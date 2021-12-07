@@ -245,7 +245,13 @@ int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 		return -ENODATA;
 	}
 
-	err = nrf_cloud_cell_pos_request_json_get(&info, false, &root_obj);
+	/* Set the request location flag when encoding the cellular position request.
+	 * In general, the application does not care about
+	 * getting the location back from cellular position requests. However, this is
+	 * needed to ensure that the cellular location of the application
+	 * is visualized in the nRF Cloud web UI.
+	 */
+	err = nrf_cloud_cell_pos_request_json_get(&info, true, &root_obj);
 	if (err) {
 		LOG_ERR("nrf_cloud_cell_pos_request_json_get, error: %d", err);
 		return -ENOMEM;
