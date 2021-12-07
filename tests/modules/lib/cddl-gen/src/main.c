@@ -8,7 +8,7 @@
 
 static void test_encode(void)
 {
-	Test_t test;
+	struct Test test;
 
 	zassert_true(&test != NULL, "Should not be NULL");
 }
