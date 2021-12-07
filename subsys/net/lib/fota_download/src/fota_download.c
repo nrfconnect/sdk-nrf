@@ -256,12 +256,14 @@ static void download_with_offset(struct k_work *unused)
 	int err = dfu_target_offset_get(&offset);
 	if (err != 0) {
 		LOG_ERR("%s failed to get offset with error %d", __func__, err);
+		send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
 		return;
 	}
 
 	err = download_client_connect(&dlc, dlc.host, &dlc.config);
 	if (err != 0) {
 		LOG_ERR("%s failed to connect with error %d", __func__, err);
+		send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
 		return;
 	}
 
@@ -269,6 +271,7 @@ static void download_with_offset(struct k_work *unused)
 	if (err != 0) {
 		LOG_ERR("%s failed to start download  with error %d", __func__,
 			err);
+		send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
 		return;
 	}
 	LOG_INF("Downloading from offset: 0x%x", offset);
