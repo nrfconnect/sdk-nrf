@@ -113,6 +113,26 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
 		LOG_WRN("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");
 		LOG_WRN("Add the device to nRF Cloud and wait for it to reconnect");
+
+		/* It is expected that the application will disconnect and reconnect to nRF Cloud
+		 * several times during device association.
+		 */
+
+		/* Explicitly disconnect the nRF Cloud transport library to clear its
+		 * internal state. This is needed by the library to allow subsequent calls to
+		 * nrf_cloud_connect(), which is necessary to complete device association.
+		 */
+		err = nrf_cloud_disconnect();
+		if (err) {
+			LOG_ERR("nrf_cloud_disconnect failed, error: %d", err);
+
+			/* If disconnection from nRF Cloud fails, the cloud module is notified with
+			 * an error. The application is expected to perform a reboot in order
+			 * to reconnect to nRF Cloud and complete device association.
+			 */
+			cloud_wrap_evt.type = CLOUD_WRAP_EVT_ERROR;
+			notify = true;
+		}
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATED:
 		LOG_DBG("NRF_CLOUD_EVT_USER_ASSOCIATED");
