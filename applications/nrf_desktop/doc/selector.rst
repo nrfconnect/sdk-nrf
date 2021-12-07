@@ -44,7 +44,7 @@ Implementation details
 
 The ``selector_event`` that the module sends to inform about the current hardware selector state is sent on the following occasions:
 
-* System start or wake-up (for every defined selector).
+* System start or wakeup (for every defined selector).
 * Selector state change when the application is running (only for the selector that changed state).
 
 When the application goes to sleep, selectors are not informing about the state change (interrupts are disabled).

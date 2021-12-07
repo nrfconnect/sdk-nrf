@@ -35,7 +35,7 @@ OpenThread configuration
 
 Enabling :kconfig:`CONFIG_CHIP` automatically enables the following options related to OpenThread:
 
-* :kconfig:`CONFIG_OPENTHREAD_ECDSA` and :kconfig:`OPENTHREAD_SRP_CLIENT` - enabled through :kconfig:`CHIP_ENABLE_DNSSD_SRP`
+* :kconfig:`CONFIG_OPENTHREAD_ECDSA` and :kconfig:`CONFIG_OPENTHREAD_SRP_CLIENT` - enabled through :kconfig:`CONFIG_CHIP_ENABLE_DNSSD_SRP`
 * :kconfig:`CONFIG_OPENTHREAD_DNS_CLIENT` - enabled through :kconfig:`CONFIG_CHIP_ENABLE_DNS_CLIENT`
 
 Additionally, you can enable the support for Thread :ref:`Sleepy End Device <thread_ot_device_types>` in Matter by using the :kconfig:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` Kconfig option.

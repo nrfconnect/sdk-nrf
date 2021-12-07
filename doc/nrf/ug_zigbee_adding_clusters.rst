@@ -7,10 +7,10 @@ Adding ZCL clusters to application
    :local:
    :depth: 2
 
-Once you are familiar with Zigbee in the |NCS| and you have tested some of the available :ref:`zigbee_samples`, you can use the :ref:`Zigbee template <zigbee_template_sample>` sample to create your own application with custom set of ZCL clusters.
+Once you are familiar with Zigbee in the |NCS| and you have tested some of the available :ref:`zigbee_samples`, you can use the :ref:`Zigbee template <zigbee_template_sample>` sample to create your own application with a custom set of ZCL clusters.
 For example, you can create a sensor application that uses a temperature sensor with an on/off switch, with the sensor periodically updating its measured value when it is active.
 
-Adding ZCL clusters to application consists of expanding the Zigbee template sample with new application clusters.
+Adding ZCL clusters to an application consists of expanding the Zigbee template sample with new application clusters.
 By default, the template sample includes only mandatory Zigbee clusters, that is the Basic and Identify clusters, required to identify a device within a Zigbee network.
 
 Cluster is a representation of a single functionality within a Zigbee node.
@@ -19,7 +19,7 @@ Clusters appropriate for a single device type such as a sensor or a light bulb a
 For more information about the ZCL terminology, see `Common ZCL terms and definitions`_ in the ZBOSS stack user guide.
 
 An application can implement appropriate callback functions to be informed about specific cluster state changes.
-These functions can be used to alter device's behavior when the state of a cluster is changing as a result of some external event.
+These functions can be used to alter the device's behavior when the state of a cluster is changing as a result of some external event.
 
 Read the following sections for detailed steps about how to expand the Zigbee template sample.
 

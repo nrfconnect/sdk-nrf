@@ -36,7 +36,7 @@ Default signal handler
 The default signal handler provides the default logic for handling ZBOSS stack signals.
 For more information, see :ref:`lib_zigbee_signal_handler`.
 
-Afer enabling the Zigbee application utilities library, you can use this component by calling the :c:func:`zigbee_default_signal_handler` in the application's :c:func:`zboss_signal_handler` implementation.
+After enabling the Zigbee application utilities library, you can use this component by calling the :c:func:`zigbee_default_signal_handler` in the application's :c:func:`zboss_signal_handler` implementation.
 
 .. _ug_zigbee_configuring_components_error_handler:
 

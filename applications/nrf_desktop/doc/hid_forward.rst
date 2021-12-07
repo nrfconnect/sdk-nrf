@@ -106,7 +106,7 @@ Enqueuing incoming HID input reports
 The |hid_forward| forwards only one HID input report to the HID-class USB device at a time.
 Another HID input report may be received from a peripheral connected over Bluetooth before the previous one was sent.
 In that case, ``hid_report_event`` is enqueued and submitted later.
-Up to :kconfig:`CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS` reports can be enqueued at a time for each report type and for each connected peripheral.
+Up to the number of reports specified in :kconfig:`CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS` reports can be enqueued at a time for each report type and for each connected peripheral.
 If there is not enough space to enqueue a new event, the module drops the oldest enqueued event that was received from this peripheral (of the same type).
 
 Upon receiving the ``hid_report_sent_event``, the |hid_forward| submits the ``hid_report_event`` enqueued for the peripheral that is associated with the HID-class USB device.
@@ -119,18 +119,18 @@ Forwarding HID output reports
 =============================
 
 When the |hid_forward| receives a ``hid_report_event`` that contains an output report from a :ref:`nrf_desktop_usb_state`, it tries to forward the output report.
-The HID output report is forwarded to all of the Bluetooth connected peripherals that forward the HID data to HID subscriber that is source of the HID output report.
+The HID output report is forwarded to all of the Bluetooth connected peripherals that forward the HID data to the HID subscriber that is source of the HID output report.
 The HID output report is never forwarded to peripheral that does not support it.
 
-If the GATT write without response operation is in progress for given HID output report ID and connected peripheral, the report is placed in a queue and sent later.
+If the GATT write without response operation is in progress for the given HID output report ID and connected peripheral, the report is placed in a queue and sent later.
 The |hid_forward| sends information only about the last received HID output report with given ID.
-If changes of state related to HID output report with given ID are frequent, some intermediate states can be omitted by the |hid_forward|.
+If changes of state related to the HID output report with the given ID are frequent, some intermediate states can be omitted by the |hid_forward|.
 
 Bluetooth Peripheral disconnection
 ==================================
 
 On a peripheral disconnection, nRF Desktop central informs the host that all the pressed keys reported by the peripheral are released.
-This is done to make sure that user will not observe a problem with a key stuck on peripheral disconnection.
+This is done to make sure that the user will not observe a problem with a key stuck on peripheral disconnection.
 
 Configuration channel data forwarding
 =====================================
@@ -139,7 +139,7 @@ The |hid_forward| forwards the :ref:`nrf_desktop_config_channel` data between th
 The data is exchanged with the peripheral connected over Bluetooth using HID feature report or HID output report.
 
 In contrast to :ref:`nrf_desktop_config_channel_script`, the |hid_forward| does not use configuration channel request to get hardware ID (HW ID) of the peripheral.
-The peripheral identification on nRF Desktop central is based on HW ID that is received from :ref:`nrf_desktop_ble_discovery` when peripheral discovery is completed.
+The peripheral identification on nRF Desktop central is based on the HW ID that is received from :ref:`nrf_desktop_ble_discovery` when peripheral discovery is completed.
 The peripheral uses :ref:`nrf_desktop_dev_descr` to provide the HW ID to the nRF Desktop central.
 
 The |hid_forward| only forwards the configuration channel requests that come from the USB connected host, it does not generate its own requests.

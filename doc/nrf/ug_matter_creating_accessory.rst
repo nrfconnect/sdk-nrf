@@ -8,7 +8,7 @@ Creating Matter accessory device
    :depth: 2
 
 The Matter accessory device is a basic node of the `Matter`_ network.
-The accessory is formed by the development kit and the application that is running the Matter stack and that is programmed on the development kit.
+The accessory is formed by the development kit and the application that is running the Matter stack, which is programmed on the development kit.
 
 Once you are familiar with Matter in the |NCS| and you have tested some of the available :ref:`matter_samples`, you can use the :ref:`Matter template <matter_template_sample>` sample to create your own custom accessory device application.
 For example, you can create a sensor application that uses a temperature sensor with an on/off switch, with the sensor periodically updating its measured value when it is active.
@@ -21,7 +21,7 @@ Each cluster contains attributes that are stored in the device's memory and comm
 Clusters appropriate for a single device type such as a sensor or a light bulb are organized into an addressable container that is called an endpoint.
 
 An application can implement appropriate callback functions to be informed about specific cluster state changes.
-These functions can be used to alter device's behavior when the state of a cluster is changing as a result of some external event.
+These functions can be used to alter the device's behavior when the state of a cluster is changing as a result of some external event.
 
 Read the following sections for detailed steps about how to expand the Matter template sample.
 
@@ -122,7 +122,7 @@ Complete the steps in the following subsections to modify the main loop.
 Edit the event queue
 ====================
 
-The main application loop is based on an queue on which the events are posted by ZCL callbacks, the application itself or by other entities, such as Zephyr timers.
+The main application loop is based on a queue on which the events are posted by ZCL callbacks, the application itself or by other entities, such as Zephyr timers.
 In each iteration, the event is dequeued and a corresponding event handler is called.
 
 Add new events
@@ -153,7 +153,7 @@ You need to make sure that the sensor is making measurements at the required tim
 For this purpose, use a Zephyr timer to post :c:struct:`SensorMeasure` events.
 In the template sample, such a timer is being used to count down 6 seconds when **Button 1** is being pressed to initiate the factory reset.
 
-To add a new timer for the measurement event, edit the :file:`src/app_task.cpp` file like follows:
+To add a new timer for the measurement event, edit the :file:`src/app_task.cpp` file as follows:
 
 .. code-block:: C++
 
@@ -305,7 +305,7 @@ Add new targets to CMakelists
 
 To allow a proper build, you must update the :file:`CMakelists.txt` file by adding the following targets:
 
-* :file:`${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/clusters/on-off-server/on-off-server.cpp` - for OnOff cluster callbacks.
+* :file:`${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/clusters/on-off-server/on-off-server.cpp` - for On/Off cluster callbacks.
 * :file:`${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/clusters/temperature-measurement-server/temperature-measurement-server.cpp` - for TemperatureMeasurement cluster callbacks.
 * :file:`src/zcl_callbacks.cpp` - to include the callback implementation.
 

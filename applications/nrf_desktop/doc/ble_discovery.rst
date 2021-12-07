@@ -66,8 +66,8 @@ The peripheral discovery consists of the following steps:
 a. Reading device description.
    The central checks if the connected peripheral supports the LLPM (Low Latency Packet Mode).
    The device description is a GATT Characteristic that is specific for nRF Desktop peripherals and is implemented by :ref:`nrf_desktop_dev_descr`.
-#. Reading HW ID (hardware ID).
-   The hardware ID is unique per device and it is used to identify the device while forwarding the :ref:`nrf_desktop_config_channel` data.
+#. Reading Hardware ID (HW ID).
+   The HW ID is unique per device and it is used to identify the device while forwarding the :ref:`nrf_desktop_config_channel` data.
    The HW ID is a read from a GATT Characteristic that is specific for nRF Desktop peripherals and is implemented by :ref:`nrf_desktop_dev_descr`.
 #. Reading DIS (Device Information Service).
    The central reads VID and PID of the connected peripheral.

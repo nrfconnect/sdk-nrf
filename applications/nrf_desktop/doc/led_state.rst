@@ -47,7 +47,7 @@ Configuration
 *************
 
 The |led_state| is enabled when you set the :kconfig:`CONFIG_CAF_LEDS` option.
-You must also configure :ref:`caf_leds`, which is used as sink module for ``led_state``.
+You must also configure :ref:`caf_leds`, which is used as a sink module for ``led_state``.
 
 For every board that has this option enabled, you must define the module configuration.
 Do this in the :file:`led_state_def.h` file located in the board-specific directory in the application configuration directory.
