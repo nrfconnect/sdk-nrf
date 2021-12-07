@@ -168,7 +168,7 @@ manifest:
       remote: pelioniot
     - name: cddl-gen
       remote: nordicsemi
-      revision: 24f1b2b0c64c694b7f9ac1b7eab60b39236ca0bf
+      revision: 1c2656daa87ebf4cd3c45ee8eafa336260d589bc
       path: modules/lib/cddl-gen
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
