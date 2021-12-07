@@ -143,13 +143,12 @@ Vendor specific commands can be divided into different categories as follows:
 * If the Length field is set to ``1`` (symbol ``CARRIER_TEST_STUDIO``), this field value is used by the nRFgo Studio to indicate that an unmodulated carrier is turned on at the channel.
   It remains turned on until a ``TEST_END`` or ``RESET`` command is issued.
 * If the Length field is set ``2`` (symbol ``SET_TX_POWER``), the Frequency field sets the TX power in dBm.
-  The valid TX power values are specified in the product specification ranging from -40 to +4.
-  0 dBm is the reset value.
+  The valid TX power values are specified in the product specification ranging from -40 to +4, where 0 dBm is the reset value.
   Only the 6 least significant bits will fit in the Length field.
   The two most significant bits are calculated by the DTM module.
   This is possible because the 6 least significant bits of all valid TX power values are unique.
   The TX power can be modified only when no Transmitter Test or Receiver Test is running.
-* If the Length field is set to ``3``(symbol ``NRF21540_ANTENNA_SELECT``), the Frequency field sets the nRF21540 FEM antenna.
+* If the Length field is set to ``3`` (symbol ``NRF21540_ANTENNA_SELECT``), the Frequency field sets the nRF21540 FEM antenna.
   The valid values are:
 
      * 0 - ANT1 enabled, ANT2 disabled

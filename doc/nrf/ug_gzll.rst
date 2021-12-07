@@ -382,7 +382,7 @@ If you set the ``sync_lifetime`` to zero, the Device will never be in sync.
 The ``sync_lifetime`` should be chosen with regard to how often packets are required to be sent and the fact that synchronization can only be maintained for a finite time due to clock drift and radio interference.
 To configure the sync lifetime, use the :c:func:`nrf_gzll_set_sync_lifetime()` function.
 
-The Device knows the it is in sync when the number of retransmissions gets close to zero.
+The Device knows it is in sync when the number of retransmissions gets close to zero.
 The :c:struct:`nrf_gzll_device_tx_info_t` structure is passed to the Device callback functions, and it contains the number of transmit attempts required for the current packet.
 In addition, the structure contains the ``num_channel_switches`` parameter that the application can use to determine whether the RF channels are reliable.
 This enables the application to track bad channels and update the channel tables on Host and Device if desired.
