@@ -130,10 +130,8 @@ void date_time_register_handler(date_time_evt_handler_t evt_handler);
 int date_time_update_async(date_time_evt_handler_t evt_handler);
 
 /** @brief Clear the current date time held by the library.
- *
- *  @return 0 If the operation was successful.
  */
-int date_time_clear(void);
+void date_time_clear(void);
 
 /** @brief Clear a timestamp in unix time ms.
  *
