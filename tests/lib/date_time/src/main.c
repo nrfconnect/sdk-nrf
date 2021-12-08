@@ -270,10 +270,7 @@ static void test_date_time_setup(void)
 
 static void test_date_time_teardown(void)
 {
-	int ret;
-
-	ret = date_time_clear();
-	zassert_equal(0, ret, "date_time_clear should return 0");
+	date_time_clear();
 }
 
 void test_main(void)

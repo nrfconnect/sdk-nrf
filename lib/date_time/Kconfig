@@ -19,13 +19,23 @@ config DATE_TIME_AUTO_UPDATE
 
 config DATE_TIME_UPDATE_INTERVAL_SECONDS
 	int "Date time update interval, in seconds"
-	default 3600
+	default 14400
 	help
 	  Setting this option to 0 disables sequential date time updates.
+
+config DATE_TIME_TOO_OLD_SECONDS
+	int "After which time current date time is considered too old, in seconds"
+	default 3600
+	help
+	  If the library is triggered to perform date time update or a notification provides it
+	  outside of the periodic date time updates, it will be applied if previous update was
+	  done earlier than given number of seconds ago.
+	  This must be smaller than or equal to DATE_TIME_UPDATE_INTERVAL_SECONDS.
 
 config DATE_TIME_MODEM
 	bool "Get date time from the nRF9160 onboard modem"
 	depends on NRF_MODEM_LIB
+	depends on LTE_LINK_CONTROL
 	default y
 
 config DATE_TIME_NTP
