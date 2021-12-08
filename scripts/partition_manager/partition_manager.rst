@@ -145,10 +145,17 @@ placement: dict
      It is not possible to place the partition after ``end`` or before ``start``.
 
       align: dict
-         Ensure alignment of start or end of partition by specifying a dict with a ``start`` or ``end`` key respectively, where the value is the number of bytes to align to.
+         Ensure the alignment of the start or the end of the partition by specifying a dict with a ``start`` or ``end`` key respectively, where the value is the number of bytes to align to.
          If necessary, empty partitions are inserted in front of or behind the partition to ensure that the alignment is correct.
          Only one key can be specified.
          Partitions that directly or indirectly (through :ref:`spans <partition_manager_spans>`) share size with the ``app`` partitions can only be aligned if they are placed directly after the ``app`` partition.
+
+      align_next: int
+         Ensure that the _next_ partition is aligned on this number of bytes.
+         This is equivalent to ensuring the alignment of the start of the next partition.
+         If the start of the next partition is already aligned, the largest alignment takes effect.
+         ``align_next`` fails if the alignment of the start of the next partition is not a divisor or multiple of the ``align_next`` value.
+         ``align_next`` also fails if the end of the next partition is aligned.
 
 .. _partition_manager_spans:
 

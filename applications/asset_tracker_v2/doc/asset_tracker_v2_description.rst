@@ -13,7 +13,7 @@ The Asset Tracker v2 application introduces a set of new features, which are not
 * Offline first - Highly-mobile cellular IoT products need to handle unreliable connections gracefully by implementing mechanisms to retry the failed sending of data.
 * Timestamping on the device - Sensor data is timestamped on the device using multiple time sources. When the device is offline (planned or unplanned), the timestamping does not rely on the cloud side.
 * Batching of data - Data can be batched to reduce the number of messages transmitted, and to be able to retain collected data while the device is offline.
-* Configurable at run time - The application behavior (for example, accelerometer sensitivity or GPS timeout) can be configured at run time. This improves the development experience with individual devices or when debugging the device behavior in specific areas and situations. It also reduces the cost for transmitting data to the devices by reducing the frequency of sending firmware updates to the devices.
+* Configurable at run time - The application behavior (for example, accelerometer sensitivity or GNSS timeout) can be configured at run time. This improves the development experience with individual devices or when debugging the device behavior in specific areas and situations. It also reduces the cost for transmitting data to the devices by reducing the frequency of sending firmware updates to the devices.
 
 Implementation of the above features required a rework of the existing application.
 Hence, this application is not backward compatible to the :ref:`asset_tracker` application.
@@ -105,7 +105,7 @@ The device modes and their descriptions are listed in the following table:
 |          +---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 |          | Movement timeout    | Sample and publish data at a minimum of the time interval specified by the parameter. Not dependent on movement.                     | 3600 seconds   |
 +----------+---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
-| GPS timeout                    | Timeout for acquiring a GPS fix during sampling of the data.                                                                         | 60 seconds     |
+| GPS timeout                    | Timeout for acquiring a GNSS fix during sampling of the data.                                                                        | 60 seconds     |
 +--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 | Accelerometer threshold        | Accelerometer threshold in m/s². Minimal absolute value in m/s² for the accelerometer readings to be considered as a valid movement. | 10 m/s²        |
 +--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
@@ -203,7 +203,7 @@ The following table shows the LED behavior demonstrated by the application:
 +===========================+=========================+=======================+
 | LTE connection search     | Yellow, blinking        | LED1 blinking         |
 +---------------------------+-------------------------+-----------------------+
-| GPS fix search            | Purple, blinking        | LED2 blinking         |
+| GNSS fix search           | Purple, blinking        | LED2 blinking         |
 +---------------------------+-------------------------+-----------------------+
 | Publishing data           | Green, blinking         | LED3 blinking         |
 +---------------------------+-------------------------+-----------------------+
@@ -309,51 +309,61 @@ To set up the application to work with a specific cloud example, see the followi
 For every cloud service that is supported by this application, you must configure the corresponding *cloud library* by setting certain mandatory Kconfig options that are specific to the cloud library.
 For more information, see :ref:`Cloud-specific mandatory Kconfig options <mandatory_config>`.
 
+
 Configuration options
 =====================
 
 Check and configure the following configuration options for the application:
 
-.. option:: CONFIG_ASSET_TRACKER_V2_APP_VERSION - Configuration for providing the application version
+.. _CONFIG_ASSET_TRACKER_V2_APP_VERSION:
 
-   The application publishes its version number as a part of the static device data. The default value for the application version is ``0.0.0-development``. To configure the application version, set :kconfig:`CONFIG_ASSET_TRACKER_V2_APP_VERSION` to the desired version.
+CONFIG_ASSET_TRACKER_V2_APP_VERSION - Configuration for providing the application version
+   The application publishes its version number as a part of the static device data. The default value for the application version is ``0.0.0-development``. To configure the application version, set :ref:`CONFIG_ASSET_TRACKER_V2_APP_VERSION <CONFIG_ASSET_TRACKER_V2_APP_VERSION>` to the desired version.
 
-.. option:: CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM - Configuration for enabling the use of custom cloud client ID
+.. _CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM:
 
+CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM - Configuration for enabling the use of custom cloud client ID
    This application configuration is used to enable the use of custom client ID for the respective cloud. By default, the application uses the IMEI of the nRF9160-based device as the client ID in the cloud connection.
 
-.. option:: CONFIG_CLOUD_CLIENT_ID - Configuration for providing a custom cloud client ID
+.. _CONFIG_CLOUD_CLIENT_ID:
 
-   This application configuration sets a custom client ID for the respective cloud. For setting a custom client ID, you need to set :kconfig:`CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM` to ``y``.
+CONFIG_CLOUD_CLIENT_ID - Configuration for providing a custom cloud client ID
+   This application configuration sets a custom client ID for the respective cloud. For setting a custom client ID, you need to set :ref:`CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM <CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM>` to ``y``.
 
 
 .. _default_config_values:
 
 The default values for the device configuration parameters can be set by manipulating the following configurations:
 
-.. option:: CONFIG_DATA_DEVICE_MODE - Configuration for the device mode
+.. _CONFIG_DATA_DEVICE_MODE:
 
+CONFIG_DATA_DEVICE_MODE - Configuration for the device mode
    This application configuration sets the device mode.
 
-.. option:: CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS - Configuration for Active mode
+.. _CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS:
 
+CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS - Configuration for Active mode
    This application configuration sets the Active mode timeout value.
 
-.. option:: CONFIG_DATA_MOVEMENT_RESOLUTION_SECONDS - Configuration for Movement resolution
+.. _CONFIG_DATA_MOVEMENT_RESOLUTION_SECONDS:
 
+CONFIG_DATA_MOVEMENT_RESOLUTION_SECONDS - Configuration for Movement resolution
    This configuration sets the Movement resolution timeout value.
 
-.. option:: CONFIG_DATA_MOVEMENT_TIMEOUT_SECONDS - Configuration for Movement timeout
+.. _CONFIG_DATA_MOVEMENT_TIMEOUT_SECONDS:
 
+CONFIG_DATA_MOVEMENT_TIMEOUT_SECONDS - Configuration for Movement timeout
    This configuration sets the Movement timeout value.
 
-.. option:: CONFIG_DATA_ACCELEROMETER_THRESHOLD - Configuration for Accelerometer threshold
+.. _CONFIG_DATA_ACCELEROMETER_THRESHOLD:
 
+CONFIG_DATA_ACCELEROMETER_THRESHOLD - Configuration for Accelerometer threshold
    This configuration sets the Accelerometer threshold value.
 
-.. option:: CONFIG_DATA_GPS_TIMEOUT_SECONDS - Configuration for GPS timeout
+.. _CONFIG_DATA_GPS_TIMEOUT_SECONDS:
 
-   This configuration sets the GPS timeout value.
+CONFIG_DATA_GPS_TIMEOUT_SECONDS - Configuration for GNSS timeout
+   This configuration sets the GNSS timeout value.
 
 
 .. _mandatory_config:
@@ -447,7 +457,7 @@ See :ref:`building_with_overlays` on how to combine overlay configuration files 
 .. external_antenna_note_start
 
 .. note::
-   When you build the application for the nRF9160 DK v0.15.0 and later, set the :kconfig:`CONFIG_GPS_MODULE_ANTENNA_EXTERNAL` option to ``y`` to achieve the best external antenna performance.
+   When you build the application for the nRF9160 DK v0.15.0 and later, set the ``CONFIG_GPS_MODULE_ANTENNA_EXTERNAL`` option to ``y`` to achieve the best external antenna performance.
 
 .. external_antenna_note_end
 
@@ -599,7 +609,7 @@ All module threads have the following identical properties by default:
 
 * Thread is initialized at boot.
 * Thread is preemptive.
-* Priority is set to the lowest application priority in the system, which is done by setting ``CONFIG_NUM_PREEMPT_PRIORITIES`` to ``1``.
+* Priority is set to the lowest application priority in the system, which is done by setting :kconfig:`CONFIG_NUM_PREEMPT_PRIORITIES` to ``1``.
 * Thread is started instantly after it is initialized in the boot sequence.
 
 Following is the basic structure for all the threads:

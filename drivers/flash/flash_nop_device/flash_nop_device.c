@@ -13,7 +13,12 @@
 #include <string.h>
 #include <sys/util.h>
 
+/* configuration derived from DT */
+#ifdef CONFIG_ARCH_POSIX
+#define SOC_NV_FLASH_NODE DT_CHILD(DT_DRV_INST(0), flash_0)
+#else
 #define SOC_NV_FLASH_NODE DT_CHILD(DT_DRV_INST(0), flash_sim_0)
+#endif /* CONFIG_ARCH_POSIX */
 
 #define FLASH_NOP_DEVICE_BASE_OFFSET DT_REG_ADDR(SOC_NV_FLASH_NODE)
 #define FLASH_NOP_DEVICE_ERASE_UNIT DT_PROP(SOC_NV_FLASH_NODE, erase_block_size)

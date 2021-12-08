@@ -20,7 +20,7 @@ The information is fetched in the following prioritized order:
 #. If the NTP time request does not succeed, the library tries to request time information from several other NTP servers, before it fails.
 
 The :c:func:`date_time_set` function can be used to obtain the current date-time information from external sources independent of the internal date-time update routine.
-Time from GPS can be such an external source.
+Time from GNSS can be such an external source.
 
 The option :kconfig:`CONFIG_DATE_TIME_AUTO_UPDATE` determines whether date-time update is triggered automatically when the LTE network becomes available.
 Libraries that require date-time information can just enable this library to get updated time information.

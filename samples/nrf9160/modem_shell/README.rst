@@ -518,17 +518,61 @@ Configuration options
 
 Check and configure the following configuration options for the sample:
 
-.. option:: CONFIG_MOSH_LINK - Enable LTE link control feature in modem shell.
-.. option:: CONFIG_MOSH_PING - Enable ping feature in modem shell.
-.. option:: CONFIG_MOSH_IPERF3 - Enable iperf3 feature in modem shell.
-.. option:: CONFIG_MOSH_CURL - Enable curl feature in modem shell.
-.. option:: CONFIG_MOSH_SOCK - Enable socket tool feature in modem shell.
-.. option:: CONFIG_MOSH_SMS - Enable SMS feature in modem shell.
-.. option:: CONFIG_MOSH_LOCATION - Enable Location tool in modem shell.
-.. option:: CONFIG_MOSH_GNSS - Enable GNSS feature in modem shell.
-.. option:: CONFIG_MOSH_FOTA - Enable FOTA feature in modem shell.
-.. option:: CONFIG_MOSH_PPP - Enable PPP feature in modem shell.
-.. option:: CONFIG_MOSH_REST - Enable REST feature in modem shell.
+.. _CONFIG_MOSH_LINK:
+
+CONFIG_MOSH_LINK
+   Enable LTE link control feature in modem shell.
+
+.. _CONFIG_MOSH_PING:
+
+CONFIG_MOSH_PING
+   Enable ping feature in modem shell.
+
+.. _CONFIG_MOSH_IPERF3:
+
+CONFIG_MOSH_IPERF3
+   Enable iperf3 feature in modem shell.
+
+.. _CONFIG_MOSH_CURL:
+
+CONFIG_MOSH_CURL
+   Enable curl feature in modem shell.
+
+.. _CONFIG_MOSH_SOCK:
+
+CONFIG_MOSH_SOCK
+    Enable socket tool feature in modem shell.
+
+.. _CONFIG_MOSH_SMS:
+
+CONFIG_MOSH_SMS
+    Enable SMS feature in modem shell
+
+.. _CONFIG_MOSH_LOCATION:
+
+CONFIG_MOSH_LOCATION
+   Enable Location tool in modem shell.
+
+.. _CONFIG_MOSH_GNSS:
+
+CONFIG_MOSH_GNSS
+   Enable GNSS feature in modem shell
+
+.. _CONFIG_MOSH_FOTA:
+
+CONFIG_MOSH_FOTA
+   Enable FOTA feature in modem shell
+
+.. _CONFIG_MOSH_PPP:
+
+CONFIG_MOSH_PPP
+   Enable PPP feature in modem shell
+
+.. _CONFIG_MOSH_REST:
+
+CONFIG_MOSH_REST
+   Enable REST feature in modem shell
+
 
 .. note::
    You may not be able to use all features at the same time due to memory restrictions.

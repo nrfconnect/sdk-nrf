@@ -11,7 +11,7 @@ The nRF Cloud library enables applications to connect to Nordic Semiconductor's 
 It abstracts and hides the details of the transport and the encoding scheme that is used for the payload and provides a simplified API interface for sending data from supported sensor types to the cloud.
 The current implementation supports the following technologies:
 
-* GPS and FLIP sensor data
+* GNSS and FLIP sensor data
 * TLS secured MQTT as the communication protocol
 * JSON as the data format
 
@@ -111,7 +111,17 @@ Configuration options for device ID
 Firmware over-the-air (FOTA) updates
 ************************************
 The nRF Cloud library supports FOTA updates for your nRF9160-based device.
-When the library is included by the application, the :kconfig:`CONFIG_NRF_CLOUD_FOTA` option is enabled by default, and the FOTA functionality is made available to the application.
+The :kconfig:`CONFIG_NRF_CLOUD_FOTA` option is enabled by default when :kconfig:`CONFIG_NRF_CLOUD_MQTT` is set.
+This enables FOTA functionality in the application.
+
+nRF Cloud FOTA enables the following additional features and libraries:
+
+* :kconfig:`CONFIG_FOTA_DOWNLOAD` enables :ref:`lib_fota_download`
+* :kconfig:`CONFIG_DFU_TARGET` enables :ref:`lib_dfu_target`
+* :kconfig:`CONFIG_DOWNLOAD_CLIENT` enables :ref:`lib_download_client`
+* :kconfig:`CONFIG_FOTA_DOWNLOAD_PROGRESS_EVT`
+* :kconfig:`CONFIG_REBOOT`
+* :kconfig:`CONFIG_CJSON_LIB`
 
 For FOTA updates to work, the device must provide the information about the supported FOTA types to nRF Cloud.
 The device passes this information by writing a ``fota_v2`` field containing an array of FOTA types into the ``serviceInfo`` field in the device's shadow.
@@ -147,18 +157,10 @@ If the value equals :c:enumerator:`NRF_CLOUD_FOTA_MODEM`, the application can op
 
 Building FOTA images
 ====================
-The |NCS| build system places output images in the :file:`<build folder>/zephyr` folder.
+The build system will create the files :file:`dfu_application.zip` and/or :file:`dfu_mcuboot.zip` for a properly configured application.
+See :ref:`app_build_fota` for more information about FOTA zip files.
 
-If :kconfig:`CONFIG_BOOTLOADER_MCUBOOT` is set, the build system creates the file :file:`dfu_application.zip` file containing files :file:`app_update.bin` and :file:`manifest.json`.
-Further, if :kconfig:`CONFIG_IMG_MANAGER` and :kconfig:`CONFIG_MCUBOOT_IMG_MANAGER` are also set, then the application will be able to process FOTA updates.
-
-The :file:`app_update.bin` file is a signed version of your application.
-The signature matches to what MCUboot expects, so it allows this file to be used as an update.
-The build system creates a :file:`manifest.json` file using information in the :file:`zephyr.meta` output file.
-This includes the Zephyr and |NCS| git hashes for the commits used to build the application.
-If your working tree contains uncommitted changes, the build system adds the suffix ``-dirty`` to the relevant version field.
-
-When you use the zip file to create an update bundle, the `nRF Cloud`_ UI populates the ``Name`` and ``Version`` fields from the :file:`manifest.json` file.
+When you use the files :file:`dfu_application.zip` or :file:`dfu_mcuboot.zip` to create an update bundle, the `nRF Cloud`_ UI populates the ``Name`` and ``Version`` fields from the :file:`manifest.json` file contained within.
 However, you are free to change them as needed.
 The UI populates the ``Version`` field from only the |NCS| version field in the :file:`manifest.json` file.
 

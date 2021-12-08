@@ -15,14 +15,14 @@ The events managed by the Event Manager are structured data types that are defin
 The Event Manager profiler tracer registers :c:struct:`profiler_info` as trace_data of event types.
 The tracer uses this additional information to track the usage of events within the application.
 
-See the :ref:`event_manager_profiling_sample` sample for an example of how to use the library with the :ref:`profiler`.
+See the :ref:`event_manager_profiling_tracer_sample` sample for an example of how to use the library with the :ref:`profiler`.
 
 .. _event_manager_profiler_tracer_config:
 
 Configuration
 *************
 
-To use the Event Manager profiler tracer, enable the :kconfig:`CONFIG_EVENT_MANAGER_PROFILER` Kconfig option.
+To use the Event Manager profiler tracer, enable the :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_TRACER` Kconfig option.
 This Kconfig option also automatically initializes the Profiler.
 
 Additional configuration
@@ -30,8 +30,8 @@ Additional configuration
 
 You can also set the following Kconfig options when working with the Event Manager profiler tracer:
 
-* :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_TRACE_EVENT_EXECUTION` - With this Kconfig option set, the Event Manager profiler tracer will track two additional events that mark the start and the end of each event execution, respectively.
-* :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_PROFILE_EVENT_DATA` - With this Kconfig option set, the Event Manager profiler tracer will trigger logging of event data during profiling, allowing you to see what event data values were sent.
+* :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_TRACER_TRACE_EVENT_EXECUTION` - With this Kconfig option set, the Event Manager profiler tracer will track two additional events that mark the start and the end of each event execution, respectively.
+* :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_TRACER_PROFILE_EVENT_DATA` - With this Kconfig option set, the Event Manager profiler tracer will trigger logging of event data during profiling, allowing you to see what event data values were sent.
 
 .. _event_manager_profiler_tracer_em_implementation:
 
@@ -43,7 +43,7 @@ Implementing profiling for Event Manager events
 
 To profile an Event Manager event, you must complete the following steps:
 
-1. Enable profiling Event Manager events using the :kconfig:`CONFIG_EVENT_MANAGER_PROFILER` Kconfig option.
+1. Enable profiling Event Manager events using the :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_TRACER` Kconfig option.
 #. Edit the source file for the event type:
 
    a. Define a profiling function that logs the event data to a given buffer by calling one of the following functions for every registered data type:
@@ -110,9 +110,9 @@ The Event Manager profiler tracer uses the hooks to register profiler events and
 API documentation
 *****************
 
-| Header file: :file:`include/event_manager_profiler.h`
-| Source files: :file:`subsys/event_manager_profiler/`
+| Header file: :file:`include/event_manager_profiler_tracer.h`
+| Source files: :file:`subsys/event_manager_profiler_tracer/`
 
-.. doxygengroup:: event_manager_profiler
+.. doxygengroup:: event_manager_profiler_tracer
    :project: nrf
    :members:

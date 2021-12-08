@@ -14,10 +14,10 @@
 
 LOG_MODULE_REGISTER(memfault_ncs_metrics, CONFIG_MEMFAULT_NCS_LOG_LEVEL);
 
-#ifdef CONFIG_MEMFAULT_NCS_STACK_METRICS
+#ifdef CONFIG_MEMFAULT_NCS_LTE_METRICS
 static bool connected;
 static bool connect_timer_started;
-#endif /* CONFIG_MEMFAULT_NCS_STACK_METRICS */
+#endif /* CONFIG_MEMFAULT_NCS_LTE_METRICS */
 
 static void stack_check(const struct k_thread *cthread, void *user_data)
 {

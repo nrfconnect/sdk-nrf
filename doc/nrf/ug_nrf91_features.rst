@@ -267,25 +267,25 @@ See `GPS interface and antenna`_ for more details on GNSS interface and antenna.
 Obtaining a fix
 ===============
 
-GPS provides lots of useful information including 3D location (latitude, longitude, altitude), time, and velocity.
+GNSS provides lots of useful information including 3D location (latitude, longitude, altitude), time, and velocity.
 
-The time to obtain a fix (also referred to as Time to First Fix (TTFF)) will depend on the time when the GPS receiver was last turned on and used.
+The time to obtain a fix (also referred to as Time to First Fix (TTFF)) will depend on the time when the GNSS receiver was last turned on and used.
 
-Following are the various GPS start modes:
+Following are the various GNSS start modes:
 
-* Cold start - GPS starts after being powered off for a long time with zero knowledge of the time, current location, or the satellite orbits.
-* Warm start - GPS has some coarse knowledge of the time, location, or satellite orbits from a previous fix that is more than around 37 minutes old.
-* Hot start - GPS fix is requested within an interval of around 37 minutes from the last successful fix.
+* Cold start - GNSS starts after being powered off for a long time with zero knowledge of the time, current location, or the satellite orbits.
+* Warm start - GNSS has some coarse knowledge of the time, location, or satellite orbits from a previous fix that is more than around 37 minutes old.
+* Hot start - GNSS fix is requested within an interval of around 37 minutes from the last successful fix.
 
-Each GPS satellite transmits its own `Ephemeris`_ data and common `Almanac`_ data:
+Each satellite transmits its own `Ephemeris`_ data and common `Almanac`_ data:
 
-* Ephemeris data - Provides information about the orbit of the GPS satellite transmitting it. This data is valid for four hours and becomes inaccurate after that.
+* Ephemeris data - Provides information about the orbit of the satellite transmitting it. This data is valid for four hours and becomes inaccurate after that.
 * Almanac data - Provides coarse orbit and status information for each satellite in the constellation. Each satellite broadcasts Almanac data for all satellites.
 
 The data transmission occurs at a slow data rate of 50 bps.
 The orbital data can be received faster using A-GPS.
 
-Due to the clock bias on the receiver, there are four unknowns when looking for a GPS fix - latitude, longitude, altitude, and clock bias.
+Due to the clock bias on the receiver, there are four unknowns when looking for a GNSS fix - latitude, longitude, altitude, and clock bias.
 This results in solving an equation system with four unknowns, and therefore a minimum of four satellites must be tracked to acquire a fix.
 
 Enhancements to GNSS
@@ -317,7 +317,7 @@ Normally, devices connect to the cellular network approximately every two hours 
 P-GPS enables devices to determine the exact orbital location of the satellite without connecting to the network every two hours with a trade-off of reduced accuracy of the calculated position over time.
 Note that P-GPS requires more memory compared to regular A-GPS.
 
-Also, note that due to satellite clock inaccuracies, not all functional satellites will have Ephemerides data valid for two weeks in the downloaded PGPS package.
+Also, note that due to satellite clock inaccuracies, not all functional satellites will have Ephemerides data valid for two weeks in the downloaded P-GPS package.
 This means that the number of satellites having valid predicted Ephemerides reduces in number roughly after ten days.
 Hence, the GNSS module needs to download the Ephemeris data from the satellite broadcast if no predicted Ephemeris is found for that satellite to be able to use the satellite.
 

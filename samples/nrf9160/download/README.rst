@@ -26,9 +26,9 @@ Overview
 ********
 
 The sample first initializes the :ref:`nrfxlib:nrf_modem` and AT communications.
-Next, it provisions a certificate to the modem using the :ref:`modem_key_mgmt` library if the :kconfig:`CONFIG_SAMPLE_SECURE_SOCKET` option is set.
+Next, it provisions a certificate to the modem using the :ref:`modem_key_mgmt` library if the :ref:`CONFIG_SAMPLE_SECURE_SOCKET <CONFIG_SAMPLE_SECURE_SOCKET>` option is set.
 The provisioning of the certificates must be done before connecting to the LTE network since the certificates can only be provisioned when the device is not connected.
-The certificate file name and security tag can be configured using the :kconfig:`CONFIG_SAMPLE_SEC_TAG` and the :kconfig:`CONFIG_SAMPLE_CERT_FILE` options, respectively.
+The certificate file name and security tag can be configured using the :ref:`CONFIG_SAMPLE_SEC_TAG <CONFIG_SAMPLE_SEC_TAG>` and the :ref:`CONFIG_SAMPLE_CERT_FILE <CONFIG_SAMPLE_CERT_FILE>` options, respectively.
 
 The sample then performs the following actions:
 
@@ -45,8 +45,8 @@ To enable CoAP block-wise transfer, it is necessary to enable :ref:`Zephyr's CoA
 Using TLS and DTLS
 ==================
 
-When the :kconfig:`CONFIG_SAMPLE_SECURE_SOCKET` option is set, the sample provisions the certificate found in the :file:`samples/nrf9160/download/cert` folder.
-The certificate file name is indicated by the :kconfig:`CONFIG_SAMPLE_CERT_FILE` option.
+When the :ref:`CONFIG_SAMPLE_SECURE_SOCKET <CONFIG_SAMPLE_SECURE_SOCKET>` option is set, the sample provisions the certificate found in the :file:`samples/nrf9160/download/cert` folder.
+The certificate file name is indicated by the :ref:`CONFIG_SAMPLE_CERT_FILE <CONFIG_SAMPLE_CERT_FILE>` option.
 This certificate will work for the default test files.
 If you are using a custom download test file, you must provision the correct certificate for the servers from which the certificates will be downloaded.
 
@@ -62,29 +62,35 @@ Configuration options
 
 Check and configure the following configuration options for the sample:
 
-.. option:: CONFIG_SAMPLE_SECURE_SOCKET - Secure socket configuration
+.. _CONFIG_SAMPLE_SECURE_SOCKET:
 
-If enabled, this option provisions the certificate to the modem.
+CONFIG_SAMPLE_SECURE_SOCKET - Secure socket configuration
+   If enabled, this option provisions the certificate to the modem.
 
-.. option:: CONFIG_SAMPLE_SEC_TAG - Security tag configuration
+.. _CONFIG_SAMPLE_SEC_TAG:
 
-This option configures the security tag.
+CONFIG_SAMPLE_SEC_TAG - Security tag configuration
+   This option configures the security tag.
 
-.. option:: CONFIG_SAMPLE_CERT_FILE - Certificate file name configuration
+.. _CONFIG_SAMPLE_CERT_FILE:
 
-This option sets the certificate file name.
+CONFIG_SAMPLE_CERT_FILE - Certificate file name configuration
+   This option sets the certificate file name.
 
-.. option:: CONFIG_SAMPLE_COMPUTE_HASH - Hash compute configuration
+.. _CONFIG_SAMPLE_COMPUTE_HASH:
 
-If enabled, this option computes the SHA256 hash of the downloaded file.
+CONFIG_SAMPLE_COMPUTE_HASH - Hash compute configuration
+   If enabled, this option computes the SHA256 hash of the downloaded file.
 
-.. option:: CONFIG_SAMPLE_COMPARE_HASH - Hash compare configuration
+.. _CONFIG_SAMPLE_COMPARE_HASH:
 
-If enabled, this option compares the hash against the SHA256 hash set by :kconfig:`CONFIG_SAMPLE_SHA256_HASH` for a match.
+CONFIG_SAMPLE_COMPARE_HASH - Hash compare configuration
+   If enabled, this option compares the hash against the SHA256 hash set by :ref:`CONFIG_SAMPLE_SHA256_HASH <CONFIG_SAMPLE_SHA256_HASH>` for a match.
 
-.. option:: CONFIG_SAMPLE_SHA256_HASH - Hash configuration
+.. _CONFIG_SAMPLE_SHA256_HASH:
 
-This option sets the SHA256 hash to be compared with :kconfig:`CONFIG_SAMPLE_COMPUTE_HASH`.
+CONFIG_SAMPLE_SHA256_HASH - Hash configuration
+   This option sets the SHA256 hash to be compared with :ref:`CONFIG_SAMPLE_COMPUTE_HASH <CONFIG_SAMPLE_COMPUTE_HASH>`.
 
 
 Building and running

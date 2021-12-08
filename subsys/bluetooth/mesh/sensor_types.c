@@ -496,7 +496,7 @@ FORMAT(percentage_16) = SCALAR_FORMAT_MAX(2,
 					  SCALAR(1e-2, 0),
 					  10000);
 FORMAT(percentage_delta_trigger) = SCALAR_FORMAT(2,
-					  (UNSIGNED),
+					  (UNSIGNED | HAS_UNDEFINED),
 					  percent,
 					  SCALAR(1e-2, 0));
 

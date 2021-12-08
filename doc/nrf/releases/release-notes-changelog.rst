@@ -295,6 +295,7 @@ OpenThread samples
 
   * Support for ``nrf5340dk_nrf5340_cpuapp_ns`` build target for :ref:`zephyr:nrf5340dk_nrf5340`.
     This allows to build the OpenThread samples with Trusted Firmware-M and the PSA crypto API support.
+    This platform is experimental, so :ref:`nrfxlib:ot_libs` will not be generated for it.
 
 Zigbee samples
 --------------
@@ -317,6 +318,10 @@ Other samples
     * Introduced :kconfig:`CONFIG_HW_UNIQUE_KEY_LOAD` with fewer dependencies than :kconfig:`CONFIG_HW_UNIQUE_KEY` solely for loading the key.
     * The bootloader now allows a single boot with no key present, to allow the app to write a key.
       After the first boot, the key must be present or the bootloader won't boot the app.
+
+  * Bug fixes:
+
+    * NCSDK-10209: the |NSIB| and MCUboot have been made more robust against alignment errors caused by changes in the size of partitions.
 
 * Added the :ref:`hw_unique_key_usage` sample.
 
@@ -524,7 +529,7 @@ Other libraries
 
 * :ref:`profiler` library:
 
-  * Updated Python scripts to use multiple processes that communicate over sockets.
+  * Updated Python scripts to use multiple processes that communicate over pipes.
   * Increase the number of supported profiler events.
   * Added a special profiler event for indicating a situation where the profiler's data buffer has overflowed and some events have been dropped, which causes the device to stop sending events.
 
@@ -532,6 +537,7 @@ Other libraries
 
   * Fixed the NCSDK-5156 issue with the size calculation for the non-secure callable region, which prevented users from adding a large number of custom secure services.
   * All EGU peripherals, instead of just EGU1 and EGU2, are now configurable to be non-secure and are configured as non-secure by default.
+  * Fixed a bug where the fp context could be overwritten by other threads if both threads are using Non-secure-callable functions (secure services).
 
 * :ref:`mod_memfault`:
 
@@ -584,6 +590,8 @@ Partition Manager
 * Partition manager information is no longer appended to the ``rom_report`` target.
   To inspect the current partition manager configuration please use the ``partition_manager_report`` target.
 * Added the ``share_size`` functionality to let a partition share size with a partition in another region.
+* Added a new directive, ``align_next``, which controls the alignment of the next partition.
+  See the Partition Manager documentation for more information.
 
 DFU target
 ----------
@@ -668,6 +676,9 @@ In addition to documentation related to the changes listed above, the following 
   * :ref:`library_template` - added a template for documenting libraries.
   * :ref:`ug_nrf5340` - Added a note about varying folder names of the network core child image when programming with nrfjprog.
   * :ref:`ug_nrf5340` - Updated the :ref:`ug_nrf5340_ses_multi_image` to better match the programming procedure.
+  * :ref:`ug_nrf5340` - Added a section for Bluetooth mesh and its samples for application core under the section Protocols and use cases.
+  * :ref:`ug_nrf52` - Added a section describing Bluetooth mesh under the Supported protocols section.
+  * Updated documentation to use the acronym GNSS instead of GPS when not talking explicitly about the GPS system.
 
 * Libraries:
 

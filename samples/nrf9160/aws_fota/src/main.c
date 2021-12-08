@@ -392,6 +392,13 @@ static void aws_fota_cb_handler(struct aws_fota_event *fota_evt)
 	}
 }
 
+static void reboot(void)
+{
+	/* Reboot after a small delay to ensure that all logs are printed. */
+	k_sleep(K_SECONDS(1));
+	sys_reboot(SYS_REBOOT_COLD);
+}
+
 void main(void)
 {
 	int err;
@@ -403,27 +410,28 @@ void main(void)
 
 	err = nrf_modem_lib_get_init_ret();
 	switch (err) {
+	case 0:
+		/* Initialization successful, no action required. */
+		break;
 	case MODEM_DFU_RESULT_OK:
 		printk("Modem firmware update successful!\n");
 		printk("Modem will run the new firmware after reboot\n");
-		k_thread_suspend(k_current_get());
-		break;
+		reboot();
+		return;
 	case MODEM_DFU_RESULT_UUID_ERROR:
 	case MODEM_DFU_RESULT_AUTH_ERROR:
 		printk("Modem firmware update failed\n");
 		printk("Modem will run non-updated firmware on reboot.\n");
-		break;
+		reboot();
+		return;
 	case MODEM_DFU_RESULT_HARDWARE_ERROR:
 	case MODEM_DFU_RESULT_INTERNAL_ERROR:
-		printk("Modem firmware update failed\n");
-		printk("Fatal error.\n");
-		break;
-	case -1:
-		printk("Could not initialize modem library.\n");
-		printk("Fatal error.\n");
+		printk("Modem firmware update failed, fatal error: %d\n", err);
+		reboot();
 		return;
 	default:
-		break;
+		printk("Could not initialize modem library, fatal error: %d\n", err);
+		return;
 	}
 
 	printk("LTE Link Connecting ...\n");
@@ -492,7 +500,7 @@ void main(void)
 		if (do_reboot) {
 			/* Teardown */
 			mqtt_disconnect(&client);
-			sys_reboot(0);
+			reboot();
 		}
 	}
 

@@ -4,27 +4,27 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _FIVE_SEC_EVENT_H_
-#define _FIVE_SEC_EVENT_H_
+#ifndef _CONFIG_EVENT_H_
+#define _CONFIG_EVENT_H_
 
 /**
- * @brief Five-second event
- * @defgroup five_sec_event Five-second event
+ * @brief Configuration Event
+ * @defgroup config_event Configuration Event
  * @{
  */
 
 #include <event_manager.h>
-#include <event_manager_profiler.h>
+#include <event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-struct five_sec_event {
+struct config_event {
 	struct event_header header;
 };
 
-EVENT_TYPE_DECLARE(five_sec_event);
+EVENT_TYPE_DECLARE(config_event);
 
 #ifdef __cplusplus
 }
@@ -34,4 +34,4 @@ EVENT_TYPE_DECLARE(five_sec_event);
  * @}
  */
 
-#endif /* _FIVE_SEC_EVENT_H_ */
+#endif /* _CONFIG_EVENT_H_ */

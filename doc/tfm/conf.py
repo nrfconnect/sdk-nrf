@@ -28,6 +28,7 @@ extensions = [
     "m2r2",
     "sphinx.ext.autosectionlabel",
     "sphinxcontrib.plantuml",
+    "sphinx_tabs.tabs",
     "ncs_cache",
     "zephyr.external_content",
 ]

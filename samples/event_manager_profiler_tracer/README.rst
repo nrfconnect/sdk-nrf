@@ -1,4 +1,4 @@
-.. _event_manager_profiling_sample:
+.. _event_manager_profiling_tracer_sample:
 
 Event Manager profiling tracer
 ##############################
@@ -37,6 +37,26 @@ If it is equal to ``5``, Module B sends a :c:struct:`five_sec_event` to Module A
 
 When Module A receives a :c:struct:`five_sec_event` from Module B, it zeros the counter, sends a series of 50 :c:struct:`burst_event`, and simulates work for 100 ms by busy waiting.
 
+.. msc::
+   hscale = "1.3";
+   Main [label="main.c"],ModA [label="Module A"],ModB [label="Module B"];
+   Main>>ModA [label="Configuration event"];
+   ModA rbox ModA [label="Increases the counter"];
+   ModA>>ModB [label="One-second event, counter value 1"];
+   ModB rbox ModB [label="Checks the counter"];
+   ModA rbox ModA [label="Increases the counter"];
+   ModA>>ModB [label="One-second event, counter value 2"];
+   ModB rbox ModB [label="Checks the counter"];
+   |||;
+   ...;
+   ...;
+   |||;
+   ModA rbox ModA [label="Increases the counter"];
+   ModA>>ModB [label="One-second event, counter value 5"];
+   ModB rbox ModB [label="Checks the counter\nCounter value matches 5"];
+   ModA<<ModB [label="Five-second event"];
+   ModA rbox ModA [label="Zeroes the counter\nSends 50 burst events\nSimulates work for 100 ms"];
+
 Configuration
 *************
 
@@ -44,7 +64,7 @@ Configuration
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/event_manager_profiler`
+.. |sample path| replace:: :file:`samples/event_manager_profiler_tracer`
 
 .. include:: /includes/build_and_run.txt
 

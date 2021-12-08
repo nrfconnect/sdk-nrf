@@ -59,6 +59,10 @@ kconfig_mapping = utils.get_intersphinx_mapping("kconfig")
 if kconfig_mapping:
     intersphinx_mapping["kconfig"] = kconfig_mapping
 
+# -- Options for zephyr.warnings_filter ----------------------------------------
+
+warnings_filter_silent = True
+
 # Options for ncs_cache --------------------------------------------------------
 
 ncs_cache_docset = "zephyr"

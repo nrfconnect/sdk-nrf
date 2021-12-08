@@ -28,13 +28,13 @@ Overview
 
 LwM2M is an application layer protocol based on CoAP over UDP.
 It is designed to expose various resources for reading, writing, and executing through an LwM2M server in a very lightweight environment.
-The client sends data such as button and switch states, accelerometer data, temperature, and GPS position to the LwM2M server.
+The client sends data such as button and switch states, accelerometer data, temperature, and GNSS position to the LwM2M server.
 It can also receive activation commands such as buzzer activation and light control.
 
 .. note::
-   The GPS module interferes with the LTE connection.
-   If GPS is not needed or if the device is in an area with poor connection, disable the GPS module.
-   You can disable the GPS module by setting the configuration option :kconfig:`CONFIG_APP_GPS` to ``n``.
+   The GNSS module interferes with the LTE connection.
+   If GNSS is not needed or if the device is in an area with poor connection, disable the GNSS module.
+   You can disable the GNSS module by setting the configuration option :ref:`CONFIG_APP_GPS <CONFIG_APP_GPS>` to ``n``.
 
 
 The following LwM2M objects are implemented in this sample:
@@ -128,7 +128,7 @@ Sensor simulation
 You can use the sample for obtaining actual sensor measurements or simulated sensor data for all sensors (including the accelerometer).
 If the sample is running on the nRF9160 DK, only simulated sensor data is available, as it does not have any of the external sensors needed for actual measurements.
 
-For example, you can enable the :kconfig:`CONFIG_ENV_SENSOR_USE_SIM` configuration option if you require simulated data from the temperature, humidity, pressure or gas resistance sensors.
+For example, you can enable the :ref:`CONFIG_ENV_SENSOR_USE_SIM <CONFIG_ENV_SENSOR_USE_SIM>` configuration option if you require simulated data from the temperature, humidity, pressure or gas resistance sensors.
 
 .. _notifications_lwm2m:
 
@@ -273,7 +273,7 @@ The following instructions describe how to register your device to `Leshan Demo 
 2. Set the server address in the client:
 
    a. Open :file:`src/prj.conf`.
-   #. Set :kconfig:`CONFIG_APP_LWM2M_SERVER` to the correct server URL:
+   #. Set :ref:`CONFIG_APP_LWM2M_SERVER <CONFIG_APP_LWM2M_SERVER>` to the correct server URL:
 
       * For `Leshan Demo Server`_ - ``leshan.eclipseprojects.io`` (`public Leshan Demo Server`_).
       * For `Coiote Device Management`_ - ``eu.iot.avsystem.cloud`` (`Coiote Device Management server`_).
@@ -281,7 +281,7 @@ The following instructions describe how to register your device to `Leshan Demo 
    #. Set :kconfig:`CONFIG_LWM2M_PEER_PORT` to the port number used by the server you have chosen.
       Remember to set it to the port number used by the bootstrap server if bootstrap is enabled.
 
-#. Set :kconfig:`CONFIG_APP_LWM2M_PSK` to the hexadecimal representation of the PSK used when registering the device with the server.
+#. Set :ref:`CONFIG_APP_LWM2M_PSK <CONFIG_APP_LWM2M_PSK>` to the hexadecimal representation of the PSK used when registering the device with the server.
 
 
 
@@ -334,54 +334,62 @@ Check and configure the following configuration options for the sample:
 Server options
 --------------
 
-.. option:: CONFIG_APP_LWM2M_SERVER - Configuration for LwM2M server URL
+.. _CONFIG_APP_LWM2M_SERVER:
 
+CONFIG_APP_LWM2M_SERVER - Configuration for LwM2M server URL
    The sample configuration sets the URL of the LwM2M server to be used. The URL must not be prefixed with the application protocol.
 
-.. option:: CONFIG_APP_LWM2M_PSK - Configuration for Pre-Shared Key
+.. _CONFIG_APP_LWM2M_PSK:
 
+CONFIG_APP_LWM2M_PSK - Configuration for Pre-Shared Key
    The sample configuration is used to set the hexadecimal representation of the PSK used when registering the device with the server.
 
-.. option:: CONFIG_APP_ENDPOINT_PREFIX - Configuration for setting prefix for endpoint name
+.. _CONFIG_APP_ENDPOINT_PREFIX:
 
+CONFIG_APP_ENDPOINT_PREFIX - Configuration for setting prefix for endpoint name
    This configuration option changes the prefix of the endpoint name.
 
 LwM2M objects options
 ---------------------
 
-.. option:: CONFIG_APP_TEMP_SENSOR - Configuration for enabling an LwM2M Temperature sensor object
+.. _CONFIG_APP_TEMP_SENSOR:
 
+CONFIG_APP_TEMP_SENSOR - Configuration for enabling an LwM2M Temperature sensor object
    The sample configuration is used to enable an LwM2M Temperature sensor object.
    All compatible objects are enabled by default.
    Disabled objects will not be visible in the server.
    This configuration option can be used for other LwM2M objects also by modifying the option accordingly.
 
-.. option:: CONFIG_APP_GPS - Configuration for enabling GPS functionality
+.. _CONFIG_APP_GPS:
 
-   The sample configuration is used to enable the GPS.
-   This configuration might interfere with LTE if the GPS conditions are not optimal.
-   Disable this option if GPS is not needed.
+CONFIG_APP_GPS - Configuration for enabling GNSS functionality
+   This configuration might interfere with LTE if the GNSS conditions are not optimal.
+   Disable this option if GNSS is not needed.
 
-.. option::  CONFIG_GPS_PRIORITY_ON_FIRST_FIX - Configuration for prioritizing GPS
+.. _CONFIG_GPS_PRIORITY_ON_FIRST_FIX:
 
-   The configuration is used to prioritize GPS over LTE during the search for first fix.
-   Enabling this option makes it significantly easier for the GPS module to find a position but will also affect performance for the rest of the application during the search for first fix.
+CONFIG_GPS_PRIORITY_ON_FIRST_FIX - Configuration for prioritizing GNSS over LTE during the search for first fix.
+   Enabling this option makes it significantly easier for the GNSS module to find a position but will also affect performance for the rest of the application during the search for first fix.
 
-.. option:: CONFIG_ENV_SENSOR_USE_SIM - Configuration to enable simulated sensor data
+.. _CONFIG_ENV_SENSOR_USE_SIM:
 
+CONFIG_ENV_SENSOR_USE_SIM - Configuration to enable simulated sensor data
    The configuration when enabled, makes the sensor returns simulated data and not actual measurements.
    This option is available for all sensors, including the accelerometer.
 
-.. option:: CONFIG_LWM2M_IPSO_APP_COLOUR_SENSOR_VERSION_1_0 - Configuration for selecting the IPSO Color sensor object version
+.. _CONFIG_LWM2M_IPSO_APP_COLOUR_SENSOR_VERSION_1_0:
 
+CONFIG_LWM2M_IPSO_APP_COLOUR_SENSOR_VERSION_1_0 - Configuration for selecting the IPSO Color sensor object version
    The configuration option sets the version of the OMA IPSO object specification that is to be used by the user defined Color sensor IPSO object to 1.0.
 
-.. option:: CONFIG_LWM2M_IPSO_APP_COLOUR_SENSOR_VERSION_1_1 - Configuration for selecting the IPSO Color sensor object version
+.. _CONFIG_LWM2M_IPSO_APP_COLOUR_SENSOR_VERSION_1_1:
 
+CONFIG_LWM2M_IPSO_APP_COLOUR_SENSOR_VERSION_1_1 - Configuration for selecting the IPSO Color sensor object version
    The configuration option sets the version of the OMA IPSO object specification that is to be used by the user defined Color sensor IPSO object to 1.1.
 
-.. option:: CONFIG_APP_CUSTOM_VERSION - Configuration to set custom application version reported in the Device object.
+.. _CONFIG_APP_CUSTOM_VERSION:
 
+CONFIG_APP_CUSTOM_VERSION - Configuration to set custom application version reported in the Device object
    The configuration option allows to specify custom application version reported to the LwM2M server. By default, the current |NCS| version is used.
 
 .. _sensor_module_options:
@@ -389,26 +397,31 @@ LwM2M objects options
 Sensor module options
 ---------------------
 
-.. option:: CONFIG_SENSOR_MODULE - Configuration for periodic sensor reading
+.. _CONFIG_SENSOR_MODULE:
 
+CONFIG_SENSOR_MODULE - Configuration for periodic sensor reading
    This configuration option enables periodic reading of sensors and updating the resource values when
    the change is sufficiently large.
    The server is notified if a change in one or more resources is observed.
 
-.. option:: CONFIG_SENSOR_MODULE_TEMP - Configuration to enable Temperature sensor
+.. _CONFIG_SENSOR_MODULE_TEMP:
 
+CONFIG_SENSOR_MODULE_TEMP - Configuration to enable Temperature sensor
    This configuration option enables the Temperature sensor in the Sensor Module.
 
-.. option:: CONFIG_SENSOR_MODULE_TEMP_PERIOD - Configuration for interval between sensor readings
+.. _CONFIG_SENSOR_MODULE_TEMP_PERIOD:
 
+CONFIG_SENSOR_MODULE_TEMP_PERIOD - Configuration for interval between sensor readings
    This configuration option sets the time interval (in seconds) between sensor readings from the Temperature sensor.
 
-.. option:: CONFIG_SENSOR_MODULE_TEMP_DELTA_INT - Configuration for setting required change
+.. _CONFIG_SENSOR_MODULE_TEMP_DELTA_INT:
 
+CONFIG_SENSOR_MODULE_TEMP_DELTA_INT - Configuration for setting required change
    This configuration option sets the required change (integer part) in sensor value before the corresponding resource value is updated.
 
-.. option:: CONFIG_SENSOR_MODULE_TEMP_DELTA_DEC - Configuration for setting required change
+.. _CONFIG_SENSOR_MODULE_TEMP_DELTA_DEC:
 
+CONFIG_SENSOR_MODULE_TEMP_DELTA_DEC - Configuration for setting required change
    This configuration option sets the required change (decimal part) in sensor value before the corresponding resource value is updated.
 
 .. note::
@@ -509,11 +522,11 @@ Testing
    #. Press **Button 1** on nRF9160 DK or **SW3** on Thingy:91 and confirm that the button event appears in the terminal.
    #. Check that the button press event has been registered on the LwM2M server by confirming that the press count has been updated.
    #. Retrieve sensor data from various sensors and check if values are reasonable.
-   #. Test GPS module:
+   #. Test GNSS module:
 
-      a. Ensure that :kconfig:`CONFIG_GPS_PRIORITY_ON_FIRST_FIX` is enabled.
-      #. Ensure that you are in a location with good GPS signal, preferably outside.
-      #. Wait for the GPS to receive a fix, which will be displayed in the terminal.
+      a. Ensure that :ref:`CONFIG_GPS_PRIORITY_ON_FIRST_FIX <CONFIG_GPS_PRIORITY_ON_FIRST_FIX>` is enabled.
+      #. Ensure that you are in a location with good GNSS signal, preferably outside.
+      #. Wait for the GNSS to receive a fix, which will be displayed in the terminal.
          It might take several minutes for the first fix.
 
    #. Try to enable or disable some sensors in menuconfig and check if the sensors

@@ -52,7 +52,7 @@ The SLM application does not send an *OK* response when it enters data mode.
 Exiting data mode
 =================
 
-To exit data mode, the MCU sends the termination command set by the ``CONFIG_SLM_DATAMODE_TERMINATOR`` configuration option over UART and also applies the silence period set by the ``CONFIG_SLM_DATAMODE_SILENCE`` option, both before and after the termination command.
+To exit data mode, the MCU sends the termination command set by the :ref:`CONFIG_SLM_DATAMODE_TERMINATOR <CONFIG_SLM_DATAMODE_TERMINATOR>` configuration option over UART and also applies the silence period set by the :ref:`CONFIG_SLM_DATAMODE_SILENCE <CONFIG_SLM_DATAMODE_SILENCE>` option, both before and after the termination command.
 
 When instructed to exit data mode, the SLM application returns the AT command response ``OK``.
 
@@ -94,18 +94,20 @@ The buffer size is set to 3884 bytes by default.
    There is no unsolicited notification defined for this event.
    UART hardware flow control is responsible for imposing and revoking flow control.
 
-Configuration
-*************
+Configuration options
+*********************
 
 Check and configure the following configuration options for data mode:
 
-.. option:: CONFIG_SLM_DATAMODE_TERMINATOR - Pattern string to terminate data mode
+.. _CONFIG_SLM_DATAMODE_TERMINATOR:
 
+CONFIG_SLM_DATAMODE_TERMINATOR - Pattern string to terminate data mode
    This option specifies a pattern string to terminate data mode.
    The default pattern string is ``+++``.
 
-.. option:: CONFIG_SLM_DATAMODE_SILENCE - Silence time to exit data mode
+.. _CONFIG_SLM_DATAMODE_SILENCE:
 
+CONFIG_SLM_DATAMODE_SILENCE - Silence time to exit data mode
    This option specifies the length, in seconds, of the UART silence applied before and after the pattern string that is used to exit data mode is sent.
    The default value is 1 second.
 

@@ -18,7 +18,7 @@
 #include <bluetooth/conn.h>
 
 #include <event_manager.h>
-#include <event_manager_profiler.h>
+#include <event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -40,8 +40,16 @@ Configuration options
 
 Check and set the following configuration options for the sample:
 
-.. option:: CONFIG_LOCATION_SAMPLE_GNSS_ANTENNA_ONBOARD - Onboard GNSS antenna is used (default)
-.. option:: CONFIG_LOCATION_SAMPLE_GNSS_ANTENNA_EXTERNAL - External GNSS antenna is used
+.. _CONFIG_LOCATION_SAMPLE_GNSS_ANTENNA_ONBOARD:
+
+CONFIG_LOCATION_SAMPLE_GNSS_ANTENNA_ONBOARD - Configuration for onboard GNSS antenna (default)
+   This option enables the onboard GNSS antenna.
+
+
+.. _CONFIG_LOCATION_SAMPLE_GNSS_ANTENNA_EXTERNAL:
+
+CONFIG_LOCATION_SAMPLE_GNSS_ANTENNA_EXTERNAL - External GNSS antenna
+   This option enables the external GNSS antenna.
 
 Additional configuration
 ========================

@@ -1045,7 +1045,9 @@ static struct report_state *find_next_report_state(const struct report_data *rd,
 		for (size_t j = 0; j < ARRAY_SIZE(sub->state); j++) {
 			struct report_state *rs = &sub->state[j];
 
-			if ((rs->linked_rd == rd) &&
+			if (((rs->linked_rd == rd) ||
+			     ((rs->linked_rd == &empty_rd) &&
+			      (get_used_rd(rs->report_id) == rd))) &&
 			    (sub_prio_result <= sub_prio) &&
 			    (rs != former_rs)) {
 				__ASSERT_NO_MSG(sub_prio_result != sub_prio);

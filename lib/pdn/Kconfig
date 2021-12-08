@@ -40,6 +40,8 @@ config PDN_INIT_PRIORITY
 	int "Initialization priority"
 	default APPLICATION_INIT_PRIORITY
 
+endif # PDN_SYS_INIT
+
 config PDN_DEFAULTS_OVERRIDE
 	bool "Override defaults for PDP context 0"
 
@@ -97,7 +99,6 @@ config PDN_DEFAULT_PASSWORD
 	depends on !PDN_DEFAULT_AUTH_NONE
 
 endif # PDN_DEFAULTS_OVERRIDE
-endif # PDN_SYS_INIT
 
 module=PDN
 module-dep=LOG

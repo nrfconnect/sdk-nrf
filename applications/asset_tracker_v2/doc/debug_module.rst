@@ -28,9 +28,9 @@ Information that is collected from the device can be sent to Memfault's cloud so
 The debug module uses `Memfault SDK`_ to track |NCS| specific metrics such as LTE and stack metrics.
 In addition, the following types of custom Memfault metrics are defined and tracked when compiling in the debug module:
 
- * ``GpsTimeToFix`` - Time duration between the start of a GPS search and obtaining a fix.
- * ``GpsTimeoutSearchTime`` - Time duration between the start of a GPS search and a search timeout.
- * ``GpsSatellitesTracked`` - Number of satellites tracked during a GPS search window.
+ * ``GpsTimeToFix`` - Time duration between the start of a GNSS search and obtaining a fix.
+ * ``GpsTimeoutSearchTime`` - Time duration between the start of a GNSS search and a search timeout.
+ * ``GpsSatellitesTracked`` - Number of satellites tracked during a GNSS search window.
 
 The debug module also implements `Memfault SDK`_ software watchdog, which is designed to trigger an assert before an actual watchdog timeout.
 This enables the application to be able to collect coredump data before a reboot occurs.
@@ -41,16 +41,19 @@ To get started with Memfault, see :ref:`using_memfault`.
 Configuration options
 *********************
 
-.. option:: CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT - Configuration for transfer of Memfault data
+.. _CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT:
 
+CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT - Configuration for transfer of Memfault data
    This option, if enabled, makes the debug module trigger events carrying Memfault data. This data can be routed through an external transport to Memfault cloud, for example, through AWS IoT, Azure IoT Hub, or `nRF Cloud`_.
 
-.. option:: CONFIG_DEBUG_MODULE_MEMFAULT_HEARTBEAT_INTERVAL_SEC - Configuration for |NCS| Memfault metrics tracking interval
+.. _CONFIG_DEBUG_MODULE_MEMFAULT_HEARTBEAT_INTERVAL_SEC:
 
+CONFIG_DEBUG_MODULE_MEMFAULT_HEARTBEAT_INTERVAL_SEC - Configuration for nRF Connect SDK Memfault metrics tracking interval
    This option sets the time interval for tracking |NCS| Memfault metrics.
 
-.. option:: CONFIG_DEBUG_MODULE_MEMFAULT_CHUNK_SIZE_MAX - Configuration for maximum size of transmitted packets.
+.. _CONFIG_DEBUG_MODULE_MEMFAULT_CHUNK_SIZE_MAX:
 
+CONFIG_DEBUG_MODULE_MEMFAULT_CHUNK_SIZE_MAX - Configuration for maximum size of transmitted packets
    This option sets the maximum size of packets transmitted over the configured custom transport.
 
 Module configurations

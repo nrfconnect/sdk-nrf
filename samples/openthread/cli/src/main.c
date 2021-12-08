@@ -11,10 +11,8 @@
 #include "ble.h"
 #endif
 
-#if defined(CONFIG_USB_UART_CONSOLE)
 #include <drivers/uart.h>
 #include <usb/usb_device.h>
-#endif
 
 LOG_MODULE_REGISTER(cli_sample, CONFIG_OT_COMMAND_LINE_INTERFACE_LOG_LEVEL);
 
@@ -30,7 +28,7 @@ LOG_MODULE_REGISTER(cli_sample, CONFIG_OT_COMMAND_LINE_INTERFACE_LOG_LEVEL);
 
 void main(void)
 {
-#if defined(CONFIG_USB_UART_CONSOLE)
+#if DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_shell_uart), zephyr_cdc_acm_uart)
 	int ret;
 	const struct device *dev;
 	uint32_t dtr = 0U;

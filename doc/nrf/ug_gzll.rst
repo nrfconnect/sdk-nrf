@@ -39,6 +39,17 @@ Gazell provides the following features:
 * Capability to control the RF front-end module.
 * Generates transmission statistics for each RF channel.
 
+.. _ug_gzll_configuration:
+
+Configuration
+*************
+
+To enable the Gazell support in the |NCS|, set the following Kconfig options:
+
+* :kconfig:`CONFIG_GZLL` - This option enables the :ref:`nrfxlib:gzll` library.
+* :kconfig:`CONFIG_CLOCK_CONTROL_NRF` - This option enables the nRF5 HFCLK controller support.
+* :kconfig:`CONFIG_GAZELL` - This option enables the :ref:`gzll_glue` module.
+
 .. _ug_gzll_resources:
 
 Resources
@@ -52,12 +63,14 @@ To ensure correct operation, Gazell requires exclusive access to the following r
 * Three PPI channels
 * Software interrupt (SWI)
 
+The :ref:`gzll_glue` module specifies the resources used by the :ref:`nrfxlib:gzll` library.
+
 The Gazell interrupt priorities are configured by applications.
 The radio and timer interrupt handlers should run at priority level 0 (highest priority), and the Gazell callback functions can run at priority level 1.
 To avoid blocking Gazell operations, applications can run at priority level 2 or higher.
 
 You can customize Gazell at runtime for a range of different applications.
-See the :ref:`nrfxlib:gzll` and :ref:`nrfxlib:gzll_api` for a list of configuration functions as well as the default and constant parameters.
+See the :ref:`nrfxlib:gzll_api` for a list of configuration functions as well as the default and constant parameters.
 
 .. note:
    Editing the header file containing the default and constant parameters does not change their value when compiling a new project.
@@ -95,6 +108,7 @@ Gazell automatically notifies the application when a packet is received.
 
 To set up a Gazell application, do the following:
 
+* Initialize GZLL glue code using :c:func:`gzll_glue_init()`.
 * Initialize Gazell using :c:func:`nrf_gzll_init()` and choose either Host or Device.
 * Reconfigure Gazell's default parameters.
   At a minimum, reconfigure the addresses and channels to avoid interfering with other Gazell networks.
@@ -368,7 +382,7 @@ If you set the ``sync_lifetime`` to zero, the Device will never be in sync.
 The ``sync_lifetime`` should be chosen with regard to how often packets are required to be sent and the fact that synchronization can only be maintained for a finite time due to clock drift and radio interference.
 To configure the sync lifetime, use the :c:func:`nrf_gzll_set_sync_lifetime()` function.
 
-The Device knows the it is in sync when the number of retransmissions gets close to zero.
+The Device knows it is in sync when the number of retransmissions gets close to zero.
 The :c:struct:`nrf_gzll_device_tx_info_t` structure is passed to the Device callback functions, and it contains the number of transmit attempts required for the current packet.
 In addition, the structure contains the ``num_channel_switches`` parameter that the application can use to determine whether the RF channels are reliable.
 This enables the application to track bad channels and update the channel tables on Host and Device if desired.

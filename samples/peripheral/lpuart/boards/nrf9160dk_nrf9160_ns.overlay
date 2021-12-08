@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: LicenseRef-Nordic-5-Clause */
 
 &uart1 {
+	status = "okay";
 	rx-pin = <10>;
 	tx-pin = <11>;
 	/delete-property/ rts-pin;
@@ -16,9 +17,9 @@
 };
 
 &uart0 {
-	status = "disabled";
+	/delete-property/ rx-pin;
 };
 
 &gpiote {
-	interrupts = <13 NRF_DEFAULT_IRQ_PRIORITY>;
+	interrupts = <49 NRF_DEFAULT_IRQ_PRIORITY>;
 };

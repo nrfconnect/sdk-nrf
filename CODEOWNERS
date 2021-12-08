@@ -154,6 +154,7 @@ Kconfig*                                  @tejlmand
 /subsys/mgmt/                             @hakonfam @sigvartmh
 /subsys/esb/                              @Raane @lemrey
 /subsys/event_manager/                    @pdunaj
+/subsys/event_manager_profiler_tracer/    @pdunaj @MarekPieta
 /subsys/fw_info/                          @hakonfam
 /subsys/gazell/                           @leewkb4567
 /subsys/mpsl/                             @rugeGerritsen
@@ -171,18 +172,37 @@ Kconfig*                                  @tejlmand
 /modules/                                 @tejlmand
 /modules/tfm/                             @oyvindronningstad @ioannisg @hakonfam
 /subsys/zigbee/                           @tomchy @sebastiandraus
+/tests/                                   @gopiotr
 /tests/bluetooth/tester/                  @carlescufi @trond-snekvik
-/tests/drivers/flash_nop_device/          @de-nordic
+/tests/crypto/                            @torsteingrindvik @magnev
 /tests/drivers/clock_control/clock_control_mpsl/ @ryanjh
-/tests/lib/edge_impulse/                  @pdunaj @MarekPieta
+/tests/drivers/flash_nop_device/          @de-nordic
+/tests/drivers/flash_patch/               @oyvindronningstad
+/tests/drivers/fprotect/                  @oyvindronningstad
+/tests/drivers/nrfx_integration_test/     @anangl
+/tests/lib/at_cmd_parser/                 @rlubos
 /tests/lib/at_sms_cert/                   @eivindj-nordic
+/tests/lib/date_time/                     @simensrostad
+/tests/lib/edge_impulse/                  @pdunaj @MarekPieta
 /tests/lib/hw_unique_key*/                @oyvindronningstad @Vge0rge
+/tests/lib/lte_lc/                        @jtguggedal
 /tests/lib/modem_jwt/                     @SeppoTakalo
-/tests/modules/tfm/                       @hakonfam
-/tests/subsys/bootloader/                 @hakonfam
+/tests/lib/sms/                           @trantanen
+/tests/modules/lib/cddl-gen/              @oyvindronningstad
 /tests/modules/mcuboot/external_flash/    @hakonfam @sigvartmh
+/tests/modules/tfm/                       @hakonfam
+/tests/subsys/bluetooth/mesh/             @trond-snekvik
+/tests/subsys/bootloader/                 @hakonfam
+/tests/subsys/debug/cpu_load/             @nordic-krch
+/tests/subsys/dfu/                        @hakonfam @sigvartmh
+/tests/subsys/event_manager/              @pdunaj @MarekPieta
+/tests/subsys/fw_info/                    @oyvindronningstad
+/tests/subsys/net/lib/aws_*/              @simensrostad
+/tests/subsys/net/lib/azure_iot_hub/      @jtguggedal
+/tests/subsys/net/lib/fota_download/      @hakonfam @sigvartmh
 /tests/subsys/pcd/                        @hakonfam @sigvartmh
 /tests/subsys/profiler/                   @pdunaj @MarekPieta
+/tests/subsys/spm/                        @oyvindronningstad @SebastianBoe
 /tests/subsys/zigbee/                     @tomchy @sebastiandraus
-/tests/subsys/bluetooth/mesh/             @trond-snekvik
+/tests/unity/                             @nordic-krch
 /zephyr/                                  @carlescufi
