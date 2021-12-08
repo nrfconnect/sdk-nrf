@@ -37,7 +37,9 @@ The sample supports the following development kit, version 0.14.0 or higher:
 
 .. include:: /includes/spm.txt
 
-
+On the nRF9160 DK, you must set the control signal from the nRF52840 board controller MCU (**P0.19**) to *high* to let the nRF9160 communicate with the external flash memory.
+To do so, enable the ``external_flash_pins_routing`` node in devicetree.
+See :ref:`zephyr:nrf9160dk_board_controller_firmware` for details on building the firmware for the nRF52840 board controller MCU.
 
 Configuration options
 *********************
