@@ -8,9 +8,6 @@ The |NCS| is where you begin building low power wireless applications with Nordi
 The SDK contains optimized cellular IoT (LTE-M and NB-IoT), Bluetooth® Low Energy, Thread, Zigbee, and Bluetooth mesh stacks, a range of applications, samples, and reference implementations, as well as a full suite of drivers for Nordic Semiconductor's devices.
 The |NCS| includes the Zephyr™ real-time operating system (RTOS), which is built for connected low power products.
 
-.. note::
-   This version of the |NCS| supports prototyping and evaluation, but should not be used for production and deployment in end products.
-
 To access different versions of the |NCS| documentation, use the version drop-down in the top left corner.
 To view the documentation from the different repositories that are part of |NCS|, click the arrow in the bottom left corner and select the desired document set.
 A "99" at the end of the version number of this documentation indicates continuous updates on the main branch since the previous major.minor release.
