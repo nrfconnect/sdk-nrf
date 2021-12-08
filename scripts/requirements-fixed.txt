@@ -19,6 +19,7 @@ Babel==2.9.1
 breathe==4.26.1
 canopen==1.2.0
 cbor==1.0.0
+cddl-gen==0.3.0
 certifi==2020.12.5
 cffi==1.14.4
 chardet==4.0.0
