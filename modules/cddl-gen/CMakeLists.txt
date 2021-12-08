@@ -8,4 +8,13 @@ if(NOT CONFIG_CDDL_GEN)
   return()
 endif()
 
-add_subdirectory(${ZEPHYR_CDDL_GEN_MODULE_DIR} cddl-gen)
+zephyr_library()
+zephyr_library_sources(
+  ${ZEPHYR_CDDL_GEN_MODULE_DIR}/src/cbor_decode.c
+  ${ZEPHYR_CDDL_GEN_MODULE_DIR}/src/cbor_encode.c
+  ${ZEPHYR_CDDL_GEN_MODULE_DIR}/src/cbor_common.c
+  )
+
+zephyr_include_directories(
+  ${ZEPHYR_CDDL_GEN_MODULE_DIR}/include
+  )
