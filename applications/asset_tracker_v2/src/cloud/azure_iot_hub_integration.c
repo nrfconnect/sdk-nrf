@@ -1,6 +1,6 @@
 #include <zephyr.h>
 #include <net/azure_iot_hub.h>
-#include <modem/at_cmd.h>
+#include <nrf_modem_at.h>
 
 #include "cloud/cloud_wrapper.h"
 
@@ -278,7 +278,7 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 	char imei_buf[20];
 
 	/* Retrieve device IMEI from modem. */
-	err = at_cmd_write("AT+CGSN", imei_buf, sizeof(imei_buf), NULL);
+	err = nrf_modem_at_cmd(imei_buf, sizeof(imei_buf), "AT+CGSN");
 	if (err) {
 		LOG_ERR("Not able to retrieve device IMEI from modem");
 		return err;

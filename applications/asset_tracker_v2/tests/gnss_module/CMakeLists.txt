@@ -16,7 +16,7 @@ test_runner_generate(src/gnss_module_test.c)
 cmock_handle(../../src/modules/modules_common.h )
 cmock_handle(${ZEPHYR_BASE}/../nrf/include/event_manager.h )
 cmock_handle(${ZEPHYR_BASE}/../nrf/include/date_time.h )
-cmock_handle(${ZEPHYR_BASE}/../nrf/include/modem/at_cmd.h )
+cmock_handle(${ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/nrf_modem_at.h )
 cmock_handle(${ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/nrf_modem_gnss.h )
 
 
@@ -38,5 +38,5 @@ target_include_directories(app PRIVATE ${ZEPHYR_BASE}/../nrf/modules/cjson/inclu
 target_compile_options(app PRIVATE
 	-DCONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN=20
 	-DCONFIG_GNSS_MODULE_NMEA
-	-DCONFIG_GNSS_MODULE_AT_MAGPIO="AT%XMAGPIO"
-	-DCONFIG_GNSS_MODULE_AT_COEX0="AT%XCOEX0")
+	-DCONFIG_GNSS_MODULE_AT_MAGPIO="AT%%XMAGPIO"
+	-DCONFIG_GNSS_MODULE_AT_COEX0="AT%%XCOEX0")

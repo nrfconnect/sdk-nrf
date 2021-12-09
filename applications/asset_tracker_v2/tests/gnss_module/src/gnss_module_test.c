@@ -9,7 +9,7 @@
 #include <mock_modules_common.h>
 #include <mock_event_manager.h>
 #include <mock_date_time.h>
-#include <mock_at_cmd.h>
+#include <mock_nrf_modem_at.h>
 #include <mock_nrf_modem_gnss.h>
 
 #include "app_module_event.h"
@@ -122,7 +122,6 @@ void setUp(void)
 	mock_modules_common_Init();
 	mock_event_manager_Init();
 	mock_date_time_Init();
-	mock_at_cmd_Init();
 
 	gnss_module_event_count = 0;
 	expected_gnss_module_event_count = 0;
@@ -140,7 +139,6 @@ void tearDown(void)
 	mock_modules_common_Verify();
 	mock_event_manager_Verify();
 	mock_date_time_Verify();
-	mock_at_cmd_Verify();
 	mock_nrf_modem_gnss_Verify();
 }
 
@@ -150,21 +148,6 @@ static int nrf_modem_gnss_event_handler_set_callback(
 {
 	/* Latch the GNSS event handler for future use. */
 	gnss_module_gnss_evt_handler = handler;
-	return 0;
-}
-
-static int validate_at_cmd_write(const char *const cmd,
-				 char *buf,
-				 size_t buf_len,
-				 enum at_cmd_state *state,
-				 int no_of_calls)
-{
-	/* Only check the common part of XMAGPIO and XCOEX0 AT commands. */
-	TEST_ASSERT_EQUAL_CHAR_ARRAY("AT%X", cmd, strlen("AT%X"));
-	TEST_ASSERT_NULL(buf);
-	TEST_ASSERT_EQUAL(0, buf_len);
-	TEST_ASSERT_NULL(state);
-
 	return 0;
 }
 
@@ -267,9 +250,8 @@ static void setup_gnss_module_in_init_state(void)
 		.supports_shutdown = true,
 	};
 
-	__wrap_at_cmd_write_AddCallback(&validate_at_cmd_write);
-	__wrap_at_cmd_write_ExpectAnyArgsAndReturn(0);
-	__wrap_at_cmd_write_ExpectAnyArgsAndReturn(0);
+	__wrap_nrf_modem_at_printf_ExpectAndReturn(CONFIG_GNSS_MODULE_AT_MAGPIO, 0);
+	__wrap_nrf_modem_at_printf_ExpectAndReturn(CONFIG_GNSS_MODULE_AT_COEX0, 0);
 	__wrap_nrf_modem_gnss_event_handler_set_AddCallback(
 		&nrf_modem_gnss_event_handler_set_callback);
 	__wrap_nrf_modem_gnss_event_handler_set_ExpectAnyArgsAndReturn(0);
