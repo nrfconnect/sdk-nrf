@@ -125,11 +125,11 @@ There are different ways of doing this, but not all will store your configuratio
 Configuration system overview
 =============================
 
-Zephyr and NCS use several configuration systems, each system with a specialized syntax and purpose.
+Zephyr and the |NCS| use several configuration systems, each system with a specialized syntax and purpose.
 
 The |NCS| consists of the following configuration sources:
 
-* Devicetree specification (DTS) files for hardware-related options.
+* Devicetree source (DTS) files for hardware-related options.
 * Kconfig files for software-related options.
 * Partition Manager files for memory layout configuration.
   This is an |NCS| configuration system that is not available in Zephyr.
@@ -147,7 +147,7 @@ Hardware-related configuration
    :start-after: Devicetree
    :end-before: The preprocessed devicetree sources
 
-The preprocessed devicetree sources (stored in :file:`*.dts.pre.tmp`) are parsed by :file:`zephyr/scripts/dts/gen_defines.py` to generate a :file:`devicetree_unfixed.h` header with preprocessor macros.
+The preprocessed devicetree sources are parsed by the :file:`zephyr/scripts/dts/gen_defines.py` script to generate a :file:`devicetree_unfixed.h` header file with preprocessor macros.
 
 .. ncs-include:: guides/build/index.rst
    :docset: zephyr
