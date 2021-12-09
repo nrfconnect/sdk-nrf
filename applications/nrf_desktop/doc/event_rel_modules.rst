@@ -30,11 +30,11 @@ Sink modules for ble_peer_event
 * :ref:`nrf_desktop_ble_discovery`
 * :ref:`nrf_desktop_ble_latency`
 * :ref:`nrf_desktop_ble_scan`
+* :ref:`nrf_desktop_ble_state_pm`
 * :ref:`nrf_desktop_dfu`
 * :ref:`nrf_desktop_hid_forward`
 * :ref:`nrf_desktop_hid_state`
 * :ref:`nrf_desktop_led_state`
-* :ref:`nrf_desktop_power_manager`
 * :ref:`nrf_desktop_ble_state`
 
 
@@ -66,6 +66,30 @@ Sink modules for config_event
 * :ref:`nrf_desktop_info`
 * :ref:`nrf_desktop_led_stream`
 * :ref:`nrf_desktop_motion`
+* :ref:`nrf_desktop_hids`
+* :ref:`nrf_desktop_usb_state`
+
+
+.. _nrf_desktop_hid_report_event_sources:
+
+Source modules for hid_report_event
+===================================
+
+* :ref:`nrf_desktop_hid_forward`
+* :ref:`nrf_desktop_hid_state`
+* :ref:`nrf_desktop_hids`
+* :ref:`nrf_desktop_usb_state`
+
+.. _nrf_desktop_hid_report_event_sinks:
+
+Sink modules for hid_report_event
+=================================
+
+* :ref:`nrf_desktop_ble_qos`
+* :ref:`nrf_desktop_ble_scan`
+* :ref:`nrf_desktop_dfu`
+* :ref:`nrf_desktop_hid_forward`
+* :ref:`nrf_desktop_hid_state`
 * :ref:`nrf_desktop_hids`
 * :ref:`nrf_desktop_usb_state`
 
@@ -106,7 +130,7 @@ Source modules for module_state_event
 * :ref:`nrf_desktop_qos`
 * :ref:`nrf_desktop_selector`
 * :ref:`nrf_desktop_settings_loader`
-* :ref:`nrf_desktop_ble_smp`
+* :ref:`nrf_desktop_smp`
 * :ref:`nrf_desktop_usb_state`
 * :ref:`nrf_desktop_watchdog`
 * :ref:`nrf_desktop_wheel`
@@ -153,8 +177,9 @@ Sink modules for module_state_event
 * :ref:`nrf_desktop_qos`
 * :ref:`nrf_desktop_selector`
 * :ref:`nrf_desktop_settings_loader`
-* :ref:`nrf_desktop_ble_smp`
+* :ref:`nrf_desktop_smp`
 * :ref:`nrf_desktop_usb_state`
+* :ref:`nrf_desktop_usb_state_pm`
 * :ref:`nrf_desktop_wheel`
 
 
@@ -178,6 +203,7 @@ Sink modules for power_down_event
 * :ref:`nrf_desktop_motion`
 * :ref:`nrf_desktop_wheel`
 * :ref:`nrf_desktop_ble_adv`
+* :ref:`nrf_desktop_ble_bond`
 * :ref:`nrf_desktop_ble_latency`
 * :ref:`nrf_desktop_board`
 * :ref:`nrf_desktop_buttons_sim`
@@ -208,6 +234,7 @@ Sink modules for wake_up_event
 * :ref:`nrf_desktop_battery_charger`
 * :ref:`nrf_desktop_battery_meas`
 * :ref:`nrf_desktop_ble_adv`
+* :ref:`nrf_desktop_ble_bond`
 * :ref:`nrf_desktop_ble_latency`
 * :ref:`nrf_desktop_board`
 * :ref:`nrf_desktop_buttons`
