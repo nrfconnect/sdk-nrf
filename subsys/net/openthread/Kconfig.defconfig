@@ -26,19 +26,7 @@ config MAIN_STACK_SIZE
 	int
 	default 2048
 
-config NET_CONNECTION_MANAGER
-	bool
-	default y
-
 config INIT_STACKS
-	bool
-	default y
-
-config NET_LOG
-	bool
-	default y
-
-config NET_STATISTICS
 	bool
 	default y
 
