@@ -623,6 +623,10 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 	/* Configure GNSS to continuous tracking mode */
 	err = nrf_modem_gnss_fix_interval_set(1);
 
+#if defined(CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK)
+	err |= nrf_modem_gnss_elevation_threshold_set(CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK);
+#endif
+
 	uint8_t use_case;
 
 	switch (gnss_config.accuracy) {
