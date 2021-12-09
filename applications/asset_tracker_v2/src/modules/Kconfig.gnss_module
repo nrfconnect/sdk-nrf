@@ -39,6 +39,16 @@ config GNSS_MODULE_PGPS_STORE_LOCATION
 	  modem upon boot.
 	  Note that this may also increase flash wear.
 
+config GNSS_MODULE_AGPS_FILTERED
+	bool "Request only visible satellite ephemerides"
+	default NRF_CLOUD_AGPS_FILTERED
+	depends on NRF_CLOUD_AGPS_FILTERED
+
+config GNSS_MODULE_ELEVATION_MASK
+	int "Minimum elevation angle for visible satellites"
+	default NRF_CLOUD_AGPS_ELEVATION_MASK
+	depends on NRF_CLOUD_AGPS_FILTERED
+
 choice GNSS_MODULE_ANTENNA
 	default GNSS_MODULE_ANTENNA_ONBOARD
 	prompt "Select which antenna to use for GNSS"

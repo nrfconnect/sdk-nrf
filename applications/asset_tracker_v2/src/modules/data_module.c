@@ -697,6 +697,12 @@ static int agps_request_encode(struct nrf_modem_gnss_agps_data_frame *incoming_r
 	cloud_agps_request.area = modem_info.network.area_code.value;
 	cloud_agps_request.request = *incoming_request;
 	cloud_agps_request.queued = true;
+#if defined(CONFIG_GNSS_MODULE_AGPS_FILTERED)
+	cloud_agps_request.filtered = CONFIG_GNSS_MODULE_AGPS_FILTERED;
+#endif
+#if defined(CONFIG_GNSS_MODULE_ELEVATION_MASK)
+	cloud_agps_request.mask_angle = CONFIG_GNSS_MODULE_ELEVATION_MASK;
+#endif
 
 	err = cloud_codec_encode_agps_request(&codec, &cloud_agps_request);
 	switch (err) {
