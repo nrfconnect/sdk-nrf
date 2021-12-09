@@ -702,14 +702,25 @@ Configuring static partitions
 Static partitions are defined through a YAML-formatted configuration file in the root application's source directory.
 This file is similar to the regular :file:`pm.yml` configuration files, except that it also defines the start address for all partitions.
 
-The static configuration can be provided through a :file:`pm_static.yml` file in the application's source directory.
-Alternatively, define a ``PM_STATIC_YML_FILE`` variable that provides the path and file name for the static configuration in the application's :file:`CMakeLists.txt` file, as shown in the example below.
+You can set ``PM_STATIC_YML_FILE`` to contain exactly the static configuration you want to use.
 
-.. code-block:: cmake
+If you don’t set ``PM_STATIC_YML_FILE``, the build system will use the following order to look for files in your application source directory to use as a static configuration layout:
 
-   set(PM_STATIC_YML_FILE
-     ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static_${CMAKE_BUILD_TYPE}.yml
-     )
+* If build type is used, :ref:`gs_modifying_build_types`, the following order applies:
+
+  1. If the file :file:`pm_static_<board>_<revision>_<buildtype>.yml` exists, it will be used.
+  #. Otherwise, if the file :file:`pm_static_<board>_<buildtype>.yml` exists, it will be used.
+  #. Otherwise, if the file :file:`pm_static_<buildtype>.yml` exists, it will be used.
+  #. Otherwise, if the file :file:`pm_static.yml` exists, it will be used.
+
+* If build type is not used, then the same order as above applies, except that *<buildtype>* is not part of the file name:
+
+  1. If the file :file:`pm_static_<board>_<revision>.yml` exists, it will be used.
+  #. Otherwise, if the file :file:`pm_static_<board>.yml` exists, it will be used.
+  #. Otherwise, if the file :file:`pm_static.yml` exists, it will be used.
+
+For :ref:`ug_multi_image` where the image targets a different domain, :ref:`ug_multi_image_build_scripts` uses the same search algorithm, but a domain specific configuration file is also searched.
+For example, :file:`pm_static_<board>_<buildtype>_<domain>.yml` or :file:`pm_static_<board>_<domain>.yml`.
 
 Use a static partition layout to ensure consistency between builds, as the settings storage will be at the same location after the DFU.
 
