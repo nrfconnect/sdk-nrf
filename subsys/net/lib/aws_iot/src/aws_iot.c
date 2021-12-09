@@ -845,7 +845,7 @@ static int broker_init(void)
 		((struct sockaddr_in *)&broker);
 
 	inet_pton(AF_INET, CONFIG_AWS_IOT_STATIC_IPV4_ADDR,
-		  &broker->sin_addr);
+		  &broker4->sin_addr);
 	broker4->sin_family = AF_INET;
 	broker4->sin_port = htons(CONFIG_AWS_IOT_PORT);
 
