@@ -92,7 +92,7 @@ struct modem_module_edrx {
 struct modem_module_static_modem_data {
 	int64_t timestamp;
 	uint16_t band;
-	uint16_t nw_mode_gps;
+	uint16_t nw_mode_gnss;
 	uint16_t nw_mode_ltem;
 	uint16_t nw_mode_nbiot;
 	char iccid[23];

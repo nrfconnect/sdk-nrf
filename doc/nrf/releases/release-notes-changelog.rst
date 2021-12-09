@@ -59,6 +59,11 @@ Applications
 
 This section provides detailed lists of changes by :ref:`application <applications>`.
 
+nRF9160: Asset Tracker v2
+-------------------------
+
+* Updated the code and documentation to use the acronym GNSS instead of GPS when not referring explicitly to the GPS system.
+
 nRF Desktop
 -----------
 

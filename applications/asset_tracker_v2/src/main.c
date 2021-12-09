@@ -60,10 +60,10 @@ static enum state_type {
 /* Application sub states. The application can be in either active or passive
  * mode.
  *
- * Active mode: Sensor data and GPS position is acquired at a configured
+ * Active mode: Sensor data and GNSS position is acquired at a configured
  *		interval and sent to cloud.
  *
- * Passive mode: Sensor data and GPS position is acquired when movement is
+ * Passive mode: Sensor data and GNSS position is acquired when movement is
  *		 detected, or after the configured movement timeout occurs.
  */
 static enum sub_state_type {
@@ -99,7 +99,7 @@ K_TIMER_DEFINE(movement_timeout_timer, data_sample_timer_handler, NULL);
 
 /* Movement resolution timer decides the period after movement that consecutive
  * movements are ignored and do not cause data collection. This is used to
- * lower power consumption by limiting how often GPS search is performed and
+ * lower power consumption by limiting how often GNSS search is performed and
  * data is sent on air.
  */
 K_TIMER_DEFINE(movement_resolution_timer, waiting_for_movement_handler, NULL);
@@ -345,20 +345,20 @@ static void data_get(void)
 	 * is that the GNSS module in nRF9160 will always search for at least 60 seconds for the
 	 * first position fix after a reboot.
 	 *
-	 * The addition of 15 seconds to the configured GPS timeout is done
-	 * to let the GPS module run the currently ongoing search until
+	 * The addition of 15 seconds to the configured GNSS timeout is done
+	 * to let the GNSS module run the currently ongoing search until
 	 * the end. If the timeout for sending data is exactly the same as for
-	 * the GPS search, a fix occurring at the same time as timeout is
+	 * the GNSS search, a fix occurring at the same time as timeout is
 	 * triggered will be missed and not sent to cloud before the next
 	 * interval has  passed in active mode, or until next movement in
 	 * passive mode.
 	 */
 
 	if (first) {
-		if (IS_ENABLED(CONFIG_APP_REQUEST_GPS_ON_INITIAL_SAMPLING) &&
+		if (IS_ENABLED(CONFIG_APP_REQUEST_GNSS_ON_INITIAL_SAMPLING) &&
 		    !app_cfg.no_data.gnss) {
 			app_module_event->data_list[count++] = APP_DATA_GNSS;
-			app_module_event->timeout = MAX(app_cfg.gps_timeout + 15, 75);
+			app_module_event->timeout = MAX(app_cfg.gnss_timeout + 15, 75);
 		}
 
 		app_module_event->data_list[count++] = APP_DATA_MODEM_STATIC;
@@ -366,7 +366,7 @@ static void data_get(void)
 	} else {
 		if (!app_cfg.no_data.gnss) {
 			app_module_event->data_list[count++] = APP_DATA_GNSS;
-			app_module_event->timeout = MAX(app_cfg.gps_timeout + 15, 75);
+			app_module_event->timeout = MAX(app_cfg.gnss_timeout + 15, 75);
 		}
 	}
 

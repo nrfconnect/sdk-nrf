@@ -35,7 +35,7 @@ enum json_common_buffer_type {
 	JSON_COMMON_UI,
 	JSON_COMMON_MODEM_STATIC,
 	JSON_COMMON_MODEM_DYNAMIC,
-	JSON_COMMON_GPS,
+	JSON_COMMON_GNSS,
 	JSON_COMMON_SENSOR,
 	JSON_COMMON_ACCELEROMETER,
 	JSON_COMMON_BATTERY,
@@ -120,7 +120,7 @@ int json_common_sensor_data_add(cJSON *parent,
 				cJSON **parent_ref);
 
 /**
- * @brief Encode and add GPS data to the parent object.
+ * @brief Encode and add GNSS data to the parent object.
  *
  * @param[out] parent Pointer to object that the encoded data is added to.
  * @param[in] data Pointer to data that is to be encoded.
@@ -134,8 +134,8 @@ int json_common_sensor_data_add(cJSON *parent,
  * @return 0 on success. -ENODATA if the passed in data is not valid. Otherwise a negative error
  *         code is returned.
  */
-int json_common_gps_data_add(cJSON *parent,
-			     struct cloud_data_gps *data,
+int json_common_gnss_data_add(cJSON *parent,
+			     struct cloud_data_gnss *data,
 			     enum json_common_op_code op,
 			     const char *object_label,
 			     cJSON **parent_ref);

@@ -6,25 +6,25 @@
 
 #include <stdio.h>
 
-#include "gps_module_event.h"
+#include "gnss_module_event.h"
 
-static char *get_evt_type_str(enum gps_module_event_type type)
+static char *get_evt_type_str(enum gnss_module_event_type type)
 {
 	switch (type) {
-	case GPS_EVT_DATA_READY:
-		return "GPS_EVT_DATA_READY";
-	case GPS_EVT_TIMEOUT:
-		return "GPS_EVT_TIMEOUT";
-	case GPS_EVT_ACTIVE:
-		return "GPS_EVT_ACTIVE";
-	case GPS_EVT_INACTIVE:
-		return "GPS_EVT_INACTIVE";
-	case GPS_EVT_SHUTDOWN_READY:
-		return "GPS_EVT_SHUTDOWN_READY";
-	case GPS_EVT_AGPS_NEEDED:
-		return "GPS_EVT_AGPS_NEEDED";
-	case GPS_EVT_ERROR_CODE:
-		return "GPS_EVT_ERROR_CODE";
+	case GNSS_EVT_DATA_READY:
+		return "GNSS_EVT_DATA_READY";
+	case GNSS_EVT_TIMEOUT:
+		return "GNSS_EVT_TIMEOUT";
+	case GNSS_EVT_ACTIVE:
+		return "GNSS_EVT_ACTIVE";
+	case GNSS_EVT_INACTIVE:
+		return "GNSS_EVT_INACTIVE";
+	case GNSS_EVT_SHUTDOWN_READY:
+		return "GNSS_EVT_SHUTDOWN_READY";
+	case GNSS_EVT_AGPS_NEEDED:
+		return "GNSS_EVT_AGPS_NEEDED";
+	case GNSS_EVT_ERROR_CODE:
+		return "GNSS_EVT_ERROR_CODE";
 	default:
 		return "Unknown event";
 	}
@@ -33,9 +33,9 @@ static char *get_evt_type_str(enum gps_module_event_type type)
 static int log_event(const struct event_header *eh, char *buf,
 		     size_t buf_len)
 {
-	const struct gps_module_event *event = cast_gps_module_event(eh);
+	const struct gnss_module_event *event = cast_gnss_module_event(eh);
 
-	if (event->type == GPS_EVT_ERROR_CODE) {
+	if (event->type == GNSS_EVT_ERROR_CODE) {
 		return snprintf(buf, buf_len, "%s - Error code %d",
 				get_evt_type_str(event->type), event->data.err);
 	}
@@ -48,7 +48,7 @@ static int log_event(const struct event_header *eh, char *buf,
 static void profile_event(struct log_event_buf *buf,
 			 const struct event_header *eh)
 {
-	const struct gps_module_event *event = cast_gps_module_event(eh);
+	const struct gnss_module_event *event = cast_gnss_module_event(eh);
 
 #if defined(CONFIG_PROFILER_EVENT_TYPE_STRING)
 	profiler_log_encode_string(buf, get_evt_type_str(event->type));
@@ -57,7 +57,7 @@ static void profile_event(struct log_event_buf *buf,
 #endif
 }
 
-EVENT_INFO_DEFINE(gps_module_event,
+EVENT_INFO_DEFINE(gnss_module_event,
 #if defined(CONFIG_PROFILER_EVENT_TYPE_STRING)
 		  ENCODE(PROFILER_ARG_STRING),
 #else
@@ -68,11 +68,11 @@ EVENT_INFO_DEFINE(gps_module_event,
 
 #endif /* CONFIG_PROFILER */
 
-EVENT_TYPE_DEFINE(gps_module_event,
-		  CONFIG_GPS_EVENTS_LOG,
+EVENT_TYPE_DEFINE(gnss_module_event,
+		  CONFIG_GNSS_EVENTS_LOG,
 		  log_event,
 #if defined(CONFIG_PROFILER)
-		  &gps_module_event_info);
+		  &gnss_module_event_info);
 #else
 		  NULL);
 #endif

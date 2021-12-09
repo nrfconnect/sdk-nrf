@@ -12,9 +12,9 @@
 					"}"							\
 				"}"
 
-#define TEST_VALIDATE_GPS_JSON_SCHEMA								\
+#define TEST_VALIDATE_GNSS_JSON_SCHEMA								\
 				"{"								\
-					"\"gps\":{"						\
+					"\"gnss\":{"						\
 						"\"v\":{"					\
 							"\"lng\":10,"				\
 							"\"lat\":62,"				\
@@ -57,7 +57,7 @@
 					"\"dev\":{"						\
 						"\"v\":{"					\
 							"\"band\":3,"				\
-							"\"nw\":\"NB-IoT GPS\","		\
+							"\"nw\":\"NB-IoT GNSS\","		\
 							"\"iccid\":\"89450421180216216095\","	\
 							"\"modV\":\"mfw_nrf9160_1.2.3\","	\
 							"\"brdV\":\"nrf9160dk_nrf9160\","	\
@@ -148,7 +148,7 @@
 					"}"							\
 				"]"
 
-#define TEST_VALIDATE_ARRAY_GPS_JSON_SCHEMA							\
+#define TEST_VALIDATE_ARRAY_GNSS_JSON_SCHEMA							\
 				"["								\
 					"{"							\
 						"\"v\":{"					\
@@ -193,7 +193,7 @@
 					"{"							\
 						"\"v\":{"					\
 							"\"band\":3,"				\
-							"\"nw\":\"NB-IoT GPS\","		\
+							"\"nw\":\"NB-IoT GNSS\","		\
 							"\"iccid\":\"89450421180216216095\","	\
 							"\"modV\":\"mfw_nrf9160_1.2.3\","	\
 							"\"brdV\":\"nrf9160dk_nrf9160\","	\
@@ -227,7 +227,7 @@
 				"{"								\
 					"\"cfg\":{"						\
 						"\"act\":false,"				\
-						"\"gpst\":60,"					\
+						"\"gnsst\":60,"					\
 						"\"actwt\":120,"				\
 						"\"mvres\":120,"				\
 						"\"mvt\":3600,"					\
@@ -261,7 +261,7 @@
 						"\"ts\":1563968747123"				\
 					"}"							\
 				"],"								\
-				"\"gps\":["							\
+				"\"gnss\":["							\
 					"{"							\
 						"\"v\":{"					\
 							"\"lng\":10,"				\
@@ -345,7 +345,7 @@
 					"{"							\
 						"\"v\":{"					\
 							"\"band\":3,"				\
-							"\"nw\":\"NB-IoT GPS\","		\
+							"\"nw\":\"NB-IoT GNSS\","		\
 							"\"iccid\":\"89450421180216216095\","	\
 							"\"modV\":\"mfw_nrf9160_1.2.3\","	\
 							"\"brdV\":\"nrf9160dk_nrf9160\","	\
@@ -356,7 +356,7 @@
 					"{"							\
 						"\"v\":{"					\
 							"\"band\":3,"				\
-							"\"nw\":\"NB-IoT GPS\","		\
+							"\"nw\":\"NB-IoT GNSS\","		\
 							"\"iccid\":\"89450421180216216095\","	\
 							"\"modV\":\"mfw_nrf9160_1.2.3\","	\
 							"\"brdV\":\"nrf9160dk_nrf9160\","	\

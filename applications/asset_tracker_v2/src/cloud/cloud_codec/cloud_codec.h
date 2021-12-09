@@ -38,7 +38,7 @@ struct cloud_data_battery {
 	bool queued : 1;
 };
 
-struct cloud_data_gps_pvt {
+struct cloud_data_gnss_pvt {
 	/** Longitude */
 	double longi;
 	/** Latitude */
@@ -53,20 +53,20 @@ struct cloud_data_gps_pvt {
 	float hdg;
 };
 
-enum cloud_data_gps_format {
-	CLOUD_CODEC_GPS_FORMAT_INVALID,
-	CLOUD_CODEC_GPS_FORMAT_PVT,
-	CLOUD_CODEC_GPS_FORMAT_NMEA
+enum cloud_data_gnss_format {
+	CLOUD_CODEC_GNSS_FORMAT_INVALID,
+	CLOUD_CODEC_GNSS_FORMAT_PVT,
+	CLOUD_CODEC_GNSS_FORMAT_NMEA
 };
 
-/** @brief Structure containing GPS data published to cloud. */
-struct cloud_data_gps {
-	/** GPS data timestamp. UNIX milliseconds. */
-	int64_t gps_ts;
+/** @brief Structure containing GNSS data published to cloud. */
+struct cloud_data_gnss {
+	/** GNSS data timestamp. UNIX milliseconds. */
+	int64_t gnss_ts;
 
 	union {
 		/** Structure containing PVT data. */
-		struct cloud_data_gps_pvt pvt;
+		struct cloud_data_gnss_pvt pvt;
 
 		/* Null terminated NMEA string. The maximum number of characters in an
 		 * NMEA string is 83.
@@ -74,8 +74,8 @@ struct cloud_data_gps {
 		char nmea[83];
 	};
 
-	/** Enum signifying the type of GPS data that is valid. */
-	enum cloud_data_gps_format format;
+	/** Enum signifying the type of GNSS data that is valid. */
+	enum cloud_data_gnss_format format;
 
 	/** Flag signifying that the data entry is to be encoded. */
 	bool queued : 1;
@@ -95,8 +95,8 @@ struct cloud_data_no_data {
 struct cloud_data_cfg {
 	/** Device mode. */
 	bool active_mode;
-	/** GPS search timeout. */
-	int gps_timeout;
+	/** GNSS search timeout. */
+	int gnss_timeout;
 	/** Time between cloud publications in Active mode. */
 	int active_wait_timeout;
 	/** Time between cloud publications in Passive mode. */
@@ -136,8 +136,8 @@ struct cloud_data_modem_static {
 	int64_t ts;
 	/** Band number. */
 	uint16_t bnd;
-	/** Network mode GPS. */
-	uint16_t nw_gps;
+	/** Network mode GNSS. */
+	uint16_t nw_gnss;
 	/** Network mode LTE-M. */
 	uint16_t nw_lte_m;
 	/** Network mode NB-IoT. */
@@ -249,7 +249,7 @@ int cloud_codec_encode_config(struct cloud_codec_data *output,
 			      struct cloud_data_cfg *cfg);
 
 int cloud_codec_encode_data(struct cloud_codec_data *output,
-			    struct cloud_data_gps *gps_buf,
+			    struct cloud_data_gnss *gnss_buf,
 			    struct cloud_data_sensors *sensor_buf,
 			    struct cloud_data_modem_static *modem_stat_buf,
 			    struct cloud_data_modem_dynamic *modem_dyn_buf,
@@ -262,13 +262,13 @@ int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
 
 int cloud_codec_encode_batch_data(
 				struct cloud_codec_data *output,
-				struct cloud_data_gps *gps_buf,
+				struct cloud_data_gnss *gnss_buf,
 				struct cloud_data_sensors *sensor_buf,
 				struct cloud_data_modem_dynamic *modem_dyn_buf,
 				struct cloud_data_ui *ui_buf,
 				struct cloud_data_accelerometer *accel_buf,
 				struct cloud_data_battery *bat_buf,
-				size_t gps_buf_count,
+				size_t gnss_buf_count,
 				size_t sensor_buf_count,
 				size_t modem_dyn_buf_count,
 				size_t ui_buf_count,
@@ -297,9 +297,9 @@ void cloud_codec_populate_bat_buffer(struct cloud_data_battery *bat_buffer,
 				     int *head_bat_buf,
 				     size_t buffer_count);
 
-void cloud_codec_populate_gps_buffer(struct cloud_data_gps *gps_buffer,
-				     struct cloud_data_gps *new_gps_data,
-				     int *head_gps_buf,
+void cloud_codec_populate_gnss_buffer(struct cloud_data_gnss *gnss_buffer,
+				     struct cloud_data_gnss *new_gnss_data,
+				     int *head_gnss_buf,
 				     size_t buffer_count);
 
 void cloud_codec_populate_modem_dynamic_buffer(

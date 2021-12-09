@@ -6,8 +6,8 @@
 
 menu "Application control module"
 
-config APP_REQUEST_GPS_ON_INITIAL_SAMPLING
-	bool "Request GPS on initial data sampling after connection"
+config APP_REQUEST_GNSS_ON_INITIAL_SAMPLING
+	bool "Request GNSS on initial data sampling after connection"
 	default y if GPS_MODULE
 
 config APP_REQUEST_NEIGHBOR_CELLS_DATA

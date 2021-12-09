@@ -115,28 +115,28 @@ void cloud_codec_populate_bat_buffer(struct cloud_data_battery *bat_buffer,
 		buffer_count - 1);
 }
 
-void cloud_codec_populate_gps_buffer(struct cloud_data_gps *gps_buffer,
-				    struct cloud_data_gps *new_gps_data,
-				    int *head_gps_buf,
+void cloud_codec_populate_gnss_buffer(struct cloud_data_gnss *gnss_buffer,
+				    struct cloud_data_gnss *new_gnss_data,
+				    int *head_gnss_buf,
 				    size_t buffer_count)
 {
-	if (!IS_ENABLED(CONFIG_DATA_GPS_BUFFER_STORE)) {
+	if (!IS_ENABLED(CONFIG_DATA_GNSS_BUFFER_STORE)) {
 		return;
 	}
 
-	if (!new_gps_data->queued) {
+	if (!new_gnss_data->queued) {
 		return;
 	}
 
 	/* Go to start of buffer if end is reached. */
-	*head_gps_buf += 1;
-	if (*head_gps_buf == buffer_count) {
-		*head_gps_buf = 0;
+	*head_gnss_buf += 1;
+	if (*head_gnss_buf == buffer_count) {
+		*head_gnss_buf = 0;
 	}
 
-	gps_buffer[*head_gps_buf] = *new_gps_data;
+	gnss_buffer[*head_gnss_buf] = *new_gnss_data;
 
-	LOG_DBG("Entry: %d of %d in GPS buffer filled", *head_gps_buf,
+	LOG_DBG("Entry: %d of %d in GNSS buffer filled", *head_gnss_buf,
 		buffer_count - 1);
 }
 

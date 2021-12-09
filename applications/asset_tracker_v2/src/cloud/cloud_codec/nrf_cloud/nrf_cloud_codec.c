@@ -24,7 +24,7 @@ LOG_MODULE_REGISTER(cloud_codec, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 
 /* Data types that are supported in batch messages. */
 enum batch_data_type {
-	GPS,
+	GNSS,
 	ENVIRONMENTALS,
 	BUTTON,
 	RSRP
@@ -130,12 +130,12 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 {
 	for (int i = 0; i < buf_count; i++) {
 		switch (type) {
-		case GPS: {
+		case GNSS: {
 			int err;
-			struct cloud_data_gps *data = (struct cloud_data_gps *)buf;
+			struct cloud_data_gnss *data = (struct cloud_data_gnss *)buf;
 
 			err =  add_data(array, APP_ID_GPS, data[i].nmea,
-					&data[i].gps_ts, data[i].queued, NULL);
+					&data[i].gnss_ts, data[i].queued, NULL);
 			if (err && err != -ENODATA) {
 				return err;
 			}
@@ -404,7 +404,7 @@ exit:
 }
 
 int cloud_codec_encode_data(struct cloud_codec_data *output,
-			    struct cloud_data_gps *gps_buf,
+			    struct cloud_data_gnss *gnss_buf,
 			    struct cloud_data_sensors *sensor_buf,
 			    struct cloud_data_modem_static *modem_stat_buf,
 			    struct cloud_data_modem_dynamic *modem_dyn_buf,
@@ -436,24 +436,24 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 
 	/******************************************************************************************/
 
-	/* TEMPHACK - Add GPS, humidity, and temperateure to root object and unpack in nrf cloud
+	/* TEMPHACK - Add GNSS, humidity, and temperature to root object and unpack in nrf cloud
 	 * integration layer before it is adressed to the right endpoint.
 	 */
 
-	/* GPS NMEA */
+	/* GNSS NMEA */
 
-	err = add_data(root_obj, APP_ID_GPS, gps_buf->nmea, &gps_buf->gps_ts, gps_buf->queued,
-		       OBJECT_MSG_GPS);
+	err = add_data(root_obj, APP_ID_GPS, gnss_buf->nmea, &gnss_buf->gnss_ts, gnss_buf->queued,
+		       OBJECT_MSG_GNSS);
 	if (err == 0) {
 		msg_obj_added = true;
 	} else if (err != -ENODATA) {
 		goto add_object;
 	}
-	gps_buf->queued = false;
+	gnss_buf->queued = false;
 
-	/* Humidity and Temperateure */
+	/* Humidity and Temperature */
 
-	/* Convert to humidity and temperateure to string format. */
+	/* Convert to humidity and temperature to string format. */
 	char humidity[7];
 	char temperature[7];
 
@@ -707,13 +707,13 @@ exit:
 
 int cloud_codec_encode_batch_data(
 				struct cloud_codec_data *output,
-				struct cloud_data_gps *gps_buf,
+				struct cloud_data_gnss *gnss_buf,
 				struct cloud_data_sensors *sensor_buf,
 				struct cloud_data_modem_dynamic *modem_dyn_buf,
 				struct cloud_data_ui *ui_buf,
 				struct cloud_data_accelerometer *accel_buf,
 				struct cloud_data_battery *bat_buf,
-				size_t gps_buf_count,
+				size_t gnss_buf_count,
 				size_t sensor_buf_count,
 				size_t modem_dyn_buf_count,
 				size_t ui_buf_count,
@@ -729,9 +729,9 @@ int cloud_codec_encode_batch_data(
 		return -ENOMEM;
 	}
 
-	err = add_batch_data(root_array, GPS, gps_buf, gps_buf_count);
+	err = add_batch_data(root_array, GNSS, gnss_buf, gnss_buf_count);
 	if (err) {
-		LOG_ERR("Failed adding GPS data to array, error: %d", err);
+		LOG_ERR("Failed adding GNSS data to array, error: %d", err);
 		goto exit;
 	}
 

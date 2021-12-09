@@ -65,7 +65,7 @@ int json_common_modem_static_data_add(cJSON *parent,
 
 	static const char lte_string[] = "LTE-M";
 	static const char nbiot_string[] = "NB-IoT";
-	static const char gps_string[] = " GPS";
+	static const char gnss_string[] = " GNSS";
 
 	if (!data->queued) {
 		return -ENODATA;
@@ -91,8 +91,8 @@ int json_common_modem_static_data_add(cJSON *parent,
 		strcpy(nw_mode, nbiot_string);
 	}
 
-	if (data->nw_gps) {
-		strcat(nw_mode, gps_string);
+	if (data->nw_gnss) {
+		strcat(nw_mode, gnss_string);
 	}
 
 	err = json_add_number(modem_val_obj, MODEM_CURRENT_BAND, data->bnd);
@@ -335,11 +335,11 @@ exit:
 	return err;
 }
 
-int json_common_gps_data_add(cJSON *parent,
-			     struct cloud_data_gps *data,
-			     enum json_common_op_code op,
-			     const char *object_label,
-			     cJSON **parent_ref)
+int json_common_gnss_data_add(cJSON *parent,
+			      struct cloud_data_gnss *data,
+			      enum json_common_op_code op,
+			      const char *object_label,
+			      cJSON **parent_ref)
 {
 	int err;
 
@@ -347,86 +347,86 @@ int json_common_gps_data_add(cJSON *parent,
 		return -ENODATA;
 	}
 
-	err = date_time_uptime_to_unix_time_ms(&data->gps_ts);
+	err = date_time_uptime_to_unix_time_ms(&data->gnss_ts);
 	if (err) {
 		LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
 		return err;
 	}
 
-	cJSON *gps_obj = cJSON_CreateObject();
-	cJSON *gps_val_obj = cJSON_CreateObject();
+	cJSON *gnss_obj = cJSON_CreateObject();
+	cJSON *gnss_val_obj = cJSON_CreateObject();
 
-	if (gps_obj == NULL || gps_val_obj == NULL) {
+	if (gnss_obj == NULL || gnss_val_obj == NULL) {
 		err = -ENOMEM;
 		goto exit;
 	}
 
 	switch (data->format) {
-	case CLOUD_CODEC_GPS_FORMAT_PVT:
-		err = json_add_number(gps_val_obj, DATA_GPS_LONGITUDE, data->pvt.longi);
+	case CLOUD_CODEC_GNSS_FORMAT_PVT:
+		err = json_add_number(gnss_val_obj, DATA_GNSS_LONGITUDE, data->pvt.longi);
 		if (err) {
 			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 			goto exit;
 		}
 
-		err = json_add_number(gps_val_obj, DATA_GPS_LATITUDE, data->pvt.lat);
+		err = json_add_number(gnss_val_obj, DATA_GNSS_LATITUDE, data->pvt.lat);
 		if (err) {
 			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 			goto exit;
 		}
 
-		err = json_add_number(gps_val_obj, DATA_GPS_ACCURACY, data->pvt.acc);
+		err = json_add_number(gnss_val_obj, DATA_GNSS_ACCURACY, data->pvt.acc);
 		if (err) {
 			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 			goto exit;
 		}
 
-		err = json_add_number(gps_val_obj, DATA_GPS_ALTITUDE, data->pvt.alt);
+		err = json_add_number(gnss_val_obj, DATA_GNSS_ALTITUDE, data->pvt.alt);
 		if (err) {
 			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 			goto exit;
 		}
 
-		err = json_add_number(gps_val_obj, DATA_GPS_SPEED, data->pvt.spd);
+		err = json_add_number(gnss_val_obj, DATA_GNSS_SPEED, data->pvt.spd);
 		if (err) {
 			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 			goto exit;
 		}
 
-		err = json_add_number(gps_val_obj, DATA_GPS_HEADING, data->pvt.hdg);
+		err = json_add_number(gnss_val_obj, DATA_GNSS_HEADING, data->pvt.hdg);
 		if (err) {
 			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 			goto exit;
 		}
 
-		json_add_obj(gps_obj, DATA_VALUE, gps_val_obj);
+		json_add_obj(gnss_obj, DATA_VALUE, gnss_val_obj);
 		break;
-	case CLOUD_CODEC_GPS_FORMAT_NMEA:
-		cJSON_Delete(gps_val_obj);
-		err = json_add_str(gps_obj, DATA_VALUE, data->nmea);
+	case CLOUD_CODEC_GNSS_FORMAT_NMEA:
+		cJSON_Delete(gnss_val_obj);
+		err = json_add_str(gnss_obj, DATA_VALUE, data->nmea);
 		if (err) {
 			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 			goto exit;
 		}
 		break;
-	case CLOUD_CODEC_GPS_FORMAT_INVALID:
+	case CLOUD_CODEC_GNSS_FORMAT_INVALID:
 		/* Fall through */
 	default:
 		err = -EINVAL;
-		LOG_WRN("GPS data format not set");
+		LOG_WRN("GNSS data format not set");
 		goto exit;
 	}
 
-	err = json_add_number(gps_obj, DATA_TIMESTAMP, data->gps_ts);
+	err = json_add_number(gnss_obj, DATA_TIMESTAMP, data->gnss_ts);
 	if (err) {
 		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		cJSON_Delete(gps_obj);
+		cJSON_Delete(gnss_obj);
 		return err;
 	}
 
-	err = op_code_handle(parent, op, object_label, gps_obj, parent_ref);
+	err = op_code_handle(parent, op, object_label, gnss_obj, parent_ref);
 	if (err) {
-		cJSON_Delete(gps_obj);
+		cJSON_Delete(gnss_obj);
 		return err;
 	}
 
@@ -435,8 +435,8 @@ int json_common_gps_data_add(cJSON *parent,
 	return 0;
 
 exit:
-	cJSON_Delete(gps_obj);
-	cJSON_Delete(gps_val_obj);
+	cJSON_Delete(gnss_obj);
+	cJSON_Delete(gnss_val_obj);
 	return err;
 }
 
@@ -951,7 +951,7 @@ int json_common_config_add(cJSON *parent, struct cloud_data_cfg *data, const cha
 		goto exit;
 	}
 
-	err = json_add_number(config_obj, CONFIG_GPS_TIMEOUT, data->gps_timeout);
+	err = json_add_number(config_obj, CONFIG_GNSS_TIMEOUT, data->gnss_timeout);
 	if (err) {
 		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 		goto exit;
@@ -1028,7 +1028,7 @@ exit:
 
 void json_common_config_get(cJSON *parent, struct cloud_data_cfg *data)
 {
-	cJSON *gps_timeout = cJSON_GetObjectItem(parent, CONFIG_GPS_TIMEOUT);
+	cJSON *gnss_timeout = cJSON_GetObjectItem(parent, CONFIG_GNSS_TIMEOUT);
 	cJSON *active = cJSON_GetObjectItem(parent, CONFIG_DEVICE_MODE);
 	cJSON *active_wait = cJSON_GetObjectItem(parent, CONFIG_ACTIVE_TIMEOUT);
 	cJSON *move_res = cJSON_GetObjectItem(parent, CONFIG_MOVE_RES);
@@ -1036,8 +1036,8 @@ void json_common_config_get(cJSON *parent, struct cloud_data_cfg *data)
 	cJSON *acc_thres = cJSON_GetObjectItem(parent, CONFIG_ACC_THRESHOLD);
 	cJSON *nod_list = cJSON_GetObjectItem(parent, CONFIG_NO_DATA_LIST);
 
-	if (gps_timeout != NULL) {
-		data->gps_timeout = gps_timeout->valueint;
+	if (gnss_timeout != NULL) {
+		data->gnss_timeout = gnss_timeout->valueint;
 	}
 
 	if (active != NULL) {
@@ -1134,10 +1134,10 @@ int json_common_batch_data_add(cJSON *parent, enum json_common_buffer_type type,
 								 NULL);
 		}
 			break;
-		case JSON_COMMON_GPS: {
-			struct cloud_data_gps *data =
-					(struct cloud_data_gps *)buf;
-			err = json_common_gps_data_add(array_obj,
+		case JSON_COMMON_GNSS: {
+			struct cloud_data_gnss *data =
+					(struct cloud_data_gnss *)buf;
+			err = json_common_gnss_data_add(array_obj,
 						       &data[i],
 						       JSON_COMMON_ADD_DATA_TO_ARRAY,
 						       NULL,

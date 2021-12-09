@@ -4,53 +4,54 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig GPS_MODULE
+menuconfig GNSS_MODULE
 	bool "GPS module"
 	select DATE_TIME
 	default y
 
-if GPS_MODULE
+if GNSS_MODULE
 
-choice GPS_MODULE_DATA_FORMAT
+choice GNSS_MODULE_DATA_FORMAT
 	prompt "Select GNSS data format"
-	default GPS_MODULE_NMEA if NRF_CLOUD_MQTT
-	default GPS_MODULE_PVT
+	default GNSS_MODULE_NMEA if NRF_CLOUD_MQTT
+	default GNSS_MODULE_PVT
 
-config GPS_MODULE_PVT
+config GNSS_MODULE_PVT
 	bool "Include PVT data in GNSS fix event"
 	help
 	  PVT stands for position, velocity, and time.
-	  The GPS data will be included as a struct in the GPS_EVT_DATA_READY event propagated by this module upon a fix.
+	  The GNSS data will be included as a struct in the GNSS_EVT_DATA_READY event propagated by this module upon a fix.
 
-config GPS_MODULE_NMEA
+config GNSS_MODULE_NMEA
 	bool "Include NMEA data in GNSS fix event"
 	help
-	  NMEA is a defined ASCII representation of GPS data.
-	  The GPS data will be included as a string in the GPS_EVT_DATA_READY event.
+	  NMEA is a defined ASCII representation of GNSS data.
+	  The GNSS data will be included as a string in the GNSS_EVT_DATA_READY event.
 
 endchoice
 
-config GPS_MODULE_PGPS_STORE_LOCATION
+config GNSS_MODULE_PGPS_STORE_LOCATION
 	bool "Store location to modem upon fix"
 	help
 	  If this option is enabled. The location of the device is stored to flash upon every GNSS
 	  fix. This can shorten the first time to fix for semi-stationary applications by injecting
 	  the last known location, current time and relevant predicted ephemerides to the
 	  modem upon boot.
+	  Note that this may also increase flash wear.
 
-choice GPS_MODULE_ANTENNA
-	default GPS_MODULE_ANTENNA_ONBOARD
+choice GNSS_MODULE_ANTENNA
+	default GNSS_MODULE_ANTENNA_ONBOARD
 	prompt "Select which antenna to use for GNSS"
 
-config GPS_MODULE_ANTENNA_ONBOARD
+config GNSS_MODULE_ANTENNA_ONBOARD
 	bool "Use onboard antenna"
 
-config GPS_MODULE_ANTENNA_EXTERNAL
+config GNSS_MODULE_ANTENNA_EXTERNAL
 	bool "Use external antenna"
 
 endchoice
 
-config GPS_MODULE_AT_MAGPIO
+config GNSS_MODULE_AT_MAGPIO
 	string "AT%XMAGPIO command"
 	default "AT\%XMAGPIO=1,0,0,1,1,1574,1577" if BOARD_NRF9160DK_NRF9160_NS
 	default "AT\%XMAGPIO=1,1,1,7,1,746,803,2,698,748,2,1710,2200,3,824,894,4,880,960,5,791,849,7,1565,1586" if BOARD_THINGY91_NRF9160_NS
@@ -58,16 +59,16 @@ config GPS_MODULE_AT_MAGPIO
 	  Defines what is the AT%XMAGPIO command to be sent to GNSS module. Leave
 	  empty if this command should not be sent.
 
-config GPS_MODULE_AT_COEX0
+config GNSS_MODULE_AT_COEX0
 	string "AT%XCOEX0 command"
-	default "AT\%XCOEX0=1,1,1565,1586" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && GPS_MODULE_ANTENNA_ONBOARD
-	default "AT\%XCOEX0" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && GPS_MODULE_ANTENNA_EXTERNAL
+	default "AT\%XCOEX0=1,1,1565,1586" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && GNSS_MODULE_ANTENNA_ONBOARD
+	default "AT\%XCOEX0" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && GNSS_MODULE_ANTENNA_EXTERNAL
 	help
 	  Defines what is the AT%XCOEX0 command to be sent to GNSS module. Leave
 	  empty if this command should not be sent.
 
-endif # GPS_MODULE
+endif # GNSS_MODULE
 
-module = GPS_MODULE
-module-str = GPS module
+module = GNSS_MODULE
+module-str = GNSS module
 source "subsys/logging/Kconfig.template.log_config"

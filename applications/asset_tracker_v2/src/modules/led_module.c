@@ -36,9 +36,9 @@ static void update_led(enum led_state state)
 				&asset_tracker_led_effect[LED_STATE_LTE_CONNECTING]);
 		led_bm |= BIT(LED_ID_CONNECTING);
 		break;
-	case LED_STATE_GPS_SEARCHING:
+	case LED_STATE_GNSS_SEARCHING:
 		send_led_event(LED_ID_SEARCHING,
-				&asset_tracker_led_effect[LED_STATE_GPS_SEARCHING]);
+				&asset_tracker_led_effect[LED_STATE_GNSS_SEARCHING]);
 		led_bm |= BIT(LED_ID_SEARCHING);
 		break;
 	case LED_STATE_CLOUD_PUBLISHING:
