@@ -24,10 +24,10 @@
  * This code is distributed under a BSD style license, see the LICENSE file
  * for complete information.
  */
- 
+
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
 #if defined (CONFIG_POSIX_API)
-/* Disabling __BSD_VISIBLE, because it was causing name collisions with select and fdsets when no POSIX API 
+/* Disabling __BSD_VISIBLE, because it was causing name collisions with select and fdsets when no POSIX API
  */
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -60,8 +60,8 @@
 #include <sys/time.h>
 
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED) && defined(CONFIG_AT_CMD)
-#include <modem/at_cmd.h>
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
+#include <nrf_modem_at.h>
 #endif
 #endif
 
@@ -90,10 +90,6 @@
 #if defined(HAVE_SETPROCESSAFFINITYMASK)
 #include <Windows.h>
 #endif /* HAVE_SETPROCESSAFFINITYMASK */
-
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED) && defined (CONFIG_AT_CMD)
-#include <modem/at_cmd.h>
-#endif
 
 #include "net.h"
 #include "iperf.h"
@@ -973,7 +969,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 		{ "nstreams", required_argument, NULL, OPT_NUMSTREAMS },
 		{ "xbind", required_argument, NULL, 'X' },
 #endif
-#if defined (CONFIG_NRF_IPERF3_MULTICONTEXT_SUPPORT)                           
+#if defined (CONFIG_NRF_IPERF3_MULTICONTEXT_SUPPORT)
 		{ "interface", required_argument, NULL, 'I' },
 		{ "pdn_id", required_argument, NULL, NRF_OPT_PDN_ID },
 #else
@@ -1003,7 +999,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 		{ "debug", no_argument, NULL, 'd' },
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
 		{ "manual", no_argument, NULL, 'm' }, /* -m or --manual instead of help, because shell is stoling -h and --help */
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED) && defined (CONFIG_AT_CMD)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
 		/* added */
 		{ "curr-mdm-traces", no_argument, NULL, NRF_OPT_CURRENT_MDM_TRACES },
 #endif
@@ -1217,7 +1213,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			iperf_set_test_reverse(test, 1);
 			client_flag = 1;
 			break;
-#if defined(CONFIG_NRF_IPERF3_INTEGRATION)			
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
 		case '2':
 #else
 		case OPT_BIDIRECTIONAL:
@@ -1468,7 +1464,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			client_flag = 1;
 			break;
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED) && defined (CONFIG_AT_CMD)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
 		case NRF_OPT_CURRENT_MDM_TRACES:
 			test->curr_mdm_traces = true;
 			break;
@@ -1638,23 +1634,23 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 #endif
 	}
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED) && defined (CONFIG_AT_CMD)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
     if (!test->curr_mdm_traces) {
 
     	/* Let's set more lightweight traces for getting better perf: */
-        static const char lightweight_mdm_trace[] = "AT%XMODEMTRACE=1,5";
-              
-        if (at_cmd_write(lightweight_mdm_trace, NULL, 0, NULL) != 0) {
+        static const char lightweight_mdm_trace[] = "AT%%XMODEMTRACE=1,5";
+
+        if (nrf_modem_at_printf(lightweight_mdm_trace) != 0) {
         	printk("error when setting lightweight modem traces\n");
         }
         else {
-        	printk("note: custom traces \"%s\" was set for testing\n", 
+        	printk("note: custom traces \"%s\" was set for testing\n",
         		lightweight_mdm_trace);
         	printk("note: use --curr-mdm-traces hook for the current ones\n\n");
         }
     }
 #endif
-#endif	
+#endif
 	return 0;
 }
 
@@ -1664,7 +1660,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 int iperf_open_logfile(struct iperf_test *test)
 {
 	test->outfile = NULL;
-#if !defined(CONFIG_NRF_IPERF3_INTEGRATION)	
+#if !defined(CONFIG_NRF_IPERF3_INTEGRATION)
 	test->outfile = fopen(test->logfile, "a+");
 	if (test->outfile == NULL) {
 		i_errno = IELOGFILE;
@@ -1727,7 +1723,7 @@ int iperf_set_send_state(struct iperf_test *test, signed char state)
             i_errno = IESENDMESSAGE;
 			if (test->debug)
 				iperf_printf(test, "iperf_set_send_state failed of sending state: %d, ret: %d\n", state, ret);
-			
+
 			ret = -1;
             break;
         }
@@ -2076,7 +2072,7 @@ int iperf_exchange_parameters(struct iperf_test *test)
 		if (iperf_set_send_state(test, CREATE_STREAMS) != 0) {
 		    if (test->debug)
 				iperf_printf(test, "Sending ctrl CREATE_STREAMS failed\n");
-		    
+
             return -1;
         }
 	}
@@ -2350,7 +2346,7 @@ static int send_results(struct iperf_test *test)
 	if (j == NULL) {
 		i_errno = IEPACKAGERESULTS;
 		r = -1;
-	} else {		
+	} else {
 		cJSON_AddNumberToObject(j, "cpu_util_total", test->cpu_util[0]);
 		cJSON_AddNumberToObject(j, "cpu_util_user", test->cpu_util[1]);
 		cJSON_AddNumberToObject(j, "cpu_util_system",
@@ -2467,14 +2463,14 @@ static int send_results(struct iperf_test *test)
 				iperf_printf(test,"send_results\n%s\n", str);
 				cJSON_free(str);
 			}
-#if defined (CONFIG_NRF_IPERF3_NONBLOCKING_CLIENT_CHANGES)			
+#if defined (CONFIG_NRF_IPERF3_NONBLOCKING_CLIENT_CHANGES)
 			/* non blocking mode client when sending results, due to several jamning problems */
 			if (test->role == 's') {
 				if (r == 0 && JSON_write(test->ctrl_sck, j) < 0) {
 					i_errno = IESENDRESULTS;
 					r = -1;
 				}
-			}	
+			}
 			else {
 				if (r == 0 && JSON_write_nonblock(test, j) < 0) {
 					i_errno = IESENDRESULTS;
@@ -2523,7 +2519,7 @@ static int get_results(struct iperf_test *test)
 	int retransmits;
 	struct iperf_stream *sp;
 
-#if defined (CONFIG_NRF_IPERF3_NONBLOCKING_CLIENT_CHANGES)			
+#if defined (CONFIG_NRF_IPERF3_NONBLOCKING_CLIENT_CHANGES)
 	/* non blocking mode client when sending results, due to several jamning problems */
 	if (test->role == 's')
 		j = JSON_read(test->ctrl_sck);
@@ -2551,7 +2547,7 @@ static int get_results(struct iperf_test *test)
 			r = -1;
 			if (test->debug) {
 				iperf_printf(test, "get_results: IERECVRESULTS 2\n");
-			}			
+			}
 		} else {
 			if (test->debug) {
 				char *str = cJSON_Print(j);
@@ -2578,7 +2574,7 @@ static int get_results(struct iperf_test *test)
 			if (j_streams == NULL) {
 				if (test->debug) {
 					iperf_printf(test, "get_results: IERECVRESULTS 3\n");
-				}				
+				}
 				i_errno = IERECVRESULTS;
 				r = -1;
 			} else {
@@ -2590,7 +2586,7 @@ static int get_results(struct iperf_test *test)
 						i_errno = IERECVRESULTS;
 						if (test->debug) {
 							iperf_printf(test, "get_results: IERECVRESULTS 4\n");
-						}						
+						}
 						r = -1;
 					} else {
 						j_id = cJSON_GetObjectItem(
@@ -2624,7 +2620,7 @@ static int get_results(struct iperf_test *test)
 							i_errno = IERECVRESULTS;
 							if (test->debug) {
 								iperf_printf(test, "get_results: IERECVRESULTS 5\n");
-							}							
+							}
 							r = -1;
 						} else {
 							sid = j_id->valueint;
@@ -2778,7 +2774,7 @@ JSON_write_nonblock(struct iperf_test *test, cJSON *json)
     {
 		if (test->debug)
 			iperf_printf(test, "JSON_write_nonblock: cJSON_PrintUnformatted failed\n");
-        
+
 		goto exit;
     }
     else
@@ -3025,7 +3021,7 @@ static cJSON
                     if (read(test->ctrl_sck, &nsize, sizeof(nsize)) > 0)
 #else
                     if (recv(test->ctrl_sck, &nsize, sizeof(nsize), 0) > 0)
-#endif					
+#endif
                     {
                         hsize = ntohl(nsize);
                         str = (char *) calloc(sizeof(char), hsize+1);   /* +1 for trailing null */
@@ -3113,7 +3109,7 @@ void add_to_interval_list(struct iperf_stream_result *rp,
 
 		/* ...and then retry: */
 		irp = (struct iperf_interval_results *)malloc(sizeof(struct iperf_interval_results));
-		
+
 		if (irp == NULL) {
 			printf("add_to_interval_list 2nd try: out of heap mem: still cannot add interval to list\n");
 		}
@@ -3226,7 +3222,7 @@ struct iperf_test *iperf_new_test()
 		i_errno = IENOMEMORY;
 		return NULL;
 	}
-	
+
 	/* initialize everything to zero */
 	memset(test, 0, sizeof(struct iperf_test));
 
@@ -3412,7 +3408,7 @@ void iperf_free_test(struct iperf_test *test)
 	struct iperf_stream *sp;
 
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED) && defined (CONFIG_AT_CMD)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
   if (!test->curr_mdm_traces) {
     static const char default_mdm_trace[] = "AT%XMODEMTRACE=1,2";
 
@@ -3655,7 +3651,7 @@ void iperf_reset_test(struct iperf_test *test)
 #endif /* HAVE_SSL */
 
 	memset(test->cookie, 0, COOKIE_SIZE);
-	
+
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
     test->multisend = 1;
 #else
@@ -3857,7 +3853,7 @@ static void iperf_print_intermediate(struct iperf_test *test)
      */
 	int interval_ok = 0;
 	SLIST_FOREACH(sp, &test->streams, streams)
-	{	
+	{
 		irp = TAILQ_LAST(&sp->result->interval_results, irlisthead);
 		if (irp) {
 			iperf_time_diff(&irp->interval_start_time,
@@ -5123,8 +5119,8 @@ static void iperf_print_results(struct iperf_test *test)
 
 /**
  * Main report-printing callback.
- * Prints results either during a test (interval report only) or 
- * after the entire test has been run (last interval report plus 
+ * Prints results either during a test (interval report only) or
+ * after the entire test has been run (last interval report plus
  * overall summary).
  */
 void iperf_reporter_callback(struct iperf_test *test)
@@ -5369,7 +5365,7 @@ void iperf_free_stream(struct iperf_stream *sp)
 	free(sp->buffer);
 #endif
 	if (sp->diskfile_fd >= 0)
-		close(sp->diskfile_fd);		
+		close(sp->diskfile_fd);
 	for (irp = TAILQ_FIRST(&sp->result->interval_results); irp != NULL;
 	     irp = nirp) {
 		nirp = TAILQ_NEXT(irp, irlistentries);
@@ -5440,7 +5436,7 @@ struct iperf_stream *iperf_new_stream(struct iperf_test *test, int s,
 		free(sp->result);
 		free(sp);
 		return NULL;
-	}	
+	}
 #else //mmap not supported
 	/* Create and randomize the buffer */
 	sp->buffer_fd = mkstemp(template);
@@ -5486,7 +5482,7 @@ struct iperf_stream *iperf_new_stream(struct iperf_test *test, int s,
 			     S_IRUSR | S_IWUSR);
 		if (sp->diskfile_fd == -1) {
 			i_errno = IEFILE;
-#if defined(CONFIG_NRF_IPERF3_INTEGRATION)			
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
 			free(sp->buffer);
 #else
 			munmap(sp->buffer, sp->test->settings->blksize);
@@ -5584,7 +5580,7 @@ int iperf_init_stream(struct iperf_stream *sp, struct iperf_test *test)
 	/* Set IP TOS */
 	if ((opt = test->settings->tos)) {
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-		if (nrf_iperf3_mock_getsockdomain(test, sp->socket) == AF_INET6) {		
+		if (nrf_iperf3_mock_getsockdomain(test, sp->socket) == AF_INET6) {
 #else
         if (getsockdomain(sp->socket) == AF_INET6) {
 #endif
@@ -5791,8 +5787,8 @@ int iperf_create_pidfile(struct iperf_test *test)
 		}
 
 		/*
-	 * File didn't exist, we couldn't read it, or it didn't correspond to 
-	 * a running process.  Try to create it. 
+	 * File didn't exist, we couldn't read it, or it didn't correspond to
+	 * a running process.  Try to create it.
 	 */
 		fd = open(test->pidfile, O_WRONLY | O_CREAT | O_TRUNC,
 			  S_IRUSR | S_IWUSR);
@@ -6048,7 +6044,7 @@ int iperf_printf(struct iperf_test *test, const char *format, ...)
 			r = vfprintf(test->outfile, format, argp);
 			va_end(argp);
 		}
-	} 
+	}
 	else if (test->role == 's') {
 		char linebuffer[1024];
 		int i = 0;
