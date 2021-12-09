@@ -38,7 +38,10 @@ The following sections provide detailed lists of changes by component.
 Application development
 =======================
 
-* |no_changes_yet_note|
+Using Edge Impulse
+------------------
+
+* Added instruction on how to download a model from a public Edge Impulse project.
 
 Protocols
 =========
