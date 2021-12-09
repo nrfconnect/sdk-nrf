@@ -732,6 +732,11 @@ int lwm2m_os_download_file_size_get(size_t *size)
 
 /* LTE LC module abstractions. */
 
+static void lwm2m_os_lte_event_handler(const struct lte_lc_evt *const evt)
+{
+	/* This event handler is not in use by LwM2M carrier library. */
+}
+
 int lwm2m_os_lte_link_up(void)
 {
 	int err;
@@ -746,7 +751,7 @@ int lwm2m_os_lte_link_up(void)
 		}
 	}
 
-	return lte_lc_connect();
+	return lte_lc_connect_async(lwm2m_os_lte_event_handler);
 }
 
 int lwm2m_os_lte_link_down(void)
