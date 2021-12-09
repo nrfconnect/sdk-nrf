@@ -787,9 +787,7 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`lte_lc_readme`
 * :ref:`modem_info_readme`
-* :ref:`at_cmd_readme`
 * :ref:`at_cmd_parser_readme`
-* :ref:`at_notif_readme`
 * :ref:`sms_readme`
 
 This sample uses the following `sdk-nrfxlib`_ libraries:
