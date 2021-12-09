@@ -86,9 +86,9 @@
 #include "memdebug.h" /* keep this as LAST include */
 
 #if defined(CONFIG_NRF_CURL_INTEGRATION)
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED) && defined (CONFIG_AT_CMD)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
 /* NRF_IPERF3_INTEGRATION_CHANGE: added */
-#include <modem/at_cmd.h>
+#include <nrf_modem_at.h>
 #endif
 #endif
 
@@ -343,7 +343,7 @@ static CURLcode pre_transfer(struct GlobalConfig *global,
 #if defined(CONFIG_NRF_CURL_INTEGRATION)
   curl_easy_nrf_set_kill_signal(per->curl, global->kill_signal);
 #endif
-  
+
   return result;
 }
 
@@ -894,7 +894,7 @@ static CURLcode single_transfer(struct GlobalConfig *global,
 
         /* Single header file for all URLs */
         if(config->headerfile) {
-          /* open file for output: */          
+          /* open file for output: */
           if(strcmp(config->headerfile, "-")) {
             FILE *newfile;
 #if !defined(CONFIG_NRF_CURL_INTEGRATION)
@@ -981,11 +981,11 @@ static CURLcode single_transfer(struct GlobalConfig *global,
         if(config->etag_save_file) {
           /* open file for output: */
           if(strcmp(config->etag_save_file, "-")) {
-#if !defined(CONFIG_NRF_CURL_INTEGRATION)            
+#if !defined(CONFIG_NRF_CURL_INTEGRATION)
             FILE *newfile = fopen(config->etag_save_file, "wb");
 #else
             FILE *newfile = NULL;
-#endif            
+#endif
             if(!newfile) {
               warnf(
                 config->global,
@@ -1120,7 +1120,7 @@ static CURLcode single_transfer(struct GlobalConfig *global,
               /* set offset to current file size: */
               config->resume_from = fileinfo.st_size;
             else
-#endif            
+#endif
               /* let offset be 0 */
               config->resume_from = 0;
           }
@@ -1211,7 +1211,7 @@ static CURLcode single_transfer(struct GlobalConfig *global,
           /* we send the output to a tty, therefore we switch off the progress
              meter */
           per->noprogress = global->noprogress = global->isatty = TRUE;
-        else 
+        else
 #endif
 
         {
@@ -1813,16 +1813,16 @@ static CURLcode single_transfer(struct GlobalConfig *global,
         if (config->upload_buffsize) {
           my_setopt(curl, CURLOPT_UPLOAD_BUFFERSIZE, config->upload_buffsize);
         }
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED) && defined (CONFIG_AT_CMD)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
         if (!global->curr_mdm_traces) {
           /* Let's set more lightweight traces for getting better perf: */
-          static const char lightweight_mdm_trace[] = "AT%XMODEMTRACE=1,5";
-              
-          if (at_cmd_write(lightweight_mdm_trace, NULL, 0, NULL) != 0) {
+          static const char lightweight_mdm_trace[] = "AT%%XMODEMTRACE=1,5";
+
+          if (nrf_modem_at_printf(lightweight_mdm_trace) != 0) {
             printk("error when setting lightweight modem traces\n");
           }
           else {
-            printk("note: custom traces \"%s\" was set for testing\n", 
+            printk("note: custom traces \"%s\" was set for testing\n",
               lightweight_mdm_trace);
         	printk("note: use --curr-mdm-traces hook for the current ones\n\n");
           }
@@ -2630,7 +2630,7 @@ CURLcode operate(struct GlobalConfig *global, int argc, argv_item_t argv[])
       else if(res == PARAM_MANUAL_REQUESTED)
         hugehelp();
       /* Check if we were asked for the version information */
-#endif      
+#endif
       else if(res == PARAM_VERSION_INFO_REQUESTED)
         tool_version_info();
       /* Check if we were asked to list the SSL engines */
