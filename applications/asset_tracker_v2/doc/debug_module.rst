@@ -28,9 +28,9 @@ Information that is collected from the device can be sent to Memfault's cloud so
 The debug module uses `Memfault SDK`_ to track |NCS| specific metrics such as LTE and stack metrics.
 In addition, the following types of custom Memfault metrics are defined and tracked when compiling in the debug module:
 
- * ``GpsTimeToFix`` - Time duration between the start of a GNSS search and obtaining a fix.
- * ``GpsTimeoutSearchTime`` - Time duration between the start of a GNSS search and a search timeout.
- * ``GpsSatellitesTracked`` - Number of satellites tracked during a GNSS search window.
+ * ``GnssTimeToFix`` - Time duration between the start of a GNSS search and obtaining a fix.
+ * ``GnssTimeoutSearchTime`` - Time duration between the start of a GNSS search and a search timeout.
+ * ``GnssSatellitesTracked`` - Number of satellites tracked during a GNSS search window.
 
 The debug module also implements `Memfault SDK`_ software watchdog, which is designed to trigger an assert before an actual watchdog timeout.
 This enables the application to be able to collect coredump data before a reboot occurs.

@@ -7,10 +7,10 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(gps_module_test)
+project(gnss_module_test)
 
 # generate runner for the test
-test_runner_generate(src/gps_module_test.c)
+test_runner_generate(src/gnss_module_test.c)
 
 # create mock
 cmock_handle(../../src/modules/modules_common.h )
@@ -21,11 +21,11 @@ cmock_handle(${ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/nrf_modem_gnss.h )
 
 
 
-# add gps_module (the unit under test)
-target_sources(app PRIVATE ../../src/modules/gps_module.c)
+# add gnss_module (the unit under test)
+target_sources(app PRIVATE ../../src/modules/gnss_module.c)
 
 # add test file
-target_sources(app PRIVATE src/gps_module_test.c)
+target_sources(app PRIVATE src/gnss_module_test.c)
 
 target_include_directories(app PRIVATE .)
 target_include_directories(app PRIVATE ../../src/)
@@ -37,6 +37,6 @@ target_include_directories(app PRIVATE ${ZEPHYR_BASE}/../nrf/modules/cjson/inclu
 # Options that cannot be passed through Kconfig fragments.
 target_compile_options(app PRIVATE
 	-DCONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN=20
-	-DCONFIG_GPS_MODULE_NMEA
-	-DCONFIG_GPS_MODULE_AT_MAGPIO="AT%XMAGPIO"
-	-DCONFIG_GPS_MODULE_AT_COEX0="AT%XCOEX0")
+	-DCONFIG_GNSS_MODULE_NMEA
+	-DCONFIG_GNSS_MODULE_AT_MAGPIO="AT%XMAGPIO"
+	-DCONFIG_GNSS_MODULE_AT_COEX0="AT%XCOEX0")

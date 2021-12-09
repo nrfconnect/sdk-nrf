@@ -484,7 +484,7 @@ static int static_modem_data_get(void)
 
 	modem_module_event->data.modem_static.nw_mode_ltem = modem_param.network.lte_mode.value;
 	modem_module_event->data.modem_static.nw_mode_nbiot = modem_param.network.nbiot_mode.value;
-	modem_module_event->data.modem_static.nw_mode_gps = modem_param.network.gps_mode.value;
+	modem_module_event->data.modem_static.nw_mode_gnss = modem_param.network.gps_mode.value;
 	modem_module_event->data.modem_static.band = modem_param.network.current_band.value;
 
 	strncpy(modem_module_event->data.modem_static.app_version,

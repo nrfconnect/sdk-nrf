@@ -22,7 +22,7 @@
 #include "events/data_module_event.h"
 #include "events/sensor_module_event.h"
 #include "events/util_module_event.h"
-#include "events/gps_module_event.h"
+#include "events/gnss_module_event.h"
 #include "events/modem_module_event.h"
 #include "events/ui_module_event.h"
 #include "events/debug_module_event.h"
@@ -38,7 +38,7 @@ struct debug_msg_data {
 		struct sensor_module_event sensor;
 		struct data_module_event data;
 		struct app_module_event app;
-		struct gps_module_event gps;
+		struct gnss_module_event gnss;
 		struct modem_module_event modem;
 	} module;
 };
@@ -94,10 +94,10 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&debug_msg);
 	}
 
-	if (is_gps_module_event(eh)) {
-		struct gps_module_event *event = cast_gps_module_event(eh);
+	if (is_gnss_module_event(eh)) {
+		struct gnss_module_event *event = cast_gnss_module_event(eh);
 		struct debug_msg_data debug_msg = {
-			.module.gps = *event
+			.module.gnss = *event
 		};
 
 		message_handler(&debug_msg);
@@ -241,37 +241,37 @@ static void send_memfault_data(bool lte_connected)
 #endif /* if defined(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT) */
 }
 
-static void add_gps_metrics(uint8_t satellites, uint32_t search_time,
-			    enum gps_module_event_type event)
+static void add_gnss_metrics(uint8_t satellites, uint32_t search_time,
+			    enum gnss_module_event_type event)
 {
 	int err;
 
 	switch (event) {
-	case GPS_EVT_DATA_READY:
+	case GNSS_EVT_DATA_READY:
 		err = memfault_metrics_heartbeat_set_unsigned(
-						MEMFAULT_METRICS_KEY(GpsTimeToFix),
+						MEMFAULT_METRICS_KEY(GnssTimeToFix),
 						search_time);
 		if (err) {
-			LOG_ERR("Failed updating GpsTimeToFix metric, error: %d", err);
+			LOG_ERR("Failed updating GnssTimeToFix metric, error: %d", err);
 		}
 		break;
-	case GPS_EVT_TIMEOUT:
+	case GNSS_EVT_TIMEOUT:
 		err = memfault_metrics_heartbeat_set_unsigned(
-						MEMFAULT_METRICS_KEY(GpsTimeoutSearchTime),
+						MEMFAULT_METRICS_KEY(GnssTimeoutSearchTime),
 						search_time);
 		if (err) {
-			LOG_ERR("Failed updating GpsTimeoutSearchTime metric, error: %d", err);
+			LOG_ERR("Failed updating GnssTimeoutSearchTime metric, error: %d", err);
 		}
 		break;
 	default:
-		LOG_ERR("Unknown GPS module event type");
+		LOG_ERR("Unknown GNSS module event type");
 		return;
 	}
 
-	err = memfault_metrics_heartbeat_set_unsigned(MEMFAULT_METRICS_KEY(GpsSatellitesTracked),
+	err = memfault_metrics_heartbeat_set_unsigned(MEMFAULT_METRICS_KEY(GnssSatellitesTracked),
 						      satellites);
 	if (err) {
-		LOG_ERR("Failed updating GpsSatellitesTracked metric, error: %d", err);
+		LOG_ERR("Failed updating GnssSatellitesTracked metric, error: %d", err);
 	}
 
 	memfault_metrics_heartbeat_debug_trigger();
@@ -309,11 +309,11 @@ static void memfault_handle_event(struct debug_msg_data *msg)
 		return;
 	}
 
-	if ((IS_EVENT(msg, gps, GPS_EVT_TIMEOUT)) ||
-	    (IS_EVENT(msg, gps, GPS_EVT_DATA_READY))) {
-		add_gps_metrics(msg->module.gps.data.gps.satellites_tracked,
-				msg->module.gps.data.gps.search_time,
-				msg->module.gps.type);
+	if ((IS_EVENT(msg, gnss, GNSS_EVT_TIMEOUT)) ||
+	    (IS_EVENT(msg, gnss, GNSS_EVT_DATA_READY))) {
+		add_gnss_metrics(msg->module.gnss.data.gnss.satellites_tracked,
+				msg->module.gnss.data.gnss.search_time,
+				msg->module.gnss.type);
 		return;
 	}
 }
@@ -339,7 +339,7 @@ EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, gps_module_event);
+EVENT_SUBSCRIBE_EARLY(MODULE, gnss_module_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, ui_module_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, sensor_module_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, data_module_event);

@@ -333,7 +333,7 @@ int cloud_wrap_data_send(char *buf, size_t len)
 		goto clean_exit;
 	}
 
-	err = decode_and_send(root_obj, OBJECT_MSG_GPS, false);
+	err = decode_and_send(root_obj, OBJECT_MSG_GNSS, false);
 	if (err) {
 		goto clean_exit;
 	}

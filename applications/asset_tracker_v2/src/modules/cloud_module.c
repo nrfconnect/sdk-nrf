@@ -30,7 +30,7 @@
 #include "events/data_module_event.h"
 #include "events/util_module_event.h"
 #include "events/modem_module_event.h"
-#include "events/gps_module_event.h"
+#include "events/gnss_module_event.h"
 #include "events/debug_module_event.h"
 
 #include <logging/log.h>
@@ -51,7 +51,7 @@ struct cloud_msg_data {
 		struct modem_module_event modem;
 		struct cloud_module_event cloud;
 		struct util_module_event util;
-		struct gps_module_event gps;
+		struct gnss_module_event gnss;
 		struct debug_module_event debug;
 	} module;
 };
@@ -210,10 +210,10 @@ static bool event_handler(const struct event_header *eh)
 		enqueue_msg = true;
 	}
 
-	if (is_gps_module_event(eh)) {
-		struct gps_module_event *evt = cast_gps_module_event(eh);
+	if (is_gnss_module_event(eh)) {
+		struct gnss_module_event *evt = cast_gnss_module_event(eh);
 
-		msg.module.gps = *evt;
+		msg.module.gnss = *evt;
 		enqueue_msg = true;
 	}
 
@@ -533,7 +533,7 @@ static void pgps_request_send(struct cloud_codec_data *data)
 	} else if (err) {
 		LOG_ERR("cloud_wrap_pgps_request_send, err: %d", err);
 	} else {
-		LOG_DBG("PGPS request sent");
+		LOG_DBG("P-GPS request sent");
 	}
 }
 #endif
@@ -835,11 +835,11 @@ static void on_all_states(struct cloud_msg_data *msg)
 	}
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-	if (IS_EVENT(msg, gps, GPS_EVT_AGPS_NEEDED)) {
+	if (IS_EVENT(msg, gnss, GNSS_EVT_AGPS_NEEDED)) {
 		/* Keep a local copy of the incoming request. Used when injecting
 		 * P-GPS data into the modem.
 		 */
-		memcpy(&agps_request, &msg->module.gps.data.agps_request, sizeof(agps_request));
+		memcpy(&agps_request, &msg->module.gnss.data.agps_request, sizeof(agps_request));
 	}
 #endif
 }
@@ -908,6 +908,6 @@ EVENT_SUBSCRIBE(MODULE, data_module_event);
 EVENT_SUBSCRIBE(MODULE, app_module_event);
 EVENT_SUBSCRIBE(MODULE, modem_module_event);
 EVENT_SUBSCRIBE(MODULE, cloud_module_event);
-EVENT_SUBSCRIBE(MODULE, gps_module_event);
+EVENT_SUBSCRIBE(MODULE, gnss_module_event);
 EVENT_SUBSCRIBE(MODULE, debug_module_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, util_module_event);

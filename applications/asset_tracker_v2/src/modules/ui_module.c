@@ -18,7 +18,7 @@
 #include "events/ui_module_event.h"
 #include "events/sensor_module_event.h"
 #include "events/util_module_event.h"
-#include "events/gps_module_event.h"
+#include "events/gnss_module_event.h"
 #include "events/modem_module_event.h"
 #include "events/led_state_event.h"
 
@@ -30,7 +30,7 @@ struct ui_msg_data {
 		struct app_module_event app;
 		struct modem_module_event modem;
 		struct data_module_event data;
-		struct gps_module_event gps;
+		struct gnss_module_event gnss;
 		struct util_module_event util;
 	} module;
 };
@@ -44,21 +44,21 @@ static enum state_type {
 
 /* UI module sub states. */
 static enum sub_state_type {
-	SUB_STATE_GPS_INACTIVE,
-	SUB_STATE_GPS_ACTIVE
+	SUB_STATE_GNSS_INACTIVE,
+	SUB_STATE_GNSS_ACTIVE
 } sub_state;
 
 /* Forward declarations */
 static void led_pat_active_work_fn(struct k_work *work);
 static void led_pat_passive_work_fn(struct k_work *work);
-static void led_pat_gps_work_fn(struct k_work *work);
+static void led_pat_gnss_work_fn(struct k_work *work);
 
 /* Delayed works that is used to make sure the device always reverts back to the
- * device mode or GPS search LED pattern.
+ * device mode or GNSS search LED pattern.
  */
 static K_WORK_DELAYABLE_DEFINE(led_pat_active_work, led_pat_active_work_fn);
 static K_WORK_DELAYABLE_DEFINE(led_pat_passive_work, led_pat_passive_work_fn);
-static K_WORK_DELAYABLE_DEFINE(led_pat_gps_work, led_pat_gps_work_fn);
+static K_WORK_DELAYABLE_DEFINE(led_pat_gnss_work, led_pat_gnss_work_fn);
 
 /* UI module message queue. */
 #define UI_QUEUE_ENTRY_COUNT		10
@@ -94,10 +94,10 @@ static char *state2str(enum state_type new_state)
 static char *sub_state2str(enum sub_state_type new_state)
 {
 	switch (new_state) {
-	case SUB_STATE_GPS_INACTIVE:
-		return "SUB_STATE_GPS_INACTIVE";
-	case SUB_STATE_GPS_ACTIVE:
-		return "SUB_STATE_GPS_ACTIVE";
+	case SUB_STATE_GNSS_INACTIVE:
+		return "SUB_STATE_GNSS_INACTIVE";
+	case SUB_STATE_GNSS_ACTIVE:
+		return "SUB_STATE_GNSS_ACTIVE";
 	default:
 		return "Unknown";
 	}
@@ -161,10 +161,10 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&ui_msg);
 	}
 
-	if (is_gps_module_event(eh)) {
-		struct gps_module_event *event = cast_gps_module_event(eh);
+	if (is_gnss_module_event(eh)) {
+		struct gnss_module_event *event = cast_gnss_module_event(eh);
 		struct ui_msg_data ui_msg = {
-			.module.gps = *event
+			.module.gnss = *event
 		};
 
 		message_handler(&ui_msg);
@@ -233,9 +233,9 @@ static void led_pat_passive_work_fn(struct k_work *work)
 	update_led_pattern(LED_STATE_PASSIVE_MODE);
 }
 
-static void led_pat_gps_work_fn(struct k_work *work)
+static void led_pat_gnss_work_fn(struct k_work *work)
 {
-	update_led_pattern(LED_STATE_GPS_SEARCHING);
+	update_led_pattern(LED_STATE_GNSS_SEARCHING);
 }
 
 static int setup(const struct device *dev)
@@ -253,35 +253,35 @@ static int setup(const struct device *dev)
 	return 0;
 }
 
-/* Message handler for SUB_STATE_GPS_ACTIVE in STATE_ACTIVE. */
-static void on_state_active_sub_state_gps_active(struct ui_msg_data *msg)
+/* Message handler for SUB_STATE_GNSS_ACTIVE in STATE_ACTIVE. */
+static void on_state_active_sub_state_gnss_active(struct ui_msg_data *msg)
 {
-	if (IS_EVENT(msg, gps, GPS_EVT_INACTIVE)) {
+	if (IS_EVENT(msg, gnss, GNSS_EVT_INACTIVE)) {
 		update_led_pattern(LED_STATE_ACTIVE_MODE);
-		sub_state_set(SUB_STATE_GPS_INACTIVE);
+		sub_state_set(SUB_STATE_GNSS_INACTIVE);
 	}
 
 	if ((IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) ||
 	    (IS_EVENT(msg, data, DATA_EVT_UI_DATA_SEND))) {
 		update_led_pattern(LED_STATE_CLOUD_PUBLISHING);
-		k_work_reschedule(&led_pat_gps_work, K_SECONDS(5));
+		k_work_reschedule(&led_pat_gnss_work, K_SECONDS(5));
 	}
 
 	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_READY)) {
 		if (!msg->module.data.data.cfg.active_mode) {
 			state_set(STATE_PASSIVE);
-			k_work_reschedule(&led_pat_gps_work,
+			k_work_reschedule(&led_pat_gnss_work,
 					      K_SECONDS(5));
 		}
 	}
 }
 
-/* Message handler for SUB_STATE_GPS_INACTIVE in STATE_ACTIVE. */
-static void on_state_active_sub_state_gps_inactive(struct ui_msg_data *msg)
+/* Message handler for SUB_STATE_GNSS_INACTIVE in STATE_ACTIVE. */
+static void on_state_active_sub_state_gnss_inactive(struct ui_msg_data *msg)
 {
-	if (IS_EVENT(msg, gps, GPS_EVT_ACTIVE)) {
-		update_led_pattern(LED_STATE_GPS_SEARCHING);
-		sub_state_set(SUB_STATE_GPS_ACTIVE);
+	if (IS_EVENT(msg, gnss, GNSS_EVT_ACTIVE)) {
+		update_led_pattern(LED_STATE_GNSS_SEARCHING);
+		sub_state_set(SUB_STATE_GNSS_ACTIVE);
 	}
 
 	if ((IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) ||
@@ -299,35 +299,35 @@ static void on_state_active_sub_state_gps_inactive(struct ui_msg_data *msg)
 	}
 }
 
-/* Message handler for SUB_STATE_GPS_ACTIVE in STATE_PASSIVE. */
-static void on_state_passive_sub_state_gps_active(struct ui_msg_data *msg)
+/* Message handler for SUB_STATE_GNSS_ACTIVE in STATE_PASSIVE. */
+static void on_state_passive_sub_state_gnss_active(struct ui_msg_data *msg)
 {
-	if (IS_EVENT(msg, gps, GPS_EVT_INACTIVE)) {
+	if (IS_EVENT(msg, gnss, GNSS_EVT_INACTIVE)) {
 		update_led_pattern(LED_STATE_PASSIVE_MODE);
-		sub_state_set(SUB_STATE_GPS_INACTIVE);
+		sub_state_set(SUB_STATE_GNSS_INACTIVE);
 	}
 
 	if ((IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) ||
 	    (IS_EVENT(msg, data, DATA_EVT_UI_DATA_SEND))) {
 		update_led_pattern(LED_STATE_CLOUD_PUBLISHING);
-		k_work_reschedule(&led_pat_gps_work, K_SECONDS(5));
+		k_work_reschedule(&led_pat_gnss_work, K_SECONDS(5));
 	}
 
 	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_READY)) {
 		if (msg->module.data.data.cfg.active_mode) {
 			state_set(STATE_ACTIVE);
-			k_work_reschedule(&led_pat_gps_work,
+			k_work_reschedule(&led_pat_gnss_work,
 					      K_SECONDS(5));
 		}
 	}
 }
 
-/* Message handler for SUB_STATE_GPS_INACTIVE in STATE_PASSIVE. */
-static void on_state_passive_sub_state_gps_inactive(struct ui_msg_data *msg)
+/* Message handler for SUB_STATE_GNSS_INACTIVE in STATE_PASSIVE. */
+static void on_state_passive_sub_state_gnss_inactive(struct ui_msg_data *msg)
 {
-	if (IS_EVENT(msg, gps, GPS_EVT_ACTIVE)) {
-		update_led_pattern(LED_STATE_GPS_SEARCHING);
-		sub_state_set(SUB_STATE_GPS_ACTIVE);
+	if (IS_EVENT(msg, gnss, GNSS_EVT_ACTIVE)) {
+		update_led_pattern(LED_STATE_GNSS_SEARCHING);
+		sub_state_set(SUB_STATE_GNSS_ACTIVE);
 	}
 
 	if ((IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) ||
@@ -357,7 +357,7 @@ static void on_all_states(struct ui_msg_data *msg)
 		}
 
 		state_set(STATE_ACTIVE);
-		sub_state_set(SUB_STATE_GPS_INACTIVE);
+		sub_state_set(SUB_STATE_GNSS_INACTIVE);
 	}
 
 	if (IS_EVENT(msg, util, UTIL_EVT_SHUTDOWN_REQUEST)) {
@@ -393,11 +393,11 @@ static void message_handler(struct ui_msg_data *msg)
 	switch (state) {
 	case STATE_ACTIVE:
 		switch (sub_state) {
-		case SUB_STATE_GPS_ACTIVE:
-			on_state_active_sub_state_gps_active(msg);
+		case SUB_STATE_GNSS_ACTIVE:
+			on_state_active_sub_state_gnss_active(msg);
 			break;
-		case SUB_STATE_GPS_INACTIVE:
-			on_state_active_sub_state_gps_inactive(msg);
+		case SUB_STATE_GNSS_INACTIVE:
+			on_state_active_sub_state_gnss_inactive(msg);
 			break;
 		default:
 			LOG_WRN("Unknown ui module sub state.");
@@ -406,11 +406,11 @@ static void message_handler(struct ui_msg_data *msg)
 		break;
 	case STATE_PASSIVE:
 		switch (sub_state) {
-		case SUB_STATE_GPS_ACTIVE:
-			on_state_passive_sub_state_gps_active(msg);
+		case SUB_STATE_GNSS_ACTIVE:
+			on_state_passive_sub_state_gnss_active(msg);
 			break;
-		case SUB_STATE_GPS_INACTIVE:
-			on_state_passive_sub_state_gps_inactive(msg);
+		case SUB_STATE_GNSS_INACTIVE:
+			on_state_passive_sub_state_gnss_inactive(msg);
 			break;
 		default:
 			LOG_WRN("Unknown ui module sub state.");
@@ -431,7 +431,7 @@ static void message_handler(struct ui_msg_data *msg)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, data_module_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, gps_module_event);
+EVENT_SUBSCRIBE_EARLY(MODULE, gnss_module_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, util_module_event);
 

@@ -32,8 +32,8 @@ config DATA_THREAD_STACK_SIZE
 	default 5120 if NRF_CLOUD_AGPS
 	default 3072
 
-config DATA_GPS_BUFFER_COUNT
-	int "Number of GPS data ringbuffer entries"
+config DATA_GNSS_BUFFER_COUNT
+	int "Number of GNSS data ringbuffer entries"
 	range 1 100
 	default 10
 	help
@@ -72,8 +72,8 @@ config DATA_BATTERY_BUFFER_COUNT
 	range 1 100
 	default 3
 
-config DATA_GPS_BUFFER_STORE
-	bool "Store GPS data received from the GPS module"
+config DATA_GNSS_BUFFER_STORE
+	bool "Store GNSS data received from the GNSS module"
 	default y
 
 config DATA_SENSOR_BUFFER_STORE
@@ -130,11 +130,11 @@ config DATA_ACCELEROMETER_THRESHOLD
 	help
 	  Minimum absolute value in m/s² that is considered movement in passive mode.
 
-config DATA_GPS_TIMEOUT_SECONDS
-	int "Default GPS timeout"
+config DATA_GNSS_TIMEOUT_SECONDS
+	int "Default GNSS timeout"
 	default 60
 	help
-	  Timeout for acquiring a GPS fix during sampling of data.
+	  Timeout for acquiring a GNSS fix during sampling of data.
 
 config DATA_SAMPLE_GNSS_DEFAULT
 	bool "Include GNSS in sample requests"

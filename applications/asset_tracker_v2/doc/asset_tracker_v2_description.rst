@@ -105,7 +105,7 @@ The real-time configurations supported by the application are listed in the foll
 |          +---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 |          | Movement timeout    | Number of seconds between each sampling/publication in passive mode, whether the device is moving or not.                            | 3600 seconds   |
 +----------+---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
-| GPS timeout                    | Timeout for acquiring a GNSS fix during data sampling.                                                                               | 60 seconds     |
+| GNSS timeout                   | Timeout for acquiring a GNSS fix during data sampling.                                                                               | 60 seconds     |
 +--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 | Accelerometer threshold        | Accelerometer threshold in m/s². Minimal absolute value in m/s² for accelerometer readings to be considered valid movement.          | 10 m/s²        |
 +--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
@@ -264,9 +264,9 @@ CONFIG_DATA_MOVEMENT_TIMEOUT_SECONDS - Configuration for Movement timeout
 CONFIG_DATA_ACCELEROMETER_THRESHOLD - Configuration for Accelerometer threshold
    This configuration sets the Accelerometer threshold value.
 
-.. _CONFIG_DATA_GPS_TIMEOUT_SECONDS:
+.. _CONFIG_DATA_GNSS_TIMEOUT_SECONDS:
 
-CONFIG_DATA_GPS_TIMEOUT_SECONDS - Configuration for GNSS timeout
+CONFIG_DATA_GNSS_TIMEOUT_SECONDS - Configuration for GNSS timeout
    This configuration sets the GNSS timeout value.
 
 Optional library configurations
@@ -326,7 +326,7 @@ See :ref:`Building with overlays <building_with_overlays>` for information on ho
 .. external_antenna_note_start
 
 .. note::
-   When you build the application for the nRF9160 DK v0.15.0 and later, set the ``CONFIG_GPS_MODULE_ANTENNA_EXTERNAL`` option to ``y`` to achieve the best external antenna performance.
+   When you build the application for the nRF9160 DK v0.15.0 and later, set the :kconfig:`CONFIG_GNSS_MODULE_ANTENNA_EXTERNAL` option to ``y`` to achieve the best external antenna performance.
 
 .. external_antenna_note_end
 
@@ -384,13 +384,13 @@ After programming the application and all the prerequisites to your development 
 
     <inf> event_manager: APP_EVT_DATA_GET_ALL
     <inf> event_manager: APP_EVT_DATA_GET - Requested data types (MOD_DYN, BAT, ENV, GNSS)
-    <inf> event_manager: GPS_EVT_ACTIVE
+    <inf> event_manager: GNSS_EVT_ACTIVE
     <inf> event_manager: SENSOR_EVT_ENVIRONMENTAL_NOT_SUPPORTED
     <inf> event_manager: MODEM_EVT_MODEM_DYNAMIC_DATA_READY
     <inf> event_manager: MODEM_EVT_BATTERY_DATA_READY
-    <inf> event_manager: GPS_EVT_DATA_READY
+    <inf> event_manager: GNSS_EVT_DATA_READY
     <inf> event_manager: DATA_EVT_DATA_READY
-    <inf> event_manager: GPS_EVT_INACTIVE
+    <inf> event_manager: GNSS_EVT_INACTIVE
     <inf> event_manager: DATA_EVT_DATA_SEND
     <wrn> data_module: No batch data to encode, ringbuffers empty
     <inf> event_manager: CLOUD_EVT_DATA_ACK
@@ -406,7 +406,7 @@ Following are the current limitations in the nRF Cloud implementation of the Ass
 * Data that is sampled by the device must ideally be addressed to the cloud-side device state and published in a single packet for regular device updates.
   This is to avoid the unnecessary stack overhead associated with splitting the payload and the additional current consumption that might result from splitting and sending the data as separate packets.
   However, in the case of nRF Cloud implementation, the nRF Cloud front end supports only the display of APP_DATA_MODEM_DYNAMIC (networkInfo) and APP_DATA_MODEM_STATIC (deviceInfo) through the device shadow.
-  The other supported data types (GPS, temperature, and humidity) must be sent in a specified format to a separate message endpoint for the front end to graphically represent the data.
+  The other supported data types (GNSS, temperature, and humidity) must be sent in a specified format to a separate message endpoint for the front end to graphically represent the data.
   You can find the JSON protocol definitions for data sent to the message endpoint in `nRF Cloud JSON protocol schemas`_.
 
 * The nRF Cloud web application does not support the manipulation of real-time configurations.
@@ -424,7 +424,7 @@ Following are the current limitations in the nRF Cloud implementation of the Ass
 				"activeWaitTime":120,
 				"movementTimeout":3600,
 				"movementResolution":120,
-				"gpsTimeout":60,
+				"gnssTimeout":60,
 				"movementThreshold":10,
 				"nod":[]
 			}

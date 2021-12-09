@@ -20,7 +20,7 @@
 /** @brief Asset Tracker led states in the application. */
 enum led_state {
 	LED_STATE_LTE_CONNECTING,
-	LED_STATE_GPS_SEARCHING,
+	LED_STATE_GNSS_SEARCHING,
 	LED_STATE_CLOUD_PUBLISHING,
 	LED_STATE_ACTIVE_MODE,
 	LED_STATE_PASSIVE_MODE,
