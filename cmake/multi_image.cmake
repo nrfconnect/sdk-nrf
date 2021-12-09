@@ -146,30 +146,30 @@ function(add_child_image_from_source)
   #
   # <child-sample> DIRECTORY
   # | - prj.conf (A)
-  # | - prj_<desc>.conf (B)
+  # | - prj_<buildtype>.conf (B)
   # | - boards DIRECTORY
   # | | - <board>.conf (C)
-  # | | - <board>_<desc>.conf (D)
+  # | | - <board>_<buildtype>.conf (D)
 
 
   # <current-sample> DIRECTORY
   # | - prj.conf
-  # | - prj_<desc>.conf
+  # | - prj_<buildtype>.conf
   # | - child_image DIRECTORY
   #     |-- <ACI_NAME>.conf (I)                 Fragment, used together with (A) and (C)
-  #     |-- <ACI_NAME>_<desc>.conf (J)          Fragment, used together with (B) and (D)
+  #     |-- <ACI_NAME>_<buildtype>.conf (J)     Fragment, used together with (B) and (D)
   #     |-- <ACI_NAME>.overlay                  If present, will be merged with BOARD.dts
   #     |-- <ACI_NAME> DIRECTORY
   #         |-- boards DIRECTORY
   #         |   |-- <board>.conf (E)            If present, use instead of (C), requires (G).
-  #         |   |-- <board>_<desc>.conf (F)     If present, use instead of (D), requires (H).
+  #         |   |-- <board>_<buildtype>.conf (F)     If present, use instead of (D), requires (H).
   #         |   |-- <board>.overlay             If present, will be merged with BOARD.dts
   #         |   |-- <board>_<revision>.overlay  If present, will be merged with BOARD.dts
   #         |-- prj.conf (G)                    If present, use instead of (A)
   #         |                                   Note that (C) is ignored if this is present.
   #         |                                   Use (E) instead.
-  #         |-- prj_<desc>.conf (H)             If present, used instead of (B) when user
-  #         |                                   specify `-DCONF_FILE=prj_<desc>.conf for
+  #         |-- prj_<buildtype>.conf (H)        If present, used instead of (B) when user
+  #         |                                   specify `-DCONF_FILE=prj_<buildtype>.conf for
   #         |                                   parent image. Note that any (C) is ignored
   #         |                                   if this is present. Use (F) instead.
   #         |-- <board>.overlay                 If present, will be merged with BOARD.dts
