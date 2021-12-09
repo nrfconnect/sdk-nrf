@@ -142,13 +142,19 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		LOG_WRN("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");
 		LOG_WRN("Add the device to nRF Cloud and wait for it to reconnect");
 
-		/* It is expected that the application will disconnect and reconnect to nRF Cloud
+		/* A disconnect/reconnect is required by nRF Cloud after the
+		 * NRF_CLOUD_EVT_USER_ASSOCIATED event is received. This event is sent from
+		 * nRF Cloud when the device has been added to an nRF Cloud account.
+		 * However, it is likely that the device is in PSM when this occurs and not able to
+		 * receive this event.
+		 *
+		 * Due to this, we explicitly disconnect the application
+		 * when the NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST event is received and depend on
+		 * the reconnection routine in the cloud module to reconnect the application until
+		 * the device has been registered to the nRF Cloud account.
+		 *
+		 * It is expected that the application will disconnect and reconnect to nRF Cloud
 		 * several times during device association.
-		 */
-
-		/* Explicitly disconnect the nRF Cloud transport library to clear its
-		 * internal state. This is needed by the library to allow subsequent calls to
-		 * nrf_cloud_connect(), which is necessary to complete device association.
 		 */
 		err = nrf_cloud_disconnect();
 		if (err) {
