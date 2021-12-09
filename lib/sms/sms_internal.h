@@ -13,7 +13,7 @@
 /**
  * @brief Temporary buffer that can be used in various functions where data buffer is required.
  *
- * @details Will be used at least as response buffer for at_cmd_write() and at_params_string_get().
+ * @details Will be used at least when encoding SMS-SUBMIT message.
  * Be careful when using this internal buffer so that the caller hasn't already passed the data
  * using the same buffer.
  */

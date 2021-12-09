@@ -855,7 +855,7 @@ int sms_deliver_pdu_parse(const char *pdu, struct sms_data *data)
 		return data->payload_len;
 	}
 
-	LOG_DBG("Time:   %02x-%02x-%02x %02x:%02x:%02x",
+	LOG_DBG("Time:   %02d-%02d-%02d %02d:%02d:%02d",
 		header->time.year,
 		header->time.month,
 		header->time.day,

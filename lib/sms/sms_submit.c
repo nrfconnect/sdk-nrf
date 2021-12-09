@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <zephyr.h>
 #include <errno.h>
-#include <modem/at_cmd.h>
+#include <nrf_modem_at.h>
 #include <modem/sms.h>
 
 #include "sms_internal.h"
@@ -121,7 +121,6 @@ static int sms_submit_encode(
 	uint8_t sms_submit_header_byte;
 	uint8_t ud_start_index;
 	uint8_t udh_size = (udh_str == NULL) ? 0 : strlen(udh_str) / 2;
-	enum at_cmd_state state = 0;
 
 	/* Create and send CMGS AT command */
 	msg_size =
@@ -168,11 +167,11 @@ static int sms_submit_encode(
 	LOG_DBG("Sending encoded SMS data (length=%d):", msg_size);
 	LOG_DBG("%s", log_strdup(send_buf));
 
-	err = at_cmd_write(send_buf, send_buf, SMS_BUF_TMP_LEN, &state);
+	err = nrf_modem_at_printf(send_buf);
 	if (err) {
-		LOG_ERR("at_cmd_write returned state=%d, err=%d", state, err);
+		LOG_ERR("Sending AT command failed, err=%d", err);
 	} else {
-		LOG_DBG("AT Response:%s", log_strdup(send_buf));
+		LOG_DBG("Sending AT command succeeded");
 	}
 
 	return err;

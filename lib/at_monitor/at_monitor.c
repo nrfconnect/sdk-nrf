@@ -26,11 +26,14 @@ static K_FIFO_DEFINE(at_monitor_fifo);
 static K_HEAP_DEFINE(at_monitor_heap, CONFIG_AT_MONITOR_HEAP_SIZE);
 static K_WORK_DEFINE(at_monitor_work, at_monitor_task);
 
-static void at_monitor_dispatch(const char *notif)
+/* This is not static so that tests can call this function */
+void at_monitor_dispatch(const char *notif)
 {
 	bool monitored;
 	struct at_notif_fifo *at_notif;
 	size_t sz_needed;
+
+	__ASSERT_NO_MSG(notif != NULL);
 
 	/* Dispatch to monitors in ISR, if any.
 	 * There might be non-ISR monitors that are interested
