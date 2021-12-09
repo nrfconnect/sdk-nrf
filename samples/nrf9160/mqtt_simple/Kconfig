@@ -35,7 +35,7 @@ config MQTT_MESSAGE_BUFFER_SIZE
 
 config MQTT_PAYLOAD_BUFFER_SIZE
 	int "MQTT payload buffer size"
-	default 128
+	default 400
 
 config BUTTON_EVENT_PUBLISH_MSG
 	string "The message to publish on a button event"
