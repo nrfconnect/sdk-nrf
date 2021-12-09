@@ -763,9 +763,37 @@ static int start(const struct device *dev, struct gps_config *cfg)
 		return -EIO;
 	}
 
-	err = nrf_modem_gnss_use_case_set(drv_data->config.use_case);
+#ifdef CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK
+	err = nrf_modem_gnss_elevation_threshold_set(CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK);
+	if (!err) {
+		LOG_DBG("Set elevation threshold to %d", CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK);
+	} else {
+		LOG_ERR("Failed to set elevation threshold: %d", err);
+	}
+#endif
+
+	uint8_t use_case = drv_data->config.use_case;
+
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_AGPS_FILTERED) &&
+	    (drv_data->config.interval > 1)) {
+		/** when in periodic tracking mode, prevent modem from wasting time
+		 *   downloading missing ephemerides
+		 */
+		use_case |= NRF_MODEM_GNSS_USE_CASE_SCHED_DOWNLOAD_DISABLE;
+		err = nrf_modem_gnss_use_case_set(use_case);
+
+		if (!err) {
+			LOG_DBG("Disabled scheduled GNSS downloads");
+		} else {
+			LOG_DBG("Could not disable scheduled GNSS downloads: %d", err);
+			use_case &= ~NRF_MODEM_GNSS_USE_CASE_SCHED_DOWNLOAD_DISABLE;
+			err = nrf_modem_gnss_use_case_set(use_case);
+		}
+	} else {
+		err = nrf_modem_gnss_use_case_set(use_case);
+	}
 	if (err) {
-		LOG_ERR("Failed to set GPS use case, error: %d", err);
+		LOG_ERR("Failed to configure use case: %d", err);
 		return -EIO;
 	}
 
