@@ -33,9 +33,9 @@
 #endif
 
 #if defined(CONFIG_NRF_CURL_INTEGRATION)
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED) && defined (CONFIG_AT_CMD)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
 /* NRF_IPERF3_INTEGRATION_CHANGE: added */
-#include <modem/at_cmd.h>
+#include <nrf_modem_at.h>
 #endif
 #endif
 
@@ -213,12 +213,12 @@ static void free_globalconfig(struct GlobalConfig *config)
 static void main_free(struct GlobalConfig *config)
 {
 #if defined(CONFIG_NRF_CURL_INTEGRATION)
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED) && defined (CONFIG_AT_CMD)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
   if (!config->curr_mdm_traces) {
-    static const char default_mdm_trace[] = "AT%XMODEMTRACE=1,2";
+    static const char default_mdm_trace[] = "AT%%XMODEMTRACE=1,2";
 
     /* We cannot know what was set before the tests, thus setting "default": */
-    if (at_cmd_write(default_mdm_trace, NULL, 0, NULL) != 0) {
+    if (nrf_modem_at_printf(default_mdm_trace) != 0) {
       printk("error when setting default modem traces \"%s\"\n", default_mdm_trace);
     }
     else {
@@ -348,7 +348,7 @@ int curl_tool_main(int argc, char *argv[], struct k_poll_signal *kill_signal)
 #if defined(CONFIG_NRF_CURL_INTEGRATION)
     global.kill_signal = kill_signal;
 #endif
-      
+
     /* Start our curl operation */
     result = operate(&global, argc, argv);
 

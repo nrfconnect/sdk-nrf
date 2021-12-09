@@ -798,7 +798,7 @@ ParameterError getparameter(const char *flag, /* f or -long-flag */
           return PARAM_BAD_NUMERIC;
         }
         break;
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED) && defined (CONFIG_AT_CMD)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
       case 'T': /* --curr-mdm-traces */
         global->curr_mdm_traces = toggle;
       break;
