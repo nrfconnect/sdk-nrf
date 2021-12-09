@@ -239,12 +239,14 @@ In these files, you can specify different values for configuration options that 
 See :ref:`zephyr:setting_configuration_values` in the Zephyr documentation for information on how to change the configuration permanently.
 
 .. tip::
-   Reconfiguring through menuconfig only changes the specific setting and will not adjust defaults for other visible and configured symbols.
+   Reconfiguring through menuconfig only changes the specific setting and the invisible options that are calculated from it.
+   It does not adjust visible symbols that have already defaulted to a value even if this default calculation is supposed to be dependent on the changed setting.
    This may result in a bloated configuration compared to changing the setting directly in :file:`prj.conf`.
    See the section Stuck symbols in menuconfig and guiconfig on the :ref:`kconfig_tips_and_tricks` in the Zephyr documentation for more information.
 
 If you work with SES, the :file:`prj.conf` file is read when you open a project.
-The file will be reloaded when CMake re-runs. This will happen automatically when the application is rebuilt, but can also be requested manually by using the :guilabel:`Project` > :guilabel:`Run CMake...` option.
+The file will be reloaded when CMake re-runs.
+This will happen automatically when the application is rebuilt, but can also be requested manually by using the :guilabel:`Project` > :guilabel:`Run CMake...` option.
 
 .. _configuring_vsc:
 
@@ -287,8 +289,11 @@ The *<buildtype>* can be any string, but it is common to use ``release`` and ``d
 
 For information about how to set variables, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
-In case there are other configuration files that you would like to modify, such as Partition Manager :ref:`static configuration <ug_pm_static>` or any child image configuration, you need to create a separate configuration file for them using the same naming pattern.
-For example, the file for the Partition Manager static configuration would be called :file:`pm_static_release.yaml`.
+The Partition Manager's :ref:`static configuration <ug_pm_static>` can also be made dependent on the build type.
+When the build type has been inferred, the file :file:`pm_static_<buildtype>.yml` will have precedence over :file:`pm_static.yml`.
+
+The child image Kconfig configuration can also be made dependent on the build type.
+The child image Kconfig file is named :file:`<child_image>.conf` instead of :file:`prj.conf`, but otherwise follows the same pattern as the parent Kconfig.
 
 .. build_types_overview_end
 
