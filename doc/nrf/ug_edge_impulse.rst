@@ -81,8 +81,9 @@ Complete the following steps to configure the building process:
    * Any downloadable URI supported by CMake's ``file(DOWNLOAD)`` command.
      For this variant, the |NCS| build system will download the :file:`zip` file automatically during build.
      The :file:`zip` file is downloaded into your application's :file:`build` directory.
+     See `Downloading model directly from Edge Impulse studio`_ for en example.
 
-     If the URI requires providing an additional API key, you can provide it using the following CMake definition: :c:macro:`EI_API_KEY_HEADER`.
+     If the URI requires providing an additional API key, you can provide it using the :c:macro:`EI_API_KEY_HEADER` CMake definition.
      The API key is provided using a format in which *key_name* is followed by *key_value*.
      For example, ``api-key:aaaabbbbccccdddd``, where ``aaaabbbbccccdddd`` is a sample *key_value*.
      See :ref:`cmake_options` for more information about defining CMake options for command line builds and SEGGER Embedded studio.
@@ -91,16 +92,21 @@ Downloading model directly from Edge Impulse studio
 ---------------------------------------------------
 
 As an example of downloadable URI, you can configure the |NCS| build system to download your model directly from the Edge Impulse studio.
-Complete the following steps to do this:
+You can download a model from either a private or a public project.
+
+Downloading from a private project
+++++++++++++++++++++++++++++++++++
+
+Complete the following steps to download the model from a private Edge Impulse project:
 
 1. Set :kconfig:`CONFIG_EDGE_IMPULSE_URI` to the URI from Edge Impulse studio:
 
    .. parsed-literal::
       :class: highlight
 
-      CONFIG_EDGE_IMPULSE_URI="https:\ //studio.edgeimpulse.com/v1/api/*XXXXX*/deployment/download?type=zip"
+      CONFIG_EDGE_IMPULSE_URI="https:\ //studio.edgeimpulse.com/v1/api/*XYZ*/deployment/download?type=zip"
 
-   The *XXXXX* must be set to the project ID of your Edge Impulse project.
+   Set *XYZ* to the project ID of your Edge Impulse project.
    You can check the project ID of your project in the :guilabel:`Project info` panel under :guilabel:`Dashboard`.
 
    .. figure:: images/ei_project_id.png
@@ -109,11 +115,50 @@ Complete the following steps to do this:
 
       Project ID in Edge Impulse studio dashboard
 
-#. Define the :c:macro:`EI_API_KEY_HEADER` CMake option as ``x-api-key:aaaabbbbccccdddd`` to provide the x-api-key associated with yout Edge Impulse project.
-   You can access your API keys under the :guilabel:`Keys` tab in the Edge Impulse project dashboard.
+#. Define the :c:macro:`EI_API_KEY_HEADER` CMake option (see :ref:`cmake_options`) as ``x-api-key:[ei api key]`` to provide the x-api-key associated with your Edge Impulse project.
+   To check what to provide as the *[ei api key]* value, check your API keys under the :guilabel:`Keys` tab in the Edge Impulse project dashboard.
 
    .. figure:: images/ei_api_key.png
       :scale: 50 %
       :alt: API key under the Keys tab in Edge Impulse studio
 
       API key under the Keys tab in Edge Impulse studio
+
+Downloading from a public project
++++++++++++++++++++++++++++++++++
+
+Complete the following steps to download the model from a public Edge Impulse project:
+
+1. Check the ID of the public project:
+
+   a. Check the project ID of your project in the :guilabel:`Project info` panel under :guilabel:`Dashboard`.
+   #. Provide this project ID in the *XYZ* field in the following URL:
+
+      .. parsed-literal::
+         :class: highlight
+
+         https:\ //studio.edgeimpulse.com/v1/api/*XYZ*/versions/public
+
+   #. Paste the URL into your browser.
+      The ID of the public project is returned as the value of the ``publicProjectId`` field.
+      For example:
+
+      .. parsed-literal::
+         :class: highlight
+
+         {"success":true,"versions":[{"version":1,"publicProjectId":66469,"publicProjectUrl":"https://studio.edgeimpulse.com/public/66468/latest"}]}
+
+      In this example, the *XYZ* project ID is ``66468``, while the ``publicProjectId`` equals ``66469``.
+
+#. Set :kconfig:`CONFIG_EDGE_IMPULSE_URI` to the following URI from Edge Impulse studio:
+
+   .. parsed-literal::
+      :class: highlight
+
+      CONFIG_EDGE_IMPULSE_URI="https:\ //studio.edgeimpulse.com/v1/api/*XYZ*/deployment/download?type=zip&modelType=int8"
+
+   Set the *XYZ* to the public project ID from previous step.
+   Using the example above, this would be ``66469``.
+
+   .. note::
+      This URI includes the ``modelType=int8`` parameter because from public Edge Impulse projects you can only download quantized models created with Edge Impulse's EON Compiler.
