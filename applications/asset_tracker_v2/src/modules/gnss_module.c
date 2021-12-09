@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <date_time.h>
 #include <event_manager.h>
-#include <modem/at_cmd.h>
+#include <nrf_modem_at.h>
 #include <nrf_modem_gnss.h>
 #if defined(CONFIG_NRF_CLOUD_PGPS) && defined(CONFIG_GNSS_MODULE_PGPS_STORE_LOCATION)
 #include <net/nrf_cloud_pgps.h>
@@ -509,14 +509,14 @@ static int lna_configure(void)
 
 	/* Make sure the AT command is not empty. */
 	if (xmagpio_command[0] != '\0') {
-		err = at_cmd_write(xmagpio_command, NULL, 0, NULL);
+		err = nrf_modem_at_printf(xmagpio_command);
 		if (err) {
 			return err;
 		}
 	}
 
 	if (xcoex0_command[0] != '\0') {
-		err = at_cmd_write(xcoex0_command, NULL, 0, NULL);
+		err = nrf_modem_at_printf(xcoex0_command);
 		if (err) {
 			return err;
 		}

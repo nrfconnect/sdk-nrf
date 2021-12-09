@@ -11,8 +11,6 @@
 #include <math.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
-#include <modem/at_cmd.h>
-#include <modem/at_notif.h>
 
 #define MODULE modem_module
 
@@ -813,12 +811,6 @@ static void on_state_init(struct modem_msg_data *msg)
 		int err;
 
 		state_set(STATE_DISCONNECTED);
-
-		err = at_cmd_init();
-		__ASSERT(err == 0, "Failed initializing at_cmd");
-
-		err = at_notif_init();
-		__ASSERT(err == 0, "Failed initializing at_notif");
 
 		err = setup();
 		__ASSERT(err == 0, "Failed running setup()");
