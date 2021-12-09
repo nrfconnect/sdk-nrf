@@ -9,7 +9,6 @@
 #include <shell/shell.h>
 #include <modem/at_monitor.h>
 #include <nrf_modem_at.h>
-#include <modem/at_notif.h>
 
 #include "mosh_defines.h"
 #include "mosh_print.h"
@@ -30,11 +29,6 @@ static void at_cmd_handler(const char *response)
 	mosh_print("AT event handler: %s", response);
 }
 
-static void at_cmd_handler_old(void *context, const char *response)
-{
-	mosh_print("Old AT event handler: %s", response);
-}
-
 int at_shell(const struct shell *shell, size_t argc, char **argv)
 {
 	int err;
@@ -49,13 +43,9 @@ int at_shell(const struct shell *shell, size_t argc, char **argv)
 
 	if (!strcmp(command, "events_enable")) {
 		at_monitor_resume(mosh_at_handler);
-		/* TODO: at_notif should be removed once all used libraries use at_monitor */
-		at_notif_register_handler((void *)shell, at_cmd_handler_old);
 		mosh_print("AT command events enabled");
 	} else if (!strcmp(command, "events_disable")) {
 		at_monitor_pause(mosh_at_handler);
-		/* TODO: at_notif should be removed once all used libraries use at_monitor */
-		at_notif_deregister_handler((void *)shell, at_cmd_handler_old);
 		mosh_print("AT command events disabled");
 	} else {
 		err = nrf_modem_at_cmd(response, sizeof(response), "%s", command);
