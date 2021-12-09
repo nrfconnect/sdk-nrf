@@ -28,9 +28,10 @@ static void at_param_clear(struct at_param *param)
 {
 	__ASSERT(param != NULL, "Parameter cannot be NULL.");
 
-	if ((param->type == AT_PARAM_TYPE_STRING) ||
-	    (param->type == AT_PARAM_TYPE_ARRAY)) {
+	if (param->type == AT_PARAM_TYPE_STRING) {
 		k_free(param->value.str_val);
+	} else if (param->type == AT_PARAM_TYPE_ARRAY) {
+		k_free(param->value.array_val);
 	}
 
 	param->value.int_val = 0;
