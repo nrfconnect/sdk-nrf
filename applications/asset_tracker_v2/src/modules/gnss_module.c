@@ -454,6 +454,16 @@ static void search_start(void)
 		}
 	}
 
+#if defined(CONFIG_GNSS_MODULE_ELEVATION_MASK)
+	err = nrf_modem_gnss_elevation_threshold_set(CONFIG_GNSS_MODULE_ELEVATION_MASK);
+	if (err) {
+		LOG_ERR("Failed to set elevation threshold to %d, error: %d",
+			CONFIG_GNSS_MODULE_ELEVATION_MASK, err);
+	} else {
+		LOG_DBG("Elevation threshold set to %d", CONFIG_GNSS_MODULE_ELEVATION_MASK);
+	}
+#endif
+
 	err = nrf_modem_gnss_start();
 	if (err) {
 		LOG_WRN("Failed to start GNSS, error: %d", err);

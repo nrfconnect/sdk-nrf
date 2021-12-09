@@ -216,6 +216,11 @@ struct cloud_data_agps_request {
 	struct nrf_modem_gnss_agps_data_frame request;
 	/** Flag signifying that the data entry is to be encoded. */
 	bool queued : 1;
+	/** Flag indicating that the ephemerides will only include visible satellites */
+	bool filtered : 1;
+	/** Angle above the horizon to constrain the filtered set to. */
+	uint8_t mask_angle;
+
 };
 struct cloud_data_pgps_request {
 	/** Number of requested predictions. */
