@@ -4,14 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <nrf_modem_at.h>
+#include <modem/at_monitor.h>
 #include <modem/at_cmd_parser.h>
-#include <modem/at_cmd.h>
-#include <modem/at_notif.h>
 #include <ctype.h>
 #include <device.h>
 #include <errno.h>
 #include <modem/modem_info.h>
 #include <net/socket.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <zephyr.h>
@@ -23,22 +24,21 @@ LOG_MODULE_REGISTER(modem_info);
 #define INVALID_DESCRIPTOR	-1
 
 #define AT_CMD_CESQ		"AT+CESQ"
-#define AT_CMD_CESQ_ON		"AT%CESQ=1"
-#define AT_CMD_CESQ_OFF		"AT%CESQ=0"
-#define AT_CMD_CESQ_RESP	"%CESQ"
-#define AT_CMD_CURRENT_BAND	"AT%XCBAND"
-#define AT_CMD_SUPPORTED_BAND	"AT%XCBAND=?"
+#define AT_CMD_CESQ_ON		"AT%%CESQ=1"
+#define AT_CMD_CESQ_OFF		"AT%%CESQ=0"
+#define AT_CMD_CURRENT_BAND	"AT%%XCBAND"
+#define AT_CMD_SUPPORTED_BAND	"AT%%XCBAND=?"
 #define AT_CMD_CURRENT_MODE	"AT+CEMODE?"
 #define AT_CMD_CURRENT_OP	"AT+COPS?"
 #define AT_CMD_NETWORK_STATUS	"AT+CEREG?"
 #define AT_CMD_PDP_CONTEXT	"AT+CGDCONT?"
-#define AT_CMD_UICC_STATE	"AT%XSIM?"
-#define AT_CMD_VBAT		"AT%XVBAT"
-#define AT_CMD_TEMP		"AT%XTEMP?"
+#define AT_CMD_UICC_STATE	"AT%%XSIM?"
+#define AT_CMD_VBAT		"AT%%XVBAT"
+#define AT_CMD_TEMP		"AT%%XTEMP?"
 #define AT_CMD_FW_VERSION	"AT+CGMR"
 #define AT_CMD_CRSM		"AT+CRSM"
 #define AT_CMD_ICCID		"AT+CRSM=176,12258,0,0,10"
-#define AT_CMD_SYSTEMMODE	"AT%XSYSTEMMODE?"
+#define AT_CMD_SYSTEMMODE	"AT%%XSYSTEMMODE?"
 #define AT_CMD_IMSI		"AT+CIMI"
 #define AT_CMD_IMEI		"AT+CGSN"
 #define AT_CMD_DATE_TIME	"AT+CCLK?"
@@ -340,13 +340,10 @@ static const struct modem_info_data *const modem_data[] = {
 	[MODEM_INFO_APN]	= &apn_data,
 };
 
+AT_MONITOR(modem_info_cesq_mon, "%CESQ", modem_info_rsrp_subscribe_handler, PAUSED);
+
 static rsrp_cb_t modem_info_rsrp_cb;
 static struct at_param_list m_param_list;
-
-static bool is_cesq_notification(const char *buf, size_t len)
-{
-	return strstr(buf, AT_CMD_CESQ_RESP) ? true : false;
-}
 
 static void flip_iccid_string(char *buf)
 {
@@ -421,7 +418,6 @@ int modem_info_short_get(enum modem_info info, uint16_t *buf)
 {
 	int err;
 	char recv_buf[CONFIG_MODEM_INFO_BUFFER_SIZE] = {0};
-	int cmd_length = 0;
 
 	if (buf == NULL) {
 		return -EINVAL;
@@ -431,17 +427,12 @@ int modem_info_short_get(enum modem_info info, uint16_t *buf)
 		return -EINVAL;
 	}
 
-	err = at_cmd_write(modem_data[info]->cmd,
-			   recv_buf,
-			   CONFIG_MODEM_INFO_BUFFER_SIZE,
-			   NULL);
-
+	err = nrf_modem_at_cmd(recv_buf, CONFIG_MODEM_INFO_BUFFER_SIZE, modem_data[info]->cmd);
 	if (err != 0) {
 		return -EIO;
 	}
 
-	err = modem_info_parse(modem_data[info], &recv_buf[cmd_length]);
-
+	err = modem_info_parse(modem_data[info], recv_buf);
 	if (err) {
 		return err;
 	}
@@ -460,6 +451,7 @@ int modem_info_short_get(enum modem_info info, uint16_t *buf)
 static int parse_ip_addresses(char *out_buf, size_t out_buf_size, char *in_buf)
 {
 	int err;
+	char *p;
 	char *str_end = in_buf;
 	int current_ip_idx = 0;
 	int total_ip_count = 0;
@@ -472,6 +464,17 @@ static int parse_ip_addresses(char *out_buf, size_t out_buf_size, char *in_buf)
 	char ip_buf[INET_ADDRSTRLEN + sizeof(" ") + INET6_ADDRSTRLEN];
 	char *ip_v6_str;
 	bool first_address;
+
+	p = strstr(in_buf, "OK\r\n");
+	if (!p) {
+		LOG_WRN("No response status: %s", log_strdup(in_buf));
+		return -EINVAL;
+	}
+
+	/* Trim the last part of the response,
+	 * we use \r\n to count the number of IP addresses
+	 */
+	*p = '\0';
 
 	/* Check for potentially multiple IP addresses */
 	while ((str_end = strstr(str_end, AT_CMD_RSP_DELIM)) != NULL) {
@@ -588,10 +591,7 @@ int modem_info_string_get(enum modem_info info, char *buf, const size_t buf_size
 
 	buf[0] = '\0';
 
-	err = at_cmd_write(modem_data[info]->cmd,
-			  recv_buf,
-			  CONFIG_MODEM_INFO_BUFFER_SIZE,
-			  NULL);
+	err = nrf_modem_at_cmd(recv_buf, CONFIG_MODEM_INFO_BUFFER_SIZE, modem_data[info]->cmd);
 	if (err != 0) {
 		return -EIO;
 	}
@@ -676,16 +676,10 @@ int modem_info_string_get(enum modem_info info, char *buf, const size_t buf_size
 	return len <= 0 ? -ENOTSUP : len;
 }
 
-static void modem_info_rsrp_subscribe_handler(void *context, const char *response)
+static void modem_info_rsrp_subscribe_handler(const char *notif)
 {
-	ARG_UNUSED(context);
-
-	uint16_t param_value;
 	int err;
-
-	if (!is_cesq_notification(response, strlen(response))) {
-		return;
-	}
+	uint16_t param_value;
 
 	const struct modem_info_data rsrp_notify_data = {
 		.cmd		= AT_CMD_CESQ,
@@ -695,7 +689,7 @@ static void modem_info_rsrp_subscribe_handler(void *context, const char *respons
 		.data_type	= AT_PARAM_TYPE_NUM_INT,
 	};
 
-	err = modem_info_parse(&rsrp_notify_data, response);
+	err = modem_info_parse(&rsrp_notify_data, notif);
 	if (err != 0) {
 		LOG_ERR("modem_info_parse failed to parse "
 			"CESQ notification, %d", err);
@@ -717,14 +711,9 @@ int modem_info_rsrp_register(rsrp_cb_t cb)
 {
 	modem_info_rsrp_cb = cb;
 
-	int rc = at_notif_register_handler(NULL,
-		modem_info_rsrp_subscribe_handler);
-	if (rc != 0) {
-		LOG_ERR("Can't register handler rc=%d", rc);
-		return rc;
-	}
+	at_monitor_resume(modem_info_cesq_mon);
 
-	if (at_cmd_write(AT_CMD_CESQ_ON, NULL, 0, NULL) != 0) {
+	if (nrf_modem_at_printf(AT_CMD_CESQ_ON) != 0) {
 		return -EIO;
 	}
 
