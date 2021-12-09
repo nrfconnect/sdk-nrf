@@ -6,21 +6,11 @@
 
 menuconfig SMS
 	bool "SMS subscriber"
-	select AT_CMD_PARSER
-	select AT_NOTIF
+	select AT_MONITOR
 	help
 	  A library for managing SMS subscriptions.
 
 if SMS
-
-config SMS_AT_CMD
-	bool
-	default y
-	select AT_CMD
-	help
-	  Use the AT Command library with SMS subscriber library. This is
-	  separated here from other dependencies to allow disabling of
-	  AT Command library in tests for mocking purposes.
 
 config SMS_SUBSCRIBERS_MAX_CNT
 	int "Maximum number of subscribers"

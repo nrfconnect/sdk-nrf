@@ -12,7 +12,9 @@ project(sms_test)
 # generate runner for the test
 test_runner_generate(src/sms_test.c)
 
-cmock_handle(../../../include/modem/at_cmd.h)
+cmock_handle(${ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/nrf_modem_at.h)
+
+zephyr_include_directories(app PRIVATE ${ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/)
 
 # add test file
 target_sources(app PRIVATE src/sms_test.c)

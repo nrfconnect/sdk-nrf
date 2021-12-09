@@ -9,23 +9,14 @@
 #include <stdio.h>
 #include <modem/sms.h>
 #include <errno.h>
-#include <modem/at_cmd.h>
-#include <modem/at_cmd_parser.h>
-#include <modem/at_params.h>
-#include <modem/at_notif.h>
+#include <modem/at_monitor.h>
+#include <nrf_modem_at.h>
 
 #include "sms_submit.h"
 #include "sms_deliver.h"
-#include "sms_at.h"
 #include "sms_internal.h"
 
 LOG_MODULE_REGISTER(sms, CONFIG_SMS_LOG_LEVEL);
-
-/** @brief Number of parameters in CNMI AT command response. */
-#define AT_CNMI_PARAMS_COUNT 6
-/** @brief Maxmimum number of parameters for any AT command response. */
-#define AT_SMS_PARAMS_COUNT_MAX AT_CNMI_PARAMS_COUNT
-
 
 /** @brief AT command to check if a client already exist. */
 #define AT_SMS_SUBSCRIBER_READ "AT+CNMI?"
@@ -39,15 +30,16 @@ LOG_MODULE_REGISTER(sms, CONFIG_SMS_LOG_LEVEL);
 /** @brief SMS structure where received SMS is parsed. */
 static struct sms_data sms_data_info;
 
-/** @brief Worker handling SMS acknowledgements */
-static struct k_work sms_ack_work;
-
 /**
- * @brief Response list used for AT command parsing.
- * @details This is a global variable so that we can use the same structure requiring memory and
- * initialization in various places of the code.
+ * @brief Worker handling SMS acknowledgements because we cannot call
+ * nrf_modem_at_printf from AT monitor callback.
  */
-static struct at_param_list resp_list;
+static struct k_work sms_ack_work;
+/**
+ * @brief Worker handling notifying SMS subscribers about received messages because we cannot
+ * notify subscribers in ISR context where AT notifications are received.
+ */
+static struct k_work sms_notify_work;
 
 /* Reserving internal temporary buffers that are used for various functions requiring memory. */
 uint8_t sms_buf_tmp[SMS_BUF_TMP_LEN];
@@ -70,6 +62,10 @@ struct sms_subscriber {
 /** @brief List of subscribers. */
 static struct sms_subscriber subscribers[CONFIG_SMS_SUBSCRIBERS_MAX_CNT];
 
+/* AT monitors for received SMS messages (CMT) and status reports (CDS). */
+AT_MONITOR_ISR(sms_at_handler_cmt, "+CMT", sms_at_cmd_handler_cmt, PAUSED);
+AT_MONITOR_ISR(sms_at_handler_cds, "+CDS", sms_at_cmd_handler_cds, PAUSED);
+
 /**
  * @brief Acknowledge SMS messages towards network.
  *
@@ -77,7 +73,7 @@ static struct sms_subscriber subscribers[CONFIG_SMS_SUBSCRIBERS_MAX_CNT];
  */
 static void sms_ack(struct k_work *work)
 {
-	int ret = at_cmd_write(AT_SMS_PDU_ACK, NULL, 0, NULL);
+	int ret = nrf_modem_at_printf(AT_SMS_PDU_ACK);
 
 	if (ret != 0) {
 		LOG_ERR("Unable to ACK the SMS PDU");
@@ -85,42 +81,73 @@ static void sms_ack(struct k_work *work)
 }
 
 /**
- * @brief Callback handler for AT notification library callback.
+ * @brief Notify SMS subscribers about received SMS or status report.
  *
- * @param[in] context Callback context info that is not used.
- * @param[in] at_notif AT notification string.
+ * @param[in] work Unused k_work instance required for k_work_submit signature.
  */
-void sms_at_handler(void *context, const char *at_notif)
+static void sms_notify(struct k_work *work)
 {
-	int err;
-
-	ARG_UNUSED(context);
-
-	if (at_notif == NULL) {
-		return;
-	}
-
-	/* Parse AT command and SMS PDU */
-	err = sms_at_parse(at_notif, &sms_data_info, &resp_list);
-	if (err) {
-		if (err != -ENOTSMSAT) {
-			goto sms_ack;
-		}
-		return;
-	}
-
-	/* Notify all subscribers. */
-	LOG_DBG("Valid SMS notification decoded");
 	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
 		if (subscribers[i].listener != NULL) {
 			subscribers[i].listener(&sms_data_info, subscribers[i].ctx);
 		}
 	}
+}
 
-sms_ack:
-	/* Use system work queue to ACK SMS PDU because we cannot
-	 * call at_cmd_write from a notification callback.
+/**
+ * @brief Callback handler for CMT notification.
+ *
+ * @param[in] at_notif AT notification string.
+ */
+static void sms_at_cmd_handler_cmt(const char *at_notif)
+{
+	int err;
+
+	if (at_notif == NULL) {
+		return;
+	}
+
+	memset(&sms_data_info, 0, sizeof(struct sms_data));
+
+	/* Parse AT command and SMS PDU */
+	err = sscanf(
+		at_notif,
+		"+CMT: %*[^,],%*u\r\n"
+		"%"STRINGIFY(SMS_BUF_TMP_LEN)"s\r\n",
+		sms_buf_tmp);
+	if (err < 1) {
+		LOG_ERR("Unable to parse CMT notification, err=%d: %s", err, log_strdup(at_notif));
+		goto sms_ack_send;
+	}
+
+	sms_data_info.type = SMS_TYPE_DELIVER;
+	err = sms_deliver_pdu_parse(sms_buf_tmp, &sms_data_info);
+	if (err) {
+		goto sms_ack_send;
+	}
+	LOG_DBG("Valid SMS notification decoded");
+
+	k_work_submit(&sms_notify_work);
+
+sms_ack_send:
+	k_work_submit(&sms_ack_work);
+}
+
+/**
+ * @brief Callback handler for CDS notification.
+ *
+ * @param[in] at_notif AT notification string.
+ */
+static void sms_at_cmd_handler_cds(const char *at_notif)
+{
+	/* This indicates SMS-STATUS-REPORT has been received. However, its content is not
+	 * parsed so we don't know if the message is delivered or if an error occurred.
 	 */
+	LOG_DBG("SMS status report received");
+	memset(&sms_data_info, 0, sizeof(struct sms_data));
+	sms_data_info.type = SMS_TYPE_STATUS_REPORT;
+
+	k_work_submit(&sms_notify_work);
 	k_work_submit(&sms_ack_work);
 }
 
@@ -132,62 +159,45 @@ sms_ack:
  */
 static int sms_init(void)
 {
-	char *resp = sms_buf_tmp;
+	uint32_t cnmi_value1 = 0xFFFFFFFF;
+	uint32_t cnmi_value2 = 0xFFFFFFFF;
+	uint32_t cnmi_value3 = 0xFFFFFFFF;
+	uint32_t cnmi_value4 = 0xFFFFFFFF;
 	int ret;
 
 	k_work_init(&sms_ack_work, &sms_ack);
-
-	ret = at_params_list_init(&resp_list, AT_SMS_PARAMS_COUNT_MAX);
-	if (ret) {
-		LOG_ERR("AT params error, err: %d", ret);
-		return ret;
-	}
+	k_work_init(&sms_notify_work, &sms_notify);
 
 	/* Check if one SMS client has already been registered. */
-	ret = at_cmd_write(AT_SMS_SUBSCRIBER_READ, resp, SMS_BUF_TMP_LEN, NULL);
+	ret = nrf_modem_at_cmd(sms_buf_tmp, SMS_BUF_TMP_LEN, AT_SMS_SUBSCRIBER_READ);
 	if (ret) {
-		LOG_ERR("Unable to check if an SMS client exists, err: %d",
-			ret);
+		LOG_ERR("Unable to check if an SMS client exists, err: %d", ret);
 		return ret;
 	}
 
-	ret = at_parser_max_params_from_str(resp, NULL, &resp_list,
-					    AT_CNMI_PARAMS_COUNT);
-	if (ret) {
-		LOG_INF("%s", log_strdup(resp));
-		LOG_ERR("Invalid AT response, err: %d", ret);
-		return ret;
+	ret = sscanf(
+		sms_buf_tmp,
+		"+CNMI: %u,%u,%u,%u",
+		&cnmi_value1, &cnmi_value2, &cnmi_value3, &cnmi_value4);
+	if (ret < 4) {
+		LOG_ERR("CNMI parsing failure, err: %d", ret);
+		return -EBADMSG;
 	}
-
-	/* Check the response format and parameters. */
-	for (int i = 1; i < (AT_CNMI_PARAMS_COUNT - 1); i++) {
-		int value;
-
-		ret = at_params_int_get(&resp_list, i, &value);
-		if (ret) {
-			LOG_ERR("Invalid AT response parameters, err: %d", ret);
-			return ret;
-		}
-
-		/* Parameters 1 to 4 should be 0 if no client is registered. */
-		if (value != 0) {
-			LOG_ERR("Only one SMS client can be registered");
-			return -EBUSY;
-		}
+	/* Parameters 1 to 4 should be 0 if no client is registered. */
+	if (cnmi_value1 != 0 || cnmi_value2 != 0 || cnmi_value3 != 0 || cnmi_value4 != 0) {
+		LOG_ERR("Only one SMS client can be registered");
+		return -EBUSY;
 	}
 
 	/* Register for AT commands notifications before creating the client. */
-	ret = at_notif_register_handler(NULL, sms_at_handler);
-	if (ret) {
-		LOG_ERR("Cannot register AT notification handler, err: %d",
-			ret);
-		return ret;
-	}
+	at_monitor_resume(sms_at_handler_cmt);
+	at_monitor_resume(sms_at_handler_cds);
 
 	/* Register this module as an SMS client. */
-	ret = at_cmd_write(AT_SMS_SUBSCRIBER_REGISTER, NULL, 0, NULL);
+	ret = nrf_modem_at_printf(AT_SMS_SUBSCRIBER_REGISTER);
 	if (ret) {
-		(void)at_notif_deregister_handler(NULL, sms_at_handler);
+		at_monitor_pause(sms_at_handler_cmt);
+		at_monitor_pause(sms_at_handler_cds);
 		LOG_ERR("Unable to register a new SMS client, err: %d", ret);
 		return ret;
 	}
@@ -251,7 +261,6 @@ int sms_register_listener(sms_callback_t listener, void *context)
  */
 static void sms_uninit(void)
 {
-	char *resp = sms_buf_tmp;
 	int ret;
 	int count;
 
@@ -264,7 +273,7 @@ static void sms_uninit(void)
 	}
 
 	if (sms_client_registered) {
-		ret = at_cmd_write(AT_SMS_SUBSCRIBER_UNREGISTER, resp, SMS_BUF_TMP_LEN, NULL);
+		ret = nrf_modem_at_printf(AT_SMS_SUBSCRIBER_UNREGISTER);
 		if (ret) {
 			LOG_ERR("Unable to unregister the SMS client, err: %d",
 				ret);
@@ -272,8 +281,9 @@ static void sms_uninit(void)
 		}
 		LOG_DBG("SMS client unregistered");
 
-		/* Unregister from AT commands notifications. */
-		(void)at_notif_deregister_handler(NULL, sms_at_handler);
+		/* Pause AT commands notifications. */
+		at_monitor_pause(sms_at_handler_cmt);
+		at_monitor_pause(sms_at_handler_cds);
 
 		/* Clear all observers. */
 		for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
@@ -281,9 +291,6 @@ static void sms_uninit(void)
 			subscribers[i].listener = NULL;
 		}
 	}
-
-	/* Cleanup resources. */
-	at_params_list_free(&resp_list);
 
 	sms_client_registered = false;
 }
