@@ -113,6 +113,13 @@ Other samples
 
 :ref:`radio_test` - Added support for front-end module devices that support 2-pin PA/LNA interface with additional support for the Skyworks SKY66114-11 and the Skyworks SKY66403-11.
 
+* :ref:`secure_partition_manager` sample:
+
+  * Bug fixes:
+
+    * NCSDK-12230: Fixed an issue where low baud rates would trigger a fault by selecting as system clock driver ``SYSTICK`` instead of ``RTC1``.
+
+
 Drivers
 =======
 

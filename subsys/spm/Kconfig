@@ -188,6 +188,16 @@ config SPM_NRF_RTC1_NS
 	bool "RTC1 is Non-Secure"
 	default y
 
+config NRF_RTC_TIMER
+	depends on !SPM_NRF_RTC1_NS
+	help
+	  RTC1 cannot be used the system clock driver for SPM if it is Non-Secure
+
+config CORTEX_M_SYSTICK
+	default y if SPM_NRF_RTC1_NS
+	help
+	  Use the Cortex-M SYSTICK timer as the system clock driver since RTC1 is Non-Secure
+
 config SPM_NRF_IPC_NS
 	bool "IPC is Non-Secure"
 	default y
