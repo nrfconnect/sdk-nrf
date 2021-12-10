@@ -274,7 +274,21 @@ int assistance_request(struct nrf_modem_gnss_agps_data_frame *agps_request)
 	struct nrf_cloud_rest_agps_request request = {
 		.type = NRF_CLOUD_REST_AGPS_REQ_CUSTOM,
 		.agps_req = agps_request,
-		.net_info = NULL
+		.net_info = NULL,
+#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME)
+		.filtered = true,
+		/* Note: if you change the mask angle here, you may want to
+		 * also change it to match in gnss_init_and_start() in main.c.
+		 */
+		.mask_angle = CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK
+		/* Note: if CONFIG_NRF_CLOUD_AGPS_FILTERED is enabled but
+		 * CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME is not,
+		 * the nrf_cloud_rest library will set the above fields to
+		 * true and CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK respectively.
+		 * When CONFIG_NRF_CLOUD_AGPS_FILTERED is disabled, it will
+		 * set them to false and 0.
+		 */
+#endif
 	};
 
 	struct nrf_cloud_rest_agps_result result = {
