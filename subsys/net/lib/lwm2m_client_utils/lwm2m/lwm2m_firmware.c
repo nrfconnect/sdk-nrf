@@ -16,6 +16,9 @@
 #include <logging/log_ctrl.h>
 #include <net/lwm2m.h>
 #include <modem/nrf_modem_lib.h>
+#include <modem/modem_info.h>
+#include <modem/at_cmd.h>
+#include <nrf_modem_at.h>
 #include <sys/reboot.h>
 #include <net/fota_download.h>
 #include <net/lwm2m_client_utils.h>
@@ -55,11 +58,76 @@ static char *fota_host;
 static int current_update_instance = -1;
 static int fota_sec_tag;
 #define MAX_INSTANCE_COUNT CONFIG_LWM2M_FIRMWARE_INSTANCE_COUNT
+static char package_name[MAX_INSTANCE_COUNT][CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_NAME_LENGTH];
+static char package_version[MAX_INSTANCE_COUNT][CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_VERSION_LENGTH];
+
+#define MANUFACTURER_LENGTH 25
+#define HWVERSION_LENGTH 18
 
 static struct k_work_delayable reboot_work;
 static struct k_work download_work;
 
 void client_acknowledge(void);
+
+static void set_version_and_name_information(void)
+{
+	int ret = 0;
+	char manufacturer[MANUFACTURER_LENGTH] = {0};
+	char hw_version[HWVERSION_LENGTH] = {0};
+
+	ret = modem_info_init();
+	if (ret != 0) {
+		LOG_ERR("Modem info Init error: %d\n\r", ret);
+	}
+	modem_info_string_get(MODEM_INFO_FW_VERSION,
+			      package_version[CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM],
+			      MODEM_INFO_MAX_RESPONSE_SIZE);
+
+	ret = nrf_modem_at_scanf("AT+CGMI", "%" STRINGIFY(MANUFACTURER_LENGTH) "[.:0-9A-Za-z ]",
+				 &manufacturer);
+	if (ret != 1) {
+		LOG_ERR("Failed to obtain manufacturer, error: %d", ret);
+	}
+
+	ret = nrf_modem_at_scanf("AT%HWVERSION",
+				 "%%HWVERSION: %" STRINGIFY(HWVERSION_LENGTH) "[.:0-9A-Za-z ]",
+				 &hw_version);
+	if (ret != 1) {
+		LOG_ERR("Failed to obtain hw version, error: %d", ret);
+	}
+	strcat(package_name[CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM], "modem:");
+	strncat(package_name[CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM], manufacturer,
+		MANUFACTURER_LENGTH);
+	strcat(package_name[CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM], ":");
+	strncat(package_name[CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM], hw_version,
+		HWVERSION_LENGTH);
+
+	strncpy(package_name[CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP],
+		STRINGIFY(PROJECT_NAME),
+		sizeof(package_name[CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP]));
+
+	strncpy(package_version[CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP],
+		STRINGIFY(APP_VERSION),
+		sizeof(package_version[CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP]));
+
+	lwm2m_engine_set_res_data(LWM2M_PATH(5,
+				  CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM, 6),
+				  package_name[0], sizeof(package_name[0]), LWM2M_RES_DATA_FLAG_RO);
+
+	lwm2m_engine_set_res_data(LWM2M_PATH(5,
+				  CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP, 6),
+				  package_name[1], sizeof(package_name[1]), LWM2M_RES_DATA_FLAG_RO);
+
+	lwm2m_engine_set_res_data(LWM2M_PATH(5,
+				  CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM, 7),
+				  package_version[0], sizeof(package_version[0]),
+				  LWM2M_RES_DATA_FLAG_RO);
+
+	lwm2m_engine_set_res_data(LWM2M_PATH(5,
+				  CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP, 7),
+				  package_version[1], sizeof(package_version[1]),
+				  LWM2M_RES_DATA_FLAG_RO);
+}
 
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM)
 static void apply_fmfu_from_ext_flash(struct k_work *work)
@@ -453,18 +521,20 @@ int lwm2m_init_firmware(void)
 	lwm2m_firmware_set_update_cb(firmware_update_cb);
 
 	lwm2m_engine_register_pre_write_callback(LWM2M_PATH(5,
-						 LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM, 0),
-						 firmware_get_buf);
+						 CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM,
+						 0), firmware_get_buf);
 	lwm2m_engine_register_post_write_callback(LWM2M_PATH(5,
-						  LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM, 1),
-						  write_dl_uri);
+						  CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM,
+						  1), write_dl_uri);
 
 	lwm2m_engine_register_pre_write_callback(LWM2M_PATH(5,
-						 LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP, 0),
-						 firmware_get_buf);
+						 CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP,
+						 0), firmware_get_buf);
 	lwm2m_engine_register_post_write_callback(LWM2M_PATH(5,
-						  LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP, 1),
-						  write_dl_uri);
+						  CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP,
+						  1), write_dl_uri);
+
+	set_version_and_name_information();
 
 	lwm2m_firmware_set_write_cb(firmware_block_received_cb);
 	return 0;
@@ -520,7 +590,6 @@ int lwm2m_init_image(uint16_t obj_inst_id)
 	int ret = 0;
 	struct update_counter counter;
 	bool image_ok;
-	bool status;
 
 	/* Update boot status and update counter */
 	ret = fota_update_counter_read(obj_inst_id, &counter);

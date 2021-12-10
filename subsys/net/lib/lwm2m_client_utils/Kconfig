@@ -77,6 +77,22 @@ config LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP
 		It's impossibile to limit the range of the value to LWM2M_FIRMWARE_INSTANCE_COUNT-1 even
 		when it should be.
 
+config LWM2M_CLIENT_UTILS_FIRMWARE_NAME_LENGTH
+	int "Application Firmware object name length"
+	range 0 255
+	default 52
+	help
+	  	This is the length of the name information residing in the resource ID 6 of the
+		firmware update object.
+
+config LWM2M_CLIENT_UTILS_FIRMWARE_VERSION_LENGTH
+	int "Application Firmware object version name length"
+	range 0 255
+	default 30
+	help
+		This is the length of the version information residing in the resource ID 7 of the
+		firmware update object.
+
 endif # LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
 
 module = LWM2M_CLIENT_UTILS
