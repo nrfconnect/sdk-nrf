@@ -10,3 +10,4 @@ ses=5.68
 west=0.12.0
 gn=1880
 doxygen=1.9.2
+ruby=2.7.0
