@@ -489,6 +489,21 @@ static int cmd_gnss_agps_automatic_disable(const struct shell *shell, size_t arg
 	return gnss_set_agps_automatic(false);
 }
 
+static int cmd_gnss_agps_filtered(const struct shell *shell, size_t argc, char **argv)
+{
+	return print_help(shell, argc, argv);
+}
+
+static int cmd_gnss_agps_filtered_enable(const struct shell *shell, size_t argc, char **argv)
+{
+	return gnss_set_agps_filtered_ephemerides(true);
+}
+
+static int cmd_gnss_agps_filtered_disable(const struct shell *shell, size_t argc, char **argv)
+{
+	return gnss_set_agps_filtered_ephemerides(false);
+}
+
 static int cmd_gnss_agps(const struct shell *shell, size_t argc, char **argv)
 {
 	return print_help(shell, argc, argv);
@@ -935,6 +950,15 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 );
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
+	sub_gnss_agps_filtered,
+	SHELL_CMD_ARG(enable, NULL, "Enable AGPS filtered ephemerides.",
+		      cmd_gnss_agps_filtered_enable, 1, 0),
+	SHELL_CMD_ARG(disable, NULL, "Disable AGPS filtered ephemerides (default).",
+		      cmd_gnss_agps_filtered_disable, 1, 0),
+	SHELL_SUBCMD_SET_END
+);
+
+SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_gnss_agps,
 	SHELL_CMD(automatic, &sub_gnss_agps_automatic,
 		  "Enable/disable automatic fetching of AGPS data.", cmd_gnss_agps_automatic),
@@ -944,6 +968,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		  "<ephe> <alm> <utc> <klob> <neq> <time> <pos> <integrity>\nSet filter for "
 		  "allowed AGPS data.\n0 = disabled, 1 = enabled (default all enabled).",
 		  cmd_gnss_agps_filter),
+	SHELL_CMD(filtephem, &sub_gnss_agps_filtered,
+		  "Enable/disable AGPS filtered ephemerides.", cmd_gnss_agps_filtered),
 	SHELL_SUBCMD_SET_END
 );
 
