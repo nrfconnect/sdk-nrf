@@ -185,6 +185,20 @@ int gnss_set_duty_cycling_policy(enum gnss_duty_cycling_policy policy);
 int gnss_set_elevation_threshold(uint8_t elevation);
 
 /**
+ * @brief Enables/disabled AGPS filtered ephemerides.
+ *
+ * When enabled, the nRF Cloud AGPS service will be requested to reduce
+ * the set of ephemerides returned to only include those satellites which
+ * are at or above the most recently set elevation threshold angle.
+ *
+ * @param enable True to enable, false to disable.
+ *
+ * @retval 0 if the operation was successful.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int gnss_set_agps_filtered_ephemerides(bool enable);
+
+/**
  * @brief Sets the GNSS use case configuration.
  *
  * @param low_accuracy_enabled True if low accuracy fixes are allowed, false if not.

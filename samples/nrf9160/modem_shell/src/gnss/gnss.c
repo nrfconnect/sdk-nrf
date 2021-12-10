@@ -69,6 +69,8 @@ static uint32_t periodic_fix_interval;
 static uint32_t periodic_fix_retry;
 static bool nmea_mask_set;
 static struct nrf_modem_gnss_agps_data_frame agps_need;
+static bool gnss_filtered_ephemerides_enabled;
+static uint8_t gnss_elevation = 5; /* init to modem default threshold angle */
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
 static struct k_work get_agps_data_work;
@@ -624,6 +626,12 @@ static void get_agps_data(struct k_work *item)
 
 	struct lte_lc_cells_info net_info = { 0 };
 
+	if (gnss_filtered_ephemerides_enabled) {
+		request.mask_angle = gnss_elevation;
+		mosh_print("GNSS: Requesting filtered ephemeris; elevation = %u", gnss_elevation);
+	}
+	request.filtered = gnss_filtered_ephemerides_enabled;
+
 	err = serving_cell_info_get(&net_info.current_cell);
 	if (err) {
 		mosh_warn("GNSS: Could not get cell info, error: %d", err);
@@ -1143,9 +1151,23 @@ int gnss_set_elevation_threshold(uint8_t elevation)
 	err = nrf_modem_gnss_elevation_threshold_set(elevation);
 	if (err) {
 		mosh_error("GNSS: Failed to set elevation threshold");
+	} else {
+		gnss_elevation = elevation;
 	}
 
 	return err;
+}
+
+int gnss_set_agps_filtered_ephemerides(bool enable)
+{
+#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME)
+	gnss_filtered_ephemerides_enabled = enable;
+	return 0;
+#else
+	mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME to "
+		   "change A-GPS filtered ephemerides mode from the shell.");
+	return -EOPNOTSUPP;
+#endif
 }
 
 int gnss_set_use_case(bool low_accuracy_enabled, bool scheduled_downloads_disabled)
