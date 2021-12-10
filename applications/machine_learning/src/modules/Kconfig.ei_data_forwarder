@@ -44,15 +44,26 @@ config ML_APP_EI_DATA_FORWARDER_BUF_SIZE
 	  Size of the buffer used to temporarily store forwarded data.
 	  The buffer must be big enough to store a single line of forwarded data.
 
+config ML_APP_EI_DATA_FORWARDER_PIPELINE_COUNT
+	int "Number of samples pipelined in the Bluetooth stack"
+	depends on ML_APP_EI_DATA_FORWARDER_BT_NUS
+	default 2
+	range 1 BT_CONN_TX_MAX
+	help
+	  Number of sensor samples pipelined in the Bluetooth stack. Pipelining samples in the
+	  Bluetooth stack reduces latency related to delivering subsequent sensor samples to
+	  the stack.
+
 config ML_APP_EI_DATA_FORWARDER_BUF_COUNT
 	int "Data buffer count"
 	depends on ML_APP_EI_DATA_FORWARDER_BT_NUS
 	default 3
 	range 0 16
 	help
-	  Up to 2 sensor samples are pipelined in the Bluetooth stack. In case the pipeline is full,
-	  additional samples are buffered by the application module. This Kconfig option specifies
-	  number of sensor samples temporarily stored by the application module.
+	  Up to CONFIG_ML_APP_EI_DATA_FORWARDER_PIPELINE_COUNT sensor samples are pipelined in the
+	  Bluetooth stack. In case the pipeline is full, additional samples are buffered by the
+	  application module. This Kconfig option specifies number of sensor samples temporarily
+	  stored by the application module.
 
 config ML_APP_EI_DATA_FORWARDER_UART_DEV
 	string "UART device name"
