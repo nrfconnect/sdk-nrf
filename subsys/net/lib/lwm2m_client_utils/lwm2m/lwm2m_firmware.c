@@ -452,12 +452,19 @@ int lwm2m_init_firmware(void)
 #endif
 	lwm2m_firmware_set_update_cb(firmware_update_cb);
 
-	/* setup data buffer for block-wise transfer */
-	for (int i = 0; i < MAX_INSTANCE_COUNT; i++) {
+	lwm2m_engine_register_pre_write_callback(LWM2M_PATH(5,
+						 LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM, 0),
+						 firmware_get_buf);
+	lwm2m_engine_register_post_write_callback(LWM2M_PATH(5,
+						  LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM, 1),
+						  write_dl_uri);
 
-		lwm2m_engine_register_pre_write_callback(LWM2M_PATH(5, i, 0), firmware_get_buf);
-		lwm2m_engine_register_post_write_callback(LWM2M_PATH(5, i, 1), write_dl_uri);
-	}
+	lwm2m_engine_register_pre_write_callback(LWM2M_PATH(5,
+						 LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP, 0),
+						 firmware_get_buf);
+	lwm2m_engine_register_post_write_callback(LWM2M_PATH(5,
+						  LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP, 1),
+						  write_dl_uri);
 
 	lwm2m_firmware_set_write_cb(firmware_block_received_cb);
 	return 0;
@@ -513,6 +520,7 @@ int lwm2m_init_image(uint16_t obj_inst_id)
 	int ret = 0;
 	struct update_counter counter;
 	bool image_ok;
+	bool status;
 
 	/* Update boot status and update counter */
 	ret = fota_update_counter_read(obj_inst_id, &counter);
