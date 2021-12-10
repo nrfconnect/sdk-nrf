@@ -7,6 +7,7 @@
 #include <stdio.h>
 
 #include "app_module_event.h"
+#include "common_module_event.h"
 
 static char *type2str(enum app_module_data_type type)
 {
@@ -104,22 +105,12 @@ static void profile_event(struct log_event_buf *buf,
 #endif
 }
 
-EVENT_INFO_DEFINE(app_module_event,
-#if defined(CONFIG_PROFILER_EVENT_TYPE_STRING)
-		  ENCODE(PROFILER_ARG_STRING),
-#else
-		  ENCODE(PROFILER_ARG_U8),
-#endif
-		  ENCODE("type"),
-		  profile_event);
+COMMON_EVENT_INFO_DEFINE(app_module_event,
+			 profile_event);
 
 #endif /* CONFIG_PROFILER */
 
-EVENT_TYPE_DEFINE(app_module_event,
-		  CONFIG_APP_EVENTS_LOG,
-		  log_event,
-#if defined(CONFIG_PROFILER)
-		  &app_module_event_info);
-#else
-		  NULL);
-#endif
+COMMON_EVENT_TYPE_DEFINE(app_module_event,
+			 CONFIG_APP_EVENTS_LOG,
+			 log_event,
+			 &app_module_event_info);
