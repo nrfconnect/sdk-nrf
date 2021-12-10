@@ -345,6 +345,8 @@ Libraries for networking
 * :ref:`lib_nrf_cloud_rest` library:
 
   * Updated to use the :ref:`lib_rest_client` library for REST API calls.
+  * Added :c:func:`nrf_cloud_rest_send_device_message` function that sends a JSON message to nRF Cloud using the `SendDeviceMessage` endpoint.
+  * Added :c:func:`nrf_cloud_rest_send_location` function that sends an NMEA sentence to nRF Cloud as a GPS-type device message.
 
 Other libraries
 ---------------

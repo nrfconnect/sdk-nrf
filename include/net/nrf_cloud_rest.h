@@ -308,6 +308,38 @@ int nrf_cloud_rest_disconnect(struct nrf_cloud_rest_context *const rest_ctx);
  */
 int nrf_cloud_rest_jitp(const sec_tag_t nrf_cloud_sec_tag);
 
+/**
+ * @brief Send a JSON formatted device message using the SendDeviceMessage endpoint.
+ *
+ * @param[in,out] rest_ctx Context for communicating with nRF Cloud's REST API.
+ * @param[in]     device_id Null-terminated, unique device ID registered with nRF Cloud.
+ * @param[in]     json_msg Null-terminated JSON string containing the device message.
+ * @param[in]     bulk Use the bulk message topic. If true, the topic parameter is ignored.
+ * @param[in]     topic Optional; null-terminated MQTT topic string.
+ *                      If NULL, the d2c topic is used.
+ *
+ * @retval 0 If successful.
+ *          Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_rest_send_device_message(struct nrf_cloud_rest_context *const rest_ctx,
+	const char *const device_id, const char *const json_msg, const bool bulk,
+	const char *const topic);
+
+/**
+ * @brief Send a supported NMEA sentence to nRF Cloud as a device message.
+ *
+ * @param[in,out] rest_ctx Context for communicating with nRF Cloud's REST API.
+ * @param[in]     device_id Null-terminated, unique device ID registered with nRF Cloud.
+ * @param[in]     nmea_sentence Null-terminated NMEA sentence.
+ * @param[in]     ts_ms UNIX epoch timestamp (in milliseconds) to include with the location data.
+ *                      A negative value will exclude the timestamp.
+ *
+ * @retval 0 If successful.
+ *          Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_rest_send_location(struct nrf_cloud_rest_context *const rest_ctx,
+	const char *const device_id, const char *const nmea_sentence, const int64_t ts_ms);
+
 /** @} */
 
 #ifdef __cplusplus
