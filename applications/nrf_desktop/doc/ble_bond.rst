@@ -40,20 +40,18 @@ Both IDs related to the given Bluetooth peer operation are propagated in ``ble_p
 
 The identity usage depends on the device type:
 
-* nRF Desktop central
-  The nRF Desktop central uses only one application local identity and only one Bluetooth local identity (the default ones).
-* nRF Desktop peripheral
-  The nRF Desktop peripheral uses multiple local identities.
+  * nRF Desktop central uses only one application local identity and only one Bluetooth local identity (the default ones).
+  * nRF Desktop peripheral uses multiple local identities.
 
-  Every application local identity is associated with exactly one Bluetooth local identity.
-  The |ble_bond| stores the mapping from the application local identities to the Bluetooth local identities in the ``bt_stack_id_lut`` array.
-  The mapping changes only after a successful erase advertising.
+Every application local identity is associated with exactly one Bluetooth local identity.
+The |ble_bond| stores the mapping from the application local identities to the Bluetooth local identities in the ``bt_stack_id_lut`` array.
+The mapping changes only after a successful erase advertising.
 
-  Only one Bluetooth peer can be bonded with a given local identity.
+Only one Bluetooth peer can be bonded with a given local identity.
 
-  Also, only one of the application local identities is selected at a time.
-  When the device changes the selected Bluetooth peer, it actually switches its own local identity.
-  The old peer is disconnected by the application, Bluetooth advertising is started, and the new peer connects.
+Also, only one of the application local identities is selected at a time.
+When the device changes the selected Bluetooth peer, it actually switches its own local identity.
+The old peer is disconnected by the application, Bluetooth advertising is started, and the new peer connects.
 
 Module states
 *************
@@ -68,7 +66,7 @@ The following diagram shows states and transitions between these states after th
 .. figure:: /images/nrf_desktop_ble_bond.svg
    :alt: nRF Desktop Bluetooth LE bond module state diagram
 
-   nRF Desktop Bluetooth LE bond module state diagram (click to enlarge)
+   nRF Desktop Bluetooth LE bond module state diagram
 
 .. note::
   The diagram does not present the states related to module going into standby (:c:enum:`STATE_STANDBY`, :c:enum:`STATE_DISABLED_STANDBY`, :c:enum:`STATE_DONGLE_CONN_STANDBY`).
@@ -211,7 +209,7 @@ The module provides the following :ref:`nrf_desktop_config_channel` options:
 
 Perform :ref:`nrf_desktop_config_channel` set operation on selected option to trigger the operation.
 The options can be used only if the module is in :c:enumerator:`STATE_IDLE`.
-Because of this, they cannot be used when device is suspended by :ref:`nrf_desktop_power_manager`.
+Because of this, they cannot be used when the device is suspended by :ref:`nrf_desktop_power_manager`.
 The device must be woken up from suspended state before the operation is started.
 
 Shell integration

@@ -29,7 +29,7 @@ For this reason, make sure that :kconfig:`CONFIG_CAF_LEDS` and :kconfig:`CONFIG_
 To enable the module, use the :kconfig:`CONFIG_DESKTOP_LED_STREAM_ENABLE` Kconfig option.
 
 You can also define the stream LED event queue size (:kconfig:`CONFIG_DESKTOP_LED_STREAM_QUEUE_SIZE`).
-The queue is used by the module as data buffer for the data received from the host computer.
+The queue is used by the module as a data buffer for the data received from the host computer.
 
 Configuration channel
 *********************

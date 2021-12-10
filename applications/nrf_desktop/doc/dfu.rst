@@ -40,7 +40,7 @@ It requires the transport option :kconfig:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE`
 
 Set the value of :kconfig:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE` to specify the size of the sync buffer (in words).
 During the DFU, the data is initially stored in the buffer and then it is moved to flash.
-The buffer is located in RAM, so increasing the buffer size increases the RAM usage.
+The buffer is located in the RAM, so increasing the buffer size increases the RAM usage.
 If the buffer is small, the host must perform the DFU progress synchronization more often.
 
 .. important::
@@ -68,7 +68,7 @@ The module provides a simple protocol that allows the update tool on the host to
 
 .. note::
    All the described :ref:`nrf_desktop_config_channel` options are used by the :ref:`nrf_desktop_config_channel_script` during the DFU.
-   You can trigger DFU using a single command in CLI.
+   You can trigger DFU using a single command in the CLI.
 
 The following :ref:`nrf_desktop_config_channel` options are available to perform the firmware update:
 
@@ -152,7 +152,7 @@ sync
 Writing data to flash
 =====================
 
-The image data that is received from the host is initially buffered in RAM.
+The image data that is received from the host is initially buffered in the RAM.
 Writing the data to flash is triggered when the host performs the fetch operation on the ``sync`` option.
 At that point, the :ref:`nrf_desktop_config_channel_script` waits until the data is written to flash before providing more image data chunks.
 

@@ -30,15 +30,15 @@ Set the option :kconfig:`CONFIG_DESKTOP_BATTERY_CHARGER_DISCRETE` to enable the 
 
 The following module configuration options are available:
 
-* :kconfig:`CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PIN` - Configures the pin to which the charge status output (CSO) from the charger is connected.
+* ``CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PIN`` - Configures the pin to which the charge status output (CSO) from the charger is connected.
 
-  * :kconfig:`CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PULL_NONE` - CSO pin pull disabled (default setting).
-  * :kconfig:`CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PULL_UP` - CSO pin pull up.
-  * :kconfig:`CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PULL_DOWN` - CSO pin pull down.
+  * ``CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PULL_NONE`` - CSO pin pull disabled (default setting).
+  * ``CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PULL_UP`` - CSO pin pull up.
+  * ``CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PULL_DOWN`` - CSO pin pull down.
 
-* :kconfig:`CONFIG_DESKTOP_BATTERY_CHARGER_ENABLE_PIN` - Configures the pin that enables the battery charging.
-* :kconfig:`CONFIG_DESKTOP_BATTERY_CHARGER_ENABLE_INVERSED` - Option for inversing the charging enable signal.
-* :kconfig:`CONFIG_DESKTOP_BATTERY_CHARGER_CSO_FREQ` - Set this Kconfig option to the CSO pin state switching frequency (in Hz) for when a charging error occurs.
+* ``CONFIG_DESKTOP_BATTERY_CHARGER_ENABLE_PIN`` - Configures the pin that enables the battery charging.
+* ``CONFIG_DESKTOP_BATTERY_CHARGER_ENABLE_INVERSED`` - Option for inversing the charging enable signal.
+* ``CONFIG_DESKTOP_BATTERY_CHARGER_CSO_FREQ`` - Set this Kconfig option to the CSO pin state switching frequency (in Hz) for when a charging error occurs.
 
 Implementation details
 **********************

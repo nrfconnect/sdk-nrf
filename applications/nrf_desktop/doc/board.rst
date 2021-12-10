@@ -8,7 +8,7 @@ Board module
    :depth: 2
 
 The board module is used to ensure the proper state of GPIO pins that are not configured by other modules in the application.
-Ensuring the proper state is done by setting the state of the mentioned pins on the system start and wake-up, and when the system enters the low-power mode.
+Ensuring the proper state is done by setting the state of the mentioned pins on the system start and wakeup, and when the system enters the low-power mode.
 
 Module events
 *************
@@ -30,7 +30,7 @@ For every configuration, you must define the :file:`port_state_def.h` file in th
 
 The :file:`port_state_def.h` file defines the states set to the GPIO ports by the following arrays:
 
-* ``port_state_on`` - State set on the system start and wake-up.
+* ``port_state_on`` - State set on the system start and wakeup.
 * ``port_state_off`` - State set when the system enters the low-power mode.
 
 Every :c:struct:`port_state` refers to a single GPIO port and contains the following information:

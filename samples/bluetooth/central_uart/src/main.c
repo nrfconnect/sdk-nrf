@@ -60,8 +60,11 @@ static K_FIFO_DEFINE(fifo_uart_rx_data);
 static struct bt_conn *default_conn;
 static struct bt_nus_client nus_client;
 
-static void ble_data_sent(uint8_t err, const uint8_t *const data, uint16_t len)
+static void ble_data_sent(struct bt_nus_client *nus, uint8_t err,
+					const uint8_t *const data, uint16_t len)
 {
+	ARG_UNUSED(nus);
+
 	struct uart_data_t *buf;
 
 	/* Retrieve buffer context. */
@@ -75,8 +78,11 @@ static void ble_data_sent(uint8_t err, const uint8_t *const data, uint16_t len)
 	}
 }
 
-static uint8_t ble_data_received(const uint8_t *const data, uint16_t len)
+static uint8_t ble_data_received(struct bt_nus_client *nus,
+						const uint8_t *data, uint16_t len)
 {
+	ARG_UNUSED(nus);
+
 	int err;
 
 	for (uint16_t pos = 0; pos != len;) {

@@ -86,6 +86,8 @@ You can enable existing child images in the |NCS| by enabling the respective mod
 To turn an application that you have implemented into a child image that can be included in a parent image, you must update the build scripts to enable the child image and add the required configuration options.
 You should also know how image-specific variables are disambiguated and what targets of the child images are available.
 
+.. _ug_multi_image_build_scripts:
+
 Updating the build scripts
 ==========================
 

@@ -97,7 +97,7 @@ IEEE 802.15.4 EUI-64 configuration
 The Zigbee stack uses the EUI-64 address that is configured in the IEEE 802.15.4 shim layer.
 By default, it uses an address from Nordic Semiconductor's pool.
 
-If your devices should use different address, you can change the address according to your company's addressing scheme.
+If your devices should use a different address, you can change the address according to your company's addressing scheme.
 
 .. include:: /includes/ieee802154_eui64_conf.txt
 

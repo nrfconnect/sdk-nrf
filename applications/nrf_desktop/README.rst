@@ -489,7 +489,7 @@ No additional software or drivers are required.
       .. figure:: /images/nrf_desktop_dongle_usb.svg
          :alt: nRF Desktop dongle
 
-      The dongle has an USB connector located at one end of the board.
+      The dongle has a USB connector located at one end of the board.
       It should be inserted to the USB slot located on the host.
 
 ..
@@ -1083,9 +1083,9 @@ First, create a new motion sensor driver that will provide code for communicatio
 Use the two existing |NCS| sensor drivers as an example.
 
 The communication between the application and the sensor is done through a sensor driver API (see :ref:`sensor_api`).
-For motion module to work correctly, the driver must support a trigger (see ``sensor_trigger_set``) on a new data (see ``SENSOR_TRIG_DATA_READY`` trigger type).
+For the motion module to work correctly, the driver must support a trigger (see ``sensor_trigger_set``) on a new data (see ``SENSOR_TRIG_DATA_READY`` trigger type).
 
-When motion data is ready, the driver calls a registered callback.
+When the motion data is ready, the driver calls a registered callback.
 The application starts a process of retrieving a motion data sample.
 The motion module calls ``sensor_sample_fetch`` and then ``sensor_channel_get`` on two sensor channels, ``SENSOR_CHAN_POS_DX`` and ``SENSOR_CHAN_POS_DY``.
 The driver must support these two channels.
@@ -1145,7 +1145,7 @@ The following options are inherited from the ``spi-device`` binding and are comm
 
   .. note::
       To achieve the full speed, data must be propagated through the application and reach Bluetooth LE a few hundred microseconds before the subsequent connection event.
-      If you aim for the lowest latency through the LLPM (a 1-ms interval), the sensor data readout should take no more than 250 us.
+      If you aim for the lowest latency through the LLPM (an interval of 1 ms), the sensor data readout should take no more than 250 us.
       The bus and the sensor configuration must ensure that communication speed is fast enough.
 
 The remaining option ``irq-gpios`` is specific to ``pixart,pmw3360`` binding.
@@ -1189,14 +1189,14 @@ Changing interrupt priority
 You can edit the DTS files to change the priority of the peripheral's interrupt.
 This can be useful when :ref:`adding a new custom board <porting_guide_adding_board>` or whenever you need to change the interrupt priority.
 
-The ``interrupts`` property is an array, where meaning of each element is defined by the specification of the interrupt controller.
+The ``interrupts`` property is an array, where the meaning of each element is defined by the specification of the interrupt controller.
 These specification files are located at :file:`zephyr/dts/bindings/interrupt-controller/` DTS binding file directory.
 
 For example, for nRF52840 the file is :file:`arm,v7m-nvic.yaml`.
 This file defines ``interrupts`` property in the ``interrupt-cells`` list.
-In case of nRF52840, it contains two elements: ``irq`` and ``priority``.
+For nRF52840, it contains two elements: ``irq`` and ``priority``.
 The default values for these elements for the given peripheral can be found in the :file:`dtsi` file specific for the device.
-In case of nRF52840, this is :file:`zephyr/dts/arm/nordic/nrf52840.dtsi`, which has the following ``interrupts`` property for nRF52840:
+In the case of nRF52840, this is :file:`zephyr/dts/arm/nordic/nrf52840.dtsi`, which has the following ``interrupts``:
 
 .. code-block::
 
@@ -1519,7 +1519,7 @@ To enable the MCUboot bootloader, select the :kconfig:`CONFIG_BOOTLOADER_MCUBOOT
 
 Configure the MCUboot bootloader with the following options:
 
-* ``CONFIG_BOOT_SIGNATURE_KEY_FILE`` - This option defines the path to the private key that is used to sign the application and that is used by the bootloader to verify the application signature.
+* :kconfig:`CONFIG_BOOT_SIGNATURE_KEY_FILE` - This option defines the path to the private key that is used to sign the application and that is used by the bootloader to verify the application signature.
   The key must be defined only in the MCUboot bootloader configuration file.
 * :kconfig:`CONFIG_IMG_MANAGER` and :kconfig:`CONFIG_MCUBOOT_IMG_MANAGER` - These options allow the application to manage the DFU image.
   Enable both of them only for configurations that support :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`.

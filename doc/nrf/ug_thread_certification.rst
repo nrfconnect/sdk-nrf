@@ -102,7 +102,7 @@ Complete the following steps to prepare for the certification tests:
 See the following links for more information on OpenThread:
 
 - `OpenThread THCI`_
-- `Openthread acting as a new reference platform`_
+- `OpenThread acting as a new reference platform`_
 
 Thread Test Harness with nRF52840 DK
 ====================================

@@ -8,7 +8,7 @@ Supported Zigbee features
    :depth: 2
 
 The |NCS|'s Zigbee protocol uses the ZBOSS library, a third-party precompiled Zigbee stack.
-It includes all mandatory features of the |zigbee_version| specification and provides an Application Programming Interface to access different services.
+It includes all mandatory features of the |zigbee_version| specification and provides an Application Programming Interface (API) to access different services.
 The stack comes with the following features:
 
 * Complete implementation of the Zigbee core specification and Zigbee Pro feature set
