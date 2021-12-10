@@ -34,7 +34,7 @@ You must define :kconfig:`CONFIG_DESKTOP_WATCHDOG_TIMEOUT`.
 After this amount of time (in ms), the device will be restarted if the watchdog timer was not reset.
 
 .. note::
-    The module is used only in the release configurations (``ZRelease``, ``ZReleaseB0``).
+    The module is used only in the release configurations (``release``, ``release_b0``).
     For the :ref:`debug configurations <nrf_desktop_requirements_build_types>` (``debug``, ``shell``, ``b0``), enabling watchdog timer can cause losing logs, for example when the logger is in the panic mode.
 
 Implementation details
