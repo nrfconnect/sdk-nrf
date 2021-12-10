@@ -19,6 +19,7 @@
 #include <net/nrf_cloud_rest.h>
 #include <net/rest_client.h>
 #include <logging/log.h>
+#include <cJSON.h>
 
 #include "nrf_cloud_codec.h"
 
@@ -94,6 +95,11 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 
 #define API_DEVICES_BASE		"/devices"
 #define API_DEVICES_STATE_TEMPLATE	API_VER API_DEVICES_BASE "/%s/state"
+#define API_DEVICES_MSGS_TEMPLATE	API_VER API_DEVICES_BASE "/%s/messages"
+#define API_DEVICES_MSGS_MSG_KEY	"message"
+#define API_DEVICES_MSGS_TOPIC_KEY	"topic"
+#define API_DEVICES_MSGS_D2C_TPC_TMPLT	"d/%s/d2c%s"
+#define API_DEVICES_MSGS_BULK		"/bulk"
 
 #define JITP_HOSTNAME_TLS	CONFIG_NRF_CLOUD_HOST_NAME
 #define JITP_PORT		8443
@@ -134,7 +140,7 @@ static int generate_auth_header(const char *const tok, char **auth_hdr_out)
 	int ret;
 	size_t buff_size = sizeof(AUTH_HDR_BEARER_TEMPLATE) + strlen(tok);
 
-	*auth_hdr_out = k_calloc(buff_size, 1);
+	*auth_hdr_out = k_malloc(buff_size);
 	if (!*auth_hdr_out) {
 		return -ENOMEM;
 	}
@@ -219,7 +225,7 @@ int nrf_cloud_rest_shadow_state_update(struct nrf_cloud_rest_context *const rest
 
 	/* Format API URL with device ID */
 	buff_sz = sizeof(API_DEVICES_STATE_TEMPLATE) + strlen(device_id);
-	url = k_calloc(buff_sz, 1);
+	url = k_malloc(buff_sz);
 	if (!url) {
 		ret = -ENOMEM;
 		goto clean_up;
@@ -333,7 +339,7 @@ int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx
 	buff_sz = sizeof(API_UPDATE_FOTA_URL_TEMPLATE) +
 		  strlen(device_id) +
 		  strlen(job_id);
-	url = k_calloc(buff_sz, 1);
+	url = k_malloc(buff_sz);
 	if (!url) {
 		ret = -ENOMEM;
 		goto clean_up;
@@ -373,7 +379,7 @@ int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx
 			  strlen(job_status_strings[status]);
 	}
 
-	payload = k_calloc(buff_sz, 1);
+	payload = k_malloc(buff_sz);
 	if (!payload) {
 		ret = -ENOMEM;
 		goto clean_up;
@@ -441,7 +447,7 @@ int nrf_cloud_rest_fota_job_get(struct nrf_cloud_rest_context *const rest_ctx,
 	/* Format API URL with device ID */
 	url_sz = sizeof(API_GET_FOTA_URL_TEMPLATE) +
 		    strlen(device_id);
-	url = k_calloc(url_sz, 1);
+	url = k_malloc(url_sz);
 	if (!url) {
 		ret = -ENOMEM;
 		goto clean_up;
@@ -805,7 +811,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		goto clean_up;
 	}
 
-	url = k_calloc(url_sz, 1);
+	url = k_malloc(url_sz);
 	if (!url) {
 		ret = -ENOMEM;
 		goto clean_up;
@@ -1033,7 +1039,7 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		}
 	}
 
-	url = k_calloc(url_sz, 1);
+	url = k_malloc(url_sz);
 	if (!url) {
 		ret = -ENOMEM;
 		goto clean_up;
@@ -1181,7 +1187,6 @@ int nrf_cloud_rest_jitp(const sec_tag_t nrf_cloud_sec_tag)
 	struct rest_client_req_context req;
 	struct rest_client_resp_context resp;
 
-	memset(&req, 0, sizeof(req));
 	memset(&resp, 0, sizeof(resp));
 	rest_client_request_defaults_set(&req);
 
@@ -1213,6 +1218,172 @@ int nrf_cloud_rest_jitp(const sec_tag_t nrf_cloud_sec_tag)
 			ret = -ENODEV;
 		}
 	}
+
+	return ret;
+}
+
+int nrf_cloud_rest_send_location(struct nrf_cloud_rest_context *const rest_ctx,
+	const char *const device_id, const char *const nmea_sentence, const int64_t ts_ms)
+{
+	__ASSERT_NO_MSG(rest_ctx != NULL);
+	__ASSERT_NO_MSG(device_id != NULL);
+	__ASSERT_NO_MSG(nmea_sentence != NULL);
+
+	int err = -ENOMEM;
+	char *json_msg = NULL;
+
+	(void)nrf_cloud_codec_init();
+
+	cJSON *root_obj = json_create_req_obj(NRF_CLOUD_JSON_APPID_VAL_GPS,
+					     NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
+
+	if (cJSON_AddStringToObjectCS(root_obj, NRF_CLOUD_JSON_DATA_KEY, nmea_sentence) == NULL) {
+		LOG_ERR("Failed to add NMEA string");
+		goto clean_up;
+	}
+
+	if ((ts_ms >= 0) &&
+	    (cJSON_AddNumberToObject(root_obj, NRF_CLOUD_MSG_TIMESTAMP_KEY, ts_ms) == NULL)) {
+		LOG_ERR("Failed to add timestamp");
+		goto clean_up;
+	}
+
+	json_msg = cJSON_PrintUnformatted(root_obj);
+	if (!json_msg) {
+		LOG_ERR("Failed to print JSON");
+		goto clean_up;
+	}
+
+	err = nrf_cloud_rest_send_device_message(rest_ctx, device_id, json_msg, false, NULL);
+
+clean_up:
+	cJSON_Delete(root_obj);
+	if (json_msg) {
+		cJSON_free((void *)json_msg);
+	}
+
+	return err;
+}
+
+int nrf_cloud_rest_send_device_message(struct nrf_cloud_rest_context *const rest_ctx,
+	const char *const device_id, const char *const json_msg, const bool bulk,
+	const char *const topic)
+{
+	__ASSERT_NO_MSG(rest_ctx != NULL);
+	__ASSERT_NO_MSG(device_id != NULL);
+	__ASSERT_NO_MSG(json_msg != NULL);
+
+	int ret;
+	size_t buff_sz;
+	char *auth_hdr = NULL;
+	char *url = NULL;
+	char *d2c = NULL;
+	cJSON *root_obj;
+	struct rest_client_req_context req;
+	struct rest_client_resp_context resp;
+
+	memset(&resp, 0, sizeof(resp));
+	init_rest_client_request(rest_ctx, &req, HTTP_POST);
+
+	root_obj = cJSON_CreateObject();
+
+	if (cJSON_AddRawToObjectCS(root_obj, API_DEVICES_MSGS_MSG_KEY, json_msg) == NULL) {
+		ret = -ENOMEM;
+		goto clean_up;
+	}
+
+	/* Format the d2c topic if topic was not provided or bulk topic was specified */
+	if (!topic || bulk) {
+		buff_sz = strlen(device_id) + sizeof(API_DEVICES_MSGS_D2C_TPC_TMPLT) +
+			  (bulk ? sizeof(API_DEVICES_MSGS_BULK) : 0);
+
+		d2c = k_malloc(buff_sz);
+		if (!d2c) {
+			ret = -ENOMEM;
+			goto clean_up;
+		}
+
+		ret = snprintk(d2c, buff_sz, API_DEVICES_MSGS_D2C_TPC_TMPLT, device_id,
+			       (bulk ? API_DEVICES_MSGS_BULK : ""));
+		if (ret < 0 || ret >= buff_sz) {
+			LOG_ERR("Could not format topic");
+			ret = -ETXTBSY;
+			goto clean_up;
+		}
+	}
+
+	if (cJSON_AddStringToObjectCS(root_obj, API_DEVICES_MSGS_TOPIC_KEY,
+				      (d2c ? d2c : topic)) == NULL) {
+		ret = -ENOMEM;
+		goto clean_up;
+	}
+
+	/* Set payload */
+	req.body = cJSON_PrintUnformatted(root_obj);
+	if (!req.body) {
+		ret = -ENOMEM;
+		goto clean_up;
+	}
+
+	/* Format API URL with device ID */
+	buff_sz = sizeof(API_DEVICES_MSGS_TEMPLATE) + strlen(device_id);
+	url = k_malloc(buff_sz);
+	if (!url) {
+		ret = -ENOMEM;
+		goto clean_up;
+	}
+	req.url = url;
+
+	ret = snprintk(url, buff_sz, API_DEVICES_MSGS_TEMPLATE, device_id);
+	if (ret < 0 || ret >= buff_sz) {
+		LOG_ERR("Could not format URL");
+		ret = -ETXTBSY;
+		goto clean_up;
+	}
+
+	/* Format auth header */
+	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
+	if (ret) {
+		LOG_ERR("Could not format HTTP auth header");
+		goto clean_up;
+	}
+	char *const headers[] = {
+		HDR_ACCEPT_APP_JSON,
+		(char *const)auth_hdr,
+		CONTENT_TYPE_APP_JSON,
+		NULL
+	};
+
+	req.header_fields = (const char **)headers;
+
+	/* Make REST call */
+	ret = do_rest_client_request(rest_ctx, &req, &resp);
+	if (ret) {
+		ret = -EIO;
+		goto clean_up;
+	}
+
+	if (rest_ctx->status != NRF_CLOUD_HTTP_STATUS_ACCEPTED) {
+		ret = -EBADMSG;
+		goto clean_up;
+	}
+
+clean_up:
+	if (url) {
+		k_free(url);
+	}
+	if (auth_hdr) {
+		k_free(auth_hdr);
+	}
+	if (req.body) {
+		cJSON_free((void *)req.body);
+	}
+	if (d2c) {
+		k_free(d2c);
+	}
+	cJSON_Delete(root_obj);
+
+	close_connection(rest_ctx);
 
 	return ret;
 }

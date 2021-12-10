@@ -25,11 +25,21 @@
 extern "C" {
 #endif
 
+/* nRF Cloud appID values */
 #define NRF_CLOUD_JSON_APPID_KEY		"appId"
 #define NRF_CLOUD_JSON_APPID_VAL_AGPS		"AGPS"
 #define NRF_CLOUD_JSON_APPID_VAL_PGPS		"PGPS"
+#define NRF_CLOUD_JSON_APPID_VAL_GPS		"GPS"
 #define NRF_CLOUD_JSON_APPID_VAL_CELL_POS	"CELL_POS"
 #define NRF_CLOUD_JSON_APPID_VAL_DEVICE		"DEVICE"
+#define NRF_CLOUD_JSON_APPID_VAL_FLIP		"FLIP"
+#define NRF_CLOUD_JSON_APPID_VAL_BTN		"BUTTON"
+#define NRF_CLOUD_JSON_APPID_VAL_TEMP		"TEMP"
+#define NRF_CLOUD_JSON_APPID_VAL_HUMID		"HUMID"
+#define NRF_CLOUD_JSON_APPID_VAL_AIR_PRESS	"AIR_PRESS"
+#define NRF_CLOUD_JSON_APPID_VAL_AIR_QUAL	"AIR_QUAL"
+#define NRF_CLOUD_JSON_APPID_VAL_RSRP		"RSRP"
+#define NRF_CLOUD_JSON_APPID_VAL_LIGHT		"LIGHT"
 
 #define NRF_CLOUD_JSON_MSG_TYPE_KEY		"messageType"
 #define NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA	"DATA"
@@ -79,6 +89,8 @@ extern "C" {
 #define NRF_CLOUD_JSON_PGPS_GPS_TIME		"startGpsTimeOfDaySeconds"
 #define NRF_CLOUD_PGPS_RCV_ARRAY_IDX_HOST 0
 #define NRF_CLOUD_PGPS_RCV_ARRAY_IDX_PATH 1
+
+#define NRF_CLOUD_MSG_TIMESTAMP_KEY		"ts"
 
 /**@brief Initialize the codec used encoding the data to the cloud. */
 int nrf_cloud_codec_init(void);
