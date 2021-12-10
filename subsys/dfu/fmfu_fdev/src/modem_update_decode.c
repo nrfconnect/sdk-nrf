@@ -5,8 +5,9 @@
  */
 
 /*
- * Generated with cddl_gen.py (https://github.com/oyvindronningstad/cddl_gen)
- * Generated with a default_maxq of 128
+ * Generated using cddl_gen version 0.3.99
+ * https://github.com/NordicSemiconductor/cddl-gen
+ * Generated with a default_max_qty of 128
  */
 
 #include <stdint.h>
@@ -16,8 +17,8 @@
 #include "cbor_decode.h"
 #include "modem_update_decode.h"
 
-#if DEFAULT_MAXQ != 128
-#error "The type file was generated with a different default_maxq than this file"
+#if DEFAULT_MAX_QTY != 128
+#error "The type file was generated with a different default_max_qty than this file"
 #endif
 
 static bool decode_Segment(cbor_state_t *state, struct Segment *result)
@@ -148,9 +149,11 @@ static bool decode_Sig_structure1(cbor_state_t *state,
 	bool tmp_result = (((
 		list_start_decode(state) &&
 		(int_res =
-			 (((tstrx_expect(state,
-					 ((tmp_str.value = "Signature1",
-					   tmp_str.len = 10, &tmp_str))))) &&
+			 (((tstrx_expect(
+				  state,
+				  ((tmp_str.value = "Signature1",
+				    tmp_str.len = sizeof("Signature1") - 1,
+				    &tmp_str))))) &&
 			  (((int_res =
 				     (bstrx_cbor_start_decode(
 					      state,
@@ -160,9 +163,9 @@ static bool decode_Sig_structure1(cbor_state_t *state,
 					      (&(*result)
 							._Sig_structure1_body_protected_cbor)))))),
 			    bstrx_cbor_end_decode(state), int_res)) &&
-			  ((bstrx_expect(state,
-					 ((tmp_str.value = "", tmp_str.len = 0,
-					   &tmp_str))))) &&
+			  ((bstrx_expect(state, ((tmp_str.value = "",
+						  tmp_str.len = sizeof("") - 1,
+						  &tmp_str))))) &&
 			  ((bstrx_decode(
 				  state,
 				  (&(*result)._Sig_structure1_payload))))),
@@ -188,56 +191,58 @@ static bool decode_Wrapper(cbor_state_t *state,
 	return tmp_result;
 }
 
-__attribute__((unused)) static bool
-type_test_decode_Wrapper(struct COSE_Sign1_Manifest *result)
-{
-	/* This function should not be called, it is present only to test that
-	 * the types of the function and struct match, since this information
-	 * is lost with the casts in the entry funciton.
-	 */
-	return decode_Wrapper(NULL, result);
-}
-
-bool cbor_decode_Wrapper(const uint8_t *payload, size_t payload_len,
+bool cbor_decode_Wrapper(const uint8_t *payload, uint32_t payload_len,
 			 struct COSE_Sign1_Manifest *result,
-			 size_t *payload_len_out)
+			 uint32_t *payload_len_out)
 {
-	return entry_function(payload, payload_len, (const void *)result,
-			      payload_len_out, (void *)decode_Wrapper, 1, 3);
+	cbor_state_t states[5];
+
+	new_state(states, sizeof(states) / sizeof(cbor_state_t), payload,
+		  payload_len, 1);
+
+	bool ret = decode_Wrapper(states, result);
+
+	if (ret && (payload_len_out != NULL)) {
+		*payload_len_out = MIN(payload_len, (size_t)states[0].payload -
+							    (size_t)payload);
+	}
+
+	return ret;
 }
 
-__attribute__((unused)) static bool
-type_test_decode_Sig_structure1(struct Sig_structure1 *result)
-{
-	/* This function should not be called, it is present only to test that
-	 * the types of the function and struct match, since this information
-	 * is lost with the casts in the entry funciton.
-	 */
-	return decode_Sig_structure1(NULL, result);
-}
-
-bool cbor_decode_Sig_structure1(const uint8_t *payload, size_t payload_len,
+bool cbor_decode_Sig_structure1(const uint8_t *payload, uint32_t payload_len,
 				struct Sig_structure1 *result,
-				size_t *payload_len_out)
+				uint32_t *payload_len_out)
 {
-	return entry_function(payload, payload_len, (const void *)result,
-			      payload_len_out, (void *)decode_Sig_structure1, 1,
-			      3);
+	cbor_state_t states[5];
+
+	new_state(states, sizeof(states) / sizeof(cbor_state_t), payload,
+		  payload_len, 1);
+
+	bool ret = decode_Sig_structure1(states, result);
+
+	if (ret && (payload_len_out != NULL)) {
+		*payload_len_out = MIN(payload_len, (size_t)states[0].payload -
+							    (size_t)payload);
+	}
+
+	return ret;
 }
 
-__attribute__((unused)) static bool
-type_test_decode_Segments(struct Segments *result)
+bool cbor_decode_Segments(const uint8_t *payload, uint32_t payload_len,
+			  struct Segments *result, uint32_t *payload_len_out)
 {
-	/* This function should not be called, it is present only to test that
-	 * the types of the function and struct match, since this information
-	 * is lost with the casts in the entry funciton.
-	 */
-	return decode_Segments(NULL, result);
-}
+	cbor_state_t states[3];
 
-bool cbor_decode_Segments(const uint8_t *payload, size_t payload_len,
-			  struct Segments *result, size_t *payload_len_out)
-{
-	return entry_function(payload, payload_len, (const void *)result,
-			      payload_len_out, (void *)decode_Segments, 1, 1);
+	new_state(states, sizeof(states) / sizeof(cbor_state_t), payload,
+		  payload_len, 1);
+
+	bool ret = decode_Segments(states, result);
+
+	if (ret && (payload_len_out != NULL)) {
+		*payload_len_out = MIN(payload_len, (size_t)states[0].payload -
+							    (size_t)payload);
+	}
+
+	return ret;
 }

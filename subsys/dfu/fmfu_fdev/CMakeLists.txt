@@ -8,8 +8,6 @@ zephyr_library()
 
 zephyr_library_sources(src/fmfu_fdev.c)
 
-zephyr_link_libraries(cbor_decode)
-
 zephyr_compile_definitions(fmfu_fdev CDDL_CBOR_CANONICAL)
 
 if (CONFIG_FMFU_CDDL_DECODER_GENERATE)

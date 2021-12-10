@@ -5,8 +5,9 @@
  */
 
 /*
- * Generated with cddl_gen.py (https://github.com/oyvindronningstad/cddl_gen)
- * Generated with a default_maxq of 128
+ * Generated using cddl_gen version 0.3.99
+ * https://github.com/NordicSemiconductor/cddl-gen
+ * Generated with a default_max_qty of 128
  */
 
 #ifndef MODEM_UPDATE_TYPES_H__
@@ -18,7 +19,7 @@
 #include <string.h>
 #include "cbor_decode.h"
 
-#define DEFAULT_MAXQ 128
+#define DEFAULT_MAX_QTY 128
 
 struct Segment {
 	uint32_t _Segment_target_addr;
@@ -27,7 +28,7 @@ struct Segment {
 
 struct Segments {
 	struct Segment _Segments__Segment[128];
-	size_t _Segments__Segment_count;
+	uint32_t _Segments__Segment_count;
 };
 
 struct header_map {
