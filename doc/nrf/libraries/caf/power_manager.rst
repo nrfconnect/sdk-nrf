@@ -25,6 +25,8 @@ By default, the timeout is set to 120 seconds.
 
 The :kconfig:`CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT` sets the period of time after which the device is turned off upon an internal error.
 
+The :kconfig:`CONFIG_CAF_POWER_MANAGER_RUNTIME_TIMEOUT_SET` allows for the two aforementioned timeouts to be set during runtime.
+
 Optional boolean for keeping the system on
 ==========================================
 
@@ -42,6 +44,7 @@ When started, it can do the following operations:
 * Manage `Power states`_
 * Trigger `Switching to low power`_
 * Handle `Wake-up scenarios`_ from suspended or off states
+* `Update timeout intervals`_
 
 Power states
 ============
@@ -163,3 +166,12 @@ Before the application enters the off state, at least one module must configure 
 After the reboot, the application initializes itself again.
 
 .. |power_manager| replace:: power manager module
+
+Update timeout intervals
+========================
+Upon enabling :kconfig:`CONFIG_CAF_POWER_MANAGER_RUNTIME_TIMEOUT_SET`, the timeout interval can be set by calling (:c:func:`power_manager_configure_timeout`), and the error timeout interval can be set by calling (:c:func:`power_manager_configure_error_timeout`).
+Calling these functions will generate a :c:struct:`power_manager_configure_timeout_event` that custom modules can subscribe to.
+
+The event is picked up by the |power_manager| and the timeout is set immediately. That is, if the timeout is changed from 15s to 60s while the device is in the idle state, the power-down timeout will be extended by 45s for that idle interval. The following wake-up intervals will be 60s.
+
+The default timeout intervals are set by :kconfig:`CONFIG_CAF_POWER_MANAGER_TIMEOUT` and :kconfig:`CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT`.

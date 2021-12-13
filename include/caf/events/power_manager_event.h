@@ -3,94 +3,112 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#ifndef _POWER_MANAGER_EVENT_H_
-#define _POWER_MANAGER_EVENT_H_
 
-/**
- * @file
- * @defgroup caf_power_manager_event CAF Power Manager Event
- * @{
- * @brief CAF Power Manager Event.
- */
+#include <caf/events/power_manager_event.h>
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <assert.h>
+#include <sys/util.h>
+#include <stdio.h>
+#include <caf/events/module_state_event.h>
 
 
-/**
- * @brief Available power levels
- *
- * The power levels provided by the power manager.
- */
-enum power_manager_level {
-	/**
-	 * @brief Stay alive.
-	 */
-	POWER_MANAGER_LEVEL_ALIVE = -1,
-	/**
-	 * @brief Suspend but do not go to power off
-	 */
-	POWER_MANAGER_LEVEL_SUSPENDED,
-	/**
-	 * @brief Go to full power off
-	 */
-	POWER_MANAGER_LEVEL_OFF,
-	/**
-	 * @brief Number of supported levels
-	 */
-	POWER_MANAGER_LEVEL_MAX
-};
 
-
-/**
- * @brief An event to specify which power state is allowed by module
- *
- * Any module can set maximum allowed power state that can be configured
- * by power manager.
- */
-struct power_manager_restrict_event {
-	/** Event header. */
-	struct event_header header;
-	/**
-	 * @brief The module index
-	 *
-	 * The index of the module that wish to block possibility to set power
-	 * mode below specified level.
-	 */
-	size_t module_idx;
-	/**
-	 * @brief The deepest sleep mode allowed
-	 */
-	enum power_manager_level level;
-};
-
-EVENT_TYPE_DECLARE(power_manager_restrict_event);
-
-/**
- * @brief Set the deepest power sleep mode allowed
- *
- * @param module_idx The index of the module
- * @param lvl        Maximal allowed mode
- */
-static inline void power_manager_restrict(size_t module_idx, enum power_manager_level lvl)
+static int log_restrict_event(const struct event_header *eh,
+		     char *buf, size_t buf_len)
 {
-	struct power_manager_restrict_event *event = new_power_manager_restrict_event();
+	const struct power_manager_restrict_event *event = cast_power_manager_restrict_event(eh);
+	enum power_manager_level lvl = event->level;
+	const char *power_state_str;
 
-	event->module_idx = module_idx;
-	event->level = lvl;
-	EVENT_SUBMIT(event);
+	__ASSERT_NO_MSG(event->module_idx < module_count());
+	__ASSERT_NO_MSG(lvl <= POWER_MANAGER_LEVEL_MAX);
+	__ASSERT_NO_MSG(lvl >= POWER_MANAGER_LEVEL_ALIVE);
+
+	switch (lvl) {
+	case POWER_MANAGER_LEVEL_ALIVE:
+		power_state_str = "ALIVE";
+		break;
+	case POWER_MANAGER_LEVEL_SUSPENDED:
+		power_state_str = "SUSPENDED";
+		break;
+	case POWER_MANAGER_LEVEL_OFF:
+		power_state_str = "OFF";
+		break;
+	case POWER_MANAGER_LEVEL_MAX:
+		power_state_str = "MAX";
+		break;
+	default:
+		power_state_str = "INVALID";
+		break;
+	}
+
+	EVENT_MANAGER_LOG(eh, "module \"%s\" restricts to %s",
+			module_name_get(module_id_get(event->module_idx)),
+			power_state_str);
+	return 0;
 }
 
-#ifdef __cplusplus
+static void profile_restrict_event(struct log_event_buf *buf,
+			  const struct event_header *eh)
+{
+	const struct power_manager_restrict_event *event = cast_power_manager_restrict_event(eh);
+
+	profiler_log_encode_uint32(buf, event->module_idx);
+	profiler_log_encode_int8(buf, event->level);
 }
-#endif
 
-/**
- * @}
- */
+static int log_configure_event(const struct event_header *eh,
+		     char *buf, size_t buf_len)
+{
+	const struct power_manager_configure_timeout_event *event =
+		cast_power_manager_configure_timeout_event(eh);
+	__ASSERT_NO_MSG(event->module_idx < module_count());
+	enum power_manager_timeout_setting setting = event->timeout_setting;
+	const int new_timeout = event->timeout_seconds;
+	const char *setting_str;
 
-#endif /* _POWER_MANAGER_EVENT_H_ */
+	switch (setting) {
+	case POWER_DOWN_ERROR_TIMEOUT:
+		setting_str = "Power down error timeout";
+		break;
+	case POWER_DOWN_TIMEOUT:
+		setting_str = "Power down timeout";
+		break;
+	}
+	return snprintf(buf, buf_len, "%s set to %d",
+	setting_str, new_timeout);
+}
+
+static void profile_configure_event(struct log_event_buf *buf,
+			  const struct event_header *eh)
+{
+	const struct power_manager_configure_timeout_event *event =
+		cast_power_manager_configure_timeout_event(eh);
+
+	profiler_log_encode_uint32(buf, event->module_idx);
+	profiler_log_encode_int8(buf, event->timeout_setting);
+}
+
+EVENT_INFO_DEFINE(power_manager_restrict_event,
+		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_S8),
+		  ENCODE("module", "level"),
+		  profile_restrict_event
+);
+
+EVENT_TYPE_DEFINE(power_manager_restrict_event,
+		  IS_ENABLED(CONFIG_CAF_INIT_LOG_POWER_MANAGER_EVENTS),
+		  log_restrict_event,
+		  &power_manager_restrict_event_info
+);
+
+EVENT_INFO_DEFINE(power_manager_configure_timeout_event,
+		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_S8),
+		  ENCODE("module", "timeout setting"),
+		  profile_configure_event
+);
+
+EVENT_TYPE_DEFINE(power_manager_configure_timeout_event,
+		  IS_ENABLED(CONFIG_CAF_INIT_LOG_POWER_MANAGER_EVENTS),
+		  log_configure_event,
+		  &power_manager_configure_timeout_event_info
+);

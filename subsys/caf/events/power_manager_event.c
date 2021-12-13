@@ -13,7 +13,7 @@
 
 
 
-static int log_event(const struct event_header *eh,
+static int log_restrict_event(const struct event_header *eh,
 		     char *buf, size_t buf_len)
 {
 	const struct power_manager_restrict_event *event = cast_power_manager_restrict_event(eh);
@@ -48,7 +48,7 @@ static int log_event(const struct event_header *eh,
 	return 0;
 }
 
-static void profile_event(struct log_event_buf *buf,
+static void profile_restrict_event(struct log_event_buf *buf,
 			  const struct event_header *eh)
 {
 	const struct power_manager_restrict_event *event = cast_power_manager_restrict_event(eh);
@@ -57,15 +57,58 @@ static void profile_event(struct log_event_buf *buf,
 	profiler_log_encode_int8(buf, event->level);
 }
 
+static int log_configure_event(const struct event_header *eh,
+		     char *buf, size_t buf_len)
+{
+	const struct power_manager_configure_timeout_event *event =
+		cast_power_manager_configure_timeout_event(eh);
+	__ASSERT_NO_MSG(event->module_idx < module_count());
+	enum power_manager_timeout_setting setting = event->timeout_setting;
+	const int new_timeout = event->timeout_seconds;
+	const char *setting_str;
+
+	switch (setting) {
+	case POWER_DOWN_ERROR_TIMEOUT:
+		setting_str = "Power down error timeout";
+		break;
+	case POWER_DOWN_TIMEOUT:
+		setting_str = "Power down timeout";
+		break;
+	}
+	return snprintf(buf, buf_len, "%s set to %d",
+	setting_str, new_timeout);
+}
+
+static void profile_configure_event(struct log_event_buf *buf,
+			  const struct event_header *eh)
+{
+	const struct power_manager_configure_timeout_event *event =
+		cast_power_manager_configure_timeout_event(eh);
+
+	profiler_log_encode_uint32(buf, event->module_idx);
+	profiler_log_encode_int8(buf, event->timeout_setting);
+}
 
 EVENT_INFO_DEFINE(power_manager_restrict_event,
 		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_S8),
 		  ENCODE("module", "level"),
-		  profile_event
+		  profile_restrict_event
 );
 
 EVENT_TYPE_DEFINE(power_manager_restrict_event,
 		  IS_ENABLED(CONFIG_CAF_INIT_LOG_POWER_MANAGER_EVENTS),
-		  log_event,
+		  log_restrict_event,
 		  &power_manager_restrict_event_info
+);
+
+EVENT_INFO_DEFINE(power_manager_configure_timeout_event,
+		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_S8),
+		  ENCODE("module", "timeout setting"),
+		  profile_configure_event
+);
+
+EVENT_TYPE_DEFINE(power_manager_configure_timeout_event,
+		  IS_ENABLED(CONFIG_CAF_INIT_LOG_POWER_MANAGER_EVENTS),
+		  log_configure_event,
+		  &power_manager_configure_timeout_event_info
 );

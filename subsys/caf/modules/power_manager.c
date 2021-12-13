@@ -29,10 +29,14 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_POWER_MANAGER_LOG_LEVEL);
 #include <caf/events/keep_alive_event.h>
 #include <caf/events/force_power_down_event.h>
 
+#include <settings/settings.h>
+static uint32_t power_down_error_timeout		= CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT;
+static uint32_t power_down_timeout				= CONFIG_CAF_POWER_MANAGER_TIMEOUT;
+#define POWER_DOWN_TIMEOUT_CONFIG_KEY		"power_down_timeout"
+#define POWER_DOWN_ERROR_TIMEOUT_CONFIG_KEY	"power_down_error_timeout"
 
-#define POWER_DOWN_ERROR_TIMEOUT      K_SECONDS(CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT)
-#define POWER_DOWN_CHECK_INTERVAL_SEC 1
-#define POWER_DOWN_CHECK_INTERVAL     K_SECONDS(POWER_DOWN_CHECK_INTERVAL_SEC)
+#define POWER_DOWN_CHECK_INTERVAL_SEC	1
+#define POWER_DOWN_CHECK_INTERVAL		K_SECONDS(POWER_DOWN_CHECK_INTERVAL_SEC)
 
 
 enum power_state {
@@ -67,7 +71,7 @@ static void power_down_counter_reset(void)
 	    check_if_power_state_allowed(POWER_MANAGER_LEVEL_SUSPENDED)) {
 		power_down_interval_counter = 0;
 		k_work_reschedule(&power_down_trigger, POWER_DOWN_CHECK_INTERVAL);
-		LOG_DBG("Power down timer restarted");
+		LOG_DBG("Power down timer restarted: %d [s]", power_down_timeout);
 	}
 }
 
@@ -76,6 +80,84 @@ static void power_down_counter_abort(void)
 	k_work_cancel_delayable(&power_down_trigger);
 	LOG_DBG("Power down timer aborted");
 }
+
+static int settings_set(const char *key, size_t len_rd, settings_read_cb read_cb, void *cb_arg)
+{
+	if (!strcmp(key, POWER_DOWN_TIMEOUT_CONFIG_KEY)) {
+		ssize_t len = read_cb(cb_arg, &power_down_timeout, sizeof(power_down_timeout));
+
+		if ((len != sizeof(power_down_timeout)) || (len != len_rd)) {
+			LOG_ERR(
+				"Can't read power_down_timeout from storage. Using default: %d [s]",
+				power_down_timeout
+			);
+			return len;
+		}
+		LOG_INF("Power down timeout set to %d [s]", power_down_timeout);
+	}
+
+	if (!strcmp(key, POWER_DOWN_ERROR_TIMEOUT_CONFIG_KEY)) {
+		ssize_t len = read_cb(cb_arg, &power_down_error_timeout, sizeof(power_down_error_timeout));
+
+		if ((len != sizeof(power_down_error_timeout)) || (len != len_rd)) {
+			LOG_ERR(
+				"Can't read power_down_error_timeout from storage. Using default: %d [s]",
+				power_down_error_timeout
+			);
+			return len;
+		}
+		LOG_INF("Power down error timeout set to %d [s]", power_down_error_timeout);
+	}
+
+	return 0;
+}
+
+#if IS_ENABLED(CONFIG_CAF_POWER_MANAGER_RUNTIME_TIMEOUT_SET)
+SETTINGS_STATIC_HANDLER_DEFINE(power_manager, MODULE_NAME, NULL, settings_set, NULL, NULL);
+#endif /* CONFIG_CAF_POWER_MANAGER_RUNTIME_TIMEOUT_SET */
+
+static int store_power_down_error_timeout(void)
+{
+	if (IS_ENABLED(CONFIG_CAF_POWER_MANAGER_RUNTIME_TIMEOUT_SET)) {
+		char key[100]; //testing if this works
+		int err = snprintk(key, sizeof(key), MODULE_NAME "/%s",
+				   POWER_DOWN_ERROR_TIMEOUT_CONFIG_KEY);
+		// char key[] = MODULE_NAME "/" POWER_DOWN_ERROR_TIMEOUT_CONFIG_KEY;
+
+		err = settings_save_one(key, &power_down_error_timeout,
+			sizeof(power_down_error_timeout));
+
+		if (err) {
+			LOG_ERR("Problem storing power_down_error_timeout: (err %d)", err);
+			power_down_error_timeout = CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT;
+			return err;
+		}
+		LOG_DBG("power_down_error_timeout set to %d [s]", power_down_error_timeout);
+	}
+	return 0;
+}
+
+static int store_power_down_timeout(void)
+{
+	if (IS_ENABLED(CONFIG_CAF_POWER_MANAGER_RUNTIME_TIMEOUT_SET)) {
+		// char key[] = MODULE_NAME "/" POWER_DOWN_TIMEOUT_CONFIG_KEY;
+		char key[30]; //testing if this works
+		int err = snprintk(key, sizeof(key), MODULE_NAME "/%s",
+				   POWER_DOWN_TIMEOUT_CONFIG_KEY);
+		err = settings_save_one(key, &power_down_timeout,
+			sizeof(power_down_timeout));
+
+		if (err) {
+			LOG_ERR("Problem storing power_down_timeout: (err %d)", err);
+			power_down_timeout = CONFIG_CAF_POWER_MANAGER_TIMEOUT;
+			return err;
+		}
+		LOG_DBG("power_down_timeout set to %d [s]", power_down_timeout);
+	}
+	return 0;
+}
+
+
 
 static void set_power_state(enum power_state state)
 {
@@ -164,7 +246,7 @@ static void power_down(struct k_work *work)
 
 	power_down_interval_counter++;
 	if (power_down_interval_counter <
-	    (CONFIG_CAF_POWER_MANAGER_TIMEOUT) / (POWER_DOWN_CHECK_INTERVAL_SEC)) {
+	    (power_down_timeout) / (POWER_DOWN_CHECK_INTERVAL_SEC)) {
 		k_work_reschedule(&power_down_trigger, POWER_DOWN_CHECK_INTERVAL);
 		return;
 	}
@@ -224,6 +306,24 @@ static bool event_handler(const struct event_header *eh)
 		EVENT_SUBMIT(event);
 		return false;
 	}
+	if (IS_ENABLED(CONFIG_CAF_POWER_MANAGER_RUNTIME_TIMEOUT_SET) &&
+		is_power_manager_configure_timeout_event(eh)) {
+		const struct power_manager_configure_timeout_event *event =
+			cast_power_manager_configure_timeout_event(eh);
+		int timeout_interval;
+
+		memcpy(&timeout_interval, &event->timeout_seconds, sizeof(timeout_interval));
+		if (event->timeout_setting == POWER_DOWN_ERROR_TIMEOUT) {
+			power_down_error_timeout = timeout_interval;
+			// power_down_error_timeout = event->timeout_seconds;
+			int err = store_power_down_error_timeout();
+		} else if (event->timeout_setting == POWER_DOWN_TIMEOUT) {
+			power_down_timeout = timeout_interval;
+			// power_down_timeout = event->timeout_seconds;
+			int err = store_power_down_timeout();
+		}
+		return false;
+	}
 
 	if (is_power_manager_restrict_event(eh)) {
 		const struct power_manager_restrict_event *event =
@@ -257,7 +357,7 @@ static bool event_handler(const struct event_header *eh)
 				system_off();
 			}
 		}
-		if (!is_off_allowed && was_off_allowed) {
+		if (is_off_allowed && !was_off_allowed) {
 			/* System off is not allowed. Reboot if needed. */
 			if (power_state == POWER_STATE_OFF) {
 				LOG_INF("Off restricted - rebooting");
@@ -272,7 +372,7 @@ static bool event_handler(const struct event_header *eh)
 		switch (power_state) {
 		case POWER_STATE_ERROR:
 			k_work_reschedule(&error_trigger,
-					  POWER_DOWN_ERROR_TIMEOUT);
+					  K_SECONDS(power_down_error_timeout));
 			break;
 
 		case POWER_STATE_ERROR_SUSPENDED:
@@ -339,9 +439,16 @@ static bool event_handler(const struct event_header *eh)
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
+			/* These things will be opt-out by the compiler. */
+			if (!IS_ENABLED(CONFIG_CAF_POWER_MANAGER_RUNTIME_TIMEOUT_SET)) {
+				ARG_UNUSED(settings_set);
+			} else {
+				settings_load();
+			}
 
 			__ASSERT_NO_MSG(!initialized);
 			power_state = POWER_STATE_IDLE;
+
 			initialized = true;
 
 			LOG_INF("Activate power manager");
@@ -374,6 +481,9 @@ EVENT_LISTENER(MODULE, event_handler);
 #endif
 #if IS_ENABLED(CONFIG_CAF_KEEP_ALIVE_EVENTS)
 	EVENT_SUBSCRIBE(MODULE, keep_alive_event);
+#endif
+#if IS_ENABLED(CONFIG_CAF_POWER_MANAGER_RUNTIME_TIMEOUT_SET)
+	EVENT_SUBSCRIBE(MODULE, power_manager_configure_timeout_event);
 #endif
 EVENT_SUBSCRIBE(MODULE, power_manager_restrict_event);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
