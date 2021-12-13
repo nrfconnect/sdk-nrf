@@ -54,7 +54,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: c932ad1952970987301719d927fc0232116e908f
+      revision: v2.7.0-ncs1
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -99,16 +99,16 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 800d4756702f07364f32538a6f0263c16be3eafc
+      revision: v1.7.99-ncs4
       path: bootloader/mcuboot
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 4fd082590c20abac209f83f6adcd28a21849929e
+      revision: v1.8.0
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
-      revision: v1.3.99-ncs3-rc2
+      revision: v1.3.99-ncs3
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
@@ -116,7 +116,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v1.8.0-rc2
+      revision: v1.8.0
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -127,7 +127,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: v1.8.0-rc2
+      revision: v1.8.0
       groups:
       - nrf-802154
     - name: cjson
@@ -136,12 +136,12 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: 409df1635d1b182e09a207cc7512e8b0e36176da
+      revision: v1.8.0
       groups:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: e01e324a79167c17ad1cbcb9a31a760d95b601f6
+      revision: v1.8.0
       groups:
       - find-my
     # Other third-party repositories.
