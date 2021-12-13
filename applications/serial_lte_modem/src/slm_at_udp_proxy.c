@@ -417,9 +417,9 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 		(void)close(proxy.sock);
 		proxy.sock = INVALID_SOCKET;
 		if (proxy.role == UDP_ROLE_CLIENT) {
-			sprintf(rsp_buf, "\r\n#XTCPCLI: %d,\"disconnected\"\r\n", ret);
+			sprintf(rsp_buf, "\r\n#XUDPCLI: %d,\"disconnected\"\r\n", ret);
 		} else {
-			sprintf(rsp_buf, "\r\n#XTCPSVR: %d,\"stopped\"\r\n", ret);
+			sprintf(rsp_buf, "\r\n#XUDPSVR: %d,\"stopped\"\r\n", ret);
 		}
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
