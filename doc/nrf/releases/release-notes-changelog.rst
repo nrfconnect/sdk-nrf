@@ -1,5 +1,3 @@
-:orphan:
-
 .. _ncs_release_notes_changelog:
 
 Changelog for |NCS| v1.8.99
@@ -14,10 +12,17 @@ The most relevant changes that are present on the main branch of the |NCS|, as c
 .. note::
    This file is a work in progress and might not cover all relevant changes.
 
+.. HOWTO
+
+   When adding a new PR, decide whether it needs an entry in the changelog.
+   If it does, update this page.
+   Add the sections you need, as only a handful of sections is kept when the changelog is cleaned.
+   "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and so on.
+
 Highlights
 **********
 
-There are no entries for this section yet.
+* |no_changes_yet_note|
 
 Known issues
 ************
@@ -33,7 +38,7 @@ The following sections provide detailed lists of changes by component.
 Application development
 =======================
 
-There are no entries for this section yet.
+* |no_changes_yet_note|
 
 Protocols
 =========
@@ -44,7 +49,7 @@ See `Samples`_ for lists of changes for the protocol-related samples.
 Bluetooth
 ---------
 
-There are no entries for this section yet.
+* |no_changes_yet_note|
 
 Applications
 ============
@@ -54,7 +59,7 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 nRF9160: Asset Tracker v2
 -------------------------
 
-There are no entries for this section yet.
+* |no_changes_yet_note|
 
 Samples
 =======
@@ -65,14 +70,14 @@ For lists of protocol-specific changes, see `Protocols`_.
 Bluetooth samples
 -----------------
 
-There are no entries for this section yet.
+* |no_changes_yet_note|
 
 Drivers
 =======
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-There are no entries for this section yet.
+* |no_changes_yet_note|
 
 Libraries
 =========
@@ -82,9 +87,7 @@ This section provides detailed lists of changes by :ref:`library <libraries>`.
 Bluetooth libraries and services
 --------------------------------
 
-Updated:
-
-There are no entries for this section yet.
+* |no_changes_yet_note|
 
 sdk-nrfxlib
 -----------
@@ -94,7 +97,7 @@ See the changelog for each library in the :doc:`nfxlib documentation <nrfxlib:RE
 Modem library
 +++++++++++++
 
-There are no entries for this section yet.
+* |no_changes_yet_note|
 
 Scripts
 =======
@@ -104,7 +107,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 Partition Manager
 -----------------
 
-There are no entries for this section yet.
+* |no_changes_yet_note|
 
 MCUboot
 =======
@@ -115,14 +118,7 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-* Fixed support for Low Power in Zephyr's single-thread mode.
-  See ``MCUBOOT_CPU_IDLE()`` macro.
-* Switched USB CDC ACM serial recovery I/O device configuration from Kconfig to Devicetree with the compatible ``"zephyr,cdc-acm-uart"`` property.
-* Switched UART serial recovery I/O device configuration from Kconfig to Devicetree using Zephyr's ``zephyr,console`` property of the chosen node.
-* Fixed a deadlock issue with cryptolib selectors in Kconfig.
-* Fixed an issue with the serial recovery skipping on nRF5340.
-* Added cleanup of UARTE devices before chainloading the application.
-  This allows the application to initialize the devices correctly and fixes potential missing output of the application's log.
+* |no_changes_yet_note|
 
 Mcumgr
 ======
@@ -131,7 +127,7 @@ The mcumgr library contains all commits from the upstream mcumgr repository up t
 
 The following list summarizes the most important changes inherited from upstream mcumgr:
 
-* No changes yet
+* |no_changes_yet_note|
 
 Zephyr
 ======
@@ -161,11 +157,13 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
-* No changes yet
+* |no_changes_yet_note|
 
 Documentation
 =============
 
 In addition to documentation related to the changes listed above, the following documentation has been updated:
 
-* No changes yet
+* |no_changes_yet_note|
+
+.. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
