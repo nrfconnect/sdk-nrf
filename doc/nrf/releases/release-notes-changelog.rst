@@ -89,6 +89,12 @@ Bluetooth libraries and services
 
 * |no_changes_yet_note|
 
+Modem libraries
+---------------
+
+* :ref:`at_cmd_parser_readme` library:
+  * Can now parse AT command responses containing the response result, for example, ``OK`` or ``ERROR``.
+
 sdk-nrfxlib
 -----------
 
