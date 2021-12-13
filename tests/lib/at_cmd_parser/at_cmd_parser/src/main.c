@@ -4,10 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <stddef.h>
 #include <ztest.h>
 #include <stdio.h>
 #include <string.h>
 #include <kernel.h>
+#include <sys/util.h>
 
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
@@ -21,19 +23,39 @@
 #define EMPTYPARAMLINE_PARAM_COUNT  6
 #define CERTIFICATE_PARAM_COUNT     5
 
-const char *singleline = "+CEREG: 2,\"76C1\",\"0102DA04\", 7\r\n";
-const char *multiline =  "+CGEQOSRDP: 0,0,,\r\n"
-			 "+CGEQOSRDP: 1,2,,\r\n"
-			 "+CGEQOSRDP: 2,4,,,1,65280000\r\n";
-const char *pduline = "+CMT: \"12345678\", 24\r\n"
-	   "06917429000171040A91747966543100009160402143708006C8329BFD0601\r\n";
-const char *singleparamline = "mfw_nrf9160_0.7.0-23.prealpha\r\n";
-const char *emptyparamline = "+CPSMS: 1,,,\"10101111\",\"01101100\"\r\n";
+const char *singleline[] = { "+CEREG: 2,\"76C1\",\"0102DA04\", 7\r\n+CME ERROR: 10\r\n",
+			     "+CEREG: 2,\"76C1\",\"0102DA04\", 7\r\nOK\r\n",
+			     "+CEREG: 2,\"76C1\",\"0102DA04\", 7\r\n" };
+const char *multiline[] = { "+CGEQOSRDP: 0,0,,\r\n"
+			    "+CGEQOSRDP: 1,2,,\r\n"
+			    "+CGEQOSRDP: 2,4,,,1,65280000\r\n",
+			    "+CGEQOSRDP: 0,0,,\r\n"
+			    "+CGEQOSRDP: 1,2,,\r\n"
+			    "+CGEQOSRDP: 2,4,,,1,65280000\r\nOK\r\n"
+			    "+CGEQOSRDP: 0,0,,\r\n"
+			    "+CGEQOSRDP: 1,2,,\r\n"
+			    "+CGEQOSRDP: 2,4,,,1,65280000\r\nERROR\r\n" };
+const char *pduline[] = {
+	"+CMT: \"12345678\", 24\r\n"
+	"06917429000171040A91747966543100009160402143708006C8329BFD0601\r\n+CME ERROR: 123\r\n",
+	"+CMT: \"12345678\", 24\r\n"
+	"06917429000171040A91747966543100009160402143708006C8329BFD0601\r\nOK\r\n",
+	"+CMT: \"12345678\", 24\r\n"
+	"06917429000171040A91747966543100009160402143708006C8329BFD0601\r\n"
+};
+const char *singleparamline[] = {
+	"mfw_nrf9160_0.7.0-23.prealpha\r\n+CMS ERROR: 123\r\n",
+	"mfw_nrf9160_0.7.0-23.prealpha\r\nOK\r\n",
+	"mfw_nrf9160_0.7.0-23.prealpha\r\n"
+};
+const char *emptyparamline[] = { "+CPSMS: 1,,,\"10101111\",\"01101100\"\r\n",
+				 "+CPSMS: 1,,,\"10101111\",\"01101100\"\r\nOK\r\n",
+				 "+CPSMS: 1,,,\"10101111\",\"01101100\"\r\n+CME ERROR: 123\r\n" };
 const char *certificate = "%CMNG: 12345678, 0, \"978C...02C4\","
 			  "\"-----BEGIN CERTIFICATE-----"
 			  "MIIBc464..."
 			  "...bW9aAa4"
-			  "-----END CERTIFICATE-----\"\r\n";
+			  "-----END CERTIFICATE-----\"\r\nERROR\r\n";
 
 static struct at_param_list test_list;
 static struct at_param_list test_list2;
@@ -49,75 +71,54 @@ static void test_params_fail_on_invalid_input(void)
 	int ret;
 	static struct at_param_list uninitialized;
 
-	ret = at_parser_max_params_from_str(NULL, NULL,
-					    &test_list, TEST_PARAMS);
-	zassert_true(ret == -EINVAL,
-		      "at_parser_max_params_from_str should return -EINVAL");
-
-	ret = at_parser_max_params_from_str(singleline, NULL,
-					    NULL, TEST_PARAMS);
-	zassert_true(ret == -EINVAL,
-		      "at_parser_max_params_from_str should return -EINVAL");
-
-	ret = at_parser_max_params_from_str(singleline, NULL,
-					    &uninitialized, TEST_PARAMS);
-	zassert_true(ret == -EINVAL,
-		      "at_parser_max_params_from_str should return -EINVAL");
-
+	ret = at_parser_max_params_from_str(NULL, NULL, &test_list, TEST_PARAMS);
+	zassert_true(ret == -EINVAL, "at_parser_max_params_from_str should return -EINVAL");
 	ret = at_parser_params_from_str(NULL, NULL, &test_list);
-	zassert_true(ret == -EINVAL,
-		      "at_parser_params_from_str should return -EINVAL");
+	zassert_true(ret == -EINVAL, "at_parser_params_from_str should return -EINVAL");
 
-	/**
-	 * This test setup must be disabled, as the third param cannot be NULL
-	 * Otherwise there will be HARD FAULT
-	 * ret = at_parser_params_from_str(singleline, NULL, NULL);
-	 * zassert_true(ret == -EINVAL,
-	 *	      "at_parser_params_from_str should return -EINVAL");
-	 */
-	ret = at_parser_params_from_str(singleline, NULL, &uninitialized);
-	zassert_true(ret == -EINVAL,
-		      "at_parser_params_from_str should return -EINVAL");
+	for (size_t i = 0; i < ARRAY_SIZE(singleline); i++) {
+		ret = at_parser_max_params_from_str(singleline[i], NULL, NULL, TEST_PARAMS);
+		zassert_true(ret == -EINVAL, "at_parser_max_params_from_str should return -EINVAL");
 
-	ret = at_parser_params_from_str(singleline, NULL, &test_list);
-	zassert_true(ret == -E2BIG,
-		      "at_parser_params_from_str should return -E2BIG");
-	zassert_equal(TEST_PARAMS, at_params_valid_count_get(&test_list),
-		      "There should be TEST_PARAMS elements in the list");
+		ret = at_parser_max_params_from_str(singleline[i], NULL, &uninitialized,
+						    TEST_PARAMS);
+		zassert_true(ret == -EINVAL, "at_parser_max_params_from_str should return -EINVAL");
 
-	ret = at_parser_params_from_str(multiline, NULL, &test_list);
-	zassert_true(ret == -E2BIG,
-		      "at_parser_params_from_str should return -E2BIG");
-	zassert_equal(TEST_PARAMS, at_params_valid_count_get(&test_list),
-		      "There should be TEST_PARAMS elements in the list");
+		ret = at_parser_params_from_str(singleline[i], NULL, &uninitialized);
+		zassert_true(ret == -EINVAL, "at_parser_params_from_str should return -EINVAL");
 
-	ret = at_parser_max_params_from_str(singleline, NULL,
-					    &test_list, TEST_PARAMS);
-	zassert_true(ret == -E2BIG,
-		      "at_parser_params_from_str should return -E2BIG");
-	zassert_equal(TEST_PARAMS, at_params_valid_count_get(&test_list),
-		      "There should be TEST_PARAMS elements in the list");
+		ret = at_parser_params_from_str(singleline[i], NULL, &test_list);
+		zassert_true(ret == -E2BIG, "at_parser_params_from_str should return -E2BIG");
+		zassert_equal(TEST_PARAMS, at_params_valid_count_get(&test_list),
+			      "There should be TEST_PARAMS elements in the list");
 
-	ret = at_parser_max_params_from_str(multiline, NULL,
-					    &test_list, TEST_PARAMS);
-	zassert_true(ret == -E2BIG,
-		      "at_parser_params_from_str should return -E2BIG");
-	zassert_equal(TEST_PARAMS, at_params_valid_count_get(&test_list),
-		      "There should be TEST_PARAMS elements in the list");
+		ret = at_parser_max_params_from_str(singleline[i], NULL, &test_list, TEST_PARAMS);
+		zassert_true(ret == -E2BIG, "at_parser_params_from_str should return -E2BIG");
+		zassert_equal(TEST_PARAMS, at_params_valid_count_get(&test_list),
+			      "There should be TEST_PARAMS elements in the list");
 
-	ret = at_parser_max_params_from_str(singleline, NULL,
-					    &test_list2, TEST_PARAMS);
-	zassert_true(ret == -E2BIG,
-		      "at_parser_params_from_str should return -E2BIG");
-	zassert_equal(TEST_PARAMS, at_params_valid_count_get(&test_list),
-		      "There should be TEST_PARAMS elements in the list");
+		ret = at_parser_max_params_from_str(singleline[i], NULL, &test_list2, TEST_PARAMS);
+		zassert_true(ret == -E2BIG, "at_parser_params_from_str should return -E2BIG");
+		zassert_equal(TEST_PARAMS, at_params_valid_count_get(&test_list),
+			      "There should be TEST_PARAMS elements in the list");
+	}
 
-	ret = at_parser_max_params_from_str(multiline, NULL,
-					    &test_list2, TEST_PARAMS);
-	zassert_true(ret == -E2BIG,
-		      "at_parser_params_from_str should return -E2BIG");
-	zassert_equal(TEST_PARAMS, at_params_valid_count_get(&test_list),
-		      "There should be TEST_PARAMS elements in the list");
+	for (size_t i = 0; i < ARRAY_SIZE(multiline); i++) {
+		ret = at_parser_params_from_str(multiline[i], NULL, &test_list);
+		zassert_true(ret == -E2BIG, "at_parser_params_from_str should return -E2BIG");
+		zassert_equal(TEST_PARAMS, at_params_valid_count_get(&test_list),
+			      "There should be TEST_PARAMS elements in the list");
+
+		ret = at_parser_max_params_from_str(multiline[i], NULL, &test_list, TEST_PARAMS);
+		zassert_true(ret == -E2BIG, "at_parser_params_from_str should return -E2BIG");
+		zassert_equal(TEST_PARAMS, at_params_valid_count_get(&test_list),
+			      "There should be TEST_PARAMS elements in the list");
+
+		ret = at_parser_max_params_from_str(multiline[i], NULL, &test_list2, TEST_PARAMS);
+		zassert_true(ret == -E2BIG, "at_parser_params_from_str should return -E2BIG");
+		zassert_equal(TEST_PARAMS, at_params_valid_count_get(&test_list),
+			      "There should be TEST_PARAMS elements in the list");
+	}
 }
 
 static void test_params_fail_on_invalid_input_teardown(void)
@@ -363,8 +364,10 @@ static void test_testcases(void)
 	char *remainding;
 
 	/* Try to parse the singleline string */
-	ret = at_parser_params_from_str(singleline, NULL, &test_list2);
-	zassert_true(ret == 0, "at_parser_params_from_str should return 0");
+	for (size_t i = 0; i < ARRAY_SIZE(singleline); i++) {
+		ret = at_parser_params_from_str(singleline[i], NULL, &test_list2);
+		zassert_true(ret == 0, "at_parser_params_from_str should return 0");
+	}
 
 	ret = at_params_valid_count_get(&test_list2);
 	zassert_true(ret == SINGLELINE_PARAM_COUNT,
@@ -384,8 +387,10 @@ static void test_testcases(void)
 		     "Param type at index 4 should be a short");
 
 	/* Try to parse the pduline string */
-	ret = at_parser_params_from_str(pduline, NULL, &test_list2);
-	zassert_true(ret == 0, "at_parser_params_from_str should return 0");
+	for (size_t i = 0; i < ARRAY_SIZE(pduline); i++) {
+		ret = at_parser_params_from_str(pduline[i], NULL, &test_list2);
+		zassert_true(ret == 0, "at_parser_params_from_str should return 0");
+	}
 
 	ret = at_params_valid_count_get(&test_list2);
 	zassert_true(ret == PDULINE_PARAM_COUNT,
@@ -401,9 +406,11 @@ static void test_testcases(void)
 	zassert_true(at_params_type_get(&test_list2, 3) == AT_PARAM_TYPE_STRING,
 		     "Param type at index 3 should be a string");
 
-	/* Try to parse the singleparamline string */
-	ret = at_parser_params_from_str(singleparamline, NULL, &test_list2);
-	zassert_true(ret == 0, "at_parser_params_from_str should return 0");
+	for (size_t i = 0; i < ARRAY_SIZE(singleparamline); i++) {
+		/* Try to parse the singleparamline string */
+		ret = at_parser_params_from_str(singleparamline[i], NULL, &test_list2);
+		zassert_true(ret == 0, "at_parser_params_from_str should return 0");
+	}
 
 	ret = at_params_valid_count_get(&test_list2);
 	zassert_true(ret == SINGLEPARAMLINE_PARAM_COUNT,
@@ -412,9 +419,11 @@ static void test_testcases(void)
 	zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
 		     "Param type at index 0 should be a string");
 
-	/* Try to parse the string containing empty/optional parameters  */
-	ret = at_parser_params_from_str(emptyparamline, NULL, &test_list2);
-	zassert_true(ret == 0, "at_parser_params_from_str should return 0");
+	for (size_t i = 0; i < ARRAY_SIZE(emptyparamline); i++) {
+		/* Try to parse the string containing empty/optional parameters  */
+		ret = at_parser_params_from_str(emptyparamline[i], NULL, &test_list2);
+		zassert_true(ret == 0, "at_parser_params_from_str should return 0");
+	}
 
 	ret = at_params_valid_count_get(&test_list2);
 	zassert_true(ret == EMPTYPARAMLINE_PARAM_COUNT,
@@ -434,81 +443,66 @@ static void test_testcases(void)
 	zassert_true(at_params_type_get(&test_list2, 5) == AT_PARAM_TYPE_STRING,
 		     "Param type at index 5 should be a string");
 
-	/* Try to parse the string containing multiple notifications  */
-	remainding = (char *)multiline;
-	ret = at_parser_params_from_str(remainding, (char **)&remainding,
-					&test_list2);
-	zassert_true(ret == -EAGAIN,
-		     "at_parser_params_from_str should return 0");
+	for (size_t i = 0; i < ARRAY_SIZE(multiline); i++) {
+		/* Try to parse the string containing multiple notifications  */
+		remainding = (char *)multiline[i];
+		ret = at_parser_params_from_str(remainding, (char **)&remainding, &test_list2);
+		zassert_true(ret == -EAGAIN, "at_parser_params_from_str should return 0");
 
-	ret = at_params_valid_count_get(&test_list2);
-	zassert_true(ret == 5,
-		      "at_params_valid_count_get returns wrong valid count");
+		ret = at_params_valid_count_get(&test_list2);
+		zassert_true(ret == 5, "at_params_valid_count_get returns wrong valid count");
 
-	zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
-		     "Param type at index 0 should be a string");
-	zassert_true(at_params_type_get(&test_list2, 1) ==
-							AT_PARAM_TYPE_NUM_INT,
-		     "Param type at index 1 should be a short");
-	zassert_true(at_params_type_get(&test_list2, 2) ==
-							AT_PARAM_TYPE_NUM_INT,
-		     "Param type at index 2 should be a short");
-	zassert_true(at_params_type_get(&test_list2, 3) == AT_PARAM_TYPE_EMPTY,
-		     "Param type at index 3 should be empty");
-	zassert_true(at_params_type_get(&test_list2, 4) == AT_PARAM_TYPE_EMPTY,
-		     "Param type at index 4 should be empty");
+		zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
+			     "Param type at index 0 should be a string");
+		zassert_true(at_params_type_get(&test_list2, 1) == AT_PARAM_TYPE_NUM_INT,
+			     "Param type at index 1 should be a short");
+		zassert_true(at_params_type_get(&test_list2, 2) == AT_PARAM_TYPE_NUM_INT,
+			     "Param type at index 2 should be a short");
+		zassert_true(at_params_type_get(&test_list2, 3) == AT_PARAM_TYPE_EMPTY,
+			     "Param type at index 3 should be empty");
+		zassert_true(at_params_type_get(&test_list2, 4) == AT_PARAM_TYPE_EMPTY,
+			     "Param type at index 4 should be empty");
 
-	/* 2nd iteration */
-	ret = at_parser_params_from_str(remainding, (char **)&remainding,
-					&test_list2);
-	zassert_true(ret == -EAGAIN,
-		     "at_parser_params_from_str should return 0");
+		/* 2nd iteration */
+		ret = at_parser_params_from_str(remainding, (char **)&remainding, &test_list2);
+		zassert_true(ret == -EAGAIN, "at_parser_params_from_str should return 0");
 
-	ret = at_params_valid_count_get(&test_list2);
-	zassert_true(ret == 5,
-		      "at_params_valid_count_get returns wrong valid count");
+		ret = at_params_valid_count_get(&test_list2);
+		zassert_true(ret == 5, "at_params_valid_count_get returns wrong valid count");
 
-	zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
-		     "Param type at index 0 should be a string");
-	zassert_true(at_params_type_get(&test_list2, 1) ==
-							AT_PARAM_TYPE_NUM_INT,
-		     "Param type at index 1 should be a short");
-	zassert_true(at_params_type_get(&test_list2, 2) ==
-							AT_PARAM_TYPE_NUM_INT,
-		     "Param type at index 2 should be a short");
-	zassert_true(at_params_type_get(&test_list2, 3) == AT_PARAM_TYPE_EMPTY,
-		     "Param type at index 3 should be empty");
-	zassert_true(at_params_type_get(&test_list2, 4) == AT_PARAM_TYPE_EMPTY,
-		     "Param type at index 4 should be empty");
+		zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
+			     "Param type at index 0 should be a string");
+		zassert_true(at_params_type_get(&test_list2, 1) == AT_PARAM_TYPE_NUM_INT,
+			     "Param type at index 1 should be a short");
+		zassert_true(at_params_type_get(&test_list2, 2) == AT_PARAM_TYPE_NUM_INT,
+			     "Param type at index 2 should be a short");
+		zassert_true(at_params_type_get(&test_list2, 3) == AT_PARAM_TYPE_EMPTY,
+			     "Param type at index 3 should be empty");
+		zassert_true(at_params_type_get(&test_list2, 4) == AT_PARAM_TYPE_EMPTY,
+			     "Param type at index 4 should be empty");
 
-	/* 3rd iteration */
-	ret = at_parser_params_from_str(remainding, (char **)&remainding,
-					&test_list2);
-	zassert_true(ret == 0,
-		     "at_parser_params_from_str should return 0");
+		/* 3rd iteration */
+		ret = at_parser_params_from_str(remainding, (char **)&remainding, &test_list2);
+		zassert_true(ret == 0, "at_parser_params_from_str should return 0");
 
-	ret = at_params_valid_count_get(&test_list2);
-	zassert_true(ret == 7,
-		      "at_params_valid_count_get returns wrong valid count");
+		ret = at_params_valid_count_get(&test_list2);
+		zassert_true(ret == 7, "at_params_valid_count_get returns wrong valid count");
 
-	zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
-		     "Param type at index 0 should be a string");
-	zassert_true(at_params_type_get(&test_list2, 1) ==
-							AT_PARAM_TYPE_NUM_INT,
-		     "Param type at index 1 should be a short");
-	zassert_true(at_params_type_get(&test_list2, 2) ==
-							AT_PARAM_TYPE_NUM_INT,
-		     "Param type at index 2 should be a short");
-	zassert_true(at_params_type_get(&test_list2, 3) == AT_PARAM_TYPE_EMPTY,
-		     "Param type at index 3 should be empty");
-	zassert_true(at_params_type_get(&test_list2, 4) == AT_PARAM_TYPE_EMPTY,
-		     "Param type at index 4 should be empty");
-	zassert_true(at_params_type_get(&test_list2, 5) ==
-							AT_PARAM_TYPE_NUM_INT,
-		     "Param type at index 5 should be a short");
-	zassert_true(at_params_type_get(&test_list2, 6) ==
-							AT_PARAM_TYPE_NUM_INT,
-		     "Param type at index 6 should be a integer");
+		zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
+			     "Param type at index 0 should be a string");
+		zassert_true(at_params_type_get(&test_list2, 1) == AT_PARAM_TYPE_NUM_INT,
+			     "Param type at index 1 should be a short");
+		zassert_true(at_params_type_get(&test_list2, 2) == AT_PARAM_TYPE_NUM_INT,
+			     "Param type at index 2 should be a short");
+		zassert_true(at_params_type_get(&test_list2, 3) == AT_PARAM_TYPE_EMPTY,
+			     "Param type at index 3 should be empty");
+		zassert_true(at_params_type_get(&test_list2, 4) == AT_PARAM_TYPE_EMPTY,
+			     "Param type at index 4 should be empty");
+		zassert_true(at_params_type_get(&test_list2, 5) == AT_PARAM_TYPE_NUM_INT,
+			     "Param type at index 5 should be a short");
+		zassert_true(at_params_type_get(&test_list2, 6) == AT_PARAM_TYPE_NUM_INT,
+			     "Param type at index 6 should be a integer");
+	}
 
 	/* Try to parse the string containing certificate data  */
 	ret = at_parser_params_from_str(certificate, NULL, &test_list2);

@@ -86,6 +86,12 @@ Updated:
 
 There are no entries for this section yet.
 
+Modem libraries
+---------------
+
+* :ref:`at_cmd_parser_readme` library:
+  * Can now parse AT command responses containing the response result, for example, ``OK`` or ``ERROR``.
+
 sdk-nrfxlib
 -----------
 
