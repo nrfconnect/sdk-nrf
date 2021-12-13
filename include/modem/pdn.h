@@ -89,9 +89,6 @@ typedef void (*pdn_event_handler_t)(uint8_t cid, enum pdn_event event,
 /**
  * @brief Initialize the PDN library.
  *
- * This library depends on the @ref at_cmd and @ref at_notif libraries,
- * and they must be both initialized before initializing this library.
- *
  * @return int Zero on success or a negative errno otherwise.
  */
 int pdn_init(void);
@@ -99,7 +96,7 @@ int pdn_init(void);
 /**
  * @brief Create a Packet Data Protocol (PDP) context.
  *
- * If a callback is provided via the @c cb parameter, the library will
+ * If a callback is provided via the @p cb parameter, the library will
  * generate events from the +CNEC and +GGEV AT notifications to report
  * state of the Packet Data Network (PDN) connection.
  *
@@ -150,9 +147,9 @@ int pdn_ctx_destroy(uint8_t cid);
  *
  * @param cid The PDP context ID to activate a connection for.
  * @param[out] esm If provided, the function will block to return the ESM error reason.
- * @param[out] family If provided, the function will block to return PDN_FAM_IPV4 if only IPv4 is
- *		      supported, or PDN_FAM_IPV6 if only IPv6 is supported. Otherwise, this value
- *		      will remain unchanged.
+ * @param[out] family If provided, the function will block to return @c PDN_FAM_IPV4 if only IPv4
+ *		      is supported, or @c PDN_FAM_IPV6 if only IPv6 is supported.
+ *		      Otherwise, this value will remain unchanged.
  * @return int Zero on success or a negative errno otherwise.
  */
 int pdn_activate(uint8_t cid, int *esm, enum pdn_fam *family);
