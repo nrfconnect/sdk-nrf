@@ -35,6 +35,7 @@ LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 
 static uint8_t *stream_buf;
 static size_t stream_buf_len;
+static size_t stream_buf_bytes;
 
 int dfu_ctx_mcuboot_set_b1_file(const char *file, bool s0_active,
 				const char **update)
@@ -114,6 +115,8 @@ int dfu_target_mcuboot_init(size_t file_size, dfu_target_callback_t cb)
 	const struct device *flash_dev;
 	int err;
 
+	stream_buf_bytes = 0;
+
 	if (stream_buf == NULL) {
 		LOG_ERR("Missing stream_buf, call '..set_buf' before '..init");
 		return -ENODEV;
@@ -150,11 +153,20 @@ int dfu_target_mcuboot_init(size_t file_size, dfu_target_callback_t cb)
 
 int dfu_target_mcuboot_offset_get(size_t *out)
 {
-	return dfu_target_stream_offset_get(out);
+	int err = 0;
+
+	err = dfu_target_stream_offset_get(out);
+	if (err == 0) {
+		*out += stream_buf_bytes;
+	}
+
+	return err;
 }
 
 int dfu_target_mcuboot_write(const void *const buf, size_t len)
 {
+	stream_buf_bytes = (stream_buf_bytes + len) % stream_buf_len;
+
 	return dfu_target_stream_write(buf, len);
 }
 
@@ -169,6 +181,8 @@ int dfu_target_mcuboot_done(bool successful)
 	}
 
 	if (successful) {
+		stream_buf_bytes = 0;
+
 		err = stream_flash_erase_page(dfu_target_stream_get_stream(),
 					      MCUBOOT_SECONDARY_LAST_PAGE_ADDR);
 		if (err != 0) {

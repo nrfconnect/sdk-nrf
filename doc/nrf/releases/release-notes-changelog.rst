@@ -289,7 +289,8 @@ Libraries for networking
 * :ref:`lib_fota_download` library:
 
   * Fixed an issue where the application would not be notified of errors originating from inside :c:func:`download_with_offset`. In the http_update samples, this would result in the dfu start button interrupt being disabled after a connect error in :c:func:`download_with_offset` after a disconnect during firmware download.
-
+  * Fixed an issue that :ref:`lib_fota_download`, after a link-connection timeout, restarted the firmware image download from an incorrect offset.
+    This resulted in an invalid image and required a restart of the firmware update process.
 * :ref:`lib_dfu_target` library:
 
   * Updated the implementation of modem delta upgrades in the DFU target library to use the new socketless interface provided by the :ref:`nrf_modem`.
