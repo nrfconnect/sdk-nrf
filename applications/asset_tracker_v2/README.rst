@@ -24,3 +24,4 @@ See the subpages for detailed documentation on the application and its internal 
    doc/debug_module
    doc/sensor_module
    doc/ui_module
+   doc/gnss_module
