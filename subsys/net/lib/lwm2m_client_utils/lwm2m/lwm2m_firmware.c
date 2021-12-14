@@ -64,8 +64,13 @@ static char package_version[MAX_INSTANCE_COUNT][CONFIG_LWM2M_CLIENT_UTILS_FIRMWA
 #define MANUFACTURER_LENGTH 25
 #define HWVERSION_LENGTH 18
 
+struct fota_download_work {
+	struct k_work work;
+	int image_type;
+};
+
 static struct k_work_delayable reboot_work;
-static struct k_work download_work;
+static struct fota_download_work download_work;
 
 void client_acknowledge(void);
 
@@ -412,8 +417,20 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 	/* Following cases mark end of FOTA download */
 	case FOTA_DOWNLOAD_EVT_CANCELLED:
 	case FOTA_DOWNLOAD_EVT_ERROR:
-		LOG_ERR("FOTA_DOWNLOAD_EVT_ERROR");
+		LOG_ERR("FOTA_DOWNLOAD_EVT_ERROR %d", evt->cause);
 		lwm2m_firmware_set_update_state(current_update_instance, STATE_IDLE);
+		/* If we were given Full modem update URL and we started with expecting delta image,
+		 * we will retrigger the job expecting full modem image
+		 */
+		if (evt->cause == FOTA_DOWNLOAD_ERROR_CAUSE_TYPE_MISMATCH &&
+		   fota_download_target() == DFU_TARGET_IMAGE_TYPE_FULL_MODEM &&
+		   current_update_instance == CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM) {
+			LOG_INF("Restarting download, attempting full modem image");
+			download_work.image_type = DFU_TARGET_IMAGE_TYPE_FULL_MODEM;
+			k_work_submit(&download_work.work);
+			lwm2m_firmware_set_update_state(current_update_instance, STATE_DOWNLOADING);
+			return;
+		}
 		break;
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		image_type = fota_download_target();
@@ -429,14 +446,17 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 
 static void start_fota_download(struct k_work *work)
 {
+	struct fota_download_work *dl_work = CONTAINER_OF(work, struct fota_download_work, work);
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM)
 	/* We can't know if the download is full modem firmware
 	 * before the downloader actually starts, so configure
 	 * the dfu_target_full_modem here
 	 */
-	configure_full_modem_update();
+	if (dl_work->image_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM)
+		configure_full_modem_update();
 #endif
-	int ret = fota_download_start(fota_host, fota_path, fota_sec_tag, 0, 0);
+	int ret = fota_download_start_with_image_type(fota_host, fota_path, fota_sec_tag, 0, 0,
+						      dl_work->image_type);
 
 	if (ret < 0) {
 		LOG_ERR("fota_download_start() failed, return code %d", ret);
@@ -506,7 +526,13 @@ static int write_dl_uri(uint16_t obj_inst_id,
 	fota_host[len] = 0;
 	current_update_instance = obj_inst_id;
 
-	k_work_submit(&download_work);
+	if (obj_inst_id == CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM) {
+		download_work.image_type = DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
+	} else if (obj_inst_id == CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP) {
+		download_work.image_type = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
+	}
+
+	k_work_submit(&download_work.work);
 	lwm2m_firmware_set_update_state(current_update_instance, STATE_DOWNLOADING);
 	return 0;
 }
@@ -514,7 +540,7 @@ static int write_dl_uri(uint16_t obj_inst_id,
 int lwm2m_init_firmware(void)
 {
 	k_work_init_delayable(&reboot_work, reboot_work_handler);
-	k_work_init(&download_work, start_fota_download);
+	k_work_init(&download_work.work, start_fota_download);
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM)
 	k_work_init(&full_modem_update_work, apply_fmfu_from_ext_flash);
 #endif
