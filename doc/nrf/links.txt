@@ -201,6 +201,8 @@
 
 .. _`nRF Connect for Mobile`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-mobile
 
+.. _`nRF Connect Device Manager`: https://www.nordicsemi.com/Products/Development-tools/nrf-connect-device-manager
+
 .. _`nRF Mesh mobile app`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Mesh
 
 .. _`nRF Toolbox`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Toolbox
