@@ -59,11 +59,17 @@ LED 3:
     * On - The network is open.
     * Off - The network is closed.
 
+LED 4:
+    Blinks when the network coordinator is in Identify mode.
+
 Button 1:
     Reopens the network for 180 seconds.
 
     .. note::
          The network is also opened after start-up.
+
+Button 4:
+    Puts the network coordinator in Identify mode.
 
 Building and running
 ********************
