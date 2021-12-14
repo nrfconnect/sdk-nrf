@@ -384,7 +384,7 @@ static char rtt_buffer[RTT_BUF_SZ];
 static void trace_rtt_init(void)
 {
 	trace_rtt_channel = SEGGER_RTT_AllocUpBuffer("modem_trace", rtt_buffer,
-		sizeof(rtt_buffer), SEGGER_RTT_MODE_NO_BLOCK_SKIP);
+		sizeof(rtt_buffer), SEGGER_RTT_MODE_NO_BLOCK_TRIM);
 
 	if (trace_rtt_channel < 0) {
 		LOG_ERR("Could not allocated RTT channel for modem trace (%d)",
@@ -626,6 +626,20 @@ void nrf_modem_os_init(void)
 #endif
 }
 
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT
+/* The value of DELAY_LOOP_VAL is found experimentally to introduce the right amount of delay
+ * for the RTT client on host side to fetch the modem traces in time and thereby reduce data loss.
+ * The delay introduced by this function is about 4.7 ms.
+ */
+#define DELAY_LOOP_VAL 75000
+static void rtt_read_delay(void)
+{
+	for (int i = 0; i < DELAY_LOOP_VAL; i++) {
+		arch_nop();
+	}
+}
+#endif
+
 int32_t nrf_modem_os_trace_put(const uint8_t * const data, uint32_t len)
 {
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
@@ -655,12 +669,24 @@ int32_t nrf_modem_os_trace_put(const uint8_t * const data, uint32_t len)
 	uint32_t remaining_bytes = len;
 
 	while (remaining_bytes) {
-		uint8_t transfer_len = MIN(remaining_bytes, RTT_BUF_SZ);
 		uint32_t idx = len - remaining_bytes;
+		uint32_t transfer_len;
 
-		SEGGER_RTT_WriteSkipNoLock(trace_rtt_channel, &data[idx],
-			transfer_len);
+		transfer_len = SEGGER_RTT_WriteNoLock(trace_rtt_channel, &data[idx],
+							remaining_bytes);
+		if (transfer_len == 0) {
+			/* The API failed to write any bytes into the RTT buffer. This could be
+			 * because the RTT listener is not running on host side or the RTT speed
+			 * configured on host side is too slow. In this situation, we stop
+			 * attempting to write more bytes of the current trace and break out of
+			 * the loop. The trace bytes that have not been written are considered
+			 * lost.
+			 */
+			break;
+		}
 		remaining_bytes -= transfer_len;
+
+		rtt_read_delay();
 	}
 #endif
 	return 0;
