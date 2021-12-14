@@ -330,7 +330,7 @@ int socket_send(const struct download_client *client, size_t len)
 
 	while (len) {
 		sent = send(client->fd, client->buf + off, len, 0);
-		if (sent <= 0) {
+		if (sent < 0) {
 			return -errno;
 		}
 
