@@ -85,7 +85,7 @@ For lists of protocol-specific changes, see `Protocols`_.
 Bluetooth samples
 -----------------
 
-* |no_changes_yet_note|
+* Added :ref:`multiple_adv_sets` sample.
 
 nRF9160 samples
 ---------------
