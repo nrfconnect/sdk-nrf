@@ -493,6 +493,7 @@ void main(void)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	/* Modem FW update needs to be verified before modem is used. */
 	lwm2m_verify_modem_fw_update(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM);
+	lwm2m_report_firmware_update_status(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_MODEM);
 #endif
 #if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
 	ret = at_cmd_init();
@@ -537,6 +538,7 @@ void main(void)
 		LOG_ERR("Failed to setup image properties (%d)", ret);
 		return;
 	}
+	lwm2m_report_firmware_update_status(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_INSTANCE_APP);
 #endif
 
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)

@@ -611,6 +611,30 @@ void lwm2m_verify_modem_fw_update(uint16_t obj_inst_id)
 	sys_reboot(SYS_REBOOT_COLD);
 }
 
+void lwm2m_report_firmware_update_status(uint16_t obj_inst_id)
+{
+	int ret = 0;
+	struct update_counter counter;
+	char path[9+1]; /* '5/[0-65535]/5' -> max len 9 + terminating NULL */
+
+	ret = fota_update_counter_read(obj_inst_id, &counter);
+	if (ret) {
+		LOG_ERR("Failed read update counter");
+		return;
+	}
+
+	ret = snprintf(path, sizeof(path), "5/%" PRIu16 "/5", obj_inst_id);
+
+	/* Check if a firmware update status needs to be reported */
+	if (counter.update != -1 && counter.current == counter.update) {
+		LOG_INF("Firmware updated successfully for instance %d", obj_inst_id);
+		lwm2m_engine_set_u8(path, RESULT_SUCCESS);
+	} else if (counter.update > counter.current) {
+		LOG_INF("Firmware failed to be updated");
+		lwm2m_engine_set_u8(path, RESULT_UPDATE_FAILED);
+	}
+}
+
 int lwm2m_init_image(uint16_t obj_inst_id)
 {
 	int ret = 0;
@@ -655,20 +679,6 @@ int lwm2m_init_image(uint16_t obj_inst_id)
 
 			LOG_INF("Update Counter updated");
 		}
-	}
-
-	char path[9+1]; /* '5/[0-65535]/5' -> max len 9 + terminating NULL */
-
-	ret = snprintf(path, sizeof(path), "5/%" PRIu16 "/5", obj_inst_id);
-
-
-	/* Check if a firmware update status needs to be reported */
-	if (counter.update != -1 && counter.current == counter.update) {
-		LOG_INF("Firmware updated successfully");
-		lwm2m_engine_set_u8(path, RESULT_SUCCESS);
-	} else if (counter.update > counter.current) {
-		LOG_INF("Firmware failed to be updated");
-		lwm2m_engine_set_u8(path, RESULT_UPDATE_FAILED);
 	}
 
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
