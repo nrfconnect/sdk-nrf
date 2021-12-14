@@ -185,35 +185,42 @@ ZB_HA_DECLARE_DIMMABLE_LIGHT_CTX(
 	dimmable_light_ctx,
 	dimmable_light_ep);
 
-/**@brief Callback for button events.
+/**@brief Starts identifying the device.
  *
- * @param[in]   button_state  Bitmask containing buttons state.
- * @param[in]   has_changed   Bitmask containing buttons
- *                            that have changed their state.
+ * @param  bufid  Unused parameter, required by ZBOSS scheduler API.
  */
-static void button_changed(uint32_t button_state, uint32_t has_changed)
+static void start_identifying(zb_bufid_t bufid)
 {
 	zb_ret_t zb_err_code;
 
-	/* Calculate bitmask of buttons that are pressed
-	 * and have changed their state.
+	ZVUNUSED(bufid);
+
+	/* Check if endpoint is in identifying mode,
+	 * if not, put desired endpoint in identifying mode.
 	 */
+	if (dev_ctx.identify_attr.identify_time == ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE) {
+		LOG_INF("Enter identify mode");
+
+		zb_err_code = zb_bdb_finding_binding_target(HA_DIMMABLE_LIGHT_ENDPOINT);
+		ZB_ERROR_CHECK(zb_err_code);
+	} else {
+		LOG_INF("Cancel identify mode");
+		zb_bdb_finding_binding_target_cancel();
+	}
+}
+
+/**@brief Callback for button events.
+ *
+ * @param[in]   button_state  Bitmask containing the state of the buttons.
+ * @param[in]   has_changed   Bitmask containing buttons that have changed their state.
+ */
+static void button_changed(uint32_t button_state, uint32_t has_changed)
+{
+	/* Calculate bitmask of buttons that are pressed and have changed their state. */
 	uint32_t buttons = button_state & has_changed;
 
 	if (buttons & IDENTIFY_MODE_BUTTON) {
-		/* Check if endpoint is in identifying mode,
-		 * if not put desired endpoint in identifying mode.
-		 */
-		if (dev_ctx.identify_attr.identify_time ==
-		    ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE) {
-			LOG_INF("Bulb put in identifying mode");
-			zb_err_code = zb_bdb_finding_binding_target(
-				HA_DIMMABLE_LIGHT_ENDPOINT);
-			ZB_ERROR_CHECK(zb_err_code);
-		} else {
-			LOG_INF("Cancel F&B target procedure");
-			zb_bdb_finding_binding_target_cancel();
-		}
+		ZB_SCHEDULE_APP_CALLBACK(start_identifying, 0);
 	}
 }
 
@@ -326,6 +333,42 @@ static void on_off_set_value(zb_bool_t on)
 			dev_ctx.level_control_attr.current_level);
 	} else {
 		light_bulb_set_brightness(0U);
+	}
+}
+
+/**@brief Function to toggle the identify LED - BULB_LED is used for this.
+ *
+ * @param  bufid  Unused parameter, required by ZBOSS scheduler API.
+ */
+static void toggle_identify_led(zb_bufid_t bufid)
+{
+	static int blink_status;
+
+	light_bulb_set_brightness(((++blink_status) % 2) ? (255U) : (0U));
+	ZB_SCHEDULE_APP_ALARM(toggle_identify_led, bufid, ZB_MILLISECONDS_TO_BEACON_INTERVAL(100));
+}
+
+/**@brief Function to handle identify notification events on the first endpoint.
+ *
+ * @param  bufid  Unused parameter, required by ZBOSS scheduler API.
+ */
+static void identify_cb(zb_bufid_t bufid)
+{
+	zb_ret_t zb_err_code;
+
+	if (bufid) {
+		/* Schedule a self-scheduling function that will toggle the LED. */
+		ZB_SCHEDULE_APP_CALLBACK(toggle_identify_led, bufid);
+	} else {
+		/* Cancel the toggling function alarm and restore current Zigbee LED state. */
+		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(toggle_identify_led, ZB_ALARM_ANY_PARAM);
+		ZVUNUSED(zb_err_code);
+
+		if (dev_ctx.on_off_attr.on_off) {
+			light_bulb_set_brightness(dev_ctx.level_control_attr.current_level);
+		} else {
+			light_bulb_set_brightness(0U);
+		}
 	}
 }
 
@@ -512,6 +555,9 @@ void main(void)
 
 	bulb_clusters_attr_init();
 	level_control_set_value(dev_ctx.level_control_attr.current_level);
+
+	/* Register handler to identify notifications. */
+	ZB_AF_SET_IDENTIFY_NOTIFICATION_HANDLER(HA_DIMMABLE_LIGHT_ENDPOINT, identify_cb);
 
 	/* Initialize ZCL scene table */
 	zcl_scenes_init();

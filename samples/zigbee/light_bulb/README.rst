@@ -55,6 +55,7 @@ LED 3:
 LED 4:
     Indicates the dimmable light option, that is changes to the light bulb brightness.
     It can be controlled by another Zigbee device in the network, for example a light switch.
+    Blinks when the light bulb is in Identify mode.
 
 Button 4:
     Puts the light bulb in Identify mode.
