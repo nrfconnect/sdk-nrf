@@ -418,7 +418,7 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 	case FOTA_DOWNLOAD_EVT_CANCELLED:
 	case FOTA_DOWNLOAD_EVT_ERROR:
 		LOG_ERR("FOTA_DOWNLOAD_EVT_ERROR %d", evt->cause);
-		lwm2m_firmware_set_update_state(current_update_instance, STATE_IDLE);
+		lwm2m_firmware_set_update_state_with_instance(current_update_instance, STATE_IDLE);
 		/* If we were given Full modem update URL and we started with expecting delta image,
 		 * we will retrigger the job expecting full modem image
 		 */
@@ -428,14 +428,16 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 			LOG_INF("Restarting download, attempting full modem image");
 			download_work.image_type = DFU_TARGET_IMAGE_TYPE_FULL_MODEM;
 			k_work_submit(&download_work.work);
-			lwm2m_firmware_set_update_state(current_update_instance, STATE_DOWNLOADING);
+			lwm2m_firmware_set_update_state_with_instance(current_update_instance,
+								      STATE_DOWNLOADING);
 			return;
 		}
 		break;
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		image_type = fota_download_target();
 		LOG_INF("FOTA download finished, target %d", image_type);
-		lwm2m_firmware_set_update_state(current_update_instance, STATE_DOWNLOADED);
+		lwm2m_firmware_set_update_state_with_instance(current_update_instance,
+							      STATE_DOWNLOADED);
 		break;
 	}
 	k_free(fota_host);
@@ -460,7 +462,7 @@ static void start_fota_download(struct k_work *work)
 
 	if (ret < 0) {
 		LOG_ERR("fota_download_start() failed, return code %d", ret);
-		lwm2m_firmware_set_update_state(current_update_instance, STATE_IDLE);
+		lwm2m_firmware_set_update_state_with_instance(current_update_instance, STATE_IDLE);
 		k_free(fota_host);
 		current_update_instance = -1;
 		fota_host = NULL;
@@ -533,7 +535,7 @@ static int write_dl_uri(uint16_t obj_inst_id,
 	}
 
 	k_work_submit(&download_work.work);
-	lwm2m_firmware_set_update_state(current_update_instance, STATE_DOWNLOADING);
+	lwm2m_firmware_set_update_state_with_instance(current_update_instance, STATE_DOWNLOADING);
 	return 0;
 }
 
@@ -691,4 +693,3 @@ int lwm2m_init_image(uint16_t obj_inst_id)
 
 	return ret;
 }
-
