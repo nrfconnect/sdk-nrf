@@ -159,6 +159,10 @@ Bootloader libraries
 Modem libraries
 ---------------
 
+* :ref:`at_monitor_readme` library:
+
+  * Introduced AT_MONITOR_ISR macro to monitor AT notifications in an interrupt service routine.
+
 * :ref:`at_cmd_parser_readme` library:
 
   * Can now parse AT command responses containing the response result, for example, ``OK`` or ``ERROR``.
