@@ -11,7 +11,7 @@
 #include <random/rand32.h>
 #include <net/mqtt.h>
 #include <net/socket.h>
-#include <modem/at_cmd.h>
+#include <nrf_modem_at.h>
 #include <modem/lte_lc.h>
 #include <logging/log.h>
 #if defined(CONFIG_MODEM_KEY_MGMT)
@@ -351,7 +351,7 @@ static int broker_init(void)
 
 #if defined(CONFIG_NRF_MODEM_LIB)
 #define IMEI_LEN 15
-#define CGSN_RESPONSE_LENGTH 19
+#define CGSN_RESPONSE_LENGTH (IMEI_LEN + 6 + 1) /* Add 6 for \r\nOK\r\n and 1 for \0 */
 #define CLIENT_ID_LEN sizeof("nrf-") + IMEI_LEN
 #else
 #define RANDOM_LEN 10
@@ -374,15 +374,7 @@ static const uint8_t* client_id_get(void)
 	char imei_buf[CGSN_RESPONSE_LENGTH + 1];
 	int err;
 
-	if (!IS_ENABLED(CONFIG_AT_CMD_SYS_INIT)) {
-		err = at_cmd_init();
-		if (err) {
-			LOG_ERR("at_cmd failed to initialize, error: %d", err);
-			goto exit;
-		}
-	}
-
-	err = at_cmd_write("AT+CGSN", imei_buf, sizeof(imei_buf), NULL);
+	err = nrf_modem_at_cmd(imei_buf, sizeof(imei_buf), "AT+CGSN");
 	if (err) {
 		LOG_ERR("Failed to obtain IMEI, error: %d", err);
 		goto exit;
