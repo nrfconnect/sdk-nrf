@@ -54,6 +54,11 @@ Bluetooth
 
 * |no_changes_yet_note|
 
+Matter
+------
+
+* Added ``EXPERIMENTAL`` select in Kconfig that informs that Matter support is experimental.
+
 Applications
 ============
 
