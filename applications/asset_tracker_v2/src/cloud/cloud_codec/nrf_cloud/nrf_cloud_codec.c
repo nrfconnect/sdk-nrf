@@ -27,7 +27,9 @@ enum batch_data_type {
 	GNSS,
 	ENVIRONMENTALS,
 	BUTTON,
-	RSRP
+	MODEM_STATIC,
+	MODEM_DYNAMIC,
+	VOLTAGE,
 };
 
 /* Function that checks the version number of the incoming message and determines if it has already
@@ -59,15 +61,9 @@ static bool has_shadow_update_been_handled(cJSON *root_obj)
 	return retval;
 }
 
-static int add_meta_data(cJSON *parent, const char *app_id, int64_t *timestamp)
+static int add_meta_data(cJSON *parent, const char *app_id, int64_t *timestamp, bool convert_time)
 {
 	int err;
-
-	err = date_time_uptime_to_unix_time_ms(timestamp);
-	if (err) {
-		LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
-		return err;
-	}
 
 	err = json_add_str(parent, DATA_ID, app_id);
 	if (err) {
@@ -81,17 +77,27 @@ static int add_meta_data(cJSON *parent, const char *app_id, int64_t *timestamp)
 		return err;
 	}
 
-	err = json_add_number(parent, DATA_TIMESTAMP, *timestamp);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		return err;
+	if (timestamp != NULL) {
+		if (convert_time) {
+			err = date_time_uptime_to_unix_time_ms(timestamp);
+			if (err) {
+				LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
+				return err;
+			}
+		}
+
+		err = json_add_number(parent, DATA_TIMESTAMP, *timestamp);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			return err;
+		}
 	}
 
 	return 0;
 }
 
-static int add_data(cJSON *parent, const char *app_id, const char *str_val,
-		    int64_t *timestamp, bool queued, const char *object_name)
+static int add_data(cJSON *parent, cJSON *child, const char *app_id, const char *str_val,
+		    int64_t *timestamp, bool queued, const char *object_name, bool convert_time)
 {
 	int err;
 
@@ -101,23 +107,37 @@ static int add_data(cJSON *parent, const char *app_id, const char *str_val,
 
 	cJSON *data_obj = cJSON_CreateObject();
 
-	err = json_add_str(data_obj, DATA_TYPE, str_val);
+	if (data_obj == NULL) {
+		return -ENOMEM;
+	}
+
+	err = add_meta_data(data_obj, app_id, timestamp, convert_time);
 	if (err) {
 		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 		goto exit;
 	}
 
-	err = add_meta_data(data_obj, app_id, timestamp);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
+	if (str_val != NULL) {
+		err = json_add_str(data_obj, DATA_TYPE, str_val);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
 	}
 
-	if (object_name == NULL) {
-		json_add_obj_array(parent, data_obj);
-	} else {
-		json_add_obj(parent, object_name, data_obj);
+	if (child != NULL) {
+		cJSON *content_obj = cJSON_CreateObject();
+
+		if (content_obj == NULL) {
+			err = -ENOMEM;
+			goto exit;
+		}
+
+		json_add_obj(content_obj, object_name, child);
+		json_add_obj(data_obj, DATA_TYPE, content_obj);
 	}
+
+	json_add_obj_array(parent, data_obj);
 
 	return 0;
 
@@ -134,8 +154,8 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 			int err;
 			struct cloud_data_gnss *data = (struct cloud_data_gnss *)buf;
 
-			err =  add_data(array, APP_ID_GPS, data[i].nmea,
-					&data[i].gnss_ts, data[i].queued, NULL);
+			err =  add_data(array, NULL, APP_ID_GPS, data[i].nmea,
+					&data[i].gnss_ts, data[i].queued, NULL, true);
 			if (err && err != -ENODATA) {
 				return err;
 			}
@@ -162,14 +182,14 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 				return -ENOMEM;
 			}
 
-			err = add_data(array, APP_ID_HUMIDITY, humidity,
-				       &data[i].env_ts, data[i].queued, NULL);
+			err = add_data(array, NULL, APP_ID_HUMIDITY, humidity,
+				       &data[i].env_ts, data[i].queued, NULL, true);
 			if (err && err != -ENODATA) {
 				return err;
 			}
 
-			err =  add_data(array, APP_ID_TEMPERATURE, temperature,
-					&ts_temp, data[i].queued, NULL);
+			err =  add_data(array, NULL, APP_ID_TEMPERATURE, temperature,
+					&ts_temp, data[i].queued, NULL, true);
 			if (err && err != -ENODATA) {
 				return err;
 			}
@@ -188,8 +208,8 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 				return -ENOMEM;
 			}
 
-			err =  add_data(array, APP_ID_BUTTON, button,
-					&data[i].btn_ts, data[i].queued, NULL);
+			err =  add_data(array, NULL, APP_ID_BUTTON, button,
+					&data[i].btn_ts, data[i].queued, NULL, true);
 			if (err && err != -ENODATA) {
 				return err;
 			}
@@ -197,20 +217,101 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 			data[i].queued = false;
 			break;
 		}
-		case RSRP: {
+		case MODEM_STATIC: {
+			int err;
+			cJSON *modem_static_ref = NULL;
+			cJSON *data_ref = NULL;
+			struct cloud_data_modem_static *modem_static =
+						(struct cloud_data_modem_static *)buf;
+
+			err = json_common_modem_static_data_add(NULL, modem_static,
+								JSON_COMMON_GET_POINTER_TO_OBJECT,
+								NULL, &modem_static_ref);
+			if (err && err != -ENODATA) {
+				return err;
+			} else if (err == -ENODATA) {
+				break;
+			}
+
+			data_ref = cJSON_DetachItemFromObject(modem_static_ref, DATA_VALUE);
+			cJSON_Delete(modem_static_ref);
+
+			if (data_ref == NULL) {
+				LOG_ERR("Cannot find object: %s", DATA_VALUE);
+				return -ENOENT;
+			}
+
+			err = add_data(array, data_ref, APP_ID_DEVICE, NULL, &modem_static->ts,
+				       true, DATA_MODEM_STATIC, false);
+			if (err && err != -ENODATA) {
+				cJSON_Delete(data_ref);
+				return err;
+			}
+
+			break;
+		}
+		case MODEM_DYNAMIC: {
 			int err, len;
 			char rsrp[5];
-			struct cloud_data_modem_dynamic *data =
-						(struct cloud_data_modem_dynamic *)buf;
+			cJSON *modem_dynamic_ref = NULL;
+			cJSON *data_ref = NULL;
+			struct cloud_data_modem_dynamic *modem_dynamic =
+				(struct cloud_data_modem_dynamic *)buf;
 
-			len = snprintk(rsrp, sizeof(rsrp), "%d", data[i].rsrp);
-			if ((len < 0) || (len >= sizeof(rsrp))) {
-				LOG_ERR("Cannot convert RSRP value to string, buffer to small");
+			err = json_common_modem_dynamic_data_add(NULL, &modem_dynamic[i],
+								 JSON_COMMON_GET_POINTER_TO_OBJECT,
+								 NULL, &modem_dynamic_ref);
+			if (err && err != -ENODATA) {
+				return err;
+			} else if (err == -ENODATA) {
+				break;
+			}
+
+			data_ref = cJSON_DetachItemFromObject(modem_dynamic_ref, DATA_VALUE);
+			cJSON_Delete(modem_dynamic_ref);
+
+			if (data_ref == NULL) {
+				LOG_ERR("Cannot find object: %s", DATA_VALUE);
+				return -ENOENT;
+			}
+
+			err = add_data(array, data_ref, APP_ID_DEVICE, NULL, &modem_dynamic[i].ts,
+				       true, DATA_MODEM_DYNAMIC, false);
+			if (err && err != -ENODATA) {
+				cJSON_Delete(data_ref);
+				return err;
+			}
+
+			/* Retrieve and construct RSRP APP_ID message from dynamic modem data */
+			if (modem_dynamic[i].rsrp_fresh) {
+				len = snprintk(rsrp, sizeof(rsrp), "%d", modem_dynamic[i].rsrp);
+				if ((len < 0) || (len >= sizeof(rsrp))) {
+					LOG_ERR("Cannot convert RSRP value, buffer to small");
+					return -ENOMEM;
+				}
+
+				err = add_data(array, NULL, APP_ID_RSRP, rsrp, &modem_dynamic[i].ts,
+					       true, NULL, false);
+				if (err && err != -ENODATA) {
+					return err;
+				}
+			}
+
+			break;
+		}
+		case VOLTAGE: {
+			int err, len;
+			char voltage[5];
+			struct cloud_data_battery *data = (struct cloud_data_battery *)buf;
+
+			len = snprintk(voltage, sizeof(voltage), "%d", data[i].bat);
+			if ((len < 0) || (len >= sizeof(voltage))) {
+				LOG_ERR("Cannot convert voltage number to string, buffer to small");
 				return -ENOMEM;
 			}
 
-			err =  add_data(array, APP_ID_RSRP, rsrp,
-					&data[i].ts, data[i].queued, NULL);
+			err = add_data(array, NULL, APP_ID_VOLTAGE, voltage, &data[i].bat_ts,
+				       data[i].queued, NULL, true);
 			if (err && err != -ENODATA) {
 				return err;
 			}
@@ -412,236 +513,10 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 			    struct cloud_data_accelerometer *accel_buf,
 			    struct cloud_data_battery *bat_buf)
 {
-	int err, len;
-	char *buffer;
-	bool msg_obj_added = false;
-	bool state_obj_added = false;
-
-	cJSON *root_obj = cJSON_CreateObject();
-	cJSON *state_obj = cJSON_CreateObject();
-	cJSON *rep_obj = cJSON_CreateObject();
-	cJSON *dev_obj = cJSON_CreateObject();
-
-	cJSON *modem_static_ref = NULL;
-	cJSON *modem_dynamic_ref = NULL;
-	cJSON *data_ref = NULL;
-
-	if (root_obj == NULL || state_obj == NULL || rep_obj == NULL || dev_obj == NULL) {
-		cJSON_Delete(root_obj);
-		cJSON_Delete(state_obj);
-		cJSON_Delete(rep_obj);
-		cJSON_Delete(dev_obj);
-		return -ENOMEM;
-	}
-
-	/******************************************************************************************/
-
-	/* TEMPHACK - Add GNSS, humidity, and temperature to root object and unpack in nrf cloud
-	 * integration layer before it is adressed to the right endpoint.
+	/* Encoding of the latest buffer entries is not supported.
+	 * Only batch encoding is supported.
 	 */
-
-	/* GNSS NMEA */
-
-	err = add_data(root_obj, APP_ID_GPS, gnss_buf->nmea, &gnss_buf->gnss_ts, gnss_buf->queued,
-		       OBJECT_MSG_GNSS);
-	if (err == 0) {
-		msg_obj_added = true;
-	} else if (err != -ENODATA) {
-		goto add_object;
-	}
-	gnss_buf->queued = false;
-
-	/* Humidity and Temperature */
-
-	/* Convert to humidity and temperature to string format. */
-	char humidity[7];
-	char temperature[7];
-
-	len = snprintk(humidity, sizeof(humidity), "%.2f", sensor_buf->hum);
-	if ((len < 0) || (len >= sizeof(humidity))) {
-		LOG_ERR("Cannot convert humidity to string, buffer to small");
-		err = -ENOMEM;
-		goto add_object;
-	}
-
-	len = snprintk(temperature, sizeof(temperature), "%.2f", sensor_buf->temp);
-	if ((len < 0) || (len >= sizeof(temperature))) {
-		LOG_ERR("Cannot convert temperature to string, buffer to small");
-		err = -ENOMEM;
-		goto add_object;
-	}
-
-	/* Make a copy of the sensor timestamp. Timestamps are converted before encoding add
-	 * humidity and temperature share the same timestamp.
-	 */
-	int64_t ts_temp = sensor_buf->env_ts;
-
-	err = add_data(root_obj, APP_ID_HUMIDITY, humidity, &sensor_buf->env_ts, sensor_buf->queued,
-		       OBJECT_MSG_HUMID);
-	if (err == 0) {
-		msg_obj_added = true;
-	} else if (err != -ENODATA) {
-		goto add_object;
-	}
-
-	err = add_data(root_obj, APP_ID_TEMPERATURE, temperature, &ts_temp, sensor_buf->queued,
-		       OBJECT_MSG_TEMP);
-	if (err == 0) {
-		msg_obj_added = true;
-	} else if (err != -ENODATA) {
-		goto add_object;
-	}
-	sensor_buf->queued = false;
-
-	/* Separate RSRP from static modem data if the entry is queued and encode as a separate
-	 * message.
-	 */
-	if (modem_dyn_buf->queued && modem_dyn_buf->rsrp_fresh) {
-		char rsrp[5];
-
-		/* Make a copy of the timestamp to avoid error when converting the relative
-		 * timestamp twice with date_time_uptime_to_unix_time_ms().
-		 */
-		int64_t rsrp_ts = modem_dyn_buf->ts;
-
-		/* Adjust RSRP to dBm */
-		modem_dyn_buf->rsrp -= 140;
-
-		len = snprintk(rsrp, sizeof(rsrp), "%d", modem_dyn_buf->rsrp);
-		if ((len < 0) || (len >= sizeof(rsrp))) {
-			LOG_ERR("Cannot convert RSRP value to string, buffer to small");
-			err = -ENOMEM;
-			goto add_object;
-		}
-
-		err = add_data(root_obj, APP_ID_RSRP, rsrp, &rsrp_ts, true, OBJECT_MSG_RSRP);
-		if (err == 0) {
-			msg_obj_added = true;
-		} else if (err != -ENODATA) {
-			goto add_object;
-		}
-	}
-
-	/******************************************************************************************/
-
-	/* deviceInfo */
-
-	err = json_common_modem_static_data_add(NULL, modem_stat_buf,
-						JSON_COMMON_GET_POINTER_TO_OBJECT,
-						NULL,
-						&modem_static_ref);
-	if (err == 0) {
-		state_obj_added = true;
-	} else if (err != -ENODATA) {
-		goto add_object;
-	}
-
-	data_ref = cJSON_DetachItemFromObject(modem_static_ref, DATA_VALUE);
-	cJSON_Delete(modem_static_ref);
-
-	if (data_ref != NULL) {
-		/* Temporary add battery data to deviceInfo. */
-		if (bat_buf->queued) {
-			err = json_add_number(data_ref, DATA_BATTERY, bat_buf->bat);
-			if (err) {
-				cJSON_Delete(data_ref);
-				goto add_object;
-			}
-			bat_buf->queued = false;
-		}
-
-		json_add_obj(dev_obj, DATA_MODEM_STATIC, data_ref);
-	} else {
-		/* If deviceInfo is empty but battery data is queued, we create a deviceInfo object
-		 * and populate it with battery data.
-		 */
-		if (bat_buf->queued) {
-
-			data_ref = cJSON_CreateObject();
-			if (data_ref == NULL) {
-				err = -ENOMEM;
-				goto add_object;
-			}
-
-			err = json_add_number(data_ref, DATA_BATTERY, bat_buf->bat);
-			if (err) {
-				cJSON_Delete(data_ref);
-				goto add_object;
-			}
-
-			state_obj_added = true;
-			json_add_obj(dev_obj, DATA_MODEM_STATIC, data_ref);
-			bat_buf->queued = false;
-		}
-	}
-
-	/* networkInfo */
-
-	err = json_common_modem_dynamic_data_add(NULL, modem_dyn_buf,
-						 JSON_COMMON_GET_POINTER_TO_OBJECT,
-						 NULL,
-						 &modem_dynamic_ref);
-	if (err == 0) {
-		state_obj_added = true;
-	} else if (err != -ENODATA) {
-		goto add_object;
-	}
-
-	data_ref = cJSON_DetachItemFromObject(modem_dynamic_ref, DATA_VALUE);
-	cJSON_Delete(modem_dynamic_ref);
-	if (data_ref != NULL) {
-		json_add_obj(dev_obj, DATA_MODEM_DYNAMIC, data_ref);
-	}
-
-add_object:
-
-	/* Delete state object if empty. */
-	if (state_obj_added) {
-		json_add_obj(rep_obj, OBJECT_DEVICE, dev_obj);
-		json_add_obj(state_obj, OBJECT_REPORTED, rep_obj);
-		json_add_obj(root_obj, OBJECT_STATE, state_obj);
-	} else {
-		cJSON_Delete(dev_obj);
-		cJSON_Delete(rep_obj);
-		cJSON_Delete(state_obj);
-	}
-
-	/* Check error code after all objects has been added to the root object.
-	 * This way, we only need to clear the root_object upon an error.
-	 */
-	if ((err != 0) && (err != -ENODATA)) {
-		goto exit;
-	}
-
-	if (!state_obj_added && !msg_obj_added) {
-		err = -ENODATA;
-		LOG_DBG("No data to encode, JSON string empty...");
-		goto exit;
-	} else {
-		/* At this point err can be either 0 or -ENODATA. Explicitly set err to 0 if
-		 * objects has been added to the rootj object.
-		 */
-		err = 0;
-	}
-
-	buffer = cJSON_PrintUnformatted(root_obj);
-	if (buffer == NULL) {
-		LOG_ERR("Failed to allocate memory for JSON string");
-
-		err = -ENOMEM;
-		goto exit;
-	}
-
-	if (IS_ENABLED(CONFIG_CLOUD_CODEC_LOG_LEVEL_DBG)) {
-		json_print_obj("Encoded message:\n", root_obj);
-	}
-
-	output->buf = buffer;
-	output->len = strlen(buffer);
-
-exit:
-	cJSON_Delete(root_obj);
-	return err;
+	return -ENOTSUP;
 }
 
 int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
@@ -677,7 +552,7 @@ int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
 		goto exit;
 	}
 
-	err = add_meta_data(root_obj, APP_ID_BUTTON, &ui_buf->btn_ts);
+	err = add_meta_data(root_obj, APP_ID_BUTTON, &ui_buf->btn_ts, true);
 	if (err) {
 		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 		goto exit;
@@ -705,20 +580,21 @@ exit:
 	return err;
 }
 
-int cloud_codec_encode_batch_data(
-				struct cloud_codec_data *output,
-				struct cloud_data_gnss *gnss_buf,
-				struct cloud_data_sensors *sensor_buf,
-				struct cloud_data_modem_dynamic *modem_dyn_buf,
-				struct cloud_data_ui *ui_buf,
-				struct cloud_data_accelerometer *accel_buf,
-				struct cloud_data_battery *bat_buf,
-				size_t gnss_buf_count,
-				size_t sensor_buf_count,
-				size_t modem_dyn_buf_count,
-				size_t ui_buf_count,
-				size_t accel_buf_count,
-				size_t bat_buf_count)
+int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
+				  struct cloud_data_gnss *gnss_buf,
+				  struct cloud_data_sensors *sensor_buf,
+				  struct cloud_data_modem_static *modem_stat_buf,
+				  struct cloud_data_modem_dynamic *modem_dyn_buf,
+				  struct cloud_data_ui *ui_buf,
+				  struct cloud_data_accelerometer *accel_buf,
+				  struct cloud_data_battery *bat_buf,
+				  size_t gnss_buf_count,
+				  size_t sensor_buf_count,
+				  size_t modem_stat_buf_count,
+				  size_t modem_dyn_buf_count,
+				  size_t ui_buf_count,
+				  size_t accel_buf_count,
+				  size_t bat_buf_count)
 {
 	int err;
 	char *buffer;
@@ -747,9 +623,21 @@ int cloud_codec_encode_batch_data(
 		goto exit;
 	}
 
-	err = add_batch_data(root_array, RSRP, modem_dyn_buf, modem_dyn_buf_count);
+	err = add_batch_data(root_array, VOLTAGE, bat_buf, bat_buf_count);
 	if (err) {
-		LOG_ERR("Failed adding RSRP data to array, error: %d", err);
+		LOG_ERR("Failed adding battery data to array, error: %d", err);
+		goto exit;
+	}
+
+	err = add_batch_data(root_array, MODEM_STATIC, modem_stat_buf, modem_stat_buf_count);
+	if (err) {
+		LOG_ERR("Failed adding static modem data to array, error: %d", err);
+		goto exit;
+	}
+
+	err = add_batch_data(root_array, MODEM_DYNAMIC, modem_dyn_buf, modem_dyn_buf_count);
+	if (err) {
+		LOG_ERR("Failed adding dynamic modem data to array, error: %d", err);
 		goto exit;
 	}
 
@@ -781,7 +669,6 @@ int cloud_codec_encode_batch_data(
 
 exit:
 	/* Clear buffers that are not handled by this function. */
-	memset(bat_buf, 0, bat_buf_count * sizeof(struct cloud_data_battery));
 	memset(accel_buf, 0, accel_buf_count * sizeof(struct cloud_data_accelerometer));
 	cJSON_Delete(root_array);
 	return err;

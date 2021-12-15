@@ -232,12 +232,6 @@ int cloud_wrap_disconnect(void)
 	return 0;
 }
 
-int cloud_wrap_state_get(void)
-{
-	/* Not supported by nRF Cloud */
-	return 0;
-}
-
 int cloud_wrap_state_send(char *buf, size_t len)
 {
 	int err;
@@ -255,102 +249,6 @@ int cloud_wrap_state_send(char *buf, size_t len)
 	}
 
 	return 0;
-}
-
-/* Decode data received from the data module and send the data to the correct endpoint. Ideally all
- * data should be sent to one endpoint in one message, but due to current restrictions in
- * nRF Cloud they must be sent to different endpoints.
- */
-static int decode_and_send(cJSON *object, const char *object_name, bool device_state)
-{
-	int err;
-	char *tx_buffer;
-	struct nrf_cloud_tx_data msg = {0};
-	cJSON *msg_ref = NULL;
-
-	msg_ref = cJSON_DetachItemFromObject(object, object_name);
-	if (msg_ref != NULL) {
-		if (device_state) {
-			/* When state object is detached from root, we need to add the reported
-			 * object back to state object before sending to the shadow.
-			 */
-			cJSON *state_obj = cJSON_CreateObject();
-
-			if (state_obj == NULL) {
-				cJSON_Delete(msg_ref);
-				return -ENOMEM;
-			}
-
-			json_add_obj(state_obj, OBJECT_STATE, msg_ref);
-
-			tx_buffer = cJSON_Print(state_obj);
-			cJSON_Delete(state_obj);
-			msg.topic_type = NRF_CLOUD_TOPIC_STATE;
-
-		} else {
-			tx_buffer = cJSON_Print(msg_ref);
-			cJSON_Delete(msg_ref);
-			msg.topic_type = NRF_CLOUD_TOPIC_MESSAGE;
-		}
-
-		if (tx_buffer == NULL) {
-			LOG_ERR("Failed to allocate memory for JSON string");
-			return -ENOMEM;
-		}
-
-		msg.data.ptr = tx_buffer;
-		msg.data.len = strlen(tx_buffer);
-		msg.qos = MQTT_QOS_0_AT_MOST_ONCE;
-
-		err = nrf_cloud_send(&msg);
-		k_free(tx_buffer);
-		if (err) {
-			LOG_ERR("nrf_cloud_send, error: %d", err);
-			return err;
-		}
-	}
-
-	return 0;
-}
-
-int cloud_wrap_data_send(char *buf, size_t len)
-{
-	int err;
-	cJSON *root_obj = NULL;
-
-	root_obj = cJSON_Parse(buf);
-	if (root_obj == NULL) {
-		return -ENOENT;
-	}
-
-	err = decode_and_send(root_obj, OBJECT_MSG_TEMP, false);
-	if (err) {
-		goto clean_exit;
-	}
-
-	err = decode_and_send(root_obj, OBJECT_MSG_HUMID, false);
-	if (err) {
-		goto clean_exit;
-	}
-
-	err = decode_and_send(root_obj, OBJECT_MSG_GNSS, false);
-	if (err) {
-		goto clean_exit;
-	}
-
-	err = decode_and_send(root_obj, OBJECT_MSG_RSRP, false);
-	if (err) {
-		goto clean_exit;
-	}
-
-	err = decode_and_send(root_obj, OBJECT_STATE, true);
-	if (err) {
-		goto clean_exit;
-	}
-
-clean_exit:
-	cJSON_Delete(root_obj);
-	return err;
 }
 
 int cloud_wrap_batch_send(char *buf, size_t len)
@@ -410,15 +308,29 @@ int cloud_wrap_neighbor_cells_send(char *buf, size_t len)
 	return 0;
 }
 
+int cloud_wrap_state_get(void)
+{
+	/* Not supported, the nRF Cloud library automatically requests the cloud-side state upon
+	 * an established connection.
+	 */
+	return -ENOTSUP;
+}
+
+int cloud_wrap_data_send(char *buf, size_t len)
+{
+	/* Not supported, all data is sent to the bulk topic. */
+	return -ENOTSUP;
+}
+
 int cloud_wrap_agps_request_send(char *buf, size_t len)
 {
-	/* Not supported */
+	/* Not supported, A-GPS is requested internally via the nRF Cloud A-GPS library. */
 	return -ENOTSUP;
 }
 
 int cloud_wrap_pgps_request_send(char *buf, size_t len)
 {
-	/* Not supported */
+	/* Not supported, P-GPS is requested internally via the nRF Cloud P-GPS library. */
 	return -ENOTSUP;
 }
 
