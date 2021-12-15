@@ -1,0 +1,9 @@
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Support for Matter (formerly Connected Home over IP) protocol in NCS is experimental
+config CHIP
+	bool
+	select EXPERIMENTAL
