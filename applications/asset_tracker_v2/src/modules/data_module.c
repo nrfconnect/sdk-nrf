@@ -79,6 +79,10 @@ static struct cloud_data_neighbor_cells neighbor_cells;
  * have to be buffered.
  */
 static struct cloud_data_modem_static modem_stat;
+/* Size of the static modem (modem_stat) data structure.
+ * Used to provide an array size when encoding batch data.
+ */
+#define MODEM_STATIC_ARRAY_SIZE 1
 
 /* Head of ringbuffers. */
 static int head_gnss_buf;
@@ -600,6 +604,9 @@ static void data_encode(void)
 		 */
 		LOG_DBG("No new data to encode");
 		break;
+	case -ENOTSUP:
+		LOG_DBG("Regular data updates are not supported, data will be published in batch");
+		break;
 	default:
 		LOG_ERR("Error encoding message %d", err);
 		SEND_ERROR(data, DATA_EVT_ERROR, err);
@@ -607,18 +614,20 @@ static void data_encode(void)
 	}
 
 	err = cloud_codec_encode_batch_data(&codec,
-					gnss_buf,
-					sensors_buf,
-					modem_dyn_buf,
-					ui_buf,
-					accel_buf,
-					bat_buf,
-					ARRAY_SIZE(gnss_buf),
-					ARRAY_SIZE(sensors_buf),
-					ARRAY_SIZE(modem_dyn_buf),
-					ARRAY_SIZE(ui_buf),
-					ARRAY_SIZE(accel_buf),
-					ARRAY_SIZE(bat_buf));
+					    gnss_buf,
+					    sensors_buf,
+					    &modem_stat,
+					    modem_dyn_buf,
+					    ui_buf,
+					    accel_buf,
+					    bat_buf,
+					    ARRAY_SIZE(gnss_buf),
+					    ARRAY_SIZE(sensors_buf),
+					    MODEM_STATIC_ARRAY_SIZE,
+					    ARRAY_SIZE(modem_dyn_buf),
+					    ARRAY_SIZE(ui_buf),
+					    ARRAY_SIZE(accel_buf),
+					    ARRAY_SIZE(bat_buf));
 	switch (err) {
 	case 0:
 		LOG_DBG("Batch data encoded successfully");

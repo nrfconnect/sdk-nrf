@@ -440,7 +440,9 @@ static void config_get(void)
 	int err;
 
 	err = cloud_wrap_state_get();
-	if (err) {
+	if (err == -ENOTSUP) {
+		LOG_DBG("Requesting of device configuration is not supported");
+	} else if (err) {
 		LOG_ERR("cloud_wrap_state_get, err: %d", err);
 	} else {
 		LOG_DBG("Device configuration requested");

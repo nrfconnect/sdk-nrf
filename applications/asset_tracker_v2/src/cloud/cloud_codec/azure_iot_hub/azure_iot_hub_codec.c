@@ -396,20 +396,21 @@ exit:
 	return err;
 }
 
-int cloud_codec_encode_batch_data(
-				struct cloud_codec_data *output,
-				struct cloud_data_gnss *gnss_buf,
-				struct cloud_data_sensors *sensor_buf,
-				struct cloud_data_modem_dynamic *modem_dyn_buf,
-				struct cloud_data_ui *ui_buf,
-				struct cloud_data_accelerometer *accel_buf,
-				struct cloud_data_battery *bat_buf,
-				size_t gnss_buf_count,
-				size_t sensor_buf_count,
-				size_t modem_dyn_buf_count,
-				size_t ui_buf_count,
-				size_t accel_buf_count,
-				size_t bat_buf_count)
+int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
+				  struct cloud_data_gnss *gnss_buf,
+				  struct cloud_data_sensors *sensor_buf,
+				  struct cloud_data_modem_static *modem_stat_buf,
+				  struct cloud_data_modem_dynamic *modem_dyn_buf,
+				  struct cloud_data_ui *ui_buf,
+				  struct cloud_data_accelerometer *accel_buf,
+				  struct cloud_data_battery *bat_buf,
+				  size_t gnss_buf_count,
+				  size_t sensor_buf_count,
+				  size_t modem_stat_buf_count,
+				  size_t modem_dyn_buf_count,
+				  size_t ui_buf_count,
+				  size_t accel_buf_count,
+				  size_t bat_buf_count)
 {
 	int err;
 	char *buffer;
@@ -420,6 +421,15 @@ int cloud_codec_encode_batch_data(
 	if (root_obj == NULL) {
 		cJSON_Delete(root_obj);
 		return -ENOMEM;
+	}
+
+	err = json_common_batch_data_add(root_obj, JSON_COMMON_MODEM_STATIC,
+					 modem_stat_buf, modem_stat_buf_count,
+					 DATA_MODEM_STATIC);
+	if (err == 0) {
+		object_added = true;
+	} else if (err != -ENODATA) {
+		goto exit;
 	}
 
 	err = json_common_batch_data_add(root_obj, JSON_COMMON_MODEM_DYNAMIC,
