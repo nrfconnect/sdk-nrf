@@ -569,7 +569,8 @@ static void send_agps_request(struct k_work *work)
 /* Request A-GPS data no more often than every hour (time in milliseconds). */
 #define AGPS_UPDATE_PERIOD (60 * 60 * MSEC_PER_SEC)
 
-	if ((last_request_timestamp != 0) &&
+	if (!IS_ENABLED(CONFIG_NRF_CLOUD_AGPS_FILTERED) &&
+	    (last_request_timestamp != 0) &&
 	    (k_uptime_get() - last_request_timestamp) < AGPS_UPDATE_PERIOD) {
 		LOG_WRN("A-GPS request was sent less than 1 hour ago");
 	} else {
