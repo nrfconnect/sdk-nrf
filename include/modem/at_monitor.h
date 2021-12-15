@@ -46,6 +46,18 @@ struct at_monitor_entry {
 };
 
 /**
+ * @brief AT monitor entry (ISR).
+ */
+struct at_monitor_isr_entry {
+	/** The filter for this monitor. */
+	const char *filter;
+	/** Monitor callback. */
+	const at_monitor_handler_t handler;
+	/** Whether monitor is paused. */
+	bool paused;
+};
+
+/**
  * @brief Ready to dispatch notifications to monitors.
  */
 void at_monitor_init(void);
@@ -58,7 +70,7 @@ void at_monitor_init(void);
 #define ACTIVE 0
 
 /**
- * @brief Define an AT monitor.
+ * @brief Define an AT monitor to receive notifications in the system workqueue thread.
  *
  * @param name The monitor name.
  * @param _filter The filter for AT notification the monitor should receive,
@@ -67,12 +79,30 @@ void at_monitor_init(void);
  * @param ... Optional monitor initial state (@c PAUSED or @c ACTIVE).
  *	      The default initial state of a monitor is active.
  */
-#define AT_MONITOR(name, _filter, _handler, ...)                               \
-	static void _handler(const char *);                                    \
-	STRUCT_SECTION_ITERABLE(at_monitor_entry, at_monitor_##name) = {       \
-		.filter = _filter,                                             \
-		.handler = _handler,                                           \
-		COND_CODE_1(__VA_ARGS__, (.paused = __VA_ARGS__,), ())         \
+#define AT_MONITOR(name, _filter, _handler, ...)                                                   \
+	static void _handler(const char *);                                                        \
+	STRUCT_SECTION_ITERABLE(at_monitor_entry, at_monitor_##name) = {                           \
+		.filter = _filter,                                                                 \
+		.handler = _handler,                                                               \
+		COND_CODE_1(__VA_ARGS__, (.paused = __VA_ARGS__,), ())                             \
+	}
+
+/**
+ * @brief Define an AT monitor to receive AT notifications in an ISR.
+ *
+ * @param name The monitor name.
+ * @param _filter The filter for AT notification the monitor should receive,
+ *		  or @c ANY to receive all notifications.
+ * @param _handler The monitor callback.
+ * @param ... Optional monitor initial state (@c PAUSED or @c ACTIVE).
+ *	      The default initial state of a monitor is active.
+ */
+#define AT_MONITOR_ISR(name, _filter, _handler, ...)                                               \
+	static void _handler(const char *);                                                        \
+	STRUCT_SECTION_ITERABLE(at_monitor_isr_entry, at_monitor_##name) = {                       \
+		.filter = _filter,                                                                 \
+		.handler = _handler,                                                               \
+		COND_CODE_1(__VA_ARGS__, (.paused = __VA_ARGS__,), ())                             \
 	}
 
 /**

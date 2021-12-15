@@ -31,6 +31,17 @@ static void at_monitor_dispatch(const char *notif)
 	struct at_notif_fifo *at_notif;
 	size_t sz_needed;
 
+	/* Dispatch to monitors in ISR, if any.
+	 * There might be non-ISR monitors that are interested
+	 * in the same notification, so copy it to the heap afterwards regardless.
+	 */
+	STRUCT_SECTION_FOREACH(at_monitor_isr_entry, e) {
+		if (!e->paused && (e->filter == ANY || strstr(notif, e->filter))) {
+			LOG_DBG("Dispatching to %p (ISR)", e->handler);
+			e->handler(notif);
+		}
+	}
+
 	sz_needed = sizeof(struct at_notif_fifo) + strlen(notif) + sizeof(char);
 
 	at_notif = k_heap_alloc(&at_monitor_heap, sz_needed, K_NO_WAIT);
