@@ -55,9 +55,12 @@ void fota_dl_handler(const struct fota_download_evt *evt)
 	switch (evt->id) {
 	case FOTA_DOWNLOAD_EVT_ERROR:
 		printk("Received error from fota_download\n");
-		/* Fallthrough */
+		update_sample_stop();
+		break;
+
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		update_sample_done();
+		printk("Reset device to apply new modem firmware\n");
 		break;
 
 	default:
@@ -73,7 +76,7 @@ void update_start(void)
 	err = fota_download_start(CONFIG_DOWNLOAD_HOST, get_file(), SEC_TAG,
 				  0, 0);
 	if (err != 0) {
-		update_sample_done();
+		update_sample_stop();
 		printk("fota_download_start() failed, err %d\n", err);
 	}
 }

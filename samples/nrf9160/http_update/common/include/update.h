@@ -44,7 +44,18 @@ struct update_sample_init_params {
  */
 int update_sample_init(struct update_sample_init_params *params);
 
-/** Notify the library that the update has been completed. */
+/** Notify the library that the update has been stopped.
+ *
+ * This will re-enable the button. Making it possible to
+ * restart or continue the update.
+ */
+void update_sample_stop(void);
+
+/** Notify the library that the update has been completed.
+ *
+ * This will send the modem to power off mode, while waiting
+ * for a reset.
+ */
 void update_sample_done(void);
 
 #endif /* UPDATE_H__ */

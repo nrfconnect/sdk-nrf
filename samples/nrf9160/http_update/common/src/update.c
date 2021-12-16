@@ -200,7 +200,12 @@ int update_sample_init(struct update_sample_init_params *params)
 	return 0;
 }
 
-void update_sample_done(void)
+void update_sample_stop(void)
 {
 	button_irq_enable();
+}
+
+void update_sample_done(void)
+{
+	lte_lc_deinit();
 }

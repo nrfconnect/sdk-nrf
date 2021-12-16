@@ -114,6 +114,10 @@ nRF9160 samples
 
   * Added support for minimal assistance using factory almanac, time and location.
 
+* nRF9160: HTTP update samples:
+
+  * HTTP update samples now set the modem in the power off mode after the firmware image download completes. This avoids ungraceful disconnects from the network upon pressing the reset button on the kit.
+
 Other samples
 -------------
 

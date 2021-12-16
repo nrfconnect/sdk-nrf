@@ -167,7 +167,7 @@ void update_start(void)
 	err = fota_download_start(CONFIG_DOWNLOAD_HOST, get_file(), SEC_TAG,
 				  0, 0);
 	if (err != 0) {
-		update_sample_done();
+		update_sample_stop();
 		printk("fota_download_start() failed, err %d\n", err);
 	}
 }
