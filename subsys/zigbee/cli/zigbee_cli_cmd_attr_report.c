@@ -25,9 +25,6 @@
 /* Defines default value for maximum interval inside configure reporting request. */
 #define ZIGBEE_CLI_CONFIGURE_REPORT_DEFAULT_MAX_INTERVAL 60
 
-/* Defines default value for minimum value change inside configure reporting request. */
-#define ZIGBEE_CLI_CONFIGURE_REPORT_DEFAULT_VALUE_CHANGE NULL
-
 /* Defines default value for minimum interval configured in order to turn off reporting.
  * See ZCL specification, sec. 2.5.7.1.5.
  * This can be any value, only max_interval parameters is relevant.
@@ -239,6 +236,8 @@ zb_uint8_t cli_agent_ep_handler_report(zb_bufid_t bufid)
  */
 static void construct_reporting_frame(struct ctx_entry *entry)
 {
+	/* Minimum value change for analog type, largest analog data type is 8 octet in legth. */
+	zb_uint8_t min_val_change[8]= {0};
 	struct configure_reporting_req_data *req_data = &(entry->configure_reporting_req_data);
 
 	/* Get the ZCL packet sequence number. */
@@ -255,7 +254,7 @@ static void construct_reporting_frame(struct ctx_entry *entry)
 		req_data->attr_type,
 		req_data->interval_min,
 		req_data->interval_max,
-		ZIGBEE_CLI_CONFIGURE_REPORT_DEFAULT_VALUE_CHANGE);
+		min_val_change);
 }
 
 /**@brief Actually send the Configure Reporting frame.
