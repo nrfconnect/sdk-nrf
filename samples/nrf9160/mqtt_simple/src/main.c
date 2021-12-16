@@ -201,11 +201,35 @@ static int subscribe(void)
  */
 static int publish_get_payload(struct mqtt_client *c, size_t length)
 {
+	int ret;
+	int err = 0;
+
+	/* Return an error if the payload is larger than the payload buffer.
+	 * Note: To allow new messages, we have to read the payload before returning.
+	 */
 	if (length > sizeof(payload_buf)) {
-		return -EMSGSIZE;
+		err = -EMSGSIZE;
 	}
 
-	return mqtt_readall_publish_payload(c, payload_buf, length);
+	/* Truncate payload until it fits in the payload buffer. */
+	while (length > sizeof(payload_buf)) {
+		ret = mqtt_read_publish_payload_blocking(
+				c, payload_buf, (length - sizeof(payload_buf)));
+		if (ret == 0) {
+			return -EIO;
+		} else if (ret < 0) {
+			return ret;
+		}
+
+		length -= ret;
+	}
+
+	ret = mqtt_readall_publish_payload(c, payload_buf, length);
+	if (ret) {
+		return ret;
+	}
+
+	return err;
 }
 
 /**@brief MQTT client event handler
@@ -252,6 +276,10 @@ void mqtt_evt_handler(struct mqtt_client *const c,
 			/* Echo back received data */
 			data_publish(&client, MQTT_QOS_1_AT_LEAST_ONCE,
 				payload_buf, p->message.payload.len);
+		} else if (err == -EMSGSIZE) {
+			LOG_ERR("Received payload (%d bytes) is larger than the payload buffer "
+				"size (%d bytes).",
+				p->message.payload.len, sizeof(payload_buf));
 		} else {
 			LOG_ERR("publish_get_payload failed: %d", err);
 			LOG_INF("Disconnecting MQTT client...");
