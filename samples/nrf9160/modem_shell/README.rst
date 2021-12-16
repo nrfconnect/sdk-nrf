@@ -539,7 +539,7 @@ Examples
 ----
 
 Cloud
-=========
+=====
 
 MoSh command: ``cloud``
 
@@ -558,6 +558,42 @@ Examples
      cloud connect
      location get --method cellular
      cloud disconnect
+
+----
+
+Remote control using nRF Cloud
+==============================
+
+Once you have established an MQTT connection to nRF Cloud using the ``cloud`` command, you can use the :guilabel:`Terminal` window in the nRF Cloud portal to execute MoSh commands to the device.
+This feature enables full remote control of the MoSh application running on a device that is connected to cloud.
+MoSh output, such as responses to commands and other notifications can be echoed to the ``messages`` endpoint and the :guilabel:`Terminal` window of the nRF Cloud portal.
+Use the ``print cloud`` command to enable this behavior.
+The data format of the input data in the :guilabel:`Terminal` window must be JSON.
+
+Examples
+--------
+
+* Establish the connection to nRF Cloud:
+
+  .. code-block:: console
+
+     cloud connect
+
+* To request the device location, enter the following command in the :guilabel:`Terminal` window of the nRF Cloud portal:
+
+   .. code-block:: console
+
+     {"appId":"MODEM_SHELL", "data":"location get --method cellular"}
+
+  The device location appears in the :guilabel:`Location` window.
+
+* An AT command is sent to the modem:
+
+   .. code-block:: console
+
+     {"appId":"MODEM_SHELL", "data":"at AT+COPS=1,2,\\\"24412\\\""}
+
+  Note the syntax for escaping the quotation marks.
 
 Configuration
 *************
@@ -799,6 +835,8 @@ For example:
 
    west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-pgps.conf
 
+.. _cloud_build:
+
 Cloud
 =====
 
@@ -808,6 +846,11 @@ For example:
 .. code-block:: console
 
    west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-cloud_mqtt.conf
+
+Remote control using nRF Cloud
+==============================
+
+To enable the remote control feature, you need to build the sample with cloud connectivity, see :ref:`cloud_build`.
 
 Zephyr native TCP/IP stack usage over nRF9160 LTE connection
 ============================================================
