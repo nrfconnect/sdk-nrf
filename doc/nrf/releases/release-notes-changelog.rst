@@ -72,6 +72,13 @@ Bluetooth samples
 
 * |no_changes_yet_note|
 
+nRF9160 samples
+---------------
+
+* :ref:`lwm2m_client` sample:
+
+  * Added support for multi-instance firmware update object. (Object number 5 in OMA specification)
+
 Drivers
 =======
 
@@ -93,6 +100,13 @@ sdk-nrfxlib
 -----------
 
 See the changelog for each library in the :doc:`nfxlib documentation <nrfxlib:README>` for additional information.
+
+Libraries for networking
+------------------------
+
+* :ref:`lib_lwm2m_client_utils` library:
+
+  * Added support for multi-instance firmware update object. (Object number 5 in OMA specification)
 
 Modem library
 +++++++++++++
