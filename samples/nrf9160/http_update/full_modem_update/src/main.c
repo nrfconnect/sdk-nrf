@@ -5,7 +5,6 @@
  */
 
 #include <zephyr.h>
-#include <modem/at_cmd.h>
 #include <modem/nrf_modem_lib.h>
 #include <dfu/dfu_target_full_modem.h>
 #include <net/fota_download.h>
@@ -223,12 +222,6 @@ void main(void)
 	err = dfu_target_full_modem_cfg(&params);
 	if (err != 0) {
 		printk("dfu_target_full_modem_cfg failed: %d\n", err);
-		return;
-	}
-
-	err = at_cmd_init();
-	if (err != 0) {
-		printk("at_cmd_init failed: %d\n", err);
 		return;
 	}
 
