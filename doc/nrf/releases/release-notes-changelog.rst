@@ -216,6 +216,8 @@ nrf9160 Samples
 
     * Added:
 
+      * Remote control support over MQTT using the :guilabel:`Terminal` window in the nRF Cloud portal.
+        It enables executing any MoSh command on the device remotely.
       * An option ``--interval`` (in seconds) to neighbor cell measurements in continuous mode  (``link ncellmeas --continuous``).
         When using this option, a new measurement is started in each interval.
       * Separate plain AT command mode that can be started with the command ``at at_cmd_mode start``.

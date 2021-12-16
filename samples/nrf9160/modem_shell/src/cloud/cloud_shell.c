@@ -9,6 +9,7 @@
 #include <net/nrf_cloud.h>
 #include <nrf_cloud_fsm.h>
 #include <shell/shell.h>
+#include <shell/shell_uart.h>
 #include "mosh_print.h"
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
@@ -18,14 +19,21 @@
 #include <net/nrf_cloud_pgps.h>
 #endif
 
+#define CLOUD_CMD_MAX_LENGTH 150
+
 BUILD_ASSERT(
 	IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) &&
 	IS_ENABLED(CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD));
+
+extern struct k_work_q mosh_common_work_q;
 
 static struct k_work_delayable cloud_reconnect_work;
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 static struct k_work notify_pgps_work;
 #endif
+static struct k_work cloud_cmd_work;
+
+static char shell_cmd[CLOUD_CMD_MAX_LENGTH + 1];
 
 static int cloud_shell_print_usage(const struct shell *shell, size_t argc, char **argv)
 {
@@ -67,6 +75,61 @@ static void notify_pgps(struct k_work *work)
 }
 #endif /* defined(CONFIG_NRF_CLOUD_PGPS) */
 
+static void cloud_cmd_execute(struct k_work *work)
+{
+	const struct shell *shell = shell_backend_uart_get_ptr();
+
+	shell_execute_cmd(shell, shell_cmd);
+	memset(shell_cmd, 0, CLOUD_CMD_MAX_LENGTH);
+}
+
+static bool cloud_shell_parse_mosh_cmd(const char *buf_in)
+{
+	const cJSON *app_id = NULL;
+	const cJSON *mosh_cmd = NULL;
+	bool ret = false;
+
+	cJSON *cloud_cmd_json = cJSON_Parse(buf_in);
+
+	/* A format example expected from nrf cloud:
+	 * {"appId":"MODEM_SHELL", "data":"location get"}
+	 */
+	if (cloud_cmd_json == NULL) {
+		const char *error_ptr = cJSON_GetErrorPtr();
+
+		if (error_ptr != NULL) {
+			mosh_error("JSON parsing error before: %s\n", error_ptr);
+		}
+		ret = false;
+		goto end;
+	}
+
+	/* MoSh commands are identified by checking if appId equals "MODEM_SHELL" */
+	app_id = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, "appId");
+	if (cJSON_IsString(app_id) && (app_id->valuestring != NULL)) {
+		if (strcmp(app_id->valuestring, "MODEM_SHELL") != 0) {
+			ret = false;
+			goto end;
+		}
+	}
+
+	/* The value of attribute "data" contains the actual command */
+	mosh_cmd = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json, "data");
+	if (cJSON_IsString(mosh_cmd) && (mosh_cmd->valuestring != NULL)) {
+		mosh_print("%s", mosh_cmd->valuestring);
+		if (strlen(mosh_cmd->valuestring) <= CLOUD_CMD_MAX_LENGTH) {
+			strcpy(shell_cmd, mosh_cmd->valuestring);
+			ret = true;
+		} else {
+			mosh_error("Received cloud command exceeds maximum permissible length %d",
+				   CLOUD_CMD_MAX_LENGTH);
+		}
+	}
+end:
+	cJSON_Delete(cloud_cmd_json);
+	return ret;
+}
+
 static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 {
 	int err = 0;
@@ -86,7 +149,8 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		mosh_print("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED");
 		if (!nfsm_get_disconnect_requested()) {
 			mosh_print("Reconnecting in %d seconds...", reconnection_delay);
-			k_work_reschedule(&cloud_reconnect_work, K_SECONDS(reconnection_delay));
+			k_work_reschedule_for_queue(&mosh_common_work_q, &cloud_reconnect_work,
+						    K_SECONDS(reconnection_delay));
 		}
 		break;
 	case NRF_CLOUD_EVT_ERROR:
@@ -101,8 +165,13 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 	case NRF_CLOUD_EVT_RX_DATA:
 		mosh_print("NRF_CLOUD_EVT_RX_DATA");
 		if (((char *)evt->data.ptr)[0] == '{') {
-			/* Not A-GPS data */
-			break;
+			/* Not A-GPS data. Check if it's a MoSh command sent from the cloud */
+			bool cmd_found = cloud_shell_parse_mosh_cmd(evt->data.ptr);
+
+			if (cmd_found) {
+				k_work_submit_to_queue(&mosh_common_work_q, &cloud_cmd_work);
+				break;
+			}
 		}
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 		err = nrf_cloud_agps_process((char *)evt->data.ptr, evt->data.len);
@@ -110,7 +179,7 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 			mosh_print("A-GPS data processed");
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 			/* call us back when prediction is ready */
-			k_work_submit(&notify_pgps_work);
+			k_work_submit_to_queue(&mosh_common_work_q, &notify_pgps_work);
 #endif
 			/* data was valid; no need to pass to other handlers */
 			break;
@@ -162,13 +231,15 @@ static void cmd_cloud_connect(const struct shell *shell, size_t argc, char **arg
 		}
 
 		initialized = true;
+
+		k_work_init(&cloud_cmd_work, cloud_cmd_execute);
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 		k_work_init(&notify_pgps_work, notify_pgps);
 #endif
 		k_work_init_delayable(&cloud_reconnect_work, cloud_reconnect_work_fn);
 	}
 
-	k_work_reschedule(&cloud_reconnect_work, K_NO_WAIT);
+	k_work_reschedule_for_queue(&mosh_common_work_q, &cloud_reconnect_work, K_NO_WAIT);
 
 	mosh_print("Endpoint: %s", CONFIG_NRF_CLOUD_HOST_NAME);
 }
