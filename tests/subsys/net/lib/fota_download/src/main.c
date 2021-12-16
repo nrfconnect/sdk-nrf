@@ -25,11 +25,21 @@ char buf[1024];
 #define NO_SPACE "s0s1"
 #define NO_TLS -1
 
+#define ARBITRARY_IMAGE_OFFSET 512
+
 /* Stubs and mocks */
 bool dfu_ctx_mcuboot_set_b1_file__s0_active;
 const char *download_client_start_file;
 char *dfu_ctx_mcuboot_set_b1_file__update;
 static bool spm_s0_active_retval;
+
+K_SEM_DEFINE(download_with_offset_sem, 0, 1);
+static bool start_with_offset;
+static bool fail_on_offset_get;
+static bool fail_on_connect;
+static bool fail_on_start;
+static bool download_with_offset_success;
+static download_client_callback_t download_client_event_handler;
 
 int dfu_target_init(int img_type, size_t file_size, dfu_target_callback_t cb)
 {
@@ -43,6 +53,16 @@ int dfu_target_img_type(const void *const buf, size_t len)
 
 int dfu_target_offset_get(size_t *offset)
 {
+	if (fail_on_offset_get == true) {
+		return -1;
+	}
+
+	if (start_with_offset == true) {
+		*offset = ARBITRARY_IMAGE_OFFSET;
+	} else {
+		*offset = 0;
+	}
+
 	return 0;
 }
 
@@ -70,6 +90,16 @@ int download_client_start(struct download_client *client, const char *file,
 			  size_t from)
 {
 	download_client_start_file = file;
+
+	if (fail_on_start == true) {
+		return -1;
+	}
+
+	if (from == ARBITRARY_IMAGE_OFFSET) {
+		download_with_offset_success = true;
+		k_sem_give(&download_with_offset_sem);
+	}
+
 	return 0;
 }
 
@@ -81,12 +111,17 @@ int download_client_file_size_get(struct download_client *client, size_t *size)
 int download_client_init(struct download_client *client,
 			 download_client_callback_t callback)
 {
+	download_client_event_handler = callback;
 	return 0;
 }
 
 int download_client_connect(struct download_client *client, const char *host,
 			    const struct download_client_cfg *config)
 {
+	if (fail_on_connect == true) {
+		return -1;
+	}
+
 	return 0;
 }
 
@@ -166,11 +201,39 @@ void set_s0_active(bool s0_active)
 
 void client_callback(const struct fota_download_evt *evt)
 {
+	switch (evt->id) {
+	case FOTA_DOWNLOAD_EVT_ERROR:
+		if (fail_on_offset_get == true) {
+			zassert_equal(evt->cause, FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED, NULL);
+			fail_on_offset_get = false;
+			k_sem_give(&download_with_offset_sem);
+		}
+		if (fail_on_connect == true) {
+			zassert_equal(evt->cause, FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED, NULL);
+			fail_on_connect = false;
+			k_sem_give(&download_with_offset_sem);
+		}
+		if (fail_on_start == true) {
+			zassert_equal(evt->cause, FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED, NULL);
+			fail_on_start = false;
+			k_sem_give(&download_with_offset_sem);
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 static void init(void)
 {
 	int err;
+
+	k_sem_init(&download_with_offset_sem, 0, 1);
+	start_with_offset = false;
+	fail_on_offset_get = false;
+	fail_on_connect = false;
+	fail_on_start = false;
 
 	err = fota_download_init(client_callback);
 	zassert_equal(err, 0, NULL);
@@ -223,12 +286,102 @@ static void test_fota_download_start(void)
 	/* Check if double call returns EALREADY */
 	err = fota_download_start("something.com", buf, NO_TLS, 0, 0);
 	zassert_equal(err, -EALREADY, "No failure for double call");
+
+	err = fota_download_cancel();
+	zassert_equal(err, 0, NULL);
+}
+
+static void test_download_with_offset(void)
+{
+	int err;
+
+	uint8_t fragment_buf[1] = {0};
+	size_t  fragment_len = 1;
+	const struct download_client_evt evt = {
+		.id = DOWNLOAD_CLIENT_EVT_FRAGMENT,
+		.fragment = {
+			.buf = fragment_buf,
+			.len = fragment_len,
+		}
+	};
+
+	start_with_offset = true;
+
+
+	/* Check that application is being notified when
+	 * download_with_offset fails to get fw image offset
+	 */
+	err = fota_download_start("something.com", buf, NO_TLS, 0, 0);
+	zassert_ok(err, NULL);
+
+	err = download_client_event_handler(&evt);
+	zassert_equal(err, -1, NULL);
+
+	fail_on_offset_get = true;
+	k_sem_take(&download_with_offset_sem, K_SECONDS(2));
+	zassert_false(fail_on_offset_get, NULL);
+
+	err = fota_download_cancel();
+	zassert_ok(err, NULL);
+
+
+	/* Check that application is being notified when
+	 * download_with_offset fails to connect
+	 */
+	err = fota_download_start("something.com", buf, NO_TLS, 0, 0);
+	zassert_ok(err, NULL);
+
+	err = download_client_event_handler(&evt);
+	zassert_equal(err, -1, NULL);
+
+	fail_on_connect = true;
+	k_sem_take(&download_with_offset_sem, K_SECONDS(2));
+	zassert_false(fail_on_connect, NULL);
+
+	err = fota_download_cancel();
+	zassert_ok(err, NULL);
+
+
+	/* Check that application is being notified when
+	 * download_with_offset fails to start download
+	 */
+	err = fota_download_start("something.com", buf, NO_TLS, 0, 0);
+	zassert_ok(err, NULL);
+
+	err = download_client_event_handler(&evt);
+	zassert_equal(err, -1, NULL);
+
+	fail_on_start = true;
+	k_sem_take(&download_with_offset_sem, K_SECONDS(2));
+	zassert_false(fail_on_start, NULL);
+
+	err = fota_download_cancel();
+	zassert_ok(err, NULL);
+
+
+	/* Successfully restart download with offset */
+	err = fota_download_start("something.com", buf, NO_TLS, 0, 0);
+	zassert_ok(err, NULL);
+
+	err = download_client_event_handler(&evt);
+	zassert_equal(err, -1, NULL);
+
+	download_with_offset_success = false;
+	k_sem_take(&download_with_offset_sem, K_SECONDS(2));
+	zassert_true(download_with_offset_success, NULL);
+
+	err = fota_download_cancel();
+	zassert_ok(err, NULL);
+
+
+	start_with_offset = false;
 }
 
 void test_main(void)
 {
 	ztest_test_suite(lib_fota_download_test,
-			 ztest_unit_test(test_fota_download_start));
+			 ztest_unit_test(test_fota_download_start),
+			 ztest_unit_test(test_download_with_offset));
 
 	ztest_run_test_suite(lib_fota_download_test);
 }
