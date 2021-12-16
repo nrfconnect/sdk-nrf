@@ -1,0 +1,11 @@
+sample:
+  description: nRF Distance Measurement sample
+  name: Distance measurement sample
+tests:
+  samples.mpsl.timeslot:
+    build_only: true
+    platform_allow: nrf52833dk_nrf52833 nrf52840dk_nrf52840
+    integration_platforms:
+      - nrf52833dk_nrf52833
+      - nrf52840dk_nrf52840
+    tags: bluetooth ci_build
