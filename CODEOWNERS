@@ -159,6 +159,7 @@ Kconfig*                                  @tejlmand
 /subsys/caf/                              @pdunaj
 /subsys/debug/                            @nordic-krch @anangl
 /subsys/dfu/                              @hakonfam @sigvartmh
+/subsys/dm/                               @maje-emb
 /subsys/ieee802154/                       @rlubos @czeslawmakarski
 /subsys/mgmt/                             @hakonfam @sigvartmh
 /subsys/esb/                              @lemrey

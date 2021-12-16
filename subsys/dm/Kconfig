@@ -1,0 +1,122 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if NRF_DM
+
+menu "nRF DM (Distance Measurement)"
+
+choice NRF_DM_TIMER
+	default NRF_DM_TIMER2
+	prompt "Timer to use for the nrf_dm library."
+
+config NRF_DM_TIMER0
+	depends on HAS_HW_NRF_TIMER0
+	bool "TIMER0"
+
+config NRF_DM_TIMER1
+	depends on HAS_HW_NRF_TIMER1
+	bool "TIMER1"
+
+config NRF_DM_TIMER2
+	depends on HAS_HW_NRF_TIMER2
+	bool "TIMER2"
+
+config NRF_DM_TIMER3
+	depends on HAS_HW_NRF_TIMER3
+	bool "TIMER3"
+
+config NRF_DM_TIMER4
+	depends on HAS_HW_NRF_TIMER4
+	bool "TIMER4"
+
+endchoice
+
+config DM_TIMESLOT_RESCHEDULE
+	bool "Timeslot reschedule"
+	default n
+	help
+	  "Enable allocation of the next timeslot after the previous timeslot has succeeded."
+
+config DM_INITIATOR_DELAY_US
+	int "Initiator start delay"
+	default 4000
+	help
+	  "Additional Initiator Start delay time. Used to improve synchronization."
+
+config DM_REFLECTOR_DELAY_US
+	int "Reflector start delay"
+	default 0
+	help
+	  "Additional Reflector Start delay time. Used to improve synchronization."
+
+config DM_INITIATOR_RANGING_WINDOW_US
+	int "Initiator ranging window"
+	default 19000
+	help
+	  "Time for ranging required by initiator role."
+
+config DM_REFLECTOR_RANGING_WINDOW_US
+	int "Reflector ranging window"
+	default 23000
+	help
+	  "Time for ranging required by reflector role."
+
+config DM_MIN_TIME_BETWEEN_TIMESLOTS_US
+	int "Minimum time between two timeslots"
+	default 8000
+	help
+	  "Minimum time between two timeslots.
+	  This should account for processing of the ranging data after the timeslot."
+
+config DM_RANGING_OFFSET_US
+	int "Ranging offset"
+	default 1200000
+	help
+	  "Time between the synchronisation and the ranging.
+	  Increasing this allows for more rangings to different peers but also increases latency."
+
+config DM_GPIO_DEBUG
+	bool "Debugging with output pins"
+	default n
+	select PPI_TRACE
+	help
+	  "Indication of distance measurement events by output pins."
+
+config DM_TIMESLOT_QUEUE_LENGTH
+	int "Timeslot queue length"
+	default 40
+	help
+	  "The maximum number of timeslots that can be scheduled."
+
+config DM_TIMESLOT_QUEUE_COUNT_SAME_PEER
+	int "The number of the same peer in the queue."
+	default 10
+	help
+	  "The maximum number of timeslots that can be scheduled for a single peer."
+
+if DM_GPIO_DEBUG
+
+config DM_RANGING_PIN
+	int "Ranging pin number"
+	default 37
+	help
+	  "Pin number of the ranging process occurrence."
+
+config DM_ADD_REQUEST_PIN
+	int "Add request pin number"
+	default 36
+	help
+	  "This pin is set when a distance measurement request is added."
+
+endif #DM_GPIO_DEBUG
+
+endmenu
+
+module = NRF_DM
+module-str = NRF_DM
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif #NRF_DM
