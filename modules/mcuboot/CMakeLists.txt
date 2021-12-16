@@ -194,6 +194,13 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       mcuboot
       ${ZEPHYR_NRF_MODULE_DIR}/subsys/partition_manager/ext_flash_mcuboot_secondary.conf
       )
+    if (CONFIG_SPI_NOR)
+    # Overriding the default 'n' of MULTITHREADING in MCUBoot child image
+    add_overlay_config(
+      mcuboot
+      ${ZEPHYR_NRF_MODULE_DIR}/subsys/partition_manager/multithreading.conf
+      )
+    endif()
   endif()
 
   if (CONFIG_BUILD_WITH_TFM)

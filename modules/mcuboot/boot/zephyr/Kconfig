@@ -125,3 +125,7 @@ config NRF53_RAM_FLASH_SIZE
 	  is read from external flash, and buffered in  RAM. This option is used
 	  to define forward the size of this RAM region to the partition manager
 	  configuration.
+
+DT_COMPAT_JEDEC_SPI_NOR := jedec,spi-nor
+config MULTITHREADING
+	default y if $(dt_compat_on_bus,$(DT_COMPAT_JEDEC_SPI_NOR),spi) && SPI_NOR

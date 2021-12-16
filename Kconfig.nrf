@@ -68,6 +68,14 @@ config INIT_ARCH_HW_AT_BOOT
 	  leave the system in a clean state, so it is necessary to perform
 	  architecture specific hardware initialization.
 
+DT_COMPAT_JEDEC_SPI_NOR := jedec,spi-nor
+# Enable SPI by default when NOR flash is connected to SPI in devicetree
+config SPI
+	default y if $(dt_compat_on_bus,$(DT_COMPAT_JEDEC_SPI_NOR),spi)
+
+config SPI_NOR
+	default y if $(dt_compat_on_bus,$(DT_COMPAT_JEDEC_SPI_NOR),spi) && PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
+
 DT_COMPAT_NORDIC_QSPI_NOR := nordic,qspi-nor
 config NORDIC_QSPI_NOR
 	default y if $(dt_compat_on_bus,$(DT_COMPAT_NORDIC_QSPI_NOR),qspi) && PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY && !SPI_NOR
@@ -75,6 +83,13 @@ config NORDIC_QSPI_NOR
 DT_ZEPHYR_FLASH := zephyr,flash
 DT_CHOSEN_ZEPHYR_FLASH := $(dt_chosen_path,$(DT_ZEPHYR_FLASH))
 config NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE
+	default $(dt_node_int_prop_int,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
+	help
+	  Set the flash layout page size equal to the erase block size of the
+	  chosen Zephyr flash devicetree node to ensure that swapping can be
+	  performed.
+
+config SPI_NOR_FLASH_LAYOUT_PAGE_SIZE
 	default $(dt_node_int_prop_int,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
 	help
 	  Set the flash layout page size equal to the erase block size of the
