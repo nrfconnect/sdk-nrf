@@ -840,6 +840,9 @@ Create a binding between two endpoints on two nodes.
    zdo bind on *h:source_eui64* *d:source_ep* *h:dst_addr*
                *d:dst_ep* *h:source_cluster_id* *h:request_dst_addr*
 
+.. note::
+    To bind the device to a group address, set ``dst_addr`` to a group address and ``dst_ep`` to ``0``.
+
 Create bound connection between a device identified by *source_eui64* and endpoint *source_ep*, and a device identified by destination address *dst_addr* and destination endpoint *dst_ep*.
 The connection is created for ZCL commands and attributes assigned to the ZCL cluster *source_cluster_id* on the *request_dst_addr* node (usually short address corresponding to *source_eui64* argument).
 
@@ -863,6 +866,9 @@ Remove a binding between two endpoints on two nodes.
 
    zdo bind off *h:source_eui64* *d:source_ep* *h:dst_eui64*
                 *d:destination_ep* *h:source_cluster_id* *h:request_dst_addr*
+
+.. note::
+    To unbind the device from a group address, set ``dst_addr`` to a group address and ``dst_ep`` to ``0``.
 
 Remove bound connection between a device identified by *source_eui64* and endpoint *source_ep*, and a device identified by destination address *dst_eui64* and destination endpoint *dst_ep*.
 The connection is removed for ZCL commands and attributes assigned to the ZCL cluster *source_cluster_id* on the *request_dst_addr* node (usually, the same address as for the *source_eui64* device).
