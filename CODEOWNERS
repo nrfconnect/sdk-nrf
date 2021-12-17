@@ -152,7 +152,7 @@ Kconfig*                                  @tejlmand
 /subsys/dfu/                              @hakonfam @sigvartmh
 /subsys/ieee802154/                       @rlubos @czeslawmakarski
 /subsys/mgmt/                             @hakonfam @sigvartmh
-/subsys/esb/                              @Raane @lemrey
+/subsys/esb/                              @lemrey
 /subsys/event_manager/                    @pdunaj
 /subsys/event_manager_profiler_tracer/    @pdunaj @MarekPieta
 /subsys/fw_info/                          @hakonfam
