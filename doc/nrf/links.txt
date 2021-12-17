@@ -649,6 +649,10 @@
 
 .. ### Source: other
 
+.. _`BME680`: https://www.bosch-sensortec.com/products/environmental-sensors/gas-sensors/bme680/
+
+.. _`ADXL362`: https://www.analog.com/en/products/adxl362.html#product-overview
+
 .. _`Pelion Device Management Portal`: https://portal.mbedcloud.com/login
 
 .. _`ARM TrustZone`: https://developer.arm.com/documentation/100690/0200/ARM-TrustZone-technology?lang=en
