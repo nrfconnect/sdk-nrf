@@ -35,7 +35,7 @@ target_include_directories(platform_s
 
 target_sources(platform_s
   PRIVATE
-  ${CMAKE_CURRENT_LIST_DIR}/common/plat_init.c
+  ${CMAKE_CURRENT_LIST_DIR}/common/tfm_hal_platform.c
   )
 
 if (${TFM_PARTITION_CRYPTO}
