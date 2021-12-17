@@ -6,6 +6,12 @@ Configuring Matter
 When you build any of the available Matter samples to the supported development kits, you automatically build the Matter stack for the nRF Connect platform.
 The development kit and the application running Matter stack that is programmed on the development kit together form the Matter accessory device.
 
+.. raw:: html
+
+   <div style="text-align: center;">
+   <iframe width="560" height="315" src="https://www.youtube.com/embed/XWWJYraNZPs" title="Matter development environment video overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+   </div>
+
 Currently, the |NCS| only supports Matter stack that is built on top of a low-power, 802.15.4-compatible Thread network.
 To commission and control the Matter accessory device remotely over such a network, you need to set up a Matter controller on a mobile or a PC.
 Matter controller is a role within the Matter environment.
