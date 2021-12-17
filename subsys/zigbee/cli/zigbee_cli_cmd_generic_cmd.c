@@ -337,6 +337,20 @@ int cmd_zb_generic_cmd(const struct shell *shell, size_t argc, char **argv)
 		zb_cli_print_error(shell, "Remote ep value", ZB_FALSE);
 		goto error;
 	}
+	/* Handle sending to group address. */
+	if ((packet_info->dst_addr_mode == ZB_APS_ADDR_MODE_16_ENDP_PRESENT) &&
+	    (packet_info->dst_ep == 0)) {
+		zb_uint16_t group_addr = packet_info->dst_addr.addr_short;
+
+		/* Verify group address. */
+		if ((group_addr < ZB_ZCL_ATTR_SCENES_CURRENT_GROUP_MIN_VALUE)
+		    || (group_addr > ZB_ZCL_ATTR_SCENES_CURRENT_GROUP_MAX_VALUE)) {
+			zb_cli_print_error(shell, "Incorrect group address", ZB_FALSE);
+			goto error;
+		}
+
+		packet_info->dst_addr_mode = ZB_APS_ADDR_MODE_16_GROUP_ENDP_NOT_PRESENT;
+	}
 
 	ret_val = parse_hex_u16(*(arg++), &(packet_info->cluster_id));
 	if (ret_val == 0) {
@@ -487,6 +501,20 @@ int cmd_zb_zcl_raw(const struct shell *shell, size_t argc, char **argv)
 	if (ret_val == 0) {
 		zb_cli_print_error(shell, "Remote ep value", ZB_FALSE);
 		goto error;
+	}
+	/* Handle sending to group address. */
+	if ((packet_info->dst_addr_mode == ZB_APS_ADDR_MODE_16_ENDP_PRESENT) &&
+	    (packet_info->dst_ep == 0)) {
+		zb_uint16_t group_addr = packet_info->dst_addr.addr_short;
+
+		/* Verify group address. */
+		if ((group_addr < ZB_ZCL_ATTR_SCENES_CURRENT_GROUP_MIN_VALUE)
+		    || (group_addr > ZB_ZCL_ATTR_SCENES_CURRENT_GROUP_MAX_VALUE)) {
+			zb_cli_print_error(shell, "Incorrect group address", ZB_FALSE);
+			goto error;
+		}
+
+		packet_info->dst_addr_mode = ZB_APS_ADDR_MODE_16_GROUP_ENDP_NOT_PRESENT;
 	}
 
 	ret_val = parse_hex_u16(*(arg++), &(packet_info->cluster_id));
