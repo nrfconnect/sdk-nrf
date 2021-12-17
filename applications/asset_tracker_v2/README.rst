@@ -22,3 +22,4 @@ See the subpages for detailed documentation on the application and its internal 
    doc/cloud_module
    doc/cloud_wrapper
    doc/debug_module
+   doc/sensor_module
