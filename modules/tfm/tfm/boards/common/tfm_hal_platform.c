@@ -7,6 +7,7 @@
  */
 
 #include "tfm_hal_platform.h"
+#include "tfm_hal_platform_common.h"
 #include "cmsis.h"
 #include "uart_stdout.h"
 #include "tfm_spm_log.h"
@@ -15,12 +16,12 @@
 
 enum tfm_hal_status_t tfm_hal_platform_init(void)
 {
-	__enable_irq();
+	enum tfm_hal_status_t status;
 
-	/* Only if UART1 is used by TF-M do we initialize it. */
-#ifdef SECURE_UART1
-	stdio_init();
-#endif
+	status = tfm_hal_platform_common_init();
+	if (status != TFM_HAL_SUCCESS) {
+		return status;
+	}
 
 #if defined(TFM_PARTITION_CRYPTO) && \
     !defined(TFM_CRYPTO_KEY_DERIVATION_MODULE_DISABLED) && \
