@@ -65,6 +65,11 @@ nRF9160: Asset Tracker v2
 * Updated the code and documentation to use the acronym GNSS instead of GPS when not referring explicitly to the GPS system.
 * Added support for atmospheric pressure readings retrieved from the BME680 sensor on Thingy:91.
 
+* Added:
+
+  * Support for A-GPS filtered ephemerides.
+
+
 nRF Desktop
 -----------
 
@@ -198,6 +203,15 @@ Libraries for networking
 * :ref:`lib_dfu_target` library:
 
   * Updated the implementation of modem delta upgrades in the DFU target library to use the new socketless interface provided by the :ref:`nrf_modem`.
+
+* :ref:`lib_location` library:
+
+  * Added A-GPS filtered ephemerides support.
+
+* :ref:`lib_nrf_cloud` library:
+
+  * Added A-GPS filtered ephemerides support, with ability to set matching threshold mask angle.
+  * When filtered ephemerides is enabled, A-GPS assistance requests to cloud are limited to no more than once every two hours.
 
 Other libraries
 ---------------
