@@ -492,6 +492,7 @@ Send a generic ZCL command to the remote node.
     The payload requires the **little-endian** byte order.
 
     To send a request using binding table entries, set ``dst_addr`` and ``ep`` to ``0``.
+    To send as groupcast, set ``dst_addr`` to a group address and ``ep`` to ``0``.
 
 Send a generic ZCL command with ID ``cmd_ID`` and payload ``payload`` to the cluster ``cluster``.
 The cluster belongs to the profile ``profile``, which resides on the endpoint ``ep`` of the remote node ``dst_addr``.
