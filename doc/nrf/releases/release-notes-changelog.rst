@@ -367,7 +367,13 @@ See the changelog for each library in the :doc:`nfxlib documentation <nrfxlib:RE
 Libraries for Zigbee
 --------------------
 
-* Added factory reset functionality in :ref:`lib_zigbee_application_utilities`.
+* :ref:`lib_zigbee_application_utilities`:
+
+  * Added factory reset functionality in :ref:`lib_zigbee_application_utilities`.
+
+* :ref:`lib_zigbee_shell`:
+
+  * Extended ``zcl cmd`` shell command to allow sending groupcasts.
 
 Scripts
 =======
