@@ -79,7 +79,7 @@ Kconfig*                                  @tejlmand
 /lib/at_shell/                            @jtguggedal @simensrostad
 /lib/at_sms_cert/                         @eivindj-nordic
 /lib/agps/                                @jtguggedal @simensrostad
-/lib/nrf_modem_lib/                       @rlubos
+/lib/nrf_modem_lib/                       @rlubos @lemrey
 /lib/edge_impulse/                        @pdunaj
 /lib/fprotect/                            @hakonfam
 /lib/flash_patch/                         @hakonfam
