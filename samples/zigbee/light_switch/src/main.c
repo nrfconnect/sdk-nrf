@@ -465,6 +465,20 @@ void zboss_signal_handler(zb_bufid_t bufid)
 			}
 		}
 		break;
+	case ZB_ZDO_SIGNAL_LEAVE:
+		/* If device leaves the network, reset bulb short_addr. */
+		if (status == RET_OK) {
+			zb_zdo_signal_leave_params_t *leave_params =
+				ZB_ZDO_SIGNAL_GET_PARAMS(sig_hndler, zb_zdo_signal_leave_params_t);
+
+			if (leave_params->leave_type == ZB_NWK_LEAVE_TYPE_RESET) {
+				bulb_ctx.short_addr = 0xFFFF;
+			}
+		}
+		/* Call default signal handler. */
+		ZB_ERROR_CHECK(zigbee_default_signal_handler(bufid));
+		break;
+
 	default:
 		/* Call default signal handler. */
 		ZB_ERROR_CHECK(zigbee_default_signal_handler(bufid));
