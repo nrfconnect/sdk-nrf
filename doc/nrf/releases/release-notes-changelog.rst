@@ -94,6 +94,7 @@ Bluetooth samples
 * Added:
 
   * :ref:`multiple_adv_sets` sample.
+  * :ref:`ble_nrf_dm` sample.
 
 * Updated:
 
