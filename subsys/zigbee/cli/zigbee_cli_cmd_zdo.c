@@ -76,6 +76,11 @@
 #define ZIGBEE_CLI_IEEE_ADDR_RESP_TIMEOUT  5
 /* Defines how long to wait, in seconds, for mgmt_leave response. */
 #define ZIGBEE_CLI_MGMT_LEAVE_RESP_TIMEOUT 5
+/* In case of group binding, the addressing field contains a short address but the endpoint number
+ * is not included.
+ */
+#define GROUP_BIND_TABLE_RECORD_SIZE \
+	(ZB_OFFSETOF(zb_zdo_binding_table_record_t, dst_address) + sizeof(zb_uint16_t))
 
 LOG_MODULE_DECLARE(zigbee_shell, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
 
@@ -1057,6 +1062,27 @@ static int cmd_zb_bind(const struct shell *shell, size_t argc, char **argv)
 		ret_err = -EINVAL;
 		goto error;
 	}
+	/* Handle binding to group - short addr and endpoint = 0. */
+	if (bind_req->dst_addr_mode == ADDR_SHORT) {
+		zb_uint16_t group_addr = bind_req->dst_address.addr_short;
+
+		/* Verify that dst_endp == 0, prevent binding to device by short address. */
+		if (bind_req->dst_endp != 0) {
+			zb_cli_print_error(shell, "Set destination_ep to zero to bind to group",
+					   ZB_FALSE);
+			ret_err = -EINVAL;
+			goto error;
+		}
+		/* Verify group address. */
+		if ((group_addr < ZB_ZCL_ATTR_SCENES_CURRENT_GROUP_MIN_VALUE)
+		    || (group_addr > ZB_ZCL_ATTR_SCENES_CURRENT_GROUP_MAX_VALUE)) {
+			zb_cli_print_error(shell, "Incorrect group address", ZB_FALSE);
+			ret_err = -EINVAL;
+			goto error;
+		}
+
+		bind_req->dst_addr_mode = ZB_BIND_DST_ADDR_MODE_16_BIT_GROUP;
+	}
 
 	if (!parse_hex_u16(argv[5], &(bind_req->cluster_id))) {
 		zb_cli_print_error(shell, "Incorrect cluster ID", ZB_FALSE);
@@ -1862,11 +1888,19 @@ static void print_bind_resp(const struct shell *shell,
 	uint32_t next_start_index = ((uint32_t)bind_resp->start_index +
 				     bind_resp->binding_table_list_count);
 
+	/* Set pointer to first binding table record. */
 	tbl_rec = (const zb_zdo_binding_table_record_t *)(bind_resp + 1);
 
 	for (idx = bind_resp->start_index; idx < next_start_index; ++idx) {
 		print_bind_resp_record(shell, idx, tbl_rec);
-		++tbl_rec;
+
+		/* Handle group binding case - shorter binding table record. */
+		if (tbl_rec->dst_addr_mode == ZB_APS_ADDR_MODE_16_GROUP_ENDP_NOT_PRESENT) {
+			tbl_rec = (zb_zdo_binding_table_record_t *)((zb_uint8_t *)tbl_rec +
+					GROUP_BIND_TABLE_RECORD_SIZE);
+		} else {
+			++tbl_rec;
+		}
 	}
 }
 
