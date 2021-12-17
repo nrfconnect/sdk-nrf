@@ -20,12 +20,10 @@ static int log_ml_result_event(const struct event_header *eh, char *buf, size_t 
 static int log_ml_result_signin_event(const struct event_header *eh, char *buf, size_t buf_len)
 {
 	const struct ml_result_signin_event *event = cast_ml_result_signin_event(eh);
-	const char *mid = module_id_get(event->module_idx);
-
-	__ASSERT_NO_MSG(mid);
 
 	return snprintf(buf, buf_len, "module: \"%s\" %s ml_result_event",
-		mid, event->state ? "signs in to" : "signs off from");
+			module_name_get(module_id_get(event->module_idx)),
+			event->state ? "signs in to" : "signs off from");
 }
 
 static void profile_ml_result_event(struct log_event_buf *buf, const struct event_header *eh)

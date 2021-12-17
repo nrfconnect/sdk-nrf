@@ -104,6 +104,16 @@ Bluetooth libraries and services
 
 * |no_changes_yet_note|
 
+Common Application Framework (CAF)
+----------------------------------
+
+* Updated:
+
+  * Unify module id reference location.
+    The array holding module reference objects is explicitly defined in linker script to avoid creating an orphan section.
+    ``MODULE_ID`` macro and :c:func:`module_id_get` function now returns module reference from dedicated section instead of module name.
+    The module name can not be obtained from reference object directly, a helper function (:c:func:`module_name_get`) should be used instead.
+
 Modem libraries
 ---------------
 

@@ -26,13 +26,11 @@ extern "C" {
 
 #define MODULE_ID_PTR_VAR(mname) _CONCAT(__module_, mname)
 #define MODULE_ID_LIST_SECTION_NAME   STRINGIFY(MODULE_ID_LIST_SECTION_PREFIX)
-#define MODULE_ID_LIST_START _CONCAT(__start_, MODULE_ID_LIST_SECTION_PREFIX)
-#define MODULE_ID_LIST_STOP  _CONCAT(__stop_,  MODULE_ID_LIST_SECTION_PREFIX)
 #define MODULE_ID_PTR_VAR_EXTERN_DEC(mname) \
 	extern const void * const MODULE_ID_PTR_VAR(mname)
 
-extern const void * const MODULE_ID_LIST_START;
-extern const void * const MODULE_ID_LIST_STOP;
+extern const void * const __start_module_id_list[];
+extern const void * const __stop_module_id_list[];
 
 
 /**
@@ -42,7 +40,7 @@ extern const void * const MODULE_ID_LIST_STOP;
  */
 static inline size_t module_count(void)
 {
-	return (&MODULE_ID_LIST_STOP - &MODULE_ID_LIST_START);
+	return (__stop_module_id_list - __start_module_id_list);
 }
 
 /**
@@ -54,10 +52,23 @@ static inline size_t module_count(void)
  */
 static inline const void *module_id_get(size_t idx)
 {
-	if (idx >= module_count()) {
-		return NULL;
-	}
-	return *((&MODULE_ID_LIST_START) + idx);
+	__ASSERT_NO_MSG(idx < module_count());
+
+	return (__start_module_id_list + idx);
+}
+
+/**
+ * @brief Get name of the module with given id.
+ *
+ * @param[in] id Id of the module.
+ *
+ * @return Module name.
+ */
+static inline const char *module_name_get(const void *id)
+{
+	__ASSERT_NO_MSG(id);
+
+	return *((const char **)id);
 }
 
 /** @brief Get index of module.
@@ -70,7 +81,7 @@ static inline const void *module_id_get(size_t idx)
  */
 #define MODULE_IDX(mname) ({                                        \
 		MODULE_ID_PTR_VAR_EXTERN_DEC(mname);                \
-		&MODULE_ID_PTR_VAR(mname) - &MODULE_ID_LIST_START;  \
+		&MODULE_ID_PTR_VAR(mname) - __start_module_id_list; \
 	})
 
 /**
@@ -249,7 +260,7 @@ static inline bool check_state(const struct module_state_event *event,
  */
 #define MODULE_ID(mname) ({                                  \
 			MODULE_ID_PTR_VAR_EXTERN_DEC(mname); \
-			MODULE_ID_PTR_VAR(mname);            \
+			&MODULE_ID_PTR_VAR(mname);           \
 		})
 
 
@@ -288,7 +299,7 @@ static inline void module_set_state(enum module_state state)
 
 	struct module_state_event *event = new_module_state_event();
 
-	event->module_id = MODULE_ID_PTR_VAR(MODULE);
+	event->module_id = MODULE_ID(MODULE);
 	event->state = state;
 	EVENT_SUBMIT(event);
 }
