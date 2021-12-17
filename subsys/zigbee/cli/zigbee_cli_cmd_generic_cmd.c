@@ -235,14 +235,11 @@ static int zcl_cmd_send(struct ctx_entry *entry)
 	zb_ret_t zb_err_code;
 	uint8_t entry_index = ctx_mgr_get_index_by_entry(entry);
 
-	if (entry->generic_cmd_data.def_resp == ZB_ZCL_ENABLE_DEFAULT_RESPONSE) {
-		zb_err_code = ZB_SCHEDULE_APP_ALARM(cmd_zb_zcl_cmd_timeout,
-						    entry_index,
-						    (CMD_ENTRY_TIMEOUT_S * ZB_TIME_ONE_SECOND));
-		if (zb_err_code != RET_OK) {
-			zb_cli_print_error(entry->shell, "Couldn't schedule timeout cb.", ZB_FALSE);
-			goto error;
-		}
+	zb_err_code = ZB_SCHEDULE_APP_ALARM(cmd_zb_zcl_cmd_timeout, entry_index,
+					    (CMD_ENTRY_TIMEOUT_S * ZB_TIME_ONE_SECOND));
+	if (zb_err_code != RET_OK) {
+		zb_cli_print_error(entry->shell, "Couldn't schedule timeout cb.", ZB_FALSE);
+		goto error;
 	}
 
 	zb_err_code = ZB_SCHEDULE_APP_CALLBACK(zb_zcl_send_cmd_frame, entry_index);
