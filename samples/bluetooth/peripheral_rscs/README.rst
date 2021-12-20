@@ -62,7 +62,7 @@ After programming the sample to your development kit, test it by performing the 
 #. In :guilabel:`SC Control Point`, tap the :guilabel:`Indicate` button to control the sensor.
 #. The following Op Codes (with data if required) can be written into :guilabel:`SC Control Point`:
 
-   * ``01 xx xx xx`` to set the Total Distance Value to the entered value (if the server supports the Total Distance Measurement feature).
+   * ``01 xx xx xx xx`` to set the Total Distance Value to the entered value in meters. (if the server supports the Total Distance Measurement feature).
    * ``02`` to start the sensor calibration process (if the server supports the Sensor Calibration feature).
    * ``03 xx`` to update the sensor location (if the server supports the Multiple Sensor Locations feature).
    * ``04`` to get a list of supported localizations (if the server supports the Multiple Sensor Locations feature).

@@ -85,7 +85,13 @@ For lists of protocol-specific changes, see `Protocols`_.
 Bluetooth samples
 -----------------
 
-* Added :ref:`multiple_adv_sets` sample.
+* Added:
+
+  * :ref:`multiple_adv_sets` sample.
+
+* Updated:
+
+  * :ref:`peripheral_rscs` - Corrected the number of bytes for setting the Total Distance Value and specified the data units.
 
 nRF9160 samples
 ---------------
@@ -113,7 +119,11 @@ This section provides detailed lists of changes by :ref:`library <libraries>`.
 Bluetooth libraries and services
 --------------------------------
 
-* |no_changes_yet_note|
+Updated:
+
+* :ref:`rscs_readme` library:
+
+  * Added units for :c:struct:`bt_rscs_measurement` members.
 
 Common Application Framework (CAF)
 ----------------------------------

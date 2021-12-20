@@ -147,16 +147,16 @@ struct bt_rscs_measurement {
 	/** True if running, False if walking. */
 	bool is_running;
 
-	/** Instantaneous Speed. */
+	/** Instantaneous Speed. 256 units = 1 meter/second */
 	uint16_t inst_speed;
 
-	/** Instantaneous Cadence. */
+	/** Instantaneous Cadence. 1 unit = 1 stride/minute */
 	uint8_t inst_cadence;
 
-	/** Instantaneous Stride Length. */
+	/** Instantaneous Stride Length. 100 units = 1 meter */
 	uint16_t inst_stride_length;
 
-	/** Total Distance. */
+	/** Total Distance. 1 unit = 1 meter */
 	uint32_t total_distance;
 };
 
