@@ -8,8 +8,7 @@
 #include <stdio.h>
 #include <nrf_modem.h>
 #include <modem/lte_lc.h>
-#include <modem/at_cmd.h>
-#include <modem/at_notif.h>
+#include <nrf_modem_at.h>
 #include <net/mqtt.h>
 #include <net/socket.h>
 #include <modem/nrf_modem_lib.h>
@@ -26,8 +25,8 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 
 #if !defined(CONFIG_USE_CUSTOM_CLIENT_ID)
 /* Define the length of the IMEI AT COMMAND response buffer */
-#define CGSN_RESP_LEN 19
 #define IMEI_LEN 15
+#define CGSN_RESPONSE_LENGTH (IMEI_LEN + 6 + 1) /* Add 6 for \r\nOK\r\n and 1 for \0 */
 #define CLIENT_ID_LEN (sizeof(CONFIG_CLIENT_ID_PREFIX) + IMEI_LEN)
 #else
 #define CLIENT_ID_LEN sizeof(CONFIG_CLIENT_ID)
@@ -260,14 +259,11 @@ static void broker_init(const char *hostname)
 static int client_id_get(char *id_buf, size_t len)
 {
 #if !defined(CONFIG_CLIENT_ID)
-	enum at_cmd_state at_state;
-	char imei_buf[CGSN_RESP_LEN];
-	int err = at_cmd_write("AT+CGSN", imei_buf, sizeof(imei_buf),
-				&at_state);
+	char imei_buf[CGSN_RESPONSE_LENGTH];
+	int err = nrf_modem_at_cmd(imei_buf, sizeof(imei_buf), "AT+CGSN");
 
 	if (err) {
-		printk("Error when trying to do at_cmd_write: %d, at_state: %d",
-			err, at_state);
+		printk("Error when trying to do nrf_modem_at_cmd: %d", err);
 		return err;
 	}
 	snprintf(id_buf, len, "%s%.*s", CONFIG_CLIENT_ID_PREFIX,
