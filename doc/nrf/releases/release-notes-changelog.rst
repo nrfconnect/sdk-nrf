@@ -185,6 +185,13 @@ Documentation
 
 In addition to documentation related to the changes listed above, the following documentation has been updated:
 
-* |no_changes_yet_note|
+* Reorganized the contents of the :ref:´ug_app_dev` section:
+
+  * Added new subpage :ref:`app_optimize` and moved the optimization sections under it.
+  * Added new subpage :ref:`ext_components` and moved the sections for using external components or modules under it.
+
+* Reorganized the contents of the :ref:`protocols` section:
+
+  * Reduced the ToC levels of the subpages.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
