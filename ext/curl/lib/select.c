@@ -403,9 +403,6 @@ int Curl_poll(struct pollfd ufds[], unsigned int nfds, timediff_t timeout_ms)
     if(ufds[i].fd == CURL_SOCKET_BAD)
       continue;
     if (ufds[i].revents & POLLHUP) {
-#if defined(CONFIG_NRF_CURL_INTEGRATION)
-	    printk("\npoll() returned: POLLHUP - connection closed\n");
-#endif
 	    ufds[i].revents |= POLLIN;
     }
     if (ufds[i].revents & POLLERR) {
