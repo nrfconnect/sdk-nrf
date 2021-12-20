@@ -7,7 +7,7 @@ The following user guides describe the supported protocols.
 They introduce you to concepts that are important to work with the protocol and guide you through developing your application.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Subpages:
 
    ug_ble_controller
