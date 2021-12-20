@@ -20,6 +20,8 @@
 #include <bluetooth/mesh/gen_onoff_srv.h>
 #include <bluetooth/mesh/lightness_srv.h>
 #include <bluetooth/mesh/model_types.h>
+#include <bluetooth/mesh/light_ctrl_reg.h>
+#include <bluetooth/mesh/light_ctrl_reg_spec.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,21 +29,52 @@ extern "C" {
 
 struct bt_mesh_light_ctrl_srv;
 
-/** @def BT_MESH_LIGHT_CTRL_SRV_INIT
+#if defined(CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG)
+/** @def BT_MESH_LIGHT_CTRL_SRV_INIT_WITH_REG
  *
- *  @brief Initialization parameters for @ref bt_mesh_light_ctrl_srv.
+ *  @brief Initialization parameters for @ref bt_mesh_light_ctrl_srv with custom regulator.
+ *
+ *  Only available if @kconfig{CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG} is selected.
  *
  *  @param[in] _lightness_srv Pointer to the @ref bt_mesh_lightness_srv this
  *                            server controls.
+ *  @param[in] _reg           Pointer to the @ref bt_mesh_light_ctrl_reg to use.
  */
-#define BT_MESH_LIGHT_CTRL_SRV_INIT(_lightness_srv)                            \
+#define BT_MESH_LIGHT_CTRL_SRV_INIT_WITH_REG(_lightness_srv, _reg)             \
 	{                                                                      \
 		.cfg = BT_MESH_LIGHT_CTRL_SRV_CFG_INIT,                        \
 		.onoff = BT_MESH_ONOFF_SRV_INIT(                               \
 			&_bt_mesh_light_ctrl_srv_onoff),                       \
 		.lightness = _lightness_srv,                                   \
-		BT_MESH_LIGHT_CTRL_SRV_REG_INIT                                \
+		.reg = _reg                                                    \
 	}
+#endif
+
+/** @def BT_MESH_LIGHT_CTRL_SRV_INIT
+ *
+ *  @brief Initialization parameters for @ref bt_mesh_light_ctrl_srv.
+ *
+ *  This will enable the spec regulator if @kconfig{CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG} and
+ *  @kconfig{CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC} are selected.
+ *
+ *  @param[in] _lightness_srv Pointer to the @ref bt_mesh_lightness_srv this
+ *                            server controls.
+ */
+#if CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC && CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+#define BT_MESH_LIGHT_CTRL_SRV_INIT(_lightness_srv)                            \
+	BT_MESH_LIGHT_CTRL_SRV_INIT_WITH_REG(                                  \
+		_lightness_srv,                                                \
+		&(&((struct bt_mesh_light_ctrl_reg_spec)                       \
+		    BT_MESH_LIGHT_CTRL_REG_SPEC_INIT))->reg)
+#else
+#define BT_MESH_LIGHT_CTRL_SRV_INIT(_lightness_srv)                            \
+	{                                                                      \
+		.cfg = BT_MESH_LIGHT_CTRL_SRV_CFG_INIT,                        \
+		.onoff = BT_MESH_ONOFF_SRV_INIT(                               \
+			&_bt_mesh_light_ctrl_srv_onoff),                       \
+		.lightness = _lightness_srv                                    \
+	}
+#endif
 
 /** @def BT_MESH_MODEL_LIGHT_CTRL_SRV
  *
@@ -92,36 +125,12 @@ struct bt_mesh_light_ctrl_srv_cfg {
 	uint32_t fade_standby_auto;
 	/** Transition time to Standby state (in manual mode). */
 	uint32_t fade_standby_manual;
-	/** State-wise light levels */
+	/** State-wise light levels. */
 	uint16_t light[LIGHT_CTRL_STATE_COUNT];
-};
-
-/** Illumination regulator configuration */
-struct bt_mesh_light_ctrl_srv_reg_cfg {
-	/** Target illuminance values */
+#if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+	/** Target illuminance values. */
 	struct sensor_value lux[LIGHT_CTRL_STATE_COUNT];
-	/** Regulator upwards integral coefficient */
-	float kiu;
-	/** Regulator downwards integral coefficient */
-	float kid;
-	/** Regulator upwards propotional coefficient */
-	float kpu;
-	/** Regulator downwards propotional coefficient */
-	float kpd;
-	/** Regulator dead zone (in percent) */
-	uint8_t accuracy;
-};
-
-/** Illumination regulator */
-struct bt_mesh_light_ctrl_srv_reg {
-	/** Regulator step timer */
-	struct k_work_delayable timer;
-	/** Internal integral sum. */
-	float i;
-	/** Previous output */
-	uint16_t prev;
-	/** Regulator configuration */
-	struct bt_mesh_light_ctrl_srv_reg_cfg cfg;
+#endif
 };
 
 /** @brief Light Lightness Control Server instance.
@@ -142,8 +151,6 @@ struct bt_mesh_light_ctrl_srv {
 		/** Fade duration */
 		uint32_t duration;
 	} fade;
-	/** Present ambient illumination */
-	struct sensor_value ambient_lux;
 	/** State timer */
 	struct k_work_delayable timer;
 
@@ -175,9 +182,10 @@ struct bt_mesh_light_ctrl_srv {
 
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 	/** Illuminance regulator */
-	struct bt_mesh_light_ctrl_srv_reg reg;
+	struct bt_mesh_light_ctrl_reg *reg;
+	/** Previous regulator value */
+	uint16_t reg_prev;
 #endif
-
 	/** Lightness server instance */
 	struct bt_mesh_lightness_srv *lightness;
 	/** Extended Generic OnOff server */
