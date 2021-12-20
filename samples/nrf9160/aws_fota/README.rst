@@ -143,7 +143,7 @@ CONFIG_CERT_SEC_TAG - Security tag for TLS credentials
 CONFIG_MQTT_BROKER_HOSTNAME - AWT IoT MQTT broker hostname
    By default, the sample uses nRF Cloud's MQTT broker.
    Change this value to AWS IoT's MQTT broker.
-   To find the address of the AWS IoT MQTT broker, open the AWS IoT console, go to :guilabel:`Test` and select :guilabel:`View endpoint` from the :guilabel:`Connected as XXX` drop-down menu.
+   To find the address of the AWS IoT MQTT broker, open the AWS IoT console, go to :guilabel:`Settings` and read the endpoint under :guilabel:`Device data endpoint`.
 
 .. _CONFIG_USE_CUSTOM_CLIENT_ID:
 
@@ -231,8 +231,8 @@ After programming the sample to your development kit, test it by performing the 
 Troubleshooting
 ===============
 
-ERROR: mqtt_connect -45:
-   Error -45 ("operation is not supported on socket") indicates an error with the configured certificates.
+ERROR: mqtt_connect -ECONNREFUSED:
+   Error -ECONNREFUSED ("Connection refused") may indicate an error with the configured certificates.
 
 Content range is not defined:
    If you host the firmware image on a different server than in an S3 bucket, this error indicates that the Content-Range field is missing in the HTTP GET header.
