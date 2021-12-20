@@ -277,6 +277,32 @@ endchoice
 endmenu
 endif
 
+menuconfig BT_MESH_LIGHT_CTRL_REG
+	bool "Lightness PI Regulator"
+	help
+	  Enable the lightness PI regulator module
+
+if BT_MESH_LIGHT_CTRL_REG
+
+config BT_MESH_LIGHT_CTRL_REG_SPEC
+	bool "Spec Lightness PI Regulator"
+	depends on FPU
+	default y
+	help
+	  Enable specification-defined lightness PI regulator implementation.
+
+if BT_MESH_LIGHT_CTRL_REG_SPEC
+
+config BT_MESH_LIGHT_CTRL_REG_SPEC_INTERVAL
+	int "Update interval"
+	default 100
+	range 10 100
+	help
+	  Update interval of the specification PI regulator (in milliseconds).
+
+endif #BT_MESH_LIGHT_CTRL_REG_SPEC
+endif #BT_MESH_LIGHT_CTRL_REG
+
 menuconfig BT_MESH_LIGHT_CTRL_SRV
 	bool "Light Lightness Control (LC) Server"
 	select BT_MESH_NRF_MODELS
@@ -290,21 +316,13 @@ if BT_MESH_LIGHT_CTRL_SRV
 
 menuconfig BT_MESH_LIGHT_CTRL_SRV_REG
 	bool "Lightness Regulator"
-	depends on FPU
+	select BT_MESH_LIGHT_CTRL_REG
 	default y
 	help
-	  Enable the Lightness PI Regulator for controlling the lightness level
+	  Enable the use of a PI regulator for controlling the lightness level
 	  through an illuminance sensor feedback loop.
 
 if BT_MESH_LIGHT_CTRL_SRV_REG
-
-config BT_MESH_LIGHT_CTRL_SRV_REG_INTERVAL
-	int "Update interval"
-	default 100
-	range 10 100
-	help
-	  Update interval of the Light LC Server model's internal PI regulator
-	  (in milliseconds).
 
 config BT_MESH_LIGHT_CTRL_SRV_REG_KIU
 	int "Default Kiu coefficient"

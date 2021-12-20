@@ -218,21 +218,21 @@ enum bt_mesh_light_ctrl_coeff {
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 #define BT_MESH_LIGHT_CTRL_SRV_REG_CFG_INIT                                    \
 	{                                                                      \
-		.lux = { { CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_STANDBY },    \
-			 { CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON },         \
-			 { CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_PROLONG } },  \
-		.kiu = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_KIU,                  \
-		.kid = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_KID,                  \
-		.kpu = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_KPU,                  \
-		.kpd = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_KPD,                  \
+		.ki.up = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_KIU,                  \
+		.ki.down = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_KID,                  \
+		.kp.up = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_KPU,                  \
+		.kp.down = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_KPD,                  \
 		.accuracy = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_ACCURACY,        \
 	}
 
-#define BT_MESH_LIGHT_CTRL_SRV_REG_INIT .reg = {                               \
-		.cfg = BT_MESH_LIGHT_CTRL_SRV_REG_CFG_INIT                     \
+#define BT_MESH_LIGHT_CTRL_SRV_LUX_INIT                                        \
+	.lux = {                                                               \
+		{ CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_STANDBY },             \
+		{ CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON },                  \
+		{ CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_PROLONG }              \
 	}
 #else
-#define BT_MESH_LIGHT_CTRL_SRV_REG_INIT
+#define BT_MESH_LIGHT_CTRL_SRV_LUX_INIT
 #endif
 
 #define BT_MESH_LIGHT_CTRL_SRV_CFG_INIT                                        \
@@ -254,7 +254,8 @@ enum bt_mesh_light_ctrl_coeff {
 			CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_STANDBY,             \
 			CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_ON,                  \
 			CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG,             \
-		}                                                              \
+		},                                                             \
+		BT_MESH_LIGHT_CTRL_SRV_LUX_INIT                                \
 	}
 /** @endcond */
 
