@@ -3410,10 +3410,10 @@ void iperf_free_test(struct iperf_test *test)
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
 #if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
   if (!test->curr_mdm_traces) {
-    static const char default_mdm_trace[] = "AT%XMODEMTRACE=1,2";
+    static const char default_mdm_trace[] = "AT%%XMODEMTRACE=1,2";
 
     /* We cannot know what was set before the tests, thus setting "default" back: */
-    if (at_cmd_write(default_mdm_trace, NULL, 0, NULL) != 0) {
+    if (nrf_modem_at_printf(default_mdm_trace) != 0) {
       printk("error when setting default modem traces \"%s\"\n", default_mdm_trace);
     }
     else {
