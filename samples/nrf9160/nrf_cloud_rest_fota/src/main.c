@@ -730,6 +730,7 @@ static void error_reboot(void)
 {
 	LOG_INF("Rebooting in 30s..");
 	(void)nrf_cloud_rest_disconnect(&rest_ctx);
+	(void)lte_lc_deinit();
 	k_sleep(K_SECONDS(30));
 	sys_reboot(SYS_REBOOT_COLD);
 }
@@ -828,6 +829,7 @@ void main(void)
 		if (fota_status == NRF_CLOUD_FOTA_SUCCEEDED) {
 			save_settings();
 			(void)nrf_cloud_rest_disconnect(&rest_ctx);
+			(void)lte_lc_deinit();
 			LOG_INF("Rebooting in 10s to complete FOTA update..");
 			k_sleep(K_SECONDS(10));
 			sys_reboot(SYS_REBOOT_COLD);
