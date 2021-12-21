@@ -167,43 +167,9 @@ The application supports the following development kits:
 User interface
 **************
 
-The application uses the following buttons on the nRF9160-based development kits:
-
-* Button 1 on Thingy:91
-* Button 1 and Button 2 on nRF9160 DK
-
-Additionally, the application displays LED behavior that corresponds to the task performed by the application.
-The following table shows the purpose of each supported button:
-
-+--------+-------------------------------------+------------------------------------------------------------------------------------------------------------------+
-| Button | Thingy:91                           | nRF9160 DK                                                                                                       |
-+========+=====================================+==================================================================================================================+
-| 1      | Send a message to the cloud service | Send message to the cloud service.                                                                               |
-+--------+-------------------------------------+------------------------------------------------------------------------------------------------------------------+
-| 2      |                                     | Send message to the cloud service.                                                                               |
-|        |                                     +------------------------------------------------------------------------------------------------------------------+
-|        |                                     | Fake movement. For testing purposes, the nRF9160 DK does not have an external accelerometer to trigger movement. |
-+--------+-------------------------------------+------------------------------------------------------------------------------------------------------------------+
-
-The following table describes the LED states in the application:
-
-+---------------------------+-------------------------+-----------------------+
-| State                     | Thingy:91 RGB LED       | nRF9160 DK solid LEDs |
-+===========================+=========================+=======================+
-| LTE connection search     | Yellow, blinking        | LED1 blinking         |
-+---------------------------+-------------------------+-----------------------+
-| GNSS fix search           | Purple, blinking        | LED2 blinking         |
-+---------------------------+-------------------------+-----------------------+
-| Publishing data           | Green, blinking         | LED3 blinking         |
-+---------------------------+-------------------------+-----------------------+
-| Active mode               | Light blue, blinking    | LED4 blinking         |
-+---------------------------+-------------------------+-----------------------+
-| Passive mode              | Dark blue, slow blinking| LED4 slow blinking    |
-+---------------------------+-------------------------+-----------------------+
-| Error                     | Red, on                 | all 4 LEDs blinking   |
-+---------------------------+-------------------------+-----------------------+
-| Completion of FOTA Update | White, rapid blinking   | all 4 LEDs on         |
-+---------------------------+-------------------------+-----------------------+
+The application supports basic UI elements to visualize its operating state and to notify the cloud using button presses.
+This functionality is implemented in the :ref:`UI module <asset_tracker_v2_ui_module>` and the supported
+LED patterns are documented in the :ref:`UI module LED indication <led_indication>` section.
 
 .. _atv2_lwm2m_carrier_support:
 
