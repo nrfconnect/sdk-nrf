@@ -98,9 +98,9 @@ static int settings_set(const char *key, size_t len_rd, settings_read_cb read_cb
 	return 0;
 }
 
-#ifdef COFNIG_CAF_BLE_ADV_DIRECT_ADV
+#if CONFIG_CAF_BLE_ADV_DIRECT_ADV
 SETTINGS_STATIC_HANDLER_DEFINE(ble_adv, MODULE_NAME, NULL, settings_set, NULL, NULL);
-#endif /* CONFIG_CAF_BLE_ADV_DIRECT_ADV */
+#endif
 
 static void broadcast_adv_state(bool active)
 {
