@@ -45,7 +45,7 @@ static const struct bt_data ad[] = {
 };
 
 static const struct bt_data sd[] = {
-	BT_DATA_BYTES(BT_DATA_UUID16_ALL, 0x1e, 0x18),
+	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_BMS_VAL)),
 };
 
 static void connected(struct bt_conn *conn, uint8_t err)
@@ -82,7 +82,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	}
 }
 
-static struct bt_conn_cb conn_callbacks = {
+BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected        = connected,
 	.disconnected     = disconnected,
 	.security_changed = security_changed,
@@ -183,7 +183,6 @@ void main(void)
 		return;
 	}
 
-	bt_conn_cb_register(&conn_callbacks);
 	bt_conn_auth_cb_register(&conn_auth_callbacks);
 
 	err = bt_enable(NULL);

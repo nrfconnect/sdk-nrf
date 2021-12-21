@@ -59,7 +59,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	printk("Disconnected (reason %u)\n", reason);
 }
 
-static struct bt_conn_cb conn_callbacks = {
+BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected = connected,
 	.disconnected = disconnected,
 };
@@ -108,7 +108,6 @@ static void lbs_init(void)
 	};
 
 	dk_button_handler_add(&button_handler);
-	bt_conn_cb_register(&conn_callbacks);
 
 	int err = bt_lbs_init(&lbs_callbacs);
 

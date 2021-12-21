@@ -37,7 +37,7 @@ static const struct bt_data ad[] = {
 		      (CONFIG_BT_DEVICE_APPEARANCE >> 0) & 0xff,
 		      (CONFIG_BT_DEVICE_APPEARANCE >> 8) & 0xff),
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_LIMITED | BT_LE_AD_NO_BREDR)),
-	BT_DATA_BYTES(BT_DATA_SOLICIT16, 0x05, 0x18),
+	BT_DATA_BYTES(BT_DATA_SOLICIT16, BT_UUID_16_ENCODE(BT_UUID_CTS_VAL)),
 	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
 
@@ -210,7 +210,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	}
 }
 
-static struct bt_conn_cb conn_callbacks = {
+BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected = connected,
 	.disconnected = disconnected,
 	.security_changed = security_changed,
@@ -327,12 +327,6 @@ void main(void)
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
-	}
-
-	bt_conn_cb_register(&conn_callbacks);
-	if (err) {
-		printk("Failed to register connection callbacks\n");
-		return;
 	}
 
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);

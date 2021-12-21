@@ -81,7 +81,7 @@ static void __attribute__((unused)) security_changed(struct bt_conn *conn,
 	}
 }
 
-static struct bt_conn_cb conn_callbacks = {
+BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected    = connected,
 	.disconnected = disconnected,
 	COND_CODE_1(CONFIG_BT_SMP,
@@ -121,7 +121,6 @@ void main(void)
 
 	printk("Starting Bluetooth NUS shell transport example\n");
 
-	bt_conn_cb_register(&conn_callbacks);
 	if (IS_ENABLED(CONFIG_BT_SMP)) {
 		bt_conn_auth_cb_register(&conn_auth_callbacks);
 	}

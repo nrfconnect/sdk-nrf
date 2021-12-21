@@ -236,7 +236,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	gatt_discover(conn);
 }
 
-static struct bt_conn_cb conn_callbacks = {
+BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected = connected,
 	.disconnected = disconnected,
 	.security_changed = security_changed
@@ -379,7 +379,6 @@ void main(void)
 	}
 
 	scan_init();
-	bt_conn_cb_register(&conn_callbacks);
 
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {

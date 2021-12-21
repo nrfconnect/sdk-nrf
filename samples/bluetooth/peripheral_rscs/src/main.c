@@ -119,7 +119,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	dk_set_led_off(CON_STATUS_LED);
 }
 
-#ifdef CONFIG_BT_LBS_SECURITY_ENABLED
+#ifdef CONFIG_BT_RSCS_SECURITY_ENABLED
 static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -135,15 +135,15 @@ static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_
 }
 #endif
 
-static struct bt_conn_cb conn_callbacks = {
-	.connected    = connected,
+BT_CONN_CB_DEFINE(conn_callbacks) = {
+	.connected = connected,
 	.disconnected = disconnected,
-#ifdef CONFIG_BT_LBS_SECURITY_ENABLED
+#ifdef CONFIG_BT_RSCS_SECURITY_ENABLED
 	.security_changed = security_changed,
 #endif
 };
 
-#if defined(CONFIG_BT_LBS_SECURITY_ENABLED)
+#if defined(CONFIG_BT_RSCS_SECURITY_ENABLED)
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -209,7 +209,6 @@ void main(void)
 		return;
 	}
 
-	bt_conn_cb_register(&conn_callbacks);
 	if (IS_ENABLED(CONFIG_BT_RSCS_SECURITY_ENABLED)) {
 		bt_conn_auth_cb_register(&conn_auth_callbacks);
 	}

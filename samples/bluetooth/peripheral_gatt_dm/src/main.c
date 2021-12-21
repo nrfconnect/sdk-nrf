@@ -115,7 +115,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	}
 }
 
-static struct bt_conn_cb conn_callbacks = {
+BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected        = connected,
 	.disconnected     = disconnected,
 	.security_changed = security_changed,
@@ -226,12 +226,6 @@ void main(void)
 	err = bt_enable(NULL);
 	if (err) {
 		printk("BLE init failed with error code %d\n", err);
-		return;
-	}
-
-	bt_conn_cb_register(&conn_callbacks);
-	if (err) {
-		printk("Failed to register connection callbacks.\n");
 		return;
 	}
 

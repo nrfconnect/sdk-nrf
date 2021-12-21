@@ -28,7 +28,9 @@ static struct bt_le_ext_adv *adv;
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-	BT_DATA_BYTES(BT_DATA_UUID16_ALL, 0x0d, 0x18, 0x0f, 0x18, 0x0a, 0x18),
+	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_HRS_VAL),
+					  BT_UUID_16_ENCODE(BT_UUID_BAS_VAL),
+					  BT_UUID_16_ENCODE(BT_UUID_DIS_VAL)),
 };
 
 static void connected(struct bt_conn *conn, uint8_t conn_err)
@@ -64,7 +66,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	k_work_submit(&start_advertising_worker);
 }
 
-static struct bt_conn_cb conn_callbacks = {
+BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected = connected,
 	.disconnected = disconnected,
 };
@@ -164,8 +166,6 @@ void main(void)
 	}
 
 	bt_ready();
-
-	bt_conn_cb_register(&conn_callbacks);
 
 	/* Implement notification. At the moment there is no suitable way
 	 * of starting delayed work so we do it here

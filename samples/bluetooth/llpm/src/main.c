@@ -411,14 +411,15 @@ static void test_run(void)
 	}
 }
 
+BT_CONN_CB_DEFINE(conn_callbacks) = {
+	.connected = connected,
+	.disconnected = disconnected,
+	.le_param_updated = le_param_updated,
+};
+
 void main(void)
 {
 	int err;
-	static struct bt_conn_cb conn_callbacks = {
-		.connected = connected,
-		.disconnected = disconnected,
-		.le_param_updated = le_param_updated,
-	};
 
 #if defined(CONFIG_USB_DEVICE_STACK)
 	const struct device *uart_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
@@ -438,8 +439,6 @@ void main(void)
 	console_init();
 
 	printk("Starting Bluetooth LLPM example\n");
-
-	bt_conn_cb_register(&conn_callbacks);
 
 	err = bt_enable(NULL);
 	if (err) {
