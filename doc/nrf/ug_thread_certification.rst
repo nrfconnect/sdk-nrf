@@ -54,6 +54,7 @@ Thread Test Harness integration
 To certify a Thread product, all certification test cases must be run on the Thread Test Harness software.
 
 A detailed description of how to assemble and configure a Thread Test Bed and run the Thread Test Harness can be found on the `Thread Group's Confluence wiki page`_.
+Access to this information is only available to members of the Thread Group, and access to the Thread Test Harness depends on the membership tier.
 
 .. note::
    The following procedure references the nRF52840 Development Kit.
