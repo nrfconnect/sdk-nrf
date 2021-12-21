@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+target_sources_ifdef(CONFIG_CAF_BLE_BOND_SUPPORTED
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_bond.c)
+
 target_sources_ifdef(CONFIG_ML_APP_EI_DATA_FORWARDER_UART
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ei_data_forwarder_uart.c)
 
