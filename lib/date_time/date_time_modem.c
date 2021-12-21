@@ -37,14 +37,18 @@ int date_time_modem_get(int64_t *date_time_ms)
 	int rc;
 	struct tm date_time;
 
+#if defined(CONFIG_DATE_TIME_NTP)
 	if (!modem_valid_network_time) {
 		/* We will get here whenever we haven't received XTIME notification meaning
 		 * that we don't want to query modem time when it has been set with AT+CCLK.
+		 * However, if we don't have other time sources (NTP in practice),
+		 * then we are OK to check modem time as modem clock is more accurate than
+		 * application side clock.
 		 */
 		LOG_DBG("Modem has not got time from LTE network, so not using it");
 		return -ENODATA;
 	}
-
+#endif
 	/* Example of modem time response:
 	 * "+CCLK: \"20/02/25,17:15:02+04\"\r\n\000{"
 	 */
