@@ -33,27 +33,6 @@ extern "C" {
 #endif
 
 
-/** @def SUBS_PRIO_MIN
- *
- * @brief Index of the highest subscriber priority level.
- */
-#define SUBS_PRIO_MIN    _SUBS_PRIO_FIRST
-
-
-/** @def SUBS_PRIO_MAX
- *
- * @brief Index of the lowest subscriber priority level.
- */
-#define SUBS_PRIO_MAX    _SUBS_PRIO_FINAL
-
-
-/** @def SUBS_PRIO_COUNT
- *
- * @brief Number of subscriber priority levels.
- */
-#define SUBS_PRIO_COUNT (SUBS_PRIO_MAX - SUBS_PRIO_MIN + 1)
-
-
 /** @brief Event header.
  *
  * When defining an event structure, the event header
@@ -110,12 +89,12 @@ struct event_type {
 	/** Event name. */
 	const char			*name;
 
-	/** Array of pointers to the array of subscribers. */
-	const struct event_subscriber	*subs_start[SUBS_PRIO_COUNT];
+	/** Pointer to the array of subscribers. */
+	const struct event_subscriber	*subs_start;
 
-	/** Array of pointers to the element directly after the array of
+	/** Pointer to the element directly after the array of
 	 * subscribers. */
-	const struct event_subscriber	*subs_stop[SUBS_PRIO_COUNT];
+	const struct event_subscriber	*subs_stop;
 
 	/** Bool indicating if the event is logged by default. */
 	bool init_log_enable;
@@ -128,12 +107,8 @@ struct event_type {
 	const void *trace_data;
 };
 
-
-extern const struct event_listener __start_event_listeners[];
-extern const struct event_listener __stop_event_listeners[];
-
-extern const struct event_type __start_event_types[];
-extern const struct event_type __stop_event_types[];
+extern struct event_type _event_type_list_start[];
+extern struct event_type _event_type_list_end[];
 
 
 /** Create an event listener object.
@@ -151,7 +126,7 @@ extern const struct event_type __stop_event_types[];
  * @param ename  Name of the event.
  */
 #define EVENT_SUBSCRIBE_EARLY(lname, ename) \
-	_EVENT_SUBSCRIBE(lname, ename, _SUBS_PRIO_ID(_SUBS_PRIO_FIRST))
+	_EVENT_SUBSCRIBE(lname, ename, _EM_SUBS_PRIO_ID(_EM_SUBS_PRIO_EARLY))
 
 
 /** Subscribe a listener to the normal notification list for an event
@@ -161,7 +136,7 @@ extern const struct event_type __stop_event_types[];
  * @param ename  Name of the event.
  */
 #define EVENT_SUBSCRIBE(lname, ename) \
-	_EVENT_SUBSCRIBE(lname, ename, _SUBS_PRIO_ID(_SUBS_PRIO_NORMAL))
+	_EVENT_SUBSCRIBE(lname, ename, _EM_SUBS_PRIO_ID(_EM_SUBS_PRIO_NORMAL))
 
 
 /** Subscribe a listener to an event type as final module that is
@@ -171,7 +146,7 @@ extern const struct event_type __stop_event_types[];
  * @param ename  Name of the event.
  */
 #define EVENT_SUBSCRIBE_FINAL(lname, ename)							\
-	_EVENT_SUBSCRIBE(lname, ename, _SUBS_PRIO_ID(_SUBS_PRIO_FINAL));			\
+	_EVENT_SUBSCRIBE(lname, ename, _EM_MARKER_FINAL_ELEMENT);				\
 	const struct {} _CONCAT(_CONCAT(__event_subscriber_, ename), final_sub_redefined) = {}
 
 
@@ -229,7 +204,7 @@ extern const struct event_type __stop_event_types[];
  * @param id  ID.
  */
 #define ASSERT_EVENT_ID(id) \
-	__ASSERT_NO_MSG((id >= __start_event_types) && (id < __stop_event_types))
+	__ASSERT_NO_MSG((id >= _event_type_list_start) && (id < _event_type_list_end))
 
 
 /** Submit an event to the Event Manager.

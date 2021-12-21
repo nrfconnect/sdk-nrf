@@ -142,6 +142,13 @@ Modem libraries
 
   * Can now parse AT command responses containing the response result, for example, ``OK`` or ``ERROR``.
 
+Event manager
+-------------
+
+* Updated:
+
+  * Modified the sections used by the event manager. Stopped using orphaned sections. Removed forced alignment for x86. Reworked priorities.
+
 Libraries for networking
 ------------------------
 

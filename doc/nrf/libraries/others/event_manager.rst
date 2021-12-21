@@ -49,21 +49,13 @@ Every listener is identified by a unique name.
 Configuration
 *************
 
-To use Event Manager, you must enable the following Kconfig options:
-
-* :kconfig:`CONFIG_EVENT_MANAGER` - This option enables the Event Manager.
-* :kconfig:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` - This option enables orphan memory sections used by the Event Manager.
-  Set this option to suppress warnings and errors.
-
-Initializing the Event Manager
-==============================
-
-You must initialize the Event Manager in your :file:`main.c` file.
+To use Event Manager, enable it using the :kconfig:`CONFIG_EVENT_MANAGER` Kconfig option and initialize it in your :file:`main.c` file.
 Initializing the Event Manager allows it to handle submitted events and deliver them to modules that subscribe to the specified event type.
 
-To initialize the Event Manager, complete the following steps:
+Complete the following steps:
 
-1. Include :file:`event_manager.h` in your :file:`main.c` file.
+1. Enable the :kconfig:`CONFIG_EVENT_MANAGER` Kconfig option.
+#. Include :file:`event_manager.h` in your :file:`main.c` file.
 #. Call :c:func:`event_manager_init()`.
 
 .. _event_manager_implementing_events:
