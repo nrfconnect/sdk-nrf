@@ -42,15 +42,15 @@ const char * const g_memfault_metrics_id_GpsTimeoutSearchTime;
  * depend on these to exist. But since we are unit testing, we dont need
  * these subscriptions and hence these structs can remain uninitialized.
  */
-const struct event_type __event_type_gps_module_event;
-const struct event_type __event_type_debug_module_event;
-const struct event_type __event_type_app_module_event;
-const struct event_type __event_type_data_module_event;
-const struct event_type __event_type_cloud_module_event;
-const struct event_type __event_type_modem_module_event;
-const struct event_type __event_type_sensor_module_event;
-const struct event_type __event_type_ui_module_event;
-const struct event_type __event_type_util_module_event;
+struct event_type __event_type_gps_module_event;
+struct event_type __event_type_debug_module_event;
+struct event_type __event_type_app_module_event;
+struct event_type __event_type_data_module_event;
+struct event_type __event_type_cloud_module_event;
+struct event_type __event_type_modem_module_event;
+struct event_type __event_type_sensor_module_event;
+struct event_type __event_type_ui_module_event;
+struct event_type __event_type_util_module_event;
 
 /* The following is required because unity is using a different main signature
  * (returns int) and zephyr expects main to not return value.

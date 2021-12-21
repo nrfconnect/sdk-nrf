@@ -7,7 +7,6 @@
 menuconfig EVENT_MANAGER
 	bool
 	prompt "Event Manager"
-	depends on LINKER_ORPHAN_SECTION_PLACE
 	help
 	  Enable Event Manager.
 	  Note that Event Manager uses orphan sections to handle its
