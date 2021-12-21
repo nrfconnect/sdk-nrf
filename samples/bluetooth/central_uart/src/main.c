@@ -432,7 +432,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	gatt_discover(conn);
 }
 
-static struct bt_conn_cb conn_callbacks = {
+BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected = connected,
 	.disconnected = disconnected,
 	.security_changed = security_changed
@@ -568,8 +568,6 @@ void main(void)
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
 	}
-
-	bt_conn_cb_register(&conn_callbacks);
 
 	int (*module_init[])(void) = {uart_init, scan_init, nus_client_init};
 	for (size_t i = 0; i < ARRAY_SIZE(module_init); i++) {

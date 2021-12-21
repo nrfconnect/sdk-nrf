@@ -582,22 +582,20 @@ int test_run(const struct shell *shell,
 	return 0;
 }
 
+BT_CONN_CB_DEFINE(conn_callbacks) = {
+	.connected = connected,
+	.disconnected = disconnected,
+	.le_param_req = le_param_req,
+	.le_param_updated = le_param_updated,
+	.le_phy_updated = le_phy_updated,
+	.le_data_len_updated = le_data_length_updated
+};
+
 void main(void)
 {
 	int err;
 
-	static struct bt_conn_cb conn_callbacks = {
-	    .connected = connected,
-	    .disconnected = disconnected,
-	    .le_param_req = le_param_req,
-	    .le_param_updated = le_param_updated,
-	    .le_phy_updated = le_phy_updated,
-	    .le_data_len_updated = le_data_length_updated
-	};
-
 	printk("Starting Bluetooth Throughput example\n");
-
-	bt_conn_cb_register(&conn_callbacks);
 
 	err = bt_enable(NULL);
 	if (err) {

@@ -374,7 +374,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 }
 #endif
 
-static struct bt_conn_cb conn_callbacks = {
+BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected    = connected,
 	.disconnected = disconnected,
 #ifdef CONFIG_BT_NUS_SECURITY_ENABLED
@@ -567,8 +567,6 @@ void main(void)
 	if (err) {
 		error();
 	}
-
-	bt_conn_cb_register(&conn_callbacks);
 
 	if (IS_ENABLED(CONFIG_BT_NUS_SECURITY_ENABLED)) {
 		bt_conn_auth_cb_register(&conn_auth_callbacks);
