@@ -82,10 +82,39 @@ In this state, the module enables the GPIO interrupts and waits for the pin stat
 Whenever a button is pressed, the module switches to ``STATE_SCANNING``.
 When the switch occurs, the module submits a work with a delay set to :kconfig:`CONFIG_CAF_BUTTONS_DEBOUNCE_INTERVAL`.
 The work scans the keyboard matrix, or directly connected buttons (depends on configuration).
-If any button state change occurs, the module sends related event.
+If any button state change occurs, the module sends an event with the :c:member:`button_event.key_id` of that button.
 
 * If the button is kept pressed while the scanning is performed, the work will be resubmitted with a delay set to :kconfig:`CONFIG_CAF_BUTTONS_SCAN_INTERVAL`.
 * If no button is pressed, the module switches back to ``STATE_ACTIVE``.
+
+Key ID
+======
+
+The :c:member:`button_event.key_id` is an unique 2-byte value that depends on the module configuration described in the configuration file.
+
+The following table breaks down the :c:member:`button_event.key_id` bits.
+
++------------------------------+
+| key_id                       |
++---------+---------+----+-----+
+| 0 .. 6  | 7 .. 13 | 14 | 15  |
++=========+=========+====+=====+
+| Row idx | Col idx | Reserved |
++---------+---------+----------+
+
+In this :c:member:`button_event.key_id` value:
+
+* The first seven least significant bits (``Row idx``) encode the index of the ``row`` array that corresponds to the GPIO port and the pin to which the button's row is connected.
+* The next seven bits (``Col idx``) encode the index of the ``col`` array that corresponds to the GPIO port and the pin to which the button's column is connected.
+  If the buttons are directly connected they are denoted only by ``row`` array index, ``col`` array index bits are set to zero.
+* The last two bits are reserved for application-specific usage.
+
+For example, if the configuration file looks as described in the `Configuration`_ section of this documentation, an event :c:struct:`button_event` with the :c:member:`button_event.key_id` value equal to ``0x0083`` indicates the following information:
+
+* The button row pin is connected to the gpio that is at index 3 in the ``row`` array from the configuration file.
+  That is, the row port and pin are ``1`` and ``14``, respectively.
+* The button column pin is connected to the gpio that is at index 1 in the ``col`` array from the configuration file.
+  That is, the column port and pin are ``0`` and ``24``, respectively.
 
 Power management states
 =======================
