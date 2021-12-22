@@ -6,8 +6,6 @@
 
 #include <zephyr.h>
 #include <modem/nrf_modem_lib.h>
-#include <modem/at_cmd.h>
-#include <modem/at_notif.h>
 #include <nrf_modem_at.h>
 #include <modem/modem_info.h>
 #include <dfu/mcuboot.h>
@@ -462,18 +460,6 @@ int init(void)
 	if (modem_lib_init_result) {
 		LOG_ERR("Failed to initialize modem library: 0x%X", modem_lib_init_result);
 		return -EFAULT;
-	}
-
-	err = at_cmd_init();
-	if (err) {
-		LOG_ERR("Failed to initialize AT commands, error: %d", err);
-		return err;
-	}
-
-	err = at_notif_init();
-	if (err) {
-		LOG_ERR("Failed to initialize AT notifications, error: %d", err);
-		return err;
 	}
 
 	err = fota_download_init(http_fota_dl_handler);
