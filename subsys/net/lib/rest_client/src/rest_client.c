@@ -60,10 +60,10 @@ static void rest_client_http_response_cb(struct http_response *rsp,
 			return;
 		}
 		resp_ctx->http_status_code = rsp->http_status_code;
-		resp_ctx->response_len = rsp->content_length;
+		resp_ctx->response_len = rsp->processed;
 
 		LOG_DBG("HTTP: All data received (content/total: %d/%d), status: %u %s",
-			rsp->content_length,
+			resp_ctx->response_len,
 			resp_ctx->total_response_len,
 			rsp->http_status_code,
 			log_strdup(rsp->http_status));
