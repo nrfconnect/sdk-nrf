@@ -169,6 +169,7 @@ Common Application Framework (CAF)
     The array holding module reference objects is explicitly defined in linker script to avoid creating an orphan section.
     ``MODULE_ID`` macro and :c:func:`module_id_get` function now returns module reference from dedicated section instead of module name.
     The module name can not be obtained from reference object directly, a helper function (:c:func:`module_name_get`) should be used instead.
+  * Fixed the NCSDK-13058 known issue related to directed advertising in CAF.
 
 Bootloader libraries
 --------------------

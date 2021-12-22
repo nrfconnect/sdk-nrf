@@ -868,6 +868,17 @@ NCSDK-10196: DFU fails for some configurations with the quick session resume fea
 
   **Workaround:** Use the quick session resume feature only for configurations with the cellular network backend.
 
+Common Application Framework (CAF)
+==================================
+
+.. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+NCSDK-13058: Directed advertising does not work
+  The directed advertising feature enabled with the :kconfig:`CONFIG_CAF_BLE_ADV_DIRECT_ADV` option does not work as intended.
+  Using directed advertising towards peers that enable privacy may result in connection establishing problems.
+
+  **Workaround** Manually cherry-pick and apply commit with fix from main (commit hash: ``c61c677872943bcf7905ddeec8b24b07ae50752e``).
+
 Subsystems
 **********
 
