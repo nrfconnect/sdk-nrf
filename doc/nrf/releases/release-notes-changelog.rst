@@ -119,6 +119,7 @@ nRF Desktop
   * Added two states to enable erasing dongle peer: ``STATE_DONGLE_ERASE_PEER`` and ``STATE_DONGLE_ERASE_ADV``.
   * Added new application specific Kconfig option to enable :ref:`nrf_desktop_ble_bond`.
   * Added configuration for ``nrf52833dk_nrf52820`` to allow testing of nRF Desktop dongle on the nRF52820 SoC.
+  * Added configuration for Working with ChromeBook (WWCB).
 
 * Updated:
 
@@ -126,6 +127,8 @@ nRF Desktop
    * Moved Fn key related macros to an application specific header file (:file:`configuration/common/fn_key_id.h`).
    * Config channel no longer uses orphaned sections to store module Id information.
      Hence, the :kconfig:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
+   * Bluetooth transmission power level for the Bluetooth LE advertising module.
+     It is now assumed to be 0 dBm during advertising.
 
 Samples
 =======

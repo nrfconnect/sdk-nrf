@@ -19,6 +19,13 @@ const struct {} ble_adv_def_include_once;
 
 static const struct bt_data ad_unbonded[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
+	/* nRF Desktop devices are assumed to have transmit power set to 0 dBm
+	 * during advertising.
+	 */
+	BT_DATA_BYTES(BT_DATA_TX_POWER, 0x0),
+	BT_DATA_BYTES(BT_DATA_GAP_APPEARANCE,
+			  (CONFIG_BT_DEVICE_APPEARANCE & BIT_MASK(__CHAR_BIT__)),
+			  (CONFIG_BT_DEVICE_APPEARANCE >> __CHAR_BIT__)),
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL,
 #if CONFIG_DESKTOP_HIDS_ENABLE
 			  0x12, 0x18,	/* HID Service */

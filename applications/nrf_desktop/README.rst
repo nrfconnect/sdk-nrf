@@ -401,6 +401,7 @@ The following build types are available for various boards in the nRF Desktop:
 * ``b0`` -- ``debug`` build type with the support for the B0 bootloader enabled (for :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
 * ``mcuboot`` -- ``debug`` build type with the support for the MCUboot bootloader enabled (for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
 * ``shell`` -- ``debug`` build type with the shell enabled.
+* ``b0_wwcb`` -- ``debug`` build type with the support for the B0 bootloader enabled, working with ChromeBook (WWCB).
 
 In nRF Desktop, not every development kit can support every build type mentioned above.
 If the given build type is not supported on the selected DK, an error message will appear when `Building and running`_.

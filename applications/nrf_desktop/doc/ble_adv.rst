@@ -35,6 +35,10 @@ The nRF Desktop devices also enable :kconfig:`CONFIG_BT_FILTER_ACCEPT_LIST` to m
 This is done to prevent Bluetooth Centrals other than the bonded one from connecting with the device.
 The nRF Desktop dongle scans for peripheral devices using the Bluetooth device name, which is provided in the scan response data.
 
+Transmission power level
+========================
 
+Bluetooth TX power level is assumed to be 0 dBm during advertising.
+This value is sent in unbonded advertising.
 
 .. |ble_adv| replace:: Bluetooth® LE advertising module
