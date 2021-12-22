@@ -25,3 +25,9 @@ Implementation details
 
 nRF Desktop uses the buttons module from :ref:`lib_caf` (CAF).
 See the :ref:`CAF button module <caf_buttons>` page for implementation details.
+
+Key ID
+======
+
+If :kconfig:`CONFIG_DESKTOP_FN_KEYS_ENABLE` is enabled, the :c:member:`button_event.key_id` additionally encodes if a button related to :c:struct:`button_event` is a function key.
+See the :ref:`nRF Desktop function key module <nrf_desktop_fn_keys>` page for implementation details.
