@@ -35,13 +35,72 @@ config CAF_BLE_ADV_DIRECT_ADV
 config CAF_BLE_ADV_FAST_ADV
 	bool "Enable period of fast advertising"
 
+config CAF_BLE_ADV_SLOW_INT_MIN
+	hex "Minimum Advertising Interval during slow advertising (N * 0.625 milliseconds)"
+	range 0x0020 0x4000
+	default 0x00a0 # 100 ms
+	help
+	  Minimum Advertising Interval shall be less than or equal to the
+	  Maximum Advertising Interval. The Minimum Advertising Interval and
+	  Maximum Advertising Interval should not be the same value (as stated
+	  in Bluetooth Core Spec 5.2, section 7.8.5)
+
+config CAF_BLE_ADV_SLOW_INT_MAX
+	hex "Maximum Advertising Interval during slow advertising (N * 0.625 milliseconds)"
+	range 0x0020 0x4000
+	default 0x00f0 # 150 ms
+	help
+	  Minimum Advertising Interval shall be less than or equal to the
+	  Maximum Advertising Interval. The Minimum Advertising Interval and
+	  Maximum Advertising Interval should not be the same value (as stated
+	  in Bluetooth Core Spec 5.2, section 7.8.5)
+
+if CAF_BLE_ADV_FAST_ADV
+
+config CAF_BLE_ADV_FAST_INT_MIN
+	hex "Minimum Advertising Interval during fast advertising (N * 0.625 milliseconds)"
+	range 0x0020 0x4000
+	default 0x0030 # 30 ms
+	help
+	  Minimum Advertising Interval shall be less than or equal to the
+	  Maximum Advertising Interval. The Minimum Advertising Interval and
+	  Maximum Advertising Interval should not be the same value (as stated
+	  in Bluetooth Core Spec 5.2, section 7.8.5)
+
+config CAF_BLE_ADV_FAST_INT_MAX
+	hex "Maximum Advertising Interval during fast advertising (N * 0.625 milliseconds)"
+	range 0x0020 0x4000
+	default 0x0060 # 60 ms
+	help
+	  Minimum Advertising Interval shall be less than or equal to the
+	  Maximum Advertising Interval. The Minimum Advertising Interval and
+	  Maximum Advertising Interval should not be the same value (as stated
+	  in Bluetooth Core Spec 5.2, section 7.8.5)
+
 config CAF_BLE_ADV_FAST_ADV_TIMEOUT
 	int "Time of initial fast advertising [s]"
 	default 30
-	depends on CAF_BLE_ADV_FAST_ADV
 	help
 	  Device will initially advertise with shorter interval to enable quicker discovery by
 	  hosts. After this time it will shift to normal cadence advertising.
+
+endif
+
+if !CAF_BLE_ADV_FAST_ADV
+
+config CAF_BLE_ADV_FAST_INT_MIN
+	hex
+	default 0x0
+
+config CAF_BLE_ADV_FAST_INT_MAX
+	hex
+	default 0x0
+
+config CAF_BLE_ADV_FAST_ADV_TIMEOUT
+	int
+	default 0
+
+endif
 
 config CAF_BLE_ADV_SWIFT_PAIR
 	bool "Enable Swift Pair feature"
@@ -51,14 +110,24 @@ config CAF_BLE_ADV_SWIFT_PAIR
 	  advertising packets used by your device when it's not bonded. The Swift Pair data
 	  must be added as the last member of advertising data.
 
+if CAF_BLE_ADV_PM_EVENTS && CAF_BLE_ADV_SWIFT_PAIR
+
 config CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD
 	int "No Swift Pair time gap before suspend [s]"
 	default 30
-	depends on CAF_BLE_ADV_PM_EVENTS
-	depends on CAF_BLE_ADV_SWIFT_PAIR
 	help
 	  To ensure users will not try to connect to a device which is no longer available,
 	  Swift Pair vendor section will be removed before exiting from advertising mode.
+
+endif
+
+if !(CAF_BLE_ADV_PM_EVENTS && CAF_BLE_ADV_SWIFT_PAIR)
+
+config CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD
+	int
+	default 0
+
+endif
 
 config CAF_BLE_ADV_BLE_BOND_SUPPORTED
 	bool

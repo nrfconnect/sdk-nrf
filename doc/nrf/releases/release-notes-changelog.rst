@@ -236,6 +236,9 @@ Common Application Framework (CAF)
 
   * Added new LED effect macro: :c:macro:`LED_EFFECT_LED_BLINK2`.
   * Added a macro to pass color arguments between macro calls: :c:macro:`LED_COLOR_ARG_PASS`.
+* :ref:`caf_ble_adv`:
+
+  * Added possibility of setting custom Bluetooth LE advertising intervals.
 * Updated:
 
   * Unify module ID reference location.

@@ -19,14 +19,6 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BLE_ADV_LOG_LEVEL);
 
-#ifndef CONFIG_CAF_BLE_ADV_FAST_ADV_TIMEOUT
-#define CONFIG_CAF_BLE_ADV_FAST_ADV_TIMEOUT 0
-#endif
-
-#ifndef CONFIG_CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD
-#define CONFIG_CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD 0
-#endif
-
 #define SWIFT_PAIR_SECTION_SIZE 1 /* number of struct bt_data objects */
 
 #define MAX_KEY_LEN 30
@@ -199,11 +191,13 @@ static int ble_adv_start_undirected(const bt_addr_le_t *bond_addr,
 
 	LOG_INF("Use %s advertising", (fast_adv)?("fast"):("slow"));
 	if (fast_adv) {
-		adv_param.interval_min = BT_GAP_ADV_FAST_INT_MIN_1;
-		adv_param.interval_max = BT_GAP_ADV_FAST_INT_MAX_1;
+		BUILD_ASSERT(CONFIG_CAF_BLE_ADV_FAST_INT_MIN <= CONFIG_CAF_BLE_ADV_FAST_INT_MAX);
+		adv_param.interval_min = CONFIG_CAF_BLE_ADV_FAST_INT_MIN;
+		adv_param.interval_max = CONFIG_CAF_BLE_ADV_FAST_INT_MAX;
 	} else {
-		adv_param.interval_min = BT_GAP_ADV_FAST_INT_MIN_2;
-		adv_param.interval_max = BT_GAP_ADV_FAST_INT_MAX_2;
+		BUILD_ASSERT(CONFIG_CAF_BLE_ADV_SLOW_INT_MIN <= CONFIG_CAF_BLE_ADV_SLOW_INT_MAX);
+		adv_param.interval_min = CONFIG_CAF_BLE_ADV_SLOW_INT_MIN;
+		adv_param.interval_max = CONFIG_CAF_BLE_ADV_SLOW_INT_MAX;
 	}
 
 	if (IS_ENABLED(CONFIG_BT_FILTER_ACCEPT_LIST)) {
