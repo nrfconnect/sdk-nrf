@@ -26,3 +26,5 @@ See the subpages for detailed documentation on the application and its internal 
    doc/modem_module
    doc/sensor_module
    doc/ui_module
+   doc/util_module
+   doc/modules_common
