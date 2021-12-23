@@ -20,8 +20,24 @@
 #define ACK_PKT_LENGTH            3
 #define FRAME_TYPE_MASK           0x07
 #define FRAME_TYPE_ACK            0x02
-#define ZBOSS_ED_MIN_DBM          -94
-#define ZBOSS_ED_RESULT_FACTOR    4
+
+#if defined(NRF52840_XXAA) || defined(NRF52811_XXAA) || \
+defined(NRF5340_XXAA_NETWORK) || defined(NRF5340_XXAA_APPLICATION)
+/* dBm value corresponding to value 0 in the EDSAMPLE register. */
+#define ZBOSS_ED_MIN_DBM       (-92)
+/* Factor needed to calculate the ED result based on the data from the RADIO peripheral. */
+#define ZBOSS_ED_RESULT_FACTOR 4
+
+#elif defined(NRF52833_XXAA) || defined(NRF52820_XXAA)
+/* dBm value corresponding to value 0 in the EDSAMPLE register. */
+#define ZBOSS_ED_MIN_DBM       (-93)
+/* Factor needed to calculate the ED result based on the data from the RADIO peripheral. */
+#define ZBOSS_ED_RESULT_FACTOR 5
+
+#else
+#error "Selected chip is not supported."
+#endif
+
 
 BUILD_ASSERT(IS_ENABLED(CONFIG_NET_PKT_TIMESTAMP), "Timestamp is required");
 BUILD_ASSERT(!IS_ENABLED(CONFIG_IEEE802154_NET_IF_NO_AUTO_START),
