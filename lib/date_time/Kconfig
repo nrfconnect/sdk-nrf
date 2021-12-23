@@ -51,9 +51,6 @@ config DATE_TIME_NTP_QUERY_TIME_SECONDS
 	int "Duration in which the library will query for NTP time, in seconds"
 	default 5
 
-config DATE_TIME_IPV6
-	bool "Use IPv6"
-
 module=DATE_TIME
 module-dep=LOG
 module-str=Date time module

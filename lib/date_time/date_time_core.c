@@ -101,6 +101,7 @@ static void date_time_update_thread(void)
 #endif
 		LOG_DBG("Did not get time from any time source");
 
+		date_time_core_schedule_update();
 		date_time_core_notify_event(DATE_TIME_NOT_OBTAINED);
 	}
 }
