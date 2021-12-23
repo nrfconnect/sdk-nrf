@@ -156,9 +156,13 @@
   - "drivers/gps/gps_sim/**/*"
   - "subsys/net/lib/nrf_cloud/**/*"
   - "subsys/net/lib/cloud/**/*"
+  - "subsys/net/lib/aws_iot/**/*"
+  - "subsys/net/lib/azure_iot_hub/**/*"
   - "lib/date_time/**/*"
   - "drivers/sensor/sensor_sim/**/*"
   - "samples/nrf9160/udp/**/*"
+  - "samples/nrf9160/aws_iot/**/*"
+  - "samples/nrf9160/azure_iot_hub/**/*"
 
 "CI-desktop-test":
   - "applications/nrf_desktop/**/*"
