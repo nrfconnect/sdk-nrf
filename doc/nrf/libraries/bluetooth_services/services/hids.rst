@@ -22,6 +22,11 @@ The HIDS module must be notified about the incoming connect and
 disconnect events using the dedicated API. This is done to synchronize
 the connection state of HIDS with the top module that uses it.
 
+.. note::
+
+   Some systems require security to use the HID service.
+   To ensure interoperability, enable the :kconfig:`CONFIG_BT_HIDS_DEFAULT_PERM_RW_ENCRYPT` option.
+
 The HID Service is used in the following samples:
 
  * :ref:`peripheral_hids_mouse`
