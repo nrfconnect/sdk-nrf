@@ -92,7 +92,10 @@ Bluetooth samples
 * Updated:
 
   * :ref:`peripheral_rscs` - Corrected the number of bytes for setting the Total Distance Value and specified the data units.
-  * :ref`direct_test_mode` - Added support for front-end module devices that support 2-pin PA/LNA interface with additional support for the Skyworks SKY66114-11 and the Skyworks SKY66403-11.
+  * :ref:`direct_test_mode` - Added support for front-end module devices that support 2-pin PA/LNA interface with additional support for the Skyworks SKY66114-11 and the Skyworks SKY66403-11.
+  * :ref:`peripheral_hids_mouse` - Added a notice about encryption requirement.
+  * :ref:`peripheral_hids_keyboard` - Added a notice about encryption requirement.
+
 
 nRF9160 samples
 ---------------

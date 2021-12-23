@@ -80,6 +80,15 @@ Button 4:
 LED 4:
    Indicates if an NFC field is present.
 
+Configuration
+*************
+
+|config|
+
+Setup
+=====
+
+The HID service specification does not require encryption (:kconfig:`CONFIG_BT_HIDS_DEFAULT_PERM_RW_ENCRYPT`), but some systems disconnect from the HID devices that do not support security.
 
 Building and running
 ********************
