@@ -7,14 +7,8 @@ Gazell Link Layer
    :local:
    :depth: 2
 
-.. gzll_intro_start
-
-Gazell is a protocol for setting up a robust wireless link between a single Host and up to eight Devices in a star network topology.
-It is designed to minimize power consumption in power-sensitive wireless desktop products and is also suitable for a range of other wireless applications.
-
-.. gzll_intro_end
-
-To minimize the power consumption of the power-sensitive peripheral devices, Gazell uses the central hub (host side) with its more relaxed power constraints to keep the link open while the peripheral devices can sleep and save on power consumption.
+Gazell Link Layer minimizes the power consumption of the power-sensitive peripheral devices.
+Gazell uses the central hub (Host side) with its more relaxed power constraints to keep the link open while the peripheral devices can sleep and save on power consumption.
 A typical example of this is a wireless mouse communicating with a USB dongle that is inserted into a computer.
 
 Gazell provides a switching and synchronization scheme that reduces interference and provides wireless coexistence features, enabling high throughput and low latency.
@@ -22,14 +16,14 @@ Gazell provides a switching and synchronization scheme that reduces interference
 Features
 ********
 
-Gazell provides the following features:
+Gazell Link Layer provides the following features:
 
 * Support for star network topology with one Host and up to eight Devices.
 * Bidirectional data transfer between each Host and Device.
 * Channel hopping functionality that gives a reliable wireless link in environments with interference from other radio sources.
 * Packet acknowledgment and automatic packet retransmission functionality to prevent data loss.
 * Individual TX and RX FIFOs for every data pipe.
-* Backward compatible with legacy nRF24L Series Gazell.
+* Backward compatible with legacy nRF24L IC Gazell.
 * Devices self-synchronize to the Host, meaning:
 
   * No connection packets are required to setup a link.
@@ -47,15 +41,15 @@ Configuration
 To enable the Gazell support in the |NCS|, set the following Kconfig options:
 
 * :kconfig:`CONFIG_GZLL` - This option enables the :ref:`nrfxlib:gzll` library.
-* :kconfig:`CONFIG_CLOCK_CONTROL_NRF` - This option enables the nRF5 HFCLK controller support.
+* :kconfig:`CONFIG_CLOCK_CONTROL_NRF` - This option enables HFCLK controller support for the nRF52 Series devices.
 * :kconfig:`CONFIG_GAZELL` - This option enables the :ref:`gzll_glue` module.
 
 .. _ug_gzll_resources:
 
-Resources
-*********
+Resources required
+******************
 
-Gazell uses a fixed set of peripheral resources in the nRF5 SoC.
+Gazell uses a fixed set of peripheral resources in System on Chips of the nRF52 series.
 To ensure correct operation, Gazell requires exclusive access to the following resources:
 
 * Radio
@@ -70,19 +64,27 @@ The radio and timer interrupt handlers should run at priority level 0 (highest p
 To avoid blocking Gazell operations, applications can run at priority level 2 or higher.
 
 You can customize Gazell at runtime for a range of different applications.
-See the :ref:`nrfxlib:gzll_api` for a list of configuration functions as well as the default and constant parameters.
+See the :ref:`nrfxlib:gzll` and :ref:`nrfxlib:gzll_api` for a list of configuration functions as well as the default and constant parameters.
 
-.. note:
+.. note::
+
    Editing the header file containing the default and constant parameters does not change their value when compiling a new project.
    These values are provided as a useful reference when making an application with the precompiled library.
 
-Gazell modes
-************
+Gazell network
+**************
 
-A member of a Gazell star network is either a Host or Device.
-Up to eight Devices can communicate with a single Host.
-Each Host can communicate with up to eight Devices.
-Each Device communicates to a single Host.
+Gazell has the following two roles available in its network:
+
+* Device: an initiator role, where the Device transmits packets periodically.
+* Host: a listening role, where the Host works mainly as a receiver and only transmits ACK packets back to the Device.
+  The ACK packets can optionally carry payload (enabling duplex communication).
+
+One application can only work in a single Gazell role at a time.
+However, the role can be switched during runtime.
+
+A member of a Gazell star network is either a Host or Device, and up to eight Devices can communicate with a single Host.
+Each Host can communicate with up to eight Devices, and each Device communicates to a single Host.
 
 .. figure:: images/gzll_fig1_star_network.svg
    :alt: Gazell star network
@@ -94,10 +96,10 @@ Each packet that a Device sends is required to be acknowledged by the Host.
 The Host can send data to the Device by piggybacking data in an acknowledgment (ACK) packet.
 Therefore, the Host must wait for a packet from the Device before it can send any data to it.
 
-You can build more sophisticated Gazell networks, since a single Device can speak to several Hosts and any node can change between the two modes.
+You can build more sophisticated Gazell networks, since a single Device can speak to at least two Hosts and any node can change between the two roles.
 However, this requires the application to coordinate such a network.
 
-This document focuses on the typical use case of a star network with static modes.
+This document focuses on the typical use case of a star network with static roles.
 
 Setting up a Gazell application
 *******************************
@@ -106,32 +108,50 @@ Gazell automatically takes care of all synchronization and packet handling.
 You need to add payloads to the transmit (TX) FIFOs and read payloads from the receive (RX) FIFOs.
 Gazell automatically notifies the application when a packet is received.
 
-To set up a Gazell application, do the following:
+To set up a Gazell application, complete the following steps:
 
-* Initialize GZLL glue code using :c:func:`gzll_glue_init()`.
-* Initialize Gazell using :c:func:`nrf_gzll_init()` and choose either Host or Device.
-* Reconfigure Gazell's default parameters.
-  At a minimum, reconfigure the addresses and channels to avoid interfering with other Gazell networks.
-* Enable Gazell using :c:func:`nrf_gzll_enable()`.
-* If the node is a Device, start sending:
+1. Initialize Gazell Link Layer glue code using :c:func:`gzll_glue_init()`.
+#. Initialize Gazell using :c:func:`nrf_gzll_init()` and choose either Host or Device.
+#. Reconfigure Gazell's default parameters.
 
-  * Add payloads to the TX FIFO using :c:func:`nrf_gzll_add_packet_to_tx_fifo()`.
-  * Handle the returned ACK packet when the :c:func:`nrf_gzll_device_tx_success()` callback is called.
-    Fetch the payloads from the RX FIFO using :c:func:`nrf_gzll_fetch_packet_from_rx_fifo()`.
-  * Handle the failed packet transmissions when the :c:func:`nrf_gzll_device_tx_failed()` callback is called.
-    Failed packets are automatically removed from the TX FIFO.
+   At a minimum, reconfigure the addresses and channels to avoid interfering with other Gazell networks.
+#. Enable Gazell using :c:func:`nrf_gzll_enable()`.
+#. Continue to either `Setting up a Device`_ to set up a Device, or `Setting up a Host`_ to setup a Host.
 
-* If the node is a Host, start listening:
 
-  * Handle the received data packets when the :c:func:`nrf_gzll_host_rx_data_ready()` callback is called.
-    Fetch the packets from the RX FIFO using :c:func:`nrf_gzll_fetch_from_rx_fifo()`.
-  * Add any payloads to send to the TX FIFO using :c:func:`nrf_gzll_add_packet_to_tx_fifo()`.
+Setting up a Device
+===================
+
+If the node is a Device, complete the following steps:
+
+1. Add payloads to the TX FIFO using :c:func:`nrf_gzll_add_packet_to_tx_fifo()`.
+#. Handle the returned ACK packet when the :c:func:`nrf_gzll_device_tx_success()` callback is called.
+
+   Fetch the payloads from the RX FIFO using :c:func:`nrf_gzll_fetch_packet_from_rx_fifo()`.
+#. Handle the failed packet transmissions when the :c:func:`nrf_gzll_device_tx_failed()` callback is called.
+
+   Failed packets are automatically removed from the TX FIFO.
+
+Setting up a Host
+=================
+
+If the node is a Host, start listening by completing the following steps:
+
+1. Handle the received data packets when the :c:func:`nrf_gzll_host_rx_data_ready()` callback is called.
+
+   Fetch the packets from the RX FIFO using :c:func:`nrf_gzll_fetch_from_rx_fifo()`.
+#. Add any payloads to send to the TX FIFO using :c:func:`nrf_gzll_add_packet_to_tx_fifo()`.
+
+Disabling Gazell
+****************
 
 You can also disable Gazell at any time using the :c:func:`nrf_gzll_disable()` function.
+
 When this is called, Gazell completes any ongoing transmission or reception before being disabled.
 (That is, until the end of the current timeslot, see :ref:`gazell_timeslots`).
 When the disabling operation is complete, Gazell calls the :c:func:`nrf_gzll_disabled()` function.
 When this callback is completed, the Gazell CPU context, radio and Gazell timer stop.
+
 You can now call any of the configuration set functions, which will be valid, once Gazell is enabled again.
 
 Packet transactions
@@ -143,7 +163,7 @@ When the Device receives an ACK packet, it knows that the initial packet was suc
 
 Similarly, when the Host receives the initial packet, the :c:func:`nrf_gzll_host_rx_data_ready()` callback function is called to notify to the application that a new packet has been received.
 
-.. note:
+.. note::
 
    These callback functions are actually queued so that the application avoids race conditions.
    See :ref:`gazell_cb_queue`.
@@ -185,7 +205,7 @@ Each logical address on the nodes is termed a *pipe*.
 Each pipe maps to one on-air address used when transmitting or receiving packets.
 
 The on-air addresses are composed of a 2-4 bytes long "base address" in addition to a 1-byte prefix address.
-The nRF5 radio uses an alternating sequence of 0s and 1s as the preamble of the packet.
+The radio of the nRF52 Series uses an alternating sequence of 0s and 1s as the preamble of the packet.
 Therefore, for packets to be received correctly, the most significant byte of the base address should not be an alternating sequence of 0s and 1s, that is, it should not be 0x55 or 0xAA.
 
 Pipe 0 has its own unique base address, which is base address 0, while pipes 1-7 use the same base address, which is base address 1.
@@ -195,9 +215,10 @@ Each of the eight pipes have a unique byte-long prefix address.
 On-air, the most significant bit of each address byte is transmitted first.
 The most significant byte of the four bytes long base address is the first transmitted address byte, while the prefix byte is transmitted last.
 
-.. note:
-   The byte order in Gazell and the nRF5 radio peripheral are not the same.
-   This is because the address bytes are rearranged in Gazell to match the nRF24L radios.
+.. note::
+
+   The byte order in Gazell and the nRF52 Series radio peripheral are not the same.
+   This is because the address bytes are rearranged in Gazell to match radio of the nRF24L IC.
 
 FIFOs
 *****
@@ -209,7 +230,7 @@ The total number of packets in the FIFOs is six, while every individual TX or RX
 Device FIFO handling
 ====================
 
-When Gazell is enabled in Device mode, any packets uploaded to a TX FIFO will be transmitted at the next opportunity.
+When Gazell is enabled in Device role, any packets uploaded to a TX FIFO will be transmitted at the next opportunity.
 If several TX FIFOs contain packets, the various TX FIFOs are serviced in a round robin fashion, meaning that no TX FIFOs will experience starvation even when packets are continuously added to other TX FIFOs.
 
 When an ACK is successfully received from a Host, it implies that the payload was successfully received and added to the Host's RX FIFO.
@@ -223,7 +244,7 @@ A payload received in an ACK does not need to be discarded due to a full RX FIFO
 Host FIFO handling
 ==================
 
-When Gazell is enabled in Host mode, all enabled pipes (addresses) are simultaneously monitored for incoming packets.
+When Gazell is enabled in Host role, all enabled pipes (addresses) are simultaneously monitored for incoming packets.
 
 If a new packet is received and the pipe's RX FIFO has available space, it is added to the RX FIFO and an ACK is sent in return to the Device.
 If the pipe's TX FIFO contains any packets, the next serviceable packet is attached as a payload in the ACK packet.
@@ -306,13 +327,13 @@ In the next timeslot with a channel shift, Gazell picks the next channel from th
 .. figure:: images/gzll_fig4_device_channel_switch.svg
    :alt: Host and Device channel switching. Here, timeslots_per_channel = 2.
 
-   Host and Device channel switching. Here, timeslots_per_channel = 2.
+   Host and Device channel switching. Here, ``timeslots_per_channel`` = 2.
 
-.. note:
+.. note::
 
    Host channel switching is the same as Device channel switching.
 
-In Device mode, ``timeslots_per_channel`` can also be seen as the number of transmission attempts spent on each channel before switching the channel.
+In the Device role, ``timeslots_per_channel`` can also be seen as the number of transmission attempts spent on each channel before switching the channel.
 This is because there is at least one transmission attempt for every timeslot.
 
 The ``channel_selection_policy`` parameter is used by a Device in sync to decide the initial channel to be used when sending a new packet to a Host (that is, for the first time the new packet is sent, not for the retransmission attempts).
@@ -374,7 +395,7 @@ The duration the Device stays in the in sync state is the ``sync_lifetime`` and 
 The ``sync_lifetime`` is reset whenever a packet is received.
 Once the ``sync_lifetime`` has expired on a Device, the internal timer is stopped and the Device returns to out of sync state.
 
-.. note:
+.. note::
 
    When a Device that is in sync sends a packet but does not receive an ACK, it continues to transmit until it reaches the maximum number of attempts.
 
@@ -390,9 +411,10 @@ This enables the application to track bad channels and update the channel tables
 Backwards compatibility
 ***********************
 
-The Gazell Link Layer examples are not fully "out of the box" compatible with the legacy examples provided in the nRFgo SDK for nRF24Lxx devices.
-The default timeslot period and channel tables require adjustment, as well as some setup to emulate the Gazell modes.
-The Gazell Low Power Host mode (Host mode 1) is not supported in the nRF5.
+The Gazell Link Layer examples are not fully compatible out of the box with the legacy examples provided in the nRFgo SDK for the nRF24L IC.
+
+The default timeslot period and channel tables require adjustment, as well as some setup to emulate the Gazell roles.
+The Gazell Low Power Host role (Host role 1) is not supported in the nRF52 Series.
 
 Channel tables
 ==============
@@ -401,54 +423,53 @@ The default channel tables require adjustment.
 
 Depending on your project, do one of the following:
 
-* Edit the :file:`gzll_params.h` file used in the nRF24Lxx projects.
-* Use the :c:func:`nrf_gzll_set_channel_table()` function in the nRF5 projects.
+* Edit the :file:`gzll_params.h` file used in the nRF24L IC projects.
+* Use the :c:func:`nrf_gzll_set_channel_table()` function in the nRF52 Series projects.
 
 Timeslot periods
 ================
 
 The Gazell Link Layer supports the following minimum timeslot periods:
 
-* 600 us timeslot period, nRF5 Gazell Device to nRF5 Gazell Host.
-* 504 us timeslot period, nRF5 Gazell Device to nRF24Lxx Gazell Host.
+* 600 us timeslot period, nRF52 Series Gazell Device to nRF52 Series Gazell Host.
+* 504 us timeslot period, nRF52 Series Gazell Device to nRF24L IC Gazell Host.
 
 When using 504 us timeslot period, the following restrictions apply:
 
 * The maximum payload size is 17 bytes.
-* The maximum ack payload size is 10 bytes.
+* The maximum ACK payload size is 10 bytes.
 
 In addition, the relation between the Device and Host timing parameters should be as follows:
 
-* The Host listens to each channel in a GZLL_RX_PERIOD number of microseconds, where GZLL_RX_PERIOD is the heartbeat interval in the nRF24Lxx devices.
+* The Host listens to each channel in a GZLL_RX_PERIOD number of microseconds, where GZLL_RX_PERIOD is the heartbeat interval in the nRF24L IC.
 * The Host GZLL_RX_PERIOD must be greater than the time required to make two full transmission attempts on the Device (including ACK wait time).
 
 Depending on your project, do one of the following:
 
-* Edit the :file:`gzll_params.h` file used in the nRF24Lxx projects.
-* Use the :c:func:`nrf_gzll_set_timeslot_period()` function in the nRF5 projects (nRF5 Gazell timeslot period = 0.5*GZLL_RX_PERIOD).
+* Edit the :file:`gzll_params.h` file used in the nRF24L IC projects.
+* Use the :c:func:`nrf_gzll_set_timeslot_period()` function in the nRF52 Series projects (nRF52 Series Gazell timeslot period = 0.5*GZLL_RX_PERIOD).
 
-Emulating legacy Gazell modes
+Emulating legacy Gazell roles
 =============================
 
-The Gazell Link Layer protocol for the nRF5 Series is compatible with the most useful modes of the Gazell Link Layer for the nRF24Lxx devices.
+The Gazell Link Layer protocol for the nRF52 Series is compatible with the most useful roles of the Gazell Link Layer for the nRF24L IC.
 
-Emulating legacy nRF24Lxx Gazell Device mode 2 and nRF24Lxx Host mode 0
------------------------------------------------------------------------
+Emulating legacy Gazell Device role 2 and Host role 0 on the nRF24 IC
+---------------------------------------------------------------------
 
-You can emulate the legacy Device mode 2 as follows:
+You can emulate the legacy Device role 2 as follows:
 
 * The channel selection policy is equivalent to :c:enumerator:`NRF_GZLL_DEVICE_CHANNEL_SELECTION_POLICY_USE_SUCCESSFUL`.
 * When Gazell is out of sync, a large number of attempts may occur on each channel before the channel is switched.
 * When Gazell is in sync, a low number of transmission attempts, typically two, are allowed on each channel before the channel is switched.
 
-The legacy Host mode 0 behaves as follows:
+The legacy Host role 0 behaves as follows:
 
 * Host is always on while it is enabled.
 * When enabled, the Host will continuously cycle through the channel table.
 
 See the example on how to achieve such behavior.
 Assuming a channel table ``my_channel_table[]`` with three channels:
-
 
 .. code-block:: c
 

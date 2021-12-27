@@ -133,7 +133,7 @@ Thread samples
     * Added :file:`prj_thread_1_2.conf` to support Thread v1.2 build for the nRF52 and nRF53 Series devices.
     * Added child image configuration files for network core builds for Thread v1.2 build.
 
-nrf9160 Samples
+nrf9160 samples
 ---------------
 
 * Added:
@@ -148,6 +148,15 @@ nrf9160 Samples
 
       * An option ``--interval`` (in seconds) to neighbor cell measurements in continuous mode  (``link ncellmeas --continuous``).
         When using this option, a new measurement is started in each interval.
+
+Gazell samples
+--------------
+
+* Updated:
+
+  * Separated the :ref:`gazell_samples` into their own pages for Host and Device.
+
+    There are now four different sample pages, where each Host sample must be used along with its corresponding Device sample.
 
 Drivers
 =======
