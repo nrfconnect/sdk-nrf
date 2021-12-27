@@ -128,17 +128,18 @@ static void response_cb(struct http_response *rsp,
 static int headers_cb(int sock, struct http_request *req, void *user_data)
 {
 	size_t len;
-	int ret = 0;
+	int ret = 0, offset = 0;
 
 	len = strlen(httpc.headers);
 	while (len > 0) {
-		ret = send(sock, httpc.headers + ret, len, 0);
+		ret = send(sock, httpc.headers + offset, len, 0);
 		if (ret < 0) {
 			LOG_ERR("send header fail: %d", ret);
 			return ret;
 		}
 		LOG_DBG("send header: %d bytes", ret);
 		len -= ret;
+		offset += ret;
 	}
 
 	return len;
@@ -198,16 +199,6 @@ int httpc_datamode_callback(uint8_t op, const uint8_t *data, int len)
 	}
 	if (op == DATAMODE_SEND) {
 		ret = do_send_payload(data, len);
-		LOG_INF("datamode send: %d", ret);
-		if (ret == 0) {
-			/* Payload sent successfully */
-			sprintf(rsp_buf, "\r\nOK\r\n");
-			rsp_send(rsp_buf, strlen(rsp_buf));
-		} else {
-			/* Payload sent fail */
-			sprintf(rsp_buf, "\r\nERROR\r\n");
-			rsp_send(rsp_buf, strlen(rsp_buf));
-		}
 	} else if (op == DATAMODE_EXIT) {
 		k_sem_give(&http_req_sem);
 	}
