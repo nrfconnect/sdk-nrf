@@ -91,6 +91,7 @@ manifest:
           - segger
           - tinycbor
           - tinycrypt
+          - zscilib
 
     # NCS repositories.
     #
