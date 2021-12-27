@@ -52,7 +52,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: f295fb7c67ca6895a98bc33c1cf0a837d2f5383e
+      revision: e0b8c6a30c7831600c52cabf34898e8f9fd03958
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -72,6 +72,7 @@ manifest:
           - cmsis
           - edtt
           - fatfs
+          - fff
           - hal_nordic
           - hal_st
           - libmetal
@@ -80,16 +81,18 @@ manifest:
           - lvgl
           - lz4
           - mbedtls
-          - mcumgr
           - mipi-sys-t
           - nanopb
           - net-tools
           - nrf_hw_models
           - open-amp
           - openthread
+          - psa-arch-tests
           - segger
           - tinycbor
           - tinycrypt
+          - tf-m-tests
+          - zscilib
 
     # NCS repositories.
     #
@@ -97,16 +100,20 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 4e4e979c1998e6dad7e47011e6e076b861921645
+      revision: 296af282cc269f4983dc6814180109e5f5808a1a
       path: bootloader/mcuboot
+    - name: mbedtls-nrf
+      path: mbedtls
+      repo-path: sdk-mbedtls
+      revision: 68dfba636301bd618bc9b5c1a946f358ad8714ee
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: bf61b30136b01ebb355259cf299b6f5dbe2c5ff7
+      revision: be4f031dcf7617e6b18a49a58a18fd37221e4671
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
-      path: modules/tee/tfm
-      revision: v1.3.99-ncs3
+      path: modules/tee/tf-m/trusted-firmware-m
+      revision: b599a2e3b93b256ccb886d3368ab9948845ebac4
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
@@ -114,7 +121,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 1f69ad49f53b695ccc162c954e1935f30e8222dc
+      revision: c0da86c97e5761dfbc828ab76ef18150b7215f23
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -134,12 +141,12 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: 6f1fda348997c840eec6626eced06ace848a2f54
+      revision: 8533210d8e57a7de4c389f593f5bd690175cf5d9
       groups:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: 4914b09010fd3d44be23423bce402f0b61342e61
+      revision: 432902c94f11113862b1d1a9b2813fdcbfb07f02
       groups:
       - find-my
     # Other third-party repositories.
@@ -151,11 +158,6 @@ manifest:
       path: test/cmock/vendor/unity
       revision: 74cde089e65c3435ce9aa87d5c69f4f16b7f6ade
       remote: throwtheswitch
-    - name: mbedtls-nrf
-      path: mbedtls
-      repo-path: mbedtls
-      revision: mbedtls-2.26.0
-      remote: armmbed
     - name: Alexa-Gadgets-Embedded-Sample-Code
       path: modules/alexa-embedded
       revision: face92d8c62184832793f518bb1f19379538c5c1

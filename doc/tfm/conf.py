@@ -11,7 +11,7 @@ NRF_BASE = Path(__file__).absolute().parents[2]
 sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import utils
 
-TFM_BASE = utils.get_projdir("tfm") / "trusted-firmware-m"
+TFM_BASE = utils.get_projdir("tfm")
 ZEPHYR_BASE = utils.get_projdir("zephyr")
 
 # General configuration --------------------------------------------------------
