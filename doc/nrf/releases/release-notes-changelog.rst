@@ -49,11 +49,6 @@ Protocols
 This section provides detailed lists of changes by :ref:`protocol <protocols>`.
 See `Samples`_ for lists of changes for the protocol-related samples.
 
-Bluetooth
----------
-
-* |no_changes_yet_note|
-
 Matter
 ------
 
@@ -63,11 +58,6 @@ Applications
 ============
 
 This section provides detailed lists of changes by :ref:`application <applications>`.
-
-nRF9160: Asset Tracker v2
--------------------------
-
-* |no_changes_yet_note|
 
 nRF Desktop
 -----------
@@ -125,8 +115,6 @@ This section provides detailed lists of changes by :ref:`library <libraries>`.
 Bluetooth libraries and services
 --------------------------------
 
-Updated:
-
 * :ref:`rscs_readme` library:
 
   * Added units for :c:struct:`bt_rscs_measurement` members.
@@ -135,10 +123,9 @@ Common Application Framework (CAF)
 ----------------------------------
 
 * Migrated :ref:`nRF Desktop settings loader <nrf_desktop_settings_loader>` to :ref:`lib_caf` as :ref:`CAF: Settings loader module <caf_settings_loader>`.
-
 * Updated:
 
-  * Unify module id reference location.
+  * Unify module ID reference location.
     The array holding module reference objects is explicitly defined in linker script to avoid creating an orphan section.
     ``MODULE_ID`` macro and :c:func:`module_id_get` function now returns module reference from dedicated section instead of module name.
     The module name can not be obtained from reference object directly, a helper function (:c:func:`module_name_get`) should be used instead.
@@ -152,39 +139,37 @@ Modem libraries
 ---------------
 
 * :ref:`at_cmd_parser_readme` library:
+
   * Can now parse AT command responses containing the response result, for example, ``OK`` or ``ERROR``.
 
 Libraries for networking
-========================
+------------------------
 
 * :ref:`lib_fota_download` library:
 
   * Fixed an issue where the application would not be notified of errors originating from inside :c:func:`download_with_offset`. In the http_update samples, this would result in the dfu start button interrupt being disabled after a connect error in :c:func:`download_with_offset` after a disconnect during firmware download.
-
-sdk-nrfxlib
------------
-
-See the changelog for each library in the :doc:`nfxlib documentation <nrfxlib:README>` for additional information.
 
 Other libraries
 ---------------
 
 * Moved :ref:`lib_bootloader` to a section of their own.
 
-Modem library
+Event Manager
 +++++++++++++
 
-* |no_changes_yet_note|
+* Modified sections used by the Event Manager and stopped using orphaned sections.
+* Removed forced alignment for x86.
+* Reworked priorities.
+
+sdk-nrfxlib
+-----------
+
+See the changelog for each library in the :doc:`nfxlib documentation <nrfxlib:README>` for additional information.
 
 Scripts
 =======
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
-
-Partition Manager
------------------
-
-* |no_changes_yet_note|
 
 HID Configurator
 ----------------
