@@ -74,6 +74,7 @@ manifest:
           - cmsis
           - edtt
           - fatfs
+          - fff
           - hal_nordic
           - hal_st
           - libmetal
