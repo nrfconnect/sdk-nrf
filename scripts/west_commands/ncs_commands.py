@@ -482,6 +482,7 @@ _BLOCKED_PROJECTS = set(
      'modules/hal/atmel',
      'modules/hal/cypress',
      'modules/hal/espressif',
+     'modules/hal/gigadevice',
      'modules/hal/infineon',
      'modules/hal/microchip',
      'modules/hal/nuvoton',
