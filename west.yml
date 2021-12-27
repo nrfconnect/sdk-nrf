@@ -88,9 +88,11 @@ manifest:
           - nrf_hw_models
           - open-amp
           - openthread
+          - psa-arch-tests
           - segger
           - tinycbor
           - tinycrypt
+          - tf-m-tests
           - zscilib
 
     # NCS repositories.
