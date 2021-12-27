@@ -149,9 +149,9 @@ To start developing, check out the :ref:`esb_prx_ptx` sample.
 Gazell
 ======
 
-.. include:: ug_gzll.rst
-   :start-after: gzll_intro_start
-   :end-before: gzll_intro_end
+.. include:: ug_gz.rst
+   :start-after: gz_intro_start
+   :end-before: gz_intro_end
 
 See the :ref:`ug_gzll` user guide and the :ref:`ug_gzp` user guide for information about how to work with Gazell.
 To start developing, check out the :ref:`gazell_samples`.
