@@ -8,10 +8,12 @@
 #include <stdarg.h>
 #include <string.h>
 #include <stddef.h>
+
+#include "common_test.h"
+
 #include <sys/byteorder.h>
 #include <logging/log.h>
 
-#include "common_test.h"
 #include <mbedtls/ecdh.h>
 
 /* Setting LOG_LEVEL_DBG might affect time measurements! */
