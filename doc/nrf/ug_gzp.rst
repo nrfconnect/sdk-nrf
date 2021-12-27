@@ -7,8 +7,16 @@ Gazell Pairing
    :local:
    :depth: 2
 
-The Gazell Pairing library for the nRF5 Series enables applications to use the Gazell Link Layer to provide a secure wireless link between Gazell nodes.
-The library is customized for pairing a device (for example, a mouse, keyboard, or remote control) with a host (typically a USB dongle) using Gazell.
+The Gazell Pairing library for the nRF52 Series enables applications to use the Gazell Link Layer to provide a secure wireless link between Gazell nodes.
+The library is customized for pairing a Device (for example, a mouse, keyboard, or remote control) with a Host (typically a USB dongle) using Gazell.
+
+Gazell Pairing also uses additional hardware peripherals and restricts the usage of the Gazell Link Layer.
+
+See the :ref:`Gazell Pairing library <gzp>` page for more information on how to use this library.
+
+
+Features
+********
 
 The Gazell Pairing library has the following features:
 
@@ -18,7 +26,7 @@ The Gazell Pairing library has the following features:
 * Dynamic update of key during runtime
 * Storage of pairing parameters in non-volatile memory
 * One time programmable (OTP) device compatibility
-* Backwards compatible with Gazell Pairing library for nRF24L devices.
+* Backwards compatible with Gazell Pairing library for the nRF24L IC.
 
 Secure key exchange in Gazell Pairing is based on a Secret Key that is factory-programmed.
 Only nodes that share the same Secret Key for a desktop ecosystem, can form an encrypted link.
@@ -29,7 +37,7 @@ This Host ID key is used to transmit a dynamic key that is used for encrypting s
 All encrypted exchanges of keys and data use a session token that is equivalent to the AES counter mode and provides protection against ciphertext attacks.
 In addition, all encrypted packets include an encrypted packet validation ID so that all packets are authenticated.
 
-The security features of Gazell provide counter measures against a range of potential attacks, including:
+The security features of Gazell Pairing provide counter measures against a range of potential attacks, including:
 
 * Frequency analysis attacks
 * Hostile device attacks
@@ -38,12 +46,14 @@ The security features of Gazell provide counter measures against a range of pote
 * Passive eavesdropping
 * Replay attacks
 
-Close proximity pairing
-***********************
+See `Terminology`_ for a description of each of these security features.
 
-Gazell only allows pairing when the Host and Device are in close proximity to each other.
-The Received Signal Strength Indication (RSSI) is used on the Host side of the nRF5 so that only Devices residing close (<30 cm) to the Host are allowed to pair (on nRF24L Host nodes, the carrier detect functionality is employed).
-Proximity estimation is essential to avoid confusion when pairing in certain environments, for example in an office.
+
+.. note::
+   Gazell only allows pairing when the Host and Device are in close proximity to each other.
+   The Received Signal Strength Indication (RSSI) is used on the Host side of the nRF52 Series so that only Devices residing close (<30 cm) to the Host are allowed to pair (on the nRF24L IC Host nodes, the carrier detect functionality is employed).
+   Proximity estimation is essential to avoid confusion when pairing in certain environments, for example in an office.
+
 
 Pairing and key exchange stages
 *******************************
@@ -216,50 +226,6 @@ The Encrypted User Data may be compromised if both these conditions are met:
 
 * Attacker eavesdrops the user data exchange.
 * The current Dynamic Key has been compromised.
-
-Configuration
-*************
-
-The prerequisite :ref:`ug_gzll` should be enabled as described in :ref:`ug_gzll_configuration`.
-
-To enable the Gazell Pairing, set the :kconfig:`CONFIG_GAZELL_PAIRING` Kconfig option.
-
-Select the role by either of the following Kconfig options:
-
-* :kconfig:`CONFIG_GAZELL_PAIRING_DEVICE` - Device.
-* :kconfig:`CONFIG_GAZELL_PAIRING_HOST` - Host.
-
-To support persistent storage of pairing data, set the :kconfig:`CONFIG_GAZELL_PAIRING_SETTINGS` Kconfig option.
-
-To support encryption, set the :kconfig:`CONFIG_GAZELL_PAIRING_CRYPT` Kconfig option.
-
-Resource requirements
-*********************
-
-In addition to the resources required by the :ref:`ug_gzll` (see :ref:`ug_gzll_resources`), Gazell Pairing also employs three nRF5 peripherals:
-
-* Random Number Generator, for generating keys and tokens.
-* AES Electronic Codebook (ECB), for encryption and decryption.
-* Non-Volatile Memory Controller (NVMC), for storing of pairing parameters.
-
-In addition, Gazell Pairing employs the following Gazell Link Layer resources:
-
-* Two pipes: one for pairing and one for encrypted data transmission.
-* Gazell pairing determines the channel set used by Gazell.
-
-Since GZP requires exclusive access to pipes 0 and :c:macro:`GZP_DATA_PIPE` (default pipe 1), it must control the internal Gazell Link Layer variables ``base_address_0``, ``base_address_1`` and ``prefix_address_byte`` for pipes :c:macro:`GZP_PAIRING_PIPE` (always pipe 0) and :c:macro:`GZP_DATA_PIPE` (configurable).
-The main application can use the pipes 2-7.
-The ``base_address_1`` applies to these pipes.
-Gazell Pairing must also determine whether the RX pipes 0 and 1 are enabled.
-Make sure not to affect the ``rx_enabled`` status of these pipes.
-
-The following Gazell Link Layer API functions should not be accessed:
-
-* :c:func:`nrf_gzll_set_base_address_0()`
-* :c:func:`nrf_gzll_set_base_address_1()`
-* :c:func:`nrf_gzll_set_address_prefix_byte()` (for pipes 0 and 1)
-* :c:func:`nrf_gzll_set_rx_pipes_enabled()` (can be used but the enabled status of pipes 0 and 1 should not be modified)
-* :c:func:`nrf_gzll_set_channel_table()`
 
 System Address and channel table generation
 *******************************************

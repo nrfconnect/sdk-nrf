@@ -306,8 +306,8 @@ Gazell samples
 * New section.
 * Added:
 
-  * :ref:`gzll_ack_payload`
-  * :ref:`gzp_dynamic_pairing`
+  * :ref:`Gazell ACK Payload <gzll_ack_payload_host>`
+  * :ref:`Gazell Dynamic Pairing <gzp_dynamic_pairing_host>`
 
 HomeKit samples
 ---------------
