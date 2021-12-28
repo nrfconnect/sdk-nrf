@@ -35,6 +35,15 @@ Those additions are automatically included into the Zephyr build system using a 
 
 You must be aware of these additions when you start writing your own applications based on this SDK.
 
+* The Kconfig option :kconfig:`CONFIG_WARN_EXPERIMENTAL` is enabled by default.
+  It gives warnings at CMake configure time if any experimental feature is enabled.
+
+  For example, when building a sample that enables :kconfig:`CONFIG_BT_EXT_ADV`, the following warning is printed at CMake configure time:
+
+  .. code-block:: shell
+
+     warning: Experimental symbol BT_EXT_ADV is enabled.
+
 * The |NCS| provides an additional :file:`boilerplate.cmake` that is automatically included when using the Zephyr CMake package in the :file:`CMakeLists.txt` file of your application::
 
     find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
