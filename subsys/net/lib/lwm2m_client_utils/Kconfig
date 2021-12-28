@@ -59,6 +59,19 @@ config LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG
 
 endif # LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
 
+config LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
+	bool "Signal measurement information object support (ID 10256)"
+	default y
+	help
+	  This object is used in combination with Connectivity Monitor object (ID 4)
+	  and provides information about neighbouring cells. It is used to assist
+	  with the device location services.
+
+config LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_INSTANCE_COUNT
+	int "Maximum # of signal measurement objects"
+	default 3
+	depends on LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
+
 module = LWM2M_CLIENT_UTILS
 module-dep = LOG
 module-str = LwM2M client utilities library
