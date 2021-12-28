@@ -24,7 +24,6 @@ config HW_CC3XX
 	depends on HAS_HW_NRF_CC310 || HAS_HW_NRF_CC312
 	depends on !TRUSTED_EXECUTION_NONSECURE
 	select NRF_CC3XX_PLATFORM
-	default y
 	help
 	  This option enables the Arm CC3xx hw devices in nRF52840, nRF53, and nRF9160 devices.
 
