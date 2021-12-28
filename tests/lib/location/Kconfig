@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config LOCATION
+	bool "Internal"
+	#depends on NRF_MODEM_LIB
+	default y
+	help
+	  Redefinition to disable modemlib requirement from the tests as we want to mock it.
+
+config MULTICELL_LOCATION
+	bool "Internal"
+	#depends on NRF_MODEM_LIB
+	depends on LTE_LINK_CONTROL
+	#select MODEM_KEY_MGMT
+	select CJSON_LIB
+	default y
+	help
+	  Redefinition to disable modemlib requirement from the tests as we want to mock it.
+
+config MULTICELL_LOCATION_REST_CLIENT
+	bool
+	default n
+	help
+	  Used in tests to enable mocking of REST client library
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
