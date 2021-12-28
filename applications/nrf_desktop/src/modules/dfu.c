@@ -10,6 +10,7 @@
 #include <sys/byteorder.h>
 #include <storage/flash_map.h>
 #include <pm_config.h>
+#include <sys/reboot.h>
 
 #include <event_manager.h>
 #include "config_event.h"
@@ -21,6 +22,7 @@
 #include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
+#include <logging/log_ctrl.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 
 

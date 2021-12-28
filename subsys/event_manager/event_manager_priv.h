@@ -12,6 +12,11 @@
 #ifndef _EVENT_MANAGER_PRIV_H_
 #define _EVENT_MANAGER_PRIV_H_
 
+#include <zephyr.h>
+#include <zephyr/types.h>
+#include <sys/__assert.h>
+#include <logging/log.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -106,7 +111,9 @@ extern "C" {
 			(struct ename *)event_manager_alloc(sizeof(*event));	\
 		BUILD_ASSERT(offsetof(struct ename, header) == 0,		\
 				 "");						\
-		event->header.type_id = _EVENT_ID(ename);			\
+		if (event != NULL) {						\
+			event->header.type_id = _EVENT_ID(ename);		\
+		}								\
 		return event;							\
 	}
 
@@ -125,8 +132,10 @@ extern "C" {
 				 sizeof(*event), "");					\
 		BUILD_ASSERT(offsetof(struct ename, header) == 0,			\
 				 "");							\
-		event->header.type_id = _EVENT_ID(ename);				\
-		event->dyndata.size = size;						\
+		if (event != NULL) {							\
+			event->header.type_id = _EVENT_ID(ename);			\
+			event->dyndata.size = size;					\
+		}									\
 		return event;								\
 	}
 
@@ -203,6 +212,92 @@ struct event_manager_event_display_bm {
 };
 
 extern struct event_manager_event_display_bm _event_manager_event_display_bm;
+
+
+/** @brief Event header.
+ *
+ * When defining an event structure, the event header
+ * must be placed as the first field.
+ */
+struct event_header {
+	/** Linked list node used to chain events. */
+	sys_snode_t node;
+
+	/** Pointer to the event type object. */
+	const struct event_type *type_id;
+};
+
+
+/** @brief Dynamic event data.
+ *
+ * When defining an event structure, the dynamic event data
+ * must be placed as the last field.
+ */
+struct event_dyndata {
+	/** Size of the dynamic data. */
+	size_t size;
+
+	/** Dynamic data. */
+	uint8_t data[0];
+};
+
+
+/** @brief Event listener.
+ *
+ * All event listeners must be defined using @ref EVENT_LISTENER.
+ */
+struct event_listener {
+	/** Name of this listener. */
+	const char *name;
+
+	/** Pointer to the function that is called when an event is handled.
+	 * The function should return true to consume the event, which means that the event is
+	 * not propagated to further listeners, or false, otherwise.
+	 */
+	bool (*notification)(const struct event_header *eh);
+};
+
+
+/** @brief Event subscriber.
+ */
+struct event_subscriber {
+	/** Pointer to the listener. */
+	const struct event_listener *listener;
+};
+
+
+/** @brief Event type.
+ */
+struct event_type {
+	/** Event name. */
+	const char			*name;
+
+	/** Pointer to the array of subscribers. */
+	const struct event_subscriber	*subs_start;
+
+	/** Pointer to the element directly after the array of subscribers. */
+	const struct event_subscriber	*subs_stop;
+
+	/** Bool indicating if the event is logged by default. */
+	bool init_log_enable;
+
+	/** Function to log data from this event. */
+	int (*log_event)(const struct event_header *eh, char *buf,
+			      size_t buf_len);
+
+	/** Custom data related to tracking. */
+	const void *trace_data;
+};
+
+extern struct event_type _event_type_list_start[];
+extern struct event_type _event_type_list_end[];
+
+
+/** @brief Submit an event to the Event Manager.
+ *
+ * @param eh  Pointer to the event header element in the event object.
+ */
+void _event_submit(struct event_header *eh);
 
 #ifdef __cplusplus
 }

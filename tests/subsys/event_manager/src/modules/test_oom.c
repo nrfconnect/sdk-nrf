@@ -9,14 +9,15 @@
 
 #include <test_events.h>
 #include <data_event.h>
+#include "test_oom.h"
 
 #define MODULE test_oom
 #define TEST_EVENTS_CNT 150
 
 static struct data_event *event_tab[TEST_EVENTS_CNT];
 
-/* Custom reboot handler to check if sys_reboot is called when OOM. */
-void sys_reboot(int type)
+/* Custom reboot handler to check if OOM error is handled. */
+void oom_error_handler(void)
 {
 	int i = 0;
 

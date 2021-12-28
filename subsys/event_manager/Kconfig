@@ -34,7 +34,7 @@ source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 config EVENT_MANAGER_EVENT_LOG_BUF_LEN
 	int "Length of buffer for processing event message"
 	default 128
-	range 2 1024
+	range 0 1024
 
 config EVENT_MANAGER_LOG_EVENT_TYPE
 	bool "Include event type in the event log output"

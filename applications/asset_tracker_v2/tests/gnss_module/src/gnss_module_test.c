@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <mock_modules_common.h>
 #include <mock_event_manager.h>
+#include <mock_event_manager_priv.h>
 #include <mock_date_time.h>
 #include <mock_nrf_modem_at.h>
 #include <mock_nrf_modem_gnss.h>

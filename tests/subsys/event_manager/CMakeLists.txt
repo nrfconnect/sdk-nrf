@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019 Nordic Semiconductor
+# Copyright (c) 2022 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -11,8 +11,10 @@ project("Event Manager unit tests")
 
 # Include event headers
 zephyr_library_include_directories(src/events)
+zephyr_library_include_directories(src/modules)
 
 # Add test sources
 target_sources(app PRIVATE src/main.c)
 add_subdirectory(src/events)
 add_subdirectory(src/modules)
+add_subdirectory(src/utils)

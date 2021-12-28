@@ -11,6 +11,7 @@
 #include <drivers/gpio.h>
 #include <hal/nrf_power.h>
 #include <helpers/nrfx_reset_reason.h>
+#include <sys/reboot.h>
 
 #include <event_manager.h>
 #include <profiler.h>

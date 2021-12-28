@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <mock_modules_common.h>
 #include <mock_event_manager.h>
+#include <mock_event_manager_priv.h>
 #include <mock_watchdog_app.h>
 #include <memfault/metrics/mock_metrics.h>
 #include <memfault/core/mock_data_packetizer.h>
