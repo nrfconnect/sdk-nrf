@@ -535,7 +535,7 @@ void nrf_modem_os_log(int level, const char *fmt, ...)
 
 		va_start(ap, fmt);
 
-		if (IS_ENABLED(CONFIG_LOG_MINIMAL)) {
+		if (IS_ENABLED(CONFIG_LOG_MODE_MINIMAL)) {
 			/* Fallback to minimal implementation. */
 			/* Based on Zephyr's. */
 			printk("%c: ", z_log_minimal_level_to_char(lev));
@@ -559,7 +559,7 @@ void nrf_modem_os_logdump(int level, const char *str, const void *data, size_t l
 	if (IS_ENABLED(CONFIG_LOG)) {
 		uint16_t lev = log_level_lu(level);
 
-		if (IS_ENABLED(CONFIG_LOG_MINIMAL)) {
+		if (IS_ENABLED(CONFIG_LOG_MODE_MINIMAL)) {
 			/* Fallback to minimal implementation. */
 			/* Based on Zephyr's. */
 			printk("%c: %s\n",
