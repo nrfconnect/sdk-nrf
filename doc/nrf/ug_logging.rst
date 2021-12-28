@@ -36,7 +36,7 @@ You can use the Zephyr system logger in |NCS| for the following use cases:
 * Logs from external components - Useful for gathering messages from sample applications and custom modules.
 
 The logger can be enabled with the :kconfig:`CONFIG_LOG` Kconfig option.
-This option is automatically set alongside the minimal logging implementation (:kconfig:`CONFIG_LOG_MINIMAL`) with the :kconfig:`CONFIG_NCS_SAMPLES_DEFAULTS` Kconfig option, which is enabled by default for all samples in |NCS|.
+This option is automatically set alongside the minimal logging implementation (:kconfig:`CONFIG_LOG_MODE_MINIMAL`) with the :kconfig:`CONFIG_NCS_SAMPLES_DEFAULTS` Kconfig option, which is enabled by default for all samples in |NCS|.
 For more information about configuring Zephyr's logger, see :ref:`zephyr:logging_api`.
 
 .. _ug_logging_net_application:
