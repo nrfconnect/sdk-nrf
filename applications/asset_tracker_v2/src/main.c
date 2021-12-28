@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <event_manager.h>
 #include <modem/nrf_modem_lib.h>
+#include <sys/reboot.h>
 
 /* Module name is used by the event manager macros in this file */
 #define MODULE main

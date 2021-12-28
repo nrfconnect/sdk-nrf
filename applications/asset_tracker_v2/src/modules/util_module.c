@@ -8,6 +8,7 @@
 #include <sys/reboot.h>
 #include <device.h>
 #include <logging/log.h>
+#include <logging/log_ctrl.h>
 
 #define MODULE util_module
 
@@ -24,7 +25,6 @@
 #include "events/modem_module_event.h"
 #include "events/ui_module_event.h"
 
-#include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_UTIL_MODULE_LOG_LEVEL);
 
 struct util_msg_data {

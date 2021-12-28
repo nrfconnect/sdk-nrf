@@ -15,6 +15,7 @@ test_runner_generate(src/gnss_module_test.c)
 # create mock
 cmock_handle(../../src/modules/modules_common.h )
 cmock_handle(${ZEPHYR_BASE}/../nrf/include/event_manager.h )
+cmock_handle(${ZEPHYR_BASE}/../nrf/subsys/event_manager/event_manager_priv.h )
 cmock_handle(${ZEPHYR_BASE}/../nrf/include/date_time.h )
 cmock_handle(${ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/nrf_modem_at.h )
 cmock_handle(${ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/nrf_modem_gnss.h )

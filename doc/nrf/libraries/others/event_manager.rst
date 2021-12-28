@@ -154,14 +154,18 @@ The following code example shows a source file for the event type ``sample_event
    {
 	   struct sample_event *event = cast_sample_event(eh);
 
-	   return snprintf(buf, buf_len, "val1=%d val2=%d val3=%d", event->value1,
+	   EVENT_MANAGER_LOG(eh, "val1=%d val2=%d val3=%d", event->value1,
 			   event->value2, event->value3);
+	   return 0;
    }
 
    EVENT_TYPE_DEFINE(sample_event,	/* Unique event name. */
 		     true,		/* Event logged by default. */
 		     log_sample_event,	/* Function logging event data. */
 		     NULL);		/* No event info provided. */
+
+.. note::
+	There is a deprecated way of logging Event Manager events by writing string to the provided buffer which is supported until NCS2.0.
 
 Submitting an event
 ===================

@@ -10,6 +10,7 @@
 #include <sys/slist.h>
 #include <event_manager.h>
 #include <logging/log.h>
+#include <sys/reboot.h>
 
 LOG_MODULE_REGISTER(event_manager, CONFIG_EVENT_MANAGER_LOG_LEVEL);
 
@@ -30,6 +31,26 @@ static bool log_is_event_displayed(const struct event_type *et)
 	return atomic_test_bit(_event_manager_event_display_bm.flags, idx);
 }
 
+static void log_event_using_buffer(const struct event_header *eh, const struct event_type *et)
+{
+	BUILD_ASSERT(CONFIG_EVENT_MANAGER_EVENT_LOG_BUF_LEN != 1);
+	char log_buf[CONFIG_EVENT_MANAGER_EVENT_LOG_BUF_LEN];
+
+	int pos = et->log_event(eh, log_buf, sizeof(log_buf));
+
+	if (pos < 0) {
+		log_buf[0] = '\0';
+	} else if (pos >= sizeof(log_buf)) {
+		log_buf[sizeof(log_buf) - 2] = '~';
+	}
+
+	if (IS_ENABLED(CONFIG_EVENT_MANAGER_LOG_EVENT_TYPE)) {
+		LOG_INF("e: %s %s", et->name, log_strdup(log_buf));
+	} else {
+		LOG_INF("%s", log_strdup(log_buf));
+	}
+}
+
 static void log_event(const struct event_header *eh)
 {
 	const struct event_type *et = eh->type_id;
@@ -40,24 +61,11 @@ static void log_event(const struct event_header *eh)
 	}
 
 	if (et->log_event) {
-		char log_buf[CONFIG_EVENT_MANAGER_EVENT_LOG_BUF_LEN];
-
-		int pos = et->log_event(eh, log_buf, sizeof(log_buf));
-
-		if (pos < 0) {
-			log_buf[0] = '\0';
-		} else if (pos >= sizeof(log_buf)) {
-			BUILD_ASSERT(sizeof(log_buf) >= 2,
-					 "Buffer invalid");
-			log_buf[sizeof(log_buf) - 2] = '~';
-		}
-
-		if (IS_ENABLED(CONFIG_EVENT_MANAGER_LOG_EVENT_TYPE)) {
-			LOG_INF("e: %s %s", et->name, log_strdup(log_buf));
+		if (CONFIG_EVENT_MANAGER_EVENT_LOG_BUF_LEN > 0) {
+			log_event_using_buffer(eh, et);
 		} else {
-			LOG_INF("%s", log_strdup(log_buf));
+			(void)et->log_event(eh, NULL, 0);
 		}
-
 	} else if (IS_ENABLED(CONFIG_EVENT_MANAGER_LOG_EVENT_TYPE)) {
 		LOG_INF("e: %s", et->name);
 	}
@@ -116,10 +124,13 @@ void * __weak event_manager_alloc(size_t size)
 	void *event = k_malloc(size);
 
 	if (unlikely(!event)) {
-		printk("Event Manager OOM error\n");
-		LOG_PANIC();
+		LOG_ERR("Event Manager OOM error\n");
 		__ASSERT_NO_MSG(false);
-		sys_reboot(SYS_REBOOT_WARM);
+		if (IS_ENABLED(CONFIG_REBOOT)) {
+			sys_reboot(SYS_REBOOT_WARM);
+		} else {
+			k_panic();
+		}
 		return NULL;
 	}
 
