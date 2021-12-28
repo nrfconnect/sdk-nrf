@@ -13,7 +13,7 @@
 
 #include <sys/types.h>
 #include <logging/log_ctrl.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <dfu/mcuboot.h>
 
 #include <shell/shell.h>
