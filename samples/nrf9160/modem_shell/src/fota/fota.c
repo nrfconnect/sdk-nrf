@@ -8,7 +8,7 @@
 #include <string.h>
 
 #include <zephyr.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <modem/modem_key_mgmt.h>
 #include <net/fota_download.h>
 

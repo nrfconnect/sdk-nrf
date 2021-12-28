@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <version.h>
 #include <logging/log_ctrl.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <net/lwm2m.h>
 #include "pm_config.h"
 #include <net/lwm2m_client_utils.h>
