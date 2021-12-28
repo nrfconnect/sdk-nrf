@@ -29,7 +29,7 @@ endchoice
 
 config CAF_LEDS_PM_EVENTS
 	bool "Power management events support"
-	select DEVICE_POWER_MANAGEMENT
+	select PM_DEVICE
 	depends on CAF_PM_EVENTS
 	default y
 	help
