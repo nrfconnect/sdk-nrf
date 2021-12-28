@@ -1,0 +1,6 @@
+tests:
+  unity.location_test:
+    tags: location
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
