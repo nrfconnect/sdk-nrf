@@ -16,7 +16,7 @@
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
 #include <settings/settings.h>
-#include <power/reboot.h>
+#include <sys/reboot.h>
 #include <logging/log_ctrl.h>
 
 #include <logging/log.h>
