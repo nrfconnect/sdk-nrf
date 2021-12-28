@@ -395,7 +395,7 @@ KRKNWK-7721: MAC counter updating issue
 .. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-7962: Logging interferes with shell output
-  :kconfig:`CONFIG_LOG_MINIMAL` is configured by default for most OpenThread samples.
+  :kconfig:`CONFIG_LOG_MODE_MINIMAL` is configured by default for most OpenThread samples.
   It accesses the UART independently from the shell backend, which sometimes leads to malformed output.
 
   **Workaround:** Disable logging or enable a more advanced logging option.
