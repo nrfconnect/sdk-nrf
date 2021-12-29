@@ -9,8 +9,7 @@ menu "AT Host Library for nrf91"
 config AT_HOST_LIBRARY
 	bool "AT Host Library for nrf91"
 	depends on NRF_MODEM_LIB_SYS_INIT
-	select AT_CMD
-	select AT_NOTIF
+	select AT_MONITOR
 
 if AT_HOST_LIBRARY
 
