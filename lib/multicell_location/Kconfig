@@ -27,15 +27,24 @@ config MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 
 config MULTICELL_LOCATION_SERVICE_HERE
 	bool "HERE location service"
-	select REST_CLIENT
 	help
 	  Use HERE location service
 
 config MULTICELL_LOCATION_SERVICE_POLTE
 	bool "Polte location service"
-	select REST_CLIENT
 	help
 	  Use Polte location service
+
+if MULTICELL_LOCATION_SERVICE_HERE || MULTICELL_LOCATION_SERVICE_POLTE
+config MULTICELL_LOCATION_REST_CLIENT
+	bool
+	default y
+	select REST_CLIENT
+	help
+	  Use the REST client library with multicell location library. This is
+	  separated here from other dependencies to allow disabling of
+	  REST client library in tests for mocking purposes.
+endif
 
 if MULTICELL_LOCATION_SERVICE_HERE
 choice MULTICELL_LOCATION_SERVICE_HERE_VERSION
