@@ -895,7 +895,7 @@ int lte_lc_psm_get(int *tau, int *active_time)
 	*tau = psm_cfg.tau;
 	*active_time = psm_cfg.active_time;
 
-	LOG_DBG("TAU: %d sec, active time: %d sec\n", *tau, *active_time);
+	LOG_DBG("TAU: %d sec, active time: %d sec", *tau, *active_time);
 
 	return 0;
 }
@@ -1145,8 +1145,12 @@ int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
 int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
 			   enum lte_lc_system_mode_preference *preference)
 {
-	int err, mode_bitmask = 0;
-	int ltem_mode, nbiot_mode, gps_mode, mode_preference;
+	int err;
+	int mode_bitmask = 0;
+	int ltem_mode = 0;
+	int nbiot_mode = 0;
+	int gps_mode = 0;
+	int mode_preference = 0;
 
 	if (mode == NULL) {
 		return -EINVAL;
