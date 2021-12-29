@@ -337,7 +337,7 @@ class DfuImage:
             if not bootloader_api['is_dfu_file_correct'](dfu_bin_path):
                 continue
 
-            if dev_bootloader_variant != bootloader_api['get_dfu_image_bootloader_var']():
+            if (dev_bootloader_variant != bootloader_api['get_dfu_image_bootloader_var']()) and (dev_bootloader_variant is not None):
                 continue
 
             return dfu_bin_path

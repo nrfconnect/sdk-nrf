@@ -489,6 +489,8 @@ class NrfHidDevice():
     def get_complete_module_name(self, name):
         """complete module name consist of module name + '/' + variant name."""
         for key in self.dev_config:
-            if '{}/'.format(name) in key:
+            if key.startswith('{}/'.format(name)):
+                return key
+            if name == key:
                 return key
         return None
