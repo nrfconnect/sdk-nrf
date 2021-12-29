@@ -192,7 +192,7 @@ HID Configurator
 * Added:
 
   * HID Configurator now recognizes the bootloader variant as a DFU module variant for the configuration channel communication.
-    The new implementation is not backward compatible, since new version of script checks for variant it expects firmware to support this request.
+    The new implementation is backward compatible: the new version of the script checks for module name and acts accordingly.
 
 MCUboot
 =======
