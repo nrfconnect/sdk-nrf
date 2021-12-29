@@ -11,8 +11,9 @@
 #include <drivers/uart.h>
 #include <string.h>
 #include <init.h>
-#include <modem/at_cmd.h>
-#include <modem/at_notif.h>
+
+#include <nrf_modem_at.h>
+#include <modem/at_monitor.h>
 
 LOG_MODULE_REGISTER(at_host, CONFIG_AT_HOST_LOG_LEVEL);
 
@@ -25,16 +26,13 @@ K_THREAD_STACK_DEFINE(at_host_stack_area, AT_HOST_STACK_SIZE);
 #define CONFIG_UART_1_NAME      "UART_1"
 #define CONFIG_UART_2_NAME      "UART_2"
 
-#define INVALID_DESCRIPTOR      -1
-
-#define OK_STR    "OK\r\n"
-#define ERROR_STR "ERROR\r\n"
-
 #if CONFIG_AT_HOST_CMD_MAX_LEN > CONFIG_AT_CMD_RESPONSE_MAX_LEN
 #define AT_BUF_SIZE CONFIG_AT_HOST_CMD_MAX_LEN
 #else
 #define AT_BUF_SIZE CONFIG_AT_CMD_RESPONSE_MAX_LEN
 #endif
+
+AT_MONITOR(at_host, ANY, response_handler);
 
 /** @brief Termination Modes. */
 enum term_modes {
@@ -44,7 +42,6 @@ enum term_modes {
 	MODE_CR_LF,     /**< CR+LF Termination */
 	MODE_COUNT      /* Counter of term_modes */
 };
-
 
 /** @brief UARTs. */
 enum select_uart {
@@ -60,8 +57,6 @@ static char at_buf[AT_BUF_SIZE]; /* AT command and modem response buffer */
 static struct k_work_q at_host_work_q;
 static struct k_work cmd_send_work;
 
-
-
 static inline void write_uart_string(const char *str)
 {
 	/* Send characters until, but not including, null */
@@ -70,49 +65,28 @@ static inline void write_uart_string(const char *str)
 	}
 }
 
-static void response_handler(void *context, const char *response)
+static void response_handler(const char *response)
 {
-	ARG_UNUSED(context);
-
 	/* Forward the data over UART */
 	write_uart_string(response);
 }
 
 static void cmd_send(struct k_work *work)
 {
-	char              str[25];
-	enum at_cmd_state state;
 	int               err;
 
 	ARG_UNUSED(work);
 
-	err = at_cmd_write(at_buf, at_buf,
-			   sizeof(at_buf), &state);
+    /* Sending through string format rather than raw buffer in case
+     * the buffer contains characters that need to be escaped
+     */
+	err = nrf_modem_at_cmd(at_buf, sizeof(at_buf), "%s", at_buf);
 	if (err < 0) {
 		LOG_ERR("Error while processing AT command: %d", err);
-		state = AT_CMD_ERROR;
 	}
 
-	/* Handle the various error responses from modem */
-	switch (state) {
-	case AT_CMD_OK:
-		write_uart_string(at_buf);
-		write_uart_string(OK_STR);
-		break;
-	case AT_CMD_ERROR:
-		write_uart_string(ERROR_STR);
-		break;
-	case AT_CMD_ERROR_CMS:
-		sprintf(str, "+CMS ERROR: %d\r\n", err);
-		write_uart_string(str);
-		break;
-	case AT_CMD_ERROR_CME:
-		sprintf(str, "+CME ERROR: %d\r\n", err);
-		write_uart_string(str);
-		break;
-	default:
-		break;
-	}
+	write_uart_string(at_buf);
+
 	at_buf_busy = false;
 	uart_irq_rx_enable(uart_dev);
 }
@@ -290,18 +264,6 @@ static int at_host_init(const struct device *arg)
 	default:
 		LOG_ERR("Unknown UART instance %d", uart_id);
 		return -EINVAL;
-	}
-
-	err = at_notif_init();
-	if (err) {
-		LOG_ERR("Failed to initialize AT notifications, err %d", err);
-		return err;
-	}
-
-	err = at_notif_register_handler(NULL, response_handler);
-	if (err != 0) {
-		LOG_ERR("Can't register handler err=%d", err);
-		return err;
 	}
 
 	/* Initialize the UART module */
