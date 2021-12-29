@@ -488,7 +488,7 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
 	timer_value = strtoul(active_time_str + unit_str_len, NULL, 2);
 	psm_cfg->active_time = timer_unit ? timer_unit * timer_value : -1;
 
-	LOG_DBG("TAU: %d sec, active time: %d sec\n",
+	LOG_DBG("TAU: %d sec, active time: %d sec",
 		psm_cfg->tau, psm_cfg->active_time);
 
 	return 0;
