@@ -6,6 +6,7 @@
 
 #include <zephyr.h>
 #include <drivers/pwm.h>
+#include <pm/device.h>
 #include <string.h>
 
 #include "ui.h"
@@ -188,7 +189,7 @@ int ui_leds_init(void)
 void ui_leds_start(void)
 {
 #ifdef CONFIG_PM_DEVICE
-	int err = pm_device_state_set(leds.pwm_dev, PM_DEVICE_STATE_ACTIVE);
+	int err = pm_device_action_run(leds.pwm_dev, PM_DEVICE_ACTION_RESUME);
 	if (err) {
 		LOG_ERR("PWM enable failed");
 	}
@@ -200,7 +201,7 @@ void ui_leds_stop(void)
 {
 	k_work_cancel_delayable_sync(&leds.work, &leds.work_sync);
 #ifdef CONFIG_PM_DEVICE
-	int err = pm_device_state_set(leds.pwm_dev, PM_DEVICE_STATE_SUSPENDED);
+	int err = pm_device_action_run(leds.pwm_dev, PM_DEVICE_ACTION_SUSPEND);
 	if (err) {
 		LOG_ERR("PWM disable failed");
 	}

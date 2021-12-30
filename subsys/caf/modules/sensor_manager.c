@@ -7,6 +7,7 @@
 #include <zephyr.h>
 #include <math.h>
 #include <drivers/sensor.h>
+#include <pm/device.h>
 
 #include <caf/events/sensor_event.h>
 #include <caf/sensor_manager.h>
@@ -23,9 +24,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_SENSOR_MANAGER_LOG_LEVEL);
 
 #define SAMPLE_THREAD_STACK_SIZE	CONFIG_CAF_SENSOR_MANAGER_THREAD_STACK_SIZE
 #define SAMPLE_THREAD_PRIORITY		CONFIG_CAF_SENSOR_MANAGER_THREAD_PRIORITY
-
-/* PM_DEVICE_STATE_ACTIVE should equal zero. */
-BUILD_ASSERT(PM_DEVICE_STATE_ACTIVE == 0, "PM_DEVICE_STATE_ACTIVE is expected equal 0");
 
 struct sensor_data {
 	const struct device *dev;
@@ -467,8 +465,9 @@ static bool handle_power_down_event(const struct event_header *eh)
 			} else if (atomic_get(&sd->state) == SENSOR_STATE_ACTIVE) {
 				int ret = 0;
 
-				if (sc->suspend_pm_state != PM_DEVICE_STATE_ACTIVE) {
-					ret = pm_device_state_set(sd->dev, sc->suspend_pm_state);
+				if (sc->suspend) {
+					ret = pm_device_action_run(sd->dev,
+								   PM_DEVICE_ACTION_SUSPEND);
 				}
 
 				if (ret) {
@@ -499,10 +498,10 @@ static bool handle_wake_up_event(const struct event_header *eh)
 
 			if (sc->trigger) {
 				sensor_trigger_set(sd->dev, &sc->trigger->cfg, NULL);
-			} else if (sc->suspend_pm_state != PM_DEVICE_STATE_ACTIVE) {
-				ret = pm_device_state_set(sd->dev, PM_DEVICE_STATE_ACTIVE);
+			} else if (sc->suspend) {
+				ret = pm_device_action_run(sd->dev, PM_DEVICE_ACTION_RESUME);
 				if (ret) {
-					LOG_ERR("Sensor %s cannot be activated (%d)",
+					LOG_ERR("Sensor %s cannot be resumed (%d)",
 						sc->dev_name, ret);
 					update_sensor_state(sc, sd, SENSOR_STATE_ERROR);
 				}
