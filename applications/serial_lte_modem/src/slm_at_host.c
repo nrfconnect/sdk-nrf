@@ -13,6 +13,7 @@
 #include <hal/nrf_gpio.h>
 #include <sys/ring_buffer.h>
 #include <sys/util.h>
+#include <pm/device.h>
 #include <string.h>
 #include <init.h>
 #include "slm_util.h"
@@ -197,9 +198,9 @@ int poweroff_uart(void)
 
 	uart_rx_disable(uart_dev);
 	k_sleep(K_MSEC(100));
-	err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_SUSPENDED);
+	err = pm_device_action_run(uart_dev, PM_DEVICE_ACTION_SUSPEND);
 	if (err) {
-		LOG_ERR("Can't power off uart: %d", err);
+		LOG_ERR("Can't suspend uart: %d", err);
 	}
 
 	return err;
@@ -208,25 +209,28 @@ int poweroff_uart(void)
 int poweron_uart(void)
 {
 	int err;
-	enum pm_device_state current_state = PM_DEVICE_STATE_ACTIVE;
 
-	err = pm_device_state_get(uart_dev, &current_state);
+	err = pm_device_action_run(uart_dev, PM_DEVICE_ACTION_RESUME);
+	if (err == -EALREADY) {
+		/* Already on, no action */
+		return 0;
+	}
+
 	if (err) {
-		LOG_ERR("Device get power_state: %d", err);
 		return err;
 	}
 
-	if (current_state != PM_DEVICE_STATE_ACTIVE) {
-		pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE);
-		k_sleep(K_MSEC(100));
-		err = uart_receive();
-		if (err == 0) {
-			k_sem_give(&tx_done);
-			rsp_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
-		}
+	k_sleep(K_MSEC(100));
+
+	err = uart_receive();
+	if (err) {
+		return err;
 	}
 
-	return err;
+	k_sem_give(&tx_done);
+	rsp_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
+
+	return 0;
 }
 
 int slm_uart_configure(void)
@@ -785,7 +789,7 @@ int slm_at_host_init(void)
 		return -EFAULT;
 	}
 	/* Power on UART module */
-	pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE);
+	pm_device_action_run(uart_dev, PM_DEVICE_ACTION_RESUME);
 	err = uart_receive();
 	if (err) {
 		return -EFAULT;
@@ -833,9 +837,9 @@ void slm_at_host_uninit(void)
 	/* Power off UART module */
 	uart_rx_disable(uart_dev);
 	k_sleep(K_MSEC(100));
-	err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_SUSPENDED);
+	err = pm_device_action_run(uart_dev, PM_DEVICE_ACTION_SUSPEND);
 	if (err) {
-		LOG_WRN("Can't power off uart: %d", err);
+		LOG_WRN("Can't suspend uart: %d", err);
 	}
 
 	/* Un-initialize AT Parser */

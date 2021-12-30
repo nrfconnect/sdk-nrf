@@ -9,6 +9,7 @@
 #include <logging/log.h>
 #include <ram_pwrdn.h>
 #include <device.h>
+#include <pm/device.h>
 
 #include "coap_client_utils.h"
 
@@ -98,9 +99,9 @@ static void on_mtd_mode_toggle(uint32_t med)
 	const struct device *cons = device_get_binding(CONSOLE_LABEL);
 
 	if (med) {
-		pm_device_state_set(cons, PM_DEVICE_STATE_ACTIVE);
+		pm_device_action_run(cons, PM_DEVICE_ACTION_RESUME);
 	} else {
-		pm_device_state_set(cons, PM_DEVICE_STATE_SUSPENDED);
+		pm_device_action_run(cons, PM_DEVICE_ACTION_SUSPEND);
 	}
 #endif
 	dk_set_led(MTD_SED_LED, med);
