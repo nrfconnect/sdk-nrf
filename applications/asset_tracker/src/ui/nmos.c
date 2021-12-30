@@ -8,6 +8,7 @@
 #include <sys/util.h>
 #include <drivers/gpio.h>
 #include <drivers/pwm.h>
+#include <pm/device.h>
 
 #include "ui.h"
 
@@ -89,7 +90,7 @@ static void nmos_pwm_disable(uint32_t nmos_idx)
 		return;
 	}
 
-	int err = pm_device_state_set(pwm_dev, PM_DEVICE_STATE_SUSPENDED);
+	int err = pm_device_action_run(pwm_dev, PM_DEVICE_ACTION_SUSPEND);
 	if (err) {
 		LOG_WRN("PWM disable failed");
 	}
@@ -111,7 +112,7 @@ static int nmos_pwm_enable(size_t nmos_idx)
 		return 0;
 	}
 
-	err = pm_device_state_set(pwm_dev, PM_DEVICE_STATE_ACTIVE);
+	err = pm_device_action_run(pwm_dev, PM_DEVICE_ACTION_RESUME);
 	if (err) {
 		LOG_ERR("PWM enable failed");
 		return err;

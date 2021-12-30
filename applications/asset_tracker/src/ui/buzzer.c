@@ -6,6 +6,7 @@
 
 #include <zephyr.h>
 #include <drivers/pwm.h>
+#include <pm/device.h>
 
 #include "ui.h"
 
@@ -63,7 +64,7 @@ static void buzzer_disable(void)
 	pwm_out(0, 0);
 
 #ifdef CONFIG_PM_DEVICE
-	int err = pm_device_state_set(pwm_dev, PM_DEVICE_STATE_SUSPENDED);
+	int err = pm_device_action_run(pwm_dev, PM_DEVICE_ACTION_SUSPEND);
 	if (err) {
 		LOG_ERR("PWM disable failed");
 	}
@@ -77,7 +78,7 @@ static int buzzer_enable(void)
 	atomic_set(&buzzer_enabled, 1);
 
 #ifdef CONFIG_PM_DEVICE
-	err = pm_device_state_set(pwm_dev, PM_DEVICE_STATE_ACTIVE);
+	err = pm_device_action_run(pwm_dev, PM_DEVICE_ACTION_RESUME);
 	if (err) {
 		LOG_ERR("PWM enable failed");
 		return err;
