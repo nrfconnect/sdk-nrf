@@ -94,11 +94,9 @@ struct sm_sensor_config {
 	 */
 	struct sm_trigger *trigger;
 	/**
-	 * @brief Power state used to suspend sensor
-	 *
-	 * This power state would be set when sensor is suspended
+	 * @brief Flag to indicate whether sensor should be suspended or not.
 	 */
-	enum pm_device_state suspend_pm_state;
+	bool suspend;
 };
 
 #ifdef __cplusplus

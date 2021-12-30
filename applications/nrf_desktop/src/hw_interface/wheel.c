@@ -12,6 +12,7 @@
 #include <device.h>
 #include <drivers/sensor.h>
 #include <drivers/gpio.h>
+#include <pm/device.h>
 
 #include <event_manager.h>
 #include "wheel_event.h"
@@ -203,11 +204,11 @@ static int enable_qdec(enum state next_state)
 
 	/* QDEC device driver starts in PM_DEVICE_STATE_ACTIVE state. */
 	if (state != STATE_DISABLED) {
-		err = pm_device_state_set(qdec_dev, PM_DEVICE_STATE_ACTIVE);
+		err = pm_device_action_run(qdec_dev, PM_DEVICE_ACTION_RESUME);
 	}
 
 	if (err) {
-		LOG_ERR("Cannot activate QDEC");
+		LOG_ERR("Cannot resume QDEC");
 		return err;
 	}
 
@@ -243,7 +244,7 @@ static int disable_qdec(enum state next_state)
 		return err;
 	}
 
-	err = pm_device_state_set(qdec_dev, PM_DEVICE_STATE_SUSPENDED);
+	err = pm_device_action_run(qdec_dev, PM_DEVICE_ACTION_SUSPEND);
 	if (err) {
 		LOG_ERR("Cannot suspend QDEC");
 	} else {

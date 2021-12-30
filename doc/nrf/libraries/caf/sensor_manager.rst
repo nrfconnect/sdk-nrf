@@ -177,7 +177,7 @@ Manually configuring passive power management
 To manually configure the passive power management functionality, complete the following steps:
 
 1. Enable :kconfig:`CONFIG_CAF_SENSOR_MANAGER_PM` Kconfig option.
-#. Extend the module configuration file of the sensor of your choice by adding :c:member:`sm_sensor_config.suspend_pm_state` in an array of :c:struct:`sm_sensor_config`.
+#. Extend the module configuration file of the sensor of your choice by adding :c:member:`sm_sensor_config.suspend` in an array of :c:struct:`sm_sensor_config`.
    For example, the extended configuration file for the LIS2DH accelerometer could look like follows:
 
    .. code-block:: c
@@ -192,13 +192,12 @@ To manually configure the passive power management functionality, complete the f
                         .chan_cnt = ARRAY_SIZE(accel_chan),
                         .sampling_period_ms = 20,
                         .active_events_limit = 3,
-                        .suspend_pm_state = PM_DEVICE_STATE_SUSPENDED,
+                        .suspend = true,
                 },
         };
 
-:c:member:`sm_sensor_config.suspend_pm_state` configures the sensor's device power state in which it is put when :c:struct:`power_down_event` is received.
-The default value for :c:member:`sm_sensor_config.suspend_pm_state` is :c:enumerator:`PM_DEVICE_STATE_ACTIVE`.
-For more details about device power states in Zephyr, see :ref:`zephyr:power_management_api` in the Zephyr documentation.
+If :c:member:`sm_sensor_config.suspend` is true, the sensor is suspended when :c:struct:`power_down_event` is received.
+The default value for :c:member:`sm_sensor_config.suspend` is ``false``.
 
 .. note::
     |device_pm_note|
@@ -288,9 +287,8 @@ If a :c:struct:`power_down_event` comes when the sensor is in the :c:enumerator:
 
 Depending on the trigger functionality configuration:
 
-* If the sensor has the trigger functionality configured, the trigger is activated and the :c:member:`sm_sensor_config.suspend_pm_state` is ignored.
-* If no trigger is configured, the sensor device state is changed to the state configured in :c:member:`sm_sensor_config.suspend_pm_state`.
-  This happens only if the :c:member:`sm_sensor_config.suspend_pm_state` is different than the default value (:c:enumerator:`PM_DEVICE_STATE_ACTIVE`).
+* If the sensor has the trigger functionality configured, the trigger is activated and the :c:member:`sm_sensor_config.suspend` is ignored.
+* If no trigger is configured, the sensor is either resumed or suspended depending on the value of :c:member:`sm_sensor_config.suspend`.
 
 .. note::
     |device_pm_note|
@@ -299,7 +297,7 @@ If a :c:struct:`wake_up_event` comes when the sensor is in the :c:enumerator:`SE
 
 Depending on the trigger functionality configuration:
 
-* If the sensor does not support the trigger functionality and :c:member:`sensor_config.suspend_pm_state` is different than :c:enumerator:`PM_DEVICE_STATE_ACTIVE`, the sensor device state is set to :c:enumerator:`PM_DEVICE_STATE_ACTIVE`.
+* If the sensor does not support the trigger functionality and :c:member:`sensor_config.suspend` is true, the sensor device is resumed.
 * If the sensor supports the trigger functionality, the trigger is deactivated.
 
 Active power management
@@ -322,4 +320,4 @@ Sending :c:struct:`wake_up_event` to other modules results in waking up the whol
 .. |only_configured_module_note| replace:: Only the configured module should include the configuration file.
    Do not include the configuration file in other source files.
 .. |device_pm_note| replace:: Not all device power states might be supported by the sensor's device.
-   Check the sensor's driver implementation before configuring :c:member:`sm_sensor_config.suspend_pm_state`.
+   Check the sensor's driver implementation before configuring :c:member:`sm_sensor_config.suspend`.

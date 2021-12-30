@@ -7,6 +7,7 @@
 #include <zephyr.h>
 #include <assert.h>
 #include <drivers/led.h>
+#include <pm/device.h>
 
 #include <caf/events/power_event.h>
 #include <caf/events/led_event.h>
@@ -204,7 +205,7 @@ static void leds_start(void)
 		/* Zephyr power management API is not implemented for GPIO LEDs.
 		 * LEDs are turned off by CAF LEDs module.
 		 */
-		int err = pm_device_state_set(leds[i].dev, PM_DEVICE_STATE_ACTIVE);
+		int err = pm_device_action_run(leds[i].dev, PM_DEVICE_ACTION_RESUME);
 
 		if (err) {
 			LOG_ERR("Failed to set LED driver into active state (err: %d)", err);
@@ -225,7 +226,7 @@ static void leds_stop(void)
 		/* Zephyr power management API is not implemented for GPIO LEDs.
 		 * LEDs are turned off by CAF LEDs module.
 		 */
-		int err = pm_device_state_set(leds[i].dev, PM_DEVICE_STATE_SUSPENDED);
+		int err = pm_device_action_run(leds[i].dev, PM_DEVICE_ACTION_SUSPEND);
 
 		if (err) {
 			LOG_ERR("Failed to set LED driver into suspend state (err: %d)", err);

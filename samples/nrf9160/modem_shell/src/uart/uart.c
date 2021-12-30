@@ -8,6 +8,7 @@
 
 #include <zephyr.h>
 #include <device.h>
+#include <pm/device.h>
 #include "uart.h"
 
 void disable_uarts(void)
@@ -16,41 +17,27 @@ void disable_uarts(void)
 
 	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
 	if (uart_dev) {
-		pm_device_state_set(uart_dev, PM_DEVICE_STATE_SUSPENDED);
+		pm_device_action_run(uart_dev, PM_DEVICE_ACTION_SUSPEND);
 	}
 
 	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart1)));
 	if (uart_dev) {
-		pm_device_state_set(uart_dev, PM_DEVICE_STATE_SUSPENDED);
+		pm_device_action_run(uart_dev, PM_DEVICE_ACTION_SUSPEND);
 	}
 }
 
 void enable_uarts(void)
 {
 	const struct device *uart_dev;
-	enum pm_device_state current_state;
 
 	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
-
-	int err = pm_device_state_get(uart_dev, &current_state);
-
-	if (err) {
-		printk("Failed to assess UART power state, pm_device_state_get: %d", err);
-		return;
-	}
-
-	/* If UARTs are already enabled, do nothing */
-	if (current_state == PM_DEVICE_STATE_ACTIVE) {
-		return;
-	}
-
 	if (uart_dev) {
-		pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE);
+		pm_device_action_run(uart_dev, PM_DEVICE_ACTION_RESUME);
 	}
 
 	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart1)));
 	if (uart_dev) {
-		pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE);
+		pm_device_action_run(uart_dev, PM_DEVICE_ACTION_RESUME);
 	}
 
 	printk("UARTs enabled\n");
