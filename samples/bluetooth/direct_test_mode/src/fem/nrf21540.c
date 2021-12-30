@@ -9,6 +9,7 @@
 #include <device.h>
 #include <drivers/gpio.h>
 #include <drivers/spi.h>
+#include <pm/device.h>
 #include <soc.h>
 #include <sys/__assert.h>
 
@@ -658,7 +659,7 @@ static int nrf21540_tx_gain_set(uint8_t gain)
 	}
 
 	if (uart_ready) {
-		err = pm_device_state_set(uart, PM_DEVICE_STATE_SUSPENDED);
+		err = pm_device_action_run(uart, PM_DEVICE_ACTION_SUSPEND);
 		if (err) {
 			goto error;
 		}
@@ -679,7 +680,7 @@ static int nrf21540_tx_gain_set(uint8_t gain)
 	uarte_configuration_restore(uarte_inst, &uarte_cfg);
 
 	if (uart_ready) {
-		err = pm_device_state_set(uart, PM_DEVICE_STATE_ACTIVE);
+		err = pm_device_action_run(uart, PM_DEVICE_ACTION_RESUME);
 	}
 
 	if (uart_irq) {
