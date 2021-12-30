@@ -7,6 +7,7 @@
 #include <zephyr/types.h>
 #include <sys/ring_buffer.h>
 #include <drivers/uart.h>
+#include <pm/device.h>
 
 #define MODULE uart_handler
 #include "module_state_event.h"
@@ -243,25 +244,13 @@ static void set_uart_power_state(uint8_t dev_idx, bool active)
 #if UART_SET_PM_STATE
 	const struct device *dev = devices[dev_idx];
 	int err;
-	enum pm_device_state current_state;
-	enum pm_device_state target_state;
+	enum pm_device_action action;
 
-	target_state = active ? PM_DEVICE_STATE_ACTIVE : PM_DEVICE_STATE_SUSPENDED;
+	action = active ? PM_DEVICE_ACTION_RESUME : PM_DEVICE_ACTION_SUSPEND;
 
-	err = pm_device_state_get(dev, &current_state);
-	if (err) {
-		LOG_ERR("device_get_power_state: %d", err);
-		return;
-	}
-
-	if (current_state == target_state) {
-		return;
-	}
-
-	err = pm_device_state_set(dev, target_state);
-	if (err) {
-		LOG_ERR("device_set_power_state: %d", err);
-		return;
+	err = pm_device_action_run(dev, action);
+	if ((err < 0) && (err != -EALREADY)) {
+		LOG_ERR("pm_device_action_run failed: %d", err);
 	}
 #endif
 }

@@ -8,6 +8,7 @@
 
 #include <zephyr.h>
 #include <device.h>
+#include <pm/device.h>
 #include <shell/shell.h>
 #include <shell/shell_uart.h>
 #include <modem/lte_lc.h>
@@ -84,47 +85,47 @@ void uart_toggle_power_state(void)
 	int err;
 
 	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
-	if (uart_dev) {
-		err = pm_device_state_get(uart_dev, &uart0_power_state);
-		if (err) {
-			mosh_print(
-				"Failed to assess UART power state, pm_device_state_get: %d.",
-				err);
-			return;
-		}
+	if (uart_dev == NULL) {
+		mosh_print("Could not get UART device");
+		return;
+	}
 
-		if (uart0_power_state == PM_DEVICE_STATE_ACTIVE) {
-			mosh_print("Disabling UARTs");
+	err = pm_device_state_get(uart_dev, &uart0_power_state);
+	if (err) {
+		mosh_print("Failed to assess UART power state, pm_device_state_get: %d.",
+			   err);
+		return;
+	}
 
-			/* allow little time for printing the notification */
-			k_sleep(K_MSEC(500));
+	if (uart0_power_state == PM_DEVICE_STATE_ACTIVE) {
+		mosh_print("Disabling UARTs");
 
-			/* set uart0 to suspended state */
-			err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_SUSPENDED);
+		/* allow little time for printing the notification */
+		k_sleep(K_MSEC(500));
 
-			/* set uart1 to suspended state */
-			uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart1)));
-			if (uart_dev) {
-				pm_device_state_set(uart_dev, PM_DEVICE_STATE_SUSPENDED);
-			}
-		} else {
-			/* set uart0 to active state */
-			err = pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE);
+		/* set uart0 to suspended state */
+		err = pm_device_action_run(uart_dev, PM_DEVICE_ACTION_SUSPEND);
 
-			/* set uart1 to active state */
-			uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart1)));
-			if (uart_dev) {
-				pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE);
-			}
-			mosh_print("Enabling UARTs");
-
-			/* stop timer if uarts were disabled with command 'uart disable' */
-			k_timer_stop(&uart_reenable_timer);
-		}
-		if (err) {
-			mosh_print("Failed to change UART power state");
+		/* set uart1 to suspended state */
+		uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart1)));
+		if (uart_dev) {
+			pm_device_action_run(uart_dev, PM_DEVICE_ACTION_SUSPEND);
 		}
 	} else {
+		/* set uart0 to active state */
+		err = pm_device_action_run(uart_dev, PM_DEVICE_ACTION_RESUME);
+
+		/* set uart1 to active state */
+		uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart1)));
+		if (uart_dev) {
+			pm_device_action_run(uart_dev, PM_DEVICE_ACTION_RESUME);
+		}
+		mosh_print("Enabling UARTs");
+
+		/* stop timer if uarts were disabled with command 'uart disable' */
+		k_timer_stop(&uart_reenable_timer);
+	}
+	if (err) {
 		mosh_print("Failed to change UART power state");
 	}
 }
