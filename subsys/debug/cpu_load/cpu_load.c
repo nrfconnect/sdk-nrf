@@ -273,7 +273,7 @@ static int cmd_cpu_load_reset(const struct shell *shell,
 
 	err = cpu_load_init();
 	if (err != 0) {
-		shell_error(shell, "Init failed (err:%d)");
+		shell_error(shell, "Init failed (err:%d)", err);
 		return 0;
 	}
 
