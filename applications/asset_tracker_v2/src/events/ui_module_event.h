@@ -27,15 +27,15 @@ enum ui_module_event_type {
 	 */
 	UI_EVT_BUTTON_DATA_READY,
 
-	/** The sensor module has performed all procedures to prepare for
+	/** The UI module has performed all procedures to prepare for
 	 *  a shutdown of the system. The event carries the ID (id) of the module.
 	 */
-	SENSOR_EVT_SHUTDOWN_READY,
+	UI_EVT_SHUTDOWN_READY,
 
 	/** An irrecoverable error has occurred in the cloud module. Error details are
 	 *  attached in the event structure.
 	 */
-	SENSOR_EVT_ERROR
+	UI_EVT_ERROR
 };
 
 /** @brief Structure used to provide button data. */
