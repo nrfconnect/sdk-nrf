@@ -149,12 +149,6 @@ Hardware-related configuration
 
 The preprocessed devicetree sources are parsed by the :file:`zephyr/scripts/dts/gen_defines.py` script to generate a :file:`devicetree_unfixed.h` header file with preprocessor macros.
 
-.. ncs-include:: guides/build/index.rst
-   :docset: zephyr
-   :dedent: 3
-   :start-after: header with preprocessor macros.
-   :end-before: This file is just for reference.
-
 The :file:`zephyr.dts` file contains the entire hardware-related configuration of the system in the devicetree format.
 The header file contains the same kind of information, but with defines usable by source code.
 
