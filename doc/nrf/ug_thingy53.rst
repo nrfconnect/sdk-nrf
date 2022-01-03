@@ -289,7 +289,7 @@ The Thingy:53-compatible samples and applications use MCUboot bootloader than ca
 This method uses signed binary files :file:`app_update.bin` and :file:`net_core_app_update.bin` (or :file:`dfu_application.zip`).
 You can program the precompiled firmware image using one of the following ways:
 
-* Use the :doc:`mcuboot:index` feature and the built-in serial recovery mode of Thingy:53.
+* Use the :doc:`mcuboot:index-ncs` feature and the built-in serial recovery mode of Thingy:53.
   In this scenario Thingy is connected directly to your PC through USB.
 * Update the firmware over-the-air (OTA) using Bluetooth LE and the nRF Programmer mobile application for Android or iOS.
   To use this method, the application that is currently programmed on Thingy:53 must support it.

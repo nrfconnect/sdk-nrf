@@ -48,7 +48,7 @@ Architecture
 
 There are two implementations currently supported:
 
-* The first implementation provides the first stage in the chain, the immutable :ref:`bootloader`, which could be either |NSIB| or :doc:`MCUboot <mcuboot:index>`.
+* The first implementation provides the first stage in the chain, the immutable :ref:`bootloader`, which could be either |NSIB| or :doc:`MCUboot <mcuboot:index-ncs>`.
   It does not support bootloader upgradability, but it is useful if you need just the capability to update your application.
 
   See below for an abstract representation of the memory layout for an application that uses only an immutable bootloader in its boot chain:
@@ -56,7 +56,7 @@ There are two implementations currently supported:
   .. figure:: images/bootloader_memory_layout_onestage.svg
      :alt: Memory layout
 
-* The second implementation provides both the first stage in the chain, the immutable bootloader (|NSIB|), and uses :doc:`MCUboot <mcuboot:index>` as the upgradable second-stage bootloader.
+* The second implementation provides both the first stage in the chain, the immutable bootloader (|NSIB|), and uses :doc:`MCUboot <mcuboot:index-ncs>` as the upgradable second-stage bootloader.
   This implementation provides the capability to update both your bootloader and your application.
   This is useful when a bootloader performs additional complex operations, like using a software stack.
 

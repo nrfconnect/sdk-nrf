@@ -206,7 +206,7 @@ Documentation
 * Added :ref:`getting_started` information.
 * Added :ref:`user_guides` for working with nRF9160 samples, Enhanced ShockBurst (ESB), and the secure bootloader chain.
 * Added documentation for various :ref:`samples` and :ref:`libraries`.
-* Added :doc:`MCUboot <mcuboot:index>` and :doc:`nrfxlib <nrfxlib:README>` documentation.
+* Added :doc:`MCUboot <mcuboot:index-ncs>` and :doc:`nrfxlib <nrfxlib:README>` documentation.
 
 Known issues
 ************
