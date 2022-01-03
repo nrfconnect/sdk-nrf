@@ -355,7 +355,7 @@ NFC
 Immutable bootloader
 --------------------
 
-* Exposed :c:func:`fw_info_ext_api_provide` as an :ref:`external API <doc_fw_info_ext_api>`, so that :doc:`mcuboot:index` can use it to provide external APIs from the :ref:`bootloader` to its images.
+* Exposed :c:func:`fw_info_ext_api_provide` as an :ref:`external API <doc_fw_info_ext_api>`, so that :doc:`mcuboot:index-ncs` can use it to provide external APIs from the :ref:`bootloader` to its images.
   This means that requesting external APIs in applications works even if MCUboot is included.
 * Fixed a bug so that the :ref:`bootloader` works with nRF5340 SPU flash regions.
 * Added a :ref:`doc_bl_storage` library:

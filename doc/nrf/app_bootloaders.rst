@@ -50,7 +50,7 @@ You can find an overview of currently supported bootloaders in the table below:
      - Yes
      - :ref:`Monotonic (HW) <bootloader_monotonic_counter>`
      - Dual slot execute in place (XIP)
-   * - :doc:`MCUboot <mcuboot:index>`
+   * - :doc:`MCUboot <mcuboot:index-ncs>`
      - Yes
      - Yes
      - :doc:`See imgtool <mcuboot:imgtool>`

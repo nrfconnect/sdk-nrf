@@ -214,7 +214,7 @@ See the description of :kconfig:`CONFIG_SB_SIGNING_COMMAND` for which arguments 
 Adding MCUboot as an immutable bootloader
 =========================================
 
-To build :doc:`mcuboot:index` with a Zephyr or |NCS| sample, enable the ``CONFIG_BOOTLOADER_MCUBOOT`` in the application's :file:`prj.conf` file, an associated Kconfig fragment, or using the command line:
+To build :doc:`mcuboot:index-ncs` with a Zephyr or |NCS| sample, enable the ``CONFIG_BOOTLOADER_MCUBOOT`` in the application's :file:`prj.conf` file, an associated Kconfig fragment, or using the command line:
 
 .. code-block:: console
 
