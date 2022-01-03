@@ -14,7 +14,7 @@ The documentation consists of several inter-linked documentation sets, one for e
 
 The entry point is the |NCS| documentation that you are currently reading.
 The local :doc:`Zephyr documentation <zephyr:index>` is a slightly extended version of the official `Zephyr Project documentation`_, containing some additions specific to Nordic Semiconductor.
-The local :doc:`MCUboot documentation <mcuboot:index>` is a slightly extended version of the official `MCUboot`_ documentation, containing some additions specific to Nordic Semiconductor.
+The local :doc:`MCUboot documentation <mcuboot:index-ncs>` is a slightly extended version of the official `MCUboot`_ documentation, containing some additions specific to Nordic Semiconductor.
 
 You can switch between these documentation sets by using the selector in the *bottom-left corner of each documentation page*.
 

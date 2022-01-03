@@ -119,7 +119,7 @@ Quick programming of precompiled firmware images
 When you have the precompiled firmware images ready, you can directly program the images onto the Thingy:91 using the `nRF Connect Programmer`_ app, which is available in `nRF Connect for Desktop`_.
 
 In this method, the Thingy:91 is connected directly to your PC through USB.
-This method makes use of the :doc:`mcuboot:index` feature and the inbuilt serial recovery mode of Thingy:91.
+This method makes use of the :doc:`mcuboot:index-ncs` feature and the inbuilt serial recovery mode of Thingy:91.
 You can program either the nRF9160 SiP or the nRF52840 SoC component on the Thingy:91.
 
 Alternatively, you can use an external debug probe such as nRF9160 DK or any J-Link device supporting ARM Cortex-M33 to program applications on a Thingy:91.

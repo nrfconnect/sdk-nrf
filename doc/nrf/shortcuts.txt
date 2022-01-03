@@ -42,7 +42,7 @@
 .. |fota_upgrades_def| replace:: You can upgrade the firmware of the device over the air, thus without a wired connection.
    Such an upgrade is called a FOTA (firmware over-the-air) upgrade.
 
-.. |fota_upgrades_req_mcuboot| replace:: To upgrade the application, you must use :doc:`mcuboot:index` as the upgradable bootloader (:kconfig:`CONFIG_BOOTLOADER_MCUBOOT` must be enabled).
+.. |fota_upgrades_req_mcuboot| replace:: To upgrade the application, you must use :doc:`mcuboot:index-ncs` as the upgradable bootloader (:kconfig:`CONFIG_BOOTLOADER_MCUBOOT` must be enabled).
 
 .. |fota_upgrades_building| replace:: To create a binary file for an application upgrade, make sure that :kconfig:`CONFIG_BOOTLOADER_MCUBOOT` is enabled and build the application as usual.
    The build will create several binary files (see :ref:`mcuboot:mcuboot_ncs`).
