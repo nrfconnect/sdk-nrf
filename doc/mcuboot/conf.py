@@ -57,7 +57,18 @@ if kconfig_mapping:
 
 external_content_contents = [
     (NRF_BASE / "doc" / "mcuboot", "*.rst"),
-    (MCUBOOT_BASE / "docs", "*.md"),
+    (MCUBOOT_BASE / "docs", "release-notes.md"),
+    (MCUBOOT_BASE / "docs", "design.md"),
+    (MCUBOOT_BASE / "docs", "encrypted_images.md"),
+    (MCUBOOT_BASE / "docs", "imgtool.md"),
+    (MCUBOOT_BASE / "docs", "ecdsa.md"),
+    (MCUBOOT_BASE / "docs", "readme-zephyr.md"),
+    (MCUBOOT_BASE / "docs", "testplan-mynewt.md"),
+    (MCUBOOT_BASE / "docs", "testplan-zephyr.md"),
+    (MCUBOOT_BASE / "docs", "release.md"),
+    (MCUBOOT_BASE / "docs", "SECURITY.md"),
+    (MCUBOOT_BASE / "docs", "signed_images.md"),
+    (MCUBOOT_BASE / "docs", "SubmittingPatches.md"),
 ]
 
 # Options for ncs_cache --------------------------------------------------------
