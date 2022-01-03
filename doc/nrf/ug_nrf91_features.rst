@@ -63,7 +63,7 @@ A secure bootloader chain protects your application against running unauthorized
 See :ref:`ug_bootloader` for more information.
 
 A bootloader chain is optional.
-Not all of the nRF9160 samples include a secure bootloader chain, but the ones that do use the :ref:`bootloader` sample and :doc:`mcuboot:index`.
+Not all of the nRF9160 samples include a secure bootloader chain, but the ones that do use the :ref:`bootloader` sample and :doc:`mcuboot:index-ncs`.
 
 .. _nrf9160_ug_secure_partition_manager:
 
@@ -97,7 +97,7 @@ The user application runs in the non-secure domain.
 Therefore, it must be built for the ``nrf9160dk_nrf9160_ns`` or ``thingy91_nrf9160_ns`` build target.
 
 The application image might require other images to be present.
-Some samples include the :ref:`bootloader` sample (:kconfig:`CONFIG_SECURE_BOOT`) and :doc:`mcuboot:index` (:kconfig:`CONFIG_BOOTLOADER_MCUBOOT`).
+Some samples include the :ref:`bootloader` sample (:kconfig:`CONFIG_SECURE_BOOT`) and :doc:`mcuboot:index-ncs` (:kconfig:`CONFIG_BOOTLOADER_MCUBOOT`).
 Depending on the configuration, all these images can be built at the same time in a :ref:`multi-image build <ug_multi_image>`.
 
 .. _lte_modem:
