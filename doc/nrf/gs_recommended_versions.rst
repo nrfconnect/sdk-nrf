@@ -175,8 +175,8 @@ Building and running applications, samples, and tests
      - |anytree_ver|
    * - canopen
      - |canopen_ver|
-   * - cbor
-     - |cbor_ver|
+   * - cbor2
+     - |cbor2_ver|
    * - click
      - |click_ver|
    * - cryptography
