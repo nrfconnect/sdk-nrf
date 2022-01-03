@@ -15,7 +15,7 @@ Configuration
 
 You can enable the |power_manager| by selecting the :kconfig:`CONFIG_CAF_POWER_MANAGER` option in the configuration.
 
-This module uses Zephyr's :ref:`zephyr:power_management_api` subsystem.
+This module uses Zephyr's :ref:`zephyr:pm_api` subsystem.
 
 Timeout configuration options
 =============================
