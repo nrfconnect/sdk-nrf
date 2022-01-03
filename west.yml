@@ -83,7 +83,6 @@ manifest:
           - lvgl
           - lz4
           - mbedtls
-          - mcumgr
           - mipi-sys-t
           - nanopb
           - net-tools
