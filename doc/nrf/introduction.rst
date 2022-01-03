@@ -15,7 +15,7 @@ It is a set of open source projects maintained by Nordic Semiconductor, consisti
   See the :doc:`nrfxlib documentation <nrfxlib:README>`.
 * `sdk-mcuboot`_ repository - contains a fork of the `MCUboot`_ project, which provides a secure bootloader application.
   You can find the fork in :file:`bootloader/mcuboot` after obtaining the |NCS| source code.
-  See the :doc:`documentation <mcuboot:index>` in Nordic Semiconductor’s MCUboot fork.
+  See the :doc:`documentation <mcuboot:index-ncs>` in Nordic Semiconductor’s MCUboot fork.
 * `sdk-zephyr`_ repository - contains a fork of the `Zephyr`_ project, which provides samples, libraries, and drivers for a wide variety of devices, including Nordic Semiconductor devices.
   See the :doc:`documentation <zephyr:index>` in Nordic Semiconductor’s Zephyr fork.
 
