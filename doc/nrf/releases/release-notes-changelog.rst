@@ -65,6 +65,7 @@ nRF9160: Asset Tracker v2
 * Updated the code and documentation to use the acronym GNSS instead of GPS when not referring explicitly to the GPS system.
 * Added support for atmospheric pressure readings retrieved from the BME680 sensor on Thingy:91.
 * Fixed an issue where PSM could be requested from the network even though it was disabled in Kconfig.
+* Added new documentation for Asset Tracker v2 :ref:`asset_tracker_v2_modem_module`.
 
 nRF Desktop
 -----------
@@ -296,7 +297,7 @@ Documentation
 
 In addition to documentation related to the changes listed above, the following documentation has been updated:
 
-* Reorganized the contents of the :ref:´ug_app_dev` section:
+* Reorganized the contents of the :ref:`ug_app_dev` section:
 
   * Added new subpage :ref:`app_optimize` and moved the optimization sections under it.
   * Added new subpage :ref:`ext_components` and moved the sections for using external components or modules under it.
@@ -304,5 +305,6 @@ In addition to documentation related to the changes listed above, the following 
 * Reorganized the contents of the :ref:`protocols` section:
 
   * Reduced the ToC levels of the subpages.
+
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
