@@ -6,10 +6,14 @@
 
 #include <zephyr.h>
 #include <sys/reboot.h>
+#include <device.h>
 #include <logging/log.h>
 
 #define MODULE util_module
 
+#if defined(CONFIG_WATCHDOG_APPLICATION)
+#include "watchdog_app.h"
+#endif
 #include "modules_common.h"
 #include "events/app_module_event.h"
 #include "events/cloud_module_event.h"
@@ -226,6 +230,22 @@ static void reboot_ack_check(uint32_t module_id)
 	}
 }
 
+static int setup(const struct device *dev)
+{
+	ARG_UNUSED(dev);
+
+#if defined(CONFIG_WATCHDOG_APPLICATION)
+	int err = watchdog_init_and_start();
+
+	if (err) {
+		LOG_DBG("watchdog_init_and_start, error: %d", err);
+		send_reboot_request(REASON_GENERIC);
+	}
+#endif
+
+	return 0;
+}
+
 /* Message handler for STATE_INIT. */
 static void on_state_init(struct util_msg_data *msg)
 {
@@ -325,3 +345,5 @@ EVENT_SUBSCRIBE_EARLY(MODULE, gnss_module_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, ui_module_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, sensor_module_event);
 EVENT_SUBSCRIBE_EARLY(MODULE, data_module_event);
+
+SYS_INIT(setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
