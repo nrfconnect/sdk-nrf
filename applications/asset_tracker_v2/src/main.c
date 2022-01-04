@@ -11,10 +11,6 @@
 #include <event_manager.h>
 #include <modem/nrf_modem_lib.h>
 
-#if defined(CONFIG_WATCHDOG_APPLICATION)
-#include "watchdog_app.h"
-#endif
-
 /* Module name is used by the event manager macros in this file */
 #define MODULE main
 #include <caf/events/module_state_event.h>
@@ -502,14 +498,6 @@ void main(void)
 		LOG_ERR("Failed starting module, error: %d", err);
 		SEND_ERROR(app, APP_EVT_ERROR, err);
 	}
-
-#if defined(CONFIG_WATCHDOG_APPLICATION)
-	err = watchdog_init_and_start();
-	if (err) {
-		LOG_DBG("watchdog_init_and_start, error: %d", err);
-		SEND_ERROR(app, APP_EVT_ERROR, err);
-	}
-#endif
 
 	while (true) {
 		module_get_next_msg(&self, &msg);
