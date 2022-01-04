@@ -150,18 +150,19 @@ def merge_objects(src: Dict, dst: Dict, offset: int) -> None:
             dst["objtypes"][str(index_cnt)] = src["objtypes"][src_index]
 
     # merge objects
-    for src_prefix, src_object in src["objects"].items():
+    for src_prefix, src_objects in src["objects"].items():
         if src_prefix not in dst["objects"]:
-            dst["objects"][src_prefix] = dict()
+            dst["objects"][src_prefix] = list()
 
-        dst_object = dst["objects"][src_prefix]
-        for src_name, src_value in src_object.items():
-            dst_object[src_name] = [
-                src_value[0] + offset,
-                obj_map[str(src_value[1])],
-                src_value[2],
-                src_value[3],
-            ]
+        dst_objects = dst["objects"][src_prefix]
+        for src_object in src_objects:
+            dst_objects.append([
+                src_object[0] + offset,
+                obj_map[str(src_object[1])],
+                src_object[2],
+                src_object[3],
+                src_object[4],
+            ])
 
 
 def main(build_dir: Path) -> None:
