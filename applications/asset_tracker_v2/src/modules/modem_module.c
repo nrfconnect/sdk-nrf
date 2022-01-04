@@ -722,14 +722,19 @@ static int neighbor_cells_measurement_start(void)
 static int configure_low_power(void)
 {
 	int err;
+	bool enable = IS_ENABLED(CONFIG_MODEM_AUTO_REQUEST_POWER_SAVING_FEATURES);
 
-	err = lte_lc_psm_req(true);
+	err = lte_lc_psm_req(enable);
 	if (err) {
 		LOG_ERR("lte_lc_psm_req, error: %d", err);
 		return err;
 	}
 
-	LOG_DBG("PSM requested");
+	if (enable) {
+		LOG_DBG("PSM requested");
+	} else {
+		LOG_DBG("PSM disabled");
+	}
 
 	return 0;
 }
@@ -787,12 +792,10 @@ static int setup(void)
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_MODEM_AUTO_REQUEST_POWER_SAVING_FEATURES)) {
-		err = configure_low_power();
-		if (err) {
-			LOG_ERR("configure_low_power, error: %d", err);
-			return err;
-		}
+	err = configure_low_power();
+	if (err) {
+		LOG_ERR("configure_low_power, error: %d", err);
+		return err;
 	}
 
 	err = modem_data_init();
