@@ -93,10 +93,10 @@ Kconfig*                                  @tejlmand
 /lib/pelion/                              @pdunaj
 /lib/ram_pwrdn/                           @mariuszpos @MarekPorwisz
 /lib/fatal_error/                         @SebastianBoe
-/lib/sms/                                 @trantanen
+/lib/sms/                                 @trantanen @tokangas
 /lib/st25r3911b/                          @grochu
 /lib/supl/                                @rlubos @tokangas
-/lib/date_time/                           @simensrostad
+/lib/date_time/                           @trantanen @tokangas
 /lib/wave_gen/                            @MarekPieta
 /lib/hw_unique_key/                       @oyvindronningstad @Vge0rge
 /lib/modem_jwt/                           @jayteemo @SeppoTakalo
@@ -182,12 +182,12 @@ Kconfig*                                  @tejlmand
 /tests/drivers/nrfx_integration_test/     @anangl
 /tests/lib/at_cmd_parser/                 @rlubos
 /tests/lib/at_sms_cert/                   @eivindj-nordic
-/tests/lib/date_time/                     @simensrostad
+/tests/lib/date_time/                     @trantanen @tokangas
 /tests/lib/edge_impulse/                  @pdunaj @MarekPieta
 /tests/lib/hw_unique_key*/                @oyvindronningstad @Vge0rge
 /tests/lib/lte_lc/                        @jtguggedal
 /tests/lib/modem_jwt/                     @SeppoTakalo
-/tests/lib/sms/                           @trantanen
+/tests/lib/sms/                           @trantanen @tokangas
 /tests/modules/lib/cddl-gen/              @oyvindronningstad
 /tests/modules/mcuboot/external_flash/    @hakonfam @sigvartmh
 /tests/modules/tfm/                       @hakonfam @SebastianBoe
