@@ -200,6 +200,11 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
+Unity
+-----
+
+* Fixed bug that resulted in the mocks for some functions not having the __wrap_ prefix. This happened for functions declared with whitespaces between identifier and parameter list.
+
 HID Configurator
 ----------------
 
