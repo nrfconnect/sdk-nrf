@@ -25,11 +25,6 @@ static K_SEM_DEFINE(time_fetch_sem, 0, 1);
 static void date_time_handler(struct k_work *work);
 static K_WORK_DELAYABLE_DEFINE(time_work, date_time_handler);
 
-/* We could check if date_time_last_update_uptime is not zero to determine whether
- * time is valid unless k_uptime_get() wouldn't return zero shortly after bootup in QEMU
- * even when CONFIG_QEMU_ICOUNT=n.
- */
-static bool initial_time_valid;
 static int64_t date_time_last_update_uptime;
 static date_time_evt_handler_t app_evt_handler;
 
@@ -212,12 +207,11 @@ int64_t date_time_core_last_update_uptime(void)
 
 bool date_time_core_is_valid(void)
 {
-	return initial_time_valid;
+	return (date_time_last_update_uptime != 0);
 }
 
 void date_time_core_clear(void)
 {
-	initial_time_valid = false;
 	date_time_last_update_uptime = 0;
 }
 
@@ -243,7 +237,6 @@ void date_time_core_store(int64_t curr_time_ms, enum date_time_evt_type time_sou
 	struct tm ltm = { 0 };
 	int ret;
 
-	initial_time_valid = true;
 	date_time_last_update_uptime = k_uptime_get();
 
 	date_time_core_schedule_update();

@@ -275,6 +275,12 @@ static void test_date_time_teardown(void)
 
 void test_main(void)
 {
+	/* Delay to ensure that k_uptime_get returns positive non-zero value
+	 * irrespective of what CONFIG_SYS_CLOCK_TICKS_PER_SEC value is.
+	 * This has been an issue in QEMU tests.
+	 */
+	k_sleep(K_SECONDS(1));
+
 	ztest_test_suite(test_date_time,
 		ztest_unit_test_setup_teardown(
 					test_date_time_invalid_input,
