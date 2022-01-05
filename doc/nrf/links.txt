@@ -105,6 +105,8 @@
 
 .. _`TF-M sample incompatibility issue`: https://github.com/zephyrproject-rtos/zephyr/issues/34658
 
+.. _`cddl-gen`: https://github.com/NordicSemiconductor/cddl-gen
+
 .. ### Source: github.io
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/

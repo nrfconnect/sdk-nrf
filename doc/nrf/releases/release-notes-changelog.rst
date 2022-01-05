@@ -289,12 +289,28 @@ The following list summarizes the most important changes inherited from the upst
 
 * |no_changes_yet_note|
 
+cddl-gen
+========
+
+The `cddl-gen`_ module has been updated from version 0.1.0 to 0.3.0.
+Release notes for 0.3.0 can be found in :file:`ncs/nrf/modules/lib/cddl-gen/RELEASE_NOTES.md`.
+
+The change prompted some changes in the CMake for the module, notably:
+
+* The CMake function ``target_cddl_source()`` was removed.
+* The non-generated source files (:file:`cbor_encode.c` and :file:`cbor_decode.c`) and their accompanying header files are now added to the build when :kconfig:`CONFIG_CDDL_GEN` is enabled.
+
+Also, it prompted the following:
+
+* The code of some libraries using cddl-gen (like :ref:`lib_fmfu_fdev`) has been regenerated.
+* The sdk-nrf integration test has been expanded into three new tests.
+
 Documentation
 =============
 
 In addition to documentation related to the changes listed above, the following documentation has been updated:
 
-* Reorganized the contents of the :ref:´ug_app_dev` section:
+* Reorganized the contents of the :ref:`ug_app_dev` section:
 
   * Added new subpage :ref:`app_optimize` and moved the optimization sections under it.
   * Added new subpage :ref:`ext_components` and moved the sections for using external components or modules under it.
