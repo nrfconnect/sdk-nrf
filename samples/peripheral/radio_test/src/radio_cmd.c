@@ -350,15 +350,15 @@ static int cmd_toggle_dc(const struct shell *shell, size_t argc, char **argv)
 
 #if NRF_POWER_HAS_DCDCEN_VDDH
 	shell_print(shell,
-		"DCDC VDDH state %lu\n",
-		"Write '0' to toggle state of DCDC REG0\n",
+		"DCDC VDDH state %d\n"
+		"Write '0' to toggle state of DCDC REG0\n"
 		"Write '1' to toggle state of DCDC REG1",
 		nrf_power_dcdcen_vddh_get(NRF_POWER));
 #endif /* NRF_POWER_HAS_DCDCEN_VDDH */
 
 #if NRF_POWER_HAS_DCDCEN
 	shell_print(shell,
-		"DCDC state %lu\n",
+		"DCDC state %d\n"
 		"Write '1' or '0' to toggle",
 		nrf_power_dcdcen_get(NRF_POWER));
 #endif /* NRF_POWER_HAS_DCDCEN */
@@ -470,7 +470,7 @@ static int cmd_print(const struct shell *shell, size_t argc, char **argv)
 
 	default:
 		shell_print(shell,
-			    "Data rate unknown or deprecated: %lu\n\r",
+			    "Data rate unknown or deprecated: %d\n\r",
 			    config.mode);
 		break;
 	}
@@ -656,10 +656,10 @@ static int cmd_print(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	shell_print(shell,
-		"Start Channel: %lu\n"
-		"End Channel: %lu\n"
-		"Time on each channel: %lu ms\n"
-		"Duty cycle: %lu percent\n",
+		"Start Channel: %hhu\n"
+		"End Channel: %hhu\n"
+		"Time on each channel: %u ms\n"
+		"Duty cycle: %u percent\n",
 		config.channel_start,
 		config.channel_end,
 		config.delay_ms,
