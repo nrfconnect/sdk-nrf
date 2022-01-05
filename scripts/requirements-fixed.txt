@@ -47,7 +47,7 @@ junit2html==30.0.4
 junitparser==1.6.3
 lazy-object-proxy==1.4.3
 lpc-checksum==2.2.0
-lxml==4.6.3
+lxml==4.6.5
 MarkupSafe==1.1.1
 mccabe==0.6.1
 milksnake==0.1.5
