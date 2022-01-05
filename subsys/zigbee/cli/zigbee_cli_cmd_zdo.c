@@ -87,18 +87,22 @@ static void ctx_timeout_cb(zb_uint8_t ctx_timeout_cb);
  *
  * @param[in]  argv  Pointer to argument table.
  * @param[in]  num   Number of cluster IDs to scan.
- * @param[out] ids   Pointer to an array to store cluster IDs.
+ * @param[out] ids   Pointer to an array (uint16_t) to store cluster IDs.
+ *                   The array may be unaligned.
  *
  * @retval  1 Parsing succeeded.
  * @retval  0 Parsing failed.
  */
-static int sscan_cluster_list(char **argv, uint8_t num, uint16_t *ids)
+static int sscan_cluster_list(char **argv, uint8_t num, void *ids)
 {
 	uint16_t len = 0;
+	uint16_t id;
+	uint16_t *ptr = ids;
 
-	while ((len < num) && parse_hex_u16(argv[len], ids)) {
+	while ((len < num) && parse_hex_u16(argv[len], &id)) {
+		UNALIGNED_PUT(id, ptr);
 		len += 1;
-		ids += 1;
+		ptr += 1;
 	}
 
 	return (len == num);
@@ -244,7 +248,7 @@ static void cmd_zb_simple_desc_req_cb(zb_bufid_t bufid)
 	zb_zdo_simple_desc_resp_t *simple_desc_resp;
 	zb_uint8_t in_cluster_cnt;
 	zb_uint8_t out_cluster_cnt;
-	zb_uint16_t *cluster_list;
+	void *cluster_list;
 
 	simple_desc_resp = (zb_zdo_simple_desc_resp_t *)zb_buf_begin(bufid);
 	in_cluster_cnt = simple_desc_resp->simple_desc.app_input_cluster_count;
@@ -273,10 +277,10 @@ static void cmd_zb_simple_desc_req_cb(zb_bufid_t bufid)
 			simple_desc_resp->simple_desc.app_device_version);
 
 		PRINT_LIST(text_buffer, "in_clusters=", "0x%04hx", zb_uint16_t,
-			   cluster_list, in_cluster_cnt);
+			   (zb_uint16_t *)cluster_list, in_cluster_cnt);
 
 		PRINT_LIST(text_buffer, "out_clusters=", "0x%04hx", zb_uint16_t,
-			   cluster_list + in_cluster_cnt, out_cluster_cnt);
+			   (zb_uint16_t *)cluster_list + in_cluster_cnt, out_cluster_cnt);
 
 		shell_print(ctx_entry->shell, "%s", text_buffer);
 
@@ -836,7 +840,7 @@ static int cmd_zb_match_desc(const struct shell *shell, size_t argc,
 			sscan_cluster_list(
 				argv + 5,
 				match_desc_req->num_in_clusters,
-				(uint16_t *)match_desc_req->cluster_list);
+				match_desc_req->cluster_list);
 
 		if (!result) {
 			zb_cli_print_error(shell,

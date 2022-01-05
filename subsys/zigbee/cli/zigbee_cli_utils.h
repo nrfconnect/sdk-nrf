@@ -61,8 +61,9 @@ static inline void zb_cli_print_error(const struct shell *shell,
 {                                                                            \
 	sprintf((text_buffer + strlen(text_buffer)), hdr);                   \
 	for (type * item = (ptr); item < (ptr) + size - 1; item++) {         \
+		type local_item = UNALIGNED_GET(item);                       \
 		sprintf((text_buffer +                                       \
-			strlen(text_buffer)), fmt ",", *item);               \
+			strlen(text_buffer)), fmt ",", local_item);          \
 		}                                                            \
 	if (size > 0) {                                                      \
 		sprintf((text_buffer +                                       \
