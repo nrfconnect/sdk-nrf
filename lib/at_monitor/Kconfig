@@ -16,7 +16,7 @@ config AT_MONITOR_SYS_INIT
 
 config AT_MONITOR_HEAP_SIZE
 	int "Heap size for notifications"
-	range 64 768
+	range 64 2048
 	default 256
 
 module=AT_MONITOR
