@@ -28,6 +28,7 @@ static K_WORK_DEFINE(at_monitor_work, at_monitor_task);
 
 static void at_monitor_dispatch(const char *notif)
 {
+	bool monitored;
 	struct at_notif_fifo *at_notif;
 	size_t sz_needed;
 
@@ -40,6 +41,18 @@ static void at_monitor_dispatch(const char *notif)
 			LOG_DBG("Dispatching to %p (ISR)", e->handler);
 			e->handler(notif);
 		}
+	}
+
+	monitored = false;
+	STRUCT_SECTION_FOREACH(at_monitor_entry, e) {
+		if (!e->paused && (e->filter == ANY || strstr(notif, e->filter))) {
+			monitored = true;
+			break;
+		}
+	}
+
+	if (!monitored) {
+		return;
 	}
 
 	sz_needed = sizeof(struct at_notif_fifo) + strlen(notif) + sizeof(char);
