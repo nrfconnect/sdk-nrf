@@ -8,16 +8,10 @@
 #define _GPIO_PINS_H_
 
 static const char * const port_map[] = {
-#ifdef CONFIG_GPIO_NRF_P0
-		DT_LABEL(DT_NODELABEL(gpio0)),
-#else
-		NULL,
-#endif /* CONFIG_GPIO_NRF_P0 */
-#ifdef CONFIG_GPIO_NRF_P1
-		DT_LABEL(DT_NODELABEL(gpio1)),
-#else
-		NULL,
-#endif /* CONFIG_GPIO_NRF_P1 */
+	COND_CODE_1(DT_NODE_HAS_STATUS(DT_NODELABEL(gpio0), okay),
+			(DT_LABEL(DT_NODELABEL(gpio0))), (NULL)),
+	COND_CODE_1(DT_NODE_HAS_STATUS(DT_NODELABEL(gpio1), okay),
+			(DT_LABEL(DT_NODELABEL(gpio1))), (NULL))
 };
 
 struct gpio_pin {
