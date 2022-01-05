@@ -27,7 +27,6 @@ For types common to all models, see :ref:`bt_mesh_models`.
    :caption: Subpages:
 
    XYZ Server model<mesh_model_server_client_template>
-   XYZ Client model<mesh_model_server_client_template>
 
 
 Common types*
