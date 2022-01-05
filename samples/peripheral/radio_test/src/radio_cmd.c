@@ -470,7 +470,7 @@ static int cmd_print(const struct shell *shell, size_t argc, char **argv)
 
 	default:
 		shell_print(shell,
-			    "Data rate unknown or deprecated: %lu\n\r",
+			    "Data rate unknown or deprecated: %d\n\r",
 			    config.mode);
 		break;
 	}
@@ -656,10 +656,10 @@ static int cmd_print(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	shell_print(shell,
-		"Start Channel: %lu\n"
-		"End Channel: %lu\n"
-		"Time on each channel: %lu ms\n"
-		"Duty cycle: %lu percent\n",
+		"Start Channel: %hhu\n"
+		"End Channel: %hhu\n"
+		"Time on each channel: %u ms\n"
+		"Duty cycle: %u percent\n",
 		config.channel_start,
 		config.channel_end,
 		config.delay_ms,
