@@ -114,34 +114,35 @@ void main(void)
 	mosh_print_version_info();
 
 #if !defined(CONFIG_LWM2M_CARRIER)
-	printk("Initializing modemlib...\n");
-	err = nrf_modem_lib_init(NORMAL_MODE);
+	/* Get Modem library initialization return value. */
+	err = nrf_modem_lib_get_init_ret();
 	switch (err) {
+	case 0:
+		/* Modem library was initialized successfully. */
+		break;
 	case MODEM_DFU_RESULT_OK:
 		printk("Modem firmware update successful!\n");
 		printk("Modem will run the new firmware after reboot\n");
 		sys_reboot(SYS_REBOOT_WARM);
-		break;
+		return;
 	case MODEM_DFU_RESULT_UUID_ERROR:
 	case MODEM_DFU_RESULT_AUTH_ERROR:
 		printk("Modem firmware update failed!\n");
 		printk("Modem will run non-updated firmware on reboot.\n");
 		sys_reboot(SYS_REBOOT_WARM);
-		break;
+		return;
 	case MODEM_DFU_RESULT_HARDWARE_ERROR:
 	case MODEM_DFU_RESULT_INTERNAL_ERROR:
 		printk("Modem firmware update failed!\n");
 		printk("Fatal error.\n");
 		sys_reboot(SYS_REBOOT_WARM);
-		break;
-	case -1:
+		return;
+	default:
+		/* Modem library initialization failed. */
 		printk("Could not initialize modemlib.\n");
 		printk("Fatal error.\n");
 		return;
-	default:
-		break;
 	}
-	printk("Initialized modemlib\n");
 
 	at_cmd_init();
 #if !defined(CONFIG_AT_NOTIF_SYS_INIT)
