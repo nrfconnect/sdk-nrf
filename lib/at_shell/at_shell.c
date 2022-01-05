@@ -41,7 +41,7 @@ int at_shell(const struct shell *shell, size_t argc, char **argv)
 	global_shell = (struct shell *)shell;
 
 	if (argc < 2) {
-		shell_print(shell, "%s", argc, at_usage_str);
+		shell_print(shell, "%s", at_usage_str);
 		return 0;
 	}
 
