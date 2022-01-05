@@ -296,17 +296,17 @@ static void ping_cli_evt_handler(enum ping_time_evt evt, zb_uint32_t delay_ms,
 
 	case PING_EVT_FRAME_TIMEOUT:
 		shell_error(req_data->shell,
-			    "Error: Request timed out after %ld ms.", delay_ms);
+			    "Error: Request timed out after %u ms.", delay_ms);
 		break;
 
 	case PING_EVT_ECHO_RECEIVED:
-		shell_print(req_data->shell, "Ping time: %ld ms", delay_ms);
+		shell_print(req_data->shell, "Ping time: %u ms", delay_ms);
 		zb_cli_print_done(req_data->shell, ZB_FALSE);
 		break;
 
 	case PING_EVT_ACK_RECEIVED:
 		if (req_data->ping_req_data.request_echo == 0) {
-			shell_print(req_data->shell, "Ping time: %ld ms",
+			shell_print(req_data->shell, "Ping time: %u ms",
 				    delay_ms);
 			zb_cli_print_done(req_data->shell, ZB_FALSE);
 		}
