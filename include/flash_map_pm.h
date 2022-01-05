@@ -27,10 +27,6 @@
 #define storage nvs_storage
 #endif
 
-#if (CONFIG_SETTINGS_FCB || CONFIG_SETTINGS_NVS) && CONFIG_FILE_SYSTEM_LITTLEFS
-#error "Not supported"
-#endif
-
 #define PM_ID(label) PM_##label##_ID
 #define PM_IS_ENABLED(label) PM_##label##_IS_ENABLED
 
