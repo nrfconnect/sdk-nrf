@@ -250,12 +250,12 @@ static void send_event(struct k_work *work)
 	printk("Event was successfully sent\n");
 exit:
 	if (atomic_get(&event_interval) <= 0) {
-		printk("The event reporting stops, interval is set to %d\n",
+		printk("The event reporting stops, interval is set to %ld\n",
 		       atomic_get(&event_interval));
 		return;
 	}
 
-	printk("Next event will be sent in %d seconds\n", event_interval);
+	printk("Next event will be sent in %ld seconds\n", event_interval);
 	k_work_reschedule_for_queue(&application_work_q, &send_event_work,
 				    K_SECONDS(event_interval));
 }
