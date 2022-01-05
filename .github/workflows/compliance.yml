@@ -54,6 +54,7 @@ jobs:
       env:
         BASE_REF: ${{ github.base_ref }}
       working-directory: ncs/nrf
+      if: contains(github.event.pull_request.user.login, 'dependabot[bot]') != true
       run: |
         export PATH="$HOME/.local/bin:$PATH"
         export PATH="$HOME/bin:$PATH"
@@ -66,17 +67,22 @@ jobs:
     - name: upload-results
       uses: actions/upload-artifact@v2
       continue-on-error: True
+      if: contains(github.event.pull_request.user.login, 'dependabot[bot]') != true
       with:
         name: compliance.xml
         path: ncs/nrf/compliance.xml
 
     - name: check-warns
       working-directory: ncs/nrf
+      if: contains(github.event.pull_request.user.login, 'dependabot[bot]') != true
       run: |
         if [[ ! -s "compliance.xml" ]]; then
           exit 1;
         fi
 
+    - name: check-warns
+      working-directory: ncs/nrf
+      run: |
         for file in Nits.txt checkpatch.txt Identity.txt Gitlint.txt pylint.txt Devicetree.txt Kconfig.txt KconfigBasic.txt Codeowners.txt; do
           if [[ -s $file ]]; then
              errors=$(cat $file)
