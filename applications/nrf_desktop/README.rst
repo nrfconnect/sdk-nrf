@@ -362,7 +362,7 @@ Depending on what development kit you use, you need to select the respective con
 
       .. table-from-rows:: /includes/sample_board_rows.txt
          :header: heading
-         :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833
+         :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52833dk_nrf52820
 
       In nRF52840 DK, the application is configured to work as gaming mouse (with motion emulated by using DK buttons) and in nRF52833 DK, the application is configured to work as HID dongle.
 
@@ -968,9 +968,16 @@ Sample mouse, keyboard or dongle (nrf52840dk_nrf52840)
 
 Sample dongle (nrf52833dk_nrf52833)
       * The configuration uses the nRF52833 Development Kit.
-      * The application is configured to act as both mouse and keyboard.
+      * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
       * Bluetooth uses Nordic's SoftDevice link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
+
+Sample dongle (nrf52833dk_nrf52820)
+      * The configuration uses the nRF52820 emulation on the nRF52833 Development Kit.
+      * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
+      * Bluetooth uses Zephyr's software link layer and is configured to act as a central.
+        Input data comes from Bluetooth and is retransmitted to USB.
+      * |preconfigured_build_types|
 
 nRF52832 Desktop Keyboard (nrf52kbd_nrf52832)
       * The reference design used is defined in :file:`nrf/boards/arm/nrf52kbd_nrf52832` for the project-specific hardware.
@@ -980,13 +987,13 @@ nRF52832 Desktop Keyboard (nrf52kbd_nrf52832)
 
 nRF52840 USB Dongle (nrf52840dongle_nrf52840) and nRF52833 USB Dongle (nrf52833dongle_nrf52833)
       * Since the nRF52840 Dongle is generic and defined in Zephyr, project-specific changes are applied in the DTS overlay file.
-      * The application is configured to act as both mouse and keyboard.
+      * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
       * Bluetooth uses Nordic's SoftDevice link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
       * |preconfigured_build_types|
 
 nRF52820 USB Dongle (nrf52820dongle_nrf52820)
-      * The application is configured to act as both mouse and keyboard.
+      * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
       * Bluetooth uses Zephyr's software link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
       * |preconfigured_build_types|

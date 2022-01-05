@@ -82,7 +82,27 @@ Complete the following steps:
        In versions earlier than 5.44, the HID device attached by BlueZ could obtain wrong VID and PID values (ignoring values in Device Information Service), which would stop HIDAPI from opening the device.
        In versions earlier than 5.56, the HID device attached by BlueZ might provide incomplete HID feature report on get operation.
 
-   Additionally, to call the Python script on Linux without root rights, install the provided udev rule :file:`99-hid.rules` file by copying it to :file:`/etc/udev/rules.d` and replugging the device.
+#. If you don't want to use the root access to run the python script, copy the provided udev rule from the :file:`99-hid.rules` file to the :file:`/etc/udev/rules.d` and reconnect the device.
+#. If you want to connect to a device with a different Vendor or Product ID other than the one specified in the file, use one of the following options:
+
+   * Run the script with the root permission.
+   * Complete the following steps to run the script without root permission:
+
+     a. Add a new entry to the :file:`99-hid.rules` file with your Vendor and Product ID.
+     #. Copy the provided udev rule from the :file:`99-hid.rules` file to the :file:`/etc/udev/rules.d`.
+     #. Reconnect the device.
+
+   Vendor and Product ID can be specified in the configuration file related to the nRF Desktop application.
+   The following examples shows the entry to add to the :file:`99-hid.rules` file to add device connected with USB and Bluetooth:
+
+   .. parsed-literal::
+      :class: highlight
+
+      Device connected using USB:
+      ATTRS{idVendor}=="my Vendor ID", ATTRS{idProduct}=="my Product ID", MODE="0666", SYMLINK+="nrf52-desktop-my-dev-name"
+
+      Device connected using Bluetooth:
+      ATTRS{name}=="Name of my Bluetooth device ", SUBSYSTEMS=="input", MODE="0666", SYMLINK+="nrf52-desktop-my-dev-name"
 
 #. If you want to display an LED stream based on sound data, you must also install the additional requirements using the following commands:
 
@@ -92,7 +112,7 @@ Complete the following steps:
       sudo apt-get install portaudio19-dev python3-pyaudio
       pip3 install --user -r requirements_music_led_stream.txt
 
-For more detailed information about LED stream functionality, see the `Playing LED stream`_ section.
+  For more detailed information about LED stream functionality, see the `Playing LED stream`_ section.
 
 Using the script
 ****************
