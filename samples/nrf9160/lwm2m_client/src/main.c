@@ -20,10 +20,9 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 
-#include <modem/at_cmd.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
-#include <modem/at_notif.h>
+#include <nrf_modem_at.h>
 
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
 #if defined(CONFIG_MODEM_KEY_MGMT)
@@ -54,7 +53,7 @@ BUILD_ASSERT(sizeof(CONFIG_APP_LWM2M_SERVER) > 1,
 #define LWM2M_SECURITY_NO_SEC 3
 
 static uint8_t endpoint_name[ENDPOINT_NAME_LEN + 1];
-static uint8_t imei_buf[IMEI_LEN + 3]; /* account for /n/r */
+static uint8_t imei_buf[IMEI_LEN + sizeof("\r\nOK\r\n")];
 static struct lwm2m_ctx client;
 
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
@@ -95,11 +94,21 @@ static int remove_whitespace(char *buf)
 static int query_modem(const char *cmd, char *buf, size_t buf_len)
 {
 	int ret;
-	enum at_cmd_state at_state;
 
-	ret = at_cmd_write(cmd, buf, buf_len, &at_state);
+	/* Using format string in case the command contains characters
+	 * that need to be escaped.
+	 */
+	ret = nrf_modem_at_cmd(buf, buf_len, "%s", cmd);
 	if (ret) {
-		LOG_ERR("at_cmd_write [%s] error:%d, at_state: %d", cmd, ret, at_state);
+		if (ret > 0) {
+			LOG_ERR("nrf_modem_at_cmd[%s] error_type: %d, error_value: %d",
+				log_strdup(cmd),
+				nrf_modem_at_err_type(ret),
+				nrf_modem_at_err(ret));
+		} else {
+			LOG_ERR("nrf_modem_at_cmd[%s] error: %d", log_strdup(cmd), ret);
+		}
+
 		strncpy(buf, "error", buf_len);
 		return ret;
 	}
@@ -469,19 +478,6 @@ void main(void)
 	/* Modem FW update needs to be verified before modem is used. */
 	lwm2m_verify_modem_fw_update();
 #endif
-#if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
-	ret = at_cmd_init();
-	if (ret != 0) {
-		LOG_ERR("at_cmd_init failed: %d\n", ret);
-		return;
-	}
-
-	ret = at_notif_init();
-	if (ret != 0) {
-		LOG_ERR("at_notif_init failed: %d\n", ret);
-		return;
-	}
-#endif
 
 	LOG_INF("Initializing modem.");
 	ret = lte_lc_init();
@@ -491,9 +487,22 @@ void main(void)
 	}
 
 	/* query IMEI */
-	query_modem("AT+CGSN", imei_buf, sizeof(imei_buf));
+	ret = query_modem("AT+CGSN", imei_buf, sizeof(imei_buf));
+
+	if (ret != 0) {
+		LOG_ERR("Unable to get IMEI");
+		return;
+	}
+
+	/* remove trailing AT "OK" message */
+	uint8_t *ok_resp = strstr(imei_buf, "OK");
+
+	uint32_t index = ok_resp - imei_buf;
+
+	imei_buf[index] = '\0';
+
 	/* use IMEI as unique endpoint name */
-	snprintf(endpoint_name, sizeof(endpoint_name), "%s%s", CONFIG_APP_ENDPOINT_PREFIX,
+	snprintk(endpoint_name, sizeof(endpoint_name), "%s%s", CONFIG_APP_ENDPOINT_PREFIX,
 		 imei_buf);
 	LOG_INF("endpoint: %s", log_strdup(endpoint_name));
 
