@@ -112,6 +112,7 @@ nRF Desktop
   * Added Kconfig options that allow erasing dongle bond on the gaming mouse using buttons or config channel.
   * Added two states to enable erasing dongle peer: ``STATE_DONGLE_ERASE_PEER`` and ``STATE_DONGLE_ERASE_ADV``.
   * Added new application specific Kconfig option to enable :ref:`nrf_desktop_ble_bond`.
+  * Added configuration for ``nrf52833dk_nrf52820`` to allow testing of nRF Desktop dongle on the nRF52820 SoC.
 
 * Updated:
 
