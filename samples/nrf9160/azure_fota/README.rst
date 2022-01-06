@@ -66,8 +66,8 @@ Check and configure the following library Kconfig options:
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` - Specifies the device ID, which is used when connecting to Azure IoT Hub or when DPS is enabled.
 
 .. note::
-   If the :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` option is disabled, set the device ID in the :file:`prj.conf` file.
-   If the :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` option is enabled, provide the device ID using the :c:struct:`azure_iot_hub_config` configuration struct in a call to the :c:func:`azure_iot_hub_init` function.
+   To provide the device ID used in the connection towards Azure IoT Hub at run time, set the ``device_id`` member of the :c:struct:`azure_iot_hub_config` structure when calling the :c:func:`azure_iot_hub_connect` function.
+   If the ``device_id.size`` buffer size is zero, the compile-time option :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID`` is used.
 
 Building and running
 ********************

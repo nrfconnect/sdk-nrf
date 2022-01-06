@@ -636,6 +636,11 @@ Libraries for networking
     * Added the :c:func:`nrf_cloud_pgps_process_update` function that stores a portion of a P-GPS download to flash.
     * Added the :c:func:`nrf_cloud_pgps_finish_update` function that a user of the P-GPS library calls when the custom download completes.
 
+  * :ref:`lib_azure_iot_hub` library:
+
+    * The library has been reworked to use `Azure SDK for Embedded C`_.
+    * The APIs for both IoT Hub and DPS interaction have changed and the applications and samples that use the library have been updated.
+
 Libraries for NFC
 -----------------
 
