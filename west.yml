@@ -31,6 +31,8 @@ manifest:
       url-base: https://github.com/NordicSemiconductor
     - name: memfault
       url-base: https://github.com/memfault
+    - name: azure
+      url-base: https://github.com/azure
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -177,6 +179,10 @@ manifest:
       revision: 9f6b3812237fbb0d4157ba3584c13f1644fcbe3a
       groups:
       - nrf5340_audio
+    - name: azure-sdk-for-c
+      path: modules/lib/azure-sdk-for-c
+      revision: 1.3.1
+      remote: azure
 
   # West-related configuration for the nrf repository.
   self:

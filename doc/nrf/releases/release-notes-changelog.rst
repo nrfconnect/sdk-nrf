@@ -376,6 +376,11 @@ Libraries for networking
       * Handling for new nRF Cloud REST error code 40499.
         Moved the error log from the :c:func:`nrf_cloud_parse_rest_error` function into the calling function.
 
+  * :ref:`lib_azure_iot_hub` library:
+
+    * The library has been reworked to use :ref:`Azure SDK for Embedded C`.
+    * The APIs for both IoT Hub and DPS interaction have changed and the applications and samples that use the library have been updated.
+
 Libraries for NFC
 -----------------
 

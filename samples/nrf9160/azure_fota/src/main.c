@@ -47,18 +47,6 @@ static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 	case AZURE_IOT_HUB_EVT_DATA_RECEIVED:
 		printk("AZURE_IOT_HUB_EVT_DATA_RECEIVED\n");
 		break;
-	case AZURE_IOT_HUB_EVT_DPS_CONNECTING:
-		printk("AZURE_IOT_HUB_EVT_DPS_CONNECTING\n");
-		break;
-	case AZURE_IOT_HUB_EVT_DPS_REGISTERING:
-		printk("AZURE_IOT_HUB_EVT_DPS_REGISTERING\n");
-		break;
-	case AZURE_IOT_HUB_EVT_DPS_DONE:
-		printk("AZURE_IOT_HUB_EVT_DPS_DONE\n");
-		break;
-	case AZURE_IOT_HUB_EVT_DPS_FAILED:
-		printk("AZURE_IOT_HUB_EVT_DPS_FAILED\n");
-		break;
 	case AZURE_IOT_HUB_EVT_TWIN_RECEIVED:
 		printk("AZURE_IOT_HUB_EVT_TWIN_RECEIVED\n");
 		break;

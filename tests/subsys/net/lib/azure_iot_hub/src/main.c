@@ -24,7 +24,7 @@ static void test_topic_parse_devicebound(void)
 	zassert_equal(err, 0, NULL);
 	zassert_equal(topic_data.type, TOPIC_TYPE_DEVICEBOUND,
 		      "Incorrect topic type");
-	zassert_equal(topic_data.prop_bag_count, 0,
+	zassert_equal(topic_data.property_count, 0,
 		      "Incorrect property bag count");
 }
 
@@ -42,10 +42,10 @@ static void test_topic_parse_twin_update_desired(void)
 	zassert_equal(err, 0, NULL);
 	zassert_equal(topic_data.type, TOPIC_TYPE_TWIN_UPDATE_DESIRED,
 		      "Incorrect topic type");
-	zassert_equal(topic_data.prop_bag_count, 1,
+	zassert_equal(topic_data.property_count, 1,
 		      "Incorrect property bag count");
-	zassert_true(strcmp(topic_data.prop_bag[0].key, "$version") == 0, NULL);
-	zassert_true(strcmp(topic_data.prop_bag[0].value, "9") == 0, NULL);
+	zassert_true(strcmp(topic_data.properties[0].key, "$version") == 0, NULL);
+	zassert_true(strcmp(topic_data.properties[0].value, "9") == 0, NULL);
 }
 
 static void test_topic_parse_twin_update_result(void)
@@ -63,12 +63,12 @@ static void test_topic_parse_twin_update_result(void)
 	zassert_equal(topic_data.type, TOPIC_TYPE_TWIN_UPDATE_RESULT,
 		      "Incorrect topic type");
 	zassert_equal(topic_data.status, 200, NULL);
-	zassert_equal(topic_data.prop_bag_count, 2,
+	zassert_equal(topic_data.property_count, 2,
 		      "Incorrect property bag count");
-	zassert_true(strcmp(topic_data.prop_bag[0].key, "$rid") == 0, NULL);
-	zassert_true(strcmp(topic_data.prop_bag[0].value, "738") == 0, NULL);
-	zassert_true(strcmp(topic_data.prop_bag[1].key, "$version") == 0, NULL);
-	zassert_true(strcmp(topic_data.prop_bag[1].value, "135") == 0, NULL);
+	zassert_true(strcmp(topic_data.properties[0].key, "$rid") == 0, NULL);
+	zassert_true(strcmp(topic_data.properties[0].value, "738") == 0, NULL);
+	zassert_true(strcmp(topic_data.properties[1].key, "$version") == 0, NULL);
+	zassert_true(strcmp(topic_data.properties[1].value, "135") == 0, NULL);
 }
 
 static void test_topic_parse_direct_method(void)
@@ -86,10 +86,10 @@ static void test_topic_parse_direct_method(void)
 	zassert_equal(topic_data.type, TOPIC_TYPE_DIRECT_METHOD,
 		      "Incorrect topic type");
 	zassert_true(strcmp(topic_data.name, "my_method") == 0, NULL);
-	zassert_equal(topic_data.prop_bag_count, 1,
+	zassert_equal(topic_data.property_count, 1,
 		      "Incorrect property bag count");
-	zassert_true(strcmp(topic_data.prop_bag[0].key, "$rid") == 0, NULL);
-	zassert_true(strcmp(topic_data.prop_bag[0].value, "387") == 0, NULL);
+	zassert_true(strcmp(topic_data.properties[0].key, "$rid") == 0, NULL);
+	zassert_true(strcmp(topic_data.properties[0].value, "387") == 0, NULL);
 }
 
 static void test_topic_parse_dps_reg_result(void)
@@ -108,13 +108,13 @@ static void test_topic_parse_dps_reg_result(void)
 	zassert_equal(topic_data.type, TOPIC_TYPE_DPS_REG_RESULT,
 		      "Incorrect topic type");
 	zassert_equal(topic_data.status, 204, NULL);
-	zassert_equal(topic_data.prop_bag_count, 2,
+	zassert_equal(topic_data.property_count, 2,
 		      "Incorrect property bag count");
-	zassert_true(strcmp(topic_data.prop_bag[0].key, "$rid") == 0, NULL);
-	zassert_true(strcmp(topic_data.prop_bag[0].value, "59765") == 0, NULL);
-	zassert_true(strcmp(topic_data.prop_bag[1].key, "retry-after") == 0,
+	zassert_true(strcmp(topic_data.properties[0].key, "$rid") == 0, NULL);
+	zassert_true(strcmp(topic_data.properties[0].value, "59765") == 0, NULL);
+	zassert_true(strcmp(topic_data.properties[1].key, "retry-after") == 0,
 			    NULL);
-	zassert_true(strcmp(topic_data.prop_bag[1].value, "3") == 0, NULL);
+	zassert_true(strcmp(topic_data.properties[1].value, "3") == 0, NULL);
 }
 
 static void test_topic_parse_prop_bag_overload(void)
@@ -134,13 +134,13 @@ static void test_topic_parse_prop_bag_overload(void)
 	zassert_equal(topic_data.type, TOPIC_TYPE_DPS_REG_RESULT,
 		      "Incorrect topic type");
 	zassert_equal(topic_data.status, 204, NULL);
-	zassert_equal(topic_data.prop_bag_count, 5,
+	zassert_equal(topic_data.property_count, 5,
 		      "Incorrect property bag count");
-	zassert_true(strcmp(topic_data.prop_bag[0].key, "$rid") == 0, NULL);
-	zassert_true(strcmp(topic_data.prop_bag[0].value, "59765") == 0, NULL);
-	zassert_true(strcmp(topic_data.prop_bag[1].key, "retry-after") == 0,
+	zassert_true(strcmp(topic_data.properties[0].key, "$rid") == 0, NULL);
+	zassert_true(strcmp(topic_data.properties[0].value, "59765") == 0, NULL);
+	zassert_true(strcmp(topic_data.properties[1].key, "retry-after") == 0,
 			    NULL);
-	zassert_true(strcmp(topic_data.prop_bag[1].value, "3") == 0, NULL);
+	zassert_true(strcmp(topic_data.properties[1].value, "3") == 0, NULL);
 }
 
 static void test_topic_parse_unknown_topic(void)
@@ -158,7 +158,7 @@ static void test_topic_parse_unknown_topic(void)
 	zassert_equal(err, 0, NULL);
 	zassert_equal(topic_data.type, TOPIC_TYPE_UNEXPECTED,
 		      "Incorrect topic type");
-	zassert_equal(topic_data.prop_bag_count, 0,
+	zassert_equal(topic_data.property_count, 0,
 		      "Incorrect property bag count");
 }
 
@@ -170,7 +170,7 @@ static void test_topic_add_prop_bags(void)
 	char *key2 = "key2";
 	char *val2 = "";
 	char *key3 = "key3";
-	struct azure_iot_hub_prop_bag bags[] = {
+	struct azure_iot_hub_property bags[] = {
 		{
 			.key = key1,
 			.value = val1,
@@ -201,7 +201,7 @@ static void test_topic_add_prop_bags_reverse(void)
 	char *key2 = "key2";
 	char *value2 = "";
 	char *key3 = "key3";
-	struct azure_iot_hub_prop_bag bags[] = {
+	struct azure_iot_hub_property bags[] = {
 		{
 			.key = key3,
 			.value = NULL,
@@ -242,22 +242,22 @@ static void test_topic_parse_long(void)
 	zassert_equal(err, 0, NULL);
 	zassert_equal(topic_data.type, TOPIC_TYPE_DEVICEBOUND,
 		      "Incorrect topic type");
-	zassert_equal(topic_data.prop_bag_count, 5,
+	zassert_equal(topic_data.property_count, 5,
 		      "Incorrect property bag count");
-	zassert_true(strcmp(topic_data.prop_bag[0].key, "%24.mid") == 0, NULL);
-	zassert_true(strcmp(topic_data.prop_bag[0].value,
+	zassert_true(strcmp(topic_data.properties[0].key, "%24.mid") == 0, NULL);
+	zassert_true(strcmp(topic_data.properties[0].value,
 			    "456132-235-a2fd-8458-56432854d-123456") == 0, NULL);
-	zassert_true(strcmp(topic_data.prop_bag[1].key, "%24.to") == 0,
+	zassert_true(strcmp(topic_data.properties[1].key, "%24.to") == 0,
 			    NULL);
-	zassert_true(strcmp(topic_data.prop_bag[1].value,
+	zassert_true(strcmp(topic_data.properties[1].value,
 		     "%2Fdevices%2Fmy-device-name%2Fmessages%2Fdevicebound") == 0,
 		     NULL);
-	zassert_true(strcmp(topic_data.prop_bag[2].key, "key1") == 0, NULL);
-	zassert_equal(strlen(topic_data.prop_bag[2].value), 0, NULL);
-	zassert_true(strcmp(topic_data.prop_bag[3].key, "key2") == 0, NULL);
-	zassert_equal(strlen(topic_data.prop_bag[3].value), 0, NULL);
-	zassert_true(strcmp(topic_data.prop_bag[4].key, "key3") == 0, NULL);
-	zassert_true(strcmp(topic_data.prop_bag[4].value, "value3") == 0, NULL);
+	zassert_true(strcmp(topic_data.properties[2].key, "key1") == 0, NULL);
+	zassert_equal(strlen(topic_data.properties[2].value), 0, NULL);
+	zassert_true(strcmp(topic_data.properties[3].key, "key2") == 0, NULL);
+	zassert_equal(strlen(topic_data.properties[3].value), 0, NULL);
+	zassert_true(strcmp(topic_data.properties[4].key, "key3") == 0, NULL);
+	zassert_true(strcmp(topic_data.properties[4].value, "value3") == 0, NULL);
 }
 
 static void test_topic_prop_bag_too_long(void)
@@ -276,7 +276,7 @@ static void test_topic_prop_bag_too_long(void)
 	zassert_equal(err, -ENOMEM, NULL);
 	zassert_equal(topic_data.type, TOPIC_TYPE_DEVICEBOUND,
 		      "Incorrect topic type");
-	zassert_equal(topic_data.prop_bag_count, 0,
+	zassert_equal(topic_data.property_count, 0,
 		      "Incorrect property bag count");
 }
 

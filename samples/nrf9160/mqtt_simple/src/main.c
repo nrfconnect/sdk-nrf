@@ -24,6 +24,8 @@
 #endif
 #include <dk_buttons_and_leds.h>
 
+#include <azure/iot/az_iot_hub_client.h>
+
 #include "certificates.h"
 
 LOG_MODULE_REGISTER(mqtt_simple, CONFIG_MQTT_SIMPLE_LOG_LEVEL);
