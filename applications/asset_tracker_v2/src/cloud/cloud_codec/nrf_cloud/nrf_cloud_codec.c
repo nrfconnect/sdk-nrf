@@ -167,29 +167,54 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 			int err, len;
 			char humidity[7];
 			char temperature[7];
+			char pressure[7];
 			struct cloud_data_sensors *data = (struct cloud_data_sensors *)buf;
-			int64_t ts_temp = data[i].env_ts;
 
-			len = snprintk(humidity, sizeof(humidity), "%.2f", data[i].hum);
+			if (data[i].queued == false) {
+				break;
+			}
+
+			err = date_time_uptime_to_unix_time_ms(&data[i].env_ts);
+			if (err) {
+				LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
+				return -EOVERFLOW;
+			}
+
+			len = snprintk(humidity, sizeof(humidity), "%.2f",
+				       data[i].humidity);
 			if ((len < 0) || (len >= sizeof(humidity))) {
-				LOG_ERR("Cannot convert humidity to string, buffer to small");
+				LOG_ERR("Cannot convert humidity to string, buffer too small");
 				return -ENOMEM;
 			}
 
-			len = snprintk(temperature, sizeof(temperature), "%.2f", data[i].temp);
+			len = snprintk(temperature, sizeof(temperature), "%.2f",
+				       data[i].temperature);
 			if ((len < 0) || (len >= sizeof(temperature))) {
-				LOG_ERR("Cannot convert temperature to string, buffer to small");
+				LOG_ERR("Cannot convert temperature to string, buffer too small");
+				return -ENOMEM;
+			}
+
+			len = snprintk(pressure, sizeof(pressure), "%.2f",
+				       data[i].pressure);
+			if ((len < 0) || (len >= sizeof(pressure))) {
+				LOG_ERR("Cannot convert pressure to string, buffer too small");
 				return -ENOMEM;
 			}
 
 			err = add_data(array, NULL, APP_ID_HUMIDITY, humidity,
-				       &data[i].env_ts, data[i].queued, NULL, true);
+				       &data[i].env_ts, data[i].queued, NULL, false);
 			if (err && err != -ENODATA) {
 				return err;
 			}
 
-			err =  add_data(array, NULL, APP_ID_TEMPERATURE, temperature,
-					&ts_temp, data[i].queued, NULL, true);
+			err = add_data(array, NULL, APP_ID_TEMPERATURE, temperature,
+				       &data[i].env_ts, data[i].queued, NULL, false);
+			if (err && err != -ENODATA) {
+				return err;
+			}
+
+			err =  add_data(array, NULL, APP_ID_AIR_PRESS, pressure,
+					&data[i].env_ts, data[i].queued, NULL, false);
 			if (err && err != -ENODATA) {
 				return err;
 			}
@@ -204,7 +229,7 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 
 			len = snprintk(button, sizeof(button), "%d", data[i].btn);
 			if ((len < 0) || (len >= sizeof(button))) {
-				LOG_ERR("Cannot convert button number to string, buffer to small");
+				LOG_ERR("Cannot convert button number to string, buffer too small");
 				return -ENOMEM;
 			}
 
@@ -286,7 +311,7 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 			if (modem_dynamic[i].rsrp_fresh) {
 				len = snprintk(rsrp, sizeof(rsrp), "%d", modem_dynamic[i].rsrp);
 				if ((len < 0) || (len >= sizeof(rsrp))) {
-					LOG_ERR("Cannot convert RSRP value, buffer to small");
+					LOG_ERR("Cannot convert RSRP value, buffer too small");
 					return -ENOMEM;
 				}
 
@@ -306,7 +331,7 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 
 			len = snprintk(voltage, sizeof(voltage), "%d", data[i].bat);
 			if ((len < 0) || (len >= sizeof(voltage))) {
-				LOG_ERR("Cannot convert voltage number to string, buffer to small");
+				LOG_ERR("Cannot convert voltage to string, buffer too small");
 				return -ENOMEM;
 			}
 
@@ -541,7 +566,7 @@ int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
 
 	len = snprintk(button, sizeof(button), "%d", ui_buf->btn);
 	if ((len < 0) || (len >= sizeof(button))) {
-		LOG_ERR("Cannot convert button number to string, buffer to small");
+		LOG_ERR("Cannot convert button number to string, buffer too small");
 		err = -ENOMEM;
 		goto exit;
 	}

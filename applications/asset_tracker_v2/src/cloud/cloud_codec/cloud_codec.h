@@ -123,10 +123,12 @@ struct cloud_data_accelerometer {
 struct cloud_data_sensors {
 	/** Environmental sensors timestamp. UNIX milliseconds. */
 	int64_t env_ts;
-	/** Temperature in celcius */
-	double temp;
-	/** Humidity level in percentage */
-	double hum;
+	/** Temperature in celcius. */
+	double temperature;
+	/** Humidity level in percentage. */
+	double humidity;
+	/** Atmospheric pressure in kilopascal. */
+	double pressure;
 	/** Flag signifying that the data entry is to be encoded. */
 	bool queued : 1;
 };

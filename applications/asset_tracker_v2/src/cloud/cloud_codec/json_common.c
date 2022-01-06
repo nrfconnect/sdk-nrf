@@ -298,13 +298,19 @@ int json_common_sensor_data_add(cJSON *parent,
 		goto exit;
 	}
 
-	err = json_add_number(sensor_val_obj, DATA_TEMPERATURE, data->temp);
+	err = json_add_number(sensor_val_obj, DATA_TEMPERATURE, data->temperature);
 	if (err) {
 		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 		goto exit;
 	}
 
-	err = json_add_number(sensor_val_obj, DATA_HUMID, data->hum);
+	err = json_add_number(sensor_val_obj, DATA_HUMIDITY, data->humidity);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_number(sensor_val_obj, DATA_PRESSURE, data->pressure);
 	if (err) {
 		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 		goto exit;

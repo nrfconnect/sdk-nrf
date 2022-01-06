@@ -215,10 +215,13 @@ static void test_encode_environmental_data_object(void)
 	int ret;
 	/* Avoid using high precision floating point values to ease string comparison post
 	 * encoding.
+	 * The values for humidity, temperature, and pressure are actually floating point values,
+	 * env_ts is an integer.
 	 */
 	struct cloud_data_sensors data = {
-		.hum = 50,
-		.temp = 23,
+		.humidity = 50,
+		.temperature = 23,
+		.pressure = 101,
 		.env_ts = 1000,
 		.queued = true
 	};
@@ -269,8 +272,9 @@ static void test_encode_environmental_data_array(void)
 	 * encoding.
 	 */
 	struct cloud_data_sensors data = {
-		.hum = 50,
-		.temp = 23,
+		.humidity = 50,
+		.temperature = 23,
+		.pressure = 101,
 		.env_ts = 1000,
 		.queued = true
 	};
@@ -876,13 +880,15 @@ static void test_encode_batch_data_object(void)
 		[1].queued = true
 	};
 	struct cloud_data_sensors environmental[2] = {
-		[0].hum = 50,
-		[0].temp = 23,
+		[0].humidity = 50,
+		[0].temperature = 23,
+		[0].pressure = 80,
 		[0].env_ts = 1000,
 		[0].queued = true,
 		/* Second entry */
-		[1].hum = 50,
-		[1].temp = 23,
+		[1].humidity = 50,
+		[1].temperature = 23,
+		[1].pressure = 101,
 		[1].env_ts = 1000,
 		[1].queued = true
 	};
@@ -1094,8 +1100,9 @@ static void test_floating_point_encoding_environmental(void)
 	cJSON *decoded_value_obj;
 	struct cloud_data_sensors decoded_values = {0};
 	struct cloud_data_sensors data = {
-		.temp = 26.27,
-		.hum = 35.15,
+		.temperature = 26.27,
+		.humidity = 35.15,
+		.pressure = 101.36,
 		.env_ts = 1000,
 		.queued = true
 	};
@@ -1121,16 +1128,23 @@ static void test_floating_point_encoding_environmental(void)
 	zassert_not_null(decoded_value_obj, "Decoded value object is NULL");
 
 	cJSON *temperature = cJSON_GetObjectItem(decoded_value_obj, DATA_TEMPERATURE);
-	cJSON *humidity = cJSON_GetObjectItem(decoded_value_obj, DATA_HUMID);
+	cJSON *humidity = cJSON_GetObjectItem(decoded_value_obj, DATA_HUMIDITY);
+	cJSON *pressure = cJSON_GetObjectItem(decoded_value_obj, DATA_PRESSURE);
 
 	zassert_not_null(temperature, "Temperature is NULL");
 	zassert_not_null(humidity, "Humidity is NULL");
+	zassert_not_null(pressure, "Pressure is NULL");
 
-	decoded_values.temp = temperature->valuedouble;
-	decoded_values.hum = humidity->valuedouble;
+	decoded_values.temperature = temperature->valuedouble;
+	decoded_values.humidity = humidity->valuedouble;
+	decoded_values.pressure = pressure->valuedouble;
 
-	zassert_within(decoded_values.temp, data.temp, 0.1, "Decoded value is not within delta");
-	zassert_within(decoded_values.hum, data.hum, 0.1, "Decoded value is not within delta");
+	zassert_within(decoded_values.temperature, data.temperature, 0.1,
+		       "Decoded value is not within delta");
+	zassert_within(decoded_values.humidity, data.humidity, 0.1,
+		       "Decoded value is not within delta");
+	zassert_within(decoded_values.pressure, data.pressure, 0.1,
+		       "Decoded value is not within delta");
 
 	cJSON_Delete(decoded_root_obj);
 }

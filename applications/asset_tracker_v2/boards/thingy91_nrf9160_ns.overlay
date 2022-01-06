@@ -8,6 +8,7 @@
 	aliases {
 		temp-sensor = &bme680;
 		humidity-sensor = &bme680;
+		pressure-sensor = &bme680;
 		accelerometer = &adxl362;
 	};
 	pwmleds0 {
