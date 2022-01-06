@@ -20,15 +20,17 @@ Sensor types
 
 The following table lists the sensors and sensor data types supported by the module:
 
-+------------------+-----------------+
-| Sensor data type | External device |
-+==================+=================+
-| Humidity         | `BME680`_       |
-+------------------+-----------------+
-| Temperature      | `BME680`_       |
-+------------------+-----------------+
-| Acceleration     | `ADXL362`_      |
-+------------------+-----------------+
++----------------------+-----------------+
+| Sensor data type     | External device |
++======================+=================+
+| Humidity             | `BME680`_       |
++----------------------+-----------------+
+| Temperature          | `BME680`_       |
++----------------------+-----------------+
+| Atmospheric Pressure | `BME680`_       |
++----------------------+-----------------+
+| Acceleration         | `ADXL362`_      |
++----------------------+-----------------+
 
 The module controls and collects data from the sensors by interacting with their :ref:`device drivers <device_model_api>` using :ref:`Zephyr's generic sensor API <sensor_api>`.
 

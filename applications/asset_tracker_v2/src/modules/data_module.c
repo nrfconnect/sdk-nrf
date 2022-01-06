@@ -1222,8 +1222,9 @@ static void on_all_states(struct data_msg_data *msg)
 
 	if (IS_EVENT(msg, sensor, SENSOR_EVT_ENVIRONMENTAL_DATA_READY)) {
 		struct cloud_data_sensors new_sensor_data = {
-			.temp = msg->module.sensor.data.sensors.temperature,
-			.hum = msg->module.sensor.data.sensors.humidity,
+			.temperature = msg->module.sensor.data.sensors.temperature,
+			.humidity = msg->module.sensor.data.sensors.humidity,
+			.pressure = msg->module.sensor.data.sensors.pressure,
 			.env_ts = msg->module.sensor.data.sensors.timestamp,
 			.queued = true
 		};

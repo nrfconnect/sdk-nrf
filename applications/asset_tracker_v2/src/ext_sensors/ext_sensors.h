@@ -32,7 +32,8 @@ enum ext_sensor_evt_type {
 	/** Events propagated when an error associated with a sensor device occurs. */
 	EXT_SENSOR_EVT_ACCELEROMETER_ERROR,
 	EXT_SENSOR_EVT_TEMPERATURE_ERROR,
-	EXT_SENSOR_EVT_HUMIDITY_ERROR
+	EXT_SENSOR_EVT_HUMIDITY_ERROR,
+	EXT_SENSOR_EVT_PRESSURE_ERROR
 };
 
 /** @brief Structure containing external sensor data. */
@@ -81,6 +82,15 @@ int ext_sensors_temperature_get(double *temp);
  * @return 0 on success or negative error value on failure.
  */
 int ext_sensors_humidity_get(double *humid);
+
+/**
+ * @brief Get pressure from library.
+ *
+ * @param[out] press Pointer to variable containing atmospheric pressure in kilopascal.
+ *
+ * @return 0 on success or negative error value on failure.
+ */
+int ext_sensors_pressure_get(double *press);
 
 /**
  * @brief Set the threshold that triggeres callback on accelerometer data.

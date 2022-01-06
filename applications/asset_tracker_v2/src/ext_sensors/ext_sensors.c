@@ -47,6 +47,11 @@ static struct env_sensor humid_sensor = {
 	.dev = DEVICE_DT_GET(DT_ALIAS(humidity_sensor)),
 };
 
+static struct env_sensor press_sensor = {
+	.channel = SENSOR_CHAN_PRESS,
+	.dev = DEVICE_DT_GET(DT_ALIAS(pressure_sensor)),
+};
+
 static struct env_sensor accel_sensor = {
 	.channel = SENSOR_CHAN_ACCEL_XYZ,
 	.dev = DEVICE_DT_GET(DT_ALIAS(accelerometer)),
@@ -128,6 +133,12 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 	if (!device_is_ready(humid_sensor.dev)) {
 		LOG_ERR("Humidity sensor device is not ready");
 		evt.type = EXT_SENSOR_EVT_HUMIDITY_ERROR;
+		evt_handler(&evt);
+	}
+
+	if (!device_is_ready(press_sensor.dev)) {
+		LOG_ERR("Pressure sensor device is not ready");
+		evt.type = EXT_SENSOR_EVT_PRESSURE_ERROR;
 		evt_handler(&evt);
 	}
 
@@ -214,6 +225,37 @@ int ext_sensors_humidity_get(double *ext_hum)
 	k_spinlock_key_t key = k_spin_lock(&(humid_sensor.lock));
 	*ext_hum = sensor_value_to_double(&data);
 	k_spin_unlock(&(humid_sensor.lock), key);
+
+	return 0;
+}
+
+int ext_sensors_pressure_get(double *ext_press)
+{
+	int err;
+	struct sensor_value data = {0};
+	struct ext_sensor_evt evt = {0};
+
+	err = sensor_sample_fetch_chan(press_sensor.dev, SENSOR_CHAN_ALL);
+	if (err) {
+		LOG_ERR("Failed to fetch data from %s, error: %d",
+			press_sensor.dev->name, err);
+		evt.type = EXT_SENSOR_EVT_PRESSURE_ERROR;
+		evt_handler(&evt);
+		return -ENODATA;
+	}
+
+	err = sensor_channel_get(press_sensor.dev, press_sensor.channel, &data);
+	if (err) {
+		LOG_ERR("Failed to fetch data from %s, error: %d",
+			press_sensor.dev->name, err);
+		evt.type = EXT_SENSOR_EVT_PRESSURE_ERROR;
+		evt_handler(&evt);
+		return -ENODATA;
+	}
+
+	k_spinlock_key_t key = k_spin_lock(&(press_sensor.lock));
+	*ext_press = sensor_value_to_double(&data);
+	k_spin_unlock(&(press_sensor.lock), key);
 
 	return 0;
 }

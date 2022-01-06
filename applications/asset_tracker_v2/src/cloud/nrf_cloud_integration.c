@@ -41,6 +41,7 @@ static int send_service_info(void)
 	struct nrf_cloud_svc_info_ui ui_info = {
 		.gps = true,
 		.humidity = true,
+		.air_pressure = true,
 		.rsrp = true,
 		.temperature = true,
 		.button = true

@@ -57,6 +57,8 @@ struct sensor_module_data {
 	double temperature;
 	/** Humidity in percentage. */
 	double humidity;
+	/** Atmospheric pressure in kilopascal. */
+	double pressure;
 };
 
 /** @brief Structure used to provide acceleration data. */
