@@ -55,6 +55,7 @@
 #define MODEM_MCCMNC	       "mccmnc"
 #define MODEM_CELL_ID	       "cellID"
 #define MODEM_IP_ADDRESS       "ipAddress"
+#define MODEM_IMEI             "imei"
 
 #define DATA_NEIGHBOR_CELLS_LTE           "lte"
 #define DATA_NEIGHBOR_CELLS_MCC		  "mcc"

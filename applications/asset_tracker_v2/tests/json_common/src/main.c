@@ -293,6 +293,8 @@ static void test_encode_modem_dynamic_data_object(void)
 {
 	int ret;
 	struct cloud_data_modem_dynamic data = {
+		.band = 3,
+		.nw_mode = LTE_LC_LTE_MODE_NBIOT,
 		.rsrp = -8,
 		.area = 12,
 		.mccmnc = "24202",
@@ -300,6 +302,8 @@ static void test_encode_modem_dynamic_data_object(void)
 		.ip = "10.81.183.99",
 		.ts = 1000,
 		.queued = true,
+		.band_fresh = true,
+		.nw_mode_fresh = true,
 		.area_code_fresh = true,
 		.cell_id_fresh = true,
 		.rsrp_fresh = true,
@@ -350,6 +354,8 @@ static void test_encode_modem_dynamic_data_array(void)
 {
 	int ret;
 	struct cloud_data_modem_dynamic data = {
+		.band = 20,
+		.nw_mode = LTE_LC_LTE_MODE_LTEM,
 		.rsrp = -8,
 		.area = 12,
 		.mccmnc = "24202",
@@ -357,6 +363,8 @@ static void test_encode_modem_dynamic_data_array(void)
 		.ip = "10.81.183.99",
 		.ts = 1000,
 		.queued = true,
+		.band_fresh = true,
+		.nw_mode_fresh = true,
 		.area_code_fresh = true,
 		.cell_id_fresh = true,
 		.rsrp_fresh = true,
@@ -382,10 +390,8 @@ static void test_encode_modem_static_data_object(void)
 {
 	int ret;
 	struct cloud_data_modem_static data = {
-		.bnd = 3,
-		.nw_nb_iot = 1,
-		.nw_gnss = 1,
-		.iccid = "89450421180216216095",
+		.imei = "352656106111232",
+		.iccid = "89450421180216211234",
 		.fw = "mfw_nrf9160_1.2.3",
 		.brdv = "nrf9160dk_nrf9160",
 		.appv = "v1.0.0-development",
@@ -436,10 +442,8 @@ static void test_encode_modem_static_data_array(void)
 {
 	int ret;
 	struct cloud_data_modem_static data = {
-		.bnd = 3,
-		.nw_nb_iot = 1,
-		.nw_gnss = 1,
-		.iccid = "89450421180216216095",
+		.imei = "352656106111232",
+		.iccid = "89450421180216211234",
 		.fw = "mfw_nrf9160_1.2.3",
 		.brdv = "nrf9160dk_nrf9160",
 		.appv = "v1.0.0-development",
@@ -806,6 +810,8 @@ static void test_encode_batch_data_object(void)
 		[1].format = CLOUD_CODEC_GNSS_FORMAT_PVT
 	};
 	struct cloud_data_modem_dynamic modem_dynamic[2] = {
+		[0].band = 3,
+		[0].nw_mode = LTE_LC_LTE_MODE_NBIOT,
 		[0].rsrp = -8,
 		[0].area = 12,
 		[0].mccmnc = "24202",
@@ -813,12 +819,16 @@ static void test_encode_batch_data_object(void)
 		[0].ip = "10.81.183.99",
 		[0].ts = 1000,
 		[0].queued = true,
+		[0].band_fresh = true,
+		[0].nw_mode_fresh = true,
 		[0].area_code_fresh = true,
 		[0].cell_id_fresh = true,
 		[0].rsrp_fresh = true,
 		[0].ip_address_fresh = true,
 		[0].mccmnc_fresh = true,
 		/* Second entry */
+		[1].band = 20,
+		[1].nw_mode = LTE_LC_LTE_MODE_LTEM,
 		[1].rsrp = -5,
 		[1].area = 12,
 		[1].mccmnc = "24202",
@@ -826,6 +836,8 @@ static void test_encode_batch_data_object(void)
 		[1].ip = "10.81.183.99",
 		[1].ts = 1000,
 		[1].queued = true,
+		[1].band_fresh = true,
+		[1].nw_mode_fresh = true,
 		[1].area_code_fresh = true,
 		[1].cell_id_fresh = true,
 		[1].rsrp_fresh = true,
@@ -833,20 +845,16 @@ static void test_encode_batch_data_object(void)
 		[1].mccmnc_fresh = true,
 	};
 	struct cloud_data_modem_static modem_static[2] = {
-		[0].bnd = 3,
-		[0].nw_nb_iot = 1,
-		[0].nw_gnss = 1,
-		[0].iccid = "89450421180216216095",
+		[0].imei = "352656106111232",
+		[0].iccid = "89450421180216211234",
 		[0].fw = "mfw_nrf9160_1.2.3",
 		[0].brdv = "nrf9160dk_nrf9160",
 		[0].appv = "v1.0.0-development",
 		[0].ts = 1000,
 		[0].queued = true,
 		/* Second entry */
-		[1].bnd = 3,
-		[1].nw_nb_iot = 1,
-		[1].nw_gnss = 1,
-		[1].iccid = "89450421180216216095",
+		[1].imei = "352656106111232",
+		[1].iccid = "89450421180216211234",
 		[1].fw = "mfw_nrf9160_1.2.3",
 		[1].brdv = "nrf9160dk_nrf9160",
 		[1].appv = "v1.0.0-development",

@@ -1134,10 +1134,6 @@ static void on_all_states(struct data_msg_data *msg)
 	}
 
 	if (IS_EVENT(msg, modem, MODEM_EVT_MODEM_STATIC_DATA_READY)) {
-		modem_stat.nw_lte_m = msg->module.modem.data.modem_static.nw_mode_ltem;
-		modem_stat.nw_nb_iot = msg->module.modem.data.modem_static.nw_mode_nbiot;
-		modem_stat.nw_gnss = msg->module.modem.data.modem_static.nw_mode_gnss;
-		modem_stat.bnd = msg->module.modem.data.modem_static.band;
 		modem_stat.ts = msg->module.modem.data.modem_static.timestamp;
 		modem_stat.queued = true;
 
@@ -1153,10 +1149,14 @@ static void on_all_states(struct data_msg_data *msg)
 		BUILD_ASSERT(sizeof(modem_stat.iccid) >=
 			     sizeof(msg->module.modem.data.modem_static.iccid));
 
+		BUILD_ASSERT(sizeof(modem_stat.imei) >=
+			     sizeof(msg->module.modem.data.modem_static.imei));
+
 		strcpy(modem_stat.appv, msg->module.modem.data.modem_static.app_version);
 		strcpy(modem_stat.brdv, msg->module.modem.data.modem_static.board_version);
 		strcpy(modem_stat.fw, msg->module.modem.data.modem_static.modem_fw);
 		strcpy(modem_stat.iccid, msg->module.modem.data.modem_static.iccid);
+		strcpy(modem_stat.imei, msg->module.modem.data.modem_static.imei);
 
 		requested_data_status_set(APP_DATA_MODEM_STATIC);
 	}
@@ -1168,11 +1168,15 @@ static void on_all_states(struct data_msg_data *msg)
 	if (IS_EVENT(msg, modem, MODEM_EVT_MODEM_DYNAMIC_DATA_READY)) {
 		struct cloud_data_modem_dynamic new_modem_data = {
 			.area = msg->module.modem.data.modem_dynamic.area_code,
+			.nw_mode = msg->module.modem.data.modem_dynamic.nw_mode,
+			.band = msg->module.modem.data.modem_dynamic.band,
 			.cell = msg->module.modem.data.modem_dynamic.cell_id,
 			.rsrp = msg->module.modem.data.modem_dynamic.rsrp,
 			.ts = msg->module.modem.data.modem_dynamic.timestamp,
 
 			.area_code_fresh = msg->module.modem.data.modem_dynamic.area_code_fresh,
+			.nw_mode_fresh = msg->module.modem.data.modem_dynamic.nw_mode_fresh,
+			.band_fresh = msg->module.modem.data.modem_dynamic.band_fresh,
 			.cell_id_fresh = msg->module.modem.data.modem_dynamic.cell_id_fresh,
 			.rsrp_fresh = msg->module.modem.data.modem_dynamic.rsrp_fresh,
 			.ip_address_fresh = msg->module.modem.data.modem_dynamic.ip_address_fresh,

@@ -64,8 +64,12 @@ static enum state_type {
 /* Struct that holds data from the modem information module. */
 static struct modem_param_info modem_param;
 
-/* Value that always holds the latest RSRP value. */
+/* Value that holds the latest RSRP value. */
 static int16_t rsrp_value_latest;
+
+/* Value that holds the latest LTE network mode. */
+static enum lte_lc_lte_mode nw_mode_latest;
+
 const k_tid_t module_thread;
 
 /* Modem module message queue. */
@@ -228,6 +232,9 @@ static void lte_evt_handler(const struct lte_lc_evt *const evt)
 		} else {
 			LOG_DBG("Neighbor cell measurement was not successful");
 		}
+		break;
+	case LTE_LC_EVT_LTE_MODE_UPDATE:
+		nw_mode_latest = evt->lte_mode;
 		break;
 	default:
 		break;
@@ -487,11 +494,6 @@ static int static_modem_data_get(void)
 
 	struct modem_module_event *modem_module_event = new_modem_module_event();
 
-	modem_module_event->data.modem_static.nw_mode_ltem = modem_param.network.lte_mode.value;
-	modem_module_event->data.modem_static.nw_mode_nbiot = modem_param.network.nbiot_mode.value;
-	modem_module_event->data.modem_static.nw_mode_gnss = modem_param.network.gps_mode.value;
-	modem_module_event->data.modem_static.band = modem_param.network.current_band.value;
-
 	strncpy(modem_module_event->data.modem_static.app_version,
 		CONFIG_ASSET_TRACKER_V2_APP_VERSION,
 		sizeof(modem_module_event->data.modem_static.app_version) - 1);
@@ -508,6 +510,10 @@ static int static_modem_data_get(void)
 		modem_param.sim.iccid.value_string,
 		sizeof(modem_module_event->data.modem_static.iccid) - 1);
 
+	strncpy(modem_module_event->data.modem_static.imei,
+		modem_param.device.imei.value_string,
+		sizeof(modem_module_event->data.modem_static.imei) - 1);
+
 	modem_module_event->data.modem_static.app_version
 		[sizeof(modem_module_event->data.modem_static.app_version) - 1] = '\0';
 
@@ -519,6 +525,9 @@ static int static_modem_data_get(void)
 
 	modem_module_event->data.modem_static.iccid
 		[sizeof(modem_module_event->data.modem_static.iccid) - 1] = '\0';
+
+	modem_module_event->data.modem_static.imei
+		[sizeof(modem_module_event->data.modem_static.imei) - 1] = '\0';
 
 	modem_module_event->data.modem_static.timestamp = k_uptime_get();
 	modem_module_event->type = MODEM_EVT_MODEM_STATIC_DATA_READY;
@@ -547,7 +556,10 @@ static void populate_event_with_dynamic_modem_data(struct modem_module_event *ev
 	/* Structure that holds previous sampled dynamic modem data. By default, set all members of
 	 * the structure to invalid values.
 	 */
-	static struct modem_module_dynamic_modem_data prev = { .rsrp = UINT8_MAX };
+	static struct modem_module_dynamic_modem_data prev = {
+		.rsrp = UINT8_MAX,
+		.nw_mode = LTE_LC_LTE_MODE_NONE,
+	};
 
 	/* Compare the latest sampled parameters with the previous. If there has been a change we
 	 * want to include the parameters in the event.
@@ -557,6 +569,22 @@ static void populate_event_with_dynamic_modem_data(struct modem_module_event *ev
 		prev.rsrp = rsrp_value_latest;
 
 		event->data.modem_dynamic.rsrp_fresh = true;
+		params_added = true;
+	}
+
+	if ((prev.band != param->network.current_band.value) || include) {
+		event->data.modem_dynamic.band = param->network.current_band.value;
+		prev.band = param->network.current_band.value;
+
+		event->data.modem_dynamic.band_fresh = true;
+		params_added = true;
+	}
+
+	if ((prev.nw_mode != nw_mode_latest) || include) {
+		event->data.modem_dynamic.nw_mode = nw_mode_latest;
+		prev.nw_mode = nw_mode_latest;
+
+		event->data.modem_dynamic.nw_mode_fresh = true;
 		params_added = true;
 	}
 
