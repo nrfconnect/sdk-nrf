@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <net/azure_iot_hub.h>
+#include <net/azure_iot_hub_dps.h>
 #include <dk_buttons_and_leds.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
@@ -21,7 +22,7 @@
  * device twin document.
  */
 #define EVENT_INTERVAL		20
-#define RECV_BUF_SIZE		300
+#define RECV_BUF_SIZE		1024
 #define APP_WORK_Q_STACK_SIZE	KB(2)
 
 struct method_data {
@@ -38,6 +39,10 @@ static void direct_method_handler(struct k_work *work);
 static K_SEM_DEFINE(network_connected_sem, 0, 1);
 static K_SEM_DEFINE(recv_buf_sem, 1, 1);
 static atomic_t event_interval = EVENT_INTERVAL;
+
+#ifdef CONFIG_AZURE_IOT_HUB_DPS
+static bool dps_was_successful;
+#endif
 
 /* A work queue is created to execute potentially blocking calls from.
  * This is done to avoid blocking for example the system work queue for extended
@@ -124,17 +129,21 @@ static void on_evt_twin_desired(char *buf, size_t len)
 
 static void on_evt_direct_method(struct azure_iot_hub_method *method)
 {
-	printk("Method name: %s\n", method->name);
-	printf("Payload: %.*s\n", method->payload_len, method->payload);
+	size_t request_id_len = MIN(sizeof(method_data.request_id) - 1, method->request_id.size);
+	size_t name_len = MIN(sizeof(method_data.name) - 1, method->name.size);
 
-	strncpy(method_data.request_id, method->rid, sizeof(method_data.request_id) - 1);
-	method_data.request_id[sizeof(method_data.request_id) - 1] = '\0';
+	printk("Method name: %.*s\n", method->name.size, method->name.ptr);
+	printk("Payload: %.*s\n", method->payload.size, method->payload.ptr);
 
-	strncpy(method_data.name, method->name, sizeof(method_data.name) - 1);
-	method_data.name[sizeof(method_data.name) - 1] = '\0';
+	memcpy(method_data.request_id, method->request_id.ptr, request_id_len);
 
-	snprintf(method_data.payload, sizeof(method_data.payload),
-		 "%.*s", method->payload_len, method->payload);
+	method_data.request_id[request_id_len] = '\0';
+
+	memcpy(method_data.name, method->name.ptr, name_len);
+	method_data.name[name_len] = '\0';
+
+	snprintk(method_data.payload, sizeof(method_data.payload),
+		 "%.*s", method->payload.size, method->payload.ptr);
 
 	k_work_submit_to_queue(&application_work_q, &method_data.work);
 }
@@ -171,40 +180,30 @@ static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 		break;
 	case AZURE_IOT_HUB_EVT_DATA_RECEIVED:
 		printk("AZURE_IOT_HUB_EVT_DATA_RECEIVED\n");
-		printf("Received payload: %.*s\n",
-		       evt->data.msg.len, evt->data.msg.ptr);
-		break;
-	case AZURE_IOT_HUB_EVT_DPS_CONNECTING:
-		printk("AZURE_IOT_HUB_EVT_DPS_CONNECTING\n");
-		break;
-	case AZURE_IOT_HUB_EVT_DPS_REGISTERING:
-		printk("AZURE_IOT_HUB_EVT_DPS_REGISTERING\n");
-		break;
-	case AZURE_IOT_HUB_EVT_DPS_DONE:
-		printk("AZURE_IOT_HUB_EVT_DPS_DONE\n");
-		break;
-	case AZURE_IOT_HUB_EVT_DPS_FAILED:
-		printk("AZURE_IOT_HUB_EVT_DPS_FAILED\n");
+		printk("Received payload: %.*s\n",
+			evt->data.msg.payload.size, evt->data.msg.payload.ptr);
 		break;
 	case AZURE_IOT_HUB_EVT_TWIN_RECEIVED:
 		printk("AZURE_IOT_HUB_EVT_TWIN_RECEIVED\n");
-		event_interval_apply(event_interval_get(evt->data.msg.ptr));
+		event_interval_apply(event_interval_get(evt->data.msg.payload.ptr));
 		break;
 	case AZURE_IOT_HUB_EVT_TWIN_DESIRED_RECEIVED:
 		printk("AZURE_IOT_HUB_EVT_TWIN_DESIRED_RECEIVED\n");
-		on_evt_twin_desired(evt->data.msg.ptr, evt->data.msg.len);
+		on_evt_twin_desired(evt->data.msg.payload.ptr, evt->data.msg.payload.size);
 		break;
 	case AZURE_IOT_HUB_EVT_DIRECT_METHOD:
 		printk("AZURE_IOT_HUB_EVT_DIRECT_METHOD\n");
 		on_evt_direct_method(&evt->data.method);
 		break;
 	case AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS:
-		printk("AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: %s\n",
-		       evt->data.result.rid);
+		printk("AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: %.*s\n",
+		       evt->data.result.request_id.size, evt->data.result.request_id.ptr);
 		break;
 	case AZURE_IOT_HUB_EVT_TWIN_RESULT_FAIL:
-		printk("AZURE_IOT_HUB_EVT_TWIN_RESULT_FAIL, ID %s, status %d\n",
-			evt->data.result.rid, evt->data.result.status);
+		printk("AZURE_IOT_HUB_EVT_TWIN_RESULT_FAIL, ID %.*s, status %d\n",
+			evt->data.result.request_id.size,
+			evt->data.result.request_id.ptr,
+			evt->data.result.status);
 		break;
 	case AZURE_IOT_HUB_EVT_PUBACK:
 		printk("AZURE_IOT_HUB_EVT_PUBACK\n");
@@ -223,13 +222,13 @@ static void send_event(struct k_work *work)
 	int err;
 	static char buf[60];
 	ssize_t len;
-	struct azure_iot_hub_data msg = {
+	struct azure_iot_hub_msg msg = {
 		.topic.type = AZURE_IOT_HUB_TOPIC_EVENT,
-		.ptr = buf,
+		.payload.ptr = buf,
 		.qos = MQTT_QOS_0_AT_MOST_ONCE,
 	};
 
-	len = snprintf(buf, sizeof(buf),
+	len = snprintk(buf, sizeof(buf),
 		       "{\"temperature\":%d.%d,\"timestamp\":%d}",
 		       25, k_uptime_get_32() % 10, k_uptime_get_32());
 	if ((len < 0) || (len > sizeof(buf))) {
@@ -237,7 +236,7 @@ static void send_event(struct k_work *work)
 		goto exit;
 	}
 
-	msg.len = len;
+	msg.payload.size = len;
 
 	printk("Sending event:\n%s\n", buf);
 
@@ -263,14 +262,17 @@ exit:
 static void direct_method_handler(struct k_work *work)
 {
 	int err;
-	static const char ret[] = "{\"it\":\"worked\"}";
+	static char *response = "{\"it\":\"worked\"}";
 
 	/* Status code 200 indicates successful execution of direct method. */
 	struct azure_iot_hub_result result = {
-		.rid = method_data.request_id,
+		.request_id = {
+			.ptr = method_data.request_id,
+			.size = strlen(method_data.request_id),
+		},
 		.status = 200,
-		.payload = ret,
-		.payload_len = sizeof(ret) - 1,
+		.payload.ptr = response,
+		.payload.size = sizeof(response) - 1,
 	};
 	bool led_state = strncmp(method_data.payload, "0", 1) ? 1 : 0;
 
@@ -300,9 +302,9 @@ static void twin_report_work_fn(struct k_work *work)
 	int err;
 	char buf[100];
 	ssize_t len;
-	struct azure_iot_hub_data data = {
+	struct azure_iot_hub_msg data = {
 		.topic.type = AZURE_IOT_HUB_TOPIC_TWIN_REPORTED,
-		.ptr = buf,
+		.payload.ptr = buf,
 		.qos = MQTT_QOS_0_AT_MOST_ONCE,
 	};
 	int new_interval;
@@ -319,7 +321,7 @@ static void twin_report_work_fn(struct k_work *work)
 		return;
 	}
 
-	data.len = len;
+	data.payload.size = len;
 
 	err = azure_iot_hub_send(&data);
 	if (err) {
@@ -373,7 +375,7 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		char log_buf[60];
 		ssize_t len;
 
-		len = snprintf(log_buf, sizeof(log_buf),
+		len = snprintk(log_buf, sizeof(log_buf),
 			       "eDRX parameter update: eDRX: %f, PTW: %f",
 			       evt->edrx_cfg.edrx, evt->edrx_cfg.ptw);
 		if (len > 0) {
@@ -421,16 +423,114 @@ static void work_init(void)
 		       K_HIGHEST_APPLICATION_THREAD_PRIO, NULL);
 }
 
+#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
+static K_SEM_DEFINE(dps_done_sem, 0, 1);
+
+static void dps_handler(enum azure_iot_hub_dps_reg_status status)
+{
+	switch (status) {
+	case AZURE_IOT_HUB_DPS_REG_STATUS_NOT_STARTED:
+		printk("DPS registration status: AZURE_IOT_HUB_DPS_REG_STATUS_NOT_STARTED\n");
+		break;
+	case AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNING:
+		printk("DPS registration status: AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNING\n");
+		break;
+	case AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNED:
+		printk("DPS registration status: AZURE_IOT_HUB_DPS_REG_STATUS_ASSIGNED\n");
+
+		dps_was_successful = true;
+
+		k_sem_give(&dps_done_sem);
+		break;
+	case AZURE_IOT_HUB_DPS_REG_STATUS_FAILED:
+		printk("DPS registration status: AZURE_IOT_HUB_DPS_REG_STATUS_FAILED\n");
+
+		dps_was_successful = false;
+
+		k_sem_give(&dps_done_sem);
+		break;
+	default:
+		printk("Unhandled DPS status: %d\n", status);
+		break;
+	}
+}
+
+/* Run DPS using the provided device_id as registration ID. Upon success, the function will return
+ * 0 and populate the hostname and device_id buffers with the assigned values.
+ * The return value will be a negative integer in case of failure.
+ */
+static int dps_run(struct azure_iot_hub_buf *hostname, struct azure_iot_hub_buf *device_id)
+{
+	int err;
+	struct azure_iot_hub_dps_config dps_cfg = {
+		.handler = dps_handler,
+		.reg_id = {
+			.ptr = device_id->ptr,
+			.size = strlen(device_id->ptr),
+		},
+		/* Default ID scope provided by Kconfig is used, so we will not change that. */
+	};
+
+	printk("Starting DPS\n");
+
+	err = azure_iot_hub_dps_init(&dps_cfg);
+	if (err) {
+		printk("azure_iot_hub_dps_init failed, error: %d\n", err);
+		return err;
+	}
+
+	err = azure_iot_hub_dps_start();
+	if (err == 0) {
+		printk("The DPS process has started, timeout is set to %d seconds\n",
+			CONFIG_AZURE_IOT_HUB_DPS_TIMEOUT_SEC);
+
+		/* If DPS was started successfully, we wait for the semaphore that is given when the
+		 * provisioning completes.
+		 */
+
+		(void)k_sem_take(&dps_done_sem, K_FOREVER);
+
+		if (!dps_was_successful) {
+			return -EFAULT;
+		}
+
+		/* The device was assigned, continue to retrieve the hostname. */
+	} else if (err == -EALREADY) {
+		printk("Already assigned to an IoT hub, skipping DPS\n");
+	} else {
+		printk("DPS failed to start, error: %d\n", err);
+		return err;
+	}
+
+	err = azure_iot_hub_dps_hostname_get(hostname);
+	if (err) {
+		printk("Failed to get hostname, error: %d", err);
+		return err;
+	}
+
+	printk("Device ID \"%.*s\" assigned to IoT hub with hostname \"%.*s\"\n",
+		device_id->size, device_id->ptr,
+		hostname->size, hostname->ptr);
+
+	return 0;
+}
+#endif /* CONFIG_AZURE_IOT_HUB_DPS && !CONFIG_AZURE_IOT_HUB_DPS_AUTO */
+
 void main(void)
 {
 	int err;
-	/* The device ID below is only used in by the library if
-	 * CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP is enabled. By default it's not.
-	 */
-	char dev_id[] = "my-device";
+	char device_id[128] = CONFIG_AZURE_IOT_HUB_DEVICE_ID;
+	char hostname[128] = CONFIG_AZURE_IOT_HUB_HOSTNAME;
 	struct azure_iot_hub_config cfg = {
-		.device_id = dev_id,
-		.device_id_len = strlen(dev_id),
+		.device_id = {
+			.ptr = device_id,
+			.size = sizeof(CONFIG_AZURE_IOT_HUB_DEVICE_ID) - 1,
+		},
+		.hostname = {
+			.ptr = hostname,
+			.size = sizeof(CONFIG_AZURE_IOT_HUB_HOSTNAME) - 1,
+		},
+		.use_dps = true,
 	};
 
 	printk("Azure IoT Hub sample started\n");
@@ -442,13 +542,6 @@ void main(void)
 	work_init();
 	cJSON_Init();
 
-	err = azure_iot_hub_init(&cfg, azure_event_handler);
-	if (err) {
-		printk("Azure IoT Hub could not be initialized, error: %d\n",
-		       err);
-		return;
-	}
-
 #if IS_ENABLED(CONFIG_LTE_LINK_CONTROL)
 	printk("Connecting to LTE network\n");
 	modem_configure();
@@ -456,11 +549,30 @@ void main(void)
 	printk("Connected to LTE network\n");
 #endif
 
-	err = azure_iot_hub_connect();
+#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
+	/* Using the device ID as DPS registration ID. */
+	err = dps_run(&cfg.hostname, &cfg.device_id);
+	if (err) {
+		printk("Failed to run DPS, error: %d\n, terminating connection attempt", err);
+		return;
+	}
+#endif
+
+	err = azure_iot_hub_init(azure_event_handler);
+	if (err) {
+		printk("Azure IoT Hub could not be initialized, error: %d\n", err);
+		return;
+	}
+
+	printk("Azure IoT Hub library initialized\n");
+
+	err = azure_iot_hub_connect(&cfg);
 	if (err < 0) {
 		printk("azure_iot_hub_connect failed: %d\n", err);
 		return;
 	}
+
+	printk("Connection request sent to IoT Hub\n");
 
 	/* After the connection to the IoT hub has been established, the
 	 * Azure IoT Hub library will generate events when data is received.

@@ -159,6 +159,10 @@ manifest:
       path: modules/lib/lc3
       groups:
       - nrf5340_audio
+    - name: azure-sdk-for-c
+      repo-path: azure-sdk-for-c
+      path: modules/lib/azure-sdk-for-c
+      revision: 308c171cb4b5eed266649012a68406487ec81fb2
     # Other third-party repositories.
     - name: cmock
       path: test/cmock

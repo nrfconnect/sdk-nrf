@@ -17,8 +17,6 @@
 #include <cJSON.h>
 #include <cJSON_os.h>
 
-#include "azure_iot_hub_dps.h"
-
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(azure_fota, CONFIG_AZURE_FOTA_LOG_LEVEL);

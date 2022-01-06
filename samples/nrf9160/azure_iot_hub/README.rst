@@ -66,13 +66,19 @@ Additional configuration
 
 Check and configure the following library options that are used by the sample:
 
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` - Sets the Azure IoT Hub device ID. Alternatively, enable :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` option and set the device ID at run time in :c:struct:`azure_iot_hub_config` passed to the :c:func:`azure_iot_hub_init` function.
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_HOSTNAME` - Sets the Azure IoT Hub host name. If DPS is used, the sample assumes that the IoT hub host name is unknown, and the configuration is ignored.
+* :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` - Sets the Azure IoT Hub device ID. Alternatively, the device ID can be provided at run time.
+* :kconfig:option:`CONFIG_AZURE_IOT_HUB_HOSTNAME` - Sets the Azure IoT Hub host name. If DPS is used, the sample assumes that the IoT hub host name is unknown, and the configuration is ignored. The configuration can also be omitted and the hostname provided at run time.
 
-If DPS is used, configure the following library options:
+If DPS is used, use the Kconfig fragment found in the :file:`overlay-dps.conf` file and change the desired configurations there.
+As an example, the following compiles with DPS for nRF9160DK:
+
+.. code-block:: console
+
+	west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-dps.conf
 
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS` - Enables Azure IoT Hub DPS.
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE` - Sets the Azure IoT Hub DPS ID scope.
+* :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_REG_ID` - Sets the Azure IoT Hub DPS registration ID. It can be provided at run time. By default, the sample uses the device ID as the registration ID and sets it at run time.
+* :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE` - Sets the DPS ID scope of the Azure IoT Hub. This can be provided at run time.
 
 .. note::
 
@@ -102,7 +108,7 @@ Optionally, follow the instructions at `Azure IoT Explorer`_ to install and conf
 #. Observe the log output and verify that it is similar to the :ref:`sampoutput_azure_iot`.
 #. Use the `Azure IoT Explorer`_, or log in to the `Azure Portal`_.
 #. Select the connected IoT hub and then your device.
-#. Change the device twin's *desired* property ``telemetryInterval`` to a new value, for instance ``10``, and save the updated device twin.
+#. Change the device twin's *desired* property ``telemetryInterval`` to a new value, for instance ``60``, and save the updated device twin.
    If it does not exist, you can add the *desired* property.
 #. Observe that the device receives the updated ``telemetryInterval`` value, applies it, and starts sending new telemetry events every 10 seconds.
 #. Verify that the ``reported`` object in the device twin now has a ``telemetryInterval`` property with the correct value reported back from the device.
@@ -136,7 +142,10 @@ When the sample runs, the device boots, and the sample displays the following ou
 	Event was successfully sent
 	Next event will be sent in 20 seconds
 
-	...
+
+If a new telemetry interval is set in the device twin, the console output is like this:
+
+.. code-block:: console
 
 	AZURE_IOT_HUB_EVT_TWIN_DESIRED_RECEIVED
 	New telemetry interval has been applied: 60
