@@ -61,11 +61,6 @@ int json_common_modem_static_data_add(cJSON *parent,
 				      cJSON **parent_ref)
 {
 	int err;
-	char nw_mode[50] = {0};
-
-	static const char lte_string[] = "LTE-M";
-	static const char nbiot_string[] = "NB-IoT";
-	static const char gnss_string[] = " GNSS";
 
 	if (!data->queued) {
 		return -ENODATA;
@@ -85,23 +80,7 @@ int json_common_modem_static_data_add(cJSON *parent,
 		goto exit;
 	}
 
-	if (data->nw_lte_m) {
-		strcpy(nw_mode, lte_string);
-	} else if (data->nw_nb_iot) {
-		strcpy(nw_mode, nbiot_string);
-	}
-
-	if (data->nw_gnss) {
-		strcat(nw_mode, gnss_string);
-	}
-
-	err = json_add_number(modem_val_obj, MODEM_CURRENT_BAND, data->bnd);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
-	}
-
-	err = json_add_str(modem_val_obj, MODEM_NETWORK_MODE, nw_mode);
+	err = json_add_str(modem_val_obj, MODEM_IMEI, data->imei);
 	if (err) {
 		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
 		goto exit;
@@ -183,6 +162,26 @@ int json_common_modem_dynamic_data_add(cJSON *parent,
 	if (modem_obj == NULL || modem_val_obj == NULL) {
 		err = -ENOMEM;
 		goto exit;
+	}
+
+	if (data->band_fresh) {
+		err = json_add_number(modem_val_obj, MODEM_CURRENT_BAND, data->band);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
+	}
+
+	if (data->nw_mode_fresh) {
+		err = json_add_str(modem_val_obj, MODEM_NETWORK_MODE,
+				   (data->nw_mode == LTE_LC_LTE_MODE_LTEM) ? "LTE-M" :
+				   (data->nw_mode == LTE_LC_LTE_MODE_NBIOT) ? "NB-IoT" : "Unknown");
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
 	}
 
 	if (data->rsrp_fresh) {

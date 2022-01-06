@@ -15,6 +15,7 @@
 #define MODEM_MCCMNC	       "mccmnc"
 #define MODEM_CELL_ID	       "cell"
 #define MODEM_IP_ADDRESS       "ip"
+#define MODEM_IMEI             "imei"
 
 #define CONFIG_DEVICE_MODE		  "act"
 #define CONFIG_ACTIVE_TIMEOUT		  "actwt"
