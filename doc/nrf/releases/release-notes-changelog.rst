@@ -151,6 +151,7 @@ nRF9160 samples
   * Added a new shell command ``cloud`` for establishing an MQTT connection to nRF Cloud.
   * Removed support for the GPS driver.
   * The LED 1 on the development kit indicates the LTE registration status.
+  * Added a new shell command ``filtephem`` to enable or disable nRF Cloud A-GPS filtered ephemerides mode (REST only).
 
 * :ref:`http_application_update_sample` sample:
 
@@ -161,6 +162,7 @@ nRF9160 samples
 
   * Added support for minimal assistance using factory almanac, time and location.
   * Added support for TTFF test mode.
+  * Added support for nRF Cloud A-GPS filtered mode.
 
 * nRF9160: HTTP update samples:
 
@@ -291,11 +293,11 @@ Libraries for networking
 
 * :ref:`lib_location` library:
 
-  * Added A-GPS filtered ephemerides support.
+  * Added A-GPS filtered ephemerides support for both MQTT and REST transports.
 
 * :ref:`lib_nrf_cloud` library:
 
-  * Added A-GPS filtered ephemerides support, with ability to set matching threshold mask angle.
+  * Added A-GPS filtered ephemerides support, with ability to set matching threshold mask angle, for both MQTT and REST transports.
   * When filtered ephemerides is enabled, A-GPS assistance requests to cloud are limited to no more than once every two hours.
   * Updated MQTT connection error handling.
     Now, unacknowledged pings and other errors result in a transition to the disconnected state.
