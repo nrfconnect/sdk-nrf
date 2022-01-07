@@ -39,18 +39,6 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 		LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS		: \
 	LTE_LC_SYSTEM_MODE_NONE)
 
-enum lte_lc_notif_type {
-	LTE_LC_NOTIF_CEREG,
-	LTE_LC_NOTIF_CSCON,
-	LTE_LC_NOTIF_CEDRXP,
-	LTE_LC_NOTIF_XT3412,
-	LTE_LC_NOTIF_NCELLMEAS,
-	LTE_LC_NOTIF_XMODEMSLEEP,
-	LTE_LC_NOTIF_MDMEV,
-
-	LTE_LC_NOTIF_COUNT,
-};
-
 /* Static variables */
 
 static bool is_initialized;
@@ -160,33 +148,6 @@ static const char thingy91_magpio[] = {
 
 static struct k_sem link;
 
-static const char *const at_notifs[] = {
-	[LTE_LC_NOTIF_CEREG]		= "+CEREG",
-	[LTE_LC_NOTIF_CSCON]		= "+CSCON",
-	[LTE_LC_NOTIF_CEDRXP]		= "+CEDRXP",
-	[LTE_LC_NOTIF_XT3412]		= "%XT3412",
-	[LTE_LC_NOTIF_NCELLMEAS]	= "%NCELLMEAS",
-	[LTE_LC_NOTIF_XMODEMSLEEP]	= "%XMODEMSLEEP",
-	[LTE_LC_NOTIF_MDMEV]		= "%MDMEV",
-};
-
-BUILD_ASSERT(ARRAY_SIZE(at_notifs) == LTE_LC_NOTIF_COUNT);
-
-static bool is_relevant_notif(const char *notif, enum lte_lc_notif_type *type)
-{
-	for (size_t i = 0; i < ARRAY_SIZE(at_notifs); i++) {
-		if (strncmp(at_notifs[i], notif,
-			    strlen(at_notifs[i])) == 0) {
-			/* The notification type matches the array index */
-			*type = i;
-
-			return true;
-		}
-	}
-
-	return false;
-}
-
 static bool is_cellid_valid(uint32_t cellid)
 {
 	if (cellid == LTE_LC_CELL_EUTRAN_ID_INVALID) {
@@ -196,302 +157,319 @@ static bool is_cellid_valid(uint32_t cellid)
 	return true;
 }
 
-AT_MONITOR(network, ANY, at_handler);
+AT_MONITOR(ltelc_atmon_cereg, "+CEREG", at_handler_cereg);
+AT_MONITOR(ltelc_atmon_cscon, "+CSCON", at_handler_cscon);
+AT_MONITOR(ltelc_atmon_cedrxp, "+CEDRXP", at_handler_cedrxp);
+AT_MONITOR(ltelc_atmon_xt3412, "%XT3412", at_handler_xt3412);
+AT_MONITOR(ltelc_atmon_ncellmeas, "%NCELLMEAS", at_handler_ncellmeas);
+AT_MONITOR(ltelc_atmon_xmodemsleep, "%XMODEMSLEEP", at_handler_xmodemsleep);
+AT_MONITOR(ltelc_atmon_mdmev, "%MDMEV", at_handler_mdmev);
 
-static void at_handler(const char *response)
+static void at_handler_cereg(const char *response)
 {
 	int err;
-	bool notify = false;
-	enum lte_lc_notif_type notif_type;
 	struct lte_lc_evt evt = {0};
 
-	if (response == NULL) {
-		LOG_ERR("Response buffer is NULL-pointer");
+	__ASSERT_NO_MSG(response != NULL);
+
+	static enum lte_lc_nw_reg_status prev_reg_status =
+		LTE_LC_NW_REG_NOT_REGISTERED;
+	static struct lte_lc_cell prev_cell;
+	static struct lte_lc_psm_cfg prev_psm_cfg;
+	static enum lte_lc_lte_mode prev_lte_mode = LTE_LC_LTE_MODE_NONE;
+	enum lte_lc_nw_reg_status reg_status = 0;
+	struct lte_lc_cell cell = {0};
+	enum lte_lc_lte_mode lte_mode;
+	struct lte_lc_psm_cfg psm_cfg = {0};
+
+	LOG_DBG("+CEREG notification: %s", log_strdup(response));
+
+	err = parse_cereg(response, true, &reg_status, &cell, &lte_mode);
+	if (err) {
+		LOG_ERR("Failed to parse notification (error %d): %s",
+			err, log_strdup(response));
 		return;
 	}
 
-	/* Only proceed with parsing if notification is relevant */
-	if (!is_relevant_notif(response, &notif_type)) {
-		return;
-	}
-
-	switch (notif_type) {
-	case LTE_LC_NOTIF_CEREG: {
-		static enum lte_lc_nw_reg_status prev_reg_status =
-			LTE_LC_NW_REG_NOT_REGISTERED;
-		static struct lte_lc_cell prev_cell;
-		static struct lte_lc_psm_cfg prev_psm_cfg;
-		static enum lte_lc_lte_mode prev_lte_mode = LTE_LC_LTE_MODE_NONE;
-		enum lte_lc_nw_reg_status reg_status = 0;
-		struct lte_lc_cell cell = {0};
-		enum lte_lc_lte_mode lte_mode;
-		struct lte_lc_psm_cfg psm_cfg = {0};
-
-		LOG_DBG("+CEREG notification: %s", log_strdup(response));
-
-		err = parse_cereg(response, true, &reg_status, &cell, &lte_mode);
-		if (err) {
-			LOG_ERR("Failed to parse notification (error %d): %s",
-				err, log_strdup(response));
-			return;
-		}
-
-		if ((reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
-		    (reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
-			/* Set the network registration status to UNKNOWN if the cell ID is parsed
-			 * to UINT32_MAX (FFFFFFFF) when the registration status is either home or
-			 * roaming.
-			 */
-			if (!is_cellid_valid(cell.id)) {
-				reg_status = LTE_LC_NW_REG_UNKNOWN;
-			} else {
-				k_sem_give(&link);
-			}
-		}
-
-		switch (reg_status) {
-		case LTE_LC_NW_REG_NOT_REGISTERED:
-			LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_NOT_REGISTERED);
-			break;
-		case LTE_LC_NW_REG_REGISTERED_HOME:
-			LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_REGISTERED_HOME);
-			break;
-		case LTE_LC_NW_REG_SEARCHING:
-			LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_SEARCHING);
-			break;
-		case LTE_LC_NW_REG_REGISTRATION_DENIED:
-			LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_REGISTRATION_DENIED);
-			break;
-		case LTE_LC_NW_REG_UNKNOWN:
-			LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_UNKNOWN);
-			break;
-		case LTE_LC_NW_REG_REGISTERED_ROAMING:
-			LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_REGISTERED_ROAMING);
-			break;
-		case LTE_LC_NW_REG_REGISTERED_EMERGENCY:
-			LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_REGISTERED_EMERGENCY);
-			break;
-		case LTE_LC_NW_REG_UICC_FAIL:
-			LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_UICC_FAIL);
-			break;
-		}
-
-		if (event_handler_list_is_empty()) {
-			return;
-		}
-
-		/* Network registration status event */
-		if (reg_status != prev_reg_status) {
-			prev_reg_status = reg_status;
-			evt.type = LTE_LC_EVT_NW_REG_STATUS;
-			evt.nw_reg_status = reg_status;
-
-			event_handler_list_dispatch(&evt);
-		}
-
-		/* Cell update event */
-		if (memcmp(&cell, &prev_cell, sizeof(struct lte_lc_cell))) {
-			evt.type = LTE_LC_EVT_CELL_UPDATE;
-
-			memcpy(&prev_cell, &cell, sizeof(struct lte_lc_cell));
-			memcpy(&evt.cell, &cell, sizeof(struct lte_lc_cell));
-			event_handler_list_dispatch(&evt);
-		}
-
-		if (lte_mode != prev_lte_mode) {
-			prev_lte_mode = lte_mode;
-			evt.type = LTE_LC_EVT_LTE_MODE_UPDATE;
-			evt.lte_mode = lte_mode;
-
-			LTE_LC_TRACE(lte_mode == LTE_LC_LTE_MODE_LTEM ?
-				     LTE_LC_TRACE_LTE_MODE_UPDATE_LTEM :
-				     LTE_LC_TRACE_LTE_MODE_UPDATE_NBIOT);
-
-			event_handler_list_dispatch(&evt);
-		}
-
-		if ((reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
-		    (reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
-			return;
-		}
-
-		err = lte_lc_psm_get(&psm_cfg.tau, &psm_cfg.active_time);
-		if (err) {
-			LOG_ERR("Failed to get PSM information");
-			return;
-		}
-
-		/* PSM configuration update event */
-		if (memcmp(&psm_cfg, &prev_psm_cfg,
-			   sizeof(struct lte_lc_psm_cfg))) {
-			evt.type = LTE_LC_EVT_PSM_UPDATE;
-
-			memcpy(&prev_psm_cfg, &psm_cfg,
-			       sizeof(struct lte_lc_psm_cfg));
-			memcpy(&evt.psm_cfg, &psm_cfg,
-			       sizeof(struct lte_lc_psm_cfg));
-			event_handler_list_dispatch(&evt);
-		}
-
-		break;
-	}
-	case LTE_LC_NOTIF_CSCON:
-		LOG_DBG("+CSCON notification");
-
-		err = parse_rrc_mode(response,
-				     &evt.rrc_mode,
-				     AT_CSCON_RRC_MODE_INDEX);
-		if (err) {
-			LOG_ERR("Can't parse signalling mode, error: %d", err);
-			return;
-		}
-
-		if (evt.rrc_mode == LTE_LC_RRC_MODE_IDLE) {
-			LTE_LC_TRACE(LTE_LC_TRACE_RRC_IDLE);
-		} else if (evt.rrc_mode == LTE_LC_RRC_MODE_CONNECTED) {
-			LTE_LC_TRACE(LTE_LC_TRACE_RRC_CONNECTED);
-		}
-
-		evt.type = LTE_LC_EVT_RRC_UPDATE;
-		notify = true;
-
-		break;
-	case LTE_LC_NOTIF_CEDRXP:
-		LOG_DBG("+CEDRXP notification");
-
-		err = parse_edrx(response, &evt.edrx_cfg);
-		if (err) {
-			LOG_ERR("Can't parse eDRX, error: %d", err);
-			return;
-		}
-
-		evt.type = LTE_LC_EVT_EDRX_UPDATE;
-		notify = true;
-
-		break;
-	case LTE_LC_NOTIF_XT3412:
-		LOG_DBG("%%XT3412 notification");
-
-		err = parse_xt3412(response, &evt.time);
-		if (err) {
-			LOG_ERR("Can't parse TAU pre-warning notification, error: %d", err);
-			return;
-		}
-
-		if (evt.time != CONFIG_LTE_LC_TAU_PRE_WARNING_TIME_MS) {
-			/* Only propagate TAU pre-warning notifications when the received time
-			 * parameter is the duration of the set pre-warning time.
-			 */
-			return;
-		}
-
-		evt.type = LTE_LC_EVT_TAU_PRE_WARNING;
-		notify = true;
-
-		break;
-	case LTE_LC_NOTIF_NCELLMEAS: {
-		int ncell_count = neighborcell_count_get(response);
-		struct lte_lc_ncell *neighbor_cells = NULL;
-
-		LOG_DBG("%%NCELLMEAS notification");
-		LOG_DBG("Neighbor cell count: %d", ncell_count);
-
-		if (event_handler_list_is_empty()) {
-			/* No need to parse the response if there is no handler
-			 * to receive the parsed data.
-			 */
-			return;
-		}
-
-		if (ncell_count != 0) {
-			neighbor_cells = k_calloc(ncell_count, sizeof(struct lte_lc_ncell));
-			if (neighbor_cells == NULL) {
-				LOG_ERR("Failed to allocate memory for neighbor cells");
-				return;
-			}
-		}
-
-		evt.cells_info.neighbor_cells = neighbor_cells;
-
-		err = parse_ncellmeas(response, &evt.cells_info);
-
-		switch (err) {
-		case -E2BIG:
-			LOG_WRN("Not all neighbor cells could be parsed");
-			LOG_WRN("More cells than the configured max count of %d were found",
-				CONFIG_LTE_NEIGHBOR_CELLS_MAX);
-			/* Fall through */
-		case 0: /* Fall through */
-		case 1:
-			evt.type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
-			event_handler_list_dispatch(&evt);
-			break;
-		default:
-			LOG_ERR("Parsing of neighbor cells failed, err: %d", err);
-			break;
-		}
-
-		if (neighbor_cells) {
-			k_free(neighbor_cells);
-		}
-
-		return;
-	}
-	case LTE_LC_NOTIF_XMODEMSLEEP:
-		LOG_DBG("%%XMODEMSLEEP notification");
-
-		err = parse_xmodemsleep(response, &evt.modem_sleep);
-		if (err) {
-			LOG_ERR("Can't parse modem sleep pre-warning notification, error: %d", err);
-			return;
-		}
-
-		/* Link controller only supports PSM, RF inactivity and flight mode
-		 * modem sleep types.
+	if ((reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
+	    (reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+		/* Set the network registration status to UNKNOWN if the cell ID is parsed
+		 * to UINT32_MAX (FFFFFFFF) when the registration status is either home or
+		 * roaming.
 		 */
-		if ((evt.modem_sleep.type != LTE_LC_MODEM_SLEEP_PSM) &&
-		    (evt.modem_sleep.type != LTE_LC_MODEM_SLEEP_RF_INACTIVITY) &&
-		    (evt.modem_sleep.type != LTE_LC_MODEM_SLEEP_FLIGHT_MODE)) {
-			return;
-		}
-
-		/* Propagate the appropriate event depending on the parsed time parameter. */
-		if (evt.modem_sleep.time == CONFIG_LTE_LC_MODEM_SLEEP_PRE_WARNING_TIME_MS) {
-			evt.type = LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING;
-		} else if (evt.modem_sleep.time == 0) {
-			LTE_LC_TRACE(LTE_LC_TRACE_MODEM_SLEEP_EXIT);
-
-			evt.type = LTE_LC_EVT_MODEM_SLEEP_EXIT;
+		if (!is_cellid_valid(cell.id)) {
+			reg_status = LTE_LC_NW_REG_UNKNOWN;
 		} else {
-			LTE_LC_TRACE(LTE_LC_TRACE_MODEM_SLEEP_ENTER);
-
-			evt.type = LTE_LC_EVT_MODEM_SLEEP_ENTER;
+			k_sem_give(&link);
 		}
+	}
 
-		notify = true;
-
+	switch (reg_status) {
+	case LTE_LC_NW_REG_NOT_REGISTERED:
+		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_NOT_REGISTERED);
 		break;
-	case LTE_LC_NOTIF_MDMEV:
-		LOG_DBG("%%MDMEV notification");
-
-		err = parse_mdmev(response, &evt.modem_evt);
-		if (err) {
-			LOG_ERR("Can't parse modem event notification, error: %d", err);
-			return;
-		}
-
-		evt.type = LTE_LC_EVT_MODEM_EVENT;
-		notify = true;
-
+	case LTE_LC_NW_REG_REGISTERED_HOME:
+		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_REGISTERED_HOME);
 		break;
-	default:
-		LOG_ERR("Unrecognized notification type: %d", notif_type);
+	case LTE_LC_NW_REG_SEARCHING:
+		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_SEARCHING);
+		break;
+	case LTE_LC_NW_REG_REGISTRATION_DENIED:
+		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_REGISTRATION_DENIED);
+		break;
+	case LTE_LC_NW_REG_UNKNOWN:
+		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_UNKNOWN);
+		break;
+	case LTE_LC_NW_REG_REGISTERED_ROAMING:
+		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_REGISTERED_ROAMING);
+		break;
+	case LTE_LC_NW_REG_REGISTERED_EMERGENCY:
+		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_REGISTERED_EMERGENCY);
+		break;
+	case LTE_LC_NW_REG_UICC_FAIL:
+		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_UICC_FAIL);
 		break;
 	}
 
-	if (!event_handler_list_is_empty() && notify) {
+	if (event_handler_list_is_empty()) {
+		return;
+	}
+
+	/* Network registration status event */
+	if (reg_status != prev_reg_status) {
+		prev_reg_status = reg_status;
+		evt.type = LTE_LC_EVT_NW_REG_STATUS;
+		evt.nw_reg_status = reg_status;
+
 		event_handler_list_dispatch(&evt);
 	}
+
+	/* Cell update event */
+	if (memcmp(&cell, &prev_cell, sizeof(struct lte_lc_cell))) {
+		evt.type = LTE_LC_EVT_CELL_UPDATE;
+
+		memcpy(&prev_cell, &cell, sizeof(struct lte_lc_cell));
+		memcpy(&evt.cell, &cell, sizeof(struct lte_lc_cell));
+		event_handler_list_dispatch(&evt);
+	}
+
+	if (lte_mode != prev_lte_mode) {
+		prev_lte_mode = lte_mode;
+		evt.type = LTE_LC_EVT_LTE_MODE_UPDATE;
+		evt.lte_mode = lte_mode;
+
+		LTE_LC_TRACE(lte_mode == LTE_LC_LTE_MODE_LTEM ?
+			     LTE_LC_TRACE_LTE_MODE_UPDATE_LTEM :
+			     LTE_LC_TRACE_LTE_MODE_UPDATE_NBIOT);
+
+		event_handler_list_dispatch(&evt);
+	}
+
+	if ((reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
+	    (reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+		return;
+	}
+
+	err = lte_lc_psm_get(&psm_cfg.tau, &psm_cfg.active_time);
+	if (err) {
+		LOG_ERR("Failed to get PSM information");
+		return;
+	}
+
+	/* PSM configuration update event */
+	if (memcmp(&psm_cfg, &prev_psm_cfg, sizeof(struct lte_lc_psm_cfg))) {
+		evt.type = LTE_LC_EVT_PSM_UPDATE;
+
+		memcpy(&prev_psm_cfg, &psm_cfg, sizeof(struct lte_lc_psm_cfg));
+		memcpy(&evt.psm_cfg, &psm_cfg, sizeof(struct lte_lc_psm_cfg));
+		event_handler_list_dispatch(&evt);
+	}
+}
+
+static void at_handler_cscon(const char *response)
+{
+	int err;
+	struct lte_lc_evt evt = {0};
+
+	__ASSERT_NO_MSG(response != NULL);
+
+	LOG_DBG("+CSCON notification");
+
+	err = parse_rrc_mode(response, &evt.rrc_mode, AT_CSCON_RRC_MODE_INDEX);
+	if (err) {
+		LOG_ERR("Can't parse signalling mode, error: %d", err);
+		return;
+	}
+
+	if (evt.rrc_mode == LTE_LC_RRC_MODE_IDLE) {
+		LTE_LC_TRACE(LTE_LC_TRACE_RRC_IDLE);
+	} else if (evt.rrc_mode == LTE_LC_RRC_MODE_CONNECTED) {
+		LTE_LC_TRACE(LTE_LC_TRACE_RRC_CONNECTED);
+	}
+
+	evt.type = LTE_LC_EVT_RRC_UPDATE;
+
+	event_handler_list_dispatch(&evt);
+}
+
+static void at_handler_cedrxp(const char *response)
+{
+	int err;
+	struct lte_lc_evt evt = {0};
+
+	__ASSERT_NO_MSG(response != NULL);
+
+	LOG_DBG("+CEDRXP notification");
+
+	err = parse_edrx(response, &evt.edrx_cfg);
+	if (err) {
+		LOG_ERR("Can't parse eDRX, error: %d", err);
+		return;
+	}
+
+	evt.type = LTE_LC_EVT_EDRX_UPDATE;
+
+	event_handler_list_dispatch(&evt);
+}
+
+static void at_handler_xt3412(const char *response)
+{
+	int err;
+	struct lte_lc_evt evt = {0};
+
+	__ASSERT_NO_MSG(response != NULL);
+
+	LOG_DBG("%%XT3412 notification");
+
+	err = parse_xt3412(response, &evt.time);
+	if (err) {
+		LOG_ERR("Can't parse TAU pre-warning notification, error: %d", err);
+		return;
+	}
+
+	if (evt.time != CONFIG_LTE_LC_TAU_PRE_WARNING_TIME_MS) {
+		/* Only propagate TAU pre-warning notifications when the received time
+		 * parameter is the duration of the set pre-warning time.
+		 */
+		return;
+	}
+
+	evt.type = LTE_LC_EVT_TAU_PRE_WARNING;
+
+	event_handler_list_dispatch(&evt);
+}
+
+static void at_handler_ncellmeas(const char *response)
+{
+	int err;
+	struct lte_lc_evt evt = {0};
+
+	__ASSERT_NO_MSG(response != NULL);
+
+	int ncell_count = neighborcell_count_get(response);
+	struct lte_lc_ncell *neighbor_cells = NULL;
+
+	LOG_DBG("%%NCELLMEAS notification");
+	LOG_DBG("Neighbor cell count: %d", ncell_count);
+
+	if (event_handler_list_is_empty()) {
+		/* No need to parse the response if there is no handler
+		 * to receive the parsed data.
+		 */
+		return;
+	}
+
+	if (ncell_count != 0) {
+		neighbor_cells = k_calloc(ncell_count, sizeof(struct lte_lc_ncell));
+		if (neighbor_cells == NULL) {
+			LOG_ERR("Failed to allocate memory for neighbor cells");
+			return;
+		}
+	}
+
+	evt.cells_info.neighbor_cells = neighbor_cells;
+
+	err = parse_ncellmeas(response, &evt.cells_info);
+
+	switch (err) {
+	case -E2BIG:
+		LOG_WRN("Not all neighbor cells could be parsed");
+		LOG_WRN("More cells than the configured max count of %d were found",
+			CONFIG_LTE_NEIGHBOR_CELLS_MAX);
+		/* Fall through */
+	case 0: /* Fall through */
+	case 1:
+		evt.type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
+		event_handler_list_dispatch(&evt);
+		break;
+	default:
+		LOG_ERR("Parsing of neighbor cells failed, err: %d", err);
+		break;
+	}
+
+	if (neighbor_cells) {
+		k_free(neighbor_cells);
+	}
+}
+
+static void at_handler_xmodemsleep(const char *response)
+{
+	int err;
+	struct lte_lc_evt evt = {0};
+
+	__ASSERT_NO_MSG(response != NULL);
+
+	LOG_DBG("%%XMODEMSLEEP notification");
+
+	err = parse_xmodemsleep(response, &evt.modem_sleep);
+	if (err) {
+		LOG_ERR("Can't parse modem sleep pre-warning notification, error: %d", err);
+		return;
+	}
+
+	/* Link controller only supports PSM, RF inactivity and flight mode
+	 * modem sleep types.
+	 */
+	if ((evt.modem_sleep.type != LTE_LC_MODEM_SLEEP_PSM) &&
+		(evt.modem_sleep.type != LTE_LC_MODEM_SLEEP_RF_INACTIVITY) &&
+		(evt.modem_sleep.type != LTE_LC_MODEM_SLEEP_FLIGHT_MODE)) {
+		return;
+	}
+
+	/* Propagate the appropriate event depending on the parsed time parameter. */
+	if (evt.modem_sleep.time == CONFIG_LTE_LC_MODEM_SLEEP_PRE_WARNING_TIME_MS) {
+		evt.type = LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING;
+	} else if (evt.modem_sleep.time == 0) {
+		LTE_LC_TRACE(LTE_LC_TRACE_MODEM_SLEEP_EXIT);
+
+		evt.type = LTE_LC_EVT_MODEM_SLEEP_EXIT;
+	} else {
+		LTE_LC_TRACE(LTE_LC_TRACE_MODEM_SLEEP_ENTER);
+
+		evt.type = LTE_LC_EVT_MODEM_SLEEP_ENTER;
+	}
+
+	event_handler_list_dispatch(&evt);
+}
+
+static void at_handler_mdmev(const char *response)
+{
+	int err;
+	struct lte_lc_evt evt = {0};
+
+	__ASSERT_NO_MSG(response != NULL);
+
+	LOG_DBG("%%MDMEV notification");
+
+	err = parse_mdmev(response, &evt.modem_evt);
+	if (err) {
+		LOG_ERR("Can't parse modem event notification, error: %d", err);
+		return;
+	}
+
+	evt.type = LTE_LC_EVT_MODEM_EVENT;
+
+	event_handler_list_dispatch(&evt);
 }
 
 static int enable_notifications(void)
