@@ -144,7 +144,7 @@ int location_service_get_cell_location_nrf_cloud(
 		.auth = jwt_buf,
 		.connect_socket = -1,
 		.keep_alive = false,
-		.timeout_ms = CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT * MSEC_PER_SEC,
+		.timeout_ms = NRF_CLOUD_REST_TIMEOUT_NONE,
 		.rx_buf = rcv_buf,
 		.rx_buf_len = rcv_buf_len,
 		.fragment_size = 0

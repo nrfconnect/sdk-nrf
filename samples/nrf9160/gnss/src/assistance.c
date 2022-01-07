@@ -108,7 +108,7 @@ static void get_pgps_data_work_fn(struct k_work *work)
 	struct nrf_cloud_rest_context rest_ctx = {
 		.connect_socket = -1,
 		.keep_alive = false,
-		.timeout_ms = CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT * MSEC_PER_SEC,
+		.timeout_ms = NRF_CLOUD_REST_TIMEOUT_NONE,
 		.auth = jwt_buf,
 		.rx_buf = rx_buf,
 		.rx_buf_len = sizeof(rx_buf),
@@ -260,7 +260,7 @@ int assistance_request(struct nrf_modem_gnss_agps_data_frame *agps_request)
 	struct nrf_cloud_rest_context rest_ctx = {
 		.connect_socket = -1,
 		.keep_alive = false,
-		.timeout_ms = CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT * MSEC_PER_SEC,
+		.timeout_ms = NRF_CLOUD_REST_TIMEOUT_NONE,
 		.auth = jwt_buf,
 		.rx_buf = rx_buf,
 		.rx_buf_len = sizeof(rx_buf),

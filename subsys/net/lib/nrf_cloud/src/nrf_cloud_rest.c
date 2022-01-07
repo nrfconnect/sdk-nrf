@@ -9,21 +9,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #if defined(CONFIG_POSIX_API)
-#include <posix/arpa/inet.h>
 #include <posix/unistd.h>
-#include <posix/netdb.h>
 #include <posix/sys/socket.h>
 #else
 #include <net/socket.h>
 #endif
-#include <net/net_ip.h>
 #include <modem/nrf_modem_lib.h>
-#include <net/tls_credentials.h>
 #include <modem/modem_key_mgmt.h>
-#include <net/http_client.h>
-#include <net/http_parser.h>
 #include <net/nrf_cloud_rest.h>
-#include <sys/base64.h>
+#include <net/rest_client.h>
 #include <logging/log.h>
 
 #include "nrf_cloud_codec.h"
@@ -38,26 +32,37 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 
 #define API_VER				"/v1"
 
-#define CONTENT_TYPE_TXT_PLAIN		"text/plain"
-#define CONTENT_TYPE_ALL		"*/*"
-#define CONTENT_TYPE_APP_JSON		"application/json"
-#define CONTENT_TYPE_APP_OCT_STR	"application/octet-stream"
 #define CONTENT_RANGE_RSP		"content-range: bytes"
+#define CONTENT_RANGE_RSP_MIXED_CASE	"Content-Range: bytes"
 #define CONTENT_RANGE_TOTAL_TOK		'/'
+
 #define LF_TOK				'\n'
 #define CR_TOK				'\r'
+#define CRLF				"\r\n"
 
-#define AUTH_HDR_BEARER_TEMPLATE	"Authorization: Bearer %s\r\n"
-#define HOST_HDR_TEMPLATE		"Host: %s\r\n"
-#define HDR_ACCEPT_APP_JSON		"accept: application/json\r\n"
-#define HDR_ACCEPT_ALL			"accept: " CONTENT_TYPE_ALL "\r\n"
-#define HDR_RANGE_BYTES_TEMPLATE	"Range: bytes=%u-%u\r\n"
+#define HDR_TYPE_TXT_PLAIN		"text/plain"
+#define HDR_TYPE_ALL			 "*/*"
+#define HDR_TYPE_APP_JSON		"application/json"
+#define HDR_TYPE_APP_OCT_STR		"application/octet-stream"
+
+#define CONTENT_TYPE			"Content-Type: "
+#define CONTENT_TYPE_TXT_PLAIN		(CONTENT_TYPE HDR_TYPE_TXT_PLAIN CRLF)
+#define CONTENT_TYPE_ALL		(CONTENT_TYPE HDR_TYPE_ALL CRLF)
+#define CONTENT_TYPE_APP_JSON		(CONTENT_TYPE HDR_TYPE_APP_JSON CRLF)
+#define CONTENT_TYPE_APP_OCT_STR	(CONTENT_TYPE HDR_TYPE_APP_OCT_STR CRLF)
+
+#define AUTH_HDR_BEARER_TEMPLATE	"Authorization: Bearer %s" CRLF
+#define HOST_HDR_TEMPLATE		"Host: %s" CRLF
+#define HTTP_HDR_ACCEPT			"Accept: "
+#define HDR_ACCEPT_APP_JSON		(HTTP_HDR_ACCEPT HDR_TYPE_APP_JSON CRLF)
+#define HDR_ACCEPT_ALL			(HTTP_HDR_ACCEPT HDR_TYPE_ALL CRLF)
+#define HDR_RANGE_BYTES_TEMPLATE	("Range: bytes=%u-%u" CRLF)
 #define HDR_RANGE_BYTES_SZ		(sizeof(HDR_RANGE_BYTES_TEMPLATE) + \
 					UINT32_MAX_STR_SZ + UINT32_MAX_STR_SZ)
 
 #define API_FOTA_JOB_EXEC		"/fota-job-executions"
-#define API_GET_FOTA_URL_TEMPLATE	API_VER API_FOTA_JOB_EXEC "/%s/current"
-#define API_UPDATE_FOTA_URL_TEMPLATE	API_VER API_FOTA_JOB_EXEC "/%s/%s"
+#define API_GET_FOTA_URL_TEMPLATE	(API_VER API_FOTA_JOB_EXEC "/%s/current")
+#define API_UPDATE_FOTA_URL_TEMPLATE	(API_VER API_FOTA_JOB_EXEC "/%s/%s")
 #define API_UPDATE_FOTA_BODY_TEMPLATE	"{\"status\":\"%s\"}"
 #define API_UPDATE_FOTA_DETAILS_TMPLT	"{\"status\":\"%s\", \"details\":\"%s\"}"
 
@@ -88,17 +93,14 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 #define API_DEVICES_BASE		"/devices"
 #define API_DEVICES_STATE_TEMPLATE	API_VER API_DEVICES_BASE "/%s/state"
 
-#define HTTP_PROTOCOL		"HTTP/1.1"
-#define SOCKET_PROTOCOL		IPPROTO_TLS_1_2
-
 #define JITP_HOSTNAME_TLS	CONFIG_NRF_CLOUD_HOST_NAME
 #define JITP_PORT		8443
 #define JITP_URL		"/topics/jitp?qos=1"
-#define JITP_CONTENT		"*/*\r\n" \
-				"Connection: close\r\n" \
-				"Host: " JITP_HOSTNAME_TLS ":" STRINGIFY(JITP_PORT) "\r\n"
+#define JITP_CONTENT_TYPE_HDR	(CONTENT_TYPE HDR_TYPE_ALL CRLF)
+#define JITP_HOST_HDR		"Host: " JITP_HOSTNAME_TLS ":" STRINGIFY(JITP_PORT) CRLF
+#define JITP_CONNECTION_HDR	"Connection: close" CRLF
 #define JITP_HTTP_TIMEOUT_MS	(15000)
-#define JITP_RX_BUF_SZ		(255)
+#define JITP_RX_BUF_SZ		(400)
 
 /* Mapping of enum to strings for Job Execution Status. */
 static const char *const job_status_strings[] = {
@@ -120,46 +122,6 @@ static const char *const agps_req_type_strings[] = {
 	[NRF_CLOUD_REST_AGPS_REQ_LOCATION]	= AGPS_REQ_TYPE_STR_LOC,
 	[NRF_CLOUD_REST_AGPS_REQ_CUSTOM]	= AGPS_REQ_TYPE_STR_CUSTOM,
 };
-
-static void http_response_cb(struct http_response *rsp,
-			enum http_final_call final_data,
-			void *user_data)
-{
-	struct nrf_cloud_rest_context *rest_ctx = NULL;
-
-	if (user_data) {
-		rest_ctx = (struct nrf_cloud_rest_context *)user_data;
-	}
-
-	/* If the entire HTTP response is not received in a single "recv" call
-	 * then this could be called multiple times, with a different value in
-	 * rsp->body_start. Only set rest_ctx->response once, the first time,
-	 * which will be the start of the body.
-	 */
-	if (rest_ctx && !rest_ctx->response && rsp->body_found && rsp->body_start) {
-		rest_ctx->response = rsp->body_start;
-	}
-
-	rest_ctx->total_response_len += rsp->data_len;
-
-	if (final_data == HTTP_DATA_FINAL) {
-		LOG_DBG("HTTP: All data received, status: %u %s",
-			rsp->http_status_code,
-			log_strdup(rsp->http_status));
-
-		if (!rest_ctx) {
-			LOG_WRN("User data not provided");
-			return;
-		}
-
-		rest_ctx->status = rsp->http_status_code;
-		rest_ctx->response_len = rsp->content_length;
-
-		LOG_DBG("Content/Total: %d/%d",
-			rest_ctx->response_len,
-			rest_ctx->total_response_len);
-	}
-}
 
 static int generate_auth_header(const char *const tok, char **auth_hdr_out)
 {
@@ -184,140 +146,6 @@ static int generate_auth_header(const char *const tok, char **auth_hdr_out)
 	return 0;
 }
 
-static int tls_setup(int fd, const char *const tls_hostname, const sec_tag_t sec_tag)
-{
-	int err;
-	int verify = TLS_PEER_VERIFY_REQUIRED;
-	const sec_tag_t tls_sec_tag[] = {
-		sec_tag,
-	};
-
-	err = setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
-	if (err) {
-		LOG_ERR("Failed to setup peer verification, error: %d", errno);
-		return err;
-	}
-
-	err = setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, tls_sec_tag,
-			 sizeof(tls_sec_tag));
-	if (err) {
-		LOG_ERR("Failed to setup TLS sec tag, error: %d", errno);
-		return err;
-	}
-
-	if (tls_hostname) {
-		err = setsockopt(fd, SOL_TLS, TLS_HOSTNAME, tls_hostname,
-				 strlen(tls_hostname));
-		if (err) {
-			LOG_ERR("Failed to setup TLS hostname, error: %d", errno);
-			return err;
-		}
-	}
-	return 0;
-}
-
-static int socket_timeouts_set(int fd)
-{
-	int err;
-	struct timeval timeout = {0};
-
-	if (CONFIG_NRF_CLOUD_REST_SEND_TIMEOUT > -1) {
-		/* Send TO also affects TCP connect */
-		timeout.tv_sec = CONFIG_NRF_CLOUD_REST_SEND_TIMEOUT;
-		err = setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
-		if (err) {
-			LOG_ERR("Failed to set socket send timeout, error: %d", errno);
-			return err;
-		}
-	}
-
-	if (CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT > -1) {
-		timeout.tv_sec = CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT;
-		err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
-		if (err) {
-			LOG_ERR("Failed to set socket recv timeout, error: %d", errno);
-			return err;
-		}
-	}
-
-	return 0;
-}
-
-static int do_connect(int *const fd, const char *const hostname,
-		      const uint16_t port_num, const char *const ip_address,
-		      const sec_tag_t sec_tag)
-{
-	int ret;
-	struct addrinfo *addr_info;
-	char peer_addr[INET_ADDRSTRLEN];
-	/* Use IP to connect if provided, always use hostname for TLS (SNI) */
-	const char *const connect_addr = ip_address ? ip_address : hostname;
-
-	struct addrinfo hints = {
-		.ai_family = AF_INET,
-		.ai_socktype = SOCK_STREAM,
-		.ai_next =  NULL,
-	};
-
-	/* Make sure fd is always initialized when this function is called */
-	*fd = -1;
-
-	ret = getaddrinfo(connect_addr, NULL, &hints, &addr_info);
-	if (ret) {
-		LOG_ERR("getaddrinfo() failed, error: %d", ret);
-		return -EFAULT;
-	}
-
-	inet_ntop(AF_INET, &net_sin(addr_info->ai_addr)->sin_addr,
-			peer_addr, INET_ADDRSTRLEN);
-	LOG_DBG("getaddrinfo() %s", log_strdup(peer_addr));
-
-	((struct sockaddr_in *)addr_info->ai_addr)->sin_port = htons(port_num);
-
-	*fd = socket(AF_INET, SOCK_STREAM, SOCKET_PROTOCOL);
-	if (*fd == -1) {
-		LOG_ERR("Failed to open socket, error: %d", errno);
-		ret = -ENOTCONN;
-		goto clean_up;
-	}
-
-	if (sec_tag >= 0) {
-		ret = tls_setup(*fd, hostname, sec_tag);
-		if (ret) {
-			ret = -EACCES;
-			goto clean_up;
-		}
-	}
-
-	ret = socket_timeouts_set(*fd);
-	if (ret) {
-		LOG_ERR("Failed to set socket timeouts, error: %d", errno);
-		ret = -EINVAL;
-		goto clean_up;
-	}
-
-	LOG_DBG("Connecting to %s", log_strdup(connect_addr));
-
-	ret = connect(*fd, addr_info->ai_addr, sizeof(struct sockaddr_in));
-	if (ret) {
-		LOG_ERR("Failed to connect socket, error: %d", errno);
-		ret = -ECONNREFUSED;
-	}
-
-clean_up:
-
-	freeaddrinfo(addr_info);
-
-	if (ret) {
-		if (*fd > -1) {
-			(void)close(*fd);
-			*fd = -1;
-		}
-	}
-
-	return ret;
-}
-
 static void close_connection(struct nrf_cloud_rest_context *const rest_ctx)
 {
 	if (!rest_ctx->keep_alive) {
@@ -325,70 +153,49 @@ static void close_connection(struct nrf_cloud_rest_context *const rest_ctx)
 	}
 }
 
-static int do_api_call(struct http_request *http_req, struct nrf_cloud_rest_context *const rest_ctx,
-	const uint16_t port_num, const sec_tag_t sec_tag)
+static void init_rest_client_request(struct nrf_cloud_rest_context const *const rest_ctx,
+	struct rest_client_req_context *const req, const enum http_method meth)
 {
-	int err = 0;
+	memset(req, 0, sizeof(*req));
 
-	if (rest_ctx->connect_socket < 0) {
-		err = do_connect(&rest_ctx->connect_socket,
-				 http_req->host,
-				 port_num,
-				 NULL,
-				 sec_tag);
-		if (err) {
-			return err;
-		}
-	}
+	req->connect_socket	= rest_ctx->connect_socket;
+	req->keep_alive		= rest_ctx->keep_alive;
 
-	/* Assign the user provided receive buffer into the http request */
-	http_req->recv_buf	= rest_ctx->rx_buf;
-	http_req->recv_buf_len	= rest_ctx->rx_buf_len;
+	req->resp_buff		= rest_ctx->rx_buf;
+	req->resp_buff_len	= rest_ctx->rx_buf_len;
 
-	memset(http_req->recv_buf, 0, http_req->recv_buf_len);
-	/* Ensure receive buffer stays NULL terminated */
-	--http_req->recv_buf_len;
-
-	rest_ctx->response		= NULL;
-	rest_ctx->response_len		= 0;
-	rest_ctx->total_response_len	= 0;
-
-	/* The http_client timeout does not seem to work correctly, so
-	 * for now do not use a timeout.
-	 */
-	err = http_client_req(rest_ctx->connect_socket,
-			      http_req,
-			      NRF_CLOUD_REST_TIMEOUT_NONE,
-			      rest_ctx);
-
-	if (err < 0) {
-		LOG_ERR("http_client_req() error: %d", err);
-		err = -EIO;
-	} else if (rest_ctx->total_response_len >= rest_ctx->rx_buf_len) {
-		/* 1 byte is reserved to NULL terminate the response */
-		LOG_ERR("Receive buffer too small, %d bytes are required",
-			rest_ctx->total_response_len + 1);
-		err = -ENOBUFS;
-	} else {
-		err = 0;
-	}
-
-	return err;
-}
-
-static void init_request(struct http_request *const req, const enum http_method meth,
-			 const char *const content_type)
-{
-	memset(req, 0, sizeof(struct http_request));
-
+	req->sec_tag		= CONFIG_NRF_CLOUD_SEC_TAG;
+	req->port		= HTTPS_PORT;
 	req->host		= CONFIG_NRF_CLOUD_REST_HOST_NAME;
-	req->protocol		= HTTP_PROTOCOL;
+	req->tls_peer_verify	= TLS_PEER_VERIFY_REQUIRED;
+	req->timeout_ms		= SYS_FOREVER_MS;
 
-	req->response		= http_response_cb;
-	req->method		= meth;
-	req->content_type_value	= content_type;
+	req->http_method	= meth;
 
 	(void)nrf_cloud_codec_init();
+}
+
+static void sync_rest_client_data(struct nrf_cloud_rest_context *const rest_ctx,
+	struct rest_client_req_context const *const req,
+	struct rest_client_resp_context const *const resp)
+{
+	rest_ctx->status		= resp->http_status_code;
+	rest_ctx->response		= resp->response;
+	rest_ctx->response_len		= resp->response_len;
+	rest_ctx->total_response_len	= resp->total_response_len;
+
+	rest_ctx->connect_socket	= req->connect_socket;
+}
+
+static int do_rest_client_request(struct nrf_cloud_rest_context *const rest_ctx,
+	struct rest_client_req_context *const req,
+	struct rest_client_resp_context *const resp)
+{
+	int ret = rest_client_request(req, resp);
+
+	sync_rest_client_data(rest_ctx, req, resp);
+
+	return ret;
 }
 
 int nrf_cloud_rest_shadow_state_update(struct nrf_cloud_rest_context *const rest_ctx,
@@ -402,9 +209,11 @@ int nrf_cloud_rest_shadow_state_update(struct nrf_cloud_rest_context *const rest
 	size_t buff_sz;
 	char *auth_hdr = NULL;
 	char *url = NULL;
-	struct http_request http_req;
+	struct rest_client_req_context req;
+	struct rest_client_resp_context resp;
 
-	init_request(&http_req, HTTP_PATCH, CONTENT_TYPE_APP_JSON);
+	memset(&resp, 0, sizeof(resp));
+	init_rest_client_request(rest_ctx, &req, HTTP_PATCH);
 
 	/* Format API URL with device ID */
 	buff_sz = sizeof(API_DEVICES_STATE_TEMPLATE) + strlen(device_id);
@@ -413,7 +222,6 @@ int nrf_cloud_rest_shadow_state_update(struct nrf_cloud_rest_context *const rest
 		ret = -ENOMEM;
 		goto clean_up;
 	}
-	http_req.url = url;
 
 	ret = snprintk(url, buff_sz, API_DEVICES_STATE_TEMPLATE, device_id);
 	if (ret < 0 || ret >= buff_sz) {
@@ -422,7 +230,7 @@ int nrf_cloud_rest_shadow_state_update(struct nrf_cloud_rest_context *const rest
 		goto clean_up;
 	}
 
-	LOG_DBG("URL: %s", log_strdup(http_req.url));
+	req.url = url;
 
 	/* Format auth header */
 	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
@@ -433,30 +241,26 @@ int nrf_cloud_rest_shadow_state_update(struct nrf_cloud_rest_context *const rest
 	char *const headers[] = {
 		HDR_ACCEPT_APP_JSON,
 		(char *const)auth_hdr,
+		CONTENT_TYPE_APP_JSON,
 		NULL
 	};
 
-	http_req.header_fields = (const char **)headers;
+	req.header_fields = (const char **)headers;
 
 	/* Set payload */
-	http_req.payload = shadow_json;
-	http_req.payload_len = strlen(shadow_json);
-	LOG_DBG("Payload: %s", log_strdup(http_req.payload));
+	req.body = shadow_json;
 
 	/* Make REST call */
-	ret = do_api_call(&http_req, rest_ctx, HTTPS_PORT, CONFIG_NRF_CLOUD_SEC_TAG);
+	ret = do_rest_client_request(rest_ctx, &req, &resp);
 	if (ret) {
 		ret = -EIO;
 		goto clean_up;
 	}
 
-	LOG_DBG("API status: %d", rest_ctx->status);
 	if (rest_ctx->status != NRF_CLOUD_HTTP_STATUS_ACCEPTED) {
 		ret = -EBADMSG;
 		goto clean_up;
 	}
-
-	LOG_DBG("API call response len: %u bytes", rest_ctx->response_len);
 
 clean_up:
 	if (url) {
@@ -517,19 +321,22 @@ int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx
 	char *auth_hdr = NULL;
 	char *url = NULL;
 	char *payload = NULL;
-	struct http_request http_req;
+	struct rest_client_req_context req;
+	struct rest_client_resp_context resp;
 
-	init_request(&http_req, HTTP_PATCH, CONTENT_TYPE_APP_JSON);
+	memset(&resp, 0, sizeof(resp));
+	init_rest_client_request(rest_ctx, &req, HTTP_PATCH);
 
 	/* Format API URL with device and job ID */
 	buff_sz = sizeof(API_UPDATE_FOTA_URL_TEMPLATE) +
-		    strlen(device_id) + strlen(job_id);
+		  strlen(device_id) +
+		  strlen(job_id);
 	url = k_calloc(buff_sz, 1);
 	if (!url) {
 		ret = -ENOMEM;
 		goto clean_up;
 	}
-	http_req.url = url;
+	req.url = url;
 
 	ret = snprintk(url, buff_sz, API_UPDATE_FOTA_URL_TEMPLATE,
 		       device_id, job_id);
@@ -538,8 +345,6 @@ int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx
 		ret = -ETXTBSY;
 		goto clean_up;
 	}
-
-	LOG_DBG("URL: %s", log_strdup(http_req.url));
 
 	/* Format auth header */
 	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
@@ -550,10 +355,11 @@ int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx
 	char *const headers[] = {
 		HDR_ACCEPT_APP_JSON,
 		(char *const)auth_hdr,
+		CONTENT_TYPE_APP_JSON,
 		NULL
 	};
 
-	http_req.header_fields = (const char **)headers;
+	req.header_fields = (const char **)headers;
 
 	/* Format payload */
 	if (details) {
@@ -583,24 +389,19 @@ int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx
 		ret = -ETXTBSY;
 		goto clean_up;
 	}
-	http_req.payload = payload;
-	http_req.payload_len = strlen(http_req.payload);
-	LOG_DBG("Payload: %s", log_strdup(http_req.payload));
+	req.body = payload;
 
 	/* Make REST call */
-	ret = do_api_call(&http_req, rest_ctx, HTTPS_PORT, CONFIG_NRF_CLOUD_SEC_TAG);
+	ret = do_rest_client_request(rest_ctx, &req, &resp);
 	if (ret) {
 		ret = -EIO;
 		goto clean_up;
 	}
 
-	LOG_DBG("API status: %d", rest_ctx->status);
 	if (rest_ctx->status != NRF_CLOUD_HTTP_STATUS_OK) {
 		ret = -EBADMSG;
 		goto clean_up;
 	}
-
-	LOG_DBG("API call response len: %u bytes", rest_ctx->response_len);
 
 clean_up:
 	if (url) {
@@ -629,9 +430,11 @@ int nrf_cloud_rest_fota_job_get(struct nrf_cloud_rest_context *const rest_ctx,
 	size_t url_sz;
 	char *auth_hdr = NULL;
 	char *url = NULL;
-	struct http_request http_req;
+	struct rest_client_req_context req;
+	struct rest_client_resp_context resp;
 
-	init_request(&http_req, HTTP_GET, CONTENT_TYPE_ALL);
+	memset(&resp, 0, sizeof(resp));
+	init_rest_client_request(rest_ctx, &req, HTTP_GET);
 
 	/* Format API URL with device ID */
 	url_sz = sizeof(API_GET_FOTA_URL_TEMPLATE) +
@@ -641,7 +444,7 @@ int nrf_cloud_rest_fota_job_get(struct nrf_cloud_rest_context *const rest_ctx,
 		ret = -ENOMEM;
 		goto clean_up;
 	}
-	http_req.url = url;
+	req.url = url;
 
 	ret = snprintk(url, url_sz, API_GET_FOTA_URL_TEMPLATE, device_id);
 	if (ret < 0 || ret >= url_sz) {
@@ -649,8 +452,6 @@ int nrf_cloud_rest_fota_job_get(struct nrf_cloud_rest_context *const rest_ctx,
 		ret = -ETXTBSY;
 		goto clean_up;
 	}
-
-	LOG_DBG("URL: %s", log_strdup(http_req.url));
 
 	/* Format auth header */
 	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
@@ -661,26 +462,24 @@ int nrf_cloud_rest_fota_job_get(struct nrf_cloud_rest_context *const rest_ctx,
 	char *const headers[] = {
 		HDR_ACCEPT_APP_JSON,
 		(char *const)auth_hdr,
+		CONTENT_TYPE_ALL,
 		NULL
 	};
 
-	http_req.header_fields = (const char **)headers;
+	req.header_fields = (const char **)headers;
 
 	/* Make REST call */
-	ret = do_api_call(&http_req, rest_ctx, HTTPS_PORT, CONFIG_NRF_CLOUD_SEC_TAG);
+	ret = do_rest_client_request(rest_ctx, &req, &resp);
 	if (ret) {
 		ret = -EIO;
 		goto clean_up;
 	}
 
-	LOG_DBG("API status: %d", rest_ctx->status);
 	if (rest_ctx->status != NRF_CLOUD_HTTP_STATUS_OK &&
 	    rest_ctx->status != NRF_CLOUD_HTTP_STATUS_NOT_FOUND) {
 		ret = -EBADMSG;
 		goto clean_up;
 	}
-
-	LOG_DBG("API call response len: %u bytes", rest_ctx->response_len);
 
 	if (!job) {
 		ret = 0;
@@ -725,12 +524,13 @@ int nrf_cloud_rest_cell_pos_get(struct nrf_cloud_rest_context *const rest_ctx,
 	int ret;
 	char *auth_hdr = NULL;
 	char *payload = NULL;
-	struct http_request http_req;
+	struct rest_client_req_context req;
+	struct rest_client_resp_context resp;
 
-	init_request(&http_req, HTTP_POST, CONTENT_TYPE_APP_JSON);
+	memset(&resp, 0, sizeof(resp));
+	init_rest_client_request(rest_ctx, &req, HTTP_POST);
 
-	http_req.url = API_GET_CELL_POS_TEMPLATE;
-	LOG_DBG("URL: %s", log_strdup(http_req.url));
+	req.url = API_GET_CELL_POS_TEMPLATE;
 
 	/* Format auth header */
 	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
@@ -742,10 +542,11 @@ int nrf_cloud_rest_cell_pos_get(struct nrf_cloud_rest_context *const rest_ctx,
 	char *const headers[] = {
 		HDR_ACCEPT_APP_JSON,
 		(char *const)auth_hdr,
+		CONTENT_TYPE_APP_JSON,
 		NULL
 	};
 
-	http_req.header_fields = (const char **)headers;
+	req.header_fields = (const char **)headers;
 
 	/* Get payload */
 	ret = nrf_cloud_format_cell_pos_req(request->net_info, 1, &payload);
@@ -754,12 +555,10 @@ int nrf_cloud_rest_cell_pos_get(struct nrf_cloud_rest_context *const rest_ctx,
 		goto clean_up;
 	}
 
-	http_req.payload = payload;
-	http_req.payload_len = strlen(http_req.payload);
-	LOG_DBG("Payload: %s", log_strdup(http_req.payload));
+	req.body = payload;
 
 	/* Make REST call */
-	ret = do_api_call(&http_req, rest_ctx, HTTPS_PORT, CONFIG_NRF_CLOUD_SEC_TAG);
+	ret = do_rest_client_request(rest_ctx, &req, &resp);
 	if (ret) {
 		ret = -EIO;
 		goto clean_up;
@@ -772,8 +571,6 @@ int nrf_cloud_rest_cell_pos_get(struct nrf_cloud_rest_context *const rest_ctx,
 		ret = -ENODATA;
 		goto clean_up;
 	}
-
-	LOG_DBG("API call response len: %u bytes", rest_ctx->response_len);
 
 	if (result) {
 		ret = nrf_cloud_parse_cell_pos_response(rest_ctx->response, result);
@@ -865,6 +662,13 @@ static int get_content_range_total_bytes(char *const buf)
 	char *end;
 	char *start = strstr(buf, CONTENT_RANGE_RSP);
 
+	/* nRF Cloud currently uses lower-case in content-range
+	 * response, but check for mixed-case to be complete.
+	 */
+	if (!start) {
+		start = strstr(buf, CONTENT_RANGE_RSP_MIXED_CASE);
+	}
+
 	if (!start) {
 		return -EBADMSG;
 	}
@@ -914,10 +718,14 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	size_t frag_size;
 	char *auth_hdr = NULL;
 	char *url = NULL;
-	struct http_request http_req;
 	char const *req_type = NULL;
 	char custom_types[AGPS_CUSTOM_TYPE_STR_SZ];
 	char range_hdr[HDR_RANGE_BYTES_SZ];
+	struct rest_client_req_context req;
+	struct rest_client_resp_context resp;
+
+	memset(&resp, 0, sizeof(resp));
+	init_rest_client_request(rest_ctx, &req, HTTP_GET);
 
 	if ((request->type == NRF_CLOUD_REST_AGPS_REQ_CUSTOM) &&
 	    (request->agps_req == NULL)) {
@@ -929,8 +737,6 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		ret = -EINVAL;
 		goto clean_up;
 	}
-
-	init_request(&http_req, HTTP_GET, CONTENT_TYPE_APP_OCT_STR);
 
 	/* Determine size of URL buffer and allocate */
 	url_sz = sizeof(API_GET_AGPS_BASE);
@@ -964,7 +770,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		ret = -ENOMEM;
 		goto clean_up;
 	}
-	http_req.url = url;
+	req.url = url;
 
 	/* Format API URL */
 	ret = snprintk(url, url_sz, API_GET_AGPS_BASE);
@@ -1013,8 +819,6 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		remain -= ret;
 	}
 
-	LOG_DBG("URL: %s", log_strdup(http_req.url));
-
 	/* Format auth header */
 	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
 	if (ret) {
@@ -1026,10 +830,11 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		HDR_ACCEPT_ALL,
 		(char *const)auth_hdr,
 		(char *const)range_hdr,
+		CONTENT_TYPE_APP_OCT_STR,
 		NULL
 	};
 
-	http_req.header_fields = (const char **)headers;
+	req.header_fields = (const char **)headers;
 
 	pos = 0;
 	remain = 0;
@@ -1049,7 +854,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 			goto clean_up;
 		}
 
-		ret = do_api_call(&http_req, rest_ctx, HTTPS_PORT, CONFIG_NRF_CLOUD_SEC_TAG);
+		ret = do_rest_client_request(rest_ctx, &req, &resp);
 		if (ret) {
 			ret = -EIO;
 			goto clean_up;
@@ -1134,9 +939,11 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	size_t pos;
 	char *auth_hdr = NULL;
 	char *url = NULL;
-	struct http_request http_req;
+	struct rest_client_req_context req;
+	struct rest_client_resp_context resp;
 
-	init_request(&http_req, HTTP_GET, CONTENT_TYPE_ALL);
+	memset(&resp, 0, sizeof(resp));
+	init_rest_client_request(rest_ctx, &req, HTTP_GET);
 
 	/* Determine size of URL buffer and allocate */
 	url_sz = sizeof(API_GET_PGPS_BASE);
@@ -1169,7 +976,7 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		ret = -ENOMEM;
 		goto clean_up;
 	}
-	http_req.url = url;
+	req.url = url;
 
 	/* Format API URL */
 	ret = snprintk(url, url_sz, API_GET_PGPS_BASE);
@@ -1234,7 +1041,6 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 			remain -= ret;
 		}
 	}
-	LOG_DBG("URL: %s", log_strdup(http_req.url));
 
 	/* Format auth header */
 	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
@@ -1245,26 +1051,24 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	char *const headers[] = {
 		HDR_ACCEPT_APP_JSON,
 		(char *const)auth_hdr,
+		CONTENT_TYPE_ALL,
 		NULL
 	};
 
-	http_req.header_fields = (const char **)headers;
+	req.header_fields = (const char **)headers;
 
 	/* Make REST call */
-	ret = do_api_call(&http_req, rest_ctx, HTTPS_PORT, CONFIG_NRF_CLOUD_SEC_TAG);
+	ret = do_rest_client_request(rest_ctx, &req, &resp);
 	if (ret) {
 		ret = -EIO;
 		goto clean_up;
 	}
 
-	LOG_DBG("API status: %d", rest_ctx->status);
 	if (rest_ctx->status != NRF_CLOUD_HTTP_STATUS_OK ||
 	    !rest_ctx->response || !rest_ctx->response_len) {
 		ret = -EBADMSG;
 		goto clean_up;
 	}
-
-	LOG_DBG("API call response: %s", log_strdup(rest_ctx->response));
 
 clean_up:
 	if (url) {
@@ -1304,34 +1108,41 @@ int nrf_cloud_rest_jitp(const sec_tag_t nrf_cloud_sec_tag)
 	__ASSERT_NO_MSG(nrf_cloud_sec_tag >= 0);
 
 	int ret;
-	struct http_request http_req;
 	char rx_buf[JITP_RX_BUF_SZ];
 	char *const headers[] = {
 		HDR_ACCEPT_ALL,
+		JITP_CONTENT_TYPE_HDR,
+		JITP_HOST_HDR,
+		JITP_CONNECTION_HDR,
 		NULL
 	};
-	struct nrf_cloud_rest_context rest_ctx = {
-		.keep_alive = false,
-		.connect_socket = -1,
-		.timeout_ms = JITP_HTTP_TIMEOUT_MS,
-		.rx_buf = rx_buf,
-		.rx_buf_len = sizeof(rx_buf)
-	};
+	struct rest_client_req_context req;
+	struct rest_client_resp_context resp;
 
-	init_request(&http_req, HTTP_POST, JITP_CONTENT);
-	http_req.host		= JITP_HOSTNAME_TLS;
-	http_req.url		= JITP_URL;
-	http_req.header_fields	= (const char **)headers;
+	memset(&req, 0, sizeof(req));
+	memset(&resp, 0, sizeof(resp));
+	rest_client_request_defaults_set(&req);
 
-	ret = do_api_call(&http_req, &rest_ctx, JITP_PORT, nrf_cloud_sec_tag);
+	req.sec_tag		= nrf_cloud_sec_tag;
+	req.port		= JITP_PORT;
+	req.header_fields	= (const char **)headers;
+	req.url			= JITP_URL;
+	req.host		= JITP_HOSTNAME_TLS;
+	req.timeout_ms		= SYS_FOREVER_MS;
+	req.http_method		= HTTP_POST;
+	req.resp_buff		= rx_buf;
+	req.resp_buff_len	= sizeof(rx_buf);
+	req.tls_peer_verify	= TLS_PEER_VERIFY_REQUIRED;
+
+	ret = rest_client_request(&req, &resp);
 	if (ret == 0) {
-		if ((rest_ctx.status == 0) && (rest_ctx.response_len == 0)) {
+		if ((resp.http_status_code == 0) && (resp.response_len == 0)) {
 			/* Expected response for an unprovisioned device.
 			 * Wait 30s before associating device with account
 			 */
-		} else if ((rest_ctx.status == NRF_CLOUD_HTTP_STATUS_FORBIDDEN) &&
-			   (rest_ctx.response_len > 0) &&
-			   (strstr(rest_ctx.response, "\"message\":null"))) {
+		} else if ((resp.http_status_code == NRF_CLOUD_HTTP_STATUS_FORBIDDEN) &&
+			   (resp.response_len > 0) &&
+			   (strstr(resp.response, "\"message\":null"))) {
 			/* Expected response for an already provisioned device.
 			 * User can proceed to use the API.
 			 */
@@ -1340,8 +1151,6 @@ int nrf_cloud_rest_jitp(const sec_tag_t nrf_cloud_sec_tag)
 			ret = -ENODEV;
 		}
 	}
-
-	close_connection(&rest_ctx);
 
 	return ret;
 }
