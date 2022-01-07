@@ -240,7 +240,7 @@ int bt_mesh_prop_cli_props_get(struct bt_mesh_prop_cli *cli,
 			       enum bt_mesh_prop_srv_kind kind,
 			       struct bt_mesh_prop_list *rsp)
 {
-	return props_get(cli, ctx, kind, 0x0000, rsp);
+	return props_get(cli, ctx, kind, 1, rsp);
 }
 
 int bt_mesh_prop_cli_prop_get(struct bt_mesh_prop_cli *cli,

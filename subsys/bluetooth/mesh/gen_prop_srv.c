@@ -120,7 +120,7 @@ static int handle_owner_properties_get(struct bt_mesh_model *model, struct bt_me
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PROP_OP_ADMIN_PROPS_STATUS,
 				 BT_MESH_PROP_MSG_MAXLEN_PROPS_STATUS);
 
-	pub_list_build(model->user_data, &rsp, 0);
+	pub_list_build(model->user_data, &rsp, 1);
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
 
 	return 0;
@@ -313,6 +313,9 @@ static int handle_client_properties_get(struct bt_mesh_model *model, struct bt_m
 					struct net_buf_simple *buf)
 {
 	uint16_t start_prop = net_buf_simple_pull_le16(buf);
+
+	if(start_prop == BT_MESH_PROP_ID_PROHIBITED)
+		return -EINVAL;
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_PROP_OP_CLIENT_PROPS_STATUS,
 				 BT_MESH_PROP_MSG_MAXLEN_PROPS_STATUS);
@@ -566,7 +569,7 @@ static int update_handler(struct bt_mesh_model *model)
 	case BT_MESH_PROP_SRV_STATE_NONE:
 		return 0;
 	case BT_MESH_PROP_SRV_STATE_LIST:
-		pub_list_build(srv, srv->pub.msg, 0);
+		pub_list_build(srv, srv->pub.msg, 1);
 		return 0;
 	case BT_MESH_PROP_SRV_STATE_PROP:
 		bt_mesh_model_msg_init(srv->pub.msg,
@@ -606,6 +609,15 @@ static int bt_mesh_prop_srv_init(struct bt_mesh_model *model)
 	if (srv->property_count > CONFIG_BT_MESH_PROP_MAXCOUNT) {
 		BT_ERR("Property counter is larger than max allowed value");
 		return -EINVAL;
+	}
+
+	struct bt_mesh_prop *p;
+	PROP_FOREACH(srv, p)
+	{
+		if (p->id == BT_MESH_PROP_ID_PROHIBITED) {
+			BT_ERR("Property IDs must be greater then 0");
+			return -EINVAL;
+		}
 	}
 
 #if CONFIG_BT_SETTINGS
@@ -695,7 +707,7 @@ int bt_mesh_prop_srv_pub_list(struct bt_mesh_prop_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_PROP_OP_MFR_PROPS_STATUS,
 				 BT_MESH_PROP_MSG_MAXLEN_PROPS_STATUS);
 
-	pub_list_build(srv, &msg, 0);
+	pub_list_build(srv, &msg, 1);
 
 	return model_send(srv->model, ctx, &msg);
 }
