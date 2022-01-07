@@ -196,8 +196,14 @@ add_region(
 dt_chosen(ext_flash_dev PROPERTY nordic,pm-ext-flash)
 if (DEFINED ext_flash_dev)
   dt_prop(dev_name PATH ${ext_flash_dev} PROPERTY label)
-  dt_prop(num_bits PATH ${ext_flash_dev} PROPERTY size)
-  math(EXPR num_bytes "${num_bits} / 8")
+  dt_prop(size_in_bytes PATH ${ext_flash_dev} PROPERTY size-in-bytes)
+
+  if (size_in_bytes)
+    dt_prop(num_bytes PATH ${ext_flash_dev} PROPERTY size)
+  else()
+    dt_prop(num_bits PATH ${ext_flash_dev} PROPERTY size)
+    math(EXPR num_bytes "${num_bits} / 8")
+  endif()
 
   add_region(
     NAME external_flash
