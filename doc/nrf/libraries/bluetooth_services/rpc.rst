@@ -76,7 +76,7 @@ Then, you can invoke build command like this:
 .. parsed-literal::
    :class: highlight
 
-   west build -b *board* -- -DCONFIG_OVERLAY=my_overlay_file.conf
+   west build -b *board* -- -DOVERLAY_CONFIG=my_overlay_file.conf
 
 API documentation
 *****************
