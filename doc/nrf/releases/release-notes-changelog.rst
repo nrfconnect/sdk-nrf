@@ -216,6 +216,10 @@ Libraries for networking
   * Added A-GPS filtered ephemerides support, with ability to set matching threshold mask angle.
   * When filtered ephemerides is enabled, A-GPS assistance requests to cloud are limited to no more than once every two hours.
 
+* :ref:`lib_nrf_cloud_rest` library:
+
+  * Updated to use the :ref:`lib_rest_client` library for REST API calls.
+
 Other libraries
 ---------------
 

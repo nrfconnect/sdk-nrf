@@ -198,7 +198,7 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 	struct nrf_cloud_rest_context rest_ctx = {
 		.connect_socket = -1,
 		.keep_alive = false,
-		.timeout_ms = CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT * MSEC_PER_SEC,
+		.timeout_ms = NRF_CLOUD_REST_TIMEOUT_NONE,
 		.rx_buf = rest_api_recv_buf,
 		.rx_buf_len = sizeof(rest_api_recv_buf),
 		.fragment_size = 0
@@ -263,7 +263,7 @@ static void method_gnss_pgps_request_work_fn(struct k_work *item)
 	struct nrf_cloud_rest_context rest_ctx = {
 		.connect_socket = -1,
 		.keep_alive = false,
-		.timeout_ms = CONFIG_NRF_CLOUD_REST_RECV_TIMEOUT * MSEC_PER_SEC,
+		.timeout_ms = NRF_CLOUD_REST_TIMEOUT_NONE,
 		.rx_buf = rest_api_recv_buf,
 		.rx_buf_len = sizeof(rest_api_recv_buf),
 		.fragment_size = 0
