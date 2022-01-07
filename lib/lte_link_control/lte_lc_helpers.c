@@ -113,6 +113,10 @@ void event_handler_list_dispatch(const struct lte_lc_evt *const evt)
 {
 	struct event_handler *curr, *tmp;
 
+	if (event_handler_list_is_empty()) {
+		return;
+	}
+
 	k_mutex_lock(&list_mtx, K_FOREVER);
 
 	/* Dispatch events to all registered handlers */
