@@ -64,8 +64,18 @@ config GAZELL_PAIRING_SETTINGS
 
 endif # GAZELL_PAIRING
 
+config GAZELL_ZERO_LATENCY_IRQS
+	bool "Gazell zero-latency interrupts [EXPERIMENTAL]"
+	depends on ZERO_LATENCY_IRQS
+	select EXPERIMENTAL
+	help
+	  Enable zero-latency interrupt for Gazell's radio and timer IRQ so
+	  that they will not be blocked by interrupt locking.
+
 config GAZELL_HIGH_IRQ_PRIO
 	int "Gazell high IRQ priority"
+	range 0 0 if GAZELL_ZERO_LATENCY_IRQS
+	range 0 5 if ZERO_LATENCY_IRQS
 	range 0 6
 	default 0
 	help
@@ -74,6 +84,7 @@ config GAZELL_HIGH_IRQ_PRIO
 
 config GAZELL_LOW_IRQ_PRIO_MIN
 	int
+	default 0 if (GAZELL_ZERO_LATENCY_IRQS)
 	default 1 if (GAZELL_HIGH_IRQ_PRIO = 0)
 	default 2 if (GAZELL_HIGH_IRQ_PRIO = 1)
 	default 3 if (GAZELL_HIGH_IRQ_PRIO = 2)
@@ -84,7 +95,9 @@ config GAZELL_LOW_IRQ_PRIO_MIN
 
 config GAZELL_LOW_IRQ_PRIO
 	int "Gazell low IRQ priority"
+	range GAZELL_LOW_IRQ_PRIO_MIN 6 if ZERO_LATENCY_IRQS
 	range GAZELL_LOW_IRQ_PRIO_MIN 7
+	default GAZELL_LOW_IRQ_PRIO_MIN
 	help
 	  The interrupt priority for Gazell's SWI IRQ. This value shall
 	  be greater than the Gazell's high IRQ priority value.
