@@ -22,6 +22,13 @@
 
 #include "hal/nrf_gpio.h"
 
+#if DT_NODE_HAS_STATUS(DT_PHANDLE(DT_NODELABEL(radio), coex), okay)
+#define CX_NODE DT_PHANDLE(DT_NODELABEL(radio), coex)
+#else
+#define CX_NODE DT_INVALID_NODE
+#error No enabled coex nodes registered in DTS.
+#endif
+
 /* Value from chapter 7. Logic Timing from Thread Radio Coexistence */
 #define REQUEST_TO_GRANT_US 50U
 
@@ -250,3 +257,18 @@ int32_t mpsl_cx_thread_interface_config_set(
 
 	return 0;
 }
+
+static int mpsl_cx_init(const struct device *dev)
+{
+	ARG_UNUSED(dev);
+
+	struct mpsl_cx_thread_interface_config cfg = {
+		.request_pin  = NRF_DT_GPIOS_TO_PSEL(CX_NODE, req_gpios),
+		.priority_pin = NRF_DT_GPIOS_TO_PSEL(CX_NODE, pri_dir_gpios),
+		.granted_pin  = NRF_DT_GPIOS_TO_PSEL(CX_NODE, grant_gpios),
+	};
+
+	return mpsl_cx_thread_interface_config_set(&cfg);
+}
+
+SYS_INIT(mpsl_cx_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
