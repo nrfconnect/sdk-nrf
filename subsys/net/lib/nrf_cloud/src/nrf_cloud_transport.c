@@ -715,6 +715,11 @@ static void nrf_cloud_fota_cb_handler(const struct nrf_cloud_fota_evt
 	switch (evt->id) {
 	case NRF_CLOUD_FOTA_EVT_START: {
 		LOG_DBG("NRF_CLOUD_FOTA_EVT_START");
+		struct nrf_cloud_evt cloud_evt = {
+			.type = NRF_CLOUD_EVT_FOTA_START
+		};
+
+		nct_apply_update(&cloud_evt);
 		break;
 	}
 	case NRF_CLOUD_FOTA_EVT_DONE: {
@@ -739,6 +744,11 @@ static void nrf_cloud_fota_cb_handler(const struct nrf_cloud_fota_evt
 	}
 	case NRF_CLOUD_FOTA_EVT_ERROR: {
 		LOG_ERR("NRF_CLOUD_FOTA_EVT_ERROR");
+		struct nrf_cloud_evt cloud_evt = {
+			.type = NRF_CLOUD_EVT_FOTA_ERROR
+		};
+
+		nct_apply_update(&cloud_evt);
 		break;
 	}
 	case NRF_CLOUD_FOTA_EVT_ERASE_PENDING: {

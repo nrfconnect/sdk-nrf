@@ -99,8 +99,12 @@ enum nrf_cloud_evt_type {
 	NRF_CLOUD_EVT_SENSOR_DATA_ACK,
 	/** The transport was disconnected. */
 	NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED,
+	/** A FOTA update has started. */
+	NRF_CLOUD_EVT_FOTA_START,
 	/** The device should be restarted to apply a firmware upgrade */
 	NRF_CLOUD_EVT_FOTA_DONE,
+	/** An error occurred during the FOTA update. */
+	NRF_CLOUD_EVT_FOTA_ERROR,
 	/** There was an error communicating with the cloud. */
 	NRF_CLOUD_EVT_ERROR = 0xFF
 };
