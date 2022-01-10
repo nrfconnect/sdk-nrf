@@ -9,6 +9,7 @@
 #include <drivers/sensor.h>
 
 #include <caf/events/sensor_event.h>
+#include <caf/events/sensor_force_active_event.h>
 #include <caf/sensor_manager.h>
 
 #include CONFIG_CAF_SENSOR_MANAGER_DEF_PATH
@@ -35,6 +36,9 @@ struct sensor_data {
 	atomic_t state;
 	unsigned int sleep_cntd;
 	atomic_t event_cnt;
+#if IS_ENABLED(CONFIG_CAF_SENSOR_FORCE_ACTIVE_EVENTS)
+	bool forced_active;
+#endif
 };
 
 static struct sensor_data sensor_data[ARRAY_SIZE(sensor_configs)];
@@ -43,6 +47,22 @@ static K_THREAD_STACK_DEFINE(sample_thread_stack, SAMPLE_THREAD_STACK_SIZE);
 static struct k_thread sample_thread;
 static struct k_sem can_sample;
 
+
+static void set_sensor_forced_active(struct sensor_data *sd, bool forced_active)
+{
+#if IS_ENABLED(CONFIG_CAF_SENSOR_FORCE_ACTIVE_EVENTS)
+	sd->forced_active = forced_active;
+#endif
+}
+
+static bool get_sensor_forced_active(struct sensor_data *sd)
+{
+#if IS_ENABLED(CONFIG_CAF_SENSOR_FORCE_ACTIVE_EVENTS)
+	return sd->forced_active;
+#else
+	return false;
+#endif
+}
 
 static void update_sensor_state(const struct sm_sensor_config *sc, struct sensor_data *sd,
 				const enum sensor_state state)
@@ -151,13 +171,18 @@ static void process_sensor_activity(const struct sm_sensor_config *sc,
 				    struct sensor_data *sd,
 				    const float *curr)
 {
-	size_t data_cnt = get_sensor_data_cnt(sc);
 	bool sleep = true;
+	size_t data_cnt = get_sensor_data_cnt(sc);
 
-	for (size_t i = 0; i < data_cnt; i++) {
-		if (process_sensor_trigger_values(sc, sd, curr[i], sd->prev[i])) {
-			sleep = false;
-			break;
+	if (get_sensor_forced_active(sd)) {
+		sleep = false;
+	} else {
+
+		for (size_t i = 0; i < data_cnt; i++) {
+			if (process_sensor_trigger_values(sc, sd, curr[i], sd->prev[i])) {
+				sleep = false;
+				break;
+			}
 		}
 	}
 
@@ -484,6 +509,31 @@ static bool handle_power_down_event(const struct event_header *eh)
 	return false;
 }
 
+static void sensor_wake_up(const struct sm_sensor_config *sc, struct sensor_data *sd)
+{
+	k_sched_lock();
+	if (atomic_get(&sd->state) != SENSOR_STATE_ERROR) {
+		int ret = 0;
+
+		if (sc->trigger) {
+			sensor_trigger_set(sd->dev, &sc->trigger->cfg, NULL);
+		} else if (sc->suspend_pm_state != PM_DEVICE_STATE_ACTIVE) {
+			ret = pm_device_state_set(sd->dev, PM_DEVICE_STATE_ACTIVE);
+			if (ret) {
+				LOG_ERR("Sensor %s cannot be activated (%d)",
+					sc->dev_name, ret);
+				update_sensor_state(sc, sd, SENSOR_STATE_ERROR);
+			}
+		}
+
+		if (!ret) {
+			LOG_DBG("Sensor %s wake up", sc->dev_name);
+			sensor_wake_up_post(sc, sd);
+		}
+	}
+	k_sched_unlock();
+}
+
 static bool handle_wake_up_event(const struct event_header *eh)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(sensor_data); i++) {
@@ -491,29 +541,55 @@ static bool handle_wake_up_event(const struct event_header *eh)
 		const struct sm_sensor_config *sc = &sensor_configs[i];
 
 		/* Locking the scheduler to prevent concurrent access to sensor state. */
-		k_sched_lock();
-		if (atomic_get(&sd->state) != SENSOR_STATE_ERROR) {
-			int ret = 0;
-
-			if (sc->trigger) {
-				sensor_trigger_set(sd->dev, &sc->trigger->cfg, NULL);
-			} else if (sc->suspend_pm_state != PM_DEVICE_STATE_ACTIVE) {
-				ret = pm_device_state_set(sd->dev, PM_DEVICE_STATE_ACTIVE);
-				if (ret) {
-					LOG_ERR("Sensor %s cannot be activated (%d)",
-						sc->dev_name, ret);
-					update_sensor_state(sc, sd, SENSOR_STATE_ERROR);
-				}
-			}
-
-			if (!ret) {
-				LOG_DBG("Sensor %s wake up", sc->dev_name);
-				sensor_wake_up_post(sc, sd);
-			}
-		}
-		k_sched_unlock();
+		sensor_wake_up(sc, sd);
 	}
 	k_sem_give(&can_sample);
+	return false;
+}
+
+static const struct sm_sensor_config *sensor_find_config_by_descr(const char * const descr)
+{
+	size_t i;
+	const struct sm_sensor_config *sc;
+
+	for (i = 0, sc = sensor_configs; i < ARRAY_SIZE(sensor_configs); i++, sc++) {
+		if (descr == sc->event_descr) {
+			return sc;
+		}
+	}
+	for (i = 0, sc = sensor_configs; i < ARRAY_SIZE(sensor_configs); i++, sc++) {
+		if (strcmp(descr, sc->event_descr) == 0) {
+			return sc;
+		}
+	}
+
+	return NULL;
+}
+
+static struct sensor_data *sensor_config2data(const struct sm_sensor_config *sc)
+{
+	size_t i = sc - sensor_configs;
+
+	__ASSERT_NO_MSG(i < ARRAY_SIZE(sensor_configs));
+	return &sensor_data[i];
+}
+
+static bool handle_sensor_force_active_event(const struct event_header *eh)
+{
+	const struct sensor_force_active_event *event = cast_sensor_force_active_event(eh);
+	const struct sm_sensor_config *sc = sensor_find_config_by_descr(event->descr);
+
+	__ASSERT_NO_MSG(sc != NULL);
+	if (sc == NULL) {
+		return false;
+	}
+	struct sensor_data *sd = sensor_config2data(sc);
+
+	set_sensor_forced_active(sd, event->force_active);
+	if (event->force_active && (atomic_get(&sd->state) == SENSOR_STATE_SLEEP)) {
+		sensor_wake_up(sc, sd);
+		k_sem_give(&can_sample);
+	}
 	return false;
 }
 
@@ -535,16 +611,19 @@ static bool event_handler(const struct event_header *eh)
 
 	if (is_sensor_event(eh)) {
 		const struct sensor_event *event = cast_sensor_event(eh);
+		const struct sm_sensor_config *sc = sensor_find_config_by_descr(event->descr);
 
-		for (size_t i = 0; i < ARRAY_SIZE(sensor_configs); i++) {
-			if (event->descr == sensor_configs[i].event_descr) {
-				struct sensor_data *sd = &sensor_data[i];
-
-				atomic_dec(&sd->event_cnt);
-				__ASSERT_NO_MSG(!(atomic_get(&sd->event_cnt) < 0));
-				return false;
-			}
+		__ASSERT_NO_MSG(sc != NULL);
+		if (sc == NULL) {
+			return false;
 		}
+		struct sensor_data *sd = sensor_config2data(sc);
+		atomic_val_t previous;
+
+		__ASSERT_NO_MSG(sd != NULL);
+		previous = atomic_dec(&sd->event_cnt);
+		__ASSERT_NO_MSG(previous > 0);
+		(void)previous;
 
 		return false;
 	}
@@ -557,6 +636,10 @@ static bool event_handler(const struct event_header *eh)
 		return handle_wake_up_event(eh);
 	}
 
+	if (IS_ENABLED(CONFIG_CAF_SENSOR_FORCE_ACTIVE_EVENTS) &&
+	    is_sensor_force_active_event(eh)) {
+		return handle_sensor_force_active_event(eh);
+	}
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -570,3 +653,6 @@ EVENT_SUBSCRIBE_FINAL(MODULE, sensor_event);
 EVENT_SUBSCRIBE(MODULE, power_down_event);
 EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #endif /* CONFIG_AF_SENSOR_MANAGER_PM */
+#if CONFIG_CAF_SENSOR_FORCE_ACTIVE_EVENTS
+EVENT_SUBSCRIBE(MODULE, sensor_force_active_event);
+#endif
