@@ -46,15 +46,32 @@ static void update_led(enum led_state state)
 				&asset_tracker_led_effect[LED_STATE_CLOUD_PUBLISHING]);
 		led_bm |= BIT(LED_ID_PUBLISHING);
 		break;
+	case LED_STATE_CLOUD_CONNECTING:
+		send_led_event(LED_ID_CLOUD_CONNECTING,
+			       &asset_tracker_led_effect[LED_STATE_CLOUD_CONNECTING]);
+		led_bm |= BIT(LED_ID_CLOUD_CONNECTING);
+		break;
+	case LED_STATE_CLOUD_ASSOCIATING:
+		send_led_event(LED_ID_ASSOCIATING,
+			       &asset_tracker_led_effect[LED_STATE_CLOUD_ASSOCIATING]);
+		led_bm |= BIT(LED_ID_ASSOCIATING);
+		break;
+	case LED_STATE_CLOUD_ASSOCIATED:
+		send_led_event(LED_ID_ASSOCIATED,
+			       &asset_tracker_led_effect[LED_STATE_CLOUD_ASSOCIATED]);
+		led_bm |= BIT(LED_ID_ASSOCIATED);
+		break;
 	case LED_STATE_ACTIVE_MODE:
-		send_led_event(LED_ID_MODE,
+		send_led_event(LED_ID_ACTIVE_MODE,
 				&asset_tracker_led_effect[LED_STATE_ACTIVE_MODE]);
-		led_bm |= BIT(LED_ID_MODE);
+		led_bm |= BIT(LED_ID_ACTIVE_MODE);
 		break;
 	case LED_STATE_PASSIVE_MODE:
-		send_led_event(LED_ID_MODE,
-				&asset_tracker_led_effect[LED_STATE_PASSIVE_MODE]);
-		led_bm |= BIT(LED_ID_MODE);
+		send_led_event(LED_ID_PASSIVE_MODE_1,
+			       &asset_tracker_led_effect[LED_STATE_PASSIVE_MODE]);
+		send_led_event(LED_ID_PASSIVE_MODE_2,
+			       &asset_tracker_led_effect[LED_STATE_PASSIVE_MODE]);
+		led_bm |= (BIT(LED_ID_PASSIVE_MODE_1) | BIT(LED_ID_PASSIVE_MODE_2));
 		break;
 	case LED_STATE_ERROR_SYSTEM_FAULT:
 		for (size_t i = 0; i < LED_ID_COUNT; i++) {
@@ -63,12 +80,22 @@ static void update_led(enum led_state state)
 			led_bm |= BIT(i);
 		}
 		break;
+	case LED_STATE_FOTA_UPDATING:
+		send_led_event(LED_ID_FOTA_1,
+			       &asset_tracker_led_effect[LED_STATE_FOTA_UPDATING]);
+		send_led_event(LED_ID_FOTA_2,
+			       &asset_tracker_led_effect[LED_STATE_FOTA_UPDATING]);
+		led_bm |= (BIT(LED_ID_FOTA_1) | BIT(LED_ID_FOTA_2));
+		break;
 	case LED_STATE_FOTA_UPDATE_REBOOT:
-		for (size_t i = 0; i < LED_ID_COUNT; i++) {
-			send_led_event(i,
-					&asset_tracker_led_effect[LED_STATE_FOTA_UPDATE_REBOOT]);
-			led_bm |= BIT(i);
-		}
+		send_led_event(LED_ID_FOTA_1,
+			       &asset_tracker_led_effect[LED_STATE_FOTA_UPDATE_REBOOT]);
+		send_led_event(LED_ID_FOTA_2,
+			       &asset_tracker_led_effect[LED_STATE_FOTA_UPDATE_REBOOT]);
+		led_bm |= (BIT(LED_ID_FOTA_1) | BIT(LED_ID_FOTA_2));
+		break;
+	case LED_STATE_TURN_OFF:
+		/* Do nothing. */
 		break;
 	default:
 		LOG_WRN("Unrecognized LED state event send");

@@ -40,23 +40,32 @@ LED indication
 The module supports multiple LED patterns to visualize the operating state of the application.
 The following table describes the supported LED states:
 
-+---------------------------+-------------------------+-----------------------+
-| State                     | Thingy:91 RGB LED       | nRF9160 DK solid LEDs |
-+===========================+=========================+=======================+
-| LTE connection search     | Yellow, blinking        | LED1 blinking         |
-+---------------------------+-------------------------+-----------------------+
-| GNSS fix search           | Purple, blinking        | LED2 blinking         |
-+---------------------------+-------------------------+-----------------------+
-| Publishing data           | Green, blinking         | LED3 blinking         |
-+---------------------------+-------------------------+-----------------------+
-| Active mode               | Light blue, blinking    | LED4 blinking         |
-+---------------------------+-------------------------+-----------------------+
-| Passive mode              | Dark blue, slow blinking| LED4 slow blinking    |
-+---------------------------+-------------------------+-----------------------+
-| Error                     | Red, static             | all 4 LEDs blinking   |
-+---------------------------+-------------------------+-----------------------+
-| Completion of FOTA update | White, rapid blinking   | all 4 LEDs on         |
-+---------------------------+-------------------------+-----------------------+
++---------------------------+------------------------------+----------------------------+
+| State                     | Thingy:91 RGB LED            | nRF9160 DK solid LEDs      |
++===========================+==============================+============================+
+| LTE connection search     | Yellow, blinking             | LED1 blinking              |
++---------------------------+------------------------------+----------------------------+
+| GNSS fix search           | Purple, blinking             | LED2 blinking              |
++---------------------------+------------------------------+----------------------------+
+| Cloud association         | White, double pulse blinking | LED3 double pulse blinking |
++---------------------------+------------------------------+----------------------------+
+| Connecting to cloud       | Green, triple pulse blinking | LED3 triple pulse blinking |
++---------------------------+------------------------------+----------------------------+
+| Publishing data           | Green, blinking              | LED3 blinking              |
++---------------------------+------------------------------+----------------------------+
+| Active mode               | Light blue, blinking         | LED4 blinking              |
++---------------------------+------------------------------+----------------------------+
+| Passive mode              | Dark blue, blinking          | LED3 and LED4 blinking     |
++---------------------------+------------------------------+----------------------------+
+| Error                     | Red, static                  | All 4 LEDs blinking        |
++---------------------------+------------------------------+----------------------------+
+| FOTA update               | Orange, rapid blinking       | LED1 and LED2 blinking     |
++---------------------------+------------------------------+----------------------------+
+| Completion of FOTA update | Orange, static               | LED1 and LED2 static       |
++---------------------------+------------------------------+----------------------------+
+
+.. note::
+   The LED pattern that indicates the device mode is visible for a few seconds after an update has been sent to cloud.
 
 Configuration options
 *********************
@@ -73,14 +82,20 @@ The UI module continuously updates its internal state based on the mode and oper
 This ensures that the correct LED pattern is displayed when the application changes its state of operation.
 The UI module has an internal state machine with the following states:
 
-* ``STATE_ACTIVE`` - The application is in the active mode, revert to the active mode LED pattern.
-* ``STATE_PASSIVE`` - The application is in the passive mode, revert to the passive mode LED pattern.
+* ``STATE_INIT`` - The initial state of the module.
+* ``STATE_RUNNING`` - The module has performed all the required initializations and can initiate the display of LED patterns based on incoming events from other modules.
 
-   * ``SUB_STATE_GNSS_ACTIVE`` - The application is performing a GNSS search, revert to the GNSS search LED pattern.
-   * ``SUB_STATE_GNSS_INACTIVE`` - A GNSS search is not being performed.
+   * ``SUB_STATE_ACTIVE`` - The application is in the active mode. The module reverts to the active mode LED pattern after cloud publication.
+   * ``SUB_STATE_PASSIVE`` - The application is in the passive mode. The module reverts to the passive mode LED pattern after cloud publication.
 
-* ``STATE_SHUTDOWN`` - The module has been shut down after receiving a request from the utility module.
+      * ``SUB_SUB_STATE_GNSS_ACTIVE`` - The application is performing a GNSS search. The module reverts to the GNSS search LED pattern.
+      * ``SUB_SUB_STATE_GNSS_INACTIVE`` - A GNSS search is not being performed.
 
+* ``STATE_LTE_CONNECTING`` - The modem module is performing an LTE connection search. The UI module triggers the LTE connection search LED pattern.
+* ``STATE_CLOUD_CONNECTING`` - The cloud module is connecting to cloud. The UI module triggers the cloud connection LED pattern.
+* ``STATE_CLOUD_ASSOCIATING`` - The cloud module is performing user association. The UI module triggers the cloud association LED pattern.
+* ``STATE_FOTA_UPDATING`` - The cloud module is performing a FOTA update. The UI module triggers the FOTA update LED pattern.
+* ``STATE_SHUTDOWN`` - The module has been shut down after receiving a request from the utility module. It triggers the appropriate LED pattern that corresponds to the shutdown reason.
 
 Module events
 *************
@@ -99,8 +114,7 @@ API documentation
 *****************
 
 | Header file: :file:`asset_tracker_v2/src/events/ui_module_event.h`
-| Source files: :file:`asset_tracker_v2/src/events/ui_module_event.c`
-                :file:`asset_tracker_v2/src/modules/ui_module.c`
+| Source files: :file:`asset_tracker_v2/src/events/ui_module_event.c`, :file:`asset_tracker_v2/src/modules/ui_module.c`
 
 .. doxygengroup:: ui_module_event
    :project: nrf
