@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>
+#include "common.h"
 #include <toolchain/common.h>
 #include <sys/util.h>
 #include <drivers/entropy.h>
@@ -15,13 +16,6 @@
 #include <ztest.h>
 #endif
 
-#if defined(CONFIG_MBEDTLS)
-#if !defined(CONFIG_MBEDTLS_CFG_FILE)
-#include "mbedtls/config.h"
-#else
-#include CONFIG_MBEDTLS_CFG_FILE
-#endif /* CONFIG_MBEDTLS_CFG_FILE */
-#endif
 #include <mbedtls/platform.h>
 #include <mbedtls/cipher.h>
 #if defined(CONFIG_NRF_CC310_PLATFORM)
@@ -62,7 +56,14 @@ int init_drbg(const unsigned char *p_optional_seed, size_t len);
  */
 size_t hex2bin_safe(const char *hex, uint8_t *buf, size_t buflen);
 
-#if defined(MBEDTLS_CTR_DRBG_C)
+#if defined(MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG)
+
+#include "psa/crypto.h"
+#include "nrf_cc3xx_platform_ctr_drbg.h"
+
+extern mbedtls_psa_external_random_context_t drbg_ctx;
+
+#elif defined(MBEDTLS_CTR_DRBG_C)
 
 #include <mbedtls/ctr_drbg.h>
 
