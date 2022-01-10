@@ -43,8 +43,14 @@ enum cloud_module_event_type {
 	/** An empty device configuration has been received from cloud. */
 	CLOUD_EVT_CONFIG_EMPTY,
 
+	/** A FOTA update has started. */
+	CLOUD_EVT_FOTA_START,
+
 	/** FOTA has been performed, a reboot of the application is needed. */
 	CLOUD_EVT_FOTA_DONE,
+
+	/** An error occurred during a FOTA update. */
+	CLOUD_EVT_FOTA_ERROR,
 
 	/** Sending of data to cloud has been attempted.
 	 *  The payload associated with this event is of type @ref cloud_module_data_ack (ack).

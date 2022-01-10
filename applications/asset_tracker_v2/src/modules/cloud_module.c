@@ -334,6 +334,7 @@ static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
 		break;
 	case CLOUD_WRAP_EVT_FOTA_START: {
 		LOG_DBG("CLOUD_WRAP_EVT_FOTA_START");
+		SEND_EVENT(cloud, CLOUD_EVT_FOTA_START);
 		break;
 	}
 	case CLOUD_WRAP_EVT_FOTA_ERASE_PENDING:
@@ -342,9 +343,11 @@ static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
 	case CLOUD_WRAP_EVT_FOTA_ERASE_DONE:
 		LOG_DBG("CLOUD_WRAP_EVT_FOTA_ERASE_DONE");
 		break;
-	case CLOUD_WRAP_EVT_FOTA_ERROR:
+	case CLOUD_WRAP_EVT_FOTA_ERROR: {
 		LOG_DBG("CLOUD_WRAP_EVT_FOTA_ERROR");
+		SEND_EVENT(cloud, CLOUD_EVT_FOTA_ERROR);
 		break;
+	}
 	case CLOUD_WRAP_EVT_ERROR: {
 		LOG_DBG("CLOUD_WRAP_EVT_ERROR");
 		SEND_ERROR(cloud, CLOUD_EVT_ERROR, evt->err);
