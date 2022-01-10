@@ -111,6 +111,8 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 	switch (evt->type) {
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTING:
 		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_CONNECTING");
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_CONNECTING;
+		notify = true;
 		break;
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTED:
 		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_CONNECTED");
