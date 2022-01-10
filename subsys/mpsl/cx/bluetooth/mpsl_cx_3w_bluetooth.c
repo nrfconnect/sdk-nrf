@@ -121,3 +121,12 @@ int mpsl_cx_bt_interface_3wire_config_set(void)
 
 	return err;
 }
+
+static int mpsl_cx_init(const struct device *dev)
+{
+	ARG_UNUSED(dev);
+
+	return mpsl_cx_bt_interface_3wire_config_set();
+}
+
+SYS_INIT(mpsl_cx_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
