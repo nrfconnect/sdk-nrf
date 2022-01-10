@@ -25,11 +25,14 @@ static void test_state_reset(void)
 	_heap_free();
 	_heap_init();
 
-	TEST_VECTOR_ASSERT_EQUAL(0, init_drbg(NULL, 0));
+	// TEST_VECTOR_ASSERT_EQUAL(0, init_drbg(NULL, 0));
 }
 
 void run_suites(test_case_t *cases, uint32_t case_count)
 {
+	LOG_INF("%d test cases --- `%s` (location of cases: %p)",
+		case_count, cases->p_test_case_name, cases);
+
 	for (uint32_t c = 0; c < case_count; c++) {
 		uint32_t n_cases = get_vector_count(&cases[c]);
 
@@ -97,6 +100,7 @@ void test_main(void)
 		   ITEM_COUNT(test_case_aes_ecb_data, test_case_t));
 	run_suites(__start_test_case_aes_cbc_data,
 		   ITEM_COUNT(test_case_aes_cbc_data, test_case_t));
+
 	run_suites(__start_test_case_ecdsa_data,
 		   ITEM_COUNT(test_case_ecdsa_data, test_case_t));
 	run_suites(__start_test_case_ecdh_data,
