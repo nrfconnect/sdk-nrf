@@ -23,6 +23,171 @@ if(IMAGE_NAME)
   generate_shared(IMAGE ${IMAGE_NAME} FILE ${CMAKE_BINARY_DIR}/shared_vars.cmake)
 endif(IMAGE_NAME)
 
+#
+# Function for gathering all CMake arguments relevant to Kconfig and Devicetree 
+# for a child image. The output can be passed directly to a CMake call.
+#
+# Usage:
+#   get_child_image_cmake_args(
+#     CHILD_IMAGE            <name of child image>
+#     OUTPUT_CMAKE_ARGS      <output variable for storing cmake args>
+#   )
+function(get_child_image_cmake_args)
+
+  set(oneValueArgs CHILD_IMAGE CONFIG_OUT)
+  cmake_parse_arguments(GET_ARGS "" "${oneValueArgs}" "" ${ARGN})
+
+  if (NOT GET_ARGS_CHILD_IMAGE OR NOT GET_ARGS_CONFIG_OUT)
+    message(FATAL_ERROR "Missing parameter, required: ${oneValueArgs}")
+  endif()
+
+  # It is possible for a sample to use a custom set of Kconfig fragments for a
+  # child image, or to append additional Kconfig fragments to the child image.
+  # Note that <CHILD_IMAGE> in this context is the name of the child image as
+  # passed to the 'add_child_image' function.
+  #
+  # <child-sample> DIRECTORY
+  # | - prj.conf (A)
+  # | - prj_<buildtype>.conf (B)
+  # | - boards DIRECTORY
+  # | | - <board>.conf (C)
+  # | | - <board>_<buildtype>.conf (D)
+
+
+  # <current-sample> DIRECTORY
+  # | - prj.conf
+  # | - prj_<buildtype>.conf
+  # | - child_image DIRECTORY
+  #     |-- <CHILD_IMAGE>.conf (I)                 Fragment, used together with (A) and (C)
+  #     |-- <CHILD_IMAGE>_<buildtype>.conf (J)     Fragment, used together with (B) and (D)
+  #     |-- <CHILD_IMAGE>.overlay                  If present, will be merged with BOARD.dts
+  #     |-- <CHILD_IMAGE> DIRECTORY
+  #         |-- boards DIRECTORY
+  #         |   |-- <board>.conf (E)            If present, use instead of (C), requires (G).
+  #         |   |-- <board>_<buildtype>.conf (F)     If present, use instead of (D), requires (H).
+  #         |   |-- <board>.overlay             If present, will be merged with BOARD.dts
+  #         |   |-- <board>_<revision>.overlay  If present, will be merged with BOARD.dts
+  #         |-- prj.conf (G)                    If present, use instead of (A)
+  #         |                                   Note that (C) is ignored if this is present.
+  #         |                                   Use (E) instead.
+  #         |-- prj_<buildtype>.conf (H)        If present, used instead of (B) when user
+  #         |                                   specify `-DCONF_FILE=prj_<buildtype>.conf for
+  #         |                                   parent image. Note that any (C) is ignored
+  #         |                                   if this is present. Use (F) instead.
+  #         |-- <board>.overlay                 If present, will be merged with BOARD.dts
+  #         |-- <board>_<revision>.overlay      If present, will be merged with BOARD.dts
+  #
+  # Note: The folder `child_image/<CHILD_IMAGE>` is only need when configurations
+  #       files must be used instead of the child image default configs.
+  #       The append a child image default config, place the addetional settings
+  #       in `child_image/<CHILD_IMAGE>.conf`.
+  set(fragments_dir ${APPLICATION_CONFIG_DIR}/child_image)
+  set(conf_dir ${APPLICATION_CONFIG_DIR}/child_image/${GET_ARGS_CHILD_IMAGE})
+  if (NOT ${GET_ARGS_CHILD_IMAGE}_CONF_FILE)
+    ncs_file(CONF_FILES ${conf_dir}
+             BOARD ${ACI_BOARD}
+             # Child image always uses the same revision as parent board.
+             BOARD_REVISION ${BOARD_REVISION}
+             KCONF ${GET_ARGS_CHILD_IMAGE}_CONF_FILE
+             DTS ${GET_ARGS_CHILD_IMAGE}_DTC_OVERLAY_FILE
+             BUILD ${CONF_FILE_BUILD_TYPE}
+    )
+
+    # Check for configuration fragment. The contents of these are appended
+    # to the project configuration, as opposed to the CONF_FILE which is used
+    # as the base configuration.
+    if (DEFINED CONF_FILE_BUILD_TYPE)
+      set(child_image_conf_fragment ${fragments_dir}/${GET_ARGS_CHILD_IMAGE}_${CONF_FILE_BUILD_TYPE}.conf)
+    else()
+      set(child_image_conf_fragment ${fragments_dir}/${GET_ARGS_CHILD_IMAGE}.conf)
+    endif()
+    if (EXISTS ${child_image_conf_fragment})
+      add_overlay_config(${GET_ARGS_CHILD_IMAGE} ${child_image_conf_fragment})
+    endif()
+
+    # Check for overlay named <GET_ARGS_CHILD_IMAGE>.overlay.
+    set(child_image_dts_overlay ${fragments_dir}/${GET_ARGS_CHILD_IMAGE}.overlay)
+    if (EXISTS ${child_image_dts_overlay})
+      add_overlay_dts(${GET_ARGS_CHILD_IMAGE} ${child_image_dts_overlay})
+    endif()
+    if(DEFINED ${GET_ARGS_CHILD_IMAGE}_CONF_FILE)
+      set(${GET_ARGS_CHILD_IMAGE}_CONF_FILE ${${GET_ARGS_CHILD_IMAGE}_CONF_FILE} CACHE STRING
+        "Default ${GET_ARGS_CHILD_IMAGE} configuration file"
+      )
+    endif()
+  endif()
+
+  # Construct a list of variables that, when present in the root
+  # image, should be passed on to all child images as well.
+  list(APPEND
+    SHARED_MULTI_IMAGE_VARIABLES
+    CMAKE_BUILD_TYPE
+    CMAKE_VERBOSE_MAKEFILE
+    BOARD_DIR
+    BOARD_REVISION
+    ZEPHYR_MODULES
+    ZEPHYR_EXTRA_MODULES
+    ZEPHYR_TOOLCHAIN_VARIANT
+    GNUARMEMB_TOOLCHAIN_PATH
+    EXTRA_KCONFIG_TARGETS
+    NCS_TOOLCHAIN_VERSION
+    PM_DOMAINS
+    ${ACI_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION
+    )
+
+  foreach(kconfig_target ${EXTRA_KCONFIG_TARGETS})
+    list(APPEND
+      SHARED_MULTI_IMAGE_VARIABLES
+      EXTRA_KCONFIG_TARGET_COMMAND_FOR_${kconfig_target}
+      )
+  endforeach()
+
+  unset(child_image_cmake_args)
+  list(REMOVE_DUPLICATES SHARED_MULTI_IMAGE_VARIABLES)
+  foreach(shared_var ${SHARED_MULTI_IMAGE_VARIABLES})
+    if(DEFINED ${shared_var})
+      # Any  shared var that is a list must be escaped to ensure correct behaviour.
+      string(REPLACE \; \\\\\; val "${${shared_var}}")
+      list(APPEND child_image_cmake_args
+        -D${shared_var}=${val}
+        )
+    endif()
+  endforeach()
+
+  get_cmake_property(VARIABLES              VARIABLES)
+  get_cmake_property(VARIABLES_CACHED CACHE_VARIABLES)
+
+  set(regex "^${GET_ARGS_CHILD_IMAGE}_.+")
+
+  list(FILTER VARIABLES        INCLUDE REGEX ${regex})
+  list(FILTER VARIABLES_CACHED INCLUDE REGEX ${regex})
+
+  foreach(var_name
+      ${VARIABLES}
+      ${VARIABLES_CACHED}
+      )
+    # This regex is guaranteed to match due to the filtering done
+    # above, we only re-run the regex to extract the part after
+    # '_'. We run the regex twice because it is believed that
+    # list(FILTER is faster than doing a string(REGEX on each item.
+    string(REGEX MATCH "^${GET_ARGS_CHILD_IMAGE}_(.+)" unused_out_var ${var_name})
+
+    # When we try to pass a list on to the child image, like
+    # -DCONF_FILE=a.conf;b.conf, we will get into trouble because ; is
+    # a special character, so we escape it (mucho) to get the expected
+    # behaviour.
+    string(REPLACE \; \\\\\; val "${${var_name}}")
+
+    list(APPEND child_image_cmake_args
+      -D${CMAKE_MATCH_1}=${val}
+      )
+  endforeach()
+
+  unset(${GET_ARGS_CONFIG_OUT} PARENT_SCOPE)
+  set(${GET_ARGS_CONFIG_OUT} "${child_image_cmake_args}" PARENT_SCOPE)
+
+endfunction()
+
 function(add_child_image)
   # Adds a child image to the build.
   #
@@ -110,10 +275,11 @@ function(add_child_image_from_source)
       # will pass the check as long as the child image hasn't changed.
       message(FATAL_ERROR "A domain may only have a single child image."
         "Current domain image is: ${domain_parent}, `${domain_parent}` is a "
-	"domain parent image, so you may add `${ACI_NAME}` as a child inside "
-	"`${domain_parent}`"
+        "domain parent image, so you may add `${ACI_NAME}` as a child inside "
+        "`${domain_parent}`"
       )
     endif()
+
     # This needs to be made globally available as it is used in other files.
     set(${ACI_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION ${ACI_NAME} CACHE INTERNAL "")
 
@@ -139,146 +305,10 @@ function(add_child_image_from_source)
 
   message("\n=== child image ${ACI_NAME} - ${ACI_DOMAIN}${inherited} begin ===")
 
-  # It is possible for a sample to use a custom set of Kconfig fragments for a
-  # child image, or to append additional Kconfig fragments to the child image.
-  # Note that <ACI_NAME> in this context is the name of the child image as
-  # passed to the 'add_child_image' function.
-  #
-  # <child-sample> DIRECTORY
-  # | - prj.conf (A)
-  # | - prj_<buildtype>.conf (B)
-  # | - boards DIRECTORY
-  # | | - <board>.conf (C)
-  # | | - <board>_<buildtype>.conf (D)
-
-
-  # <current-sample> DIRECTORY
-  # | - prj.conf
-  # | - prj_<buildtype>.conf
-  # | - child_image DIRECTORY
-  #     |-- <ACI_NAME>.conf (I)                 Fragment, used together with (A) and (C)
-  #     |-- <ACI_NAME>_<buildtype>.conf (J)     Fragment, used together with (B) and (D)
-  #     |-- <ACI_NAME>.overlay                  If present, will be merged with BOARD.dts
-  #     |-- <ACI_NAME> DIRECTORY
-  #         |-- boards DIRECTORY
-  #         |   |-- <board>.conf (E)            If present, use instead of (C), requires (G).
-  #         |   |-- <board>_<buildtype>.conf (F)     If present, use instead of (D), requires (H).
-  #         |   |-- <board>.overlay             If present, will be merged with BOARD.dts
-  #         |   |-- <board>_<revision>.overlay  If present, will be merged with BOARD.dts
-  #         |-- prj.conf (G)                    If present, use instead of (A)
-  #         |                                   Note that (C) is ignored if this is present.
-  #         |                                   Use (E) instead.
-  #         |-- prj_<buildtype>.conf (H)        If present, used instead of (B) when user
-  #         |                                   specify `-DCONF_FILE=prj_<buildtype>.conf for
-  #         |                                   parent image. Note that any (C) is ignored
-  #         |                                   if this is present. Use (F) instead.
-  #         |-- <board>.overlay                 If present, will be merged with BOARD.dts
-  #         |-- <board>_<revision>.overlay      If present, will be merged with BOARD.dts
-  #
-  # Note: The folder `child_image/<ACI_NAME>` is only need when configurations
-  #       files must be used instead of the child image default configs.
-  #       The append a child image default config, place the addetional settings
-  #       in `child_image/<ACI_NAME>.conf`.
-  set(ACI_CONF_DIR ${APPLICATION_CONFIG_DIR}/child_image)
-  set(ACI_NAME_CONF_DIR ${APPLICATION_CONFIG_DIR}/child_image/${ACI_NAME})
-  if (NOT ${ACI_NAME}_CONF_FILE)
-    ncs_file(CONF_FILES ${ACI_NAME_CONF_DIR}
-             BOARD ${ACI_BOARD}
-             # Child image always uses the same revision as parent board.
-             BOARD_REVISION ${BOARD_REVISION}
-             KCONF ${ACI_NAME}_CONF_FILE
-             DTS ${ACI_NAME}_DTC_OVERLAY_FILE
-             BUILD ${CONF_FILE_BUILD_TYPE}
+  get_child_image_cmake_args(
+    CHILD_IMAGE ${ACI_NAME}
+    CONFIG_OUT image_cmake_args
     )
-
-    # Check for configuration fragment. The contents of these are appended
-    # to the project configuration, as opposed to the CONF_FILE which is used
-    # as the base configuration.
-    if (DEFINED CONF_FILE_BUILD_TYPE)
-      set(child_image_conf_fragment ${ACI_CONF_DIR}/${ACI_NAME}_${CONF_FILE_BUILD_TYPE}.conf)
-    else()
-      set(child_image_conf_fragment ${ACI_CONF_DIR}/${ACI_NAME}.conf)
-    endif()
-    if (EXISTS ${child_image_conf_fragment})
-      add_overlay_config(${ACI_NAME} ${child_image_conf_fragment})
-    endif()
-
-    # Check for overlay named <ACI_NAME>.overlay.
-    set(child_image_dts_overlay ${ACI_CONF_DIR}/${ACI_NAME}.overlay)
-    if (EXISTS ${child_image_dts_overlay})
-      add_overlay_dts(${ACI_NAME} ${child_image_dts_overlay})
-    endif()
-    if(DEFINED ${ACI_NAME}_CONF_FILE)
-      set(${ACI_NAME}_CONF_FILE ${${ACI_NAME}_CONF_FILE} CACHE STRING
-          "Default ${ACI_NAME} configuration file"
-      )
-    endif()
-  endif()
-  # Construct a list of variables that, when present in the root
-  # image, should be passed on to all child images as well.
-  list(APPEND
-    SHARED_MULTI_IMAGE_VARIABLES
-    CMAKE_BUILD_TYPE
-    CMAKE_VERBOSE_MAKEFILE
-    BOARD_DIR
-    BOARD_REVISION
-    ZEPHYR_MODULES
-    ZEPHYR_EXTRA_MODULES
-    ZEPHYR_TOOLCHAIN_VARIANT
-    GNUARMEMB_TOOLCHAIN_PATH
-    EXTRA_KCONFIG_TARGETS
-    NCS_TOOLCHAIN_VERSION
-    PM_DOMAINS
-    ${ACI_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION
-    )
-
-  foreach(kconfig_target ${EXTRA_KCONFIG_TARGETS})
-    list(APPEND
-      SHARED_MULTI_IMAGE_VARIABLES
-      EXTRA_KCONFIG_TARGET_COMMAND_FOR_${kconfig_target}
-      )
-  endforeach()
-
-  unset(image_cmake_args)
-  list(REMOVE_DUPLICATES SHARED_MULTI_IMAGE_VARIABLES)
-  foreach(shared_var ${SHARED_MULTI_IMAGE_VARIABLES})
-    if(DEFINED ${shared_var})
-      # Any  shared var that is a list must be escaped to ensure correct behaviour.
-      string(REPLACE \; \\\\\; val "${${shared_var}}")
-      list(APPEND image_cmake_args
-        -D${shared_var}=${val}
-        )
-    endif()
-  endforeach()
-
-  get_cmake_property(VARIABLES              VARIABLES)
-  get_cmake_property(VARIABLES_CACHED CACHE_VARIABLES)
-
-  set(regex "^${ACI_NAME}_.+")
-
-  list(FILTER VARIABLES        INCLUDE REGEX ${regex})
-  list(FILTER VARIABLES_CACHED INCLUDE REGEX ${regex})
-
-  foreach(var_name
-      ${VARIABLES}
-      ${VARIABLES_CACHED}
-      )
-    # This regex is guaranteed to match due to the filtering done
-    # above, we only re-run the regex to extract the part after
-    # '_'. We run the regex twice because it is believed that
-    # list(FILTER is faster than doing a string(REGEX on each item.
-    string(REGEX MATCH "^${ACI_NAME}_(.+)" unused_out_var ${var_name})
-
-    # When we try to pass a list on to the child image, like
-    # -DCONF_FILE=a.conf;b.conf, we will get into trouble because ; is
-    # a special character, so we escape it (mucho) to get the expected
-    # behaviour.
-    string(REPLACE \; \\\\\; val "${${var_name}}")
-
-    list(APPEND image_cmake_args
-      -D${CMAKE_MATCH_1}=${val}
-      )
-  endforeach()
 
   file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${ACI_NAME})
   execute_process(

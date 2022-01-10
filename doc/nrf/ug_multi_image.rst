@@ -190,12 +190,12 @@ With ``west``, you can pass these configuration variables into CMake by using th
    -DCONF_FILE=app_prj.conf
 
 You can make a project pass Kconfig configuration files, fragments, and device tree overlays to child images by placing them in the :file:`child_image` folder in the application source directory.
-The listing below describes how to leverage this functionality, where ``ACI_NAME`` is the name of the child image to which the configuration will be applied.
+The listing below describes how to leverage this functionality, where ``CHILD_IMAGE`` is the name of the child image to which the configuration will be applied.
 
 .. literalinclude:: ../../cmake/multi_image.cmake
     :language: c
     :start-at: It is possible for a sample to use a custom set of Kconfig fragments for a
-    :end-before: set(ACI_CONF_DIR ${APPLICATION_CONFIG_DIR}/child_image)
+    :end-before: set(fragments_dir ${APPLICATION_CONFIG_DIR}/child_image)
 
 Variables in child images
 -------------------------
