@@ -94,4 +94,6 @@ config PM_PARTITION_SIZE_TFM_EXTRA
 	  its size will be set to 0, this is because no feature using this
 	  partition is enabled when TFM_MINIMAL is enabled.
 
+rsource "Kconfig.psa.defconfig"
+
 endif # BUILD_WITH_TFM
