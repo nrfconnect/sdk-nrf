@@ -116,9 +116,19 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
 		LOG_DBG("NRF_CLOUD_EVT_SENSOR_DATA_ACK");
 		break;
+	case NRF_CLOUD_EVT_FOTA_START:
+		LOG_DBG("NRF_CLOUD_EVT_FOTA_START");
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_FOTA_START;
+		notify = true;
+		break;
 	case NRF_CLOUD_EVT_FOTA_DONE:
 		LOG_DBG("NRF_CLOUD_EVT_FOTA_DONE");
 		cloud_wrap_evt.type = CLOUD_WRAP_EVT_FOTA_DONE;
+		notify = true;
+		break;
+	case NRF_CLOUD_EVT_FOTA_ERROR:
+		LOG_DBG("NRF_CLOUD_EVT_FOTA_ERROR");
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_FOTA_ERROR;
 		notify = true;
 		break;
 	case NRF_CLOUD_EVT_RX_DATA:
