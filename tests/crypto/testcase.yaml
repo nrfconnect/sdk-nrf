@@ -1,8 +1,6 @@
-# Test timeouts were determined by rounding nRF52840-DK times up to
-# the next 100 seconds.
 tests:
-  crypto.vanilla:
-    extra_args: OVERLAY_CONFIG=overlay-vanilla.conf
+  crypto.builtin:
+    extra_args: OVERLAY_CONFIG=overlay-builtin.conf
     platform_allow: nrf52840dk_nrf52840 nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp
     integration_platforms:
       - nrf52840dk_nrf52840
@@ -19,15 +17,6 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
     tags: crypto ci_build
     timeout: 200
-  crypto.multi:
-    extra_args: OVERLAY_CONFIG=overlay-multi.conf
-    platform_allow: nrf52840dk_nrf52840 nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp
-    integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf9160dk_nrf9160
-      - nrf5340dk_nrf5340_cpuapp
-    tags: crypto ci_build
-    timeout: 200
   crypto.oberon:
     extra_args: OVERLAY_CONFIG=overlay-oberon.conf
     platform_allow: nrf52840dk_nrf52840 nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp
@@ -35,14 +24,6 @@ tests:
       - nrf52840dk_nrf52840
       - nrf9160dk_nrf9160
       - nrf5340dk_nrf5340_cpuapp
-    tags: crypto ci_build
-    timeout: 200
-  crypto.cc3xx_oberon:
-    extra_args: OVERLAY_CONFIG=overlay-cc3xx-oberon.conf
-    platform_allow: nrf52840dk_nrf52840 nrf9160dk_nrf9160
-    integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf9160dk_nrf9160
     tags: crypto ci_build
     timeout: 200
   crypto.small.hash:

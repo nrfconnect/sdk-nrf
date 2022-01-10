@@ -11,6 +11,7 @@
 #include <logging/log.h>
 
 #include "common_test.h"
+
 #include <mbedtls/ecdsa.h>
 
 /* Setting LOG_LEVEL_DBG might affect time measurements! */
@@ -139,6 +140,7 @@ void exec_test_case_ecdsa_sign(void)
 	mbedtls_mpi_init(&s);
 
 	start_time_measurement();
+
 	err_code = mbedtls_ecdsa_sign(&ctx_sign.grp, &r, &s, &ctx_sign.d,
 				      m_ecdsa_input_buf, hash_len,
 				      drbg_random, &drbg_ctx);
