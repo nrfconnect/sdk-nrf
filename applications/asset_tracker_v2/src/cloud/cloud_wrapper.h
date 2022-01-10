@@ -35,6 +35,10 @@ enum cloud_wrap_event_type {
 	 *  Payload is of type @ref cloud_wrap_event_data.
 	 */
 	CLOUD_WRAP_EVT_DATA_RECEIVED,
+	/** User association request received from cloud. */
+	CLOUD_WRAP_EVT_USER_ASSOCIATION_REQUEST,
+	/** User association completed. */
+	CLOUD_WRAP_EVT_USER_ASSOCIATED,
 	/** A-GPS data received from the cloud integration layer.
 	 *  Payload is of type @ref cloud_wrap_event_data.
 	 */

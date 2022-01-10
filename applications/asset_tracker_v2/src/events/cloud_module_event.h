@@ -35,6 +35,12 @@ enum cloud_module_event_type {
 	/** Connection has timed out. */
 	CLOUD_EVT_CONNECTION_TIMEOUT,
 
+	/** User association request received from cloud. */
+	CLOUD_EVT_USER_ASSOCIATION_REQUEST,
+
+	/** User association completed. */
+	CLOUD_EVT_USER_ASSOCIATED,
+
 	/** A new device configuration has been received from cloud.
 	 *  The payload associated with this event is of type @ref cloud_data_cfg (config).
 	 */
