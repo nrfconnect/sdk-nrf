@@ -629,14 +629,12 @@ void nrf_modem_os_init(void)
 int32_t nrf_modem_os_trace_put(const uint8_t * const data, uint32_t len)
 {
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
-	/* Max DMA transfers are 255 bytes.
-	 * Split RAM buffer into smaller chunks
-	 * to be transferred using DMA.
-	 */
+	/* Split RAM buffer into smaller chunks to be transferred using DMA. */
 	uint32_t remaining_bytes = len;
+	const uint32_t MAX_BUF_LEN = (1 << UARTE1_EASYDMA_MAXCNT_SIZE) - 1;
 
 	while (remaining_bytes) {
-		uint8_t transfer_len = MIN(remaining_bytes, UINT8_MAX);
+		size_t transfer_len = MIN(remaining_bytes, MAX_BUF_LEN);
 		uint32_t idx = len - remaining_bytes;
 
 		nrfx_uarte_tx(&uarte_inst, &data[idx], transfer_len);
