@@ -888,6 +888,26 @@ static void on_state_connected(struct modem_msg_data *msg)
 /* Message handler for all states. */
 static void on_all_states(struct modem_msg_data *msg)
 {
+	if (IS_EVENT(msg, cloud, CLOUD_EVT_USER_ASSOCIATION_REQUEST)) {
+		int err = lte_lc_psm_req(false);
+
+		if (err) {
+			LOG_ERR("lte_lc_psm_req, error: %d", err);
+			SEND_ERROR(modem, MODEM_EVT_ERROR, err);
+		}
+	}
+
+	if (IS_EVENT(msg, cloud, CLOUD_EVT_USER_ASSOCIATED)) {
+
+		/* Re-enable low power features after cloud has been associated. */
+		int err = configure_low_power();
+
+		if (err) {
+			LOG_ERR("configure_low_power, error: %d", err);
+			SEND_ERROR(modem, MODEM_EVT_ERROR, err);
+		}
+	}
+
 	if (IS_EVENT(msg, app, APP_EVT_START)) {
 		int err;
 

@@ -19,6 +19,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
  */
 #define CELL_POS_FILTER_STRING "CELL_POS"
 
+static struct k_work_delayable user_associating_work;
+
 static cloud_wrap_evt_handler_t wrapper_evt_handler;
 
 static void cloud_wrapper_notify_event(const struct cloud_wrap_event *evt)
@@ -28,6 +30,25 @@ static void cloud_wrapper_notify_event(const struct cloud_wrap_event *evt)
 	} else {
 		LOG_ERR("Library event handler not registered, or empty event");
 	}
+}
+
+/* Work item that is called if user association fails to succeed within
+ * CONFIG_CLOUD_USER_ASSOCIATION_TIMEOUT_SEC.
+ */
+static void user_association_work_fn(struct k_work *work)
+{
+	/* Report an irrecoverable error in case user association fails. Will cause a reboot of the
+	 * application.
+	 */
+	struct cloud_wrap_event cloud_wrap_evt = {
+		.type = CLOUD_WRAP_EVT_ERROR,
+		.err = -ETIMEDOUT
+	};
+
+	LOG_ERR("Failed to associate the device within: %d seconds",
+		CONFIG_CLOUD_USER_ASSOCIATION_TIMEOUT_SEC);
+
+	cloud_wrapper_notify_event(&cloud_wrap_evt);
 }
 
 static int send_service_info(void)
@@ -151,36 +172,41 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
 		LOG_WRN("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");
-		LOG_WRN("Add the device to nRF Cloud and wait for it to reconnect");
+		LOG_WRN("Add the device to nRF Cloud to complete user association");
 
-		/* A disconnect/reconnect is required by nRF Cloud after the
-		 * NRF_CLOUD_EVT_USER_ASSOCIATED event is received. This event is sent from
-		 * nRF Cloud when the device has been added to an nRF Cloud account.
-		 * However, it is likely that the device is in PSM when this occurs and not able to
-		 * receive this event.
-		 *
-		 * Due to this, we explicitly disconnect the application
-		 * when the NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST event is received and depend on
-		 * the reconnection routine in the cloud module to reconnect the application until
-		 * the device has been registered to the nRF Cloud account.
-		 *
-		 * It is expected that the application will disconnect and reconnect to nRF Cloud
-		 * several times during device association.
+		/* Schedule a work item that causes an error in case user association is not
+		 * carried out within a configurable amount of time.
 		 */
-		err = nrf_cloud_disconnect();
-		if (err) {
-			LOG_ERR("nrf_cloud_disconnect failed, error: %d", err);
+		k_work_schedule(&user_associating_work,
+				K_SECONDS(CONFIG_CLOUD_USER_ASSOCIATION_TIMEOUT_SEC));
 
-			/* If disconnection from nRF Cloud fails, the cloud module is notified with
-			 * an error. The application is expected to perform a reboot in order
-			 * to reconnect to nRF Cloud and complete device association.
-			 */
-			cloud_wrap_evt.type = CLOUD_WRAP_EVT_ERROR;
-			notify = true;
-		}
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_USER_ASSOCIATION_REQUEST;
+		notify = true;
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATED:
 		LOG_DBG("NRF_CLOUD_EVT_USER_ASSOCIATED");
+
+		/* Disconnect/reconnect the device to apply the appropriate device policies and to
+		 * complete the user association process.
+		 */
+		if (k_work_delayable_is_pending(&user_associating_work)) {
+			err = nrf_cloud_disconnect();
+			if (err) {
+				LOG_ERR("nrf_cloud_disconnect, error: %d", err);
+
+				cloud_wrap_evt.type = CLOUD_WRAP_EVT_ERROR;
+				cloud_wrap_evt.err = err;
+				cloud_wrapper_notify_event(&cloud_wrap_evt);
+				return;
+			}
+
+			/* Cancel user association timeout upon completion of user association. */
+			k_work_cancel_delayable(&user_associating_work);
+
+			/* Notify the rest of the applicaiton that user association succeeded. */
+			cloud_wrap_evt.type = CLOUD_WRAP_EVT_USER_ASSOCIATED;
+			notify = true;
+		}
 		break;
 	default:
 		LOG_ERR("Unknown nRF Cloud event type: %d", evt->type);
@@ -211,6 +237,8 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 	LOG_DBG(" Cloud:       %s", "nRF Cloud");
 	LOG_DBG(" Endpoint:    %s", CONFIG_NRF_CLOUD_HOST_NAME);
 	LOG_DBG("********************************************");
+
+	k_work_init_delayable(&user_associating_work, user_association_work_fn);
 
 	wrapper_evt_handler = event_handler;
 

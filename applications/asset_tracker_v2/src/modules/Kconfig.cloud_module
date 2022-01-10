@@ -65,6 +65,14 @@ config CLOUD_CONNECT_RETRIES
 	  If the cloud module exceeds the number of reconnection attempts it will
 	  send out an error event.
 
+config CLOUD_USER_ASSOCIATION_TIMEOUT_SEC
+	int "Cloud user association timeout, in seconds"
+	default 300
+	depends on NRF_CLOUD_MQTT
+	help
+	  If user associating to nRF Cloud is not completed within this amount of time an
+	  irrecoverable error is reported by the module.
+
 rsource "../cloud/Kconfig"
 
 endif # CLOUD_MODULE

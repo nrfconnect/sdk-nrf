@@ -323,6 +323,32 @@ static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
 		LOG_DBG("CLOUD_WRAP_EVT_PGPS_DATA_RECEIVED");
 		agps_data_handle(evt->data.buf, evt->data.len);
 		break;
+	case CLOUD_WRAP_EVT_USER_ASSOCIATION_REQUEST: {
+		LOG_DBG("CLOUD_WRAP_EVT_USER_ASSOCIATION_REQUEST");
+
+		/* Cancel the reconnection routine upon a user association request. Device is
+		 * awaiting registration to an nRF Cloud and does not need to reconnect
+		 * until this happens.
+		 */
+		k_work_cancel_delayable(&connect_check_work);
+		connect_retries = 0;
+
+		SEND_EVENT(cloud, CLOUD_EVT_USER_ASSOCIATION_REQUEST);
+	};
+		break;
+	case CLOUD_WRAP_EVT_USER_ASSOCIATED: {
+		LOG_DBG("CLOUD_WRAP_EVT_USER_ASSOCIATED");
+
+		/* After user association, the device is disconnected. Reconnect immediately
+		 * to complete the process.
+		 */
+		if (!k_work_delayable_is_pending(&connect_check_work)) {
+			k_work_reschedule(&connect_check_work, K_SECONDS(5));
+		}
+
+		SEND_EVENT(cloud, CLOUD_EVT_USER_ASSOCIATED);
+	};
+		break;
 	case CLOUD_WRAP_EVT_FOTA_DONE: {
 		LOG_DBG("CLOUD_WRAP_EVT_FOTA_DONE");
 		SEND_EVENT(cloud, CLOUD_EVT_FOTA_DONE);
