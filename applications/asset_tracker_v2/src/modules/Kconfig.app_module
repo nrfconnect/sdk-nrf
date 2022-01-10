@@ -8,7 +8,7 @@ menu "Application control module"
 
 config APP_REQUEST_GNSS_ON_INITIAL_SAMPLING
 	bool "Request GNSS on initial data sampling after connection"
-	default y if GPS_MODULE
+	default y if GNSS_MODULE
 
 config APP_REQUEST_NEIGHBOR_CELLS_DATA
 	bool "Request neighbor cells data"
