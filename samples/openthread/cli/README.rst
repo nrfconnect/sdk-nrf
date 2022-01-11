@@ -121,6 +121,10 @@ To activate the optional extensions supported by this sample, modify :makevar:`O
 * For the minimal single protocol variant, set :file:`overlay-minimal_singleprotocol.conf`.
 * For the minimal multiprotocol variant, set :file:`overlay-minimal_multiprotocol.conf`.
 * For USB transport support, set :file:`overlay-usb.conf`. Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to :file:`usb.overlay`.
+* For turning on logging, set :file:`overlay-logging.conf`.
+* For redirecting logs to RTT, set :file:`overlay-rtt.conf`.
+  For more information about RTT please refer to :ref:`RTT logging <ug_logging>`.
+* For debbuging a Thread sample with GDB thread awareness, set :file:`overlay-debug.conf`.
 
 See :ref:`cmake_options` for instructions on how to add this option.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
