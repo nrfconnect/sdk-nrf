@@ -194,6 +194,8 @@ Bluetooth libraries and services
 Common Application Framework (CAF)
 ----------------------------------
 
+* Added a simple implementation of the Bluetooth LE bond module.
+  The implementation allows to erase bonds for default Bluetooth local identity.
 * Migrated :ref:`nRF Desktop settings loader <nrf_desktop_settings_loader>` to :ref:`lib_caf` as :ref:`CAF: Settings loader module <caf_settings_loader>`.
 * :ref:`caf_leds`:
 
