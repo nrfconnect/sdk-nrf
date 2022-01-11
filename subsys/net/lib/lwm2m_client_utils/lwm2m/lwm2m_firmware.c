@@ -51,6 +51,8 @@ static int image_type = DFU_TARGET_IMAGE_TYPE_ANY;
 static char *fota_path;
 static char *fota_host;
 static int fota_sec_tag;
+static uint8_t percent_downloaded;
+static uint32_t bytes_downloaded;
 
 static struct k_work_delayable reboot_work;
 static struct k_work download_work;
@@ -173,6 +175,27 @@ static void *firmware_get_buf(uint16_t obj_inst_id, uint16_t res_id,
 	return firmware_buf;
 }
 
+static int firmware_update_state(uint16_t obj_inst_id, uint16_t res_id,
+				 uint16_t res_inst_id, uint8_t *data,
+				 uint16_t data_len, bool last_block,
+				 size_t total_size)
+{
+	int ret = 0;
+
+	if (*data == STATE_IDLE) {
+		ret = dfu_target_reset();
+		if (ret < 0) {
+			LOG_ERR("Failed to reset DFU target, err: %d", ret);
+			return ret;
+		}
+
+		percent_downloaded = 0;
+		bytes_downloaded = 0;
+	}
+
+	return 0;
+}
+
 static void dfu_target_cb(enum dfu_target_evt_id evt)
 {
 	ARG_UNUSED(evt);
@@ -183,8 +206,6 @@ static int firmware_block_received_cb(uint16_t obj_inst_id,
 				      uint8_t *data, uint16_t data_len,
 				      bool last_block, size_t total_size)
 {
-	static uint8_t percent_downloaded;
-	static uint32_t bytes_downloaded;
 	uint8_t curent_percent;
 	uint32_t current_bytes;
 	size_t offset;
@@ -415,6 +436,7 @@ int lwm2m_init_firmware(void)
 	/* setup data buffer for block-wise transfer */
 	lwm2m_engine_register_pre_write_callback("5/0/0", firmware_get_buf);
 	lwm2m_engine_register_post_write_callback("5/0/1", write_dl_uri);
+	lwm2m_engine_register_post_write_callback("5/0/3", firmware_update_state);
 	lwm2m_firmware_set_write_cb(firmware_block_received_cb);
 	return 0;
 }
