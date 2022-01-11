@@ -85,6 +85,8 @@ nRF Machine Learning (Edge Impulse)
 * Added:
 
   * Added :kconfig:`CONFIG_ML_APP_SENSOR_EVENT_DESCR` option that globally defines sensor used by the application modules.
+  * Bluetooth LE bonding functionality.
+    The functionality relies on Bluetooth LE bond module implementation from Common Application Framework.
 
 * Updated:
 
