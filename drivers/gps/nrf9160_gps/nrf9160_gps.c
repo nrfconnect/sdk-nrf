@@ -14,7 +14,7 @@
 #include <string.h>
 #include <logging/log.h>
 #include <nrf_modem_gnss.h>
-#include <modem/at_cmd.h>
+#include <nrf_modem_at.h>
 #ifdef CONFIG_NRF9160_GPS_HANDLE_MODEM_CONFIGURATION
 #include <modem/lte_lc.h>
 #endif
@@ -557,10 +557,19 @@ static int configure_antenna(void)
 	int err = 0;
 
 #if CONFIG_NRF9160_GPS_SET_MAGPIO
-	err = at_cmd_write(CONFIG_NRF9160_GPS_MAGPIO_STRING,
-				NULL, 0, NULL);
+	/* Using format string since the command contains characters
+	 * that need to be escaped.
+	 */
+	err = nrf_modem_at_printf("%s", CONFIG_NRF9160_GPS_MAGPIO_STRING);
 	if (err) {
-		LOG_ERR("Could not configure MAGPIO, error: %d", err);
+		if (err > 0) {
+			LOG_ERR("Could not configure MAGPIO, error_type: %d, error_value: %d",
+				nrf_modem_at_err_type(err),
+				nrf_modem_at_err(err));
+		} else {
+			LOG_ERR("Could not configure MAGPIO, error: %d", err);
+		}
+
 		return err;
 	}
 
@@ -569,10 +578,19 @@ static int configure_antenna(void)
 #endif /* CONFIG_NRF9160_GPS_SET_MAGPIO */
 
 #if CONFIG_NRF9160_GPS_SET_COEX0
-	err = at_cmd_write(CONFIG_NRF9160_GPS_COEX0_STRING,
-				NULL, 0, NULL);
+	/* Using format string since the command contains characters
+	 * that need to be escaped.
+	 */
+	err = nrf_modem_at_printf("%s", CONFIG_NRF9160_GPS_COEX0_STRING);
 	if (err) {
-		LOG_ERR("Could not configure COEX0, error: %d", err);
+		if (err > 0) {
+			LOG_ERR("Could not configure COEX0, error_type: %d, error_value: %d",
+				nrf_modem_at_err_type(err),
+				nrf_modem_at_err(err));
+		} else {
+			LOG_ERR("Could not configure COEX0, error: %d", err);
+		}
+
 		return err;
 	}
 
