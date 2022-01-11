@@ -305,10 +305,20 @@ function(add_child_image_from_source)
 
   message("\n=== child image ${ACI_NAME} - ${ACI_DOMAIN}${inherited} begin ===")
 
-  get_child_image_cmake_args(
-    CHILD_IMAGE ${ACI_NAME}
-    CONFIG_OUT image_cmake_args
-    )
+  unset(image_cmake_args)
+  if (PRE_DEFINED_IMAGE_CMAKE_ARGS_${ACI_NAME})
+    # A complete set of configurations has been specified. Use this instead of
+    # finding the cmake args the normal way.
+    set(image_cmake_args "${PRE_DEFINED_IMAGE_CMAKE_ARGS_${ACI_NAME}}")
+  else()
+    get_child_image_cmake_args(
+      CHILD_IMAGE ${ACI_NAME}
+      CONFIG_OUT image_cmake_args
+      )
+  endif()
+
+  # Expose the CMake args for the current image in case we want to create a variant build
+  set(${ACI_NAME}_IMAGE_CMAKE_ARGS "${image_cmake_args}" CACHE INTERNAL "")
 
   file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${ACI_NAME})
   execute_process(
