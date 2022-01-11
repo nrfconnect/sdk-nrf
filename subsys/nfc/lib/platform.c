@@ -9,7 +9,11 @@
 #include <nrfx_timer.h>
 
 #ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
+#if defined(CONFIG_BUILD_WITH_TFM)
+#include <tfm_ioctl_api.h>
+#elif defined(CONFIG_SPM_SERVICE_READ)
 #include <secure_services.h>
+#endif
 #endif
 
 #include <logging/log.h>
@@ -24,9 +28,6 @@ LOG_MODULE_REGISTER(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 					      _irq_handler)
 
 #define DT_DRV_COMPAT nordic_nrf_clock
-
-/* Number of NFC Tag Header registers in the FICR register space. */
-#define NFC_TAGHEADER_REGISTERS_NUM	3
 
 static struct onoff_manager *hf_mgr;
 static struct onoff_client cli;
@@ -64,45 +65,54 @@ nrfx_err_t nfc_platform_setup(void)
 }
 
 
-static nrfx_err_t nfc_platform_tagheader_get(uint8_t index,
-					     uint32_t *tag_header)
+static nrfx_err_t nfc_platform_tagheaders_get(uint32_t tag_header[3])
 {
-	const uint32_t tag_header_addresses[] = {
-#ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
-		(uint32_t) &NRF_FICR_S->NFC.TAGHEADER0,
-		(uint32_t) &NRF_FICR_S->NFC.TAGHEADER1,
-		(uint32_t) &NRF_FICR_S->NFC.TAGHEADER2
+	__IOM FICR_NFC_Type *ficr_nfc =
+#if defined(NRF_TRUSTZONE_NONSECURE)
+				&NRF_FICR_S->NFC;
 #else
-		(uint32_t) &NRF_FICR->NFC.TAGHEADER0,
-		(uint32_t) &NRF_FICR->NFC.TAGHEADER1,
-		(uint32_t) &NRF_FICR->NFC.TAGHEADER2
+				&NRF_FICR->NFC;
 #endif
-	};
 
-	if (index >= ARRAY_SIZE(tag_header_addresses)) {
-		LOG_ERR("Tag Header index out of bounds");
-		return NRFX_ERROR_INVALID_ADDR;
+
+#ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
+#if defined(CONFIG_BUILD_WITH_TFM)
+	uint32_t err = 0;
+	enum tfm_platform_err_t plt_err;
+	FICR_NFC_Type ficr_nfc_ns;
+
+	plt_err = tfm_platform_mem_read(&ficr_nfc_ns, (uint32_t)ficr_nfc,
+					sizeof(ficr_nfc_ns), &err);
+	if (plt_err != TFM_PLATFORM_ERR_SUCCESS || err != 0) {
+		LOG_ERR("Could not read FICR NFC Tag Header (plt_err %d, err: %d)",
+			plt_err, err);
+		return NRFX_ERROR_INTERNAL;
 	}
 
-#ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
+	ficr_nfc = &ficr_nfc_ns;
+#elif defined(CONFIG_SPM_SERVICE_READ)
 	int err;
+	FICR_NFC_Type ficr_nfc_ns;
 
-	// TODO: Read all three headers at once to avoid the 300us IPC
-	// overhead and add support for the TF-M equivalent of
-	// spm_request_read
-	err = spm_request_read(tag_header, tag_header_addresses[index],
-			       sizeof(uint32_t));
+	err = spm_request_read(&ficr_nfc_ns, (uint32_t)ficr_nfc,
+			       sizeof(ficr_nfc_ns));
 	if (err != 0) {
-		LOG_ERR("Could not read NFC Tag Header FICR (err: %d)", err);
-		return NRFX_ERROR_INVALID_ADDR;
+		LOG_ERR("Could not read FICR NFC Tag Header (err: %d)", err);
+		return NRFX_ERROR_INTERNAL;
 	}
+
+	ficr_nfc = &ficr_nfc_ns;
 #else
-	*tag_header = *((uint32_t *) tag_header_addresses[index]);
+#error "Cannot read FICR NFC Tag Header in current configuration"
 #endif
+#endif /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
+
+	tag_header[0] = ficr_nfc->TAGHEADER0;
+	tag_header[1] = ficr_nfc->TAGHEADER1;
+	tag_header[2] = ficr_nfc->TAGHEADER2;
 
 	return NRFX_SUCCESS;
 }
-
 
 nrfx_err_t nfc_platform_nfcid1_default_bytes_get(uint8_t * const buf,
 						 uint32_t        buf_len)
@@ -118,13 +128,11 @@ nrfx_err_t nfc_platform_nfcid1_default_bytes_get(uint8_t * const buf,
 	}
 
 	nrfx_err_t err;
-	uint32_t nfc_tag_header[NFC_TAGHEADER_REGISTERS_NUM];
+	uint32_t nfc_tag_header[3];
 
-	for (int i = 0; i < ARRAY_SIZE(nfc_tag_header); i++) {
-		err = nfc_platform_tagheader_get(i, &nfc_tag_header[i]);
-		if (err != NRFX_SUCCESS) {
-			return err;
-		}
+	err = nfc_platform_tagheaders_get(nfc_tag_header);
+	if (err != NRFX_SUCCESS) {
+		return err;
 	}
 
 	buf[0] = (uint8_t) (nfc_tag_header[0] >> 0);
