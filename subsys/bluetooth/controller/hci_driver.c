@@ -28,6 +28,7 @@
 #include "multithreading_lock.h"
 #include "hci_internal.h"
 #include "ecdh.h"
+#include "radio_nrf5_txp.h"
 
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_DEBUG_HCI_DRIVER)
 #define LOG_MODULE_NAME sdc_hci_driver
@@ -595,6 +596,13 @@ static int configure_supported_features(void)
 			return -ENOTSUP;
 		}
 	}
+
+#if RADIO_TXP_DEFAULT != 0
+	err = sdc_default_tx_power_set(RADIO_TXP_DEFAULT);
+	if (err) {
+		return -ENOTSUP;
+	}
+#endif
 
 	return 0;
 }
