@@ -218,6 +218,13 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     SOURCE_DIR ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr
     )
 
+  if (CONFIG_BUILD_S1_VARIANT)
+    add_s1_variant(
+      BASE_IMAGE mcuboot
+      SOURCE_DIR ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr
+      )
+  endif()
+
   set(merged_hex_file
     ${PROJECT_BINARY_DIR}/mcuboot_primary_app.hex)
   set(merged_hex_file_depends

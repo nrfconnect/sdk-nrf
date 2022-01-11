@@ -76,6 +76,11 @@ if (CONFIG_SECURE_BOOT)
         ${NRF_DIR}/subsys/bootloader/image/log_minimal.conf
         )
   endif()
+  if (CONFIG_BUILD_S1_VARIANT AND "${CONFIG_S1_VARIANT_IMAGE_NAME}" STREQUAL "app")
+    add_s1_variant(
+      SOURCE_DIR ${APPLICATION_SOURCE_DIR}
+      )
+  endif()
 endif()
 
 if (CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE)
