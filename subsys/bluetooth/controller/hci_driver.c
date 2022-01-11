@@ -28,6 +28,7 @@
 #include "multithreading_lock.h"
 #include "hci_internal.h"
 #include "ecdh.h"
+#include "radio_nrf5_txp.h"
 
 #define BT_DBG_ENABLED IS_ENABLED(CONFIG_BT_DEBUG_HCI_DRIVER)
 #define LOG_MODULE_NAME sdc_hci_driver
@@ -687,6 +688,21 @@ static int configure_memory_usage(void)
 	return 0;
 }
 
+static int configure_post_sdc_enable(void)
+{
+	int err;
+
+#ifdef RADIO_TXP_DEFAULT
+	err = sdc_default_tx_power_set(RADIO_TXP_DEFAULT);
+	if (err) {
+		return -ENOTSUP;
+	}
+#endif
+
+	return 0;
+}
+
+
 static int hci_driver_open(void)
 {
 	BT_DBG("Open");
@@ -738,6 +754,11 @@ static int hci_driver_open(void)
 		MULTITHREADING_LOCK_RELEASE();
 	}
 	if (err < 0) {
+		return err;
+	}
+
+	err = configure_post_sdc_enable();
+	if (err) {
 		return err;
 	}
 

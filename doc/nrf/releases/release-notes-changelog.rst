@@ -48,6 +48,15 @@ Protocols
 This section provides detailed lists of changes by :ref:`protocol <protocols>`.
 See `Samples`_ for lists of changes for the protocol-related samples.
 
+Bluetooth LE Controller
+-----------------------
+
+These changes are valid for :ref:`nrfxlib:softdevice_controller`.
+
+* Added:
+
+  * The SoftDevice Controller now respects ``CONFIG_BT_CTLR_TX_PWR_*``.
+
 Bluetooth mesh
 --------------
 
