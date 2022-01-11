@@ -22,6 +22,9 @@ config S1_VARIANT_IMAGE_NAME
 	help
 	  Which image should be linked against S1.
 
+config IS_S1_IMAGE
+        bool "Is current image s1 image [READ_ONLY]"
+
 config SECURE_BOOT
 	bool "Use Secure Bootloader"
 	depends on !IS_SECURE_BOOTLOADER

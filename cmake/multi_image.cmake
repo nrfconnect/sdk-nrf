@@ -185,7 +185,95 @@ function(get_child_image_cmake_args)
 
   unset(${GET_ARGS_CONFIG_OUT} PARENT_SCOPE)
   set(${GET_ARGS_CONFIG_OUT} "${child_image_cmake_args}" PARENT_SCOPE)
+endfunction()
 
+function(add_s1_variant)
+  set(oneValueArgs BASE_IMAGE SOURCE_DIR)
+  cmake_parse_arguments(ASV "" "${oneValueArgs}" "" ${ARGN})
+
+  set(s1_override_conf
+    ${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/image/is_s1_image.conf)
+
+  add_image_variant(
+    IMAGE_NAME s1_image
+    BASE_IMAGE ${ASV_BASE_IMAGE}
+    EXTRA_CONFIG ${s1_override_conf}
+    SOURCE_DIR ${ASV_SOURCE_DIR}
+    )
+endfunction()
+
+# Adds a variant of an image to the build.
+# The configuration passed to the variant image is a copy of that sent to the
+# base image, except what is passed to the EXTRA_CONFIG argument.
+#
+# Required arguments are:
+# IMAGE_NAME - The name of the variant image
+# BASE_IMAGE - The name of the base image which the variant image is based on.
+# SOURCE_DIR - The source dir of the base image.
+# EXTRA_CONFIG - The extra configuration fragment to pass to the variant image.
+function(add_image_variant)
+
+  set(oneValueArgs BASE_IMAGE IMAGE_NAME SOURCE_DIR EXTRA_CONFIG)
+  cmake_parse_arguments(AIV "" "${oneValueArgs}" "" ${ARGN})
+
+  if (AIV_BASE_IMAGE)
+    # A base image has been specified, this means that we need to copy the
+    # configuration of a child image (as opposed to copying the configuration
+    # from the top level parent image (that is, 'app').
+
+    set(base_image_configuration "${${AIV_BASE_IMAGE}_IMAGE_CMAKE_ARGS}")
+  else()
+    # No base image is specified, this means that the base image is the top
+    # level parent image (that is, 'app'). Copy relevant information from the
+    # 'app' image CMakeCache in order to build an identical variant image
+
+    get_cmake_property(variables_cached CACHE_VARIABLES)
+    foreach(var_name ${variables_cached})
+      # If '-DCONF_FILE' is specified, it is unset by boilerplate.cmake and
+      # replaced with 'CACHED_CONF_FILE' in the cache. Therefore we need this
+      # special handling for passing the value to the variant image.
+      if("${var_name}" MATCHES "CACHED_CONF_FILE")
+          list(APPEND application_vars ${var_name})
+      endif()
+
+      if("${var_name}" MATCHES "^CONFIG_.*")
+          list(APPEND application_vars ${var_name})
+      endif()
+
+      get_property(var_help CACHE ${var_name} PROPERTY HELPSTRING)
+      if("${var_help}" STREQUAL "No help, variable specified on the command line.")
+        list(APPEND application_vars ${var_name})
+      endif()
+    endforeach()
+
+    foreach(app_var_name ${application_vars})
+      get_property(var_type  CACHE ${app_var_name} PROPERTY TYPE)
+      list(APPEND base_image_configuration "-D${var_name}:${var_type}=${${app_var_name}}")
+    endforeach()
+  endif()
+
+  # Pass the extra configuration fragment to variant image.
+  if (base_image_configuration MATCHES ".*OVERLAY_CONFIG")
+    string(REGEX REPLACE
+      "-DOVERLAY_CONFIG="
+      "-DOVERLAY_CONFIG=${AIV_EXTRA_CONFIG}\\\\;"
+      variant_image_cmake_args
+      "${base_image_configuration}"
+      )
+  else()
+    set(variant_image_cmake_args "${base_image_configuration}")
+    list(APPEND variant_image_cmake_args "-DOVERLAY_CONFIG=${AIV_EXTRA_CONFIG}")
+  endif()
+
+  # Place the image name at the end to avoid confusion with variables that are
+  # automatically passed to a child image since it is prefixed with the child
+  # image name.
+  set(PRE_DEFINED_IMAGE_CMAKE_ARGS_${AIV_IMAGE_NAME} "${variant_image_cmake_args}" CACHE INTERNAL "")
+
+  add_child_image(
+    NAME ${AIV_IMAGE_NAME}
+    SOURCE_DIR ${AIV_SOURCE_DIR}
+    )
 endfunction()
 
 function(add_child_image)
@@ -202,6 +290,11 @@ function(add_child_image)
   # is either built from source, included as a hex file, or ignored.
   #
   # See chapter "Multi-image builds" in the documentation for more details.
+
+  if (CONFIG_IS_S1_IMAGE)
+    # Don't add child images while building the S1 variant image.
+    return()
+  endif()
 
   set(oneValueArgs NAME SOURCE_DIR DOMAIN)
   cmake_parse_arguments(ACI "" "${oneValueArgs}" "" ${ARGN})

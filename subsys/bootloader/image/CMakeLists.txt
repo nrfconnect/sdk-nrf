@@ -4,6 +4,10 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+if (CONFIG_IS_S1_IMAGE)
+  return()
+endif()
+
 # This CMakeLists.txt is executed by the root application only when
 # B0 (SECURE_BOOT) is enabled. First, figure out what image will be
 # booted by B0, and set the required properties for that image to be
