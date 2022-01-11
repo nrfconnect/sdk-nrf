@@ -61,6 +61,14 @@ static enum state_type {
 	STATE_SHUTDOWN,
 } state;
 
+/* Enumerator that specifies the data type that is sampled. */
+enum sample_type {
+	NEIGHBOR_CELL,
+	MODEM_DYNAMIC,
+	MODEM_STATIC,
+	BATTERY_VOLTAGE
+};
+
 /* Struct that holds data from the modem information module. */
 static struct modem_param_info modem_param;
 
@@ -90,7 +98,7 @@ static void send_cell_update(uint32_t cell_id, uint32_t tac);
 static void send_neighbor_cell_update(struct lte_lc_cells_info *cell_info);
 static void send_psm_update(int tau, int active_time);
 static void send_edrx_update(float edrx, float ptw);
-static inline int adjust_rsrp(int input);
+static inline int adjust_rsrp(int input, enum sample_type type);
 static inline int adjust_rsrq(int input);
 
 /* Convenience functions used in internal state handling. */
@@ -256,7 +264,7 @@ static void modem_rsrp_handler(char rsrp_value)
 	 * This temporarily saves the latest value which are sent to
 	 * the Data module upon a modem data request.
 	 */
-	rsrp_value_latest = adjust_rsrp(rsrp_value);
+	rsrp_value_latest = adjust_rsrp(rsrp_value, MODEM_DYNAMIC);
 
 	LOG_DBG("Incoming RSRP status message, RSRP value is %d",
 		rsrp_value_latest);
@@ -431,10 +439,22 @@ static void send_edrx_update(float edrx, float ptw)
 	EVENT_SUBMIT(evt);
 }
 
-static inline int adjust_rsrp(int input)
+static inline int adjust_rsrp(int input, enum sample_type type)
 {
-	if (IS_ENABLED(CONFIG_MODEM_CONVERT_RSRP_AND_RSPQ_TO_DB)) {
-		return input - 140;
+	switch (type) {
+	case NEIGHBOR_CELL:
+		if (IS_ENABLED(CONFIG_MODEM_NEIGHBOR_CELLS_DATA_CONVERT_RSRP_TO_DBM)) {
+			return input - 140;
+		}
+		break;
+	case MODEM_DYNAMIC:
+		if (IS_ENABLED(CONFIG_MODEM_DYNAMIC_DATA_CONVERT_RSRP_TO_DBM)) {
+			return input - 140;
+		}
+		break;
+	default:
+		LOG_WRN("Unknown sample type");
+		break;
 	}
 
 	return input;
@@ -442,7 +462,7 @@ static inline int adjust_rsrp(int input)
 
 static inline int adjust_rsrq(int input)
 {
-	if (IS_ENABLED(CONFIG_MODEM_CONVERT_RSRP_AND_RSPQ_TO_DB)) {
+	if (IS_ENABLED(CONFIG_MODEM_NEIGHBOR_CELLS_DATA_CONVERT_RSRQ_TO_DB)) {
 		return round(input * 0.5 - 19.5);
 	}
 
@@ -464,13 +484,15 @@ static void send_neighbor_cell_update(struct lte_lc_cells_info *cell_info)
 
 	/* Convert RSRP to dBm and RSRQ to dB per "nRF91 AT Commands" v1.7. */
 	evt->data.neighbor_cells.cell_data.current_cell.rsrp =
-			adjust_rsrp(evt->data.neighbor_cells.cell_data.current_cell.rsrp);
+			adjust_rsrp(evt->data.neighbor_cells.cell_data.current_cell.rsrp,
+				    NEIGHBOR_CELL);
 	evt->data.neighbor_cells.cell_data.current_cell.rsrq =
 			adjust_rsrq(evt->data.neighbor_cells.cell_data.current_cell.rsrq);
 
 	for (size_t i = 0; i < evt->data.neighbor_cells.cell_data.ncells_count; i++) {
 		evt->data.neighbor_cells.neighbor_cells[i].rsrp =
-			adjust_rsrp(evt->data.neighbor_cells.neighbor_cells[i].rsrp);
+			adjust_rsrp(evt->data.neighbor_cells.neighbor_cells[i].rsrp,
+				    NEIGHBOR_CELL);
 		evt->data.neighbor_cells.neighbor_cells[i].rsrq =
 			adjust_rsrq(evt->data.neighbor_cells.neighbor_cells[i].rsrq);
 	}
