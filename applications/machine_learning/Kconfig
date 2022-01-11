@@ -5,6 +5,7 @@
 #
 
 menu "Machine learning application"
+rsource "src/Kconfig.ml_app"
 rsource "src/events/Kconfig"
 rsource "src/modules/Kconfig"
 endmenu

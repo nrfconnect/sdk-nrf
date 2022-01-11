@@ -31,7 +31,7 @@ endchoice
 
 config ML_APP_EI_DATA_FORWARDER_SENSOR_EVENT_DESCR
 	string "Description of forwarded sensor event"
-	default ""
+	default ML_APP_SENSOR_EVENT_DESCR
 	help
 	  The module forwards data related to sensor events with predefined description.
 	  Other sensor events are ignored.

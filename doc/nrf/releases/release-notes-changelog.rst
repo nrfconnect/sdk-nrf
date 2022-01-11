@@ -77,6 +77,10 @@ nRF9160: Asset Tracker v2
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
+* Added:
+
+  * Added :kconfig:`CONFIG_ML_APP_SENSOR_EVENT_DESCR` option that globally defines sensor used by the application modules.
+
 * Updated:
 
   * Renamed ``ml_state`` module to ``ml_app_mode`` module.
