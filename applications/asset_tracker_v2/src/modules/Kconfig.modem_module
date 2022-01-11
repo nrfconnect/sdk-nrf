@@ -29,11 +29,40 @@ config MODEM_AUTO_REQUEST_POWER_SAVING_FEATURES
 	default y
 
 config MODEM_CONVERT_RSRP_AND_RSPQ_TO_DB
-	bool "Convert RSRP and RSRQ values to dBm and dB, respectively"
-	default y if AWS_IOT || AZURE_IOT_HUB
+	bool "Convert RSRP and RSRQ values to dBm and dB, respectively [DEPRECATED]"
+	select MODEM_DYNAMIC_DATA_CONVERT_RSRP_TO_DBM
+	select MODEM_NEIGHBOR_CELLS_DATA_CONVERT_RSRP_TO_DBM
+	select MODEM_NEIGHBOR_CELLS_DATA_CONVERT_RSRQ_TO_DB
 	help
 	  If this option is enabled, RSRP and RSRQ values are converted to dBm and dB before being
-	  sent out by the module.
+	  sent out by the module. This option is deprecated,
+	  use MODEM_DYNAMIC_DATA_CONVERT_RSRP_TO_DBM, MODEM_NEIGHBOR_CELLS_DATA_CONVERT_RSRP_TO_DBM
+	  and MODEM_NEIGHBOR_CELLS_DATA_CONVERT_RSRQ_TO_DB instead.
+
+config MODEM_DYNAMIC_DATA_CONVERT_RSRP_TO_DBM
+	bool "Convert RSRP values to dBm for dynamic modem data"
+	default y
+	help
+	  If this option is enabled, RSRP values are converted to dBm before being
+	  sent out by the module with the MODEM_EVT_MODEM_DYNAMIC_DATA_READY event.
+
+config MODEM_NEIGHBOR_CELLS_DATA_CONVERT_RSRP_TO_DBM
+	bool "Convert RSRP values to dBm for neighbor cell measurements"
+	default y if AWS_IOT || AZURE_IOT_HUB
+	help
+	  If this option is enabled, RSRP values are converted to dBm before being
+	  sent out by the module with the MODEM_EVT_NEIGHBOR_CELLS_DATA_READY event.
+	  Don't convert RSRP to dBm when building for nRF Cloud, this is handled during encoding
+	  using the nRF Cloud cellular positioning library.
+
+config MODEM_NEIGHBOR_CELLS_DATA_CONVERT_RSRQ_TO_DB
+	bool "Convert RSRQ values to dB for neighbor cell measurements"
+	default y if AWS_IOT || AZURE_IOT_HUB
+	help
+	  If this option is enabled, RSRQ values are converted to dB before being
+	  sent out by the module with the MODEM_EVT_NEIGHBOR_CELLS_DATA_READY event.
+	  Don't convert RSRQ to dB when building for nRF Cloud, this is handled during encoding
+	  using the nRF Cloud cellular positioning library.
 
 endif # MODEM_MODULE
 
