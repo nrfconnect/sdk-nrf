@@ -11,7 +11,10 @@
  *
  */
 
+
+#if !defined(CONFIG_MPSL_CX_PIN_FORWARDER)
 #include <mpsl_cx_abstract_interface.h>
+#endif
 
 #include <stddef.h>
 #include <stdint.h>
@@ -22,8 +25,8 @@
 
 #include "hal/nrf_gpio.h"
 
-#if DT_NODE_HAS_STATUS(DT_PHANDLE(DT_NODELABEL(radio), coex), okay)
-#define CX_NODE DT_PHANDLE(DT_NODELABEL(radio), coex)
+#if DT_NODE_EXISTS(DT_NODELABEL(nrf_radio_coex))
+#define CX_NODE DT_NODELABEL(nrf_radio_coex)
 #else
 #define CX_NODE DT_INVALID_NODE
 #error No enabled coex nodes registered in DTS.
@@ -32,11 +35,12 @@
 /* Value from chapter 7. Logic Timing from Thread Radio Coexistence */
 #define REQUEST_TO_GRANT_US 50U
 
-static mpsl_cx_cb_t callback;
-
 static const struct gpio_dt_spec req_spec = GPIO_DT_SPEC_GET(CX_NODE, req_gpios);
 static const struct gpio_dt_spec pri_spec = GPIO_DT_SPEC_GET(CX_NODE, pri_dir_gpios);
 static const struct gpio_dt_spec gra_spec = GPIO_DT_SPEC_GET(CX_NODE, grant_gpios);
+
+#if !defined(CONFIG_MPSL_CX_PIN_FORWARDER)
+static mpsl_cx_cb_t callback;
 static struct gpio_callback grant_cb;
 
 static int32_t grant_pin_is_asserted(bool *is_asserted)
@@ -208,3 +212,17 @@ static int mpsl_cx_init(const struct device *dev)
 }
 
 SYS_INIT(mpsl_cx_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
+
+#else // !defined(CONFIG_MPSL_CX_PIN_FORWARDER)
+static int mpsl_cx_init(const struct device *dev)
+{
+	nrf_gpio_pin_mcu_select(req_spec.pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	nrf_gpio_pin_mcu_select(pri_spec.pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	nrf_gpio_pin_mcu_select(gra_spec.pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+
+	return 0;
+}
+
+SYS_INIT(mpsl_cx_init, PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+
+#endif // !defined(CONFIG_MPSL_CX_PIN_FORWARDER)
