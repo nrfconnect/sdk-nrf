@@ -208,6 +208,10 @@ Modem libraries
 Event manager
 -------------
 
+* Added:
+
+  * ``EVENT_SUBSCRIBE_FIRST`` subscriber priority.
+
 * Updated:
 
   * Modified the sections used by the event manager. Stopped using orphaned sections. Removed forced alignment for x86. Reworked priorities.
