@@ -35,7 +35,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
       :class: highlight
 
       **AT#XSLMUART?**
-      #XSLMUART: 115200
+      #XSLMUART: 115200,0
       OK
 
    You can change the used baud rate with the corresponding set command, but note that LTE Link Monitor requires 115200 bps for communication.
@@ -135,7 +135,7 @@ TCP client
          #XSEND: 8
          OK
 
-         **AT#XRECV**
+         **AT#XRECV=0**
          PONG: 'Test TCP'
          #XRECV: 17
          OK
@@ -199,14 +199,14 @@ TCP client
       .. parsed-literal::
          :class: highlight
 
-         **AT#XRECV**
+         **AT#XRECV=0**
          HTTP/1.1 200 OK
          Content-Type: text/html; charset=ISO-8859-1
          *[...]*
          #XRECV: 576
          OK
 
-         **AT#XRECV**
+         **AT#XRECV=0**
          *[...]*
          Connection: close
          #XRECV:147
@@ -336,7 +336,7 @@ UDP client
          **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,"Test UDP"**
          #XSENDTO: 8
          OK
-         **AT#XRECVFROM**
+         **AT#XRECVFROM=0**
          PONG: Test UDP
          #XRECVFROM: 14
          OK
@@ -375,7 +375,7 @@ UDP client
          #XSEND: 8
          OK
 
-         **AT#XRECV**
+         **AT#XRECV=0**
          PONG: Test UDP
          #XRECV: 14
          OK
@@ -511,7 +511,7 @@ You must register the corresponding credentials on the server side.
          #XSEND: 15
          OK
 
-         **AT#XRECV**
+         **AT#XRECV=0**
          PONG: b'Test TLS client'
          #XRECV: 24
          OK
@@ -621,7 +621,7 @@ You must register the same PSK and PSK identity on the server side.
 		 #XSEND: 16
 		 OK
 
-		 **AT#XRECV**
+		 **AT#XRECV=0**
 		 PONG: b'Test DTLS client'
 		 #XRECV: 25
 		 OK
@@ -737,7 +737,7 @@ To act as a TCP server, |global_private_address|
          #XACCEPT: 3
          OK
 
-         **AT#XRECV**
+         **AT#XRECV=0**
          Hello, TCP#1!Hello, TCP#2!
          #XRECV: 26
          OK
@@ -746,7 +746,7 @@ To act as a TCP server, |global_private_address|
          #XSEND: 15
          OK
 
-         **AT#XRECV**
+         **AT#XRECV=0**
          Hello, TCP#3!Hello, TCP#4!Hello, TCP#5!
          #XRECV: 39
          OK
@@ -1008,12 +1008,12 @@ To act as a UDP server, |global_private_address|
       .. parsed-literal::
          :class: highlight
 
-         **AT#XRECVFROM**
+         **AT#XRECVFROM=0**
          Hello, UDP#1!
          #XRECVFROM: 13
          OK
 
-         **AT#XRECVFROM**
+         **AT#XRECVFROM=0**
          Hello, UDP#2!
          #XRECVFROM: 13
          OK
@@ -1022,17 +1022,17 @@ To act as a UDP server, |global_private_address|
          #XSENDTO: 15
          OK
 
-         **AT#XRECVFROM**
+         **AT#XRECVFROM=0**
          Hello, UDP#3!
          #XRECVFROM: 13
          OK
 
-         **AT#XRECVFROM**
+         **AT#XRECVFROM=0**
          Hello, UDP#4!
          #XRECVFROM: 13
          OK
 
-         **AT#XRECVFROM**
+         **AT#XRECVFROM=0**
          Hello, UDP#5!
          #XRECVFROM: 13
          OK
@@ -1047,7 +1047,7 @@ To act as a UDP server, |global_private_address|
       .. parsed-literal::
          :class: highlight
 
-         **AT#XRECVFROM**
+         **AT#XRECVFROM=0**
          #XSOCKET: -60
          ERROR
 

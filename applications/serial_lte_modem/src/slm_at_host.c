@@ -241,26 +241,32 @@ int slm_uart_configure(void)
 		LOG_ERR("uart_configure: %d", err);
 		return err;
 	}
+#if defined(CONFIG_SLM_UART_HWFC_RUNTIME)
 /* Set HWFC dynamically */
-#if defined(CONFIG_UART_0_NRF_HW_ASYNC_TIMER)
-	if (slm_uart.flow_ctrl == UART_CFG_FLOW_CTRL_RTS_CTS) {
-		nrf_uarte_hwfc_pins_set(NRF_UARTE0,
-					DT_PROP(DT_NODELABEL(uart0), rts_pin),
-					DT_PROP(DT_NODELABEL(uart0), cts_pin));
-	} else {
-		nrf_uarte_hwfc_pins_disconnect(NRF_UARTE0);
-		nrf_gpio_pin_clear(DT_PROP(DT_NODELABEL(uart0), rts_pin));
-	}
-#endif
-#if defined(CONFIG_UART_2_NRF_HW_ASYNC_TIMER)
-	if (slm_uart.flow_ctrl == UART_CFG_FLOW_CTRL_RTS_CTS) {
-		nrf_uarte_hwfc_pins_set(NRF_UARTE2,
-					DT_PROP(DT_NODELABEL(uart2), rts_pin),
-					DT_PROP(DT_NODELABEL(uart2), cts_pin));
-	} else {
-		nrf_uarte_hwfc_pins_disconnect(NRF_UARTE2);
-		nrf_gpio_pin_clear(DT_PROP(DT_NODELABEL(uart2), rts_pin));
-	}
+	#if defined(CONFIG_SLM_CONNECT_UART_0)
+		#define RTS_PIN DT_PROP(DT_NODELABEL(uart0), rts_pin)
+		#define CTS_PIN DT_PROP(DT_NODELABEL(uart0), cts_pin)
+		if (slm_uart.flow_ctrl == UART_CFG_FLOW_CTRL_RTS_CTS) {
+			nrf_uarte_hwfc_pins_set(NRF_UARTE0,
+						RTS_PIN,
+						CTS_PIN);
+		} else {
+			nrf_gpio_pin_clear(RTS_PIN);
+			nrf_gpio_cfg_output(RTS_PIN);
+		}
+	#endif
+	#if defined(CONFIG_SLM_CONNECT_UART_2)
+		#define RTS_PIN DT_PROP(DT_NODELABEL(uart2), rts_pin)
+		#define CTS_PIN DT_PROP(DT_NODELABEL(uart2), cts_pin)
+		if (slm_uart.flow_ctrl == UART_CFG_FLOW_CTRL_RTS_CTS) {
+			nrf_uarte_hwfc_pins_set(NRF_UARTE2,
+						RTS_PIN,
+						CTS_PIN);
+		} else {
+			nrf_gpio_pin_clear(RTS_PIN);
+			nrf_gpio_cfg_output(RTS_PIN);
+		}
+	#endif
 #endif
 	return err;
 }
@@ -742,6 +748,7 @@ int slm_at_host_init(void)
 	}
 	/* Save UART configuration to setting page */
 	if (!uart_configured) {
+		uart_configured = true;
 		err = uart_config_get(uart_dev, &slm_uart);
 		if (err != 0) {
 			LOG_ERR("uart_config_get: %d", err);
@@ -752,7 +759,6 @@ int slm_at_host_init(void)
 			LOG_ERR("slm_setting_uart_save: %d", err);
 			return err;
 		}
-		uart_configured = true;
 	} else {
 		/* else re-config UART based on setting page */
 		LOG_DBG("UART baud: %d d/p/s-bits: %d/%d/%d HWFC: %d",

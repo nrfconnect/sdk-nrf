@@ -35,6 +35,10 @@ config SLM_EXTERNAL_XTAL
 #
 # Inter-Connect
 #
+config SLM_UART_HWFC_RUNTIME
+	bool "Support of UART HWFC runtime configuration"
+	help
+		Selected if rts-pin/cts-pin are defined in devicetree
 choice
 	prompt "UART for interconnect"
 	help
@@ -43,8 +47,13 @@ choice
 		-  UART 2
 	config SLM_CONNECT_UART_0
 		bool "UART 0"
+		select SLM_UART_HWFC_RUNTIME if $(dt_node_has_prop,uart0,rts-pin) && \
+			$(dt_node_has_prop,uart0,cts-pin)
+
 	config SLM_CONNECT_UART_2
 		bool "UART 2"
+		select SLM_UART_HWFC_RUNTIME if $(dt_node_has_prop,uart2,rts-pin) && \
+			$(dt_node_has_prop,uart2,cts-pin)
 endchoice
 
 choice

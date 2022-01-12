@@ -206,14 +206,21 @@ Set command
 -----------
 
 The set command changes the UART baud rate and hardware flow control settings.
+Hardware flow control settings can be changed only if :ref:`CONFIG_SLM_UART_HWFC_RUNTIME <CONFIG_SLM_UART_HWFC_RUNTIME>` is selected.
 These settings are stored in the flash memory and applied during the application startup.
 
 Syntax
 ~~~~~~
 
+The following is the syntax when :ref:`CONFIG_SLM_UART_HWFC_RUNTIME <CONFIG_SLM_UART_HWFC_RUNTIME>` is selected:
 ::
 
    #XSLMUART[=<baud_rate>,<hwfc>]
+
+The following is the syntax when :ref:`CONFIG_SLM_UART_HWFC_RUNTIME <CONFIG_SLM_UART_HWFC_RUNTIME>` is not selected:
+::
+
+   #XSLMUART[=<baud_rate>]
 
 The ``<baud_rate>`` parameter is an integer.
 It accepts the following values:
@@ -303,18 +310,34 @@ Syntax
 Response syntax
 ~~~~~~~~~~~~~~~
 
+The following is the syntax when :ref:`CONFIG_SLM_UART_HWFC_RUNTIME <CONFIG_SLM_UART_HWFC_RUNTIME>` is selected:
+
 ::
 
    #XSLMUART: (list of the available baud rate options),(disable or enable hwfc)
 
+The following is the syntax when :ref:`CONFIG_SLM_UART_HWFC_RUNTIME <CONFIG_SLM_UART_HWFC_RUNTIME>` not selected:
+
+::
+
+   #XSLMUART: (list of the available baud rate options)
+
 Example
 ~~~~~~~
+
+The following is an example when :ref:`CONFIG_SLM_UART_HWFC_RUNTIME <CONFIG_SLM_UART_HWFC_RUNTIME>` is selected:
 
 ::
 
    AT#XSLMUART=?
    #XSLMUART: (1200,2400,4800,9600,14400,19200,38400,57600,115200,230400,460800,921600,1000000),(0,1)
 
+The following is an example when :ref:`CONFIG_SLM_UART_HWFC_RUNTIME <CONFIG_SLM_UART_HWFC_RUNTIME>` is not selected:
+
+::
+
+   AT#XSLMUART=?
+   #XSLMUART: (1200,2400,4800,9600,14400,19200,38400,57600,115200,230400,460800,921600,1000000)
 
 Device UUID #XUUID
 ==================

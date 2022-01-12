@@ -60,6 +60,12 @@ CONFIG_SLM_EXTERNAL_XTAL - Use external XTAL for UARTE
    This option configures the application to use an external XTAL for UARTE.
    See the `nRF9160 Product Specification`_ (section 6.19 UARTE) for more information.
 
+.. _CONFIG_SLM_UART_HWFC_RUNTIME:
+
+CONFIG_SLM_UART_HWFC_RUNTIME - Support of UART HWFC runtime configuration
+   This option let the application configure HWFC during runtime rather than while compiling by using ``#XSLMUART``.
+   This option is automatically selected when the **rts-pin** and **cts-pin** are defined in the DTS overlay.
+
 .. _CONFIG_SLM_CONNECT_UART_0:
 
 CONFIG_SLM_CONNECT_UART_0 - UART 0
@@ -84,7 +90,7 @@ CONFIG_SLM_START_SLEEP - Enter sleep on startup
 
 CONFIG_SLM_INTERFACE_PIN - Interface GPIO to wake up from sleep or exit idle
    This option specifies which interface GPIO to use for exiting sleep or idle mode.
-   By default, **P0.6** (Button 1 on the nRF9160 DK) is used when :ref:`CONFIG_SLM_CONNECT_   <CONFIG_SLM_CONNECT_UART_0>` is selected, and **P0.31** is used when :ref:`CONFIG_SLM_CONNECT_UART_2 <CONFIG_SLM_CONNECT_UART_2>` is selected.
+   By default, **P0.6** (Button 1 on the nRF9160 DK) is used when :ref:`CONFIG_SLM_CONNECT_UART_0 <CONFIG_SLM_CONNECT_UART_0>` is selected, and **P0.31** is used when :ref:`CONFIG_SLM_CONNECT_UART_2 <CONFIG_SLM_CONNECT_UART_2>` is selected.
 
    **P0.26** (Multi-function button on Thingy:91) is used when the target is Thingy:91.
 
