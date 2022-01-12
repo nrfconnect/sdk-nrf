@@ -84,15 +84,25 @@ config PM_PARTITION_SIZE_TFM
 	  TFM_MINIMAL is set. This is because no modification of the features
 	  supported by TF-M can be performed when TFM_MINIMAL is enabled.
 
-config PM_PARTITION_SIZE_TFM_EXTRA
-	hex
-	prompt  "Memory reserved for TFM EXTRA" if !TFM_MINIMAL
-	default 0x10000 if !TFM_MINIMAL
+config PM_PARTITION_SIZE_TFM_PROTECTED_STORAGE
+	hex "Memory reserved for TFM Protected Storage"
+	default 0x4000 if TFM_PARTITION_PROTECTED_STORAGE
 	default 0
 	help
-	  Memory set aside for the TFM EXTRA partition. If TFM_MINIMAL is set
-	  its size will be set to 0, this is because no feature using this
-	  partition is enabled when TFM_MINIMAL is enabled.
+	  Memory set aside for the TFM Protected Storage (PS) partition.
+
+config PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE
+	hex "Memory reserved for TFM Internal Trusted Storage"
+	default 0x2000 if TFM_PARTITION_INTERNAL_TRUSTED_STORAGE
+	default 0
+	help
+	  Memory set aside for the TFM Internal Trusted Storage (ITS) partition
+
+config PM_PARTITION_SIZE_TFM_OTP_NV_COUNTERS
+	hex "Memory reserved for TFM OTP / Non-Volatile Counters"
+	default 0x2000
+	help
+	  Memory set aside for the OTP / Non-Volatile (NV) Counters partition
 
 rsource "Kconfig.psa.defconfig"
 
