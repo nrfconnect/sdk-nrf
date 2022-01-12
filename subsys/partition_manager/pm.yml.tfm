@@ -36,7 +36,17 @@ app_secondary:
   share_size: app_primary
 #endif
 
-tfm_extra:
+tfm_ps:
   placement: {after: [app_secondary, app]}
-  size: CONFIG_PM_PARTITION_SIZE_TFM_EXTRA
+  size: CONFIG_PM_PARTITION_SIZE_TFM_PROTECTED_STORAGE
+  align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
+
+tfm_its:
+  placement: {after: [app_secondary, app]}
+  size: CONFIG_PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE
+  align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
+
+tfm_otp_nv_counters:
+  placement: {after: [app_secondary, app]}
+  size: CONFIG_PM_PARTITION_SIZE_TFM_OTP_NV_COUNTERS
   align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
