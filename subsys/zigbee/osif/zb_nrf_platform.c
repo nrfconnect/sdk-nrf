@@ -106,14 +106,14 @@ bool zigbee_debug_zboss_thread_is_created(void)
 	return false;
 }
 
-/**@brief Function for suspending zboss thread.
+/**@brief Function for suspending ZBOSS thread.
  */
 void zigbee_debug_suspend_zboss_thread(void)
 {
 	k_thread_suspend(zboss_tid);
 }
 
-/**@brief Function for resuming zboss thread.
+/**@brief Function for resuming ZBOSS thread.
  */
 void zigbee_debug_resume_zboss_thread(void)
 {

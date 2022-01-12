@@ -101,7 +101,7 @@ config ZIGBEE_APP_CB_QUEUE_LENGTH
 config ZIGBEE_DEBUG_FUNCTIONS
 	bool "Include Zigbee debug functions"
 	help
-	  Include functions to suspend/resume zboss thread.
+	  Include functions to suspend/resume ZBOSS thread.
 	  It may be helpful when debugging but using this functions can cause instability of the device.
 
 menu "Zigbee Log configuration"

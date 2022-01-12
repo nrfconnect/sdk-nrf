@@ -260,14 +260,14 @@ static int cmd_zb_role_zr(const struct shell *shell, size_t argc, char **argv)
  *
  * This command can be called multiple times.
  *
- * If the zboss thread has not been created yet, `zigbee_enable` is called to
- * create the zboss thread and the Zigbee stack is started. The subsequent
+ * If the ZBOSS thread has not been created yet, `zigbee_enable` is called to
+ * create the ZBOSS thread and the Zigbee stack is started. The subsequent
  * behavior of the device depends on the implementation of the
  * `zboss_signal_handler` function. If `zigbee_default_signal_handler` is used
  * to handle a ZBOSS signals, the device will attempt to join or form a network
  * (depending on the role) after the Zigbee stack is started.
  *
- * If the device is not on a network but the zboss thread has been created
+ * If the device is not on a network but the ZBOSS thread has been created
  * (so the Zigbee stack is started), then it will attempt to join
  * or form a network (depending on the role).
  *
