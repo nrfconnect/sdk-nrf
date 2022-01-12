@@ -121,7 +121,6 @@ static int handle_at_slmver(enum at_cmd_type type)
 
 	return ret;
 }
-
 static void go_sleep_wk(struct k_work *work)
 {
 	ARG_UNUSED(work);
@@ -272,6 +271,7 @@ static int handle_at_slmuart(enum at_cmd_type type)
 				return -EINVAL;
 			}
 		}
+#if defined(CONFIG_SLM_UART_HWFC_RUNTIME)
 		ret = at_params_unsigned_short_get(&at_param_list, 2, &hwfc);
 		if (ret == 0) {
 			if ((hwfc != UART_CFG_FLOW_CTRL_RTS_CTS) &&
@@ -279,8 +279,12 @@ static int handle_at_slmuart(enum at_cmd_type type)
 				LOG_ERR("Invalid uart hwfc provided.");
 				return -EINVAL;
 			}
-			slm_uart.flow_ctrl = (uint8_t)hwfc;
 		}
+#else
+		hwfc = UART_CFG_FLOW_CTRL_NONE;
+#endif
+		slm_uart.flow_ctrl = hwfc;
+
 		ret = k_work_reschedule(&slm_work.uart_work, K_MSEC(SLM_UART_RESPONSE_DELAY));
 		if (ret > 0) {
 			ret = 0;
@@ -292,8 +296,13 @@ static int handle_at_slmuart(enum at_cmd_type type)
 		ret = 0;
 	}
 	if (type == AT_CMD_TYPE_TEST_COMMAND) {
+#if defined(CONFIG_SLM_UART_HWFC_RUNTIME)
 		sprintf(rsp_buf, "\r\n#XSLMUART: (1200,2400,4800,9600,14400,19200,38400,57600,"
 				 "115200,230400,460800,921600,1000000),(0,1)\r\n");
+#else
+		sprintf(rsp_buf, "\r\n#XSLMUART: (1200,2400,4800,9600,14400,19200,38400,57600,"
+				 "115200,230400,460800,921600,1000000)\r\n");
+#endif
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		ret = 0;
 	}
