@@ -61,10 +61,12 @@ static int send_service_info(void)
 	};
 	struct nrf_cloud_svc_info_ui ui_info = {
 		.gps = true,
+#if defined(CONFIG_BOARD_THINGY91_NRF9160_NS)
 		.humidity = true,
 		.air_pressure = true,
-		.rsrp = true,
 		.temperature = true,
+#endif
+		.rsrp = true,
 		.button = true
 	};
 	struct nrf_cloud_svc_info service_info = {
