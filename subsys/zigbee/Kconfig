@@ -104,6 +104,20 @@ config ZIGBEE_DEBUG_FUNCTIONS
 	  Include functions to suspend/resume zboss thread.
 	  It may be helpful when debugging but using this functions can cause instability of the device.
 
+# Configure default behavior of zb_osif_abort() function called as ZBOSS assert handler
+choice
+	prompt "Default behavior for ZBOSS stack internal assert handler"
+	default ZBOSS_RESET_ON_ASSERT
+
+	config ZBOSS_RESET_ON_ASSERT
+		bool "Reset device when a ZBOSS assert occurs"
+		depends on REBOOT
+
+	config ZBOSS_HALT_ON_ASSERT
+		bool "Halt device when a ZBOSS assert occurs. Use only for testing and debugging."
+
+endchoice
+
 menu "Zigbee Log configuration"
 
 config ZBOSS_ERROR_PRINT_TO_LOG

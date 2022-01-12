@@ -27,6 +27,11 @@ You can also configure the following OSIF-related Kconfig options:
   .. note::
       These functions are useful for debugging, but they can cause instability of the device.
 
+* :kconfig:`CONFIG_ZBOSS_RESET_ON_ASSERT` - Configures the ZBOSS OSIF layer to reset the device when a ZBOSS assert occurs.
+  This option is enabled by default.
+  Use it for production-ready applications.
+* :kconfig:`CONFIG_ZBOSS_HALT_ON_ASSERT` - Configures the ZBOSS OSIF layer to halt the device when a ZBOSS assert occurs.
+  Use this option only for testing and debugging your application.
 * :kconfig:`CONFIG_ZIGBEE_HAVE_SERIAL` - Enables the UART serial abstract for the ZBOSS OSIF layer and allows to configure the serial glue layer.
   For more information, see the :ref:`zigbee_osif_zboss_osif_serial` section.
 * :kconfig:`CONFIG_ZIGBEE_USE_BUTTONS` - Enables the buttons abstract for the ZBOSS OSIF layer.

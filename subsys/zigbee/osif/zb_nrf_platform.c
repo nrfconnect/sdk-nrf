@@ -8,6 +8,7 @@
 #include <kernel.h>
 #include <sys/reboot.h>
 #include <logging/log.h>
+#include <logging/log_ctrl.h>
 #include <init.h>
 
 #include <hal/nrf_power.h>
@@ -511,10 +512,20 @@ void zb_osif_init(void)
 
 void zb_osif_abort(void)
 {
-	LOG_ERR("Fatal error occurred");
+	/* Log ZBOSS error message and flush logs. */
+	LOG_ERR("ZBOSS fatal error occurred");
+	LOG_PANIC();
+
+	/* Flush ZBOSS trace logs. */
 	ZB_OSIF_SERIAL_FLUSH();
 
-	k_fatal_halt(K_ERR_KERNEL_PANIC);
+	/* By default reset device or halt if so configured. */
+	if (IS_ENABLED(CONFIG_ZBOSS_RESET_ON_ASSERT)) {
+		zb_reset(0);
+	}
+	if (IS_ENABLED(CONFIG_ZBOSS_HALT_ON_ASSERT)) {
+		k_fatal_halt(K_ERR_KERNEL_PANIC);
+	}
 }
 
 void zb_reset(zb_uint8_t param)
