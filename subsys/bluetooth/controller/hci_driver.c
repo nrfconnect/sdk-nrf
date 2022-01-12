@@ -112,7 +112,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 	#define SDC_PERIODIC_ADV_SYNC_COUNT CONFIG_BT_PER_ADV_SYNC_MAX
 	#define SDC_PERIODIC_SYNC_MEM_SIZE \
 		(SDC_PERIODIC_ADV_SYNC_COUNT * \
-		 SDC_MEM_PER_PERIODIC_SYNC(SDC_DEFAULT_PERIODIC_SYNC_BUFFER_COUNT))
+		 SDC_MEM_PER_PERIODIC_SYNC(CONFIG_BT_CTLR_SDC_PERIODIC_SYNC_BUFFER_COUNT))
 #else
 	#define SDC_PERIODIC_ADV_SYNC_COUNT 0
 	#define SDC_PERIODIC_SYNC_MEM_SIZE 0
@@ -640,9 +640,20 @@ static int configure_memory_usage(void)
 
 	if (IS_ENABLED(CONFIG_BT_PER_ADV_SYNC)) {
 		cfg.periodic_sync_count.count = SDC_PERIODIC_ADV_SYNC_COUNT;
+
 		required_memory =
 		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
 			    SDC_CFG_TYPE_PERIODIC_SYNC_COUNT,
+			    &cfg);
+		if (required_memory < 0) {
+			return required_memory;
+		}
+
+		cfg.periodic_sync_buffer_cfg.count = CONFIG_BT_CTLR_SDC_PERIODIC_SYNC_BUFFER_COUNT;
+
+		required_memory =
+		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+			    SDC_CFG_TYPE_PERIODIC_SYNC_BUFFER_CFG,
 			    &cfg);
 		if (required_memory < 0) {
 			return required_memory;
