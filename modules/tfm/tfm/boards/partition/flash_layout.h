@@ -74,38 +74,39 @@
 #define FLASH_AREA_3_ID            (FLASH_AREA_2_ID + 1)
 #define FLASH_AREA_3_OFFSET        (PM_APP_SECONDARY_ADDRESS)
 #define FLASH_AREA_3_SIZE          (PM_APP_SECONDARY_SIZE)
+
 /* Not used, only the Non-swapping firmware upgrade operation
  * is supported on NRF5340 Application MCU.
  */
-#ifdef PM_TFM_EXTRA_ADDRESS
 #define FLASH_AREA_SCRATCH_ID      (FLASH_AREA_3_ID + 1)
-#define FLASH_AREA_SCRATCH_OFFSET  (PM_TFM_EXTRA_ADDRESS)
+#define FLASH_AREA_SCRATCH_OFFSET  (FLASH_AREA_3_OFFSET + FLASH_AREA_3_SIZE)
 #define FLASH_AREA_SCRATCH_SIZE    (0)
 /* Maximum number of image sectors supported by the bootloader. */
 #define MCUBOOT_MAX_IMG_SECTORS    (FLASH_MAX_PARTITION_SIZE / \
 				    FLASH_AREA_IMAGE_SECTOR_SIZE)
-#endif /* PM_TFM_EXTRA_ADDRESS */
 
 /* Not used, only the Non-swapping firmware upgrade operation
  * is supported on nRF5340. The maximum number of status entries
  * supported by the bootloader.
  */
-#define MCUBOOT_STATUS_MAX_ENTRIES      (0)
+#define MCUBOOT_STATUS_MAX_ENTRIES (0)
 
-#ifdef PM_TFM_EXTRA_ADDRESS
-#define FLASH_PS_AREA_OFFSET            (PM_TFM_EXTRA_ADDRESS)
-#define FLASH_PS_AREA_SIZE              (0x4000)   /* 16 KB */
+#ifdef PM_TFM_PS_ADDRESS
+#define FLASH_PS_AREA_OFFSET       (PM_TFM_PS_ADDRESS)
+#define FLASH_PS_AREA_SIZE         (PM_TFM_PS_SIZE)
+#endif
 
 /* Internal Trusted Storage (ITS) Service definitions */
-#define FLASH_ITS_AREA_OFFSET           (FLASH_PS_AREA_OFFSET + \
-					 FLASH_PS_AREA_SIZE)
-#define FLASH_ITS_AREA_SIZE             (0x2000)   /* 8 KB */
+#ifdef PM_TFM_ITS_ADDRESS
+#define FLASH_ITS_AREA_OFFSET      (PM_TFM_ITS_ADDRESS)
+#define FLASH_ITS_AREA_SIZE        (PM_TFM_ITS_SIZE)
 #endif /* PM_TFM_EXTRA_ADDRESS */
 
-/* NV Counters definitions */
-#define FLASH_NV_COUNTERS_AREA_OFFSET   (FLASH_ITS_AREA_OFFSET + \
-					 FLASH_ITS_AREA_SIZE)
-#define FLASH_NV_COUNTERS_AREA_SIZE     (FLASH_AREA_IMAGE_SECTOR_SIZE)
+#ifdef PM_TFM_OTP_NV_COUNTERS_ADDRESS
+#define FLASH_OTP_NV_COUNTERS_AREA_OFFSET (PM_TFM_OTP_NV_COUNTERS_ADDRESS)
+#define FLASH_OTP_NV_COUNTERS_AREA_SIZE   (PM_TFM_OTP_NV_COUNTERS_SIZE)
+#define FLASH_OTP_NV_COUNTERS_SECTOR_SIZE (FLASH_AREA_IMAGE_SECTOR_SIZE)
+#endif
 
 /* Non-secure storage region */
 #if defined(PM_SETTINGS_STORAGE_ADDRESS) && defined(PM_SETTINGS_STORAGE_SIZE)
@@ -166,11 +167,13 @@
 /* Specifies the smallest flash programmable unit in bytes */
 #define TFM_HAL_ITS_PROGRAM_UNIT        (0x4)
 
-/* NV Counters definitions */
-#define TFM_NV_COUNTERS_AREA_ADDR    FLASH_NV_COUNTERS_AREA_OFFSET
-#define TFM_NV_COUNTERS_AREA_SIZE    (0x18) /* 24 Bytes */
-#define TFM_NV_COUNTERS_SECTOR_ADDR  FLASH_NV_COUNTERS_AREA_OFFSET
-#define TFM_NV_COUNTERS_SECTOR_SIZE  FLASH_AREA_IMAGE_SECTOR_SIZE
+/* OTP / NV counter definitions */
+#define TFM_OTP_NV_COUNTERS_AREA_SIZE   (FLASH_OTP_NV_COUNTERS_AREA_SIZE / 2)
+#define TFM_OTP_NV_COUNTERS_AREA_ADDR   FLASH_OTP_NV_COUNTERS_AREA_OFFSET
+#define TFM_OTP_NV_COUNTERS_SECTOR_SIZE FLASH_OTP_NV_COUNTERS_SECTOR_SIZE
+#define TFM_OTP_NV_COUNTERS_BACKUP_AREA_ADDR \
+	(TFM_OTP_NV_COUNTERS_AREA_ADDR           \
+	 TFM_OTP_NV_COUNTERS_AREA_SIZE)
 
 /* Use Flash memory to store Code data */
 #define FLASH_BASE_ADDRESS (0x00000000)
