@@ -20,26 +20,6 @@ Currently MCUboot works with the various operating systems and SDKs, such as Zep
 MCUboot is an open governance project.
 See the `membership list <https://github.com/mcu-tools/mcuboot/wiki/Members>`_ for current members, and the `project charter <https://github.com/mcu-tools/mcuboot/wiki/MCUboot-Project-Charter>`_ for more details.
 
-Documentation
-*************
-
-The MCUboot documentation is composed of the following pages:
-
-.. toctree::
-   :maxdepth: 1
-
-   release-notes.md
-   design.md
-   encrypted_images.md
-   imgtool.md
-   ecdsa.md
-   readme-zephyr.md
-   readme-ncs.rst
-   testplan-zephyr.md
-   release.md
-   SECURITY.md
-   SubmittingPatches.md
-
 Roadmap
 *******
 
