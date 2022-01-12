@@ -20,6 +20,11 @@
 #ifndef __RTE_DEVICE_H
 #define __RTE_DEVICE_H
 
+/* Undef the TF-M defined array size since devicetree will pull in util.h which
+ * has this definition.
+ */
+#undef ARRAY_SIZE
+
 #include <devicetree.h>
 #include <autoconf.h>
 
