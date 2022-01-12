@@ -15,6 +15,7 @@
 
 #define MODULE ei_data_forwarder
 #include <caf/events/module_state_event.h>
+#include <caf/events/sensor_force_active_event.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_EI_DATA_FORWARDER_LOG_LEVEL);
@@ -86,6 +87,12 @@ static void update_state(enum state new_state)
 			broadcast_ei_data_forwarder_state(new_forwarder_state);
 		}
 		forwarder_state = new_forwarder_state;
+
+		if (IS_ENABLED(CONFIG_CAF_SENSOR_FORCE_ACTIVE_EVENTS)) {
+			sensor_force_active(
+				handled_sensor_event_descr,
+				forwarder_state == EI_DATA_FORWARDER_STATE_TRANSMITTING);
+		}
 	}
 }
 
