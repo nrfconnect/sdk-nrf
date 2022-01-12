@@ -12,6 +12,7 @@ menuconfig ZIGBEE
 	select NET_L2_ZIGBEE
 	select NETWORKING
 	select NET_PKT_TXTIME
+	select REBOOT
 	imply MPSL
 	imply COUNTER
 	imply COUNTER_TIMER2
