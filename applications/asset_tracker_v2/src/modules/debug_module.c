@@ -292,7 +292,8 @@ static void memfault_handle_event(struct debug_msg_data *msg)
 	 * compared to having Memfault SDK trigger regular updates independently. All data
 	 * should preferably be sent within the same LTE RRC connected window.
 	 */
-	if (IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) {
+	if ((IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) ||
+	    (IS_EVENT(msg, data, DATA_EVT_DATA_SEND_BATCH))) {
 		send_memfault_data(false);
 		return;
 	}
