@@ -38,7 +38,7 @@
 				zb_error_to_string_get(LOCAL_ERR_CODE),	\
 				__FILE__,				\
 				__LINE__);				\
-			k_fatal_halt(K_ERR_KERNEL_PANIC);		\
+			zb_osif_abort();				\
 		}							\
 	} while (0)
 
@@ -59,12 +59,12 @@
 		}							      \
 	} while (0)
 #else
-#define ZB_ERROR_CHECK(ERR_CODE)				  \
-	do {							  \
+#define ZB_ERROR_CHECK(ERR_CODE)					\
+	do {								\
 		const uint32_t LOCAL_ERR_CODE = (uint32_t) (-ERR_CODE); \
-		if (LOCAL_ERR_CODE != RET_OK) {			  \
-			k_fatal_halt(K_ERR_KERNEL_PANIC);	  \
-		}						  \
+		if (LOCAL_ERR_CODE != RET_OK) {				\
+			zb_osif_abort();				\
+		}							\
 	} while (0)
 
 #define ZB_COMM_STATUS_CHECK(COMM_STATUS)	   \
