@@ -13,14 +13,20 @@ config MPSL_CX
 	  Radio Coexistence interface connects nRF5 radio protocols with external
 	  Packet Traffic Arbiter (PTA) which denies or grants access to RF.
 
+config MPSL_CX_PIN_FORWARDER
+	bool
+	depends on SOC_NRF5340_CPUAPP
+	depends on MPSL_CX
+	default y
+
 if MPSL_CX
 
 choice MPSL_CX_CHOICE
 	prompt "Radio Coexistence interface implementation"
 
 config MPSL_CX_THREAD
-	select NRFX_GPIOTE
-	select GPIO
+	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
+	select GPIO if !MPSL_CX_PIN_FORWARDER
 	depends on !BT
 	bool "Thread Radio Coexistence [EXPERIMENTAL]"
 	select EXPERIMENTAL
@@ -52,8 +58,8 @@ config MPSL_CX_BT_1WIRE
 	  implementation for co-located radios.
 
 config MPSL_CX_GENERIC_3PIN
-	select NRFX_GPIOTE
-	select GPIO
+	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
+	select GPIO if !MPSL_CX_PIN_FORWARDER
 	bool "Generic 3-pin Radio Coexistence support [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	help
