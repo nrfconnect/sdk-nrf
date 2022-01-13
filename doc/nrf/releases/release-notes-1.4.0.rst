@@ -597,7 +597,7 @@ Thread
 
 * :ref:`ug_thread` - updated by reorganizing structure and adding new pages
 
-  * :ref:`ug_thread_configuring` - added as a separate page (was a section of :ref:`ug_thread`); updated with information about :ref:`ug_thread_configuring_basic`, :ref:`ug_thread_configuring_crypto`, :ref:`thread_ug_thread_1_2`, :ref:`thread_ug_feature_sets`
+  * :ref:`ug_thread_configuring` - added as a separate page (was a section of :ref:`ug_thread`); updated with information about :ref:`ug_thread_configuring_basic`, :ref:`ug_thread_configuring_crypto`, :ref:`thread_ug_thread_specification_options`, :ref:`thread_ug_feature_sets`
   * :ref:`ug_thread_intro` - added as a container for conceptual pages about OpenThread
 
     * :ref:`thread_ug_supported_features` - added as a separate page (was a section of :ref:`ug_thread`)

@@ -87,13 +87,13 @@ To program the nRF device with the RCP application, complete the following steps
 
          .. code-block:: console
 
-            west build -p always -b nrf52840dongle_nrf52840 nrf/samples/openthread/coprocessor/ -- -DOVERLAY_CONFIG="overlay-rcp.conf ../cli/overlay-thread_1_2.conf overlay-usb.conf" -DDTC_OVERLAY_FILE="usb.overlay"
+            west build -p always -b nrf52840dongle_nrf52840 nrf/samples/openthread/coprocessor/ -- -DOVERLAY_CONFIG="overlay-rcp.conf overlay-usb.conf" -DDTC_OVERLAY_FILE="usb.overlay" -DCONFIG_OPENTHREAD_THREAD_VERSION_1_2=y
 
       .. tab:: nRF52840 Development Kit (UART transport)
 
          .. code-block:: console
 
-            west build -p always -b nrf52840dk_nrf52840 nrf/samples/openthread/coprocessor/ -- -DOVERLAY_CONFIG="overlay-rcp.conf ../cli/overlay-thread_1_2.conf"
+            west build -p always -b nrf52840dk_nrf52840 nrf/samples/openthread/coprocessor/ -- -DOVERLAY_CONFIG="overlay-rcp.conf" -DCONFIG_OPENTHREAD_THREAD_VERSION_1_2=y
 
 #. Depending on the hardware platform, complete the following steps:
 

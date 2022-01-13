@@ -16,7 +16,7 @@ tests:
     build_only: true
     platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
     tags: ci_build
-    extra_args: OVERLAY_CONFIG=overlay-thread_1_2.conf
+    extra_args: CONFIG_OPENTHREAD_THREAD_VERSION_1_2=y
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf52833dk_nrf52833
