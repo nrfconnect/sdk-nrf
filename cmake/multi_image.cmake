@@ -221,6 +221,10 @@ function(add_child_image_from_source)
 
   message("\n=== child image ${ACI_NAME} - ${ACI_DOMAIN}${inherited} begin ===")
 
+  if (CONFIG_BOOTLOADER_MCUBOOT)
+    list(APPEND extra_cmake_args "-DCONFIG_NCS_MCUBOOT_IN_BUILD=y")
+  endif()
+
   if (ACI_PRELOAD_IMAGE)
     get_property(
       preload_file
