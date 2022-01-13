@@ -77,11 +77,39 @@ Complete the following steps to prepare for the certification tests:
 
 #. Prepare Thread Test Harness.
 
-   a. Copy the provided :file:`ncs/nrf/samples/openthread/cli/harness/nRF_Connect_SDK.py` file into :file:`C:\\GRL\\Thread1.1\\Thread_Harness\\THCI\\`.
+   a. Copy the provided :file:`ncs/modules/lib/openthread/tools/harness-thci/OpenThread.py` file into :file:`C:\\GRL\\Thread1.1\\Thread_Harness\\THCI\\nRF_Connect_SDK.py`.
 
    b. Copy the provided :file:`ncs/nrf/samples/openthread/cli/harness/nRF_Connect_SDK.jpg` file into :file:`C:\\GRL\\Thread1.1\\Web\\images\\`.
 
-   c. Edit :file:`C:\\GRL\\Thread1.1\\Web\\data\\deviceInputFields.xml` and prepend the following code:
+   c. Edit :file:`C:\\GRL\\Thread1.1\\Thread_Harness\\THCI\\nRF_Connect_SDK.py` as follows:
+
+      .. code-block:: python
+
+            >> Thread Host Controller Interface
+            >> Device : OpenThread THCI
+            >> Class : OpenThread
+
+      to
+
+      .. code-block:: python
+
+            >> Thread Host Controller Interface
+            >> Device : nRF_Connect_SDK THCI
+            >> Class : nRF_Connect_SDK
+
+      and
+
+      .. code-block:: python
+
+         class OpenThread(OpenThreadTHCI, IThci):
+
+      to
+
+      .. code-block:: python
+
+         class nRF_Connect_SDK(OpenThreadTHCI, IThci):
+
+   d. Edit :file:`C:\\GRL\\Thread1.1\\Web\\data\\deviceInputFields.xml` and prepend the following code:
 
       .. code-block::
 
