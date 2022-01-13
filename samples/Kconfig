@@ -93,3 +93,8 @@ endif # LOG
 
 config NCS_IS_VARIANT_IMAGE
 	bool "Image is a variant build of another image [READ ONLY]"
+
+config NCS_MCUBOOT_IN_BUILD
+	bool "MCUBoot is included in the build [READ ONLY]"
+	help
+	  Helper option used to communicate to child images that MCUboot is included in the build.
