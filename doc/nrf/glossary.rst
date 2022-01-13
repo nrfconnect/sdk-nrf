@@ -592,7 +592,7 @@ Glossary
       In the |NCS| and Zephyr, it is named :file:`west.yml`.
 
    West manifest repository
-      A :term:`repository <Repository>` that contains a :term`West manifest file`` and can be used to configure a west workspace.
+      A :term:`repository <Repository>` that contains a :term:`West manifest file` and can be used to configure a west workspace.
       See :ref:`dm_repo_types`.
 
    West project
