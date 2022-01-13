@@ -1,38 +1,56 @@
 .. _ug_radio_fem:
 
-Radio front-end module (FEM) support
-####################################
+Working with RF front-end modules
+#################################
 
 .. contents::
    :local:
-   :depth: 2
+   :depth: 4
+
+An RF front-end module (FEM) is a device that amplifies the RF signal, and therefore, increases the range distance and the strength of a link's connection.
+In addition to extending the range, an RF FEM also increases the robustness of the link connection.
+A more robust link leads to less packet loss, meaning less retransmissions.
+The probability of successfully receiving the first packet also increases, resulting in low link latency.
+
+FEMs provide a power amplifier (PA) that increases the TX power and a low-noise amplifier (LNA) that increases the RX sensitivity.
+Some FEMs, like the nRF21540, provide a power down (PDN) control that powers down the FEM internal circuits, to reduce energy consumption.
+
+For testing purposes, a FEM is usually integrated in either a development kit or a shield that you connect to a development kit.
 
 This guide describes how to add support for 2 different front-end module (FEM) implementations to your application in |NCS|.
 
-|NCS| allows you to extend the radio range of your development kit with an implementation of the front-end modules.
-Front-end modules are range extenders used for boosting the link robustness and link budget of wireless SoCs.
+Software support
+****************
 
-The FEM support is based on the :ref:`nrfxlib:mpsl_fem`, which is integrated into the nrfxlib's MPSL library.
-This library provides nRF21540 GPIO and Simple GPIO implementations, for 3-pin and 2-pin PA/LNA interfaces, respectively.
+If your application uses radio protocols and requires FEM, you can enable :ref:`nrfxlib:mpsl_fem` in the :ref:`nrfxlib:mpsl` (MPSL) library.
+The test samples in |NCS|: :ref:`radio_test` and :ref:`direct_test_mode` also support FEM control.
+You can use as well your own FEM driver when required.
 
-The implementations described in this guide are the following:
+Using MPSL
+==========
+
+The MPSL library provides an implementation for the 3-pin GPIO interface of the nRF21540 and a simplified version for FEMs with a 2-pin interface.
+To use this implementation, your application must use a protocol driver that enables the FEM feature.
+The library provides multiprotocol support, but you can also use it in applications that require only one protocol.
+To avoid conflicts, check the protocol documentation to see if the protocol uses FEM support provided by MPSL.
+
+The implementations supported by the MPSL library are the following:
 
 * :ref:`ug_radio_fem_nrf21540_gpio` - For the nRF21540 GPIO implementation that uses nRF21540.
 * :ref:`ug_radio_fem_skyworks` - For the Simple GPIO implementation that uses the SKY66112-11 device.
 
-These methods are only available to protocol drivers that are using FEM features provided by the MPSL library in multiprotocol scenarios.
-They are also valid for cases where an application uses just one protocol, but benefits from features provided by MPSL.
-To avoid conflicts, check the protocol documentation to see if it uses FEM support provided by MPSL.
+.. note::
+   Currently, the following protocols use FEM support provided by MPSL:
 
-|NCS| provides a friendly wrapper that configures FEM based on devicetree (DTS) and Kconfig information.
-To enable FEM support, you must enable FEM and MPSL, and add an ``nrf_radio_fem`` node in the devicetree file.
-The node can also be provided by the devicetree file of the target devkit or by an overlay file.
-See :ref:`zephyr:dt-guide` for more information about the DTS data structure, and :ref:`zephyr:dt_vs_kconfig` for information about differences between DTS and Kconfig.
+   * :ref:`ug_thread`
+   * :ref:`ug_zigbee`
+   * :ref:`ug_ble_controller`
+   * :ref:`ug_multiprotocol_support`
 
 .. _ug_radio_fem_requirements:
 
 Enabling FEM and MPSL
-*********************
+---------------------
 
 Before you add the devicetree node in your application, complete the following steps:
 
@@ -41,13 +59,48 @@ Before you add the devicetree node in your application, complete the following s
    See :ref:`nrfxlib:mpsl_lib` in the nrfxlib documentation for details.
 #. Enable support for MPSL implementation in |NCS| by setting the :kconfig:`CONFIG_MPSL` Kconfig option to ``y``.
 
+.. _ug_radio_fem_direct_support:
+
+Direct support
+==============
+
+If your application cannot use MPSL or if the FEM driver in MPSL does not support all features you need, you can implement your own driver for nRF21540.
+The following samples have direct FEM support:
+
+* :ref:`direct_test_mode`
+* :ref:`radio_test`
+
+The implementations supported by the samples are the following:
+
+* :ref:`ug_radio_fem_nrf21540_spi_gpio` - For the nRF21540 SPI/GPIO implementation that uses nRF21540.
+* :ref:`ug_radio_fem_skyworks` - For the Simple GPIO implementation that uses the Skyworks devices.
+
+.. note::
+   The nRF5340 DK network core peripherals, like UART and SPI, share an ID and a base address.
+   To configure the nRF21540 front-end module gain, write the gain value over the SPI.
+   In samples, UART is used as a control interface or shell transport.
+   To send the gain value, UART is temporary disabled and restarted after the SPI transfer.
+
+See the :ref:`direct_test_mode` samples for an example implementation.
+
+Hardware description
+********************
+
+The |NCS| provides a wrapper that configures FEM based on devicetree (DTS) and Kconfig information.
+To enable FEM support, you must add an ``nrf_radio_fem`` node in the devicetree file.
+The node can also be provided by the devicetree file of the target development kit or by an overlay file.
+See :ref:`zephyr:dt-guide` for more information about the DTS data structure, and :ref:`zephyr:dt_vs_kconfig` for information about differences between DTS and Kconfig.
+
+Adding support for nRF21540
+===========================
+
+The nRF21540 device is a range extender that you can use with nRF52 and nRF53 Series devices.
+For more information about nRF21540, see the `nRF21540`_ documentation.
+
 .. _ug_radio_fem_nrf21540_gpio:
 
-Adding support for nRF21540 in GPIO mode
-****************************************
-
-The nRF21540 device is a range extender that can be used with nRF52 and nRF53 Series devices.
-For more information about nRF21540, see the `nRF21540`_ documentation.
+GPIO mode
+---------
 
 The nRF21540 GPIO mode implementation of FEM is compatible with this device and implements the 3-pin PA/LNA interface.
 
@@ -94,10 +147,96 @@ To use nRF21540 in GPIO mode, complete the following steps:
    *  ``802154_rpmsg`` for applications having support for 802.15.4, but not for Bluetooth.
    *  ``hci_rpmsg`` for application having support for Bluetooth, but not for 802.15.4.
 
-Optional properties
-===================
+   .. note::
+       This step is not needed when testing with :ref:`direct_test_mode` and :ref:`radio_test` on the nRF53 Series devices.
 
-The following properties are optional and can be added to the devicetree node if needed:
+.. _ug_radio_fem_nrf21540_spi_gpio:
+
+SPI/GPIO mode
+-------------
+
+The nRF21540 has also an SPI interface.
+You can use it to fully control your front-end module or you can use a combination of SPI and GPIO interface.
+The SPI interface enables you, for example, to set the output power of the nRF21540.
+
+To use nRF21540 in SPI or mixed mode, complete the following steps:
+
+1. Add the following node in the devicetree file:
+
+   .. code-block::
+
+      / {
+            nrf_radio_fem: name_of_fem_node {
+               compatible  = "nordic,nrf21540-fem";
+               tx-en-gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
+               rx-en-gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
+               pdn-gpios   = <&gpio0 15 GPIO_ACTIVE_HIGH>;
+               spi-if = <&nrf_radio_fem_spi>
+         };
+      };
+#. Optionally replace the SPI bus device name ``nrf_radio_fem_spi``.
+#. Replace the pin numbers provided for each of the required properties:
+
+   * ``tx-en-gpios`` - GPIO characteristic of the device that controls the ``TX_EN`` signal of nRF21540.
+   * ``rx-en-gpios`` - GPIO characteristic of the device that controls the ``RX_EN`` signal of nRF21540.
+   * ``pdn-gpios`` - GPIO characteristic of the device that controls the ``PDN`` signal of nRF21540.
+
+   These properties correspond to ``TX_EN``, ``RX_EN``, and ``PDN`` pins of nRF21540 that are supported by software FEM.
+
+   The``phandle-array`` type is commonly used for describing GPIO signals in Zephyr's devicetree.
+   The first element ``&gpio0`` refers to the GPIO port ("port 0" has been selected in the example shown).
+   The second element is the pin number on that port.
+   The last element must be ``GPIO_ACTIVE_HIGH`` for nRF21540, but for a different FEM module you can use ``GPIO_ACTIVE_LOW``.
+
+   Set the state of the remaining control pins according to the `nRF21540 Product Specification`_.
+#. Add a following SPI bus device node on the devicetree file:
+
+   .. code-block::
+
+      fem_spi: &spi3 {
+	      status = "okay";
+	      sck-pin = <47>;
+	      miso-pin = <46>;
+	      mosi-pin = <45>;
+	      cs-gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
+
+	      nrf_radio_fem_spi: nrf21540_fem_spi@0 {
+		      compatible = "nordic,nrf21540-fem-spi";
+		      status = "okay";
+		      reg = <0>;
+		      label = "FEM_SPI_IF";
+		      spi-max-frequency = <8000000>;
+	      };
+      };
+
+   In this example, the nRF21540 is controlled by the ``spi3`` bus.
+   Replace the SPI bus according to your hardware design.
+   Replace the SPI bus device name ``nrf_radio_fem_spi`` with the name from the previous step.
+
+#. Replace the pin numbers provided for each of the required properties:
+
+   * ``sck-pin`` -  GPIO pin number of the device that controls the ``SCK`` signal of the nRF21540.
+   * ``miso-pin`` - GPIO pin number of the device that controls the ``MISO`` signal of the nRF21540.
+   * ``mosi-pin`` - GPIO pin number of the device that controls the ``MOSI`` signal of the nRF21540.
+   * ``cs-gpio`` - GPIO characteristic of the device that controls the ``CSN`` signal of nRF21540.
+
+   ``sck-pin``, ``miso-pin``, ``mosi-pin`` are absolute pin numbers.
+   Use the following formula to calculate them::
+
+      pin_no = b\*32 + a
+
+   In this formula ``a`` is a pin number and ``b`` is a port number (Pb.a).
+   For example, for P0.1, ``pin_no = 1`` and for P1.0, ``pin_no = 32``.
+
+Optional properties
+-------------------
+
+The following properties are optional and you can add them to the devicetree node if needed.
+
+* Properties that control the other pins:
+
+   * ``ant-sel-gpios`` - GPIO characteristic of the device that controls the ``ANT_SEL`` signal of nRF21540.
+   * ``mode-gpios`` - GPIO characteristic of the device that controls the ``MODE`` signal of nRF21540.
 
 * Properties that control the timing of interface signals:
 
@@ -122,12 +261,14 @@ The following properties are optional and can be added to the devicetree node if
 
 .. _ug_radio_fem_skyworks:
 
-Adding support for SKY66112-11
-******************************
+Adding support for Skyworks front-end module
+============================================
 
+You can use the Skyworks range extenders with nRF52 and nRF53 Series devices.
 SKY66112-11 is one of many FEM devices that support the 2-pin PA/LNA interface.
-Currently, only the nRF52 Series devices support this interface.
-nRF53 Series devices are not supported.
+The |NCS| provides also devicetree bindings for the SKY66114-11 and SKY66403-11.
+You can use SKY66112-11 as an example on how to create bindings for different devices that support the 2-pin PA/LNA interface.
+For more details about devicetree binding, see: :ref:`Zephyr documentation <zephyr:dt-bindings>`.
 
 .. note::
   In the naming convention used in the API of the MPSL library, the functionalities designated as ``PA`` and ``LNA`` apply to the ``ctx-gpios`` and ``crx-gpios`` pins listed below, respectively.
@@ -163,9 +304,16 @@ To use the Simple GPIO implementation of FEM with SKY66112-11, complete the foll
    See the official `SKY66112-11 page`_ for more information.
 
 Optional properties
-===================
+-------------------
 
-The following properties are optional and can be added to the devicetree node if needed:
+The following properties are optional and you can add them to the devicetree node if needed.
+
+* Properties that control the other pins:
+
+   * csd-gpios - GPIO characteristic of the device that controls the CSD signal of SKY66112-11.
+   * cps-gpios - GPIO characteristic of the device that controls the CPS signal of SKY66112-11.
+   * chl-gpios - GPIO characteristic of the device that controls the CHL signal of SKY66112-11.
+   * ant-sel-gpios - GPIO characteristic of the device that controls the ANT_SEL signal of devices that support antenna diversity, for example SKY66403-11.
 
 * Properties that control the timing of interface signals:
 
@@ -190,7 +338,7 @@ The following properties are optional and can be added to the devicetree node if
 .. _ug_radio_fem_incomplete_connections:
 
 Use case of incomplete physical connections to the FEM module
-*************************************************************
+=============================================================
 
 The method of configuring FEM using the devicetree file allows you to opt out of using some pins.
 For example if power consumption is not critical, the nRF21540 module PDN pin can be connected to a fixed logic level.
@@ -201,26 +349,41 @@ This applies to all properties with a ``-gpios`` suffix, for both nRF21540 and S
 
 .. _ug_radio_fem_boards:
 
-Supported boards
+Hardware support
 ****************
 
 Two nRF21540 boards are available, showcasing the possibilities of the nRF21540 FEM:
 
 * :ref:`nRF21540 DK <nrf21540dk_nrf52840>`
-* nRF21540 EK, described in sections below
+* :ref:`ug_radio_fem_nrf21540_ek`
+
+For example SKY66112-11EK also has a 2-pin PA/LNA interface.
 
 The front-end module feature is supported on the nRF52 and nRF53 Series devices.
+
+nRF21540 DK
+===========
+
+The nRF21540 DK is a development kit that has the nRF52840 device combined with the additional nRF21540 front-end module.
+You can use it the same way as :ref:`zephyr:nrf52840dk_nrf52840`
+It is an easy way to start testing front-end modules.
+For more details see :ref:`nRF21540 DK <nrf21540dk_nrf52840>`
+
+Shields
+=======
+
+Shields are adds on that you can attach to the development kit to extend its feature and functionalities.
 
 .. _ug_radio_fem_nrf21540_ek:
 
 nRF21540 EK
-===========
+-----------
 
 The nRF21540 EK (Evaluation Kit) is an RF front-end module (FEM) for Bluetooth Low Energy, Bluetooth mesh, 2.4 GHz proprietary, Thread, and Zigbee range extension.
 When combined with an nRF52 or nRF53 Series SoC, the nRF21540 RF FEM’s +21 dBm TX output power and 13 dB RX gain ensure a superior link budget for up to 16x range extension.
 
 Overview
---------
+^^^^^^^^
 
 The nRF21540 complementary device has a 50 Ω SMA transceiver interface and 2x 50 Ω SMA antenna interfaces.
 This enables connecting an SoC or a signal generator to the input.
@@ -239,8 +402,8 @@ The FEM SMA input can be connected to the nRF52 or nRF53 Series SoC RF output wi
 
    nRF21540 EK shield
 
-Pin assignment of the nRF21540 EK
----------------------------------
+Pin assignment
+^^^^^^^^^^^^^^
 
 +-----------------------+----------+-----------------+
 | Shield connector pin  | SIGNAL   | FEM function    |
@@ -267,7 +430,7 @@ Pin assignment of the nRF21540 EK
 .. _ug_radio_fem_nrf21540_ek_programming:
 
 Programming
------------
+^^^^^^^^^^^
 
 Set ``-DSHIELD=nrf21540_ek`` when you invoke ``west build`` or ``cmake`` in your Zephyr application.
 
@@ -296,8 +459,20 @@ The *childImageName_* parameter can take the following values:
 *  ``hci_rpmsg_`` for application with support for Bluetooth, but without support for 802.15.4
 
 References
-----------
+^^^^^^^^^^
 
 * `nRF21540 DK product page`_
 * `nRF21540 Product Specification`_
 * `nRF21540`_
+
+Shields with 2-pin PA/LNA interface
+-----------------------------------
+
+The SKY66112-11EK is an example of a shield with the 2-pin PA/LNA interface.
+
+Perform the following steps to use it:
+
+1. Connect the shield to the development kit.
+#. Follow the steps in the :ref:`ug_radio_fem_skyworks` to add a FEM node in the devicetree.
+#. Build your project.
+#. Program the development kit with the created binary file.
