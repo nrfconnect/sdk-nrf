@@ -31,11 +31,9 @@ Below are some of the requirements and limitations of the application while runn
    * The LwM2M carrier library stores keys into the modem, which requires disconnecting from the LTE link and connecting to it.
    * The application must wait for the :c:macro:`LWM2M_CARRIER_EVENT_LTE_READY` event before using the LTE link.
 
-* The LwM2M carrier library uses the modem DFU socket and a TLS socket for FOTA.
+* The LwM2M carrier library uses the TLS socket for FOTA.
 
-  * The modem DFU socket is available to the application until a carrier-initiated modem DFU (FOTA) occurs.
-  * If the application is using the modem DFU or TLS sockets, it must immediately close both when the :c:macro:`LWM2M_CARRIER_EVENT_FOTA_START` event is received.
-    This is necessary to let the library use the only modem DFU socket, and to have sufficient memory to perform a TLS handshake.
+  * If the application is using the TLS socket, it must immediately close it when the :c:macro:`LWM2M_CARRIER_EVENT_FOTA_START` event is received.
   * If the application needs a TLS socket at all times, it can use `Mbed TLS`_.
 
 * The LwM2M carrier library uses both the DTLS sessions made available through the modem. Therefore, the application cannot run any DTLS sessions.

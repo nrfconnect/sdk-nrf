@@ -20,7 +20,6 @@ It provides an abstraction of the following modules:
   * :ref:`lte_lc_readme`
   * :ref:`lib_download_client`
   * :ref:`modem_key_mgmt`
-  * :ref:`at_cmd_parser_readme`
   * :ref:`sms_readme`
   * :ref:`pdn_readme`
 
@@ -179,7 +178,23 @@ Following are the various LwM2M carrier library events:
 
     * :c:macro:`LWM2M_CARRIER_ERROR_DISCONNECT_FAIL` - This error is generated from the :c:func:`lte_lc_offline` function. See :c:member:`value` field of the event.
 
-    * :c:macro:`LWM2M_CARRIER_ERROR_BOOTSTRAP` - This error is generated from the :c:func:`modem_key_mgmt_write` function, if the :c:member:`value` field is negative. If the :c:member:`value` field is 0, it indicates that the bootstrap sequence has failed. If this error persists, contact your carrier.
+    * :c:macro:`LWM2M_CARRIER_ERROR_BOOTSTRAP` - This error is generated during the bootstrap procedure.
+
+      +--------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------------------------------+
+      | Errors                                                 | More information                                                                     | Recovery                                         |
+      |                                                        |                                                                                      |                                                  |
+      +========================================================+======================================================================================+==================================================+
+      | Retry limit for connecting to the bootstrap            | Common reason for this failure can be incorrect URI or PSK,                          | Library will retry after next device reboot.     |
+      | server has been reached (``-ETIMEDOUT``).              | or the server is unavailable (for example temporary network issues).                 |                                                  |
+      |                                                        | If this error persists, contact your carrier.                                        |                                                  |
+      +--------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------------------------------+
+      | Failure to provision the PSK                           | If the link is forced up by the application during the bootstrap procedure           | Library will retry after 24 hours.               |
+      | needed for the bootstrap procedure.                    | the error will be ``-EACCES``. Verify that the LwM2M library is controlling          |                                                  |
+      |                                                        | the link until the :c:macro:`LWM2M_CARRIER_EVENT_LTE_READY` event is sent.           |                                                  |
+      +--------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------------------------------+
+      | Failure to read MSISDN or ICCID values (``-EFAULT``).  | ICCID is fetched from SIM, while MSISDN will be received from the network for        | Library will retry upon next network connection. |
+      |                                                        | some carriers. If it has not been issued yet, the bootstrap process can not proceed. |                                                  |
+      +--------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------------------------------+
 
     * :c:macro:`LWM2M_CARRIER_ERROR_FOTA_PKG` - This error indicates that the update package has been rejected. The integrity check has failed because of a wrong package sent from the server, or a wrong package received by client. The :c:member:`value` field will have an error of type :c:type:`nrf_dfu_err_t` from the file :file:`nrfxlib\\nrf_modem\\include\\nrf_socket.h`.
 

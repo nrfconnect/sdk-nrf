@@ -38,7 +38,7 @@ typedef void lwm2m_os_timer_t;
 /**
  * @brief Maximum number of semaphores that the system must support.
  */
-#define LWM2M_OS_MAX_SEM_COUNT (4 + (LWM2M_OS_MAX_WORK_QS * 2))
+#define LWM2M_OS_MAX_SEM_COUNT (3 + (LWM2M_OS_MAX_WORK_QS * 2))
 
 /* pointer to semaphore object */
 typedef void lwm2m_os_sem_t;
@@ -56,6 +56,11 @@ typedef void lwm2m_os_sem_t;
  */
 #define LWM2M_OS_STORAGE_BASE 0xCA00
 #define LWM2M_OS_STORAGE_END  0xCAFF
+
+/**
+ * @brief AT command error handler callback function.
+ */
+typedef void (*lwm2m_os_at_handler_callback_t)(const char *notif);
 
 /**
  * @brief Timer callback function.
@@ -96,19 +101,6 @@ struct lwm2m_os_sms_data {
  * @brief SMS subscriber callback function.
  */
 typedef void (*lwm2m_os_sms_callback_t)(struct lwm2m_os_sms_data *const data, void *context);
-
-/**
- * @brief List of AT parameters that compose an AT command or response.
- */
-struct lwm2m_os_at_param_list {
-	size_t param_count;
-	void *params;
-};
-
-/**
- * @brief AT Command handler.
- */
-typedef void (*lwm2m_os_at_cmd_handler_t)(void *ctx, const char *response);
 
 /**
  * @defgroup lwm2m_os_download_evt_id LwM2M OS download events
@@ -459,7 +451,7 @@ int lwm2m_os_nrf_modem_shutdown(void);
  * @retval  0      If success.
  * @retval -EIO    If AT command driver initialisation failed.
  */
-int lwm2m_os_at_init(void);
+int lwm2m_os_at_init(lwm2m_os_at_handler_callback_t callback);
 
 /**
  * @brief Initialize SMS subscriber library.
@@ -470,15 +462,6 @@ int lwm2m_os_sms_init(void);
  * @brief Uninitialize SMS subscriber library.
  */
 void lwm2m_os_sms_uninit(void);
-
-/**
- * @brief Set AT command global notification handler.
- *
- * @retval  0        If command execution was successful.
- * @retval -ENOBUFS  If memory cannot be allocated.
- * @retval -EINVAL   If handler is a NULL pointer.
- */
-int lwm2m_os_at_notif_register_handler(void *context, lwm2m_os_at_cmd_handler_t handler);
 
 /**
  * @brief Register as an SMS client/listener.
@@ -492,82 +475,6 @@ int lwm2m_os_sms_client_register(lwm2m_os_sms_callback_t lib_callback, void *con
  * @brief degister as an SMS client/listener.
  */
 void lwm2m_os_sms_client_deregister(int handle);
-
-/**
- * @brief Send an AT command and receive response immediately.
- *
- * @retval  0         If command execution was successful (same as OK returned from modem). Error
- *                    codes returned from the driver or by the socket are returned as negative
- *                    values, CMS and CME errors are returned as positive values, the state
- *                    parameter will indicate if it's a CME or CMS error. ERROR will return ENOEXEC
- *                    (positve).
- * @retval -ENOBUFS   If AT_CMD_RESPONSE_MAX_LEN is not large enough to hold the data returned from
- *                    the modem.
- * @retval -ENOEXEC   If the modem returned ERROR.
- * @retval -EMSGSIZE  If the supplied buffer is to small or NULL.
- * @retval -EIO       If the function failed to send the command.
- * @retval -EHOSTDOWN If the Modem library is shutdown.
- */
-int lwm2m_os_at_cmd_write(const char *const cmd, char *buf, size_t buf_len);
-
-/**
- * @brief Free a list of AT parameters.
- */
-void lwm2m_os_at_params_list_free(struct lwm2m_os_at_param_list *list);
-
-/**
- * @brief Create a list of AT parameters.
- *
- * @retval  0      If success.
- * @retval -EINVAL If @p list is a NULL pointer.
- * @retval -ENOMEM If there is not enough memory.
- */
-int lwm2m_os_at_params_list_init(struct lwm2m_os_at_param_list *list, size_t max_params_count);
-
-/**
- * @brief Get a parameter value as an integer number.
- *
- * @retval  0      If success.
- */
-int lwm2m_os_at_params_int_get(struct lwm2m_os_at_param_list *list, size_t index, uint32_t *value);
-
-/**
- * @brief Get a parameter value as a short number.
- *
- * @retval  0      If success.
- */
-int lwm2m_os_at_params_short_get(struct lwm2m_os_at_param_list *list, size_t index,
-				 uint16_t *value);
-
-/**
- * @brief Get a parameter value as a string.
- *
- * @retval  0      If success.
- */
-int lwm2m_os_at_params_string_get(struct lwm2m_os_at_param_list *list, size_t index, char *value,
-				  size_t *len);
-
-/**
- * @brief Clear/reset all parameter types and values.
- *
- * @retval  0      If success.
- */
-int lwm2m_os_at_params_list_clear(struct lwm2m_os_at_param_list *list);
-
-/**
- * @brief Parse AT command or response parameters from a string.
- *
- * @retval  0      If success.
- */
-int lwm2m_os_at_parser_params_from_str(const char *at_params_str, char **next_param_str,
-				       struct lwm2m_os_at_param_list *const list);
-
-/**
- * @brief Get the number of valid parameters in the list.
- *
- * @retval  0      If success.
- */
-int lwm2m_os_at_params_valid_count_get(struct lwm2m_os_at_param_list *list);
 
 /**
  * @brief Establish a connection with the server.
@@ -636,54 +543,6 @@ int32_t lwm2m_os_lte_mode_get(void);
  * @brief Translate the error number.
  */
 int lwm2m_os_nrf_errno(void);
-
-/**
- * @brief Check if a certificate chain credential exists in persistent storage.
- *
- * @param[in]  sec_tag  The tag to search for.
- * @param[out] exists   Whether the credential exists.
- *                      Only valid if the operation is successful.
- *
- * @retval  0       On success.
- * @retval -ENOBUFS Insufficient memory.
- * @retval -EPERM   Insufficient permissions.
- */
-int lwm2m_os_sec_ca_chain_exists(uint32_t sec_tag, bool *exists);
-
-/**
- * @brief Compare a certificate chain.
- *
- * @param[in] sec_tag Security tag associated with the certificate chain.
- * @param[in] buf     Buffer to compare the certificate chain to.
- * @param[in] len     Length of the certificate chain.
- *
- * @retval  0       If the certificate chain match.
- * @retval  1       If the certificate chain do not match.
- * @retval -ENOBUFS Internal buffer is too small.
- * @retval -ENOENT  No credential associated with the given @p sec_tag.
- * @retval -EPERM   Insufficient permissions.
- */
-int lwm2m_os_sec_ca_chain_cmp(uint32_t sec_tag, const void *buf, size_t len);
-
-/**
- * @brief Provision a certificate chain or update an existing one.
- *
- * @note If used when the LTE link is active, the function will return an error and the key will not
- *       be written.
- *
- * @param[in]  sec_tag  Security tag for this credential.
- * @param[in]  buf      Buffer containing the credential data.
- * @param[in]  len      Length of the buffer.
- *
- * @retval  0       If success.
- * @retval -EINVAL  Invalid parameters.
- * @retval -ENOBUFS Internal buffer is too small.
- * @retval -EACCES  The operation failed because the LTE link is active.
- * @retval -ENOMEM  Not enough memory to store the credential.
- * @retval -ENOENT  The security tag could not be written.
- * @retval -EPERM   Insufficient permissions.
- */
-int lwm2m_os_sec_ca_chain_write(uint32_t sec_tag, const void *buf, size_t len);
 
 /**
  * @brief Check if a pre-shared key exists in persistent storage.

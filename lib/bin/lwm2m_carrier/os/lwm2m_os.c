@@ -12,9 +12,6 @@
 #include <zephyr.h>
 #include <string.h>
 #include <nrf_modem.h>
-#include <nrf_modem_at.h>
-#include <modem/at_cmd_parser.h>
-#include <modem/at_params.h>
 #include <modem/lte_lc.h>
 #include <modem/pdn.h>
 #include <modem/nrf_modem_lib.h>
@@ -24,6 +21,7 @@
 #include <sys/reboot.h>
 #include <sys/__assert.h>
 #include <sys/util.h>
+#include <random/rand32.h>
 #include <toolchain.h>
 #include <fs/nvs.h>
 #include <logging/log.h>
@@ -51,6 +49,9 @@ struct k_work_q lwm2m_os_work_qs[LWM2M_OS_MAX_WORK_QS];
 
 static struct k_sem lwm2m_os_sems[LWM2M_OS_MAX_SEM_COUNT];
 static uint8_t lwm2m_os_sems_used;
+
+/* AT monitor for notifications used by the library */
+AT_MONITOR(lwm2m_carrier_at_handler, ANY, lwm2m_os_at_handler);
 
 int lwm2m_os_init(void)
 {
@@ -97,7 +98,7 @@ void lwm2m_os_sys_reset(void)
 
 uint32_t lwm2m_os_rand_get(void)
 {
-	return k_cycle_get_32();
+	return sys_rand32_get();
 }
 
 /* Semaphore functions */
@@ -369,226 +370,20 @@ int lwm2m_os_nrf_modem_shutdown(void)
 
 /* AT command module abstractions. */
 
-AT_MONITOR(lwm2m, ANY, lwm2m_at_notif_handler, PAUSED);
+static lwm2m_os_at_handler_callback_t at_handler_callback;
 
-static lwm2m_os_at_cmd_handler_t at_notif_handler;
-
-int lwm2m_os_at_init(void)
+int lwm2m_os_at_init(lwm2m_os_at_handler_callback_t callback)
 {
-	return 0;
-}
-
-static void lwm2m_at_notif_handler(const char *notif)
-{
-	if (at_notif_handler) {
-		at_notif_handler(NULL, notif);
-	}
-}
-
-int lwm2m_os_at_notif_register_handler(void *context, lwm2m_os_at_cmd_handler_t handler)
-{
-	at_notif_handler = handler;
-	at_monitor_resume(lwm2m);
+	at_handler_callback = callback;
 
 	return 0;
 }
 
-int lwm2m_os_at_cmd_write(const char *const cmd, char *buf, size_t buf_len)
+static void lwm2m_os_at_handler(const char *notif)
 {
-	int err;
-
-	err = nrf_modem_at_cmd(buf, buf_len, "%s", cmd);
-	if (err > 0) {
-		err = -ENOEXEC;
+	if (at_handler_callback != NULL) {
+		at_handler_callback(notif);
 	}
-
-	return err;
-}
-
-static void at_params_list_get(struct at_param_list *dst, struct lwm2m_os_at_param_list *src)
-{
-	struct at_param *src_param = src->params;
-
-	dst->param_count = src->param_count;
-	for (size_t i = 0; i < src->param_count; i++) {
-		dst->params[i].size = src_param[i].size;
-		dst->params[i].type = src_param[i].type;
-		switch (src_param[i].type) {
-		case AT_PARAM_TYPE_INVALID:
-		case AT_PARAM_TYPE_EMPTY:
-			break;
-		case AT_PARAM_TYPE_NUM_INT:
-			dst->params[i].value.int_val = src_param[i].value.int_val;
-			break;
-		case AT_PARAM_TYPE_STRING:
-			dst->params[i].value.str_val = src_param[i].value.str_val;
-			break;
-		case AT_PARAM_TYPE_ARRAY:
-			dst->params[i].value.array_val = src_param[i].value.array_val;
-			break;
-		default:
-			break;
-		}
-	}
-}
-
-static void at_params_list_translate(struct lwm2m_os_at_param_list *dst, struct at_param_list *src)
-{
-	struct at_param *dst_param = dst->params;
-
-	dst->param_count = src->param_count;
-	for (size_t i = 0; i < src->param_count; i++) {
-		dst_param[i].size = src->params[i].size;
-		dst_param[i].type = src->params[i].type;
-		switch (src->params[i].type) {
-		case AT_PARAM_TYPE_INVALID:
-		case AT_PARAM_TYPE_EMPTY:
-			break;
-		case AT_PARAM_TYPE_NUM_INT:
-			dst_param[i].value.int_val = src->params[i].value.int_val;
-			break;
-		case AT_PARAM_TYPE_STRING:
-			dst_param[i].value.str_val = src->params[i].value.str_val;
-			/* Detach this pointer from the source list
-			 * so that it's not freed when we free at_param_list.
-			 */
-			src->params[i].value.str_val = NULL;
-			break;
-		case AT_PARAM_TYPE_ARRAY:
-			/* Detach this pointer from the source list
-			 * so that it's not freed when we free at_param_list.
-			 */
-			dst_param[i].value.array_val = src->params[i].value.array_val;
-			src->params[i].value.array_val = NULL;
-			break;
-		default:
-			break;
-		}
-	}
-}
-
-int lwm2m_os_at_params_list_init(struct lwm2m_os_at_param_list *list, size_t max_params_count)
-{
-	if (list == NULL) {
-		return -EINVAL;
-	}
-
-	/* Array initialized with empty parameters. */
-	list->params = k_calloc(max_params_count, sizeof(struct at_param));
-	if (list->params == NULL) {
-		return -ENOMEM;
-	}
-
-	list->param_count = max_params_count;
-
-	return 0;
-}
-
-void lwm2m_os_at_params_list_free(struct lwm2m_os_at_param_list *list)
-{
-	struct at_param_list tmp_list = {
-		.param_count = list->param_count,
-		.params = (struct at_param *)list->params,
-	};
-
-	at_params_list_free(&tmp_list);
-}
-
-int lwm2m_os_at_params_int_get(struct lwm2m_os_at_param_list *list, size_t index, uint32_t *value)
-{
-	int err;
-	struct at_param_list tmp_list;
-
-	err = at_params_list_init(&tmp_list, list->param_count);
-	if (err != 0) {
-		return err;
-	}
-
-	at_params_list_get(&tmp_list, list);
-	err = at_params_int_get(&tmp_list, index, value);
-	at_params_list_translate(list, &tmp_list);
-
-	at_params_list_free(&tmp_list);
-
-	return err;
-}
-
-int lwm2m_os_at_params_short_get(struct lwm2m_os_at_param_list *list, size_t index, uint16_t *value)
-{
-	int err;
-	struct at_param_list tmp_list;
-
-	err = at_params_list_init(&tmp_list, list->param_count);
-	if (err != 0) {
-		return err;
-	}
-
-	at_params_list_get(&tmp_list, list);
-	err = at_params_short_get(&tmp_list, index, value);
-	at_params_list_translate(list, &tmp_list);
-
-	at_params_list_free(&tmp_list);
-
-	return err;
-}
-
-int lwm2m_os_at_params_string_get(struct lwm2m_os_at_param_list *list, size_t index, char *value,
-				  size_t *len)
-{
-	int err;
-	struct at_param_list tmp_list;
-
-	err = at_params_list_init(&tmp_list, list->param_count);
-	if (err != 0) {
-		return err;
-	}
-
-	at_params_list_get(&tmp_list, list);
-	err = at_params_string_get(&tmp_list, index, value, len);
-	at_params_list_translate(list, &tmp_list);
-
-	at_params_list_free(&tmp_list);
-
-	return err;
-}
-
-int lwm2m_os_at_parser_params_from_str(const char *at_params_str, char **next_param_str,
-				       struct lwm2m_os_at_param_list *const list)
-{
-	int err;
-	struct at_param_list tmp_list;
-
-	err = at_params_list_init(&tmp_list, list->param_count);
-	if (err != 0) {
-		return err;
-	}
-
-	err = at_parser_params_from_str(at_params_str, next_param_str, &tmp_list);
-
-	at_params_list_translate(list, &tmp_list);
-
-	at_params_list_free(&tmp_list);
-
-	return err;
-}
-
-int lwm2m_os_at_params_valid_count_get(struct lwm2m_os_at_param_list *list)
-{
-	int err;
-	struct at_param_list tmp_list;
-
-	err = at_params_list_init(&tmp_list, list->param_count);
-	if (err != 0) {
-		return err;
-	}
-
-	at_params_list_get(&tmp_list, list);
-	err = at_params_valid_count_get(&tmp_list);
-	at_params_list_translate(list, &tmp_list);
-
-	at_params_list_free(&tmp_list);
-
-	return err;
 }
 
 /* SMS subscriber module abstraction.*/
@@ -728,6 +523,11 @@ int lwm2m_os_download_file_size_get(size_t *size)
 
 /* LTE LC module abstractions. */
 
+static void lwm2m_os_lte_event_handler(const struct lte_lc_evt *const evt)
+{
+	/* This event handler is not in use by LwM2M carrier library. */
+}
+
 int lwm2m_os_lte_link_up(void)
 {
 	int err;
@@ -742,7 +542,7 @@ int lwm2m_os_lte_link_up(void)
 		}
 	}
 
-	return lte_lc_connect();
+	return lte_lc_connect_async(lwm2m_os_lte_event_handler);
 }
 
 int lwm2m_os_lte_link_down(void)
@@ -840,21 +640,6 @@ int lwm2m_os_nrf_errno(void)
 {
 	/* nrf_errno have the same values as newlibc errno */
 	return errno;
-}
-
-int lwm2m_os_sec_ca_chain_exists(uint32_t sec_tag, bool *exists)
-{
-	return modem_key_mgmt_exists(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, exists);
-}
-
-int lwm2m_os_sec_ca_chain_cmp(uint32_t sec_tag, const void *buf, size_t len)
-{
-	return modem_key_mgmt_cmp(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, buf, len);
-}
-
-int lwm2m_os_sec_ca_chain_write(uint32_t sec_tag, const void *buf, size_t len)
-{
-	return modem_key_mgmt_write(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, buf, len);
 }
 
 int lwm2m_os_sec_psk_exists(uint32_t sec_tag, bool *exists)

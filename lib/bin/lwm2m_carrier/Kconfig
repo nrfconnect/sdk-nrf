@@ -31,8 +31,8 @@ menuconfig LWM2M_CARRIER
 	# Credentials NCS
 	depends on MODEM_KEY_MGMT
 	# AT libraries
-	depends on AT_CMD_PARSER
 	depends on AT_MONITOR
+	depends on (AT_MONITOR_HEAP_SIZE >= 320)
 	# reboot functionality
 	depends on REBOOT
 	help
