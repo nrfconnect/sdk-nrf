@@ -14,9 +14,10 @@ static int log_hid_notification_event(const struct event_header *eh, char *buf,
 	const struct hid_notification_event *event =
 		cast_hid_notification_event(eh);
 
-	return snprintf(buf, buf_len,
+	EVENT_MANAGER_LOG(eh,
 			"report_id 0x%x %sabled",
 			event->report_id, (event->enabled)?"en":"dis");
+	return 0;
 }
 
 EVENT_TYPE_DEFINE(hid_notification_event,

@@ -14,11 +14,8 @@ static int log_ble_ctrl_event(const struct event_header *eh, char *buf,
 {
 	const struct ble_ctrl_event *event = cast_ble_ctrl_event(eh);
 
-	return snprintf(
-		buf,
-		buf_len,
-		"cmd:%d",
-		event->cmd);
+	EVENT_MANAGER_LOG(eh, "cmd:%d", event->cmd);
+	return 0;
 }
 
 EVENT_TYPE_DEFINE(ble_ctrl_event,

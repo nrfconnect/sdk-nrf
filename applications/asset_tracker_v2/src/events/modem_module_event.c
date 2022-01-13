@@ -64,11 +64,12 @@ static int log_event(const struct event_header *eh, char *buf,
 	const struct modem_module_event *event = cast_modem_module_event(eh);
 
 	if (event->type == MODEM_EVT_ERROR) {
-		return snprintf(buf, buf_len, "%s - Error code %d",
+		EVENT_MANAGER_LOG(eh, "%s - Error code %d",
 				get_evt_type_str(event->type), event->data.err);
+	} else {
+		EVENT_MANAGER_LOG(eh, "%s", get_evt_type_str(event->type));
 	}
-
-	return snprintf(buf, buf_len, "%s", get_evt_type_str(event->type));
+	return 0;
 }
 
 #if defined(CONFIG_PROFILER)

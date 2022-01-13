@@ -14,12 +14,8 @@ static int log_ble_data_event(const struct event_header *eh, char *buf,
 {
 	const struct ble_data_event *event = cast_ble_data_event(eh);
 
-	return snprintf(
-		buf,
-		buf_len,
-		"buf:%p len:%d",
-		event->buf,
-		event->len);
+	EVENT_MANAGER_LOG(eh, "buf:%p len:%d", event->buf, event->len);
+	return 0;
 }
 
 EVENT_TYPE_DEFINE(ble_data_event,

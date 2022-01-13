@@ -23,9 +23,10 @@ static int log_click_event(const struct event_header *eh, char *buf,
 
 	__ASSERT_NO_MSG(event->click < CLICK_COUNT);
 	__ASSERT_NO_MSG(click_name[event->click]);
-	return snprintf(buf, buf_len, "key_id: %" PRIu16 " click: %s",
+	EVENT_MANAGER_LOG(eh, "key_id: %" PRIu16 " click: %s",
 			event->key_id,
 			click_name[event->click]);
+	return 0;
 }
 
 static void profile_click_event(struct log_event_buf *buf,

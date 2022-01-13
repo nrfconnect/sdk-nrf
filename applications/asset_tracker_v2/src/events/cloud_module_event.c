@@ -49,7 +49,8 @@ static int log_event(const struct event_header *eh, char *buf,
 {
 	const struct cloud_module_event *event = cast_cloud_module_event(eh);
 
-	return snprintf(buf, buf_len, "%s", get_evt_type_str(event->type));
+	EVENT_MANAGER_LOG(eh, "%s", get_evt_type_str(event->type));
+	return 0;
 }
 
 #if defined(CONFIG_PROFILER)

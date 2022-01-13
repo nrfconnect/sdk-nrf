@@ -28,8 +28,9 @@ static int log_ble_peer_event(const struct event_header *eh, char *buf,
 
 	__ASSERT_NO_MSG(event->state < PEER_STATE_COUNT);
 
-	return snprintf(buf, buf_len, "id=%p %s", event->id,
+	EVENT_MANAGER_LOG(eh, "id=%p %s", event->id,
 			state_name[event->state]);
+	return 0;
 }
 
 static void profile_ble_peer_event(struct log_event_buf *buf,
@@ -56,7 +57,8 @@ static int log_ble_peer_search_event(const struct event_header *eh, char *buf,
 {
 	const struct ble_peer_search_event *event = cast_ble_peer_search_event(eh);
 
-	return snprintf(buf, buf_len, "%sactive", (event->active)?(""):("in"));
+	EVENT_MANAGER_LOG(eh, "%sactive", (event->active)?(""):("in"));
+	return 0;
 }
 
 static void profile_ble_peer_search_event(struct log_event_buf *buf,
@@ -99,10 +101,11 @@ static int log_ble_peer_operation_event(const struct event_header *eh,
 
 	__ASSERT_NO_MSG(event->op < PEER_OPERATION_COUNT);
 
-	return snprintf(buf, buf_len, "%s bt_app_id=%u bt_stack_id=%u",
+	EVENT_MANAGER_LOG(eh, "%s bt_app_id=%u bt_stack_id=%u",
 			op_name[event->op],
 			event->bt_app_id,
 			event->bt_stack_id);
+	return 0;
 }
 
 static void profile_ble_peer_operation_event(struct log_event_buf *buf,
@@ -132,11 +135,12 @@ static int log_ble_peer_conn_params_event(const struct event_header *eh,
 	const struct ble_peer_conn_params_event *event =
 		cast_ble_peer_conn_params_event(eh);
 
-	return snprintf(buf, buf_len, "peer=%p min=%"PRIx16 " max=%"PRIx16
+	EVENT_MANAGER_LOG(eh, "peer=%p min=%"PRIx16 " max=%"PRIx16
 			" lat=%"PRIu16 " timeout=%" PRIu16 " (%s)",
 			event->id, event->interval_min,	event->interval_max,
 			event->latency, event->timeout,
 			(event->updated ? "updated" : "required"));
+	return 0;
 }
 
 EVENT_TYPE_DEFINE(ble_peer_conn_params_event,

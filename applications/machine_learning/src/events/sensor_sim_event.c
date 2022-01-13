@@ -13,7 +13,8 @@ static int log_sensor_sim_event(const struct event_header *eh, char *buf, size_t
 {
 	const struct sensor_sim_event *event = cast_sensor_sim_event(eh);
 
-	return snprintf(buf, buf_len, "%s", event->label);
+	EVENT_MANAGER_LOG(eh, "%s", event->label);
+	return 0;
 }
 
 static void profile_sensor_sim_event(struct log_event_buf *buf, const struct event_header *eh)

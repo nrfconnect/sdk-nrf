@@ -17,11 +17,8 @@ static int log_fs_event(
 {
 	const struct fs_event *event = cast_fs_event(eh);
 
-	return snprintf(
-		buf,
-		buf_len,
-		"req:%d",
-		event->req);
+	EVENT_MANAGER_LOG(eh, "req:%d", event->req);
+	return 0;
 }
 
 int fs_event_helper_file_write(

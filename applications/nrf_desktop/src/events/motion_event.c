@@ -13,7 +13,8 @@ static int log_motion_event(const struct event_header *eh, char *buf,
 {
 	const struct motion_event *event = cast_motion_event(eh);
 
-	return snprintf(buf, buf_len, "dx=%d, dy=%d", event->dx, event->dy);
+	EVENT_MANAGER_LOG(eh, "dx=%d, dy=%d", event->dx, event->dy);
+	return 0;
 }
 
 static void profile_motion_event(struct log_event_buf *buf,

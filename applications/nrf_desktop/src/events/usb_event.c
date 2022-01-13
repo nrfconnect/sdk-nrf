@@ -28,7 +28,8 @@ static int log_usb_state_event(const struct event_header *eh, char *buf,
 
 	__ASSERT_NO_MSG(event->state < USB_STATE_COUNT);
 
-	return snprintf(buf, buf_len, "state:%s", state_name[event->state]);
+	EVENT_MANAGER_LOG(eh, "state:%s", state_name[event->state]);
+	return 0;
 }
 
 EVENT_TYPE_DEFINE(usb_state_event,
@@ -41,8 +42,9 @@ static int log_usb_hid_event(const struct event_header *eh, char *buf,
 {
 	const struct usb_hid_event *event = cast_usb_hid_event(eh);
 
-	return snprintf(buf, buf_len, "id:%p %sabled", event->id,
+	EVENT_MANAGER_LOG(eh, "id:%p %sabled", event->id,
 			(event->enabled)?("en"):("dis"));
+	return 0;
 }
 
 EVENT_TYPE_DEFINE(usb_hid_event,

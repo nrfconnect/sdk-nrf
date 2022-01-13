@@ -15,8 +15,9 @@ static int log_cpu_load_event(const struct event_header *eh, char *buf,
 {
 	const struct cpu_load_event *event = cast_cpu_load_event(eh);
 
-	return snprintf(buf, buf_len, "CPU load: %03u,%03u%%",
+	EVENT_MANAGER_LOG(eh, "CPU load: %03u,%03u%%",
 			event->load / 1000, event->load % 1000);
+	return 0;
 }
 
 static void profile_cpu_load_event(struct log_event_buf *buf,

@@ -38,10 +38,11 @@ static int log_sensor_event(const struct event_header *eh, char *buf, size_t buf
 {
 	struct sensor_event *event = cast_sensor_event(eh);
 
-	return snprintf(buf, buf_len,
+	EVENT_MANAGER_LOG(eh,
 			"%s sensor event: sensor_value: val1 = %d, val2 = %d; unsigned_value = %d",
 			sensor_type_to_string(event->type), event->sensor_value.val1,
 			event->sensor_value.val2, event->unsigned_value);
+	return 0;
 }
 
 EVENT_TYPE_DEFINE(sensor_event, false, log_sensor_event, NULL);

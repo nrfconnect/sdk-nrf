@@ -42,9 +42,10 @@ static int log_event(const struct event_header *eh,
 		break;
 	}
 
-	return snprintf(buf, buf_len, "module \"%s\" restricts to %s",
+	EVENT_MANAGER_LOG(eh, "module \"%s\" restricts to %s",
 			module_name_get(module_id_get(event->module_idx)),
 			power_state_str);
+	return 0;
 }
 
 static void profile_event(struct log_event_buf *buf,

@@ -13,7 +13,8 @@ static int log_one_sec_event(const struct event_header *eh, char *buf,
 {
 	struct one_sec_event *event = cast_one_sec_event(eh);
 
-	return snprintf(buf, buf_len, "timer: %" PRId8, event->five_sec_timer);
+	EVENT_MANAGER_LOG(eh, "timer: %" PRId8, event->five_sec_timer);
+	return 0;
 }
 
 static void profile_one_sec_event(struct log_event_buf *buf,

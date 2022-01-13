@@ -14,7 +14,8 @@ static int log_passkey_input_event(const struct event_header *eh, char *buf,
 {
 	const struct passkey_input_event *event = cast_passkey_input_event(eh);
 
-	return snprintf(buf, buf_len, "passkey: %" PRIu32, event->passkey);
+	EVENT_MANAGER_LOG(eh, "passkey: %" PRIu32, event->passkey);
+	return 0;
 }
 
 static void profile_passkey_input_event(struct log_event_buf *buf,
@@ -41,8 +42,9 @@ static int log_passkey_req_event(const struct event_header *eh, char *buf,
 {
 	const struct passkey_req_event *event = cast_passkey_req_event(eh);
 
-	return snprintf(buf, buf_len, "input %s", (event->active) ?
+	EVENT_MANAGER_LOG(eh, "input %s", (event->active) ?
 						  ("started") : ("stopped"));
+	return 0;
 }
 
 static void profile_passkey_req_event(struct log_event_buf *buf,
