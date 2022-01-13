@@ -57,7 +57,7 @@ mypy==0.800
 mypy-extensions==0.4.3
 naturalsort==1.5.1
 packaging==20.8
-Pillow==8.3.2
+Pillow==9.0.0
 pluggy==0.13.1
 ply==3.11
 prettytable==2.0.0
