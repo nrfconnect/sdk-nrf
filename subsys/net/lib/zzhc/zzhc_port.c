@@ -156,7 +156,7 @@ bool zzhc_check_http_payload(struct zzhc *ctx)
 	return (res_code && res_desc);
 }
 
-int zzhc_get_at_param_short(struct zzhc *ctx, char *data, int idx)
+int zzhc_get_at_param_short(struct zzhc *ctx, const char *data, int idx)
 {
 	int rc;
 	uint16_t evt;
