@@ -330,6 +330,11 @@ Other libraries
   * Added functions for powering up and down RAM sections for a given address range.
   * Added experimental functionality to automatically power up and down RAM sections based on the libc heap usage.
 
+* :ref:`liblwm2m_carrier_readme` library:
+
+  * Updated to v0.22.0.
+    See the :ref:`liblwm2m_carrier_changelog` for detailed information.
+
 Event Manager
 +++++++++++++
 

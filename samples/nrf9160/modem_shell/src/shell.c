@@ -106,6 +106,10 @@ void lwm2m_print_deferred(const lwm2m_carrier_event_t *evt)
 			"Failed to connect to server",
 		[LWM2M_CARRIER_DEFERRED_SERVER_REGISTRATION] =
 			"Server registration sequence not completed",
+		[LWM2M_CARRIER_DEFERRED_SERVICE_UNAVAILABLE] =
+			"Server in maintenance mode",
+		[LWM2M_CARRIER_DEFERRED_SIM_MSISDN] =
+			"Waiting for SIM MSISDN",
 	};
 
 	mosh_error("Reason: %s, timeout: %d seconds\n", strdef[def->reason], def->timeout);
