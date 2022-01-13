@@ -24,7 +24,7 @@ Software support
 
 If your application uses radio protocols and requires FEM, you can enable :ref:`nrfxlib:mpsl_fem` in the :ref:`nrfxlib:mpsl` (MPSL) library.
 The test samples in |NCS|: :ref:`radio_test` and :ref:`direct_test_mode` also support FEM control.
-You can use as well your own FEM driver when required.
+You can also use your own FEM driver when required.
 
 Using MPSL
 ==========
@@ -155,7 +155,7 @@ To use nRF21540 in GPIO mode, complete the following steps:
 SPI/GPIO mode
 -------------
 
-The nRF21540 has also an SPI interface.
+The nRF21540 features an SPI interface.
 You can use it to fully control your front-end module or you can use a combination of SPI and GPIO interface.
 The SPI interface enables you, for example, to set the output power of the nRF21540.
 
@@ -357,22 +357,23 @@ Two nRF21540 boards are available, showcasing the possibilities of the nRF21540 
 * :ref:`nRF21540 DK <nrf21540dk_nrf52840>`
 * :ref:`ug_radio_fem_nrf21540_ek`
 
-For example SKY66112-11EK also has a 2-pin PA/LNA interface.
+Also various Skyworks front-end modules are supported.
+For example, SKY66112-11EK has a 2-pin PA/LNA interface.
 
 The front-end module feature is supported on the nRF52 and nRF53 Series devices.
 
 nRF21540 DK
 ===========
 
-The nRF21540 DK is a development kit that has the nRF52840 device combined with the additional nRF21540 front-end module.
-You can use it the same way as :ref:`zephyr:nrf52840dk_nrf52840`
+The nRF21540 DK is a development kit that features the nRF52840 device combined with the additional nRF21540 front-end module.
+You can use it the same way as :ref:`zephyr:nrf52840dk_nrf52840`.
 It is an easy way to start testing front-end modules.
-For more details see :ref:`nRF21540 DK <nrf21540dk_nrf52840>`
+For more details, see :ref:`nRF21540 DK <nrf21540dk_nrf52840>`.
 
 Shields
 =======
 
-Shields are adds on that you can attach to the development kit to extend its feature and functionalities.
+Shields are add-ons that you can attach to the development kit to extend its feature and functionalities.
 
 .. _ug_radio_fem_nrf21540_ek:
 

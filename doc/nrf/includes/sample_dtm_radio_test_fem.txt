@@ -15,3 +15,10 @@ For example, to build the sample from the command line for an nRF5340 DK with an
    To configure the nRF21540 front-end module gain, write the gain value over the SPI.
    In samples, UART is used as a control interface or shell transport.
    To send the gain value UART is temporary disabled and restarted after the SPI transfer.
+
+For more details refer to the following documentation:
+
+* :ref:`ug_radio_fem`
+* :ref:`ug_radio_fem_direct_support`
+* :ref:`ug_radio_fem_nrf21540_spi_gpio`
+* :ref:`ug_radio_fem_nrf21540_ek`
