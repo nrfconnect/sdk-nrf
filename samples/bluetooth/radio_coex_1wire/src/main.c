@@ -78,8 +78,10 @@ static void check_input(void)
 
 	if ((input_char == 'g') ^ APP_GRANT_ACTIVE_LOW) {
 		nrf_gpio_pin_set(APP_GRANT_GPIO_PIN);
+		printk("Current state is: Grant every request\n");
 	} else if ((input_char == 'd') ^ APP_GRANT_ACTIVE_LOW) {
 		nrf_gpio_pin_clear(APP_GRANT_GPIO_PIN);
+		printk("Current state is: Deny every request\n");
 	} else {
 		return;
 	}
