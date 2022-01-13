@@ -11,9 +11,8 @@ config ZZHC
 	depends on TRUSTED_EXECUTION_NONSECURE
 	select NRF_MODEM_LIB
 	select SETTINGS
-	select AT_CMD
 	select AT_CMD_PARSER
-	select AT_NOTIF
+	select AT_MONITOR
 	select BASE64
 	select JSON_LIBRARY
 

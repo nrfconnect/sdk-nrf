@@ -22,8 +22,6 @@
 extern "C" {
 #endif
 
-#include <modem/at_cmd.h>
-#include <modem/at_notif.h>
 #include <settings/settings.h>
 #include <modem/lte_lc.h>
 
@@ -136,53 +134,6 @@ struct zzhc {
  */
 int zzhc_load_iccid(char *iccid_buf, int buf_len);
 
-/**
- * @brief Function to send an AT command and receive response immediately
- *
- * This function should be used if the response from the modem should be
- * returned in a user supplied buffer. This function will return an empty buffer
- * if nothing is returned by the modem.
- *
- * @param cmd Pointer to null terminated AT command string
- * @param buf Buffer to put the response in. NULL pointer is allowed, see
- *            behaviour explanation for @ref buf_len equals 0.
- * @param buf_len Length of response buffer. 0 length is allowed and will send
- *                the command, process the return code from the modem, but
- *                any returned data will be dropped.
- *
- * @return 0 on success, non-zero on failure.
- *
- */
-#define zzhc_at_cmd_xfer(cmd, buf, buf_len)             \
-	at_cmd_write(cmd, buf, buf_len, NULL)
-
-
-/**@brief Register AT-notification handler
- *
- * This function registers AT-command notification handler.
- *
- * @param context  Pointer to context.
- * @param handler  AT-command notification handler. Format:
- *                 void at_notif_handler(void *context, char *response);
- *
- */
-#define zzhc_register_handler(context, handler)         \
-	at_notif_register_handler(context, handler)
-
-/**@brief De-register AT-notification handler.
- *
- * This function de-registers AT-command notification handler. It checks whether
- * an the combination of context and handler exists. If it exists, then
- * de-register, else do nothing.
- *
- * @param context  Pointer to context.
- * @param handler  AT-command notification handler. Format:
- *                 void at_notif_handler(void *context, char *response);
- *
- */
-#define zzhc_deregister_handler(context, handler)       \
-	at_notif_deregister_handler(context, handler)
-
 /**@brief Encode a buffer into base64 format.
  *
  * This function is equivalent to bash command "base64 < src.bin > dst.bin"
@@ -240,7 +191,7 @@ bool zzhc_check_http_payload(struct zzhc *ctx);
  * @return 0 on success, non-zero on failure.
  *
  */
-int zzhc_get_at_param_short(struct zzhc *ctx, char *data, int idx);
+int zzhc_get_at_param_short(struct zzhc *ctx, const char *data, int idx);
 
 #ifdef __cplusplus
 }

@@ -19,7 +19,12 @@ LOG_MODULE_REGISTER(zzhc, CONFIG_ZZHC_LOG_LEVEL);
 #include <net/socket.h>
 #endif
 
+#include <nrf_modem_at.h>
+#include <modem/at_monitor.h>
+
 #include "zzhc_internal.h"
+
+AT_MONITOR(zzhc_monitor, ANY, response_handler);
 
 #define REGVER            2         /** Self-registration protocol version */
 #define MANUFACTURER_CODE "NOD"     /** Manufactuerer code */
@@ -43,11 +48,13 @@ static char const status_cereg[7] = "+CEREG:";
 /**@brief %XSIM event prefix. */
 static char const status_xsim[6] = "%XSIM:";
 
+static struct zzhc zzhc_context;
+
 /**@brief Function to handle AT-command notifications. */
-static void at_notif_handler(void *context, char *response)
+static void response_handler(const char *response)
 {
 	int rc;
-	struct zzhc *ctx = (struct zzhc *)context;
+	struct zzhc *ctx = &zzhc_context;
 
 	if (ctx == NULL) {
 		return;
@@ -121,7 +128,8 @@ static int build_json(struct zzhc *ctx, char *buff, int len)
 	strcat(l_buff, duple);
 
 	/* IMEI */
-	if (zzhc_at_cmd_xfer("AT+CGSN=1", ctx->at_resp, AT_RESPONSE_LEN) != 0) {
+	if (nrf_modem_at_cmd(ctx->at_resp, AT_RESPONSE_LEN,
+			     "AT+CGSN=1") != 0) {
 		return -EIO;
 	}
 	cptr = strchr(ctx->at_resp, '"');
@@ -135,7 +143,8 @@ static int build_json(struct zzhc *ctx, char *buff, int len)
 	strcat(l_buff, duple);
 
 	/* MODEL */
-	if (zzhc_at_cmd_xfer("AT+CGMM", ctx->at_resp, AT_RESPONSE_LEN) != 0) {
+	if (nrf_modem_at_cmd(ctx->at_resp, AT_RESPONSE_LEN,
+			     "AT+CGMM") != 0) {
 		return -EIO;
 	}
 	cptr = strstr(ctx->at_resp, "\r\n");
@@ -148,8 +157,8 @@ static int build_json(struct zzhc *ctx, char *buff, int len)
 	strcat(l_buff, duple);
 
 	/* SWVER */
-	if (zzhc_at_cmd_xfer("AT%SHORTSWVER", ctx->at_resp,
-		AT_RESPONSE_LEN) != 0) {
+	if (nrf_modem_at_cmd(ctx->at_resp, AT_RESPONSE_LEN,
+			     "AT%%SHORTSWVER") != 0) {
 		return -EIO;
 	}
 	cptr = strstr(ctx->at_resp, "\r\n");
@@ -165,7 +174,8 @@ static int build_json(struct zzhc *ctx, char *buff, int len)
 	strcat(l_buff, duple);
 
 	/* SIM1LTEIMSI */
-	if (zzhc_at_cmd_xfer("AT+CIMI", ctx->at_resp, AT_RESPONSE_LEN) != 0) {
+	if (nrf_modem_at_cmd(ctx->at_resp, AT_RESPONSE_LEN,
+			     "AT+CIMI") != 0) {
 		return -EIO;
 	}
 	cptr = strstr(ctx->at_resp, "\r\n");
@@ -384,7 +394,7 @@ static int check_simcard_whitelist(struct zzhc *ctx)
 	int rc;
 
 	/* Read operator ID. For China Telecom, it's 6. */
-	rc = zzhc_at_cmd_xfer("AT%XOPERID", ctx->at_resp, AT_RESPONSE_LEN);
+	rc = nrf_modem_at_cmd(ctx->at_resp, AT_RESPONSE_LEN, "AT%%XOPERID");
 	if (rc != 0) {
 		return -EIO;
 	}
@@ -413,8 +423,7 @@ static int check_iccid(struct zzhc *ctx)
 	char c;
 
 	/* SIM1ICCID */
-	if (zzhc_at_cmd_xfer("AT+CRSM=176,12258,0,0,0", ctx->at_resp,
-		AT_RESPONSE_LEN) != 0) {
+	if (nrf_modem_at_cmd(ctx->at_resp, AT_RESPONSE_LEN, "AT+CRSM=176,12258,0,0,0") != 0) {
 		return -EIO;
 	}
 
@@ -452,15 +461,15 @@ static int fsm(struct zzhc *ctx)
 		LOG_DBG("STATE_INIT");
 
 		zzhc_sem_init(ctx->sem, 0, 0);
-		zzhc_register_handler(ctx, at_notif_handler);
+		at_monitor_resume(zzhc_monitor);
 		ctx->state = STATE_WAIT_FOR_REG;
 		break;
 
 	case STATE_WAIT_FOR_REG:
 		LOG_DBG("STATE_WAIT_FOR_REG");
 
-		if (zzhc_at_cmd_xfer("AT+CEREG?", ctx->at_resp,
-			AT_RESPONSE_LEN) != 0) {
+		if (nrf_modem_at_cmd(ctx->at_resp, AT_RESPONSE_LEN,
+				     "AT+CEREG?") != 0) {
 			return -EIO;
 		}
 
@@ -564,7 +573,7 @@ static int fsm(struct zzhc *ctx)
 
 		/* Clean-up */
 		disconnect(ctx);
-		zzhc_deregister_handler(ctx, at_notif_handler);
+		at_monitor_pause(zzhc_monitor);
 		return -ECANCELED;
 
 	default:
@@ -581,26 +590,20 @@ static void zzhc_init(void *arg1, void *arg2, void *arg3)
 	struct zzhc *ctx;
 
 	/* Unconditionally subscribe +CEREG events */
-	if (zzhc_at_cmd_xfer("AT+CEREG=5", NULL, 0) != 0) {
+	if (nrf_modem_at_printf("AT+CEREG=5") != 0) {
 		LOG_DBG("Can't subscribe to +CEREG events.");
 		return;
 	}
 
 	/* Unconditionally subscribe %XSIM events */
-	if (zzhc_at_cmd_xfer("AT%XSIM=1", NULL, 0) != 0) {
+	if (nrf_modem_at_printf("AT%%XSIM=1") != 0) {
 		LOG_DBG("Can't subscribe to %%XSIM events.");
 		return;
 	}
 
-	/* Allocate resource. */
-	ctx = (struct zzhc *)zzhc_malloc(sizeof(struct zzhc));
-	if (ctx == NULL) {
-		LOG_DBG("Can't allocate memory for context.");
-		return;
-	}
+	ctx = &zzhc_context;
 
 	/* Initial values */
-	memset(ctx, 0, sizeof(struct zzhc));
 	ctx->state      = STATE_INIT;
 	ctx->registered = false;
 	ctx->sim_ready  = false;
@@ -628,7 +631,6 @@ static void zzhc_init(void *arg1, void *arg2, void *arg3)
 
 zzhc_init_cleanup:
 	zzhc_ext_uninit(ctx);
-	zzhc_free(ctx);
 	LOG_DBG("Exit.");
 }
 
