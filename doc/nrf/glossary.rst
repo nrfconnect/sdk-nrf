@@ -50,7 +50,7 @@ Glossary
       The support package includes a :term:`devicetree <Devicetree>` describing the hardware, :term:`Kconfig files <Kconfig file>` and :term:`fragments <Kconfig fragment>` defining its default software configuration, and may include target-specific source files, documentation, and other metadata.
 
    Branch
-      A line of development composed of a sequence of :term:`commits <Commit>`.
+      A line of development composed of a sequence of Git :term:`commits <Commit>`.
 
    Carrier Wave (CW)
       A single-frequency electromagnetic wave that can be modulated in amplitude, frequency, or phase to convey information.
@@ -73,7 +73,7 @@ Glossary
       In :term:`flow control <Hardware Flow Control (HWFC)>`, the receiving end is ready and telling the far end to start sending.
 
    Clone
-      A local copy of a remote Git :term:`repository <Repository>` obtained using the command ``git clone``.
+      A copy of a Git :term:`repository <Repository>` obtained using the command ``git clone``.
 
    Cluster
       In the context of a :ref:`Matter <ug_matter>` or :ref:`Zigbee <ug_zigbee>` network, a cluster is a representation of a single functionality within the network.
@@ -84,7 +84,7 @@ Glossary
       In a thread mesh network, the process of authenticating and joining new devices to the network.
 
    Commit
-      A snapshot of the history of each project file, taken at a specific moment in time.
+      A snapshot of the state of a :term:`repository <Repository>` at a specific moment in time, along with its previous development history.
       It is associated with a unique SHA and a message describing the edits it contains.
 
    Commit tag
@@ -443,7 +443,7 @@ Glossary
       * In a bootloader, the process of storing public key hashes in a separate region of memory from the bootloader image.
 
    Pull Request
-      A set of :term:`commits <Commit>` that are sent to contribute to a :term:`repository <Repository>`.
+      A set of :term:`commits <Commit>` that are sent as a :term:`contribution <Contribution>` to a Git :term:`repository <Repository>`.
 
    Qualified Design Identification (QDID)
       A unique identifier assigned to a design that has completed the Bluetooth Qualification Process.
