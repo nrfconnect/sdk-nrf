@@ -85,22 +85,15 @@ doxyrunner_fmt_vars = {
 # create mbedtls config header (needed for Doxygen)
 doxyrunner_outdir.mkdir(exist_ok=True)
 
-fin_path = NRFXLIB_BASE / "nrf_security" / "configs" / "nrf-config.h.template"
+fin_path = NRFXLIB_BASE / "nrf_security" / "configs" / "legacy_crypto_config.h.template"
 fout_path = doxyrunner_outdir / "mbedtls_doxygen_config.h"
 
 with open(fin_path) as fin, open(fout_path, "w") as fout:
     fout.write(
         re.sub(
             r"#cmakedefine ([A-Z0-9_-]+)",
-            "\n".join(
-                (
-                    r"#define \1",
-                    r"#define CONFIG_GLUE_\1",
-                    r"#define CONFIG_CC310_\1",
-                    r"#define CONFIG_VANILLA_\1",
-                )
-            ),
-            fin.read(),
+            r"#define \1",
+            fin.read()
         )
     )
 
