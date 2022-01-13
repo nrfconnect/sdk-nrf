@@ -5,7 +5,6 @@
 
 menuconfig NRF_CLOUD_PGPS
 	bool "Enable nRF Cloud Predicted GPS (P-GPS)"
-	depends on NRF_CLOUD_REST || NRF_CLOUD_MQTT
 	depends on MODEM_INFO
 	depends on MODEM_INFO_ADD_NETWORK
 	depends on DATE_TIME
