@@ -45,7 +45,9 @@ Glossary
       A layer of the Bluetooth LE protocol stack comprised of multiple (non real-time) network and transport protocols enabling applications to communicate with peer devices in a standard and interoperable way.
 
    Board
-      In Zephyr and the |NCS|, a data structure for describing the hardware on the development kit, its configuration files, and the variant (secure or non-secure) of the build.
+      In Zephyr and the |NCS|, the name of a specific supported hardware target.
+      Every board has a software support package in a file system directory.
+      The support package includes a :term:`devicetree <Devicetree>` describing the hardware, :term:`Kconfig files <Kconfig file>` and :term:`fragments <Kconfig fragment>` defining its default software configuration, and may include target-specific source files, documentation, and other metadata.
 
    Branch
       A line of development composed of a sequence of :term:`commits <Commit>`.
