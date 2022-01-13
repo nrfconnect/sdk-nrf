@@ -23,7 +23,8 @@ static int log_config_event(const struct event_header *eh, char *buf,
 {
 	struct config_event *event = cast_config_event(eh);
 
-	return snprintf(buf, buf_len, "init_val_1=%d", event->init_value1);
+	EVENT_MANAGER_LOG(eh, "init_val_1=%d", event->init_value1);
+	return 0;
 }
 
 EVENT_INFO_DEFINE(config_event,

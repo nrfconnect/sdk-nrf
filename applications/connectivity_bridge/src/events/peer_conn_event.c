@@ -25,15 +25,14 @@ static int log_peer_conn_event(const struct event_header *eh, char *buf,
 
 	__ASSERT_NO_MSG(event->peer_id < PEER_ID_COUNT);
 
-	return snprintf(
-		buf,
-		buf_len,
+	EVENT_MANAGER_LOG(eh,
 		"%s:%s_%d baud:%d",
 		event->conn_state == PEER_STATE_CONNECTED ?
 			"CONNECTED" : "DISCONNECTED",
 		peer_name[event->peer_id],
 		event->dev_idx,
 		event->baudrate);
+	return 0;
 }
 
 EVENT_TYPE_DEFINE(peer_conn_event,

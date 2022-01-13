@@ -23,7 +23,8 @@ static int log_ei_data_forwarder_event(const struct event_header *eh, char *buf,
 	__ASSERT_NO_MSG(event->state < EI_DATA_FORWARDER_STATE_COUNT);
 	__ASSERT_NO_MSG(ei_data_forwarder_state_name[event->state] != NULL);
 
-	return snprintf(buf, buf_len, "state: %s", ei_data_forwarder_state_name[event->state]);
+	EVENT_MANAGER_LOG(eh, "state: %s", ei_data_forwarder_state_name[event->state]);
+	return 0;
 }
 
 EVENT_TYPE_DEFINE(ei_data_forwarder_event,

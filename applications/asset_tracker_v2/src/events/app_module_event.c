@@ -62,13 +62,10 @@ static int log_event(const struct event_header *eh, char *buf,
 		     size_t buf_len)
 {
 	const struct app_module_event *event = cast_app_module_event(eh);
-	char event_name[50] = "\0";
 	char data_types[50] = "\0";
 
-	strcpy(event_name, get_evt_type_str(event->type));
-
 	if (event->type == APP_EVT_ERROR) {
-		return snprintf(buf, buf_len, "%s - Error code %d",
+		EVENT_MANAGER_LOG(eh, "%s - Error code %d",
 				get_evt_type_str(event->type), event->data.err);
 	} else if (event->type == APP_EVT_DATA_GET) {
 		for (int i = 0; i < event->count; i++) {
@@ -81,11 +78,14 @@ static int log_event(const struct event_header *eh, char *buf,
 			strcat(data_types, ", ");
 		}
 
-		return snprintf(buf, buf_len, "%s - Requested data types (%s)",
-				event_name, data_types);
+		EVENT_MANAGER_LOG(eh, "%s - Requested data types (%s)",
+				get_evt_type_str(event->type), log_strdup(data_types));
+	} else {
+		EVENT_MANAGER_LOG(eh, "%s", get_evt_type_str(event->type));
 	}
 
-	return snprintf(buf, buf_len, "%s", event_name);
+
+	return 0;
 }
 
 #if defined(CONFIG_PROFILER)

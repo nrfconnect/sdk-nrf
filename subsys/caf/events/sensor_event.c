@@ -20,7 +20,8 @@ static int log_sensor_event(const struct event_header *eh, char *buf, size_t buf
 {
 	const struct sensor_event *event = cast_sensor_event(eh);
 
-	return snprintf(buf, buf_len, "%s", event->descr);
+	EVENT_MANAGER_LOG(eh, "%s", event->descr);
+	return 0;
 }
 
 static void profile_sensor_event(struct log_event_buf *buf, const struct event_header *eh)
@@ -48,8 +49,9 @@ static int log_sensor_state_event(const struct event_header *eh, char *buf, size
 	__ASSERT_NO_MSG(event->state < SENSOR_STATE_COUNT);
 	__ASSERT_NO_MSG(sensor_state_name[event->state] != NULL);
 
-	return snprintf(buf, buf_len, "sensor:%s state:%s",
+	EVENT_MANAGER_LOG(eh, "sensor:%s state:%s",
 			event->descr, sensor_state_name[event->state]);
+	return 0;
 }
 
 EVENT_TYPE_DEFINE(sensor_state_event,

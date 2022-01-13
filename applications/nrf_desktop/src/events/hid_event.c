@@ -8,36 +8,44 @@
 
 #include "hid_event.h"
 
+#define HID_EVENT_LOG_BUF_LEN 128
+
 
 static int log_hid_report_event(const struct event_header *eh, char *buf,
 				size_t buf_len)
 {
 	const struct hid_report_event *event = cast_hid_report_event(eh);
 	int pos;
+	char log_buf[HID_EVENT_LOG_BUF_LEN];
 
 	__ASSERT_NO_MSG(event->dyndata.size > 0);
 
-	pos = snprintf(buf, buf_len, "Report 0x%x src:%p sub:%p:",
+	pos = snprintf(log_buf, sizeof(log_buf), "Report 0x%x src:%p sub:%p:",
 		       event->dyndata.data[0],
 		       event->source,
 		       event->subscriber);
-	if ((pos > 0) && (pos < buf_len)) {
+	if ((pos > 0) && (pos < sizeof(log_buf))) {
 		for (size_t i = 1; i < event->dyndata.size; i++) {
-			int tmp = snprintf(&buf[pos], buf_len - pos,
+			int tmp = snprintf(&log_buf[pos], sizeof(log_buf) - pos,
 					   " 0x%.2x", event->dyndata.data[i]);
 			if (tmp < 0) {
+				log_buf[sizeof(log_buf) - 2] = '~';
 				pos = tmp;
 				break;
 			}
 
 			pos += tmp;
 
-			if (pos >= buf_len)
+			if (pos >= sizeof(log_buf))
 				break;
 		}
 	}
-
-	return pos;
+	if (pos < 0) {
+		EVENT_MANAGER_LOG(eh, "log message preparation failure");
+		return pos;
+	}
+	EVENT_MANAGER_LOG(eh, "%s", log_strdup(log_buf));
+	return 0;
 }
 
 static void profile_hid_report_event(struct log_event_buf *buf,
@@ -69,9 +77,9 @@ static int log_hid_report_subscriber_event(const struct event_header *eh,
 	const struct hid_report_subscriber_event *event =
 		cast_hid_report_subscriber_event(eh);
 
-	return snprintf(buf, buf_len,
-			"report subscriber %p was %sconnected",
+	EVENT_MANAGER_LOG(eh, "report subscriber %p was %sconnected",
 			event->subscriber, (event->connected)?(""):("dis"));
+	return 0;
 }
 
 static void profile_hid_report_subscriber_event(struct log_event_buf *buf,
@@ -101,16 +109,17 @@ static int log_hid_report_sent_event(const struct event_header *eh,
 		cast_hid_report_sent_event(eh);
 
 	if (event->error) {
-		return snprintf(buf, buf_len,
+		EVENT_MANAGER_LOG(eh,
 				"error while sending 0x%x report by %p",
 				event->report_id,
 				event->subscriber);
 	} else {
-		return snprintf(buf, buf_len,
+		EVENT_MANAGER_LOG(eh,
 				"report 0x%x sent by %p",
 				event->report_id,
 				event->subscriber);
 	}
+	return 0;
 }
 
 static void profile_hid_report_sent_event(struct log_event_buf *buf,
@@ -140,10 +149,11 @@ static int log_hid_report_subscription_event(const struct event_header *eh,
 	const struct hid_report_subscription_event *event =
 		cast_hid_report_subscription_event(eh);
 
-	return snprintf(buf, buf_len,
+	EVENT_MANAGER_LOG(eh,
 			"report 0x%x notification %sabled by %p",
 			event->report_id,
 			(event->enabled)?("en"):("dis"), event->subscriber);
+	return 0;
 }
 
 static void profile_hid_report_subscription_event(struct log_event_buf *buf,

@@ -26,8 +26,9 @@ static int log_module_state_event(const struct event_header *eh, char *buf,
 
 	__ASSERT_NO_MSG(event->state < MODULE_STATE_COUNT);
 
-	return snprintf(buf, buf_len, "module:%s state:%s",
+	EVENT_MANAGER_LOG(eh, "module:%s state:%s",
 		      (const char *)event->module_id, state_name[event->state]);
+	return 0;
 }
 
 EVENT_TYPE_DEFINE(module_state_event,

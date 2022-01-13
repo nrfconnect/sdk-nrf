@@ -13,8 +13,9 @@ static int log_button_event(const struct event_header *eh, char *buf,
 {
 	const struct button_event *event = cast_button_event(eh);
 
-	return snprintf(buf, buf_len, "key_id=0x%x %s", event->key_id,
+	EVENT_MANAGER_LOG(eh, "key_id=0x%x %s", event->key_id,
 			(event->pressed)?("pressed"):("released"));
+	return 0;
 }
 
 static void profile_button_event(struct log_event_buf *buf,

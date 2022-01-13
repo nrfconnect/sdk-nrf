@@ -27,8 +27,9 @@ static int log_net_state_event(const struct event_header *eh, char *buf,
 
 	__ASSERT_NO_MSG(event->state < NET_STATE_COUNT);
 
-	return snprintf(buf, buf_len, "id=%p %s", event->id,
+	EVENT_MANAGER_LOG(eh, "id=%p %s", event->id,
 			state_name[event->state]);
+	return 0;
 }
 
 static void profile_net_state_event(struct log_event_buf *buf,

@@ -21,11 +21,12 @@ static int log_config_event(const struct event_header *eh, char *buf,
 
 	__ASSERT_NO_MSG(event->status < ARRAY_SIZE(status_name));
 
-	return snprintf(buf, buf_len, "%s %s rcpt: %02x id: %02x",
+	EVENT_MANAGER_LOG(eh, "%s %s rcpt: %02x id: %02x",
 			status_name[event->status],
 			event->is_request ? "req" : "rsp",
 			event->recipient,
 			event->event_id);
+	return 0;
 }
 
 EVENT_TYPE_DEFINE(config_event,

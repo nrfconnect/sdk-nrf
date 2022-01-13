@@ -32,17 +32,19 @@ static int log_event(const struct event_header *eh, char *buf,
 	const struct sensor_module_event *event = cast_sensor_module_event(eh);
 
 	if (event->type == SENSOR_EVT_ERROR) {
-		return snprintf(buf, buf_len, "%s - Error code %d",
+		EVENT_MANAGER_LOG(eh, "%s - Error code %d",
 				get_evt_type_str(event->type), event->data.err);
 	} else if (event->type == SENSOR_EVT_MOVEMENT_DATA_READY) {
-		return snprintf(buf, buf_len, "%s - X: %.2f, Y: %.2f, Z: %.2f",
+		EVENT_MANAGER_LOG(eh, "%s - X: %.2f, Y: %.2f, Z: %.2f",
 				get_evt_type_str(event->type),
 				event->data.accel.values[0],
 				event->data.accel.values[1],
 				event->data.accel.values[2]);
-	}
 
-	return snprintf(buf, buf_len, "%s", get_evt_type_str(event->type));
+	} else {
+		EVENT_MANAGER_LOG(eh, "%s", get_evt_type_str(event->type));
+	}
+	return 0;
 }
 
 #if defined(CONFIG_PROFILER)

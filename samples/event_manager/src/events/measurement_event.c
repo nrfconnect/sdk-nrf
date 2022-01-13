@@ -13,8 +13,9 @@ static int log_measurement_event(const struct event_header *eh, char *buf,
 {
 	struct measurement_event *event = cast_measurement_event(eh);
 
-	return snprintf(buf, buf_len, "val1=%d val2=%d val3=%d", event->value1,
+	EVENT_MANAGER_LOG(eh, "val1=%d val2=%d val3=%d", event->value1,
 			event->value2, event->value3);
+	return 0;
 }
 
 static void profile_measurement_event(struct log_event_buf *buf,

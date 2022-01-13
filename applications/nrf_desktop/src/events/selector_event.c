@@ -14,9 +14,10 @@ static int log_selector_event(const struct event_header *eh, char *buf,
 {
 	const struct selector_event *event = cast_selector_event(eh);
 
-	return snprintf(buf, buf_len, "id: %" PRIu8 " position: %" PRIu8,
+	EVENT_MANAGER_LOG(eh, "id: %" PRIu8 " position: %" PRIu8,
 			event->selector_id,
 			event->position);
+	return 0;
 }
 
 static void profile_selector_event(struct log_event_buf *buf,

@@ -14,13 +14,12 @@ static int log_uart_data_event(const struct event_header *eh, char *buf,
 {
 	const struct uart_data_event *event = cast_uart_data_event(eh);
 
-	return snprintf(
-		buf,
-		buf_len,
+	EVENT_MANAGER_LOG(eh,
 		"dev:%u buf:%p len:%d",
 		event->dev_idx,
 		event->buf,
 		event->len);
+	return 0;
 }
 
 EVENT_TYPE_DEFINE(uart_data_event,

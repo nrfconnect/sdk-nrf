@@ -28,7 +28,8 @@ static int log_battery_state_event(const struct event_header *eh, char *buf,
 
 	__ASSERT_NO_MSG(event->state < BATTERY_STATE_COUNT);
 
-	return snprintf(buf, buf_len, "battery %s", state_name[event->state]);
+	EVENT_MANAGER_LOG(eh, "battery %s", state_name[event->state]);
+	return 0;
 }
 
 static void profile_battery_state_event(struct log_event_buf *buf,
@@ -56,7 +57,8 @@ static int log_battery_level_event(const struct event_header *eh, char *buf,
 {
 	const struct battery_level_event *event = cast_battery_level_event(eh);
 
-	return snprintf(buf, buf_len, "level=%u", event->level);
+	EVENT_MANAGER_LOG(eh, "level=%u", event->level);
+	return 0;
 }
 
 static void profile_battery_level_event(struct log_event_buf *buf,

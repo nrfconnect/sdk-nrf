@@ -13,8 +13,9 @@ static int log_led_event(const struct event_header *eh, char *buf,
 {
 	const struct led_event *event = cast_led_event(eh);
 
-	return snprintf(buf, buf_len, "led_id:%u effect:%p",
+	EVENT_MANAGER_LOG(eh, "led_id:%u effect:%p",
 			event->led_id, event->led_effect);
+	return 0;
 }
 
 EVENT_TYPE_DEFINE(led_event,
@@ -27,8 +28,9 @@ static int log_led_ready_event(const struct event_header *eh, char *buf,
 {
 	const struct led_ready_event *event = cast_led_ready_event(eh);
 
-	return snprintf(buf, buf_len, "led_id:%u effect:%p",
+	EVENT_MANAGER_LOG(eh, "led_id:%u effect:%p",
 			event->led_id, event->led_effect);
+	return 0;
 }
 
 EVENT_TYPE_DEFINE(led_ready_event,
