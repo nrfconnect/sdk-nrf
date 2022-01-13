@@ -106,7 +106,7 @@ Glossary
       A mechanism for upgrading the firmware of a device.
 
    Devicetree
-      A data structure for describing hardware and its boot-time configuration, including peripherals on a development kit, boot-time clock frequencies, and interrupt lines.
+      A data structure for describing hardware and its boot-time configuration, including :term:`SoC <System on Chip (SoC)>` peripherals, boot-time clock frequencies, and interrupt lines.
 
    Devicetree Specification (DTSpec)
       A document that defines the source and binary representations of a :term:`devicetree <Devicetree>`, along with some common characteristics of the data structure, such as interrupts and memory addressing.
@@ -237,8 +237,9 @@ Glossary
       Kconfig files use the :file:`.conf` extension.
 
    Kconfig fragment
-      A configuration file used for building an application image with or without software support from specific :term:`Kconfig options <Kconfig option>`.
-      Examples include things like whether to add networking support or which drivers are needed by the application.
+      A configuration file that sets the values of some :term:`Kconfig options <Kconfig option>`.
+      This can be used to configure the software included in an application image and its behavior.
+      Kconfig fragments can be used, for example, to determine whether the application has networking support, which device drivers to include, and the sizes of logging buffers.
       Kconfig fragments use the :file:`.conf` extension.
 
    Kconfig language
@@ -246,7 +247,7 @@ Glossary
       It was initially created for the Linux kernel.
 
    Kconfig option
-      A configuration option used in a :term:`Kconfig file` or :term:`fragment <Kconfig fragment>`.
+      A configuration option defined in a :term:`Kconfig file` or set in a :term:`Kconfig fragment`.
 
    Kconfig project configuration
       A :term:`Kconfig fragment`, usually called :file:`prj.conf`, used to define default :term:`Kconfig options <Kconfig option>` for an application.
