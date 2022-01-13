@@ -32,11 +32,10 @@ Thread 1.2 improves network scalability, responsiveness, density, and power cons
 For more information about this Thread version, see the official `Thread 1.2 in Commercial White Paper`_ and the `Thread 1.2 Base Features`_ document.
 
 In |NCS|, you can choose which version of the Thread protocol to use in your application.
-By default, |NCS| supports Thread 1.1, but you can enable and configure Thread 1.2 by using :ref:`dedicated options <thread_ug_thread_1_2>`.
+By default, |NCS| supports Thread 1.1, but you can enable and configure Thread 1.2 by using :ref:`dedicated options <thread_ug_thread_specification_options>`.
 
 .. note::
-    All Thread 1.2 mandatory functionalities are currently implemented, except for the full Border Router support.
-    See :ref:`thread_ug_thread_1_2` for the list of 1.2 features that are currently available in |NCS|, with information about how to enable them.
+    See :ref:`thread_ug_thread_specification_options` for the list of 1.2 features that are currently available in |NCS|, with information about how to enable them.
     Currently, the :ref:`ot_cli_sample` sample is the only sample that provides an :ref:`ot_cli_sample_thread_v12`.
 
 Coordinated Sampled Listening (CSL)

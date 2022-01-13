@@ -54,6 +54,11 @@ Matter
 
 * Added ``EXPERIMENTAL`` select in Kconfig that informs that Matter support is experimental.
 
+Thread
+------
+
+* Changed how Thread 1.2 is enabled, refer to :ref:`thread_ug_thread_specification_options` and :ref:`thread_ug_feature_sets` for more information.
+
 Applications
 ============
 
@@ -123,6 +128,13 @@ nRF9160 samples
 * nRF9160: HTTP update samples:
 
   * HTTP update samples now set the modem in the power off mode after the firmware image download completes. This avoids ungraceful disconnects from the network upon pressing the reset button on the kit.
+
+Thread samples
+--------------
+
+* :ref:`ot_cli_sample` sample:
+
+  * Removed `overlay-thread_1_2.conf` as Thread 1.2 is now supported as described in :ref:`thread_ug_thread_specification_options`.
 
 Other samples
 -------------

@@ -110,4 +110,49 @@ config OPENTHREAD_PING_SENDER
 	bool
 	default y
 
+if OPENTHREAD_THREAD_VERSION_1_2
+
+# Thread 1.2 dependencies
+config NRF_802154_ENCRYPTION
+	bool
+	default y
+
+config IEEE802154_2015
+	bool
+	default y
+
+config NET_PKT_TXTIME
+	bool
+	default y
+
+config NET_PKT_TIMESTAMP
+	bool
+	default y
+
+config OPENTHREAD_MAC_SOFTWARE_TX_SECURITY_ENABLE
+	bool
+	default n
+
+if OPENTHREAD_CSL_RECEIVER
+
+config IEEE802154_CSL_ENDPOINT
+	bool
+	default y
+
+config OPENTHREAD_CSL_RECEIVE_TIME_AHEAD
+	int
+	default 3000
+
+config OPENTHREAD_CSL_MIN_RECEIVE_ON
+	int
+	default 300
+
+config OPENTHREAD_CUSTOM_PARAMETERS
+	string
+	default "OPENTHREAD_CONFIG_PLATFORM_CSL_UNCERT=5"
+
+endif
+
+endif
+
 endif

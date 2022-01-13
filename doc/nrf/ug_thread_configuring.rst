@@ -81,7 +81,7 @@ See the following files for more options that you might want to change:
 * :file:`zephyr/subsys/net/l2/openthread/Kconfig.thread` - Thread network configuration options.
 
 .. note::
-    You can find the default configuration for all :ref:`openthread_samples` in the :file:`nrf/samples/openthread/common/overlay-ot-defaults.conf` file.
+    You can find the default configuration for all :ref:`openthread_samples` in the :file:`nrf/subsys/net/openthread/Kconfig.defconfig` file.
 
 .. _ug_thread_configuring_eui64:
 
@@ -111,9 +111,9 @@ To do this, modify the setting of the following Kconfig option:
 
 For more configuration options, read the module documentation.
 
-.. _thread_ug_thread_1_2:
+.. _thread_ug_thread_specification_options:
 
-Thread 1.2 Specification options
+Thread Specification options
 ================================
 
 The OpenThread stack can be configured to operate in compliance with either the Thread 1.1 Specification  or the :ref:`Thread 1.2 Specification <thread_ug_supported_features_v12>`.
@@ -129,23 +129,6 @@ By selecting support for Thread 1.2, you enable the following features in additi
 * Enhanced Keep Alive
 * Thread Domain Name
 * Coordinated Sampled Listening (CSL) Transmitter (for Full Thread Devices only)
-
-Moreover, Thread 1.2 also comes with the following features that are supported for development, but not production:
-
-* Domain Unicast Addresses - Set :kconfig:`CONFIG_OPENTHREAD_DUA` to enable this feature.
-* Multicast Listener Registration - Set :kconfig:`CONFIG_OPENTHREAD_MLR` to enable this feature.
-* Backbone Router - Set :kconfig:`CONFIG_OPENTHREAD_BACKBONE_ROUTER` to enable this feature.
-* Link Metrics - Set :kconfig:`CONFIG_OPENTHREAD_LINK_METRICS_INITIATOR` to enable the link metrics initiator functionality.
-  Set :kconfig:`CONFIG_OPENTHREAD_LINK_METRICS_SUBJECT` to enable the link metrics subject functionality.
-* Coordinated Sampled Listening (CSL) Receiver - Set :kconfig:`CONFIG_OPENTHREAD_CSL_RECEIVER` to enable this feature.
-
-.. note::
-   The Link Metrics and Coordinated Sampled Listening features are not supported for nRF53 Series devices yet.
-   The Backbone Router feature enables the functionality for the Thread Network side, but not for the Backbone side.
-
-To test Thread 1.2 options, you can use the :ref:`ot_cli_sample` sample with the :ref:`ot_cli_sample_thread_v12`.
-
-
 
 Thread commissioning options
 ============================
@@ -398,8 +381,42 @@ No tick indicates that there is no support for the given feature in the related 
       - ✔
       -
       -
+    * - DUA (Thread 1.2)
+      - ✔
+      - ✔
+      - ✔
+      -
+    * - MLR (Thread 1.2)
+      - ✔
+      - ✔
+      - ✔
+      -
+    * - BACKBONE_ROUTER (Thread 1.2)
+      - ✔
+      -
+      -
+      -
+    * - LINK_METRICS_INITIATOR (Thread 1.2)
+      - ✔
+      - ✔
+      - ✔
+      -
+    * - LINK_METRICS_SUBJECT (Thread 1.2)
+      - ✔
+      - ✔
+      -
+      -
+    * - CSL_RECEIVER (Thread 1.2)
+      - ✔
+      -
+      - ✔
+      -
 
 For the full list of configuration options that were used during compilation, including their default values, see the :file:`openthread_lib_configuration.txt` file within each library folder in the nrfxlib repository.
+
+.. note::
+   The Link Metrics and Coordinated Sampled Listening features are not supported for nRF53 Series devices yet.
+   The Backbone Router feature enables the functionality for the Thread Network side, but not for the Backbone side.
 
 .. _thread_ug_customizing_prebuilt:
 

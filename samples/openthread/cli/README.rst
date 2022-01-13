@@ -44,8 +44,8 @@ See `Testing diagnostic module`_ section for an example.
 Experimental Thread 1.2 extension
 =================================
 
-This optional extension allows you to test :ref:`available features from the Thread 1.2 Specification <thread_ug_thread_1_2>`.
-You can enable these features either by :ref:`activating the overlay extension <ot_cli_sample_activating_variants>` as described below or by setting :ref:`thread_ug_thread_1_2`.
+This optional extension allows you to test :ref:`available features from the Thread 1.2 Specification <thread_ug_thread_specification_options>`.
+You can enable these features by setting :ref:`thread_ug_thread_specification_options`.
 
 .. _ot_cli_sample_thread_certification:
 
@@ -117,7 +117,6 @@ Activating sample extensions
 
 To activate the optional extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` in the following manner:
 
-* For the experimental Thread 1.2 variant, set :file:`overlay-thread_1_2.conf`.
 * For the minimal single protocol variant, set :file:`overlay-minimal_singleprotocol.conf`.
 * For the minimal multiprotocol variant, set :file:`overlay-minimal_multiprotocol.conf`.
 * For USB transport support, set :file:`overlay-usb.conf`. Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to :file:`usb.overlay`.
