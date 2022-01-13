@@ -621,6 +621,14 @@ Button 1:
 Button 2:
    Enables or disables the UARTs for power consumption measurements. Toggles between UARTs enabled and disabled.
 
+LED indications
+===============
+
+The LEDs have the following functions:
+
+LED 1:
+   Indicates the LTE registration status.
+
 Testing
 =======
 

@@ -130,6 +130,7 @@ nRF9160 samples
 
   * Added a new shell command ``cloud`` for establishing an MQTT connection to nRF Cloud.
   * Removed support for the GPS driver.
+  * The LED 1 on the development kit indicates the LTE registration status.
 
 * :ref:`http_application_update_sample` sample:
 
