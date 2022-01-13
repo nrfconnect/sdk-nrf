@@ -17,6 +17,8 @@
 #include <modem/lte_lc.h>
 #include <modem/pdn.h>
 
+#include <dk_buttons_and_leds.h>
+
 #include <nrf_socket.h>
 
 #include "link_settings.h"
@@ -46,6 +48,8 @@ struct pdn_activation_status_info {
 	bool activated;
 	uint8_t cid;
 };
+
+#define REGISTERED_STATUS_LED          DK_LED1
 
 /* Work for getting the modem info that ain't in lte connection ind: */
 static struct k_work registered_work;
@@ -146,6 +150,8 @@ static void link_registered_work(struct k_work *unused)
 	struct pdn_activation_status_info pdn_act_status_arr[CONFIG_PDN_CONTEXTS_MAX];
 
 	ARG_UNUSED(unused);
+
+	dk_set_led_on(REGISTERED_STATUS_LED);
 
 	memset(pdn_act_status_arr, 0,
 	       CONFIG_PDN_CONTEXTS_MAX * sizeof(struct pdn_activation_status_info));
@@ -333,6 +339,8 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		    evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ||
 		    evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING) {
 			k_work_submit(&registered_work);
+		} else {
+			dk_set_led_off(REGISTERED_STATUS_LED);
 		}
 		break;
 	case LTE_LC_EVT_CELL_UPDATE:

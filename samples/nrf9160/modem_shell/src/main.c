@@ -200,6 +200,11 @@ void main(void)
 #endif
 	k_poll_signal_init(&mosh_signal);
 
+	err = dk_leds_init();
+	if (err) {
+		printk("Cannot initialize LEDs (err: %d)", err);
+	}
+
 	/* Resize terminal width and height of the shell to have proper command editing. */
 	shell_execute_cmd(shell, "resize");
 	/* Run empty command because otherwise "resize" would be set to the command line. */
