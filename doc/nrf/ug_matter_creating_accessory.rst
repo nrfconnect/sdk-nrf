@@ -50,7 +50,7 @@ Edit clusters using the ZAP tool
 Adding the functionalities for an on/off switch and a sensor requires adding new clusters.
 
 Adding new application clusters can be achieved by modifying ZAP file, which can be found as :file:`src/template.zap`.
-This file is handled by `ZCL Advanced Platform`_ (ZAP tool), a third-party tool that is a generic templating engine for applications and libraries based on Zigbee Cluster Library.
+This file can be edited using `ZCL Advanced Platform`_ (ZAP tool), a third-party tool that is a generic templating engine for applications and libraries based on Zigbee Cluster Library.
 This tool is provided with the Matter submodule.
 
 To edit clusters using the ZAP tool, complete the following steps:
@@ -91,19 +91,20 @@ To edit clusters using the ZAP tool, complete the following steps:
 
          Configuring the Temperature Measurement server cluster
 
-#. Go to the On/off cluster configuration and make sure that you have On and Off commands enabled:
+#. Go to the On/off cluster configuration and make sure that you have the ``OnOff`` attribute and both On and Off commands enabled:
 
    .. figure:: images/matter_create_accessory_enable_onoff_commands.png
       :alt: On/off cluster configuration
 
       On/off cluster configuration
 
+#. Go to the Temperature Measurement cluster configuration and make sure that you have the ``MeasuredValue`` attribute enabled.
 #. Save the file and exit.
-#. Use the modified ZAP file to generate the C++ code that contains the selected clusters by running the following command in the :file:`src/gen/` directory:
+#. Use the modified ZAP file to generate the C++ code that contains the selected clusters by running the following command:
 
    .. code-block::
 
-      nrfconnect-dir/modules/lib/matter/scripts/tools/zap/generate.py src/template.zap
+      nrfconnect-dir/modules/lib/matter/scripts/tools/zap/generate.py $PWD/src/template.zap
 
 At this point, new clusters have been added to the Matter accessory.
 
@@ -122,8 +123,8 @@ Complete the steps in the following subsections to modify the main loop.
 Edit the event queue
 ====================
 
-The main application loop is based on a queue on which the events are posted by ZCL callbacks, the application itself or by other entities, such as Zephyr timers.
-In each iteration, the event is dequeued and a corresponding event handler is called.
+The main application loop is based on a queue on which events are posted by ZCL callbacks and by other application components, such as Zephyr timers.
+In each iteration, an event is dequeued and a corresponding event handler is called.
 
 Add new events
 --------------
@@ -140,17 +141,18 @@ To model behaviour of a sensor, add the following new events to :c:enum:`EventTy
 * Sensor deactivation.
 * Sensor measurement.
 
-For example, the edited :c:enum:`EventType` can look like follows:
+For example, the edited :c:enum:`EventType` can look as follows:
 
 .. code-block:: C++
 
-   enum EventType : uint8_t { FunctionPress, FunctionRelease, FunctionTimer, SensorActivate, SensorDeactivate, SensorMeasure};
+   enum EventType : uint8_t { FunctionPress, FunctionRelease, FunctionTimer, SensorActivate, SensorDeactivate, SensorMeasure };
+   enum UpdateLedStateEventType : uint8_t { UpdateLedState = SensorMeasure + 1 };
 
 Add sensor timer
 ----------------
 
 You need to make sure that the sensor is making measurements at the required time points.
-For this purpose, use a Zephyr timer to post :c:struct:`SensorMeasure` events.
+For this purpose, use a Zephyr timer to periodically post :c:struct:`SensorMeasure` events.
 In the template sample, such a timer is being used to count down 6 seconds when **Button 1** is being pressed to initiate the factory reset.
 
 To add a new timer for the measurement event, edit the :file:`src/app_task.cpp` file as follows:
@@ -177,7 +179,7 @@ To add a new timer for the measurement event, edit the :file:`src/app_task.cpp` 
    int AppTask::Init()
    {
            /*
-           .      Original content
+           ... Original content
            */
 
            k_timer_init(&sSensorTimer, &SensorTimerHandler, nullptr);
@@ -185,7 +187,7 @@ To add a new timer for the measurement event, edit the :file:`src/app_task.cpp` 
            return 0;
    }
 
-If :c:func:`StartSensorTimer()` is called, the :c:struct:`SensorMeasure` event is added to the event queue every *aTimeoutMs* milliseconds, as long as ``sSensorTimer`` has not been stopped.
+If :c:func:`StartSensorTimer()` is called, the :c:struct:`SensorMeasure` event is added to the event queue every *aTimeoutMs* milliseconds, until :c:func:`StopSensorTimer()` is called.
 
 Implement event handlers
 ------------------------
@@ -193,9 +195,9 @@ Implement event handlers
 When an event is dequeued, the application calls the event handler function.
 Because you have added new events, you must implement the corresponding handlers.
 
-To add a new event handler, complete the following steps:
+To add new event handlers, complete the following steps:
 
-1. Edit the :file:`src/app_task.cpp` file like follows:
+1. Edit the :file:`src/app_task.cpp` file as follows:
 
    .. code-block:: C++
 
@@ -211,12 +213,12 @@ To add a new event handler, complete the following steps:
 
       void AppTask::SensorMeasureHandler()
       {
-              emberAfTemperatureMeasurementClusterSetMeasuredValueCallback(/* endpoint ID */ 1, /* temperature in 0.01*C */ int16_t(rand() % 5000));
+              chip::app::Clusters::TemperatureMeasurement::Attributes::MeasuredValue::Set(
+                      /* endpoint ID */ 1, /* temperature in 0.01*C */ int16_t(rand() % 5000));
       }
 
-   With this addition, when :c:func:`SensorMeasureHandler()` is called, the Temperature Measurement cluster's attribute is updated by calling a function from the :file:`temperature-measurement-server.cpp`, located at :file:`modules/lib/matter/src/app/clusters/`.
-   If the sensor is active, the timer expiration event happens every half a second.
-   This causes an invocation of :c:func:`SensorMeasureHandler()` and triggers an update of the sensor's measured value.
+   With this addition, when the sensor is active, the timer expiration event happens every half a second.
+   This causes an invocation of :c:func:`SensorMeasureHandler()` and triggers an update of the ``MeasuredValue`` attribute of the Temperature Measurement cluster.
    In the code fragment, the example value is updated randomly, but in a real sensor application it would be updated with the value obtained from external measurement.
 #. Declare these handler functions in :file:`src/app_task.h` to make sure the application builds properly.
 #. In the :file:`src/app_task.cpp` file, add cases for new events in :c:func:`DispatchEvent()`, for example:
@@ -235,6 +237,9 @@ To add a new event handler, complete the following steps:
               case AppEvent::FunctionTimer:
                       FunctionTimerEventHandler();
                       break;
+              case AppEvent::UpdateLedState:
+                      event.UpdateLedStateEvent.LedWidget->UpdateState();
+                      break;
               case AppEvent::SensorActivate:
                       SensorActivateHandler();
                       break;
@@ -250,49 +255,50 @@ To add a new event handler, complete the following steps:
               }
       }
 
-Include headers for clusters' callbacks
-=======================================
+Include header for cluster attribute helpers
+============================================
 
-To have the required callback declaration for the Temperature Measurement cluster, make sure to include the following file in the :file:`src/app_task.cpp` file:
+To import helper functions for accessing cluster attributes, make sure to include the following file in the :file:`src/app_task.cpp` file:
 
 .. code-block:: C++
 
-   #include <app/clusters/temperature-measurement-server/temperature-measurement-server.h>
+   #include <app-common/zap-generated/attributes/Accessors.h>
 
 .. rst-class:: numbered-step
 
 Create a callback for sensor activation and deactivation
 ********************************************************
 
-Up until now the events :c:struct:`SensorActivate` and :c:struct:`SensorDeactivate` are not present in the event queue.
-This is because the attribute of the On/off cluster is not changed from within the ``AppTask``.
-It can only be changed externally, for example using the Matter controller.
+Handlers for the :c:struct:`SensorActivate` and :c:struct:`SensorDeactivate` events are now ready, but the events are not posted to the event queue.
+The sensor is supposed to be turned on and off remotely by changing the ``OnOff`` attribute of the On/off cluster, for example using the Matter controller.
+This means that we need to implement a callback function to post one of these events every time the ``OnOff`` attribute changes.
 
-However, the sensor application needs to know how this attribute is changing to know when the sensor is turned on and off.
-This means that there is a need to implement a callback function to post one of these events every time the On/off attribute changes.
+To implement the callback function, complete the following steps:
 
-To implement the callback function, create a new file, for example :file:`src/zcl_callbacks.cpp`, and implement the callback in this file.
-To see a list of callback functions that are customizable, open :file:`src/gen/callback-stub.cpp` and look for functions with ``__attribute__((weak))``.
-It is sufficient just to implement ``emberAfPostAttributeChangeCallback`` (read the description in :file:`src/gen/callback-stub.cpp`).
+1. Create a new file, for example :file:`src/zcl_callbacks.cpp`.
+2. Implement the callback in this file:
 
-For example, the implementation can look like follows:
+   a. Open :file:`src/zap-generated/callback-stub.cpp` to check the list of customizable callback functions, marked with ``__attribute__((weak))``.
+   #. Read the description of :c:func:`MatterPostAttributeChangeCallback()`.
+   #. Implement :c:func:`MatterPostAttributeChangeCallback()` in the :file:`src/zcl_callbacks.cpp` file.
+
+For example, the implementation can look as follows:
 
 .. code-block:: C++
 
    #include "app_task.h"
 
-   #include <app-common/zap-generated/attribute-id.h>
-   #include <app-common/zap-generated/attribute-type.h>
-   #include <app-common/zap-generated/cluster-id.h>
-   #include <app/util/af-types.h>
-   #include <app/util/af.h>
+   #include <app-common/zap-generated/ids/Attributes.h>
+   #include <app-common/zap-generated/ids/Clusters.h>
+   #include <app/ConcreteAttributePath.h>
 
    using namespace ::chip;
+   using namespace ::chip::app::Clusters;
 
-   void emberAfPostAttributeChangeCallback(EndpointId endpoint, ClusterId clusterId, AttributeId attributeId, uint8_t mask,
-                                          uint16_t manufacturerCode, uint8_t type, uint16_t size, uint8_t *value)
+   void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath & attributePath, uint8_t mask, uint8_t type,
+                                          uint16_t size, uint8_t * value)
    {
-           if (clusterId != ZCL_ON_OFF_CLUSTER_ID || attributeId != ZCL_ON_OFF_ATTRIBUTE_ID)
+           if (attributePath.mClusterId != OnOff::Id || attributePath.mAttributeId != OnOff::Attributes::OnOff::Id)
                    return;
 
            GetAppTask().PostEvent(AppEvent(*value ? AppEvent::SensorActivate : AppEvent::SensorDeactivate));
@@ -300,26 +306,22 @@ For example, the implementation can look like follows:
 
 .. rst-class:: numbered-step
 
-Add new targets to CMakelists
-*****************************
+Add new source file to CMakeLists
+*********************************
 
-To allow a proper build, you must update the :file:`CMakelists.txt` file by adding the following targets:
-
-* :file:`${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/clusters/on-off-server/on-off-server.cpp` - for On/Off cluster callbacks.
-* :file:`${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/clusters/temperature-measurement-server/temperature-measurement-server.cpp` - for TemperatureMeasurement cluster callbacks.
-* :file:`src/zcl_callbacks.cpp` - to include the callback implementation.
+To ensure that everything builds without errors, update the :file:`CMakeLists.txt` file by adding :file:`src/zcl_callbacks.cpp` source file to the ``app`` target.
 
 Testing the new sensor application
 **********************************
 
 .. note::
-    Because of the limitations for reading the Temperature Measurement cluster attribute, commission the Matter device using the Python Controller when :ref:`setting up Matter development environment <ug_matter_configuring_mobile>`.
+   Use the Python Controller when :ref:`setting up Matter development environment <ug_matter_configuring_mobile>`.
 
 To check if the sensor device is working, complete the following steps:
 
 .. include:: ../../samples/matter/template/README.rst
-    :start-after: matter_template_sample_testing_start
-    :end-before: #. Press **Button 1**
+   :start-after: matter_template_sample_testing_start
+   :end-before: #. Press **Button 1**
 
 #. Activate the sensor by running the following command on the On/off cluster with the correct *node_ID* assigned during commissioning:
 
@@ -334,7 +336,6 @@ To check if the sensor device is working, complete the following steps:
       :class: highlight
 
       zclread TemperatureMeasurement MeasuredValue *node_ID* 1 0
-
 
 #. Deactivate the sensor by running the following command on the On/off cluster with the correct *node_ID* assigned during commissioning:
 
