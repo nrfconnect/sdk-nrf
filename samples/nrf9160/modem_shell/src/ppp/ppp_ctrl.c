@@ -37,8 +37,7 @@
 
 /* ppp globals: */
 struct net_if *ppp_iface_global;
-K_SEM_DEFINE(zsocket_sem, 0, 1);
-K_SEM_DEFINE(msocket_sem, 0, 1);
+K_SEM_DEFINE(ppp_sockets_sem, 0, 2);
 
 /* Socket to send and recv data to/from modem */
 int ppp_modem_data_socket_fd = PPP_MODEM_DATA_RAW_SCKT_FD_NONE;
@@ -52,16 +51,19 @@ uint16_t used_mtu_mru;
 /* Work for auto starting/stopping ppp according to default PDN
  * activation status
  */
-struct ppp_ctrl_worker_data {
+struct ppp_ctrl_pdn_status_worker_data {
 	struct k_work work;
 	bool default_pdn_active;
-} ppp_ctrl_worker_data;
+} ppp_ctrl_pdn_status_worker_data;
 
 static const struct device *ppp_uart_dev;
 
-/* Work for a starting/stopping net if */
-static struct k_work ppp_net_if_start_work;
-static struct k_work ppp_net_if_stop_work;
+/* Work for a re-starting PPP */
+static struct k_work ppp_ctrl_restart_work;
+
+static bool ppp_up;
+
+static volatile bool ppp_closing;
 
 /******************************************************************************/
 
@@ -138,8 +140,8 @@ return_error:
 
 static void ppp_ctrl_link_default_pdn_status_handler(struct k_work *work_item)
 {
-	struct ppp_ctrl_worker_data *data_ptr =
-		CONTAINER_OF(work_item, struct ppp_ctrl_worker_data, work);
+	struct ppp_ctrl_pdn_status_worker_data *data_ptr =
+		CONTAINER_OF(work_item, struct ppp_ctrl_pdn_status_worker_data, work);
 
 	if (data_ptr->default_pdn_active == true) {
 		mosh_print("Default PDN is active: starting PPP automatically.");
@@ -151,25 +153,13 @@ static void ppp_ctrl_link_default_pdn_status_handler(struct k_work *work_item)
 }
 
 /******************************************************************************/
-static void ppp_ctrl_net_if_stop(struct k_work *work_item)
+
+static void ppp_ctrl_restart_worker(struct k_work *work_item)
 {
 	ARG_UNUSED(work_item);
 
-	ppp_ctrl_stop_net_if();
-
-	mosh_print("PPP net_if: stopped");
-
-}
-
-static void ppp_ctrl_net_if_start(struct k_work *work_item)
-{
-	ARG_UNUSED(work_item);
-
-	if (!ppp_ctrl_start_net_if()) {
-		mosh_print("PPP net_if: started");
-	} else {
-		mosh_print("PPP net_if: starting failed");
-	}
+	ppp_ctrl_stop();
+	ppp_ctrl_start();
 }
 
 /******************************************************************************/
@@ -211,10 +201,13 @@ ppp_ctrl_net_mgmt_event_ipv4_levelhandler(struct net_mgmt_event_callback *cb,
 	} else if (mgmt_event == NET_EVENT_IPV4_ADDR_DEL) {
 		mosh_print("Dial up (IPv4) connection down");
 
-		/* To be able to reconnect the dial up, we need to bring PPP net_if down/up: */
-		mosh_print("PPP net_if: restarting...");
-		k_work_submit(&ppp_net_if_stop_work);
-		k_work_submit(&ppp_net_if_start_work);
+		/* To be able to reconnect the dial up from Windows UI,
+		 * we need to bring PPP net_if and sockets down/up:
+		 */
+		if (!ppp_closing) {
+			mosh_print("PPP: restarting...");
+			k_work_submit(&ppp_ctrl_restart_work);
+		}
 	}
 }
 
@@ -261,16 +254,18 @@ static void ppp_ctrl_net_mgmt_events_subscribe(void)
 
 void ppp_ctrl_init(void)
 {
+	ppp_up = false;
+	ppp_closing = false;
+
 	used_mtu_mru = CONFIG_NET_PPP_MTU_MRU;
 
 	ppp_ctrl_net_mgmt_events_subscribe();
 
-	k_work_init(&ppp_ctrl_worker_data.work,
+	k_work_init(&ppp_ctrl_pdn_status_worker_data.work,
 		    ppp_ctrl_link_default_pdn_status_handler);
 
-	/* 2 works for doing the restart for ppp net_if: */
-	k_work_init(&ppp_net_if_start_work, ppp_ctrl_net_if_start);
-	k_work_init(&ppp_net_if_stop_work, ppp_ctrl_net_if_stop);
+	/* A work for doing the restart for ppp: */
+	k_work_init(&ppp_ctrl_restart_work, ppp_ctrl_restart_worker);
 
 	ppp_uart_dev = device_get_binding(CONFIG_NET_PPP_UART_NAME);
 	if (!ppp_uart_dev) {
@@ -283,8 +278,8 @@ void ppp_ctrl_init(void)
 
 void ppp_ctrl_default_pdn_active(bool default_pdn_active)
 {
-	ppp_ctrl_worker_data.default_pdn_active = default_pdn_active;
-	k_work_submit(&ppp_ctrl_worker_data.work);
+	ppp_ctrl_pdn_status_worker_data.default_pdn_active = default_pdn_active;
+	k_work_submit(&ppp_ctrl_pdn_status_worker_data.work);
 }
 
 /******************************************************************************/
@@ -293,12 +288,12 @@ static int ppp_ctrl_modem_sckt_create(void)
 {
 	if (ppp_modem_data_socket_fd != PPP_MODEM_DATA_RAW_SCKT_FD_NONE) {
 		mosh_warn("PPP modem sckt already up - nothing to do");
-		goto return_error;
+		return 0;
 	}
 
 	ppp_modem_data_socket_fd = socket(AF_PACKET, SOCK_RAW, 0);
 	if (ppp_modem_data_socket_fd < 0) {
-		mosh_error("modem data socket creation failed: (%d)!!!!\n", -errno);
+		mosh_error("modem data socket creation failed: (%d)\n", -errno);
 		goto return_error;
 	} else {
 		mosh_print("modem data socket %d created for modem data", ppp_modem_data_socket_fd);
@@ -307,14 +302,24 @@ static int ppp_ctrl_modem_sckt_create(void)
 #ifdef SO_SNDTIMEO
 	struct timeval tv;
 
-	/* blocking socket and we do not want to block for long: 1 sec timeout for sending: */
+	/* blocking socket and we do not want to block for long: 1 sec timeout
+	 * for both sending and receiving:
+	 */
 	tv.tv_sec = 1;
 	tv.tv_usec = 0;
 	if (setsockopt(ppp_modem_data_socket_fd, SOL_SOCKET, SO_SNDTIMEO,
 		       (struct timeval *)&tv, sizeof(struct timeval)) < 0) {
-		mosh_error("Unable to set socket SO_SNDTIMEO");
-		goto return_error;
+		mosh_warn("Unable to set socket SO_SNDTIMEO - continue");
 	}
+#ifdef SO_RCVTIMEO
+	/* We want to set SO_RCVTIMEO for workarounding problems that are seen
+	 * if closing sckt from another thread while in nrf_recv().
+	 */
+	if (setsockopt(ppp_modem_data_socket_fd, SOL_SOCKET, SO_RCVTIMEO,
+		       (struct timeval *)&tv, sizeof(struct timeval)) < 0) {
+		mosh_warn("Unable to set socket SO_RCVTIMEO - continue");
+	}
+#endif
 #endif
 	return 0;
 
@@ -324,14 +329,17 @@ return_error:
 
 static int ppp_ctrl_zephyr_sckt_create(void)
 {
+	int ret;
+
 	if (ppp_data_socket_fd != PPP_MODEM_DATA_RAW_SCKT_FD_NONE) {
 		mosh_warn("PPP Zephyr data socket already up - nothing to do");
-		goto return_error;
+		return 0;
 	}
+
 	/* Create raw Zephyr socket for passing data to/from ppp link: */
 	ppp_data_socket_fd = socket(AF_PACKET, SOCK_RAW | SOCK_NATIVE, IPPROTO_RAW);
 	if (ppp_data_socket_fd < 0) {
-		mosh_error("PPP Zephyr data socket creation failed: (%d)!!!!\n", -errno);
+		mosh_error("PPP Zephyr data socket creation failed: (%d)\n", -errno);
 		goto return_error;
 	} else {
 		mosh_print("PPP Zephyr data socket %d created", ppp_data_socket_fd);
@@ -343,10 +351,11 @@ static int ppp_ctrl_zephyr_sckt_create(void)
 	dst.sll_ifindex = net_if_get_by_iface(ppp_iface_global);
 	dst.sll_family = AF_PACKET;
 
-	int ret = bind(ppp_data_socket_fd, (const struct sockaddr *)&dst,
+	ret = bind(ppp_data_socket_fd, (const struct sockaddr *)&dst,
 		       sizeof(struct sockaddr_ll));
 	if (ret < 0) {
 		mosh_error("Failed to bind PPP data socket : %d", errno);
+		(void)close(ppp_data_socket_fd);
 		goto return_error;
 	}
 	return 0;
@@ -357,63 +366,91 @@ return_error:
 
 /******************************************************************************/
 
-int ppp_ctrl_sckts_create(void)
+static int ppp_ctrl_sckts_create(void)
 {
-	int err = ppp_ctrl_modem_sckt_create();
-
-	if (err) {
-		mosh_error("Cannot create modem sckt for ppp: %d", err);
-		return err;
-	}
-	k_sem_give(&msocket_sem);
+	int err;
 
 	err = ppp_ctrl_zephyr_sckt_create();
 	if (err) {
 		mosh_error("Cannot create zephyr sckt for ppp: %d", err);
 		return err;
 	}
-	k_sem_give(&zsocket_sem);
+
+	err = ppp_ctrl_modem_sckt_create();
+	if (err) {
+		mosh_error("Cannot create modem sckt for ppp: %d", err);
+		return err;
+	}
+
+	/* Give a semaphore for both snd and rcv */
+	k_sem_give(&ppp_sockets_sem);
+	k_sem_give(&ppp_sockets_sem);
 	return 0;
 }
 
 
-void ppp_ctrl_close_sckts(void)
+static void ppp_ctrl_close_sckts(void)
 {
+	int err;
+	int tmp_sckt_id;
 
-	k_sem_reset(&msocket_sem);
+	k_sem_reset(&ppp_sockets_sem);
+
+	if (ppp_data_socket_fd != PPP_MODEM_DATA_RAW_SCKT_FD_NONE) {
+		tmp_sckt_id = ppp_data_socket_fd;
+
+		/* Change global sckt variables already before actual close to avoid going
+		 * to poll() etc in UL/DL threads when closing.
+		 */
+		ppp_data_socket_fd = PPP_MODEM_DATA_RAW_SCKT_FD_NONE;
+		mosh_print("Closing PPP zephyr sckt");
+		err = close(tmp_sckt_id);
+		if (err) {
+			mosh_print("Closing of PPP zephyr sckt failed, errno %d", -errno);
+		}
+	}
+
+	/* Give some time for closing zephyr socket. */
+	k_sleep(K_SECONDS(2));
+
 	if (ppp_modem_data_socket_fd != PPP_MODEM_DATA_RAW_SCKT_FD_NONE) {
 		mosh_print("Closing PPP modem sckt");
-		(void)close(ppp_modem_data_socket_fd);
+		tmp_sckt_id = ppp_modem_data_socket_fd;
 		ppp_modem_data_socket_fd = PPP_MODEM_DATA_RAW_SCKT_FD_NONE;
+		err = close(tmp_sckt_id);
+		if (err) {
+			mosh_print("Closing of PPP modem sckt failed, errno %d", -errno);
+		}
 	}
-	k_sem_reset(&zsocket_sem);
-	if (ppp_data_socket_fd != PPP_MODEM_DATA_RAW_SCKT_FD_NONE) {
-		mosh_print("Closing PPP zephyr sckt");
-		(void)close(ppp_data_socket_fd);
-		ppp_data_socket_fd = PPP_MODEM_DATA_RAW_SCKT_FD_NONE;
-	}
+
 }
 
 /******************************************************************************/
 
 int ppp_ctrl_start(void)
 {
-	if (ppp_modem_data_socket_fd != PPP_MODEM_DATA_RAW_SCKT_FD_NONE) {
+	if (ppp_up) {
 		mosh_warn("PPP already up.\n");
-		goto return_error;
+		return 0;
 	}
 
 	if (ppp_ctrl_start_net_if()) {
-		goto return_error;
+		goto clear;
 	}
 
 	if (ppp_ctrl_sckts_create()) {
-		goto return_error;
+		goto clear;
 	}
+	ppp_up = true;
+	mosh_print("PPP: started");
 
 	return 0;
 
-return_error:
+clear:
+	ppp_up = false;
+	mosh_error("PPP cannot be started");
+	ppp_ctrl_stop_net_if();
+	ppp_ctrl_close_sckts();
 	return -1;
 }
 
@@ -421,6 +458,11 @@ return_error:
 
 void ppp_ctrl_stop(void)
 {
+	ppp_closing = true;
 	ppp_ctrl_stop_net_if();
 	ppp_ctrl_close_sckts();
+
+	mosh_print("PPP: stopped");
+	ppp_up = false;
+	ppp_closing = false;
 }

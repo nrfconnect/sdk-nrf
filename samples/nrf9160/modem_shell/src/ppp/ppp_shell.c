@@ -293,9 +293,9 @@ int ppp_shell_cmd(const struct shell *shell, size_t argc, char **argv)
 	case PPP_CMD_UP:
 		ret = ppp_ctrl_start();
 		if (ret >= 0) {
-			mosh_print("PPP net if up.\n");
+			mosh_print("PPP up.");
 		} else {
-			mosh_error("PPP net if cannot be started\n");
+			mosh_error("PPP cannot be started");
 		}
 
 		break;
