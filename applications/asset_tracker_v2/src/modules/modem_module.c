@@ -324,6 +324,8 @@ static void print_carrier_deferred_reason(const lwm2m_carrier_event_t *evt)
 			"Server registration sequence not completed",
 		[LWM2M_CARRIER_DEFERRED_SERVICE_UNAVAILABLE] =
 			"Server in maintenance mode",
+		[LWM2M_CARRIER_DEFERRED_SIM_MSISDN] =
+			"Waiting for SIM MSISDN",
 	};
 
 	__ASSERT(PART_OF_ARRAY(strdef, &strdef[def->reason]),

@@ -9,6 +9,43 @@ Changelog
 
 All notable changes to this project are documented in this file.
 
+liblwm2m_carrier 0.22.0
+***********************
+
+Release for modem firmware version 1.3.1.
+
+Certification status
+====================
+
+For certification status, see `Mobile network operator certifications`_.
+
+Size
+====
+
+See :ref:`lwm2m_lib_size` for an explanation of the library size in different scenarios.
+
++-------------------------+---------------+------------+
+|                         | Flash (Bytes) | RAM (Bytes)|
++-------------------------+---------------+------------+
+| Library size            | 67872         | 15484      |
+| (binary)                |               |            |
++-------------------------+---------------+------------+
+| Library size            | 90532         | 37592      |
+| (reference application) |               |            |
++-------------------------+---------------+------------+
+
+Changes
+=======
+
+* Added a new event :c:macro:`LWM2M_CARRIER_DEFERRED_SIM_MSISDN`.
+
+  * This event can trigger on devices with a new SIM card that has not been registered on the network yet.
+    (Therefore, it has not received the phone number needed for device management).
+* Removed dependency on the deprecated AT command and AT notification libraries from the glue layer.
+* Added dependency on the AT monitor library in the glue layer.
+* Changed the :c:func:`lwm2m_os_lte_link_up` function to perform an asynchronous connect.
+* Removed the following unused functions from the glue layer: ``lwm2m_os_sec_ca_chain_exists()``, ``lwm2m_os_sec_ca_chain_cmp()``, ``lwm2m_os_sec_ca_chain_write()``.
+
 liblwm2m_carrier 0.21.0
 ***********************
 

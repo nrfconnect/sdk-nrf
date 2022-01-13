@@ -100,6 +100,8 @@ typedef struct {
 #define LWM2M_CARRIER_DEFERRED_SERVER_REGISTRATION 7
 /** Server in maintenance mode. */
 #define LWM2M_CARRIER_DEFERRED_SERVICE_UNAVAILABLE 8
+/** Waiting for SIM MSISDN. */
+#define LWM2M_CARRIER_DEFERRED_SIM_MSISDN	   9
 /** @} */
 
 /**
@@ -245,6 +247,7 @@ typedef struct {
  *
  * @retval  0      If success.
  * @retval -EIO    Failed to initialize modem library or unable to read IMEI.
+ * @retval -E2BIG  The provided PSK is too large to be stored in the modem.
  */
 int lwm2m_carrier_init(const lwm2m_carrier_config_t *config);
 
