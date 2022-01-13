@@ -185,6 +185,7 @@ int ppp_settings_init(void)
 		mosh_error("Failed to get current uart settings, error: %d", ret);
 		return ret;
 	}
+	ppp_uart_conf_valid = true;
 
 	ret = settings_subsys_init();
 	if (ret) {
@@ -208,9 +209,7 @@ int ppp_settings_init(void)
 	ret = ppp_settings_uart_dev_conf_set(&ppp_uart_conf);
 	if (ret) {
 		mosh_error("Failed to set custom uart settings, error: %d", ret);
-		return ret;
 	}
-	ppp_uart_conf_valid = true;
 
 	return ret;
 }

@@ -15,7 +15,5 @@ int ppp_ctrl_start(void);
 void ppp_ctrl_stop(void);
 
 void ppp_ctrl_default_pdn_active(bool default_pdn_active);
-int ppp_ctrl_sckts_create(void);
-void ppp_ctrl_close_sckts(void);
 
 #endif /* MOSH_PPP_CTRL_H */

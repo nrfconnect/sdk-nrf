@@ -27,14 +27,14 @@
 extern int ppp_modem_data_socket_fd;
 extern int ppp_data_socket_fd;
 extern uint16_t used_mtu_mru;
-extern struct k_sem msocket_sem;
+
+extern struct k_sem ppp_sockets_sem;
 
 #define PPP_MODEM_DATA_RCV_THREAD_STACK_SIZE 1024
 
 #define PPP_MODEM_DATA_RCV_THREAD_PRIORITY K_PRIO_COOP(10) /* -6 */
 #define PPP_MODEM_DATA_RCV_POLL_TIMEOUT_MS 1000 /* Milliseconds */
 #define PPP_MODEM_DATA_RCV_BUFFER_SIZE PPP_MODEM_DATA_RCV_SND_BUFF_SIZE
-#define PPP_MODEM_DATA_RCV_PKT_BUF_ALLOC_TIMEOUT K_MSEC(500)
 
 static char receive_buffer[PPP_MODEM_DATA_RCV_BUFFER_SIZE];
 
@@ -54,8 +54,8 @@ static void ppp_modem_dl_data_thread_handler(void)
 
 	while (true) {
 		if (ppp_modem_data_socket_fd < 0 || ppp_data_socket_fd < 0) {
-			/* Wait for a socket to be created */
-			k_sem_take(&msocket_sem, K_FOREVER);
+			/* Wait for sockets to be created */
+			k_sem_take(&ppp_sockets_sem, K_FOREVER);
 			continue;
 		}
 		fds[0].fd = ppp_modem_data_socket_fd;
@@ -69,23 +69,25 @@ static void ppp_modem_dl_data_thread_handler(void)
 			recv_data_len =
 				recv(ppp_modem_data_socket_fd, receive_buffer, used_mtu_mru, 0);
 			if (recv_data_len > 0) {
-				ret = sendto(ppp_data_socket_fd, receive_buffer,
-					     recv_data_len, 0,
+				ret = sendto(ppp_data_socket_fd, receive_buffer, recv_data_len, 0,
 					     (const struct sockaddr *)&dst,
 					     sizeof(struct sockaddr_ll));
 				if (ret < 0) {
-					mosh_error(
-						"%s: cannot send data from mdm to PPP link "
-						"- dropped data of len %d\n",
-						(__func__), recv_data_len);
+					mosh_error("%s: cannot send data from modem to PPP link "
+						   "- dropped data of len %d, err %d",
+						   (__func__), recv_data_len, ret);
 				}
 			} else {
-				mosh_error(
-					"%s: recv() from modem failed %d\n",
-					(__func__), recv_data_len);
+				/* We have set SO_RCVTIMEO and
+				 * thus it is normal to have an ETIMEDOUT
+				 */
+				if (errno != ETIMEDOUT) {
+					mosh_error("%s: recv() from modem failed, %d, errno: %d",
+						   (__func__), recv_data_len, -errno);
+				}
 			}
 		} else if (ret < 0) {
-			mosh_error("%s: poll() failed %d\n", (__func__), ret);
+			mosh_error("%s: poll() failed %d", (__func__), ret);
 		}
 	}
 }

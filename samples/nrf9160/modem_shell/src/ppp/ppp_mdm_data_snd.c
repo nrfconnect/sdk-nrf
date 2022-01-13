@@ -30,7 +30,8 @@ extern struct net_if *ppp_iface_global;
 extern int ppp_modem_data_socket_fd;
 extern int ppp_data_socket_fd;
 extern uint16_t used_mtu_mru;
-extern struct k_sem zsocket_sem;
+
+extern struct k_sem ppp_sockets_sem;
 
 /* Local defines: */
 #define PPP_MODEM_DATA_SND_THREAD_STACK_SIZE 1024
@@ -39,22 +40,8 @@ extern struct k_sem zsocket_sem;
 
 #define PPP_MODEM_DATA_SND_POLL_TIMEOUT_MS 1000                 /* Milliseconds */
 #define PPP_MODEM_DATA_SND_BUFFER_SIZE PPP_MODEM_DATA_RCV_SND_BUFF_SIZE
-#define PPP_MODEM_DATA_SND_PKT_BUF_ALLOC_TIMEOUT K_MSEC(500)
 
 static uint8_t buf_tx[PPP_MODEM_DATA_SND_BUFFER_SIZE];
-
-static void ppp_modem_data_snd_error_check(void)
-{
-	if (errno == EINVAL || errno == ENOTCONN) {
-		/* Temporarily workaround underlying issues by closing and recreating sckts */
-		ppp_ctrl_close_sckts();
-
-		/* Give some time for closing */
-		k_sleep(K_SECONDS(1));
-
-		ppp_ctrl_sckts_create();
-	}
-}
 
 static void ppp_modem_ul_data_thread_handler(void)
 {
@@ -69,15 +56,14 @@ static void ppp_modem_ul_data_thread_handler(void)
 
 	while (true) {
 		if (ppp_data_socket_fd < 0 || ppp_modem_data_socket_fd < 0) {
-			/* Wait for a socket to be created */
-			k_sem_take(&zsocket_sem, K_FOREVER);
+			/* Wait for sockets to be created */
+			k_sem_take(&ppp_sockets_sem, K_FOREVER);
 			continue;
 		} else {
 			/* Poll for the recv data from PPP to be sent to modem: */
 			fds[0].fd = ppp_data_socket_fd;
 			fds[0].events = POLLIN;
 			fds[0].revents = 0;
-
 
 			ret = poll(fds, 1, PPP_MODEM_DATA_SND_POLL_TIMEOUT_MS);
 			if (ret > 0) { /* && (fds[0].revents & POLLIN) */
@@ -94,9 +80,8 @@ static void ppp_modem_ul_data_thread_handler(void)
 					/* Note: no worth to handle partial sends for raw sockets */
 					if (ret < 0) {
 						mosh_error(
-							"ppp_mdm_data_snd: send() failed to modem: (%d), ret %d, data len: %d\n",
+							"ppp_mdm_data_snd: send() failed to modem: (%d), ret %d, data len: %d",
 							-errno, ret, recv_data_len);
-						ppp_modem_data_snd_error_check();
 					} else if (ret != recv_data_len) {
 						mosh_error(
 							"ppp_mdm_data_snd: only partially sent to modem, only %d of original %d was sent",

@@ -463,23 +463,29 @@ The MoSh command is simple but you need to have a normal dial-up setup in your P
 Examples
 --------
 
-* Set the PPP network interface up:
+* PPP network interface is brought up/down automatically when LTE connection is up/down. Set the PPP network interface up manually:
 
   .. code-block:: console
 
      ppp up
 
-* Set the PPP network interface down:
+* Set the PPP network interface down manually:
 
   .. code-block:: console
 
      ppp down
 
-* Set the custom configuration for PPP UART:
+* Set the custom baudrate configuration for PPP UART (default: 115200):
 
   .. code-block:: console
 
-     ppp uartconf --baudrate 460800
+     ppp uartconf --baudrate 921600
+
+* Set the ``rts_cts`` hardware flow control configuration for PPP UART (default: none):
+
+  .. code-block:: console
+
+     ppp uartconf --flowctrl rts_cts
 
 ----
 
@@ -684,6 +690,55 @@ For example:
 .. code-block:: console
 
    west build -p -b nrf9160dk_nrf9160_ns -- -DDTC_OVERLAY_FILE=ppp.overlay -DOVERLAY_CONFIG=overlay-ppp.conf
+
+After programming the development kit, you can test it in the Linux environment as follows:
+
+1. Connect the development kit to the computer using a USB cable.
+   The development kit is assigned a ttyACM device (Linux).
+
+#. Open a serial connection to the development kit (/dev/ttyACM2) with a terminal (for example PuTTY).
+
+#. Reset the development kit.
+
+#. Observe in the terminal window that the MoSh starts with the PPP support.
+   This is indicated by output similar to the following (there is also a lot of additional information about the LTE connection):
+
+   .. code-block:: console
+
+      Network registration status: searching
+      Network registration status: Connected - home network
+      Default PDN is active: starting PPP automatically
+      PPP: started
+      mosh:~$
+
+#. Enter command``ppp uartconf`` that results in the following UART configuration:
+
+   .. code-block:: console
+
+      mosh:~$ ppp uartconf -r
+      PPP uart configuration:
+        baudrate:     921600
+        flow control: RTS_CTS
+        parity:       none
+        data bits:    bits8
+        stop bits:    bits1
+      mosh:~$
+
+#. In a Linux terminal, enter the following command to start the PPP connection:
+
+   .. code-block:: console
+
+      $ sudo pppd -detach /dev/ttyACM0 921600 noauth crtscts noccp novj nodeflate nobsdcomp local debug +ipv6 ipv6cp-use-ipaddr usepeerdns noipdefault defaultroute
+
+#. In a MoSh terminal, observe that the PPP connection is created:
+
+   .. code-block:: console
+
+      Dial up (IPv6) connection up
+      Dial up (IPv4) connection up
+      mosh:~$
+
+#. Now, you are ready to browse Internet in Linux by using the MoSh PPP dial-up over LTE connection.
 
 Application FOTA support
 ========================

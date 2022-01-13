@@ -152,6 +152,7 @@ nRF9160 samples
   * Removed support for the GPS driver.
   * The LED 1 on the development kit indicates the LTE registration status.
   * Added a new shell command ``filtephem`` to enable or disable nRF Cloud A-GPS filtered ephemerides mode (REST only).
+  * Various PPP updates. For example, started using Zephyr async PPP driver configuration to provide better throughput for dial-up.
 
 * :ref:`http_application_update_sample` sample:
 

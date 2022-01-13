@@ -3,6 +3,12 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+&uart0 {
+	compatible = "nordic,nrf-uarte";
+	status = "okay";
+	/delete-property/ cts-pull-up;
+	hw-flow-control;
+};
 
 /* Enable uart1. Note: cannot be used with T-FM.
  * See: https://github.com/zephyrproject-rtos/zephyr/commit/0856e4ba518d32576ed1800a4b70a33617196474
