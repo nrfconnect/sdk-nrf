@@ -37,9 +37,9 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 #define MIN_RANGE_VALUE (-ACCEL_RANGE_G * SENSOR_G / 1000000.0)
 #define MAX_RANGE_VALUE (ACCEL_RANGE_G * SENSOR_G / 1000000.0)
 
-static float32_value_t *x_val;
-static float32_value_t *y_val;
-static float32_value_t *z_val;
+static double *x_val;
+static double *y_val;
+static double *z_val;
 static int64_t accel_read_timestamp[3];
 int32_t lwm2m_timestamp;
 static uint8_t meas_qual_ind;
@@ -67,7 +67,7 @@ static void *accel_x_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res
 	if (is_regular_read_cb(accel_read_timestamp[res_timestamp_index])) {
 		int ret;
 		struct accelerometer_sensor_data accel_data;
-		float32_value_t new_x_val;
+		double new_x_val;
 
 		ret = accelerometer_read(&accel_data);
 		if (ret) {
@@ -83,9 +83,9 @@ static void *accel_x_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res
 			lwm2m_set_timestamp(IPSO_OBJECT_ACCELEROMETER_ID, obj_inst_id);
 		}
 
-		new_x_val = sensor_value_to_float32(accel_data.x);
-		lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID),
-					 &new_x_val);
+		new_x_val = sensor_value_to_double(&accel_data.x);
+		lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID),
+				       &new_x_val);
 	}
 
 	*data_len = sizeof(*x_val);
@@ -101,7 +101,7 @@ static void *accel_y_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res
 	if (is_regular_read_cb(accel_read_timestamp[res_timestamp_index])) {
 		int ret;
 		struct accelerometer_sensor_data accel_data;
-		float32_value_t new_y_val;
+		double new_y_val;
 
 		ret = accelerometer_read(&accel_data);
 		if (ret) {
@@ -117,9 +117,9 @@ static void *accel_y_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res
 			lwm2m_set_timestamp(IPSO_OBJECT_ACCELEROMETER_ID, obj_inst_id);
 		}
 
-		new_y_val = sensor_value_to_float32(accel_data.y);
-		lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID),
-					 &new_y_val);
+		new_y_val = sensor_value_to_double(&accel_data.y);
+		lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID),
+				       &new_y_val);
 	}
 
 	*data_len = sizeof(*y_val);
@@ -135,7 +135,7 @@ static void *accel_z_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res
 	if (is_regular_read_cb(accel_read_timestamp[res_timestamp_index])) {
 		int ret;
 		struct accelerometer_sensor_data accel_data;
-		float32_value_t new_z_val;
+		double new_z_val;
 
 		ret = accelerometer_read(&accel_data);
 		if (ret) {
@@ -151,9 +151,9 @@ static void *accel_z_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res
 			lwm2m_set_timestamp(IPSO_OBJECT_ACCELEROMETER_ID, obj_inst_id);
 		}
 
-		new_z_val = sensor_value_to_float32(accel_data.z);
-		lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID),
-					 &new_z_val);
+		new_z_val = sensor_value_to_double(&accel_data.z);
+		lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID),
+				       &new_z_val);
 	}
 
 	*data_len = sizeof(*z_val);
@@ -163,12 +163,8 @@ static void *accel_z_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res
 
 int lwm2m_init_accel(void)
 {
-	float32_value_t min_range_val = { .val1 = (int)MIN_RANGE_VALUE,
-					  .val2 = (MIN_RANGE_VALUE - (int)MIN_RANGE_VALUE) *
-						  100000 };
-	float32_value_t max_range_val = { .val1 = (int)MAX_RANGE_VALUE,
-					  .val2 = (MAX_RANGE_VALUE - (int)MAX_RANGE_VALUE) *
-						  100000 };
+	double min_range_val = MIN_RANGE_VALUE;
+	double max_range_val = MAX_RANGE_VALUE;
 	uint16_t dummy_data_len;
 	uint8_t dummy_data_flags;
 
@@ -194,10 +190,10 @@ int lwm2m_init_accel(void)
 				  (void **)&y_val, &dummy_data_len, &dummy_data_flags);
 	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID),
 				  (void **)&z_val, &dummy_data_len, &dummy_data_flags);
-	lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, MIN_RANGE_VALUE_RID),
-				 &min_range_val);
-	lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, MAX_RANGE_VALUE_RID),
-				 &max_range_val);
+	lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, MIN_RANGE_VALUE_RID),
+			       &min_range_val);
+	lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, MAX_RANGE_VALUE_RID),
+			       &max_range_val);
 
 	if (IS_ENABLED(CONFIG_LWM2M_IPSO_ACCELEROMETER_VERSION_1_1)) {
 		meas_qual_ind = 0;
@@ -221,7 +217,7 @@ static bool event_handler(const struct event_header *eh)
 {
 	if (is_accel_event(eh)) {
 		struct accel_event *event = cast_accel_event(eh);
-		float32_value_t received_value;
+		double received_value;
 
 		accel_read_timestamp[0] = k_uptime_get();
 		accel_read_timestamp[1] = k_uptime_get();
@@ -236,17 +232,17 @@ static bool event_handler(const struct event_header *eh)
 			event->data.x.val1, event->data.x.val2, event->data.y.val1,
 			event->data.y.val2, event->data.z.val1, event->data.z.val2);
 
-		received_value = sensor_value_to_float32(event->data.x);
-		lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID),
-					 &received_value);
+		received_value = sensor_value_to_double(&event->data.x);
+		lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID),
+				       &received_value);
 
-		received_value = sensor_value_to_float32(event->data.y);
-		lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID),
-					 &received_value);
+		received_value = sensor_value_to_double(&event->data.y);
+		lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID),
+				       &received_value);
 
-		received_value = sensor_value_to_float32(event->data.z);
-		lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID),
-					 &received_value);
+		received_value = sensor_value_to_double(&event->data.z);
+		lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID),
+				       &received_value);
 
 		return true;
 	}

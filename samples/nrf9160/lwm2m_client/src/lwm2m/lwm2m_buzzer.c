@@ -15,7 +15,7 @@
 LOG_MODULE_REGISTER(app_lwm2m_buzzer, CONFIG_APP_LOG_LEVEL);
 
 #define FREQUENCY_START_VAL 440U
-#define INTENSITY_START_VAL 100U
+#define INTENSITY_START_VAL 100.0
 
 #define BUZZER_APP_TYPE "Buzzer"
 
@@ -62,7 +62,7 @@ static int buzzer_intensity_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t r
 int lwm2m_init_buzzer(void)
 {
 	int ret;
-	float32_value_t start_intensity = { .val1 = INTENSITY_START_VAL, .val2 = 0 };
+	double start_intensity = INTENSITY_START_VAL;
 
 	ret = ui_buzzer_init();
 	if (ret) {
@@ -86,7 +86,7 @@ int lwm2m_init_buzzer(void)
 						  buzzer_intensity_cb);
 	lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_BUZZER_ID, 0, APPLICATION_TYPE_RID),
 				  BUZZER_APP_TYPE, sizeof(BUZZER_APP_TYPE), LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_BUZZER_ID, 0, LEVEL_RID), &start_intensity);
+	lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_BUZZER_ID, 0, LEVEL_RID), &start_intensity);
 
 	if (IS_ENABLED(CONFIG_LWM2M_IPSO_APP_BUZZER_VERSION_1_1)) {
 		lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_BUZZER_ID, 0, TIMESTAMP_RID),

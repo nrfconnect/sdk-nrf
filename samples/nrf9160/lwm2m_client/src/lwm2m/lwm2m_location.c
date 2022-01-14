@@ -22,21 +22,21 @@ static bool event_handler(const struct event_header *eh)
 	if (is_gps_pvt_event(eh)) {
 		struct gps_pvt_event *event = cast_gps_pvt_event(eh);
 
-		float32_value_t latitude = double_to_float32(event->pvt.latitude);
-		float32_value_t longitude = double_to_float32(event->pvt.longitude);
-		float32_value_t altitude = double_to_float32(event->pvt.altitude);
-		float32_value_t speed = double_to_float32(event->pvt.speed);
-		float32_value_t radius = double_to_float32(event->pvt.accuracy);
+		double latitude = (double)event->pvt.latitude;
+		double longitude = (double)event->pvt.longitude;
+		double altitude = (double)event->pvt.altitude;
+		double speed = (double)event->pvt.speed;
+		double radius = (double)event->pvt.accuracy;
 
-		lwm2m_engine_set_float32(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LATITUDE_RID),
-					 &latitude);
-		lwm2m_engine_set_float32(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LONGITUDE_RID),
-					 &longitude);
-		lwm2m_engine_set_float32(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, ALTITUDE_RID),
-					 &altitude);
-		lwm2m_engine_set_float32(
+		lwm2m_engine_set_float(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LATITUDE_RID),
+				       &latitude);
+		lwm2m_engine_set_float(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LONGITUDE_RID),
+				       &longitude);
+		lwm2m_engine_set_float(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, ALTITUDE_RID),
+				       &altitude);
+		lwm2m_engine_set_float(
 			LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LOCATION_RADIUS_RID), &radius);
-		lwm2m_engine_set_float32(
+		lwm2m_engine_set_float(
 			LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LOCATION_SPEED_RID), &speed);
 
 		return true;

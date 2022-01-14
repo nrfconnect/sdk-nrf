@@ -259,7 +259,7 @@ static void provision_psk(int instance)
 		return;
 	}
 
-	lwm2m_rd_client_stop(&client, rd_client_event);
+	lwm2m_rd_client_stop(&client, rd_client_event, false);
 	lte_lc_offline();
 
 	ret = modem_key_mgmt_write(client.tls_tag, MODEM_KEY_MGMT_CRED_TYPE_PSK, psk_hex, psk_len);
@@ -278,7 +278,7 @@ static void provision_psk(int instance)
 
 exit:
 	lte_lc_connect();
-	lwm2m_rd_client_start(&client, endpoint_name, false, rd_client_event);
+	lwm2m_rd_client_start(&client, endpoint_name, false, rd_client_event, NULL);
 }
 #endif
 
@@ -554,7 +554,7 @@ void main(void)
 #endif
 
 	while (true) {
-		lwm2m_rd_client_start(&client, endpoint_name, flags, rd_client_event);
+		lwm2m_rd_client_start(&client, endpoint_name, flags, rd_client_event, NULL);
 
 		k_sem_take(&lwm2m_restart, K_FOREVER);
 
@@ -562,7 +562,7 @@ void main(void)
 			" re-establish network connection.");
 
 		/* Stop the LwM2M engine. */
-		lwm2m_rd_client_stop(&client, rd_client_event);
+		lwm2m_rd_client_stop(&client, rd_client_event, false);
 
 		/* Try to reconnect to the network. */
 		ret = lte_lc_offline();
