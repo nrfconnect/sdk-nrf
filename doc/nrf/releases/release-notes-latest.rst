@@ -34,7 +34,12 @@ Zigbee
 nRF9160
 =======
 
+Modem libraries
+---------------
 
+* Modem library integration layer:
+
+  * Fixed a bug in the socket offloading component, where the :c:func:`recvfrom` wrapper could do an out-of-bounds copy of the sender's address, when the application is compiled without IPv6 support. In some cases, the out of bounds copy could indefinitely block the :c:func:`send` and other socket API calls.
 
 Common
 ======
