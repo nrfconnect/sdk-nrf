@@ -64,11 +64,6 @@ void lwm2m_set_timestamp(int ipso_obj_id, unsigned int obj_inst_id);
 /* Check whether notification read callback or regular read callback */
 bool is_regular_read_cb(int64_t read_timestamp);
 
-float32_value_t double_to_float32(double val);
-float32_value_t sensor_value_to_float32(struct sensor_value val);
-
-double float32_to_double(float32_value_t val);
-
 #ifdef __cplusplus
 }
 #endif
