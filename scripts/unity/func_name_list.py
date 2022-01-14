@@ -14,7 +14,7 @@ def func_names_from_header(in_file, out_file):
 
     with open(out_file, 'w') as f_out:
         # Regex match all function names in the header file
-        x = re.findall(r"^\s*(?:\w+[*\s]+)+(\w+?)\s*\([^\\]*?\)\s*;",
+        x = re.findall(r"^\s*(?:\w+[*\s]+)+(\w+?)\s*\([\w\s,*\.\[\]]*?\)\s*;",
                        content, re.M | re.S)
         for item in x:
             f_out.write(item + "\n")

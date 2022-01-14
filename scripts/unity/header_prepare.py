@@ -63,7 +63,7 @@ def header_prepare(in_file, out_file, out_wrap_file):
     # Prepare file with functions prefixed with __wrap_ that will be used for
     # mock generation.
     func_pattern = re.compile(
-        r"^\s*((?:\w+[*\s]+)+)(\w+?\s*\([^\\{}#]*?\)\s*;)", re.M)
+        r"^\s*((?:\w+[*\s]+)+)(\w+?\s*\([\w\s,*\.\[\]]*?\)\s*;)", re.M)
     content2 = func_pattern.sub(r"\n\1__wrap_\2", content)
 
     with open(out_wrap_file, 'w') as f_wrap:
