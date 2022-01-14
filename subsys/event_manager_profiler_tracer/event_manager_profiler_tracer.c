@@ -12,14 +12,14 @@ LOG_MODULE_REGISTER(event_manager_profiler_tracer, CONFIG_EVENT_MANAGER_LOG_LEVE
 
 #define IDS_COUNT (CONFIG_EVENT_MANAGER_MAX_EVENT_CNT + 2)
 
-extern const struct profiler_info __start_profiler_info[];
-extern const struct profiler_info __stop_profiler_info[];
+extern struct profiler_info _profiler_info_list_start[];
+extern struct profiler_info _profiler_info_list_end[];
 
 static uint16_t profiler_event_ids[IDS_COUNT];
 
 void event_manager_trace_event_execution(const struct event_header *eh, bool is_start)
 {
-	size_t event_cnt = __stop_profiler_info - __start_profiler_info;
+	size_t event_cnt = _profiler_info_list_end - _profiler_info_list_start;
 	size_t event_idx = event_cnt + (is_start ? 0 : 1);
 	size_t trace_evt_id = profiler_event_ids[event_idx];
 
@@ -43,7 +43,7 @@ void event_manager_trace_event_submission(const struct event_header *eh, const v
 		return;
 	}
 
-	size_t event_idx = (const struct profiler_info *) profiler_info - __start_profiler_info;
+	size_t event_idx = (const struct profiler_info *) profiler_info - _profiler_info_list_start;
 	size_t trace_evt_id = profiler_event_ids[event_idx];
 
 	if (!is_profiling_enabled(trace_evt_id)) {
@@ -70,7 +70,7 @@ void trace_register_execution_tracking_events(void)
 {
 	static const char * const labels[] = {EM_MEM_ADDRESS_LABEL};
 	enum profiler_arg types[] = {MEM_ADDRESS_TYPE};
-	size_t event_cnt = __stop_profiler_info - __start_profiler_info;
+	size_t event_cnt = _profiler_info_list_end - _profiler_info_list_start;
 	uint16_t profiler_event_id;
 
 	ARG_UNUSED(types);
@@ -91,16 +91,15 @@ void trace_register_execution_tracking_events(void)
 
 static void trace_register_events(void)
 {
-	for (const struct profiler_info *profiler_info = __start_profiler_info;
-	     (profiler_info != __stop_profiler_info); profiler_info++) {
-		size_t event_idx = profiler_info - __start_profiler_info;
+	STRUCT_SECTION_FOREACH(profiler_info, pi) {
+		size_t event_idx = pi - _profiler_info_list_start;
 		uint16_t profiler_event_id;
 
 		profiler_event_id = profiler_register_event_type(
-			profiler_info->name,
-			profiler_info->profiler_arg_labels,
-			profiler_info->profiler_arg_types,
-			profiler_info->profiler_arg_cnt);
+			pi->name,
+			pi->profiler_arg_labels,
+			pi->profiler_arg_types,
+			pi->profiler_arg_cnt);
 		profiler_event_ids[event_idx] = profiler_event_id;
 	}
 
@@ -115,7 +114,7 @@ int event_manager_trace_event_init(void)
 	 * Apart from that 2 additional profiler events are used to indicate processing
 	 * start and end of an Event Manager event.
 	 */
-	__ASSERT_NO_MSG(__stop_profiler_info - __start_profiler_info + 2 <=
+	__ASSERT_NO_MSG(_profiler_info_list_end - _profiler_info_list_start + 2 <=
 			CONFIG_PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS);
 
 	if (profiler_init()) {

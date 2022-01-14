@@ -49,8 +49,7 @@ extern "C" {
 					_ARG_LABELS_DEFINE(labels);				\
 	const static enum profiler_arg _CONCAT(ename, _profiler_arg_types[]) __used =		\
 						_ARG_TYPES_DEFINE(types);			\
-	const static struct profiler_info _CONCAT(ename, _info) __used				\
-			__attribute__((__section__("profiler_info"))) = {			\
+	STRUCT_SECTION_ITERABLE(profiler_info, _CONCAT(ename, _info)) = {			\
 				.profile_fn		=					\
 					profile_func,						\
 				.profiler_arg_cnt	=					\

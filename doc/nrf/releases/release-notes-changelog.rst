@@ -97,8 +97,10 @@ nRF Desktop
 
 * Updated:
 
-   * Documentation and diagrams for the Bluetooth LE bond internal module.
+   * Documentation and diagrams for the :ref:`nrf_desktop_ble_bond` module.
    * Moved Fn key related macros to an application specific header file (:file:`configuration/common/fn_key_id.h`).
+   * Config channel no longer uses orphaned sections to store module Id information.
+     Hence, the :kconfig:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
 
 Samples
 =======
@@ -241,6 +243,16 @@ Event manager
 * Updated:
 
   * Modified the sections used by the event manager. Stopped using orphaned sections. Removed forced alignment for x86. Reworked priorities.
+  * Event manager no longer uses orphaned sections to store information about event types, listeners and subscribers.
+    Hence, the :kconfig:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
+
+Event manager Profiler Tracer
+-----------------------------
+
+* Updated:
+
+  * Event manager Profiler Tracer no longer use orphaned sections to store profiler information.
+    Hence, the :kconfig:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
 
 Libraries for networking
 ------------------------
