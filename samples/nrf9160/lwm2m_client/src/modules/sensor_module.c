@@ -32,14 +32,14 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 #define ACCEL_STARTUP_DELAY K_SECONDS(CONFIG_SENSOR_MODULE_ACCEL_STARTUP_DELAY)
 #define ACCEL_PERIOD CONFIG_SENSOR_MODULE_ACCEL_PERIOD
 #define ACCEL_DELTA_X                                                   \
-	((float32_value_t){ .val1 = CONFIG_SENSOR_MODULE_ACCEL_X_DELTA_INT, \
-			    .val2 = CONFIG_SENSOR_MODULE_ACCEL_X_DELTA_DEC })
+	((double)CONFIG_SENSOR_MODULE_ACCEL_X_DELTA_INT + \
+	 (double)CONFIG_SENSOR_MODULE_ACCEL_X_DELTA_DEC / 1000000.0)
 #define ACCEL_DELTA_Y                                                   \
-	((float32_value_t){ .val1 = CONFIG_SENSOR_MODULE_ACCEL_Y_DELTA_INT, \
-			    .val2 = CONFIG_SENSOR_MODULE_ACCEL_Y_DELTA_DEC })
+	((double)CONFIG_SENSOR_MODULE_ACCEL_Y_DELTA_INT + \
+	 (double)CONFIG_SENSOR_MODULE_ACCEL_Y_DELTA_DEC / 1000000.0)
 #define ACCEL_DELTA_Z                                                   \
-	((float32_value_t){ .val1 = CONFIG_SENSOR_MODULE_ACCEL_Z_DELTA_INT, \
-			    .val2 = CONFIG_SENSOR_MODULE_ACCEL_Z_DELTA_DEC })
+	((double)CONFIG_SENSOR_MODULE_ACCEL_Z_DELTA_INT + \
+	 (double)CONFIG_SENSOR_MODULE_ACCEL_Z_DELTA_DEC / 1000000.0)
 
 static struct k_work_delayable accel_work;
 #endif /* defined(CONFIG_SENSOR_MODULE_ACCEL) */
@@ -48,8 +48,8 @@ static struct k_work_delayable accel_work;
 #define TEMP_STARTUP_DELAY K_SECONDS(CONFIG_SENSOR_MODULE_TEMP_STARTUP_DELAY)
 #define TEMP_PERIOD CONFIG_SENSOR_MODULE_TEMP_PERIOD
 #define TEMP_DELTA                                                   \
-	((float32_value_t){ .val1 = CONFIG_SENSOR_MODULE_TEMP_DELTA_INT, \
-			    .val2 = CONFIG_SENSOR_MODULE_TEMP_DELTA_DEC })
+	((double)CONFIG_SENSOR_MODULE_TEMP_DELTA_INT + \
+	 (double)CONFIG_SENSOR_MODULE_TEMP_DELTA_DEC / 1000000.0)
 
 static struct k_work_delayable temp_work;
 #endif /* defined(CONFIG_SENSOR_MODULE_TEMP) */
@@ -58,8 +58,8 @@ static struct k_work_delayable temp_work;
 #define PRESS_STARTUP_DELAY K_SECONDS(CONFIG_SENSOR_MODULE_PRESS_STARTUP_DELAY)
 #define PRESS_PERIOD CONFIG_SENSOR_MODULE_PRESS_PERIOD
 #define PRESS_DELTA                                                   \
-	((float32_value_t){ .val1 = CONFIG_SENSOR_MODULE_PRESS_DELTA_INT, \
-			    .val2 = CONFIG_SENSOR_MODULE_PRESS_DELTA_DEC })
+	((double)CONFIG_SENSOR_MODULE_PRESS_DELTA_INT + \
+	 (double)CONFIG_SENSOR_MODULE_PRESS_DELTA_DEC / 1000000.0)
 
 static struct k_work_delayable press_work;
 #endif /* defined(CONFIG_SENSOR_MODULE_PRESS) */
@@ -68,8 +68,8 @@ static struct k_work_delayable press_work;
 #define HUMID_STARTUP_DELAY K_SECONDS(CONFIG_SENSOR_MODULE_HUMID_STARTUP_DELAY)
 #define HUMID_PERIOD CONFIG_SENSOR_MODULE_HUMID_PERIOD
 #define HUMID_DELTA                                                   \
-	((float32_value_t){ .val1 = CONFIG_SENSOR_MODULE_HUMID_DELTA_INT, \
-			    .val2 = CONFIG_SENSOR_MODULE_HUMID_DELTA_DEC })
+	((double)CONFIG_SENSOR_MODULE_HUMID_DELTA_INT + \
+	 (double)CONFIG_SENSOR_MODULE_HUMID_DELTA_DEC / 1000000.0)
 
 static struct k_work_delayable humid_work;
 #endif /* defined(CONFIG_SENSOR_MODULE_HUMID) */
@@ -77,7 +77,7 @@ static struct k_work_delayable humid_work;
 #if defined(CONFIG_SENSOR_MODULE_GAS_RES)
 #define GAS_RES_STARTUP_DELAY K_SECONDS(CONFIG_SENSOR_MODULE_GAS_RES_STARTUP_DELAY)
 #define GAS_RES_PERIOD CONFIG_SENSOR_MODULE_GAS_RES_PERIOD
-#define GAS_RES_DELTA ((float32_value_t){ .val1 = CONFIG_SENSOR_MODULE_GAS_RES_DELTA, .val2 = 0 })
+#define GAS_RES_DELTA ((double)CONFIG_SENSOR_MODULE_GAS_RES_DELTA)
 
 static struct k_work_delayable gas_res_work;
 #endif /* defined(CONFIG_SENSOR_MODULE_GAS_RES) */
@@ -108,13 +108,13 @@ static struct k_work_delayable light_work;
 static struct k_work_delayable colour_work;
 #endif /* defined(CONFIG_SENSOR_MODULE_COLOUR) */
 
-static bool float32_sufficient_change(float32_value_t new_val, float32_value_t old_val,
-				      float32_value_t req_change)
+static bool double_sufficient_change(double new_val, double old_val,
+				     double req_change)
 {
 	double change;
 
-	change = fabs(float32_to_double(new_val) - float32_to_double(old_val));
-	if (change > float32_to_double(req_change)) {
+	change = fabs(new_val - old_val);
+	if (change > req_change) {
 		return true;
 	}
 	return false;
@@ -123,9 +123,9 @@ static bool float32_sufficient_change(float32_value_t new_val, float32_value_t o
 #if defined(CONFIG_SENSOR_MODULE_ACCEL)
 static void accel_work_cb(struct k_work *work)
 {
-	float32_value_t *old_x_val;
-	float32_value_t *old_y_val;
-	float32_value_t *old_z_val;
+	double *old_x_val;
+	double *old_y_val;
+	double *old_z_val;
 	uint16_t dummy_data_len;
 	uint8_t dummy_data_flags;
 	struct accelerometer_sensor_data new_data;
@@ -141,12 +141,12 @@ static void accel_work_cb(struct k_work *work)
 
 	accelerometer_read(&new_data);
 
-	sufficient_x = float32_sufficient_change(sensor_value_to_float32(new_data.x), *old_x_val,
-						 ACCEL_DELTA_X);
-	sufficient_y = float32_sufficient_change(sensor_value_to_float32(new_data.y), *old_y_val,
-						 ACCEL_DELTA_Y);
-	sufficient_z = float32_sufficient_change(sensor_value_to_float32(new_data.z), *old_z_val,
-						 ACCEL_DELTA_Z);
+	sufficient_x = double_sufficient_change(sensor_value_to_double(&new_data.x), *old_x_val,
+						ACCEL_DELTA_X);
+	sufficient_y = double_sufficient_change(sensor_value_to_double(&new_data.y), *old_y_val,
+						ACCEL_DELTA_Y);
+	sufficient_z = double_sufficient_change(sensor_value_to_double(&new_data.z), *old_z_val,
+						ACCEL_DELTA_Z);
 
 	if (sufficient_x || sufficient_y || sufficient_z) {
 		struct accel_event *event = new_accel_event();
@@ -163,7 +163,7 @@ static void accel_work_cb(struct k_work *work)
 #if defined(CONFIG_SENSOR_MODULE_TEMP)
 static void temp_work_cb(struct k_work *work)
 {
-	float32_value_t *old_temp_val;
+	double *old_temp_val;
 	uint16_t dummy_data_len;
 	uint8_t dummy_data_flags;
 	struct sensor_value new_temp_val;
@@ -174,8 +174,8 @@ static void temp_work_cb(struct k_work *work)
 
 	env_sensor_read_temperature(&new_temp_val);
 
-	if (float32_sufficient_change(sensor_value_to_float32(new_temp_val), *old_temp_val,
-				      TEMP_DELTA)) {
+	if (double_sufficient_change(sensor_value_to_double(&new_temp_val), *old_temp_val,
+				     TEMP_DELTA)) {
 		struct sensor_event *event = new_sensor_event();
 
 		event->type = TEMPERATURE_SENSOR;
@@ -191,7 +191,7 @@ static void temp_work_cb(struct k_work *work)
 #if defined(CONFIG_SENSOR_MODULE_PRESS)
 static void press_work_cb(struct k_work *work)
 {
-	float32_value_t *old_press_val;
+	double *old_press_val;
 	uint16_t dummy_data_len;
 	uint8_t dummy_data_flags;
 	struct sensor_value new_press_val;
@@ -202,8 +202,8 @@ static void press_work_cb(struct k_work *work)
 
 	env_sensor_read_pressure(&new_press_val);
 
-	if (float32_sufficient_change(sensor_value_to_float32(new_press_val), *old_press_val,
-				      PRESS_DELTA)) {
+	if (double_sufficient_change(sensor_value_to_double(&new_press_val), *old_press_val,
+				     PRESS_DELTA)) {
 		struct sensor_event *event = new_sensor_event();
 
 		event->type = PRESSURE_SENSOR;
@@ -219,7 +219,7 @@ static void press_work_cb(struct k_work *work)
 #if defined(CONFIG_SENSOR_MODULE_HUMID)
 static void humid_work_cb(struct k_work *work)
 {
-	float32_value_t *old_humid_val;
+	double *old_humid_val;
 	uint16_t dummy_data_len;
 	uint8_t dummy_data_flags;
 	struct sensor_value new_humid_val;
@@ -230,8 +230,8 @@ static void humid_work_cb(struct k_work *work)
 
 	env_sensor_read_humidity(&new_humid_val);
 
-	if (float32_sufficient_change(sensor_value_to_float32(new_humid_val), *old_humid_val,
-				      HUMID_DELTA)) {
+	if (double_sufficient_change(sensor_value_to_double(&new_humid_val), *old_humid_val,
+				     HUMID_DELTA)) {
 		struct sensor_event *event = new_sensor_event();
 
 		event->type = HUMIDITY_SENSOR;
@@ -247,7 +247,7 @@ static void humid_work_cb(struct k_work *work)
 #if defined(CONFIG_SENSOR_MODULE_GAS_RES)
 static void gas_res_work_cb(struct k_work *work)
 {
-	float32_value_t *old_gas_res_val;
+	double *old_gas_res_val;
 	uint16_t dummy_data_len;
 	uint8_t dummy_data_flags;
 	struct sensor_value new_gas_res_val;
@@ -258,8 +258,8 @@ static void gas_res_work_cb(struct k_work *work)
 
 	env_sensor_read_gas_resistance(&new_gas_res_val);
 
-	if (float32_sufficient_change(sensor_value_to_float32(new_gas_res_val), *old_gas_res_val,
-				      GAS_RES_DELTA)) {
+	if (double_sufficient_change(sensor_value_to_double(&new_gas_res_val), *old_gas_res_val,
+				     GAS_RES_DELTA)) {
 		struct sensor_event *event = new_sensor_event();
 
 		event->type = GAS_RESISTANCE_SENSOR;

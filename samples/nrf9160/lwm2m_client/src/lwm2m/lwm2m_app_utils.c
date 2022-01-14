@@ -28,22 +28,3 @@ void lwm2m_set_timestamp(int ipso_obj_id, unsigned int obj_inst_id)
 	snprintk(path, MAX_LWM2M_PATH_LEN, "%d/%u/%d", ipso_obj_id, obj_inst_id, TIMESTAMP_RID);
 	lwm2m_engine_set_s32(path, timestamp);
 }
-
-float32_value_t double_to_float32(double val)
-{
-	float32_value_t out;
-
-	out.val1 = (int32_t)val;
-	out.val2 = (int32_t)((out.val1 - val) * LWM2M_FLOAT32_DEC_MAX);
-	return out;
-}
-
-float32_value_t sensor_value_to_float32(struct sensor_value val)
-{
-	return (float32_value_t){ .val1 = val.val1, .val2 = val.val2 };
-}
-
-double float32_to_double(float32_value_t val)
-{
-	return (double)val.val1 + (double)val.val2 / 1000000;
-}
