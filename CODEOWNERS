@@ -22,6 +22,9 @@
 /.github/labeler.yml                      @thst-nordic @guwa @mariusz-nordicsemi @tomaszkob89 @totyz @doublemis1 @wiminordic @jorgenmk @maciekrozanski @ns-tolu @miha-nordic @maciejpietras @piwe-nordic @nordic-babu @fredaas @torsteingrindvik @mswarowsky @shantha-14 @ardo-nordic
 /.github/workflows/manifest.yml           @thst-nordic @guwa @mariusz-nordicsemi @tomaszkob89 @totyz @doublemis1 @wiminordic @jorgenmk @maciekrozanski @ns-tolu @miha-nordic @maciejpietras @piwe-nordic @nordic-babu @fredaas @torsteingrindvik @mswarowsky @shantha-14 @ardo-nordic
 
+# Quarantine for the CI and Twister
+/scripts/quarantine.yaml                  @ncs-test-leads @carlescufi @thst-nordic
+
 # VS Code Configuration files
 /.vscode/                                 @trond-snekvik
 
