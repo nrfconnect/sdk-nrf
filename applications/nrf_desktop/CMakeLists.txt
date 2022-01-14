@@ -61,3 +61,7 @@ endif()
 if(CONFIG_BT_RPMSG_NRF53)
   assert_exists(hci_rpmsg_CONF_FILE)
 endif()
+
+if(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)
+zephyr_linker_sources(SECTIONS nrf_desktop.ld)
+endif()
