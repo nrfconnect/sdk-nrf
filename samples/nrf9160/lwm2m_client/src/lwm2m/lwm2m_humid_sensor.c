@@ -17,8 +17,8 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 
-#define MIN_RANGE_VALUE 0
-#define MAX_RANGE_VALUE 100
+#define MIN_RANGE_VALUE 0.0
+#define MAX_RANGE_VALUE 100.0
 
 #if defined(CONFIG_ENV_SENSOR_USE_EXTERNAL)
 #define HUMID_APP_TYPE "BME680 Humidity Sensor"
@@ -28,7 +28,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 
 #define HUMID_UNIT "%"
 
-static float32_value_t *humid_float;
+static double *humid_float;
 static int64_t sensor_read_timestamp;
 static int32_t lwm2m_timestamp;
 static uint8_t meas_qual_ind;
@@ -40,7 +40,7 @@ static void *humidity_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t re
 	if (is_regular_read_cb(sensor_read_timestamp)) {
 		int ret;
 		struct sensor_value humid_val;
-		float32_value_t new_humid_float;
+		double new_humid_float;
 
 		ret = env_sensor_read_humidity(&humid_val);
 		if (ret) {
@@ -56,10 +56,10 @@ static void *humidity_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t re
 			lwm2m_set_timestamp(IPSO_OBJECT_HUMIDITY_SENSOR_ID, obj_inst_id);
 		}
 
-		new_humid_float = sensor_value_to_float32(humid_val);
-		lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0,
+		new_humid_float = sensor_value_to_double(&humid_val);
+		lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0,
 						    SENSOR_VALUE_RID),
-					 &new_humid_float);
+				       &new_humid_float);
 	}
 
 	*data_len = sizeof(*humid_float);
@@ -69,8 +69,8 @@ static void *humidity_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t re
 
 int lwm2m_init_humid_sensor(void)
 {
-	float32_value_t min_range_val = { .val1 = MIN_RANGE_VALUE, .val2 = 0 };
-	float32_value_t max_range_val = { .val1 = MAX_RANGE_VALUE, .val2 = 0 };
+	double min_range_val = MIN_RANGE_VALUE;
+	double max_range_val = MAX_RANGE_VALUE;
 	uint16_t dummy_data_len;
 	uint8_t dummy_data_flags;
 
@@ -85,10 +85,10 @@ int lwm2m_init_humid_sensor(void)
 				  (void **)&humid_float, &dummy_data_len, &dummy_data_flags);
 	lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0, SENSOR_UNITS_RID),
 				  HUMID_UNIT, sizeof(HUMID_UNIT), LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0, MIN_RANGE_VALUE_RID),
-				 &min_range_val);
-	lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0, MAX_RANGE_VALUE_RID),
-				 &max_range_val);
+	lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0, MIN_RANGE_VALUE_RID),
+			       &min_range_val);
+	lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0, MAX_RANGE_VALUE_RID),
+			       &max_range_val);
 
 	if (IS_ENABLED(CONFIG_LWM2M_IPSO_HUMIDITY_SENSOR_VERSION_1_1)) {
 		meas_qual_ind = 0;
@@ -114,7 +114,7 @@ static bool event_handler(const struct event_header *eh)
 		struct sensor_event *event = cast_sensor_event(eh);
 
 		if (event->type == HUMIDITY_SENSOR) {
-			float32_value_t received_value;
+			double received_value;
 
 			sensor_read_timestamp = k_uptime_get();
 
@@ -125,10 +125,10 @@ static bool event_handler(const struct event_header *eh)
 				lwm2m_set_timestamp(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0);
 			}
 
-			received_value = sensor_value_to_float32(event->sensor_value);
-			lwm2m_engine_set_float32(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0,
-							    SENSOR_VALUE_RID),
-						 &received_value);
+			received_value = sensor_value_to_double(&event->sensor_value);
+			lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0,
+							  SENSOR_VALUE_RID),
+					       &received_value);
 
 			return true;
 		}
