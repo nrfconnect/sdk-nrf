@@ -850,12 +850,16 @@ static ssize_t nrf91_socket_offload_recvfrom(void *obj, void *buf, size_t len,
 				      NULL, NULL);
 	} else {
 		/* Allocate space for maximum of IPv4 and IPv6 family type. */
-		struct nrf_sockaddr_in6 cliaddr_storage;
+		struct nrf_sockaddr_in6 cliaddr_storage = { 0 };
 		nrf_socklen_t sock_len = sizeof(struct nrf_sockaddr_in6);
 		struct nrf_sockaddr *cliaddr = (struct nrf_sockaddr *)&cliaddr_storage;
 
 		retval = nrf_recvfrom(ctx->nrf_fd, buf, len, z_to_nrf_flags(flags),
 				      cliaddr, &sock_len);
+		if (retval < 0) {
+			goto exit;
+		}
+
 		if (cliaddr->sa_family == NRF_AF_INET) {
 			nrf_to_z_ipv4(from, (struct nrf_sockaddr_in *)cliaddr);
 			*fromlen = sizeof(struct sockaddr_in);
@@ -866,6 +870,7 @@ static ssize_t nrf91_socket_offload_recvfrom(void *obj, void *buf, size_t len,
 		}
 	}
 
+exit:
 	k_mutex_lock(ctx->lock, K_FOREVER);
 
 	return retval;
