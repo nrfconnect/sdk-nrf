@@ -1,7 +1,3 @@
-:root {
-  --docset-color: #2980b9;
-}
-
 /* Flexbox Tile Grid Settings  */
 .grid {
   list-style-type: none !important;
@@ -53,6 +49,8 @@
 .grid-item h2 {
   font-size: 1.1rem;
   overflow-x: unset;
+  margin: 0 0 24px !important;
+  color: white !important;
 }
 
 .grid-item img {

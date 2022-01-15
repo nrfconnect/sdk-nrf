@@ -42,6 +42,7 @@ html_static_path = [str(NRF_BASE / "doc" / "_static")]
 html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False
+html_title = project
 
 html_theme_options = {"docsets": utils.get_docsets("mcuboot")}
 
@@ -80,7 +81,4 @@ ncs_cache_manifest = NRF_BASE / "west.yml"
 
 
 def setup(app):
-    app.add_css_file("css/common.css")
-    app.add_css_file("css/mcuboot.css")
-
     utils.add_google_analytics(app)

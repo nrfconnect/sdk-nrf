@@ -31,6 +31,7 @@ extensions.extend(["ncs_cache", "zephyr.external_content", "zephyr.doxyrunner"])
 # Options for HTML output ------------------------------------------------------
 
 html_static_path.append(str(NRF_BASE / "doc" / "_static"))
+html_title = project
 html_theme_options = {"docsets": utils.get_docsets("nrfx")}
 
 # -- Options for doxyrunner ----------------------------------------------------
@@ -70,7 +71,4 @@ ncs_cache_manifest = NRF_BASE / "west.yml"
 
 
 def setup(app):
-    app.add_css_file("css/common.css")
-    app.add_css_file("css/nrfx.css")
-
     utils.add_google_analytics(app)

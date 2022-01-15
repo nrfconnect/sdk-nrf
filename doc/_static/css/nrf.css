@@ -1,19 +1,5 @@
-:root {
-  --docset-color: #00a9ce;
-}
-
-/* link text */
-.wy-nav-content a {
-  color: var(--docset-color);
-}
-
-.wy-nav-content a:visited {
-  color: #0077c8;
-}
-
 /* Doc link boxes on the start page */
-
-.rst-content blockquote.doc-link {
+blockquote.doc-link {
   padding: 0 10px;
   display: block;
   width: 450px;
@@ -85,7 +71,7 @@
 }
 
 .blue-box {
-  background: var(--docset-color);
+  background: #00a9ce;
 }
 
 /* styling for known issues page */

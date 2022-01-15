@@ -1,10 +1,6 @@
-:root {
-  --docset-color: #ff9933;
-}
-
 /* Doc link box on the ZBOSS page */
 
-.rst-content blockquote.doc-link {
+blockquote.doc-link {
   padding: 0 10px;
   display: block;
   width: 450px;

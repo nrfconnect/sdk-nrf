@@ -16,7 +16,7 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 
 # General configuration --------------------------------------------------------
 
-project = "Kconfig reference"
+project = "Kconfig Reference"
 copyright = "2019-2022, Nordic Semiconductor"
 author = "Nordic Semiconductor"
 # NOTE: use blank space as version to preserve space
@@ -35,6 +35,7 @@ html_title = project
 html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False
+html_title = project
 
 html_theme_options = {"docsets": utils.get_docsets("kconfig")}
 
@@ -71,7 +72,6 @@ os.environ["NCS_MEMFAULT_FIRMWARE_SDK_KCONFIG"] = str(
 
 
 def setup(app):
-    app.add_css_file("css/common.css")
     app.add_css_file("css/kconfig.css")
 
     utils.add_google_analytics(app)
