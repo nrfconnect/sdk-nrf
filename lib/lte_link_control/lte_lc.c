@@ -1701,7 +1701,6 @@ int lte_lc_periodic_search_get(struct lte_lc_periodic_search_cfg *const cfg)
 }
 
 #if defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT)
-SYS_DEVICE_DEFINE("LTE_LINK_CONTROL", init_and_connect,
-		  NULL,
+SYS_INIT(init_and_connect,
 		  APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 #endif /* CONFIG_LTE_AUTO_INIT_AND_CONNECT */
