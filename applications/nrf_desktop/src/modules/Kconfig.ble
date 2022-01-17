@@ -25,6 +25,20 @@ endif
 
 comment "BLE Bond"
 
+config DESKTOP_BLE_BOND_ENABLE
+	bool "Enable BLE bond module"
+	depends on BT_BONDABLE
+	depends on BT_SETTINGS
+	depends on CAF_SETTINGS_LOADER
+	depends on CAF_BLE_COMMON_EVENTS
+	select CAF_BLE_BOND_SUPPORTED
+	help
+	  Enable app-specific implementation of Bluetooth LE bond module.
+	  The module is used to control Bluetooth peers.
+
+	  The module selects the CAF_BLE_BOND_SUPPORTED option to inform CAF that BLE bond module is
+	  supported by the application.
+
 config DESKTOP_BLE_USE_DEFAULT_ID
 	bool "Use default Bluetooth local identity"
 	depends on BT_PERIPHERAL
@@ -136,9 +150,13 @@ config DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS
 
 endif
 
+if DESKTOP_BLE_BOND_ENABLE
+
 module = DESKTOP_BLE_BOND
 module-str = BLE bonds
 source "subsys/logging/Kconfig.template.log_config"
+
+endif
 
 comment "BLE Scanning"
 

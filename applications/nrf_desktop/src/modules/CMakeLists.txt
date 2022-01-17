@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-target_sources_ifdef(CONFIG_CAF_BLE_BOND_SUPPORTED
+target_sources_ifdef(CONFIG_DESKTOP_BLE_BOND_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_bond.c)
 
 target_sources_ifdef(CONFIG_DESKTOP_BLE_ENABLE_PASSKEY
