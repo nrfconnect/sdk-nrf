@@ -29,7 +29,7 @@ static int get_hash_from_flash(const struct device *fdev, size_t offset,
 
 	mbedtls_sha256_init(&sha256_ctx);
 
-	err = mbedtls_sha256_starts_ret(&sha256_ctx, false);
+	err = mbedtls_sha256_starts(&sha256_ctx, false);
 	if (err != 0) {
 		return err;
 	}
@@ -42,13 +42,13 @@ static int get_hash_from_flash(const struct device *fdev, size_t offset,
 			return err;
 		}
 
-		err = mbedtls_sha256_update_ret(&sha256_ctx, buffer, part_len);
+		err = mbedtls_sha256_update(&sha256_ctx, buffer, part_len);
 		if (err != 0) {
 			return err;
 		}
 	}
 
-	err = mbedtls_sha256_finish_ret(&sha256_ctx, hash);
+	err = mbedtls_sha256_finish(&sha256_ctx, hash);
 	if (err != 0) {
 		return err;
 	}
