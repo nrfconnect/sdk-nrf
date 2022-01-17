@@ -7,7 +7,7 @@
 menuconfig ML_APP_LED_STATE
 	bool "LED state"
 	depends on CAF_LED_EVENTS
-	depends on ML_APP_ML_STATE_EVENTS
+	depends on ML_APP_MODE_EVENTS
 
 if ML_APP_LED_STATE
 

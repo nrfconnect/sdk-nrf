@@ -12,7 +12,7 @@
 
 #include <caf/events/ble_common_event.h>
 #include <caf/events/sensor_event.h>
-#include "ml_state_event.h"
+#include "ml_app_mode_event.h"
 
 #define MODULE ei_data_forwarder
 #include <caf/events/module_state_event.h>
@@ -28,7 +28,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_EI_DATA_FORWARDER_LOG_LEVEL);
 #define PIPELINE_MAX_CNT	CONFIG_ML_APP_EI_DATA_FORWARDER_PIPELINE_COUNT
 #define BUF_SLAB_ALIGN		4
 
-#define ML_STATE_CONTROL	IS_ENABLED(CONFIG_ML_APP_ML_STATE_EVENTS)
+#define ML_APP_MODE_CONTROL	IS_ENABLED(CONFIG_ML_APP_MODE_EVENTS)
 
 enum {
 	CONN_SECURED			= BIT(0),
@@ -57,7 +57,7 @@ static const char *handled_sensor_event_descr = CONFIG_ML_APP_EI_DATA_FORWARDER_
 static uint8_t conn_state;
 static struct bt_conn *nus_conn;
 
-static enum state state = ML_STATE_CONTROL ? STATE_DISABLED_SUSPENDED : STATE_DISABLED_ACTIVE;
+static enum state state = ML_APP_MODE_CONTROL ? STATE_DISABLED_SUSPENDED : STATE_DISABLED_ACTIVE;
 
 BUILD_ASSERT(sizeof(struct ei_data_packet) % BUF_SLAB_ALIGN == 0);
 K_MEM_SLAB_DEFINE(buf_slab, sizeof(struct ei_data_packet), DATA_BUF_COUNT, BUF_SLAB_ALIGN);
@@ -257,7 +257,7 @@ static bool handle_sensor_event(const struct sensor_event *event)
 	return false;
 }
 
-static bool handle_ml_state_event(const struct ml_state_event *event)
+static bool handle_ml_app_mode_event(const struct ml_app_mode_event *event)
 {
 	if (state == STATE_ERROR) {
 		return false;
@@ -266,7 +266,7 @@ static bool handle_ml_state_event(const struct ml_state_event *event)
 	bool disabled = ((state == STATE_DISABLED_ACTIVE) || (state == STATE_DISABLED_SUSPENDED));
 	enum state new_state;
 
-	if (event->state == ML_STATE_DATA_FORWARDING) {
+	if (event->mode == ML_APP_MODE_DATA_FORWARDING) {
 		new_state = disabled ? STATE_DISABLED_ACTIVE : STATE_ACTIVE;
 
 		clean_buffered_data();
@@ -413,9 +413,9 @@ static bool event_handler(const struct event_header *eh)
 		return handle_sensor_event(cast_sensor_event(eh));
 	}
 
-	if (ML_STATE_CONTROL &&
-	    is_ml_state_event(eh)) {
-		return handle_ml_state_event(cast_ml_state_event(eh));
+	if (ML_APP_MODE_CONTROL &&
+	    is_ml_app_mode_event(eh)) {
+		return handle_ml_app_mode_event(cast_ml_app_mode_event(eh));
 	}
 
 	if (is_module_state_event(eh)) {
@@ -441,6 +441,6 @@ EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, sensor_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
-#if ML_STATE_CONTROL
-EVENT_SUBSCRIBE(MODULE, ml_state_event);
-#endif /* ML_STATE_CONTROL */
+#if ML_APP_MODE_CONTROL
+EVENT_SUBSCRIBE(MODULE, ml_app_mode_event);
+#endif /* ML_APP_MODE_CONTROL */

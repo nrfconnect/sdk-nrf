@@ -7,45 +7,45 @@
 #include <zephyr.h>
 
 #include <caf/events/click_event.h>
-#include "ml_state_event.h"
+#include "ml_app_mode_event.h"
 
-#define MODULE ml_state
+#define MODULE ml_app_mode
 #include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_ML_STATE_LOG_LEVEL);
+LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_MODE_LOG_LEVEL);
 
-#ifdef CONFIG_ML_APP_ML_STATE_CONTROL_BUTTON_ID
-  #define STATE_CONTROL			true
-  #define STATE_CONTROL_BUTTON_ID	CONFIG_ML_APP_ML_STATE_CONTROL_BUTTON_ID
+#ifdef CONFIG_ML_APP_MODE_CONTROL_BUTTON_ID
+  #define MODE_CONTROL			true
+  #define MODE_CONTROL_BUTTON_ID	CONFIG_ML_APP_MODE_CONTROL_BUTTON_ID
 #else
-  #define STATE_CONTROL			false
-  #define STATE_CONTROL_BUTTON_ID	0
-#endif /* CONFIG_ML_APP_ML_STATE_CONTROL_BUTTON_ID */
+  #define MODE_CONTROL			false
+  #define MODE_CONTROL_BUTTON_ID	0
+#endif /* CONFIG_ML_APP_MODE_CONTROL_BUTTON_ID */
 
-static enum ml_state state = IS_ENABLED(CONFIG_ML_APP_ML_RUNNER) ?
-			     ML_STATE_MODEL_RUNNING : ML_STATE_DATA_FORWARDING;
+static enum ml_app_mode mode = IS_ENABLED(CONFIG_ML_APP_ML_RUNNER) ?
+			     ML_APP_MODE_MODEL_RUNNING : ML_APP_MODE_DATA_FORWARDING;
 
 
-static void broadcast_state(void)
+static void broadcast_mode(void)
 {
-	struct ml_state_event *event = new_ml_state_event();
+	struct ml_app_mode_event *event = new_ml_app_mode_event();
 
-	event->state = state;
+	event->mode = mode;
 	EVENT_SUBMIT(event);
 }
 
 static bool handle_click_event(const struct click_event *event)
 {
-	if ((event->key_id == STATE_CONTROL_BUTTON_ID) &&
+	if ((event->key_id == MODE_CONTROL_BUTTON_ID) &&
 	    (event->click == CLICK_LONG)) {
-		switch (state) {
-		case ML_STATE_DATA_FORWARDING:
-			state = ML_STATE_MODEL_RUNNING;
+		switch (mode) {
+		case ML_APP_MODE_DATA_FORWARDING:
+			mode = ML_APP_MODE_MODEL_RUNNING;
 			break;
 
-		case ML_STATE_MODEL_RUNNING:
-			state = ML_STATE_DATA_FORWARDING;
+		case ML_APP_MODE_MODEL_RUNNING:
+			mode = ML_APP_MODE_DATA_FORWARDING;
 			break;
 
 		default:
@@ -54,7 +54,7 @@ static bool handle_click_event(const struct click_event *event)
 			break;
 		}
 
-		broadcast_state();
+		broadcast_mode();
 	}
 
 	return false;
@@ -62,7 +62,7 @@ static bool handle_click_event(const struct click_event *event)
 
 static bool event_handler(const struct event_header *eh)
 {
-	if (STATE_CONTROL &&
+	if (MODE_CONTROL &&
 	    is_click_event(eh)) {
 		return handle_click_event(cast_click_event(eh));
 	}
@@ -76,7 +76,7 @@ static bool event_handler(const struct event_header *eh)
 			__ASSERT_NO_MSG(!initialized);
 			module_set_state(MODULE_STATE_READY);
 			initialized = true;
-			broadcast_state();
+			broadcast_mode();
 		}
 
 		return false;
@@ -90,6 +90,6 @@ static bool event_handler(const struct event_header *eh)
 
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
-#if STATE_CONTROL
+#if MODE_CONTROL
 EVENT_SUBSCRIBE(MODULE, click_event);
-#endif /* STATE_CONTROL */
+#endif /* MODE_CONTROL */

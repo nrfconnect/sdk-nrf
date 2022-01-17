@@ -540,8 +540,8 @@ The nRF Machine Learning application also uses the following dedicated applicati
   The module runs the machine learning model and provides results only if there is an active subsriber.
   An application module can inform that it is actively listening for results using :c:struct:`ml_result_signin_event`.
 
-``ml_state``
-  The module controls switching between running the machine learning model and forwarding the data.
+``ml_app_mode``
+  The module controls Application mode. It switches between running the machine learning model and forwarding the data.
   The change is triggered by a long press of the button defined in the module's configuration.
 
 ``sensor_sim_ctrl``

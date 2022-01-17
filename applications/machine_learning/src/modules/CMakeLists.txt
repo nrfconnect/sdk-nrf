@@ -19,8 +19,8 @@ target_sources_ifdef(CONFIG_ML_APP_LED_STATE
 target_sources_ifdef(CONFIG_ML_APP_ML_RUNNER
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ml_runner.c)
 
-target_sources_ifdef(CONFIG_ML_APP_ML_STATE
-		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ml_state.c)
+target_sources_ifdef(CONFIG_ML_APP_MODE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ml_app_mode.c)
 
 target_sources_ifdef(CONFIG_ML_APP_USB_STATE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/usb_state.c)
