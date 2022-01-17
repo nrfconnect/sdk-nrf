@@ -36,7 +36,7 @@
 /applications/matter_weather_station/     @Damian-Nordic @kkasperczyk-no
 /applications/nrf_desktop/                @pdunaj
 /applications/pelion_client/              @pdunaj
-/applications/serial_lte_modem/           @junqingzou @lats1980 @rlubos
+/applications/serial_lte_modem/           @junqingzou @pirun @rlubos
 # Boards
 /boards/                                  @SebastianBoe @anangl
 # All cmake related files
@@ -170,7 +170,10 @@ Kconfig*                                  @tejlmand
 /subsys/mpsl/                             @rugeGerritsen
 /subsys/net/                              @rlubos
 /subsys/net/lib/azure_*                   @jtguggedal @simensrostad @coderbyheart
+/subsys/net/lib/ftp_client/               @junqingzou
+/subsys/net/lib/icalendar_parser/         @lats1980
 /subsys/net/lib/lwm2m_client_utils/       @rlubos @VeijoPesonen
+/subsys/net/lib/zzhc/                     @junqingzou
 /subsys/nfc/                              @grochu @anangl
 /subsys/nrf_rpc/                          @doki-nordic @KAGA164
 /subsys/partition_manager/                @hakonfam
