@@ -488,10 +488,10 @@ static bool handle_module_state_event(const struct module_state_event *event)
 		init();
 		initialized = true;
 
-		if (!IS_ENABLED(CONFIG_CAF_BLE_BOND_SUPPORTED)) {
+		if (!IS_ENABLED(CONFIG_CAF_BLE_ADV_BLE_BOND_SUPPORTED)) {
 			ble_initialized();
 		}
-	} else if (IS_ENABLED(CONFIG_CAF_BLE_BOND_SUPPORTED) &&
+	} else if (IS_ENABLED(CONFIG_CAF_BLE_ADV_BLE_BOND_SUPPORTED) &&
 		   check_state(event, MODULE_ID(ble_bond), MODULE_STATE_READY)) {
 		/* Settings need to be loaded before advertising start */
 		ble_initialized();
@@ -715,7 +715,7 @@ static bool event_handler(const struct event_header *eh)
 		return handle_ble_peer_event(cast_ble_peer_event(eh));
 	}
 
-	if (IS_ENABLED(CONFIG_CAF_BLE_BOND_SUPPORTED) &&
+	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_BLE_BOND_SUPPORTED) &&
 	    is_ble_peer_operation_event(eh)) {
 		return handle_ble_peer_operation_event(cast_ble_peer_operation_event(eh));
 	}
@@ -738,9 +738,9 @@ static bool event_handler(const struct event_header *eh)
 EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, ble_peer_event);
-#if CONFIG_CAF_BLE_BOND_SUPPORTED
+#if CONFIG_CAF_BLE_ADV_BLE_BOND_SUPPORTED
 EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
-#endif /* CONFIG_CAF_BLE_BOND_SUPPORTED */
+#endif /* CONFIG_CAF_BLE_ADV_BLE_BOND_SUPPORTED */
 #if CONFIG_CAF_BLE_ADV_PM_EVENTS
 EVENT_SUBSCRIBE(MODULE, power_down_event);
 EVENT_SUBSCRIBE(MODULE, wake_up_event);

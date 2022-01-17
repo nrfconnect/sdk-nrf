@@ -60,6 +60,15 @@ config CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD
 	  To ensure users will not try to connect to a device which is no longer available,
 	  Swift Pair vendor section will be removed before exiting from advertising mode.
 
+config CAF_BLE_ADV_BLE_BOND_SUPPORTED
+	bool
+	default CAF_BLE_BOND_SUPPORTED
+	help
+	  Kconfig option used to inform that Bluetooth LE bond functionality is supported by the
+	  application. If an application supports Bluetooth LE bond module, the Bluetooth LE
+	  advertising module should not start advertising before the Bluetooth LE bond module is
+	  initialized.
+
 module = CAF_BLE_ADV
 module-str = caf module BLE advertising
 source "subsys/logging/Kconfig.template.log_config"
