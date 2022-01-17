@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if (CONFIG_MPSL_CX_THREAD OR CONFIG_MPSL_CX_THREAD OR CONFIG_MPSL_CX_BT_3WIRE)
+if (CONFIG_MPSL_CX_THREAD OR CONFIG_MPSL_CX_BT_1WIRE OR CONFIG_MPSL_CX_BT_3WIRE)
     zephyr_library()
 
     zephyr_library_sources_ifdef(CONFIG_MPSL_CX_THREAD thread/mpsl_cx_thread.c)
