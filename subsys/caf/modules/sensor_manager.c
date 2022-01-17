@@ -180,7 +180,9 @@ static bool is_sensor_active(const struct sensor_data *sd)
 static void sensor_wake_up_post(const struct sm_sensor_config *sc, struct sensor_data *sd)
 {
 	sd->sample_timeout = k_uptime_get();
-	reset_sensor_sleep_cnt(sc, sd);
+	if (sc->trigger) {
+		reset_sensor_sleep_cnt(sc, sd);
+	}
 	update_sensor_state(sc, sd, SENSOR_STATE_ACTIVE);
 }
 
