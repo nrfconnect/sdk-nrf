@@ -132,7 +132,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf9160/location/                @trantanen @hiltunent @jhirsi @tokangas
 /samples/nrf9160/lwm2m_client/            @rlubos @VeijoPesonen
 /samples/spm/                             @lemrey @hakonfam @SebastianBoe
-/samples/openthread/                      @MarekPorwisz @lmaciejonczyk @rlubos
+/samples/openthread/                      @lmaciejonczyk @rlubos @edmont @canisLupus1313
 /samples/profiler/                        @pdunaj @pizi-nordic
 /samples/peripheral/radio_test/           @kapi-no
 /samples/peripheral/lpuart/               @nordic-krch
