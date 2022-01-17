@@ -114,7 +114,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v1.8.0
+      revision: 1f69ad49f53b695ccc162c954e1935f30e8222dc
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -134,12 +134,12 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: pull/302/head
+      revision: 09d8ab6e6226d4028156b8410b16a47bd6bacb58
       groups:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: ff8e3cfe66c287aef68c592b79768314216dfda4
+      revision: 4914b09010fd3d44be23423bce402f0b61342e61
       groups:
       - find-my
     # Other third-party repositories.
