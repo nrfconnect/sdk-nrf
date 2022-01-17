@@ -731,7 +731,7 @@ static void cloud_connect_work_fn(struct k_work *work)
 {
 	int ret;
 
-	LOG_INF("Connecting to cloud, attempt %d of %d",
+	LOG_INF("Connecting to cloud, attempt %ld of %d",
 	       atomic_get(&cloud_connect_attempts),
 		   CONFIG_CLOUD_CONNECT_COUNT_MAX);
 
