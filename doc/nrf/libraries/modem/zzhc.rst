@@ -44,7 +44,6 @@ To enable the ZZHC library, edit the :file:`prj.conf` file according to the foll
 
    * :kconfig:`CONFIG_NRF_MODEM_LIB`
    * :kconfig:`CONFIG_SETTINGS`
-   * :kconfig:`CONFIG_AT_CMD`
    * :kconfig:`CONFIG_AT_CMD_PARSER`
    * :kconfig:`CONFIG_AT_NOTIF`
    * :kconfig:`CONFIG_BASE64`
