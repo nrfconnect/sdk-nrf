@@ -6,7 +6,7 @@
 
 rsource "Kconfig.ei_data_forwarder"
 rsource "Kconfig.led_state"
+rsource "Kconfig.ml_app_mode"
 rsource "Kconfig.ml_runner"
-rsource "Kconfig.ml_state"
 rsource "Kconfig.usb_state"
 rsource "Kconfig.sensor_sim_ctrl"

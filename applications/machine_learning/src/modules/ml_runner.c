@@ -8,7 +8,7 @@
 #include <ei_wrapper.h>
 
 #include <caf/events/sensor_event.h>
-#include "ml_state_event.h"
+#include "ml_app_mode_event.h"
 #include "ml_result_event.h"
 
 #define MODULE ml_runner
@@ -20,7 +20,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_ML_RUNNER_LOG_LEVEL);
 #define SHIFT_WINDOWS		CONFIG_ML_APP_ML_RUNNER_WINDOW_SHIFT
 #define SHIFT_FRAMES		CONFIG_ML_APP_ML_RUNNER_FRAME_SHIFT
 
-#define APP_CONTROLS_ML_STATE	IS_ENABLED(CONFIG_ML_APP_ML_STATE_EVENTS)
+#define APP_CONTROLS_ML_MODE	IS_ENABLED(CONFIG_ML_APP_MODE_EVENTS)
 
 /* Make sure that event handlers will not be preempted by the EI wrapper's callback. */
 BUILD_ASSERT(CONFIG_SYSTEM_WORKQUEUE_PRIORITY < CONFIG_EI_WRAPPER_THREAD_PRIORITY);
@@ -184,7 +184,7 @@ static int init(void)
 
 	if (err) {
 		LOG_ERR("Edge Impulse wrapper failed to initialize (err: %d)", err);
-	} else if (!APP_CONTROLS_ML_STATE) {
+	} else if (!APP_CONTROLS_ML_MODE) {
 		start_prediction();
 	}
 
@@ -213,14 +213,14 @@ static bool handle_sensor_event(const struct sensor_event *event)
 	return false;
 }
 
-static bool handle_ml_state_event(const struct ml_state_event *event)
+static bool handle_ml_app_mode_event(const struct ml_app_mode_event *event)
 {
-	if ((event->state == ML_STATE_MODEL_RUNNING) && (state == STATE_SUSPENDED)) {
+	if ((event->mode == ML_APP_MODE_MODEL_RUNNING) && (state == STATE_SUSPENDED)) {
 		state = current_active_state();
 		if (state == STATE_ACTIVE) {
 			start_prediction();
 		}
-	} else if ((event->state != ML_STATE_MODEL_RUNNING) &&
+	} else if ((event->mode != ML_APP_MODE_MODEL_RUNNING) &&
 		   ((state == STATE_ACTIVE) || (state == STATE_READY))) {
 		int err = buf_cleanup();
 
@@ -238,7 +238,7 @@ static bool handle_module_state_event(const struct module_state_event *event)
 		__ASSERT_NO_MSG(state == STATE_DISABLED);
 
 		if (!init()) {
-			state = APP_CONTROLS_ML_STATE ? STATE_SUSPENDED : current_active_state();
+			state = APP_CONTROLS_ML_MODE ? STATE_SUSPENDED : current_active_state();
 			module_set_state(MODULE_STATE_READY);
 		} else {
 			report_error();
@@ -278,9 +278,9 @@ static bool event_handler(const struct event_header *eh)
 		return handle_sensor_event(cast_sensor_event(eh));
 	}
 
-	if (APP_CONTROLS_ML_STATE &&
-	    is_ml_state_event(eh)) {
-		return handle_ml_state_event(cast_ml_state_event(eh));
+	if (APP_CONTROLS_ML_MODE &&
+	    is_ml_app_mode_event(eh)) {
+		return handle_ml_app_mode_event(cast_ml_app_mode_event(eh));
 	}
 
 	if (is_module_state_event(eh)) {
@@ -301,6 +301,6 @@ EVENT_LISTENER(MODULE, event_handler);
 EVENT_SUBSCRIBE(MODULE, module_state_event);
 EVENT_SUBSCRIBE(MODULE, sensor_event);
 EVENT_SUBSCRIBE(MODULE, ml_result_signin_event);
-#if APP_CONTROLS_ML_STATE
-EVENT_SUBSCRIBE(MODULE, ml_state_event);
-#endif /* APP_CONTROLS_ML_STATE */
+#if APP_CONTROLS_ML_MODE
+EVENT_SUBSCRIBE(MODULE, ml_app_mode_event);
+#endif /* APP_CONTROLS_ML_MODE */
