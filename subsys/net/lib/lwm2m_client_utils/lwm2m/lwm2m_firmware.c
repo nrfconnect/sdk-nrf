@@ -32,8 +32,9 @@
 LOG_MODULE_REGISTER(lwm2m_firmware, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
 #define BYTE_PROGRESS_STEP (1024 * 10)
-#define REBOOT_DELAY       K_SECONDS(1)
+#define REBOOT_DELAY K_SECONDS(1)
 
+static lwm2m_firmware_get_update_state_cb_t update_state_cb;
 static uint8_t firmware_buf[CONFIG_LWM2M_COAP_BLOCK_SIZE];
 
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM)
@@ -181,6 +182,10 @@ static int firmware_update_state(uint16_t obj_inst_id, uint16_t res_id,
 				 size_t total_size)
 {
 	int ret = 0;
+
+	if (update_state_cb) {
+		update_state_cb(*data);
+	}
 
 	if (*data == STATE_IDLE) {
 		ret = dfu_target_reset();
@@ -423,6 +428,11 @@ static int write_dl_uri(uint16_t obj_inst_id,
 	k_work_submit(&download_work);
 	lwm2m_firmware_set_update_state(STATE_DOWNLOADING);
 	return 0;
+}
+
+void lwm2m_firmware_set_update_state_cb(lwm2m_firmware_get_update_state_cb_t cb)
+{
+	update_state_cb = cb;
 }
 
 int lwm2m_init_firmware(void)

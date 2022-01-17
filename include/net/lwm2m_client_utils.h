@@ -53,6 +53,26 @@ int lwm2m_init_location(void);
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 /**
+ * @brief Firmware update state change event callback.
+ *
+ * @param[in] update_state LWM2M Firmware Update object states
+ *
+ * @return Callback returns a negative error code (errno.h) indicating
+ *         reason of failure or 0 for success.
+ */
+typedef int (*lwm2m_firmware_get_update_state_cb_t)(uint8_t update_state);
+
+/**
+ * @brief Set event callback for firmware update changes.
+ *
+ * LwM2M clients use this function to register a callback for receiving the
+ * update state changes when performing a firmware update.
+ *
+ * @param[in] cb A callback function to receive firmware update state changes.
+ */
+void lwm2m_firmware_set_update_state_cb(lwm2m_firmware_get_update_state_cb_t cb);
+
+/**
  * @brief Firmware read callback
  */
 void *firmware_read_cb(uint16_t obj_inst_id, size_t *data_len);
