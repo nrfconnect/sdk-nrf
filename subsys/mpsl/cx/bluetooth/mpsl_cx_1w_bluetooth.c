@@ -47,7 +47,7 @@ static void coex_enable_callback(void)
 	coex_enabled = true;
 }
 
-int mpsl_cx_bt_interface_1wire_config_set(void)
+static int mpsl_cx_bt_interface_1wire_config_set(void)
 {
 	nrfx_err_t err = NRFX_SUCCESS;
 	mpsl_coex_gpiote_cfg_t *gpiote_cfg;

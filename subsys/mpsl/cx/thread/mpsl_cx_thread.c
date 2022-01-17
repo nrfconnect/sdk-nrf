@@ -12,7 +12,6 @@
  */
 
 #include <mpsl_cx_abstract_interface.h>
-#include <mpsl/mpsl_cx_config_thread.h>
 
 #include <stddef.h>
 #include <stdint.h>
@@ -32,7 +31,6 @@
 /* Value from chapter 7. Logic Timing from Thread Radio Coexistence */
 #define REQUEST_TO_GRANT_US 50U
 
-static struct mpsl_cx_thread_interface_config config;
 static mpsl_cx_cb_t callback;
 
 static const struct device *req_dev;
@@ -112,14 +110,12 @@ static void gpiote_irq_handler(const struct device *gpiob, struct gpio_callback 
 	}
 }
 
-static int32_t gpio_init(uint8_t pin_no, bool input, const struct device **port,
-		gpio_port_value_t *pin_mask)
+static int32_t gpio_init(uint8_t pin_no, bool input, const char *gpio_lbl,
+		const struct device **port, gpio_port_value_t *pin_mask)
 {
 	gpio_flags_t flags;
-	bool use_port_1 = (pin_no > P0_PIN_NUM);
 
-	pin_no = use_port_1 ? pin_no - P0_PIN_NUM : pin_no;
-	*port = device_get_binding(use_port_1 ? "GPIO_1" : "GPIO_0");
+	*port = device_get_binding(gpio_lbl);
 
 	if (*port == NULL) {
 		return -NRF_EINVAL;
@@ -138,17 +134,17 @@ static int32_t gpio_init(uint8_t pin_no, bool input, const struct device **port,
 	return 0;
 }
 
-static int32_t gpiote_init(void)
+static int32_t gpiote_init(uint8_t granted_pin, const char *gpio_lbl)
 {
 	int32_t ret;
 	gpio_flags_t flags = GPIO_INT_ENABLE | GPIO_INT_EDGE | GPIO_INT_EDGE_BOTH;
 
-	ret = gpio_init(config.granted_pin, true, &gra_dev, &gra_pin_mask);
+	ret = gpio_init(granted_pin, true, gpio_lbl, &gra_dev, &gra_pin_mask);
 	if (ret < 0) {
 		return ret;
 	}
 
-	ret = gpio_pin_interrupt_configure(gra_dev, config.granted_pin, flags);
+	ret = gpio_pin_interrupt_configure(gra_dev, granted_pin, flags);
 	if (ret < 0) {
 		return ret;
 	}
@@ -227,12 +223,14 @@ static const mpsl_cx_interface_t m_mpsl_cx_methods = {
 	.p_register_callback   = register_callback,
 };
 
-int32_t mpsl_cx_thread_interface_config_set(
-		struct mpsl_cx_thread_interface_config const * const new_config)
+int32_t mpsl_cx_thread_interface_config_set(void)
 {
 	int32_t ret_code;
 
-	config = *new_config;
+	uint8_t request_pin = NRF_DT_GPIOS_TO_PSEL(CX_NODE, req_gpios);
+	uint8_t priority_pin = NRF_DT_GPIOS_TO_PSEL(CX_NODE, pri_dir_gpios);
+	uint8_t granted_pin = NRF_DT_GPIOS_TO_PSEL(CX_NODE, grant_gpios);
+
 	callback = NULL;
 
 	ret_code = mpsl_cx_interface_set(&m_mpsl_cx_methods);
@@ -240,17 +238,19 @@ int32_t mpsl_cx_thread_interface_config_set(
 		return ret_code;
 	}
 
-	ret_code = gpio_init(config.request_pin, false, &req_dev, &req_pin_mask);
+	ret_code = gpio_init(request_pin, false, DT_GPIO_LABEL(CX_NODE, req_gpios),
+		&req_dev, &req_pin_mask);
 	if (ret_code != 0) {
 		return ret_code;
 	}
 
-	ret_code = gpio_init(config.priority_pin, false, &pri_dev, &pri_pin_mask);
+	ret_code = gpio_init(priority_pin, false, DT_GPIO_LABEL(CX_NODE, pri_dir_gpios),
+		&pri_dev, &pri_pin_mask);
 	if (ret_code != 0) {
 		return ret_code;
 	}
 
-	ret_code = gpiote_init();
+	ret_code = gpiote_init(granted_pin, DT_GPIO_LABEL(CX_NODE, grant_gpios));
 	if (ret_code != 0) {
 		return ret_code;
 	}
@@ -262,13 +262,7 @@ static int mpsl_cx_init(const struct device *dev)
 {
 	ARG_UNUSED(dev);
 
-	struct mpsl_cx_thread_interface_config cfg = {
-		.request_pin  = NRF_DT_GPIOS_TO_PSEL(CX_NODE, req_gpios),
-		.priority_pin = NRF_DT_GPIOS_TO_PSEL(CX_NODE, pri_dir_gpios),
-		.granted_pin  = NRF_DT_GPIOS_TO_PSEL(CX_NODE, grant_gpios),
-	};
-
-	return mpsl_cx_thread_interface_config_set(&cfg);
+	return mpsl_cx_thread_interface_config_set();
 }
 
 SYS_INIT(mpsl_cx_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
