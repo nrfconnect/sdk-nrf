@@ -14,6 +14,7 @@
 #include <kernel.h>
 #include <soc.h>
 #include <sys/byteorder.h>
+#include <sys/util.h>
 #include <stdbool.h>
 #include <sys/__assert.h>
 
@@ -401,7 +402,12 @@ static void recv_thread(void *p1, void *p2, void *p3)
 	ARG_UNUSED(p2);
 	ARG_UNUSED(p3);
 
+#if defined(CONFIG_BT_BUF_EVT_DISCARDABLE_COUNT)
+	static uint8_t hci_buffer[MAX(BT_BUF_RX_SIZE,
+				      BT_BUF_EVT_SIZE(CONFIG_BT_BUF_EVT_DISCARDABLE_SIZE))];
+#else
 	static uint8_t hci_buffer[BT_BUF_RX_SIZE];
+#endif
 
 	bool received_evt = false;
 	bool received_data = false;
