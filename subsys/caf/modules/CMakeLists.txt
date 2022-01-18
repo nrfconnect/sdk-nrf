@@ -8,6 +8,8 @@ zephyr_library()
 
 zephyr_library_sources_ifdef(CONFIG_CAF_BLE_ADV ble_adv.c)
 
+zephyr_library_sources_ifdef(CONFIG_CAF_BLE_BOND ble_bond.c)
+
 zephyr_library_sources_ifdef(CONFIG_CAF_BLE_STATE ble_state.c)
 
 zephyr_library_sources_ifdef(CONFIG_CAF_BLE_STATE_PM ble_state_pm.c)

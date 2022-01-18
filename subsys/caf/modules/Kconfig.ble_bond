@@ -4,10 +4,17 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config CAF_BLE_BOND_SUPPORTED
-	bool "Application supports Bluetooth LE bond module"
-	depends on SETTINGS
+menuconfig CAF_BLE_BOND
+	bool "Enable CAF implementation of Bluetooth LE bond"
+	depends on BT_BONDABLE
+	depends on BT_SETTINGS
+	depends on CAF_SETTINGS_LOADER
 	depends on CAF_BLE_COMMON_EVENTS
+	select CAF_BLE_BOND_SUPPORTED
+
+config CAF_BLE_BOND_SUPPORTED
+	bool
 	help
-	  The module does not have a generic implementation in CAF. Make sure to provide your own
-	  implementation of the module if you enable this option.
+	  Kconfig option used to inform that Bluetooth LE bond functionality is supported by the
+	  application. This option must be selected by Kconfig option that enables Bluetooth LE
+	  bond support.
