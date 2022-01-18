@@ -48,8 +48,10 @@ For example, the file contents should look like the following:
 
 .. code-block:: c
 
-	#include "hid_keymap.h"
 	#include <caf/key_id.h>
+
+	#include "hid_keymap.h"
+	#inclue "fn_key_id.h"
 
 	static const struct hid_keymap hid_keymap[] = {
 		{ KEY_ID(0x00, 0x01), 0x0014, REPORT_ID_KEYBOARD_KEYS }, /* Q */
