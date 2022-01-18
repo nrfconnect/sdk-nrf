@@ -180,6 +180,16 @@ struct location_gnss_config {
 	 * parameter has no effect.
 	 */
 	uint8_t num_consecutive_fixes;
+
+	/**
+	 * @brief Obstructed visibility detection. If set to true, the library tries to detect
+	 * situations where getting a GNSS fix is unlikely or would consume a lot of energy.
+	 * When such a situation is detected, GNSS is stopped without waiting for a fix or a
+	 * timeout.
+	 *
+	 * @details See Kconfig for related configuration options.
+	 */
+	bool visibility_detection;
 };
 
 /** LTE cellular positioning configuration. */
