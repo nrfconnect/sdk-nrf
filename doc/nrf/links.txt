@@ -224,6 +224,8 @@
 
 .. _`nRF21540 DK product page`: https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF21540
 
+.. _`nRF Desktop reference design page`: https://www.nordicsemi.com/Products/Reference-designs/nRF-Desktop
+
 .. ### Source: infocenter.nordicsemi.com
 
 .. _`Nordic Semiconductor Infocenter`: https://infocenter.nordicsemi.com/index.jsp
