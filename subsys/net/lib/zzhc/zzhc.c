@@ -21,6 +21,7 @@ LOG_MODULE_REGISTER(zzhc, CONFIG_ZZHC_LOG_LEVEL);
 
 #include <nrf_modem_at.h>
 #include <modem/at_monitor.h>
+#include <nrf_socket.h>
 
 #include "zzhc_internal.h"
 
@@ -35,6 +36,8 @@ AT_MONITOR(zzhc_monitor, ANY, response_handler);
 #define RETRY_TIMEOUT     3600      /** 1 hour, 3600s */
 #define RETRY_CNT_MAX     3         /** Max. value of retry counter */
 #define WHITELISTED_OP_ID 6         /** Whitelisted Operator ID */
+#define PRIMARY_DNS "218.4.4.4"
+#define SECONDARY_DNS "218.2.2.2"
 
 #define THREAD_PRIORITY   K_PRIO_PREEMPT(CONFIG_ZZHC_THREAD_PRIO)
 #define STACK_SIZE        CONFIG_ZZHC_STACK_SIZE
@@ -451,6 +454,82 @@ static int check_iccid(struct zzhc *ctx)
 	return rc;
 }
 
+static int check_and_set_dns(struct zzhc *ctx)
+{
+	int err;
+	uint8_t dns_compare[32];
+	struct nrf_in_addr pri_dns;
+	struct nrf_in_addr sec_dns;
+	struct nrf_addrinfo *info;
+	struct nrf_addrinfo hints = {
+		.ai_family = NRF_AF_INET,
+		.ai_socktype = NRF_SOCK_STREAM,
+		.ai_protocol = NRF_IPPROTO_TCP,
+	};
+
+	err = nrf_modem_at_cmd(ctx->at_resp, AT_RESPONSE_LEN,
+			       "AT+CGCONTRDP=0");
+
+	if (err) {
+		return -EIO;
+	}
+
+	snprintk(dns_compare, sizeof(dns_compare),
+		 "\"%s\",\"%s\"",
+		 PRIMARY_DNS,
+		 SECONDARY_DNS);
+
+	if (strstr(ctx->at_resp, dns_compare)) {
+		return 0;
+	}
+
+	err = nrf_inet_pton(NRF_AF_INET, PRIMARY_DNS, &pri_dns);
+
+	if (err != 1) {
+		LOG_DBG("nrf_inet_pton failed. errno: %d", errno);
+		return -EIO;
+	}
+
+	/* Manually set DNS */
+	err = nrf_setdnsaddr(NRF_AF_INET, &pri_dns, sizeof(pri_dns));
+
+	if (err) {
+		LOG_DBG("nrf_setdnsaddr failed. errno: %d", errno);
+		return -EIO;
+	}
+
+	/* Hostname resolution */
+	err = nrf_getaddrinfo(hostname, NULL, &hints, &info);
+	if (err) {
+		LOG_DBG("Can't resolve hostname %s. err: %d. Trying secondary backup DNS.",
+			log_strdup(hostname), err);
+	} else {
+		return 0;
+	}
+
+	err = nrf_inet_pton(NRF_AF_INET, SECONDARY_DNS, &sec_dns);
+
+	if (err != 1) {
+		LOG_DBG("nrf_inet_pton failed. errno: %d", errno);
+		return -EIO;
+	}
+
+	err = nrf_setdnsaddr(NRF_AF_INET, &sec_dns, sizeof(sec_dns));
+
+	if (err) {
+		LOG_DBG("nrf_setdnsaddr failed. errno: %d", errno);
+		return -EIO;
+	}
+
+	err = nrf_getaddrinfo(hostname, NULL, &hints, &info);
+	if (err) {
+		LOG_DBG("Can't resolve hostname %s. err: %d", log_strdup(hostname), err);
+		return -EIO;
+	}
+
+	return 0;
+}
+
 /**@brief Finite state machine */
 static int fsm(struct zzhc *ctx)
 {
@@ -481,7 +560,8 @@ static int fsm(struct zzhc *ctx)
 		}
 
 		if (check_iccid(ctx) == 0 ||
-			check_simcard_whitelist(ctx) != 0) {
+		    check_simcard_whitelist(ctx) != 0 ||
+		    check_and_set_dns(ctx) != 0) {
 			ctx->state = STATE_END;
 		} else {
 			ctx->state = STATE_START;
