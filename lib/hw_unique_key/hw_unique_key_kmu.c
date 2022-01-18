@@ -71,8 +71,8 @@ void hw_unique_key_write(enum hw_unique_key_slot kmu_slot, const uint8_t *key)
 #endif
 
 	if (err != 0) {
-		HUK_PRINT("The HUK writing (%d) failed with error code: %d\n\r",
-			err, kmu_slot);
+		HUK_PRINT_VAL("The HUK writing to: ", kmu_slot);
+		HUK_PRINT_VAL("  failed with error code: ", err);
 		HUK_PANIC();
 	}
 }
