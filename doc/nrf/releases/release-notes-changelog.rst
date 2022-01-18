@@ -120,6 +120,7 @@ Bluetooth samples
   * :ref:`direct_test_mode` - Added support for front-end module devices that support 2-pin PA/LNA interface with additional support for the Skyworks SKY66114-11 and the Skyworks SKY66403-11.
   * :ref:`peripheral_hids_mouse` - Added a notice about encryption requirement.
   * :ref:`peripheral_hids_keyboard` - Added a notice about encryption requirement.
+  * :ref:`central_and_peripheral_hrs` - Clarified the "Requirements" section and fixed a link in the "Testing" section of the document.
 
 
 nRF9160 samples
