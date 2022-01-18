@@ -69,7 +69,7 @@ config BT_RX_STACK_SIZE
 
 # SYSTEM_WORKQUEUE_STACK_SIZE is declared in Zephyr and also here for a second
 # time, because Central side Bluetooth sample needs a different workqueue size
-# when Nordic BLE controller is used.
+# when the SoftDevice Controller is used.
 config SYSTEM_WORKQUEUE_STACK_SIZE
 	int
 	default 2048 if BT_LL_SOFTDEVICE
@@ -119,6 +119,16 @@ config BT_CTLR_SDC_PERIODIC_SYNC_BUFFER_COUNT
 	help
 	  The buffers are used for processing incoming packets
 	  and storing periodic advertising reports.
+
+# CONFIG_BT_CTLR_SYNC_PERIODIC_ADV_LIST_SIZE is declared in Zephyr and also
+# here for a second time, to set different range for the SoftDevice Controller.
+config BT_CTLR_SYNC_PERIODIC_ADV_LIST_SIZE
+	int "LE Periodic Advertiser List size"
+	range 0 8
+	default 0
+	help
+	  Set Periodic Advertiser List size, this will be return in the HCI LE
+	  Read Periodic Advertiser List Command.
 
 config BT_CTLR_SDC_RX_PRIO
 	# Hidden option to set the priority of the controller receive thread
