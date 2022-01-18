@@ -14,6 +14,9 @@
 /* Timeout for the discovery in ms */
 #define SERVICE_DISCOVERY_TIMEOUT 2000
 
+#define BT_UUID_EMPTY BT_UUID_DECLARE_16(0x1234)
+#define BT_UUID_EMPTY_CHR BT_UUID_DECLARE_16(0x1235)
+
 static char dummy_conn;
 K_SEM_DEFINE(discovery_finished, 0, 1);
 
@@ -36,12 +39,19 @@ const struct bt_gatt_attr discover_sim[] = {
 	BT_GATT_DISCOVER_MOCK_DESC(11, BT_UUID_HIDS_CTRL_POINT),
 
 	/* DIS */
-	BT_GATT_DISCOVER_MOCK_SERV(12, BT_UUID_DIS, 0xffff),
+	BT_GATT_DISCOVER_MOCK_SERV(12, BT_UUID_DIS, 16),
 	BT_GATT_DISCOVER_MOCK_CHRC(13, BT_UUID_DIS_MODEL_NUMBER, BT_GATT_CHRC_READ),
 	BT_GATT_DISCOVER_MOCK_DESC(14, BT_UUID_DIS_MODEL_NUMBER),
 
 	BT_GATT_DISCOVER_MOCK_CHRC(15, BT_UUID_DIS_MANUFACTURER_NAME, BT_GATT_CHRC_READ),
 	BT_GATT_DISCOVER_MOCK_DESC(16, BT_UUID_DIS_MANUFACTURER_NAME),
+
+	/* Empty Service */
+	BT_GATT_DISCOVER_MOCK_SERV(17, BT_UUID_EMPTY, 17),
+
+	/* Another instance of service with the same UUID, but with a single characteristic */
+	BT_GATT_DISCOVER_MOCK_SERV(18, BT_UUID_EMPTY, 0xffff),
+	BT_GATT_DISCOVER_MOCK_CHRC(19, BT_UUID_EMPTY_CHR, BT_GATT_CHRC_READ),
 };
 
 
@@ -366,6 +376,26 @@ void test_gatt_generic_serv(void)
 	serv_val  = bt_gatt_dm_attr_service_val(attr_serv);
 	zassert_true(!bt_uuid_cmp(BT_UUID_DIS, serv_val->uuid), "Invalid service detected");
 	zassert_equal(5,
+		      bt_gatt_dm_attr_cnt(dm),
+		      "Unexpected number of attributes detected: %d",
+		      bt_gatt_dm_attr_cnt(dm));
+
+	dm = run_dm_next(dm);
+	zassert_not_null(dm, "Device Manager pointer not set");
+	attr_serv = bt_gatt_dm_service_get(dm);
+	serv_val  = bt_gatt_dm_attr_service_val(attr_serv);
+	zassert_true(!bt_uuid_cmp(BT_UUID_EMPTY, serv_val->uuid), "Invalid service detected");
+	zassert_equal(1,
+		      bt_gatt_dm_attr_cnt(dm),
+		      "Unexpected number of attributes detected: %d",
+		      bt_gatt_dm_attr_cnt(dm));
+
+	dm = run_dm_next(dm);
+	zassert_not_null(dm, "Device Manager pointer not set");
+	attr_serv = bt_gatt_dm_service_get(dm);
+	serv_val  = bt_gatt_dm_attr_service_val(attr_serv);
+	zassert_true(!bt_uuid_cmp(BT_UUID_EMPTY, serv_val->uuid), "Invalid service detected");
+	zassert_equal(2,
 		      bt_gatt_dm_attr_cnt(dm),
 		      "Unexpected number of attributes detected: %d",
 		      bt_gatt_dm_attr_cnt(dm));
