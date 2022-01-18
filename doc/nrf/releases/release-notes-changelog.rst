@@ -325,6 +325,9 @@ Modem libraries
       The timestamp comes from the moment of scanning or neighbor measurements.
     * Removed dependency on the :ref:`lib_modem_jwt` library.
       The :ref:`lib_location` library now selects :kconfig:option:`CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT` when using :kconfig:option:`CONFIG_NRF_CLOUD_REST`.
+    * Added a new feature, obstructed satellite visibility detection for GNSS.
+      When this feature is enabled, the library tries to detect occurrences where getting a GNSS fix is unlikely or would consume a lot of energy.
+      When such an occurrence is detected, GNSS is stopped without waiting for a fix or a timeout.
 
   * :ref:`nrf_modem_lib_readme` library:
 
