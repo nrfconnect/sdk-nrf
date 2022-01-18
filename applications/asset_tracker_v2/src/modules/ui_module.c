@@ -26,6 +26,13 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_UI_MODULE_LOG_LEVEL);
 
+/* Define a custom STATIC macro that exposes internal variables when unit testing. */
+#if defined(CONFIG_UNITY)
+#define STATIC
+#else
+#define STATIC static
+#endif
+
 struct ui_msg_data {
 	union {
 		struct app_module_event app;
@@ -38,7 +45,7 @@ struct ui_msg_data {
 };
 
 /* UI module states. */
-static enum state_type {
+STATIC enum state_type {
 	STATE_INIT,
 	STATE_RUNNING,
 	STATE_LTE_CONNECTING,
@@ -49,13 +56,13 @@ static enum state_type {
 } state;
 
 /* UI module sub states. */
-static enum sub_state_type {
+STATIC enum sub_state_type {
 	SUB_STATE_ACTIVE,
 	SUB_STATE_PASSIVE,
 } sub_state;
 
 /* UI module sub-sub states. */
-static enum sub_sub_state_type {
+STATIC enum sub_sub_state_type {
 	SUB_SUB_STATE_GNSS_INACTIVE,
 	SUB_SUB_STATE_GNSS_ACTIVE
 } sub_sub_state;
@@ -67,7 +74,7 @@ static void led_pattern_update_work_fn(struct k_work *work);
 #define HOLD_FOREVER -1
 
 /* List of LED patterns supported in the UI module. */
-struct led_pattern {
+STATIC struct led_pattern {
 	/* Variable used to construct a linked list of led patterns. */
 	sys_snode_t header;
 	/* LED state. */
@@ -77,7 +84,7 @@ struct led_pattern {
 } led_pattern_list[LED_STATE_COUNT];
 
 /* Linked list used to schedule multiple LED pattern transitions. */
-static sys_slist_t pattern_transition_list = SYS_SLIST_STATIC_INIT(&pattern_transition_list);
+STATIC sys_slist_t pattern_transition_list = SYS_SLIST_STATIC_INIT(&pattern_transition_list);
 
 /* Delayed work that is used to display and transition to the correct LED pattern depending on the
  * internal state of the module.
@@ -349,7 +356,7 @@ static bool is_cloud_related_event(struct ui_msg_data *msg)
 }
 
 /* Function that clears LED pattern transition list. */
-static void transition_list_clear(void)
+STATIC void transition_list_clear(void)
 {
 	struct led_pattern *transition, *next_transition = NULL;
 
