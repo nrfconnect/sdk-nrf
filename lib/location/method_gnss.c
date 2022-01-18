@@ -62,12 +62,10 @@ BUILD_ASSERT(
 #define AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE 400
 #endif
 
-struct method_gnss_start_work_args {
-	struct k_work work_item;
-	struct location_gnss_config gnss_config;
-};
+#define VISIBILITY_DETECTION_EXEC_TIME CONFIG_LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_EXEC_TIME
+#define VISIBILITY_DETECTION_SAT_LIMIT CONFIG_LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_SAT_LIMIT
 
-static struct method_gnss_start_work_args method_gnss_start_work;
+static struct k_work method_gnss_start_work;
 static struct k_work method_gnss_pvt_work;
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
@@ -86,6 +84,7 @@ static struct gps_pgps_request pgps_request;
 #endif
 
 static bool running;
+static struct location_gnss_config gnss_config;
 static K_SEM_DEFINE(entered_psm_mode, 0, 1);
 static K_SEM_DEFINE(entered_rrc_idle, 0, 1);
 
@@ -441,7 +440,7 @@ int method_gnss_cancel(void)
 	running = false;
 
 	/* Cancel any work that has not been started yet */
-	(void)k_work_cancel(&method_gnss_start_work.work_item);
+	(void)k_work_cancel(&method_gnss_start_work);
 
 	/* If we are currently not in PSM, i.e., LTE is running, reset the semaphore to unblock
 	 * method_gnss_positioning_work_fn() and allow the ongoing location request to terminate.
@@ -558,11 +557,10 @@ static bool method_gnss_allowed_to_start(void)
 	return true;
 }
 
-static void method_gnss_print_pvt(const struct nrf_modem_gnss_pvt_data_frame *pvt_data)
+static uint8_t method_gnss_tracked_satellites(const struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 {
 	uint8_t tracked = 0;
 
-	/* Print number of tracked satellites */
 	for (uint32_t i = 0; i < NRF_MODEM_GNSS_MAX_SATELLITES; i++) {
 		if (pvt_data->sv[i].sv == 0) {
 			break;
@@ -571,8 +569,13 @@ static void method_gnss_print_pvt(const struct nrf_modem_gnss_pvt_data_frame *pv
 		tracked++;
 	}
 
+	return tracked;
+}
+
+static void method_gnss_print_pvt(const struct nrf_modem_gnss_pvt_data_frame *pvt_data)
+{
 	LOG_DBG("Tracked satellites: %d, fix valid: %s",
-		tracked,
+		method_gnss_tracked_satellites(pvt_data),
 		pvt_data->flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID ? "true" : "false");
 
 	/* Print details for each satellite */
@@ -632,6 +635,14 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 			method_gnss_cancel();
 			location_core_event_cb(&location_result);
 		}
+	} else if (gnss_config.visibility_detection) {
+		if (pvt_data.execution_time >= VISIBILITY_DETECTION_EXEC_TIME &&
+		    pvt_data.execution_time < (VISIBILITY_DETECTION_EXEC_TIME + MSEC_PER_SEC) &&
+		    method_gnss_tracked_satellites(&pvt_data) < VISIBILITY_DETECTION_SAT_LIMIT) {
+			LOG_DBG("GNSS visibility obstructed, canceling");
+			method_gnss_cancel();
+			location_core_event_cb_error();
+		}
 	}
 }
 
@@ -652,9 +663,6 @@ static void method_gnss_pgps_ext_work_fn(struct k_work *item)
 static void method_gnss_positioning_work_fn(struct k_work *work)
 {
 	int err = 0;
-	struct method_gnss_start_work_args *work_data =
-		CONTAINER_OF(work, struct method_gnss_start_work_args, work_item);
-	const struct location_gnss_config gnss_config = work_data->gnss_config;
 
 	if (!method_gnss_allowed_to_start()) {
 		/* Location request was cancelled while waiting for RRC idle or PSM. Do nothing. */
@@ -708,8 +716,9 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 
 int method_gnss_location_get(const struct location_method_config *config)
 {
-	const struct location_gnss_config gnss_config = config->gnss;
 	int err;
+
+	gnss_config = config->gnss;
 
 	/* GNSS event handler is already set once in method_gnss_init(). If no other thread is
 	 * using GNSS, setting it again is not needed.
@@ -747,8 +756,8 @@ int method_gnss_location_get(const struct location_method_config *config)
 	nrf_modem_gnss_start();
 	nrf_modem_gnss_stop();
 #endif
-	method_gnss_start_work.gnss_config = gnss_config;
-	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_start_work.work_item);
+
+	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_start_work);
 
 	running = true;
 
@@ -767,7 +776,7 @@ int method_gnss_init(void)
 	}
 
 	k_work_init(&method_gnss_pvt_work, method_gnss_pvt_work_fn);
-	k_work_init(&method_gnss_start_work.work_item, method_gnss_positioning_work_fn);
+	k_work_init(&method_gnss_start_work, method_gnss_positioning_work_fn);
 
 #if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
 	k_work_init(&method_gnss_agps_ext_work, method_gnss_agps_ext_work_fn);
