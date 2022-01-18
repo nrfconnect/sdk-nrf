@@ -15,6 +15,7 @@
 
 #include <caf/key_id.h>
 
+#include "fn_key_id.h"
 #include "fn_keys_def.h"
 
 #include <logging/log.h>

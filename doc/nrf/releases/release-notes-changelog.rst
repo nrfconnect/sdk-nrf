@@ -93,6 +93,7 @@ nRF Desktop
 * Updated:
 
    * Documentation and diagrams for the Bluetooth LE bond internal module.
+   * Moved Fn key related macros to an application specific header file (:file:`configuration/common/fn_key_id.h`).
 
 Samples
 =======
