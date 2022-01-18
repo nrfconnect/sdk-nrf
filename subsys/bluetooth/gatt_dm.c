@@ -290,9 +290,13 @@ static uint8_t discovery_process_service(struct bt_gatt_dm *dm,
 		return BT_GATT_ITER_STOP;
 	}
 
-	LOG_DBG("Service detected, handles range: <%u, %u>",
-		cur_attr->handle + 1,
-		service_val->end_handle);
+	if (cur_attr->handle == service_val->end_handle) {
+		LOG_DBG("Empty service detected with handle: %u", cur_attr->handle);
+	} else {
+		LOG_DBG("Service detected, handles range: <%u, %u>",
+			cur_attr->handle + 1,
+			service_val->end_handle);
+	}
 
 	struct bt_gatt_service_val *cur_service_val =
 		bt_gatt_dm_attr_service_val(cur_attr);
@@ -309,15 +313,17 @@ static uint8_t discovery_process_service(struct bt_gatt_dm *dm,
 		return BT_GATT_ITER_STOP;
 	}
 
+	dm->discover_params.end_handle = cur_service_val->end_handle;
+
 	if (cur_attr->handle == cur_service_val->end_handle) {
 		/* No characteristics to discover, go to next service. */
-		return BT_GATT_ITER_CONTINUE;
+		discovery_complete(dm);
+		return BT_GATT_ITER_STOP;
 	}
 
 	dm->discover_params.uuid         = NULL;
 	dm->discover_params.type         = BT_GATT_DISCOVER_ATTRIBUTE;
 	dm->discover_params.start_handle = cur_attr->handle + 1;
-	dm->discover_params.end_handle   = cur_service_val->end_handle;
 	LOG_DBG("Starting descriptors discovery");
 	err = bt_gatt_discover(dm->conn, &(dm->discover_params));
 

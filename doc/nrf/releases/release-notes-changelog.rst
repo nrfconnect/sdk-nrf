@@ -87,7 +87,9 @@ This section provides detailed lists of changes by :ref:`library <libraries>`.
 Bluetooth libraries and services
 --------------------------------
 
-|no_changes_yet_note|
+* :ref:`gatt_dm_readme` library:
+
+  * Fixed discovery of empty services.
 
 sdk-nrfxlib
 -----------
