@@ -86,11 +86,11 @@ enum gzp_event_type {
 };
 
 /* GZP event information */
-struct __packed gzp_event_info {
+struct gzp_event_info {
 	enum gzp_event_type event_type;
 
 	union {
-		struct __packed {
+		struct {
 			uint32_t pipe;
 			nrf_gzll_device_tx_info_t info;
 		} tx;
