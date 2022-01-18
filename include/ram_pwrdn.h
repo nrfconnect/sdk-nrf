@@ -14,7 +14,7 @@
 /**
  * @defgroup ram_pwrdn RAM Power Down
  * @{
- * @brief Module for disabling unused sections of RAM.
+ * @brief Module for powering on and off RAM sections.
  *
  */
 
@@ -22,9 +22,29 @@
 extern "C" {
 #endif
 
-/** Request powering down unused RAM sections.
+/**
+ * @brief Request powering down RAM sections for the given address range.
  *
- * Not all devices support this feature.
+ * Power down RAM sections which fully fall within the given address range.
+ */
+void power_down_ram(uintptr_t start_address, uintptr_t end_address);
+
+/**
+ * @brief Request powering up RAM sections for the given address range.
+ *
+ * Power up RAM sections which overlap with the given address range.
+ */
+void power_up_ram(uintptr_t start_address, uintptr_t end_address);
+
+/**
+ * @brief Request powering down unused RAM sections.
+ *
+ * Power down RAM sections which are not used by the application image.
+ *
+ * @note
+ * Some libc implementations use the memory area following the application
+ * image for heap. If this is the case and the application relies on dynamic
+ * memory allocations, this function should not be used.
  */
 void power_down_unused_ram(void);
 
