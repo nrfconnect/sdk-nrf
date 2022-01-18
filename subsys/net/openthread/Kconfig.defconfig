@@ -54,6 +54,14 @@ choice OPENTHREAD_SECURITY
 	default OPENTHREAD_NRF_SECURITY_CHOICE
 endchoice
 
+config MBEDTLS_SSL_PROTO_DTLS
+	bool
+	default y
+
+config MBEDTLS_ENTROPY_C
+	bool
+	default y
+
 config MBEDTLS_CIPHER_MODE_CBC
 	bool
 	default n
