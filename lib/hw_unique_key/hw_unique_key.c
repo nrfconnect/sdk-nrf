@@ -29,7 +29,7 @@ void hw_unique_key_write_random(void)
 	err = nrf_cc3xx_platform_ctr_drbg_init(&ctx, pers_str, sizeof(pers_str) - 1);
 
 	if (err != 0) {
-		HUK_PRINT("The RNG setup failed with error code: %d\n\r", err);
+		HUK_PRINT_VAL("The RNG setup failed with error code: ", err);
 		HUK_PANIC();
 	}
 
@@ -38,12 +38,12 @@ void hw_unique_key_write_random(void)
 	err2 = nrf_cc3xx_platform_ctr_drbg_free(&ctx);
 
 	if (err != 0 || olen != sizeof(rand_bytes)) {
-		HUK_PRINT("The RNG call failed with error code: %d\n\r", err);
+		HUK_PRINT_VAL("The RNG call failed with error code: ", err);
 		HUK_PANIC();
 	}
 
 	if (err2 != 0) {
-		HUK_PRINT("Could not free nrf_cc3xx_platform_ctr_drbg context: %d\n\r", err2);
+		HUK_PRINT_VAL("Could not free nrf_cc3xx_platform_ctr_drbg context: ", err2);
 	}
 
 	for (int i = 0; i < ARRAY_SIZE(huk_slots); i++) {

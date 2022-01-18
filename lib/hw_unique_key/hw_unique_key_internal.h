@@ -13,13 +13,15 @@
 #ifdef __ZEPHYR__
 #include <sys/printk.h>
 #include <kernel.h>
-#define HUK_PRINT printk
+#define HUK_PRINT(msg) printk(msg)
+#define HUK_PRINT_VAL(msg, val) printk(msg, val)
 #define HUK_PANIC k_panic
 
 #elif defined(__NRF_TFM__)
-#include "log/tfm_log.h"
+#include "tfm_spm_log.h"
 #include "utilities.h"
-#define HUK_PRINT LOG_MSG
+#define HUK_PRINT(msg) SPMLOG_DBGMSG(msg)
+#define HUK_PRINT_VAL(msg, val) SPMLOG_DBGMSGVAL(msg, val)
 #define HUK_PANIC tfm_core_panic
 
 #else

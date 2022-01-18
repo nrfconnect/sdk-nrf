@@ -28,13 +28,10 @@
 #define TFM_KEY_LEN_BYTES  16
 #endif
 
-extern const psa_ecc_family_t initial_attestation_curve_type;
-extern const uint8_t  initial_attestation_private_key[];
-extern const uint32_t initial_attestation_private_key_size;
-
-enum tfm_plat_err_t tfm_plat_get_huk_derived_key(const uint8_t *label,
-		size_t label_size, const uint8_t *context, size_t context_size,
-		uint8_t *key, size_t key_size)
+enum tfm_plat_err_t
+tfm_plat_get_huk_derived_key(const uint8_t *label, size_t label_size,
+			     const uint8_t *context, size_t context_size,
+			     uint8_t *key, size_t key_size)
 {
 	if (key_size > TFM_KEY_LEN_BYTES) {
 		return TFM_PLAT_ERR_INVALID_INPUT;
@@ -51,40 +48,33 @@ enum tfm_plat_err_t tfm_plat_get_huk_derived_key(const uint8_t *label,
 
 enum tfm_plat_err_t
 tfm_plat_get_initial_attest_key(uint8_t *key_buf, uint32_t size,
-		struct ecc_key_t *ecc_key, psa_ecc_family_t *curve_type)
+				struct ecc_key_t *ecc_key,
+				psa_ecc_family_t *curve_type)
 {
-	uint8_t *key_dst;
-	const uint8_t *key_src;
-	uint32_t key_size;
-	uint32_t full_key_size = initial_attestation_private_key_size;
 	uint8_t key_label[] = "tfm_initial_attest_key";
 	int err;
 
-	if (size < full_key_size) {
+	if (size < 32) {
 		return TFM_PLAT_ERR_INVALID_INPUT;
 	}
 
-	/* Set the EC curve type which the key belongs to */
-	*curve_type = initial_attestation_curve_type;
-
-	/* Copy the private key to the buffer, it MUST be present */
-	key_dst  = key_buf;
-	key_src  = initial_attestation_private_key;
-	key_size = initial_attestation_private_key_size;
-
 	err  = hw_unique_key_derive_key(HUK_KEYSLOT_MKEK, NULL, 0,
-			key_label, sizeof(key_label) - 1, key_dst, key_size);
+					key_label, sizeof(key_label) - 1,
+					key_buf, size);
 	if (err) {
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
 
-	ecc_key->priv_key = key_dst;
-	ecc_key->priv_key_size = key_size;
+	ecc_key->priv_key = key_buf;
+	ecc_key->priv_key_size = size;
 
 	ecc_key->pubx_key = NULL;
 	ecc_key->pubx_key_size = 0;
 	ecc_key->puby_key = NULL;
 	ecc_key->puby_key_size = 0;
+
+	/* Set the EC curve type which the key belongs to */
+	*curve_type = PSA_ECC_FAMILY_SECP_R1;
 
 	return TFM_PLAT_ERR_SUCCESS;
 }
