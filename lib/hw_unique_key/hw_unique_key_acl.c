@@ -73,14 +73,14 @@ void hw_unique_key_load_kdr(void)
 	err = nrf_cc3xx_platform_kdr_load_key((uint8_t *)huk_addr +
 					      sizeof(huk_magic));
 	if (err != 0) {
-		HUK_PRINT("The HUK loading failed with error code: %d\n\r", err);
+		HUK_PRINT_VAL("The HUK loading failed with error code: ", err);
 		HUK_PANIC();
 	}
 
 	/* Lock the flash page which holds the key */
 	err = fprotect_area_no_access(huk_addr, CONFIG_FPROTECT_BLOCK_SIZE);
 	if (err != 0) {
-		HUK_PRINT("Fprotect failed with error code: %d\n\r", err);
+		HUK_PRINT_VAL("Fprotect failed with error code: ", err);
 		HUK_PANIC();
 	}
 }
