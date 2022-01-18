@@ -33,24 +33,20 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf21540dk_nrf52840
 
-Bluetooth® LE Central Role only:
+To test just the Bluetooth® LE Central Role operation, you need one of the following setups:
 
-  The sample requires a smartphone or a tablet running a compatible application.
+  * A smartphone or a tablet running a compatible application.
+  * Another development kit running the :ref:`zephyr:peripheral_hr` sample.
+    See the documentation for that sample for detailed instructions.
 
-  You can test the application with the :ref:`zephyr:peripheral_hr` sample.
-  See the documentation for that sample for detailed instructions.
+To test the Relay mode operation, you need one of the following setups:
 
-Relay mode:
+  * A smartphone or a tablet running a compatible application.
+  * Two additional development kits running :ref:`zephyr:bluetooth_central_hr` and :ref:`zephyr:peripheral_hr` samples.
 
-  The sample requires a smartphone or a tablet running a compatible application.
-
-  You can test the application with the :ref:`zephyr:bluetooth_central_hr` and :ref:`zephyr:peripheral_hr` samples.
-  You need additional two development kits for testing with these two samples.
-
-
-  You can also mix devices for this sample.
-  For an echo test, you only need one additional device.
-  For example, you can use a smartphone providing the HRS functionality and a development kit running the :ref:`zephyr:bluetooth_central_hr` sample.
+You can also mix devices when testing this sample.
+For a simple echo test, you only need one additional device.
+Alternatively, you can use a smartphone providing the HRS functionality and a development kit running the :ref:`zephyr:bluetooth_central_hr` sample.
 
 User interface
 **************
@@ -76,7 +72,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, you can test it either by connecting to other development kits that are running the :ref:`peripheral_hids_keyboard` sample, or by using the `nRF Connect for Desktop`_ **Bluetooth Low Energy** application that emulates a HRS server.
+After programming the sample to your development kit, test it either by connecting to other development kits that are running the :ref:`zephyr:peripheral_hr` sample, or by using the `nRF Connect for Desktop`_ **Bluetooth Low Energy** application that emulates an HRS server.
 
 Testing with other development kits
 -----------------------------------
