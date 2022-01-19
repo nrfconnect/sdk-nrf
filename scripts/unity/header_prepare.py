@@ -7,6 +7,7 @@
 import re
 import argparse
 
+# Tests for validating the regexes are located tests/unity/wrap
 
 def header_prepare(in_file, out_file, out_wrap_file):
     with open(in_file) as f_in:

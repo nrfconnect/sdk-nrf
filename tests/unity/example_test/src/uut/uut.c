@@ -24,7 +24,5 @@ int uut_init(void *handle)
 		return err;
 	}
 
-	foo_syscall();
-
-	return foo_execute() + foo_execute2() + foo_execute3();
+	return foo_execute();
 }

@@ -11,3 +11,8 @@ int foo_init(void *handle)
 	/* This implementation will be wrapped and mocked. */
 	return 0;
 }
+
+int foo_execute(void)
+{
+	return 0;
+}
