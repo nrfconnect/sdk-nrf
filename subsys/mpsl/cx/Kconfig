@@ -51,6 +51,14 @@ config MPSL_CX_BT_1WIRE
 	  Radio Coexistence interface implementation using a simple 1-wire PTA
 	  implementation for co-located radios.
 
+config MPSL_CX_GENERIC_3PIN
+	select NRFX_GPIOTE
+	select GPIO
+	bool "Generic 3-pin Radio Coexistence support [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	  Radio Coexistence supporting Generic 3-pin interface.
+
 endchoice # MPSL_CX_CHOICE
 
 endif	# MPSL_CX
