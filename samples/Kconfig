@@ -90,3 +90,6 @@ config LOG_DEFAULT_LEVEL
 	default 1 if NCS_SAMPLES_DEFAULTS
 
 endif # LOG
+
+config NCS_IS_VARIANT_IMAGE
+	bool "Image is a variant build of another image [READ ONLY]"
