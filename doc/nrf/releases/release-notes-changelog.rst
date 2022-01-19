@@ -319,6 +319,10 @@ Modem libraries
     * Removed dependency on the :ref:`lib_modem_jwt` library.
       The :ref:`lib_location` library now selects :kconfig:option:`CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT` when using :kconfig:option:`CONFIG_NRF_CLOUD_REST`.
 
+  * :ref:`nrf_modem_lib_readme` library:
+
+    * Added :c:macro:`NRF_MODEM_LIB_ON_INIT` macro for compile-time registration of callbacks on modem initialization.
+    * Added :c:macro:`NRF_MODEM_LIB_ON_SHUTDOWN` macro for compile-time registration of callbacks on modem de-initialization.
 
 Libraries for networking
 ------------------------

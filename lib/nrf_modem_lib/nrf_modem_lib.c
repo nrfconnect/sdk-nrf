@@ -7,10 +7,12 @@
 #include <init.h>
 #include <device.h>
 #include <zephyr.h>
-#include <zephyr/types.h>
 #include <nrfx_ipc.h>
 #include <nrf_modem.h>
 #include <nrf_modem_platform.h>
+#include <modem/nrf_modem_lib.h>
+#include <toolchain/common.h>
+#include <logging/log.h>
 #include <pm_config.h>
 
 #ifdef CONFIG_LTE_LINK_CONTROL
@@ -21,6 +23,8 @@
 #error  nrf_modem_lib must be run as non-secure firmware.\
 	Are you building for the correct board ?
 #endif
+
+LOG_MODULE_DECLARE(nrf_modem_lib);
 
 struct shutdown_thread {
 	sys_snode_t node;
@@ -83,6 +87,12 @@ static int _nrf_modem_lib_init(const struct device *unused)
 	}
 	k_mutex_unlock(&slist_mutex);
 
+	LOG_DBG("Modem library has initialized, ret %d", init_ret);
+	STRUCT_SECTION_FOREACH(nrf_modem_lib_init_cb, e) {
+		LOG_DBG("Modem init callback: %p", e->callback);
+		e->callback(init_ret, e->context);
+	}
+
 	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_SYS_INIT)) {
 		/* nrf_modem_init() returns values from a different namespace
 		 * than Zephyr's. Make sure to return something in Zephyr's
@@ -131,6 +141,12 @@ int nrf_modem_lib_shutdown(void)
 #ifdef CONFIG_LTE_LINK_CONTROL
 	lte_lc_deinit();
 #endif
+	LOG_DBG("Shutting down modem library");
+	STRUCT_SECTION_FOREACH(nrf_modem_lib_shutdown_cb, e) {
+		LOG_DBG("Modem shutdown callback: %p", e->callback);
+		e->callback(e->context);
+	}
+
 	nrf_modem_shutdown();
 
 	return 0;
