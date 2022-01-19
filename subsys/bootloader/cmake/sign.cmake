@@ -68,11 +68,6 @@ endif()
 
 if (CONFIG_BUILD_S1_VARIANT)
   list(APPEND slots s1_image)
-
-  # Only add extra dependency if s1 image is not 'app'.
-  if (NOT CONFIG_S1_VARIANT_IMAGE_NAME STREQUAL "app")
-    set(s1_image_is_from_child_image ${CONFIG_S1_VARIANT_IMAGE_NAME})
-  endif ()
 endif ()
 
 if (NOT "${CONFIG_SB_VALIDATION_INFO_CRYPTO_ID}" EQUAL "1")
@@ -84,14 +79,20 @@ foreach (slot ${slots})
   set(signed_hex ${PROJECT_BINARY_DIR}/signed_by_b0_${slot}.hex)
   set(signed_bin ${PROJECT_BINARY_DIR}/signed_by_b0_${slot}.bin)
 
-  set(sign_depends ${PROJECT_BINARY_DIR}/${slot}.hex ${SIGN_KEY_FILE_DEPENDS})
-  if(DEFINED ${slot}_is_from_child_image)
-    list(APPEND sign_depends ${${slot}_is_from_child_image}_subimage)
+  if (${slot} STREQUAL "s1_image")
+    # The s1_image slot is built as a child image, add the dependency and
+    # path to its hex file accordingly. We cannot use the shared variables
+    # from the s1 child image since its configure stage might not have executed
+    # yet.
+    set(slot_hex ${CMAKE_BINARY_DIR}/s1_image/zephyr/zephyr.hex)
+    set(sign_depends s1_image_subimage)
   else()
-    list(APPEND sign_depends ${slot}_hex)
+    set(slot_hex ${PROJECT_BINARY_DIR}/${slot}.hex)
+    set(sign_depends ${slot}_hex)
   endif()
+  list(APPEND sign_depends ${slot_hex} ${SIGN_KEY_FILE_DEPENDS})
 
-  set(to_sign ${PROJECT_BINARY_DIR}/${slot}.hex)
+  set(to_sign ${slot_hex})
   set(hash_file ${GENERATED_PATH}/${slot}_firmware.sha256)
   set(signature_file ${GENERATED_PATH}/${slot}_firmware.signature)
 
