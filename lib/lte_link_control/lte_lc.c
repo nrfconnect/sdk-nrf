@@ -538,7 +538,8 @@ static int init_and_config(void)
 	int err;
 
 	if (is_initialized) {
-		return -EALREADY;
+		LOG_DBG("The library is already initialized and configured");
+		return 0;
 	}
 
 	k_sem_init(&link, 0, 1);
@@ -709,11 +710,7 @@ int lte_lc_init(void)
 {
 	int err = init_and_config();
 
-	if ((err == 0) || (err == -EALREADY)) {
-		return err;
-	}
-
-	return -EFAULT;
+	return err ? -EFAULT : 0;
 }
 
 void lte_lc_register_handler(lte_lc_evt_handler_t handler)
@@ -771,7 +768,7 @@ int lte_lc_init_and_connect_async(lte_lc_evt_handler_t handler)
 
 	err = init_and_config();
 	if (err) {
-		return err;
+		return -EFAULT;
 	}
 
 	return lte_lc_connect_async(handler);
