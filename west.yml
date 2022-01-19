@@ -104,7 +104,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: cadb5102a7ffa9b188960fa3f83a7b2e4351c2bf
+      revision: pull/623/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tfm
@@ -124,10 +124,7 @@ manifest:
           path: third_party/nlassert/repo
         - name: pigweed
           path: third_party/pigweed/repo
-    - name: nrf-802154
-      repo-path: sdk-nrf-802154
-      path: nrf-802154
-      revision: 453044a0e97ec2c8fa2d6d0135a093cbc5362eb2
+    - ff9fd2c1aea703ba0f31d9f9474190f962634f3
       groups:
       - nrf-802154
     - name: cjson
