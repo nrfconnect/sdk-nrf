@@ -298,13 +298,15 @@ MCUboot is added to its boot chain by including the ``CONFIG_BOOTLOADER_MCUBOOT`
 |how_to_configure|
 
 MCUboot can use the cryptographic functionality exposed by the immutable bootloader, reducing the flash memory usage for MCUboot to less than 16 kB.
-To enable this configuration, apply the :file:`overlay-minimal-external-crypto.conf` Kconfig fragment file for the MCUboot image:
+To enable this configuration, apply both the :file:`prj_minimal.conf` Kconfig project file and the :file:`external_crypto.conf` kconfig fragment for the MCUboot image:
 
 .. code-block::
 
    west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- \
    -DCONFIG_BOOTLOADER_MCUBOOT=y \
-   -Dmcuboot_OVERLAY_CONFIG=overlay-minimal-external-crypto.conf
+   -DCONFIG_SECURE_BOOT=y \
+   -Dmcuboot_CONF_FILE=prj_minimal.conf \
+   -Dmcuboot_OVERLAY_CONFIG=external_crypto.conf
 
 See :ref:`ug_bootloader_config` for more information about using Kconfig fragments with bootloaders.
 
