@@ -9,6 +9,16 @@
 # booted by B0, and set the required properties for that image to be
 # bootable by B0.
 
+if (CONFIG_NCS_IS_VARIANT_IMAGE)
+  # When building the a variant of an image, the configuration of the variant image
+  # is identical to the base image, except 'CONFIG_NCS_IS_VARIANT_IMAGE'. This file is
+  # included if 'CONFIG_SECURE_BOOT' is set, which can be the case for the base
+  # image. However, the logic in this file should only be performed once, for
+  # the base image, not for the variant variant. Hence, we have this check to avoid
+  # execution of this file for the variant image.
+    return()
+endif()
+
 if (CONFIG_BOOTLOADER_MCUBOOT)
   set(image_to_boot mcuboot)
 
