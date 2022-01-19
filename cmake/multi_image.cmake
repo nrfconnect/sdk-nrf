@@ -239,15 +239,18 @@ function(add_child_image_from_source)
       )
   endforeach()
 
+  set(preload_file ${CMAKE_BINARY_DIR}/${ACI_NAME}/child_image_preload.cmake)
+  file(WRITE ${preload_file} "# Generated file used for preloading a child image\n")
+
   unset(image_cmake_args)
   list(REMOVE_DUPLICATES SHARED_MULTI_IMAGE_VARIABLES)
   foreach(shared_var ${SHARED_MULTI_IMAGE_VARIABLES})
     if(DEFINED ${shared_var})
-      # Any  shared var that is a list must be escaped to ensure correct behaviour.
-      string(REPLACE \; \\\\\; val "${${shared_var}}")
-      list(APPEND image_cmake_args
-        -D${shared_var}=${val}
-        )
+        file(
+          APPEND
+          ${preload_file}
+          "set(${shared_var} ${${shared_var}} CACHE INTERNAL \"NCS child image controlled\")\n"
+          )
     endif()
   endforeach()
 
@@ -268,15 +271,10 @@ function(add_child_image_from_source)
     # '_'. We run the regex twice because it is believed that
     # list(FILTER is faster than doing a string(REGEX on each item.
     string(REGEX MATCH "^${ACI_NAME}_(.+)" unused_out_var ${var_name})
-
-    # When we try to pass a list on to the child image, like
-    # -DCONF_FILE=a.conf;b.conf, we will get into trouble because ; is
-    # a special character, so we escape it (mucho) to get the expected
-    # behaviour.
-    string(REPLACE \; \\\\\; val "${${var_name}}")
-
-    list(APPEND image_cmake_args
-      -D${CMAKE_MATCH_1}=${val}
+    file(
+      APPEND
+      ${preload_file}
+      "set(${CMAKE_MATCH_1} ${${var_name}} CACHE INTERNAL \"NCS child image controlled\")\n"
       )
   endforeach()
 
@@ -286,7 +284,7 @@ function(add_child_image_from_source)
     -G${CMAKE_GENERATOR}
     ${EXTRA_MULTI_IMAGE_CMAKE_ARGS} # E.g. --trace-expand
     -DIMAGE_NAME=${ACI_NAME}
-    ${image_cmake_args}
+    -C ${preload_file}
     ${ACI_SOURCE_DIR}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${ACI_NAME}
     RESULT_VARIABLE ret
