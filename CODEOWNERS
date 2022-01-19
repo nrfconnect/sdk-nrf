@@ -168,6 +168,8 @@ Kconfig*                                  @tejlmand
 /subsys/fw_info/                          @hakonfam
 /subsys/gazell/                           @leewkb4567
 /subsys/mpsl/                             @rugeGerritsen
+/subsys/mpsl/cx/                          @jciupis @martintv
+/subsys/mpsl/fem/                         @jciupis @martintv
 /subsys/net/                              @rlubos
 /subsys/net/lib/azure_*                   @jtguggedal @simensrostad @coderbyheart
 /subsys/net/lib/ftp_client/               @junqingzou
