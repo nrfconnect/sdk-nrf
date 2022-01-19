@@ -6,7 +6,7 @@
 
  #include <ztest.h>
  #include <tfm_ns_interface.h>
- #include <tfm/tfm_ioctl_api.h>
+ #include <tfm_ioctl_api.h>
  #include <pm_config.h>
 
  #include <hal/nrf_gpio.h>
