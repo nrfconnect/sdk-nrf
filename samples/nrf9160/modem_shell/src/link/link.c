@@ -606,9 +606,6 @@ int link_func_mode_set(enum lte_lc_func_mode fun, bool rel14_used)
 			 * subscribed there also nowadays?
 			 */
 			return_value = lte_lc_init_and_connect_async(link_ind_handler);
-			if (return_value == -EALREADY) {
-				return_value = lte_lc_connect_async(link_ind_handler);
-			}
 		}
 		break;
 	case LTE_LC_FUNC_MODE_DEACTIVATE_LTE:

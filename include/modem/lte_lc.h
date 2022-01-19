@@ -792,11 +792,10 @@ int lte_lc_deregister_handler(lte_lc_evt_handler_t handler);
  *
  * @note a follow-up call to lte_lc_connect() or lte_lc_connect_async() must be
  *	 made to establish an LTE connection. The module can be initialized
- *	 only once, and subsequent calls will return -EALREADY.
+ *	 only once, and subsequent calls will return 0.
  *
  * @retval 0 if successful.
  * @retval -EFAULT if an AT command failed.
- * @retval -EALREADY if the library has already been initialized.
  */
 int lte_lc_init(void);
 
@@ -821,11 +820,10 @@ int lte_lc_connect(void);
  *	   the connection attempt times out.
  *
  * @note The module can be initialized only once, and repeated calls will
- *	 return -EALREADY. lte_lc_connect_async() should be used on subsequent
+ *	 return 0. lte_lc_connect_async() should be used on subsequent
  *	 calls.
  *
  * @retval 0 if successful.
- * @retval -EALREADY if the library has already been initialized.
  * @retval -EFAULT if an AT command failed.
  * @retval -ETIMEDOUT if a connection attempt timed out before the device was
  *	   registered to a network.
@@ -849,13 +847,12 @@ int lte_lc_connect_async(lte_lc_evt_handler_t handler);
  *	   network. Non-blocking.
  *
  * @note The module can be initialized only once, and repeated calls will
- *	 return -EALREADY. lte_lc_connect() should be used on subsequent calls.
+ *	 return 0. lte_lc_connect() should be used on subsequent calls.
  *
  * @param handler Event handler for receiving LTE events. The parameter can be
  *		  NULL if an event handler is already registered.
  *
  * @retval 0 if successful.
- * @retval -EALREADY if the library has already been initialized.
  * @retval -EFAULT if an AT command failed.
  * @retval -EINVAL if no event handler was registered.
  */
