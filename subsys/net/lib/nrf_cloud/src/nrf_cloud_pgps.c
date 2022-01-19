@@ -371,9 +371,19 @@ static void discard_oldest_predictions(int num)
 	npgps_print_blocks();
 
 	/* update index and header for new first stored prediction */
+	uint16_t gps_day;
+	uint32_t gps_time_of_day;
+
 	get_prediction_day_time(last, &index.start_sec,
-				&index.header.gps_day,
-				&index.header.gps_time_of_day);
+				&gps_day,
+				&gps_time_of_day);
+
+	/* gps_day and time_of_day are packed members of a struct. To
+	 * avoid an unaligned pointer we use intermediate variables.
+	 */
+	index.header.gps_day = gps_day;
+	index.header.gps_time_of_day = gps_time_of_day;
+
 	LOG_DBG("updated index to gps_sec:%d, day:%u, time:%u",
 		(int32_t)index.start_sec, index.header.gps_day,
 		index.header.gps_time_of_day);
