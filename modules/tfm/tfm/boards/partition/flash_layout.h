@@ -141,11 +141,12 @@
 /* Dedicated flash area for PS */
 #define TFM_HAL_PS_FLASH_AREA_SIZE     FLASH_PS_AREA_SIZE
 #define PS_RAM_FS_SIZE                 FLASH_AREA_IMAGE_SECTOR_SIZE
+#endif /* FLASH_PS_AREA_OFFSET */
+
 /* Number of PS_SECTOR_SIZE per block */
 #define TFM_HAL_PS_SECTORS_PER_BLOCK   (0x1)
 /* Specifies the smallest flash programmable unit in bytes */
 #define TFM_HAL_PS_PROGRAM_UNIT        (0x4)
-#endif /* FLASH_PS_AREA_OFFSET */
 
 /* Internal Trusted Storage (ITS) Service definitions
  * Note: Further documentation of these definitions can be found in the
@@ -171,9 +172,8 @@
 #define TFM_OTP_NV_COUNTERS_AREA_SIZE   (FLASH_OTP_NV_COUNTERS_AREA_SIZE / 2)
 #define TFM_OTP_NV_COUNTERS_AREA_ADDR   FLASH_OTP_NV_COUNTERS_AREA_OFFSET
 #define TFM_OTP_NV_COUNTERS_SECTOR_SIZE FLASH_OTP_NV_COUNTERS_SECTOR_SIZE
-#define TFM_OTP_NV_COUNTERS_BACKUP_AREA_ADDR \
-	(TFM_OTP_NV_COUNTERS_AREA_ADDR           \
-	 TFM_OTP_NV_COUNTERS_AREA_SIZE)
+#define TFM_OTP_NV_COUNTERS_BACKUP_AREA_ADDR (TFM_OTP_NV_COUNTERS_AREA_ADDR + \
+					      TFM_OTP_NV_COUNTERS_AREA_SIZE)
 
 /* Use Flash memory to store Code data */
 #define FLASH_BASE_ADDRESS (0x00000000)
