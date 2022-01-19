@@ -218,6 +218,7 @@ Modem libraries
 * :ref:`at_monitor_readme` library:
 
   * Introduced AT_MONITOR_ISR macro to monitor AT notifications in an interrupt service routine.
+  * Removed :c:func:`at_monitor_init` function and :kconfig:`CONFIG_AT_MONITOR_SYS_INIT` option. The library now initializes automatically when enabled.
 
 * :ref:`at_cmd_parser_readme` library:
 

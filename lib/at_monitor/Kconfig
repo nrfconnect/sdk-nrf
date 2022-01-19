@@ -9,11 +9,6 @@ menuconfig AT_MONITOR
 
 if AT_MONITOR
 
-config AT_MONITOR_SYS_INIT
-	bool "Initialize during SYS_INIT"
-	depends on NRF_MODEM_LIB_SYS_INIT
-	default y
-
 config AT_MONITOR_HEAP_SIZE
 	int "Heap size for notifications"
 	range 64 2048

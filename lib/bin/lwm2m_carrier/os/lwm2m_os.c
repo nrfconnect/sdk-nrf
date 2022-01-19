@@ -384,8 +384,6 @@ int lwm2m_os_at_init(void)
 		return -EIO;
 	}
 
-	at_monitor_init();
-
 	return 0;
 }
 

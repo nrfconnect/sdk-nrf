@@ -100,12 +100,5 @@ static int at_monitor_sys_init(const struct device *unused)
 	return 0;
 }
 
-#if defined(CONFIG_AT_MONITOR_SYS_INIT)
 /* Initialize during SYS_INIT */
 SYS_INIT(at_monitor_sys_init, APPLICATION, 0);
-#endif
-
-void at_monitor_init(void)
-{
-	at_monitor_sys_init(NULL);
-}
