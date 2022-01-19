@@ -519,14 +519,14 @@ static int lna_configure(void)
 
 	/* Make sure the AT command is not empty. */
 	if (xmagpio_command[0] != '\0') {
-		err = nrf_modem_at_printf(xmagpio_command);
+		err = nrf_modem_at_printf("%s", xmagpio_command);
 		if (err) {
 			return err;
 		}
 	}
 
 	if (xcoex0_command[0] != '\0') {
-		err = nrf_modem_at_printf(xcoex0_command);
+		err = nrf_modem_at_printf("%s", xcoex0_command);
 		if (err) {
 			return err;
 		}
