@@ -23,6 +23,10 @@ The library wrapper eases the task of initializing the Modem library by automati
 :ref:`partition_manager` is the component that reserves the RAM memory for the shared memory regions used by the Modem library.
 For more information, see :ref:`partition_mgr_integration`.
 
+The library wrapper also provides callbacks for the initialization and shutdown operations.
+The application can setup a callback for :c:func:`nrf_modem_lib_init` calls using the :c:macro:`NRF_MODEM_LIB_ON_INIT` macro, and a callback for :c:func:`nrf_modem_lib_shutdown` calls using the :c:macro:`NRF_MODEM_LIB_ON_SHUTDOWN` macro.
+These compile-time callbacks allow any part of the application to perform any setup steps that require the modem to be a certain state. Futher, they ensure that said steps will be repeated any time another part of the application turns the modem on or off.
+
 The library wrapper can also initialize the Modem library during system initialization using :c:macro:`SYS_INIT`.
 The :kconfig:`CONFIG_NRF_MODEM_LIB_SYS_INIT` Kconfig option can be used to control the initialization.
 Some libraries in |NCS|, such as the :ref:`lte_lc_readme` have similar configuration options to initialize during system initialization and these options depend on the configuration option of the integration layer.

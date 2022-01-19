@@ -18,6 +18,7 @@
 extern "C" {
 #endif
 
+#include <zephyr.h>
 #include <nrf_modem.h>
 
 /**
@@ -46,6 +47,42 @@ extern "C" {
  * @return int Zero on success, non-zero otherwise.
  */
 int nrf_modem_lib_init(enum nrf_modem_mode_t mode);
+
+/**
+ * @brief Modem library initialization callback.
+ */
+struct nrf_modem_lib_init_cb {
+	void (*callback)(int ret, void *ctx);
+	void *context;
+};
+
+/**
+ * @brief Modem library shutdown callback.
+ */
+struct nrf_modem_lib_shutdown_cb {
+	void (*callback)(void *ctx);
+	void *context;
+};
+
+/**
+ * @brief Define a callback for @ref nrf_modem_lib_init calls.
+ */
+#define NRF_MODEM_LIB_ON_INIT(name, _callback, _context)                                           \
+	static void _callback(int ret, void *ctx);                                                 \
+	STRUCT_SECTION_ITERABLE(nrf_modem_lib_init_cb, nrf_modem_hook_##name) = {                  \
+		.callback = _callback,                                                             \
+		.context = _context,                                                               \
+	};
+
+/**
+ * @brief Define a callback for @ref nrf_modem_lib_shutdown calls.
+ */
+#define NRF_MODEM_LIB_ON_SHUTDOWN(name, _callback, _context)                                       \
+	static void _callback(void *ctx);                                                          \
+	STRUCT_SECTION_ITERABLE(nrf_modem_lib_shutdown_cb, nrf_modem_hook_##name) = {              \
+		.callback = _callback,                                                             \
+		.context = _context,                                                               \
+	};
 
 /**
  * @brief Makes a thread sleep until next time nrf_modem_lib_init() is called.
