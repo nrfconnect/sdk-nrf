@@ -209,6 +209,10 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_get_dst_out, BT_CONN_GET_DST_OUT_RP
 			 bt_conn_get_dst_out_rpc_handler, NULL);
 
 #if defined(CONFIG_BT_USER_PHY_UPDATE)
+static const size_t bt_conn_le_phy_info_buf_size =
+	1 + SIZE_OF_FIELD(struct bt_conn_le_phy_info, tx_phy) +
+	1 + SIZE_OF_FIELD(struct bt_conn_le_phy_info, rx_phy);
+
 void bt_conn_le_phy_info_enc(CborEncoder *encoder, const struct bt_conn_le_phy_info *data)
 {
 	ser_encode_uint(encoder, data->tx_phy);
@@ -217,6 +221,12 @@ void bt_conn_le_phy_info_enc(CborEncoder *encoder, const struct bt_conn_le_phy_i
 #endif /* defined(CONFIG_BT_USER_PHY_UPDATE) */
 
 #if defined(CONFIG_BT_USER_DATA_LEN_UPDATE)
+static const size_t bt_conn_le_data_len_info_buf_size =
+	1 + SIZE_OF_FIELD(struct bt_conn_le_data_len_info, tx_max_len) +
+	1 + SIZE_OF_FIELD(struct bt_conn_le_data_len_info, tx_max_time) +
+	1 + SIZE_OF_FIELD(struct bt_conn_le_data_len_info, rx_max_len) +
+	1 + SIZE_OF_FIELD(struct bt_conn_le_data_len_info, rx_max_time);
+
 void bt_conn_le_data_len_info_enc(CborEncoder *encoder,
 				  const struct bt_conn_le_data_len_info *data)
 {
