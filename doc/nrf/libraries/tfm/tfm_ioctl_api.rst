@@ -19,9 +19,9 @@ Functionality
 Platform-specific services are internally accessed through the :c:func:`tfm_platform_hal_ioctl` function.
 Wrapper functions for these accesses are defined in :file:`tfm_ioctl_ns_api.c` and :file:`tfm_ioctl_s_api.c`.
 
-The supported platform services are defined by :c:struct:`fm_platform_ioctl_request_types_t` in :file:`tfm_ioctl_api.h`.
+The supported platform services are defined by :c:struct:`tfm_platform_ioctl_core_reqest_types_t` in :file:`tfm_ioctl_core_api.h`.
 
-.. literalinclude:: ../../../../include/tfm/tfm_ioctl_api.h
+.. literalinclude:: ../../../../../modules/tee/tf-m/trusted-firmware-m/platform/ext/target/nordic_nrf/common/core/services/include/tfm_ioctl_core_api.h
     :language: c
     :start-at: /** @brief Supported request types.
     :end-before: /** @brief Argument list for each platform read service.
