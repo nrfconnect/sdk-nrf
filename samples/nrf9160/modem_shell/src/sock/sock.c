@@ -18,7 +18,6 @@
 #endif
 #include <net/tls_credentials.h>
 #include <fcntl.h>
-#include <modem/at_cmd.h>
 #include <nrf_socket.h>
 
 #include "sock.h"

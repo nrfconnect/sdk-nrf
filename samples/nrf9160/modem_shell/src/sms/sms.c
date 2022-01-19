@@ -9,9 +9,6 @@
 #include <stdio.h>
 #include <zephyr.h>
 
-#include <modem/at_cmd.h>
-#include <modem/at_cmd_parser.h>
-#include <modem/at_params.h>
 #include <modem/sms.h>
 
 #include "sms.h"

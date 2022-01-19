@@ -350,7 +350,7 @@ int gnss_set_pvt_output_level(uint8_t level);
 int gnss_set_nmea_output_level(uint8_t level);
 
 /**
- * @brief Configures whether GPS driver event information is printed out.
+ * @brief Configures whether GNSS API event information is printed out.
  *
  * @param level 0 = event output disabled
  *              1 = event output enabled
