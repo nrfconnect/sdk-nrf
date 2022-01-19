@@ -34,9 +34,9 @@
 
 static mpsl_cx_cb_t callback;
 
-static const struct gpio_dt_spec req_spec;
-static const struct gpio_dt_spec pri_spec;
-static const struct gpio_dt_spec gra_spec;
+static const struct gpio_dt_spec req_spec = GPIO_DT_SPEC_GET(CX_NODE, req_gpios);
+static const struct gpio_dt_spec pri_spec = GPIO_DT_SPEC_GET(CX_NODE, pri_dir_gpios);
+static const struct gpio_dt_spec gra_spec = GPIO_DT_SPEC_GET(CX_NODE, grant_gpios);
 static struct gpio_callback grant_cb;
 
 static int32_t grant_pin_is_asserted(bool *is_asserted)
