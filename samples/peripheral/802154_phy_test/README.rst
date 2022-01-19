@@ -964,10 +964,6 @@ If the selected LED lights up, the sample works as expected and is ready for use
 
 .. _802154_phy_test_testing_board:
 
-.. note::
-   The serial communication does not use echo, and the timeout for receiving the entire command after receiving its first character is very short.
-   To let the device properly receive the commands, use a terminal application that supports *line mode*, or send the entire command using commands like ``echo`` or ``printf``.
-
 Performing radio tests without the serial interface
 ===================================================
 

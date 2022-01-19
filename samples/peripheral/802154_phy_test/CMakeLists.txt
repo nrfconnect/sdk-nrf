@@ -18,7 +18,6 @@ target_include_directories(app PRIVATE
 target_sources(app PRIVATE
     src/main.c
     src/comm_proc.c
-    src/uart_proc.c
     src/rf_proc.c
     src/ptt_conf.c
     src/periph_proc.c
