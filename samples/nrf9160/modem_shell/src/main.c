@@ -148,9 +148,6 @@ void main(void)
 #if !defined(CONFIG_AT_NOTIF_SYS_INIT)
 	at_notif_init();
 #endif
-#if !defined(CONFIG_AT_MONITOR_SYS_INIT)
-	at_monitor_init();
-#endif
 	lte_lc_init();
 #else
 	/* Wait until modemlib has been initialized. */

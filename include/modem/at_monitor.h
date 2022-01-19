@@ -57,11 +57,6 @@ struct at_monitor_isr_entry {
 	bool paused;
 };
 
-/**
- * @brief Ready to dispatch notifications to monitors.
- */
-void at_monitor_init(void);
-
 /** Wildcard. Match any notifications. */
 #define ANY NULL
 /** Monitor is paused. */

@@ -29,11 +29,7 @@ The AT monitor library facilitates the integration of the Modem library in |NCS|
 Initialization
 ==============
 
-The application can initialize the AT monitor library in the following ways:
-
-* Manually by using the :c:func:`at_monitor_init` function.
-* Automatically by using the ``SYS_INIT`` macro and by enabling :kconfig:`CONFIG_AT_MONITOR_SYS_INIT`.
-
+The AT monitor library initializes automatically when enabled using :kconfig:`CONFIG_AT_MONITOR`.
 Upon initialization, the AT monitor library registers itself as the receiver of AT notifications from the Modem library (using :c:func:`nrf_modem_at_notif_handler_set`).
 
 .. note::

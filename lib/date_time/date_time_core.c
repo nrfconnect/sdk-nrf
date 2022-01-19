@@ -141,11 +141,6 @@ void date_time_lte_ind_handler(const struct lte_lc_evt *const evt)
 
 void date_time_core_init(void)
 {
-	if (IS_ENABLED(CONFIG_DATE_TIME_MODEM) && IS_ENABLED(CONFIG_DATE_TIME_AUTO_UPDATE) &&
-	    !IS_ENABLED(CONFIG_AT_MONITOR_SYS_INIT)) {
-		at_monitor_init();
-	}
-
 	if (IS_ENABLED(CONFIG_DATE_TIME_AUTO_UPDATE) && IS_ENABLED(CONFIG_LTE_LINK_CONTROL)) {
 		lte_lc_register_handler(date_time_lte_ind_handler);
 	}

@@ -48,10 +48,6 @@ int at_shell(const struct shell *shell, size_t argc, char **argv)
 	char *command = argv[1];
 
 	if (!strcmp(command, "events_enable")) {
-		if (!IS_ENABLED(CONFIG_AT_MONITOR_SYS_INIT)) {
-			at_monitor_init();
-		}
-
 		at_monitor_resume(at_shell_monitor);
 		shell_print(shell, "AT command event handler enabled");
 	} else if (!strcmp(command, "events_disable")) {
