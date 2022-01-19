@@ -135,7 +135,7 @@ int link_api_pdp_context_dynamic_params_get(struct pdp_context_info *populated_i
 			       at_cmd_pdp_context_read_info_cmd_str);
 	if (ret) {
 		mosh_error(
-			"at_cmd_write returned err: %d for %s",
+			"nrf_modem_at_cmd returned err: %d for %s",
 			ret,
 			at_cmd_pdp_context_read_info_cmd_str);
 		return ret;
@@ -516,7 +516,7 @@ int link_api_pdp_contexts_read(struct pdp_context_info_array *pdp_info)
 
 	ret = nrf_modem_at_cmd(at_response_str, sizeof(at_response_str), AT_CMD_PDP_CONTEXTS_READ);
 	if (ret) {
-		mosh_error("at_cmd_write returned err: %d", ret);
+		mosh_error("nrf_modem_at_cmd returned err: %d", ret);
 		return ret;
 	}
 

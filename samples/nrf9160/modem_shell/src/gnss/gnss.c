@@ -10,6 +10,7 @@
 #include <zephyr.h>
 #include <init.h>
 #include <assert.h>
+#include <nrf_modem_at.h>
 #include <nrf_modem_gnss.h>
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
@@ -115,6 +116,35 @@ K_MSGQ_DEFINE(event_msgq, sizeof(struct event_item), 10, 4);
 static uint8_t pvt_output_level = 2;
 static uint8_t nmea_output_level;
 static uint8_t event_output_level;
+
+int gnss_configure_lna(void)
+{
+	int err;
+	const char *xmagpio_command;
+	const char *xcoex0_command;
+
+	xmagpio_command = CONFIG_MOSH_AT_MAGPIO;
+	xcoex0_command = CONFIG_MOSH_AT_COEX0;
+
+	/* Make sure the AT command is not empty */
+	if (xmagpio_command[0] != '\0') {
+		err = nrf_modem_at_printf("%s", xmagpio_command);
+		if (err) {
+			mosh_error("Failed to send XMAGPIO command");
+			return err;
+		}
+	}
+
+	if (xcoex0_command[0] != '\0') {
+		err = nrf_modem_at_printf("%s", xcoex0_command);
+		if (err) {
+			mosh_error("Failed to send XCOEX0 command");
+			return err;
+		}
+	}
+
+	return 0;
+}
 
 static int get_event_data(void **dest, uint8_t type, size_t len)
 {

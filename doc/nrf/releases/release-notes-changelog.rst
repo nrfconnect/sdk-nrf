@@ -115,6 +115,7 @@ nRF9160 samples
 * :ref:`modem_shell_application` sample:
 
   * Added a new shell command ``cloud`` for establishing an MQTT connection to nRF Cloud.
+  * Removed support for the GPS driver.
 
 * :ref:`http_application_update_sample` sample:
 
