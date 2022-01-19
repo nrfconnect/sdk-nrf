@@ -100,21 +100,31 @@ function(add_child_image)
   #
   # Required arguments are:
   # NAME - The name of the child image
-  # SOURCE_DIR - The source dir of the child image
+  # SOURCE_DIR - The source dir of the child image, not required if
+  #              PRELOAD_IMAGE is set.
   #
   # Optional arguments are:
   # DOMAIN - The domain to place the child image in.
+  # PRELOAD_IMAGE - Use preload file from this image instead of using standard
+  #                 mechanisms for locating child image configurations.
+  #                 Set this to "app" to use the preload file from the "root"
+  #                 image (that is, the only non-child-image in the build).
   #
   # Depending on the value of CONFIG_${NAME}_BUILD_STRATEGY the child image
   # is either built from source, included as a hex file, or ignored.
   #
   # See chapter "Multi-image builds" in the documentation for more details.
 
-  set(oneValueArgs NAME SOURCE_DIR DOMAIN)
+  # Don't add child images when building variant images.
+  if (CONFIG_NCS_IS_VARIANT_IMAGE)
+    return()
+  endif()
+
+  set(oneValueArgs NAME SOURCE_DIR DOMAIN PRELOAD_IMAGE)
   cmake_parse_arguments(ACI "" "${oneValueArgs}" "" ${ARGN})
 
-  if (NOT ACI_NAME OR NOT ACI_SOURCE_DIR)
-    message(FATAL_ERROR "Missing parameter, required: NAME SOURCE_DIR")
+  if (NOT ACI_NAME OR NOT (ACI_SOURCE_DIR OR ACI_PRELOAD_IMAGE))
+    message(FATAL_ERROR "Missing parameter, required: NAME and (SOURCE_DIR or PRELOAD_IMAGE)")
   endif()
 
   if (NOT CONFIG_PARTITION_MANAGER_ENABLED)
@@ -143,11 +153,11 @@ endfunction()
 
 function(add_child_image_from_source)
   # See 'add_child_image'
-  set(oneValueArgs NAME SOURCE_DIR DOMAIN BOARD)
+  set(oneValueArgs NAME SOURCE_DIR DOMAIN BOARD PRELOAD_IMAGE)
   cmake_parse_arguments(ACI "" "${oneValueArgs}" "" ${ARGN})
 
-  if (NOT ACI_NAME OR NOT ACI_SOURCE_DIR)
-    message(FATAL_ERROR "Missing parameter, required: NAME SOURCE_DIR")
+  if (NOT ACI_NAME OR NOT (ACI_SOURCE_DIR OR ACI_PRELOAD_IMAGE))
+    message(FATAL_ERROR "Missing parameter, required: NAME and (SOURCE_DIR or PRELOAD_IMAGE)")
   endif()
 
   # Pass information that the partition manager is enabled to Kconfig.
@@ -211,144 +221,162 @@ function(add_child_image_from_source)
 
   message("\n=== child image ${ACI_NAME} - ${ACI_DOMAIN}${inherited} begin ===")
 
-  # It is possible for a sample to use a custom set of Kconfig fragments for a
-  # child image, or to append additional Kconfig fragments to the child image.
-  # Note that <ACI_NAME> in this context is the name of the child image as
-  # passed to the 'add_child_image' function.
-  #
-  # <child-sample> DIRECTORY
-  # | - prj.conf (A)
-  # | - prj_<buildtype>.conf (B)
-  # | - boards DIRECTORY
-  # | | - <board>.conf (C)
-  # | | - <board>_<buildtype>.conf (D)
-
-
-  # <current-sample> DIRECTORY
-  # | - prj.conf
-  # | - prj_<buildtype>.conf
-  # | - child_image DIRECTORY
-  #     |-- <ACI_NAME>.conf (I)                 Fragment, used together with (A) and (C)
-  #     |-- <ACI_NAME>_<buildtype>.conf (J)     Fragment, used together with (B) and (D)
-  #     |-- <ACI_NAME>.overlay                  If present, will be merged with BOARD.dts
-  #     |-- <ACI_NAME> DIRECTORY
-  #         |-- boards DIRECTORY
-  #         |   |-- <board>.conf (E)            If present, use instead of (C), requires (G).
-  #         |   |-- <board>_<buildtype>.conf (F)     If present, use instead of (D), requires (H).
-  #         |   |-- <board>.overlay             If present, will be merged with BOARD.dts
-  #         |   |-- <board>_<revision>.overlay  If present, will be merged with BOARD.dts
-  #         |-- prj.conf (G)                    If present, use instead of (A)
-  #         |                                   Note that (C) is ignored if this is present.
-  #         |                                   Use (E) instead.
-  #         |-- prj_<buildtype>.conf (H)        If present, used instead of (B) when user
-  #         |                                   specify `-DCONF_FILE=prj_<buildtype>.conf for
-  #         |                                   parent image. Note that any (C) is ignored
-  #         |                                   if this is present. Use (F) instead.
-  #         |-- <board>.overlay                 If present, will be merged with BOARD.dts
-  #         |-- <board>_<revision>.overlay      If present, will be merged with BOARD.dts
-  #
-  # Note: The folder `child_image/<ACI_NAME>` is only need when configurations
-  #       files must be used instead of the child image default configs.
-  #       The append a child image default config, place the addetional settings
-  #       in `child_image/<ACI_NAME>.conf`.
-  set(ACI_CONF_DIR ${APPLICATION_CONFIG_DIR}/child_image)
-  set(ACI_NAME_CONF_DIR ${APPLICATION_CONFIG_DIR}/child_image/${ACI_NAME})
-  if (NOT ${ACI_NAME}_CONF_FILE)
-    ncs_file(CONF_FILES ${ACI_NAME_CONF_DIR}
-             BOARD ${ACI_BOARD}
-             # Child image always uses the same revision as parent board.
-             BOARD_REVISION ${BOARD_REVISION}
-             KCONF ${ACI_NAME}_CONF_FILE
-             DTS ${ACI_NAME}_DTC_OVERLAY_FILE
-             BUILD ${CONF_FILE_BUILD_TYPE}
-    )
-
-    # Check for configuration fragment. The contents of these are appended
-    # to the project configuration, as opposed to the CONF_FILE which is used
-    # as the base configuration.
-    if (DEFINED CONF_FILE_BUILD_TYPE)
-      set(child_image_conf_fragment ${ACI_CONF_DIR}/${ACI_NAME}_${CONF_FILE_BUILD_TYPE}.conf)
-    else()
-      set(child_image_conf_fragment ${ACI_CONF_DIR}/${ACI_NAME}.conf)
-    endif()
-    if (EXISTS ${child_image_conf_fragment})
-      add_overlay_config(${ACI_NAME} ${child_image_conf_fragment})
-    endif()
-
-    # Check for overlay named <ACI_NAME>.overlay.
-    set(child_image_dts_overlay ${ACI_CONF_DIR}/${ACI_NAME}.overlay)
-    if (EXISTS ${child_image_dts_overlay})
-      add_overlay_dts(${ACI_NAME} ${child_image_dts_overlay})
-    endif()
-    if(DEFINED ${ACI_NAME}_CONF_FILE)
-      set(${ACI_NAME}_CONF_FILE ${${ACI_NAME}_CONF_FILE} CACHE STRING
-          "Default ${ACI_NAME} configuration file"
+  if (ACI_PRELOAD_IMAGE)
+    get_property(
+      preload_file
+      TARGET ${ACI_PRELOAD_IMAGE}_subimage
+      PROPERTY preload_file
       )
-    endif()
-  endif()
-  # Construct a list of variables that, when present in the root
-  # image, should be passed on to all child images as well.
-  list(APPEND
-    SHARED_MULTI_IMAGE_VARIABLES
-    CMAKE_BUILD_TYPE
-    CMAKE_VERBOSE_MAKEFILE
-    BOARD_DIR
-    BOARD_REVISION
-    ZEPHYR_MODULES
-    ZEPHYR_EXTRA_MODULES
-    ZEPHYR_TOOLCHAIN_VARIANT
-    GNUARMEMB_TOOLCHAIN_PATH
-    EXTRA_KCONFIG_TARGETS
-    NCS_TOOLCHAIN_VERSION
-    PM_DOMAINS
-    ${ACI_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION
-    )
 
-  foreach(kconfig_target ${EXTRA_KCONFIG_TARGETS})
+    get_property(
+      source_dir
+      TARGET ${ACI_PRELOAD_IMAGE}_subimage
+      PROPERTY source_dir
+      )
+
+    list(APPEND extra_cmake_args "-DCONFIG_NCS_IS_VARIANT_IMAGE=y")
+  else()
+    set(source_dir ${ACI_SOURCE_DIR})
+
+    # It is possible for a sample to use a custom set of Kconfig fragments for a
+    # child image, or to append additional Kconfig fragments to the child image.
+    # Note that <ACI_NAME> in this context is the name of the child image as
+    # passed to the 'add_child_image' function.
+    #
+    # <child-sample> DIRECTORY
+    # | - prj.conf (A)
+    # | - prj_<buildtype>.conf (B)
+    # | - boards DIRECTORY
+    # | | - <board>.conf (C)
+    # | | - <board>_<buildtype>.conf (D)
+
+
+    # <current-sample> DIRECTORY
+    # | - prj.conf
+    # | - prj_<buildtype>.conf
+    # | - child_image DIRECTORY
+    #     |-- <ACI_NAME>.conf (I)                 Fragment, used together with (A) and (C)
+    #     |-- <ACI_NAME>_<buildtype>.conf (J)     Fragment, used together with (B) and (D)
+    #     |-- <ACI_NAME>.overlay                  If present, will be merged with BOARD.dts
+    #     |-- <ACI_NAME> DIRECTORY
+    #         |-- boards DIRECTORY
+    #         |   |-- <board>.conf (E)            If present, use instead of (C), requires (G).
+    #         |   |-- <board>_<buildtype>.conf (F)     If present, use instead of (D), requires (H).
+    #         |   |-- <board>.overlay             If present, will be merged with BOARD.dts
+    #         |   |-- <board>_<revision>.overlay  If present, will be merged with BOARD.dts
+    #         |-- prj.conf (G)                    If present, use instead of (A)
+    #         |                                   Note that (C) is ignored if this is present.
+    #         |                                   Use (E) instead.
+    #         |-- prj_<buildtype>.conf (H)        If present, used instead of (B) when user
+    #         |                                   specify `-DCONF_FILE=prj_<buildtype>.conf for
+    #         |                                   parent image. Note that any (C) is ignored
+    #         |                                   if this is present. Use (F) instead.
+    #         |-- <board>.overlay                 If present, will be merged with BOARD.dts
+    #         |-- <board>_<revision>.overlay      If present, will be merged with BOARD.dts
+    #
+    # Note: The folder `child_image/<ACI_NAME>` is only need when configurations
+    #       files must be used instead of the child image default configs.
+    #       The append a child image default config, place the addetional settings
+    #       in `child_image/<ACI_NAME>.conf`.
+    set(ACI_CONF_DIR ${APPLICATION_CONFIG_DIR}/child_image)
+    set(ACI_NAME_CONF_DIR ${APPLICATION_CONFIG_DIR}/child_image/${ACI_NAME})
+    if (NOT ${ACI_NAME}_CONF_FILE)
+      ncs_file(CONF_FILES ${ACI_NAME_CONF_DIR}
+        BOARD ${ACI_BOARD}
+        # Child image always uses the same revision as parent board.
+        BOARD_REVISION ${BOARD_REVISION}
+        KCONF ${ACI_NAME}_CONF_FILE
+        DTS ${ACI_NAME}_DTC_OVERLAY_FILE
+        BUILD ${CONF_FILE_BUILD_TYPE}
+        )
+
+      # Check for configuration fragment. The contents of these are appended
+      # to the project configuration, as opposed to the CONF_FILE which is used
+      # as the base configuration.
+      if (DEFINED CONF_FILE_BUILD_TYPE)
+        set(child_image_conf_fragment ${ACI_CONF_DIR}/${ACI_NAME}_${CONF_FILE_BUILD_TYPE}.conf)
+      else()
+        set(child_image_conf_fragment ${ACI_CONF_DIR}/${ACI_NAME}.conf)
+      endif()
+      if (EXISTS ${child_image_conf_fragment})
+        add_overlay_config(${ACI_NAME} ${child_image_conf_fragment})
+      endif()
+
+      # Check for overlay named <ACI_NAME>.overlay.
+      set(child_image_dts_overlay ${ACI_CONF_DIR}/${ACI_NAME}.overlay)
+      if (EXISTS ${child_image_dts_overlay})
+        add_overlay_dts(${ACI_NAME} ${child_image_dts_overlay})
+      endif()
+      if(DEFINED ${ACI_NAME}_CONF_FILE)
+        set(${ACI_NAME}_CONF_FILE ${${ACI_NAME}_CONF_FILE} CACHE STRING
+          "Default ${ACI_NAME} configuration file"
+          )
+      endif()
+    endif()
+    # Construct a list of variables that, when present in the root
+    # image, should be passed on to all child images as well.
     list(APPEND
       SHARED_MULTI_IMAGE_VARIABLES
-      EXTRA_KCONFIG_TARGET_COMMAND_FOR_${kconfig_target}
+      CMAKE_BUILD_TYPE
+      CMAKE_VERBOSE_MAKEFILE
+      BOARD_DIR
+      BOARD_REVISION
+      ZEPHYR_MODULES
+      ZEPHYR_EXTRA_MODULES
+      ZEPHYR_TOOLCHAIN_VARIANT
+      GNUARMEMB_TOOLCHAIN_PATH
+      EXTRA_KCONFIG_TARGETS
+      NCS_TOOLCHAIN_VERSION
+      PM_DOMAINS
+      ${ACI_DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION
       )
-  endforeach()
 
-  set(preload_file ${CMAKE_BINARY_DIR}/${ACI_NAME}/child_image_preload.cmake)
-  file(WRITE ${preload_file} "# Generated file used for preloading a child image\n")
+    foreach(kconfig_target ${EXTRA_KCONFIG_TARGETS})
+      list(APPEND
+        SHARED_MULTI_IMAGE_VARIABLES
+        EXTRA_KCONFIG_TARGET_COMMAND_FOR_${kconfig_target}
+        )
+    endforeach()
 
-  unset(image_cmake_args)
-  list(REMOVE_DUPLICATES SHARED_MULTI_IMAGE_VARIABLES)
-  foreach(shared_var ${SHARED_MULTI_IMAGE_VARIABLES})
-    if(DEFINED ${shared_var})
+    set(preload_file ${CMAKE_BINARY_DIR}/${ACI_NAME}/child_image_preload.cmake)
+    file(WRITE ${preload_file} "# Generated file used for preloading a child image\n")
+
+    unset(image_cmake_args)
+    list(REMOVE_DUPLICATES SHARED_MULTI_IMAGE_VARIABLES)
+    foreach(shared_var ${SHARED_MULTI_IMAGE_VARIABLES})
+      if(DEFINED ${shared_var})
         file(
           APPEND
           ${preload_file}
           "set(${shared_var} ${${shared_var}} CACHE INTERNAL \"NCS child image controlled\")\n"
           )
-    endif()
-  endforeach()
+      endif()
+    endforeach()
 
-  get_cmake_property(VARIABLES              VARIABLES)
-  get_cmake_property(VARIABLES_CACHED CACHE_VARIABLES)
+    get_cmake_property(VARIABLES              VARIABLES)
+    get_cmake_property(VARIABLES_CACHED CACHE_VARIABLES)
 
-  set(regex "^${ACI_NAME}_.+")
+    set(regex "^${ACI_NAME}_.+")
 
-  list(FILTER VARIABLES        INCLUDE REGEX ${regex})
-  list(FILTER VARIABLES_CACHED INCLUDE REGEX ${regex})
+    list(FILTER VARIABLES        INCLUDE REGEX ${regex})
+    list(FILTER VARIABLES_CACHED INCLUDE REGEX ${regex})
 
-  foreach(var_name
-      ${VARIABLES}
-      ${VARIABLES_CACHED}
-      )
-    # This regex is guaranteed to match due to the filtering done
-    # above, we only re-run the regex to extract the part after
-    # '_'. We run the regex twice because it is believed that
-    # list(FILTER is faster than doing a string(REGEX on each item.
-    string(REGEX MATCH "^${ACI_NAME}_(.+)" unused_out_var ${var_name})
-    file(
-      APPEND
-      ${preload_file}
-      "set(${CMAKE_MATCH_1} ${${var_name}} CACHE INTERNAL \"NCS child image controlled\")\n"
-      )
-  endforeach()
+    foreach(var_name
+        ${VARIABLES}
+        ${VARIABLES_CACHED}
+        )
+      # This regex is guaranteed to match due to the filtering done
+      # above, we only re-run the regex to extract the part after
+      # '_'. We run the regex twice because it is believed that
+      # list(FILTER is faster than doing a string(REGEX on each item.
+      string(REGEX MATCH "^${ACI_NAME}_(.+)" unused_out_var ${var_name})
+      file(
+        APPEND
+        ${preload_file}
+        "set(${CMAKE_MATCH_1} ${${var_name}} CACHE INTERNAL \"NCS child image controlled\")\n"
+        )
+    endforeach()
+  endif()
 
   file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${ACI_NAME})
   execute_process(
@@ -357,7 +385,8 @@ function(add_child_image_from_source)
     ${EXTRA_MULTI_IMAGE_CMAKE_ARGS} # E.g. --trace-expand
     -DIMAGE_NAME=${ACI_NAME}
     -C ${preload_file}
-    ${ACI_SOURCE_DIR}
+    ${extra_cmake_args}
+    ${source_dir}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${ACI_NAME}
     RESULT_VARIABLE ret
     )
@@ -393,7 +422,7 @@ function(add_child_image_from_source)
 
   include(ExternalProject)
   ExternalProject_Add(${ACI_NAME}_subimage
-    SOURCE_DIR ${ACI_SOURCE_DIR}
+    SOURCE_DIR ${source_dir}
     BINARY_DIR ${CMAKE_BINARY_DIR}/${ACI_NAME}
     BUILD_BYPRODUCTS ${${ACI_NAME}_byproducts}
     CONFIGURE_COMMAND ""
@@ -401,6 +430,18 @@ function(add_child_image_from_source)
     INSTALL_COMMAND ""
     BUILD_ALWAYS True
     USES_TERMINAL_BUILD True
+    )
+
+  set_property(
+    TARGET ${ACI_NAME}_subimage
+    PROPERTY preload_file
+    ${preload_file}
+    )
+
+  set_property(
+    TARGET ${ACI_NAME}_subimage
+    PROPERTY source_dir
+    ${source_dir}
     )
 
   foreach(kconfig_target
