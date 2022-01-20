@@ -107,7 +107,7 @@ zb_ret_t zb_osif_nvram_write(zb_uint8_t page, zb_uint32_t pos, void *buf,
 		return RET_PAGE_NOT_FOUND;
 	}
 
-	if (pos + len >= zb_get_nvram_page_length()) {
+	if (pos + len > zb_get_nvram_page_length()) {
 		return RET_INVALID_PARAMETER;
 	}
 
