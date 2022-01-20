@@ -14,7 +14,7 @@
 #include <sys/printk.h>
 #include <kernel.h>
 #define HUK_PRINT(msg) printk(msg)
-#define HUK_PRINT_VAL(msg, val) printk(msg, val)
+#define HUK_PRINT_VAL(msg, val) printk(msg " %d", val)
 #define HUK_PANIC k_panic
 
 #elif defined(__NRF_TFM__)
