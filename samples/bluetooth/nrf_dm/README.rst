@@ -9,7 +9,9 @@ Bluetooth: nRF Distance Measurement with Bluetooth LE discovery
 
 The nRF Distance Measurement sample demonstrates the functionality of the Distance Measurement (DM) subsystem.
 It shows how to use DM to measure the distance between devices.
-The Bluetooth® Heart Rate Service is running simultaneously.
+The Bluetooth® Direction and Distance Finding Service is running simultaneously.
+
+Sample is configured to use Nordic's SoftDevice link layer.
 
 Requirements
 ************
@@ -162,6 +164,7 @@ Dependencies
 
 This sample uses the following |NCS| subsystems:
 
+* :ref:`ddfs_readme`
 * :ref:`dk_buttons_and_leds_readme`
 
 This sample uses the following `sdk-nrfxlib`_ library:
