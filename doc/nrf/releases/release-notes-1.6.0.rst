@@ -124,7 +124,7 @@ nRF9160
     * Updated configuration options for setting the source of the MQTT client ID (nRF Cloud device ID).
     * Updated nRF Cloud FOTA to use type-validated FOTA download.
 
-  * :ref:`asset_tracker` application:
+  * nRF9160: Asset Tracker application:
 
     * Added optional P-GPS support.
     * Added application-specific option ``CONFIG_PGPS_STORE_LOCATION``.
@@ -602,7 +602,7 @@ Applications and samples
 
 * nRF9160:
 
-   * :ref:`asset_tracker` - Added sections on using nRF Cloud A-GPS or P-GPS, and on using nRF Cloud FOTA.
+   * nRF9160: Asset Tracker - Added sections on using nRF Cloud A-GPS or P-GPS, and on using nRF Cloud FOTA.
    * :ref:`asset_tracker_v2`:
 
       * Added a table showing cloud services and the corresponding cloud-side instances.

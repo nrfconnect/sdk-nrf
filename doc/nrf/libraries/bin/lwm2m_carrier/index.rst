@@ -19,7 +19,7 @@ This library uses LwM2M protocol to communicate with device manager platforms, b
 If you want to use LwM2M for other purposes, see :ref:`lwm2m_interface`.
 
 The :ref:`lwm2m_carrier` sample demonstrates how to run this library in an application.
-The LwM2M carrier library is also used in the :ref:`asset_tracker` application.
+The LwM2M carrier library is also used in the :ref:`asset_tracker_v2` application.
 
 
 .. toctree::

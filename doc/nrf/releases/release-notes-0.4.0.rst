@@ -175,7 +175,7 @@ Documentation
 
 * Added or updated documentation for the following samples:
 
-  * :ref:`asset_tracker`, :ref:`nrf_coap_client_sample`,  :ref:`mqtt_simple_sample`, and :ref:`http_application_update_sample`
+  * nRF9160: Asset Tracker, :ref:`nrf_coap_client_sample`,  :ref:`mqtt_simple_sample`, and :ref:`http_application_update_sample`
   * :ref:`peripheral_hids_mouse`, :ref:`peripheral_hids_keyboard`,  :ref:`bluetooth_central_hids`, and :ref:`bluetooth_central_dfu_smp`
   * :ref:`record_text`, :ref:`writable_ndef_msg`, and :ref:`nfc_tag_reader`
   * :ref:`event_manager_sample` and :ref:`profiler_sample`
@@ -208,9 +208,9 @@ Known issues
 nRF9160
 =======
 
-* The :ref:`asset_tracker` sample does not wait for connection to nRF Connect for Cloud before trying to send data.
+* The nRF9160: Asset Tracker sample does not wait for connection to nRF Connect for Cloud before trying to send data.
   This causes the sample to crash if the user toggles one of the switches before the board is connected to the cloud.
-* The :ref:`asset_tracker` sample might show up to 2.5 mA current consumption in idle mode with ``CONFIG_POWER_OPTIMIZATION_ENABLE=y``.
+* The nRF9160: Asset Tracker sample might show up to 2.5 mA current consumption in idle mode with ``CONFIG_POWER_OPTIMIZATION_ENABLE=y``.
 * If a debugger (for example, J-Link) is connected via SWD to the nRF9160, the modem firmware will reset.
   Therefore, the LTE modem cannot be operational during debug sessions.
 * The SEGGER Control Block cannot be found by automatic search by the RTT Viewer/Logger.

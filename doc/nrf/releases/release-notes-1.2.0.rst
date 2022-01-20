@@ -128,7 +128,7 @@ nRF9160
 Updated samples and applications
 --------------------------------
 
-* :ref:`asset_tracker`:
+* nRF9160: Asset Tracker:
 
   * Added functionality to configure high/low thresholds for sensor data, so that only data below/above the threshold is sent to the cloud.
   * Modified the command format to match the format that is used by nRF Connect for Cloud.
@@ -534,7 +534,7 @@ nRF9160
   The behavior depends on the cellular network connection.
 * The :ref:`gps_with_supl_support_sample` sample stops working if :ref:`supl_client` support is enabled, but the SUPL host name cannot be resolved.
   As a workaround, insert a delay (``k_sleep()``) of a few seconds after the ``printf`` on line 294 in :file:`main.c`.
-* The :ref:`asset_tracker` sample might show up to 2.5 mA current consumption in idle mode with ``CONFIG_POWER_OPTIMIZATION_ENABLE=y``.
+* The nRF9160: Asset Tracker sample might show up to 2.5 mA current consumption in idle mode with ``CONFIG_POWER_OPTIMIZATION_ENABLE=y``.
 * The SEGGER Control Block cannot be found by automatic search by the RTT Viewer/Logger.
   As a workaround, set the RTT Control Block address to 0 and it will try to search from address 0 and upwards.
   If this does not work, look in the ``builddir/zephyr/zephyr.map`` file to find the address of the ``_SEGGER_RTT`` symbol in the map file and use that as input to the viewer/logger.

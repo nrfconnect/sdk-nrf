@@ -29,7 +29,6 @@
 /.vscode/                                 @trond-snekvik
 
 # Applications
-/applications/asset_tracker/              @jhn-nordic @jtguggedal @rlubos
 /applications/asset_tracker_v2/           @simensrostad @jtguggedal @jhn-nordic @coderbyheart
 /applications/connectivity_bridge/        @jtguggedal @nordic-auko
 /applications/machine_learning/           @pdunaj

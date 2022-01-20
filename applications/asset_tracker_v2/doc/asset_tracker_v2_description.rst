@@ -7,7 +7,7 @@ Application description
    :local:
    :depth: 2
 
-The Asset Tracker v2 application introduces a set of new features, which are not present in the :ref:`asset_tracker` application:
+The Asset Tracker v2 application is built on the following principles:
 
 * Ultra-low power by design - The application highlights the power saving features of the nRF9160 SiP, which is critical for successfully developing small form-factor devices and products which need very long battery lifetime.
 * Offline first - Highly-mobile cellular IoT products need to handle unreliable connections gracefully by implementing mechanisms to retry the failed sending of data.
@@ -15,11 +15,8 @@ The Asset Tracker v2 application introduces a set of new features, which are not
 * Batching of data - Data is batched to reduce the number of messages transmitted, and to be able to retain collected data while the device is offline.
 * Configurable at run-time - The application behavior (for example, accelerometer sensitivity or GNSS timeout) can be configured at run time. This improves the development experience with individual devices or when debugging the device behavior in specific areas and situations. It also reduces the cost for transmitting data to the devices by reducing the frequency of sending firmware updates to the devices.
 
-Implementation of the above features required a rework of the existing application.
-Hence, this application is not backward compatible to the :ref:`asset_tracker` application.
-
 .. note::
-    The code is currently a work in progress and is not fully optimized yet. It will undergo changes and improvements in the future.
+    The code is under active development. It will undergo changes and improvements in the future.
 
 Overview
 ********

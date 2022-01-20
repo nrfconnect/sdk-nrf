@@ -74,6 +74,11 @@ nRF9160: Asset Tracker v2
 * Added support for A-GPS filtered ephemerides.
 * Added new documentation for :ref:`asset_tracker_v2_util_module` and :ref:`api_modules_common`.
 
+nRF9160: Asset Tracker
+----------------------
+
+* The application is removed.Hence, it is recommended to upgrade to the :ref:`asset_tracker_v2_modem_module` application.
+
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 

@@ -105,7 +105,6 @@ CI-zigbee-test:
     - '!include/bluetooth/mesh/?.*'
 
 CI-thingy91-test:
-  - 'applications/asset_tracker/.*/?.*'
   - 'ext/cjson/.*/?.*'
   - 'drivers/gps/gps_sim/.*/?.*'
   - 'subsys/net/lib/nrf_cloud/.*/?.*'
