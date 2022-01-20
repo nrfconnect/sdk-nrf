@@ -871,6 +871,14 @@ NCSDK-10196: DFU fails for some configurations with the quick session resume fea
 Common Application Framework (CAF)
 ==================================
 
+.. rst-class:: v1-8-0
+
+NCSDK-13247: Sensor manager dereferences NULL pointer on wake up for sensors without trigger
+  :ref:`caf_sensor_manager` dereferences NULL pointer while handling a :c:struct:`wake_up_event` if a configured sensor does not use trigger.
+  This leads to undefined behaviour.
+
+  **Workaround** Manually cherry-pick and apply commit with fix from main (commit hash: ``3db6da76206d379c223afe2de646218e60e4f339``).
+
 .. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
 NCSDK-13058: Directed advertising does not work
