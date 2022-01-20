@@ -17,3 +17,13 @@ zephyr_library_sources_ifdef(
   bt_rpc_conn_host.c
   bt_rpc_gatt_host.c
 )
+
+zephyr_library_sources_ifdef(
+  CONFIG_BT_RPC_INTERNAL_FUNCTIONS
+  bt_rpc_internal_host.c
+)
+
+zephyr_library_include_directories_ifdef(
+  CONFIG_BT_RPC_INTERNAL_FUNCTIONS
+  ${ZEPHYR_BASE}/subsys/bluetooth/host
+)

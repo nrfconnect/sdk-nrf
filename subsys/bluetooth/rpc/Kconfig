@@ -108,6 +108,12 @@ config BT_RPC_GATT_BUFFER_SIZE
 
 endif # BT_RPC_HOST
 
+config BT_RPC_INTERNAL_FUNCTIONS
+	bool "Internal functions"
+	default n
+	help
+	  Enable functionality required for internal purposes e.g. testing.
+
 endif # BT_RPC
 
 choice BT_STACK_SELECTION
