@@ -957,6 +957,11 @@ static inline bool proto_is_secure(int proto)
 	       (proto >= IPPROTO_DTLS_1_0 && proto <= IPPROTO_DTLS_1_2);
 }
 
+static inline bool af_is_supported(int family)
+{
+	return (family == AF_PACKET) || (family == AF_INET) || (family == AF_INET6);
+}
+
 static bool nrf91_socket_is_supported(int family, int type, int proto)
 {
 	if (offload_disabled) {
@@ -967,7 +972,7 @@ static bool nrf91_socket_is_supported(int family, int type, int proto)
 		return false;
 	}
 
-	return true;
+	return af_is_supported(family);
 }
 
 static int native_socket(int family, int type, int proto, bool *offload_lock)
