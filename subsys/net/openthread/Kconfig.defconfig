@@ -118,7 +118,7 @@ config OPENTHREAD_PING_SENDER
 	bool
 	default y
 
-config MBEDTLS_PSA_CRYPTO_C
+config MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
 	bool
 	default n
 
