@@ -25,7 +25,7 @@ target_include_directories(platform_region_defs INTERFACE ${partition_includes})
 
 target_compile_definitions(platform_s
   PRIVATE
-  $<$<BOOL:${PLATFORM_DUMMY_CRYPTO_KEYS}>:PLATFORM_DUMMY_CRYPTO_KEYS>
+  $<$<BOOL:${PLATFORM_DEFAULT_CRYPTO_KEYS}>:PLATFORM_DEFAULT_CRYPTO_KEYS>
   )
 
 target_include_directories(platform_s
@@ -40,7 +40,7 @@ target_sources(platform_s
 
 if (${TFM_PARTITION_CRYPTO}
       AND (NOT ${CRYPTO_KEY_DERIVATION_MODULE_DISABLED})
-      AND (NOT ${PLATFORM_DUMMY_CRYPTO_KEYS}))
+      AND (NOT ${PLATFORM_DEFAULT_CRYPTO_KEYS}))
   target_sources(platform_s
     PRIVATE
       ${NRF_DIR}/lib/hw_unique_key/hw_unique_key.c
