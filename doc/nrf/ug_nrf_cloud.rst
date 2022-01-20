@@ -39,9 +39,8 @@ For more information on the various services, see the following documentation:
 Applications and samples
 ************************
 
-The following applications use the :ref:`lib_nrf_cloud` for services in |NCS|:
+The following application uses the :ref:`lib_nrf_cloud` for services in |NCS|:
 
-* :ref:`asset_tracker`
 * :ref:`asset_tracker_v2`
 
 The following samples demonstrate specific nRF Cloud functionality:

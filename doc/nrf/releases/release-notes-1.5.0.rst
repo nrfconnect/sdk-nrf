@@ -69,7 +69,7 @@ nRF9160
 
 * Updated:
 
-  * :ref:`asset_tracker` application - Updated to use the new FOTA (fota_v2) based on nRF Connect for Cloud.
+  * nRF9160: Asset Tracker application - Updated to use the new FOTA (fota_v2) based on nRF Connect for Cloud.
   * :ref:`serial_lte_modem` application:
 
     * Fixed an issue where FOTA downloads were interrupted if an AT command was issued.

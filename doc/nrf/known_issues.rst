@@ -84,23 +84,23 @@ External antenna performance setting
 .. rst-class:: v1-3-2 v1-3-1 v1-3-0
 
 NCSDK-5574: Warnings during FOTA
-   The :ref:`asset_tracker` application prints warnings and error messages during successful FOTA.
+   The nRF9160: Asset Tracker application prints warnings and error messages during successful FOTA.
 
 .. rst-class:: v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
 
 NCSDK-6689: High current consumption in Asset Tracker
-  The :ref:`asset_tracker` application might show up to 2.5 mA current consumption in idle mode with :kconfig:`CONFIG_POWER_OPTIMIZATION_ENABLE` set to ``y``.
+  The nRF9160: Asset Tracker might show up to 2.5 mA current consumption in idle mode with :kconfig:`CONFIG_POWER_OPTIMIZATION_ENABLE` set to ``y``.
 
 .. rst-class:: v1-0-0 v0-4-0 v0-3-0
 
 Sending data before connecting to nRF Cloud
-  The :ref:`asset_tracker` application does not wait for connection to nRF Cloud before trying to send data.
+  The nRF9160: Asset Tracker application does not wait for connection to nRF Cloud before trying to send data.
   This causes the application to crash if the user toggles one of the switches before the kit is connected to the cloud.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
 
 IRIS-2676: Missing support for FOTA on nRF Cloud
-  The :ref:`asset_tracker` application does not support the nRF Cloud FOTA_v2 protocol.
+  The nRF9160: Asset Tracker application does not support the nRF Cloud FOTA_v2 protocol.
 
   **Workaround:** The implementation for supporting the nRF Cloud FOTA_v2 can be found in the following commits:
 

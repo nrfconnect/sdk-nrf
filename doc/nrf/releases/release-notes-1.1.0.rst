@@ -20,8 +20,8 @@ It contains reference applications, sample source code, and libraries for Blueto
 Highlights
 **********
 
-* Updated the :ref:`lib_fota_download` library (used by the :ref:`aws_fota_sample` sample, the :ref:`asset_tracker` application, and the :ref:`http_application_update_sample` sample) to support delta updates of the modem firmware in addition to application updates.
-* Updated the :ref:`asset_tracker` application with new features and firmware over-the-air (FOTA) support.
+* Updated the :ref:`lib_fota_download` library (used by the :ref:`aws_fota_sample` sample, the nRF9160: Asset Tracker application, and the :ref:`http_application_update_sample` sample) to support delta updates of the modem firmware in addition to application updates.
+* Updated the nRF9160: Asset Tracker application with new features and firmware over-the-air (FOTA) support.
 * Added an :ref:`lwm2m_carrier` sample that demonstrates how to set up and use the :ref:`liblwm2m_carrier_readme` library to connect to an operator network.
   The new :ref:`liblwm2m_carrier_readme` library provides Verizon network support.
 * Added an :ref:`lwm2m_client` that uses Zephyr's :ref:`zephyr:lwm2m_interface` library to push sensor data to a server.
@@ -127,7 +127,7 @@ nRF9160
 Updated samples and applications
 --------------------------------
 
-* :ref:`asset_tracker`:
+* nRF9160: Asset Tracker:
 
   * Updated to use the generic cloud API.
   * Added a user interface module to the application to facilitate the use of buttons, LEDs, buzzer, and NMOS transistors.
@@ -238,7 +238,7 @@ Board support
 
   *  Removed support for earlier hardware versions of ``nrf52840_pca20035`` and ``nrf9160_pca20035``.
      From |NCS| v1.1.0, only the latest hardware version is supported.
-  *  Removed configurations specific to the deprecated board versions from the :ref:`asset_tracker` application.
+  *  Removed configurations specific to the deprecated board versions from the nRF9160: Asset Tracker application.
 
 
 Common libraries and drivers
@@ -499,7 +499,7 @@ nRF9160
 
 * Deprecation warning: The nrf_inbuilt_key API in the BSD library will be removed in a future release.
   A replacement library that wraps the AT commands for ``AT%CMNG`` will be available in the |NCS|.
-* The :ref:`asset_tracker` sample might show up to 2.5 mA current consumption in idle mode with ``CONFIG_POWER_OPTIMIZATION_ENABLE=y``.
+* The nRF9160: Asset Tracker sample might show up to 2.5 mA current consumption in idle mode with ``CONFIG_POWER_OPTIMIZATION_ENABLE=y``.
 * The SEGGER Control Block cannot be found by automatic search by the RTT Viewer/Logger.
   As a workaround, set the RTT Control Block address to 0 and it will try to search from address 0 and upwards.
   If this does not work, look in the ``builddir/zephyr/zephyr.map`` file to find the address of the ``_SEGGER_RTT`` symbol in the map file and use that as input to the viewer/logger.
