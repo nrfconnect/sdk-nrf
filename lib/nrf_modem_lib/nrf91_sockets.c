@@ -871,7 +871,12 @@ static ssize_t nrf91_socket_offload_recvfrom(void *obj, void *buf, size_t len,
 	}
 
 exit:
-	k_mutex_lock(ctx->lock, K_FOREVER);
+	if (ctx->lock) {
+		/* don't touch this if the context has been released
+		 * as a consequence of the socket being closed
+		 */
+		k_mutex_lock(ctx->lock, K_FOREVER);
+	}
 
 	return retval;
 }
