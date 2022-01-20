@@ -416,5 +416,10 @@ In addition to documentation related to the changes listed above, the following 
 
   * Reduced the ToC levels of the subpages.
 
+* Reorganized the contents of the :ref:`ug_radio_fem` section:
+
+  * Added new section :ref: `ug_radio_fem_nrf21540_spi_gpio`.
+  * Added new section :ref: `ug_radio_fem_direct_support`.
+  * Added more information about supported protocols and hardware.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
