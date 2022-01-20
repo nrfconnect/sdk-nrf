@@ -132,6 +132,7 @@ nRF9160 samples
 * :ref:`gnss_sample` sample:
 
   * Added support for minimal assistance using factory almanac, time and location.
+  * Added support for TTFF test mode.
 
 * nRF9160: HTTP update samples:
 
