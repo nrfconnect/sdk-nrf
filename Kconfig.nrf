@@ -59,6 +59,10 @@ config ENTROPY_GENERATOR
 config PSA_WANT_ALG_CTR_DRBG
 	default y if ENTROPY_GENERATOR
 
+# Override PSA_WANT_ALG_HMAC_DRBG
+config PSA_WANT_ALG_HMAC_DRBG
+	default y if PSA_WANT_ALG_DETERMINISTIC_ECDSA
+
 config INIT_ARCH_HW_AT_BOOT
 	default n if SPM
 	default y
