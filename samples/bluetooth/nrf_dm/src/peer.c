@@ -5,11 +5,11 @@
  */
 
 #include <zephyr.h>
-#include <random/rand32.h>
-#include <bluetooth/services/hrs.h>
-#include "pwm_led.h"
+#include <bluetooth/conn.h>
+
 #include "peer.h"
-#include <bluetooth/bluetooth.h>
+#include "pwm_led.h"
+#include "service.h"
 
 #define PEER_MAX                8   /* Maximum number of tracked peer devices. */
 
@@ -22,8 +22,7 @@
 #define DISTANCE_MAX_LED        50   /* from 0 to DISTANCE_MAX_LED [decimeter] -
 				      * the distance range which is indicated by the PWM LED
 				      */
-
-#define AC_ACCESS_ADDRESS       0x8e89bed6
+#define DEFAULT_RANGING_MODE    DM_RANGING_MODE_MCPD
 
 static void timeout_handler(struct k_timer *timer_id);
 static K_TIMER_DEFINE(timer, timeout_handler, NULL);
@@ -37,6 +36,7 @@ struct peer_entry {
 
 static struct peer_entry *closest_peer;
 static uint32_t access_address;
+static enum dm_ranging_mode ranging_mode = DEFAULT_RANGING_MODE;
 
 K_MSGQ_DEFINE(result_msgq, sizeof(struct dm_result), 16, 4);
 
@@ -117,29 +117,9 @@ struct peer_entry *peer_find(const bt_addr_le_t *peer)
 	return NULL;
 }
 
-static uint16_t meter_to_decimeter(float value)
-{
-	float val;
-
-	val = (value < 0 ? 0 : value) * 10;
-	return val < UINT16_MAX ? (uint16_t)val : UINT16_MAX;
-}
-
 static void ble_notification(const struct peer_entry *peer)
 {
-	if (!peer) {
-		return;
-	}
-
-	float res;
-
-	if (peer->result.ranging_mode == DM_RANGING_MODE_RTT) {
-		res = peer->result.dist_estimates.rtt.rtt;
-	} else {
-		res = peer->result.dist_estimates.mcpd.best;
-	}
-
-	bt_hrs_notify(meter_to_decimeter(res));
+	service_distance_measurement_update(&peer->bt_addr, &peer->result);
 }
 
 static void led_notification(const struct peer_entry *peer)
@@ -231,9 +211,19 @@ static void peer_thread(void)
 			closest_peer = mcpd_min_peer_result(closest_peer, peer);
 
 			led_notification(closest_peer);
-			ble_notification(closest_peer);
+			ble_notification(peer);
 		}
 	}
+}
+
+void peer_ranging_mode_set(enum dm_ranging_mode mode)
+{
+	ranging_mode = mode;
+}
+
+enum dm_ranging_mode peer_ranging_mode_get(void)
+{
+	return ranging_mode;
 }
 
 int peer_access_address_prepare(void)

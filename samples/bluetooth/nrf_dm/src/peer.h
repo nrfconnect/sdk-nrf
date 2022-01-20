@@ -12,8 +12,6 @@ extern "C" {
 #endif
 
 #include <zephyr.h>
-#include <stdlib.h>
-#include <zephyr/types.h>
 #include <bluetooth/addr.h>
 #include <dm.h>
 
@@ -34,7 +32,21 @@ bool peer_supported_test(const bt_addr_le_t *peer);
  */
 int peer_supported_add(const bt_addr_le_t *peer);
 
-/** @brief Prepare a access address.
+/** @brief Set a new Distance Measurement ranging mode.
+ *
+ *  @param mode Ranging mode.
+ */
+void peer_ranging_mode_set(enum dm_ranging_mode mode);
+
+/** @brief Get the current ranging mode.
+ *
+ *  @param None
+ *
+ *  @retval Ranging mode value.
+ */
+enum dm_ranging_mode peer_ranging_mode_get(void);
+
+/** @brief Prepare an access address.
  *
  *  @retval 0 if the operation was successful, otherwise a (negative) error code.
  */
@@ -64,6 +76,5 @@ void peer_update(struct dm_result *result);
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif /* PEER_H_ */

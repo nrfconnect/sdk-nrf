@@ -11,15 +11,16 @@
 #include <zephyr.h>
 #include <sys/printk.h>
 #include <sys/byteorder.h>
-#include <random/rand32.h>
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/scan.h>
+#include <bluetooth/services/ddfs.h>
 
 #include <dk_buttons_and_leds.h>
 
 #include <dm.h>
 #include "peer.h"
+#include "service.h"
 
 #define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
@@ -31,8 +32,6 @@
 #define COMPANY_CODE            0x0059
 #define SUPPORT_DM_CODE         0xFF55AA5A
 
-#define DEFAULT_RANGING_MODE    DM_RANGING_MODE_MCPD
-
 struct adv_mfg_data {
 	uint16_t company_code;	    /* Company Identifier Code. */
 	uint32_t support_dm_code;   /* To identify the device that supports distance measurement. */
@@ -40,8 +39,6 @@ struct adv_mfg_data {
 } __packed;
 
 static struct adv_mfg_data mfg_data;
-static enum dm_ranging_mode ranging_mode = DEFAULT_RANGING_MODE;
-
 struct bt_le_adv_param adv_param_conn =
 	BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_CONNECTABLE |
 			     BT_LE_ADV_OPT_NOTIFY_SCAN_REQ,
@@ -67,7 +64,7 @@ static const struct bt_data ad[] = {
 
 static const struct bt_data sd[] = {
 	BT_DATA(BT_DATA_MANUFACTURER_DATA, (unsigned char *)&mfg_data, sizeof(mfg_data)),
-	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_HRS_VAL)),
+	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_DDFS_VAL),
 };
 
 static struct bt_le_scan_param scan_param = {
@@ -105,7 +102,7 @@ static bool data_cb(struct bt_data *data, void *user_data)
 
 			bt_addr_le_copy(&req.bt_addr, user_data);
 			req.role = DM_ROLE_INITIATOR;
-			req.ranging_mode = ranging_mode;
+			req.ranging_mode = peer_ranging_mode_get();
 			req.access_address = sys_le32_to_cpu(recv_mfg_data->access_address);
 			req.start_delay_us = 0;
 
@@ -138,7 +135,7 @@ static void adv_scanned_cb(struct bt_le_ext_adv *adv,
 	if (peer_supported_test(info->addr)) {
 		bt_addr_le_copy(&req.bt_addr, info->addr);
 		req.role = DM_ROLE_REFLECTOR;
-		req.ranging_mode = ranging_mode;
+		req.ranging_mode = peer_ranging_mode_get();
 		req.access_address = peer_access_address_get();
 		req.start_delay_us = 0;
 
@@ -315,6 +312,12 @@ void main(void)
 		return;
 	}
 
+	err = service_ddfs_init();
+	if (err) {
+		printk("DDF Service init failed (err %d)\n", err);
+		return;
+	}
+
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
@@ -330,5 +333,6 @@ void main(void)
 	for (;;) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
 		k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
+		service_azimuth_elevation_simulation();
 	}
 }
