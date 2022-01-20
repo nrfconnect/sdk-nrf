@@ -1287,6 +1287,10 @@ void bt_rpc_auth_cb_pairing_failed(struct bt_conn *conn, enum bt_security_err re
 
 static int bt_conn_auth_cb_register_on_remote(uint16_t flags)
 {
+	if (flags & FLAG_AUTH_CB_IS_NULL) {
+		return bt_conn_auth_cb_register(NULL);
+	}
+
 #if defined(CONFIG_BT_SMP_APP_PAIRING_ACCEPT)
 	remote_auth_cb.pairing_accept = (flags & FLAG_PAIRING_ACCEPT_PRESENT) ?
 					bt_rpc_auth_cb_pairing_accept : NULL;

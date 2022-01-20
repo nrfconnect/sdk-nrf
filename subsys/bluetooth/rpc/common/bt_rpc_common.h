@@ -210,6 +210,7 @@ enum {
 	FLAG_PAIRING_CONFIRM_PRESENT  = BIT(6),
 	FLAG_PAIRING_COMPLETE_PRESENT = BIT(7),
 	FLAG_PAIRING_FAILED_PRESENT   = BIT(8),
+	FLAG_AUTH_CB_IS_NULL          = BIT(15),
 };
 
 /* Helper callback definitions for connection API and Extended Advertising.
