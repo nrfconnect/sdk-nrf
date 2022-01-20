@@ -197,6 +197,7 @@ Common Application Framework (CAF)
     ``MODULE_ID`` macro and :c:func:`module_id_get` function now returns module reference from dedicated section instead of module name.
     The module name can not be obtained from reference object directly, a helper function (:c:func:`module_name_get`) should be used instead.
   * Fixed the NCSDK-13058 known issue related to directed advertising in CAF.
+  * Fixed NULL dereferencing in :ref:`caf_sensor_manager` during :c:struct:`wake_up_event` handling for sensors that do not support trigger.
 
 Bootloader libraries
 --------------------
