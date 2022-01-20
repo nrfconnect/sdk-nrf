@@ -16,6 +16,10 @@ config GNSS_SAMPLE_MODE_CONTINUOUS
 config GNSS_SAMPLE_MODE_PERIODIC
 	bool "Periodic fixes"
 
+config GNSS_SAMPLE_MODE_TTFF_TEST
+	bool "Time-to-first-fix (TTFF) test mode"
+	select GNSS_SAMPLE_NMEA_ONLY
+
 endchoice
 
 if GNSS_SAMPLE_MODE_PERIODIC
@@ -36,6 +40,20 @@ config GNSS_SAMPLE_PERIODIC_TIMEOUT
 	  If set to zero, GNSS is allowed to run indefinitely until a valid PVT estimate is produced.
 
 endif # GNSS_SAMPLE_MODE_PERIODIC
+
+if GNSS_SAMPLE_MODE_TTFF_TEST
+
+config GNSS_SAMPLE_MODE_TTFF_TEST_COLD_START
+	bool "Delete GNSS data before each start (cold start)"
+	help
+	  When enabled, deletes all stored data from GNSS to force a cold start every time GNSS is started.
+
+config GNSS_SAMPLE_MODE_TTFF_TEST_INTERVAL
+	int "Time to wait between TTFF tests in seconds"
+	range 1 604800
+	default 120
+
+endif # GNSS_SAMPLE_MODE_TTFF_TEST
 
 config GNSS_SAMPLE_NMEA_ONLY
 	bool "Output only NMEA strings"

@@ -14,23 +14,35 @@
 
 LOG_MODULE_REGISTER(gnss_sample, CONFIG_GNSS_SAMPLE_LOG_LEVEL);
 
+#if !defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE) || defined(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST)
+static struct k_work_q gnss_work_q;
+
+#define GNSS_WORKQ_THREAD_STACK_SIZE 2304
+#define GNSS_WORKQ_THREAD_PRIORITY   5
+
+K_THREAD_STACK_DEFINE(gnss_workq_stack_area, GNSS_WORKQ_THREAD_STACK_SIZE);
+#endif /* !CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE || CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST */
+
 #if !defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE)
 #include "assistance.h"
 
 static struct nrf_modem_gnss_agps_data_frame last_agps;
-static struct k_work_q agps_work_q;
 static struct k_work agps_data_get_work;
 static volatile bool requesting_assistance;
-
-#define AGPS_WORKQ_THREAD_STACK_SIZE 2304
-#define AGPS_WORKQ_THREAD_PRIORITY   5
-
-K_THREAD_STACK_DEFINE(agps_workq_stack_area, AGPS_WORKQ_THREAD_STACK_SIZE);
 #endif /* !CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE */
+
+#if defined(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST)
+static struct k_work_delayable ttff_test_got_fix_work;
+static struct k_work_delayable ttff_test_prepare_work;
+static struct k_work ttff_test_start_work;
+static uint32_t time_to_fix;
+static uint32_t time_blocked;
+#endif
 
 static const char update_indicator[] = {'\\', '|', '/', '-'};
 
 static struct nrf_modem_gnss_pvt_data_frame last_pvt;
+static uint64_t fix_timestamp;
 
 K_MSGQ_DEFINE(nmea_queue, sizeof(struct nrf_modem_gnss_nmea_data_frame *), 10, 4);
 static K_SEM_DEFINE(pvt_data_sem, 0, 1);
@@ -70,6 +82,18 @@ static void gnss_event_handler(int event)
 		}
 		break;
 
+#if defined(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST)
+	case NRF_MODEM_GNSS_EVT_FIX:
+		/* Time to fix is calculated here, but it's printed from a delayed work to avoid
+		 * messing up the NMEA output.
+		 */
+		time_to_fix = (k_uptime_get() - fix_timestamp) / 1000;
+		k_work_schedule_for_queue(&gnss_work_q, &ttff_test_got_fix_work, K_MSEC(100));
+		k_work_schedule_for_queue(&gnss_work_q, &ttff_test_prepare_work,
+					  K_SECONDS(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_INTERVAL));
+		break;
+#endif /* CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST */
+
 	case NRF_MODEM_GNSS_EVT_NMEA:
 		nmea_data = k_malloc(sizeof(struct nrf_modem_gnss_nmea_data_frame));
 		if (nmea_data == NULL) {
@@ -95,7 +119,7 @@ static void gnss_event_handler(int event)
 					     sizeof(last_agps),
 					     NRF_MODEM_GNSS_DATA_AGPS_REQ);
 		if (retval == 0) {
-			k_work_submit_to_queue(&agps_work_q, &agps_data_get_work);
+			k_work_submit_to_queue(&gnss_work_q, &agps_data_get_work);
 		}
 #endif /* !CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE */
 		break;
@@ -157,24 +181,34 @@ void lte_disconnect(void)
 }
 #endif /* CONFIG_GNSS_SAMPLE_LTE_ON_DEMAND */
 
-static void agps_data_get(struct k_work *item)
+static void agps_data_get_work_fn(struct k_work *item)
 {
 	ARG_UNUSED(item);
 
 	int err;
 
-	/* With minimal assistance, assistance is injected only when GNSS starts for the
-	 * first time.
+#if defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_SUPL)
+	/* SUPL doesn't usually provide satellite real time integrity information. If GNSS asks
+	 * only for satellite integrity, the request should be ignored.
 	 */
-	if (IS_ENABLED(CONFIG_GNSS_SAMPLE_ASSISTANCE_MINIMAL)) {
-		static bool assistance_done;
-
-		if (assistance_done) {
-			return;
-		}
-
-		assistance_done = true;
+	if (last_agps.sv_mask_ephe == 0 &&
+	    last_agps.sv_mask_alm == 0 &&
+	    last_agps.data_flags == NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) {
+		LOG_INF("Ignoring assistance request for only satellite integrity");
+		return;
 	}
+#endif /* CONFIG_GNSS_SAMPLE_ASSISTANCE_SUPL */
+
+#if defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_MINIMAL)
+	/* With minimal assistance, the request should be ignored if no GPS time or position
+	 * is requested.
+	 */
+	if (!(last_agps.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) &&
+	    !(last_agps.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST)) {
+		LOG_INF("Ignoring assistance request because no GPS time or position is requested")
+		return;
+	}
+#endif /* CONFIG_GNSS_SAMPLE_ASSISTANCE_MINIMAL */
 
 	requesting_assistance = true;
 
@@ -199,6 +233,96 @@ static void agps_data_get(struct k_work *item)
 	requesting_assistance = false;
 }
 #endif /* !CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE */
+
+#if defined(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST)
+static void ttff_test_got_fix_work_fn(struct k_work *item)
+{
+	LOG_INF("Time to fix: %u", time_to_fix);
+	if (time_blocked > 0) {
+		LOG_INF("Time GNSS was blocked by LTE: %u", time_blocked);
+	}
+	LOG_INF("Sleeping for %u seconds", CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_INTERVAL);
+}
+
+static int ttff_test_force_cold_start(void)
+{
+	int err;
+	uint32_t delete_mask;
+
+	LOG_INF("Deleting GNSS data");
+
+	/* Delete everything else except the TCXO offset. */
+	delete_mask = NRF_MODEM_GNSS_DELETE_EPHEMERIDES |
+		      NRF_MODEM_GNSS_DELETE_ALMANACS |
+		      NRF_MODEM_GNSS_DELETE_IONO_CORRECTION_DATA |
+		      NRF_MODEM_GNSS_DELETE_LAST_GOOD_FIX |
+		      NRF_MODEM_GNSS_DELETE_GPS_TOW |
+		      NRF_MODEM_GNSS_DELETE_GPS_WEEK |
+		      NRF_MODEM_GNSS_DELETE_UTC_DATA |
+		      NRF_MODEM_GNSS_DELETE_GPS_TOW_PRECISION;
+
+	/* With minimal assistance, we want to keep the factory almanac. */
+	if (IS_ENABLED(CONFIG_GNSS_SAMPLE_ASSISTANCE_MINIMAL)) {
+		delete_mask &= ~NRF_MODEM_GNSS_DELETE_ALMANACS;
+	}
+
+	err = nrf_modem_gnss_nv_data_delete(delete_mask);
+	if (err) {
+		LOG_ERR("Failed to delete GNSS data");
+		return -1;
+	}
+
+	return 0;
+}
+
+static void ttff_test_prepare_work_fn(struct k_work *item)
+{
+	/* Make sure GNSS is stopped before next start. */
+	nrf_modem_gnss_stop();
+
+	if (IS_ENABLED(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_COLD_START)) {
+		if (ttff_test_force_cold_start() != 0) {
+			return;
+		}
+	}
+
+#if !defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE)
+	if (IS_ENABLED(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_COLD_START)) {
+		/* All A-GPS data is always requested before GNSS is started. */
+		last_agps.sv_mask_ephe = 0xffffffff;
+		last_agps.sv_mask_alm = 0xffffffff;
+		last_agps.data_flags =
+			NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST |
+			NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST |
+			NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST |
+			NRF_MODEM_GNSS_AGPS_POSITION_REQUEST |
+			NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;
+
+		k_work_submit_to_queue(&gnss_work_q, &agps_data_get_work);
+	} else {
+		/* Start and stop GNSS to trigger possible A-GPS data request. If new A-GPS
+		 * data is needed it is fetched before GNSS is started.
+		 */
+		nrf_modem_gnss_start();
+		nrf_modem_gnss_stop();
+	}
+#endif /* !CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE */
+
+	k_work_submit_to_queue(&gnss_work_q, &ttff_test_start_work);
+}
+
+static void ttff_test_start_work_fn(struct k_work *item)
+{
+	LOG_INF("Starting GNSS");
+	if (nrf_modem_gnss_start() != 0) {
+		LOG_ERR("Failed to start GNSS");
+		return;
+	}
+
+	fix_timestamp = k_uptime_get();
+	time_blocked = 0;
+}
+#endif /* CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST */
 
 static void date_time_evt_handler(const struct date_time_evt *evt)
 {
@@ -263,23 +387,31 @@ static int sample_init(void)
 {
 	int err = 0;
 
-#if !defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE)
+#if !defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE) || defined(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST)
 	struct k_work_queue_config cfg = {
-		.name = "agps_work_q",
+		.name = "gnss_work_q",
 		.no_yield = false
 	};
 
 	k_work_queue_start(
-		&agps_work_q,
-		agps_workq_stack_area,
-		K_THREAD_STACK_SIZEOF(agps_workq_stack_area),
-		AGPS_WORKQ_THREAD_PRIORITY,
+		&gnss_work_q,
+		gnss_workq_stack_area,
+		K_THREAD_STACK_SIZEOF(gnss_workq_stack_area),
+		GNSS_WORKQ_THREAD_PRIORITY,
 		&cfg);
+#endif /* !CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE || CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST */
 
-	k_work_init(&agps_data_get_work, agps_data_get);
+#if !defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE)
+	k_work_init(&agps_data_get_work, agps_data_get_work_fn);
 
-	err = assistance_init(&agps_work_q);
+	err = assistance_init(&gnss_work_q);
 #endif /* !CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE */
+
+#if defined(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST)
+	k_work_init_delayable(&ttff_test_got_fix_work, ttff_test_got_fix_work_fn);
+	k_work_init_delayable(&ttff_test_prepare_work, ttff_test_prepare_work_fn);
+	k_work_init(&ttff_test_start_work, ttff_test_start_work_fn);
+#endif /* CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST */
 
 	return err;
 }
@@ -353,6 +485,10 @@ static int gnss_init_and_start(void)
 #if defined(CONFIG_GNSS_SAMPLE_MODE_PERIODIC)
 	fix_retry = CONFIG_GNSS_SAMPLE_PERIODIC_TIMEOUT;
 	fix_interval = CONFIG_GNSS_SAMPLE_PERIODIC_INTERVAL;
+#elif defined(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST)
+	/* Single fix for TTFF test mode. */
+	fix_retry = 0;
+	fix_interval = 0;
 #endif
 
 	if (nrf_modem_gnss_fix_retry_set(fix_retry) != 0) {
@@ -365,10 +501,14 @@ static int gnss_init_and_start(void)
 		return -1;
 	}
 
+#if defined(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST)
+	k_work_schedule_for_queue(&gnss_work_q, &ttff_test_prepare_work, K_NO_WAIT);
+#else /* !CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST */
 	if (nrf_modem_gnss_start() != 0) {
 		LOG_ERR("Failed to start GNSS");
 		return -1;
 	}
+#endif
 
 	return 0;
 }
@@ -432,7 +572,6 @@ static void print_fix_data(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 int main(void)
 {
 	uint8_t cnt = 0;
-	uint64_t fix_timestamp = 0;
 	struct nrf_modem_gnss_nmea_data_frame *nmea_data;
 
 	LOG_INF("Starting GNSS sample");
@@ -491,6 +630,14 @@ int main(void)
 
 				printk("\nNMEA strings:\n\n");
 			}
+#if defined(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST)
+			else {
+				/* Calculate the time GNSS has been blocked by LTE. */
+				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_DEADLINE_MISSED) {
+					time_blocked++;
+				}
+			}
+#endif /* CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST */
 		}
 		if (events[1].state == K_POLL_STATE_MSGQ_DATA_AVAILABLE &&
 		    k_msgq_get(events[1].msgq, &nmea_data, K_NO_WAIT) == 0) {

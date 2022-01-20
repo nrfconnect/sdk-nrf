@@ -33,17 +33,36 @@ Because `NMEA`_ data needs to be read as soon as an NMEA event is received, a :r
 The event handler function reads the received NMEA strings and puts those into the message queue.
 The consumer loop reads from the queue and outputs the strings to the console.
 
+Operation modes
+===============
+
+The sample supports different operation modes:
+
+* Continuous
+* Periodic
+* Time-to-first-fix (TTFF) test
+
 By default, the sample runs in continuous tracking mode.
-You can also configure it to run in periodic mode, where fixes are acquired periodically with the set interval.
+In continuous mode, GNSS tries to acquire a fix once a second.
+
+In periodic mode, fixes are acquired periodically with the set interval.
+
+In TTFF test mode, the sample acquires fixes periodically and calculates the TTFF for each fix.
+You can use the TTFF test mode without assistance or with any supported assistance method.
+You can also configure it to perform cold starts, where the stored data is deleted from GNSS before each start.
+If you enable assistance with cold starts, new assistance data is also downloaded and injected to GNSS before each start.
 
 Output modes
 ============
 
-This sample operates in two different output modes.
+The sample supports two output modes:
 
-In the default mode, the sample displays information from both PVT (Position, Velocity, and Time) and NMEA strings.
-You can also configure the sample to run in NMEA-only mode, where only the NMEA strings are displayed in the console.
-In the NMEA-only mode, you can visualize the data from the GNSS using a third-party tool.
+* Position, Velocity, and Time (PVT) and NMEA
+* NMEA-only
+
+By default, the sample displays information from both PVT and NMEA strings.
+You can also configure the sample to run in NMEA-only output mode, where only the NMEA strings are displayed in the console.
+In the NMEA-only output mode, you can visualize the data from the GNSS using a third-party tool.
 
 A-GPS and P-GPS
 ===============
@@ -52,7 +71,6 @@ When support for A-GPS or P-GPS, or both, is enabled, a :ref:`Zephyr workqueue <
 Downloading the data can take some time.
 The workqueue ensures that the main thread is not blocked during the operation.
 
-You can enable A-GPS and P-GPS support for both the default mode (PVT and NMEA) and the NMEA-only mode.
 When assistance support is enabled, the sample receives an A-GPS data request notification from the GNSS module, and it starts downloading the assistance data requested by the GNSS module.
 The sample then displays the information in the terminal about the download process.
 Finally, after the download completes, the sample switches back to the previous display mode.
@@ -80,8 +98,8 @@ Check and configure the following configuration options for the sample:
 
 .. _CONFIG_GNSS_SAMPLE_NMEA_ONLY:
 
-CONFIG_GNSS_SAMPLE_NMEA_ONLY - To enable NMEA-only mode
-   The NMEA-only mode can be used for example with 3rd party tools to visualize the GNSS output.
+CONFIG_GNSS_SAMPLE_NMEA_ONLY - To enable NMEA-only output mode
+   The NMEA-only output mode can be used for example with 3rd party tools to visualize the GNSS output.
 
 .. _CONFIG_GNSS_SAMPLE_ANTENNA_EXTERNAL:
 
@@ -104,6 +122,16 @@ CONFIG_GNSS_SAMPLE_MODE_PERIODIC - To enable periodic fixes
    This configuration option enables periodic fixes instead of continuous tracking.
    Set :kconfig:`CONFIG_GNSS_SAMPLE_PERIODIC_INTERVAL` and :kconfig:`CONFIG_GNSS_SAMPLE_PERIODIC_TIMEOUT` to configure the desired fix interval and timeout.
 
+.. _CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST:
+
+CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST - To enable time-to-first-fix (TTFF) test mode
+  This configuration enables the TTFF test mode instead of continuous tracking.
+  When TTFF test mode is enabled, the :ref:`CONFIG_GNSS_SAMPLE_NMEA_ONLY <CONFIG_GNSS_SAMPLE_NMEA_ONLY>` option is automatically selected.
+  Set the :kconfig:`CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_INTERVAL` option to configure the time between fixes.
+  If you have enabled the :kconfig:`CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_COLD_START` option, the sample will perform GNSS cold starts instead of hot starts.
+  When assistance is used, LTE may block the GNSS operation and increase the time needed to get a fix.
+  You can set the :kconfig:`CONFIG_GNSS_SAMPLE_LTE_ON_DEMAND` option to disable LTE after the assistance data has been downloaded, so that GNSS can run without interruptions.
+
 Building and running
 ********************
 
@@ -121,10 +149,10 @@ Testing
 After programming the sample and all the prerequisites to the development kit, you can test the sample by performing the following steps:
 
 1. Connect your nRF9160 DK to the PC using a USB cable and power on or reset your nRF9160 DK.
-2. Open a terminal emulator.
+#. Open a terminal emulator.
 #. Test the sample by performing the following steps:
 
-   If the default mode is enabled:
+   If the default output mode is enabled:
 
    a. Observe that the following information is displayed in the terminal emulator:
 
@@ -167,7 +195,7 @@ After programming the sample and all the prerequisites to the development kit, y
 
                 NMEA strings:
 
-                $GPGGA,054824.58,6128.77008,N,02351.48387,E,1,07,2.05,116.27,M,0,,*22
+                $GPGGA,054824.58,6129.28608,N,02346.17887,E,1,07,2.05,116.27,M,0,,*22
                 $GPGLL,6129.28608,N,02346.17887,E,054824.58,A,A*6B
                 $GPGSA,A,3,10,12,17,24,28,,,,,,,,3.05,2.05,2.25,1*13
                 $GPGSV,2,1,7,17,50,083,41,24,68,250,38,10,14,294,46,28,23,071,38,1*56
@@ -175,7 +203,7 @@ After programming the sample and all the prerequisites to the development kit, y
                 $GPRMC,054824.58,A,6129.28608,N,02346.17887,E,0.08,0.00,030620,,,A,V*29
                 ---------------------------------
 
-   If NMEA-only mode is enabled:
+   If NMEA-only output mode is enabled:
 
    a. Observe that the following information is displayed in the terminal emulator:
 
@@ -197,6 +225,48 @@ After programming the sample and all the prerequisites to the development kit, y
                 $GPGSV,1,1,2,17,,,24,1,,,28,1*6D
                 $GPRMC,000002.00,V,,,,,,,060180,,,N,V*0A
 
+   If TTFF test mode is enabled:
+
+   a. Observe that the following information is displayed in the terminal emulator:
+
+          .. code-block:: console
+
+                $GPGGA,000033.00,,,,,0,,99.99,,M,,M,,*66
+                $GPGLL,,,,,000033.00,V,N*4A
+                $GPGSA,A,1,,,,,,,,,,,,,99.99,99.99,99.99,1*2D
+                $GPGSV,3,1,10,1,,,36,5,,,26,7,,,25,10,,,44,1*53
+                $GPGSV,3,2,10,14,,,43,17,,,37,21,,,41,23,,,43,1*64
+                $GPGSV,3,3,10,24,,,31,28,,,39,1*61
+                $GPRMC,000033.00,V,,,,,,,060180,,,N,V*08
+                $GPGGA,121300.68,6129.28608,N,02346.17887,E,1,05,2.41,123.44,M,,M,,*7A
+                $GPGLL,6129.28608,N,02346.17887,E,121300.68,A,A*63
+                $GPGSA,A,3,01,10,17,21,23,,,,,,,,6.32,2.41,5.84,1*12
+                $GPGSV,4,1,14,1,17,047,37,7,-22,107,25,10,22,314,44,12,09,232,,1*41
+                $GPGSV,4,2,14,13,29,173,,14,38,072,44,15,40,211,,17,46,106,37,1*65
+                $GPGSV,4,3,14,19,35,139,,21,15,019,41,23,19,279,42,24,51,273,32,1*6F
+                $GPGSV,4,4,14,28,,,39,30,00,110,,1*52
+                $GPRMC,121300.68,A,6129.28608,N,02346.17887,E,0.10,0.00,200122,,,A,V*2C
+                [00:00:34.790,649] <inf> gnss_sample: Time to fix: 34
+                [00:00:34.796,447] <inf> gnss_sample: Sleeping for 120 seconds
+                [00:02:34.699,493] <inf> gnss_sample: Starting GNSS
+                $GPGGA,121500.82,,,,,0,,99.99,,M,,M,,*6B
+                $GPGLL,,,,,121500.82,V,N*47
+                $GPGSA,A,1,,,,,,,,,,,,,99.99,99.99,99.99,1*2D
+                $GPGSV,1,1,0,,,,,,,,,,,,,,,,,1*54
+                $GPRMC,121500.82,V,,,,,,,200122,,,N,V*09
+                $GPGGA,121501.82,6129.28608,N,02346.17887,E,1,04,2.73,118.22,M,,M,,*78
+                $GPGLL,6129.28608,N,02346.17887,E,121501.82,A,A*69
+                $GPGSA,A,3,10,17,21,23,,,,,,,,,7.59,2.73,7.08,1*18
+                $GPGSV,4,1,13,1,18,046,28,10,22,313,49,12,10,232,26,13,28,173,25,1*51
+                $GPGSV,4,2,13,14,37,072,50,15,40,211,25,17,46,105,45,19,35,138,31,1*63
+                $GPGSV,4,3,13,21,15,018,45,23,18,278,45,24,52,273,,28,,,44,1*57
+                $GPGSV,4,4,13,30,00,110,,1*55
+                $GPRMC,121501.82,A,6129.28608,N,02346.17887,E,0.16,0.00,200122,,,A,V*20
+                [00:02:35.940,582] <inf> gnss_sample: Time to fix: 1
+                [00:02:35.946,319] <inf> gnss_sample: Sleeping for 120 seconds
+
+   #. Observe that the samples displays the time to fix for each fix.
+
    If A-GPS and/or P-GPS support is enabled:
 
    a. Observe that the following message is displayed in the terminal emulator immediately after the device boots:
@@ -205,7 +275,7 @@ After programming the sample and all the prerequisites to the development kit, y
 
               [00:00:04.488,494] <inf> gnss_sample: Assistance data needed, ephe 0xffffffff, alm 0xffffffff, flags 0x3b
 
-   b. Observe the following actions in the terminal emulator:
+   #. Observe the following actions in the terminal emulator:
 
       i. The sample downloads the requested assistance data if needed (with P-GPS, the data may already be available in the flash memory).
       #. The sample continues after the download has completed.
