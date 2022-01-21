@@ -135,6 +135,7 @@ static const struct location_method_api *location_method_api_get(enum location_m
 
 static const char LOCATION_ACCURACY_LOW_STR[] = "low";
 static const char LOCATION_ACCURACY_NORMAL_STR[] = "normal";
+static const char LOCATION_ACCURACY_HIGH_STR[] = "high";
 
 static const char *location_core_gnss_accuracy_str(enum location_accuracy accuracy)
 {
@@ -146,6 +147,9 @@ static const char *location_core_gnss_accuracy_str(enum location_accuracy accura
 		break;
 	case LOCATION_ACCURACY_NORMAL:
 		accuracy_str = LOCATION_ACCURACY_NORMAL_STR;
+		break;
+	case LOCATION_ACCURACY_HIGH:
+		accuracy_str = LOCATION_ACCURACY_HIGH_STR;
 		break;
 	default:
 		__ASSERT_NO_MSG(0);
