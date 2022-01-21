@@ -9,8 +9,11 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <kernel.h>
-#include <nrfx_gpiote.h>
 #include <nrfx.h>
+
+#if IS_ENABLED(CONFIG_PTT_ANTENNA_DIVERSITY)
+#include <nrfx_gpiote.h>
+#endif /* IS_ENABLED(CONFIG_PTT_ANTENNA_DIVERSITY) */
 
 #if defined(DPPI_PRESENT)
 #include <nrfx_dppi.h>

@@ -54,7 +54,7 @@ static int setup(const struct device *dev)
 	return 0;
 }
 
-SYS_INIT(rf_setup, POST_KERNEL, PTT_RF_INIT_PRIORITY);
+SYS_INIT(rf_setup, POST_KERNEL, CONFIG_PTT_RF_INIT_PRIORITY);
 
 SYS_INIT(setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
