@@ -32,7 +32,7 @@ config HW_UNIQUE_KEY
 	bool "Hardware Unique Keys (HUK)"
 	depends on HAS_HW_NRF_CC310 || HAS_HW_NRF_CC312
 	depends on NRF_CC3XX_PLATFORM
-	depends on NORDIC_SECURITY_BACKEND
+	depends on NRF_SECURITY
 	depends on !ARM_NONSECURE_FIRMWARE
 	depends on MPU_ALLOW_FLASH_WRITE
 	select FPROTECT if HAS_HW_NRF_ACL
