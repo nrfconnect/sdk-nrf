@@ -514,12 +514,13 @@ See `Firmware architecture`_ for more information.
 The nRF Machine Learning application uses the following modules available in CAF:
 
 * :ref:`caf_ble_adv`
-* CAF Bluetooth LE bond module
+* :ref:`caf_ble_bond`
 * :ref:`caf_ble_smp`
 * :ref:`caf_ble_state`
 * :ref:`caf_buttons`
 * :ref:`caf_click_detector`
 * :ref:`caf_leds`
+* :ref:`caf_power_manager`
 * :ref:`caf_sensor_manager`
 
 See the module pages for more information about the modules and their configuration.
