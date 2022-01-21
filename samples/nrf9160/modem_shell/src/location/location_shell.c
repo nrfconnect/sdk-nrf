@@ -32,7 +32,7 @@ static const char location_usage_str[] =
 
 static const char location_get_usage_str[] =
 	"Usage: location get [--method <method>] [--interval <secs>]\n"
-	"[--gnss_accuracy <acc>] [--gnss_timeout <timeout in secs>]\n"
+	"[--gnss_accuracy <acc>] [--gnss_num_fixes <number of fixes>] [--gnss_timeout <timeout in secs>]\n"
 	"[--cellular_timeout <timeout in secs>] [--cellular_service <service_string>]\n"
 	"[--wifi_timeout <timeout in secs>] [--wifi_service <service_string>]\n"
 	"Options:\n"
@@ -41,7 +41,9 @@ static const char location_get_usage_str[] =
 	"                      methods in priority order.\n"
 	"  --interval,         Position update interval in seconds\n"
 	"                      (default: 0 = single position)\n"
-	"  --gnss_accuracy,    Used GNSS accuracy: 'low' or 'normal'\n"
+	"  --gnss_accuracy,    Used GNSS accuracy: 'low', 'normal' or 'high'\n"
+	"  --gnss_num_fixes,   Number of consecutive fix attempts (if gnss_accuracy\n"
+	"                      set to 'high', default: 3)\n"
 	"  --gnss_timeout,     GNSS timeout in seconds\n"
 	"  --cellular_timeout, Cellular timeout in seconds\n"
 	"  --cellular_service, Used cellular positioning service:\n"
@@ -57,10 +59,11 @@ enum {
 	LOCATION_SHELL_OPT_INTERVAL         = 1001,
 	LOCATION_SHELL_OPT_GNSS_ACCURACY    = 1002,
 	LOCATION_SHELL_OPT_GNSS_TIMEOUT     = 1003,
-	LOCATION_SHELL_OPT_CELLULAR_TIMEOUT = 1004,
-	LOCATION_SHELL_OPT_CELLULAR_SERVICE = 1005,
-	LOCATION_SHELL_OPT_WIFI_TIMEOUT     = 1006,
-	LOCATION_SHELL_OPT_WIFI_SERVICE     = 1007,
+	LOCATION_SHELL_OPT_GNSS_NUM_FIXES   = 1004,
+	LOCATION_SHELL_OPT_CELLULAR_TIMEOUT = 1005,
+	LOCATION_SHELL_OPT_CELLULAR_SERVICE = 1006,
+	LOCATION_SHELL_OPT_WIFI_TIMEOUT     = 1007,
+	LOCATION_SHELL_OPT_WIFI_SERVICE     = 1008,
 };
 
 /* Specifying the expected options */
@@ -69,6 +72,7 @@ static struct option long_options[] = {
 	{ "interval", required_argument, 0, LOCATION_SHELL_OPT_INTERVAL },
 	{ "gnss_accuracy", required_argument, 0, LOCATION_SHELL_OPT_GNSS_ACCURACY },
 	{ "gnss_timeout", required_argument, 0, LOCATION_SHELL_OPT_GNSS_TIMEOUT },
+	{ "gnss_num_fixes", required_argument, 0, LOCATION_SHELL_OPT_GNSS_NUM_FIXES },
 	{ "cellular_timeout", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_TIMEOUT },
 	{ "cellular_service", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_SERVICE },
 	{ "wifi_timeout", required_argument, 0, LOCATION_SHELL_OPT_WIFI_TIMEOUT },
@@ -190,6 +194,9 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	enum location_accuracy gnss_accuracy = 0;
 	bool gnss_accuracy_set = false;
 
+	int gnss_num_fixes = 0;
+	bool gnss_num_fixes_set = false;
+
 	int cellular_timeout = 0;
 	bool cellular_timeout_set = false;
 	enum location_service cellular_service = LOCATION_SERVICE_ANY;
@@ -234,6 +241,11 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			gnss_timeout_set = true;
 			break;
 
+		case LOCATION_SHELL_OPT_GNSS_NUM_FIXES:
+			gnss_num_fixes = atoi(optarg);
+			gnss_num_fixes_set = true;
+			break;
+
 		case LOCATION_SHELL_OPT_CELLULAR_TIMEOUT:
 			cellular_timeout = atoi(optarg);
 			cellular_timeout_set = true;
@@ -271,6 +283,8 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 				gnss_accuracy = LOCATION_ACCURACY_LOW;
 			} else if (strcmp(optarg, "normal") == 0) {
 				gnss_accuracy = LOCATION_ACCURACY_NORMAL;
+			} else if (strcmp(optarg, "high") == 0) {
+				gnss_accuracy = LOCATION_ACCURACY_HIGH;
 			} else {
 				mosh_error("Unknown GNSS accuracy. See usage:");
 				goto show_usage;
@@ -338,6 +352,10 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 				}
 				if (gnss_accuracy_set) {
 					config.methods[i].gnss.accuracy = gnss_accuracy;
+				}
+				if (gnss_num_fixes_set) {
+					config.methods[i].gnss.num_consecutive_fixes =
+						gnss_num_fixes;
 				}
 			} else if (config.methods[i].method == LOCATION_METHOD_CELLULAR) {
 				config.methods[i].cellular.service = cellular_service;
