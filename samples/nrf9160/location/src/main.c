@@ -160,6 +160,29 @@ static void location_gnss_low_accuracy_get(void)
 	location_event_wait();
 }
 
+/**
+ * @brief Retrieve location with GNSS high accuracy.
+ */
+static void location_gnss_high_accuracy_get(void)
+{
+	int err;
+	struct location_config config;
+	enum location_method methods[] = {LOCATION_METHOD_GNSS};
+
+	location_config_defaults_set(&config, sizeof(methods), methods);
+	config.methods[0].gnss.accuracy = LOCATION_ACCURACY_HIGH;
+
+	printk("Requesting high accuracy GNSS location...\n");
+
+	err = location_request(&config);
+	if (err) {
+		printk("Requesting location failed, error: %d\n", err);
+		return;
+	}
+
+	location_event_wait();
+}
+
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
 /**
  * @brief Retrieve location with Wi-Fi positioning as first priority, GNSS as second
@@ -259,6 +282,8 @@ int main(void)
 	location_default_get();
 
 	location_gnss_low_accuracy_get();
+
+	location_gnss_high_accuracy_get();
 
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
 	location_wifi_get();
