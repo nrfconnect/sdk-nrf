@@ -106,6 +106,10 @@ int lwm2m_update_connmon(void);
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
 #define ECID_SIGNAL_MEASUREMENT_INFO_OBJECT_ID 10256
+
+int lwm2m_signal_meas_info_inst_id_to_index(uint16_t obj_inst_id);
+int lwm2m_signal_meas_info_index_to_inst_id(int index);
+int init_neighbour_cell_info(void);
 #endif
 
 #ifdef __cplusplus
