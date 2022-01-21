@@ -49,7 +49,11 @@ if (${TFM_PARTITION_CRYPTO}
   )
 endif()
 
-target_link_libraries(platform_s PRIVATE platform_cc3xx)
+if (${TFM_PARTITION_CRYPTO})
+  target_link_libraries(platform_s PRIVATE platform_cc3xx)
+  target_link_libraries(platform_s PRIVATE crypto_service_mbedtls)
+endif()
+
 target_compile_definitions(platform_s PUBLIC CONFIG_HW_UNIQUE_KEY CONFIG_HW_UNIQUE_KEY_RANDOM)
 
 target_include_directories(platform_ns PUBLIC ${board_includes})
