@@ -115,6 +115,7 @@ if OPENTHREAD_THREAD_VERSION_1_2
 # Thread 1.2 dependencies
 config NRF_802154_ENCRYPTION
 	bool
+	default n if CHIP
 	default y
 
 config IEEE802154_2015
@@ -131,6 +132,7 @@ config NET_PKT_TIMESTAMP
 
 config OPENTHREAD_MAC_SOFTWARE_TX_SECURITY_ENABLE
 	bool
+	default y if CHIP
 	default n
 
 if OPENTHREAD_CSL_RECEIVER
