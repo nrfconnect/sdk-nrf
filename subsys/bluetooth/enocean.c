@@ -368,7 +368,7 @@ static void adv_recv(const struct bt_le_scan_recv_info *info,
 		     struct net_buf_simple *buf)
 {
 	if (info->adv_type != BT_GAP_ADV_TYPE_ADV_NONCONN_IND || !info->addr ||
-	    info->addr->type != BT_ADDR_LE_RANDOM) {
+	    info->addr->type != BT_ADDR_LE_RANDOM || (buf->len < 2)) {
 		return;
 	}
 
@@ -381,13 +381,18 @@ static void adv_recv(const struct bt_le_scan_recv_info *info,
 	 * AD type, skip this.
 	 */
 	if (has_shortened_name) {
+
+		if (buf->len < ((len - 1) + 2)) {
+			return;
+		}
+
 		net_buf_simple_pull(buf, len - 1);
 		payload = buf->data;
 		len = net_buf_simple_pull_u8(buf);
 		type = net_buf_simple_pull_u8(buf);
 	}
 
-	if (type != BT_DATA_MANUFACTURER_DATA) {
+	if ((type != BT_DATA_MANUFACTURER_DATA) || (buf->len < 2)) {
 		return;
 	}
 
