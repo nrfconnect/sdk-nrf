@@ -695,9 +695,6 @@ static void on_radio_disabled_tx(void)
 	ESB_SYS_TIMER->EVENTS_COMPARE[0] = 0;
 	ESB_SYS_TIMER->EVENTS_COMPARE[1] = 0;
 
-	/* Remove */
-	ESB_SYS_TIMER->TASKS_START = 1;
-
 	nrfx_gppi_channels_enable(ppi_all_channels_mask);
 	nrfx_gppi_channels_disable(1 << ppi_ch_timer_compare1_radio_txen);
 
@@ -943,7 +940,6 @@ static void radio_irq_handler(void)
 	if (NRF_RADIO->EVENTS_READY &&
 	    (NRF_RADIO->INTENSET & RADIO_INTENSET_READY_Msk)) {
 		NRF_RADIO->EVENTS_READY = 0;
-		ESB_SYS_TIMER->TASKS_START;
 	}
 
 	if (NRF_RADIO->EVENTS_END &&
