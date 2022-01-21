@@ -17,6 +17,11 @@ When the device provisioning is complete, the library automatically connects to 
 The library also has integrated support for Azure FOTA.
 For more information on Azure FOTA, see the documentation on :ref:`lib_azure_fota` library and :ref:`azure_fota_sample` sample.
 
+.. important::
+   If the server sends a device-bound message when the device is unavailable for a period of time, for instance while in LTE Power Saving Mode, the server will most likely terminate the TCP connection.
+   This will result in additional data traffic as the device has to reconnect to the server, which in turn requires a new TLS handshake and MQTT connection establishment.
+
+
 .. _prereq_connect_to_azure_iot_hub:
 
 Prerequisites for connecting to Azure IoT Hub
