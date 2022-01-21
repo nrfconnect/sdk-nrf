@@ -59,6 +59,33 @@ static struct lwm2m_engine_obj_inst inst[MAX_INSTANCE_COUNT];
 static struct lwm2m_engine_res res[MAX_INSTANCE_COUNT][SIGNAL_MEAS_INFO_MAX_ID];
 static struct lwm2m_engine_res_inst res_inst[MAX_INSTANCE_COUNT][RESOURCE_INSTANCE_COUNT];
 
+int lwm2m_signal_meas_info_inst_id_to_index(uint16_t obj_inst_id)
+{
+	int i;
+
+	for (i = 0; i < MAX_INSTANCE_COUNT; i++) {
+		if (inst[i].obj && inst[i].obj_inst_id == obj_inst_id) {
+			return i;
+		}
+	}
+
+	return -ENOENT;
+}
+
+int lwm2m_signal_meas_info_index_to_inst_id(int index)
+{
+	if (index >= MAX_INSTANCE_COUNT) {
+		return -EINVAL;
+	}
+
+	/* not instantiated */
+	if (!inst[index].obj) {
+		return -ENOENT;
+	}
+
+	return inst[index].obj_inst_id;
+}
+
 static struct lwm2m_engine_obj_inst *signal_meas_info_create(uint16_t obj_inst_id)
 {
 	int index, i = 0, j = 0;
@@ -103,6 +130,8 @@ static struct lwm2m_engine_obj_inst *signal_meas_info_create(uint16_t obj_inst_i
 
 static int lwm2m_signal_meas_info_init(const struct device *dev)
 {
+	int ret = 0;
+
 	signal_meas_info.obj_id = ECID_SIGNAL_MEASUREMENT_INFO_OBJECT_ID;
 	signal_meas_info.version_major = SIGNAL_MEAS_INFO_VERSION_MAJOR;
 	signal_meas_info.version_minor = SIGNAL_MEAS_INFO_VERSION_MINOR;
@@ -112,6 +141,16 @@ static int lwm2m_signal_meas_info_init(const struct device *dev)
 	signal_meas_info.max_instance_count = MAX_INSTANCE_COUNT;
 	signal_meas_info.create_cb = signal_meas_info_create;
 	lwm2m_register_obj(&signal_meas_info);
+
+	/* auto create all instances */
+	for (int i = 0; i < MAX_INSTANCE_COUNT; i++) {
+		struct lwm2m_engine_obj_inst *obj_inst = NULL;
+
+		ret = lwm2m_create_obj_inst(ECID_SIGNAL_MEASUREMENT_INFO_OBJECT_ID, i, &obj_inst);
+		if (ret < 0) {
+			LOG_ERR("Create LWM2M server instance %d error: %d", i, ret);
+		}
+	}
 
 	return 0;
 }
