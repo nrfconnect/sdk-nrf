@@ -34,6 +34,7 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 #include "lwm2m_app_utils.h"
 #include "sensor_module.h"
 #include "gps_module.h"
+#include "lwm2m_engine.h"
 
 #if !defined(CONFIG_LTE_LINK_CONTROL)
 #error "Missing CONFIG_LTE_LINK_CONTROL"
@@ -117,6 +118,15 @@ static int query_modem(const char *cmd, char *buf, size_t buf_len)
 	return 0;
 }
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
+static struct k_work_delayable ncell_meas_work;
+void ncell_meas_work_handler(struct k_work *work)
+{
+	lte_lc_neighbor_cell_measurement(LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT);
+	k_work_schedule(&ncell_meas_work, K_SECONDS(CONFIG_APP_NEIGHBOUR_CELL_SCAN_INTERVAL));
+}
+#endif
+
 static int lwm2m_setup(void)
 {
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT)
@@ -167,6 +177,9 @@ static int lwm2m_setup(void)
 #endif
 #if defined(CONFIG_LWM2M_LOCATION_OBJ_SUPPORT)
 	initialise_gps();
+#endif
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
+	init_neighbour_cell_info();
 #endif
 	return 0;
 }
@@ -551,6 +564,11 @@ void main(void)
 	if (ret) {
 		LOG_ERR("Could not initialize sensor module (%d)", ret);
 	}
+#endif
+
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
+	k_work_init_delayable(&ncell_meas_work, ncell_meas_work_handler);
+	k_work_schedule(&ncell_meas_work, K_SECONDS(1));
 #endif
 
 	while (true) {
