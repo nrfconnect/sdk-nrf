@@ -18,3 +18,7 @@ config TFM_PARTITION_CRYPTO
 config TFM_PARTITION_PLATFORM
 	bool
 	default y
+
+config TFM_PARTITION_INTERNAL_TRUSTED_STORAGE
+	bool
+	default y
