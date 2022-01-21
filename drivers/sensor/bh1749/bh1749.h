@@ -103,9 +103,8 @@ enum async_init_step {
 };
 
 struct bh1749_data {
-	const struct device *i2c;
-	const struct device *gpio;
 	struct gpio_callback gpio_cb;
+	struct k_work_delayable init_work;
 	struct k_work work;
 	const struct device *dev;
 	uint16_t sample_rgb_ir[BH1749_SAMPLES_TO_FETCH];
@@ -117,6 +116,11 @@ struct bh1749_data {
 	sensor_trigger_handler_t trg_handler;
 	struct sensor_trigger trigger;
 #endif
+};
+
+struct bh1749_config {
+	const struct i2c_dt_spec i2c;
+	const struct gpio_dt_spec int_gpio;
 };
 
 #ifdef CONFIG_BH1749_TRIGGER

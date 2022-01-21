@@ -124,10 +124,10 @@
 	};
 
 	bh1749@38 {
-			compatible = "rohm,bh1749";
-			label = "BH1749";
-			reg = <0x38>;
-			int-gpios = <&gpio0 27 0>;
+		compatible = "rohm,bh1749";
+		label = "BH1749";
+		reg = <0x38>;
+		int-gpios = <&gpio0 27 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
 	};
 };
 
