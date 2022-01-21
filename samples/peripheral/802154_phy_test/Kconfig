@@ -52,6 +52,7 @@ config PTT_HW_VERSION
 
 config PTT_ANTENNA_DIVERSITY
 	depends on !SOC_SERIES_NRF53X
+	depends on NRFX_GPIOTE
 	bool "Enable Antenna Diversity [EXPERIMENTAL]"
 	select EXPERIMENTAL
 
@@ -89,5 +90,31 @@ config PTT_ANT_TOGGLE_TIME
 	  Time in microseconds between antenna switches in Auto Mode
 
 endif #PTT_ANTENNA_DIVERSITY
+
+config PTT_CLK_OUT
+	bool "Enable external clock signal generator"
+	default y
+	depends on NRFX_GPIOTE
+	help
+	  Output clock signal to an external pin
+
+config PTT_POWER_MGMT
+	bool "Enable power management commands"
+	default y
+	depends on NRFX_POWER
+	help
+	  Enable power management commands.
+
+config PTT_CACHE_MGMT
+	bool "Enable cache management commands"
+	default y
+	help
+	  Enable cache management commands.
+
+config PTT_RF_INIT_PRIORITY
+	int "PTT RF init priority"
+	default 50
+	help
+	  PTT RF module init priority
 
 endmenu
