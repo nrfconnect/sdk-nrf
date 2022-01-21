@@ -113,12 +113,6 @@ Asset Tracker v2
 
 .. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
-CIA-351: Connectivity issues with Azure IoT Hub
-  If a ``device bound`` message is sent to the device while the device is in the LTE Power Saving Mode, the TCP connection will most likely be terminated by the server.
-  Known symptoms of this are frequent reconnections to cloud, messages sent to Azure IoT Hub never arriving, and FOTA images being downloaded twice.
-
-.. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
-
 CIA-463: Wrong network mode parameter reported to cloud
   The network mode string present in ``deviceInfo`` (nRF Cloud) and ``dev`` (Azure IoT Hub and AWS IoT) JSON objects that is reported to cloud might contain wrong network modes.
   The network mode string contains the network modes that the modem is configured to use, not what the modem actually connects to the LTE network with.
@@ -252,6 +246,14 @@ NCSDK-10106: Elevated current consumption when using applications without :ref:`
   When running applications that do not enable :ref:`nrfxlib:nrf_modem` on nRF9160 with build code B1A, current consumption will stay at 3 mA when in sleep.
 
   **Workaround:** Enable :ref:`nrfxlib:nrf_modem`.
+
+.. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+CIA-351: Connectivity issues with Azure IoT Hub
+  If a ``device-bound`` message is sent to the device while it is in the LTE Power Saving Mode (PSM), the TCP connection will most likely be terminated by the server.
+  Known symptoms of this are frequent reconnections to cloud, messages sent to Azure IoT Hub never arriving, and FOTA images being downloaded twice.
+
+  **Workaround:** Avoid using LTE Power Saving Mode (PSM) and extended DRX intervals longer than approximately 30 seconds. This will reduce the risk of the issue occurring, at the cost of increased power consumption.
 
 nRF5
 ****
