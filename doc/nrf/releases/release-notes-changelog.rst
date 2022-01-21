@@ -261,6 +261,10 @@ Other libraries
   * Removed the :kconfig:`CONFIG_DATE_TIME_IPV6` Kconfig option.
     The library now automatically uses IPv6 for NTP when available.
 
+* :ref:`lib_location` library:
+
+  * Added support for GNSS high accuracy.
+
 Event Manager
 +++++++++++++
 

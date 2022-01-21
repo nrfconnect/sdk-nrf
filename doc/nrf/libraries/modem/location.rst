@@ -40,6 +40,7 @@ Each location method has its own implementation for the location retrieval:
      precedence as the transport method of GNSS assistance data.
    * Note that acquiring GNSS fix only starts when LTE connection, more specifically Radio Resource Control (RRC) connection, is idle.
      Also, if A-GPS is not used and Power Saving Mode (PSM) is enabled, Location library will wait for the modem to enter PSM.
+   * Selectable location accuracy (low/normal/high).
 * Cellular positioning
    * :ref:`lte_lc_readme` for getting visible cellular base stations.
    * :ref:`lib_multicell_location` for sending cell information to the selected location service and getting the calculated location back to the device.

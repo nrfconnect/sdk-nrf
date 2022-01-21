@@ -128,6 +128,7 @@ static void location_config_method_defaults_set(
 	if (method_type == LOCATION_METHOD_GNSS) {
 		method->gnss.timeout = 120;
 		method->gnss.accuracy = LOCATION_ACCURACY_NORMAL;
+		method->gnss.num_consecutive_fixes = 3;
 	} else if (method_type == LOCATION_METHOD_CELLULAR) {
 		method->cellular.timeout = 30;
 		method->cellular.service = LOCATION_SERVICE_ANY;
