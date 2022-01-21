@@ -98,11 +98,6 @@
 
 .. _`nRF Cloud JSON protocol schemas`: https://github.com/nRFCloud/application-protocols
 
-.. _`Pelion Device Management Client library reference example`: https://github.com/PelionIoT/mbed-cloud-client-example
-.. _`Pelion manifest tool`: https://github.com/PelionIoT/manifest-tool#device-management-manifest-cli-tool
-.. _`Installing the manifest tool`: https://github.com/PelionIoT/manifest-tool#installing-the-manifest-tool
-.. _`Using the manifest tool`: https://github.com/PelionIoT/manifest-tool#using-the-manifest-tool
-
 .. _`TF-M sample incompatibility issue`: https://github.com/zephyrproject-rtos/zephyr/issues/34658
 
 .. _`cddl-gen`: https://github.com/NordicSemiconductor/cddl-gen
@@ -592,20 +587,6 @@
 .. _`NCS hardware accelerometer machine learning model`: https://studio.edgeimpulse.com/public/33129/latest
 .. _`Nordic Semi Thingy:53 page`: https://www.edgeimpulse.com/docs/nordic-semi-thingy53
 
-.. ### Source: pelion.com
-
-.. _`Pelion website`: https://pelion.com/
-.. _`Pelion Device Management documentation`: https://developer.pelion.com/docs/
-.. _`Pelion Device Management release notes`: https://developer.pelion.com/docs/device-management/current/release-notes/index.html
-.. _`Pelion Device Management`: https://developer.pelion.com/docs/device-management/current/welcome/index.html
-.. _`Provisioning devices for Pelion Device Management`: https://developer.pelion.com/docs/device-management/current/provisioning-process/index.html
-.. _`Provisioning development devices`: https://developer.pelion.com/docs/device-management/current/provisioning-process/provisioning-development-devices.html
-.. _`Device Management Update`: https://developer.pelion.com/docs/device-management/v4.7/updating-firmware/index.html
-.. _`Factory Configuration Client`: https://developer.pelion.com/docs/device-management/current/factory-client/index.html
-.. _`Pelion's factory_configurator_client.h`: https://developer.pelion.com/docs/device-management/current/factory-client/factory__configurator__client_8h.html
-.. _`Pelion Manifest Tool for version 4.7`: https://developer.pelion.com/docs/device-management/v4.7/updating-firmware/manifest-tool.html
-.. _`Zephyr integration tutorial`: https://developer.pelion.com/docs/device-management/current/connecting/zephyr.html
-
 .. ### Source: memfault.com
 
 .. _`Memfault`: https://memfault.com/
@@ -656,8 +637,6 @@
 .. _`BME680`: https://www.bosch-sensortec.com/products/environmental-sensors/gas-sensors/bme680/
 
 .. _`ADXL362`: https://www.analog.com/en/products/adxl362.html#product-overview
-
-.. _`Pelion Device Management Portal`: https://portal.mbedcloud.com/login
 
 .. _`ARM TrustZone`: https://developer.arm.com/documentation/100690/0200/ARM-TrustZone-technology?lang=en
 .. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads

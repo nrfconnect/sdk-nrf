@@ -343,8 +343,8 @@ Pelion
 ------
 
 * Updated Pelion Device Management Client library version to 4.10.0.
-* Switched to using :ref:`caf_power_manager` and :ref:`caf_net_state` in :ref:`pelion_client`.
-* Updated the :ref:`application documentation <pelion_client>` with a step that requires downloading Pelion development tools.
+* Switched to using :ref:`caf_power_manager` and :ref:`caf_net_state` in the nRF Pelion Client application.
+* Updated the nRF Pelion Client application documentation with a step that requires downloading Pelion development tools.
 
 Profiler
 --------

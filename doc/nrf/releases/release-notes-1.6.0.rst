@@ -384,8 +384,8 @@ Pelion
 ------
 
 * Added the integration of Pelion Device Management library, available as one of the external submodule repositories in the |NCS|.
-  For more information, see :ref:`ug_pelion`.
-* Added the :ref:`pelion_client` application that showcases the usage of Pelion Device Management library.
+  For more information, see Using Pelion with the |NCS|.
+* Added the nRF Pelion Client application that showcases the usage of Pelion Device Management library.
 
 Common Application Framework (CAF)
 ----------------------------------

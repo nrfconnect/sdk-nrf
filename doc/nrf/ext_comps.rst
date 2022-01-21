@@ -12,4 +12,3 @@ The following user guides show how you can use external components in your appli
    ug_bt_coex
    ug_edge_impulse
    ug_nrf_cloud
-   ug_pelion
