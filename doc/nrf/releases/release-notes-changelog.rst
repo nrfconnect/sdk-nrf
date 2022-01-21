@@ -193,6 +193,10 @@ Bluetooth libraries and services
 
   * Added units for :c:struct:`bt_rscs_measurement` members.
 
+* :ref:`ble_rpc` library:
+
+  * Fixed the issue related to missing buffer size variables for the user PHY update and the user data length update procedures.
+
 Common Application Framework (CAF)
 ----------------------------------
 
