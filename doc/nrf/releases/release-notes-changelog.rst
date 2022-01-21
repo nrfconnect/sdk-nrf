@@ -22,7 +22,7 @@ The most relevant changes that are present on the main branch of the |NCS|, as c
 Highlights
 **********
 
-* |no_changes_yet_note|
+* Removed support for Pelion DM library.
 
 Known issues
 ************

@@ -31,8 +31,6 @@ manifest:
       url-base: https://github.com/alexa
     - name: nordicsemi
       url-base: https://github.com/NordicSemiconductor
-    - name: pelioniot
-      url-base: https://github.com/PelionIoT
     - name: memfault
       url-base: https://github.com/memfault
 
@@ -162,10 +160,6 @@ manifest:
       path: modules/alexa-embedded
       revision: face92d8c62184832793f518bb1f19379538c5c1
       remote: alexa
-    - name: mbed-cloud-client
-      path: modules/lib/pelion-dm
-      revision: 4.10.0
-      remote: pelioniot
     - name: cddl-gen
       remote: nordicsemi
       revision: 1c2656daa87ebf4cd3c45ee8eafa336260d589bc

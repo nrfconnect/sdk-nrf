@@ -300,7 +300,7 @@ The child image Kconfig file is named :file:`<child_image>.conf` instead of :fil
 The Devicetree configuration is not affected by the build type.
 
 .. note::
-    For an example of an application that is using build types, see the :ref:`nrf_desktop` application (:ref:`nrf_desktop_requirements_build_types`), the :ref:`nrf_machine_learning_app` application (:ref:`nrf_machine_learning_app_requirements_build_types`), or the :ref:`pelion_client` application (:ref:`pelion_client_reqs_build_types`).
+    For an example of an application that is using build types, see the :ref:`nrf_desktop` application (:ref:`nrf_desktop_requirements_build_types`) or the :ref:`nrf_machine_learning_app` application (:ref:`nrf_machine_learning_app_requirements_build_types`).
 
 Selecting a build type in the VS Code extension
 ===============================================

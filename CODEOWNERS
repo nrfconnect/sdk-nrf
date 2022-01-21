@@ -35,7 +35,6 @@
 /applications/machine_learning/           @pdunaj
 /applications/matter_weather_station/     @Damian-Nordic @kkasperczyk-no
 /applications/nrf_desktop/                @pdunaj
-/applications/pelion_client/              @pdunaj
 /applications/serial_lte_modem/           @junqingzou @pirun @rlubos
 # Boards
 /boards/                                  @SebastianBoe @anangl
@@ -99,7 +98,6 @@ Kconfig*                                  @tejlmand
 /lib/multicell_location/                  @jtguggedal
 /lib/multithreading_lock/                 @rugeGerritsen
 /lib/pdn/                                 @lemrey @rlubos
-/lib/pelion/                              @pdunaj
 /lib/ram_pwrdn/                           @mariuszpos @MarekPorwisz
 /lib/fatal_error/                         @SebastianBoe
 /lib/sms/                                 @trantanen @tokangas
