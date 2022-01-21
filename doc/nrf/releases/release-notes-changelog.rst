@@ -86,7 +86,7 @@ nRF Machine Learning (Edge Impulse)
 
   * Added :kconfig:`CONFIG_ML_APP_SENSOR_EVENT_DESCR` option that globally defines sensor used by the application modules.
   * Bluetooth LE bonding functionality.
-    The functionality relies on Bluetooth LE bond module implementation from Common Application Framework.
+    The functionality relies on :ref:`caf_ble_bond`.
 
 * Updated:
 
@@ -104,7 +104,7 @@ nRF Desktop
 
 * Updated:
 
-   * Documentation and diagrams for the :ref:`nrf_desktop_ble_bond` module.
+   * Documentation and diagrams for the :ref:`nrf_desktop_ble_bond`.
    * Moved Fn key related macros to an application specific header file (:file:`configuration/common/fn_key_id.h`).
    * Config channel no longer uses orphaned sections to store module Id information.
      Hence, the :kconfig:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
@@ -196,7 +196,7 @@ Bluetooth libraries and services
 Common Application Framework (CAF)
 ----------------------------------
 
-* Added a simple implementation of the Bluetooth LE bond module.
+* Added a simple implementation of the :ref:`caf_ble_bond`.
   The implementation allows to erase bonds for default Bluetooth local identity.
 * Migrated :ref:`nRF Desktop settings loader <nrf_desktop_settings_loader>` to :ref:`lib_caf` as :ref:`CAF: Settings loader module <caf_settings_loader>`.
 * :ref:`caf_leds`:

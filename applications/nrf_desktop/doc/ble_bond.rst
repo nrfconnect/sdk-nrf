@@ -14,6 +14,10 @@ The module controls the following operations:
 * Triggering scanning for new peers (only for nRF Desktop central).
 * Erasing the Bluetooth bonds.
 
+.. note::
+   The nRF Desktop uses the application-specific |ble_bond| implementation.
+   The application does not rely on the :ref:`caf_ble_bond` implementation.
+
 Module events
 *************
 
