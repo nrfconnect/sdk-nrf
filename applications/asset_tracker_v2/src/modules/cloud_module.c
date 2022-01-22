@@ -246,11 +246,21 @@ static void agps_data_handle(const uint8_t *buf, size_t len)
 		LOG_WRN("Unable to process A-GPS data, error: %d", err);
 	} else {
 		LOG_DBG("A-GPS data processed");
-		return;
 	}
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+	if (!err) {
+		err = nrf_cloud_pgps_notify_prediction();
+		if (err) {
+			LOG_ERR("Error requesting prediction notification: %d", err);
+		} else {
+			return;
+		}
+	}
+#endif
+
 	LOG_DBG("Process incoming data if P-GPS related");
 
 	err = nrf_cloud_pgps_process(buf, len);
@@ -638,6 +648,10 @@ void pgps_handler(struct nrf_cloud_pgps_event *event)
 			LOG_ERR("Unable to send prediction to modem: %d", err);
 		}
 
+		err = nrf_cloud_pgps_preemptive_updates();
+		if (err) {
+			LOG_ERR("Error requesting updates: %d", err);
+		}
 		break;
 	case PGPS_EVT_REQUEST: {
 		LOG_DBG("PGPS_EVT_REQUEST");
