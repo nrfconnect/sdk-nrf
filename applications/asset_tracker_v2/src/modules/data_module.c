@@ -979,30 +979,47 @@ static void agps_request_handle(struct nrf_modem_gnss_agps_data_frame *incoming_
 {
 	int err;
 
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+	struct nrf_modem_gnss_agps_data_frame request;
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+	request.sv_mask_ephe = 0;
+	request.sv_mask_alm = 0;
+#else
+	request.sv_mask_ephe = incoming_request->sv_mask_ephe;
+	request.sv_mask_alm = incoming_request->sv_mask_alm;
+#endif
+	request.data_flags = incoming_request->data_flags;
+
+#if defined(CONFIG_NRF_CLOUD_MQTT)
 	/* If CONFIG_NRF_CLOUD_MQTT is enabled, the nRF Cloud MQTT transport library will be used
 	 * to send the request.
 	 */
-#if defined(CONFIG_NRF_CLOUD_AGPS) && defined(CONFIG_NRF_CLOUD_MQTT)
-	err = nrf_cloud_agps_request(incoming_request);
+	err = nrf_cloud_agps_request(&request);
 	if (err) {
 		LOG_WRN("Failed to request A-GPS data, error: %d", err);
 		LOG_WRN("This is expected to fail if we are not in a connected state");
 	} else {
-		LOG_DBG("A-GPS request sent");
-		return;
+		if (nrf_cloud_agps_request_in_progress()) {
+			LOG_DBG("A-GPS request sent");
+			return;
+		}
+		LOG_DBG("No A-GPS data requested");
+		/* Continue so P-GPS, if enabled, can be requested. */
 	}
-#elif defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT)
+#else
 	/* If the nRF Cloud MQTT transport library is not enabled, we will have to create an
 	 * A-GPS request and send out an event containing the request for the cloud module to pick
 	 * up and send to the cloud that is currently used.
 	 */
-	err = agps_request_encode(incoming_request);
+	err = agps_request_encode(&request);
 	if (err) {
 		LOG_WRN("Failed to request A-GPS data, error: %d", err);
 	} else {
 		LOG_DBG("A-GPS request sent");
 		return;
 	}
+#endif
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
