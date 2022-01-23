@@ -23,6 +23,13 @@ if (CONFIG_MCUBOOT)
 endif()
 
 if(CONFIG_BOOTLOADER_MCUBOOT)
+  if (CONFIG_NCS_IS_VARIANT_IMAGE)
+    # When building the variant of an image, the configuration of the variant image
+    # is identical to the base image, except 'CONFIG_NCS_IS_VARIANT_IMAGE'. The
+    # logic below should only be performed once, for the base image, not for the variant variant.
+    # Hence, we have this early return to avoid execution of this file for the variant image.
+    return()
+  endif()
 
   include(${ZEPHYR_BASE}/../nrf/cmake/fw_zip.cmake)
 
