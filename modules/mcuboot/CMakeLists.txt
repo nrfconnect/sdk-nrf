@@ -33,15 +33,17 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     # SIGNED_BIN_FILE_IN - (required) Hex image to sign
     # SIGNED_HEX_FILE_NAME_PREFIX - (required) Prefix of the output image
     # SLOT_SIZE - (required) The size of the primary partition
-    # START_ADDRESS_OFFSET - (required) Offset
     # SIGNED_HEX_FILE_OUT - (required) Signed hex output image
+    #
+    # Optional arguments:
+    # START_ADDRESS_OFFSET - (required) Offset
     # SIGNED_BIN_FILE_OUT - (optional) Signed bin output image
     # SIGNED_HEX_TEST_FILE_OUT - (optional) Signed hex output test image including IMAGE_MAGIC
     # SIGNED_BIN_FILE_OUT - (optional) Signed bin output image
     # DEPENDS - (optional) One or more dependencies for signing the hex image
 
-    set(oneValueArgs SIGNED_BIN_FILE_IN SIGNED_HEX_FILE_NAME_PREFIX SLOT_SIZE START_ADDRESS_OFFSET SIGNED_HEX_FILE_OUT)
-    set(oneValueOptionalArgs SIGNED_BIN_FILE_OUT SIGNED_HEX_TEST_FILE_OUT)
+    set(oneValueArgs SIGNED_BIN_FILE_IN SIGNED_HEX_FILE_NAME_PREFIX SLOT_SIZE SIGNED_HEX_FILE_OUT)
+    set(oneValueOptionalArgs SIGNED_BIN_FILE_OUT SIGNED_HEX_TEST_FILE_OUT START_ADDRESS_OFFSET)
     set(multiValueArgs DEPENDS)
     cmake_parse_arguments(SIGN_ARG "" "${oneValueArgs};${oneValueOptionalArgs}" "${multiValueArgs}" ${ARGN})
     check_arguments_required_all(sign SIGN_ARG ${oneValueArgs})
@@ -64,7 +66,8 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     # for the secondary slot, since these are the only ones with a memory mapped
     # area.
     dt_nodelabel(qspi_node NODELABEL "qspi")
-    if (NOT CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY OR DEFINED qspi_node)
+    if ((NOT CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY OR DEFINED qspi_node) AND
+        SIGN_ARG_START_ADDRESS_OFFSET)
       set(moved_test_update_hex
         ${SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX}_moved_test_update.hex
         )
