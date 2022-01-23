@@ -234,6 +234,11 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       NAME s1_image
       PRELOAD_IMAGE mcuboot
       )
+  elseif(CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT)
+    add_child_image(
+      NAME mcuboot_secondary_app
+      PRELOAD_IMAGE app
+      )
   endif()
 
   set(merged_hex_file
@@ -352,6 +357,38 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       mcuboot_primary_app_PM_TARGET
       mcuboot_sign_target
       )
+
+    if (CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT)
+      get_shared(mcuboot_secondary_app_bin_dir IMAGE mcuboot_secondary_app PROPERTY ZEPHYR_BINARY_DIR)
+      set(mcuboot_secondary_app_hex ${mcuboot_secondary_app_bin_dir}/zephyr.hex)
+
+      sign(
+        SIGNED_BIN_FILE_IN ${mcuboot_secondary_app_hex}
+        SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/mcuboot_secondary_app
+        SLOT_SIZE $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_SIZE>
+        SIGNED_HEX_FILE_OUT mcuboot_secondary_app_signed_hex
+        SIGNED_BIN_FILE_OUT mcuboot_secondary_app_signed_bin
+        SIGNED_HEX_TEST_FILE_OUT mcuboot_secondary_app_signed_test_hex
+        DEPENDS mcuboot_secondary_app_subimage ${mcuboot_secondary_app_bin_dir}/zephyr.hex
+        )
+
+      add_custom_target(mcuboot_secondary_app_sign_target
+        DEPENDS
+        ${mcuboot_secondary_app_signed_hex}
+        ${mcuboot_secondary_app_signed_bin}
+        ${mcuboot_secondary_app_signed_test_hex}
+        )
+
+      set_property(GLOBAL PROPERTY
+        mcuboot_secondary_app_PM_HEX_FILE
+        ${mcuboot_secondary_app_signed_hex}
+        )
+
+      set_property(GLOBAL PROPERTY
+        mcuboot_secondary_app_PM_TARGET
+        mcuboot_secondary_app_sign_target
+        )
+    endif()
 
     get_shared(cpunet_signed_app_hex IMAGE CPUNET PROPERTY PM_SIGNED_APP_HEX)
 
