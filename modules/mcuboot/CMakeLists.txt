@@ -233,6 +233,11 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       NAME s1_image
       PRELOAD_IMAGE mcuboot
       )
+  elseif(CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT)
+    add_child_image(
+      NAME app_variant
+      PRELOAD_IMAGE app
+      )
   endif()
 
   set(merged_hex_file
@@ -351,6 +356,38 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       mcuboot_primary_app_PM_TARGET
       mcuboot_sign_target
       )
+
+    if (CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT)
+      get_shared(app_variant_bin_dir IMAGE app_variant PROPERTY ZEPHYR_BINARY_DIR)
+      set(app_variant_hex ${app_variant_bin_dir}/zephyr.hex)
+
+      sign(
+        SIGNED_BIN_FILE_IN ${app_variant_hex}
+        SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/app_variant
+        SLOT_SIZE $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_SIZE>
+        SIGNED_HEX_FILE_OUT app_variant_signed_hex
+        SIGNED_BIN_FILE_OUT app_variant_signed_bin
+        SIGNED_HEX_TEST_FILE_OUT app_variant_signed_test_hex
+        DEPENDS app_variant_subimage ${app_variant_bin_dir}/zephyr.hex
+        )
+
+      add_custom_target(app_variant_sign_target
+        DEPENDS
+        ${app_variant_signed_hex}
+        ${app_variant_signed_bin}
+        ${app_variant_signed_test_hex}
+        )
+
+      set_property(GLOBAL PROPERTY
+        app_variant_PM_HEX_FILE
+        ${app_variant_signed_hex}
+        )
+
+      set_property(GLOBAL PROPERTY
+        app_variant_PM_TARGET
+        app_variant_sign_target
+        )
+    endif()
 
     get_shared(cpunet_signed_app_hex IMAGE CPUNET PROPERTY PM_SIGNED_APP_HEX)
 

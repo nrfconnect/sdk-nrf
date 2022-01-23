@@ -23,6 +23,11 @@ config SIGN_IMAGES
 
 if BOOTLOADER_MCUBOOT
 
+config BOOT_BUILD_DIRECT_XIP_VARIANT
+	bool "Build DIRECT_XIP variant"
+	help
+	  Build a variant of the 'app' image which can be used for DIRECT_XIP.
+
 # The name of this configuration needs to match the requirements set by the
 # script `partition_manager.py`. See `pm.yml` in the application directory
 # of MCUBoot.
