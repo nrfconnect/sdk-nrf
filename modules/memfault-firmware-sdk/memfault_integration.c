@@ -8,9 +8,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <init.h>
-#include <nrf_modem_at.h>
 #include <modem/lte_lc_trace.h>
 #include <memfault_ncs.h>
+
+#ifdef CONFIG_NRF_MODEM_LIB
+#include <nrf_modem_at.h>
+#endif
 
 #include <memfault/core/build_info.h>
 #include <memfault/core/compiler.h>
@@ -88,6 +91,7 @@ void memfault_platform_get_device_info(sMemfaultDeviceInfo *info)
 	};
 }
 
+#ifdef CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI
 static int request_imei(const char *cmd, char *buf, size_t buf_len)
 {
 	int err = nrf_modem_at_cmd(buf, buf_len, cmd);
@@ -120,6 +124,7 @@ static int device_info_init(void)
 
 	return err;
 }
+#endif /* CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI */
 
 static int init(const struct device *unused)
 {
@@ -138,12 +143,12 @@ static int init(const struct device *unused)
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI)) {
-		err = device_info_init();
-		if (err) {
-			LOG_ERR("Device info initialization failed, error: %d", err);
-		}
+#ifdef CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI
+	err = device_info_init();
+	if (err) {
+		LOG_ERR("Device info initialization failed, error: %d", err);
 	}
+#endif /* CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI */
 
 	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_USE_DEFAULT_METRICS)) {
 		memfault_ncs_metrcics_init();
