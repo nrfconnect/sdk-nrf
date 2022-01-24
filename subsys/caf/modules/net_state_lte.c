@@ -14,7 +14,7 @@
 #include <caf/events/net_state_event.h>
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_PELION_CLIENT_NET_LOG_LEVEL);
+LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_NET_STATE_LTE_LOG_LEVEL);
 
 static struct k_work_delayable connecting_work;
 static enum net_state net_state;
