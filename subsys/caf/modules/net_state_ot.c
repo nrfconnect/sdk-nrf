@@ -17,7 +17,7 @@
 #include <caf/events/factory_reset_event.h>
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_PELION_CLIENT_NET_LOG_LEVEL);
+LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_NET_STATE_OT_LOG_LEVEL);
 
 
 #define NET_MODULE_ID_STATE_READY_WAIT_FOR                          \
