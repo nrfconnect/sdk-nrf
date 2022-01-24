@@ -205,7 +205,7 @@ static void agps_data_get_work_fn(struct k_work *item)
 	 */
 	if (!(last_agps.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) &&
 	    !(last_agps.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST)) {
-		LOG_INF("Ignoring assistance request because no GPS time or position is requested")
+		LOG_INF("Ignoring assistance request because no GPS time or position is requested");
 		return;
 	}
 #endif /* CONFIG_GNSS_SAMPLE_ASSISTANCE_MINIMAL */
