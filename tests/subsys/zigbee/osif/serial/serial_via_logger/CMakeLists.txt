@@ -14,8 +14,8 @@ add_definitions(-Wno-packed-bitfield-compat)
 zephyr_compile_definitions(CONFIG_ZBOSS_TRACE_HEXDUMP_LOGGING)
 zephyr_compile_definitions(CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE=1024)
 
-zephyr_include_directories(${NRFXLIB_DIR}/zboss/include)
-zephyr_include_directories(${NRFXLIB_DIR}/zboss/include/osif)
+zephyr_include_directories(${NRFXLIB_DIR}/zboss/production/include)
+zephyr_include_directories(${NRFXLIB_DIR}/zboss/production/include/osif)
 target_include_directories(app BEFORE PRIVATE mock)
 
 target_sources(app PRIVATE
