@@ -181,7 +181,7 @@ int location_service_generate_request(
 		timing_advance[0] = '\0';
 	} else {
 		len = snprintk(timing_advance, sizeof(timing_advance),
-			       "\"timing_advance\":%d,",
+			       "\"timingAdvance\":%d,",
 			       cell_data->current_cell.timing_advance / TA_DIVIDER);
 		if ((len < 0) || (len >= sizeof(timing_advance))) {
 			LOG_ERR("Too small buffer for timing advance");
