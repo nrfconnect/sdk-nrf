@@ -261,7 +261,8 @@ static void cmd_zb_simple_desc_req_cb(zb_bufid_t bufid)
 	}
 
 	if (simple_desc_resp->hdr.status == ZB_ZDP_STATUS_SUCCESS) {
-		char text_buffer[150] = "";
+		/* Buffer size set to 256, should be sufficient up to 20 clusters (in + out). */
+		char text_buffer[256] = "";
 
 		sprintf(text_buffer,
 			"src_addr=0x%04hx ep=%d profile_id=0x%04hx"
