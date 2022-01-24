@@ -55,7 +55,7 @@ static void test_hw_unique_key_tfm1(void)
 	/* Set the key attributes for the storage key */
 	psa_set_key_usage_flags(&attributes,
 			(PSA_KEY_USAGE_ENCRYPT | PSA_KEY_USAGE_DECRYPT | PSA_KEY_USAGE_EXPORT));
-	psa_set_key_algorithm(&attributes, PSA_ALG_AEAD_WITH_TAG_LENGTH(PSA_ALG_CMAC, 16));
+	psa_set_key_algorithm(&attributes, PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_CMAC, 16));
 	psa_set_key_type(&attributes, PSA_KEY_TYPE_AES);
 	psa_set_key_bits(&attributes, sizeof(out_key) * 8);
 
