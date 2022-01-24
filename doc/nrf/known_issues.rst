@@ -1459,6 +1459,13 @@ SoftDevice Controller
 
 In addition to the known issues listed here, see also :ref:`softdevice_controller_limitations` for permanent limitations.
 
+.. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+DRGN-16650: Undefined behavior when extended scanning is enabled.
+  When extended scanning is enabled and :kconfig:`CONFIG_BT_BUF_ACL_RX_SIZE` is set to a value less than 251, it may result in asserts or undefined behavior.
+
+  **Workaround:** Set :kconfig:`CONFIG_BT_BUF_EVT_RX_SIZE` to 255 when extended scanning is enabled.
+
 .. rst-class:: v1-8-0
 
 DRGN-16013: Initiating connections over extended advertising is not supported when external radio coexistence and FEM support are enabled.
