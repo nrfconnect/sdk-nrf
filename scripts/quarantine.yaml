@@ -9,6 +9,8 @@
 
 - scenarios:
     - samples.edge_impulse.wrapper
+    - samples.psa_tls
+	- lib.hw_unique_key_tfm.hw_unique_key_tfm1
     - applications.machine_learning.zdebug
     - applications.machine_learning.zdebug_nus
     - applications.machine_learning.zdebug_rtt
