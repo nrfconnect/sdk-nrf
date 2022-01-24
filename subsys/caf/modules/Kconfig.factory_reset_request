@@ -20,8 +20,8 @@ config CAF_FACTORY_RESET_REQUEST_BUTTON
 	default 0x0000
 	help
 	  Button that will trigger a factory reset when held during the board
-	  boot-up. Factory reset will erase any stored Pelion and Network
-	  data. It will also re-provision the device.
+	  boot-up. If the button is held, factory reset request event would be
+	  propagated through the system.
 
 config CAF_FACTORY_RESET_REQUEST_DELAY
 	int "Time in miliseconds to wait for button event at initialization"
