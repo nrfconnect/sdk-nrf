@@ -4,6 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/others/fw_info.rst.
+ * Rendered documentation is available at https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/others/fw_info.html.
+ */
+
 #ifndef FW_INFO_H__
 #define FW_INFO_H__
 

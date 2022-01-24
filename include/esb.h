@@ -3,6 +3,12 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/others/esb.rst.
+ * Rendered documentation is available at https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/others/esb.html.
+ */
+
 #ifndef __ESB_H
 #define __ESB_H
 

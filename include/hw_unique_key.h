@@ -4,6 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/others/hw_unique_key.rst.
+ * Rendered documentation is available at https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/others/hw_unique_key.html.
+ */
+
 #ifndef HW_UNIQUE_KEY_H_
 #define HW_UNIQUE_KEY_H_
 

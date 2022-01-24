@@ -4,6 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/gazell/gzll_glue.rst.
+ * Rendered documentation is available at https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/gazell/gzll_glue.html.
+ */
+
 #ifndef __GZLL_GLUE_H
 #define __GZLL_GLUE_H
 

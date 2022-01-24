@@ -4,6 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/others/memfault_ncs.rst.
+ * Rendered documentation is available at https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/others/memfault_ncs.html.
+ */
+
 /** @file
  *  @brief Memfault NCS integration
  */

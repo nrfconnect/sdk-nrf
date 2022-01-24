@@ -4,6 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/others/st25r3911b_nfc.rst.
+ * Rendered documentation is available at https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/others/st25r3911b_nfc.html.
+ */
+
 #ifndef ST25R3911B_NFCA_H_
 #define ST25R3911B_NFCA_H_
 
