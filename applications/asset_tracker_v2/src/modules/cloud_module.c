@@ -93,8 +93,16 @@ static struct cloud_data_cfg copy_cfg;
 const k_tid_t cloud_module_thread;
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-/* Local copy of the last requested AGPS request from the modem. */
-static struct nrf_modem_gnss_agps_data_frame agps_request;
+/* Local copy of the last A-GPS request from the modem, used to inject correct P-GPS data. */
+static struct nrf_modem_gnss_agps_data_frame agps_request = {
+	.sv_mask_ephe = 0xFFFFFFFF,
+	.sv_mask_alm = 0xFFFFFFFF,
+	.data_flags = NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST |
+		      NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST |
+		      NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST |
+		      NRF_MODEM_GNSS_AGPS_POSITION_REQUEST |
+		      NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST
+};
 #endif
 
 /* Cloud module message queue. */
@@ -820,25 +828,6 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 	if (IS_EVENT(msg, data, DATA_EVT_NEIGHBOR_CELLS_DATA_SEND)) {
 		neighbor_cells_data_send(&msg->module.data);
 	}
-
-	/* To properly initialize the nRF Cloud PGPS library we need to be connected to cloud and
-	 * date time must be obtained.
-	 */
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-	if (IS_EVENT(msg, data, DATA_EVT_DATE_TIME_OBTAINED)) {
-		struct nrf_cloud_pgps_init_param param = {
-			.event_handler = pgps_handler,
-			.storage_base = PM_MCUBOOT_SECONDARY_ADDRESS,
-			.storage_size = PM_MCUBOOT_SECONDARY_SIZE
-		};
-
-		int err = nrf_cloud_pgps_init(&param);
-
-		if (err) {
-			LOG_ERR("nrf_cloud_pgps_init: %d", err);
-		}
-	}
-#endif
 }
 
 /* Message handler for SUB_STATE_CLOUD_DISCONNECTED. */
@@ -885,6 +874,21 @@ static void on_all_states(struct cloud_msg_data *msg)
 		 * P-GPS data into the modem.
 		 */
 		memcpy(&agps_request, &msg->module.gnss.data.agps_request, sizeof(agps_request));
+	}
+
+	/* To properly initialize the nRF Cloud PGPS library date time must have been obtained. */
+	if (IS_EVENT(msg, data, DATA_EVT_DATE_TIME_OBTAINED)) {
+		struct nrf_cloud_pgps_init_param param = {
+			.event_handler = pgps_handler,
+			.storage_base = PM_MCUBOOT_SECONDARY_ADDRESS,
+			.storage_size = PM_MCUBOOT_SECONDARY_SIZE
+		};
+
+		int err = nrf_cloud_pgps_init(&param);
+
+		if (err) {
+			LOG_ERR("nrf_cloud_pgps_init: %d", err);
+		}
 	}
 #endif
 }

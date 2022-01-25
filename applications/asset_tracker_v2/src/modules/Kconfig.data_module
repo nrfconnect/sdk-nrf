@@ -11,6 +11,10 @@ menuconfig DATA_MODULE
 
 if DATA_MODULE
 
+config DATA_AGPS_REQUEST_ALL_UPON_CONNECTION
+	bool "Request all A-GPS data upon a connection"
+	depends on NRF_CLOUD_AGPS || NRF_CLOUD_PGPS
+
 config PENDING_DATA_COUNT
 	int "Number of entries in pending data list"
 	default 10
