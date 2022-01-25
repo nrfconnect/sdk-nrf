@@ -12,6 +12,10 @@
 #include <modem/nrf_modem_lib.h>
 #include <sys/reboot.h>
 
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#include <net/nrf_cloud_agps.h>
+#endif
+
 /* Module name is used by the event manager macros in this file */
 #define MODULE main
 #include <caf/events/module_state_event.h>
@@ -271,6 +275,50 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
+static bool is_agps_processed(void)
+{
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+	struct nrf_modem_gnss_agps_data_frame processed;
+
+	nrf_cloud_agps_processed(&processed);
+
+	if (!processed.sv_mask_ephe) {
+		return false;
+	}
+
+#endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_NRF_CLOUD_PGPS */
+
+	return true;
+}
+
+static bool request_gnss(void)
+{
+	uint32_t uptime_current_ms = k_uptime_get();
+	int agps_wait_threshold_ms = CONFIG_APP_REQUEST_GNSS_WAIT_FOR_AGPS_THRESHOLD_SEC *
+				     MSEC_PER_SEC;
+
+	if (!IS_ENABLED(CONFIG_APP_REQUEST_GNSS_WAIT_FOR_AGPS)) {
+		return true;
+	} else if (agps_wait_threshold_ms < 0) {
+		/* If CONFIG_APP_REQUEST_GNSS_WAIT_FOR_AGPS_THRESHOLD_SEC is set to -1,
+		 * we need to notify the data module that the application module is awaiting
+		 * A-GPS data in order to request GNSS. If not, GNSS will never be
+		 * requested if the initial A-GPS data request fails.
+		 */
+		if (is_agps_processed()) {
+			return true;
+		}
+
+		SEND_EVENT(app, APP_EVT_AGPS_NEEDED);
+		return false;
+
+	} else if ((agps_wait_threshold_ms < uptime_current_ms) || is_agps_processed()) {
+		return true;
+	}
+
+	return false;
+}
+
 static void data_sample_timer_handler(struct k_timer *timer)
 {
 	ARG_UNUSED(timer);
@@ -324,10 +372,10 @@ static void data_get(void)
 	struct app_module_event *app_module_event = new_app_module_event();
 	size_t count = 0;
 
-	/* Specify a timeout that each module has to fetch data. If data is not
-	 * fetched within this timeout, the data that is available is sent.
+	/* Set a low sample timeout. If GNSS is requested, the sample timeout will be increased to
+	 * accommodate the GNSS timeout.
 	 */
-	app_module_event->timeout = 10;
+	app_module_event->timeout = 1;
 
 	/* Specify which data that is to be included in the transmission. */
 	app_module_event->data_list[count++] = APP_DATA_MODEM_DYNAMIC;
@@ -338,21 +386,31 @@ static void data_get(void)
 		app_module_event->data_list[count++] = APP_DATA_NEIGHBOR_CELLS;
 	}
 
-	/* The reason for having at least 75 seconds timeout in the case of requesting GNSS data
-	 * is that the GNSS module in nRF9160 will always search for at least 60 seconds for the
-	 * first position fix after a reboot.
+	/* The reason for having at least 75 seconds sample timeout when
+	 * requesting GNSS data is that the GNSS module on the nRF9160 modem will always
+	 * search for at least 60 seconds for the first position fix after a reboot. This limit
+	 * is enforced in order to give the modem time to perform scheduled downloads of
+	 * A-GPS data from the GNSS satellites.
 	 *
-	 * The addition of 15 seconds to the configured GNSS timeout is done
-	 * to let the GNSS module run the currently ongoing search until
-	 * the end. If the timeout for sending data is exactly the same as for
-	 * the GNSS search, a fix occurring at the same time as timeout is
-	 * triggered will be missed and not sent to cloud before the next
-	 * interval has  passed in active mode, or until next movement in
-	 * passive mode.
+	 * However, if A-GPS data has been downloaded via the cloud connection and processed
+	 * before the initial GNSS search, the actual GNSS timeout set by the application is used.
+	 *
+	 * Processing A-GPS before requesting GNSS data is enabled by default,
+	 * and the time that the application will wait for A-GPS data before including GNSS
+	 * in sample requests can be adjusted via the
+	 * CONFIG_APP_REQUEST_GNSS_WAIT_FOR_AGPS_THRESHOLD_SEC Kconfig option. If this option is
+	 * set to -1, the application module will not request GNSS unless A-GPS data has been
+	 * processed.
+	 *
+	 * If A-GPS data has been processed the sample timeout can be ignored as the
+	 * GNSS will most likely time out before the sample timeout expires.
+	 *
+	 * When GNSS is requested, set the sample timeout to (GNSS timeout + 15 seconds)
+	 * to let the GNSS module finish ongoing searches before data is sent to cloud.
 	 */
 
 	if (first) {
-		if (IS_ENABLED(CONFIG_APP_REQUEST_GNSS_ON_INITIAL_SAMPLING) &&
+		if (IS_ENABLED(CONFIG_APP_REQUEST_GNSS_ON_INITIAL_SAMPLING) && request_gnss() &&
 		    !app_cfg.no_data.gnss) {
 			app_module_event->data_list[count++] = APP_DATA_GNSS;
 			app_module_event->timeout = MAX(app_cfg.gnss_timeout + 15, 75);
@@ -361,7 +419,7 @@ static void data_get(void)
 		app_module_event->data_list[count++] = APP_DATA_MODEM_STATIC;
 		first = false;
 	} else {
-		if (!app_cfg.no_data.gnss) {
+		if (request_gnss() && !app_cfg.no_data.gnss) {
 			app_module_event->data_list[count++] = APP_DATA_GNSS;
 			app_module_event->timeout = MAX(app_cfg.gnss_timeout + 15, 75);
 		}
@@ -396,7 +454,7 @@ static void on_state_init(struct app_msg_data *msg)
 /* Message handler for STATE_RUNNING. */
 static void on_state_running(struct app_msg_data *msg)
 {
-	if (IS_EVENT(msg, data, DATA_EVT_DATE_TIME_OBTAINED)) {
+	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONNECTED)) {
 		data_get();
 	}
 

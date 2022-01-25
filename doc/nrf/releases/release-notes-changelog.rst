@@ -83,6 +83,7 @@ nRF9160: Asset Tracker v2
 * Added support for A-GPS filtered ephemerides.
 * Added new documentation for :ref:`asset_tracker_v2_util_module` and :ref:`api_modules_common`.
 * Updated support for P-GPS preemptive updates and P-GPS coexistence with A-GPS.
+* Added functionality that allows the application to wait for A-GPS data to be processed before starting GNSS positioning.
 
 nRF9160: Asset Tracker
 ----------------------

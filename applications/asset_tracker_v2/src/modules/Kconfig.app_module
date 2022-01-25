@@ -10,6 +10,25 @@ config APP_REQUEST_GNSS_ON_INITIAL_SAMPLING
 	bool "Request GNSS on initial data sampling after connection"
 	default y if GNSS_MODULE
 
+config APP_REQUEST_GNSS_WAIT_FOR_AGPS
+	bool "Wait for A-GPS data before requesting sampling of GNSS data"
+	default y
+	select DATA_AGPS_REQUEST_ALL_UPON_CONNECTION
+	depends on NRF_CLOUD_AGPS || NRF_CLOUD_PGPS
+	help
+	  If this option is enabled, the application module will wait a configured amount of
+	  seconds set by APP_REQUEST_GNSS_WAIT_FOR_AGPS_THRESHOLD_SEC before requesting GNSS data,
+	  unless A-GPS data has been processed.
+
+config APP_REQUEST_GNSS_WAIT_FOR_AGPS_THRESHOLD_SEC
+	int "Number of seconds to wait for A-GPS data"
+	default 300
+	range -1 2147483647
+	help
+	  Number of seconds that the application module will wait for A-GPS data to be processed
+	  before requesting GNSS data. If set to -1, the application module will wait
+	  until A-GPS data has been processed.
+
 config APP_REQUEST_NEIGHBOR_CELLS_DATA
 	bool "Request neighbor cells data"
 	depends on AWS_IOT || NRF_CLOUD_MQTT || AZURE_IOT_HUB

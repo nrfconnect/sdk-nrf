@@ -58,6 +58,9 @@ enum app_module_event_type {
 	 */
 	APP_EVT_ACTIVITY_DETECTION_DISABLE,
 
+	/** The application module needs A-GPS to be processed before it requests GNSS. */
+	APP_EVT_AGPS_NEEDED,
+
 	/** The application module has performed all procedures to prepare for
 	 *  a shutdown of the system.
 	 */

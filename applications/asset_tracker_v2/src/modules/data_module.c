@@ -494,6 +494,8 @@ static int setup(void)
 		return err;
 	}
 
+	date_time_register_handler(date_time_event_handler);
+
 	return 0;
 }
 
@@ -675,7 +677,8 @@ static int get_modem_info(struct modem_param_info *const modem_info)
  *	  types to form the A-GPS request.
  *
  * @param[in] incoming_request Pointer to a structure containing A-GPS data types that has been
- *			       requested by the modem.
+ *			       requested by the modem. If incoming_request is NULL, all A-GPS data
+ *			       types are requested.
  *
  * @return 0 on success, otherwise a negative error code indicating reason of failure.
  */
@@ -691,11 +694,23 @@ static int agps_request_encode(struct nrf_modem_gnss_agps_data_frame *incoming_r
 		return err;
 	}
 
+	if (incoming_request == NULL) {
+		cloud_agps_request.request.sv_mask_ephe = 0xFFFFFFFF,
+		cloud_agps_request.request.sv_mask_alm = 0xFFFFFFFF,
+		cloud_agps_request.request.data_flags =
+					NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST |
+					NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST |
+					NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST |
+					NRF_MODEM_GNSS_AGPS_POSITION_REQUEST |
+					NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;
+	} else {
+		cloud_agps_request.request = *incoming_request;
+	}
+
 	cloud_agps_request.mcc = modem_info.network.mcc.value;
 	cloud_agps_request.mnc = modem_info.network.mnc.value;
 	cloud_agps_request.cell = modem_info.network.cellid_dec;
 	cloud_agps_request.area = modem_info.network.area_code.value;
-	cloud_agps_request.request = *incoming_request;
 	cloud_agps_request.queued = true;
 #if defined(CONFIG_GNSS_MODULE_AGPS_FILTERED)
 	cloud_agps_request.filtered = CONFIG_GNSS_MODULE_AGPS_FILTERED;
@@ -971,9 +986,8 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
  *	  If both A-GPS and P-GPS is enabled. A-GPS will take precedence.
  *
  * @param[in] incoming_request Pointer to a structure containing A-GPS data types that has been
- *			       requested by the modem.
- *
- * @return 0 on success, otherwise a negative error code indicating reason of failure.
+ *			       requested by the modem. If incoming_request is NULL, all A-GPS data
+ *			       types are requested.
  */
 static void agps_request_handle(struct nrf_modem_gnss_agps_data_frame *incoming_request)
 {
@@ -982,20 +996,22 @@ static void agps_request_handle(struct nrf_modem_gnss_agps_data_frame *incoming_
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 	struct nrf_modem_gnss_agps_data_frame request;
 
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-	request.sv_mask_ephe = 0;
-	request.sv_mask_alm = 0;
-#else
-	request.sv_mask_ephe = incoming_request->sv_mask_ephe;
-	request.sv_mask_alm = incoming_request->sv_mask_alm;
-#endif
-	request.data_flags = incoming_request->data_flags;
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS) && incoming_request != NULL) {
+		request.sv_mask_ephe = 0;
+		request.sv_mask_alm = 0;
+		request.data_flags = incoming_request->data_flags;
+	} else if (incoming_request != NULL) {
+		request.sv_mask_ephe = incoming_request->sv_mask_ephe;
+		request.sv_mask_alm = incoming_request->sv_mask_alm;
+		request.data_flags = incoming_request->data_flags;
+	}
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 	/* If CONFIG_NRF_CLOUD_MQTT is enabled, the nRF Cloud MQTT transport library will be used
 	 * to send the request.
 	 */
-	err = nrf_cloud_agps_request(&request);
+	err = (incoming_request == NULL) ? nrf_cloud_agps_request_all() :
+					   nrf_cloud_agps_request(&request);
 	if (err) {
 		LOG_WRN("Failed to request A-GPS data, error: %d", err);
 		LOG_WRN("This is expected to fail if we are not in a connected state");
@@ -1012,7 +1028,8 @@ static void agps_request_handle(struct nrf_modem_gnss_agps_data_frame *incoming_
 	 * A-GPS request and send out an event containing the request for the cloud module to pick
 	 * up and send to the cloud that is currently used.
 	 */
-	err = agps_request_encode(&request);
+	err = (incoming_request == NULL) ? agps_request_encode(NULL) :
+					   agps_request_encode(&request);
 	if (err) {
 		LOG_WRN("Failed to request A-GPS data, error: %d", err);
 	} else {
@@ -1039,7 +1056,11 @@ static void agps_request_handle(struct nrf_modem_gnss_agps_data_frame *incoming_
 static void on_cloud_state_disconnected(struct data_msg_data *msg)
 {
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONNECTED)) {
-		date_time_update_async(date_time_event_handler);
+
+		if (IS_ENABLED(CONFIG_DATA_AGPS_REQUEST_ALL_UPON_CONNECTION)) {
+			agps_request_handle(NULL);
+		}
+
 		state_set(STATE_CLOUD_CONNECTED);
 	}
 }
@@ -1071,6 +1092,11 @@ static void on_cloud_state_connected(struct data_msg_data *msg)
 
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONFIG_EMPTY)) {
 		config_send();
+		return;
+	}
+
+	if (IS_EVENT(msg, app, APP_EVT_AGPS_NEEDED)) {
+		agps_request_handle(NULL);
 		return;
 	}
 }
