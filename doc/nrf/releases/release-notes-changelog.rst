@@ -59,6 +59,15 @@ Thread
 
 * Changed how Thread 1.2 is enabled, refer to :ref:`thread_ug_thread_specification_options` and :ref:`thread_ug_feature_sets` for more information.
 
+Zigbee
+------
+
+* Updated ZBOSS Zigbee stack to version ``3.11.0.0+5.1.0``.
+  See the :ref:`nrfxlib:zboss_changelog` in the nrfxlib documentation for detailed information.
+* Added development ZBOSS stack library version based on the ZBOSS build v3.10.0.780+v5.1.0.
+  This library version is dedicated for testing ZCL v8 features.
+* Added ZBOSS libraries variant with ZBOSS Traces enabled.
+
 Applications
 ============
 
