@@ -19,7 +19,7 @@ NRFXLIB_BASE = utils.get_projdir("nrfxlib")
 # General configuration --------------------------------------------------------
 
 project = "nrfxlib"
-copyright = "2019-2021, Nordic Semiconductor"
+copyright = "2019-2022, Nordic Semiconductor"
 author = "Nordic Semiconductor"
 version = release = "1.8.99"
 
