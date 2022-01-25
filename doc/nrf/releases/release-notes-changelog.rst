@@ -324,6 +324,10 @@ Modem libraries
     * Current system time is attached to the ``location_datetime`` parameter of the location request response with Wi-Fi and cellular methods.
       The timestamp comes from the moment of scanning or neighbor measurements.
 
+  * :ref:`nrf_modem_lib_readme`:
+
+    * Moved modem trace processing to a thread.
+
 Other libraries
 ---------------
 

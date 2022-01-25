@@ -11,7 +11,7 @@
 			clocks = <&sysclk>;
 			tx-pin = <2>;
 			rx-pin = <3>;
-			interrupts = <6 3>;
+			interrupts = <6 1>;
 			status = "okay";
 			label = "UART_1";
 		};

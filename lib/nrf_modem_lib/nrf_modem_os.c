@@ -51,6 +51,11 @@ static struct k_heap shmem_heap;
 /* Library heap, defined here in application RAM */
 static K_HEAP_DEFINE(library_heap, CONFIG_NRF_MODEM_LIB_HEAP_SIZE);
 
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
+/* Dedicated heap for modem traces  */
+static K_HEAP_DEFINE(trace_heap, CONFIG_NRF_MODEM_LIB_TRACE_HEAP_SIZE);
+#endif
+
 /* Store information about failed allocations */
 static struct mem_diagnostic_info shmem_diag;
 static struct mem_diagnostic_info heap_diag;
@@ -537,7 +542,7 @@ void nrf_modem_os_init(void)
 	read_task_create();
 
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
-	int err = nrf_modem_lib_trace_init();
+	int err = nrf_modem_lib_trace_init(&trace_heap);
 
 	if (err != 0) {
 		LOG_ERR("nrf_modem_lib_trace_init failed with error %d.", err);
@@ -585,10 +590,6 @@ int32_t nrf_modem_os_trace_put(const uint8_t *const data, uint32_t len)
 		LOG_ERR("nrf_modem_lib_trace_process failed, err %d", err);
 	}
 
-	err = nrf_modem_trace_processed_callback(data, len);
-	if (err) {
-		LOG_ERR("nrf_modem_trace_processed_callback failed, err %d", err);
-	}
 #endif
 	return 0;
 }
