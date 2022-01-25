@@ -11,6 +11,7 @@ project(modem_trace_test_rtt)
 
 # create mock
 cmock_handle(${ZEPHYR_SEGGER_MODULE_DIR}/SEGGER/SEGGER_RTT.h )
+cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem.h )
 
 # generate runner for the test
 test_runner_generate(src/modem_trace_test.c)

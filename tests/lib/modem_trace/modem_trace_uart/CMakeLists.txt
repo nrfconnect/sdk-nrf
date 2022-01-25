@@ -11,6 +11,7 @@ project(modem_trace_test_uart)
 
 # create mock
 cmock_handle(${ZEPHYR_HAL_NORDIC_MODULE_DIR}/nrfx/drivers/include/nrfx_uarte.h )
+cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem.h )
 
 # generate runner for the test
 test_runner_generate(src/modem_trace_test.c)
