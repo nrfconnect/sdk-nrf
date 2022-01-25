@@ -216,6 +216,11 @@ static void consumer_ctrl_notif_handler(enum bt_hids_notify_evt evt)
 
 static void broadcast_kbd_leds_report(struct bt_hids_rep *rep, struct bt_conn *conn, bool write)
 {
+	/* Ignore HID keyboard LEDs report read. */
+	if (!write) {
+		return;
+	}
+
 	struct hid_report_event *event = new_hid_report_event(rep->size + 1);
 
 	event->source = conn;
