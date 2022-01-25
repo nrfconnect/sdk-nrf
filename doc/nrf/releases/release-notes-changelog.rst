@@ -297,6 +297,9 @@ Libraries for networking
 
   * Added A-GPS filtered ephemerides support, with ability to set matching threshold mask angle.
   * When filtered ephemerides is enabled, A-GPS assistance requests to cloud are limited to no more than once every two hours.
+  * Updated MQTT connection error handling.
+    Now, unacknowledged pings and other errors result in a transition to the disconnected state.
+    This ensures that reconnection can take place.
 
 * :ref:`lib_nrf_cloud_rest` library:
 
