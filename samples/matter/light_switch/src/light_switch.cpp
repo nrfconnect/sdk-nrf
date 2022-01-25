@@ -140,8 +140,8 @@ CHIP_ERROR LightSwitch::Init()
 		return err;
 	}
 
-	auto params =
-		chip::Transport::UdpListenParameters(&chip::DeviceLayer::InetLayer()).SetListenPort(kDiscoveryPort);
+	auto params = chip::Transport::UdpListenParameters(chip::DeviceLayer::UDPEndPointManager())
+			      .SetListenPort(kDiscoveryPort);
 	err = mDiscoveryServiceEndpoint.Init(params);
 
 	if (err != CHIP_NO_ERROR) {

@@ -35,7 +35,6 @@ target_sources(app PRIVATE
     ${COMMON_ROOT}/src/led_widget.cpp
     ${COMMON_ROOT}/src/thread_util.cpp
     ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/im-client-callbacks.cpp
-    ${DATA_MODEL_ROOT}/controller-clusters/zap-generated/attribute-size.cpp
     ${DATA_MODEL_ROOT}/controller-clusters/zap-generated/callback-stub.cpp
     ${DATA_MODEL_ROOT}/controller-clusters/zap-generated/CHIPClientCallbacks.cpp
     ${DATA_MODEL_ROOT}/controller-clusters/zap-generated/CHIPClusters.cpp

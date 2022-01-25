@@ -43,7 +43,6 @@ target_sources(app PRIVATE
     src/bolt_lock_manager.cpp
     src/main.cpp
     src/zcl_callbacks.cpp
-    src/zap-generated/attribute-size.cpp
     src/zap-generated/IMClusterCommandHandler.cpp
     src/zap-generated/callback-stub.cpp
     ${COMMON_ROOT}/src/led_widget.cpp

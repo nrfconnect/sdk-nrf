@@ -15,11 +15,19 @@
 #include <app-common/zap-generated/attribute-type.h>
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/cluster-id.h>
+#include <app-common/zap-generated/cluster-objects.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
 #include <app/util/attribute-storage.h>
 #include <credentials/DeviceAttestationCredsProvider.h>
 #include <credentials/examples/DeviceAttestationCredsExample.h>
+
+#if CONFIG_CHIP_OTA_REQUESTOR
+#include <app/clusters/ota-requestor/BDXDownloader.h>
+#include <app/clusters/ota-requestor/OTARequestor.h>
+#include <platform/GenericOTARequestorDriver.h>
+#include <platform/nrfconnect/OTAImageProcessorImpl.h>
+#endif
 
 #include <dk_buttons_and_leds.h>
 #include <drivers/sensor.h>
@@ -96,6 +104,13 @@ Identify sIdentify = { chip::EndpointId{ kIdentifyEndpointId }, AppTask::OnIdent
 		       EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_AUDIBLE_BEEP };
 
 const device *sBme688SensorDev = device_get_binding(DT_LABEL(DT_INST(0, bosch_bme680)));
+
+#if CONFIG_CHIP_OTA_REQUESTOR
+GenericOTARequestorDriver sOTARequestorDriver;
+OTAImageProcessorImpl sOTAImageProcessor;
+chip::BDXDownloader sBDXDownloader;
+chip::OTARequestor sOTARequestor;
+#endif
 } /* namespace */
 
 AppTask AppTask::sAppTask;
@@ -170,6 +185,14 @@ int AppTask::Init()
 
 #if defined(CONFIG_CHIP_NFC_COMMISSIONING)
 	PlatformMgr().AddEventHandler(AppTask::ChipEventHandler, 0);
+#endif
+
+#if CONFIG_CHIP_OTA_REQUESTOR
+	sOTAImageProcessor.SetOTADownloader(&sBDXDownloader);
+	sBDXDownloader.SetImageProcessorDelegate(&sOTAImageProcessor);
+	sOTARequestorDriver.Init(&sOTARequestor, &sOTAImageProcessor);
+	sOTARequestor.Init(&chip::Server::GetInstance(), &sOTARequestorDriver, &sBDXDownloader);
+	chip::SetRequestorInstance(&sOTARequestor);
 #endif
 
 	return 0;
@@ -411,20 +434,20 @@ void AppTask::UpdatePowerSourceClusterState()
 	/* Value is expressed in half percent units ranging from 0 to 200. */
 	uint8_t batteryPercentage;
 	uint32_t batteryTimeRemaining;
-	EmberAfPowerSourceStatus batteryStatus;
-	EmberAfBatChargeLevel batteryChargeLevel;
+	Clusters::PowerSource::PowerSourceStatus batteryStatus;
+	Clusters::PowerSource::BatChargeLevel batteryChargeLevel;
 	bool batteryPresent;
-	EmberAfBatChargeState batteryCharged;
+	Clusters::PowerSource::BatChargeState batteryCharged;
 
 	if (voltage < 0) {
 		voltage = 0;
 		batteryPercentage = 0;
-		batteryStatus = EMBER_ZCL_POWER_SOURCE_STATUS_UNAVAILABLE;
+		batteryStatus = Clusters::PowerSource::PowerSourceStatus::kUnavailable;
 		batteryPresent = false;
 
 		LOG_ERR("Battery level measurement failed %d", voltage);
 	} else {
-		batteryStatus = EMBER_ZCL_POWER_SOURCE_STATUS_ACTIVE;
+		batteryStatus = Clusters::PowerSource::PowerSourceStatus::kActive;
 		batteryPresent = true;
 	}
 
@@ -440,17 +463,17 @@ void AppTask::UpdatePowerSourceClusterState()
 	batteryTimeRemaining = kFullBatteryOperationTime * batteryPercentage / kMaxBatteryPercentage;
 
 	if (voltage < kCriticalThresholdVoltageMv) {
-		batteryChargeLevel = EMBER_ZCL_BAT_CHARGE_LEVEL_CRITICAL;
+		batteryChargeLevel = Clusters::PowerSource::BatChargeLevel::kCritical;
 	} else if (voltage < kWarningThresholdVoltageMv) {
-		batteryChargeLevel = EMBER_ZCL_BAT_CHARGE_LEVEL_WARNING;
+		batteryChargeLevel = Clusters::PowerSource::BatChargeLevel::kWarning;
 	} else {
-		batteryChargeLevel = EMBER_ZCL_BAT_CHARGE_LEVEL_OK;
+		batteryChargeLevel = Clusters::PowerSource::BatChargeLevel::kOk;
 	}
 
 	if (BatteryCharged()) {
-		batteryCharged = EMBER_ZCL_BAT_CHARGE_STATE_IS_CHARGING;
+		batteryCharged = Clusters::PowerSource::BatChargeState::kIsCharging;
 	} else {
-		batteryCharged = EMBER_ZCL_BAT_CHARGE_STATE_IS_NOT_CHARGING;
+		batteryCharged = Clusters::PowerSource::BatChargeState::kIsNotCharging;
 	}
 
 	status = Clusters::PowerSource::Attributes::BatteryVoltage::Set(kPowerSourceEndpointId, voltage);
@@ -470,12 +493,14 @@ void AppTask::UpdatePowerSourceClusterState()
 		LOG_ERR("Updating battery time remaining failed %x", status);
 	}
 
-	status = Clusters::PowerSource::Attributes::BatteryChargeLevel::Set(kPowerSourceEndpointId, batteryChargeLevel);
+	status = Clusters::PowerSource::Attributes::BatteryChargeLevel::Set(kPowerSourceEndpointId,
+									    chip::to_underlying(batteryChargeLevel));
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery charge level failed %x", status);
 	}
 
-	status = Clusters::PowerSource::Attributes::Status::Set(kPowerSourceEndpointId, batteryStatus);
+	status = Clusters::PowerSource::Attributes::Status::Set(kPowerSourceEndpointId,
+								chip::to_underlying(batteryStatus));
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery status failed %x", status);
 	}
@@ -485,7 +510,8 @@ void AppTask::UpdatePowerSourceClusterState()
 		LOG_ERR("Updating battery present failed %x", status);
 	}
 
-	status = Clusters::PowerSource::Attributes::BatteryChargeState::Set(kPowerSourceEndpointId, batteryCharged);
+	status = Clusters::PowerSource::Attributes::BatteryChargeState::Set(kPowerSourceEndpointId,
+									    chip::to_underlying(batteryCharged));
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery charge failed %x", status);
 	}

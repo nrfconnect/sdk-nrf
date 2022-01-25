@@ -156,7 +156,7 @@ void AppTask::DispatchEvent(const AppEvent &event)
 		break;
 	case AppEvent::Toggle:
 		LockActionHandler(BoltLockMgr().IsUnlocked() ? BoltLockManager::Action::Lock :
-							       BoltLockManager::Action::Unlock,
+								     BoltLockManager::Action::Unlock,
 				  event.LockEvent.ChipInitiated);
 		break;
 	case AppEvent::CompleteLockAction:
