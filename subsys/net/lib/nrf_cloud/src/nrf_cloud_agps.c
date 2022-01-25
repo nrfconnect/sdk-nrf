@@ -31,6 +31,7 @@ static K_SEM_DEFINE(agps_injection_active, 1, 1);
 
 static bool agps_print_enabled;
 static struct nrf_modem_gnss_agps_data_frame processed;
+static K_MUTEX_DEFINE(processed_lock);
 static atomic_t request_in_progress;
 
 #if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED)
@@ -98,7 +99,10 @@ int nrf_cloud_agps_request(const struct nrf_modem_gnss_agps_data_frame *request)
 	uint32_t ephem;
 
 	atomic_set(&request_in_progress, 0);
+
+	k_mutex_lock(&processed_lock, K_FOREVER);
 	memset(&processed, 0, sizeof(processed));
+	k_mutex_unlock(&processed_lock);
 
 	if (request->data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST) {
 		types[type_count++] = NRF_CLOUD_AGPS_UTC_PARAMETERS;
@@ -619,7 +623,12 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len)
 #endif
 		}
 
+		/* The processed variable is read/written by agps_send_to_modem() and
+		 * nrf_cloud_agps_processed() which can be called from different contexts.
+		 */
+		k_mutex_lock(&processed_lock, K_FOREVER);
 		err = agps_send_to_modem(&element);
+		k_mutex_unlock(&processed_lock);
 		if (err) {
 			LOG_ERR("Failed to send data to modem, error: %d", err);
 			break;
@@ -646,6 +655,8 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len)
 void nrf_cloud_agps_processed(struct nrf_modem_gnss_agps_data_frame *received_elements)
 {
 	if (received_elements) {
+		k_mutex_lock(&processed_lock, K_FOREVER);
 		memcpy(received_elements, &processed, sizeof(*received_elements));
+		k_mutex_unlock(&processed_lock);
 	}
 }
