@@ -616,6 +616,7 @@ static ssize_t hids_boot_kb_outp_report_read(struct bt_conn *conn,
 	if (rep->handler) {
 		struct bt_hids_rep report = {
 		    .data = buf,
+		    .size = sizeof(conn_data->hids_boot_kb_outp_rep_ctx),
 		};
 		rep->handler(&report, conn, false);
 	}
