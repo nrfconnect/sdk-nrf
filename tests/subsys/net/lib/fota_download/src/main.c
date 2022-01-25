@@ -125,10 +125,11 @@ int download_client_connect(struct download_client *client, const char *host,
 	return 0;
 }
 
-int dfu_ctx_mcuboot_set_b1_file(char *file, bool s0_active, char **update)
+int dfu_ctx_mcuboot_set_b1_file(char * const file, bool s0_active,
+				const char **selected_path)
 {
 	dfu_ctx_mcuboot_set_b1_file__s0_active = s0_active;
-	*update = dfu_ctx_mcuboot_set_b1_file__update;
+	*selected_path = dfu_ctx_mcuboot_set_b1_file__update;
 	return 0;
 }
 

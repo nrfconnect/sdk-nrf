@@ -244,7 +244,10 @@ Bootloader libraries
 Libraries for networking
 ------------------------
 * :ref:`lib_fota_download` library:
+
   * Skipping host name check when connecting to TLS service using just IP address.
+  * Bootloader FOTA download standardized to accept only full dual path names (for example "path/to/s0.bin path/to/s1.bin").
+    Truncated dual path names ("path/to/s0.bin s1.bin") no longer supported.
 
 Modem libraries
 ---------------

@@ -10,35 +10,44 @@
 #include <dfu_target.h>
 #include <dfu_target_mcuboot.h>
 
-/* Create buffer which we will fill with strings to test with.
- * This is needed since 'dfu_ctx_Mcuboot_set_b1_file` will modify its
- * 'file' parameter, hence we can not provide it raw c strings as they
- * are stored in read-only memory
+/* Create buffer which we will fill with strings to test with
+ * This is needed since dfu_ctx_mcuboot_set_b1_file will modify its
+ * 'file' parameter.
  */
 char buf[1024];
 
 #define S0_S1 "s0 s1"
 #define NO_SPACE "s0s1"
 
-const char *flash_ptr = S0_S1;
+char *const flash_ptr = S0_S1;
 
 static void test_dfu_ctx_mcuboot_set_b1_file(void)
 {
 	int err;
 	const char *update;
-	bool s0_active = true;
+	bool s0_active;
 
 	memcpy(buf, S0_S1, sizeof(S0_S1));
+	s0_active = true;
 	err = dfu_ctx_mcuboot_set_b1_file(buf, s0_active, &update);
 
-	zassert_equal(err, 0, NULL);
-	zassert_true(strcmp("s1", update) == 0, NULL);
+	zassert_equal(err, 0, "Selection of file from valid dual file "
+			      "file specifier should not fail.");
+	zassert_not_null(update, "Selected update for valid dual "
+				 "file specifier should never be NULL");
+	zassert_true(strcmp("s1", update) == 0, "s1 should be selected "
+				 "when s0 is active");
 
+	memcpy(buf, S0_S1, sizeof(S0_S1));
 	s0_active = false;
 	err = dfu_ctx_mcuboot_set_b1_file(buf, s0_active, &update);
 
-	zassert_equal(err, 0, NULL);
-	zassert_true(strcmp("s0", update) == 0, NULL);
+	zassert_equal(err, 0, "Selection of file from valid dual file "
+			      "file specifier should not fail.");
+	zassert_not_null(update, "Selected update for valid dual "
+				 "file specifier should never be NULL");
+	zassert_true(strcmp("s0", update) == 0, "s0 should be selected "
+				 "when s0 is inactive");
 }
 
 #ifdef CONFIG_BOARD_NATIVE_POSIX
