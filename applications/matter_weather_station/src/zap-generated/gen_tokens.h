@@ -1,6 +1,6 @@
 /*
  *
- *    Copyright (c) 2021 Project CHIP Authors
+ *    Copyright (c) 2022 Project CHIP Authors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -33,11 +33,11 @@
 #endif // DEFINETOKENS
 
 // Macro snippet that loads all the attributes from tokens
-#define GENERATED_TOKEN_LOADER(endpoint)                                                           \
-	do {                                                                                       \
+#define GENERATED_TOKEN_LOADER(endpoint)                                                                               \
+	do {                                                                                                           \
 	} while (false)
 
 // Macro snippet that saves the attribute to token
-#define GENERATED_TOKEN_SAVER                                                                      \
-	do {                                                                                       \
+#define GENERATED_TOKEN_SAVER                                                                                          \
+	do {                                                                                                           \
 	} while (false)

@@ -177,7 +177,7 @@ void AppTask::DispatchEvent(const AppEvent &aEvent)
 		break;
 	case AppEvent::Toggle:
 		LightingMgr().InitiateAction(LightingMgr().IsTurnedOn() ? LightingManager::Action::Off :
-									  LightingManager::Action::On,
+										LightingManager::Action::On,
 					     aEvent.LightEvent.Value, aEvent.LightEvent.ChipInitiated);
 		break;
 	case AppEvent::Level:

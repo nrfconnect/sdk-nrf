@@ -403,11 +403,14 @@ The current |NCS| main branch is based on the Zephyr v2.7 development branch.
 Matter (Project CHIP)
 =====================
 
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``bbd19d92f6d58ef79c98793fe0dfb2979db6336d``.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``77ab003e5fcd409cd225b68daa3cdaf506ed1107``.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
-* |no_changes_yet_note|
+* Added:
+
+  * Support for General Diagnostics, Software Diagnostics and Thread Network Diagnostics clusters.
+  * Initial support for the Matter OTA (Over-the-air) Requestor role, used for updating the device firmware.
 
 cddl-gen
 ========
