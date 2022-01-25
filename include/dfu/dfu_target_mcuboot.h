@@ -29,18 +29,18 @@ extern "C" {
  * This function is told what slot is active, and sets the update pointer to
  * point to the correct none active entry in the file path.
  *
- * @param[in, out] file      pointer to file path with space separator. Note
- *                           that the space separator can be replaced by a NULL
- *                           terminator.
- * @param[in]      s0_active bool indicating if S0 is the currently active slot.
- * @param[out]     update    pointer to correct file MCUBoot bootloader upgrade.
- *                           Will be set to NULL if no space separator is found.
+ * @param[in, out] file          pointer to file path with space separator. Note
+ *                               that the space separator will be replaced by a
+ *                               NULL terminator.
+ * @param[in]      s0_active     bool indicating if S0 is the currently active slot.
+ * @param[out]     selected_path pointer to correct file MCUBoot bootloader upgrade.
+ *                               Will be set to NULL if no space separator is found.
  *
  * @retval 0 If successful (note that this does not imply that a space
  *           separator was found) negative errno otherwise.
  */
-int dfu_ctx_mcuboot_set_b1_file(const char *file, bool s0_active,
-				const char **update);
+int dfu_ctx_mcuboot_set_b1_file(char * const file, bool s0_active,
+				const char **selected_path);
 
 /**
  * @brief Set buffer to use for flash write operations.

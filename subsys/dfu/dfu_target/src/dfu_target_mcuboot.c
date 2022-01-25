@@ -37,10 +37,10 @@ static uint8_t *stream_buf;
 static size_t stream_buf_len;
 static size_t stream_buf_bytes;
 
-int dfu_ctx_mcuboot_set_b1_file(const char *file, bool s0_active,
-				const char **update)
+int dfu_ctx_mcuboot_set_b1_file(char *const file, bool s0_active,
+				const char **selected_path)
 {
-	if (file == NULL || update == NULL) {
+	if (file == NULL || selected_path == NULL) {
 		LOG_ERR("Got NULL pointer");
 		return -EINVAL;
 	}
@@ -61,29 +61,16 @@ int dfu_ctx_mcuboot_set_b1_file(const char *file, bool s0_active,
 
 	if (delimiter == NULL) {
 		/* Could not find delimiter in input */
-		*update = NULL;
-
+		*selected_path = NULL;
 		return 0;
 	}
 
-	*update = file;
-	if (s0_active) {
-		char *tmp = strrchr(file, '/');
+	/* Insert null-terminator to split the dual filepath into two separate filepaths */
+	*delimiter = '\0';
+	const char *s0_path = file;
+	const char *s1_path = delimiter + 1;
 
-		if (tmp == NULL) {
-			/* Point after delimiter to 'activate' second file path (S1) */
-			*update = delimiter + 1;
-		} else {
-			/* Copy after delimiter to 'activate' second file path (S1)
-			 * Copy one byte more to include the ending '\0' in original string
-			 */
-			memcpy(tmp + 1, delimiter + 1, strlen(delimiter));
-		}
-	} else {
-		/* Insert null-terminator to 'activate' first file path (S0) */
-		*delimiter = '\0';
-	}
-
+	*selected_path = s0_active ? s1_path : s0_path;
 	return 0;
 }
 
