@@ -126,6 +126,7 @@ config BT_CTLR_SYNC_PERIODIC_ADV_LIST_SIZE
 	int "LE Periodic Advertiser List size"
 	range 0 8
 	default 0
+	depends on BT_CTLR_SYNC_PERIODIC_ADV_LIST
 	help
 	  Set Periodic Advertiser List size, this will be return in the HCI LE
 	  Read Periodic Advertiser List Command.
