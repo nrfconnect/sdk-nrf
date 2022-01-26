@@ -211,7 +211,7 @@ add_custom_target(
   USES_TERMINAL
 )
 
-add_docset(zephyr DODGY)
+add_docset(zephyr)
 add_dependencies(zephyr-html zephyr-devicetree)
 add_dependencies(zephyr-html-all zephyr-devicetree)
 
@@ -271,7 +271,7 @@ add_docset(mcuboot)
 #-------------------------------------------------------------------------------
 # docset: nrfx
 
-add_docset(nrfx DODGY)
+add_docset(nrfx)
 
 #-------------------------------------------------------------------------------
 # docset: tfm
