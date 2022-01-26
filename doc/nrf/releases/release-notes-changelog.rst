@@ -225,6 +225,10 @@ The change prompted some changes in the CMake for the module, notably:
 Documentation
 =============
 
+* Added:
+
+  * Documentation for :ref:`degugging of nRF5340 <debugging>` in :ref:`working with nRF5340 DK<ug_nrf5340>` user guide.
+
 * Removed:
 
   * Documentation on the Getting Started Assistant, as this tool is no longer in use.
