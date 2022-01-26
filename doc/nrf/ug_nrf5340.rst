@@ -500,7 +500,6 @@ To program the nRF5340 DK from the command line, use either west or nrfjprog (wh
 .. note::
    Programming the nRF5340 DK from the command line (with west or nrfjprog) requires the `nRF Command Line Tools`_ v10.12.0 or later.
 
-
 Separate images
 ---------------
 
@@ -592,7 +591,6 @@ See the following instructions.
          Therefore, you must recover the network core first.
          Otherwise, if you recover the application core first and the network core last, the binary written to the application core is deleted and readback protection is enabled again after a reset.
 
-
 .. include:: ug_nrf52.rst
    :start-after: fota_upgrades_start
    :end-before: fota_upgrades_end
@@ -634,6 +632,35 @@ Container for firmware update binaries
 
 The build system will automatically place both the application core and the network core update binaries (:file:`app_update.bin` and :file:`net_core_app_update.bin`) into a container package named :file:`dfu_application.zip`.
 This container package can be used by update tools to pass both images during the simultaneous update of multiple images.
+
+.. _debugging:
+
+Debugging
+*********
+
+To debug the application core firmware, you need a single debug session.
+Set up the debug session as described in `Debugging nRF5340 with SES`_ or `Debugging an application`_ with Visual Studio Code.
+
+To debug the firmware running on the network core, you also need to set up a separate debug session for the application core.
+
+Complete the following steps to start debugging the network core:
+
+1. Set up sessions for the application core and network core as mentioned in `Debugging nRF5340 with SES`_ or `Debugging an application`_ with Visual Studio Code.
+#. Select the appropriate CPU for debugging in each session, the nRF5340 application core and the nRF5340 network core respectively.
+#. Once both sessions are established, execute the code on the application core.
+
+   The startup code releases the ``NETWORK.FORCEOFF`` signal to start the network core and allocates the necessary GPIO pins for it.
+#. Start code execution on the network core in the other debug session.
+
+If you want to reset the network core while debugging, make sure to first reset the application core and execute the code.
+
+You can also use the following tools for debugging:
+
+* SEGGER Ozone
+* GDB command line tool
+
+.. note::
+  Debugging firmware on the application core in the non-secure domain (when using the ``nrf5340dk_nrf5340_cpuapp_ns`` build target), is currently not supported.
 
 .. _logging_cpunet:
 

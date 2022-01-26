@@ -123,6 +123,7 @@
 .. _`Creating an application`: https://nrfconnect.github.io/vscode-nrf-connect/connect/create_app.html
 .. _`Building an application`: https://nrfconnect.github.io/vscode-nrf-connect/connect/build_app.html
 .. _`Testing an application`: https://nrfconnect.github.io/vscode-nrf-connect/connect/test_app.html
+.. _`Debugging an application`: https://nrfconnect.github.io/vscode-nrf-connect/connect/debug_app.html
 .. _`West integration`: https://nrfconnect.github.io/vscode-nrf-connect/connect/west.html
 
 .. ### Source: developer.nordicsemi.com
@@ -265,6 +266,7 @@
 .. _`AT+CGEREP set command`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/packet_domain/cgerep_set.html
 
 .. _`Getting started with nRF Connect SDK (nRF53 Series)`: https://infocenter.nordicsemi.com/topic/ug_gsg_ncs/UG/gsg/intro.html
+.. _`Debugging nRF5340 with SES`: https://infocenter.nordicsemi.com/topic/ug_gsg_ncs/UG/gsg/debug.html?cp=1_1_0_7
 
 .. _`nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/keyfeatures_html5.html
 .. _`nRF5340 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_dk/UG/dk/intro.html
