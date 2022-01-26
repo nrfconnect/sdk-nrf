@@ -3,6 +3,14 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+/*
+ * The RST file for this library can be found in
+ * doc/nrf/libraries/bluetooth_services/services/bas_client.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/bluetooth_services/services/bas_client.html.
+ */
+
 #ifndef __BAS_C_H
 #define __BAS_C_H
 

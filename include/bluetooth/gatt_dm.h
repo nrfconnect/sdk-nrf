@@ -4,6 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/bluetooth_services/gatt_dm.rst.
+ * Rendered documentation is available at https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/bluetooth_services/gatt_dm.html.
+ */
+
 #ifndef BT_GATT_DM_H_
 #define BT_GATT_DM_H_
 

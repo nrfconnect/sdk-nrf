@@ -3,6 +3,12 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/bluetooth_services/enocean.rst.
+ * Rendered documentation is available at https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/bluetooth_services/enocean.html.
+ */
+
 /**
  * @file
  * @defgroup bt_enocean Bluetooth EnOcean library API

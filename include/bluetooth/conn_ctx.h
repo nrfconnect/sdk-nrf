@@ -4,6 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/bluetooth_services/conn_ctx.rst.
+ * Rendered documentation is available at https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/bluetooth_services/conn_ctx.html.
+ */
+
 /**
  * @file
  * @defgroup bt_conn_ctx Bluetooth connection context library API
