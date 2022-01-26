@@ -125,7 +125,7 @@ static int client_handle_get_response(uint8_t *buf, int received)
 	payload = coap_packet_get_payload(&reply, &payload_len);
 	token_len = coap_header_get_token(&reply, token);
 
-	if ((token_len != sizeof(next_token)) &&
+	if ((token_len != sizeof(next_token)) ||
 	    (memcmp(&next_token, token, sizeof(next_token)) != 0)) {
 		printk("Invalid token received: 0x%02x%02x\n",
 		       token[1], token[0]);
@@ -133,7 +133,7 @@ static int client_handle_get_response(uint8_t *buf, int received)
 	}
 
 	if (payload_len > 0) {
-		snprintf(temp_buf, MAX(payload_len, sizeof(temp_buf)), "%s", payload);
+		snprintf(temp_buf, MIN(payload_len, sizeof(temp_buf)), "%s", payload);
 	} else {
 		strcpy(temp_buf, "EMPTY");
 	}
