@@ -17,6 +17,17 @@ menuconfig RAM_POWER_DOWN_LIBRARY
 
 if RAM_POWER_DOWN_LIBRARY
 
+config RAM_POWER_ADJUST_ON_HEAP_RESIZE
+	bool "Automatically adjust RAM power mask on libc heap resize"
+	depends on NEWLIB_LIBC && !NEWLIB_LIBC_NANO
+	select NEWLIB_LIBC_HEAP_LISTENER
+	select EXPERIMENTAL
+	help
+	  When this option is enabled, the RAM sections not used by the application
+	  image will get automatically disabled at boot time, and then RAM power
+	  configuration will be adjusted when the libc heap (which uses the memory
+	  area following the application image) is increased or trimmed.
+
 module =  RAM_POWERDOWN
 module-str = RAM Power down module
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"

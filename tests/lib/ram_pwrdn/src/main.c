@@ -11,6 +11,7 @@
 
 #include <inttypes.h>
 #include <stdlib.h>
+#include <malloc.h>
 
 /* ===== Test helpers ===== */
 
@@ -39,7 +40,7 @@ static bool check_section_range(struct bank_section first, struct bank_section l
 		uint8_t first_sect_id = bank_id == first.bank_id ? first.sect_id : 0;
 		uint8_t last_sect_id = bank_id == last.bank_id ? last.sect_id : 1;
 
-		for (uint8_t sect_id = first_sect_id; sect_id < last_sect_id; ++sect_id) {
+		for (uint8_t sect_id = first_sect_id; sect_id <= last_sect_id; ++sect_id) {
 			if (check_section_up(bank_id, sect_id) != up) {
 				return false;
 			}
@@ -49,7 +50,62 @@ static bool check_section_range(struct bank_section first, struct bank_section l
 	return true;
 }
 
+static bool get_first_down_section(struct bank_section *out)
+{
+	bool down_section_found = false;
+
+	for (uint8_t bank_id = 0; bank_id <= 8; ++bank_id) {
+		for (uint8_t sect_id = 0; sect_id < (bank_id == 8 ? 6 : 2); ++sect_id) {
+			bool is_up = check_section_up(bank_id, sect_id);
+
+			if (is_up && down_section_found) {
+				return false;
+			}
+
+			if (!is_up && !down_section_found) {
+				out->bank_id = bank_id;
+				out->sect_id = sect_id;
+				down_section_found = true;
+			}
+		}
+	}
+
+	return down_section_found;
+}
+
 /* ===== Test cases ===== */
+
+static void test_heap_resize(void)
+{
+	const size_t buffer_size = 20480; // 20KiB
+
+	struct bank_section limit;
+	struct bank_section limit_saved;
+	void *buffer;
+
+	/* Save the current limit between powered up and down RAM areas */
+	zassert_true(get_first_down_section(&limit_saved), "Enabled RAM limit not found");
+
+	/* Allocate some memory and verify that the limit has moved forward */
+	buffer = malloc(buffer_size);
+	memset(buffer, 0, buffer_size);
+
+	zassert_true(get_first_down_section(&limit), "Enabled RAM limit not found after malloc");
+	zassert_true(limit.bank_id > limit_saved.bank_id || (limit.bank_id == limit_saved.bank_id &&
+							     limit.sect_id > limit_saved.sect_id),
+		     "Enabled RAM limit not moved forward after malloc");
+
+	/* Trim memory and verify that the limit has moved backward */
+	free(buffer);
+	malloc_trim(0);
+	limit_saved.bank_id = limit.bank_id;
+	limit_saved.sect_id = limit.sect_id;
+
+	zassert_true(get_first_down_section(&limit), "Enabled RAM limit not found after malloc");
+	zassert_true(limit.bank_id < limit_saved.bank_id || (limit.bank_id == limit_saved.bank_id &&
+							     limit.sect_id < limit_saved.sect_id),
+		     "Enabled RAM limit not moved backward after malloc");
+}
 
 static void test_manual_power_control(void)
 {
@@ -108,7 +164,7 @@ static void test_manual_power_control(void)
 
 	/* Power down sections on the border between two banks */
 	power_down_ram(RAM_BANK8_ADDR - RAM_BANK_SECTION_SIZE - 1,
-		       RAM_BANK8_ADDR + RAM_BANK_SECTION_SIZE);
+		       RAM_BANK8_ADDR + RAM_BANK8_SECTION_SIZE);
 	zassert_true(check_section_range(bank_section(0, 0), bank_section(7, 0), true),
 		     "Disabling sections on two banks (disabled too much)");
 	zassert_true(check_section_range(bank_section(7, 1), bank_section(8, 0), false),
@@ -119,6 +175,7 @@ static void test_manual_power_control(void)
 
 void test_main(void)
 {
-	ztest_test_suite(test_ram_pwrdn, ztest_unit_test(test_manual_power_control));
+	ztest_test_suite(test_ram_pwrdn, ztest_unit_test(test_heap_resize),
+			 ztest_unit_test(test_manual_power_control));
 	ztest_run_test_suite(test_ram_pwrdn);
 }

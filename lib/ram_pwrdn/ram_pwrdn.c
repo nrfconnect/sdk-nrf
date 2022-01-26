@@ -8,8 +8,12 @@
 #include <logging/log.h>
 #include <sys/util.h>
 #include <zephyr.h>
-
 #include <stdint.h>
+
+#if CONFIG_RAM_POWER_ADJUST_ON_HEAP_RESIZE
+#include <init.h>
+#include <sys/heap_listener.h>
+#endif
 
 LOG_MODULE_REGISTER(ram_pwrdn, CONFIG_RAM_POWERDOWN_LOG_LEVEL);
 
@@ -110,6 +114,16 @@ static uint8_t ram_bank_section_id_ceil(uintptr_t address, const struct ram_bank
 	return (uint8_t)(ROUND_UP(address - bank->start, bank->section_size) / bank->section_size);
 }
 
+/*
+ * Returns end address of RAM managed by the Power Down library
+ */
+static uintptr_t ram_end_addr(void)
+{
+	const struct ram_bank *last_bank = &banks[RAM_BANK_COUNT - 1];
+
+	return last_bank->start + ram_bank_size(last_bank);
+}
+
 void power_down_ram(uintptr_t start_address, uintptr_t end_address)
 {
 	for (uint8_t bank_id = 0; bank_id < RAM_BANK_COUNT; ++bank_id) {
@@ -146,7 +160,32 @@ void power_up_ram(uintptr_t start_address, uintptr_t end_address)
 
 void power_down_unused_ram(void)
 {
-	const struct ram_bank *last_bank = &banks[RAM_BANK_COUNT - 1];
-
-	power_down_ram(RAM_IMAGE_END_ADDR, last_bank->start + ram_bank_size(last_bank));
+	power_down_ram(RAM_IMAGE_END_ADDR, ram_end_addr());
 }
+
+#if CONFIG_RAM_POWER_ADJUST_ON_HEAP_RESIZE
+
+static void libc_heap_resize_cb(void *old_heap_end, void *new_heap_end)
+{
+	if (new_heap_end > old_heap_end) {
+		power_up_ram(RAM_IMAGE_END_ADDR, (uintptr_t)new_heap_end);
+	} else if (new_heap_end < old_heap_end) {
+		power_down_ram((uintptr_t)new_heap_end, ram_end_addr());
+	}
+}
+
+static HEAP_LISTENER_DEFINE(heap_listener, HEAP_ID_LIBC, libc_heap_resize_cb);
+
+static int ram_power_init(const struct device *unused)
+{
+	ARG_UNUSED(unused);
+
+	power_down_unused_ram();
+	heap_listener_register(&heap_listener);
+
+	return 0;
+}
+
+SYS_INIT(ram_power_init, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+
+#endif
