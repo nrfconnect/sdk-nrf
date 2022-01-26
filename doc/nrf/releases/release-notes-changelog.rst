@@ -446,6 +446,14 @@ Libraries for NFC
 
 |no_changes_yet_note|
 
+  * :file:`ncs/nrf/subsys/nfc/lib/platform.c`:
+
+    * Updated:
+
+      * Add the possibility of deffering nfc callback to a thread context. (Experimental)
+      * Add support for Zero Latency Interrupts for NFC. (Experimental)
+      * Align file with new library implementation.
+
 Other libraries
 ---------------
 

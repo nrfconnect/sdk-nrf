@@ -32,7 +32,8 @@
 
 #define NDEF_RESTORE_BTN_MSK	DK_BTN1_MSK
 
-static uint8_t ndef_msg_buf[CONFIG_NDEF_FILE_SIZE]; /**< Buffer for NDEF file. */
+/**< Buffer for NDEF file. */
+static uint8_t ndef_msg_buf[CONFIG_NDEF_FILE_SIZE];
 
 enum {
 	FLASH_WRITE_FINISHED,
