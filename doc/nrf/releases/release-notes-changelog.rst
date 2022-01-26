@@ -335,7 +335,21 @@ Libraries for networking
 Libraries for NFC
 -----------------
 
-|no_changes_yet_note|
+* :ref:`lib_nfc`
+
+  * Updated:
+
+    * Added the possibility of moving an NFC callback to a thread context.
+    * Added support for zero-latency interrupts for NFC.
+    * Aligned the :file:`ncs/nrf/subsys/nfc/lib/platform.c` file with new library implementation.
+
+* :ref:`lib_nfc_ndef`:
+
+  * Fixed a write to a constant field in the :c:func:`ac_rec_payload_parse` function.
+
+* :ref:`nfc_t4t_isodep_readme`:
+
+  * Fixed out of bounds access in the :c:func:`ats_parse` function.
 
 Other libraries
 ---------------
