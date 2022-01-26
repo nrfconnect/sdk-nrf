@@ -3,10 +3,13 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#include <zephyr/kernel.h>
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 #include <nrfx_nfct.h>
 #include <nrfx_timer.h>
+#include <nfc_platform.h>
+#include "platform_internal.h"
 
 #if defined(CONFIG_BUILD_WITH_TFM)
 #include <tfm_ioctl_api.h>
@@ -24,6 +27,12 @@ LOG_MODULE_REGISTER(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 					      _irq_handler)
 
 #define DT_DRV_COMPAT nordic_nrf_clock
+
+#ifdef CONFIG_NFC_ZERO_LATENCY_IRQ
+#define NFCT_IRQ_FLAGS	IRQ_ZERO_LATENCY
+#else
+#define NFCT_IRQ_FLAGS	0
+#endif /* CONFIG_NFC_ZERO_LATENCY_IRQ */
 
 static struct onoff_manager *hf_mgr;
 static struct onoff_client cli;
@@ -46,15 +55,23 @@ static void clock_handler(struct onoff_manager *mgr, int res)
 	nrfx_nfct_state_force(NRFX_NFCT_STATE_ACTIVATED);
 }
 
-nrfx_err_t nfc_platform_setup(void)
+nrfx_err_t nfc_platform_setup(nfc_lib_cb_resolve_t nfc_lib_cb_resolve)
 {
+	int err;
+
 	hf_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
 	__ASSERT_NO_MSG(hf_mgr);
 
 	IRQ_DIRECT_CONNECT(NFCT_IRQn, CONFIG_NFCT_IRQ_PRIORITY,
-			   nfc_isr_wrapper, 0);
+			   nfc_isr_wrapper, NFCT_IRQ_FLAGS);
 	IRQ_CONNECT(NFC_TIMER_IRQn, CONFIG_NFCT_IRQ_PRIORITY,
-			   nfc_timer_irq_handler, NULL,  0);
+		    nfc_timer_irq_handler, NULL,  0);
+
+	err = nfc_platform_internal_init(nfc_lib_cb_resolve);
+	if (err) {
+		LOG_ERR("NFC platform init fail: callback resolution function pointer is invalid");
+		return NRFX_ERROR_NULL;
+	}
 
 	LOG_DBG("NFC platform initialized");
 	return NRFX_SUCCESS;
