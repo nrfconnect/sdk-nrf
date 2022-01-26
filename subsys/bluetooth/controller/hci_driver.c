@@ -666,6 +666,7 @@ static int configure_memory_usage(void)
 			return required_memory;
 		}
 
+#if defined(CONFIG_BT_CTLR_SYNC_PERIODIC_ADV_LIST_SIZE)
 		cfg.periodic_adv_list_size = CONFIG_BT_CTLR_SYNC_PERIODIC_ADV_LIST_SIZE;
 		required_memory =
 		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
@@ -674,6 +675,7 @@ static int configure_memory_usage(void)
 		if (required_memory < 0) {
 			return required_memory;
 		}
+#endif
 	}
 
 	BT_DBG("BT mempool size: %u, required: %u",
