@@ -358,8 +358,10 @@ Other libraries
   * Added support for GNSS high accuracy.
 
 * :ref:`lib_ram_pwrdn` library:
+
   * Added functions for powering up and down RAM sections for a given address range.
   * Added experimental functionality to automatically power up and down RAM sections based on the libc heap usage.
+  * Added support for nRF5340 application core to power up and down RAM sections.
 
 Event Manager
 +++++++++++++
