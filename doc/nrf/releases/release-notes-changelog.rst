@@ -176,6 +176,10 @@ nRF9160 samples
 
   * HTTP update samples now set the modem in the power off mode after the firmware image download completes. This avoids ungraceful disconnects from the network upon pressing the reset button on the kit.
 
+* :ref:`lwm2m_client` sample:
+
+  * Added support for triggering neighbour cell measurements.
+
 Thread samples
 --------------
 
@@ -249,6 +253,10 @@ Libraries for networking
   * Skipping host name check when connecting to TLS service using just IP address.
   * Bootloader FOTA download standardized to accept only full dual path names (for example "path/to/s0.bin path/to/s1.bin").
     Truncated dual path names ("path/to/s0.bin s1.bin") no longer supported.
+
+* :ref:`lib_lwm2m_client_utils` library:
+
+  * Added support for LwM2M object ECID-Signal Measurement Information (object ID 10256).
 
 Modem libraries
 ---------------
