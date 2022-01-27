@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in
+ * doc/nrf/libraries/bluetooth_services/mesh/light_ctrl.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/bluetooth_services/mesh/light_ctrl.html.
+ */
+
 /** @file
  *  @defgroup bt_mesh_light_ctrl Light Lightness Control common API
  *  @{
