@@ -22,10 +22,14 @@
 #include <sys/heap_listener.h>
 #endif
 
-LOG_MODULE_REGISTER(ram_pwrdn, CONFIG_RAM_POWERDOWN_LOG_LEVEL);
+#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
+#include <pm_config.h>
+#endif
 
 #define RAM_IMAGE_END_ADDR ((uintptr_t)_image_ram_end)
 #define RAM_BANK_COUNT ARRAY_SIZE(banks)
+
+LOG_MODULE_REGISTER(ram_pwrdn, CONFIG_RAM_POWERDOWN_LOG_LEVEL);
 
 struct ram_bank {
 	uintptr_t start;
@@ -145,9 +149,13 @@ static uint8_t ram_bank_section_id_ceil(uintptr_t address, const struct ram_bank
  */
 static uintptr_t ram_end_addr(void)
 {
+#if !defined(CONFIG_PARTITION_MANAGER_ENABLED)
 	const struct ram_bank *last_bank = &banks[RAM_BANK_COUNT - 1];
 
 	return last_bank->start + ram_bank_size(last_bank);
+#else
+	return PM_SRAM_PRIMARY_END_ADDRESS;
+#endif
 }
 
 void power_down_ram(uintptr_t start_address, uintptr_t end_address)

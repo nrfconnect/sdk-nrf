@@ -18,6 +18,10 @@ This function will automatically disable all memory regions that are not used by
     Working with an indirectly accessed memory that is not associated with any variable or a memory segment does not cause the ``_image_ram_end`` symbol to increase its value.
     For this reason, do not access powered down RAM sections when using this power optimization method.
 
+.. note::
+   :c:func:`power_down_unused_ram` does not power down segments of RAM reserved by the :ref:`partition_manager`.
+   If you need to reserve a segment of RAM, create your own RAM partition using the :ref:`partition_manager`.
+
 API documentation
 *****************
 
