@@ -29,9 +29,12 @@ extern "C" {
 #define NRF_CLOUD_JSON_APPID_VAL_AGPS		"AGPS"
 #define NRF_CLOUD_JSON_APPID_VAL_PGPS		"PGPS"
 #define NRF_CLOUD_JSON_APPID_VAL_CELL_POS	"CELL_POS"
+#define NRF_CLOUD_JSON_APPID_VAL_DEVICE		"DEVICE"
 
 #define NRF_CLOUD_JSON_MSG_TYPE_KEY		"messageType"
 #define NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA	"DATA"
+#define NRF_CLOUD_JSON_MSG_TYPE_VAL_DISCONNECT	"DISCON"
+#define NRF_CLOUD_JSON_MSG_MAX_LEN_DISCONNECT   200
 
 #define NRF_CLOUD_JSON_DATA_KEY			"data"
 
@@ -158,6 +161,9 @@ int nrf_cloud_format_single_cell_pos_req_json(cJSON * const req_obj_out);
 /** @brief Parses the cellular positioning response (REST and MQTT) from nRF Cloud. */
 int nrf_cloud_parse_cell_pos_response(const char *const buf,
 				      struct nrf_cloud_cell_pos_result *result);
+
+/** @brief Checks whether the provided MQTT payload is an nRF Cloud disconnection request */
+bool nrf_cloud_detect_disconnection_request(const char *const buf);
 
 /** @brief Obtains a pointer to the string at the specified index in the cJSON array.
  * No memory is allocated, pointer is valid as long as the cJSON array is valid.
