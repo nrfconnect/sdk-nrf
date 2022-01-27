@@ -35,11 +35,12 @@ LOG_MODULE_REGISTER(aes_gcm, LOG_LEVEL_DBG);
 
 #define NRF_CRYPTO_EXAMPLE_AES_MAX_TEXT_SIZE (100)
 #define NRF_CRYPTO_EXAMPLE_AES_BLOCK_SIZE (16)
+#define NRF_CRYPTO_EXAMPLE_AES_IV_SIZE (12)
 #define NRF_CRYPTO_EXAMPLE_AES_ADDITIONAL_SIZE (35)
 #define NRF_CRYPTO_EXAMPLE_AES_GCM_TAG_LENGTH (16)
 
 /* AES sample IV, DO NOT USE IN PRODUCTION */
-static uint8_t m_iv[NRF_CRYPTO_EXAMPLE_AES_BLOCK_SIZE];
+static uint8_t m_iv[NRF_CRYPTO_EXAMPLE_AES_IV_SIZE];
 
 /* Below text is used as plaintext for encryption/decryption */
 static uint8_t m_plain_text[NRF_CRYPTO_EXAMPLE_AES_MAX_TEXT_SIZE] = {
