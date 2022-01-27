@@ -10,7 +10,10 @@
 #include <bluetooth/mesh/models.h>
 #include <bluetooth/mesh/vnd/silvair_enocean_srv.h>
 
-#define MAX_TICKS (CONFIG_BT_MESH_SILVAIR_ENOCEAN_DELTA_TIMEOUT / \
+#define PHASE_B_DELAY 150UL
+#define ENOCEAN_TIMEOUT_COMP (CONFIG_BT_MESH_SILVAIR_ENOCEAN_WAIT_TIME + \
+		PHASE_B_DELAY)
+#define MAX_TICKS ((CONFIG_BT_MESH_SILVAIR_ENOCEAN_DELTA_TIMEOUT - ENOCEAN_TIMEOUT_COMP) / \
 		  CONFIG_BT_MESH_SILVAIR_ENOCEAN_TICK_TIME)
 
 #define DELAY_TIME_STEP_MS (5)
@@ -278,7 +281,7 @@ static void check_release(bool onoff, bool expect_generic_set, int wait)
 		ztest_expect_value(bt_mesh_onoff_cli_set_unack, set->transition->time, 0);
 		ztest_expect_value(bt_mesh_onoff_cli_set_unack, set->transition->delay, 150);
 		ztest_expect_value(bt_mesh_onoff_cli_set_unack, cli->pub.retransmit,
-				   BT_MESH_TRANSMIT(3, 50));
+				   BT_MESH_PUB_TRANSMIT(3, 50));
 	} else {
 		ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack, cli, &srv.buttons[0].lvl);
 		ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack, delta_set->delta, (wait + 1) *
@@ -290,7 +293,7 @@ static void check_release(bool onoff, bool expect_generic_set, int wait)
 		ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack,
 				   delta_set->transition->delay, 0);
 		ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack, cli->pub.retransmit,
-				   BT_MESH_TRANSMIT(4, 50));
+				   BT_MESH_PUB_TRANSMIT(4, 50));
 	}
 
 	mock_button_action(onoff ? BT_ENOCEAN_SWITCH_OB : BT_ENOCEAN_SWITCH_IB,
@@ -336,7 +339,7 @@ static void check_ticks(bool onoff, int tick_count)
 			ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack,
 					   delta_set->transition->delay, 150);
 			ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack, cli->pub.retransmit,
-					   BT_MESH_TRANSMIT(3, 50));
+					   BT_MESH_PUB_TRANSMIT(3, 50));
 		} else {
 			ztest_expect_value(bt_mesh_lvl_cli_delta_set_unack,
 					   delta_set->transition->delay, 0);
