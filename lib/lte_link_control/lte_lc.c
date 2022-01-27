@@ -58,16 +58,20 @@ static const char unlock_plmn[] = "AT+COPS=0";
 #endif
 /* Request eDRX to be disabled */
 static const char edrx_disable[] = "AT+CEDRXS=3";
+#if defined(CONFIG_LTE_EDRX_REQ)
 /* Default eDRX setting */
 static char edrx_param_ltem[5] = CONFIG_LTE_EDRX_REQ_VALUE_LTE_M;
 static char edrx_param_nbiot[5] = CONFIG_LTE_EDRX_REQ_VALUE_NBIOT;
+#endif  /* defined(CONFIG_LTE_EDRX_REQ) */
 /* Default PTW setting */
 static char ptw_param_ltem[5] = CONFIG_LTE_PTW_VALUE_LTE_M;
 static char ptw_param_nbiot[5] = CONFIG_LTE_PTW_VALUE_NBIOT;
+#if defined(CONFIG_LTE_PSM_REQ)
 /* Default PSM RAT setting */
 static char psm_param_rat[9] = CONFIG_LTE_PSM_REQ_RAT;
 /* Default PSM RPATU setting */
 static char psm_param_rptau[9] = CONFIG_LTE_PSM_REQ_RPTAU;
+#endif /* defined(CONFIG_LTE_PSM_REQ) */
 /* Request PSM to be disabled */
 static const char psm_disable[] = "AT+CPSMS=";
 /* Enable CSCON (RRC mode) notifications */
@@ -528,6 +532,96 @@ static int enable_notifications(void)
 	return 0;
 }
 
+#if defined(CONFIG_LTE_PSM_REQ)
+static int lte_lc_psm_enable(bool enable)
+{
+	int err;
+
+	if (strlen(psm_param_rptau) == 8 && strlen(psm_param_rat) == 8) {
+		err = nrf_modem_at_printf("AT+CPSMS=1,,,\"%s\",\"%s\"", psm_param_rptau,
+					  psm_param_rat);
+	} else if (strlen(psm_param_rptau) == 8) {
+		err = nrf_modem_at_printf("AT+CPSMS=1,,,\"%s\"", psm_param_rptau);
+	} else if (strlen(psm_param_rat) == 8) {
+		err = nrf_modem_at_printf("AT+CPSMS=1,,,,\"%s\"", psm_param_rat);
+	} else {
+		err = nrf_modem_at_printf("AT+CPSMS=1");
+	}
+
+	if (err != 0) {
+		LOG_ERR("nrf_modem_at_printf failed, reported error: %d", err);
+		return -EFAULT;
+	}
+
+	return 0;
+}
+#endif /* defined(CONFIG_LTE_PSM_REQ) */
+
+static int lte_lc_psm_disable()
+{
+	int err;
+
+	err = nrf_modem_at_printf(psm_disable);
+	if (err != 0) {
+		LOG_ERR("nrf_modem_at_printf failed, reported error: %d", err);
+		return -EFAULT;
+	}
+
+	return 0;
+}
+
+#if defined(CONFIG_LTE_EDRX_REQ)
+static int lte_lc_edrx_enable()
+{
+	int err;
+	int actt[] = { AT_CEDRXS_ACTT_WB, AT_CEDRXS_ACTT_NB };
+
+	/* Apply the configurations for both LTE-M and NB-IoT. */
+	for (size_t i = 0; i < ARRAY_SIZE(actt); i++) {
+		char *edrx_param =
+			(actt[i] == AT_CEDRXS_ACTT_WB) ? edrx_param_ltem : edrx_param_nbiot;
+		char *ptw_param = (actt[i] == AT_CEDRXS_ACTT_WB) ? ptw_param_ltem : ptw_param_nbiot;
+
+		if (strlen(edrx_param) == 4) {
+			err = nrf_modem_at_printf("AT+CEDRXS=2,%d,\"%s\"", actt[i], edrx_param);
+		} else {
+			err = nrf_modem_at_printf("AT+CEDRXS=2,%d", actt[i]);
+		}
+
+		if (err) {
+			LOG_ERR("Failed to enable eDRX, reported error: %d", err);
+			return -EFAULT;
+		}
+
+		/* PTW must be requested after eDRX is enabled */
+		if (strlen(ptw_param) != 4) {
+			continue;
+		}
+
+		err = nrf_modem_at_printf("AT%%XPTW=%d,\"%s\"", actt[i], ptw_param);
+		if (err) {
+			LOG_ERR("Failed to request PTW, reported error: %d", err);
+			return -EFAULT;
+		}
+	}
+
+	return 0;
+}
+#endif /* defined(CONFIG_LTE_EDRX_REQ) */
+
+static int lte_lc_edrx_disable()
+{
+	int err;
+
+	err = nrf_modem_at_printf(edrx_disable);
+	if (err) {
+		LOG_ERR("Failed to disable eDRX, reported error: %d", err);
+		return -EFAULT;
+	}
+
+	return 0;
+}
+
 static int init_and_config(void)
 {
 	int err;
@@ -575,12 +669,25 @@ static int init_and_config(void)
 	}
 #endif
 
-#if defined(CONFIG_LTE_EDRX_REQ)
-	/* Request configured eDRX settings to save power */
-	if (lte_lc_edrx_req(true) != 0) {
+#if defined(CONFIG_LTE_PSM_REQ_ON_INIT)
+	if (lte_lc_psm_enable() != 0) {
 		return -EIO;
 	}
-#endif
+#else
+	if (lte_lc_psm_disable() != 0) {
+		return -EIO;
+	}
+#endif /* defined(CONFIG_LTE_PSM_REQ) */
+#if defined(CONFIG_LTE_EDRX_REQ_ON_INIT)
+	/* Request configured eDRX settings to save power */
+	if (lte_lc_edrx_enable() != 0) {
+		return -EIO;
+	}
+#else
+	if (lte_lc_edrx_disable() != 0) {
+		return -EIO;
+	}
+#endif /* defined(CONFIG_LTE_EDRX_REQ) */
 #if defined(CONFIG_LTE_LOCK_BANDS)
 	/* Set LTE band lock (volatile setting).
 	 * Has to be done every time before activating the modem.
@@ -793,6 +900,7 @@ int lte_lc_power_off(void)
 	return lte_lc_func_mode_set(LTE_LC_FUNC_MODE_POWER_OFF) ? -EFAULT : 0;
 }
 
+#if defined(CONFIG_LTE_PSM_REQ)
 int lte_lc_psm_param_set(const char *rptau, const char *rat)
 {
 	if ((rptau != NULL && strlen(rptau) != 8) ||
@@ -818,36 +926,20 @@ int lte_lc_psm_param_set(const char *rptau, const char *rat)
 
 	return 0;
 }
+#endif /* defined(CONFIG_LTE_PSM_REQ) */
 
+#if defined(CONFIG_LTE_PSM_REQ)
 int lte_lc_psm_req(bool enable)
 {
-	int err;
-
 	if (enable) {
-		if (strlen(psm_param_rptau) == 8 &&
-		    strlen(psm_param_rat) == 8) {
-			err = nrf_modem_at_printf("AT+CPSMS=1,,,\"%s\",\"%s\"",
-						  psm_param_rptau,
-						  psm_param_rat);
-		} else if (strlen(psm_param_rptau) == 8) {
-			err = nrf_modem_at_printf("AT+CPSMS=1,,,\"%s\"", psm_param_rptau);
-		} else if (strlen(psm_param_rat) == 8) {
-			err = nrf_modem_at_printf("AT+CPSMS=1,,,,\"%s\"", psm_param_rat);
-		} else {
-			err = nrf_modem_at_printf("AT+CPSMS=1");
-		}
+		return lte_lc_psm_enable();
 	} else {
-		err = nrf_modem_at_printf(psm_disable);
+		return lte_lc_psm_disable();
 	}
-
-	if (err) {
-		LOG_ERR("nrf_modem_at_printf failed, reported error: %d", err);
-		return -EFAULT;
-	}
-
-	return 0;
 }
+#endif /* defined(CONFIG_LTE_PSM_REQ) */
 
+#if defined(CONFIG_LTE_PSM_REQ)
 int lte_lc_psm_get(int *tau, int *active_time)
 {
 	int err;
@@ -929,7 +1021,9 @@ int lte_lc_psm_get(int *tau, int *active_time)
 
 	return 0;
 }
+#endif /* defined(CONFIG_LTE_PSM_REQ) */
 
+#if defined(CONFIG_LTE_EDRX_REQ)
 int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx)
 {
 	char *edrx_param;
@@ -958,6 +1052,7 @@ int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx)
 
 	return 0;
 }
+#endif /* defined(CONFIG_LTE_EDRX_REQ) */
 
 int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw)
 {
@@ -988,53 +1083,16 @@ int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw)
 	return 0;
 }
 
+#if defined(CONFIG_LTE_EDRX_REQ)
 int lte_lc_edrx_req(bool enable)
 {
-	int err;
-	int actt[] = {AT_CEDRXS_ACTT_WB, AT_CEDRXS_ACTT_NB};
-
-	if (!enable) {
-		err = nrf_modem_at_printf(edrx_disable);
-		if (err) {
-			LOG_ERR("Failed to disable eDRX, reported error: %d", err);
-			return -EFAULT;
-		}
-
-		return 0;
+	if (enable) {
+		return lte_lc_edrx_enable();
+	} else {
+		return lte_lc_edrx_disable();
 	}
-
-	/* Apply the configurations for both LTE-M and NB-IoT. */
-	for (size_t i = 0; i < ARRAY_SIZE(actt); i++) {
-		char *edrx_param = (actt[i] == AT_CEDRXS_ACTT_WB) ?
-					edrx_param_ltem : edrx_param_nbiot;
-		char *ptw_param = (actt[i] == AT_CEDRXS_ACTT_WB) ?
-					ptw_param_ltem : ptw_param_nbiot;
-
-		if (strlen(edrx_param) == 4) {
-			err = nrf_modem_at_printf("AT+CEDRXS=2,%d,\"%s\"", actt[i], edrx_param);
-		} else {
-			err = nrf_modem_at_printf("AT+CEDRXS=2,%d", actt[i]);
-		}
-
-		if (err) {
-			LOG_ERR("Failed to enable eDRX, reported error: %d", err);
-			return -EFAULT;
-		}
-
-		/* PTW must be requested after eDRX is enabled */
-		if (strlen(ptw_param) != 4) {
-			continue;
-		}
-
-		err = nrf_modem_at_printf("AT%%XPTW=%d,\"%s\"", actt[i], ptw_param);
-		if (err) {
-			LOG_ERR("Failed to request PTW, reported error: %d", err);
-			return -EFAULT;
-		}
-	}
-
-	return 0;
 }
+#endif /* defined(CONFIG_LTE_EDRX_REQ) */
 
 int lte_lc_rai_req(bool enable)
 {

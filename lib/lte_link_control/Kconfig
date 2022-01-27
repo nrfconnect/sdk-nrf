@@ -54,27 +54,52 @@ config LTE_UNLOCK_PLMN
 	help
 		Disable PLMN locks for network selection.
 
+menuconfig LTE_PSM_REQ
+	bool "Enable PSM requests"
+	default n
+	help
+		Enable request for use of PSM using AT+CPSMS. If not set
+		functions to set PSM parameter as well as to request PSM
+		are not available. For reference, see 3GPP 27.007 Ch. 7.38.
+
+if LTE_PSM_REQ
+config LTE_PSM_REQ_ON_INIT
+	bool "Request PSM at run time automatically using Kconfig parameters"
+	default y
+	help
+		Request PSM automatically on initialization. If not set
+		eDRX has to be activated manually using lte_lc_psm_req().
+
 config LTE_PSM_REQ_RPTAU
 	string "PSM setting requested periodic TAU"
 	default "00000011"
 	help
 		Power saving mode setting for requested periodic TAU.
-		See 3GPP 27.007 Ch. 7.38.
-		And 3GPP 24.008 Ch. 10.5.7.4a for data format.
+		For reference, see 3GPP 24.008 Ch. 10.5.7.4a for data format.
 
 config LTE_PSM_REQ_RAT
 	string "PSM setting requested active time"
 	default "00100001"
 	help
 		Power saving mode setting for requested active time.
-		See 3GPP 27.007 Ch. 7.38.
-		And 3GPP 24.008 Ch. 10.5.7.3 for data format.
+		For reference, see 3GPP 24.008 Ch. 10.5.7.3 for data format.
+endif # LTE_PSM_REQ
 
-config LTE_EDRX_REQ
-	bool "Enable requesting use of eDRX."
+menuconfig LTE_EDRX_REQ
+	bool "Enable eDRX requests"
+	default y
 	help
-		Enable request for use of eDRX using AT+CEDRXS.
-		For reference, see 3GPP 27.007 Ch. 7.40.
+		Enable request for use of eDRX using AT+CEDRXS. If not set
+		functions to set eDRX parameter as well as to request eDRX
+		are not available. For reference, see 3GPP 27.007 Ch. 7.40.
+
+if LTE_EDRX_REQ
+config LTE_EDRX_REQ_ON_INIT
+	bool "Request eDRX at run time automatically using Kconfig parameters"
+	default y
+	help
+		Request eDRX automatically on initialization. If not set
+		eDRX has to be activated manually using lte_lc_edrx_req().
 
 config LTE_EDRX_REQ_VALUE_LTE_M
 	string "Requested eDRX value for LTE-M"
@@ -97,6 +122,7 @@ config LTE_EDRX_REQ_VALUE_NBIOT
 		Extended DRX parameters information element.
 		See 3GPP TS 24.008, subclause 10.5.5.32.
 		The value 1001 corresponds to 163.84 seconds.
+endif # LTE_EDRX_REQ
 
 config LTE_PTW_VALUE_LTE_M
 	string "Requested PTW value for LTE-M"

@@ -253,6 +253,10 @@ Modem libraries
   * Introduced AT_MONITOR_ISR macro to monitor AT notifications in an interrupt service routine.
   * Removed :c:func:`at_monitor_init` function and :kconfig:`CONFIG_AT_MONITOR_SYS_INIT` option. The library now initializes automatically when enabled.
 
+* :ref:`lte_lc_readme` library:
+
+  * Fixed undefined configuration of PSM/eDRX by forcing initialization.
+
 * :ref:`at_cmd_parser_readme` library:
 
   * Can now parse AT command responses containing the response result, for example, ``OK`` or ``ERROR``.
