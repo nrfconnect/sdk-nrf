@@ -63,17 +63,24 @@ int DFUOverSMP::UploadConfirmHandler(uint32_t offset, uint32_t size, void *arg)
 
 void DFUOverSMP::StartServer()
 {
-	if (!mIsEnabled) {
-		mIsEnabled = true;
-		smp_bt_register();
-
-		ChipLogProgress(DeviceLayer, "Enabled software update");
-
-		/* Start SMP advertising only in case CHIPoBLE advertising is not working. */
-		if (!ConnectivityMgr().IsBLEAdvertisingEnabled())
-			StartBLEAdvertising();
-	} else {
+	if (mIsEnabled) {
 		ChipLogProgress(DeviceLayer, "Software update is already enabled");
+		return;
+	}
+
+	int error = smp_bt_register();
+
+	if (error) {
+		ChipLogProgress(DeviceLayer, "Failed to start SMP server: %d", error);
+		return;
+	}
+
+	mIsEnabled = true;
+	ChipLogProgress(DeviceLayer, "Enabled software update");
+
+	/* Start SMP advertising only in case CHIPoBLE advertising is not working. */
+	if (!ConnectivityMgr().IsBLEAdvertisingEnabled()) {
+		StartBLEAdvertising();
 	}
 }
 
