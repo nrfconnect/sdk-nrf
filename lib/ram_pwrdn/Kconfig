@@ -6,7 +6,7 @@
 
 menuconfig RAM_POWER_DOWN_LIBRARY
 	bool "Enable API for turning off unused RAM segments"
-	depends on SOC_NRF52840 || SOC_NRF52833
+	depends on SOC_NRF52840 || SOC_NRF52833 || SOC_NRF5340_CPUAPP
 	help
 	  This allows application to call API for disabling unused RAM segments
 	  in the System ON mode. Effectively the application looses possibility

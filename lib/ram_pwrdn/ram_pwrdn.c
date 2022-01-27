@@ -4,11 +4,18 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <hal/nrf_power.h>
 #include <logging/log.h>
 #include <sys/util.h>
 #include <zephyr.h>
 #include <stdint.h>
+
+#if defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52833)
+#include <hal/nrf_power.h>
+#elif defined(CONFIG_SOC_NRF5340_CPUAPP)
+#include <hal/nrf_vmc.h>
+#else
+#error "RAM power-down module is not supported on the current platform"
+#endif
 
 #if CONFIG_RAM_POWER_ADJUST_ON_HEAP_RESIZE
 #include <init.h>
@@ -16,10 +23,6 @@
 #endif
 
 LOG_MODULE_REGISTER(ram_pwrdn, CONFIG_RAM_POWERDOWN_LOG_LEVEL);
-
-#if !defined(CONFIG_SOC_NRF52840) && !defined(CONFIG_SOC_NRF52833)
-#error "RAM power-down module is not supported on the current platform"
-#endif
 
 #define RAM_IMAGE_END_ADDR ((uintptr_t)_image_ram_end)
 #define RAM_BANK_COUNT ARRAY_SIZE(banks)
@@ -33,6 +36,7 @@ struct ram_bank {
 extern char _image_ram_end[];
 
 static const struct ram_bank banks[] = {
+#if defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52833)
 	{ .start = 0x20000000UL, .section_count = 2, .section_size = 0x1000 },
 	{ .start = 0x20002000UL, .section_count = 2, .section_size = 0x1000 },
 	{ .start = 0x20004000UL, .section_count = 2, .section_size = 0x1000 },
@@ -46,6 +50,16 @@ static const struct ram_bank banks[] = {
 #else
 	{ .start = 0x20010000UL, .section_count = 6, .section_size = 0x8000 },
 #endif
+#elif defined(CONFIG_SOC_NRF5340_CPUAPP)
+	{ .start = 0x20000000UL, .section_count = 16, .section_size = 0x1000 },
+	{ .start = 0x20010000UL, .section_count = 16, .section_size = 0x1000 },
+	{ .start = 0x20020000UL, .section_count = 16, .section_size = 0x1000 },
+	{ .start = 0x20030000UL, .section_count = 16, .section_size = 0x1000 },
+	{ .start = 0x20040000UL, .section_count = 16, .section_size = 0x1000 },
+	{ .start = 0x20050000UL, .section_count = 16, .section_size = 0x1000 },
+	{ .start = 0x20060000UL, .section_count = 16, .section_size = 0x1000 },
+	{ .start = 0x20070000UL, .section_count = 16, .section_size = 0x1000 },
+#endif
 };
 
 /*
@@ -53,9 +67,15 @@ static const struct ram_bank banks[] = {
  */
 static void ram_bank_power_down(uint8_t bank_id, uint8_t first_section_id, uint8_t last_section_id)
 {
+#if defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52833)
 	uint32_t mask = GENMASK(NRF_POWER_RAMPOWER_S0POWER + last_section_id,
 				NRF_POWER_RAMPOWER_S0POWER + first_section_id);
 	nrf_power_rampower_mask_off(NRF_POWER, bank_id, mask);
+#elif defined(CONFIG_SOC_NRF5340_CPUAPP)
+	uint32_t mask = GENMASK(VMC_RAM_POWER_S0POWER_Pos + last_section_id,
+				VMC_RAM_POWER_S0POWER_Pos + first_section_id);
+	nrf_vmc_ram_block_power_clear(NRF_VMC, bank_id, mask);
+#endif
 }
 
 /*
@@ -63,9 +83,15 @@ static void ram_bank_power_down(uint8_t bank_id, uint8_t first_section_id, uint8
  */
 static void ram_bank_power_up(uint8_t bank_id, uint8_t first_section_id, uint8_t last_section_id)
 {
+#if defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52833)
 	uint32_t mask = GENMASK(NRF_POWER_RAMPOWER_S0POWER + last_section_id,
 				NRF_POWER_RAMPOWER_S0POWER + first_section_id);
 	nrf_power_rampower_mask_on(NRF_POWER, bank_id, mask);
+#elif defined(CONFIG_SOC_NRF5340_CPUAPP)
+	uint32_t mask = GENMASK(VMC_RAM_POWER_S0POWER_Pos + last_section_id,
+				VMC_RAM_POWER_S0POWER_Pos + first_section_id);
+	nrf_vmc_ram_block_power_set(NRF_VMC, bank_id, mask);
+#endif
 }
 
 /*
