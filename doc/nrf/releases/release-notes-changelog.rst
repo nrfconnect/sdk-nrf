@@ -67,6 +67,7 @@ Zigbee
 * Added development ZBOSS stack library version based on the ZBOSS build v3.11.1.177+v5.1.1.
   This library version is dedicated for testing ZCL v8 features.
 * Added ZBOSS libraries variant with ZBOSS Traces enabled.
+* Added new version of the :ref:`ug_zigbee_tools_ncp_host` (v2.1.1).
 
 Applications
 ============
