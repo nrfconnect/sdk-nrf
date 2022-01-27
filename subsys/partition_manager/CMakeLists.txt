@@ -73,12 +73,8 @@ if (CONFIG_NRF_MODEM_LIB)
   ncs_add_partition_manager_config(pm.yml.libmodem)
 endif()
 
-if (CONFIG_BT_RPMSG_NRF53)
-  ncs_add_partition_manager_config(pm.yml.bt_rpmsg_nrf53)
-endif()
-
-if (CONFIG_BT_RPC AND SOC_NRF5340_CPUAPP)
-  ncs_add_partition_manager_config(pm.yaml.bt_rpc_host_nrf53)
+if (CONFIG_RPMSG_SERVICE AND CONFIG_SOC_NRF5340_CPUAPP)
+  ncs_add_partition_manager_config(pm.yml.rpmsg_nrf53)
 endif()
 
 if (CONFIG_PCD_APP)
