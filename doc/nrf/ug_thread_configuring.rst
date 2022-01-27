@@ -52,7 +52,7 @@ Configure OpenThread to build from source
   When building the OpenThread libraries from source, you can also :ref:`update the pre-built OpenThread libraries <thread_ug_feature_updating_libs>`.
 
 Configure OpenThread to use pre-built libraries
-  Set :kconfig:`CONFIG_OPENTHREAD_LIBRARY_1_1` to use pre-built libraries.
+  Set :kconfig:`CONFIG_OPENTHREAD_LIBRARY` to use pre-built libraries.
   Select one of the :ref:`thread_ug_feature_sets` by enabling :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`, :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_FTD`, or :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD`.
 
   This disables building OpenThread from source files and links pre-built libraries instead.
@@ -239,9 +239,9 @@ Pre-built libraries
 
 The |NCS| provides a set of :ref:`nrfxlib:ot_libs`.
 These pre-built libraries are available in nrfxlib and provide features and optional functionalities from the OpenThread stack.
-You can use these libraries for building applications with support for the complete Thread 1.1 Specification.
+You can use these libraries for building applications with support for the complete Thread Specification.
 
-To use a pre-built library, configure OpenThread to use pre-built libraries by setting the :kconfig:`CONFIG_OPENTHREAD_LIBRARY_1_1` Kconfig option and select one of the provided :ref:`thread_ug_feature_sets`.
+To use a pre-built library, configure OpenThread to use pre-built libraries by setting the :kconfig:`CONFIG_OPENTHREAD_LIBRARY` Kconfig option and select one of the provided :ref:`thread_ug_feature_sets`.
 
 .. _thread_ug_feature_sets:
 
@@ -253,12 +253,12 @@ These feature sets are mainly used for pre-built libraries, but you can also use
 
 The |NCS| provides the following feature sets:
 
-* :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` - Enable the complete set of OpenThread features for the Thread 1.1 Specification.
-* :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_FTD` - Enable optimized OpenThread features for FTD (Thread 1.1).
-* :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD` - Enable optimized OpenThread features for MTD (Thread 1.1).
+* :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` - Enable the complete set of OpenThread features for the Thread Specification.
+* :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_FTD` - Enable optimized OpenThread features for FTD.
+* :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD` - Enable optimized OpenThread features for MTD.
 * :kconfig:`CONFIG_OPENTHREAD_USER_CUSTOM_LIBRARY` - Create a custom feature set for compilation when :ref:`building using OpenThread sources <ug_thread_configuring_basic_building>`.
   This option is the default.
-  If you select :kconfig:`CONFIG_OPENTHREAD_LIBRARY_1_1`, choose a different feature set.
+  If you select :kconfig:`CONFIG_OPENTHREAD_LIBRARY`, choose a different feature set.
 
   .. note::
     When :ref:`building OpenThread from source <ug_thread_configuring_basic>`, you can select another feature set as base.
