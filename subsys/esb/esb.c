@@ -1102,7 +1102,8 @@ void esb_disable(void)
 	memset(rx_pipe_info, 0, sizeof(rx_pipe_info));
 	memset(pids, 0, sizeof(pids));
 
-	/*  Disable the radio */
+	/*  Disable the radio and ESB interrupts */
+	irq_disable(RADIO_IRQn);
 	irq_disable(ESB_EVT_IRQ);
 
 	NRF_RADIO->SHORTS =
