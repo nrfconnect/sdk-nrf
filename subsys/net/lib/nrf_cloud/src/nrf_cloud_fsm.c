@@ -522,12 +522,23 @@ static int dc_rx_data_handler(const struct nct_evt *nct_evt)
 		.topic = nct_evt->param.dc->topic,
 	};
 
+	bool discon_req = nrf_cloud_detect_disconnection_request(nct_evt->param.dc->data.ptr);
+
 	/* All data is forwared to the app... unless a callback is registered */
 	if (cell_pos_cb_send(nct_evt->param.dc->data.ptr) == 0) {
 		return 0;
 	}
 
 	nfsm_set_current_state_and_notify(nfsm_get_current_state(), &cloud_evt);
+
+	if (discon_req) {
+		LOG_DBG("Device deleted from nRF Cloud");
+		int err = nrf_cloud_disconnect();
+
+		if (err < 0) {
+			LOG_ERR("nRF Cloud disconnection-on-delete failure, error: %d", err);
+		}
+	}
 
 	return 0;
 }

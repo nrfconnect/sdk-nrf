@@ -330,6 +330,7 @@ Libraries for networking
   * Updated MQTT connection error handling.
     Now, unacknowledged pings and other errors result in a transition to the disconnected state.
     This ensures that reconnection can take place.
+  * nRF Cloud device removal now correctly triggers MQTT disconnection.
 
 * :ref:`lib_nrf_cloud_rest` library:
 

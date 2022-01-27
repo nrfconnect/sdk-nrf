@@ -1522,3 +1522,39 @@ cleanup:
 	cJSON_Delete(cell_pos_obj);
 	return ret;
 }
+
+bool nrf_cloud_detect_disconnection_request(const char *const buf)
+{
+	if (buf == NULL) {
+		return false;
+	}
+
+	/* The candidate buffer must be a null-terminated string less than
+	 * a certain length
+	 */
+	if (memchr(buf, '\0', NRF_CLOUD_JSON_MSG_MAX_LEN_DISCONNECT) == NULL) {
+		return false;
+	}
+
+	/* Fast test to avoid parsing EVERY message with cJSON. */
+	if (strstr(buf, NRF_CLOUD_JSON_APPID_VAL_DEVICE) == NULL ||
+	    strstr(buf, NRF_CLOUD_JSON_MSG_TYPE_VAL_DISCONNECT) == NULL) {
+		return false;
+	}
+
+	/* If the quick test passes, use cJSON to get certainty */
+	bool ret = true;
+	cJSON *discon_request_obj = cJSON_Parse(buf);
+
+	/* Check for nRF Cloud disconnection request MQTT message */
+	if (!json_item_string_exists(discon_request_obj, NRF_CLOUD_JSON_MSG_TYPE_KEY,
+				     NRF_CLOUD_JSON_MSG_TYPE_VAL_DISCONNECT) ||
+	    !json_item_string_exists(discon_request_obj, NRF_CLOUD_JSON_APPID_KEY,
+				     NRF_CLOUD_JSON_APPID_VAL_DEVICE)) {
+		/* Not a disconnection request message */
+		ret = false;
+	}
+
+	cJSON_Delete(discon_request_obj);
+	return ret;
+}
