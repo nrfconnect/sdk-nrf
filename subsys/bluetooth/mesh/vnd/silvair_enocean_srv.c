@@ -14,6 +14,12 @@
 #define BT_MESH_SILVAIR_ENOCEAN_PROXY_SUB_OP_DELETE 0x02
 #define BT_MESH_SILVAIR_ENOCEAN_PROXY_SUB_OP_STATUS 0x03
 
+#define PHASE_B_DELAY 150UL
+#define ENOCEAN_TIMEOUT_COMP (CONFIG_BT_MESH_SILVAIR_ENOCEAN_WAIT_TIME + \
+		PHASE_B_DELAY)
+#define MAX_TICKS ((CONFIG_BT_MESH_SILVAIR_ENOCEAN_DELTA_TIMEOUT - ENOCEAN_TIMEOUT_COMP) / \
+		  CONFIG_BT_MESH_SILVAIR_ENOCEAN_TICK_TIME)
+
 enum bt_mesh_silvair_enocean_status {
 	BT_MESH_SILVAIR_ENOCEAN_STATUS_SET = 0x00,
 	BT_MESH_SILVAIR_ENOCEAN_STATUS_NOT_SET = 0x01,
@@ -56,7 +62,7 @@ static void send_onoff(struct bt_mesh_silvair_enocean_button *button,
 		.transition = &transition,
 	};
 
-	button->onoff.pub.retransmit = BT_MESH_TRANSMIT(3, 50);
+	button->onoff.pub.retransmit = BT_MESH_PUB_TRANSMIT(3, 50);
 
 	bt_mesh_dtt_srv_transition_get(button->onoff.model, &transition);
 	transition.delay = delay_get(&button->onoff.pub, 1);
@@ -90,14 +96,14 @@ static void send_delta(struct bt_mesh_silvair_enocean_button *button, enum phase
 
 	switch (phase) {
 	case PHASE_B:
-		button->lvl.pub.retransmit = BT_MESH_TRANSMIT(3, 50);
+		button->lvl.pub.retransmit = BT_MESH_PUB_TRANSMIT(3, 50);
 		transition.delay = delay_get(&button->lvl.pub, 1);
 		break;
 	case PHASE_C:
 		button->lvl.pub.retransmit = 0;
 		break;
 	case PHASE_D:
-		button->lvl.pub.retransmit = BT_MESH_TRANSMIT(4, 50);
+		button->lvl.pub.retransmit = BT_MESH_PUB_TRANSMIT(4, 50);
 		break;
 	}
 
@@ -117,11 +123,9 @@ static void state_machine_button_process(
 		break;
 	case BT_ENOCEAN_BUTTON_RELEASE:
 		if (button->state != BT_MESH_SILVAIR_ENOCEAN_STATE_DELTA ||
-		    !k_work_delayable_is_pending(&button->timer) ||
 		    button->target != on_off) {
 			send_onoff(button, on_off);
-		} else if (button->state == BT_MESH_SILVAIR_ENOCEAN_STATE_DELTA &&
-			   k_work_delayable_is_pending(&button->timer)) {
+		} else if (button->state == BT_MESH_SILVAIR_ENOCEAN_STATE_DELTA) {
 			send_delta(button, PHASE_D);
 		}
 
@@ -186,11 +190,13 @@ static void timeout(struct k_work *work)
 		break;
 	case BT_MESH_SILVAIR_ENOCEAN_STATE_DELTA:
 		send_delta(button, PHASE_C);
-		if (button->tick_count++ <
-		    CONFIG_BT_MESH_SILVAIR_ENOCEAN_DELTA_TIMEOUT /
-		    CONFIG_BT_MESH_SILVAIR_ENOCEAN_TICK_TIME) {
+
+		if (button->tick_count++ < MAX_TICKS) {
 			k_work_reschedule(&button->timer, tick_timeout);
+		} else {
+			button->state = BT_MESH_SILVAIR_ENOCEAN_STATE_IDLE;
 		}
+
 		break;
 	}
 }
