@@ -7,32 +7,29 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(modem_trace_test_uart)
+project(uart)
 
 # create mock
-cmock_handle(${ZEPHYR_HAL_NORDIC_MODULE_DIR}/nrfx/drivers/include/nrfx_uarte.h )
-cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem.h )
-cmock_handle(${ZEPHYR_BASE}/include/zephyr/drivers/pinctrl.h )
+cmock_handle(${ZEPHYR_HAL_NORDIC_MODULE_DIR}/nrfx/drivers/include/nrfx_uarte.h)
+cmock_handle(${ZEPHYR_BASE}/include/zephyr/drivers/pinctrl.h)
 
 # generate runner for the test
-test_runner_generate(src/modem_trace_test.c)
+test_runner_generate(src/main.c)
 
 target_include_directories(app PRIVATE src)
 
 # add test file
-target_sources(app PRIVATE src/modem_trace_test.c)
+target_sources(app PRIVATE src/main.c)
 
 # add unit under test
-target_sources(app PRIVATE ${NRF_DIR}/lib/nrf_modem_lib/nrf_modem_lib_trace.c)
+target_sources(app PRIVATE ${NRF_DIR}/lib/nrf_modem_lib/trace_backends/uart/uart.c)
 
 # include paths
 target_include_directories(app PRIVATE ${ZEPHYR_HAL_NORDIC_MODULE_DIR}/nrfx)
 target_include_directories(app PRIVATE ${ZEPHYR_HAL_NORDIC_MODULE_DIR}/nrfx/mdk)
-target_include_directories(app PRIVATE ${ZEPHYR_CMSIS_MODULE_DIR}/CMSIS/Core/Include/)
 target_include_directories(app PRIVATE ${ZEPHYR_BASE}/modules/hal_nordic/nrfx)
-target_include_directories(app PRIVATE ${NRF_DIR}/include/modem/)
-target_include_directories(app PRIVATE ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/ )
 target_include_directories(app PRIVATE ${ZEPHYR_BASE}/soc/arm/nordic_nrf/common)
+target_include_directories(app PRIVATE ${NRF_DIR}/include/modem/)
 
 # Define the device. Otherwise an "unknown device" warning will be triggered when compiling
 # nrfx_config.h

@@ -1,0 +1,17 @@
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+rsource "uart/Kconfig"
+rsource "rtt/Kconfig"
+
+choice NRF_MODEM_LIB_TRACE_BACKEND
+	prompt "Trace backend"
+	default NRF_MODEM_LIB_TRACE_BACKEND_UART
+
+endchoice # NRF_MODEM_LIB_TRACE_BACKEND
+
+module = MODEM_TRACE_BACKEND
+module-str = Modem trace backend
+source "subsys/logging/Kconfig.template.log_config"
