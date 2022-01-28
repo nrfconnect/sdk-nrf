@@ -21,6 +21,9 @@
 
 using namespace ::chip::DeviceLayer;
 
+constexpr uint16_t kAdvertisingIntervalMinMs = 400;
+constexpr uint16_t kAdvertisingIntervalMaxMs = 500;
+
 DFUOverSMP DFUOverSMP::sDFUOverSMP;
 
 void DFUOverSMP::Init(DFUOverSMPRestartAdvertisingHandler startAdvertisingCb)
@@ -97,7 +100,7 @@ void DFUOverSMP::StartBLEAdvertising()
 
 	int rc;
 	bt_le_adv_param advParams = BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME,
-							 BT_GAP_ADV_FAST_INT_MIN_2, BT_GAP_ADV_FAST_INT_MAX_2, nullptr);
+							 kAdvertisingIntervalMinMs, kAdvertisingIntervalMaxMs, nullptr);
 
 	rc = bt_le_adv_stop();
 	if (rc) {
@@ -141,7 +144,7 @@ void DFUOverSMP::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg 
 				sDFUOverSMP.restartAdvertisingCallback();
 		}
 		break;
-	case DeviceEventType::kCHIPoBLEConnectionClosed:
+	case DeviceEventType::kCommissioningComplete:
 		/* Check if after closing CHIPoBLE connection advertising is working, if no start SMP advertising. */
 		if (!ConnectivityMgr().IsBLEAdvertisingEnabled()) {
 			sDFUOverSMP.restartAdvertisingCallback();
