@@ -5,6 +5,12 @@
  */
 
 /*
+ * The RST file for this library can be found in doc/nrf/libraries/networking/coap_utils.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/networking/coap_utils.html.
+ */
+
+/*
  * Copyright (c) 2020 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause

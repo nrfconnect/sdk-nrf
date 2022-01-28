@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/networking/icalendar_parser.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/networking/icalendar_parser.html.
+ */
+
 #ifndef ICAL_PARSER_H__
 #define ICAL_PARSER_H__
 

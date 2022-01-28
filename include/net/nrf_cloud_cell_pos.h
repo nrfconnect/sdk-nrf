@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in
+ * doc/nrf/libraries/networking/nrf_cloud_cell_pos.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/networking/nrf_cloud_cell_pos.html.
+ */
+
 #ifndef NRF_CLOUD_CELL_POS_H_
 #define NRF_CLOUD_CELL_POS_H_
 

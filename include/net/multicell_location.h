@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in
+ * doc/nrf/libraries/networking/multicell_location.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/networking/multicell_location.html.
+ */
+
 #ifndef MULTICELL_LOCATION_H_
 #define MULTICELL_LOCATION_H_
 
