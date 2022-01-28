@@ -62,9 +62,9 @@ Thread
 Zigbee
 ------
 
-* Updated ZBOSS Zigbee stack to version ``3.11.0.0+5.1.0``.
+* Updated ZBOSS Zigbee stack to version ``3.11.1.0+5.1.1``.
   See the :ref:`nrfxlib:zboss_changelog` in the nrfxlib documentation for detailed information.
-* Added development ZBOSS stack library version based on the ZBOSS build v3.10.0.780+v5.1.0.
+* Added development ZBOSS stack library version based on the ZBOSS build v3.11.1.177+v5.1.1.
   This library version is dedicated for testing ZCL v8 features.
 * Added ZBOSS libraries variant with ZBOSS Traces enabled.
 
