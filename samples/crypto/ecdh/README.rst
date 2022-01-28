@@ -9,22 +9,6 @@ Crypto: ECDH
 
 The ECDH sample shows how to perform an Elliptic-curve Diffie–Hellman key exchange to allow two parties to obtain a shared secret.
 
-Overview
-********
-
-The sample follows these steps to perform an ECDH key exchange:
-
-1. First, the sample performs initialization:
-
-   a. The Platform Security Architecture (PSA) API is initialized.
-   #. Two random Elliptic Curve Cryptography (ECC) key pairs are generated and imported into the PSA crypto keystore.
-
-#. Then, ECDH key exchange is performed using the generated key pairs.
-
-#. Afterwards, the sample performs cleanup:
-
-   a. The key pairs are removed from the PSA crypto keystore.
-
 Requirements
 ************
 
@@ -36,6 +20,22 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
+Overview
+********
+
+The sample performs the following operations:
+
+1. Initialization:
+
+   a. The Platform Security Architecture (PSA) API is initialized.
+   #. Two random Elliptic Curve Cryptography (ECC) key pairs are generated and imported into the PSA crypto keystore.
+
+#. ECDH key exchange using the generated key pairs.
+
+#. Cleanup:
+
+   a. The key pairs are removed from the PSA crypto keystore.
+
 Building and running
 ********************
 
@@ -46,7 +46,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+After programming the sample to your development kit, complete the following steps to test it:
 
 1. |connect_terminal|
 #. Compile and program the application.

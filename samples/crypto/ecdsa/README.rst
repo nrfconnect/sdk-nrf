@@ -9,26 +9,6 @@ Crypto: ECDSA
 
 The ECDSA sample shows how to sign and verify messages using SHA-256 as the hashing algorithm and the secp256r1 curve.
 
-Overview
-********
-
-The sample follows these steps:
-
-1. First, the sample performs initialization:
-
-   a. The Platform Security Architecture (PSA) API is initialized.
-   #. A random Elliptic Curve Cryptography (ECC) key pair is generated and imported into the PSA crypto keystore.
-   #. The public key of the ECDSA key pair is imported into the PSA crypto keystore.
-
-#. Then, ECDSA signing and verification is performed:
-
-   a. Signing is performed using the private key of the ECC key pair.
-   #. The signature is verified using the exported public key.
-
-#. Afterwards, the sample performs cleanup:
-
-   a. The key pair and public key are removed from the PSA crypto keystore.
-
 Requirements
 ************
 
@@ -40,6 +20,26 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
+Overview
+********
+
+The sample performs the following operations:
+
+1. Initialization:
+
+   a. The Platform Security Architecture (PSA) API is initialized.
+   #. A random Elliptic Curve Cryptography (ECC) key pair is generated and imported into the PSA crypto keystore.
+   #. The public key of the ECDSA key pair is imported into the PSA crypto keystore.
+
+#. ECDSA signing and verification:
+
+   a. Signing is performed using the private key of the ECC key pair.
+   #. The signature is verified using the exported public key.
+
+#. Cleanup:
+
+   a. The key pair and public key are removed from the PSA crypto keystore.
+
 Building and running
 ********************
 
@@ -50,7 +50,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+After programming the sample to your development kit, complete the following steps to test it:
 
 1. |connect_terminal|
 #. Compile and program the application.

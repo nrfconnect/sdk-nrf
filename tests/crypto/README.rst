@@ -9,6 +9,19 @@ Cryptography tests
 
 Cryptography tests verify the functionality of the :ref:`nrfxlib:nrf_security` by using known test vectors approved by the National Institute of Standards and Technology (NIST) and others.
 
+Requirements
+************
+
+The tests support the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340dk_nrf5340_cpuapp, nrf9160dk_nrf9160, nrf52840dk_nrf52840
+
+.. note::
+   Nordic Semiconductor devices such as nRF51, nRF52810, or nRF52811 cannot run the full test suite because of limited flash capacity.
+   A recommended approach in such case is to run subsets of the tests one by one.
+
 Overview
 ********
 
@@ -122,20 +135,6 @@ See :kconfig:`CONFIG_NORDIC_SECURITY_BACKEND`.
 | EC-JPAKE           | secp256r1   | `J-PAKE: Password-Authenticated Key Exchange by Juggling`_                 | Custom                                                                     |
 +--------------------+-------------+----------------------------------------------------------------------------+----------------------------------------------------------------------------+
 
-Requirements
-************
-
-The tests support the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp, nrf9160dk_nrf9160, nrf52840dk_nrf52840
-
-.. note::
-   Nordic devices such as nRF51, nRF52810, or nRF52811 cannot run the full test suite because of limited flash capacity.
-   A recommended approach in such case is to run subsets of the tests one by one.
-
-
 Building and running
 ********************
 
@@ -147,12 +146,12 @@ There are multiple ways to build the tests.
 See :ref:`nrf_security` for additional information about configuring the Nordic Security Module.
 You can use the following configuration files to build the test in a specific setup:
 
-* :file:`overlay-cc3xx.conf` - it uses hardware acceleration using the Arm CryptoCell accelerator (for cryptography and entropy for random number generation).
-* :file:`overlay-cc3xx-oberon.conf` - it uses a combination of hardware acceleration, using the Arm CryptoCell, and the Oberon software library, that adds key sizes and algorithms not supported in the CryptoCell.
+* :file:`overlay-cc3xx.conf` uses hardware acceleration using the Arm CryptoCell accelerator (for cryptography and entropy for random number generation).
+* :file:`overlay-cc3xx-oberon.conf` uses a combination of hardware acceleration, using the Arm CryptoCell, and the Oberon software library, that adds key sizes and algorithms not supported in the CryptoCell.
   This setup uses hardware acceleration as much as possible.
-* :file:`overlay-oberon.conf` - it uses only the Oberon software library for all cryptographic operations.
-* :file:`overlay-vanilla.conf` - it is software only, except for a hardware-accelerated module to generate entropy for random number generation.
-* :file:`overlay-multi.conf` - it uses a combination of hardware acceleration, using the Arm CryptoCell, and vanilla mbedtls and Oberon software implementations to support functionalities not supported by the CryptoCell.
+* :file:`overlay-oberon.conf` uses only the Oberon software library for all cryptographic operations.
+* :file:`overlay-vanilla.conf` is for software only, except for a hardware-accelerated module to generate entropy for random number generation.
+* :file:`overlay-multi.conf` uses a combination of hardware acceleration, using the Arm CryptoCell, and vanilla Mbed TLS and Oberon software implementations to support functionalities not supported by the CryptoCell.
   This setup uses hardware acceleration as much as possible.
 
 You can use one of the listed overlay configurations by adding the ``-- -DOVERLAY_CONFIG=<overlay_config_file>`` flag to your build. Also see :ref:`cmake_options` for instructions on how to add this option.
@@ -178,11 +177,10 @@ Testing
 
       PROJECT EXECUTION SUCCESSFUL
 
-
 Additional test cases and test vectors
 ======================================
 
-Test cases and test vectors can be added to the test suite either by including additional source files or by extending the existing files.
+You can add test cases and test vectors to the test suite either by including additional source files or by extending the existing files.
 
 
 Test case
@@ -210,24 +208,25 @@ A new test case must be registered to the ``test_case_data`` section using ``ITE
 
 
 .. note::
-   The macro call to ``ITEM_REGISTER`` must be done in a .c file.
+   The macro call to ``ITEM_REGISTER`` must be done in a :file:`.c` file.
 
 Setting up a test case
 ~~~~~~~~~~~~~~~~~~~~~~
 
 As part of the test case setup, any previously used buffers are cleared.
-Then, the next test vector is fetched using the ``ITEM_GET`` macro.
+The next test vector is fetched using the ``ITEM_GET`` macro.
 The macro requires the following parameters:
 
 * ``test_vector_hmac_data`` - the section to fetch the test vector from (HMAC in this example).
 * ``test_vector_hmac_t`` - information about which type of test vector to expect in the given section.
-  In the example, ``test_vector_hmac_t`` is expected, the same type that is used when registering HMAC test vectors.
+  In the example, ``test_vector_hmac_t`` is expected.
+  It is the same type that is used when registering HMAC test vectors.
 * Information about which index to fetch a test vector from.
 
 The fetched test vector is then unhexified.
 
 Test vector data is stored as strings of hexadecimal characters.
-In order to use them, they must be parsed to binary, which is also done in the setup procedure.
+To use them, they must be parsed to binary, which is also done in the setup procedure.
 
 The following example shows a test vector setup::
 

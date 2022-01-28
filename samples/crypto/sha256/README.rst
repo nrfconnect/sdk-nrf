@@ -9,18 +9,6 @@ Crypto: SHA-256
 
 The SHA-256 sample shows how to calculate and verify hashes.
 
-Overview
-********
-
-The sample follows these steps:
-
-1. First, the sample initializes the Platform Security Architecture (PSA) API.
-
-#. Then, it calculates and verifies a SHA-256 hash on a sample plaintext:
-
-   a. The SHA-256 hash is calculated.
-   #. The SHA-256 hash is verified.
-
 Requirements
 ************
 
@@ -32,6 +20,18 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
+Overview
+********
+
+The sample performs the following operations:
+
+1. Initialization of the Platform Security Architecture (PSA) API.
+
+#. Calculation and verification of a SHA-256 hash on a sample plaintext:
+
+   a. The SHA-256 hash is calculated.
+   #. The SHA-256 hash is verified.
+
 Building and running
 ********************
 
@@ -42,7 +42,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+After programming the sample to your development kit, complete the following steps to test it:
 
 1. |connect_terminal|
 #. Compile and program the application.
