@@ -270,6 +270,10 @@ Modem libraries
 
   * The modem trace handling is moved from :file:`nrf_modem_os.c` to a new file :file:`nrf_modem_lib_trace.c`, which also provides the API for starting a trace session for a given time interval or until a given size of trace data is received.
 
+* Removed the ``at_cmd`` library.
+
+* Removed the ``at_notif`` library.
+
 Event manager
 -------------
 

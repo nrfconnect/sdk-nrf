@@ -14,7 +14,7 @@ Below are some of the requirements and limitations of the application while runn
    * The LwM2M carrier library initializes and uses the :ref:`nrf_modem`.
      This library is needed to track the modem FOTA states.
 
-* The LwM2M carrier library registers to receive several AT event reports using the :ref:`at_cmd_readme` and :ref:`at_notif_readme` libraries. The following notifications must not be deregistered by the application:
+* The LwM2M carrier library registers to receive several AT event reports using the :ref:`at_monitor_readme` library. The following notifications must not be deregistered by the application:
 
    * SMS events (AT+CNMI).
    * Packet Domain events (AT+CGEREP).

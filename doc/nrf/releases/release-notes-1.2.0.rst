@@ -187,7 +187,7 @@ Updated libraries
 
 * Moved the following libraries from ``drivers/`` to ``lib/``:
 
-  * :ref:`at_cmd_readme`
+  * ``at_cmd`` library
   * ``lte_link_control``
 
 
@@ -473,7 +473,7 @@ Documentation
     * :ref:`modem_key_mgmt` - added
     * :ref:`sms_readme` - added
     * :ref:`supl_client` - added
-    * :ref:`at_cmd_readme` - updated
+    * ``at_cmd`` library - updated
     * :ref:`at_cmd_parser_readme` - updated
     * :ref:`lib_download_client` - updated
 

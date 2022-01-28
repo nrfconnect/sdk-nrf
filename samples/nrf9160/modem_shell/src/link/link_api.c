@@ -30,7 +30,6 @@
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 
-#define AT_CMD_BUFFER_LEN (CONFIG_AT_CMD_RESPONSE_MAX_LEN + 1)
 #define AT_CMD_PDP_CONTEXTS_READ "AT+CGDCONT?"
 #define AT_CMD_PDP_CONTEXTS_READ_PARAM_COUNT 12
 #define AT_CMD_PDP_CONTEXTS_READ_CID_INDEX 1

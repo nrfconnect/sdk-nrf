@@ -116,7 +116,7 @@ nRF9160
 
   * Cloud API (``include/net/cloud.h``) - provides a generic cloud API with an implementation for nRF Connect for Cloud.
   * :ref:`liblwm2m_carrier_readme` (version 0.8.0) - provides support for the Verizon Wireless network support.
-  * :ref:`at_notif_readme` - dispatches AT command notifications to registered modules.
+  * ``at_notif`` library - dispatches AT command notifications to registered modules.
 
 * Added the following drivers:
 
@@ -215,7 +215,7 @@ Updated libraries
 Updated drivers
 ---------------
 
-* :ref:`at_cmd_readme`:
+* ``at_cmd`` library:
 
   * Added an option to initialize the driver manually.
   * Fixed detection of CME / CMS errors.
@@ -445,7 +445,7 @@ Documentation
 
   * nRF9160:
 
-    * :ref:`at_notif_readme`
+    * ``at_notif`` library
     * :ref:`doc_fw_info`
     * :ref:`lib_aws_fota`
     * :ref:`lib_aws_jobs`

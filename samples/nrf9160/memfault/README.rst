@@ -51,7 +51,6 @@ There are also some metrics, which are specific to |NCS| that are enabled by def
 
    * Shows how many bytes of unused space is left in a stack.
    * Configurable using :kconfig:`CONFIG_MEMFAULT_NCS_STACK_METRICS`.
-   * ``Ncs_AtCmdUnusedStack`` - The :ref:`at_cmd_readme` library's stack.
    * ``Ncs_ConnectionPollUnusedStack``- Stack used by the cloud libraries for :ref:`lib_nrf_cloud`, :ref:`lib_aws_iot` and :ref:`lib_azure_iot_hub`.
 
 In addition to showing the capturing of metrics provided by the Memfault SDK integration layer in |NCS|, the sample also shows how to capture an application-specific metric.

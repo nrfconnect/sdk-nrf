@@ -25,7 +25,7 @@ For more information, see :ref:`partition_mgr_integration`.
 
 The library wrapper can also initialize the Modem library during system initialization using :c:macro:`SYS_INIT`.
 The :kconfig:`CONFIG_NRF_MODEM_LIB_SYS_INIT` Kconfig option can be used to control the initialization.
-Some libraries in |NCS|, such as the :ref:`at_cmd_readme` and the :ref:`lte_lc_readme` have similar configuration options to initialize during system initialization and these options depend on the configuration option of the integration layer.
+Some libraries in |NCS|, such as the :ref:`lte_lc_readme` have similar configuration options to initialize during system initialization and these options depend on the configuration option of the integration layer.
 If your application performs an update of the nRF9160 modem firmware, you must disable this functionality to have full control on the initialization of the library.
 
 The library wrapper also coordinates the shutdown operation among different parts of the application that use the Modem library.

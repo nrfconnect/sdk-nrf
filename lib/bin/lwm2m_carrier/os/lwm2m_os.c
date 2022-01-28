@@ -12,8 +12,7 @@
 #include <zephyr.h>
 #include <string.h>
 #include <nrf_modem.h>
-#include <modem/at_cmd.h>
-#include <modem/at_notif.h>
+#include <nrf_modem_at.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 #include <modem/lte_lc.h>
@@ -370,37 +369,36 @@ int lwm2m_os_nrf_modem_shutdown(void)
 
 /* AT command module abstractions. */
 
+AT_MONITOR(lwm2m, ANY, lwm2m_at_notif_handler, PAUSED);
+
+static lwm2m_os_at_cmd_handler_t at_notif_handler;
+
 int lwm2m_os_at_init(void)
 {
-	int err;
-
-	err = at_cmd_init();
-	if (err) {
-		return -EIO;
-	}
-
-	err = at_notif_init();
-	if (err) {
-		return -EIO;
-	}
-
 	return 0;
+}
+
+static void lwm2m_at_notif_handler(const char *notif)
+{
+	if (at_notif_handler) {
+		at_notif_handler(NULL, notif);
+	}
 }
 
 int lwm2m_os_at_notif_register_handler(void *context, lwm2m_os_at_cmd_handler_t handler)
 {
-	return at_notif_register_handler(context, handler);
+	at_notif_handler = handler;
+	at_monitor_resume(lwm2m);
+
+	return 0;
 }
 
 int lwm2m_os_at_cmd_write(const char *const cmd, char *buf, size_t buf_len)
 {
-	enum at_cmd_state state = AT_CMD_OK;
-	int err = at_cmd_write(cmd, buf, buf_len, &state);
+	int err;
 
-	if ((err == 0) && (state != AT_CMD_OK)) {
-		/* Application has enabled AT+CMEE=1 and state indicates an error.
-		 * Report this as if the modem returned ERROR.
-		 */
+	err = nrf_modem_at_cmd(buf, buf_len, "%s", cmd);
+	if (err > 0) {
 		err = -ENOEXEC;
 	}
 

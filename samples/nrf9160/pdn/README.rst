@@ -72,8 +72,7 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
-* :ref:`at_cmd_readme`
-* :ref:`at_notif_readme`
+* :ref:`at_monitor_readme`
 * :ref:`lte_lc_readme`
 * :ref:`pdn_readme`
 

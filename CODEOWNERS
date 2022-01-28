@@ -79,10 +79,8 @@ Kconfig*                                  @tejlmand
 /lib/bin/                                 @rlubos @lemrey
 /lib/adp536x/                             @jtguggedal
 /lib/at_cmd_parser/                       @rlubos
-/lib/at_cmd/                              @rlubos
 /lib/at_host/                             @rlubos
 /lib/at_monitor/                          @lemrey @rlubos
-/lib/at_notif/                            @rlubos
 /lib/at_shell/                            @jtguggedal @simensrostad
 /lib/at_sms_cert/                         @eivindj-nordic
 /lib/agps/                                @jtguggedal @simensrostad

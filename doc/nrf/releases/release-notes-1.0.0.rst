@@ -101,7 +101,7 @@ nRF9160
 * Added the following libraries:
 
   * :ref:`lib_fota_download` - handles Firmware Over The Air (FOTA) downloads.
-  * :ref:`at_cmd_readme` - facilitates handling of AT Commands by multiple modules.
+  * ``at_cmd`` library - facilitates handling of AT Commands by multiple modules.
   * :ref:`lib_aws_jobs` - facilitates communication with the AWS IoT Jobs service.
   * :ref:`lib_aws_fota` - combines the :ref:`lib_aws_jobs` and :ref:`lib_fota_download` libraries to create a user-friendly library that can perform firmware-over-the-air (FOTA) update using HTTP and MQTT TLS.
 
@@ -231,7 +231,7 @@ Documentation
   * nRF9160:
 
     * :ref:`lib_spm`
-    * :ref:`at_cmd_readme`
+    * ``at_cmd`` library
     * :ref:`lib_download_client`
     * :ref:`lib_aws_fota`
     * :ref:`lib_fota_download`

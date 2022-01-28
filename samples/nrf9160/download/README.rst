@@ -131,8 +131,6 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
-* :ref:`at_cmd_readme`
-* :ref:`at_notif_readme`
 * :ref:`modem_key_mgmt`
 * :ref:`lte_lc_readme`
 

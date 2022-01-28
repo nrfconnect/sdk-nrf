@@ -44,9 +44,7 @@ static void stack_check(const struct k_thread *cthread, void *user_data)
 		return;
 	}
 
-	if (strncmp("at_cmd_socket_thread", name, sizeof("at_cmd_socket_thread")) == 0) {
-		stack_type = STACK_AT_CMD;
-	} else if (strncmp("connection_poll_thread", name,
+	if (strncmp("connection_poll_thread", name,
 			   sizeof("connection_poll_thread")) == 0) {
 		stack_type = STACK_CONNECTION_POLL;
 	} else {
@@ -60,15 +58,7 @@ static void stack_check(const struct k_thread *cthread, void *user_data)
 		return;
 	}
 
-	if (stack_type == STACK_AT_CMD) {
-		LOG_DBG("Unused at_cmd_socket_thread stack size: %d", unused);
-
-		err = memfault_metrics_heartbeat_set_unsigned(
-			MEMFAULT_METRICS_KEY(Ncs_AtCmdUnusedStack), unused);
-		if (err) {
-			LOG_ERR("Failed to set Ncs_AtCmdUnusedStack");
-		}
-	} else if (stack_type == STACK_CONNECTION_POLL) {
+	if (stack_type == STACK_CONNECTION_POLL) {
 		LOG_DBG("Unused connection_poll_thread stack size: %d", unused);
 
 		err = memfault_metrics_heartbeat_set_unsigned(

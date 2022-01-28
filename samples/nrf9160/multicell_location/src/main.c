@@ -7,7 +7,6 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <modem/lte_lc.h>
-#include <modem/at_cmd.h>
 #include <dk_buttons_and_leds.h>
 #include <net/multicell_location.h>
 
