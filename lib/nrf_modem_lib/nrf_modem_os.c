@@ -230,8 +230,7 @@ bool nrf_modem_os_is_in_isr(void)
 	return k_is_in_isr();
 }
 
-#define NRF_MODEM_OS_SEM_MAX 3
-static struct k_sem nrf_modem_os_sems[NRF_MODEM_OS_SEM_MAX];
+static struct k_sem nrf_modem_os_sems[NRF_MODEM_OS_NUM_SEM_REQUIRED];
 
 int nrf_modem_os_sem_init(void **sem,
 	unsigned int initial_count, unsigned int limit)
@@ -242,7 +241,7 @@ int nrf_modem_os_sem_init(void **sem,
 		goto recycle;
 	}
 
-	__ASSERT(used < NRF_MODEM_OS_SEM_MAX,
+	__ASSERT(used < NRF_MODEM_OS_NUM_SEM_REQUIRED,
 		 "Not enough semaphores in glue layer");
 
 	*sem = &nrf_modem_os_sems[used++];
@@ -566,13 +565,19 @@ void nrf_modem_os_init(void)
 #endif
 }
 
-int32_t nrf_modem_os_trace_put(const uint8_t * const data, uint32_t len)
+int32_t nrf_modem_os_trace_put(const uint8_t *const data, uint32_t len)
 {
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
-	int err = nrf_modem_lib_trace_process(data, len);
+	int err;
 
-	if (err != 0) {
-		LOG_ERR("nrf_modem_lib_trace_process returns %d", err);
+	err = nrf_modem_lib_trace_process(data, len);
+	if (err) {
+		LOG_ERR("nrf_modem_lib_trace_process failed, err %d", err);
+	}
+
+	err = nrf_modem_trace_processed_callback(data, len);
+	if (err) {
+		LOG_ERR("nrf_modem_trace_processed_callback failed, err %d", err);
 	}
 #endif
 	return 0;
