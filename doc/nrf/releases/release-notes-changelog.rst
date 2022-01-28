@@ -512,3 +512,11 @@ In addition to documentation related to the changes listed above, the following 
 * Added the :ref:`ug_thingy91_gsg` guide and reworked the :ref:`ug_thingy91` user guide.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
+
+* :ref:`nrf_modem` section pages:
+
+  * :ref:`nrfxlib:architecture` - Updated architecture diagram.
+  * :ref:`nrfxlib:nrf_modem_delta_dfu` - Updated.
+  * :ref:`nrfxlib:nrf_modem` - Removed overview diagram.
+  * ``AT socket`` page removed.
+  * ``Extensions`` page removed.
