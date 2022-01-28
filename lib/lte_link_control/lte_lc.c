@@ -865,7 +865,7 @@ int lte_lc_psm_get(int *tau, int *active_time)
 	char active_time_str[9] = {0};
 	char tau_ext_str[9] = {0};
 	char tau_legacy_str[9] = {0};
-	char response[128] = { 0 };
+	char response[160] = { 0 };
 	const char ch = ',';
 	char *comma_ptr;
 
