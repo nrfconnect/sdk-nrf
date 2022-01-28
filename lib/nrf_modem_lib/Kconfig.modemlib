@@ -28,7 +28,7 @@ config NRF_MODEM_LIB_TRACE_ENABLED
 	help
 	  When enabled, a portion of RAM (called Trace region) will be shared with the modem to receive modem's trace data.
 	  The size of the Trace region is defined by the NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.
-	  Trace data is output on the chosen trace medium.
+	  Trace data is output on the chosen trace backend.
 	  To stop traces or to change trace level at runtime, use the AT command %XMODEMTRACE or the nrf_modem_lib_trace API.
 
 if NRF_MODEM_LIB_TRACE_ENABLED
@@ -64,7 +64,7 @@ config NRF_MODEM_LIB_TRACE_THREAD_PROCESSING
 	bool "Process modem traces in a thread [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	help
-	  Use a thread to forward modem traces to the trace medium instead of doing so in interrupt
+	  Use a thread to forward modem traces to the trace backend instead of doing so in interrupt
 	  context. This allows for asynchronous operations, like async UART. A small amount of memory
 	  needs to be allocated on the heap for each trace buffer. The trace heap size and trace thread
 	  priority might need to be adjusted depending on the application needs.
@@ -78,31 +78,7 @@ config NRF_MODEM_LIB_TRACE_THREAD_PRIO
 
 endif # NRF_MODEM_LIB_TRACE_THREAD_PROCESSING
 
-choice NRF_MODEM_LIB_TRACE_MEDIUM
-	prompt "Trace medium"
-	default NRF_MODEM_LIB_TRACE_MEDIUM_UART
-
-config NRF_MODEM_LIB_TRACE_MEDIUM_UART
-	bool "UARTE1"
-	# Modem tracing over UART use the UARTE1 as a dedicated peripheral.
-	# This enables the UARTE1 peripheral and includes nrfx UARTE driver.
-	select NRFX_UARTE1
-	# TF-M use UARTE1 as log output, to avoid a conflict disable logging
-	# in TF-M.
-	select TFM_LOG_LEVEL_SILENCE if BUILD_WITH_TFM
-
-config NRF_MODEM_LIB_TRACE_MEDIUM_RTT
-	bool "SEGGER RTT"
-	select USE_SEGGER_RTT
-
-endchoice # NRF_MODEM_LIB_TRACE_MEDIUM
-if NRF_MODEM_LIB_TRACE_MEDIUM_RTT
-
-config NRF_MODEM_LIB_TRACE_MEDIUM_RTT_BUF_SIZE
-	int "Size of the buffer used by the RTT to write traces"
-	default 255
-
-endif # NRF_MODEM_LIB_TRACE_MEDIUM_RTT
+rsource "trace_backends/Kconfig"
 
 endif # NRF_MODEM_LIB_TRACE_ENABLED
 

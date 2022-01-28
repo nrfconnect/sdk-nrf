@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Adds UART to the trace backend choice.
+choice NRF_MODEM_LIB_TRACE_BACKEND
+
+config NRF_MODEM_LIB_TRACE_BACKEND_UART
+	bool "UARTE1"
+	# Modem tracing over UART use the UARTE1 as a dedicated peripheral.
+	# This enables the UARTE1 peripheral and includes nrfx UARTE driver.
+	select NRFX_UARTE1
+	# TF-M use UARTE1 as log output, disable TF-M logging to avoid conflict.
+	select TFM_LOG_LEVEL_SILENCE if BUILD_WITH_TFM
+
+endchoice # NRF_MODEM_LIB_TRACE_BACKEND

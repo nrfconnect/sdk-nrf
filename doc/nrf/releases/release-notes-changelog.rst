@@ -187,6 +187,12 @@ nRF9160 samples
     * Support for injecting GNSS reference altitude for low accuracy mode.
       For a position fix using only three satellites, GNSS module must have a reference altitude that can now be injected using the ``gnss agps ref_altitude`` command.
 
+* :ref:`modem_trace_backend_sample` sample:
+
+  * Added:
+
+    * Sample demonstrating how to add a custom modem trace backend. The custom backend prints the amount of bytes of trace data received, trace data throughput, and CPU load.
+
 Thread samples
 --------------
 
@@ -284,6 +290,10 @@ Modem libraries
   * :ref:`pdn_readme` library:
 
     * Automatically subscribe to ``+CNEC=16`` and ``+CGEREP=1`` if the :ref:`lte_lc_readme` library is used to change the modem's functional mode.
+
+  * :ref:`nrf_modem_lib_readme` library:
+
+    * Ability to add :ref:`custom trace backends <adding_custom_modem_trace_backends>`.
 
 Libraries for networking
 ------------------------

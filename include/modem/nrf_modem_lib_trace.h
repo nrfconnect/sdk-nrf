@@ -17,7 +17,7 @@
 
 /** @brief Initialize the modem trace module.
  *
- * Initializes the module and the trace transport medium.
+ * Initializes the module and the trace backend.
  *
  * @param trace_heap Heap to use for modem traces
  *
@@ -50,9 +50,7 @@ int nrf_modem_lib_trace_start(enum nrf_modem_lib_trace_mode trace_mode);
  *
  * This function should only be called to process a trace received from the modem by the
  * nrf_modem_os_trace_put() function. This function forwards the trace to the selected
- * (during compile time) trace transport medium. When the maximum number of trace bytes
- * (configured via the @ref nrf_modem_lib_trace_start) is received, this function stops the trace
- * session.
+ * (during compile time) trace backend.
  *
  * @param data Memory buffer containing the modem trace data.
  * @param len  Memory buffer length.

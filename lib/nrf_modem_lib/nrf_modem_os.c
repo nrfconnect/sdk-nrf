@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA
- * Copyright (c) 2021 Intellinium <giuliano.franchetto@intellinium.com>
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -670,13 +669,6 @@ int32_t nrf_modem_os_trace_put(const uint8_t *const data, uint32_t len)
 	if (err) {
 		LOG_ERR("nrf_modem_lib_trace_process failed, err %d", err);
 	}
-
-#ifndef CONFIG_NRF_MODEM_LIB_TRACE_THREAD_PROCESSING
-	err = nrf_modem_trace_processed_callback(data, len);
-	if (err) {
-		LOG_ERR("nrf_modem_trace_processed_callback failed, err %d", err);
-	}
-#endif /* CONFIG_NRF_MODEM_LIB_TRACE_THREAD_PROCESSING */
 
 #endif /* CONFIG_NRF_MODEM_LIB_TRACE_ENABLED */
 	return 0;
