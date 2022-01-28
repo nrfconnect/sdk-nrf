@@ -895,6 +895,13 @@ Subsystems
 Bluetooth® LE
 =============
 
+.. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
+NCSDK-13459: Uninitialized size in hids_boot_kb_outp_report_read
+  When reading from the boot keyboard output report characteristic, the :ref:`hids_readme` calls the registered callback with uninitialized report size.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix from main (commit hash: ``f18250dad6cbd9778de7af4b8a774b58e55fe720``).
+
 .. rst-class:: v1-8-0
 
 NCSDK-12886: Peripheral UART sample building issue with nRF52811
