@@ -9,22 +9,6 @@ Crypto: HKDF
 
 The HMAC Key Derivation Function (HKDF) sample shows how to derive keys with the HKDF algorithm, using a sample key, salt, and additional data.
 
-Overview
-********
-
-The sample follows these steps:
-
-1. First, the sample initializes the Platform Security Architecture (PSA) API.
-
-#. Then, it performs key derivation:
-
-   a. The input key is imported into the PSA crypto keystore.
-   #. The output key is derived.
-
-#. Afterwards, it performs cleanup:
-
-   a. The input and the output keys are removed from the PSA crypto keystore.
-
 Requirements
 ************
 
@@ -36,6 +20,22 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
+Overview
+********
+
+The sample performs the following operations:
+
+1. Initialization of the Platform Security Architecture (PSA) API.
+
+#. Key derivation:
+
+   a. The input key is imported into the PSA crypto keystore.
+   #. The output key is derived.
+
+#. Cleanup:
+
+   a. The input and the output keys are removed from the PSA crypto keystore.
+
 Building and running
 ********************
 
@@ -46,7 +46,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+After programming the sample to your development kit, complete the following steps to test it:
 
 1. |connect_terminal|
 #. Compile and program the application.

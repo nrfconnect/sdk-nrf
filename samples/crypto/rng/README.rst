@@ -9,15 +9,6 @@ Crypto: RNG
 
 The RNG sample shows how to produce random numbers.
 
-Overview
-********
-
-The sample produces random numbers of 100-byte length.
-
-1. First, the sample initializes the Platform Security Architecture (PSA) API.
-
-#. Then, it generates five 100-byte random numbers.
-
 Requirements
 ************
 
@@ -29,6 +20,17 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
+Overview
+********
+
+The sample produces random numbers of 100-byte length.
+
+It performs the following operations:
+
+1. Initialization of the Platform Security Architecture (PSA) API.
+
+#. Generation of five 100-byte random numbers.
+
 Building and running
 ********************
 
@@ -39,7 +41,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+After programming the sample to your development kit, complete the following steps to test it:
 
 1. |connect_terminal|
 #. Compile and program the application.
