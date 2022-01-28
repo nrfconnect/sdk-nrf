@@ -7,7 +7,7 @@ Bluetooth: Mesh Silvair EnOcean
    :local:
    :depth: 2
 
-The :ref:`ug_bt_mesh` Silvair EnOcean sample can be used to change the state of light sources on other devices within the same mesh network.
+You can use the :ref:`ug_bt_mesh` Silvair EnOcean sample to change the state of light sources on other devices within the same mesh network.
 It also demonstrates how to use Bluetooth® mesh models by using the Silvair EnOcean Proxy Server model in an application.
 
 Use the Silvair EnOcean sample with the :ref:`bluetooth_mesh_light_lc` sample to demonstrate its function in a Bluetooth mesh network.
@@ -163,7 +163,7 @@ Configuring models
 
 See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
 
-Configure the Generic OnOff Client and the Generic Level Client models on each element on the :guilabel:`Mesh Silvair EnOcean` node:
+Configure the :ref:`bt_mesh_onoff_cli_readme` and the :ref:`bt_mesh_lvl_cli_readme` models on each element on the :guilabel:`Mesh Silvair EnOcean` node:
 
 * Bind the model to :guilabel:`Application Key 1`.
 * Set the publication parameters:

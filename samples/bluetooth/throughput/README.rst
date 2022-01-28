@@ -7,11 +7,23 @@ Bluetooth: Throughput
    :local:
    :depth: 2
 
-.. note::
-   The implementation and usage of this sample has changed considerably with |NCS| v1.5.0.
+The Bluetooth® Throughput sample uses the :ref:`throughput_readme` to measure Bluetooth Low Energy throughput performance.
+You can use it to determine the maximum throughput, or to experiment with different connection parameters and check their impact on the throughput.
 
-The Bluetooth® Throughput sample uses the :ref:`throughput_readme` to measure Bluetooth® Low Energy throughput performance.
-You can use it to determine the maximum throughput, or to experiment with different connection parameters and check their influence on the throughput.
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52dk_nrf52832
+
+You can use any two of the development kits listed above and mix different development kits.
+
+.. include:: /includes/hci_rpmsg_overlay.txt
+
+The sample also requires a connection to a computer with a serial terminal for each of the development kits.
 
 Overview
 ********
@@ -24,23 +36,23 @@ Zephyr's :ref:`zephyr:shell_api` module is used to handle the commands.
 The sample demonstrates the interaction of the following connection parameters:
 
 ATT_MTU size
-   In *Bluetooth* Low Energy, the default Maximum Transmission Unit (MTU) is 23 bytes.
-   When increasing this value, longer ATT payloads can be achieved, increasing ATT throughput.
+   In Bluetooth Low Energy, the default Maximum Transmission Unit (MTU) is 23 bytes.
+   When increasing this value, longer ATT payloads can be achieved, increasing the ATT throughput.
 
 .. note::
    To configure the ATT_MTU size, use menuconfig and compile and program the sample again.
 
 Data length
-   In *Bluetooth* Low Energy, the default data length for a radio packet is 27 bytes.
-   Data length extension allows to use larger radio packets, so that more data can be sent in one packet, increasing throughput.
+   In Bluetooth Low Energy, the default data length for a radio packet is 27 bytes.
+   Data length extension allows to use larger radio packets, so that more data can be sent in one packet, increasing the throughput.
 
 Connection interval
-   The connection interval defines how often the devices must listen on the radio.
+   The connection interval defines how often the devices must listen to the radio.
    When increasing this value, more packets may be sent in one interval, but if a packet is lost, the wait until the retransmission is longer.
 
 Physical layer (PHY) data rate
-   Starting with Bluetooth® 5, the over-the-air data rate in Bluetooth Low Energy can exceed 1 Ms/s (mega symbol per second), which allows for faster transmission.
-   In addition, it is possible to use coded PHY (available on the nRF52840 SoC only) for long-range transmission.
+   Starting with Bluetooth 5, the over-the-air data rate in Bluetooth Low Energy can exceed 1 Ms/s (mega symbols per second), which allows for faster transmission.
+   In addition, you can use coded PHY (available on the nRF52840 SoC only) for long-range transmission.
 
 By default, the following connection parameter values are used:
 
@@ -58,7 +70,6 @@ By default, the following connection parameter values are used:
    * - PHY data rate
      - 2 Ms/s
 
-
 Changing connection parameter values
 ====================================
 
@@ -71,29 +82,14 @@ You can adjust the following parameters:
 * LE Connection interval
 
 .. note::
-   In a *Bluetooth* Low Energy connection, the different devices negotiate the connection parameters that are used.
+   In a Bluetooth Low Energy connection, the different devices negotiate the connection parameters that are used.
    If the configuration parameters for the devices differ, they agree on the lowest common denominator.
 
    By default, the sample uses the fastest connection parameters.
    You can change them to different valid values without a need to program both kits again.
 
 .. note::
-   When you have set the LE Connection Interval to high values and need to change the PHY or the Data Length in the next test, the PHY Update procedure or Data Length Update procedure can take several seconds.
-
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52dk_nrf52832
-
-You can use any two of the development kits listed above and mix different development kits.
-
-.. include:: /includes/hci_rpmsg_overlay.txt
-
-The sample also requires a connection to a computer with a serial terminal for each of the development kits.
+   When you have set the LE Connection Interval to high values and need to change the PHY or the Data Length in the next test, the PHY Update or Data Length Update procedure can take several seconds.
 
 User interface
 **************
@@ -104,24 +100,22 @@ Button 1:
 Button 2:
    Set the board into a slave (peer) role.
 
-
 Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/throughput`
 
 .. include:: /includes/build_and_run.txt
 
-
 Testing
 =======
 
-After programming the sample to both kits, test it by performing the following steps:
+After programming the sample to both kits, complete following steps to test it:
 
 1. Connect to both kits with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.
 #. Reset both kits.
-#. Press Button 1 on the kit to set the kit into master (tester) role.
-#. Press Button 2 on the other kit to set the kit into slave (peer) mode.
+#. Press **Button 1** on the kit to set the kit into master (tester) role.
+#. Press **Button 2** on the other kit to set the kit into slave (peer) mode.
 #. Observe that the kits establish a connection.
    The tester outputs the following information::
 
@@ -137,7 +131,6 @@ After programming the sample to both kits, test it by performing the following s
    At the end of the test, both tester and peer display the results of the test.
 #. Repeat the test after changing the parameters.
    Observe how the throughput changes for different sets of parameters.
-
 
 Sample output
 ==============

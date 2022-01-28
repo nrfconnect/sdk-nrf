@@ -10,57 +10,6 @@ Bluetooth: Peripheral UART
 The Peripheral UART sample demonstrates how to use the :ref:`nus_service_readme`.
 It uses the NUS service to send data back and forth between a UART connection and a Bluetooth® LE connection, emulating a serial port over Bluetooth LE.
 
-Overview
-********
-
-When connected, the sample forwards any data received on the RX pin of the UART 0 peripheral to the Bluetooth LE unit.
-On Nordic Semiconductor's development kits, the UART 0 peripheral is typically gated through the SEGGER chip to a USB CDC virtual serial port.
-
-Any data sent from the Bluetooth LE unit is sent out of the UART 0 peripheral's TX pin.
-
-.. note::
-   Thingy:53 uses second instance of USB CDC ACM class instead of UART 0, because it has no built-in SEGGER chip that could be used to gate UART 0.
-
-.. _peripheral_uart_debug:
-
-Debugging
-=========
-
-In this sample, the UART console is used to send and read data over the NUS service.
-Debug messages are not displayed in this UART console.
-Instead, they are printed by the RTT logger.
-
-If you want to view the debug messages, follow the procedure in :ref:`testing_rtt_connect`.
-
-.. note::
-   On Thingy:53 debug logs are provided over the USB CDC ACM class serial port, instead of using RTT.
-
-FEM support
-***********
-
-.. include:: /includes/sample_fem_support.txt
-
-.. _peripheral_uart_minimal_ext:
-
-Minimal sample variant
-======================
-
-You can build the sample with a minimum configuration as a demonstration of how to reduce code size and RAM usage.
-This variant is available for resource-constrained boards.
-
-See :ref:`peripheral_uart_sample_activating_variants` for details.
-
-.. _peripheral_uart_cdc_acm_ext:
-
-USB CDC ACM extension
-=====================
-
-For the boards with the USB device peripheral, you can build the sample with support for the USB CDC ACM class serial port instead of the physical UART.
-This build uses the UART async adapter module that acts as a bridge between the USB CDC ACM that provides only the interrupt interface and the default sample configuration that uses the UART async API.
-
-For more information about the adapter, see the :file:`uart_async_adapter` source files available in the :file:`peripheral_uart/src` directory.
-See :ref:`peripheral_uart_sample_activating_variants` for details about how to build the sample with this extension.
-
 Requirements
 ************
 
@@ -86,6 +35,58 @@ See the documentation for that sample for detailed instructions.
 
    The sample also enables an additional USB CDC ACM port that is used instead of UART 0.
    Because of that, it uses a separate USB Vendor and Product ID.
+
+Overview
+********
+
+When connected, the sample forwards any data received on the RX pin of the UART 0 peripheral to the Bluetooth LE unit.
+On Nordic Semiconductor's development kits, the UART 0 peripheral is typically gated through the SEGGER chip to a USB CDC virtual serial port.
+
+Any data sent from the Bluetooth LE unit is sent out of the UART 0 peripheral's TX pin.
+
+.. note::
+   Thingy:53 uses the second instance of USB CDC ACM class instead of UART 0, because it has no built-in SEGGER chip that could be used to gate UART 0.
+
+.. _peripheral_uart_debug:
+
+Debugging
+=========
+
+In this sample, the UART console is used to send and read data over the NUS service.
+Debug messages are not displayed in this UART console.
+Instead, they are printed by the RTT logger.
+
+If you want to view the debug messages, follow the procedure in :ref:`testing_rtt_connect`.
+
+.. note::
+   On the Thingy:53, debug logs are provided over the USB CDC ACM class serial port, instead of using RTT.
+
+FEM support
+***********
+
+.. include:: /includes/sample_fem_support.txt
+
+.. _peripheral_uart_minimal_ext:
+
+Minimal sample variant
+======================
+
+You can build the sample with a minimum configuration as a demonstration of how to reduce code size and RAM usage.
+This variant is available for resource-constrained boards.
+
+See :ref:`peripheral_uart_sample_activating_variants` for details.
+
+.. _peripheral_uart_cdc_acm_ext:
+
+USB CDC ACM extension
+=====================
+
+For the boards with the USB device peripheral, you can build the sample with support for the USB CDC ACM class serial port instead of the physical UART.
+This build uses the UART async adapter module that acts as a bridge between the USB CDC ACM and the default sample configuration.
+The USB CDC ACM provides only the interrupt interface and the default sample configuration uses the UART async API.
+
+For more information about the adapter, see the :file:`uart_async_adapter` source files available in the :file:`peripheral_uart/src` directory.
+See :ref:`peripheral_uart_sample_activating_variants` for details about how to build the sample with this extension.
 
 User interface
 **************
@@ -113,7 +114,7 @@ Thingy:53
 RGB LED:
    The RGB LED channels are used independently to display the following information:
 
-   * Red channel blinks with a period of 2 seconds, duty cycle 50%, when the main loop is running (device is advertising).
+   * Red channel blinks with a period of two seconds, duty cycle 50%, when the main loop is running (device is advertising).
    * Green channel displays if device is connected.
 
 Button:
@@ -145,7 +146,7 @@ For more information about using configuration overlay files, see :ref:`zephyr:i
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+After programming the sample to your development kit, complete the following steps to test it:
 
 1. Connect the device to the computer to access UART 0.
    If you use a development kit, UART 0 is forwarded as a COM port (Windows) or ttyACM device (Linux) after you connect the development kit over USB.
