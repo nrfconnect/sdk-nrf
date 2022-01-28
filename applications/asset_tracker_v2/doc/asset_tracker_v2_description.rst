@@ -81,6 +81,8 @@ The application supports the following data types:
 
 Sensor data published to the cloud service contain relative `timestamps <Timestamping_>`_ that originate from the time of sampling.
 
+.. _real_time_configs:
+
 Real-time configurations
 ========================
 
@@ -231,40 +233,6 @@ Check and configure the following configuration options for the application:
 
 CONFIG_ASSET_TRACKER_V2_APP_VERSION - Configuration for providing the application version
    The application publishes its version number as a part of the static device data. The default value for the application version is ``0.0.0-development``. To configure the application version, set :ref:`CONFIG_ASSET_TRACKER_V2_APP_VERSION <CONFIG_ASSET_TRACKER_V2_APP_VERSION>` to the desired version.
-
-.. _default_config_values:
-
-To set the default values for the device configuration at compile time, manipulate the following configurations:
-
-.. _CONFIG_DATA_DEVICE_MODE:
-
-CONFIG_DATA_DEVICE_MODE - Configuration for the device mode
-   This configuration sets the device mode.
-
-.. _CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS:
-
-CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS - Configuration for Active mode
-   This configuration sets the Active mode timeout value.
-
-.. _CONFIG_DATA_MOVEMENT_RESOLUTION_SECONDS:
-
-CONFIG_DATA_MOVEMENT_RESOLUTION_SECONDS - Configuration for Movement resolution
-   This configuration sets the Movement resolution timeout value.
-
-.. _CONFIG_DATA_MOVEMENT_TIMEOUT_SECONDS:
-
-CONFIG_DATA_MOVEMENT_TIMEOUT_SECONDS - Configuration for Movement timeout
-   This configuration sets the Movement timeout value.
-
-.. _CONFIG_DATA_ACCELEROMETER_THRESHOLD:
-
-CONFIG_DATA_ACCELEROMETER_THRESHOLD - Configuration for Accelerometer threshold
-   This configuration sets the Accelerometer threshold value.
-
-.. _CONFIG_DATA_GNSS_TIMEOUT_SECONDS:
-
-CONFIG_DATA_GNSS_TIMEOUT_SECONDS - Configuration for GNSS timeout
-   This configuration sets the GNSS timeout value.
 
 Optional library configurations
 ===============================
