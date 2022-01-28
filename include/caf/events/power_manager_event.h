@@ -3,6 +3,13 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/caf/caf_overview.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/caf/caf_overview.html.
+ */
+
 #ifndef _POWER_MANAGER_EVENT_H_
 #define _POWER_MANAGER_EVENT_H_
 
