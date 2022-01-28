@@ -80,6 +80,8 @@ nRF9160: Asset Tracker v2
 * Added support for atmospheric pressure readings retrieved from the BME680 sensor on Thingy:91.
 * Fixed an issue where PSM could be requested from the network even though it was disabled in Kconfig.
 * Added new documentation for Asset Tracker v2 :ref:`asset_tracker_v2_modem_module`.
+* Added new documentation for Asset Tracker v2 :ref:`asset_tracker_v2_app_module`.
+* Added new documentation for Asset Tracker v2 :ref:`asset_tracker_v2_data_module`.
 * Added support for A-GPS filtered ephemerides.
 * Added new documentation for :ref:`asset_tracker_v2_util_module` and :ref:`api_modules_common`.
 * Updated support for P-GPS preemptive updates and P-GPS coexistence with A-GPS.
