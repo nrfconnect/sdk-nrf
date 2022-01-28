@@ -361,4 +361,6 @@ Some of the samples that are compatible with Thingy:53 are:
 * :ref:`peripheral_lbs`
 * :ref:`peripheral_uart`
 * :ref:`bluetooth_mesh_light`
+* :ref:`bluetooth_mesh_light_lc`
 * :ref:`bluetooth_mesh_light_switch`
+* :ref:`bluetooth_mesh_sensor_server`
