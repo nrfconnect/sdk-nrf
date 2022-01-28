@@ -19,10 +19,6 @@ To establish a connection, pass the security tag to the :ref:`nrfxlib:nrf_modem`
 
 See :ref:`nrfxlib:security_tags` for more information about how security tags are used in the Modem library.
 
-.. important::
-   Security credentials usually exceed the default AT command response length.
-   Therefore, you must set :kconfig:`CONFIG_AT_CMD_RESPONSE_MAX_LEN` to a sufficiently high value when using this library.
-
 .. _cert_dwload:
 
 Certificates

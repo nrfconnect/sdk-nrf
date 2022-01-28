@@ -119,23 +119,6 @@ The following code snippet shows how to define an AT monitor that will receive a
 		printf("Received a notification: %s", notif);
 	}
 
-Differences from the AT command notifications library
-=====================================================
-
-The AT monitor and :ref:`at_notif_readme` libraries solve similar purposes but there are two important differences between the two libraries:
-
-#. The AT notification library works with the :ref:`at_cmd_readme`, which uses the Modem library AT socket. The AT monitor library uses the Modem library :ref:`nrfxlib:nrf_modem_at_api`, which is not socket-based.
-#. The AT notification library features run-time registration of notification handlers, whereas the AT monitor library features static registration.
-
-The two libraries are separate; they do not interfere with each other in any way and can be used at the same time.
-However, because the two libraries are separate and use separate APIs in the Modem library, note the following information:
-
-#. The AT monitors will only receive the notifications to which the application subscribed by using the :ref:`nrfxlib:nrf_modem_at_api`.
-#. The modules that have registered with :ref:`at_notif_readme` library will only receive notifications that were enabled using the :ref:`at_cmd_readme`.
-
-.. note::
-   The :ref:`at_notif_readme` library is deprecated and therefore it is recommended to use the AT monitor library for new applications.
-
 API documentation
 =================
 

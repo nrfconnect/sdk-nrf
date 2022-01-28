@@ -9,8 +9,6 @@
 #include <nrf_modem.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/lte_lc.h>
-#include <modem/at_cmd.h>
-#include <modem/at_notif.h>
 #include <net/azure_iot_hub.h>
 #include <net/azure_fota.h>
 #include <dfu/mcuboot.h>

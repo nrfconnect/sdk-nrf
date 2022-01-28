@@ -69,7 +69,7 @@ nRF9160
 
 * Updated:
 
-  * :ref:`at_cmd_readme` library:
+  * ``at_cmd`` library library:
 
     * Reimplemented the library to enable asynchronous handling of commands and reduce memory usage.
     * Updated all commands to only match ``OK`` or ``ERROR`` in the response if they are at the end (in case those strings are part of the response, like in certificate).

@@ -10,8 +10,6 @@
 #if defined(CONFIG_NRF_MODEM_LIB)
 #include <modem/lte_lc.h>
 #include <modem/nrf_modem_lib.h>
-#include <modem/at_cmd.h>
-#include <modem/at_notif.h>
 #include <modem/modem_info.h>
 #include <nrf_modem.h>
 #endif

@@ -440,7 +440,7 @@ In addition to documentation related to the changes listed above, the following 
 * :ref:`libraries` - improved the structure of the library documentation
 * :ref:`bt_mesh` (and subpages) - added
 * :ref:`nrf_bt_scan_readme` - updated
-* :ref:`at_cmd_readme` - added
+* ``at_cmd`` library - added
 * :ref:`coap_utils_readme` - added
 * :ref:`tnep_poller_readme` and :ref:`tnep_tag_readme` - updated
 * :ref:`nrf_desktop_config_channel_script` - updated

@@ -15,9 +15,7 @@
   - "**/*.rst"
 
 "CI-iot-samples-test":
-  - "include/modem/at_cmd*.h"
   - "include/modem/at_monitor.h"
-  - "include/modem/at_notif.h"
   - "include/modem/at_params.h"
   - "include/modem/lte_lc*.h"
   - "include/modem/modem_key_mgmt.h"
@@ -26,10 +24,8 @@
   - "include/net/download_client.h"
   - "include/net/multicell_location.h"
   - "include/secure_services.h"
-  - "lib/at_cmd_*/**/*"
   - "lib/at_host/**/*"
   - "lib/at_monitor/**/*"
-  - "lib/at_notif/**/*"
   - "lib/lte_link_control/**/*"
   - "lib/modem_key_mgmt/**/*"
   - "lib/multicell_location/**/*"

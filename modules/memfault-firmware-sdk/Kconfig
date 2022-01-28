@@ -97,11 +97,7 @@ config MEMFAULT_NCS_FW_VERSION
 
 config MEMFAULT_NCS_INIT_PRIORITY
 	int "Memfault initialization priority"
-	range AT_CMD_INIT_PRIORITY 99 if MEMFAULT_NCS_DEVICE_ID_IMEI
 	default 90
-	help
-	  If IMEI is used as device ID, the initialization priority must be
-	  greater than that of the AT command module
 
 config MEMFAULT_NCS_PROVISION_CERTIFICATES
 	bool "Provision certificates on initalization"
@@ -121,7 +117,6 @@ config MEMFAULT_NCS_STACK_METRICS
 	help
 	  Collect metrics for unused stack space for selected stacks.
 	  Currently the following stacks' unused space is monitored:
-		- at_cmd_socket_thread, used by the AT command library
 		- connection_poll_thread, used by the cloud libraries for
 		  nRF Cloud, AWS IoT and Azure IoT Hub
 
