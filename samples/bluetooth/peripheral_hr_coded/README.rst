@@ -10,13 +10,6 @@ Bluetooth: Peripheral Heart Rate Monitor with Coded PHY
 The Peripheral Heart Rate Monitor with Coded PHY offers similar functionality to the :ref:`zephyr:peripheral_hr` sample from Zephyr.
 However, this sample supports LE Coded PHY.
 
-Overview
-********
-
-The sample demonstrates a basic Bluetooth® Low Energy Peripheral role functionality that exposes the Heart Rate GATT Service with LE Coded PHY support, which is not available in Zephyr Bluetooth LE Controller (See :ref:`ug_ble_controller` for more information).
-Once it connects to a Central device, it generates dummy heart rate values.
-It can be used together with the :ref:`bluetooth_central_hr_coded` sample.
-
 Requirements
 ************
 
@@ -28,10 +21,15 @@ The sample supports the following development kits:
 
 .. include:: /includes/hci_rpmsg_overlay.txt
 
-The sample also requires:
+The sample also requires a device running a Heart Rate Server with LE Coded PHY support to connect to.
+For example, another development kit running the :ref:`bluetooth_central_hr_coded` sample.
 
-* A device running a Heart Rate Server with LE Coded PHY support to connect to.
-  For example, another development kit running the :ref:`bluetooth_central_hr_coded` sample.
+Overview
+********
+
+The sample demonstrates a basic Bluetooth® Low Energy Peripheral role functionality that exposes the Heart Rate GATT Service with LE Coded PHY support, which is not available in Zephyr Bluetooth LE Controller (See :ref:`ug_ble_controller` for more information).
+Once it connects to a Central device, it generates dummy heart rate values.
+You can use it together with the :ref:`bluetooth_central_hr_coded` sample.
 
 Building and running
 ********************

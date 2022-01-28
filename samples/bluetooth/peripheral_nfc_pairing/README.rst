@@ -19,13 +19,28 @@ The sample supports pairing in one of the following modes:
 * LE Secure Connections OOB pairing
 * Legacy OOB pairing
 * Legacy Just Works pairing
-* Negotiated Handover(TNEP protocol) - two-way OOB pairing
+* Negotiated Handover (TNEP protocol) - two-way OOB pairing
+
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340dk_nrf5340_cpuapp, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833
+
+The sample has the following additional requirements:
+
+* NFC polling device (for example, a smartphone or a tablet with NFC support).
+* NFC polling device with TNEP support (when testing the two-way OOB pairing).
+  You can use the corresponding :ref:`central_nfc_pairing` as an NFC Polling Device.
 
 Overview
 ********
 
 When the application starts, it initializes and starts the NFCT peripheral that is used for pairing.
-The application does not start advertising immediately, but only when the NFC tag is read by an NFC polling device, for example a smartphone or a tablet with NFC support, or when the exchange of data over the TNEP Connection Handover Service is finished.
+The application does not start advertising immediately, but only when the NFC tag is read by an NFC polling device, for example a smartphone or a tablet with NFC support, or when the exchange of data over the TNEP Connection Handover Service has completed.
 The message that the tag sends to the NFC device contains the data required to initiate pairing.
 To start the NFC data transfer, the NFC device must touch the NFC antenna that is connected to the development kit.
 
@@ -55,7 +70,7 @@ Handover messages are exchanged using the TNEP Single Response communication mod
 The NFC Poller Device can have the Handover Requester or Handover Selector Device role.
 The role is assumed based on the first NDEF message from the NFC Tag.
 
-This sample can be configured to take the Connection Handover Selector role or the Connection Requester role.
+You can configure this sample to take the Connection Handover Selector role or the Connection Requester role.
 The Connection Handover Selector role is default for this sample.
 You can change the default role by choosing ``CONFIG_NFC_TAG_CH_SELECTOR`` or ``CONFIG_NFC_TAG_CH_REQUESTER``.
 
@@ -63,20 +78,7 @@ You can change the default role by choosing ``CONFIG_NFC_TAG_CH_SELECTOR`` or ``
    :alt: Negotiated Handover
 
 
-Requirements
-************
 
-The sample supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833
-
-The sample has the following additional requirements:
-
-* NFC polling device (for example, a smartphone or a tablet with NFC support).
-* NFC polling device with TNEP support (when testing the two-way OOB pairing).
-  You can use the corresponding :ref:`central_nfc_pairing` as an NFC Polling Device.
 
 User interface
 **************
@@ -100,7 +102,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+After programming the sample to your development kit, complete the following steps to test it:
 
 Testing with NFC Poller Device
 ------------------------------

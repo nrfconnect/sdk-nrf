@@ -7,7 +7,7 @@ Bluetooth: Mesh and peripheral coexistence
    :local:
    :depth: 2
 
-This sample demonstrates how to combine Bluetooth® mesh and Bluetooth® Low Energy features in a single application.
+This sample demonstrates how to combine Bluetooth® mesh and Bluetooth Low Energy features in a single application.
 
 Requirements
 ************
@@ -18,14 +18,10 @@ The mesh and peripheral coexistence sample supports the following development ki
    :header: heading
    :rows: nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf21540dk_nrf52840
 
-The sample also requires a smartphone with the following apps:
+The sample also requires a smartphone with `nRF Connect for Mobile`_ and one of the following apps:
 
-* Nordic Semiconductor's nRF Mesh mobile app:
-
-     * `nRF Mesh mobile app for Android`_
-     * `nRF Mesh mobile app for iOS`_
-
-* `nRF Connect for Mobile`_
+* `nRF Mesh mobile app for Android`_
+* `nRF Mesh mobile app for iOS`_
 
 Overview
 ********
@@ -33,12 +29,12 @@ Overview
 The purpose of this sample is to showcase an application where a peripheral can operate independently of Bluetooth mesh.
 It combines the features of the :ref:`peripheral_lbs` sample and the :ref:`bluetooth_mesh_light` sample into a single application.
 
-The LED Button Service (LBS) controls the state of a LED and monitors the state of a button on the device.
+The :ref:`lbs_readme` controls the state of a LED and monitors the state of a button on the device.
 Bluetooth mesh controls and monitors the state of a separate LED on the device.
 The LBS and Bluetooth mesh do not share any states on the device and operate independently of each other.
 
 To be truly independent, the LBS must be able to advertise its presence independently of Bluetooth mesh.
-Since Bluetooth mesh uses the advertiser as its main channel of communication, the application must be configured to allow sharing of this resource.
+Because Bluetooth mesh uses the advertiser as its main channel of communication, you must configure the application to allow sharing of this resource.
 To achieve this, extended advertising is enabled with two simultaneous advertising sets.
 One of these sets is used to handle all Bluetooth mesh communication, while the other is used for advertising the LBS.
 
@@ -146,11 +142,11 @@ See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh 
 
 Configure the Generic OnOff Server model on the root element of the :guilabel:`Mesh and Peripheral Coex` node:
 
-* Bind the model to :guilabel:`Application Key 1`.
+1. Bind the model to :guilabel:`Application Key 1`.
+   Once the model is bound to the application key, you can control **LED 1** on the device.
 
-  Once the model is bound to the application key, you can control **LED 1** on the device.
-* In the model view, tap :guilabel:`ON`/:guilabel:`OFF` (one of the Generic On Off Controls).
-  This switches the **LED 1** on the development kit on and off respectively.
+#. In the model view, tap :guilabel:`ON`/:guilabel:`OFF` (one of the Generic On Off Controls).
+   This switches the **LED 1** on the development kit on and off respectively.
 
 Testing LED Button Service (peripheral)
 =======================================
@@ -160,7 +156,7 @@ After programming the sample to your development kit, test it by performing the 
 1. Start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
 #. Power on the development kit.
 #. Connect to the device from the nRF Connect application.
-   The device is advertising as ``Mesh and Peripheral Coex``.
+   The device is advertising as "Mesh and Peripheral Coex".
    The services of the connected device are shown.
 #. In :guilabel:`Nordic LED Button Service`, enable notifications for the :guilabel:`Button` characteristic.
 #. Press **Button 1** on the device.
