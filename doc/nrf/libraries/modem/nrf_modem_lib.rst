@@ -31,7 +31,7 @@ If your application performs an update of the nRF9160 modem firmware, you must d
 The library wrapper also coordinates the shutdown operation among different parts of the application that use the Modem library.
 This is done by the :c:func:`nrf_modem_lib_shutdown` function call, by waking the sleeping threads when the modem is being shut down.
 
-When :kconfig:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` Kconfig option is enabled, the library wrapper enables proprietary modem traces and forwards it to the `Modem trace module`_.
+When :kconfig:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` Kconfig option is enabled, the modem traces are enabled in the modem and are forwarded to the `Modem trace module`_.
 
 When using the Modem library in |NCS|, the library should be initialized and shutdown using the :c:func:`nrf_modem_lib_init` and :c:func:`nrf_modem_lib_shutdown` function calls, respectively.
 
@@ -73,8 +73,6 @@ The module provides the functionality for starting, stopping, and forwarding of 
 * :kconfig:`CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART` to send modem traces over UARTE1
 * :kconfig:`CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT` to send modem traces over SEGGER RTT
 
-When :kconfig:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` Kconfig option is enabled, :c:func:`nrf_modem_lib_init` sends the trace memory configuration to the modem.
-When this happens, the modem starts sending startup trace data.
 If the application wants the trace data, :c:func:`nrf_modem_lib_trace_init` must be called before :c:func:`nrf_modem_lib_init`.
 This is done automatically when using the OS Abstraction layer.
 If the application wants to stop an ongoing trace session, it can use the :c:func:`nrf_modem_lib_trace_stop` function.
