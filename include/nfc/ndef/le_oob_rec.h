@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/nfc/ndef/le_oob_rec.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/nfc/ndef/le_oob_rec.html.
+ */
+
 #ifndef NFC_NDEF_LE_OOB_REC_H_
 #define NFC_NDEF_LE_OOB_REC_H_
 

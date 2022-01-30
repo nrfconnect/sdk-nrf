@@ -3,6 +3,13 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/nfc/t4t/apdu.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/nfc/t4t/apdu.html.
+ */
+
 #ifndef NFC_T4T_APDU_H_
 #define NFC_T4T_APDU_H_
 

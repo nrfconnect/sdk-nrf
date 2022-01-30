@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/nfc/tnep/ch.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/nfc/tnep/ch.html.
+ */
+
 #ifndef NFC_TNEP_CH_H_
 #define NFC_TNEP_CH_H_
 

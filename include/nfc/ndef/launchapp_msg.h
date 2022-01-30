@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/nfc/ndef/launchapp.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/nfc/ndef/launchapp.html.
+ */
+
 #ifndef NFC_LAUNCHAPP_MSG_H__
 #define NFC_LAUNCHAPP_MSG_H__
 
