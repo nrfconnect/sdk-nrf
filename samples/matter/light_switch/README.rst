@@ -29,26 +29,26 @@ For this sample to work, you also need the :ref:`Matter light bulb <matter_light
 Overview
 ********
 
-The light switch must be put into the test mode and paired with a light bulb device to be able to send Matter light bulb control commands such as toggling the light and setting its brightness level.
+You must set the light switch in the test mode and pair it with a light bulb device to be able to send Matter light bulb control commands such as toggling the light and setting its brightness level.
 
 .. _matter_light_switch_sample_test_mode:
 
 Test mode
 =========
 
-Unlike other samples, such as :ref:`Matter door lock <matter_lock_sample>`, the light switch sample does not support Matter commissioning over Bluetooth® LE.
-To make the light switch and the light bulb devices able to communicate with each other, they must be initialized with the same static Thread network parameters and static Matter cryptographic keys.
+Unlike other samples, such as :ref:`Matter door lock <matter_lock_sample>`, this sample does not support Matter commissioning over Bluetooth® LE.
+To enable communication between the light switch and the light bulb devices, they must be initialized with the same static Thread network parameters and static Matter cryptographic keys.
 
-Pressing **Button 3** activates the test mode before enabling the pairing phase on the device.
+Press **Button 3** to activate the test mode before enabling the pairing phase on the device.
 
 .. _matter_light_switch_sample_pairing:
 
 Pairing
 =======
 
-After the test mode is activated and both devices are initialized with the same network parameters, the pairing phase starts.
+The pairing phase starts when you have activated the test mode and both devices are initialized with the same network parameters.
 During this phase, the light bulb device periodically sends multicast messages with static content.
-Once such a message is intercepted by the light switch device, the light switch is made aware of the IP address of the nearby light bulb device and the pairing is done.
+Once the light switch device receives such a message, it becomes aware of the IP address of the nearby light bulb device and the pairing is done.
 
 Configuration
 *************
@@ -100,13 +100,13 @@ Building and running
 Testing
 =======
 
-After building this and :ref:`Matter light bulb <matter_light_bulb_sample>` samples, and programming them to your development kits, test communication between both devices by performing the following steps:
+After building this and :ref:`Matter light bulb <matter_light_bulb_sample>` samples, and programming them to your development kits, complete the following steps to test communication between the devices:
 
 .. matter_light_switch_sample_testing_start
 
 #. Complete the following actions for both devices:
 
-   #. |connect_kit|
+   a. |connect_kit|
    #. |connect_terminal|
 
 #. On both devices, press **Button 1** to reset them to factory settings.
@@ -160,7 +160,7 @@ After building this and :ref:`Matter light bulb <matter_light_bulb_sample>` samp
 Dependencies
 ************
 
-This sample uses the Matter library which includes the |NCS| platform integration layer:
+This sample uses the Matter library that includes the |NCS| platform integration layer:
 
 * `Matter`_
 

@@ -11,7 +11,7 @@ This sample demonstrates a minimal implementation of the :ref:`Matter <ug_matter
 This basic implementation enables the commissioning on the device, which allows it to join a Matter network.
 
 Use this sample as a reference for developing your own application.
-See the :ref:`ug_matter_creating_accessory` page for an overview of steps that you need to complete.
+See the :ref:`ug_matter_creating_accessory` page for an overview of the process you need to follow.
 
 Requirements
 ************
@@ -22,7 +22,7 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp, nrf21540dk_nrf52840
 
-For testing purposes, that is to commission the device and :ref:`control it remotely <matter_template_network_mode>` through a Thread network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>` (which requires additional hardware depending on which setup you choose).
+For testing purposes, that is to commission the device and :ref:`control it remotely <matter_template_network_mode>` through a Thread network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`. This requires additional hardware depending on the setup you choose.
 
 .. note::
     |matter_gn_required_note|
@@ -39,9 +39,9 @@ You can press a button to start the factory reset when needed.
 Remote testing in a network
 ===========================
 
-Testing in a Matter-enabled Thread network requires a Matter controller that you can configure either on PC or mobile.
+Testing in a Matter-enabled Thread network requires a Matter controller that you can configure either on a PC or a mobile device.
 By default, the Matter accessory device has Thread disabled.
-You must pair it with the Matter controller over Bluetooth LE to get configuration from the controller if you want to use the device within a Thread network.
+To use the device within a Thread network, you must pair it with the Matter controller over Bluetooth LE to get the configuration from the controller.
 You can enable the controller after :ref:`building and running the sample <matter_template_network_testing>`.
 
 To pair the device, the controller must get the commissioning information from the Matter accessory device and provision the device into the network.
@@ -56,7 +56,8 @@ During the last part of the commissioning procedure (the provisioning operation)
 As a result, the device can join the Thread network and communicate with other Thread devices in the network.
 
 To start the commissioning procedure, the controller must get the commissioning information from the Matter accessory device.
-The data payload, which includes the device discriminator and setup PIN code, is encoded within a QR code, printed to the UART console.
+The data payload includes the device discriminator and setup PIN code.
+The payload is encoded within a QR code, printed to the UART console.
 
 Configuration
 *************
@@ -76,8 +77,8 @@ User interface
     :end-before: matter_door_lock_sample_led1_end
 
 Button 1:
-     If pressed for 6 seconds, it initiates the factory reset of the device.
-     Releasing the button within the 6-second window cancels the factory reset procedure.
+     If pressed for six seconds, it initiates the factory reset of the device.
+     Releasing the button within the six-second window cancels the factory reset procedure.
 
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_jlink_start
@@ -94,10 +95,10 @@ Testing
 =======
 
 When you have built the sample and programmed it to your development kit, it automatically starts the Bluetooth LE advertising and the **LED1** starts flashing (Short Flash On).
-At this point, you can press **Button 1** for 6 seconds to initiate the factory reset of the device.
+At this point, you can press **Button 1** for six seconds to initiate the factory reset of the device.
 
 .. note::
-    If you are new to Matter, commission the Matter device using the Android Mobile Controller when :ref:`setting up Matter development environment <ug_matter_configuring_mobile>`.
+    If you are new to Matter, commission the Matter device using the Android Mobile Controller when :ref:`setting up the Matter development environment <ug_matter_configuring_mobile>`.
 
 .. _matter_template_network_testing:
 
@@ -111,7 +112,7 @@ To test the sample in a Matter-enabled Thread network, complete the following st
 1. |connect_kit|
 #. |connect_terminal|
 #. Commission the device into a Thread network by following the guides linked on the :ref:`ug_matter_configuring` page for the Matter controller you want to use.
-   As part of this procedure, you will complete the following steps:
+   The guides walk you through the following steps:
 
    * Configure Thread Border Router.
    * Build and install the Matter controller.
@@ -120,14 +121,14 @@ To test the sample in a Matter-enabled Thread network, complete the following st
 
    At the end of this procedure, **LED 1** of the Matter device programmed with the sample starts flashing in the Short Flash Off state.
    This indicates that the device is fully provisioned, but does not yet have full Thread network connectivity.
-#. Press **Button 1** for 6 seconds to initiate the factory reset of the device.
+#. Press **Button 1** for six seconds to initiate the factory reset of the device.
 
 The device reboots after all its settings are erased.
 
 Dependencies
 ************
 
-This sample uses the Matter library, which includes the |NCS| platform integration layer:
+This sample uses the Matter library that includes the |NCS| platform integration layer:
 
 * `Matter`_
 
