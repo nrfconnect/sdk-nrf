@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/dfu/fmfu_fdev.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/dfu/fmfu_fdev.html.
+ */
+
 #ifndef FMFU_FDEV_H__
 #define FMFU_FDEV_H__
 

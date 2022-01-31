@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/shell/shell_bt_nus.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/shell/shell_bt_nus.html.
+ */
+
 #ifndef SHELL_BT_NUS_H_
 #define SHELL_BT_NUS_H_
 

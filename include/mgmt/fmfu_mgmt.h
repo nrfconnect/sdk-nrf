@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/dfu/fmfu_mgmt.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/dfu/fmfu_mgmt.html.
+ */
+
 /** @file fmfu_mgmt.h
  * @defgroup fmfu_mgmt MCUMgr module for full Modem Firmware Upgrade
  * @{

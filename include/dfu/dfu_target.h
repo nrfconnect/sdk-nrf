@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/dfu/dfu_target.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/dfu/dfu_target.html.
+ */
+
 #ifndef DFU_TARGET_H__
 #define DFU_TARGET_H__
 
