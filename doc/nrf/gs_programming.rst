@@ -11,7 +11,6 @@ Building and programming an application
 
 For additional information, check the user guide for the hardware platform that you are using.
 These user guides contain platform-specific instructions for building and programming.
-For additional information, check the user guide for the hardware platform that you are using.
 For example, see :ref:`ug_nrf5340_building` in the :ref:`ug_nrf5340` user guide for information about programming an nRF5340 DK, or :ref:`Programming precompiled firmware images <programming_thingy>` and :ref:`building_pgming` for information about programming a Thingy:91.
 
 .. note::

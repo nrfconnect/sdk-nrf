@@ -1,6 +1,8 @@
+:orphan:
+
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v1.8.99
+Changelog for |NCS| v1.9.99
 ###########################
 
 .. contents::
@@ -22,13 +24,13 @@ The most relevant changes that are present on the main branch of the |NCS|, as c
 Highlights
 **********
 
-* Removed support for Pelion DM library.
+There are no entries for this section yet.
 
 Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v1.8.0`_ for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v1.9.0`_ for the list of issues valid for the latest release.
 
 Changelog
 *********
@@ -38,10 +40,7 @@ The following sections provide detailed lists of changes by component.
 Application development
 =======================
 
-Using Edge Impulse
-------------------
-
-* Added instruction on how to download a model from a public Edge Impulse project.
+|no_changes_yet_note|
 
 Protocols
 =========
@@ -52,23 +51,7 @@ See `Samples`_ for lists of changes for the protocol-related samples.
 Matter
 ------
 
-* Added ``EXPERIMENTAL`` select in Kconfig that informs that Matter support is experimental.
-
-Thread
-------
-
-* Changed how Thread 1.2 is enabled, refer to :ref:`thread_ug_thread_specification_options` and :ref:`thread_ug_feature_sets` for more information.
-* Modified feature sets by adding support for SRP client and removing rarely used features.
-
-Zigbee
-------
-
-* Updated ZBOSS Zigbee stack to version ``3.11.1.0+5.1.1``.
-  See the :ref:`nrfxlib:zboss_changelog` in the nrfxlib documentation for detailed information.
-* Added development ZBOSS stack library version based on the ZBOSS build v3.11.1.177+v5.1.1.
-  This library version is dedicated for testing ZCL v8 features.
-* Added ZBOSS libraries variant with ZBOSS Traces enabled.
-* Added new version of the :ref:`ug_zigbee_tools_ncp_host` (v2.1.1).
+|no_changes_yet_note|
 
 Applications
 ============
@@ -78,65 +61,7 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 nRF9160: Asset Tracker v2
 -------------------------
 
-* Updated the code and documentation to use the acronym GNSS instead of GPS when not referring explicitly to the GPS system.
-* Added support for atmospheric pressure readings retrieved from the BME680 sensor on Thingy:91.
-* Fixed an issue where PSM could be requested from the network even though it was disabled in Kconfig.
-* Added new documentation for Asset Tracker v2 :ref:`asset_tracker_v2_modem_module`.
-* Added new documentation for Asset Tracker v2 :ref:`asset_tracker_v2_app_module`.
-* Added new documentation for Asset Tracker v2 :ref:`asset_tracker_v2_data_module`.
-* Added support for A-GPS filtered ephemerides.
-* Added new documentation for :ref:`asset_tracker_v2_util_module` and :ref:`api_modules_common`.
-* Updated support for P-GPS preemptive updates and P-GPS coexistence with A-GPS.
-* Added functionality that allows the application to wait for A-GPS data to be processed before starting GNSS positioning.
-* Fixed nRF Cloud FOTA issue to only enable image types on the cloud if they are enabled on the device.
-
-nRF9160: Asset Tracker
-----------------------
-
-* The application is removed.
-  Hence, it is recommended to upgrade to the :ref:`asset_tracker_v2` application.
-
-nRF Machine Learning (Edge Impulse)
------------------------------------
-
-* Added:
-
-  * Added :kconfig:`CONFIG_ML_APP_SENSOR_EVENT_DESCR` option that globally defines sensor used by the application modules.
-  * Bluetooth LE bonding functionality.
-    The functionality relies on :ref:`caf_ble_bond`.
-
-* Updated:
-
-  * Renamed ``ml_state`` module to ``ml_app_mode`` module.
-
-nRF Desktop
------------
-
-* Added:
-
-  * :ref:`nrf_desktop_hid_state_pm` documentation.
-  * Possibility to ask for bootloader variant using config channel.
-  * Added Kconfig options that allow erasing dongle bond on the gaming mouse using buttons or config channel.
-  * Added two states to enable erasing dongle peer: ``STATE_DONGLE_ERASE_PEER`` and ``STATE_DONGLE_ERASE_ADV``.
-  * Added new application specific Kconfig option to enable :ref:`nrf_desktop_ble_bond`.
-  * Added configuration for ``nrf52833dk_nrf52820`` to allow testing of nRF Desktop dongle on the nRF52820 SoC.
-  * Added configuration for Working with ChromeBook (WWCB).
-
-* Updated:
-
-   * Documentation and diagrams for the :ref:`nrf_desktop_ble_bond`.
-   * Moved Fn key related macros to an application specific header file (:file:`configuration/common/fn_key_id.h`).
-   * Config channel no longer uses orphaned sections to store module Id information.
-     Hence, the :kconfig:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
-   * Bluetooth transmission power level for the Bluetooth LE advertising module.
-     It is now assumed to be 0 dBm during advertising.
-
-Thingy:53: Matter weather station
----------------------------------
-
-* Added:
-
-  * Initial support for the Matter-compliant over-the-air (OTA) device firmware upgrade (DFU) method.
+|no_changes_yet_note|
 
 Samples
 =======
@@ -147,91 +72,14 @@ For lists of protocol-specific changes, see `Protocols`_.
 Bluetooth samples
 -----------------
 
-* Added:
-
-  * :ref:`multiple_adv_sets` sample.
-  * :ref:`ble_nrf_dm` sample.
-
-* Updated:
-
-  * :ref:`peripheral_rscs` - Corrected the number of bytes for setting the Total Distance Value and specified the data units.
-  * :ref:`direct_test_mode` - Added support for front-end module devices that support 2-pin PA/LNA interface with additional support for the Skyworks SKY66114-11 and the Skyworks SKY66403-11.
-  * :ref:`peripheral_hids_mouse` - Added a notice about encryption requirement.
-  * :ref:`peripheral_hids_keyboard` - Added a notice about encryption requirement.
-  * :ref:`central_and_peripheral_hrs` - Clarified the "Requirements" section and fixed a link in the "Testing" section of the document.
-  * :ref:`peripheral_uart` - Increased the system workqueue stack size for the :file:`prj_minimal.conf` file.
-
-
-nRF9160 samples
----------------
-
-* :ref:`secure_partition_manager` sample:
-
-  * Reduced the amount of RAM reserved in the default configuration of the sample for nRF9160, freeing up 32 Kb of RAM for the application.
-
-* :ref:`modem_shell_application` sample:
-
-  * Added a new shell command ``cloud`` for establishing an MQTT connection to nRF Cloud.
-  * Removed support for the GPS driver.
-  * The LED 1 on the development kit indicates the LTE registration status.
-  * Added a new shell command ``filtephem`` to enable or disable nRF Cloud A-GPS filtered ephemerides mode (REST only).
-  * Various PPP updates. For example, started using Zephyr async PPP driver configuration to provide better throughput for dial-up.
-
-* :ref:`http_application_update_sample` sample:
-
-  * Added support for application downgrade.
-    The sample now alternates updates between two different application images.
-
-* :ref:`gnss_sample` sample:
-
-  * Added support for minimal assistance using factory almanac, time and location.
-  * Added support for TTFF test mode.
-  * Added support for nRF Cloud A-GPS filtered mode.
-
-* nRF9160: HTTP update samples:
-
-  * HTTP update samples now set the modem in the power off mode after the firmware image download completes. This avoids ungraceful disconnects from the network upon pressing the reset button on the kit.
-
-* :ref:`lwm2m_client` sample:
-
-  * Added support for triggering neighbour cell measurements.
-
-Thread samples
---------------
-
-* :ref:`ot_cli_sample` sample:
-
-  * Removed `overlay-thread_1_2.conf` as Thread 1.2 is now supported as described in :ref:`thread_ug_thread_specification_options`.
-
-Matter samples
---------------
-
-* :ref:`matter_lock_sample`:
-
-  * Added initial support for the Matter-compliant over-the-air (OTA) device firmware upgrade (DFU) method.
-
-* :ref:`matter_light_bulb_sample`:
-
-  * Added initial support for the Matter-compliant over-the-air (OTA) device firmware upgrade (DFU) method.
-
-Other samples
--------------
-
-:ref:`radio_test` - Added support for front-end module devices that support 2-pin PA/LNA interface with additional support for the Skyworks SKY66114-11 and the Skyworks SKY66403-11.
-
-* :ref:`secure_partition_manager` sample:
-
-  * Bug fixes:
-
-    * NCSDK-12230: Fixed an issue where low baud rates would trigger a fault by selecting as system clock driver ``SYSTICK`` instead of ``RTC1``.
-
+|no_changes_yet_note|
 
 Drivers
 =======
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-* |no_changes_yet_note|
+|no_changes_yet_note|
 
 Libraries
 =========
@@ -241,170 +89,7 @@ This section provides detailed lists of changes by :ref:`library <libraries>`.
 Bluetooth libraries and services
 --------------------------------
 
-* :ref:`rscs_readme` library:
-
-  * Added units for :c:struct:`bt_rscs_measurement` members.
-
-* :ref:`ble_rpc` library:
-
-  * Fixed the issue related to missing buffer size variables for the user PHY update and the user data length update procedures.
-
-* :ref:`bt_mesh` library:
-
-  * Extracted proportional-integral (PI) regulator module from :ref:`bt_mesh_light_ctrl_srv_readme`, enabling easier implementation of custom regulators.
-
-Common Application Framework (CAF)
-----------------------------------
-
-* Added a simple implementation of the :ref:`caf_ble_bond`.
-  The implementation allows to erase bonds for default Bluetooth local identity.
-* Migrated :ref:`nRF Desktop settings loader <nrf_desktop_settings_loader>` to :ref:`lib_caf` as :ref:`CAF: Settings loader module <caf_settings_loader>`.
-* :ref:`caf_leds`:
-
-  * Added new LED effect macro: :c:macro:`LED_EFFECT_LED_BLINK2`.
-  * Added a macro to pass color arguments between macro calls: :c:macro:`LED_COLOR_ARG_PASS`.
-* :ref:`caf_ble_adv`:
-
-  * Added possibility of setting custom Bluetooth LE advertising intervals.
-* Updated:
-
-  * Unify module ID reference location.
-    The array holding module reference objects is explicitly defined in linker script to avoid creating an orphan section.
-    ``MODULE_ID`` macro and :c:func:`module_id_get` function now returns module reference from dedicated section instead of module name.
-    The module name can not be obtained from reference object directly, a helper function (:c:func:`module_name_get`) should be used instead.
-  * Fixed the NCSDK-13058 known issue related to directed advertising in CAF.
-  * Fixed NULL dereferencing in :ref:`caf_sensor_manager` during :c:struct:`wake_up_event` handling for sensors that do not support trigger.
-
-Bootloader libraries
---------------------
-
-* Added a separate section for :ref:`lib_bootloader`.
-
-Libraries for networking
-------------------------
-* :ref:`lib_fota_download` library:
-
-  * Skipping host name check when connecting to TLS service using just IP address.
-  * Bootloader FOTA download standardized to accept only full dual path names (for example "path/to/s0.bin path/to/s1.bin").
-    Truncated dual path names ("path/to/s0.bin s1.bin") no longer supported.
-
-* :ref:`lib_lwm2m_client_utils` library:
-
-  * Added support for LwM2M object ECID-Signal Measurement Information (object ID 10256).
-
-* :ref:`lib_nrf_cloud_pgps` library:
-
-  * Removed the word ALL from the :kconfig:`CONFIG_NRF_CLOUD_PGPS_REQUEST_UPON_INIT` option.
-    Changed the :c:func:`nrf_cloud_pgps_init` function to use this to disable all three reasons for downloading P-GPS data, not just the full set.
-
-Modem libraries
----------------
-
-* :ref:`nrf_modem_lib_readme` library:
-
-  * Fixed a bug in the socket offloading component, where the :c:func:`recvfrom` wrapper could do an out-of-bounds copy of the sender's address, when the application is compiled without IPv6 support. In some cases, the out of bounds copy could indefinitely block the :c:func:`send` and other socket API calls.
-  * Fixed a bug in the socket offloading component, where the :c:func:`accept` wrapper did not free the reserved file descriptor if the call to :c:func:`nrf_accept` failed. On subsequent failing calls to :c:func:`accept`, this bug could result in the OS running out of file descriptors.
-
-* :ref:`at_monitor_readme` library:
-
-  * Introduced AT_MONITOR_ISR macro to monitor AT notifications in an interrupt service routine.
-  * Removed :c:func:`at_monitor_init` function and :kconfig:`CONFIG_AT_MONITOR_SYS_INIT` option. The library now initializes automatically when enabled.
-
-* :ref:`at_cmd_parser_readme` library:
-
-  * Can now parse AT command responses containing the response result, for example, ``OK`` or ``ERROR``.
-
-* :ref:`nrf_modem_lib_readme`:
-
-  * The modem trace handling is moved from :file:`nrf_modem_os.c` to a new file :file:`nrf_modem_lib_trace.c`, which also provides the API for starting a trace session for a given time interval or until a given size of trace data is received.
-
-* :ref:`lte_lc_readme` library:
-
-  * API calls that initialize the library will now return ``0`` if the library has already been initialized.
-
-* Removed the ``at_cmd`` library.
-
-* Removed the ``at_notif`` library.
-
-Event manager
--------------
-
-* Added:
-
-  * ``EVENT_SUBSCRIBE_FIRST`` subscriber priority.
-
-* Updated:
-
-  * Modified the sections used by the event manager. Stopped using orphaned sections. Removed forced alignment for x86. Reworked priorities.
-  * Event manager no longer uses orphaned sections to store information about event types, listeners and subscribers.
-    Hence, the :kconfig:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
-
-Event manager Profiler Tracer
------------------------------
-
-* Updated:
-
-  * Event manager Profiler Tracer no longer use orphaned sections to store profiler information.
-    Hence, the :kconfig:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
-
-Libraries for networking
-------------------------
-
-* :ref:`lib_fota_download` library:
-
-  * Fixed an issue where the application would not be notified of errors originating from inside :c:func:`download_with_offset`. In the http_update samples, this would result in the dfu start button interrupt being disabled after a connect error in :c:func:`download_with_offset` after a disconnect during firmware download.
-  * Fixed an issue that :ref:`lib_fota_download`, after a link-connection timeout, restarted the firmware image download from an incorrect offset.
-    This resulted in an invalid image and required a restart of the firmware update process.
-* :ref:`lib_dfu_target` library:
-
-  * Updated the implementation of modem delta upgrades in the DFU target library to use the new socketless interface provided by the :ref:`nrf_modem`.
-
-* :ref:`lib_location` library:
-
-  * Added A-GPS filtered ephemerides support for both MQTT and REST transports.
-
-* :ref:`lib_nrf_cloud` library:
-
-  * Added A-GPS filtered ephemerides support, with ability to set matching threshold mask angle, for both MQTT and REST transports.
-  * When filtered ephemerides is enabled, A-GPS assistance requests to cloud are limited to no more than once every two hours.
-  * Updated MQTT connection error handling.
-    Now, unacknowledged pings and other errors result in a transition to the disconnected state.
-    This ensures that reconnection can take place.
-  * nRF Cloud device removal now correctly triggers MQTT disconnection.
-
-* :ref:`lib_nrf_cloud_rest` library:
-
-  * Updated to use the :ref:`lib_rest_client` library for REST API calls.
-  * Added :c:func:`nrf_cloud_rest_send_device_message` function that sends a JSON message to nRF Cloud using the `SendDeviceMessage` endpoint.
-  * Added :c:func:`nrf_cloud_rest_send_location` function that sends an NMEA sentence to nRF Cloud as a GPS-type device message.
-
-Other libraries
----------------
-
-* Moved :ref:`lib_bootloader` to a section of their own.
-  * Added write protection by default for the image partition.
-
-* :ref:`lib_date_time` library:
-
-  * Removed the :kconfig:`CONFIG_DATE_TIME_IPV6` Kconfig option.
-    The library now automatically uses IPv6 for NTP when available.
-
-* :ref:`lib_location` library:
-
-  * Added support for GNSS high accuracy.
-
-* :ref:`lib_ram_pwrdn` library:
-
-  * Added functions for powering up and down RAM sections for a given address range.
-  * Added experimental functionality to automatically power up and down RAM sections based on the libc heap usage.
-  * Added support for nRF5340 application core to power up and down RAM sections.
-
-Event Manager
-+++++++++++++
-
-* Modified sections used by the Event Manager and stopped using orphaned sections.
-* Removed forced alignment for x86.
-* Reworked priorities.
+|no_changes_yet_note|
 
 sdk-nrfxlib
 -----------
@@ -419,15 +104,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 Unity
 -----
 
-* Fixed bug that resulted in the mocks for some functions not having the __wrap_ prefix. This happened for functions declared with whitespaces between identifier and parameter list.
-
-HID Configurator
-----------------
-
-* Added:
-
-  * HID Configurator now recognizes the bootloader variant as a DFU module variant for the configuration channel communication.
-    The new implementation is backward compatible: the new version of the script checks for module name and acts accordingly.
+|no_changes_yet_note|
 
 MCUboot
 =======
@@ -477,10 +154,7 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
-* Added:
-
-  * Support for General Diagnostics, Software Diagnostics and Thread Network Diagnostics clusters.
-  * Initial support for the Matter OTA (Over-the-air) Requestor role, used for updating the device firmware.
+|no_changes_yet_note|
 
 cddl-gen
 ========
@@ -490,44 +164,11 @@ Release notes for 0.3.0 can be found in :file:`ncs/nrf/modules/lib/cddl-gen/RELE
 
 The change prompted some changes in the CMake for the module, notably:
 
-* The CMake function ``target_cddl_source()`` was removed.
-* The non-generated source files (:file:`cbor_encode.c` and :file:`cbor_decode.c`) and their accompanying header files are now added to the build when :kconfig:`CONFIG_CDDL_GEN` is enabled.
-
-Also, it prompted the following:
-
-* The code of some libraries using cddl-gen (like :ref:`lib_fmfu_fdev`) has been regenerated.
-* The sdk-nrf integration test has been expanded into three new tests.
+|no_changes_yet_note|
 
 Documentation
 =============
 
-In addition to documentation related to the changes listed above, the following documentation has been updated:
-
-* Reorganized the contents of the :ref:`ug_app_dev` section:
-
-  * Added new subpage :ref:`app_optimize` and moved the optimization sections under it.
-  * Added new subpage :ref:`ext_components` and moved the sections for using external components or modules under it.
-
-* Reorganized the contents of the :ref:`protocols` section:
-
-  * Reduced the ToC levels of the subpages.
-
-* Added :ref:`ug_nrf9160_gs` and removed now redundant modem firmware section from :ref:`ug_nrf9160`.
-
-* Reorganized the contents of the :ref:`ug_radio_fem` section:
-
-  * Added new section :ref: `ug_radio_fem_nrf21540_spi_gpio`.
-  * Added new section :ref: `ug_radio_fem_direct_support`.
-  * Added more information about supported protocols and hardware.
-
-* Added the :ref:`ug_thingy91_gsg` guide and reworked the :ref:`ug_thingy91` user guide.
+|no_changes_yet_note|
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
-
-* :ref:`nrf_modem` section pages:
-
-  * :ref:`nrfxlib:architecture` - Updated architecture diagram.
-  * :ref:`nrfxlib:nrf_modem_delta_dfu` - Updated.
-  * :ref:`nrfxlib:nrf_modem` - Removed overview diagram.
-  * ``AT socket`` page removed.
-  * ``Extensions`` page removed.
