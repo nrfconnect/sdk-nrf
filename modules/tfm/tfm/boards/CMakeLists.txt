@@ -35,7 +35,16 @@ target_include_directories(platform_s
 
 target_sources(platform_s
   PRIVATE
-  ${CMAKE_CURRENT_LIST_DIR}/common/tfm_hal_platform.c
+  common/tfm_hal_platform.c
+  $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_OTP}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_otp.c>
+  $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_PROVISIONING}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_provisioning.c>
+  )
+
+# Disabling UART stdout not supported in NS Image, which is always built even when not needed.
+# TODO: Remove when not building NS image.
+target_sources(platform_ns
+  PRIVATE
+  $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_UART_STDOUT}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_uart_stdout.c>
   )
 
 if (${TFM_PARTITION_CRYPTO}
