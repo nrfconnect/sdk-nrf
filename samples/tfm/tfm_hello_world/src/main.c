@@ -107,8 +107,10 @@ void main(void)
 	 * oscillator (LFXO) can be used.
 	 * This configuration has already been done by TF-M so this is redundant.
 	 */
-	printk("Configuring MCU selection for LFXO\n");
 	gpio_pin_mcu_select(PIN_XL1, NRF_GPIO_PIN_MCUSEL_PERIPHERAL);
 	gpio_pin_mcu_select(PIN_XL2, NRF_GPIO_PIN_MCUSEL_PERIPHERAL);
+	printk("MCU selection configured\n");
+#else
+	printk("MCU selection skipped\n");
 #endif /* defined(GPIO_PIN_CNF_MCUSEL_Msk) */
 }
