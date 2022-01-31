@@ -34,6 +34,8 @@ config TFM_SECURE_UART1
 
 config TFM_MINIMAL
 	bool "Use minimal TF-M build"
+	select PSA_DEFAULT_OFF
+	select TFM_LOG_LEVEL_SILENCE
 	help
 	  Use minimal TF-M build. This will make the TF-M image fit within 32kB.
 	  No configuration of the size of the partition nor the features of the
@@ -77,7 +79,8 @@ config PM_PARTITION_SIZE_BL2
 config PM_PARTITION_SIZE_TFM
 	hex
 	prompt  "Memory reserved for TFM" if !TFM_MINIMAL
-	default 0x10000 if TFM_MINIMAL
+	default 0x10000 if TFM_MINIMAL && TFM_CMAKE_BUILD_TYPE_DEBUG
+	default 0x8000 if TFM_MINIMAL
 	# NCSDK-13503: Temporarily bump size while regressions are being fixed
 	default 0x60000 if TFM_REGRESSION_S
 	default 0x50000 if TFM_CMAKE_BUILD_TYPE_DEBUG
