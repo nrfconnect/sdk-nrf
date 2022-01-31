@@ -79,44 +79,57 @@ static int32_t granted_ops_get(mpsl_cx_op_map_t *granted_ops)
 	return 0;
 }
 
+static void check_and_notify()
+{
+	int32_t ret;
+	mpsl_cx_op_map_t granted_ops;
+
+	ret = granted_ops_get(&granted_ops);
+
+	__ASSERT(ret == 0, "Getting grant pin state returned unexpected result: %d", ret);
+	if (ret != 0) {
+		/* nrfx gpio implementation cant return failure for this call
+		 * This condition is handled for fail-safe approach. It is
+		 * assumed GRANT is not given, if cannot read its value
+		 */
+		granted_ops = granted_ops_map(false);
+	}
+
+	if (granted_ops != last_notified) {
+		last_notified = granted_ops;
+		callback(granted_ops);
+	}
+}
+
 static void gpiote_irq_handler(const struct device *gpiob, struct gpio_callback *cb, uint32_t pins)
 {
 	(void)gpiob;
 	(void)cb;
 	(void)pins;
+	uint8_t mon;
 
-	int32_t ret;
-	mpsl_cx_op_map_t granted_ops;
-	uint8_t incremented = 0;
+	if (callback == NULL) {
+		return;
+	}
 
 	do {
-		if (callback != NULL && is_handled == 0) {
+		if (is_handled == 0) {
 			is_handled++;
-			ret = granted_ops_get(&granted_ops);
-
-			__ASSERT(ret == 0,
-				"Getting grant pin state returned unexpected result: %d", ret);
-			if (ret != 0) {
-				/* nrfx gpio implementation cant return failure for this call
-				 * This condition is handled for fail-safe approach. It is
-				 * assumed GRANT is not given, if cannot read its value
-				 */
-				granted_ops = granted_ops_map(false);
-			}
-
-			if (granted_ops != last_notified) {
-				last_notified = granted_ops;
-				callback(granted_ops);
-			}
+			check_and_notify();
 			is_handled--;
-			if (monitor > 0) {
-				monitor--;
-			}
-		} else if (callback != NULL) {
+
+			do {
+				mon = __LDREXB(&monitor);
+				if (mon > 0) {
+					mon--;
+				}
+			} while (__STREXB(mon, &monitor));
+
+		} else {
 			monitor++;
-			incremented = 1;
+			break;
 		}
-	} while (monitor > 0 && incremented == 0);
+	} while (monitor > 0);
 }
 
 static int32_t gpio_init(uint8_t pin_no, bool input, const struct device **port,
