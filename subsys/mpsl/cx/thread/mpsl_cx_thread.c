@@ -79,7 +79,7 @@ static int32_t granted_ops_get(mpsl_cx_op_map_t *granted_ops)
 	return 0;
 }
 
-static void check_and_notify()
+static void check_and_notify(void)
 {
 	int32_t ret;
 	mpsl_cx_op_map_t granted_ops;
