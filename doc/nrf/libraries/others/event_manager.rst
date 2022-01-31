@@ -165,7 +165,7 @@ The following code example shows a source file for the event type ``sample_event
 		     NULL);		/* No event info provided. */
 
 .. note::
-	There is a deprecated way of logging Event Manager events by writing string to the provided buffer which is supported until NCS2.0.
+	There is a deprecated way of logging Event Manager events by writing a string to the provided buffer that will be supported until a future release of |NCS|.
 
 Submitting an event
 ===================
