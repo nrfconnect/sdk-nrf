@@ -161,9 +161,13 @@ config OPENTHREAD_CSL_MIN_RECEIVE_ON
 	int
 	default 300
 
+config OPENTHREAD_PLATFORM_CSL_UNCERT
+	int
+	default 5
+
 config OPENTHREAD_CUSTOM_PARAMETERS
 	string
-	default "OPENTHREAD_CONFIG_PLATFORM_CSL_UNCERT=5"
+	default ""
 
 endif
 
