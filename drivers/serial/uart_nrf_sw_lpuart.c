@@ -8,33 +8,12 @@
 #include <zephyr/drivers/gpio.h>
 #include <hal/nrf_gpio.h>
 #include <hal/nrf_gpiote.h>
+#include <nrfx_gpiote.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/onoff.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 
 LOG_MODULE_REGISTER(lpuart, CONFIG_NRF_SW_LPUART_LOG_LEVEL);
-
-/* Structure describing bidirectional pin. */
-struct lpuart_bidir_gpio {
-	struct gpio_callback callback;
-
-	/* gpio device. */
-	const struct device *port;
-
-	/* pin number - within port. */
-	gpio_pin_t pin;
-
-	/* absolute pin number. */
-	uint8_t nrf_pin;
-
-	/* gpiote channel allocated for that pin. */
-	uint8_t ch;
-
-	/* True if pin is used to request TX transfer. False if pin in idle is
-	 * an input armed to detect transfer requestes.
-	 */
-	bool req;
-};
 
 /* States. */
 enum rx_state {
@@ -84,10 +63,12 @@ struct lpuart_data {
 	const struct device *uart;
 
 	/* Request pin. */
-	struct lpuart_bidir_gpio req_pin;
-
+	nrfx_gpiote_pin_t req_pin;
 	/* Response pin. */
-	struct lpuart_bidir_gpio rdy_pin;
+	nrfx_gpiote_pin_t rdy_pin;
+
+	/* GPIOTE channel used by rdy pin. */
+	uint8_t rdy_ch;
 
 	/* Timer used for TX timeouting. */
 	struct k_timer tx_timer;
@@ -114,9 +95,6 @@ struct lpuart_data {
 	/* RX state */
 	enum rx_state rx_state;
 
-	/* Set to true if request has been detected. */
-	bool rx_req;
-
 	struct onoff_client rx_clk_cli;
 
 #if CONFIG_NRF_SW_LPUART_INT_DRIVEN
@@ -125,18 +103,19 @@ struct lpuart_data {
 };
 
 /* Configuration structured. */
-
-struct lpuart_pin_config {
-	const char *port_name;
-	gpio_pin_t pin;
-	uint8_t nrf_pin;
-};
-
 struct lpuart_config {
 	const char *uart_name;
-	struct lpuart_pin_config req;
-	struct lpuart_pin_config rdy;
+	nrfx_gpiote_pin_t req_pin;
+	nrfx_gpiote_pin_t rdy_pin;
 };
+
+static void req_pin_handler(nrfx_gpiote_pin_t pin,
+			     nrfx_gpiote_trigger_t trigger,
+			     void *context);
+
+static void rdy_pin_handler(nrfx_gpiote_pin_t pin,
+			     nrfx_gpiote_trigger_t trigger,
+			     void *context);
 
 static inline struct lpuart_data *get_dev_data(const struct device *dev)
 {
@@ -148,59 +127,159 @@ static inline const struct lpuart_config *get_dev_config(const struct device *de
 	return dev->config;
 }
 
-static void ctrl_pin_set(const struct lpuart_bidir_gpio *io, bool force)
-{
-	if (force) {
-		nrf_gpio_pin_set(io->nrf_pin);
-		nrf_gpiote_te_default(NRF_GPIOTE, io->ch);
-		nrf_gpio_cfg_output(io->nrf_pin);
-		return;
-	}
-
-	int key = irq_lock();
-
-	/* note that there is still a very small chance that if ZLI is used
-	 * then it may be interrupted by ZLI and if during that time receiver
-	 * clears the pin and sets it high again we may miss it.
-	 * This might be solved in the next iteration but it will required
-	 * extension to the GPIO driver to use LATCH for sensing. In case of
-	 * sensing it is possible to switch from output to input in single
-	 * operation (change or NRF_GPIO->PIN_CNF register).
-	 */
-	nrf_gpiote_te_default(NRF_GPIOTE, io->ch);
-	nrf_gpiote_event_configure(NRF_GPIOTE, io->ch, io->nrf_pin,
-					NRF_GPIOTE_POLARITY_HITOLO);
-
-	nrf_gpio_cfg_input(io->nrf_pin, NRF_GPIO_PIN_PULLUP);
-	nrf_gpiote_event_enable(NRF_GPIOTE, io->ch);
-
-	irq_unlock(key);
-}
-
-/* Sets pin to output and sets low state. */
-static void ctrl_pin_clear(const struct lpuart_bidir_gpio *io)
-{
-	nrf_gpio_pin_clear(io->nrf_pin);
-	nrf_gpiote_te_default(NRF_GPIOTE, io->ch);
-	nrf_gpio_cfg_output(io->nrf_pin);
-}
-
-/* Sets pin to idle state. In case of request pin it means out,low and in case
- * of response pin it means in, nopull, low to high detection enabled.
+/* Called when uart transfer is finished to indicate to the receiver that it
+ * can be closed.
  */
-static void ctrl_pin_idle(const struct lpuart_bidir_gpio *io)
+static void req_pin_idle(struct lpuart_data *data)
 {
-	if (io->req) {
-		ctrl_pin_clear(io);
-		return;
+	nrf_gpio_cfg(data->req_pin,
+		     NRF_GPIO_PIN_DIR_OUTPUT,
+		     NRF_GPIO_PIN_INPUT_DISCONNECT,
+		     NRF_GPIO_PIN_NOPULL,
+		     NRF_GPIO_PIN_S0S1,
+		     NRF_GPIO_PIN_NOSENSE);
+}
+
+static void pend_req_pin_idle(struct lpuart_data *data)
+{
+	/* Wait until pin is high */
+	while (!nrfx_gpiote_in_is_set(data->req_pin)) {
 	}
 
-	nrf_gpiote_te_default(NRF_GPIOTE, io->ch);
-	nrf_gpiote_event_configure(NRF_GPIOTE, io->ch, io->nrf_pin,
-					NRF_GPIOTE_POLARITY_LOTOHI);
+	req_pin_idle(data);
+}
 
-	nrf_gpio_cfg_input(io->nrf_pin, NRF_GPIO_PIN_NOPULL);
-	nrf_gpiote_event_enable(NRF_GPIOTE, io->ch);
+/* Used to force pin assertion. Pin is kept high during uart transfer. */
+static void req_pin_set(struct lpuart_data *data)
+{
+	const nrf_gpio_pin_dir_t dir = NRF_GPIO_PIN_DIR_INPUT;
+	const nrf_gpio_pin_input_t input = NRF_GPIO_PIN_INPUT_CONNECT;
+
+	nrf_gpio_reconfigure(data->req_pin, &dir, &input, NULL, NULL, NULL);
+
+	nrfx_gpiote_trigger_disable(data->req_pin);
+}
+
+/* Pin is reconfigured to input with pull up and low state detection. That leads
+ * to pin assertion. Receiver when ready will pull pin down for a moment which
+ * means that transmitter can start.
+ */
+static void req_pin_arm(struct lpuart_data *data)
+{
+	const nrf_gpio_pin_pull_t pull = NRF_GPIO_PIN_PULLUP;
+
+	/* Add pull up before reconfiguring to input. */
+	nrf_gpio_reconfigure(data->req_pin, NULL, NULL, &pull, NULL, NULL);
+
+	nrfx_gpiote_trigger_enable(data->req_pin, true);
+}
+
+static int req_pin_init(struct lpuart_data *data, nrfx_gpiote_pin_t pin)
+{
+	uint8_t ch;
+	nrfx_err_t err;
+	nrfx_gpiote_input_config_t input_config = {
+		.pull = NRF_GPIO_PIN_PULLDOWN
+	};
+	nrfx_gpiote_trigger_config_t trigger_config = {
+		.trigger = NRFX_GPIOTE_TRIGGER_HITOLO,
+		.p_in_channel = &ch
+	};
+	nrfx_gpiote_handler_config_t handler_config = {
+		.handler = req_pin_handler,
+		.p_context = data
+	};
+
+	err = nrfx_gpiote_channel_alloc(&ch);
+	if (err != NRFX_SUCCESS) {
+		return -ENOMEM;
+	}
+
+	err = nrfx_gpiote_input_configure(pin, &input_config, &trigger_config, &handler_config);
+	if (err != NRFX_SUCCESS) {
+		return -EINVAL;
+	}
+
+	data->req_pin = pin;
+	/* Make gpiote driver think that pin is input but then reconfigure to
+	 * output. Which will be at some point reconfigured back to input for
+	 * a moment.
+	 */
+	req_pin_idle(data);
+
+	return 0;
+}
+
+static void rdy_pin_suspend(struct lpuart_data *data)
+{
+	nrfx_gpiote_trigger_disable(data->rdy_pin);
+}
+
+
+static int rdy_pin_init(struct lpuart_data *data, nrfx_gpiote_pin_t pin)
+{
+	nrfx_err_t err;
+	nrfx_gpiote_input_config_t input_config = {
+		.pull = NRF_GPIO_PIN_NOPULL
+	};
+	nrfx_gpiote_handler_config_t handler_config = {
+		.handler = rdy_pin_handler,
+		.p_context = data
+	};
+
+	err = nrfx_gpiote_channel_alloc(&data->rdy_ch);
+	if (err != NRFX_SUCCESS) {
+		return -ENOMEM;
+	}
+
+	err = nrfx_gpiote_input_configure(pin, &input_config, NULL, &handler_config);
+	if (err != NRFX_SUCCESS) {
+		LOG_ERR("err:%08x", err);
+		return -EINVAL;
+	}
+
+	data->rdy_pin = pin;
+	nrf_gpio_pin_clear(pin);
+
+	return 0;
+}
+
+/* Pin activated to detect high state (using SENSE). */
+static void rdy_pin_idle(struct lpuart_data *data)
+{
+	nrfx_err_t err;
+	nrfx_gpiote_trigger_config_t trigger_config = {
+		.trigger = NRFX_GPIOTE_TRIGGER_HIGH
+	};
+
+	err = nrfx_gpiote_input_configure(data->rdy_pin, NULL, &trigger_config, NULL);
+	__ASSERT(err == NRFX_SUCCESS, "Unexpected err: %08x/%d", err, err);
+
+	nrfx_gpiote_trigger_enable(data->rdy_pin, true);
+}
+
+/* Indicated to the transmitter that receiver is ready by pulling pin down for
+ * a moment, and reconfiguring it back to input with low state detection.
+ */
+static void rdy_pin_blink(struct lpuart_data *data)
+{
+	nrfx_err_t err;
+	nrfx_gpiote_trigger_config_t trigger_config = {
+		.trigger = NRFX_GPIOTE_TRIGGER_HITOLO,
+		.p_in_channel = &data->rdy_ch
+	};
+	const nrf_gpio_pin_dir_t dir_in = NRF_GPIO_PIN_DIR_INPUT;
+	const nrf_gpio_pin_dir_t dir_out = NRF_GPIO_PIN_DIR_OUTPUT;
+
+	/* Drive low for a moment */
+	nrf_gpio_reconfigure(data->rdy_pin, &dir_out, NULL, NULL, NULL, NULL);
+
+	err = nrfx_gpiote_input_configure(data->rdy_pin, NULL, &trigger_config, NULL);
+	__ASSERT(err == NRFX_SUCCESS, "Unexpected err: %08x/%d", err, err);
+
+	nrfx_gpiote_trigger_enable(data->rdy_pin, true);
+
+	nrf_gpio_reconfigure(data->rdy_pin, &dir_in, NULL, NULL, NULL, NULL);
 }
 
 /* Function enables RX, after that it informs transmitter about readiness by
@@ -221,10 +300,8 @@ static void activate_rx(struct lpuart_data *data)
 	__ASSERT(err == 0, "RX: Enabling failed (err:%d)", err);
 
 	/* Ready. Confirm by toggling the pin. */
-	ctrl_pin_clear(&data->rdy_pin);
-	ctrl_pin_set(&data->rdy_pin, false);
+	rdy_pin_blink(data);
 	LOG_DBG("RX: Ready");
-	data->rx_req = false;
 	data->rx_state = RX_ACTIVE;
 }
 
@@ -277,36 +354,38 @@ static void deactivate_rx(struct lpuart_data *data)
 		__ASSERT_NO_MSG(err >= 0);
 	}
 
-	ctrl_pin_idle(&data->rdy_pin);
-	if (nrf_gpio_pin_read(data->rdy_pin.nrf_pin)) {
-		LOG_DBG("RX: Request pending while deactivating");
-		/* pin is set high, another request pending. */
-		nrf_gpiote_event_clear(NRF_GPIOTE,
-				     nrf_gpiote_in_event_get(data->rdy_pin.ch));
-		data->rx_req = true;
-	}
-
 	/* abort rx */
 	data->rx_state = RX_TO_IDLE;
 	err = uart_rx_disable(data->uart);
 	if (err < 0 && err != -EFAULT) {
 		LOG_ERR("RX: Failed to disable (err: %d)", err);
+	} else if (err == -EFAULT) {
+		LOG_ERR("Rx disable failed.");
 	}
 }
 
 static void tx_complete(struct lpuart_data *data)
 {
-	ctrl_pin_idle(&data->req_pin);
+	LOG_DBG("TX completed, pin idle");
+	pend_req_pin_idle(data);
 	data->tx_buf = NULL;
 	data->tx_active = false;
 }
 
-static void on_req_pin_change(struct lpuart_data *data)
+/* Handler is called when transition to low state is detected which indicates
+ * that receiver is ready for the packet.
+ */
+static void req_pin_handler(nrfx_gpiote_pin_t pin,
+			     nrfx_gpiote_trigger_t trigger,
+			     void *context)
 {
+	ARG_UNUSED(trigger);
+	ARG_UNUSED(pin);
 	int key;
 	const uint8_t *buf;
 	size_t len;
 	int err;
+	struct lpuart_data *data = context;
 
 	if (data->tx_buf == NULL) {
 		LOG_WRN("TX: request confirmed but no data to send");
@@ -316,7 +395,8 @@ static void on_req_pin_change(struct lpuart_data *data)
 	}
 
 	LOG_DBG("TX: Confirmed, starting.");
-	ctrl_pin_set(&data->req_pin, true);
+
+	req_pin_set(data);
 	k_timer_stop(&data->tx_timer);
 
 	key = irq_lock();
@@ -331,91 +411,31 @@ static void on_req_pin_change(struct lpuart_data *data)
 	}
 }
 
-static void on_rdy_pin_change(struct lpuart_data *data)
+/* Handler is called in two cases:
+ * - high state detection. Receiver is idle and new transfer request is received
+ * - low state. Receiver is active and receiving a packet. Transmitter indicates
+ *   end of the packet.
+ */
+static void rdy_pin_handler(nrfx_gpiote_pin_t pin,
+			    nrfx_gpiote_trigger_t trigger,
+			    void *context)
 {
-	if (nrf_gpiote_event_polarity_get(NRF_GPIOTE, data->rdy_pin.ch)
-		== NRF_GPIOTE_POLARITY_LOTOHI) {
+	struct lpuart_data *data = context;
+
+	rdy_pin_suspend(data);
+	if (trigger == NRFX_GPIOTE_TRIGGER_HIGH) {
 		__ASSERT_NO_MSG(data->rx_state != RX_ACTIVE);
 
 		LOG_DBG("RX: Request detected.");
-		data->rx_req = true;
 		if (data->rx_state == RX_IDLE) {
 			start_rx_activation(data);
 		}
-	} else {
+	} else { /* HITOLO */
 		__ASSERT_NO_MSG(data->rx_state == RX_ACTIVE);
 
 		LOG_DBG("RX: End detected.");
 		deactivate_rx(data);
 	}
-}
-
-static void gpio_handler(const struct device *port,
-			struct gpio_callback *cb,
-			gpio_port_pins_t pins)
-{
-	const struct lpuart_bidir_gpio *io =
-		CONTAINER_OF(cb, struct lpuart_bidir_gpio, callback);
-	struct lpuart_data *data;
-
-	if (io->req) {
-		data = CONTAINER_OF(io, struct lpuart_data, req_pin);
-		on_req_pin_change(data);
-		return;
-	}
-
-	data = CONTAINER_OF(io, struct lpuart_data, rdy_pin);
-	on_rdy_pin_change(data);
-}
-
-static int ctrl_pin_configure(struct lpuart_bidir_gpio *io,
-			      const struct lpuart_pin_config *cfg, bool req)
-{
-	int err;
-	size_t i;
-
-	io->pin = cfg->pin;
-	io->nrf_pin = cfg->nrf_pin;
-	io->req = req;
-	io->port = device_get_binding(cfg->port_name);
-	if (!io->port) {
-		return -ENODEV;
-	}
-
-	gpio_init_callback(&io->callback, gpio_handler, BIT(io->pin));
-
-	err = gpio_pin_configure(io->port, io->pin, GPIO_INPUT);
-	if (err < 0) {
-		return err;
-	}
-
-	err = gpio_add_callback(io->port, &io->callback);
-	if (err < 0) {
-		return err;
-	}
-
-	err = gpio_pin_interrupt_configure(io->port, io->pin, req ?
-				GPIO_INT_EDGE_FALLING : GPIO_INT_EDGE_RISING);
-	if (err < 0) {
-		return err;
-	}
-
-	/* It is a hacky way to determine which channel is used for given pin.
-	 * GPIO driver implementation change may lead to break.
-	 */
-	for (i = 0; i < GPIOTE_CH_NUM; i++) {
-		if (nrf_gpiote_event_pin_get(NRF_GPIOTE, i) == io->nrf_pin) {
-			io->ch = i;
-			break;
-		}
-	}
-	__ASSERT(i < GPIOTE_CH_NUM, "Used channel not found");
-
-	ctrl_pin_idle(io);
-
-	LOG_DBG("Pin %d configured, gpiote ch:%d, mode:%s",
-		io->nrf_pin, io->ch, req ? "req" : "rdy");
-	return 0;
 }
 
 static int api_callback_set(const struct device *dev, uart_callback_t callback,
@@ -467,6 +487,13 @@ static void uart_callback(const struct device *uart, struct uart_event *evt,
 		LOG_DBG("RX: Ready buf:%p, offset: %d,len: %d",
 		     evt->data.rx.buf, evt->data.rx.offset, evt->data.rx.len);
 		user_callback(dev, evt);
+		if (data->rx_state == RX_BLOCKED) {
+			/* If order of rx_rdy and rx_disabled events were swapped
+			 * call rx_buf_req now.
+			 */
+			evt->type = UART_RX_BUF_REQUEST;
+			user_callback(dev, evt);
+		}
 		break;
 
 	case UART_RX_BUF_REQUEST:
@@ -479,26 +506,41 @@ static void uart_callback(const struct device *uart, struct uart_event *evt,
 		break;
 
 	case UART_RX_BUF_RELEASED:
+		LOG_DBG("Rx buf released");
 		user_callback(dev, evt);
 		break;
 
 	case UART_RX_DISABLED:
+	{
+		bool call_cb;
+
 		LOG_DBG("Rx disabled");
 		__ASSERT_NO_MSG((data->rx_state != RX_IDLE) &&
 			 (data->rx_state != RX_OFF));
 
 		if (data->rx_state == RX_TO_IDLE) {
+			call_cb = true;
 			data->rx_state = RX_BLOCKED;
 			/* Need to request new buffer since uart was disabled */
 			evt->type = UART_RX_BUF_REQUEST;
+		} else if (data->rx_state == RX_ACTIVE) {
+			/* Evt order flipped. RX_RDY will follow. */
+			LOG_WRN("Uart events flipped.");
+			data->rx_state = RX_BLOCKED;
+			call_cb = false;
 		} else {
 			data->rx_buf = NULL;
 			data->rx_state = RX_OFF;
+			call_cb = true;
 		}
 
-		user_callback(dev, evt);
+		if (call_cb) {
+			user_callback(dev, evt);
+		}
 		break;
+	}
 	case UART_RX_STOPPED:
+		LOG_DBG("Rx stopped");
 		user_callback(dev, evt);
 		break;
 	}
@@ -511,6 +553,7 @@ static void tx_timeout(struct k_timer *timer)
 	const uint8_t *txbuf = data->tx_buf;
 	int err;
 
+	LOG_WRN("Tx timeout");
 	if (data->tx_active) {
 		err = uart_tx_abort(data->uart);
 		if (err == -EFAULT) {
@@ -553,7 +596,8 @@ static int api_tx(const struct device *dev, const uint8_t *buf,
 	data->tx_len = len;
 	k_timer_start(&data->tx_timer, SYS_TIMEOUT_MS(timeout), K_NO_WAIT);
 
-	ctrl_pin_set(&data->req_pin, false);
+	/* Enable interrupt on pin going low. */
+	req_pin_arm(data);
 
 	return 0;
 }
@@ -601,8 +645,6 @@ static int api_rx_enable(const struct device *dev, uint8_t *buf,
 			 size_t len, int32_t timeout)
 {
 	struct lpuart_data *data = get_dev_data(dev);
-	bool pending_rx;
-	int key;
 
 	__ASSERT_NO_MSG(data->rx_state == RX_OFF);
 
@@ -615,15 +657,7 @@ static int api_rx_enable(const struct device *dev, uint8_t *buf,
 	data->rx_state = RX_IDLE;
 
 	LOG_DBG("RX: Enabling");
-
-	key = irq_lock();
-	pending_rx = nrf_gpio_pin_read(data->rdy_pin.nrf_pin)
-		     && (data->rx_state == RX_IDLE);
-	irq_unlock(key);
-
-	if (pending_rx) {
-		start_rx_activation(data);
-	}
+	rdy_pin_idle(data);
 
 	return 0;
 }
@@ -635,17 +669,13 @@ static int api_rx_buf_rsp(const struct device *dev, uint8_t *buf, size_t len)
 	__ASSERT_NO_MSG((data->rx_state != RX_OFF) &&
 		 (data->rx_state != RX_TO_OFF));
 
+	LOG_DBG("buf rsp, state:%d", data->rx_state);
 	if (data->rx_state == RX_TO_IDLE || data->rx_state == RX_BLOCKED) {
 		data->rx_buf = buf;
 		data->rx_len = len;
 
-		if (data->rx_req) {
-			LOG_DBG("RX: Pending request. Activating RX");
-			start_rx_activation(data);
-		} else {
-			data->rx_state = RX_IDLE;
-			LOG_DBG("RX: Idle");
-		}
+		data->rx_state = RX_IDLE;
+		rdy_pin_idle(data);
 
 		return 0;
 	}
@@ -882,14 +912,16 @@ static int lpuart_init(const struct device *dev)
 		return -ENODEV;
 	}
 
-	err = ctrl_pin_configure(&data->req_pin, &cfg->req, true);
+	err = req_pin_init(data, cfg->req_pin);
 	if (err < 0) {
-		return -EINVAL;
+		LOG_ERR("req pin init failed:%d", err);
+		return err;
 	}
 
-	err = ctrl_pin_configure(&data->rdy_pin, &cfg->rdy, false);
+	err = rdy_pin_init(data, cfg->rdy_pin);
 	if (err < 0) {
-		return -EINVAL;
+		LOG_ERR("rdy pin init failed:%d", err);
+		return err;
 	}
 
 	k_timer_init(&data->tx_timer, tx_timeout, NULL);
@@ -980,15 +1012,13 @@ static int api_config_get(const struct device *dev, struct uart_config *cfg)
 
 #define LPUART_PIN_CFG_INITIALIZER(pin_prop) \
 	{ \
-		.port_name = GET_PORT(pin_prop), \
-		.pin = DT_INST_PROP(0, pin_prop) & 0x1F, \
-		.nrf_pin = DT_INST_PROP(0, pin_prop) \
+		.pin = DT_INST_PROP(0, pin_prop) \
 	}
 
 static const struct lpuart_config lpuart_config = {
 	.uart_name = DT_INST_BUS_LABEL(0),
-	.req = LPUART_PIN_CFG_INITIALIZER(req_pin),
-	.rdy = LPUART_PIN_CFG_INITIALIZER(rdy_pin)
+	.req_pin = DT_INST_PROP(0, req_pin),
+	.rdy_pin = DT_INST_PROP(0, rdy_pin)
 };
 
 static struct lpuart_data lpuart_data;
