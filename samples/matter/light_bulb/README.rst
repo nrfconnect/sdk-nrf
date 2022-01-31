@@ -27,8 +27,8 @@ The sample supports the following development kits:
 
 For remote testing scenarios, you also need the following:
 
-* If you want to commission the light bulb device and :ref:`control it remotely <matter_light_bulb_network_mode>` through a Thread network: a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>` (which requires additional hardware depending on which setup you choose).
-* If you want to use the :ref:`test mode <matter_light_bulb_sample_test_mode>` and control the light bulb using light switch, the :ref:`Matter light switch <matter_light_switch_sample>` sample programmed to another supported development kit.
+* To commission the light bulb device and :ref:`control it remotely <matter_light_bulb_network_mode>` through a Thread network, a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>` (which requires additional hardware depending on which setup you choose).
+* To use the :ref:`test mode <matter_light_bulb_sample_test_mode>` and control the light bulb using light switch, the :ref:`Matter light switch <matter_light_switch_sample>` sample programmed to another supported development kit.
 
 .. note::
     |matter_gn_required_note|
@@ -37,13 +37,13 @@ Overview
 ********
 
 The sample uses buttons to test changing the light bulb and device states, and LEDs to show the state of these changes.
-It can be tested in the following ways:
+You can test it in the following ways:
 
 * Standalone, by using a single DK that runs the light bulb application.
 * Remotely over the Thread protocol, which requires more devices.
 
-The remote control testing requires a Matter controller, which can be configured either on PC or mobile (for remote testing in a network) or on an embedded device (for remote testing using test mode).
-Both methods can be enabled after :ref:`building and running the sample <matter_light_bulb_sample_remote_control>`.
+The remote control testing requires a Matter controller that you can configure on a PC, mobile device (for remote testing in a network), or on an embedded device (for remote testing using test mode).
+You can enable both methods after :ref:`building and running the sample <matter_light_bulb_sample_remote_control>`.
 
 .. _matter_light_bulb_network_mode:
 
@@ -64,7 +64,7 @@ Remote testing using test mode
     :end-before: matter_door_lock_sample_test_mode_end
 
 Using the test mode allows you to control the light bulb remotely without using a smartphone compatible with Android.
-The light bulb device programmed with this sample can be used with the light switch device programmed with the :ref:`Matter light switch <matter_light_switch_sample>` sample to create a simplified Thread network.
+You can use the light bulb device programmed with this sample together with a light switch device programmed with the :ref:`Matter light switch <matter_light_switch_sample>` sample to create a simplified Thread network.
 
 Configuration
 *************
@@ -111,11 +111,11 @@ Button 2:
 Button 3:
     Starts the Thread networking in the :ref:`test mode <matter_light_bulb_sample_test_mode>` using the default configuration.
 
-    When running application in light switch test mode it also starts publishing the light bulb service messages for a predefined period of time to advertise the light bulb device IP address to the light switch device (if used).
-    If for some reason the light switch device is not able to receive messages during this predefined period of time, you can restart publishing service by pressing this button again.
+    When running the application in light switch test mode, it also starts publishing the light bulb service messages for a predefined period of time to advertise the light bulb device IP address to the light switch device (if used).
+    If the light switch device cannot receive messages during this time, press the button again to restart the publishing service.
 
 Button 4:
-    Starts the NFC tag emulation, enables Bluetooth® LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
+    Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
     This button is used during the :ref:`commissioning procedure <matter_light_bulb_sample_remote_control_commissioning>`.
 
 .. include:: ../lock/README.rst
@@ -144,7 +144,7 @@ You can either test the sample's :ref:`basic features <matter_light_bulb_sample_
 Testing basic features
 ----------------------
 
-After building the sample and programming it to your development kit, test its basic features by completing the following steps:
+After building the sample and programming it to your development kit, complete the following steps to test its basic features:
 
 #. |connect_kit|
 #. |connect_terminal|
@@ -172,7 +172,7 @@ After building the sample and programming it to your development kit, test its b
 Testing communication with another device
 -----------------------------------------
 
-After building this sample and the :ref:`Matter light switch <matter_light_switch_sample>` sample and programming them to development kits, test communication between both devices by completing the following steps:
+After building this sample and the :ref:`Matter light switch <matter_light_switch_sample>` sample and programming them to the development kits, complete the following steps to test communication between both devices:
 
 .. include:: ../light_switch/README.rst
     :start-after: matter_light_switch_sample_testing_start
@@ -198,11 +198,13 @@ Commissioning the device
     :start-after: matter_door_lock_sample_commissioning_start
     :end-before: matter_door_lock_sample_commissioning_end
 
-Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE, which starts automatically upon the device startup, but only for a predefined period of time (15 minutes by default).
-If the Bluetooth LE advertising times out, you can re-enable it by pressing **Button 4**.
+Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE.
+The device becomes discoverable automatically upon the device startup, but only for a predefined period of time (15 minutes by default).
+If the Bluetooth LE advertising times out, press **Button 4** to re-enable it.
 
 When you start the commissioning procedure, the controller must get the commissioning information from the Matter accessory device.
-The data payload, which includes the device discriminator and setup PIN code, is encoded within a QR code, printed to the UART console, and can be shared using an NFC tag.
+The data payload includes the device discriminator and setup PIN code.
+It is encoded within a QR code printed to the UART console and can be shared using an NFC tag.
 
 Upgrading the device firmware
 =============================
@@ -212,11 +214,11 @@ To upgrade the device firmware, complete the steps listed for the selected metho
 Dependencies
 ************
 
-This sample uses the Matter library, which includes the |NCS| platform integration layer:
+This sample uses the Matter library that includes the |NCS| platform integration layer:
 
 * `Matter`_
 
-In addition, the sample uses the following |NCS| components:
+In addition, it uses the following |NCS| components:
 
 * :ref:`dk_buttons_and_leds_readme`
 * :ref:`nfc_uri`
