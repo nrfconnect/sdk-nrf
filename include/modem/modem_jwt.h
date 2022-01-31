@@ -3,6 +3,13 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/modem/modem_jwt.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/modem/modem_jwt.html.
+ */
+
 #ifndef MODEM_JWT_H__
 #define MODEM_JWT_H__
 

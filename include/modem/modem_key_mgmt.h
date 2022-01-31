@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/modem/modem_key_mgmt.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/modem/modem_key_mgmt.html.
+ */
+
 #ifndef MODEM_KEY_MGMT_H__
 #define MODEM_KEY_MGMT_H__
 

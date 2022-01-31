@@ -3,6 +3,13 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/modem/location.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/modem/location.html.
+ */
+
 #ifndef LOCATION_H_
 #define LOCATION_H_
 

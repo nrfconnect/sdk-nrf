@@ -3,6 +3,13 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/modem/at_cmd_parser.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/modem/at_cmd_parser.html.
+ */
+
 #ifndef AT_CMD_PARSER_H__
 #define AT_CMD_PARSER_H__
 

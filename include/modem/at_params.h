@@ -12,6 +12,12 @@
 extern "C" {
 #endif
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/modem/at_params.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/modem/at_params.html.
+ */
+
 /**
  * @file at_params.h
  *

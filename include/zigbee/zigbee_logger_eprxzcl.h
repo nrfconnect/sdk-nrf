@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in
+ * doc/nrf/libraries/zigbee/zigbee_logger_eprxzcl.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/zigbee/zigbee_logger_eprxzcl.html.
+ */
+
 #ifndef ZIGBEE_COMMON_ZIGBEE_LOGGER_EPRXZCL_H_
 #define ZIGBEE_COMMON_ZIGBEE_LOGGER_EPRXZCL_H_
 

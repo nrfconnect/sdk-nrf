@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in
+ * doc/nrf/libraries/zigbee/zigbee_error_handler.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/zigbee/zigbee_error_handler.html.
+ */
+
 /**
  * @file
  *  @defgroup zb_error ZBOSS error handling utilities

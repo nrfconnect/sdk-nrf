@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * The RST file for this library can be found in doc/nrf/libraries/zigbee/zigbee_fota.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/zigbee/zigbee_fota.html.
+ */
+
 /** @file zigbee_fota.h
  *
  * @defgroup zigbee_fota Zigbee firmware over-the-air download library

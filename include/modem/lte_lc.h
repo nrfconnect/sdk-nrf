@@ -1,4 +1,10 @@
 /*
+ * The RST file for this library can be found in doc/nrf/libraries/modem/lte_lc.rst.
+ * Rendered documentation is available at
+ * https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/modem/lte_lc.html.
+ */
+
+/*
  * Copyright (c) 2018 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
