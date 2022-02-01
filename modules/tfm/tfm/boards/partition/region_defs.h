@@ -137,4 +137,17 @@
 #define BOOT_TFM_SHARED_DATA_LIMIT (BOOT_TFM_SHARED_DATA_BASE + \
 				    BOOT_TFM_SHARED_DATA_SIZE - 1)
 
+/* Regions used by psa-arch-tests to keep state */
+#define PSA_TEST_SCRATCH_AREA_SIZE (0x400)
+
+#ifdef PSA_API_TEST_IPC
+
+/* Firmware Framework test suites */
+#define FF_TEST_PARTITION_SIZE 0x100
+#define PSA_TEST_SCRATCH_AREA_BASE (NS_DATA_LIMIT + 1 - \
+				    PSA_TEST_SCRATCH_AREA_SIZE - \
+				    FF_TEST_PARTITION_SIZE)
+
+#endif /* PSA_API_TEST_IPC */
+
 #endif /* __REGION_DEFS_H__ */
