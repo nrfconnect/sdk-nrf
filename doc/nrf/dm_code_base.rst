@@ -10,7 +10,7 @@ nRF Connect SDK code base
 The source code, libraries, and tools that compose the |NCS| are entirely hosted in a set of `Git`_ repositories.
 Basic familiarity with Git is required to understand the architecture of the repository set and to work with the |NCS|.
 
-All |NCS| repositories are publicly hosted on `GitHub`_, and accessible to both individual users and companies.
+All |NCS| repositories are publicly hosted on the `nrfconnect GitHub organization`_, and accessible to both individual users and companies.
 
 .. _dm_repo_types:
 
