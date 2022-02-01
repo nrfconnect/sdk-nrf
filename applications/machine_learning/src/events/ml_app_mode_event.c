@@ -21,7 +21,9 @@ static int log_ml_app_mode_event(const struct event_header *eh, char *buf, size_
 	__ASSERT_NO_MSG(event->mode < ML_APP_MODE_COUNT);
 	__ASSERT_NO_MSG(ml_app_mode_name[event->mode] != NULL);
 
-	return snprintf(buf, buf_len, "state: %s", ml_app_mode_name[event->mode]);
+	EVENT_MANAGER_LOG(eh, "state: %s", ml_app_mode_name[event->mode]);
+
+	return 0;
 }
 
 EVENT_TYPE_DEFINE(ml_app_mode_event,
