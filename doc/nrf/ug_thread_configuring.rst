@@ -298,8 +298,8 @@ No tick indicates that there is no support for the given feature in the related 
       -
     * - COAPS
       - ✔
-      - ✔
-      - ✔
+      -
+      -
       -
     * - COMMISSIONER
       - ✔
@@ -338,8 +338,8 @@ No tick indicates that there is no support for the given feature in the related 
       -
     * - JAM_DETECTION
       - ✔
-      - ✔
-      - ✔
+      -
+      -
       -
     * - JOINER
       - ✔
@@ -353,8 +353,8 @@ No tick indicates that there is no support for the given feature in the related 
       -
     * - MAC_FILTER
       - ✔
-      - ✔
-      - ✔
+      -
+      -
       -
     * - MTD_NETDIAG
       - ✔
@@ -363,7 +363,7 @@ No tick indicates that there is no support for the given feature in the related 
       -
     * - SERVICE
       - ✔
-      - ✔
+      -
       -
       -
     * - SLAAC
@@ -376,9 +376,14 @@ No tick indicates that there is no support for the given feature in the related 
       - ✔
       - ✔
       -
+    * - SRP_CLIENT
+      - ✔
+      - ✔
+      - ✔
+      -
     * - UDP_FORWARD
       - ✔
-      - ✔
+      -
       -
       -
     * - DUA (Thread 1.2)
