@@ -55,15 +55,9 @@ config PM_PARTITION_SIZE_SPM
 config PM_PARTITION_SIZE_SPM_SRAM
 	hex "RAM reserved for SPM"
 	default 0 if !SPM_SECURE_SERVICES
-	default 0x10000 if SOC_NRF9160
 	default 0x8000
 	help
 	  RAM area set aside for the SPM.
-	  On the nRF9160 the Modem library needs to be included in the build.
-	  There are scrict requirements to the RAM area reserved for Modem library.
-	  Specifically it must be 64kB from RAM offset 0x10000.
-	  By setting the SPM RAM to 0x10000 we ensure that Modem library RAM ends
-	  up in the right place.
 
 config SPM_BOOT_SILENTLY
 	bool "Boot silently"

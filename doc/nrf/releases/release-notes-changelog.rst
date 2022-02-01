@@ -153,6 +153,10 @@ Bluetooth samples
 nRF9160 samples
 ---------------
 
+* :ref:`secure_partition_manager` sample:
+
+  * Reduced the amount of RAM reserved in the default configuration of the sample for nRF9160, freeing up 32 Kb of RAM for the application.
+
 * :ref:`modem_shell_application` sample:
 
   * Added a new shell command ``cloud`` for establishing an MQTT connection to nRF Cloud.
