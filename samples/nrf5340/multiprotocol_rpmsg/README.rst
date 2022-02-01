@@ -9,6 +9,17 @@ nRF5340: Multiprotocol RPMsg
 
 This sample exposes the :ref:`softdevice_controller` and the IEEE 802.15.4 radio driver support to the nRF5340 application CPU, using RPMsg transport as part of `OpenAMP`_.
 
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340dk_nrf5340_cpunet
+
+The testing procedure of the sample also requires a second development kit that supports IEEE 802.15.4.
+
 Overview
 ********
 
@@ -23,21 +34,10 @@ See the following configuration options for more information:
 You might need to adjust the Kconfig configuration of this sample to make it compatible with the peer application.
 For example, :kconfig:`CONFIG_BT_MAX_CONN` must be equal to the maximum number of connections supported by the peer application.
 
-The following components have been disabled to make this sample energy-efficient:
+The following components in the :file:`prj.conf` file have been disabled to make this sample energy-efficient:
 
-* Serial console (in :file:`prj.conf`)
-* Logger (in :file:`prj.conf`)
-
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpunet
-
-The testing procedure of the sample also requires a second development kit that supports IEEE 802.15.4.
+* Serial console
+* Logger
 
 Building and running
 ********************
@@ -48,6 +48,8 @@ You must program this sample to the nRF5340 network core.
 
 The recommended way of building the sample is to use the multi-image feature of the build system.
 In this way, the sample is built automatically as a child image when both :kconfig:`CONFIG_BT_RPMSG_NRF53` and :kconfig:`CONFIG_NRF_802154_SER_HOST` are enabled.
+
+However, you can also build the sample as a stand-alone image.
 
 See :ref:`configure_application` for information about how to configure the sample.
 
@@ -64,15 +66,13 @@ To see an example of this multi-image build on the command line, run the followi
 
    west build -b nrf5340dk_nrf5340_cpuapp -p -- -DOVERLAY_CONFIG="overlay-802154.conf;overlay-bt.conf"
 
-However, it is also possible to build the sample as a stand-alone image.
-
 .. include:: /includes/build_and_run.txt
 
 Testing
 *******
 
 The testing methods for this sample depend on how it was built and programmed to the device.
-For example, if you built the sample in a multi-image build containing also the :ref:`sockets-echo-server-sample` sample mentioned before, you can test it as follows:
+For example, if you built the sample in a multi-image build containing also the :ref:`sockets-echo-server-sample` sample, you can test it as follows:
 
 1. Run the IEEE 802.15.4 variant of the :ref:`sockets-echo-client-sample` on a second development kit that supports IEEE 802.15.4.
 #. |connect_terminal|

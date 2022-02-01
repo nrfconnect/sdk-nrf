@@ -7,13 +7,22 @@ nRF5340: Empty firmware for application core
    :local:
    :depth: 2
 
-This sample can be used to run an application on the network core of the nRF5340 when there is no need for the working application core.
+You can use this sample to run an application on the network core of the nRF5340 when there is no need for the working application core.
+
+Requirements
+************
+
+The sample supports the following development kit:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340dk_nrf5340_cpuapp
 
 Overview
 ********
 
-The sample has minimal Zephyr configuration: no multithreading, no clock, no MPU, no device drivers.
-It does the following things:
+The sample has a minimal Zephyr configuration: no multithreading, no clock, no MPU, no device drivers.
+It does the following:
 
 * During system initialization:
 
@@ -27,15 +36,6 @@ It does the following things:
   * The application RAM is powered off to reduce power consumption.
   * The application core is suspended indefinitely.
 
-Requirements
-************
-
-The sample supports the following development kit:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp
-
 Building and running
 ********************
 
@@ -45,14 +45,17 @@ Building and running
 
 Testing
 =======
-1. Program this sample to the application core.
+
+To test the sample, complete the following steps:
+
+1. Program the sample to the application core.
 #. Program Zephyr's :ref:`zephyr:blinky-sample` sample to the network core.
 #. Observe the LEDs on the kit.
 
 Dependencies
 ************
 
-This sample uses the following `nrfx`_ dependencies:
+This sample has the following `nrfx`_ dependencies:
 
 * ``nrfx/nrf.h``
 * ``nrfx/nrfx.h``
