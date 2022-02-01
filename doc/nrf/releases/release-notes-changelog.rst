@@ -58,6 +58,7 @@ Thread
 ------
 
 * Changed how Thread 1.2 is enabled, refer to :ref:`thread_ug_thread_specification_options` and :ref:`thread_ug_feature_sets` for more information.
+* Modified feature sets by adding support for SRP client and removing rarely used features.
 
 Zigbee
 ------
