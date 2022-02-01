@@ -1710,6 +1710,7 @@ These are valid for events that have many listeners or sources, and are gathered
    doc/bas.rst
    doc/hid_forward.rst
    doc/hid_state.rst
+   doc/hid_state_pm.rst
    doc/hids.rst
    doc/info.rst
    doc/led_state.rst

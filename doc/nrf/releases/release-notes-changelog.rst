@@ -112,6 +112,7 @@ nRF Desktop
 
 * Added:
 
+  * :ref:`nrf_desktop_hid_state_pm` documentation.
   * Possibility to ask for bootloader variant using config channel.
   * Added Kconfig options that allow erasing dongle bond on the gaming mouse using buttons or config channel.
   * Added two states to enable erasing dongle peer: ``STATE_DONGLE_ERASE_PEER`` and ``STATE_DONGLE_ERASE_ADV``.
