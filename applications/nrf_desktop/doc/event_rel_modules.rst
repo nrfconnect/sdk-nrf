@@ -90,6 +90,7 @@ Sink modules for hid_report_event
 * :ref:`nrf_desktop_dfu`
 * :ref:`nrf_desktop_hid_forward`
 * :ref:`nrf_desktop_hid_state`
+* :ref:`nrf_desktop_hid_state_pm`
 * :ref:`nrf_desktop_hids`
 * :ref:`nrf_desktop_usb_state`
 
