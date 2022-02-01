@@ -104,7 +104,7 @@ config NRF_MODEM_LIB_SHMEM_CTRL_SIZE
 
 config NRF_MODEM_LIB_SHMEM_TX_SIZE
 	int "TX region size"
-	range 1024 16384
+	range 1024 32768
 	default 8192
 	help
 	  Size of the shared memory area owned by the application.
@@ -113,13 +113,11 @@ config NRF_MODEM_LIB_SHMEM_TX_SIZE
 
 config NRF_MODEM_LIB_SHMEM_RX_SIZE
 	int "RX region size"
-	range 1544 16384
+	range 1544 32768
 	default 8192
 	help
 	  Size of the shared memory area owned by the modem.
 	  This area holds all incoming data from the modem, plus the modem's own control structures.
-	  The minimum memory requirements stem from the size of the RPC lists (264 bytes = 8 + (32 * 8)),
-	  plus the RPC messages and data buffers (1280 bytes = 256 + 1024).
 
 config NRF_MODEM_LIB_SHMEM_TRACE_SIZE_OVERRIDE
 	bool "Custom Trace region size"
