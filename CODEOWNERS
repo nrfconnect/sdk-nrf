@@ -137,7 +137,7 @@ Kconfig*                                  @tejlmand
 /samples/peripheral/radio_test/           @kapi-no
 /samples/peripheral/lpuart/               @nordic-krch
 /samples/peripheral/802154_phy_test/      @czeslawmakarski
-/samples/tfm/tfm_hello_world/             @oyvindronningstad @SebastianBoe
+/samples/tfm/                             @SebastianBoe @joerchan
 /samples/zigbee/                          @tomchy @sebastiandraus
 /samples/CMakeLists.txt                   @tejlmand
 /samples/nrf5340/netboot/                 @hakonfam
@@ -180,7 +180,7 @@ Kconfig*                                  @tejlmand
 /subsys/spm/                              @SebastianBoe
 /subsys/nonsecure/                        @SebastianBoe
 /modules/                                 @tejlmand
-/modules/tfm/                             @oyvindronningstad @SebastianBoe @hakonfam
+/modules/tfm/                             @SebastianBoe @joerchan
 /subsys/zigbee/                           @tomchy @sebastiandraus
 /tests/                                   @gopiotr
 /tests/bluetooth/tester/                  @carlescufi @trond-snekvik
@@ -202,7 +202,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/ram_pwrdn/                     @Damian-Nordic
 /tests/modules/lib/cddl-gen/              @oyvindronningstad
 /tests/modules/mcuboot/external_flash/    @hakonfam @sigvartmh
-/tests/modules/tfm/                       @hakonfam @SebastianBoe
+/tests/modules/tfm/                       @SebastianBoe @joerchan @torsteingrindvik @magnev
 /tests/subsys/bluetooth/mesh/             @trond-snekvik
 /tests/subsys/bootloader/                 @hakonfam
 /tests/subsys/debug/cpu_load/             @nordic-krch
