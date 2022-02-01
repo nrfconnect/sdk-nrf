@@ -125,9 +125,11 @@ void test_sha256_string(const uint8_t * input, uint32_t input_len, const uint8_t
 	static uint32_t run_count;
 
 	rc = bl_sha256_init(&ctx);
+	zassert_equal(0, rc, "bl_sha256_init failed retval was: %d", rc);
 	rc = bl_sha256_update(&ctx, input, input_len);
+	zassert_equal(0, rc, "bl_sha256_update failed retval was: %d", rc);
 	rc = bl_sha256_finalize(&ctx, output);
-	zassert_equal(0, rc, "hash updated failed retval was: %d");
+	zassert_equal(0, rc, "bl_sha256_finalize failed retval was: %d", rc);
 
 	for(size_t i = 0; i < ARRAY_SIZE(output); i++) {
 		if(eq){

@@ -36,7 +36,7 @@ int bl_sha256_init(ocrypto_sha256_ctx *ctx)
 
 int bl_sha256_update(ocrypto_sha256_ctx *ctx, const uint8_t *data, uint32_t data_len)
 {
-	if (!ctx || !data) {
+	if (!ctx || (!data && data_len > 0)) {
 		return -EINVAL;
 	}
 	ocrypto_sha256_update(ctx, data, (size_t) data_len);
