@@ -230,7 +230,7 @@
 
 .. _`iBasis network coverage spreadsheet`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/3rd-party/iBasis-simplified-coverage-map-for-web.pdf?la=en&hash=CA7DBF400243D8A7A7BDA94873B50E73C26B4FAC
 
-.. _`nRF Connect SDK v1.9.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v19
+.. _`nRF Connect SDK v1.9.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v19?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=In-line%20text%20%7C%20nRF%20Connect%20SDK%20v1.9%20%7C%20Link%20to%20webinar
 
 .. ### Source: infocenter.nordicsemi.com
 
@@ -364,11 +364,11 @@
 
 .. ### Source: www.segger.com
 
-.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x86`: https://www.segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_win_x86
-.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x64`: https://www.segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_win_x64
-.. _`SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`: https://www.segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_macos
-.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x86`: https://www.segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x86
-.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x64`: https://www.segger.com/downloads/embedded-studio/embeddedstudio_arm_nordic_linux_x64
+.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x86`: https://www.segger.com/downloads/embedded-studio/EmbeddedStudio_ARM_Nordic_v568_win_x86.zip
+.. _`SEGGER Embedded Studio (Nordic Edition) - Windows x64`: https://www.segger.com/downloads/embedded-studio/EmbeddedStudio_ARM_Nordic_v568_win_x64.zip
+.. _`SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`: https://www.segger.com/downloads/embedded-studio/EmbeddedStudio_ARM_Nordic_v568_macos_x64.dmg
+.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x86`: https://www.segger.com/downloads/embedded-studio/EmbeddedStudio_ARM_Nordic_v568_linux_x86.tar.gz
+.. _`SEGGER Embedded Studio (Nordic Edition) - Linux x64`: https://www.segger.com/downloads/embedded-studio/EmbeddedStudio_ARM_Nordic_v568_linux_x64.tar.gz
 
 .. _`J-Link Software and Documentation Pack`: https://www.segger.com/downloads/jlink
 
