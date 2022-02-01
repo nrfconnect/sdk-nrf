@@ -10,14 +10,6 @@ NFC: Text record
 The NFC Text record sample shows how to use the NFC tag to expose a text record to NFC polling devices.
 It uses the :ref:`lib_nfc_ndef`.
 
-Overview
-********
-
-When the sample starts, it initializes the NFC tag and generates an NDEF message with three text records that contain the text "Hello World!" in three languages.
-Then it sets up the NFC library to use the generated message and sense the external NFC field.
-
-The only events handled by the application are the NFC events.
-
 Requirements
 ************
 
@@ -27,8 +19,15 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840,  nrf52dk_nrf52832, nrf52833dk_nrf52833
 
-
 The sample also requires a smartphone or tablet.
+
+Overview
+********
+
+When the sample starts, it initializes the NFC tag and generates an NDEF message with three text records that contain the text "Hello World!" in three languages.
+Then it sets up the NFC library to use the generated message and sense the external NFC field.
+
+The only events handled by the application are the NFC events.
 
 User interface
 **************
@@ -46,13 +45,11 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+After programming the sample to your development kit, complete the following steps to test it:
 
-1. Touch the NFC antenna with the smartphone or tablet and observe that LED 1 is lit.
-#. Observe that the smartphone/tablet displays the encoded text (in the most
-   suitable language).
-#. Move the smartphone/tablet away from the NFC antenna and observe that LED 1
-   turns off.
+1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 1** is lit.
+#. Observe that the smartphone or tablet displays the encoded text (in the most suitable language).
+#. Move the smartphone or tablet away from the NFC antenna and observe that **LED 1** turns off.
 
 Dependencies
 ************
@@ -66,7 +63,7 @@ In addition, it uses the Type 2 Tag library from `sdk-nrfxlib`_:
 
 * :ref:`nrfxlib:nfc_api_type2`
 
-The sample uses the following Zephyr libraries:
+It uses the following Zephyr libraries:
 
 * ``include/zephyr.h``
 * ``include/device.h``
