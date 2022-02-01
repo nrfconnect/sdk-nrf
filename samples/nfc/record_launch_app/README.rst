@@ -19,9 +19,8 @@ This sample supports the following development kits:
    :header: heading
    :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840,  nrf52dk_nrf52832, nrf52833dk_nrf52833
 
-
 The sample also requires a smartphone or a tablet.
-You need to have the nRF Toolbox app installed for iOS devices.
+You need to have the `nRF Toolbox`_ app installed for iOS devices.
 
 Overview
 ********
@@ -47,16 +46,16 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, perform the following steps to test it:
+After programming the sample to your development kit, complete the following steps to test it:
 
 1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 1** is lit.
-#. Observe that the smartphone or tablet launches the nRF Toolbox application.
+#. Observe that the smartphone or tablet launches the `nRF Toolbox`_ application.
 #. Move the smartphone or tablet away from the NFC antenna and observe that **LED 1**
    turns off.
 
    .. note::
-	   Devices running iOS require the nRF Toolbox app to be installed before testing the sample.
-	   Devices running Android will open Google Play when the application is not installed.
+      Devices running iOS require the nRF Toolbox app to be installed before testing the sample.
+      Devices running Android open Google Play when the application is not installed.
 
 Dependencies
 ************

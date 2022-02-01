@@ -10,24 +10,35 @@ NFC: System OFF
 The NFC System OFF sample shows how to make the NFC Tag device wake up from the System OFF mode when it detects the NFC field.
 The sample uses the :ref:`lib_nfc_ndef`.
 
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52dk_nrf52832
+
+The sample also requires a smartphone or tablet with the NFC feature.
+
 Overview
 ********
 
 The sample starts with the initialization of the NFC Tag device.
 The device then attempts to detect an external NFC field.
-If the field is not detected within 3 seconds, the device goes into the System OFF mode.
+If the field is not detected within three seconds, the device goes into the System OFF mode.
 
-The wake-up from the System OFF mode is done when an NFC field is detected.
+The device wakes up from the System OFF mode when an NFC field is detected.
 The system is started and the NFC Tag device is reinitialized.
 The tag can be read afterwards.
 
-Once the NFC field is not within range anymore, the sample goes back to the System OFF mode.
+When the NFC field is not within range anymore, the device goes back to the System OFF mode.
 
-Fully working NFC Tag is not a requirement for wake up by NFC field feature.
-It is also possible to skip NFC Tag configuration and use NFCT peripheral registers directly.
-In this case reader will not be able to read anything, but it will be able to wake up the system.
-Following function shows how to do it.
-It can be used instead of ``start_nfc()`` function from the sample.
+You do not necessarily need a fully working NFC Tag for the wake-up.
+You can use the NFCT peripheral registers directly.
+In this case, the reader cannot read anything, but it can wake up the system.
+
+When using the registers to wake up the device, replace :c:func:`start_nfc()` with the following function:
 
 .. code-block:: c
 
@@ -42,30 +53,16 @@ It can be used instead of ``start_nfc()`` function from the sample.
   	irq_unlock(key);
   }
 
-
 See the `System OFF mode`_ page in the nRF52840 Product Specification for more information.
-
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52dk_nrf52832
-
-The sample also requires a smartphone or tablet with the NFC feature.
-
 
 User interface
 **************
 
 LED 1:
-   On when an NFC field is present within range.
+   Lit when an NFC field is present within range.
 
 LED 2:
-   On when the system is on.
-
+   Lit when the system is on.
 
 Building and running
 ********************
@@ -77,19 +74,19 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+After programming the sample to your development kit, complete the following steps to test it:
 
-1. Observe that LED 2 on the Tag device turns off after 3 seconds after the programming is complete.
+1. Observe that **LED 2** on the Tag device turns off three seconds after the programming has completed.
    This indicates that the system is in the System OFF mode.
 #. Make sure that the NFC feature is activated on the smartphone or tablet.
-   Check the device documentation for information about how to enable the NFC feature.
-#. With the smartphone or tablet, touch the NFC antenna on the NFC Tag device.
-#. Observe that LED 2 on the Tag device is lit, followed by LED 1 shortly after that.
-   Moreover, a ``Hello World!`` notification appears on the smartphone or tablet.
+   Check the device documentation on how to enable the NFC feature.
+#. With the smartphone or tablet, touch the NFC antenna of the NFC Tag device.
+#. Observe that **LED 2** on the Tag device is lit, followed by **LED 1** shortly after that.
+   Also a "Hello World!" notification appears on the smartphone or tablet.
    The notification text is obtained from NFC.
 #. Move the smartphone or tablet away from the NFC antenna.
-   LED 1 turns off.
-#. Observe that LED 2 on the Tag device turns off after 3 seconds.
+   **LED 1** turns off.
+#. Observe that **LED 2** on the Tag device turns off after three seconds.
    This indicates that system is in the System OFF mode again.
 
 Dependencies
