@@ -102,6 +102,10 @@
 
 .. _`cddl-gen`: https://github.com/NordicSemiconductor/cddl-gen
 
+.. _`nordic-hid.quirk`: https://github.com/fwupd/fwupd/tree/main/plugins/nordic-hid/nordic-hid.quirk
+
+.. _`fwupd`: https://github.com/fwupd/fwupd
+
 .. ### Source: github.io
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
@@ -777,3 +781,15 @@
 .. _`Termite`: https://www.compuphase.com/software_termite.htm
 
 .. _`Teraterm`: https://ttssh2.osdn.jp/index.html.en
+
+.. _`LVFS`: https://fwupd.org/lvfs
+
+.. _`LVFS Getting an Account`: https://lvfs.readthedocs.io/en/latest/apply.html
+
+.. _`LVFS metadata`: https://lvfs.readthedocs.io/en/latest/metainfo.html
+
+.. _`LVFS Uploading Firmware`: https://lvfs.readthedocs.io/en/latest/upload.html
+
+.. _`LVFS testing`: https://lvfs.readthedocs.io/en/latest/testing.html
+
+.. _`LVFS building fwupd`: https://lvfs.readthedocs.io/en/latest/custom-plugin.html#building-fwupd
