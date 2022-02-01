@@ -8,11 +8,6 @@
 #    - None
 
 - scenarios:
-    - samples.edge_impulse.wrapper
-    - applications.machine_learning.zdebug
-    - applications.machine_learning.zdebug_nus
-    - applications.machine_learning.zdebug_rtt
-    - applications.machine_learning.zrelease
+    - None
   platforms:
-    - all
-  comment: "Issues with edge impulse server"
+    - None
