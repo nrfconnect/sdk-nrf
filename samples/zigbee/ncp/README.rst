@@ -12,7 +12,7 @@ The :ref:`Zigbee <ug_zigbee>` NCP sample demonstrates the usage of Zigbee's :ref
 Together with the source code from :ref:`ug_zigbee_tools_ncp_host`, you can use this sample to create a complete and functional Zigbee device.
 For example, as shown in the `Testing`_ scenario, you can program a development kit with the NCP sample and bundle it with the simple gateway application on the NCP host processor.
 
-You can then use this sample together with the :ref:`Zigbee light bulb <zigbee_light_bulb_sample>` to set up a basic Zigbee network.
+You can then use this sample together with the :ref:`Zigbee Light bulb <zigbee_light_bulb_sample>` to set up a basic Zigbee network.
 
 Requirements
 ************
@@ -23,14 +23,14 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf52840dk_nrf52840, nrf52840dongle_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840, nrf5340dk_nrf5340_cpuapp
 
-``nrf5340dk_nrf5340_cpuapp`` is supported only for development.
+The nRF5340 DK (``nrf5340dk_nrf5340_cpuapp``) is supported only for development.
 
 You can use any of the development kits listed above.
 
 .. note::
     The nRF52840 Dongle uses a :ref:`different bootloader <zigbee_ncp_bootloader>` than other development kits.
 
-For this sample to work, you also need the following:
+To test this sample, you also need the following:
 
 * :ref:`ug_zigbee_tools_ncp_host` tool, which is based on the ZBOSS stack and requires a PC with an operating system compatible with the 64-bit Ubuntu 18.04 Linux.
   The tool is available for download as a standalone :file:`zip` package using the following link:
@@ -50,16 +50,16 @@ This means that you need at least two development kits for testing this sample.
 Requirements for DFU through MCUboot
 ====================================
 
-If you opt for `MCUboot`_ when selecting the `Bootloader support`_, you will need the `dfu-util tool`_ to upload the new firmware image.
+If you opt for `MCUboot`_ when selecting the `Bootloader support`_, you need the `dfu-util tool`_ to upload the new firmware image.
 
 Overview
 ********
 
-The sample demonstrates using a Nordic Semiconductor's Development Kit as Zigbee Network Co-Processor.
+The sample demonstrates using a Nordic Semiconductor's Development Kit as a Zigbee Network Co-Processor.
 
 The sample uses the :kconfig:`CONFIG_ZIGBEE_LIBRARY_NCP_DEV` Kconfig option, which is available as part of the :ref:`nrfxlib:zboss_configuration`.
 The NCP Kconfig option extends the compilation process with an implementation of the ZBOSS API serialization through NCP commands.
-It also implements the ZBOSS default signal handler function, which controls the ZBOSS and commissioning logic.
+It also implements the ZBOSS default signal handler function that controls the ZBOSS and commissioning logic.
 
 The sample is built to work with bootloader.
 See :ref:`zigbee_ncp_bootloader` for more information.
@@ -77,7 +77,7 @@ Serial communication setup
 ==========================
 
 The communication channel uses Zephyr's :ref:`zephyr:uart_api` API.
-This serial device is selected with :kconfig:`CONFIG_ZIGBEE_UART_DEVICE_NAME`.
+This serial device is selected with :kconfig:`CONFIG_ZIGBEE_UART_DEVICE_NAME` Kconfig option.
 
 By default, Zephyr's logger uses ``UART_0`` and the NCP sample communicates through the UART serialization using ``UART_1``.
 The DTS overlay file configures ``UART_1`` to be connected to the on-board J-Link instead of ``UART_0``.
@@ -88,9 +88,9 @@ The ``UART_0`` pins are configured by Devicetree overlay files for each supporte
 Communication through USB
 -------------------------
 
-You can change the communication channel from the default UART to nRF USB CDC ACM ``CDC_ACM_0`` by using the :file:`prj_usb.conf` configuration file and adding the ``-DCONF_FILE='prj_usb.conf'`` flag to the build command.
+To change the communication channel from the default UART to nRF USB CDC ACM ``CDC_ACM_0``, use the :file:`prj_usb.conf` configuration file and add the ``-DCONF_FILE='prj_usb.conf'`` flag to the build command.
 See :ref:`cmake_options` for instructions on how to add this flag to your build.
-For example, when building from the command line, you can use the following command:
+For example, when building from the command line, use the following command:
 
 .. code-block:: console
 
@@ -99,9 +99,9 @@ For example, when building from the command line, you can use the following comm
 The USB device VID and PID are configured by the sample's Kconfig file.
 
 .. note::
-    The USB is used as the default NCP communication channel when using the nRF52840 Dongle.
+   USB is used as the default NCP communication channel when using the nRF52840 Dongle.
 
-When you change the communication channel to nRF USB with :file:`prj_usb.conf`, :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>` start to be printed by default in binary format using ``UART_1``.
+When you change the communication channel to nRF USB with :file:`prj_usb.conf`, :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>` are printed by default in binary format using ``UART_1``.
 This is configured in the :file:`prj_usb.conf` file with the following settings:
 
 * :kconfig:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - to enable binary format.
@@ -111,7 +111,7 @@ This is configured in the :file:`prj_usb.conf` file with the following settings:
   This option is set to ``"UART_1"`` when the UART serial is selected.
 
 Alternatively, you can configure :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>` to be printed in binary format using an independent CDC ACM device of the same nRF USB.
-To do so, complete the following steps:
+Complete the following steps:
 
 1. Set the following Kconfig options:
 
@@ -119,11 +119,11 @@ To do so, complete the following steps:
    * :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` - This option selects nRF USB serial over UART serial.
    * :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME` - This option selects the serial device for printing Zigbee stack logs, set to ``"CDC_ACM_1"``.
 
-#. Create two instances of USB CDC ACM for application by completing the following steps:
+#. Create two instances of USB CDC ACM for the application:
 
    a. Create two entries in the DTS overlay file for the selected board, one for each USB CDC ACM instance.
       See :ref:`zephyr:usb_device_cdc_acm` for more information.
-   #. While the NCP sample configures single USB CDC ACM instance ``"CDC_ACM_0"`` by default, configure the second USB CDC ACM instance ``"CDC_ACM_1"`` by extending ``zephyr_udc0`` node in the DTS overlay file with the following code:
+   #. Extend the ``zephyr_udc0`` node in the DTS overlay file to also configure the second USB CDC ACM instance ``"CDC_ACM_1"``:
 
       .. code-block:: devicetree
 
@@ -141,11 +141,11 @@ To do so, complete the following steps:
 
 #. Enable the composite USB device driver using the :kconfig:`CONFIG_USB_COMPOSITE_DEVICE` Kconfig option.
 
-With this configuration, you will see two serial ports created by the NCP sample.
+With this configuration, you have two serial ports created by the NCP sample.
 Use the first one for NCP communication.
-Use second serial port for collecting Zigbee stack logs.
+Use the second serial port for collecting Zigbee stack logs.
 
-You can also check the :file:`prj_usb.conf` file, which contains the complete Kconfig configuration of Zigbee stack logs over nRF USB serial commented out.
+You can also check the :file:`prj_usb.conf` file that contains the complete Kconfig configuration of Zigbee stack logs over nRF USB serial commented out.
 For more configuration options, see :ref:`Zigbee stack logs <zigbee_ug_logging_stack_logs>`.
 
 .. _zigbee_ncp_bootloader:
@@ -155,20 +155,20 @@ Bootloader support
 
 The bootloader support in the NCP sample depends on the development kit, its respective build target, and `Serial communication setup`_:
 
-* For the ``nrf52840dongle_nrf52840`` build target, `nRF5 SDK Bootloader`_ is used by default because the dongle comes with this bootloader preinstalled.
-* For the ``nrf52840dk_nrf52840``, ``nrf52833dk_nrf52833``, and ``nrf21540dk_nrf52840`` build targets, the following scenarios are possible when building for these build targets:
+* For the ``nrf52840dongle_nrf52840`` build target, the `nRF5 SDK Bootloader`_ is used by default because the dongle comes with this bootloader preinstalled.
+* For the ``nrf52840dk_nrf52840``, ``nrf52833dk_nrf52833``, and ``nrf21540dk_nrf52840`` build targets, the following scenarios are possible when building for them:
 
-  * If the `Communication through USB`_ is selected, `MCUboot`_ is enabled by default.
-  * If the default UART serial communication channel is used, the bootloader support is not enabled, but MCUboot can be enabled by the user.
+  * If you select `Communication through USB`_, `MCUboot`_ is enabled by default.
+  * If you use the default UART serial communication channel, the bootloader support is not enabled, but you can enable MCUboot.
 
 MCUboot
 -------
 
-When the `Communication through USB`_ is selected, MCUboot in this sample is built with support for single application slot, and uses the USB DFU class driver to allow uploading image over USB.
+When you select `Communication through USB`_, MCUboot is built with support for a single application slot, and it uses the USB DFU class driver to allow uploading of the image over USB.
 
-If you want to use the default UART serial communication channel, you can enable MCUboot by setting the :kconfig:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option.
+If you want to use the default UART serial communication channel, set the :kconfig:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option to enable MCUboot.
 To use the same MCUboot configuration as in `Communication through USB`_, you need to provide MCUboot with the Kconfig options included in the :file:`child_image/mcuboot_usb.conf` file.
-See :ref:`ug_multi_image_variables` for how to set the required options.
+See :ref:`ug_multi_image_variables` to learn how to set the required options.
 
 MCUboot with the USB DFU requires a larger partition.
 To increase the partition, define the ``PM_STATIC_YML_FILE`` variable that provides the path to the :file:`pm_static.yml` static configuration file in the :file:`configuration` directory for the build target of your choice.
@@ -182,11 +182,11 @@ See the following command-line instruction for an example:
    west build samples/zigbee/ncp -b nrf52840dk_nrf52840 -- -DCONFIG_BOOTLOADER_MCUBOOT=y  -Dmcuboot_CONFIG_MULTITHREADING=y -Dmcuboot_CONFIG_BOOT_USB_DFU_WAIT=y -Dmcuboot_CONFIG_SINGLE_APPLICATION_SLOT=y -DPM_STATIC_YML_FILE=samples/zigbee/ncp/configuration/nrf52840dk_nrf52840/pm_static.yml
 
 When building the sample, the build system also generates the signed :file:`app_update.bin` image file in the :file:`build` directory.
-This file can be used to upgrade a device.
+You can use this file to upgrade a device.
 See :ref:`mcuboot_ncs` for more information about this and other automatically generated files.
 
 After every reset, the sample first boots to MCUboot and then, after a couple of seconds, the NCP sample is booted.
-When booted to MCUboot, the new image can be uploaded with the `dfu-util tool`_.
+When booted to MCUboot, you can upload the new image with the `dfu-util tool`_.
 See the Testing section of the :ref:`USB DFU sample documentation <zephyr:usb_dfu>` for the list of required dfu-util commands.
 
 To learn more about configuring bootloader for an application in |NCS|, see the :ref:`ug_bootloader` page.
@@ -195,11 +195,14 @@ nRF5 SDK Bootloader
 -------------------
 
 When the sample is built for ``nrf52840dongle_nrf52840``, the build system does not produce an upgrade image.
-to upgrade the dongle, you can use one of the following options:
+To upgrade the dongle, you can use one of the following options:
 
 * nRF Connect Programmer application (part of `nRF Connect for Desktop`_).
+
   For more details, see `Programming the nRF52840 Dongle`_ in the nRF Connect Programmer user guide.
+
 * `nRF Util`_ tool, if you do not want to use the nRF Connect Programmer application.
+
   To generate a DFU package, see `Generating DFU packages`_ in the nRF Util user guide.
   Upgrading the dongle using this method requires putting the dongle into the DFU mode.
   When in the DFU mode, you can use `nRF Util`_ for sending the upgrade image.
@@ -207,7 +210,7 @@ to upgrade the dongle, you can use one of the following options:
 
   .. note::
       By default, you can enter the DFU mode on the dongle using the pin reset.
-      Alternatively, you can also trigger the bootloader on the dongle from the NCP Host application by calling :c:func:`ncp_host_ota_run_bootloader`.
+      Alternatively, you can call :c:func:`ncp_host_ota_run_bootloader` to trigger the bootloader on the dongle from the NCP Host application.
 
 FEM support
 ===========
@@ -224,12 +227,20 @@ These commands let you request custom actions over the ZBOSS NCP protocol.
 
 Vendor-specific commands are sent over the NCP protocol using the following types of packets:
 
-* Request - These can be sent only by the host.
+* Request
+
+  These can be sent only by the host.
   The nRF SoC must respond to all of them.
-* Response - These can be sent only by the nRF SoC.
+
+* Response
+
+  These can be sent only by the nRF SoC.
   The nRF SoC can send them only when requested by the host.
   This limitation can be bypassed by indications.
-* Indication - These can be sent only by the nRF SoC.
+
+* Indication
+
+  These can be sent only by the nRF SoC.
   The indications are sent on demand from the nRF SoC to the host, for example to inform the host about polling avoidance or sudden or rare events, such as pressing the button.
   Indications are neither responded to nor acknowledged.
 
@@ -242,26 +253,31 @@ Implementing vendor-specific commands
       The steps in this section describe the process of implementing the vendor-specific commands in the NCP sample.
       Documentation for the implementation steps for the host side is not yet available.
 
-To implement custom vendor-specific commands, you need to modify the NCP sample in the following manner:
+To implement custom vendor-specific commands, you need to modify the NCP sample as follows:
 
 1. Implement a callback for handling custom commands requests.
+
    The function must follow the :c:func:`zb_ncp_custom_request_cb_t` declaration.
    For an example, see :c:func:`ncp_vendor_specific_req_handler` in the sample.
    This function parses the command payload, validates it, performs required action on **LED 2**, and sends a response.
+
 #. Register the handler function using :c:func:`zb_ncp_custom_register_request_cb`, as implemented in the sample.
+
    Once the callback is registered, it is called for every custom command request received from the host.
+
 #. At the end of the custom request callback, implement the response to the request using one of the following options:
 
-   * Implement an immediate response, which is sent just after the request is received and parsed.
+   * Implement an immediate response that is sent just after the request is received and parsed.
      For this option, make sure that the length of the response is returned from the custom command callback (implemented in step 1) and :c:func:`zb_ncp_custom_response` is called with a buffer that contains both the response payload and the parameters encapsulated in :c:struct:`ncp_hl_custom_resp_t`.
-   * Implement a delayed response, which can be useful for example to implement commands that require more time to complete.
+   * Implement a delayed response that can be useful for example to implement commands that require more time to complete.
      For this option, make sure that :c:macro:`NCP_RET_LATER` is returned from the custom command callback (implemented in step 1) and :c:func:`zb_ncp_custom_response` is called after this callback.
 
    If the function fails, it must return an error code, while a response is automatically generated by the stack.
    See :c:func:`ncp_vendor_specific_req_handler` for an example of the immediate response.
 #. Implement custom indications by using :c:func:`zb_ncp_custom_indication` to send an indication to the host.
+
    The NCP sample demonstrates the indication usage to inform the host about the index of the LED that is controlled by custom requests.
-   The indication is sent 3 seconds after start-up.
+   The indication is sent three seconds after start-up.
    See :c:func:`custom_indication` in the sample to see how to pass the data to the indication's payload.
 
 Once you complete these steps and configure the vendor-specific commands on the host, you can call these commands from the host to use the extended functionalities in the NCP sample.
@@ -287,18 +303,21 @@ Building and running
 Testing
 =======
 
-After building the sample and programming it to your development kit, test it by performing the following steps:
+After building the sample and programming it to your development kit, complete the following steps to test it:
 
 1. Download and extract the `ZBOSS NCP Host`_ package.
 
    .. note::
-      If you are using an Linux distribution different than the 64-bit Ubuntu 18.04, make sure to rebuild the package libraries and applications by following the instructions described in the `Rebuilding the ZBOSS libraries for host`_ section in the `NCP Host documentation`_.
+      If you are using a Linux distribution different than the 64-bit Ubuntu 18.04, make sure to rebuild the package libraries and applications.
+      Follow the instructions in the `Rebuilding the ZBOSS libraries for host`_ section in the `NCP Host documentation`_.
 
-#. If you are using `Communication through USB`_, connect the nRF USB port of the NCP sample's development kit to the PC USB port with an USB cable.
-#. Get the kit’s serial port name (for example, /dev/ttyACM0).
+#. If you are using `Communication through USB`_, connect the nRF USB port of the NCP sample's development kit to the PC USB port with a USB cable.
+#. Get the kit’s serial port name (for example, ``/dev/ttyACM0``).
+
    If you are communicating through the nRF USB, get the nRF USB serial port name.
-#. Turn on the development kit that runs the light bulb sample.
-#. Start the simple gateway application by running the following command with *serial_port_name* replaced with the serial port name used for communication with the NCP sample:
+
+#. Turn on the development kit that runs the Light bulb sample.
+#. To start the simple gateway application, run the following command with *serial_port_name* replaced with the serial port name used for communication with the NCP sample:
 
    .. parsed-literal::
       :class: highlight
@@ -308,7 +327,8 @@ After building the sample and programming it to your development kit, test it by
 The simple gateway device forms the Zigbee network and opens the network for 180 seconds for new devices to join.
 When the light bulb joins the network, the **LED 3** on the light bulb device turns on to indicate that it is connected to the simple gateway.
 The gateway then starts discovering the On/Off cluster.
-When it is found, the simple gateway configures bindings and reporting for the device and then starts sending On/Off toggle commands with a 15-second period that toggle the **LED 4** on the light bulb on and off.
+When it is found, the simple gateway configures bindings and reporting for the device.
+It then starts sending On/Off toggle commands with a 15-second interval that toggle the **LED 4** on the light bulb on and off.
 
 Dependencies
 ************
@@ -319,7 +339,7 @@ This sample uses the following |NCS| libraries:
 
   * :file:`zb_nrf_platform.h`
 
-This sample uses the following `sdk-nrfxlib`_ libraries:
+It uses the following `sdk-nrfxlib`_ libraries:
 
 * :ref:`nrfxlib:zboss` |zboss_version| (`API documentation`_)
 

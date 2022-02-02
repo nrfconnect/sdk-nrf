@@ -22,16 +22,14 @@ The sample supports the following development kits:
 
 You can use one or more of the development kits listed above and mix different development kits.
 
-For this sample to work, the following samples also need to be programmed:
-
-* The :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>` sample on one separate device.
+To test this sample, you also need to program the :ref:`Zigbee Network coordinator <zigbee_network_coordinator_sample>` sample on one separate device.
 
 Overview
 ********
 
-The Zigbee template sample takes the Zigbee Router role and implements two clusters (Basic and Identify) that used to be required by the Zigbee Home Automation profile.
+The Zigbee Template sample takes the Zigbee Router role and implements two clusters (Basic and Identify) that used to be required by the Zigbee Home Automation profile.
 The Basic cluster provides attributes and commands for determining basic information about the node.
-The Identify cluster allows to put the device into the identification mode, which provides a way to locate the device.
+The Identify cluster allows to set the device into the identification mode, which provides a way to locate the device.
 
 .. _zigbee_template_configuration:
 
@@ -70,17 +68,20 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+After programming the sample to your development kit, complete the following steps to test it:
 
-1. Turn on the development kit that runs the network coordinator sample.
+1. Turn on the development kit that runs the Network coordinator sample.
+
    When **LED 3** turns on, this development kit has become the Coordinator of the Zigbee network and the network is established.
-#. Turn on the development kit that runs the template sample.
+
+#. Turn on the development kit that runs the Template sample.
+
    When **LED 3** turns on, the light bulb has become a Router inside the network.
 
-   .. tip::
+   .. note::
         If **LED 3** does not turn on, press **Button 1** on the Coordinator to reopen the network.
 
-The device running the template sample is now part of the Zigbee network as a Router.
+The device running the Template sample is now part of the Zigbee network as a Router.
 As a result, the network range is extended by the template application radio range.
 
 Dependencies
@@ -96,7 +97,7 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`dk_buttons_and_leds_readme`
 
-This sample uses the following `sdk-nrfxlib`_ libraries:
+It uses the following `sdk-nrfxlib`_ libraries:
 
 * :ref:`nrfxlib:zboss` |zboss_version| (`API documentation`_)
 
