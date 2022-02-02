@@ -275,7 +275,7 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 	int err;
 
 #if !defined(CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM)
-	char imei_buf[20];
+	char imei_buf[20 + sizeof("OK\r\n")];
 
 	/* Retrieve device IMEI from modem. */
 	err = nrf_modem_at_cmd(imei_buf, sizeof(imei_buf), "AT+CGSN");
