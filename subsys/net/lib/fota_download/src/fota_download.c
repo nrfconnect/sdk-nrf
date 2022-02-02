@@ -200,6 +200,10 @@ static int download_client_callback(const struct download_client_evt *event)
 
 	case DOWNLOAD_CLIENT_EVT_DONE:
 		err = dfu_target_done(true);
+		if (err == 0) {
+			err = dfu_target_schedule_update(0);
+		}
+
 		if (err != 0) {
 			LOG_ERR("dfu_target_done error: %d", err);
 			send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);

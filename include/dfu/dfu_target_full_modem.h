@@ -108,6 +108,17 @@ int dfu_target_full_modem_write(const void *const buf, size_t len);
  */
 int dfu_target_full_modem_done(bool successful);
 
+/**
+ * @brief Schedule update of the image.
+ *
+ * This call does nothing fot this target type.
+ *
+ * @param[in] img_num This parameter is unused by this target type.
+ *
+ * @return 0, it is always successful.
+ **/
+int dfu_target_full_modem_schedule_update(int img_num);
+
 #endif /* DFU_TARGET_FULL_MODEM_H__ */
 
 /**@} */

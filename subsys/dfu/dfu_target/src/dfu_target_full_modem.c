@@ -78,3 +78,10 @@ int dfu_target_full_modem_done(bool successful)
 
 	return dfu_target_stream_done(successful);
 }
+
+int dfu_target_full_modem_schedule_update(int img_num)
+{
+	ARG_UNUSED(img_num);
+
+	return 0;
+}

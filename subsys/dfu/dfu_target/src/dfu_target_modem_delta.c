@@ -169,22 +169,30 @@ int dfu_target_modem_delta_done(bool successful)
 {
 	int err;
 
+	ARG_UNUSED(successful);
+
 	err = nrf_modem_delta_dfu_write_done();
 	if (err != 0) {
 		LOG_ERR("Failed to stop MFU and release resources, error %d", err);
 		return -EFAULT;
 	}
 
-	if (successful) {
-		err = nrf_modem_delta_dfu_update();
-		if (err != 0) {
-			LOG_ERR("Modem firmware upgrade scheduling failed, error %d", err);
-			return -EFAULT;
-		}
-		LOG_INF("Scheduling modem firmware upgrade at next boot");
-	} else {
-		LOG_INF("Modem upgrade stopped.");
-	}
-
 	return 0;
+}
+
+int dfu_target_modem_delta_schedule_update(int img_num)
+{
+	int err;
+
+	ARG_UNUSED(img_num);
+
+	err = nrf_modem_delta_dfu_update();
+
+	if (err != 0) {
+		LOG_ERR("Modem firmware upgrade scheduling failed, error %d", err);
+		return -EFAULT;
+	}
+	LOG_INF("Scheduling modem firmware upgrade at next boot");
+
+	return err;
 }
