@@ -209,6 +209,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/modem_trace/                   @balaji-nordic
 /tests/lib/ram_pwrdn/                     @Damian-Nordic
 /tests/modules/lib/zcbor/                 @oyvindronningstad
+/tests/modules/mcuboot/direct_xip/        @hakonfam
 /tests/modules/mcuboot/external_flash/    @hakonfam @sigvartmh
 /tests/modules/tfm/                       @SebastianBoe @joerchan @torsteingrindvik @magnev
 /tests/nrf5340_audio/                     @koffes @alexsven @erikrobstad @rick1082 @nordic-auko
