@@ -86,6 +86,11 @@ int dfu_target_reset(void)
 	return 0;
 }
 
+int dfu_target_schedule_update(int img_num)
+{
+	return 0;
+}
+
 int download_client_start(struct download_client *client, const char *file,
 			  size_t from)
 {

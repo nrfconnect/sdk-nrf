@@ -14,6 +14,7 @@ static const struct dfu_target dfu_target_ ## name  = { \
 	.offset_get = dfu_target_## name ##_offset_get, \
 	.write = dfu_target_ ## name ## _write, \
 	.done = dfu_target_ ## name ## _done, \
+	.schedule_update = dfu_target_ ## name ## _schedule_update, \
 }
 
 #ifdef CONFIG_DFU_TARGET_MODEM_DELTA
@@ -131,10 +132,6 @@ int dfu_target_done(bool successful)
 		return err;
 	}
 
-	if (successful) {
-		current_target = NULL;
-	}
-
 	return 0;
 }
 
@@ -150,4 +147,18 @@ int dfu_target_reset(void)
 	}
 	current_target = NULL;
 	return 0;
+}
+
+int dfu_target_schedule_update(int img_num)
+{
+	int err = 0;
+
+	if (current_target == NULL) {
+		return -EACCES;
+	}
+
+	err = current_target->schedule_update(img_num);
+	current_target = NULL;
+
+	return err;
 }

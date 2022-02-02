@@ -41,6 +41,7 @@ struct dfu_target {
 	int (*offset_get)(size_t *offset);
 	int (*write)(const void *const buf, size_t len);
 	int (*done)(bool successful);
+	int (*schedule_update)(int img_num);
 };
 
 /**
@@ -122,6 +123,20 @@ int dfu_target_done(bool successful);
  *	   code identicating reason of failure.
  **/
 int dfu_target_reset(void);
+
+/**
+ * @brief Schedule update of one or more images.
+ *
+ * This call requests images update. Time of update depends on image type.
+ *
+ * @param[in] img_num For DFU_TARGET_IMAGE_TYPE_MCUBOOT
+ *		      image type: given image pair index or -1 for all
+ *		      of image pair indexes. Disregard otherwise.
+ *
+ * @return 0 for a successful request or a negative error
+ *	   code identicating reason of failure.
+ **/
+int dfu_target_schedule_update(int img_num);
 
 #ifdef __cplusplus
 }
