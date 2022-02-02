@@ -24,6 +24,38 @@ You can use the services offered by nRF Cloud in the following scenarios:
 #. Device connected to nRF Cloud over REST, interacting using the `nRF Cloud REST API`_.
 #. Device connected to a customer cloud service in a suitable manner. The services can be used from the customer cloud service that communicates over REST to the nRF Cloud REST API in a proxy configuration.
 
+Choosing a protocol: MQTT or REST
+*********************************
+
+When choosing a protocol, consider the following:
+* How often does the device transmit data?
+* Which cloud APIs does the device need to access?
+* What are the power consumption requirements for the device?
+* What are the network data usage requirements for the device?
+* What are the carrier's network settings (NAT timeout, eDRX/PSM) and how will the settings affect device behavior?
+
+MQTT has a higher (data/power) cost to set up a connection.  However, the data size of an MQTT publish event is smaller than a comparable REST transaction.
+MQTT may be preferred if a device is able to maintain a connection to the broker and sends/receives data frequently.
+REST may be preferred if a device sends data infrequently or does not need to receive unsolicited data from the cloud.
+
+REST overview
+=============
+
+* The device initiates a TLS connection to nRF Cloud.
+* nRF Cloud supports a connection keep-alive/idle time of 60 seconds for REST API sockets.
+* For authentication, the device must send a JSON Web Token (JWT) with each REST transaction.
+  The JWT is approximately 450 bytes, but can be larger depending on the claims.
+* Each REST transaction contains HTTP headers, including the JWT, and any API specific payload.
+
+MQTT overview
+=============
+
+* The device initiates a mutual-TLS (mTLS) connection to the nRF Cloud MQTT broker.
+* The MQTT keep-alive time can be set by the device and can be longer than 60s.
+* Device authentication through mTLS lasts throughout the MQTT connection.
+* Once connected, the device subscribes to the desired MQTT topics.
+* Each MQTT publish event contains the MQTT topic and the payload.
+
 |NCS| library support
 *********************
 
