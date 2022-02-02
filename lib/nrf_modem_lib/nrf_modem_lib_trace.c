@@ -25,18 +25,7 @@ static int trace_rtt_channel;
 static char rtt_buffer[CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT_BUF_SIZE];
 #endif
 
-static uint32_t max_trace_size_bytes;
-static uint32_t total_trace_size_rcvd;
 static bool is_transport_initialized;
-
-static void trace_stop_timer_handler(struct k_timer *timer);
-
-K_TIMER_DEFINE(trace_stop_timer, trace_stop_timer_handler, NULL);
-
-static void trace_stop_timer_handler(struct k_timer *timer)
-{
-	nrf_modem_lib_trace_stop();
-}
 
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
 static bool uart_init(void)
@@ -84,23 +73,14 @@ int nrf_modem_lib_trace_init(void)
 	return 0;
 }
 
-int nrf_modem_lib_trace_start(enum nrf_modem_lib_trace_mode trace_mode, uint16_t duration,
-			      uint32_t max_size)
+int nrf_modem_lib_trace_start(enum nrf_modem_lib_trace_mode trace_mode)
 {
 	if (!is_transport_initialized) {
 		return -ENXIO;
 	}
 
-	total_trace_size_rcvd = 0;
-
-	max_trace_size_bytes = max_size;
-
 	if (nrf_modem_at_printf("AT%%XMODEMTRACE=1,%hu", trace_mode) != 0) {
 		return -EOPNOTSUPP;
-	}
-
-	if (duration != 0) {
-		k_timer_start(&trace_stop_timer, K_SECONDS(duration), K_SECONDS(0));
 	}
 
 	return 0;
@@ -110,22 +90,6 @@ int nrf_modem_lib_trace_process(const uint8_t *data, uint32_t len)
 {
 	if (!is_transport_initialized) {
 		return -ENXIO;
-	}
-
-	if (max_trace_size_bytes != 0) {
-		total_trace_size_rcvd += len;
-
-		if (total_trace_size_rcvd > max_trace_size_bytes) {
-			/* Skip sending  to transport medium as the current trace won't fit.
-			 * Disable traces (see API doc for reasoning).
-			 */
-			nrf_modem_lib_trace_stop();
-
-			return 0;
-		}
-		if (total_trace_size_rcvd == max_trace_size_bytes) {
-			nrf_modem_lib_trace_stop();
-		}
 	}
 
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
@@ -160,7 +124,8 @@ int nrf_modem_lib_trace_process(const uint8_t *data, uint32_t len)
 
 int nrf_modem_lib_trace_stop(void)
 {
-	k_timer_stop(&trace_stop_timer);
+	__ASSERT(!k_is_in_isr(),
+		"nrf_modem_lib_trace_stop cannot be called from interrupt context");
 
 	if (nrf_modem_at_printf("AT%%XMODEMTRACE=0") != 0) {
 		return -EOPNOTSUPP;

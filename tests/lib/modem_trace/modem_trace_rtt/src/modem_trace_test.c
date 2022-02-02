@@ -12,16 +12,12 @@
 
 extern int unity_main(void);
 
-static int64_t trace_stop_timestamp = INT64_MAX;
 static int trace_rtt_channel;
 
 static const char *start_trace_at_cmd_fmt = "AT%%XMODEMTRACE=1,%hu";
 static unsigned int exp_trace_mode;
 static int nrf_modem_at_printf_retval;
 static bool exp_trace_stop;
-
-#define NO_TIMEOUT 0
-#define NO_MAX_SIZE 0
 
 /* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */
 extern int generic_suiteTearDown(int num_failures);
@@ -35,7 +31,6 @@ void tearDown(void)
 {
 	mock_SEGGER_RTT_Verify();
 
-	trace_stop_timestamp = INT64_MAX;
 	exp_trace_stop = false;
 }
 
@@ -51,11 +46,7 @@ static void nrf_modem_at_printf_ExpectTraceModeAndReturn(unsigned int trace_mode
 int nrf_modem_at_printf(const char *fmt, ...)
 {
 	if (exp_trace_stop) {
-		if (strcmp(fmt, "AT%%XMODEMTRACE=0") == 0) {
-			trace_stop_timestamp = k_uptime_get();
-		} else {
-			TEST_ASSERT_EQUAL_STRING("AT%%XMODEMTRACE=0", fmt);
-		}
+		TEST_ASSERT_EQUAL_STRING("AT%%XMODEMTRACE=0", fmt);
 	} else {
 		va_list args;
 		unsigned int trace_mode;
@@ -90,22 +81,16 @@ static int rtt_allocupbuffer_callback(const char *sName, void *pBuffer, unsigned
 	return trace_rtt_channel;
 }
 
-static void modem_trace_init_with_rtt_transport(void)
+static void trace_session_setup_with_rtt_transport(void)
 {
 	__wrap_SEGGER_RTT_AllocUpBuffer_AddCallback(&rtt_allocupbuffer_callback);
 	__wrap_SEGGER_RTT_AllocUpBuffer_ExpectAnyArgsAndReturn(0);
 
 	TEST_ASSERT_EQUAL(0, nrf_modem_lib_trace_init());
-}
-
-static void trace_session_setup_with_rtt_transport(uint16_t duration, uint32_t max_size)
-{
-	modem_trace_init_with_rtt_transport();
 
 	nrf_modem_at_printf_ExpectTraceModeAndReturn(NRF_MODEM_LIB_TRACE_ALL, 0);
 
-	TEST_ASSERT_EQUAL(0,
-			  nrf_modem_lib_trace_start(NRF_MODEM_LIB_TRACE_ALL, duration, max_size));
+	TEST_ASSERT_EQUAL(0, nrf_modem_lib_trace_start(NRF_MODEM_LIB_TRACE_ALL));
 }
 
 void test_modem_trace_init_rtt_transport_medium(void)
@@ -120,16 +105,8 @@ void test_modem_trace_init_rtt_transport_medium(void)
 
 static void expect_rtt_write(const uint8_t *buffer, uint16_t size)
 {
-#if CONFIG_BOARD_NATIVE_POSIX
-	/* For native_posix platform, the macro RTT_USE_ASM does not get defined. Due to this,
-	 * the SEGGER_RTT_WriteSkipNoLock() gets called instead of the assembly version of the API
-	 * (SEGGER_RTT_ASM_Write_skipNoLock). See SEGGER_RTT.h for how the macro is used.
-	 */
-	__wrap_SEGGER_RTT_WriteSkipNoLock_ExpectAndReturn(trace_rtt_channel, buffer, size, size);
-#else
 	__wrap_SEGGER_RTT_ASM_WriteSkipNoLock_ExpectAndReturn(trace_rtt_channel, buffer, size,
 							size);
-#endif
 }
 
 /* Test that when RTT is configured as trace transport, the traces are forwarded to RTT API. */
@@ -140,7 +117,7 @@ void test_modem_trace_forwarding_to_rtt(void)
 
 	trace_rtt_channel = 1;
 
-	trace_session_setup_with_rtt_transport(NO_TIMEOUT, NO_MAX_SIZE);
+	trace_session_setup_with_rtt_transport();
 
 	/* Simulate the reception of modem trace and expect the RTT API to be called.
 	 * Since the trace buffer size is larger than NRF_MODEM_LIB_TRACE_MEDIUM_RTT_BUF_SIZE,
@@ -160,7 +137,7 @@ void test_modem_trace_when_rtt_channel_allocation_fails(void)
 	__wrap_SEGGER_RTT_AllocUpBuffer_ExpectAnyArgsAndReturn(-1);
 
 	TEST_ASSERT_EQUAL(-EBUSY, nrf_modem_lib_trace_init());
-	TEST_ASSERT_EQUAL(-ENXIO, nrf_modem_lib_trace_start(NRF_MODEM_LIB_TRACE_ALL, 0, 0));
+	TEST_ASSERT_EQUAL(-ENXIO, nrf_modem_lib_trace_start(NRF_MODEM_LIB_TRACE_ALL));
 
 	const uint16_t sample_trace_buffer_size = 10;
 	const uint8_t sample_trace_data[sample_trace_buffer_size];

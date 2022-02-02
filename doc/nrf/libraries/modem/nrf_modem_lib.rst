@@ -77,7 +77,6 @@ If the application wants the trace data, :c:func:`nrf_modem_lib_trace_init` must
 This is done automatically when using the OS Abstraction layer.
 If the application wants to stop an ongoing trace session, it can use the :c:func:`nrf_modem_lib_trace_stop` function.
 The :c:func:`nrf_modem_lib_trace_start` function supports activating a subset of traces or all traces.
-It is also possible to use this function to run a trace session either for a specific time interval or until a given amount of trace data is received.
 
 .. _partition_mgr_integration:
 
