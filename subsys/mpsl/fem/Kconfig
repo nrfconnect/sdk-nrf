@@ -61,15 +61,34 @@ config MPSL_FEM_SIMPLE_GPIO
 
 endchoice	# MPSL_FEM_CHOICE
 
-if MPSL_FEM_NRF21540_GPIO
+if MPSL_FEM_NRF21540_GPIO && MPSL_FEM
 
 config MPSL_FEM_NRF21540_TX_GAIN_DB
 	int "TX gain of the nRF21540 PA amplifier in dB"
+	default MPSL_FEM_NRF21540_TX_GAIN_DB_POUTB
+	help
+	  With the GPIO implementation, the Kconfig can be set either to TX gain of POUTA
+	  or TX gain of POUTB. Using an unsupported value results in build assertion.
+
+config MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA
+	int "TX gain value (POUTA)"
 	default 20
 	help
-	  The default value of 20 dB is based on nRF21540 Product Specification
-	  (v1.0) and it corresponds to the configuration in which the pin
-	  MODE=0 and pin POUTA_SEL=0
+	  The default value of 20 dB is based on nRF21540 Product Specification (v1.0) and it
+	  corresponds to the configuration in which the pin MODE=0 and register POUTA_SEL=0.
+
+	  Alternatively, if register POUTA_SEL=1, FEM will use TX gain value defined by the UICR.
+	  In that case user must set value of this Kconfig option to match UICR content.
+
+config MPSL_FEM_NRF21540_TX_GAIN_DB_POUTB
+	int "TX gain value (POUTB)"
+	default 10
+	help
+	  The default value of 10 dB is based on nRF21540 Product Specification (v1.0) and it
+	  corresponds to the configuration in which the pin MODE=1 and register POUTB_SEL=0.
+
+	  Alternatively, if register POUTB_SEL=1, FEM will use TX gain value defined by the UICR.
+	  In that case user must set value of this Kconfig option to match UICR content.
 
 config MPSL_FEM_NRF21540_RX_GAIN_DB
 	int "RX gain of the nRF21540 LNA amplifier in dB"
