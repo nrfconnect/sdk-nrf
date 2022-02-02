@@ -32,13 +32,13 @@ static K_SEM_DEFINE(sem_per_adv, 0, 1);
 static K_SEM_DEFINE(sem_per_sync, 0, 1);
 static K_SEM_DEFINE(sem_per_sync_lost, 0, 1);
 
-#if defined(CONFIG_BT_CTLR_DF_ANT_SWITCH_RX)
+#if defined(CONFIG_BT_DF_CTE_RX_AOA)
 /* Example sequence of antenna switch patterns for antenna matrix designed by
  * Nordic. For more information about antenna switch patterns see README.rst.
  */
 static const uint8_t ant_patterns[] = { 0x2, 0x0, 0x5, 0x6, 0x1, 0x4,
 					0xC, 0x9, 0xE, 0xD, 0x8, 0xA };
-#endif /* CONFIG_BT_CTLR_DF_ANT_SWITCH_RX */
+#endif /* CONFIG_BT_DF_CTE_RX_AOA */
 
 static inline uint32_t adv_interval_to_ms(uint16_t interval)
 {
@@ -235,14 +235,14 @@ static void enable_cte_rx(void)
 
 	const struct bt_df_per_adv_sync_cte_rx_param cte_rx_params = {
 		.max_cte_count = 5,
-#if defined(CONFIG_BT_CTLR_DF_ANT_SWITCH_RX)
+#if defined(CONFIG_BT_DF_CTE_RX_AOA)
 		.cte_types = BT_DF_CTE_TYPE_ALL,
 		.slot_durations = 0x2,
 		.num_ant_ids = ARRAY_SIZE(ant_patterns),
 		.ant_ids = ant_patterns,
 #else
 		.cte_types = BT_DF_CTE_TYPE_AOD_1US | BT_DF_CTE_TYPE_AOD_2US,
-#endif /* CONFIG_BT_CTLR_DF_ANT_SWITCH_RX */
+#endif /* CONFIG_BT_DF_CTE_RX_AOA */
 	};
 
 	printk("Enable receiving of CTE...\n");
