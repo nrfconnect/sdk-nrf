@@ -45,7 +45,7 @@ This procedure involves a TLS handshake that might take up to three seconds.
 The API blocks for the duration of the handshake.
 
 The cloud uses the certificates of the device for authentication.
-See `Updating the nRF Cloud certificate`_ and the :ref:`modem_key_mgmt` library for more information on modem credentials.
+See :ref:`nrf9160_ug_updating_cloud_certificate` and the :ref:`modem_key_mgmt` library for more information on modem credentials.
 The certificates are generated using the device ID and PIN or HWID.
 The device ID is also the MQTT client ID.
 There are multiple configuration options for the device or client ID.

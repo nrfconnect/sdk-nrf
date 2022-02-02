@@ -41,7 +41,7 @@ Programming the certificates to the on-board modem of the nRF9160-based kit
 To program the certificates, complete the following steps:
 
 1. `Download nRF Connect for Desktop`_.
-#. Update the modem firmware on the on-board modem of the nRF9160-based kit to the latest version by following the steps in `Updating the nRF9160 DK cellular modem`_.
+#. Update the modem firmware on the on-board modem of the nRF9160-based kit to the latest version by following the steps in :ref:`nrf9160_gs_updating_fw_modem`.
 #. Build and program the :ref:`at_client_sample` sample to the nRF9160-based kit as explained in :ref:`gs_programming`.
 #. Launch the `LTE Link Monitor`_ application, which is implemented as part of `nRF Connect for Desktop`_.
 #. Click :guilabel:`Certificate manager` located at the top right corner.

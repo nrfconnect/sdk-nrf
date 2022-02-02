@@ -37,7 +37,7 @@ To use the location services, see the respective documentation for account setup
    nRF9160 DK and Thingy:91 devices are shipped with RSA256 certificates.
    To start using the Multicell location library with nRF Cloud, you must perform either of the following actions:
 
-      * Delete the device from nRF Cloud and reprovision it with a new ES256 device certificate. See `Updating the nRF Connect for Cloud certificate`_ for more information.
+      * Delete the device from nRF Cloud and reprovision it with a new ES256 device certificate. See :ref:`nrf9160_ug_updating_cloud_certificate` for more information.
       * Register a separate key for JWT signing as described in `Securely Generating Credentials on the nRF9160`_ and set :kconfig:`CONFIG_MULTICELL_LOCATION_NRF_CLOUD_JWT_SEC_TAG` accordingly.
 
 .. reprovision_cert_note_end
