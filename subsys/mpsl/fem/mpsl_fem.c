@@ -277,11 +277,22 @@ static int fem_nrf21540_gpio_configure(void)
 					     pdn_gpios));
 #endif
 
+	BUILD_ASSERT(
+	  (CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB == CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA) ||
+	  (CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB == CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTB));
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), mode_gpios)
-	err = inactive_pin_configure(
+	gpio_flags_t mode_pin_flags = GPIO_OUTPUT_ACTIVE;
+
+	if (CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB == CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA) {
+		mode_pin_flags = GPIO_OUTPUT_INACTIVE;
+	}
+
+	mode_pin_flags |= DT_GPIO_FLAGS(DT_NODELABEL(nrf_radio_fem), mode_gpios);
+
+	err = gpio_pin_configure(
+		DEVICE_DT_GET(DT_GPIO_CTLR(DT_NODELABEL(nrf_radio_fem), mode_gpios)),
 		DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem), mode_gpios),
-		DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem), mode_gpios),
-		DT_GPIO_FLAGS(DT_NODELABEL(nrf_radio_fem), mode_gpios));
+		mode_pin_flags);
 
 	if (err) {
 		return err;
