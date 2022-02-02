@@ -42,6 +42,8 @@ When :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` Kconfig option is enab
 
 When using the Modem library in |NCS|, the library should be initialized and shutdown using the :c:func:`nrf_modem_lib_init` and :c:func:`nrf_modem_lib_shutdown` function calls, respectively.
 
+:kconfig:option:`CONFIG_NRF_MODEM_LIB_LOG_FW_VERSION_UUID` can be enabled for printing logs of both FW version and UUID at the end of the library initialization step.
+
 Socket offloading
 *****************
 
