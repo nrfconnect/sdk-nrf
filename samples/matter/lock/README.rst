@@ -76,20 +76,24 @@ Configuration
 .. matter_door_lock_sample_configuration_file_types_start
 
 The sample uses different configuration files depending on the supported features.
-The configuration files are automatically attached to the build based on the build type suffix of the file name, such as :file:`_single_image_dfu` in the :file:`prj_single_image_dfu.conf` file.
+The configuration files are automatically attached to the build based on the build type suffix of the file name, such as :file:`_single_image_smp_dfu` in the :file:`prj_single_image_smp_dfu.conf` file.
 To modify the configuration options, apply the modifications to the files with the appropriate suffix.
 See the table for information about available configuration types:
 
-+---------------------------+--------------------------------------+------------------------+------------------------------+
-| Config suffix             | Enabled feature                      | Enabling build option  | Supported boards             |
-+===========================+======================================+========================+==============================+
-| none                      | none (basic build)                   | none                   | ``nrf52840dk_nrf52840``      |
-|                           |                                      |                        | ``nrf5340dk_nrf5340_cpuapp`` |
-+---------------------------+--------------------------------------+------------------------+------------------------------+
-| :file:`_single_image_dfu` | Single-image Device Firmware Upgrade | ``-DBUILD_WITH_DFU=1`` | ``nrf52840dk_nrf52840``      |
-+---------------------------+--------------------------------------+------------------------+------------------------------+
-| :file:`_multi_image_dfu`  | Multi-image Device Firmware Upgrade  | ``-DBUILD_WITH_DFU=1`` | ``nrf5340dk_nrf5340_cpuapp`` |
-+---------------------------+--------------------------------------+------------------------+------------------------------+
++----------------------------------+----------------------------------------------------------+-----------------------------+------------------------------+
+| Config suffix                    | Enabled feature                                          | Enabling build option       | Supported boards             |
++==================================+==========================================================+=============================+==============================+
+| none                             | none (basic build)                                       | ``-DBUILD_WITH_DFU=OFF``    | ``nrf52840dk_nrf52840``      |
+|                                  |                                                          |                             | ``nrf5340dk_nrf5340_cpuapp`` |
++----------------------------------+----------------------------------------------------------+-----------------------------+------------------------------+
+| :file:`_single_image_matter_dfu` | Single-image Device Firmware Upgrade over Matter         | ``-DBUILD_WITH_DFU=MATTER`` | ``nrf52840dk_nrf52840``      |
++----------------------------------+----------------------------------------------------------+-----------------------------+------------------------------+
+| :file:`_multi_image_matter_dfu`  | Multi-image Device Firmware Upgrade over Matter          | ``-DBUILD_WITH_DFU=MATTER`` | ``nrf5340dk_nrf5340_cpuapp`` |
++----------------------------------+----------------------------------------------------------+-----------------------------+------------------------------+
+| :file:`_single_image_smp_dfu`    | Single-image Device Firmware Upgrade over Matter and SMP | ``-DBUILD_WITH_DFU=BLE``    | ``nrf52840dk_nrf52840``      |
++----------------------------------+----------------------------------------------------------+-----------------------------+------------------------------+
+| :file:`_multi_image_smp_dfu`     | Multi-image Device Firmware Upgrade over Matter and SMP  | ``-DBUILD_WITH_DFU=BLE``    | ``nrf5340dk_nrf5340_cpuapp`` |
++----------------------------------+----------------------------------------------------------+-----------------------------+------------------------------+
 
 .. matter_door_lock_sample_configuration_file_types_end
 
@@ -101,16 +105,27 @@ Device Firmware Upgrade support
 .. note::
    You can enable over-the-air Device Firmware Upgrade only on hardware platforms that have external flash memory.
 
-To configure the sample to use the secure bootloader for performing over-the-air Device Firmware Upgrade over Bluetooth LE, use the ``-DBUILD_WITH_DFU=1`` build flag during the build process.
+The sample supports over-the-air (OTA) device firmware upgrade (DFU) using one of the two following protocols:
+
+* Matter OTA update protocol that uses the Matter operational network for querying and downloading a new firmware image.
+* Simple Management Protocol (SMP) over Bluetooth® LE.
+  In this case, the DFU can be done either using a smartphone application or a PC command line tool.
+  Note that this protocol is not part of the Matter specification.
+
+In both cases, MCUboot secure bootloader is used to apply the new firmware image.
+
+The DFU over Matter is enabled by default.
+To configure the sample to support the DFU over Matter and SMP, use the ``-DBUILD_WITH_DFU=BLE`` build flag during the build process.
+To configure the sample to disable the DFU and the secure bootloader, use the ``-DBUILD_WITH_DFU=OFF`` build flag during the build process.
 
 See :ref:`cmake_options` for instructions on how to add these options to your build.
 
-When building on the command line, run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_):
+When building on the command line, run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_), and *dfu_method* replaced with the desired DFU method:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b *build_target* -- -DBUILD_WITH_DFU=1
+   west build -b *build_target* -- -DBUILD_WITH_DFU=\ *dfu_method*
 
 .. matter_door_lock_sample_build_with_dfu_end
 

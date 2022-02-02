@@ -24,7 +24,14 @@ The measurement results are stored in the device memory and can be read using th
 The controller communicates with the weather station device over the Matter protocol using Zigbee Cluster Library (ZCL).
 The library describes data measurements within the proper clusters that correspond to the measurement type.
 
-The application uses MCUboot secure bootloader and SMP protocol for performing over-the-air Device Firmware Upgrade using Bluetooth® LE.
+The application supports over-the-air (OTA) device firmware upgrade (DFU) using one of the two following protocols:
+
+* Matter OTA update protocol that uses the Matter operational network for querying and downloading a new firmware image.
+* Simple Management Protocol (SMP) over Bluetooth® LE.
+  In this case, the DFU can be done either using a smartphone application or a PC command line tool.
+  Note that this protocol is not part of the Matter specification.
+
+In both cases, MCUboot secure bootloader is used to apply the new firmware image.
 For information about how to upgrade the device firmware using a PC or a mobile, see the :ref:`matter_weather_station_app_dfu` section.
 
 .. _matter_weather_station_network_mode:
@@ -241,10 +248,6 @@ After programming the application, perform the following steps to test the Matte
 
 Updating the device firmware
 ============================
-
-.. note::
-    Device Firmware Upgrade feature is under development and currently it is possible to update only the application core image.
-    Network core image update is not yet available.
 
 To update the device firmware, complete the steps listed for the selected method in the :doc:`matter:nrfconnect_examples_software_update` tutorial in the Matter documentation.
 

@@ -21,6 +21,13 @@
 #include <credentials/DeviceAttestationCredsProvider.h>
 #include <credentials/examples/DeviceAttestationCredsExample.h>
 
+#ifdef CONFIG_CHIP_OTA_REQUESTOR
+#include <app/clusters/ota-requestor/BDXDownloader.h>
+#include <app/clusters/ota-requestor/OTARequestor.h>
+#include <platform/GenericOTARequestorDriver.h>
+#include <platform/nrfconnect/OTAImageProcessorImpl.h>
+#endif
+
 #include <dk_buttons_and_leds.h>
 #include <logging/log.h>
 #include <zephyr.h>
@@ -49,6 +56,13 @@ bool sIsThreadEnabled;
 bool sHaveBLEConnections;
 
 k_timer sFunctionTimer;
+
+#ifdef CONFIG_CHIP_OTA_REQUESTOR
+GenericOTARequestorDriver sOTARequestorDriver;
+OTAImageProcessorImpl sOTAImageProcessor;
+chip::BDXDownloader sBDXDownloader;
+chip::OTARequestor sOTARequestor;
+#endif
 } /* namespace */
 
 AppTask AppTask::sAppTask;
@@ -94,8 +108,14 @@ int AppTask::Init()
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 
-#if defined(CONFIG_CHIP_NFC_COMMISSIONING)
 	PlatformMgr().AddEventHandler(AppTask::ChipEventHandler, 0);
+
+#ifdef CONFIG_CHIP_OTA_REQUESTOR
+	sOTAImageProcessor.SetOTADownloader(&sBDXDownloader);
+	sBDXDownloader.SetImageProcessorDelegate(&sOTAImageProcessor);
+	sOTARequestorDriver.Init(&sOTARequestor, &sOTAImageProcessor);
+	sOTARequestor.Init(&chip::Server::GetInstance(), &sOTARequestorDriver, &sBDXDownloader);
+	chip::SetRequestorInstance(&sOTARequestor);
 #endif
 
 	return 0;
