@@ -14,6 +14,7 @@
 #include <toolchain/common.h>
 #include <logging/log.h>
 #include <pm_config.h>
+#include <nrf_modem_at.h>
 
 #ifndef CONFIG_TRUSTED_EXECUTION_NONSECURE
 #error  nrf_modem_lib must be run as non-secure firmware.\
@@ -55,6 +56,48 @@ static const nrf_modem_init_params_t init_params = {
 #endif
 };
 
+static void log_fw_version_uuid(void)
+{
+	int err;
+	size_t off;
+	char fw_version_buf[32];
+	char *fw_version_end;
+	char fw_uuid_buf[64];
+	char *fw_uuid;
+	char *fw_uuid_end;
+
+	err = nrf_modem_at_cmd(fw_version_buf, sizeof(fw_version_buf), "AT+CGMR");
+	if (err == 0) {
+		/* Get first string before "\r\n"
+		 * which corresponds to FW version string.
+		 */
+		fw_version_end = strstr(fw_version_buf, "\r\n");
+		off = fw_version_end - fw_version_buf - 1;
+		fw_version_buf[off + 1] = '\0';
+		LOG_INF("Modem FW version: %s", log_strdup(fw_version_buf));
+	} else {
+		LOG_ERR("Unable to obtain modem FW version (ERR: %d, ERR TYPE: %d)",
+			nrf_modem_at_err(err), nrf_modem_at_err_type(err));
+	}
+
+	err = nrf_modem_at_cmd(fw_uuid_buf, sizeof(fw_uuid_buf), "AT%%XMODEMUUID");
+	if (err == 0) {
+		/* Get string that starts with " " after "%XMODEMUUID:",
+		 * then move to the next string before "\r\n"
+		 * which corresponds to the FW UUID string.
+		 */
+		fw_uuid = strstr(fw_uuid_buf, " ");
+		fw_uuid++;
+		fw_uuid_end = strstr(fw_uuid_buf, "\r\n");
+		off = fw_uuid_end - fw_uuid_buf - 1;
+		fw_uuid_buf[off + 1] = '\0';
+		LOG_INF("Modem FW UUID: %s", log_strdup(fw_uuid));
+	} else {
+		LOG_ERR("Unable to obtain modem FW UUID (ERR: %d, ERR TYPE: %d)\n",
+			nrf_modem_at_err(err), nrf_modem_at_err_type(err));
+	}
+}
+
 static int _nrf_modem_lib_init(const struct device *unused)
 {
 	if (!first_time_init) {
@@ -70,6 +113,10 @@ static int _nrf_modem_lib_init(const struct device *unused)
 		    nrfx_isr, nrfx_ipc_irq_handler, 0);
 
 	init_ret = nrf_modem_init(&init_params, NORMAL_MODE);
+
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_LOG_FW_VERSION_UUID)) {
+		log_fw_version_uuid();
+	}
 
 	k_mutex_lock(&slist_mutex, K_FOREVER);
 	if (sys_slist_peek_head(&shutdown_threads) != NULL) {
