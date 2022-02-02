@@ -22,7 +22,7 @@
 #include <credentials/DeviceAttestationCredsProvider.h>
 #include <credentials/examples/DeviceAttestationCredsExample.h>
 
-#if CONFIG_CHIP_OTA_REQUESTOR
+#ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include <app/clusters/ota-requestor/BDXDownloader.h>
 #include <app/clusters/ota-requestor/OTARequestor.h>
 #include <platform/GenericOTARequestorDriver.h>
@@ -105,7 +105,7 @@ Identify sIdentify = { chip::EndpointId{ kIdentifyEndpointId }, AppTask::OnIdent
 
 const device *sBme688SensorDev = device_get_binding(DT_LABEL(DT_INST(0, bosch_bme680)));
 
-#if CONFIG_CHIP_OTA_REQUESTOR
+#ifdef CONFIG_CHIP_OTA_REQUESTOR
 GenericOTARequestorDriver sOTARequestorDriver;
 OTAImageProcessorImpl sOTAImageProcessor;
 chip::BDXDownloader sBDXDownloader;
@@ -183,11 +183,9 @@ int AppTask::Init()
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 
-#if defined(CONFIG_CHIP_NFC_COMMISSIONING)
 	PlatformMgr().AddEventHandler(AppTask::ChipEventHandler, 0);
-#endif
 
-#if CONFIG_CHIP_OTA_REQUESTOR
+#ifdef CONFIG_CHIP_OTA_REQUESTOR
 	sOTAImageProcessor.SetOTADownloader(&sBDXDownloader);
 	sBDXDownloader.SetImageProcessorDelegate(&sOTAImageProcessor);
 	sOTARequestorDriver.Init(&sOTARequestor, &sOTAImageProcessor);

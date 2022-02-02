@@ -6,14 +6,25 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-option(BUILD_WITH_DFU "Build target with Device Firmware Upgrade support" OFF)
-if(BUILD_WITH_DFU)
-# Use multi-image DFU for the nRF5340dk
-    if(${BOARD} STREQUAL "nrf5340dk_nrf5340_cpuapp")
-        set(CONF_FILE prj_multi_image_dfu.conf)
+if(BOARD STREQUAL "nrf52840dk_nrf52840" OR BOARD STREQUAL "nrf5340dk_nrf5340_cpuapp")
+    set(BUILD_WITH_DFU "MATTER" CACHE STRING "Build target with Device Firmware Upgrade support")
+else()
+    set(BUILD_WITH_DFU "OFF" CACHE STRING "Build target with Device Firmware Upgrade support")
+endif()
+
+if(NOT BUILD_WITH_DFU STREQUAL "OFF")
+    if(BUILD_WITH_DFU STREQUAL "BLE" AND BOARD STREQUAL "nrf5340dk_nrf5340_cpuapp")
+        set(CONF_FILE prj_multi_image_smp_dfu.conf)
+    elseif(BUILD_WITH_DFU STREQUAL "BLE")
+        set(CONF_FILE prj_single_image_smp_dfu.conf)
+    elseif(BUILD_WITH_DFU STREQUAL "MATTER" AND BOARD STREQUAL "nrf5340dk_nrf5340_cpuapp")
+        set(CONF_FILE prj_multi_image_matter_dfu.conf)
+    elseif(BUILD_WITH_DFU STREQUAL "MATTER")
+        set(CONF_FILE prj_single_image_matter_dfu.conf)
     else()
-        set(CONF_FILE prj_single_image_dfu.conf)
+        message(FATAL_ERROR "Selected invalid BUILD_WITH_DFU value: ${BUILD_WITH_DFU}")
     endif()
+
     if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static.yml")
         set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static.yml)
     else()
@@ -49,7 +60,7 @@ target_sources(app PRIVATE
     ${COMMON_ROOT}/src/thread_util.cpp
 )
 
-if(BUILD_WITH_DFU)
+if(BUILD_WITH_DFU STREQUAL "BLE")
     target_sources(app PRIVATE ${COMMON_ROOT}/src/dfu_over_smp.cpp)
 endif()
 

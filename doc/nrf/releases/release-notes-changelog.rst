@@ -130,6 +130,13 @@ nRF Desktop
    * Bluetooth transmission power level for the Bluetooth LE advertising module.
      It is now assumed to be 0 dBm during advertising.
 
+Thingy:53: Matter weather station
+---------------------------------
+
+* Added:
+
+  * Initial support for the Matter-compliant over-the-air (OTA) device firmware upgrade (DFU) method.
+
 Samples
 =======
 
@@ -193,6 +200,17 @@ Thread samples
 * :ref:`ot_cli_sample` sample:
 
   * Removed `overlay-thread_1_2.conf` as Thread 1.2 is now supported as described in :ref:`thread_ug_thread_specification_options`.
+
+Matter samples
+--------------
+
+* :ref:`matter_lock_sample`:
+
+  * Added initial support for the Matter-compliant over-the-air (OTA) device firmware upgrade (DFU) method.
+
+* :ref:`matter_light_bulb_sample`:
+
+  * Added initial support for the Matter-compliant over-the-air (OTA) device firmware upgrade (DFU) method.
 
 Other samples
 -------------
