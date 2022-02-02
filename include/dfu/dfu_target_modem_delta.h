@@ -68,6 +68,19 @@ int dfu_target_modem_delta_write(const void *const buf, size_t len);
  */
 int dfu_target_modem_delta_done(bool successful);
 
+/**
+ * @brief Schedule update of the image.
+ *
+ * This call requests image update. The update will be performed after
+ * the device reset.
+ *
+ * @param[in] img_num This parameter is unused by this target type.
+ *
+ * @return 0 for a successful request or a negative error
+ *	   code identicating reason of failure.
+ **/
+int dfu_target_modem_delta_schedule_update(int img_num);
+
 #endif /* DFU_TARGET_MODEM_H__ */
 
 /**@} */

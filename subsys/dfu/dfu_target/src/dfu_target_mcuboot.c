@@ -219,17 +219,41 @@ int dfu_target_mcuboot_done(bool successful)
 			LOG_ERR("Unable to delete last page: %d", err);
 			return err;
 		}
-
-		err = boot_request_upgrade_multi(curr_sec_img, BOOT_UPGRADE_TEST);
-		if (err != 0) {
-			LOG_ERR("boot_request_upgrade error %d", err);
-			return err;
-		}
-
-		LOG_INF("MCUBoot image upgrade scheduled. "
-			"Reset device to apply");
 	} else {
 		LOG_INF("MCUBoot image upgrade aborted.");
+	}
+
+	return err;
+}
+
+static int dfu_target_mcuboot_schedule_one_img(int img_num)
+{
+	int err = 0;
+
+	err = boot_request_upgrade_multi(img_num, BOOT_UPGRADE_TEST);
+	if (err != 0) {
+		LOG_ERR("boot_request_upgrade for image-%d error %d",
+			img_num, err);
+	} else {
+		LOG_INF("MCUBoot image-%d upgrade scheduled. "
+			"Reset device to apply", img_num);
+	}
+
+	return err;
+}
+
+int dfu_target_mcuboot_schedule_update(int img_num)
+{
+	int err = 0;
+
+	if (img_num == -1) {
+		for (int i = 0; i < TARGET_IMAGE_COUNT && !err; i++) {
+			err = dfu_target_mcuboot_schedule_one_img(i);
+		}
+	} else if (img_num >= 0 && img_num < TARGET_IMAGE_COUNT) {
+		err = dfu_target_mcuboot_schedule_one_img(img_num);
+	} else {
+		err = -ENOENT;
 	}
 
 	return err;

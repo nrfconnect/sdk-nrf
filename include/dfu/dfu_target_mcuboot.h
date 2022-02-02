@@ -95,6 +95,20 @@ int dfu_target_mcuboot_write(const void *const buf, size_t len);
  */
 int dfu_target_mcuboot_done(bool successful);
 
+/**
+ * @brief Schedule update of one or more images.
+ *
+ * This call requests images update. The update will be performed after
+ * the device reset.
+ *
+ * @param[in] img_num Given image pair index or -1 for all
+ *		      of image pair indexes.
+ *
+ * @return 0 for a successful request or a negative error
+ *	   code identicating reason of failure.
+ **/
+int dfu_target_mcuboot_schedule_update(int img_num);
+
 #ifdef __cplusplus
 }
 #endif
