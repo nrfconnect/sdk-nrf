@@ -41,12 +41,12 @@ Devices in the nRF91 Series are supported by the following boards in the `Zephyr
      - PCA10090
      - ``nrf9160dk_nrf9160_ns``
      - | `Product Specification <nRF9160 Product Specification_>`_
-       | `Getting started <nRF9160 DK Getting Started_>`_
+       | :ref:`Getting started <ug_nrf9160_gs>`
        | `User Guide <nRF9160 DK Hardware_>`_
    * - Thingy91
      - PCA20035
      - ``thingy91_nrf9160_ns``
-     - | `Getting started <Nordic Thingy:91 Getting Started_>`_
+     - | :ref:`Getting started <ug_thingy91_gsg>`
        | `User Guide <Nordic Thingy:91 User Guide_>`_
 
 Application MCU
@@ -133,7 +133,7 @@ Full upgrade
     Both methods use the Simple Management Protocol (SMP) to provide an interface over UART, which enables the device to perform the update.
 
     * You can use the nRF Connect Programmer to perform the update, regardless of the images that are part of the existing firmware of the device.
-      For example, you can update the modem on an nRF9160 DK using the instructions described in `Updating the nRF9160 DK cellular modem`_ in the nRF Connect Programmer user guide.
+      For example, you can update the modem on an nRF9160 DK using the instructions described in :ref:`nrf9160_gs_updating_fw_modem` in the nRF9160 DK Getting Started guide.
 
     * You can also use the nRF pynrfjprog Python package to perform the update, as long as a custom application image integrating the ``lib_fmfu_mgmt`` subsystem is included in the existing firmware of the device.
       See the :ref:`fmfu_smp_svr_sample` sample for an example on how to integrate the :ref:`subsystem <lib_fmfu_mgmt>` in your custom application.

@@ -43,7 +43,7 @@ Supported modem firmware
 * mfw_nrf9160_1.1.0
 
 Use the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See `Updating the nRF9160 DK cellular modem`_ for instructions.
+See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
 
 
 Supported boards
