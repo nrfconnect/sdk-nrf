@@ -7,9 +7,9 @@ Zigbee: Network coordinator
    :local:
    :depth: 2
 
-This :ref:`Zigbee <ug_zigbee>` network coordinator sample establishes the Zigbee network and commissions Zigbee devices that want to join the network.
+This :ref:`Zigbee <ug_zigbee>` Network coordinator sample establishes the Zigbee network and commissions Zigbee devices that want to join the network.
 
-You can use this sample together with the :ref:`Zigbee light bulb <zigbee_light_bulb_sample>` and the :ref:`Zigbee light switch <zigbee_light_switch_sample>` to set up a basic Zigbee network.
+You can use this sample together with the :ref:`Zigbee Light bulb <zigbee_light_bulb_sample>` and the :ref:`Zigbee Light switch <zigbee_light_switch_sample>` to set up a basic Zigbee network.
 
 Requirements
 ************
@@ -24,18 +24,18 @@ You can use one of the development kits listed above.
 
 Optionally, you can use this sample with one or both of the following samples:
 
-* The :ref:`Zigbee light bulb <zigbee_light_bulb_sample>` sample programmed on one or more separate devices.
-* The :ref:`Zigbee light switch <zigbee_light_switch_sample>` sample programmed on one or more separate devices.
+* The :ref:`Zigbee Light bulb <zigbee_light_bulb_sample>` sample programmed on one or more separate devices.
+* The :ref:`Zigbee Light switch <zigbee_light_switch_sample>` sample programmed on one or more separate devices.
 
 You can mix different development kits.
 
 Overview
 ********
 
-This Zigbee network coordinator sample demonstrates the Zigbee Coordinator role and implements two clusters (Basic and Identify) that used to be required by the Zigbee Home Automation profile.
+This Zigbee Network coordinator sample demonstrates the Zigbee Coordinator role and implements two clusters (Basic and Identify) that used to be required by the Zigbee Home Automation profile.
 It is a minimal implementation that supports only the network steering commissioning mechanism.
 The Basic cluster provides attributes and commands for determining basic information about the node.
-The Identify cluster allows to put the device into the identification mode, which provides a way to locate the device.
+The Identify cluster allows to set the device into the identification mode, which provides a way to locate the device.
 
 Configuration
 *************
@@ -60,7 +60,7 @@ LED 3:
     * Off - The network is closed.
 
 LED 4:
-    Blinks when the network coordinator is in Identify mode.
+    Blinks when the Network coordinator is in Identify mode.
 
 Button 1:
     Reopens the network for 180 seconds.
@@ -69,7 +69,7 @@ Button 1:
          The network is also opened after start-up.
 
 Button 4:
-    Puts the network coordinator in Identify mode.
+    Sets the Network coordinator in Identify mode.
 
 Building and running
 ********************
@@ -84,27 +84,32 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+After programming the sample to your development kit, complete the following steps to test it:
 
 1. Turn on the development kit that runs the coordinator sample.
-   When **LED 1** starts blinking, the main application thread has started.
-   When **LED 3** turns on, this development kit has become the Coordinator of the Zigbee network and the network is established.
+
+   * When **LED 1** starts blinking, the main application thread has started.
+   * When **LED 3** turns on, this development kit has become the Coordinator of the Zigbee network and the network is established.
+
 #. Turn on the other development kits that you programmed.
 
-   * When **LED 3** turns on the development kit that runs the light bulb sample, it has become a Router inside the network.
-   * When **LED 3** turns on the development kit that runs the light switch sample, it has become an End Device, connected directly to the Coordinator.
+   * When **LED 3** turns on the development kit that runs the Light bulb sample, it has become a Router inside the network.
+   * When **LED 3** turns on the development kit that runs the Light switch sample, it has become an End Device, connected directly to the Coordinator.
 
-   .. tip::
+   .. note::
        If **LED 3** on the development kits does not turn on, press **Button 1** on the Coordinator to reopen the network.
 
-#. Optionally, if you are testing with both the light bulb and the light switch samples, complete the following additional steps:
+#. Optionally, if you are testing with both the Light bulb and the Light switch samples, complete the following additional steps:
 
-   #. Wait until **LED 4** on the development kit that runs the light switch sample turns on.
+   a. Wait until **LED 4** on the development kit that runs the Light switch sample turns on.
+
       This LED indicates that the switch found a light bulb to control.
-   #. Use buttons on the development kit that runs the light switch sample to control the light bulb, as described in the light switch sample's user interface section.
+
+   #. Use buttons on the development kit that runs the Light switch sample to control the light bulb, as described in the Light switch sample's user interface section.
+
       The result of using the buttons is reflected on the light bulb's **LED 4**.
 
-You can now use buttons on the light switch to control the light bulb, as described in the :ref:`zigbee_light_switch_user_interface` section of the light switch sample page.
+You can now use buttons on the light switch to control the light bulb, as described in the :ref:`zigbee_light_switch_user_interface` section of the Light switch sample page.
 
 Dependencies
 ************
