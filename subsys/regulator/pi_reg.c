@@ -4,11 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <bluetooth/mesh/light_ctrl_reg.h>
+#include <zephyr/types.h>
+#include <stddef.h>
+#include <kernel.h>
 
-void bt_mesh_light_ctrl_reg_target_set(struct bt_mesh_light_ctrl_reg *reg,
-				       float value,
-				       int32_t transition_time)
+#include <regulator/pi_reg.h>
+
+void regulator_pi_reg_target_set(struct regulator_pi_reg *reg,
+				 float value,
+				 int32_t transition_time)
 {
 	reg->prev_target = reg->target;
 	reg->target = value;
@@ -20,7 +24,7 @@ void bt_mesh_light_ctrl_reg_target_set(struct bt_mesh_light_ctrl_reg *reg,
 	reg->transition_time = transition_time;
 }
 
-float bt_mesh_light_ctrl_reg_target_get(struct bt_mesh_light_ctrl_reg *reg)
+float regulator_pi_reg_target_get(struct regulator_pi_reg *reg)
 {
 	if (reg->transition_time == 0) {
 		return reg->target;

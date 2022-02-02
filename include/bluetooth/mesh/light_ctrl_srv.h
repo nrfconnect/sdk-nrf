@@ -20,8 +20,8 @@
 #include <bluetooth/mesh/gen_onoff_srv.h>
 #include <bluetooth/mesh/lightness_srv.h>
 #include <bluetooth/mesh/model_types.h>
-#include <bluetooth/mesh/light_ctrl_reg.h>
-#include <bluetooth/mesh/light_ctrl_reg_spec.h>
+#include <regulator/pi_reg.h>
+#include <regulator/pi_reg_bt_mesh.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,7 +38,7 @@ struct bt_mesh_light_ctrl_srv;
  *
  *  @param[in] _lightness_srv Pointer to the @ref bt_mesh_lightness_srv this
  *                            server controls.
- *  @param[in] _reg           Pointer to the @ref bt_mesh_light_ctrl_reg to use.
+ *  @param[in] _reg           Pointer to the @ref regulator_pi_reg to use.
  */
 #define BT_MESH_LIGHT_CTRL_SRV_INIT_WITH_REG(_lightness_srv, _reg)             \
 	{                                                                      \
@@ -55,17 +55,17 @@ struct bt_mesh_light_ctrl_srv;
  *  @brief Initialization parameters for @ref bt_mesh_light_ctrl_srv.
  *
  *  This will enable the spec regulator if @kconfig{CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG} and
- *  @kconfig{CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC} are selected.
+ *  @kconfig{CONFIG_REGULATOR_PI_REG_BT_MESH} are selected.
  *
  *  @param[in] _lightness_srv Pointer to the @ref bt_mesh_lightness_srv this
  *                            server controls.
  */
-#if CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC && CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
+#if CONFIG_REGULATOR_PI_REG_BT_MESH && CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 #define BT_MESH_LIGHT_CTRL_SRV_INIT(_lightness_srv)                            \
 	BT_MESH_LIGHT_CTRL_SRV_INIT_WITH_REG(                                  \
 		_lightness_srv,                                                \
-		&(&((struct bt_mesh_light_ctrl_reg_spec)                       \
-		    BT_MESH_LIGHT_CTRL_REG_SPEC_INIT))->reg)
+		&(&((struct regulator_pi_reg_bt_mesh)                          \
+		    REGULATOR_PI_REG_BT_MESH_INIT))->reg)
 #else
 #define BT_MESH_LIGHT_CTRL_SRV_INIT(_lightness_srv)                            \
 	{                                                                      \
@@ -182,7 +182,7 @@ struct bt_mesh_light_ctrl_srv {
 
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 	/** Illuminance regulator */
-	struct bt_mesh_light_ctrl_reg *reg;
+	struct regulator_pi_reg *reg;
 	/** Previous regulator value */
 	uint16_t reg_prev;
 #endif

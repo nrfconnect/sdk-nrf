@@ -6,7 +6,7 @@
 
 #include <stdlib.h>
 #include <bluetooth/mesh/light_ctrl_srv.h>
-#include <bluetooth/mesh/light_ctrl_reg.h>
+#include <regulator/pi_reg.h>
 #include <bluetooth/mesh/sensor_types.h>
 #include <bluetooth/mesh/properties.h>
 #include "lightness_internal.h"
@@ -46,7 +46,7 @@ enum stored_flags {
 struct setup_srv_storage_data {
 	struct bt_mesh_light_ctrl_srv_cfg cfg;
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	struct bt_mesh_light_ctrl_reg_cfg reg_cfg;
+	struct regulator_pi_reg_cfg reg_cfg;
 #endif
 };
 
@@ -359,7 +359,7 @@ static float lux_getf(struct bt_mesh_light_ctrl_srv *srv)
 	return to_centi_lux(&srv->cfg.lux[srv->state]) / 100.0f;
 }
 
-static void reg_updated(struct bt_mesh_light_ctrl_reg *reg, float value)
+static void reg_updated(struct regulator_pi_reg *reg, float value)
 {
 	struct bt_mesh_light_ctrl_srv *srv = (struct bt_mesh_light_ctrl_srv *)(reg->user_data);
 	uint16_t output = CLAMP(value, 0, UINT16_MAX);
@@ -415,7 +415,7 @@ static void transition_start(struct bt_mesh_light_ctrl_srv *srv,
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 	if (srv->reg) {
 		atomic_set_bit(&srv->flags, FLAG_REGULATOR);
-		bt_mesh_light_ctrl_reg_target_set(srv->reg, lux_getf(srv), fade_time);
+		regulator_pi_reg_target_set(srv->reg, lux_getf(srv), fade_time);
 	}
 #endif
 }
@@ -1388,7 +1388,7 @@ struct __packed scene_data {
 		light:1;
 	struct bt_mesh_light_ctrl_srv_cfg cfg;
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	struct bt_mesh_light_ctrl_reg_cfg reg;
+	struct regulator_pi_reg_cfg reg;
 #endif
 	uint16_t lightness;
 };
@@ -1501,7 +1501,7 @@ static int light_ctrl_srv_init(struct bt_mesh_model *model)
 
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 	if (srv->reg) {
-		struct bt_mesh_light_ctrl_reg_cfg reg_cfg = BT_MESH_LIGHT_CTRL_SRV_REG_CFG_INIT;
+		struct regulator_pi_reg_cfg reg_cfg = BT_MESH_LIGHT_CTRL_SRV_REG_CFG_INIT;
 
 		srv->reg->updated = reg_updated;
 		srv->reg->user_data = srv;
@@ -1636,7 +1636,7 @@ static void light_ctrl_srv_reset(struct bt_mesh_model *model)
 	struct bt_mesh_light_ctrl_srv *srv = model->user_data;
 	struct bt_mesh_light_ctrl_srv_cfg cfg = BT_MESH_LIGHT_CTRL_SRV_CFG_INIT;
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	struct bt_mesh_light_ctrl_reg_cfg reg_cfg = BT_MESH_LIGHT_CTRL_SRV_REG_CFG_INIT;
+	struct regulator_pi_reg_cfg reg_cfg = BT_MESH_LIGHT_CTRL_SRV_REG_CFG_INIT;
 #endif
 
 	srv->cfg = cfg;

@@ -14,10 +14,10 @@ target_sources(app
   PRIVATE
   ${app_sources}
   ${NRF_DIR}/subsys/bluetooth/mesh/light_ctrl_srv.c
-  ${NRF_DIR}/subsys/bluetooth/mesh/light_ctrl_reg.c
-  ${NRF_DIR}/subsys/bluetooth/mesh/light_ctrl_reg_spec.c
   ${NRF_DIR}/subsys/bluetooth/mesh/sensor_types.c
   ${NRF_DIR}/subsys/bluetooth/mesh/sensor.c
+  ${NRF_DIR}/subsys/regulator/pi_reg.c
+  ${NRF_DIR}/subsys/regulator/pi_reg_bt_mesh.c
   ${ZEPHYR_BASE}/subsys/net/buf.c
   )
 
@@ -47,9 +47,10 @@ target_compile_options(app
   -DCONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_ON=20000
   -DCONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG=10000
   -DCONFIG_BT_MESH_LIGHT_CTRL_SRV_REG=1
-  -DCONFIG_BT_MESH_LIGHT_CTRL_REG=1
-  -DCONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC=1
-  -DCONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC_INTERVAL=100
+  -DCONFIG_REGULATOR=1
+  -DCONFIG_REGULATOR_PI_REG=1
+  -DCONFIG_REGULATOR_PI_REG_BT_MESH=1
+  -DCONFIG_REGULATOR_PI_REG_BT_MESH_INTERVAL=100
   -DCONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_KIU=250
   -DCONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_KID=25
   -DCONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_KPU=80

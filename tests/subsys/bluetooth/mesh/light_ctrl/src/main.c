@@ -9,7 +9,7 @@
 #include <bluetooth/mesh.h>
 #include <bluetooth/mesh/models.h>
 #include <bluetooth/mesh/light_ctrl_srv.h>
-#include <bluetooth/mesh/light_ctrl_reg_spec.h>
+#include <regulator/pi_reg_bt_mesh.h>
 #include "light_ctrl_internal.h"
 
 #define FLAGS_CONFIGURATION (BIT(FLAG_STARTED) | BIT(FLAG_OCC_MODE))
@@ -18,7 +18,7 @@
 	(CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_ACCURACY / 100.0 * (state_luxlevel) / 2)
 
 /* Difference between In and In-1 in PI Regulator for the given Ki coefficient and U = 1. */
-#define SUMMATION_STEP(ki) ((ki) * CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC_INTERVAL / 1000)
+#define SUMMATION_STEP(ki) ((ki) * CONFIG_REGULATOR_PI_REG_BT_MESH_INTERVAL / 1000)
 
 enum flags {
 	FLAG_ON,
@@ -250,7 +250,7 @@ static void schedule_dwork_timeout(enum light_ctrl_timer timer_idx)
 {
 	zassert_not_null(mock_timers[timer_idx].handler, "No timer handler");
 	if (timer_idx == REG_TIMER) {
-		mock_uptime += k_ms_to_ticks_ceil64(CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC_INTERVAL);
+		mock_uptime += k_ms_to_ticks_ceil64(CONFIG_REGULATOR_PI_REG_BT_MESH_INTERVAL);
 	}
 	mock_timers[timer_idx].handler(&mock_timers[timer_idx].dwork->work);
 }
@@ -323,7 +323,7 @@ static void expect_ctrl_enable(void)
 	state_timeout = K_MSEC(0);
 	expect_transition_start(&state_timeout);
 
-	reg_start_timeout = K_MSEC(CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC_INTERVAL);
+	reg_start_timeout = K_MSEC(CONFIG_REGULATOR_PI_REG_BT_MESH_INTERVAL);
 	ztest_expect_value(k_work_schedule, dwork, mock_timers[REG_TIMER].dwork);
 	ztest_expect_data(k_work_schedule, &delay, &reg_start_timeout);
 }
@@ -390,7 +390,7 @@ static void trigger_pi_reg(uint32_t steps)
 {
 	while (steps-- > 0) {
 		k_timeout_t reg_timeout;
-		reg_timeout = K_MSEC(CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC_INTERVAL);
+		reg_timeout = K_MSEC(CONFIG_REGULATOR_PI_REG_BT_MESH_INTERVAL);
 		expect_timer_reschedule(REG_TIMER, &reg_timeout);
 		schedule_dwork_timeout(REG_TIMER);
 	}
@@ -412,7 +412,7 @@ static float sensor_to_float(struct sensor_value *val)
 static void setup(void)
 {
 	mock_timers[REG_TIMER].dwork = &CONTAINER_OF(
-		light_ctrl_srv.reg, struct bt_mesh_light_ctrl_reg_spec, reg)->timer;
+		light_ctrl_srv.reg, struct regulator_pi_reg_bt_mesh, reg)->timer;
 	zassert_not_null(_bt_mesh_light_ctrl_srv_cb.init, "Init cb is null");
 	zassert_not_null(_bt_mesh_light_ctrl_srv_cb.start, "Start cb is null");
 

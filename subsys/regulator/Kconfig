@@ -1,0 +1,33 @@
+menuconfig REGULATOR
+	bool "Regulator"
+	help
+	  This option enables regulator support
+
+if REGULATOR
+
+menuconfig REGULATOR_PI_REG
+	bool "PI Regulator"
+	help
+	  Enable the PI regulator module
+
+if REGULATOR_PI_REG
+
+config REGULATOR_PI_REG_BT_MESH
+	bool "Bluetooth Mesh PI Regulator"
+	depends on FPU
+	default y
+	help
+	  Enable Bluetooth Mesh specification-defined PI regulator implementation.
+
+if REGULATOR_PI_REG_BT_MESH
+
+config REGULATOR_PI_REG_BT_MESH_INTERVAL
+	int "Update interval"
+	default 100
+	range 10 100
+	help
+	  Update interval of the mesh PI regulator (in milliseconds).
+
+endif #REGULATOR_PI_REG_BT_MESH
+endif #REGULATOR_PI_REG
+endif #REGULATOR
