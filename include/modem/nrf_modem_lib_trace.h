@@ -38,25 +38,10 @@ enum nrf_modem_lib_trace_mode {
  * This function sends AT command that requests the modem to start sending traces.
  *
  * @param trace_mode Trace mode
- * @param duration   Trace duration in seconds. If set to 0, the trace session will
- *                   continue until @ref nrf_modem_lib_trace_stop is called or until
- *                   the required size of max trace data (specified by the
- *                   @p max_size parameter) is received.
- * @param max_size   Maximum size (in bytes) of trace data that should be received.
- *                   The tracing will be stopped after receiving @p max_size
- *                   bytes. If set to 0, the trace session will continue until
- *                   @ref nrf_modem_lib_trace_stop is called or until the duration
- *                   set via the @p duration parameter is reached.
- *                   To ensure the integrity of the trace output, the
- *                   modem_trace module will never skip a trace message. For
- *                   this purpose, if it detects that a received trace won't fit
- *                   in the maximum allowed size, it will stop the trace session
- *                   without sending out that trace to the transport medium.
  *
  * @return Zero on success, non-zero otherwise.
  */
-int nrf_modem_lib_trace_start(enum nrf_modem_lib_trace_mode trace_mode, uint16_t duration,
-			      uint32_t max_size);
+int nrf_modem_lib_trace_start(enum nrf_modem_lib_trace_mode trace_mode);
 
 /** @brief Process modem trace data
  *
