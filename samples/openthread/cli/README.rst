@@ -10,8 +10,24 @@ Thread: CLI
 The :ref:`Thread <ug_thread>` CLI sample demonstrates how to send commands to a Thread device using the OpenThread Command Line Interface (CLI).
 The CLI is integrated into the Zephyr shell.
 
-This sample supports optional :ref:`ot_cli_sample_thread_v12`, which can be turned on or off.
+This sample supports the optional :ref:`ot_cli_sample_thread_v12` that you can turn on or off.
 See :ref:`coap_client_sample_activating_variants` for details.
+
+Requirements
+************
+
+The sample supports the following development kits for testing the network status:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340dk_nrf5340_cpuapp, nrf5340dk_nrf5340_cpuapp_ns, nrf52840dk_nrf52840, nrf52840dongle_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
+
+Optionally, you can use one or more compatible development kits programmed with this sample or another :ref:`Thread sample <openthread_samples>` for :ref:`testing communication or diagnostics <ot_cli_sample_testing_multiple>` and :ref:`thread_ot_commissioning_configuring_on-mesh`.
+
+Thread 1.2 extension requirements
+=================================
+
+If you enable the :ref:`ot_cli_sample_thread_v12`, you need `nRF Sniffer for 802.15.4`_ to observe messages sent from the router to the leader kit when :ref:`ot_cli_sample_testing_multiple_v12`.
 
 Overview
 ********
@@ -20,11 +36,11 @@ The sample demonstrates the usage of commands listed in `OpenThread CLI Referenc
 OpenThread CLI is integrated into the system shell accessible over serial connection.
 To indicate a Thread command, the ``ot`` keyword needs to precede the command.
 
-The amount of commands you can test depends on the application configuration.
+The number of commands you can test depends on the application configuration.
 The CLI sample comes with the :ref:`full set of OpenThread functionalities <thread_ug_feature_sets>` enabled (:kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`).
 
 If used alone, the sample allows you to test the network status.
-It is recommended to use at least two development kits running the same sample to be able to test communication.
+It is recommended to use at least two development kits running the same sample for testing the communication.
 
 .. _ot_cli_sample_diag_module:
 
@@ -32,8 +48,8 @@ Diagnostic module
 =================
 
 By default, the CLI sample comes with the :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` :ref:`feature set <thread_ug_feature_sets>` enabled, which allows you to use Zephyr's diagnostic module with its ``diag`` commands.
-Use these commands for manually checking hardware-related functionalities without running a Thread network.
-For example, when adding a new functionality or during the manufacturing process to ensure radio communication is working.
+Use these commands to manually check hardware-related functionalities without running a Thread network.
+For example, to ensure radio communication is working when adding a new functionality or during the manufacturing process.
 See `Testing diagnostic module`_ section for an example.
 
 .. note::
@@ -45,14 +61,14 @@ Experimental Thread 1.2 extension
 =================================
 
 This optional extension allows you to test :ref:`available features from the Thread 1.2 Specification <thread_ug_thread_specification_options>`.
-You can enable these features by setting :ref:`thread_ug_thread_specification_options`.
+To enable these features, set the :ref:`thread_ug_thread_specification_options`.
 
 .. _ot_cli_sample_thread_certification:
 
 Certification tests with CLI sample
 ===================================
 
-The Thread CLI sample can be used for running certification tests.
+You can use the Thread CLI sample for running certification tests.
 See :ref:`ug_thread_cert` for information on how to use this sample on Thread Certification Test Harness.
 
 .. _ot_cli_sample_minimal:
@@ -70,33 +86,18 @@ Serial transport
 
 The Thread CLI sample supports UART and USB CDC ACM as serial transports.
 By default, it uses UART transport.
-You can switch to USB transport by :ref:`activating the USB overlay extension <ot_cli_sample_activating_variants>`, as described below.
+To switch to USB transport, :ref:`activate the USB overlay extension <ot_cli_sample_activating_variants>`.
 
 FEM support
 ===========
 
 .. include:: /includes/sample_fem_support.txt
 
-Requirements
-************
-
-The sample supports the following development kits for testing the network status:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp, nrf5340dk_nrf5340_cpuapp_ns, nrf52840dk_nrf52840, nrf52840dongle_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
-
-Optionally, you can use one or more compatible development kits programmed with this sample or another :ref:`Thread sample <openthread_samples>` for :ref:`testing communication or diagnostics <ot_cli_sample_testing_multiple>` and :ref:`thread_ot_commissioning_configuring_on-mesh`.
-
-Thread 1.2 extension requirements
-=================================
-
-If you enable the :ref:`ot_cli_sample_thread_v12`, you will need `nRF Sniffer for 802.15.4`_ to observe messages sent from the router to the leader kit when :ref:`ot_cli_sample_testing_multiple_v12`.
 
 User interface
 **************
 
-All the interactions with the application are handled using serial communication.
+All interactions with the application are handled using serial communication.
 See `OpenThread CLI Reference`_ for the list of available serial commands.
 
 Building and running
@@ -115,11 +116,12 @@ To update the OpenThread libraries provided by ``nrfxlib``, invoke ``west build 
 Activating sample extensions
 ============================
 
-To activate the optional extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` in the following manner:
+To activate the optional extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` as follows:
 
 * For the minimal single protocol variant, set :file:`overlay-minimal_singleprotocol.conf`.
 * For the minimal multiprotocol variant, set :file:`overlay-minimal_multiprotocol.conf`.
-* For USB transport support, set :file:`overlay-usb.conf`. Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to :file:`usb.overlay`.
+* For USB transport support, set :file:`overlay-usb.conf`.
+  Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to :file:`usb.overlay`.
 * For turning on logging, set :file:`overlay-logging.conf`.
 * For redirecting logs to RTT, set :file:`overlay-rtt.conf`.
   For more information about RTT please refer to :ref:`RTT logging <ug_logging>`.
@@ -131,7 +133,7 @@ For more information about using configuration overlay files, see :ref:`zephyr:i
 Testing
 =======
 
-After building the sample and programming it to your development kit, test it by performing the following steps:
+After building the sample and programming it to your development kit, complete the following steps to test it:
 
 #. Turn on the development kit.
 #. Set up the serial connection with the development kit.
@@ -162,7 +164,7 @@ After building the sample and programming it to your development kit, test it by
          ot_zephyr
          Done
 
-   #. Get the IP addresses of the current thread network with the ``ot ipaddr`` command.
+   #. Get the IP addresses of the current Thread network with the ``ot ipaddr`` command.
       For example:
 
       .. code-block:: console
@@ -175,8 +177,8 @@ After building the sample and programming it to your development kit, test it by
 
 .. _ot_cli_sample_testing_multiple:
 
-Testing with more kits
-----------------------
+Testing with multiple kits
+--------------------------
 
 If you are using more than one development kit for testing the CLI sample, you can also complete additional testing procedures.
 
@@ -225,7 +227,8 @@ To test diagnostic commands, complete the following steps:
    .. note::
         |thread_hwfc_enabled|.
 
-#. Make sure that the diagnostic module is enabled and configured with proper radio channel and transmission power by running the following commands on both devices:
+#. Make sure that the diagnostic module is enabled and configured with proper radio channel and transmission power.
+   Run the following commands on both devices:
 
    .. code-block:: console
 
@@ -252,7 +255,7 @@ To test diagnostic commands, complete the following steps:
       status 0x00
       Done
 
-#. Read the radio statistics on the other device by running the following command:
+#. To read the radio statistics on the other device, run the following command:
 
    .. code-block:: console
 
@@ -342,8 +345,8 @@ To test the Thread 1.2 features, complete the following steps:
       ff03:0:0:0:0:0:0:fc
       Done
 
-   The router kit will send an ``MLR.req`` message and a ``DUA.req`` message to the leader kit (Backbone Router).
-   This can be observed using the `nRF Sniffer for 802.15.4`_.
+   The router kit sends an ``MLR.req`` message and a ``DUA.req`` message to the leader kit (Backbone Router).
+   Use the `nRF Sniffer for 802.15.4`_ to observe this.
 
 #. On the leader kit, list the IPv6 addresses:
 
@@ -366,7 +369,7 @@ To test the Thread 1.2 features, complete the following steps:
 
 #. Run the following commands on the router kit:
 
-   a. Reattach the router kit as SED with a polling period of 3 seconds:
+   a. Reattach the router kit as SED with a polling period of three seconds:
 
       .. code-block:: console
 
@@ -446,7 +449,7 @@ To test the Thread 1.2 features, complete the following steps:
          1 packets transmitted, 1 packets received. Packet loss = 0.0%. Round-trip min/a
          Done
 
-      Observe that there is a long latency on the reply of up to 3000 ms.
+      Observe that there is a long latency, up to 3000 ms, on the reply.
       This is due to the indirect transmission mechanism based on data polling.
 
    #. Enable a CSL Receiver on the router kit (now SED) by configuring a CSL period of 0.5 seconds:
