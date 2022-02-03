@@ -23,6 +23,8 @@ For types common to all models, see :ref:`bt_mesh_models`.
 
    light_ctrl_srv.rst
    light_ctrl_cli.rst
+   light_ctrl_reg.rst
+   light_ctrl_reg_spec.rst
 
 
 

@@ -290,21 +290,14 @@ if BT_MESH_LIGHT_CTRL_SRV
 
 menuconfig BT_MESH_LIGHT_CTRL_SRV_REG
 	bool "Lightness Regulator"
-	depends on FPU
+	select REGULATOR
+	select REGULATOR_PI_REG
 	default y
 	help
-	  Enable the Lightness PI Regulator for controlling the lightness level
+	  Enable the use of a PI regulator for controlling the lightness level
 	  through an illuminance sensor feedback loop.
 
 if BT_MESH_LIGHT_CTRL_SRV_REG
-
-config BT_MESH_LIGHT_CTRL_SRV_REG_INTERVAL
-	int "Update interval"
-	default 100
-	range 10 100
-	help
-	  Update interval of the Light LC Server model's internal PI regulator
-	  (in milliseconds).
 
 config BT_MESH_LIGHT_CTRL_SRV_REG_KIU
 	int "Default Kiu coefficient"

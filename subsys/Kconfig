@@ -27,6 +27,8 @@ rsource "event_manager_profiler_tracer/Kconfig"
 
 rsource "profiler/Kconfig"
 
+rsource "regulator/Kconfig"
+
 rsource "spm/Kconfig"
 
 rsource "fw_info/Kconfig"
