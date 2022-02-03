@@ -20,19 +20,28 @@ See :ref:`ug_bootloader` for more information about the full bootloader chain.
 
 .. _bootloader_rot:
 
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf9160dk_nrf9160_ns, nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf21540dk_nrf52840
+
 Overview
 ********
 
 The sample accomplishes a simple and reliable *Root of Trust* (RoT) for a secure boot chain as follows:
 
-1. Locking the flash memory.
+1. Locks the flash memory.
 
    To enable the RoT, the bootloader sample locks the flash memory that contains both the sample bootloader and its configuration.
    Locking is done using the hardware that is available on the given architecture.
 
    For additional details on locking, see the :ref:`fprotect_readme` driver.
 
-#. Selecting the next stage in the boot chain.
+#. Selects the next stage in the boot chain.
 
    The next stage in the boot chain can either be another bootloader or an application.
 
@@ -41,7 +50,7 @@ The sample accomplishes a simple and reliable *Root of Trust* (RoT) for a secure
 
    For information about creating a second stage bootloader, see :ref:`ug_bootloader_adding_upgradable`.
 
-#. Verify the next stage in the boot chain.
+#. Verifies the next stage in the boot chain.
 
    After selecting the image to boot next, the bootloader sample verifies the image validity using one of the provisioned public key hashes.
 
@@ -63,11 +72,11 @@ The sample accomplishes a simple and reliable *Root of Trust* (RoT) for a secure
 
    If the public key does not match any remaining valid provisioned hashes, the validation process fails.
 
-#. Booting the next stage in the boot chain.
+#. Boots the next stage in the boot chain.
 
    After verifying the next boot stage, the bootloader sample uninitializes all peripherals that it used and boots the next boot stage.
 
-#. Sharing the cryptographic library through an external API.
+#. Shares the cryptographic library through an external API.
 
    The bootloader sample shares some of its functionality through an external API (``EXT_API``).
 
@@ -99,12 +108,12 @@ OTP regions are special regions of the flash memory that only allow flash memory
 
 Because of these design constraints, the following limitations apply:
 
-1. The public key hash cannot contain half-words with the value ``0xFFFF``, as such hashes cannot be guaranteed to be immutable when placed in the OTP region.
-   Therefore, the bootloader refuses to boot if any hash contains a half-word with the value ``0xFFFF``.
-   If your public key hash is found to contain this value, :ref:`regenerate it <ug_fw_update_keys>` or use another public key.
+* The public key hash cannot contain half-words with the value ``0xFFFF``, as such hashes cannot be guaranteed to be immutable when placed in the OTP region.
+  Therefore, the bootloader refuses to boot if any hash contains a half-word with the value ``0xFFFF``.
+  If your public key hash is found to contain this value, :ref:`regenerate it <ug_fw_update_keys>` or use another public key.
 
-#. Writing data to an OTP region means that provisioned data cannot be written more than once to the target device.
-   When programming images that contain flash memory content for this region, such as the bootloader or images containing the bootloader, the UICR must first be erased.
+* Writing data to an OTP region means that provisioned data cannot be written more than once to the target device.
+  When programming images that contain flash memory content for this region, such as the bootloader or images containing the bootloader, the UICR must first be erased.
 
 .. note::
    On the nRF9160 and nRF5340, the UICR can only be erased by erasing the entire flash memory.
@@ -138,10 +147,10 @@ Flash memory layout
 
 The flash memory layout is defined by the :file:`samples/bootloader/pm.yml` file, which establishes four main partitions:
 
-1. *B0* - Contains the bootloader sample.
-#. *Provision* - Stores the provisioned data.
-#. *S0* - Defines one of the two potential storage areas for the second stage bootloader.
-#. *S1* - Defines the other one of the two potential storage areas for the second stage bootloader.
+* *B0* - Contains the bootloader sample.
+* *Provision* - Stores the provisioned data.
+* *S0* - Defines one of the two potential storage areas for the second stage bootloader.
+* *S1* - Defines the other one of the two potential storage areas for the second stage bootloader.
 
 The default location for placing the next image in the boot chain is *S0*.
 This would result, for example, in a flash memory layout like the following, when using the ``nrf52840dk_nrf52840`` board:
@@ -182,9 +191,8 @@ When using the ``nrf52840dk_nrf52840`` board, this would produce a flash memory 
 Signature Keys
 ==============
 
-This bootloader supports the following key types for validating the next image in the boot chain:
+This bootloader supports the ECDSA-p256 key type for validating the next image in the boot chain.
 
-* ECDSA-p256
 
 By default, when not explicitly defined, a private/public key pair is generated during the build.
 However, these key pairs should only be used during development.
@@ -203,7 +211,7 @@ Firmware versions using the |NSIB| are kept in the form of a *monotonic counter*
 Counter values are kept as slots in the flash memory, with each new counter value occupying a new slot.
 See :kconfig:`CONFIG_SB_MONOTONIC_COUNTER` for more details.
 
-An application's counter value can be set by building using the :kconfig:`CONFIG_FW_INFO_FIRMWARE_VERSION` option:
+To set the counter value of an application, build it using the :kconfig:`CONFIG_FW_INFO_FIRMWARE_VERSION` option:
 
 .. code-block::
 
@@ -213,15 +221,6 @@ The number of slots available for counter values depends on the type of nRF devi
 For default values and ranges, see :kconfig:`CONFIG_SB_NUM_VER_COUNTER_SLOTS`.
 
 .. bootloader_monotonic_counter_end
-
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf9160dk_nrf9160_ns, nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf21540dk_nrf52840
 
 Configuration
 *************
@@ -244,7 +243,7 @@ Building and running
 
 The bootloader sample should be included as a child image in a multi-image build, rather than being built stand-alone.
 While it is possible to build this sample by itself and merge it into other application images, this process is not officially supported by the |NCS|.
-To reduce development time and potential issues with this route, you should let the existing |NCS| infrastructure for multi-image builds handle the integration.
+To reduce the development time and potential issues with this route, let the existing |NCS| infrastructure for multi-image builds handle the integration.
 
 For building and running this sample with an application, see :ref:`ug_bootloader_adding_immutable`.
 
@@ -253,17 +252,17 @@ Building and running using |SES|
 
 .. include:: /includes/build_and_run_bootloader.txt
 
-To add the bootloader sample as a child image to your application:
+To add the bootloader sample as a child image to your application, complete the following steps:
 
 1. :ref:`Create a private key in PEM format <ug_fw_update_keys>`.
-#. Enable the |NSIB| by running ``menuconfig`` on your application:
+#. To enable the |NSIB|, run ``menuconfig`` on your application:
 
    a. Select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK project`.
    #. Go to :guilabel:`Modules` > :guilabel:`Nordic nRF Connect` > :guilabel:`Bootloader` and set :guilabel:`Use Secure Bootloader` to enable :kconfig:`CONFIG_SECURE_BOOT`.
    #. Under :guilabel:`Private key PEM file` (:kconfig:`CONFIG_SB_SIGNING_KEY_FILE`), enter the path to the private key that you created.
       If you choose to run the sample with default debug keys, you can skip this step.
 
-      There are additional configuration options that you can modify, but it is not recommended to do so.
+      You can also modify other additional configuration options, but that is not recommended.
       The default settings are suitable for most use cases.
 
       .. note::
@@ -273,7 +272,9 @@ To add the bootloader sample as a child image to your application:
    #. Click :guilabel:`Configure`.
 
 #. Select :guilabel:`Build` -> :guilabel:`Build Solution` to compile your application.
+
    The build process creates two images, one for the bootloader and one for the application, and merges them.
+
 #. Select :guilabel:`Build` -> :guilabel:`Build and Run` to program the resulting image to your device.
 
 Testing
@@ -293,7 +294,7 @@ This sample uses the following |NCS| libraries:
 * :ref:`doc_bl_validation`
 * :ref:`doc_bl_storage`
 
-This sample uses the following `sdk-nrfxlib`_ libraries:
+It uses the following `sdk-nrfxlib`_ libraries:
 
 * :ref:`nrfxlib:nrf_cc310_bl_readme`
 * :ref:`nrfxlib:nrf_oberon_readme`
