@@ -10,6 +10,17 @@ nRF9160: AWS IoT
 The AWS IoT sample shows the communication of an nRF9160-based device with the AWS IoT message broker over MQTT.
 This sample uses the :ref:`lib_aws_iot` library.
 
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: thingy91_nrf9160_ns, nrf9160dk_nrf9160_ns
+
+.. include:: /includes/spm.txt
+
 Overview
 ********
 
@@ -25,17 +36,6 @@ Below are the two types of messages that are published:
 A type 2 message is only published upon an initial connection to the sample, while a type 1 message is published sequentially with a configurable time in between each publishing of the data.
 In addition to publishing data, the sample also subscribes to the AWS IoT shadow delta topic, and two customizable application specific topics.
 The customizable topics are not part of the AWS IoT shadow and must therefore be passed to the :ref:`lib_aws_iot` library using the :c:func:`aws_iot_subscription_topics_add` function.
-
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: thingy91_nrf9160_ns, nrf9160dk_nrf9160_ns
-
-.. include:: /includes/spm.txt
 
 .. _setup_awsiot:
 
@@ -78,8 +78,8 @@ CONFIG_CONNECTION_RETRY_TIMEOUT_SECONDS
 
    The sample sets the option :kconfig:`CONFIG_MQTT_KEEPALIVE` to the maximum allowed value, 1200 seconds (20 minutes) as specified by AWS IoT Core.
    This is to limit the IP traffic between the device and the AWS IoT message broker for supporting a low power sample.
-   However, note that in certain LTE networks, the NAT timeout can be considerably lower than 1200 seconds.
-   So as a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, the option :kconfig:`CONFIG_MQTT_KEEPALIVE` must be set to the lowest of the aforementioned timeout limits (Maximum allowed MQTT keepalive and NAT timeout).
+   In certain LTE networks, the NAT timeout can be considerably lower than 1200 seconds.
+   As a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, set the option :kconfig:`CONFIG_MQTT_KEEPALIVE` to the lowest timeout limit (Maximum allowed MQTT keepalive and NAT timeout).
 
 Building and running
 ********************
@@ -92,7 +92,7 @@ Testing
 =======
 
 1. Make sure that you have completed the steps in :ref:`setup_awsiot`.
-   This retrieves the AWS IoT broker hostname, security tag and client-id.
+   This retrieves the AWS IoT broker hostname, security tag, and client-id.
 
 #. Set the :kconfig:`CONFIG_AWS_IOT_BROKER_HOST_NAME`, :kconfig:`CONFIG_AWS_IOT_SEC_TAG`, and :kconfig:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` options to reflect the values retrieved during step 1.
 #. Program the sample to hardware.

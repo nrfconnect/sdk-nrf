@@ -76,8 +76,8 @@ If DPS is used, configure the following library options:
 
    The sample sets the option :kconfig:`CONFIG_MQTT_KEEPALIVE` to the maximum allowed value, 1767 seconds (29.45 minutes) as specified by Azure IoT Hub.
    This is to limit the IP traffic between the device and the Azure IoT Hub message broker for supporting a low power sample.
-   However, note that in certain LTE networks, the NAT timeout can be considerably lower than 1767 seconds.
-   So as a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, the option :kconfig:`CONFIG_MQTT_KEEPALIVE` must be set to the lowest of the aforementioned timeout limits (Maximum allowed MQTT keepalive and NAT timeout).
+   In certain LTE networks, the NAT timeout can be considerably lower than 1767 seconds.
+   As a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, set the option :kconfig:`CONFIG_MQTT_KEEPALIVE` to the lowest timeout limit (Maximum allowed MQTT keepalive and NAT timeout).
 
 Building and running
 ********************
@@ -115,7 +115,7 @@ Optionally, follow the instructions at `Azure IoT Explorer`_ to install and conf
 Sample Output
 =============
 
-When the sample runs, the device boots, and the sample displays an output identical to the following output in the terminal over UART:
+When the sample runs, the device boots, and the sample displays the following output in the terminal over UART:
 
 .. code-block:: console
 

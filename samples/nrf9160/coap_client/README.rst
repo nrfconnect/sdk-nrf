@@ -9,6 +9,19 @@ nRF9160: nRF CoAP Client
 
 The nRF CoAP Client sample demonstrates the communication between a public CoAP server and an nRF9160 SiP that acts as the CoAP client.
 
+Requirements
+************
+
+The sample supports the following development kit:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf9160dk_nrf9160_ns
+
+The sample also requires a public CoAP server IP address or URL available on the Internet.
+
+.. include:: /includes/spm.txt
+
 Overview
 ********
 
@@ -26,19 +39,6 @@ This sample uses the resource **obs** (Californium observable resource) in the c
 The communication follows the standard request/response pattern and is based on the change in the state of the value of the resource.
 The sample queries one resource at a time.
 Other resources can be configured using the Kconfig option ``CONFIG_COAP_RESOURCE``.
-
-Requirements
-************
-
-The sample supports the following development kit:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf9160dk_nrf9160_ns
-
-The sample also requires a public CoAP server IP address or URL available on the internet.
-
-.. include:: /includes/spm.txt
 
 Building and running
 ********************
@@ -81,6 +81,10 @@ For the above sample output, the information displayed on the terminal conveys t
 * ``token 0x9772`` - CoAP token, which is unique per request/response pair
 * ``payload: 15:39:40`` - the actual message payload (current time in UTC format) from the resource that is queried in this sample
 
+References
+**********
+
+`RFC 7252 - The Constrained Application Protocol`_
 
 Dependencies
 ************
@@ -100,8 +104,3 @@ It uses the following Zephyr library:
 In addition, it uses the following sample:
 
 * :ref:`secure_partition_manager`
-
-References
-**********
-
-`RFC 7252 - The Constrained Application Protocol`_
