@@ -81,6 +81,8 @@ To configure the Zigbee FOTA library, use the following options:
 
 For detailed steps about configuring the library in a Zigbee sample or application, see :ref:`ug_zigbee_configuring_components_ota`.
 
+.. _lib_zigbee_fota_limitations:
+
 Limitations
 ***********
 

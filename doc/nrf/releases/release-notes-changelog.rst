@@ -77,6 +77,11 @@ nRF Desktop
 
   * Documentation for selective HID report subscription in :ref:`nrf_desktop_usb_state` using :kconfig:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION` option.
 
+Thingy:53 Zigbee weather station
+--------------------------------
+
+* Added new :ref:`zigbee_weather_station_app` application.
+
 Samples
 =======
 
