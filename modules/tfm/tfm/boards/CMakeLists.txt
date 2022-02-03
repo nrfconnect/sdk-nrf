@@ -51,7 +51,7 @@ endif()
 
 if (${TFM_PARTITION_CRYPTO})
   target_link_libraries(platform_s PRIVATE platform_cc3xx)
-  target_link_libraries(platform_s PRIVATE crypto_service_mbedtls)
+  target_link_libraries(platform_s PRIVATE crypto_service_mbedcrypto)
 endif()
 
 target_compile_definitions(platform_s PUBLIC CONFIG_HW_UNIQUE_KEY CONFIG_HW_UNIQUE_KEY_RANDOM)
