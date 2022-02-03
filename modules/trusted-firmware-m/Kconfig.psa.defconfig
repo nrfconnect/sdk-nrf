@@ -95,9 +95,9 @@ config PSA_WANT_ALG_CTR
 config PSA_WANT_ALG_OFB
 	bool
 	default y
-config PSA_WANT_ALG_XTS
-	bool
-	default y
+
+# PSA_WANT_ALG_XTS - Currently not supported
+
 config PSA_WANT_ALG_HKDF
 	bool
 	default y
