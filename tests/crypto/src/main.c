@@ -81,10 +81,14 @@ void test_main(void)
 		   ITEM_COUNT(test_case_aead_ccm_data, test_case_t));
 	run_suites(__start_test_case_aead_ccm_simple_data,
 		   ITEM_COUNT(test_case_aead_ccm_simple_data, test_case_t));
+
+#if defined(CONFIG_OBERON_BACKEND) || defined(CONFIG_CC312_BACKEND)
 	run_suites(__start_test_case_aead_gcm_data,
 		   ITEM_COUNT(test_case_aead_gcm_data, test_case_t));
 	run_suites(__start_test_case_aead_gcm_simple_data,
 		   ITEM_COUNT(test_case_aead_gcm_simple_data, test_case_t));
+#endif
+
 	run_suites(__start_test_case_aead_chachapoly_data,
 		   ITEM_COUNT(test_case_aead_chachapoly_data, test_case_t));
 	run_suites(__start_test_case_aead_chachapoly_simple_data,
