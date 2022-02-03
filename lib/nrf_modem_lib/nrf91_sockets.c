@@ -577,7 +577,7 @@ static int nrf91_socket_offload_accept(void *obj, struct sockaddr *addr,
 	new_sd = nrf_accept(sd, nrf_addr_ptr, nrf_addrlen_ptr);
 	if (new_sd < 0) {
 		/* nrf_accept sets errno appropriately */
-		return -1;
+		goto error;
 	}
 
 	ctx = allocate_ctx(new_sd);
