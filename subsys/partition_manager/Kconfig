@@ -82,6 +82,12 @@ partition-size=0x1000
 rsource "Kconfig.template.partition_size"
 endif
 
+if EMDS
+partition=EMDS_STORAGE
+partition-size=0x1000
+rsource "Kconfig.template.partition_size"
+endif
+
 endmenu # Zephyr subsystem configurations
 menu "NCS subsystem configurations"
 

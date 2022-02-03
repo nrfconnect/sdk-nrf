@@ -13,6 +13,8 @@ rsource "dfu/Kconfig"
 
 rsource "esb/Kconfig"
 
+rsource "emds/Kconfig"
+
 rsource "gazell/Kconfig"
 
 rsource "pcd/Kconfig"

@@ -1,0 +1,6 @@
+tests:
+  emds.flash:
+    platform_allow: nrf52840dk_nrf52840
+    tags: emds
+    integration_platforms:
+      - nrf52840dk_nrf52840

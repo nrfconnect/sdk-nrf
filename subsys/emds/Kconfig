@@ -1,0 +1,71 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig EMDS
+	bool "Emergency Data Storage [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	depends on PARTITION_MANAGER_ENABLED
+	depends on FLASH_MAP
+	default n
+	help
+	  Enable Emergency Data Storage
+
+if EMDS
+
+config EMDS_SECTOR_COUNT
+	int "Sector count of the emergency data storage area"
+	default 1
+	help
+	  Number of sectors used for the emergency data storage area
+
+config EMDS_THREAD_STACK_SIZE
+	int "Stack size for the emergency data storage thread"
+	default 500
+	help
+	  Size of the stack that is initialized by the emergency data storage
+
+config EMDS_THREAD_PRIORITY
+	int "Priority for the emergency data storage thread"
+	default 0
+	help
+	  Cooperative priority for the emergency data storage thread. This will
+	  be used through K_PRIO_COOP(x), that means higher value gives lower
+	  priority.
+
+config EMDS_FLASH_TIME_WRITE_ONE_WORD_US
+	int "Time to write one word into flash"
+	default 41
+	help
+	  Max time to write one word (4 bytes) in flash (in microseconds). This
+	  value is dependent on the chip used, and should be checked against the
+	  chip datasheet.
+
+config EMDS_FLASH_TIME_ENTRY_OVERHEAD_US
+	int "Time to schedule write of one entry"
+	default 300
+	help
+	   Max time to prepare the write of each entry (in microseconds).
+
+config EMDS_FLASH_TIME_BASE_OVERHEAD_US
+	int "Time to schedule the store process"
+	default 85000 if SETTINGS && !SOC_FLASH_NRF_PARTIAL_ERASE
+	default 9000 if SETTINGS && SOC_FLASH_NRF_PARTIAL_ERASE
+	default 500
+	help
+	   Max time to prepare the store process (in microseconds). If used
+	   together with SETTINGS this value has to be at least as long as the
+	   time to erase one page (ERASEPAGE). If used together with
+	   SOC_FLASH_NRF_PARTIAL_ERASE this value should be
+	   (SOC_FLASH_NRF_PARTIAL_ERASE_MS * 1000 * 3). This is to account for
+	   worst case scenario, before starting storing entries. This value
+	   is dependent on the chip used, and should be checked against the chip
+	   datasheet.
+
+module = EMDS
+module-str = emergency data storage
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # EMDS
