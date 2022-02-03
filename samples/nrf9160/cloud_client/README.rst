@@ -10,6 +10,15 @@ nRF9160: Cloud client
 This sample connects to, and communicates with a compatible cloud service using the respective cloud backend firmware library.
 The sample connects to the cloud service using cellular network (LTE) and publishes a custom string in intervals or upon a button trigger.
 
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :sample-yaml-rows:
+
 Overview
 ********
 
@@ -36,15 +45,6 @@ The identification strings for the different cloud backends are listed in the fo
    * - Azure IoT Hub
      - "AZURE_IOT_HUB"
 
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :sample-yaml-rows:
-
 Setup
 *****
 
@@ -52,7 +52,7 @@ For configuring the different cloud backends, refer to the documentation on :ref
 Each cloud backend has specific setup steps that must be executed before it can be used.
 
 .. note::
-   The nRF9160 DK and Thingy:91 come preprogrammed with the certificates required for a connection to `nRF Cloud`_.
+   The nRF9160 DK and Thingy:91 are preprogrammed with the certificates required for a connection to `nRF Cloud`_.
    No extra steps are required to use the Cloud client sample with nRF Cloud.
 
 
@@ -74,13 +74,13 @@ They can be added to :file:`cloud_client/prj.conf`.
 .. note::
    The sample sets the option :kconfig:`CONFIG_MQTT_KEEPALIVE` to the maximum allowed value that is specified by the configured cloud backend.
    This is to limit the IP traffic between the device and the message broker of the cloud provider for supporting a low power sample.
-   However, note that in certain LTE networks, the NAT timeout can be considerably lower than the maximum allowed MQTT keepalive.
-   So as a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, the option :kconfig:`CONFIG_MQTT_KEEPALIVE` must be set to the lowest of the aforementioned timeout limits (Maximum allowed MQTT keepalive and NAT timeout).
+   In certain LTE networks, the NAT timeout can be considerably lower than the maximum allowed MQTT keepalive.
+   As a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, set the option :kconfig:`CONFIG_MQTT_KEEPALIVE` to the lowest timeout limit (Maximum allowed MQTT keepalive and NAT timeout).
 
 Functionality and supported technologies
 ****************************************
 
-The communication protocol supported by the sample is dependent on the cloud backend that is used.
+The communication protocol supported by the sample depends on the cloud backend that is used.
 
 Functions
 =========

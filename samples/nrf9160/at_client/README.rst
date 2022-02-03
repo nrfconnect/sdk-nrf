@@ -10,17 +10,6 @@ nRF9160: AT Client
 The AT Client sample demonstrates the asynchronous serial communication taking place over UART to the nRF9160 modem.
 The sample enables you to use an external computer or MCU to send AT commands to the LTE-M/NB-IoT modem of your nRF9160 device.
 
-Overview
-********
-
-The AT Client sample acts as a proxy for sending directives to the nRF9160 modem using AT commands.
-This facilitates the reading of responses or analyzing of events related to the nRF9160 modem.
-The commands can be initiated from a terminal or the `LTE Link Monitor`_, which is an application implemented as part of `nRF Connect for Desktop`_.
-
-For more information on the AT commands, see the `AT Commands Reference Guide`_.
-
-
-
 Requirements
 ************
 
@@ -31,6 +20,17 @@ The sample supports the following development kit:
    :rows: nrf9160dk_nrf9160_ns
 
 .. include:: /includes/spm.txt
+
+
+Overview
+********
+
+The AT Client sample acts as a proxy for sending directives to the nRF9160 modem using AT commands.
+This facilitates the reading of responses or analyzing of events related to the nRF9160 modem.
+You can initiate the commands from a terminal or the `LTE Link Monitor`_, which is an application implemented as part of `nRF Connect for Desktop`_.
+
+For more information on the AT commands, see the `AT Commands Reference Guide`_.
+
 
 Building and running
 ********************
@@ -43,7 +43,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test the sample by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
 1. Press the reset button on the nRF9160 DK to reboot the kit and start the AT Client sample.
 #. :ref:`Connect to the nRF9160 DK with LTE Link Monitor<lte_connect>`.
@@ -89,7 +89,7 @@ After programming the sample to your development kit, test the sample by perform
    #. Enter the command: :command:`AT%CMNG=1`
 
       This command displays a list of all certificates that are stored on your device.
-      If the device has been added to nRF Cloud, a CA certificate, a client certificate, and a private key with security tag 16842753 (which is the security tag for nRF Cloud credentials) are displayed.
+      If you add the device to nRF Cloud, a CA certificate, a client certificate, and a private key with security tag 16842753 (which is the security tag for nRF Cloud credentials) are displayed.
 
 
 Sample output
@@ -102,6 +102,12 @@ The following is a sample output of the command: :command:`AT%XMONITOR`
    AT%XMONITOR
    %XMONITOR: 5,"","","24201","76C1",7,20,"0102DA03",105,6400,53,24,"","11100000","11100000"
    OK
+
+
+References
+**********
+
+`AT Commands Reference Guide`_
 
 
 Dependencies
@@ -121,9 +127,3 @@ It uses the following `sdk-nrfxlib`_ library:
 In addition, it uses the following sample:
 
 * :ref:`secure_partition_manager`
-
-
-References
-**********
-
-`AT Commands Reference Guide`_

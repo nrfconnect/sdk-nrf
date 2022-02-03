@@ -78,7 +78,7 @@ Finally, after the download completes, the sample switches back to the previous 
 Minimal assistance
 ==================
 
-GNSS satellite acquisition can also be assisted by providing factory almanac, GPS time and coarse location to the GNSS module.
+GNSS satellite acquisition can also be assisted by providing factory almanac, GPS time, and coarse location to the GNSS module.
 Using this information, GNSS can calculate which satellites it should search for and what are the expected Doppler frequencies.
 
 The sample includes a factory almanac that is written to the file system when the sample starts.
@@ -146,7 +146,7 @@ See :ref:`supl_client` for information on installing and enabling the SUPL clien
 Testing
 =======
 
-After programming the sample and all the prerequisites to the development kit, you can test the sample by performing the following steps:
+After programming the sample and all the prerequisites to the development kit, test it by performing the following steps:
 
 1. Connect your nRF9160 DK to the PC using a USB cable and power on or reset your nRF9160 DK.
 #. Open a terminal emulator.

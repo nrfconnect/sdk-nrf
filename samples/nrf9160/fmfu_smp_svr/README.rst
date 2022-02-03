@@ -25,7 +25,7 @@ This sample supports the following development kit:
 Overview
 ********
 
-The sample does the following:
+The sample performs the following operations:
 
 1. It deinitializes the :ref:`nrfxlib:nrf_modem`.
 #. It registers to mcumgr a ``stat`` command.
@@ -53,7 +53,7 @@ For example, when building on the command line, add the UART overlay for nRF9160
 Testing
 =======
 
-After programming the sample to your development kit, perform the following steps to test it:
+After programming the sample to your development kit, test it by performing the following steps:
 
 1. Connect the USB cable and power on or reset your nRF9160 DK.
 #. Open a terminal emulator, observe that the sample starts, and then close the terminal emulator.
@@ -127,10 +127,10 @@ This sample uses the following |NCS| libraries:
 * :ref:`lib_fmfu_mgmt`
 * :ref:`modem_info_readme`
 
-This sample uses the following `sdk-nrfxlib` library:
+This sample uses the following `sdk-nrfxlib`_ library:
 
 * :ref:`nrfxlib:nrf_modem`
 
-In addition, it uses the following |NCS| sample:
+In addition, it uses the following sample:
 
 * :ref:`secure_partition_manager`

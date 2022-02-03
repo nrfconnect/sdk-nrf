@@ -7,7 +7,21 @@ nRF9160: AWS FOTA
    :local:
    :depth: 2
 
-The Amazon Web Services firmware over-the-air (AWS FOTA) sample shows how to perform an over-the-air firmware update of an nRF9160 device using MQTT and HTTP. It is similar to the :ref:`http_application_update_sample`, except that the firmware download is triggered through an AWS IoT job.
+The Amazon Web Services firmware over-the-air (AWS FOTA) sample shows how to perform an over-the-air firmware update of an nRF9160 device using MQTT and HTTP.
+It is similar to the :ref:`http_application_update_sample`, except that the firmware download is triggered through an AWS IoT job.
+
+Requirements
+************
+
+The sample supports the following development kit:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :sample-yaml-rows:
+
+The sample requires an `AWS account`_ with access to Simple Storage Service (S3) and the IoT Core service.
+
+.. include:: /includes/spm.txt
 
 Overview
 *********
@@ -96,20 +110,6 @@ Use LTE Link Monitor to write the certificates to the kit:
    #. Before programming the sample, make sure to configure the :ref:`security tag <CONFIG_CERT_SEC_TAG>` to the one that you chose.
 
 .. include:: /includes/aws_s3_bucket.txt
-
-Requirements
-************
-
-The sample supports the following development kit:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :sample-yaml-rows:
-
-The sample requires an `AWS account`_ with access to Simple Storage Service (S3) and the IoT Core service.
-
-.. include:: /includes/spm.txt
-
 
 Building and running
 ********************
