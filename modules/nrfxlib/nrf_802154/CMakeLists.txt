@@ -30,7 +30,7 @@ if (CONFIG_NRF_802154_RADIO_DRIVER OR CONFIG_NRF_802154_SERIALIZATION)
   target_link_libraries(nrf-802154-driver-interface INTERFACE zephyr-802154-interface)
   target_link_libraries(nrf-802154-serialization-interface INTERFACE zephyr-802154-interface)
 
-  target_compile_definitions(nrf-802154-driver-interface INTERFACE NRF_802154_ECB_PRIORITY=0)
+  target_compile_definitions(nrf-802154-driver-interface INTERFACE NRF_802154_ECB_PRIORITY=-1)
   target_compile_definitions(nrf-802154-driver-interface INTERFACE NRF_802154_SWI_PRIORITY=1)
   target_compile_definitions(nrf-802154-platform PUBLIC NRF_802154_SL_RTC_IRQ_PRIORITY=1)
 
