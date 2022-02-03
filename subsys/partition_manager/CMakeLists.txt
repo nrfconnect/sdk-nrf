@@ -97,6 +97,10 @@ if(CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION)
   ncs_add_partition_manager_config(pm.yml.pgps)
 endif()
 
+if (CONFIG_EMDS)
+  ncs_add_partition_manager_config(pm.yml.emds)
+endif()
+
 # We are using partition manager if we are a child image or if we are
 # the root image and the 'partition_manager' target exists.
 set(using_partition_manager

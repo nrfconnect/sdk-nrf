@@ -586,6 +586,7 @@ Other libraries
 
   * :ref:`event_manager_proxy` library.
   * :ref:`QoS` library.
+  * :ref:`emds_readme` library.
 
 
 * Updated:
@@ -633,6 +634,7 @@ Other libraries
   * Partition Manager:
 
     * Added the :file:`ncs/nrf/subsys/partition_manager/pm.yml.pgps` file.
+    * Added the :file:`ncs/nrf/subsys/partition_manager/pm.yml.emds` file.
 
   * :ref:`nrf_profiler`:
 
