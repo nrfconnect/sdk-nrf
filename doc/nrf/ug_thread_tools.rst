@@ -172,7 +172,7 @@ To set up and configure the OpenThread Border Router, follow the official `OpenT
 
       cd ot-br-posix
       git pull --unshallow
-      git checkout 8ae81c5
+      git checkout f0bd216
 
 * After the *Build and install OTBR* section, configure RCP device's UART baud rate in *otbr-agent*.
   Modify the :file:`/etc/default/otbr-agent` configuration file with default RCP baud rate:
@@ -214,16 +214,17 @@ To install and configure the OpenThread Border Router using the Docker container
 
    .. code-block:: console
 
-      docker pull nrfconnect/otbr:8ae81c5
+      docker pull nrfconnect/otbr:f0bd216
 
 #. Connect the radio co-processor that you configured in :ref:`ug_thread_tools_tbr_rcp` to the Border Router device.
-#. Start the OpenThread Border Router container using one of the following commands depending on the hardware platform:
+#. Start the OpenThread Border Router container using the following commands:
 
    .. code-block:: console
 
+      sudo modprobe ip6table_filter
       sudo docker run -it --rm --privileged --name otbr --network otbr -p 8080:80 \
       --sysctl "net.ipv6.conf.all.disable_ipv6=0 net.ipv4.conf.all.forwarding=1 net.ipv6.conf.all.forwarding=1" \
-      --volume /dev/ttyACM0:/dev/radio nrfconnect/otbr:8ae81c5 --radio-url spinel+hdlc+uart:///dev/radio?uart-baudrate=1000000
+      --volume /dev/ttyACM0:/dev/radio nrfconnect/otbr:f0bd216 --radio-url spinel+hdlc+uart:///dev/radio?uart-baudrate=1000000
 
    Replace ``/dev/ttyACM0`` with the device node name of the OpenThread radio co-processor.
 
@@ -281,7 +282,7 @@ To install the verified version, replace the ``git checkout full/latest-release`
 
 .. parsed-literal::
 
-   git checkout bf45115f41ba2b8029eda174be2b93dea73b9261
+   git checkout a8f3f76
 
 When installing on macOS, follow the instructions for the manual installation and replace the above command to ensure that the correct version is installed.
 
