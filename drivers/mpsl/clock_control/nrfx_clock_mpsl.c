@@ -55,8 +55,7 @@ nrfx_err_t nrfx_clock_init(nrfx_clock_event_handler_t handler)
 	return NRFX_SUCCESS;
 }
 
-
-void nrfx_clock_irq_handler(void)
+__attribute__((weak)) void nrfx_clock_irq_handler(void)
 {
 	MPSL_IRQ_CLOCK_Handler();
 }
