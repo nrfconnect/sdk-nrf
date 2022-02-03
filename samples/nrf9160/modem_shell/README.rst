@@ -750,7 +750,7 @@ After programming the development kit, test it in the Linux environment by perfo
 
    .. code-block:: console
 
-      $ sudo pppd -detach /dev/ttyACM0 921600 noauth crtscts noccp novj nodeflate nobsdcomp local debug +ipv6 ipv6cp-use-ipaddr usepeerdns noipdefault defaultroute
+      $ sudo pppd -detach /dev/ttyACM0 921600 noauth crtscts noccp novj nodeflate nobsdcomp local debug +ipv6 ipv6cp-use-ipaddr usepeerdns noipdefault defaultroute ipv6cp-restart 5 ipcp-restart 5 lcp-echo-interval 0
 
 #. In a MoSh terminal, observe that the PPP connection is created:
 
