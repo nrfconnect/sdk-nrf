@@ -60,6 +60,13 @@ Logging configuration
 Logging is handled with the :kconfig:`CONFIG_LOG` option.
 This option enables logging for both the stack and Zephyr's :ref:`zephyr:logging_api` API.
 
+Zephyr allows you to configure log levels of different software modules independently.
+To change the log level configuration for the Matter module, set one of the available options:
+
+* :kconfig:`CONFIG_MATTER_LOG_LEVEL_ERR`
+* :kconfig:`CONFIG_MATTER_LOG_LEVEL_INFO`
+* :kconfig:`CONFIG_MATTER_LOG_LEVEL_DBG`
+
 .. _ug_matter_configuring_optional_shell:
 
 Matter shell commands
@@ -69,6 +76,22 @@ You can enable the Matter shell library using the :kconfig:`CONFIG_CHIP_LIB_SHEL
 This option lets you use the Matter shell commands with :ref:`matter_samples`.
 
 See :doc:`matter:nrfconnect_examples_cli` in the Matter documentation for the list of available Matter shell commands.
+
+.. _ug_matter_configuring_device_identification:
+
+Matter device identification
+============================
+
+Matter has many ways to identify a specific device, both mandatory and optional.
+These can be used for various purposes, such as dividing devices into groups (by function, by vendor or by location), device commissioning or vendor-specific cases before the device was commissioned (for example, identifying factory software version or related features).
+
+Some of these can be configured using the Kconfig options listed below:
+
+* :kconfig:`CONFIG_CHIP_DEVICE_TYPE` sets the type of the device using the Matter Device Type Identifier, for example Door Lock (0x000A) or Dimmable Light Bulb (0x0101).
+* :kconfig:`CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE` enables including an optional device type subtype in the commissionable node discovery record.
+  This allows filtering of the discovery results to find the nodes that match the device type.
+* :kconfig:`CONFIG_CHIP_ROTATING_DEVICE_ID` enables an optional rotating device identifier feature that provides an additional unique identifier for each device.
+  This identifier is similar to the serial number, but it additionally changes at predefined times to protect against long-term tracking of the device.
 
 .. _ug_matter_configuring_requirements:
 
