@@ -1,0 +1,10 @@
+sample:
+  name: Zigbee Weather Station
+  description: Zigbee Weather Station application
+tests:
+  applications.zigbee_weather_station:
+    build_only: true
+    platform_allow: thingy53_nrf5340_cpuapp
+    integration_platforms:
+      - thingy53_nrf5340_cpuapp
+    tags: ci_build

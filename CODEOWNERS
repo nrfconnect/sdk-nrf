@@ -35,6 +35,7 @@
 /applications/matter_weather_station/     @Damian-Nordic @kkasperczyk-no
 /applications/nrf_desktop/                @pdunaj
 /applications/serial_lte_modem/           @junqingzou @pirun @rlubos
+/applications/zigbee_weather_station/     @adsz-nordic @tomchy
 # Boards
 /boards/                                  @SebastianBoe @anangl
 # All cmake related files

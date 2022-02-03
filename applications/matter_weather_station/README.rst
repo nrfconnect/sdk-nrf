@@ -7,7 +7,7 @@ Thingy:53: Matter weather station
    :local:
    :depth: 2
 
-This Matter weather station application demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a weather station device.
+This Matter weather station application demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a weather station device using the Nordic Thingy:53.
 Such a device lets you remotely gather different kinds of data using the device sensors, such as temperature, air pressure, and relative humidity.
 The device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
 You can use this application as a reference for creating your own application.
@@ -43,7 +43,7 @@ By default, the Matter accessory device has Thread disabled, and it must be pair
 To do this, the device must be made discoverable over Bluetooth LE.
 
 The Bluetooth LE advertising starts automatically upon the device startup, but only for a predefined period of time (15 minutes by default).
-If the Bluetooth LE advertising times out, you can re-enable it manually using **Button 1**.
+If the Bluetooth LE advertising times out, you can re-enable it manually using **Button (SW3)**.
 
 Additionally, the controller must get the commissioning information from the Matter accessory device and provision the device into the network.
 For details, see the `Testing`_ section.
@@ -99,7 +99,7 @@ See :ref:`thingy53_app_guide` for details.
 User interface
 **************
 
-LED 1:
+LED (LD1):
     Shows the overall state of the device and its connectivity.
     The following states are possible:
 
@@ -108,7 +108,11 @@ LED 1:
     * Rapid even flashing (blue color, 100 ms on/100 ms off) - The device is in the unprovisioned state and a commissioning application is connected through Bluetooth LE.
     * Short flash on (purple color, 50 ms on/950 ms off) - The device is fully provisioned and has Thread enabled.
 
-Button 1:
+    .. note::
+       Thingy:53 allows to control RGB components of its single LED independently.
+       This means that the listed color components can overlap, creating additional color effects.
+
+Button (SW3):
     Used during the commissioning procedure.
     Depending on how long you press the button:
 
@@ -193,9 +197,9 @@ After programming the application, perform the following steps to test the Matte
 
 1. Turn on the Thingy:53.
    The application starts in an unprovisioned state.
-   The advertising over Bluetooth LE and DFU start automatically, and **LED 1** starts blinking blue (short flash on).
+   The advertising over Bluetooth LE and DFU start automatically, and **LED (LD1)** starts blinking blue (short flash on).
 #. Commission the device into a Thread network by following the steps in :ref:`ug_matter_configuring_mobile`.
-   During the commissioning procedure, **LED 1** of the Matter device starts blinking blue (rapid even flashing).
+   During the commissioning procedure, **LED (LD1)** of the Matter device starts blinking blue (rapid even flashing).
    This indicates that the device is connected over Bluetooth LE, but does not yet have full Thread network connectivity.
 
    .. note::
@@ -203,7 +207,7 @@ After programming the application, perform the following steps to test the Matte
         The data payload, which includes the device discriminator and setup PIN code, is encoded and shared using an NFC tag.
         When using the debug configuration, you can also get this type of information from the USB interface logs.
 
-   Once the commissioning is complete and the device has full Thread connectivity, **LED 1** starts blinking purple (short flash on).
+   Once the commissioning is complete and the device has full Thread connectivity, **LED (LD1)** starts blinking purple (short flash on).
 #. Read sensor measurements in Android CHIPTool:
 
    a. In the Android CHIPTool application main menu, tap the :guilabel:`SENSOR CLUSTERS` button to open the sensor measurements section.
