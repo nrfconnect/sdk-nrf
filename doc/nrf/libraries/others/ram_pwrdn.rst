@@ -1,13 +1,13 @@
 .. _lib_ram_pwrdn:
 
-RAM Power Down
+RAM power-down
 ##############
 
 .. contents::
    :local:
    :depth: 2
 
-The RAM Power Down library is a basic module for disabling unused sections of RAM, which allows to save power in low power applications.
+The RAM power-down library is a basic module for disabling unused sections of RAM, which allows to save power in low-power applications.
 
 To disable unused RAM sections, call :c:func:`power_down_unused_ram`.
 This function will automatically disable all memory regions that are not used by the application.

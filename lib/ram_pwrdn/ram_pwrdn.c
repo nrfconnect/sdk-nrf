@@ -14,7 +14,7 @@
 #elif defined(CONFIG_SOC_NRF5340_CPUAPP)
 #include <hal/nrf_vmc.h>
 #else
-#error "RAM power-down module is not supported on the current platform"
+#error "RAM power-down library is not supported on the current platform"
 #endif
 
 #if CONFIG_RAM_POWER_ADJUST_ON_HEAP_RESIZE
