@@ -29,7 +29,7 @@ config RAM_POWER_ADJUST_ON_HEAP_RESIZE
 	  area following the application image) is increased or trimmed.
 
 module =  RAM_POWERDOWN
-module-str = RAM Power down module
+module-str = RAM power-down library
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # RAM_POWER_DOWN_LIBRARY
