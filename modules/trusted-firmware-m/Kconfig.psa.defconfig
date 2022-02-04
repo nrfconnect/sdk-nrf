@@ -107,6 +107,9 @@ config PSA_WANT_ALG_PBKDF2_HMAC
 config PSA_WANT_ALG_TLS12_PRF
 	bool
 	default y
+config PSA_WANT_ALG_TLS12_PSK_TO_MS
+	bool
+	default y
 config PSA_WANT_ALG_ECDH
 	bool
 	default y
