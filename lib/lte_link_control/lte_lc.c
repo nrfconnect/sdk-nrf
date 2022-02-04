@@ -632,20 +632,47 @@ static int connect_lte(bool blocking)
 	int err;
 	int tries = (IS_ENABLED(CONFIG_LTE_NETWORK_USE_FALLBACK) ? 2 : 1);
 	enum lte_lc_func_mode current_func_mode;
+	enum lte_lc_nw_reg_status reg_status;
+	static atomic_t in_progress;
 
 	if (!is_initialized) {
 		LOG_ERR("The LTE link controller is not initialized");
 		return -EPERM;
 	}
 
-	k_sem_init(&link, 0, 1);
+	/* Check if a connection attempt is already in progress */
+	if (atomic_set(&in_progress, 1)) {
+		return -EINPROGRESS;
+	}
+
+	err = lte_lc_nw_reg_status_get(&reg_status);
+	if (err) {
+		LOG_ERR("Failed to get current registration status");
+		return -EFAULT;
+	}
+
+	/* Do not attempt to register with an LTE network if the device already is registered.
+	 * This check is needed for blocking _connect() calls to avoid hanging for
+	 * CONFIG_LTE_NETWORK_TIMEOUT seconds waiting for a semaphore that will not be given.
+	 */
+	if ((reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
+	    (reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+		LOG_DBG("The device is already registered with an LTE network");
+
+		return 0;
+	}
+
+	if (blocking) {
+		k_sem_init(&link, 0, 1);
+	}
 
 	do {
 		tries--;
 
 		err = lte_lc_func_mode_get(&current_func_mode);
 		if (err) {
-			return -EFAULT;
+			err = -EFAULT;
+			goto exit;
 		}
 
 		/* Change the modem sys-mode only if it's not running or is meant to change */
@@ -654,13 +681,14 @@ static int connect_lte(bool blocking)
 		     (current_func_mode == LTE_LC_FUNC_MODE_OFFLINE))) {
 			err = lte_lc_system_mode_set(sys_mode_target, mode_pref_current);
 			if (err) {
-				return -EFAULT;
+				err = -EFAULT;
+				goto exit;
 			}
 		}
 
 		err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
 		if (err || !blocking) {
-			return err;
+			goto exit;
 		}
 
 		err = k_sem_take(&link, K_SECONDS(CONFIG_LTE_NETWORK_TIMEOUT));
@@ -677,7 +705,8 @@ static int connect_lte(bool blocking)
 
 				err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
 				if (err) {
-					return -EFAULT;
+					err = -EFAULT;
+					goto exit;
 				}
 
 				LOG_INF("Using fallback network mode");
@@ -688,6 +717,9 @@ static int connect_lte(bool blocking)
 			tries = 0;
 		}
 	} while (tries > 0);
+
+exit:
+	atomic_clear(&in_progress);
 
 	return err;
 }
