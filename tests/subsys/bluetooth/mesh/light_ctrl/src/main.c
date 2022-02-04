@@ -34,6 +34,7 @@ enum flags {
 	FLAG_CTRL_SRV_MANUALLY_ENABLED,
 	FLAG_STARTED,
 	FLAG_RESUME_TIMER,
+	FLAG_AMBIENT_LUXLEVEL_SET,
 };
 
 static struct {
@@ -433,8 +434,7 @@ static void teardown(void)
 static void enable_ctrl(void)
 {
 	enum bt_mesh_light_ctrl_srv_state expected_state = LIGHT_CTRL_STATE_STANDBY;
-	atomic_t expected_flags = FLAGS_CONFIGURATION | BIT(FLAG_CTRL_SRV_MANUALLY_ENABLED)
-				  | BIT(FLAG_REGULATOR);
+	atomic_t expected_flags = FLAGS_CONFIGURATION | BIT(FLAG_CTRL_SRV_MANUALLY_ENABLED);
 
 	expect_ctrl_enable();
 	bt_mesh_light_ctrl_srv_enable(&light_ctrl_srv);
@@ -446,7 +446,11 @@ static void turn_on_ctrl(void)
 {
 	enum bt_mesh_light_ctrl_srv_state expected_state = LIGHT_CTRL_STATE_ON;
 	atomic_t expected_flags = FLAGS_CONFIGURATION | BIT(FLAG_CTRL_SRV_MANUALLY_ENABLED)
-				  | BIT(FLAG_ON) | BIT(FLAG_TRANSITION) | BIT(FLAG_REGULATOR);
+				  | BIT(FLAG_ON) | BIT(FLAG_TRANSITION) | BIT(FLAG_REGULATOR)
+				  | BIT(FLAG_AMBIENT_LUXLEVEL_SET);
+
+	/* Set the flag to trigger regulator. */
+	atomic_set_bit(&light_ctrl_srv.flags, FLAG_AMBIENT_LUXLEVEL_SET);
 
 	/* Start transition to On state. */
 	expect_turn_on_state_change();
@@ -514,7 +518,6 @@ static void test_fsm_no_change_by_light_onoff(void)
 	/* Enable light ctrl server, to enter STANDBY state */
 	expected_flags = expected_flags | BIT(FLAG_CTRL_SRV_MANUALLY_ENABLED);
 	expected_flags = expected_flags | BIT(FLAG_TRANSITION);
-	expected_flags = expected_flags | BIT(FLAG_REGULATOR);
 	expect_ctrl_enable();
 	bt_mesh_light_ctrl_srv_enable(&light_ctrl_srv);
 
@@ -880,7 +883,8 @@ static void switch_to_prolong_state(void)
 {
 	enum bt_mesh_light_ctrl_srv_state expected_state = LIGHT_CTRL_STATE_PROLONG;
 	atomic_t expected_flags = FLAGS_CONFIGURATION | BIT(FLAG_CTRL_SRV_MANUALLY_ENABLED)
-				  | BIT(FLAG_ON) | BIT(FLAG_TRANSITION) | BIT(FLAG_REGULATOR);
+				  | BIT(FLAG_ON) | BIT(FLAG_TRANSITION) | BIT(FLAG_REGULATOR)
+				  | BIT(FLAG_AMBIENT_LUXLEVEL_SET);
 
 	light_ctrl_srv.cfg.fade_prolong = 0;
 
@@ -900,20 +904,14 @@ static void switch_to_prolong_state(void)
 	expect_timer_reschedule(STATE_TIMER, &timeout);
 	schedule_dwork_timeout(STATE_TIMER);
 	expected_statemachine_cond(true, expected_state, expected_flags);
-
-	/* State machine sets lightness value to the LC Lightness Prolong state value when finishes
-	 * transition to the state.
-	 */
-	zassert_equal(pi_reg_test_ctx.lightness, light_ctrl_srv.cfg.light[LIGHT_CTRL_STATE_PROLONG],
-		      "Expected: %d, got: %d", light_ctrl_srv.cfg.light[LIGHT_CTRL_STATE_PROLONG],
-		      pi_reg_test_ctx.lightness);
 }
 
 static void switch_to_standby_state(void)
 {
 	enum bt_mesh_light_ctrl_srv_state expected_state = LIGHT_CTRL_STATE_STANDBY;
 	atomic_t expected_flags = FLAGS_CONFIGURATION | BIT(FLAG_CTRL_SRV_MANUALLY_ENABLED)
-				  | BIT(FLAG_TRANSITION) | BIT(FLAG_REGULATOR);
+				  | BIT(FLAG_TRANSITION) | BIT(FLAG_REGULATOR)
+				  | BIT(FLAG_AMBIENT_LUXLEVEL_SET);
 
 	light_ctrl_srv.cfg.fade_standby_auto = 0;
 
@@ -938,13 +936,6 @@ static void switch_to_standby_state(void)
 	expected_flags &= ~BIT(FLAG_TRANSITION);
 	schedule_dwork_timeout(STATE_TIMER);
 	expected_statemachine_cond(true, expected_state, expected_flags);
-
-	/* State machine sets lightness value to the LC Lightness Standby state value when finishes
-	 * transition to the state.
-	 */
-	zassert_equal(pi_reg_test_ctx.lightness, light_ctrl_srv.cfg.light[LIGHT_CTRL_STATE_STANDBY],
-		      "Expected: %d, got: %d", light_ctrl_srv.cfg.light[LIGHT_CTRL_STATE_STANDBY],
-		      pi_reg_test_ctx.lightness);
 }
 
 /**

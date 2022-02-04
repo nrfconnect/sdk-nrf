@@ -35,6 +35,7 @@ enum flags {
 	FLAG_CTRL_SRV_MANUALLY_ENABLED,
 	FLAG_STARTED,
 	FLAG_RESUME_TIMER,
+	FLAG_AMBIENT_LUXLEVEL_SET,
 };
 
 enum stored_flags {
@@ -410,10 +411,17 @@ static void transition_start(struct bt_mesh_light_ctrl_srv *srv,
 	lux_get(srv, &srv->fade.initial_lux);
 
 	atomic_set_bit(&srv->flags, FLAG_TRANSITION);
-	light_set(srv, srv->cfg.light[state], fade_time);
+	if (!IS_ENABLED(CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG) ||
+	    !atomic_test_bit(&srv->flags, FLAG_AMBIENT_LUXLEVEL_SET)) {
+		/* If the regulator is enabled and Ambient LuxLevel value has been provided, the
+		 * regulator will provide a light value to an application according to new state
+		 * and target value.
+		 */
+		light_set(srv, srv->cfg.light[state], fade_time);
+	}
 	restart_timer(srv, fade_time);
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
-	if (srv->reg) {
+	if (srv->reg && atomic_test_bit(&srv->flags, FLAG_AMBIENT_LUXLEVEL_SET)) {
 		atomic_set_bit(&srv->flags, FLAG_REGULATOR);
 		bt_mesh_light_ctrl_reg_target_set(srv->reg, lux_getf(srv), fade_time);
 	}
@@ -950,6 +958,7 @@ static int handle_sensor_status(struct bt_mesh_model *model, struct bt_mesh_msg_
 #if CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG
 		if (id == BT_MESH_PROP_ID_PRESENT_AMB_LIGHT_LEVEL && srv->reg) {
 			srv->reg->measured = sensor_to_float(&value);
+			atomic_set_bit(&srv->flags, FLAG_AMBIENT_LUXLEVEL_SET);
 			continue;
 		}
 #endif
