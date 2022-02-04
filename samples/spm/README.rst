@@ -13,6 +13,15 @@ This firmware is required to set up an nRF device with Trusted Execution (|trust
 .. note::
    An alternative for using the SPM is Trusted Firmware-M (TF-M). See :ref:`ug_tfm`.
 
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf5340dk_nrf5340_cpuapp, nrf9160dk_nrf9160
+
 Overview
 ********
 
@@ -31,23 +40,23 @@ If your application requires a different security attribution configuration, you
 Secure Services
 ===============
 
-The SPM can provide access to secure services to the application firmware.
+The SPM can provide the application firmware with access to Secure Services.
 See the :ref:`lib_spm` library for information about the available services.
-For an example code using the secure services, see :ref:`secure_services`.
+For an example code using them, see :ref:`secure_services`.
 
 Requirements for the application firmware
 =========================================
 
-* The application firmware must be located in the slot_ns flash partition.
+* The application firmware must be located in the ``slot_ns`` flash partition.
   For more details, see the partition configuration file for the chosen board (for example, `nrf9160dk_nrf9160_partition_conf.dts`_ for the nRF9160 DK).
-  Note that if you build your application firmware with the |NCS|, this requirement is automatically fulfilled.
+  If you build your application firmware with the |NCS|, this requirement is automatically fulfilled.
 
-* The application firmware must be built as a non-secure firmware for the build target (for example, nrf9160dk_nrf9160_ns for the nRF9160 DK).
+* The application firmware must be built as a non-secure firmware for the build target (for example, ``nrf9160dk_nrf9160_ns`` for the nRF9160 DK).
 
 Automatic building of SPM
 =========================
 
-The sample is automatically built by the non-secure applications when the non-secure build target is used (for example, nrf9160dk_nrf9160_ns).
+The sample is automatically built by the non-secure applications when the non-secure build target is used (for example, ``nrf9160dk_nrf9160_ns``).
 However, it is not a part of the non-secure application.
 
 Instead of programming SPM and the non-secure application at the same time, you might want to program them individually.
@@ -56,15 +65,6 @@ To do this, disable the automatic building of SPM by setting the option ``CONFIG
 If this results in a single-image build, the start address of the non-secure application will change.
 The security attribution configuration for the flash will change when SPM is not built as a sub-image.
 
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp, nrf9160dk_nrf9160
-
 Building and running
 ********************
 
@@ -72,9 +72,8 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-The sample is built as a secure firmware image for the nrf9160dk_nrf9160 and nrf5340dk_nrf5340 build targets.
+The sample is built as a secure firmware image for the ``nrf9160dk_nrf9160`` and ``nrf5340dk_nrf5340`` build targets.
 See `Automatic building of SPM`_ if you want to program it independently from the non-secure application firmware.
-
 
 Testing
 =======
