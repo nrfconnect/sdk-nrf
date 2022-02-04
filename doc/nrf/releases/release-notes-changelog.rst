@@ -158,6 +158,7 @@ Bluetooth samples
   * :ref:`peripheral_hids_mouse` - Added a notice about encryption requirement.
   * :ref:`peripheral_hids_keyboard` - Added a notice about encryption requirement.
   * :ref:`central_and_peripheral_hrs` - Clarified the "Requirements" section and fixed a link in the "Testing" section of the document.
+  * :ref:`peripheral_uart` - Increased the system workqueue stack size for the :file:`prj_minimal.conf` file.
 
 
 nRF9160 samples
