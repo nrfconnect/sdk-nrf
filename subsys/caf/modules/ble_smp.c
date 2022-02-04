@@ -56,6 +56,7 @@ static bool event_handler(const struct event_header *eh)
 				module_set_state(MODULE_STATE_ERROR);
 			} else {
 				LOG_INF("Service initialized");
+				LOG_INF("MCUboot image version: %s", CONFIG_MCUBOOT_IMAGE_VERSION);
 				module_set_state(MODULE_STATE_READY);
 			}
 		}
