@@ -11,6 +11,8 @@
 #include <hal/nrf_gpio.h>
 #include <soc_secure.h>
 
+#define MPSL_FEM_SPI_IF DT_PHANDLE(DT_NODELABEL(nrf_radio_fem), spi_if)
+
 static void fem_pin_num_correction(uint8_t *p_gpio_pin, const char *gpio_lbl)
 {
 	(void)p_gpio_pin;
