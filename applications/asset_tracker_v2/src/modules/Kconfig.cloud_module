@@ -17,6 +17,7 @@ CLOUD_SERVICE_SELECTOR := choice
 # A-GPS takes precedence if both A-GPS and P-GPS are enabled at the same time. Therefore, A-GPS is
 # disabled when enabling P-GPS.
 config NRF_CLOUD_AGPS
+	depends on GNSS_MODULE
 	default y
 
 # Enable MQTT clean session by default. This is to ensure that the configured cloud MQTT service
