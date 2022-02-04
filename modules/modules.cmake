@@ -6,6 +6,7 @@ set(ZEPHYR_NRFXLIB_CMAKE_DIR  ${CMAKE_CURRENT_LIST_DIR}/nrfxlib)
 set(ZEPHYR_CJSON_CMAKE_DIR    ${CMAKE_CURRENT_LIST_DIR}/cjson)
 set(ZEPHYR_CJSON_KCONFIG      ${CMAKE_CURRENT_LIST_DIR}/cjson/Kconfig)
 set(ZEPHYR_TRUSTED_FIRMWARE_M_KCONFIG ${CMAKE_CURRENT_LIST_DIR}/trusted-firmware-m/Kconfig)
+set(ZEPHYR_MBEDTLS_KCONFIG ${CMAKE_CURRENT_LIST_DIR}/mbedtls/Kconfig)
 
 # Those are modules with Kconfig tree's inside the module repo but where
 # nRF Connect SDK extend those trees.
