@@ -85,16 +85,13 @@ static int fem_nrf21540_gpio_pins_forward(void)
 #endif
 
 #if DT_NODE_HAS_STATUS(MPSL_FEM_SPI_IF, okay)
+	/* Only the CS pin is forwarded. Other SPI pins may be used by the application core to
+	 * communicate with other SPI peripherals.
+	 */
 	uint8_t cs_pin = DT_SPI_DEV_CS_GPIOS_PIN(MPSL_FEM_SPI_IF);
-	uint8_t sck_pin = DT_PROP(DT_BUS(DT_NODELABEL(nrf_radio_fem_spi)), sck_pin);
-	uint8_t miso_pin = DT_PROP(DT_BUS(DT_NODELABEL(nrf_radio_fem_spi)), miso_pin);
-	uint8_t mosi_pin = DT_PROP(DT_BUS(DT_NODELABEL(nrf_radio_fem_spi)), mosi_pin);
 
 	fem_pin_num_correction(&cs_pin, DT_SPI_DEV_CS_GPIOS_LABEL(MPSL_FEM_SPI_IF));
 	soc_secure_gpio_pin_mcu_select(cs_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-	soc_secure_gpio_pin_mcu_select(sck_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-	soc_secure_gpio_pin_mcu_select(miso_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-	soc_secure_gpio_pin_mcu_select(mosi_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
 #endif
 
 	return 0;
