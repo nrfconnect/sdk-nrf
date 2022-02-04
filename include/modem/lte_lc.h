@@ -812,6 +812,7 @@ int lte_lc_init(void);
  * @retval -EFAULT if an AT command failed.
  * @retval -ETIMEDOUT if a connection attempt timed out before the device was
  *	   registered to a network.
+ * @retval -EINPROGRESS if a connection establishment attempt is already in progress.
  */
 int lte_lc_connect(void);
 
@@ -827,6 +828,7 @@ int lte_lc_connect(void);
  * @retval -EFAULT if an AT command failed.
  * @retval -ETIMEDOUT if a connection attempt timed out before the device was
  *	   registered to a network.
+ * @retval -EINPROGRESS if a connection establishment attempt is already in progress.
  */
 int lte_lc_init_and_connect(void);
 
