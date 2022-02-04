@@ -128,7 +128,7 @@ Sensor simulation
 You can use the sample for obtaining actual sensor measurements or simulated sensor data for all sensors (including the accelerometer).
 If the sample is running on the nRF9160 DK, only simulated sensor data is available, as it does not have any of the external sensors needed for actual measurements.
 
-For example, you can enable the :ref:`CONFIG_ENV_SENSOR_USE_SIM <CONFIG_ENV_SENSOR_USE_SIM>` configuration option if you require simulated data from the temperature, humidity, pressure or gas resistance sensors.
+For example, you can enable the :ref:`CONFIG_ENV_SENSOR_USE_SIM <CONFIG_ENV_SENSOR_USE_SIM>` configuration option if you require simulated data from the temperature, humidity, pressure, or gas resistance sensors.
 
 .. _notifications_lwm2m:
 
@@ -157,7 +157,7 @@ The sensor module is intended to be used together with notifications.
 If notifications are enabled for a Sensor Value resource, and the corresponding sensor is enabled in the sensor module, a notification will be sent only when that value changes significantly (as specified by the change threshold).
 Thus, the bandwidth usage can be significantly limited, while simultaneously registering important changes in sensor values.
 
-See the :ref:`sensor_module_options` for information on enabling and configuring the sensor module.
+See :ref:`sensor_module_options` for information on enabling and configuring the sensor module.
 
 .. note::
 
@@ -171,7 +171,7 @@ Configuration
 Setup
 =====
 
-Before building and running the sample, make sure that you complete the following steps:
+Before building and running the sample, complete the following steps:
 
 1. Select the device to be tested.
 2. Select the LwM2M server to be used for testing and register the device on it. You can also optionally enable notifications for the resources so that the resources are actively monitored by the server.
@@ -556,7 +556,7 @@ To update the firmware, complete the following steps:
 Dependencies
 ************
 
-This application uses the following |NCS| libraries and drivers:
+This sample application uses the following |NCS| libraries and drivers:
 
 * :ref:`modem_info_readme`
 * :ref:`at_cmd_parser_readme`

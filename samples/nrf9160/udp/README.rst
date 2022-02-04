@@ -52,7 +52,7 @@ Configuration
 Configuration options
 =====================
 
-You can configure the following options:
+Check and configure the following configuration options for the sample:
 
 .. _CONFIG_UDP_DATA_UPLOAD_SIZE_BYTES:
 
@@ -138,7 +138,7 @@ After programming the sample to your device, test it by performing the following
 1. |connect_kit|
 #. |connect_terminal|
 #. Enable logging by setting the :kconfig:`CONFIG_SERIAL` option to ``y`` in the :file:`prj.conf` and :file:`spm.conf` configuration files.
-#. Observe that the sample shows output similar to the following one in the terminal emulator:
+#. Observe that the sample shows output similar to the following in the terminal emulator:
 
    .. code-block:: console
 

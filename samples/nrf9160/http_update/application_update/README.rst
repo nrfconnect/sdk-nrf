@@ -10,6 +10,18 @@ nRF9160: HTTP application update
 The HTTP application update sample demonstrates how to do a basic firmware over-the-air (FOTA) update.
 It uses the :ref:`lib_fota_download` library to download two image files from a remote server and program them to flash memory.
 
+Requirements
+************
+
+The sample supports the following development kit:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf9160dk_nrf9160_ns
+
+The sample also requires two signed firmware images that have to be available for download from an HTTP server.
+The images are generated automatically when building the sample, but you must upload them to a server and configure the location from where they can be downloaded.
+
 Overview
 ********
 
@@ -22,18 +34,6 @@ The sample updates between the two images, either from *version 1* to *version 2
 
 By default, the images are saved to the `MCUboot`_ second-stage bootloader secondary slot.
 To be used by MCUboot, the downloaded images must be signed using imgtool.
-
-Requirements
-************
-
-The sample supports the following development kit:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf9160dk_nrf9160_ns
-
-The sample also requires two signed firmware images that have to be available for download from an HTTP server.
-The images are generated automatically when building the sample, but you must upload them to a server and configure the location from where they can be downloaded.
 
 Building and running
 ********************
@@ -81,7 +81,7 @@ If you do not want to host the image file, you can also upload it to a public S3
 Hosting your image on an AWS S3 Server
 --------------------------------------
 
-To upload the file to a public S3 bucket, do the following:
+To upload the file to a public S3 bucket, perform the following steps:
 
 1. Go to `AWS S3 console`_ and sign in.
 #. Go to the bucket you have created.
@@ -94,7 +94,7 @@ Remember to do the following when specifying the filenames:
 * Use the ``<bucket-name>.s3.<region>.amazonaws.com`` part of the URL as the hostname of the server hosting the images, without including ``https://``.
 * Specify the file names as the remaining part of the URL.
 
-You can then use the steps mentioned in the `Specifying the image files`_ section above to upload both images.
+Follow the steps mentioned in the `Specifying the image files`_ section to upload both images.
 
 Testing
 =======

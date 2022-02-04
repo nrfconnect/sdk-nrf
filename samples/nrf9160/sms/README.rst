@@ -9,16 +9,6 @@ nRF9160: SMS
 
 The SMS sample demonstrates how you can send and receive SMS messages with your nRF9160-based device.
 
-
-Overview
-********
-
-The SMS sample registers the nRF9160-based device for SMS service within the nRF9160 modem using the :ref:`sms_readme` library.
-The sample requires an LTE connection.
-
-When the sample starts, it sends SMS if a recipient phone number is set in the configuration.
-The sample then receives all the SMS messages and displays the information about the messages including the text that is sent.
-
 Requirements
 ************
 
@@ -28,6 +18,14 @@ The sample supports the following development kit:
    :header: heading
    :rows: nrf9160dk_nrf9160_ns
 
+Overview
+********
+
+The SMS sample registers the nRF9160-based device for SMS service within the nRF9160 modem using the :ref:`sms_readme` library.
+The sample requires an LTE connection.
+
+When the sample starts, it sends an SMS if a recipient phone number is set in the configuration.
+The sample then receives all the SMS messages and displays the information about the messages including the text that is sent.
 
 Configuration
 *************
@@ -71,7 +69,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test the sample by performing the following steps:
+After programming the sample to your development kit, test it by performing the following steps:
 
 1. |connect_kit|
 #. |connect_terminal|

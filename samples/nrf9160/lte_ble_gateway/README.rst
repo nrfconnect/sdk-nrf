@@ -12,18 +12,6 @@ The LTE Sensor Gateway sample demonstrates how to transmit sensor data from an n
 The sensor data is collected using Bluetooth® Low Energy.
 Therefore, this sample acts as a gateway between the Bluetooth LE and the LTE connections to nRF Cloud.
 
-Overview
-*********
-
-The sample connects using Bluetooth LE to a Thingy:52 running the factory pre-loaded application.
-When the connection is established, it starts collecting data from two sensors:
-
-* The flip state of the Thingy:52
-* The simulated GNSS position data
-
-The sample aggregates the data from both sensors in memory.
-You can then trigger an alarm that sends the aggregated data over LTE to `nRF Cloud`_ by flipping the Thingy:52, which causes a change in the flip state to ``UPSIDE_DOWN``.
-
 Requirements
 ************
 
@@ -36,6 +24,18 @@ The sample supports the following development kit:
 The sample also requires a `Nordic Thingy:52`_.
 
 .. include:: /includes/spm.txt
+
+Overview
+*********
+
+The sample connects using Bluetooth LE to a Thingy:52 running the factory preloaded application.
+When the connection is established, it starts collecting data from two sensors:
+
+* The flip state of the Thingy:52
+* The simulated GNSS position data
+
+The sample aggregates the data from both sensors in memory.
+You can then trigger an alarm that sends the aggregated data over LTE to `nRF Cloud`_ by flipping the Thingy:52, which causes a change in the flip state to ``UPSIDE_DOWN``.
 
 User interface
 **************
@@ -62,7 +62,7 @@ When you connect the nRF9160 development kit to your computer, three virtual ser
 * The second port is connected to the *board controller* on the development kit, the nRF52840.
 
 You must program the *board controller* with the :ref:`bluetooth-hci-lpuart-sample` sample first, before programming the main controller with the LTE Sensor Gateway sample application.
-You can program the board controller as follows:
+Program the board controller as follows:
 
 1. Set the **SW10** switch, marked as debug/prog, in the **NRF52** position.
    In nRF9160 DK v0.9.0 and earlier, the switch is called **SW5**.
@@ -72,7 +72,7 @@ You can program the board controller as follows:
    See :ref:`putty` for the required settings.
 
 After programming the board controller, you must program the main controller with the LTE Sensor Gateway sample, which also includes the :ref:`secure_partition_manager` sample.
-You can program the main controller as follows:
+Program the main controller as follows:
 
 1. Set the **SW5** switch, marked as *debug/prog*, in the **NRF91** position.
 #. Build the LTE Sensor Gateway sample (this sample) for the nrf9160dk_nrf9160_ns build target and program the main controller with it.
@@ -83,7 +83,7 @@ You can program the main controller as follows:
 Testing
 =======
 
-After programming the main controller with the sample, you can test it as follows:
+After programming the main controller with the sample, test it by performing the following steps:
 
 1. Power on your Thingy:52 and observe that it starts blinking blue.
 #. Open a web browser and navigate to https://nrfcloud.com/.
