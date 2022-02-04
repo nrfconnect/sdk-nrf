@@ -211,7 +211,14 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-* |no_changes_yet_note|
+
+Flash driver
+--------------------
+
+*  nRF SoC Flash driver
+
+  * Added TF-M secure read service.
+
 
 Libraries
 =========
