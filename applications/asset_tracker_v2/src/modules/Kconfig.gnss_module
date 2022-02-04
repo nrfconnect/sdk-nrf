@@ -5,7 +5,7 @@
 #
 
 menuconfig GNSS_MODULE
-	bool "GPS module"
+	bool "GNSS module"
 	select DATE_TIME
 	default y
 
