@@ -10,6 +10,21 @@ nRF9160: HTTP full modem update
 The HTTP full modem update sample shows how to perform a full firmware update of the modem.
 The sample downloads a modem firmware signed by Nordic Semiconductor and then performs the firmware update of the modem.
 
+Requirements
+************
+
+The sample supports the following development kit, version 0.14.0 or higher:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf9160dk_nrf9160_ns
+
+.. include:: /includes/spm.txt
+
+On the nRF9160 DK, set the control signal from the nRF52840 board controller MCU (**P0.19**) to *high* to let the nRF9160 communicate with the external flash memory.
+Enable the ``external_flash_pins_routing`` node in devicetree.
+See :ref:`zephyr:nrf9160dk_board_controller_firmware` for details on building the firmware for the nRF52840 board controller MCU.
+
 Overview
 ********
 
@@ -25,21 +40,6 @@ The sample proceeds as follows:
 
 The current version of this sample downloads two different versions of the firmware, namely 1.3.0 and 1.3.1.
 The sample then selects the version which is currently not installed.
-
-Requirements
-************
-
-The sample supports the following development kit, version 0.14.0 or higher:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf9160dk_nrf9160_ns
-
-.. include:: /includes/spm.txt
-
-On the nRF9160 DK, you must set the control signal from the nRF52840 board controller MCU (**P0.19**) to *high* to let the nRF9160 communicate with the external flash memory.
-To do so, enable the ``external_flash_pins_routing`` node in devicetree.
-See :ref:`zephyr:nrf9160dk_board_controller_firmware` for details on building the firmware for the nRF52840 board controller MCU.
 
 Configuration options
 *********************

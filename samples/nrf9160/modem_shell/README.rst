@@ -9,6 +9,15 @@ nRF9160: Modem Shell
 
 The Modem Shell (MoSh) sample application enables you to test various device connectivity features, including data throughput.
 
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf9160dk_nrf9160_ns
+
 Overview
 ********
 
@@ -88,7 +97,7 @@ You can use the AT command module to send AT commands to the modem.
 Examples
 --------
 
-* Send AT command to query network status with:
+* Send AT command to query network status:
 
   .. code-block:: console
 
@@ -528,15 +537,6 @@ Examples
      location get --method cellular
      cloud disconnect
 
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf9160dk_nrf9160_ns
-
 Configuration
 *************
 
@@ -638,7 +638,7 @@ LED 1:
 Testing
 =======
 
-To test MoSh after programming the application and all prerequisites to your development kit, complete the following steps:
+After programming the application and all prerequisites to your development kit, test it by performing the following steps:
 
 1. Connect the development kit to the computer using a USB cable.
    The development kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
@@ -691,7 +691,7 @@ For example:
 
    west build -p -b nrf9160dk_nrf9160_ns -- -DDTC_OVERLAY_FILE=ppp.overlay -DOVERLAY_CONFIG=overlay-ppp.conf
 
-After programming the development kit, you can test it in the Linux environment as follows:
+After programming the development kit, test it in the Linux environment by performing the following steps:
 
 1. Connect the development kit to the computer using a USB cable.
    The development kit is assigned a ttyACM device (Linux).
@@ -780,6 +780,11 @@ For example:
 
    west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-cloud_mqtt.conf
 
+References
+**********
+
+* `nRF9160 Hardware Verification Guidelines - UART interface`_
+
 Dependencies
 ************
 
@@ -793,8 +798,3 @@ This sample uses the following |NCS| libraries:
 This sample uses the following `sdk-nrfxlib`_ libraries:
 
 * :ref:`nrfxlib:nrf_modem`
-
-References
-**********
-
-* `nRF9160 Hardware Verification Guidelines - UART interface`_
