@@ -862,7 +862,7 @@ int lte_lc_psm_get(int *tau, int *active_time)
 	char active_time_str[9] = {0};
 	char tau_ext_str[9] = {0};
 	char tau_legacy_str[9] = {0};
-	char response[160] = { 0 };
+	static char response[160] = { 0 };
 	const char ch = ',';
 	char *comma_ptr;
 
@@ -877,6 +877,8 @@ int lte_lc_psm_get(int *tau, int *active_time)
 	 * We need to parse the three last parameters, Active-Time, Periodic-TAU-ext and
 	 * Periodic-TAU. N.B. Periodic-TAU will not be present on modem firmwares < 1.2.0.
 	 */
+
+	response[0] = '\0';
 
 	err = nrf_modem_at_cmd(response, sizeof(response), "AT%%XMONITOR");
 	if (err < 0) {
