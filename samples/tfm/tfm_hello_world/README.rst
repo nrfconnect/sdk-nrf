@@ -7,13 +7,7 @@ TF-M Hello World
    :local:
    :depth: 2
 
-A simple sample based on Hello World that demonstrates adding Trusted Firmware-M (TF-M) to an application.
-
-Overview
-********
-
-This sample uses the Platform Security Architecture (PSA) API to calculate a SHA-256 digest and the TF-M platform read service to read two FICR registers.
-The PSA API call is handled by the TF-M secure firmware.
+The TF-M Hello World sample is based on Hello World that demonstrates adding Trusted Firmware-M (TF-M) to an application.
 
 Requirements
 ************
@@ -23,6 +17,12 @@ The sample supports the following development kits:
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
    :rows: nrf5340dk_nrf5340_cpuapp_ns, nrf9160dk_nrf9160_ns
+
+Overview
+********
+
+This sample uses the Platform Security Architecture (PSA) API to calculate a SHA-256 digest and the TF-M platform read service to read two FICR registers.
+The PSA API call is handled by the TF-M secure firmware.
 
 Building and running
 ********************

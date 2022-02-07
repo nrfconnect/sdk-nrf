@@ -14,23 +14,6 @@ The sample provides a set of predefined commands that allow you to configure the
 * Modulated TX carrier
 * RX or TX sweep
 
-Overview
-********
-
-You can run the tests by connecting to the development kit through the serial port and sending shell commands.
-Zephyr's :ref:`zephyr:shell_api` module is used to handle the commands.
-At any time during the tests, you can dynamically set the radio parameters, such as output power, bit rate, and channel.
-In sweep mode, you can set the time for which the radio scans each channel from 1 millisecond to 99 milliseconds, in steps of 1 millisecond.
-The sample also allows you to send a data pattern to another development kit.
-
-The sample starts with enabling the high frequency crystal oscillator and configuring the shell.
-You can then start running commands to set up and control the radio.
-See :ref:`radio_test_ui` for a list of available commands.
-
-.. note::
-   For the IEEE 802.15.4 mode, the start channel and the end channel must be within the channel range of 11 to 26.
-   Use the ``start_channel`` and ``end_channel`` commands to control this setting.
-
 Requirements
 ************
 
@@ -69,6 +52,23 @@ Skyworks front-end module
 .. include:: /includes/sample_dtm_radio_test_skyworks.txt
 
 You can configure the Skyworks front-end module (FEM) antenna output and activation delay using the main shell commands of the :ref:`radio_test_ui`.
+
+Overview
+********
+
+To run the tests, connect to the development kit through the serial port and send shell commands.
+Zephyr's :ref:`zephyr:shell_api` module is used to handle the commands.
+At any time during the tests, you can dynamically set the radio parameters, such as output power, bit rate, and channel.
+In sweep mode, you can set the time for which the radio scans each channel from 1 millisecond to 99 milliseconds, in steps of 1 millisecond.
+The sample also allows you to send a data pattern to another development kit.
+
+The sample first enables the high frequency crystal oscillator and configures the shell.
+You can then start running commands to set up and control the radio.
+See :ref:`radio_test_ui` for a list of available commands.
+
+.. note::
+   For the IEEE 802.15.4 mode, the start channel and the end channel must be within the channel range of 11 to 26.
+   Use the ``start_channel`` and ``end_channel`` commands to control this setting.
 
 .. _radio_test_ui:
 
@@ -140,8 +140,8 @@ Building and running
 
 .. note::
    On the |nRF5340DKnoref|, the Radio test sample is a standalone network sample that does not require any counterpart application sample.
-   However, you must still program the application core to boot up the network core.
-   You can use any sample for this, for example :ref:`nrf5340_empty_app_core`.
+   Program the application core to boot up the network core.
+   Use any sample for this, for example :ref:`nrf5340_empty_app_core`.
    The :ref:`nrf5340_empty_app_core` is built and programmed automatically by default.
    If you want to program another sample for the application core, unset the :kconfig:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE` option.
 
@@ -150,7 +150,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, you can test it in one of two ways.
+After programming the sample to your development kit, complete the folowing steps to test it in one of the following two ways:
 
 .. note::
    For the |nRF5340DKnoref|, see :ref:`logging_cpunet` for information about the COM terminals on which the logging output is available.
@@ -164,9 +164,11 @@ Testing with another development kit
    The kits are assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 #. |connect_terminal_both|
 #. Run the following commands on one of the kits:
-   #. Set the data rate with the ``data_rate`` command to ``ble_2Mbit``.
+
+   a. Set the data rate with the ``data_rate`` command to ``ble_2Mbit``.
    #. Set the transmission pattern with the ``transmit_pattern`` command to ``pattern_11110000``.
    #. Set the radio channel with the ``start_channel`` command to 40.
+
 #. Repeat all steps for the second kit.
 #. On both kits, run the ``parameters_print`` command to confirm that the radio configuration is the same on both kits.
 #. Set one kit in the Modulated TX Carrier mode using the ``start_tx_modulated_carrier`` command.
@@ -183,15 +185,15 @@ Testing with RSSI Viewer
 #. |connect_terminal|
 #. Set the start channel with the ``start_channel`` command to 20.
 #. Set the end channel with the ``end_channel`` command to 60.
-#. Set the time on channel with the ``time_on_channel`` command to 50ms.
+#. Set the time on channel with the ``time_on_channel`` command to 50 ms.
 #. Set the kit in the TX sweep mode using the ``start_tx_sweep`` command.
 #. Start the RSSI Viewer application and select the kit to communicate with.
-#. On the application chart, observe the TX sweep in the form of a wave that starts at 2420 MHz frequency and ends with 2480MHz.
+#. On the application chart, observe the TX sweep in the form of a wave that starts at 2420 MHz frequency and ends with 2480 MHz.
 
 Dependencies
 ************
 
-This sample uses the following nrfx dependencies:
+This sample has the following nrfx dependencies:
 
   * ``nrfx/drivers/include/nrfx_timer.h``
   * ``nrfx/hal/nrf_nvmc.h``
