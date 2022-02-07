@@ -13,9 +13,6 @@ The Bluetooth® mesh support is controlled by :kconfig:`CONFIG_BT_MESH`, which d
 * :kconfig:`CONFIG_BT_OBSERVER` - Enables the Bluetooth Observer role.
 * :kconfig:`CONFIG_BT_PERIPHERAL` - Enables the Bluetooth Peripheral role.
 
-The Bluetooth mesh subsystem currently performs best with :ref:`Zephyr's Bluetooth LE Controller <zephyr:bluetooth-arch>`.
-To force |NCS| to build with this controller, enable :kconfig:`CONFIG_BT_LL_SW_SPLIT`.
-
 Optional features configuration
 *******************************
 
