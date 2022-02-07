@@ -182,14 +182,24 @@ extern "C" {
 
 
 #define _EVENT_TYPE_DECLARE(ename)					\
+	enum {_CONCAT(ename, _HAS_DYNDATA) = 0};			\
 	_EVENT_TYPE_DECLARE_COMMON(ename);				\
 	_EVENT_ALLOCATOR_FN(ename)
 
 
 #define _EVENT_TYPE_DYNDATA_DECLARE(ename)				\
+	enum {_CONCAT(ename, _HAS_DYNDATA) = 1};			\
 	_EVENT_TYPE_DECLARE_COMMON(ename);				\
 	_EVENT_ALLOCATOR_DYNDATA_FN(ename)
 
+
+#if IS_ENABLED(CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE)
+#define _EVENT_TYPE_DEFINE_SIZES(ename)             \
+	.struct_size = sizeof(struct ename),        \
+	.has_dyndata = _CONCAT(ename, _HAS_DYNDATA),
+#else
+#define _EVENT_TYPE_DEFINE_SIZES(ename)
+#endif
 
 #define _EVENT_TYPE_DEFINE(ename, init_log_en, log_fn, trace_data_pointer)		\
 	_EVENT_SUBSCRIBERS_ARRAY_TAGS(ename);						\
@@ -201,6 +211,7 @@ extern "C" {
 		.log_event       = (IS_ENABLED(CONFIG_LOG) ? (log_fn) : (NULL)),	\
 		.trace_data      = (IS_ENABLED(CONFIG_EVENT_MANAGER_PROFILER_TRACER) ?	\
 					(trace_data_pointer) : (NULL)),			\
+		_EVENT_TYPE_DEFINE_SIZES(ename) /* No comma here intentionally */	\
 	}
 
 
@@ -287,6 +298,14 @@ struct event_type {
 
 	/** Custom data related to tracking. */
 	const void *trace_data;
+
+#if IS_ENABLED(CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE)
+	/** The size of the event structure */
+	uint16_t struct_size;
+
+	/** The flag that stores the information if the event type contains dyndata */
+	bool has_dyndata;
+#endif
 };
 
 extern struct event_type _event_type_list_start[];

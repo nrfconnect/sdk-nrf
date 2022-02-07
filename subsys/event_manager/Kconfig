@@ -46,4 +46,11 @@ config EVENT_MANAGER_MAX_EVENT_CNT
 	help
 	  Maximum number of declared event types in Event Manager.
 
+config EVENT_MANAGER_PROVIDE_EVENT_SIZE
+	bool "Provide information about the event size"
+	help
+	  This option enables the information about event size.
+	  This would require to store more information with event type
+	  and should be enabled only if such an information is required.
+
 endif # EVENT_MANAGER
