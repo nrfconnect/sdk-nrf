@@ -1102,16 +1102,28 @@ int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status)
 {
 	int err;
 	uint16_t status_tmp;
+	uint32_t cell_id = 0;
 
 	if (status == NULL) {
 		return -EINVAL;
 	}
 
 	/* Read network registration status */
-	err = nrf_modem_at_scanf("AT%XMONITOR", "%%XMONITOR: %hu", &status_tmp);
-	if (err != 1) {
+	err = nrf_modem_at_scanf("AT+CEREG?",
+		"+CEREG: "
+		"%*u,"		/* <n> */
+		"%u,"		/* <stat> */
+		"%*[^,],"	/* <tac> */
+		"\"%x\",",	/* <ci> */
+		&status_tmp,
+		&cell_id);
+	if (err < 1) {
 		LOG_ERR("Could not get registration status, error: %d", err);
 		return -EFAULT;
+	}
+
+	if (!is_cellid_valid(cell_id)) {
+		*status = LTE_LC_NW_REG_UNKNOWN;
 	}
 
 	*status = status_tmp;
