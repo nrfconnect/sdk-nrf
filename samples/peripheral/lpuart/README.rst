@@ -9,12 +9,6 @@ Low Power UART
 
 The Low Power UART sample demonstrates the capabilities of the :ref:`uart_nrf_sw_lpuart` module.
 
-Overview
-********
-
-The sample implements a simple loopback using a single UART instance.
-It has console and logging disabled by default, to demonstrate low power consumption while having UART active.
-
 Requirements
 ************
 
@@ -30,6 +24,12 @@ The sample also requires the following pins to be shorted:
 * Request Pin (Arduino Digital Pin 12 (6 on nRF21540 DK)) with Response Pin (Arduino Digital Pin 13 (7 on nRF21540 DK))
 
 Additionally, it requires a logic analyzer.
+
+Overview
+********
+
+The sample implements a simple loopback using a single UART instance.
+By default, the console and logging are disabled to demonstrate low power consumption when UART is active.
 
 Configuration
 *************
@@ -54,7 +54,8 @@ After programming the sample to your development kit, test it by performing the 
 
 1. Connect the logic analyzer to the shorted pins, to confirm UART activity.
 2. Measure the current to confirm that the power consumption indicates that high-frequency clock is disabled during the idle stage.
-   During the idle stage, the UART receiver is ready to start reception, as the request pin wakes it up.
+
+During the idle stage, the UART receiver is ready to start reception, as the request pin wakes it up.
 
 Dependencies
 ************
