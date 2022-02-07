@@ -208,9 +208,20 @@ Bluetooth libraries and services
 
   * :ref:`ams_client_readme` library.
 
-* :ref:`gatt_dm_readme` library:
+* Updated:
 
-  * Fixed discovery of empty services.
+  * :ref:`gatt_dm_readme` library:
+
+    * To fix discovery for empty services.
+
+Other libraries
+----------------
+
+* Updated:
+
+  * :ref:`event_manager`:
+
+      * To add :c:func:`event_manager_event_size` function with corresponding :kconfig:`CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE` option.
 
 Libraries for networking
 ------------------------
