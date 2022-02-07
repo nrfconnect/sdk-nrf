@@ -401,7 +401,7 @@ The following build types are available for various boards in the nRF Desktop:
 * ``b0`` -- ``debug`` build type with the support for the B0 bootloader enabled (for :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
 * ``mcuboot`` -- ``debug`` build type with the support for the MCUboot bootloader enabled (for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
 * ``shell`` -- ``debug`` build type with the shell enabled.
-* ``b0_wwcb`` -- ``debug`` build type with the support for the B0 bootloader enabled, working with ChromeBook (WWCB).
+* ``b0_wwcb`` -- ``debug`` build type with the support for the B0 bootloader enabled for `Works With ChromeBook (WWCB)`_.
 
 In nRF Desktop, not every development kit can support every build type mentioned above.
 If the given build type is not supported on the selected DK, an error message will appear when `Building and running`_.
@@ -1653,10 +1653,10 @@ For example, the following line will start the upload of the new image to the de
 
   mcumgr -t 60 --conntype serial --connstring=/dev/ttyACM0 image upload build-nrf52833dongle_nrf52833/zephyr/app_update.bin
 
-The fwupd support
-=================
+fwupd support
+=============
 
-The fwupd is an open-source project providing tools and daemon for managing the installation of firmware updates on Linux-based systems.
+fwupd is an open-source project providing tools and daemon for managing the installation of firmware updates on Linux-based systems.
 Together with the `LVFS (Linux Vendor Firmware Serivce) <LVFS_>`_, it provides a solution for vendors to easily distribute firmware for compatible devices.
 
 The fwupd tools can communicate with the devices running the nRF Desktop application with the :ref:`nrf_desktop_bootloader_background_dfu` feature enabled.

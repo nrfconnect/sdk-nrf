@@ -793,3 +793,5 @@
 .. _`LVFS testing`: https://lvfs.readthedocs.io/en/latest/testing.html
 
 .. _`LVFS building fwupd`: https://lvfs.readthedocs.io/en/latest/custom-plugin.html#building-fwupd
+
+.. _`Works With ChromeBook (WWCB)`: https://www.google.com/chromebook/workswithchromebook
