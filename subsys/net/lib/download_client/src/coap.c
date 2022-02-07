@@ -8,11 +8,18 @@
 #include <net/coap.h>
 #include <net/download_client.h>
 #include <logging/log.h>
+#include <string.h>
 
 LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 
 #define COAP_VER 1
 #define FILENAME_SIZE CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE
+#define COAP_PATH_ELEM_DELIM "/"
+
+/* declaration of strtok_r appears to be missing in some cases,
+ * even though it's defined in the minimal libc, so we forward declare it
+ */
+extern char *strtok_r(char *str, const char *sep, char **state);
 
 int url_parse_file(const char *url, char *file, size_t len);
 int socket_send(const struct download_client *client, size_t len);
@@ -109,6 +116,8 @@ int coap_request_send(struct download_client *client)
 {
 	int err;
 	char file[FILENAME_SIZE];
+	char *path_elem;
+	char *path_elem_saveptr;
 	struct coap_packet request;
 
 	err = coap_packet_init(
@@ -126,12 +135,15 @@ int coap_request_send(struct download_client *client)
 		return err;
 	}
 
-	err = coap_packet_append_option(&request, COAP_OPTION_URI_PATH,
-					file, strlen(file));
-	if (err) {
-		LOG_ERR("Unable add option to request");
-		return err;
-	}
+	path_elem = strtok_r(file, COAP_PATH_ELEM_DELIM, &path_elem_saveptr);
+	do {
+		err = coap_packet_append_option(&request, COAP_OPTION_URI_PATH,
+			path_elem, strlen(path_elem));
+		if (err) {
+			LOG_ERR("Unable add option to request");
+			return err;
+		}
+	} while ((path_elem = strtok_r(NULL, COAP_PATH_ELEM_DELIM, &path_elem_saveptr)));
 
 	err = coap_append_block2_option(&request, &client->coap.block_ctx);
 	if (err) {
