@@ -9,13 +9,6 @@ IEEE 802.15.4 PHY test tool
 
 The IEEE 802.15.4 PHY test tool performs 802.15.4 RF Performance and PHY Certification tests, and can also provide information for a general evaluation of the performance of the integrated 802.15.4 radio.
 
-Overview
-********
-
-You can perform the testing by connecting to the development kit through the serial port and sending supported commands.
-
-See the :ref:`802154_phy_test_ui` for the list of the available commands.
-
 Requirements
 ************
 
@@ -31,6 +24,13 @@ For more information, see :ref:`802154_phy_test_testing`.
 .. note::
    You can perform the testing using other equipment, like spectrum analyzers, oscilloscopes, or RF power meters, but these methods are not covered by this documentation.
 
+Overview
+********
+
+To perform the tests, connect to the development kit through the serial port and send supported commands.
+
+See the :ref:`802154_phy_test_ui` for the list of the available commands.
+
 .. _802154_phy_test_ui:
 
 Serial commands list
@@ -41,19 +41,19 @@ This section lists the serial commands that are supported by the sample.
 changemode - Change the device mode
 ===================================
 
-It changes the device mode if BOTH modes are available.
+It changes the device mode if both modes are available.
 
    .. parsed-literal::
       :class: highlight
 
       custom changemode *<mode>*
 
-The ``<mode>`` argument can assume one of the following values:
+The ``<mode>`` argument assumes one of the following values:
 
 * ``0`` - DUT
 * ``1`` - CMD
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -70,12 +70,12 @@ It makes the CMD device control the LED indicating packet reception.
 
       custom lindication *<value>*
 
-The ``<value>`` argument can assume one of the following values:
+The ``<value>`` argument assumes one of the following values:
 
 * ``0`` - none
 * ``1`` - LED packet reception indication
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -86,13 +86,6 @@ rping - Ping the DUT
 ====================
 
 It makes the CMD device send a PING to the DUT device and wait for the reply.
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom rping
-
-See the following example:
 
    .. parsed-literal::
       :class: highlight
@@ -112,7 +105,7 @@ It makes the CMD device set the timeout in milliseconds for receiving the *pong*
 * The ``<timeout:1>`` value indicates the higher byte of the timeout.
 * The ``<timeout:0>`` value indicates the lower byte of the timeout.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -131,7 +124,7 @@ It sets a common radio channel for the DUT and CMD devices, sends a PING, and wa
 
 The four ``<channel:x>`` arguments are four octets defining the channel page and number.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -150,7 +143,7 @@ It sets radio channel of the CMD device.
 
 The four ``<channel:x>`` arguments are four bytes defining the channel page and number.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -169,7 +162,7 @@ It sets the radio channel of the DUT device.
 
 The ``<channel>`` argument indicates the selected channel’s number.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -180,13 +173,6 @@ lgetchannel - Get the CMD radio channel
 =======================================
 
 It gets the current configured channel of the CMD device.
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom lgetchannel
-
-See the following example:
 
    .. parsed-literal::
       :class: highlight
@@ -207,7 +193,7 @@ It sets the CMD device's TX power.
   Use ``0`` for both.
 * The ``<power>`` argument indicates the TX power as a signed integer in dBm.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -224,24 +210,10 @@ It gets the current configured power of the CMD device.
 
       custom lgetpower
 
-See the following example:
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom lgetpower
-
 rgetpower - Get the DUT radio power
 ===================================
 
 It gets the current configured power of the DUT device.
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom rgetpower
-
-See the following example:
 
    .. parsed-literal::
       :class: highlight
@@ -261,7 +233,7 @@ It commands the DUT device to start a modulated waveform transmission of a certa
 * The ``<duration:1>`` argument indicates the higher byte of the duration value.
 * The ``<duration:0>`` argument indicates the lower byte of the duration value.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -272,13 +244,6 @@ rstart - Start the RX Test
 ==========================
 
 It makes the DUT device start the RX test routine, clearing previous statistics.
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom rstart
-
-See the following example:
 
    .. parsed-literal::
       :class: highlight
@@ -296,25 +261,11 @@ The DUT device also sends the test results to the CMD device
 
       custom rend
 
-See the following example:
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom rend
-
 find - Find the DUT
 ===================
 
 It makes the CMD device cycle all the channels (11-26) trying to PING the DUT device.
 It stops upon receiving a reply.
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom find
-
-See the following example:
 
    .. parsed-literal::
       :class: highlight
@@ -333,7 +284,7 @@ It makes the CMD device perform a Clear Channel Assessment (CCA) with the reques
 
 The ``<mode>`` argument indicates the IEEE 802.15.4 CCA mode (1-3).
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -351,12 +302,12 @@ If enabled, it makes the CMD device perform a Clear Channel Assessment (CCA) bef
       custom lsetcca *<toggle>*
 
 The ``<toggle>`` argument enables or disables the execution of a CCA before each transmission.
-It can be set to the following values:
+You can set it to the following values:
 
 * ``1`` - enable CCA
 * ``0`` - disable CCA
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -367,13 +318,6 @@ lgeted - Perform Energy Detection
 =================================
 
 It starts the energy detection and reports the result as 2 hexadecimal bytes.
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom lgeted
-
-See the following example:
 
    .. parsed-literal::
       :class: highlight
@@ -391,24 +335,10 @@ It then outputs the result as 2 hexadecimal bytes.
 
       custom lgetlqi
 
-See the following example:
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom lgetlqi
-
 lgetrssi - Measure RSSI
 =======================
 
 It gets the RSSI in dBm.
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom lgetrssi
-
-See the following example:
 
    .. parsed-literal::
       :class: highlight
@@ -428,7 +358,7 @@ It is used for frame filtering and acknowledgment transmission.
 
 The ``<short_address>`` argument indicates the IEEE 802.15.4 short, two-byte address.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -448,17 +378,17 @@ It is used for frame filtering and acknowledgment transmission.
 
 The ``<extended_address>`` argument indicates the IEEE 802.15.4 long, 8-byte address.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
 
       custom lsetextended *0x000000000000FFFF*
 
-lsetpanid - Set PAN id
+lsetpanid - Set PAN ID
 ======================
 
-It sets the PAN id.
+It sets the PAN ID.
 It is used for frame filtering and acknowledgment transmission.
 
    .. parsed-literal::
@@ -468,7 +398,7 @@ It is used for frame filtering and acknowledgment transmission.
 
 The ``<panid>`` argument indicates the two-bytes of the IEEE 802.15.4 PAN ID.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -488,7 +418,7 @@ It sets an arbitrary payload of a raw IEEE 802.15.4 packet.
 * The ``<length>`` argument indicates the length of the payload in bytes.
 * The ``<payload>`` argument indicates the bytes of the packet payload.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -509,7 +439,7 @@ It starts the transmission of packets with a random (or previously defined) payl
   Set to ``0`` for an infinite transmission.
 * The ``<delay>`` argument indicates the delay in milliseconds between the transmissions.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -526,25 +456,11 @@ It makes the CMD device stop current burst transmission.
 
       custom ltxend
 
-See the following example:
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom ltxend
-
 lstart - Start the continuous receive mode
 ==========================================
 
 It makes the sample enter the continuous receive mode and print the received packet information over a serial connection.
 The sample does not accept any other command until it receives ``custom lend``.
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom lstart
-
-See the following example:
 
    .. parsed-literal::
       :class: highlight
@@ -568,14 +484,7 @@ The statistics are shown in the following format:
 
       [total]0x%x%x%x%x [protocol]0x%x%x%x%x [totalLqi]0x%x%x%x%x [totalRssiMgnitude]0x%x%x%x%x
 
-See the following example:
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom lend
-
-lsetantenna - Set CMD antenna id
+lsetantenna - Set CMD antenna ID
 ================================
 
 It sets the antenna used by the CMD device for both TX and RX operations.
@@ -585,17 +494,17 @@ It sets the antenna used by the CMD device for both TX and RX operations.
 
       custom lsetantenna *<antenna>*
 
-The ``<antenna>`` argument indicates the antenna id.
+The ``<antenna>`` argument indicates the antenna ID.
 It can either be ``0`` or ``1``.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
 
       custom lsetantenna *1*
 
-lsetrxantenna - Set CMD antenna id for RX
+lsetrxantenna - Set CMD antenna ID for RX
 =========================================
 
 It sets the antenna used by the CMD device for RX operations.
@@ -605,17 +514,17 @@ It sets the antenna used by the CMD device for RX operations.
 
       custom lsetrxantenna *<antenna>*
 
-The ``<antenna>`` argument indicates the antenna id.
+The ``<antenna>`` argument indicates the antenna ID.
 It can either be ``0`` or ``1``.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
 
       custom lsetrxantenna *1*
 
-lsettxantenna - Set CMD antenna id for TX
+lsettxantenna - Set CMD antenna ID for TX
 =========================================
 
 It sets the antenna used by the CMD device for TX operations.
@@ -625,17 +534,17 @@ It sets the antenna used by the CMD device for TX operations.
 
       custom lsettxantenna *<antenna>*
 
-The ``<antenna>`` argument indicates the antenna id.
+The ``<antenna>`` argument indicates the antenna ID.
 It can either be ``0`` or ``1``.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
 
       custom lsettxantenna *1*
 
-lgetrxantenna - Get CMD RX antenna id
+lgetrxantenna - Get CMD RX antenna ID
 =====================================
 
 It gets the antenna used by the CMD device for RX operations.
@@ -645,14 +554,7 @@ It gets the antenna used by the CMD device for RX operations.
 
       custom lgetrxantenna
 
-See the following example:
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom lgetrxantenna
-
-lgettxantenna - Get CMD TX antenna id
+lgettxantenna - Get CMD TX antenna ID
 =====================================
 
 It gets the antenna used by the CMD device for TX operations.
@@ -662,14 +564,7 @@ It gets the antenna used by the CMD device for TX operations.
 
       custom lgettxantenna
 
-See the following example:
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom lgettxantenna
-
-lgetbestrxantenna - Get last best CMD RX antenna id selected by antenna diversity algorithm
+lgetbestrxantenna - Get last best CMD RX antenna ID selected by antenna diversity algorithm
 ===========================================================================================
 
 It gets the last best antenna selected for RX operations by the antenna diversity algorithm.
@@ -679,14 +574,7 @@ It gets the last best antenna selected for RX operations by the antenna diversit
 
       custom lgetbestrxantenna
 
-See the following example:
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom lgetbestrxantenna
-
-rsetantenna - Set DUT antenna id
+rsetantenna - Set DUT antenna ID
 ================================
 
 It sets the antenna used by the DUT device for both TX and RX operations.
@@ -696,17 +584,17 @@ It sets the antenna used by the DUT device for both TX and RX operations.
 
       custom rsetantenna *<antenna>*
 
-The ``<antenna>`` argument indicates the antenna id.
+The ``<antenna>`` argument indicates the antenna ID.
 It can either be ``0`` or ``1``.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
 
       custom rsetantenna *1*
 
-rsettxantenna - Set DUT TX antenna id
+rsettxantenna - Set DUT TX antenna ID
 =====================================
 
 It sets the antenna used by the DUT device for TX operations.
@@ -716,17 +604,17 @@ It sets the antenna used by the DUT device for TX operations.
 
       custom rsettxantenna *<antenna>*
 
-The ``<antenna>`` argument indicates the antenna id.
+The ``<antenna>`` argument indicates the antenna ID.
 It can either be ``0`` or ``1``.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
 
       custom rsettxantenna *1*
 
-rsetrxantenna - Set DUT RX antenna id
+rsetrxantenna - Set DUT RX antenna ID
 =====================================
 
 It sets the antenna used by the DUT device for RX operations.
@@ -736,17 +624,17 @@ It sets the antenna used by the DUT device for RX operations.
 
       custom rsetrxantenna *<antenna>*
 
-The ``<antenna>`` argument indicates the antenna id.
+The ``<antenna>`` argument indicates the antenna ID.
 It can either be ``0`` or ``1``.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
 
       custom rsetrxantenna *1*
 
-rgetrxantenna - Get DUT TX antenna id
+rgetrxantenna - Get DUT TX antenna ID
 =====================================
 
 It gets the antenna used by the DUT device for TX operations.
@@ -756,14 +644,7 @@ It gets the antenna used by the DUT device for TX operations.
 
       custom rgettxantenna
 
-See the following example:
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom rgettxantenna
-
-rgettxantenna - Get DUT RX antenna id
+rgettxantenna - Get DUT RX antenna ID
 =====================================
 
 It gets the antenna used by the DUT device for RX operations.
@@ -773,24 +654,10 @@ It gets the antenna used by the DUT device for RX operations.
 
       custom rgetrxantenna
 
-See the following example:
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom rgetrxantenna
-
-rgetbestrxantenna - Get last best DUT RX antenna id selected by antenna diversity algorithm
+rgetbestrxantenna - Get last best DUT RX antenna ID selected by antenna diversity algorithm
 ===========================================================================================
 
 It gets the last best antenna selected for RX operations by the antenna diversity algorithm.
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom rgetbestrxantenna
-
-See the following example:
 
    .. parsed-literal::
       :class: highlight
@@ -815,7 +682,7 @@ It starts the transmission of the unmodulated carrier.
   It ranges between ``0`` and ``32767`` milliseconds.
   Set to ``0`` for infinite transmission.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -840,7 +707,7 @@ It starts a modulated waveform transmission.
   It ranges between ``0`` and ``32767`` milliseconds.
   Set to ``0`` for infinite transmission.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -857,20 +724,10 @@ It gets the hardware version of the DUT device.
 
       custom rhardwareversion
 
-   .. parsed-literal::
-      :class: highlight
-
-      custom rhardwareversion
-
 rsoftwareversion - Get the DUT software version
 ===============================================
 
 It gets the software version of the DUT device.
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom rsoftwareversion
 
    .. parsed-literal::
       :class: highlight
@@ -896,7 +753,7 @@ It is the highest possible considering the GPIO and CLOCK modules possibilities.
   * ``0`` - disabled
   * ``1`` - enabled
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -920,7 +777,7 @@ It makes the CMD device set the value of the selected GPIO out pin.
   * ``0`` - low
   * ``1`` - high
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -940,7 +797,7 @@ It makes CMD reconfigure the selected GPIO pin to INPUT mode and read its value.
 * The ``<pin>`` argument indicates the GPIO pin number.
   It ranges between ``0`` and the number of GPIO pins supported by the SoC.
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -963,7 +820,7 @@ It has no effects on unsupported boards.
   * ``0`` - disabled
   * ``1`` - enabled
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -975,13 +832,6 @@ lgetdcdc - Get DC/DC mode
 
 It gets the DC/DC mode of the CMD device.
 It is always ``0`` for unsupported boards.
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom lgetdcdc
-
-See the following example:
 
    .. parsed-literal::
       :class: highlight
@@ -1003,7 +853,7 @@ It makes the CMD device disable or enable the ICACHE
   * ``0`` - disabled
   * ``1`` - enabled
 
-See the following example:
+For example:
 
    .. parsed-literal::
       :class: highlight
@@ -1020,24 +870,10 @@ It makes the CMD device print the SoC temperature in the format ``<.%02>``.
 
       custom lgettemp
 
-See the following example:
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom lgettemp
-
 lsleep - Transition radio to sleep mode
 =======================================
 
 It makes the CMD device put the radio in sleep mode.
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom lsleep
-
-See the following example:
 
    .. parsed-literal::
       :class: highlight
@@ -1054,24 +890,10 @@ It makes the CMD device put the radio in receive mode.
 
       custom lreceive
 
-See the following example:
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom lreceive
-
 lreboot - Reboots the device
 ============================
 
 It reboots the device
-
-   .. parsed-literal::
-      :class: highlight
-
-      custom lreboot
-
-See the following example:
 
    .. parsed-literal::
       :class: highlight
@@ -1090,7 +912,7 @@ FEM support
 
 .. note::
    The sample provides support for the *antenna diversity* feature on the nRF52840.
-   You can enable the feature setting the :kconfig:`PTT_ANTENNA_DIVERSITY` option as ``enabled``.
+   To enable the feature, set the :kconfig:`PTT_ANTENNA_DIVERSITY` option as ``enabled``.
 
 
 Building and running
@@ -1110,13 +932,13 @@ Building and running
 Testing the sample
 ==================
 
-After programming the sample to your development kit, test it by performing the following steps:
+After programming the sample to your development kit, complete the following steps to test it:
 
 1. Connect the development kit to the computer using a USB cable.
    Use the development kit's programmer USB port (J2).
    The kits are assigned a COM port (in Windows) or a ttyACM device (in Linux), visible in the Device Manager or in the :file:`/dev` directory.
 #. |connect_terminal|
-#. If the sample is configured to support BOTH modes (the default setting), switch the development kit into CMD mode by sending the following command:
+#. If the sample is configured to support both modes (the default setting), switch the development kit into CMD mode by sending the following command:
 
    .. parsed-literal::
       :class: highlight
@@ -1124,10 +946,13 @@ After programming the sample to your development kit, test it by performing the 
       custom changemode *1*
 
 #. On the bottom side of your development kit, locate the table describing the GPIO pin assignment to the LEDs.
-   Read the numbers of the GPIO pins assigned to LED 1, 2, 3 or 4.
+#. Read the numbers of the GPIO pins assigned to LED 1, 2, 3 or 4.
+
    For example, on the nRF52840DK, the LEDs are controlled by the pins ranging between P0.13 and P0.16.
-#. The LEDs on nRF5340DK and nRF52840DK are in the ``sink`` configuration.
-   To turn them on, you must set the respective pin's state to low to let the current flow through the LED, using the ``custom lsetgpio <pin> 0`` command, where ``<pin>`` is the number of the pin assigned for selected LED.
+   The LEDs on nRF5340DK and nRF52840DK are in the ``sink`` configuration.
+
+#. To turn the LEDs on, set the respective pin's state to low to let the current flow through the LED, using the ``custom lsetgpio <pin> 0`` command, where ``<pin>`` is the number of the pin assigned for selected LED.
+
    See the following example for how to light up LED 1 on the nRF5340DK:
 
    .. parsed-literal::
@@ -1140,19 +965,21 @@ If the selected LED lights up, the sample works as expected and is ready for use
 .. _802154_phy_test_testing_board:
 
 .. note::
-   The serial communication does not utilize echo, and the timeout for receiving the entire command after receiving its first character is very short.
+   The serial communication does not use echo, and the timeout for receiving the entire command after receiving its first character is very short.
    To let the device properly receive the commands, use a terminal application that supports *line mode*, or send the entire command using commands like ``echo`` or ``printf``.
 
 Performing radio tests without the serial interface
 ===================================================
 
 1. Make sure that at least one of the development kits can be set into CMD mode and the other one to the DUT mode.
-   The DUT device will not initialize the serial interface.
-   The easiest way to achieve this is to flash both devices with the sample configured to support BOTH modes (default setting).
+
+   The DUT device does not initialize the serial interface.
+   The easiest way to achieve this is to flash both devices with the sample configured to support both modes (default setting).
 #. Connect both development kits to the computer using a USB cable.
+
    The kits are assigned a COM port (in Windows) or a ttyACM device (in Linux), visible in the Device Manager or the :file:`/dev` directory.
 #. |connect_terminal|
-#. If the samples are configured to support BOTH modes (the default setting), switch one of the development kits into CMD mode by sending the following command:
+#. If the samples are configured to support both modes (the default setting), switch one of the development kits into CMD mode by sending the following command:
 
    .. parsed-literal::
       :class: highlight
@@ -1166,7 +993,7 @@ Performing radio tests without the serial interface
 
       custom find
 
-#. The development kit running in CMD mode should respond with one of the following 2 responses:
+#. The development kit running in CMD mode should respond with one of the following two responses:
 
     * ``channel <ch> find <ack>`` - if the CMD device successfully communicates with the DUT device.
     * ``DUT NOT FOUND`` - if it could not exchange packets with the DUT device.
