@@ -208,6 +208,20 @@ static int do_fota_start(int op, const char *file_uri, int sec_tag,
 	}
 
 	*delimiter = ' ';
+
+	/* When download MCUBOOT bootloader, S0 and S1 must be two full filepath
+	 * as this is required in fota_download
+	 */
+	char *tmp = strrchr(path, '/');
+
+	if (tmp != NULL) {
+		char path2[SLM_MAX_URL] = { 0 };
+
+		memcpy(path2, path, tmp - path + 1);
+		tmp = delimiter + 1;
+		strcat(path2, tmp);
+		strcpy(tmp, path2);
+	}
 #endif
 
 	memset(hostname, 0x00, URI_HOST_MAX);
