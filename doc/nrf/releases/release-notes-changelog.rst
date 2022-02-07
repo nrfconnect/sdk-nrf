@@ -138,6 +138,15 @@ Bluetooth libraries and services
 
   * Fixed discovery of empty services.
 
+Libraries for networking
+------------------------
+
+* :ref:`lib_download_client` library:
+
+  * Fixed
+
+    * An issue where downloads of COAP URIs would fail when they contained multiple path elements.
+
 sdk-nrfxlib
 -----------
 
