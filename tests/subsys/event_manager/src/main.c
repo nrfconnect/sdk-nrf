@@ -7,10 +7,13 @@
 #include <ztest.h>
 #include <event_manager.h>
 
+#include "sized_events.h"
 #include "test_events.h"
 
 static enum test_id cur_test_id;
 static K_SEM_DEFINE(test_end_sem, 0, 1);
+static bool expect_assert;
+
 
 /* Provide custom assert post action handler to handle the assertion on OOM
  * error in Event Manager.
@@ -18,7 +21,13 @@ static K_SEM_DEFINE(test_end_sem, 0, 1);
 BUILD_ASSERT(!IS_ENABLED(CONFIG_ASSERT_NO_FILE_INFO));
 void assert_post_action(const char *file, unsigned int line)
 {
-       printk("assert_post_action - file: %s (line: %u)\n", file, line);
+	printk("assert_post_action - file: %s (line: %u)\n", file, line);
+	if (expect_assert) {
+		expect_assert = false;
+		printk("Assertion was expected.\n");
+	} else {
+		zassert(false, "", "Unexpected assertion reached.");
+	}
 }
 
 void test_init(void)
@@ -64,6 +73,107 @@ static void test_multicontext(void)
 	test_start(TEST_MULTICONTEXT);
 }
 
+static void test_event_size_static(void)
+{
+	if (!IS_ENABLED(CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE)) {
+		ztest_test_skip();
+		return;
+	}
+
+	struct test_size1_event *ev_s1;
+	struct test_size2_event *ev_s2;
+	struct test_size3_event *ev_s3;
+	struct test_size_big_event *ev_sb;
+
+	ev_s1 = new_test_size1_event();
+	zassert_equal(sizeof(*ev_s1), event_manager_event_size(&ev_s1->header),
+		"Event size1 unexpected size");
+	event_manager_free(ev_s1);
+
+	ev_s2 = new_test_size2_event();
+	zassert_equal(sizeof(*ev_s2), event_manager_event_size(&ev_s2->header),
+		"Event size2 unexpected size");
+	event_manager_free(ev_s2);
+
+	ev_s3 = new_test_size3_event();
+	zassert_equal(sizeof(*ev_s3), event_manager_event_size(&ev_s3->header),
+		"Event size3 unexpected size");
+	event_manager_free(ev_s3);
+
+	ev_sb = new_test_size_big_event();
+	zassert_equal(sizeof(*ev_sb), event_manager_event_size(&ev_sb->header),
+		"Event size_big unexpected size");
+	event_manager_free(ev_sb);
+}
+
+static void test_event_size_dynamic(void)
+{
+	if (!IS_ENABLED(CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE)) {
+		ztest_test_skip();
+		return;
+	}
+
+	struct test_dynamic_event *ev;
+
+	ev = new_test_dynamic_event(0);
+	zassert_equal(sizeof(*ev) + 0, event_manager_event_size(&ev->header),
+		"Event dynamic with 0 elements unexpected size");
+	event_manager_free(ev);
+
+	ev = new_test_dynamic_event(10);
+	zassert_equal(sizeof(*ev) + 10, event_manager_event_size(&ev->header),
+		"Event dynamic with 10 elements unexpected size");
+	event_manager_free(ev);
+
+	ev = new_test_dynamic_event(100);
+	zassert_equal(sizeof(*ev) + 100, event_manager_event_size(&ev->header),
+		"Event dynamic with 100 elements unexpected size");
+	event_manager_free(ev);
+}
+
+static void test_event_size_dynamic_with_data(void)
+{
+	if (!IS_ENABLED(CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE)) {
+		ztest_test_skip();
+		return;
+	}
+
+	struct test_dynamic_with_data_event *ev;
+
+	ev = new_test_dynamic_with_data_event(0);
+	zassert_equal(sizeof(*ev) + 0, event_manager_event_size(&ev->header),
+		"Event dynamic with 0 elements unexpected size");
+	event_manager_free(ev);
+
+	ev = new_test_dynamic_with_data_event(10);
+	zassert_equal(sizeof(*ev) + 10, event_manager_event_size(&ev->header),
+		"Event dynamic with 10 elements unexpected size");
+	event_manager_free(ev);
+
+	ev = new_test_dynamic_with_data_event(100);
+	zassert_equal(sizeof(*ev) + 100, event_manager_event_size(&ev->header),
+		"Event dynamic with 100 elements unexpected size");
+	event_manager_free(ev);
+}
+
+static void test_event_size_disabled(void)
+{
+	if (IS_ENABLED(CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE)) {
+		ztest_test_skip();
+		return;
+	}
+
+	struct test_size1_event *ev_s1;
+
+	ev_s1 = new_test_size1_event();
+	expect_assert = true;
+	zassert_equal(0, event_manager_event_size(&ev_s1->header),
+		"Event size1 unexpected size");
+	zassert_false(expect_assert,
+		"Assertion during event_manager_event_size function execution was expected");
+	event_manager_free(ev_s1);
+}
+
 void test_oom_reset(void);
 
 void test_main(void)
@@ -75,7 +185,11 @@ void test_main(void)
 			 ztest_unit_test(test_event_order),
 			 ztest_unit_test(test_subs_order),
 			 ztest_unit_test(test_oom_reset),
-			 ztest_unit_test(test_multicontext)
+			 ztest_unit_test(test_multicontext),
+			 ztest_unit_test(test_event_size_static),
+			 ztest_unit_test(test_event_size_dynamic),
+			 ztest_unit_test(test_event_size_dynamic_with_data),
+			 ztest_unit_test(test_event_size_disabled)
 			 );
 
 	ztest_run_test_suite(event_manager_tests);

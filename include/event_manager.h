@@ -148,6 +148,35 @@ extern "C" {
 #define EVENT_SUBMIT(event) _event_submit(&event->header)
 
 
+/**
+ * @brief Get the event size
+ *
+ * Function that calculates the event size using its header.
+ * @note
+ * For this function to be available the @kconfig{CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE} option
+ * needs to be enabled.
+ *
+ * @param eh Pointer to the event header.
+ *
+ * @return Event size in bytes.
+ */
+static inline size_t event_manager_event_size(const struct event_header *eh)
+{
+#if IS_ENABLED(CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE)
+	size_t size = eh->type_id->struct_size;
+
+	if (eh->type_id->has_dyndata) {
+		size += ((const struct event_dyndata *)
+			 (((const uint8_t *)eh) + size - sizeof(struct event_dyndata)))->size;
+	}
+	return size;
+#else
+	__ASSERT_NO_MSG(false);
+	return 0;
+#endif
+}
+
+
 /** @brief Initialize the Event Manager.
  *
  * @retval 0 If the operation was successful. Error values can be added by overwriting
