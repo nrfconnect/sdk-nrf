@@ -1,6 +1,6 @@
 .. _random_hw_unique_key:
 
-Random Hardware Unique Key
+Random hardware unique key
 ##########################
 
 .. contents::
@@ -8,14 +8,6 @@ Random Hardware Unique Key
    :depth: 2
 
 This sample writes random hardware unique keys (HUKs) to the Key Management Unit (KMU), when available, or to the relevant flash memory page, when the KMU is not present.
-
-Overview
-********
-
-When using the :ref:`lib_hw_unique_key` library together with the nRF Secure Immutable Bootloader, you must provision a hardware unique key for the bootloader into the relevant KMU slot or flash memory page.
-
-To provision the HUKs, build and run this sample before programming the bootloader and application.
-It will save the HUKs in the device.
 
 Requirements
 ************
@@ -25,6 +17,14 @@ The sample supports the following development kits:
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
    :rows: nrf5340dk_nrf5340_cpuapp, nrf9160dk_nrf9160, nrf52840dk_nrf52840, nrf21540dk_nrf52840
+
+Overview
+********
+
+When using the :ref:`lib_hw_unique_key` library together with the :ref:`bootloader`, you must provision a hardware unique key for the bootloader into the relevant KMU slot or flash memory page.
+
+To provision the HUKs, build and run this sample before programming the bootloader and application.
+It will save the HUKs in the device.
 
 Configuration
 *************
@@ -36,7 +36,7 @@ FEM support
 
 .. include:: /includes/sample_fem_support.txt
 
-Building and Running
+Building and running
 ********************
 
 .. |sample path| replace:: :file:`samples/keys/random_hw_unique_key`
@@ -50,14 +50,14 @@ Testing
 
       1. |connect_terminal_specific|
       #. Reset the kit.
-      #. Observe that the following output:
+      #. Observe the following output:
 
          .. code-block:: console
 
              Writing random keys to KMU.
              Success!
 
-         If an error occurs, the sample will print a message and it will raise a kernel panic.
+         If an error occurs, the sample prints a message and raises a kernel panic.
 
 Dependencies
 *************
