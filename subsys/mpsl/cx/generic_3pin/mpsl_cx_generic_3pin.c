@@ -272,7 +272,7 @@ static int mpsl_cx_init(const struct device *dev)
 	return 0;
 }
 
-SYS_INIT(mpsl_cx_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
+SYS_INIT(mpsl_cx_init, POST_KERNEL, CONFIG_MPSL_CX_INIT_PRIORITY);
 
 #else // !defined(CONFIG_MPSL_CX_PIN_FORWARDER)
 static int mpsl_cx_init(const struct device *dev)
