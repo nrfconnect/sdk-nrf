@@ -8,13 +8,11 @@
 
 #include "motion_event.h"
 
-static int log_motion_event(const struct event_header *eh, char *buf,
-				size_t buf_len)
+static void log_motion_event(const struct event_header *eh)
 {
 	const struct motion_event *event = cast_motion_event(eh);
 
 	EVENT_MANAGER_LOG(eh, "dx=%d, dy=%d", event->dx, event->dy);
-	return 0;
 }
 
 static void profile_motion_event(struct log_event_buf *buf,

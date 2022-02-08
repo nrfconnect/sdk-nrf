@@ -27,14 +27,27 @@ config EVENT_MANAGER_SHOW_EVENT_HANDLERS
 	help
 	  This option controls if event handlers are printed to console.
 
+config EVENT_MANAGER_TRACE_EVENT_DATA
+	bool "Enables tracing information"
+	help
+	  This option allows to gather information about events for tracing purposes.
+
 module = EVENT_MANAGER
 module-str = Event Manager
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 config EVENT_MANAGER_EVENT_LOG_BUF_LEN
 	int "Length of buffer for processing event message"
+	depends on EVENT_MANAGER_USE_DEPRECATED_LOG_FUN
 	default 128
-	range 0 1024
+	range 2 1024
+	help
+	  This option is only needed for deprecated event logging approach.
+
+config EVENT_MANAGER_USE_DEPRECATED_LOG_FUN
+	bool "Allow using both logging functions current and deprecated one."
+	help
+	  This option is only needed for deprecated event logging approach.
 
 config EVENT_MANAGER_LOG_EVENT_TYPE
 	bool "Include event type in the event log output"

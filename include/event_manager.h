@@ -30,6 +30,14 @@
 extern "C" {
 #endif
 
+/** @brief Pointer to the event handler function.
+ *
+ * @param eh  Pointer to the event header of the event that is processed by Event Manager.
+ * @retval    True if event was consumed and should not be propagated to other listeners,
+ *            false otherwise.
+ */
+typedef bool (*cb_fn)(const struct event_header *eh);
+
 /** @brief Create an event listener object.
  *
  * @param lname   Module name.

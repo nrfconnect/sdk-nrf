@@ -9,8 +9,7 @@
 
 #include "cdc_data_event.h"
 
-static int log_cdc_data_event(const struct event_header *eh, char *buf,
-				  size_t buf_len)
+static void log_cdc_data_event(const struct event_header *eh)
 {
 	const struct cdc_data_event *event = cast_cdc_data_event(eh);
 
@@ -19,7 +18,6 @@ static int log_cdc_data_event(const struct event_header *eh, char *buf,
 		event->dev_idx,
 		event->buf,
 		event->len);
-	return 0;
 }
 
 EVENT_TYPE_DEFINE(cdc_data_event,

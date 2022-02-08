@@ -16,8 +16,7 @@ static const char * const click_name[] = {
 	[CLICK_DOUBLE] = "DOUBLE",
 };
 
-static int log_click_event(const struct event_header *eh, char *buf,
-			   size_t buf_len)
+static void log_click_event(const struct event_header *eh)
 {
 	const struct click_event *event = cast_click_event(eh);
 
@@ -26,7 +25,6 @@ static int log_click_event(const struct event_header *eh, char *buf,
 	EVENT_MANAGER_LOG(eh, "key_id: %" PRIu16 " click: %s",
 			event->key_id,
 			click_name[event->click]);
-	return 0;
 }
 
 static void profile_click_event(struct log_event_buf *buf,

@@ -19,8 +19,7 @@ EVENT_TYPE_DEFINE(ble_discovery_complete_event,
 
 
 #if CONFIG_DESKTOP_BLE_QOS_ENABLE
-static int log_ble_qos_event(const struct event_header *eh,
-			     char *buf, size_t buf_len)
+static void log_ble_qos_event(const struct event_header *eh)
 {
 	const struct ble_qos_event *event = cast_ble_qos_event(eh);
 	int pos = 0;
@@ -34,10 +33,9 @@ static int log_ble_qos_event(const struct event_header *eh,
 	}
 	if (err < 0) {
 		EVENT_MANAGER_LOG(eh, "log message preparation failure");
-		return err;
+		return;
 	}
 	EVENT_MANAGER_LOG(eh, "%s", log_strdup(log_buf));
-	return 0;
 }
 
 EVENT_TYPE_DEFINE(ble_qos_event,
