@@ -59,8 +59,7 @@ static char *get_evt_type_str(enum modem_module_event_type type)
 	}
 }
 
-static int log_event(const struct event_header *eh, char *buf,
-		     size_t buf_len)
+static void log_event(const struct event_header *eh)
 {
 	const struct modem_module_event *event = cast_modem_module_event(eh);
 
@@ -70,7 +69,6 @@ static int log_event(const struct event_header *eh, char *buf,
 	} else {
 		EVENT_MANAGER_LOG(eh, "%s", get_evt_type_str(event->type));
 	}
-	return 0;
 }
 
 #if defined(CONFIG_PROFILER)

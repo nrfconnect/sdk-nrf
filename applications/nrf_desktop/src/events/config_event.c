@@ -14,8 +14,7 @@ static const char * const status_name[] = {
 #undef X
 };
 
-static int log_config_event(const struct event_header *eh, char *buf,
-			    size_t buf_len)
+static void log_config_event(const struct event_header *eh)
 {
 	const struct config_event *event = cast_config_event(eh);
 
@@ -26,7 +25,6 @@ static int log_config_event(const struct event_header *eh, char *buf,
 			event->is_request ? "req" : "rsp",
 			event->recipient,
 			event->event_id);
-	return 0;
 }
 
 EVENT_TYPE_DEFINE(config_event,

@@ -13,8 +13,7 @@
 
 
 
-static int log_event(const struct event_header *eh,
-		     char *buf, size_t buf_len)
+static void log_event(const struct event_header *eh)
 {
 	const struct power_manager_restrict_event *event = cast_power_manager_restrict_event(eh);
 	enum power_manager_level lvl = event->level;
@@ -45,7 +44,6 @@ static int log_event(const struct event_header *eh,
 	EVENT_MANAGER_LOG(eh, "module \"%s\" restricts to %s",
 			module_name_get(module_id_get(event->module_idx)),
 			power_state_str);
-	return 0;
 }
 
 static void profile_event(struct log_event_buf *buf,

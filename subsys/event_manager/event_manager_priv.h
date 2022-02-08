@@ -21,6 +21,24 @@
 extern "C" {
 #endif
 
+/* Determine if _Generic is supported.
+ * In general it's a C11 feature but it was added also in:
+ * - GCC 4.9.0 https://gcc.gnu.org/gcc-4.9/changes.html
+ * - Clang 3.0 https://releases.llvm.org/3.0/docs/ClangReleaseNotes.html
+ *
+ * @note Z_C_GENERIC is also set for C++ where functionality is implemented
+ * using overloading and templates.
+ */
+#ifndef Z_C_GENERIC
+#if defined(__cplusplus) || (((__STDC_VERSION__ >= 201112L) || \
+	((__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__) >= 40900) || \
+	((__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__) >= 30000)))
+#define Z_C_GENERIC 1
+#else
+#define Z_C_GENERIC 0
+#endif
+#endif
+
 
 /* Macros related to sorting of elements in the event subscribers section. */
 
@@ -192,7 +210,6 @@ extern "C" {
 	_EVENT_TYPE_DECLARE_COMMON(ename);				\
 	_EVENT_ALLOCATOR_DYNDATA_FN(ename)
 
-
 #if IS_ENABLED(CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE)
 #define _EVENT_TYPE_DEFINE_SIZES(ename)             \
 	.struct_size = sizeof(struct ename),        \
@@ -201,18 +218,107 @@ extern "C" {
 #define _EVENT_TYPE_DEFINE_SIZES(ename)
 #endif
 
-#define _EVENT_TYPE_DEFINE(ename, init_log_en, log_fn, trace_data_pointer)		\
-	_EVENT_SUBSCRIBERS_ARRAY_TAGS(ename);						\
-	STRUCT_SECTION_ITERABLE(event_type, _CONCAT(__event_type_, ename)) = {		\
-		.name            = STRINGIFY(ename),					\
-		.subs_start      = _EVENT_SUBSCRIBERS_START_TAG(ename),			\
-		.subs_stop       = _EVENT_SUBSCRIBERS_END_TAG(ename),			\
-		.init_log_enable = init_log_en,						\
-		.log_event       = (IS_ENABLED(CONFIG_LOG) ? (log_fn) : (NULL)),	\
-		.trace_data      = (IS_ENABLED(CONFIG_EVENT_MANAGER_PROFILER_TRACER) ?	\
-					(trace_data_pointer) : (NULL)),			\
-		_EVENT_TYPE_DEFINE_SIZES(ename) /* No comma here intentionally */	\
+/** @brief Event header.
+ *
+ * When defining an event structure, the event header
+ * must be placed as the first field.
+ */
+struct event_header {
+	/** Linked list node used to chain events. */
+	sys_snode_t node;
+
+	/** Pointer to the event type object. */
+	const struct event_type *type_id;
+};
+
+/** Function to log data from this event. */
+typedef void (*log_event_data)(const struct event_header *eh);
+
+/** Deprecated function to log data from this event. */
+typedef	int (*log_event_data_dep)(const struct event_header *eh, char *buf, size_t buf_len);
+
+
+
+#if IS_ENABLED(CONFIG_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN)
+#define _EVENT_TYPE_DEFINE_LOG_FUN(log_fn)						\
+	.log_event_func_dep = ((IS_ENABLED(CONFIG_LOG) && Z_C_GENERIC) ?		\
+					((log_event_data_dep)_Generic((log_fn),		\
+						log_event_data : NULL,			\
+						log_event_data_dep : log_fn,		\
+						default : NULL))			\
+					: (NULL)),					\
+	.log_event_func     = (log_event_data) (IS_ENABLED(CONFIG_LOG) ?		\
+					(Z_C_GENERIC ?					\
+						(_Generic((log_fn),			\
+							log_event_data : log_fn,	\
+							log_event_data_dep : NULL,	\
+							default : NULL))		\
+						: (log_fn))				\
+					: (NULL)),
+#else
+#define _EVENT_TYPE_DEFINE_LOG_FUN(log_fun) .log_event_func = log_fun,
+#endif
+
+/** @brief Event type.
+ */
+struct event_type {
+	/** Event name. */
+	const char			*name;
+
+	/** Pointer to the array of subscribers. */
+	const struct event_subscriber	*subs_start;
+
+	/** Pointer to the element directly after the array of subscribers. */
+	const struct event_subscriber	*subs_stop;
+
+	/** Bool indicating if the event is logged by default. */
+	bool init_log_enable;
+
+	/** Function to log data from this event. */
+	log_event_data log_event_func;
+
+#if IS_ENABLED(CONFIG_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN)
+	/** Deprecated function to log data from this event. */
+	log_event_data_dep log_event_func_dep;
+#endif
+
+	/** Custom data related to tracking. */
+	const void *trace_data;
+
+#if IS_ENABLED(CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE)
+	/** The size of the event structure */
+	uint16_t struct_size;
+
+	/** The flag that stores the information if the event type contains dyndata */
+	bool has_dyndata;
+#endif
+};
+
+extern struct event_type _event_type_list_start[];
+extern struct event_type _event_type_list_end[];
+
+#define _EVENT_TYPE_DEFINE(ename, init_log_en, log_fn, trace_data_pointer)			\
+	_EVENT_SUBSCRIBERS_ARRAY_TAGS(ename);							\
+	STRUCT_SECTION_ITERABLE(event_type, _CONCAT(__event_type_, ename)) = {			\
+		.name               = STRINGIFY(ename),						\
+		.subs_start         = _EVENT_SUBSCRIBERS_START_TAG(ename),			\
+		.subs_stop          = _EVENT_SUBSCRIBERS_END_TAG(ename),			\
+		.init_log_enable    = init_log_en,						\
+		_EVENT_TYPE_DEFINE_LOG_FUN(log_fn) /* No comma here intentionally */		\
+		.trace_data       = (IS_ENABLED(CONFIG_EVENT_MANAGER_TRACE_EVENT_DATA) ?	\
+					(trace_data_pointer) : (NULL)),				\
+		_EVENT_TYPE_DEFINE_SIZES(ename) /* No comma here intentionally */		\
 	}
+
+/**
+ * @brief Bitmask indicating event is displayed.
+ */
+struct event_manager_event_display_bm {
+	ATOMIC_DEFINE(flags, CONFIG_EVENT_MANAGER_MAX_EVENT_CNT);
+};
+
+extern struct event_manager_event_display_bm _event_manager_event_display_bm;
+
 
 /* Event hooks subscribers */
 #define _EVENT_HOOK_REGISTER(section, hook_fn, prio)                       \
@@ -241,28 +347,7 @@ extern "C" {
 		     "Enable EVENT_MANAGER_POSTPROCESS_HOOKS before usage"); \
 	_EVENT_HOOK_REGISTER(event_postprocess_hook, hook_fn, prio)
 
-/**
- * @brief Bitmask indicating event is displayed.
- */
-struct event_manager_event_display_bm {
-	ATOMIC_DEFINE(flags, CONFIG_EVENT_MANAGER_MAX_EVENT_CNT);
-};
 
-extern struct event_manager_event_display_bm _event_manager_event_display_bm;
-
-
-/** @brief Event header.
- *
- * When defining an event structure, the event header
- * must be placed as the first field.
- */
-struct event_header {
-	/** Linked list node used to chain events. */
-	sys_snode_t node;
-
-	/** Pointer to the event type object. */
-	const struct event_type *type_id;
-};
 
 
 /** @brief Dynamic event data.
@@ -302,42 +387,6 @@ struct event_subscriber {
 	const struct event_listener *listener;
 };
 
-
-/** @brief Event type.
- */
-struct event_type {
-	/** Event name. */
-	const char			*name;
-
-	/** Pointer to the array of subscribers. */
-	const struct event_subscriber	*subs_start;
-
-	/** Pointer to the element directly after the array of subscribers. */
-	const struct event_subscriber	*subs_stop;
-
-	/** Bool indicating if the event is logged by default. */
-	bool init_log_enable;
-
-	/** Function to log data from this event. */
-	int (*log_event)(const struct event_header *eh, char *buf,
-			      size_t buf_len);
-
-	/** Custom data related to tracking. */
-	const void *trace_data;
-
-#if IS_ENABLED(CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE)
-	/** The size of the event structure */
-	uint16_t struct_size;
-
-	/** The flag that stores the information if the event type contains dyndata */
-	bool has_dyndata;
-#endif
-};
-
-extern struct event_type _event_type_list_start[];
-extern struct event_type _event_type_list_end[];
-
-
 /** @brief Structure used to register event manager initialization hook
  */
 struct event_manager_postinit_hook {
@@ -364,6 +413,8 @@ struct event_postprocess_hook {
 	/** @brief Hook function */
 	void (*hook)(const struct event_header *eh);
 };
+
+
 
 /** @brief Submit an event to the Event Manager.
  *

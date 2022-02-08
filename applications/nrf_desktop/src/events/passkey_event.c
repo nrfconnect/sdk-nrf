@@ -9,13 +9,11 @@
 #include "passkey_event.h"
 
 
-static int log_passkey_input_event(const struct event_header *eh, char *buf,
-				   size_t buf_len)
+static void log_passkey_input_event(const struct event_header *eh)
 {
 	const struct passkey_input_event *event = cast_passkey_input_event(eh);
 
 	EVENT_MANAGER_LOG(eh, "passkey: %" PRIu32, event->passkey);
-	return 0;
 }
 
 static void profile_passkey_input_event(struct log_event_buf *buf,
@@ -37,14 +35,12 @@ EVENT_TYPE_DEFINE(passkey_input_event,
 		  &passkey_input_event_info);
 
 
-static int log_passkey_req_event(const struct event_header *eh, char *buf,
-				 size_t buf_len)
+static void log_passkey_req_event(const struct event_header *eh)
 {
 	const struct passkey_req_event *event = cast_passkey_req_event(eh);
 
 	EVENT_MANAGER_LOG(eh, "input %s", (event->active) ?
 						  ("started") : ("stopped"));
-	return 0;
 }
 
 static void profile_passkey_req_event(struct log_event_buf *buf,

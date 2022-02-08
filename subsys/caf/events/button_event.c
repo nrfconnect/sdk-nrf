@@ -8,14 +8,12 @@
 
 #include <caf/events/button_event.h>
 
-static int log_button_event(const struct event_header *eh, char *buf,
-			    size_t buf_len)
+static void log_button_event(const struct event_header *eh)
 {
 	const struct button_event *event = cast_button_event(eh);
 
 	EVENT_MANAGER_LOG(eh, "key_id=0x%x %s", event->key_id,
 			(event->pressed)?("pressed"):("released"));
-	return 0;
 }
 
 static void profile_button_event(struct log_event_buf *buf,

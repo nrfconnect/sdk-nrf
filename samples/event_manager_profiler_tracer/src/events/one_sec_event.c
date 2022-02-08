@@ -8,13 +8,11 @@
 
 #include "one_sec_event.h"
 
-static int log_one_sec_event(const struct event_header *eh, char *buf,
-				 size_t buf_len)
+static void log_one_sec_event(const struct event_header *eh)
 {
 	struct one_sec_event *event = cast_one_sec_event(eh);
 
 	EVENT_MANAGER_LOG(eh, "timer: %" PRId8, event->five_sec_timer);
-	return 0;
 }
 
 static void profile_one_sec_event(struct log_event_buf *buf,

@@ -15,8 +15,7 @@ static const char * const peer_name[] = {
 #undef X
 };
 
-static int log_peer_conn_event(const struct event_header *eh, char *buf,
-				  size_t buf_len)
+static void log_peer_conn_event(const struct event_header *eh)
 {
 	const struct peer_conn_event *event = cast_peer_conn_event(eh);
 
@@ -32,7 +31,6 @@ static int log_peer_conn_event(const struct event_header *eh, char *buf,
 		peer_name[event->peer_id],
 		event->dev_idx,
 		event->baudrate);
-	return 0;
 }
 
 EVENT_TYPE_DEFINE(peer_conn_event,

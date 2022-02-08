@@ -17,8 +17,7 @@ static const char * const state_name[NET_STATE_COUNT] = {
 	[NET_STATE_CONNECTED] = "NET_STATE_CONNECTED"
 };
 
-static int log_net_state_event(const struct event_header *eh, char *buf,
-			       size_t buf_len)
+static void log_net_state_event(const struct event_header *eh)
 {
 	const struct net_state_event *event = cast_net_state_event(eh);
 
@@ -29,7 +28,6 @@ static int log_net_state_event(const struct event_header *eh, char *buf,
 
 	EVENT_MANAGER_LOG(eh, "id=%p %s", event->id,
 			state_name[event->state]);
-	return 0;
 }
 
 static void profile_net_state_event(struct log_event_buf *buf,
