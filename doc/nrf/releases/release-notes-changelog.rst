@@ -181,6 +181,15 @@ Matter samples
   * All ZAP configurations due to changes in Matter upstream.
   * Pairing process to Binding process in the Light Switch sample.
 
+NFC samples
+-----------
+
+* Updated:
+
+  * :ref:`nfc_tag_reader` sample:
+
+    * Skip NDEF content printing when message parsing returns an error.
+
 nrf5340 Samples
 ---------------
 
@@ -276,6 +285,14 @@ Libraries
 =========
 
 This section provides detailed lists of changes by :ref:`library <libraries>`.
+
+Libraries for NFC
+-----------------
+
+* :ref:`nfc_ndef_parser_readme`
+
+  * :c:func:`nfc_ndef_msg_parse`: fixed declaration, added an assertion to avoid a potential usage fault and added a note in the function documentation.
+  * Renamed the :c:macro:`NFC_NDEF_PARSER_REQUIRED_MEM` macro.
 
 Bluetooth libraries and services
 --------------------------------
