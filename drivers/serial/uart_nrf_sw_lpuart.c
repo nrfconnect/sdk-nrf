@@ -713,7 +713,7 @@ static void int_driven_evt_handler(const struct device *lpuart,
 		data->int_driven.rxlen = 0;
 		data->int_driven.rxrd = 0;
 		err = api_rx_enable(lpuart, data->int_driven.rxbuf,
-					sizeof(data->int_driven.rxbuf), 1);
+					sizeof(data->int_driven.rxbuf), 1000);
 		__ASSERT_NO_MSG(err >= 0);
 		break;
 	}
@@ -907,7 +907,7 @@ static int lpuart_init(const struct device *dev)
 	}
 
 	err = api_rx_enable(dev, data->int_driven.rxbuf,
-				sizeof(data->int_driven.rxbuf), 1);
+				sizeof(data->int_driven.rxbuf), 1000);
 #endif
 
 	data->txbyte = -1;
