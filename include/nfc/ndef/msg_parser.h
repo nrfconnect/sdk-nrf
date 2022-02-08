@@ -81,7 +81,7 @@ struct nfc_ndef_msg_parser_msg_2 {
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_msg_parse(const uint8_t  *result_buf,
+int nfc_ndef_msg_parse(uint8_t  *result_buf,
 		       uint32_t *result_buf_len,
 		       const uint8_t *raw_data,
 		       uint32_t *raw_data_len);
