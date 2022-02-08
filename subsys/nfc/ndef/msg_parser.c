@@ -9,7 +9,7 @@
 
 LOG_MODULE_REGISTER(nfc_ndef_parser, CONFIG_NFC_NDEF_PARSER_LOG_LEVEL);
 
-int nfc_ndef_msg_parse(const uint8_t *result_buf,
+int nfc_ndef_msg_parse(uint8_t *result_buf,
 		       uint32_t *result_buf_len,
 		       const uint8_t *raw_data,
 		       uint32_t *raw_data_len)
