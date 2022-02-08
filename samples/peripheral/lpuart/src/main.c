@@ -103,11 +103,11 @@ static void async(const struct device *lpuart)
 	err = uart_callback_set(lpuart, uart_callback, (void *)lpuart);
 	__ASSERT(err == 0, "Failed to set callback");
 
-	err = uart_rx_enable(lpuart, buf, BUF_SIZE, 10);
+	err = uart_rx_enable(lpuart, buf, BUF_SIZE, 10000);
 	__ASSERT(err == 0, "Failed to enable RX");
 
 	while (1) {
-		err = uart_tx(lpuart, txbuf, sizeof(txbuf), 10);
+		err = uart_tx(lpuart, txbuf, sizeof(txbuf), 10000);
 		__ASSERT(err == 0, "Failed to initiate transmission");
 
 		k_sleep(K_MSEC(500));
