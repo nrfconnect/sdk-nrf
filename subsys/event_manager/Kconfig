@@ -53,4 +53,32 @@ config EVENT_MANAGER_PROVIDE_EVENT_SIZE
 	  This would require to store more information with event type
 	  and should be enabled only if such an information is required.
 
+config EVENT_MANAGER_POSTINIT_HOOK
+	bool "Enable postinit hook"
+	help
+	  Enable postinit hooks support.
+	  This option is here for optimisation purposes.
+	  When postinit hook is not in use the related code may be removed.
+
+config EVENT_MANAGER_SUBMIT_HOOKS
+	bool "Enable event submit hooks"
+	help
+	  Enable event submit hooks support.
+	  This option is here for optimisation purposes.
+	  When submit hook is not in use the related code may be removed.
+
+config EVENT_MANAGER_PREPROCESS_HOOKS
+	bool "Enable event preprocess hooks"
+	help
+	  Enable event preprocess hooks support.
+	  This option is here for optimisation purposes.
+	  When preprocess hook is not in use the related code may be removed.
+
+config EVENT_MANAGER_POSTPROCESS_HOOKS
+	bool "Enable event postprocess hooks"
+	help
+	  Enable event postprocess hooks support.
+	  This option is here for optimisation purposes.
+	  When postprocess hook is not in use the related code may be removed.
+
 endif # EVENT_MANAGER

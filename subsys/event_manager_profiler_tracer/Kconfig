@@ -8,9 +8,10 @@ config EVENT_MANAGER_PROFILER_TRACER
 	depends on EVENT_MANAGER
 	bool "Log events to Profiler"
 	select PROFILER
-	help
-	  Event Manager will use profiler event count equal to Event Manager profiled event count
-	  + 2 events for processing event start/end.
+	select EVENT_MANAGER_POSTINIT_HOOK
+	select EVENT_MANAGER_SUBMIT_HOOKS
+	select EVENT_MANAGER_PREPROCESS_HOOKS
+	select EVENT_MANAGER_POSTPROCESS_HOOKS
 
 if EVENT_MANAGER_PROFILER_TRACER
 

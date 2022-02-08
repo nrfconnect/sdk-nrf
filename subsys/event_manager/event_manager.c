@@ -109,16 +109,6 @@ static void log_event_init(void)
 	}
 }
 
-void __weak event_manager_trace_event_execution(const struct event_header *eh,
-				  bool is_start)
-{
-}
-
-void __weak event_manager_trace_event_submission(const struct event_header *eh,
-				const void *trace_info)
-{
-}
-
 void * __weak event_manager_alloc(size_t size)
 {
 	void *event = k_malloc(size);
@@ -140,11 +130,6 @@ void * __weak event_manager_alloc(size_t size)
 void __weak event_manager_free(void *addr)
 {
 	k_free(addr);
-}
-
-int __weak event_manager_trace_event_init(void)
-{
-	return 0;
 }
 
 static void event_processor_fn(struct k_work *work)
@@ -175,7 +160,11 @@ static void event_processor_fn(struct k_work *work)
 
 		const struct event_type *et = eh->type_id;
 
-		event_manager_trace_event_execution(eh, true);
+		if (IS_ENABLED(CONFIG_EVENT_MANAGER_PREPROCESS_HOOKS)) {
+			STRUCT_SECTION_FOREACH(event_preprocess_hook, h) {
+				h->hook(eh);
+			}
+		}
 
 		log_event(eh);
 
@@ -201,7 +190,11 @@ static void event_processor_fn(struct k_work *work)
 			}
 		}
 
-		event_manager_trace_event_execution(eh, false);
+		if (IS_ENABLED(CONFIG_EVENT_MANAGER_POSTPROCESS_HOOKS)) {
+			STRUCT_SECTION_FOREACH(event_postprocess_hook, h) {
+				h->hook(eh);
+			}
+		}
 
 		event_manager_free(eh);
 	}
@@ -212,9 +205,13 @@ void _event_submit(struct event_header *eh)
 	__ASSERT_NO_MSG(eh);
 	ASSERT_EVENT_ID(eh->type_id);
 
-	event_manager_trace_event_submission(eh, eh->type_id->trace_data);
-
 	k_spinlock_key_t key = k_spin_lock(&lock);
+
+	if (IS_ENABLED(CONFIG_EVENT_MANAGER_SUBMIT_HOOKS)) {
+		STRUCT_SECTION_FOREACH(event_submit_hook, h) {
+			h->hook(eh);
+		}
+	}
 	sys_slist_append(&eventq, &eh->node);
 	k_spin_unlock(&lock, key);
 
@@ -223,10 +220,21 @@ void _event_submit(struct event_header *eh)
 
 int event_manager_init(void)
 {
+	int ret = 0;
+
 	__ASSERT_NO_MSG(_event_type_list_end - _event_type_list_start <=
 			CONFIG_EVENT_MANAGER_MAX_EVENT_CNT);
 
 	log_event_init();
 
-	return event_manager_trace_event_init();
+	if (IS_ENABLED(CONFIG_EVENT_MANAGER_POSTINIT_HOOK)) {
+		STRUCT_SECTION_FOREACH(event_manager_postinit_hook, h) {
+			ret = h->hook();
+			if (ret) {
+				break;
+			}
+		}
+	}
+
+	return ret;
 }
