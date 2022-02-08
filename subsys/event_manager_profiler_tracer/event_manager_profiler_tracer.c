@@ -17,7 +17,13 @@ extern struct profiler_info _profiler_info_list_end[];
 
 static uint16_t profiler_event_ids[IDS_COUNT];
 
-void event_manager_trace_event_execution(const struct event_header *eh, bool is_start)
+/** @brief Trace event execution.
+ *
+ * @param eh        Pointer to the event header of the event that is processed by Event Manager.
+ * @param is_start  Bool value indicating if this occurrence is related
+ *                  to start or end of the event processing.
+ **/
+static void event_manager_trace_event_execution(const struct event_header *eh, bool is_start)
 {
 	size_t event_cnt = _profiler_info_list_end - _profiler_info_list_start;
 	size_t event_idx = event_cnt + (is_start ? 0 : 1);
@@ -37,8 +43,27 @@ void event_manager_trace_event_execution(const struct event_header *eh, bool is_
 	profiler_log_send(&buf, trace_evt_id);
 }
 
-void event_manager_trace_event_submission(const struct event_header *eh, const void *profiler_info)
+static void event_manager_trace_event_preprocess(const struct event_header *eh)
 {
+	event_manager_trace_event_execution(eh, true);
+}
+
+static void event_manager_trace_event_postprocess(const struct event_header *eh)
+{
+	event_manager_trace_event_execution(eh, false);
+}
+
+EVENT_HOOK_PREPROCESS_REGISTER_FIRST(event_manager_trace_event_preprocess);
+EVENT_HOOK_POSTPROCESS_REGISTER_LAST(event_manager_trace_event_postprocess);
+
+/** @brief Trace event submission.
+ *
+ * @param eh Pointer to the event header of the event that is submitted to Event Manager.
+ **/
+static void event_manager_trace_event_submission(const struct event_header *eh)
+{
+	const void *profiler_info = eh->type_id->trace_data;
+
 	if (!profiler_info) {
 		return;
 	}
@@ -66,7 +91,9 @@ void event_manager_trace_event_submission(const struct event_header *eh, const v
 	profiler_log_send(&buf, trace_evt_id);
 }
 
-void trace_register_execution_tracking_events(void)
+EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST(event_manager_trace_event_submission);
+
+static void trace_register_execution_tracking_events(void)
 {
 	static const char * const labels[] = {EM_MEM_ADDRESS_LABEL};
 	enum profiler_arg types[] = {MEM_ADDRESS_TYPE};
@@ -108,7 +135,12 @@ static void trace_register_events(void)
 	}
 }
 
-int event_manager_trace_event_init(void)
+/** @brief Initialize tracing in the Event Manager.
+ *
+ * @retval 0 If the operation was successful.
+ * @retval other Error code
+ **/
+static int event_manager_trace_event_init(void)
 {
 	/* Every profiled Event Manager event registers a single profiler event.
 	 * Apart from that 2 additional profiler events are used to indicate processing
@@ -125,3 +157,5 @@ int event_manager_trace_event_init(void)
 
 	return 0;
 }
+
+EVENT_MANAGER_HOOK_POSTINIT_REGISTER(event_manager_trace_event_init);

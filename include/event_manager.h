@@ -136,9 +136,6 @@ extern "C" {
 #define ASSERT_EVENT_ID(id) \
 	__ASSERT_NO_MSG((id >= _event_type_list_start) && (id < _event_type_list_end))
 
-
-
-
 /** @brief Submit an event.
  *
  * This helper macro simplifies the event submission.
@@ -147,6 +144,18 @@ extern "C" {
  */
 #define EVENT_SUBMIT(event) _event_submit(&event->header)
 
+/**
+ * @brief Register event hook after the event manager is initialized.
+ *
+ * The event hook called after the event manager is initialized to provide some additional
+ * initialization of the modules that depends on it.
+ * The hook function should have a form `int hook(void)`.
+ * If the initialization hook returns non-zero value the initialization process is interrupted.
+ *
+ * @param hook_fn Hook function.
+ */
+#define EVENT_MANAGER_HOOK_POSTINIT_REGISTER(hook_fn) \
+	_EVENT_MANAGER_HOOK_POSTINIT_REGISTER(hook_fn, _EM_SUBS_PRIO_ID(_EM_SUBS_PRIO_NORMAL))
 
 /**
  * @brief Get the event size
@@ -177,53 +186,147 @@ static inline size_t event_manager_event_size(const struct event_header *eh)
 }
 
 
+/**
+ * @brief Register hook called on event submission. The hook would be called first.
+ *
+ * The event hook called when the event is submitted.
+ * The hook function should have a form `void hook(const struct event_header *eh)`.
+ * The macro makes sure that the hook provided here is called first.
+ * Only one hook can be registered with this macro.
+ *
+ * @note
+ * The registered hook may be called from many contexts.
+ * To ensure that order of events in the queue matches the order of the registered callbacks calls,
+ * the callbacks are called under the same spinlock as adding events to the queue.
+ *
+ * @param hook_fn Hook function.
+ */
+#define EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST(hook_fn)                      \
+	const struct {} __event_hook_on_submit_first_sub_redefined = {};  \
+	_EVENT_HOOK_ON_SUBMIT_REGISTER(hook_fn, _EM_MARKER_FIRST_ELEMENT)
+
+/**
+ * @brief Register event hook on submission.
+ *
+ * The event hook called when the event is submitted.
+ * The hook function should have a form `void hook(const struct event_header *eh)`.
+ *
+ * @note
+ * The registered hook may be called from many contexts.
+ * To ensure that order of events in the queue matches the order of the registered callbacks calls,
+ * the callbacks are called under the same spinlock as adding events to the queue.
+ *
+ * @param hook_fn Hook function.
+ */
+#define EVENT_HOOK_ON_SUBMIT_REGISTER(hook_fn) \
+	_EVENT_HOOK_ON_SUBMIT_REGISTER(hook_fn, _EM_SUBS_PRIO_ID(_EM_SUBS_PRIO_NORMAL))
+
+/**
+ * @brief Register event hook on submission. The hook would be called last.
+ *
+ * The event hook called when the event is submitted.
+ * The hook function should have a form `void hook(const struct event_header *eh)`.
+ * The macro makes sure that the hook provided here is called last.
+ * Only one hook can be registered with this macro.
+ *
+ * @note
+ * The registered hook may be called from many contexts.
+ * To ensure that order of events in the queue matches the order of the registered callbacks calls,
+ * the callbacks are called under the same spinlock as adding events to the queue.
+ *
+ * @param hook_fn Hook function.
+ */
+#define EVENT_HOOK_ON_SUBMIT_REGISTER_LAST(hook_fn)                      \
+	const struct {} __event_hook_on_submit_last_sub_redefined = {};  \
+	_EVENT_HOOK_ON_SUBMIT_REGISTER(hook_fn, _EM_MARKER_FINAL_ELEMENT)
+
+/**
+ * @brief Register event hook on the start of event processing. The hook would be called first.
+ *
+ * The hook function should have a form `void hook(const struct event_header *eh)`.
+ * The macro makes sure that the hook provided here is called first.
+ * Only one hook can be registered with this macro.
+ *
+ * @param hook_fn Hook function.
+ */
+#define EVENT_HOOK_PREPROCESS_REGISTER_FIRST(hook_fn)                      \
+	const struct {} __event_hook_preprocess_first_sub_redefined = {};  \
+	_EVENT_HOOK_PREPROCESS_REGISTER(hook_fn, _EM_MARKER_FIRST_ELEMENT)
+
+/**
+ * @brief Register event hook on the start of event processing.
+ *
+ * The event hook called when the event is being processed.
+ * The hook function should have a form `void hook(const struct event_header *eh)`.
+ *
+ * @param hook_fn Hook function.
+ */
+#define EVENT_HOOK_PREPROCESS_REGISTER(hook_fn) \
+	_EVENT_HOOK_PREPROCESS_REGISTER(hook_fn, _EM_SUBS_PRIO_ID(_EM_SUBS_PRIO_NORMAL))
+
+/**
+ * @brief Register event hook on the start of event processing. The hook would be called last.
+ *
+ * The event hook called when the event is being processed.
+ * The hook function should have a form `void hook(const struct event_header *eh)`.
+ * The macro makes sure that the hook provided here is called last.
+ * Only one hook can be registered with this macro.
+ *
+ * @param hook_fn Hook function.
+ */
+#define EVENT_HOOK_PREPROCESS_REGISTER_LAST(hook_fn)                      \
+	const struct {} __event_hook_preprocess_last_sub_redefined = {};  \
+	_EVENT_HOOK_PREPROCESS_REGISTER(hook_fn, _EM_MARKER_FINAL_ELEMENT)
+
+/**
+ * @brief Register event hook on the end of event processing. The hook would be called first.
+ *
+ * The event hook called after the event is processed.
+ * The hook function should have a form `void hook(const struct event_header *eh)`.
+ * The macro makes sure that the hook provided here is called first.
+ * Only one hook can be registered with this macro.
+ *
+ * @param hook_fn Hook function.
+ */
+#define EVENT_HOOK_POSTPROCESS_REGISTER_FIRST(hook_fn)                      \
+	const struct {} __event_hook_postprocess_first_sub_redefined = {};  \
+	_EVENT_HOOK_POSTPROCESS_REGISTER(hook_fn, _EM_MARKER_FIRST_ELEMENT)
+
+/**
+ * @brief Register event hook on the end of event processing.
+ *
+ * The event hook called after the event is processed.
+ * The hook function should have a form `void hook(const struct event_header *eh)`.
+ *
+ * @param hook_fn Hook function.
+ */
+#define EVENT_HOOK_POSTPROCESS_REGISTER(hook_fn) \
+	_EVENT_HOOK_POSTPROCESS_REGISTER(hook_fn, _EM_SUBS_PRIO_ID(_EM_SUBS_PRIO_NORMAL))
+
+/**
+ * @brief Register event hook on the end of event processing. The hook would be called last.
+ *
+ * The event hook called after the event is processed.
+ * The hook function should have a form `void hook(const struct event_header *eh)`.
+ * The macro makes sure that the hook provided here is called last.
+ * Only one hook can be registered with this macro.
+ *
+ * @param hook_fn Hook function.
+ */
+#define EVENT_HOOK_POSTPROCESS_REGISTER_LAST(hook_fn)                      \
+	const struct {} __event_hook_postprocess_last_sub_redefined = {};  \
+	_EVENT_HOOK_POSTPROCESS_REGISTER(hook_fn, _EM_MARKER_FINAL_ELEMENT)
+
+
 /** @brief Initialize the Event Manager.
  *
- * @retval 0 If the operation was successful. Error values can be added by overwriting
- *         event_manager_trace_event_init function.
+ * @retval 0 If the operation was successful. Error values can be added by the hooks registered
+ *         by @ref EVENT_MANAGER_HOOK_POSTINIT_REGISTER macro.
  */
 int event_manager_init(void);
 
-
-/** @brief Trace event execution.
- * The behavior of this function depends on the actual implementation.
- * The default implementation of this function is no-operation.
- * It is annotated as weak and is meant to be overridden by layer
- * adding support for profiling mechanism.
- *
- * @param eh        Pointer to the event header of the event that is processed by Event Manager.
- * @param is_start  Bool value indicating if this occurrence is related
- *                  to start or end of the event processing.
- **/
-void event_manager_trace_event_execution(const struct event_header *eh,
-				  bool is_start);
-
-
-/** @brief Trace event submission.
- * The behavior of this function depends on the actual implementation.
- * The default implementation of this function is no-operation.
- * It is annotated as weak and is meant to be overridden by layer
- * adding support for profiling mechanism.
- *
- * @param eh          Pointer to the event header of the event that is processed by Event Manager.
- * @param trace_info  Custom event description for profiling.
- **/
-void event_manager_trace_event_submission(const struct event_header *eh,
-				const void *trace_info);
-
-
-/** @brief Initialize tracing in the Event Manager.
- * The behavior of this function depends on the actual implementation.
- * The default implementation of this function is no-operation.
- * It is annotated as weak and is meant to be overridden by layer
- * adding support for profiling mechanism.
- *
- * @retval 0 If the operation was successful. Error values can be added by
- *         overwriting this function.
- **/
-int event_manager_trace_event_init(void);
-
 /** @brief Allocate event.
+ *
  * The behavior of this function depends on the actual implementation.
  * The default implementation of this function is same as k_malloc.
  * It is annotated as weak and can be overridden by user.
@@ -235,6 +338,7 @@ void *event_manager_alloc(size_t size);
 
 
 /** @brief Free memory occupied by the event.
+ *
  * The behavior of this function depends on the actual implementation.
  * The default implementation of this function is same as k_free.
  * It is annotated as weak and can be overridden by user.
@@ -244,7 +348,7 @@ void *event_manager_alloc(size_t size);
 void event_manager_free(void *addr);
 
 
-/** @brief Log event
+/** @brief Log event.
  *
  * This helper macro simplifies event logging.
  *

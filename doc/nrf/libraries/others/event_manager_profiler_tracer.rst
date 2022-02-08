@@ -101,11 +101,31 @@ To profile an Event Manager event, you must complete the following steps:
 Event Manager profiler tracer implementation details
 ****************************************************
 
+The profiler tracer uses some of the Event Manager hooks to connect with the manager.
+
+Initialization hook usage
+=========================
+
+.. include:: event_manager.rst
+   :start-after: em_initialization_hook_start
+   :end-before: em_initialization_hook_end
+
+The Event Manager profiled tracer uses the hook to append itself to the initialization procedure.
+
+Tracing hook usage
+==================
+
+.. include:: event_manager.rst
+   :start-after: em_initialization_hook_start
+   :end-before: em_initialization_hook_end
+
+The Event Manager profiled tracer uses the hook to append itself to the initialization procedure.
+
 .. include:: event_manager.rst
    :start-after: em_tracing_hooks_start
    :end-before: em_tracing_hooks_end
 
-The Event Manager profiler tracer uses the hooks to register profiler events and log their occurrence when application is running.
+The Event Manager profiler tracer uses the tracing hooks to register profiler events and log their occurrence when application is running.
 
 API documentation
 *****************
