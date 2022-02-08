@@ -107,6 +107,7 @@ Zigbee serial logger
 
 This set of functions uses Zephyr's :ref:`UART API <zephyr:uart_api>` and can be configured to use either the UART peripheral or the USB CDC ACM device.
 Data is buffered internally in ring buffer and printed in the binary format.
+This ring buffer has a size of 4096 bytes by default.
 
 Zigbee serial logger configuration options
 ------------------------------------------
