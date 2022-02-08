@@ -214,6 +214,32 @@ extern "C" {
 		_EVENT_TYPE_DEFINE_SIZES(ename) /* No comma here intentionally */	\
 	}
 
+/* Event hooks subscribers */
+#define _EVENT_HOOK_REGISTER(section, hook_fn, prio)                       \
+	BUILD_ASSERT((hook_fn) != NULL, "Registered hook cannot be NULL"); \
+	STRUCT_SECTION_ITERABLE(section, _CONCAT(prio, hook_fn)) = {       \
+		.hook = (hook_fn)                                          \
+	}
+
+#define _EVENT_MANAGER_HOOK_POSTINIT_REGISTER(hook_fn, prio)             \
+	BUILD_ASSERT(IS_ENABLED(CONFIG_EVENT_MANAGER_POSTINIT_HOOK),     \
+		     "Enable EVENT_MANAGER_POSTINIT_HOOK before usage"); \
+	_EVENT_HOOK_REGISTER(event_manager_postinit_hook, hook_fn, prio)
+
+#define _EVENT_HOOK_ON_SUBMIT_REGISTER(hook_fn, prio)                   \
+	BUILD_ASSERT(IS_ENABLED(CONFIG_EVENT_MANAGER_SUBMIT_HOOKS),     \
+		     "Enable EVENT_MANAGER_SUBMIT_HOOKS before usage"); \
+	_EVENT_HOOK_REGISTER(event_submit_hook, hook_fn, prio)
+
+#define _EVENT_HOOK_PREPROCESS_REGISTER(hook_fn, prio)                      \
+	BUILD_ASSERT(IS_ENABLED(CONFIG_EVENT_MANAGER_PREPROCESS_HOOKS),     \
+		     "Enable EVENT_MANAGER_PREPROCESS_HOOKS before usage"); \
+	_EVENT_HOOK_REGISTER(event_preprocess_hook, hook_fn, prio)
+
+#define _EVENT_HOOK_POSTPROCESS_REGISTER(hook_fn, prio)                      \
+	BUILD_ASSERT(IS_ENABLED(CONFIG_EVENT_MANAGER_POSTPROCESS_HOOKS),     \
+		     "Enable EVENT_MANAGER_POSTPROCESS_HOOKS before usage"); \
+	_EVENT_HOOK_REGISTER(event_postprocess_hook, hook_fn, prio)
 
 /**
  * @brief Bitmask indicating event is displayed.
@@ -311,6 +337,33 @@ struct event_type {
 extern struct event_type _event_type_list_start[];
 extern struct event_type _event_type_list_end[];
 
+
+/** @brief Structure used to register event manager initialization hook
+ */
+struct event_manager_postinit_hook {
+	/** @brief Hook function */
+	int (*hook)(void);
+};
+/** @brief Structure used to register event submit hook
+ */
+struct event_submit_hook {
+	/** @brief Hook function */
+	void (*hook)(const struct event_header *eh);
+};
+
+/** @brief Structure used to register event preprocess hook
+ */
+struct event_preprocess_hook {
+	/** @brief Hook function */
+	void (*hook)(const struct event_header *eh);
+};
+
+/** @brief Structure used to register event postprocess hook
+ */
+struct event_postprocess_hook {
+	/** @brief Hook function */
+	void (*hook)(const struct event_header *eh);
+};
 
 /** @brief Submit an event to the Event Manager.
  *

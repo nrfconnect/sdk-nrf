@@ -49,7 +49,7 @@ Every listener is identified by a unique name.
 Configuration
 *************
 
-To use Event Manager, enable it using the :kconfig:`CONFIG_EVENT_MANAGER` Kconfig option and initialize it in your :file:`main.c` file.
+To use the Event Manager, enable it using the :kconfig:`CONFIG_EVENT_MANAGER` Kconfig option and initialize it in your :file:`main.c` file.
 Initializing the Event Manager allows it to handle submitted events and deliver them to modules that subscribe to the specified event type.
 
 Complete the following steps:
@@ -300,6 +300,22 @@ Event Manager extensions
 
 The Event Manager provides additional features that could be helpful when debugging event-based applications.
 
+.. _event_manager_profiling_init_hooks:
+
+Initialization hook
+===================
+
+.. em_initialization_hook_start
+
+The Event Manager provides an initialization hook for any module that relies on the Event Manager initialization before the first event is processed.
+The hook function should be declared in the ``int hook(void)`` format.
+If the hook function returns a non-zero value, the initialization process is interrupted and a related error is returned.
+
+To register the initialization hook, use the macro :c:macro:`EVENT_MANAGER_HOOK_POSTINIT_REGISTER`.
+For details, refer to :ref:`event_manager_api`.
+
+.. em_initialization_hook_end
+
 .. _event_manager_profiling_tracing_hooks:
 
 Tracing hooks
@@ -307,21 +323,34 @@ Tracing hooks
 
 .. em_tracing_hooks_start
 
-Event Manager provides tracing hooks that you can use at run time to get information about Event Manager initialization, event submission, and event execution.
-The hooks are provided as weak functions.
-You can override them for interacting with a custom profiler or for other purposes.
+The Event Manager uses flexible mechanism to implement hooks when an event is submitted, before it is processed, and after its processing.
+Oryginally designed to implement event tracing, the tracing hooks can be used for other purposes as well.
+The registered hook function should be declared in the ``void hook(const struct event_header *eh)`` format.
 
-The following weak functions are provided by Event Manager as hooks:
+The following macros are implemented to register event tracing hooks:
 
-* :c:func:`event_manager_trace_event_execution`
-* :c:func:`event_manager_trace_event_submission`
-* :c:func:`event_manager_trace_event_init`
+* :c:macro:`EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST`, :c:macro:`EVENT_HOOK_ON_SUBMIT_REGISTER`, :c:macro:`EVENT_HOOK_ON_SUBMIT_REGISTER_LAST`
+* :c:macro:`EVENT_HOOK_PREPROCESS_REGISTER_FIRST`, :c:macro:`EVENT_HOOK_PREPROCESS_REGISTER`, :c:macro:`EVENT_HOOK_PREPROCESS_REGISTER_LAST`
+* :c:macro:`EVENT_HOOK_POSTPROCESS_REGISTER_FIRST`, :c:macro:`EVENT_HOOK_POSTPROCESS_REGISTER`, :c:macro:`EVENT_HOOK_POSTPROCESS_REGISTER_LAST`
+
+For details, refer to :ref:`event_manager_api`.
+
+.. em_tracing_hooks_end
+
+.. _event_manager_profiling_mem_hooks:
+
+Memory management hooks
+=======================
+
+The Event Manager implements default memory management functions using weak implementation.
+You can override this implementation to implement other types of memory allocation.
+
+The following weak functions are provided by the Event Manager as the memory management hooks:
+
 * :c:func:`event_manager_alloc`
 * :c:func:`event_manager_free`
 
-For details, refer to `API documentation`_.
-
-.. em_tracing_hooks_end
+For details, refer to :ref:`event_manager_api`.
 
 Shell integration
 =================
@@ -348,6 +377,7 @@ This subcommand set contains the following commands:
   If called without additional arguments, the command applies to all event types.
   To enable or disable logging for specific event types, pass the event type indexes, as displayed by :command:`show_events`, as arguments.
 
+.. _event_manager_api:
 
 API documentation
 *****************
