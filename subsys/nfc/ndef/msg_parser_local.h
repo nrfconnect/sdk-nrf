@@ -44,8 +44,8 @@ struct nfc_ndef_parser_memo_desc {
  *
  *  This function should not be used directly.
  *
- *  @param[in] result_buf Pointer to the buffer that will be used to allocate
- *                        data instances.
+ *  @param[out] result_buf Pointer to the buffer that will be used to allocate
+ *                         data instances.
  *  @param[in,out] result_buf_len As input: size of the buffer specified
  *                                by @p result_buf.
  *                                As output: size of the reserved (used)
@@ -56,7 +56,7 @@ struct nfc_ndef_parser_memo_desc {
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_msg_parser_memo_resolve(const uint8_t *result_buf,
+int nfc_ndef_msg_parser_memo_resolve(uint8_t *result_buf,
 				     uint32_t *result_buf_len,
 				     struct nfc_ndef_parser_memo_desc *parser_memo_desc);
 

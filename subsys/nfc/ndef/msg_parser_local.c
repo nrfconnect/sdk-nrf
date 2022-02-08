@@ -77,7 +77,7 @@ int nfc_ndef_msg_parser_internal(struct nfc_ndef_parser_memo_desc *parser_memo_d
 }
 
 
-int nfc_ndef_msg_parser_memo_resolve(const uint8_t *result_buf,
+int nfc_ndef_msg_parser_memo_resolve(uint8_t *result_buf,
 				     uint32_t *result_buf_len,
 				     struct nfc_ndef_parser_memo_desc *parser_memo_desc)
 {
