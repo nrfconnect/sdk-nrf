@@ -21,6 +21,13 @@ config MPSL_CX_PIN_FORWARDER
 
 if MPSL_CX
 
+config MPSL_CX_INIT_PRIORITY
+	int "Initialization priority of the Radio Coexistence interface"
+	default KERNEL_INIT_PRIORITY_DEFAULT
+	help
+	  Set the initialization priority number. Do not mess with it unless
+	  you know what you are doing.
+
 choice MPSL_CX_CHOICE
 	prompt "Radio Coexistence interface implementation"
 
