@@ -109,6 +109,22 @@ static void log_event_init(void)
 	}
 }
 
+void __weak event_manager_event_postprocess_1(const struct event_header *eh)
+{
+}
+
+void __weak event_manager_event_postprocess_2(const struct event_header *eh)
+{
+}
+
+void __weak event_manager_event_postprocess_3(const struct event_header *eh)
+{
+}
+
+void __weak event_manager_event_postprocess_4(const struct event_header *eh)
+{
+}
+
 void __weak event_manager_trace_event_execution(const struct event_header *eh,
 				  bool is_start)
 {
@@ -200,6 +216,11 @@ static void event_processor_fn(struct k_work *work)
 				log_event_consumed(et);
 			}
 		}
+
+		event_manager_event_postprocess_1(eh);
+		event_manager_event_postprocess_2(eh);
+		event_manager_event_postprocess_3(eh);
+		event_manager_event_postprocess_4(eh);
 
 		event_manager_trace_event_execution(eh, false);
 

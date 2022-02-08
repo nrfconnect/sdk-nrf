@@ -321,6 +321,7 @@ Event manager
 
 * Added:
 
+  * Universal hooks for event postprocessing in a form event_manager_event_postprocess_N where N is in a range between 1 and 4.
   * ``EVENT_SUBSCRIBE_FIRST`` subscriber priority.
 
 * Updated:
