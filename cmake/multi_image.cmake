@@ -352,7 +352,7 @@ function(add_child_image_from_source)
         file(
           APPEND
           ${preload_file}
-          "set(${shared_var} ${${shared_var}} CACHE INTERNAL \"NCS child image controlled\")\n"
+          "set(${shared_var} \"${${shared_var}}\" CACHE INTERNAL \"NCS child image controlled\")\n"
           )
       endif()
     endforeach()
