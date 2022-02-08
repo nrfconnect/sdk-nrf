@@ -16,8 +16,7 @@ static const char * const state_name[] = {
 #undef X
 };
 
-static int log_module_state_event(const struct event_header *eh, char *buf,
-				  size_t buf_len)
+static void log_module_state_event(const struct event_header *eh)
 {
 	const struct module_state_event *event = cast_module_state_event(eh);
 
@@ -28,7 +27,6 @@ static int log_module_state_event(const struct event_header *eh, char *buf,
 
 	EVENT_MANAGER_LOG(eh, "module:%s state:%s",
 		      (const char *)event->module_id, state_name[event->state]);
-	return 0;
 }
 
 EVENT_TYPE_DEFINE(module_state_event,

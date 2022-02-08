@@ -8,8 +8,7 @@
 
 #include "hids_event.h"
 
-static int log_hid_notification_event(const struct event_header *eh, char *buf,
-				      size_t buf_len)
+static void log_hid_notification_event(const struct event_header *eh)
 {
 	const struct hid_notification_event *event =
 		cast_hid_notification_event(eh);
@@ -17,7 +16,6 @@ static int log_hid_notification_event(const struct event_header *eh, char *buf,
 	EVENT_MANAGER_LOG(eh,
 			"report_id 0x%x %sabled",
 			event->report_id, (event->enabled)?"en":"dis");
-	return 0;
 }
 
 EVENT_TYPE_DEFINE(hid_notification_event,

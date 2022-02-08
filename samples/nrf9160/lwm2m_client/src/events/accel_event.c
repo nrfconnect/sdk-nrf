@@ -28,7 +28,7 @@ static const char *accel_orienation_state_to_string(enum accel_orientation_state
 	}
 }
 
-static int log_accel_event(const struct event_header *eh, char *buf, size_t buf_len)
+static void log_accel_event(const struct event_header *eh)
 {
 	struct accel_event *event = cast_accel_event(eh);
 
@@ -37,7 +37,6 @@ static int log_accel_event(const struct event_header *eh, char *buf, size_t buf_
 		event->data.x.val1, event->data.x.val2, event->data.y.val1, event->data.y.val2,
 		event->data.z.val1, event->data.z.val2,
 		accel_orienation_state_to_string(event->orientation));
-	return 0;
 }
 
 EVENT_TYPE_DEFINE(accel_event, false, log_accel_event, NULL);

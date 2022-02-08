@@ -19,8 +19,7 @@ static const char * const state_name[] = {
 	"CONN_FAILED"
 };
 
-static int log_ble_peer_event(const struct event_header *eh, char *buf,
-			      size_t buf_len)
+static void log_ble_peer_event(const struct event_header *eh)
 {
 	const struct ble_peer_event *event = cast_ble_peer_event(eh);
 
@@ -30,7 +29,6 @@ static int log_ble_peer_event(const struct event_header *eh, char *buf,
 
 	EVENT_MANAGER_LOG(eh, "id=%p %s", event->id,
 			state_name[event->state]);
-	return 0;
 }
 
 static void profile_ble_peer_event(struct log_event_buf *buf,
@@ -52,13 +50,11 @@ EVENT_TYPE_DEFINE(ble_peer_event,
 		  log_ble_peer_event,
 		  &ble_peer_event_info);
 
-static int log_ble_peer_search_event(const struct event_header *eh, char *buf,
-				     size_t buf_len)
+static void log_ble_peer_search_event(const struct event_header *eh)
 {
 	const struct ble_peer_search_event *event = cast_ble_peer_search_event(eh);
 
 	EVENT_MANAGER_LOG(eh, "%sactive", (event->active)?(""):("in"));
-	return 0;
 }
 
 static void profile_ble_peer_search_event(struct log_event_buf *buf,
@@ -91,8 +87,7 @@ static const char * const op_name[] = {
 	"CANCEL"
 };
 
-static int log_ble_peer_operation_event(const struct event_header *eh,
-					char *buf, size_t buf_len)
+static void log_ble_peer_operation_event(const struct event_header *eh)
 {
 	const struct ble_peer_operation_event *event =
 		cast_ble_peer_operation_event(eh);
@@ -105,7 +100,6 @@ static int log_ble_peer_operation_event(const struct event_header *eh,
 			op_name[event->op],
 			event->bt_app_id,
 			event->bt_stack_id);
-	return 0;
 }
 
 static void profile_ble_peer_operation_event(struct log_event_buf *buf,
@@ -129,8 +123,7 @@ EVENT_TYPE_DEFINE(ble_peer_operation_event,
 		  log_ble_peer_operation_event,
 		  &ble_peer_operation_event_info);
 
-static int log_ble_peer_conn_params_event(const struct event_header *eh,
-					  char *buf, size_t buf_len)
+static void log_ble_peer_conn_params_event(const struct event_header *eh)
 {
 	const struct ble_peer_conn_params_event *event =
 		cast_ble_peer_conn_params_event(eh);
@@ -140,7 +133,6 @@ static int log_ble_peer_conn_params_event(const struct event_header *eh,
 			event->id, event->interval_min,	event->interval_max,
 			event->latency, event->timeout,
 			(event->updated ? "updated" : "required"));
-	return 0;
 }
 
 EVENT_TYPE_DEFINE(ble_peer_conn_params_event,

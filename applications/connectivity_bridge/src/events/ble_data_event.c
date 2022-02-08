@@ -9,13 +9,11 @@
 
 #include "ble_data_event.h"
 
-static int log_ble_data_event(const struct event_header *eh, char *buf,
-				  size_t buf_len)
+static void log_ble_data_event(const struct event_header *eh)
 {
 	const struct ble_data_event *event = cast_ble_data_event(eh);
 
 	EVENT_MANAGER_LOG(eh, "buf:%p len:%d", event->buf, event->len);
-	return 0;
 }
 
 EVENT_TYPE_DEFINE(ble_data_event,

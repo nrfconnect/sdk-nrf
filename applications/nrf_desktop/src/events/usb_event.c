@@ -18,8 +18,7 @@ static const char * const state_name[] = {
 	[USB_STATE_SUSPENDED]    = "SUSPENDED"
 };
 
-static int log_usb_state_event(const struct event_header *eh, char *buf,
-			       size_t buf_len)
+static void log_usb_state_event(const struct event_header *eh)
 {
 	const struct usb_state_event *event = cast_usb_state_event(eh);
 
@@ -29,7 +28,6 @@ static int log_usb_state_event(const struct event_header *eh, char *buf,
 	__ASSERT_NO_MSG(event->state < USB_STATE_COUNT);
 
 	EVENT_MANAGER_LOG(eh, "state:%s", state_name[event->state]);
-	return 0;
 }
 
 EVENT_TYPE_DEFINE(usb_state_event,
@@ -37,14 +35,12 @@ EVENT_TYPE_DEFINE(usb_state_event,
 		  log_usb_state_event,
 		  NULL);
 
-static int log_usb_hid_event(const struct event_header *eh, char *buf,
-			     size_t buf_len)
+static void log_usb_hid_event(const struct event_header *eh)
 {
 	const struct usb_hid_event *event = cast_usb_hid_event(eh);
 
 	EVENT_MANAGER_LOG(eh, "id:%p %sabled", event->id,
 			(event->enabled)?("en"):("dis"));
-	return 0;
 }
 
 EVENT_TYPE_DEFINE(usb_hid_event,

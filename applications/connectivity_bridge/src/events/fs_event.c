@@ -10,15 +10,11 @@
 #include <fs_event.h>
 #include <fs/fs.h>
 
-static int log_fs_event(
-	const struct event_header *eh,
-	char *buf,
-	size_t buf_len)
+static void log_fs_event(const struct event_header *eh)
 {
 	const struct fs_event *event = cast_fs_event(eh);
 
 	EVENT_MANAGER_LOG(eh, "req:%d", event->req);
-	return 0;
 }
 
 int fs_event_helper_file_write(

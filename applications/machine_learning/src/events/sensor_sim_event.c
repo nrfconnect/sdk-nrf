@@ -9,12 +9,11 @@
 #include "sensor_sim_event.h"
 
 
-static int log_sensor_sim_event(const struct event_header *eh, char *buf, size_t buf_len)
+static void log_sensor_sim_event(const struct event_header *eh)
 {
 	const struct sensor_sim_event *event = cast_sensor_sim_event(eh);
 
 	EVENT_MANAGER_LOG(eh, "%s", event->label);
-	return 0;
 }
 
 static void profile_sensor_sim_event(struct log_event_buf *buf, const struct event_header *eh)

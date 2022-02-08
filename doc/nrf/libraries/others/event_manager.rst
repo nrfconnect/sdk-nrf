@@ -149,14 +149,12 @@ The following code example shows a source file for the event type ``sample_event
 
    #include "sample_event.h"
 
-   static int log_sample_event(const struct event_header *eh, char *buf,
-			       size_t buf_len)
+   static void log_sample_event(const struct event_header *eh)
    {
 	   struct sample_event *event = cast_sample_event(eh);
 
 	   EVENT_MANAGER_LOG(eh, "val1=%d val2=%d val3=%d", event->value1,
 			   event->value2, event->value3);
-	   return 0;
    }
 
    EVENT_TYPE_DEFINE(sample_event,	/* Unique event name. */
@@ -166,6 +164,9 @@ The following code example shows a source file for the event type ``sample_event
 
 .. note::
 	There is a deprecated way of logging Event Manager events by writing a string to the provided buffer that will be supported until a future release of |NCS|.
+	To use the deprecated way, you need to set the :kconfig:`CONFIG_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN` option.
+	You can then use both ways of logging events.
+	Event manager figures out which way to be used based on the type of the logging function passed.
 
 Submitting an event
 ===================

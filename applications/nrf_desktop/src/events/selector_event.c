@@ -9,15 +9,13 @@
 #include "selector_event.h"
 
 
-static int log_selector_event(const struct event_header *eh, char *buf,
-			      size_t buf_len)
+static void log_selector_event(const struct event_header *eh)
 {
 	const struct selector_event *event = cast_selector_event(eh);
 
 	EVENT_MANAGER_LOG(eh, "id: %" PRIu8 " position: %" PRIu8,
 			event->selector_id,
 			event->position);
-	return 0;
 }
 
 static void profile_selector_event(struct log_event_buf *buf,

@@ -45,13 +45,11 @@ static char *get_evt_type_str(enum cloud_module_event_type type)
 	}
 }
 
-static int log_event(const struct event_header *eh, char *buf,
-		     size_t buf_len)
+static void log_event(const struct event_header *eh)
 {
 	const struct cloud_module_event *event = cast_cloud_module_event(eh);
 
 	EVENT_MANAGER_LOG(eh, "%s", get_evt_type_str(event->type));
-	return 0;
 }
 
 #if defined(CONFIG_PROFILER)

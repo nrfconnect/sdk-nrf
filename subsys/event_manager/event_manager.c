@@ -31,12 +31,12 @@ static bool log_is_event_displayed(const struct event_type *et)
 	return atomic_test_bit(_event_manager_event_display_bm.flags, idx);
 }
 
+#if IS_ENABLED(CONFIG_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN)
 static void log_event_using_buffer(const struct event_header *eh, const struct event_type *et)
 {
-	BUILD_ASSERT(CONFIG_EVENT_MANAGER_EVENT_LOG_BUF_LEN != 1);
 	char log_buf[CONFIG_EVENT_MANAGER_EVENT_LOG_BUF_LEN];
 
-	int pos = et->log_event(eh, log_buf, sizeof(log_buf));
+	int pos = et->log_event_func_dep(eh, log_buf, sizeof(log_buf));
 
 	if (pos < 0) {
 		log_buf[0] = '\0';
@@ -50,6 +50,7 @@ static void log_event_using_buffer(const struct event_header *eh, const struct e
 		LOG_INF("%s", log_strdup(log_buf));
 	}
 }
+#endif /*CONFIG_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN*/
 
 static void log_event(const struct event_header *eh)
 {
@@ -60,13 +61,17 @@ static void log_event(const struct event_header *eh)
 		return;
 	}
 
-	if (et->log_event) {
-		if (CONFIG_EVENT_MANAGER_EVENT_LOG_BUF_LEN > 0) {
-			log_event_using_buffer(eh, et);
-		} else {
-			(void)et->log_event(eh, NULL, 0);
-		}
-	} else if (IS_ENABLED(CONFIG_EVENT_MANAGER_LOG_EVENT_TYPE)) {
+
+	if (et->log_event_func) {
+		et->log_event_func(eh);
+	}
+#ifdef CONFIG_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN
+	else if (et->log_event_func_dep) {
+		log_event_using_buffer(eh, et);
+	}
+#endif
+
+	else if (IS_ENABLED(CONFIG_EVENT_MANAGER_LOG_EVENT_TYPE)) {
 		LOG_INF("e: %s", et->name);
 	}
 }
@@ -147,7 +152,6 @@ static void event_processor_fn(struct k_work *work)
 	sys_slist_merge_slist(&events, &eventq);
 
 	k_spin_unlock(&lock, key);
-
 
 	/* Traverse the list of events. */
 	sys_snode_t *node;
