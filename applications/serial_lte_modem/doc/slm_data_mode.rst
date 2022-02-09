@@ -52,7 +52,9 @@ The SLM application does not send an *OK* response when it enters data mode.
 Exiting data mode
 =================
 
-To exit data mode, the MCU sends the termination command set by the :ref:`CONFIG_SLM_DATAMODE_TERMINATOR <CONFIG_SLM_DATAMODE_TERMINATOR>` configuration option over UART and also applies the silence period set by the :ref:`CONFIG_SLM_DATAMODE_SILENCE <CONFIG_SLM_DATAMODE_SILENCE>` option, both before and after the termination command.
+To exit data mode, the MCU sends the termination command set by the :ref:`CONFIG_SLM_DATAMODE_TERMINATOR <CONFIG_SLM_DATAMODE_TERMINATOR>` configuration option over UART.
+
+The pattern string could be sent alone or as an affix to the data.
 
 When instructed to exit data mode, the SLM application returns the AT command response ``OK``.
 
@@ -105,12 +107,6 @@ CONFIG_SLM_DATAMODE_TERMINATOR - Pattern string to terminate data mode
    This option specifies a pattern string to terminate data mode.
    The default pattern string is ``+++``.
 
-.. _CONFIG_SLM_DATAMODE_SILENCE:
-
-CONFIG_SLM_DATAMODE_SILENCE - Silence time to exit data mode
-   This option specifies the length, in seconds, of the UART silence applied before and after the pattern string that is used to exit data mode is sent.
-   The default value is 1 second.
-
 Data mode AT commands
 *********************
 
@@ -121,7 +117,6 @@ Data mode control #XDATACTRL
 
 The ``#XDATACTRL`` command allows you to configure the time limit used to trigger data transmissions.
 It can be applied only after entering data mode.
-If it is not issued, the data mode works in single RX mode.
 
 When the time limit is configured, small-size packets will be sent only after the timeout.
 
@@ -138,9 +133,8 @@ Syntax
    #XDATACTRL=<time_limit>
 
 * The ``<time_limit>`` parameter sets the timeout value in milliseconds.
-  The default value is 0.
-  Setting the value to 0 disables the time limit and the timeout trigger.
-  When different from 0, this value must be long enough to allow for the transmission of one DMA block size of data (hardcoded to 256 bytes).
+  The default value is the minimum required value, based on the configured UART baud rate.
+  This value must be long enough to allow for the transmission of one DMA block size of data (hardcoded to 256 bytes).
 
 Read command
 ------------

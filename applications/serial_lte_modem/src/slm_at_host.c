@@ -50,11 +50,11 @@ static uint8_t at_buf[AT_MAX_CMD_LEN];
 static uint16_t at_buf_len;
 static bool at_buf_overflow;
 static struct ring_buf data_rb;
-static bool datamode_off_pending;
 static bool datamode_rx_disabled;
 static slm_datamode_handler_t datamode_handler;
 static struct k_work raw_send_work;
 static struct k_work cmd_send_work;
+static struct k_work datamode_quit_work;
 
 static uint8_t uart_rx_buf[UART_RX_BUF_NUM][UART_RX_LEN];
 static uint8_t *next_buf;
@@ -155,6 +155,15 @@ int enter_datamode(slm_datamode_handler_t handler)
 	ring_buf_init(&data_rb, sizeof(at_buf), at_buf);
 	datamode_handler = handler;
 	slm_operation_mode = SLM_DATA_MODE;
+	if (datamode_time_limit == 0) {
+		if (slm_uart.baudrate > 0) {
+			datamode_time_limit = UART_RX_LEN * (8 + 1 + 1) * 1000 / slm_uart.baudrate;
+			datamode_time_limit += UART_RX_MARGIN_MS;
+		} else {
+			LOG_WRN("Baudrate not set");
+			datamode_time_limit = 1000;
+		}
+	}
 	LOG_INF("Enter datamode");
 
 	return 0;
@@ -287,7 +296,7 @@ bool verify_datamode_control(uint16_t time_limit, uint16_t *min_time_limit)
 	min_time = UART_RX_LEN * (8 + 1 + 1) * 1000 / slm_uart.baudrate;
 	min_time += UART_RX_MARGIN_MS;
 
-	if (time_limit > 0 && min_time > time_limit) {
+	if (time_limit == 0 || min_time > time_limit) {
 		LOG_ERR("Invalid time_limit: %d, min: %d", time_limit, min_time);
 		return false;
 	}
@@ -314,6 +323,9 @@ static void raw_send(struct k_work *work)
 {
 	uint8_t *data = NULL;
 	int size_send, size_sent;
+	const char *quit_str = CONFIG_SLM_DATAMODE_TERMINATOR;
+	int quit_str_len = strlen(quit_str);
+	bool datamode_off_pending = false;
 
 	ARG_UNUSED(work);
 
@@ -321,27 +333,47 @@ static void raw_send(struct k_work *work)
 	do {
 		size_send = ring_buf_get_claim(&data_rb, &data, sizeof(at_buf));
 		if (data != NULL && size_send > 0) {
+			/* Exit datamode if apply */
+			if (size_send >= quit_str_len) {
+				char *quit = data + (size_send - quit_str_len);
+
+				if (strncmp(quit, quit_str, quit_str_len) == 0) {
+					memset(quit, 0x00, quit_str_len);
+					size_send -= quit_str_len;
+					datamode_off_pending = true;
+				}
+				if (size_send == 0) {
+					k_work_submit(&datamode_quit_work);
+					LOG_INF("datamode off pending");
+					return;
+				}
+			}
+			/* Raw data sending */
+			int size_finish = datamode_off_pending ? quit_str_len : 0;
+
 			LOG_INF("Raw send %d", size_send);
 			LOG_HEXDUMP_DBG(data, MIN(size_send, HEXDUMP_DATAMODE_MAX), "RX-DATAMODE");
-			if (datamode_handler) {
+			if (datamode_handler && size_send > 0) {
 				size_sent = datamode_handler(DATAMODE_SEND, data, size_send);
 				if (size_sent > 0) {
-					(void)ring_buf_get_finish(&data_rb, size_sent);
+					size_finish += size_sent;
 				} else if (size_sent == 0) {
-					(void)ring_buf_get_finish(&data_rb, size_send);
+					size_finish += size_send;
 				} else {
 					LOG_WRN("Raw send failed, %d dropped", size_send);
-					(void)ring_buf_get_finish(&data_rb, size_send);
-					(void)exit_datamode(DATAMODE_EXIT_ERROR);
-					if (datamode_rx_disabled) {
-						/* UART RX already resumed */
-						datamode_rx_disabled = false;
-					}
-					break;
+					size_finish += size_send;
+					datamode_off_pending = true;
 				}
+				(void)ring_buf_get_finish(&data_rb, size_finish);
 			} else {
 				LOG_WRN("no handler, %d dropped", size_send);
-				(void)ring_buf_get_finish(&data_rb, size_send);
+				(void)ring_buf_get_finish(&data_rb, size_send + size_finish);
+			}
+
+			if (datamode_off_pending) {
+				k_work_submit(&datamode_quit_work);
+				LOG_INF("datamode off pending");
+				return;
 			}
 		} else {
 			break;
@@ -369,14 +401,9 @@ static void inactivity_timer_handler(struct k_timer *timer)
 
 K_TIMER_DEFINE(inactivity_timer, inactivity_timer_handler, NULL);
 
-static void silence_timer_handler(struct k_timer *timer)
+static void datamode_quit(struct k_work *work)
 {
-	ARG_UNUSED(timer);
-
-	/* Drop pending data unconditionally */
-	if (datamode_time_limit > 0) {
-		k_timer_stop(&inactivity_timer);
-	}
+	ARG_UNUSED(work);
 
 	/* quit datamode */
 	if (datamode_handler) {
@@ -385,46 +412,15 @@ static void silence_timer_handler(struct k_timer *timer)
 		LOG_WRN("missing datamode handler");
 	}
 	(void)exit_datamode(DATAMODE_EXIT_OK);
-	datamode_off_pending = false;
 }
-
-K_TIMER_DEFINE(silence_timer, silence_timer_handler, NULL);
 
 static int raw_rx_handler(const uint8_t *data, int datalen)
 {
 	int ret;
-	const char *quit_str = CONFIG_SLM_DATAMODE_TERMINATOR;
-	int quit_str_len = strlen(quit_str);
-	int64_t silence = CONFIG_SLM_DATAMODE_SILENCE * MSEC_PER_SEC;
-	static int64_t rx_start;
 
-	/* First, check conditions for quitting datamode */
-	if (silence > k_uptime_delta(&rx_start)) {
-		if (datamode_off_pending) {
-			/* quit procedure aborted */
-			k_timer_stop(&silence_timer);
-			datamode_off_pending = false;
-			(void)ring_buf_put(&data_rb, quit_str, quit_str_len);
-			LOG_INF("datamode off cancelled");
-		}
-	} else {
-		/* leading silence confirmed */
-		if (datalen == quit_str_len && strncmp(data, quit_str, quit_str_len) == 0) {
-			datamode_off_pending = true;
-			/* check subordinate silence */
-			k_timer_start(&silence_timer, K_SECONDS(CONFIG_SLM_DATAMODE_SILENCE),
-				      K_NO_WAIT);
-			LOG_INF("datamode off pending");
-			rx_start = k_uptime_get();
-			return 0;
-		}
-	}
+	k_timer_stop(&inactivity_timer);
 
-	if (datamode_time_limit > 0) {
-		k_timer_stop(&inactivity_timer);
-	}
-
-	/* Second, save data to buffer */
+	/* save data to buffer */
 	ret = ring_buf_put(&data_rb, data, datalen);
 	if (ret != datalen) {
 		LOG_ERR("enqueue data error (%d, %d)", datalen, ret);
@@ -438,14 +434,9 @@ static int raw_rx_handler(const uint8_t *data, int datalen)
 		return -1;
 	}
 
-	/* Third, start/restart inactivity timer, or trigger sending */
-	if (datamode_time_limit > 0) {
-		k_timer_start(&inactivity_timer, K_MSEC(datamode_time_limit), K_NO_WAIT);
-	} else {
-		k_work_submit(&raw_send_work);
-	}
+	/* start/restart inactivity timer */
+	k_timer_start(&inactivity_timer, K_MSEC(datamode_time_limit), K_NO_WAIT);
 
-	rx_start = k_uptime_get();
 	return 0;
 }
 
@@ -818,6 +809,7 @@ int slm_at_host_init(void)
 
 	k_work_init(&raw_send_work, raw_send);
 	k_work_init(&cmd_send_work, cmd_send);
+	k_work_init(&datamode_quit_work, datamode_quit);
 	k_work_init_delayable(&uart_recovery_work, uart_recovery);
 	k_sem_give(&tx_done);
 	rsp_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
@@ -833,7 +825,6 @@ void slm_at_host_uninit(void)
 	int err;
 
 	if (slm_operation_mode == SLM_DATA_MODE) {
-		k_timer_stop(&silence_timer);
 		k_timer_stop(&inactivity_timer);
 	}
 	datamode_handler = NULL;
