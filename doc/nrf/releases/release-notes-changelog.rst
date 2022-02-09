@@ -48,6 +48,14 @@ Protocols
 This section provides detailed lists of changes by :ref:`protocol <protocols>`.
 See `Samples`_ for lists of changes for the protocol-related samples.
 
+Bluetooth mesh
+--------------
+
+* Added:
+
+  * :c:struct:`bt_mesh_sensor_srv` context to relevant callbacks and APIs to help resolve the associated sensor model instance.
+    For details, see `Bluetooth mesh samples`_ and `Bluetooth libraries and services`_.
+
 Thread
 ------
 
@@ -129,6 +137,9 @@ Bluetooth mesh samples
 * Updated
 
   * All samples are using the Partition Manager, replacing the use of the Device Tree Source flash partitions.
+  * :ref:`bluetooth_mesh_sensor_server` sample:
+
+    * Updated definitions for sensor callbacks to include the :c:struct:`bt_mesh_sensor_srv` context.
 
 Thread samples
 --------------
@@ -212,6 +223,17 @@ Bluetooth libraries and services
 * :ref:`gatt_dm_readme` library:
 
   * Fixed discovery of empty services.
+
+* :ref:`bt_mesh` library:
+
+  * Added:
+
+    * :c:struct:`bt_mesh_sensor_srv` context to the following API and callbacks:
+
+      * :c:func:`sensor_column_encode` API.
+      * :c:member:`get` and :c:member:`set` callbacks in :c:struct:`bt_mesh_sensor_setting`.
+      * :c:member:`get` callback in :c:struct:`bt_mesh_sensor_series`.
+      * :c:member:`get` callback in :c:struct:`bt_mesh_sensor`.
 
 Libraries for networking
 ------------------------

@@ -39,8 +39,10 @@ static uint32_t col_samps[ARRAY_SIZE(columns)];
 
 static int32_t prev_pres;
 
-static int chip_temp_get(struct bt_mesh_sensor *sensor,
-			 struct bt_mesh_msg_ctx *ctx, struct sensor_value *rsp)
+static int chip_temp_get(struct bt_mesh_sensor_srv *srv,
+			 struct bt_mesh_sensor *sensor,
+			 struct bt_mesh_msg_ctx *ctx,
+			 struct sensor_value *rsp)
 {
 	int err;
 
@@ -69,9 +71,11 @@ static struct bt_mesh_sensor chip_temp = {
 	.get = chip_temp_get,
 };
 
-static int relative_runtime_in_chip_temp_get(
-	struct bt_mesh_sensor *sensor, struct bt_mesh_msg_ctx *ctx,
-	const struct bt_mesh_sensor_column *column, struct sensor_value *value)
+static int relative_runtime_in_chip_temp_get(struct bt_mesh_sensor_srv *srv,
+	struct bt_mesh_sensor *sensor,
+	struct bt_mesh_msg_ctx *ctx,
+	const struct bt_mesh_sensor_column *column,
+	struct sensor_value *value)
 {
 	if (tot_temp_samps) {
 		int32_t index = column - &columns[0];
@@ -104,9 +108,10 @@ static struct bt_mesh_sensor presence_sensor = {
 	.type = &bt_mesh_sensor_presence_detected,
 };
 
-static int time_since_presence_detected_get(struct bt_mesh_sensor *sensor,
-					    struct bt_mesh_msg_ctx *ctx,
-					    struct sensor_value *rsp)
+static int time_since_presence_detected_get(struct bt_mesh_sensor_srv *srv,
+					struct bt_mesh_sensor *sensor,
+					struct bt_mesh_msg_ctx *ctx,
+					struct sensor_value *rsp)
 {
 	if (prev_pres) {
 		rsp->val1 = (k_uptime_get_32() - prev_pres) / MSEC_PER_SEC;
