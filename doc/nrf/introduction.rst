@@ -153,3 +153,8 @@ See :ref:`dev-model` for more information about the |NCS| code base and how to m
 
 Repositories and revisions
 **************************
+
+The following table lists all the repositories (and their respective revisions) that are included as part of |NCS| |release| release:
+
+.. manifest-revisions-table::
+   :show-first: nrfxlib, find-my, homekit, matter, nrf-802154, zephyr, mcuboot, trusted-firmware-m, tfm-mcuboot, openthread, mbedtls, mbedtls-nrf, memfault-firmware-sdk
