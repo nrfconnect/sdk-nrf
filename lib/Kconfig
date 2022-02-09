@@ -36,5 +36,6 @@ rsource "multicell_location/Kconfig"
 rsource "location/Kconfig"
 rsource "at_shell/Kconfig"
 rsource "modem_antenna/Kconfig"
+rsource "qos/Kconfig"
 
 endmenu

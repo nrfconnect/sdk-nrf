@@ -524,7 +524,11 @@ Libraries for NFC
 Other libraries
 ---------------
 
-* Added :ref:`event_manager_proxy`.
+* Added:
+
+  * :ref:`event_manager_proxy` library.
+  * :ref:`QoS` library.
+
 
 * Updated:
 
