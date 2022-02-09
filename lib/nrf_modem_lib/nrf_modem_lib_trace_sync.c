@@ -29,6 +29,7 @@ static char rtt_buffer[CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT_BUF_SIZE];
 #endif
 
 static bool is_transport_initialized;
+static bool is_stopped;
 
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
 static bool uart_init(void)
@@ -66,6 +67,8 @@ static bool rtt_init(void)
 int nrf_modem_lib_trace_init(struct k_heap *trace_heap)
 {
 	ARG_UNUSED(trace_heap);
+	is_stopped = false;
+
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
 	is_transport_initialized = uart_init();
 #endif
@@ -89,6 +92,8 @@ int nrf_modem_lib_trace_start(enum nrf_modem_lib_trace_mode trace_mode)
 		return -EOPNOTSUPP;
 	}
 
+	is_stopped = false;
+
 	return 0;
 }
 
@@ -96,6 +101,10 @@ int nrf_modem_lib_trace_process(const uint8_t *data, uint32_t len)
 {
 	if (!is_transport_initialized) {
 		return -ENXIO;
+	}
+
+	if (is_stopped) {
+		return 0;
 	}
 
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
@@ -132,9 +141,12 @@ int nrf_modem_lib_trace_stop(void)
 {
 	__ASSERT(!k_is_in_isr(), "%s cannot be called from interrupt context", __func__);
 
-	if (nrf_modem_at_printf("AT%%XMODEMTRACE=0") != 0) {
-		return -EOPNOTSUPP;
-	}
+	/* Don't use the AT%%XMODEMTRACE=0 command to disable traces because the
+	 * modem won't respond if the modem has crashed and is outputting the modem
+	 * core dump.
+	 */
+
+	is_stopped = true;
 
 	return 0;
 }
