@@ -58,11 +58,11 @@ const struct bt_df_adv_cte_tx_param cte_params = {
 	.cte_len = CTE_LEN,
 	.cte_count = 1,
 #if defined(CONFIG_BT_DF_CTE_TX_AOD)
-	.cte_type = BT_HCI_LE_AOD_CTE_2US,
+	.cte_type = BT_DF_CTE_TYPE_AOD_2US,
 	.num_ant_ids = ARRAY_SIZE(ant_patterns),
 	.ant_ids = ant_patterns
 #else
-	.cte_type = BT_HCI_LE_AOA_CTE,
+	.cte_type = BT_DF_CTE_TYPE_AOA,
 	.num_ant_ids = 0,
 	.ant_ids = NULL
 #endif /* CONFIG_BT_DF_CTE_TX_AOD */
