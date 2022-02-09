@@ -62,7 +62,11 @@ static int get_res_timestamp_index(uint16_t res_id)
 static void *accel_x_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
 			     size_t *data_len)
 {
-	uint8_t res_timestamp_index = get_res_timestamp_index(res_id);
+	int res_timestamp_index = get_res_timestamp_index(res_id);
+
+	if (res_timestamp_index < 0) {
+		return NULL;
+	}
 
 	if (is_regular_read_cb(accel_read_timestamp[res_timestamp_index])) {
 		int ret;
@@ -96,7 +100,11 @@ static void *accel_x_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res
 static void *accel_y_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
 			     size_t *data_len)
 {
-	uint8_t res_timestamp_index = get_res_timestamp_index(res_id);
+	int res_timestamp_index = get_res_timestamp_index(res_id);
+
+	if (res_timestamp_index < 0) {
+		return NULL;
+	}
 
 	if (is_regular_read_cb(accel_read_timestamp[res_timestamp_index])) {
 		int ret;
@@ -130,7 +138,11 @@ static void *accel_y_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res
 static void *accel_z_read_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
 			     size_t *data_len)
 {
-	uint8_t res_timestamp_index = get_res_timestamp_index(res_id);
+	int res_timestamp_index = get_res_timestamp_index(res_id);
+
+	if (res_timestamp_index < 0) {
+		return NULL;
+	}
 
 	if (is_regular_read_cb(accel_read_timestamp[res_timestamp_index])) {
 		int ret;
