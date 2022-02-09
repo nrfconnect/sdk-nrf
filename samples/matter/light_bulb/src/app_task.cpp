@@ -15,10 +15,10 @@
 
 #include <app-common/zap-generated/attribute-id.h>
 #include <app-common/zap-generated/attribute-type.h>
+#include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/cluster-id.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
-#include <app/util/attribute-storage.h>
 #include <credentials/DeviceAttestationCredsProvider.h>
 #include <credentials/examples/DeviceAttestationCredsExample.h>
 
@@ -35,18 +35,24 @@
 
 #include <algorithm>
 
+using namespace ::chip;
+using namespace ::chip::app;
 using namespace ::chip::Credentials;
 using namespace ::chip::DeviceLayer;
 
-#define PWM_LED DT_ALIAS(pwm_led1)
+#define PWM_DEVICE DEVICE_DT_GET(DT_PWMS_CTLR(DT_ALIAS(pwm_led1)))
+#define PWM_CHANNEL DT_PWMS_CHANNEL(DT_ALIAS(pwm_led1))
 
 LOG_MODULE_DECLARE(app);
 K_MSGQ_DEFINE(sAppEventQueue, sizeof(AppEvent), AppTask::APP_EVENT_QUEUE_SIZE, alignof(AppEvent));
 
 namespace
 {
-static constexpr uint32_t kFactoryResetTriggerTimeout = 3000;
-static constexpr uint32_t kFactoryResetCancelWindow = 3000;
+constexpr uint32_t kFactoryResetTriggerTimeout = 3000;
+constexpr uint32_t kFactoryResetCancelWindow = 3000;
+constexpr EndpointId kLightEndpointId = 1;
+constexpr uint8_t kDefaultMinLevel = 0;
+constexpr uint8_t kDefaultMaxLevel = 254;
 
 LEDWidget sStatusLED;
 LEDWidget sLightLED;
@@ -102,7 +108,13 @@ int AppTask::Init()
 	k_timer_user_data_set(&sFunctionTimer, this);
 
 	/* Initialize light manager */
-	ret = LightingMgr().Init(DEVICE_DT_GET(DT_PWMS_CTLR(PWM_LED)), DT_PWMS_CHANNEL(PWM_LED));
+	uint8_t minLightLevel = kDefaultMinLevel;
+	Clusters::LevelControl::Attributes::MinLevel::Get(kLightEndpointId, &minLightLevel);
+
+	uint8_t maxLightLevel = kDefaultMaxLevel;
+	Clusters::LevelControl::Attributes::MaxLevel::Get(kLightEndpointId, &maxLightLevel);
+
+	ret = LightingMgr().Init(PWM_DEVICE, PWM_CHANNEL, minLightLevel, maxLightLevel);
 	if (ret) {
 		return ret;
 	}
@@ -157,20 +169,17 @@ void AppTask::PostEvent(const AppEvent &aEvent)
 
 void AppTask::UpdateClusterState()
 {
-	uint8_t onOff = LightingMgr().IsTurnedOn();
-
 	/* write the new on/off value */
-	EmberAfStatus status = emberAfWriteAttribute(1, ZCL_ON_OFF_CLUSTER_ID, ZCL_ON_OFF_ATTRIBUTE_ID,
-						     CLUSTER_MASK_SERVER, &onOff, ZCL_BOOLEAN_ATTRIBUTE_TYPE);
+
+	EmberAfStatus status = Clusters::OnOff::Attributes::OnOff::Set(kLightEndpointId, LightingMgr().IsTurnedOn());
 
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating on/off cluster failed: %x", status);
 	}
 
-	uint8_t level = LightingMgr().GetLevel();
+	/* write the current level */
 
-	status = emberAfWriteAttribute(1, ZCL_LEVEL_CONTROL_CLUSTER_ID, ZCL_CURRENT_LEVEL_ATTRIBUTE_ID,
-				       CLUSTER_MASK_SERVER, &level, ZCL_INT8U_ATTRIBUTE_TYPE);
+	status = Clusters::LevelControl::Attributes::CurrentLevel::Set(kLightEndpointId, LightingMgr().GetLevel());
 
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating level cluster failed: %x", status);

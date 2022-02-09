@@ -229,7 +229,7 @@
 
 #define ZAP_ATTRIBUTE_MASK(mask) ATTRIBUTE_MASK_##mask
 // This is an array of EmberAfAttributeMetadata structures.
-#define GENERATED_ATTRIBUTE_COUNT 152
+#define GENERATED_ATTRIBUTE_COUNT 154
 #define GENERATED_ATTRIBUTES                                                                                                                \
 	{                                                                                                                                   \
 		/* Endpoint: 0, Cluster: Descriptor (server) */                                                                             \
@@ -510,6 +510,8 @@
 			/* Endpoint: 1, Cluster: Level Control (server) */                                                                  \
 			{ 0x00000000, ZAP_TYPE(INT8U), 1, 0, ZAP_SIMPLE_DEFAULT(0x00) }, /* current level */                                \
 			{ 0x00000001, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0000) }, /* remaining time */                            \
+			{ 0x00000002, ZAP_TYPE(INT8U), 1, 0, ZAP_SIMPLE_DEFAULT(0x00) }, /* min level */                                    \
+			{ 0x00000003, ZAP_TYPE(INT8U), 1, 0, ZAP_SIMPLE_DEFAULT(0xFE) }, /* max level */                                    \
 			{ 0x0000000F, ZAP_TYPE(BITMAP8), 1,                                                                                 \
 			  ZAP_ATTRIBUTE_MASK(MIN_MAX) | ZAP_ATTRIBUTE_MASK(WRITABLE),                                                       \
 			  ZAP_MIN_MAX_DEFAULTS_INDEX(0) }, /* options */                                                                    \
@@ -618,11 +620,11 @@
 			  chipFuncArrayOnOffServer }, /* Endpoint: 1, Cluster: On/Off (server) */                                      \
 			{ 0x00000008,                                                                                                  \
 			  ZAP_ATTRIBUTE_INDEX(140),                                                                                    \
-			  6,                                                                                                           \
-			  11,                                                                                                          \
+			  8,                                                                                                           \
+			  13,                                                                                                          \
 			  ZAP_CLUSTER_MASK(SERVER) | ZAP_CLUSTER_MASK(INIT_FUNCTION),                                                  \
 			  chipFuncArrayLevelControlServer }, /* Endpoint: 1, Cluster: Level Control (server) */                        \
-			{ 0x0000001D, ZAP_ATTRIBUTE_INDEX(146), 6, 6, ZAP_CLUSTER_MASK(SERVER), NULL }, /* Endpoint:                   \
+			{ 0x0000001D, ZAP_ATTRIBUTE_INDEX(148), 6, 6, ZAP_CLUSTER_MASK(SERVER), NULL }, /* Endpoint:                   \
 													   1, Cluster:                 \
 													   Descriptor                  \
 													   (server) */                 \
@@ -633,7 +635,7 @@
 // This is an array of EmberAfEndpointType structures.
 #define GENERATED_ENDPOINT_TYPES                                                                                       \
 	{                                                                                                              \
-		{ ZAP_CLUSTER_INDEX(0), 11, 379 }, { ZAP_CLUSTER_INDEX(11), 3, 30 },                                   \
+		{ ZAP_CLUSTER_INDEX(0), 11, 379 }, { ZAP_CLUSTER_INDEX(11), 3, 32 },                                   \
 	}
 
 // Largest attribute size is needed for various buffers
@@ -643,7 +645,7 @@
 #define ATTRIBUTE_SINGLETONS_SIZE (250)
 
 // Total size of attribute storage
-#define ATTRIBUTE_MAX_SIZE (409)
+#define ATTRIBUTE_MAX_SIZE (411)
 
 // Number of fixed endpoints
 #define FIXED_ENDPOINT_COUNT (2)
