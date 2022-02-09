@@ -249,6 +249,10 @@ Bluetooth libraries and services
 
   * Fixed the issue related to missing buffer size variables for the user PHY update and the user data length update procedures.
 
+* :ref:`bt_mesh` library:
+
+  * Extracted proportional-integral (PI) regulator module from :ref:`bt_mesh_light_ctrl_srv_readme`, enabling easier implementation of custom regulators.
+
 Common Application Framework (CAF)
 ----------------------------------
 

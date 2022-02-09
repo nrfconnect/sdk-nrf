@@ -5,10 +5,10 @@
  */
 
 /** @file
- *  @defgroup bt_mesh_light_ctrl_reg Light Lightness Control Regulator
+ *  @defgroup bt_mesh_light_ctrl_reg Illuminance regulator
  *  @ingroup bt_mesh_light_ctrl
  *  @{
- *  @brief Light Lightness Control regulator API
+ *  @brief Illuminance regulator API
  */
 
 #ifndef BT_MESH_LIGHT_CTRL_REG_H__
@@ -27,7 +27,7 @@ struct bt_mesh_light_ctrl_reg_coeff {
 	float down;
 };
 
-/** Light Lightness Control regulator configuration. */
+/** Illuminance regulator configuration. */
 struct bt_mesh_light_ctrl_reg_cfg {
 	/** Regulator integral coefficient. */
 	struct bt_mesh_light_ctrl_reg_coeff ki;
@@ -66,7 +66,7 @@ struct bt_mesh_light_ctrl_reg {
  *  Sets the target lightness, also known as the setpoint, for the regulator.
  *  Transition time is optional.
  *
- *  @param[in] reg      Lightness regulator instance.
+ *  @param[in] reg      Illuminance regulator instance.
  *
  *  @param[in] target   Target lightness (setpoint).
  *
@@ -83,7 +83,7 @@ void bt_mesh_light_ctrl_reg_target_set(struct bt_mesh_light_ctrl_reg *reg,
  *  Returns the target lightness, taking the requested transition time into
  *  account, for use in regulator implementations.
  *
- *  @param[in] reg      Lightness regulator instance.
+ *  @param[in] reg      Illuminance regulator instance.
  *
  *  @returns    The current target lightness, interpolated during transition
  *              time.

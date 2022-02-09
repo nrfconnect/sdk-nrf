@@ -5,10 +5,10 @@
  */
 
 /** @file
- *  @defgroup bt_mesh_light_ctrl_reg_spec Light Lightness Control Spec Regulator
+ *  @defgroup bt_mesh_light_ctrl_reg_spec Specification-defined illuminance regulator
  *  @ingroup bt_mesh_light_ctrl
  *  @{
- *  @brief Light Lightness Control spec regulator
+ *  @brief Specification-defined illuminance regulator
  */
 
 #ifndef BT_MESH_LIGHT_CTRL_REG_SPEC_H__
@@ -33,7 +33,7 @@ extern "C" {
 		}                                                              \
 	}
 
-/** Light Lightness Control spec regulator context. */
+/** Specification-defined illuminance regulator context. */
 struct bt_mesh_light_ctrl_reg_spec {
 	/** Common regulator context. */
 	struct bt_mesh_light_ctrl_reg reg;
