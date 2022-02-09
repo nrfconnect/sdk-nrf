@@ -107,6 +107,7 @@ Kconfig*                                  @tejlmand
 /lib/hw_unique_key/                       @oyvindronningstad @Vge0rge
 /lib/modem_jwt/                           @jayteemo @SeppoTakalo
 /lib/modem_attest_token/                  @jayteemo
+/lib/qos/                                 @simensrostad
 /modules/                                 @tejlmand
 /modules/mcuboot/                         @nvlsianpu
 /modules/cjson/                           @simensrostad @plskeggs @sigvartmh
