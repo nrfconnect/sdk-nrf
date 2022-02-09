@@ -31,6 +31,7 @@ extensions = [
     "table_from_rows",
     "options_from_kconfig",
     "ncs_include",
+    "manifest_revisions_table",
     "sphinxcontrib.mscgen",
     "zephyr.html_redirects",
     "zephyr.warnings_filter",
@@ -167,6 +168,10 @@ table_from_rows_base_dir = NRF_BASE
 
 options_from_kconfig_base_dir = NRF_BASE
 options_from_kconfig_zephyr_dir = ZEPHYR_BASE
+
+# Options for manifest_revisions_table -----------------------------------------
+
+manifest_revisions_table_manifest = NRF_BASE / "west.yml"
 
 # Options for ncs_cache --------------------------------------------------------
 
