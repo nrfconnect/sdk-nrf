@@ -18,7 +18,6 @@ static int trace_rtt_channel;
 static const char *start_trace_at_cmd_fmt = "AT%%XMODEMTRACE=1,%hu";
 static unsigned int exp_trace_mode;
 static int nrf_modem_at_printf_retval;
-static bool exp_trace_stop;
 
 static K_HEAP_DEFINE(trace_heap, CONFIG_NRF_MODEM_LIB_TRACE_HEAP_SIZE);
 
@@ -35,8 +34,6 @@ void tearDown(void)
 {
 	mock_SEGGER_RTT_Verify();
 	mock_nrf_modem_Verify();
-
-	exp_trace_stop = false;
 }
 
 static void nrf_modem_at_printf_ExpectTraceModeAndReturn(unsigned int trace_mode, int retval)
@@ -50,20 +47,16 @@ static void nrf_modem_at_printf_ExpectTraceModeAndReturn(unsigned int trace_mode
  */
 int nrf_modem_at_printf(const char *fmt, ...)
 {
-	if (exp_trace_stop) {
-		TEST_ASSERT_EQUAL_STRING("AT%%XMODEMTRACE=0", fmt);
-	} else {
-		va_list args;
-		unsigned int trace_mode;
+	va_list args;
+	unsigned int trace_mode;
 
-		TEST_ASSERT_EQUAL_STRING(start_trace_at_cmd_fmt, fmt);
+	TEST_ASSERT_EQUAL_STRING(start_trace_at_cmd_fmt, fmt);
 
-		va_start(args, fmt);
-		trace_mode = va_arg(args, unsigned int);
-		va_end(args);
+	va_start(args, fmt);
+	trace_mode = va_arg(args, unsigned int);
+	va_end(args);
 
-		TEST_ASSERT_EQUAL(exp_trace_mode, trace_mode);
-	}
+	TEST_ASSERT_EQUAL(exp_trace_mode, trace_mode);
 
 	return nrf_modem_at_printf_retval;
 }
@@ -203,16 +196,6 @@ void test_modem_trace_process_when_not_initialized(void)
 	/* Simulate the reception of modem trace and expect no RTT API to be called. */
 	TEST_ASSERT_EQUAL(-ENXIO,
 			nrf_modem_lib_trace_process(sample_trace_data, sizeof(sample_trace_data)));
-}
-
-/* Test nrf_modem_lib_trace_stop when nrf_modem_at_printf returns fails. */
-void test_modem_trace_stop_when_nrf_modem_at_printf_fails(void)
-{
-	/* Make nrf_modem_at_printf return failure. */
-	exp_trace_stop = true;
-	nrf_modem_at_printf_retval = -1;
-
-	TEST_ASSERT_EQUAL(-EOPNOTSUPP, nrf_modem_lib_trace_stop());
 }
 
 void main(void)

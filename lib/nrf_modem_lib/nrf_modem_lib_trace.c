@@ -45,6 +45,7 @@ static char rtt_buffer[CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT_BUF_SIZE];
 #endif
 
 static bool is_transport_initialized;
+static bool is_stopped;
 
 struct trace_data_t {
 	void *fifo_reserved; /* 1st word reserved for use by fifo */
@@ -72,43 +73,47 @@ void trace_handler_thread(void)
 		const uint8_t * const data = trace_data->data;
 		const uint32_t len = trace_data->len;
 
+		if (!is_stopped) {
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
-		/* Split RAM buffer into smaller chunks to be transferred using DMA. */
-		const uint32_t MAX_BUF_LEN = (1 << UARTE1_EASYDMA_MAXCNT_SIZE) - 1;
-		uint32_t remaining_bytes = len;
-		nrfx_err_t err;
+			/* Split buffer into smaller chunks to be transferred using DMA. */
+			const uint32_t MAX_BUF_LEN = (1 << UARTE1_EASYDMA_MAXCNT_SIZE) - 1;
+			uint32_t remaining_bytes = len;
+			nrfx_err_t err;
 
-		while (remaining_bytes) {
-			size_t transfer_len = MIN(remaining_bytes, MAX_BUF_LEN);
-			uint32_t idx = len - remaining_bytes;
+			while (remaining_bytes) {
+				size_t transfer_len = MIN(remaining_bytes, MAX_BUF_LEN);
+				uint32_t idx = len - remaining_bytes;
 
-			if (k_sem_take(&tx_sem, K_MSEC(UART_TX_WAIT_TIME_MS)) != 0) {
-				LOG_WRN("UARTE TX not available");
-				break;
+				if (k_sem_take(&tx_sem, K_MSEC(UART_TX_WAIT_TIME_MS)) != 0) {
+					LOG_WRN("UARTE TX not available");
+					break;
+				}
+				err = nrfx_uarte_tx(&uarte_inst, &data[idx], transfer_len);
+				if (err != NRFX_SUCCESS) {
+					LOG_ERR("nrfx_uarte_tx error: %d", err);
+					k_sem_give(&tx_sem);
+					break;
+				}
+				remaining_bytes -= transfer_len;
 			}
-			err = nrfx_uarte_tx(&uarte_inst, &data[idx], transfer_len);
-			if (err != NRFX_SUCCESS) {
-				LOG_ERR("nrfx_uarte_tx error: %d", err);
-				k_sem_give(&tx_sem);
-				break;
-			}
-			remaining_bytes -= transfer_len;
-		}
-		wait_for_tx_done();
+			wait_for_tx_done();
 #endif
 
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT
-		uint32_t remaining_bytes = len;
+			uint32_t remaining_bytes = len;
 
-		while (remaining_bytes) {
-			uint16_t transfer_len = MIN(remaining_bytes,
+			while (remaining_bytes) {
+				uint16_t transfer_len = MIN(remaining_bytes,
 						CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT_BUF_SIZE);
-			uint32_t idx = len - remaining_bytes;
+				uint32_t idx = len - remaining_bytes;
 
-			SEGGER_RTT_WriteSkipNoLock(trace_rtt_channel, &data[idx], transfer_len);
-			remaining_bytes -= transfer_len;
-		}
+				SEGGER_RTT_WriteSkipNoLock(trace_rtt_channel, &data[idx],
+					transfer_len);
+				remaining_bytes -= transfer_len;
+			}
 #endif
+		}
+
 		trace_processed_callback(data, len);
 		k_heap_free(t_heap, trace_data);
 	}
@@ -187,6 +192,8 @@ static bool rtt_init(void)
 int nrf_modem_lib_trace_init(struct k_heap *trace_heap)
 {
 	t_heap = trace_heap;
+	is_stopped = false;
+
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
 	is_transport_initialized = uart_init();
 #endif
@@ -209,6 +216,8 @@ int nrf_modem_lib_trace_start(enum nrf_modem_lib_trace_mode trace_mode)
 	if (nrf_modem_at_printf("AT%%XMODEMTRACE=1,%hu", trace_mode) != 0) {
 		return -EOPNOTSUPP;
 	}
+
+	is_stopped = false;
 
 	return 0;
 }
@@ -255,9 +264,12 @@ int nrf_modem_lib_trace_stop(void)
 	__ASSERT(!k_is_in_isr(),
 		"nrf_modem_lib_trace_stop cannot be called from interrupt context");
 
-	if (nrf_modem_at_printf("AT%%XMODEMTRACE=0") != 0) {
-		return -EOPNOTSUPP;
-	}
+	/* Don't use the AT%%XMODEMTRACE=0 command to disable traces because the
+	 * modem won't respond if the modem has crashed and is outputting the modem
+	 * core dump.
+	 */
+
+	is_stopped = true;
 
 	return 0;
 }
