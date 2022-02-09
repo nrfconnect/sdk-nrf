@@ -2,8 +2,8 @@
 
 .. _thingy91_ug_intro:
 
-Working with Thingy:91
-######################
+Developing with Thingy:91
+#########################
 
 .. contents::
    :local:
