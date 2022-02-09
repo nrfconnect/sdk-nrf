@@ -126,6 +126,7 @@ static int do_gpio_pin_configure_set(uint16_t op, gpio_pin_t pin)
 		err = gpio_pin_interrupt_configure(gpio_dev, pin, GPIO_INT_DISABLE);
 		if (err) {
 			LOG_ERR("Interface pin interrupt config error: %d", err);
+			k_free(slm_gpio_pin);
 			return err;
 		}
 		/* Remove callback */
