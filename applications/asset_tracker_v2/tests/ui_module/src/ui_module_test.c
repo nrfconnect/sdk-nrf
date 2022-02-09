@@ -40,9 +40,11 @@ static struct gnss_module_event gnss_module_event_memory;
 /* Macro used to submit module events of a specific type to the UI module. */
 #define TEST_SEND_EVENT(_mod, _type, _event)                                                       \
 	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&_mod##_module_event_memory);		   \
+	__wrap_event_manager_free_ExpectAnyArgs();						   \
 	_event = new_##_mod##_module_event();							   \
 	_event->type = _type;                                                                      \
-	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER((struct event_header *)_event))
+	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER((struct event_header *)_event));		   \
+	event_manager_free(_event)
 
 /* Dummy structs to please linker. The EVENT_SUBSCRIBE macros in ui_module.c
  * depend on these to exist. But since we are unit testing, we dont need
@@ -305,6 +307,7 @@ void test_state_shutdown_fota(void)
 	 * the UI module acknowledges the shutdown request.
 	 */
 	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&ui_module_event_memory);
+	__wrap_event_manager_free_ExpectAnyArgs();
 	__wrap__event_submit_Stub(&validate_ui_evt);
 
 	struct util_module_event *util_module_event = new_util_module_event();
@@ -313,6 +316,8 @@ void test_state_shutdown_fota(void)
 	util_module_event->reason = REASON_FOTA_UPDATE;
 
 	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER((struct event_header *)util_module_event));
+	event_manager_free(util_module_event);
+
 	state_verify(STATE_SHUTDOWN, SUB_STATE_ACTIVE, SUB_SUB_STATE_GNSS_INACTIVE);
 
 	TEST_ASSERT_TRUE(list_node_verify_next(LED_STATE_FOTA_UPDATE_REBOOT, -1));
@@ -331,6 +336,7 @@ void test_state_shutdown_error(void)
 	 * the UI module acknowledges the shutdown request.
 	 */
 	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&ui_module_event_memory);
+	__wrap_event_manager_free_ExpectAnyArgs();
 	__wrap__event_submit_Stub(&validate_ui_evt);
 
 	struct util_module_event *util_module_event = new_util_module_event();
@@ -339,6 +345,8 @@ void test_state_shutdown_error(void)
 	util_module_event->reason = REASON_GENERIC;
 
 	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER((struct event_header *)util_module_event));
+	event_manager_free(util_module_event);
+
 	state_verify(STATE_SHUTDOWN, SUB_STATE_ACTIVE, SUB_SUB_STATE_GNSS_INACTIVE);
 
 	TEST_ASSERT_TRUE(list_node_verify_next(LED_STATE_ERROR_SYSTEM_FAULT, -1));
@@ -378,6 +386,8 @@ void test_mode_transition(void)
 
 	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&data_module_event_memory);
 	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&data_module_event_memory);
+	__wrap_event_manager_free_ExpectAnyArgs();
+	__wrap_event_manager_free_ExpectAnyArgs();
 
 	/* Set module in SUB_STATE_PASSIVE */
 	data_module_event = new_data_module_event();
@@ -385,6 +395,8 @@ void test_mode_transition(void)
 	data_module_event->data.cfg.active_mode = false;
 
 	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER((struct event_header *)data_module_event));
+	event_manager_free(data_module_event);
+
 	state_verify(STATE_RUNNING, SUB_STATE_PASSIVE, SUB_SUB_STATE_GNSS_INACTIVE);
 
 	verify_publication(false);
@@ -395,6 +407,8 @@ void test_mode_transition(void)
 	data_module_event->data.cfg.active_mode = true;
 
 	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER((struct event_header *)data_module_event));
+	event_manager_free(data_module_event);
+
 	state_verify(STATE_RUNNING, SUB_STATE_ACTIVE, SUB_SUB_STATE_GNSS_INACTIVE);
 
 	verify_publication(true);
