@@ -124,7 +124,7 @@ static int uart_receive(void)
 	int ret;
 
 	ret = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_MS);
-	if (ret) {
+	if (ret && ret != -EBUSY) {
 		LOG_ERR("UART RX failed: %d", ret);
 		rsp_send(FATAL_STR, sizeof(FATAL_STR) - 1);
 		return ret;
