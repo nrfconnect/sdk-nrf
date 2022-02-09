@@ -81,7 +81,9 @@ static void cadence_store(struct bt_mesh_sensor_srv *srv)
 }
 
 
-static int value_get(struct bt_mesh_sensor *sensor, struct bt_mesh_msg_ctx *ctx,
+static int value_get(struct bt_mesh_sensor_srv *srv,
+		     struct bt_mesh_sensor *sensor,
+		     struct bt_mesh_msg_ctx *ctx,
 		     struct sensor_value *value)
 {
 	int err;
@@ -90,7 +92,7 @@ static int value_get(struct bt_mesh_sensor *sensor, struct bt_mesh_msg_ctx *ctx,
 		return -ENOTSUP;
 	}
 
-	err = sensor->get(sensor, ctx, value);
+	err = sensor->get(srv, sensor, ctx, value);
 	if (err) {
 		BT_WARN("Value get for 0x%04x: %d", sensor->type->id, err);
 		return err;
@@ -101,14 +103,15 @@ static int value_get(struct bt_mesh_sensor *sensor, struct bt_mesh_msg_ctx *ctx,
 	return 0;
 }
 
-static int buf_status_add(struct bt_mesh_sensor *sensor,
+static int buf_status_add(struct bt_mesh_sensor_srv *srv,
+			  struct bt_mesh_sensor *sensor,
 			  struct bt_mesh_msg_ctx *ctx,
 			  struct net_buf_simple *buf)
 {
 	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
 	int err;
 
-	err = value_get(sensor, ctx, value);
+	err = value_get(srv, sensor, ctx, value);
 	if (err) {
 		sensor_status_id_encode(buf, 0, sensor->type->id);
 		return err;
@@ -197,7 +200,7 @@ static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 
 		sensor = sensor_get(srv, id);
 		if (sensor) {
-			buf_status_add(sensor, ctx, &rsp);
+			buf_status_add(srv, sensor, ctx, &rsp);
 		} else {
 			BT_WARN("Unknown sensor ID 0x%04x", id);
 			sensor_status_id_encode(&rsp, 0, id);
@@ -207,7 +210,7 @@ static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	}
 
 	SENSOR_FOR_EACH(&srv->sensors, sensor) {
-		buf_status_add(sensor, ctx, &rsp);
+		buf_status_add(srv, sensor, ctx, &rsp);
 	}
 
 respond:
@@ -277,7 +280,7 @@ static int handle_column_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 		goto respond;
 	}
 
-	err = sensor_column_encode(&rsp, sensor, ctx, col);
+	err = sensor_column_encode(&rsp, srv, sensor, ctx, col);
 	if (err) {
 		BT_WARN("Failed encoding sensor column: %d", err);
 		return err;
@@ -351,7 +354,7 @@ static int handle_series_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 
 		BT_DBG("Column #%u", i);
 
-		int err = sensor_column_encode(&rsp, sensor, ctx, col);
+		int err = sensor_column_encode(&rsp, srv, sensor, ctx, col);
 
 		if (err) {
 			BT_WARN("Failed encoding: %d", err);
@@ -609,7 +612,7 @@ static int handle_setting_get(struct bt_mesh_model *model, struct bt_mesh_msg_ct
 
 	struct sensor_value values[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
 
-	setting->get(sensor, setting, ctx, values);
+	setting->get(srv, sensor, setting, ctx, values);
 
 	err = sensor_value_encode(&rsp, setting->type, values);
 	if (err) {
@@ -669,7 +672,7 @@ static int setting_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		return err;
 	}
 
-	setting->set(sensor, setting, ctx, values);
+	setting->set(srv, sensor, setting, ctx, values);
 
 	uint8_t minlen = rsp.len;
 
@@ -816,7 +819,7 @@ static void pub_msg_add(struct bt_mesh_sensor_srv *srv,
 
 	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
 
-	err = value_get(s, NULL, value);
+	err = value_get(srv, s, NULL, value);
 	if (err) {
 		return;
 	}
@@ -1062,7 +1065,7 @@ int bt_mesh_sensor_srv_sample(struct bt_mesh_sensor_srv *srv,
 	struct sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
 	int err;
 
-	err = value_get(sensor, NULL, value);
+	err = value_get(srv, sensor, NULL, value);
 	if (err) {
 		return -EBUSY;
 	}

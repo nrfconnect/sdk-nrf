@@ -13,6 +13,7 @@
 
 #include <bluetooth/mesh/sensor.h>
 #include <bluetooth/mesh/sensor_cli.h>
+#include <bluetooth/mesh/sensor_srv.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -155,6 +156,7 @@ int sensor_ch_decode(struct net_buf_simple *buf,
 		     struct sensor_value *value);
 
 int sensor_column_encode(struct net_buf_simple *buf,
+			 struct bt_mesh_sensor_srv *srv,
 			 struct bt_mesh_sensor *sensor,
 			 struct bt_mesh_msg_ctx *ctx,
 			 const struct bt_mesh_sensor_column *col);

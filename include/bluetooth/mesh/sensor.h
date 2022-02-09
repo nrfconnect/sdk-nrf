@@ -219,6 +219,7 @@ struct bt_mesh_sensor_type {
 };
 
 struct bt_mesh_sensor;
+struct bt_mesh_sensor_srv;
 
 /** Single sensor setting. */
 struct bt_mesh_sensor_setting {
@@ -229,6 +230,8 @@ struct bt_mesh_sensor_setting {
 	 *
 	 *  @note This handler is mandatory.
 	 *
+	 *  @param[in]  srv     Sensor server instance associated with this
+	 *                      setting.
 	 *  @param[in]  sensor  Sensor this setting belongs to.
 	 *  @param[in]  setting Pointer to this setting structure.
 	 *  @param[in]  ctx     Context parameters for the packet this call
@@ -239,7 +242,8 @@ struct bt_mesh_sensor_setting {
 	 *                      by the setting sensor type. All channels must be
 	 *                      filled.
 	 */
-	void (*get)(struct bt_mesh_sensor *sensor,
+	void (*get)(struct bt_mesh_sensor_srv *srv,
+		    struct bt_mesh_sensor *sensor,
 		    const struct bt_mesh_sensor_setting *setting,
 		    struct bt_mesh_msg_ctx *ctx,
 		    struct sensor_value *rsp);
@@ -248,6 +252,8 @@ struct bt_mesh_sensor_setting {
 	 *
 	 *  Should only be specified for writable sensor settings.
 	 *
+	 *  @param[in] srv     Sensor server instance associated with this
+	 *                     setting.
 	 *  @param[in] sensor  Sensor this setting belongs to.
 	 *  @param[in] setting Pointer to this setting structure.
 	 *  @param[in] ctx     Context parameters for the packet this call
@@ -258,7 +264,7 @@ struct bt_mesh_sensor_setting {
 	 *
 	 *  @return 0 on success, or (negative) error code otherwise.
 	 */
-	int (*set)(
+	int (*set)(struct bt_mesh_sensor_srv *srv,
 		struct bt_mesh_sensor *sensor,
 		const struct bt_mesh_sensor_setting *setting,
 		struct bt_mesh_msg_ctx *ctx,
@@ -305,6 +311,7 @@ struct bt_mesh_sensor_series {
 	 *  Should return the historical data for the latest sensor readings in
 	 *  the given column.
 	 *
+	 *  @param[in]  srv    Sensor server associated with sensor instance.
 	 *  @param[in]  sensor Sensor pointer.
 	 *  @param[in]  ctx    Message context pointer, or NULL if this call
 	 *                     didn't originate from a mesh message.
@@ -316,9 +323,11 @@ struct bt_mesh_sensor_series {
 	 *
 	 *  @return 0 on success, or (negative) error code otherwise.
 	 */
-	int (*get)(struct bt_mesh_sensor *sensor, struct bt_mesh_msg_ctx *ctx,
-		   const struct bt_mesh_sensor_column *column,
-		   struct sensor_value *value);
+	int (*get)(struct bt_mesh_sensor_srv *srv,
+		struct bt_mesh_sensor *sensor,
+		struct bt_mesh_msg_ctx *ctx,
+		const struct bt_mesh_sensor_column *column,
+		struct sensor_value *value);
 };
 
 /** Sensor instance. */
@@ -349,6 +358,7 @@ struct bt_mesh_sensor {
 
 	/** @brief Getter function for the sensor value.
 	 *
+	 *  @param[in]  srv    Sensor server associated with sensor instance.
 	 *  @param[in]  sensor Sensor instance.
 	 *  @param[in]  ctx    Message context, or NULL if the call wasn't
 	 *                     triggered by a mesh message.
@@ -358,8 +368,10 @@ struct bt_mesh_sensor {
 	 *
 	 *  @return 0 on success, or (negative) error code otherwise.
 	 */
-	int (*const get)(struct bt_mesh_sensor *sensor,
-			 struct bt_mesh_msg_ctx *ctx, struct sensor_value *rsp);
+	int (*const get)(struct bt_mesh_sensor_srv *srv,
+			 struct bt_mesh_sensor *sensor,
+			 struct bt_mesh_msg_ctx *ctx,
+			 struct sensor_value *rsp);
 
 	/* Internal state, overwritten on init. Should only be written to by
 	 * internal modules.
