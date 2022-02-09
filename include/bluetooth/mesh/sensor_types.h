@@ -961,7 +961,7 @@ extern const struct bt_mesh_sensor_type
  *    - Encoding: 32 bit unsigned scalar (Resolution: 0.001 kVAh)
  *    - Range: 0 to 4294967.293
  */
-extern const struct bt_mesh_sensor_type bt_mesh_sensor_apparent_energy32;
+extern const struct bt_mesh_sensor_type bt_mesh_sensor_apparent_energy;
 
 /** Apparent power
  *
