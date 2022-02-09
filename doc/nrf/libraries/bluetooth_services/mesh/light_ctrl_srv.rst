@@ -301,11 +301,11 @@ The illuminance regulator complements the light level state machine by adding an
 This allows the Light Lightness Server to adjust its output level that is based on the room's ambient light, and as a result conserve energy and achieve more consistent light levels.
 
 .. figure:: images/bt_mesh_light_ctrl_reg.svg
-   :alt: Light Lightness Control Server illuminance regulator
+   :alt: Illuminance regulator
 
-   Light Lightness Control Server illuminance regulator
+   Illuminance regulator
 
-The illuminance regulator takes the state machine's target illuminance level as the reference level and compares it to sensor data from an external illuminance sensor.
+The illuminance regulator takes the specified target illuminance level as the reference level and compares it to sensor data from an external illuminance sensor.
 The inputs are compared to establish an error for the regulator, which the regulator tries to minimize.
 The regulator contains a proportional (P) and an integral (I) component whose outputs are summarized to a light level output.
 
@@ -313,19 +313,8 @@ The illuminance regulator's output level only comes into effect if the required 
 To get full benefit of the regulator, the state machine's light level output should generally be configured to a lower value than desired, while keeping the target illuminance levels high.
 This allows the regulator to conserve energy by taking advantage of the room's ambient lighting.
 
-The regulator operates in a compile time configurable interval between 10 and 100 ms.
-For each step, the regulator:
-
-1. Calculates the integral of the error since the last step.
-#. Adds the integral to an internal sum.
-#. Multiplies this sum by an integral coefficient.
-#. Summarizes the sum with the raw difference multiplied by a proportional coefficient.
-
-The error, the regulator coefficients, and the internal sum, are represented as 32-bit floating point values.
-The resulting output level is represented as an unsigned 16-bit integer.
-
-To reduce noise, the regulator has a configurable accuracy property, which allows it to ignore errors smaller than the configured accuracy (represented as a percentage of the light level).
-See :kconfig:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_ACCURACY` and :c:enumerator:`BT_MESH_LIGHT_CTRL_PROP_REG_ACCURACY` for more information.
+The Light LC Server uses :ref:`bt_mesh_light_ctrl_reg_readme` to interract with the illuminance regulator.
+If the regulator functionality is enabled and no regulator is specified (using :c:macro:`BT_MESH_LIGHT_CTRL_SRV_INIT_WITH_REG`), the server will by default use the :ref:`bt_mesh_light_ctrl_reg_spec_readme`.
 
 Sensor input
 ------------
@@ -334,9 +323,9 @@ The regulator relies on regular sensor input data to function correctly.
 This sensor data must come from an external :ref:`bt_mesh_sensor_srv_readme` model and report the ambient light level with the :c:var:`bt_mesh_sensor_present_amb_light_level` sensor type.
 The Sensor Server should publish its sensor readings to an address the Light LC Server is subscribed to, using a common application key.
 
-The Light LC Server will process all incoming sensor messages and use them in the next regulator step.
+The Light LC Server will process all incoming sensor messages and pass the reported ambient light level to the regulator.
 The regulator depends on frequent readings from the sensor server to provide a stable output for the Light Lightness Server.
-If the sensor reports are too slow, the regulator might oscillate, as it attempts to compensate for outdated feedback.
+If the sensor reports are too slow, the regulator might oscillate as it attempts to compensate for outdated feedback.
 
 .. tip::
    Use the Sensor :ref:`bt_mesh_sensor_publishing_delta` feature for ambient light sensors feeding the regulator.
@@ -345,53 +334,6 @@ If the sensor reports are too slow, the regulator might oscillate, as it attempt
 The Sensor Server may be instantiated on the same mesh node as the Light LC Server, or on a different mesh node in the same area.
 The regulator performance depends heavily on the sensor's placement and sensitivity.
 In general, ambient light sensor devices should be placed in a way that allows their light sensor to capture the human perception of the room's light level as closely as possible.
-
-Tuning the regulator
---------------------
-
-Regulator tuning is complex and depends on a lot of internal and external parameters.
-Varying sensor delay, light output and light change rate may significantly affect the regulator performance and accuracy.
-To compensate for the external parameters, each regulator component provides user controllable coefficients that change their impact on the output value:
-
-* K\ :sub:`p` - for the proportional component
-* K\ :sub:`i` - for the integral component
-
-These coefficients can have individual values for positive and negative errors, referenced as follows in the API:
-
-* K\ :sub:`pu` - proportional up; used when target is higher.
-* K\ :sub:`pd` - proportional down; used when target is lower.
-* K\ :sub:`iu` - integral up; used when target is higher.
-* K\ :sub:`id` - integral down; used when target is lower
-
-Regulators are tuned to fit their environment by changing the coefficients.
-The coefficient adjustments are typically done by analyzing the system's *step response*.
-The step response is the overall system response to a change in reference value, for instance in a state change in the light level state machine.
-
-.. note::
-    The transition time between states in the Light LC Server makes the feedback loop more forgiving.
-    A larger transition time can compensate for poor regulator response.
-
-The illuminance regulator is a PI regulator, which uses the following components to compensate for a mismatch between the reference and the measured level:
-
-* Instantaneous error - The proportional component that is typically the main source of correction for a PI regulator.
-  It compares the reference value to the most recent feedback value, and attempts to correct the error by eliminating the difference.
-* Accumulated error - The integral component that compensates for errors by adding up the sum of the error over time.
-  Its main contribution is to eliminate system bias and accelerate the system step response.
-
-Changing different coefficients will affect the step response differently.
-Increasing the two coefficients will have the following effect on the step response:
-
-=========== ========= ========= ============= ==================
-Coefficient Rise time Overshoot Settling time Steady-state error
-=========== ========= ========= ============= ==================
-K\ :sub:`p`  Faster    Higher    \-            \-
-K\ :sub:`i`  Faster    Higher    Longer        Reduced
-=========== ========= ========= ============= ==================
-
-The value of the coefficients is typically a trade-off between fast response time and system instability:
-
-* If the value is too high, the system might become unstable, potentially leading to oscillation and loss of control.
-* If the value is too low, the step response might be too slow or unable to reach the target value altogether.
 
 States
 ******

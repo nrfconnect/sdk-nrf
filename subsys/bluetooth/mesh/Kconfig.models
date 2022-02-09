@@ -298,7 +298,7 @@ config BT_MESH_LIGHT_CTRL_REG_SPEC_INTERVAL
 	default 100
 	range 10 100
 	help
-	  Update interval of the specification PI regulator (in milliseconds).
+	  Update interval of the specification-defined illuminance regulator (in milliseconds).
 
 endif #BT_MESH_LIGHT_CTRL_REG_SPEC
 endif #BT_MESH_LIGHT_CTRL_REG

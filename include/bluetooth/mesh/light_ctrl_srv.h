@@ -54,7 +54,8 @@ struct bt_mesh_light_ctrl_srv;
  *
  *  @brief Initialization parameters for @ref bt_mesh_light_ctrl_srv.
  *
- *  This will enable the spec regulator if @kconfig{CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG} and
+ *  This will enable the specification-defined regulator if
+ *  @kconfig{CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG} and
  *  @kconfig{CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC} are selected.
  *
  *  @param[in] _lightness_srv Pointer to the @ref bt_mesh_lightness_srv this
