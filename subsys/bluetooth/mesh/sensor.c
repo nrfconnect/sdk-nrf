@@ -3,9 +3,9 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <bluetooth/mesh/sensor.h>
-#include <bluetooth/mesh/properties.h>
+
 #include "sensor.h"
+#include <bluetooth/mesh/properties.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -254,6 +254,7 @@ bt_mesh_sensor_column_format_get(const struct bt_mesh_sensor_type *type)
 }
 
 int sensor_column_encode(struct net_buf_simple *buf,
+			 struct bt_mesh_sensor_srv *srv,
 			 struct bt_mesh_sensor *sensor,
 			 struct bt_mesh_msg_ctx *ctx,
 			 const struct bt_mesh_sensor_column *col)
@@ -287,7 +288,7 @@ int sensor_column_encode(struct net_buf_simple *buf,
 		return err;
 	}
 
-	err = sensor->series.get(sensor, ctx, col, values);
+	err = sensor->series.get(srv, sensor, ctx, col, values);
 	if (err) {
 		return err;
 	}

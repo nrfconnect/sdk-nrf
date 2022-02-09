@@ -280,7 +280,8 @@ static void prop_mfr_get(struct bt_mesh_prop_srv *srv,
 	memcpy(val->value, &property.current, sizeof(property));
 }
 
-static int sensor_data_get(struct bt_mesh_sensor *sensor,
+static int sensor_data_get(struct bt_mesh_sensor_srv *srv,
+			   struct bt_mesh_sensor *sensor,
 			   struct bt_mesh_msg_ctx *ctx,
 			   struct sensor_value *rsp);
 
@@ -298,7 +299,8 @@ static struct sensor_value values[ARRAY_SIZE(sensors)];
 static struct bt_mesh_sensor_srv sensor_srv =
 	BT_MESH_SENSOR_SRV_INIT(sensors, ARRAY_SIZE(sensors));
 
-static int sensor_data_get(struct bt_mesh_sensor *sensor,
+static int sensor_data_get(struct bt_mesh_sensor_srv *srv,
+			   struct bt_mesh_sensor *sensor,
 			   struct bt_mesh_msg_ctx *ctx,
 			   struct sensor_value *rsp)
 {
