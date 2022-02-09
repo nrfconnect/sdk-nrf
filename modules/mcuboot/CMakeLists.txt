@@ -23,6 +23,13 @@ if (CONFIG_MCUBOOT)
 endif()
 
 if(CONFIG_BOOTLOADER_MCUBOOT)
+  if (CONFIG_NCS_IS_VARIANT_IMAGE)
+    # When building the variant of an image, the configuration of the variant image
+    # is identical to the base image, except 'CONFIG_NCS_IS_VARIANT_IMAGE'. The
+    # logic below should only be performed once, for the base image, not for the variant variant.
+    # Hence, we have this early return to avoid execution of this file for the variant image.
+    return()
+  endif()
 
   include(${ZEPHYR_BASE}/../nrf/cmake/fw_zip.cmake)
 
@@ -33,15 +40,17 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     # SIGNED_BIN_FILE_IN - (required) Hex image to sign
     # SIGNED_HEX_FILE_NAME_PREFIX - (required) Prefix of the output image
     # SLOT_SIZE - (required) The size of the primary partition
-    # START_ADDRESS_OFFSET - (required) Offset
     # SIGNED_HEX_FILE_OUT - (required) Signed hex output image
+    #
+    # Optional arguments:
+    # START_ADDRESS_OFFSET - (required) Offset
     # SIGNED_BIN_FILE_OUT - (optional) Signed bin output image
     # SIGNED_HEX_TEST_FILE_OUT - (optional) Signed hex output test image including IMAGE_MAGIC
     # SIGNED_BIN_FILE_OUT - (optional) Signed bin output image
     # DEPENDS - (optional) One or more dependencies for signing the hex image
 
-    set(oneValueArgs SIGNED_BIN_FILE_IN SIGNED_HEX_FILE_NAME_PREFIX SLOT_SIZE START_ADDRESS_OFFSET SIGNED_HEX_FILE_OUT)
-    set(oneValueOptionalArgs SIGNED_BIN_FILE_OUT SIGNED_HEX_TEST_FILE_OUT)
+    set(oneValueArgs SIGNED_BIN_FILE_IN SIGNED_HEX_FILE_NAME_PREFIX SLOT_SIZE SIGNED_HEX_FILE_OUT)
+    set(oneValueOptionalArgs SIGNED_BIN_FILE_OUT SIGNED_HEX_TEST_FILE_OUT START_ADDRESS_OFFSET)
     set(multiValueArgs DEPENDS)
     cmake_parse_arguments(SIGN_ARG "" "${oneValueArgs};${oneValueOptionalArgs}" "${multiValueArgs}" ${ARGN})
     check_arguments_required_all(sign SIGN_ARG ${oneValueArgs})
@@ -64,7 +73,8 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     # for the secondary slot, since these are the only ones with a memory mapped
     # area.
     dt_nodelabel(qspi_node NODELABEL "qspi")
-    if (NOT CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY OR DEFINED qspi_node)
+    if ((NOT CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY OR DEFINED qspi_node) AND
+        SIGN_ARG_START_ADDRESS_OFFSET)
       set(moved_test_update_hex
         ${SIGN_ARG_SIGNED_HEX_FILE_NAME_PREFIX}_moved_test_update.hex
         )
@@ -223,6 +233,11 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       NAME s1_image
       PRELOAD_IMAGE mcuboot
       )
+  elseif(CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT)
+    add_child_image(
+      NAME mcuboot_secondary_app
+      PRELOAD_IMAGE app
+      )
   endif()
 
   set(merged_hex_file
@@ -341,6 +356,38 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       mcuboot_primary_app_PM_TARGET
       mcuboot_sign_target
       )
+
+    if (CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT)
+      get_shared(mcuboot_secondary_app_bin_dir IMAGE mcuboot_secondary_app PROPERTY ZEPHYR_BINARY_DIR)
+      set(mcuboot_secondary_app_hex ${mcuboot_secondary_app_bin_dir}/zephyr.hex)
+
+      sign(
+        SIGNED_BIN_FILE_IN ${mcuboot_secondary_app_hex}
+        SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/mcuboot_secondary_app
+        SLOT_SIZE $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_SIZE>
+        SIGNED_HEX_FILE_OUT mcuboot_secondary_app_signed_hex
+        SIGNED_BIN_FILE_OUT mcuboot_secondary_app_signed_bin
+        SIGNED_HEX_TEST_FILE_OUT mcuboot_secondary_app_signed_test_hex
+        DEPENDS mcuboot_secondary_app_subimage ${mcuboot_secondary_app_bin_dir}/zephyr.hex
+        )
+
+      add_custom_target(mcuboot_secondary_app_sign_target
+        DEPENDS
+        ${mcuboot_secondary_app_signed_hex}
+        ${mcuboot_secondary_app_signed_bin}
+        ${mcuboot_secondary_app_signed_test_hex}
+        )
+
+      set_property(GLOBAL PROPERTY
+        mcuboot_secondary_app_PM_HEX_FILE
+        ${mcuboot_secondary_app_signed_hex}
+        )
+
+      set_property(GLOBAL PROPERTY
+        mcuboot_secondary_app_PM_TARGET
+        mcuboot_secondary_app_sign_target
+        )
+    endif()
 
     get_shared(cpunet_signed_app_hex IMAGE CPUNET PROPERTY PM_SIGNED_APP_HEX)
 
