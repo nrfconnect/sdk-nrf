@@ -30,6 +30,8 @@ static char *get_evt_type_str(enum cloud_module_event_type type)
 		return "CLOUD_EVT_CONFIG_EMPTY";
 	case CLOUD_EVT_DATA_ACK:
 		return "CLOUD_EVT_DATA_ACK";
+	case CLOUD_EVT_DATA_SEND:
+		return "CLOUD_EVT_DATA_SEND";
 	case CLOUD_EVT_SHUTDOWN_READY:
 		return "CLOUD_EVT_SHUTDOWN_READY";
 	case CLOUD_EVT_FOTA_START:

@@ -15,14 +15,6 @@ config DATA_AGPS_REQUEST_ALL_UPON_CONNECTION
 	bool "Request all A-GPS data upon a connection"
 	depends on NRF_CLOUD_AGPS || NRF_CLOUD_PGPS
 
-config PENDING_DATA_COUNT
-	int "Number of entries in pending data list"
-	default 10
-
-config FAILED_DATA_COUNT
-	int "Number of entries in failed data list"
-	default 10
-
 config DATA_SEND_ALL_DEVICE_CONFIGURATIONS
 	bool "Encode and send all device configurations regardless if they have changed or not"
 	help

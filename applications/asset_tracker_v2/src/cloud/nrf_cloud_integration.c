@@ -321,13 +321,14 @@ int cloud_wrap_disconnect(void)
 	return 0;
 }
 
-int cloud_wrap_state_send(char *buf, size_t len)
+int cloud_wrap_state_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	int err;
 	struct nrf_cloud_tx_data msg = {
 		.data.ptr = buf,
 		.data.len = len,
-		.qos = MQTT_QOS_0_AT_MOST_ONCE,
+		.id = id,
+		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		.topic_type = NRF_CLOUD_TOPIC_STATE,
 	};
 
@@ -340,13 +341,14 @@ int cloud_wrap_state_send(char *buf, size_t len)
 	return 0;
 }
 
-int cloud_wrap_batch_send(char *buf, size_t len)
+int cloud_wrap_batch_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	int err;
 	struct nrf_cloud_tx_data msg = {
 		.data.ptr = buf,
 		.data.len = len,
-		.qos = MQTT_QOS_0_AT_MOST_ONCE,
+		.id = id,
+		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		.topic_type = NRF_CLOUD_TOPIC_BULK,
 	};
 
@@ -359,13 +361,14 @@ int cloud_wrap_batch_send(char *buf, size_t len)
 	return 0;
 }
 
-int cloud_wrap_ui_send(char *buf, size_t len)
+int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	int err;
 	struct nrf_cloud_tx_data msg = {
 		.data.ptr = buf,
 		.data.len = len,
-		.qos = MQTT_QOS_0_AT_MOST_ONCE,
+		.id = id,
+		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
 	};
 
@@ -378,13 +381,14 @@ int cloud_wrap_ui_send(char *buf, size_t len)
 	return 0;
 }
 
-int cloud_wrap_neighbor_cells_send(char *buf, size_t len)
+int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	int err;
 	struct nrf_cloud_tx_data msg = {
 		.data.ptr = buf,
 		.data.len = len,
-		.qos = MQTT_QOS_0_AT_MOST_ONCE,
+		.id = id,
+		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
 	};
 
@@ -397,7 +401,7 @@ int cloud_wrap_neighbor_cells_send(char *buf, size_t len)
 	return 0;
 }
 
-int cloud_wrap_state_get(void)
+int cloud_wrap_state_get(bool ack, uint32_t id)
 {
 	/* Not supported, the nRF Cloud library automatically requests the cloud-side state upon
 	 * an established connection.
@@ -405,25 +409,25 @@ int cloud_wrap_state_get(void)
 	return -ENOTSUP;
 }
 
-int cloud_wrap_data_send(char *buf, size_t len)
+int cloud_wrap_data_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	/* Not supported, all data is sent to the bulk topic. */
 	return -ENOTSUP;
 }
 
-int cloud_wrap_agps_request_send(char *buf, size_t len)
+int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	/* Not supported, A-GPS is requested internally via the nRF Cloud A-GPS library. */
 	return -ENOTSUP;
 }
 
-int cloud_wrap_pgps_request_send(char *buf, size_t len)
+int cloud_wrap_pgps_request_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	/* Not supported, P-GPS is requested internally via the nRF Cloud P-GPS library. */
 	return -ENOTSUP;
 }
 
-int cloud_wrap_memfault_data_send(char *buf, size_t len)
+int cloud_wrap_memfault_data_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	/* Not supported */
 	return -ENOTSUP;
