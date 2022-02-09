@@ -185,7 +185,18 @@ Make sure to select a suitable build target when building your application.
 Building and programming
 ************************
 
-See :ref:`gs_programming` for information on building and programming samples on nRF9160 DK.
+You can program applications and samples on the nRF9160 DK after obtaining the corresponding firmware images.
+
+Download the latest application and modem firmware from the `nRF9160 DK Downloads <nRF9160 product website (compatible downloads)>`_ page.
+
+To program applications using the Programmer app from `nRF Connect for Desktop`_, follow the instructions in :ref:`nrf9160_gs_updating_fw_application`.
+In Step 2, set the switch to **nRF91** or **nRF52** as appropriate for the application or sample you are programming.
+Likewise, in Step 7, choose the :file:`.hex` file for the application you are programming.
+
+.. note::
+   When you update the application firmware on an nRF9160 DK, you must also update the modem firmware as described in :ref:`nrf9160_gs_updating_fw_modem`.
+
+See :ref:`gs_programming` for more information on building and programming samples on nRF9160 DK.
 
 
 Board revisions
