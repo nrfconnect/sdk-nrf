@@ -6,6 +6,7 @@
 
 menuconfig CLOUD_MODULE
 	bool "Cloud module"
+	select QOS
 	default y
 
 if CLOUD_MODULE

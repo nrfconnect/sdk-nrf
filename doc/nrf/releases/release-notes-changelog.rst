@@ -91,6 +91,7 @@ nRF9160: Asset Tracker v2
   * Support for Indoor Air Quality (IAQ) readings retrieved from the BME680 sensor on Thingy:91. For more information, see the :ref:`asset_tracker_v2_sensor_module`.
   * Support for QEMU x86 emulation.
   * Support for the :ref:`lib_nrf_cloud_pgps` flash memory partition under certain conditions.
+  * Support for :ref:`QoS` library to handle multiple in-flight messages for MQTT based cloud backends such as AWS IoT, Azure IoT Hub, and nRF Cloud.
 
 * Updated:
 
