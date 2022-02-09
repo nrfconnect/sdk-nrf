@@ -36,20 +36,24 @@
 
 declare -A PROJECT_TAGS
 
-# Uncomment and edit these lines as needed.
+# Set the tag names for all the projects below.
 #
 #     - keys are project names in west.yml
 #     - values are the tags you want to make
 #
-# PROJECT_TAGS[zephyr]=v2.7.99-ncs1-rc1
-# PROJECT_TAGS[mcuboot]=v1.8.99-ncs1-rc1
-# PROJECT_TAGS[trusted-firmware-m]=v1.5.0-ncs1-rc1
-# PROJECT_TAGS[matter]=v1.9.0-rc1
-# PROJECT_TAGS[openthread]=v1.9.0-rc1
-# PROJECT_TAGS[nrfxlib]=v1.9.0-rc1
-# PROJECT_TAGS[find-my]=v1.9.0-rc1
-# PROJECT_TAGS[nrf-802154]=v1.9.0-rc1
-# PROJECT_TAGS[homekit]=v1.9.0-rc1
+# nrfx/nRF/srcx repositories: vX.Y.Z(-rcN)
+PROJECT_TAGS[nrfxlib]=""
+PROJECT_TAGS[find-my]=""
+PROJECT_TAGS[homekit]=""
+PROJECT_TAGS[matter]=""
+PROJECT_TAGS[nrf-802154]=""
+
+# OSS repositories: vX.Y.Z-ncsN(-I)(-rcM)
+PROJECT_TAGS[zephyr]=""
+PROJECT_TAGS[mcuboot]=""
+PROJECT_TAGS[trusted-firmware-m]=""
+PROJECT_TAGS[tfm-mcuboot]=""
+PROJECT_TAGS[mbedtls-nrf]=""
 
 
 
@@ -84,6 +88,11 @@ tag() {
     project="$1"
     tagname="$2"
 
+    if [ -z "$project" ] || [ -z "$tagname" ]; then
+	    echo "empty project or tagname" 1>&2
+	    return
+    fi
+
     hline
 
     sha=$(west list -f '{sha}' "$project")
@@ -109,6 +118,11 @@ push_tag() {
     project="$1"
     tagname="$2"
 
+    if [ -z "$project" ] || [ -z "$tagname" ]; then
+	    echo "empty project or tagname" 1>&2
+	    return
+    fi
+
     hline
 
     local_path=$(west list -f '{abspath}' "$project")
@@ -130,6 +144,11 @@ remove_tag() {
     project="$1"
     tagname="$2"
 
+    if [ -z "$project" ] || [ -z "$tagname" ]; then
+	    echo "empty project or tagname" 1>&2
+	    return
+    fi
+
     hline
 
     local_path=$(west list -f '{abspath}' "$project")
@@ -137,6 +156,16 @@ remove_tag() {
     echo "$project": removing tag "$tagname" in "$local_path"
 
     git -C "$local_path" tag -d "$tagname"
+}
+
+check_tags() {
+
+    for project in "${!PROJECT_TAGS[@]}"; do
+        if [ -z "${PROJECT_TAGS[$project]}" ]; then
+	    echo "error: empty tag name" 1>&2
+	    exit 1
+	fi
+    done
 }
 
 tag_all() {
@@ -167,6 +196,7 @@ remove_all() {
 command="$1"
 shift
 
+check_tags
 case "$command" in
     tag-all)
 	# Create tags in all the repositories in the local working trees.
