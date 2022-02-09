@@ -622,11 +622,15 @@
 .. _`nRF Connect for Cloud Patch Device State`: https://api.nrfcloud.com/v1#operation/UpdateDeviceState
 .. _`nRF Cloud REST API (v1)`:
 .. _`nRF Cloud Device API`: https://api.nrfcloud.com/v1
+.. _`nRF Cloud REST API ListMessages`: https://api.nrfcloud.com/v1#operation/ListMessages
+.. _`nRF Cloud Device Messages`: https://docs.nrfcloud.com/Reference/DeviceMessages/
 .. _`nRF Cloud REST API`:
 .. _`nRF Connect for Cloud REST API`: https://docs.nrfcloud.com/Reference/Interacting/REST#the-nrf-cloud-rest-api
 .. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
 .. _`nRF Cloud Location Services documentation`: https://docs.nrfcloud.com/Reference/LocationServices
 .. _`nRF Cloud MQTT API`: https://docs.nrfcloud.com/Reference/Interacting/MQTT
+.. _`nRF Cloud Security`: https://docs.nrfcloud.com/Reference/Devices/Security/
+.. _`nRF Cloud MQTT Topics`: https://docs.nrfcloud.com/Reference/Interacting/MQTT/#message-and-location-services-topics
 
 .. _`nRF Cloud Security`: https://docs.nrfcloud.com/Reference/Devices/Security/
 
