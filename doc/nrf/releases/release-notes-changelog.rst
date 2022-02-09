@@ -138,6 +138,13 @@ Bluetooth samples
 
     * Increased the main stack size from 1024 to 1536 bytes.
 
+nRF9160 samples
+---------------
+
+* Added:
+
+  * :ref:`nrf_cloud_rest_device_message` sample, demonstrating how to send an arbitrary device message with the nRF Cloud REST API.
+
 Bluetooth mesh samples
 ----------------------
 
