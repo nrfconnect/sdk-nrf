@@ -100,6 +100,7 @@ static void validate_debug_data_ready_evt(struct event_header *eh, int no_of_cal
 void setup_debug_module_in_init_state(void)
 {
 	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
+	__wrap_event_manager_free_ExpectAnyArgs();
 	struct app_module_event *app_module_event = new_app_module_event();
 
 	app_module_event->type = APP_EVT_START;
@@ -115,6 +116,7 @@ void setup_debug_module_in_init_state(void)
 	__wrap_module_start_ExpectAndReturn(&expected_module_data, 0);
 
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER((struct event_header *)app_module_event));
+	event_manager_free(app_module_event);
 }
 
 /* Test whether the correct Memfault metrics are set upon a GNSS fix. */
@@ -133,6 +135,7 @@ void test_memfault_trigger_metric_sampling_on_gnss_fix(void)
 	__wrap_memfault_metrics_heartbeat_debug_trigger_Expect();
 
 	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&gnss_module_event_memory);
+	__wrap_event_manager_free_ExpectAnyArgs();
 	struct gnss_module_event *gnss_module_event = new_gnss_module_event();
 
 	gnss_module_event->type = GNSS_EVT_DATA_READY;
@@ -140,6 +143,7 @@ void test_memfault_trigger_metric_sampling_on_gnss_fix(void)
 	gnss_module_event->data.gnss.search_time = 60000;
 
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER((struct event_header *)gnss_module_event));
+	event_manager_free(gnss_module_event);
 }
 
 /* Test whether the correct Memfault metrics are set upon a GNSS timeout. */
@@ -160,6 +164,7 @@ void test_memfault_trigger_metric_sampling_on_gnss_timeout(void)
 	__wrap_memfault_metrics_heartbeat_debug_trigger_Ignore();
 
 	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&gnss_module_event_memory);
+	__wrap_event_manager_free_ExpectAnyArgs();
 	struct gnss_module_event *gnss_module_event = new_gnss_module_event();
 
 	gnss_module_event->type = GNSS_EVT_TIMEOUT;
@@ -167,6 +172,7 @@ void test_memfault_trigger_metric_sampling_on_gnss_timeout(void)
 	gnss_module_event->data.gnss.search_time = 30000;
 
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER((struct event_header *)gnss_module_event));
+	event_manager_free(gnss_module_event);
 }
 
 /* Test that the debug module is able to submit Memfault data externally through events
@@ -187,12 +193,14 @@ void test_memfault_trigger_data_send(void)
 	__wrap__event_submit_Stub(&validate_debug_data_ready_evt);
 
 	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&data_module_event_memory);
+	__wrap_event_manager_free_ExpectAnyArgs();
 	struct data_module_event *data_module_event = new_data_module_event();
 
 	data_module_event->type = DATA_EVT_DATA_SEND;
 
 	__wrap_event_manager_alloc_IgnoreAndReturn(&debug_module_event_memory);
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER((struct event_header *)data_module_event));
+	event_manager_free(data_module_event);
 }
 
 /* Test that no Memfault SDK specific APIs are called on GNSS module events
@@ -206,6 +214,7 @@ void test_memfault_unhandled_event(void)
 	/* Expect no memfault APIs to be called on GNSS_EVT_ACTIVE */
 
 	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&gnss_module_event_memory);
+	__wrap_event_manager_free_ExpectAnyArgs();
 	struct gnss_module_event *gnss_module_event = new_gnss_module_event();
 
 	gnss_module_event->type = GNSS_EVT_ACTIVE;
@@ -222,6 +231,7 @@ void test_memfault_unhandled_event(void)
 
 	gnss_module_event->type = GNSS_EVT_ERROR_CODE;
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER((struct event_header *)gnss_module_event));
+	event_manager_free(gnss_module_event);
 }
 
 /* Test whether the correct Memfault software watchdog APIs are called on callbacks from the
