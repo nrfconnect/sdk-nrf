@@ -104,6 +104,11 @@ static struct lwm2m_engine_obj_inst *signal_meas_info_create(uint16_t obj_inst_i
 		}
 	}
 
+	if (index >= MAX_INSTANCE_COUNT) {
+		LOG_ERR("Not enough memory to create object instance.");
+		return NULL;
+	}
+
 	(void)memset(res[index], 0,
 		     sizeof(res[index][0]) * ARRAY_SIZE(res[index]));
 	init_res_instance(res_inst[index], ARRAY_SIZE(res_inst[index]));
