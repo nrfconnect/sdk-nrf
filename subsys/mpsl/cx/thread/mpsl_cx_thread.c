@@ -42,6 +42,9 @@ static const struct gpio_dt_spec gra_spec = GPIO_DT_SPEC_GET(CX_NODE, grant_gpio
 #if !defined(CONFIG_MPSL_CX_PIN_FORWARDER)
 static mpsl_cx_cb_t callback;
 static struct gpio_callback grant_cb;
+static volatile mpsl_cx_op_map_t last_notified;
+static volatile uint8_t is_handled;
+static volatile uint8_t monitor;
 
 static int32_t grant_pin_is_asserted(bool *is_asserted)
 {
@@ -80,33 +83,57 @@ static int32_t granted_ops_get(mpsl_cx_op_map_t *granted_ops)
 	return 0;
 }
 
+static void check_and_notify(void)
+{
+	int32_t ret;
+	mpsl_cx_op_map_t granted_ops;
+
+	ret = granted_ops_get(&granted_ops);
+
+	__ASSERT(ret == 0, "Getting grant pin state returned unexpected result: %d", ret);
+	if (ret != 0) {
+		/* nrfx gpio implementation cant return failure for this call
+		 * This condition is handled for fail-safe approach. It is
+		 * assumed GRANT is not given, if cannot read its value
+		 */
+		granted_ops = granted_ops_map(false);
+	}
+
+	if (granted_ops != last_notified) {
+		last_notified = granted_ops;
+		callback(granted_ops);
+	}
+}
+
 static void gpiote_irq_handler(const struct device *gpiob, struct gpio_callback *cb, uint32_t pins)
 {
 	(void)gpiob;
 	(void)cb;
 	(void)pins;
+	uint8_t mon;
 
-	static mpsl_cx_op_map_t last_notified;
-	int32_t ret;
-	mpsl_cx_op_map_t granted_ops;
-
-	if (callback != NULL) {
-		ret = granted_ops_get(&granted_ops);
-
-		__ASSERT(ret == 0, "Getting grant pin state returned unexpected result: %d", ret);
-		if (ret != 0) {
-			/* nrfx gpio implementation cannot return failure for this call
-			 * This condition is handled for fail-safe approach. It is assumed
-			 * GRANT is not given, if cannot read its value
-			 */
-			granted_ops = granted_ops_map(false);
-		}
-
-		if (granted_ops != last_notified) {
-			last_notified = granted_ops;
-			callback(granted_ops);
-		}
+	if (callback == NULL) {
+		return;
 	}
+
+	do {
+		if (is_handled == 0) {
+			is_handled++;
+			check_and_notify();
+			is_handled--;
+
+			do {
+				mon = __LDREXB(&monitor);
+				if (mon > 0) {
+					mon--;
+				}
+			} while (__STREXB(mon, &monitor));
+
+		} else {
+			monitor++;
+			break;
+		}
+	} while (monitor > 0);
 }
 
 static int32_t request(const mpsl_cx_request_t *req_params)
@@ -159,6 +186,7 @@ static uint32_t req_grant_delay_get(void)
 static int32_t register_callback(mpsl_cx_cb_t cb)
 {
 	callback = cb;
+	gpiote_irq_handler(NULL, NULL, 0);
 
 	return 0;
 }
