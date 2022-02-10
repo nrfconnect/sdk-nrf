@@ -54,10 +54,14 @@ static void user_association_work_fn(struct k_work *work)
 static int send_service_info(void)
 {
 	int err;
+	bool fota_capable = IS_ENABLED(CONFIG_NRF_CLOUD_FOTA) &&
+			    IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT);
+	bool boot_fota_capable = IS_ENABLED(CONFIG_BUILD_S1_VARIANT) &&
+				 IS_ENABLED(CONFIG_SECURE_BOOT);
 	struct nrf_cloud_svc_info_fota fota_info = {
-		.application = true,
-		.bootloader = true,
-		.modem = true
+		.application = fota_capable,
+		.bootloader = fota_capable && boot_fota_capable,
+		.modem = fota_capable
 	};
 	struct nrf_cloud_svc_info_ui ui_info = {
 		.gps = true,

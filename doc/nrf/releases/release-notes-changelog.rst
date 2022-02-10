@@ -88,6 +88,7 @@ nRF9160: Asset Tracker v2
 * Added new documentation for :ref:`asset_tracker_v2_util_module` and :ref:`api_modules_common`.
 * Updated support for P-GPS preemptive updates and P-GPS coexistence with A-GPS.
 * Added functionality that allows the application to wait for A-GPS data to be processed before starting GNSS positioning.
+* Fixed nRF Cloud FOTA issue to only enable image types on the cloud if they are enabled on the device.
 
 nRF9160: Asset Tracker
 ----------------------
