@@ -135,6 +135,10 @@ static int lwm2m_setup(void)
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
 	init_neighbour_cell_info();
 #endif
+
+#if defined(CONFIG_LWM2M_PORTFOLIO_OBJ_SUPPORT)
+	lwm2m_init_portfolio_object();
+#endif
 	return 0;
 }
 

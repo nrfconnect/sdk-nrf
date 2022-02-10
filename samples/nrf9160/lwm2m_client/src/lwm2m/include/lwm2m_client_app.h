@@ -56,6 +56,10 @@ int lwm2m_init_onoff_switch(void);
 int lwm2m_init_accel(void);
 #endif
 
+#if defined(CONFIG_LWM2M_PORTFOLIO_OBJ_SUPPORT)
+int lwm2m_init_portfolio_object(void);
+#endif
+
 #ifdef __cplusplus
 }
 #endif
