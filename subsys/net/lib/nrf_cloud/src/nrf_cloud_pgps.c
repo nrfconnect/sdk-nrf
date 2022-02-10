@@ -1580,12 +1580,14 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 			evt_handler(&evt);
 		}
 
-		if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS_REQUEST_ALL_UPON_INIT)) {
-			err = pgps_request_all();
-		} else {
-			err = 0;
+		if (!IS_ENABLED(CONFIG_NRF_CLOUD_PGPS_REQUEST_UPON_INIT)) {
+			return 0;
 		}
+		err = pgps_request_all();
 	} else if (num_valid < count) {
+		if (!IS_ENABLED(CONFIG_NRF_CLOUD_PGPS_REQUEST_UPON_INIT)) {
+			return 0;
+		}
 		/* read missing predictions at end */
 		struct gps_pgps_request request;
 
@@ -1601,6 +1603,9 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 
 		err = pgps_request(&request);
 	} else if ((count - (pnum + 1)) < REPLACEMENT_THRESHOLD) {
+		if (!IS_ENABLED(CONFIG_NRF_CLOUD_PGPS_REQUEST_UPON_INIT)) {
+			return 0;
+		}
 		/* Replace expired predictions with newer.
 		 * The function will emit the request as a PGPS_EVT_REQUEST if
 		 * auto-request is disabled.
