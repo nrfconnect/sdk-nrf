@@ -75,6 +75,72 @@ void ncell_meas_work_handler(struct k_work *work)
 }
 #endif
 
+
+#if defined(CONFIG_APP_LWM2M_CONFORMANCE_TESTING)
+static struct k_work_delayable send_periodical_work;
+static uint8_t send_count = 0;
+
+static int server_send_mute_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, uint8_t *data,
+			uint16_t data_len, bool last_block, size_t total_size)
+{
+	if (*data) {
+		LOG_INF("Server Muted Send");
+	} else {
+
+		if (send_count == 0) {
+			LOG_INF("Server Activate Send");
+			send_count = 5;
+			k_work_schedule(&send_periodical_work, K_SECONDS(1));
+		}
+	}
+
+	return 0;
+}
+
+static void lwm2m_register_server_send_mute_cb(void)
+{
+	int ret;
+	char path[sizeof("/0/0/10")];
+	lwm2m_engine_set_data_cb_t cb;
+
+	cb = server_send_mute_cb;
+	snprintk(path, sizeof(path), "1/%d/23", client.srv_obj_inst);
+	ret = lwm2m_engine_register_post_write_callback(path, cb);
+	if (ret) {
+		LOG_ERR("Send enable CB fail %d", ret);
+	}
+}
+
+void send_periodically_work_handler(struct k_work *work)
+{
+	int ret;
+	char const *send_path[4] = {
+		LWM2M_PATH(3, 0, 0),
+		LWM2M_PATH(3, 0, 3),
+		LWM2M_PATH(3, 0, 13),
+		LWM2M_PATH(3, 0, 19),
+	};
+
+	/* lwm2m send post to server */
+	ret = lwm2m_engine_send(&client, send_path, 4, true);
+	if (ret) {
+		if (ret == EPERM) {
+			LOG_INF("Server Mute send block send operation");
+		} else {
+			LOG_INF("Periodically SEND test data fail %d", ret);
+		}
+	}
+
+	if (send_count) {
+		if (ret == 0) {
+			send_count--;
+		}
+
+		k_work_schedule(&send_periodical_work, K_SECONDS(15));
+	}
+}
+#endif
+
 static int lwm2m_setup(void)
 {
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT)
@@ -209,6 +275,11 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_COMPLETE:
 		reconnection_counter = 0;
 		LOG_DBG("Registration complete");
+
+#if defined(CONFIG_APP_LWM2M_CONFORMANCE_TESTING)
+		lwm2m_register_server_send_mute_cb();
+#endif
+
 		/* Get current time and date */
 		date_time_update_async(date_time_event_handler);
 #if defined(CONFIG_APP_GNSS)
@@ -385,6 +456,9 @@ void main(void)
 	k_work_init_delayable(&ncell_meas_work, ncell_meas_work_handler);
 	k_work_schedule(&ncell_meas_work, K_SECONDS(1));
 #endif
+#if defined(CONFIG_APP_LWM2M_CONFORMANCE_TESTING)
+	k_work_init_delayable(&send_periodical_work, send_periodically_work_handler);
+#endif
 
 	while (true) {
 		if (lwm2m_security_needs_bootstrap()) {
@@ -401,6 +475,10 @@ void main(void)
 
 		/* Stop the LwM2M engine. */
 		lwm2m_rd_client_stop(&client, rd_client_event, false);
+#if defined(CONFIG_APP_LWM2M_CONFORMANCE_TESTING)
+		k_work_cancel_delayable(&send_periodical_work);
+		send_count = 0;
+#endif
 
 		if (reconnect) {
 			reconnect = false;
