@@ -638,10 +638,18 @@
 .. _`Chocolatey`: https://chocolatey.org/
 .. _`PlantUML from chocolatey`: https://community.chocolatey.org/packages/plantuml
 
+.. ### Source: fwupd.org & lvfs.readthedocs.io
+
+.. _`LVFS`: https://fwupd.org/lvfs
+.. _`LVFS Getting an Account`: https://lvfs.readthedocs.io/en/latest/apply.html
+.. _`LVFS metadata`: https://lvfs.readthedocs.io/en/latest/metainfo.html
+.. _`LVFS Uploading Firmware`: https://lvfs.readthedocs.io/en/latest/upload.html
+.. _`LVFS testing`: https://lvfs.readthedocs.io/en/latest/testing.html
+.. _`LVFS building fwupd`: https://lvfs.readthedocs.io/en/latest/custom-plugin.html#building-fwupd
+
 .. ### Source: other
 
 .. _`iBasis IoT network coverage`: https://ibasis.com/solutions/iot-connectivity/network-coverage/
-
 
 .. _`BME680`: https://www.bosch-sensortec.com/products/environmental-sensors/gas-sensors/bme680/
 
@@ -657,6 +665,8 @@
 .. _`GCC compiler`: https://gcc.gnu.org/
 
 .. _`MCUboot`: https://www.mcuboot.com
+
+.. _`Apple Notification Center Service Specification`: https://developer.apple.com/library/archive/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/Introduction/Introduction.html
 
 .. _`nRF Mesh mobile app for iOS`: https://apps.apple.com/us/app/nrf-mesh/id1380726771
 .. _`nRF Mesh mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.nrfmeshprovisioner
@@ -696,6 +706,8 @@
 
 .. _`Creative Commons 4.0 Attribution License`: https://creativecommons.org/licenses/by/4.0/
 .. _`shared by Google`: https://developers.google.com/terms/site-policies
+
+.. _`Works With ChromeBook (WWCB)`: https://www.google.com/chromebook/workswithchromebook
 
 .. _`openSSL`: https://www.openssl.org/
 
@@ -745,8 +757,6 @@
 .. _`GN`: https://gn.googlesource.com/gn/
 .. _`GN website`: https://gn.googlesource.com/gn/#getting-a-binary
 
-.. _`Apple Notification Center Service Specification`: https://developer.apple.com/library/archive/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/Introduction/Introduction.html
-
 .. _`Power Saving Mode (PSM)`: https://www.sharetechnote.com/html/Handbook_LTE_PSM.html
 
 .. _`Leshan Demo Server web UI`:
@@ -781,17 +791,3 @@
 .. _`Termite`: https://www.compuphase.com/software_termite.htm
 
 .. _`Teraterm`: https://ttssh2.osdn.jp/index.html.en
-
-.. _`LVFS`: https://fwupd.org/lvfs
-
-.. _`LVFS Getting an Account`: https://lvfs.readthedocs.io/en/latest/apply.html
-
-.. _`LVFS metadata`: https://lvfs.readthedocs.io/en/latest/metainfo.html
-
-.. _`LVFS Uploading Firmware`: https://lvfs.readthedocs.io/en/latest/upload.html
-
-.. _`LVFS testing`: https://lvfs.readthedocs.io/en/latest/testing.html
-
-.. _`LVFS building fwupd`: https://lvfs.readthedocs.io/en/latest/custom-plugin.html#building-fwupd
-
-.. _`Works With ChromeBook (WWCB)`: https://www.google.com/chromebook/workswithchromebook
