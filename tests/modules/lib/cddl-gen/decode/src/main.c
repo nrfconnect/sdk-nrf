@@ -16,6 +16,10 @@ static void test_decode(void)
 	struct Test test;
 	bool res;
 
+	/* Initialize struct to ensure test isn't checking uninitialized pointers */
+	test._Test_name_tstr[0] = (cbor_string_type_t){NULL, 0};
+	test._Test_name_tstr[1] = (cbor_string_type_t){NULL, 0};
+
 	new_state(states, 4, payload, sizeof(payload), 1);
 
 	res = list_start_encode(states, 3);
