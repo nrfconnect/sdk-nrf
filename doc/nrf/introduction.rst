@@ -8,20 +8,20 @@ About the |NCS|
    :depth: 2
 
 The |NCS| enables you to develop applications for nRF52, nRF53, and nRF91 Series devices.
-It is a set of open source projects maintained by Nordic Semiconductor, consisting of several Git repositories publicly hosted on `GitHub`_:
+It is a combination of software developed by Nordic Semiconductor and open source projects, hosted as `Git_` repositories in the `nrfconnect GitHub organization`_.
+Every |NCS| release consists of a combination of all those repositories at different revisions. Some notable repositories include:
 
 * `sdk-nrf`_ repository - contains applications, samples, libraries, and drivers that are specifically targeted at Nordic Semiconductor devices.
 * `sdk-nrfxlib`_ repository - contains closed-source libraries and modules in binary format.
   See the :doc:`nrfxlib documentation <nrfxlib:README>`.
+* `sdk-zephyr`_ repository - contains a fork of the `Zephyr`_ project, which provides samples, libraries, and drivers for a wide variety of devices, including Nordic Semiconductor devices.
+  See the :doc:`documentation <zephyr:index>` in Nordic Semiconductor’s Zephyr fork.
 * `sdk-mcuboot`_ repository - contains a fork of the `MCUboot`_ project, which provides a secure bootloader application.
   You can find the fork in :file:`bootloader/mcuboot` after obtaining the |NCS| source code.
   See the :doc:`documentation <mcuboot:index-ncs>` in Nordic Semiconductor’s MCUboot fork.
-* `sdk-zephyr`_ repository - contains a fork of the `Zephyr`_ project, which provides samples, libraries, and drivers for a wide variety of devices, including Nordic Semiconductor devices.
-  See the :doc:`documentation <zephyr:index>` in Nordic Semiconductor’s Zephyr fork.
 
-Every nRF Connect SDK release consists of a combination of these repositories at different revisions.
-The revision of each of those repositories is determined by the current revision of the main (or manifest) repository, ``sdk-nrf``.
-It contains the SDK manifest file that enables you to manage the repositories as one code base with the west tool.
+See the :ref:`repos_and_revs` section for a comprehensive list of repositories and their current revisions.
+The revision of each of those repositories is determined by the current revision of the main (manifest) repository, ``sdk-nrf``, which contains the SDK manifest file that helps manage the repositories as one :ref:`code base <dm_code_base>` with the :ref:`ncs_west_intro` tool.
 
 About the |NCS| license
 ***********************
@@ -107,6 +107,8 @@ Everything in Git is checksummed before it is stored and is then referred to by 
 The mechanism that Git uses for this checksumming is called a SHA-1 hash.
 This hash is a 40-character string, composed of hexadecimal characters (0–9 and a–f), and calculated based on the contents of a file or directory structure in Git.
 
+.. _ncs_west_intro:
+
 West
 ====
 
@@ -146,3 +148,8 @@ For more information about the west tool, see the :ref:`zephyr:west` user guide.
 
 See :ref:`getting_started` for information about how to install the |NCS| and about the first steps.
 See :ref:`dev-model` for more information about the |NCS| code base and how to manage it.
+
+.. _repos_and_revs:
+
+Repositories and revisions
+**************************
