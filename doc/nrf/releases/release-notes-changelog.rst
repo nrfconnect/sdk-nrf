@@ -204,6 +204,7 @@ nRF9160 samples
     * Reworked the retry logic so that the sample can fall back to bootstrap mode and need not always restart the LTE connection.
       Added :ref:`state_diagram` to the sample documentation.
     * Replaced the deprecated GPS-driver with the new GNSS interface.
+    * Added minimal Portfolio object support that is required for LwM2M conformance testing.
 
   * :ref:`download_sample` sample:
 
