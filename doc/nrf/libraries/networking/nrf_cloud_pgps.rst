@@ -51,6 +51,7 @@ Configure these additional options to refine the behavior of P-GPS:
 * :kconfig:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS`
 * :kconfig:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD`
 * :kconfig:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_FRAGMENT_SIZE`
+* :kconfig:`CONFIG_NRF_CLOUD_PGPS_REQUEST_UPON_INIT`
 
 Configure both of the following options if you need your application to use A-GPS as well, for coarse time and position data and to get the fastest TTFF:
 
@@ -76,7 +77,8 @@ Initialization
 
 Ideally, once the device has connected to the cloud, the application must call the P-GPS initialization function.
 If a connection is not available, initialization must still be called.
-In this case, predictions will be unavailable if all valid predictions have expired, until a connection is established to the cloud in the future.
+If the :kconfig:`CONFIG_NRF_CLOUD_PGPS_REQUEST_UPON_INIT` option is disabled, the initialization function does not automatically download missing P-GPS data.
+In these cases, predictions might be unavailable until a connection is established to the cloud.
 
 .. note::
    Each prediction requires 2 KB of flash. For prediction periods of 240 minutes (four hours), and with 42 predictions per week, the flash requirement adds up to 84 KB.

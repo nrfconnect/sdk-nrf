@@ -292,6 +292,11 @@ Libraries for networking
 
   * Added support for LwM2M object ECID-Signal Measurement Information (object ID 10256).
 
+* :ref:`lib_nrf_cloud_pgps` library:
+
+  * Removed the word ALL from the :kconfig:`CONFIG_NRF_CLOUD_PGPS_REQUEST_UPON_INIT` option.
+    Changed the :c:func:`nrf_cloud_pgps_init` function to use this to disable all three reasons for downloading P-GPS data, not just the full set.
+
 Modem libraries
 ---------------
 
