@@ -19,6 +19,7 @@ config  CERT_SEC_TAG
 
 config USE_CUSTOM_CLIENT_ID
 	bool "Custom MQTT client ID"
+	default y
 
 config CLIENT_ID
 	depends on USE_CUSTOM_CLIENT_ID
