@@ -96,6 +96,15 @@ Libraries
 
 This section provides detailed lists of changes by :ref:`library <libraries>`.
 
+Libraries for networking
+------------------------
+
+* :ref:`lib_nrf_cloud_rest` library:
+
+   * Added JSON Web Token (JWT) autogeneration feature.
+
+     If enabled, the nRF Cloud REST library automatically generates a JWT if none is provided by the user when making REST requests.
+
 Bluetooth libraries and services
 --------------------------------
 

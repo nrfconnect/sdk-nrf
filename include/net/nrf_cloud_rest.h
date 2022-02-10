@@ -76,6 +76,10 @@ struct nrf_cloud_rest_context {
 	 * If the device ID is the device's internal UUID, the sub claim
 	 * can be omitted for modem generated JWTs; the UUID is included
 	 * in the iss claim.
+	 * If no JWT is provided, and CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT
+	 * is enabled, then one will be generated automatically with
+	 * CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT_VALID_TIME_S as its lifetime in
+	 * seconds.
 	 */
 	char *auth;
 	/** User allocated buffer for receiving API response, which

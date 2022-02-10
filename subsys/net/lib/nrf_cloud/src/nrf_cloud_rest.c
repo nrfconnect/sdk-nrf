@@ -52,7 +52,7 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 #define CONTENT_TYPE_APP_JSON		(CONTENT_TYPE HDR_TYPE_APP_JSON CRLF)
 #define CONTENT_TYPE_APP_OCT_STR	(CONTENT_TYPE HDR_TYPE_APP_OCT_STR CRLF)
 
-#define AUTH_HDR_BEARER_TEMPLATE	"Authorization: Bearer %s" CRLF
+#define AUTH_HDR_BEARER_PREFIX		"Authorization: Bearer "
 #define HOST_HDR_TEMPLATE		"Host: %s" CRLF
 #define HTTP_HDR_ACCEPT			"Accept: "
 #define HDR_ACCEPT_APP_JSON		(HTTP_HDR_ACCEPT HDR_TYPE_APP_JSON CRLF)
@@ -131,25 +131,75 @@ static const char *const agps_req_type_strings[] = {
 	[NRF_CLOUD_REST_AGPS_REQ_CUSTOM]	= AGPS_REQ_TYPE_STR_CUSTOM,
 };
 
+/* Generate an authorization header value string in the form:
+ * "Authorization: Bearer JWT \r\n"
+ */
 static int generate_auth_header(const char *const tok, char **auth_hdr_out)
 {
-	if (!tok || !auth_hdr_out) {
+	if ((!tok && !IS_ENABLED(CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT))) {
+		LOG_ERR("Cannot generate auth header, no token was given, "
+				"and JWT autogen is not enabled");
+		return -EINVAL;
+	}
+	if (!auth_hdr_out) {
+		LOG_ERR("Cannot generate auth header, no output pointer given.");
 		return -EINVAL;
 	}
 
-	int ret;
-	size_t buff_size = sizeof(AUTH_HDR_BEARER_TEMPLATE) + strlen(tok);
+	/* These lengths NOT including null terminators */
+	int tok_len = tok ? strlen(tok) : -1;
+	int prefix_len = sizeof(AUTH_HDR_BEARER_PREFIX) - 1;
+	int postfix_len = sizeof(CRLF) - 1;
 
-	*auth_hdr_out = k_malloc(buff_size);
+
+#ifdef CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT
+	if (!tok) {
+		tok_len = CONFIG_MODEM_JWT_MAX_LEN;
+	}
+#endif /* CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT */
+
+	if (tok_len <= 0) {
+		LOG_ERR("Cannot generate auth header, non-positive token length of %d", tok_len);
+		return -EINVAL;
+	}
+
+	*auth_hdr_out = k_malloc(prefix_len + tok_len + postfix_len + 1);
 	if (!*auth_hdr_out) {
 		return -ENOMEM;
 	}
-	ret = snprintk(*auth_hdr_out, buff_size, AUTH_HDR_BEARER_TEMPLATE, tok);
-	if (ret < 0 || ret >= buff_size) {
-		k_free(*auth_hdr_out);
-		*auth_hdr_out = NULL;
-		return -ETXTBSY;
+
+	char *prefix_ptr = *auth_hdr_out;
+	char *tok_ptr = prefix_ptr + prefix_len;
+	char *postfix_ptr;
+
+	/* Write the prefix */
+	memcpy(prefix_ptr, AUTH_HDR_BEARER_PREFIX, prefix_len);
+
+	/* Copy the given token if it exists*/
+	if (tok) {
+		memcpy(tok_ptr, tok, tok_len);
 	}
+
+#ifdef CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT
+	/* Generate a token, if none was given */
+	if (!tok) {
+		int err = nrf_cloud_jwt_generate(
+			CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT_VALID_TIME_S,
+			tok_ptr, tok_len + 1);
+
+		if (err < 0) {
+			LOG_ERR("Failed to auto-generate JWT, error: %d", err);
+			k_free(*auth_hdr_out);
+			*auth_hdr_out = NULL;
+			return err;
+		}
+		tok_len = strlen(tok_ptr);
+	}
+#endif /* CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT */
+
+	/* Write the postfix */
+	postfix_ptr = tok_ptr + tok_len;
+	memcpy(postfix_ptr, CRLF, postfix_len + 1);
 
 	return 0;
 }
