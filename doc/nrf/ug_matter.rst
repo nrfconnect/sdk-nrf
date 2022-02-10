@@ -19,6 +19,7 @@ Matter is in an early development stage and must be treated as an experimental f
 
 The |NCS| allows you to develop applications that are compatible with Matter.
 See :ref:`matter_samples` for the list of available samples or :ref:`Matter Weather Station <matter_weather_station_app>` for specific Matter application.
+If you are new to Matter, you can follow along with the video tutorials on Nordic Semiconductor's YouTube channel, for example `Developing Matter products with nRF Connect SDK`_.
 
 .. note::
     |matter_gn_required_note|

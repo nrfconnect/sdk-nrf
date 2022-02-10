@@ -640,6 +640,8 @@
 
 .. ### Source: other
 
+.. _`Developing Matter products with nRF Connect SDK`: https://www.youtube.com/watch?v=kdMJQFDRoss
+
 .. _`iBasis IoT network coverage`: https://ibasis.com/solutions/iot-connectivity/network-coverage/
 
 
