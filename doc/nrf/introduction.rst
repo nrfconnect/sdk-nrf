@@ -8,8 +8,13 @@ About the |NCS|
    :depth: 2
 
 The |NCS| enables you to develop applications for nRF52, nRF53, and nRF91 Series devices.
-It is a combination of software developed by Nordic Semiconductor and open source projects, hosted as `Git_` repositories in the `nrfconnect GitHub organization`_.
-Every |NCS| release consists of a combination of all those repositories at different revisions. Some notable repositories include:
+It is a combination of software developed by Nordic Semiconductor and open source projects, hosted as `Git`_ repositories in the `nrfconnect GitHub organization`_.
+
+Every |NCS| release consists of a combination of all those repositories at different revisions.
+See the :ref:`repos_and_revs` section for a comprehensive list of repositories and their current revisions.
+The revision of each of those repositories is determined by the current revision of the main (manifest) repository, ``sdk-nrf``, which contains the SDK manifest file that helps manage the repositories as one :ref:`code base <dm_code_base>` with the :ref:`ncs_west_intro` tool.
+
+Some notable repositories include:
 
 * `sdk-nrf`_ repository - contains applications, samples, libraries, and drivers that are specifically targeted at Nordic Semiconductor devices.
 * `sdk-nrfxlib`_ repository - contains closed-source libraries and modules in binary format.
@@ -20,8 +25,6 @@ Every |NCS| release consists of a combination of all those repositories at diffe
   You can find the fork in :file:`bootloader/mcuboot` after obtaining the |NCS| source code.
   See the :doc:`documentation <mcuboot:index-ncs>` in Nordic Semiconductor’s MCUboot fork.
 
-See the :ref:`repos_and_revs` section for a comprehensive list of repositories and their current revisions.
-The revision of each of those repositories is determined by the current revision of the main (manifest) repository, ``sdk-nrf``, which contains the SDK manifest file that helps manage the repositories as one :ref:`code base <dm_code_base>` with the :ref:`ncs_west_intro` tool.
 
 About the |NCS| license
 ***********************
@@ -154,7 +157,7 @@ See :ref:`dev-model` for more information about the |NCS| code base and how to m
 Repositories and revisions
 **************************
 
-The following table lists all the repositories (and their respective revisions) that are included as part of |NCS| |release| release:
+The following table lists all the repositories (and their respective revisions) that are included as part of |NCS| |version| release:
 
 .. manifest-revisions-table::
    :show-first: nrfxlib, find-my, homekit, matter, nrf-802154, zephyr, mcuboot, trusted-firmware-m, tfm-mcuboot, openthread, mbedtls, mbedtls-nrf, memfault-firmware-sdk
