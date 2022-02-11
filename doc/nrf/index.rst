@@ -59,6 +59,7 @@ In addition to the |NCS| documentation, information is available in the followin
    scripts
    release_notes
    known_issues
+   vulnerabilities
    documentation
 
 ..   cheat_sheet
