@@ -441,7 +441,7 @@ static uint8_t const dtm_prbs_content[] = {
 
 static void radio_gpio_pattern_clear(void)
 {
-	NRF_RADIO->CLEARPATTERN = 1;
+	NRF_RADIO->CLEARPATTERN = RADIO_CLEARPATTERN_CLEARPATTERN_Clear;
 }
 
 static void antenna_radio_pin_config(void)
@@ -484,6 +484,20 @@ static void switch_pattern_set(void)
 
 		break;
 	}
+}
+
+static void radio_cte_reset(void)
+{
+	NRF_RADIO->DFEMODE &= ~RADIO_DFEMODE_DFEOPMODE_Msk;
+	NRF_RADIO->DFEMODE |= ((RADIO_DFEMODE_DFEOPMODE_Disabled << RADIO_DFEMODE_DFEOPMODE_Pos)
+			       & RADIO_DFEMODE_DFEOPMODE_Msk);
+
+	NRF_RADIO->CTEINLINECONF &= ~RADIO_CTEINLINECONF_CTEINLINECTRLEN_Msk;
+	NRF_RADIO->CTEINLINECONF |= ((RADIO_CTEINLINECONF_CTEINLINECTRLEN_Disabled <<
+				      RADIO_CTEINLINECONF_CTEINLINECTRLEN_Pos)
+				     & RADIO_CTEINLINECONF_CTEINLINECTRLEN_Msk);
+
+	radio_gpio_pattern_clear();
 }
 
 static void radio_cte_prepare(bool rx)
@@ -997,6 +1011,8 @@ static void radio_prepare(bool rx)
 #if DIRECTION_FINDING_SUPPORTED
 	if (dtm_inst.cte_info.mode != DTM_CTE_MODE_OFF) {
 		radio_cte_prepare(rx);
+	} else {
+		radio_cte_reset();
 	}
 #endif /* DIRECTION_FINDING_SUPPORTED */
 
@@ -1463,6 +1479,11 @@ static uint32_t constant_tone_setup(uint8_t cte_info)
 {
 	uint8_t type = (cte_info >> LE_CTE_TYPE_POS) & LE_CTE_TYPE_MASK;
 
+	if (cte_info == 0) {
+		dtm_inst.cte_info.mode = DTM_CTE_MODE_OFF;
+		return DTM_SUCCESS;
+	}
+
 	dtm_inst.cte_info.time = cte_info & LE_CTE_CTETIME_MASK;
 	dtm_inst.cte_info.info = cte_info;
 
@@ -1532,6 +1553,16 @@ static uint32_t antenna_set(uint8_t antenna)
 	}
 
 	return DTM_SUCCESS;
+}
+
+#else
+static uint32_t constant_tone_setup(uint8_t cte_info)
+{
+	if (cte_info != 0) {
+		dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
+	}
+
+	return ((cte_info == 0) ? DTM_SUCCESS : DTM_ERROR_ILLEGAL_CONFIGURATION);
 }
 #endif /* DIRECTION_FINDING_SUPPORTED */
 
@@ -1650,7 +1681,6 @@ static enum dtm_err_code on_test_setup_cmd(enum dtm_ctrl_code control,
 
 #if DIRECTION_FINDING_SUPPORTED
 		memset(&dtm_inst.cte_info, 0, sizeof(dtm_inst.cte_info));
-		radio_gpio_pattern_clear();
 #endif /* DIRECTION_FINDING_SUPPORTED */
 
 #ifdef NRF52840_XXAA
@@ -1694,10 +1724,10 @@ static enum dtm_err_code on_test_setup_cmd(enum dtm_ctrl_code control,
 	case LE_TEST_SETUP_TRANSMIT_POWER:
 		return transmit_power_set(parameter);
 
-#if DIRECTION_FINDING_SUPPORTED
 	case LE_TEST_SETUP_CONSTANT_TONE_EXTENSION:
 		return constant_tone_setup(parameter);
 
+#if DIRECTION_FINDING_SUPPORTED
 	case LE_TEST_SETUP_CONSTANT_TONE_EXTENSION_SLOT:
 		return constant_tone_slot_set(parameter);
 
