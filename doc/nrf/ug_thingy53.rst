@@ -188,7 +188,7 @@ Complete the following steps after installing the `nRF Connect for Visual Studio
       The welcome page for nRF Connect for VS Code.
 
 #. Click on :guilabel:`Add an existing applicaton to workspace...`.
-#. In the prompt, navigate to the folder containing the sample you want to build, such as :file:`nrf\\samples\\bluetooth\\peripheral_lbs`.
+#. In the prompt, navigate to the folder containing the sample you want to build, such as :file:`nrf/samples/bluetooth/peripheral_lbs`.
    You should now see the selected application in the :guilabel:`Applications` window in the lower left corner.
 
    .. note::

@@ -87,13 +87,13 @@ Note that these settings can put the LwM2M carrier library either in the normal 
    To redo the bootstrap process, you must erase the flash and then load your application again.
 
 After calling the :c:func:`lwm2m_carrier_init` function, your application can call the non-returning function :c:func:`lwm2m_carrier_run` in its own thread.
-Both these functions are called in :file:`nrf\\lib\\bin\\lwm2m_carrier\\os\\lwm2m_carrier.c`, which is included into the project when you enable the LwM2M carrier library.
+Both these functions are called in :file:`nrf/lib/bin/lwm2m_carrier/os/lwm2m_carrier.c`, which is included into the project when you enable the LwM2M carrier library.
 
 The :c:func:`lwm2m_carrier_event_handler` function must be implemented by your application.
 This is shown in the :ref:`lwm2m_carrier` sample.
-A weak implementation is included in :file:`nrf\\lib\\bin\\lwm2m_carrier\\os\\lwm2m_carrier.c`.
+A weak implementation is included in :file:`nrf/lib/bin/lwm2m_carrier/os/lwm2m_carrier.c`.
 
-See :file:`nrf\\lib\\bin\\lwm2m_carrier\\include\\lwm2m_carrier.h` for all the events and API.
+See :file:`nrf/lib/bin/lwm2m_carrier/include/lwm2m_carrier.h` for all the events and API.
 
 .. _lwm2m_events:
 
@@ -196,7 +196,7 @@ Following are the various LwM2M carrier library events:
       |                                                        | some carriers. If it has not been issued yet, the bootstrap process can not proceed. |                                                  |
       +--------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------------------------------+
 
-    * :c:macro:`LWM2M_CARRIER_ERROR_FOTA_PKG` - This error indicates that the update package has been rejected. The integrity check has failed because of a wrong package sent from the server, or a wrong package received by client. The :c:member:`value` field will have an error of type :c:type:`nrf_dfu_err_t` from the file :file:`nrfxlib\\nrf_modem\\include\\nrf_socket.h`.
+    * :c:macro:`LWM2M_CARRIER_ERROR_FOTA_PKG` - This error indicates that the update package has been rejected. The integrity check has failed because of a wrong package sent from the server, or a wrong package received by client. The :c:member:`value` field will have an error of type :c:type:`nrf_dfu_err_t` from the file :file:`nrfxlib/nrf_modem/include/nrf_socket.h`.
 
     * :c:macro:`LWM2M_CARRIER_ERROR_FOTA_PROTO` - This error indicates a protocol error. There might be unexpected HTTP header contents. The server might not support partial content requests.
 
