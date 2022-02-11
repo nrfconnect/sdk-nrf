@@ -69,7 +69,6 @@ static uint32_t periodic_fix_interval;
 static uint32_t periodic_fix_retry;
 static bool nmea_mask_set;
 static struct nrf_modem_gnss_agps_data_frame agps_need;
-static bool gnss_filtered_ephemerides_enabled;
 static uint8_t gnss_elevation = 5; /* init to modem default threshold angle */
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
@@ -87,6 +86,7 @@ static bool agps_inject_int = true;
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 static char agps_data_buf[3500];
+static bool gnss_filtered_ephemerides_enabled;
 #endif /* CONFIG_NRF_CLOUD_AGPS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
