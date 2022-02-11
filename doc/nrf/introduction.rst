@@ -160,4 +160,4 @@ Repositories and revisions
 The following table lists all the repositories (and their respective revisions) that are included as part of |NCS| |version| release:
 
 .. manifest-revisions-table::
-   :show-first: nrfxlib, find-my, homekit, matter, nrf-802154, zephyr, mcuboot, trusted-firmware-m, tfm-mcuboot, openthread, mbedtls, mbedtls-nrf, memfault-firmware-sdk
+   :show-first: zephyr, nrfxlib, mcuboot, trusted-firmware-m, find-my, homekit, matter, nrf-802154, tfm-mcuboot, mbedtls-nrf, memfault-firmware-sdk
