@@ -366,18 +366,9 @@ Support for nRF Cloud
 *********************
 
 Enabling full support for nRF Cloud is currently a work in progress.
-Following are the current limitations in the nRF Cloud implementation of the Asset Tracker v2:
-
-* Data that is sampled by the device must ideally be addressed to the cloud-side device state and published in a single packet for regular device updates.
-  This is to avoid the unnecessary stack overhead associated with splitting the payload and the additional current consumption that might result from splitting and sending the data as separate packets.
-  However, in the case of nRF Cloud implementation, the nRF Cloud front end supports only the display of APP_DATA_MODEM_DYNAMIC (networkInfo) and APP_DATA_MODEM_STATIC (deviceInfo) through the device shadow.
-  The other supported data types (GNSS, temperature, and humidity) must be sent in a specified format to a separate message endpoint for the front end to graphically represent the data.
-  You can find the JSON protocol definitions for data sent to the message endpoint in `nRF Cloud JSON protocol schemas`_.
-
-* The nRF Cloud web application does not support the manipulation of real-time configurations.
-  However, this is possible by using the REST API calls described in `nRF Cloud Patch Device State`_.
-  To manipulate the device configuration, the ``desired`` section of the device state must be populated with the desired configuration of the device.
-  The following schema sets the various device configuration parameters to their default values:
+Manipulation of the application's real-time configurations is not supported through the nRF Cloud Web UI.
+However, this is possible by using the REST API calls described in `nRF Cloud Patch Device State`_.
+The following schema sets the various device configuration parameters to their default values:
 
    .. parsed-literal::
       :class: highlight
