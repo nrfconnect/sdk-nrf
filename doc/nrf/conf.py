@@ -39,6 +39,7 @@ extensions = [
     "zephyr.external_content",
     "zephyr.doxyrunner",
     "sphinx_tabs.tabs",
+    "vuln_table",
     "page_filter",
 ]
 
