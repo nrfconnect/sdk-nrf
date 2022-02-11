@@ -39,6 +39,7 @@ extensions = [
     "zephyr.external_content",
     "zephyr.doxyrunner",
     "sphinx_tabs.tabs",
+    "page_filter",
 ]
 
 linkcheck_ignore = [
