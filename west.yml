@@ -108,7 +108,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: a13cd152d7b70e90fe8dd9bca17d40a2a678f3e9
+      revision: 382af40f508158f101031ef688fe280bdefd8f20
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -140,7 +140,7 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: 68f841fd497a0cdd99e9fc67fc42f2b1d8da72ff
+      revision: a206fb7b90e25f3f1ebe4a786840788f9dd698ed
       groups:
       - homekit
     - name: find-my
