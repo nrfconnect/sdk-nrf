@@ -1192,6 +1192,17 @@ static enum dtm_err_code  dtm_vendor_specific_pkt(uint32_t vendor_cmd,
 		dtm_inst.fem.vendor_active_delay = vendor_option;
 
 		break;
+
+	case FEM_DEFAULT_PARAMS_SET:
+		dtm_inst.fem.gain = FEM_USE_DEFAULT_GAIN;
+		dtm_inst.fem.vendor_active_delay = 0;
+
+		if (fem_antenna_select(FEM_ANTENNA_1) != 0) {
+			dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
+			return DTM_ERROR_ILLEGAL_CONFIGURATION;
+		}
+
+		break;
 #endif /* CONFIG_FEM */
 	}
 
@@ -1676,8 +1687,6 @@ static enum dtm_err_code on_test_setup_cmd(enum dtm_ctrl_code control,
 		dtm_inst.radio_mode = NRF_RADIO_MODE_BLE_1MBIT;
 		dtm_inst.packet_hdr_plen =
 			NRF_RADIO_PREAMBLE_LENGTH_8BIT;
-		dtm_inst.fem.vendor_active_delay = 0;
-		dtm_inst.fem.gain = FEM_USE_DEFAULT_GAIN;
 
 #if DIRECTION_FINDING_SUPPORTED
 		memset(&dtm_inst.cte_info, 0, sizeof(dtm_inst.cte_info));
