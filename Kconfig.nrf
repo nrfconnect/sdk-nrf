@@ -51,6 +51,10 @@ config PRIVILEGED_STACK_SIZE
 config MCUMGR_BUF_SIZE
 	default 1024 if UPDATEABLE_IMAGE_NUMBER > 1
 
+# When using HCI on the nRF5340 we need a larger command buffer.
+config BT_BUF_CMD_TX_COUNT
+	default 10 if SOC_NRF5340_CPUAPP || SOC_NRF5340_CPUNET
+
 # Set ENTROPY_GENERATOR to true for TF-M or SPM builds with enabled
 # RNG provided from secure services.
 config ENTROPY_GENERATOR
