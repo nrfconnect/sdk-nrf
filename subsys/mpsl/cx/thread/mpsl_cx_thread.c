@@ -89,8 +89,9 @@ static void gpiote_irq_handler(const struct device *gpiob, struct gpio_callback 
 	static mpsl_cx_op_map_t last_notified;
 	int32_t ret;
 	mpsl_cx_op_map_t granted_ops;
+	mpsl_cx_cb_t callback_copy = callback;
 
-	if (callback != NULL) {
+	if (callback_copy != NULL) {
 		ret = granted_ops_get(&granted_ops);
 
 		__ASSERT(ret == 0, "Getting grant pin state returned unexpected result: %d", ret);
@@ -104,7 +105,7 @@ static void gpiote_irq_handler(const struct device *gpiob, struct gpio_callback 
 
 		if (granted_ops != last_notified) {
 			last_notified = granted_ops;
-			callback(granted_ops);
+			callback_copy(granted_ops);
 		}
 	}
 }
