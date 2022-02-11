@@ -15,7 +15,7 @@ Library wrapper
 ***************
 
 The library wrapper provides an encapsulation over the core Modem library functions such as initialization and shutdown.
-The library wrapper is implemented in :file:`nrf\\lib\\nrf_modem_lib\\nrf_modem_lib.c`.
+The library wrapper is implemented in :file:`nrf/lib/nrf_modem_lib/nrf_modem_lib.c`.
 
 The library wrapper encapsulates the :c:func:`nrf_modem_init` and :c:func:`nrf_modem_shutdown` calls of the Modem library with :c:func:`nrf_modem_lib_init` and :c:func:`nrf_modem_lib_shutdown` calls, respectively.
 The library wrapper eases the task of initializing the Modem library by automatically passing the size and address of all the shared memory regions of the Modem library to the :c:func:`nrf_modem_init` call.
@@ -41,7 +41,7 @@ Socket offloading
 Zephyr Socket API offers the :ref:`socket offloading functionality <zephyr:net_socket_offloading>` to redirect or *offload* function calls to BSD socket APIs such as ``socket()`` and ``send()``.
 The integration layer utilizes this functionality to offload the socket API calls to the Modem library and thus eases the task of porting the networking code to the nRF9160 by providing a wrapper for Modem library's native socket API such as :c:func:`nrf_socket` and :c:func:`nrf_send`.
 
-The socket offloading functionality in the integration layer is implemented in :file:`nrf\\lib\\nrf_modem_lib\\nrf91_sockets.c`.
+The socket offloading functionality in the integration layer is implemented in :file:`nrf/lib/nrf_modem_lib/nrf91_sockets.c`.
 
 Modem library socket API sets errnos as defined in :file:`nrf_errno.h`.
 The socket offloading support in the integration layer in |NCS| converts those errnos to the errnos that adhere to the selected C library implementation.
@@ -58,7 +58,7 @@ OS abstraction layer
 
 For functioning, the Modem library requires the implementation of an OS abstraction layer, which is an interface over the operating system functionalities such as interrupt setup, threads, and heap.
 The integration layer provides an implementation of the OS abstraction layer using |NCS| components.
-The OS abstraction layer is implemented in the :file:`nrfxlib\\nrf_modem\\include\\nrf_modem_os.c`.
+The OS abstraction layer is implemented in the :file:`nrfxlib/nrf_modem/include/nrf_modem_os.c`.
 
 The behavior of the functions in the OS abstraction layer is dependent on the |NCS| components that are used in their implementation.
 This is relevant for functions such as :c:func:`nrf_modem_os_shm_tx_alloc`, which uses :ref:`Zephyr's Heap implementation <zephyr:heap_v2>` to dynamically allocate memory.
@@ -66,7 +66,7 @@ In this case, the characteristics of the allocations made by these functions dep
 
 Modem trace module
 ******************
-The modem trace module is implemented in :file:`nrf\\lib\\nrf_modem_lib\\nrf_modem_lib_trace.c`.
+The modem trace module is implemented in :file:`nrf/lib/nrf_modem_lib/nrf_modem_lib_trace.c`.
 
 The module provides the functionality for starting, stopping, and forwarding of modem traces to a transport medium that can be set by enabling any one of the following Kconfig options:
 
