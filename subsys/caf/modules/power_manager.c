@@ -257,7 +257,7 @@ static bool event_handler(const struct event_header *eh)
 				system_off();
 			}
 		}
-		if (is_off_allowed && !was_off_allowed) {
+		if (!is_off_allowed && was_off_allowed) {
 			/* System off is not allowed. Reboot if needed. */
 			if (power_state == POWER_STATE_OFF) {
 				LOG_INF("Off restricted - rebooting");
