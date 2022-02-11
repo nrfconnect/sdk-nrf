@@ -88,3 +88,10 @@ if(TFM_PARTITION_PLATFORM)
     ${src_dir}/tfm_ioctl_ns_api.c
     )
 endif()
+
+if(LOG_MEMORY_PROTECTION)
+  target_sources(platform_s
+	PRIVATE
+	src/log_memory_protection.c
+	)
+endif()
