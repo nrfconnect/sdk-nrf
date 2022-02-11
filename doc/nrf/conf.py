@@ -54,6 +54,7 @@ extensions = [
     "sphinx_copybutton",
     "notfound.extension",
     "ncs_tool_versions",
+    "page_filter",
 ]
 
 linkcheck_ignore = [
