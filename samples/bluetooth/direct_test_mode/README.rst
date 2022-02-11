@@ -166,7 +166,16 @@ Vendor specific commands can be divided into different categories as follows:
   For example, in the nRF21540 front-end module, the gain range is 0 - 31.
 * If the Length field is set to ``5`` (symbol ``FEM_ACTIVE_DELAY_SET``), the Frequency field sets the front-end module (FEM) activation delay in microseconds relative to the radio start.
   By default, this value is set to (radio ramp-up time - front-end module (FEM) TX/RX settling time).
+* If the Length field is set to ``6`` (symbol ``FEM_DEFAULT_PARAMS_SET``) and the Frequency field to any value, the front-end module parameters, such as antenna output, gain, and delay, are set to their default values.
 * All other values of Frequency and Length field are reserved.
+
+.. note::
+  Front-end module configuration parameters, such as antenna output, gain, and active delay, are not set to their default values after the DTM reset command.
+  Testers, for example Anritsu MT885, issue a reset command in the beginning of every test.
+  Therefore, you cannot run automated test scripts for front-end modules with other than the default parameters.
+
+  If you have changed the default parameters of the front-end module, you can restore them.
+  You can either send the ``FEM_DEFAULT_PARAMS_SET`` command or power cycle the front-end module.
 
 The DTM-to-Serial adaptation layer
 ==================================
