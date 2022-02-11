@@ -52,7 +52,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: a4edab554f67590a89703067af703c7996604562
+      revision: v2.7.99-ncs1
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -99,28 +99,28 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 17f6d045a10a8d2ba9f3dede820e9c6dd81a5c56
+      revision: v1.8.99-ncs1
       path: bootloader/mcuboot
     - name: mbedtls-nrf
       path: mbedtls
       repo-path: sdk-mbedtls
-      revision: v3.0.0-ncs1-rc2
+      revision: v3.0.0-ncs1
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 6195aa85b705a5786cb0bc20ec9a4912355f0afc
+      revision: v1.9.0
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 6cd4acfb247cc86c8d90c260d52b372a43c26cdd
+      revision: v1.5.0-ncs1
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
-      revision: v1.7.2-ncs1-rc2
+      revision: v1.7.2-ncs1
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: ec9e7f67a4fadce78be76b0a29f3407b5c424586
+      revision: v1.9.0
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -131,7 +131,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: v1.9.0-rc2
+      revision: v1.9.0
       groups:
       - nrf-802154
     - name: cjson
@@ -140,12 +140,12 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: 2a3dec7cb6788600129ed2a1167d56e05388a12c
+      revision: v1.9.0
       groups:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: 185edcc4a3182bfc8f1d80b12b3468a588013a15
+      revision: v1.9.0
       groups:
       - find-my
     # Other third-party repositories.
