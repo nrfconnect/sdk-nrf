@@ -4,5 +4,5 @@ tests:
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - nrf5340dk_nrf5340_cpuapp_ns
-    tags: hw_unique_key
+    tags: huk
     build_only: true
