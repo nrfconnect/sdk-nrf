@@ -16,7 +16,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp, nrf5340dk_nrf5340_cpuapp_ns, nrf9160dk_nrf9160, nrf9160dk_nrf9160_ns, nrf52840dk_nrf52840
+   :rows: nrf5340dk_nrf5340_cpuapp, nrf5340dk_nrf5340_cpuapp_ns, nrf9160dk_nrf9160, nrf9160dk_nrf9160_ns, nrf52840dk_nrf52840, nrf21540dk_nrf52840
 
 .. include:: /includes/tfm.txt
 
@@ -43,6 +43,16 @@ The sample goes through the following steps to derive a key and use it to encryp
    Otherwise, the native nrf_cc3xx_platform APIs are used, and the key is imported into psa_crypto.
 
 #. Encrypts a sample string using the ``key_id`` received from the psa_crypto.
+
+Configuration
+*************
+
+|config|
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
 
 Building and running
 ********************
