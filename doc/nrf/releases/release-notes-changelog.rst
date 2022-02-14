@@ -72,6 +72,13 @@ Bluetooth samples
 
 |no_changes_yet_note|
 
+Bluetooth mesh samples
+----------------------
+
+* Updated
+
+  * All samples are using the Partition Manager, replacing the use of the Device Tree Source flash partitions.
+
 Thread samples
 --------------
 
