@@ -85,8 +85,8 @@ ZB_HA_DECLARE_RANGE_EXTENDER_EP(
 	nwk_coordinator_clusters);
 
 ZBOSS_DECLARE_DEVICE_CTX_1_EP(
-	nwk_coordinator,
-	nwk_coordinator_ep);
+	network_coordinator,
+	network_coordinator_ep);
 
 
 /**@brief Function for initializing all clusters attributes. */
