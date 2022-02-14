@@ -26,7 +26,6 @@ The sample supports the following development kits:
 You can use one or more of the development kits listed above as the Thread CoAP Client.
 You also need one or more compatible development kits programmed with the :ref:`coap_server_sample` sample.
 
-
 Multiprotocol extension requirements
 ====================================
 
@@ -34,7 +33,6 @@ If you enable the :ref:`coap_client_sample_multi_ext`, make sure you have a phon
 
 .. note::
   The :ref:`testing instructions <coap_client_sample_testing_ble>` refer to nRF Toolbox, but similar applications can be used as well, for example `nRF Connect for Mobile`_.
-
 
 Overview
 ********
@@ -51,29 +49,34 @@ The following CoAP resources are accessed on the server side:
 This sample uses :ref:`Zephyr CoAP API<zephyr:coap_sock_interface>` for communication, which is the preferred API to use for new CoAP applications.
 For example usage of the native Thread CoAP API, see the :ref:`coap_server_sample` sample.
 
-.. _coap_client_sample_multi_ext:
+Device Firmware Upgrade extension
+=================================
 
-Multiprotocol Bluetooth LE extension
-====================================
+You can use this optional extension to perform an over-the-air Device Firmware Upgrade (DFU).
+In this process, the device that hosts the new firmware image sends it to the CoAP Client device using `SMP over Bluetooth`_.
+The :ref:`MCUboot <mcuboot:mcuboot_wrapper>` bootloader solution is then used to replace the old firmware image with the new one.
 
-This optional extension can demonstrate the OpenThread stack and :ref:`nrfxlib:softdevice_controller` working concurrently.
-It uses the :ref:`nus_service_readme` library to control the LED states over Bluetooth® LE in a Thread network.
-For more information about the multiprotocol feature, see :ref:`ug_multiprotocol_support`.
+.. note::
+   The Device Firmware Upgrade feature is currently supported only on the nRF52840 DK.
 
 FEM support
 ===========
 
 .. include:: /includes/sample_fem_support.txt
 
-Device Firmware Upgrade extension
-=================================
+.. _coap_client_sample_multi_ext:
 
-This optional extension can be used to perform an over-the-air Device Firmware Upgrade (DFU).
-In this process, the device that hosts the new firmware image sends it to the CoAP Client device using `SMP over Bluetooth`_.
-The :ref:`MCUboot <mcuboot:mcuboot_wrapper>` bootloader solution is then used to replace the old firmware image with the new one.
+Multiprotocol Bluetooth LE extension
+====================================
 
-.. note::
-   The Device Firmware Upgrade feature is currently supported only on the nRF52840 DK.
+This optional extension demonstrates the OpenThread stack and :ref:`nrfxlib:softdevice_controller` working concurrently.
+It uses the :ref:`nus_service_readme` library to control the LED states over Bluetooth® LE in a Thread network.
+For more information about the multiprotocol feature, see :ref:`ug_multiprotocol_support`.
+
+Trusted Firmware-M support
+==========================
+
+.. include:: /includes/tfm.txt
 
 User interface
 **************

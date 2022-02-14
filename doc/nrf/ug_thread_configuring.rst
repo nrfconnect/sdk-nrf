@@ -114,7 +114,7 @@ For more configuration options, read the module documentation.
 .. _thread_ug_thread_specification_options:
 
 Thread Specification options
-================================
+============================
 
 The OpenThread stack can be configured to operate in compliance with either the Thread 1.1 Specification  or the :ref:`Thread 1.2 Specification <thread_ug_supported_features_v12>`.
 You can change the stack version by using the following Kconfig options:
@@ -231,6 +231,20 @@ Minimal Thread Device (MTD)
 
   By default, the MTD operates as Minimal End Device (MED).
   To make it operate as Sleepy End Device (SED), set :kconfig:`CONFIG_OPENTHREAD_MTD_SED`.
+
+.. _thread_ug_tfm_support:
+
+Trusted Firmware-M support options
+==================================
+
+To configure your Thread application on the nRF5340 DK to run with Trusted Firmware-M, use the ``nrf5340dk_nrf5340_cpuapp_ns`` build target and enable the following Kconfig options:
+
+* :kconfig:`CONFIG_BUILD_WITH_TFM`
+* :kconfig:`CONFIG_OPENTHREAD_CRYPTO_PSA`
+
+In the |NCS|, these options are enabled by default for the :ref:`application core <ug_nrf5340_intro_app_core>` of the :ref:`openthread_samples` that can be programmed with the ``nrf5340dk_nrf5340_cpuapp_ns`` build target.
+
+For more Trusted Firmware-M documentation, see :ref:`ug_tfm` and the official `TF-M documentation`_.
 
 .. _thread_ug_prebuilt:
 

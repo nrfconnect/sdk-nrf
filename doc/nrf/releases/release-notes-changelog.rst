@@ -72,6 +72,11 @@ Bluetooth samples
 
 |no_changes_yet_note|
 
+Thread samples
+--------------
+
+* Updated the relevant sample documentation pages with information about support for :ref:`Trusted Firmware-M <ug_tfm>`.
+
 Drivers
 =======
 
