@@ -42,6 +42,14 @@ The CLI sample comes with the :ref:`full set of OpenThread functionalities <thre
 If used alone, the sample allows you to test the network status.
 It is recommended to use at least two development kits running the same sample for testing the communication.
 
+.. _ot_cli_sample_thread_certification:
+
+Certification tests with CLI sample
+===================================
+
+You can use the Thread CLI sample to run certification tests.
+See :ref:`ug_thread_cert` for information on how to use this sample on Thread Certification Test Harness.
+
 .. _ot_cli_sample_diag_module:
 
 Diagnostic module
@@ -63,13 +71,10 @@ Experimental Thread 1.2 extension
 This optional extension allows you to test :ref:`available features from the Thread 1.2 Specification <thread_ug_thread_specification_options>`.
 To enable these features, set the :ref:`thread_ug_thread_specification_options`.
 
-.. _ot_cli_sample_thread_certification:
+FEM support
+===========
 
-Certification tests with CLI sample
-===================================
-
-You can use the Thread CLI sample for running certification tests.
-See :ref:`ug_thread_cert` for information on how to use this sample on Thread Certification Test Harness.
+.. include:: /includes/sample_fem_support.txt
 
 .. _ot_cli_sample_minimal:
 
@@ -88,11 +93,10 @@ The Thread CLI sample supports UART and USB CDC ACM as serial transports.
 By default, it uses UART transport.
 To switch to USB transport, :ref:`activate the USB overlay extension <ot_cli_sample_activating_variants>`.
 
-FEM support
-===========
+Trusted Firmware-M support
+==========================
 
-.. include:: /includes/sample_fem_support.txt
-
+.. include:: /includes/tfm.txt
 
 User interface
 **************

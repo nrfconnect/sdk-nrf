@@ -18,6 +18,8 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf5340dk_nrf5340_cpuapp, nrf5340dk_nrf5340_cpuapp_ns, nrf9160dk_nrf9160, nrf9160dk_nrf9160_ns, nrf52840dk_nrf52840
 
+.. include:: /includes/tfm.txt
+
 Overview
 ********
 

@@ -21,6 +21,7 @@ To get started with the nRF5340 DK, follow the steps in the `Getting started wit
 
    See the `nRF Connect SDK v1.4.0 documentation`_ for the last release supporting the nRF5340 PDK.
 
+.. _ug_nrf5340_intro:
 
 Introduction
 ************
@@ -30,6 +31,8 @@ nRF5340 is a wireless ultra-low-power multicore System on Chip (SoC) with two fu
 See the `nRF5340 Product Specification`_ for more information about the nRF5340 SoC.
 :ref:`zephyr:nrf5340dk_nrf5340` gives an overview of the nRF5340 DK support in Zephyr.
 
+.. _ug_nrf5340_intro_net_core:
+
 Network core
 ============
 
@@ -37,6 +40,8 @@ The network core is an Arm Cortex-M33 processor with a reduced feature set, desi
 Use this core for radio communication and for real-time processing tasks involving low-level radio protocol layers.
 
 The build target for the network core in Zephyr is ``nrf5340dk_nrf5340_cpunet``.
+
+.. _ug_nrf5340_intro_app_core:
 
 Application core
 ================
@@ -46,25 +51,6 @@ Use this core for tasks that require high performance and for application-level 
 
 The M33 TrustZone divides the application MCU into secure and non-secure domains.
 When the MCU boots, it always starts executing from the secure area.
-The |NCS| provides two alternatives for running applications from the non-secure area of the memory:
-
-Secure Partition Manager (SPM)
-  The :ref:`secure_partition_manager` sample uses the SPU peripheral to configure security attributions for flash, SRAM, and peripherals.
-  After the configuration setup is complete, the sample loads the application firmware from the non-secure domain.
-  In addition, the SPM sample can provide access to secure services to the application firmware.
-
-  The SPM sample is currently the default solution used by most |NCS| samples.
-  This means that when you build your application for the non-secure domain, the :ref:`secure_partition_manager` sample is automatically included in the build.
-
-Trusted Firmware-M (TF-M)
-  Trusted Firmware-M provides a highly configurable set of software components to create a Trusted Execution Environment.
-  TF-M is a framework which will be extended for new functions and use cases beyond the scope of SPM.
-
-  Support for TF-M in |NCS| is currently experimental.
-  If your application does not depend on the secure services developed in SPM and does not use them, then TF-M can replace SPM as the secure firmware component in your application.
-
-  For more information and instructions on how to do this, see :ref:`ug_tfm`.
-  See :ref:`tfm_hello_world` for a sample that demonstrates how to add TF-M to an application.
 
 In Zephyr, the application core is divided into two different build targets:
 
@@ -73,6 +59,30 @@ In Zephyr, the application core is divided into two different build targets:
 
 .. note::
    In |NCS| releases before v1.6.1, the build target ``nrf5340dk_nrf5340_cpuapp_ns`` was named ``nrf5340dk_nrf5340_cpuappns``.
+
+The |NCS| provides two alternatives for running applications from the non-secure area of the memory: Secure Partition Manager and Trusted Firmware-M.
+
+Secure Partition Manager (SPM)
+------------------------------
+
+The :ref:`secure_partition_manager` sample uses the SPU peripheral to configure security attributions for flash, SRAM, and peripherals.
+After the configuration setup is complete, the sample loads the application firmware from the non-secure domain.
+In addition, the SPM sample provides the application firmware with access to secure services.
+
+The SPM sample is currently the default solution used by most |NCS| samples.
+This means that when you build your application for the non-secure domain, the :ref:`secure_partition_manager` sample is automatically included in the build.
+
+Trusted Firmware-M (TF-M)
+-------------------------
+
+Trusted Firmware-M provides a configurable set of software components to create a Trusted Execution Environment.
+It is a framework for functions and use cases beyond the scope of SPM.
+
+Support for TF-M in the |NCS| is currently experimental.
+If your application does not depend on the secure services from SPM and does not use them, TF-M can replace SPM as the secure firmware component in your application.
+
+For more information and instructions on how to do this, see :ref:`ug_tfm`.
+See also :ref:`tfm_hello_world` for a sample that demonstrates how to add TF-M to an application.
 
 Inter-core communication
 ========================

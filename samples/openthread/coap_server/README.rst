@@ -24,6 +24,11 @@ The sample supports the following development kits:
 You can use one or more of these development kits as the Thread CoAP Server.
 You also need one or more compatible development kits programmed with the :ref:`coap_client_sample` sample.
 
+Trusted Firmware-M support
+==========================
+
+.. include:: /includes/tfm.txt
+
 Overview
 ********
 
