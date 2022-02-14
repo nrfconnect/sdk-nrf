@@ -84,14 +84,12 @@ enum hw_unique_key_slot {
  */
 void hw_unique_key_write(enum hw_unique_key_slot kmu_slot, const uint8_t *key);
 
-#ifdef CONFIG_HW_UNIQUE_KEY_RANDOM
 /**
- * @brief Read random numbers from @ref nrf_cc3xx_platform_ctr_drbg_get
+ * @brief Read random numbers from nrf_cc3xx_platform_ctr_drbg_get
  *        and write them to all slots with @ref hw_unique_key_write.
  *        Panic on failure.
  */
 void hw_unique_key_write_random(void);
-#endif /* CONFIG_HW_UNIQUE_KEY_RANDOM */
 
 /**
  * @brief Check whether a Hardware Unique Key has been written to the KMU.
@@ -111,7 +109,6 @@ bool hw_unique_key_is_written(enum hw_unique_key_slot kmu_slot);
  */
 bool hw_unique_key_are_any_written(void);
 
-#ifdef CONFIG_HAS_HW_NRF_ACL
 /**
  * @brief Load the Hardware Unique Key (HUK) into the KDR registers of the
  *        Cryptocell.
@@ -121,7 +118,6 @@ bool hw_unique_key_are_any_written(void);
  *          Panic on failure.
  */
 void hw_unique_key_load_kdr(void);
-#endif /* CONFIG_HAS_HW_NRF_ACL */
 
 /**
  * @brief Derive a key from the specified HUK, using the nrf_cc3xx_platform API
