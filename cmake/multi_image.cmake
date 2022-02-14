@@ -297,7 +297,7 @@ function(add_child_image_from_source)
       # Check for configuration fragment. The contents of these are appended
       # to the project configuration, as opposed to the CONF_FILE which is used
       # as the base configuration.
-      if (DEFINED CONF_FILE_BUILD_TYPE)
+      if(NOT "${CONF_FILE_BUILD_TYPE}" STREQUAL "")
         set(child_image_conf_fragment ${ACI_CONF_DIR}/${ACI_NAME}_${CONF_FILE_BUILD_TYPE}.conf)
       else()
         set(child_image_conf_fragment ${ACI_CONF_DIR}/${ACI_NAME}.conf)
