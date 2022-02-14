@@ -6,7 +6,7 @@ tests:
       - nrf52840dk_nrf52840
       - nrf9160dk_nrf9160
       - nrf5340dk_nrf5340_cpuapp
-    tags: crypto ci_build
+    tags: crypto ci_build legacy builtin_legacy
     timeout: 600
   crypto.cc3xx:
     extra_args: OVERLAY_CONFIG=overlay-cc3xx.conf
@@ -15,7 +15,7 @@ tests:
       - nrf52840dk_nrf52840
       - nrf9160dk_nrf9160
       - nrf5340dk_nrf5340_cpuapp
-    tags: crypto ci_build
+    tags: crypto ci_build legacy cc3xx_legacy
     timeout: 200
   crypto.oberon:
     extra_args: OVERLAY_CONFIG=overlay-oberon.conf
@@ -24,5 +24,5 @@ tests:
       - nrf52840dk_nrf52840
       - nrf9160dk_nrf9160
       - nrf5340dk_nrf5340_cpuapp
-    tags: crypto ci_build
+    tags: crypto ci_build legacy oberon_legacy
     timeout: 200
