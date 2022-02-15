@@ -914,6 +914,7 @@ Documentation
   * Additional user guidance to the :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` pages and the corresponding Developing with pages.
   * A page on :ref:`software_maturity` listing the different software maturity levels for the available features.
   * A page on :ref:`ug_pinctrl`.
+  * Documentation for :ref:`ug_thingy53_gs`.
 
 * Updated:
 
@@ -927,6 +928,10 @@ Documentation
   * :ref:`thread_ot_memory` with definitions of variants listed on the tables.
   * :ref:`ug_nrf_cloud` with more information about security.
   * :ref:`software_maturity` with a table detailing the differences between supported and experimental features.
+
+* Updated:
+
+   * Working with Thingy:53 with new information, and renamed to :ref:`ug_thingy53`.
 
 * Removed:
 

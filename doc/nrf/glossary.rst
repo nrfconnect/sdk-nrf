@@ -553,6 +553,9 @@ Glossary
    Security Manager Protocol (SMP)
       A protocol used for pairing and key distribution.
 
+   Serial Wire Debug (SWD)
+      A standard two-wire interface for programming and debugging Arm CPUs.
+
    Signal-to-Noise Ratio (SNR)
       The level of signal power compared to the level of noise power, often expressed in decibels (dB).
 
