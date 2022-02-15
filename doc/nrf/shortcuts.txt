@@ -25,8 +25,6 @@
 .. |connect_terminal_both| replace:: Connect to both kits with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.
 
-.. |GSA| replace:: Getting Started Assistant
-
 .. |nRF5340DKnoref| replace:: nRF5340 DK board (PCA10095)
 
 .. |nRF9160DK| replace:: nRF9160 DK board (PCA10090) - see :ref:`ug_nrf9160`
