@@ -44,17 +44,21 @@ void method_cellular_lte_ind_handler(const struct lte_lc_evt *const evt)
 	switch (evt->type) {
 	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS: {
 		LOG_DBG("Cell measurements results received");
-		memset(&cell_data, 0, sizeof(struct lte_lc_cells_info));
 
-		if (evt->cells_info.current_cell.id) {
-			/* Copy current and neighbor cell information */
-			memcpy(&cell_data, &evt->cells_info, sizeof(struct lte_lc_cells_info));
-			memcpy(neighbor_cells, evt->cells_info.neighbor_cells,
-			       sizeof(struct lte_lc_ncell) * cell_data.ncells_count);
+		/* Copy current cell information. */
+		memcpy(&cell_data.current_cell,
+		       &evt->cells_info.current_cell,
+		       sizeof(struct lte_lc_cell));
+
+		/* Copy neighbor cell information if present. */
+		if (evt->cells_info.ncells_count > 0 && evt->cells_info.neighbor_cells) {
+			memcpy(cell_data.neighbor_cells,
+			       evt->cells_info.neighbor_cells,
+			       sizeof(struct lte_lc_ncell) * evt->cells_info.ncells_count);
+
+			cell_data.ncells_count = evt->cells_info.ncells_count;
 		} else {
-			LOG_INF("No current cell information from modem.");
-		}
-		if (!evt->cells_info.ncells_count) {
+			cell_data.ncells_count = 0;
 			LOG_INF("No neighbor cell information from modem.");
 		}
 		k_sem_give(&cellmeas_data_ready);
@@ -123,8 +127,8 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 		return;
 	}
 
-	if (cell_data.current_cell.id == 0) {
-		LOG_WRN("No cells were found");
+	if (cell_data.current_cell.id == LTE_LC_CELL_EUTRAN_ID_INVALID) {
+		LOG_WRN("Current cell ID not valid");
 		location_core_event_cb_error();
 		running = false;
 		return;
