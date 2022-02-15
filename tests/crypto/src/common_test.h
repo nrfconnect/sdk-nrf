@@ -18,11 +18,6 @@
 
 #include <mbedtls/platform.h>
 #include <mbedtls/cipher.h>
-#if defined(CONFIG_NRF_CC310_PLATFORM)
-#include <nrf_cc310_platform.h>
-#include <nrf_cc310_platform_abort.h>
-#include <nrf_cc310_platform_mutex.h>
-#endif /* CONFIG_NRF_CC310_PLATFORM) */
 
 /* Found in nrfxlib/nrf_security/mbedtls/mbedtls_heap.c
  * Used for reallocating the heap between suites.
