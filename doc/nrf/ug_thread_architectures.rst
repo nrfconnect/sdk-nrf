@@ -195,6 +195,44 @@ This platform design is suitable for the following development kits:
    :header: heading
    :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
 
+.. _thread_architectures_designs_cp_uart:
+
+UART recommendations for NCP
+============================
+
+Use the following recommended default UART settings for configuration based on :ref:`thread_architectures_designs_cp_ncp` architecture:
+
+* Bit rate: 1000000
+* Start bits: 1
+* Data bits: 8
+* Stop bits: 1
+* No parity
+* Flow Control: Hardware
+
+Flow control
+   UART Hardware Flow Control is recommended in Nordic Semiconductor's solution.
+   Using Software Flow Control is neither recommended nor implemented.
+
+Hardware reset
+   Use the Arduino-style hardware reset, where the DTR signal is coupled to the RES pin through a 0.01 µF capacitor.
+   This causes the NCP to automatically reset whenever the serial port is opened.
+
+   .. note::
+      This hardware reset method is not used in Nordic Semiconductor's solution.
+      Dedicate one of your host pins to control the RES pin on the NCP, so that you can easily perform a hardware reset if necessary.
+
+Recommended UART signals
+------------------------
+
+The following UART signals are used in the Nordic Semiconductor's solution:
+
+* RX
+* TX
+* CTS
+* RTS
+* DTS (optional, not used)
+* RES
+
 .. _ug_thread_architectures_communication:
 
 NCP/RCP communication details

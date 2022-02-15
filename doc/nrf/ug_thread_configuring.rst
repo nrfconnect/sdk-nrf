@@ -511,45 +511,5 @@ To update the nrfxlib libraries with debug symbols, run the following command:
 
    west build -b nrf52840dk_nrf52840 -t install_openthread_libraries
 
-UART recommendations for NCP
-****************************
-
-Use the following recommended default UART settings for configuration based on :ref:`thread_architectures_designs_cp_ncp` architecture:
-
-* Bit rate: 1000000
-* Start bits: 1
-* Data bits: 8
-* Stop bits: 1
-* No parity
-* Flow Control: Hardware
-
-Flow control
-============
-
-UART Hardware Flow Control is recommended in the Nordic solution.
-Using Software Flow Control is neither recommended nor implemented.
-
-Hardware reset
-==============
-
-Use the Arduino-style hardware reset, where the DTR signal is coupled to the RES pin through a 0.01 µF capacitor.
-This causes the NCP to automatically reset whenever the serial port is opened.
-
-.. note::
-    This hardware reset method is not used in Nordic Semiconductor's solution.
-    It is recommended to dedicate one of your host pins to control the RES pin on the NCP, so that you can easily perform a hardware reset if necessary.
-
-Recommended UART signals
-========================
-
-The following UART signals are used in the Nordic solution:
-
-* RX
-* TX
-* CTS
-* RTS
-* DTS (optional, not used)
-* RES
-
 .. |board_note_for_updating_libs| replace:: This command also builds the sample on the specified board.
    Make sure that the board you mention is compatible with the chosen sample.
