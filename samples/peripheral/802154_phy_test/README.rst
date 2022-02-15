@@ -644,7 +644,7 @@ It gets the antenna used by the DUT device for TX operations.
 
       custom rgettxantenna
 
-rgettxantenna - Get DUT RX antenna ID
+rgettxantenna - Get DUT RX antenna ID [Known Issue]
 =====================================
 
 It gets the antenna used by the DUT device for RX operations.
@@ -654,7 +654,7 @@ It gets the antenna used by the DUT device for RX operations.
 
       custom rgetrxantenna
 
-rgetbestrxantenna - Get last best DUT RX antenna ID selected by antenna diversity algorithm
+rgetbestrxantenna - Get last best DUT RX antenna ID selected by antenna diversity algorithm [Known Issue]
 ===========================================================================================
 
 It gets the last best antenna selected for RX operations by the antenna diversity algorithm.
