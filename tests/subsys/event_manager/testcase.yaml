@@ -1,6 +1,5 @@
 tests:
   event_manager.core:
-    platform_exclude: native_posix qemu_x86
     integration_platforms:
       - nrf51dk_nrf51422
       - nrf52dk_nrf52832
