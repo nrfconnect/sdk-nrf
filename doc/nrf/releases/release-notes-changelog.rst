@@ -201,6 +201,9 @@ The change prompted some changes in the CMake for the module, notably:
 Documentation
 =============
 
-|no_changes_yet_note|
+* Removed:
+
+  * Documentation on the Getting Started Assistant, as this tool is no longer in use.
+    Linux users can install the |NCS| by using the `Installing using Visual Studio Code <Installing on Linux_>`_ instructions or by following the steps on the :ref:`gs_installing` page.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
