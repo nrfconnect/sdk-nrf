@@ -9,6 +9,10 @@
 # See the west documentation for more information:
 #
 # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/west/index.html
+#
+# When creating a PR, change the SHA to
+# pull/666/head
+# replacing 666 with your PR number
 
 manifest:
   version: "0.12"
