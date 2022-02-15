@@ -104,7 +104,7 @@
 
 .. nrf21540dk_nrf52840
 
-| nRF21540 DK | PCA10112 | :ref:`nrf21540dk_nrf52840 <nrf21540dk_nrf52840>` | ``nrf21540dk_nrf52840`` |
+| :ref:`nRF21540 DK <ug_radio_fem>` | PCA10112 | :ref:`nrf21540dk_nrf52840 <nrf21540dk_nrf52840>` | ``nrf21540dk_nrf52840`` |
 
 .. thingy52_nrf52832
 
