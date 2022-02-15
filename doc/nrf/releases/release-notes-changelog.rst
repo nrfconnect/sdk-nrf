@@ -293,6 +293,20 @@ Modem libraries
   * Removed ``MODEM_INFO_NETWORK_MODE_MAX_SIZE``.
   * Removed ``CONFIG_MODEM_INFO_ADD_BOARD``.
 
+* :ref:`nrf_modem_lib_readme` library:
+
+  * Updated:
+
+    * The :c:func:`getaddrinfo` function to return ``EAFNOSUPPORT`` instead of ``EPROTONOSUPPORT`` when socket family is not supported.
+    * The :c:func:`bind` function to return ``EAFNOSUPPORT`` instead of ``ENOTSUP`` when socket family is not supported.
+    * The :c:func:`sendto` function to return ``EAFNOSUPPORT`` instead of ``ENOTSUP`` when socket family is not supported.
+    * The :c:func:`connect` function to not override the error codes set by the Modem library when called with raw parameters (non-IP).
+
+  * Fixed:
+
+    * An issue where the :c:func:`getsockopt` function causes segmentation fault when the ``optlen`` parameter is provided as ``NULL``.
+    * An issue where the :c:func:`recvfrom` function causes segmentation fault when the ``from`` and ``fromlen`` parameters are provided as ``NULL``.
+
 Libraries for networking
 ------------------------
 

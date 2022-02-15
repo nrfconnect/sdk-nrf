@@ -228,13 +228,6 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 	return retval;
 }
 
-static int nrf_to_z_addrinfo_flags(int flags)
-{
-	/* Flags not implemented.*/
-	ARG_UNUSED(flags);
-	return 0;
-}
-
 static void z_to_nrf_addrinfo_hints(const struct zsock_addrinfo *z_in,
 				   struct nrf_addrinfo *nrf_out)
 {
@@ -255,7 +248,7 @@ static int nrf_to_z_addrinfo(struct zsock_addrinfo *z_out,
 {
 	z_out->ai_next = NULL;
 	z_out->ai_canonname = NULL; /* TODO Do proper content copy. */
-	z_out->ai_flags = nrf_to_z_addrinfo_flags(nrf_in->ai_flags);
+	z_out->ai_flags = nrf_in->ai_flags;
 	z_out->ai_socktype = nrf_in->ai_socktype;
 
 	z_out->ai_family = nrf_in->ai_family;
@@ -278,7 +271,7 @@ static int nrf_to_z_addrinfo(struct zsock_addrinfo *z_out,
 		nrf_to_z_ipv6(z_out->ai_addr,
 			(const struct nrf_sockaddr_in6 *)nrf_in->ai_addr);
 	} else {
-		return -EPROTONOSUPPORT;
+		return -EAFNOSUPPORT;
 	}
 
 	return 0;
@@ -306,6 +299,7 @@ static int nrf91_socket_offload_accept(void *obj, struct sockaddr *addr,
 	struct nrf_sockaddr_in6 nrf_addr;
 	nrf_socklen_t nrf_addrlen;
 
+	/* `z_reserve_fd()` can fail */
 	if (fd < 0) {
 		return -1;
 	}
@@ -347,6 +341,7 @@ static int nrf91_socket_offload_accept(void *obj, struct sockaddr *addr,
 			nrf_to_z_ipv6(
 			    addr, (const struct nrf_sockaddr_in6 *)&nrf_addr);
 		} else {
+			errno = ENOTSUP;
 			goto error;
 		}
 	}
@@ -357,7 +352,7 @@ static int nrf91_socket_offload_accept(void *obj, struct sockaddr *addr,
 	return fd;
 
 error:
-	if (new_sd != -1) {
+	if (new_sd >= 0) {
 		nrf_close(new_sd);
 	}
 
@@ -388,14 +383,10 @@ static int nrf91_socket_offload_bind(void *obj, const struct sockaddr *addr,
 		retval = nrf_bind(sd, (const struct nrf_sockaddr *)&ipv6,
 				  sizeof(struct nrf_sockaddr_in6));
 	} else {
-		goto error;
+		errno = EAFNOSUPPORT;
+		retval = -1;
 	}
 
-	return retval;
-
-error:
-	retval = -1;
-	errno = ENOTSUP;
 	return retval;
 }
 
@@ -427,17 +418,8 @@ static int nrf91_socket_offload_connect(void *obj, const struct sockaddr *addr,
 	} else {
 		/* Pass in raw to library as it is non-IP address. */
 		retval = nrf_connect(sd, (void *)addr, addrlen);
-		if (retval < 0) {
-			/* Not supported by library. */
-			goto error;
-		}
 	}
 
-	return retval;
-
-error:
-	retval = -1;
-	errno = ENOTSUP;
 	return retval;
 }
 
@@ -448,7 +430,7 @@ static int nrf91_socket_offload_setsockopt(void *obj, int level, int optname,
 	int retval;
 	int nrf_level = level;
 	int nrf_optname;
-	struct nrf_timeval nrf_timeo;
+	struct nrf_timeval nrf_timeo = { 0 };
 	void *nrf_optval = (void *)optval;
 	nrf_socklen_t nrf_optlen = optlen;
 
@@ -458,11 +440,13 @@ static int nrf91_socket_offload_setsockopt(void *obj, int level, int optname,
 	}
 
 	if ((level == SOL_SOCKET) && ((optname == SO_RCVTIMEO) ||
-		(optname == SO_SNDTIMEO))) {
-		nrf_timeo.tv_sec = ((struct timeval *)optval)->tv_sec;
-		nrf_timeo.tv_usec = ((struct timeval *)optval)->tv_usec;
-		nrf_optval = &nrf_timeo;
-		nrf_optlen = sizeof(struct nrf_timeval);
+				      (optname == SO_SNDTIMEO))) {
+		if (optval != NULL) {
+			nrf_timeo.tv_sec = ((struct timeval *)optval)->tv_sec;
+			nrf_timeo.tv_usec = ((struct timeval *)optval)->tv_usec;
+			nrf_optval = &nrf_timeo;
+			nrf_optlen = sizeof(struct nrf_timeval);
+		}
 	} else if ((level == SOL_TLS) && (optname == TLS_SESSION_CACHE)) {
 		nrf_optlen = sizeof(nrf_sec_session_cache_t);
 	}
@@ -481,8 +465,9 @@ static int nrf91_socket_offload_getsockopt(void *obj, int level, int optname,
 	int nrf_level = level;
 	int nrf_optname;
 	struct nrf_timeval nrf_timeo = {0, 0};
+	nrf_socklen_t nrf_timeo_size = sizeof(struct nrf_timeval);
 	void *nrf_optval = optval;
-	nrf_socklen_t nrf_optlen = (nrf_socklen_t)*optlen;
+	nrf_socklen_t *nrf_optlen = (nrf_socklen_t *)optlen;
 
 	if (z_to_nrf_optname(level, optname, &nrf_optname) < 0) {
 		errno = ENOPROTOOPT;
@@ -492,15 +477,17 @@ static int nrf91_socket_offload_getsockopt(void *obj, int level, int optname,
 	if ((level == SOL_SOCKET) && ((optname == SO_RCVTIMEO) ||
 		(optname == SO_SNDTIMEO))) {
 		nrf_optval = &nrf_timeo;
-		nrf_optlen = sizeof(struct nrf_timeval);
+		nrf_optlen = &nrf_timeo_size;
 	}
 
 	retval = nrf_getsockopt(sd, nrf_level, nrf_optname, nrf_optval,
-				&nrf_optlen);
+				nrf_optlen);
 
-	if ((retval == 0) && (optval != NULL)) {
-		*optlen = nrf_optlen;
-
+	/* The call was successful so we can assume that both
+	 * `nrf_optval` (`optval`) and `nrf_optlen` (`optlen`)
+	 * are not NULL, so we can dereference them.
+	 */
+	if (retval == 0) {
 		if (level == SOL_SOCKET) {
 			if (optname == SO_ERROR) {
 				/* Use nrf_modem_os_errno_set() to translate from nRF
@@ -536,7 +523,7 @@ static ssize_t nrf91_socket_offload_recvfrom(void *obj, void *buf, size_t len,
 		k_mutex_unlock(ctx->lock);
 	}
 
-	if (from == NULL) {
+	if (from == NULL || fromlen == NULL) {
 		retval = nrf_recvfrom(ctx->nrf_fd, buf, len, flags,
 				      NULL, NULL);
 	} else {
@@ -551,10 +538,12 @@ static ssize_t nrf91_socket_offload_recvfrom(void *obj, void *buf, size_t len,
 			goto exit;
 		}
 
-		if (cliaddr->sa_family == NRF_AF_INET) {
+		if (cliaddr->sa_family == NRF_AF_INET &&
+		    sock_len == sizeof(struct nrf_sockaddr_in)) {
 			nrf_to_z_ipv4(from, (struct nrf_sockaddr_in *)cliaddr);
 			*fromlen = sizeof(struct sockaddr_in);
-		} else if (cliaddr->sa_family == NRF_AF_INET6) {
+		} else if (cliaddr->sa_family == NRF_AF_INET6 &&
+			   sock_len == sizeof(struct nrf_sockaddr_in6)) {
 			nrf_to_z_ipv6(from, (struct nrf_sockaddr_in6 *)
 					  cliaddr);
 			*fromlen = sizeof(struct sockaddr_in6);
@@ -598,14 +587,10 @@ static ssize_t nrf91_socket_offload_sendto(void *obj, const void *buf,
 		retval = nrf_sendto(sd, buf, len, flags,
 				    (struct nrf_sockaddr*)&ipv6, sock_len);
 	} else {
-		goto error;
+		errno = EAFNOSUPPORT;
+		retval = -1;
 	}
 
-	return retval;
-
-error:
-	retval = -1;
-	errno = ENOTSUP;
 	return retval;
 }
 
@@ -802,12 +787,8 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 			retval = DNS_EAI_MEMORY;
 			k_free(next_z_res);
 			break;
-		} else if (err == -EPROTONOSUPPORT) {
-			retval = DNS_EAI_SOCKTYPE;
-			k_free(next_z_res);
-			break;
 		} else if (err == -EAFNOSUPPORT) {
-			retval = DNS_EAI_ADDRFAMILY;
+			retval = DNS_EAI_FAMILY;
 			k_free(next_z_res);
 			break;
 		}
@@ -841,31 +822,29 @@ static int nrf91_socket_offload_fcntl(int fd, int cmd, va_list args)
 	switch (cmd) {
 	case F_SETFL:
 		flags = va_arg(args, int);
-		if (flags != 0 && flags != O_NONBLOCK)
-			goto error;
+		if (flags != 0 && flags != O_NONBLOCK) {
+			errno = EINVAL;
+			retval = -1;
+		}
 
 		/* Translate flags from native to nRF */
 		flags = (flags & O_NONBLOCK) ? NRF_O_NONBLOCK : 0;
 
 		retval = nrf_fcntl(fd, NRF_F_SETFL, flags);
-		break;
 
+		break;
 	case F_GETFL:
 		flags = nrf_fcntl(fd, NRF_F_GETFL, 0);
 
 		/* Translate flags from nRF to native */
 		retval = (flags & NRF_O_NONBLOCK) ? O_NONBLOCK : 0;
-		break;
 
+		break;
 	default:
-		goto error;
+		errno = EINVAL;
+		retval = -1;
 	}
 
-	return retval;
-
-error:
-	retval = -1;
-	errno = EINVAL;
 	return retval;
 }
 

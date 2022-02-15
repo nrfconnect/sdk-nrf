@@ -1,0 +1,5 @@
+tests:
+  unity.nrf91_sockets_test:
+    tags: nrf_modem_lib
+    integration_platforms:
+      - native_posix
