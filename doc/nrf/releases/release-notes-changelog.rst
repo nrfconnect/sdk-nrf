@@ -38,6 +38,10 @@ The following sections provide detailed lists of changes by component.
 Application development
 =======================
 
+* Fixed:
+
+  * Issue with NCS Toolchain delimiter handling on MacOS, which could in special situations result in the build system not being able to properly locate the correct program needed.
+
 This section provides detailed lists of changes by :ref:`application <applications>`.
 
 nRF9160: Asset Tracker v2
