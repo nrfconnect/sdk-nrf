@@ -38,7 +38,14 @@ The following sections provide detailed lists of changes by component.
 Application development
 =======================
 
-|no_changes_yet_note|
+This section provides detailed lists of changes by :ref:`application <applications>`.
+
+nRF9160: Asset Tracker v2
+-------------------------
+
+ * Added:
+
+   * Support for :ref:`Bosch Software Environmental Cluster (BSEC) library <bosch_software_environmental_cluster_library>` driver .
 
 Protocols
 =========
