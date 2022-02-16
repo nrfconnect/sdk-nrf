@@ -7,8 +7,8 @@
    :local:
    :depth: 2
 
-|NCS| delivers reference software and supporting libraries for developing low-power wireless applications with Nordic Semiconductor products in the nRF21, nRF52, nRF53, and nRF91 series.
-The SDK includes open source projects (TF-M, MCUboot OpenThread, Matter, and the Zephyr RTOS), which are continuously integrated and re-distributed with the SDK.
+|NCS| delivers reference software and supporting libraries for developing low-power wireless applications with Nordic Semiconductor products in the nRF52, nRF53, and nRF91 Series.
+The SDK includes open source projects (TF-M, MCUboot, OpenThread, Matter, and the Zephyr RTOS), which are continuously integrated and re-distributed with the SDK.
 
 Release notes might refer to "experimental" support for features, which indicates that the feature is incomplete in functionality or verification, and can be expected to change in future releases.
 The feature is made available in its current state though the design and interfaces can change between release tags.
