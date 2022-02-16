@@ -409,6 +409,17 @@ static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 	case STATE_UA_PIN_WAIT:
 	case STATE_UA_PIN_COMPLETE:
 		if (new_state == STATE_UA_PIN_COMPLETE) {
+			/* If the config was found, the shadow data has already been sent */
+			if (!config_found) {
+				struct nrf_cloud_evt cloud_evt = {
+					.type = NRF_CLOUD_EVT_RX_DATA,
+					.data = nct_evt->param.cc->data,
+					.topic = nct_evt->param.cc->topic
+				};
+				/* Send shadow data to application */
+				nfsm_set_current_state_and_notify(nfsm_get_current_state(),
+								  &cloud_evt);
+			}
 			return handle_pin_complete(nct_evt);
 		} else if (new_state == STATE_UA_PIN_WAIT) {
 			return state_ua_pin_wait();
