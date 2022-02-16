@@ -315,6 +315,10 @@ KRKNWK-6756: 802.15.4 Service Layer (SL) library support for the nRF53
 FOTA does not work
   FOTA with the :ref:`zephyr:smp_svr_sample` does not work.
 
+.. rst-class:: v1-9-0
+
+NCSDK-13925: :ref:`radio_test` and :ref:`direct_test_mode` build with warnings for nRF5340 with the :ref:`ug_radio_fem_nrf21540_ek` support.
+
 nRF52820
 ========
 
