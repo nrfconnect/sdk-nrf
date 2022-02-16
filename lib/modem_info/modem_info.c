@@ -345,6 +345,19 @@ AT_MONITOR(modem_info_cesq_mon, "%CESQ", modem_info_rsrp_subscribe_handler, PAUS
 static rsrp_cb_t modem_info_rsrp_cb;
 static struct at_param_list m_param_list;
 
+/* Local strnlen, since it is not always available */
+static size_t m_strnlen(const char *s, size_t maxlen)
+{
+	size_t n = 0;
+
+	while (*s != '\0' && n < maxlen) {
+		s++;
+		n++;
+	}
+
+	return n;
+}
+
 static void flip_iccid_string(char *buf)
 {
 	uint8_t current_char;
@@ -718,6 +731,144 @@ int modem_info_rsrp_register(rsrp_cb_t cb)
 	}
 
 	return 0;
+}
+
+/*
+ * Obtain and copy out a string value from a response to an AT command.
+ * One buffer is used internally and dimensioned for the known maximum size of
+ * the value, while the other is the user provided target buffer.
+ *
+ * cmd     Command to execute
+ * fmt     Format string by which to extract 1 string from response
+ * tmp_buf Buffer to hold response from nrf_modem_scanf
+ * out_buf Buffer to finally write the string to
+ */
+int at_scanf_string(const char *cmd, const char *fmt, char *tmp_buf,
+		     size_t tmp_buf_size, char *out_buf, size_t out_buf_size)
+{
+	int ret;
+
+	if (cmd == NULL || fmt == NULL ||
+	    tmp_buf == NULL || out_buf == NULL) {
+		LOG_ERR("Invalid pointer");
+		return -EINVAL;
+	}
+
+	ret = nrf_modem_at_scanf(cmd, fmt, tmp_buf);
+
+	if (ret != 1) {
+		LOG_ERR("nrf_modem_at_scanf failed");
+		return -EIO;
+	}
+
+	if (m_strnlen(tmp_buf, tmp_buf_size) == tmp_buf_size) {
+		LOG_ERR("Internal buffer too small");
+		return -EIO;
+	}
+
+	if (m_strnlen(tmp_buf, tmp_buf_size) >= out_buf_size) {
+		LOG_ERR("Target buffer too small");
+		return -EINVAL;
+	}
+
+	strcpy(out_buf, tmp_buf);
+
+	return 0;
+}
+
+/*
+ * Obtain and copy out a int value from a response to an AT command.
+ *
+ * cmd     Command to execute
+ * fmt     Format string by which to extract 1 int from response
+ * val     Output value
+ */
+int at_scanf_int(const char *cmd, const char *fmt, int *val)
+{
+	int ret;
+
+	if (cmd == NULL || fmt == NULL || val == NULL) {
+		LOG_ERR("Invalid pointer");
+		return -EINVAL;
+	}
+
+	ret = nrf_modem_at_scanf(cmd, fmt, val);
+
+	if (ret != 1) {
+		LOG_ERR("nrf_modem_at_scanf failed");
+		return -EIO;
+	}
+
+	return 0;
+}
+
+/* FW UUID is 36 characters: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX */
+#define FW_UUID_SIZE 37
+
+int modem_info_get_fw_uuid(char *buf, size_t buf_size)
+{
+	char recv_buf[FW_UUID_SIZE] = {0};
+
+	return at_scanf_string("AT%XMODEMUUID",
+			       "%%XMODEMUUID: %" STRINGIFY(FW_UUID_SIZE) "[^\r\n]",
+			       recv_buf, FW_UUID_SIZE, buf, buf_size);
+}
+
+/* The "short software identification" has no specified size limit. */
+#define FW_VERSION_SIZE 32
+
+int modem_info_get_fw_version(char *buf, size_t buf_size)
+{
+	char recv_buf[FW_VERSION_SIZE] = {0};
+
+	return at_scanf_string("AT%SHORTSWVER",
+			       "%%SHORTSWVER: %" STRINGIFY(FW_VERSION_SIZE) "[^\r\n]",
+			       recv_buf, FW_VERSION_SIZE, buf, buf_size);
+}
+
+/* SVN is always 2 digits: XX */
+#define SVN_SIZE 3
+
+int modem_info_get_svn(char *buf, size_t buf_size)
+{
+	char recv_buf[SVN_SIZE] = {0};
+
+	return at_scanf_string("AT+CGSN=3",
+			       "+CGSN: \"%" STRINGIFY(SVN_SIZE) "[^\"]",
+			       recv_buf, SVN_SIZE, buf, buf_size);
+}
+
+int modem_info_get_batt_voltage(int *val)
+{
+	return at_scanf_int("AT%XVBAT", "%%XVBAT: %d", val);
+}
+
+int modem_info_get_temperature(int *val)
+{
+	return at_scanf_int("AT%XTEMP?", "%%XTEMP: %d", val);
+}
+
+int modem_info_get_rsrp(int *val)
+{
+	int ret;
+	int val_tmp;
+
+	ret = at_scanf_int("AT+CESQ",
+			   "+CESQ: %*d,%*d,%*d,%*d,%*d,%d", &val_tmp);
+
+	if (ret != 0) {
+		LOG_ERR("at_scanf_int failed");
+		return -EIO;
+	}
+
+	if (val_tmp == 255) {
+		LOG_WRN("No valid RSRP");
+		return -ENOENT;
+	}
+
+	*val = val_tmp - RSRP_OFFSET_VAL;
+	return 0;
+
 }
 
 int modem_info_init(void)
