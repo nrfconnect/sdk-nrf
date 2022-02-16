@@ -471,7 +471,7 @@ void bt_scan_filter_disable(void);
  * @return 0 If the operation was successful. Otherwise, a (negative) error
  *	     code is returned.
  */
-int bt_scan_filter_status(struct bt_filter_status *status);
+int bt_scan_filter_status_get(struct bt_filter_status *status);
 
 /**@brief Function for adding any type of filter to the scanning.
  *

@@ -1294,7 +1294,7 @@ int bt_scan_filter_enable(uint8_t mode, bool match_all)
 	return 0;
 }
 
-int bt_scan_filter_get(struct bt_filter_status *status)
+int bt_scan_filter_status_get(struct bt_filter_status *status)
 {
 	if (!status) {
 		return -EINVAL;
