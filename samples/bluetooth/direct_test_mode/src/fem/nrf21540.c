@@ -625,7 +625,7 @@ static int spim_gain_transfer(uint8_t gain)
 	return 0;
 }
 
-static int nrf21540_tx_gain_set(uint8_t gain)
+static int nrf21540_tx_gain_set(uint32_t gain)
 {
 	int err;
 	NRF_UARTE_Type *uarte_inst = NRF_UARTE0;
