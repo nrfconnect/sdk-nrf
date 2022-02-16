@@ -16,14 +16,8 @@
 #include <logging/log.h>
 #include <modem/modem_info.h>
 #include "cJSON_os.h"
-#include "nrf_cloud_fota.h"
 
 LOG_MODULE_REGISTER(nrf_cloud_codec, CONFIG_NRF_CLOUD_LOG_LEVEL);
-
-#define PGPS_RCV_ARRAY_IDX_HOST 0
-#define PGPS_RCV_ARRAY_IDX_PATH 1
-#define PGPS_RCV_REST_HOST "host"
-#define PGPS_RCV_REST_PATH "path"
 
 #define DUA_PIN_STR "not_associated"
 #define TIMEOUT_STR "timeout"
@@ -58,11 +52,6 @@ static const char *const sensor_type_str[] = {
 };
 #define SENSOR_TYPE_ARRAY_SIZE (sizeof(sensor_type_str) / sizeof(*sensor_type_str))
 
-#define MSGTYPE_VAL_DATA	"DATA"
-#define FOTA_VAL_BOOT		"BOOT"
-#define FOTA_VAL_APP		"APP"
-#define FOTA_VAL_MODEM		"MODEM"
-
 /* Shadow keys */
 #define JSON_KEY_STATE		"state"
 #define JSON_KEY_REP		"reported"
@@ -89,11 +78,6 @@ static const char *const sensor_type_str[] = {
 #define JSON_KEY_DEVICE_TO_CLOUD "g2c"
 #define JSON_KEY_CLOUD_TO_DEVICE "c2g"
 #endif
-
-#define JSON_KEY_MSGTYPE	"messageType"
-#define JSON_KEY_APPID		"appId"
-#define JSON_KEY_DATA		"data"
-#define JSON_KEY_TOPIC_BULK	"/bulk"
 
 int nrf_cloud_codec_init(void)
 {
@@ -339,9 +323,10 @@ int nrf_cloud_encode_sensor_data(const struct nrf_cloud_sensor_data *sensor,
 		return -ENOMEM;
 	}
 
-	ret = json_add_str_cs(root_obj, JSON_KEY_APPID, sensor_type_str[sensor->type]);
-	ret += json_add_str_cs(root_obj, JSON_KEY_DATA, sensor->data.ptr);
-	ret += json_add_str_cs(root_obj, JSON_KEY_MSGTYPE, MSGTYPE_VAL_DATA);
+	ret = json_add_str_cs(root_obj, NRF_CLOUD_JSON_APPID_KEY, sensor_type_str[sensor->type]);
+	ret += json_add_str_cs(root_obj, NRF_CLOUD_JSON_DATA_KEY, sensor->data.ptr);
+	ret += json_add_str_cs(root_obj, NRF_CLOUD_JSON_MSG_TYPE_KEY,
+			       NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
 
 	if (ret != 0) {
 		cJSON_Delete(root_obj);
@@ -668,7 +653,7 @@ int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
 	/* Populate bulk endpoint topic by copying and appending /bulk to the parsed
 	 * tx endpoint (d2c) topic.
 	 */
-	size_t bulk_ep_len_temp = tx_endpoint->len + sizeof(JSON_KEY_TOPIC_BULK);
+	size_t bulk_ep_len_temp = tx_endpoint->len + sizeof(NRF_CLOUD_BULK_MSG_TOPIC);
 
 	bulk_endpoint->ptr = nrf_cloud_calloc(bulk_ep_len_temp, 1);
 	if (bulk_endpoint->ptr == NULL) {
@@ -679,7 +664,7 @@ int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
 
 	bulk_endpoint->len = snprintk((char *)bulk_endpoint->ptr, bulk_ep_len_temp, "%s%s",
 				       (char *)tx_endpoint->ptr,
-				       JSON_KEY_TOPIC_BULK);
+				       NRF_CLOUD_BULK_MSG_TOPIC);
 
 	cJSON *rx_obj = json_object_decode(topic_obj, JSON_KEY_CLOUD_TO_DEVICE);
 
@@ -790,15 +775,15 @@ static int nrf_cloud_encode_service_info_fota(const struct nrf_cloud_svc_info_fo
 			return -ENOMEM;
 		}
 		if (fota->bootloader) {
-			cJSON_AddItemToArray(array, cJSON_CreateString(FOTA_VAL_BOOT));
+			cJSON_AddItemToArray(array, cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_BOOT));
 			++item_cnt;
 		}
 		if (fota->modem) {
-			cJSON_AddItemToArray(array, cJSON_CreateString(FOTA_VAL_MODEM));
+			cJSON_AddItemToArray(array, cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_MODEM));
 			++item_cnt;
 		}
 		if (fota->application) {
-			cJSON_AddItemToArray(array, cJSON_CreateString(FOTA_VAL_APP));
+			cJSON_AddItemToArray(array, cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_APP));
 			++item_cnt;
 		}
 
@@ -1122,11 +1107,11 @@ int nrf_cloud_rest_fota_execution_parse(const char *const response,
 		goto err_cleanup;
 	}
 
-	if (!strcmp(type, NRF_CLOUD_FOTA_REST_VAL_TYPE_MODEM)) {
+	if (!strcmp(type, NRF_CLOUD_FOTA_TYPE_MODEM)) {
 		job->type = NRF_CLOUD_FOTA_MODEM;
-	} else if (!strcmp(type, NRF_CLOUD_FOTA_REST_VAL_TYPE_BOOT)) {
+	} else if (!strcmp(type, NRF_CLOUD_FOTA_TYPE_BOOT)) {
 		job->type = NRF_CLOUD_FOTA_BOOTLOADER;
-	} else if (!strcmp(type, NRF_CLOUD_FOTA_REST_VAL_TYPE_APP)) {
+	} else if (!strcmp(type, NRF_CLOUD_FOTA_TYPE_APP)) {
 		job->type = NRF_CLOUD_FOTA_APPLICATION;
 	} else {
 		LOG_WRN("Unhandled FOTA type: %s", log_strdup(type));
@@ -1172,14 +1157,14 @@ int nrf_cloud_parse_pgps_response(const char *const response,
 
 	/* MQTT response is an array, REST is key/value map */
 	if (cJSON_IsArray(rsp_obj)) {
-		if (get_string_from_array(rsp_obj, PGPS_RCV_ARRAY_IDX_HOST, &host_ptr) ||
-		    get_string_from_array(rsp_obj, PGPS_RCV_ARRAY_IDX_PATH, &path_ptr)) {
+		if (get_string_from_array(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_HOST, &host_ptr) ||
+		    get_string_from_array(rsp_obj, NRF_CLOUD_PGPS_RCV_ARRAY_IDX_PATH, &path_ptr)) {
 			LOG_ERR("Invalid P-GPS array response format");
 			err = -EFTYPE;
 			goto cleanup;
 		}
-	} else if (get_string_from_obj(rsp_obj, PGPS_RCV_REST_HOST, &host_ptr) ||
-		   get_string_from_obj(rsp_obj, PGPS_RCV_REST_PATH, &path_ptr)) {
+	} else if (get_string_from_obj(rsp_obj, NRF_CLOUD_PGPS_RCV_REST_HOST, &host_ptr) ||
+		   get_string_from_obj(rsp_obj, NRF_CLOUD_PGPS_RCV_REST_PATH, &path_ptr)) {
 		LOG_ERR("Invalid P-GPS REST response format");
 		err = -EFTYPE;
 		goto cleanup;

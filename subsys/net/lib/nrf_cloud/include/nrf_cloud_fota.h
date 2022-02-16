@@ -15,18 +15,6 @@
 extern "C" {
 #endif
 
-#define NRF_CLOUD_FOTA_REST_KEY_JOB_DOC	"jobDocument"
-#define NRF_CLOUD_FOTA_REST_KEY_JOB_ID	"jobId"
-#define NRF_CLOUD_FOTA_REST_KEY_PATH	"path"
-#define NRF_CLOUD_FOTA_REST_KEY_HOST	"host"
-#define NRF_CLOUD_FOTA_REST_KEY_TYPE	"firmwareType"
-#define NRF_CLOUD_FOTA_REST_KEY_SIZE	"fileSize"
-#define NRF_CLOUD_FOTA_REST_KEY_VER	"version"
-
-#define NRF_CLOUD_FOTA_REST_VAL_TYPE_MODEM "MODEM"
-#define NRF_CLOUD_FOTA_REST_VAL_TYPE_BOOT  "BOOT"
-#define NRF_CLOUD_FOTA_REST_VAL_TYPE_APP   "APP"
-
 /**@brief FOTA event type provided to callback. */
 enum nrf_cloud_fota_evt_id {
 	NRF_CLOUD_FOTA_EVT_START,

@@ -53,6 +53,8 @@ extern "C" {
 #define NRF_CLOUD_JSON_FILTERED_KEY		"filtered"
 #define NRF_CLOUD_JSON_ELEVATION_MASK_KEY	"mask"
 
+#define NRF_CLOUD_BULK_MSG_TOPIC		"/bulk"
+
 /* Modem info key text */
 #define NRF_CLOUD_JSON_MCC_KEY			"mcc"
 #define NRF_CLOUD_JSON_MNC_KEY			"mnc"
@@ -87,10 +89,24 @@ extern "C" {
 #define NRF_CLOUD_JSON_PGPS_INT_MIN		"predictionIntervalMinutes"
 #define NRF_CLOUD_JSON_PGPS_GPS_DAY		"startGpsDay"
 #define NRF_CLOUD_JSON_PGPS_GPS_TIME		"startGpsTimeOfDaySeconds"
-#define NRF_CLOUD_PGPS_RCV_ARRAY_IDX_HOST 0
-#define NRF_CLOUD_PGPS_RCV_ARRAY_IDX_PATH 1
+#define NRF_CLOUD_PGPS_RCV_ARRAY_IDX_HOST	0
+#define NRF_CLOUD_PGPS_RCV_ARRAY_IDX_PATH	1
+#define NRF_CLOUD_PGPS_RCV_REST_HOST		"host"
+#define NRF_CLOUD_PGPS_RCV_REST_PATH		"path"
 
 #define NRF_CLOUD_MSG_TIMESTAMP_KEY		"ts"
+
+/* FOTA */
+#define NRF_CLOUD_FOTA_TYPE_MODEM		"MODEM"
+#define NRF_CLOUD_FOTA_TYPE_BOOT		"BOOT"
+#define NRF_CLOUD_FOTA_TYPE_APP			"APP"
+#define NRF_CLOUD_FOTA_REST_KEY_JOB_DOC		"jobDocument"
+#define NRF_CLOUD_FOTA_REST_KEY_JOB_ID		"jobId"
+#define NRF_CLOUD_FOTA_REST_KEY_PATH		"path"
+#define NRF_CLOUD_FOTA_REST_KEY_HOST		"host"
+#define NRF_CLOUD_FOTA_REST_KEY_TYPE		"firmwareType"
+#define NRF_CLOUD_FOTA_REST_KEY_SIZE		"fileSize"
+#define NRF_CLOUD_FOTA_REST_KEY_VER		"version"
 
 /**@brief Initialize the codec used encoding the data to the cloud. */
 int nrf_cloud_codec_init(void);
