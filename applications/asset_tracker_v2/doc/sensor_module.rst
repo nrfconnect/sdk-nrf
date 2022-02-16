@@ -74,6 +74,28 @@ The sensor module will only send out a :c:enum:`SENSOR_EVT_MOVEMENT_DATA_READY` 
    This is beyond the scope of the general asset tracker framework this application provides.
    Therefore, the readings are not transmitted to the cloud and are only used to detect a binary active and inactive state.
 
+.. _bosch_software_environmental_cluster_library:
+
+Bosch Software Environmental Cluster (BSEC) library
+===================================================
+
+The sensor module supports integration with the BSEC signal processing library using the external sensors, internal convenience API.
+If enabled, the BSEC library is used instead of the BME680 Zephyr driver to provide sensor readings from the BME680 for temperature, humidity, and atmospheric pressure.
+In addition, the BSEC driver provides an additional sensor reading, indoor air quality (IAQ), which is a metric given in between 0-500 range, that estimates the air quality of the environment.
+
+As the BSEC library requires a separate license, it is not a default part of |NCS|, but can be downloaded externally and imported into the |NCS| source tree.
+
+Perform the following steps to enable BSEC:
+
+1. Download the BSEC library, using the `Bosch BSEC`_ link.
+#. Extract and store the folder containing the library contents in the path specified by :ref:`CONFIG_EXTERNAL_SENSORS_BME680_BSEC_PATH <CONFIG_EXTERNAL_SENSORS_BME680_BSEC_PATH>` option or update the path configuration to reference the library location.
+#. Disable the Zephyr BME680 driver by setting :kconfig:`CONFIG_BME680` to false.
+#. Enable the external sensors API BSEC integration layer by enabling :ref:`CONFIG_EXTERNAL_SENSORS_BME680_BSEC <CONFIG_EXTERNAL_SENSORS_BME680_BSEC>` option.
+
+Air quality readings are provided with the :c:enumerator:`SENSOR_EVT_ENVIRONMENTAL_DATA_READY` event.
+
+To check and configure the BSEC configuration options, see :ref:`external_sensor_API_BSEC_configurations` section.
+
 Configuration options
 *********************
 
@@ -81,6 +103,41 @@ Configuration options
 
 CONFIG_SENSOR_THREAD_STACK_SIZE - Sensor module thread stack size
    This option configures the sensor module's internal thread stack size.
+
+.. _external_sensor_API_BSEC_configurations:
+
+External sensors API BSEC configurations
+========================================
+
+.. _CONFIG_EXTERNAL_SENSORS_BME680_BSEC:
+
+CONFIG_EXTERNAL_SENSORS_BME680_BSEC
+   This option configures the Bosch BSEC library for the BME680.
+
+.. _CONFIG_EXTERNAL_SENSORS_BME680_BSEC_PATH:
+
+CONFIG_EXTERNAL_SENSORS_BME680_BSEC_PATH
+   This option sets the path for the Bosch BSEC library folder.
+
+.. _CONFIG_EXTERNAL_SENSORS_BSEC_SAMPLE_MODE_ULTRA_LOW_POWER:
+
+CONFIG_EXTERNAL_SENSORS_BSEC_SAMPLE_MODE_ULTRA_LOW_POWER
+   This option configures the BSEC ultra Low Power Mode. In this mode, the BME680 is sampled every 300 seconds.
+
+.. _CONFIG_EXTERNAL_SENSORS_BSEC_SAMPLE_MODE_LOW_POWER:
+
+CONFIG_EXTERNAL_SENSORS_BSEC_SAMPLE_MODE_LOW_POWER
+   This option configures BSEC Low Power Mode. In this mode, the BME680 is sampled every 3 seconds.
+
+.. _CONFIG_EXTERNAL_SENSORS_BSEC_SAMPLE_MODE_CONTINUOUS:
+
+CONFIG_EXTERNAL_SENSORS_BSEC_SAMPLE_MODE_CONTINUOUS
+  This option configures BSEC continuous Mode. In this mode, the BME680 is sampled every second.
+
+.. _CONFIG_EXTERNAL_SENSORS_BSEC_TEMPERATURE_OFFSET:
+
+CONFIG_EXTERNAL_SENSORS_BSEC_TEMPERATURE_OFFSET
+   This option configures BSEC temperature offset in degree celsius multiplied by 100.
 
 Module states
 *************

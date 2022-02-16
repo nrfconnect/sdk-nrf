@@ -8,8 +8,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <drivers/sensor.h>
-#include "ext_sensors.h"
 #include <stdlib.h>
+
+#if defined(CONFIG_EXTERNAL_SENSORS_BME680_BSEC)
+#include "ext_sensors_bsec.h"
+#endif
+
+#include "ext_sensors.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(ext_sensors, CONFIG_EXTERNAL_SENSORS_LOG_LEVEL);
@@ -124,6 +129,15 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 
 	evt_handler = handler;
 
+#if defined(CONFIG_EXTERNAL_SENSORS_BME680_BSEC)
+	int err = ext_sensors_bsec_init();
+
+	if (err) {
+		LOG_ERR("ext_sensors_bsec_init, error: %d", err);
+		evt.type = EXT_SENSOR_EVT_BME680_ERROR;
+		evt_handler(&evt);
+	}
+#else
 	if (!device_is_ready(temp_sensor.dev)) {
 		LOG_ERR("Temperature sensor device is not ready");
 		evt.type = EXT_SENSOR_EVT_TEMPERATURE_ERROR;
@@ -141,6 +155,7 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 		evt.type = EXT_SENSOR_EVT_PRESSURE_ERROR;
 		evt_handler(&evt);
 	}
+#endif /* if defined(CONFIG_EXTERNAL_SENSORS_BME680_BSEC) */
 
 	if (!device_is_ready(accel_sensor.dev)) {
 		LOG_ERR("Accelerometer device is not ready");
@@ -173,6 +188,10 @@ int ext_sensors_temperature_get(double *ext_temp)
 	struct sensor_value data = {0};
 	struct ext_sensor_evt evt = {0};
 
+#if defined(CONFIG_EXTERNAL_SENSORS_BME680_BSEC)
+	return ext_sensors_bsec_temperature_get(ext_temp);
+#endif
+
 	err = sensor_sample_fetch_chan(temp_sensor.dev, SENSOR_CHAN_ALL);
 	if (err) {
 		LOG_ERR("Failed to fetch data from %s, error: %d",
@@ -203,6 +222,10 @@ int ext_sensors_humidity_get(double *ext_hum)
 	int err;
 	struct sensor_value data = {0};
 	struct ext_sensor_evt evt = {0};
+
+#if defined(CONFIG_EXTERNAL_SENSORS_BME680_BSEC)
+	return ext_sensors_bsec_humidity_get(ext_hum);
+#endif
 
 	err = sensor_sample_fetch_chan(humid_sensor.dev, SENSOR_CHAN_ALL);
 	if (err) {
@@ -235,6 +258,10 @@ int ext_sensors_pressure_get(double *ext_press)
 	struct sensor_value data = {0};
 	struct ext_sensor_evt evt = {0};
 
+#if defined(CONFIG_EXTERNAL_SENSORS_BME680_BSEC)
+	return ext_sensors_bsec_pressure_get(ext_press);
+#endif
+
 	err = sensor_sample_fetch_chan(press_sensor.dev, SENSOR_CHAN_ALL);
 	if (err) {
 		LOG_ERR("Failed to fetch data from %s, error: %d",
@@ -258,6 +285,14 @@ int ext_sensors_pressure_get(double *ext_press)
 	k_spin_unlock(&(press_sensor.lock), key);
 
 	return 0;
+}
+
+int ext_sensors_air_quality_get(uint16_t *ext_bsec_air_quality)
+{
+#if defined(CONFIG_EXTERNAL_SENSORS_BME680_BSEC)
+	return ext_sensors_bsec_air_quality_get(ext_bsec_air_quality);
+#endif
+	return -ENOTSUP;
 }
 
 int ext_sensors_mov_thres_set(double threshold_new)
