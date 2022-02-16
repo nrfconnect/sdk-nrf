@@ -25,8 +25,8 @@
   ],
   "COMPONENTS_BY_VERSION": {
     "latest": {
-      "ncs": "1.9.0",
-      "nrfxlib": "1.9.0",
+      "ncs": "1.9.99",
+      "nrfxlib": "1.9.99",
       "zephyr": "2.7.99",
       "mcuboot": "1.8.99",
       "nrfx": "2.7",
