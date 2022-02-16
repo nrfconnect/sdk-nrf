@@ -48,11 +48,17 @@ if(NOT NO_BOILERPLATE)
         set(CMAKE_MAKE_PROGRAM ${NCS_TOOLCHAIN_NINJA} CACHE INTERNAL "NCS Toolchain ninja")
       endif()
 
+      if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
+        set(env_list_delimeter ";")
+      else()
+        set(env_list_delimeter ":")
+      endif()
+
       # If NCS_TOOLCHAIN_ENV_PATH is set, then we must ensure to prepend it
       # to ENV{PATH}. This is especially needed for west to work properly
       # in windows with MinGW64.
       if(NCS_TOOLCHAIN_ENV_PATH)
-        set(ENV{PATH} "${NCS_TOOLCHAIN_ENV_PATH};$ENV{PATH}")
+        set(ENV{PATH} "${NCS_TOOLCHAIN_ENV_PATH}${env_list_delimeter}$ENV{PATH}")
       endif()
 
       # If the NCS toolchain specifies a dedicated PYTHONPATH,
