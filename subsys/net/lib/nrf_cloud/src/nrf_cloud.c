@@ -350,12 +350,15 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 {
 	int err;
 
-	if (current_state != STATE_DC_CONNECTED) {
-		return -EACCES;
+	if (!msg) {
+		return -EINVAL;
 	}
 
 	switch (msg->topic_type) {
 	case NRF_CLOUD_TOPIC_STATE: {
+		if (current_state < STATE_CC_CONNECTED) {
+			return -EACCES;
+		}
 		const struct nct_cc_data shadow_data = {
 			.opcode = NCT_CC_OPCODE_UPDATE_REQ,
 			.data.ptr = msg->data.ptr,
@@ -372,6 +375,9 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 		break;
 	}
 	case NRF_CLOUD_TOPIC_MESSAGE: {
+		if (current_state != STATE_DC_CONNECTED) {
+			return -EACCES;
+		}
 		const struct nct_dc_data buf = {
 			.data.ptr = msg->data.ptr,
 			.data.len = msg->data.len,
@@ -391,6 +397,9 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 		break;
 	}
 	case NRF_CLOUD_TOPIC_BULK: {
+		if (current_state != STATE_DC_CONNECTED) {
+			return -EACCES;
+		}
 		const struct nct_dc_data buf = {
 			.data.ptr = msg->data.ptr,
 			.data.len = msg->data.len,

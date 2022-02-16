@@ -133,6 +133,11 @@ Libraries for networking
 
      If enabled, the nRF Cloud REST library automatically generates a JWT if none is provided by the user when making REST requests.
 
+  * Updated:
+
+    * During the connection process, shadow data is sent to the application even if no "config" section is present.
+    * The application can now send shadow updates earlier in the connection process.
+
 Bluetooth libraries and services
 --------------------------------
 
