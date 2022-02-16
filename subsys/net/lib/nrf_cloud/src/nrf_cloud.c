@@ -21,11 +21,6 @@
 
 LOG_MODULE_REGISTER(nrf_cloud, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
-/* Identifier for user association message sent to the cloud.
- * A unique, unsigned 16 bit magic number. Can't be zero.
- */
-#define CC_UA_DATA_ID 9547
-
 /* Flag to indicate if a disconnect has been requested. */
 static atomic_t disconnect_requested;
 
