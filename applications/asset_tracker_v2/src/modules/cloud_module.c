@@ -843,6 +843,11 @@ static void on_sub_state_cloud_disconnected(struct cloud_msg_data *msg)
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONNECTION_TIMEOUT)) {
 		connect_cloud();
 	}
+
+	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_SEND) &&
+	    IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
+		config_send(&msg->module.data);
+	}
 }
 
 /* Message handler for all states. */

@@ -1062,6 +1062,12 @@ static void on_cloud_state_disconnected(struct data_msg_data *msg)
 		}
 
 		state_set(STATE_CLOUD_CONNECTED);
+		return;
+	}
+
+	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONFIG_EMPTY) &&
+	    IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
+		config_send();
 	}
 }
 
