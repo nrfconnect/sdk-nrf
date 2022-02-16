@@ -39,6 +39,7 @@ static bool full_idle_mode;
 struct k_work_q slm_work_q;
 
 /* global variable defined in different files */
+extern uint8_t fota_type;
 extern uint8_t fota_stage;
 extern uint8_t fota_status;
 extern int32_t fota_info;
@@ -267,8 +268,15 @@ void start_execute(void)
 
 	/* Post-FOTA handling */
 	if (fota_stage != FOTA_STAGE_INIT) {
-		handle_nrf_modem_lib_init_ret();
-		handle_mcuboot_swap_ret();
+		if (fota_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA) {
+			handle_nrf_modem_lib_init_ret();
+		} else if (fota_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
+			handle_mcuboot_swap_ret();
+		} else {
+			LOG_ERR("Unknown DFU type: %d", fota_type);
+			fota_status = FOTA_STATUS_ERROR;
+			fota_info = -EAGAIN;
+		}
 	}
 
 	err = ext_xtal_control(true);

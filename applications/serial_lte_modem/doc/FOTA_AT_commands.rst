@@ -81,8 +81,11 @@ Example
    OK
    #XFOTA: 1,0,0
    ...
-   #XFOTA: 1,4,0
+   #XFOTA:4,0
    AT#XRESET
+   OK
+   READY
+   #XFOTA: 5,0
 
    Erase previous image after FOTA
    AT#XFOTA=8
@@ -102,8 +105,11 @@ Example
    OK
    #XFOTA: 1,0,0
    ...
-   #XFOTA: 1,4,0
+   #XFOTA: 4,0
    AT#XRESET
+   OK
+   READY
+   #XFOTA: 5,0
 
 Unsolicited notification
 ~~~~~~~~~~~~~~~~~~~~~~~~
