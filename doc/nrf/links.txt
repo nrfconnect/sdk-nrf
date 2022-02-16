@@ -656,6 +656,7 @@
 .. _`iBasis IoT network coverage`: https://ibasis.com/solutions/iot-connectivity/network-coverage/
 
 .. _`BME680`: https://www.bosch-sensortec.com/products/environmental-sensors/gas-sensors/bme680/
+.. _`Bosch BSEC`: https://www.bosch-sensortec.com/software-tools/software/bsec/
 
 .. _`ADXL362`: https://www.analog.com/en/products/adxl362.html#product-overview
 

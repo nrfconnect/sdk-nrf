@@ -166,6 +166,9 @@ static void ext_sensor_handler(const struct ext_sensor_evt *const evt)
 	case EXT_SENSOR_EVT_PRESSURE_ERROR:
 		LOG_ERR("EXT_SENSOR_EVT_PRESSURE_ERROR");
 		break;
+	case EXT_SENSOR_EVT_BME680_ERROR:
+		LOG_ERR("EXT_SENSOR_EVT_BME680_ERROR");
+		break;
 	default:
 		break;
 	}
