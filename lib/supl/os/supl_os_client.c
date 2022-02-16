@@ -105,7 +105,7 @@ static int set_device_id(void)
 
 static int set_lte_params(void)
 {
-	char response[128] = { 0 };
+	char response[192] = { 0 };
 
 	lte_params_init(&supl_client_ctx.lte_params);
 
