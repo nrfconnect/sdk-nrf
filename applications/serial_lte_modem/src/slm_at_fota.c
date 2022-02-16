@@ -52,6 +52,7 @@ int slm_setting_fota_save(void);
 /* global variable defined in different files */
 extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
 extern struct at_param_list at_param_list;
+extern uint8_t fota_type;
 extern uint8_t fota_stage;
 extern uint8_t fota_status;
 extern int32_t fota_info;
@@ -246,6 +247,8 @@ static int do_fota_start(int op, const char *file_uri, int sec_tag,
 		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
+	fota_type = type;
+
 	return ret;
 }
 
@@ -362,6 +365,8 @@ int handle_at_fota(enum at_cmd_type cmd_type)
 			err = do_fota_erase_app();
 		} else if (op == SLM_FOTA_ERASE_MFW) {
 			err = do_fota_erase_mfw();
+		} else {
+			err = -EINVAL;
 		} break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:

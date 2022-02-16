@@ -115,12 +115,6 @@ config SLM_DATAMODE_TERMINATOR
 	help
 	  Use a pattern to terminate data mode
 
-config SLM_DATAMODE_SILENCE
-	int "Silence time to exit data mode"
-	default 1
-	help
-	  Exit data mode after the specified time (in seconds) of UART silence
-
 #
 # Configurable services
 #

@@ -133,7 +133,7 @@ Syntax
   If ``payload_length`` is greater than ``0``, the SLM will enter data mode and expect the upcoming UART input data as payload.
   The SLM will then send the payload to the HTTP server until the ``payload_length`` bytes are sent.
   To abort sending the payload, terminate data mode by sending the terminator string defined in :kconfig:`CONFIG_SLM_DATAMODE_TERMINATOR`.
-  The default pattern string is "+++". Keep in mind that UART silence as configured in :kconfig:`CONFIG_SLM_DATAMODE_SILENCE` is required before and after the pattern string.
+  The default pattern string is "+++".
 
 Response syntax
 ~~~~~~~~~~~~~~~
