@@ -1094,6 +1094,8 @@ int lte_lc_rai_req(bool enable)
 		return -EOPNOTSUPP;
 	case LTE_LC_SYSTEM_MODE_NBIOT:
 	case LTE_LC_SYSTEM_MODE_NBIOT_GPS:
+	case LTE_LC_SYSTEM_MODE_LTEM_NBIOT:
+	case LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS:
 		break;
 	default:
 		LOG_ERR("Unknown system mode");
