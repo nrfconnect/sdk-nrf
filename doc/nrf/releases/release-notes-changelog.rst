@@ -66,7 +66,9 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 nRF9160: Asset Tracker v2
 -------------------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * For nRF Cloud builds, the configuration section in the shadow is now initialized during the cloud connection process.
 
 nRF Desktop
 -----------
