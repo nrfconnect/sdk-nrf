@@ -108,7 +108,8 @@ config MULTICELL_LOCATION_HERE_HTTPS_PORT
 
 config MULTICELL_LOCATION_HERE_HOSTNAME
 	string "Server hostname for HERE"
-	default "pos.api.here.com" if MULTICELL_LOCATION_HERE_V1
+	default "pos.api.here.com" if MULTICELL_LOCATION_HERE_V1 && MULTICELL_LOCATION_HERE_USE_APP_CODE_ID
+	default "pos.ls.hereapi.com" if MULTICELL_LOCATION_HERE_V1 && MULTICELL_LOCATION_HERE_USE_API_KEY
 	default "positioning.hereapi.com" if MULTICELL_LOCATION_HERE_V2
 	help
 	  Server hostname to use when connecting to HERE location service
