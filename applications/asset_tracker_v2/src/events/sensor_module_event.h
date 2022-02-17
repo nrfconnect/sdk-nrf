@@ -59,6 +59,10 @@ struct sensor_module_data {
 	double humidity;
 	/** Atmospheric pressure in kilopascal. */
 	double pressure;
+	/** BSEC air quality in Indoor-Air-Quality (IAQ) index.
+	 *  If -1, the value is not provided.
+	 */
+	int bsec_air_quality;
 };
 
 /** @brief Structure used to provide acceleration data. */

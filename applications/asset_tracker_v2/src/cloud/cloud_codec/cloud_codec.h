@@ -129,6 +129,10 @@ struct cloud_data_sensors {
 	double humidity;
 	/** Atmospheric pressure in kilopascal. */
 	double pressure;
+	/** BSEC Air quality in Indoor-Air-Quality (IAQ) index.
+	 *  If -1, the value is not provided.
+	 */
+	int bsec_air_quality;
 	/** Flag signifying that the data entry is to be encoded. */
 	bool queued : 1;
 };

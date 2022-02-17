@@ -36,6 +36,7 @@
 #define DATA_TEMPERATURE    "temp"
 #define DATA_HUMIDITY	    "hum"
 #define DATA_PRESSURE       "atmp"
+#define DATA_BSEC_IAQ       "bsec_iaq"
 #define DATA_ENVIRONMENTALS "env"
 #define DATA_BUTTON	    "btn"
 #define DATA_CONFIG	    "cfg"
