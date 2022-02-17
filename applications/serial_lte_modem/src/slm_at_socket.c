@@ -280,7 +280,6 @@ static int do_socketopt_set_int(int option, int value)
 		}
 		break;
 
-
 	case SO_PRIORITY:
 	case SO_TIMESTAMPING:
 		sprintf(rsp_buf, "\r\n#XSOCKETOPT: \"not supported\"\r\n");
@@ -354,10 +353,10 @@ static int do_secure_socketopt_set_str(int option, const char *value)
 		/** Write-only socket option to set hostname. It accepts a string containing
 		 *  the hostname (may be NULL to disable hostname verification).
 		 */
-		if (value) {
-			ret = setsockopt(sock.fd, SOL_TLS, option, value, strlen(value));
-		} else {
+		if (slm_util_cmd_casecmp(value, "NULL")) {
 			ret = setsockopt(sock.fd, SOL_TLS, option, NULL, 0);
+		} else {
+			ret = setsockopt(sock.fd, SOL_TLS, option, value, strlen(value));
 		}
 		if (ret < 0) {
 			LOG_ERR("setsockopt(%d) error: %d", option, -errno);
@@ -1142,22 +1141,15 @@ int handle_at_secure_socketopt(enum at_cmd_type cmd_type)
 				if (err) {
 					return err;
 				}
+				err = do_secure_socketopt_set_int(name, value_int);
 			} else if (type == AT_PARAM_TYPE_STRING) {
 				err = util_string_get(&at_param_list, 3, value_str, &size);
 				if (err) {
 					return err;
 				}
+				err = do_secure_socketopt_set_str(name, value_str);
 			} else {
 				return -EINVAL;
-			}
-			if (type == AT_PARAM_TYPE_NUM_INT) {
-				err = do_secure_socketopt_set_int(name, value_int);
-			} else if (type == AT_PARAM_TYPE_STRING) {
-				if (size != 0) {
-					err = do_secure_socketopt_set_str(name, value_str);
-				} else {
-					err = do_secure_socketopt_set_str(name, NULL);
-				}
 			}
 		}  else if (op == AT_SOCKETOPT_GET) {
 			err = do_secure_socketopt_get(name);
