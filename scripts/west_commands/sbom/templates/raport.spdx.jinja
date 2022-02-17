@@ -1,0 +1,49 @@
+# Document Information
+
+SPDXVersion: SPDX-2.2
+DataLicense: CC0-1.0
+SPDXID: SPDXRef-DOCUMENT
+DocumentName: west-ncs-sbom-report
+DocumentNamespace: http://spdx.org/spdxdocs/west-ncs-sbom-{{report_uuid}}
+
+# Creation Info
+
+Creator: Tool: west-ncs-sbom
+Created: {{timestamp}}
+CreatorComment:<text>Generated with west-ncs-sbom. For details, see https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/introduction.html#about-the-ncs-license.</text>
+
+# Package Information
+
+PackageName: west-ncs-sbom-package
+SPDXID: SPDXRef-1
+PackageDownloadLocation: NONE
+FilesAnalyzed: true
+PackageVerificationCode: {{files | verification_code}}
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseInfoFromFiles: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+
+{% for file in files %}
+# File
+
+FileName: {{file.file_path|rel_to_this_file}}
+SPDXID: SPDXRef-{{1+loop.index}}
+FileChecksum: SHA1: {{file.sha1}}
+LicenseConcluded: {{ file.license_expr | adjust_identifier if file.license_expr != '' else 'NOASSERTION' }}
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+{% endfor %}
+
+
+# Extracted Licenses
+{% for license in licenses_sorted %}
+LicenseID: {{licenses[license].friendly_id}}
+{% if licenses[license].text != '' -%}
+ExtractedText: <text>{{ licenses[license].text }}</text>
+{% else -%}
+ExtractedText: Unknown spdx license reference: {{licenses[license].friendly_id}}
+{% endif -%}
+{% if licenses[license].name != None -%} LicenseName: {{licenses[license].name}} {% endif -%}
+{% if licenses[license].url != None -%} LicenseCrossReference: {{licenses[license].url}} {% endif -%}
+{% endfor %}

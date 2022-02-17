@@ -799,6 +799,8 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
+* Added new ``west ncs-sbom`` command that generates :ref:`Software Bill of Materials <west_sbom>`.
+
 Unity
 -----
 

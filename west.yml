@@ -182,6 +182,5 @@ manifest:
   self:
     # This repository should be cloned to ncs/nrf.
     path: nrf
-    # This line configures west extensions which are currently only
-    # for internal use by NCS maintainers.
+    # This line configures west extensions.
     west-commands: scripts/west-commands.yml

@@ -805,6 +805,7 @@
 .. _`BH1749NUC-E`: https://fscdn.rohm.com/en/products/databook/datasheet/ic/sensor/light/bh1749nuc-e.pdf
 
 .. _`Windows Python Path`: https://docs.python.org/3/using/windows.html#finding-the-python-executable
+.. _`Python's Path.glob`: https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob
 
 .. _`CMock`: https://www.throwtheswitch.org/cmock
 .. _`Unity`: https://www.throwtheswitch.org/unity
@@ -848,6 +849,10 @@
 
 .. _`SPDX tool`: https://spdx.dev/
 .. _`SPDX identifier`: https://spdx.dev/ids/
+.. _`SPDX License List`: https://spdx.org/licenses/
+
+.. _`Scancode-Toolkit`: https://scancode-toolkit.readthedocs.io/
+.. _`Scancode-Toolkit Installation`: https://scancode-toolkit.readthedocs.io/en/stable/getting-started/install.html
 
 .. _`dfu-util tool`: http://dfu-util.sourceforge.net/
 
