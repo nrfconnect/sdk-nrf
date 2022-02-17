@@ -181,6 +181,7 @@ static void environmental_data_get(void)
 #if defined(CONFIG_EXTERNAL_SENSORS)
 	int err;
 	double temperature, humidity, pressure;
+	uint16_t bsec_air_quality;
 
 	/* Request data from external sensors. */
 	err = ext_sensors_temperature_get(&temperature);
@@ -198,11 +199,23 @@ static void environmental_data_get(void)
 		LOG_ERR("ext_sensors_pressure_get, error: %d", err);
 	}
 
+	err = ext_sensors_air_quality_get(&bsec_air_quality);
+	if (err && err == -ENOTSUP) {
+		/* Air quality is not available, enable the Bosch BSEC library driver.
+		 * Propagate the air quality value as -1.
+		 */
+		bsec_air_quality = UINT16_MAX;
+	} else if (err) {
+		LOG_ERR("ext_sensors_bsec_air_quality_get, error: %d", err);
+	}
+
 	sensor_module_event = new_sensor_module_event();
 	sensor_module_event->data.sensors.timestamp = k_uptime_get();
 	sensor_module_event->data.sensors.temperature = temperature;
 	sensor_module_event->data.sensors.humidity = humidity;
 	sensor_module_event->data.sensors.pressure = pressure;
+	sensor_module_event->data.sensors.bsec_air_quality =
+					(bsec_air_quality == UINT16_MAX) ? -1 : bsec_air_quality;
 	sensor_module_event->type = SENSOR_EVT_ENVIRONMENTAL_DATA_READY;
 #else
 

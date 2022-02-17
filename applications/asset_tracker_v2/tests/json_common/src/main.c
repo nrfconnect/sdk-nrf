@@ -222,6 +222,7 @@ static void test_encode_environmental_data_object(void)
 		.humidity = 50,
 		.temperature = 23,
 		.pressure = 101,
+		.bsec_air_quality = 50,
 		.env_ts = 1000,
 		.queued = true
 	};
@@ -265,6 +266,31 @@ static void test_encode_environmental_data_object(void)
 	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
 }
 
+static void test_encode_environmental_data_object_besec_disabled(void)
+{
+	int ret;
+	struct cloud_data_sensors data = {
+		.humidity = 50,
+		.temperature = 23,
+		.pressure = 101,
+		.bsec_air_quality = -1,
+		.env_ts = 1000,
+		.queued = true
+	};
+
+	ret = json_common_sensor_data_add(dummy.root_obj,
+					  &data,
+					  JSON_COMMON_ADD_DATA_TO_OBJECT,
+					  DATA_ENVIRONMENTALS,
+					  NULL);
+	zassert_equal(0, ret, "Return value %d is wrong", ret);
+
+	ret = encoded_output_check(dummy.root_obj,
+				   TEST_VALIDATE_ENVIRONMENTAL_JSON_SCHEMA_AIR_QUALITY_DISABLED,
+				   data.queued);
+	zassert_equal(0, ret, "Return value %d is wrong", ret);
+}
+
 static void test_encode_environmental_data_array(void)
 {
 	int ret;
@@ -275,6 +301,7 @@ static void test_encode_environmental_data_array(void)
 		.humidity = 50,
 		.temperature = 23,
 		.pressure = 101,
+		.bsec_air_quality = 55,
 		.env_ts = 1000,
 		.queued = true
 	};
@@ -891,12 +918,14 @@ static void test_encode_batch_data_object(void)
 		[0].humidity = 50,
 		[0].temperature = 23,
 		[0].pressure = 80,
+		[0].bsec_air_quality = 50,
 		[0].env_ts = 1000,
 		[0].queued = true,
 		/* Second entry */
 		[1].humidity = 50,
 		[1].temperature = 23,
 		[1].pressure = 101,
+		[1].bsec_air_quality = 55,
 		[1].env_ts = 1000,
 		[1].queued = true
 	};
@@ -1243,6 +1272,9 @@ void test_main(void)
 
 		/* Environmental */
 		ztest_unit_test_setup_teardown(test_encode_environmental_data_object,
+					       test_setup_object,
+					       test_teardown_object),
+		ztest_unit_test_setup_teardown(test_encode_environmental_data_object_besec_disabled,
 					       test_setup_object,
 					       test_teardown_object),
 		ztest_unit_test_setup_teardown(test_encode_environmental_data_array,

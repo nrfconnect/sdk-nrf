@@ -1280,6 +1280,7 @@ static void on_all_states(struct data_msg_data *msg)
 			.temperature = msg->module.sensor.data.sensors.temperature,
 			.humidity = msg->module.sensor.data.sensors.humidity,
 			.pressure = msg->module.sensor.data.sensors.pressure,
+			.bsec_air_quality = msg->module.sensor.data.sensors.bsec_air_quality,
 			.env_ts = msg->module.sensor.data.sensors.timestamp,
 			.queued = true
 		};

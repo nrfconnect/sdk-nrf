@@ -165,9 +165,10 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 		}
 		case ENVIRONMENTALS: {
 			int err, len;
-			char humidity[7];
-			char temperature[7];
-			char pressure[7];
+			char humidity[10];
+			char temperature[10];
+			char pressure[10];
+			char bsec_air_quality[4];
 			struct cloud_data_sensors *data = (struct cloud_data_sensors *)buf;
 
 			if (data[i].queued == false) {
@@ -184,21 +185,33 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 				       data[i].humidity);
 			if ((len < 0) || (len >= sizeof(humidity))) {
 				LOG_ERR("Cannot convert humidity to string, buffer too small");
-				return -ENOMEM;
 			}
 
 			len = snprintk(temperature, sizeof(temperature), "%.2f",
 				       data[i].temperature);
 			if ((len < 0) || (len >= sizeof(temperature))) {
 				LOG_ERR("Cannot convert temperature to string, buffer too small");
-				return -ENOMEM;
 			}
 
 			len = snprintk(pressure, sizeof(pressure), "%.2f",
 				       data[i].pressure);
 			if ((len < 0) || (len >= sizeof(pressure))) {
 				LOG_ERR("Cannot convert pressure to string, buffer too small");
-				return -ENOMEM;
+			}
+
+			if (data[i].bsec_air_quality >= 0) {
+				len = snprintk(bsec_air_quality, sizeof(bsec_air_quality), "%d",
+					data[i].bsec_air_quality);
+				if ((len < 0) || (len >= sizeof(bsec_air_quality))) {
+					LOG_ERR("Cannot convert BSEC air quality to string, "
+						"buffer too small");
+				}
+
+				err = add_data(array, NULL, APP_ID_AIR_QUAL, bsec_air_quality,
+					       &data[i].env_ts, data[i].queued, NULL, false);
+				if (err && err != -ENODATA) {
+					return err;
+				}
 			}
 
 			err = add_data(array, NULL, APP_ID_HUMIDITY, humidity,

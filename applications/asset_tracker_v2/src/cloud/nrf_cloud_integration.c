@@ -68,6 +68,7 @@ static int send_service_info(void)
 #if defined(CONFIG_BOARD_THINGY91_NRF9160_NS)
 		.humidity = true,
 		.air_pressure = true,
+		.air_quality = true,
 		.temperature = true,
 #endif
 		.rsrp = true,
