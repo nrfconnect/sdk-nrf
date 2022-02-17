@@ -266,7 +266,7 @@ static void drop_enqueued_reports(struct enqueued_reports *enqueued_reports,
 
 		item = get_enqueued_report(enqueued_reports, irep_idx);
 
-		k_free(item->report);
+		event_manager_free(item->report);
 		k_free(item);
 	}
 }
@@ -359,7 +359,7 @@ static void enqueue_hid_report(struct enqueued_reports *enqueued_reports,
 	} else {
 		LOG_WRN("Enqueue dropped the oldest report");
 		item = get_enqueued_report(enqueued_reports, irep_idx);
-		k_free(item->report);
+		event_manager_free(item->report);
 	}
 
 	if (!item) {
