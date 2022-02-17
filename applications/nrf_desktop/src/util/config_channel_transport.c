@@ -221,7 +221,7 @@ int config_channel_transport_set(struct config_channel_transport *transport,
 
 	if (err < 0) {
 		LOG_WRN("Received improper frame");
-		k_free(event);
+		event_manager_free(event);
 		return -EINVAL;
 	}
 

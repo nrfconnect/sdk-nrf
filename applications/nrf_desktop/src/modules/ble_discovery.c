@@ -96,7 +96,7 @@ static void hids_discovery_completed(struct bt_gatt_dm *dm, void *context)
 	/* Nothing was found. */
 	LOG_ERR("Unrecognized peer");
 	peer_disconnect(bt_gatt_dm_conn_get(dm));
-	k_free(event);
+	event_manager_free(event);
 	int err = bt_gatt_dm_data_release(dm);
 
 	if (err) {
