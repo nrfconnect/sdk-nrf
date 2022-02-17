@@ -23,7 +23,7 @@ void oom_error_handler(void)
 
 	/* Freeing memory to enable further testing. */
 	while (event_tab[i] != NULL) {
-		k_free(event_tab[i]);
+		event_manager_free(event_tab[i]);
 		i++;
 	}
 
