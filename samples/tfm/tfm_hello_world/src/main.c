@@ -81,8 +81,16 @@ void main(void)
 	}
 
 	printk("Reading some secure memory that NS is allowed to read\n");
-	printk("FICR->INFO.PART: 0x%08x\n",
-		secure_read_word((intptr_t)&NRF_FICR_S->INFO.PART));
+
+	NRF_TIMER1_NS->TASKS_START = 1;
+
+	uint32_t part = secure_read_word((intptr_t)&NRF_FICR_S->INFO.PART);
+
+	NRF_TIMER1_NS->TASKS_CAPTURE[0] = 1;
+
+	printk("Approximate IPC overhead us: %d\n", NRF_TIMER1_NS->CC[0]);
+
+	printk("FICR->INFO.PART: 0x%08x\n", part);
 	printk("FICR->INFO.VARIANT: 0x%08x\n",
 		secure_read_word((intptr_t)&NRF_FICR_S->INFO.VARIANT));
 
