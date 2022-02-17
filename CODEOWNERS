@@ -203,6 +203,7 @@ Kconfig*                                  @tejlmand
 /tests/modules/lib/cddl-gen/              @oyvindronningstad
 /tests/modules/mcuboot/external_flash/    @hakonfam @sigvartmh
 /tests/modules/tfm/                       @SebastianBoe @joerchan @torsteingrindvik @magnev
+/tests/subsys/bluetooth/gatt_dm/          @doki-nordic
 /tests/subsys/bluetooth/mesh/             @trond-snekvik
 /tests/subsys/bootloader/                 @hakonfam
 /tests/subsys/debug/cpu_load/             @nordic-krch
