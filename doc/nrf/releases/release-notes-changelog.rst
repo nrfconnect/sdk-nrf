@@ -46,6 +46,7 @@ nRF9160: Asset Tracker v2
  * Added:
 
    * Support for :ref:`Bosch Software Environmental Cluster (BSEC) library <bosch_software_environmental_cluster_library>` driver .
+   * Support for indoor air quality (IAQ) readings retrieved from the BME680 sensor on Thingy:91. For more information, see the :ref:`asset_tracker_v2_sensor_module`.
 
 Protocols
 =========

@@ -315,6 +315,15 @@ int json_common_sensor_data_add(cJSON *parent,
 		goto exit;
 	}
 
+	/* If air quality is negative, the value is not provided. */
+	if (data->bsec_air_quality >= 0) {
+		err = json_add_number(sensor_val_obj, DATA_BSEC_IAQ, data->bsec_air_quality);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+	}
+
 	json_add_obj(sensor_obj, DATA_VALUE, sensor_val_obj);
 
 	err = json_add_number(sensor_obj, DATA_TIMESTAMP, data->env_ts);
