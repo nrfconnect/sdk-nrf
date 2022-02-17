@@ -130,6 +130,8 @@ By selecting support for Thread 1.2, you enable the following features in additi
 * Thread Domain Name
 * Coordinated Sampled Listening (CSL) Transmitter (for Full Thread Devices only)
 
+For a list of all supported features, see the :ref:`thread_ug_feature_sets`.
+
 Thread commissioning options
 ============================
 
@@ -434,7 +436,6 @@ No tick indicates that there is no support for the given feature in the related 
 For the full list of configuration options that were used during compilation, including their default values, see the :file:`openthread_lib_configuration.txt` file within each library folder in the nrfxlib repository.
 
 .. note::
-   The Link Metrics and Coordinated Sampled Listening features are not supported for nRF53 Series devices yet.
    The Backbone Router feature enables the functionality for the Thread Network side, but not for the Backbone side.
 
 .. _thread_ug_customizing_prebuilt:

@@ -11,7 +11,7 @@ The :ref:`Thread <ug_thread>` CLI sample demonstrates how to send commands to a 
 The CLI is integrated into the Zephyr shell.
 
 This sample supports the optional :ref:`ot_cli_sample_thread_v12` that you can turn on or off.
-See :ref:`coap_client_sample_activating_variants` for details.
+See :ref:`ot_cli_sample_thread_v12` for details.
 
 Requirements
 ************
@@ -69,7 +69,8 @@ Experimental Thread 1.2 extension
 =================================
 
 This optional extension allows you to test :ref:`available features from the Thread 1.2 Specification <thread_ug_thread_specification_options>`.
-To enable these features, set the :ref:`thread_ug_thread_specification_options`.
+To enable this extension, set ``-DCONF_FILE=prj_thread_1_2.conf``.
+See :ref:`gs_modifying_build_types` for details.
 
 FEM support
 ===========
