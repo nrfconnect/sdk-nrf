@@ -18,7 +18,7 @@ Build warnings will be generated to indicate when features labelled EXPERIMENTAL
 Highlights
 **********
 
-* Added experimental support for Nordic Distance Toolbox with examples. The software package adds phase-based distance measurement support for the nRF52 and nRF53 Series of devices.
+* Added experimental support for Nordic Distance Toolbox with examples. The software package adds phase-based distance measurement support for the nRF52 Series of devices.
 * Added support for Amazon Frustration-Free Setup (FFS) for Matter devices.
 * Added deep power-down mode to QSPI driver to optimize energy usage for solutions using an external flash memory.
 * Added support for micro:bit v2 board.
