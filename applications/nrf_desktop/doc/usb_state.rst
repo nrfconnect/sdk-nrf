@@ -57,11 +57,46 @@ USB device instance configuration
 The nRF Desktop device can provide multiple instances of a HID-class USB device.
 The number of instances is controlled by :kconfig:`CONFIG_USB_HID_DEVICE_COUNT`.
 
-* The Bluetooth® Peripheral device will be able to use a single instance only.
-* The Bluetooth® Central device can use either a single instance or a number of instances equal to :kconfig:`CONFIG_BT_MAX_PAIRED`.
 
-On the Bluetooth Central device, if only one instance is used, reports from all Peripherals connected to the Central are forwarded to the same instance.
-In other cases, reports from each of the bonded peripherals will be forwarded to a dedicated HID-class USB device instance.
+nRF Desktop Peripheral
+----------------------
+
+The nRF Desktop Peripheral devices by default use only a single HID-class USB instance.
+In that case, this instance is used for all the HID reports.
+
+Enable :kconfig:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION` to use more than one HID-class USB instance on nRF Desktop Peripheral.
+Make sure to set a greater value in the :kconfig:`CONFIG_USB_HID_DEVICE_COUNT` option and create an additional :file:`usb_state_def.h` header in the configuration.
+The header assigns HID reports to the HID-class USB instances.
+A given HID report can be handled only by a single HID-class USB instance.
+For example, the file contents can look as follows:
+
+   .. code-block:: c
+
+      #include "hid_report_desc.h"
+
+      /* This configuration file is included only once from usb_state module and holds
+       * information about HID report subscriptions of USB HID instances.
+       */
+
+      /* This structure enforces the header file is included only once in the build.
+       * Violating this requirement triggers a multiple definition error at link time.
+       */
+      const struct {} usb_state_def_include_once;
+
+      static const uint32_t usb_hid_report_bm[] = {
+             BIT(REPORT_ID_MOUSE),
+             BIT(REPORT_ID_KEYBOARD_KEYS),
+      };
+
+The ``usb_hid_report_bm`` defines HID reports handled by a HID-class USB instance, in a bitmask format.
+In this example, the HID mouse input report is handled by the first HID-class USB instance and the HID keyboard input report is handled by the second HID-class USB instance.
+
+nRF Desktop Central
+-------------------
+
+The nRF Desktop Central device can use either a single HID-class USB instance or a number of instances equal to that specified in the :kconfig:`CONFIG_BT_MAX_PAIRED` option.
+If only one instance is used, reports from all Peripherals connected to the Central are forwarded to the same instance.
+In other cases, reports from each of the bonded peripherals are forwarded to a dedicated HID-class USB instance.
 The same instance is used after reconnection.
 
 USB wakeup configuration
