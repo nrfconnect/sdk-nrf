@@ -17,18 +17,12 @@
 
 LOG_MODULE_REGISTER(multicell_location_here, CONFIG_MULTICELL_LOCATION_LOG_LEVEL);
 
-#define HOSTNAME	CONFIG_MULTICELL_LOCATION_HERE_HOSTNAME
+/* Here API references:
+ * v1: https://developer.here.com/documentation/positioning/api-reference-swagger.html
+ * v2: https://developer.here.com/documentation/positioning-api/api-reference.html
+ */
 
-/* Estimated size requirements for HTTP header */
-#define HTTP_HEADER_SIZE	200
-/* Estimated size for current cell information */
-#define CURRENT_CELL_SIZE	100
-/* Buffer size for neighbor element objects */
-#define NEIGHBOR_ELEMENT_SIZE	36
-/* Neighbor buffer size that will hold all neighbor cell objects */
-#define NEIGHBOR_BUFFER_SIZE	(CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS * NEIGHBOR_ELEMENT_SIZE)
-/* Estimated size for HTTP request body */
-#define HTTP_BODY_SIZE		(CURRENT_CELL_SIZE + NEIGHBOR_BUFFER_SIZE)
+#define HOSTNAME	CONFIG_MULTICELL_LOCATION_HERE_HOSTNAME
 
 #if IS_ENABLED(CONFIG_MULTICELL_LOCATION_HERE_V1)
 #define API_LOCATE_PATH		"/positioning/v1/locate"
@@ -52,13 +46,29 @@ BUILD_ASSERT(sizeof(API_APP_ID) > 1, "App ID must be configured");
 #define HEADER_CONTENT_TYPE    "Content-Type: application/json\r\n"
 #define HEADER_CONNECTION      "Connection: close\r\n"
 
+/* Estimated size requirements for HTTP header */
+#define HTTP_HEADER_SIZE	200
+
+/* Estimated size for current cell information */
+#define CURRENT_CELL_SIZE	100
+/* Buffer size for neighbor element objects */
+#define NEIGHBOR_ELEMENT_SIZE	72
+/* Neighbor buffer size that will hold all neighbor cell objects */
+#define NEIGHBOR_BUFFER_SIZE	(CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS * NEIGHBOR_ELEMENT_SIZE)
+/* Estimated size for HTTP request body */
+#define HTTP_BODY_SIZE		(CURRENT_CELL_SIZE + NEIGHBOR_BUFFER_SIZE)
+
 #define HTTP_REQUEST_BODY						\
 	"{"								\
 		"\"lte\":["						\
 			"{"						\
-				"\"mcc\": %d,"				\
-				"\"mnc\": %d,"				\
-				"\"cid\": %d,"				\
+				"\"mcc\":%d,"				\
+				"\"mnc\":%d,"				\
+				"\"cid\":%d,"				\
+				"\"tac\":%d,"				\
+				"\"rsrp\":%d,"				\
+				"\"rsrq\":%.1f,"			\
+				"\"ta\":%d,"				\
 				"\"nmr\":["				\
 					"%s"				\
 				"]"					\
@@ -70,23 +80,92 @@ BUILD_ASSERT(sizeof(API_APP_ID) > 1, "App ID must be configured");
 	"{"								\
 		"\"lte\":["						\
 			"{"						\
-				"\"mcc\": %d,"				\
-				"\"mnc\": %d,"				\
-				"\"cid\": %d"				\
+				"\"mcc\":%d,"				\
+				"\"mnc\":%d,"				\
+				"\"cid\":%d,"				\
+				"\"tac\":%d,"				\
+				"\"rsrp\":%d,"				\
+				"\"rsrq\":%.1f,"			\
+				"\"ta\":%d"				\
 			"}"						\
 		"]"							\
 	"}"
 
 #define HTTP_REQUEST_BODY_NEIGHBOR_ELEMENT				\
 	"{"								\
-		"\"earfcn\": %d,"						\
-		"\"pci\": %d"						\
+		"\"earfcn\":%d,"					\
+		"\"pci\":%d,"						\
+		"\"rsrp\":%d,"						\
+		"\"rsrq\":%.1f"						\
 	"}"
 
 BUILD_ASSERT(sizeof(HOSTNAME) > 1, "Hostname must be configured");
 
 static char body[HTTP_BODY_SIZE];
 static char neighbors[NEIGHBOR_BUFFER_SIZE];
+
+/* Modem returns RSRP and RSRQ as index values which require
+ * a conversion to dBm and dB respectively. See modem AT
+ * command reference guide for more information.
+ */
+#define RSRP_ADJ(rsrp) (rsrp - ((rsrp <= 0) ? 140 : 141))
+#define RSRQ_ADJ(rsrq) (((double)rsrq * 0.5) - 19.5)
+
+#define HERE_MIN_RSRP -140
+#define HERE_MAX_RSRP -44
+
+static int here_adjust_rsrp(int input)
+{
+	int return_value;
+
+	return_value = RSRP_ADJ(input);
+
+	if (return_value < HERE_MIN_RSRP) {
+		return_value = HERE_MIN_RSRP;
+	} else if (return_value > HERE_MAX_RSRP) {
+		return_value = HERE_MAX_RSRP;
+	}
+
+	return return_value;
+}
+
+#define HERE_MIN_RSRQ -19.5
+#define HERE_MAX_RSRQ -3
+
+static double here_adjust_rsrq(int input)
+{
+	double return_value;
+
+	return_value = RSRQ_ADJ(input);
+
+	if (return_value < HERE_MIN_RSRQ) {
+		return_value = HERE_MIN_RSRQ;
+	} else if (return_value > HERE_MAX_RSRQ) {
+		return_value = HERE_MAX_RSRQ;
+	}
+
+	return return_value;
+}
+
+#define HERE_TA_ADJ(ta) (ta / 16)
+
+#define HERE_MIN_TA 0
+#define HERE_MAX_TA 1282
+
+static int here_adjust_ta(int input)
+{
+	int return_value;
+
+	return_value = HERE_TA_ADJ(input);
+
+	if (return_value < HERE_MIN_TA) {
+		return_value = HERE_MIN_TA;
+	} else if (return_value > HERE_MAX_TA) {
+		return_value = HERE_MAX_TA;
+	}
+
+	return return_value;
+}
 
 /* TLS certificate:
  *	GlobalSign Root CA - R3
@@ -143,7 +222,12 @@ static int location_service_generate_request(
 		len = snprintk(buf, buf_len, HTTP_REQUEST_BODY_NO_NEIGHBORS,
 			       cell_data->current_cell.mcc,
 			       cell_data->current_cell.mnc,
-			       cell_data->current_cell.id);
+			       cell_data->current_cell.id,
+			       cell_data->current_cell.tac,
+			       here_adjust_rsrp(cell_data->current_cell.rsrp),
+			       here_adjust_rsrq(cell_data->current_cell.rsrq),
+			       here_adjust_ta(cell_data->current_cell.timing_advance)
+			       );
 		if ((len < 0) || (len >= buf_len)) {
 			LOG_ERR("Too small buffer for HTTP request body");
 			return -ENOMEM;
@@ -160,7 +244,10 @@ static int location_service_generate_request(
 		len = snprintk(element, sizeof(element) - 1 /* ',' */,
 			       HTTP_REQUEST_BODY_NEIGHBOR_ELEMENT,
 			       cell_data->neighbor_cells[i].earfcn,
-			       cell_data->neighbor_cells[i].phys_cell_id);
+			       cell_data->neighbor_cells[i].phys_cell_id,
+			       here_adjust_rsrp(cell_data->neighbor_cells[i].rsrp),
+			       here_adjust_rsrq(cell_data->neighbor_cells[i].rsrq)
+			       );
 		if ((len < 0) || (len >= sizeof(element))) {
 			LOG_ERR("Too small buffer for cell element buffer");
 			return -ENOMEM;
@@ -185,6 +272,10 @@ static int location_service_generate_request(
 		       cell_data->current_cell.mcc,
 		       cell_data->current_cell.mnc,
 		       cell_data->current_cell.id,
+		       cell_data->current_cell.tac,
+		       here_adjust_rsrp(cell_data->current_cell.rsrp),
+		       here_adjust_rsrq(cell_data->current_cell.rsrq),
+		       here_adjust_ta(cell_data->current_cell.timing_advance),
 		       neighbors);
 	if ((len < 0) || (len >= buf_len)) {
 		LOG_ERR("Too small buffer for HTTP request body");
