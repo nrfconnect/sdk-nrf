@@ -153,6 +153,7 @@ Kconfig*                                  @tejlmand
 /scripts/                                 @mbolivar-nordic @tejlmand @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @pdunaj
 /scripts/tools-versions-*.txt             @tejlmand @grho @shantha-14
+/scripts/west_commands/sbom/              @doki-nordic @maje-emb
 /share/zephyrbuild-package/               @tejlmand
 /share/ncs-package/                       @tejlmand
 /subsys/bluetooth/                        @alwa-nordic @carlescufi @KAGA164

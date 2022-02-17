@@ -8,3 +8,8 @@ west-commands:
       - name: ncs-compare
         class: NcsCompare
         help: compare upstream manifest with NCS
+  - file: scripts/west_commands/sbom/ncs_sbom_command.py
+    commands:
+      - name: ncs-sbom
+        class: NcsSbom
+        help: generate Software Bill Of Materials including license information
