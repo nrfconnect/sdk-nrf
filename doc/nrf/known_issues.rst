@@ -1576,6 +1576,13 @@ SoftDevice Controller
 
 In addition to the known issues listed here, see also :ref:`softdevice_controller_limitations` for permanent limitations.
 
+.. rst-class:: v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+DRGN-16859: The vendor-specific HCI command Zephyr Write TX Power Level may return "Unknown Advertiser Identifier (0x42)" when setting advertising output power.
+  The SoftDevice Controller will return this error code if the command is issued before advertising parameters are set.
+
+  **Workaround:** Configure the advertiser before setting TX Power using HCI LE Set Advertising Parameters
+
 .. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
 
 DRGN-16808: Assertion on nRF53 Series devices when the RC oscillator is used as the Low Frequency clock source
