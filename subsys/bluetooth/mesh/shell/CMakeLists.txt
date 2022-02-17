@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+zephyr_library()
+
+zephyr_library_sources(shell_utils.c)
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_SHELL_ONOFF_CLI shell_onoff_cli.c)
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_SHELL_LVL_CLI shell_lvl_cli.c)
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_SHELL_DTT_CLI shell_dtt_cli.c)
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_SHELL_PONOFF_CLI shell_ponoff_cli.c)
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_SHELL_PLVL_CLI shell_plvl_cli.c)
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_SHELL_BATTERY_CLI shell_bat_cli.c)
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_SHELL_LOC_CLI shell_loc_cli.c)
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_SHELL_PROP_CLI shell_prop_cli.c)
