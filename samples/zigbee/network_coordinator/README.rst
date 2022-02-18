@@ -47,6 +47,8 @@ FEM support
 
 .. include:: /includes/sample_fem_support.txt
 
+.. _zigbee_network_coordinator_user_interface:
+
 User interface
 **************
 
@@ -66,7 +68,7 @@ Button 1:
     Reopens the network for 180 seconds.
 
     .. note::
-         The network is also opened after start-up.
+         The network is also opened after startup.
 
 Button 4:
     Sets the Network coordinator in Identify mode.
