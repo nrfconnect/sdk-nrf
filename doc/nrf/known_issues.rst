@@ -916,6 +916,16 @@ NCSDK-12020: Current consumption for Gaming Mouse increased by 1400mA
 
   **Workaround:** Change ``pwm_pin_set_cycles`` to ``pwm_pin_set_usec`` in function :c:func:`led_pwm_set_brightness` in Zephyr's driver :file:`led_pwm.c` file.
 
+nRF Machine Learning
+====================
+
+.. rst-class:: v1-9-0
+
+NCSDK-13923: Device may crash during Bluetooth bonding
+  The device programmed with the nRF Machine Learning application may crash during Bluetooth bonding because of insufficient Bluetooth RX thread stack size.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``4870fcd8316bd3a4b53ca0054f0ce35e1a8c567d``).
+
 Pelion
 ======
 
