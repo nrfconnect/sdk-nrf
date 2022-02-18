@@ -85,6 +85,10 @@ This also means that, for example, when using four GPIOs, the pattern count cann
 
 If the number of switch-sample periods is greater than the number of stored switching patterns, then the radio loops back to the first pattern.
 
+The length of the antenna switching pattern is limited by the :kconfig:`CONFIG_BT_CTLR_DF_MAX_ANT_SW_PATTERN_LEN` option.
+If the required length of the antenna switching pattern is greater than the default value of :kconfig:`CONFIG_BT_CTLR_DF_MAX_ANT_SW_PATTERN_LEN`, set the :kconfig:`CONFIG_BT_CTLR_DF_MAX_ANT_SW_PATTERN_LEN` option to the required value in the board configuration file.
+For example, for the :ref:`nRF52833 DK <ug_nrf52>` add :kconfig:`CONFIG_BT_CTLR_DF_MAX_ANT_SW_PATTERN_LEN` =N, where N is the required antenna switching pattern length, to the :file:`nrf52833dk_nrf52833.conf` file.
+
 The following table presents the patterns that you can use to switch antennas on the Nordic-designed antenna matrix:
 
 +--------+--------------+
