@@ -132,7 +132,7 @@ static int admin_prop_set(const struct shell *shell, size_t argc, char *argv[], 
 	uint16_t id = (uint16_t)strtol(argv[1], NULL, 0);
 	enum bt_mesh_prop_access access = (enum bt_mesh_prop_access)strtol(argv[2], NULL, 0);
 	uint8_t val[CONFIG_BT_MESH_PROP_MAXSIZE] = { 0 };
-	uint8_t len = shell_model_hexstr2num(shell, argv[2], val, sizeof(val));
+	uint8_t len = shell_model_hexstr2num(shell, argv[3], val, sizeof(val));
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_GEN_PROP_CLI, &mod)) {
 		return -ENODEV;
@@ -172,7 +172,7 @@ static int cmd_prop_admin_prop_set_unack(const struct shell *shell, size_t argc,
 static int mfr_prop_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
 	uint16_t id = (uint16_t)strtol(argv[1], NULL, 0);
-	enum bt_mesh_prop_access access = (enum bt_mesh_prop_access)strtol(argv[3], NULL, 0);
+	enum bt_mesh_prop_access access = (enum bt_mesh_prop_access)strtol(argv[2], NULL, 0);
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_GEN_PROP_CLI, &mod)) {
 		return -ENODEV;
