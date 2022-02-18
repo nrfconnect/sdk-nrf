@@ -403,10 +403,16 @@ static void run_scheduler(struct bt_mesh_scheduler_srv *srv)
 		return;
 	}
 
-	srv->idx = planned_idx;
 	tai_to_ts(&srv->sched_tai[planned_idx], &sched_time);
 	int64_t scheduled_uptime = bt_mesh_time_srv_mktime(srv->time_srv,
 			&sched_time);
+
+	if (scheduled_uptime < 0) {
+		BT_WARN("Scheduler not started. Error: %lld.", scheduled_uptime);
+		return;
+	}
+
+	srv->idx = planned_idx;
 	k_work_reschedule(&srv->delayed_work,
 			  K_MSEC(MAX(scheduled_uptime - current_uptime, 0)));
 	BT_DBG("Scheduler started. Target uptime: %lld. Current uptime: %lld.",
@@ -423,6 +429,11 @@ static void schedule_action(struct bt_mesh_scheduler_srv *srv,
 	struct tm *current_local = bt_mesh_time_srv_localtime(srv->time_srv,
 			current_uptime);
 
+	if (current_local == NULL) {
+		BT_WARN("Local time not available");
+		return;
+	}
+
 	BT_DBG("Current uptime %lld", current_uptime);
 
 	BT_DBG("Current time:");
@@ -434,12 +445,12 @@ static void schedule_action(struct bt_mesh_scheduler_srv *srv,
 	BT_DBG("      second: %d", current_local->tm_sec);
 
 	if (!convert_scheduler_time_to_tm(&sched_time, current_local, entry)) {
-		BT_DBG("Cannot convert scheduled action time to struct tm");
+		BT_WARN("Cannot convert scheduled action time to struct tm");
 		return;
 	}
 
 	if (ts_to_tai(&srv->sched_tai[idx], &sched_time)) {
-		BT_DBG("tm cannot be converted into TAI");
+		BT_WARN("tm cannot be converted into TAI");
 		return;
 	}
 
