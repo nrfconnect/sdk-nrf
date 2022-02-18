@@ -51,6 +51,13 @@ Matter
 
 |no_changes_yet_note|
 
+Thread
+------
+
+* Added:
+
+  *  Support for the Link Metrics and CSL Thread v1.2 features for the nRF53 Series devices.
+
 Applications
 ============
 
@@ -89,7 +96,13 @@ Bluetooth mesh samples
 Thread samples
 --------------
 
-* Updated the relevant sample documentation pages with information about support for :ref:`Trusted Firmware-M <ug_tfm>`.
+* Updated:
+
+  * The relevant sample documentation pages with information about support for :ref:`Trusted Firmware-M <ug_tfm>`.
+  * :ref:`ot_cli_sample` sample:
+
+    * Added :file:`prj_thread_1_2.conf` to support Thread v1.2 build for the nRF52 and nRF53 Series devices.
+    * Added child image configuration files for network core builds for Thread v1.2 build.
 
 Drivers
 =======
