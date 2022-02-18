@@ -39,6 +39,8 @@ int coap_block_init(struct download_client *client, size_t from);
 int coap_parse(struct download_client *client, size_t len);
 int coap_request_send(struct download_client *client);
 
+static bool is_cancelled = false;
+
 static const char *str_family(int family)
 {
 	switch (family) {
@@ -378,11 +380,18 @@ static int error_evt_send(const struct download_client *dl, int error)
 	/* Error will be sent as negative. */
 	__ASSERT_NO_MSG(error > 0);
 
-	const struct download_client_evt evt = {
-		.id = DOWNLOAD_CLIENT_EVT_ERROR,
-		.error = -error
-	};
+	const struct download_client_evt evt = { .id = DOWNLOAD_CLIENT_EVT_ERROR, .error = -error };
 
+	return dl->callback(&evt);
+}
+
+static int raise_cancel_evt(const struct download_client *dl)
+{
+	is_cancelled = false;
+
+	const struct download_client_evt evt = {
+		.id = DOWNLOAD_CLIENT_EVT_CANCELLED,
+	};
 	return dl->callback(&evt);
 }
 
@@ -417,6 +426,11 @@ restart_and_suspend:
 	while (true) {
 		__ASSERT(dl->offset < sizeof(dl->buf), "Buffer overflow");
 
+		if (is_cancelled) {
+			raise_cancel_evt(dl);
+			goto restart_and_suspend;
+		}
+
 		if (sizeof(dl->buf) - dl->offset == 0) {
 			LOG_ERR("Could not fit HTTP header from server (> %d)",
 				sizeof(dl->buf));
@@ -430,7 +444,10 @@ restart_and_suspend:
 		len = recv(dl->fd, dl->buf + dl->offset,
 			   sizeof(dl->buf) - dl->offset, 0);
 
-		if ((len == 0) || (len == -1)) {
+		if (is_cancelled) {
+			raise_cancel_evt(dl);
+			goto restart_and_suspend;
+		} else if ((len == 0) || (len == -1)) {
 			/* We just had an unexpected socket error or closure */
 
 			/* If there is a partial data payload in our buffer,
@@ -655,8 +672,21 @@ int download_client_disconnect(struct download_client *const client)
 	return 0;
 }
 
-int download_client_start(struct download_client *client, const char *file,
-			  size_t from)
+int download_client_cancel(struct download_client *const client)
+{
+	if (client == NULL || client->fd < 0) {
+		return -EINVAL;
+	}
+
+	is_cancelled = true;
+
+	/* wakeup thread to cancel the download */
+	k_thread_resume(client->tid);
+
+	return 0;
+}
+
+int download_client_start(struct download_client *client, const char *file, size_t from)
 {
 	int err;
 

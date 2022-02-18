@@ -59,6 +59,8 @@ enum download_client_evt_id {
 	 * network socket as necessary before re-attempting the download.
 	 */
 	DOWNLOAD_CLIENT_EVT_ERROR,
+	/** Download cancelled. */
+	DOWNLOAD_CLIENT_EVT_CANCELLED,
 	/** Download complete. */
 	DOWNLOAD_CLIENT_EVT_DONE,
 };
@@ -245,11 +247,22 @@ int download_client_file_size_get(struct download_client *client, size_t *size);
 /**
  * @brief Disconnect from the server.
  *
+ * If a download is active, it must be cancelled before.
+ *
  * @param[in] client	Client instance.
  *
  * @return Zero on success, a negative error code otherwise.
  */
 int download_client_disconnect(struct download_client *client);
+
+/**
+ * @brief Cancel a running download
+ *
+* @param[in] client	Client instance.
+*
+* @return Zero on success, a negative error code otherwise.
+ */
+int download_client_cancel(struct download_client *client);
 
 #ifdef __cplusplus
 }

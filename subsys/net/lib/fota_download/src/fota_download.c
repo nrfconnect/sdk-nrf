@@ -195,7 +195,7 @@ static int download_client_callback(const struct download_client_evt *event)
 			send_progress((offset * 100) / file_size);
 			LOG_DBG("Progress: %d/%d bytes", offset, file_size);
 		}
-	break;
+		break;
 	}
 
 	case DOWNLOAD_CLIENT_EVT_DONE:
@@ -215,6 +215,24 @@ static int download_client_callback(const struct download_client_evt *event)
 		first_fragment = true;
 		downloading = false;
 		break;
+
+	case DOWNLOAD_CLIENT_EVT_CANCELLED: {
+		err = download_client_disconnect(&dlc);
+		if (err != 0) {
+			send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
+			return err;
+		}
+
+		err = dfu_target_done(false);
+		if (err != 0) {
+			send_error_evt(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
+			return err;
+		}
+
+		first_fragment = true;
+		send_evt(FOTA_DOWNLOAD_EVT_CANCELLED);
+		break;
+	}
 
 	case DOWNLOAD_CLIENT_EVT_ERROR: {
 		/* In case of socket errors we can return 0 to retry/continue,
@@ -243,6 +261,8 @@ static int download_client_callback(const struct download_client_evt *event)
 			/* Return non-zero to tell download_client to stop */
 			return event->error;
 		}
+
+		break;
 	}
 	default:
 		break;
@@ -440,18 +460,10 @@ int fota_download_cancel(void)
 		return -EAGAIN;
 	}
 
-	err = download_client_disconnect(&dlc);
+	err = download_client_cancel(&dlc);
 	if (err) {
-		LOG_ERR("%s failed to disconnect: %d", __func__, err);
+		LOG_ERR("%s failed to cancel download: %d", __func__, err);
 		return err;
-	}
-
-	err = dfu_target_done(false);
-	if (err && err != -EACCES) {
-		LOG_ERR("%s failed to clean up: %d", __func__, err);
-	} else {
-		first_fragment = true;
-		send_evt(FOTA_DOWNLOAD_EVT_CANCELLED);
 	}
 
 	return err;
