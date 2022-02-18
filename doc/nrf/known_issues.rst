@@ -317,7 +317,10 @@ FOTA does not work
 
 .. rst-class:: v1-9-0
 
-NCSDK-13925: :ref:`radio_test` and :ref:`direct_test_mode` build with warnings for nRF5340 with the :ref:`ug_radio_fem_nrf21540_ek` support.
+NCSDK-13925: Build warning in the RF test samples when the nRF21540 EK support is enabled.
+  :ref:`radio_test` and :ref:`direct_test_mode` build with warnings for nRF5340 with the :ref:`ug_radio_fem_nrf21540_ek` support.
+
+  **Workaround:** Change the parameter type in the :c:func:`nrf21540_tx_gain_set()` function in :file:`ncs/nrf/samples/bluetooth/direct_test_mode/src/fem/nrf21540.c` from :c:type:`uint8_t` to :c:type:`uint32_t`.
 
 nRF52820
 ========
