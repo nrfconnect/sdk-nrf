@@ -81,13 +81,17 @@ If you want to learn more about Zigbee topics and terminology mentioned in this 
 Requirements
 ************
 
-For this quick start guide, you need three development kits of the following types:
+For this quick start guide, you need *three* development kits of the following types:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
    :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf5340dk_nrf5340_cpuapp, nrf21540dk_nrf52840
 
 You can mix different development kits.
+
+.. note::
+
+   Make sure that you have three development kits before proceeding to the next steps.
 
 Software requirements
 =====================
@@ -186,7 +190,7 @@ To program the samples, complete the following steps:
          :alt: nRF Connect for Visual Studio Code - Refresh Connected Devices and Flash buttons
 
    When the programming is done, the **LED 3** on the development kit turns on to indicate that the Zigbee network is open.
-   After some time, it turns off and the Zigbee network needs to be reopened.
+   After some time, it turns off and the Zigbee network needs to be reopened (see below).
 #. Add the light switch application.
    Repeat steps 2 to 4 using a custom application location and name, for example ``Zigbee_light_switch``.
    The path for the application template is :file:`nrf/samples/zigbee/light_switch`.
@@ -198,6 +202,16 @@ To program the samples, complete the following steps:
    After some time, the devices join the Zigbee network.
    On the development kit programmed with the light bulb sample, **LED 3** turns on when the light bulb joins the network.
    On the development kit programmed with the light switch sample, **LED 3** turns on when the device joins the network and **LED 4** turns on when the light switch finds a light bulb to control.
+
+Reopening the network
+   If you find that you are having issues with your devices joining the Zigbee network, it may be because the network needs to be reopened manually.
+   If the network is open, then **LED 3** on the development kit programmed with the network coordinator sample will be on.
+   If **LED 3** is not on, then the network is closed and needs to be reopened again.
+
+   To reopen the network, press **Button 1** on the development kit that has been programmed as the network coordinator.
+   The network remains open for 180 seconds by default at startup, and after **Button 1** is pressed. After 180 seconds have passed, the network will close and need to be re-opened.
+
+   For more information, see the :ref:`User interface <zigbee_network_coordinator_user_interface>` section from the :ref:`Zigbee Network coordinator <zigbee_light_switch_sample>` sample.
 
 .. rst-class:: numbered-step
 
