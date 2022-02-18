@@ -116,8 +116,7 @@ enum esb_bitrate {
 	ESB_BITRATE_1MBPS = RADIO_MODE_MODE_Nrf_1Mbit,
 	/** 2 Mb radio mode. */
 	ESB_BITRATE_2MBPS = RADIO_MODE_MODE_Nrf_2Mbit,
-#if !(defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52810) ||          \
-      defined(CONFIG_SOC_NRF52811) || defined(CONFIG_SOC_NRF5340_CPUNET))
+#if defined(RADIO_MODE_MODE_Nrf_250Kbit)
 	/** 250 Kb radio mode. */
 	ESB_BITRATE_250KBPS = RADIO_MODE_MODE_Nrf_250Kbit,
 #endif
