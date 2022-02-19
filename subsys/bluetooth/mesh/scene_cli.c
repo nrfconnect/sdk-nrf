@@ -18,7 +18,7 @@ static int handle_scene_status(struct bt_mesh_model *model, struct bt_mesh_msg_c
 	state.current = net_buf_simple_pull_le16(buf);
 	if (buf->len == 3) {
 		state.target = net_buf_simple_pull_le16(buf);
-		state.remaining_time = net_buf_simple_pull_u8(buf);
+		state.remaining_time = model_transition_decode(net_buf_simple_pull_u8(buf));
 	} else if (!buf->len) {
 		state.target = BT_MESH_SCENE_NONE;
 		state.remaining_time = 0;
@@ -69,7 +69,7 @@ static int handle_scene_reg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx 
 		rsp->current = reg.current;
 		if (rsp->scenes) {
 			rsp->count = MIN(rsp->count, reg.count);
-			memcpy(&rsp->scenes, reg.scenes,
+			memcpy(rsp->scenes, reg.scenes,
 			       rsp->count * sizeof(uint16_t));
 		} else {
 			rsp->count = 0;
