@@ -308,7 +308,7 @@ static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[]
 
 SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
 			       SHELL_CMD_ARG(set, NULL, "<elem_idx> ", cmd_instance_set, 2, 0),
-			       SHELL_CMD_ARG(get - all, NULL, NULL, cmd_instance_get_all, 1, 0),
+			       SHELL_CMD_ARG(get-all, NULL, NULL, cmd_instance_get_all, 1, 0),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
@@ -325,10 +325,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      cmd_light_onoff_set, 2, 2),
 	SHELL_CMD_ARG(light-onoff-set-unack, NULL, "<onoff> [transition_time_ms [delay_ms]]",
 		      cmd_light_onoff_set_unack, 2, 2),
-	SHELL_CMD_ARG(prop-get, NULL, NULL, cmd_prop_get, 1, 0),
+	SHELL_CMD_ARG(prop-get, NULL, "<id>", cmd_prop_get, 2, 0),
 	SHELL_CMD_ARG(prop-set, NULL, "<id> <decimal> <frac>", cmd_prop_set, 4, 0),
 	SHELL_CMD_ARG(prop-set-unack, NULL, "<id> <decimal> <frac>", cmd_prop_set_unack, 4, 0),
-	SHELL_CMD_ARG(coeff-get, NULL, NULL, cmd_coeff_get, 1, 0),
+	SHELL_CMD_ARG(coeff-get, NULL, "<id>", cmd_coeff_get, 2, 0),
 	SHELL_CMD_ARG(coeff-set, NULL, "<id> <value>", cmd_coeff_set, 3, 0),
 	SHELL_CMD_ARG(coeff-set-unack, NULL, "<id> <value>", cmd_coeff_set_unack, 3, 0),
 	SHELL_CMD(instance, &instance_cmds, "Instance commands", shell_model_cmds_help),
