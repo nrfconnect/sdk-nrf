@@ -36,24 +36,11 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		update_sample_done();
-		printk("Reset device to apply new firmware\n");
+		printk("Press 'Reset' button or enter 'reset' to apply new firmware\n");
 		break;
 
 	default:
 		break;
-	}
-}
-
-static void update_start(void)
-{
-	int err;
-	const char *filename = get_file();
-
-	err = fota_download_start(CONFIG_DOWNLOAD_HOST, filename,
-				  SEC_TAG, 0, 0);
-	if (err != 0) {
-		update_sample_stop();
-		printk("fota_download_start() failed, err %d\n", err);
 	}
 }
 
@@ -62,6 +49,7 @@ void main(void)
 	int err;
 
 	printk("HTTP application update sample started\n");
+	printk("Using version %d\n", CONFIG_APPLICATION_VERSION);
 
 	err = nrf_modem_lib_init(NORMAL_MODE);
 	if (err) {
@@ -78,13 +66,14 @@ void main(void)
 	}
 
 	err = update_sample_init(&(struct update_sample_init_params){
-					.update_start = update_start,
-					.num_leds = NUM_LEDS
+					.update_start = update_sample_start,
+					.num_leds = NUM_LEDS,
+					.filename = get_file()
 				});
 	if (err != 0) {
 		printk("update_sample_init() failed, err %d\n", err);
 		return;
 	}
 
-	printk("Press Button 1 to perform application firmware update\n");
+	printk("Press Button 1 or enter 'download' to download firmware update\n");
 }

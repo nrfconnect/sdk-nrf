@@ -31,6 +31,9 @@ struct update_sample_init_params {
 
 	/* Number of LEDs to enable. Must be 0, 1 or 2. */
 	int num_leds;
+
+	/* Update file to download */
+	const char *filename;
 };
 
 /** Initialize common update sample library.
@@ -43,6 +46,10 @@ struct update_sample_init_params {
  * @return non-negative on success, negative errno code on fail
  */
 int update_sample_init(struct update_sample_init_params *params);
+
+/** Begin downloading specified FOTA update
+ */
+void update_sample_start(void);
 
 /** Notify the library that the update has been stopped.
  *

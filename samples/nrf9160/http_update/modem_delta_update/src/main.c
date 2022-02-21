@@ -60,24 +60,11 @@ void fota_dl_handler(const struct fota_download_evt *evt)
 
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		update_sample_done();
-		printk("Reset device to apply new modem firmware\n");
+		printk("Press 'Reset' button or enter 'reset' to apply new firmware\n");
 		break;
 
 	default:
 		break;
-	}
-}
-
-void update_start(void)
-{
-	int err;
-
-	/* Functions for getting the host and file */
-	err = fota_download_start(CONFIG_DOWNLOAD_HOST, get_file(), SEC_TAG,
-				  0, 0);
-	if (err != 0) {
-		update_sample_stop();
-		printk("fota_download_start() failed, err %d\n", err);
 	}
 }
 
@@ -109,12 +96,14 @@ void main(void)
 	case MODEM_DFU_RESULT_OK:
 		printk("Modem firmware update successful!\n");
 		printk("Modem will run the new firmware after reboot\n");
+		printk("Press 'Reset' button or enter 'reset' to apply new firmware\n");
 		k_thread_suspend(k_current_get());
 		break;
 	case MODEM_DFU_RESULT_UUID_ERROR:
 	case MODEM_DFU_RESULT_AUTH_ERROR:
 		printk("Modem firmware update failed\n");
 		printk("Modem will run non-updated firmware on reboot.\n");
+		printk("Press 'Reset' button or enter 'reset'\n");
 		break;
 	case MODEM_DFU_RESULT_HARDWARE_ERROR:
 	case MODEM_DFU_RESULT_INTERNAL_ERROR:
@@ -137,8 +126,9 @@ void main(void)
 	}
 
 	err = update_sample_init(&(struct update_sample_init_params){
-					.update_start = update_start,
-					.num_leds = num_leds()
+					.update_start = update_sample_start,
+					.num_leds = num_leds(),
+					.filename = get_file()
 				});
 	if (err != 0) {
 		printk("update_sample_init() failed, err %d\n", err);
@@ -147,5 +137,5 @@ void main(void)
 
 	printk("Current modem firmware version: %s\n", version);
 
-	printk("Press Button 1 for modem delta update\n");
+	printk("Press Button 1 for enter 'download' to download modem delta update\n");
 }

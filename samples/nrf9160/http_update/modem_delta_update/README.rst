@@ -46,7 +46,7 @@ Testing
 After programming the sample to your development kit,, test it by performing the following steps:
 
 1. Note the LED pattern (1 or 2 LEDs).
-#. Press button 1 to download the delta for the alternative firmware version.
+#. Press **Button 1** on the nRF9160 DK or type "download" in the terminal emulator to start the download process of the delta to the alternative firmware version.
 #. Once the download has been completed, follow the reboot instructions printed to the UART console.
 #. Observe that the LED pattern has changed (1 vs 2).
 #. Start over from point 1, to perform the delta update back to the previous version.
@@ -68,3 +68,4 @@ It uses the following Zephyr libraries:
 * :ref:`zephyr:flash_api`
 * :ref:`zephyr:logging_api`
 * :ref:`zephyr:gpio_api`
+* :ref:`zephyr:shell_api`

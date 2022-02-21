@@ -114,6 +114,13 @@ Thread samples
     * Added :file:`prj_thread_1_2.conf` to support Thread v1.2 build for the nRF52 and nRF53 Series devices.
     * Added child image configuration files for network core builds for Thread v1.2 build.
 
+nrf9160 Samples
+---------------
+
+* Added:
+
+  * Shell functionality to HTTP Update samples.
+
 Drivers
 =======
 

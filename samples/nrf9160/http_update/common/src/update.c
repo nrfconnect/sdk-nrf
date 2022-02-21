@@ -9,8 +9,11 @@
 #include <modem/lte_lc.h>
 #include <modem/modem_key_mgmt.h>
 #include <net/socket.h>
+#include <net/fota_download.h>
 #include <nrf_socket.h>
 #include <stdio.h>
+#include <sys/reboot.h>
+#include <shell/shell.h>
 #include "update.h"
 
 #define LED_PORT DT_GPIO_LABEL(DT_ALIAS(led0), gpios)
@@ -19,6 +22,7 @@ static const struct device *gpiob;
 static struct gpio_callback gpio_cb;
 static struct k_work fota_work;
 static update_start_cb update_start;
+static char filename[128] = {0};
 
 #define SW0_PIN (DT_GPIO_PIN(DT_ALIAS(sw0), gpios))
 #define SW0_FLAGS (DT_GPIO_FLAGS(DT_ALIAS(sw0), gpios))
@@ -173,17 +177,42 @@ static void fota_work_cb(struct k_work *work)
 	}
 }
 
+static int shell_download(const struct shell *shell, size_t argc, char **argv)
+{
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	update_sample_start();
+
+	return 0;
+}
+
+static int shell_reboot(const struct shell *shell, size_t argc, char **argv)
+{
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	shell_print(shell, "Device will now reboot");
+	sys_reboot(SYS_REBOOT_WARM);
+
+	return 0;
+}
+
+SHELL_CMD_REGISTER(reset, NULL, "For rebooting device", shell_reboot);
+SHELL_CMD_REGISTER(download, NULL, "For downloading modem  firmware", shell_download);
+
 int update_sample_init(struct update_sample_init_params *params)
 {
 	int err;
 
-	if (params == NULL || params->update_start == NULL) {
+	if (params == NULL || params->update_start == NULL || params->filename == NULL) {
 		return -EINVAL;
 	}
 
 	k_work_init(&fota_work, fota_work_cb);
 
 	update_start = params->update_start;
+	strcpy(filename, params->filename);
 
 	modem_configure();
 
@@ -198,6 +227,18 @@ int update_sample_init(struct update_sample_init_params *params)
 	}
 
 	return 0;
+}
+
+void update_sample_start(void)
+{
+	int err;
+
+	/* Functions for getting the host and file */
+	err = fota_download_start(CONFIG_DOWNLOAD_HOST, filename, SEC_TAG, 0, 0);
+	if (err != 0) {
+		update_sample_stop();
+		printk("fota_download_start() failed, err %d\n", err);
+	}
 }
 
 void update_sample_stop(void)
