@@ -175,6 +175,7 @@ struct nrf_cloud_rest_pgps_request {
  *
  * @retval 0 If successful.
  *          Otherwise, a (negative) error code is returned.
+ *          See @verbatim embed:rst:inline :ref:`nrf_cloud_rest_failure` @endverbatim for details.
  */
 int nrf_cloud_rest_cell_pos_get(struct nrf_cloud_rest_context *const rest_ctx,
 	struct nrf_cloud_rest_cell_pos_request const *const request,
@@ -195,7 +196,14 @@ int nrf_cloud_rest_cell_pos_get(struct nrf_cloud_rest_context *const rest_ctx,
  *           size specified by rest_ctx->fragment_size, a positive value is
  *           returned, which indicates the size (in bytes) of the necessary
  *           result buffer.
- *           Otherwise, a (negative) error code is returned.
+ *           Otherwise, a (negative) error code is returned:
+ *           - -EINVAL will be returned, and an error message printed, if invalid parameters
+ *		are given.
+ *           - -ENOBUFS will be returned, and an error message printed, if there is not enough
+ *             buffer space to store retrieved AGPS data.
+ *           - See @verbatim embed:rst:inline :ref:`nrf_cloud_rest_failure` @endverbatim for all
+ *             other possible error codes.
+ *
  */
 int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	struct nrf_cloud_rest_agps_request const *const request,
@@ -212,6 +220,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
  *
  * @retval 0 If successful.
  *          Otherwise, a (negative) error code is returned.
+ *          See @verbatim embed:rst:inline :ref:`nrf_cloud_rest_failure` @endverbatim for details.
  */
 int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	struct nrf_cloud_rest_pgps_request const *const request);
@@ -231,6 +240,7 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
  *
  * @retval 0 If successful.
  *          Otherwise, a (negative) error code is returned.
+ *          See @verbatim embed:rst:inline :ref:`nrf_cloud_rest_failure` @endverbatim for details.
  */
 int nrf_cloud_rest_fota_job_get(struct nrf_cloud_rest_context *const rest_ctx,
 	const char *const device_id, struct nrf_cloud_fota_job_info *const job);
@@ -256,6 +266,7 @@ void nrf_cloud_rest_fota_job_free(struct nrf_cloud_fota_job_info *const job);
  *
  * @retval 0 If successful.
  *          Otherwise, a (negative) error code is returned.
+ *          See @verbatim embed:rst:inline :ref:`nrf_cloud_rest_failure` @endverbatim for details.
  */
 int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx,
 	const char *const device_id, const char *const job_id,
@@ -270,6 +281,7 @@ int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx
  *
  * @retval 0 If successful.
  *          Otherwise, a (negative) error code is returned.
+ *          See @verbatim embed:rst:inline :ref:`nrf_cloud_rest_failure` @endverbatim for details.
  */
 int nrf_cloud_rest_shadow_state_update(struct nrf_cloud_rest_context *const rest_ctx,
 	const char *const device_id, const char * const shadow_json);
@@ -282,18 +294,25 @@ int nrf_cloud_rest_shadow_state_update(struct nrf_cloud_rest_context *const rest
  * @param[in]     svc_inf Service info items to be updated in the shadow.
  *
  * @retval 0 If successful.
- *          Otherwise, a (negative) error code is returned.
+ *         Otherwise, a (negative) error code is returned.
+ *         See @verbatim embed:rst:inline :ref:`nrf_cloud_rest_failure` @endverbatim for details.
  */
 int nrf_cloud_rest_shadow_service_info_update(struct nrf_cloud_rest_context *const rest_ctx,
 	const char *const device_id, const struct nrf_cloud_svc_info * const svc_inf);
 
 /**
  * @brief Closes the connection to the server.
+ *	  The socket pointed to by @p rest_ctx.connect_socket will be closed,
+ *	  and @p rest_ctx.connect_socket will be set to -1.
  *
  * @param[in,out] rest_ctx Context for communicating with nRF Cloud's REST API.
  *
  * @retval 0 If successful.
- *          Otherwise, a (negative) error code is returned.
+ *          Otherwise, a (negative) error code is returned:
+ *	    - -EINVAL, if valid context is not given.
+ *	    - -ENOTCONN, if socket was already closed, or never opened.
+ *	    - -EIO, for any kind of socket-level closure failure.
+ *
  */
 int nrf_cloud_rest_disconnect(struct nrf_cloud_rest_context *const rest_ctx);
 
@@ -308,7 +327,9 @@ int nrf_cloud_rest_disconnect(struct nrf_cloud_rest_context *const rest_ctx);
  *
  * @retval 0 If successful; wait 30s before associating device with nRF Cloud account.
  * @retval 1 Device is already provisioned.
- *         Otherwise, a (negative) error code is returned.
+ *         Otherwise, a (negative) error code is returned:
+ *         - Any underlying socket or HTTP response error will be returned directly.
+ *	   - -ENODEV will be returned if device JITP immediately rejected.
  */
 int nrf_cloud_rest_jitp(const sec_tag_t nrf_cloud_sec_tag);
 
@@ -324,6 +345,7 @@ int nrf_cloud_rest_jitp(const sec_tag_t nrf_cloud_sec_tag);
  *
  * @retval 0 If successful.
  *          Otherwise, a (negative) error code is returned.
+ *          See @verbatim embed:rst:inline :ref:`nrf_cloud_rest_failure` @endverbatim for details.
  */
 int nrf_cloud_rest_send_device_message(struct nrf_cloud_rest_context *const rest_ctx,
 	const char *const device_id, const char *const json_msg, const bool bulk,
@@ -340,6 +362,7 @@ int nrf_cloud_rest_send_device_message(struct nrf_cloud_rest_context *const rest
  *
  * @retval 0 If successful.
  *          Otherwise, a (negative) error code is returned.
+ *          See @verbatim embed:rst:inline :ref:`nrf_cloud_rest_failure` @endverbatim for details.
  */
 int nrf_cloud_rest_send_location(struct nrf_cloud_rest_context *const rest_ctx,
 	const char *const device_id, const char *const nmea_sentence, const int64_t ts_ms);
