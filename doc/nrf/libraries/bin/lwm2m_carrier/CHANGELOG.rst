@@ -9,6 +9,91 @@ Changelog
 
 All notable changes to this project are documented in this file.
 
+liblwm2m_carrier 0.30.0
+***********************
+
+Release for modem firmware version 1.3.1 and 1.3.2.
+
+Certification status
+====================
+
+For certification status, see `Mobile network operator certifications`_.
+
+Size
+====
+
+See :ref:`lwm2m_lib_size` for an explanation of the library size in different scenarios.
+
++-------------------------+---------------+------------+
+|                         | Flash (Bytes) | RAM (Bytes)|
++-------------------------+---------------+------------+
+| Library size            | 71566         | 15739      |
+| (binary)                |               |            |
++-------------------------+---------------+------------+
+| Library size            | 93860         | 38720      |
+| (reference application) |               |            |
++-------------------------+---------------+------------+
+
+Changes
+=======
+
+* Added support for LG U+ network operator.
+
+* Added the App Data Container object (10250).
+* Added support for application FOTA in the glue layer. This is required for LG U+ support.
+* Added the Kconfig options :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS` and :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_SERVICE_CODE`.
+
+* Removed the Kconfig options ``CONFIG_LWM2M_CARRIER_USE_CUSTOM_PSK`` and ``CONFIG_LWM2M_CARRIER_USE_CUSTOM_APN``.
+
+  * Instead, only the Kconfig options :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_PSK` and :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` are needed. If the Kconfig options are empty, they are ignored.
+
+* Renamed the event ``LWM2M_CARRIER_EVENT_CARRIER_INIT`` to :c:macro:`LWM2M_CARRIER_EVENT_INIT`.
+* Removed the event ``LWM2M_CARRIER_EVENT_CERTS_INIT`` and initialization parameter ``lwm2m_carrier_event_certs_init_t``.
+
+ * Instead, certificates can be written to modem when the :c:macro:`LWM2M_CARRIER_EVENT_INIT` event is received, before attaching to the network.
+ * List of certificates is no longer supplied to the :c:func:`lwm2m_carrier_init` function. LwM2M carrier library will instead iterate through all CA certificates in the modem.
+
+* Added the Kconfig option :kconfig:option:`CONFIG_LWM2M_CARRIER_SESSION_IDLE_TIMEOUT`.
+* Removed some runtime resource ``_set()`` functions. The resources are static and therefore added to library initialization instead.
+
+  * Removed ``lwm2m_carrier_device_type_set()``, ``lwm2m_carrier_hardware_version_set()`` and ``lwm2m_carrier_software_version_set()``.
+  * Added :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_TYPE`, :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_HARDWARE_VERSION` and :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_SOFTWARE_VERSION`.
+
+* Added new initialization configurations to set the static device object resources:
+
+  * :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_MANUFACTURER`
+  * :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_MODEL_NUMBER`
+
+* The LwM2M carrier library now requests the application to handle the LTE link, instead of handling the link on its own.
+
+  * Removed the glue functions ``lwm2m_os_lte_link_up()``, ``lwm2m_os_lte_link_down()``, and ``lwm2m_os_lte_power_down()``.
+  * Removed the events ``LWM2M_CARRIER_EVENT_CONNECTING```, ``LWM2M_CARRIER_EVENT_CONNECTED``, ``LWM2M_CARRIER_EVENT_DISCONNECTING``, and ``LWM2M_CARRIER_EVENT_DISCONNECTED``.
+  * Added the events :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_UP`, :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_DOWN`, and :c:macro:`LWM2M_CARRIER_EVENT_LTE_POWER_OFF`.
+* Renamed the error ``LWM2M_CARRIER_ERROR_CONNECT_FAIL`` to :c:macro:`LWM2M_CARRIER_ERROR_LTE_LINK_UP_FAIL`.
+* Renamed the error ``LWM2M_CARRIER_ERROR_DISCONNECT_FAIL`` to :c:macro:`LWM2M_CARRIER_ERROR_LTE_LINK_DOWN_FAIL`.
+* Removed the event ``LWM2M_CARRIER_EVENT_LTE_READY``. The event was intended to help the user application coexist with the library, but it was not useful.
+
+  * Action to bring up and down the link are requested using the new :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_UP` and :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_DOWN` events.
+    The application can therefore perform housekeeping at these events if needed.
+  * Even when the ``LWM2M_CARRIER_EVENT_LTE_READY`` event was sent to the application, the carrier library could still disconnect the link to write keys to the modem after a while in some cases.
+  * Any application must handle untimely disconnects anyway, because of factors such as signal coverage, making the ``LWM2M_CARRIER_EVENT_LTE_READY`` event redundant.
+
+* NVS records are no longer statically defined by a devicetree partition. Instead, the :ref:`partition_manager` is used to define flash partition dynamically.
+
+  * To use the legacy NVS partition, you can add a ``pm_static.yml`` file to your project with the following content:
+
+    .. code-block:: none
+
+       lwm2m_carrier:
+         address: 0xfa000
+         size: 0x3000
+       free:
+         address: 0xfd000
+         size: 0x3000
+
+    This is strongly encouraged if you are updating deployed devices, to make sure that the persistent configuration of the library is preserved across the versions.
+    The address of the previous storage can be confirmed by checking the :file:`build/zephyr/zephyr.dts` file in your old project.
+
 liblwm2m_carrier 0.22.0
 ***********************
 
@@ -273,7 +358,7 @@ Changes
 * PSK format has been modified to be more user-friendly.
 
   * Previous format: Byte array. For example, ``static const char bootstrap_psk[] = {0x01, 0x02, 0xab, 0xcd, 0xef};``.
-  * Current format: A null-terminated string that must be composed of hexadecimal numbers. For example "0102abcdef".
+  * Current format: A null-terminated string that must be composed of hexadecimal numbers. For example, "0102abcdef".
 
 liblwm2m_carrier 0.8.2
 **********************
@@ -355,12 +440,14 @@ Changes
 * Fixed an issue where high LTE network activity could prevent modem firmware updates over LwM2M.
 
 * Added the following library events:
+
    * LWM2M_CARRIER_EVENT_CONNECTING, to indicate that the LTE link is about to be brought up.
    * LWM2M_CARRIER_EVENT_DISCONNECTING, to indicate that the LTE link is about to be brought down.
    * LWM2M_CARRIER_EVENT_DEFERRED, to indicate that the LwM2M operation is deferred for 24 hours.
    * LWM2M_CARRIER_EVENT_ERROR, to indicate that an error has occurred.
 
 * Renamed the following library events:
+
    * LWM2M_CARRIER_EVENT_CONNECT to LWM2M_CARRIER_EVENT_CONNECTED.
    * LWM2M_CARRIER_EVENT_DISCONNECT to LWM2M_CARRIER_EVENT_DISCONNECTED.
 

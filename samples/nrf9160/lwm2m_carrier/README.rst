@@ -42,7 +42,7 @@ Troubleshooting
 
 Bootstrapping can take several minutes.
 This is expected and dependent on the availability of the LTE link.
-During bootstrap, several :c:macro:`LWM2M_CARRIER_EVENT_CONNECTED` and :c:macro:`LWM2M_CARRIER_EVENT_DISCONNECTED` events are printed.
+During bootstrap, the application will receive the :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_UP` and :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_DOWN` events.
 This is expected and is part of the bootstrapping procedure.
 For more information, see the :ref:`lwm2m_events` and :ref:`lwm2m_msc` sections in the LwM2M carrier library documentation.
 

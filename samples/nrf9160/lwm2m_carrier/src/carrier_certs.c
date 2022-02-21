@@ -18,9 +18,6 @@
 #define GREEN "\e[0;32m"
 #define NORMAL "\e[0m"
 
-/* The order of the tags in this array specifies which tag is used first */
-static int tags[] = { 411, 412 };
-
 static const char ca411[] = {
 	/* VzW and Motive, AT&T */
 	#include "../certs/DigiCertGlobalRootG2.pem"
@@ -47,28 +44,18 @@ static const struct {
 	}
 };
 
-static const ca_cert_tags_t ca_tags = {
-	.tags = tags,
-	.count = ARRAY_SIZE(tags),
-};
-
-int carrier_cert_provision(ca_cert_tags_t * const tags)
+int carrier_cert_provision(void)
 {
 	int err;
 	bool mismatch = 0;
 	bool provisioned;
-
-	if (tags == NULL) {
-		printk(ORANGE "ERROR: " NORMAL "Invalid input argument!\n");
-		return -1;
-	}
 
 	for (int i = 0; i < ARRAY_SIZE(certs); i++) {
 		err = modem_key_mgmt_exists(
 			certs[i].tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, &provisioned);
 
 		if (err) {
-			goto cert_exit_empty;
+			return -1;
 		}
 
 		if (provisioned) {
@@ -94,20 +81,12 @@ int carrier_cert_provision(ca_cert_tags_t * const tags)
 			if (err) {
 				printk(ORANGE "ERROR: " NORMAL
 				  "Unable to provision certificate, err: %d\n", err);
-				goto cert_exit_empty;
+				return -1;
 			}
 			printk("Certificate provisioned, tag %d\n", certs[i].tag);
 		}
 	}
-
-	*tags = ca_tags;
-
 	return 0;
-
-cert_exit_empty:
-	tags->count = 0;
-	tags->tags = NULL;
-	return -1;
 }
 
 #endif /* CONFIG_LWM2M_CARRIER */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Nordic Semiconductor ASA
+ * Copyright (c) 2019-2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -18,35 +18,40 @@
 #include <modem/modem_key_mgmt.h>
 #include <modem/sms.h>
 #include <net/download_client.h>
-#include <zephyr/sys/reboot.h>
-#include <zephyr/sys/__assert.h>
-#include <zephyr/sys/util.h>
-#include <zephyr/random/rand32.h>
-#include <zephyr/toolchain.h>
-#include <zephyr/fs/nvs.h>
-#include <zephyr/logging/log.h>
-#include <zephyr/logging/log_ctrl.h>
+#include <storage/flash_map.h>
+#include <sys/reboot.h>
+#include <sys/__assert.h>
+#include <sys/util.h>
+#include <random/rand32.h>
+#include <toolchain.h>
+#include <fs/nvs.h>
+#include <logging/log.h>
+#include <logging/log_ctrl.h>
 #include <nrf_errno.h>
 #include <modem/at_monitor.h>
 
 /* NVS-related defines */
 
-/* Multiple of FLASH_PAGE_SIZE */
-#define NVS_SECTOR_SIZE DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size)
-/* At least 2 sectors */
-#define NVS_SECTOR_COUNT 3
+/* Divide flash area into NVS sectors */
+#define NVS_SECTOR_SIZE     (CONFIG_LWM2M_CARRIER_STORAGE_SECTOR_SIZE)
+#define NVS_SECTOR_COUNT    (FLASH_AREA_SIZE(lwm2m_carrier) / NVS_SECTOR_SIZE)
 /* Start address of the filesystem in flash */
-#define NVS_STORAGE_OFFSET DT_REG_ADDR(DT_NODE_BY_FIXED_PARTITION_LABEL(storage))
+#define NVS_STORAGE_OFFSET  (FLASH_AREA_OFFSET(lwm2m_carrier))
+/* Flash Device runtime structure */
+#define NVS_FLASH_DEVICE    (DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller)))
 
 static struct nvs_fs fs = {
 	.sector_size = NVS_SECTOR_SIZE,
 	.sector_count = NVS_SECTOR_COUNT,
 	.offset = NVS_STORAGE_OFFSET,
-	.flash_device = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller)),
+	.flash_device = NVS_FLASH_DEVICE,
 };
 
 K_THREAD_STACK_ARRAY_DEFINE(lwm2m_os_work_q_client_stack, LWM2M_OS_MAX_WORK_QS, 4096);
-struct k_work_q lwm2m_os_work_qs[LWM2M_OS_MAX_WORK_QS];
+static struct k_work_q lwm2m_os_work_qs[LWM2M_OS_MAX_WORK_QS];
+
+K_THREAD_STACK_ARRAY_DEFINE(lwm2m_os_thread_stack, LWM2M_OS_MAX_THREAD_COUNT, 600);
+static struct k_thread lwm2m_os_threads[LWM2M_OS_MAX_THREAD_COUNT];
 
 static struct k_sem lwm2m_os_sems[LWM2M_OS_MAX_SEM_COUNT];
 static uint8_t lwm2m_os_sems_used;
@@ -54,8 +59,16 @@ static uint8_t lwm2m_os_sems_used;
 /* AT monitor for notifications used by the library */
 AT_MONITOR(lwm2m_carrier_at_handler, ANY, lwm2m_os_at_handler);
 
+/* LwM2M carrier OS logs. */
+LOG_MODULE_REGISTER(lwm2m_os, LOG_LEVEL_DBG);
+
 int lwm2m_os_init(void)
 {
+#if defined CONFIG_LOG_RUNTIME_FILTERING
+	log_filter_set(NULL, CONFIG_LOG_DOMAIN_ID, LOG_CURRENT_MODULE_ID(),
+		       CONFIG_LOG_DEFAULT_LEVEL);
+#endif /* CONFIG_LOG_RUNTIME_FILTERING */
+
 	/* Initialize storage */
 	if (!device_is_ready(fs.flash_device)) {
 		return -ENODEV;
@@ -110,18 +123,16 @@ uint32_t lwm2m_os_rand_get(void)
 
 int lwm2m_os_sem_init(lwm2m_os_sem_t **sem, unsigned int initial_count, unsigned int limit)
 {
-	if (PART_OF_ARRAY(lwm2m_os_sems, (struct k_sem *)*sem)) {
-		goto reinit;
+	if (*sem == NULL) {
+		__ASSERT(lwm2m_os_sems_used < LWM2M_OS_MAX_SEM_COUNT,
+			 "Not enough semaphores in glue layer");
+
+		*sem = (lwm2m_os_sem_t *)&lwm2m_os_sems[lwm2m_os_sems_used++];
+	} else {
+		__ASSERT(PART_OF_ARRAY(lwm2m_os_sems, (struct k_sem *)sem),
+			 "Uninitialised semaphore");
 	}
 
-	__ASSERT(lwm2m_os_sems_used < LWM2M_OS_MAX_SEM_COUNT,
-		 "Not enough semaphores in glue layer");
-
-	*sem = (lwm2m_os_sem_t *)&lwm2m_os_sems[lwm2m_os_sems_used];
-
-	lwm2m_os_sems_used++;
-
-reinit:
 	return k_sem_init((struct k_sem *)*sem, initial_count, limit);
 }
 
@@ -150,7 +161,7 @@ void lwm2m_os_sem_reset(lwm2m_os_sem_t *sem)
 
 int lwm2m_os_storage_delete(uint16_t id)
 {
-	__ASSERT((id >= LWM2M_OS_STORAGE_BASE) || (id <= LWM2M_OS_STORAGE_END),
+	__ASSERT((id >= LWM2M_OS_STORAGE_BASE) && (id <= LWM2M_OS_STORAGE_END),
 		 "Storage ID out of range");
 
 	return nvs_delete(&fs, id);
@@ -158,7 +169,7 @@ int lwm2m_os_storage_delete(uint16_t id)
 
 int lwm2m_os_storage_read(uint16_t id, void *data, size_t len)
 {
-	__ASSERT((id >= LWM2M_OS_STORAGE_BASE) || (id <= LWM2M_OS_STORAGE_END),
+	__ASSERT((id >= LWM2M_OS_STORAGE_BASE) && (id <= LWM2M_OS_STORAGE_END),
 		 "Storage ID out of range");
 
 	return nvs_read(&fs, id, data, len);
@@ -166,7 +177,7 @@ int lwm2m_os_storage_read(uint16_t id, void *data, size_t len)
 
 int lwm2m_os_storage_write(uint16_t id, const void *data, size_t len)
 {
-	__ASSERT((id >= LWM2M_OS_STORAGE_BASE) || (id <= LWM2M_OS_STORAGE_END),
+	__ASSERT((id >= LWM2M_OS_STORAGE_BASE) && (id <= LWM2M_OS_STORAGE_END),
 		 "Storage ID out of range");
 
 	return nvs_write(&fs, id, data, len);
@@ -199,6 +210,7 @@ lwm2m_os_work_q_t *lwm2m_os_work_q_start(int index, const char *name)
 	if (index >= LWM2M_OS_MAX_WORK_QS) {
 		return NULL;
 	}
+
 	lwm2m_os_work_q_t *work_q = (lwm2m_os_work_q_t *)&lwm2m_os_work_qs[index];
 
 	k_work_queue_start(&lwm2m_os_work_qs[index], lwm2m_os_work_q_client_stack[index],
@@ -320,22 +332,38 @@ bool lwm2m_os_timer_is_pending(lwm2m_os_timer_t *timer)
 	return k_work_delayable_is_pending(&work->work_item);
 }
 
-/* LWM2M logs. */
+/* Thread functions */
 
-LOG_MODULE_REGISTER(lwm2m_os, LOG_LEVEL_DBG);
+int lwm2m_os_thread_start(int index, lwm2m_os_thread_entry_t entry, const char *name)
+{
+	__ASSERT(index < LWM2M_OS_MAX_THREAD_COUNT, "Not enough threads in glue layer");
+
+	if (index >= LWM2M_OS_MAX_THREAD_COUNT) {
+		return -EINVAL;
+	}
+
+	k_tid_t thread = k_thread_create(&lwm2m_os_threads[index], lwm2m_os_thread_stack[index],
+					 K_THREAD_STACK_SIZEOF(lwm2m_os_thread_stack[index]),
+					 entry, NULL, NULL, NULL, K_LOWEST_APPLICATION_THREAD_PRIO,
+					 0, K_NO_WAIT);
+
+	k_thread_name_set(thread, name);
+	k_thread_start(thread);
+
+	return 0;
+}
 
 int lwm2m_os_nrf_modem_init(void)
 {
-	int nrf_err;
-
-#if defined CONFIG_LOG_RUNTIME_FILTERING
-	log_filter_set(NULL, CONFIG_LOG_DOMAIN_ID, LOG_CURRENT_MODULE_ID(),
-		       CONFIG_LOG_DEFAULT_LEVEL);
-#endif /* CONFIG_LOG_RUNTIME_FILTERING */
-
-	nrf_err = nrf_modem_lib_init(NORMAL_MODE);
+#if defined CONFIG_NRF_MODEM_LIB_SYS_INIT
+	int nrf_err = nrf_modem_lib_get_init_ret();
+#else
+	int nrf_err = nrf_modem_lib_init(NORMAL_MODE);
+#endif /* CONFIG_NRF_MODEM_LIB_SYS_INIT */
 
 	switch (nrf_err) {
+	case 0:
+		break;
 	case MODEM_DFU_RESULT_OK:
 		LOG_INF("Modem firmware update successful.");
 		LOG_INF("Modem will run the new firmware after reboot.");
@@ -350,12 +378,10 @@ int lwm2m_os_nrf_modem_init(void)
 		LOG_ERR("Modem firmware update failed.");
 		LOG_ERR("Fatal error.");
 		break;
-	case -1:
+	default:
 		LOG_ERR("Could not initialize modem library.");
 		LOG_ERR("Fatal error.");
 		return -EIO;
-	default:
-		break;
 	}
 
 	return nrf_err;
@@ -528,38 +554,6 @@ int lwm2m_os_download_file_size_get(size_t *size)
 
 /* LTE LC module abstractions. */
 
-static void lwm2m_os_lte_event_handler(const struct lte_lc_evt *const evt)
-{
-	/* This event handler is not in use by LwM2M carrier library. */
-}
-
-int lwm2m_os_lte_link_up(void)
-{
-	int err;
-	static bool initialized;
-
-	if (!initialized) {
-		initialized = true;
-
-		err = lte_lc_init();
-		if (err) {
-			return err;
-		}
-	}
-
-	return lte_lc_connect_async(lwm2m_os_lte_event_handler);
-}
-
-int lwm2m_os_lte_link_down(void)
-{
-	return lte_lc_offline();
-}
-
-int lwm2m_os_lte_power_down(void)
-{
-	return lte_lc_power_off();
-}
-
 int32_t lwm2m_os_lte_mode_get(void)
 {
 	enum lte_lc_system_mode mode;
@@ -676,3 +670,192 @@ int lwm2m_os_sec_identity_delete(uint32_t sec_tag)
 {
 	return modem_key_mgmt_delete(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_IDENTITY);
 }
+
+/* Application firmware upgrade abstractions */
+
+#if CONFIG_DFU_TARGET_MCUBOOT
+
+#include <dfu/dfu_target.h>
+#include <dfu/dfu_target_mcuboot.h>
+#include <dfu/dfu_target_stream.h>
+#include <pm_config.h>
+#include <sys/crc.h>
+
+static bool dfu_started;
+static bool dfu_in_progress;
+static uint8_t dfu_stream_buf[1024] __aligned(4);
+
+static void dfu_target_cb(enum dfu_target_evt_id evt_id)
+{
+	/* This event handler is not in use by LwM2M carrier library. */
+	ARG_UNUSED(evt_id);
+}
+
+int lwm2m_os_app_fota_start(size_t max_file_size)
+{
+	int err, offset;
+
+	if (dfu_started) {
+		return -EBUSY;
+	}
+
+	err = dfu_target_mcuboot_set_buf(dfu_stream_buf, sizeof(dfu_stream_buf));
+	if (err) {
+		return -EIO;
+	}
+
+	err = dfu_target_init(DFU_TARGET_IMAGE_TYPE_MCUBOOT, 0, max_file_size, dfu_target_cb);
+	if (err == -EBUSY) {
+		return -EBUSY;
+	} else if ((err == -ENOMEM) || (err == -E2BIG) || (err == -EFBIG)) {
+		return -ENOMEM;
+	} else if (err) {
+		return -EIO;
+	}
+
+	err = dfu_target_offset_get(&offset);
+	if (err) {
+		return -EIO;
+	}
+
+	dfu_started = true;
+	if (offset > 0) {
+		dfu_in_progress = true;
+	}
+
+	return offset;
+}
+
+int lwm2m_os_app_fota_fragment(const char *buf, uint16_t len, uint16_t offset, uint32_t crc32)
+{
+	int err;
+
+	if ((buf == NULL) || (offset > len)) {
+		/* Invalid arguments. */
+		return -EIO;
+	}
+
+	if (!dfu_started) {
+		return -EACCES;
+	}
+
+	/* CRC-validate whole fragment. */
+	if (crc32 != crc32_ieee(buf, len)) {
+		return -EINVAL;
+	}
+
+	if (!dfu_in_progress) {
+		/* First fragment. Check image type. */
+		if (!dfu_target_mcuboot_identify(buf)) {
+			lwm2m_os_app_fota_abort();
+			return -ENOTSUP;
+		}
+
+		dfu_in_progress = true;
+	}
+
+	/* Partial write starting from offset. */
+	err = dfu_target_write(&buf[offset], len - offset);
+	if (!err) {
+		/* Success. */
+		return 0;
+	}
+
+	/* Cancel DFU and handle error. */
+	lwm2m_os_app_fota_abort();
+
+	if ((err == -ENOMEM) || (err == -E2BIG) || (err == -EFBIG)) {
+		return -ENOMEM;
+	}
+
+	return -EIO;
+}
+
+int lwm2m_os_app_fota_finish(uint32_t crc32)
+{
+	int err = 0;
+	size_t bytes_written;
+
+	if (!dfu_started) {
+		return -EACCES;
+	}
+
+	/* Ensure that the whole image is flushed into flash before CRC-validating it. */
+	err = dfu_target_stream_done(true);
+	if (!err) {
+		err = dfu_target_stream_offset_get(&bytes_written);
+	}
+	if (err) {
+		err = -EIO;
+		goto abort;
+	}
+
+	if (crc32 != crc32_ieee((const uint8_t *)PM_MCUBOOT_SECONDARY_ADDRESS, bytes_written)) {
+		err = -EINVAL;
+		goto abort;
+	}
+
+	err = dfu_target_done(true);
+	if (!err) {
+		err = dfu_target_schedule_update(0);
+	}
+	if (err) {
+		err = -EIO;
+		goto abort;
+	}
+
+	return 0;
+
+abort:
+	lwm2m_os_app_fota_abort();
+	return err;
+}
+
+void lwm2m_os_app_fota_abort(void)
+{
+	struct stream_flash_ctx *stream;
+
+	if (dfu_started) {
+		/* Ensure that the firmware transfer progress is cleared. */
+		stream = dfu_target_stream_get_stream();
+		stream->bytes_written = 0;
+
+		dfu_target_reset();
+
+		dfu_in_progress = false;
+		dfu_started = false;
+	}
+}
+
+#else
+
+int lwm2m_os_app_fota_start(size_t max_file_size)
+{
+	ARG_UNUSED(max_file_size);
+
+	return -ENOTSUP;
+}
+
+int lwm2m_os_app_fota_fragment(const char *buf, uint16_t len, uint16_t offset, uint32_t crc32)
+{
+	ARG_UNUSED(buf);
+	ARG_UNUSED(len);
+	ARG_UNUSED(offset);
+	ARG_UNUSED(crc32);
+
+	return -ENOTSUP;
+}
+
+int lwm2m_os_app_fota_finish(uint32_t crc32)
+{
+	ARG_UNUSED(crc32);
+
+	return -ENOTSUP;
+}
+
+void lwm2m_os_app_fota_abort(void)
+{
+	/* Do nothing. */
+}
+
+#endif /* CONFIG_DFU_TARGET_MCUBOOT */

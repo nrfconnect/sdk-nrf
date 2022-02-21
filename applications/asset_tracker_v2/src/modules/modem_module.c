@@ -23,8 +23,6 @@
 
 #ifdef CONFIG_LWM2M_CARRIER
 #include <lwm2m_carrier.h>
-
-#include "carrier_certs.h"
 #endif /* CONFIG_LWM2M_CARRIER */
 
 #include <zephyr/logging/log.h>
@@ -183,7 +181,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 static void lte_evt_handler(const struct lte_lc_evt *const evt)
 {
 	switch (evt->type) {
-	case LTE_LC_EVT_NW_REG_STATUS:
+	case LTE_LC_EVT_NW_REG_STATUS: {
 		if (evt->nw_reg_status == LTE_LC_NW_REG_UICC_FAIL) {
 			LOG_ERR("No SIM card detected!");
 			SEND_ERROR(modem, MODEM_EVT_ERROR, -ENOTSUP);
@@ -199,11 +197,9 @@ static void lte_evt_handler(const struct lte_lc_evt *const evt)
 		LOG_DBG("Network registration status: %s",
 			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
 			"Connected - home network" : "Connected - roaming");
-
-		if (!IS_ENABLED(CONFIG_LWM2M_CARRIER)) {
-			SEND_EVENT(modem, MODEM_EVT_LTE_CONNECTED);
-		}
+		SEND_EVENT(modem, MODEM_EVT_LTE_CONNECTED);
 		break;
+	}
 	case LTE_LC_EVT_PSM_UPDATE:
 		LOG_DBG("PSM parameter update: TAU: %d, Active time: %d",
 			evt->psm_cfg.tau, evt->psm_cfg.active_time);
@@ -299,15 +295,15 @@ static void modem_rsrp_handler(char rsrp_value)
 #ifdef CONFIG_LWM2M_CARRIER
 static void print_carrier_error(const lwm2m_carrier_event_t *evt)
 {
-	const lwm2m_carrier_event_error_t *err = (lwm2m_carrier_event_error_t *)evt->data;
+	const lwm2m_carrier_event_error_t *err = evt->data.error;
 	static const char *const strerr[] = {
 		[LWM2M_CARRIER_ERROR_NO_ERROR] =
 			"No error",
 		[LWM2M_CARRIER_ERROR_BOOTSTRAP] =
 			"Bootstrap error",
-		[LWM2M_CARRIER_ERROR_CONNECT_FAIL] =
+		[LWM2M_CARRIER_ERROR_LTE_LINK_UP_FAIL] =
 			"Failed to connect to the LTE network",
-		[LWM2M_CARRIER_ERROR_DISCONNECT_FAIL] =
+		[LWM2M_CARRIER_ERROR_LTE_LINK_DOWN_FAIL] =
 			"Failed to disconnect from the LTE network",
 		[LWM2M_CARRIER_ERROR_FOTA_PKG] =
 			"Package refused from modem",
@@ -321,16 +317,20 @@ static void print_carrier_error(const lwm2m_carrier_event_t *evt)
 			"Modem firmware update failed",
 		[LWM2M_CARRIER_ERROR_CONFIGURATION] =
 			"Illegal object configuration detected",
+		[LWM2M_CARRIER_ERROR_INIT] =
+			"Initialization failure",
+		[LWM2M_CARRIER_ERROR_INTERNAL] =
+			"Internal failure",
 	};
 
-	__ASSERT(PART_OF_ARRAY(strerr, &strerr[err->code]), "Unhandled carrier library error");
+	__ASSERT(PART_OF_ARRAY(strerr, &strerr[err->type]), "Unhandled carrier library error");
 
-	LOG_ERR("%s, reason %d\n", strerr[err->code], err->value);
+	LOG_ERR("%s, reason %d\n", strerr[err->type], err->value);
 }
 
 static void print_carrier_deferred_reason(const lwm2m_carrier_event_t *evt)
 {
-	const lwm2m_carrier_event_deferred_t *def = (lwm2m_carrier_event_deferred_t *)evt->data;
+	const lwm2m_carrier_event_deferred_t *def = evt->data.deferred;
 	static const char *const strdef[] = {
 		[LWM2M_CARRIER_DEFERRED_NO_REASON] =
 			"No reason given",
@@ -365,30 +365,27 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *evt)
 	int err = 0;
 
 	switch (evt->type) {
-	case LWM2M_CARRIER_EVENT_MODEM_INIT:
-		LOG_INF("LWM2M_CARRIER_EVENT_MODEM_INIT");
+	case LWM2M_CARRIER_EVENT_INIT: {
+		LOG_INF("LWM2M_CARRIER_EVENT_INIT");
 		SEND_EVENT(modem, MODEM_EVT_CARRIER_INITIALIZED);
 		break;
-	case LWM2M_CARRIER_EVENT_CONNECTING:
-		LOG_INF("LWM2M_CARRIER_EVENT_CONNECTING");
+	}
+	case LWM2M_CARRIER_EVENT_LTE_LINK_UP: {
+		LOG_INF("LWM2M_CARRIER_EVENT_LTE_LINK_UP");
+		SEND_EVENT(modem, MODEM_EVT_CARRIER_EVENT_LTE_LINK_UP_REQUEST);
 		break;
-	case LWM2M_CARRIER_EVENT_CONNECTED:
-		LOG_INF("LWM2M_CARRIER_EVENT_CONNECTED");
+	}
+	case LWM2M_CARRIER_EVENT_LTE_LINK_DOWN: {
+		LOG_INF("LWM2M_CARRIER_EVENT_LTE_LINK_DOWN");
+		SEND_EVENT(modem, MODEM_EVT_CARRIER_EVENT_LTE_LINK_DOWN_REQUEST);
 		break;
-	case LWM2M_CARRIER_EVENT_DISCONNECTING:
-		LOG_INF("LWM2M_CARRIER_EVENT_DISCONNECTING");
-		break;
-	case LWM2M_CARRIER_EVENT_DISCONNECTED:
-		LOG_INF("LWM2M_CARRIER_EVENT_DISCONNECTED");
+	}
+	case LWM2M_CARRIER_EVENT_LTE_POWER_OFF:
+		LOG_INF("LWM2M_CARRIER_EVENT_LTE_POWER_OFF");
 		break;
 	case LWM2M_CARRIER_EVENT_BOOTSTRAPPED:
 		LOG_INF("LWM2M_CARRIER_EVENT_BOOTSTRAPPED");
 		break;
-	case LWM2M_CARRIER_EVENT_LTE_READY: {
-		LOG_INF("LWM2M_CARRIER_EVENT_LTE_READY");
-		SEND_EVENT(modem, MODEM_EVT_LTE_CONNECTED);
-		break;
-	}
 	case LWM2M_CARRIER_EVENT_REGISTERED:
 		LOG_INF("LWM2M_CARRIER_EVENT_REGISTERED");
 		break;
@@ -413,21 +410,17 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *evt)
 		return 1;
 	}
 	case LWM2M_CARRIER_EVENT_ERROR: {
-		const lwm2m_carrier_event_error_t *err = (lwm2m_carrier_event_error_t *)evt->data;
+		const lwm2m_carrier_event_error_t *err = evt->data.error;
 
 		LOG_ERR("LWM2M_CARRIER_EVENT_ERROR");
 		print_carrier_error(evt);
 
-		if (err->code == LWM2M_CARRIER_ERROR_FOTA_FAIL) {
+		if (err->type == LWM2M_CARRIER_ERROR_FOTA_FAIL) {
 			SEND_EVENT(modem, MODEM_EVT_CARRIER_FOTA_STOPPED);
 		}
 		break;
 	}
-	case LWM2M_CARRIER_EVENT_CERTS_INIT:
-		err = carrier_certs_provision((ca_cert_tags_t *)evt->data);
-		break;
 	}
-
 	return err;
 }
 #endif /* CONFIG_LWM2M_CARRIER */
@@ -856,12 +849,10 @@ static int setup(void)
 {
 	int err;
 
-	if (!IS_ENABLED(CONFIG_LWM2M_CARRIER)) {
-		err = lte_lc_init();
-		if (err) {
-			LOG_ERR("lte_lc_init, error: %d", err);
-			return err;
-		}
+	err = lte_lc_init();
+	if (err) {
+		LOG_ERR("lte_lc_init, error: %d", err);
+		return err;
 	}
 
 	err = configure_low_power();
@@ -895,8 +886,13 @@ static void on_state_init(struct modem_msg_data *msg)
 
 		err = setup();
 		__ASSERT(err == 0, "Failed running setup()");
-
 		SEND_EVENT(modem, MODEM_EVT_INITIALIZED);
+
+		err = lte_connect();
+		if (err) {
+			LOG_ERR("Failed connecting to LTE, error: %d", err);
+			SEND_ERROR(modem, MODEM_EVT_ERROR, err);
+		}
 	}
 }
 
@@ -912,8 +908,15 @@ static void on_state_disconnected(struct modem_msg_data *msg)
 	}
 
 	if ((IS_EVENT(msg, app, APP_EVT_LTE_DISCONNECT)) ||
+	    (IS_EVENT(msg, modem, MODEM_EVT_CARRIER_EVENT_LTE_LINK_UP_REQUEST)) ||
 	    (IS_EVENT(msg, cloud, CLOUD_EVT_LTE_DISCONNECT))) {
-		lte_connect();
+		int err;
+
+		err = lte_connect();
+		if (err) {
+			LOG_ERR("Failed connecting to LTE, error: %d", err);
+			SEND_ERROR(modem, MODEM_EVT_ERROR, err);
+		}
 	}
 }
 
@@ -946,7 +949,18 @@ static void on_state_connected(struct modem_msg_data *msg)
 		state_set(STATE_DISCONNECTED);
 	}
 
+	if (IS_EVENT(msg, modem, MODEM_EVT_CARRIER_EVENT_LTE_LINK_DOWN_REQUEST)) {
+		int err;
+
+		err = lte_lc_offline();
+		if (err) {
+			LOG_ERR("LTE disconnect failed, error: %d", err);
+			SEND_ERROR(modem, MODEM_EVT_ERROR, err);
+		}
+	}
+
 	if ((IS_EVENT(msg, app, APP_EVT_LTE_DISCONNECT)) ||
+	    (IS_EVENT(msg, modem, MODEM_EVT_CARRIER_EVENT_LTE_LINK_DOWN_REQUEST)) ||
 	    (IS_EVENT(msg, cloud, CLOUD_EVT_LTE_DISCONNECT))) {
 		int err;
 

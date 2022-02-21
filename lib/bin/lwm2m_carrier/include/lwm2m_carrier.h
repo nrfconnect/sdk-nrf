@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Nordic Semiconductor ASA
+ * Copyright (c) 2019-2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -26,45 +26,54 @@ extern "C" {
  * @name LwM2M carrier library events.
  * @{
  */
-/** Modem library initialized. */
-#define LWM2M_CARRIER_EVENT_MODEM_INIT	  1
-/** Connecting to the LTE network. */
-#define LWM2M_CARRIER_EVENT_CONNECTING	  2
-/** Connected to the LTE network. */
-#define LWM2M_CARRIER_EVENT_CONNECTED	  3
-/** Disconnecting from the LTE network. */
-#define LWM2M_CARRIER_EVENT_DISCONNECTING 4
-/** Disconnected from the LTE network. */
-#define LWM2M_CARRIER_EVENT_DISCONNECTED  5
+/** Carrier library initialized. */
+#define LWM2M_CARRIER_EVENT_INIT	  1
+/** Request connect to the LTE network. */
+#define LWM2M_CARRIER_EVENT_LTE_LINK_UP	  2
+/**
+ * Request disconnect from the LTE network.
+ * The link must be offline until a subsequent LWM2M_CARRIER_EVENT_LTE_LINK_UP event.
+ */
+#define LWM2M_CARRIER_EVENT_LTE_LINK_DOWN 3
+/** Request power off LTE network. */
+#define LWM2M_CARRIER_EVENT_LTE_POWER_OFF 4
 /** LwM2M carrier bootstrapped. */
 #define LWM2M_CARRIER_EVENT_BOOTSTRAPPED  6
 /** LwM2M carrier registered. */
 #define LWM2M_CARRIER_EVENT_REGISTERED	  7
 /** LwM2M carrier operation is deferred. */
 #define LWM2M_CARRIER_EVENT_DEFERRED	  8
-/** Modem update started. */
+/** Firmware update started. */
 #define LWM2M_CARRIER_EVENT_FOTA_START	  9
 /** Application will reboot. */
 #define LWM2M_CARRIER_EVENT_REBOOT	  10
-/** LTE network is ready to be used. */
-#define LWM2M_CARRIER_EVENT_LTE_READY	  11
 /** Modem domain event received. */
 #define LWM2M_CARRIER_EVENT_MODEM_DOMAIN  12
+/** Data received through the App Data Container object */
+#define LWM2M_CARRIER_EVENT_APP_DATA      13
 /** An error occurred. */
 #define LWM2M_CARRIER_EVENT_ERROR	  20
-/** CA certificates need to be initialized. */
-#define LWM2M_CARRIER_EVENT_CERTS_INIT	  30
 /** @} */
 
 /**
- * @brief LwM2M carrier library event structure.
+ * @name LwM2M carrier library firmware update types.
+ * @{
+ */
+/** Receiving a modem firmware delta patch. */
+#define LWM2M_CARRIER_FOTA_START_MODEM_DELTA 0
+/** Receiving application firmware. */
+#define LWM2M_CARRIER_FOTA_START_APPLICATION 2
+/** @} */
+
+/**
+ * @brief LwM2M carrier library firmware update event structure.
  */
 typedef struct {
-	/** Event type. */
+	/** Firmware type to be received. */
 	uint32_t type;
-	/** Event data. Can be NULL, depending on event type. */
-	const void *data;
-} lwm2m_carrier_event_t;
+	/** URI from where the firmware will be downloaded. Set to NULL if no URI will be used. */
+	const char *uri;
+} lwm2m_carrier_event_fota_start_t;
 
 /**
  * @name LwM2M carrier library modem domain event types.
@@ -77,6 +86,21 @@ typedef struct {
 /** Modem has detected a reset loop and will restrict Attach attempts for the next 30 minutes. */
 #define LWM2M_CARRIER_MODEM_EVENT_RESET_LOOP	 2
 /** @} */
+
+/**
+ * @brief LwM2M carrier library modem domain event type value.
+ */
+typedef uint32_t lwm2m_carrier_event_modem_domain_t;
+
+/**
+ * @brief LwM2M carrier library app data event structure.
+ */
+typedef struct {
+	/** Buffer containing received application data. */
+	const uint8_t *buffer;
+	/** Number of bytes received. */
+	size_t buffer_len;
+} lwm2m_carrier_event_app_data_t;
 
 /**
  * @name LwM2M carrier library event deferred reasons.
@@ -115,15 +139,15 @@ typedef struct {
 } lwm2m_carrier_event_deferred_t;
 
 /**
- * @name LwM2M carrier library event error codes.
+ * @name LwM2M carrier library event error types.
  * @{
  */
 /** No error. */
 #define LWM2M_CARRIER_ERROR_NO_ERROR		0
 /** Failed to connect to the LTE network. */
-#define LWM2M_CARRIER_ERROR_CONNECT_FAIL	1
+#define LWM2M_CARRIER_ERROR_LTE_LINK_UP_FAIL	1
 /** Failed to disconnect from the LTE network. */
-#define LWM2M_CARRIER_ERROR_DISCONNECT_FAIL	2
+#define LWM2M_CARRIER_ERROR_LTE_LINK_DOWN_FAIL	2
 /** LwM2M carrier bootstrap failed. */
 #define LWM2M_CARRIER_ERROR_BOOTSTRAP		3
 /** Update package rejected. */
@@ -138,17 +162,43 @@ typedef struct {
 #define LWM2M_CARRIER_ERROR_FOTA_FAIL		8
 /** Illegal object configuration detected. */
 #define LWM2M_CARRIER_ERROR_CONFIGURATION	9
+/** LwM2M carrier init failed. */
+#define LWM2M_CARRIER_ERROR_INIT		10
+/** Internal error detected. */
+#define LWM2M_CARRIER_ERROR_INTERNAL		11
 /** @} */
 
 /**
  * @brief LwM2M carrier library error event structure.
  */
 typedef struct {
-	/** Error event code. */
-	uint32_t code;
+	/** Error event type. */
+	uint32_t type;
 	/** Error event value. */
 	int32_t value;
 } lwm2m_carrier_event_error_t;
+
+/**
+ * @brief LwM2M carrier library event structure.
+ */
+typedef struct {
+	/** Event type. */
+	uint32_t type;
+	/** Pointer to event data, according to event type. */
+	union {
+		/** @c LWM2M_CARRIER_EVENT_FOTA_START */
+		lwm2m_carrier_event_fota_start_t *fota_start;
+		/** @c LWM2M_CARRIER_EVENT_MODEM_DOMAIN */
+		lwm2m_carrier_event_modem_domain_t *modem_domain;
+		/** @c LWM2M_CARRIER_EVENT_APP_DATA */
+		lwm2m_carrier_event_app_data_t *app_data;
+		/** @c LWM2M_CARRIER_EVENT_DEFERRED */
+		lwm2m_carrier_event_deferred_t *deferred;
+		/** @c LWM2M_CARRIER_EVENT_ERROR */
+		lwm2m_carrier_event_error_t *error;
+		/** For all other event types, it will be set to NULL. */
+	} data;
+} lwm2m_carrier_event_t;
 
 /**
  * @name LwM2M device power sources types.
@@ -203,51 +253,63 @@ typedef struct {
 /** @} */
 
 /**
- * @brief Structure holding security tags for CA certificates to be applied by the LwM2M carrier
- *        library.
- */
-typedef struct {
-	/** Pointer to static array of available security tags */
-	int *tags;
-	/** Number of available security tags */
-	int count;
-} ca_cert_tags_t;
-
-/**
  * @brief Structure holding LwM2M carrier library initialization parameters.
  */
 typedef struct {
-	/** URI of the LwM2M Bootstrap-Server or LwM2M Server, null-terminated string. */
-	const char *server_uri;
-	/** Configure if server_uri is a LwM2M Bootstrap-Server or a standard LwM2M Server. */
-	bool is_bootstrap_server;
-	/** Default server lifetime (in seconds), used when server_uri is a LwM2M Server. */
-	int32_t server_lifetime;
-	/** Pre-Shared Key for the LwM2M Server, null-terminated hexadecimal string. */
-	const char *psk;
-	/** Optional custom APN, null-terminated string. */
-	const char *apn;
 	/** Connect to certification servers if true, connect to production servers otherwise. */
 	bool certification_mode;
 	/** Disable bootstrap from Smartcard mode when this is enabled by the carrier. */
 	bool disable_bootstrap_from_smartcard;
+	/** Denotes whether @c server_uri is an LwM2M Bootstrap-Server or an LwM2M Server. */
+	bool is_bootstrap_server;
+	/** Optional URI of the custom server. Null-terminated string of max 255 characters. */
+	const char *server_uri;
+	/** Default server lifetime (in seconds). Used only for an LwM2M Server. */
+	int32_t server_lifetime;
+	/** Default DTLS session idle timeout (in seconds). */
+	int32_t session_idle_timeout;
+	/** Optional Pre-Shared Key. Null-terminated string of max 64 hexadecimal digits. */
+	const char *psk;
+	/** Optional custom APN. Null-terminated string of max 63 characters. */
+	const char *apn;
+	/** Optional LwM2M device manufacturer name. Null-terminated string of max 32 characters. */
+	const char *manufacturer;
+	/** Optional LwM2M device model number. Null-terminated string of max 32 characters. */
+	const char *model_number;
+	/** Optional LwM2M device type. Null-terminated string of max 32 characters. */
+	const char *device_type;
+	/** Optional LwM2M device hardware version. Null-terminated string of max 32 characters. */
+	const char *hardware_version;
+	/** Optional LwM2M device software version. Null-terminated string of max 32 characters. */
+	const char *software_version;
+	/**
+	 * LG U+ Service Code registered for this device. This field is only required for devices
+	 * certifying with LG U+. Null-terminated string of at most 5 characters.
+	 */
+	const char *service_code;
 } lwm2m_carrier_config_t;
 
 /**
  * @brief Initialize the LwM2M carrier library.
  *
- * @param[in] config Configuration parameters for the library.
+ * @param[in] config Configuration parameters for the library. Optional.
  *
  * @note The library does not copy the contents of pointers in the config parameters. The
  *       application has to make sure that the provided parameters are valid throughout the
  *       application lifetime (i.e. placed in static memory or in flash).
  *
- * @note The first time this function is called after a modem firmware update, (FOTA) it may take
- *       several seconds to return in order to complete the procedure.
+ * @note This function will block until a SIM card is initialized by the modem. The library cannot
+ *       proceed if, for example, no SIM is inserted, or a PIN code must be entered.
  *
- * @retval  0      If success.
- * @retval -EIO    Failed to initialize modem library or unable to read IMEI.
- * @retval -E2BIG  The provided PSK is too large to be stored in the modem.
+ * @note The first time this function is called after a modem firmware update (FOTA), it may block
+ *       for several seconds in order to complete the procedure.
+ *
+ * @retval  0      If initialization was successful.
+ * @retval -EINVAL If the configuration parameters are invalid. See @c lwm2m_carrier_config_t
+ * @retval -EACCES If initialization failed due to an error in the OS integration layer.
+ * @retval -ENOMEM If initialization failed due to insufficient OS resources.
+ * @retval -EIO    If initialization failed due to a modem or AT command error.
+ * @retval -EFAULT If initialization failed due to an internal error.
  */
 int lwm2m_carrier_init(const lwm2m_carrier_config_t *config);
 
@@ -294,7 +356,7 @@ int lwm2m_carrier_utc_offset_read(void);
  *
  * @return  Null-terminated timezone string pointer, IANA Timezone (TZ) database format.
  */
-const char *lwm2m_carrier_timezone_read(void);
+char *lwm2m_carrier_timezone_read(void);
 
 /**
  * @brief Function to write current UTC time (LwM2M server write operation)
@@ -304,7 +366,7 @@ const char *lwm2m_carrier_timezone_read(void);
  * @param[in] time Time since Epoch in seconds.
  *
  * @retval  0      If success.
- * @retval -EINVAL If value of time is less then 0.
+ * @retval -EINVAL If value of time is less than 0.
  */
 int lwm2m_carrier_utc_time_write(int32_t time);
 
@@ -341,7 +403,7 @@ int lwm2m_carrier_timezone_write(const char *tz);
  * @param[in] event LwM2M carrier event that occurred.
  *
  * @return  In case of @c LWM2M_CARRIER_EVENT_REBOOT events if non-zero is returned, the LwM2M
- *          carrier library will not reboot the device. The application should to reboot at the
+ *          carrier library will not reboot the device. The application should reboot at the
  *          earliest convenient time.
  */
 int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event);
@@ -425,50 +487,6 @@ int lwm2m_carrier_battery_level_set(uint8_t battery_level);
  * @retval -ENODEV If internal battery is not listed as an available power source.
  */
 int lwm2m_carrier_battery_status_set(int32_t battery_status);
-
-/**
- * @brief Set the LwM2M device type.
- *
- * @note Type of the LwM2M device specified by the manufacturer.
- *
- * @param[in]  device_type Null terminated string specifying the type of the LwM2M device.
- *
- * @retval  0      If the device type has been set successfully.
- * @retval -EINVAL If the input argument is a NULL pointer or an empty string.
- * @retval -E2BIG  If the input string is too long.
- * @retval -ENOMEM If it was not possible to allocate memory storage to hold the string.
- */
-int lwm2m_carrier_device_type_set(const char *device_type);
-
-/**
- * @brief Set the LwM2M device hardware version.
- *
- * @note LwM2M device hardware version.
- *
- * @param[in]  hardware_version Null terminated string specifying the hardware version of the LWM2M
- *                              device.
- *
- * @retval  0      If the hardware version has been set successfully.
- * @retval -EINVAL If the input argument is a NULL pointer or an empty string.
- * @retval -E2BIG  If the input string is too long.
- * @retval -ENOMEM If it was not possible to allocate memory storage to hold the string.
- */
-int lwm2m_carrier_hardware_version_set(const char *hardware_version);
-
-/**
- * @brief Set the LwM2M device software version.
- *
- * @note High level device software version (application).
- *
- * @param[in]  software_version Null terminated string specifying the current software version of
- *                              the LwM2M device.
- *
- * @retval  0      If the software version has been set successfully.
- * @retval -EINVAL If the input argument is a NULL pointer or an empty string.
- * @retval -E2BIG  If the input string is too long.
- * @retval -ENOMEM If it was not possible to allocate memory storage to hold the string.
- */
-int lwm2m_carrier_software_version_set(const char *software_version);
 
 /**
  * @brief Update the device object instance error code by adding an individual error.
@@ -610,6 +628,24 @@ int lwm2m_carrier_location_set(double latitude, double longitude, float altitude
  */
 int lwm2m_carrier_velocity_set(int heading, float speed_h, float speed_v, float uncertainty_h,
 			       float uncertainty_v);
+
+/**
+ * @brief Schedule application data to be sent using the App Data Container object.
+ *
+ * @details This function sets the "UL data" (uplink) resource of this object to the desired value,
+ *          which can then be read by, or reported to, the LwM2M server.
+ *
+ * @note The App Data Container object will not be initialized for every carrier.
+ *
+ * @param[in]  buffer     Buffer containing the application data to be sent.
+ * @param[in]  buffer_len Number of bytes in the buffer.
+ *
+ * @retval  0      If the resource has been set successfully.
+ * @retval -ENOENT If the object is not yet initialized.
+ * @retval -EINVAL If the buffer is NULL.
+ * @retval -ENOMEM If there is not enough memory to copy the buffer contents to the resource model.
+ */
+int lwm2m_carrier_app_data_send(const uint8_t *buffer, size_t buffer_len);
 
 #ifdef __cplusplus
 }

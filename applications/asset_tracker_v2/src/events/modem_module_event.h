@@ -144,6 +144,8 @@ enum modem_module_event_type {
 	 *  The event has no associated payload.
 	 */
 	MODEM_EVT_CARRIER_REBOOT_REQUEST,
+	MODEM_EVT_CARRIER_EVENT_LTE_LINK_UP_REQUEST,
+	MODEM_EVT_CARRIER_EVENT_LTE_LINK_DOWN_REQUEST,
 };
 
 /** @brief LTE cell information. */

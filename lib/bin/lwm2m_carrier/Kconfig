@@ -19,7 +19,7 @@ menuconfig LWM2M_CARRIER
 	depends on NVS
 	# Heap and stack requirements
 	depends on (HEAP_MEM_POOL_SIZE >= 4096)
-	depends on (SYSTEM_WORKQUEUE_STACK_SIZE >= 1312)
+	depends on (SYSTEM_WORKQUEUE_STACK_SIZE >= 1536)
 	# NCS dependencies
 	# Networking - Zephyr
 	depends on NETWORKING
@@ -63,7 +63,8 @@ config LWM2M_CARRIER_IS_SERVER_BOOTSTRAP
 	bool "Bootstrap-Server"
 	default y
 	help
-	  Configure if server is a LwM2M Bootstrap-Server or a standard LwM2M Server
+	  Configure whether the custom server is a LwM2M Bootstrap-Server
+	  or a standard LwM2M Server.
 
 if !LWM2M_CARRIER_IS_SERVER_BOOTSTRAP
 
@@ -71,47 +72,102 @@ config LWM2M_CARRIER_SERVER_LIFETIME
 	int "Server lifetime"
 	default 60
 	help
-	  Default server lifetime.
+	  Default server lifetime (seconds).
 
 endif # !LWM2M_CARRIER_IS_SERVER_BOOTSTRAP
 
 endif # LWM2M_CARRIER_USE_CUSTOM_URI
 
-config LWM2M_CARRIER_USE_CUSTOM_PSK
-	bool "Use custom PSK"
-	help
-	  Use a custom PSK.
-
-if LWM2M_CARRIER_USE_CUSTOM_PSK
-
 config LWM2M_CARRIER_CUSTOM_PSK
 	string "LwM2M carrier custom bootstrap PSK"
 	default ""
 	help
-	  PSK of the custom bootstrap server.
-
-endif # LWM2M_CARRIER_USE_CUSTOM_PSK
-
-config LWM2M_CARRIER_USE_CUSTOM_APN
-	bool "Use custom APN"
-	help
-	  Use a custom APN.
-
-if LWM2M_CARRIER_USE_CUSTOM_APN
+	  Set a custom PSK for the Bootstrap-Server.
+	  If left blank, a default PSK will be generated based on the carrier.
 
 config LWM2M_CARRIER_CUSTOM_APN
 	string "LwM2M carrier custom APN"
 	default ""
 	help
-	  Custom APN.
-
-endif # LWM2M_CARRIER_USE_CUSTOM_APN
+	  Add an optional custom APN.
 
 config LWM2M_CARRIER_BOOTSTRAP_SMARTCARD
 	bool "Allow bootstrap from Smartcard"
 	default y
 	help
 	  Bootstrap from Smartcard mode when this is enabled by the carrier.
+
+config LWM2M_CARRIER_DEVICE_MANUFACTURER
+	string "Device manufacturer"
+	default ""
+	help
+	  Set the LwM2M device manufacturer name.
+	  If left blank, the default value will be read from the modem.
+	  Some carriers may override this value.
+
+config LWM2M_CARRIER_DEVICE_MODEL_NUMBER
+	string "Device model number"
+	default ""
+	help
+	  Set the LwM2M device model number (manufacturer-specified string).
+	  If left blank, the default value will be read from the modem.
+	  Some carriers may override this value.
+
+config LWM2M_CARRIER_DEVICE_TYPE
+	string "Device type"
+	default "Smart Device"
+	help
+	  Set the LwM2M device type (manufacturer-specified string).
+	  Some carriers may override this value.
+
+config LWM2M_CARRIER_DEVICE_HARDWARE_VERSION
+	string "Device hardware version"
+	default ""
+	help
+	  Set the LwM2M device hardware version.
+	  If left blank, the default value will be read from the modem.
+
+config LWM2M_CARRIER_DEVICE_SOFTWARE_VERSION
+	string "Device software version"
+	default ""
+	help
+	  Set the LwM2M device software version.
+	  Some carriers may override this value.
+
+config LWM2M_CARRIER_LG_UPLUS
+	bool "LwM2M carrier LG U+ settings"
+	depends on DFU_TARGET_MCUBOOT
+	help
+	  Enable settings required for supporting the LG U+ carrier.
+
+if LWM2M_CARRIER_LG_UPLUS
+
+config LWM2M_CARRIER_LG_UPLUS_SERVICE_CODE
+	string "LG U+ Service Code"
+	help
+	  Service Code registered for this device with LG U+.
+
+endif # LWM2M_CARRIER_LG_UPLUS
+
+config LWM2M_CARRIER_SESSION_IDLE_TIMEOUT
+	int "DTLS session idle timeout"
+	default 60
+	help
+	  Number of seconds, for which a DTLS session used by this library can be idle
+	  before it is closed. Setting this to 0 will use the default value (60 seconds).
+
+config LWM2M_CARRIER_STORAGE_AREA_SIZE
+	hex "Size of the lwm2m_carrier partition"
+	default 0x3000
+	help
+	  Size of the dynamic flash partition used for LwM2M carrier library storage.
+	  Should be a multiple of CONFIG_LWM2M_CARRIER_STORAGE_SECTOR_SIZE.
+
+DT_ZEPHYR_FLASH := zephyr,flash
+config LWM2M_CARRIER_STORAGE_SECTOR_SIZE
+	hex
+	default $(dt_node_int_prop_hex,$(dt_chosen_path,$(DT_ZEPHYR_FLASH)),erase-block-size)
+
 
 module=LWM2M_CARRIER
 module-dep=LOG
