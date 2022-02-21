@@ -88,9 +88,9 @@ Testing
 After programming the sample to the development kit, test it by performing the following steps:
 
 1. Start the application and wait for a prompt for pressing a button.
-#. Press the button to start the update procedure.
+#. Press the button or type "download" in the terminal emulator to start the update procedure.
 #. Once the download is completed, the modem update procedure will begin automatically.
-#. Reset the development kit.
+#. Reset the development kit by pressing the **Reset** button or typing "reset" in the terminal emulator.
 #. Observe that the LED pattern has changed.
 
 Dependencies
@@ -113,3 +113,4 @@ It also uses the following Zephyr libraries:
   * :ref:`zephyr:flash_api`
   * :ref:`zephyr:logging_api`
   * :ref:`zephyr:gpio_api`
+  * :ref:`zephyr:shell_api`

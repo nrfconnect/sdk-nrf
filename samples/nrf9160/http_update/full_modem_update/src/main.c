@@ -8,6 +8,7 @@
 #include <modem/nrf_modem_lib.h>
 #include <dfu/dfu_target_full_modem.h>
 #include <net/fota_download.h>
+#include <shell/shell.h>
 #include <nrf_modem_full_dfu.h>
 #include <modem/modem_info.h>
 #include <dfu/fmfu_fdev.h>
@@ -89,7 +90,8 @@ static void apply_fmfu_from_ext_flash(bool valid_init)
 		return;
 	}
 
-	printk("Modem firmware update completed\n");
+	printk("Modem firmware update completed.\n");
+	printk("Press 'Reset' button or enter 'reset' to apply new firmware\n");
 }
 
 static void fmfu_work_cb(struct k_work *work)
@@ -177,6 +179,19 @@ static int num_leds(void)
 	return current_version_is_0() ? 1 : 2;
 }
 
+static int shell_flash(const struct shell *shell, size_t argc, char **argv)
+{
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	k_work_submit(&fmfu_work);
+	fmfu_button_irq_disable();
+
+	return 0;
+}
+
+SHELL_CMD_REGISTER(flash, NULL, "For rebooting device", shell_flash);
+
 void main(void)
 {
 	int err;
@@ -237,14 +252,14 @@ void main(void)
 
 	err = update_sample_init(&(struct update_sample_init_params){
 					.update_start = update_start,
-					.num_leds = num_leds()
+					.num_leds = num_leds(),
+					.filename = get_file()
 				});
 	if (err != 0) {
 		printk("update_sample_init() failed, err %d\n", err);
 		return;
 	}
 
-	printk("Press Button 1 to download and apply full modem firmware "
-	       "update\n");
-	printk("Press Button 2 to apply modem firmware update (no download)\n");
+	printk("Press Button 1 or enter 'download' to download firmware update\n");
+	printk("Press Button 2 or enter 'flash' to apply modem firmware update from flash\n");
 }

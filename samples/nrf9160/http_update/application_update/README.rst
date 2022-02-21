@@ -116,14 +116,14 @@ After programming the sample to your development kit, test it by performing the 
 
 #. Observe that **LED 1** is lit.
    This indicates that version 1 of the application is running.
-#. Press **Button 1** on the nRF9160 DK to start the download process, and wait until ``Download complete`` is printed in the terminal.
-#. Press the **RESET** button on the kit.
+#. Press **Button 1** on the nRF9160 DK or type "download" in the terminal emulator to start the download process, and wait until ``Download complete`` is printed in the terminal.
+#. Press the **RESET** button on the kit or type "reset" in the terminal emulator.
    MCUboot will now detect the downloaded image and program it to flash memory.
    This can take up to a minute.
    Nothing is printed in the terminal while the writing is in progress.
 #. Observe that **LED 1** and **LED 2** are lit.
    This indicates that version 2 or higher of the application is running.
-#. You can now downgrade the application by repeating the button presses mentioned above.
+#. You can now downgrade the application by repeating the button presses or typing "download" in the terminal emulator.
    Observe that after the second update only **LED 1** is lit.
    This indicates that the application image has been downgraded to version 1.
    Any further updates will toggle between the versions.
@@ -145,5 +145,6 @@ It uses the following Zephyr libraries:
 * :ref:`zephyr:flash_api`
 * :ref:`zephyr:logging_api`
 * :ref:`zephyr:gpio_api`
+* :ref:`zephyr:shell_api`
 
 It also uses the `MCUboot`_ bootloader.
