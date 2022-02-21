@@ -42,6 +42,7 @@ zephyr_library_sources_ifdef(
 	cli/zigbee_cli_cmd_zscheduler.c
 	cli/zigbee_cli_cmd_nvram.c
 	cli/zigbee_cli_ctx_mgr.c
+	cli/zigbee_cli_cmd_nbr.c
 )
 
 zephyr_library_link_libraries(zboss)
