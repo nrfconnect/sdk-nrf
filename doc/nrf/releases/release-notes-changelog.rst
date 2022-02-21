@@ -453,6 +453,18 @@ Libraries
 
 This section provides detailed lists of changes by :ref:`library <libraries>`.
 
+Binary libraries
+----------------
+
+* Updated:
+
+  * :ref:`liblwm2m_carrier_readme` library:
+
+    * Updated to v0.30.0.
+      See the :ref:`liblwm2m_carrier_changelog` for detailed information.
+    * Projects that use the LwM2M carrier library can not use TF-M for this release, since the LwM2M carrier library requires hard floating point.
+      For more information, see the :ref:`TF-M <ug_tfm>` documentation.
+
 Bluetooth libraries and services
 --------------------------------
 

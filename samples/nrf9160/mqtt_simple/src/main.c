@@ -113,9 +113,6 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	case LWM2M_CARRIER_EVENT_REBOOT:
 		LOG_INF("LWM2M_CARRIER_EVENT_REBOOT");
 		break;
-	case LWM2M_CARRIER_EVENT_LTE_READY:
-		LOG_INF("LWM2M_CARRIER_EVENT_LTE_READY");
-		break;
 	case LWM2M_CARRIER_EVENT_ERROR:
 		LOG_ERR("LWM2M_CARRIER_EVENT_ERROR: code %d, value %d",
 			((lwm2m_carrier_event_error_t *)event->data)->code,

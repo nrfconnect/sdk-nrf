@@ -7,10 +7,12 @@
 #ifndef CARRIER_CERTS_H__
 #define CARRIER_CERTS_H__
 
-#ifdef CONFIG_LWM2M_CARRIER
-#include <lwm2m_carrier.h>
-
-int carrier_cert_provision(ca_cert_tags_t * const tags);
-#endif /* CONFIG_LWM2M_CARRIER */
+/**
+ * @brief Provision CA certificates to modem if needed.
+ *
+ * @retval  0 in case of success
+ * @retval -1 in case of failure
+ */
+int carrier_cert_provision(void);
 
 #endif /* CARRIER_CERTS_H__ */

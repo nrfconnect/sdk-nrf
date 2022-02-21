@@ -12,8 +12,12 @@ The LwM2M carrier library is certified together with specific versions of the mo
 
 For a list of all the carrier certifications (including those certifications with no dependency on the LwM2M carrier library), see the `Mobile network operator certifications`_.
 
-.. note::
+The LwM2M carrier library is used by Nordic during *module certification*.
+Including the library in your application is one way to fulfill the device management requirements of your carrier.
+Note that some carriers accept different approaches for *end product certification*.
+For more information, see the device certification programs of your respective carrier:
 
-   Your final product will need certification from the carrier.
-   Contact the carrier for more information on their respective device certification program.
-   If your carrier is AT&T or Verizon Wireless, see `AT&T's Get network ready program`_, and `Verizon's Get certified program`_ for more information.
+ * `AT&T's Get network ready program`_
+ * `T-Mobile's IoT certification program`_
+ * `Verizon's Get certified program`_
+ * `LG U+ certification program`_

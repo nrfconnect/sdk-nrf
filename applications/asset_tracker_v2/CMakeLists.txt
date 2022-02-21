@@ -25,7 +25,6 @@ add_subdirectory(src/events)
 add_subdirectory_ifdef(CONFIG_CLOUD_MODULE src/cloud)
 add_subdirectory_ifdef(CONFIG_SENSOR_MODULE src/ext_sensors)
 add_subdirectory_ifdef(CONFIG_WATCHDOG_APPLICATION src/watchdog)
-add_subdirectory_ifdef(CONFIG_LWM2M_CARRIER src/carrier_certs)
 
 # Include nRF modem library header file for QEMU x86 builds.
 # These are used throughout the application in type definitions.

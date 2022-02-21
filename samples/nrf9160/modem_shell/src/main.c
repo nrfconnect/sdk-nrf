@@ -67,7 +67,7 @@ struct k_work_q mosh_common_work_q;
 struct modem_param_info modem_param;
 struct k_poll_signal mosh_signal;
 
-K_SEM_DEFINE(nrf_modem_lib_initialized, 0, 1);
+K_SEM_DEFINE(nrf_carrier_lib_initialized, 0, 1);
 
 static void mosh_print_version_info(void)
 {
@@ -160,13 +160,11 @@ void main(void)
 		printk("Fatal error.\n");
 		return;
 	}
-
-	lte_lc_init();
 #else
-	/* Wait until modemlib has been initialized. */
-	k_sem_take(&nrf_modem_lib_initialized, K_FOREVER);
-
+	/* Wait until the LwM2M carrier library has initialized the modem library. */
+	k_sem_take(&nrf_carrier_lib_initialized, K_FOREVER);
 #endif
+	lte_lc_init();
 #if defined(CONFIG_MOSH_PPP)
 	ppp_ctrl_init();
 #endif
