@@ -67,6 +67,13 @@ Thread
 
   *  Support for the :ref:`thread_architectures_designs_cp_ncp` architecture and the related tools.
 
+Zigbee
+------
+
+* Added:
+
+  * Zigbee Shell command for monitoring the list of active Zigbee neighbors.
+
 Applications
 ============
 

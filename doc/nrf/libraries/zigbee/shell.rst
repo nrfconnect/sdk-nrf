@@ -27,6 +27,8 @@ To configure the Zigbee shell library, use the following options:
 * :kconfig:`CONFIG_ZIGBEE_SHELL_ENDPOINT`
 * :kconfig:`CONFIG_ZIGBEE_SHELL_DEBUG_CMD`
 * :kconfig:`CONFIG_ZIGBEE_SHELL_LOG_LEVEL`
+* :kconfig:`CONFIG_ZIGBEE_SHELL_CTX_MGR_ENTRIES_NBR`
+* :kconfig:`CONFIG_ZIGBEE_SHELL_MONITOR_CACHE_SIZE`
 
 For detailed steps about configuring the library in a Zigbee sample or application, see :ref:`ug_zigbee_configuring_components_logger_ep`.
 
@@ -124,6 +126,7 @@ Example:
    help               :Prints the help message.
    history            :Command history.
    kernel             :Kernel commands
+   nbr                :Zigbee neighbor table.
    nrf_clock_control  :Clock control commmands
    nvram              :Zigbee NVRAM manipulation.
    resize             :Console gets terminal screen size or assumes default in
@@ -1111,6 +1114,48 @@ Resume Zigbee scheduler processing.
 
 .. note::
     |precondition4|
+
+----
+
+.. _nbr_monitor_on:
+
+nbr monitor on
+==============
+
+Start monitoring the list of active Zigbee neighbors.
+
+.. code-block::
+
+   nbr monitor on
+
+----
+
+.. _nbr_monitor_off:
+
+nbr monitor off
+===============
+
+Stop monitoring the list of active Zigbee neighbors.
+
+.. code-block::
+
+   nbr monitor off
+
+----
+
+.. _nbr_monitor_trigger:
+
+nbr monitor trigger
+===================
+
+Trigger logging the list of active Zigbee neighbors.
+
+.. note::
+    This function will trigger logging only if the Zigbee active neighbor monitor is started (see :ref:`nbr_monitor_on`).
+
+.. code-block::
+
+   nbr monitor trigger
 
 ----
 
