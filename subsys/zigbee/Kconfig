@@ -395,6 +395,13 @@ config ZIGBEE_SHELL_CTX_MGR_ENTRIES_NBR
 	  Number of entries in context manager of Zigbee Shell.
 	  Entries are shared by ZDO commands, ZCL commands and PING commands.
 
+config ZIGBEE_SHELL_MONITOR_CACHE_SIZE
+	int "Size of the Zigbee active neighbor monitor cache"
+	default 10
+	range 3 254
+	help
+	  The maximum number of neighbor table entries, logged by the Zigbee active neighbor monitor.
+
 endif #ZIGBEE_SHELL
 
 endmenu #menu "ZBOSS osif configuration"
