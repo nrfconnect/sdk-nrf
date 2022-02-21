@@ -262,6 +262,8 @@ Libraries for networking
 
     * During the connection process, shadow data is sent to the application even if no "config" section is present.
     * The application can now send shadow updates earlier in the connection process.
+    * Centralized error handling.
+      Changes to error return values.
 
 * :ref:`lib_download_client` library:
 

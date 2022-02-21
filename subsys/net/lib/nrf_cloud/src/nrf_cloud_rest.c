@@ -247,15 +247,29 @@ static void sync_rest_client_data(struct nrf_cloud_rest_context *const rest_ctx,
 
 static int do_rest_client_request(struct nrf_cloud_rest_context *const rest_ctx,
 	struct rest_client_req_context *const req,
-	struct rest_client_resp_context *const resp)
+	struct rest_client_resp_context *const resp,
+	bool check_status_good, bool expect_body)
 {
 	int ret = rest_client_request(req, resp);
 
 	sync_rest_client_data(rest_ctx, req, resp);
 
-	return ret;
-}
+	if (ret) {
+		LOG_DBG("REST client request failed with error code %d", ret);
+		return ret;
+	} else if (rest_ctx->status == NRF_CLOUD_HTTP_STATUS_NONE) {
+		LOG_DBG("REST request endpoint closed connection without reply.");
+		return -ESHUTDOWN;
+	} else if (check_status_good && (rest_ctx->status != NRF_CLOUD_HTTP_STATUS_OK) &&
+					(rest_ctx->status != NRF_CLOUD_HTTP_STATUS_ACCEPTED)) {
+		LOG_DBG("REST request was rejected. Response status: %d", rest_ctx->status);
+		return -EBADMSG;
+	} else if (expect_body && (!rest_ctx->response || !rest_ctx->response_len)) {
+		return -ENODATA;
+	}
 
+	return 0;
+}
 int nrf_cloud_rest_shadow_state_update(struct nrf_cloud_rest_context *const rest_ctx,
 	const char *const device_id, const char * const shadow_json)
 {
@@ -282,7 +296,7 @@ int nrf_cloud_rest_shadow_state_update(struct nrf_cloud_rest_context *const rest
 	}
 
 	ret = snprintk(url, buff_sz, API_DEVICES_STATE_TEMPLATE, device_id);
-	if (ret < 0 || ret >= buff_sz) {
+	if ((ret < 0) || (ret >= buff_sz)) {
 		LOG_ERR("Could not format URL");
 		ret = -ETXTBSY;
 		goto clean_up;
@@ -309,16 +323,7 @@ int nrf_cloud_rest_shadow_state_update(struct nrf_cloud_rest_context *const rest
 	req.body = shadow_json;
 
 	/* Make REST call */
-	ret = do_rest_client_request(rest_ctx, &req, &resp);
-	if (ret) {
-		ret = -EIO;
-		goto clean_up;
-	}
-
-	if (rest_ctx->status != NRF_CLOUD_HTTP_STATUS_ACCEPTED) {
-		ret = -EBADMSG;
-		goto clean_up;
-	}
+	ret = do_rest_client_request(rest_ctx, &req, &resp, true, false);
 
 clean_up:
 	if (url) {
@@ -398,7 +403,7 @@ int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx
 
 	ret = snprintk(url, buff_sz, API_UPDATE_FOTA_URL_TEMPLATE,
 		       device_id, job_id);
-	if (ret < 0 || ret >= buff_sz) {
+	if ((ret < 0) || (ret >= buff_sz)) {
 		LOG_ERR("Could not format URL");
 		ret = -ETXTBSY;
 		goto clean_up;
@@ -442,7 +447,7 @@ int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx
 		ret = snprintk(payload, buff_sz, API_UPDATE_FOTA_BODY_TEMPLATE,
 			       job_status_strings[status]);
 	}
-	if (ret < 0 || ret >= buff_sz) {
+	if ((ret < 0) || (ret >= buff_sz)) {
 		LOG_ERR("Could not format payload");
 		ret = -ETXTBSY;
 		goto clean_up;
@@ -450,16 +455,7 @@ int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx
 	req.body = payload;
 
 	/* Make REST call */
-	ret = do_rest_client_request(rest_ctx, &req, &resp);
-	if (ret) {
-		ret = -EIO;
-		goto clean_up;
-	}
-
-	if (rest_ctx->status != NRF_CLOUD_HTTP_STATUS_OK) {
-		ret = -EBADMSG;
-		goto clean_up;
-	}
+	ret = do_rest_client_request(rest_ctx, &req, &resp, true, false);
 
 clean_up:
 	if (url) {
@@ -505,7 +501,7 @@ int nrf_cloud_rest_fota_job_get(struct nrf_cloud_rest_context *const rest_ctx,
 	req.url = url;
 
 	ret = snprintk(url, url_sz, API_GET_FOTA_URL_TEMPLATE, device_id);
-	if (ret < 0 || ret >= url_sz) {
+	if ((ret < 0) || (ret >= url_sz)) {
 		LOG_ERR("Could not format URL");
 		ret = -ETXTBSY;
 		goto clean_up;
@@ -527,9 +523,8 @@ int nrf_cloud_rest_fota_job_get(struct nrf_cloud_rest_context *const rest_ctx,
 	req.header_fields = (const char **)headers;
 
 	/* Make REST call */
-	ret = do_rest_client_request(rest_ctx, &req, &resp);
+	ret = do_rest_client_request(rest_ctx, &req, &resp, false, false);
 	if (ret) {
-		ret = -EIO;
 		goto clean_up;
 	}
 
@@ -616,17 +611,9 @@ int nrf_cloud_rest_cell_pos_get(struct nrf_cloud_rest_context *const rest_ctx,
 	req.body = payload;
 
 	/* Make REST call */
-	ret = do_rest_client_request(rest_ctx, &req, &resp);
+	ret = do_rest_client_request(rest_ctx, &req, &resp, true, true);
+
 	if (ret) {
-		ret = -EIO;
-		goto clean_up;
-	}
-	if (rest_ctx->status != NRF_CLOUD_HTTP_STATUS_OK) {
-		ret = -EBADMSG;
-		goto clean_up;
-	}
-	if (!rest_ctx->response || !rest_ctx->response_len) {
-		ret = -ENODATA;
 		goto clean_up;
 	}
 
@@ -824,7 +811,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 #define AGPS_UPDATE_PERIOD ((120 - MARGIN_MINUTES) * 60 * MSEC_PER_SEC)
 
 	if (filtered && (last_request_timestamp != 0) &&
-	    (k_uptime_get() - last_request_timestamp) < AGPS_UPDATE_PERIOD) {
+	    ((k_uptime_get() - last_request_timestamp) < AGPS_UPDATE_PERIOD)) {
 		LOG_WRN("A-GPS request was sent less than 2 hours ago");
 		ret = 0;
 		result->agps_sz = 0;
@@ -870,7 +857,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 
 	/* Format API URL */
 	ret = snprintk(url, url_sz, API_GET_AGPS_BASE);
-	if (ret < 0 || ret >= url_sz) {
+	if ((ret < 0) || (ret >= url_sz)) {
 		LOG_ERR("Could not format URL: device id");
 		ret = -ETXTBSY;
 		goto clean_up;
@@ -880,7 +867,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 
 	if (filtered) {
 		ret = snprintk(&url[pos], remain, AGPS_FILTERED);
-		if (ret < 0 || ret >= remain) {
+		if ((ret < 0) || (ret >= remain)) {
 			LOG_ERR("Could not format URL: filtered");
 			ret = -ETXTBSY;
 			goto clean_up;
@@ -888,7 +875,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		pos += ret;
 		remain -= ret;
 		ret = snprintk(&url[pos], remain, AGPS_ELEVATION_MASK, mask_angle);
-		if (ret < 0 || ret >= remain) {
+		if ((ret < 0) || (ret >= remain)) {
 			LOG_ERR("Could not format URL: mask angle");
 			ret = -ETXTBSY;
 			goto clean_up;
@@ -899,7 +886,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 
 	if (req_type) {
 		ret = snprintk(&url[pos], remain, AGPS_REQ_TYPE, req_type);
-		if (ret < 0 || ret >= remain) {
+		if ((ret < 0) || (ret >= remain)) {
 			LOG_ERR("Could not format URL: request type");
 			ret = -ETXTBSY;
 			goto clean_up;
@@ -910,7 +897,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 
 	if (request->type == NRF_CLOUD_REST_AGPS_REQ_CUSTOM) {
 		ret = snprintk(&url[pos], remain, AGPS_CUSTOM_TYPE, custom_types);
-		if (ret < 0 || ret >= remain) {
+		if ((ret < 0) || (ret >= remain)) {
 			LOG_ERR("Could not format URL: custom types");
 			ret = -ETXTBSY;
 			goto clean_up;
@@ -925,7 +912,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 			       request->net_info->current_cell.mnc,
 			       request->net_info->current_cell.tac,
 			       request->net_info->current_cell.id);
-		if (ret < 0 || ret >= remain) {
+		if ((ret < 0) || (ret >= remain)) {
 			LOG_ERR("Could not format URL: network info");
 			ret = -ETXTBSY;
 			goto clean_up;
@@ -971,9 +958,9 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 			goto clean_up;
 		}
 
-		ret = do_rest_client_request(rest_ctx, &req, &resp);
+		/* Send request, do not check for good response status  */
+		ret = do_rest_client_request(rest_ctx, &req, &resp, false, false);
 		if (ret) {
-			ret = -EIO;
 			goto clean_up;
 		}
 
@@ -1098,7 +1085,7 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 
 	/* Format API URL */
 	ret = snprintk(url, url_sz, API_GET_PGPS_BASE);
-	if (ret < 0 || ret >= url_sz) {
+	if ((ret < 0) || (ret >= url_sz)) {
 		LOG_ERR("Could not format URL");
 		ret = -ETXTBSY;
 		goto clean_up;
@@ -1111,7 +1098,7 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		    NRF_CLOUD_REST_PGPS_REQ_NO_COUNT) {
 			ret = snprintk(&url[pos], remain, PGPS_REQ_PREDICT_CNT,
 				request->pgps_req->prediction_count);
-			if (ret < 0 || ret >= remain) {
+			if ((ret < 0) || (ret >= remain)) {
 				LOG_ERR("Could not format URL: prediction count");
 				ret = -ETXTBSY;
 				goto clean_up;
@@ -1124,7 +1111,7 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		    NRF_CLOUD_REST_PGPS_REQ_NO_INTERVAL) {
 			ret = snprintk(&url[pos], remain, PGPS_REQ_PREDICT_INT_MIN,
 				       request->pgps_req->prediction_period_min);
-			if (ret < 0 || ret >= remain) {
+			if ((ret < 0) || (ret >= remain)) {
 				LOG_ERR("Could not format URL: prediction interval");
 				ret = -ETXTBSY;
 				goto clean_up;
@@ -1137,7 +1124,7 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		    NRF_CLOUD_REST_PGPS_REQ_NO_GPS_DAY) {
 			ret = snprintk(&url[pos], remain, PGPS_REQ_START_GPS_DAY,
 				       request->pgps_req->gps_day);
-			if (ret < 0 || ret >= remain) {
+			if ((ret < 0) || (ret >= remain)) {
 				LOG_ERR("Could not format URL: GPS day");
 				ret = -ETXTBSY;
 				goto clean_up;
@@ -1150,7 +1137,7 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		    NRF_CLOUD_REST_PGPS_REQ_NO_GPS_TOD) {
 			ret = snprintk(&url[pos], remain, PGPS_REQ_START_GPS_TOD_S,
 				       request->pgps_req->gps_time_of_day);
-			if (ret < 0 || ret >= remain) {
+			if ((ret < 0) || (ret >= remain)) {
 				LOG_ERR("Could not format URL: GPS time");
 				ret = -ETXTBSY;
 				goto clean_up;
@@ -1176,17 +1163,7 @@ int nrf_cloud_rest_pgps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 	req.header_fields = (const char **)headers;
 
 	/* Make REST call */
-	ret = do_rest_client_request(rest_ctx, &req, &resp);
-	if (ret) {
-		ret = -EIO;
-		goto clean_up;
-	}
-
-	if (rest_ctx->status != NRF_CLOUD_HTTP_STATUS_OK ||
-	    !rest_ctx->response || !rest_ctx->response_len) {
-		ret = -EBADMSG;
-		goto clean_up;
-	}
+	ret = do_rest_client_request(rest_ctx, &req, &resp, true, true);
 
 clean_up:
 	if (url) {
@@ -1254,7 +1231,8 @@ int nrf_cloud_rest_jitp(const sec_tag_t nrf_cloud_sec_tag)
 
 	ret = rest_client_request(&req, &resp);
 	if (ret == 0) {
-		if ((resp.http_status_code == 0) && (resp.response_len == 0)) {
+		if ((resp.http_status_code == NRF_CLOUD_HTTP_STATUS_NONE) &&
+		    (resp.response_len == 0)) {
 			/* Expected response for an unprovisioned device.
 			 * Wait 30s before associating device with account
 			 */
@@ -1386,7 +1364,7 @@ int nrf_cloud_rest_send_device_message(struct nrf_cloud_rest_context *const rest
 	req.url = url;
 
 	ret = snprintk(url, buff_sz, API_DEVICES_MSGS_TEMPLATE, device_id);
-	if (ret < 0 || ret >= buff_sz) {
+	if ((ret < 0) || (ret >= buff_sz)) {
 		LOG_ERR("Could not format URL");
 		ret = -ETXTBSY;
 		goto clean_up;
@@ -1408,16 +1386,7 @@ int nrf_cloud_rest_send_device_message(struct nrf_cloud_rest_context *const rest
 	req.header_fields = (const char **)headers;
 
 	/* Make REST call */
-	ret = do_rest_client_request(rest_ctx, &req, &resp);
-	if (ret) {
-		ret = -EIO;
-		goto clean_up;
-	}
-
-	if (rest_ctx->status != NRF_CLOUD_HTTP_STATUS_ACCEPTED) {
-		ret = -EBADMSG;
-		goto clean_up;
-	}
+	ret = do_rest_client_request(rest_ctx, &req, &resp, true, false);
 
 clean_up:
 	if (url) {
