@@ -5,17 +5,12 @@
 #
 
 if (CONFIG_NRF_802154_RADIO_DRIVER OR CONFIG_NRF_802154_SERIALIZATION)
-  if (NOT CONFIG_NRF_802154_SL_OPENSOURCE AND NOT CONFIG_SOC_SERIES_NRF53X)
+  if (CONFIG_NRF_802154_SL)
     target_sources(nrf-802154-platform
       PRIVATE
         ${ZEPHYR_CURRENT_MODULE_DIR}/nrf_802154/sl/platform/hp_timer/nrf_802154_hp_timer.c
-        ${ZEPHYR_CURRENT_MODULE_DIR}/nrf_802154/sl/platform/lp_timer/nrf_802154_lp_timer.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/sl/platform/nrf_802154_platform_sl_lptimer_zephyr.c
     )
-  elseif (NOT CONFIG_NRF_802154_SL_OPENSOURCE AND CONFIG_SOC_NRF5340_CPUNET)
-    target_sources(nrf-802154-platform
-      PRIVATE
-        ${ZEPHYR_CURRENT_MODULE_DIR}/nrf_802154/sl/platform/hp_timer/nrf_802154_hp_timer.c
-  )
   endif ()
 
   if (CONFIG_MPSL)
