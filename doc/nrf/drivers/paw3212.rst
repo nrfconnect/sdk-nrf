@@ -85,9 +85,9 @@ Kconfig configuration
 
 Use the following Kconfig options to configure the PAW3212 motion sensor:
 
-* :kconfig:`CONFIG_PAW3212` - This option enables the PAW3212 motion sensor driver.
-* :kconfig:`CONFIG_PAW3212_ORIENTATION_0`, :kconfig:`CONFIG_PAW3212_ORIENTATION_90`, :kconfig:`CONFIG_PAW3212_ORIENTATION_180`, or :kconfig:`CONFIG_PAW3212_ORIENTATION_270` - The selected choice option specifies the rotation of the PAW3212 motion sensor in degrees (clockwise), respectively 0, 90, 180, or 270 degrees.
-* :kconfig:`CONFIG_PAW3212_8_BIT_MODE` or :kconfig:`CONFIG_PAW3212_12_BIT_MODE` - The selected choice option specifies the motion data length, respectively 8-bit or 12-bit.
+* :kconfig:option:`CONFIG_PAW3212` - This option enables the PAW3212 motion sensor driver.
+* :kconfig:option:`CONFIG_PAW3212_ORIENTATION_0`, :kconfig:option:`CONFIG_PAW3212_ORIENTATION_90`, :kconfig:option:`CONFIG_PAW3212_ORIENTATION_180`, or :kconfig:option:`CONFIG_PAW3212_ORIENTATION_270` - The selected choice option specifies the rotation of the PAW3212 motion sensor in degrees (clockwise), respectively 0, 90, 180, or 270 degrees.
+* :kconfig:option:`CONFIG_PAW3212_8_BIT_MODE` or :kconfig:option:`CONFIG_PAW3212_12_BIT_MODE` - The selected choice option specifies the motion data length, respectively 8-bit or 12-bit.
 
 See :ref:`kconfig_tips_and_tricks` for information about Kconfig.
 

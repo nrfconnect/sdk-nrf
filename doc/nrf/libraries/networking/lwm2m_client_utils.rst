@@ -34,17 +34,17 @@ To use NB-IoT, a bootstrap server, or the queue mode, follow the implementation 
 
 Enable the following parameters when using this library:
 
-* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS`
-* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT`
-* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT`
-* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT`
-* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_OBJ_SUPPORT`
-* :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT`
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS`
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT`
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT`
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT`
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_OBJ_SUPPORT`
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT`
 
 Support for the objects are enabled by default but they can be set individually.
-Disable the :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT` Kconfig option only if you are implementing a ``Reboot`` resource on your application because of a mandatory requirement.
+Disable the :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT` Kconfig option only if you are implementing a ``Reboot`` resource on your application because of a mandatory requirement.
 
-If you are using the Firmware Update object and require downloading of firmware images from TLS enabled services like HTTPS, configure :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG` to specify the security tag that has root certificate for the target server.
+If you are using the Firmware Update object and require downloading of firmware images from TLS enabled services like HTTPS, configure :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG` to specify the security tag that has root certificate for the target server.
 
 Defining custom objects
 ***********************
@@ -70,7 +70,7 @@ To define custom objects, complete the following steps:
 #. Pass the resource information to the LwM2M client utils library to register callbacks for the resource and to publish the sensor data.
 
 The following example describes how you can define an object that follows the Generic Sensor definition from IPSO.
-To enable the support for Generic Sensor, set the Kconfig option :kconfig:`CONFIG_LWM2M_IPSO_GENERIC_SENSOR` to ``y``.
+To enable the support for Generic Sensor, set the Kconfig option :kconfig:option:`CONFIG_LWM2M_IPSO_GENERIC_SENSOR` to ``y``.
 
 To define an object that follows the Generic Sensor definition, complete the following steps:
 

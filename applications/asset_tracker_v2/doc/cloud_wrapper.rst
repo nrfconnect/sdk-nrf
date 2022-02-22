@@ -16,7 +16,7 @@ Integration layers
 The :ref:`Integration layers <integration_layers>` table lists the |NCS| client libraries that are supported by the cloud wrapper API and the associated integration layers.
 Each integration layer interacts with a specific client library and contains the code required to properly set up and maintain a connection to the designated cloud service.
 Based on the Kconfig options listed in the table, the corresponding integration layer + client library combination is linked in.
-For example, if :kconfig:`CONFIG_AWS_IOT` is enabled, CMake links in the :file:`asset_tracker_v2/src/cloud/aws_iot_integration.c` file that integrates the :ref:`lib_aws_iot` library.
+For example, if :kconfig:option:`CONFIG_AWS_IOT` is enabled, CMake links in the :file:`asset_tracker_v2/src/cloud/aws_iot_integration.c` file that integrates the :ref:`lib_aws_iot` library.
 This takes place in the :file:`asset_tracker_v2/src/cloud/CMakeLists.txt` file.
 
 .. note::
@@ -24,15 +24,15 @@ This takes place in the :file:`asset_tracker_v2/src/cloud/CMakeLists.txt` file.
 
 .. _integration_layers:
 
-+---------------------------+------------------------------------------------------------------+----------------------------------+
-| Client library            | Integration layer                                                | Kconfig option                   |
-+===========================+==================================================================+==================================+
-| :ref:`lib_aws_iot`        |   :file:`asset_tracker_v2/src/cloud/aws_iot_integration.c`       | :kconfig:`CONFIG_AWS_IOT`        |
-+---------------------------+------------------------------------------------------------------+----------------------------------+
-| :ref:`lib_azure_iot_hub`  |   :file:`asset_tracker_v2/src/cloud/azure_iot_hub_integration.c` | :kconfig:`CONFIG_AZURE_IOT_HUB`  |
-+---------------------------+------------------------------------------------------------------+----------------------------------+
-| :ref:`lib_nrf_cloud`      |   :file:`asset_tracker_v2/src/cloud/nrf_cloud_integration.c`     | :kconfig:`CONFIG_NRF_CLOUD_MQTT` |
-+---------------------------+------------------------------------------------------------------+----------------------------------+
++---------------------------+------------------------------------------------------------------+-----------------------------------------+
+| Client library            | Integration layer                                                | Kconfig option                          |
++===========================+==================================================================+=========================================+
+| :ref:`lib_aws_iot`        |   :file:`asset_tracker_v2/src/cloud/aws_iot_integration.c`       | :kconfig:option:`CONFIG_AWS_IOT`        |
++---------------------------+------------------------------------------------------------------+-----------------------------------------+
+| :ref:`lib_azure_iot_hub`  |   :file:`asset_tracker_v2/src/cloud/azure_iot_hub_integration.c` | :kconfig:option:`CONFIG_AZURE_IOT_HUB`  |
++---------------------------+------------------------------------------------------------------+-----------------------------------------+
+| :ref:`lib_nrf_cloud`      |   :file:`asset_tracker_v2/src/cloud/nrf_cloud_integration.c`     | :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` |
++---------------------------+------------------------------------------------------------------+-----------------------------------------+
 
 Data addressing
 ***************

@@ -49,12 +49,12 @@ Every listener is identified by a unique name.
 Configuration
 *************
 
-To use the Event Manager, enable it using the :kconfig:`CONFIG_EVENT_MANAGER` Kconfig option and initialize it in your :file:`main.c` file.
+To use the Event Manager, enable it using the :kconfig:option:`CONFIG_EVENT_MANAGER` Kconfig option and initialize it in your :file:`main.c` file.
 Initializing the Event Manager allows it to handle submitted events and deliver them to modules that subscribe to the specified event type.
 
 Complete the following steps:
 
-1. Enable the :kconfig:`CONFIG_EVENT_MANAGER` Kconfig option.
+1. Enable the :kconfig:option:`CONFIG_EVENT_MANAGER` Kconfig option.
 #. Include :file:`event_manager.h` in your :file:`main.c` file.
 #. Call :c:func:`event_manager_init()`.
 

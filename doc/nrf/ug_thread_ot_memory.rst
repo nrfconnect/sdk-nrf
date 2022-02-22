@@ -20,17 +20,17 @@ The memory requirement tables list flash memory and RAM requirements for samples
 The values change depending on the sample, device type, and hardware platform.
 Moreover, take into account the following considerations:
 
-* All samples were compiled using the default :file:`prj.conf` plus the corresponding :kconfig:`OPENTHREAD_NORDIC_LIBRARY` and :kconfig:`OPENTHREAD_THREAD_VERSION` choices.
+* All samples were compiled using the default :file:`prj.conf` plus the corresponding :kconfig:option:`OPENTHREAD_NORDIC_LIBRARY` and :kconfig:option:`OPENTHREAD_THREAD_VERSION` choices.
 * The single protocol samples were optimized with the overlay :file:`overlay-minimal_singleprotocol.conf`.
 * The multiprotocol samples were optimized with the overlay :file:`overlay-minimal_multiprotocol.conf`.
 * To enable the multiprotocol support, the following options were used:
 
-  * :kconfig:`CONFIG_MPSL` set to ``y`` (default setting for all samples)
-  * :kconfig:`CONFIG_BT` set to ``y``
-  * :kconfig:`CONFIG_BT_PERIPHERAL` set to ``y``
-  * :kconfig:`CONFIG_BT_DEVICE_NAME` set to ``"NCS DUT"``
-  * :kconfig:`CONFIG_BT_DEVICE_APPEARANCE` set to ``833``
-  * :kconfig:`CONFIG_BT_MAX_CONN` set to ``1``
+  * :kconfig:option:`CONFIG_MPSL` set to ``y`` (default setting for all samples)
+  * :kconfig:option:`CONFIG_BT` set to ``y``
+  * :kconfig:option:`CONFIG_BT_PERIPHERAL` set to ``y``
+  * :kconfig:option:`CONFIG_BT_DEVICE_NAME` set to ``"NCS DUT"``
+  * :kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE` set to ``833``
+  * :kconfig:option:`CONFIG_BT_MAX_CONN` set to ``1``
 
 * Values for the :ref:`Thread CLI sample <ot_cli_sample>`, which works with all OpenThread calls, are the highest possible for the OpenThread stack using the master image library configuration.
 

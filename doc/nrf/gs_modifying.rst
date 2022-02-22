@@ -108,9 +108,9 @@ The application has full control over the build process.
 
 Using Zephyr's configuration options is the standard way of controlling how the system is built.
 These options can be found under Zephyr's menuconfig :guilabel:`Build and Link Features` > :guilabel:`Compiler Options`.
-For example, to turn off optimizations, select :kconfig:`CONFIG_NO_OPTIMIZATIONS`.
+For example, to turn off optimizations, select :kconfig:option:`CONFIG_NO_OPTIMIZATIONS`.
 
-Compiler options not controlled by the Zephyr build system can be controlled through the :kconfig:`CONFIG_COMPILER_OPT` Kconfig option.
+Compiler options not controlled by the Zephyr build system can be controlled through the :kconfig:option:`CONFIG_COMPILER_OPT` Kconfig option.
 
 .. _configure_application:
 

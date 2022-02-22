@@ -54,15 +54,15 @@ Configuration
 Complete the following steps for configuration:
 
 1. The prerequisite :ref:`ug_gzll` should be enabled as described in the Gazell Link Layer :ref:`ug_gzll_configuration` section.
-#. Set the :kconfig:`CONFIG_GAZELL_PAIRING` Kconfig option to enable the Gazell Pairing.
+#. Set the :kconfig:option:`CONFIG_GAZELL_PAIRING` Kconfig option to enable the Gazell Pairing.
 #. Select the role by either of the following Kconfig options:
 
-   a. :kconfig:`CONFIG_GAZELL_PAIRING_DEVICE` - Device.
-   #. :kconfig:`CONFIG_GAZELL_PAIRING_HOST` - Host.
+   a. :kconfig:option:`CONFIG_GAZELL_PAIRING_DEVICE` - Device.
+   #. :kconfig:option:`CONFIG_GAZELL_PAIRING_HOST` - Host.
 
-To support persistent storage of pairing data, set the :kconfig:`CONFIG_GAZELL_PAIRING_SETTINGS` Kconfig option.
+To support persistent storage of pairing data, set the :kconfig:option:`CONFIG_GAZELL_PAIRING_SETTINGS` Kconfig option.
 
-To support encryption, set the :kconfig:`CONFIG_GAZELL_PAIRING_CRYPT` Kconfig option.
+To support encryption, set the :kconfig:option:`CONFIG_GAZELL_PAIRING_CRYPT` Kconfig option.
 
 API documentation
 *****************

@@ -38,19 +38,19 @@ Without a valid date and time, the modem cannot generate JWTs with an expiration
 User interface
 **************
 
-If you want to perform an update check immediately, press the button configured by the Kconfig option :kconfig:`CONFIG_REST_FOTA_BUTTON_EVT_NUM`.
-This will bypass the wait time specified by the :kconfig:`CONFIG_REST_FOTA_JOB_CHECK_RATE_MIN` option.
+If you want to perform an update check immediately, press the button configured by the Kconfig option :kconfig:option:`CONFIG_REST_FOTA_BUTTON_EVT_NUM`.
+This will bypass the wait time specified by the :kconfig:option:`CONFIG_REST_FOTA_JOB_CHECK_RATE_MIN` option.
 
-If you have the option :kconfig:`CONFIG_REST_FOTA_DO_JITP` enabled and you press the button configured by the :kconfig:`CONFIG_REST_FOTA_BUTTON_EVT_NUM` option when prompted at startup, it will request just-in-time provisioning (JITP) through REST with nRF Cloud.
+If you have the option :kconfig:option:`CONFIG_REST_FOTA_DO_JITP` enabled and you press the button configured by the :kconfig:option:`CONFIG_REST_FOTA_BUTTON_EVT_NUM` option when prompted at startup, it will request just-in-time provisioning (JITP) through REST with nRF Cloud.
 This is useful when initially provisioning and associating a device on nRF Cloud.
 You only need to do this once for each device.
 
 When you start up your device and have not requested JITP, the sample will ask if FOTA should be enabled in the device's shadow.
-Press the button configured by :kconfig:`CONFIG_REST_FOTA_BUTTON_EVT_NUM` to perform the shadow update.
+Press the button configured by :kconfig:option:`CONFIG_REST_FOTA_BUTTON_EVT_NUM` to perform the shadow update.
 Depending on how you provisioned your device with nRF Cloud, this step might not be needed.
 You only need to do this once for each device.
 
-If you have enabled the :kconfig:`CONFIG_REST_FOTA_ENABLE_LED` option, an LED configured by the :kconfig:`CONFIG_REST_FOTA_LED_NUM` option indicates the state of the connection to the LTE network.
+If you have enabled the :kconfig:option:`CONFIG_REST_FOTA_ENABLE_LED` option, an LED configured by the :kconfig:option:`CONFIG_REST_FOTA_LED_NUM` option indicates the state of the connection to the LTE network.
 
 Configuration
 *************
@@ -61,32 +61,32 @@ Configuration options
 
 Check and configure the following configuration options for the sample:
 
-.. kconfig:: CONFIG_REST_FOTA_JOB_CHECK_RATE_MIN
+.. _CONFIG_REST_FOTA_JOB_CHECK_RATE_MIN:
 
 CONFIG_REST_FOTA_JOB_CHECK_RATE_MIN - Update check rate
    This configuration option defines how often the sample checks for FOTA updates.
 
-.. kconfig:: CONFIG_REST_FOTA_DL_TIMEOUT_MIN
+.. _CONFIG_REST_FOTA_DL_TIMEOUT_MIN:
 
 CONFIG_REST_FOTA_DL_TIMEOUT_MIN - Download timeout value
    This configuration option defines how long to wait for a download to complete.
 
-.. kconfig:: CONFIG_REST_FOTA_ENABLE_LED
+.. _CONFIG_REST_FOTA_ENABLE_LED:
 
 CONFIG_REST_FOTA_ENABLE_LED - Enable LED
    This configuration option defines if the LED will be used to indicate connection to the LTE network.
 
-.. kconfig:: CONFIG_REST_FOTA_LED_NUM
+.. _CONFIG_REST_FOTA_LED_NUM:
 
 CONFIG_REST_FOTA_LED_NUM - Enable LED
    This configuration option defines if the LED is to be used.
 
-.. kconfig:: CONFIG_REST_FOTA_BUTTON_EVT_NUM
+.. _CONFIG_REST_FOTA_BUTTON_EVT_NUM:
 
 CONFIG_REST_FOTA_BUTTON_EVT_NUM - Button number
    This configuration option defines the button to use for device interactions.
 
-.. kconfig:: CONFIG_REST_FOTA_DO_JITP
+.. _CONFIG_REST_FOTA_DO_JITP:
 
 CONFIG_REST_FOTA_DO_JITP - Enable prompt to perform JITP via REST
    This configuration option defines if the application will prompt the user for just-in-time provisioning on startup.

@@ -143,7 +143,7 @@ Building and running
    Program the application core to boot up the network core.
    Use any sample for this, for example :ref:`nrf5340_empty_app_core`.
    The :ref:`nrf5340_empty_app_core` is built and programmed automatically by default.
-   If you want to program another sample for the application core, unset the :kconfig:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE` option.
+   If you want to program another sample for the application core, unset the :kconfig:option:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE` option.
 
 .. _radio_test_testing:
 
