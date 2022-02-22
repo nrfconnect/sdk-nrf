@@ -78,7 +78,7 @@ int location_request(const struct location_config *config)
 	/* Go to default config handling if no config given or if no methods given */
 	if (config == NULL || config->methods_count == 0) {
 
-		location_config_defaults_set(&default_config, sizeof(methods), methods);
+		location_config_defaults_set(&default_config, ARRAY_SIZE(methods), methods);
 
 		if (config != NULL) {
 			/* Top level configs are given and must be taken from given config */
