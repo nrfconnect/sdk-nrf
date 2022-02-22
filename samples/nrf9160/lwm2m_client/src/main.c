@@ -55,7 +55,7 @@ BUILD_ASSERT(sizeof(CONFIG_APP_LWM2M_SERVER) > 1,
 
 static uint8_t endpoint_name[ENDPOINT_NAME_LEN + 1];
 static uint8_t imei_buf[IMEI_LEN + sizeof("\r\nOK\r\n")];
-static struct lwm2m_ctx client;
+static struct lwm2m_ctx client = {0};
 
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
 #include "config.h"
@@ -470,8 +470,6 @@ void main(void)
 	LOG_INF("endpoint: %s", log_strdup(endpoint_name));
 
 	/* Setup LwM2M */
-	(void)memset(&client, 0x0, sizeof(client));
-
 	ret = lwm2m_setup();
 	if (ret < 0) {
 		LOG_ERR("Failed to setup LWM2M fields (%d)", ret);
