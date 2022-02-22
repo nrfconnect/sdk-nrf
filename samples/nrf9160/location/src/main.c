@@ -100,7 +100,7 @@ static void location_with_fallback_get(void)
 	struct location_config config;
 	enum location_method methods[] = {LOCATION_METHOD_GNSS, LOCATION_METHOD_CELLULAR};
 
-	location_config_defaults_set(&config, sizeof(methods), methods);
+	location_config_defaults_set(&config, ARRAY_SIZE(methods), methods);
 	/* GNSS timeout is set to 1 second to force a failure. */
 	config.methods[0].gnss.timeout = 1;
 	/* Default cellular configuration may be overridden here. */
@@ -146,7 +146,7 @@ static void location_gnss_low_accuracy_get(void)
 	struct location_config config;
 	enum location_method methods[] = {LOCATION_METHOD_GNSS};
 
-	location_config_defaults_set(&config, sizeof(methods), methods);
+	location_config_defaults_set(&config, ARRAY_SIZE(methods), methods);
 	config.methods[0].gnss.accuracy = LOCATION_ACCURACY_LOW;
 
 	printk("Requesting low accuracy GNSS location...\n");
@@ -169,7 +169,7 @@ static void location_gnss_high_accuracy_get(void)
 	struct location_config config;
 	enum location_method methods[] = {LOCATION_METHOD_GNSS};
 
-	location_config_defaults_set(&config, sizeof(methods), methods);
+	location_config_defaults_set(&config, ARRAY_SIZE(methods), methods);
 	config.methods[0].gnss.accuracy = LOCATION_ACCURACY_HIGH;
 
 	printk("Requesting high accuracy GNSS location...\n");
@@ -197,7 +197,7 @@ static void location_wifi_get(void)
 		LOCATION_METHOD_GNSS,
 		LOCATION_METHOD_CELLULAR};
 
-	location_config_defaults_set(&config, sizeof(methods), methods);
+	location_config_defaults_set(&config, ARRAY_SIZE(methods), methods);
 
 	printk("Requesting Wi-Fi location with GNSS and cellular fallback...\n");
 
@@ -220,7 +220,7 @@ static void location_gnss_periodic_get(void)
 	struct location_config config;
 	enum location_method methods[] = {LOCATION_METHOD_GNSS, LOCATION_METHOD_CELLULAR};
 
-	location_config_defaults_set(&config, sizeof(methods), methods);
+	location_config_defaults_set(&config, ARRAY_SIZE(methods), methods);
 	config.interval = 30;
 
 	printk("Requesting 30s periodic GNSS location with cellular fallback...\n");
