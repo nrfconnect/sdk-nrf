@@ -45,7 +45,7 @@ The sample demonstrates using a co-processor target on the MCU to communicate wi
 According to the co-processor architecture, the MCU part must cooperate with user higher layer process to establish the complete full stack application.
 The sample shows how to set up the connection between the co-processor and the host.
 
-This sample comes with the :ref:`full set of OpenThread functionalities <thread_ug_feature_sets>` enabled (:kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`).
+This sample comes with the :ref:`full set of OpenThread functionalities <thread_ug_feature_sets>` enabled (:kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`).
 
 .. _ot_coprocessor_sample_logging:
 
@@ -54,7 +54,7 @@ Logging extension
 
 By default, this sample uses :ref:`Spinel logging backend <ug_logging_backends_spinel>` for sending log messages to the host device using the Spinel protocol.
 This is a useful feature, because it does not require separate interfaces to communicate with the co-processor through the Spinel protocol and collect log messages.
-Moreover, using the Spinel logging backend (by setting :kconfig:`CONFIG_LOG_BACKEND_SPINEL`) does not exclude using another backend like UART or RTT at the same time.
+Moreover, using the Spinel logging backend (by setting :kconfig:option:`CONFIG_LOG_BACKEND_SPINEL`) does not exclude using another backend like UART or RTT at the same time.
 
 By default, the log levels for all modules are set to critical to not engage the microprocessor in unnecessary activities.
 To make the solution flexible, you can change independently the log levels for your modules, for the whole Zephyr system, and for OpenThread.
@@ -87,7 +87,7 @@ Configuration
 
 Check and configure the following library option that is used by the sample:
 
-* :kconfig:`CONFIG_OPENTHREAD_COPROCESSOR_RCP` - Selects the RCP architecture for the sample.
+* :kconfig:option:`CONFIG_OPENTHREAD_COPROCESSOR_RCP` - Selects the RCP architecture for the sample.
 
 .. _ot_coprocessor_sample_config_files:
 

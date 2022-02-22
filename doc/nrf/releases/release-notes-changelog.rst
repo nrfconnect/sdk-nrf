@@ -87,7 +87,7 @@ nRF Desktop
 
 * Added:
 
-  * Documentation for selective HID report subscription in :ref:`nrf_desktop_usb_state` using :kconfig:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION` option.
+  * Documentation for selective HID report subscription in :ref:`nrf_desktop_usb_state` using :kconfig:option:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION` option.
 
 Thingy:53 Zigbee weather station
 --------------------------------
@@ -264,7 +264,7 @@ The change prompted some changes in the CMake for the module, notably:
 Trusted Firmware-M
 ==================
 
-* Fixed the NCSDK-14015 known issue that would cause crash during boot when the :kconfig:`CONFIG_RPMSG_SERVICE` Kconfig option was enabled on the nRF5340 SoC.
+* Fixed the NCSDK-14015 known issue that would cause crash during boot when the :kconfig:option:`CONFIG_RPMSG_SERVICE` Kconfig option was enabled on the nRF5340 SoC.
 
 Documentation
 =============

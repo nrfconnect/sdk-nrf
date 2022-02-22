@@ -25,7 +25,7 @@ the connection state of HIDS with the top module that uses it.
 .. note::
 
    Some systems require security to use the HID service.
-   To ensure interoperability, enable the :kconfig:`CONFIG_BT_HIDS_DEFAULT_PERM_RW_ENCRYPT` option.
+   To ensure interoperability, enable the :kconfig:option:`CONFIG_BT_HIDS_DEFAULT_PERM_RW_ENCRYPT` option.
 
 The HID Service is used in the following samples:
 

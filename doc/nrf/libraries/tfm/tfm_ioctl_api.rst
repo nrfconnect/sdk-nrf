@@ -26,7 +26,7 @@ The supported platform services are defined by :c:struct:`tfm_platform_ioctl_cor
     :start-at: /** @brief Supported request types.
     :end-before: /** @brief Argument list for each platform read service.
 
-Set the :kconfig:``CONFIG_TFM_PARTITION_PLATFORM`` Kconfig option to enable the services.
+Set the :kconfig:option:``CONFIG_TFM_PARTITION_PLATFORM`` Kconfig option to enable the services.
 
 See the :ref:`tfm_hello_world` sample for example usage.
 

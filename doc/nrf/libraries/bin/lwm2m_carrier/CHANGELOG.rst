@@ -76,11 +76,11 @@ Changes
 
 * Library can now be provided a non-bootstrap custom URI. Previously, only bootstrap custom URI was accepted.
 
-  * New Kconfig :c:kconfig:`CONFIG_LWM2M_CARRIER_IS_SERVER_BOOTSTRAP` indicates if the custom URI is a Bootstrap-Server.
-  * New Kconfig :c:kconfig:`CONFIG_LWM2M_CARRIER_SERVER_LIFETIME` sets the lifetime for the (non-bootstrap) LwM2M server.
+  * New Kconfig :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_SERVER_BOOTSTRAP` indicates if the custom URI is a Bootstrap-Server.
+  * New Kconfig :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_LIFETIME` sets the lifetime for the (non-bootstrap) LwM2M server.
 * Library will now read bootstrap information from Smartcard when applicable.
 
-  * New Kconfig :c:kconfig:`CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD` can be used to disable this feature.
+  * New Kconfig :kconfig:option:`CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD` can be used to disable this feature.
 * Added a new event :c:macro:`LWM2M_CARRIER_EVENT_MODEM_DOMAIN` to indicate modem domain events.
 * Removed logging from the OS glue layer.
 * Added the Cellular Connectivity object.
@@ -140,8 +140,8 @@ Changes
 * Renamed the event :c:macro:`LWM2M_CARRIER_BSDLIB_INIT` to :c:macro:`LWM2M_CARRIER_EVENT_MODEM_INIT`.
 * Added a new deferred event reason :c:macro:`LWM2M_CARRIER_DEFERRED_SERVICE_UNAVAILABLE`, which indicates that the LwM2M server is unavailable due to maintenance.
 * Added a new error code :c:macro:`LWM2M_CARRIER_ERROR_CONFIGURATION` which indicates that an illegal object configuration was detected.
-* Added new Kconfig options :c:kconfig:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_APN` and :c:kconfig:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` to set the ``apn`` member of :c:type:`lwm2m_carrier_config_t`.
-* It is now possible to configure a custom bootstrap URI using :c:kconfig:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI` regardless of operator SIM.
+* Added new Kconfig options :kconfig:option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_APN` and :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` to set the ``apn`` member of :c:type:`lwm2m_carrier_config_t`.
+* It is now possible to configure a custom bootstrap URI using :kconfig:option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_BOOTSTRAP_URI` regardless of operator SIM.
 
 liblwm2m_carrier 0.10.2
 ***********************

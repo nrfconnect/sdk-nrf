@@ -65,10 +65,10 @@ Application development
   See :ref:`gs_modifying_build_types` for details.
 * Build system:
 
-  * Added an option to control the inclusion of RPMsg samples on the nRF53 network core :kconfig:`NCS_INCLUDE_RPMSG_CHILD_IMAGE`.
+  * Added an option to control the inclusion of RPMsg samples on the nRF53 network core :kconfig:option:`NCS_INCLUDE_RPMSG_CHILD_IMAGE`.
   * Updated generation of the :file:`manifest.json` file in the :file:`dfu_application.zip` and :file:`dfu_mcuboot.zip` files to include nrf and zephyr revisions reported by the new build file :file:`zephyr.meta`.
   * Build warnings are now printed when experimental features are enabled (NCSDK-6336).
-    Warnings can be disabled by disabling :kconfig:`CONFIG_WARN_EXPERIMENTAL`
+    Warnings can be disabled by disabling :kconfig:option:`CONFIG_WARN_EXPERIMENTAL`
   * Fixed the NCSIDB-581 bug where application signing and file conversion for Device Firmware Update (DFU) could fail in SEGGER Embedded Studio during a build.
 
 Protocols
@@ -170,7 +170,7 @@ nRF9160: Asset Tracker v2
 nrf9160: Asset Tracker
 ----------------------
 
-* Added timestamps to environment sensor data when compiled with :kconfig:`CONFIG_USE_BME680_BSEC`
+* Added timestamps to environment sensor data when compiled with :kconfig:option:`CONFIG_USE_BME680_BSEC`
 * Updated the application to clear the ephemeris and almanac flags from an A-GPS request when P-GPS is enabled.
 
 nRF Machine Learning (Edge Impulse)
@@ -199,7 +199,7 @@ nRF Desktop
 
 * Removed:
 
-  * Removed configuration files used for building the application with :kconfig:`CONFIG_BT_LL_SW_SPLIT` for various boards.
+  * Removed configuration files used for building the application with :kconfig:option:`CONFIG_BT_LL_SW_SPLIT` for various boards.
     The configuration files for boards that do not have room for the SoftDevice LL in flash or SRAM remain untouched.
 
 * Updated:
@@ -422,7 +422,7 @@ Other samples
 
   * Improved how hardware unique keys are handled.
 
-    * Introduced :kconfig:`CONFIG_HW_UNIQUE_KEY_LOAD` with fewer dependencies than :kconfig:`CONFIG_HW_UNIQUE_KEY` solely for loading the key.
+    * Introduced :kconfig:option:`CONFIG_HW_UNIQUE_KEY_LOAD` with fewer dependencies than :kconfig:option:`CONFIG_HW_UNIQUE_KEY` solely for loading the key.
     * The bootloader now allows a single boot with no key present, to allow the app to write a key.
       After the first boot, the key must be present or the bootloader won't boot the app.
 
@@ -458,7 +458,7 @@ Bluetooth libraries and services
 * :ref:`ble_rpc` library:
 
   * Added support for the GATT API serialization.
-  * Changed the configuration option that enables the library from the :kconfig:`CONFIG_BT_RPC` to the :kconfig:`CONFIG_BT_RPC_STACK`.
+  * Changed the configuration option that enables the library from the :kconfig:option:`CONFIG_BT_RPC` to the :kconfig:option:`CONFIG_BT_RPC_STACK`.
 
 * :ref:`bms_readme` - Changed security permissions of the service's characteristics to require authentication.
 * :ref:`hogp_readme` - Added a clarification about the report size in the documentation of one API function.
@@ -484,8 +484,8 @@ Common Application Framework (CAF)
   * :ref:`caf_power_manager`:
 
     * Added the state transition diagram on the documentation page.
-    * The power management support in modules is now enabled by default when the :kconfig:`CONFIG_CAF_PM_EVENTS` Kconfig option is enabled.
-    * Added a dependency on :kconfig:`CONFIG_PM_POLICY_APP`, which is required by the application that is using the :ref:`caf_power_manager` to link.
+    * The power management support in modules is now enabled by default when the :kconfig:option:`CONFIG_CAF_PM_EVENTS` Kconfig option is enabled.
+    * Added a dependency on :kconfig:option:`CONFIG_PM_POLICY_APP`, which is required by the application that is using the :ref:`caf_power_manager` to link.
 
   * :ref:`caf_sensor_manager`:
 
@@ -578,12 +578,12 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud_pgps` library:
 
-  * Fixed an issue with :kconfig:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE` to ensure predictions are properly stored.
-  * Fixed error handling associated with :kconfig:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE`.
+  * Fixed an issue with :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE` to ensure predictions are properly stored.
+  * Fixed error handling associated with :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE`.
   * Added :c:func:`nrf_cloud_pgps_request_reset`, so P-GPS application request handler can indicate failure to process the request.
     This ensures the P-GPS library tries the request again.
-  * Added :kconfig:`CONFIG_NRF_CLOUD_PGPS_SOCKET_RETRIES`.
-  * Changed :c:func:`nrf_cloud_pgps_init` to limit allowable :kconfig:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` to an even number, and limited :kconfig:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` to this value minus 2.
+  * Added :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_SOCKET_RETRIES`.
+  * Changed :c:func:`nrf_cloud_pgps_init` to limit allowable :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` to an even number, and limited :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` to this value minus 2.
   * Updated the signature of :c:func:`npgps_download_start` to accept an integer parameter specifying the PDN ID, which replaces the parameter used to specify the APN.
 
 * :ref:`lib_nrf_cloud_rest` library:
@@ -683,13 +683,13 @@ Other libraries
 
 * :ref:`mod_memfault`:
 
-  * Added PSM and eDRX configuration metrics that are collected when :kconfig:`MEMFAULT_NCS_LTE_METRICS` is enabled.
+  * Added PSM and eDRX configuration metrics that are collected when :kconfig:option:`MEMFAULT_NCS_LTE_METRICS` is enabled.
 
 * :ref:`lib_date_time` library:
 
   * The library now stores the received date-time information as Zephyr and modem time.
     Also modem XTIME notifications are used as time source.
-    Added the :kconfig:`CONFIG_DATE_TIME_AUTO_UPDATE` option to trigger a time update when device has connected to LTE.
+    Added the :kconfig:option:`CONFIG_DATE_TIME_AUTO_UPDATE` option to trigger a time update when device has connected to LTE.
 
 Libraries for Zigbee
 --------------------

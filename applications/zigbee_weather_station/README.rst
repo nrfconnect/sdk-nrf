@@ -153,10 +153,10 @@ Readout configuration options
 
 The following Kconfig option values can be set to custom values:
 
-* :kconfig:`CONFIG_FIRST_WEATHER_CHECK_DELAY_SECONDS` - This option defines the delay from the moment of the application initialization to the first sensor data readout.
+* :kconfig:option:`CONFIG_FIRST_WEATHER_CHECK_DELAY_SECONDS` - This option defines the delay from the moment of the application initialization to the first sensor data readout.
   The value is provided in seconds, with the default value set to ``5``.
 
-* :kconfig:`WEATHER_CHECK_PERIOD_SECONDS` - This option defines the period of cyclic sensor readouts after the first readout.
+* :kconfig:option:`WEATHER_CHECK_PERIOD_SECONDS` - This option defines the period of cyclic sensor readouts after the first readout.
   The value is provided in seconds, with the default value set to ``60``.
 
 Building and running
