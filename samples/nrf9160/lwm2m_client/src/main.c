@@ -70,54 +70,6 @@ void client_acknowledge(void)
 	lwm2m_acknowledge(&client);
 }
 
-static int remove_whitespace(char *buf)
-{
-	size_t i, j = 0, len;
-
-	len = strlen(buf);
-	for (i = 0; i < len; i++) {
-		if (buf[i] >= 32 && buf[i] <= 126) {
-			if (j != i) {
-				buf[j] = buf[i];
-			}
-
-			j++;
-		}
-	}
-
-	if (j < len) {
-		buf[j] = '\0';
-	}
-
-	return 0;
-}
-
-static int query_modem(const char *cmd, char *buf, size_t buf_len)
-{
-	int ret;
-
-	/* Using format string in case the command contains characters
-	 * that need to be escaped.
-	 */
-	ret = nrf_modem_at_cmd(buf, buf_len, "%s", cmd);
-	if (ret) {
-		if (ret > 0) {
-			LOG_ERR("nrf_modem_at_cmd[%s] error_type: %d, error_value: %d",
-				log_strdup(cmd),
-				nrf_modem_at_err_type(ret),
-				nrf_modem_at_err(ret));
-		} else {
-			LOG_ERR("nrf_modem_at_cmd[%s] error: %d", log_strdup(cmd), ret);
-		}
-
-		strncpy(buf, "error", buf_len);
-		return ret;
-	}
-
-	remove_whitespace(buf);
-	return 0;
-}
-
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
 static struct k_work_delayable ncell_meas_work;
 void ncell_meas_work_handler(struct k_work *work)
@@ -499,20 +451,18 @@ void main(void)
 		return;
 	}
 
-	/* query IMEI */
-	ret = query_modem("AT+CGSN", imei_buf, sizeof(imei_buf));
-
-	if (ret != 0) {
-		LOG_ERR("Unable to get IMEI");
+	ret = modem_info_init();
+	if (ret < 0) {
+		LOG_ERR("Unable to init modem_info (%d)", ret);
 		return;
 	}
 
-	/* remove trailing AT "OK" message */
-	uint8_t *ok_resp = strstr(imei_buf, "OK");
-
-	uint32_t index = ok_resp - imei_buf;
-
-	imei_buf[index] = '\0';
+	/* query IMEI */
+	ret = modem_info_string_get(MODEM_INFO_IMEI, imei_buf, sizeof(imei_buf));
+	if (ret < 0) {
+		LOG_ERR("Unable to get IMEI");
+		return;
+	}
 
 	/* use IMEI as unique endpoint name */
 	snprintk(endpoint_name, sizeof(endpoint_name), "%s%s", CONFIG_APP_ENDPOINT_PREFIX,
