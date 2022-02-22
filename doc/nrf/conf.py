@@ -35,7 +35,7 @@ extensions = [
     "sphinxcontrib.mscgen",
     "zephyr.html_redirects",
     "zephyr.warnings_filter",
-    "zephyr.kconfig-role",
+    "zephyr.kconfig",
     "ncs_cache",
     "zephyr.external_content",
     "zephyr.doxyrunner",

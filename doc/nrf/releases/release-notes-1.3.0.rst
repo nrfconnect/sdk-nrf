@@ -419,7 +419,7 @@ Documentation
 
 In addition to documentation related to the changes listed above, the following documentation has been updated:
 
-* :ref:`kconfig:configuration_options` - moved Kconfig options to a separate documentation set
+* Moved Kconfig options to a separate documentation set
 * :ref:`doc_build` - updated to reflect that Kconfig options are now built as a separate documentation set
 * :ref:`doc_styleguide` - updated
 * :ref:`gs_assistant` - updated to recommend the use of the toolchain manager

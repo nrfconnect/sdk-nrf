@@ -1,0 +1,4 @@
+Kconfig Search
+##############
+
+.. kconfig:search::
