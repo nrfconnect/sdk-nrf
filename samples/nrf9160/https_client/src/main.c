@@ -224,6 +224,13 @@ void main(void)
 
 	printk("Received %d bytes\n", off);
 
+	/* Make sure recv_buf is NULL terminated (for safe use with strstr) */
+	if (off < sizeof(recv_buf)) {
+		recv_buf[off] = '\0';
+	} else {
+		recv_buf[sizeof(recv_buf) - 1] = '\0';
+	}
+
 	/* Print HTTP response */
 	p = strstr(recv_buf, "\r\n");
 	if (p) {
