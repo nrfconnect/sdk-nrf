@@ -33,11 +33,11 @@ Connecting
 The application can use :c:func:`nrf_cloud_connect` to connect to the cloud.
 This API triggers a series of events and actions in the system.
 If the API fails, the application must retry to connect.
-If the :kconfig:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option is enabled, an nRF Cloud library thread monitors the connection socket.
-When :kconfig:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` is enabled, an additional event, :c:enum:`NRF_CLOUD_EVT_TRANSPORT_CONNECTING`, is sent to the application.
+If the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option is enabled, an nRF Cloud library thread monitors the connection socket.
+When :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` is enabled, an additional event, :c:enum:`NRF_CLOUD_EVT_TRANSPORT_CONNECTING`, is sent to the application.
 The status field of :c:struct:`nrf_cloud_evt` contains the connection status that is defined by :c:enumerator:`nrf_cloud_connect_result`.
 The event :c:enumerator:`NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED` also contains additional information in the status field that is defined by :c:enumerator:`nrf_cloud_disconnect_status`.
-See :ref:`connect_to_cloud` for additional information on :kconfig:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD`.
+See :ref:`connect_to_cloud` for additional information on :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD`.
 When the poll thread option is used directly with the nRF Cloud library, the enumeration values are prefixed with ``NRF``.
 
 First, the library tries to establish the transport for communicating with the cloud.
@@ -98,30 +98,30 @@ After receiving :c:enumerator:`NRF_CLOUD_EVT_READY`, the application can start s
 Configuration options for device ID
 ===================================
 
-* :kconfig:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` - If you enable this option, the ID is automatically generated using a prefix and the modem's IMEI (``<prefix><IMEI>``). You can configure the prefix by using :kconfig:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`. The default format of the prefix is ``nrf-`` and it is valid only for Nordic devices such as Thingy:91 or nRF9160 DK. For custom hardware, use a prefix other than ``nrf-`` by modifying :kconfig:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`.
+* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` - If you enable this option, the ID is automatically generated using a prefix and the modem's IMEI (``<prefix><IMEI>``). You can configure the prefix by using :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`. The default format of the prefix is ``nrf-`` and it is valid only for Nordic devices such as Thingy:91 or nRF9160 DK. For custom hardware, use a prefix other than ``nrf-`` by modifying :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX`.
 
-* :kconfig:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID` - If you enable this option, the ID is automatically generated using the modem's 128-bit internal UUID, which results in a 32-character string with no hyphens. This option requires modem firmware v1.3.0 or higher.
+* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID` - If you enable this option, the ID is automatically generated using the modem's 128-bit internal UUID, which results in a 32-character string with no hyphens. This option requires modem firmware v1.3.0 or higher.
 
-* :kconfig:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` - If you enable this option, the ID is set at compile time using the value specified by :kconfig:`CONFIG_NRF_CLOUD_CLIENT_ID`.
+* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` - If you enable this option, the ID is set at compile time using the value specified by :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID`.
 
-* :kconfig:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME` - If you enable this option, the ID is set at run time. If the nRF Cloud library is used directly, set the NULL-terminated ID string in :c:struct:`nrf_cloud_init_param` when calling :c:func:`nrf_cloud_init`. If the generic Cloud API is used, set the ID in :c:struct:`cloud_backend_config` and then call :c:func:`cloud_init`.
+* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME` - If you enable this option, the ID is set at run time. If the nRF Cloud library is used directly, set the NULL-terminated ID string in :c:struct:`nrf_cloud_init_param` when calling :c:func:`nrf_cloud_init`. If the generic Cloud API is used, set the ID in :c:struct:`cloud_backend_config` and then call :c:func:`cloud_init`.
 
 .. _lib_nrf_cloud_fota:
 
 Firmware over-the-air (FOTA) updates
 ************************************
 The nRF Cloud library supports FOTA updates for your nRF9160-based device.
-The :kconfig:`CONFIG_NRF_CLOUD_FOTA` option is enabled by default when :kconfig:`CONFIG_NRF_CLOUD_MQTT` is set.
+The :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` option is enabled by default when :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` is set.
 This enables FOTA functionality in the application.
 
 nRF Cloud FOTA enables the following additional features and libraries:
 
-* :kconfig:`CONFIG_FOTA_DOWNLOAD` enables :ref:`lib_fota_download`
-* :kconfig:`CONFIG_DFU_TARGET` enables :ref:`lib_dfu_target`
-* :kconfig:`CONFIG_DOWNLOAD_CLIENT` enables :ref:`lib_download_client`
-* :kconfig:`CONFIG_FOTA_DOWNLOAD_PROGRESS_EVT`
-* :kconfig:`CONFIG_REBOOT`
-* :kconfig:`CONFIG_CJSON_LIB`
+* :kconfig:option:`CONFIG_FOTA_DOWNLOAD` enables :ref:`lib_fota_download`
+* :kconfig:option:`CONFIG_DFU_TARGET` enables :ref:`lib_dfu_target`
+* :kconfig:option:`CONFIG_DOWNLOAD_CLIENT` enables :ref:`lib_download_client`
+* :kconfig:option:`CONFIG_FOTA_DOWNLOAD_PROGRESS_EVT`
+* :kconfig:option:`CONFIG_REBOOT`
+* :kconfig:option:`CONFIG_CJSON_LIB`
 
 For FOTA updates to work, the device must provide the information about the supported FOTA types to nRF Cloud.
 The device passes this information by writing a ``fota_v2`` field containing an array of FOTA types into the ``serviceInfo`` field in the device's shadow.
@@ -217,7 +217,7 @@ The return values for a failure scenario of the :c:func:`cloud_init` function ar
 *	-ENOMEM - Error building MQTT topics. The given client ID of the device could be too long.
 
 .. note::
-   If :kconfig:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` is enabled, error values could be different or have different error descriptions.
+   If :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` is enabled, error values could be different or have different error descriptions.
 
 .. _connect_to_cloud:
 
@@ -225,19 +225,19 @@ Connecting to the Cloud
 =======================
 
 The nRF Cloud library offers two ways to handle backend connections when the :c:func:`cloud_connect` function is called.
-If you enable the :kconfig:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option, a cloud backend thread monitors the connection socket.
+If you enable the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option, a cloud backend thread monitors the connection socket.
 If you disable the option, the user application must monitor the socket.
 
 The dual functionalities of the :c:func:`cloud_connect` function in the two scenarios are described below:
 
-* :kconfig:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` - If you enable this option, the function does not block and returns success if the connection monitoring thread has started. Below are some of the error codes that can be returned:
+* :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` - If you enable this option, the function does not block and returns success if the connection monitoring thread has started. Below are some of the error codes that can be returned:
 
    * :c:enumerator:`CLOUD_CONNECT_RES_ERR_NOT_INITD` - Cloud backend is not initialized
    * :c:enumerator:`CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED` - Connection process has already been started
 
   Upon success, the monitoring thread sends an event of type :c:enumerator:`CLOUD_EVT_CONNECTING` to the user’s cloud event handler, with the ``err`` field set to success. If an error occurs, another event of the same type is sent, with the ``err`` field set to indicate the cause. These additional errors are described in the following section.
 
-* :kconfig:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` - If you disable this option, the function blocks and returns success when the MQTT connection to the cloud completes. The connection socket is set in the backend binding and it becomes available for the application to use. Below are some of the error codes that can be returned:
+* :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` - If you disable this option, the function blocks and returns success when the MQTT connection to the cloud completes. The connection socket is set in the backend binding and it becomes available for the application to use. Below are some of the error codes that can be returned:
 
    * :c:enumerator:`CLOUD_CONNECT_RES_ERR_NOT_INITD`.
    * :c:enumerator:`CLOUD_CONNECT_RES_ERR_NETWORK` - Host cannot be found with the available network interfaces.
@@ -270,7 +270,7 @@ The user application can generate a disconnect request with the :c:func:`cloud_d
 A successful disconnection is indicated by the :c:enumerator:`CLOUD_EVT_DISCONNECTED` event.
 The ``err`` field in the event message is set to :c:enumerator:`CLOUD_DISCONNECT_USER_REQUEST`.
 If an unexpected disconnect event is received, the ``err`` field contains the cause.
-If :kconfig:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` is not enabled, the only cause of disconnection is :c:enumerator:`CLOUD_DISCONNECT_MISC`.
+If :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` is not enabled, the only cause of disconnection is :c:enumerator:`CLOUD_DISCONNECT_MISC`.
 The user application must use the connection socket to determine a reason.
 
 The following events can cause disconnection if the backend thread is monitoring the socket:

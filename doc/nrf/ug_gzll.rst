@@ -39,9 +39,9 @@ Configuration
 
 To enable the Gazell support in the |NCS|, set the following Kconfig options:
 
-* :kconfig:`CONFIG_GZLL` - This option enables the :ref:`nrfxlib:gzll` library.
-* :kconfig:`CONFIG_CLOCK_CONTROL_NRF` - This option enables HFCLK controller support for the nRF52 Series devices.
-* :kconfig:`CONFIG_GAZELL` - This option enables the :ref:`gzll_glue` module.
+* :kconfig:option:`CONFIG_GZLL` - This option enables the :ref:`nrfxlib:gzll` library.
+* :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF` - This option enables HFCLK controller support for the nRF52 Series devices.
+* :kconfig:option:`CONFIG_GAZELL` - This option enables the :ref:`gzll_glue` module.
 
 .. _ug_gzll_resources:
 

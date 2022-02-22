@@ -31,7 +31,7 @@ Authentication
 Each HTTP/REST request must include a valid JSON Web Token (JWT) that serves as a proof of identity.
 Usually, these tokens are generated based on the `device credentials <nRF Cloud Security_>`_, and must be passed to the ``auth`` parameter of the :c:struct:`nrf_cloud_rest_context` structure.
 To generate a token, call the :c:func:`nrf_cloud_jwt_generate` function, or use the :ref:`lib_modem_jwt` library.
-Alternatively, if you have enabled the :kconfig:`NRF_CLOUD_REST_AUTOGEN_JWT` option (along with its dependencies), the nRF Cloud REST library generates a JWT automatically if one is not provided.
+Alternatively, if you have enabled the :kconfig:option:`NRF_CLOUD_REST_AUTOGEN_JWT` option (along with its dependencies), the nRF Cloud REST library generates a JWT automatically if one is not provided.
 
 Socket management and reuse
 ***************************
@@ -91,13 +91,13 @@ These are documented on the function itself.
 Configuration
 *************
 
-Configure the :kconfig:`CONFIG_NRF_CLOUD_REST` option to enable or disable the use of this library.
+Configure the :kconfig:option:`CONFIG_NRF_CLOUD_REST` option to enable or disable the use of this library.
 
 Additionally, configure the following options for the needs of your application:
 
-* :kconfig:`CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE`
-* :kconfig:`CONFIG_NRF_CLOUD_REST_HOST_NAME`
-* :kconfig:`CONFIG_NRF_CLOUD_SEC_TAG`
+* :kconfig:option:`CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE`
+* :kconfig:option:`CONFIG_NRF_CLOUD_REST_HOST_NAME`
+* :kconfig:option:`CONFIG_NRF_CLOUD_SEC_TAG`
 
 API documentation
 *****************

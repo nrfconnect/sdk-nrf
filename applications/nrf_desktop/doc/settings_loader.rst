@@ -27,6 +27,6 @@ nRF Desktop uses the Settings loader module from :ref:`lib_caf` (CAF).
 See the :ref:`CAF Settings loader module <caf_settings_loader>` page for implementation details.
 
 .. tip::
-   Enabling :kconfig:`CONFIG_CAF_SETTINGS_LOADER_USE_THREAD` is recommended for keyboard reference design (nRF52832 Desktop Keyboard).
+   Enabling :kconfig:option:`CONFIG_CAF_SETTINGS_LOADER_USE_THREAD` is recommended for keyboard reference design (nRF52832 Desktop Keyboard).
    The :ref:`caf_buttons` uses the system workqueue to scan the keyboard matrix.
    Loading the settings in the system workqueue context could block the workqueue and result in missing key presses on system reboot.

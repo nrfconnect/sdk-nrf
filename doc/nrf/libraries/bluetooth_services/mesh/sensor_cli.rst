@@ -21,7 +21,7 @@ In most cases, the incoming data needs to be interpreted differently based on th
 When parsing incoming messages, the Sensor Client is required to do a lookup of the sensor type of the data so it can decode it correctly.
 For this purpose, the :ref:`bt_mesh_sensor_types` module includes the :ref:`list of available sensor types <bt_mesh_sensor_types_readme>`.
 
-By default, all sensor types are available when the Sensor Client model is compiled in, but this behavior can be overridden to reduce flash consumption by explicitly disabling :kconfig:`CONFIG_BT_MESH_SENSOR_ALL_TYPES`.
+By default, all sensor types are available when the Sensor Client model is compiled in, but this behavior can be overridden to reduce flash consumption by explicitly disabling :kconfig:option:`CONFIG_BT_MESH_SENSOR_ALL_TYPES`.
 In this case, only the referenced sensor types will be available.
 
 .. note::
@@ -47,8 +47,8 @@ The Bluetooth mesh shell subsystem provides a set of commands to interact with t
 
 To make these commands available, enable the following Kconfig options:
 
-* :kconfig:`CONFIG_BT_MESH_SHELL`
-* :kconfig:`CONFIG_BT_MESH_SHELL_SENSOR_CLI`
+* :kconfig:option:`CONFIG_BT_MESH_SHELL`
+* :kconfig:option:`CONFIG_BT_MESH_SHELL_SENSOR_CLI`
 
 mdl_sensor instance get-all
    Print all instances of the Sensor Client model on the device.
@@ -64,7 +64,7 @@ mdl_sensor instance set <elem_idx>
 
 mdl_sensor desc-get [sensor_id]
    Get the sensor descriptor for one or all sensors on the server.
-   This will get a maximum number of sensor descriptors specified by :kconfig:`CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_SENSORS`.
+   This will get a maximum number of sensor descriptors specified by :kconfig:option:`CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_SENSORS`.
 
    * ``sensor_id`` - If present, selects the sensor for which to get the descriptor.
 
@@ -105,7 +105,7 @@ mdl_sensor cadence-set-unack <sensor_id> <fast_period_div> <min_int> <delta_type
 
 mdl_sensor settings-get <sensor_id>
    Get the available settings for a sensor on the server.
-   This will get a maximum number of settings specified by :kconfig:`CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_SETTINGS`.
+   This will get a maximum number of settings specified by :kconfig:option:`CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_SETTINGS`.
 
    * ``sensor_id`` - Selects the sensor for which to get the available settings.
 
@@ -135,7 +135,7 @@ mdl_sensor setting-set-unack <sensor_id> <setting_id> <value>
 
 mdl_sensor get [sensor_id]
    Get the sensor value for one or all of the sensors on the server.
-   This will get a maximum number of sensor values specified by :kconfig:`CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_SENSORS`.
+   This will get a maximum number of sensor values specified by :kconfig:option:`CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_SENSORS`.
 
    * ``sensor_id`` - If present, selects the sensor for which to get the sensor value.
 
@@ -149,7 +149,7 @@ mdl_sensor series-entry get <sensor_id> <column>
 
 mdl_sensor series-entries-get <sensor_id> [range_start range_end]
    Get the entries for all columns, or a specified range of columns, for a sensor on the server.
-   This will get a maximum number of entries specified by :kconfig:`CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_COLUMNS`.
+   This will get a maximum number of entries specified by :kconfig:option:`CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_COLUMNS`.
 
    * ``sensor_id`` - Selects the sensor for which to get the entries.
    * ``range_start`` - If present, selects the start of the column range to get.

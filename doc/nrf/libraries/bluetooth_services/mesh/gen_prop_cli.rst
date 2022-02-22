@@ -26,8 +26,8 @@ The Bluetooth mesh shell subsystem provides a set of commands to interact with t
 
 To make these commands available, enable the following Kconfig options:
 
-* :kconfig:`CONFIG_BT_MESH_SHELL`
-* :kconfig:`CONFIG_BT_MESH_SHELL_PROP_CLI`
+* :kconfig:option:`CONFIG_BT_MESH_SHELL`
+* :kconfig:option:`CONFIG_BT_MESH_SHELL_PROP_CLI`
 
 mdl_prop instance get-all
 	Print all instances of the Generic Property Client model on the device.

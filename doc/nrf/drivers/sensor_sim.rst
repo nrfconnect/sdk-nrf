@@ -46,7 +46,7 @@ The following sensor channels and configuration options are available:
 Configuration of sensor triggers
 ================================
 
-Use :kconfig:`CONFIG_SENSOR_SIM_TRIGGER` to enable the sensor trigger.
+Use :kconfig:option:`CONFIG_SENSOR_SIM_TRIGGER` to enable the sensor trigger.
 The simulated sensor supports the :c:enum:`SENSOR_TRIG_DATA_READY` trigger.
 
 You can configure the event that generates the trigger in Devicetree by using the ``trigger-gpios`` or ``trigger-timeout`` options.
@@ -54,8 +54,8 @@ You can configure the event that generates the trigger in Devicetree by using th
 For both triggers, the handler function is called by a dedicated thread.
 The thread has the following configuration options:
 
-* :kconfig:`CONFIG_SENSOR_SIM_THREAD_PRIORITY` - This Kconfig option defines the priority.
-* :kconfig:`CONFIG_SENSOR_SIM_THREAD_STACK_SIZE` - This Kconfig option defines the stack size.
+* :kconfig:option:`CONFIG_SENSOR_SIM_THREAD_PRIORITY` - This Kconfig option defines the priority.
+* :kconfig:option:`CONFIG_SENSOR_SIM_THREAD_STACK_SIZE` - This Kconfig option defines the stack size.
 
 API documentation
 *****************
