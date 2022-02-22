@@ -207,7 +207,7 @@ Setting up the Asset Tracker cloud example
 
 To set up the application to work with a specific cloud example, see the following documentation:
 
-* nRF Cloud - `Creating an nRF Cloud account`_ and `Connecting your device to nRF Cloud`_.
+* nRF Cloud - :ref:`Connecting your device to nRF Cloud <nrf9160_gs_connecting_dk_to_cloud>`.
 * AWS IoT Core - `Getting started guide for nRF Asset Tracker for AWS`_
 * Azure IoT Hub - `Getting started guide for nRF Asset Tracker for Azure`_
 
