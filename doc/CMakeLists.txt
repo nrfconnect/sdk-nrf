@@ -291,78 +291,7 @@ add_docset(nrfxlib)
 #-------------------------------------------------------------------------------
 # docset: kconfig
 
-file(WRITE ${KCONFIG_BINARY_DIR}/Kconfig.soc.defconfig
-     "osource \"${ZEPHYR_BASE}/soc/$(ARCH)/*/Kconfig.defconfig\"\n"
-)
-file(WRITE ${KCONFIG_BINARY_DIR}/Kconfig.soc
-     "osource \"${ZEPHYR_BASE}/soc/$(ARCH)/*/Kconfig.soc\"\n"
-)
-file(WRITE ${KCONFIG_BINARY_DIR}/Kconfig.shield.defconfig
-     "osource \"${ZEPHYR_BASE}/boards/shields/*/Kconfig.defconfig\"\n"
-)
-file(WRITE ${KCONFIG_BINARY_DIR}/Kconfig.shield
-     "osource \"${ZEPHYR_BASE}/boards/shields/*/Kconfig.shield\"\n"
-)
-file(WRITE ${KCONFIG_BINARY_DIR}/Kconfig.soc.arch
-     "osource \"${ZEPHYR_BASE}/soc/$(ARCH)/Kconfig\"\n"
-     "osource \"${ZEPHYR_BASE}/soc/$(ARCH)/*/Kconfig\"\n"
-)
-
-foreach(module_name ${ZEPHYR_MODULE_NAMES})
-  zephyr_string(SANITIZE TOUPPER MODULE_NAME_UPPER ${module_name})
-  list(APPEND
-       ZEPHYR_KCONFIG_MODULES
-       "ZEPHYR_${MODULE_NAME_UPPER}_MODULE_DIR=${ZEPHYR_${MODULE_NAME_UPPER}_MODULE_DIR}"
-  )
-
-  if(ZEPHYR_${MODULE_NAME_UPPER}_KCONFIG)
-    list(APPEND
-         ZEPHYR_KCONFIG_MODULES
-         "ZEPHYR_${MODULE_NAME_UPPER}_KCONFIG=${ZEPHYR_${MODULE_NAME_UPPER}_KCONFIG}"
-  )
-  endif()
-
-  if(NCS_${MODULE_NAME_UPPER}_KCONFIG)
-    list(APPEND
-         ZEPHYR_KCONFIG_MODULES
-         "NCS_${MODULE_NAME_UPPER}_KCONFIG=${NCS_${MODULE_NAME_UPPER}_KCONFIG}"
-  )
-  endif()
-
-endforeach()
-
-set(KCONFIG_RST_OUT ${KCONFIG_BINARY_DIR}/src)
-
-add_custom_target(
-  kconfig-content
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${KCONFIG_RST_OUT}
-  COMMAND ${CMAKE_COMMAND} -E env
-    PYTHONPATH=${ZEPHYR_BASE}/scripts/kconfig
-    ZEPHYR_BASE=${ZEPHYR_BASE}
-    srctree=${ZEPHYR_BASE}
-    BOARD_DIR=boards/*/*/
-    ARCH=*
-    ARCH_DIR=arch/
-    SOC_DIR=soc/
-    KCONFIG_BINARY_DIR=${KCONFIG_BINARY_DIR}
-    KCONFIG_WARN_UNDEF=y
-    KCONFIG_TURBO_MODE=${KCONFIG_TURBO_MODE}
-    KCONFIG_DOC_MODE=1
-    ${ZEPHYR_KCONFIG_MODULES}
-      ${PYTHON_EXECUTABLE}
-        ${ZEPHYR_BASE}/doc/_scripts/gen_kconfig_rest.py ${KCONFIG_RST_OUT}
-        --separate-all-index
-        --modules Zephyr,zephyr,${ZEPHYR_BASE}
-                  nRF,nrf,${NRF_BASE}
-                  nrfxlib,nrfxlib,${ZEPHYR_NRFXLIB_MODULE_DIR}
-        --no-index-modules BuildDir,${CMAKE_BINARY_DIR}
-                           MCUboot,${ZEPHYR_MCUBOOT_MODULE_DIR}
-  VERBATIM
-)
-
 add_docset(kconfig)
-add_dependencies(kconfig-html kconfig-content)
-add_dependencies(kconfig-html-all kconfig-content)
 
 #-------------------------------------------------------------------------------
 # Global targets
