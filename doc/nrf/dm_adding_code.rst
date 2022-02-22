@@ -92,7 +92,7 @@ This is demonstrated by the following code:
        - name: nrf
          repo-path: sdk-nrf
          remote: ncs
-         revision: v1.9.0
+         revision: v1.9.1
          import: true
      self:
        path: application
@@ -119,7 +119,7 @@ For example:
      projects:
        - name: nrf
          remote: ncs
-         revision: v1.9.0
+         revision: v1.9.1
          import: true
        # Example for how to override a repository in the nRF Connect SDK with your own:
        - name: mcuboot
