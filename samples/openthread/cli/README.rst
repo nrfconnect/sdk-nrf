@@ -37,7 +37,7 @@ OpenThread CLI is integrated into the system shell accessible over serial connec
 To indicate a Thread command, the ``ot`` keyword needs to precede the command.
 
 The number of commands you can test depends on the application configuration.
-The CLI sample comes with the :ref:`full set of OpenThread functionalities <thread_ug_feature_sets>` enabled (:kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`).
+The CLI sample comes with the :ref:`full set of OpenThread functionalities <thread_ug_feature_sets>` enabled (:kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`).
 
 If used alone, the sample allows you to test the network status.
 It is recommended to use at least two development kits running the same sample for testing the communication.
@@ -55,13 +55,13 @@ See :ref:`ug_thread_cert` for information on how to use this sample on Thread Ce
 Diagnostic module
 =================
 
-By default, the CLI sample comes with the :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` :ref:`feature set <thread_ug_feature_sets>` enabled, which allows you to use Zephyr's diagnostic module with its ``diag`` commands.
+By default, the CLI sample comes with the :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` :ref:`feature set <thread_ug_feature_sets>` enabled, which allows you to use Zephyr's diagnostic module with its ``diag`` commands.
 Use these commands to manually check hardware-related functionalities without running a Thread network.
 For example, to ensure radio communication is working when adding a new functionality or during the manufacturing process.
 See `Testing diagnostic module`_ section for an example.
 
 .. note::
-    If you disable the :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` feature set, you can enable the diagnostic module with the :kconfig:`CONFIG_OPENTHREAD_DIAG` Kconfig option.
+    If you disable the :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` feature set, you can enable the diagnostic module with the :kconfig:option:`CONFIG_OPENTHREAD_DIAG` Kconfig option.
 
 .. _ot_cli_sample_thread_v12:
 

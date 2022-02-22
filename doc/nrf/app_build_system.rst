@@ -35,10 +35,10 @@ Those additions are automatically included into the Zephyr build system using a 
 
 You must be aware of these additions when you start writing your own applications based on this SDK.
 
-* The Kconfig option :kconfig:`CONFIG_WARN_EXPERIMENTAL` is enabled by default.
+* The Kconfig option :kconfig:option:`CONFIG_WARN_EXPERIMENTAL` is enabled by default.
   It gives warnings at CMake configure time if any experimental feature is enabled.
 
-  For example, when building a sample that enables :kconfig:`CONFIG_BT_EXT_ADV`, the following warning is printed at CMake configure time:
+  For example, when building a sample that enables :kconfig:option:`CONFIG_BT_EXT_ADV`, the following warning is printed at CMake configure time:
 
   .. code-block:: shell
 
@@ -61,9 +61,9 @@ Building FOTA images
 
 The |NCS| build system places output images in the :file:`<build folder>/zephyr` folder.
 
-If :kconfig:`CONFIG_BOOTLOADER_MCUBOOT` is set, the build system creates the :file:`dfu_application.zip` file containing files :file:`app_update.bin` and :file:`manifest.json`.
-If you have also set the options :kconfig:`CONFIG_IMG_MANAGER` and :kconfig:`CONFIG_MCUBOOT_IMG_MANAGER`, the application will be able to process FOTA updates.
-If you have set the options :kconfig:`CONFIG_SECURE_BOOT` and :kconfig:`CONFIG_BUILD_S1_VARIANT`, a similar file :file:`dfu_mcuboot.zip` will also be created.
+If :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` is set, the build system creates the :file:`dfu_application.zip` file containing files :file:`app_update.bin` and :file:`manifest.json`.
+If you have also set the options :kconfig:option:`CONFIG_IMG_MANAGER` and :kconfig:option:`CONFIG_MCUBOOT_IMG_MANAGER`, the application will be able to process FOTA updates.
+If you have set the options :kconfig:option:`CONFIG_SECURE_BOOT` and :kconfig:option:`CONFIG_BUILD_S1_VARIANT`, a similar file :file:`dfu_mcuboot.zip` will also be created.
 You can use this file to perform FOTA updates of MCUboot itself.
 
 The :file:`app_update.bin` file is a signed version of your application.

@@ -13,14 +13,14 @@ The module provides different backends for available networks (like LTE or OpenT
 Configuration
 *************
 
-You can enable |net_state| by selecting the :kconfig:`CONFIG_CAF_NET_STATE` option in the configuration.
+You can enable |net_state| by selecting the :kconfig:option:`CONFIG_CAF_NET_STATE` option in the configuration.
 The module selects the backend based on the link layer enabled.
 
 Log information about connection waiting
 ========================================
 
-The option :kconfig:`CONFIG_CAF_NET_STATE_WAITING` enables periodically logging message, while the module is waiting for network connection.
-The period between logs may be configured by :kconfig:`CONFIG_CAF_LOG_NET_STATE_WAITING_PERIOD`.
+The option :kconfig:option:`CONFIG_CAF_NET_STATE_WAITING` enables periodically logging message, while the module is waiting for network connection.
+The period between logs may be configured by :kconfig:option:`CONFIG_CAF_LOG_NET_STATE_WAITING_PERIOD`.
 
 Implementation details
 **********************

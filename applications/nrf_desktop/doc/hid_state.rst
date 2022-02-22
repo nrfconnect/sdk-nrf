@@ -29,13 +29,13 @@ Module events
 Configuration
 *************
 
-The |hid_state| is enabled by selecting :kconfig:`CONFIG_DESKTOP_HID_STATE_ENABLE`.
+The |hid_state| is enabled by selecting :kconfig:option:`CONFIG_DESKTOP_HID_STATE_ENABLE`.
 This module is optional and turned off by default.
 
 To send boot reports, enable the respective Kconfig option:
 
-* :kconfig:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD` - This option enables sending keyboard boot reports.
-* :kconfig:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE` - This option enables sending mouse boot reports.
+* :kconfig:option:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD` - This option enables sending keyboard boot reports.
+* :kconfig:option:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE` - This option enables sending mouse boot reports.
 
 HID keymap
 ==========
@@ -66,7 +66,7 @@ For example, the file contents should look like the following:
 		{ FN_KEY_ID(0x06, 0x03), 0x0196, REPORT_ID_CONSUMER_CTRL }, /* internet */
 	};
 
-You must define the mentioned array in this configuration file, and specify its location with the :kconfig:`CONFIG_DESKTOP_HID_STATE_HID_KEYMAP_DEF_PATH` Kconfig option.
+You must define the mentioned array in this configuration file, and specify its location with the :kconfig:option:`CONFIG_DESKTOP_HID_STATE_HID_KEYMAP_DEF_PATH` Kconfig option.
 
 .. note::
    The configuration file should be included only by the configured module.
@@ -101,7 +101,7 @@ For example, the file contents should look like follows:
 		[HID_KEYBOARD_LEDS_KANA] = LED_UNAVAILABLE,
 	};
 
-You must define all of the mentioned data in this configuration file, and specify its location with the :kconfig:`CONFIG_DESKTOP_HID_STATE_HID_KEYBOARD_LEDS_DEF_PATH` Kconfig option.
+You must define all of the mentioned data in this configuration file, and specify its location with the :kconfig:option:`CONFIG_DESKTOP_HID_STATE_HID_KEYBOARD_LEDS_DEF_PATH` Kconfig option.
 
 .. note::
    The configuration file should be included only by the configured module.
@@ -110,13 +110,13 @@ You must define all of the mentioned data in this configuration file, and specif
 Report expiration
 =================
 
-With the :kconfig:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION` configuration option, you can set the amount of time after which a key will be considered expired.
+With the :kconfig:option:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION` configuration option, you can set the amount of time after which a key will be considered expired.
 The higher the value, the longer the period after which the nRF Desktop application will recall pressed keys when the connection is established.
 
 Queue event size
 ================
 
-With the :kconfig:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE` configuration option, you can set the number of elements on the queue where the keys are stored before the connection is established.
+With the :kconfig:option:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE` configuration option, you can set the number of elements on the queue where the keys are stored before the connection is established.
 When a key state changes (it is pressed or released) before the connection is established, an element containing this key's usage is pushed onto the queue.
 If there is no space in the queue, the oldest element is released.
 
@@ -200,11 +200,11 @@ This queue preserves an order at which input data events are received.
 Storing limitations
 -------------------
 
-The number of events that can be inserted into the queue is limited by :kconfig:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE`.
+The number of events that can be inserted into the queue is limited by :kconfig:option:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE`.
 
 Discarding events
     When there is no space for a new input event, the |hid_state| will try to free space by discarding the oldest event in the queue.
-    Events stored in the queue are automatically discarded after the period defined by :kconfig:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION`.
+    Events stored in the queue are automatically discarded after the period defined by :kconfig:option:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION`.
 
     When discarding an event from the queue, the module checks if the key associated with the event is pressed.
     This is to avoid missing key releases for earlier key presses when the keys from the queue are replayed to the host.
@@ -262,7 +262,7 @@ The :c:struct:`report_data` structure is passed as an argument to this function.
 
 .. note::
     The HID report formatting function must work according to the HID report descriptor (``hid_report_desc``).
-    The source file containing the descriptor is given by :kconfig:`CONFIG_DESKTOP_HID_REPORT_DESC`.
+    The source file containing the descriptor is given by :kconfig:option:`CONFIG_DESKTOP_HID_REPORT_DESC`.
 
 Handling HID keyboard LED state
 ===============================

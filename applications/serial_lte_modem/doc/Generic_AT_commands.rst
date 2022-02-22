@@ -137,13 +137,13 @@ The ``<shutdown_mode>`` parameter accepts only the following integer values:
 * ``0`` - Deprecated.
 * ``1`` - Enter Sleep.
   In this mode, both the SLM service and the LTE connection are terminated.
-  The development kit can be waken up using the :kconfig:`CONFIG_SLM_WAKEUP_PIN`.
+  The development kit can be waken up using the :kconfig:option:`CONFIG_SLM_WAKEUP_PIN`.
 
 * ``2`` - Enter Idle.
   In this mode, both the SLM service and the LTE connection are maintained.
-  The development kit can be made to exit idle using the :kconfig:`CONFIG_SLM_WAKEUP_PIN`.
-  If the :kconfig:`CONFIG_SLM_INDICATE_PIN` is defined, SLM toggle this GPIO when there is data for MCU.
-  MCU could in turn make SLM to exit idle by :kconfig:`CONFIG_SLM_WAKEUP_PIN`.
+  The development kit can be made to exit idle using the :kconfig:option:`CONFIG_SLM_WAKEUP_PIN`.
+  If the :kconfig:option:`CONFIG_SLM_INDICATE_PIN` is defined, SLM toggle this GPIO when there is data for MCU.
+  MCU could in turn make SLM to exit idle by :kconfig:option:`CONFIG_SLM_WAKEUP_PIN`.
   The data is buffered during the idle status and is sent to MCU after exiting the ilde status.
 
 .. note::

@@ -22,7 +22,7 @@ See the :ref:`event_manager_profiling_tracer_sample` sample for an example of ho
 Configuration
 *************
 
-To use the Event Manager profiler tracer, enable the :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_TRACER` Kconfig option.
+To use the Event Manager profiler tracer, enable the :kconfig:option:`CONFIG_EVENT_MANAGER_PROFILER_TRACER` Kconfig option.
 This Kconfig option also automatically initializes the Profiler.
 
 Additional configuration
@@ -30,8 +30,8 @@ Additional configuration
 
 You can also set the following Kconfig options when working with the Event Manager profiler tracer:
 
-* :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_TRACER_TRACE_EVENT_EXECUTION` - With this Kconfig option set, the Event Manager profiler tracer will track two additional events that mark the start and the end of each event execution, respectively.
-* :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_TRACER_PROFILE_EVENT_DATA` - With this Kconfig option set, the Event Manager profiler tracer will trigger logging of event data during profiling, allowing you to see what event data values were sent.
+* :kconfig:option:`CONFIG_EVENT_MANAGER_PROFILER_TRACER_TRACE_EVENT_EXECUTION` - With this Kconfig option set, the Event Manager profiler tracer will track two additional events that mark the start and the end of each event execution, respectively.
+* :kconfig:option:`CONFIG_EVENT_MANAGER_PROFILER_TRACER_PROFILE_EVENT_DATA` - With this Kconfig option set, the Event Manager profiler tracer will trigger logging of event data during profiling, allowing you to see what event data values were sent.
 
 .. _event_manager_profiler_tracer_em_implementation:
 
@@ -43,7 +43,7 @@ Implementing profiling for Event Manager events
 
 To profile an Event Manager event, you must complete the following steps:
 
-1. Enable profiling Event Manager events using the :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_TRACER` Kconfig option.
+1. Enable profiling Event Manager events using the :kconfig:option:`CONFIG_EVENT_MANAGER_PROFILER_TRACER` Kconfig option.
 #. Edit the source file for the event type:
 
    a. Define a profiling function that logs the event data to a given buffer by calling one of the following functions for every registered data type:

@@ -100,7 +100,7 @@ In particular, partition definitions are global per domain, and must be identica
 If the same partition is defined twice with different configurations within a domain, the Partition Manager will fail.
 
 .. note::
-   If Partition Manager configurations are only defined by subsystems, so that only one image is included in the build, you must set the option :kconfig:`CONFIG_PM_SINGLE_IMAGE` to execute the Partition Manager script.
+   If Partition Manager configurations are only defined by subsystems, so that only one image is included in the build, you must set the option :kconfig:option:`CONFIG_PM_SINGLE_IMAGE` to execute the Partition Manager script.
 
 .. _pm_yaml_format:
 

@@ -30,8 +30,8 @@ Enabling 3-wire coexistence and MPSL
 
 Make sure that the following KConfig options are enabled:
 
-   * :kconfig:`CONFIG_MPSL_CX`
-   * :kconfig:`CONFIG_MPSL_CX_BT_3WIRE`
+   * :kconfig:option:`CONFIG_MPSL_CX`
+   * :kconfig:option:`CONFIG_MPSL_CX_BT_3WIRE`
 
 .. _ug_bt_coex_3w_config:
 
@@ -65,8 +65,8 @@ Enabling 1-wire coexistence and MPSL
 
 Make sure that the following KConfig options are enabled:
 
-   * :kconfig:`CONFIG_MPSL_CX`
-   * :kconfig:`CONFIG_MPSL_CX_BT_1WIRE`
+   * :kconfig:option:`CONFIG_MPSL_CX`
+   * :kconfig:option:`CONFIG_MPSL_CX_BT_1WIRE`
 
 .. _ug_bt_coex_1w_config:
 
