@@ -19,7 +19,7 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 project = "nRF Connect SDK"
 copyright = "2019-2022, Nordic Semiconductor"
 author = "Nordic Semiconductor"
-version = release = "1.9.0"
+version = release = "1.9.1"
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))

@@ -1,6 +1,7 @@
 {
   "VERSIONS": [
     "latest",
+    "1.9.1",
     "1.9.0",
     "1.8.0",
     "1.7.1",
@@ -25,8 +26,17 @@
   ],
   "COMPONENTS_BY_VERSION": {
     "latest": {
-      "ncs": "1.9.0",
-      "nrfxlib": "1.9.0",
+      "ncs": "1.9.1",
+      "nrfxlib": "1.9.1",
+      "zephyr": "2.7.99",
+      "mcuboot": "1.8.99",
+      "nrfx": "2.7",
+      "tfm": "1.5.0",
+      "matter": ""
+    },
+    "1.9.1": {
+      "ncs": "1.9.1",
+      "nrfxlib": "1.9.1",
       "zephyr": "2.7.99",
       "mcuboot": "1.8.99",
       "nrfx": "2.7",
