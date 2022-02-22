@@ -42,33 +42,33 @@ Configuration
 
 Configure the following options to enable or disable the use of this library:
 
-* :kconfig:`CONFIG_NRF_CLOUD_PGPS`
-* :kconfig:`CONFIG_NRF_CLOUD_MQTT` or :kconfig:`CONFIG_NRF_CLOUD_REST`
+* :kconfig:option:`CONFIG_NRF_CLOUD_PGPS`
+* :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` or :kconfig:option:`CONFIG_NRF_CLOUD_REST`
 
 Configure these additional options to refine the behavior of P-GPS:
 
-* :kconfig:`CONFIG_NRF_CLOUD_PGPS_PREDICTION_PERIOD`
-* :kconfig:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS`
-* :kconfig:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD`
-* :kconfig:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_FRAGMENT_SIZE`
-* :kconfig:`CONFIG_NRF_CLOUD_PGPS_REQUEST_UPON_INIT`
+* :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_PREDICTION_PERIOD`
+* :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS`
+* :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD`
+* :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_FRAGMENT_SIZE`
+* :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REQUEST_UPON_INIT`
 
 Configure both of the following options if you need your application to use A-GPS as well, for coarse time and position data and to get the fastest TTFF:
 
-* :kconfig:`CONFIG_NRF_CLOUD_AGPS`
-* :kconfig:`CONFIG_AGPS`
+* :kconfig:option:`CONFIG_NRF_CLOUD_AGPS`
+* :kconfig:option:`CONFIG_AGPS`
 
 If A-GPS is not desired (due to data costs, low power requirements, or expected frequent loss of cloud connectivity), both options listed above must be disabled.
 
 For an application that uses P-GPS, the following options must be configured for storing settings, for having accurate clock time, and for having a location to store predictions:
 
-* :kconfig:`CONFIG_FLASH`
-* :kconfig:`CONFIG_FCB`
-* :kconfig:`CONFIG_SETTINGS_FCB`
-* :kconfig:`CONFIG_DATE_TIME`
-* :kconfig:`CONFIG_BOOTLOADER_MCUBOOT`
-* :kconfig:`CONFIG_IMG_MANAGER`
-* :kconfig:`CONFIG_MCUBOOT_IMG_MANAGER`
+* :kconfig:option:`CONFIG_FLASH`
+* :kconfig:option:`CONFIG_FCB`
+* :kconfig:option:`CONFIG_SETTINGS_FCB`
+* :kconfig:option:`CONFIG_DATE_TIME`
+* :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`
+* :kconfig:option:`CONFIG_IMG_MANAGER`
+* :kconfig:option:`CONFIG_MCUBOOT_IMG_MANAGER`
 
 See :ref:`configure_application` for information on how to change configuration options.
 
@@ -77,7 +77,7 @@ Initialization
 
 Ideally, once the device has connected to the cloud, the application must call the P-GPS initialization function.
 If a connection is not available, initialization must still be called.
-If the :kconfig:`CONFIG_NRF_CLOUD_PGPS_REQUEST_UPON_INIT` option is disabled, the initialization function does not automatically download missing P-GPS data.
+If the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REQUEST_UPON_INIT` option is disabled, the initialization function does not automatically download missing P-GPS data.
 In these cases, predictions might be unavailable until a connection is established to the cloud.
 
 .. note::
@@ -107,24 +107,24 @@ P-GPS data can be requested from the cloud using one of the following methods:
 
 * Directly:
 
-  * If :kconfig:`CONFIG_NRF_CLOUD_MQTT` is enabled:
+  * If :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` is enabled:
 
    * Call the function :c:func:`nrf_cloud_pgps_request_all` to request a full set of predictions.
    * Pass a properly initialized :c:struct:`gps_pgps_request` structure to the :c:func:`nrf_cloud_pgps_request` function.
 
-  * If :kconfig:`CONFIG_NRF_CLOUD_REST` is enabled:
+  * If :kconfig:option:`CONFIG_NRF_CLOUD_REST` is enabled:
 
    * Pass a properly initialized :c:struct:`nrf_cloud_rest_pgps_request` structure to the :c:func:`nrf_cloud_rest_pgps_data_get` function.
 
 * Indirectly:
 
-  * If :kconfig:`CONFIG_NRF_CLOUD_MQTT` is enabled:
+  * If :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` is enabled:
 
    * Call :c:func:`nrf_cloud_pgps_init`, with no valid predictions present in flash, or with some or all of the predictions expired.
    * Call :c:func:`nrf_cloud_pgps_preemptive_updates`.
    * Call :c:func:`nrf_cloud_pgps_notify_prediction`.
 
-  * If :kconfig:`CONFIG_NRF_CLOUD_REST` is enabled:
+  * If :kconfig:option:`CONFIG_NRF_CLOUD_REST` is enabled:
 
    * N/A
 
@@ -172,7 +172,7 @@ If the use case involves possible long-distance travel between fix attempts, suc
 
 The application can also call :c:func:`nrf_cloud_pgps_preemptive_updates` to discard expired predictions and replace them with newer ones, prior to the expiration of the entire set of predictions.
 This can be useful for customer use cases where cloud connections are available infrequently.
-The :kconfig:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` sets the minimum number of valid predictions remaining before such an update occurs.
+The :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD` sets the minimum number of valid predictions remaining before such an update occurs.
 
 For best performance, applications can call the P-GPS functions mentioned in this section from workqueue handlers rather than directly from various callback functions.
 

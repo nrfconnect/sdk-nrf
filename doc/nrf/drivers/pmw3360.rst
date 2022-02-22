@@ -85,10 +85,10 @@ Kconfig configuration
 
 Use the following Kconfig options to configure the PMW3360 motion sensor:
 
-* :kconfig:`CONFIG_PMW3360` - This option enables the PMW3360 motion sensor driver.
-* :kconfig:`CONFIG_PMW3360_ORIENTATION_0`, :kconfig:`CONFIG_PMW3360_ORIENTATION_90`, :kconfig:`CONFIG_PMW3360_ORIENTATION_180`, or :kconfig:`CONFIG_PMW3360_ORIENTATION_270` - The selected choice option specifies the rotation of the PMW3360 motion sensor in degrees (clockwise), respectively 0, 90, 180, or 270 degrees.
-* :kconfig:`CONFIG_PMW3360_CPI` - This option specifies the Counts Per Inch (CPI) value.
-* :kconfig:`CONFIG_PMW3360_RUN_DOWNSHIFT_TIME_MS`, :kconfig:`CONFIG_PMW3360_REST1_DOWNSHIFT_TIME_MS`, :kconfig:`CONFIG_PMW3360_REST2_DOWNSHIFT_TIME_MS` - Times in milliseconds after which the sensor switches to the next mode.
+* :kconfig:option:`CONFIG_PMW3360` - This option enables the PMW3360 motion sensor driver.
+* :kconfig:option:`CONFIG_PMW3360_ORIENTATION_0`, :kconfig:option:`CONFIG_PMW3360_ORIENTATION_90`, :kconfig:option:`CONFIG_PMW3360_ORIENTATION_180`, or :kconfig:option:`CONFIG_PMW3360_ORIENTATION_270` - The selected choice option specifies the rotation of the PMW3360 motion sensor in degrees (clockwise), respectively 0, 90, 180, or 270 degrees.
+* :kconfig:option:`CONFIG_PMW3360_CPI` - This option specifies the Counts Per Inch (CPI) value.
+* :kconfig:option:`CONFIG_PMW3360_RUN_DOWNSHIFT_TIME_MS`, :kconfig:option:`CONFIG_PMW3360_REST1_DOWNSHIFT_TIME_MS`, :kconfig:option:`CONFIG_PMW3360_REST2_DOWNSHIFT_TIME_MS` - Times in milliseconds after which the sensor switches to the next mode.
   The sequence of the modes is static, with the following pattern: ``RUN`` > ``REST1`` > ``REST2`` > ``REST3``.
   The time value specified in the Kconfig options corresponds to the respective arrows.
 

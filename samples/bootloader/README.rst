@@ -165,7 +165,7 @@ This would result, for example, in a flash memory layout like the following, whe
 Pre-signed variants
 -------------------
 
-When the application uses a second-stage upgradable bootloader, *S1* can be programmed with the same image as *S0* when compiled with the :kconfig:`CONFIG_BUILD_S1_VARIANT` option.
+When the application uses a second-stage upgradable bootloader, *S1* can be programmed with the same image as *S0* when compiled with the :kconfig:option:`CONFIG_BUILD_S1_VARIANT` option.
 This ensures that the upgradable bootloader can be executed from either slot chosen by the |NSIB|.
 
 When the upgradable bootloader is upgraded, the new image is placed into the slot not in use by the current version of the bootloader.
@@ -209,16 +209,16 @@ Monotonic Counter
 
 Firmware versions using the |NSIB| are kept in the form of a *monotonic counter*, a hardware-based version that prevents booting an image with a lower counter value.
 Counter values are kept as slots in the flash memory, with each new counter value occupying a new slot.
-See :kconfig:`CONFIG_SB_MONOTONIC_COUNTER` for more details.
+See :kconfig:option:`CONFIG_SB_MONOTONIC_COUNTER` for more details.
 
-To set the counter value of an application, build it using the :kconfig:`CONFIG_FW_INFO_FIRMWARE_VERSION` option:
+To set the counter value of an application, build it using the :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` option:
 
 .. code-block::
 
    CONFIG_FW_INFO_FIRMWARE_VERSION=<integer>
 
 The number of slots available for counter values depends on the type of nRF devices being used.
-For default values and ranges, see :kconfig:`CONFIG_SB_NUM_VER_COUNTER_SLOTS`.
+For default values and ranges, see :kconfig:option:`CONFIG_SB_NUM_VER_COUNTER_SLOTS`.
 
 .. bootloader_monotonic_counter_end
 
@@ -258,15 +258,15 @@ To add the bootloader sample as a child image to your application, complete the 
 #. To enable the |NSIB|, run ``menuconfig`` on your application:
 
    a. Select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK project`.
-   #. Go to :guilabel:`Modules` > :guilabel:`Nordic nRF Connect` > :guilabel:`Bootloader` and set :guilabel:`Use Secure Bootloader` to enable :kconfig:`CONFIG_SECURE_BOOT`.
-   #. Under :guilabel:`Private key PEM file` (:kconfig:`CONFIG_SB_SIGNING_KEY_FILE`), enter the path to the private key that you created.
+   #. Go to :guilabel:`Modules` > :guilabel:`Nordic nRF Connect` > :guilabel:`Bootloader` and set :guilabel:`Use Secure Bootloader` to enable :kconfig:option:`CONFIG_SECURE_BOOT`.
+   #. Under :guilabel:`Private key PEM file` (:kconfig:option:`CONFIG_SB_SIGNING_KEY_FILE`), enter the path to the private key that you created.
       If you choose to run the sample with default debug keys, you can skip this step.
 
       You can also modify other additional configuration options, but that is not recommended.
       The default settings are suitable for most use cases.
 
       .. note::
-         If you need more flexibility with signing, or if you do not want the build system to handle your private key, choose :kconfig:`CONFIG_SB_SIGNING_CUSTOM`, and also specify :kconfig:`CONFIG_SB_SIGNING_COMMAND` and :kconfig:`CONFIG_SB_SIGNING_PUBLIC_KEY`.
+         If you need more flexibility with signing, or if you do not want the build system to handle your private key, choose :kconfig:option:`CONFIG_SB_SIGNING_CUSTOM`, and also specify :kconfig:option:`CONFIG_SB_SIGNING_COMMAND` and :kconfig:option:`CONFIG_SB_SIGNING_PUBLIC_KEY`.
          These options allow you to define the signing command.
 
    #. Click :guilabel:`Configure`.

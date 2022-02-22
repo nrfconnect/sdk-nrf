@@ -29,7 +29,7 @@ The current version of the sample supports the following libraries as cloud back
 *  :ref:`lib_aws_iot`
 *  :ref:`lib_azure_iot_hub`
 
-To swap between the supported libraries, change the option :kconfig:`CONFIG_CLOUD_BACKEND` to match the configuration string of a compatible cloud backend.
+To swap between the supported libraries, change the option :kconfig:option:`CONFIG_CLOUD_BACKEND` to match the configuration string of a compatible cloud backend.
 The identification strings for the different cloud backends are listed in the following table:
 
 .. list-table::
@@ -72,10 +72,10 @@ They can be added to :file:`cloud_client/prj.conf`.
    To output data in the terminal window located in the `nRF Cloud`_ web interface, the data format must be in JSON format.
 
 .. note::
-   The sample sets the option :kconfig:`CONFIG_MQTT_KEEPALIVE` to the maximum allowed value that is specified by the configured cloud backend.
+   The sample sets the option :kconfig:option:`CONFIG_MQTT_KEEPALIVE` to the maximum allowed value that is specified by the configured cloud backend.
    This is to limit the IP traffic between the device and the message broker of the cloud provider for supporting a low power sample.
    In certain LTE networks, the NAT timeout can be considerably lower than the maximum allowed MQTT keepalive.
-   As a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, set the option :kconfig:`CONFIG_MQTT_KEEPALIVE` to the lowest timeout limit (Maximum allowed MQTT keepalive and NAT timeout).
+   As a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, set the option :kconfig:option:`CONFIG_MQTT_KEEPALIVE` to the lowest timeout limit (Maximum allowed MQTT keepalive and NAT timeout).
 
 Functionality and supported technologies
 ****************************************

@@ -29,7 +29,7 @@ The AT monitor library facilitates the integration of the Modem library in |NCS|
 Initialization
 ==============
 
-The AT monitor library initializes automatically when enabled using :kconfig:`CONFIG_AT_MONITOR`.
+The AT monitor library initializes automatically when enabled using :kconfig:option:`CONFIG_AT_MONITOR`.
 Upon initialization, the AT monitor library registers itself as the receiver of AT notifications from the Modem library (using :c:func:`nrf_modem_at_notif_handler_set`).
 
 .. note::
@@ -61,7 +61,7 @@ The following code snippet shows how to register a handler that receives ``+CERE
 		printf("Received +CEREG notification: %s", notif);
 	}
 
-The size of the AT monitor library heap can be configured using the :kconfig:`CONFIG_AT_MONITOR_HEAP_SIZE` option.
+The size of the AT monitor library heap can be configured using the :kconfig:option:`CONFIG_AT_MONITOR_HEAP_SIZE` option.
 
 Direct dispatching
 ******************

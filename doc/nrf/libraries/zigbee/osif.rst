@@ -16,42 +16,42 @@ Configuration
 
 The ZBOSS OSIF layer implements a series of functions used by ZBOSS and is included in the |NCS|'s Zigbee subsystem.
 
-The ZBOSS OSIF layer is automatically enabled when you enable the ZBOSS library with the :kconfig:`CONFIG_ZIGBEE` Kconfig option.
+The ZBOSS OSIF layer is automatically enabled when you enable the ZBOSS library with the :kconfig:option:`CONFIG_ZIGBEE` Kconfig option.
 
 You can also configure the following OSIF-related Kconfig options:
 
-* :kconfig:`CONFIG_ZIGBEE_APP_CB_QUEUE_LENGTH` - Defines the length of the application callback and alarm queue.
+* :kconfig:option:`CONFIG_ZIGBEE_APP_CB_QUEUE_LENGTH` - Defines the length of the application callback and alarm queue.
   This queue is used to pass application callbacks and alarms from other threads or interrupts to the ZBOSS main loop context.
-* :kconfig:`CONFIG_ZIGBEE_DEBUG_FUNCTIONS` - Includes functions to suspend and resume the ZBOSS thread.
+* :kconfig:option:`CONFIG_ZIGBEE_DEBUG_FUNCTIONS` - Includes functions to suspend and resume the ZBOSS thread.
 
   .. note::
       These functions are useful for debugging, but they can cause instability of the device.
 
-* :kconfig:`CONFIG_ZBOSS_RESET_ON_ASSERT` - Configures the ZBOSS OSIF layer to reset the device when a ZBOSS assert occurs.
+* :kconfig:option:`CONFIG_ZBOSS_RESET_ON_ASSERT` - Configures the ZBOSS OSIF layer to reset the device when a ZBOSS assert occurs.
   This option is enabled by default.
   Use it for production-ready applications.
-* :kconfig:`CONFIG_ZBOSS_HALT_ON_ASSERT` - Configures the ZBOSS OSIF layer to halt the device when a ZBOSS assert occurs.
+* :kconfig:option:`CONFIG_ZBOSS_HALT_ON_ASSERT` - Configures the ZBOSS OSIF layer to halt the device when a ZBOSS assert occurs.
   Use this option only for testing and debugging your application.
-* :kconfig:`CONFIG_ZIGBEE_HAVE_SERIAL` - Enables the UART serial abstract for the ZBOSS OSIF layer and allows to configure the serial glue layer.
+* :kconfig:option:`CONFIG_ZIGBEE_HAVE_SERIAL` - Enables the UART serial abstract for the ZBOSS OSIF layer and allows to configure the serial glue layer.
   For more information, see the :ref:`zigbee_osif_zboss_osif_serial` section.
-* :kconfig:`CONFIG_ZIGBEE_USE_BUTTONS` - Enables the buttons abstract for the ZBOSS OSIF layer.
+* :kconfig:option:`CONFIG_ZIGBEE_USE_BUTTONS` - Enables the buttons abstract for the ZBOSS OSIF layer.
   You can use this option if you want to test ZBOSS examples directly in the |NCS|.
-* :kconfig:`CONFIG_ZIGBEE_USE_DIMMABLE_LED` - Dimmable LED (PWM) abstract for the ZBOSS OSIF layer.
+* :kconfig:option:`CONFIG_ZIGBEE_USE_DIMMABLE_LED` - Dimmable LED (PWM) abstract for the ZBOSS OSIF layer.
   You can use this option if you want to test ZBOSS examples directly in the |NCS|.
-* :kconfig:`CONFIG_ZIGBEE_USE_LEDS` - LEDs abstract for the ZBOSS OSIF layer.
+* :kconfig:option:`CONFIG_ZIGBEE_USE_LEDS` - LEDs abstract for the ZBOSS OSIF layer.
   You can use this option if you want to test ZBOSS examples directly in the |NCS|.
-* :kconfig:`CONFIG_ZIGBEE_USE_SOFTWARE_AES` - Configures the ZBOSS OSIF layer to use the software encryption.
+* :kconfig:option:`CONFIG_ZIGBEE_USE_SOFTWARE_AES` - Configures the ZBOSS OSIF layer to use the software encryption.
 
 Additionally, the following Kconfig option is available when setting :ref:`zigbee_ug_logging_logger_options`:
 
-* :kconfig:`CONFIG_ZBOSS_OSIF_LOG_LEVEL` - Configures the custom logger options for the ZBOSS OSIF layer.
+* :kconfig:option:`CONFIG_ZBOSS_OSIF_LOG_LEVEL` - Configures the custom logger options for the ZBOSS OSIF layer.
 
 .. _zigbee_osif_zboss_osif_serial:
 
 ZBOSS OSIF serial abstract
 **************************
 
-Setting the :kconfig:`CONFIG_ZIGBEE_HAVE_SERIAL` option enables the serial abstract for the ZBOSS OSIF layer.
+Setting the :kconfig:option:`CONFIG_ZIGBEE_HAVE_SERIAL` option enables the serial abstract for the ZBOSS OSIF layer.
 
 The ZBOSS OSIF serial implements sets of backend functions that are used by the ZBOSS stack for serial communication:
 
@@ -96,11 +96,11 @@ Zigbee async serial configuration options
 
 To configure this set of functions, use the following options:
 
-* :kconfig:`CONFIG_ZIGBEE_HAVE_ASYNC_SERIAL` - This option enables Zigbee async serial.
-* :kconfig:`CONFIG_ZIGBEE_UART_DEVICE_NAME` - This option specifies serial device to use.
-* :kconfig:`CONFIG_ZIGBEE_UART_SUPPORTS_FLOW_CONTROL` - This option should be set if serial device supports flow control.
-* :kconfig:`CONFIG_ZIGBEE_UART_RX_BUF_LEN` - This option enables and configures the size of internal RX and TX buffer.
-* :kconfig:`CONFIG_ZBOSS_TRACE_BINARY_NCP_TRANSPORT_LOGGING` - This option enables logging ZBOSS traces in binary format with Zigbee async serial.
+* :kconfig:option:`CONFIG_ZIGBEE_HAVE_ASYNC_SERIAL` - This option enables Zigbee async serial.
+* :kconfig:option:`CONFIG_ZIGBEE_UART_DEVICE_NAME` - This option specifies serial device to use.
+* :kconfig:option:`CONFIG_ZIGBEE_UART_SUPPORTS_FLOW_CONTROL` - This option should be set if serial device supports flow control.
+* :kconfig:option:`CONFIG_ZIGBEE_UART_RX_BUF_LEN` - This option enables and configures the size of internal RX and TX buffer.
+* :kconfig:option:`CONFIG_ZBOSS_TRACE_BINARY_NCP_TRANSPORT_LOGGING` - This option enables logging ZBOSS traces in binary format with Zigbee async serial.
 
 Zigbee serial logger
 ====================
@@ -114,15 +114,15 @@ Zigbee serial logger configuration options
 
 Use the following options to configure the Zigbee serial logger:
 
-* :kconfig:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - This option enables logging ZBOSS traces with Zigbee serial logger.
-* :kconfig:`CONFIG_ZBOSS_TRACE_UART_LOGGING` - This option selects the UART serial backend.
-* :kconfig:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` - This option selects the USB CDC ACM serial backend.
+* :kconfig:option:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` - This option enables logging ZBOSS traces with Zigbee serial logger.
+* :kconfig:option:`CONFIG_ZBOSS_TRACE_UART_LOGGING` - This option selects the UART serial backend.
+* :kconfig:option:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` - This option selects the USB CDC ACM serial backend.
 
    .. note::
       See :ref:`zephyr:usb_device_cdc_acm` for more information about how to configure USB CDC ACM instance for logging ZBOSS trace messages.
 
-* :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME` - This option specifies the serial device to use.
-* :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE` - This option specifies the size of the internal ring buffer.
+* :kconfig:option:`CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME` - This option specifies the serial device to use.
+* :kconfig:option:`CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE` - This option specifies the size of the internal ring buffer.
 
 Zigbee logger
 =============
@@ -135,8 +135,8 @@ Zigbee logger configuration options
 
 Use the following options to configure the Zigbee logger:
 
-* :kconfig:`CONFIG_ZBOSS_TRACE_HEXDUMP_LOGGING` - This option enables Logging ZBOSS Traces with Zigbee logger.
-* :kconfig:`CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE` - This option specifies size of internal ring buffer.
+* :kconfig:option:`CONFIG_ZBOSS_TRACE_HEXDUMP_LOGGING` - This option enables Logging ZBOSS Traces with Zigbee logger.
+* :kconfig:option:`CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE` - This option specifies size of internal ring buffer.
 
 API documentation
 *****************

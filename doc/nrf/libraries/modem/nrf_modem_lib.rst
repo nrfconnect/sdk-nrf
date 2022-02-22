@@ -24,14 +24,14 @@ The library wrapper eases the task of initializing the Modem library by automati
 For more information, see :ref:`partition_mgr_integration`.
 
 The library wrapper can also initialize the Modem library during system initialization using :c:macro:`SYS_INIT`.
-The :kconfig:`CONFIG_NRF_MODEM_LIB_SYS_INIT` Kconfig option can be used to control the initialization.
+The :kconfig:option:`CONFIG_NRF_MODEM_LIB_SYS_INIT` Kconfig option can be used to control the initialization.
 Some libraries in |NCS|, such as the :ref:`lte_lc_readme` have similar configuration options to initialize during system initialization and these options depend on the configuration option of the integration layer.
 If your application performs an update of the nRF9160 modem firmware, you must disable this functionality to have full control on the initialization of the library.
 
 The library wrapper also coordinates the shutdown operation among different parts of the application that use the Modem library.
 This is done by the :c:func:`nrf_modem_lib_shutdown` function call, by waking the sleeping threads when the modem is being shut down.
 
-When :kconfig:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` Kconfig option is enabled, the modem traces are enabled in the modem and are forwarded to the `Modem trace module`_.
+When :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` Kconfig option is enabled, the modem traces are enabled in the modem and are forwarded to the `Modem trace module`_.
 
 When using the Modem library in |NCS|, the library should be initialized and shutdown using the :c:func:`nrf_modem_lib_init` and :c:func:`nrf_modem_lib_shutdown` function calls, respectively.
 
@@ -47,7 +47,7 @@ Modem library socket API sets errnos as defined in :file:`nrf_errno.h`.
 The socket offloading support in the integration layer in |NCS| converts those errnos to the errnos that adhere to the selected C library implementation.
 
 The socket offloading functionality is enabled by default.
-To disable the functionality, set the :kconfig:`CONFIG_NET_SOCKETS_OFFLOAD` Kconfig option to ``n`` in your project configuration.
+To disable the functionality, set the :kconfig:option:`CONFIG_NET_SOCKETS_OFFLOAD` Kconfig option to ``n`` in your project configuration.
 If you disable the socket offloading functionality, the socket calls will no longer be offloaded to the nRF9160 modem firmware.
 Instead, the calls will be relayed to the native Zephyr TCP/IP implementation.
 This can be useful to switch between an emulator and a real device while running networking code on these devices.
@@ -70,8 +70,8 @@ The modem trace module is implemented in :file:`nrf/lib/nrf_modem_lib/nrf_modem_
 
 The module provides the functionality for starting, stopping, and forwarding of modem traces to a transport medium that can be set by enabling any one of the following Kconfig options:
 
-* :kconfig:`CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART` to send modem traces over UARTE1
-* :kconfig:`CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT` to send modem traces over SEGGER RTT
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART` to send modem traces over UARTE1
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT` to send modem traces over SEGGER RTT
 
 If the application wants the trace data, :c:func:`nrf_modem_lib_trace_init` must be called before :c:func:`nrf_modem_lib_init`.
 This is done automatically when using the OS Abstraction layer.
@@ -100,12 +100,12 @@ The RAM area that the Modem library shares with the nRF9160 modem core is divide
 
 The size of the RX, TX and the Trace regions can be configured by the following Kconfig options of the integration layer:
 
-* :kconfig:`CONFIG_NRF_MODEM_LIB_SHMEM_RX_SIZE` for the RX region
-* :kconfig:`CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE` for the TX region
-* :kconfig:`CONFIG_NRF_MODEM_LIB_SHMEM_TRACE_SIZE` for the Trace region
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_RX_SIZE` for the RX region
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE` for the TX region
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_TRACE_SIZE` for the Trace region
 
 The size of the Control region is fixed.
-The Modem library exports the size value through :kconfig:`CONFIG_NRF_MODEM_SHMEM_CTRL_SIZE`.
+The Modem library exports the size value through :kconfig:option:`CONFIG_NRF_MODEM_SHMEM_CTRL_SIZE`.
 This value is automatically passed by the integration layer to the library during the initialization through :c:func:`nrf_modem_lib_init`.
 
 When the application is built using CMake, the :ref:`partition_manager` automatically reads the Kconfig options of the integration layer.
@@ -132,10 +132,10 @@ Diagnostic functionality
 ************************
 
 The Modem library integration layer in |NCS| provides some diagnostic functionalities to log the allocations on the Modem library heap and the TX memory region.
-These functionalities can be turned on by the :kconfig:`CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC` and :kconfig:`CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC` options.
+These functionalities can be turned on by the :kconfig:option:`CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC` options.
 
 The contents of both the Modem library heap and the TX memory region can be examined through the :c:func:`nrf_modem_lib_heap_diagnose` and :c:func:`nrf_modem_lib_shm_tx_diagnose` functions, respectively.
-Additionally, it is possible to schedule a periodic report of the contents of these two areas of memory by using the :kconfig:`CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC` and :kconfig:`CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC` options, respectively.
+Additionally, it is possible to schedule a periodic report of the contents of these two areas of memory by using the :kconfig:option:`CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC` options, respectively.
 The report will be printed by a dedicated work queue that is distinct from the system work queue at configurable time intervals.
 
 API documentation

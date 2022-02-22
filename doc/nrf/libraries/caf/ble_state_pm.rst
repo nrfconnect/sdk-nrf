@@ -12,8 +12,8 @@ The |ble_state_pm| is a minor module that counts the number of active BluetoothÂ
 Configuration
 *************
 
-The module is enabled by selecting :kconfig:`CONFIG_CAF_BLE_STATE_PM`.
-It depends on :kconfig:`CONFIG_CAF_BLE_STATE` and :kconfig:`CONFIG_CAF_POWER_MANAGER`.
+The module is enabled by selecting :kconfig:option:`CONFIG_CAF_BLE_STATE_PM`.
+It depends on :kconfig:option:`CONFIG_CAF_BLE_STATE` and :kconfig:option:`CONFIG_CAF_POWER_MANAGER`.
 
 Implementation details
 **********************

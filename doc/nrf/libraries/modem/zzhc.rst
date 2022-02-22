@@ -38,28 +38,28 @@ Enabling the ZZHC library
 
 To enable the ZZHC library, edit the :file:`prj.conf` file according to the following steps:
 
-1. Set :kconfig:`CONFIG_ZZHC` to ``y``.
+1. Set :kconfig:option:`CONFIG_ZZHC` to ``y``.
    This option enables the ZZHC library and ensures that China Telecom can approve the end product.
    The following required options are automatically selected when the ZZHC library is enabled:
 
-   * :kconfig:`CONFIG_NRF_MODEM_LIB`
-   * :kconfig:`CONFIG_SETTINGS`
-   * :kconfig:`CONFIG_AT_CMD_PARSER`
-   * :kconfig:`CONFIG_BASE64`
-   * :kconfig:`CONFIG_JSON_LIBRARY`
+   * :kconfig:option:`CONFIG_NRF_MODEM_LIB`
+   * :kconfig:option:`CONFIG_SETTINGS`
+   * :kconfig:option:`CONFIG_AT_CMD_PARSER`
+   * :kconfig:option:`CONFIG_BASE64`
+   * :kconfig:option:`CONFIG_JSON_LIBRARY`
 
-#. Set :kconfig:`CONFIG_TRUSTED_EXECUTION_NONSECURE` to ``y``.
+#. Set :kconfig:option:`CONFIG_TRUSTED_EXECUTION_NONSECURE` to ``y``.
    This option enables the Trusted Execution: Non-Secure firmware image.
    The ZZHC library only works when this option is enabled.
-#. Set :kconfig:`CONFIG_HEAP_MEM_POOL_SIZE` to the minimum heap size required (2560 bytes): ``CONFIG_HEAP_MEM_POOL_SIZE=2560``.
-#. Set the following options required by :kconfig:`CONFIG_NRF_MODEM_LIB`:
+#. Set :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE` to the minimum heap size required (2560 bytes): ``CONFIG_HEAP_MEM_POOL_SIZE=2560``.
+#. Set the following options required by :kconfig:option:`CONFIG_NRF_MODEM_LIB`:
 
    * ``CONFIG_NETWORKING=y``
    * ``CONFIG_NET_NATIVE=n``
    * ``CONFIG_NET_SOCKETS=y``
    * ``CONFIG_NET_SOCKETS_OFFLOAD=y``
 
-#. Set the following options required by :kconfig:`CONFIG_SETTINGS`:
+#. Set the following options required by :kconfig:option:`CONFIG_SETTINGS`:
 
    * ``CONFIG_FLASH=y``
    * ``CONFIG_FLASH_PAGE_LAYOUT=y``
@@ -73,8 +73,8 @@ Configuring additional thread behavior
 
 You can configure the thread behavior using the following Kconfig options:
 
-* To adjust the stack size for the thread, change :kconfig:`CONFIG_ZZHC_STACK_SIZE`.
-* To adjust the thread priority, change :kconfig:`CONFIG_ZZHC_THREAD_PRIO`.
+* To adjust the stack size for the thread, change :kconfig:option:`CONFIG_ZZHC_STACK_SIZE`.
+* To adjust the thread priority, change :kconfig:option:`CONFIG_ZZHC_THREAD_PRIO`.
 
 Allowing for automatic registration to LTE-M or NB-IoT on boot
 --------------------------------------------------------------

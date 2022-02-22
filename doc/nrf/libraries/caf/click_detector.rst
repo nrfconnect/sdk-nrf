@@ -14,13 +14,13 @@ Configuration
 
 To use the module, you must enable the following Kconfig options:
 
-* :kconfig:`CONFIG_CAF_CLICK_DETECTOR` - This option enables the |click_detector|.
-* :kconfig:`CONFIG_CAF_BUTTON_EVENTS` - This option enables the ``button_event`` that is required for the |click_detector| to work.
+* :kconfig:option:`CONFIG_CAF_CLICK_DETECTOR` - This option enables the |click_detector|.
+* :kconfig:option:`CONFIG_CAF_BUTTON_EVENTS` - This option enables the ``button_event`` that is required for the |click_detector| to work.
 
-In addition to :kconfig:`CONFIG_CAF_CLICK_DETECTOR`, the following Kconfig options are available for the module:
+In addition to :kconfig:option:`CONFIG_CAF_CLICK_DETECTOR`, the following Kconfig options are available for the module:
 
-* :kconfig:`CONFIG_CAF_CLICK_DETECTOR_DEF_PATH`
-* :kconfig:`CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS`
+* :kconfig:option:`CONFIG_CAF_CLICK_DETECTOR_DEF_PATH`
+* :kconfig:option:`CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS`
 
 Adding module configuration file
 ================================
@@ -51,7 +51,7 @@ To do so, complete the following steps:
    .. note::
         The :c:macro:`KEY_ID` macro is defined in :file:`include/caf/key_id.h`.
 
-#. Specify the location of the file with the :kconfig:`CONFIG_CAF_CLICK_DETECTOR_DEF_PATH` Kconfig option.
+#. Specify the location of the file with the :kconfig:option:`CONFIG_CAF_CLICK_DETECTOR_DEF_PATH` Kconfig option.
 
 .. note::
    The configuration file should be included only by the configured module.
@@ -80,7 +80,7 @@ The exact values of time intervals for click types are defined in the :file:`sub
 Power management states
 =======================
 
-If the option :kconfig:`CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS` is enabled, the module can react to power management events.
+If the option :kconfig:option:`CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS` is enabled, the module can react to power management events.
 The module stops tracing of key states when ``power_down_event`` is received.
 The module starts operating again when ``wake_up_event`` is received.
 

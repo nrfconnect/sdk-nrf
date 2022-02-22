@@ -18,16 +18,16 @@ Configuration
 
 The following Kconfig options are required:
 
-* :kconfig:`CONFIG_CAF_SENSOR_MANAGER` - This option enables the |sensor_manager|.
-* :kconfig:`CONFIG_SENSOR` - This option enables Zephyr's :ref:`zephyr:sensor_api` driver, which is required for interacting with the sensors.
+* :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER` - This option enables the |sensor_manager|.
+* :kconfig:option:`CONFIG_SENSOR` - This option enables Zephyr's :ref:`zephyr:sensor_api` driver, which is required for interacting with the sensors.
 
 The following Kconfig options are also available for the module:
 
-* :kconfig:`CONFIG_CAF_SENSOR_MANAGER_DEF_PATH`
-* :kconfig:`CONFIG_CAF_SENSOR_MANAGER_THREAD_STACK_SIZE`
-* :kconfig:`CONFIG_CAF_SENSOR_MANAGER_THREAD_PRIORITY`
-* :kconfig:`CONFIG_CAF_SENSOR_MANAGER_PM`
-* :kconfig:`CONFIG_CAF_SENSOR_MANAGER_ACTIVE_PM`
+* :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_DEF_PATH`
+* :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_THREAD_STACK_SIZE`
+* :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_THREAD_PRIORITY`
+* :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_PM`
+* :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_ACTIVE_PM`
 
 To use the module, you must complete the following requirements:
 
@@ -35,7 +35,7 @@ To use the module, you must complete the following requirements:
 #. Add and enable the sensor in the Devicetree file.
    For example, in the :file:`BOARD.dts` file.
    For more information about adding sensor device to devicetree, refer to :ref:`zephyr:use-dt-overlays`.
-#. Enable the :kconfig:`CONFIG_CAF_SENSOR_MANAGER` and :kconfig:`CONFIG_SENSOR` Kconfig options.
+#. Enable the :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER` and :kconfig:option:`CONFIG_SENSOR` Kconfig options.
 #. Enable the sensor of your choice in Kconfig.
    Each sensor has its own set of Kconfig options.
 #. Add the configuration file that contains an array of :c:struct:`sm_sensor_config` for the sensor that you want to use in your application by completing the following steps:
@@ -79,7 +79,7 @@ To use the module, you must complete the following requirements:
                  },
          };
 
-   #. Specify the location of the file with the :kconfig:`CONFIG_CAF_SENSOR_MANAGER_DEF_PATH` Kconfig option.
+   #. Specify the location of the file with the :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_DEF_PATH` Kconfig option.
 
 .. note::
      |only_configured_module_note|
@@ -101,7 +101,7 @@ To use the sensor trigger, complete the following steps:
 
 1. Enable the sensor trigger option in the sensor-specific Kconfig file.
    The Kconfig option name is different for each sensor.
-   For example, for the LIS2DH accelerometer, set the :kconfig:`CONFIG_LIS2DH_TRIGGER_GLOBAL_THREAD` option to ``y``.
+   For example, for the LIS2DH accelerometer, set the :kconfig:option:`CONFIG_LIS2DH_TRIGGER_GLOBAL_THREAD` option to ``y``.
 #. Extend the module configuration file by adding :c:member:`sm_sensor_config.trigger` in an array of :c:struct:`sm_sensor_config`.
    :c:member:`sm_sensor_config.trigger` configures the sensor trigger with the following information:
 
@@ -168,7 +168,7 @@ See `Passive power management`_ for more information.
 
 The configuration scenario depends on whether you configured and enabled the sensor trigger:
 
-* If you :ref:`enabled the sensor trigger <caf_sensor_manager_configuring_trigger>` for your sensor, enable the :kconfig:`CONFIG_CAF_SENSOR_MANAGER_PM` Kconfig option to use passive power management.
+* If you :ref:`enabled the sensor trigger <caf_sensor_manager_configuring_trigger>` for your sensor, enable the :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_PM` Kconfig option to use passive power management.
 * If you did not enable the sensor trigger functionality, you need to manually configure passive power management.
 
 Manually configuring passive power management
@@ -176,7 +176,7 @@ Manually configuring passive power management
 
 To manually configure the passive power management functionality, complete the following steps:
 
-1. Enable :kconfig:`CONFIG_CAF_SENSOR_MANAGER_PM` Kconfig option.
+1. Enable :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_PM` Kconfig option.
 #. Extend the module configuration file of the sensor of your choice by adding :c:member:`sm_sensor_config.suspend` in an array of :c:struct:`sm_sensor_config`.
    For example, the extended configuration file for the LIS2DH accelerometer could look like follows:
 
@@ -209,7 +209,7 @@ The |sensor_manager| can create :c:struct:`power_manager_restrict_event` and :c:
 This functionality is called *active power management*.
 See `Active power management`_ for more information.
 
-To use the active power management in the |sensor_manager|, enable the :kconfig:`CONFIG_CAF_SENSOR_MANAGER_ACTIVE_PM` Kconfig option.
+To use the active power management in the |sensor_manager|, enable the :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_ACTIVE_PM` Kconfig option.
 
 Implementation details
 **********************
@@ -223,7 +223,7 @@ When started, it can do the following operations:
 
 The |sensor_manager| samples sensors periodically, according to the configuration specified for each sensor.
 Sampling of the sensors is done from a dedicated preemptive thread.
-You can change the thread priority by setting the :kconfig:`CONFIG_CAF_SENSOR_MANAGER_THREAD_PRIORITY` Kconfig option.
+You can change the thread priority by setting the :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_THREAD_PRIORITY` Kconfig option.
 Use the preemptive thread priority to make sure that the thread does not block other operations in the system.
 
 For each sensor, the |sensor_manager| limits the number of :c:struct:`sensor_event` events that it submits, but whose processing has not been completed.
@@ -234,7 +234,7 @@ A situation can occur that the ``active_sensor_events_cnt`` counter will already
 Because of this behavior, the maximum number of allocated sensor events for the given sensor is equal to :c:member:`sm_sensor_config.active_events_limit` plus one.
 
 The dedicated thread uses its own thread stack.
-You can change the size of the stack by setting the :kconfig:`CONFIG_CAF_SENSOR_MANAGER_THREAD_STACK_SIZE` Kconfig option.
+You can change the size of the stack by setting the :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_THREAD_STACK_SIZE` Kconfig option.
 The thread stack size must be big enough for the sensors used.
 
 Sensor state events
@@ -244,7 +244,7 @@ Each sensor can be in one of the following states:
 
 * :c:enumerator:`SENSOR_STATE_DISABLED` - Initial state.
 * :c:enumerator:`SENSOR_STATE_SLEEP` - Sensor sleeps and no sampling is performed.
-  Available if the sensor trigger is configured or :kconfig:`CONFIG_CAF_SENSOR_MANAGER_PM` is enabled.
+  Available if the sensor trigger is configured or :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_PM` is enabled.
 * :c:enumerator:`SENSOR_STATE_ACTIVE` - Sensor is actively sampling.
 * :c:enumerator:`SENSOR_STATE_ERROR` - Sensor error.
 
@@ -263,7 +263,7 @@ If one of the sensors reports an error, it does not stop the |sensor_manager| fr
 After the initialization, each sensor changes its state to :c:enumerator:`SENSOR_STATE_ACTIVE` and start periodic sampling.
 In case of an error sensor submits :c:struct:`sensor_state_event` with the :c:enumerator:`SENSOR_STATE_ERROR` state.
 
-If the trigger functionality or :kconfig:`CONFIG_CAF_SENSOR_MANAGER_PM` is enabled the sensor can be put into the :c:enumerator:`SENSOR_STATE_SLEEP` state.
+If the trigger functionality or :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_PM` is enabled the sensor can be put into the :c:enumerator:`SENSOR_STATE_SLEEP` state.
 In this state, the sensor is not actively sampling and is not reporting any :c:struct:`sensor_event`.
 If the sensor trigger fires or the :c:struct:`wake_up_event` comes, the sensor state changes to :c:enumerator:`SENSOR_STATE_ACTIVE` and periodic sampling is restarted.
 
@@ -281,7 +281,7 @@ The sensor trigger activation type can be of the following type:
 Passive power management
 ========================
 
-If the :kconfig:`CONFIG_CAF_SENSOR_MANAGER_PM` Kconfig option is enabled, the sensors react to :c:struct:`power_down_event` and :c:struct:`wake_up_event`.
+If the :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_PM` Kconfig option is enabled, the sensors react to :c:struct:`power_down_event` and :c:struct:`wake_up_event`.
 
 If a :c:struct:`power_down_event` comes when the sensor is in the :c:enumerator:`SENSOR_STATE_ACTIVE` state, the sensor state changes to :c:enumerator:`SENSOR_STATE_SLEEP` and sensor stops sampling.
 
@@ -303,7 +303,7 @@ Depending on the trigger functionality configuration:
 Active power management
 =======================
 
-If :kconfig:`CONFIG_CAF_SENSOR_MANAGER_ACTIVE_PM` is enabled, the sensor can submit :c:struct:`power_manager_restrict_event` and :c:struct:`wake_up_event`.
+If :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_ACTIVE_PM` is enabled, the sensor can submit :c:struct:`power_manager_restrict_event` and :c:struct:`wake_up_event`.
 
 A :c:struct:`power_manager_restrict_event` restricts a power level to which the application can be put.
 It is submitted every time the allowed state changes.

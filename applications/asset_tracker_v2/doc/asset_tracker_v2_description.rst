@@ -239,9 +239,9 @@ Optional library configurations
 
 You can add the following optional configurations to configure the heap or to provide additional information such as APN to the modem for registering with an LTE network:
 
-* :kconfig:`CONFIG_HEAP_MEM_POOL_SIZE` - Configures the size of the heap that is used by the application when encoding and sending data to the cloud. More information can be found in :ref:`memory_allocation`.
-* :kconfig:`CONFIG_PDN_DEFAULTS_OVERRIDE` - Used for manual configuration of the APN. Set the option to ``y`` to override the default PDP context configuration.
-* :kconfig:`CONFIG_PDN_DEFAULT_APN` - Used for manual configuration of the APN. An example is ``apn.example.com``.
+* :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE` - Configures the size of the heap that is used by the application when encoding and sending data to the cloud. More information can be found in :ref:`memory_allocation`.
+* :kconfig:option:`CONFIG_PDN_DEFAULTS_OVERRIDE` - Used for manual configuration of the APN. Set the option to ``y`` to override the default PDP context configuration.
+* :kconfig:option:`CONFIG_PDN_DEFAULT_APN` - Used for manual configuration of the APN. An example is ``apn.example.com``.
 
 Configuration files
 ===================
@@ -291,7 +291,7 @@ See :ref:`Building with overlays <building_with_overlays>` for information on ho
 .. external_antenna_note_start
 
 .. note::
-   When you build the application for the nRF9160 DK v0.15.0 and later, set the :kconfig:`CONFIG_GNSS_MODULE_ANTENNA_EXTERNAL` option to ``y`` to achieve the best external antenna performance.
+   When you build the application for the nRF9160 DK v0.15.0 and later, set the :kconfig:option:`CONFIG_GNSS_MODULE_ANTENNA_EXTERNAL` option to ``y`` to achieve the best external antenna performance.
 
 .. external_antenna_note_end
 
@@ -438,7 +438,7 @@ All module threads have the following identical properties by default:
 
 * Thread is initialized at boot.
 * Thread is preemptive.
-* Priority is set to the lowest application priority in the system, which is done by setting :kconfig:`CONFIG_NUM_PREEMPT_PRIORITIES` to ``1``.
+* Priority is set to the lowest application priority in the system, which is done by setting :kconfig:option:`CONFIG_NUM_PREEMPT_PRIORITIES` to ``1``.
 * Thread is started instantly after it is initialized in the boot sequence.
 
 Following is the basic structure for all the threads:
@@ -486,7 +486,7 @@ Following are some features that rely on dynamically allocated memory, using the
 * Event manager events
 * Encoding of the data that will be sent to cloud
 
-You can configure the heap memory by using the :kconfig:`CONFIG_HEAP_MEM_POOL_SIZE`.
+You can configure the heap memory by using the :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE`.
 The data management module that encodes data destined for cloud is the biggest consumer of heap memory.
 Therefore, when adjusting buffer sizes in the data management module, you must also adjust the heap accordingly.
 This avoids the problem of running out of heap memory in worst-case scenarios.

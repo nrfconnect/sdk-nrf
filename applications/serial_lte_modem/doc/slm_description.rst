@@ -338,7 +338,7 @@ Connecting with an external MCU
 If you run your user application on an external MCU (for example, an nRF52 Series development kit), you can control the modem on nRF9160 directly from the application.
 See the `nRF52 client for Serial LTE Modem application`_ repository for a sample implementation of such an application.
 
-To connect with an external MCU, set the :kconfig:`CONFIG_UART_2_NRF_HW_ASYNC_TIMER` and :ref:`CONFIG_SLM_CONNECT_UART_2 <CONFIG_SLM_CONNECT_UART_2>` configuration options in the Serial LTE Modem application configuration.
+To connect with an external MCU, set the :kconfig:option:`CONFIG_UART_2_NRF_HW_ASYNC_TIMER` and :ref:`CONFIG_SLM_CONNECT_UART_2 <CONFIG_SLM_CONNECT_UART_2>` configuration options in the Serial LTE Modem application configuration.
 
 The following table shows how to connect an nRF52 Series development kit to the nRF9160 DK to be able to communicate through UART:
 

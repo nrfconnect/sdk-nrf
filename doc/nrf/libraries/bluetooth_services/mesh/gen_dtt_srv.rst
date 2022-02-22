@@ -16,10 +16,10 @@ Configuration
 
 The following configuration parameters are associated with the Generic DTT Server model:
 
-* :kconfig:`CONFIG_BT_MESH_DTT_SRV_PERSISTENT` - Control whether changes to the Generic Default Transition Time are stored persistently.
+* :kconfig:option:`CONFIG_BT_MESH_DTT_SRV_PERSISTENT` - Control whether changes to the Generic Default Transition Time are stored persistently.
 
   .. note::
-    This option is only available if :kconfig:`CONFIG_BT_SETTINGS` is enabled.
+    This option is only available if :kconfig:option:`CONFIG_BT_SETTINGS` is enabled.
 
 States
 ======
@@ -58,7 +58,7 @@ None.
 Persistent storage
 ==================
 
-The Generic Default Transition Time is stored persistently if :kconfig:`CONFIG_BT_MESH_DTT_SRV_PERSISTENT` is enabled.
+The Generic Default Transition Time is stored persistently if :kconfig:option:`CONFIG_BT_MESH_DTT_SRV_PERSISTENT` is enabled.
 
 API documentation
 =================

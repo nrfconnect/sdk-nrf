@@ -45,7 +45,7 @@ You then must submit the first ``module_state_event``, because CAF modules are i
 
 complete the following steps:
 
-1. Enable :kconfig:`CONFIG_CAF` Kconfig option in your project configuration file.
+1. Enable :kconfig:option:`CONFIG_CAF` Kconfig option in your project configuration file.
 #. Enable and initialize Event Manager.
    See :ref:`event_manager_configuration` for more details.
 #. Submit the first :c:struct:`module_state_event`:

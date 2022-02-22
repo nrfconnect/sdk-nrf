@@ -100,7 +100,7 @@ The OpenAMP library uses the IPM SHIM layer, which in turn uses the IPC driver i
 
 .. |note| replace:: The following instructions are for the application core.
    To upgrade the firmware on the network core, perform the steps for FOTA upgrade described below, replacing :file:`app_update.bin`, which is the file used when upgrading firmware on the application core, with :file:`net_core_app_update.bin`.
-   In addition, ensure that :kconfig:`CONFIG_PCD_APP` is enabled for the MCUboot child image.
+   In addition, ensure that :kconfig:option:`CONFIG_PCD_APP` is enabled for the MCUboot child image.
    For more details, see :ref:`nc_bootloader`.
 
 Protocols and use cases
@@ -243,13 +243,13 @@ Direct use of the radio peripheral
 Samples that directly use the radio peripheral can run on the network core of the nRF5340.
 They do not require any functionality from the application core.
 
-However, on nRF5340, the application core is responsible for starting the network core and connecting its GPIO pins (see :kconfig:`CONFIG_BOARD_ENABLE_CPUNET` and the code in :file:`zephyr/boards/arm/nrf5340dk_nrf5340/nrf5340_cpunet_reset.c`).
+However, on nRF5340, the application core is responsible for starting the network core and connecting its GPIO pins (see :kconfig:option:`CONFIG_BOARD_ENABLE_CPUNET` and the code in :file:`zephyr/boards/arm/nrf5340dk_nrf5340/nrf5340_cpunet_reset.c`).
 Therefore, you must always program the application core, even if the firmware is supposed to run only on the network core.
 
 You can use the :ref:`nrf5340_empty_app_core` sample for this purpose.
 Configure the network core application to automatically include this sample as a child image.
 This is the default configuration for the listed network core samples.
-For more information, see :kconfig:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE` and :ref:`ug_nrf5340_multi_image`.
+For more information, see :kconfig:option:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE` and :ref:`ug_nrf5340_multi_image`.
 
 
 No radio communication
@@ -273,7 +273,7 @@ Samples that do not need radio communication can run on the application core of 
 They do not require any firmware on the network core.
 Therefore, the network core can remain empty.
 
-If you want to enable the network core anyway, set the :kconfig:`CONFIG_BOARD_ENABLE_CPUNET` option in the image for the application core.
+If you want to enable the network core anyway, set the :kconfig:option:`CONFIG_BOARD_ENABLE_CPUNET` option in the image for the application core.
 
 .. _ug_nrf5340_multi_image:
 
@@ -299,9 +299,9 @@ For other samples, the images are built separately.
 
 The build configuration depends on the following Kconfig options that must be set in the configuration of the parent image:
 
-* :kconfig:`CONFIG_BT_RPMSG_NRF53` - set to ``y`` in all Bluetooth LE samples for the application core
-* :kconfig:`CONFIG_NRF_802154_SER_HOST` - set to ``y`` in all Thread, Zigbee, and Matter samples for the application core
-* :kconfig:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE` - set to ``y`` in all network core samples that require the :ref:`nrf5340_empty_app_core` sample
+* :kconfig:option:`CONFIG_BT_RPMSG_NRF53` - set to ``y`` in all Bluetooth LE samples for the application core
+* :kconfig:option:`CONFIG_NRF_802154_SER_HOST` - set to ``y`` in all Thread, Zigbee, and Matter samples for the application core
+* :kconfig:option:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE` - set to ``y`` in all network core samples that require the :ref:`nrf5340_empty_app_core` sample
 
 The combination of these options determines which (if any) sample is included in the build of the parent image:
 
@@ -311,16 +311,16 @@ The combination of these options determines which (if any) sample is included in
    * - Enabled options
      - Child image sample for the network core
      - Child image sample for the application core
-   * - :kconfig:`CONFIG_BT_RPMSG_NRF53`
+   * - :kconfig:option:`CONFIG_BT_RPMSG_NRF53`
      - :ref:`zephyr:bluetooth-hci-rpmsg-sample`
      - ---
-   * - :kconfig:`CONFIG_NRF_802154_SER_HOST`
+   * - :kconfig:option:`CONFIG_NRF_802154_SER_HOST`
      - :ref:`zephyr:nrf-ieee802154-rpmsg-sample`
      - ---
-   * - :kconfig:`CONFIG_BT_RPMSG_NRF53` and :kconfig:`CONFIG_NRF_802154_SER_HOST`
+   * - :kconfig:option:`CONFIG_BT_RPMSG_NRF53` and :kconfig:option:`CONFIG_NRF_802154_SER_HOST`
      - :ref:`multiprotocol-rpmsg-sample`
      - ---
-   * - :kconfig:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE`
+   * - :kconfig:option:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE`
      - ---
      - :ref:`nrf5340_empty_app_core`
 
@@ -603,26 +603,26 @@ It allows the updating of both the application core and the network core in one 
 
 To enable the simultaneous update of multiple images in the MCUboot, set the following options:
 
-* :kconfig:`CONFIG_BOOT_UPGRADE_ONLY` - The simultaneous update of multiple images does not support network core image reversion, so you need to disable application image reversion.
-* :kconfig:`CONFIG_PCD_APP` - Enable commands exchange with the network core.
-* :kconfig:`CONFIG_UPDATEABLE_IMAGE_NUMBER` - Enable support for multiple update partitions by setting this option to ``2``.
+* :kconfig:option:`CONFIG_BOOT_UPGRADE_ONLY` - The simultaneous update of multiple images does not support network core image reversion, so you need to disable application image reversion.
+* :kconfig:option:`CONFIG_PCD_APP` - Enable commands exchange with the network core.
+* :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER` - Enable support for multiple update partitions by setting this option to ``2``.
 
 To enable the simultaneous update of multiple images in the application, in addition to enabling the MCUboot support, set the following options:
 
-* :kconfig:`CONFIG_UPDATEABLE_IMAGE_NUMBER` - Enable support for multiple update partitions by setting this option to ``2``.
+* :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER` - Enable support for multiple update partitions by setting this option to ``2``.
 
 Additionally, the memory partitions must be defined and include:
 
 * ``mcuboot_primary`` and ``mcuboot_secondary`` partitions for the application core image slots.
 * ``mcuboot_primary_1`` and ``mcuboot_secondary_1`` partitions for the network core image slots.
-* ``pcd_sram`` partition used for command exchange between the application core and the network core (see :kconfig:`CONFIG_PCD_APP`).
+* ``pcd_sram`` partition used for command exchange between the application core and the network core (see :kconfig:option:`CONFIG_PCD_APP`).
 
 .. note::
 
    The application core does not have direct access to the network core flash memory.
    The update image is passed indirectly using RAM.
    Because of this, the ``mcuboot_primary_1`` must be stored in ``ram_flash`` region.
-   To enable providing such region on the device, see :kconfig:`CONFIG_FLASH_SIMULATOR`.
+   To enable providing such region on the device, see :kconfig:option:`CONFIG_FLASH_SIMULATOR`.
 
 Samples and applications built for Thingy:53 enable simultaneous update of multiple images by default.
 To learn more about Thingy:53, see :ref:`ug_thingy53`.

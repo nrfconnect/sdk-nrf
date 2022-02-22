@@ -96,7 +96,7 @@ When in this state, the following transitions are possible:
 * Start peer erase with :c:enumerator:`PEER_OPERATION_ERASE` by triggering a ``click_event`` with the ``CLICK_LONG`` click type.
 * Start erase advertising with :c:enumerator:`PEER_OPERATION_ERASE_ADV` by triggering a ``click_event`` with the ``ON_START_CLICK(CLICK_LONG)`` click type.
 * Select next peer with :c:enumerator:`PEER_OPERATION_SELECT` by triggering a ``click_event`` with the ``CLICK_SHORT`` click type.
-* Select the dongle peer with :c:enumerator:`PEER_OPERATION_SELECTED` by triggering a ``selector_event`` with the selector in the :kconfig:`CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS` position.
+* Select the dongle peer with :c:enumerator:`PEER_OPERATION_SELECTED` by triggering a ``selector_event`` with the selector in the :kconfig:option:`CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS` position.
 
 It is also possible to trigger looking for a new peer with :c:enumerator:`PEER_OPERATION_SCAN_REQUEST` with a ``click_event`` of the ``CLICK_SHORT`` click type.
 
@@ -131,7 +131,7 @@ The application local identity still uses the Bluetooth local identity that was 
    The erase advertising timeout can be extended in case a new peer connects.
    This ensures that a new peer will have time to establish the Bluetooth security level.
 
-   The timeout is increased to a bigger value when the passkey authentication is enabled (:kconfig:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY`).
+   The timeout is increased to a bigger value when the passkey authentication is enabled (:kconfig:option:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY`).
    This gives the end user enough time to enter the passkey.
 
 Peer selection (:c:enumerator:`STATE_SELECT_PEER`)
@@ -145,7 +145,7 @@ Dongle states
 
 The module can go into one of the following dongle states:
 
-* :c:enumerator:`STATE_DONGLE` - This is the default state of the module when the hardware selector used to select the dongle peer is placed in the :kconfig:`CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS` position.
+* :c:enumerator:`STATE_DONGLE` - This is the default state of the module when the hardware selector used to select the dongle peer is placed in the :kconfig:option:`CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS` position.
   This state is used for connection with the nRF Desktop dongle.
 * :c:enumerator:`STATE_DONGLE_STANDBY` - The Bluetooth LE bond module is suspended when the dongle peer is selected.
   See :ref:`ble_bond_standby_states`.
@@ -183,7 +183,7 @@ Configuration
 *************
 
 The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-Set the :kconfig:`CONFIG_DESKTOP_BLE_BOND_ENABLE` option to enable the module.
+Set the :kconfig:option:`CONFIG_DESKTOP_BLE_BOND_ENABLE` option to enable the module.
 
 You can control the connected peers using the following methods:
 
@@ -199,19 +199,19 @@ Peer control using a button
 
 Complete the following steps to let the user control Bluetooth peers using the dedicated button:
 
-1. Set the :kconfig:`CONFIG_DESKTOP_BLE_PEER_CONTROL` option to enable the feature.
+1. Set the :kconfig:option:`CONFIG_DESKTOP_BLE_PEER_CONTROL` option to enable the feature.
 #. Configure the :ref:`caf_buttons`.
-#. Define the button's key ID as :kconfig:`CONFIG_DESKTOP_BLE_PEER_CONTROL_BUTTON`.
+#. Define the button's key ID as :kconfig:option:`CONFIG_DESKTOP_BLE_PEER_CONTROL_BUTTON`.
 #. Add the button to the :ref:`nrf_desktop_click_detector` configuration, because the |ble_bond| reacts on ``click_event``.
 
 The following peer operations can be enabled:
 
-* :kconfig:`CONFIG_DESKTOP_BLE_PEER_ERASE` - Bluetooth LE peer erase triggered at any time.
-* :kconfig:`CONFIG_DESKTOP_BLE_PEER_ERASE_ON_START` - Erase advertising triggered by long press of the predefined button on system start.
+* :kconfig:option:`CONFIG_DESKTOP_BLE_PEER_ERASE` - Bluetooth LE peer erase triggered at any time.
+* :kconfig:option:`CONFIG_DESKTOP_BLE_PEER_ERASE_ON_START` - Erase advertising triggered by long press of the predefined button on system start.
   This option can be used only by nRF Desktop peripheral.
-* :kconfig:`CONFIG_DESKTOP_BLE_PEER_SELECT` - Select Bluetooth LE peer.
+* :kconfig:option:`CONFIG_DESKTOP_BLE_PEER_SELECT` - Select Bluetooth LE peer.
   This option can be used only by nRF Desktop peripheral.
-* :kconfig:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST` - Scan for new Bluetooth peers.
+* :kconfig:option:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST` - Scan for new Bluetooth peers.
   This option can be used only by nRF Desktop central.
 
 Peer control using a hardware selector
@@ -220,7 +220,7 @@ Peer control using a hardware selector
 .. note::
     This feature can be used only by nRF Desktop peripheral devices.
 
-Set the :kconfig:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE` option to use the dedicated local identity to connect with the dongle.
+Set the :kconfig:option:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE` option to use the dedicated local identity to connect with the dongle.
 The last application local identity (the one with the highest ID) is used for this purpose.
 
 The dongle is the nRF Desktop central.
@@ -230,8 +230,8 @@ This local identity is meant to be paired with the dongle during the production 
 The dongle peer is selected using the :ref:`nrf_desktop_selector`.
 You must also define the following parameters of the selector used to switch between dongle peer and other Bluetooth LE peers:
 
-* :kconfig:`CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_ID` - Selector ID.
-* :kconfig:`CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS` - Selector position for the dongle peer (when selector is in other position, other Bluetooth peers are selected).
+* :kconfig:option:`CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_ID` - Selector ID.
+* :kconfig:option:`CONFIG_DESKTOP_BLE_DONGLE_PEER_SELECTOR_POS` - Selector position for the dongle peer (when selector is in other position, other Bluetooth peers are selected).
 
 .. note::
     The Bluetooth local identity used for the dongle peer does not provide any special capabilities.
@@ -244,7 +244,7 @@ Default Bluetooth local identity on peripheral
 ==============================================
 
 By default, the default Bluetooth local identity is unused, because it cannot be reset.
-You can set :kconfig:`CONFIG_DESKTOP_BLE_USE_DEFAULT_ID` to make the nRF Desktop peripheral initially use the default Bluetooth local identity for the application local identity with ID ``0``.
+You can set :kconfig:option:`CONFIG_DESKTOP_BLE_USE_DEFAULT_ID` to make the nRF Desktop peripheral initially use the default Bluetooth local identity for the application local identity with ID ``0``.
 After the successful erase advertising for application local identity with ID ``0``, the default Bluetooth local identity is switched out and it is no longer used.
 The peer bonded with the default Bluetooth local identity is unpaired.
 
@@ -256,8 +256,8 @@ Erasing dongle peers
 
 To enable erasing dongle peer you have to enable the following options:
 
-* :kconfig:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_BUTTON` - If you want to enable erasing peers using buttons.
-* :kconfig:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_CONF_CHANNEL` - If you want to enable erasing peers using `Configuration channel options`_.
+* :kconfig:option:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_BUTTON` - If you want to enable erasing peers using buttons.
+* :kconfig:option:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_CONF_CHANNEL` - If you want to enable erasing peers using `Configuration channel options`_.
 
 Configuration channel options
 *****************************

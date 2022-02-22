@@ -47,16 +47,16 @@ Additional configuration
 
 Check and configure the following mandatory library options that are used by the sample:
 
-* :kconfig:`CONFIG_SMS`
-* :kconfig:`CONFIG_NRF_MODEM_LIB`
+* :kconfig:option:`CONFIG_SMS`
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB`
 
 Check and configure the following optional library options that are used by the sample:
 
-* :kconfig:`CONFIG_SMS_SUBSCRIBERS_MAX_CNT`
-* :kconfig:`CONFIG_LTE_AUTO_INIT_AND_CONNECT`
-* :kconfig:`CONFIG_LOG`
-* :kconfig:`CONFIG_ASSERT`
-* :kconfig:`CONFIG_ASSERT_VERBOSE`
+* :kconfig:option:`CONFIG_SMS_SUBSCRIBERS_MAX_CNT`
+* :kconfig:option:`CONFIG_LTE_AUTO_INIT_AND_CONNECT`
+* :kconfig:option:`CONFIG_LOG`
+* :kconfig:option:`CONFIG_ASSERT`
+* :kconfig:option:`CONFIG_ASSERT_VERBOSE`
 
 Building and running
 ********************

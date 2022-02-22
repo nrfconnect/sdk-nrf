@@ -26,7 +26,7 @@ The library supports the following location services:
 *  `Skyhook Precision Location`_
 *  `Polte Location API`_
 
-The data transport method for the request to the service is mainly REST. However, either MQTT (:kconfig:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:`CONFIG_NRF_CLOUD_REST`) can be configured for `nRF Cloud Location Services`_.
+The data transport method for the request to the service is mainly REST. However, either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`) can be configured for `nRF Cloud Location Services`_.
 
 To use the location services, see the respective documentation for account setup and for getting the required credentials for authentication.
 
@@ -55,45 +55,45 @@ The library has an API to handle provisioning of the required TLS certificates f
 Configuration
 *************
 
-To use the multicell location library, enable the :kconfig:`CONFIG_MULTICELL_LOCATION` Kconfig option.
+To use the multicell location library, enable the :kconfig:option:`CONFIG_MULTICELL_LOCATION` Kconfig option.
 
 Select nRF Cloud, HERE, Skyhook and Polte location services using at least one of the following sets of options and configure corresponding authentication parameters:
 
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE` and :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY` (see below other authentication options)
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK` and :kconfig:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_POLTE` and :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_CUSTOMER_ID` and :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_API_TOKEN`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY` (see below other authentication options)
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_POLTE` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_CUSTOMER_ID` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_API_TOKEN`
 
 API key is used for HERE, Skyhook and Polte (needs also customer ID) as default authentication method.
 A JSON Web Token (JWT) signed by the device's private key is used for nRF Cloud.
 
 The following options offer different version and authentication method for HERE location service:
 
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_V1`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_V2`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_USE_API_KEY`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_USE_APP_CODE_ID`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_APP_CODE`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_APP_ID`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_V1`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_V2`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_USE_API_KEY`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_USE_APP_CODE_ID`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_APP_CODE`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_APP_ID`
 
 The following options control the transport method used with `nRF Cloud`_:
 
-* :kconfig:`CONFIG_NRF_CLOUD_REST` - Uses REST APIs to communicate with `nRF Cloud`_ if :kconfig:`CONFIG_NRF_CLOUD_MQTT` is not set.
-* :kconfig:`CONFIG_NRF_CLOUD_MQTT` - Uses MQTT transport to communicate with `nRF Cloud`_.
+* :kconfig:option:`CONFIG_NRF_CLOUD_REST` - Uses REST APIs to communicate with `nRF Cloud`_ if :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` is not set.
+* :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` - Uses MQTT transport to communicate with `nRF Cloud`_.
 
 Following are the options that can usually have default values:
 
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_HTTPS_PORT`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_HOSTNAME`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_TLS_SEC_TAG`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_SKYHOOK_HTTPS_PORT`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_SKYHOOK_HOSTNAME`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_SKYHOOK_TLS_SEC_TAG`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_HTTPS_PORT`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_HOSTNAME`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_TLS_SEC_TAG`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS`
-*  :kconfig:`CONFIG_MULTICELL_LOCATION_RECV_BUF_SIZE`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_HTTPS_PORT`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_HOSTNAME`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_TLS_SEC_TAG`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_SKYHOOK_HTTPS_PORT`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_SKYHOOK_HOSTNAME`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_SKYHOOK_TLS_SEC_TAG`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_HTTPS_PORT`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_HOSTNAME`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_TLS_SEC_TAG`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS`
+*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_RECV_BUF_SIZE`
 
 Other relevant options for configuring location retrieval can be found from :ref:`lib_nrf_cloud_rest` and :ref:`lib_rest_client`.
 

@@ -69,19 +69,19 @@ Asset tracker
 
 .. rst-class:: v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
-NCSDK-6898: Setting :kconfig:`CONFIG_SECURE_BOOT` does not work
+NCSDK-6898: Setting :kconfig:option:`CONFIG_SECURE_BOOT` does not work
   The immutable bootloader is not able to find the required metadata in the MCUboot image.
   See the related NCSDK-6898 known issue in `Build system`_ for more details.
 
-  **Workaround:** Set :kconfig:`CONFIG_FW_INFO` in MCUboot.
+  **Workaround:** Set :kconfig:option:`CONFIG_FW_INFO` in MCUboot.
 
 .. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 External antenna performance setting
   The preprogrammed Asset Tracker does not come with the best external antenna performance.
 
-  **Workaround:** If you are using nRF9160 DK v0.15.0 or higher and Thingy:91 v1.4.0 or higher, set :kconfig:`CONFIG_NRF9160_GPS_ANTENNA_EXTERNAL` to ``y``.
-  Alternatively, for nRF9160 DK v0.15.0, you can set the :kconfig:`CONFIG_NRF9160_GPS_COEX0_STRING` option to ``AT%XCOEX0`` when building the preprogrammed Asset Tracker to achieve the best external antenna performance.
+  **Workaround:** If you are using nRF9160 DK v0.15.0 or higher and Thingy:91 v1.4.0 or higher, set :kconfig:option:`CONFIG_NRF9160_GPS_ANTENNA_EXTERNAL` to ``y``.
+  Alternatively, for nRF9160 DK v0.15.0, you can set the :kconfig:option:`CONFIG_NRF9160_GPS_COEX0_STRING` option to ``AT%XCOEX0`` when building the preprogrammed Asset Tracker to achieve the best external antenna performance.
 
 .. rst-class:: v1-3-2 v1-3-1 v1-3-0
 
@@ -91,7 +91,7 @@ NCSDK-5574: Warnings during FOTA
 .. rst-class:: v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
 
 NCSDK-6689: High current consumption in Asset Tracker
-  The nRF9160: Asset Tracker might show up to 2.5 mA current consumption in idle mode with :kconfig:`CONFIG_POWER_OPTIMIZATION_ENABLE` set to ``y``.
+  The nRF9160: Asset Tracker might show up to 2.5 mA current consumption in idle mode with :kconfig:option:`CONFIG_POWER_OPTIMIZATION_ENABLE` set to ``y``.
 
 .. rst-class:: v1-0-0 v0-4-0 v0-3-0
 
@@ -136,7 +136,7 @@ NCSDK-12912: LwM2M carrier library does not recover if initial network connectio
   When the device is switched on, if :cpp:func:`lte_lc_connect()` returns an error at timeout, it will cause :cpp:func:`lwm2m_carrier_init()` to fail.
   Thus, the device will fail to connect to carrier device management servers.
 
-  **Workaround**: Increase :kconfig:`CONFIG_LTE_NETWORK_TIMEOUT` to allow :ref:`lte_lc_readme` more time to successfully connect.
+  **Workaround**: Increase :kconfig:option:`CONFIG_LTE_NETWORK_TIMEOUT` to allow :ref:`lte_lc_readme` more time to successfully connect.
 
 .. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-3-1 v1-2-1 v1-2-0
 
@@ -163,7 +163,7 @@ NCSDK-13106: When replacing a Verizon SIM card, the LwM2M carrier library does n
 
   **Workaround**: Use one of the following workarounds:
 
-  * Use the :kconfig:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_PSK` and :kconfig:`CONFIG_LWM2M_CARRIER_CUSTOM_PSK` configuration options to set the appropriate PSK needed for Verizon test or live servers.
+  * Use the :kconfig:option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_PSK` and :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_PSK` configuration options to set the appropriate PSK needed for Verizon test or live servers.
     This PSK can be obtain from the carrier.
   * After inserting a new SIM card, reboot the device again.
 
@@ -293,10 +293,10 @@ NCSDK-11432: DFU: Erasing secondary slot returns error response
 .. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-9786: Wrong FLASH_PAGE_ERASE_MAX_TIME_US for the nRF53 network core
-  ``FLASH_PAGE_ERASE_MAX_TIME_US`` defines the execution window duration when doing the flash operation synchronously along the radio operations (:kconfig:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` not enabled).
+  ``FLASH_PAGE_ERASE_MAX_TIME_US`` defines the execution window duration when doing the flash operation synchronously along the radio operations (:kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` not enabled).
 
   The ``FLASH_PAGE_ERASE_MAX_TIME_US`` value of the nRF53 network core is lower than required.
-  For this reason, if :kconfig:`CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL` is set to ``y`` and :kconfig:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` is set to ``n``, a flash erase operation on the nRF5340 network core will result in an MPSL timeslot OVERSTAYED assert.
+  For this reason, if :kconfig:option:`CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL` is set to ``y`` and :kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` is set to ``n``, a flash erase operation on the nRF5340 network core will result in an MPSL timeslot OVERSTAYED assert.
 
   **Workaround:** Increase ``FLASH_PAGE_ERASE_MAX_TIME_US`` (defined in :file:`ncs/zephyr/soc/arm/nordic_nrf/nrf53/soc.h`) from 44850UL to 89700UL (the same value as for the application core).
 
@@ -382,7 +382,7 @@ KRKNWK-10633: Incorrect data when using ACK-based Probing with Link Metrics
 
 KRKNWK-10467: Security issues for retransmitted frames with Thread 1.2
   The Thread 1.2 current implementation does not guarantee that all retransmitted frames will be secured when using the transmission security capabilities of the radio driver.
-  For this reason, OpenThread retransmissions are disabled by default when the :kconfig:`CONFIG_NRF_802154_ENCRYPTION` Kconfig option is enabled.
+  For this reason, OpenThread retransmissions are disabled by default when the :kconfig:option:`CONFIG_NRF_802154_ENCRYPTION` Kconfig option is enabled.
   You can enable the retransmissions at your own risk.
 
 .. rst-class:: v1-6-1 v1-6-0
@@ -418,10 +418,10 @@ KRKNWK-7885: Throughput is lower when using CC310 nrf_security backend
 
   **Workaround:** Use AES-CCM ciphers from the nrf_oberon backend by setting the following options:
 
-  * :kconfig:`CONFIG_OBERON_BACKEND` to ``y``
-  * :kconfig:`CONFIG_OBERON_MBEDTLS_AES_C` to ``y``
-  * :kconfig:`CONFIG_OBERON_MBEDTLS_CCM_C` to ``y``
-  * :kconfig:`CONFIG_CC3XX_MBEDTLS_AES_C` to ``n``
+  * :kconfig:option:`CONFIG_OBERON_BACKEND` to ``y``
+  * :kconfig:option:`CONFIG_OBERON_MBEDTLS_AES_C` to ``y``
+  * :kconfig:option:`CONFIG_OBERON_MBEDTLS_CCM_C` to ``y``
+  * :kconfig:option:`CONFIG_CC3XX_MBEDTLS_AES_C` to ``n``
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
@@ -434,7 +434,7 @@ KRKNWK-7721: MAC counter updating issue
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-7962: Logging interferes with shell output
-  :kconfig:`CONFIG_LOG_MODE_MINIMAL` is configured by default for most OpenThread samples.
+  :kconfig:option:`CONFIG_LOG_MODE_MINIMAL` is configured by default for most OpenThread samples.
   It accesses the UART independently from the shell backend, which sometimes leads to malformed output.
 
   **Workaround:** Disable logging or enable a more advanced logging option.
@@ -919,7 +919,7 @@ DESK-978: Directed advertising issues with SoftDevice Link Layer
   For more detailed information, see the ``Known issues and limitations`` section of the SoftDevice Controller's :ref:`nrfxlib:softdevice_controller_changelog`.
 
   .. note::
-     The Kconfig option name changed from ``CONFIG_DESKTOP_BLE_DIRECT_ADV`` to :kconfig:`CONFIG_CAF_BLE_ADV_DIRECT_ADV` beginning with the |NCS| v1.5.99.
+     The Kconfig option name changed from ``CONFIG_DESKTOP_BLE_DIRECT_ADV`` to :kconfig:option:`CONFIG_CAF_BLE_ADV_DIRECT_ADV` beginning with the |NCS| v1.5.99.
 
   **Workaround:** Directed advertising is disabled by default for nRF Desktop.
 
@@ -954,7 +954,7 @@ Pelion
 .. rst-class:: v1-6-1 v1-6-0
 
 NCSDK-10196: DFU fails for some configurations with the quick session resume feature enabled
-  Enabling :kconfig:`CONFIG_PELION_QUICK_SESSION_RESUME` together with the OpenThread network backend leads to the quick session resume failure during the DFU packet exchange.
+  Enabling :kconfig:option:`CONFIG_PELION_QUICK_SESSION_RESUME` together with the OpenThread network backend leads to the quick session resume failure during the DFU packet exchange.
   This is valid for the :ref:`nRF52840 DK <ug_nrf52>` and the :ref:`nRF5340 DK <ug_nrf5340>`.
 
   **Workaround:** Use the quick session resume feature only for configurations with the cellular network backend.
@@ -973,7 +973,7 @@ NCSDK-13247: Sensor manager dereferences NULL pointer on wake up for sensors wit
 .. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
 NCSDK-13058: Directed advertising does not work
-  The directed advertising feature enabled with the :kconfig:`CONFIG_CAF_BLE_ADV_DIRECT_ADV` option does not work as intended.
+  The directed advertising feature enabled with the :kconfig:option:`CONFIG_CAF_BLE_ADV_DIRECT_ADV` option does not work as intended.
   Using directed advertising towards peers that enable privacy may result in connection establishing problems.
 
   **Workaround** Manually cherry-pick and apply commit with fix from main (commit hash: ``c61c677872943bcf7905ddeec8b24b07ae50752e``).
@@ -1006,7 +1006,7 @@ NCSDK-9820: Notification mismatch in :ref:`peripheral_lbs`
 NCSDK-9106: Bluetooth® ECC thread stack size too small
   The Bluetooth ECC thread used during the pairing procedure with LE Secure Connections might overflow when an interrupt is triggered when the stack usage is at its maximum.
 
-  **Workaround:** Increase the ECC stack size by setting :kconfig:`CONFIG_BT_HCI_ECC_STACK_SIZE` to ``1140``.
+  **Workaround:** Increase the ECC stack size by setting :kconfig:option:`CONFIG_BT_HCI_ECC_STACK_SIZE` to ``1140``.
 
 .. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
@@ -1044,7 +1044,7 @@ NCSDK-8223: GATT requests might deadlock RX thread
   This causes a deadlock because only the RX thread releases the TX buffers for the GATT requests.
   The deadlock is resolved by a 30 second timeout, but the ATT bearer cannot transmit without reconnecting.
 
-  **Workaround:** Set :kconfig:`CONFIG_BT_L2CAP_TX_BUF_COUNT` >= ``CONFIG_BT_ATT_TX_MAX`` + 2.
+  **Workaround:** Set :kconfig:option:`CONFIG_BT_L2CAP_TX_BUF_COUNT` >= ``CONFIG_BT_ATT_TX_MAX`` + 2.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
@@ -1098,8 +1098,8 @@ Unstable samples
 
 .. rst-class:: v1-2-1 v1-2-0 v1-1-0
 
-:kconfig:`CONFIG_BT_SMP` alignment requirement
-  When running the :ref:`bluetooth_central_dfu_smp` sample, the :kconfig:`CONFIG_BT_SMP` configuration must be aligned between this sample and the Zephyr counterpart (:ref:`zephyr:smp_svr_sample`).
+:kconfig:option:`CONFIG_BT_SMP` alignment requirement
+  When running the :ref:`bluetooth_central_dfu_smp` sample, the :kconfig:option:`CONFIG_BT_SMP` configuration must be aligned between this sample and the Zephyr counterpart (:ref:`zephyr:smp_svr_sample`).
   However, security is not enabled by default in the Zephyr sample.
 
 .. rst-class:: v1-2-1 v1-2-0 v1-1-0 v1-0-0
@@ -1245,7 +1245,7 @@ NCSDK-6898: Overriding child images
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
-NCSDK-6777: Project out of date when :kconfig:`CONFIG_SECURE_BOOT` is set
+NCSDK-6777: Project out of date when :kconfig:option:`CONFIG_SECURE_BOOT` is set
   The DFU :file:`.zip` file is regenerated even when no changes are made to the files it depends on.
   As a consequence, SES displays a "Project out of date" message even when the project is not out of date.
 
@@ -1254,9 +1254,9 @@ NCSDK-6777: Project out of date when :kconfig:`CONFIG_SECURE_BOOT` is set
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6848: MCUboot must be built from source when included
-  The build will fail if either :kconfig:`CONFIG_MCUBOOT_BUILD_STRATEGY_SKIP_BUILD` or :kconfig:`CONFIG_MCUBOOT_BUILD_STRATEGY_USE_HEX_FILE` is set.
+  The build will fail if either :kconfig:option:`CONFIG_MCUBOOT_BUILD_STRATEGY_SKIP_BUILD` or :kconfig:option:`CONFIG_MCUBOOT_BUILD_STRATEGY_USE_HEX_FILE` is set.
 
-  **Workaround:** Set :kconfig:`CONFIG_MCUBOOT_BUILD_STRATEGY_FROM_SOURCE` instead.
+  **Workaround:** Set :kconfig:option:`CONFIG_MCUBOOT_BUILD_STRATEGY_FROM_SOURCE` instead.
 
 .. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
 
@@ -1268,9 +1268,9 @@ KRKNWK-7827: Application build system is not aware of the settings partition
   You can use one of the following solutions:
 
   * :ref:`partition_manager` from |NCS| - see the page for all configuration options.
-    For example, for single image (without bootloader and with the settings partition used), set the :kconfig:`CONFIG_PM_SINGLE_IMAGE` Kconfig option to ``y`` and define the value for :kconfig:`CONFIG_PM_PARTITION_SIZE_SETTINGS_STORAGE` to the required settings storage size.
+    For example, for single image (without bootloader and with the settings partition used), set the :kconfig:option:`CONFIG_PM_SINGLE_IMAGE` Kconfig option to ``y`` and define the value for :kconfig:option:`CONFIG_PM_PARTITION_SIZE_SETTINGS_STORAGE` to the required settings storage size.
   * :ref:`Devicetree code partition <zephyr:flash_map_api>` from Zephyr.
-    Set :kconfig:`CONFIG_USE_DT_CODE_PARTITION` Kconfig option to ``y``.
+    Set :kconfig:option:`CONFIG_USE_DT_CODE_PARTITION` Kconfig option to ``y``.
     Make sure that the code partition is defined and chosen correctly (``offset`` and ``size``).
 
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
@@ -1323,7 +1323,7 @@ NCSDK-6238: Socket API calls may hang when using Download client
   When using the :ref:`lib_download_client` library with HTTP (without TLS), the application might not process incoming fragments fast enough, which can starve the :ref:`nrfxlib:nrf_modem` buffers and make calls to the Modem library hang.
   Samples and applications that are affected include those that use :ref:`lib_download_client` to download files through HTTP, or those that use :ref:`lib_fota_download` with modem updates enabled.
 
-  **Workaround:** Set :kconfig:`CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS`.
+  **Workaround:** Set :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS`.
 
 .. rst-class:: v1-1-0
 
@@ -1524,21 +1524,21 @@ DRGN-16506: Higher current consumption between timeslot events made with :c:macr
 
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0
 
-DRGN-15979: :kconfig:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION` must be set when :kconfig:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC` is set
+DRGN-15979: :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION` must be set when :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC` is set
   MPSL requires RC clock calibration to be enabled when the RC clock is used as the Low Frequency clock source.
 
 .. rst-class:: v1-5-0 v1-4-2 v1-4-1
 
-DRGN-15223: :kconfig:`CONFIG_SYSTEM_CLOCK_NO_WAIT` is not supported for nRF5340
-  Using :kconfig:`CONFIG_SYSTEM_CLOCK_NO_WAIT` with nRF5340 devices might not work as expected.
+DRGN-15223: :kconfig:option:`CONFIG_SYSTEM_CLOCK_NO_WAIT` is not supported for nRF5340
+  Using :kconfig:option:`CONFIG_SYSTEM_CLOCK_NO_WAIT` with nRF5340 devices might not work as expected.
 
 .. rst-class:: v1-4-2 v1-4-1
 
-DRGN-15176: :kconfig:`CONFIG_SYSTEM_CLOCK_NO_WAIT` is ignored when Low Frequency Clock is started before initializing MPSL
-  If the application starts the Low Frequency Clock before calling :c:func:`mpsl_init()`, the clock configuration option :kconfig:`CONFIG_SYSTEM_CLOCK_NO_WAIT` has no effect.
+DRGN-15176: :kconfig:option:`CONFIG_SYSTEM_CLOCK_NO_WAIT` is ignored when Low Frequency Clock is started before initializing MPSL
+  If the application starts the Low Frequency Clock before calling :c:func:`mpsl_init()`, the clock configuration option :kconfig:option:`CONFIG_SYSTEM_CLOCK_NO_WAIT` has no effect.
   MPSL will wait for the Low Frequency Clock to start.
 
-  **Workaround:** When :kconfig:`CONFIG_SYSTEM_CLOCK_NO_WAIT` is set, do not start the Low Frequency Clock.
+  **Workaround:** When :kconfig:option:`CONFIG_SYSTEM_CLOCK_NO_WAIT` is set, do not start the Low Frequency Clock.
 
 .. rst-class:: v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
@@ -1621,23 +1621,23 @@ DRGN-16859: The vendor-specific HCI commands Zephyr Write TX Power Level and Zep
 .. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
 
 DRGN-16808: Assertion on nRF53 Series devices when the RC oscillator is used as the Low Frequency clock source
-  The SoftDevice Controller might assert when :kconfig:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC` is set on nRF53 Series devices and the device is connected as a peripheral.
+  The SoftDevice Controller might assert when :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC` is set on nRF53 Series devices and the device is connected as a peripheral.
 
   **Workaround:** Do not use the RC oscillator as the Low Frequency clock source.
 
 .. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
 DRGN-16650: Undefined behavior when extended scanning is enabled
-  When extended scanning is enabled and :kconfig:`CONFIG_BT_BUF_ACL_RX_SIZE` is set to a value less than 251, it may result in asserts or undefined behavior.
+  When extended scanning is enabled and :kconfig:option:`CONFIG_BT_BUF_ACL_RX_SIZE` is set to a value less than 251, it may result in asserts or undefined behavior.
 
-  **Workaround:** Set :kconfig:`CONFIG_BT_BUF_EVT_RX_SIZE` to 255 when extended scanning is enabled.
+  **Workaround:** Set :kconfig:option:`CONFIG_BT_BUF_EVT_RX_SIZE` to 255 when extended scanning is enabled.
 
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0
 
 DRGN-16013: Initiating connections over extended advertising is not supported when external radio coexistence and FEM support are enabled
   The initiator can assert when initiating a connection to an extended advertiser when both external radio coexistence and FEM are enabled.
 
-  **Workaround:**  Do not enable both coex (:kconfig:`CONFIG_MPSL_CX_BT`) and FEM (:kconfig:`CONFIG_MPSL_FEM`) when support for extended advertising packets is enabled (:kconfig:`CONFIG_BT_EXT_ADV`).
+  **Workaround:**  Do not enable both coex (:kconfig:option:`CONFIG_MPSL_CX_BT`) and FEM (:kconfig:option:`CONFIG_MPSL_FEM`) when support for extended advertising packets is enabled (:kconfig:option:`CONFIG_BT_EXT_ADV`).
 
 .. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
@@ -1655,7 +1655,7 @@ DRGN-16317: The SoftDevice Controller may discard LE Extended Advertising Report
   If there is insufficient memory available or the Host is not able to process HCI events in time, the SoftDevice Controller can discard LE Extended Advertising Reports.
   If advertising data is split across multiple reports and any of these are discarded, the Host will not be able to reassemble the data.
 
-  **Workaround:** Increase :kconfig:`CONFIG_BT_BUF_EVT_RX_COUNT` until events are no longer discarded.
+  **Workaround:** Increase :kconfig:option:`CONFIG_BT_BUF_EVT_RX_COUNT` until events are no longer discarded.
 
 .. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
@@ -1664,8 +1664,8 @@ DRGN-16341: The SoftDevice Controller may discard LE Extended Advertising Report
 
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
-DRGN-15903: :kconfig:`BT_CTLR_TX_PWR` is ignored by the SoftDevice Controller
-  Using :kconfig:`BT_CTLR_TX_PWR` does not set TX power.
+DRGN-15903: :kconfig:option:`BT_CTLR_TX_PWR` is ignored by the SoftDevice Controller
+  Using :kconfig:option:`BT_CTLR_TX_PWR` does not set TX power.
 
   **Workaround:** Use the HCI command Zephyr Write Tx Power Level to dynamically set TX power.
 
@@ -1699,7 +1699,7 @@ DRGN-15852: In rare cases on nRF53 Series devices, an assert can occur while sca
   This is default configuration of the Bluetooth® host.
 
   **Workaround:** Use extended scanning commands.
-  That is, set :kconfig:`CONFIG_BT_EXT_ADV` to use HCI LE Set Extended Scan Enable instead.
+  That is, set :kconfig:option:`CONFIG_BT_EXT_ADV` to use HCI LE Set Extended Scan Enable instead.
 
 .. rst-class:: v1-6-0 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0
 
@@ -1727,8 +1727,8 @@ DRGN-15547: Assertion when updating PHY and the event length is configured too l
   * :c:union:`sdc_cfg_t` with :c:member:`event_length` is set to less than 2500 us and the PHY is updated from 2M to 1M, or from either 1M or 2M to Coded PHY.
   * :c:union:`sdc_cfg_t` with :c:member:`event_length` is set to less than 7500 us and a PHY update to Coded PHY is performed.
 
-  | The default value of :kconfig:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` is 7500 us.
-  | The minimum event length supported by :kconfig:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` is 2500 us.
+  | The default value of :kconfig:option:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` is 7500 us.
+  | The minimum event length supported by :kconfig:option:`CONFIG_SDC_MAX_CONN_EVENT_LEN_DEFAULT` is 2500 us.
 
   **Workaround:**
     * Set :c:union:`sdc_cfg_t` with :c:member:`event_length` to at least 2500 us if the application is using 1M PHY.
@@ -1791,7 +1791,7 @@ DRGN-15251: Very rare assertion fault when connected as peripheral on Coded PHY
   * The devices have performed a data length update, and the supported values are above the minimum specification defined values.
   * A packet is received with a CRC error.
 
-  **Workaround:** Do not enable :kconfig:`CONFIG_BT_DATA_LEN_UPDATE` for applications that require Coded PHY as a peripheral device.
+  **Workaround:** Do not enable :kconfig:option:`CONFIG_BT_DATA_LEN_UPDATE` for applications that require Coded PHY as a peripheral device.
 
 .. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
@@ -1800,7 +1800,7 @@ DRGN-15310: HCI Read RSSI fails
 
 .. rst-class:: v1-5-0
 
-DRGN-15465: Corrupted advertising data when :kconfig:`CONFIG_BT_EXT_ADV` is set
+DRGN-15465: Corrupted advertising data when :kconfig:option:`CONFIG_BT_EXT_ADV` is set
   Setting scan response data for a legacy advertiser on a build with extended advertising support corrupts parts of the advertising data.
   When using ``BT_LE_ADV_OPT_USE_NAME`` (which is the default configuration in most samples), the device name is put in the scan response.
   This corrupts the advertising data.
@@ -1815,7 +1815,7 @@ DRGN-15475: Samples might not initialize the SoftDevice Controller HCI driver co
   Samples using both the advertising and the scanning state, but not the connected state, fail to initialize the SoftDevice Controller HCI driver.
   As a result, the function :c:func:`bt_enable()` returns an error code.
 
-  **Workaround:** Manually enable :kconfig:`CONFIG_SOFTDEVICE_CONTROLLER_MULTIROLE` for the project configuration.
+  **Workaround:** Manually enable :kconfig:option:`CONFIG_SOFTDEVICE_CONTROLLER_MULTIROLE` for the project configuration.
 
 .. rst-class:: v1-5-0
 
@@ -1839,7 +1839,7 @@ DRGN-15291: The generation of QoS Connection events is not disabled after an HCI
 
 DRGN-15226: Link disconnects with reason "LMP Response Timeout (0x22)"
   If the slave receives an encryption request while the "HCI LE Long Term Key Request" event is disabled, the link disconnects with the reason "LMP Response Timeout (0x22)".
-  The event is disabled when :kconfig:`CONFIG_BT_SMP` and/or :kconfig:`CONFIG_BT_CTLR_LE_ENC` is disabled.
+  The event is disabled when :kconfig:option:`CONFIG_BT_SMP` and/or :kconfig:option:`CONFIG_BT_CTLR_LE_ENC` is disabled.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
@@ -1890,18 +1890,18 @@ DRGN-13079: An assert occurs when setting a secondary PHY to 0 when using HCI LE
 
 .. rst-class:: v1-1-0
 
-:kconfig:`CONFIG_BT_HCI_TX_STACK_SIZE` requires specific value
-  :kconfig:`CONFIG_BT_HCI_TX_STACK_SIZE` must be set to 1536 when selecting :kconfig:`CONFIG_BT_LL_SOFTDEVICE`.
+:kconfig:option:`CONFIG_BT_HCI_TX_STACK_SIZE` requires specific value
+  :kconfig:option:`CONFIG_BT_HCI_TX_STACK_SIZE` must be set to 1536 when selecting :kconfig:option:`CONFIG_BT_LL_SOFTDEVICE`.
 
 .. rst-class:: v1-1-0
 
-:kconfig:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE` requires specific value
-  :kconfig:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE` must be set to 2048 when selecting :kconfig:`CONFIG_BT_LL_SOFTDEVICE` on :ref:`central_uart` and :ref:`central_bas`.
+:kconfig:option:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE` requires specific value
+  :kconfig:option:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE` must be set to 2048 when selecting :kconfig:option:`CONFIG_BT_LL_SOFTDEVICE` on :ref:`central_uart` and :ref:`central_bas`.
 
 .. rst-class:: v1-1-0
 
-:kconfig:`CONFIG_NFCT_IRQ_PRIORITY` requires specific value
-  :kconfig:`CONFIG_NFCT_IRQ_PRIORITY` must be set to 5 or less when selecting :kconfig:`CONFIG_BT_LL_SOFTDEVICE` on :ref:`peripheral_hids_keyboard`.
+:kconfig:option:`CONFIG_NFCT_IRQ_PRIORITY` requires specific value
+  :kconfig:option:`CONFIG_NFCT_IRQ_PRIORITY` must be set to 5 or less when selecting :kconfig:option:`CONFIG_BT_LL_SOFTDEVICE` on :ref:`peripheral_hids_keyboard`.
 
 .. rst-class:: v1-1-0
 
@@ -2005,7 +2005,7 @@ Trusted Firmware-M (TF-M)
 
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
-NCSDK-11195: Build errors when enabling :kconfig:`CONFIG_BUILD_WITH_TFM` option
+NCSDK-11195: Build errors when enabling :kconfig:option:`CONFIG_BUILD_WITH_TFM` option
   Configuring the BUILD_WITH_TFM configuration in SES project configuration or using ``west -t menuconfig`` results in build errors.
 
   **Workaround:** Set ``CONFIG_BUILD_WITH_TFM=y`` in project configuration file (:file:`prj.conf`) or through west command line (``west build -- -DCONFIG_BUILD_WITH_TFM=y``).
@@ -2035,7 +2035,7 @@ NCSDK-12483: Missing debug symbols
 .. rst-class:: v1-9-0
 
 NCSDK-14015: Execution halts during boot
-  When the :kconfig:`CONFIG_RPMSG_SERVICE` is enabled on the nRF5340 SoC together with TF-M, the firmware does not boot.
+  When the :kconfig:option:`CONFIG_RPMSG_SERVICE` is enabled on the nRF5340 SoC together with TF-M, the firmware does not boot.
   This option is used by OpenThread and Bluetooth modules.
 
   **Workaround:** Place the ``rpmsg_nrf53_sram`` partition inside the ``sram_nonsecure`` partition using :ref:`partition_manager`.
@@ -2048,7 +2048,7 @@ NCSDK-13949: TF-M Secure Image copies FICR to RAM on nRF9160
 .. rst-class:: v1-9-1 v1-9-0
 
 NCSDK-12306: Enabling debug configuration causes usage fault on nRF9160
-  When the debug configuration :kconfig:`CONFIG_TFM_CMAKE_BUILD_TYPE_DEBUG` is enabled, a usage fault is triggered during boot on nRF9160.
+  When the debug configuration :kconfig:option:`CONFIG_TFM_CMAKE_BUILD_TYPE_DEBUG` is enabled, a usage fault is triggered during boot on nRF9160.
 
 Zephyr
 ******
@@ -2091,7 +2091,7 @@ NCSDK-6832: SMP Server sample fails upon initialization
   The :ref:`zephyr:smp_svr_sample` will fail upon initialization when using the :file:`bt-overlay.conf` Kconfig overlay file.
   This happens because of a stack overflow.
 
-  **Workaround:** Set :kconfig:`CONFIG_MAIN_STACK_SIZE` to ``2048``.
+  **Workaround:** Set :kconfig:option:`CONFIG_MAIN_STACK_SIZE` to ``2048``.
 
 SEGGER Embedded Studio Nordic Edition
 *************************************

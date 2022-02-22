@@ -33,51 +33,51 @@ It provides an abstraction of the following modules:
 The OS abstraction layer is fully implemented for the |NCS|, and it would have to be ported if used with other RTOS or on other systems.
 
 To run the library in an application, you must implement the application with the API of the library.
-You can enable the module using the :kconfig:`CONFIG_LWM2M_CARRIER` Kconfig option.
+You can enable the module using the :kconfig:option:`CONFIG_LWM2M_CARRIER` Kconfig option.
 
 The :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/nrf9160/lwm2m_carrier/prj.conf`) contains all the configurations that are needed by the LwM2M carrier library.
 
 You can provide the initialization parameter :c:type:`lwm2m_carrier_config_t` to overwrite the carrier default settings with the Kconfig options described below:
 
-* :kconfig:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE`:
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE`:
 
   * This configuration specifies if the LwM2M carrier library will connect to the carrier's certification servers or production servers.
   * Expected to be set during self-testing part of the certification process.
-  * This configuration is ignored if :kconfig:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_URI` is set.
+  * This configuration is ignored if :kconfig:option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_URI` is set.
 
-* :kconfig:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_URI`:
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_URI`:
 
-  * This configuration, together with :kconfig:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_URI` lets the LwM2M carrier library connect to a custom server other than the normal carrier server, thereby enabling the generic mode.
+  * This configuration, together with :kconfig:option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_URI` lets the LwM2M carrier library connect to a custom server other than the normal carrier server, thereby enabling the generic mode.
   * Expected to be set during self-testing, or if the end product is not to be certified with the applicable carriers. See :ref:`lwm2m_certification`.
-  * If this configuration is set, :kconfig:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE` is ignored.
+  * If this configuration is set, :kconfig:option:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE` is ignored.
 
-* :kconfig:`CONFIG_LWM2M_CARRIER_IS_SERVER_BOOTSTRAP`:
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_SERVER_BOOTSTRAP`:
 
   * This configuration specifies if the custom LwM2M server is a LwM2m Bootstrap-Server.
-  * This setting is ignored if :kconfig:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE` is set, since the LwM2M library will instead connect to the servers specified by the applicable carriers.
+  * This setting is ignored if :kconfig:option:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE` is set, since the LwM2M library will instead connect to the servers specified by the applicable carriers.
 
-* :kconfig:`CONFIG_LWM2M_CARRIER_SERVER_LIFETIME`:
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_LIFETIME`:
 
   * This configuration specifies the lifetime of the custom LwM2M server.
-  * This configuration is ignored if :kconfig:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE` or :kconfig:`CONFIG_LWM2M_CARRIER_IS_SERVER_BOOTSTRAP` is set.
+  * This configuration is ignored if :kconfig:option:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE` or :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_SERVER_BOOTSTRAP` is set.
 
-* :kconfig:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_PSK`:
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_PSK`:
 
-  * This configuration, together with :kconfig:`CONFIG_LWM2M_CARRIER_CUSTOM_PSK` can be set to use a non-default `Pre-Shared Key (PSK)`_.
+  * This configuration, together with :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_PSK` can be set to use a non-default `Pre-Shared Key (PSK)`_.
   * If connecting to the normal carrier device management servers (normal operation), this configuration must not be set unless your carrier explicitly states to use a custom PSK, for example during self-testing.
-  * If the :kconfig:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_URI` option is set and the server requires a secure connection, a PSK is required.
+  * If the :kconfig:option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_URI` option is set and the server requires a secure connection, a PSK is required.
 
-* :kconfig:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_APN`:
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_APN`:
 
-  * This configuration, together with :kconfig:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` produce different results depending on normal or generic mode of operation.
-  * If :kconfig:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_URI` is not set (normal), this configuration supplies a fallback APN. This might be required in your application, depending on the requirements from the carrier.
-  * If :kconfig:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_URI` is set (generic), :kconfig:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` is used instead of the default APN, (and there is no fallback APN).
+  * This configuration, together with :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` produce different results depending on normal or generic mode of operation.
+  * If :kconfig:option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_URI` is not set (normal), this configuration supplies a fallback APN. This might be required in your application, depending on the requirements from the carrier.
+  * If :kconfig:option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_URI` is set (generic), :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN` is used instead of the default APN, (and there is no fallback APN).
 
- * :kconfig:`CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD`:
+ * :kconfig:option:`CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD`:
 
   * This configuration allows the LwM2M carrier library to use a URI stored in the SIM card. The configuration in the SIM will take precedence over any other configuration.
-    For example, if a bootstrap server URI is fetched from the SIM, the :kconfig:`CONFIG_LWM2M_CARRIER_IS_SERVER_BOOTSTRAP` configuration is ignored.
-    If a production server URI is fetched from the SIM, the :kconfig:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE` configuration is ignored.
+    For example, if a bootstrap server URI is fetched from the SIM, the :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_SERVER_BOOTSTRAP` configuration is ignored.
+    If a production server URI is fetched from the SIM, the :kconfig:option:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE` configuration is ignored.
 
 Note that these settings can put the LwM2M carrier library either in the normal mode where it connects to the applicable carriers, or in the generic mode where it can connect to any bootstrap server.
 

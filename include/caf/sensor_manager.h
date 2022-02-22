@@ -45,7 +45,7 @@ struct sm_sampled_channel {
  * @brief Sensor configuration
  *
  * The sensor configuration is provided by the application in file specified by
- * the :kconfig:`CONFIG_CAF_SENSOR_MANAGER_DEF_PATH` option.
+ * the :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_DEF_PATH` option.
  */
 struct sm_sensor_config {
 	/**

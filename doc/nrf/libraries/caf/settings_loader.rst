@@ -15,18 +15,18 @@ Configuration
 
 The following Kconfig options are required:
 
-* :kconfig:`CONFIG_CAF_SETTINGS_LOADER` - This option enables the |settings_loader|.
-* :kconfig:`CONFIG_SETTINGS` - This option enables Zephyr's :ref:`zephyr:settings_api`.
+* :kconfig:option:`CONFIG_CAF_SETTINGS_LOADER` - This option enables the |settings_loader|.
+* :kconfig:option:`CONFIG_SETTINGS` - This option enables Zephyr's :ref:`zephyr:settings_api`.
 
 The following Kconfig options are also available for the module:
 
-* :kconfig:`CONFIG_CAF_SETTINGS_LOADER_DEF_PATH`
-* :kconfig:`CONFIG_CAF_SETTINGS_LOADER_USE_THREAD`
-* :kconfig:`CONFIG_CAF_SETTINGS_LOADER_THREAD_STACK_SIZE`
+* :kconfig:option:`CONFIG_CAF_SETTINGS_LOADER_DEF_PATH`
+* :kconfig:option:`CONFIG_CAF_SETTINGS_LOADER_USE_THREAD`
+* :kconfig:option:`CONFIG_CAF_SETTINGS_LOADER_THREAD_STACK_SIZE`
 
 To use the module, you must complete the following steps:
 
-1. Enable the :kconfig:`CONFIG_CAF_SETTINGS_LOADER` and :kconfig:`CONFIG_SETTINGS` Kconfig options.
+1. Enable the :kconfig:option:`CONFIG_CAF_SETTINGS_LOADER` and :kconfig:option:`CONFIG_SETTINGS` Kconfig options.
 #. Add the configuration file that implements the function :c:func:`get_req_modules`, which sets bits of modules that are required to be initialized before settings are loaded.
    For example, the file content could look like follows:
 
@@ -52,8 +52,8 @@ Getting the required modules is wrapped into the :c:func:`get_req_modules` funct
 
 Settings are loaded in the :ref:`event_manager` handler, which by default is invoked from a system workqueue context.
 This blocks the workqueue until the operation is finished.
-You can set the :kconfig:`CONFIG_DESKTOP_SETTINGS_LOADER_USE_THREAD` Kconfig option to load the settings in a separate thread in the background instead of using the system workqueue for that purpose.
+You can set the :kconfig:option:`CONFIG_DESKTOP_SETTINGS_LOADER_USE_THREAD` Kconfig option to load the settings in a separate thread in the background instead of using the system workqueue for that purpose.
 This will prevent blocking the system workqueue, but it requires creating an additional thread.
-The stack size for the background thread is defined in the :kconfig:`CONFIG_DESKTOP_SETTINGS_LOADER_THREAD_STACK_SIZE` Kconfig option.
+The stack size for the background thread is defined in the :kconfig:option:`CONFIG_DESKTOP_SETTINGS_LOADER_THREAD_STACK_SIZE` Kconfig option.
 
 .. |settings_loader| replace:: Settings loader module

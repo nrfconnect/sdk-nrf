@@ -50,7 +50,7 @@ The following configuration parameters are associated with the XYZ Server/XYZ Cl
 * ``:kconfig:PARAM_2`` - Short description of the second parameter.
 
 .. tip::
-   List Kconfig options associated with the model, and link to them using the `:kconfig:` reference.
+   List Kconfig options associated with the model, and link to them using the `:kconfig:option:` reference.
    This section is optional, because not all models have Kconfig parameters that allow configuration.
    Do not go into details here, as the link will allow the reader to get the required information.
    However, do provide a short description of each option.

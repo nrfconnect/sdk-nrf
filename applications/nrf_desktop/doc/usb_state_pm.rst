@@ -23,8 +23,8 @@ Module events
 Configuration
 *************
 
-The module is enabled by selecting :kconfig:`CONFIG_DESKTOP_USB_PM_ENABLE`.
-It depends on :kconfig:`CONFIG_DESKTOP_USB_ENABLE` and :kconfig:`CONFIG_CAF_POWER_MANAGER`.
+The module is enabled by selecting :kconfig:option:`CONFIG_DESKTOP_USB_PM_ENABLE`.
+It depends on :kconfig:option:`CONFIG_DESKTOP_USB_ENABLE` and :kconfig:option:`CONFIG_CAF_POWER_MANAGER`.
 
 The log level is inherited from the :ref:`nrf_desktop_usb_state`.
 

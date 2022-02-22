@@ -26,8 +26,8 @@ Configuration
 
 Configure the following Kconfig options when using this library:
 
-* :kconfig:`CONFIG_SMS` - Enables the SMS subscriber library.
-* :kconfig:`CONFIG_SMS_SUBSCRIBERS_MAX_CNT` - Sets the maximum number of SMS subscribers.
+* :kconfig:option:`CONFIG_SMS` - Enables the SMS subscriber library.
+* :kconfig:option:`CONFIG_SMS_SUBSCRIBERS_MAX_CNT` - Sets the maximum number of SMS subscribers.
 
 Limitations
 ***********

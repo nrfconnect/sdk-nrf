@@ -49,12 +49,12 @@ Every listener is identified by a unique name.
 Configuration
 *************
 
-To use the Event Manager, enable it using the :kconfig:`CONFIG_EVENT_MANAGER` Kconfig option and initialize it in your :file:`main.c` file.
+To use the Event Manager, enable it using the :kconfig:option:`CONFIG_EVENT_MANAGER` Kconfig option and initialize it in your :file:`main.c` file.
 Initializing the Event Manager allows it to handle submitted events and deliver them to modules that subscribe to the specified event type.
 
 Complete the following steps:
 
-1. Enable the :kconfig:`CONFIG_EVENT_MANAGER` Kconfig option.
+1. Enable the :kconfig:option:`CONFIG_EVENT_MANAGER` Kconfig option.
 #. Include :file:`event_manager.h` in your :file:`main.c` file.
 #. Call :c:func:`event_manager_init()`.
 
@@ -164,7 +164,7 @@ The following code example shows a source file for the event type ``sample_event
 
 .. note::
 	There is a deprecated way of logging Event Manager events by writing a string to the provided buffer that will be supported until a future release of |NCS|.
-	To use the deprecated way, you need to set the :kconfig:`CONFIG_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN` option.
+	To use the deprecated way, you need to set the :kconfig:option:`CONFIG_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN` option.
 	You can then use both ways of logging events.
 	Event manager figures out which way to be used based on the type of the logging function passed.
 

@@ -15,16 +15,16 @@ Configuration
 
 Before using the module make sure that the following Kconfig options are enabled:
 
-* :kconfig:`CONFIG_BT_BONDABLE`
-* :kconfig:`CONFIG_BT_SETTINGS`
-* :kconfig:`CONFIG_CAF_SETTINGS_LOADER`
-* :kconfig:`CONFIG_CAF_BLE_COMMON_EVENTS`
+* :kconfig:option:`CONFIG_BT_BONDABLE`
+* :kconfig:option:`CONFIG_BT_SETTINGS`
+* :kconfig:option:`CONFIG_CAF_SETTINGS_LOADER`
+* :kconfig:option:`CONFIG_CAF_BLE_COMMON_EVENTS`
 
 The device must be Bluetooth bondable and bonds must be stored in the non-volatile memory (settings).
 The :ref:`caf_settings_loader` is used to load content of the settings area during boot.
 
-The |ble_bond| is enabled using :kconfig:`CONFIG_CAF_BLE_BOND`.
-This Kconfig option selects :kconfig:`CONFIG_CAF_BLE_BOND_SUPPORTED` option to indicate that the |ble_bond| is implemented in the application.
+The |ble_bond| is enabled using :kconfig:option:`CONFIG_CAF_BLE_BOND`.
+This Kconfig option selects :kconfig:option:`CONFIG_CAF_BLE_BOND_SUPPORTED` option to indicate that the |ble_bond| is implemented in the application.
 
 Enabling bond erase
 ===================
@@ -34,16 +34,16 @@ The module subscribes for :c:struct:`click_event` to detect the button clicks.
 
 Complete the following steps to enable bond erase:
 
-1. Set the :kconfig:`CONFIG_CAF_BLE_BOND_PEER_ERASE_CLICK` to enable the bond erase when a predefined button click is detected.
-#. Set :kconfig:`CONFIG_CAF_BLE_BOND_PEER_ERASE_CLICK_KEY_ID` to define the key ID of the button used to erase bonds.
+1. Set the :kconfig:option:`CONFIG_CAF_BLE_BOND_PEER_ERASE_CLICK` to enable the bond erase when a predefined button click is detected.
+#. Set :kconfig:option:`CONFIG_CAF_BLE_BOND_PEER_ERASE_CLICK_KEY_ID` to define the key ID of the button used to erase bonds.
 #. Select one of the following Kconfig options to specify the click type (:c:enum:`click`) that triggers the bond erase:
 
-   * :kconfig:`CONFIG_CAF_BLE_BOND_PEER_ERASE_CLICK_SHORT` - :c:enumerator:`CLICK_SHORT`,
-   * :kconfig:`CONFIG_CAF_BLE_BOND_PEER_ERASE_CLICK_LONG` - :c:enumerator:`CLICK_LONG`,
-   * :kconfig:`CONFIG_CAF_BLE_BOND_PEER_ERASE_CLICK_DOUBLE` - :c:enumerator:`CLICK_DOUBLE`.
+   * :kconfig:option:`CONFIG_CAF_BLE_BOND_PEER_ERASE_CLICK_SHORT` - :c:enumerator:`CLICK_SHORT`,
+   * :kconfig:option:`CONFIG_CAF_BLE_BOND_PEER_ERASE_CLICK_LONG` - :c:enumerator:`CLICK_LONG`,
+   * :kconfig:option:`CONFIG_CAF_BLE_BOND_PEER_ERASE_CLICK_DOUBLE` - :c:enumerator:`CLICK_DOUBLE`.
 
 #. By default, detection of the specific click for a specific button always triggers the bond erase.
-   Set :kconfig:`CONFIG_CAF_BLE_BOND_PEER_ERASE_CLICK_TIMEOUT` to specify the waiting time for detecting the button click after boot.
+   Set :kconfig:option:`CONFIG_CAF_BLE_BOND_PEER_ERASE_CLICK_TIMEOUT` to specify the waiting time for detecting the button click after boot.
    The timeout is specified in milliseconds.
    The button click is ignored if it occurrs after the timeout.
 

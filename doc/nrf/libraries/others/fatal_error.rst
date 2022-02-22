@@ -20,7 +20,7 @@ Configuration
 
 When building for an embedded target, the default behavior of the :c:func:`k_sys_fatal_error_handler()` function in case of a fatal error is to reboot the application.
 You can modify the default behavior of the library not to reboot the application.
-To have the application enter an endless loop, change the :kconfig:`CONFIG_RESET_ON_FATAL_ERROR` Kconfig option to ``n``.
+To have the application enter an endless loop, change the :kconfig:option:`CONFIG_RESET_ON_FATAL_ERROR` Kconfig option to ``n``.
 
 Library files
 *************

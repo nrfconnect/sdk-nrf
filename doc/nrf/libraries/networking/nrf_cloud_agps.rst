@@ -23,8 +23,8 @@ Configuration
 
 Configure the following options to enable or disable the use of this library:
 
-* :kconfig:`CONFIG_NRF_CLOUD_AGPS`
-* :kconfig:`CONFIG_NRF_CLOUD_MQTT` or :kconfig:`CONFIG_NRF_CLOUD_REST`
+* :kconfig:option:`CONFIG_NRF_CLOUD_AGPS`
+* :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` or :kconfig:option:`CONFIG_NRF_CLOUD_REST`
 
 See :ref:`configure_application` for information on how to change configuration options.
 
@@ -36,8 +36,8 @@ A-GPS data can be requested using one of the following methods:
 * By specifying an array of A-GPS types
 * By requesting all the available assistance data
 
-If :kconfig:`CONFIG_NRF_CLOUD_MQTT` is enabled, the :c:func:`nrf_cloud_agps_request` function is used to request by type, and the :c:func:`nrf_cloud_agps_request_all` function is used to return all available assistance data.
-If :kconfig:`CONFIG_NRF_CLOUD_REST` is enabled, the :c:func:`nrf_cloud_rest_agps_data_get` function is used to request A-GPS data.
+If :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` is enabled, the :c:func:`nrf_cloud_agps_request` function is used to request by type, and the :c:func:`nrf_cloud_agps_request_all` function is used to return all available assistance data.
+If :kconfig:option:`CONFIG_NRF_CLOUD_REST` is enabled, the :c:func:`nrf_cloud_rest_agps_data_get` function is used to request A-GPS data.
 
 When nRF Cloud responds with the requested A-GPS data, the :c:func:`nrf_cloud_agps_process` function processes the received data.
 The function parses the data and passes it on to the modem.
@@ -45,14 +45,14 @@ The function parses the data and passes it on to the modem.
 Optimizing cloud data downloads
 *******************************
 
-When the application only requires a fast GNSS fix at most once per 2 hour period, it can reduce LTE data charges by enabling :kconfig:`CONFIG_NRF_CLOUD_AGPS_FILTERED` (A-GPS filtered mode).
-This option causes nRF Cloud to send ephemerides data for only those satellites whose elevation is at or above the :kconfig:`CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK` angle at the current moment.
+When the application only requires a fast GNSS fix at most once per 2 hour period, it can reduce LTE data charges by enabling :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED` (A-GPS filtered mode).
+This option causes nRF Cloud to send ephemerides data for only those satellites whose elevation is at or above the :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK` angle at the current moment.
 
 When using the A-GPS filtered mode with the GNSS unit in periodic tracking mode, applications should disable scheduled downloads in the GNSS unit.
 Applications do this when initializing the GNSS unit by bitwise ORing the :c:enumerator:`NRF_MODEM_GNSS_USE_CASE_SCHED_DOWNLOAD_DISABLE` bitmask with any other needed use case values, then passing the resulting value to the :c:func:`nrf_modem_gnss_use_case_set` function.
 This ensures the GNSS unit does not stay on longer than needed due to the lack of a full set of ephemerides.
 
-When the application requires fast GNSS fixes multiple times within a 2 hour period, it can avoid unnecessary A-GPS data downloads from nRF Cloud by keeping :kconfig:`CONFIG_NRF_CLOUD_AGPS_FILTERED` disabled.
+When the application requires fast GNSS fixes multiple times within a 2 hour period, it can avoid unnecessary A-GPS data downloads from nRF Cloud by keeping :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED` disabled.
 
 Practical considerations
 ************************

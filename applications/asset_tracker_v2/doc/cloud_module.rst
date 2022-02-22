@@ -120,7 +120,7 @@ CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM - Configuration for enabling the use of a cust
 
 CONFIG_CLOUD_CLIENT_ID - Configuration for providing a custom cloud client ID
    This option sets the custom client ID for the respective cloud service.
-   For setting a custom client ID, you need to set :kconfig:`CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM` to ``y``.
+   For setting a custom client ID, you need to set :kconfig:option:`CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM` to ``y``.
 
 .. _CONFIG_CLOUD_CONNECT_RETRIES:
 
@@ -147,18 +147,18 @@ Configurations for AWS IoT library
 
 To enable communication with AWS IoT, set the following options in the :file:`overlay-aws.conf` file:
 
-* :kconfig:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
-* :kconfig:`CONFIG_AWS_IOT_SEC_TAG`
+* :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
+* :kconfig:option:`CONFIG_AWS_IOT_SEC_TAG`
 
 Configurations for Azure IoT Hub library
 ----------------------------------------
 
 To enable communication with Azure IoT Hub, set the following options in the :file:`overlay-azure.conf` file:
 
-* :kconfig:`CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME`
-* :kconfig:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE`
-* :kconfig:`CONFIG_AZURE_IOT_HUB_SEC_TAG`
-* :kconfig:`CONFIG_AZURE_FOTA_SEC_TAG`
+* :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME`
+* :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE`
+* :kconfig:option:`CONFIG_AZURE_IOT_HUB_SEC_TAG`
+* :kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG`
 
 Module hierarchy
 ****************

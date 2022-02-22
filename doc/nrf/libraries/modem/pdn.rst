@@ -42,13 +42,13 @@ Multiple PDP contexts might share the same PDN connection if they are configured
 Configuration
 *************
 
-The PDN library overrides the default PDP context configuration during initialization (:c:func:`pdn_init`) if you have set the :kconfig:`CONFIG_PDN_DEFAULTS_OVERRIDE` Kconfig option.
+The PDN library overrides the default PDP context configuration during initialization (:c:func:`pdn_init`) if you have set the :kconfig:option:`CONFIG_PDN_DEFAULTS_OVERRIDE` Kconfig option.
 The default PDP context configuration consists of the following parameters, each controlled with a Kconfig setting:
 
-* Access point name, :kconfig:`CONFIG_PDN_DEFAULT_APN`
-* Family, :kconfig:`CONFIG_PDN_DEFAULT_FAM`
-* Authentication method, :kconfig:`CONFIG_PDN_DEFAULT_AUTH`
-* Authentication credentials, :kconfig:`CONFIG_PDN_DEFAULT_USERNAME` and :kconfig:`CONFIG_PDN_DEFAULT_PASSWORD`
+* Access point name, :kconfig:option:`CONFIG_PDN_DEFAULT_APN`
+* Family, :kconfig:option:`CONFIG_PDN_DEFAULT_FAM`
+* Authentication method, :kconfig:option:`CONFIG_PDN_DEFAULT_AUTH`
+* Authentication credentials, :kconfig:option:`CONFIG_PDN_DEFAULT_USERNAME` and :kconfig:option:`CONFIG_PDN_DEFAULT_PASSWORD`
 
 .. note::
    The default PDP context configuration must be overridden before the device is registered with the network.

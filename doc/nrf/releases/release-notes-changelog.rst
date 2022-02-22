@@ -90,7 +90,7 @@ nRF9160: Asset Tracker v2
 * Updated:
 
   * For nRF Cloud builds, the configuration section in the shadow is now initialized during the cloud connection process.
-  * Allow the :ref:`lib_nrf_cloud` library to handle modem FOTA updates if :kconfig:`CONFIG_NRF_CLOUD_FOTA` is enabled.
+  * Allow the :ref:`lib_nrf_cloud` library to handle modem FOTA updates if :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` is enabled.
 
 nRF9160: Serial LTE Modem
 -------------------------
@@ -106,7 +106,7 @@ nRF Desktop
 
 * Added:
 
-  * Documentation for selective HID report subscription in :ref:`nrf_desktop_usb_state` using :kconfig:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION` option.
+  * Documentation for selective HID report subscription in :ref:`nrf_desktop_usb_state` using :kconfig:option:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION` option.
 
 Thingy:53 Zigbee weather station
 --------------------------------
@@ -329,7 +329,7 @@ Other libraries
 
 * :ref:`event_manager`:
 
-  * To add :c:func:`event_manager_event_size` function with corresponding :kconfig:`CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE` option.
+  * To add :c:func:`event_manager_event_size` function with corresponding :kconfig:option:`CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE` option.
 
   * Added universal hooks for event manager initialization, event submission, preprocessing, and postprocessing.
     This includes implementation of macros that register hooks, grouped as follows:
@@ -433,7 +433,7 @@ The change prompted some changes in the CMake for the module, notably:
 Trusted Firmware-M
 ==================
 
-* Fixed the NCSDK-14015 known issue that would cause crash during boot when the :kconfig:`CONFIG_RPMSG_SERVICE` Kconfig option was enabled on the nRF5340 SoC.
+* Fixed the NCSDK-14015 known issue that would cause crash during boot when the :kconfig:option:`CONFIG_RPMSG_SERVICE` Kconfig option was enabled on the nRF5340 SoC.
 
 Documentation
 =============

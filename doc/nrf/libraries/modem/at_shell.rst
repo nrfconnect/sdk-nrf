@@ -13,15 +13,15 @@ This enables you to send AT commands to the modem and receive responses.
 Configuration
 *************
 
-The library expects that you have enabled a shell using :kconfig:`CONFIG_SHELL`.
+The library expects that you have enabled a shell using :kconfig:option:`CONFIG_SHELL`.
 To enable and configure the AT shell, use the following Kconfig options:
 
-* :kconfig:`CONFIG_AT_SHELL` - Enables the AT Host library
-* :kconfig:`CONFIG_AT_SHELL_CMD_RESPONSE_MAX_LEN` - Maximum AT command response length
+* :kconfig:option:`CONFIG_AT_SHELL` - Enables the AT Host library
+* :kconfig:option:`CONFIG_AT_SHELL_CMD_RESPONSE_MAX_LEN` - Maximum AT command response length
 
 To send AT read commands (ending with ``?``), disable the shell wildcards using the following Kconfig option:
 
-* :kconfig:`CONFIG_SHELL_WILDCARD`
+* :kconfig:option:`CONFIG_SHELL_WILDCARD`
 
 Usage
 *****

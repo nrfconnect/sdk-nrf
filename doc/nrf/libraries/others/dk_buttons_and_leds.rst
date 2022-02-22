@@ -10,7 +10,7 @@ DK Buttons and LEDs
 The DK Buttons and LEDs library is a simple module to interface with the buttons and LEDs on a Nordic Semiconductor development kit.
 It supports reading the state of up to four buttons or switches and controlling up to four LEDs.
 
-To enable this library, set :kconfig:`CONFIG_DK_LIBRARY` to ``y``.
+To enable this library, set :kconfig:option:`CONFIG_DK_LIBRARY` to ``y``.
 
 If you want to retrieve information about the button state, initialize the library with :c:func:`dk_buttons_init`.
 You can pass a callback function during initialization.

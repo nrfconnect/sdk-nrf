@@ -28,8 +28,8 @@ The Bluetooth mesh shell subsystem provides a set of commands to interact with t
 
 To make these commands available, enable the following Kconfig options:
 
-* :kconfig:`CONFIG_BT_MESH_SHELL`
-* :kconfig:`CONFIG_BT_MESH_SHELL_DTT_CLI`
+* :kconfig:option:`CONFIG_BT_MESH_SHELL`
+* :kconfig:option:`CONFIG_BT_MESH_SHELL_DTT_CLI`
 
 mdl_dtt instance get-all
 	Print all instances of the Generic Default Transition Time Client model on the device.

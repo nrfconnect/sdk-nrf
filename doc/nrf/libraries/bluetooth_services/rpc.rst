@@ -21,7 +21,7 @@ Application core
 ****************
 
 To use the Bluetooth LE stack through nRF RPC, an additional configuration is needed.
-When building samples for the application core, enable the :kconfig:`CONFIG_BT_RPC_STACK` to run the Bluetooth LE stack on the network core.
+When building samples for the application core, enable the :kconfig:option:`CONFIG_BT_RPC_STACK` to run the Bluetooth LE stack on the network core.
 This option builds :ref:`ble_rpc_host` automatically as a child image.
 For more details, see: :ref:`ug_nrf5340_building`.
 
@@ -37,38 +37,38 @@ Requirements
 Some configuration options related to Bluetooth LE must be the same on the host (network core) and client (application core).
 Set the following options in the same way for the :ref:`ble_rpc_host` and application core sample:
 
-   * :kconfig:`CONFIG_BT_CENTRAL`
-   * :kconfig:`CONFIG_BT_PERIPHERAL`
-   * :kconfig:`CONFIG_BT_FILTER_ACCEPT_LIST`
-   * :kconfig:`CONFIG_BT_USER_PHY_UPDATE`
-   * :kconfig:`CONFIG_BT_USER_DATA_LEN_UPDATE`
-   * :kconfig:`CONFIG_BT_PRIVACY`
-   * :kconfig:`CONFIG_BT_SCAN_WITH_IDENTITY`
-   * :kconfig:`CONFIG_BT_REMOTE_VERSION`
-   * :kconfig:`CONFIG_BT_SMP`
-   * :kconfig:`CONFIG_BT_CONN`
-   * :kconfig:`CONFIG_BT_REMOTE_INFO`
-   * :kconfig:`CONFIG_BT_FIXED_PASSKEY`
-   * :kconfig:`CONFIG_BT_SMP_APP_PAIRING_ACCEPT`
-   * :kconfig:`CONFIG_BT_EXT_ADV`
-   * :kconfig:`CONFIG_BT_OBSERVER`
-   * :kconfig:`CONFIG_BT_ECC`
-   * :kconfig:`CONFIG_BT_DEVICE_NAME_DYNAMIC`
-   * :kconfig:`CONFIG_BT_SMP_SC_PAIR_ONLY`
-   * :kconfig:`CONFIG_BT_PER_ADV`
-   * :kconfig:`CONFIG_BT_PER_ADV_SYNC`
-   * :kconfig:`CONFIG_BT_MAX_PAIRED`
-   * :kconfig:`CONFIG_BT_SETTINGS_CCC_LAZY_LOADING`
-   * :kconfig:`CONFIG_BT_BROADCASTER`
-   * :kconfig:`CONFIG_BT_SETTINGS`
-   * :kconfig:`CONFIG_BT_MAX_CONN`
-   * :kconfig:`CONFIG_BT_ID_MAX`
-   * :kconfig:`CONFIG_BT_EXT_ADV_MAX_ADV_SET`
-   * :kconfig:`CONFIG_BT_DEVICE_NAME_MAX`
-   * :kconfig:`CONFIG_BT_DEVICE_NAME_MAX`
-   * :kconfig:`CONFIG_BT_PER_ADV_SYNC_MAX`
-   * :kconfig:`CONFIG_BT_DEVICE_NAME`
-   * :kconfig:`CONFIG_CBKPROXY_OUT_SLOTS` on one core must be equal to :kconfig:`CONFIG_CBKPROXY_IN_SLOTS` on the other.
+   * :kconfig:option:`CONFIG_BT_CENTRAL`
+   * :kconfig:option:`CONFIG_BT_PERIPHERAL`
+   * :kconfig:option:`CONFIG_BT_FILTER_ACCEPT_LIST`
+   * :kconfig:option:`CONFIG_BT_USER_PHY_UPDATE`
+   * :kconfig:option:`CONFIG_BT_USER_DATA_LEN_UPDATE`
+   * :kconfig:option:`CONFIG_BT_PRIVACY`
+   * :kconfig:option:`CONFIG_BT_SCAN_WITH_IDENTITY`
+   * :kconfig:option:`CONFIG_BT_REMOTE_VERSION`
+   * :kconfig:option:`CONFIG_BT_SMP`
+   * :kconfig:option:`CONFIG_BT_CONN`
+   * :kconfig:option:`CONFIG_BT_REMOTE_INFO`
+   * :kconfig:option:`CONFIG_BT_FIXED_PASSKEY`
+   * :kconfig:option:`CONFIG_BT_SMP_APP_PAIRING_ACCEPT`
+   * :kconfig:option:`CONFIG_BT_EXT_ADV`
+   * :kconfig:option:`CONFIG_BT_OBSERVER`
+   * :kconfig:option:`CONFIG_BT_ECC`
+   * :kconfig:option:`CONFIG_BT_DEVICE_NAME_DYNAMIC`
+   * :kconfig:option:`CONFIG_BT_SMP_SC_PAIR_ONLY`
+   * :kconfig:option:`CONFIG_BT_PER_ADV`
+   * :kconfig:option:`CONFIG_BT_PER_ADV_SYNC`
+   * :kconfig:option:`CONFIG_BT_MAX_PAIRED`
+   * :kconfig:option:`CONFIG_BT_SETTINGS_CCC_LAZY_LOADING`
+   * :kconfig:option:`CONFIG_BT_BROADCASTER`
+   * :kconfig:option:`CONFIG_BT_SETTINGS`
+   * :kconfig:option:`CONFIG_BT_MAX_CONN`
+   * :kconfig:option:`CONFIG_BT_ID_MAX`
+   * :kconfig:option:`CONFIG_BT_EXT_ADV_MAX_ADV_SET`
+   * :kconfig:option:`CONFIG_BT_DEVICE_NAME_MAX`
+   * :kconfig:option:`CONFIG_BT_DEVICE_NAME_MAX`
+   * :kconfig:option:`CONFIG_BT_PER_ADV_SYNC_MAX`
+   * :kconfig:option:`CONFIG_BT_DEVICE_NAME`
+   * :kconfig:option:`CONFIG_CBKPROXY_OUT_SLOTS` on one core must be equal to :kconfig:option:`CONFIG_CBKPROXY_IN_SLOTS` on the other.
 
 To keep all the above configuration options in sync, create an overlay file that is shared between the application and network core.
 Then, you can invoke build command like this:

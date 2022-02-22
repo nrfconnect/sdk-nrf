@@ -13,7 +13,7 @@ The SDK includes open source projects (TF-M, MCUboot, OpenThread, Matter, and th
 Release notes might refer to "experimental" support for features, which indicates that the feature is incomplete in functionality or verification, and can be expected to change in future releases.
 The feature is made available in its current state though the design and interfaces can change between release tags.
 The feature will also be labelled with "EXPERIMENTAL" in Kconfig files to indicate this status.
-Build warnings will be generated to indicate when features labelled EXPERIMENTAL are included in builds unless the Kconfig option :kconfig:`CONFIG_WARN_EXPERIMENTAL` is disabled.
+Build warnings will be generated to indicate when features labelled EXPERIMENTAL are included in builds unless the Kconfig option :kconfig:option:`CONFIG_WARN_EXPERIMENTAL` is disabled.
 
 Highlights
 **********
@@ -246,7 +246,7 @@ nRF Desktop
   * Fn key related macros by moving them to an application specific header file (:file:`configuration/common/fn_key_id.h`).
   * :ref:`nrf_desktop_buttons` by adding a description about Key ID.
   * Config channel to no longer use orphaned sections to store module Id information.
-    Hence, the :kconfig:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
+    Hence, the :kconfig:option:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
   * Bluetooth transmission power level for the :ref:`nrf_desktop_ble_adv`.
     It is now assumed to be 0 dBm during advertising.
 
@@ -570,7 +570,7 @@ Libraries for networking
 
   * :ref:`lib_nrf_cloud_pgps` library:
 
-    * Removed the word ALL from the :kconfig:`CONFIG_NRF_CLOUD_PGPS_REQUEST_UPON_INIT` option. Changed the :c:func:`nrf_cloud_pgps_init` function to use this to disable all three reasons for downloading P-GPS data, not just the full set.
+    * Removed the word ALL from the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REQUEST_UPON_INIT` option. Changed the :c:func:`nrf_cloud_pgps_init` function to use this to disable all three reasons for downloading P-GPS data, not just the full set.
 
 DFU libraries
 -------------
@@ -599,7 +599,7 @@ Modem libraries
   * :ref:`at_monitor_readme` library:
 
     * Added :c:macro:`AT_MONITOR_ISR` macro to monitor AT notifications in an interrupt service routine. See Deferred dispatching and Direct dispatching sections in the library documentation for more information.
-    * Removed :c:func:`at_monitor_init` function and :kconfig:`CONFIG_AT_MONITOR_SYS_INIT` option. The library now initializes automatically when enabled.
+    * Removed :c:func:`at_monitor_init` function and :kconfig:option:`CONFIG_AT_MONITOR_SYS_INIT` option. The library now initializes automatically when enabled.
 
   * :ref:`at_cmd_parser_readme` library:
 
@@ -653,7 +653,7 @@ Other libraries
 
   * :ref:`lib_date_time` library:
 
-    * Removed the :kconfig:`CONFIG_DATE_TIME_IPV6` Kconfig option.
+    * Removed the :kconfig:option:`CONFIG_DATE_TIME_IPV6` Kconfig option.
       The library now automatically uses IPv6 for NTP when available.
     * Updated the documentation as part of refactoring the NTP server selection logic.
 
@@ -679,7 +679,7 @@ Other libraries
 
       * The sections used by the event manager and stopped using orphaned sections.
 
-        * Event manager no longer uses orphaned sections to store information about event types, listeners, and subscribers.    Hence, the :kconfig:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
+        * Event manager no longer uses orphaned sections to store information about event types, listeners, and subscribers.    Hence, the :kconfig:option:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
 
       * Reworked priorities.
 
@@ -693,7 +693,7 @@ Other libraries
     * Updated:
 
       * Event manager Profiler Tracer to no longer use orphaned sections to store profiler information.
-        Hence, the :kconfig:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
+        Hence, the :kconfig:option:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
 
 TF-M libraries
 --------------
@@ -781,7 +781,7 @@ The following list summarizes both the main changes inherited from upstream MCUb
 
 * Added:
 
-  * Check of reset address in the incoming image validation phase. See :kconfig:`CONFIG_MCUBOOT_VERIFY_IMG_ADDRESS`.
+  * Check of reset address in the incoming image validation phase. See :kconfig:option:`CONFIG_MCUBOOT_VERIFY_IMG_ADDRESS`.
 
 * Updated:
 
@@ -839,7 +839,7 @@ Release notes for 0.3.0 can be found in :file:`ncs/nrf/modules/lib/cddl-gen/RELE
 The change prompted some changes in the CMake for the module, notably:
 
 * The CMake function ``target_cddl_source()`` was removed.
-* The non-generated source files (:file:`cbor_encode.c` and :file:`cbor_decode.c`) and their accompanying header files are now added to the build when :kconfig:`CONFIG_CDDL_GEN` is enabled.
+* The non-generated source files (:file:`cbor_encode.c` and :file:`cbor_decode.c`) and their accompanying header files are now added to the build when :kconfig:option:`CONFIG_CDDL_GEN` is enabled.
 
 Also, it prompted the following:
 

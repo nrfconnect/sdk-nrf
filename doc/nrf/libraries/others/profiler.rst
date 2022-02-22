@@ -25,7 +25,7 @@ Configuring for use with custom events
 
 To use the Profiler for custom events, complete the following steps:
 
-1. Enable the :kconfig:`CONFIG_PROFILER` Kconfig option.
+1. Enable the :kconfig:option:`CONFIG_PROFILER` Kconfig option.
    This option adds the Profiler source code to the application.
 #. Call :c:func:`profiler_init` during the application start to initialize the Profiler.
 #. Profile custom events, as described in the following section.

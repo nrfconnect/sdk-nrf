@@ -40,7 +40,7 @@ The sample then performs the following actions:
 Downloading from a CoAP server
 ==============================
 
-To enable CoAP block-wise transfer, it is necessary to enable :ref:`Zephyr's CoAP stack <zephyr:coap_sock_interface>` using the :kconfig:`CONFIG_COAP` option.
+To enable CoAP block-wise transfer, it is necessary to enable :ref:`Zephyr's CoAP stack <zephyr:coap_sock_interface>` using the :kconfig:option:`CONFIG_COAP` option.
 
 Using TLS and DTLS
 ==================
