@@ -74,7 +74,7 @@ The :ref:`secure_partition_manager` sample provides a reference implementation o
 This firmware is required to set up an nRF9160-based device so that it can run user applications in the non-secure domain.
 
 The Secure Partition Manager sample is automatically included in the build for the ``nrf9160dk_nrf9160_ns`` and ``thingy91_nrf9160_ns`` build targets.
-To disable the automatic inclusion of the Secure Partition Manager sample, set the option :kconfig:`CONFIG_SPM` to ``n`` in the project configuration.
+To disable the automatic inclusion of the Secure Partition Manager sample, set the option :kconfig:option:`CONFIG_SPM` to ``n`` in the project configuration.
 
 
 
@@ -97,7 +97,7 @@ The user application runs in the non-secure domain.
 Therefore, it must be built for the ``nrf9160dk_nrf9160_ns`` or ``thingy91_nrf9160_ns`` build target.
 
 The application image might require other images to be present.
-Some samples include the :ref:`bootloader` sample (:kconfig:`CONFIG_SECURE_BOOT`) and :doc:`mcuboot:index-ncs` (:kconfig:`CONFIG_BOOTLOADER_MCUBOOT`).
+Some samples include the :ref:`bootloader` sample (:kconfig:option:`CONFIG_SECURE_BOOT`) and :doc:`mcuboot:index-ncs` (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`).
 Depending on the configuration, all these images can be built at the same time in a :ref:`multi-image build <ug_multi_image>`.
 
 .. _lte_modem:
@@ -182,7 +182,7 @@ To perform a FOTA upgrade, complete the following steps:
       In addition, the following requirements apply:
 
       * |fota_upgrades_req_mcuboot|
-      * If you want to upgrade the upgradable bootloader, the :ref:`bootloader` must be used (:kconfig:`CONFIG_SECURE_BOOT`).
+      * If you want to upgrade the upgradable bootloader, the :ref:`bootloader` must be used (:kconfig:option:`CONFIG_SECURE_BOOT`).
       * If you want to upgrade the modem firmware through modem delta updates, neither MCUboot nor the immutable bootloader are required, because the modem firmware upgrade is handled by the modem itself.
       * If you want to perform a full modem firmware upgrade, an |external_flash_size| is required.
 
@@ -195,7 +195,7 @@ To perform a FOTA upgrade, complete the following steps:
       |fota_upgrades_building|
       The :file:`app_update.bin` file is the file that should be uploaded to the server.
 
-      To create binary files for a bootloader upgrade, make sure that :kconfig:`CONFIG_SECURE_BOOT` and :kconfig:`CONFIG_BUILD_S1_VARIANT` are enabled and build MCUboot as usual.
+      To create binary files for a bootloader upgrade, make sure that :kconfig:option:`CONFIG_SECURE_BOOT` and :kconfig:option:`CONFIG_BUILD_S1_VARIANT` are enabled and build MCUboot as usual.
       The build will create a binary file for each variant of the upgradable bootloader, one for each bootloader slot.
       See :ref:`upgradable_bootloader` for more information.
 
@@ -385,7 +385,7 @@ To check which bands are supported for a particular modem firmware version, see 
 You can use the band lock to restrict modem operation to a subset of the supported bands, which might improve the performance of your application.
 To check which bands are certified in your region, visit `nRF9160 Certifications`_.
 
-To set the LTE band lock, enable the :ref:`lte_lc_readme` library in your project configuration file :file:`prj.conf`, by setting the Kconfig option :kconfig:`CONFIG_LTE_LINK_CONTROL`  to ``y``.
+To set the LTE band lock, enable the :ref:`lte_lc_readme` library in your project configuration file :file:`prj.conf`, by setting the Kconfig option :kconfig:option:`CONFIG_LTE_LINK_CONTROL`  to ``y``.
 
 Then, enable the LTE band lock feature and the band lock mask in the configuration file of your project, as follows::
 
@@ -393,7 +393,7 @@ Then, enable the LTE band lock feature and the band lock mask in the configurati
    CONFIG_LTE_LOCK_BAND_MASK="10000001000000001100"
 
 The band lock mask allows you to set the bands on which you want the modem to operate.
-Each bit in the :kconfig:`CONFIG_LTE_LOCK_BAND_MASK` option represents one band.
+Each bit in the :kconfig:option:`CONFIG_LTE_LOCK_BAND_MASK` option represents one band.
 The maximum length of the string is 88 characters (bit string, 88 bits).
 
 The band lock is a non-volatile setting that must be set before activating the modem.
@@ -418,7 +418,7 @@ The modem supports LTE-M (Cat-M1) and Narrowband Internet of Things (NB-IoT or L
 By default, the modem starts in LTE-M mode.
 However, this is highly configurable.
 
-When using the LTE Link Control driver, you can select LTE-M with :kconfig:`CONFIG_LTE_NETWORK_MODE_LTE_M` or NB-IoT with :kconfig:`CONFIG_LTE_NETWORK_MODE_NBIOT`.
+When using the LTE Link Control driver, you can select LTE-M with :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M` or NB-IoT with :kconfig:option:`CONFIG_LTE_NETWORK_MODE_NBIOT`.
 
 To start in NB-IoT mode without the driver, send the following command before starting the modem protocols (by using ``AT+CFUN=1``)::
 

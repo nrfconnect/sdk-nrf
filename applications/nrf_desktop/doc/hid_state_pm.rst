@@ -22,8 +22,8 @@ Module events
 Configuration
 *************
 
-The module is enabled by :kconfig:`CONFIG_DESKTOP_HID_STATE_PM_ENABLE` Kconfig option.
-The option depends on :kconfig:`CONFIG_CAF_POWER_MANAGER` and it is enabled by default.
+The module is enabled by :kconfig:option:`CONFIG_DESKTOP_HID_STATE_PM_ENABLE` Kconfig option.
+The option depends on :kconfig:option:`CONFIG_CAF_POWER_MANAGER` and it is enabled by default.
 
 Implementation details
 **********************

@@ -51,7 +51,7 @@ The GNSS module receives requests for GPS assistance data from the nRF9160 modem
 When an A-GPS request is received, the module distributes it to the other modules as a ``GNSS_EVT_AGPS_NEEDED`` event that contains information about the type of assistance data needed.
 Providing the requested A-GPS data may reduce the time it takes to acquire a position fix.
 
-The module can also store the last known location if :kconfig:`CONFIG_GNSS_MODULE_PGPS_STORE_LOCATION` is enabled.
+The module can also store the last known location if :kconfig:option:`CONFIG_GNSS_MODULE_PGPS_STORE_LOCATION` is enabled.
 This can improve the time to fix when predicted GPS assistance data is used.
 
 Module internals
@@ -71,24 +71,24 @@ Configuration options
 
 To enable the GNSS module, you must set the following option:
 
- * :kconfig:`CONFIG_GNSS_MODULE`
+ * :kconfig:option:`CONFIG_GNSS_MODULE`
 
 The module can report data either as a structure of position, velocity and time (PVT) information, or as an NMEA string of GGA type.
 To select which format to use, configure one of the following two options:
 
- * :kconfig:`CONFIG_GNSS_MODULE_PVT` - Include position, velocity and time (PVT) information in the ``GNSS_EVT_DATA_READY`` events that are sent when the GNSS acquires a position fix.
- * :kconfig:`CONFIG_GNSS_MODULE_NMEA` - Include an NMEA string of the GGA type in the ``GNSS_EVT_DATA_READY`` events that are sent when the GNSS acquires a position fix.
+ * :kconfig:option:`CONFIG_GNSS_MODULE_PVT` - Include position, velocity and time (PVT) information in the ``GNSS_EVT_DATA_READY`` events that are sent when the GNSS acquires a position fix.
+ * :kconfig:option:`CONFIG_GNSS_MODULE_NMEA` - Include an NMEA string of the GGA type in the ``GNSS_EVT_DATA_READY`` events that are sent when the GNSS acquires a position fix.
 
 The GNSS module can set up the modem and LNA to use either an onboard or external GNSS antenna using one of the following two options:
 
- * :kconfig:`CONFIG_GNSS_MODULE_ANTENNA_ONBOARD` - Send antenna configurations to the modem when you compile for Thingy:91 or nRF9160 DK.
- * :kconfig:`CONFIG_GNSS_MODULE_ANTENNA_EXTERNAL` - This configures the target to use an external GNSS antenna.
+ * :kconfig:option:`CONFIG_GNSS_MODULE_ANTENNA_ONBOARD` - Send antenna configurations to the modem when you compile for Thingy:91 or nRF9160 DK.
+ * :kconfig:option:`CONFIG_GNSS_MODULE_ANTENNA_EXTERNAL` - This configures the target to use an external GNSS antenna.
 
 If P-GPS is used, the last known position from a GNSS fix can be stored and injected to the modem together with the relevant ephemeris.
 This may, depending on the use case and the device's movements, reduce the time to fix.
 To enable this feature, use the following option:
 
-  * :kconfig:`CONFIG_GNSS_MODULE_PGPS_STORE_LOCATION`
+  * :kconfig:option:`CONFIG_GNSS_MODULE_PGPS_STORE_LOCATION`
 
 For more information on P-GPS, see :ref:`lib_nrf_cloud_pgps`.
 

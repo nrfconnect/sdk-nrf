@@ -242,7 +242,7 @@ To perform a FOTA upgrade, complete the following steps:
       * You must enable the mcumgr module, which handles the transport protocol over Bluetooth Low Energy.
         To enable this module in your application, complete the following steps:
 
-        a. Enable :kconfig:`CONFIG_MCUMGR_CMD_OS_MGMT`, :kconfig:`CONFIG_MCUMGR_CMD_IMG_MGMT`, and :kconfig:`CONFIG_MCUMGR_SMP_BT`.
+        a. Enable :kconfig:option:`CONFIG_MCUMGR_CMD_OS_MGMT`, :kconfig:option:`CONFIG_MCUMGR_CMD_IMG_MGMT`, and :kconfig:option:`CONFIG_MCUMGR_SMP_BT`.
         #. Call ``os_mgmt_register_group()`` and ``img_mgmt_register_group()`` in your application.
         #. Call ``smp_bt_register()`` in your application to initialize the mcumgr Bluetooth Low Energy transport.
 

@@ -29,13 +29,13 @@ Response is handled in the following way:
 Configuration
 *************
 
-Configure the :kconfig:`CONFIG_NRF_CLOUD_REST` option to enable or disable the use of this library.
+Configure the :kconfig:option:`CONFIG_NRF_CLOUD_REST` option to enable or disable the use of this library.
 
 Additionally, configure the following options for the needs of your application:
 
-* :kconfig:`CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE`
-* :kconfig:`CONFIG_NRF_CLOUD_REST_HOST_NAME`
-* :kconfig:`CONFIG_NRF_CLOUD_SEC_TAG`
+* :kconfig:option:`CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE`
+* :kconfig:option:`CONFIG_NRF_CLOUD_REST_HOST_NAME`
+* :kconfig:option:`CONFIG_NRF_CLOUD_SEC_TAG`
 
 API documentation
 *****************

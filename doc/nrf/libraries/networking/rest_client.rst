@@ -20,14 +20,14 @@ The same structure will contain the response data.
 Configuration
 *************
 
-To use the REST client library, enable the :kconfig:`CONFIG_REST_CLIENT` Kconfig option.
+To use the REST client library, enable the :kconfig:option:`CONFIG_REST_CLIENT` Kconfig option.
 
 You can configure the following options to adjust the behavior of the library:
 
-*  :kconfig:`CONFIG_REST_CLIENT_REQUEST_TIMEOUT`
-*  :kconfig:`CONFIG_REST_CLIENT_SCKT_SEND_TIMEOUT`
-*  :kconfig:`CONFIG_REST_CLIENT_SCKT_RECV_TIMEOUT`
-*  :kconfig:`CONFIG_REST_CLIENT_SCKT_TLS_SESSION_CACHE_IN_USE`
+*  :kconfig:option:`CONFIG_REST_CLIENT_REQUEST_TIMEOUT`
+*  :kconfig:option:`CONFIG_REST_CLIENT_SCKT_SEND_TIMEOUT`
+*  :kconfig:option:`CONFIG_REST_CLIENT_SCKT_RECV_TIMEOUT`
+*  :kconfig:option:`CONFIG_REST_CLIENT_SCKT_TLS_SESSION_CACHE_IN_USE`
 
 Limitations
 ***********

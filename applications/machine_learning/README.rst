@@ -101,7 +101,7 @@ For the Thingy:53, the sensor supports a trigger that can be used for active pow
 As long as the device detects acceleration, the board is kept in the active state.
 When the board is in the :c:enumerator:`POWER_MANAGER_LEVEL_SUSPENDED` state, it can be woken up by acceleration threshold by moving the device.
 
-You can define the time interval after which the peripherals are suspended or powered off in the :kconfig:`CONFIG_CAF_POWER_MANAGER_TIMEOUT` option.
+You can define the time interval after which the peripherals are suspended or powered off in the :kconfig:option:`CONFIG_CAF_POWER_MANAGER_TIMEOUT` option.
 By default, this period is set to 120 seconds.
 
 .. _nrf_machine_learning_app_architecture:
@@ -554,7 +554,7 @@ The nRF Machine Learning application also uses the following dedicated applicati
 
 ``ei_data_forwarder_bt_nus``
   The module forwards the sensor readouts over NUS to the connected Bluetooth Central.
-  The sensor data is forwarded only if the connection is secured and connection interval is within the limit defined by :kconfig:`CONFIG_BT_PERIPHERAL_PREF_MAX_INT` and :kconfig:`CONFIG_BT_PERIPHERAL_PREF_MAX_INT`.
+  The sensor data is forwarded only if the connection is secured and connection interval is within the limit defined by :kconfig:option:`CONFIG_BT_PERIPHERAL_PREF_MAX_INT` and :kconfig:option:`CONFIG_BT_PERIPHERAL_PREF_MAX_INT`.
 
 ``ei_data_forwarder_uart``
   The module forwards the sensor readouts over UART.

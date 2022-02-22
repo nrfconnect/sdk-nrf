@@ -33,11 +33,11 @@ Using Memfault SDK
 The SDK is part of the West manifest in |NCS| and is automatically downloaded when running ``west update``.
 By default, it is downloaded to ``<nRF Connect SDK path>/modules/lib/memfault-firmware-sdk/``.
 
-To include Memfault in your build, enable the Kconfig option :kconfig:`CONFIG_MEMFAULT`.
+To include Memfault in your build, enable the Kconfig option :kconfig:option:`CONFIG_MEMFAULT`.
 The APIs in Memfault SDK can then be linked into your application.
 
-In addition, you must configure a Memfault project key using :kconfig:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`.
-:kconfig:`CONFIG_MEMFAULT_NCS_PROJECT_KEY` is located in :file:`../overlay-memfault.conf`.
+In addition, you must configure a Memfault project key using :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`.
+:kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY` is located in :file:`../overlay-memfault.conf`.
 
 To get access to all the benefits, like up to 100 free devices connected, register at the `Memfault registration page`_.
 
@@ -59,7 +59,7 @@ Configuration files
 
 .. memfault_config_files_start
 
-If you just want to do a quick test with a sample, disable the :kconfig:`CONFIG_MEMFAULT_USER_CONFIG_ENABLE` option in the :file:`prj.conf` to avoid adding the user configuration files.
+If you just want to do a quick test with a sample, disable the :kconfig:option:`CONFIG_MEMFAULT_USER_CONFIG_ENABLE` option in the :file:`prj.conf` to avoid adding the user configuration files.
 Otherwise, follow the instructions below.
 
 Memfault SDK requires three files in the include path during the build process.
@@ -85,20 +85,20 @@ Configuration options in Memfault SDK
 
 Following are some of the configuration options that Memfault SDK define:
 
-* :kconfig:`CONFIG_MEMFAULT_SHELL`
-* :kconfig:`CONFIG_MEMFAULT_RAM_BACKED_COREDUMP`
-* :kconfig:`CONFIG_MEMFAULT_RAM_BACKED_COREDUMP_SIZE`
-* :kconfig:`CONFIG_MEMFAULT_COREDUMP_COLLECT_DATA_REGIONS`
-* :kconfig:`CONFIG_MEMFAULT_COREDUMP_COLLECT_BSS_REGIONS`
-* :kconfig:`CONFIG_MEMFAULT_HTTP_ENABLE`
-* :kconfig:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_INTERVAL_SECS`
-* :kconfig:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_USE_DEDICATED_WORKQUEUE`
-* :kconfig:`CONFIG_MEMFAULT_EVENT_STORAGE_SIZE`
-* :kconfig:`CONFIG_MEMFAULT_CLEAR_RESET_REG`
-* :kconfig:`CONFIG_MEMFAULT_METRICS`
-* :kconfig:`CONFIG_MEMFAULT_METRICS_DEFAULT_SET_ENABLE`
-* :kconfig:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD`
-* :kconfig:`CONFIG_MEMFAULT_ROOT_CERT_STORAGE_NRF9160_MODEM`
+* :kconfig:option:`CONFIG_MEMFAULT_SHELL`
+* :kconfig:option:`CONFIG_MEMFAULT_RAM_BACKED_COREDUMP`
+* :kconfig:option:`CONFIG_MEMFAULT_RAM_BACKED_COREDUMP_SIZE`
+* :kconfig:option:`CONFIG_MEMFAULT_COREDUMP_COLLECT_DATA_REGIONS`
+* :kconfig:option:`CONFIG_MEMFAULT_COREDUMP_COLLECT_BSS_REGIONS`
+* :kconfig:option:`CONFIG_MEMFAULT_HTTP_ENABLE`
+* :kconfig:option:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_INTERVAL_SECS`
+* :kconfig:option:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_USE_DEDICATED_WORKQUEUE`
+* :kconfig:option:`CONFIG_MEMFAULT_EVENT_STORAGE_SIZE`
+* :kconfig:option:`CONFIG_MEMFAULT_CLEAR_RESET_REG`
+* :kconfig:option:`CONFIG_MEMFAULT_METRICS`
+* :kconfig:option:`CONFIG_MEMFAULT_METRICS_DEFAULT_SET_ENABLE`
+* :kconfig:option:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD`
+* :kconfig:option:`CONFIG_MEMFAULT_ROOT_CERT_STORAGE_NRF9160_MODEM`
 
 You can find more details on each option using ``menuconfig``, ``guiconfig``, and in the Kconfig sources in ``modules/lib/memfault-firmware-sdk/ports/zephyr/Kconfig``.
 
@@ -115,20 +115,20 @@ Configuration options in |NCS|
 
 The Kconfig options for Memfault that are defined in |NCS| provide some additional features compared to the options that are already implemented in Memfault SDK:
 
-* :kconfig:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`
-* :kconfig:`CONFIG_MEMFAULT_NCS_PROVISION_CERTIFICATES`
-* :kconfig:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP`
-* :kconfig:`CONFIG_MEMFAULT_NCS_LTE_METRICS`
-* :kconfig:`CONFIG_MEMFAULT_NCS_STACK_METRICS`
+* :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`
+* :kconfig:option:`CONFIG_MEMFAULT_NCS_PROVISION_CERTIFICATES`
+* :kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP`
+* :kconfig:option:`CONFIG_MEMFAULT_NCS_LTE_METRICS`
+* :kconfig:option:`CONFIG_MEMFAULT_NCS_STACK_METRICS`
 
 The |NCS| integration of `Memfault SDK`_ provides default values for some metadata that are required to identify the firmware when it is sent to Memfault cloud.
 These defaults can be controlled by using the configuration options below:
 
-* :kconfig:`CONFIG_MEMFAULT_NCS_DEVICE_ID`
-* :kconfig:`CONFIG_MEMFAULT_NCS_HW_VERSION`
-* :kconfig:`CONFIG_MEMFAULT_NCS_FW_TYPE`
-* :kconfig:`CONFIG_MEMFAULT_NCS_FW_VERSION_STATIC`
-* :kconfig:`CONFIG_MEMFAULT_NCS_FW_VERSION_PREFIX`
+* :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID`
+* :kconfig:option:`CONFIG_MEMFAULT_NCS_HW_VERSION`
+* :kconfig:option:`CONFIG_MEMFAULT_NCS_FW_TYPE`
+* :kconfig:option:`CONFIG_MEMFAULT_NCS_FW_VERSION_STATIC`
+* :kconfig:option:`CONFIG_MEMFAULT_NCS_FW_VERSION_PREFIX`
 
 
 API documentation

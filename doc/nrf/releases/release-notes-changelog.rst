@@ -73,7 +73,7 @@ nRF Desktop
 
 * Added:
 
-  * Documentation for selective HID report subscription in :ref:`nrf_desktop_usb_state` using :kconfig:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION` option.
+  * Documentation for selective HID report subscription in :ref:`nrf_desktop_usb_state` using :kconfig:option:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION` option.
 
 Samples
 =======
