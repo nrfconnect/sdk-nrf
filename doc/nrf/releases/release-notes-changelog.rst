@@ -89,6 +89,8 @@ Bluetooth samples
   * :ref:`direct_test_mode` sample:
 
     * Fixed handling of the disable Constant Tone Extension command.
+    * The front-end module test parameters are not set to their default value after the DTM reset command.
+    * Added the vendor-specific ``FEM_DEFAULT_PARAMS_SET`` command for restoring the default front-end module parameters.
 
 |no_changes_yet_note|
 
