@@ -84,6 +84,12 @@ For lists of protocol-specific changes, see `Protocols`_.
 Bluetooth samples
 -----------------
 
+* Updated:
+
+  * :ref:`direct_test_mode` sample:
+
+    * Fixed handling of the disable Constant Tone Extension command.
+
 |no_changes_yet_note|
 
 Bluetooth mesh samples
