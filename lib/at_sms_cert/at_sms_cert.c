@@ -34,7 +34,7 @@ struct sms_buffer {
 static struct sms_buffer sms_buffer_list[SMS_BUFFER_LIST_SIZE];
 
 /* Buffer for SCA. */
-static char sca_buff[SCA_BUFFER_SIZE];
+static char sca_buff[SCA_BUFFER_SIZE + 1];
 
 /* AT filter function declarations. */
 static int at_cmd_callback_cpms(char *buf, size_t len, const char *at_cmd);
@@ -174,6 +174,7 @@ static int at_cmd_callback_csca(char *buf, size_t len, const char *at_cmd)
 	/* Set */
 	if (match_string("AT+CSCA=", at_cmd)) {
 		strncpy(sca_buff, &(at_cmd[8]), SCA_BUFFER_SIZE);
+		sca_buff[sizeof(sca_buff) - 1] = '\0';
 		return response_buffer_fill(buf, len, "\r\n+CSMS: OK\r\nOK\r\n");
 	}
 
@@ -190,6 +191,7 @@ static int at_cmd_callback_cscs(char *buf, size_t len, const char *at_cmd)
 	/* Set */
 	if (match_string("AT+CSCS=", at_cmd)) {
 		strncpy(sca_buff, &(at_cmd[8]), SCA_BUFFER_SIZE);
+		sca_buff[sizeof(sca_buff) - 1] = '\0';
 		return response_buffer_fill(buf, len, "\r\nOK\r\n");
 	}
 
