@@ -2015,6 +2015,14 @@ NCSDK-12483: Missing debug symbols
 
   **Workaround:** Add the following text in the application :file:`CMakeLists.txt` file: ``zephyr_link_libraries(-Wl,--undefined=my_missing_debug_symbol)``.
 
+.. rst-class:: v1-9-0
+
+NCSDK-14015: Execution halts during boot
+  When the :kconfig:`CONFIG_RPMSG_SERVICE` is enabled on the nRF5340 SoC together with TF-M, the firmware does not boot.
+  This option is used by OpenThread and Bluetooth modules.
+
+  **Workaround:** Place the ``rpmsg_nrf53_sram`` partition inside the ``sram_nonsecure`` partition using :ref:`partition_manager`.
+
 Zephyr
 ******
 
