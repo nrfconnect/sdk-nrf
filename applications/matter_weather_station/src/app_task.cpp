@@ -115,8 +115,39 @@ chip::OTARequestor sOTARequestor;
 
 AppTask AppTask::sAppTask;
 
-int AppTask::Init()
+CHIP_ERROR AppTask::Init()
 {
+	/* Initialize CHIP stack */
+	LOG_INF("Init CHIP stack");
+
+	CHIP_ERROR err = chip::Platform::MemoryInit();
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("Platform::MemoryInit() failed");
+		return err;
+	}
+
+	err = PlatformMgr().InitChipStack();
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("PlatformMgr().InitChipStack() failed");
+		return err;
+	}
+
+	err = ThreadStackMgr().InitThreadStack();
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("ThreadStackMgr().InitThreadStack() failed");
+		return err;
+	}
+
+#ifdef CONFIG_OPENTHREAD_MTD_SED
+	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_SleepyEndDevice);
+#else
+	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
+#endif
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed");
+		return err;
+	}
+
 	/* Initialize RGB LED */
 	LEDWidget::InitGpio();
 	LEDWidget::SetStateUpdateCallback(LEDStateUpdateHandler);
@@ -131,35 +162,40 @@ int AppTask::Init()
 	int ret = dk_buttons_init(ButtonStateHandler);
 	if (ret) {
 		LOG_ERR("dk_buttons_init() failed");
-		return ret;
+		return chip::System::MapErrorZephyr(ret);
 	}
 
 	if (!sBme688SensorDev) {
 		LOG_ERR("BME688 sensor init failed");
-		return -1;
+		return chip::System::MapErrorZephyr(-ENODEV);
 	}
 
-	if (BatteryMeasurementInit()) {
+	ret = BatteryMeasurementInit();
+	if (ret) {
 		LOG_ERR("Battery measurement init failed");
-		return -1;
+		return chip::System::MapErrorZephyr(ret);
 	}
 
-	if (BatteryMeasurementEnable()) {
+	ret = BatteryMeasurementEnable();
+	if (ret) {
 		LOG_ERR("Enabling battery measurement failed");
-		return -1;
+		return chip::System::MapErrorZephyr(ret);
 	}
 
-	if (BatteryChargeControlInit()) {
+	ret = BatteryChargeControlInit();
+	if (ret) {
 		LOG_ERR("Battery charge control init failed");
-		return -1;
+		return chip::System::MapErrorZephyr(ret);
 	}
 
-	if (BuzzerInit()) {
+	ret = BuzzerInit();
+	if (ret) {
 		LOG_ERR("Buzzer init failed");
-		return -1;
+		return chip::System::MapErrorZephyr(ret);
 	}
 
 #ifdef CONFIG_MCUMGR_SMP_BT
+	/* Initialize DFU over SMP */
 	GetDFUOverSMP().Init(RequestSMPAdvertisingStart);
 	GetDFUOverSMP().ConfirmNewImage();
 	GetDFUOverSMP().StartServer();
@@ -175,15 +211,8 @@ int AppTask::Init()
 	k_timer_init(
 		&sIdentifyTimer, [](k_timer *) { sAppTask.PostEvent(AppEvent{ AppEvent::IdentifyTimer }); }, nullptr);
 
-	/* Init ZCL Data Model and start server */
-	chip::Server::GetInstance().Init();
-
-	/* Initialize device attestation config */
+	/* Initialize CHIP server */
 	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
-	ConfigurationMgr().LogDeviceConfig();
-	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
-
-	PlatformMgr().AddEventHandler(AppTask::ChipEventHandler, 0);
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 	sOTAImageProcessor.SetOTADownloader(&sBDXDownloader);
@@ -193,7 +222,24 @@ int AppTask::Init()
 	chip::SetRequestorInstance(&sOTARequestor);
 #endif
 
-	return 0;
+	ReturnErrorOnFailure(chip::Server::GetInstance().Init());
+	ConfigurationMgr().LogDeviceConfig();
+	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
+
+	/*
+	 * Add CHIP event handler and start CHIP thread.
+	 * Note that all the initialization code should happen prior to this point
+	 * to avoid data races between the main and the CHIP threads.
+	 */
+	PlatformMgr().AddEventHandler(ChipEventHandler, 0);
+
+	err = PlatformMgr().StartEventLoopTask();
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("PlatformMgr().StartEventLoopTask() failed");
+		return err;
+	}
+
+	return CHIP_NO_ERROR;
 }
 
 void AppTask::OpenPairingWindow()
@@ -215,14 +261,9 @@ void AppTask::OpenPairingWindow()
 	}
 }
 
-int AppTask::StartApp()
+CHIP_ERROR AppTask::StartApp()
 {
-	int ret = Init();
-
-	if (ret) {
-		LOG_ERR("AppTask.Init() failed");
-		return ret;
-	}
+	ReturnErrorOnFailure(Init());
 
 	AppEvent event = {};
 
@@ -230,6 +271,8 @@ int AppTask::StartApp()
 		k_msgq_get(&sAppEventQueue, &event, K_FOREVER);
 		DispatchEvent(event);
 	}
+
+	return CHIP_NO_ERROR;
 }
 
 void AppTask::PostEvent(const AppEvent &event)

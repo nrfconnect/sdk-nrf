@@ -13,6 +13,9 @@
 #include <app/server/Server.h>
 #include <credentials/DeviceAttestationCredsProvider.h>
 #include <credentials/examples/DeviceAttestationCredsExample.h>
+#include <lib/support/CHIPMem.h>
+#include <lib/support/CodeUtils.h>
+#include <system/SystemError.h>
 
 #include <dk_buttons_and_leds.h>
 #include <logging/log.h>
@@ -43,8 +46,35 @@ k_timer sFunctionTimer;
 
 AppTask AppTask::sAppTask;
 
-int AppTask::Init()
+CHIP_ERROR AppTask::Init()
 {
+	/* Initialize CHIP stack */
+	LOG_INF("Init CHIP stack");
+
+	CHIP_ERROR err = chip::Platform::MemoryInit();
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("Platform::MemoryInit() failed");
+		return err;
+	}
+
+	err = PlatformMgr().InitChipStack();
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("PlatformMgr().InitChipStack() failed");
+		return err;
+	}
+
+	err = ThreadStackMgr().InitThreadStack();
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("ThreadStackMgr().InitThreadStack() failed");
+		return err;
+	}
+
+	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed");
+		return err;
+	}
+
 	/* Initialize LEDs */
 	LEDWidget::InitGpio();
 	LEDWidget::SetStateUpdateCallback(LEDStateUpdateHandler);
@@ -60,32 +90,38 @@ int AppTask::Init()
 	int ret = dk_buttons_init(ButtonEventHandler);
 	if (ret) {
 		LOG_ERR("dk_buttons_init() failed");
-		return ret;
+		return chip::System::MapErrorZephyr(ret);
 	}
 
 	/* Initialize function timer */
 	k_timer_init(&sFunctionTimer, &AppTask::TimerEventHandler, nullptr);
 	k_timer_user_data_set(&sFunctionTimer, this);
 
-	/* Init ZCL Data Model and start server */
-	chip::Server::GetInstance().Init();
-
-	/* Initialize device attestation config */
+	/* Initialize CHIP server */
 	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
+	ReturnErrorOnFailure(chip::Server::GetInstance().Init());
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 
-	return 0;
+	/*
+	 * Add CHIP event handler and start CHIP thread.
+	 * Note that all the initialization code should happen prior to this point
+	 * to avoid data races between the main and the CHIP threads.
+	 */
+	PlatformMgr().AddEventHandler(ChipEventHandler, 0);
+
+	err = PlatformMgr().StartEventLoopTask();
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("PlatformMgr().StartEventLoopTask() failed");
+		return err;
+	}
+
+	return CHIP_NO_ERROR;
 }
 
-int AppTask::StartApp()
+CHIP_ERROR AppTask::StartApp()
 {
-	int ret = Init();
-
-	if (ret) {
-		LOG_ERR("AppTask.Init() failed");
-		return ret;
-	}
+	ReturnErrorOnFailure(Init());
 
 	AppEvent event = {};
 
@@ -93,6 +129,8 @@ int AppTask::StartApp()
 		k_msgq_get(&sAppEventQueue, &event, K_FOREVER);
 		DispatchEvent(event);
 	}
+
+	return CHIP_NO_ERROR;
 }
 
 void AppTask::PostEvent(const AppEvent &event)

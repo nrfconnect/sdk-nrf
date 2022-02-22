@@ -21,6 +21,9 @@
 #include <app/server/Server.h>
 #include <credentials/DeviceAttestationCredsProvider.h>
 #include <credentials/examples/DeviceAttestationCredsExample.h>
+#include <lib/support/CHIPMem.h>
+#include <lib/support/CodeUtils.h>
+#include <system/SystemError.h>
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include <app/clusters/ota-requestor/BDXDownloader.h>
@@ -77,8 +80,35 @@ chip::OTARequestor sOTARequestor;
 
 AppTask AppTask::sAppTask;
 
-int AppTask::Init()
+CHIP_ERROR AppTask::Init()
 {
+	/* Initialize CHIP stack */
+	LOG_INF("Init CHIP stack");
+
+	CHIP_ERROR err = chip::Platform::MemoryInit();
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("Platform::MemoryInit() failed");
+		return err;
+	}
+
+	err = PlatformMgr().InitChipStack();
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("PlatformMgr().InitChipStack() failed");
+		return err;
+	}
+
+	err = ThreadStackMgr().InitThreadStack();
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("ThreadStackMgr().InitThreadStack() failed");
+		return err;
+	}
+
+	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed");
+		return err;
+	}
+
 	/* Initialize LEDs */
 	LEDWidget::InitGpio();
 	LEDWidget::SetStateUpdateCallback(LEDStateUpdateHandler);
@@ -95,10 +125,11 @@ int AppTask::Init()
 	int ret = dk_buttons_init(ButtonEventHandler);
 	if (ret) {
 		LOG_ERR("dk_buttons_init() failed");
-		return ret;
+		return chip::System::MapErrorZephyr(ret);
 	}
 
 #ifdef CONFIG_MCUMGR_SMP_BT
+	/* Initialize DFU over SMP */
 	GetDFUOverSMP().Init(RequestSMPAdvertisingStart);
 	GetDFUOverSMP().ConfirmNewImage();
 #endif
@@ -116,20 +147,13 @@ int AppTask::Init()
 
 	ret = LightingMgr().Init(PWM_DEVICE, PWM_CHANNEL, minLightLevel, maxLightLevel);
 	if (ret) {
-		return ret;
+		return chip::System::MapErrorZephyr(ret);
 	}
 
 	LightingMgr().SetCallbacks(ActionInitiated, ActionCompleted);
 
-	/* Init ZCL Data Model and start server */
-	chip::Server::GetInstance().Init();
-
-	/* Initialize device attestation config */
+	/* Initialize CHIP server */
 	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
-	ConfigurationMgr().LogDeviceConfig();
-	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
-
-	PlatformMgr().AddEventHandler(AppTask::ChipEventHandler, 0);
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 	sOTAImageProcessor.SetOTADownloader(&sBDXDownloader);
@@ -139,18 +163,31 @@ int AppTask::Init()
 	chip::SetRequestorInstance(&sOTARequestor);
 #endif
 
+	ReturnErrorOnFailure(chip::Server::GetInstance().Init());
+	ConfigurationMgr().LogDeviceConfig();
+	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
+
+	/*
+	 * Add CHIP event handler and start CHIP thread.
+	 * Note that all the initialization code should happen prior to this point
+	 * to avoid data races between the main and the CHIP threads.
+	 */
+	PlatformMgr().AddEventHandler(ChipEventHandler, 0);
+
+	err = PlatformMgr().StartEventLoopTask();
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("PlatformMgr().StartEventLoopTask() failed");
+		return err;
+	}
+
 	sLightBulbPublishService.Init();
-	return 0;
+
+	return CHIP_NO_ERROR;
 }
 
-int AppTask::StartApp()
+CHIP_ERROR AppTask::StartApp()
 {
-	int ret = Init();
-
-	if (ret) {
-		LOG_ERR("AppTask.Init() failed");
-		return ret;
-	}
+	ReturnErrorOnFailure(Init());
 
 	AppEvent event = {};
 
@@ -158,6 +195,8 @@ int AppTask::StartApp()
 		k_msgq_get(&sAppEventQueue, &event, K_FOREVER);
 		DispatchEvent(event);
 	}
+
+	return CHIP_NO_ERROR;
 }
 
 void AppTask::PostEvent(const AppEvent &aEvent)

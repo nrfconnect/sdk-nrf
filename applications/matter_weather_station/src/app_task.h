@@ -20,7 +20,7 @@ struct k_timer;
 
 class AppTask {
 public:
-	int StartApp();
+	CHIP_ERROR StartApp();
 
 	void PostEvent(const AppEvent &aEvent);
 	void UpdateClustersState();
@@ -30,7 +30,8 @@ public:
 private:
 	friend AppTask &GetAppTask();
 
-	int Init();
+	CHIP_ERROR Init();
+
 	void OpenPairingWindow();
 	void DispatchEvent(AppEvent &event);
 	void UpdateTemperatureClusterState();
