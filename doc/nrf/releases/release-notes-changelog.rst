@@ -147,6 +147,11 @@ Unity
 
 |no_changes_yet_note|
 
+Trusted Firmware-M
+==================
+
+* Fixed an issue that would cause crash during boot when the :kconfig:`CONFIG_RPMSG_SERVICE` Kconfig option was enabled on the nRF5340 SoC.
+
 MCUboot
 =======
 

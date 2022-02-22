@@ -7,6 +7,4 @@ sram_nonsecure:
   region: sram_primary
   span:
     - sram_primary /* Here, sram_primary refers to the (NS) app's RAM. */
-#ifdef CONFIG_BT_RPMSG_NRF53
     - rpmsg_nrf53_sram
-#endif
