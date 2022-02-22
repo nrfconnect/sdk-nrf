@@ -193,7 +193,7 @@ Module discovery operations
   * ``CONFIG_STATUS_GET_HWID`` - Obtain an unique Hardware ID of the device.
     The Hardware ID is represented as 8 bytes.
   * ``CONFIG_STATUS_GET_BOARD_NAME`` - Obtain the device's board name.
-    The board name is part of the Zephyr board name (:kconfig:`CONFIG_BOARD`) from a beginning to the first underscore (``_``) character.
+    The board name is part of the Zephyr board name (:kconfig:option:`CONFIG_BOARD`) from a beginning to the first underscore (``_``) character.
     For example the ``nrf52840gmouse_nrf52840`` would return ``nrf52840gmouse`` as the board name.
 
   .. note::
@@ -356,7 +356,7 @@ For example, :ref:`nrf_desktop_motion` uses this option to identify a motion sen
 Handling configuration channel in firmware
 ******************************************
 
-To enable the configuration channel in the nRF Desktop firmware, set the :kconfig:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE` Kconfig option.
+To enable the configuration channel in the nRF Desktop firmware, set the :kconfig:option:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE` Kconfig option.
 This option also enables the mandatory :ref:`nrf_desktop_info`.
 
 Make sure you also configure the following configuration channel elements:
@@ -388,7 +388,7 @@ Depending on the connection method:
 
    The "GATT write without response" operation cannot be performed on the HID feature report.
    To allow the "GATT write without response", the Peripheral must provide an additional HID output report.
-   Use the :kconfig:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT` Kconfig option in the nRF Desktop peripheral configuration to add the mentioned HID output report.
+   Use the :kconfig:option:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT` Kconfig option in the nRF Desktop peripheral configuration to add the mentioned HID output report.
    Disabling this option reduces the memory consumption.
 
 The :c:struct:`config_event` is used to propagate the configuration channel data.

@@ -137,7 +137,7 @@ Button (SW3):
 
     * If pressed for less than five seconds, it starts or cancels the Identify mode.
     * If pressed for five seconds, it initiates the factory reset of the device.
-      The length of the button press can be edited using the :kconfig:`CONFIG_FACTORY_RESET_PRESS_TIME_SECONDS` Kconfig option from :ref:`lib_zigbee_application_utilities`.
+      The length of the button press can be edited using the :kconfig:option:`CONFIG_FACTORY_RESET_PRESS_TIME_SECONDS` Kconfig option from :ref:`lib_zigbee_application_utilities`.
       Releasing the button within this time does not trigger the factory reset procedure.
 
     Additionally, pressing the button shortly or releasing it before five second has elapsed indicates user input, which allows a Sleepy End Device to start the network rejoin procedure if it was previously stopped (for example, after timeout).
@@ -159,10 +159,10 @@ Readout configuration options
 
 The following Kconfig option values can be set to custom values:
 
-* :kconfig:`CONFIG_FIRST_WEATHER_CHECK_DELAY_SECONDS` - This option defines the delay from the moment of the application initialization to the first sensor data readout.
+* :kconfig:option:`CONFIG_FIRST_WEATHER_CHECK_DELAY_SECONDS` - This option defines the delay from the moment of the application initialization to the first sensor data readout.
   The value is provided in seconds, with the default value set to ``5``.
 
-* :kconfig:`WEATHER_CHECK_PERIOD_SECONDS` - This option defines the period of cyclic sensor readouts after the first readout.
+* :kconfig:option:`WEATHER_CHECK_PERIOD_SECONDS` - This option defines the period of cyclic sensor readouts after the first readout.
   The value is provided in seconds, with the default value set to ``60``.
 
 Building and running

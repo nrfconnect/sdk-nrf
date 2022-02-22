@@ -57,21 +57,21 @@ Complete the following steps to configure the building process:
 
 1. Make sure that the following Kconfig options are enabled:
 
-   * :kconfig:`CONFIG_CPLUSPLUS`
-   * :kconfig:`CONFIG_STD_CPP11`
-   * :kconfig:`CONFIG_LIB_CPLUSPLUS`
-   * :kconfig:`CONFIG_NEWLIB_LIBC`
-   * :kconfig:`CONFIG_NEWLIB_LIBC_FLOAT_PRINTF`
+   * :kconfig:option:`CONFIG_CPLUSPLUS`
+   * :kconfig:option:`CONFIG_STD_CPP11`
+   * :kconfig:option:`CONFIG_LIB_CPLUSPLUS`
+   * :kconfig:option:`CONFIG_NEWLIB_LIBC`
+   * :kconfig:option:`CONFIG_NEWLIB_LIBC_FLOAT_PRINTF`
 
    .. note::
-      The :kconfig:`CONFIG_FPU` Kconfig option is implied by default if floating point unit (FPU) is supported by the hardware.
+      The :kconfig:option:`CONFIG_FPU` Kconfig option is implied by default if floating point unit (FPU) is supported by the hardware.
       Using FPU speeds up calculations.
 
-#. Make sure that the :kconfig:`CONFIG_FP16` Kconfig option is disabled.
+#. Make sure that the :kconfig:option:`CONFIG_FP16` Kconfig option is disabled.
    The Edge Impulse library is not compatible with half-precision floating point support introduced in Zephyr.
-#. Enable building the downloaded library by setting the :kconfig:`CONFIG_EDGE_IMPULSE` Kconfig option.
+#. Enable building the downloaded library by setting the :kconfig:option:`CONFIG_EDGE_IMPULSE` Kconfig option.
    Setting this option also enables the :ref:`ei_wrapper`.
-#. Enable and specify the Uniform Resource Identifier (URI) in the :kconfig:`CONFIG_EDGE_IMPULSE_URI` Kconfig option.
+#. Enable and specify the Uniform Resource Identifier (URI) in the :kconfig:option:`CONFIG_EDGE_IMPULSE_URI` Kconfig option.
    You can set it to one of the following values:
 
    * An absolute or relative path to a file in the local file system.
@@ -99,7 +99,7 @@ Downloading from a private project
 
 Complete the following steps to download the model from a private Edge Impulse project:
 
-1. Set :kconfig:`CONFIG_EDGE_IMPULSE_URI` to the URI from Edge Impulse studio:
+1. Set :kconfig:option:`CONFIG_EDGE_IMPULSE_URI` to the URI from Edge Impulse studio:
 
    .. parsed-literal::
       :class: highlight
@@ -150,7 +150,7 @@ Complete the following steps to download the model from a public Edge Impulse pr
 
       In this example, the *XYZ* project ID is ``66468``, while the ``publicProjectId`` equals ``66469``.
 
-#. Set :kconfig:`CONFIG_EDGE_IMPULSE_URI` to the following URI from Edge Impulse studio:
+#. Set :kconfig:option:`CONFIG_EDGE_IMPULSE_URI` to the following URI from Edge Impulse studio:
 
    .. parsed-literal::
       :class: highlight

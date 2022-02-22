@@ -91,7 +91,7 @@ Perform the following steps to enable BSEC:
 
 1. Download the BSEC library, using the `Bosch BSEC`_ link.
 #. Extract and store the folder containing the library contents in the path specified by :ref:`CONFIG_EXTERNAL_SENSORS_BME680_BSEC_PATH <CONFIG_EXTERNAL_SENSORS_BME680_BSEC_PATH>` option or update the path configuration to reference the library location.
-#. Disable the Zephyr BME680 driver by setting :kconfig:`CONFIG_BME680` to false.
+#. Disable the Zephyr BME680 driver by setting :kconfig:option:`CONFIG_BME680` to false.
 #. Enable the external sensors API BSEC integration layer by enabling :ref:`CONFIG_EXTERNAL_SENSORS_BME680_BSEC <CONFIG_EXTERNAL_SENSORS_BME680_BSEC>` option.
 
 Air quality readings are provided with the :c:enumerator:`SENSOR_EVT_ENVIRONMENTAL_DATA_READY` event.

@@ -120,17 +120,17 @@ CONFIG_GNSS_SAMPLE_ASSISTANCE_MINIMAL - To use minimal assistance
 
 CONFIG_GNSS_SAMPLE_MODE_PERIODIC - To enable periodic fixes
    This configuration option enables periodic fixes instead of continuous tracking.
-   Set :kconfig:`CONFIG_GNSS_SAMPLE_PERIODIC_INTERVAL` and :kconfig:`CONFIG_GNSS_SAMPLE_PERIODIC_TIMEOUT` to configure the desired fix interval and timeout.
+   Set :kconfig:option:`CONFIG_GNSS_SAMPLE_PERIODIC_INTERVAL` and :kconfig:option:`CONFIG_GNSS_SAMPLE_PERIODIC_TIMEOUT` to configure the desired fix interval and timeout.
 
 .. _CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST:
 
 CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST - To enable time-to-first-fix (TTFF) test mode
   This configuration enables the TTFF test mode instead of continuous tracking.
   When TTFF test mode is enabled, the :ref:`CONFIG_GNSS_SAMPLE_NMEA_ONLY <CONFIG_GNSS_SAMPLE_NMEA_ONLY>` option is automatically selected.
-  Set the :kconfig:`CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_INTERVAL` option to configure the time between fixes.
-  If you have enabled the :kconfig:`CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_COLD_START` option, the sample will perform GNSS cold starts instead of hot starts.
+  Set the :kconfig:option:`CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_INTERVAL` option to configure the time between fixes.
+  If you have enabled the :kconfig:option:`CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_COLD_START` option, the sample will perform GNSS cold starts instead of hot starts.
   When assistance is used, LTE may block the GNSS operation and increase the time needed to get a fix.
-  You can set the :kconfig:`CONFIG_GNSS_SAMPLE_LTE_ON_DEMAND` option to disable LTE after the assistance data has been downloaded, so that GNSS can run without interruptions.
+  You can set the :kconfig:option:`CONFIG_GNSS_SAMPLE_LTE_ON_DEMAND` option to disable LTE after the assistance data has been downloaded, so that GNSS can run without interruptions.
 
 Building and running
 ********************

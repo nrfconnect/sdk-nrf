@@ -71,7 +71,7 @@ Button 4:
 
     * If pressed for less than five seconds, it starts or cancels the Identify mode.
     * If pressed for five seconds, it initiates the factory reset of the device.
-      The length of the button press can be edited using the :kconfig:`CONFIG_FACTORY_RESET_PRESS_TIME_SECONDS` Kconfig option from :ref:`lib_zigbee_application_utilities`.
+      The length of the button press can be edited using the :kconfig:option:`CONFIG_FACTORY_RESET_PRESS_TIME_SECONDS` Kconfig option from :ref:`lib_zigbee_application_utilities`.
       Releasing the button within this time does not trigger the factory reset procedure.
 
 All other interactions with the application can be handled using serial communication.

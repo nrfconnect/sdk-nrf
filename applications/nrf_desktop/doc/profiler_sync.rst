@@ -28,18 +28,18 @@ Configuration
 *************
 
 A predefined signal on the GPIO is used to simultaneously generate synchronization profiler events on both devices.
-For this reason, you must enable the :kconfig:`CONFIG_GPIO` option.
+For this reason, you must enable the :kconfig:option:`CONFIG_GPIO` option.
 
-You must also enable the :kconfig:`CONFIG_EVENT_MANAGER_PROFILER_TRACER` Kconfig option.
+You must also enable the :kconfig:option:`CONFIG_EVENT_MANAGER_PROFILER_TRACER` Kconfig option.
 The profiler synchronization module generates a :ref:`profiler` event (``sync_event``) that is not an :ref:`event_manager` event.
 For this reason, the ``sync_event`` execution is not traced.
 
 You must also define the following:
 
-* The GPIO port (:kconfig:`CONFIG_DESKTOP_PROFILER_SYNC_GPIO_PORT`) and the pin (:kconfig:`CONFIG_DESKTOP_PROFILER_SYNC_GPIO_PIN`) that are used for synchronization.
+* The GPIO port (:kconfig:option:`CONFIG_DESKTOP_PROFILER_SYNC_GPIO_PORT`) and the pin (:kconfig:option:`CONFIG_DESKTOP_PROFILER_SYNC_GPIO_PIN`) that are used for synchronization.
   These GPIOs must be defined separately for both devices and connected using a physical wire.
 * The device role.
-  One of the devices must be set as ``Central`` (:kconfig:`CONFIG_DESKTOP_PROFILER_SYNC_CENTRAL`) and the other device must be set as ``Peripheral`` (:kconfig:`CONFIG_DESKTOP_PROFILER_SYNC_PERIPHERAL`).
+  One of the devices must be set as ``Central`` (:kconfig:option:`CONFIG_DESKTOP_PROFILER_SYNC_CENTRAL`) and the other device must be set as ``Peripheral`` (:kconfig:option:`CONFIG_DESKTOP_PROFILER_SYNC_PERIPHERAL`).
 
 Implementation details
 **********************

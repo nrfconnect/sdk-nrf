@@ -76,10 +76,10 @@ CONFIG_CONNECTION_RETRY_TIMEOUT_SECONDS
 
 .. note::
 
-   The sample sets the option :kconfig:`CONFIG_MQTT_KEEPALIVE` to the maximum allowed value, 1200 seconds (20 minutes) as specified by AWS IoT Core.
+   The sample sets the option :kconfig:option:`CONFIG_MQTT_KEEPALIVE` to the maximum allowed value, 1200 seconds (20 minutes) as specified by AWS IoT Core.
    This is to limit the IP traffic between the device and the AWS IoT message broker for supporting a low power sample.
    In certain LTE networks, the NAT timeout can be considerably lower than 1200 seconds.
-   As a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, set the option :kconfig:`CONFIG_MQTT_KEEPALIVE` to the lowest timeout limit (Maximum allowed MQTT keepalive and NAT timeout).
+   As a recommendation, and to prevent the likelihood of getting disconnected unexpectedly, set the option :kconfig:option:`CONFIG_MQTT_KEEPALIVE` to the lowest timeout limit (Maximum allowed MQTT keepalive and NAT timeout).
 
 Building and running
 ********************
@@ -94,12 +94,12 @@ Testing
 1. Make sure that you have completed the steps in :ref:`setup_awsiot`.
    This retrieves the AWS IoT broker hostname, security tag, and client-id.
 
-#. Set the :kconfig:`CONFIG_AWS_IOT_BROKER_HOST_NAME`, :kconfig:`CONFIG_AWS_IOT_SEC_TAG`, and :kconfig:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` options to reflect the values retrieved during step 1.
+#. Set the :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`, :kconfig:option:`CONFIG_AWS_IOT_SEC_TAG`, and :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` options to reflect the values retrieved during step 1.
 #. Program the sample to hardware.
 
 .. note::
 
-   The sample might require increasing the values of :kconfig:`CONFIG_AWS_IOT_MQTT_RX_TX_BUFFER_LEN` and :kconfig:`CONFIG_AWS_IOT_MQTT_PAYLOAD_BUFFER_LEN` options.
+   The sample might require increasing the values of :kconfig:option:`CONFIG_AWS_IOT_MQTT_RX_TX_BUFFER_LEN` and :kconfig:option:`CONFIG_AWS_IOT_MQTT_PAYLOAD_BUFFER_LEN` options.
 
 Sample output
 =============

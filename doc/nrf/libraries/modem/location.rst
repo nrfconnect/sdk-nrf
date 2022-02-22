@@ -36,9 +36,9 @@ Each location method has its own implementation for the location retrieval:
   * A-GPS and P-GPS are managed with :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps`.
   * The application may also use some other source for the data and use :c:func:`location_agps_data_process` to pass the data to the location library.
   * The data format of A-GPS or P-GPS must be as received from :ref:`lib_nrf_cloud_agps`.
-  * The data transport method for :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` can be configured to be either MQTT (:kconfig:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:`CONFIG_NRF_CLOUD_REST`).
+  * The data transport method for :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` can be configured to be either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`).
 
-    If different transport is desired for different location methods, (:kconfig:`CONFIG_NRF_CLOUD_MQTT`) and (:kconfig:`CONFIG_NRF_CLOUD_REST`) can be enabled simultaneously. In such a case, MQTT takes
+    If different transport is desired for different location methods, (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) and (:kconfig:option:`CONFIG_NRF_CLOUD_REST`) can be enabled simultaneously. In such a case, MQTT takes
     precedence as the transport method of GNSS assistance data.
   * Note that acquiring GNSS fix only starts when LTE connection, more specifically Radio Resource Control (RRC) connection, is idle.
 
@@ -52,7 +52,7 @@ Each location method has its own implementation for the location retrieval:
 
     * The service is selected in the :c:struct:`location_method_config` structure when requesting for location.
     * The services available are `nRF Cloud Location Services`_, `HERE Positioning`_, `Skyhook Precision Location`_ and `Polte Location API`_
-    * The data transport method for the service is mainly REST. However, either MQTT (:kconfig:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:`CONFIG_NRF_CLOUD_REST`) can be configured for `nRF Cloud Location Services`_.
+    * The data transport method for the service is mainly REST. However, either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`) can be configured for `nRF Cloud Location Services`_.
 
 * Wi-Fi positioning
 
@@ -104,58 +104,58 @@ Configuration
 
 Configure the following Kconfig options to enable this library:
 
-* :kconfig:`CONFIG_LOCATION` - Enables the Location library.
-* :kconfig:`CONFIG_NRF_MODEM_LIB` - Enable modem library.
-* :kconfig:`CONFIG_LTE_LINK_CONTROL` - Enable LTE link control.
+* :kconfig:option:`CONFIG_LOCATION` - Enables the Location library.
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB` - Enable modem library.
+* :kconfig:option:`CONFIG_LTE_LINK_CONTROL` - Enable LTE link control.
 
 Configure the following Kconfig options to enable Wi-Fi interface:
 
-* :kconfig:`CONFIG_WIFI` - Enable Wi-Fi for Zephyr.
-* :kconfig:`CONFIG_LOCATION_METHOD_WIFI_DEV_NAME` - Name of the Wi-Fi device.
+* :kconfig:option:`CONFIG_WIFI` - Enable Wi-Fi for Zephyr.
+* :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_DEV_NAME` - Name of the Wi-Fi device.
 
 Configure the following options to enable location methods of your choice:
 
-* :kconfig:`CONFIG_LOCATION_METHOD_GNSS` - Enables GNSS location method.
-* :kconfig:`CONFIG_LOCATION_METHOD_CELLULAR` - Enables cellular location method.
-* :kconfig:`CONFIG_LOCATION_METHOD_WIFI` - Enables Wi-Fi location method.
+* :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS` - Enables GNSS location method.
+* :kconfig:option:`CONFIG_LOCATION_METHOD_CELLULAR` - Enables cellular location method.
+* :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI` - Enables Wi-Fi location method.
 
 The following options control the use of GNSS assistance data:
 
-* :kconfig:`CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL` - Enables A-GPS data retrieval from an external source which the application implements separately. If enabled, Location library throws event :c:enum:`LOCATION_EVT_GNSS_ASSISTANCE_REQUEST` when assistance is needed. Once application has obtained the assistance data it should call :c:func:`location_agps_data_process` function to feed it into Location library.
-* :kconfig:`CONFIG_NRF_CLOUD_AGPS` - Enables A-GPS data retrieval from `nRF Cloud`_.
-* :kconfig:`CONFIG_NRF_CLOUD_PGPS` - Enables P-GPS data retrieval from `nRF Cloud`_.
-* :kconfig:`CONFIG_NRF_CLOUD_AGPS_FILTERED` - Reduces assistance size by only downloading ephemerides for visible satellites.
+* :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL` - Enables A-GPS data retrieval from an external source which the application implements separately. If enabled, Location library throws event :c:enum:`LOCATION_EVT_GNSS_ASSISTANCE_REQUEST` when assistance is needed. Once application has obtained the assistance data it should call :c:func:`location_agps_data_process` function to feed it into Location library.
+* :kconfig:option:`CONFIG_NRF_CLOUD_AGPS` - Enables A-GPS data retrieval from `nRF Cloud`_.
+* :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` - Enables P-GPS data retrieval from `nRF Cloud`_.
+* :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED` - Reduces assistance size by only downloading ephemerides for visible satellites.
 
-The following option is useful when setting :kconfig:`CONFIG_NRF_CLOUD_AGPS_FILTERED`:
+The following option is useful when setting :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED`:
 
-* :kconfig:`CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK` - Sets elevation threshold angle.
+* :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK` - Sets elevation threshold angle.
 
 The following options control the transport method used with `nRF Cloud`_:
 
-* :kconfig:`CONFIG_NRF_CLOUD_REST` - Uses REST APIs to communicate with `nRF Cloud`_ if :kconfig:`CONFIG_NRF_CLOUD_MQTT` is not set.
-* :kconfig:`CONFIG_NRF_CLOUD_MQTT` - Uses MQTT transport to communicate with `nRF Cloud`_.
-* :kconfig:`CONFIG_REST_CLIENT` - Enable :ref:`lib_rest_client` library.
+* :kconfig:option:`CONFIG_NRF_CLOUD_REST` - Uses REST APIs to communicate with `nRF Cloud`_ if :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` is not set.
+* :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` - Uses MQTT transport to communicate with `nRF Cloud`_.
+* :kconfig:option:`CONFIG_REST_CLIENT` - Enable :ref:`lib_rest_client` library.
 
 Both cellular and Wi-Fi location services are selected using the runtime configuration but the available services must be configured first.
 For cellular location services, use at least one of the following sets of options and configure corresponding authentication parameters (for more details and configuration options, see :ref:`lib_multicell_location`):
 
-* :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
-* :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE` and :kconfig:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY`
-* :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK` and :kconfig:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
-* :kconfig:`CONFIG_MULTICELL_LOCATION_SERVICE_POLTE` and :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_CUSTOMER_ID` and :kconfig:`CONFIG_MULTICELL_LOCATION_POLTE_API_TOKEN`
+* :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
+* :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY`
+* :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
+* :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_POLTE` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_CUSTOMER_ID` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_API_TOKEN`
 
 For Wi-Fi location services, use at least one of the following sets of options and configure the corresponding authentication parameters:
 
-* :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD`
-* :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE` and :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY`
-* :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK` and :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_API_KEY`
+* :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD`
+* :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE` and :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY`
+* :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK` and :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_API_KEY`
 
 The following options are related to the Wi-Fi service and can usually have the default values:
 
-* :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME`
-* :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG`
-* :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_HOSTNAME`
-* :kconfig:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_TLS_SEC_TAG`
+* :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME`
+* :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG`
+* :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_HOSTNAME`
+* :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_TLS_SEC_TAG`
 
 Usage
 *****
