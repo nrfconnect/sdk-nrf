@@ -24,7 +24,7 @@ sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
 extensions = [
-    "zephyr.kconfig-role",
+    "zephyr.kconfig",
     "sphinx.ext.intersphinx",
     "recommonmark",
     "ncs_cache",

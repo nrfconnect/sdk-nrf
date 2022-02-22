@@ -63,6 +63,10 @@ if kconfig_mapping:
 
 warnings_filter_silent = True
 
+# -- Options for zephyr.kconfig ------------------------------------------------
+
+kconfig_generate_db = False
+
 # Options for ncs_cache --------------------------------------------------------
 
 ncs_cache_docset = "zephyr"

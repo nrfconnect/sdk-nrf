@@ -52,6 +52,7 @@ Kconfig*                                  @tejlmand
 /doc/cache.yml                            @gmarull
 /doc/CMakeLists.txt                       @carlescufi
 /doc/**/conf.py                           @carlescufi
+/doc/kconfig/                             @gmarull
 /doc/nrf/                                 @carlescufi
 /doc/nrf/images/                          @Avalei
 /doc/nrfx/                                @gmarull

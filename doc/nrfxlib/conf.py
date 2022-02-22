@@ -31,7 +31,7 @@ extensions = [
     "breathe",
     "sphinxcontrib.mscgen",
     "inventory_builder",
-    "zephyr.kconfig-role",
+    "zephyr.kconfig",
     "zephyr.warnings_filter",
     "ncs_cache",
     "zephyr.external_content",

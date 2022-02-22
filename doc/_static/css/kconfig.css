@@ -1,3 +1,7 @@
 :root {
     --docset-color: #e82424;
 }
+
+dl.kconfig {
+    background-color: unset;
+}
