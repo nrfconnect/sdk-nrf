@@ -207,7 +207,7 @@ static int at_cmd_callback_cmgd(char *buf, size_t len, const char *at_cmd)
 	if (match_string("AT+CMGD=", at_cmd)) {
 		int index = strtol(&(at_cmd[8]), NULL, 10) - 1;
 
-		if (index < SMS_BUFFER_LIST_SIZE) {
+		if (index >= 0 && index < SMS_BUFFER_LIST_SIZE) {
 			sms_buffer_list[index].pdu_size = 0;
 			return response_buffer_fill(buf, len, "\r\nOK\r\n");
 		}
@@ -228,6 +228,10 @@ static int at_cmd_callback_cmss(char *buf, size_t len, const char *at_cmd)
 	}
 
 	sms_buffer_index = strtol(&(at_cmd[8]), NULL, 10) - 1;
+	if (sms_buffer_index < 0 || sms_buffer_index >= SMS_BUFFER_LIST_SIZE) {
+		return -NRF_EINVAL;
+	}
+
 	if (sms_buffer_list[sms_buffer_index].pdu_size == 0) {
 		return -NRF_EINVAL;
 	}
