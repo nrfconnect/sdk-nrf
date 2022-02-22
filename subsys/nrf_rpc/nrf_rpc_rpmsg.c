@@ -7,14 +7,9 @@
 #define NRF_RPC_LOG_MODULE NRF_RPC_TR
 #include <nrf_rpc_log.h>
 
-#include <zephyr.h>
-#include <errno.h>
-#include <metal/sys.h>
-#include <metal/device.h>
-#include <metal/alloc.h>
+#include <device.h>
+#include <ipc/ipc_service.h>
 #include <openamp/open_amp.h>
-#include <ipc/rpmsg_service.h>
-#include <init.h>
 
 #include "nrf_rpc.h"
 #include "nrf_rpc_rpmsg.h"
@@ -31,27 +26,51 @@
 } while (0)
 
 
-/* Asynchronous event notification type */
-enum nrf_rpc_event_type {
-	NRF_RPC_EVENT_CONNECTED,  /* Handshake was successful */
-	NRF_RPC_EVENT_DATA,       /* New packet arrived */
-};
-
-
-/* Semaphore used to do initial handshake and synchronisation.*/
-K_SEM_DEFINE(handshake_sem, 0, 1);
-K_SEM_DEFINE(remote_init_sem, 0, 1);
+/* Semaphore used to synchronize endpoint binding.*/
+K_SEM_DEFINE(ipc_bound_sem, 0, 1);
 
 /* Upper level callbacks */
 static nrf_rpc_tr_receive_handler_t receive_callback;
 
-static int endpoint_id;
-static bool is_handshake_done;
+/* IPC service endpoint instance */
+struct ipc_ept nrf_rpc_ept;
 
-/* Translates RPMsg error code to nRF RPC error code. */
-static int translate_error(int rpmsg_err)
+static void nrf_rpc_ept_bound(void *priv)
 {
-	switch (rpmsg_err) {
+	NRF_RPC_DBG("nRF RPC Connected");
+
+	k_sem_give(&ipc_bound_sem);
+}
+
+static void nrf_rpc_ept_recv(const void *data, size_t len, void *priv)
+{
+	NRF_RPC_ASSERT(data != NULL);
+
+	DUMP_LIMITED_DBG(data, len, "Received data");
+
+	receive_callback(data, len);
+}
+
+static struct ipc_ept_cfg nrf_rpc_ept_cfg = {
+	.name = "nrf_rpc_ept",
+	.cb = {
+		.bound    = nrf_rpc_ept_bound,
+		.received = nrf_rpc_ept_recv,
+	},
+};
+
+/* Translates error code from the lower layer to nRF RPC error code. */
+static int translate_error(int ll_err)
+{
+	switch (ll_err) {
+	case -EINVAL:
+		return -NRF_EINVAL;
+	case -EIO:
+		return -NRF_EIO;
+	case -EALREADY:
+		return -NRF_EALREADY;
+	case -EBADMSG:
+		return -NRF_EBADMSG;
 	case RPMSG_ERR_BUFF_SIZE:
 	case RPMSG_ERR_NO_MEM:
 	case RPMSG_ERR_NO_BUFF:
@@ -63,7 +82,7 @@ static int translate_error(int rpmsg_err)
 	case RPMSG_ERR_ADDR:
 		return -NRF_EIO;
 	default:
-		if (rpmsg_err < 0) {
+		if (ll_err < 0) {
 			return -NRF_EIO;
 		}
 		break;
@@ -71,83 +90,29 @@ static int translate_error(int rpmsg_err)
 	return 0;
 }
 
-static void event_handler(enum nrf_rpc_event_type event,
-				const uint8_t *buf, size_t length)
-{
-	if (event == NRF_RPC_EVENT_CONNECTED) {
-		NRF_RPC_DBG("nRF RPC Connected");
-		k_sem_give(&handshake_sem);
-		return;
-	} else if (event != NRF_RPC_EVENT_DATA) {
-		return;
-	}
-
-	NRF_RPC_ASSERT(buf != NULL);
-
-	DUMP_LIMITED_DBG(buf, length, "Received data");
-
-	receive_callback(buf, length);
-}
-
-static int endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
-	uint32_t src, void *priv)
-{
-	if (len == 0) {
-		if (!is_handshake_done) {
-			if (!IS_ENABLED(CONFIG_RPMSG_SERVICE_MODE_MASTER)) {
-				k_sem_take(&remote_init_sem, K_FOREVER);
-			}
-			rpmsg_service_send(endpoint_id, (uint8_t *)"", 0);
-			is_handshake_done = true;
-			NRF_RPC_INF("Handshake done");
-			event_handler(NRF_RPC_EVENT_CONNECTED, NULL, 0);
-		}
-		return RPMSG_SUCCESS;
-	}
-
-	event_handler(NRF_RPC_EVENT_DATA, data, len);
-
-	return RPMSG_SUCCESS;
-}
-
-static int nrf_rpc_register_endpoint(const struct device *dev)
-{
-	ARG_UNUSED(dev);
-
-	int err = rpmsg_service_register_endpoint("nrf_rpc", endpoint_cb);
-
-	endpoint_id = err;
-
-	if (err < 0) {
-		NRF_RPC_ERR("Registering endpoint failed with %d", err);
-		return err;
-	}
-
-	return 0;
-}
-
 int nrf_rpc_tr_init(nrf_rpc_tr_receive_handler_t callback)
 {
+	int err;
+	const struct device *nrf_rpc_ipc_instance;
+
 	NRF_RPC_ASSERT(callback != NULL);
 	receive_callback = callback;
 
-	if (IS_ENABLED(CONFIG_RPMSG_SERVICE_MODE_MASTER)) {
-		NRF_RPC_INF("RPC master");
-		while (!rpmsg_service_endpoint_is_bound(endpoint_id)) {
-			k_sleep(K_MSEC(1));
-		}
+	nrf_rpc_ipc_instance = DEVICE_DT_GET(DT_NODELABEL(ipc0));
 
-		rpmsg_service_send(endpoint_id, (uint8_t *)"", 0);
-	} else {
-		NRF_RPC_INF("RPC remote");
-		k_sem_give(&remote_init_sem);
+	err = ipc_service_open_instance(nrf_rpc_ipc_instance);
+	if (err < 0) {
+		NRF_RPC_ERR("IPC service instance initialization failed: %d\n", err);
+		return translate_error(err);
 	}
 
-	k_sem_take(&handshake_sem, K_FOREVER);
-
-	if (endpoint_id < 0)	{
-		return -NRF_EIO;
+	err = ipc_service_register_endpoint(nrf_rpc_ipc_instance, &nrf_rpc_ept, &nrf_rpc_ept_cfg);
+	if (err < 0) {
+		NRF_RPC_ERR("Registering endpoint failed with %d", err);
+		return translate_error(err);
 	}
+
+	k_sem_take(&ipc_bound_sem, K_FOREVER);
 
 	return 0;
 }
@@ -160,12 +125,10 @@ int nrf_rpc_tr_send(uint8_t *buf, size_t len)
 	NRF_RPC_DBG("Send %u bytes.", len);
 	DUMP_LIMITED_DBG(buf, len, "Data:");
 
-	err = rpmsg_service_send(endpoint_id, buf, len);
+	err = ipc_service_send(&nrf_rpc_ept, buf, len);
 	if (err > 0) {
 		err = 0;
 	}
 
 	return translate_error(err);
 }
-
-SYS_INIT(nrf_rpc_register_endpoint, POST_KERNEL, CONFIG_RPMSG_SERVICE_EP_REG_PRIORITY);
