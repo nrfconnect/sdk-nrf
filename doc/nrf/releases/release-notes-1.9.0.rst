@@ -68,9 +68,9 @@ Modem-related libraries and versions
    * - Library name
      - Version information
    * - Modem library
-     - :ref:`nrfxlib:nrf_modem_changelog`
+     - `Changelog <Modem library changelog for v1.9.0_>`_
    * - LwM2M carrier library
-     - :ref:`liblwm2m_carrier_changelog`
+     - `Changelog <LwM2M carrier library changelog for v1.9.0_>`_
 
 Known issues
 ************
