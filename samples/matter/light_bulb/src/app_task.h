@@ -22,13 +22,13 @@ class AppTask {
 public:
 	static constexpr size_t APP_EVENT_QUEUE_SIZE = 10;
 
-	int StartApp();
+	CHIP_ERROR StartApp();
 
 	void PostEvent(const AppEvent &aEvent);
 	void UpdateClusterState();
 
 private:
-	int Init();
+	CHIP_ERROR Init();
 
 	void CancelFunctionTimer();
 	void StartFunctionTimer(uint32_t timeoutInMs);

@@ -12,68 +12,23 @@
 #include <usb/usb_device.h>
 #endif
 
-#include <lib/support/CHIPMem.h>
-#include <platform/CHIPDeviceLayer.h>
-#include <system/SystemError.h>
-
 LOG_MODULE_REGISTER(app);
-
-using namespace ::chip::DeviceLayer;
 
 int main()
 {
-	int ret = 0;
-	CHIP_ERROR err = CHIP_NO_ERROR;
+	CHIP_ERROR err;
 
 #ifdef CONFIG_USB_DEVICE_STACK
 	err = chip::System::MapErrorZephyr(usb_enable(NULL));
 	if (err != CHIP_NO_ERROR) {
-		goto exit;
+		LOG_ERR("Failed to initialize USB device");
 	}
 #endif
 
-	err = chip::Platform::MemoryInit();
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("Platform::MemoryInit() failed");
-		goto exit;
+	if (err == CHIP_NO_ERROR) {
+		err = GetAppTask().StartApp();
 	}
 
-	LOG_INF("Init CHIP stack");
-	err = PlatformMgr().InitChipStack();
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("PlatformMgr().InitChipStack() failed");
-		goto exit;
-	}
-
-	LOG_INF("Starting CHIP task");
-	err = PlatformMgr().StartEventLoopTask();
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("PlatformMgr().StartEventLoopTask() failed");
-		goto exit;
-	}
-
-	LOG_INF("Init Thread stack");
-	err = ThreadStackMgr().InitThreadStack();
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("ThreadStackMgr().InitThreadStack() failed");
-		goto exit;
-	}
-
-#ifdef CONFIG_OPENTHREAD_MTD_SED
-	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_SleepyEndDevice);
-#else
-	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
-#endif
-	if (err != CHIP_NO_ERROR) {
-		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed");
-		goto exit;
-	}
-
-	ret = GetAppTask().StartApp();
-	if (ret != 0) {
-		err = chip::System::MapErrorZephyr(ret);
-	}
-
-exit:
+	LOG_ERR("Exited with code %" CHIP_ERROR_FORMAT, err.Format());
 	return err == CHIP_NO_ERROR ? EXIT_SUCCESS : EXIT_FAILURE;
 }

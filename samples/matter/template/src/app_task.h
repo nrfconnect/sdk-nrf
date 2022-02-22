@@ -15,12 +15,12 @@ struct k_timer;
 
 class AppTask {
 public:
-	int StartApp();
+	CHIP_ERROR StartApp();
 
 	void PostEvent(const AppEvent &aEvent);
 
 private:
-	int Init();
+	CHIP_ERROR Init();
 
 	void CancelFunctionTimer();
 	void StartFunctionTimer(uint32_t timeoutInMs);
