@@ -130,9 +130,9 @@ static struct sock_info *get_socket_info_by_id(int socket_id)
 		mosh_error("Socket id not given. -i option is mandatory");
 		return NULL;
 	}
-	if (socket_id < 0 || socket_id > MAX_SOCKETS) {
+	if (socket_id < 0 || socket_id >= MAX_SOCKETS) {
 		mosh_error(
-			"Socket id=%d must a postive number smaller than %d",
+			"Socket id=%d must a positive number smaller than %d",
 			socket_id, MAX_SOCKETS);
 		return NULL;
 	}
