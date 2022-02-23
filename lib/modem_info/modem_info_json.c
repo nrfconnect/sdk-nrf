@@ -113,13 +113,15 @@ static int network_data_add(struct network_param *network, cJSON *json_obj)
 	total_len += json_add_data(&network->ue_mode, json_obj);
 
 	len = modem_info_name_get(network->cellid_hex.type, data_name);
-	data_name[len] = '\0';
-	ret = json_add_num(json_obj, data_name, network->cellid_dec);
+	if (len > 0) {
+		data_name[len] = '\0';
 
-	if (ret) {
-		LOG_DBG("Unable to add the cell ID.");
-	} else {
-		total_len += sizeof(double);
+		ret = json_add_num(json_obj, data_name, network->cellid_dec);
+		if (ret) {
+			LOG_DBG("Unable to add the cell ID.");
+		} else {
+			total_len += sizeof(double);
+		}
 	}
 
 	network->network_mode[0] = '\0';
