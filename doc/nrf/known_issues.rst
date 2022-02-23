@@ -814,6 +814,11 @@ KRKNWK-9214: Pigweed submodule may not be accessible from some regions
 
 HomeKit
 =======
+.. rst-class:: v1-9-0 v1-8-0
+
+KRKNWK-13095: Change in KVS key naming scheme causes an error for updated devices.
+  A previous implementation allowed for empty key in domain.
+  This has been restricted during refactoring.
 
 .. rst-class:: v1-9-0
 
