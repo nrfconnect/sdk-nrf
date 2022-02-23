@@ -554,7 +554,8 @@ static int save_validate_status(const char *const job_id,
 		saved_job.type = job_type;
 		saved_job.validate = validate;
 		if (job_id != saved_job.id) {
-			strncpy(saved_job.id, job_id, sizeof(saved_job.id));
+			strncpy(saved_job.id, job_id, sizeof(saved_job.id) - 1);
+			saved_job.id[sizeof(saved_job.id) - 1] = '\0';
 		}
 	}
 
