@@ -113,11 +113,6 @@ config APP_GPS_HOLD_TIME
 endif # APP_GPS
 endmenu # LwM2M objects
 
-config APP_LWM2M_SERVER
-	string "LwM2M server name or IP address"
-	help
-	  Choose the LwM2M server you wish to connect to.
-
 config APP_LWM2M_PSK
 	string "LwM2M pre-shared key for communication"
 	default "000102030405060708090a0b0c0d0e0f"
@@ -130,15 +125,6 @@ config APP_ENDPOINT_PREFIX
 	default "urn:imei:"
 	help
 	  Sets the prefix of the endpoint name used when connecting to the LwM2M server.
-
-config APP_SERVER_TLS_TAG
-	int "LwM2M server TLS tag"
-	default 35724861
-
-config APP_BOOTSTRAP_TLS_TAG
-	int "LwM2M bootstrap server TLS tag"
-	default 35724862
-
 menu "Device info"
 config APP_MANUFACTURER
 	string "Board manufacturer"

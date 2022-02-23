@@ -40,9 +40,6 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 #error "Missing CONFIG_LTE_LINK_CONTROL"
 #endif
 
-BUILD_ASSERT(sizeof(CONFIG_APP_LWM2M_SERVER) > 1,
-	     "CONFIG_APP_LWM2M_SERVER must be set in prj.conf");
-
 #define APP_BANNER "Run LWM2M client"
 
 #define IMEI_LEN 15
@@ -56,12 +53,8 @@ BUILD_ASSERT(sizeof(CONFIG_APP_LWM2M_SERVER) > 1,
 static uint8_t endpoint_name[ENDPOINT_NAME_LEN + 1];
 static uint8_t imei_buf[IMEI_LEN + sizeof("\r\nOK\r\n")];
 static struct lwm2m_ctx client = {0};
-
-#if defined(CONFIG_LWM2M_DTLS_SUPPORT)
-#include "config.h"
-#endif /* CONFIG_LWM2M_DTLS_SUPPORT */
-
 static struct k_sem lwm2m_restart;
+static char client_psk[] = CONFIG_APP_LWM2M_PSK;
 
 static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event client_event);
 
@@ -267,7 +260,7 @@ static void provision_credentials(void)
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
 	case LWM2M_SECURITY_PRE_SHARED_KEY:
 		LOG_DBG("PSK mode, provisioning key and identity.");
-		client.tls_tag = SERVER_TLS_TAG;
+		client.tls_tag = CONFIG_LWM2M_CLIENT_UTILS_SERVER_TLS_TAG;
 		provision_psk(security_instance);
 		break;
 #endif

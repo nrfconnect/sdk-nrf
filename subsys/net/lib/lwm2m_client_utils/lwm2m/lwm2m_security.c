@@ -7,13 +7,13 @@
 #include <zephyr.h>
 #include <net/lwm2m.h>
 #include <net/lwm2m_client_utils.h>
+#include <lwm2m_engine.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_security, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
-#include "config.h"
-
-#define SERVER_ADDR	CONFIG_APP_LWM2M_SERVER
+/* LWM2M_OBJECT_SECURITY_ID */
+#define SECURITY_CLIENT_PK_ID 3
 
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
 static int load_credentials_dummy(struct lwm2m_ctx *client_ctx)
@@ -39,22 +39,19 @@ int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint)
 		return ret;
 	}
 
-	snprintk(server_url, server_url_len, "coap%s//%s%s%s",
-		 IS_ENABLED(CONFIG_LWM2M_DTLS_SUPPORT) ? "s:" : ":",
-		 strchr(SERVER_ADDR, ':') ? "[" : "", SERVER_ADDR,
-		 strchr(SERVER_ADDR, ':') ? "]" : "");
+	snprintk(server_url, server_url_len, "%s", CONFIG_LWM2M_CLIENT_UTILS_SERVER);
 
 	/* Security Mode */
 	lwm2m_engine_set_u8("0/0/2",
 			    IS_ENABLED(CONFIG_LWM2M_DTLS_SUPPORT) ? 0 : 3);
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
 	ctx->tls_tag = IS_ENABLED(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP) ?
-		       BOOTSTRAP_TLS_TAG : SERVER_TLS_TAG;
+			       CONFIG_LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG :
+				     CONFIG_LWM2M_CLIENT_UTILS_SERVER_TLS_TAG;
 	ctx->load_credentials = load_credentials_dummy;
 
-	lwm2m_engine_set_string("0/0/3", endpoint);
-	lwm2m_engine_set_opaque("0/0/5",
-				(void *)client_psk, sizeof(client_psk));
+	lwm2m_engine_set_string(LWM2M_PATH(LWM2M_OBJECT_SECURITY_ID, 0, SECURITY_CLIENT_PK_ID),
+				endpoint);
 #endif /* CONFIG_LWM2M_DTLS_SUPPORT */
 
 #if defined(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP)
