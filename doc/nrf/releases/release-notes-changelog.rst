@@ -210,6 +210,12 @@ Unity
 
 |no_changes_yet_note|
 
+Trusted Firmware-M
+==================
+
+* Fixed the NCSDK-13949 known issue where the TF-M Secure Image would copy FICR to RAM on nRF9160.
+* Fixed the NCSDK-12306 known issue where a usage fault would be triggered in the debug build on nRF9160.
+
 MCUboot
 =======
 
