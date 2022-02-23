@@ -94,6 +94,7 @@ static void sock_info_clear(struct sock_info *socket_info)
 	}
 	if (socket_info->send_buffer != NULL) {
 		free(socket_info->send_buffer);
+		socket_info->send_buffer = NULL;
 	}
 	if (socket_info->in_use) {
 		close(socket_info->fd);
@@ -218,6 +219,7 @@ static void sock_send_buffer_free(struct sock_info *socket_info)
 {
 	if (socket_info->send_buffer != NULL) {
 		free(socket_info->send_buffer);
+		socket_info->send_buffer = NULL;
 		socket_info->send_buffer_size = 0;
 	}
 }
