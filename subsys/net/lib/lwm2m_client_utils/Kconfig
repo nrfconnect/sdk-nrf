@@ -17,6 +17,34 @@ config LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT
 config LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT
 	bool "Security object support"
 	default y
+if LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_SERVER
+	string "LwM2M server address"
+	help
+	  Choose the LwM2M server you wish to connect to. Address must be full URI containing
+	  protocol and port numbers, unless it is same as CONFIG_LWM2M_PEER_PORT.
+	  For example "coaps://server.example.com:5684".
+	  Protocol must be "coap" when no security is used, or "coaps" when DTLS is used.
+
+config LWM2M_CLIENT_UTILS_SERVER_TLS_TAG
+	int "LwM2M server TLS tag"
+	default 35724861
+	help
+	  This security tag is used when connecting to LwM2M server.
+	  Client utilities will overwrite credentials of this security tag if bootstrap
+	  server writes new keys for device.
+
+config LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG
+	int "LwM2M bootstrap server TLS tag"
+	default 35724862
+	help
+	  This security tag is used when connecting to LwM2M Bootstrap server.
+	  Credentials could be provisioned to the modem for this security tag or application
+	  may write credentials into first LwM2M security instance "0/0/5".
+	  Client utilities only write to this security tag if it is empty.
+
+endif # LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT
 
 config LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT
 	bool "Connection Monitor object support"
