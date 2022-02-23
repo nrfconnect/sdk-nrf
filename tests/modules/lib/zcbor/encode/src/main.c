@@ -24,16 +24,16 @@ static void test_encode(void)
 		._Test_types_choice = _Test_types_something,
 	};
 
-	bool res = cbor_encode_Test(payload, sizeof(payload), &test, &payload_len);
+	int res = cbor_encode_Test(payload, sizeof(payload), &test, &payload_len);
 
-	zassert_true(res, "Encoding should have been successful\n");
+	zassert_equal(ZCBOR_SUCCESS, res, "Encoding should have been successful\n");
 }
 
 void test_main(void)
 {
-	ztest_test_suite(lib_cddl_gen_test,
+	ztest_test_suite(lib_zcbor_test,
 	     ztest_unit_test(test_encode)
 	 );
 
-	ztest_run_test_suite(lib_cddl_gen_test);
+	ztest_run_test_suite(lib_zcbor_test);
 }
