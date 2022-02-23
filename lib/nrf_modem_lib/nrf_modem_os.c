@@ -293,6 +293,16 @@ void nrf_modem_os_trace_irq_clear(void)
 	NVIC_ClearPendingIRQ(TRACE_IRQ);
 }
 
+void nrf_modem_os_trace_irq_disable(void)
+{
+	irq_disable(TRACE_IRQ);
+}
+
+void nrf_modem_os_trace_irq_enable(void)
+{
+	irq_enable(TRACE_IRQ);
+}
+
 ISR_DIRECT_DECLARE(rpc_proxy_irq_handler)
 {
 	atomic_inc(&rpc_event_cnt);
