@@ -84,14 +84,13 @@ void mosh_fprintf(enum mosh_print_level print_level, const char *fmt, ...)
 
 	k_mutex_lock(&mosh_print_buf_mutex, K_FOREVER);
 
+	va_start(args, fmt);
+
 	if (!mosh_print_shell_ptr_update()) {
 		vsnprintf(mosh_print_buf, sizeof(mosh_print_buf), fmt, args);
 		printk("%s", mosh_print_buf);
-		k_mutex_unlock(&mosh_print_buf_mutex);
-		return;
+		goto exit;
 	}
-
-	va_start(args, fmt);
 
 	/* Add timestamp to print buffer if requested */
 	if (mosh_print_timestamp_use) {
@@ -132,6 +131,7 @@ void mosh_fprintf(enum mosh_print_level print_level, const char *fmt, ...)
 		break;
 	}
 
+exit:
 	k_mutex_unlock(&mosh_print_buf_mutex);
 	va_end(args);
 }
