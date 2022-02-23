@@ -94,7 +94,7 @@
 
 .. _`TF-M sample incompatibility issue`: https://github.com/zephyrproject-rtos/zephyr/issues/34658
 
-.. _`cddl-gen`: https://github.com/NordicSemiconductor/cddl-gen
+.. _`zcbor`: https://github.com/NordicSemiconductor/zcbor
 
 .. _`nordic-hid.quirk`: https://github.com/fwupd/fwupd/tree/main/plugins/nordic-hid/nordic-hid.quirk
 

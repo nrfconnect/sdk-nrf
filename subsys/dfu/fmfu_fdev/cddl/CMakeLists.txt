@@ -63,7 +63,7 @@ add_custom_command(
   OUTPUT ${decode_c} ${decode_h} ${types_h}
   COMMAND
   ${PYTHON_EXECUTABLE}
-  ${ZEPHYR_CDDL_GEN_MODULE_DIR}/cddl_gen/cddl_gen.py
+  ${ZEPHYR_ZCBOR_MODULE_DIR}/zcbor/zcbor.py
   -c ${cddl_file}
   --default-max-qty 128 # TNSW-33521
   code

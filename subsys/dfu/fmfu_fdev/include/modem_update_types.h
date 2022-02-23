@@ -5,9 +5,9 @@
  */
 
 /*
- * Generated using cddl_gen version 0.3.99
- * https://github.com/NordicSemiconductor/cddl-gen
- * Generated with a default_max_qty of 128
+ * Generated using zcbor version 0.4.0
+ * https://github.com/NordicSemiconductor/zcbor
+ * Generated with a --default-max-qty of 128
  */
 
 #ifndef MODEM_UPDATE_TYPES_H__
@@ -17,8 +17,15 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
-#include "cbor_decode.h"
+#include "zcbor_decode.h"
 
+/** Which value for --default-max-qty this file was created with.
+ *
+ *  The define is used in the other generated file to do a build-time
+ *  compatibility check.
+ *
+ *  See `zcbor --help` for more information about --default-max-qty
+ */
 #define DEFAULT_MAX_QTY 128
 
 struct Segment {
@@ -28,31 +35,24 @@ struct Segment {
 
 struct Segments {
 	struct Segment _Segments__Segment[128];
-	uint32_t _Segments__Segment_count;
-};
-
-struct header_map {
+	uint_fast32_t _Segments__Segment_count;
 };
 
 struct Sig_structure1 {
-	cbor_string_type_t _Sig_structure1_body_protected;
-	struct header_map _Sig_structure1_body_protected_cbor;
-	cbor_string_type_t _Sig_structure1_payload;
+	struct zcbor_string _Sig_structure1_payload;
 };
 
 struct Manifest {
 	uint32_t _Manifest_version;
 	uint32_t _Manifest_compat;
-	cbor_string_type_t _Manifest_blob_hash;
-	cbor_string_type_t _Manifest_segments;
+	struct zcbor_string _Manifest_blob_hash;
+	struct zcbor_string _Manifest_segments;
 };
 
 struct COSE_Sign1_Manifest {
-	cbor_string_type_t _COSE_Sign1_Manifest_protected;
-	struct header_map _COSE_Sign1_Manifest_protected_cbor;
-	cbor_string_type_t _COSE_Sign1_Manifest_payload;
+	struct zcbor_string _COSE_Sign1_Manifest_payload;
 	struct Manifest _COSE_Sign1_Manifest_payload_cbor;
-	cbor_string_type_t _COSE_Sign1_Manifest_signature;
+	struct zcbor_string _COSE_Sign1_Manifest_signature;
 };
 
 #endif /* MODEM_UPDATE_TYPES_H__ */

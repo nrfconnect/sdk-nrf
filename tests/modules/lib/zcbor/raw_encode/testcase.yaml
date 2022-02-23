@@ -1,6 +1,6 @@
 tests:
-  modules.lib.cddl_gen.decode:
-    tags: cddl-gen
+  modules.lib.zcbor.raw_encode:
+    tags: zcbor
     platform_allow: native_posix
     integration_platforms:
       - native_posix

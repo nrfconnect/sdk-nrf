@@ -5,31 +5,30 @@
  */
 #include <ztest.h>
 #include "test_decode.h"
-#include "cbor_encode.h"
+#include "zcbor_encode.h"
 
 static void test_decode(void)
 {
 	uint8_t payload[32] = {0};
 	uint32_t payload_len;
 	uint8_t time[] = {1, 2, 3, 4, 5, 6, 7, 8};
-	cbor_state_t states[4];
+
+	ZCBOR_STATE_D(states, 4, payload, sizeof(payload), 1);
 	struct Test test;
 	bool res;
 
 	/* Initialize struct to ensure test isn't checking uninitialized pointers */
-	test._Test_name_tstr[0] = (cbor_string_type_t){NULL, 0};
-	test._Test_name_tstr[1] = (cbor_string_type_t){NULL, 0};
+	test._Test_name_tstr[0] = (struct zcbor_string){NULL, 0};
+	test._Test_name_tstr[1] = (struct zcbor_string){NULL, 0};
 
-	new_state(states, 4, payload, sizeof(payload), 1);
-
-	res = list_start_encode(states, 3);
-	res |= list_start_encode(states, 2);
-	res |= tstrx_put_term(states, "Foo");
-	res |= tstrx_put_term(states, "Bar");
-	res |= list_end_encode(states, 0);
-	res |= bstrx_encode(states, &(cbor_string_type_t){.value = time, .len = (sizeof(time))});
-	res |= intx32_put(states, 2);
-	res |= list_end_encode(states, 0);
+	res = zcbor_list_start_encode(states, 3);
+	res |= zcbor_list_start_encode(states, 2);
+	res |= zcbor_tstr_put_term(states, "Foo");
+	res |= zcbor_tstr_put_term(states, "Bar");
+	res |= zcbor_list_end_encode(states, 0);
+	res |= zcbor_bstr_put_arr(states, time);
+	res |= zcbor_int32_put(states, 2);
+	res |= zcbor_list_end_encode(states, 0);
 	zassert_true(res, "Encoding should have been successful\n");
 
 	uint32_t len = states->payload - payload;
@@ -44,9 +43,9 @@ static void test_decode(void)
 
 void test_main(void)
 {
-	ztest_test_suite(lib_cddl_gen_test1,
+	ztest_test_suite(lib_zcbor_test1,
 	     ztest_unit_test(test_decode)
 	 );
 
-	ztest_run_test_suite(lib_cddl_gen_test1);
+	ztest_run_test_suite(lib_zcbor_test1);
 }
