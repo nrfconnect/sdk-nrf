@@ -32,6 +32,6 @@ EVENT_INFO_DEFINE(data_event,
 		  profile_data_event);
 
 EVENT_TYPE_DEFINE(data_event,
-		  false,
 		  NULL,
-		  &data_event_info);
+		  &data_event_info,
+		  EVENT_FLAGS_CREATE());

@@ -63,11 +63,12 @@ EVENT_INFO_DEFINE(hid_report_event,
 		  ENCODE("report_id", "source", "subscriber"),
 		  profile_hid_report_event);
 
-
 EVENT_TYPE_DEFINE(hid_report_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_REPORT_EVENT),
 		  log_hid_report_event,
-		  &hid_report_event_info);
+		  &hid_report_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_REPORT_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 static void log_hid_report_subscriber_event(const struct event_header *eh)
 {
@@ -94,9 +95,11 @@ EVENT_INFO_DEFINE(hid_report_subscriber_event,
 		  profile_hid_report_subscriber_event);
 
 EVENT_TYPE_DEFINE(hid_report_subscriber_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_SUBSCRIBER_EVENT),
 		  log_hid_report_subscriber_event,
-		  &hid_report_subscriber_event_info);
+		  &hid_report_subscriber_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_SUBSCRIBER_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 static void log_hid_report_sent_event(const struct event_header *eh)
 {
@@ -133,9 +136,11 @@ EVENT_INFO_DEFINE(hid_report_sent_event,
 		  profile_hid_report_sent_event);
 
 EVENT_TYPE_DEFINE(hid_report_sent_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_REPORT_SENT_EVENT),
 		  log_hid_report_sent_event,
-		  &hid_report_sent_event_info);
+		  &hid_report_sent_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_REPORT_SENT_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 static void log_hid_report_subscription_event(const struct event_header *eh)
 {
@@ -165,6 +170,8 @@ EVENT_INFO_DEFINE(hid_report_subscription_event,
 		  profile_hid_report_subscription_event);
 
 EVENT_TYPE_DEFINE(hid_report_subscription_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_SUBSCRIPTION_EVENT),
 		  log_hid_report_subscription_event,
-		  &hid_report_subscription_event_info);
+		  &hid_report_subscription_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_SUBSCRIPTION_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

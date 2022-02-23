@@ -17,4 +17,4 @@ static void log_gnss_event(const struct event_header *eh)
 			  event->pvt.altitude);
 }
 
-EVENT_TYPE_DEFINE(gnss_pvt_event, false, log_gnss_event, NULL);
+EVENT_TYPE_DEFINE(gnss_pvt_event, log_gnss_event, NULL, EVENT_FLAGS_CREATE());

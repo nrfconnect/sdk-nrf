@@ -31,6 +31,8 @@ EVENT_INFO_DEFINE(button_event,
 		  profile_button_event);
 
 EVENT_TYPE_DEFINE(button_event,
-		  IS_ENABLED(CONFIG_CAF_INIT_LOG_BUTTON_EVENTS),
 		  log_button_event,
-		  &button_event_info);
+		  &button_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_CAF_INIT_LOG_BUTTON_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

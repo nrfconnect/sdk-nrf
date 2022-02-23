@@ -39,4 +39,4 @@ static void log_accel_event(const struct event_header *eh)
 		accel_orienation_state_to_string(event->orientation));
 }
 
-EVENT_TYPE_DEFINE(accel_event, false, log_accel_event, NULL);
+EVENT_TYPE_DEFINE(accel_event, log_accel_event, NULL, EVENT_FLAGS_CREATE());

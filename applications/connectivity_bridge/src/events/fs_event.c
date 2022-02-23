@@ -58,6 +58,8 @@ int fs_event_helper_file_write(
 }
 
 EVENT_TYPE_DEFINE(fs_event,
-		  IS_ENABLED(CONFIG_BRIDGE_LOG_FS_EVENT),
 		  log_fs_event,
-		  NULL);
+		  NULL,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_BRIDGE_LOG_FS_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

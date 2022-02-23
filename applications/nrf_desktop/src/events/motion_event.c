@@ -24,13 +24,14 @@ static void profile_motion_event(struct log_event_buf *buf,
 	profiler_log_encode_int16(buf, event->dy);
 }
 
-
 EVENT_INFO_DEFINE(motion_event,
 		  ENCODE(PROFILER_ARG_S16, PROFILER_ARG_S16),
 		  ENCODE("dx", "dy"),
 		  profile_motion_event);
 
 EVENT_TYPE_DEFINE(motion_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_MOTION_EVENT),
 		  log_motion_event,
-		  &motion_event_info);
+		  &motion_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_MOTION_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
