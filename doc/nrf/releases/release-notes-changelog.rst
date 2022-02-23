@@ -515,15 +515,21 @@ The following list summarizes the most important changes inherited from the upst
 
 * Added the Binding cluster and Groupcast communication to the Light Switch sample.
 
-cddl-gen
-========
+cddl-gen/zcbor
+==============
 
-The `cddl-gen`_ module has been updated from version 0.1.0 to 0.3.0.
-Release notes for 0.3.0 can be found in :file:`ncs/nrf/modules/lib/cddl-gen/RELEASE_NOTES.md`.
+.. note::
+    In March 2022, cddl-gen has been renamed to zcbor.
 
-The change prompted some changes in the CMake for the module, notably:
+The `zcbor`_ module has been updated from version 0.3.0 to 0.4.0.
+Release notes for 0.4.0 can be found in :file:`ncs/nrf/modules/lib/zcbor/RELEASE_NOTES.md`.
 
-|no_changes_yet_note|
+The following major changes have been implemented:
+
+* Renamed "cddl-gen" to "zcbor" throughout the repo.
+* Regenerated fmfu code from cddl.
+* Added Kconfig options to control the zcbor configuration options.
+* Updated tests to run with updated zcbor.
 
 Trusted Firmware-M
 ==================

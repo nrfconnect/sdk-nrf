@@ -162,10 +162,10 @@ manifest:
       path: modules/alexa-embedded
       revision: face92d8c62184832793f518bb1f19379538c5c1
       remote: alexa
-    - name: cddl-gen
+    - name: zcbor
       remote: nordicsemi
-      revision: 1c2656daa87ebf4cd3c45ee8eafa336260d589bc
-      path: modules/lib/cddl-gen
+      revision: 0.4.0
+      path: modules/lib/zcbor
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
       revision: 0.29.1
