@@ -40,11 +40,11 @@ extern "C" {
 
 #include <pm_config.h>
 
-#ifdef PM_PCD_SRAM_ADDRESS
-#define PCD_CMD_ADDRESS PM_PCD_SRAM_ADDRESS
+#ifdef PM_RPMSG_NRF53_SRAM_ADDRESS
+#define PCD_CMD_ADDRESS PM_RPMSG_NRF53_SRAM_ADDRESS
 #else
 /* extra '_' since its in a different domain */
-#define PCD_CMD_ADDRESS PM__PCD_SRAM_ADDRESS
+#define PCD_CMD_ADDRESS PM__RPMSG_NRF53_SRAM_ADDRESS
 #endif /* PM_PCD_SRAM_ADDRESS */
 
 #endif /* CONFIG_PCD_CMD_ADDRESS */
