@@ -481,8 +481,9 @@ static void link_shell_sysmode_set(int sysmode, int lte_pref)
 	if (ret < 0) {
 		mosh_error("Cannot set system mode to modem: %d", ret);
 		ret = lte_lc_func_mode_get(&functional_mode);
-		if (functional_mode != LTE_LC_FUNC_MODE_OFFLINE ||
-		    functional_mode != LTE_LC_FUNC_MODE_POWER_OFF) {
+		if (ret == 0 &&
+		    (functional_mode != LTE_LC_FUNC_MODE_OFFLINE &&
+		     functional_mode != LTE_LC_FUNC_MODE_POWER_OFF)) {
 			mosh_warn(
 				"Requested mode couldn't set to modem. "
 				"Not in flighmode nor in pwroff?");
