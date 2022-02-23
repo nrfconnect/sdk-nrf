@@ -30,9 +30,11 @@ EVENT_INFO_DEFINE(passkey_input_event,
 		  profile_passkey_input_event);
 
 EVENT_TYPE_DEFINE(passkey_input_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_PASSKEY_EVENT),
 		  log_passkey_input_event,
-		  &passkey_input_event_info);
+		  &passkey_input_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_PASSKEY_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 
 static void log_passkey_req_event(const struct event_header *eh)
@@ -57,6 +59,8 @@ EVENT_INFO_DEFINE(passkey_req_event,
 		  profile_passkey_req_event);
 
 EVENT_TYPE_DEFINE(passkey_req_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_PASSKEY_EVENT),
 		  log_passkey_req_event,
-		  &passkey_req_event_info);
+		  &passkey_req_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_PASSKEY_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

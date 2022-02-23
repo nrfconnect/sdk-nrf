@@ -46,9 +46,11 @@ EVENT_INFO_DEFINE(ble_peer_event,
 		  profile_ble_peer_event);
 
 EVENT_TYPE_DEFINE(ble_peer_event,
-		  IS_ENABLED(CONFIG_CAF_INIT_LOG_BLE_PEER_EVENTS),
 		  log_ble_peer_event,
-		  &ble_peer_event_info);
+		  &ble_peer_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_CAF_INIT_LOG_BLE_PEER_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 static void log_ble_peer_search_event(const struct event_header *eh)
 {
@@ -71,9 +73,11 @@ EVENT_INFO_DEFINE(ble_peer_search_event,
 		  profile_ble_peer_search_event);
 
 EVENT_TYPE_DEFINE(ble_peer_search_event,
-		  IS_ENABLED(CONFIG_CAF_INIT_LOG_BLE_PEER_SEARCH_EVENTS),
 		  log_ble_peer_search_event,
-		  &ble_peer_search_event_info);
+		  &ble_peer_search_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_CAF_INIT_LOG_BLE_PEER_SEARCH_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 
 static const char * const op_name[] = {
@@ -119,9 +123,11 @@ EVENT_INFO_DEFINE(ble_peer_operation_event,
 		  profile_ble_peer_operation_event);
 
 EVENT_TYPE_DEFINE(ble_peer_operation_event,
-		  IS_ENABLED(CONFIG_CAF_INIT_LOG_BLE_PEER_OPERATION_EVENTS),
 		  log_ble_peer_operation_event,
-		  &ble_peer_operation_event_info);
+		  &ble_peer_operation_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_CAF_INIT_LOG_BLE_PEER_OPERATION_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 static void log_ble_peer_conn_params_event(const struct event_header *eh)
 {
@@ -136,6 +142,8 @@ static void log_ble_peer_conn_params_event(const struct event_header *eh)
 }
 
 EVENT_TYPE_DEFINE(ble_peer_conn_params_event,
-		  IS_ENABLED(CONFIG_CAF_INIT_LOG_BLE_PEER_CONN_PARAMS_EVENTS),
 		  log_ble_peer_conn_params_event,
-		  NULL);
+		  NULL,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_CAF_INIT_LOG_BLE_PEER_CONN_PARAMS_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

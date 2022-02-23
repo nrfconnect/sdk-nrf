@@ -30,6 +30,8 @@ static void log_module_state_event(const struct event_header *eh)
 }
 
 EVENT_TYPE_DEFINE(module_state_event,
-		  IS_ENABLED(CONFIG_BRIDGE_LOG_MODULE_STATE_EVENT),
 		  log_module_state_event,
-		  NULL);
+		  NULL,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_BRIDGE_LOG_MODULE_STATE_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

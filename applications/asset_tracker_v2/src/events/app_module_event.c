@@ -107,6 +107,8 @@ COMMON_EVENT_INFO_DEFINE(app_module_event,
 #endif /* CONFIG_PROFILER */
 
 COMMON_EVENT_TYPE_DEFINE(app_module_event,
-			 CONFIG_APP_EVENTS_LOG,
 			 log_event,
-			 &app_module_event_info);
+			 &app_module_event_info,
+			 EVENT_FLAGS_CREATE(
+				IF_ENABLED(CONFIG_APP_EVENTS_LOG,
+					(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

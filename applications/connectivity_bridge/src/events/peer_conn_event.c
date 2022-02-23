@@ -34,6 +34,8 @@ static void log_peer_conn_event(const struct event_header *eh)
 }
 
 EVENT_TYPE_DEFINE(peer_conn_event,
-		  IS_ENABLED(CONFIG_BRIDGE_LOG_PEER_CONN_EVENT),
 		  log_peer_conn_event,
-		  NULL);
+		  NULL,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_BRIDGE_LOG_PEER_CONN_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

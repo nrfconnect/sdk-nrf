@@ -17,6 +17,8 @@ static void log_ble_ctrl_event(const struct event_header *eh)
 }
 
 EVENT_TYPE_DEFINE(ble_ctrl_event,
-		  IS_ENABLED(CONFIG_BRIDGE_LOG_BLE_CTRL_EVENT),
 		  log_ble_ctrl_event,
-		  NULL);
+		  NULL,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_BRIDGE_LOG_BLE_CTRL_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

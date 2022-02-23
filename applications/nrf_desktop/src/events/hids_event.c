@@ -19,6 +19,8 @@ static void log_hid_notification_event(const struct event_header *eh)
 }
 
 EVENT_TYPE_DEFINE(hid_notification_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_NOTIFICATION_EVENT),
 		  log_hid_notification_event,
-		  NULL);
+		  NULL,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_NOTIFICATION_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

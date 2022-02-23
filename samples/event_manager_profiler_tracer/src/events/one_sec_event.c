@@ -29,6 +29,6 @@ EVENT_INFO_DEFINE(one_sec_event,
 		  profile_one_sec_event);
 
 EVENT_TYPE_DEFINE(one_sec_event,
-		  true,
 		  log_one_sec_event,
-		  &one_sec_event_info);
+		  &one_sec_event_info,
+		  EVENT_FLAGS_CREATE(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));

@@ -25,6 +25,8 @@ static void log_ml_app_mode_event(const struct event_header *eh)
 }
 
 EVENT_TYPE_DEFINE(ml_app_mode_event,
-		  IS_ENABLED(CONFIG_ML_APP_INIT_LOG_ML_APP_MODE_EVENTS),
 		  log_ml_app_mode_event,
-		  NULL);
+		  NULL,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_ML_APP_INIT_LOG_ML_APP_MODE_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

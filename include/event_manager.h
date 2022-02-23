@@ -37,6 +37,35 @@ extern "C" {
  *            false otherwise.
  */
 typedef bool (*cb_fn)(const struct event_header *eh);
+/**
+ * @brief List of bits in event type flags.
+ */
+enum event_type_flags {
+	/* Flags set internally by event manager. */
+	EVENT_TYPE_FLAGS_SYSTEM_START,
+	EVENT_TYPE_FLAGS_HAS_DYNDATA = EVENT_TYPE_FLAGS_SYSTEM_START,
+
+	/* Flags available for user. */
+	EVENT_TYPE_FLAGS_USER_SETTABLE_START,
+	EVENT_TYPE_FLAGS_INIT_LOG_ENABLE = EVENT_TYPE_FLAGS_USER_SETTABLE_START,
+
+	/* Number of predefined flags. */
+	EVENT_TYPE_FLAGS_COUNT,
+
+	/* Value greater or equal are user-specific. */
+	EVENT_TYPE_FLAGS_USER_DEFINED_START = EVENT_TYPE_FLAGS_COUNT,
+};
+
+/** @brief Get event type flag's value.
+ *
+ * @param flag Selected event type flag.
+ * @param et   Pointer to the event type.
+ * @retval Boolean value of requested flag.
+ */
+static inline bool get_event_type_flag(const struct event_type *et, enum event_type_flags flag)
+{
+	return (et->flags & BIT(flag)) != 0;
+}
 
 /** @brief Create an event listener object.
  *
@@ -124,13 +153,12 @@ typedef bool (*cb_fn)(const struct event_header *eh);
  *                            as argument to an event of the given type.
  *
  * @param ename     	   Name of the event.
- * @param init_log_en	   Bool indicating if the event is logged
- *                         by default.
  * @param log_fn  	   Function to stringify an event of this type.
  * @param ev_info_struct   Data structure describing the event type.
+ * @param event_type_flags Event type flags. You should use EVENT_FLAGS_CREATE to define them.
  */
-#define EVENT_TYPE_DEFINE(ename, init_log_en, log_fn, ev_info_struct) \
-	_EVENT_TYPE_DEFINE(ename, init_log_en, log_fn, ev_info_struct)
+#define EVENT_TYPE_DEFINE(ename, log_fn, ev_info_struct, event_type_flags) \
+	_EVENT_TYPE_DEFINE(ename, log_fn, ev_info_struct, event_type_flags)
 
 
 /** @brief Verify if an event ID is valid.
@@ -182,7 +210,7 @@ static inline size_t event_manager_event_size(const struct event_header *eh)
 #if IS_ENABLED(CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE)
 	size_t size = eh->type_id->struct_size;
 
-	if (eh->type_id->has_dyndata) {
+	if (get_event_type_flag(eh->type_id, EVENT_TYPE_FLAGS_HAS_DYNDATA)) {
 		size += ((const struct event_dyndata *)
 			 (((const uint8_t *)eh) + size - sizeof(struct event_dyndata)))->size;
 	}
@@ -376,6 +404,16 @@ void event_manager_free(void *addr);
 		LOG_INF(__VA_ARGS__);								\
 	}											\
 } while (0)
+
+
+/**
+ * @brief Define flags for event type.
+ *
+ * @param ... Comma-separated list of flags which should be set.
+ *            In case no flags should be set leave it empty.
+ */
+ #define EVENT_FLAGS_CREATE(...)				\
+	(FOR_EACH_NONEMPTY_TERM(_EVENT_FLAGS_JOIN, (|), __VA_ARGS__) 0)
 
 
 #ifdef __cplusplus

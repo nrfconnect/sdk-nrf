@@ -22,6 +22,8 @@ EVENT_INFO_DEFINE(force_power_down_event,
 		  profile_simple_event);
 
 EVENT_TYPE_DEFINE(force_power_down_event,
-		  IS_ENABLED(CONFIG_CAF_INIT_LOG_FORCE_POWER_DOWN_EVENTS),
 		  NULL,
-		  &force_power_down_event_info);
+		  &force_power_down_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_CAF_INIT_LOG_FORCE_POWER_DOWN_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

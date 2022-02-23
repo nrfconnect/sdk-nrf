@@ -28,6 +28,8 @@ static void log_config_event(const struct event_header *eh)
 }
 
 EVENT_TYPE_DEFINE(config_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_CONFIG_EVENT),
 		  log_config_event,
-		  NULL);
+		  NULL,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_CONFIG_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

@@ -17,9 +17,11 @@ static void log_led_event(const struct event_header *eh)
 }
 
 EVENT_TYPE_DEFINE(led_event,
-		  IS_ENABLED(CONFIG_CAF_INIT_LOG_LED_EVENTS),
 		  log_led_event,
-		  NULL);
+		  NULL,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_CAF_INIT_LOG_LED_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 static void log_led_ready_event(const struct event_header *eh)
 {
@@ -30,6 +32,8 @@ static void log_led_ready_event(const struct event_header *eh)
 }
 
 EVENT_TYPE_DEFINE(led_ready_event,
-		  IS_ENABLED(CONFIG_CAF_INIT_LOG_LED_READY_EVENTS),
 		  log_led_ready_event,
-		  NULL);
+		  NULL,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_CAF_INIT_LOG_LED_READY_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

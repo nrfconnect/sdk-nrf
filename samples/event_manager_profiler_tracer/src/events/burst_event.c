@@ -18,6 +18,6 @@ EVENT_INFO_DEFINE(burst_event,
 		  profile_burst_event);
 
 EVENT_TYPE_DEFINE(burst_event,
-		  true,
 		  NULL,
-		  &burst_event_info);
+		  &burst_event_info,
+		  EVENT_FLAGS_CREATE(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));

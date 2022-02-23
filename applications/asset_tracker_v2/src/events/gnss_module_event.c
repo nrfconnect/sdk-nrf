@@ -63,6 +63,8 @@ COMMON_EVENT_INFO_DEFINE(gnss_module_event,
 #endif /* CONFIG_PROFILER */
 
 COMMON_EVENT_TYPE_DEFINE(gnss_module_event,
-			 CONFIG_GNSS_EVENTS_LOG,
 			 log_event,
-			 &gnss_module_event_info);
+			 &gnss_module_event_info,
+			 EVENT_FLAGS_CREATE(
+				IF_ENABLED(CONFIG_GNSS_EVENTS_LOG,
+					(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

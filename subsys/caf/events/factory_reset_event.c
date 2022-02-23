@@ -21,6 +21,8 @@ EVENT_INFO_DEFINE(factory_reset_event,
 		  profile_factory_reset_event);
 
 EVENT_TYPE_DEFINE(factory_reset_event,
-		  IS_ENABLED(CONFIG_CAF_INIT_LOG_FACTORY_RESET_EVENTS),
 		  NULL,
-		  &factory_reset_event_info);
+		  &factory_reset_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_CAF_INIT_LOG_FACTORY_RESET_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

@@ -20,6 +20,6 @@ EVENT_INFO_DEFINE(ack_event,
 		  profile_ack_event);
 
 EVENT_TYPE_DEFINE(ack_event,
-		  true,
 		  NULL,
-		  &ack_event_info);
+		  &ack_event_info,
+		  EVENT_FLAGS_CREATE(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));
