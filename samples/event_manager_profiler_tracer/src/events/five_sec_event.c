@@ -18,6 +18,6 @@ EVENT_INFO_DEFINE(five_sec_event,
 		  profile_five_sec_event);
 
 EVENT_TYPE_DEFINE(five_sec_event,
-		  true,
 		  NULL,
-		  &five_sec_event_info);
+		  &five_sec_event_info,
+		  EVENT_FLAGS_CREATE(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));

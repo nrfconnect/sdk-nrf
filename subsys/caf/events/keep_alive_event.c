@@ -22,6 +22,8 @@ EVENT_INFO_DEFINE(keep_alive_event,
 		  profile_simple_result_event);
 
 EVENT_TYPE_DEFINE(keep_alive_event,
-		  IS_ENABLED(CONFIG_CAF_INIT_LOG_KEEP_ALIVE_EVENTS),
 		  NULL,
-		  &keep_alive_event_info);
+		  &keep_alive_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_CAF_INIT_LOG_KEEP_ALIVE_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

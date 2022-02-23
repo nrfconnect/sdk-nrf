@@ -34,6 +34,6 @@ EVENT_INFO_DEFINE(measurement_event,
 		  profile_measurement_event);
 
 EVENT_TYPE_DEFINE(measurement_event,
-		  true,
 		  log_measurement_event,
-		  &measurement_event_info);
+		  &measurement_event_info,
+		  EVENT_FLAGS_CREATE(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));

@@ -212,8 +212,7 @@ extern "C" {
 
 #if IS_ENABLED(CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE)
 #define _EVENT_TYPE_DEFINE_SIZES(ename)             \
-	.struct_size = sizeof(struct ename),        \
-	.has_dyndata = _CONCAT(ename, _HAS_DYNDATA),
+	.struct_size = sizeof(struct ename),
 #else
 #define _EVENT_TYPE_DEFINE_SIZES(ename)
 #endif
@@ -271,9 +270,6 @@ struct event_type {
 	/** Pointer to the element directly after the array of subscribers. */
 	const struct event_subscriber	*subs_stop;
 
-	/** Bool indicating if the event is logged by default. */
-	bool init_log_enable;
-
 	/** Function to log data from this event. */
 	log_event_data log_event_func;
 
@@ -285,28 +281,34 @@ struct event_type {
 	/** Custom data related to tracking. */
 	const void *trace_data;
 
+	/** Array of flags dedicated to event type. */
+	const uint8_t flags;
+
 #if IS_ENABLED(CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE)
 	/** The size of the event structure */
 	uint16_t struct_size;
-
-	/** The flag that stores the information if the event type contains dyndata */
-	bool has_dyndata;
 #endif
 };
+
 
 extern struct event_type _event_type_list_start[];
 extern struct event_type _event_type_list_end[];
 
-#define _EVENT_TYPE_DEFINE(ename, init_log_en, log_fn, trace_data_pointer)			\
+
+#define _EVENT_TYPE_DEFINE(ename, log_fn, trace_data_pointer, et_flags)				\
+	BUILD_ASSERT(((et_flags) & ((BIT_MASK(EVENT_TYPE_FLAGS_USER_SETTABLE_START-		\
+		EVENT_TYPE_FLAGS_SYSTEM_START))<<EVENT_TYPE_FLAGS_SYSTEM_START)) == 0);		\
 	_EVENT_SUBSCRIBERS_ARRAY_TAGS(ename);							\
 	STRUCT_SECTION_ITERABLE(event_type, _CONCAT(__event_type_, ename)) = {			\
-		.name               = STRINGIFY(ename),						\
-		.subs_start         = _EVENT_SUBSCRIBERS_START_TAG(ename),			\
-		.subs_stop          = _EVENT_SUBSCRIBERS_END_TAG(ename),			\
-		.init_log_enable    = init_log_en,						\
+		.name            = STRINGIFY(ename),						\
+		.subs_start      = _EVENT_SUBSCRIBERS_START_TAG(ename),				\
+		.subs_stop       = _EVENT_SUBSCRIBERS_END_TAG(ename),				\
 		_EVENT_TYPE_DEFINE_LOG_FUN(log_fn) /* No comma here intentionally */		\
-		.trace_data       = (IS_ENABLED(CONFIG_EVENT_MANAGER_TRACE_EVENT_DATA) ?	\
+		.trace_data      = (IS_ENABLED(CONFIG_EVENT_MANAGER_TRACE_EVENT_DATA) ?		\
 					(trace_data_pointer) : (NULL)),				\
+		.flags = ((_CONCAT(ename, _HAS_DYNDATA)) ?					\
+				((et_flags) | BIT(EVENT_TYPE_FLAGS_HAS_DYNDATA)) :		\
+				((et_flags) & (~BIT(EVENT_TYPE_FLAGS_HAS_DYNDATA)))),		\
 		_EVENT_TYPE_DEFINE_SIZES(ename) /* No comma here intentionally */		\
 	}
 
@@ -347,7 +349,10 @@ extern struct event_manager_event_display_bm _event_manager_event_display_bm;
 		     "Enable EVENT_MANAGER_POSTPROCESS_HOOKS before usage"); \
 	_EVENT_HOOK_REGISTER(event_postprocess_hook, hook_fn, prio)
 
-
+/**
+ * @brief Joining together event type flags.
+ */
+#define _EVENT_FLAGS_JOIN(flag) BIT(flag)
 
 
 /** @brief Dynamic event data.
@@ -386,6 +391,7 @@ struct event_subscriber {
 	/** Pointer to the listener. */
 	const struct event_listener *listener;
 };
+
 
 /** @brief Structure used to register event manager initialization hook
  */

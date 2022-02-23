@@ -21,6 +21,8 @@ static void log_uart_data_event(const struct event_header *eh)
 }
 
 EVENT_TYPE_DEFINE(uart_data_event,
-		  IS_ENABLED(CONFIG_BRIDGE_LOG_UART_DATA_EVENT),
 		  log_uart_data_event,
-		  NULL);
+		  NULL,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_BRIDGE_LOG_UART_DATA_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

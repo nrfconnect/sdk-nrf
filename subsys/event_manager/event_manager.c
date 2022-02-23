@@ -23,7 +23,6 @@ static K_WORK_DEFINE(event_processor, event_processor_fn);
 static sys_slist_t eventq = SYS_SLIST_STATIC_INIT(&eventq);
 static struct k_spinlock lock;
 
-
 static bool log_is_event_displayed(const struct event_type *et)
 {
 	size_t idx = et - _event_type_list_start;
@@ -106,7 +105,7 @@ static void log_event_init(void)
 	}
 
 	STRUCT_SECTION_FOREACH(event_type, et) {
-		if (et->init_log_enable) {
+		if (get_event_type_flag(et, EVENT_TYPE_FLAGS_INIT_LOG_ENABLE)) {
 			size_t idx = et - _event_type_list_start;
 
 			atomic_set_bit(_event_manager_event_display_bm.flags, idx);

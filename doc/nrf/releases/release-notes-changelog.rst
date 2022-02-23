@@ -354,14 +354,27 @@ Other libraries
 
 * :ref:`event_manager`:
 
-  * To add :c:func:`event_manager_event_size` function with corresponding :kconfig:option:`CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE` option.
+  * Added:
 
-  * Added universal hooks for event manager initialization, event submission, preprocessing, and postprocessing.
-    This includes implementation of macros that register hooks, grouped as follows:
+    * Event type flags to represent if event type should be logged, traced and has dynamic data.
+      To update your application, pass a flag variable as a parameter in :c:macro:`EVENT_TYPE_DEFINE` instead of ``init_log``.
+      Use :c:macro:`EVENT_FLAGS_CREATE` to set multiple flags:
 
-    * :c:macro:`EVENT_HOOK_ON_SUBMIT_REGISTER`, :c:macro:`EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST`, :c:macro:`EVENT_HOOK_ON_SUBMIT_REGISTER_LAST`
-    * :c:macro:`EVENT_HOOK_PREPROCESS_REGISTER`, :c:macro:`EVENT_HOOK_PREPROCESS_REGISTER_FIRST`, :c:macro:`EVENT_HOOK_PREPROCESS_REGISTER_LAST`
-    * :c:macro:`EVENT_HOOK_POSTPROCESS_REGISTER`, :c:macro:`EVENT_HOOK_POSTPROCESS_REGISTER_FIRST`, :c:macro:`EVENT_HOOK_POSTPROCESS_REGISTER_LAST`
+      .. code-block:: c
+
+         EVENT_TYPE_DEFINE(my_event,
+           log_my_event,
+           &my_event_info,
+           EVENT_FLAGS_CREATE(EVENT_TYPE_FLAGS_1, EVENT_TYPE_FLAGS_2));
+
+     * :c:func:`event_manager_event_size` function with corresponding :kconfig:option:`CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE` option.
+
+    * Universal hooks for event manager initialization, event submission, preprocessing, and postprocessing.
+      This includes implementation of macros that register hooks, grouped as follows:
+
+      * :c:macro:`EVENT_HOOK_ON_SUBMIT_REGISTER`, :c:macro:`EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST`, :c:macro:`EVENT_HOOK_ON_SUBMIT_REGISTER_LAST`
+      * :c:macro:`EVENT_HOOK_PREPROCESS_REGISTER`, :c:macro:`EVENT_HOOK_PREPROCESS_REGISTER_FIRST`, :c:macro:`EVENT_HOOK_PREPROCESS_REGISTER_LAST`
+      * :c:macro:`EVENT_HOOK_POSTPROCESS_REGISTER`, :c:macro:`EVENT_HOOK_POSTPROCESS_REGISTER_FIRST`, :c:macro:`EVENT_HOOK_POSTPROCESS_REGISTER_LAST`
 
 * :ref:`event_manager_profiler_tracer`:
 

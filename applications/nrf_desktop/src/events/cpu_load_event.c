@@ -32,6 +32,8 @@ EVENT_INFO_DEFINE(cpu_load_event,
 		  profile_cpu_load_event);
 
 EVENT_TYPE_DEFINE(cpu_load_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_CPU_LOAD_EVENT),
 		  log_cpu_load_event,
-		  &cpu_load_event_info);
+		  &cpu_load_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_CPU_LOAD_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

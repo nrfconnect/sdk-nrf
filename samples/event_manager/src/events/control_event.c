@@ -18,6 +18,6 @@ EVENT_INFO_DEFINE(control_event,
 		  profile_control_event);
 
 EVENT_TYPE_DEFINE(control_event,
-		  true,
 		  NULL,
-		  &control_event_info);
+		  &control_event_info,
+		  EVENT_FLAGS_CREATE(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));

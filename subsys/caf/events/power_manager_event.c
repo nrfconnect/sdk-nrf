@@ -63,7 +63,8 @@ EVENT_INFO_DEFINE(power_manager_restrict_event,
 );
 
 EVENT_TYPE_DEFINE(power_manager_restrict_event,
-		  IS_ENABLED(CONFIG_CAF_INIT_LOG_POWER_MANAGER_EVENTS),
 		  log_event,
-		  &power_manager_restrict_event_info
-);
+		  &power_manager_restrict_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_CAF_INIT_LOG_POWER_MANAGER_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

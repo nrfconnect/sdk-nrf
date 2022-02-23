@@ -33,9 +33,11 @@ EVENT_INFO_DEFINE(sensor_event,
 		  profile_sensor_event);
 
 EVENT_TYPE_DEFINE(sensor_event,
-		  IS_ENABLED(CONFIG_CAF_INIT_LOG_SENSOR_EVENTS),
 		  log_sensor_event,
-		  &sensor_event_info);
+		  &sensor_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_CAF_INIT_LOG_SENSOR_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 
 static void log_sensor_state_event(const struct event_header *eh)
@@ -53,6 +55,8 @@ static void log_sensor_state_event(const struct event_header *eh)
 }
 
 EVENT_TYPE_DEFINE(sensor_state_event,
-		  IS_ENABLED(CONFIG_CAF_INIT_LOG_SENSOR_STATE_EVENTS),
 		  log_sensor_state_event,
-		  NULL);
+		  NULL,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_CAF_INIT_LOG_SENSOR_STATE_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

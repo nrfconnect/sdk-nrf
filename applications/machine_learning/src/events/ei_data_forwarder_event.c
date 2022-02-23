@@ -27,6 +27,8 @@ static void log_ei_data_forwarder_event(const struct event_header *eh)
 }
 
 EVENT_TYPE_DEFINE(ei_data_forwarder_event,
-		  IS_ENABLED(CONFIG_ML_APP_INIT_LOG_EI_DATA_FORWARDER_EVENTS),
 		  log_ei_data_forwarder_event,
-		  NULL);
+		  NULL,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_ML_APP_INIT_LOG_EI_DATA_FORWARDER_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

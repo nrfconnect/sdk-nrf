@@ -87,9 +87,9 @@ To profile an Event Manager event, you must complete the following steps:
 				profile_sample_event);
 
          EVENT_TYPE_DEFINE(sample_event,
-				true,
 				log_sample_event,	/* Function for logging event data. */
-				&sample_event_info);	/* Structure with data for profiling. */
+				&sample_event_info,	/* Structure with data for profiling. */
+				EVENT_FLAGS_CREATE(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));	/* Flags managing event type. */
 
       .. note::
          * By default, all Event Manager events that are defined with an :c:struct:`event_info` argument are profiled.

@@ -31,9 +31,11 @@ static void log_usb_state_event(const struct event_header *eh)
 }
 
 EVENT_TYPE_DEFINE(usb_state_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_USB_STATE_EVENT),
 		  log_usb_state_event,
-		  NULL);
+		  NULL,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_USB_STATE_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 static void log_usb_hid_event(const struct event_header *eh)
 {
@@ -44,6 +46,8 @@ static void log_usb_hid_event(const struct event_header *eh)
 }
 
 EVENT_TYPE_DEFINE(usb_hid_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_USB_HID_EVENT),
 		  log_usb_hid_event,
-		  NULL);
+		  NULL,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_USB_HID_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

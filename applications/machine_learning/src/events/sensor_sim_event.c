@@ -26,6 +26,8 @@ EVENT_INFO_DEFINE(sensor_sim_event,
 		  profile_sensor_sim_event);
 
 EVENT_TYPE_DEFINE(sensor_sim_event,
-		  IS_ENABLED(CONFIG_ML_APP_INIT_LOG_SENSOR_SIM_EVENTS),
 		  log_sensor_sim_event,
-		  &sensor_sim_event_info);
+		  &sensor_sim_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_ML_APP_INIT_LOG_SENSOR_SIM_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

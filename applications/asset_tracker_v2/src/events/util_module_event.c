@@ -46,6 +46,8 @@ COMMON_EVENT_INFO_DEFINE(util_module_event,
 #endif /* CONFIG_PROFILER */
 
 COMMON_EVENT_TYPE_DEFINE(util_module_event,
-			 CONFIG_UTIL_EVENTS_LOG,
 			 log_event,
-			 &util_module_event_info);
+			 &util_module_event_info,
+			 EVENT_FLAGS_CREATE(
+				IF_ENABLED(CONFIG_UTIL_EVENTS_LOG,
+					(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

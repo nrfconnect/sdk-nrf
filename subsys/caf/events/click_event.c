@@ -42,6 +42,8 @@ EVENT_INFO_DEFINE(click_event,
 		  profile_click_event);
 
 EVENT_TYPE_DEFINE(click_event,
-		  IS_ENABLED(CONFIG_CAF_INIT_LOG_CLICK_EVENTS),
 		  log_click_event,
-		  &click_event_info);
+		  &click_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_CAF_INIT_LOG_CLICK_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

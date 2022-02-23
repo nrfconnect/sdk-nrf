@@ -6,11 +6,10 @@
 
 #include "sized_events.h"
 
+EVENT_TYPE_DEFINE(test_size1_event, NULL, NULL, EVENT_FLAGS_CREATE());
+EVENT_TYPE_DEFINE(test_size2_event, NULL, NULL, EVENT_FLAGS_CREATE());
+EVENT_TYPE_DEFINE(test_size3_event, NULL, NULL, EVENT_FLAGS_CREATE());
+EVENT_TYPE_DEFINE(test_size_big_event, NULL, NULL, EVENT_FLAGS_CREATE());
 
-EVENT_TYPE_DEFINE(test_size1_event, false, NULL, NULL);
-EVENT_TYPE_DEFINE(test_size2_event, false, NULL, NULL);
-EVENT_TYPE_DEFINE(test_size3_event, false, NULL, NULL);
-EVENT_TYPE_DEFINE(test_size_big_event, false, NULL, NULL);
-
-EVENT_TYPE_DEFINE(test_dynamic_event, false, NULL, NULL);
-EVENT_TYPE_DEFINE(test_dynamic_with_data_event, false, NULL, NULL);
+EVENT_TYPE_DEFINE(test_dynamic_event, NULL, NULL, EVENT_FLAGS_CREATE());
+EVENT_TYPE_DEFINE(test_dynamic_with_data_event, NULL, NULL, EVENT_FLAGS_CREATE());

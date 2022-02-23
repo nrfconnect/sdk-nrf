@@ -91,6 +91,8 @@ COMMON_EVENT_INFO_DEFINE(modem_module_event,
 #endif /* CONFIG_PROFILER */
 
 COMMON_EVENT_TYPE_DEFINE(modem_module_event,
-			 CONFIG_MODEM_EVENTS_LOG,
 			 log_event,
-			 &modem_module_event_info);
+			 &modem_module_event_info,
+			 EVENT_FLAGS_CREATE(
+				IF_ENABLED(CONFIG_MODEM_EVENTS_LOG,
+					(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

@@ -45,10 +45,11 @@ EVENT_INFO_DEFINE(ml_result_event,
 		  profile_ml_result_event);
 
 EVENT_TYPE_DEFINE(ml_result_event,
-		  IS_ENABLED(CONFIG_ML_APP_INIT_LOG_ML_RESULT_EVENTS),
 		  log_ml_result_event,
-		  &ml_result_event_info);
-
+		  &ml_result_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_ML_APP_INIT_LOG_ML_RESULT_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 EVENT_INFO_DEFINE(ml_result_signin_event,
 		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8),
@@ -56,6 +57,8 @@ EVENT_INFO_DEFINE(ml_result_signin_event,
 		  profile_ml_result_signin_event);
 
 EVENT_TYPE_DEFINE(ml_result_signin_event,
-		  IS_ENABLED(CONFIG_ML_APP_INIT_LOG_ML_RESULT_SIGNIN_EVENTS),
 		  log_ml_result_signin_event,
-		  &ml_result_signin_event_info);
+		  &ml_result_signin_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_ML_APP_INIT_LOG_ML_RESULT_SIGNIN_EVENTS,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

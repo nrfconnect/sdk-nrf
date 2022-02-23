@@ -19,6 +19,6 @@ EVENT_INFO_DEFINE(config_event,
 		  profile_config_event);
 
 EVENT_TYPE_DEFINE(config_event,
-		  true,
 		  NULL,
-		  &config_event_info);
+		  &config_event_info,
+		  EVENT_FLAGS_CREATE(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));

@@ -142,6 +142,10 @@ To create a source file for the event type you defined in the header file:
 #. Define the event type with the :c:macro:`EVENT_TYPE_DEFINE` macro.
    Pass the name of the event type as declared in the header along with additional parameters.
    For example, you can provide a function that fills a buffer with a string version of the event data (used for logging).
+   The :c:macro:`EVENT_TYPE_DEFINE` macro adds flags as a last parameter.
+   These flags are constant and can only be set using :c:macro:`EVENT_FLAGS_CREATE` on :c:macro:`EVENT_TYPE_DEFINE` macro.
+   To not set any flag, use :c:macro:`EVENT_FLAGS_CREATE` without any argument as shown in the below example.
+   To get value of specific flag, use :c:func:`get_event_type_flag` function.
 
 The following code example shows a source file for the event type ``sample_event``:
 
@@ -157,10 +161,10 @@ The following code example shows a source file for the event type ``sample_event
 			   event->value2, event->value3);
    }
 
-   EVENT_TYPE_DEFINE(sample_event,	/* Unique event name. */
-		     true,		/* Event logged by default. */
-		     log_sample_event,	/* Function logging event data. */
-		     NULL);		/* No event info provided. */
+   EVENT_TYPE_DEFINE(sample_event,			/* Unique event name. */
+		     log_sample_event,			/* Function logging event data. */
+		     NULL,				/* No event info provided. */
+		     EVENT_FLAGS_CREATE());		/* Flags managing event type. */
 
 .. note::
 	There is a deprecated way of logging Event Manager events by writing a string to the provided buffer that will be supported until a future release of |NCS|.

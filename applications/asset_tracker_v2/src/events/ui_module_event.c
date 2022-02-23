@@ -55,6 +55,8 @@ COMMON_EVENT_INFO_DEFINE(ui_module_event,
 #endif /* CONFIG_PROFILER */
 
 COMMON_EVENT_TYPE_DEFINE(ui_module_event,
-			 CONFIG_UI_EVENTS_LOG,
 			 log_event,
-			 &ui_module_event_info);
+			 &ui_module_event_info,
+			 EVENT_FLAGS_CREATE(
+				IF_ENABLED(CONFIG_UI_EVENTS_LOG,
+					(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

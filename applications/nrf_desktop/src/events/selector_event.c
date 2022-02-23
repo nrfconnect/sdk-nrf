@@ -33,6 +33,8 @@ EVENT_INFO_DEFINE(selector_event,
 		  profile_selector_event);
 
 EVENT_TYPE_DEFINE(selector_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_SELECTOR_EVENT),
 		  log_selector_event,
-		  &selector_event_info);
+		  &selector_event_info,
+		  EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_SELECTOR_EVENT,
+				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
