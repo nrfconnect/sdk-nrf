@@ -1240,6 +1240,7 @@ int nrf_cloud_rest_jitp(const sec_tag_t nrf_cloud_sec_tag)
 	memset(&resp, 0, sizeof(resp));
 	rest_client_request_defaults_set(&req);
 
+	req.body		= NULL;
 	req.sec_tag		= nrf_cloud_sec_tag;
 	req.port		= JITP_PORT;
 	req.header_fields	= (const char **)headers;
