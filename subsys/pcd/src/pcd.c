@@ -131,17 +131,9 @@ static int pcd_cmd_write(const void *data, size_t len, off_t offset)
 	return 0;
 }
 
-static int network_core_update(const void *src_addr, size_t len, bool wait)
+static int network_core_pcd_cmdset(const void *src_addr, size_t len, bool wait)
 {
 	int err;
-
-	/* Retain nRF5340 Network MCU in Secure domain (bus
-	 * accesses by Network MCU will have Secure attribute set).
-	 * This is needed for the network core to be able to read the
-	 * shared RAM area used for IPC.
-	 */
-	nrf_spu_extdomain_set(NRF_SPU, 0, true, false);
-
 	/* Ensure that the network core is turned off */
 	nrf_reset_network_force_off(NRF_RESET, true);
 
@@ -174,8 +166,25 @@ static int network_core_update(const void *src_addr, size_t len, bool wait)
 
 	nrf_reset_network_force_off(NRF_RESET, true);
 	LOG_INF("Turned off network core");
-
 	return 0;
+}
+
+static int network_core_update(const void *src_addr, size_t len, bool wait)
+{
+	int err;
+	/* Configure nRF5340 Network MCU into Secure domain (bus
+	 * accesses by Network MCU will have Secure attribute set).
+	 * This is needed for the network core to be able to read the
+	 * shared RAM area used for IPC.
+	 */
+	nrf_spu_extdomain_set(NRF_SPU, 0, true, false);
+
+	err = network_core_pcd_cmdset(src_addr, len, wait);
+	/* Configure nRF5340 Network MCU back into Non-Secure domain.
+	 * This is the default for the network core when it's reset.
+	 */
+	nrf_spu_extdomain_set(NRF_SPU, 0, false, false);
+	return err;
 }
 
 int pcd_network_core_update_initiate(const void *src_addr, size_t len)
