@@ -234,6 +234,11 @@ The change prompted some changes in the CMake for the module, notably:
 
 |no_changes_yet_note|
 
+Trusted Firmware-M
+==================
+
+* Fixed the NCSDK-14015 known issue that would cause crash during boot when the :kconfig:`CONFIG_RPMSG_SERVICE` Kconfig option was enabled on the nRF5340 SoC.
+
 Documentation
 =============
 
