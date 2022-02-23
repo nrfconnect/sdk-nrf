@@ -9,3 +9,10 @@ tests:
       - nrf5340dk_nrf5340_cpunet
       - nrf21540dk_nrf52840
     tags: bluetooth ci_build
+  samples.bluetooth.direct_test_mode.nrf5340_nrf21540:
+    build_only: true
+    platform_allow: nrf5340dk_nrf5340_cpunet
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpunet
+    extra_args: SHIELD=nrf21540_ek
+    tags: bluetooth ci_build
