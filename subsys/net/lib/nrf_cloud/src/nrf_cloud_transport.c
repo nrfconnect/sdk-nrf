@@ -412,7 +412,7 @@ void nct_set_topic_prefix(const char *topic_prefix)
 		memcpy(stage, topic_prefix, len);
 		stage[len] = '\0';
 		len = strlen(topic_prefix) - len - 2; /* skip both / */
-		if (len > sizeof(tenant)) {
+		if (len >= sizeof(tenant)) {
 			LOG_WRN("Truncating copy of tenant id string length "
 				"from %d to %zd",
 				len, sizeof(tenant));
