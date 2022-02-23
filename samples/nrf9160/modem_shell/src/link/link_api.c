@@ -87,7 +87,7 @@ struct pdp_context_info *link_api_get_pdp_context_info_by_pdn_cid(int pdn_cid)
 	ret = link_api_pdp_contexts_read(&pdp_context_info_tbl);
 	if (ret) {
 		mosh_error("cannot read current connection info: %d", ret);
-		return NULL;
+		goto exit;
 	}
 
 	/* Find PDP context info for the requested CID */
@@ -101,6 +101,7 @@ struct pdp_context_info *link_api_get_pdp_context_info_by_pdn_cid(int pdn_cid)
 		}
 	}
 
+exit:
 	if (pdp_context_info_tbl.array != NULL) {
 		free(pdp_context_info_tbl.array);
 	}

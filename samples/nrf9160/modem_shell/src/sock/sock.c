@@ -454,7 +454,8 @@ static int sock_bind_to_pdp_context(struct sock_info *socket_info, int pdn_cid)
 	err = link_api_pdp_contexts_read(&pdp_context_info_tbl);
 	if (err) {
 		mosh_error("cannot read current connection info: %d", err);
-		return -EINVAL;
+		err = -EINVAL;
+		goto exit;
 	}
 
 	/* Find PDP context info for requested CID */
@@ -479,6 +480,7 @@ static int sock_bind_to_pdp_context(struct sock_info *socket_info, int pdn_cid)
 		err = -EINVAL;
 	}
 
+exit:
 	if (pdp_context_info_tbl.array != NULL) {
 		free(pdp_context_info_tbl.array);
 	}

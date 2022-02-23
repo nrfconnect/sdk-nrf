@@ -199,7 +199,7 @@ int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 	}
 	/* All good for args, get the current connection info and start the ping: */
 	int ret = 0;
-	struct pdp_context_info_array pdp_context_info_tbl;
+	struct pdp_context_info_array pdp_context_info_tbl = { 0 };
 
 	ret = link_api_pdp_contexts_read(&pdp_context_info_tbl);
 	if (ret) {
@@ -224,13 +224,14 @@ int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 
 			if (!found) {
 				mosh_error("cannot find CID: %d", ping_args.cid);
-				return -1;
+				goto exit;
 			}
 		}
 	} else {
 		mosh_error("cannot read current connection info");
-		return -1;
+		goto exit;
 	}
+
 	if (pdp_context_info_tbl.array != NULL) {
 		free(pdp_context_info_tbl.array);
 	}
@@ -251,5 +252,11 @@ int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 
 show_usage:
 	icmp_ping_shell_usage_print();
+
+exit:
+	if (pdp_context_info_tbl.array != NULL) {
+		free(pdp_context_info_tbl.array);
+	}
+
 	return -1;
 }
