@@ -333,7 +333,8 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 
 	socket_retries_left = CONFIG_FOTA_SOCKET_RETRIES;
 
-	strncpy(file_buf, file, sizeof(file_buf));
+	strncpy(file_buf, file, sizeof(file_buf) - 1);
+	file_buf[sizeof(file_buf) - 1] = '\0';
 
 #ifdef PM_S1_ADDRESS
 	/* B1 upgrade is supported, check what B1 slot is active,
