@@ -10,3 +10,10 @@ tests:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpunet
     tags: ci_build
+  samples.peripheral.radio_test.nrf5340_nrf21540:
+    build_only: true
+    platform_allow: nrf5340dk_nrf5340_cpunet
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpunet
+    extra_args: SHIELD=nrf21540_ek
+    tags: ci_build
