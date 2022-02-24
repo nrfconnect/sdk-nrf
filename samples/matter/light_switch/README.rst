@@ -107,7 +107,7 @@ After building this and :ref:`Matter light bulb <matter_light_bulb_sample>` samp
 #. Complete the following actions for both devices:
 
    a. |connect_kit|
-   #. |connect_terminal|
+   #. |connect_terminal_ANSI|
 
 #. On both devices, press **Button 1** to reset them to factory settings.
 #. Pair both devices by completing the following steps:

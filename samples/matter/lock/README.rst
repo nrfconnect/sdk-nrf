@@ -220,7 +220,7 @@ Testing
 After building the sample and programming it to your development kit, complete the following steps to test its basic features:
 
 #. |connect_kit|
-#. |connect_terminal|
+#. |connect_terminal_ANSI|
 #. Observe that **LED 2** is lit, which means that the door lock is closed.
 #. Press **Button 2** to unlock the door.
    **LED 2** is blinking while the lock is opening.

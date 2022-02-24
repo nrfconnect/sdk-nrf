@@ -156,7 +156,7 @@ Testing
 Before testing, ensure that your device is configured with the project key of your Memfault project.
 |test_sample|
 
-1. |connect_terminal|
+1. |connect_terminal_ANSI|
 #. Observe that the sample starts.
    Following is a sample output on the terminal:
 

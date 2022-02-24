@@ -643,7 +643,7 @@ After programming the application and all prerequisites to your development kit,
 1. Connect the development kit to the computer using a USB cable.
    The development kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 
-#. Create a serial connection to the development kit (J-Link COM port) with a terminal using the following settings:
+#. Create a serial connection to the development kit (J-Link COM port) with a terminal |ANSI| using the following settings:
 
    * Hardware flow control: disabled
    * Baud rate: 115200
@@ -696,7 +696,7 @@ After programming the development kit, test it in the Linux environment by perfo
 1. Connect the development kit to the computer using a USB cable.
    The development kit is assigned a ttyACM device (Linux).
 
-#. Open a serial connection to the development kit (/dev/ttyACM2) with a terminal (for example PuTTY).
+#. Open a serial connection to the development kit (/dev/ttyACM2) with a terminal |ANSI| (for example PuTTY).
 
 #. Reset the development kit.
 

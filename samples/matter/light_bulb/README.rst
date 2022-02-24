@@ -147,7 +147,7 @@ Testing basic features
 After building the sample and programming it to your development kit, complete the following steps to test its basic features:
 
 #. |connect_kit|
-#. |connect_terminal|
+#. |connect_terminal_ANSI|
 #. Observe that **LED 2** is off.
 #. Press **Button 2** on the light bulb device.
    The **LED 2** turns on and the following messages appear on the console:
