@@ -86,13 +86,23 @@ CONFIG_SLM_START_SLEEP - Enter sleep on startup
    This option makes nRF9160 enter deep sleep after startup.
    It is not selected by default.
 
-.. _CONFIG_SLM_INTERFACE_PIN:
+.. _CONFIG_SLM_WAKEUP_PIN:
 
-CONFIG_SLM_INTERFACE_PIN - Interface GPIO to wake up from sleep or exit idle
+CONFIG_SLM_WAKEUP_PIN - Interface GPIO to exit from sleep or idle
    This option specifies which interface GPIO to use for exiting sleep or idle mode.
    By default, **P0.6** (Button 1 on the nRF9160 DK) is used when :ref:`CONFIG_SLM_CONNECT_UART_0 <CONFIG_SLM_CONNECT_UART_0>` is selected, and **P0.31** is used when :ref:`CONFIG_SLM_CONNECT_UART_2 <CONFIG_SLM_CONNECT_UART_2>` is selected.
 
    **P0.26** (Multi-function button on Thingy:91) is used when the target is Thingy:91.
+
+CONFIG_SLM_INDICATE_PIN - Interface GPIO to indicate data available or unexpected reset
+   This option specifies which interface GPIO to use for indicating data available or unexpected reset.
+   By default, **P0.2** (LED 1 on the nRF9160 DK) is used when :ref:`CONFIG_SLM_CONNECT_UART_0 <CONFIG_SLM_CONNECT_UART_0>` is selected, and **P0.30** is used when :ref:`CONFIG_SLM_CONNECT_UART_2 <CONFIG_SLM_CONNECT_UART_2>` is selected.
+
+   It is not defined when the target is Thingy:91.
+
+CONFIG_SLM_INDICATE_TIME - Indicate GPIO active time
+   This option specifies the length, in milliseconds, of the time interval during which the indicate GPIO must stay active.
+   The default value is 100 milliseconds.
 
 .. _CONFIG_SLM_SOCKET_RX_MAX:
 

@@ -92,6 +92,7 @@ nRF9160: Serial LTE Modem
 * Updated:
 
   * Enhanced the #XHTTPCREQ AT command for better HTTP upload and download support.
+  * Enhanced the #XSLEEP AT command to support data indication when idle.
 
 nRF Desktop
 -----------
