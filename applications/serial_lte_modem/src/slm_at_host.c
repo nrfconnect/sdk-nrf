@@ -37,6 +37,7 @@ LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 #define UART_RX_TIMEOUT_US      2000
 #define UART_ERROR_DELAY_MS     500
 #define UART_RX_MARGIN_MS       10
+#define UART_TX_DATA_SIZE	1024
 
 #define HEXDUMP_DATAMODE_MAX    16
 
@@ -56,6 +57,9 @@ static struct k_work raw_send_work;
 static struct k_work cmd_send_work;
 static struct k_work datamode_quit_work;
 
+RING_BUF_DECLARE(delayed_rb, UART_TX_DATA_SIZE);
+static struct k_work delayed_send_work;
+
 static uint8_t uart_rx_buf[UART_RX_BUF_NUM][UART_RX_LEN];
 static uint8_t *next_buf;
 static uint8_t *uart_tx_buf;
@@ -69,6 +73,7 @@ int slm_at_parse(const char *at_cmd);
 int slm_at_init(void);
 void slm_at_uninit(void);
 int slm_setting_uart_save(void);
+int indicate_start(void);
 
 /* global variable used across different files */
 struct at_param_list at_param_list;           /* For AT parser */
@@ -82,6 +87,13 @@ extern struct uart_config slm_uart;
 static int uart_send(const uint8_t *buffer, size_t len)
 {
 	int ret;
+	enum pm_device_state state = PM_DEVICE_STATE_OFF;
+
+	pm_device_state_get(uart_dev, &state);
+	if (state != PM_DEVICE_STATE_ACTIVE) {
+		(void)indicate_start();
+		return -EAGAIN;
+	}
 
 	k_sem_take(&tx_done, K_FOREVER);
 
@@ -110,13 +122,17 @@ void rsp_send(const char *str, size_t len)
 	}
 
 	LOG_HEXDUMP_DBG(str, len, "TX");
-	(void)uart_send(str, len);
+	if (uart_send(str, len) < 0) {
+		ring_buf_put(&delayed_rb, str, len);
+	}
 }
 
 void data_send(const uint8_t *data, size_t len)
 {
 	LOG_HEXDUMP_DBG(data, MIN(len, HEXDUMP_DATAMODE_MAX), "TX-DATA");
-	(void)uart_send(data, len);
+	if (uart_send(data, len) < 0) {
+		ring_buf_put(&delayed_rb, data, len);
+	}
 }
 
 static int uart_receive(void)
@@ -208,11 +224,28 @@ int poweroff_uart(void)
 	uart_rx_disable(uart_dev);
 	k_sleep(K_MSEC(100));
 	err = pm_device_action_run(uart_dev, PM_DEVICE_ACTION_SUSPEND);
-	if (err) {
+	if (err && err != -EALREADY) {
 		LOG_ERR("Can't suspend uart: %d", err);
 	}
 
 	return err;
+}
+
+static void delayed_send(struct k_work *work)
+{
+	uint8_t *data = NULL;
+	int size_send;
+
+	/* NOTE ring_buf_get_claim() might not return full size */
+	do {
+		size_send = ring_buf_get_claim(&delayed_rb, &data, UART_TX_DATA_SIZE);
+		if (data != NULL && size_send > 0) {
+			(void)uart_send(data, size_send);
+			(void)ring_buf_get_finish(&delayed_rb, size_send);
+		} else {
+			break;
+		}
+	} while (true);
 }
 
 int poweron_uart(void)
@@ -220,12 +253,8 @@ int poweron_uart(void)
 	int err;
 
 	err = pm_device_action_run(uart_dev, PM_DEVICE_ACTION_RESUME);
-	if (err == -EALREADY) {
-		/* Already on, no action */
-		return 0;
-	}
-
-	if (err) {
+	if (err && err != -EALREADY) {
+		LOG_ERR("Can't resume uart: %d", err);
 		return err;
 	}
 
@@ -237,7 +266,8 @@ int poweron_uart(void)
 	}
 
 	k_sem_give(&tx_done);
-	rsp_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
+	uart_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);
+	k_work_submit(&delayed_send_work);
 
 	return 0;
 }
@@ -785,8 +815,6 @@ int slm_at_host_init(void)
 		LOG_ERR("Cannot set callback: %d", err);
 		return -EFAULT;
 	}
-	/* Power on UART module */
-	pm_device_action_run(uart_dev, PM_DEVICE_ACTION_RESUME);
 	err = uart_receive();
 	if (err) {
 		return -EFAULT;
@@ -810,6 +838,7 @@ int slm_at_host_init(void)
 	k_work_init(&raw_send_work, raw_send);
 	k_work_init(&cmd_send_work, cmd_send);
 	k_work_init(&datamode_quit_work, datamode_quit);
+	k_work_init(&delayed_send_work, delayed_send);
 	k_work_init_delayable(&uart_recovery_work, uart_recovery);
 	k_sem_give(&tx_done);
 	rsp_send(SLM_SYNC_STR, sizeof(SLM_SYNC_STR)-1);

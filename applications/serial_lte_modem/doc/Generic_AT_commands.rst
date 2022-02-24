@@ -116,16 +116,14 @@ The test command is not supported.
 Power saving #XSLEEP
 ====================
 
-The ``#XSLEEP`` command makes the nRF91 development kit go into idle or sleep mode.
+The ``#XSLEEP`` command makes the nRF9160 development kit enter idle or sleep mode.
 
-If you are going to do power measurements on the nRF9160 DK while running the SLM application it is recommended to disable unused peripherals.
-By default UART2 is enabled in the :file:`nrf9160dk_nrf9160_ns.overlay` file so disable the UART2 by switching the status.
-Change the line ``status = "okay"`` to ``status = "disabled"`` and then save the :file:`nrf9160dk_nrf9160_ns.overlay`` file to make sure you will get the expected power consumption numbers when doing the measurements.
+If you want to do power measurements on the nRF9160 DK while running the SLM application, disable unused peripherals.
 
 Set command
 -----------
 
-The set command makes the nRF91 development kit go into either idle or sleep mode, or it powers off the UART device.
+The set command makes the nRF9160 development kit enter either idle or sleep mode.
 
 Syntax
 ~~~~~~
@@ -136,16 +134,20 @@ Syntax
 
 The ``<shutdown_mode>`` parameter accepts only the following integer values:
 
-* ``0`` - Enter Idle.
-  In this mode, the SLM service is terminated, but the LTE connection is maintained.
+* ``0`` - Deprecated.
 * ``1`` - Enter Sleep.
   In this mode, both the SLM service and the LTE connection are terminated.
-* ``2`` - Power off UART.
-  In this mode, both the SLM service and the LTE connection are maintained.
+  The development kit can be waken up using the :kconfig:`CONFIG_SLM_WAKEUP_PIN`.
 
-* In case of Idle, it will exit by interface GPIO.
-* In case of Sleep, it will wake up by interface GPIO.
-* In case of UART power off, UART will be powered on by interface GPIO or internally by SLM when needed.
+* ``2`` - Enter Idle.
+  In this mode, both the SLM service and the LTE connection are maintained.
+  The development kit can be made to exit idle using the :kconfig:`CONFIG_SLM_WAKEUP_PIN`.
+  If the :kconfig:`CONFIG_SLM_INDICATE_PIN` is defined, SLM toggle this GPIO when there is data for MCU.
+  MCU could in turn make SLM to exit idle by :kconfig:`CONFIG_SLM_WAKEUP_PIN`.
+  The data is buffered during the idle status and is sent to MCU after exiting the ilde status.
+
+.. note::
+   This parameter does not accept ``0`` anymore.
 
 Examples
 ~~~~~~~~
@@ -153,7 +155,7 @@ Examples
 ::
 
    AT#XSLEEP=0
-   OK
+   ERROR
 
 ::
 
@@ -194,7 +196,7 @@ Example
 
 ::
 
-   #XSLEEP: (0,1,2)
+   #XSLEEP: (1,2)
    OK
 
 SLM UART #XSLMUART

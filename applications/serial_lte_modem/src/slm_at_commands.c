@@ -54,10 +54,9 @@ LOG_MODULE_REGISTER(slm_at, CONFIG_SLM_LOG_LEVEL);
 
 /**@brief Shutdown modes. */
 enum shutdown_modes {
-	SHUTDOWN_MODE_IDLE,
+	SHUTDOWN_MODE_INVALID,
 	SHUTDOWN_MODE_SLEEP,
-	SHUTDOWN_MODE_UART,
-	SHUTDOWN_MODE_INVALID
+	SHUTDOWN_MODE_IDLE
 };
 
 /**@brief AT command handler type. */
@@ -76,7 +75,7 @@ extern uint16_t datamode_time_limit;
 extern struct uart_config slm_uart;
 
 /* global functions defined in different files */
-void enter_idle(bool full_idle);
+void enter_idle(void);
 void enter_sleep(void);
 int slm_uart_configure(void);
 int poweroff_uart(void);
@@ -126,18 +125,15 @@ static void go_sleep_wk(struct k_work *work)
 	ARG_UNUSED(work);
 
 	if (slm_work.data == SHUTDOWN_MODE_IDLE) {
-		slm_at_host_uninit();
-		enter_idle(true);
+		if (poweroff_uart() == 0) {
+			enter_idle();
+		} else {
+			LOG_ERR("failed to power off UART");
+		}
 	} else if (slm_work.data == SHUTDOWN_MODE_SLEEP) {
 		slm_at_host_uninit();
 		modem_power_off();
 		enter_sleep();
-	} else if (slm_work.data == SHUTDOWN_MODE_UART) {
-		if (poweroff_uart() == 0) {
-			enter_idle(false);
-		} else {
-			LOG_ERR("failed to power off UART");
-		}
 	}
 }
 
@@ -155,16 +151,14 @@ static int handle_at_sleep(enum at_cmd_type type)
 		if (ret) {
 			return -EINVAL;
 		}
-		if (slm_work.data == SHUTDOWN_MODE_IDLE || slm_work.data == SHUTDOWN_MODE_SLEEP ||
-		    slm_work.data == SHUTDOWN_MODE_UART) {
+		if (slm_work.data == SHUTDOWN_MODE_SLEEP || slm_work.data == SHUTDOWN_MODE_IDLE) {
 			k_work_reschedule(&slm_work.sleep_work, K_MSEC(100));
 		} else {
-			LOG_ERR("AT parameter error");
 			ret = -EINVAL;
 		}
 	} else if (type == AT_CMD_TYPE_TEST_COMMAND) {
-		sprintf(rsp_buf, "\r\n#XSLEEP: (%d,%d,%d)\r\n", SHUTDOWN_MODE_IDLE,
-			SHUTDOWN_MODE_SLEEP, SHUTDOWN_MODE_UART);
+		sprintf(rsp_buf, "\r\n#XSLEEP: (%d,%d)\r\n", SHUTDOWN_MODE_SLEEP,
+			SHUTDOWN_MODE_IDLE);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		ret = 0;
 	}

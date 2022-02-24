@@ -81,8 +81,23 @@ config SLM_START_SLEEP
 	help
 	  Put nRF9160 into deep sleep mode after startup.
 
-config SLM_INTERFACE_PIN
-	int "Interface GPIO to wake up or exit idle mode"
+config SLM_WAKEUP_PIN
+	int "Wakeup pin"
+	default -1
+	help
+	  Interface GPIO to wake up from sleep or exit idle
+
+config SLM_INDICATE_PIN
+	int "Indicate pin"
+	default -1
+	help
+	  Interface GPIO pin used to indicate that data is available or an unexpected reset has occurred
+
+config SLM_INDICATE_TIME
+	int "Indication period"
+	default 100
+	help
+	  GPIO active indication time in milliseconds. This setting specify the period length for the pin to be active
 
 #
 # Socket
