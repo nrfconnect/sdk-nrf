@@ -162,7 +162,7 @@ Testing with another development kit
 
 1. Connect both development kits to the computer using a USB cable.
    The kits are assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
-#. |connect_terminal_both|
+#. |connect_terminal_both_ANSI|
 #. Run the following commands on one of the kits:
 
    a. Set the data rate with the ``data_rate`` command to ``ble_2Mbit``.
@@ -182,7 +182,7 @@ Testing with RSSI Viewer
 
 1. Connect the kit to the computer using a USB cable.
    The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
-#. |connect_terminal|
+#. |connect_terminal_ANSI|
 #. Set the start channel with the ``start_channel`` command to 20.
 #. Set the end channel with the ``end_channel`` command to 60.
 #. Set the time on channel with the ``time_on_channel`` command to 50 ms.
