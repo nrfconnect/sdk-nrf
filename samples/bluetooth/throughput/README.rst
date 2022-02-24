@@ -23,7 +23,7 @@ You can use any two of the development kits listed above and mix different devel
 
 .. include:: /includes/hci_rpmsg_overlay.txt
 
-The sample also requires a connection to a computer with a serial terminal for each of the development kits.
+The sample also requires a connection to a computer with a serial terminal |ANSI| for each of the development kits.
 
 Overview
 ********
@@ -111,8 +111,7 @@ Testing
 
 After programming the sample to both kits, complete following steps to test it:
 
-1. Connect to both kits with a terminal emulator (for example, PuTTY).
-   See :ref:`putty` for the required settings.
+1. |connect_terminal_both_ANSI|
 #. Reset both kits.
 #. Press **Button 1** on the kit to set the kit into master (tester) role.
 #. Press **Button 2** on the other kit to set the kit into slave (peer) mode.

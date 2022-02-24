@@ -141,8 +141,7 @@ Testing
 After building the sample and programming it to your development kit, complete the following steps to test it:
 
 #. Turn on the development kit.
-#. Set up the serial connection with the development kit.
-   For more details, see :ref:`putty`.
+#. |connect_terminal_ANSI|
 
    .. note::
         |thread_hwfc_enabled|
@@ -197,8 +196,7 @@ To test communication between kits, complete the following steps:
 
 #. Make sure both development kits are programmed with the CLI sample.
 #. Turn on the developments kits.
-#. Set up the serial connection with both development kits.
-   For more details, see :ref:`putty`.
+#. |connect_terminal_both_ANSI|
 
    .. note::
         |thread_hwfc_enabled|
@@ -226,8 +224,7 @@ To test diagnostic commands, complete the following steps:
 
 #. Make sure both development kits are programmed with the CLI sample.
 #. Turn on the developments kits.
-#. Set up the serial connection with both development kits.
-   For more details, see :ref:`putty`.
+#. |connect_terminal_both_ANSI|
 
    .. note::
         |thread_hwfc_enabled|.
@@ -280,8 +277,7 @@ To test the Thread 1.2 features, complete the following steps:
 
 #. Make sure both development kits are programmed with the CLI sample with the :ref:`ot_cli_sample_thread_v12` enabled.
 #. Turn on the developments kits.
-#. Set up the serial connection with both development kits.
-   For more details, see :ref:`putty`.
+#. |connect_terminal_both_ANSI|
 #. .. include:: /includes/thread_configure_network.txt
 #. .. include:: /includes/thread_enable_network.txt
 #. Test the state of the Thread network with the ``ot state`` command to see which kit is the leader:

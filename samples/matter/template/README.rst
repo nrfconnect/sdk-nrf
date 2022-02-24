@@ -110,7 +110,7 @@ To test the sample in a Matter-enabled Thread network, complete the following st
 .. matter_template_sample_testing_start
 
 1. |connect_kit|
-#. |connect_terminal|
+#. |connect_terminal_ANSI|
 #. Commission the device into a Thread network by following the guides linked on the :ref:`ug_matter_configuring` page for the Matter controller you want to use.
    The guides walk you through the following steps:
 

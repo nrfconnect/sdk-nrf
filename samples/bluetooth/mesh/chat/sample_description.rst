@@ -145,7 +145,7 @@ Interacting with the sample
 
 1. Connect the development kit to the computer using a USB cable.
    The development kit is assigned a COM port (Windows), ttyACM device (Linux) or tty.usbmodem (MacOS).
-#. |connect_terminal_specific|
+#. |connect_terminal_specific_ANSI|
 #. Enable local echo in the terminal to see the text you are typing.
 
 After completing the steps above, a command can be sent to the sample.
