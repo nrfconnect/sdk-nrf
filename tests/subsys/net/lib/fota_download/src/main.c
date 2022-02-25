@@ -168,12 +168,10 @@ void set_s0_active(bool s0_active)
 #include <nrfx_nvmc.h>
 #include <device.h>
 
-#define FLASH_NAME DT_CHOSEN_ZEPHYR_FLASH_CONTROLLER_LABEL
-
-static const struct device *fdev;
 void set_s0_active(bool s0_active)
 {
 	int err;
+	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
 	struct fw_info s0_info = { .magic = { FIRMWARE_INFO_MAGIC } };
 	struct fw_info s1_info = { .magic = { FIRMWARE_INFO_MAGIC } };
 
@@ -186,8 +184,7 @@ void set_s0_active(bool s0_active)
 		s0_info.version = s1_info.version - 1;
 	}
 
-	fdev = device_get_binding(FLASH_NAME);
-	zassert_not_equal(fdev, 0, "Unable to get fdev");
+	zassert_true(device_is_ready(fdev), "Flash device not ready");
 
 	err = flash_erase(fdev, PM_S0_ADDRESS, nrfx_nvmc_flash_page_size_get());
 	zassert_equal(err, 0, "flash_erase failed");
