@@ -11,7 +11,6 @@
 #include <ztest.h>
 #include <dfu/dfu_target_stream.h>
 
-#define FLASH_NAME DT_CHOSEN_ZEPHYR_FLASH_CONTROLLER_LABEL
 #define FLASH_BASE (64*1024)
 #define FLASH_SIZE DT_REG_SIZE(SOC_NV_FLASH_NODE)
 #define FLASH_AVAILABLE (FLASH_SIZE-FLASH_BASE)
@@ -21,7 +20,7 @@
 
 #define BUF_LEN 14000 /* Note, not page aligned */
 
-static const struct device *fdev;
+static const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
 static uint8_t sbuf[128];
 static uint8_t read_buf[BUF_LEN];
 static uint8_t write_buf[BUF_LEN] = {[0 ... BUF_LEN - 1] = 0xaa};
@@ -285,7 +284,7 @@ static void test_dfu_target_stream_save_progress(void)
 
 void test_main(void)
 {
-	fdev = device_get_binding(FLASH_NAME);
+	__ASSERT_NO_MSG(device_is_ready(fdev));
 
 #ifdef CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS
 	/* Check that the FLASH_BASE macro is actually at the start of a page,
