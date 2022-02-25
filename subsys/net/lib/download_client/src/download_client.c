@@ -494,6 +494,10 @@ restart_and_suspend:
 			}
 		} else if (IS_ENABLED(CONFIG_COAP)) {
 			rc = coap_parse(client, len);
+			if (rc == 1) {
+				/* Duplicate packet received */
+				continue;
+			}
 		}
 
 		if (rc < 0) {
