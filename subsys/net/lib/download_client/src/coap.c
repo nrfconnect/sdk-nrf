@@ -24,6 +24,18 @@ extern char *strtok_r(char *str, const char *sep, char **state);
 int url_parse_file(const char *url, char *file, size_t len);
 int socket_send(const struct download_client *client, size_t len);
 
+static int coap_get_current_from_response_pkt(const struct coap_packet *cpkt)
+{
+	int block = 0;
+
+	block = coap_get_option_int(cpkt, COAP_OPTION_BLOCK2);
+	if (block < 0) {
+		return block;
+	}
+
+	return GET_BLOCK_NUM(block) << (GET_BLOCK_SIZE(block) + 4);
+}
+
 int coap_block_init(struct download_client *client, size_t from)
 {
 	coap_block_transfer_init(&client->coap.block_ctx,
@@ -35,7 +47,7 @@ int coap_block_init(struct download_client *client, size_t from)
 int coap_block_update(struct download_client *client, struct coap_packet *pkt,
 		      size_t *blk_off)
 {
-	int err;
+	int err, new_current;
 	bool more;
 
 	*blk_off = client->coap.block_ctx.current %
@@ -43,6 +55,22 @@ int coap_block_update(struct download_client *client, struct coap_packet *pkt,
 	if (*blk_off) {
 		LOG_DBG("%d bytes of current block already downloaded",
 			*blk_off);
+	}
+
+	new_current = coap_get_current_from_response_pkt(pkt);
+	if (new_current < 0) {
+		LOG_ERR("Failed to get current from CoAP packet, err %d", new_current);
+		return new_current;
+	}
+
+	if (new_current < client->coap.block_ctx.current) {
+		LOG_WRN("Block out of order %d, expected %d", new_current,
+			client->coap.block_ctx.current);
+		return 1;
+	} else if (new_current > client->coap.block_ctx.current) {
+		LOG_WRN("Block out of order %d, expected %d", new_current,
+			client->coap.block_ctx.current);
+		return -1;
 	}
 
 	err = coap_update_from_block(pkt, &client->coap.block_ctx);
@@ -80,7 +108,7 @@ int coap_parse(struct download_client *client, size_t len)
 
 	err = coap_block_update(client, &response, &blk_off);
 	if (err) {
-		return -1;
+		return err;
 	}
 
 	response_code = coap_header_get_code(&response);
