@@ -277,6 +277,7 @@ Bluetooth libraries and services
 * :ref:`gatt_dm_readme` library:
 
   * Fixed discovery of empty services.
+  * Added option to discover several service instances using the UUID.
 
 * :ref:`bt_mesh` library:
 
