@@ -101,7 +101,8 @@ static bool icmp_ping_shell_set_ping_args_according_to_pdp_ctx(
 int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 {
 	struct icmp_ping_shell_cmd_argv ping_args;
-	int flag, dest_len;
+	struct pdp_context_info_array pdp_context_info_tbl = { 0 };
+	int flag, dest_len, ret;
 
 	icmp_ping_shell_cmd_defaults_set(&ping_args);
 
@@ -197,10 +198,8 @@ int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 		mosh_error("-d destination, MUST be given. See usage:");
 		goto show_usage;
 	}
-	/* All good for args, get the current connection info and start the ping: */
-	int ret = 0;
-	struct pdp_context_info_array pdp_context_info_tbl = { 0 };
 
+	/* All good for args, get the current connection info and start the ping: */
 	ret = link_api_pdp_contexts_read(&pdp_context_info_tbl);
 	if (ret) {
 		mosh_error("cannot read current connection info: %d", ret);
