@@ -13,7 +13,7 @@
 #include <toolchain/common.h>
 #include <logging/log.h>
 
-LOG_MODULE_REGISTER(at_monitor);
+LOG_MODULE_REGISTER(at_monitor, CONFIG_AT_MONITOR_LOG_LEVEL);
 
 struct at_notif_fifo {
 	void *fifo_reserved;
