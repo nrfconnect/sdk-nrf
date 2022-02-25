@@ -120,6 +120,9 @@ iperf_accept(struct iperf_test *test)
     struct sockaddr_in client_addr; 
     struct sockaddr_in6 client6_addr;
     struct sockaddr *sa;
+#ifdef SO_RCVTIMEO
+    struct timeval tv;
+#endif
 
     /* Workaround due to nrf91_socket_offload_accept / bsdlib that requires len to be either of in4 or in6 */    
     int domain = nrf_iperf3_mock_getsockdomain(test, test->ctrl_sck);
@@ -135,6 +138,14 @@ iperf_accept(struct iperf_test *test)
         i_errno = IEACCEPT;
         return -1;
     }
+#ifdef SO_RCVTIMEO
+    /* 30 sec timeout for control socket for param exchange. */
+    tv.tv_sec = 30;
+    tv.tv_usec = 0;
+    if (setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(struct timeval)) < 0) {
+        iperf_printf(test, "Unable to set socket SO_RCVTIMEO");
+	}
+#endif
 
     //store remote address
     sa = (struct sockaddr *)&addr;
@@ -177,7 +188,14 @@ iperf_accept(struct iperf_test *test)
         }
         close(s);
     }
-
+#ifdef SO_RCVTIMEO
+    /* Disable timeout. */
+    tv.tv_sec = 0;
+    tv.tv_usec = 0;
+    if (setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(struct timeval)) < 0) {
+        iperf_printf(test, "Unable to disable socket SO_RCVTIMEO");
+	}
+#endif
     return 0;
 }
 
