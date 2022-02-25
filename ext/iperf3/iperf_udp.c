@@ -134,7 +134,7 @@ iperf_udp_recv(struct iperf_stream *sp)
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
 	/* ....because 64bit printing ain't working */
 	if (sp->test->debug)
-	    fprintf(stderr, "pcount %d packet_count %d\n", (uint32_t)pcount, sp->packet_count);
+	    iperf_printf(sp->test, "pcount %d packet_count %d\n", (uint32_t)pcount, sp->packet_count);
 #else
 	if (sp->test->debug)
 	    fprintf(stderr, "pcount %" PRIu64 " packet_count %d\n", pcount, sp->packet_count);
