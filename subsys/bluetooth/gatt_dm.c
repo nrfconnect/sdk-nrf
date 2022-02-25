@@ -53,6 +53,14 @@ struct bt_gatt_dm {
 	/* Flags with the status of the attributes */
 	ATOMIC_DEFINE(state_flags, STATE_NUM);
 
+	/* The UUID of the service to discover. */
+	union {
+		struct bt_uuid uuid;
+		struct bt_uuid_16 u16;
+		struct bt_uuid_32 u32;
+		struct bt_uuid_128 u128;
+	} svc_uuid;
+
 	/* Single-linked list of allocated chunks for user data */
 	sys_slist_t chunk_list;
 	/* The used length of the current chunk */
@@ -60,6 +68,9 @@ struct bt_gatt_dm {
 
 	/* The pointer to callback structure */
 	const struct bt_gatt_dm_cb *callback;
+
+	/* Indicates that services should be searched by the UUID. */
+	bool search_svc_by_uuid;
 };
 
 /* Currently only one instance is supported */
@@ -618,8 +629,16 @@ int bt_gatt_dm_start(struct bt_conn *conn,
 	dm->cur_attr_id = 0;
 	sys_slist_init(&dm->chunk_list);
 	dm->cur_chunk_len = 0;
+	dm->search_svc_by_uuid = (svc_uuid != NULL);
 
-	dm->discover_params.uuid = svc_uuid ? uuid_store(dm, svc_uuid) : NULL;
+	if (svc_uuid) {
+		size_t uuid_size;
+
+		uuid_size = get_uuid_size(svc_uuid);
+		memcpy(&dm->svc_uuid.uuid, svc_uuid, uuid_size);
+	}
+
+	dm->discover_params.uuid = svc_uuid ? &dm->svc_uuid.uuid : NULL;
 	dm->discover_params.func = discovery_callback;
 	dm->discover_params.start_handle = 0x0001;
 	dm->discover_params.end_handle = 0xffff;
@@ -647,6 +666,7 @@ int bt_gatt_dm_continue(struct bt_gatt_dm *dm, void *context)
 	/* If UUID is set, it does not make sense to call this function.
 	 * The stored UUID would be broken anyway in bt_gatt_dm_data_release.
 	 */
+
 	if (dm->discover_params.uuid) {
 		return -EINVAL;
 	}
@@ -665,6 +685,7 @@ int bt_gatt_dm_continue(struct bt_gatt_dm *dm, void *context)
 	dm->discover_params.start_handle = dm->discover_params.end_handle + 1;
 	dm->discover_params.end_handle = 0xffff;
 	dm->discover_params.type = BT_GATT_DISCOVER_PRIMARY;
+	dm->discover_params.uuid = dm->search_svc_by_uuid ? &dm->svc_uuid.uuid : NULL;
 
 	err = bt_gatt_discover(dm->conn, &dm->discover_params);
 	if (err) {
