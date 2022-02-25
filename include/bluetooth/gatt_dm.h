@@ -268,11 +268,6 @@ const struct bt_gatt_dm_attr *bt_gatt_dm_desc_next(
  * another one, wait for the result of the previous procedure to finish
  * and call @ref bt_gatt_dm_data_release if it was successful.
  *
- * If the service UUID is set when you start service discovery using the
- * @ref bt_gatt_dm_start function. If there are more instances of the same service
- * on the GATT server, it discovers the next instance. Use this function to discover
- * all service instances with the given UUID.
- *
  * @param[in]     conn Connection object.
  * @param[in]     svc_uuid UUID of target service
  *                or NULL if any service should be discovered.
@@ -286,7 +281,7 @@ const struct bt_gatt_dm_attr *bt_gatt_dm_desc_next(
  *
  * If @p svc_uuid is set to the service UUID, all
  * service instances may be discovered.
- * To discover next service instance if it exist, call @ref bt_gatt_dm_continue.
+ * Call @ref bt_gatt_dm_continue to discover the next service instance.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
