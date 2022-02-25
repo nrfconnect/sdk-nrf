@@ -28,16 +28,8 @@
 		(((((((0xff & pat) << 8) | (0xff & pat)) << 8) | \
 		   (0xff & pat)) << 8) | (0xff & pat))
 
-static const struct device *flash_dev;
+static const struct device *flash_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
 static uint8_t test_read_buf[TEST_NOP_FLASH_SIZE];
-
-static void test_init(void)
-{
-	flash_dev = device_get_binding(DT_CHOSEN_ZEPHYR_FLASH_CONTROLLER_LABEL);
-
-	zassert_true(flash_dev != NULL,
-		     "Sim flash driver to nop was not found!");
-}
 
 static void test_read(void)
 {
@@ -186,8 +178,9 @@ static void test_get_erase_value(void)
 
 void test_main(void)
 {
+	__ASSERT_NO_MSG(device_is_ready(flash_dev));
+
 	ztest_test_suite(flash_nop_device,
-			 ztest_unit_test(test_init),
 			 ztest_unit_test(test_read),
 			 ztest_unit_test(test_write_read),
 			 ztest_unit_test(test_erase),
