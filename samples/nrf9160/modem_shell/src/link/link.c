@@ -75,18 +75,28 @@ static struct k_work modem_info_signal_work;
 static int32_t modem_rsrp = LINK_RSRP_VALUE_NOT_KNOWN;
 
 /* Work for continuous neighbor cell measurements: */
-static struct k_work continuous_ncellmeas_work;
+struct ncellmeas_data {
+	struct k_work_delayable work;
+
+	enum link_ncellmeas_modes mode;
+	enum lte_lc_neighbor_search_type search_type;
+	int periodic_interval;
+};
+static struct ncellmeas_data ncellmeas_work_data;
 
 static enum link_ncellmeas_modes ncellmeas_mode = LINK_NCELLMEAS_MODE_NONE;
 static enum lte_lc_neighbor_search_type ncellmeas_search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT;
+static int ncellmeas_periodic_interval;
 
-static void link_continuous_ncellmeas(struct k_work *unused)
+static void link_ncellmeas_worker(struct k_work *work_item)
 {
-	ARG_UNUSED(unused);
-	if (ncellmeas_mode == LINK_NCELLMEAS_MODE_CONTINUOUS) {
+	struct ncellmeas_data *data = CONTAINER_OF(work_item, struct ncellmeas_data, work);
+
+	if (data->mode == LINK_NCELLMEAS_MODE_CONTINUOUS) {
 		link_ncellmeas_start(true,
-				     LINK_NCELLMEAS_MODE_CONTINUOUS,
-				     ncellmeas_search_type);
+				     data->mode,
+				     data->search_type,
+				     data->periodic_interval);
 	}
 }
 
@@ -227,7 +237,8 @@ void link_init(void)
 	k_work_init(&modem_info_signal_work, link_rsrp_signal_update);
 	modem_info_rsrp_register(link_rsrp_signal_handler);
 
-	k_work_init(&continuous_ncellmeas_work, link_continuous_ncellmeas);
+	k_work_init_delayable(&ncellmeas_work_data.work, link_ncellmeas_worker);
+	ncellmeas_periodic_interval = 0;
 
 	link_sett_init();
 
@@ -309,6 +320,16 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 				cells.neighbor_cells[i].earfcn,
 				cells.neighbor_cells[i].time_diff);
 		}
+
+		ncellmeas_work_data.mode = ncellmeas_mode;
+		ncellmeas_work_data.search_type = ncellmeas_search_type;
+		ncellmeas_work_data.periodic_interval = ncellmeas_periodic_interval;
+		if (ncellmeas_mode == LINK_NCELLMEAS_MODE_CONTINUOUS &&
+		    ncellmeas_periodic_interval) {
+			/* Interval was given for continuous mode */
+			k_work_reschedule(&ncellmeas_work_data.work,
+					K_SECONDS(ncellmeas_periodic_interval));
+		}
 	} break;
 	case LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING:
 		link_shell_print_modem_sleep_notif(evt);
@@ -347,8 +368,14 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		cell_change_work_data.cell_id = evt->cell.id;
 		cell_change_work_data.tac = evt->cell.tac;
 		k_work_submit(&cell_change_work_data.work);
+
 		if (ncellmeas_mode == LINK_NCELLMEAS_MODE_CONTINUOUS) {
-			k_work_submit(&continuous_ncellmeas_work);
+			ncellmeas_work_data.mode = ncellmeas_mode;
+			ncellmeas_work_data.search_type = ncellmeas_search_type;
+			ncellmeas_work_data.periodic_interval = ncellmeas_periodic_interval;
+
+			/* Send immediately after a cell update */
+			k_work_schedule(&ncellmeas_work_data.work, K_SECONDS(0));
 		}
 		break;
 	case LTE_LC_EVT_RRC_UPDATE:
@@ -483,12 +510,17 @@ void link_rsrp_subscribe(bool subscribe)
 }
 
 void link_ncellmeas_start(bool start, enum link_ncellmeas_modes mode,
-			  enum lte_lc_neighbor_search_type search_type)
+			  enum lte_lc_neighbor_search_type search_type,
+			  int periodic_interval)
 {
 	int ret;
 
 	ncellmeas_mode = mode;
+	ncellmeas_periodic_interval = periodic_interval;
 	ncellmeas_search_type = search_type;
+
+	k_work_cancel_delayable(&ncellmeas_work_data.work);
+
 	if (start) {
 		ret = lte_lc_neighbor_cell_measurement(search_type);
 		if (ret) {

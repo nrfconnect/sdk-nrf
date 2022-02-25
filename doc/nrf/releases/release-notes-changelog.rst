@@ -128,6 +128,15 @@ nrf9160 Samples
 
   * Shell functionality to HTTP Update samples.
 
+* Updated:
+
+  * :ref:`modem_shell_application` sample:
+
+    * Added:
+
+      * An option ``--interval`` (in seconds) to neighbor cell measurements in continuous mode  (``link ncellmeas --continuous``).
+        When using this option, a new measurement is started in each interval.
+
 Drivers
 =======
 

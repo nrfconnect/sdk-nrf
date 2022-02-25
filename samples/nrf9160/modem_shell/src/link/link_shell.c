@@ -240,14 +240,20 @@ static const char link_rsrp_usage_str[] =
 	"  -u, --unsubscribe,  Unsubscribe for RSRP info\n";
 
 static const char link_ncellmeas_usage_str[] =
-	"Usage: link ncellmeas --single | --continuous | --cancel | [--search_type <type>]\n"
+	"Usage: link ncellmeas --single | --continuous [--interval <interval_in_secs>] | --cancel\n"
+	"                      [--search_type <type>]\n"
 	"Options:\n"
-	"      --single,       Start a neighbor cell measurement and report result\n"
-	"      --continuous,   Start continuous neighbor cell measurement mode and report result\n"
-	"      --cancel,       Cancel/Stop neighbor cell measurement if still ongoing\n"
-	"      --search_type,  Used search type:\n"
+	"   --single,          Start a neighbor cell measurement and report result\n"
+	"   --continuous,      Start continuous neighbor cell measurement mode and report result.\n"
+	"                      New cell measurement is done everytime when current cell changes.\n"
+	"   --cancel,          Cancel/Stop neighbor cell measurement if still ongoing\n"
+	"   --search_type,     Used search type:\n"
 	"                      'default', 'ext_light' or 'ext_comp.'\n"
+	"Options for continuous mode:\n"
+	"   --interval, [int]  Interval can be given in seconds. In addition to continuous mode\n"
+	"                      functionality, new cell measurement is done in every interval.\n"
 	"\n"
+	"Search types explained:\n"
 	"                      Default: The modem searches the network it is registered to\n"
 	"                      based on previous cell history. For modem firmware\n"
 	"                      versions < 1.3.1, this is the only valid option.\n"
@@ -323,6 +329,7 @@ enum {
 	LINK_SHELL_OPT_SINGLE,
 	LINK_SHELL_OPT_CONTINUOUS,
 	LINK_SHELL_OPT_NCELLMEAS_SEARCH_TYPE,
+	LINK_SHELL_OPT_NCELLMEAS_CONTINUOUS_INTERVAL_TIME,
 	LINK_SHELL_OPT_NMODE_NO_REL14,
 };
 
@@ -378,6 +385,7 @@ static struct option long_options[] = {
 	{ "single", no_argument, 0, LINK_SHELL_OPT_SINGLE },
 	{ "continuous", no_argument, 0, LINK_SHELL_OPT_CONTINUOUS },
 	{ "threshold", required_argument, 0, LINK_SHELL_OPT_THRESHOLD_TIME },
+	{ "interval", required_argument, 0, LINK_SHELL_OPT_NCELLMEAS_CONTINUOUS_INTERVAL_TIME },
 	{ "search_type", required_argument, 0, LINK_SHELL_OPT_NCELLMEAS_SEARCH_TYPE },
 	{ "normal_no_rel14", no_argument, 0, LINK_SHELL_OPT_NMODE_NO_REL14 },
 	{ 0, 0, 0, 0 }
@@ -565,6 +573,7 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 	char *password = NULL;
 	int pdn_cid = 0;
 	int threshold_time = 0;
+	int periodic_time = 0;
 
 	link_shell_cmd_defaults_set(&link_cmd_args);
 
@@ -788,7 +797,7 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 			break;
 		case 'I': /* PDN CID */
 			pdn_cid = atoi(optarg);
-			if (pdn_cid == 0) {
+			if (pdn_cid <= 0) {
 				mosh_error(
 					"PDN CID (%d) must be positive integer. "
 					"Default PDN context (CID=0) cannot be given.",
@@ -895,9 +904,17 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 			break;
 		case LINK_SHELL_OPT_THRESHOLD_TIME:
 			threshold_time = atoi(optarg);
-			if (threshold_time == 0) {
+			if (threshold_time <= 0) {
 				mosh_error(
 					"Not a valid number for --threshold_time (milliseconds).");
+				return -EINVAL;
+			}
+			break;
+		case LINK_SHELL_OPT_NCELLMEAS_CONTINUOUS_INTERVAL_TIME:
+			periodic_time = atoi(optarg);
+			if (periodic_time <= 0) {
+				mosh_error(
+					"Not a valid number for --interval (seconds).");
 				return -EINVAL;
 			}
 			break;
@@ -1298,13 +1315,14 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 		if (link_cmd_args.common_option == LINK_COMMON_STOP) {
 			link_ncellmeas_start(false,
 					     LINK_NCELLMEAS_MODE_NONE,
-					     LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT);
+					     LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT, 0);
 
 		} else if (link_cmd_args.ncellmeasmode != LINK_NCELLMEAS_MODE_NONE) {
 			mosh_print("Neighbor cell measurements and reporting starting");
 			link_ncellmeas_start(true,
 					     link_cmd_args.ncellmeasmode,
-					     link_cmd_args.ncellmeas_search_type);
+					     link_cmd_args.ncellmeas_search_type,
+					     periodic_time);
 		} else {
 			goto show_usage;
 		}
