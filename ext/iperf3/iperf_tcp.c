@@ -517,7 +517,7 @@ iperf_tcp_connect(struct iperf_test *test)
     if (test->pdn_id_str != NULL) {
         int ret = iperf_util_socket_pdn_id_set(s, test->pdn_id_str);
         if (ret != 0) {
-            iperf_printf(test, "iperf_tcp_listen: cannot bind socket with PDN ID %s\n", test->pdn_id_str);
+            iperf_printf(test, "iperf_tcp_connect: cannot bind socket with PDN ID %s\n", test->pdn_id_str);
             i_errno = IESTREAMLISTEN;
             return -1;
         }				
