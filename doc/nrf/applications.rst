@@ -10,10 +10,15 @@ They use interface drivers and libraries from the |NCS| and its set of repositor
 Some applications target custom hardware designed for a specific use case.
 You can also run them on different hardware like a generic development kit, but with limited functionality.
 
-
 .. toctree::
    :maxdepth: 1
    :glob:
    :caption: Subpages:
 
-   ../../applications/*/README
+   ../../applications/connectivity_bridge/README
+   ../../applications/asset_tracker_v2/README
+   ../../applications/serial_lte_modem/README
+   ../../applications/nrf_desktop/README
+   ../../applications/machine_learning/README
+   ../../applications/matter_weather_station/README
+   ../../applications/zigbee_weather_station/README
