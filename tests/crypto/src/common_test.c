@@ -94,11 +94,11 @@ int init_drbg(const unsigned char *p_optional_seed, size_t len)
 		p_seed = p_optional_seed;
 	}
 
-	const struct device *p_device =
-	    device_get_binding(DT_LABEL(DT_CHOSEN(zephyr_entropy)));
+	const struct device *p_device = DEVICE_DT_GET(DT_CHOSEN(zephyr_entropy));
 
-	if (p_device == NULL)
+	if (!device_is_ready(p_device)) {
 		return -ENODEV;
+	}
 
 	// Ensure previously run test is properly deallocated
 	// (This frees the mutex inside ctr_drbg context)
@@ -130,11 +130,11 @@ int init_drbg(const unsigned char *p_optional_seed, size_t len)
 	mbedtls_hmac_drbg_free(&drbg_ctx);
 	mbedtls_hmac_drbg_init(&drbg_ctx);
 
-	const struct device *p_device =
-	    device_get_binding(DT_LABEL(DT_CHOSEN(zephyr_entropy)));
+	const struct device *p_device = DEVICE_DT_GET(DT_CHOSEN(zephyr_entropy));
 
-	if (!p_device)
+	if (!device_is_ready(p_device)) {
 		return -ENODEV;
+	}
 
 	const mbedtls_md_info_t *p_info =
 		mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
