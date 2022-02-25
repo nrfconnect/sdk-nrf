@@ -17,14 +17,14 @@ struct device_subsys_data {
 };
 
 struct device_data {
-	const char *name;
+	const struct device *dev;
 	const struct device_subsys_data *subsys_data;
 	uint32_t subsys_cnt;
 };
 
 static const struct device_data devices[] = {
 	{
-		.name = DT_LABEL(DT_INST(0, nordic_nrf_clock)),
+		.dev = DEVICE_DT_GET_ONE(nordic_nrf_clock),
 		.subsys_data =  (const struct device_subsys_data[]){
 			{
 				.subsys = CLOCK_CONTROL_NRF_SUBSYS_HF,
@@ -43,11 +43,11 @@ static const struct device_data devices[] = {
 };
 
 
-typedef void (*test_func_t)(const char *dev_name,
+typedef void (*test_func_t)(const struct device *dev,
 			    clock_control_subsys_t subsys,
 			    uint32_t startup_us);
 
-typedef bool (*test_capability_check_t)(const char *dev_name,
+typedef bool (*test_capability_check_t)(const struct device *dev,
 					clock_control_subsys_t subsys);
 
 /* LFCLK is started by default by mpsl_init(). */
@@ -59,9 +59,8 @@ typedef bool (*test_capability_check_t)(const char *dev_name,
 #define MPSL_CLOCK_CONTROL_OFF(subsys) \
 	(((subsys) == CLOCK_CONTROL_NRF_SUBSYS_LF) ? -ENOTSUP : 0)
 
-static void setup_instance(const char *dev_name, clock_control_subsys_t subsys)
+static void setup_instance(const struct device *dev, clock_control_subsys_t subsys)
 {
-	const struct device *dev = device_get_binding(dev_name);
 	int err;
 
 	k_busy_wait(1000);
@@ -71,24 +70,22 @@ static void setup_instance(const char *dev_name, clock_control_subsys_t subsys)
 	LOG_INF("setup done");
 }
 
-static void tear_down_instance(const char *dev_name,
+static void tear_down_instance(const struct device *dev,
 				clock_control_subsys_t subsys)
 {
-	const struct device *dev = device_get_binding(dev_name);
-
 	clock_control_on(dev, subsys);
 }
 
-static void test_with_single_instance(const char *dev_name,
+static void test_with_single_instance(const struct device *dev,
 				      clock_control_subsys_t subsys,
 				      uint32_t startup_time,
 				      test_func_t func,
 				      test_capability_check_t capability_check)
 {
-	if ((capability_check == NULL) || capability_check(dev_name, subsys)) {
-		setup_instance(dev_name, subsys);
-		func(dev_name, subsys, startup_time);
-		tear_down_instance(dev_name, subsys);
+	if ((capability_check == NULL) || capability_check(dev, subsys)) {
+		setup_instance(dev, subsys);
+		func(dev, subsys, startup_time);
+		tear_down_instance(dev, subsys);
 		/* Allow logs to be printed. */
 		k_sleep(K_MSEC(100));
 	}
@@ -99,7 +96,7 @@ static void test_all_instances(test_func_t func,
 {
 	for (size_t i = 0; i < ARRAY_SIZE(devices); i++) {
 		for (size_t j = 0; j < devices[i].subsys_cnt; j++) {
-			test_with_single_instance(devices[i].name,
+			test_with_single_instance(devices[i].dev,
 					devices[i].subsys_data[j].subsys,
 					devices[i].subsys_data[j].startup_us,
 					func, capability_check);
@@ -110,37 +107,34 @@ static void test_all_instances(test_func_t func,
 /*
  * Basic test for checking correctness of getting clock status.
  */
-static void test_on_off_status_instance(const char *dev_name,
+static void test_on_off_status_instance(const struct device *dev,
 					clock_control_subsys_t subsys,
 					uint32_t startup_us)
 {
-	const struct device *dev = device_get_binding(dev_name);
 	enum clock_control_status status;
 	int err;
 
-	zassert_true(dev != NULL, "%s: Unknown device", dev_name);
-
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_STATUS_OFF(subsys), status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 
 	err = clock_control_on(dev, subsys);
-	zassert_equal(0, err, "%s: Unexpected err (%d)", dev_name, err);
+	zassert_equal(0, err, "%s: Unexpected err (%d)", dev->name, err);
 
 	k_busy_wait(startup_us);
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(CLOCK_CONTROL_STATUS_ON, status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 	err = clock_control_off(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_OFF(subsys), err,
-			"%s: Unexpected err (%d)", dev_name, err);
+			"%s: Unexpected err (%d)", dev->name, err);
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_STATUS_OFF(subsys), status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 }
 
 static void test_on_off_status(void)
@@ -152,42 +146,41 @@ static void test_on_off_status(void)
  * Test validates that if number of enabling requests matches disabling requests
  * then clock is disabled.
  */
-static void test_multiple_users_instance(const char *dev_name,
+static void test_multiple_users_instance(const struct device *dev,
 					 clock_control_subsys_t subsys,
 					 uint32_t startup_us)
 {
-	const struct device *dev = device_get_binding(dev_name);
 	enum clock_control_status status;
 	int users = 5;
 	int err;
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_STATUS_OFF(subsys), status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 	for (int i = 0; i < users; i++) {
 		err = clock_control_on(dev, subsys);
-		zassert_equal(0, err, "%s: Unexpected err (%d)", dev_name, err);
+		zassert_equal(0, err, "%s: Unexpected err (%d)", dev->name, err);
 	}
 
 	for (int i = 0; i < users; i++) {
 		err = clock_control_off(dev, subsys);
 		zassert_equal(MPSL_CLOCK_CONTROL_OFF(subsys), err,
-				"%s: Unexpected err (%d)", dev_name, err);
+				"%s: Unexpected err (%d)", dev->name, err);
 	}
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_true(status == MPSL_CLOCK_CONTROL_STATUS_OFF(subsys),
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 	err = clock_control_off(dev, subsys);
 	if (subsys == CLOCK_CONTROL_NRF_SUBSYS_LF) {
 		/* Stopping of LFCLK is not supported. */
 		zassert_equal(-ENOTSUP, err,
-				"%s: Unexpected err (%d)", dev_name, err);
+				"%s: Unexpected err (%d)", dev->name, err);
 	} else {
 		zassert_equal(-EALREADY, err,
-				"%s: Unexpected err (%d)", dev_name, err);
+				"%s: Unexpected err (%d)", dev->name, err);
 	}
 }
 
@@ -203,10 +196,8 @@ static void async_capable_callback(const struct device *dev,
 	/* empty */
 }
 
-static bool async_capable(const char *dev_name, clock_control_subsys_t subsys)
+static bool async_capable(const struct device *dev, clock_control_subsys_t subsys)
 {
-	const struct device *dev = device_get_binding(dev_name);
-
 	if (clock_control_async_on(dev, subsys,
 				   async_capable_callback, NULL) != 0) {
 		return false;
@@ -233,11 +224,10 @@ static void clock_on_callback(const struct device *dev,
  * Test checks that when asynchronous clock enabling is called twice.
  * The clock should keep on until it is closed by all users.
  */
-static void test_async_on_off_instance(const char *dev_name,
+static void test_async_on_off_instance(const struct device *dev,
 				       clock_control_subsys_t subsys,
 				       uint32_t startup_us)
 {
-	const struct device *dev = device_get_binding(dev_name);
 	enum clock_control_status status;
 	int err;
 	bool executed1 = false;
@@ -245,42 +235,42 @@ static void test_async_on_off_instance(const char *dev_name,
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_STATUS_OFF(subsys), status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 	err = clock_control_async_on(dev, subsys, clock_on_callback,
 				     &executed1);
-	zassert_equal(0, err, "%s: Unexpected err (%d)", dev_name, err);
+	zassert_equal(0, err, "%s: Unexpected err (%d)", dev->name, err);
 
 	err = clock_control_async_on(dev, subsys, clock_on_callback,
 				     &executed2);
-	zassert_equal(0, err, "%s: Unexpected err (%d)", dev_name, err);
+	zassert_equal(0, err, "%s: Unexpected err (%d)", dev->name, err);
 
 	/* wait for clock started. */
 	k_busy_wait(startup_us);
 
-	zassert_true(executed1, "%s: Expected flag to be true", dev_name);
-	zassert_true(executed2, "%s: Expected flag to be true", dev_name);
+	zassert_true(executed1, "%s: Expected flag to be true", dev->name);
+	zassert_true(executed2, "%s: Expected flag to be true", dev->name);
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(CLOCK_CONTROL_STATUS_ON, status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 	err = clock_control_off(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_OFF(subsys), err,
-			"%s: Unexpected err (%d)", dev_name, err);
+			"%s: Unexpected err (%d)", dev->name, err);
 
 	/* the clock should keep on until no more reference. */
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(CLOCK_CONTROL_STATUS_ON, status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 	err = clock_control_off(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_OFF(subsys), err,
-			"%s: Unexpected err (%d)", dev_name, err);
+			"%s: Unexpected err (%d)", dev->name, err);
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_STATUS_OFF(subsys), status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 }
 
 static void test_async_on_off(void)
@@ -304,11 +294,10 @@ static void clock_on_counting_callback(const struct device *dev,
  * Test validates that the number of callbacks matches the executed async_on
  * requests. The clock should keep on until it is closed by all users.
  */
-static void test_async_on_off_multiple_users_instance(const char *dev_name,
+static void test_async_on_off_multiple_users_instance(const struct device *dev,
 						clock_control_subsys_t subsys,
 						uint32_t startup_us)
 {
-	const struct device *dev = device_get_binding(dev_name);
 	enum clock_control_status status;
 	int users = 5;
 	int err;
@@ -316,13 +305,13 @@ static void test_async_on_off_multiple_users_instance(const char *dev_name,
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_STATUS_OFF(subsys), status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 	for (int i = 0; i < users; i++) {
 		err = clock_control_async_on(dev, subsys,
 					     clock_on_counting_callback,
 					     &count);
-		zassert_equal(0, err, "%s: Unexpected err (%d)", dev_name, err);
+		zassert_equal(0, err, "%s: Unexpected err (%d)", dev->name, err);
 	}
 
 	/* wait for clock started. */
@@ -330,40 +319,39 @@ static void test_async_on_off_multiple_users_instance(const char *dev_name,
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(CLOCK_CONTROL_STATUS_ON, status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 	zassert_equal(users, count,
-			"%s: Unexpected count (%d)", dev_name, count);
+			"%s: Unexpected count (%d)", dev->name, count);
 
 	for (int i = 0; i < (users - 1); i++) {
 		err = clock_control_off(dev, subsys);
 		zassert_equal(MPSL_CLOCK_CONTROL_OFF(subsys), err,
-				"%s: Unexpected err (%d)", dev_name, err);
+				"%s: Unexpected err (%d)", dev->name, err);
 	}
 
 	/* the clock should keep on until no more reference. */
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(CLOCK_CONTROL_STATUS_ON, status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 	err = clock_control_off(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_OFF(subsys), err,
-			"%s: Unexpected err (%d)", dev_name, err);
+			"%s: Unexpected err (%d)", dev->name, err);
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_STATUS_OFF(subsys), status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 }
 
 /*
  * Test validates that when the number of async_on request is over the
  * supporting counter, HFCLK-clock shall return -ENOTSUP.
  */
-static void test_async_on_too_many_users_instance(const char *dev_name,
+static void test_async_on_too_many_users_instance(const struct device *dev,
 						clock_control_subsys_t subsys,
 						uint32_t startup_us)
 {
-	const struct device *dev = device_get_binding(dev_name);
 	enum clock_control_status status;
 	int err;
 	int count = 0;
@@ -371,13 +359,13 @@ static void test_async_on_too_many_users_instance(const char *dev_name,
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_STATUS_OFF(subsys), status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 	for (int i = 0; i < (users - 1); i++) {
 		err = clock_control_async_on(dev, subsys,
 					     clock_on_counting_callback,
 					     &count);
-		zassert_equal(0, err, "%s: Unexpected err (%d)", dev_name, err);
+		zassert_equal(0, err, "%s: Unexpected err (%d)", dev->name, err);
 	}
 
 	/* wait for clock started. */
@@ -385,41 +373,41 @@ static void test_async_on_too_many_users_instance(const char *dev_name,
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(CLOCK_CONTROL_STATUS_ON, status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 	err = clock_control_async_on(dev, subsys,
 				     clock_on_counting_callback,
 				     &count);
 	if (subsys == CLOCK_CONTROL_NRF_SUBSYS_LF) {
 		zassert_equal(0, err,
-				"%s: Unexpected err (%d)", dev_name, err);
+				"%s: Unexpected err (%d)", dev->name, err);
 	} else {
 		/* This request is over the supporting counter */
 		zassert_equal(-ENOTSUP, err,
-				"%s: Unexpected err (%d)", dev_name, err);
+				"%s: Unexpected err (%d)", dev->name, err);
 	}
 
 	zassert_equal((users - 1), count,
-			"%s: Unexpected count (%d)", dev_name, count);
+			"%s: Unexpected count (%d)", dev->name, count);
 
 	for (int i = 0; i < (users - 1); i++) {
 		err = clock_control_off(dev, subsys);
 		zassert_equal(MPSL_CLOCK_CONTROL_OFF(subsys), err,
-				"%s: Unexpected err (%d)", dev_name, err);
+				"%s: Unexpected err (%d)", dev->name, err);
 	}
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_STATUS_OFF(subsys), status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 	err = clock_control_off(dev, subsys);
 	if (subsys == CLOCK_CONTROL_NRF_SUBSYS_LF) {
 		/* Stopping of LFCLK is not supported. */
 		zassert_equal(-ENOTSUP, err,
-				"%s: Unexpected err (%d)", dev_name, err);
+				"%s: Unexpected err (%d)", dev->name, err);
 	} else {
 		zassert_equal(-EALREADY, err,
-				"%s: Unexpected err (%d)", dev_name, err);
+				"%s: Unexpected err (%d)", dev->name, err);
 	}
 }
 
@@ -435,11 +423,10 @@ static void test_async_on_off_multiple_users(void)
  * Test checks that when asynchronous clock enabling is scheduled but clock
  * is disabled before being started then callback is never called.
  */
-static void test_async_on_stopped_instance(const char *dev_name,
+static void test_async_on_stopped_instance(const struct device *dev,
 					   clock_control_subsys_t subsys,
 					   uint32_t startup_us)
 {
-	const struct device *dev = device_get_binding(dev_name);
 	enum clock_control_status status;
 	int err;
 	int key;
@@ -447,17 +434,17 @@ static void test_async_on_stopped_instance(const char *dev_name,
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_STATUS_OFF(subsys), status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 	/* lock to prevent clock interrupt for fast starting clocks.*/
 	key = irq_lock();
 	err = clock_control_async_on(dev, subsys, clock_on_callback,
 				     &executed1);
-	zassert_equal(0, err, "%s: Unexpected err (%d)", dev_name, err);
+	zassert_equal(0, err, "%s: Unexpected err (%d)", dev->name, err);
 
 	err = clock_control_off(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_OFF(subsys), err,
-			"%s: Unexpected err (%d)", dev_name, err);
+			"%s: Unexpected err (%d)", dev->name, err);
 
 	irq_unlock(key);
 
@@ -468,10 +455,10 @@ static void test_async_on_stopped_instance(const char *dev_name,
 		 * context of the function call.
 		 */
 		zassert_true(executed1,
-				"%s: Expected flag to be true", dev_name);
+				"%s: Expected flag to be true", dev->name);
 	} else {
 		zassert_false(executed1,
-				"%s: Expected flag to be false", dev_name);
+				"%s: Expected flag to be false", dev->name);
 	}
 }
 
@@ -484,55 +471,54 @@ static void test_async_on_stopped(void)
  * Test checks that when asynchronous clock enabling is called when clock is
  * running then callback is immediate.
  */
-static void test_immediate_cb_when_clock_on_instance(const char *dev_name,
+static void test_immediate_cb_when_clock_on_instance(const struct device *dev,
 						clock_control_subsys_t subsys,
 						uint32_t startup_us)
 {
-	const struct device *dev = device_get_binding(dev_name);
 	enum clock_control_status status;
 	int err;
 	bool executed1 = false;
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_STATUS_OFF(subsys), status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 	err = clock_control_on(dev, subsys);
-	zassert_equal(0, err, "%s: Unexpected err (%d)", dev_name, err);
+	zassert_equal(0, err, "%s: Unexpected err (%d)", dev->name, err);
 
 	/* wait for clock started. */
 	k_busy_wait(startup_us);
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(CLOCK_CONTROL_STATUS_ON, status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 	err = clock_control_async_on(dev, subsys, clock_on_callback,
 				     &executed1);
-	zassert_equal(0, err, "%s: Unexpected err (%d)", dev_name, err);
+	zassert_equal(0, err, "%s: Unexpected err (%d)", dev->name, err);
 
-	zassert_true(executed1, "%s: Expected flag to be true", dev_name);
+	zassert_true(executed1, "%s: Expected flag to be true", dev->name);
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(CLOCK_CONTROL_STATUS_ON, status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 	err = clock_control_off(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_OFF(subsys), err,
-			"%s: Unexpected err (%d)", dev_name, err);
+			"%s: Unexpected err (%d)", dev->name, err);
 
 	/* the clock should keep on until no more reference. */
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(CLOCK_CONTROL_STATUS_ON, status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 
 	err = clock_control_off(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_OFF(subsys), err,
-			"%s: Unexpected err (%d)", dev_name, err);
+			"%s: Unexpected err (%d)", dev->name, err);
 
 	status = clock_control_get_status(dev, subsys);
 	zassert_equal(MPSL_CLOCK_CONTROL_STATUS_OFF(subsys), status,
-			"%s: Unexpected status (%d)", dev_name, status);
+			"%s: Unexpected status (%d)", dev->name, status);
 }
 
 static void test_immediate_cb_when_clock_on(void)
@@ -543,6 +529,10 @@ static void test_immediate_cb_when_clock_on(void)
 
 void test_main(void)
 {
+	for (size_t i = 0; i < ARRAY_SIZE(devices); i++) {
+		__ASSERT_NO_MSG(device_is_ready(devices[i].dev));
+	}
+
 	ztest_test_suite(test_clock_control,
 		ztest_unit_test(test_on_off_status),
 		ztest_unit_test(test_multiple_users),
