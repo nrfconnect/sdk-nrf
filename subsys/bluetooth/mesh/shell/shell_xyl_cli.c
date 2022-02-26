@@ -14,14 +14,14 @@
 
 static struct bt_mesh_model *mod;
 
-static void xyl_print(const struct shell *shell, int err, struct bt_mesh_light_xyl_status rsp)
+static void xyl_print(const struct shell *shell, int err, struct bt_mesh_light_xyl_status *rsp)
 {
 	if (!err) {
 		shell_print(shell,
 			    "Light val: %d, X val: %d, "
 			    "Y val %d, rem time: %d",
-			    rsp.params.lightness, rsp.params.xy.x, rsp.params.xy.y,
-			    rsp.remaining_time);
+			    rsp->params.lightness, rsp->params.xy.x, rsp->params.xy.y,
+			    rsp->remaining_time);
 	}
 }
 
@@ -36,7 +36,7 @@ static int cmd_xyl_get(const struct shell *shell, size_t argc, char *argv[])
 
 	int err = bt_mesh_light_xyl_get(cli, NULL, &rsp);
 
-	xyl_print(shell, err, rsp);
+	xyl_print(shell, err, &rsp);
 	return err;
 }
 
@@ -67,7 +67,7 @@ static int xyl_set(const struct shell *shell, size_t argc, char *argv[], bool ac
 		struct bt_mesh_light_xyl_status rsp;
 		int err = bt_mesh_light_xyl_set(cli, NULL, &set, &rsp);
 
-		xyl_print(shell, err, rsp);
+		xyl_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_light_xyl_set_unack(cli, NULL, &set);
@@ -95,15 +95,15 @@ static int cmd_xyl_target_get(const struct shell *shell, size_t argc, char *argv
 
 	int err = bt_mesh_light_xyl_target_get(cli, NULL, &rsp);
 
-	xyl_print(shell, err, rsp);
+	xyl_print(shell, err, &rsp);
 	return err;
 }
 
-static void default_print(const struct shell *shell, int err, struct bt_mesh_light_xyl rsp)
+static void default_print(const struct shell *shell, int err, struct bt_mesh_light_xyl *rsp)
 {
 	if (!err) {
-		shell_print(shell, "Light val: %d, X val: %d, Y val %d", rsp.lightness, rsp.xy.x,
-			    rsp.xy.y);
+		shell_print(shell, "Light val: %d, X val: %d, Y val %d", rsp->lightness, rsp->xy.x,
+			    rsp->xy.y);
 	}
 }
 
@@ -118,7 +118,7 @@ static int cmd_xyl_default_get(const struct shell *shell, size_t argc, char *arg
 
 	int err = bt_mesh_light_xyl_default_get(cli, NULL, &rsp);
 
-	default_print(shell, err, rsp);
+	default_print(shell, err, &rsp);
 	return err;
 }
 
@@ -143,7 +143,7 @@ static int xyl_default_set(const struct shell *shell, size_t argc, char *argv[],
 		struct bt_mesh_light_xyl rsp;
 		int err = bt_mesh_light_xyl_default_set(cli, NULL, &set, &rsp);
 
-		default_print(shell, err, rsp);
+		default_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_light_xyl_default_set_unack(cli, NULL, &set);
@@ -161,14 +161,14 @@ static int cmd_xyl_default_set_unack(const struct shell *shell, size_t argc, cha
 }
 
 static void range_print(const struct shell *shell, int err,
-			struct bt_mesh_light_xyl_range_status rsp)
+			struct bt_mesh_light_xyl_range_status *rsp)
 {
 	if (!err) {
 		shell_print(shell,
 			    "Status: %d, X min val: %d, X max val: %d "
 			    "Y min val: %d, Y max val: %d",
-			    rsp.status_code, rsp.range.min.x, rsp.range.max.x, rsp.range.min.y,
-			    rsp.range.max.y);
+			    rsp->status_code, rsp->range.min.x, rsp->range.max.x, rsp->range.min.y,
+			    rsp->range.max.y);
 	}
 }
 
@@ -183,7 +183,7 @@ static int cmd_xyl_range_get(const struct shell *shell, size_t argc, char *argv[
 
 	int err = bt_mesh_light_xyl_range_get(cli, NULL, &rsp);
 
-	range_print(shell, err, rsp);
+	range_print(shell, err, &rsp);
 	return err;
 }
 
@@ -210,7 +210,7 @@ static int xyl_range_set(const struct shell *shell, size_t argc, char *argv[], b
 		struct bt_mesh_light_xyl_range_status rsp;
 		int err = bt_mesh_light_xyl_range_set(cli, NULL, &set, &rsp);
 
-		range_print(shell, err, rsp);
+		range_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_light_xyl_range_set_unack(cli, NULL, &set);

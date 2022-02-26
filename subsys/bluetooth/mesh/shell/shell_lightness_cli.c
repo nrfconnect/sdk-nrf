@@ -14,11 +14,11 @@
 
 static struct bt_mesh_model *mod;
 
-static void light_print(const struct shell *shell, int err, struct bt_mesh_lightness_status rsp)
+static void light_print(const struct shell *shell, int err, struct bt_mesh_lightness_status *rsp)
 {
 	if (!err) {
-		shell_print(shell, "Current val: %d, target val: %d, rem time: %d", rsp.current,
-			    rsp.target, rsp.remaining_time);
+		shell_print(shell, "Current val: %d, target val: %d, rem time: %d", rsp->current,
+			    rsp->target, rsp->remaining_time);
 	}
 }
 
@@ -33,7 +33,7 @@ static int cmd_light_get(const struct shell *shell, size_t argc, char *argv[])
 
 	int err = bt_mesh_lightness_cli_light_get(cli, NULL, &rsp);
 
-	light_print(shell, err, rsp);
+	light_print(shell, err, &rsp);
 	return err;
 }
 
@@ -55,7 +55,7 @@ static int light_set(const struct shell *shell, size_t argc, char *argv[], bool 
 		struct bt_mesh_lightness_status rsp;
 		int err = bt_mesh_lightness_cli_light_set(cli, NULL, &set, &rsp);
 
-		light_print(shell, err, rsp);
+		light_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_lightness_cli_light_set_unack(cli, NULL, &set);
@@ -73,11 +73,11 @@ static int cmd_light_set_unack(const struct shell *shell, size_t argc, char *arg
 }
 
 static void range_print(const struct shell *shell, int err,
-			struct bt_mesh_lightness_range_status rsp)
+			struct bt_mesh_lightness_range_status *rsp)
 {
 	if (!err) {
-		shell_print(shell, "Status: %d, min val: %d, max val: %d", rsp.status,
-			    rsp.range.min, rsp.range.max);
+		shell_print(shell, "Status: %d, min val: %d, max val: %d", rsp->status,
+			    rsp->range.min, rsp->range.max);
 	}
 }
 
@@ -92,7 +92,7 @@ static int cmd_range_get(const struct shell *shell, size_t argc, char *argv[])
 
 	int err = bt_mesh_lightness_cli_range_get(cli, NULL, &rsp);
 
-	range_print(shell, err, rsp);
+	range_print(shell, err, &rsp);
 	return err;
 }
 
@@ -112,7 +112,7 @@ static int range_set(const struct shell *shell, size_t argc, char *argv[], bool 
 		struct bt_mesh_lightness_range_status rsp;
 		int err = bt_mesh_lightness_cli_range_set(cli, NULL, &set, &rsp);
 
-		range_print(shell, err, rsp);
+		range_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_lightness_cli_range_set_unack(cli, NULL, &set);

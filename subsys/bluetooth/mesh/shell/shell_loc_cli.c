@@ -14,11 +14,11 @@
 
 static struct bt_mesh_model *mod;
 
-static void global_loc_print(const struct shell *shell, int err, struct bt_mesh_loc_global rsp)
+static void global_loc_print(const struct shell *shell, int err, struct bt_mesh_loc_global *rsp)
 {
 	if (!err) {
-		shell_print(shell, "Latitude: %f, longitude: %f, altitude: %d", rsp.latitude,
-			    rsp.longitude, rsp.altitude);
+		shell_print(shell, "Latitude: %f, longitude: %f, altitude: %d", rsp->latitude,
+			    rsp->longitude, rsp->altitude);
 	}
 }
 
@@ -33,7 +33,7 @@ static int cmd_loc_global_get(const struct shell *shell, size_t argc, char *argv
 
 	int err = bt_mesh_loc_cli_global_get(cli, NULL, &rsp);
 
-	global_loc_print(shell, err, rsp);
+	global_loc_print(shell, err, &rsp);
 	return err;
 }
 
@@ -58,7 +58,7 @@ static int global_set(const struct shell *shell, size_t argc, char *argv[], bool
 		struct bt_mesh_loc_global rsp;
 		int err = bt_mesh_loc_cli_global_set(cli, NULL, &set, &rsp);
 
-		global_loc_print(shell, err, rsp);
+		global_loc_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_loc_cli_global_set_unack(cli, NULL, &set);
@@ -75,15 +75,15 @@ static int cmd_loc_global_set_unack(const struct shell *shell, size_t argc, char
 	return global_set(shell, argc, argv, false);
 }
 
-static void local_loc_print(const struct shell *shell, int err, struct bt_mesh_loc_local rsp)
+static void local_loc_print(const struct shell *shell, int err, struct bt_mesh_loc_local *rsp)
 {
 	if (!err) {
 		shell_print(shell,
 			    "North: %d, east: %d, altitude: %d, "
 			    "floor_number: %d, is_mobile: %d, "
 			    "time_delta: %d, precision_mm: %d",
-			    rsp.north, rsp.east, rsp.altitude, rsp.floor_number, rsp.is_mobile,
-			    rsp.time_delta, rsp.precision_mm);
+			    rsp->north, rsp->east, rsp->altitude, rsp->floor_number, rsp->is_mobile,
+			    rsp->time_delta, rsp->precision_mm);
 	}
 }
 
@@ -98,7 +98,7 @@ static int cmd_loc_local_get(const struct shell *shell, size_t argc, char *argv[
 
 	int err = bt_mesh_loc_cli_local_get(cli, NULL, &rsp);
 
-	local_loc_print(shell, err, rsp);
+	local_loc_print(shell, err, &rsp);
 	return err;
 }
 
@@ -131,7 +131,7 @@ static int local_set(const struct shell *shell, size_t argc, char *argv[], bool 
 		struct bt_mesh_loc_local rsp;
 		int err = bt_mesh_loc_cli_local_set(cli, NULL, &set, &rsp);
 
-		local_loc_print(shell, err, rsp);
+		local_loc_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_loc_cli_local_set_unack(cli, NULL, &set);

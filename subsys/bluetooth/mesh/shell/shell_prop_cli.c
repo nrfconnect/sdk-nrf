@@ -15,12 +15,12 @@
 
 static struct bt_mesh_model *mod;
 
-static void props_print(const struct shell *shell, int err, struct bt_mesh_prop_list rsp)
+static void props_print(const struct shell *shell, int err, struct bt_mesh_prop_list *rsp)
 {
 	if (!err) {
-		shell_print(shell, "ID count: %d", rsp.count);
-		for (uint8_t i = 0; i < rsp.count; i++) {
-			shell_print(shell, "ID %d val: %d", i, rsp.ids[i]);
+		shell_print(shell, "ID count: %d", rsp->count);
+		for (uint8_t i = 0; i < rsp->count; i++) {
+			shell_print(shell, "ID %d val: %d", i, rsp->ids[i]);
 		}
 	}
 }
@@ -39,7 +39,7 @@ static int cmd_prop_client_props_get(const struct shell *shell, size_t argc, cha
 
 	int err = bt_mesh_prop_cli_client_props_get(cli, NULL, id, &rsp);
 
-	props_print(shell, err, rsp);
+	props_print(shell, err, &rsp);
 	return err;
 }
 
@@ -57,14 +57,14 @@ static int cmd_prop_props_get(const struct shell *shell, size_t argc, char *argv
 
 	int err = bt_mesh_prop_cli_props_get(cli, NULL, kind, &rsp);
 
-	props_print(shell, err, rsp);
+	props_print(shell, err, &rsp);
 	return err;
 }
 
-static void prop_val_print(const struct shell *shell, int err, struct bt_mesh_prop_val rsp)
+static void prop_val_print(const struct shell *shell, int err, struct bt_mesh_prop_val *rsp)
 {
 	if (!err) {
-		shell_print(shell, "Property value: %s", bt_hex(rsp.value, rsp.size));
+		shell_print(shell, "Property value: %s", bt_hex(rsp->value, rsp->size));
 	}
 }
 
@@ -83,7 +83,7 @@ static int cmd_prop_prop_get(const struct shell *shell, size_t argc, char *argv[
 
 	int err = bt_mesh_prop_cli_prop_get(cli, NULL, kind, id, &rsp);
 
-	prop_val_print(shell, err, rsp);
+	prop_val_print(shell, err, &rsp);
 	return err;
 }
 
@@ -110,7 +110,7 @@ static int user_prop_set(const struct shell *shell, size_t argc, char *argv[], b
 						.size = CONFIG_BT_MESH_PROP_MAXSIZE };
 		int err = bt_mesh_prop_cli_user_prop_set(cli, NULL, &set, &rsp);
 
-		prop_val_print(shell, err, rsp);
+		prop_val_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_prop_cli_user_prop_set_unack(cli, NULL, &set);
@@ -152,7 +152,7 @@ static int admin_prop_set(const struct shell *shell, size_t argc, char *argv[], 
 						.size = CONFIG_BT_MESH_PROP_MAXSIZE };
 		int err = bt_mesh_prop_cli_admin_prop_set(cli, NULL, &set, &rsp);
 
-		prop_val_print(shell, err, rsp);
+		prop_val_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_prop_cli_admin_prop_set_unack(cli, NULL, &set);
@@ -190,7 +190,7 @@ static int mfr_prop_set(const struct shell *shell, size_t argc, char *argv[], bo
 						.size = CONFIG_BT_MESH_PROP_MAXSIZE };
 		int err = bt_mesh_prop_cli_mfr_prop_set(cli, NULL, &set, &rsp);
 
-		prop_val_print(shell, err, rsp);
+		prop_val_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_prop_cli_mfr_prop_set_unack(cli, NULL, &set);

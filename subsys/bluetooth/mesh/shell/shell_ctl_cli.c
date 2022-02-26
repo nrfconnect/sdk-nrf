@@ -14,14 +14,14 @@
 
 static struct bt_mesh_model *mod;
 
-static void ctl_print(const struct shell *shell, int err, struct bt_mesh_light_ctl_status rsp)
+static void ctl_print(const struct shell *shell, int err, struct bt_mesh_light_ctl_status *rsp)
 {
 	if (!err) {
 		shell_print(shell,
 			    "Current light: %d, current temp: %d "
 			    "target light: %d, target temp: %d, rem time: %d",
-			    rsp.current_light, rsp.current_temp, rsp.target_light, rsp.target_temp,
-			    rsp.remaining_time);
+			    rsp->current_light, rsp->current_temp, rsp->target_light,
+			    rsp->target_temp, rsp->remaining_time);
 	}
 }
 
@@ -36,7 +36,7 @@ static int cmd_ctl_get(const struct shell *shell, size_t argc, char *argv[])
 
 	int err = bt_mesh_light_ctl_get(cli, NULL, &rsp);
 
-	ctl_print(shell, err, rsp);
+	ctl_print(shell, err, &rsp);
 	return err;
 }
 
@@ -67,7 +67,7 @@ static int ctl_set(const struct shell *shell, size_t argc, char *argv[], bool ac
 		struct bt_mesh_light_ctl_status rsp;
 		int err = bt_mesh_light_ctl_set(cli, NULL, &set, &rsp);
 
-		ctl_print(shell, err, rsp);
+		ctl_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_light_ctl_set_unack(cli, NULL, &set);
@@ -84,14 +84,14 @@ static int cmd_ctl_set_unack(const struct shell *shell, size_t argc, char *argv[
 	return ctl_set(shell, argc, argv, false);
 }
 
-static void temp_print(const struct shell *shell, int err, struct bt_mesh_light_temp_status rsp)
+static void temp_print(const struct shell *shell, int err, struct bt_mesh_light_temp_status *rsp)
 {
 	if (!err) {
 		shell_print(shell,
 			    "Current temp: %d, current delta: %d "
 			    "target temp: %d, target delta: %d, rem time: %d",
-			    rsp.current.temp, rsp.current.delta_uv, rsp.target.temp,
-			    rsp.target.delta_uv, rsp.remaining_time);
+			    rsp->current.temp, rsp->current.delta_uv, rsp->target.temp,
+			    rsp->target.delta_uv, rsp->remaining_time);
 	}
 }
 
@@ -106,7 +106,7 @@ static int cmd_temp_get(const struct shell *shell, size_t argc, char *argv[])
 
 	int err = bt_mesh_light_temp_get(cli, NULL, &rsp);
 
-	temp_print(shell, err, rsp);
+	temp_print(shell, err, &rsp);
 	return err;
 }
 
@@ -135,7 +135,7 @@ static int temp_set(const struct shell *shell, size_t argc, char *argv[], bool a
 		struct bt_mesh_light_temp_status rsp;
 		int err = bt_mesh_light_temp_set(cli, NULL, &set, &rsp);
 
-		temp_print(shell, err, rsp);
+		temp_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_light_temp_set_unack(cli, NULL, &set);
@@ -152,11 +152,11 @@ static int cmd_temp_set_unack(const struct shell *shell, size_t argc, char *argv
 	return temp_set(shell, argc, argv, false);
 }
 
-static void default_print(const struct shell *shell, int err, struct bt_mesh_light_ctl rsp)
+static void default_print(const struct shell *shell, int err, struct bt_mesh_light_ctl *rsp)
 {
 	if (!err) {
-		shell_print(shell, "Light: %d, temp: %d, delta: %d", rsp.light, rsp.temp,
-			    rsp.delta_uv);
+		shell_print(shell, "Light: %d, temp: %d, delta: %d", rsp->light, rsp->temp,
+			    rsp->delta_uv);
 	}
 }
 
@@ -171,7 +171,7 @@ static int cmd_ctl_default_get(const struct shell *shell, size_t argc, char *arg
 
 	int err = bt_mesh_light_ctl_default_get(cli, NULL, &rsp);
 
-	default_print(shell, err, rsp);
+	default_print(shell, err, &rsp);
 	return err;
 }
 
@@ -196,7 +196,7 @@ static int default_set(const struct shell *shell, size_t argc, char *argv[], boo
 		struct bt_mesh_light_ctl rsp;
 		int err = bt_mesh_light_ctl_default_set(cli, NULL, &set, &rsp);
 
-		default_print(shell, err, rsp);
+		default_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_light_ctl_default_set_unack(cli, NULL, &set);
@@ -214,11 +214,11 @@ static int cmd_ctl_default_set_unack(const struct shell *shell, size_t argc, cha
 }
 
 static void range_print(const struct shell *shell, int err,
-			struct bt_mesh_light_temp_range_status rsp)
+			struct bt_mesh_light_temp_range_status *rsp)
 {
 	if (!err) {
-		shell_print(shell, "Status: %d, min: %d, max: %d", rsp.status, rsp.range.min,
-			    rsp.range.max);
+		shell_print(shell, "Status: %d, min: %d, max: %d", rsp->status, rsp->range.min,
+			    rsp->range.max);
 	}
 }
 
@@ -233,7 +233,7 @@ static int cmd_temp_range_get(const struct shell *shell, size_t argc, char *argv
 
 	int err = bt_mesh_light_temp_range_get(cli, NULL, &rsp);
 
-	range_print(shell, err, rsp);
+	range_print(shell, err, &rsp);
 	return err;
 }
 
@@ -256,7 +256,7 @@ static int temp_range_set(const struct shell *shell, size_t argc, char *argv[], 
 		struct bt_mesh_light_temp_range_status rsp;
 		int err = bt_mesh_light_temp_range_set(cli, NULL, &set, &rsp);
 
-		range_print(shell, err, rsp);
+		range_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_light_temp_range_set_unack(cli, NULL, &set);

@@ -14,14 +14,14 @@
 
 static struct bt_mesh_model *mod;
 
-static void hsl_print(const struct shell *shell, int err, struct bt_mesh_light_hsl_status rsp)
+static void hsl_print(const struct shell *shell, int err, struct bt_mesh_light_hsl_status *rsp)
 {
 	if (!err) {
 		shell_print(shell,
 			    "Current light: %d, current hue: %d "
 			    "current saturation: %d, rem time: %d",
-			    rsp.params.lightness, rsp.params.hue, rsp.params.saturation,
-			    rsp.remaining_time);
+			    rsp->params.lightness, rsp->params.hue, rsp->params.saturation,
+			    rsp->remaining_time);
 	}
 }
 
@@ -36,7 +36,7 @@ static int cmd_hsl_get(const struct shell *shell, size_t argc, char *argv[])
 
 	int err = bt_mesh_light_hsl_get(cli, NULL, &rsp);
 
-	hsl_print(shell, err, rsp);
+	hsl_print(shell, err, &rsp);
 	return err;
 }
 
@@ -67,7 +67,7 @@ static int hsl_set(const struct shell *shell, size_t argc, char *argv[], bool ac
 		struct bt_mesh_light_hsl_status rsp;
 		int err = bt_mesh_light_hsl_set(cli, NULL, &set, &rsp);
 
-		hsl_print(shell, err, rsp);
+		hsl_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_light_hsl_set_unack(cli, NULL, &set);
@@ -106,13 +106,13 @@ static int cmd_hsl_target_get(const struct shell *shell, size_t argc, char *argv
 	return err;
 }
 
-static void default_print(const struct shell *shell, int err, struct bt_mesh_light_hsl rsp)
+static void default_print(const struct shell *shell, int err, struct bt_mesh_light_hsl *rsp)
 {
 	if (!err) {
 		shell_print(shell,
 			    "Default light: %d, default hue: %d "
 			    "default saturation: %d",
-			    rsp.lightness, rsp.hue, rsp.saturation);
+			    rsp->lightness, rsp->hue, rsp->saturation);
 	}
 }
 
@@ -127,7 +127,7 @@ static int cmd_hsl_default_get(const struct shell *shell, size_t argc, char *arg
 
 	int err = bt_mesh_light_hsl_default_get(cli, NULL, &rsp);
 
-	default_print(shell, err, rsp);
+	default_print(shell, err, &rsp);
 	return err;
 }
 
@@ -152,7 +152,7 @@ static int hsl_default_set(const struct shell *shell, size_t argc, char *argv[],
 		struct bt_mesh_light_hsl rsp;
 		int err = bt_mesh_light_hsl_default_set(cli, NULL, &set, &rsp);
 
-		default_print(shell, err, rsp);
+		default_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_light_hsl_default_set_unack(cli, NULL, &set);
@@ -170,14 +170,14 @@ static int cmd_hsl_default_set_unack(const struct shell *shell, size_t argc, cha
 }
 
 static void range_print(const struct shell *shell, int err,
-			struct bt_mesh_light_hsl_range_status rsp)
+			struct bt_mesh_light_hsl_range_status *rsp)
 {
 	if (!err) {
 		shell_print(shell,
 			    "Status: %d, hue min val: %d, hue max val: %d "
 			    "saturation min val: %d, saturation max val: %d",
-			    rsp.status_code, rsp.range.min.hue, rsp.range.max.hue,
-			    rsp.range.min.saturation, rsp.range.max.saturation);
+			    rsp->status_code, rsp->range.min.hue, rsp->range.max.hue,
+			    rsp->range.min.saturation, rsp->range.max.saturation);
 	}
 }
 
@@ -192,7 +192,7 @@ static int cmd_hsl_range_get(const struct shell *shell, size_t argc, char *argv[
 
 	int err = bt_mesh_light_hsl_range_get(cli, NULL, &rsp);
 
-	range_print(shell, err, rsp);
+	range_print(shell, err, &rsp);
 	return err;
 }
 
@@ -219,7 +219,7 @@ static int hsl_range_set(const struct shell *shell, size_t argc, char *argv[], b
 		struct bt_mesh_light_hsl_range_status rsp;
 		int err = bt_mesh_light_hsl_range_set(cli, NULL, &set, &rsp);
 
-		range_print(shell, err, rsp);
+		range_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_light_hsl_range_set_unack(cli, NULL, &set);
@@ -236,11 +236,11 @@ static int cmd_hsl_range_set_unack(const struct shell *shell, size_t argc, char 
 	return hsl_range_set(shell, argc, argv, false);
 }
 
-static void hue_print(const struct shell *shell, int err, struct bt_mesh_light_hue_status rsp)
+static void hue_print(const struct shell *shell, int err, struct bt_mesh_light_hue_status *rsp)
 {
 	if (!err) {
-		shell_print(shell, "Current level: %d, target level: %d, rem time: %d", rsp.current,
-			    rsp.target, rsp.remaining_time);
+		shell_print(shell, "Current level: %d, target level: %d, rem time: %d",
+			    rsp->current, rsp->target, rsp->remaining_time);
 	}
 }
 
@@ -255,7 +255,7 @@ static int cmd_hue_get(const struct shell *shell, size_t argc, char *argv[])
 
 	int err = bt_mesh_light_hue_get(cli, NULL, &rsp);
 
-	hue_print(shell, err, rsp);
+	hue_print(shell, err, &rsp);
 	return err;
 }
 
@@ -277,7 +277,7 @@ static int hue_set(const struct shell *shell, size_t argc, char *argv[], bool ac
 		struct bt_mesh_light_hue_status rsp;
 		int err = bt_mesh_light_hue_set(cli, NULL, &set, &rsp);
 
-		hue_print(shell, err, rsp);
+		hue_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_light_hue_set_unack(cli, NULL, &set);
@@ -295,11 +295,11 @@ static int cmd_hue_set_unack(const struct shell *shell, size_t argc, char *argv[
 }
 
 static void saturation_print(const struct shell *shell, int err,
-			     struct bt_mesh_light_sat_status rsp)
+			     struct bt_mesh_light_sat_status *rsp)
 {
 	if (!err) {
-		shell_print(shell, "Current val: %d, target val: %d, rem time: %d", rsp.current,
-			    rsp.target, rsp.remaining_time);
+		shell_print(shell, "Current val: %d, target val: %d, rem time: %d", rsp->current,
+			    rsp->target, rsp->remaining_time);
 	}
 }
 
@@ -314,7 +314,7 @@ static int cmd_saturation_get(const struct shell *shell, size_t argc, char *argv
 
 	int err = bt_mesh_light_saturation_get(cli, NULL, &rsp);
 
-	saturation_print(shell, err, rsp);
+	saturation_print(shell, err, &rsp);
 	return err;
 }
 
@@ -336,7 +336,7 @@ static int saturation_set(const struct shell *shell, size_t argc, char *argv[], 
 		struct bt_mesh_light_sat_status rsp;
 		int err = bt_mesh_light_saturation_set(cli, NULL, &set, &rsp);
 
-		saturation_print(shell, err, rsp);
+		saturation_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_light_saturation_set_unack(cli, NULL, &set);

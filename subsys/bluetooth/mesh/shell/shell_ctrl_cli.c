@@ -120,11 +120,11 @@ static int cmd_occupancy_enabled_set_unack(const struct shell *shell, size_t arg
 	return occupancy_enabled_set(shell, argc, argv, false);
 }
 
-static void onoff_print(const struct shell *shell, int err, struct bt_mesh_onoff_status rsp)
+static void onoff_print(const struct shell *shell, int err, struct bt_mesh_onoff_status *rsp)
 {
 	if (!err) {
 		shell_print(shell, "Present val: %d, target val: %d, rem time: %d",
-			    rsp.present_on_off, rsp.target_on_off, rsp.remaining_time);
+			    rsp->present_on_off, rsp->target_on_off, rsp->remaining_time);
 	}
 }
 
@@ -139,7 +139,7 @@ static int cmd_light_onoff_get(const struct shell *shell, size_t argc, char *arg
 
 	int err = bt_mesh_light_ctrl_cli_light_onoff_get(cli, NULL, &rsp);
 
-	onoff_print(shell, err, rsp);
+	onoff_print(shell, err, &rsp);
 	return err;
 }
 
@@ -162,7 +162,7 @@ static int light_onoff_set(const struct shell *shell, size_t argc, char *argv[],
 		struct bt_mesh_onoff_status rsp;
 		int err = bt_mesh_light_ctrl_cli_light_onoff_set(cli, NULL, &set, &rsp);
 
-		onoff_print(shell, err, rsp);
+		onoff_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_light_ctrl_cli_light_onoff_set_unack(cli, NULL, &set);
@@ -179,11 +179,11 @@ static int cmd_light_onoff_set_unack(const struct shell *shell, size_t argc, cha
 	return light_onoff_set(shell, argc, argv, false);
 }
 
-static void prop_print(const struct shell *shell, int err, struct sensor_value rsp)
+static void prop_print(const struct shell *shell, int err, struct sensor_value *rsp)
 {
 	if (!err) {
-		shell_print(shell, "Sensor value: decimal part: %d, fractional part: %d", rsp.val1,
-			    rsp.val2);
+		shell_print(shell, "Sensor value: decimal part: %d, fractional part: %d", rsp->val1,
+			    rsp->val2);
 	}
 }
 
@@ -200,7 +200,7 @@ static int cmd_prop_get(const struct shell *shell, size_t argc, char *argv[])
 
 	int err = bt_mesh_light_ctrl_cli_prop_get(cli, NULL, id, &rsp);
 
-	prop_print(shell, err, rsp);
+	prop_print(shell, err, &rsp);
 	return err;
 }
 
@@ -221,7 +221,7 @@ static int prop_set(const struct shell *shell, size_t argc, char *argv[], bool a
 		struct sensor_value rsp;
 		int err = bt_mesh_light_ctrl_cli_prop_set(cli, NULL, id, &set, &rsp);
 
-		prop_print(shell, err, rsp);
+		prop_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_light_ctrl_cli_prop_set_unack(cli, NULL, id, &set);

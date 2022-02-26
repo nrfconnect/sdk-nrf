@@ -14,11 +14,11 @@
 
 static struct bt_mesh_model *mod;
 
-static void status_print(const struct shell *shell, int err, struct bt_mesh_lvl_status rsp)
+static void status_print(const struct shell *shell, int err, struct bt_mesh_lvl_status *rsp)
 {
 	if (!err) {
-		shell_print(shell, "Current val: %d, target val: %d, rem time: %d", rsp.current,
-			    rsp.target, rsp.remaining_time);
+		shell_print(shell, "Current val: %d, target val: %d, rem time: %d", rsp->current,
+			    rsp->target, rsp->remaining_time);
 	}
 }
 
@@ -33,7 +33,7 @@ static int cmd_lvl_get(const struct shell *shell, size_t argc, char *argv[])
 
 	int err = bt_mesh_lvl_cli_get(cli, NULL, &rsp);
 
-	status_print(shell, err, rsp);
+	status_print(shell, err, &rsp);
 	return err;
 }
 
@@ -58,7 +58,7 @@ static int lvl_set(const struct shell *shell, size_t argc, char *argv[], bool ac
 		struct bt_mesh_lvl_status rsp;
 		int err = bt_mesh_lvl_cli_set(cli, NULL, &set, &rsp);
 
-		status_print(shell, err, rsp);
+		status_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_lvl_cli_set_unack(cli, NULL, &set);
@@ -96,7 +96,7 @@ static int delta_set(const struct shell *shell, size_t argc, char *argv[], bool 
 		struct bt_mesh_lvl_status rsp;
 		int err = bt_mesh_lvl_cli_delta_set(cli, NULL, &set, &rsp);
 
-		status_print(shell, err, rsp);
+		status_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_lvl_cli_delta_set_unack(cli, NULL, &set);
@@ -134,7 +134,7 @@ static int move_set(const struct shell *shell, size_t argc, char *argv[], bool a
 		struct bt_mesh_lvl_status rsp;
 		int err = bt_mesh_lvl_cli_move_set(cli, NULL, &set, &rsp);
 
-		status_print(shell, err, rsp);
+		status_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_lvl_cli_move_set_unack(cli, NULL, &set);
