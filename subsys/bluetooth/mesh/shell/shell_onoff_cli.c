@@ -14,11 +14,11 @@
 
 static struct bt_mesh_model *mod;
 
-static void status_print(const struct shell *shell, int err, struct bt_mesh_onoff_status rsp)
+static void status_print(const struct shell *shell, int err, struct bt_mesh_onoff_status *rsp)
 {
 	if (!err) {
 		shell_print(shell, "Present val: %d, target val: %d, rem time: %d",
-			    rsp.present_on_off, rsp.target_on_off, rsp.remaining_time);
+			    rsp->present_on_off, rsp->target_on_off, rsp->remaining_time);
 	}
 }
 
@@ -33,7 +33,7 @@ static int cmd_onoff_get(const struct shell *shell, size_t argc, char *argv[])
 
 	int err = bt_mesh_onoff_cli_get(cli, NULL, &rsp);
 
-	status_print(shell, err, rsp);
+	status_print(shell, err, &rsp);
 	return err;
 }
 
@@ -56,7 +56,7 @@ static int onoff_set(const struct shell *shell, size_t argc, char *argv[], bool 
 		struct bt_mesh_onoff_status rsp;
 		int err = bt_mesh_onoff_cli_set(cli, NULL, &set, &rsp);
 
-		status_print(shell, err, rsp);
+		status_print(shell, err, &rsp);
 		return err;
 	} else {
 		return bt_mesh_onoff_cli_set_unack(cli, NULL, &set);
