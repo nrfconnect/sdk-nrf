@@ -463,6 +463,7 @@ Other libraries
   * :ref:`esb_readme`:
 
     * Fixed a compilation error for nRF52833.
+    * Fixed default :kconfig:option:`ESB_RADIO_IRQ_PRIORITY` and :kconfig:option:`ESB_EVENT_IRQ_PRIORITY` values to match library requirements.
 
 * Added:
 
