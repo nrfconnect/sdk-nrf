@@ -47,13 +47,13 @@ config ESB_RADIO_IRQ_PRIORITY
 	int "Radio interrupt priority"
 	range 0 5 if ZERO_LATENCY_IRQS
 	range 0 6
-	default 1
+	default 0
 
 config ESB_EVENT_IRQ_PRIORITY
 	int "Event interrupt priority"
 	range 0 5 if ZERO_LATENCY_IRQS
 	range 0 6
-	default 2
+	default 1
 
 menu "Hardware selection (alter with care)"
 
