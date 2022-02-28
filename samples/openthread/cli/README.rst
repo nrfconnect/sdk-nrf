@@ -65,8 +65,8 @@ See `Testing diagnostic module`_ section for an example.
 
 .. _ot_cli_sample_thread_v12:
 
-Experimental Thread 1.2 extension
-=================================
+Optional Thread 1.2 extension
+=============================
 
 This optional extension allows you to test :ref:`available features from the Thread 1.2 Specification <thread_ug_thread_specification_options>`.
 To enable this extension, set ``-DCONF_FILE=prj_thread_1_2.conf``.
