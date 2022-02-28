@@ -169,23 +169,6 @@ static int (* const async_init_fn[ASYNC_INIT_STEP_COUNT])(const struct device *d
 	[ASYNC_INIT_STEP_CONFIGURE] = pmw3360_async_init_configure,
 };
 
-
-static struct pmw3360_data pmw3360_data;
-
-static const struct pmw3360_config pmw3360_config = {
-	.irq_gpio = GPIO_DT_SPEC_INST_GET(0, irq_gpios),
-	.bus = {
-		.bus = DEVICE_DT_GET(DT_INST_BUS(0)),
-		.config = {
-			.frequency = DT_INST_PROP(0, spi_max_frequency),
-			.operation = SPI_WORD_SET(8) | SPI_TRANSFER_MSB |
-				     SPI_MODE_CPOL | SPI_MODE_CPHA,
-			.slave = DT_INST_REG_ADDR(0),
-		}
-	},
-	.cs_gpio = SPI_CS_GPIOS_DT_SPEC_GET(DT_DRV_INST(0)),
-};
-
 static int spi_cs_ctrl(const struct device *dev, bool enable)
 {
 	const struct pmw3360_config *config = dev->config;
@@ -1060,6 +1043,27 @@ static const struct sensor_driver_api pmw3360_driver_api = {
 	.attr_set     = pmw3360_attr_set,
 };
 
-DEVICE_DT_INST_DEFINE(0, pmw3360_init, NULL, &pmw3360_data, &pmw3360_config,
-		      POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,
-		      &pmw3360_driver_api);
+#define PMW3360_DEFINE(n)						       \
+	static struct pmw3360_data data##n;				       \
+									       \
+	static const struct pmw3360_config config##n = {		       \
+		.irq_gpio = GPIO_DT_SPEC_INST_GET(n, irq_gpios),	       \
+		.bus = {						       \
+			.bus = DEVICE_DT_GET(DT_INST_BUS(n)),		       \
+			.config = {					       \
+				.frequency = DT_INST_PROP(n,		       \
+							  spi_max_frequency),  \
+				.operation = SPI_WORD_SET(8) |		       \
+					     SPI_TRANSFER_MSB |		       \
+					     SPI_MODE_CPOL | SPI_MODE_CPHA,    \
+				.slave = DT_INST_REG_ADDR(n),		       \
+			},						       \
+		},							       \
+		.cs_gpio = SPI_CS_GPIOS_DT_SPEC_GET(DT_DRV_INST(n)),	       \
+	};								       \
+									       \
+	DEVICE_DT_INST_DEFINE(n, pmw3360_init, NULL, &data##n, &config##n,     \
+			      POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,	       \
+			      &pmw3360_driver_api);
+
+DT_INST_FOREACH_STATUS_OKAY(PMW3360_DEFINE)
