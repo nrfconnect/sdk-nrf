@@ -20,9 +20,6 @@ LOG_MODULE_REGISTER(pmw3360, CONFIG_PMW3360_LOG_LEVEL);
 
 #define PMW3360_SPI_DEV_NAME DT_BUS_LABEL(DT_DRV_INST(0))
 
-#define PMW3360_IRQ_GPIO_DEV_NAME DT_INST_GPIO_LABEL(0, irq_gpios)
-#define PMW3360_IRQ_GPIO_PIN      DT_INST_GPIO_PIN(0, irq_gpios)
-
 #define PMW3360_CS_GPIO_DEV_NAME DT_INST_SPI_DEV_CS_GPIOS_LABEL(0)
 #define PMW3360_CS_GPIO_PIN      DT_INST_SPI_DEV_CS_GPIOS_PIN(0)
 
@@ -135,7 +132,6 @@ enum async_init_step {
 
 struct pmw3360_data {
 	const struct device          *cs_gpio_dev;
-	const struct device          *irq_gpio_dev;
 	const struct device          *spi_dev;
 	struct gpio_callback         irq_gpio_cb;
 	struct k_spinlock            lock;
@@ -148,6 +144,10 @@ struct pmw3360_data {
 	int                          err;
 	bool                         ready;
 	bool                         last_read_burst;
+};
+
+struct pmw3360_config {
+	struct gpio_dt_spec irq_gpio;
 };
 
 static const struct spi_config spi_cfg = {
@@ -182,6 +182,10 @@ static int (* const async_init_fn[ASYNC_INIT_STEP_COUNT])(struct pmw3360_data *d
 
 
 static struct pmw3360_data pmw3360_data;
+
+static const struct pmw3360_config pmw3360_config = {
+	.irq_gpio = GPIO_DT_SPEC_INST_GET(0, irq_gpios),
+};
 
 static int spi_cs_ctrl(struct pmw3360_data *dev_data, bool enable)
 {
@@ -685,9 +689,8 @@ static void irq_handler(const struct device *gpiob, struct gpio_callback *cb,
 {
 	int err;
 
-	err = gpio_pin_interrupt_configure(pmw3360_data.irq_gpio_dev,
-					   PMW3360_IRQ_GPIO_PIN,
-					   GPIO_INT_DISABLE);
+	err = gpio_pin_interrupt_configure_dt(&pmw3360_config.irq_gpio,
+					      GPIO_INT_DISABLE);
 	if (unlikely(err)) {
 		LOG_ERR("Cannot disable IRQ");
 		k_panic();
@@ -718,9 +721,8 @@ static void trigger_handler(struct k_work *work)
 
 	key = k_spin_lock(&pmw3360_data.lock);
 	if (pmw3360_data.data_ready_handler) {
-		err = gpio_pin_interrupt_configure(pmw3360_data.irq_gpio_dev,
-						   PMW3360_IRQ_GPIO_PIN,
-						   GPIO_INT_LEVEL_LOW);
+		err = gpio_pin_interrupt_configure_dt(&pmw3360_config.irq_gpio,
+						      GPIO_INT_LEVEL_ACTIVE);
 	}
 	k_spin_unlock(&pmw3360_data.lock, key);
 
@@ -811,29 +813,27 @@ static int pmw3360_init_cs(struct pmw3360_data *dev_data)
 	return err;
 }
 
-static int pmw3360_init_irq(struct pmw3360_data *dev_data)
+static int pmw3360_init_irq(const struct device *dev)
 {
 	int err;
+	struct pmw3360_data *dev_data = dev->data;
+	const struct pmw3360_config *dev_config = dev->config;
 
-	dev_data->irq_gpio_dev =
-		device_get_binding(PMW3360_IRQ_GPIO_DEV_NAME);
-	if (!dev_data->irq_gpio_dev) {
-		LOG_ERR("Cannot get IRQ GPIO device");
-		return -ENXIO;
+	if (!device_is_ready(dev_config->irq_gpio.port)) {
+		LOG_ERR("IRQ GPIO device not ready");
+		return -ENODEV;
 	}
 
-	err = gpio_pin_configure(dev_data->irq_gpio_dev,
-				 PMW3360_IRQ_GPIO_PIN,
-				 GPIO_INPUT | GPIO_PULL_UP);
+	err = gpio_pin_configure_dt(&dev_config->irq_gpio, GPIO_INPUT);
 	if (err) {
 		LOG_ERR("Cannot configure IRQ GPIO");
 		return err;
 	}
 
 	gpio_init_callback(&dev_data->irq_gpio_cb, irq_handler,
-			   BIT(PMW3360_IRQ_GPIO_PIN));
+			   BIT(dev_config->irq_gpio.pin));
 
-	err = gpio_add_callback(dev_data->irq_gpio_dev, &dev_data->irq_gpio_cb);
+	err = gpio_add_callback(dev_config->irq_gpio.port, &dev_data->irq_gpio_cb);
 	if (err) {
 		LOG_ERR("Cannot add IRQ GPIO callback");
 	}
@@ -866,7 +866,7 @@ static int pmw3360_init(const struct device *dev)
 		return err;
 	}
 
-	err = pmw3360_init_irq(dev_data);
+	err = pmw3360_init_irq(dev);
 	if (err) {
 		return err;
 	}
@@ -959,6 +959,7 @@ static int pmw3360_trigger_set(const struct device *dev,
 			       sensor_trigger_handler_t handler)
 {
 	struct pmw3360_data *dev_data = &pmw3360_data;
+	const struct pmw3360_config *dev_config = dev->config;
 	int err;
 
 	ARG_UNUSED(dev);
@@ -979,13 +980,11 @@ static int pmw3360_trigger_set(const struct device *dev,
 	k_spinlock_key_t key = k_spin_lock(&dev_data->lock);
 
 	if (handler) {
-		err = gpio_pin_interrupt_configure(dev_data->irq_gpio_dev,
-						   PMW3360_IRQ_GPIO_PIN,
-						   GPIO_INT_LEVEL_LOW);
+		err = gpio_pin_interrupt_configure_dt(&dev_config->irq_gpio,
+						      GPIO_INT_LEVEL_ACTIVE);
 	} else {
-		err = gpio_pin_interrupt_configure(dev_data->irq_gpio_dev,
-						   PMW3360_IRQ_GPIO_PIN,
-						   GPIO_INT_DISABLE);
+		err = gpio_pin_interrupt_configure_dt(&dev_config->irq_gpio,
+						      GPIO_INT_DISABLE);
 	}
 
 	if (!err) {
@@ -1080,6 +1079,6 @@ static const struct sensor_driver_api pmw3360_driver_api = {
 	.attr_set     = pmw3360_attr_set,
 };
 
-DEVICE_DT_INST_DEFINE(0, pmw3360_init, NULL,
-		      NULL, NULL, POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,
+DEVICE_DT_INST_DEFINE(0, pmw3360_init, NULL, &pmw3360_data, &pmw3360_config,
+		      POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,
 		      &pmw3360_driver_api);
