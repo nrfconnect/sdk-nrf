@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2019-2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/kernel.h>
+#define DT_DRV_COMPAT pixart_pmw3360
+
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/device.h>
@@ -15,8 +16,6 @@
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(pmw3360, CONFIG_PMW3360_LOG_LEVEL);
-
-#define DT_DRV_COMPAT pixart_pmw3360
 
 /* Timings defined by spec */
 #define T_NCS_SCLK	1			/* 120 ns */
@@ -193,8 +192,8 @@ static int spi_cs_ctrl(const struct device *dev, bool enable)
 static int reg_read(const struct device *dev, uint8_t reg, uint8_t *buf)
 {
 	int err;
-	struct pmw3360_data *dev_data = dev->data;
-	const struct pmw3360_config *dev_config = dev->config;
+	struct pmw3360_data *data = dev->data;
+	const struct pmw3360_config *config = dev->config;
 
 	__ASSERT_NO_MSG((reg & SPI_WRITE_BIT) == 0);
 
@@ -213,7 +212,7 @@ static int reg_read(const struct device *dev, uint8_t reg, uint8_t *buf)
 		.count = 1
 	};
 
-	err = spi_write_dt(&dev_config->bus, &tx);
+	err = spi_write_dt(&config->bus, &tx);
 	if (err) {
 		LOG_ERR("Reg read failed on SPI write");
 		return err;
@@ -231,7 +230,7 @@ static int reg_read(const struct device *dev, uint8_t reg, uint8_t *buf)
 		.count = 1,
 	};
 
-	err = spi_read_dt(&dev_config->bus, &rx);
+	err = spi_read_dt(&config->bus, &rx);
 	if (err) {
 		LOG_ERR("Reg read failed on SPI read");
 		return err;
@@ -244,7 +243,7 @@ static int reg_read(const struct device *dev, uint8_t reg, uint8_t *buf)
 
 	k_busy_wait(T_SRX);
 
-	dev_data->last_read_burst = false;
+	data->last_read_burst = false;
 
 	return 0;
 }
@@ -252,8 +251,8 @@ static int reg_read(const struct device *dev, uint8_t reg, uint8_t *buf)
 static int reg_write(const struct device *dev, uint8_t reg, uint8_t val)
 {
 	int err;
-	struct pmw3360_data *dev_data = dev->data;
-	const struct pmw3360_config *dev_config = dev->config;
+	struct pmw3360_data *data = dev->data;
+	const struct pmw3360_config *config = dev->config;
 
 	__ASSERT_NO_MSG((reg & SPI_WRITE_BIT) == 0);
 
@@ -275,7 +274,7 @@ static int reg_write(const struct device *dev, uint8_t reg, uint8_t val)
 		.count = 1
 	};
 
-	err = spi_write_dt(&dev_config->bus, &tx);
+	err = spi_write_dt(&config->bus, &tx);
 	if (err) {
 		LOG_ERR("Reg write failed on SPI write");
 		return err;
@@ -290,24 +289,24 @@ static int reg_write(const struct device *dev, uint8_t reg, uint8_t val)
 
 	k_busy_wait(T_SWX);
 
-	dev_data->last_read_burst = false;
+	data->last_read_burst = false;
 
 	return 0;
 }
 
-static int motion_burst_read(const struct device *dev, uint8_t *data,
+static int motion_burst_read(const struct device *dev, uint8_t *buf,
 			     size_t burst_size)
 {
 	int err;
-	struct pmw3360_data *dev_data = dev->data;
-	const struct pmw3360_config *dev_config = dev->config;
+	struct pmw3360_data *data = dev->data;
+	const struct pmw3360_config *config = dev->config;
 
 	__ASSERT_NO_MSG(burst_size <= PMW3360_MAX_BURST_SIZE);
 
 	/* Write any value to motion burst register only if there have been
 	 * other SPI transmissions with sensor since last burst read.
 	 */
-	if (!dev_data->last_read_burst) {
+	if (!data->last_read_burst) {
 		err = reg_write(dev, PMW3360_REG_MOTION_BURST, 0x00);
 		if (err) {
 			return err;
@@ -332,7 +331,7 @@ static int motion_burst_read(const struct device *dev, uint8_t *data,
 		.count = 1
 	};
 
-	err = spi_write_dt(&dev_config->bus, &tx);
+	err = spi_write_dt(&config->bus, &tx);
 	if (err) {
 		LOG_ERR("Motion burst failed on SPI write");
 		return err;
@@ -341,7 +340,7 @@ static int motion_burst_read(const struct device *dev, uint8_t *data,
 	k_busy_wait(T_SRAD_MOTBR);
 
 	const struct spi_buf rx_buf = {
-		.buf = data,
+		.buf = buf,
 		.len = burst_size,
 	};
 	const struct spi_buf_set rx = {
@@ -349,7 +348,7 @@ static int motion_burst_read(const struct device *dev, uint8_t *data,
 		.count = 1
 	};
 
-	err = spi_read_dt(&dev_config->bus, &rx);
+	err = spi_read_dt(&config->bus, &rx);
 	if (err) {
 		LOG_ERR("Motion burst failed on SPI read");
 		return err;
@@ -363,7 +362,7 @@ static int motion_burst_read(const struct device *dev, uint8_t *data,
 
 	k_busy_wait(T_BEXIT);
 
-	dev_data->last_read_burst = true;
+	data->last_read_burst = true;
 
 	return 0;
 }
@@ -372,8 +371,8 @@ static int burst_write(const struct device *dev, uint8_t reg, const uint8_t *buf
 		       size_t size)
 {
 	int err;
-	struct pmw3360_data *dev_data = dev->data;
-	const struct pmw3360_config *dev_config = dev->config;
+	struct pmw3360_data *data = dev->data;
+	const struct pmw3360_config *config = dev->config;
 
 	/* Write address of burst register */
 	uint8_t write_buf = reg | SPI_WRITE_BIT;
@@ -391,7 +390,7 @@ static int burst_write(const struct device *dev, uint8_t reg, const uint8_t *buf
 		return err;
 	}
 
-	err = spi_write_dt(&dev_config->bus, &tx);
+	err = spi_write_dt(&config->bus, &tx);
 	if (err) {
 		LOG_ERR("Burst write failed on SPI write");
 		return err;
@@ -401,7 +400,7 @@ static int burst_write(const struct device *dev, uint8_t reg, const uint8_t *buf
 	for (size_t i = 0; i < size; i++) {
 		write_buf = buf[i];
 
-		err = spi_write_dt(&dev_config->bus, &tx);
+		err = spi_write_dt(&config->bus, &tx);
 		if (err) {
 			LOG_ERR("Burst write failed on SPI write (data)");
 			return err;
@@ -418,7 +417,7 @@ static int burst_write(const struct device *dev, uint8_t reg, const uint8_t *buf
 
 	k_busy_wait(T_BEXIT);
 
-	dev_data->last_read_burst = false;
+	data->last_read_burst = false;
 
 	return 0;
 }
@@ -678,34 +677,34 @@ static void irq_handler(const struct device *gpiob, struct gpio_callback *cb,
 			uint32_t pins)
 {
 	int err;
-	struct pmw3360_data *dev_data = CONTAINER_OF(cb, struct pmw3360_data,
-						     irq_gpio_cb);
-	const struct device *dev = dev_data->dev;
-	const struct pmw3360_config *dev_config = dev->config;
+	struct pmw3360_data *data = CONTAINER_OF(cb, struct pmw3360_data,
+						 irq_gpio_cb);
+	const struct device *dev = data->dev;
+	const struct pmw3360_config *config = dev->config;
 
-	err = gpio_pin_interrupt_configure_dt(&dev_config->irq_gpio,
+	err = gpio_pin_interrupt_configure_dt(&config->irq_gpio,
 					      GPIO_INT_DISABLE);
 	if (unlikely(err)) {
 		LOG_ERR("Cannot disable IRQ");
 		k_panic();
 	}
 
-	k_work_submit(&dev_data->trigger_handler_work);
+	k_work_submit(&data->trigger_handler_work);
 }
 
 static void trigger_handler(struct k_work *work)
 {
 	sensor_trigger_handler_t handler;
 	int err = 0;
-	struct pmw3360_data *dev_data = CONTAINER_OF(work, struct pmw3360_data,
-						     trigger_handler_work);
-	const struct device *dev = dev_data->dev;
-	const struct pmw3360_config *dev_config = dev->config;
+	struct pmw3360_data *data = CONTAINER_OF(work, struct pmw3360_data,
+						 trigger_handler_work);
+	const struct device *dev = data->dev;
+	const struct pmw3360_config *config = dev->config;
 
-	k_spinlock_key_t key = k_spin_lock(&dev_data->lock);
+	k_spinlock_key_t key = k_spin_lock(&data->lock);
 
-	handler = dev_data->data_ready_handler;
-	k_spin_unlock(&dev_data->lock, key);
+	handler = data->data_ready_handler;
+	k_spin_unlock(&data->lock, key);
 
 	if (!handler) {
 		return;
@@ -718,12 +717,12 @@ static void trigger_handler(struct k_work *work)
 
 	handler(dev, &trig);
 
-	key = k_spin_lock(&dev_data->lock);
-	if (dev_data->data_ready_handler) {
-		err = gpio_pin_interrupt_configure_dt(&dev_config->irq_gpio,
+	key = k_spin_lock(&data->lock);
+	if (data->data_ready_handler) {
+		err = gpio_pin_interrupt_configure_dt(&config->irq_gpio,
 						      GPIO_INT_LEVEL_ACTIVE);
 	}
-	k_spin_unlock(&dev_data->lock, key);
+	k_spin_unlock(&data->lock, key);
 
 	if (unlikely(err)) {
 		LOG_ERR("Cannot re-enable IRQ");
@@ -767,25 +766,25 @@ static int pmw3360_async_init_configure(const struct device *dev)
 
 static void pmw3360_async_init(struct k_work *work)
 {
-	struct pmw3360_data *dev_data = CONTAINER_OF(work, struct pmw3360_data,
-						     init_work);
-	const struct device *dev = dev_data->dev;
+	struct pmw3360_data *data = CONTAINER_OF(work, struct pmw3360_data,
+						 init_work);
+	const struct device *dev = data->dev;
 
-	LOG_DBG("PMW3360 async init step %d", dev_data->async_init_step);
+	LOG_DBG("PMW3360 async init step %d", data->async_init_step);
 
-	dev_data->err = async_init_fn[dev_data->async_init_step](dev);
-	if (dev_data->err) {
+	data->err = async_init_fn[data->async_init_step](dev);
+	if (data->err) {
 		LOG_ERR("PMW3360 initialization failed");
 	} else {
-		dev_data->async_init_step++;
+		data->async_init_step++;
 
-		if (dev_data->async_init_step == ASYNC_INIT_STEP_COUNT) {
-			dev_data->ready = true;
+		if (data->async_init_step == ASYNC_INIT_STEP_COUNT) {
+			data->ready = true;
 			LOG_INF("PMW3360 initialized");
 		} else {
-			k_work_schedule(&dev_data->init_work,
+			k_work_schedule(&data->init_work,
 					K_MSEC(async_init_delay[
-						dev_data->async_init_step]));
+						data->async_init_step]));
 		}
 	}
 }
@@ -793,24 +792,24 @@ static void pmw3360_async_init(struct k_work *work)
 static int pmw3360_init_irq(const struct device *dev)
 {
 	int err;
-	struct pmw3360_data *dev_data = dev->data;
-	const struct pmw3360_config *dev_config = dev->config;
+	struct pmw3360_data *data = dev->data;
+	const struct pmw3360_config *config = dev->config;
 
-	if (!device_is_ready(dev_config->irq_gpio.port)) {
+	if (!device_is_ready(config->irq_gpio.port)) {
 		LOG_ERR("IRQ GPIO device not ready");
 		return -ENODEV;
 	}
 
-	err = gpio_pin_configure_dt(&dev_config->irq_gpio, GPIO_INPUT);
+	err = gpio_pin_configure_dt(&config->irq_gpio, GPIO_INPUT);
 	if (err) {
 		LOG_ERR("Cannot configure IRQ GPIO");
 		return err;
 	}
 
-	gpio_init_callback(&dev_data->irq_gpio_cb, irq_handler,
-			   BIT(dev_config->irq_gpio.pin));
+	gpio_init_callback(&data->irq_gpio_cb, irq_handler,
+			   BIT(config->irq_gpio.pin));
 
-	err = gpio_add_callback(dev_config->irq_gpio.port, &dev_data->irq_gpio_cb);
+	err = gpio_add_callback(config->irq_gpio.port, &data->irq_gpio_cb);
 	if (err) {
 		LOG_ERR("Cannot add IRQ GPIO callback");
 	}
@@ -820,14 +819,14 @@ static int pmw3360_init_irq(const struct device *dev)
 
 static int pmw3360_init(const struct device *dev)
 {
-	struct pmw3360_data *dev_data = dev->data;
-	const struct pmw3360_config *dev_config = dev->config;
+	struct pmw3360_data *data = dev->data;
+	const struct pmw3360_config *config = dev->config;
 	int err;
 
-	dev_data->dev = dev;
-	k_work_init(&dev_data->trigger_handler_work, trigger_handler);
+	data->dev = dev;
+	k_work_init(&data->trigger_handler_work, trigger_handler);
 
-	if (!spi_is_ready(&dev_config->bus)) {
+	if (!spi_is_ready(&config->bus)) {
 		LOG_ERR("SPI device not ready");
 		return -ENODEV;
 	}
@@ -848,46 +847,46 @@ static int pmw3360_init(const struct device *dev)
 		return err;
 	}
 
-	k_work_init_delayable(&dev_data->init_work, pmw3360_async_init);
+	k_work_init_delayable(&data->init_work, pmw3360_async_init);
 
-	k_work_schedule(&dev_data->init_work,
-			K_MSEC(async_init_delay[dev_data->async_init_step]));
+	k_work_schedule(&data->init_work,
+			K_MSEC(async_init_delay[data->async_init_step]));
 
 	return err;
 }
 
 static int pmw3360_sample_fetch(const struct device *dev, enum sensor_channel chan)
 {
-	struct pmw3360_data *dev_data = dev->data;
-	uint8_t data[PMW3360_BURST_SIZE];
+	struct pmw3360_data *data = dev->data;
+	uint8_t buf[PMW3360_BURST_SIZE];
 
 	if (unlikely(chan != SENSOR_CHAN_ALL)) {
 		return -ENOTSUP;
 	}
 
-	if (unlikely(!dev_data->ready)) {
+	if (unlikely(!data->ready)) {
 		LOG_DBG("Device is not initialized yet");
 		return -EBUSY;
 	}
 
-	int err = motion_burst_read(dev, data, sizeof(data));
+	int err = motion_burst_read(dev, buf, sizeof(buf));
 
 	if (!err) {
-		int16_t x = sys_get_le16(&data[PMW3360_DX_POS]);
-		int16_t y = sys_get_le16(&data[PMW3360_DY_POS]);
+		int16_t x = sys_get_le16(&buf[PMW3360_DX_POS]);
+		int16_t y = sys_get_le16(&buf[PMW3360_DY_POS]);
 
 		if (IS_ENABLED(CONFIG_PMW3360_ORIENTATION_0)) {
-			dev_data->x = -x;
-			dev_data->y = y;
+			data->x = -x;
+			data->y = y;
 		} else if (IS_ENABLED(CONFIG_PMW3360_ORIENTATION_90)) {
-			dev_data->x = y;
-			dev_data->y = x;
+			data->x = y;
+			data->y = x;
 		} else if (IS_ENABLED(CONFIG_PMW3360_ORIENTATION_180)) {
-			dev_data->x = x;
-			dev_data->y = -y;
+			data->x = x;
+			data->y = -y;
 		} else if (IS_ENABLED(CONFIG_PMW3360_ORIENTATION_270)) {
-			dev_data->x = -y;
-			dev_data->y = -x;
+			data->x = -y;
+			data->y = -x;
 		}
 	}
 
@@ -897,21 +896,21 @@ static int pmw3360_sample_fetch(const struct device *dev, enum sensor_channel ch
 static int pmw3360_channel_get(const struct device *dev, enum sensor_channel chan,
 			       struct sensor_value *val)
 {
-	struct pmw3360_data *dev_data = dev->data;
+	struct pmw3360_data *data = dev->data;
 
-	if (unlikely(!dev_data->ready)) {
+	if (unlikely(!data->ready)) {
 		LOG_DBG("Device is not initialized yet");
 		return -EBUSY;
 	}
 
 	switch (chan) {
 	case SENSOR_CHAN_POS_DX:
-		val->val1 = dev_data->x;
+		val->val1 = data->x;
 		val->val2 = 0;
 		break;
 
 	case SENSOR_CHAN_POS_DY:
-		val->val1 = dev_data->y;
+		val->val1 = data->y;
 		val->val2 = 0;
 		break;
 
@@ -926,8 +925,8 @@ static int pmw3360_trigger_set(const struct device *dev,
 			       const struct sensor_trigger *trig,
 			       sensor_trigger_handler_t handler)
 {
-	struct pmw3360_data *dev_data = dev->data;
-	const struct pmw3360_config *dev_config = dev->config;
+	struct pmw3360_data *data = dev->data;
+	const struct pmw3360_config *config = dev->config;
 	int err;
 
 	if (unlikely(trig->type != SENSOR_TRIG_DATA_READY)) {
@@ -938,26 +937,26 @@ static int pmw3360_trigger_set(const struct device *dev,
 		return -ENOTSUP;
 	}
 
-	if (unlikely(!dev_data->ready)) {
+	if (unlikely(!data->ready)) {
 		LOG_DBG("Device is not initialized yet");
 		return -EBUSY;
 	}
 
-	k_spinlock_key_t key = k_spin_lock(&dev_data->lock);
+	k_spinlock_key_t key = k_spin_lock(&data->lock);
 
 	if (handler) {
-		err = gpio_pin_interrupt_configure_dt(&dev_config->irq_gpio,
+		err = gpio_pin_interrupt_configure_dt(&config->irq_gpio,
 						      GPIO_INT_LEVEL_ACTIVE);
 	} else {
-		err = gpio_pin_interrupt_configure_dt(&dev_config->irq_gpio,
+		err = gpio_pin_interrupt_configure_dt(&config->irq_gpio,
 						      GPIO_INT_DISABLE);
 	}
 
 	if (!err) {
-		dev_data->data_ready_handler = handler;
+		data->data_ready_handler = handler;
 	}
 
-	k_spin_unlock(&dev_data->lock, key);
+	k_spin_unlock(&data->lock, key);
 
 	return err;
 }
@@ -966,14 +965,14 @@ static int pmw3360_attr_set(const struct device *dev, enum sensor_channel chan,
 			    enum sensor_attribute attr,
 			    const struct sensor_value *val)
 {
-	struct pmw3360_data *dev_data = dev->data;
+	struct pmw3360_data *data = dev->data;
 	int err;
 
 	if (unlikely(chan != SENSOR_CHAN_ALL)) {
 		return -ENOTSUP;
 	}
 
-	if (unlikely(!dev_data->ready)) {
+	if (unlikely(!data->ready)) {
 		LOG_DBG("Device is not initialized yet");
 		return -EBUSY;
 	}
