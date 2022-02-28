@@ -46,22 +46,27 @@ zb_bool_t zb_osif_timer_is_on(void)
 /*
  * Get current time, us.
  */
-zb_time_t osif_transceiver_time_get(void)
+zb_uint64_t osif_transceiver_time_get_long(void)
 {
 	return (zb_osif_timer_get_ms() * 1000);
 }
 
+zb_time_t osif_transceiver_time_get(void)
+{
+	return (zb_time_t)osif_transceiver_time_get_long();
+}
+
 void osif_sleep_using_transc_timer(zb_time_t timeout_us)
 {
-	zb_time_t tstart = osif_transceiver_time_get();
-	zb_time_t tend = tstart + timeout_us;
+	zb_uint64_t tstart = osif_transceiver_time_get_long();
+	zb_uint64_t tend = tstart + timeout_us;
 
 	if (tend < tstart) {
-		while (tend < osif_transceiver_time_get()) {
+		while (tend < osif_transceiver_time_get_long()) {
 			zb_osif_busy_loop_delay(10);
 		}
 	} else {
-		while (osif_transceiver_time_get() < tend) {
+		while (osif_transceiver_time_get_long() < tend) {
 			zb_osif_busy_loop_delay(10);
 		}
 	}

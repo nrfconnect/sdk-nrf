@@ -123,15 +123,15 @@ zb_bool_t zb_osif_timer_is_on(void)
 /*
  * Get current time, us.
  */
-zb_time_t osif_transceiver_time_get(void)
+zb_uint64_t osif_transceiver_time_get_long(void)
 {
-	zb_uint32_t time_sys;
-	zb_uint32_t time_cur;
+	zb_uint64_t time_sys;
+	zb_uint64_t time_cur;
 
 	if (zb_osif_timer_is_on() == ZB_TRUE) {
 		uint32_t ticks = 0;
 		(void)counter_get_value(zb_timer.device, &ticks);
-		time_cur = (zb_uint32_t)counter_ticks_to_us(zb_timer.device,
+		time_cur = (zb_uint64_t)counter_ticks_to_us(zb_timer.device,
 							    ticks);
 	} else {
 		time_cur = 0;
@@ -141,17 +141,22 @@ zb_time_t osif_transceiver_time_get(void)
 	return time_sys + time_cur;
 }
 
+zb_time_t osif_transceiver_time_get(void)
+{
+	return (zb_time_t)osif_transceiver_time_get_long();
+}
+
 void osif_sleep_using_transc_timer(zb_time_t timeout_us)
 {
-	zb_time_t tstart = osif_transceiver_time_get();
-	zb_time_t tend = tstart + timeout_us;
+	zb_uint64_t tstart = osif_transceiver_time_get_long();
+	zb_uint64_t tend = tstart + timeout_us;
 
 	if (tend < tstart) {
-		while (tend < osif_transceiver_time_get()) {
+		while (tend < osif_transceiver_time_get_long()) {
 			zb_osif_busy_loop_delay(10);
 		}
 	} else {
-		while (osif_transceiver_time_get() < tend) {
+		while (osif_transceiver_time_get_long() < tend) {
 			zb_osif_busy_loop_delay(10);
 		}
 	}

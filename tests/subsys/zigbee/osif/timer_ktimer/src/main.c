@@ -21,10 +21,11 @@ static void test_zb_osif_timer(void)
 	zassert_true(ZB_CHECK_TIMER_IS_ON(), "Zephyr timer stopped by ZBOSS API");
 
 	ZB_START_HW_TIMER();
-	uint32_t timestamp1 = osif_transceiver_time_get();
+	uint64_t timestamp1 = osif_transceiver_time_get_long();
 
-	k_usleep(500);
-	uint32_t timestamp2 = osif_transceiver_time_get();
+	/* The ktimer is unable to detect intervals shorter than 1ms. */
+	k_usleep(1000);
+	uint64_t timestamp2 = osif_transceiver_time_get_long();
 
 	zassert_true((timestamp2 > timestamp1),
 		     "Timer is not incrementing");
