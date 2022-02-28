@@ -106,6 +106,7 @@ enum async_init_step {
 };
 
 struct paw3212_data {
+	const struct device          *dev;
 	struct gpio_callback         irq_gpio_cb;
 	struct k_spinlock            lock;
 	int16_t                      x;
@@ -545,25 +546,33 @@ static void irq_handler(const struct device *gpiob, struct gpio_callback *cb,
 			uint32_t pins)
 {
 	int err;
+	struct paw3212_data *dev_data = CONTAINER_OF(cb, struct paw3212_data,
+						     irq_gpio_cb);
+	const struct device *dev = dev_data->dev;
+	const struct paw3212_config *dev_config = dev->config;
 
-	err = gpio_pin_interrupt_configure_dt(&paw3212_config.irq_gpio,
+	err = gpio_pin_interrupt_configure_dt(&dev_config->irq_gpio,
 					      GPIO_INT_DISABLE);
 	if (unlikely(err)) {
 		LOG_ERR("Cannot disable IRQ");
 		k_panic();
 	}
 
-	k_work_submit(&paw3212_data.trigger_handler_work);
+	k_work_submit(&dev_data->trigger_handler_work);
 }
 
 static void trigger_handler(struct k_work *work)
 {
 	sensor_trigger_handler_t handler;
 	int err = 0;
+	struct paw3212_data *dev_data = CONTAINER_OF(work, struct paw3212_data,
+						     trigger_handler_work);
+	const struct device *dev = dev_data->dev;
+	const struct paw3212_config *dev_config = dev->config;
 
-	k_spinlock_key_t key = k_spin_lock(&paw3212_data.lock);
-	handler = paw3212_data.data_ready_handler;
-	k_spin_unlock(&paw3212_data.lock, key);
+	k_spinlock_key_t key = k_spin_lock(&dev_data->lock);
+	handler = dev_data->data_ready_handler;
+	k_spin_unlock(&dev_data->lock, key);
 
 	if (!handler) {
 		return;
@@ -574,14 +583,14 @@ static void trigger_handler(struct k_work *work)
 		.chan = SENSOR_CHAN_ALL,
 	};
 
-	handler(DEVICE_DT_INST_GET(0), &trig);
+	handler(dev, &trig);
 
-	key = k_spin_lock(&paw3212_data.lock);
-	if (paw3212_data.data_ready_handler) {
-		err = gpio_pin_interrupt_configure_dt(&paw3212_config.irq_gpio,
+	key = k_spin_lock(&dev_data->lock);
+	if (dev_data->data_ready_handler) {
+		err = gpio_pin_interrupt_configure_dt(&dev_config->irq_gpio,
 						      GPIO_INT_LEVEL_ACTIVE);
 	}
-	k_spin_unlock(&paw3212_data.lock, key);
+	k_spin_unlock(&dev_data->lock, key);
 
 	if (unlikely(err)) {
 		LOG_ERR("Cannot re-enable IRQ");
@@ -650,10 +659,9 @@ static int paw3212_async_init_configure(const struct device *dev)
 
 static void paw3212_async_init(struct k_work *work)
 {
-	const struct device *dev = DEVICE_DT_INST_GET(0);
-	struct paw3212_data *dev_data = &paw3212_data;
-
-	ARG_UNUSED(work);
+	struct paw3212_data *dev_data = CONTAINER_OF(work, struct paw3212_data,
+						     init_work);
+	const struct device *dev = dev_data->dev;
 
 	LOG_DBG("PAW3212 async init step %d", dev_data->async_init_step);
 
@@ -706,16 +714,15 @@ static int paw3212_init_irq(const struct device *dev)
 
 static int paw3212_init(const struct device *dev)
 {
-	struct paw3212_data *dev_data = &paw3212_data;
+	struct paw3212_data *dev_data = dev->data;
 	const struct paw3212_config *dev_config = dev->config;
 	int err;
-
-	ARG_UNUSED(dev);
 
 	/* Assert that negative numbers are processed as expected */
 	__ASSERT_NO_MSG(-1 == expand_s12(0xFFF));
 
 	k_work_init(&dev_data->trigger_handler_work, trigger_handler);
+	dev_data->dev = dev;
 
 	if (!spi_is_ready(&dev_config->bus)) {
 		return -ENODEV;
@@ -747,11 +754,9 @@ static int paw3212_init(const struct device *dev)
 
 static int paw3212_sample_fetch(const struct device *dev, enum sensor_channel chan)
 {
-	struct paw3212_data *dev_data = &paw3212_data;
+	struct paw3212_data *dev_data = dev->data;
 	uint8_t motion_status;
 	int err;
-
-	ARG_UNUSED(dev);
 
 	if (unlikely(chan != SENSOR_CHAN_ALL)) {
 		return -ENOTSUP;
@@ -818,9 +823,7 @@ static int paw3212_sample_fetch(const struct device *dev, enum sensor_channel ch
 static int paw3212_channel_get(const struct device *dev, enum sensor_channel chan,
 			       struct sensor_value *val)
 {
-	struct paw3212_data *dev_data = &paw3212_data;
-
-	ARG_UNUSED(dev);
+	struct paw3212_data *dev_data = dev->data;
 
 	if (unlikely(!dev_data->ready)) {
 		LOG_INF("Device is not initialized yet");
@@ -849,11 +852,9 @@ static int paw3212_trigger_set(const struct device *dev,
 			       const struct sensor_trigger *trig,
 			       sensor_trigger_handler_t handler)
 {
-	struct paw3212_data *dev_data = &paw3212_data;
+	struct paw3212_data *dev_data = dev->data;
 	const struct paw3212_config *dev_config = dev->config;
 	int err;
-
-	ARG_UNUSED(dev);
 
 	if (unlikely(trig->type != SENSOR_TRIG_DATA_READY)) {
 		return -ENOTSUP;
@@ -891,10 +892,8 @@ static int paw3212_attr_set(const struct device *dev, enum sensor_channel chan,
 			    enum sensor_attribute attr,
 			    const struct sensor_value *val)
 {
-	struct paw3212_data *dev_data = &paw3212_data;
+	struct paw3212_data *dev_data = dev->data;
 	int err;
-
-	ARG_UNUSED(dev);
 
 	if (unlikely(chan != SENSOR_CHAN_ALL)) {
 		return -ENOTSUP;
