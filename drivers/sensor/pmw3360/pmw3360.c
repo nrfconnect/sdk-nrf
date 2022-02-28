@@ -126,6 +126,7 @@ enum async_init_step {
 };
 
 struct pmw3360_data {
+	const struct device          *dev;
 	struct gpio_callback         irq_gpio_cb;
 	struct k_spinlock            lock;
 	int16_t                      x;
@@ -694,25 +695,34 @@ static void irq_handler(const struct device *gpiob, struct gpio_callback *cb,
 			uint32_t pins)
 {
 	int err;
+	struct pmw3360_data *dev_data = CONTAINER_OF(cb, struct pmw3360_data,
+						     irq_gpio_cb);
+	const struct device *dev = dev_data->dev;
+	const struct pmw3360_config *dev_config = dev->config;
 
-	err = gpio_pin_interrupt_configure_dt(&pmw3360_config.irq_gpio,
+	err = gpio_pin_interrupt_configure_dt(&dev_config->irq_gpio,
 					      GPIO_INT_DISABLE);
 	if (unlikely(err)) {
 		LOG_ERR("Cannot disable IRQ");
 		k_panic();
 	}
 
-	k_work_submit(&pmw3360_data.trigger_handler_work);
+	k_work_submit(&dev_data->trigger_handler_work);
 }
 
 static void trigger_handler(struct k_work *work)
 {
 	sensor_trigger_handler_t handler;
 	int err = 0;
+	struct pmw3360_data *dev_data = CONTAINER_OF(work, struct pmw3360_data,
+						     trigger_handler_work);
+	const struct device *dev = dev_data->dev;
+	const struct pmw3360_config *dev_config = dev->config;
 
-	k_spinlock_key_t key = k_spin_lock(&pmw3360_data.lock);
-	handler = pmw3360_data.data_ready_handler;
-	k_spin_unlock(&pmw3360_data.lock, key);
+	k_spinlock_key_t key = k_spin_lock(&dev_data->lock);
+
+	handler = dev_data->data_ready_handler;
+	k_spin_unlock(&dev_data->lock, key);
 
 	if (!handler) {
 		return;
@@ -723,14 +733,14 @@ static void trigger_handler(struct k_work *work)
 		.chan = SENSOR_CHAN_ALL,
 	};
 
-	handler(DEVICE_DT_INST_GET(0), &trig);
+	handler(dev, &trig);
 
-	key = k_spin_lock(&pmw3360_data.lock);
-	if (pmw3360_data.data_ready_handler) {
-		err = gpio_pin_interrupt_configure_dt(&pmw3360_config.irq_gpio,
+	key = k_spin_lock(&dev_data->lock);
+	if (dev_data->data_ready_handler) {
+		err = gpio_pin_interrupt_configure_dt(&dev_config->irq_gpio,
 						      GPIO_INT_LEVEL_ACTIVE);
 	}
-	k_spin_unlock(&pmw3360_data.lock, key);
+	k_spin_unlock(&dev_data->lock, key);
 
 	if (unlikely(err)) {
 		LOG_ERR("Cannot re-enable IRQ");
@@ -774,10 +784,9 @@ static int pmw3360_async_init_configure(const struct device *dev)
 
 static void pmw3360_async_init(struct k_work *work)
 {
-	const struct device *dev = DEVICE_DT_INST_GET(0);
-	struct pmw3360_data *dev_data = &pmw3360_data;
-
-	ARG_UNUSED(work);
+	struct pmw3360_data *dev_data = CONTAINER_OF(work, struct pmw3360_data,
+						     init_work);
+	const struct device *dev = dev_data->dev;
 
 	LOG_DBG("PMW3360 async init step %d", dev_data->async_init_step);
 
@@ -828,12 +837,11 @@ static int pmw3360_init_irq(const struct device *dev)
 
 static int pmw3360_init(const struct device *dev)
 {
-	struct pmw3360_data *dev_data = &pmw3360_data;
+	struct pmw3360_data *dev_data = dev->data;
 	const struct pmw3360_config *dev_config = dev->config;
 	int err;
 
-	ARG_UNUSED(dev);
-
+	dev_data->dev = dev;
 	k_work_init(&dev_data->trigger_handler_work, trigger_handler);
 
 	if (!spi_is_ready(&dev_config->bus)) {
@@ -867,10 +875,8 @@ static int pmw3360_init(const struct device *dev)
 
 static int pmw3360_sample_fetch(const struct device *dev, enum sensor_channel chan)
 {
-	struct pmw3360_data *dev_data = &pmw3360_data;
+	struct pmw3360_data *dev_data = dev->data;
 	uint8_t data[PMW3360_BURST_SIZE];
-
-	ARG_UNUSED(dev);
 
 	if (unlikely(chan != SENSOR_CHAN_ALL)) {
 		return -ENOTSUP;
@@ -908,9 +914,7 @@ static int pmw3360_sample_fetch(const struct device *dev, enum sensor_channel ch
 static int pmw3360_channel_get(const struct device *dev, enum sensor_channel chan,
 			       struct sensor_value *val)
 {
-	struct pmw3360_data *dev_data = &pmw3360_data;
-
-	ARG_UNUSED(dev);
+	struct pmw3360_data *dev_data = dev->data;
 
 	if (unlikely(!dev_data->ready)) {
 		LOG_DBG("Device is not initialized yet");
@@ -939,11 +943,9 @@ static int pmw3360_trigger_set(const struct device *dev,
 			       const struct sensor_trigger *trig,
 			       sensor_trigger_handler_t handler)
 {
-	struct pmw3360_data *dev_data = &pmw3360_data;
+	struct pmw3360_data *dev_data = dev->data;
 	const struct pmw3360_config *dev_config = dev->config;
 	int err;
-
-	ARG_UNUSED(dev);
 
 	if (unlikely(trig->type != SENSOR_TRIG_DATA_READY)) {
 		return -ENOTSUP;
@@ -981,10 +983,8 @@ static int pmw3360_attr_set(const struct device *dev, enum sensor_channel chan,
 			    enum sensor_attribute attr,
 			    const struct sensor_value *val)
 {
-	struct pmw3360_data *dev_data = &pmw3360_data;
+	struct pmw3360_data *dev_data = dev->data;
 	int err;
-
-	ARG_UNUSED(dev);
 
 	if (unlikely(chan != SENSOR_CHAN_ALL)) {
 		return -ENOTSUP;
