@@ -33,10 +33,10 @@ static void test_zb_osif_timer(void)
 	zassert_false(ZB_CHECK_TIMER_IS_ON(), "Counter running");
 
 	ZB_START_HW_TIMER();
-	uint32_t timestamp1 = osif_transceiver_time_get();
+	zb_uint64_t timestamp1 = osif_transceiver_time_get_long();
 
 	k_usleep(500);
-	uint32_t timestamp2 = osif_transceiver_time_get();
+	zb_uint64_t timestamp2 = osif_transceiver_time_get_long();
 
 	zassert_true((timestamp2 > timestamp1),
 		     "Timer is not incrementing");

@@ -31,6 +31,7 @@ typedef signed short       zb_int16_t;
 typedef enum zb_bool_e zb_bool_t;
 typedef unsigned int       zb_uint32_t;
 typedef int                zb_int32_t;
+typedef unsigned long long zb_uint64_t;
 
 typedef zb_uint32_t zb_time_t;
 

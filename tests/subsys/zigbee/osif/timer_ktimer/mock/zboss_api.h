@@ -42,6 +42,11 @@ void zb_osif_busy_loop_delay(zb_uint32_t count);
 zb_time_t zb_timer_get(void);
 
 /**
- * Get current transceiver time value in usec
+ *  Get current transceiver time value in usec
  */
 zb_time_t osif_transceiver_time_get(void);
+
+/**
+ *  Get current transceiver time value in usec
+ */
+zb_uint64_t osif_transceiver_time_get_long(void);
