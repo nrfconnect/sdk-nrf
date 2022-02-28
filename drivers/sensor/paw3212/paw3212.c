@@ -20,9 +20,6 @@ LOG_MODULE_REGISTER(paw3212, CONFIG_PAW3212_LOG_LEVEL);
 
 #define PAW3212_SPI_DEV_NAME DT_BUS_LABEL(DT_DRV_INST(0))
 
-#define PAW3212_IRQ_GPIO_DEV_NAME DT_INST_GPIO_LABEL(0, irq_gpios)
-#define PAW3212_IRQ_GPIO_PIN      DT_INST_GPIO_PIN(0, irq_gpios)
-
 #define PAW3212_CS_GPIO_DEV_NAME DT_INST_SPI_DEV_CS_GPIOS_LABEL(0)
 #define PAW3212_CS_GPIO_PIN      DT_INST_SPI_DEV_CS_GPIOS_PIN(0)
 
@@ -116,7 +113,6 @@ enum async_init_step {
 
 struct paw3212_data {
 	const struct device          *cs_gpio_dev;
-	const struct device          *irq_gpio_dev;
 	const struct device          *spi_dev;
 	struct gpio_callback         irq_gpio_cb;
 	struct k_spinlock            lock;
@@ -128,6 +124,10 @@ struct paw3212_data {
 	enum async_init_step         async_init_step;
 	int                          err;
 	bool                         ready;
+};
+
+struct paw3212_config {
+	struct gpio_dt_spec irq_gpio;
 };
 
 static const struct spi_config spi_cfg = {
@@ -157,6 +157,10 @@ static int (* const async_init_fn[ASYNC_INIT_STEP_COUNT])(struct paw3212_data *d
 
 
 static struct paw3212_data paw3212_data;
+
+static const struct paw3212_config paw3212_config = {
+	.irq_gpio = GPIO_DT_SPEC_INST_GET(0, irq_gpios),
+};
 
 static int16_t expand_s12(int16_t x)
 {
@@ -543,9 +547,8 @@ static void irq_handler(const struct device *gpiob, struct gpio_callback *cb,
 {
 	int err;
 
-	err = gpio_pin_interrupt_configure(paw3212_data.irq_gpio_dev,
-					   PAW3212_IRQ_GPIO_PIN,
-					   GPIO_INT_DISABLE);
+	err = gpio_pin_interrupt_configure_dt(&paw3212_config.irq_gpio,
+					      GPIO_INT_DISABLE);
 	if (unlikely(err)) {
 		LOG_ERR("Cannot disable IRQ");
 		k_panic();
@@ -576,9 +579,8 @@ static void trigger_handler(struct k_work *work)
 
 	key = k_spin_lock(&paw3212_data.lock);
 	if (paw3212_data.data_ready_handler) {
-		err = gpio_pin_interrupt_configure(paw3212_data.irq_gpio_dev,
-						   PAW3212_IRQ_GPIO_PIN,
-						   GPIO_INT_LEVEL_LOW);
+		err = gpio_pin_interrupt_configure_dt(&paw3212_config.irq_gpio,
+						      GPIO_INT_LEVEL_ACTIVE);
 	}
 	k_spin_unlock(&paw3212_data.lock, key);
 
@@ -695,29 +697,28 @@ static int paw3212_init_cs(struct paw3212_data *dev_data)
 	return err;
 }
 
-static int paw3212_init_irq(struct paw3212_data *dev_data)
+static int paw3212_init_irq(const struct device *dev)
 {
 	int err;
+	struct paw3212_data *dev_data = dev->data;
+	const struct paw3212_config *dev_config = dev->config;
 
-	dev_data->irq_gpio_dev =
-		device_get_binding(PAW3212_IRQ_GPIO_DEV_NAME);
-	if (!dev_data->irq_gpio_dev) {
-		LOG_ERR("Cannot get IRQ GPIO device");
-		return -ENXIO;
+	if (!device_is_ready(config->irq_gpio.port)) {
+		LOG_ERR("IRQ GPIO device not ready");
+		return -ENODEV;
 	}
 
-	err = gpio_pin_configure(dev_data->irq_gpio_dev,
-				 PAW3212_IRQ_GPIO_PIN,
-				 GPIO_INPUT | GPIO_PULL_UP);
+	err = gpio_pin_configure_dt(&dev_config->irq_gpio, GPIO_INPUT);
 	if (err) {
 		LOG_ERR("Cannot configure IRQ GPIO");
 		return err;
 	}
 
 	gpio_init_callback(&dev_data->irq_gpio_cb, irq_handler,
-			   BIT(PAW3212_IRQ_GPIO_PIN));
+			   BIT(dev_config->irq_gpio.pin));
 
-	err = gpio_add_callback(dev_data->irq_gpio_dev, &dev_data->irq_gpio_cb);
+	err = gpio_add_callback(dev_config->irq_gpio.port,
+				&dev_data->irq_gpio_cb);
 
 	if (err) {
 		LOG_ERR("Cannot add IRQ GPIO callback");
@@ -754,7 +755,7 @@ static int paw3212_init(const struct device *dev)
 		return err;
 	}
 
-	err = paw3212_init_irq(dev_data);
+	err = paw3212_init_irq(dev);
 	if (err) {
 		return err;
 	}
@@ -877,6 +878,7 @@ static int paw3212_trigger_set(const struct device *dev,
 			       sensor_trigger_handler_t handler)
 {
 	struct paw3212_data *dev_data = &paw3212_data;
+	const struct paw3212_config *dev_config = dev->config;
 	int err;
 
 	ARG_UNUSED(dev);
@@ -897,13 +899,11 @@ static int paw3212_trigger_set(const struct device *dev,
 	k_spinlock_key_t key = k_spin_lock(&dev_data->lock);
 
 	if (handler) {
-		err = gpio_pin_interrupt_configure(dev_data->irq_gpio_dev,
-						   PAW3212_IRQ_GPIO_PIN,
-						   GPIO_INT_LEVEL_LOW);
+		err = gpio_pin_interrupt_configure_dt(&dev_config->irq_gpio,
+						      GPIO_INT_LEVEL_ACTIVE);
 	} else {
-		err = gpio_pin_interrupt_configure(dev_data->irq_gpio_dev,
-						   PAW3212_IRQ_GPIO_PIN,
-						   GPIO_INT_DISABLE);
+		err = gpio_pin_interrupt_configure_dt(&dev_config->irq_gpio,
+						      GPIO_INT_DISABLE);
 	}
 
 	if (!err) {
@@ -996,6 +996,6 @@ static const struct sensor_driver_api paw3212_driver_api = {
 	.attr_set     = paw3212_attr_set,
 };
 
-DEVICE_DT_INST_DEFINE(0, paw3212_init, NULL,
-		      NULL, NULL, POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,
+DEVICE_DT_INST_DEFINE(0, paw3212_init, NULL, &paw3212_data, &paw3212_config,
+		      POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,
 		      &paw3212_driver_api);
