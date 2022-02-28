@@ -143,23 +143,6 @@ static int (* const async_init_fn[ASYNC_INIT_STEP_COUNT])(const struct device *d
 	[ASYNC_INIT_STEP_CONFIGURE] = paw3212_async_init_configure,
 };
 
-
-static struct paw3212_data paw3212_data;
-
-static const struct paw3212_config paw3212_config = {
-	.irq_gpio = GPIO_DT_SPEC_INST_GET(0, irq_gpios),
-	.bus = {
-		.bus = DEVICE_DT_GET(DT_INST_BUS(0)),
-		.config = {
-			.frequency = DT_INST_PROP(0, spi_max_frequency),
-			.operation = SPI_WORD_SET(8) | SPI_TRANSFER_MSB |
-				     SPI_MODE_CPOL | SPI_MODE_CPHA,
-			.slave = DT_INST_REG_ADDR(0),
-		}
-	},
-	.cs_gpio = SPI_CS_GPIOS_DT_SPEC_GET(DT_DRV_INST(0)),
-};
-
 static int16_t expand_s12(int16_t x)
 {
 	/* Left shifting of negative values is undefined behavior, so we cannot
@@ -967,6 +950,27 @@ static const struct sensor_driver_api paw3212_driver_api = {
 	.attr_set     = paw3212_attr_set,
 };
 
-DEVICE_DT_INST_DEFINE(0, paw3212_init, NULL, &paw3212_data, &paw3212_config,
-		      POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,
-		      &paw3212_driver_api);
+#define PAW3212_DEFINE(n)						       \
+	static struct paw3212_data data##n;				       \
+									       \
+	static const struct paw3212_config config##n = {		       \
+		.irq_gpio = GPIO_DT_SPEC_INST_GET(n, irq_gpios),	       \
+		.bus = {						       \
+			.bus = DEVICE_DT_GET(DT_INST_BUS(n)),		       \
+			.config = {					       \
+				.frequency = DT_INST_PROP(n,		       \
+							  spi_max_frequency),  \
+				.operation = SPI_WORD_SET(8) |		       \
+					     SPI_TRANSFER_MSB |		       \
+					     SPI_MODE_CPOL | SPI_MODE_CPHA,    \
+				.slave = DT_INST_REG_ADDR(n),		       \
+			},						       \
+		},							       \
+		.cs_gpio = SPI_CS_GPIOS_DT_SPEC_GET(DT_DRV_INST(n)),	       \
+	};								       \
+									       \
+	DEVICE_DT_INST_DEFINE(n, paw3212_init, NULL, &data##n, &config##n,     \
+			      POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,	       \
+			      &paw3212_driver_api);
+
+DT_INST_FOREACH_STATUS_OKAY(PAW3212_DEFINE)
