@@ -83,7 +83,6 @@ Moreover, you must configure the following parameters:
 
   * ``reg`` - The slave ID number the device has on a bus.
   * ``label`` - Name of the device.
-    Used to get device binding with :c:func:`device_get_binding`.
   * ``spi-max-frequency`` - Used for setting the bus clock frequency.
 
 * Pin to which the motion sensor IRQ line is connected (``irq-gpios``).
