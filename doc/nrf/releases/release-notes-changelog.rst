@@ -91,6 +91,10 @@ For lists of protocol-specific changes, see `Protocols`_.
 Bluetooth samples
 -----------------
 
+* Added:
+
+  * :ref:`peripheral_ams_client` sample.
+
 * Updated:
 
   * :ref:`direct_test_mode` sample:
@@ -98,8 +102,6 @@ Bluetooth samples
     * Fixed handling of the disable Constant Tone Extension command.
     * The front-end module test parameters are not set to their default value after the DTM reset command.
     * Added the vendor-specific ``FEM_DEFAULT_PARAMS_SET`` command for restoring the default front-end module parameters.
-
-|no_changes_yet_note|
 
 Bluetooth mesh samples
 ----------------------
@@ -154,6 +156,10 @@ Libraries for networking
 
 Bluetooth libraries and services
 --------------------------------
+
+* Added:
+
+  * :ref:`ams_client_readme` library.
 
 * :ref:`gatt_dm_readme` library:
 
