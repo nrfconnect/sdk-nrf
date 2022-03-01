@@ -54,7 +54,6 @@ static uint8_t endpoint_name[ENDPOINT_NAME_LEN + 1];
 static uint8_t imei_buf[IMEI_LEN + sizeof("\r\nOK\r\n")];
 static struct lwm2m_ctx client = {0};
 static struct k_sem lwm2m_restart;
-static char client_psk[] = CONFIG_APP_LWM2M_PSK;
 
 static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event client_event);
 
@@ -83,6 +82,17 @@ static int lwm2m_setup(void)
 	/* use IMEI as serial number */
 	lwm2m_app_init_device(imei_buf);
 	lwm2m_init_security(&client, endpoint_name);
+
+	if (IS_ENABLED(CONFIG_LWM2M_DTLS_SUPPORT) && sizeof(CONFIG_APP_LWM2M_PSK) > 1) {
+		/* Write hard-coded PSK key to engine */
+		char buf[1 + sizeof(CONFIG_APP_LWM2M_PSK) / 2];
+		size_t len = hex2bin(CONFIG_APP_LWM2M_PSK, sizeof(CONFIG_APP_LWM2M_PSK) - 1, buf,
+				     sizeof(buf));
+
+		/* First security instance is the right one, because in bootstrap mode, */
+		/* it is the bootstrap PSK. In normal mode, it is the server key */
+		lwm2m_engine_set_opaque("0/0/5", buf, len);
+	}
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	lwm2m_init_firmware();
@@ -127,152 +137,6 @@ static int lwm2m_setup(void)
 	init_neighbour_cell_info();
 #endif
 	return 0;
-}
-
-int lwm2m_security_index_to_inst_id(int index);
-
-static int find_server_security_instance(void)
-{
-	char pathstr[10];
-	bool bootstrap;
-	int i;
-	int instance;
-	int ret;
-
-	for (i = 0; i < CONFIG_LWM2M_SECURITY_INSTANCE_COUNT; i++) {
-		instance = lwm2m_security_index_to_inst_id(i);
-		if (instance < 0) {
-			LOG_DBG("Empty instance at index %d", i);
-			continue;
-		}
-
-		snprintk(pathstr, sizeof(pathstr), "0/%d/1", instance);
-
-		ret = lwm2m_engine_get_bool(pathstr, &bootstrap);
-		if (ret < 0) {
-			LOG_ERR("Failed to check bootstrap (%d)", ret);
-			continue;
-		}
-
-		if (!bootstrap) {
-			LOG_DBG("Security instance found, %d", instance);
-			return instance;
-		}
-	}
-
-	return -1;
-}
-
-static int get_security_mode(int instance)
-{
-	char pathstr[10];
-	uint8_t security_mode;
-	int ret;
-
-	snprintk(pathstr, sizeof(pathstr), "0/%d/2", instance);
-
-	ret = lwm2m_engine_get_u8(pathstr, &security_mode);
-	if (ret < 0) {
-		LOG_ERR("Failed to obtain security mode (%d)", ret);
-		return -1;
-	}
-
-	return security_mode;
-}
-
-#if defined(CONFIG_LWM2M_DTLS_SUPPORT)
-static void provision_psk(int instance)
-{
-	char pathstr[10];
-	char psk_hex[64];
-	int ret;
-	uint8_t *identity;
-	uint16_t identity_len;
-	uint8_t *psk;
-	uint16_t psk_len;
-	uint8_t flags;
-
-	/* Obtain identity. */
-	snprintk(pathstr, sizeof(pathstr), "0/%d/3", instance);
-
-	ret = lwm2m_engine_get_res_data(pathstr, (void **)&identity, &identity_len, &flags);
-	if (ret < 0) {
-		LOG_ERR("Failed to obtain client identity (%d)", ret);
-		return;
-	}
-
-	/* Obtain PSK. */
-	snprintk(pathstr, sizeof(pathstr), "0/%d/5", instance);
-
-	ret = lwm2m_engine_get_res_data(pathstr, (void **)&psk, &psk_len, &flags);
-	if (ret < 0) {
-		LOG_ERR("Failed to obtain PSK (%d)", ret);
-		return;
-	}
-
-	/* Convert PSK to a format accepted by the modem. */
-	psk_len = bin2hex(psk, psk_len, psk_hex, sizeof(psk_hex));
-	if (psk_len == 0) {
-		LOG_ERR("PSK is too large to convert (%d)", -EOVERFLOW);
-		return;
-	}
-
-	lwm2m_rd_client_stop(&client, rd_client_event, false);
-	lte_lc_offline();
-
-	ret = modem_key_mgmt_write(client.tls_tag, MODEM_KEY_MGMT_CRED_TYPE_PSK, psk_hex, psk_len);
-	if (ret < 0) {
-		LOG_ERR("Setting cred tag %d type %d failed (%d)", client.tls_tag,
-			MODEM_KEY_MGMT_CRED_TYPE_PSK, ret);
-		goto exit;
-	}
-
-	ret = modem_key_mgmt_write(client.tls_tag, MODEM_KEY_MGMT_CRED_TYPE_IDENTITY, identity,
-				   identity_len);
-	if (ret < 0) {
-		LOG_ERR("Setting cred tag %d type %d failed (%d)", client.tls_tag,
-			MODEM_KEY_MGMT_CRED_TYPE_IDENTITY, ret);
-	}
-
-exit:
-	lte_lc_connect();
-	lwm2m_rd_client_start(&client, endpoint_name, false, rd_client_event, NULL);
-}
-#endif
-
-static void provision_credentials(void)
-{
-	int security_instance;
-	int security_mode;
-
-	security_instance = find_server_security_instance();
-	if (security_instance == -1) {
-		LOG_ERR("No security instance found");
-		return;
-	}
-
-	security_mode = get_security_mode(security_instance);
-	if (security_mode == -1) {
-		return;
-	}
-
-	switch (security_mode) {
-#if defined(CONFIG_LWM2M_DTLS_SUPPORT)
-	case LWM2M_SECURITY_PRE_SHARED_KEY:
-		LOG_DBG("PSK mode, provisioning key and identity.");
-		client.tls_tag = CONFIG_LWM2M_CLIENT_UTILS_SERVER_TLS_TAG;
-		provision_psk(security_instance);
-		break;
-#endif
-
-	case LWM2M_SECURITY_NO_SEC:
-		LOG_DBG("NoSec mode, no provisioning needed.");
-		break;
-
-	default:
-		LOG_ERR("Unsupported security mode (%d)", -ENOTSUP);
-		break;
-	}
 }
 
 static void date_time_event_handler(const struct date_time_evt *evt)
@@ -324,8 +188,6 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_TRANSFER_COMPLETE:
 		LOG_DBG("Bootstrap transfer complete");
-		LOG_DBG("Boostrap finished, provisioning credentials.");
-		provision_credentials();
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_FAILURE:
@@ -399,10 +261,8 @@ static void modem_connect(void)
 
 void main(void)
 {
-	uint32_t flags = IS_ENABLED(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP) ?
-				       LWM2M_RD_CLIENT_FLAG_BOOTSTRAP :
-				       0;
 	int ret;
+	uint32_t bootstrap_flags = 0;
 
 	LOG_INF(APP_BANNER);
 
@@ -427,14 +287,6 @@ void main(void)
 		LOG_ERR("Unable to init settings (%d)", ret);
 		return;
 	}
-#endif
-
-	/* Load *all* persistent settings */
-	settings_load();
-
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
-	/* Modem FW update needs to be verified before modem is used. */
-	lwm2m_verify_modem_fw_update();
 #endif
 
 	LOG_INF("Initializing modem.");
@@ -469,27 +321,19 @@ void main(void)
 		return;
 	}
 
+	/* Load *all* persistent settings */
+	settings_load();
+
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
+	/* Modem FW update needs to be verified before modem is used. */
+	lwm2m_verify_modem_fw_update();
+#endif
+
 	ret = lwm2m_init_image();
 	if (ret < 0) {
 		LOG_ERR("Failed to setup image properties (%d)", ret);
 		return;
 	}
-
-#if defined(CONFIG_LWM2M_DTLS_SUPPORT)
-	ret = modem_key_mgmt_write(client.tls_tag, MODEM_KEY_MGMT_CRED_TYPE_PSK, client_psk,
-				   strlen(client_psk));
-	if (ret < 0) {
-		LOG_ERR("Setting cred tag %d type %d failed (%d)", client.tls_tag,
-			MODEM_KEY_MGMT_CRED_TYPE_PSK, ret);
-	}
-
-	ret = modem_key_mgmt_write(client.tls_tag, MODEM_KEY_MGMT_CRED_TYPE_IDENTITY, endpoint_name,
-				   strlen(endpoint_name));
-	if (ret < 0) {
-		LOG_ERR("Setting cred tag %d type %d failed (%d)", client.tls_tag,
-			MODEM_KEY_MGMT_CRED_TYPE_IDENTITY, ret);
-	}
-#endif
 
 	modem_connect();
 
@@ -513,9 +357,14 @@ void main(void)
 #endif
 
 	while (true) {
-		lwm2m_rd_client_start(&client, endpoint_name, flags, rd_client_event, NULL);
+		if (lwm2m_security_needs_bootstrap()) {
+			bootstrap_flags = LWM2M_RD_CLIENT_FLAG_BOOTSTRAP;
+		} else {
+			bootstrap_flags = 0;
+		}
 
-		k_sem_take(&lwm2m_restart, K_FOREVER);
+		lwm2m_rd_client_start(&client, endpoint_name, bootstrap_flags, rd_client_event,
+				      NULL);
 
 		LOG_INF("LwM2M restart requested. The sample will try to"
 			" re-establish network connection.");

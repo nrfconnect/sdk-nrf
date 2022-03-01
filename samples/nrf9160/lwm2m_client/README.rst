@@ -272,10 +272,13 @@ The following instructions describe how to register your device to `Leshan Demo 
 2. Set the server address in the client:
 
    a. Open :file:`src/prj.conf`.
-   #. Set :ref:`CONFIG_APP_LWM2M_SERVER <CONFIG_APP_LWM2M_SERVER>` to the correct server URL:
+   #. Set :kconfig:`CONFIG_LWM2M_CLIENT_UTILS_SERVER` to the correct server URL:
 
       * For `Leshan Demo Server`_ - ``coaps://leshan.eclipseprojects.io:5684`` (`public Leshan Demo Server`_).
       * For `Coiote Device Management`_ - ``coaps://eu.iot.avsystem.cloud:5684`` (`Coiote Device Management server`_).
+      * For `Leshan Boostrap Server Demo web UI <public Leshan Bootstrap Server Demo_>`_ - ``coaps://leshan.eclipseprojects.io:5784``
+      * For Coiote bootstrap server - ``coaps://eu.iot.avsystem.cloud:5694``
+   #. Set :kconfig:`CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP` if bootstrap is used.
 
 #. Set :ref:`CONFIG_APP_LWM2M_PSK <CONFIG_APP_LWM2M_PSK>` to the hexadecimal representation of the PSK used when registering the device with the server.
 
@@ -329,11 +332,6 @@ Check and configure the following configuration options for the sample:
 
 Server options
 --------------
-
-.. _CONFIG_APP_LWM2M_SERVER:
-
-CONFIG_APP_LWM2M_SERVER - Configuration for LwM2M server URL
-   The sample configuration sets the URL of the LwM2M server to be used. The URL must not be prefixed with the application protocol.
 
 .. _CONFIG_APP_LWM2M_PSK:
 
