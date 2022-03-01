@@ -46,7 +46,10 @@
 #define IDENTIFY_LED LED_RED
 
 /* Button used to enter the Identify mode */
-#define IDENTIFY_BUTTON DK_BTN1_MSK
+#define IDENTIFY_MODE_BUTTON DK_BTN1_MSK
+
+/* Button to start Factory Reset */
+#define FACTORY_RESET_BUTTON IDENTIFY_MODE_BUTTON
 
 BUILD_ASSERT(DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_console),
 				zephyr_cdc_acm_uart),
@@ -172,15 +175,27 @@ static void identify_callback(zb_bufid_t bufid)
 
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
-	/* Calculate bitmask of buttons that are pressed and have changed their state */
-	uint32_t buttons = button_state & has_changed;
+	if (IDENTIFY_MODE_BUTTON & has_changed) {
+		if (IDENTIFY_MODE_BUTTON & button_state) {
+			/* Button changed its state to pressed */
+		} else {
+			/* Button changed its state to released */
+			if (was_factory_reset_done()) {
+				/* The long press was for Factory Reset */
+				LOG_DBG("After Factory Reset - ignore button release");
+			} else   {
+				/* Button released before Factory Reset */
 
-	/* Inform default signal handler about user input at the device */
-	user_input_indicate();
+				/* Start identification mode */
+				ZB_SCHEDULE_APP_CALLBACK(start_identifying, 0);
 
-	if (buttons & IDENTIFY_BUTTON) {
-		ZB_SCHEDULE_APP_CALLBACK(start_identifying, 0);
+				/* Inform default signal handler about user input at the device */
+				user_input_indicate();
+			}
+		}
 	}
+
+	check_factory_reset_button(button_state, has_changed);
 }
 
 static void gpio_init(void)
@@ -255,6 +270,8 @@ void main(void)
 	#endif /* CONFIG_USB_DEVICE_STACK */
 
 	LOG_INF("Starting...");
+
+	register_factory_reset_button(FACTORY_RESET_BUTTON);
 
 	gpio_init();
 	weather_station_init();

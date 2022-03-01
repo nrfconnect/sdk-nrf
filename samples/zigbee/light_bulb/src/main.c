@@ -86,8 +86,8 @@
 /* Nordic PWM nodes don't have flags cells in their specifiers, so
  * this is just future-proofing.
  */
-#define FLAGS_OR_ZERO(node) \
-	COND_CODE_1(DT_PHA_HAS_CELL(node, pwms, flags), \
+#define FLAGS_OR_ZERO(node)				\
+	COND_CODE_1(DT_PHA_HAS_CELL(node, pwms, flags),	\
 		    (DT_PWMS_FLAGS(node)), (0))
 
 #if DT_NODE_HAS_STATUS(PWM_DK_LED4_NODE, okay)
@@ -106,18 +106,21 @@
 #error Define ZB_ROUTER_ROLE to compile router source code.
 #endif
 
+/* Button to start Factory Reset */
+#define FACTORY_RESET_BUTTON IDENTIFY_MODE_BUTTON
+
 LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
 /* Main application customizable context.
  * Stores all settings and static values.
  */
 typedef struct {
-	zb_zcl_basic_attrs_ext_t         basic_attr;
-	zb_zcl_identify_attrs_t          identify_attr;
-	zb_zcl_scenes_attrs_t            scenes_attr;
-	zb_zcl_groups_attrs_t            groups_attr;
-	zb_zcl_on_off_attrs_t            on_off_attr;
-	zb_zcl_level_control_attrs_t     level_control_attr;
+	zb_zcl_basic_attrs_ext_t basic_attr;
+	zb_zcl_identify_attrs_t identify_attr;
+	zb_zcl_scenes_attrs_t scenes_attr;
+	zb_zcl_groups_attrs_t groups_attr;
+	zb_zcl_on_off_attrs_t on_off_attr;
+	zb_zcl_level_control_attrs_t level_control_attr;
 } bulb_device_ctx_t;
 
 /* Zigbee device application context storage. */
@@ -216,12 +219,24 @@ static void start_identifying(zb_bufid_t bufid)
  */
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
-	/* Calculate bitmask of buttons that are pressed and have changed their state. */
-	uint32_t buttons = button_state & has_changed;
+	if (IDENTIFY_MODE_BUTTON & has_changed) {
+		if (IDENTIFY_MODE_BUTTON & button_state) {
+			/* Button changed its state to pressed */
+		} else {
+			/* Button changed its state to released */
+			if (was_factory_reset_done()) {
+				/* The long press was for Factory Reset */
+				LOG_DBG("After Factory Reset - ignore button release");
+			} else   {
+				/* Button released before Factory Reset */
 
-	if (buttons & IDENTIFY_MODE_BUTTON) {
-		ZB_SCHEDULE_APP_CALLBACK(start_identifying, 0);
+				/* Start identification mode */
+				ZB_SCHEDULE_APP_CALLBACK(start_identifying, 0);
+			}
+		}
 	}
+
+	check_factory_reset_button(button_state, has_changed);
 }
 
 /**@brief Function for initializing additional PWM leds. */
@@ -377,10 +392,10 @@ static void identify_cb(zb_bufid_t bufid)
 static void bulb_clusters_attr_init(void)
 {
 	/* Basic cluster attributes data */
-	dev_ctx.basic_attr.zcl_version   = ZB_ZCL_VERSION;
-	dev_ctx.basic_attr.app_version   = BULB_INIT_BASIC_APP_VERSION;
+	dev_ctx.basic_attr.zcl_version = ZB_ZCL_VERSION;
+	dev_ctx.basic_attr.app_version = BULB_INIT_BASIC_APP_VERSION;
 	dev_ctx.basic_attr.stack_version = BULB_INIT_BASIC_STACK_VERSION;
-	dev_ctx.basic_attr.hw_version    = BULB_INIT_BASIC_HW_VERSION;
+	dev_ctx.basic_attr.hw_version = BULB_INIT_BASIC_HW_VERSION;
 
 	/* Use ZB_ZCL_SET_STRING_VAL to set strings, because the first byte
 	 * should contain string length without trailing zero.
@@ -462,10 +477,10 @@ static void zcl_device_cb(zb_bufid_t bufid)
 	case ZB_ZCL_LEVEL_CONTROL_SET_VALUE_CB_ID:
 		LOG_INF("Level control setting to %d",
 			device_cb_param->cb_param.level_control_set_value_param
-				.new_value);
+			.new_value);
 		level_control_set_value(
 			device_cb_param->cb_param.level_control_set_value_param
-				.new_value);
+			.new_value);
 		break;
 
 	case ZB_ZCL_SET_ATTR_VALUE_CB_ID:
@@ -485,7 +500,7 @@ static void zcl_device_cb(zb_bufid_t bufid)
 			}
 		} else if (cluster_id == ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL) {
 			uint16_t value = device_cb_param->cb_param.
-				      set_attr_value_param.values.data16;
+					 set_attr_value_param.values.data16;
 
 			LOG_INF("level control attribute setting to %hd",
 				value);
@@ -546,6 +561,7 @@ void main(void)
 	if (err) {
 		LOG_ERR("settings initialization failed");
 	}
+	register_factory_reset_button(FACTORY_RESET_BUTTON);
 
 	/* Register callback for handling ZCL commands. */
 	ZB_ZCL_REGISTER_DEVICE_CB(zcl_device_cb);

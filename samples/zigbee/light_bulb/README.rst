@@ -58,7 +58,12 @@ LED 4:
     Blinks when the light bulb is in Identify mode.
 
 Button 4:
-    Sets the light bulb in Identify mode.
+    Depending on how long the button is pressed:
+
+    * If pressed for less than five seconds, it starts or cancels the Identify mode.
+    * If pressed for five seconds, it initiates the factory reset of the device.
+      The length of the button press can be edited using the :kconfig:`CONFIG_FACTORY_RESET_PRESS_TIME_SECONDS` Kconfig option from :ref:`lib_zigbee_application_utilities`.
+      Releasing the button within this time does not trigger the factory reset procedure.
 
 Building and running
 ********************
