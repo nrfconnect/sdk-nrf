@@ -67,6 +67,10 @@
 		};
 	};
 
+	npm1100_force_pwm_mode: npm1100_force_pwm_mode {
+		status = "okay";
+	};
+
 	chosen {
 		zephyr,console = &cdc_acm_uart0;
 	};
