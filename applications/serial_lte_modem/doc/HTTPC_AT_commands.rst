@@ -118,22 +118,33 @@ Syntax
 
 ::
 
-   AT#XHTTPCREQ=<method>,<resource>,<headers>[,<payload_length>]
+   AT#XHTTPCREQ=<method>,<resource>[,<headers>[,<content_type>,<content_length>[,<chunked_transfer>]]]
 
 * The ``<method>`` is a string.
   It represents the request method string.
 * The ``<resource>`` is a string.
   It represents the target resource to apply the request.
-* The ``<headers>`` is a string.
-  It represents the header field of the request.
+* The ``<headers>`` parameter is a string.
+  It represents the *optional headers* field of the request.
   Each header field should end with ``<CR><LF>``.
   Any occurrence of "\\r\\n" (4 bytes) inside is replaced by ``<CR><LF>`` (2 bytes).
-* The ``<payload_length>`` is an integer.
-  It represents the length of the payload.
-  If ``payload_length`` is greater than ``0``, the SLM will enter data mode and expect the upcoming UART input data as payload.
-  The SLM will then send the payload to the HTTP server until the ``payload_length`` bytes are sent.
-  To abort sending the payload, terminate data mode by sending the terminator string defined in :kconfig:`CONFIG_SLM_DATAMODE_TERMINATOR`.
-  The default pattern string is "+++".
+
+  .. note::
+     ``Host``, ``Content-Type`` and ``Content-Length`` must not be included.
+
+* The ``<content_type>`` is a string.
+  It represents the HTTP/1.1 ``Content-Type`` of the payload.
+* The ``<content_length>`` is an integer.
+  It represents the HTTP/1.1 ``Content-Length`` of the payload.
+  This parameter is ignored if ``<chunked_transfer>`` is not ``0``.
+* The ``<chunked_transfer>`` is an integer.
+  It indicates if the payload will be sent in chunked mode or not.
+
+  * ``0`` - normal mode (default)
+  * ``1`` - chunked mode
+
+  If ``<content_length>`` is greater than ``0`` or ``<chunked_transfer>`` is not ``0``, the SLM application enters ``slm_data_mode``.
+  The SLM sends the payload to the HTTP server until the terminator string defined in :kconfig:`CONFIG_SLM_DATAMODE_TERMINATOR` is received.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -151,41 +162,63 @@ The ``<state>`` value can assume one of the following values:
 Example
 ~~~~~~~
 
-The following example sends a GET request to retrieve data from the server without any optional header.
+The following example sends a GET request to retrieve data from the server without any optional header:
 
 ::
 
-   AT#XHTTPCREQ="GET","/get?foo1=bar1&foo2=bar2",""
+   AT#XHTTPCCON=1,"postman-echo.com",80
+
+   #XHTTPCCON: 1
 
    OK
 
+   AT#XHTTPCREQ="GET","/get?foo1=bar1&foo2=bar2"
+
+   OK
 
    #XHTTPCREQ: 0
 
-   #XHTTPCRSP:341,0
    HTTP/1.1 200 OK
-   Date: Thu, 11 Mar 2021 04:36:19 GMT
+   Date: Tue, 01 Mar 2022 05:22:27 GMT
    Content-Type: application/json; charset=utf-8
    Content-Length: 244
    Connection: keep-alive
-   ETag: W/"f4-ZKlqfH53aEj3f4zb0kDtYvHD+XU"
+   ETag: W/"f4-/OfnvALw5zFsaujZvrn62iBBcKo"
    Vary: Accept-Encoding
-   set-cookie: sails.sid=s%3AHGcBwpqlDDUZhU16VzuQkfTMhWhA4W1T.%2Bgm1%2BezKGo2JnWxaB5yYDo%2FNh0NbnJzJjEnkMcrfdEI; Path=/; HttpOnly
+   set-cookie: sails.sid=s%3AzTRyDH581ybGp-7K1k78tkBmVLeybFTY.Z7c5iNEaK0hH5hIMsuJpuZEH18d%2FbtSqOuhRAh1GmYM; Path=/; HttpOnly
 
 
-   #XHTTPCRSP:243,0
-   {"args":{"foo1":"bar1","foo2":"bar2"},"headers":{"x-forwarded-proto":"http","x-forwarded-port":"80","host":"postman-echo.com","x-amzn-trace-id":"Root=1-60499e43-67a96f1e18fec45b1db78c25"},"url":"http://postman-echo.com/get?foo1=bar1&foo2=bar2"
-   #XHTTPCRSP:1,0
-   }
-   #XHTTPCRSP:0,1
+   #XHTTPCRSP:337,1
+   {"args":{"foo1":"bar1","foo2":"bar2"},"headers":{"x-forwarded-proto":"http","x-forwarded-port":"80","host":"postman-echo.com","x-amzn-trace-id":"Root=1-621dad93-79bf415c46aa37f925498d97"},"url":"http://postman-echo.com/get?foo1=bar1&foo2=bar2"}
+   #XHTTPCRSP:244,1
 
-The following example sends a GET request with some headers that are delimited by "\\r\\n".
+The following example sends a POST request, with headers delimited by "\\r\\n", and with a JSON payload:
 
 ::
 
-   AT#XHTTPCREQ="GET","/instruments/150771004/temperature-values/?page=1 HTTP/1.1","Host: demo.abc.com\r\nAccept: application/vnd.api+json\r\nAuthorization: Basic ZGVtbzpkZxxx\r\n"
+   AT#XHTTPCREQ="POST","/post","User-Agent: slm\r\naccept: */*\r\n","application/json",17
 
    OK
+
+   #XHTTPCREQ: 1
+   {"hello":"world"}+++
+   #XHTTPCREQ: 0
+
+   OK
+
+   HTTP/1.1 200 OK
+   Date: Tue, 01 Mar 2022 05:22:28 GMT
+   Content-Type: application/json; charset=utf-8
+   Content-Length: 359
+   Connection: keep-alive
+   ETag: W/"167-2YuosrP0ARLW1c5oeDiW7MId014"
+   Vary: Accept-Encoding
+   set-cookie: sails.sid=s%3A_b9-1rOslsmoczQUGjv93SicuBw8f6lb.x%2B6xkThAVld5%2FpykDn7trZ9JGh%2Fir3MVU0izYBfB0Kg; Path=/; HttpOnly
+
+
+   #XHTTPCRSP:342,1
+   {"args":{},"data":{"hello":"world"},"files":{},"form":{},"headers":{"x-forwarded-proto":"http","x-forwarded-port":"80","host":"postman-echo.com","x-amzn-trace-id":"Root=1-621dad94-2fcac1637dc28f172c6346e6","content-length":"17","user-agent":"slm","accept":"*/*","content-type":"application/json"},"json":{"hello":"world"},"url":"http://postman-echo.com/post"}
+   #XHTTPCRSP:359,1
 
 Read command
 ------------
@@ -222,49 +255,3 @@ Syntax
   * ``1`` - The entire HTTP response has been received.
 
 * The ``<response>`` is the raw data of the HTTP response, including headers and body.
-
-Example
-~~~~~~~
-
-The following example sends a PUT request to send data in JSON format to the server, with an optional header.
-
-::
-
-   AT#XHTTPCCON=1,"example.com",80
-   #XHTTPCCON: 1
-
-   OK
-   AT#XHTTPCREQ="PUT","/iot/v1/device/12345678901","User-Agent: curl/7.58.0
-   accept: */*
-   CK: DEADBEEFDEADBEEFDE
-   Content-Type: application/json
-   Content-Length: 224
-   ",224
-   OK
-
-   #XHTTPCREQ: 1
-   {"id":"123456789","name":"iamchanged","desc":"My Hygrometer","type":"general","uri":"http://a.b.c.d/hygrometer","lat":24.95,"lon":121.16,"attributes":[{"key":"label","value":"thermometer"},{"key":"region","value":"Taiwan"}]}
-   OK
-
-   #XHTTPCREQ: 0
-   #XHTTPCRSP:408,0
-   HTTP/1.1 200
-   Server: nginx/1.17.3
-   Date: Wed, 17 Mar 2021 08:43:56 GMT
-   Content-Type: application/json;charset=UTF-8
-   Transfer-Encoding: chunked
-   Connection: keep-alive
-   X-Application-Context: iotapi:pob:80
-   Vary: Origin
-   X-Content-Type-Options: nosniff
-   X-XSS-Protection: 1; mode=block
-   Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-   Pragma: no-cache
-   Expires: 0
-   X-Frame-Options: DENY
-
-
-   #XHTTPCRSP:22,0
-   {"id":"12345678901"}
-
-   #XHTTPCRSP:0,1
