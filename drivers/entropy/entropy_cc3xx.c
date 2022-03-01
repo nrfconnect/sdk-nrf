@@ -26,60 +26,49 @@
 
 #define CTR_DRBG_MAX_REQUEST 1024
 
-static int entropy_cc3xx_rng_get_entropy(
-	const struct device *dev,
-	uint8_t *buffer,
-	uint16_t length)
+static int entropy_cc3xx_rng_get_entropy(const struct device *dev,
+					 uint8_t *buffer, uint16_t length)
 {
 	int res = -EINVAL;
 
 	__ASSERT_NO_MSG(dev != NULL);
 	__ASSERT_NO_MSG(buffer != NULL);
 
-
 #if defined(CONFIG_BUILD_WITH_TFM)
-
 	res = psa_generate_random(buffer, length);
 	if (res != PSA_SUCCESS) {
 		return -EINVAL;
 	}
-
 #else
 	size_t olen;
 	size_t offset = 0;
 	size_t chunk_size = CTR_DRBG_MAX_REQUEST;
-	/** This is a call from a secure app, in which case entropy is
-	 *  gathered using CC3xx HW using the CTR_DRBG features of the
-	 *  nrf_cc310_platform/nrf_cc312_platform library.
+	/* This is a call from a secure app, in which case entropy is
+	 * gathered using CC3xx HW using the CTR_DRBG features of the
+	 * nrf_cc310_platform/nrf_cc312_platform library.
 	 */
 	while (offset < length) {
-
 		if ((length - offset) < CTR_DRBG_MAX_REQUEST) {
 			chunk_size = length - offset;
 		}
 
-		#if defined(CONFIG_SPM)
-			/** This is a call from a non-secure app that
-			 * enables secure services, in which case entropy
-			 * is gathered by calling through SPM.
-			 */
-			res = spm_request_random_number(buffer + offset,
-								chunk_size,
-								&olen);
-		#else
-			/** This is a call from a secure app, in which
-			 * case entropy is gathered using CC3xx HW
-			 * using the CTR_DRBG features of the
-			 * nrf_cc310_platform/nrf_cc312_platform library.
-			 * When the given context is NULL, a global internal
-			 * ctr_drbg context is being used.
-			 */
-			res = nrf_cc3xx_platform_ctr_drbg_get(NULL,
-										buffer + offset,
-										chunk_size,
-										&olen);
-		#endif
-
+#if defined(CONFIG_SPM)
+		/* This is a call from a non-secure app that enables secure
+		 * services, in which case entropy is gathered by calling
+		 * through SPM.
+		 */
+		res = spm_request_random_number(buffer + offset,
+						chunk_size, &olen);
+#else
+		/* This is a call from a secure app, in which case entropy is
+		 * gathered using CC3xx HW using the CTR_DRBG features of the
+		 * nrf_cc310_platform/nrf_cc312_platform library.
+		 * When the given context is NULL, a global internal ctr_drbg
+		 * context is being used.
+		 */
+		res = nrf_cc3xx_platform_ctr_drbg_get(NULL, buffer + offset,
+						      chunk_size, &olen);
+#endif
 		if (olen != chunk_size) {
 			return -EINVAL;
 		}
@@ -99,25 +88,24 @@ static int entropy_cc3xx_rng_init(const struct device *dev)
 {
 	(void)dev;
 
-	#if defined(CONFIG_BUILD_WITH_TFM)
-		int ret = -1;
+#if defined(CONFIG_BUILD_WITH_TFM)
+	int ret = -1;
 
-		ret = psa_crypto_init();
-		if (ret != PSA_SUCCESS) {
-			return -EINVAL;
-		}
+	ret = psa_crypto_init();
+	if (ret != PSA_SUCCESS) {
+		return -EINVAL;
+	}
+#elif !defined(CONFIG_SPM)
+	int ret = 0;
 
-	#elif !defined(CONFIG_SPM)
-		int ret = 0;
-
-		/* When the given context is NULL, a global internal
-		 * ctr_drbg context is being used.
-		 */
-		ret = nrf_cc3xx_platform_ctr_drbg_init(NULL, NULL, 0);
-		if (ret != 0) {
-			return -EINVAL;
-		}
-	#endif
+	/* When the given context is NULL, a global internal
+	 * ctr_drbg context is being used.
+	 */
+	ret = nrf_cc3xx_platform_ctr_drbg_init(NULL, NULL, 0);
+	if (ret != 0) {
+		return -EINVAL;
+	}
+#endif
 
 	return 0;
 }
