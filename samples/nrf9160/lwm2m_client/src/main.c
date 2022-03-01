@@ -53,6 +53,8 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 static uint8_t endpoint_name[ENDPOINT_NAME_LEN + 1];
 static uint8_t imei_buf[IMEI_LEN + sizeof("\r\nOK\r\n")];
 static struct lwm2m_ctx client = {0};
+static bool reconnect;
+static int reconnection_counter;
 static struct k_sem lwm2m_restart;
 
 static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event client_event);
@@ -180,10 +182,12 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_REG_FAILURE:
 		LOG_DBG("Bootstrap registration failure!");
+		k_sem_give(&lwm2m_restart);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_REG_COMPLETE:
 		LOG_DBG("Bootstrap registration complete");
+		reconnection_counter = 0;
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_TRANSFER_COMPLETE:
@@ -191,10 +195,12 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_FAILURE:
-		LOG_DBG("Registration failure!");
+		LOG_WRN("Registration failure!");
+		k_sem_give(&lwm2m_restart);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_COMPLETE:
+		reconnection_counter = 0;
 		LOG_DBG("Registration complete");
 		/* Get current time and date */
 		date_time_update_async(date_time_event_handler);
@@ -205,6 +211,7 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE_FAILURE:
 		LOG_DBG("Registration update failure!");
+		k_sem_give(&lwm2m_restart);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE_COMPLETE:
@@ -213,6 +220,8 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_DEREGISTER_FAILURE:
 		LOG_DBG("Deregister failure!");
+		reconnect = true;
+		k_sem_give(&lwm2m_restart);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_DISCONNECT:
@@ -225,6 +234,7 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_NETWORK_ERROR:
 		LOG_ERR("LwM2M engine reported a network error.");
+		reconnect = true;
 		k_sem_give(&lwm2m_restart);
 		break;
 	}
@@ -335,6 +345,7 @@ void main(void)
 		return;
 	}
 
+	reconnection_counter = 0;
 	modem_connect();
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT)
@@ -366,18 +377,25 @@ void main(void)
 		lwm2m_rd_client_start(&client, endpoint_name, bootstrap_flags, rd_client_event,
 				      NULL);
 
-		LOG_INF("LwM2M restart requested. The sample will try to"
-			" re-establish network connection.");
+		/* Wait for restart event */
+		k_sem_take(&lwm2m_restart, K_FOREVER);
 
 		/* Stop the LwM2M engine. */
 		lwm2m_rd_client_stop(&client, rd_client_event, false);
 
-		/* Try to reconnect to the network. */
-		ret = lte_lc_offline();
-		if (ret < 0) {
-			LOG_ERR("Failed to put LTE link in offline state (%d)", ret);
-		}
+		if (reconnect) {
+			reconnect = false;
+			reconnection_counter++;
 
-		modem_connect();
+			LOG_INF("LwM2M restart requested. The sample will try to"
+				" re-establish network connection.");
+
+			/* Try to reconnect to the network. */
+			ret = lte_lc_offline();
+			if (ret < 0) {
+				LOG_ERR("Failed to put LTE link in offline state (%d)", ret);
+			}
+			modem_connect();
+		}
 	}
 }
