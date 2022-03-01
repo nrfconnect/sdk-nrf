@@ -19,11 +19,6 @@ The most relevant changes that are present on the main branch of the |NCS|, as c
    Add the sections you need, as only a handful of sections is kept when the changelog is cleaned.
    "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and so on.
 
-Highlights
-**********
-
-There are no entries for this section yet.
-
 Known issues
 ************
 
