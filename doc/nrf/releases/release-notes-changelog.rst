@@ -166,6 +166,10 @@ nrf9160 samples
     * Enabled building of bootloader FOTA update files.
     * Corrected handling of the bootloader FOTA updates.
 
+  * :ref:`lib_lwm2m_client_utils` library:
+
+    * Updated the library to store credentials and server settings permanently on bootstrap.
+
 Gazell samples
 --------------
 

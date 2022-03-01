@@ -35,6 +35,15 @@ extern "C" {
  * @brief Initialize Security object
  */
 int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint);
+
+/**
+ * @brief Check if we already have client credentials stored
+ *
+ * @return true If we need bootstrap.
+ * @return false If we already have client credentials.
+ */
+bool lwm2m_security_needs_bootstrap(void);
+
 #endif
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT)
