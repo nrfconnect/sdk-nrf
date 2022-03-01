@@ -159,7 +159,7 @@ Thread samples
     * Added :file:`prj_thread_1_2.conf` to support Thread v1.2 build for the nRF52 and nRF53 Series devices.
     * Added child image configuration files for network core builds for Thread v1.2 build.
 
-nrf9160 samples
+nRF9160 samples
 ---------------
 
 * Added:
@@ -168,7 +168,7 @@ nrf9160 samples
 
 * Updated:
 
-   * :ref:`at_monitor_sample` sample:
+  * :ref:`at_monitor_sample` sample:
 
     * Added ``denied``, ``unknown``, ``roaming``, and ``UICC failure`` CEREG status codes to :c:func:`cereg_mon`.
 
@@ -191,6 +191,10 @@ nrf9160 samples
   * :ref:`lib_lwm2m_client_utils` library:
 
     * Updated the library to store credentials and server settings permanently on bootstrap.
+
+  * :ref:`lwm2m_client` sample:
+
+    * Reworked the retry logic so that the sample can fall back to bootstrap mode and need not always restart the LTE connection.
 
   * :ref:`download_sample` sample:
 
