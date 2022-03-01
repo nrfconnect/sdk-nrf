@@ -235,7 +235,35 @@ void user_input_indicate(void);
  *                     should be enabled or disabled.
  */
 void zigbee_configure_sleepy_behavior(bool enable);
-#endif
+#endif /* CONFIG_ZIGBEE_ROLE_END_DEVICE */
+
+#if defined CONFIG_ZIGBEE_FACTORY_RESET
+
+/**@brief Registers which button and for how long has to be pressed in order to do Factory Reset.
+ *
+ * @note Must be called once before check_factory_reset_button function can be used.
+ *
+ * @param[in] button Development Kit button to be used as Factory Reset button.
+ */
+void register_factory_reset_button(uint32_t button);
+
+/**@brief Checks if Factory Reset button was pressed.
+ *        If so, it initiates the procedure of checking if it was pressed for specified time.
+ *
+ * @note register_factory_reset_button function has to be called before (once)
+ *
+ * @param[in] button_state state of Development Kit buttons; passed from button handler
+ * @param[in] has_changed determines which buttons changed; passed from button handler
+ */
+void check_factory_reset_button(uint32_t button_state, uint32_t has_changed);
+
+/**@brief Indicates whether Factory Reset was started as a result of a button press or not.
+ *
+ * @return true if Factory Reset was started; false if Factory Reset was not started
+ */
+bool was_factory_reset_done(void);
+
+#endif /* CONFIG_ZIGBEE_FACTORY_RESET */
 
 #endif /* ZIGBEE_APP_UTILS_H__ */
 

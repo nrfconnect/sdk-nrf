@@ -133,8 +133,14 @@ Power switch (SW1):
     Used for switching Thingy:53 on and off.
 
 Button (SW3):
-    Used to start and cancel the Identify mode.
-    Additionally, pressing the button indicates user input, which allows a Sleepy End Device to start the network rejoin procedure if it was stopped (for example, after timeout).
+    Depending on how long the button is pressed:
+
+    * If pressed for less than five seconds, it starts or cancels the Identify mode.
+    * If pressed for five seconds, it initiates the factory reset of the device.
+      The length of the button press can be edited using the :kconfig:`CONFIG_FACTORY_RESET_PRESS_TIME_SECONDS` Kconfig option from :ref:`lib_zigbee_application_utilities`.
+      Releasing the button within this time does not trigger the factory reset procedure.
+
+    Additionally, pressing the button shortly or releasing it before five second has elapsed indicates user input, which allows a Sleepy End Device to start the network rejoin procedure if it was previously stopped (for example, after timeout).
 
 USB port:
     Used for getting logs from the device.

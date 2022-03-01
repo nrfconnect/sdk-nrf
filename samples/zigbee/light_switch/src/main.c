@@ -74,6 +74,9 @@
 /* Button ID used to enable sleepy behavior. */
 #define BUTTON_SLEEPY              DK_BTN3_MSK
 
+/* Button to start Factory Reset */
+#define FACTORY_RESET_BUTTON       DK_BTN4_MSK
+
 /* Transition time for a single step operation in 0.1 sec units.
  * 0xFFFF - immediate change.
  */
@@ -91,21 +94,21 @@
 LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
 struct bulb_context {
-	zb_uint8_t     endpoint;
-	zb_uint16_t    short_addr;
+	zb_uint8_t endpoint;
+	zb_uint16_t short_addr;
 	struct k_timer find_alarm;
 };
 
 struct buttons_context {
-	uint32_t       state;
-	atomic_t       long_poll;
+	uint32_t state;
+	atomic_t long_poll;
 	struct k_timer alarm;
 };
 
 static struct bulb_context bulb_ctx;
 static struct buttons_context buttons_ctx;
-static zb_uint8_t  attr_zcl_version = ZB_ZCL_VERSION;
-static zb_uint8_t  attr_power_source = ZB_ZCL_BASIC_POWER_SOURCE_UNKNOWN;
+static zb_uint8_t attr_zcl_version = ZB_ZCL_VERSION;
+static zb_uint8_t attr_power_source = ZB_ZCL_BASIC_POWER_SOURCE_UNKNOWN;
 static zb_uint16_t attr_identify_time;
 
 /* Declare attribute list for Basic cluster. */
@@ -166,6 +169,8 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 	/* Inform default signal handler about user input at the device. */
 	user_input_indicate();
 
+	check_factory_reset_button(button_state, has_changed);
+
 	if (bulb_ctx.short_addr == 0xFFFF) {
 		LOG_DBG("No bulb found yet.");
 		return;
@@ -208,6 +213,9 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 				light_switch_send_on_off, cmd_id, 0);
 			ZB_ERROR_CHECK(zb_err_code);
 		}
+		break;
+	default:
+		break;
 	}
 }
 
@@ -286,17 +294,17 @@ static void find_light_bulb_cb(zb_bufid_t bufid)
 {
 	/* Get the beginning of the response. */
 	zb_zdo_match_desc_resp_t *resp =
-			       (zb_zdo_match_desc_resp_t *) zb_buf_begin(bufid);
+		(zb_zdo_match_desc_resp_t *) zb_buf_begin(bufid);
 	/* Get the pointer to the parameters buffer, which stores APS layer
 	 * response.
 	 */
-	zb_apsde_data_indication_t *ind  = ZB_BUF_GET_PARAM(bufid,
-						zb_apsde_data_indication_t);
+	zb_apsde_data_indication_t *ind = ZB_BUF_GET_PARAM(bufid,
+							   zb_apsde_data_indication_t);
 	zb_uint8_t *match_ep;
 
 	if ((resp->status == ZB_ZDP_STATUS_SUCCESS) &&
-		(resp->match_len > 0) &&
-		(bulb_ctx.short_addr == 0xFFFF)) {
+	    (resp->match_len > 0) &&
+	    (bulb_ctx.short_addr == 0xFFFF)) {
 
 		/* Match EP list follows right after response header. */
 		match_ep = (zb_uint8_t *)(resp + 1);
@@ -304,7 +312,7 @@ static void find_light_bulb_cb(zb_bufid_t bufid)
 		/* We are searching for exact cluster, so only 1 EP
 		 * may be found.
 		 */
-		bulb_ctx.endpoint   = *match_ep;
+		bulb_ctx.endpoint = *match_ep;
 		bulb_ctx.short_addr = ind->src_addr;
 
 		LOG_INF("Found bulb addr: %d ep: %d",
@@ -344,17 +352,17 @@ static void find_light_bulb(zb_bufid_t bufid)
 	 * zb_zdo_match_desc_param_t request.
 	 */
 	req = zb_buf_initial_alloc(bufid,
-		sizeof(zb_zdo_match_desc_param_t) + (1) * sizeof(zb_uint16_t));
+				   sizeof(zb_zdo_match_desc_param_t) + (1) * sizeof(zb_uint16_t));
 
-	req->nwk_addr         = MATCH_DESC_REQ_ROLE;
+	req->nwk_addr = MATCH_DESC_REQ_ROLE;
 	req->addr_of_interest = MATCH_DESC_REQ_ROLE;
-	req->profile_id       = ZB_AF_HA_PROFILE_ID;
+	req->profile_id = ZB_AF_HA_PROFILE_ID;
 
 	/* We are searching for 2 clusters: On/Off and Level Control Server. */
-	req->num_in_clusters  = 2;
+	req->num_in_clusters = 2;
 	req->num_out_clusters = 0;
-	req->cluster_list[0]  = ZB_ZCL_CLUSTER_ID_ON_OFF;
-	req->cluster_list[1]  = ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL;
+	req->cluster_list[0] = ZB_ZCL_CLUSTER_ID_ON_OFF;
+	req->cluster_list[1] = ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL;
 
 	/* Set 0xFFFF to reset short address in order to parse
 	 * only one response.
@@ -438,9 +446,9 @@ static void ota_evt_handler(const struct zigbee_fota_evt *evt)
  */
 void zboss_signal_handler(zb_bufid_t bufid)
 {
-	zb_zdo_app_signal_hdr_t    *sig_hndler = NULL;
-	zb_zdo_app_signal_type_t    sig = zb_get_app_signal(bufid, &sig_hndler);
-	zb_ret_t                    status = ZB_GET_APP_SIGNAL_STATUS(bufid);
+	zb_zdo_app_signal_hdr_t *sig_hndler = NULL;
+	zb_zdo_app_signal_type_t sig = zb_get_app_signal(bufid, &sig_hndler);
+	zb_ret_t status = ZB_GET_APP_SIGNAL_STATUS(bufid);
 
 	/* Update network status LED. */
 	zigbee_led_status_update(bufid, ZIGBEE_NETWORK_STATE_LED);
@@ -557,6 +565,7 @@ void main(void)
 	/* Initialize. */
 	configure_gpio();
 	alarm_timers_init();
+	register_factory_reset_button(FACTORY_RESET_BUTTON);
 
 	zigbee_erase_persistent_storage(ERASE_PERSISTENT_CONFIG);
 	zb_set_ed_timeout(ED_AGING_TIMEOUT_64MIN);
