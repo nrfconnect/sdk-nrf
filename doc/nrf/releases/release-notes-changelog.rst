@@ -86,6 +86,13 @@ nRF9160: Asset Tracker v2
 
   * For nRF Cloud builds, the configuration section in the shadow is now initialized during the cloud connection process.
 
+nRF9160: Serial LTE Modem
+-------------------------
+
+* Updated:
+
+  * Enhanced the #XHTTPCREQ AT command for better HTTP upload and download support.
+
 nRF Desktop
 -----------
 
