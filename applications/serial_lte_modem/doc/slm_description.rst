@@ -205,6 +205,10 @@ The following configuration files are provided:
   You can include it by adding ``-DOVERLAY_CONFIG=overlay-native_tls.conf`` to your build command.
   See :ref:`cmake_options`.
 
+* :file:`overlay-secure_bootloader.conf` - This configuration file contains additional configuration options that are required to use :ref:`ug_bootloader`.
+  You can include it by adding ``-DOVERLAY_CONFIG=overlay-secure_bootloader`` to your build command.
+  See :ref:`cmake_options`.
+
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for the nRF9160 DK.
   This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
 
