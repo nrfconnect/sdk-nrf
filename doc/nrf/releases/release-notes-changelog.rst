@@ -179,6 +179,17 @@ Gazell samples
 
     There are now four different sample pages, where each Host sample must be used along with its corresponding Device sample.
 
+Zigbee samples
+--------------
+
+* Added support for the factory reset functionality from :ref:`lib_zigbee_application_utilities` in the following:
+
+  * :ref:`zigbee_light_bulb_sample`
+  * :ref:`zigbee_light_switch_sample`
+  * :ref:`zigbee_network_coordinator_sample`
+  * :ref:`zigbee_shell_sample`
+  * :ref:`zigbee_template_sample`
+
 Drivers
 =======
 
@@ -260,6 +271,11 @@ sdk-nrfxlib
 -----------
 
 See the changelog for each library in the :doc:`nfxlib documentation <nrfxlib:README>` for additional information.
+
+Libraries for Zigbee
+--------------------
+
+* Added factory reset functionality in :ref:`lib_zigbee_application_utilities`.
 
 Scripts
 =======

@@ -32,23 +32,38 @@
 
 #define IEEE_ADDR_BUF_SIZE       17
 
+#if defined CONFIG_ZIGBEE_FACTORY_RESET
+#define FACTORY_RESET_PROBE_TIME K_SECONDS(1)
+#endif /* CONFIG_ZIGBEE_FACTORY_RESET */
+
 LOG_MODULE_REGISTER(zigbee_app_utils, CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL);
 
 /* Rejoin-procedure related variables. */
-static bool           stack_initialised;
-static bool           is_rejoin_procedure_started;
-static bool           is_rejoin_stop_requested;
-static bool           is_rejoin_in_progress;
-static uint8_t           rejoin_attempt_cnt;
+static bool stack_initialised;
+static bool is_rejoin_procedure_started;
+static bool is_rejoin_stop_requested;
+static bool is_rejoin_in_progress;
+static uint8_t rejoin_attempt_cnt;
 #if defined CONFIG_ZIGBEE_ROLE_END_DEVICE
-static volatile bool  wait_for_user_input;
-static volatile bool  is_rejoin_start_scheduled;
+static volatile bool wait_for_user_input;
+static volatile bool is_rejoin_start_scheduled;
 #endif
 
 /* Forward declarations. */
 static void rejoin_the_network(zb_uint8_t param);
 static void start_network_rejoin(void);
 static void stop_network_rejoin(zb_uint8_t was_scheduled);
+
+
+#if defined CONFIG_ZIGBEE_FACTORY_RESET
+/* Factory Reset related variables. */
+struct factory_reset_context_t {
+	uint32_t button;
+	bool reset_done;
+	struct k_timer timer;
+};
+static struct factory_reset_context_t factory_reset_context;
+#endif /* CONFIG_ZIGBEE_FACTORY_RESET */
 
 /**@brief Function to set the Erase persistent storage
  *        depending on the erase pin
@@ -168,8 +183,8 @@ addr_type_t parse_address(const char *input, zb_addr_u *addr,
 	}
 
 	return parse_hex_str(input, len, (uint8_t *)addr, len / 2, true) ?
-			     result :
-			     ADDR_INVALID;
+	       result :
+	       ADDR_INVALID;
 }
 
 zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
@@ -378,7 +393,7 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 				status);
 			ret_code = ZB_SCHEDULE_APP_ALARM(
 				(zb_callback_t)
-					bdb_start_top_level_commissioning,
+				bdb_start_top_level_commissioning,
 				ZB_BDB_NETWORK_FORMATION,
 				ZB_TIME_ONE_SECOND);
 		}
@@ -408,7 +423,7 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 				 * start network formation.
 				 */
 				comm_status = bdb_start_top_level_commissioning(
-						ZB_BDB_NETWORK_FORMATION);
+					ZB_BDB_NETWORK_FORMATION);
 			} else {
 				/* Start network rejoin procedure. */
 				start_network_rejoin();
@@ -426,9 +441,9 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 		 * of its child nodes left the network.
 		 */
 		zb_zdo_signal_leave_indication_params_t
-			*leave_ind_params = ZB_ZDO_SIGNAL_GET_PARAMS(
-				sig_hndler,
-				zb_zdo_signal_leave_indication_params_t);
+		*leave_ind_params = ZB_ZDO_SIGNAL_GET_PARAMS(
+			sig_hndler,
+			zb_zdo_signal_leave_indication_params_t);
 		char ieee_addr_buf[IEEE_ADDR_BUF_SIZE] = { 0 };
 		int addr_len;
 
@@ -530,9 +545,9 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 		 *  - If the TCLK exchange is successful.
 		 */
 		zb_zdo_signal_device_authorized_params_t
-			*authorize_params = ZB_ZDO_SIGNAL_GET_PARAMS(
-				sig_hndler,
-				zb_zdo_signal_device_authorized_params_t);
+		*authorize_params = ZB_ZDO_SIGNAL_GET_PARAMS(
+			sig_hndler,
+			zb_zdo_signal_device_authorized_params_t);
 		char ieee_addr_buf[IEEE_ADDR_BUF_SIZE] = { 0 };
 		int addr_len;
 
@@ -632,7 +647,7 @@ void zigbee_led_status_update(zb_bufid_t bufid, uint32_t led_idx)
 
 	switch (sig) {
 	case ZB_BDB_SIGNAL_DEVICE_REBOOT:
-		/* fall-through */
+	/* fall-through */
 	case ZB_BDB_SIGNAL_STEERING:
 		if (status == RET_OK) {
 			dk_set_led_on(led_idx);
@@ -720,14 +735,14 @@ static void start_network_rejoin(void)
 		is_rejoin_in_progress = false;
 
 		if (!is_rejoin_procedure_started) {
-			is_rejoin_procedure_started   = true;
-			is_rejoin_stop_requested      = false;
-			is_rejoin_in_progress         = false;
-			rejoin_attempt_cnt            = 0;
+			is_rejoin_procedure_started = true;
+			is_rejoin_stop_requested = false;
+			is_rejoin_in_progress = false;
+			rejoin_attempt_cnt = 0;
 
 #if defined CONFIG_ZIGBEE_ROLE_END_DEVICE
-			wait_for_user_input           = false;
-			is_rejoin_start_scheduled     = false;
+			wait_for_user_input = false;
+			is_rejoin_start_scheduled = false;
 
 			zb_ret_t zb_err_code = ZB_SCHEDULE_APP_ALARM(
 				stop_network_rejoin,
@@ -855,4 +870,58 @@ void zigbee_configure_sleepy_behavior(bool enable)
 		LOG_INF("Disabling sleepy end device behavior.");
 	}
 }
-#endif
+#endif /* CONFIG_ZIGBEE_ROLE_END_DEVICE */
+
+#if defined CONFIG_ZIGBEE_FACTORY_RESET
+
+static void factory_reset_timer_expired(struct k_timer *timer_id)
+{
+	uint32_t button_state = 0;
+	uint32_t has_changed = 0;
+
+	dk_read_buttons(&button_state, &has_changed);
+	if (button_state & factory_reset_context.button) {
+		LOG_DBG("FR button pressed for %d [s]", timer_id->status);
+		if (timer_id->status >= CONFIG_FACTORY_RESET_PRESS_TIME_SECONDS) {
+			/* Schedule a callback so that Factory Reset is started
+			 * from ZBOSS scheduler context
+			 */
+			LOG_DBG("Schedule Factory Reset; stop timer; set factory_reset_done flag");
+			ZB_SCHEDULE_APP_CALLBACK(zb_bdb_reset_via_local_action, 0);
+			k_timer_stop(timer_id);
+			factory_reset_context.reset_done = true;
+		}
+	} else {
+		LOG_DBG("FR button released prematurely");
+		k_timer_stop(timer_id);
+	}
+}
+
+void register_factory_reset_button(uint32_t button)
+{
+	factory_reset_context.button = button;
+	factory_reset_context.reset_done = false;
+
+	k_timer_init(&factory_reset_context.timer, factory_reset_timer_expired, NULL);
+}
+
+void check_factory_reset_button(uint32_t button_state, uint32_t has_changed)
+{
+	if (button_state & has_changed & factory_reset_context.button) {
+		LOG_DBG("Clear factory_reset_done flag; start Factory Reset timer");
+
+		/* Reset flag indicating that Factory Reset was initiated */
+		factory_reset_context.reset_done = false;
+
+		/* Start timer checking button press time */
+		k_timer_start(&factory_reset_context.timer,
+			      FACTORY_RESET_PROBE_TIME,
+			      FACTORY_RESET_PROBE_TIME);
+	}
+}
+
+bool was_factory_reset_done(void)
+{
+	return factory_reset_context.reset_done;
+}
+#endif /* CONFIG_ZIGBEE_FACTORY_RESET */

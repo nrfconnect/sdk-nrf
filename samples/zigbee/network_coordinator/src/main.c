@@ -52,14 +52,17 @@
 #error Define ZB_COORDINATOR_ROLE to compile coordinator source code.
 #endif
 
+/* Button to start Factory Reset */
+#define FACTORY_RESET_BUTTON IDENTIFY_MODE_BUTTON
+
 LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
 /* Main application customizable context.
  * Stores all settings and static values.
  */
 struct zb_device_ctx {
-	zb_zcl_basic_attrs_t     basic_attr;
-	zb_zcl_identify_attrs_t  identify_attr;
+	zb_zcl_basic_attrs_t basic_attr;
+	zb_zcl_identify_attrs_t identify_attr;
 };
 
 /* Zigbee device application context storage. */
@@ -187,9 +190,26 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 		} else {
 			LOG_INF("Top level comissioning hasn't finished yet!");
 		}
-	} else if (buttons & IDENTIFY_MODE_BUTTON) {
-		ZB_SCHEDULE_APP_CALLBACK(start_identifying, 0);
 	}
+
+	if (IDENTIFY_MODE_BUTTON & has_changed) {
+		if (IDENTIFY_MODE_BUTTON & button_state) {
+			/* Button changed its state to pressed */
+		} else {
+			/* Button changed its state to released */
+			if (was_factory_reset_done()) {
+				/* The long press was for Factory Reset */
+				LOG_DBG("After Factory Reset - ignore button release");
+			} else   {
+				/* Button released before Factory Reset */
+
+				/* Start identification mode */
+				ZB_SCHEDULE_APP_CALLBACK(start_identifying, 0);
+			}
+		}
+	}
+
+	check_factory_reset_button(button_state, has_changed);
 }
 
 /**@brief Function for initializing LEDs and Buttons. */
@@ -256,7 +276,7 @@ void zboss_signal_handler(zb_bufid_t bufid)
 			zb_err_code = ZB_SCHEDULE_APP_ALARM(
 				steering_finished, 0,
 				ZB_TIME_ONE_SECOND *
-					ZB_ZGP_DEFAULT_COMMISSIONING_WINDOW);
+				ZB_ZGP_DEFAULT_COMMISSIONING_WINDOW);
 			ZB_ERROR_CHECK(zb_err_code);
 		}
 		break;
@@ -275,7 +295,7 @@ void zboss_signal_handler(zb_bufid_t bufid)
 			zb_err_code = ZB_SCHEDULE_APP_ALARM(
 				steering_finished, 0,
 				ZB_TIME_ONE_SECOND *
-					ZB_ZGP_DEFAULT_COMMISSIONING_WINDOW);
+				ZB_ZGP_DEFAULT_COMMISSIONING_WINDOW);
 			ZB_ERROR_CHECK(zb_err_code);
 		}
 	} break;
@@ -312,6 +332,7 @@ void main(void)
 
 	/* Initialize */
 	configure_gpio();
+	register_factory_reset_button(FACTORY_RESET_BUTTON);
 
 	/* Register device context (endpoints). */
 	ZB_AF_REGISTER_DEVICE_CTX(&nwk_coordinator);
