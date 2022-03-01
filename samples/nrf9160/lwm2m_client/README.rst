@@ -226,27 +226,24 @@ The following instructions describe how to register your device to `Leshan Demo 
          #. In the :guilabel:`BOOTSTRAP` tab, click on :guilabel:`ADD CLIENTS CONFIGURATION`.
          #. Click on :guilabel:`Add clients configuration`.
          #. Enter your Client Endpoint name - urn\:imei\:*your device IMEI*.
+         #. Click :guilabel:`NEXT` and select :guilabel:`Using (D)TLS` and enter following data:
+
+            * Identity - urn\:imei\:*your device IMEI*
+            * Key - ``000102030405060708090a0b0c0d0e0f``
+         #. Click :guilabel:`NEXT` and leave default paths to be deleted.
          #. Click :guilabel:`NEXT` and in the :guilabel:`LWM2M Server Configuration` section, enter the following data:
 
             * Server URL - ``coaps://leshan.eclipseprojects.io:5684``
             * Select :guilabel:`Pre-shared Key` as the :guilabel:`Security Mode`
             * Identity - urn\:imei\:*your device IMEI*
             * Key - ``000102030405060708090a0b0c0d0e0f``
-         #. Click :guilabel:`NEXT` and in the :guilabel:`LWM2M Bootstrap Server Configuration` section enter the following data:
-
-            * Server URL - ``coaps://leshan.eclipseprojects.io:5784``
-            * Select :guilabel:`Pre-shared Key` as the :guilabel:`Security Mode`
-            * Identity - urn\:imei\:*your device IMEI*
-            * Key - ``000102030405060708090a0b0c0d0e0f``
 
             This information is used when your client connects to the server.
-            If you choose :guilabel:`Pre-shared Key`, add the values for :guilabel:`Identity` and :guilabel:`Key` fields (the configured Identity or Key need not match the Bootstrap Server configuration).
-            The same credentials will be provided in the :guilabel:`Leshan Demo Server Security configuration` page (see :ref:`dtls_support` for instructions).
-            If :guilabel:`No Security` is chosen, no further configuration is needed.
-            In this mode, no DTLS will be used for the communication with the LwM2M server.
+            If you choose :guilabel:`Pre-shared Key`, you must add the values for :guilabel:`Identity` and :guilabel:`Key` fields (the configured Key need not match the Bootstrap Server configuration).
+            The same credentials must be provided in the :guilabel:`Leshan Demo Server Security configuration` page (see :ref:`dtls_support` for instructions).
 
-         #. After adding values for the fields under both the :guilabel:`LwM2M Server Configuration` and :guilabel:`LwM2M Bootstrap Server Configuration` tabs, click :guilabel:`Add`.
-
+         #. Click :guilabel:`NEXT` and do not select :guilabel:`Add a Bootstrap Server`.
+         #. Click :guilabel:`ADD`.
 
 
       .. tab:: Coiote Device Management
@@ -261,6 +258,8 @@ The following instructions describe how to register your device to `Leshan Demo 
             * Friendly Name - *recognisable name*
             * Security mode - psk (Pre-Shared Key)
             * Key - 000102030405060708090a0b0c0d0e0f
+
+            The Coiote bootstrap server automatically creates an account for the LwM2M server using the same device endpoint name and random PSK key.
 
          #. Click :guilabel:`Add device`.
 
