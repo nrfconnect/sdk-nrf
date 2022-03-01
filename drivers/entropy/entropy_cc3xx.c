@@ -29,16 +29,19 @@
 static int entropy_cc3xx_rng_get_entropy(const struct device *dev,
 					 uint8_t *buffer, uint16_t length)
 {
-	int res = -EINVAL;
-
 	__ASSERT_NO_MSG(dev != NULL);
 	__ASSERT_NO_MSG(buffer != NULL);
+	int err = EINVAL;
 
 #if defined(CONFIG_BUILD_WITH_TFM)
-	res = psa_generate_random(buffer, length);
-	if (res != PSA_SUCCESS) {
-		return -EINVAL;
+	psa_status_t status = PSA_ERROR_GENERIC_ERROR;
+
+	status = psa_generate_random(buffer, length);
+	if (status == PSA_SUCCESS) {
+		err = 0;
 	}
+
+	return err;
 #else
 	size_t olen;
 	size_t offset = 0;
@@ -53,35 +56,45 @@ static int entropy_cc3xx_rng_get_entropy(const struct device *dev,
 		}
 
 #if defined(CONFIG_SPM)
+		int ret = -EINVAL;
+
 		/* This is a call from a non-secure app that enables secure
 		 * services, in which case entropy is gathered by calling
 		 * through SPM.
 		 */
-		res = spm_request_random_number(buffer + offset,
+		ret = spm_request_random_number(buffer + offset,
 						chunk_size, &olen);
+		if (ret != 0) {
+			return ret;
+		}
 #else
+		int ret = -1;
+
 		/* This is a call from a secure app, in which case entropy is
 		 * gathered using CC3xx HW using the CTR_DRBG features of the
 		 * nrf_cc310_platform/nrf_cc312_platform library.
 		 * When the given context is NULL, a global internal ctr_drbg
 		 * context is being used.
 		 */
-		res = nrf_cc3xx_platform_ctr_drbg_get(NULL, buffer + offset,
+		ret = nrf_cc3xx_platform_ctr_drbg_get(NULL, buffer + offset,
 						      chunk_size, &olen);
-#endif
+		if (ret != 0) {
+			return -EINVAL;
+		}
+#endif /* defined(CONFIG_SPM) */
 		if (olen != chunk_size) {
 			return -EINVAL;
 		}
 
-		if (res != 0) {
-			break;
-		}
-
 		offset += chunk_size;
 	}
-#endif
 
-	return res;
+	if (offset == length) {
+		err = 0;
+	}
+
+	return err;
+#endif /* defined(CONFIG_BUILD_WITH_TFM) */
 }
 
 static int entropy_cc3xx_rng_init(const struct device *dev)
@@ -89,14 +102,14 @@ static int entropy_cc3xx_rng_init(const struct device *dev)
 	(void)dev;
 
 #if defined(CONFIG_BUILD_WITH_TFM)
-	int ret = -1;
+	psa_status_t status;
 
-	ret = psa_crypto_init();
-	if (ret != PSA_SUCCESS) {
+	status = psa_crypto_init();
+	if (status != PSA_SUCCESS) {
 		return -EINVAL;
 	}
 #elif !defined(CONFIG_SPM)
-	int ret = 0;
+	int ret;
 
 	/* When the given context is NULL, a global internal
 	 * ctr_drbg context is being used.
