@@ -29,6 +29,13 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
     tags: bluetooth ci_build
     extra_args: CONF_FILE=prj_b0.conf
+  applications.nrf_desktop.zdebug_b0_wwcb:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840
+    integration_platforms:
+      - nrf52840dk_nrf52840
+    tags: bluetooth ci_build
+    extra_args: CONF_FILE=prj_b0_wwcb.conf
   applications.nrf_desktop.zdebug_mcuboot:
     build_only: true
     platform_allow: nrf52833dongle_nrf52833
