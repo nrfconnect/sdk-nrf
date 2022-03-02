@@ -18,7 +18,7 @@ Build warnings will be generated to indicate when features labelled EXPERIMENTAL
 Highlights
 **********
 
-* Fixed bugs related to Bluetooth® LE conformance, Thread, and TF-M.
+* Fixed bugs related to Bluetooth® LE conformance, Thread, TF-M, and to nRF Machine Learning application for Thingy:53.
   See the :ref:`ncs_release_notes_191_changelog` section for details.
 
 Release tag
@@ -93,6 +93,19 @@ Thread
 * Updated OpenThread libraries with a set of bug fixes from Zephyr upstream.
   See the `Zephyr`_ section for details.
 
+Applications
+============
+
+nRF Machine Learning
+--------------------
+
+* Fixed the NCSDK-13923 known issue that would cause the nRF52840 DK to crash when an Android device was connected over Bluetooth LE.
+
+RF Front-End Modules
+====================
+
+* Updated the default radiated output power to 10dBm for nRF21540.
+
 Trusted Firmware-M
 ==================
 
@@ -125,5 +138,7 @@ This section contains changes in Zephyr that were cherry-picked into |NCS| for t
   * KRKNWK-13059 known issue where a Thread 1.2 device would occasionally send the wrong Link Layer Frame Counter TLV, which would make the link with the neighbor unusable.
   * An issue where a Thread 1.2 device would occasionally assert due to wrong transmission error being reported to the MAC layer.
   * An issue where a Thread device would not properly handle fragmented IPv6 packets.
+  * An issue where sensor readouts on Thingy:53 would be unstable due to PMIC not being set to the PWM mode.
+  * An issue where SPI communication with sensors on Thingy:53 would be hindered because of the SPI interface being controlled by nRF5340 network core, instead of the application core.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
