@@ -61,7 +61,6 @@ Kconfig*                                  @tejlmand
 /doc/versions.json                        @carlescufi
 # All subfolders
 /drivers/                                 @anangl
-/drivers/flash/                           @de-nordic
 /dts/                                     @mbolivar-nordic @anangl
 /ext/                                     @carlescufi
 /include/                                 @anangl @rlubos
@@ -197,7 +196,6 @@ Kconfig*                                  @tejlmand
 /tests/                                   @gopiotr
 /tests/bluetooth/tester/                  @carlescufi @trond-snekvik
 /tests/crypto/                            @torsteingrindvik @magnev
-/tests/drivers/flash_nop_device/          @de-nordic
 /tests/drivers/flash_patch/               @oyvindronningstad
 /tests/drivers/fprotect/                  @oyvindronningstad
 /tests/drivers/nrfx_integration_test/     @anangl

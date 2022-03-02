@@ -12,7 +12,6 @@ rsource "hw_cc310/Kconfig"
 rsource "net/Kconfig"
 rsource "sensor/Kconfig"
 rsource "serial/Kconfig"
-rsource "flash/Kconfig"
 
 if MPSL
 rsource "mpsl/Kconfig"
