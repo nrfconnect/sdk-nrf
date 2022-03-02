@@ -26,7 +26,7 @@
 
 /* Handle modem traces from IRQ context with lower priority. */
 #define TRACE_IRQ EGU2_IRQn
-#define TRACE_IRQ_PRIORITY 6
+#define TRACE_IRQ_PRIORITY CONFIG_NRF_MODEM_TRACE_IRQ_PRIORITY
 
 #define THREAD_MONITOR_ENTRIES 10
 
