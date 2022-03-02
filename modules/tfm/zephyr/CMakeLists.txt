@@ -69,4 +69,13 @@ if (CONFIG_TFM_MINIMAL)
     )
 endif()
 
+if (NOT CONFIG_MBEDTLS_PSA_CRYPTO_STORAGE_C)
+  # Workaround: NCSDK-13530
+  # Allow TF-M crypto to not depend on ITS when PSA crypto storage is disabled.
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS
+    -DCRYPTO_STORAGE_DISABLED=TRUE
+    )
+endif()
+
 zephyr_include_directories(${NRF_DIR}/include/tfm)
