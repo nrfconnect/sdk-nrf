@@ -36,12 +36,4 @@ jobs:
           # separated.
           labels: >
             manifest,
-            CI-all-test:zephyr;nrfxlib,
-            CI-tfm-test:trusted-firmware-m;tfm-mcuboot,
-            CI-boot-dfu-test:mcuboot;mcumgr,
-            CI-matter-test:matter,
-            CI-find-my-test:find-my,
-            CI-homekit-test:homekit,
-            CI-thread-test:openthread,
-            CI-crypto-test:mbedtls;mbedtls-nrf
           dnm-labels: 'DNM'
