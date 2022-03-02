@@ -19,11 +19,12 @@
 
 # Github Actions
 /.github/                                 @thst-nordic
-/.github/labeler.yml                      @thst-nordic @guwa @mariusz-nordicsemi @tomaszkob89 @totyz @doublemis1 @wiminordic @jorgenmk @maciekrozanski @ns-tolu @miha-nordic @maciejpietras @piwe-nordic @nordic-babu @fredaas @torsteingrindvik @mswarowsky @shantha-14 @ardo-nordic
-/.github/workflows/manifest.yml           @thst-nordic @guwa @mariusz-nordicsemi @tomaszkob89 @totyz @doublemis1 @wiminordic @jorgenmk @maciekrozanski @ns-tolu @miha-nordic @maciejpietras @piwe-nordic @nordic-babu @fredaas @torsteingrindvik @mswarowsky @shantha-14 @ardo-nordic
+/.github/labeler.yml                      @thst-nordic @carlescufi @datgizmo
+/.github/test-spec.yml                    @nrfconnect/ncs-test-leads
+/.github/workflows/manifest.yml           @thst-nordic @carlescufi @datgizmo
 
 # Quarantine for the CI and Twister
-/scripts/quarantine.yaml                  @ncs-test-leads @carlescufi @thst-nordic
+/scripts/quarantine.yaml                  @nrfconnect/ncs-test-leads
 
 # VS Code Configuration files
 /.vscode/                                 @trond-snekvik
@@ -41,8 +42,6 @@
 # All cmake related files
 /cmake/                                   @tejlmand
 /CMakeLists.txt                           @tejlmand
-# CI labeler
-/ci/labeler.yaml                      @thst-nordic @guwa @mariusz-nordicsemi @tomaszkob89 @totyz @doublemis1 @wiminordic @jorgenmk @maciekrozanski @ns-tolu @miha-nordic @maciejpietras @piwe-nordic @nordic-babu @fredaas @torsteingrindvik @mswarowsky @shantha-14 @ardo-nordic
 # All Kconfig related files
 Kconfig*                                  @tejlmand
 # All doc related files
@@ -66,7 +65,7 @@ Kconfig*                                  @tejlmand
 /drivers/flash/                           @de-nordic
 /dts/                                     @mbolivar-nordic @anangl
 /ext/                                     @carlescufi
-/include/                                 @anangl @rlubos @pizi-nordic
+/include/                                 @anangl @rlubos
 /include/net/azure_*                      @jtguggedal @simensrostad @coderbyheart
 /include/bluetooth/                       @alwa-nordic @KAGA164
 /include/bluetooth/mesh/                  @trond-snekvik
@@ -134,7 +133,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf9160/lwm2m_client/            @rlubos @VeijoPesonen
 /samples/spm/                             @lemrey @hakonfam @SebastianBoe
 /samples/openthread/                      @lmaciejonczyk @rlubos @edmont @canisLupus1313
-/samples/profiler/                        @pdunaj @pizi-nordic
+/samples/profiler/                        @pdunaj
 /samples/peripheral/radio_test/           @kapi-no
 /samples/peripheral/lpuart/               @nordic-krch
 /samples/peripheral/802154_phy_test/      @czeslawmakarski
@@ -145,7 +144,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf5340/multiprotocol_rpmsg/     @hubertmis
 /scripts/                                 @mbolivar-nordic @tejlmand @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @pdunaj
-/scripts/tools-versions-*.txt             @tejlmand @asle-nordic @grho @shanta-14
+/scripts/tools-versions-*.txt             @tejlmand @grho @shantha-14
 /share/zephyrbuild-package/               @tejlmand
 /share/ncs-package/                       @tejlmand
 /subsys/bluetooth/                        @alwa-nordic @carlescufi @KAGA164
