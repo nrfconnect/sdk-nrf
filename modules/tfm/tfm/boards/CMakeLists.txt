@@ -55,6 +55,16 @@ endif()
 
 target_compile_definitions(platform_s PUBLIC CONFIG_HW_UNIQUE_KEY CONFIG_HW_UNIQUE_KEY_RANDOM)
 
+if (CRYPTO_STORAGE_DISABLED AND TFM_PARTITION_CRYPTO AND NOT TFM_PARTITION_INTERNAL_TRUSTED_STORAGE)
+  # Added here to satisfy the following requirement from tfm_crypto.yaml:
+  #
+  # "dependencies": [
+  #   "TFM_INTERNAL_TRUSTED_STORAGE_SERVICE"
+  # ]
+  target_compile_definitions(platform_s PUBLIC
+    TFM_INTERNAL_TRUSTED_STORAGE_SERVICE_SID=0x00000070)
+endif()
+
 target_include_directories(platform_ns PUBLIC ${board_includes})
 
 if(BL2)
