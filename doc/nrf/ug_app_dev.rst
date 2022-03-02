@@ -18,4 +18,5 @@ The following user guides introduce important concepts to consider when developi
    ug_unity_testing
    ug_tfm
    ug_radio_fem
+   ug_radio_coex
    ext_comps
