@@ -175,7 +175,7 @@ Kconfig*                                  @tejlmand
 /subsys/net/lib/azure_*                   @jtguggedal @simensrostad @coderbyheart
 /subsys/net/lib/ftp_client/               @junqingzou
 /subsys/net/lib/icalendar_parser/         @lats1980
-/subsys/net/lib/lwm2m_client_utils/       @rlubos @VeijoPesonen
+/subsys/net/lib/lwm2m_client_utils/       @rlubos @VeijoPesonen @SeppoTakalo @jheiskan81
 /subsys/net/lib/nrf_cloud/                @plskeggs @jayteemo @glarsennordic
 /subsys/net/lib/zzhc/                     @junqingzou
 /subsys/nfc/                              @grochu @anangl
