@@ -490,6 +490,7 @@ _BLOCKED_PROJECTS = set(
      'modules/hal/openisa',
      'modules/hal/qmsi',
      'modules/hal/quicklogic',
+     'modules/hal/rpi_pico',
      'modules/hal/silabs',
      'modules/hal/stm32',
      'modules/hal/telink',
