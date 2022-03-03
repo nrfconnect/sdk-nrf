@@ -81,3 +81,4 @@ The following samples demonstrate specific nRF Cloud functionality:
 * :ref:`gnss_sample`
 * :ref:`lte_sensor_gateway`
 * :ref:`multicell_location`
+* :ref:`nrf_cloud_mqtt_multi_service`

@@ -7,7 +7,10 @@
 
 .. _`Zephyr`: https://zephyrproject.org/
 .. _`Zephyr Project documentation`: https://docs.zephyrproject.org/latest/
+.. _`Zephyr Devicetree Overlays`: https://docs.zephyrproject.org/latest/guides/dts/howtos.html#set-devicetree-overlays
+.. _`Zephyr Initial Configuration`: https://docs.zephyrproject.org/latest/guides/build/kconfig/setting.html#the-initial-configuration
 .. _`Zephyr Network APIs`: https://docs.zephyrproject.org/latest/reference/networking/apis.html
+.. _`Zephyr Events`: https://docs.zephyrproject.org/latest/reference/kernel/synchronization/events.html
 
 .. ### Source: github.com
 
@@ -151,6 +154,8 @@
 .. _`known issues for nRF Connect SDK v1.4.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-4-1
 .. _`known issues for nRF Connect SDK v1.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-4-0
 
+.. _`connecting to nRF Cloud`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/networking/nrf_cloud.html#connecting
+
 .. _`API documentation`:
 .. _`external ZBOSS development guide and API documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.1.0/zigbee_devguide.html
 .. _`Stack commissioning start sequence`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.1.0/using_zigbee__z_c_l.html#stack_start_initiation
@@ -221,6 +226,7 @@
 
 .. _`nRF Toolbox`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Toolbox
 
+.. _`Nordic nRF9160 DK`:
 .. _`nRF9160 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nrf9160-dk/
 .. _`nRF9160 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9160-DK/Download#infotabs
 .. _`SUPL client download`: https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF9160-DK/Download#supl-c
@@ -234,6 +240,7 @@
 
 .. _`Thingy:53 product page`: https://www.nordicsemi.com/thingy53
 .. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-52
+.. _`Nordic Thingy:91`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-91
 .. _`Thingy:91 product page`: https://www.nordicsemi.com/Products/Development-hardware/Nordic-Thingy-91
 .. _`Thingy:91 product website (downloads)`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-91/Download#infotabs
 
@@ -262,6 +269,7 @@
 
 .. _`nRF9160 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf9160/nRF9160_html5_keyfeatures.html
 .. _`nRF9160 GPS receiver specification`: https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf9160%2Fgps.html&cp=2_0_0_7
+.. _`nRF9160 SiP pin configuration`: https://infocenter.nordicsemi.com/topic/ref_at_commands/REF/at_commands/sip_pin_configuration/sip_pin_configuration.html
 
 .. _`nRF9160 DK GPS`: https://infocenter.nordicsemi.com/topic/ug_nrf91_dk/UG/nrf91_DK/gps.html
 
@@ -641,6 +649,7 @@
 .. _`nRF Cloud Device API`: https://api.nrfcloud.com/v1
 .. _`nRF Cloud REST API ListMessages`: https://api.nrfcloud.com/v1#operation/ListMessages
 .. _`nRF Cloud Device Messages`: https://docs.nrfcloud.com/Reference/DeviceMessages/
+.. _`nRF Cloud Device Shadows`: https://docs.nrfcloud.com/Reference/Devices/Shadows/
 .. _`nRF Cloud REST API`:
 .. _`nRF Connect for Cloud REST API`: https://docs.nrfcloud.com/Reference/Interacting/REST#the-nrf-cloud-rest-api
 .. _`nRF Cloud Location Services`: https://api.nrfcloud.com/v1#tag/Location-Services
@@ -715,6 +724,8 @@
 .. _`802.15.2-2003 specification`: https://standards.ieee.org/standard/802_15_2-2003.html
 
 .. _`JSON`: https://www.json.org/json-en.html
+
+.. _`cJSON`: https://github.com/nrfconnect/sdk-cjson
 
 .. _`SSL Labs`: https://www.ssllabs.com/ssltest/
 
