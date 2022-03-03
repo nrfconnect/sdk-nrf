@@ -23,7 +23,8 @@ Overview
 ********
 
 .. note::
-   Currently, serialization of the :ref:`zephyr:bt_gap` and :ref:`zephyr:bluetooth_connection_mgmt` is supported.
+   Currently, only a subset of Zephyr's Bluetooth APIs is available over Bluetooth nRF RPC.
+   For more details about the limitations, see the :ref:`ble_rpc_api` of the Bluetooth nRF RPC library.
 
 The host (network core) is running the full Bluetooth LE stack.
 It receives serialized function calls that it decodes and executes, then sends response data to the client (application core).
