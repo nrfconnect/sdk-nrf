@@ -99,7 +99,7 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: v1.8.99-ncs1
+      revision: 132a537bf94044be93240a43b7622b3040bd017e
       path: bootloader/mcuboot
     - name: mbedtls-nrf
       path: mbedtls
