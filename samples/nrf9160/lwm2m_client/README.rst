@@ -458,9 +458,11 @@ The sample provides predefined configuration files for typical use cases.
 
 The following files are available:
 
-* ``prj.conf`` - Standard default configuration file
-* ``overlay-queue`` - Enables LwM2M Queue Mode support
-* ``overlay-bootstrap.conf`` - Enables LwM2M bootstrap support
+* :file:`prj.conf` - Standard default configuration file.
+* :file:`overlay-queue.conf` - Enables LwM2M Queue Mode support.
+* :file:`overlay-leshan-bootstrap.conf` - Enables LwM2M bootstrap support with Leshan demo server.
+* :file:`overlay-avsystem.conf` - Uses `Coiote Device Management`_ server.
+* :file:`overlay-avsystem-bootstrap.conf` - Uses Coiote in bootstrap mode.
 
 The sample can either be configured by editing the :file:`prj.conf` file and the relevant overlay files, or through menuconfig or guiconfig.
 
