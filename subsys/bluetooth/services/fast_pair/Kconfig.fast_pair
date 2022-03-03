@@ -25,6 +25,27 @@ config BT_FAST_PAIR_CRYPTO
 	help
 	  Add Fast Pair crypto source files.
 
+if BT_FAST_PAIR_CRYPTO
+
+choice BT_FAST_PAIR_CRYPTO_BACKEND
+	prompt "Fast Pair cryptographic backend selection"
+	default BT_FAST_PAIR_CRYPTO_TINYCRYPT
+	help
+	  Select the Fast Pair cryptographic backend.
+
+config BT_FAST_PAIR_CRYPTO_TINYCRYPT
+	bool "Fast Pair with Tinycrypt cryptographic backend"
+	select TINYCRYPT
+	select TINYCRYPT_SHA256
+	select TINYCRYPT_AES
+	select TINYCRYPT_ECC_DH
+	help
+	  Select Tinycrypt cryptographic backend for Fast Pair.
+
+endchoice
+
+endif # BT_FAST_PAIR_CRYPTO
+
 config BT_FAST_PAIR_REGISTRATION_DATA
 	bool
 	help
