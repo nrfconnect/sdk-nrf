@@ -184,6 +184,7 @@ Kconfig*                                  @tejlmand
 /modules/tfm/                             @SebastianBoe @joerchan
 /subsys/zigbee/                           @tomchy @sebastiandraus
 /tests/                                   @gopiotr
+/tests/asset_tracker_v2/                  @simensrostad @jtguggedal @jhn-nordic @coderbyheart
 /tests/bluetooth/tester/                  @carlescufi @trond-snekvik
 /tests/crypto/                            @torsteingrindvik @magnev
 /tests/drivers/clock_control/clock_control_mpsl/ @ryanjh

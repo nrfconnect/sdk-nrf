@@ -6,7 +6,7 @@
 
 menu "JSON common test"
 
-rsource "../../src/cloud/cloud_codec/Kconfig"
+rsource "${ZEPHYR_BASE}/../nrf/applications/asset_tracker_v2/src/cloud/cloud_codec/Kconfig"
 source "Kconfig.zephyr"
 
 endmenu

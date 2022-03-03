@@ -12,7 +12,7 @@ project(debug_module_test)
 # Set CMake path variables for convenience
 set(MEMFAULT_SDK_DIR ${ZEPHYR_BASE}/../modules/lib/memfault-firmware-sdk)
 set(NRF_SDK_DIR ${ZEPHYR_BASE}/../nrf)
-set(ASSET_TRACKER_V2_DIR ../..)
+set(ASSET_TRACKER_V2_DIR ${ZEPHYR_BASE}/../nrf/applications/asset_tracker_v2)
 
 # Generate runner for the test
 test_runner_generate(src/debug_module_test.c)

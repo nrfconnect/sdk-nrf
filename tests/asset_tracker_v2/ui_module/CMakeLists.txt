@@ -13,7 +13,7 @@ project(ui_module_test)
 test_runner_generate(src/ui_module_test.c)
 
 # Set CMake path variables for convenience
-set(ASSET_TRACKER_V2_DIR ../..)
+set(ASSET_TRACKER_V2_DIR ${ZEPHYR_BASE}/../nrf/applications/asset_tracker_v2)
 
 # Create mocks
 cmock_handle(${ASSET_TRACKER_V2_DIR}/src/modules/modules_common.h)
