@@ -75,7 +75,7 @@ int date_time_set(const struct tm *new_date_time)
 
 int date_time_uptime_to_unix_time_ms(int64_t *uptime)
 {
-	int64_t uptime_prev;
+	int64_t uptime_now;
 	int64_t date_time_ms;
 	int err;
 
@@ -89,25 +89,20 @@ int date_time_uptime_to_unix_time_ms(int64_t *uptime)
 		return -EINVAL;
 	}
 
-	uptime_prev = *uptime;
-
+	uptime_now = k_uptime_get();
 	err = date_time_now(&date_time_ms);
 	if (err) {
 		return err;
 	}
 
-	*uptime += date_time_ms - date_time_core_last_update_uptime();
-
-	/* Check if the passed in uptime was already converted,
-	 * meaning that after a second conversion it is greater than the
-	 * current date time UTC.
-	 */
-	if (*uptime > date_time_ms + (k_uptime_get() - date_time_core_last_update_uptime())) {
+	/* Check if the passed in uptime was already converted. */
+	if (*uptime > uptime_now) {
 		LOG_WRN("Uptime too large or previously converted");
 		LOG_WRN("Clear variable or set a new uptime");
-		*uptime = uptime_prev;
 		return -EINVAL;
 	}
+
+	*uptime += date_time_ms - uptime_now;
 
 	return 0;
 }

@@ -195,11 +195,6 @@ void date_time_core_register_handler(date_time_evt_handler_t evt_handler)
 	app_evt_handler = evt_handler;
 }
 
-int64_t date_time_core_last_update_uptime(void)
-{
-	return date_time_last_update_uptime;
-}
-
 bool date_time_core_is_valid(void)
 {
 	return (date_time_last_update_uptime != 0);
