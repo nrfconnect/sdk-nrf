@@ -87,11 +87,24 @@ These can be used for various purposes, such as dividing devices into groups (by
 
 Some of these can be configured using the Kconfig options listed below:
 
+* :kconfig:`CONFIG_CHIP_DEVICE_VENDOR_ID` sets the device manufacturer identifier that is assigned by the Connectivity Standards Alliance.
+* :kconfig:`CONFIG_CHIP_DEVICE_PRODUCT_ID` sets the product identifier that is assigned by the product manufacturer.
 * :kconfig:`CONFIG_CHIP_DEVICE_TYPE` sets the type of the device using the Matter Device Type Identifier, for example Door Lock (0x000A) or Dimmable Light Bulb (0x0101).
 * :kconfig:`CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE` enables including an optional device type subtype in the commissionable node discovery record.
   This allows filtering of the discovery results to find the nodes that match the device type.
 * :kconfig:`CONFIG_CHIP_ROTATING_DEVICE_ID` enables an optional rotating device identifier feature that provides an additional unique identifier for each device.
   This identifier is similar to the serial number, but it additionally changes at predefined times to protect against long-term tracking of the device.
+
+Amazon FFS support
+==================
+
+Matter in the |NCS| supports `Amazon Frustration-Free Setup (FFS)`_ that allows Matter devices to be automatically commissioned to the Matter network using the Matter-enabled Amazon Echo device.
+To enable the FFS support, set the following configuration options to meet the Amazon FFS setup prerequisites:
+
+* :kconfig:`CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE` to ``y``.
+* :kconfig:`CONFIG_CHIP_ROTATING_DEVICE_ID` to ``y``.
+* :kconfig:`CONFIG_CHIP_DEVICE_TYPE` to the appropriate value, depending on the device used.
+  The value must be compliant with the Matter Device Type Identifier.
 
 .. _ug_matter_configuring_requirements:
 
