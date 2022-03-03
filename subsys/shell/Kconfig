@@ -77,3 +77,79 @@ config SHELL_BT_NUS_RX_RING_BUFFER_SIZE
 	  required to increase it.
 
 endif #SHELL_BT_NUS
+
+menuconfig SHELL_IPC
+	bool "Shell IPC transport"
+	depends on IPC_SERVICE
+	select RING_BUFFER
+	help
+	  Enable Shell IPC transport
+
+if SHELL_IPC
+
+config SHELL_PROMPT_IPC
+	string "Displayed prompt name"
+	default "remote_cpu:~$ "
+	help
+	  Displayed prompt name for IPC service backend.
+
+config SHELL_IPC_ENDPOINT_NAME
+	string "Shell IPC Service endpoint name"
+	default "remote shell"
+	help
+	  Shell IPC Service endpoint name
+
+config SHELL_IPC_BACKEND_RX_RING_BUFFER_SIZE
+	int "Set RX ring buffer size"
+	default 64
+	help
+	  RX ring buffer size impacts accepted latency of handling incoming
+	  bytes by shell. If shell input is coming from the keyboard then it is
+	  usually enough if ring buffer is few bytes (more than one due to
+	  escape sequences). However, if bulk data is transferred it may be
+	  required to increase it.
+
+choice
+	prompt "Initial log level limit"
+	default SHELL_IPC_INIT_LOG_LEVEL_DEFAULT
+
+config SHELL_IPC_INIT_LOG_LEVEL_DEFAULT
+	bool "System limit (LOG_MAX_LEVEL)"
+
+config SHELL_IPC_INIT_LOG_LEVEL_DBG
+	bool "Debug"
+
+config SHELL_IPC_INIT_LOG_LEVEL_INF
+	bool "Info"
+
+config SHELL_IPC_INIT_LOG_LEVEL_WRN
+	bool "Warning"
+
+config SHELL_IPC_INIT_LOG_LEVEL_ERR
+	bool "Error"
+
+config SHELL_IPC_INIT_LOG_LEVEL_NONE
+	bool "None"
+
+endchoice
+
+config SHELL_IPC_INIT_LOG_LEVEL
+	int
+	default 0 if SHELL_IPC_INIT_LOG_LEVEL_NONE
+	default 1 if SHELL_IPC_INIT_LOG_LEVEL_ERR
+	default 2 if SHELL_IPC_INIT_LOG_LEVEL_WRN
+	default 3 if SHELL_IPC_INIT_LOG_LEVEL_INF
+	default 4 if SHELL_IPC_INIT_LOG_LEVEL_DBG
+	default 5 if SHELL_IPC_INIT_LOG_LEVEL_DEFAULT
+
+module = SHELL_IPC
+module-str = Shell over the IPC Service
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+default-timeout = 100
+source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_timeout"
+
+default-size = 10
+source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_size"
+
+endif #SHELL_IPC

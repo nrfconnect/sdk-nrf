@@ -47,7 +47,7 @@ if (CONFIG_NFC_T2T_NRFXLIB OR
 endif()
 
 add_subdirectory_ifdef(CONFIG_FW_INFO	fw_info)
-add_subdirectory_ifdef(CONFIG_SHELL_BT_NUS	shell)
+add_subdirectory(shell)
 
 add_subdirectory(debug)
 add_subdirectory(partition_manager)
