@@ -58,7 +58,6 @@ static struct k_work datamode_quit_work;
 
 static uint8_t uart_rx_buf[UART_RX_BUF_NUM][UART_RX_LEN];
 static uint8_t *next_buf;
-static uint8_t *uart_tx_buf;
 static bool uart_recovery_pending;
 static struct k_work_delayable uart_recovery_work;
 
@@ -79,24 +78,15 @@ uint16_t datamode_time_limit;                 /* Send trigger by time in data mo
 extern bool uart_configured;
 extern struct uart_config slm_uart;
 
-static int uart_send(const uint8_t *str, size_t len)
+static int uart_send(const uint8_t *buffer, size_t len)
 {
 	int ret;
 
 	k_sem_take(&tx_done, K_FOREVER);
 
-	uart_tx_buf = k_malloc(len);
-	if (uart_tx_buf == NULL) {
-		LOG_WRN("No ram buffer");
-		k_sem_give(&tx_done);
-		return -ENOMEM;
-	}
-
-	memcpy(uart_tx_buf, str, len);
-	ret = uart_tx(uart_dev, uart_tx_buf, len, SYS_FOREVER_MS);
+	ret = uart_tx(uart_dev, buffer, len, SYS_FOREVER_MS);
 	if (ret) {
 		LOG_WRN("uart_tx failed: %d", ret);
-		k_free(uart_tx_buf);
 		k_sem_give(&tx_done);
 	}
 
@@ -661,11 +651,9 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 
 	switch (evt->type) {
 	case UART_TX_DONE:
-		k_free(uart_tx_buf);
 		k_sem_give(&tx_done);
 		break;
 	case UART_TX_ABORTED:
-		k_free(uart_tx_buf);
 		k_sem_give(&tx_done);
 		LOG_INF("TX_ABORTED");
 		break;
