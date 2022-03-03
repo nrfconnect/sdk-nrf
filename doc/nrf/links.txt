@@ -71,13 +71,7 @@
 .. _`Leshan Demo Server`: https://github.com/eclipse/leshan/blob/master/README.md
 
 .. _`wpantund`: https://github.com/openthread/wpantund/blob/master/README.md
-.. _`wpantund Installation Guide`: https://github.com/openthread/wpantund/blob/master/INSTALL.md
-.. _`wpantund Usage Overview`: https://github.com/openthread/wpantund#user-content-usage-overview
-.. _`CLI wpantund wrapper`: https://github.com/openthread/wpantund/blob/master/doc/wpanctl.1
 
-.. _`Pyspinel`: https://github.com/openthread/pyspinel/blob/main/README.md
-.. _`Pyspinel arguments`: https://github.com/openthread/pyspinel/blob/main/README.md#description
-.. _`Spinel specification properties for Thread`: https://github.com/openthread/spinel-spec/blob/master/thread/detail-properties.md
 .. _`Spinel protocol`: https://github.com/openthread/spinel-spec
 
 .. _`OpenThread POSIX app`: https://github.com/zephyrproject-rtos/openthread/tree/zephyr/src/posix

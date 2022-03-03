@@ -120,14 +120,9 @@ The Spinel protocol can be configured as a logging backend using the following K
 * :kconfig:`CONFIG_LOG_BACKEND_SPINEL` - This option enables the Spinel logging backend.
 * :kconfig:`CONFIG_LOG_BACKEND_SPINEL_BUFFER_SIZE` - This option defines the size of buffer used for logger output.
 
-To communicate using the Spinel protocol and gather logs, you need one of the following tools:
+To communicate with the RCP using the Spinel protocol and gather logs, you can use the :ref:`ug_thread_tools_ot_apps`.
 
-* `Pyspinel`_
-* :ref:`ug_thread_tools_wpantund`
-
-Each one of these tools accepts the ``-d <DEBUG_LEVEL>`` and ``--debug=<DEBUG_LEVEL>`` arguments, which can be used to display logging messages.
-See `Pyspinel arguments`_ for an example if you are using Pyspinel.
-Alternatively, see `wpantund Usage Overview`_ for information about how to change wpantund configuration file to avoid passing arguments manually every time.
+This tools accept the ``-d<DEBUG_LEVEL>`` and ``--debug=<DEBUG_LEVEL>`` arguments, which can be used to display logging messages.
 
 .. _ug_logging_backends_shell:
 

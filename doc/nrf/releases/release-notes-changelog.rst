@@ -66,6 +66,10 @@ Thread
 
   *  Support for the Link Metrics and CSL Thread v1.2 features for the nRF53 Series devices.
 
+* Removed:
+
+  *  Support for the :ref:`thread_architectures_designs_cp_ncp` architecture and the related tools.
+
 Applications
 ============
 
