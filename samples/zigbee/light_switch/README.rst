@@ -55,7 +55,9 @@ Sleepy End Device behavior
 
 The light switch supports the :ref:`zigbee_ug_sed` that enables the sleepy behavior for the end device, for a significant conservation of energy.
 
-To enable the sleepy behavior, press **Button 3** while the Light switch sample is booting.
+To enable the sleepy behavior, press **Button 3** while the light switch sample is booting.
+This is required only when device is joining the network for the first time.
+After restarting the device, it will boot with the sleepy behavior enabled.
 
 .. _zigbee_light_switch_sample_nus:
 
