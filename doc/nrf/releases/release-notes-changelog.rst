@@ -394,6 +394,7 @@ Modem libraries
   * :ref:`lte_lc_readme` library:
 
     * Added :c:macro:`LTE_LC_ON_CFUN` macro for compile-time registration of callbacks on modem functional mode changes using :c:func:`lte_lc_func_mode_set`.
+    * Added support for simple shell commands.
 
 * Removed:
 
