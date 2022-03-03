@@ -48,6 +48,8 @@ Once the light switch is successfully commissioned, it sends a broadcast message
 The light switch remembers the device network address from the first response.
 At this point, you can start using the buttons on the development kit to control the clusters on the newly found devices.
 
+Additionally, the light switch sample powers down unused RAM sections to lower power consumption in the sleep state.
+
 Sleepy End Device behavior
 ==========================
 
@@ -289,6 +291,7 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
+* :ref:`lib_ram_pwrdn`
 * :ref:`lib_zigbee_error_handler`
 * :ref:`lib_zigbee_application_utilities`
 * Zigbee subsystem:
