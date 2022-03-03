@@ -86,6 +86,7 @@ manifest:
           - net-tools
           - nrf_hw_models
           - open-amp
+          - openthread
           - psa-arch-tests
           - segger
           - tinycbor
@@ -169,10 +170,6 @@ manifest:
       path: modules/lib/memfault-firmware-sdk
       revision: 0.28.2
       remote: memfault
-    - name: openthread
-      repo-path: sdk-openthread
-      path: modules/lib/openthread
-      revision: 02e61a2edd80417e9b8f9a5f4c1b2dad4ac486b4
 
   # West-related configuration for the nrf repository.
   self:
