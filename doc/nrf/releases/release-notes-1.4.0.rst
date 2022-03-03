@@ -306,7 +306,7 @@ Thread
   * Production support for nRF52833 and nRF52840 DKs.
   * Dynamic multiprotocol support with Bluetooth LE.
   * Support for :ref:`thread_architectures_designs_cp_ncp` architecture.
-  * Support for :ref:`ug_thread_vendor_hooks`.
+  * Support for Vendor hooks.
   * :ref:`ot_coprocessor_sample` sample - This sample demonstrates the usage of OpenThread Network Co-Processor architecture inside the Zephyr environment.
     It has the following characteristics:
 
@@ -607,7 +607,7 @@ Thread
     * :ref:`thread_ot_commissioning` - updated to include content from :ref:`thread_ot_commissioning_configuring_on-mesh`, which also received updates and not includes information valid for both Thread CLI and NCP samples
     * :ref:`thread_ot_commissioning_configuring_on-mesh` - removed as a separate page; now a section of :ref:`thread_ot_commissioning`
 
-  * :ref:`ug_thread_tools` - added as a separate page (was a section of :ref:`ug_thread`); updated the list of available tools and added more information about :ref:`ug_thread_tools_tbr` and :ref:`ug_thread_tools_wpantund`
+  * :ref:`ug_thread_tools` - added as a separate page (was a section of :ref:`ug_thread`); updated the list of available tools and added more information about :ref:`ug_thread_tools_tbr` and `wpantund`_.
 
 Zigbee
 ------

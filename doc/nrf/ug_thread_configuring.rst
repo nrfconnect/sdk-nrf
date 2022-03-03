@@ -458,7 +458,7 @@ The following list shows some of the configuration options that you might want t
 * :kconfig:`CONFIG_OPENTHREAD_FTD` or :kconfig:`CONFIG_OPENTHREAD_MTD` - Select the :ref:`device type <thread_ug_device_type>`.
   The :kconfig:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD` feature set supports only the MTD device type.
   The other feature sets support both device types.
-* :kconfig:`CONFIG_OPENTHREAD_COPROCESSOR` and :kconfig:`CONFIG_OPENTHREAD_COPROCESSOR_NCP` - Select the OpenThread architecture to use.
+* :kconfig:`CONFIG_OPENTHREAD_COPROCESSOR` and :kconfig:`CONFIG_OPENTHREAD_COPROCESSOR_RCP` - Select the OpenThread architecture to use.
   See :ref:`thread_architectures_designs_cp`.
 * :kconfig:`CONFIG_OPENTHREAD_MANUAL_START` - Choose whether to configure and join the Thread network automatically.
   If you set this option to ``n``, also check and configure the network parameters that are used, for example:
