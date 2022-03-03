@@ -15,8 +15,7 @@
 cmake_minimum_required(VERSION 3.20.0)
 project(nrf-connect-sdk-doc LANGUAGES NONE)
 
-set(NO_BOILERPLATE TRUE)
-find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE} ..)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE} COMPONENTS doc)
 
 #-------------------------------------------------------------------------------
 # Options
@@ -44,9 +43,6 @@ endif()
 set(KCONFIG_BINARY_DIR ${CMAKE_BINARY_DIR}/kconfig)
 list(INSERT MODULE_EXT_ROOT 0 ${ZEPHYR_BASE})
 file(MAKE_DIRECTORY ${KCONFIG_BINARY_DIR})
-
-include(${ZEPHYR_BASE}/cmake/extensions.cmake)
-include(${ZEPHYR_BASE}/cmake/zephyr_module.cmake)
 
 #-------------------------------------------------------------------------------
 # Functions
