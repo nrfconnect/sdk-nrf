@@ -48,6 +48,6 @@ add_subdirectory(src/events)
 add_subdirectory(src/modules)
 add_subdirectory(src/util)
 
-if(CONFIG_BT_RPMSG_NRF53)
+if(CONFIG_BT_RPMSG)
   assert_exists(hci_rpmsg_CONF_FILE)
 endif()
