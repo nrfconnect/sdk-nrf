@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_FAST_PAIR
+	bool "Google Fast Pair Service (GFPS)"
+	select BT_NRF_SERVICES
+	select BT_FAST_PAIR_ADVERTISING
+	select BT_FAST_PAIR_CRYPTO
+	select BT_FAST_PAIR_REGISTRATION_DATA
+	help
+	  Enable Google Fast Pair Service (GFPS).
+
+if BT_FAST_PAIR
+
+config BT_FAST_PAIR_ADVERTISING
+	bool
+	help
+	  Add Fast Pair advertising source files.
+
+config BT_FAST_PAIR_CRYPTO
+	bool
+	help
+	  Add Fast Pair crypto source files.
+
+config BT_FAST_PAIR_REGISTRATION_DATA
+	bool
+	help
+	  Add Fast Pair registration data source files.
+
+module = BT_FAST_PAIR
+module-str = Fast Pair Service
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_FAST_PAIR
