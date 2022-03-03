@@ -522,6 +522,7 @@
 .. _`Alexa.Gadget.StateListener interface`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/alexa-gadget-statelistener-interface.html
 .. _`Alexa Gadgets Notifications interface`: https://developer.amazon.com/en-US/docs/alexa/alexa-gadgets-toolkit/notifications-interface.html
 .. _`Alexa Gadgets Pairing`: https://www.amazon.com/gp/help/customer/display.html?nodeId=GV66YEZ2245F4QYS
+.. _`Amazon Frustration-Free Setup (FFS)`: https://developer.amazon.com/docs/frustration-free-setup/matter-simple-setup-overview.html
 
 .. ### Source: openthread.io
 
