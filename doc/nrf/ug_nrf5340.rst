@@ -299,7 +299,7 @@ For other samples, the images are built separately.
 
 The build configuration depends on the following Kconfig options that must be set in the configuration of the parent image:
 
-* :kconfig:`CONFIG_BT_RPMSG_NRF53` - set to ``y`` in all Bluetooth LE samples for the application core
+* :kconfig:`CONFIG_BT_RPMSG` - set to ``y`` in all Bluetooth LE samples for the application core
 * :kconfig:`CONFIG_NRF_802154_SER_HOST` - set to ``y`` in all Thread, Zigbee, and Matter samples for the application core
 * :kconfig:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE` - set to ``y`` in all network core samples that require the :ref:`nrf5340_empty_app_core` sample
 
@@ -311,13 +311,13 @@ The combination of these options determines which (if any) sample is included in
    * - Enabled options
      - Child image sample for the network core
      - Child image sample for the application core
-   * - :kconfig:`CONFIG_BT_RPMSG_NRF53`
+   * - :kconfig:`CONFIG_BT_RPMSG`
      - :ref:`zephyr:bluetooth-hci-rpmsg-sample`
      - ---
    * - :kconfig:`CONFIG_NRF_802154_SER_HOST`
      - :ref:`zephyr:nrf-ieee802154-rpmsg-sample`
      - ---
-   * - :kconfig:`CONFIG_BT_RPMSG_NRF53` and :kconfig:`CONFIG_NRF_802154_SER_HOST`
+   * - :kconfig:`CONFIG_BT_RPMSG` and :kconfig:`CONFIG_NRF_802154_SER_HOST`
      - :ref:`multiprotocol-rpmsg-sample`
      - ---
    * - :kconfig:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE`
