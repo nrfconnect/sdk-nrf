@@ -20,7 +20,7 @@ config NRF_MODEM_LIB_SYS_INIT
 
 config NRF_MODEM_TRACE_IRQ_PRIORITY
 	int "IRQ priority for trace handler"
-	default 6
+	default 4
 
 config NRF_MODEM_LIB_TRACE_ENABLED
 	bool
