@@ -46,6 +46,15 @@ config NCS_INCLUDE_RPMSG_CHILD_IMAGE
 	  - nRF IEEE 802.15.4 Serialization RPMsg: When only nRF IEEE 802.15.4 Serialization host is enabled.
 	  - nRF RPC Host: When Bluetooth and Bluetooth serialization over RPC are enabled.
 
+config NCS_SAMPLE_REMOTE_SHELL_CHILD_IMAGE
+	bool "Add remote_shell sample as a child image"
+	depends on SHELL_IPC
+	select PARTITION_MANAGER_ENABLED
+	help
+	  Add remote_shell as a child image (application core).
+	  Used by samples that run on the network core only.
+
+
 if NCS_INCLUDE_RPMSG_CHILD_IMAGE
 
 config NCS_SAMPLE_MULTIPROTOCOL_RPMSG_CHILD_IMAGE
