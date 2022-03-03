@@ -78,6 +78,8 @@ Then, you can invoke build command like this:
 
    west build -b *board* -- -DOVERLAY_CONFIG=my_overlay_file.conf
 
+.. _ble_rpc_api:
+
 API documentation
 *****************
 
