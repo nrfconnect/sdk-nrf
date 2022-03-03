@@ -30,5 +30,6 @@ rsource "Kconfig.latency"
 rsource "Kconfig.latency_c"
 rsource "Kconfig.hrs_client"
 rsource "Kconfig.ddfs"
+rsource "fast_pair/Kconfig.fast_pair"
 
 endmenu
