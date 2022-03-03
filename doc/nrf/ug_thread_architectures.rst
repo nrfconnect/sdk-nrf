@@ -129,7 +129,7 @@ Network co-processor (NCP)
 
 In the standard NCP design, the full OpenThread stack runs on the processor that provides the Thread radio (the *network processor*), and the application layer runs on a host processor.
 The host processor is typically more capable than the network processor, but it has greater power demands.
-The host processor communicates with the network processor through a serial interface (typically UART or SPI) over the Spinel protocol.
+The host processor communicates with the network processor through a serial interface (typically UART or SPI) over the `Spinel protocol`_.
 
 This design is useful for gateway devices or devices that have other processing demands, like IP cameras and speakers.
 
@@ -154,11 +154,7 @@ It has the following disadvantages:
 .. note::
     |connection_options_limited|
 
-This platform design is suitable for the following development kits:
-
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
+This platform design is currently discontinued by |NCS|.
 
 .. _thread_architectures_designs_cp_rcp:
 

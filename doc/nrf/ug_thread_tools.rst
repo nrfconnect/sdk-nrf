@@ -115,7 +115,7 @@ To program the nRF device with the RCP application, complete the following steps
                .. code-block:: console
 
                   sudo apt-get -y install libusb-1.0-0-dev sed
-                  pip3 install click crcmod ecdsa intelhex libusb1 piccata protobuf pyserial pyyaml tqdm pc_ble_driver_py pyspinel
+                  pip3 install click crcmod ecdsa intelhex libusb1 piccata protobuf pyserial pyyaml tqdm pc_ble_driver_py
                   pip3 install -U --no-dependencies nrfutil==6.0.1
                   export PATH="$HOME/.local/bin:$PATH"
 
@@ -257,149 +257,6 @@ To install and configure the OpenThread Border Router using the Docker container
 
       sudo docker exec -it otbr sh -c "sudo ot-ctl state"
 
-.. _ug_thread_tools_wpantund:
-
-wpantund
-********
-
-`wpantund`_ is a utility for providing a native IPv6 interface to a network co-processor.
-When working with Thread, it is used for interacting with the application by the following samples:
-
-* :ref:`ot_coprocessor_sample`
-
-The interaction is possible using commands proper to wpanctl, a module installed with wpantund.
-
-.. note::
-    The tool is available for Linux and macOS and is not supported on Windows.
-
-Installing wpantund
-===================
-
-To ensure that the interaction with the samples works as expected, install the version of wpantund that has been used for testing the |NCS|.
-
-See the `wpantund Installation Guide`_ for general installation instructions.
-To install the verified version, replace the ``git checkout full/latest-release`` command with the following command:
-
-.. parsed-literal::
-
-   git checkout a8f3f76
-
-When installing on macOS, follow the instructions for the manual installation and replace the above command to ensure that the correct version is installed.
-
-.. note::
-   To use USB transport for communication with a network co-processor (NCP), you must build wpantund with the udev library.
-   To do so, use the following commands::
-
-      sudo apt-get install libudev-dev
-      ./bootstrap
-      ./configure --with-udev
-      make -j4
-
-.. _ug_thread_tools_wpantund_configuring:
-
-Configuring wpantund
-====================
-
-When working with samples that support wpantund, complete the following steps to start the wpantund processes:
-
-1. Open a shell and run the wpantund process:
-
-     .. parsed-literal::
-        :class: highlight
-
-        wpantund -I *network_interface_name* -s *ncp_uart_device* -b *baud_rate*
-
-   Replace the following parameters:
-
-   * *network_interface_name* - Specifies the name of the network interface, for example, ``leader_if``.
-   * *ncp_uart_device* - Specifies the location of the device, for example:
-
-     * For UART transport: :file:`/dev/ttyACM0`
-     * For USB transport - symlink: :file:`/dev/serial/by-id/usb-Nordic_Semiconductor_ASA_Thread_Co-Processor_07AA4C22D2E2C88D-if00`
-
-   * *baud_rate* - Specifies the baud rate to use.
-     The Thread samples support baud rate ``1000000``.
-
-   For example, for UART transport, enter the following command::
-
-     sudo wpantund -I leader_if -s /dev/ttyACM0 -b 1000000
-
-   For example, for USB transport, enter the following command::
-
-     sudo wpantund -I leader_if -s /dev/serial/by-id/usb-Nordic_Semiconductor_ASA_Thread_Co-Processor_07AA4C22D2E2C88D-if00 -b 1000000
-
-#. Open another shell and run the wpanctl process by using the following command:
-
-   .. parsed-literal::
-      :class: highlight
-
-      wpanctl -I *network_interface_name*
-
-   This process can be used to control the connected NCP kit.
-
-Once wpantund and wpanctl are started, you can start running wpanctl commands to interact with the development kit.
-
-Using wpanctl commands
-======================
-
-To issue a wpanctl command, run it in the wpanctl shell.
-For example, the following command checks the kit state::
-
-  wpanctl:leader_if> status
-
-The output will be different depending on the kit and the sample.
-
-The most common wpanctl commands are the following:
-
-* ``status`` - Checks the kit state.
-* ``form "*My_OpenThread_network*"`` - Sets up a Thread network with the name ``My_OpenThread_network``.
-* ``get`` - Gets the values of all properties.
-* ``get *property*`` - Gets the value of the requested property.
-  For example, ``get NCP:SleepyPollInterval`` lists the value of the ``NCP:SleepyPollInterval`` property.
-* ``set *property* *value*`` - Sets the value of the requested property to the required value.
-  For example, ``set NCP:SleepyPollInterval 1000`` sets the value of the ``NCP:SleepyPollInterval`` property to ``1000``.
-
-For the full list of commands, run the ``help`` command in wpanctl.
-
-.. _ug_thread_tools_pyspinel:
-
-Pyspinel
-********
-
-`Pyspinel`_ is a tool for controlling OpenThread co-processor instances through a command-line interface.
-
-.. note::
-    The tool is available for Linux and macOS and is not supported on Windows.
-
-Installing Pyspinel
-===================
-
-See the `Pyspinel`_ documentation for general installation instructions.
-
-Configuring Pyspinel
-====================
-
-When working with samples that support Pyspinel, complete the following steps to communicate with the device:
-
-1. Open a shell in a Pyspinel root directory.
-#. Run Pyspinel to connect to the node:
-
-   .. parsed-literal::
-      :class: highlight
-
-      sudo python3 spinel-cli.py -d *debug_level* -u *ncp_uart_device* -b *baud_rate*
-
-   Replace the following parameters:
-
-   * *debug_level* - Specifies the debug level, range: ``0-5``.
-   * *ncp_uart_device* - Specifies the location of the device, for example, :file:`/dev/ttyACM0`.
-   * *baud_rate* - Specifies the baud rate to use.
-     The Thread samples support baud rate ``1000000``.
-
-   For example::
-
-      sudo python3 spinel-cli.py -d 4 -u /dev/ttyACM0 -b 1000000
-
 .. _ug_thread_tools_ot_apps:
 
 OpenThread POSIX applications
@@ -426,17 +283,12 @@ Building the OpenThread POSIX applications
 
 Build the OpenThread POSIX applications by performing the following steps:
 
-#. Clone the OpenThread repository into the current directory:
-
-   .. code-block:: console
-
-      https://github.com/openthread/openthread.git
 
 #. Enter the :file:`openthread` directory:
 
    .. code-block:: console
 
-      cd openthread
+      cd modules/lib/openthread
 
 #. Install the OpenThread dependencies:
 
@@ -470,11 +322,16 @@ Replace the following parameters:
    * *baud_rate* - Specifies the baud rate to use.
      The Thread Co-Processor sample supports baud rate ``1000000``.
 
-For example, to use ``ot-daemon``, enter the following commands:
+For example, to use ``ot-daemon``, enter the following command:
 
 .. code-block:: console
 
    sudo ./build/posix/src/posix/ot-daemon 'spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=1000000' --verbose
+
+And on a separate terminal window:
+
+.. code-block:: console
+
    sudo ./build/posix/src/posix/ot-ctl
 
 To use ``ot-cli``, enter the following command instead:

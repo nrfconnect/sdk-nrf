@@ -135,6 +135,8 @@ To activate the optional extensions supported by this sample, modify :makevar:`O
 See :ref:`cmake_options` for instructions on how to add this option.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
+.. _ot_cli_sample_testing:
+
 Testing
 =======
 

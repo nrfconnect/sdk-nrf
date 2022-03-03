@@ -217,8 +217,6 @@ See the following pages in the `OpenThread CLI Reference`_ on GitHub for an over
 * `Commissioner CLI commands`_
 * `Joiner CLI commands`_
 
-The NCP commands are available through `wpantund`_, which provides a `CLI wpantund wrapper`_ for `Spinel specification properties for Thread`_.
-
 .. _thread_ot_commissioning_configuring_on-mesh:
 
 Configuring on-mesh Thread commissioning
@@ -236,7 +234,7 @@ One device will act as a Commissioner and the other will be a Joiner.
 Requirements
 ============
 
-To configure on-mesh Thread commissioning, you need at least two development kits that are compatible with either the CLI or the NCP samples.
+To configure on-mesh Thread commissioning, you need at least two development kits that are compatible with either the CLI or the Co-processor samples.
 Check the sample documentation pages for the list of compatible development kits.
 
 .. _thread_ot_commissioning_configuring_on-mesh_flashing:
@@ -259,7 +257,7 @@ This network needs to be manually disabled.
 Disabling the Thread network
 ============================
 
-The |NCS|'s Thread CLI and NCP samples come with the autostart feature, which means that the devices will form the network automatically without user intervention.
+The |NCS|'s Thread CLI and Co-processor samples come with the autostart feature, which means that the devices will form the network automatically without user intervention.
 To properly observe the commissioning process, it is recommended to form a new Thread network manually.
 
 To disconnect from the network before starting the commissioning process, run the following command on both devices for the sample of your choice:
@@ -272,7 +270,7 @@ To disconnect from the network before starting the commissioning process, run th
 
          uart:~$ ot thread stop
 
-   .. group-tab:: NCP
+   .. group-tab:: Coprocessor
 
       .. code-block:: console
 

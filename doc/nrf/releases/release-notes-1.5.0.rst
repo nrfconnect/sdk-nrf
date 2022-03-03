@@ -977,7 +977,7 @@ In addition to documentation related to the changes listed above, the following 
 
   * Added information about nRF5340 to :ref:`thread_ot_memory` and :ref:`ug_thread_architectures`.
   * :ref:`ug_thread_configuring` - Updated information about IEEE 802.15.4 EUI-64 configuration.
-  * :ref:`ug_thread_tools` - Added information on installing :ref:`ug_thread_tools_wpantund`.
+  * :ref:`ug_thread_tools` - Added information on installing `wpantund`_.
 * :ref:`ug_zigbee`:
 
   * Updated :ref:`zigbee_ug_supported_features`, :ref:`ug_zigbee_platform_design_ncp`, and :ref:`ug_zigbee_tools`.
