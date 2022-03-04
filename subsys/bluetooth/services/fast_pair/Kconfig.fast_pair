@@ -17,6 +17,7 @@ if BT_FAST_PAIR
 
 config BT_FAST_PAIR_ADVERTISING
 	bool
+	depends on BT_PERIPHERAL
 	help
 	  Add Fast Pair advertising source files.
 
