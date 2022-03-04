@@ -164,12 +164,88 @@ static void bt_rpc_gatt_ccc_cfg_changed_cb_rpc_handler(CborValue *value, void *h
 
 	return;
 decoding_error:
-	report_decoding_error(BT_RPC_GATT_CB_ATTR_READ_RPC_CMD, handler_data);
+	report_decoding_error(BT_RPC_GATT_CB_CCC_CFG_CHANGED_RPC_CMD, handler_data);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_ccc_cfg_changed_cb,
 			 BT_RPC_GATT_CB_CCC_CFG_CHANGED_RPC_CMD,
 			 bt_rpc_gatt_ccc_cfg_changed_cb_rpc_handler, NULL);
+
+static void bt_rpc_gatt_ccc_cfg_write_cb_rpc_handler(CborValue *value, void *handler_data)
+{
+	uint32_t attr_index;
+	struct bt_conn *conn;
+	const struct bt_gatt_attr *attr;
+	struct _bt_gatt_ccc *ccc;
+	uint16_t ccc_value;
+	ssize_t write_len = 0;
+
+	conn = bt_rpc_decode_bt_conn(value);
+	attr_index = ser_decode_uint(value);
+	ccc_value = ser_decode_uint(value);
+
+	if (!ser_decoding_done_and_check(value)) {
+		goto decoding_error;
+	}
+
+	attr = bt_rpc_gatt_index_to_attr(attr_index);
+	if (!attr) {
+		return;
+	}
+
+	ccc = (struct _bt_gatt_ccc *) attr->user_data;
+
+	if (ccc->cfg_write) {
+		write_len = ccc->cfg_write(conn, attr, ccc_value);
+	}
+
+	ser_rsp_send_int(write_len);
+
+	return;
+decoding_error:
+	report_decoding_error(BT_RPC_GATT_CB_CCC_CFG_WRITE_RPC_CMD, handler_data);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_ccc_cfg_write_cb,
+			 BT_RPC_GATT_CB_CCC_CFG_WRITE_RPC_CMD,
+			 bt_rpc_gatt_ccc_cfg_write_cb_rpc_handler, NULL);
+
+static void bt_rpc_gatt_ccc_cfg_match_cb_rpc_handler(CborValue *value, void *handler_data)
+{
+	uint32_t attr_index;
+	struct bt_conn *conn;
+	const struct bt_gatt_attr *attr;
+	struct _bt_gatt_ccc *ccc;
+	bool match = false;
+
+	conn = bt_rpc_decode_bt_conn(value);
+	attr_index = ser_decode_int(value);
+
+	if (!ser_decoding_done_and_check(value)) {
+		goto decoding_error;
+	}
+
+	attr = bt_rpc_gatt_index_to_attr(attr_index);
+	if (!attr) {
+		return;
+	}
+
+	ccc = (struct _bt_gatt_ccc *) attr->user_data;
+
+	if (ccc->cfg_match) {
+		match = ccc->cfg_match(conn, attr);
+	}
+
+	ser_rsp_send_bool(match);
+
+	return;
+decoding_error:
+	report_decoding_error(BT_RPC_GATT_CB_CCC_CFG_MATCH_RPC_CMD, handler_data);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_ccc_cfg_match_cb,
+			 BT_RPC_GATT_CB_CCC_CFG_MATCH_RPC_CMD,
+			 bt_rpc_gatt_ccc_cfg_match_cb_rpc_handler, NULL);
 
 static void bt_rpc_gatt_attr_read_cb_rpc_handler(CborValue *value, void *handler_data)
 {
