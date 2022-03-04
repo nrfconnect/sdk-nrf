@@ -306,9 +306,9 @@ ssize_t bt_rpc_normal_attr_write(struct bt_conn *conn, const struct bt_gatt_attr
 	size_t buffer_size_max = 26;
 	size_t scratchpad_size = 0;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
-
 	buffer_size_max += len;
+
+	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
 
 	scratchpad_size += SCRATCHPAD_ALIGN(len);
 
@@ -714,7 +714,7 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_end_service, BT_RPC_GATT_END_SE
 
 static void bt_rpc_gatt_service_unregister_rpc_handler(CborValue *value, void *handler_data)
 {
-	int result;
+	int result = 0;
 	uint16_t svc_index;
 	const struct bt_gatt_service *svc;
 
