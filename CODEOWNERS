@@ -145,7 +145,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf5340/multiprotocol_rpmsg/     @hubertmis
 /scripts/                                 @mbolivar-nordic @tejlmand @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @pdunaj
-/scripts/tools-versions-*.txt             @tejlmand @asle-nordic @grho @shanta-14
+/scripts/tools-versions-*.txt             @tejlmand @asle-nordic @grho @shanta-14 @kenr @nordicsemiconductor/wayland-sysdev
 /share/zephyrbuild-package/               @tejlmand
 /share/ncs-package/                       @tejlmand
 /subsys/bluetooth/                        @alwa-nordic @carlescufi @KAGA164
