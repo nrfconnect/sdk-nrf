@@ -103,11 +103,11 @@ static int handle_mqtt_publish_evt(struct mqtt_client *const c, const struct mqt
 		evt->param.publish.message.topic.topic.size,
 		evt->param.publish.message.payload.len);
 	rsp_send(rsp_buf, strlen(rsp_buf));
-	rsp_send(evt->param.publish.message.topic.topic.utf8,
+	data_send(evt->param.publish.message.topic.topic.utf8,
 		evt->param.publish.message.topic.topic.size);
-	rsp_send("\r\n", 2);
-	rsp_send(payload_buf, evt->param.publish.message.payload.len);
-	rsp_send("\r\n", 2);
+	data_send("\r\n", 2);
+	data_send(payload_buf, evt->param.publish.message.payload.len);
+	data_send("\r\n", 2);
 
 	return 0;
 }
