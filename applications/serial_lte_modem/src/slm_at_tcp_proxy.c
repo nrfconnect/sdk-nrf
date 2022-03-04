@@ -566,7 +566,7 @@ client_events:
 				continue;
 			}
 			if (in_datamode()) {
-				datamode_send(rx_data, ret);
+				data_send(rx_data, ret);
 			} else {
 				rsp_send(rx_data, ret);
 				sprintf(rsp_buf, "\r\n#XTCPDATA: %d\r\n", ret);
@@ -647,7 +647,7 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 			continue;
 		}
 		if (in_datamode()) {
-			datamode_send(rx_data, ret);
+			data_send(rx_data, ret);
 		} else {
 			rsp_send(rx_data, ret);
 			sprintf(rsp_buf, "\r\n#XTCPDATA: %d\r\n", ret);

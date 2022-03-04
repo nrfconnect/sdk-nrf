@@ -71,7 +71,7 @@ void rsp_send(const char *str, size_t len);
  * @param len Length of raw data
  *
  */
-void datamode_send(const uint8_t *data, size_t len);
+void data_send(const uint8_t *data, size_t len);
 
 /**
  * @brief Request SLM AT host to enter data mode

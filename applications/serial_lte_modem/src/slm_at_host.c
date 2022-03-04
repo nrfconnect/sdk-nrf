@@ -34,7 +34,7 @@ LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 
 #define UART_RX_BUF_NUM         2
 #define UART_RX_LEN             256
-#define UART_RX_TIMEOUT_MS      1
+#define UART_RX_TIMEOUT_US      2000
 #define UART_ERROR_DELAY_MS     500
 #define UART_RX_MARGIN_MS       10
 
@@ -58,6 +58,7 @@ static struct k_work datamode_quit_work;
 
 static uint8_t uart_rx_buf[UART_RX_BUF_NUM][UART_RX_LEN];
 static uint8_t *next_buf;
+static uint8_t *uart_tx_buf;
 static bool uart_recovery_pending;
 static struct k_work_delayable uart_recovery_work;
 
@@ -84,9 +85,18 @@ static int uart_send(const uint8_t *buffer, size_t len)
 
 	k_sem_take(&tx_done, K_FOREVER);
 
-	ret = uart_tx(uart_dev, buffer, len, SYS_FOREVER_MS);
+	uart_tx_buf = k_malloc(len);
+	if (uart_tx_buf == NULL) {
+		LOG_WRN("No ram buffer");
+		k_sem_give(&tx_done);
+		return -ENOMEM;
+	}
+
+	memcpy(uart_tx_buf, buffer, len);
+	ret = uart_tx(uart_dev, uart_tx_buf, len, SYS_FOREVER_US);
 	if (ret) {
 		LOG_WRN("uart_tx failed: %d", ret);
+		k_free(uart_tx_buf);
 		k_sem_give(&tx_done);
 	}
 
@@ -103,9 +113,9 @@ void rsp_send(const char *str, size_t len)
 	(void)uart_send(str, len);
 }
 
-void datamode_send(const uint8_t *data, size_t len)
+void data_send(const uint8_t *data, size_t len)
 {
-	LOG_HEXDUMP_DBG(data, MIN(len, HEXDUMP_DATAMODE_MAX), "TX-DATAMODE");
+	LOG_HEXDUMP_DBG(data, MIN(len, HEXDUMP_DATAMODE_MAX), "TX-DATA");
 	(void)uart_send(data, len);
 }
 
@@ -113,7 +123,7 @@ static int uart_receive(void)
 {
 	int ret;
 
-	ret = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_MS);
+	ret = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_US);
 	if (ret && ret != -EBUSY) {
 		LOG_ERR("UART RX failed: %d", ret);
 		rsp_send(FATAL_STR, sizeof(FATAL_STR) - 1);
@@ -651,9 +661,11 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 
 	switch (evt->type) {
 	case UART_TX_DONE:
+		k_free(uart_tx_buf);
 		k_sem_give(&tx_done);
 		break;
 	case UART_TX_ABORTED:
+		k_free(uart_tx_buf);
 		k_sem_give(&tx_done);
 		LOG_INF("TX_ABORTED");
 		break;
