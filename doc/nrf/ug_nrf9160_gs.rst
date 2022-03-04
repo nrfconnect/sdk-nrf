@@ -48,7 +48,7 @@ After installing and starting the application, install the following apps:
 Updating the DK firmware
 ************************
 
-Download the latest application and modem firmware from the `nRF9160 DK Downloads <nRF9160 product website (compatible downloads)>`_ page and extract to a folder of your choice.
+Download the latest application and modem firmware from the `nRF9160 DK Downloads`_ page and extract to a folder of your choice.
 
 The downloaded zip contains the following firmware:
 
