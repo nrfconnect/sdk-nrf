@@ -169,7 +169,7 @@ static int ftp_data_send(void)
 
 	if (ring_buf_is_empty(&ftp_data_buf) == 0) {
 		sz_send = ring_buf_get(&ftp_data_buf, rsp_buf, sizeof(rsp_buf));
-		datamode_send(rsp_buf, sz_send);
+		data_send(rsp_buf, sz_send);
 	}
 
 	return sz_send;

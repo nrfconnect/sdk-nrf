@@ -403,8 +403,10 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 		if (ret == 0) {
 			continue;
 		}
-		rsp_send(rx_data, ret);
-		if (!in_datamode()) {
+		if (in_datamode()) {
+			data_send(rx_data, ret);
+		} else {
+			rsp_send(rx_data, ret);
 			sprintf(rsp_buf, "\r\n#XUDPDATA: %d\r\n", ret);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 		}

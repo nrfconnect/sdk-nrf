@@ -85,7 +85,7 @@ static void response_cb(struct http_response *rsp,
 		/* Response body starts from the beginning of receive buffer */
 		sprintf(rsp_buf, "\r\n#XHTTPCRSP:%d,%hu\r\n", rsp->data_len, final_data);
 		rsp_send(rsp_buf, strlen(rsp_buf));
-		rsp_send(data_buf, rsp->data_len);
+		data_send(data_buf, rsp->data_len);
 	}
 	/* Process response header if required */
 	if (httpc.state == HTTPC_REQ_DONE) {
@@ -99,19 +99,19 @@ static void response_cb(struct http_response *rsp,
 			LOG_DBG("There is more HTTP header data\n");
 			sprintf(rsp_buf, "\r\n#XHTTPCRSP:%d,%hu\r\n", rsp->data_len, final_data);
 			rsp_send(rsp_buf, strlen(rsp_buf));
-			rsp_send(data_buf, rsp->data_len);
+			data_send(data_buf, rsp->data_len);
 		} else {
 			httpc.state = HTTPC_RES_HEADER_DONE;
 			sprintf(rsp_buf, "\r\n#XHTTPCRSP:%d,%hu\r\n",
 						pch - data_buf + HEADER_END_LEN, final_data);
 			rsp_send(rsp_buf, strlen(rsp_buf));
-			rsp_send(data_buf, pch - data_buf + HEADER_END_LEN);
+			data_send(data_buf, pch - data_buf + HEADER_END_LEN);
 			/* Process response body if required */
 			if (rsp->body_start) {
 				sprintf(rsp_buf, "\r\n#XHTTPCRSP:%d,%hu\r\n",
 					rsp->data_len - (rsp->body_start - data_buf), final_data);
 				rsp_send(rsp_buf, strlen(rsp_buf));
-				rsp_send(rsp->body_start,
+				data_send(rsp->body_start,
 					rsp->data_len - (rsp->body_start - data_buf));
 			}
 		}
