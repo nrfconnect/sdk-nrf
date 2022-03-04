@@ -268,6 +268,12 @@ Bluetooth libraries and services
 
     * Shell commands for client models.
 
+* :ref:`ble_rpc` library:
+
+  * Added host callback handlers for the ``write`` and ``match`` operations of the CCC descriptor.
+  * Fixed the serialization of the write callback applied to the GATT attribute.
+  * Fixed the serialization of the :c:func:`bt_gatt_service_unregister` function call .
+
 Libraries for networking
 ------------------------
 
