@@ -98,8 +98,10 @@ CHIP_ERROR AppTask::Init()
 
 #ifdef CONFIG_OPENTHREAD_MTD_SED
 	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_SleepyEndDevice);
-#else
+#elif CONFIG_OPENTHREAD_MTD
 	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
+#else
+	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_FullEndDevice);
 #endif
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed");
@@ -218,7 +220,7 @@ void AppTask::DispatchEvent(const AppEvent &event)
 		break;
 	case AppEvent::Toggle:
 		LockActionHandler(BoltLockMgr().IsUnlocked() ? BoltLockManager::Action::Lock :
-								     BoltLockManager::Action::Unlock,
+							       BoltLockManager::Action::Unlock,
 				  event.LockEvent.ChipInitiated);
 		break;
 	case AppEvent::CompleteLockAction:
