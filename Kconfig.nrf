@@ -41,7 +41,7 @@ config MAIN_STACK_SIZE
 	default 2048 if ZTEST
 	default 2048 if ENTROPY_CC3XX && !(SPM || BUILD_WITH_TFM)
 
-config ZTEST_STACKSIZE
+config ZTEST_STACK_SIZE
 	default 2048 if ZTEST
 
 config PRIVILEGED_STACK_SIZE
