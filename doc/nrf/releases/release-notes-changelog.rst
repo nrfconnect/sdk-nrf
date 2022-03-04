@@ -191,6 +191,15 @@ Libraries for networking
 
     * An issue where downloads of COAP URIs would fail when they contained multiple path elements.
 
+Other libraries
+---------------
+
+* Updated:
+
+  * :ref:`esb_readme`:
+
+    * Fixed a compilation error for nRF52833.
+
 sdk-nrfxlib
 -----------
 
