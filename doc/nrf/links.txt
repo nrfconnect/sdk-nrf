@@ -691,6 +691,14 @@
 .. _`LVFS testing`: https://lvfs.readthedocs.io/en/latest/testing.html
 .. _`LVFS building fwupd`: https://lvfs.readthedocs.io/en/latest/custom-plugin.html#building-fwupd
 
+.. ### Source: google.com
+
+.. _`shared by Google`: https://developers.google.com/terms/site-policies
+
+.. _`Works With ChromeBook (WWCB)`: https://www.google.com/chromebook/workswithchromebook
+
+.. _`Google Fast Pair Service documentation`: https://developers.google.com/nearby/fast-pair/specifications/introduction
+
 .. ### Source: other
 
 .. _`Developing Matter products with nRF Connect SDK`: https://www.youtube.com/watch?v=kdMJQFDRoss
@@ -756,9 +764,6 @@
 .. _`Nanopb Downloads`: https://jpa.kapsi.fi/nanopb/download/
 
 .. _`Creative Commons 4.0 Attribution License`: https://creativecommons.org/licenses/by/4.0/
-.. _`shared by Google`: https://developers.google.com/terms/site-policies
-
-.. _`Works With ChromeBook (WWCB)`: https://www.google.com/chromebook/workswithchromebook
 
 .. _`openSSL`: https://www.openssl.org/
 
