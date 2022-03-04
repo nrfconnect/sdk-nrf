@@ -329,6 +329,15 @@ Other libraries
     The library is no longer directly referenced from the Event Manager.
     Instead, it uses the Event Manager hooks to connect with the manager.
 
+Other libraries
+---------------
+
+* Updated:
+
+  * :ref:`esb_readme`:
+
+    * Fixed a compilation error for nRF52833.
+
 sdk-nrfxlib
 -----------
 
