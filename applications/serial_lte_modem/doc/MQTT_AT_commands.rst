@@ -1,7 +1,7 @@
 .. _SLM_AT_MQTT:
 
-MQTT AT commands
-****************
+MQTT client AT commands
+***********************
 
 .. contents::
    :local:
@@ -337,8 +337,9 @@ Syntax
   It indicates the topic on which data is published.
 * The ``<msg>`` parameter is a string.
   It contains the payload on the topic being published.
-  The max ``NET_IPV4_MTU`` is 576 bytes.
-  When this parameter is not specified, SLM enters ``slm_data_mode``.
+
+  The maximum size of the payload is 256 bytes when not empty.
+  If the payload is empty (for example, ``""``), SLM enters ``slm_data_mode``.
 * The ``<qos>`` parameter is an integer.
   It indicates the MQTT Quality of Service types.
   It can accept the following values:
@@ -351,7 +352,7 @@ Syntax
     The acknowledgment of the reception is expected and the message should be published only once.
 
 * The ``<retain>`` parameter is an integer.
-  Default value is  ``0``.
+  Its default vefault value is  ``0``..
   When ``1``, it indicates that the broker should store the message persistently.
 
 Response syntax
@@ -392,13 +393,12 @@ Examples
 ::
 
    AT#XMQTTPUB="nrf91/slm/mqtt/topic0"
-   {"msg":"Test Json publish"}
+   {"msg":"Test Json publish"}+++
+   OK
    #XMQTTMSG: 21,27
    nrf91/slm/mqtt/topic0
    {"msg":"Test Json publish"}
    #XMQTTEVT: 2,0
-   +++
-   OK
 
 ::
 
@@ -412,12 +412,14 @@ Examples
 
 ::
 
-   AT#XMQTTPUB="nrf91/slm/mqtt/topic2","Test message with QoS 2",2,0
+   AT#XMQTTPUB="nrf91/slm/mqtt/topic2","",2,0
+   Test message with QoS 2+++
    OK
    #XMQTTEVT: 4,0
    #XMQTTEVT: 6,0
    #XMQTTMSG: 21,23
-   nrf91/slm/mqtt/topic2Test message with QoS 2
+   nrf91/slm/mqtt/topic2
+   Test message with QoS 2
    #XMQTTEVT: 2,0
 
 Read command
