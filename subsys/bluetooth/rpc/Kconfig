@@ -5,10 +5,11 @@
 #
 
 config BT_RPC
-	bool "Bluetooth over RPC"
+	bool "Bluetooth over RPC [EXPERIMENTAL]"
 	default y if BT_RPC_STACK
 	select NRF_RPC
 	select NRF_RPC_CBOR
+	select EXPERIMENTAL
 	depends on BT
 	depends on !BT_ISO_UNICAST
 	depends on !BT_ISO_BROADCAST
