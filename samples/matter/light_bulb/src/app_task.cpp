@@ -103,7 +103,11 @@ CHIP_ERROR AppTask::Init()
 		return err;
 	}
 
+#ifdef CONFIG_OPENTHREAD_MTD
 	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
+#else
+	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_FullEndDevice);
+#endif /* CONFIG_OPENTHREAD_MTD */
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed");
 		return err;
@@ -245,7 +249,7 @@ void AppTask::DispatchEvent(const AppEvent &aEvent)
 		break;
 	case AppEvent::Toggle:
 		LightingMgr().InitiateAction(LightingMgr().IsTurnedOn() ? LightingManager::Action::Off :
-										LightingManager::Action::On,
+									  LightingManager::Action::On,
 					     aEvent.LightEvent.Value, aEvent.LightEvent.ChipInitiated);
 		break;
 	case AppEvent::Level:
