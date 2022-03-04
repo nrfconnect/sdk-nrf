@@ -1,0 +1,56 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#ifndef BT_FAST_PAIR_H_
+#define BT_FAST_PAIR_H_
+
+#include <bluetooth/bluetooth.h>
+
+/**
+ * @defgroup bt_fast_pair Fast Pair API
+ * @brief Fast Pair API
+ *
+ * @{
+ */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/** Get Fast Pair advertising data buffer size.
+ *
+ * @param[in]  fp_discoverable	Boolean indicating if device is Fast Pair discoverable.
+ *
+ * @return Fast Pair advertising data buffer size in bytes.
+ */
+size_t bt_fast_pair_adv_data_size(bool fp_discoverable);
+
+/** Fill Bluetooth advertising packet with Fast Pair advertising data.
+ *
+ * Provided buffer will be used in bt_data structure. The data must be valid while the structure is
+ * in use.
+ *
+ * The buffer size must be at least @ref bt_fast_pair_adv_data_size.
+ *
+ * @param[out] adv_data		Pointer to the Bluetooth advertising data structure to be filled.
+ * @param[out] buf		Pointer to the buffer used to store Fast Pair advertising data.
+ * @param[in]  buf_size		Size of the buffer used to store Fast Pair advertising data.
+ * @param[in]  fp_discoverable	Boolean indicating if device is Fast Pair discoverable.
+ *
+ * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int bt_fast_pair_adv_data_fill(struct bt_data *adv_data, uint8_t *buf, size_t buf_size,
+			       bool fp_discoverable);
+
+#ifdef __cplusplus
+}
+#endif
+
+/**
+ * @}
+ */
+
+#endif /* BT_FAST_PAIR_H_ */
