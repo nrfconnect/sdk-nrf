@@ -145,6 +145,11 @@ config OPENTHREAD_MAC_SOFTWARE_TX_SECURITY_ENABLE
 	bool
 	default n
 
+# CSL Transmitter configuration
+config OPENTHREAD_PLATFORM_CSL_UNCERT
+	int
+	default 5
+
 if OPENTHREAD_CSL_RECEIVER
 
 config IEEE802154_CSL_ENDPOINT
@@ -158,14 +163,6 @@ config OPENTHREAD_CSL_RECEIVE_TIME_AHEAD
 config OPENTHREAD_CSL_MIN_RECEIVE_ON
 	int
 	default 300
-
-config OPENTHREAD_PLATFORM_CSL_UNCERT
-	int
-	default 5
-
-config OPENTHREAD_CUSTOM_PARAMETERS
-	string
-	default ""
 
 endif
 
