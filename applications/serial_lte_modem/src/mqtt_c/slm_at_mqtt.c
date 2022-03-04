@@ -19,9 +19,7 @@ LOG_MODULE_REGISTER(slm_mqtt, CONFIG_SLM_LOG_LEVEL);
 
 #define MQTT_MAX_TOPIC_LEN	128
 #define MQTT_MAX_CID_LEN	64
-#define MQTT_MESSAGE_BUFFER_LEN	NET_IPV4_MTU
-
-#define INVALID_FDS -1
+#define MQTT_MAX_PUB_LEN	256
 
 /**@brief MQTT client operations. */
 enum slm_mqttcon_operation {
@@ -57,7 +55,7 @@ static char mqtt_password[SLM_MAX_PASSWORD + 1];
 
 static struct mqtt_publish_param pub_param;
 static uint8_t pub_topic[MQTT_MAX_TOPIC_LEN];
-static uint8_t pub_msg[MQTT_MESSAGE_BUFFER_LEN];
+static uint8_t pub_msg[MQTT_MAX_PUB_LEN];
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
@@ -70,34 +68,18 @@ static struct k_thread mqtt_thread;
 static K_THREAD_STACK_DEFINE(mqtt_thread_stack, THREAD_STACK_SIZE);
 
 /* Buffers for MQTT client. */
-static uint8_t rx_buffer[MQTT_MESSAGE_BUFFER_LEN];
-static uint8_t tx_buffer[MQTT_MESSAGE_BUFFER_LEN];
-static uint8_t payload_buf[MQTT_MESSAGE_BUFFER_LEN];
+static uint8_t rx_buffer[CONFIG_SLM_MQTTC_MESSAGE_BUFFER_LEN];
+static uint8_t tx_buffer[CONFIG_SLM_MQTTC_MESSAGE_BUFFER_LEN];
 
 /* The mqtt client struct */
 static struct mqtt_client client;
-
-/**@brief Function to read the published payload.
- */
-static int publish_get_payload(struct mqtt_client *c, size_t length)
-{
-	if (length > sizeof(payload_buf)) {
-		return -EMSGSIZE;
-	}
-
-	return mqtt_readall_publish_payload(c, payload_buf, length);
-}
 
 /**@brief Function to handle received publish event.
  */
 static int handle_mqtt_publish_evt(struct mqtt_client *const c, const struct mqtt_evt *evt)
 {
+	int size_read = 0;
 	int ret;
-
-	ret = publish_get_payload(c, evt->param.publish.message.payload.len);
-	if (ret < 0) {
-		return ret;
-	}
 
 	sprintf(rsp_buf, "\r\n#XMQTTMSG: %d,%d\r\n",
 		evt->param.publish.message.topic.topic.size,
@@ -106,7 +88,13 @@ static int handle_mqtt_publish_evt(struct mqtt_client *const c, const struct mqt
 	data_send(evt->param.publish.message.topic.topic.utf8,
 		evt->param.publish.message.topic.topic.size);
 	data_send("\r\n", 2);
-	data_send(payload_buf, evt->param.publish.message.payload.len);
+	do {
+		ret = mqtt_read_publish_payload(c, rsp_buf, sizeof(rsp_buf));
+		if (ret > 0) {
+			data_send(rsp_buf, ret);
+			size_read += ret;
+		}
+	} while (ret >= 0 && size_read < evt->param.publish.message.payload.len);
 	data_send("\r\n", 2);
 
 	return 0;
@@ -562,7 +550,7 @@ int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 	uint16_t qos = MQTT_QOS_0_AT_MOST_ONCE;
 	uint16_t retain = 0;
 	size_t topic_sz = MQTT_MAX_TOPIC_LEN;
-	size_t msg_sz = MQTT_MESSAGE_BUFFER_LEN;
+	size_t msg_sz = MQTT_MAX_PUB_LEN;
 	uint16_t param_count = at_params_valid_count_get(&at_param_list);
 
 	switch (cmd_type) {
@@ -572,33 +560,22 @@ int handle_at_mqtt_publish(enum at_cmd_type cmd_type)
 			return err;
 		}
 		pub_msg[0] = '\0';
-		if (at_params_type_get(&at_param_list, 2) == AT_PARAM_TYPE_STRING) {
+		if (param_count > 2) {
 			err = util_string_get(&at_param_list, 2, pub_msg, &msg_sz);
 			if (err) {
 				return err;
 			}
-			if (param_count > 3) {
-				err = at_params_unsigned_short_get(&at_param_list, 3, &qos);
-				if (err) {
-					return err;
-				}
-			}
-			if (param_count > 4) {
-				err = at_params_unsigned_short_get(&at_param_list, 4, &retain);
-				if (err) {
-					return err;
-				}
-			}
-		} else if (at_params_type_get(&at_param_list, 2) == AT_PARAM_TYPE_NUM_INT) {
-			err = at_params_unsigned_short_get(&at_param_list, 2, &qos);
+		}
+		if (param_count > 3) {
+			err = at_params_unsigned_short_get(&at_param_list, 3, &qos);
 			if (err) {
 				return err;
 			}
-			if (param_count > 3) {
-				err = at_params_unsigned_short_get(&at_param_list, 3, &retain);
-				if (err) {
-					return err;
-				}
+		}
+		if (param_count > 4) {
+			err = at_params_unsigned_short_get(&at_param_list, 4, &retain);
+			if (err) {
+				return err;
 			}
 		}
 

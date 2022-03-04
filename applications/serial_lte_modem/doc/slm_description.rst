@@ -174,6 +174,12 @@ CONFIG_SLM_FTPC - FTP client support in SLM
 CONFIG_SLM_MQTTC - MQTT client support in SLM
    This option enables additional AT commands for using the MQTT client service.
 
+.. _CONFIG_SLM_MQTTC_MESSAGE_BUFFER_LEN:
+
+CONFIG_SLM_MQTTC_MESSAGE_BUFFER_LEN - Size of the buffer for the MQTT library
+   This option specifies the maximum message size which can be transmitted or received through MQTT (excluding PUBLISH payload).
+   The default value is 512, meaning 512 bytes for TX and RX, respectively.
+
 .. _CONFIG_SLM_HTTPC:
 
 CONFIG_SLM_HTTPC - HTTP client support in SLM
