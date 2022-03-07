@@ -121,6 +121,7 @@
   - "dts/bindings/radio_fem/**/*"
   - "samples/nrf5340/multiprotocol_rpmsg/**/*"
   - "modules/nrfxlib/nrf_802154/**/*"
+  - "applications/zigbee_weather_station/**/*"
   - any:
     - "subsys/bluetooth/**/*"
     - "!subsys/bluetooth/mesh/**/*"

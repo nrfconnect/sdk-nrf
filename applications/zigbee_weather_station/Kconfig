@@ -6,7 +6,7 @@
 
 if USB
 config USB_DEVICE_PID
-	default USB_PID_CDC_ACM_SAMPLE
+	default 0x53A0
 endif
 
 # How often sensor data is read
@@ -20,3 +20,7 @@ config FIRST_WEATHER_CHECK_DELAY_SECONDS
 	default 5
 
 source "Kconfig.zephyr"
+
+module = ZIGBEE_WEATHER_STATION
+module-str = Zigbee weather station
+source "subsys/logging/Kconfig.template.log_config"

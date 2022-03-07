@@ -14,17 +14,9 @@
  */
 #define SENSOR_VAL2_DIVISOR 1000000
 
-LOG_MODULE_DECLARE(app, LOG_LEVEL_INF);
-
-/* Structure for storing sensor measurement data */
-struct sensor_data_t {
-	struct sensor_value temperature;
-	struct sensor_value pressure;
-	struct sensor_value humidity;
-};
+LOG_MODULE_DECLARE(app, CONFIG_ZIGBEE_WEATHER_STATION_LOG_LEVEL);
 
 static const struct device *sensor;
-static struct sensor_data_t sensor_data;
 
 /*
  * Sensor value is represented as having an integer and a fractional part,
@@ -37,79 +29,140 @@ static struct sensor_data_t sensor_data;
  *     -1.0: val1 = -1, val2 =  0
  *     -1.5: val1 = -1, val2 = -500000
  */
-static float convert_sensor_value(struct sensor_value *value)
+static float convert_sensor_value(struct sensor_value value)
 {
 	float result = 0.0f;
 
-	if (value) {
-		/* Determine sign */
-		result = (value->val1 < 0 || value->val2 < 0) ? -1.0f : 1.0f;
+	/* Determine sign */
+	result = (value.val1 < 0 || value.val2 < 0) ? -1.0f : 1.0f;
 
-		/* Use absolute values */
-		value->val1 = value->val1 < 0 ? -value->val1 : value->val1;
-		value->val2 = value->val2 < 0 ? -value->val2 : value->val2;
+	/* Use absolute values */
+	value.val1 = value.val1 < 0 ? -value.val1 : value.val1;
+	value.val2 = value.val2 < 0 ? -value.val2 : value.val2;
 
-		/* Calculate value */
-		result *= (value->val1 + value->val2 / (float)SENSOR_VAL2_DIVISOR);
-	} else {
-		LOG_ERR("NULL pointer: value");
-	}
+	/* Calculate value */
+	result *= (value.val1 + value.val2 / (float)SENSOR_VAL2_DIVISOR);
 
 	return result;
 }
 
-void sensor_init(void)
+int sensor_init(void)
 {
+	int err = 0;
+
 	if (sensor) {
 		LOG_WRN("Sensor already initialized");
 	} else {
-		LOG_INF("Initializing sensor...");
-
-		sensor_data.temperature.val1 = 0;
-		sensor_data.temperature.val2 = 0;
-		sensor_data.pressure.val1 = 0;
-		sensor_data.pressure.val2 = 0;
-		sensor_data.humidity.val1 = 0;
-		sensor_data.humidity.val2 = 0;
-
 		sensor = DEVICE_DT_GET(DT_INST(0, bosch_bme680));
-		if (sensor) {
-			LOG_INF("Initializing sensor...OK");
-		} else {
-			LOG_ERR("Initializing sensor...FAILED");
+		if (!sensor) {
+			LOG_ERR("Failed to get device");
+			err = ENODEV;
 		}
 	}
+
+	return err;
 }
 
-void sensor_update(void)
+int sensor_update_measurements(void)
 {
+	int err = 0;
+
 	if (sensor) {
-		sensor_sample_fetch(sensor);
-
-		sensor_channel_get(sensor, SENSOR_CHAN_AMBIENT_TEMP, &sensor_data.temperature);
-		sensor_channel_get(sensor, SENSOR_CHAN_PRESS, &sensor_data.pressure);
-		sensor_channel_get(sensor, SENSOR_CHAN_HUMIDITY, &sensor_data.humidity);
-
-		LOG_INF("Sensor     T:%3d.%06d [*C] P:%3d.%06d [kPa] H:%3d.%06d [%%]",
-			sensor_data.temperature.val1, sensor_data.temperature.val2,
-			sensor_data.pressure.val1, sensor_data.pressure.val2,
-			sensor_data.humidity.val1, sensor_data.humidity.val2);
+		err = sensor_sample_fetch(sensor);
 	} else {
 		LOG_ERR("Sensor not initialized");
+		err = ENODEV;
 	}
+
+	return err;
 }
 
-float sensor_get_temperature(void)
+int sensor_get_temperature(float *temperature)
 {
-	return convert_sensor_value(&sensor_data.temperature);
+	int err = 0;
+
+	if (temperature) {
+		if (sensor) {
+			struct sensor_value sensor_temperature;
+
+			err = sensor_channel_get(sensor,
+						 SENSOR_CHAN_AMBIENT_TEMP,
+						 &sensor_temperature);
+			if (err) {
+				LOG_ERR("Failed to get sensor channel: %d", err);
+			} else {
+				LOG_INF("Sensor    T:%3d.%06d [*C]",
+					sensor_temperature.val1, sensor_temperature.val2);
+				*temperature = convert_sensor_value(sensor_temperature);
+			}
+		} else {
+			LOG_ERR("Sensor not initialized");
+			err = ENODEV;
+		}
+	} else {
+		LOG_ERR("NULL param");
+		err = EINVAL;
+	}
+
+	return err;
 }
 
-float sensor_get_pressure(void)
+int sensor_get_pressure(float *pressure)
 {
-	return convert_sensor_value(&sensor_data.pressure);
+	int err = 0;
+
+	if (pressure) {
+		if (sensor) {
+			struct sensor_value sensor_pressure;
+
+			err = sensor_channel_get(sensor,
+						 SENSOR_CHAN_PRESS,
+						 &sensor_pressure);
+			if (err) {
+				LOG_ERR("Failed to get sensor channel: %d", err);
+			} else {
+				LOG_INF("Sensor    P:%3d.%06d [kPa]",
+					sensor_pressure.val1, sensor_pressure.val2);
+				*pressure = convert_sensor_value(sensor_pressure);
+			}
+		} else {
+			LOG_ERR("Sensor not initialized");
+			err = ENODEV;
+		}
+	} else {
+		LOG_ERR("NULL param");
+		err = EINVAL;
+	}
+
+	return err;
 }
 
-float sensor_get_humidity(void)
+int sensor_get_humidity(float *humidity)
 {
-	return convert_sensor_value(&sensor_data.humidity);
+	int err = 0;
+
+	if (humidity) {
+		if (sensor) {
+			struct sensor_value sensor_humidity;
+
+			err = sensor_channel_get(sensor,
+						 SENSOR_CHAN_HUMIDITY,
+						 &sensor_humidity);
+			if (err) {
+				LOG_ERR("Failed to get sensor channel: %d", err);
+			} else {
+				LOG_INF("Sensor    H:%3d.%06d [%%]",
+					sensor_humidity.val1, sensor_humidity.val2);
+				*humidity = convert_sensor_value(sensor_humidity);
+			}
+		} else {
+			LOG_ERR("Sensor not initialized");
+			err = ENODEV;
+		}
+	} else {
+		LOG_ERR("NULL param");
+		err = EINVAL;
+	}
+
+	return err;
 }

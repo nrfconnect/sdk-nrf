@@ -32,6 +32,6 @@
 &pwm0 {
 	status = "disabled";
 };
-&pwm2 {
+&pwm1 {
 	status = "disabled";
 };
