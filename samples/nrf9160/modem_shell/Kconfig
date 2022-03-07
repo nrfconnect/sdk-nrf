@@ -91,6 +91,10 @@ config MOSH_CLOUD
 	help
 	  MQTT connection to nRFCloud.
 
+config MOSH_AT_CMD_MODE
+	bool "Specific AT command mode"
+	default y
+
 config MOSH_PRINT_BUFFER_SIZE
 	int "Buffer size used when printing modem shell output"
 	default 1024
@@ -115,6 +119,34 @@ config MOSH_WORKER_THREADS
 
 endmenu
 endif #MOSH_IPERF3
+
+if MOSH_AT_CMD_MODE
+choice
+	prompt "Command termination"
+	default MOSH_AT_CMD_MODE_CR_TERMINATION
+	help
+		Sets the command termination ending from the serial terminal
+		Levels are:
+		-  NULL Termination
+		-  CR Termination
+		-  LF Termination
+		-  CR+LF Termination
+	config MOSH_AT_CMD_MODE_NULL_TERMINATION
+		bool "NULL Termination"
+	config MOSH_AT_CMD_MODE_CR_TERMINATION
+		bool "CR Termination"
+	config MOSH_AT_CMD_MODE_LF_TERMINATION
+		bool "LF Termination"
+	config MOSH_AT_CMD_MODE_CR_LF_TERMINATION
+		bool "CR+LF Termination"
+endchoice
+config MOSH_AT_CMD_MODE_TERMINATION
+	int
+	default 0 if MOSH_AT_CMD_MODE_NULL_TERMINATION
+	default 1 if MOSH_AT_CMD_MODE_CR_TERMINATION
+	default 2 if MOSH_AT_CMD_MODE_LF_TERMINATION
+	default 3 if MOSH_AT_CMD_MODE_CR_LF_TERMINATION
+endif
 
 if MOSH_LINK
 menu "MoSH link control selections"

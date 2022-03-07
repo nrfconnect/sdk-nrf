@@ -171,6 +171,7 @@ nrf9160 samples
 
       * An option ``--interval`` (in seconds) to neighbor cell measurements in continuous mode  (``link ncellmeas --continuous``).
         When using this option, a new measurement is started in each interval.
+      * Separate plain AT command mode that can be started by typing: ``at at_cmd_mode start``.
 
   * :ref:`nrf_cloud_rest_fota` sample:
 

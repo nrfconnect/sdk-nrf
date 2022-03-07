@@ -19,6 +19,10 @@
 
 static const struct shell *mosh_shell;
 
+#if defined(CONFIG_MOSH_AT_CMD_MODE)
+extern bool at_cmd_mode_dont_print;
+#endif
+
 /** Configuration on whether timestamps are added to the print. */
 bool mosh_print_timestamp_use;
 
@@ -81,6 +85,12 @@ void mosh_fprintf(enum mosh_print_level print_level, const char *fmt, ...)
 	va_list args;
 	int chars = 0;
 	const char *timestamp;
+
+#if defined(CONFIG_MOSH_AT_CMD_MODE)
+	if (at_cmd_mode_dont_print) {
+		return;
+	}
+#endif
 
 	k_mutex_lock(&mosh_print_buf_mutex, K_FOREVER);
 
