@@ -29,23 +29,51 @@ static int cereg_status;
 enum cereg_status {
 	NO_NETWORK = 0,
 	HOME = 1,
-	SEARCHING = 2
+	SEARCHING = 2,
+	DENIED = 3,
+	UNKNOWN = 4,
+	ROAMING = 5,
+	UICC_FAILURE = 90
 };
 
-static const char * const cereg_str[] = {
-	[NO_NETWORK] = "no network",
-	[SEARCHING] = "searching",
-	[HOME] = "home",
-};
+static const char *cereg_str_get(enum cereg_status status)
+{
+	switch (status) {
+	case NO_NETWORK:
+		return "no network";
+	case HOME:
+		return "home";
+	case SEARCHING:
+		return "searching";
+	case DENIED:
+		return "denied";
+	case UNKNOWN:
+		return "unknown";
+	case ROAMING:
+		return "roaming";
+	case UICC_FAILURE:
+		return "UICC failure";
+	default:
+		return NULL;
+	}
+}
 
 static int rsps_status;
 static char response[64];
 
 static void cereg_mon(const char *notif)
 {
-	cereg_status = atoi(notif + strlen("+CEREG: "));
+	const char *cereg_status_str;
 
-	printk("Network registration status: %s\n", cereg_str[cereg_status]);
+	cereg_status = atoi(notif + strlen("+CEREG: "));
+	cereg_status_str = cereg_str_get(cereg_status);
+
+	if (!cereg_status_str) {
+		printk("Network registration status unknown: %d\n", cereg_status);
+		return;
+	}
+
+	printk("Network registration status: %s\n", cereg_status_str);
 
 	if (cereg_status == HOME) {
 		k_sem_give(&cereg_sem);
