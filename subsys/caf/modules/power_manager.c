@@ -139,7 +139,9 @@ static void system_off(void)
 		 */
 		nrfx_reset_reason_clear(nrfx_reset_reason_get());
 
-		pm_power_state_force(0, (struct pm_state_info){ PM_STATE_SOFT_OFF, 0, 0 });
+		const struct pm_state_info si = {PM_STATE_SOFT_OFF, 0, 0};
+
+		pm_state_force(0, &si);
 	} else {
 		LOG_WRN("System suspended");
 	}
@@ -151,7 +153,9 @@ static void system_off_on_error(void)
 	LOG_WRN("System turned off because of unrecoverable error");
 	LOG_PANIC();
 
-	pm_power_state_force(0, (struct pm_state_info){PM_STATE_SOFT_OFF, 0, 0});
+	const struct pm_state_info si = {PM_STATE_SOFT_OFF, 0, 0};
+
+	pm_state_force(0, &si);
 }
 
 static void power_down(struct k_work *work)
@@ -346,7 +350,9 @@ static bool event_handler(const struct event_header *eh)
 
 			LOG_INF("Activate power manager");
 
-			pm_power_state_force(0, (struct pm_state_info){ PM_STATE_ACTIVE, 0, 0 });
+			const struct pm_state_info si = {PM_STATE_ACTIVE, 0, 0};
+
+			pm_state_force(0, &si);
 
 			k_work_init_delayable(&error_trigger, error);
 			k_work_init_delayable(&power_down_trigger, power_down);
