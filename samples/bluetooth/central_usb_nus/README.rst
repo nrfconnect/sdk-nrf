@@ -28,8 +28,8 @@ Debugging
 
 This sample uses the board's USB connection for exchanging data with the NUS Client. 
 
-Debug messages are displayed on the UART console. Most DKs have the UART console connected to the JLink CDC port. For boards that don't have
-the JLink such as the nRF52840 Dongle, you can connect directly to the UART pins to view the debug messages.
+Debug messages are displayed on the UART console. Most DKs have the UART console connected to the JLink CDC port. The Dongle
+doesn't have a JLink, so the debug messages are disabled in the configuration.
 
 FEM support
 ***********
