@@ -142,6 +142,10 @@ nrf9160 samples
 
 * Updated:
 
+   * :ref:`at_monitor_sample` sample:
+
+    * Added ``denied``, ``unknown``, ``roaming``, and ``UICC failure`` CEREG status codes to :c:func:`cereg_mon`.
+
   * :ref:`modem_shell_application` sample:
 
     * Added:
