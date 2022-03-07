@@ -3,7 +3,7 @@
 Working with nRF53 Series
 #########################
 
-The |NCS| provides support for developing on the nRF5340 System in Package (SiP) using the nRF5340 DK and the Nordic Thingy:53.
+The |NCS| provides support for developing on the nRF5340 System on Chip (SoC) using the nRF5340 DK and the Nordic Thingy:53.
 
 .. note::
   |thingy53_unreleased|
