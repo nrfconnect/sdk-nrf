@@ -5,6 +5,12 @@ tests:
   applications.zigbee_weather_station:
     build_only: true
     platform_allow: thingy53_nrf5340_cpuapp
+    tags: ci_build
+    extra_args: CONF_FILE=prj_release.conf
     integration_platforms:
       - thingy53_nrf5340_cpuapp
-    tags: ci_build
+  applications.zigbee_weather_station.debug:
+    build_only: true
+    platform_allow: thingy53_nrf5340_cpuapp
+    tags: ci_build debug
+    extra_args: CONF_FILE=prj.conf
