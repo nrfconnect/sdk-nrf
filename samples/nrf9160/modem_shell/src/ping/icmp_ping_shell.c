@@ -52,59 +52,14 @@ static void icmp_ping_shell_usage_print(void)
 	mosh_print_no_format(icmp_ping_shell_cmd_usage_str);
 }
 
-static void
-icmp_ping_shell_cmd_defaults_set(struct icmp_ping_shell_cmd_argv *ping_args)
-{
-	memset(ping_args, 0, sizeof(struct icmp_ping_shell_cmd_argv));
-	/* ping_args->dest = NULL; */
-	ping_args->count = ICMP_PARAM_COUNT_DEFAULT;
-	ping_args->interval = ICMP_PARAM_INTERVAL_DEFAULT;
-	ping_args->timeout = ICMP_PARAM_TIMEOUT_DEFAULT;
-	ping_args->len = ICMP_PARAM_LENGTH_DEFAULT;
-	ping_args->cid = MOSH_ARG_NOT_SET;
-	ping_args->pdn_id_for_cid = MOSH_ARG_NOT_SET;
-}
-
-static bool icmp_ping_shell_set_ping_args_according_to_pdp_ctx(
-	struct icmp_ping_shell_cmd_argv *ping_args,
-	struct pdp_context_info_array *ctx_info_tbl)
-{
-	/* Find PDP context info for requested CID: */
-	int i;
-	bool found = false;
-
-	for (i = 0; i < ctx_info_tbl->size; i++) {
-		if (ctx_info_tbl->array[i].cid == ping_args->cid) {
-			ping_args->current_pdp_type = ctx_info_tbl->array[i].pdp_type;
-			ping_args->current_addr4 = ctx_info_tbl->array[i].ip_addr4;
-			ping_args->current_addr6 = ctx_info_tbl->array[i].ip_addr6;
-
-			if (ctx_info_tbl->array[i].pdn_id_valid) {
-				ping_args->pdn_id_for_cid = ctx_info_tbl->array[i].pdn_id;
-			}
-
-			strcpy(ping_args->current_apn_str, ctx_info_tbl->array[i].apn_str);
-
-			if (ctx_info_tbl->array[0].ipv4_mtu != 0) {
-				ping_args->mtu = ctx_info_tbl->array[0].ipv4_mtu;
-			} else {
-				ping_args->mtu = ICMP_DEFAULT_LINK_MTU;
-			}
-
-			found = true;
-		}
-	}
-	return found;
-}
 /*****************************************************************************/
 
 int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 {
 	struct icmp_ping_shell_cmd_argv ping_args;
-	struct pdp_context_info_array pdp_context_info_tbl = { 0 };
-	int flag, dest_len, ret;
+	int flag, dest_len;
 
-	icmp_ping_shell_cmd_defaults_set(&ping_args);
+	icmp_ping_cmd_defaults_set(&ping_args);
 
 	if (argc < 3) {
 		goto show_usage;
@@ -199,63 +154,9 @@ int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 		goto show_usage;
 	}
 
-	/* All good for args, get the current connection info and start the ping: */
-	ret = link_api_pdp_contexts_read(&pdp_context_info_tbl);
-	if (ret) {
-		mosh_error("cannot read current connection info: %d", ret);
-		goto show_usage;
-	}
-
-	if (pdp_context_info_tbl.size > 0) {
-		/* Default context: */
-		if (ping_args.cid == MOSH_ARG_NOT_SET) {
-			ping_args.current_pdp_type = pdp_context_info_tbl.array[0].pdp_type;
-			ping_args.current_addr4 = pdp_context_info_tbl.array[0].ip_addr4;
-			ping_args.current_addr6 = pdp_context_info_tbl.array[0].ip_addr6;
-			if (pdp_context_info_tbl.array[0].ipv4_mtu != 0) {
-				ping_args.mtu =	pdp_context_info_tbl.array[0].ipv4_mtu;
-			} else {
-				ping_args.mtu = ICMP_DEFAULT_LINK_MTU;
-			}
-		} else {
-			bool found = icmp_ping_shell_set_ping_args_according_to_pdp_ctx(
-				&ping_args, &pdp_context_info_tbl);
-
-			if (!found) {
-				mosh_error("cannot find CID: %d", ping_args.cid);
-				goto exit;
-			}
-		}
-	} else {
-		mosh_error("cannot read current connection info");
-		goto exit;
-	}
-
-	if (pdp_context_info_tbl.array != NULL) {
-		free(pdp_context_info_tbl.array);
-	}
-
-	/* Now we can check the max payload len vs link MTU (IPv6 check later): */
-	uint32_t ipv4_max_payload_len = ping_args.mtu - ICMP_IPV4_HDR_LEN - ICMP_HDR_LEN;
-
-	if (!ping_args.force_ipv6 && ping_args.len > ipv4_max_payload_len) {
-		mosh_warn(
-			"Payload size exceeds the link limits: MTU %d - headers %d = %d ",
-			ping_args.mtu,
-			(ICMP_IPV4_HDR_LEN - ICMP_HDR_LEN),
-			ipv4_max_payload_len);
-		/* Execute ping anyway */
-	}
-
 	return icmp_ping_start(&ping_args);
 
 show_usage:
 	icmp_ping_shell_usage_print();
-
-exit:
-	if (pdp_context_info_tbl.array != NULL) {
-		free(pdp_context_info_tbl.array);
-	}
-
 	return -1;
 }

@@ -52,6 +52,11 @@
 #include "location_shell.h"
 #endif
 
+#if defined(CONFIG_MOSH_AT_CMD_MODE)
+#include "at_cmd_mode.h"
+#include "at_cmd_mode_sett.h"
+#endif
+
 /***** Work queue and work item definitions *****/
 
 #define MOSH_COMMON_WORKQ_PRIORITY CONFIG_MOSH_COMMON_WORKQUEUE_PRIORITY
@@ -217,4 +222,12 @@ void main(void)
 	shell_execute_cmd(shell, "resize");
 	/* Run empty command because otherwise "resize" would be set to the command line. */
 	shell_execute_cmd(shell, "");
+
+#if defined(CONFIG_MOSH_AT_CMD_MODE)
+	at_cmd_mode_sett_init();
+	if (at_cmd_mode_sett_is_autostart_enabled()) {
+		/* Start directly in AT cmd mode */
+		at_cmd_mode_start(shell);
+	}
+#endif
 }

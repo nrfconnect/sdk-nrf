@@ -14,7 +14,6 @@
 #if defined(CONFIG_LWM2M_CARRIER)
 #include <lwm2m_carrier.h>
 #endif
-#include "at/at_shell.h"
 #if defined(CONFIG_MOSH_PING)
 #include "ping/icmp_ping_shell.h"
 #endif
@@ -180,8 +179,6 @@ static int cmd_curl(const struct shell *shell, size_t argc, char **argv)
 }
 SHELL_CMD_REGISTER(curl, NULL, "For curl usage, just type \"curl --manual\"", cmd_curl);
 #endif
-
-SHELL_CMD_REGISTER(at, NULL, "Execute an AT command.", at_shell);
 
 #if defined(CONFIG_MOSH_SOCK)
 SHELL_CMD_REGISTER(sock, NULL,
