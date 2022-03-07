@@ -35,6 +35,8 @@
 #include "ppp_settings.h"
 #include "ppp_ctrl.h"
 
+extern struct k_work_q mosh_common_work_q;
+
 /* ppp globals: */
 struct net_if *ppp_iface_global;
 K_SEM_DEFINE(ppp_sockets_sem, 0, 2);
@@ -206,7 +208,7 @@ ppp_ctrl_net_mgmt_event_ipv4_levelhandler(struct net_mgmt_event_callback *cb,
 		 */
 		if (!ppp_closing) {
 			mosh_print("PPP: restarting...");
-			k_work_submit(&ppp_ctrl_restart_work);
+			k_work_submit_to_queue(&mosh_common_work_q, &ppp_ctrl_restart_work);
 		}
 	}
 }
@@ -279,7 +281,7 @@ void ppp_ctrl_init(void)
 void ppp_ctrl_default_pdn_active(bool default_pdn_active)
 {
 	ppp_ctrl_pdn_status_worker_data.default_pdn_active = default_pdn_active;
-	k_work_submit(&ppp_ctrl_pdn_status_worker_data.work);
+	k_work_submit_to_queue(&mosh_common_work_q, &ppp_ctrl_pdn_status_worker_data.work);
 }
 
 /******************************************************************************/

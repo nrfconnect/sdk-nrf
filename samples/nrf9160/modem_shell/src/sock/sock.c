@@ -28,6 +28,7 @@
 #include "mosh_print.h"
 
 extern struct k_poll_signal mosh_signal;
+extern struct k_work_q mosh_common_work_q;
 
 /* Maximum number of sockets takes into account AT command socket */
 #define MAX_SOCKETS (CONFIG_POSIX_MAX_FDS - 1)
@@ -744,7 +745,8 @@ static void data_send_work_handler(struct k_work *item)
 		data_send_info_ptr->data_format_hex);
 
 	if (ret != -ECANCELED) {
-		k_work_schedule(&socket_info->send_info.work,
+		k_work_schedule_for_queue(&mosh_common_work_q,
+				&socket_info->send_info.work,
 				K_SECONDS(socket_info->send_info.interval));
 	}
 }
@@ -923,7 +925,8 @@ int sock_send_data(
 				&socket_info->send_info.work,
 				data_send_work_handler);
 			/* Send immediately for the first time */
-			k_work_schedule(&socket_info->send_info.work, K_SECONDS(0));
+			k_work_schedule_for_queue(&mosh_common_work_q, &socket_info->send_info.work,
+						  K_SECONDS(0));
 		}
 
 	} else if (data_out != NULL && data_out_length > 0) {

@@ -40,9 +40,8 @@
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 
-static bool link_subscribe_for_rsrp;
-
 extern bool uart_disable_during_sleep_requested;
+extern struct k_work_q mosh_common_work_q;
 
 struct pdn_activation_status_info {
 	bool activated;
@@ -50,6 +49,8 @@ struct pdn_activation_status_info {
 };
 
 #define REGISTERED_STATUS_LED          DK_LED1
+
+static bool link_subscribe_for_rsrp;
 
 /* Work for getting the modem info that ain't in lte connection ind: */
 static struct k_work registered_work;
@@ -205,7 +206,7 @@ static void link_cell_change_work(struct k_work *work_item)
 static void link_rsrp_signal_handler(char rsrp_value)
 {
 	modem_rsrp = (int8_t)rsrp_value - MODEM_INFO_RSRP_OFFSET_VAL;
-	k_work_submit(&modem_info_signal_work);
+	k_work_submit_to_queue(&mosh_common_work_q, &modem_info_signal_work);
 }
 
 /******************************************************************************/
@@ -327,7 +328,8 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		if (ncellmeas_mode == LINK_NCELLMEAS_MODE_CONTINUOUS &&
 		    ncellmeas_periodic_interval) {
 			/* Interval was given for continuous mode */
-			k_work_reschedule(&ncellmeas_work_data.work,
+			k_work_schedule_for_queue(&mosh_common_work_q,
+					&ncellmeas_work_data.work,
 					K_SECONDS(ncellmeas_periodic_interval));
 		}
 	} break;
@@ -359,7 +361,7 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		if (evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_EMERGENCY ||
 		    evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ||
 		    evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING) {
-			k_work_submit(&registered_work);
+			k_work_submit_to_queue(&mosh_common_work_q, &registered_work);
 		} else {
 			dk_set_led_off(REGISTERED_STATUS_LED);
 		}
@@ -367,7 +369,7 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 	case LTE_LC_EVT_CELL_UPDATE:
 		cell_change_work_data.cell_id = evt->cell.id;
 		cell_change_work_data.tac = evt->cell.tac;
-		k_work_submit(&cell_change_work_data.work);
+		k_work_submit_to_queue(&mosh_common_work_q, &cell_change_work_data.work);
 
 		if (ncellmeas_mode == LINK_NCELLMEAS_MODE_CONTINUOUS) {
 			ncellmeas_work_data.mode = ncellmeas_mode;
@@ -375,7 +377,8 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 			ncellmeas_work_data.periodic_interval = ncellmeas_periodic_interval;
 
 			/* Send immediately after a cell update */
-			k_work_schedule(&ncellmeas_work_data.work, K_SECONDS(0));
+			k_work_schedule_for_queue(&mosh_common_work_q, &ncellmeas_work_data.work,
+						  K_SECONDS(0));
 		}
 		break;
 	case LTE_LC_EVT_RRC_UPDATE:
