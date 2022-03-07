@@ -1,0 +1,11 @@
+sample:
+  name: BLE NUS Central USB
+  description: Buetooth Low Energy NUS Central USB sample
+tests:
+  samples.bluetooth.central_usb_nus:
+    build_only: true
+    platform_allow: nrf52840dongle_nrf52840 nrf52840dk_nrf52840
+    integration_platforms:
+      - nrf52840dongle_nrf52840
+      - nrf52840dk_nrf52840
+    tags: bluetooth ci_build
