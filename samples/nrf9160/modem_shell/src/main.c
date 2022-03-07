@@ -52,6 +52,12 @@
 #include "location_shell.h"
 #endif
 
+/***** Work queue and work item definitions *****/
+
+#define MOSH_COMMON_WORKQ_PRIORITY CONFIG_MOSH_COMMON_WORKQUEUE_PRIORITY
+K_THREAD_STACK_DEFINE(mosh_common_workq_stack, CONFIG_MOSH_COMMON_WORKQUEUE_STACK_SIZE);
+struct k_work_q mosh_common_work_q;
+
 /* Global variables */
 struct modem_param_info modem_param;
 struct k_poll_signal mosh_signal;
@@ -106,8 +112,18 @@ void main(void)
 {
 	int err;
 	const struct shell *shell = shell_backend_uart_get_ptr();
+	struct k_work_queue_config cfg = {
+		.name = "mosh_common_workq",
+	};
 
 	mosh_print_version_info();
+
+	k_work_queue_start(
+		&mosh_common_work_q,
+		mosh_common_workq_stack,
+		K_THREAD_STACK_SIZEOF(mosh_common_workq_stack),
+		MOSH_COMMON_WORKQ_PRIORITY,
+		&cfg);
 
 #if !defined(CONFIG_LWM2M_CARRIER)
 	/* Get Modem library initialization return value. */
