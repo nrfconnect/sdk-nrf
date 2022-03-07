@@ -212,7 +212,15 @@ After completing the :ref:`manual <build_environment_cli>` or :ref:`automatic <g
 
       .. note::
 
-	     To build from a directory other than the application directory, run the west build command with an additional parameter *directory_name*,  specifying the application directory.
+         You can run the west command with optional parameters:
+
+          * *directory_name* - To build from a directory other than the application directory, use *directory_name* to specify the application directory.
+
+          * *build_target@board_revision* - To get extra device tree overlays with new features available for a board version.
+            The *board_revision* is printed on the label of your DK, just below the PCA number.
+            For example, if you run the west build command with an additional parameter ``@1.0.0`` for nRF9160 build target, it adds the external flash on the nRF9160 DK that was available since board version 0.14.0.
+
+         For more information on other optional build parameters, run the ``west build -h`` help text command.
 
       See :ref:`gs_programming_board_names` for more information on the supported boards and build targets.
       To reuse an existing build directory for building another application for another board or build target, pass ``-p=auto`` to ``west build``.
