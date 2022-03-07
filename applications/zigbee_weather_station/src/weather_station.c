@@ -16,68 +16,126 @@
 /* Zigbee Cluster Library 4.7.2.1.1: MeasuredValue = 100x water content in % */
 #define ZCL_HUMIDITY_MEMASUREMENT_MEASURED_VALUE_MULTIPLIER 100
 
-LOG_MODULE_DECLARE(app, LOG_LEVEL_INF);
+LOG_MODULE_DECLARE(app, CONFIG_ZIGBEE_WEATHER_STATION_LOG_LEVEL);
 
-/* Store all attribute values in one place */
-struct weather_attributes_s {
-	int16_t temperature;
-	int16_t pressure;
-	int16_t humidity;
-};
-struct weather_attributes_s weather_attributes;
-
-/* Convert sensor measurements to attribute values, as specified by ZCL */
-static void calculate_attributes(void)
+int weather_station_init(void)
 {
-	weather_attributes.temperature =
-		(int16_t)(sensor_get_temperature() *
-			  ZCL_TEMPERATURE_MEMASUREMENT_MEASURED_VALUE_MULTIPLIER);
-	weather_attributes.pressure =
-		(int16_t)(sensor_get_pressure() *
-			  ZCL_PRESSURE_MEMASUREMENT_MEASURED_VALUE_MULTIPLIER);
-	weather_attributes.humidity =
-		(int16_t)(sensor_get_humidity() *
-			  ZCL_HUMIDITY_MEMASUREMENT_MEASURED_VALUE_MULTIPLIER);
+	int err = sensor_init();
+
+	if (err) {
+		LOG_ERR("Failed to initialize sensor: %d", err);
+	}
+
+	return err;
 }
 
-void weather_station_init(void)
+int weather_station_check_weather(void)
 {
-	weather_attributes.temperature = 0;
-	weather_attributes.pressure = 0;
-	weather_attributes.humidity = 0;
+	int err = sensor_update_measurements();
 
-	sensor_init();
+	if (err) {
+		LOG_ERR("Failed to update sensor");
+	}
+
+	return err;
 }
 
-void weather_station_update_attributes(void)
+int weather_station_update_temperature(void)
 {
-	sensor_update();
-	calculate_attributes();
+	int err = 0;
 
-	LOG_INF("Attributes T:%10d      P:%10d       H:%10d",
-		weather_attributes.temperature,
-		weather_attributes.pressure,
-		weather_attributes.humidity);
+	float measured_temperature = 0.0f;
+	int16_t temperature_attribute = 0;
 
+	err = sensor_get_temperature(&measured_temperature);
+	if (err) {
+		LOG_ERR("Failed to get sensor temperature: %d", err);
+	} else {
+		/* Convert measured value to attribute value, as specified in ZCL */
+		temperature_attribute = (int16_t)
+					(measured_temperature *
+					 ZCL_TEMPERATURE_MEMASUREMENT_MEASURED_VALUE_MULTIPLIER);
+		LOG_INF("Attribute T:%10d", temperature_attribute);
 
-	zb_zcl_set_attr_val(WEATHER_STATION_ENDPOINT_NB,
-			    ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT,
-			    ZB_ZCL_CLUSTER_SERVER_ROLE,
-			    ZB_ZCL_ATTR_TEMP_MEASUREMENT_VALUE_ID,
-			    (zb_uint8_t *)&weather_attributes.temperature,
-			    ZB_FALSE);
+		/* Set ZCL attribute */
+		zb_zcl_status_t status = zb_zcl_set_attr_val(WEATHER_STATION_ENDPOINT_NB,
+							     ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT,
+							     ZB_ZCL_CLUSTER_SERVER_ROLE,
+							     ZB_ZCL_ATTR_TEMP_MEASUREMENT_VALUE_ID,
+							     (zb_uint8_t *)&temperature_attribute,
+							     ZB_FALSE);
+		if (status) {
+			LOG_ERR("Failed to set ZCL attribute: %d", status);
+			err = status;
+		}
+	}
 
-	zb_zcl_set_attr_val(WEATHER_STATION_ENDPOINT_NB,
-			    ZB_ZCL_CLUSTER_ID_PRESSURE_MEASUREMENT,
-			    ZB_ZCL_CLUSTER_SERVER_ROLE,
-			    ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_VALUE_ID,
-			    (zb_uint8_t *)&weather_attributes.pressure,
-			    ZB_FALSE);
+	return err;
+}
 
-	zb_zcl_set_attr_val(WEATHER_STATION_ENDPOINT_NB,
-			    ZB_ZCL_CLUSTER_ID_REL_HUMIDITY_MEASUREMENT,
-			    ZB_ZCL_CLUSTER_SERVER_ROLE,
-			    ZB_ZCL_ATTR_REL_HUMIDITY_MEASUREMENT_VALUE_ID,
-			    (zb_uint8_t *)&weather_attributes.humidity,
-			    ZB_FALSE);
+int weather_station_update_pressure(void)
+{
+	int err = 0;
+
+	float measured_pressure = 0.0f;
+	int16_t pressure_attribute = 0;
+
+	err = sensor_get_pressure(&measured_pressure);
+	if (err) {
+		LOG_ERR("Failed to get sensor pressure: %d", err);
+	} else {
+		/* Convert measured value to attribute value, as specified in ZCL */
+		pressure_attribute = (int16_t)
+				     (measured_pressure *
+				      ZCL_PRESSURE_MEMASUREMENT_MEASURED_VALUE_MULTIPLIER);
+		LOG_INF("Attribute P:%10d", pressure_attribute);
+
+		/* Set ZCL attribute */
+		zb_zcl_status_t status = zb_zcl_set_attr_val(
+			WEATHER_STATION_ENDPOINT_NB,
+			ZB_ZCL_CLUSTER_ID_PRESSURE_MEASUREMENT,
+			ZB_ZCL_CLUSTER_SERVER_ROLE,
+			ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_VALUE_ID,
+			(zb_uint8_t *)&pressure_attribute,
+			ZB_FALSE);
+		if (status) {
+			LOG_ERR("Failed to set ZCL attribute: %d", status);
+			err = status;
+		}
+	}
+
+	return err;
+}
+
+int weather_station_update_humidity(void)
+{
+	int err = 0;
+
+	float measured_humidity = 0.0f;
+	int16_t humidity_attribute = 0;
+
+	err = sensor_get_humidity(&measured_humidity);
+	if (err) {
+		LOG_ERR("Failed to get sensor humidity: %d", err);
+	} else {
+		/* Convert measured value to attribute value, as specified in ZCL */
+		humidity_attribute = (int16_t)
+				     (measured_humidity *
+				      ZCL_HUMIDITY_MEMASUREMENT_MEASURED_VALUE_MULTIPLIER);
+		LOG_INF("Attribute H:%10d", humidity_attribute);
+
+		zb_zcl_status_t status = zb_zcl_set_attr_val(
+			WEATHER_STATION_ENDPOINT_NB,
+			ZB_ZCL_CLUSTER_ID_REL_HUMIDITY_MEASUREMENT,
+			ZB_ZCL_CLUSTER_SERVER_ROLE,
+			ZB_ZCL_ATTR_REL_HUMIDITY_MEASUREMENT_VALUE_ID,
+			(zb_uint8_t *)&humidity_attribute,
+			ZB_FALSE);
+		if (status) {
+			LOG_ERR("Failed to set ZCL attribute: %d", status);
+			err = status;
+		}
+	}
+
+	return err;
 }

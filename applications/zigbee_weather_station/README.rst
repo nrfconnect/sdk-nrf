@@ -498,9 +498,9 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`lib_zigbee_application_utilities`
 * :ref:`lib_zigbee_error_handler`
+* :ref:`lib_ram_pwrdn`
 * Zigbee subsystems:
 
-  * :file:`ram_pwrdn.h`
   * :file:`zb_nrf_platform.h`
 
 * :ref:`dk_buttons_and_leds_readme`

@@ -7,7 +7,7 @@
 #ifndef WEATHER_STATION_H
 #define WEATHER_STATION_H
 
-#include <addons/zcl/zb_zcl_temp_measurement_addons.h>
+#include <zcl/zb_zcl_temp_measurement_addons.h>
 
 /* Number chosen for the single endpoint provided by weather station */
 #define WEATHER_STATION_ENDPOINT_NB 42
@@ -140,10 +140,44 @@ struct zb_device_ctx {
 	struct zb_zcl_humidity_measurement_attrs_t humidity_attrs;
 };
 
-/* Resets weather attributes and initializes sensor */
-void weather_station_init(void);
+/**
+ * @brief Initializes HW sensor used for performing measurements.
+ *
+ * @note Has to be called before other functions can be used.
+ *
+ * @return 0 if success, error code if failure.
+ */
+int weather_station_init(void);
 
-/* Updates sensor data, sets calculated attributes of temperature, pressure and humidity clusters */
-void weather_station_update_attributes(void);
+/**
+ * @brief Updates internal measurements performed by sensor.
+ *
+ * @note It has to be called each time a fresh measurements are required.
+ *	 It does not change any ZCL attributes.
+ *
+ * @return 0 if success, error code if failure.
+ */
+int weather_station_check_weather(void);
+
+/**
+ * @brief Updates ZCL temperature attribute using value obtained during last weather check.
+ *
+ * @return 0 if success, error code if failure.
+ */
+int weather_station_update_temperature(void);
+
+/**
+ * @brief Updates ZCL pressure attribute using value obtained during last weather check.
+ *
+ * @return 0 if success, error code if failure.
+ */
+int weather_station_update_pressure(void);
+
+/**
+ * @brief Updates ZCL relative humidity attribute using value obtained during last weather check.
+ *
+ * @return 0 if success, error code if failure.
+ */
+int weather_station_update_humidity(void);
 
 #endif /* WEATHER_STATION_H */
