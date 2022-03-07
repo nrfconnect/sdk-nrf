@@ -98,6 +98,14 @@ config MOSH_PRINT_BUFFER_SIZE
 	  If the printed string exceeds this buffer, an error message is printed first and
 	  then the requested string cut into the length of this buffer.
 
+config MOSH_COMMON_WORKQUEUE_STACK_SIZE
+	int "Common workqueue stack size"
+	default 8192
+
+config MOSH_COMMON_WORKQUEUE_PRIORITY
+	int "Common workqueue priority"
+	default 5
+
 if MOSH_IPERF3
 menu "MoSH iperf3 command selections"
 
