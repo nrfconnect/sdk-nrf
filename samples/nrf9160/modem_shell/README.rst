@@ -92,7 +92,8 @@ AT commands
 
 MoSh command: ``at``
 
-You can use the AT command module to send AT commands to the modem.
+You can use the AT command module to send AT commands to the modem, individually or
+in a separate plain AT command mode.
 
 Examples
 --------
@@ -120,6 +121,24 @@ Examples
   .. code-block:: console
 
      at events_disable
+
+* Enable autostarting of AT command mode in next bootup:
+
+  .. code-block:: console
+
+     at at_cmd_mode enable_autostart
+
+* Start AT command mode:
+
+  .. code-block:: console
+
+     at at_cmd_mode start
+     MoSh AT command mode started, press ctrl-x ctrl-q to escape
+     MoSh specific AT commands:
+       ICMP Ping: AT+NPING=<addr>[,<payload_length>,<timeout_msecs>,<count>[,<interval_msecs>[,<cid>]]]
+     ===========================================================
+     at
+     OK
 
 ----
 
