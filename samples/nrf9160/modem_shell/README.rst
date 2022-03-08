@@ -93,7 +93,7 @@ AT commands
 MoSh command: ``at``
 
 You can use the AT command module to send AT commands to the modem, individually or
-in a separate plain AT command mode.
+in a separate plain AT command mode where also pipelining of AT commands is supported.
 
 Examples
 --------
@@ -136,6 +136,9 @@ Examples
      MoSh AT command mode started, press ctrl-x ctrl-q to escape
      MoSh specific AT commands:
        ICMP Ping: AT+NPING=<addr>[,<payload_length>,<timeout_msecs>,<count>[,<interval_msecs>[,<cid>]]]
+     Other custom functionalities:
+       AT command pipelining, for example:
+         at+cgmr|at+cfun?|at+nping="example.com"
      ===========================================================
      at
      OK
