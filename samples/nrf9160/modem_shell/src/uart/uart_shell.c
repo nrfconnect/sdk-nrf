@@ -103,24 +103,11 @@ void uart_toggle_power_state(void)
 		/* allow little time for printing the notification */
 		k_sleep(K_MSEC(500));
 
-		/* set uart0 to suspended state */
-		err = pm_device_action_run(uart_dev, PM_DEVICE_ACTION_SUSPEND);
-
-		/* set uart1 to suspended state */
-		uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart1)));
-		if (uart_dev) {
-			pm_device_action_run(uart_dev, PM_DEVICE_ACTION_SUSPEND);
-		}
+		disable_uarts();
 	} else {
-		/* set uart0 to active state */
-		err = pm_device_action_run(uart_dev, PM_DEVICE_ACTION_RESUME);
+		enable_uarts();
 
-		/* set uart1 to active state */
-		uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart1)));
-		if (uart_dev) {
-			pm_device_action_run(uart_dev, PM_DEVICE_ACTION_RESUME);
-		}
-		mosh_print("Enabling UARTs");
+		mosh_print("UARTs enabled");
 
 		/* stop timer if uarts were disabled with command 'uart disable' */
 		k_timer_stop(&uart_reenable_timer);
