@@ -30,7 +30,6 @@ Gazell Link Layer provides the following features:
   * No polling packets are required to maintain a link.
   * Devices can enter and remove themselves from the network at any time.
 
-* Capability to control the RF front-end module.
 * Generates transmission statistics for each RF channel.
 
 .. _ug_gzll_configuration:
