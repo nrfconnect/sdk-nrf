@@ -1347,7 +1347,7 @@ reset:
 #else
 #define POLL_THREAD_STACK_SIZE 3072
 #endif
-K_THREAD_DEFINE(connection_poll_thread, POLL_THREAD_STACK_SIZE,
+K_THREAD_DEFINE(aws_connection_poll_thread, POLL_THREAD_STACK_SIZE,
 		aws_iot_cloud_poll, NULL, NULL, NULL,
 		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
 #endif /* defined(CONFIG_AWS_IOT_CONNECTION_POLL_THREAD) */
