@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <ctype.h>
 #include <errno.h>
 #include <shell/shell.h>
 
@@ -362,6 +363,12 @@ int cmd_zb_generic_cmd(const struct shell *shell, size_t argc, char **argv)
 
 	/* Check if payload should be sent. */
 	if (strcmp(*(arg++), "-l") == 0) {
+		/* In case payload starts with 0x, skip it and warn user. */
+		if (((*arg)[0] == '0') && (tolower((*arg)[1]) == 'x')) {
+			*arg += 2;
+			shell_warn(shell, "Trimming \"0x\" from the payload");
+		}
+
 		len = strlen(*arg);
 		if (len > (2 * CMD_PAYLOAD_SIZE)) {
 			shell_warn(shell,
@@ -494,7 +501,14 @@ int cmd_zb_zcl_raw(const struct shell *shell, size_t argc, char **argv)
 		goto error;
 	}
 
-	/* Reuse the payload field from the context. */
+	/* Reuse the payload field from the context.
+	 * In case payload starts with 0x, skip it and warn user.
+	 */
+		if (((*arg)[0] == '0') && (tolower((*arg)[1]) == 'x')) {
+			*arg += 2;
+			shell_warn(shell, "Trimming \"0x\" from the payload");
+		}
+
 	len = strlen(*arg);
 	if (len > (2 * CMD_PAYLOAD_SIZE)) {
 		shell_warn(shell,
