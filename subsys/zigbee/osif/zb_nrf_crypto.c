@@ -8,7 +8,7 @@
 #include <random/rand32.h>
 #include <zboss_api.h>
 #if CONFIG_CRYPTO_NRF_ECB
-#include <crypto/cipher.h>
+#include <crypto/crypto.h>
 #elif CONFIG_BT_CTLR
 #include <bluetooth/crypto.h>
 #elif CONFIG_ZIGBEE_USE_SOFTWARE_AES
