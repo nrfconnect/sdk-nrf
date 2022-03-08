@@ -248,7 +248,7 @@ static int do_http_connect(void)
 		.tv_usec = (timeout_ms % 1000) * 1000,
 	};
 
-	LOG_DBG("Configuring socket timeout (%ld s)", timeo.tv_sec);
+	LOG_DBG("Configuring socket timeout (%lld s)", timeo.tv_sec);
 	ret = setsockopt(httpc.fd, SOL_SOCKET, SO_SNDTIMEO, &timeo, sizeof(timeo));
 	if (ret) {
 		LOG_ERR("setsockopt(SO_SNDTIMEO) error: %d", -errno);
