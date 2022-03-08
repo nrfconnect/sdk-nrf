@@ -45,6 +45,17 @@ static int store_progress(void)
 	return 0;
 }
 
+static int clear_progress(void)
+{
+	int err = settings_delete(current_name_key);
+
+	if (err != 0) {
+		LOG_ERR("setting_delete error %d", err);
+	}
+
+	return err;
+}
+
 /**
  * @brief Function used by settings_load() to restore the stream_flash ctx.
  *	  See the Zephyr documentation of the settings subsystem for more
@@ -196,10 +207,7 @@ int dfu_target_stream_done(bool successful)
 		/* Delete state so that a new call to 'init' will
 		 * start with offset 0.
 		 */
-		err = settings_delete(current_name_key);
-		if (err != 0) {
-			LOG_ERR("setting_delete error %d", err);
-		}
+		err = clear_progress();
 
 	} else {
 		/* The stream has not completed, store the progress so that
@@ -213,6 +221,18 @@ int dfu_target_stream_done(bool successful)
 	}
 
 	current_id = NULL;
+
+	return err;
+}
+
+int dfu_target_stream_clear_progress(void)
+{
+	int err = 0;
+
+#ifdef CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS
+	err = clear_progress();
+#endif
+	stream.bytes_written = 0;
 
 	return err;
 }

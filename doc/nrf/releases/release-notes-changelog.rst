@@ -212,6 +212,15 @@ Libraries for networking
 
     * An issue where downloads of COAP URIs would fail when they contained multiple path elements.
 
+DFU libraries
+-------------
+
+* Updated:
+
+  * :ref:`lib_dfu_target` library:
+
+    * Added the :c:func:`dfu_target_stream_clear_progress` function, which resets the offset of the flash stream DFU Target.
+
 sdk-nrfxlib
 -----------
 

@@ -91,13 +91,23 @@ int dfu_target_stream_write(const uint8_t *buf, size_t len);
 
 /**
  * @brief De-initialize resources and finalize stream flash write if successful.
-
+ *
  * @param[in] successful Indicate whether the firmware was successfully
  * received.
  *
  * @return Non-negative value on success, negative errno otherwise.
  */
 int dfu_target_stream_done(bool successful);
+
+/**
+ * @brief Clear the firmware download progress.
+ *
+ * This resets the firmware upgrade offset to 0, to ensure that an aborted
+ * download is not resumed when `CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS` is set.
+ *
+ * @return Non-negative value on success, negative errno otherwise.
+ */
+int dfu_target_stream_clear_progress(void);
 
 #endif /* DFU_TARGET_STREAM_H__ */
 
