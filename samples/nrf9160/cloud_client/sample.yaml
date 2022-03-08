@@ -1,5 +1,6 @@
 sample:
   name: Cloud client sample
+
 tests:
   samples.nrf9160.cloud_client:
     build_only: true
@@ -8,3 +9,32 @@ tests:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
     tags: ci_build
+
+  samples.nrf9160.cloud_client.aws:
+    build_only: true
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
+    tags: ci_build
+    extra_configs:
+      - CONFIG_CLOUD_BACKEND="AWS_IOT"
+      - CONFIG_AWS_IOT=y
+      - CONFIG_AWS_IOT_SEC_TAG=1234
+      - CONFIG_AWS_IOT_CLIENT_ID_STATIC="dummy-id"
+      - CONFIG_AWS_IOT_BROKER_HOST_NAME="dummy-host.net"
+      - CONFIG_AWS_IOT_TOPIC_UPDATE_DELTA_SUBSCRIBE=y
+
+  samples.nrf9160.cloud_client.azure:
+    build_only: true
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+      - thingy91_nrf9160_ns
+    tags: ci_build
+    extra_configs:
+      - CONFIG_CLOUD_BACKEND="AZURE_IOT_HUB"
+      - CONFIG_AZURE_IOT_HUB_HOSTNAME="dummy-host.net"
+      - CONFIG_AZURE_IOT_HUB_DEVICE_ID="dummy-id"
+      - CONFIG_AZURE_IOT_HUB_SEC_TAG=1234
+      - CONFIG_AZURE_IOT_HUB=y
