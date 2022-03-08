@@ -33,7 +33,11 @@ static struct mosh_at_cmd {
 
 #define MOSH_AT_CMD_MAX_PARAM 8
 
-static bool at_cmd_mode_util_mosh_cmd_casecmp(const char *at_cmd, const char *mosh_cmd)
+/**
+ * @brief Case insensitive string comparison between given at_cmd and supported mosh_cmd.
+ */
+
+static bool at_cmd_mode_util_mosh_cmd(const char *at_cmd, const char *mosh_cmd)
 {
 	int i;
 	int mosh_cmd_len = strlen(mosh_cmd);
@@ -60,7 +64,7 @@ static bool at_cmd_mode_util_mosh_cmd_casecmp(const char *at_cmd, const char *mo
 	return true;
 }
 
-int at_cmd_mosh_parse(const char *at_cmd)
+int at_cmd_mosh_execute(const char *at_cmd)
 {
 	int ret;
 	int total = ARRAY_SIZE(mosh_at_cmd_list);
@@ -72,7 +76,8 @@ int at_cmd_mosh_parse(const char *at_cmd)
 	}
 	ret = -ENOENT;
 	for (int i = 0; i < total; i++) {
-		if (at_cmd_mode_util_mosh_cmd_casecmp(at_cmd, mosh_at_cmd_list[i].string)) {
+		/* Check if given command is MoSh specific AT command */
+		if (at_cmd_mode_util_mosh_cmd(at_cmd, mosh_at_cmd_list[i].string)) {
 			enum at_cmd_type type = at_parser_cmd_type_get(at_cmd);
 
 			at_params_list_clear(&at_param_list);

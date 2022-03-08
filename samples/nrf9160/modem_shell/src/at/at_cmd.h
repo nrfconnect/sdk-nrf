@@ -7,6 +7,6 @@
 #ifndef MOSH_AT_CMD_H
 #define MOSH_AT_CMD_H
 
-int at_cmd_mosh_parse(const char *at_cmd);
+int at_cmd_mosh_execute(const char *at_cmd);
 
 #endif /* MOSH_AT_CMD_H */

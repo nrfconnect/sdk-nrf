@@ -171,7 +171,10 @@ nrf9160 samples
 
       * An option ``--interval`` (in seconds) to neighbor cell measurements in continuous mode  (``link ncellmeas --continuous``).
         When using this option, a new measurement is started in each interval.
-      * Separate plain AT command mode that can be started by typing: ``at at_cmd_mode start``.
+      * Separate plain AT command mode that can be started with the command ``at at_cmd_mode start``.
+        AT command termination methods can be configured using Kconfig options.
+        The default method, is CR termination.
+        In AT command mode, a maximum of 10 AT commands can be pipelined with ``|`` as the delimiter character between pipelined AT commands.
 
   * :ref:`nrf_cloud_rest_fota` sample:
 

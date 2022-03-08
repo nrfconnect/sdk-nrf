@@ -750,5 +750,5 @@ exit:
 	if (pdp_context_info_tbl.array != NULL) {
 		free(pdp_context_info_tbl.array);
 	}
-	return -1;	
+	return -1;
 }
