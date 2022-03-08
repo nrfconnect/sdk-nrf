@@ -7,7 +7,7 @@
 #include <string.h>
 #include <nrf_gzll.h>
 #include <gzp.h>
-#include <crypto/cipher.h>
+#include <crypto/crypto.h>
 #include <drivers/entropy.h>
 #include "gzp_internal.h"
 
