@@ -169,7 +169,14 @@ Matter samples
 
   * Release configuration for all samples.
 
-nRF9160 samples
+nrf5340 Samples
+---------------
+
+* Added:
+
+  * :ref:`nrf5340_remote_shell` sample.
+
+nrf9160 Samples
 ---------------
 
 * Added:
@@ -229,6 +236,15 @@ Zigbee samples
   * :ref:`zigbee_network_coordinator_sample`
   * :ref:`zigbee_shell_sample`
   * :ref:`zigbee_template_sample`
+
+Other Samples
+-------------
+
+* Updated:
+
+  * :ref:`radio_test`:
+
+    * Added new configuration that builds the sample with support for remote IPC Service shell on nRF5340 application core through USB.
 
 Drivers
 =======
@@ -381,6 +397,10 @@ Other libraries
   * :ref:`esb_readme`:
 
     * Fixed a compilation error for nRF52833.
+
+* Added:
+
+  * :ref:`shell_ipc_readme`.
 
 sdk-nrfxlib
 -----------
