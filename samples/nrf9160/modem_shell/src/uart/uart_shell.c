@@ -37,6 +37,11 @@ void uart_reenable_timer_handler(struct k_timer *timer)
 {
 	ARG_UNUSED(timer);
 	enable_uarts();
+
+	/* Use printk instead of mosh_print() as mosh_print() uses mutexes and hence cant be used
+	 * within an ISR.
+	 */
+	printk("UARTs enabled\n");
 }
 
 static K_TIMER_DEFINE(uart_reenable_timer, uart_reenable_timer_handler, NULL);
