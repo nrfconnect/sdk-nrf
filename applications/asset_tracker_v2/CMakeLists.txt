@@ -16,7 +16,7 @@ target_sources(app PRIVATE src/main.c)
 # Include source directory
 target_include_directories(app PRIVATE src)
 target_include_directories(app PRIVATE include/${BOARD}/)
-zephyr_include_directories_ifdef(CONFIG_MEMFAULT app PRIVATE configuration/memfault)
+zephyr_include_directories_ifdef(CONFIG_MEMFAULT configuration/memfault)
 
 # Application directories
 add_subdirectory(src/modules)
