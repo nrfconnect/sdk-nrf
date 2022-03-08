@@ -42,6 +42,7 @@ static struct nvs_fs fs = {
 	.sector_size = NVS_SECTOR_SIZE,
 	.sector_count = NVS_SECTOR_COUNT,
 	.offset = NVS_STORAGE_OFFSET,
+	.flash_device = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller)),
 };
 
 K_THREAD_STACK_ARRAY_DEFINE(lwm2m_os_work_q_client_stack, LWM2M_OS_MAX_WORK_QS, 4096);
@@ -56,7 +57,11 @@ AT_MONITOR(lwm2m_carrier_at_handler, ANY, lwm2m_os_at_handler);
 int lwm2m_os_init(void)
 {
 	/* Initialize storage */
-	return nvs_init(&fs, DT_CHOSEN_ZEPHYR_FLASH_CONTROLLER_LABEL);
+	if (!device_is_ready(fs.flash_device)) {
+		return -ENODEV;
+	}
+
+	return nvs_mount(&fs);
 }
 
 /* Memory management. */
