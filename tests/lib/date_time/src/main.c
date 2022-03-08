@@ -201,7 +201,7 @@ static void test_date_time_conversion(void)
 		.tm_sec = 30
 	};
 
-	/** UNIX timestamp equavivalent to tm structure date_time_dummy. */
+	/** UNIX timestamp equivalent to tm structure date_time_dummy. */
 	/** Fri Aug 07 2020 15:11:30 UTC. */
 	int64_t date_time_utc_unix = 1596813090000;
 	int64_t date_time_utc_unix_origin = k_uptime_get();
@@ -210,33 +210,59 @@ static void test_date_time_conversion(void)
 	int64_t ts_expect = 0;
 
 	ret = date_time_set(&date_time_dummy);
-	zassert_equal(0, ret, "date_time_set should equal 0");
+	zassert_equal(0, ret, "date_time_set() should return 0");
 
 	ret = date_time_now(&ts_unix_ms);
-	zassert_equal(0, ret, "date_time_now should equal 0");
+	zassert_equal(0, ret, "date_time_now() should return 0");
 
-	ts_expect = date_time_utc_unix + k_uptime_get() -
-			date_time_utc_unix_origin;
+	ts_expect = date_time_utc_unix - date_time_utc_unix_origin + k_uptime_get();
 
 	/* We cannot compare exact conversions given by the date time library due to the fact that
 	 * the comparing values are based on k_uptime_get(). Use range instead and compare agains an
-	 * arbitray "high" delta, just to be sure.
+	 * arbitrary "high" delta, just to be sure.
 	 */
-	zassert_within(ts_expect, ts_unix_ms, 500,
-		       "Converted value should be within 500ms of the expected result");
+	zassert_within(ts_expect, ts_unix_ms, 100,
+		       "Converted value should be within 100 ms of the expected result");
 
 	ret = date_time_timestamp_clear(&ts_unix_ms);
-	zassert_equal(0, ret, "date_time_timestamp_clear should return 0");
+	zassert_equal(0, ret, "date_time_timestamp_clear() should return 0");
+
+	zassert_equal(0, ts_unix_ms, "ts_unix_ms should equal 0");
+
+	uptime = 0;
+
+	ret = date_time_uptime_to_unix_time_ms(&uptime);
+	zassert_equal(0, ret,
+		      "date_time_uptime_to_unix_time_ms() should return 0");
+
+	ts_expect = date_time_utc_unix - date_time_utc_unix_origin;
+
+	zassert_within(ts_expect, uptime, 100,
+		       "Converted value should be within 100 ms of the expected result");
+
+	uptime = k_uptime_get();
 
 	ret = date_time_uptime_to_unix_time_ms(&uptime);
 	zassert_equal(0, ret,
 		      "date_time_uptime_to_unix_time_ms should return 0");
 
-	ts_expect = date_time_utc_unix_origin + date_time_utc_unix -
-			date_time_utc_unix_origin;
+	ts_expect = date_time_utc_unix - date_time_utc_unix_origin + k_uptime_get();
 
-	zassert_within(ts_expect, uptime, 500,
-		       "Converted value should be within 500ms of the expected result");
+	zassert_within(ts_expect, uptime, 100,
+		       "Converted value should be within 100 ms of the expected result");
+
+	k_sleep(K_SECONDS(1));
+
+	uptime = k_uptime_get();
+
+	ret = date_time_uptime_to_unix_time_ms(&uptime);
+	zassert_equal(0, ret,
+		      "date_time_uptime_to_unix_time_ms should return 0");
+
+	ts_expect = date_time_utc_unix - date_time_utc_unix_origin + k_uptime_get();
+
+	zassert_within(ts_expect, uptime, 100,
+		       "Converted value should be within 100 ms of the expected result");
 }
 
 static void test_date_time_validity(void)
