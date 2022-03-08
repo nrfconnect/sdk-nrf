@@ -56,6 +56,7 @@ static int nrf_802154_configure(const struct device *dev)
 #define INIT_LEVEL POST_KERNEL
 #define INIT_PRIO CONFIG_IEEE802154_NRF5_INIT_PRIO
 #else
+#define INIT_LEVEL POST_KERNEL
 /* There is no defined priority of nRF 802.15.4 Radio Driver's initialization.
  * No priority validation can be performed.
  */
