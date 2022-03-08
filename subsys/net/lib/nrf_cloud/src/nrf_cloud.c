@@ -570,7 +570,7 @@ reset:
 #else
 #define POLL_THREAD_STACK_SIZE 3072
 #endif
-K_THREAD_DEFINE(connection_poll_thread, POLL_THREAD_STACK_SIZE,
+K_THREAD_DEFINE(nrfcloud_connection_poll_thread, POLL_THREAD_STACK_SIZE,
 		nrf_cloud_run, NULL, NULL, NULL,
 		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
 #endif

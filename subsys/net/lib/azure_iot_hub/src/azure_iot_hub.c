@@ -1474,6 +1474,6 @@ start:
 	goto start;
 }
 
-K_THREAD_DEFINE(connection_poll_thread, CONFIG_AZURE_IOT_HUB_STACK_SIZE,
+K_THREAD_DEFINE(azure_connection_poll_thread, CONFIG_AZURE_IOT_HUB_STACK_SIZE,
 		azure_iot_hub_run, NULL, NULL, NULL,
 		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
