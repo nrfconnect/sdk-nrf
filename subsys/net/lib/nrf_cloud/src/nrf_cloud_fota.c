@@ -142,52 +142,40 @@ static int fota_settings_set(const char *key, size_t len_rd,
 
 	LOG_DBG("Settings key: %s, size: %d", log_strdup(key), len_rd);
 
-	if (!strncmp(key, NRF_CLOUD_SETTINGS_FOTA_JOB, strlen(NRF_CLOUD_SETTINGS_FOTA_JOB)) &&
-	    (len_rd == sizeof(saved_job))) {
-		if (read_cb(cb_arg, (void *)&saved_job, len_rd) == len_rd) {
-			LOG_DBG("Saved job: %s, type: %d, validate: %d",
-				log_strdup(saved_job.id), saved_job.type,
-				saved_job.validate);
-			return 0;
-		}
+	if (strncmp(key, NRF_CLOUD_SETTINGS_FOTA_JOB, strlen(NRF_CLOUD_SETTINGS_FOTA_JOB)) != 0) {
+		return -ENOMSG;
 	}
-	return -ENOTSUP;
-}
 
-static enum nrf_cloud_fota_validate_status get_modem_update_status(void)
-{
-	enum nrf_cloud_fota_validate_status ret = NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
-
-#if defined(CONFIG_NRF_MODEM_LIB)
-	int modem_dfu_res = nrf_modem_lib_get_init_ret();
-
-	/* Handle return values relating to modem firmware update */
-	switch (modem_dfu_res) {
-	case MODEM_DFU_RESULT_OK:
-		LOG_INF("Modem FOTA update confirmed");
-		ret = NRF_CLOUD_FOTA_VALIDATE_PASS;
-		break;
-	case MODEM_DFU_RESULT_UUID_ERROR:
-	case MODEM_DFU_RESULT_AUTH_ERROR:
-	case MODEM_DFU_RESULT_HARDWARE_ERROR:
-	case MODEM_DFU_RESULT_INTERNAL_ERROR:
-		LOG_ERR("Modem FOTA error: %d", modem_dfu_res);
-		ret = NRF_CLOUD_FOTA_VALIDATE_FAIL;
-		break;
-	default:
-		LOG_DBG("Modem FOTA result unknown: %d", modem_dfu_res);
-		break;
+	if (len_rd > sizeof(saved_job)) {
+		LOG_INF("FOTA settings size larger than expected");
+		len_rd = sizeof(saved_job);
 	}
-#endif /* CONFIG_NRF_MODEM_LIB */
 
-	return ret;
+	ssize_t sz = read_cb(cb_arg, (void *)&saved_job, len_rd);
+
+	if (sz == 0) {
+		LOG_DBG("FOTA settings key-value pair has been deleted");
+		return -EIDRM;
+	} else if (sz < 0) {
+		LOG_ERR("FOTA settings read error: %d", sz);
+		return -EIO;
+	}
+
+	if (sz == sizeof(saved_job)) {
+		LOG_INF("Saved job: %s, type: %d, validate: %d, bl: 0x%X",
+			log_strdup(saved_job.id), saved_job.type,
+			saved_job.validate, saved_job.bl_flags);
+	} else {
+		LOG_INF("FOTA settings size smaller than expected, likely outdated");
+	}
+
+	return 0;
 }
 
 int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb)
 {
 	int ret;
-	bool update_was_pending = false;
-	enum nrf_cloud_fota_validate_status validate = NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
+	bool reboot_required = false;
 
 	if (cb == NULL) {
 		LOG_ERR("Invalid parameter");
@@ -215,49 +203,35 @@ int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb)
 		return ret;
 	}
 
+	ret = nrf_cloud_pending_fota_job_process(&saved_job, &reboot_required);
 
-	if (saved_job.validate == NRF_CLOUD_FOTA_VALIDATE_PENDING) {
-		update_was_pending = true;
-#if defined(CONFIG_MCUBOOT_IMG_MANAGER)
-		if (!boot_is_img_confirmed()) {
-			ret = boot_write_img_confirmed();
-			if (ret) {
-				LOG_ERR("FOTA update confirmation failed: %d",
-					ret);
-				/* If this fails then MCUBOOT will revert
-				 * to the previous image on reboot
-				 */
-				validate = NRF_CLOUD_FOTA_VALIDATE_FAIL;
-				update_was_pending = false;
-			} else {
-				LOG_INF("FOTA update confirmed");
-				validate = NRF_CLOUD_FOTA_VALIDATE_PASS;
-			}
-		}
-#endif
-
-		if (saved_job.type == NRF_CLOUD_FOTA_MODEM) {
-			validate = get_modem_update_status();
-		}
+	if (ret == 0) {
 
 		/* save status and update when cloud connection is ready */
-		save_validate_status(saved_job.id, saved_job.type, validate);
+		save_validate_status(saved_job.id, saved_job.type, saved_job.validate);
 
-		if (saved_job.type == NRF_CLOUD_FOTA_MODEM) {
-			/* Reboot is required if type is still set to MODEM */
-			LOG_INF("Rebooting to complete modem FOTA");
+		if (reboot_required) {
+			LOG_INF("Rebooting to complete FOTA update...");
 			sys_reboot(SYS_REBOOT_COLD);
-		} else if (update_was_pending) {
-			/* Indicate that a FOTA update has occurred */
+		}
+
+		/* Indicate that a FOTA update has occurred */
+		ret = 1;
+
+	} else if (ret == -ENODEV) {
+		/* No job is pending validation */
+		ret = 0;
+
+		if (saved_job.type == NRF_CLOUD_FOTA_MODEM &&
+		    (saved_job.validate == NRF_CLOUD_FOTA_VALIDATE_PASS ||
+		     saved_job.validate == NRF_CLOUD_FOTA_VALIDATE_FAIL ||
+		     saved_job.validate == NRF_CLOUD_FOTA_VALIDATE_UNKNOWN)) {
+			/* Device has just rebooted from a modem FOTA */
+			LOG_INF("FOTA updated modem");
 			ret = 1;
 		}
-	} else if ((saved_job.validate == NRF_CLOUD_FOTA_VALIDATE_PASS ||
-		    saved_job.validate == NRF_CLOUD_FOTA_VALIDATE_FAIL ||
-		    saved_job.validate == NRF_CLOUD_FOTA_VALIDATE_UNKNOWN) &&
-		    saved_job.type == NRF_CLOUD_FOTA_MODEM) {
-		/* Device has just rebooted from a modem FOTA */
-		LOG_INF("FOTA updated modem");
-		ret = 1;
+	} else {
+		LOG_ERR("Failed to process pending FOTA job, error: %d", ret);
 	}
 
 	initialized = true;
@@ -549,6 +523,7 @@ static int save_validate_status(const char *const job_id,
 		/* Saved FOTA job has been validated, clear it */
 		saved_job.type = NRF_CLOUD_FOTA_TYPE__INVALID;
 		saved_job.validate = NRF_CLOUD_FOTA_VALIDATE_NONE;
+		saved_job.bl_flags = NRF_CLOUD_FOTA_BL_STATUS_CLEAR;
 		memset(saved_job.id, 0, sizeof(saved_job.id));
 	} else {
 		saved_job.type = job_type;
@@ -556,6 +531,11 @@ static int save_validate_status(const char *const job_id,
 		if (job_id != saved_job.id) {
 			strncpy(saved_job.id, job_id, sizeof(saved_job.id) - 1);
 			saved_job.id[sizeof(saved_job.id) - 1] = '\0';
+		}
+
+		ret = nrf_cloud_bootloader_fota_slot_set(&saved_job);
+		if (ret) {
+			LOG_WRN("Failed to set active bootloader (B1) slot flag");
 		}
 	}
 
@@ -586,6 +566,7 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 			current_fota.sent_dl_progress = 100;
 			(void)send_job_update(&current_fota);
 		}
+
 		/* MCUBOOT: download finished, update job status and reboot */
 		current_fota.status = NRF_CLOUD_FOTA_IN_PROGRESS;
 		save_validate_status(current_fota.info.id,

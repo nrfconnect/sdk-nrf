@@ -31,8 +31,10 @@ zephyr_library_sources_ifdef(
 	src/nrf_cloud_cell_pos.c)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_FOTA
-	src/nrf_cloud_fota.c)
+	src/nrf_cloud_fota.c
+	src/nrf_cloud_fota_common.c)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_REST
-	src/nrf_cloud_rest.c)
+	src/nrf_cloud_rest.c
+	src/nrf_cloud_fota_common.c)
 zephyr_include_directories(./include)
