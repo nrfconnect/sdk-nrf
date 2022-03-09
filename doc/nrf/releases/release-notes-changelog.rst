@@ -160,6 +160,11 @@ nrf9160 samples
       * An option ``--interval`` (in seconds) to neighbor cell measurements in continuous mode  (``link ncellmeas --continuous``).
         When using this option, a new measurement is started in each interval.
 
+  * :ref:`nrf_cloud_rest_fota` sample:
+
+    * Enabled building of bootloader FOTA update files.
+    * Corrected handling of the bootloader FOTA updates.
+
 Gazell samples
 --------------
 
