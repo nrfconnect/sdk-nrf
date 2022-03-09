@@ -224,11 +224,20 @@ enum nrf_cloud_fota_validate_status {
 	NRF_CLOUD_FOTA_VALIDATE_DONE
 };
 
+/** Status flags for tracking the update process of the b1 bootloader (MCUBOOT) */
+enum nrf_cloud_fota_bootloader_status_flags {
+	NRF_CLOUD_FOTA_BL_STATUS_CLEAR		= 0,
+	NRF_CLOUD_FOTA_BL_STATUS_S0_FLAG_SET	= (1 << 0),
+	NRF_CLOUD_FOTA_BL_STATUS_S0_WAS_ACTIVE	= (1 << 1),
+	NRF_CLOUD_FOTA_BL_STATUS_REBOOTED	= (1 << 2),
+};
+
 /** @brief FOTA job info provided to the settings module to track FOTA job status. */
 struct nrf_cloud_settings_fota_job {
 	enum nrf_cloud_fota_validate_status validate;
 	enum nrf_cloud_fota_type type;
 	char id[NRF_CLOUD_FOTA_JOB_ID_SIZE];
+	enum nrf_cloud_fota_bootloader_status_flags bl_flags;
 };
 
 /**@brief Generic encapsulation for any data that is sent to the cloud. */
@@ -603,6 +612,34 @@ int nrf_cloud_tenant_id_get(char *id_buf, size_t id_len);
  * @return A negative value indicates an error.
  */
 int nrf_cloud_jwt_generate(uint32_t time_valid_s, char * const jwt_buf, size_t jwt_buf_sz);
+
+/**
+ * @brief Function to process/validate a pending FOTA update job. Typically the job
+ *        information is read from non-volatile storage on startup. This function
+ *        is intended to be used by custom REST-based FOTA implementations.
+ *        It is called internally if CONFIG_NRF_CLOUD_FOTA is enabled.
+ *
+ * @param[in] job FOTA job state information.
+ * @param[out] reboot_required A reboot is needed to complete a FOTA update.
+ *
+ * @retval 0       A Pending FOTA job has been processed.
+ * @retval -ENODEV No pending/unvalidated FOTA job exists.
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_pending_fota_job_process(struct nrf_cloud_settings_fota_job * const job,
+				       bool * const reboot_required);
+
+/**
+ * @brief Function to set the active bootloader (B1) slot flag which is needed
+ *        to validate a bootloader FOTA update. For proper functionality,
+ *        CONFIG_FOTA_DOWNLOAD must be enabled.
+ *
+ * @param[in,out] job FOTA job state information.
+ *
+ * @retval 0 Flag set successfully or not a bootloader FOTA update.
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_bootloader_fota_slot_set(struct nrf_cloud_settings_fota_job * const job);
 
 /** @} */
 
