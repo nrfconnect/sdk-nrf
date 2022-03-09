@@ -434,7 +434,7 @@ static void receive_work_handler(struct k_work *work)
 	hci_driver_receive_process();
 }
 
-static const struct device *entropy_source;
+static const struct device *entropy_source = DEVICE_DT_GET(DT_NODELABEL(rng));
 
 static uint8_t rand_prio_low_vector_get(uint8_t *p_buff, uint8_t length)
 {
@@ -713,9 +713,8 @@ static int hci_driver_open(void)
 		return err;
 	}
 
-	entropy_source = device_get_binding(DT_LABEL(DT_NODELABEL(rng)));
-	if (!entropy_source) {
-		BT_ERR("An entropy source is required");
+	if (!device_is_ready(entropy_source)) {
+		BT_ERR("Entropy source device not ready");
 		return -ENODEV;
 	}
 

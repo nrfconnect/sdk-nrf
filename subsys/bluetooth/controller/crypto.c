@@ -21,16 +21,12 @@
 
 #define BT_ECB_BLOCK_SIZE 16
 
+static const struct device *dev = DEVICE_DT_GET(DT_NODELABEL(rng));
+
 int bt_rand(void *buf, size_t len)
 {
-	static const struct device *dev;
-
-	if (unlikely(!dev)) {
-		dev = device_get_binding(DT_LABEL(DT_NODELABEL(rng)));
-
-		if (!dev) {
-			return -ENODEV;
-		}
+	if (unlikely(!device_is_ready(dev))) {
+		return -ENODEV;
 	}
 
 	return entropy_get_entropy(dev, (uint8_t *)buf, len);
