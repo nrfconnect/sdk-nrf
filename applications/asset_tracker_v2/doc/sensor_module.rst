@@ -54,7 +54,7 @@ Motion is detected when acceleration in either X, Y or Z plane exceeds the confi
 The threshold is set in one of the following two ways:
 
 * When receiving the :c:enum:`DATA_EVT_CONFIG_INIT` event after boot.
-  This event contains the default threshold value set by ``CONFIG_DATA_ACCELEROMETER_THRESHOLD`` or retrieved from flash.
+  This event contains the default threshold value set by the :ref:`CONFIG_DATA_ACCELEROMETER_THRESHOLD <CONFIG_DATA_ACCELEROMETER_THRESHOLD>` option or retrieved from flash.
 * When receiving the :c:enum:`DATA_EVT_CONFIG_READY` event.
   This occurs when a new threshold value has been updated from cloud.
 
@@ -105,6 +105,11 @@ Configuration options
 
 CONFIG_SENSOR_THREAD_STACK_SIZE - Sensor module thread stack size
    This option configures the sensor module's internal thread stack size.
+
+.. _CONFIG_DATA_ACCELEROMETER_THRESHOLD:
+
+CONFIG_DATA_ACCELEROMETER_THRESHOLD
+   This configuration sets the accelerometer threshold value.
 
 .. _external_sensor_API_BSEC_configurations:
 
