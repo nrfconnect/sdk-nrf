@@ -534,7 +534,7 @@ void main(void)
 	int err;
 	struct app_msg_data msg;
 
-	if (!IS_ENABLED(CONFIG_LWM2M_CARRIER)) {
+	if (!IS_ENABLED(CONFIG_LWM2M_CARRIER) && !IS_ENABLED(CONFIG_NRF_CLOUD_FOTA)) {
 		handle_nrf_modem_lib_init_ret();
 	}
 
