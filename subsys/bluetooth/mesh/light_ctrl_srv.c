@@ -1454,7 +1454,9 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 		};
 
 		ctrl_disable(srv);
-		schedule_resume_timer(srv);
+		if (atomic_test_bit(&srv->flags, FLAG_RESUME_TIMER)) {
+			schedule_resume_timer(srv);
+		}
 		lightness_srv_change_lvl(srv->lightness, NULL, &set, &status, true);
 	}
 }
@@ -1781,8 +1783,12 @@ int bt_mesh_light_ctrl_srv_disable(struct bt_mesh_light_ctrl_srv *srv)
 	atomic_clear_bit(&srv->flags, FLAG_CTRL_SRV_MANUALLY_ENABLED);
 
 	if (!is_enabled(srv)) {
-		/* Restart resume timer even if the server has already been disabled: */
-		schedule_resume_timer(srv);
+		if (atomic_test_bit(&srv->flags, FLAG_RESUME_TIMER)) {
+			/* Restart resume timer even
+			 * if the server has already been disabled:
+			 */
+			schedule_resume_timer(srv);
+		}
 		return -EALREADY;
 	}
 
