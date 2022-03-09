@@ -1613,7 +1613,7 @@ In addition to the known issues listed here, see also :ref:`softdevice_controlle
 
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
-DRGN-16859: The vendor-specific HCI command Zephyr Write TX Power Level may return "Unknown Advertiser Identifier (0x42)" when setting advertising output power.
+DRGN-16859: The vendor-specific HCI commands Zephyr Write TX Power Level and Zephyr Read TX Power Level may return "Unknown Advertiser Identifier (0x42)" when setting advertising output power.
   The SoftDevice Controller will return this error code if the command is issued before advertising parameters are set.
 
   **Workaround:** Configure the advertiser before setting TX Power using HCI LE Set Advertising Parameters
