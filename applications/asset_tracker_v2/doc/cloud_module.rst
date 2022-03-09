@@ -120,7 +120,8 @@ CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM - Configuration for enabling the use of a cust
 
 CONFIG_CLOUD_CLIENT_ID - Configuration for providing a custom cloud client ID
    This option sets the custom client ID for the respective cloud service.
-   For setting a custom client ID, you need to set :kconfig:option:`CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM` to ``y``.
+
+   For setting a custom client ID, you need to set :ref:`CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM <CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM>` to ``y``.
 
 .. _CONFIG_CLOUD_CONNECT_RETRIES:
 
