@@ -8,7 +8,9 @@
 #include <nrf_modem.h>
 #include <modem/nrf_modem_lib.h>
 #include <dfu/mcuboot.h>
+#if defined(CONFIG_FOTA_DOWNLOAD)
 #include <net/fota_download.h>
+#endif
 #include <logging/log.h>
 #include <net/nrf_cloud.h>
 

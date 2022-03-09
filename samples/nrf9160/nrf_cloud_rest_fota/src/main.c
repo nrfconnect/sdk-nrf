@@ -109,6 +109,8 @@ SETTINGS_STATIC_HANDLER_DEFINE(rest_fota, FOTA_SETTINGS_NAME, NULL,
 static int rest_fota_settings_set(const char *key, size_t len_rd, settings_read_cb read_cb,
 				  void *cb_arg)
 {
+	ssize_t sz;
+
 	if (!key) {
 		LOG_DBG("Key is NULL");
 		return -EINVAL;
@@ -116,19 +118,44 @@ static int rest_fota_settings_set(const char *key, size_t len_rd, settings_read_
 
 	LOG_DBG("Settings key: %s, size: %d", log_strdup(key), len_rd);
 
-	if (!strncmp(key, FOTA_SETTINGS_KEY_PENDING_JOB, strlen(FOTA_SETTINGS_KEY_PENDING_JOB)) &&
-	    (len_rd == sizeof(pending_job))) {
-
-		if (read_cb(cb_arg, (void *)&pending_job, len_rd) == len_rd) {
-
-			LOG_DBG("Saved job: %s, type: %d, validate: %d",
-				log_strdup(pending_job.id),
-				pending_job.type,
-				pending_job.validate);
-			return 0;
-		}
+	if (strncmp(key, FOTA_SETTINGS_KEY_PENDING_JOB, strlen(FOTA_SETTINGS_KEY_PENDING_JOB))) {
+		return -ENOMSG;
 	}
-	return -ENOTSUP;
+
+	if (len_rd > sizeof(pending_job)) {
+		LOG_INF("FOTA settings size larger than expected");
+		len_rd = sizeof(pending_job);
+	}
+
+	sz = read_cb(cb_arg, (void *)&pending_job, len_rd);
+	if (sz == 0) {
+		LOG_DBG("FOTA settings key-value pair has been deleted");
+		return -EIDRM;
+	} else if (sz < 0) {
+		LOG_ERR("FOTA settings read error: %d", sz);
+		return -EIO;
+	}
+
+	if (sz == sizeof(pending_job)) {
+		LOG_INF("Saved job: %s, type: %d, validate: %d, bl: 0x%X",
+			log_strdup(pending_job.id), pending_job.type,
+			pending_job.validate, pending_job.bl_flags);
+	} else {
+		LOG_INF("FOTA settings size smaller than current, likely outdated");
+	}
+
+	return 0;
+}
+
+static int save_pending_job(void)
+{
+	int ret = settings_save_one(FOTA_SETTINGS_FULL, &pending_job, sizeof(pending_job));
+
+	if (ret) {
+		LOG_ERR("Failed to save FOTA job to settings, error: %d", ret);
+	}
+
+	return ret;
 }
 
 static void http_fota_dl_handler(const struct fota_download_evt *evt)
@@ -362,72 +389,20 @@ static void do_fota_enable(void)
 	}
 }
 
-static void process_pending_job(const int modem_lib_init_result)
+static void process_pending_job(void)
 {
 	bool reboot_required = false;
-	int err;
+	int ret;
 
-	if (pending_job.validate != NRF_CLOUD_FOTA_VALIDATE_PENDING) {
-		return;
-	}
+	ret = nrf_cloud_pending_fota_job_process(&pending_job, &reboot_required);
 
-	if (pending_job.type == NRF_CLOUD_FOTA_MODEM) {
-
-		pending_job.validate = NRF_CLOUD_FOTA_VALIDATE_PASS;
-
-		switch (modem_lib_init_result) {
-		case MODEM_DFU_RESULT_OK:
-			LOG_INF("Modem FOTA update confirmed");
-			break;
-		case MODEM_DFU_RESULT_UUID_ERROR:
-		case MODEM_DFU_RESULT_AUTH_ERROR:
-		case MODEM_DFU_RESULT_HARDWARE_ERROR:
-		case MODEM_DFU_RESULT_INTERNAL_ERROR:
-			LOG_ERR("Modem FOTA error: %d", modem_lib_init_result);
-			pending_job.validate = NRF_CLOUD_FOTA_VALIDATE_FAIL;
-			break;
-		default:
-			LOG_INF("Modem FOTA result unknown: %d", modem_lib_init_result);
-			pending_job.validate = NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
-			break;
-		}
-
-		reboot_required = true;
-		LOG_INF("Modem FOTA complete, rebooting...");
-
-	} else if (pending_job.type == NRF_CLOUD_FOTA_APPLICATION ||
-		   pending_job.type == NRF_CLOUD_FOTA_BOOTLOADER) {
-
-		pending_job.validate = NRF_CLOUD_FOTA_VALIDATE_PASS;
-		fota_status = NRF_CLOUD_FOTA_SUCCEEDED;
-		fota_status_details = FOTA_STATUS_DETAILS_SUCCESS;
-
-		if (!boot_is_img_confirmed()) {
-			err = boot_write_img_confirmed();
-			if (err) {
-				LOG_ERR("App/boot FOTA update confirmation failed: %d",
-					err);
-				/* If this fails then MCUBOOT will revert
-				 * to the previous image on reboot
-				 */
-				pending_job.validate = NRF_CLOUD_FOTA_VALIDATE_FAIL;
-				reboot_required = true;
-				LOG_INF("Rebooting to revert to previous version...");
-			} else {
-				LOG_INF("App/boot FOTA update confirmed");
-			}
-		}
-	}
-
-	if (reboot_required) {
-		/* Sleep to display log message */
-		k_sleep(K_SECONDS(5));
-
+	if ((ret == 0) && reboot_required) {
 		/* Save validate status and reboot */
-		err = settings_save_one(FOTA_SETTINGS_FULL, &pending_job, sizeof(pending_job));
-		if (err) {
-			LOG_ERR("settings_save_one failed: %d", err);
-		}
+		(void)save_pending_job();
+
+		/* Sleep to display log message */
+		LOG_INF("Rebooting...");
+		k_sleep(K_SECONDS(5));
 		sys_reboot(SYS_REBOOT_COLD);
 	}
 }
@@ -455,7 +430,7 @@ int init(void)
 	modem_lib_init_result = nrf_modem_lib_init(NORMAL_MODE);
 
 	/* This function may perform a reboot if a FOTA update is in progress */
-	process_pending_job(modem_lib_init_result);
+	process_pending_job();
 
 	if (modem_lib_init_result) {
 		LOG_ERR("Failed to initialize modem library: 0x%X", modem_lib_init_result);
@@ -589,10 +564,13 @@ static bool validate_in_progress_job(void)
 
 static int check_for_job(void)
 {
-	int err = nrf_cloud_rest_fota_job_get(&rest_ctx, device_id, &job);
+	int err;
 
+	LOG_INF("Checking for FOTA job...");
+
+	err = nrf_cloud_rest_fota_job_get(&rest_ctx, device_id, &job);
 	if (err) {
-		LOG_INF("Failed to fetch FOTA job, error: %d", err);
+		LOG_ERR("Failed to fetch FOTA job, error: %d", err);
 		return -ENOENT;
 	}
 
@@ -616,8 +594,9 @@ static int update_job_status(void)
 					     is_job_pending ? pending_job.id : job.id,
 					     fota_status, fota_status_details);
 
-	pending_job.validate = NRF_CLOUD_FOTA_VALIDATE_NONE;
-	pending_job.type = NRF_CLOUD_FOTA_TYPE__INVALID;
+	pending_job.validate	= NRF_CLOUD_FOTA_VALIDATE_NONE;
+	pending_job.type	= NRF_CLOUD_FOTA_TYPE__INVALID;
+	pending_job.bl_flags	= NRF_CLOUD_FOTA_BL_STATUS_CLEAR;
 	memset(pending_job.id, 0, NRF_CLOUD_FOTA_JOB_ID_SIZE);
 
 	if (err) {
@@ -626,9 +605,8 @@ static int update_job_status(void)
 		LOG_INF("FOTA job updated, status: %d", fota_status);
 
 		/* Clear the pending job in settings */
-		if (is_job_pending &&
-		    settings_save_one(FOTA_SETTINGS_FULL, &pending_job, sizeof(pending_job))) {
-			LOG_ERR("settings_save_one failed: %d", err);
+		if (is_job_pending) {
+			(void)save_pending_job();
 		}
 	}
 
@@ -680,7 +658,7 @@ static int wait_for_download(void)
 	return 0;
 }
 
-static void save_settings(void)
+static void handle_download_succeeded_and_reboot(void)
 {
 	int err;
 
@@ -688,15 +666,26 @@ static void save_settings(void)
 	memcpy(pending_job.id, job.id, NRF_CLOUD_FOTA_JOB_ID_SIZE);
 	pending_job.type = job.type;
 	pending_job.validate = NRF_CLOUD_FOTA_VALIDATE_PENDING;
+	pending_job.bl_flags = NRF_CLOUD_FOTA_BL_STATUS_CLEAR;
 
-	err = settings_save_one(FOTA_SETTINGS_FULL, &pending_job, sizeof(pending_job));
+	err = nrf_cloud_bootloader_fota_slot_set(&pending_job);
 	if (err) {
-		LOG_ERR("settings_save_one failed: %d", err);
+		LOG_WRN("Failed to set active B1 slot flag, BOOT FOTA validation my be incorrect");
+	}
+
+	err = save_pending_job();
+	if (err) {
 		LOG_WRN("FOTA job will be marked as successful without validation");
 		err = 0;
 		fota_status_details = FOTA_STATUS_DETAILS_NO_VALIDATE;
 		(void)update_job_status();
 	}
+
+	(void)nrf_cloud_rest_disconnect(&rest_ctx);
+	(void)lte_lc_deinit();
+	LOG_INF("Rebooting in 10s to complete FOTA update...");
+	k_sleep(K_SECONDS(10));
+	sys_reboot(SYS_REBOOT_COLD);
 }
 
 static void cleanup(void)
@@ -714,7 +703,7 @@ static void wait_after_job_update(void)
 
 static void error_reboot(void)
 {
-	LOG_INF("Rebooting in 30s..");
+	LOG_INF("Rebooting in 30s...");
 	(void)nrf_cloud_rest_disconnect(&rest_ctx);
 	(void)lte_lc_deinit();
 	k_sleep(K_SECONDS(30));
@@ -778,7 +767,6 @@ void main(void)
 		/* Check for a new FOTA job */
 		err = check_for_job();
 		if (err < 0) {
-			LOG_ERR("Failed to check for FOTA job");
 			error_reboot();
 		} else if (err > 0) {
 			/* No job. Wait for the configured duration or a button press */
@@ -813,12 +801,7 @@ void main(void)
 		 * Job status will be sent to nRF Cloud after reboot and validation.
 		 */
 		if (fota_status == NRF_CLOUD_FOTA_SUCCEEDED) {
-			save_settings();
-			(void)nrf_cloud_rest_disconnect(&rest_ctx);
-			(void)lte_lc_deinit();
-			LOG_INF("Rebooting in 10s to complete FOTA update..");
-			k_sleep(K_SECONDS(10));
-			sys_reboot(SYS_REBOOT_COLD);
+			handle_download_succeeded_and_reboot();
 		}
 
 		/* Job was not successful, send status to nRF Cloud */
