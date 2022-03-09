@@ -300,6 +300,42 @@ static bool is_ip_address(const char *host)
 	return false;
 }
 
+int fota_download_s0_active_get(bool *const s0_active)
+{
+	if (!s0_active) {
+		return -EINVAL;
+	}
+
+#ifdef PM_S1_ADDRESS
+#ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
+	if (spm_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, s0_active)) {
+		return -ENODEV;
+	}
+
+#else /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
+	const struct fw_info *s0;
+	const struct fw_info *s1;
+
+	s0 = fw_info_find(PM_S0_ADDRESS);
+	if (s0 == NULL) {
+		return -EFAULT;
+	}
+
+	s1 = fw_info_find(PM_S1_ADDRESS);
+	if (s1 == NULL) {
+		/* No s1 found, s0 is active */
+		*s0_active = true;
+	} else {
+		/* Both s0 and s1 found, check who is active */
+		*s0_active = s0->version >= s1->version;
+	}
+#endif /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
+	return 0;
+#else /* PM_S1_ADDRESS */
+	return -ENOENT;
+#endif /* PM_S1_ADDRESS */
+}
+
 int fota_download_start_with_image_type(const char *host, const char *file,
 	int sec_tag, uint8_t pdn_id, size_t fragment_size,
 	const enum dfu_target_image_type expected_type)
@@ -343,31 +379,11 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 	 */
 	const char *update;
 	bool s0_active;
-#ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
 
-	err = spm_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, &s0_active);
+	err = fota_download_s0_active_get(&s0_active);
 	if (err != 0) {
 		return err;
 	}
-#else /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
-	const struct fw_info *s0;
-	const struct fw_info *s1;
-
-	s0 = fw_info_find(PM_S0_ADDRESS);
-	if (s0 == NULL) {
-		return -EFAULT;
-	}
-
-	s1 = fw_info_find(PM_S1_ADDRESS);
-	if (s1 == NULL) {
-		/* No s1 found, s0 is active */
-		s0_active = true;
-	} else {
-		/* Both s0 and s1 found, check who is active */
-		s0_active = s0->version >= s1->version;
-	}
-
-#endif /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
 
 	err = dfu_ctx_mcuboot_set_b1_file(file_buf, s0_active, &update);
 	if (err != 0) {

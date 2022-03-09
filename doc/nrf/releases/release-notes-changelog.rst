@@ -209,6 +209,12 @@ Libraries for networking
 
   * Fixed an issue where downloads of COAP URIs would fail when they contained multiple path elements.
 
+* :ref:`lib_fota_download` library:
+
+  * Added:
+
+    * :c:func:`fota_download_s0_active_get` function that gets the active B1 slot.
+
 Other libraries
 ---------------
 
