@@ -161,6 +161,15 @@ int fota_download_cancel(void);
  */
 int fota_download_target(void);
 
+/**@brief Get the active bootloader (B1) slot, s0 or s1.
+ *
+ * @param[out] s0_active Set to 'true' if s0 is active slot, 'false' otherwise
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int fota_download_s0_active_get(bool *const s0_active);
+
 #ifdef __cplusplus
 }
 #endif
