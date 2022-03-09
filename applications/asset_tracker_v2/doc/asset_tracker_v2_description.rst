@@ -291,7 +291,8 @@ See :ref:`Building with overlays <building_with_overlays>` for information on ho
 .. external_antenna_note_start
 
 .. note::
-   When you build the application for the nRF9160 DK v0.15.0 and later, set the :kconfig:option:`CONFIG_GNSS_MODULE_ANTENNA_EXTERNAL` option to ``y`` to achieve the best external antenna performance.
+
+   When you build the application for the nRF9160 DK v0.15.0 and later, set the :ref:`CONFIG_GNSS_MODULE_ANTENNA_EXTERNAL <CONFIG_GNSS_MODULE_ANTENNA_EXTERNAL>` option to ``y`` to achieve the best external antenna performance.
 
 .. external_antenna_note_end
 
