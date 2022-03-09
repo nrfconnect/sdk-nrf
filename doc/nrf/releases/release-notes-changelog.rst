@@ -215,6 +215,17 @@ Libraries for networking
 
     * :c:func:`fota_download_s0_active_get` function that gets the active B1 slot.
 
+* :ref:`lib_nrf_cloud` library:
+
+  * Added:
+
+    * :c:func:`nrf_cloud_bootloader_fota_slot_set` function that sets the active bootloader slot flag during bootloader FOTA updates.
+    * :c:func:`nrf_cloud_pending_fota_job_process` function that processes the state of pending FOTA jobs.
+
+  * Fixed:
+
+    * Validation of bootloader FOTA updates.
+
 Other libraries
 ---------------
 
