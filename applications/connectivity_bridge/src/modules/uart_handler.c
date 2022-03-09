@@ -60,7 +60,7 @@ struct uart_rx_buf {
 
 struct uart_tx_buf {
 	struct ring_buf rb;
-	uint32_t buf[UART_BUF_SIZE];
+	uint8_t buf[UART_BUF_SIZE];
 };
 
 BUILD_ASSERT((sizeof(struct uart_rx_buf) % UART_SLAB_ALIGNMENT) == 0);
