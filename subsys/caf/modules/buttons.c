@@ -39,8 +39,11 @@ enum state {
 	STATE_SUSPENDING
 };
 
-static const struct device *gpio_devs[ARRAY_SIZE(port_map)];
-static struct gpio_callback gpio_cb[ARRAY_SIZE(port_map)];
+static const struct device * const gpio_devs[] = {
+	DEVICE_DT_GET_OR_NULL(DT_NODELABEL(gpio0)),
+	DEVICE_DT_GET_OR_NULL(DT_NODELABEL(gpio1)),
+};
+static struct gpio_callback gpio_cb[ARRAY_SIZE(gpio_devs)];
 static struct k_work_delayable matrix_scan;
 static struct k_work_delayable button_pressed;
 static enum state state;
@@ -109,8 +112,8 @@ static int set_trig_mode(void)
 	int err = 0;
 
 	for (size_t i = 0; (i < ARRAY_SIZE(row)) && !err; i++) {
-		__ASSERT_NO_MSG(row[i].port < ARRAY_SIZE(port_map));
-		__ASSERT_NO_MSG(port_map[row[i].port] != NULL);
+		__ASSERT_NO_MSG(row[i].port < ARRAY_SIZE(gpio_devs));
+		__ASSERT_NO_MSG(gpio_devs[row[i].port] != NULL);
 
 		err = gpio_pin_configure(gpio_devs[row[i].port], row[i].pin,
 					 flags);
@@ -426,20 +429,19 @@ static void button_pressed_fn(struct k_work *work)
 static void init_fn(void)
 {
 	/* Setup GPIO configuration */
-	for (size_t i = 0; i < ARRAY_SIZE(port_map); i++) {
-		if (!port_map[i]) {
+	for (size_t i = 0; i < ARRAY_SIZE(gpio_devs); i++) {
+		if (!gpio_devs[i]) {
 			/* Skip non-existing ports */
 			continue;
 		}
-		gpio_devs[i] = device_get_binding(port_map[i]);
-		if (!gpio_devs[i]) {
-			LOG_ERR("Cannot get GPIO device binding");
+		if (!device_is_ready(gpio_devs[i])) {
+			LOG_ERR("GPIO device not ready");
 			goto error;
 		}
 	}
 
 	for (size_t i = 0; i < ARRAY_SIZE(col); i++) {
-		__ASSERT_NO_MSG(col[i].port < ARRAY_SIZE(port_map));
+		__ASSERT_NO_MSG(col[i].port < ARRAY_SIZE(gpio_devs));
 		__ASSERT_NO_MSG(gpio_devs[col[i].port] != NULL);
 
 		int err = gpio_pin_configure(gpio_devs[col[i].port],
@@ -457,7 +459,7 @@ static void init_fn(void)
 		goto error;
 	}
 
-	uint32_t pin_mask[ARRAY_SIZE(port_map)] = {0};
+	uint32_t pin_mask[ARRAY_SIZE(gpio_devs)] = {0};
 	for (size_t i = 0; i < ARRAY_SIZE(row); i++) {
 		/* Module starts in scanning mode and will switch to
 		 * callback mode if no button is pressed.
@@ -473,8 +475,8 @@ static void init_fn(void)
 		pin_mask[row[i].port] |= BIT(row[i].pin);
 	}
 
-	for (size_t i = 0; i < ARRAY_SIZE(port_map); i++) {
-		if (!port_map[i]) {
+	for (size_t i = 0; i < ARRAY_SIZE(gpio_devs); i++) {
+		if (!gpio_devs[i]) {
 			/* Skip non-existing ports */
 			continue;
 		}
