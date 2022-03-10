@@ -11,6 +11,7 @@
 extern "C" {
 #endif
 
+#include <device.h>
 #include <drivers/sensor.h>
 
 enum act_type {
@@ -49,12 +50,9 @@ struct sm_sampled_channel {
  */
 struct sm_sensor_config {
 	/**
-	 * @brief Device name
-	 *
-	 * The device name that would be used to access the interface
-	 * using device_get_binding().
+	 * @brief Device
 	 */
-	const char *dev_name;
+	const struct device *dev;
 	/**
 	 * @brief Event descriptor
 	 *
