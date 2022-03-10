@@ -31,14 +31,18 @@ enum state {
 	STATE_OFF,
 };
 
+static const struct device * const gpio_dev[] = {
+	DEVICE_DT_GET_OR_NULL(DT_NODELABEL(gpio0)),
+	DEVICE_DT_GET_OR_NULL(DT_NODELABEL(gpio1)),
+};
+
 struct selector {
 	const struct selector_config *config;
-	struct gpio_callback gpio_cb[ARRAY_SIZE(port_map)];
+	struct gpio_callback gpio_cb[ARRAY_SIZE(gpio_dev)];
 	struct k_work_delayable work;
 	uint8_t position;
 };
 
-static const struct device *gpio_dev[ARRAY_SIZE(port_map)];
 static struct selector selectors[ARRAY_SIZE(selector_config)];
 static enum state state;
 
@@ -269,16 +273,10 @@ static int init(void)
 	BUILD_ASSERT(ARRAY_SIZE(selector_config) > 0,
 			 "There is no active selector");
 
-	for (size_t i = 0; i < ARRAY_SIZE(port_map); i++) {
-		if (!port_map[i]) {
-			continue;
-		}
-
-		gpio_dev[i] = device_get_binding(port_map[i]);
-
-		if (!gpio_dev[i]) {
-			LOG_ERR("Cannot get GPIO%u dev binding", i);
-			return -ENXIO;
+	for (size_t i = 0; i < ARRAY_SIZE(gpio_dev); i++) {
+		if (!device_is_ready(gpio_dev[i])) {
+			LOG_ERR("GPIO port %u not ready", i);
+			return -ENODEV;
 		}
 	}
 
