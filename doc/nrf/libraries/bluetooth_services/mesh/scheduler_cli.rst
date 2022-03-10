@@ -61,6 +61,66 @@ Persistent storage
 
 None.
 
+Shell commands
+**************
+
+The Bluetooth mesh shell subsystem provides a set of commands to interact with the Scheduler Client model instantiated on a device.
+
+To make these commands available, enable the following Kconfig options:
+
+* :kconfig:`CONFIG_BT_MESH_SHELL`
+* :kconfig:`CONFIG_BT_MESH_SHELL_SCHEDULER_CLI`
+
+mdl_sched instance get-all
+	Print all instances of the Scheduler Client model on the device.
+
+
+mdl_sched instance set <elem_idx>
+	Select the Scheduler Client model instantiated on the specified element ID.
+	This instance will be used in message sending.
+	If no model instance is selected, the first model instance found on the device will be used by default.
+
+	* ``elem_idx`` - Element index where the model instance is found.
+
+
+mdl_sched get
+	Get the current Schedule Register status.
+
+
+mdl_sched action-get <idx>
+	Get the appropriate Scheduler Action status.
+
+	* ``idx`` - Index of the Schedule Register entry to get.
+
+
+mdl_sched action-ctx-set <year> <month> <day> <hour> <minute> <second> <day_of_week> <action> <transition_time> <scene_number>
+	Set the appropriate Scheduler Action.
+	Used in combination with ``mdl_sched action-set`` or ``mdl_sched action-set-unack``.
+
+	* ``year`` - Two last digits of the scheduled year for the action, or 0x64 for any year.
+	* ``month`` - Scheduled month for the action.
+	* ``day`` - Scheduled day of the month for the action.
+	* ``hour`` - Scheduled hour for the action.
+	* ``minute`` - Scheduled minute for the action.
+	* ``second`` - Scheduled second for the action.
+	* ``day_of_week`` - Schedule days of the week for the action.
+	* ``action`` - Action to be performed at the scheduled time.
+	* ``transition_time`` - Transition time for this action in milliseconds.
+	* ``scene_number`` - Scene number to be used for some actions.
+
+
+mdl_sched action-set <idx>
+	Send the current Scheduler Action context and wait for a response.
+
+	* ``idx`` - Index of the Schedule Register entry to set.
+
+
+mdl_sched action-set-unack <idx>
+	Send the current Scheduler Action context without requesting a response.
+
+	* ``idx`` - Index of the Schedule Register entry to set.
+
+
 API documentation
 *****************
 
