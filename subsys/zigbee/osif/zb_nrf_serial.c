@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
 #include <zephyr/kernel.h>
 #include <string.h>
 #include <zboss_api.h>
@@ -28,8 +30,9 @@ void zb_osif_async_serial_wake_up(void);
 void zb_osif_serial_init(void)
 {
 #if defined(CONFIG_ZBOSS_TRACE_BINARY_LOGGING) && defined(CONFIG_ZIGBEE_HAVE_ASYNC_SERIAL)
+	const struct device *uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_zigbee_uart));
 	/* Assert that Serial Logger and Async Serial don't use the same serial device. */
-	int ret = strcmp(CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME, CONFIG_ZIGBEE_UART_DEVICE_NAME);
+	int ret = strcmp(CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME, uart_dev->name);
 
 	__ASSERT(ret, "The same serial device used for serial logger and async serial!");
 #endif /* defined(CONFIG_ZBOSS_TRACE_BINARY_LOGGING) && defined(CONFIG_ZIGBEE_HAVE_ASYNC_SERIAL) */
