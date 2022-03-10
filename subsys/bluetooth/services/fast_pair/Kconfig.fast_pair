@@ -8,6 +8,7 @@ menuconfig BT_FAST_PAIR
 	bool "Google Fast Pair Service (GFPS)"
 	select BT_NRF_SERVICES
 	select BT_FAST_PAIR_ADVERTISING
+	select BT_FAST_PAIR_GATT_SERVICE
 	select BT_FAST_PAIR_CRYPTO
 	select BT_FAST_PAIR_REGISTRATION_DATA
 	help
@@ -20,6 +21,12 @@ config BT_FAST_PAIR_ADVERTISING
 	depends on BT_PERIPHERAL
 	help
 	  Add Fast Pair advertising source files.
+
+config BT_FAST_PAIR_GATT_SERVICE
+	bool
+	depends on BT
+	help
+	  Add Fast Pair GATT Service source files.
 
 config BT_FAST_PAIR_CRYPTO
 	bool
