@@ -239,6 +239,8 @@ Bluetooth libraries and services
       * :c:member:`get` callback in :c:struct:`bt_mesh_sensor_series`.
       * :c:member:`get` callback in :c:struct:`bt_mesh_sensor`.
 
+    * Shell commands for client models.
+
 Libraries for networking
 ------------------------
 
