@@ -40,7 +40,7 @@ static const struct sm_sampled_channel accel_chan[] = {
 
 static const struct sm_sensor_config sensor_configs[] = {
 	{
-		.dev_name = "ADXL362",
+		.dev = DEVICE_DT_GET(DT_NODELABEL(adxl362)),
 		.event_descr = CONFIG_ML_APP_SENSOR_EVENT_DESCR,
 		.chans = accel_chan,
 		.chan_cnt = ARRAY_SIZE(accel_chan),
