@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/ {
+	chosen {
+		ncs,zigbee-uart = &uart1;
+	};
+};
+
 &uart1 {
 	compatible = "nordic,nrf-uarte";
 	current-speed = <115200>;
