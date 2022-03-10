@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/ {
+	sensor-sim {
+		compatible = "nordic,sensor-sim";
+		label = "SENSOR_SIM";
+	};
+};
+
 &spi3 {
 	compatible = "nordic,nrf-spim";
 	status = "okay";
