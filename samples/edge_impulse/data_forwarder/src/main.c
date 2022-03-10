@@ -9,7 +9,6 @@
 #include <drivers/sensor.h>
 #include <drivers/uart.h>
 
-#define SENSOR_LABEL		"SENSOR_SIM"
 #define SAMPLE_PERIOD_MS	100
 
 #define UART_LABEL		DT_LABEL(DT_NODELABEL(uart0))
@@ -21,7 +20,7 @@ const static enum sensor_channel sensor_channels[] = {
 	SENSOR_CHAN_ACCEL_Z
 };
 
-static const struct device *sensor_dev;
+static const struct device *sensor_dev = DEVICE_DT_GET(DT_NODELABEL(sensor_sim));
 static const struct device *uart_dev;
 static atomic_t uart_busy;
 
@@ -36,11 +35,9 @@ static void uart_cb(const struct device *dev, struct uart_event *evt,
 
 static int init(void)
 {
-	sensor_dev = device_get_binding(SENSOR_LABEL);
-
-	if (!sensor_dev) {
-		printk("Cannot bind sensor\n");
-		return -ENXIO;
+	if (!device_is_ready(sensor_dev)) {
+		printk("Sensor device not ready\n");
+		return -ENODEV;
 	}
 
 	uart_dev = device_get_binding(UART_LABEL);
