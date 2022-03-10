@@ -301,10 +301,6 @@ menuconfig ZIGBEE_HAVE_ASYNC_SERIAL
 
 if ZIGBEE_HAVE_ASYNC_SERIAL
 
-config ZIGBEE_UART_DEVICE_NAME
-	string "Zigbee UART device name"
-	default "UART_1"
-
 config ZIGBEE_UART_SUPPORTS_FLOW_CONTROL
 	bool "Set to true to inform application that Zigbee UART device supports flow control"
 	default n
