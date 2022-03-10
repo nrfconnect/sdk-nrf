@@ -8,8 +8,6 @@
 #include <drivers/gpio.h>
 #include <profiler.h>
 
-#include <caf/gpio_pins.h>
-
 #define MODULE profiler_sync
 #include <caf/events/module_state_event.h>
 
@@ -22,7 +20,12 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_PROFILER_SYNC_LOG_LEVEL);
 
 #define SYNC_EVENT_NAME		"sync_event"
 
-static const struct device *gpio_dev;
+static const struct device * const gpio_devs[] = {
+	DEVICE_DT_GET_OR_NULL(DT_NODELABEL(gpio0)),
+	DEVICE_DT_GET_OR_NULL(DT_NODELABEL(gpio1)),
+};
+static const struct device *gpio_dev =
+	gpio_devs[CONFIG_DESKTOP_PROFILER_SYNC_GPIO_PORT];
 static struct gpio_callback gpio_cb;
 
 static struct k_work_delayable gen_sync_event;
@@ -84,15 +87,9 @@ static int init(void)
 
 	register_sync_event();
 
-	BUILD_ASSERT(CONFIG_DESKTOP_PROFILER_SYNC_GPIO_PORT <
-		     ARRAY_SIZE(port_map));
-	__ASSERT_NO_MSG(port_map[CONFIG_DESKTOP_PROFILER_SYNC_GPIO_PORT]);
-	gpio_dev = device_get_binding(
-			port_map[CONFIG_DESKTOP_PROFILER_SYNC_GPIO_PORT]);
-
-	if (!gpio_dev) {
-		LOG_ERR("Cannot get GPIO device binding");
-		return -ENXIO;
+	if (!device_is_ready(gpio_dev)) {
+		LOG_ERR("GPIO device not ready");
+		return -ENODEV;
 	}
 
 	int err;
