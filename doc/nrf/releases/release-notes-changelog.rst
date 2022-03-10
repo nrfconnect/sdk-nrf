@@ -192,6 +192,10 @@ nrf9160 samples
 
     * Updated the library to store credentials and server settings permanently on bootstrap.
 
+  * :ref:`download_sample` sample:
+
+    * Updated the default HTTPS URL and certificate due to the old link being broken.
+
 Gazell samples
 --------------
 
