@@ -1,8 +1,10 @@
 /*
- * Copyright (c) 2018 Nordic Semiconductor ASA
+ * Copyright (c) 2018-2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+#define DT_DRV_COMPAT nordic_sensor_sim
 
 #include <drivers/gpio.h>
 #include <init.h>
@@ -523,8 +525,6 @@ static int sensor_sim_channel_get(const struct device *dev,
 	return 0;
 }
 
-static struct sensor_sim_data sensor_sim_data;
-
 static const struct sensor_driver_api sensor_sim_api_funcs = {
 	.attr_set = sensor_sim_attr_set,
 	.sample_fetch = sensor_sim_sample_fetch,
@@ -534,8 +534,11 @@ static const struct sensor_driver_api sensor_sim_api_funcs = {
 #endif
 };
 
-DEVICE_DEFINE(sensor_sim, CONFIG_SENSOR_SIM_DEV_NAME,
-	      sensor_sim_init, NULL,
-	      &sensor_sim_data, NULL,
-	      POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,
-	      &sensor_sim_api_funcs);
+#define SENSOR_SIM_DEFINE(n)						       \
+	static struct sensor_sim_data data##n;				       \
+									       \
+	DEVICE_DT_INST_DEFINE(n, sensor_sim_init, NULL, &data##n, NULL,	       \
+			      POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,	       \
+			      &sensor_sim_api_funcs);
+
+DT_INST_FOREACH_STATUS_OKAY(SENSOR_SIM_DEFINE)
