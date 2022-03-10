@@ -86,7 +86,7 @@ static void gazell_swi_irq_handler(void *args)
 bool gzll_glue_init(void)
 {
 	bool is_ok = true;
-	const struct device *clkctrl;
+	const struct device *clkctrl = DEVICE_DT_GET_ONE(nordic_nrf_clock);
 	nrfx_err_t err_code;
 	nrf_ppi_channel_t ppi_channel[3];
 	uint8_t i;
@@ -114,8 +114,7 @@ bool gzll_glue_init(void)
 			   gazell_radio_irq_handler,
 			   0);
 
-	clkctrl = device_get_binding(DT_LABEL(DT_INST(0, nordic_nrf_clock)));
-	if (clkctrl == NULL) {
+	if (!device_is_ready(clkctrl)) {
 		is_ok = false;
 	}
 
