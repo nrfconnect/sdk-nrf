@@ -5,6 +5,11 @@
 };
 
 / {
+	sensor-sim {
+		compatible = "nordic,sensor-sim";
+		label = "SENSOR_SIM";
+	};
+
 	pwmleds1 {
 		compatible = "pwm-leds";
 		status = "okay";

@@ -9,7 +9,7 @@
 #include <drivers/sensor.h>
 #include <drivers/uart.h>
 
-#define SENSOR_LABEL		CONFIG_SENSOR_SIM_DEV_NAME
+#define SENSOR_LABEL		"SENSOR_SIM"
 #define SAMPLE_PERIOD_MS	100
 
 #define UART_LABEL		DT_LABEL(DT_NODELABEL(uart0))

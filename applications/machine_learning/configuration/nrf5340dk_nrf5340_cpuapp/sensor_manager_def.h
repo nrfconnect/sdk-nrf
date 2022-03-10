@@ -33,7 +33,7 @@ static const struct sm_sampled_channel accel_chan[] = {
 
 static const struct sm_sensor_config sensor_configs[] = {
 	{
-		.dev_name = CONFIG_SENSOR_SIM_DEV_NAME,
+		.dev_name = "SENSOR_SIM",
 		.event_descr = CONFIG_ML_APP_SENSOR_EVENT_DESCR,
 		.chans = accel_chan,
 		.chan_cnt = ARRAY_SIZE(accel_chan),

@@ -13,10 +13,16 @@ The sensor provides readouts for predefined set of sensor channels and supports 
 Configuration
 *************
 
-You can enable the driver using the :kconfig:`CONFIG_SENSOR_SIM` Kconfig option.
+You can define instances of the sensor simulator on Devicetree like this:
 
-To configure the device name used by the simulated sensor device, use the :kconfig:`CONFIG_SENSOR_SIM_DEV_NAME` Kconfig option.
-The default device name is ``SENSOR_SIM``.
+.. code-block:: devicetree
+
+        sensor-sim {
+                compatible = "nordic,sensor-sim";
+                label = "SENSOR_SIM";
+        };
+
+The sensor driver will automatically be built if ``CONFIG_SENSOR=y`` and any of its instances in Devicetree have status set to ``okay``.
 
 Configuration of generated readouts
 ===================================
