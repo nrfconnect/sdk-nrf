@@ -30,7 +30,7 @@ endchoice
 config SAMPLE_FILE_URL
 	string "URL of resource to download" if SAMPLE_FILE_CUSTOM
 	default "http://speedtest.ftp.otenet.gr/files/test100k.db" if SAMPLE_FILE_HTTP
-	default "https://file-examples-com.github.io/uploads/2017/10/file_example_JPG_100kB.jpg" if SAMPLE_FILE_HTTPS
+	default "https://nrfconnectsdk.s3.eu-central-1.amazonaws.com/sample-img-100kb.png" if SAMPLE_FILE_HTTPS
 
 config SAMPLE_COMPUTE_HASH
 	bool "Compute sha256 hash"
@@ -44,7 +44,7 @@ config SAMPLE_SHA256_HASH
 	string "sha256 hash"
 	depends on SAMPLE_COMPARE_HASH
 	default "f627ca4c2c322f15db26152df306bd4f983f0146409b81a4341b9b340c365a16" if SAMPLE_FILE_HTTP
-	default "88aeb1f4467bd1e50cf624de972fbf3f40801632fedb64aaa7b1a8a9ef786fc6" if SAMPLE_FILE_HTTPS
+	default "344577d739dc0e9f9498c13be2fbc7fb947abd291e9e57db9e9ca4a89ccd5f63" if SAMPLE_FILE_HTTPS
 
 endmenu
 

@@ -121,9 +121,9 @@ The following output is logged on the terminal when the sample downloads a file 
    Download client sample started
    Provisioning certificate
    Waiting for network.. OK
-   Downloading https://file-examples-com.github.io/uploads/2017/10/file_example_JPG_100kB.jpg
-   [ 100% ] |==================================================| (102117/102117 bytes)
-   Download completed in 13302 ms @ 7676 bytes per sec, total 102117 bytes
+   Downloading https://nrfconnectsdk.s3.eu-central-1.amazonaws.com/sample-img-100kb.png
+   [ 100% ] |==================================================| (102923/102923 bytes)
+   Download completed in 12966 ms @ 7937 bytes per sec, total 102923 bytes
    Bye
 
 Dependencies
