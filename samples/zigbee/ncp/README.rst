@@ -74,8 +74,13 @@ See :ref:`ug_zigbee_configuring_eui64` for information about how to configure th
 Serial communication setup
 ==========================
 
-The communication channel uses Zephyr's :ref:`zephyr:uart_api` API.
-This serial device is selected with :kconfig:option:`CONFIG_ZIGBEE_UART_DEVICE_NAME` Kconfig option.
+The communication channel uses Zephyr's :ref:`zephyr:uart_api` API. The serial device is selected in Devicetree like this:
+
+.. code-block:: devicetree
+
+   chosen {
+       ncs,zigbee-uart = &uart0;
+   };
 
 By default, Zephyr's logger uses ``UART_0`` and the NCP sample communicates through the UART serialization using ``UART_1``.
 The DTS overlay file configures ``UART_1`` to be connected to the on-board J-Link instead of ``UART_0``.

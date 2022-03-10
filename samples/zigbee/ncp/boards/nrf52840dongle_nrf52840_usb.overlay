@@ -12,6 +12,10 @@
 };
 
 / {
+	chosen {
+		ncs,zigbee-uart = &cdc_acm_uart0;
+	};
+
 	buttons {
 		compatible = "gpio-keys";
 		rst_button0: rst_button_0 {
@@ -22,5 +26,12 @@
 
 	aliases {
 		rst0 = &rst_button0;
+	};
+};
+
+&zephyr_udc0 {
+	cdc_acm_uart0: cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+		label = "CDC_ACM_0";
 	};
 };
