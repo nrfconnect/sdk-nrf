@@ -59,3 +59,9 @@
 	};
 
 };
+
+/ {
+	chosen {
+		ncs,zigbee-uart = &uart1;
+	};
+};

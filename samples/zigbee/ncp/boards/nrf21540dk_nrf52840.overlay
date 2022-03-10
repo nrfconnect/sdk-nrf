@@ -58,5 +58,11 @@
 			low-power-enable;
 		};
 	};
+};
+
+/ {
+	chosen {
+		ncs,zigbee-uart = &uart1;
+	};
 
 };

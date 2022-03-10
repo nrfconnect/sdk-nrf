@@ -177,13 +177,12 @@ int main(void)
 
 	/* Configure line control if flow control supported by Zigbee Async serial. */
 	if (IS_ENABLED(CONFIG_ZIGBEE_UART_SUPPORTS_FLOW_CONTROL)) {
-		const struct device *uart_dev;
+		const struct device *uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_zigbee_uart));
 		uint32_t dtr = 0U;
 
-		uart_dev = device_get_binding(CONFIG_ZIGBEE_UART_DEVICE_NAME);
-		if (uart_dev == NULL) {
-			LOG_ERR("Error during NCP serial initialization");
-			return -EIO;
+		if (!device_is_ready(uart_dev)) {
+			LOG_ERR("UART device not ready");
+			return -ENODEV;
 		}
 
 		while (true) {
