@@ -10,6 +10,8 @@ Event Manager Proxy
 The Event Manager Proxy is a library that allows to exchange Event Manager events between cores.
 It connects two separate instances of Event Manager on different cores by passing registered messages using the IPC service.
 
+See the :ref:`event_manager_proxy_sample` sample for an example of how to use this library.
+
 Configuration
 *************
 
