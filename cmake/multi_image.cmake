@@ -78,7 +78,7 @@ else()
     file(
       APPEND
       ${base_image_preload_file}
-      "set(${app_var_name} ${${app_var_name}} CACHE INTERNAL \"NCS child image controlled\")\n"
+      "set(${app_var_name} \"${${app_var_name}}\" CACHE INTERNAL \"NCS child image controlled\")\n"
       )
   endforeach()
 
@@ -377,7 +377,7 @@ function(add_child_image_from_source)
       file(
         APPEND
         ${preload_file}
-        "set(${CMAKE_MATCH_1} ${${var_name}} CACHE INTERNAL \"NCS child image controlled\")\n"
+        "set(${CMAKE_MATCH_1} \"${${var_name}}\" CACHE INTERNAL \"NCS child image controlled\")\n"
         )
     endforeach()
   endif()
