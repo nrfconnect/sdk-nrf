@@ -464,7 +464,9 @@ Libraries for networking
     * Added support for using location assistance when using Coiote LwM2M server.
     * Updated the library to store credentials and server settings permanently on bootstrap.
 
+  * :ref:`lib_azure_iot_hub` library:
 
+    * Added :kconfig:option:`CONFIG_AZURE_IOT_HUB_NATIVE_TLS` option to configure the socket to be native for TLS instead of offloading TLS operations to the modem.
 
 Libraries for NFC
 -----------------
@@ -477,7 +479,6 @@ Libraries for NFC
 
       * :c:func:`nfc_ndef_msg_parse` with a fix to the declaration, a new assertion to avoid a potential usage fault, and added a note in the function documentation.
       * ``NFC_NDEF_PARSER_REQUIRED_MEMO_SIZE_CALC`` macro has been renamed to :c:macro:`NFC_NDEF_PARSER_REQUIRED_MEM`.
-
 
 Other libraries
 ---------------

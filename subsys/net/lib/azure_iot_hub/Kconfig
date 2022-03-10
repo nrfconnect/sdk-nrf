@@ -158,6 +158,13 @@ config AZURE_IOT_HUB_DPS
 	  is provided, or alternatively the device ID provided by the
 	  application if AZURE_IOT_HUB_DEVICE_ID_APP is enabled.
 
+config AZURE_IOT_HUB_NATIVE_TLS
+	bool "Enable native TLS socket"
+	help
+	  Enabling this option will configure the socket to be native for TLS
+	  instead of offloading TLS operations to the modem.
+
+
 if AZURE_IOT_HUB_DPS
 
 config AZURE_IOT_HUB_DPS_ID_SCOPE
