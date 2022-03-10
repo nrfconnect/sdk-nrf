@@ -1000,15 +1000,13 @@ void *flash_callback;
 static int open_storage(uint32_t offset, bool preserve)
 {
 	int err;
-	const struct device *flash_dev;
+	const struct device *flash_dev = DEVICE_DT_GET(DT_NODELABEL(flash_controller));
 	uint32_t block_offset = 0;
-	const char *name = DT_PROP(DT_NODELABEL(flash_controller), label);
 
-	LOG_DBG("storage name:%s", name);
-	flash_dev = device_get_binding(name);
-	if (flash_dev == NULL) {
-		LOG_ERR("Failed to get device:'%s'", name);
-		return -EFAULT;
+	LOG_DBG("storage name: %s", flash_dev->name);
+	if (!device_is_ready(flash_dev)) {
+		LOG_ERR("Flash device not ready:'%s'", flash_dev->name);
+		return -ENODEV;
 	}
 
 	block_offset = offset % flash_page_size;
