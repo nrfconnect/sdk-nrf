@@ -45,11 +45,11 @@ static enum gzp_key_select gzp_key_select;
 #endif
 
 #if defined(CONFIG_GAZELL_PAIRING_CRYPT) || defined(CONFIG_GAZELL_PAIRING_HOST)
-static const struct device *entropy_dev;
+static const struct device *entropy_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_entropy));
 #endif
 
 #ifdef CONFIG_GAZELL_PAIRING_CRYPT
-static const struct device *crypto_dev;
+static const struct device *crypto_dev = DEVICE_DT_GET_ONE(nordic_nrf_ecb);
 #endif
 
 #ifdef CONFIG_GAZELL_PAIRING_CRYPT
@@ -61,13 +61,11 @@ static uint8_t gzp_dyn_key[GZP_DYN_KEY_LENGTH];
 void gzp_init_internal(void)
 {
 #if defined(CONFIG_GAZELL_PAIRING_CRYPT) || defined(CONFIG_GAZELL_PAIRING_HOST)
-	entropy_dev = device_get_binding(DT_CHOSEN_ZEPHYR_ENTROPY_LABEL);
-	__ASSERT(entropy_dev, "Cannot get entropy device binding");
+	__ASSERT(device_is_ready(entropy_dev), "Entropy device not ready");
 #endif
 
 #ifdef CONFIG_GAZELL_PAIRING_CRYPT
-	crypto_dev = device_get_binding(CRYPTO_DEV_NAME);
-	__ASSERT(crypto_dev, "Cannot get crypto device binding");
+	__ASSERT(device_is_ready(crypto_dev), "Crypto device not ready");
 #endif
 }
 
