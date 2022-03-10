@@ -118,6 +118,10 @@ Bluetooth samples
     * The front-end module test parameters are not set to their default value after the DTM reset command.
     * Added the vendor-specific ``FEM_DEFAULT_PARAMS_SET`` command for restoring the default front-end module parameters.
 
+  * :ref:`peripheral_hids_mouse` sample:
+
+    * Increased the main stack size from 1024 to 1536 bytes.
+
 Bluetooth mesh samples
 ----------------------
 
