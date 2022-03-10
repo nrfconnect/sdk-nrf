@@ -38,9 +38,8 @@ static lwm2m_firmware_get_update_state_cb_t update_state_cb;
 static uint8_t firmware_buf[CONFIG_LWM2M_COAP_BLOCK_SIZE];
 
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM)
-#define EXT_FLASH_DEVICE DT_LABEL(DT_INST(0, jedec_spi_nor))
 static uint8_t fmfu_buf[1024];
-static const struct device *flash_dev;
+static const struct device *flash_dev = DEVICE_DT_GET_ONE(jedec_spi_nor);
 static struct k_work full_modem_update_work;
 #endif
 
@@ -94,11 +93,8 @@ static int configure_full_modem_update(void)
 {
 	int ret = 0;
 
-	if (flash_dev == NULL) {
-		flash_dev = device_get_binding(EXT_FLASH_DEVICE);
-	}
-	if (flash_dev == NULL) {
-		LOG_ERR("Failed to get flash device: %s\n", EXT_FLASH_DEVICE);
+	if (!device_is_ready(flash_dev)) {
+		LOG_ERR("Flash device not ready: %s\n", flash_dev->name);
 	}
 
 	const struct dfu_target_full_modem_params params = {
