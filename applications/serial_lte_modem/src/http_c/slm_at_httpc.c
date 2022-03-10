@@ -14,6 +14,7 @@
 #include "slm_at_host.h"
 #include "slm_at_httpc.h"
 #include "slm_util.h"
+#include "slm_native_tls.h"
 
 LOG_MODULE_REGISTER(slm_httpc, CONFIG_SLM_LOG_LEVEL);
 
@@ -223,8 +224,16 @@ static int do_http_connect(void)
 	if (httpc.sec_tag == INVALID_SEC_TAG) {
 		ret = socket(httpc.family, SOCK_STREAM, IPPROTO_TCP);
 	} else {
+#if defined(CONFIG_SLM_NATIVE_TLS)
+		ret = slm_tls_loadcrdl(httpc.sec_tag);
+		if (ret < 0) {
+			LOG_ERR("Fail to load credential: %d", ret);
+			return -EAGAIN;
+		}
+		ret = socket(httpc.family, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
+#else
 		ret = socket(httpc.family, SOCK_STREAM, IPPROTO_TLS_1_2);
-
+#endif
 	}
 	if (ret < 0) {
 		LOG_ERR("socket() failed: %d", -errno);
@@ -256,7 +265,6 @@ static int do_http_connect(void)
 		sec_tag_t sec_tag_list[] = { httpc.sec_tag };
 		int peer_verify = TLS_PEER_VERIFY_REQUIRED;
 		int session_cache = TLS_SESSION_CACHE_ENABLED;
-		int handshake_timeout = TLS_DTLS_HANDSHAKE_TIMEO_123S;
 
 		ret = setsockopt(httpc.fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
 				 sizeof(sec_tag_t));
@@ -283,13 +291,6 @@ static int do_http_connect(void)
 				 sizeof(session_cache));
 		if (ret) {
 			LOG_ERR("setsockopt(TLS_SESSION_CACHE) error: %d", -errno);
-			ret = -errno;
-			goto exit_cli;
-		}
-		ret = setsockopt(httpc.fd, SOL_TLS, TLS_DTLS_HANDSHAKE_TIMEO, &handshake_timeout,
-				 sizeof(handshake_timeout));
-		if (ret) {
-			LOG_ERR("setsockopt(TLS_DTLS_HANDSHAKE_TIMEO) error: %d", -errno);
 			ret = -errno;
 			goto exit_cli;
 		}
@@ -322,6 +323,12 @@ static int do_http_connect(void)
 	return 0;
 
 exit_cli:
+#if defined(CONFIG_SLM_NATIVE_TLS)
+	if (httpc.sec_tag != INVALID_SEC_TAG) {
+		(void)slm_tls_unloadcrdl(httpc.sec_tag);
+		httpc.sec_tag = INVALID_SEC_TAG;
+	}
+#endif
 	close(httpc.fd);
 	httpc.fd = INVALID_SOCKET;
 	sprintf(rsp_buf, "\r\n#XHTTPCCON: 0\r\n");
@@ -334,6 +341,12 @@ static int do_http_disconnect(void)
 {
 	/* Close socket if it is connected. */
 	if (httpc.fd != INVALID_SOCKET) {
+#if defined(CONFIG_SLM_NATIVE_TLS)
+		if (httpc.sec_tag != INVALID_SEC_TAG) {
+			(void)slm_tls_unloadcrdl(httpc.sec_tag);
+			httpc.sec_tag = INVALID_SEC_TAG;
+		}
+#endif
 		close(httpc.fd);
 		httpc.fd = INVALID_SOCKET;
 	} else {
