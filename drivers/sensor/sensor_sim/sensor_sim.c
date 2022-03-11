@@ -36,6 +36,8 @@ struct sensor_sim_data {
 	double accel_samples[ACCEL_CHAN_COUNT];
 	struct wave_gen_param accel_param[ACCEL_CHAN_COUNT];
 	struct k_mutex accel_param_mutex;
+	const double amplitude;
+	double val_sign;
 #if defined(CONFIG_SENSOR_SIM_TRIGGER)
 	const struct device *gpio;
 	const char *gpio_port;
@@ -348,12 +350,11 @@ static double generate_pseudo_random(void)
 static int generate_toggle(const struct device *dev, enum sensor_channel chan,
 			   size_t val_cnt, double *out_val)
 {
-	ARG_UNUSED(dev);
+	struct sensor_sim_data *data = dev->data;
+
 	ARG_UNUSED(chan);
 
-	static const double amplitude = 20.0;
-	static double val_sign = 1.0;
-	double res_val = amplitude * val_sign;
+	double res_val = data->amplitude * data->val_sign;
 
 	while (val_cnt > 0) {
 		*out_val = res_val;
@@ -361,7 +362,7 @@ static int generate_toggle(const struct device *dev, enum sensor_channel chan,
 		val_cnt--;
 	}
 
-	val_sign *= -1.0;
+	data->val_sign *= -1.0;
 
 	return 0;
 }
@@ -573,7 +574,10 @@ static const struct sensor_driver_api sensor_sim_api_funcs = {
 };
 
 #define SENSOR_SIM_DEFINE(n)						       \
-	static struct sensor_sim_data data##n;				       \
+	static struct sensor_sim_data data##n = {			       \
+		.amplitude = 20.0,					       \
+		.val_sign = 1.0,					       \
+	};								       \
 									       \
 	static const struct sensor_sim_config config##n = {		       \
 		.base_temperature = DT_INST_PROP(n, base_temperature),	       \
