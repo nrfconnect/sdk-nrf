@@ -104,6 +104,8 @@ nRF9160: Serial LTE Modem
   * Enhanced the #XSLEEP AT command to support data indication when idle.
   * Enhanced the MQTT client to support the reception of large PUBLISH payloads.
   * Added the #XDFUGET and #XDFURUN AT commands to support the cloud-to-nRF52 DFU service.
+  * Added native TLS support to the HTTPS client.
+  * Added the #XCMNG command to support the use of native TLS.
 
 nRF Desktop
 -----------

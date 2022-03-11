@@ -476,8 +476,7 @@ static struct slm_at_cmd {
 	{"AT#XGETADDRINFO", handle_at_getaddrinfo},
 
 #if defined(CONFIG_SLM_NATIVE_TLS)
-	/* Hijacked modem command */
-	{"AT%CMNG", handle_at_xcmng},
+	{"AT#XCMNG", handle_at_xcmng},
 #endif
 	/* ICMP commands */
 	{"AT#XPING", handle_at_icmp_ping},
