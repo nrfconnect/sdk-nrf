@@ -34,3 +34,16 @@ properties:
         The sensor reports a base pressure value with a simulated noise.
         Value units are kPa (kilopascal). Defaults to 98 kPa, simulation
         default.
+
+    acc-signal:
+      type: string
+      required: true
+      enum:
+        - "toggle"
+        - "wave"
+      description: |
+        When 'toggle' option is selected, a value is generated for acceleration
+        signal toggling between two values on fetch. This is the default value.
+        When 'wave' option is selected, simulated sensor uses wave signal
+        generating library to generate acceleration readouts. By default a sine
+        wave is generated.

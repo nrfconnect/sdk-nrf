@@ -20,6 +20,7 @@ You can define instances of the sensor simulator on Devicetree like this:
         sensor-sim {
                 compatible = "nordic,sensor-sim";
                 label = "SENSOR_SIM";
+                acc-signal = "toggle";
         };
 
 The sensor driver will automatically be built if ``CONFIG_SENSOR=y`` and any of its instances in Devicetree have status set to ``okay``.
@@ -33,10 +34,11 @@ The following sensor channels and configuration options are available:
 * Ambient temperature (:c:enum:`SENSOR_CHAN_AMBIENT_TEMP`) - The value is generated as the sum of the value of the Devicetree property ``base-temperature`` a pseudo-random number between ``-1`` and ``1``.
 * Humidity (:c:enum:`SENSOR_CHAN_HUMIDITY`) - The value is generated as the sum of the value of the Devicetree property ``base-humidity`` and a pseudo-random number between ``-1`` and ``1``.
 * Pressure (:c:enum:`SENSOR_CHAN_PRESS`) - The value is generated as the sum of the value of the Devicetree property ``base-pressure`` and a pseudo-random number between ``-1`` and ``1``.
-* Acceleration in X, Y, and Z axes (:c:enum:`SENSOR_CHAN_ACCEL_X`, :c:enum:`SENSOR_CHAN_ACCEL_Y`, :c:enum:`SENSOR_CHAN_ACCEL_Z`, for each axis respectively, and :c:enum:`SENSOR_CHAN_ACCEL_XYZ` for all axes at once) - The acceleration is generated depending on the selected Kconfig option:
+* Acceleration in X, Y, and Z axes (:c:enum:`SENSOR_CHAN_ACCEL_X`, :c:enum:`SENSOR_CHAN_ACCEL_Y`, :c:enum:`SENSOR_CHAN_ACCEL_Z`, for each axis respectively, and :c:enum:`SENSOR_CHAN_ACCEL_XYZ` for all axes at once).
+  The acceleration is generated depending on the selected Devicetree ``acc-signal`` property:
 
-  * :kconfig:`CONFIG_SENSOR_SIM_ACCEL_TOGGLE` - With this option, the acceleration is toggled on fetch between statically defined values.
-  * :kconfig:`CONFIG_SENSOR_SIM_ACCEL_WAVE` - With this option, the acceleration is generated as value of a periodic wave signal.
+  * ``toggle`` - With this choice, the acceleration is toggled on fetch between statically defined values.
+  * ``wave`` - With this choice, the acceleration is generated as value of a periodic wave signal.
     The wave signal value is generated using the :ref:`wave_gen` library.
     You can use the :c:func:`sensor_sim_set_wave_param` function to configure generated waves.
     By default, the function generates a sine wave.

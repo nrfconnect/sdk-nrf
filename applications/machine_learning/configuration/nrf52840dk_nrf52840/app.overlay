@@ -2,6 +2,7 @@
 	sensor-sim {
 		compatible = "nordic,sensor-sim";
 		label = "SENSOR_SIM";
+		acc-signal = "wave";
 	};
 
 	pwmleds1 {
