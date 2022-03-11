@@ -68,13 +68,14 @@
 #define TX_EN_SETTLE_TIME DT_PROP(NRF21540_NODE, tx_en_settle_time_us)
 #define RX_EN_SETTLE_TIME DT_PROP(NRF21540_NODE, rx_en_settle_time_us)
 
-#if defined(NRF5340_XXAA_NETWORK)
+#if defined(NRF5340_XXAA_NETWORK) && CONFIG_NRF21540_FEM_SPI_SUPPORTED
 /* NRF5340 Network Core has only one SPIM0 instance. */
 static nrfx_spim_t spim = NRFX_SPIM_INSTANCE(0);
-#endif
+#endif /* defined(NRF5340_XXAA_NETWORK) && CONFIG_NRF21540_FEM_SPI_SUPPORTED */
 
 #define NRF21540_SPI DT_PHANDLE(NRF21540_NODE, spi_if)
 #define NRF21540_SPI_BUS DT_BUS(NRF21540_SPI)
+#define NRF21540_SPI_LABEL DT_LABEL(NRF21540_SPI_BUS)
 
 #if defined(NRF5340_XXAA_NETWORK)
 PINCTRL_DT_DEFINE(NRF21540_SPI_BUS);
@@ -116,27 +117,58 @@ struct gpiote_pin {
 };
 
 static struct nrf21540 {
-	struct spi_dt_spec bus;
+#if CONFIG_NRF21540_FEM_SPI_SUPPORTED
+#if !defined(NRF5340_XXAA_NETWORK)
+	const struct device *spi_dev;
+#endif /* !defined(NRF5340_XXAA_NETWORK) */
+	const struct spi_config spi_cfg;
+
+#if DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI)
+	const struct spi_cs_control spi_cs;
+#endif /* DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI) */
+#endif /* CONFIG_NRF21540_FEM_SPI_SUPPORTED */
+
 	struct gpiote_pin tx_en;
 	struct gpiote_pin rx_en;
-	struct gpio_dt_spec pdn;
-	struct gpio_dt_spec ant_sel;
 	struct gpio_dt_spec tx_en_gpio;
 	struct gpio_dt_spec rx_en_gpio;
+
+#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), pdn_gpios)
+	const struct gpio_dt_spec pdn;
+#endif /* DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), pdn_gpios) */
+
+#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios)
+	const struct gpio_dt_spec ant_sel;
+#endif /* DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios) */
+
 	gppi_channel_t timer_ch;
 	gppi_channel_t pin_set_ch;
 	gppi_channel_t pin_clr_ch;
 	const nrfx_timer_t timer;
 } nrf21540_cfg = {
-#if !defined(NRF5340_XXAA_NETWORK)
-	.bus = SPI_DT_SPEC_GET(NRF21540_SPI,
-			       SPI_OP_MODE_MASTER | SPI_WORD_SET(8) |
-			       SPI_TRANSFER_MSB | SPI_LINES_SINGLE, T_NCS_SCLK),
-#endif
-	.pdn = GPIO_DT_SPEC_GET(NRF21540_NODE, pdn_gpios),
-	.ant_sel = GPIO_DT_SPEC_GET(NRF21540_NODE, ant_sel_gpios),
+#if CONFIG_NRF21540_FEM_SPI_SUPPORTED
+#if DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI)
+	.spi_cs.gpio = SPI_CS_GPIOS_DT_SPEC_GET(NRF21540_SPI),
+#endif /* DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI) */
+
+	.spi_cfg = {
+		.frequency = DT_PROP(NRF21540_SPI, spi_max_frequency),
+		.operation = (SPI_OP_MODE_MASTER | SPI_WORD_SET(8) |
+			      SPI_TRANSFER_MSB | SPI_LINES_SINGLE),
+		.slave = DT_REG_ADDR(NRF21540_SPI),
+	},
+#endif /* CONFIG_NRF21540_FEM_SPI_SUPPORTED */
+
 	.tx_en_gpio = GPIO_DT_SPEC_GET(NRF21540_NODE, tx_en_gpios),
 	.rx_en_gpio = GPIO_DT_SPEC_GET(NRF21540_NODE, rx_en_gpios),
+#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), pdn_gpios)
+	.pdn = GPIO_DT_SPEC_GET(NRF21540_NODE, pdn_gpios),
+#endif /* #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), pdn_gpios) */
+
+#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios)
+	.ant_sel = GPIO_DT_SPEC_GET(NRF21540_NODE, ant_sel_gpios),
+#endif /* DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios) */
+
 	.timer = NRFX_TIMER_INSTANCE(NRF21540_TIMER_INSTANCE)
 };
 
@@ -144,7 +176,7 @@ enum nrf21540_reg {
 	NRF21540_REG_CONFREG0 = 0x00,
 } nrf21540_reg;
 
-#if defined(NRF5340_XXAA_NETWORK)
+#if defined(NRF5340_XXAA_NETWORK) && CONFIG_NRF21540_FEM_SPI_SUPPORTED
 struct nrf_uarte_config {
 	uint32_t tx_pin;
 	uint32_t rx_pin;
@@ -158,7 +190,7 @@ struct nrf_uarte_config {
 	uint32_t txd_ptr;
 	uint32_t inten;
 };
-#endif /* defined(NRF5340_XXAA_NETWORK) */
+#endif /* defined(NRF5340_XXAA_NETWORK) && CONFIG_NRF21540_FEM_SPI_SUPPORTED */
 
 static uint32_t activate_evt;
 static uint32_t deactivate_evt;
@@ -287,8 +319,9 @@ static void event_configure(enum nrf21540_trx dir, uint32_t event,
 
 static int gpio_configure(void)
 {
-	int err;
+	int err = 0;
 
+#if DT_NODE_HAS_PROP(NRF21540_NODE, pdn_gpios)
 	/* Configure PDN pin */
 	if (!device_is_ready(nrf21540_cfg.pdn.port)) {
 		return -ENODEV;
@@ -298,14 +331,51 @@ static int gpio_configure(void)
 	if (err) {
 		return err;
 	}
+#endif /* DT_NODE_HAS_PROP(NRF21540_NODE, pdn_gpios) */
 
+#if DT_NODE_HAS_PROP(NRF21540_NODE, ant_sel_gpios)
 	/* Configure Antenna select pin */
 	if (!device_is_ready(nrf21540_cfg.ant_sel.port)) {
 		return -ENODEV;
 	}
 
-	return gpio_pin_configure_dt(&nrf21540_cfg.ant_sel, GPIO_OUTPUT_INACTIVE);
+	/* Configure Antenna select pin */
+	err = gpio_pin_configure_dt(&nrf21540_cfg.ant_sel, GPIO_OUTPUT_INACTIVE);
+#endif /* DT_NODE_HAS_PROP(NRF21540_NODE, ant_sel_gpios) */
+
+	return err;
 }
+
+#if CONFIG_NRF21540_FEM_SPI_SUPPORTED
+static int spi_config(void)
+{
+	int err = 0;
+
+#if DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI)
+	/* Configure CS pin */
+	if (!device_is_ready(nrf21540_cfg.spi_cs.gpio.port)) {
+		return -ENODEV;
+	}
+	err = gpio_pin_configure_dt(&nrf21540_cfg.spi_cs.gpio, GPIO_OUTPUT_INACTIVE);
+	if (err) {
+		return err;
+	}
+#endif /* DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI)  */
+
+#if !defined(NRF5340_XXAA_NETWORK)
+	nrf21540_cfg.spi_dev = device_get_binding(NRF21540_SPI_LABEL);
+	if (!nrf21540_cfg.spi_dev) {
+		return -ENXIO;
+	}
+
+	if (!device_is_ready(nrf21540_cfg.spi_dev)) {
+		return -ENODEV;
+	}
+#endif
+
+	return err;
+}
+#endif /* CONFIG_NRF21540_FEM_SPI_SUPPORTED */
 
 static int gppi_channel_config(void)
 {
@@ -349,36 +419,41 @@ static int nrf21540_init(void)
 		return err;
 	}
 
-	if (!spi_is_ready(&nrf21540_cfg.bus)) {
-		return -ENODEV;
+#if CONFIG_NRF21540_FEM_SPI_SUPPORTED
+	err = spi_config();
+	if (err) {
+		return err;
 	}
+#endif /* CONFIG_NRF21540_FEM_SPI_SUPPORTED */
 
 	return 0;
 }
 
 static int nrf21540_power_up(void)
 {
-	int err;
+	int err = 0;
 
 	if (!atomic_cas(&state, NRF21540_STATE_OFF, NRF21540_STATE_BUSY)) {
 		return -EBUSY;
 	}
 
+#if DT_NODE_HAS_PROP(NRF21540_NODE, pdn_gpios)
 	/* Power-up nRF21540 */
 	err = gpio_pin_set_dt(&nrf21540_cfg.pdn, 1);
-	if (err) {
-		goto error;
-	}
+#endif /* DT_NODE_HAS_PROP(NRF21540_NODE, pdn_gpios) */
 
+#if DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI)
 	/* Set CSN Pin */
-	err = gpio_pin_set_dt(&nrf21540_cfg.bus.config.cs->gpio, 0);
-	if (err) {
-		goto error;
+	if (!err) {
+		err = gpio_pin_set_dt(&nrf21540_cfg.spi_cs.gpio, 0);
 	}
 
-	k_busy_wait(PDN_SETTLE_TIME);
+#endif /* DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI) */
 
-error:
+	if (!err) {
+		k_busy_wait(PDN_SETTLE_TIME);
+	}
+
 	atomic_set(&state, err ? NRF21540_STATE_OFF : NRF21540_STATE_READY);
 
 	return err;
@@ -386,20 +461,23 @@ error:
 
 static int nrf21540_power_down(void)
 {
-	int err;
+	int err = 0;
 
 	if (!atomic_cas(&state, NRF21540_STATE_READY, NRF21540_STATE_BUSY)) {
 		return -EBUSY;
 	}
 
+#if DT_NODE_HAS_PROP(NRF21540_NODE, pdn_gpios)
 	/* Power-down nRF21540 */
 	err = gpio_pin_set_dt(&nrf21540_cfg.pdn, 0);
+#endif /* DT_NODE_HAS_PROP(NRF21540_NODE, pdn_gpios) */
 
 	atomic_set(&state, err ? NRF21540_STATE_READY : NRF21540_STATE_OFF);
 
 	return err;
 }
 
+#if DT_NODE_HAS_PROP(NRF21540_NODE, ant_sel_gpios)
 static int nrf21540_antenna_select(enum fem_antenna ant)
 {
 	int err = 0;
@@ -430,6 +508,14 @@ static int nrf21540_antenna_select(enum fem_antenna ant)
 
 	return err;
 }
+#else
+static int nrf21540_antenna_select(enum fem_antenna ant)
+{
+	return -ENOTSUP;
+}
+#endif /* DT_NODE_HAS_PROP(NRF21540_NODE, ant_sel_gpios) */
+
+#if CONFIG_NRF21540_FEM_SPI_SUPPORTED
 #if defined(NRF5340_XXAA_NETWORK)
 static inline nrf_spim_frequency_t get_nrf_spim_frequency(uint32_t frequency)
 {
@@ -508,7 +594,7 @@ static void uarte_configuration_restore(NRF_UARTE_Type *uarte,
 
 static int spim_gain_transfer(uint8_t gain)
 {
-	int err;
+	int err = 0;
 	nrfx_err_t nrfx_err;
 	uint8_t buf[NRF21540_SPI_LENGTH_BYTES];
 	nrfx_spim_config_t spim_config = NRFX_SPIM_DEFAULT_CONFIG(
@@ -526,12 +612,14 @@ static int spim_gain_transfer(uint8_t gain)
 	}
 
 	spim_config.frequency =
-		get_nrf_spim_frequency(nrf21540_cfg.bus.config.frequency);
+		get_nrf_spim_frequency(nrf21540_cfg.spi_cfg.frequency);
 
-	err = gpio_pin_set_dt(&nrf21540_cfg.bus.config.cs->gpio, 0);
+#if DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI)
+	err = gpio_pin_set_dt(&nrf21540_cfg.spi_cs.gpio, 0);
 	if (err) {
 		return err;
 	}
+#endif /* DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI) */
 
 	nrfx_err = nrfx_spim_init(&spim, &spim_config, NULL, NULL);
 	if (nrfx_err != NRFX_SUCCESS) {
@@ -547,10 +635,12 @@ static int spim_gain_transfer(uint8_t gain)
 	/* Prepare transfer */
 	nrfx_spim_xfer_desc_t xfer_desc = NRFX_SPIM_XFER_TX(buf, sizeof(buf));
 
-	err = gpio_pin_set_dt(&nrf21540_cfg.bus.config.cs->gpio, 1);
+#if DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI)
+	err = gpio_pin_set_dt(&nrf21540_cfg.spi_cs.gpio, 1);
 	if (err) {
 		return err;
 	}
+#endif /* DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI) */
 
 	nrfx_err = nrfx_spim_xfer(&spim, &xfer_desc,
 				  NRFX_SPIM_FLAG_NO_XFER_EVT_HANDLER);
@@ -561,7 +651,7 @@ static int spim_gain_transfer(uint8_t gain)
 	nrfx_spim_uninit(&spim);
 	spim_events_clear(spim.p_reg);
 
-	return 0;
+	return err;
 }
 
 static int nrf21540_tx_gain_set(uint32_t gain)
@@ -637,7 +727,7 @@ error:
 #else
 static int nrf21540_tx_gain_set(uint32_t gain)
 {
-	int err;
+	int err = 0;
 	uint8_t buf[NRF21540_SPI_LENGTH_BYTES];
 
 	if (!atomic_cas(&state, NRF21540_STATE_READY, NRF21540_STATE_BUSY)) {
@@ -649,10 +739,12 @@ static int nrf21540_tx_gain_set(uint32_t gain)
 		goto error;
 	}
 
-	err = gpio_pin_set_dt(&nrf21540_cfg.bus.config.cs->gpio, 0);
+#if DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI)
+	err = gpio_pin_set_dt(&nrf21540_cfg.spi_cs.gpio, 0);
 	if (err) {
 		goto error;
 	}
+#endif /* DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI) */
 
 	buf[NRF21540_SPI_COMMAND_ADDR_BYTE] =
 		NRF21540_SPI_WRITE(NRF21540_REG_CONFREG0);
@@ -669,18 +761,29 @@ static int nrf21540_tx_gain_set(uint32_t gain)
 		.count = 1
 	};
 
-	err = gpio_pin_set_dt(&nrf21540_cfg.bus.config.cs->gpio, 1);
+#if DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI)
+	err = gpio_pin_set_dt(&nrf21540_cfg.spi_cs.gpio, 1);
 	if (err) {
 		goto error;
 	}
+#endif /* DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI) */
 
-	err = spi_transceive_dt(&nrf21540_cfg.bus, &tx, NULL);
+	err = spi_transceive(nrf21540_cfg.spi_dev, &nrf21540_cfg.spi_cfg,
+			     &tx, NULL);
 
 error:
 	atomic_set(&state, NRF21540_STATE_READY);
 	return err;
 }
-#endif
+#endif /* defined(NRF5340_XXAA_NETWORK) */
+#else
+static int nrf21540_tx_gain_set(uint32_t gain)
+{
+	ARG_UNUSED(gain);
+
+	return -ENOTSUP;
+}
+#endif /* CONFIG_NRF21540_FEM_SPI_SUPPORTED */
 
 static int nrf21540_tx_configure(uint32_t activate_event, uint32_t deactivate_event,
 				 uint32_t activation_delay)
@@ -707,17 +810,20 @@ static int nrf21540_tx_configure(uint32_t activate_event, uint32_t deactivate_ev
 static int nrf21540_rx_configure(uint32_t activate_event, uint32_t deactivate_event,
 				 uint32_t activation_delay)
 {
-	int err;
+	int err = 0;
 
 	if (!atomic_cas(&state, NRF21540_STATE_READY, NRF21540_STATE_BUSY)) {
 		return -EBUSY;
 	}
 
+
+#if DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI)
 	/* Pull down the CSN pin before RX. */
-	err = gpio_pin_set_dt(&nrf21540_cfg.bus.config.cs->gpio, 1);
+	err = gpio_pin_set_dt(&nrf21540_cfg.spi_cs.gpio, 1);
 	if (err) {
 		return err;
 	}
+#endif /* DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI) */
 
 	activate_evt = activate_event;
 	deactivate_evt = deactivate_event;
@@ -732,7 +838,7 @@ static int nrf21540_rx_configure(uint32_t activate_event, uint32_t deactivate_ev
 				activation_delay);
 	}
 
-	return 0;
+	return err;
 }
 
 static int nrf21540_txrx_stop(void)
@@ -749,8 +855,13 @@ static int nrf21540_txrx_stop(void)
 				NRF_GPIOTE_INITIAL_VALUE_LOW :
 				NRF_GPIOTE_INITIAL_VALUE_HIGH);
 
+#if DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI)
 	/* Set CSN pin */
-	return gpio_pin_set_dt(&nrf21540_cfg.bus.config.cs->gpio, 0);
+	return gpio_pin_set_dt(&nrf21540_cfg.spi_cs.gpio, 0);
+
+#else
+	return 0;
+#endif /* DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI) */
 }
 
 static void nrf21540_txrx_configuration_clear(void)
