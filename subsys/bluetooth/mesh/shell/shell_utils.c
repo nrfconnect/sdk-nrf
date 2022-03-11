@@ -8,10 +8,13 @@
 #include <shell/shell.h>
 #include <ctype.h>
 #include <string.h>
+#include <errno.h>
 
 #include "mesh/net.h"
 #include "mesh/access.h"
 #include "shell_utils.h"
+
+extern int errno;
 
 struct shell_model_instance {
 	uint16_t addr;
@@ -46,6 +49,74 @@ static uint8_t str2u8(const char *str)
 bool shell_model_str2bool(const char *str)
 {
 	return str2u8(str);
+}
+
+
+int shell_model_str2sensorval(const char *str, struct sensor_value *out)
+{
+	int32_t sign = 1;
+	char buf[18]; /* 10 digits + decimal point + 6 digits + terminator */
+
+	if (*str == '-') {
+		sign = -1;
+		str++;
+	}
+
+	if (strlen(str) > 17 || strlen(str) == 0) {
+		return -EINVAL;
+	}
+
+	strcpy(buf, str);
+
+	char *dp = strchr(buf, '.');
+
+	if (dp != NULL) {
+		*dp = 0;
+		dp++;
+	}
+
+	errno = 0;
+	uint32_t val = strtoul(buf, NULL, 10);
+
+	if (errno || (sign == 1 && val > INT32_MAX) || (sign == -1 && val > INT32_MAX + 1ul)) {
+		return -EINVAL;
+	}
+	out->val1 = sign * val;
+	if (dp == NULL || *dp == 0) {
+		out->val2 = 0;
+		return 0;
+	}
+
+	int32_t factor = 100000;
+
+	val = 0;
+
+	do {
+		if (isdigit(*dp) && factor > 0) {
+			val += (*dp - '0') * factor;
+			factor /= 10;
+		} else {
+			return -EINVAL;
+		}
+	} while (*(++dp));
+	out->val2 = val * sign;
+	return 0;
+}
+
+void shell_model_print_sensorval(const struct shell *shell, struct sensor_value *value)
+{
+	shell_fprintf(shell, SHELL_NORMAL, "%s%d", (value->val1 < 0 || value->val2 < 0) ? "-" : "",
+		      abs(value->val1));
+	if (value->val2) {
+		int32_t val = abs(value->val2);
+		int digits = 6;
+
+		while (!(val % 10)) {
+			val /= 10;
+			digits--;
+		}
+		shell_fprintf(shell, SHELL_NORMAL, ".%0*d", digits, val);
+	}
 }
 
 static bool hex_str_check(char *str, uint8_t str_len)

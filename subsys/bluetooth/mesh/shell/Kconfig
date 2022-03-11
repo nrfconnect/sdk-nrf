@@ -118,4 +118,36 @@ config BT_MESH_SHELL_SCHEDULER_CLI
 	help
 	   Scheduler client shell support.
 
+config BT_MESH_SHELL_SENSOR_CLI
+	bool "Sensor client shell support"
+	depends on BT_MESH_SENSOR_CLI
+	default y
+	help
+	   Sensor client shell support.
+
+if BT_MESH_SHELL_SENSOR_CLI
+
+config BT_MESH_SHELL_SENSOR_CLI_MAX_SENSORS
+	int "Maximum numbers of sensors for shell"
+	default 8
+	range 1 47
+	help
+	   Maximum number of sensor per sensor server supported by the shell module.
+
+config BT_MESH_SHELL_SENSOR_CLI_MAX_SETTINGS
+	int "Maximum numbers of settings for shell"
+	default 8
+	range 1 189
+	help
+	   Maximum number of settings per sensor supported by the shell module.
+
+config BT_MESH_SHELL_SENSOR_CLI_MAX_COLUMNS
+	int "Maximum numbers of columns for shell"
+	default 8
+	range 1 126
+	help
+	   Maximum number of columns per sensor supported by the shell module.
+
+endif # BT_MESH_SHELL_SENSOR_CLI
+
 endif # BT_MESH_SHELL

@@ -13,7 +13,7 @@ Unlike the Sensor Server model, the Sensor Client only creates a single model in
 The Sensor Client can send messages to both the Sensor Server and the Sensor Setup Server, as long as it has the right application keys.
 
 Configuration
-=============
+*************
 
 The Sensor Client will receive data from the Sensor Servers asynchronously.
 In most cases, the incoming data needs to be interpreted differently based on the type of sensor that produced it.
@@ -31,17 +31,133 @@ In this case, only the referenced sensor types will be available.
 The Sensor Client API supports both blocking functions and asynchronous callbacks for accessing the Sensor Server data.
 
 Extended models
-===============
+***************
 
 None.
 
 Persistent storage
-==================
+******************
 
 None.
 
+Shell commands
+**************
+
+The Bluetooth mesh shell subsystem provides a set of commands to interact with the Sensor Client model instantiated on a device.
+
+To make these commands available, enable the following Kconfig options:
+
+* :kconfig:`CONFIG_BT_MESH_SHELL`
+* :kconfig:`CONFIG_BT_MESH_SHELL_SENSOR_CLI`
+
+mdl_sensor instance get-all
+   Print all instances of the Sensor Client model on the device.
+
+
+mdl_sensor instance set <elem_idx>
+   Select the Sensor Client model instantiated on the specified element ID.
+   This instance will be used in message sending.
+   If no model instance is selected, the first model instance found on the device will be used by default.
+
+   * ``elem_idx`` - Element index where the model instance is found.
+
+
+mdl_sensor desc-get [sensor_id]
+   Get the sensor descriptor for one or all sensors on the server.
+   This will get a maximum number of sensor descriptors specified by :kconfig:`CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_SENSORS`.
+
+   * ``sensor_id`` - If present, selects the sensor for which to get the descriptor.
+
+
+mdl_sensor cadence-get <sensor_id>
+   Get the configured cadence for a sensor on the server.
+
+   * ``sensor_id`` - Selects the sensor for which to get the configured cadence.
+
+
+mdl_sensor cadence-set <sensor_id> <fast_period_div> <min_int> <delta_type> <delta_up> <delta_down> <cadence_inside> <range_low> <range_high>
+   Set the cadence for a sensor on the server and wait for a response.
+
+   * ``sensor_id`` - Selects the sensor for which to get the configured cadence.
+   * ``fast_period_div`` - Divisor for computing fast cadence. Fast period is publish_period / (1 << fast_period_div).
+   * ``min_int`` - Minimum publish interval in fast region. Interval is never lower than 1 << min_int.
+   * ``delta_type`` - Sets the type of delta triggering. 0 = value-based threshold. 1 = percentage-based threshold.
+   * ``delta_up`` - Minimum positive delta which triggers publication.
+   * ``delta_down`` - Minimum negative delta which triggers publication.
+   * ``cadence_inside`` - Sets the cadence used inside the range. 0 = normal cadence inside, fast outside. 1 = fast cadence inside, normal outside.
+   * ``range_low`` - Lower bound of the cadence range.
+   * ``range_high`` - Upper bound of the cadence range.
+
+
+mdl_sensor cadence-set-unack <sensor_id> <fast_period_div> <min_int> <delta_type> <delta_up> <delta_down> <cadence_inside> <range_low> <range_high>
+   Set the cadence for a sensor on the server without waiting for a response.
+
+   * ``sensor_id`` - Selects the sensor for which to get the configured cadence.
+   * ``fast_period_div`` - Divisor for computing fast cadence. Fast period is publish_period / (1 << fast_period_div).
+   * ``min_int`` - Minimum publish interval in fast region. Interval is never lower than 1 << min_int.
+   * ``delta_type`` - Sets the type of delta triggering. 0 = value-based threshold. 1 = percentage-based threshold.
+   * ``delta_up`` - Minimum positive delta which triggers publication.
+   * ``delta_down`` - Minimum negative delta which triggers publication.
+   * ``cadence_inside`` - Sets the cadence used inside the range. 0 = normal cadence inside, fast outside. 1 = fast cadence inside, normal outside.
+   * ``range_low`` - Lower bound of the cadence range.
+   * ``range_high`` - Upper bound of the cadence range.
+
+
+mdl_sensor settings-get <sensor_id>
+   Get the available settings for a sensor on the server.
+   This will get a maximum number of settings specified by :kconfig:`CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_SETTINGS`.
+
+   * ``sensor_id`` - Selects the sensor for which to get the available settings.
+
+
+mdl_sensor setting-get <sensor_id> <setting_id>
+   Get the value of a setting for a sensor on the server.
+
+   * ``sensor_id`` - Selects the sensor for which to get the setting value.
+   * ``setting_id`` - Selects the setting to get.
+
+
+mdl_sensor setting-set <sensor_id> <setting_id> <value>
+   Set the value of a setting for a sensor on the server and wait for a response.
+
+   * ``sensor_id`` - Selects the sensor for which to set the setting value.
+   * ``setting_id`` - Selects the setting to set.
+   * ``value`` - The new value of the setting.
+
+
+mdl_sensor setting-set-unack <sensor_id> <setting_id> <value>
+   Set the value of a setting for a sensor on the server without waiting for a response.
+
+   * ``sensor_id`` - Selects the sensor for which to set the setting value.
+   * ``setting_id`` - Selects the setting to set.
+   * ``value`` - The new value of the setting.
+
+
+mdl_sensor get [sensor_id]
+   Get the sensor value for one or all of the sensors on the server.
+   This will get a maximum number of sensor values specified by :kconfig:`CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_SENSORS`.
+
+   * ``sensor_id`` - If present, selects the sensor for which to get the sensor value.
+
+
+mdl_sensor series-entry get <sensor_id> <column>
+   Get the value of a column for a sensor on the server.
+
+   * ``sensor_id`` - Selects the sensor for which to get the entry value.
+   * ``column`` - Start value of the column for which to get the entry value.
+
+
+mdl_sensor series-entries-get <sensor_id> [range_start range_end]
+   Get the entries for all columns, or a specified range of columns, for a sensor on the server.
+   This will get a maximum number of entries specified by :kconfig:`CONFIG_BT_MESH_SHELL_SENSOR_CLI_MAX_COLUMNS`.
+
+   * ``sensor_id`` - Selects the sensor for which to get the entries.
+   * ``range_start`` - If present, selects the start of the column range to get.
+   * ``range_end`` - If present, selects the end of the column range to get. If ``range_start`` is present, this must also be present.
+
+
 API documentation
-=================
+*****************
 
 | Header file: :file:`include/bluetooth/mesh/sensor_cli.h`
 | Source file: :file:`subsys/bluetooth/mesh/sensor_cli.c`

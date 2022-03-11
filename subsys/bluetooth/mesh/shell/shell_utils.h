@@ -9,6 +9,10 @@
 
 bool shell_model_str2bool(const char *str);
 
+int shell_model_str2sensorval(const char *str, struct sensor_value *out);
+
+void shell_model_print_sensorval(const struct shell *shell, struct sensor_value *value);
+
 uint8_t shell_model_hexstr2num(const struct shell *shell, char *str, uint8_t *buf, uint8_t buf_len);
 
 double shell_model_str2dbl(const struct shell *shell, const char *str);
