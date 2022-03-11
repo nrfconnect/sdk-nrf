@@ -58,8 +58,10 @@ static void broadcast_wave_label(const char *label)
 
 static void set_wave(void)
 {
+	/* NOTE: sensor device should be propagated instead */
+	const struct device *dev = DEVICE_DT_GET_ONE(nordic_sensor_sim);
 	const struct sim_wave *w = &sim_signal_params.waves[cur_wave_idx];
-	int err = sensor_sim_set_wave_param(sim_signal_params.chan, &w->wave_param);
+	int err = sensor_sim_set_wave_param(dev, sim_signal_params.chan, &w->wave_param);
 
 	if (err) {
 		LOG_ERR("Cannot set simulated accel params (err %d)", err);

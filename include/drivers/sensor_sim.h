@@ -33,13 +33,16 @@ extern "C" {
  * @note	This function can be used only if acceleration is generated as wave signal.
  *		Moreover, although it is thread-safe, it cannot be used in interrupts.
  *
+ * @param[in] dev		Sensor device instance.
  * @param[in] chan		Selected sensor channel.
  * @param[in] set_params	Parameters of wave signal.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int sensor_sim_set_wave_param(enum sensor_channel chan, const struct wave_gen_param *set_params);
+int sensor_sim_set_wave_param(const struct device *dev,
+			      enum sensor_channel chan,
+			      const struct wave_gen_param *set_params);
 
 #ifdef __cplusplus
 }
