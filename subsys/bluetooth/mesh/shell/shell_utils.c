@@ -48,6 +48,69 @@ bool shell_model_str2bool(const char *str)
 	return str2u8(str);
 }
 
+int shell_model_str2sensorval(const char *str, struct sensor_value *out)
+{
+	int32_t sign = 1;
+	char c = *(str++);
+	int64_t acc = 0;
+
+	if (c == '-') {
+		sign = -1;
+		c = *(str++);
+	} else if (c == '+') {
+		c = *(str++);
+	}
+	if (c == '.' && !(*str)) {
+		return -EINVAL;
+	}
+	do {
+		if (c == '.') {
+			c = *(str++);
+			break;
+		} else if (isdigit(c)) {
+			acc *= 10;
+			acc += c - '0';
+		} else {
+			return -EINVAL;
+		}
+		if ((sign == 1 && acc > INT32_MAX) || (sign == -1 && acc > (INT32_MIN * -1ll))) {
+			return -ERANGE;
+		}
+	} while ((c = *(str++)));
+	out->val1 = acc * sign;
+	if (!c) {
+		out->val2 = 0;
+		return 0;
+	}
+	int32_t factor = 100000;
+	acc = 0;
+	do {
+		if (isdigit(c) && factor > 0) {
+			acc += (c - '0') * factor;
+			factor /= 10;
+		} else {
+			return -EINVAL;
+		}
+	} while ((c = *(str++)));
+	out->val2 = acc * sign;
+	return 0;
+}
+
+void shell_model_print_sensorval(const struct shell *shell, struct sensor_value *value)
+{
+	shell_fprintf(shell, SHELL_NORMAL, "%s%d", (value->val1 < 0 || value->val2 < 0) ? "-" : "",
+		      abs(value->val1));
+	if (value->val2) {
+		int32_t val = abs(value->val2);
+		int digits = 6;
+		while (!(val % 10)) {
+			val /= 10;
+			digits--;
+		}
+		shell_fprintf(shell, SHELL_NORMAL, ".%0*d", digits, val);
+	}
+}
+
 static bool hex_str_check(char *str, uint8_t str_len)
 {
 	if (str_len % 2) {
