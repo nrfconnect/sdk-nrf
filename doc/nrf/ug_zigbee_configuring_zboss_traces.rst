@@ -99,8 +99,13 @@ To configure trace logs using the UART, complete the following steps:
 
 1. Set the :kconfig:option:`CONFIG_ZBOSS_TRACE_UART_LOGGING` Kconfig option.
 
-#. Optionally, configure which UART device you want to use with the Kconfig option :kconfig:option:`CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME`.
-   The default ``UART_1`` will be used if no other UART device is configured.
+#. Provide the ZBOSS tracing serial device in Devicetree like this:
+
+   .. code-block:: devicetree
+
+      chosen {
+          ncs,zboss-trace-uart = &uart1;
+      };
 
 #. Configure the UART device that you want to use to be connected to the onboard J-Link instead of ``UART_0``, by extending the DTS overlay file for the selected board with the following:
 
@@ -219,9 +224,6 @@ To configure trace logs using native USB, complete the following steps:
 1. Set the Kconfig option :kconfig:option:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING`.
    This also enables the necessary USB Kconfig options.
 
-#. Configure which USB device to use with the Kconfig option :kconfig:option:`CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME`.
-   This is optional, as the default ``CDC_ACM_0`` will be used if no other USB device is configured.
-
 #. Create a virtual COM port that will be used for printing ZBOSS trace logs by extending the DTS overlay file for the selected board with the following:
 
    .. code-block:: devicetree
@@ -235,3 +237,11 @@ To configure trace logs using native USB, complete the following steps:
 
    .. note::
       For the ZBOSS trace logs to be printed correctly through the USB, it is recommended to avoid using the USB autosuspend.
+
+#. Provide the ZBOSS tracing serial device in Devicetree like this:
+
+   .. code-block:: devicetree
+
+      chosen {
+          ncs,zboss-trace-uart = &cdc_acm_uart0;
+      };
