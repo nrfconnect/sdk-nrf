@@ -274,6 +274,10 @@ static int init(void)
 			 "There is no active selector");
 
 	for (size_t i = 0; i < ARRAY_SIZE(gpio_dev); i++) {
+		if (gpio_dev[i] == NULL) {
+			continue;
+		}
+
 		if (!device_is_ready(gpio_dev[i])) {
 			LOG_ERR("GPIO port %u not ready", i);
 			return -ENODEV;
