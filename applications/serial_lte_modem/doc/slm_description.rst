@@ -94,11 +94,15 @@ CONFIG_SLM_WAKEUP_PIN - Interface GPIO to exit from sleep or idle
 
    **P0.26** (Multi-function button on Thingy:91) is used when the target is Thingy:91.
 
+.. _CONFIG_SLM_INDICATE_PIN:
+
 CONFIG_SLM_INDICATE_PIN - Interface GPIO to indicate data available or unexpected reset
    This option specifies which interface GPIO to use for indicating data available or unexpected reset.
    By default, **P0.2** (LED 1 on the nRF9160 DK) is used when :ref:`CONFIG_SLM_CONNECT_UART_0 <CONFIG_SLM_CONNECT_UART_0>` is selected, and **P0.30** is used when :ref:`CONFIG_SLM_CONNECT_UART_2 <CONFIG_SLM_CONNECT_UART_2>` is selected.
 
    It is not defined when the target is Thingy:91.
+
+.. _CONFIG_SLM_INDICATE_TIME:
 
 CONFIG_SLM_INDICATE_TIME - Indicate GPIO active time
    This option specifies the length, in milliseconds, of the time interval during which the indicate GPIO must stay active.
@@ -270,19 +274,22 @@ See :ref:`app_build_system`: for more information on the |NCS| configuration sys
 
 .. _slm_native_tls:
 
-Native TLS sockets
-------------------
+Native TLS
+----------
 
 By default, the secure socket (TLS/DTLS) is offloaded onto the modem.
-However, if you need customized TLS/DTLS features that are not supported by the modem firmware, you can use a native TLS socket instead.
-The serial LTE modem application will then handle all secure sockets used in TCP/IP, TCP/IP proxy, and MQTT.
+However, if you need customized TLS/DTLS features that are not supported by the modem firmware, you can use native TLS instead.
+Currently, the SLM application can be built to use native TLS for the following services:
 
-If native TLS is enabled, the `Credential storage management %CMNG`_ command is overridden to map the :ref:`security tag <nrfxlib:security_tags>` from the serial LTE modem application to the modem.
-You must use the overridden ``AT%CMNG`` command to provision the credentials to the modem.
+* TLS Proxy server
+* HTTPS client
+
+If native TLS is enabled, you must use the ``AT#XCMNG`` command to store the credentials.
 
 .. note::
 
-   The Serial LTE Modem application supports security tags ranging from 0 to 214748364.
+   The modem needs to be in an offline state when storing the credentials.
+   The SLM application supports security tags ranging from ``0`` to ``214748364``.
 
 The configuration options that are required to enable the native TLS socket are defined in the :file:`overlay-native_tls.conf` file.
 
@@ -292,8 +299,7 @@ The configuration options that are required to enable the native TLS socket are 
 
    * PSK, PSK identity, and PSK public key are currently not supported.
    * The DTLS server is currently not supported.
-   * ``AT%CMNG=1`` is not supported.
-   * The FTP and HTTP clients currently do not support native TLS.
+   * TLS session resumption is currently not supported.
 
 .. _slm_building:
 

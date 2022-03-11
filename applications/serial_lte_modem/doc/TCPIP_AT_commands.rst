@@ -8,9 +8,7 @@ TCP and UDP AT commands
    :depth: 2
 
 The following commands list contains TCP-related and UDP-related AT commands.
-
-When TLS/DTLS is expected, the credentials should be stored on the modem side using either ``AT%XCMNG`` or the Nordic nRF Connect LTE Link Monitor tool.
-The modem needs to be in an offline state.
+When native TLS is used, you must store the credentials using the ``AT#XCMNG`` AT command.
 
 For more information on the networking services, visit the `BSD Networking Services Spec Reference`_.
 
