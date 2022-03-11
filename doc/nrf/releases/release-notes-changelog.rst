@@ -165,6 +165,7 @@ Bluetooth samples
 
       * The front-end module test parameters are not set to their default value after the DTM reset command anymore.
       * Added the vendor-specific ``FEM_DEFAULT_PARAMS_SET`` command for restoring the default front-end module parameters.
+      * Added possibility to build with the limited nRF21540 front-end module hardware pinout.
 
     * Fixed handling of the disable Constant Tone Extension command.
 
@@ -362,7 +363,7 @@ Zigbee samples
   * Removed implementation of Home Automation Profile Specification logic.
     This logic added dependency between On/Off and Level clusters, so changes in Level cluster were affecting the On/Off one.
 
-Other Samples
+Other samples
 -------------
 
 * Added:
@@ -376,6 +377,7 @@ Other Samples
   * :ref:`radio_test`:
 
     * Added new configuration that builds the sample with support for remote IPC Service shell on nRF5340 application core through USB.
+    * Added possibility to build with the limited nRF21540 front-end module hardware pinout.
 
 Drivers
 =======
