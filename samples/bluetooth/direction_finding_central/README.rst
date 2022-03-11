@@ -163,9 +163,9 @@ For example, the CTE length is 120 µs and the antenna switching slot is 1 µs.
 This will result in the following number of IQ samples:
 
 * 8 samples from the reference period.
-* Switch-sample period duration is: 120 µs - 16 µs = 104 µs. For the 1 µs antenna switching slot, the sample is taken every 2 µs (1 µs antenna switch slot, 1 µs sample slot). Meaning, the number of samples from the switch-sample period is 104 µs / 2 µs = 52.
+* Switch-sample period duration is: 120 µs - 12 µs = 108 µs. For the 1 µs antenna switching slot, the sample is taken every 2 µs (1 µs antenna switch slot, 1 µs sample slot). Meaning, the number of samples from the switch-sample period is 108 µs / 2 µs = 54.
 
-The total number of samples is 60.
+The total number of samples is 62.
 
 Building and running
 ********************
