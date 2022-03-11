@@ -121,7 +121,7 @@ static int callback(const struct download_client_evt *event)
 		}
 
 #if CONFIG_SAMPLE_COMPUTE_HASH
-		mbedtls_sha256_update_ret(&sha256_ctx,
+		mbedtls_sha256_update(&sha256_ctx,
 			event->fragment.buf, event->fragment.len);
 #endif
 		return 0;
@@ -136,7 +136,7 @@ static int callback(const struct download_client_evt *event)
 		uint8_t hash[32];
 		uint8_t hash_str[64 + 1];
 
-		mbedtls_sha256_finish_ret(&sha256_ctx, hash);
+		mbedtls_sha256_finish(&sha256_ctx, hash);
 		mbedtls_sha256_free(&sha256_ctx);
 
 		bin2hex(hash, sizeof(hash), hash_str, sizeof(hash_str));
@@ -196,7 +196,7 @@ void main(void)
 
 #if CONFIG_SAMPLE_COMPUTE_HASH
 	mbedtls_sha256_init(&sha256_ctx);
-	mbedtls_sha256_starts_ret(&sha256_ctx, false);
+	mbedtls_sha256_starts(&sha256_ctx, false);
 #endif
 
 	err = download_client_connect(&downloader, URL, &config);
