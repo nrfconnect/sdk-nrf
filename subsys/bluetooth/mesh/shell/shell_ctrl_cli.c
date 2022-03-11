@@ -182,8 +182,9 @@ static int cmd_light_onoff_set_unack(const struct shell *shell, size_t argc, cha
 static void prop_print(const struct shell *shell, int err, struct sensor_value *rsp)
 {
 	if (!err) {
-		shell_print(shell, "Sensor value: decimal part: %d, fractional part: %d", rsp->val1,
-			    rsp->val2);
+		shell_fprintf(shell, SHELL_NORMAL, "Property value: ");
+		shell_model_print_sensorval(shell, rsp);
+		shell_print(shell, "");
 	}
 }
 
@@ -207,19 +208,23 @@ static int cmd_prop_get(const struct shell *shell, size_t argc, char *argv[])
 static int prop_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
 	enum bt_mesh_light_ctrl_prop id = (enum bt_mesh_light_ctrl_prop)strtol(argv[1], NULL, 0);
-	int32_t decimal = (int32_t)strtol(argv[2], NULL, 0);
-	int32_t frac = (int32_t)strtol(argv[3], NULL, 0);
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_LIGHT_LC_CLI, &mod)) {
 		return -ENODEV;
 	}
 
 	struct bt_mesh_light_ctrl_cli *cli = mod->user_data;
-	struct sensor_value set = { .val1 = decimal, .val2 = frac };
+	struct sensor_value set;
+
+	int err = shell_model_str2sensorval(argv[2], &set);
+
+	if (err) {
+		return err;
+	}
 
 	if (acked) {
 		struct sensor_value rsp;
-		int err = bt_mesh_light_ctrl_cli_prop_set(cli, NULL, id, &set, &rsp);
+		err = bt_mesh_light_ctrl_cli_prop_set(cli, NULL, id, &set, &rsp);
 
 		prop_print(shell, err, &rsp);
 		return err;
@@ -326,8 +331,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(light-onoff-set-unack, NULL, "<onoff> [transition_time_ms [delay_ms]]",
 		      cmd_light_onoff_set_unack, 2, 2),
 	SHELL_CMD_ARG(prop-get, NULL, "<id>", cmd_prop_get, 2, 0),
-	SHELL_CMD_ARG(prop-set, NULL, "<id> <decimal> <frac>", cmd_prop_set, 4, 0),
-	SHELL_CMD_ARG(prop-set-unack, NULL, "<id> <decimal> <frac>", cmd_prop_set_unack, 4, 0),
+	SHELL_CMD_ARG(prop-set, NULL, "<id> <value>", cmd_prop_set, 3, 0),
+	SHELL_CMD_ARG(prop-set-unack, NULL, "<id> <value>", cmd_prop_set_unack, 3, 0),
 	SHELL_CMD_ARG(coeff-get, NULL, "<id>", cmd_coeff_get, 2, 0),
 	SHELL_CMD_ARG(coeff-set, NULL, "<id> <value>", cmd_coeff_set, 3, 0),
 	SHELL_CMD_ARG(coeff-set-unack, NULL, "<id> <value>", cmd_coeff_set_unack, 3, 0),
