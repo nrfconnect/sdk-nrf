@@ -14,5 +14,6 @@
 / {
 	chosen {
 		ncs,zigbee-uart = &cdc_acm_uart0;
+		ncs,zboss-trace-uart = &uart1;
 	};
 };
