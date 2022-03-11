@@ -177,6 +177,9 @@ struct download_client {
 
 	/** Event handler. */
 	download_client_callback_t callback;
+
+	/** Set socket to native TLS */
+	bool set_native_tls;
 };
 
 /**

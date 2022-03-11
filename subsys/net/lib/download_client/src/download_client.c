@@ -277,6 +277,11 @@ static int client_connect(struct download_client *dl)
 		return -EAFNOSUPPORT;
 	}
 
+	if (dl->set_native_tls) {
+		LOG_DBG("Enabled native TLS");
+		type |= SOCK_NATIVE_TLS;
+	}
+
 	LOG_DBG("family: %d, type: %d, proto: %d",
 		dl->remote_addr.sa_family, type, dl->proto);
 
