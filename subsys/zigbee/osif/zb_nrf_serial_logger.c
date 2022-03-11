@@ -22,7 +22,8 @@ RING_BUF_DECLARE(logger_buf, CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE);
 static K_SEM_DEFINE(ringbuf_sem, 1, 1);
 
 /* UART device used to print ZBOSS Trace messages. */
-static const struct device *uart_dev;
+static const struct device *uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_zboss_trace_uart));
+static bool uart_dev_initialized;
 static zb_callback_t char_handler;
 
 static void handle_tx_ready_evt(const struct device *dev)
@@ -137,7 +138,7 @@ void zb_trace_msg_port_do(void)
 		return;
 	}
 
-	if (uart_dev == NULL) {
+	if (!uart_dev_initialized) {
 		return;
 	}
 
@@ -149,13 +150,12 @@ void zb_osif_serial_logger_init(void)
 	/* Prevent multiple initiaizations as serial init function may be called more than once
 	 * by ZBOSS stack.
 	 */
-	if (uart_dev != NULL) {
+	if (uart_dev_initialized) {
 		return;
 	}
 
-	uart_dev = device_get_binding(CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME);
-	if (uart_dev == NULL) {
-		LOG_ERR("No UART device found to log ZBOSS Traces");
+	if (!device_is_ready(uart_dev)) {
+		LOG_ERR("ZBOSS Trace UART device not ready");
 		return;
 	}
 
@@ -165,8 +165,6 @@ void zb_osif_serial_logger_init(void)
 
 		if ((ret != 0) && (ret != -EALREADY)) {
 			LOG_ERR("USB initialization failed - No UART device to log ZBOSS Traces");
-			/* USB initialization failed - mark UART device as unavailable. */
-			uart_dev = NULL;
 			return;
 		}
 
@@ -180,11 +178,13 @@ void zb_osif_serial_logger_init(void)
 
 	/* Enable rx interrupts. */
 	uart_irq_rx_enable(uart_dev);
+
+	uart_dev_initialized = true;
 }
 
 void zb_osif_serial_logger_flush(void)
 {
-	if (uart_dev == NULL) {
+	if (!uart_dev_initialized) {
 		return;
 	}
 

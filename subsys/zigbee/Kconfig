@@ -271,12 +271,6 @@ config ZBOSS_TRACE_USB_CDC_LOGGING
 
 endchoice
 
-config ZBOSS_TRACE_LOGGER_DEVICE_NAME
-	string "UART device name for logging ZBOSS Traces"
-	# Use UART_1 to avoid using the same UART as Zephyr logger
-	default "UART_1" if ZBOSS_TRACE_UART_LOGGING
-	default "CDC_ACM_0" if ZBOSS_TRACE_USB_CDC_LOGGING
-
 endif # ZBOSS_TRACE_BINARY_LOGGING
 
 # Configure ZBOSS_OSIF_LOG_LEVEL

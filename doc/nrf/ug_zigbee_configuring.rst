@@ -165,11 +165,13 @@ The stack logs are provided in a binary format and you can configure how they ar
     This backend is enabled by default.
   * :kconfig:option:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` - USB CDC serial.
 
-  To specify the serial device, set :kconfig:option:`CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME`.
-  By default, this option is set to the following values:
+  To specify the serial device, you will need to set the ``ncs,zboss-trace-uart`` choice in Devicetree like this:
 
-  * ``UART_1`` if :kconfig:option:`CONFIG_ZBOSS_TRACE_UART_LOGGING` is selected.
-  * ``CDC_ACM_0`` if :kconfig:option:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING` is selected.
+  .. code-block:: devicetree
+
+     chosen {
+         ncs,zboss-trace-uart = &uart1;
+     };
 
   .. note::
      When you select :kconfig:option:`CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING`, the USB peripheral is enabled and the USB CDC serial is configured as a part of the :c:func:`zb_osif_serial_logger_init` function.

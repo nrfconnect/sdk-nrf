@@ -134,8 +134,15 @@ Use the following options to configure the Zigbee serial logger:
    .. note::
       See :ref:`zephyr:usb_device_cdc_acm` for more information about how to configure USB CDC ACM instance for logging ZBOSS trace messages.
 
-* :kconfig:option:`CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME` - This option specifies the serial device to use.
 * :kconfig:option:`CONFIG_ZBOSS_TRACE_LOGGER_BUFFER_SIZE` - This option specifies the size of the internal ring buffer.
+
+The ZBOSS tracing serial device needs to be provided in Devicetree like this:
+
+.. code-block:: devicetree
+
+   chosen {
+       ncs,zboss-trace-uart = &uart1;
+   };
 
 Zigbee logger
 =============
