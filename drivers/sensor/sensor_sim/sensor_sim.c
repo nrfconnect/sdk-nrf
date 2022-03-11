@@ -7,12 +7,13 @@
 #define DT_DRV_COMPAT nordic_sensor_sim
 
 #include <drivers/gpio.h>
+#include <kernel.h>
 #include <init.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <logging/log.h>
 
-#include "sensor_sim_priv.h"
 #include <drivers/sensor_sim.h>
 
 #define ACCEL_CHAN_COUNT	3
@@ -22,6 +23,23 @@ LOG_MODULE_REGISTER(sensor_sim, CONFIG_SENSOR_SIM_LOG_LEVEL);
 #define ACCEL_DEFAULT_TYPE		WAVE_GEN_TYPE_SINE
 #define ACCEL_DEFAULT_AMPLITUDE		20.0
 #define ACCEL_DEFAULT_PERIOD_MS		10000
+
+struct sensor_sim_data {
+#if defined(CONFIG_SENSOR_SIM_TRIGGER)
+	const struct device *gpio;
+	const char *gpio_port;
+	uint8_t gpio_pin;
+	struct gpio_callback gpio_cb;
+	struct k_sem gpio_sem;
+
+	sensor_trigger_handler_t drdy_handler;
+	struct sensor_trigger drdy_trigger;
+
+	K_THREAD_STACK_MEMBER(thread_stack,
+			      CONFIG_SENSOR_SIM_THREAD_STACK_SIZE);
+	struct k_thread thread;
+#endif  /* CONFIG_SENSOR_SIM_TRIGGER */
+};
 
 static struct wave_gen_param accel_param[ACCEL_CHAN_COUNT];
 struct k_mutex accel_param_mutex;
