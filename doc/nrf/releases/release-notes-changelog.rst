@@ -446,6 +446,7 @@ Libraries for networking
   * :ref:`lib_download_client` library:
 
     * Fixed an issue where downloads of COAP URIs would fail when they contained multiple path elements.
+    * Added a parameter :c:member:`set_native_tls` in the configuration structure to configure native TLS support at runtime.
 
   * :ref:`lib_fota_download` library:
 
