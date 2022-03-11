@@ -428,6 +428,13 @@ int fota_download_init(fota_download_callback_t client_callback)
 
 	callback = client_callback;
 
+#ifdef CONFIG_FOTA_DOWNLOAD_NATIVE_TLS
+	/* Enable native TLS for the download client socket
+	 * if configured.
+	 */
+	dlc.set_native_tls = CONFIG_FOTA_DOWNLOAD_NATIVE_TLS;
+#endif
+
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
 	/* Set the required buffer for MCUboot targets */
 	err = dfu_target_mcuboot_set_buf(mcuboot_buf, sizeof(mcuboot_buf));
