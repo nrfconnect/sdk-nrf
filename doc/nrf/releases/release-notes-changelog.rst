@@ -416,6 +416,7 @@ Documentation
 
   * Documentation for :ref:`degugging of nRF5340 <debugging>` in :ref:`working with nRF5340 DK<ug_nrf5340>` user guide.
   * Section describing how to enable Amazon Frustration-Free Setup (FFS) support in :ref:`ug_matter_configuring_device_identification`.
+  * Notes to the :ref:`bluetooth_central_dfu_smp` sample document specifying the intended use of the sample.
 
 * Changed:
 
