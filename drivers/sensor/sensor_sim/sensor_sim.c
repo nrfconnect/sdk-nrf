@@ -24,6 +24,11 @@ LOG_MODULE_REGISTER(sensor_sim, CONFIG_SENSOR_SIM_LOG_LEVEL);
 #define ACCEL_DEFAULT_AMPLITUDE		20.0
 #define ACCEL_DEFAULT_PERIOD_MS		10000
 
+enum acc_signal {
+	ACC_SIGNAL_TOGGLE,
+	ACC_SIGNAL_WAVE,
+};
+
 struct sensor_sim_data {
 	double temp_sample;
 	double humidity_sample;
@@ -51,6 +56,7 @@ struct sensor_sim_config {
 	uint32_t base_temperature;
 	uint8_t base_humidity;
 	uint32_t base_pressure;
+	enum acc_signal acc_signal;
 };
 
 /**
@@ -106,8 +112,9 @@ int sensor_sim_set_wave_param(const struct device *dev,
 			      const struct wave_gen_param *set_params)
 {
 	struct sensor_sim_data *data = dev->data;
+	const struct sensor_sim_config *config = dev->config;
 
-	if (!IS_ENABLED(CONFIG_SENSOR_SIM_ACCEL_WAVE)) {
+	if (config->acc_signal != ACC_SIGNAL_WAVE) {
 		return -ENOTSUP;
 	}
 
@@ -292,6 +299,7 @@ static int sensor_sim_trigger_set(const struct device *dev,
 static int sensor_sim_init(const struct device *dev)
 {
 	struct sensor_sim_data *data = dev->data;
+	const struct sensor_sim_config *config = dev->config;
 
 #if defined(CONFIG_SENSOR_SIM_TRIGGER)
 #if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
@@ -307,7 +315,7 @@ static int sensor_sim_init(const struct device *dev)
 
 	k_mutex_init(&data->accel_param_mutex);
 
-	if (IS_ENABLED(CONFIG_SENSOR_SIM_ACCEL_WAVE)) {
+	if (config->acc_signal == ACC_SIGNAL_WAVE) {
 		for (size_t i = 0; i < ARRAY_SIZE(data->accel_param); i++) {
 			data->accel_param[i].type = ACCEL_DEFAULT_TYPE;
 			data->accel_param[i].period_ms = ACCEL_DEFAULT_PERIOD_MS;
@@ -417,12 +425,13 @@ static int generate_accel_data(const struct device *dev,
 			       enum sensor_channel chan)
 {
 	struct sensor_sim_data *data = dev->data;
+	const struct sensor_sim_config *config = dev->config;
 	int retval = 0;
 	generator_function gen_fn = NULL;
 
-	if (IS_ENABLED(CONFIG_SENSOR_SIM_ACCEL_WAVE)) {
+	if (config->acc_signal == ACC_SIGNAL_WAVE) {
 		gen_fn = generate_wave;
-	} else if (IS_ENABLED(CONFIG_SENSOR_SIM_ACCEL_TOGGLE)) {
+	} else if (config->acc_signal == ACC_SIGNAL_TOGGLE) {
 		gen_fn = generate_toggle;
 	} else {
 		return -ENOTSUP;
@@ -570,6 +579,7 @@ static const struct sensor_driver_api sensor_sim_api_funcs = {
 		.base_temperature = DT_INST_PROP(n, base_temperature),	       \
 		.base_humidity = DT_INST_PROP(n, base_humidity),	       \
 		.base_pressure = DT_INST_PROP(n, base_pressure),	       \
+		.acc_signal = DT_INST_ENUM_IDX(n, acc_signal),		       \
 	};								       \
 									       \
 	DEVICE_DT_INST_DEFINE(n, sensor_sim_init, NULL, &data##n, &config##n,  \
