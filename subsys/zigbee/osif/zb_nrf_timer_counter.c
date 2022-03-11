@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
 #include <zephyr/drivers/counter.h>
 #include <soc.h>
 #include <zephyr/sys/atomic.h>
@@ -13,7 +15,6 @@
 #include <zb_osif_platform.h>
 
 #define ALARM_CHANNEL_ID  0
-#define TIMER_INSTANCE    DT_LABEL(DT_NODELABEL(timer2))
 
 typedef struct {
 	const struct device *device;
@@ -26,6 +27,7 @@ typedef struct {
 } zb_timer_t;
 
 static zb_timer_t zb_timer = {
+	.device = DEVICE_DT_GET(DT_NODELABEL(timer2)),
 	.is_init = ZB_FALSE,
 	.is_running = ATOMIC_INIT(0)
 };
@@ -80,8 +82,7 @@ static void zb_osif_timer_set_default_config(zb_timer_t *timer)
 
 static void zb_timer_init(void)
 {
-	zb_timer.device = device_get_binding(TIMER_INSTANCE);
-	__ASSERT(zb_timer.device != NULL, "Cannot bind timer device");
+	__ASSERT(device_is_ready(zb_timer.device), "Timer device not ready");
 
 	zb_osif_timer_set_default_config(&zb_timer);
 
