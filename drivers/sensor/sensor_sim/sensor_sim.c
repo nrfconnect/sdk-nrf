@@ -28,6 +28,9 @@ struct sensor_sim_data {
 	double temp_sample;
 	double humidity_sample;
 	double pressure_sample;
+	double accel_samples[ACCEL_CHAN_COUNT];
+	struct wave_gen_param accel_param[ACCEL_CHAN_COUNT];
+	struct k_mutex accel_param_mutex;
 #if defined(CONFIG_SENSOR_SIM_TRIGGER)
 	const struct device *gpio;
 	const char *gpio_port;
@@ -50,15 +53,11 @@ struct sensor_sim_config {
 	uint32_t base_pressure;
 };
 
-static struct wave_gen_param accel_param[ACCEL_CHAN_COUNT];
-struct k_mutex accel_param_mutex;
-
-static double accel_samples[ACCEL_CHAN_COUNT];
-
 /**
  * @typedef generator_function
  * @brief Function used to generate sensor value for given channel.
  *
+ * @param[in]	dev	Sensor device instance.
  * @param[in]	chan	Selected sensor channel.
  * @param[in]	val_cnt	Number of generated values.
  * @param[out]	out_val	Pointer to the variable that is used to store result.
@@ -66,29 +65,34 @@ static double accel_samples[ACCEL_CHAN_COUNT];
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-typedef int (*generator_function)(enum sensor_channel chan, size_t val_cnt, double *out_val);
+typedef int (*generator_function)(const struct device *dev,
+				  enum sensor_channel chan, size_t val_cnt,
+				  double *out_val);
 
 /**
  * @brief Function used to get wave parameters for given sensor channel.
  *
+ * @param[in]	dev	Sensor device instance.
  * @param[in]	chan	Selected sensor channel.
  *
  * @return Pointer to the structure describing parameters of generated wave.
  */
-static struct wave_gen_param *get_wave_params(enum sensor_channel chan)
+static struct wave_gen_param *get_wave_params(const struct device *dev,
+					      enum sensor_channel chan)
 {
+	struct sensor_sim_data *data = dev->data;
 	struct wave_gen_param *dest = NULL;
 
 	switch (chan) {
 	case SENSOR_CHAN_ACCEL_X:
 	case SENSOR_CHAN_ACCEL_XYZ:
-		dest = &accel_param[0];
+		dest = &data->accel_param[0];
 		break;
 	case SENSOR_CHAN_ACCEL_Y:
-		dest = &accel_param[1];
+		dest = &data->accel_param[1];
 		break;
 	case SENSOR_CHAN_ACCEL_Z:
-		dest = &accel_param[2];
+		dest = &data->accel_param[2];
 		break;
 	default:
 		break;
@@ -97,13 +101,17 @@ static struct wave_gen_param *get_wave_params(enum sensor_channel chan)
 	return dest;
 }
 
-int sensor_sim_set_wave_param(enum sensor_channel chan, const struct wave_gen_param *set_params)
+int sensor_sim_set_wave_param(const struct device *dev,
+			      enum sensor_channel chan,
+			      const struct wave_gen_param *set_params)
 {
+	struct sensor_sim_data *data = dev->data;
+
 	if (!IS_ENABLED(CONFIG_SENSOR_SIM_ACCEL_WAVE)) {
 		return -ENOTSUP;
 	}
 
-	struct wave_gen_param *dest = get_wave_params(chan);
+	struct wave_gen_param *dest = get_wave_params(dev, chan);
 
 	if (!dest) {
 		return -ENOTSUP;
@@ -117,16 +125,18 @@ int sensor_sim_set_wave_param(enum sensor_channel chan, const struct wave_gen_pa
 		return -EINVAL;
 	}
 
-	k_mutex_lock(&accel_param_mutex, K_FOREVER);
+	k_mutex_lock(&data->accel_param_mutex, K_FOREVER);
 
 	memcpy(dest, set_params, sizeof(*dest));
 
 	if (chan == SENSOR_CHAN_ACCEL_XYZ) {
-		memcpy(get_wave_params(SENSOR_CHAN_ACCEL_Y), set_params, sizeof(*dest));
-		memcpy(get_wave_params(SENSOR_CHAN_ACCEL_Z), set_params, sizeof(*dest));
+		memcpy(get_wave_params(dev, SENSOR_CHAN_ACCEL_Y), set_params,
+				       sizeof(*dest));
+		memcpy(get_wave_params(dev, SENSOR_CHAN_ACCEL_Z), set_params,
+				       sizeof(*dest));
 	}
 
-	k_mutex_unlock(&accel_param_mutex);
+	k_mutex_unlock(&data->accel_param_mutex);
 
 	return 0;
 }
@@ -281,12 +291,12 @@ static int sensor_sim_trigger_set(const struct device *dev,
  */
 static int sensor_sim_init(const struct device *dev)
 {
+	struct sensor_sim_data *data = dev->data;
+
 #if defined(CONFIG_SENSOR_SIM_TRIGGER)
 #if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
-	struct sensor_sim_data *drv_data = dev->data;
-
-	drv_data->gpio_port = DT_GPIO_LABEL(DT_ALIAS(sw0), gpios);
-	drv_data->gpio_pin = DT_GPIO_PIN(DT_ALIAS(sw0), gpios);
+	data->gpio_port = DT_GPIO_LABEL(DT_ALIAS(sw0), gpios);
+	data->gpio_pin = DT_GPIO_PIN(DT_ALIAS(sw0), gpios);
 #endif
 	if (sensor_sim_init_thread(dev) < 0) {
 		LOG_ERR("Failed to initialize trigger interrupt");
@@ -295,13 +305,13 @@ static int sensor_sim_init(const struct device *dev)
 #endif
 	srand(k_cycle_get_32());
 
-	k_mutex_init(&accel_param_mutex);
+	k_mutex_init(&data->accel_param_mutex);
 
 	if (IS_ENABLED(CONFIG_SENSOR_SIM_ACCEL_WAVE)) {
-		for (size_t i = 0; i < ARRAY_SIZE(accel_param); i++) {
-			accel_param[i].type = ACCEL_DEFAULT_TYPE;
-			accel_param[i].period_ms = ACCEL_DEFAULT_PERIOD_MS;
-			accel_param[i].amplitude = ACCEL_DEFAULT_AMPLITUDE;
+		for (size_t i = 0; i < ARRAY_SIZE(data->accel_param); i++) {
+			data->accel_param[i].type = ACCEL_DEFAULT_TYPE;
+			data->accel_param[i].period_ms = ACCEL_DEFAULT_PERIOD_MS;
+			data->accel_param[i].amplitude = ACCEL_DEFAULT_AMPLITUDE;
 		}
 	}
 
@@ -319,6 +329,7 @@ static double generate_pseudo_random(void)
 /**
  * @brief Generate value for acceleration signal toggling between two values on fetch.
  *
+ * @param[in]	dev	Sensor device instance.
  * @param[in]	chan	Selected sensor channel.
  * @param[in]	val_cnt	Number of generated values.
  * @param[out]	out_val	Pointer to the variable that is used to store result.
@@ -326,8 +337,10 @@ static double generate_pseudo_random(void)
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-static int generate_toggle(enum sensor_channel chan, size_t val_cnt, double *out_val)
+static int generate_toggle(const struct device *dev, enum sensor_channel chan,
+			   size_t val_cnt, double *out_val)
 {
+	ARG_UNUSED(dev);
 	ARG_UNUSED(chan);
 
 	static const double amplitude = 20.0;
@@ -348,6 +361,7 @@ static int generate_toggle(enum sensor_channel chan, size_t val_cnt, double *out
 /**
  * @brief Generate value of acceleration wave signal.
  *
+ * @param[in]	dev	Sensor device instance.
  * @param[in]	chan	Selected sensor channel.
  * @param[in]	val_cnt	Number of generated values.
  * @param[out]	out_val	Pointer to the variable that is used to store result.
@@ -355,11 +369,14 @@ static int generate_toggle(enum sensor_channel chan, size_t val_cnt, double *out
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-static int generate_wave(enum sensor_channel chan, size_t val_cnt, double *out_val)
+static int generate_wave(const struct device *dev, enum sensor_channel chan,
+			 size_t val_cnt, double *out_val)
 {
+	struct sensor_sim_data *data = dev->data;
+
 	__ASSERT_NO_MSG((val_cnt == 1) || (chan == SENSOR_CHAN_ACCEL_XYZ));
 
-	const enum sensor_channel chans[ARRAY_SIZE(accel_param)] = {
+	const enum sensor_channel chans[ARRAY_SIZE(data->accel_param)] = {
 		(chan == SENSOR_CHAN_ACCEL_XYZ) ? (SENSOR_CHAN_ACCEL_X) : chan,
 		(chan == SENSOR_CHAN_ACCEL_XYZ) ? (SENSOR_CHAN_ACCEL_Y) : SENSOR_CHAN_PRIV_START,
 		(chan == SENSOR_CHAN_ACCEL_XYZ) ? (SENSOR_CHAN_ACCEL_Z) : SENSOR_CHAN_PRIV_START
@@ -368,17 +385,17 @@ static int generate_wave(enum sensor_channel chan, size_t val_cnt, double *out_v
 	uint32_t time = k_uptime_get_32();
 	int err = 0;
 
-	k_mutex_lock(&accel_param_mutex, K_FOREVER);
+	k_mutex_lock(&data->accel_param_mutex, K_FOREVER);
 
 	for (size_t i = 0; (i < ARRAY_SIZE(chans)) && !err; i++) {
 		if (chans[i] == SENSOR_CHAN_PRIV_START) {
 			break;
 		}
 
-		err = wave_gen_generate_value(time, get_wave_params(chans[i]), out_val + i);
+		err = wave_gen_generate_value(time, get_wave_params(dev, chans[i]), out_val + i);
 	}
 
-	k_mutex_unlock(&accel_param_mutex);
+	k_mutex_unlock(&data->accel_param_mutex);
 
 	if (err) {
 		LOG_ERR("Cannot generate wave value (err %d)", err);
@@ -390,13 +407,16 @@ static int generate_wave(enum sensor_channel chan, size_t val_cnt, double *out_v
 /**
  * @brief Generates accelerometer data.
  *
+ * @param[in]	dev	Sensor device instance.
  * @param[in]	chan	Channel to generate data for.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-static int generate_accel_data(enum sensor_channel chan)
+static int generate_accel_data(const struct device *dev,
+			       enum sensor_channel chan)
 {
+	struct sensor_sim_data *data = dev->data;
 	int retval = 0;
 	generator_function gen_fn = NULL;
 
@@ -410,16 +430,17 @@ static int generate_accel_data(enum sensor_channel chan)
 
 	switch (chan) {
 	case SENSOR_CHAN_ACCEL_X:
-		retval = gen_fn(chan, 1, &accel_samples[0]);
+		retval = gen_fn(dev, chan, 1, &data->accel_samples[0]);
 		break;
 	case SENSOR_CHAN_ACCEL_Y:
-		retval = gen_fn(chan, 1, &accel_samples[1]);
+		retval = gen_fn(dev, chan, 1, &data->accel_samples[1]);
 		break;
 	case SENSOR_CHAN_ACCEL_Z:
-		retval = gen_fn(chan, 1, &accel_samples[2]);
+		retval = gen_fn(dev, chan, 1, &data->accel_samples[2]);
 		break;
 	case SENSOR_CHAN_ACCEL_XYZ:
-		retval = gen_fn(chan, ACCEL_CHAN_COUNT, &accel_samples[0]);
+		retval = gen_fn(dev, chan, ACCEL_CHAN_COUNT,
+				&data->accel_samples[0]);
 		break;
 
 	default:
@@ -453,14 +474,14 @@ static int sensor_sim_generate_data(const struct device *dev,
 					generate_pseudo_random();
 		data->pressure_sample = (double)config->base_pressure +
 					generate_pseudo_random();
-		err = generate_accel_data(SENSOR_CHAN_ACCEL_XYZ);
+		err = generate_accel_data(dev, SENSOR_CHAN_ACCEL_XYZ);
 		break;
 
 	case SENSOR_CHAN_ACCEL_X:
 	case SENSOR_CHAN_ACCEL_Y:
 	case SENSOR_CHAN_ACCEL_Z:
 	case SENSOR_CHAN_ACCEL_XYZ:
-		err = generate_accel_data(chan);
+		err = generate_accel_data(dev, chan);
 		break;
 
 	case SENSOR_CHAN_AMBIENT_TEMP:
@@ -504,18 +525,18 @@ static int sensor_sim_channel_get(const struct device *dev,
 
 	switch (chan) {
 	case SENSOR_CHAN_ACCEL_X:
-		double_to_sensor_value(accel_samples[0], sample);
+		double_to_sensor_value(data->accel_samples[0], sample);
 		break;
 	case SENSOR_CHAN_ACCEL_Y:
-		double_to_sensor_value(accel_samples[1], sample);
+		double_to_sensor_value(data->accel_samples[1], sample);
 		break;
 	case SENSOR_CHAN_ACCEL_Z:
-		double_to_sensor_value(accel_samples[2], sample);
+		double_to_sensor_value(data->accel_samples[2], sample);
 		break;
 	case SENSOR_CHAN_ACCEL_XYZ:
-		double_to_sensor_value(accel_samples[0], sample);
-		double_to_sensor_value(accel_samples[1], ++sample);
-		double_to_sensor_value(accel_samples[2], ++sample);
+		double_to_sensor_value(data->accel_samples[0], sample);
+		double_to_sensor_value(data->accel_samples[1], ++sample);
+		double_to_sensor_value(data->accel_samples[2], ++sample);
 		break;
 	case SENSOR_CHAN_AMBIENT_TEMP:
 		double_to_sensor_value(data->temp_sample, sample);
