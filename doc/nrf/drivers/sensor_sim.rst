@@ -30,9 +30,9 @@ Configuration of generated readouts
 The algorithms used to generate simulated sensor readouts are configurable.
 The following sensor channels and configuration options are available:
 
-* Ambient temperature (:c:enum:`SENSOR_CHAN_AMBIENT_TEMP`) - The value is generated as the sum of the value of the :kconfig:`CONFIG_SENSOR_SIM_BASE_TEMPERATURE` Kconfig option and a pseudo-random number between ``-1`` and ``1``.
-* Humidity (:c:enum:`SENSOR_CHAN_HUMIDITY`) - The value is generated as the sum of the value of the :kconfig:`CONFIG_SENSOR_SIM_BASE_HUMIDITY` Kconfig option and a pseudo-random number between ``-1`` and ``1``.
-* Pressure (:c:enum:`SENSOR_CHAN_PRESS`) - The value is generated as the sum of the value of the :kconfig:`CONFIG_SENSOR_SIM_BASE_PRESSURE` Kconfig option and a pseudo-random number between ``-1`` and ``1``.
+* Ambient temperature (:c:enum:`SENSOR_CHAN_AMBIENT_TEMP`) - The value is generated as the sum of the value of the Devicetree property ``base-temperature`` a pseudo-random number between ``-1`` and ``1``.
+* Humidity (:c:enum:`SENSOR_CHAN_HUMIDITY`) - The value is generated as the sum of the value of the Devicetree property ``base-humidity`` and a pseudo-random number between ``-1`` and ``1``.
+* Pressure (:c:enum:`SENSOR_CHAN_PRESS`) - The value is generated as the sum of the value of the Devicetree property ``base-pressure`` and a pseudo-random number between ``-1`` and ``1``.
 * Acceleration in X, Y, and Z axes (:c:enum:`SENSOR_CHAN_ACCEL_X`, :c:enum:`SENSOR_CHAN_ACCEL_Y`, :c:enum:`SENSOR_CHAN_ACCEL_Z`, for each axis respectively, and :c:enum:`SENSOR_CHAN_ACCEL_XYZ` for all axes at once) - The acceleration is generated depending on the selected Kconfig option:
 
   * :kconfig:`CONFIG_SENSOR_SIM_ACCEL_TOGGLE` - With this option, the acceleration is toggled on fetch between statically defined values.

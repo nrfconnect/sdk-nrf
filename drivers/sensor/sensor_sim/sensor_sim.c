@@ -25,6 +25,9 @@ LOG_MODULE_REGISTER(sensor_sim, CONFIG_SENSOR_SIM_LOG_LEVEL);
 #define ACCEL_DEFAULT_PERIOD_MS		10000
 
 struct sensor_sim_data {
+	double temp_sample;
+	double humidity_sample;
+	double pressure_sample;
 #if defined(CONFIG_SENSOR_SIM_TRIGGER)
 	const struct device *gpio;
 	const char *gpio_port;
@@ -41,14 +44,16 @@ struct sensor_sim_data {
 #endif  /* CONFIG_SENSOR_SIM_TRIGGER */
 };
 
+struct sensor_sim_config {
+	uint32_t base_temperature;
+	uint8_t base_humidity;
+	uint32_t base_pressure;
+};
+
 static struct wave_gen_param accel_param[ACCEL_CHAN_COUNT];
 struct k_mutex accel_param_mutex;
 
 static double accel_samples[ACCEL_CHAN_COUNT];
-
-static double temp_sample;
-static double humidity_sample;
-static double pressure_sample;
 
 /**
  * @typedef generator_function
@@ -425,49 +430,29 @@ static int generate_accel_data(enum sensor_channel chan)
 }
 
 /**
- * @brief Generates temperature data.
- */
-static void generate_temp_data(void)
-{
-	temp_sample = CONFIG_SENSOR_SIM_BASE_TEMPERATURE +
-		      generate_pseudo_random();
-}
-
-/**
- * @brief Generates humidity data.
- */
-static void generate_humidity_data(void)
-{
-	humidity_sample = CONFIG_SENSOR_SIM_BASE_HUMIDITY +
-			  generate_pseudo_random();
-}
-
-/**
- * @brief Generates pressure data.
- */
-static void generate_pressure_data(void)
-{
-	pressure_sample = CONFIG_SENSOR_SIM_BASE_PRESSURE +
-			  generate_pseudo_random();
-}
-
-/**
  * @brief Generates simulated sensor data for a channel.
  *
+ * @param[in]	dev	Sensor device instance.
  * @param[in]	chan	Channel to generate data for.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-static int sensor_sim_generate_data(enum sensor_channel chan)
+static int sensor_sim_generate_data(const struct device *dev,
+				    enum sensor_channel chan)
 {
+	struct sensor_sim_data *data = dev->data;
+	const struct sensor_sim_config *config = dev->config;
 	int err = 0;
 
 	switch (chan) {
 	case SENSOR_CHAN_ALL:
-		generate_temp_data();
-		generate_humidity_data();
-		generate_pressure_data();
+		data->temp_sample = (double)config->base_temperature +
+				    generate_pseudo_random();
+		data->humidity_sample = (double)config->base_humidity +
+					generate_pseudo_random();
+		data->pressure_sample = (double)config->base_pressure +
+					generate_pseudo_random();
 		err = generate_accel_data(SENSOR_CHAN_ACCEL_XYZ);
 		break;
 
@@ -479,13 +464,16 @@ static int sensor_sim_generate_data(enum sensor_channel chan)
 		break;
 
 	case SENSOR_CHAN_AMBIENT_TEMP:
-		generate_temp_data();
+		data->temp_sample = (double)config->base_temperature +
+				    generate_pseudo_random();
 		break;
 	case SENSOR_CHAN_HUMIDITY:
-		generate_humidity_data();
+		data->humidity_sample = (double)config->base_humidity +
+					generate_pseudo_random();
 		break;
 	case SENSOR_CHAN_PRESS:
-		generate_pressure_data();
+		data->pressure_sample = (double)config->base_pressure +
+					generate_pseudo_random();
 		break;
 	default:
 		err = -ENOTSUP;
@@ -505,13 +493,15 @@ static int sensor_sim_attr_set(const struct device *dev,
 static int sensor_sim_sample_fetch(const struct device *dev,
 				enum sensor_channel chan)
 {
-	return sensor_sim_generate_data(chan);
+	return sensor_sim_generate_data(dev, chan);
 }
 
 static int sensor_sim_channel_get(const struct device *dev,
 				  enum sensor_channel chan,
 				  struct sensor_value *sample)
 {
+	struct sensor_sim_data *data = dev->data;
+
 	switch (chan) {
 	case SENSOR_CHAN_ACCEL_X:
 		double_to_sensor_value(accel_samples[0], sample);
@@ -528,13 +518,13 @@ static int sensor_sim_channel_get(const struct device *dev,
 		double_to_sensor_value(accel_samples[2], ++sample);
 		break;
 	case SENSOR_CHAN_AMBIENT_TEMP:
-		double_to_sensor_value(temp_sample, sample);
+		double_to_sensor_value(data->temp_sample, sample);
 		break;
 	case SENSOR_CHAN_HUMIDITY:
-		double_to_sensor_value(humidity_sample, sample);
+		double_to_sensor_value(data->humidity_sample, sample);
 		break;
 	case SENSOR_CHAN_PRESS:
-		double_to_sensor_value(pressure_sample, sample);
+		double_to_sensor_value(data->pressure_sample, sample);
 		break;
 	default:
 		return -ENOTSUP;
@@ -555,7 +545,13 @@ static const struct sensor_driver_api sensor_sim_api_funcs = {
 #define SENSOR_SIM_DEFINE(n)						       \
 	static struct sensor_sim_data data##n;				       \
 									       \
-	DEVICE_DT_INST_DEFINE(n, sensor_sim_init, NULL, &data##n, NULL,	       \
+	static const struct sensor_sim_config config##n = {		       \
+		.base_temperature = DT_INST_PROP(n, base_temperature),	       \
+		.base_humidity = DT_INST_PROP(n, base_humidity),	       \
+		.base_pressure = DT_INST_PROP(n, base_pressure),	       \
+	};								       \
+									       \
+	DEVICE_DT_INST_DEFINE(n, sensor_sim_init, NULL, &data##n, &config##n,  \
 			      POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY,	       \
 			      &sensor_sim_api_funcs);
 

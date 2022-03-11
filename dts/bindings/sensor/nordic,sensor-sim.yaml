@@ -11,3 +11,26 @@ include: base.yaml
 properties:
     label:
       required: true
+
+    base-temperature:
+      type: int
+      default: 21
+      description: |
+        The sensor reports a base temperature value with a simulated noise.
+        Value units are degrees Celsius. Defaults to 21 degrees, simulation
+        default.
+
+    base-humidity:
+      type: int
+      default: 52
+      description: |
+        The sensor reports a base humidity value with a simulated noise.
+        Value is relative (%). Defaults to 52%, simulation default.
+
+    base-pressure:
+      type: int
+      default: 98
+      description: |
+        The sensor reports a base pressure value with a simulated noise.
+        Value units are kPa (kilopascal). Defaults to 98 kPa, simulation
+        default.
