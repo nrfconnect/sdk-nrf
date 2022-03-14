@@ -26,6 +26,7 @@ enum acc_signal {
 };
 
 struct sensor_sim_data {
+	const struct device *dev;
 	double temp_sample;
 	double humidity_sample;
 	double pressure_sample;
@@ -35,19 +36,15 @@ struct sensor_sim_data {
 	const double amplitude;
 	double val_sign;
 #if defined(CONFIG_SENSOR_SIM_TRIGGER)
-	const struct device *gpio;
-	const char *gpio_port;
-	uint8_t gpio_pin;
-	struct gpio_callback gpio_cb;
-	struct k_sem gpio_sem;
-
 	sensor_trigger_handler_t drdy_handler;
 	struct sensor_trigger drdy_trigger;
 
 	K_THREAD_STACK_MEMBER(thread_stack,
 			      CONFIG_SENSOR_SIM_THREAD_STACK_SIZE);
 	struct k_thread thread;
-#endif  /* CONFIG_SENSOR_SIM_TRIGGER */
+	struct gpio_callback gpio_cb;
+	struct k_sem gpio_sem;
+#endif /* CONFIG_SENSOR_SIM_TRIGGER */
 };
 
 struct sensor_sim_config {
@@ -56,6 +53,10 @@ struct sensor_sim_config {
 	uint32_t base_pressure;
 	enum acc_signal acc_signal;
 	struct wave_gen_param acc_param;
+#if defined(CONFIG_SENSOR_SIM_TRIGGER)
+	struct gpio_dt_spec trigger_gpio;
+	uint32_t trigger_timeout;
+#endif
 };
 
 /**
@@ -160,28 +161,29 @@ static void double_to_sensor_value(double val,
 	sense_val->val2 = (val - (int)val) * 1000000;
 }
 
-#if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
+#if defined(CONFIG_SENSOR_SIM_TRIGGER)
 /**
  * @brief Callback for GPIO when using button as trigger.
  *
- * @param dev Pointer to device structure.
+ * @param port Pointer to device structure.
  * @param cb Pointer to GPIO callback structure.
  * @param pins Pin mask for callback.
  */
-static void sensor_sim_gpio_callback(const struct device *dev,
-				struct gpio_callback *cb,
-				uint32_t pins)
+static void sensor_sim_gpio_callback(const struct device *port,
+				     struct gpio_callback *cb, uint32_t pins)
 {
-	ARG_UNUSED(pins);
-	struct sensor_sim_data *data =
-		CONTAINER_OF(cb, struct sensor_sim_data, gpio_cb);
+	struct sensor_sim_data *data = CONTAINER_OF(cb, struct sensor_sim_data,
+						    gpio_cb);
+	const struct device *dev = data->dev;
+	const struct sensor_sim_config *config = dev->config;
 
-	gpio_pin_interrupt_configure(dev, data->gpio_pin, GPIO_INT_DISABLE);
+	ARG_UNUSED(port);
+	ARG_UNUSED(pins);
+
+	gpio_pin_interrupt_configure_dt(&config->trigger_gpio, GPIO_INT_DISABLE);
 	k_sem_give(&data->gpio_sem);
 }
-#endif /* CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON */
 
-#if defined(CONFIG_SENSOR_SIM_TRIGGER)
 /**
  * @brief Function that runs in the sensor simulator thread when using trigger.
  *
@@ -191,25 +193,23 @@ static void sensor_sim_thread(int dev_ptr)
 {
 	struct device *dev = INT_TO_POINTER(dev_ptr);
 	struct sensor_sim_data *data = dev->data;
+	const struct sensor_sim_config *config = dev->config;
 
 	while (true) {
-		if (IS_ENABLED(CONFIG_SENSOR_SIM_TRIGGER_USE_TIMEOUT)) {
-			k_sleep(K_MSEC(CONFIG_SENSOR_SIM_TRIGGER_TIMEOUT_MSEC));
-		} else if (IS_ENABLED(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)) {
+		if (config->trigger_gpio.port != NULL) {
 			k_sem_take(&data->gpio_sem, K_FOREVER);
 		} else {
-			/* Should not happen. */
-			__ASSERT_NO_MSG(false);
+			k_sleep(K_MSEC(config->trigger_timeout));
 		}
 
 		if (data->drdy_handler != NULL) {
 			data->drdy_handler(dev, &data->drdy_trigger);
 		}
 
-#if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
-		gpio_pin_interrupt_configure(data->gpio, data->gpio_pin,
-					     GPIO_INT_EDGE_FALLING);
-#endif
+		if (config->trigger_gpio.port != NULL) {
+			gpio_pin_interrupt_configure_dt(&config->trigger_gpio,
+							GPIO_INT_EDGE_FALLING);
+		}
 	}
 }
 
@@ -221,30 +221,33 @@ static void sensor_sim_thread(int dev_ptr)
 static int sensor_sim_init_thread(const struct device *dev)
 {
 	struct sensor_sim_data *data = dev->data;
+	const struct sensor_sim_config *config = dev->config;
+	int ret;
 
-#if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
-	data->gpio = device_get_binding(data->gpio_port);
-	if (data->gpio == NULL) {
-		LOG_ERR("Failed to get pointer to %s device",
-			data->gpio_port);
-		return -EINVAL;
+	if (config->trigger_gpio.port != NULL) {
+		if (!device_is_ready(config->trigger_gpio.port)) {
+			LOG_ERR("GPIO port device not ready");
+			return -ENODEV;
+		}
+
+		ret = gpio_pin_configure_dt(&config->trigger_gpio, GPIO_INPUT);
+		if (ret < 0) {
+			LOG_ERR("Failed to configure GPIO pin");
+			return ret;
+		}
+
+		gpio_init_callback(&data->gpio_cb, sensor_sim_gpio_callback,
+				BIT(config->trigger_gpio.pin));
+
+		ret = gpio_add_callback(config->trigger_gpio.port,
+					&data->gpio_cb);
+		if (ret < 0) {
+			LOG_ERR("Failed to set GPIO callback");
+			return ret;
+		}
+
+		k_sem_init(&data->gpio_sem, 0, K_SEM_MAX_LIMIT);
 	}
-
-	gpio_pin_configure(data->gpio, data->gpio_pin,
-			   GPIO_INPUT | GPIO_PULL_UP | GPIO_INT_DEBOUNCE);
-
-	gpio_init_callback(&data->gpio_cb,
-			   sensor_sim_gpio_callback,
-			   BIT(data->gpio_pin));
-
-	if (gpio_add_callback(data->gpio, &data->gpio_cb) < 0) {
-		LOG_ERR("Failed to set GPIO callback");
-		return -EIO;
-	}
-
-	k_sem_init(&data->gpio_sem, 0, K_SEM_MAX_LIMIT);
-
-#endif   /* CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON */
 
 	k_thread_create(&data->thread, data->thread_stack,
 			CONFIG_SENSOR_SIM_THREAD_STACK_SIZE,
@@ -261,13 +264,18 @@ static int sensor_sim_trigger_set(const struct device *dev,
 			   const struct sensor_trigger *trig,
 			   sensor_trigger_handler_t handler)
 {
-	int ret = 0;
 	struct sensor_sim_data *data = dev->data;
+	const struct sensor_sim_config *config = dev->config;
 
-#if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
-	gpio_pin_interrupt_configure(data->gpio, data->gpio_pin,
-				     GPIO_INT_DISABLE);
-#endif
+	if (config->trigger_gpio.port != NULL) {
+		int ret;
+
+		ret = gpio_pin_interrupt_configure_dt(&config->trigger_gpio,
+						      GPIO_INT_DISABLE);
+		if (ret < 0) {
+			return ret;
+		}
+	}
 
 	switch (trig->type) {
 	case SENSOR_TRIG_DATA_READY:
@@ -276,15 +284,15 @@ static int sensor_sim_trigger_set(const struct device *dev,
 		break;
 	default:
 		LOG_ERR("Unsupported sensor trigger");
-		ret = -ENOTSUP;
-		break;
+		return -ENOTSUP;
 	}
 
-#if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
-	gpio_pin_interrupt_configure(data->gpio, data->gpio_pin,
-				     GPIO_INT_EDGE_FALLING);
-#endif
-	return ret;
+	if (config->trigger_gpio.port != NULL) {
+		return gpio_pin_interrupt_configure_dt(&config->trigger_gpio,
+						       GPIO_INT_EDGE_FALLING);
+	}
+
+	return 0;
 }
 #endif /* CONFIG_SENSOR_SIM_TRIGGER */
 
@@ -300,14 +308,15 @@ static int sensor_sim_init(const struct device *dev)
 	struct sensor_sim_data *data = dev->data;
 	const struct sensor_sim_config *config = dev->config;
 
+	data->dev = dev;
+
 #if defined(CONFIG_SENSOR_SIM_TRIGGER)
-#if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
-	data->gpio_port = DT_GPIO_LABEL(DT_ALIAS(sw0), gpios);
-	data->gpio_pin = DT_GPIO_PIN(DT_ALIAS(sw0), gpios);
-#endif
-	if (sensor_sim_init_thread(dev) < 0) {
+	int ret;
+
+	ret = sensor_sim_init_thread(dev);
+	if (ret < 0) {
 		LOG_ERR("Failed to initialize trigger interrupt");
-		return -EIO;
+		return ret;
 	}
 #endif
 	srand(k_cycle_get_32());
@@ -569,6 +578,14 @@ static const struct sensor_driver_api sensor_sim_api_funcs = {
 #endif
 };
 
+#ifdef CONFIG_SENSOR_SIM_TRIGGER
+#define SENSOR_SIM_TRIGGER_INIT(n)					       \
+	.trigger_gpio = GPIO_DT_SPEC_INST_GET_OR(n, trigger_gpios, {}),       \
+	.trigger_timeout = DT_INST_PROP(n, trigger_timeout),
+#else
+#define SENSOR_SIM_TRIGGER_INIT(n)
+#endif
+
 #define SENSOR_SIM_DEFINE(n)						       \
 	static struct sensor_sim_data data##n = {			       \
 		.amplitude = 20.0,					       \
@@ -585,6 +602,7 @@ static const struct sensor_driver_api sensor_sim_api_funcs = {
 			.amplitude = DT_INST_PROP(n, acc_wave_amplitude),      \
 			.period_ms = DT_INST_PROP(n, acc_wave_period),	       \
 		},							       \
+		SENSOR_SIM_TRIGGER_INIT(n)				       \
 	};								       \
 									       \
 	DEVICE_DT_INST_DEFINE(n, sensor_sim_init, NULL, &data##n, &config##n,  \
