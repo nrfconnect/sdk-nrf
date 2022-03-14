@@ -466,6 +466,11 @@ Trusted Firmware-M
 
 * Fixed the NCSDK-14015 known issue that would cause crash during boot when the :kconfig:option:`CONFIG_RPMSG_SERVICE` Kconfig option was enabled on the nRF5340 SoC.
 
+cJSON
+=====
+
+*  Fixed an issue with floats in the cJSON module when using NEWLIB_LIBC without the :kconfig:option:`NEWLIB_LIBC_FLOAT_PRINTF` Kconfig option.
+
 Documentation
 =============
 
