@@ -176,11 +176,11 @@ static void sensor_sim_gpio_callback(const struct device *dev,
 				uint32_t pins)
 {
 	ARG_UNUSED(pins);
-	struct sensor_sim_data *drv_data =
+	struct sensor_sim_data *data =
 		CONTAINER_OF(cb, struct sensor_sim_data, gpio_cb);
 
-	gpio_pin_interrupt_configure(dev, drv_data->gpio_pin, GPIO_INT_DISABLE);
-	k_sem_give(&drv_data->gpio_sem);
+	gpio_pin_interrupt_configure(dev, data->gpio_pin, GPIO_INT_DISABLE);
+	k_sem_give(&data->gpio_sem);
 }
 #endif /* CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON */
 
@@ -193,24 +193,24 @@ static void sensor_sim_gpio_callback(const struct device *dev,
 static void sensor_sim_thread(int dev_ptr)
 {
 	struct device *dev = INT_TO_POINTER(dev_ptr);
-	struct sensor_sim_data *drv_data = dev->data;
+	struct sensor_sim_data *data = dev->data;
 
 	while (true) {
 		if (IS_ENABLED(CONFIG_SENSOR_SIM_TRIGGER_USE_TIMEOUT)) {
 			k_sleep(K_MSEC(CONFIG_SENSOR_SIM_TRIGGER_TIMEOUT_MSEC));
 		} else if (IS_ENABLED(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)) {
-			k_sem_take(&drv_data->gpio_sem, K_FOREVER);
+			k_sem_take(&data->gpio_sem, K_FOREVER);
 		} else {
 			/* Should not happen. */
 			__ASSERT_NO_MSG(false);
 		}
 
-		if (drv_data->drdy_handler != NULL) {
-			drv_data->drdy_handler(dev, &drv_data->drdy_trigger);
+		if (data->drdy_handler != NULL) {
+			data->drdy_handler(dev, &data->drdy_trigger);
 		}
 
 #if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
-		gpio_pin_interrupt_configure(drv_data->gpio, drv_data->gpio_pin,
+		gpio_pin_interrupt_configure(data->gpio, data->gpio_pin,
 					     GPIO_INT_EDGE_FALLING);
 #endif
 	}
@@ -223,33 +223,33 @@ static void sensor_sim_thread(int dev_ptr)
  */
 static int sensor_sim_init_thread(const struct device *dev)
 {
-	struct sensor_sim_data *drv_data = dev->data;
+	struct sensor_sim_data *data = dev->data;
 
 #if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
-	drv_data->gpio = device_get_binding(drv_data->gpio_port);
-	if (drv_data->gpio == NULL) {
+	data->gpio = device_get_binding(data->gpio_port);
+	if (data->gpio == NULL) {
 		LOG_ERR("Failed to get pointer to %s device",
-			drv_data->gpio_port);
+			data->gpio_port);
 		return -EINVAL;
 	}
 
-	gpio_pin_configure(drv_data->gpio, drv_data->gpio_pin,
+	gpio_pin_configure(data->gpio, data->gpio_pin,
 			   GPIO_INPUT | GPIO_PULL_UP | GPIO_INT_DEBOUNCE);
 
-	gpio_init_callback(&drv_data->gpio_cb,
+	gpio_init_callback(&data->gpio_cb,
 			   sensor_sim_gpio_callback,
-			   BIT(drv_data->gpio_pin));
+			   BIT(data->gpio_pin));
 
-	if (gpio_add_callback(drv_data->gpio, &drv_data->gpio_cb) < 0) {
+	if (gpio_add_callback(data->gpio, &data->gpio_cb) < 0) {
 		LOG_ERR("Failed to set GPIO callback");
 		return -EIO;
 	}
 
-	k_sem_init(&drv_data->gpio_sem, 0, K_SEM_MAX_LIMIT);
+	k_sem_init(&data->gpio_sem, 0, K_SEM_MAX_LIMIT);
 
 #endif   /* CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON */
 
-	k_thread_create(&drv_data->thread, drv_data->thread_stack,
+	k_thread_create(&data->thread, data->thread_stack,
 			CONFIG_SENSOR_SIM_THREAD_STACK_SIZE,
 			// TODO TORA: upmerge confirmation from Jan Tore needed.
 			(k_thread_entry_t)sensor_sim_thread, (void *)dev,
@@ -265,17 +265,17 @@ static int sensor_sim_trigger_set(const struct device *dev,
 			   sensor_trigger_handler_t handler)
 {
 	int ret = 0;
-	struct sensor_sim_data *drv_data = dev->data;
+	struct sensor_sim_data *data = dev->data;
 
 #if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
-	gpio_pin_interrupt_configure(drv_data->gpio, drv_data->gpio_pin,
+	gpio_pin_interrupt_configure(data->gpio, data->gpio_pin,
 				     GPIO_INT_DISABLE);
 #endif
 
 	switch (trig->type) {
 	case SENSOR_TRIG_DATA_READY:
-		drv_data->drdy_handler = handler;
-		drv_data->drdy_trigger = *trig;
+		data->drdy_handler = handler;
+		data->drdy_trigger = *trig;
 		break;
 	default:
 		LOG_ERR("Unsupported sensor trigger");
@@ -284,7 +284,7 @@ static int sensor_sim_trigger_set(const struct device *dev,
 	}
 
 #if defined(CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON)
-	gpio_pin_interrupt_configure(drv_data->gpio, drv_data->gpio_pin,
+	gpio_pin_interrupt_configure(data->gpio, data->gpio_pin,
 				     GPIO_INT_EDGE_FALLING);
 #endif
 	return ret;
