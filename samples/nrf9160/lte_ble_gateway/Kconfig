@@ -6,44 +6,53 @@
 
 menu "LTE BLE gateway sample"
 
+config GNSS_SEARCH_INTERVAL
+	int "Interval for starting GNSS search"
+	default 240
+
+config GNSS_SEARCH_TIMEOUT
+	int "Timeout for GNSS search"
+	default 120
+	help
+	  The GNSS will stop acquiring GNSS fix when it times out.
+	  It will restart the search at the start of the next search interval.
+
 choice
-	prompt "GPS device"
-	default GPS_USE_SIM
-	help
-		Select from which device GPS data will be fetched.
+	default GNSS_ANTENNA_ONBOARD
+	prompt "Select which antenna to use for GNSS"
 
-config GPS_USE_SIM
-	bool "Use GPS simulator"
-	select GPS_SIM
-	select GPS_SIM_TRIGGER
-	help
-		Use simulated GPS data.
+config GNSS_ANTENNA_ONBOARD
+	bool "Use onboard antenna"
 
-config GPS_USE_NRF9160
-	bool "User provided GPS device"
-	help
-		Provide a GPS device that location data will be fetched from and
-		sent to nRF Cloud
+config GNSS_ANTENNA_EXTERNAL
+	bool "Use external antenna"
 
 endchoice
 
-config GPS_DEV_NAME
-	string
-	default GPS_SIM_DEV_NAME if GPS_USE_SIM
-	default "NRF9160_GPS" if GPS_USE_NRF9160
 
-config GPS_SEARCH_INTERVAL
-	int "Interval for starting GPS search"
-	default 240
 
-config GPS_SEARCH_TIMEOUT
-	int "Timeout for GPS search"
-	default 120
+config GNSS_AT_MAGPIO
+	string "AT%XMAGPIO command"
+	default "AT\%XMAGPIO=1,0,0,1,1,1574,1577" if BOARD_NRF9160DK_NRF9160_NS
+	default "AT\%XMAGPIO=1,1,1,7,1,746,803,2,698,748,2,1710,2200,3,824,894,4,880,960,5,791,849,7,1565,1586" if BOARD_THINGY91_NRF9160_NS
 	help
-	  The GPS will stop acquiring GPS fix when it times out.
-	  It will restart the search at the start of the next search interval.
+	  Defines the AT%XMAGPIO command to be sent to GNSS module. Leave
+	  empty if this command should not be sent.
+
+config GNSS_AT_COEX0
+	string "AT%XCOEX0 command"
+	default "AT\%XCOEX0=1,1,1565,1586" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && GNSS_ANTENNA_ONBOARD
+	default "AT\%XCOEX0" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && GNSS_ANTENNA_EXTERNAL
+	help
+	  Defines the AT%XCOEX0 command to be sent to GNSS module. Leave
+	  empty if this command should not be sent.
 
 endmenu
+
+module=LTE_BLE_GW
+module-dep=LOG
+module-str= LTE BLE gateway sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"

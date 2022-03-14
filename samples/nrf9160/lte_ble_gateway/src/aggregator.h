@@ -17,16 +17,15 @@
  * Note: The module is single instance to allow simple global access to the
  * data.
  */
-#include <zephyr/types.h>
-#include <drivers/gps.h>
+#include <nrf_modem_gnss.h>
 
 /* In this sample the GPS data is 83 byte + a data sequence tag,
  * so 87 byte is used.
  */
-#define ENTRY_MAX_SIZE (GPS_NMEA_SENTENCE_MAX_LENGTH + 4)
+#define ENTRY_MAX_SIZE (NRF_MODEM_GNSS_NMEA_MAX_LEN + 4)
 #define FIFO_MAX_ELEMENT_COUNT 12
 
-enum sensor_data_type { THINGY_ORIENTATION, GPS_POSITION };
+enum sensor_data_type { THINGY_ORIENTATION, GNSS_POSITION };
 
 struct sensor_data {
 	uint8_t length;

@@ -32,7 +32,7 @@ The sample connects using Bluetooth LE to a Thingy:52 running the factory preloa
 When the connection is established, it starts collecting data from two sensors:
 
 * The flip state of the Thingy:52
-* The simulated GNSS position data
+* The GNSS position data of the nRF9160 DK
 
 The sample aggregates the data from both sensors in memory.
 You can then trigger an alarm that sends the aggregated data over LTE to `nRF Cloud`_ by flipping the Thingy:52, which causes a change in the flip state to ``UPSIDE_DOWN``.
@@ -58,14 +58,14 @@ Programming the sample
 
 When you connect the nRF9160 development kit to your computer, three virtual serial ports of the USB CDC class should become available:
 
-* The first port is connected to the *main controller* on the development kit, the nRF9160.
-* The second port is connected to the *board controller* on the development kit, the nRF52840.
+* The first port is connected to the *main controller* on the nRF9160 development kit, the nRF9160.
+* The second port is connected to the *board controller* on the nRF9160 development kit, the nRF52840.
 
 You must program the *board controller* with the :ref:`bluetooth-hci-lpuart-sample` sample first, before programming the main controller with the LTE Sensor Gateway sample application.
 Program the board controller as follows:
 
-1. Set the **SW10** switch, marked as debug/prog, in the **NRF52** position.
-   In nRF9160 DK v0.9.0 and earlier, the switch is called **SW5**.
+1. Set the **SW10** switch, marked as *debug/prog*, in the **NRF52** position.
+   On nRF9160 DK board version 0.9.0 and earlier versions, the switch was called **SW5**.
 #. Build the :ref:`bluetooth-hci-lpuart-sample` sample for the nrf9160dk_nrf52840 build target and program the board controller with it.
 #. Verify that the programming was successful.
    Use a terminal emulator, like PuTTY, to connect to the second serial port and check the output.
@@ -74,7 +74,8 @@ Program the board controller as follows:
 After programming the board controller, you must program the main controller with the LTE Sensor Gateway sample, which also includes the :ref:`secure_partition_manager` sample.
 Program the main controller as follows:
 
-1. Set the **SW5** switch, marked as *debug/prog*, in the **NRF91** position.
+1. Set the **SW10** switch, marked as *debug/prog*, in the **NRF91** position.
+   On nRF9160 DK board version 0.9.0 and earlier versions, the switch was called **SW5**.
 #. Build the LTE Sensor Gateway sample (this sample) for the nrf9160dk_nrf9160_ns build target and program the main controller with it.
 #. Verify that the program was successful.
    To do so, use a terminal emulator, like PuTTY, to connect to the first serial port and check the output.
@@ -98,8 +99,8 @@ After programming the main controller with the sample, test it by performing the
       SPM: prepare to jump to Non-Secure image
       ***** Booting Zephyr OS v1.13.99 *****
 
-#. Observe that the message ``Application started`` is shown in the terminal window after the LTE link is established, to ensure that the application started.
-   This might take several minutes.
+#. Observe that the message ``LTE Sensor Gateway sample started`` is shown in the terminal window, to ensure that the application started.
+#. The nRF9160 DK now connects to the network. This might take several minutes.
 #. Observe that LED 3 starts blinking as the connection to nRF Cloud is established.
 #. The first time you start the sample, pair the device to your account:
 
@@ -112,7 +113,7 @@ After programming the main controller with the sample, test it by performing the
    #. After reboot, the kit connects to nRF Cloud, and the pattern disappears from the web page.
 #. Observe that LED 4 is turned on to indicate that the connection is established.
 #. Observe that the device count on your nRF Cloud dashboard is incremented by one.
-#. Set switch 2 in the position marked as **N.C.** and observe that simulated GNSS data is sent to nRF Cloud.
+#. Set switch 2 in the position marked as **N.C.** and observe that GNSS data is sent to nRF Cloud.
 #. Make sure that the Thingy:52 has established a connection to the application.
    This is indicated by its led blinking green.
 #. Flip the Thingy:52, with the USB port pointing upward, to trigger the sending of the sensor data to nRF Cloud.
@@ -126,7 +127,6 @@ Dependencies
 This sample uses the following |NCS| libraries:
 
 * :ref:`lib_nrf_cloud`
-* ``drivers/gps_sim``
 * ``drivers/sensor/sensor_sim``
 * :ref:`dk_buttons_and_leds_readme`
 * :ref:`lte_lc_readme`

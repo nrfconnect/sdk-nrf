@@ -16,7 +16,10 @@
 #include <sys/byteorder.h>
 
 #include <net/nrf_cloud.h>
+#include <logging/log.h>
 #include "aggregator.h"
+
+LOG_MODULE_DECLARE(lte_ble_gw);
 
 /* Thinghy advertisement UUID */
 #define BT_UUID_THINGY_VAL \
@@ -43,7 +46,7 @@ static uint8_t on_received(struct bt_conn *conn,
 			const void *data, uint16_t length)
 {
 	if (length > 0) {
-		printk("Orientation: %x\n", ((uint8_t *)data)[0]);
+		LOG_INF("Orientation: %x", ((uint8_t *)data)[0]);
 		struct sensor_data in_data;
 
 		in_data.type = THINGY_ORIENTATION;
@@ -51,7 +54,7 @@ static uint8_t on_received(struct bt_conn *conn,
 		in_data.data[0] = ((uint8_t *)data)[0];
 
 		if (aggregator_put(in_data) != 0) {
-			printk("Was not able to insert Thingy orientation data into aggregator.\n");
+			LOG_ERR("Was not able to insert Thingy orientation data into aggregator");
 		}
 		/* If the thingy is upside down, trigger an alarm. */
 		if (((uint8_t *)data)[0] == 3) {
@@ -59,7 +62,7 @@ static uint8_t on_received(struct bt_conn *conn,
 		}
 
 	} else {
-		printk("Orientation notification with 0 length\n");
+		LOG_DBG("Orientation notification with 0 length");
 	}
 	return BT_GATT_ITER_CONTINUE;
 }
@@ -79,13 +82,13 @@ static void discovery_completed(struct bt_gatt_dm *disc, void *ctx)
 
 	chrc = bt_gatt_dm_char_by_uuid(disc, BT_UUID_TOC);
 	if (!chrc) {
-		printk("Missing Thingy orientation characteristic\n");
+		LOG_ERR("Missing Thingy orientation characteristic");
 		goto release;
 	}
 
 	desc = bt_gatt_dm_desc_by_uuid(disc, chrc, BT_UUID_TOC);
 	if (!desc) {
-		printk("Missing Thingy orientation char value descriptor\n");
+		LOG_ERR("Missing Thingy orientation char value descriptor");
 		goto release;
 	}
 
@@ -93,7 +96,7 @@ static void discovery_completed(struct bt_gatt_dm *disc, void *ctx)
 
 	desc = bt_gatt_dm_desc_by_uuid(disc, chrc, BT_UUID_GATT_CCC);
 	if (!desc) {
-		printk("Missing Thingy orientation char CCC descriptor\n");
+		LOG_ERR("Missing Thingy orientation char CCC descriptor");
 		goto release;
 	}
 
@@ -101,24 +104,24 @@ static void discovery_completed(struct bt_gatt_dm *disc, void *ctx)
 
 	err = bt_gatt_subscribe(bt_gatt_dm_conn_get(disc), &param);
 	if (err) {
-		printk("Subscribe failed (err %d)\n", err);
+		LOG_ERR("Subscribe failed (err %d)", err);
 	}
 
 release:
 	err = bt_gatt_dm_data_release(disc);
 	if (err) {
-		printk("Could not release discovery data, err: %d\n", err);
+		LOG_ERR("Could not release discovery data, err: %d", err);
 	}
 }
 
 static void discovery_service_not_found(struct bt_conn *conn, void *ctx)
 {
-	printk("Thingy orientation service not found!\n");
+	LOG_ERR("Thingy orientation service not found!");
 }
 
 static void discovery_error_found(struct bt_conn *conn, int err, void *ctx)
 {
-	printk("The discovery procedure failed, err %d\n", err);
+	LOG_ERR("The discovery procedure failed, err %d", err);
 }
 
 static struct bt_gatt_dm_cb discovery_cb = {
@@ -135,15 +138,15 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (conn_err) {
-		printk("Failed to connect to %s (%u)\n", addr, conn_err);
+		LOG_ERR("Failed to connect to %s (%u)", log_strdup(addr), conn_err);
 		return;
 	}
 
-	printk("Connected: %s\n", addr);
+	LOG_INF("Connected: %s", log_strdup(addr));
 
 	err = bt_gatt_dm_start(conn, BT_UUID_TMS, &discovery_cb, NULL);
 	if (err) {
-		printk("Could not start service discovery, err %d\n", err);
+		LOG_ERR("Could not start service discovery, err %d", err);
 	}
 }
 
@@ -159,12 +162,12 @@ void scan_filter_match(struct bt_scan_device_info *device_info,
 
 	bt_addr_le_to_str(device_info->recv_info->addr, addr, sizeof(addr));
 
-	printk("Device found: %s\n", addr);
+	LOG_INF("Device found: %s", log_strdup(addr));
 }
 
 void scan_connecting_error(struct bt_scan_device_info *device_info)
 {
-	printk("Connection to peer failed!\n");
+	LOG_ERR("Connection to peer failed!");
 }
 
 BT_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL, scan_connecting_error, NULL);
@@ -191,26 +194,26 @@ static void scan_start(void)
 
 	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_THINGY);
 	if (err) {
-		printk("Scanning filters cannot be set\n");
+		LOG_ERR("Scanning filters cannot be set");
 		return;
 	}
 
 	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, false);
 	if (err) {
-		printk("Filters cannot be turned on\n");
+		LOG_ERR("Filters cannot be turned on");
 	}
 
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {
-		printk("Scanning failed to start, err %d\n", err);
+		LOG_ERR("Scanning failed to start, err %d", err);
 	}
 
-	printk("Scanning...\n");
+	LOG_INF("Scanning...");
 }
 
 static void ble_ready(int err)
 {
-	printk("Bluetooth ready\n");
+	LOG_INF("Bluetooth ready");
 
 	bt_conn_cb_register(&conn_callbacks);
 	scan_start();
@@ -220,10 +223,10 @@ void ble_init(void)
 {
 	int err;
 
-	printk("Initializing Bluetooth..\n");
+	LOG_INF("Initializing Bluetooth..");
 	err = bt_enable(ble_ready);
 	if (err) {
-		printk("Bluetooth init failed (err %d)\n", err);
+		LOG_ERR("Bluetooth init failed (err %d)", err);
 		return;
 	}
 }
