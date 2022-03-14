@@ -10,7 +10,7 @@ Matter architecture and integration
 Matter defines an application layer on top of the IPv6-based transport protocols.
 This allows for routing messages regardless of the underlying physical and link layers.
 
-.. figure:: images/matter_IP_pyramid.png
+.. figure:: images/matter_architecture.svg
    :alt: Matter architecture overview
 
    Matter (formerly Project CHIP) architecture overview
@@ -31,4 +31,3 @@ The |NCS|'s Multiprotocol Service Layer (MPSL) driver allows running Bluetooth L
    nRF Connect platform in Matter
 
 For detailed description, see the :doc:`matter:nrfconnect_platform_overview` page in the Matter documentation.
-If you are new to Matter, check also the tutorials on `DevZone`_.
