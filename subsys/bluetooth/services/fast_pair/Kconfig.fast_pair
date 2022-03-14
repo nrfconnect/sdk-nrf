@@ -16,6 +16,15 @@ menuconfig BT_FAST_PAIR
 
 if BT_FAST_PAIR
 
+config BT_RPA_TIMEOUT
+	default 3600
+	help
+	  The Bluetooth Core Specification v5.2 (Vol. 4, Part E, 7.8.45) allows for time range
+	  between 1 second and 3600 seconds. In case of Fast Pair we should avoid RPA address
+	  rotation when device is Fast Pair discoverable. If not discoverable, the RPA address
+	  rotation should be done together with Fast Pair payload update (responsibility of
+	  sample/application).
+
 config BT_FAST_PAIR_ADVERTISING
 	bool
 	depends on BT_PERIPHERAL
