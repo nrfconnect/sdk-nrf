@@ -20,7 +20,7 @@
 #include <kernel.h>
 #include <logging/log.h>
 
-LOG_MODULE_REGISTER(sensor_sim, CONFIG_SENSOR_SIM_LOG_LEVEL);
+LOG_MODULE_REGISTER(sensor_sim, CONFIG_SENSOR_LOG_LEVEL);
 
 #define ACCEL_CHAN_COUNT 3
 
