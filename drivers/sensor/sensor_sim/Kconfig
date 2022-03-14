@@ -26,36 +26,6 @@ config SENSOR_SIM_TRIGGER
 
 if SENSOR_SIM_TRIGGER
 
-choice
-	prompt "Select 'data ready' event trigger"
-	default SENSOR_SIM_TRIGGER_USE_TIMEOUT
-
-config SENSOR_SIM_TRIGGER_USE_TIMEOUT
-	bool "Timeout"
-	help
-	  Trigger 'data ready' event periodically.
-
-config SENSOR_SIM_TRIGGER_USE_BUTTON
-	bool "Button 1"
-	help
-	  Use button 1 to trigger 'data ready' event.
-
-endchoice
-
-config SENSOR_SIM_TRIGGER_TIMEOUT_MSEC
-	int "Time between 'data ready' triggers, in milliseconds"
-	depends on SENSOR_SIM_TRIGGER_USE_TIMEOUT
-	default 1000
-	help
-	  The time interval between each 'data ready' trigger event.
-
-config SENSOR_SIM_TRIGGER_TIMEOUT_MSEC
-	int
-	depends on !SENSOR_SIM_TRIGGER_USE_TIMEOUT
-	default 0
-	help
-	  The time interval between each 'data ready' trigger event.
-
 config SENSOR_SIM_THREAD_PRIORITY
 	int "Thread priority"
 	default 10

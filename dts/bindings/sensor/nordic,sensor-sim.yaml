@@ -73,3 +73,18 @@ properties:
       description: |
         The period of the wave in milliseconds to generate for acceleration
         signal. Defaults to 10000 (simulation default).
+
+    trigger-gpios:
+      type: phandle-array
+      description: |
+        Trigger GPIO. This parameter only has effect when
+        CONFIG_SENSOR_SIM_TRIGGER is enabled. If not provided, trigger will work
+        on a timeout basis as given by the trigger-timeout property.
+
+    trigger-timeout:
+      type: int
+      default: 1000
+      description: |
+        Timeout in milliseconds for trigger. This parameter only has effect when
+        CONFIG_SENSOR_SIM_TRIGGER is enabled. Defaults to 1000 (simulation
+        default).

@@ -49,12 +49,7 @@ Configuration of sensor triggers
 Use :kconfig:`CONFIG_SENSOR_SIM_TRIGGER` to enable the sensor trigger.
 The simulated sensor supports the :c:enum:`SENSOR_TRIG_DATA_READY` trigger.
 
-You can configure the event that generates the trigger using one of the following Kconfig options:
-
-* :kconfig:`CONFIG_SENSOR_SIM_TRIGGER_USE_TIMEOUT` - The trigger is generated periodically on timeout of the period defined in the :kconfig:`CONFIG_SENSOR_SIM_TRIGGER_TIMEOUT_MSEC` Kconfig option.
-  By default, the trigger is generated every 1 second.
-* :kconfig:`CONFIG_SENSOR_SIM_TRIGGER_USE_BUTTON` - The trigger is generated when the **Button 1** is pressed on the compatible development kit.
-  The simulated sensor driver uses :ref:`zephyr:gpio_api` to access the GPIO pin.
+You can configure the event that generates the trigger in Devicetree by using the ``trigger-gpios`` or ``trigger-timeout`` options.
 
 For both triggers, the handler function is called by a dedicated thread.
 The thread has the following configuration options:
