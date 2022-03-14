@@ -519,14 +519,6 @@ static int sensor_sim_generate_data(const struct device *dev,
 	return err;
 }
 
-static int sensor_sim_attr_set(const struct device *dev,
-		enum sensor_channel chan,
-		enum sensor_attribute attr,
-		const struct sensor_value *val)
-{
-	return 0;
-}
-
 static int sensor_sim_sample_fetch(const struct device *dev,
 				enum sensor_channel chan)
 {
@@ -571,7 +563,6 @@ static int sensor_sim_channel_get(const struct device *dev,
 }
 
 static const struct sensor_driver_api sensor_sim_api_funcs = {
-	.attr_set = sensor_sim_attr_set,
 	.sample_fetch = sensor_sim_sample_fetch,
 	.channel_get = sensor_sim_channel_get,
 #if defined(CONFIG_SENSOR_SIM_TRIGGER)
