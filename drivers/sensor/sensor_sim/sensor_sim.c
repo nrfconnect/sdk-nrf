@@ -6,19 +6,23 @@
 
 #define DT_DRV_COMPAT nordic_sensor_sim
 
-#include <drivers/gpio.h>
-#include <kernel.h>
-#include <init.h>
-#include <stdio.h>
+#include <errno.h>
 #include <stdint.h>
+#include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include <device.h>
+#include <devicetree.h>
+#include <drivers/gpio.h>
+#include <drivers/sensor.h>
+#include <drivers/sensor_sim.h>
+#include <kernel.h>
 #include <logging/log.h>
 
-#include <drivers/sensor_sim.h>
-
-#define ACCEL_CHAN_COUNT	3
-
 LOG_MODULE_REGISTER(sensor_sim, CONFIG_SENSOR_SIM_LOG_LEVEL);
+
+#define ACCEL_CHAN_COUNT 3
 
 enum acc_signal {
 	ACC_SIGNAL_TOGGLE,
