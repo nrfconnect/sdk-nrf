@@ -414,6 +414,10 @@ Documentation
   * Documentation for :ref:`degugging of nRF5340 <debugging>` in :ref:`working with nRF5340 DK<ug_nrf5340>` user guide.
   * Section describing how to enable Amazon Frustration-Free Setup (FFS) support in :ref:`ug_matter_configuring_device_identification`.
 
+* Changed:
+
+  * Updated the outdated protocol architecture diagram on the :ref:`ug_matter_architecture` page.
+
 * Removed:
 
   * Documentation on the Getting Started Assistant, as this tool is no longer in use.
