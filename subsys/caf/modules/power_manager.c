@@ -6,6 +6,7 @@
 #include <zephyr.h>
 #include <zephyr/types.h>
 #include <pm/pm.h>
+#include <pm/policy.h>
 
 #include <device.h>
 #include <drivers/gpio.h>
@@ -139,9 +140,11 @@ static void system_off(void)
 		 */
 		nrfx_reset_reason_clear(nrfx_reset_reason_get());
 
-		const struct pm_state_info si = {PM_STATE_SOFT_OFF, 0, 0};
+		const struct pm_state_info si = {PM_STATE_SOFT_OFF, 0, 0, 0};
 
-		pm_state_force(0, &si);
+		if (!pm_state_force(0, &si)) {
+			LOG_ERR("Failed to force soft off state");
+		}
 	} else {
 		LOG_WRN("System suspended");
 	}
@@ -153,9 +156,11 @@ static void system_off_on_error(void)
 	LOG_WRN("System turned off because of unrecoverable error");
 	LOG_PANIC();
 
-	const struct pm_state_info si = {PM_STATE_SOFT_OFF, 0, 0};
+	const struct pm_state_info si = {PM_STATE_SOFT_OFF, 0, 0, 0};
 
-	pm_state_force(0, &si);
+	if (!pm_state_force(0, &si)) {
+		LOG_ERR("Failed to force soft off state");
+	}
 }
 
 static void power_down(struct k_work *work)
@@ -192,9 +197,10 @@ static void send_wake_up(void)
 	EVENT_SUBMIT(event);
 }
 
-struct pm_state_info pm_policy_next_state(int32_t ticks)
+const struct pm_state_info *pm_policy_next_state(uint8_t cpu, int32_t ticks)
 {
-	return (struct pm_state_info){PM_STATE_ACTIVE, 0, 0};
+	/* Return NULL, system should remain into PM_STATE_ACTIVE. */
+	return NULL;
 }
 
 static void error(struct k_work *work)
@@ -349,10 +355,6 @@ static bool event_handler(const struct event_header *eh)
 			initialized = true;
 
 			LOG_INF("Activate power manager");
-
-			const struct pm_state_info si = {PM_STATE_ACTIVE, 0, 0};
-
-			pm_state_force(0, &si);
 
 			k_work_init_delayable(&error_trigger, error);
 			k_work_init_delayable(&power_down_trigger, power_down);
