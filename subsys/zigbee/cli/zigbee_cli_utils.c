@@ -19,12 +19,14 @@ extern zb_uint8_t cli_agent_ep_handler_attr(zb_bufid_t bufid);
 extern zb_uint8_t cli_agent_ep_handler_generic_cmd(zb_bufid_t bufid);
 extern zb_uint8_t cli_agent_ep_handler_report(zb_bufid_t bufid);
 extern zb_uint8_t cli_agent_ep_handler_ping(zb_bufid_t bufid);
+extern zb_uint8_t cli_agent_ep_handler_groups_cmd(zb_bufid_t bufid);
 
 static zb_device_handler_t zb_ep_handlers[] = {
 	cli_agent_ep_handler_attr,
 	cli_agent_ep_handler_generic_cmd,
 	cli_agent_ep_handler_report,
-	cli_agent_ep_handler_ping
+	cli_agent_ep_handler_ping,
+	cli_agent_ep_handler_groups_cmd
 };
 
 zb_uint8_t zb_cli_ep_handler(zb_bufid_t bufid)

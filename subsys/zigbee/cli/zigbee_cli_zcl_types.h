@@ -50,4 +50,13 @@ struct generic_cmd_data {
 	struct zcl_packet_info packet_info;
 };
 
+/* Structure used to store Groups commands data in the context manager entry. */
+struct groups_cmd_data {
+	zb_uint8_t group_list_cnt;
+	zb_uint16_t group_id;
+	zb_callback_t send_fn;
+	zb_uint16_t group_list[7];
+	struct zcl_packet_info packet_info;
+};
+
 #endif /* ZIGBEE_CLI_ZCL_TYPES_H__ */
