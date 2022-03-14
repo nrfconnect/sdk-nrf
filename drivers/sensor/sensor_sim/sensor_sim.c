@@ -33,7 +33,6 @@ struct sensor_sim_data {
 	double accel_samples[ACCEL_CHAN_COUNT];
 	struct wave_gen_param accel_param[ACCEL_CHAN_COUNT];
 	struct k_mutex accel_param_mutex;
-	const double amplitude;
 	double val_sign;
 #if defined(CONFIG_SENSOR_SIM_TRIGGER)
 	sensor_trigger_handler_t drdy_handler;
@@ -53,6 +52,7 @@ struct sensor_sim_config {
 	uint32_t base_pressure;
 	enum acc_signal acc_signal;
 	struct wave_gen_param acc_param;
+	double acc_toggle_amplitude;
 #if defined(CONFIG_SENSOR_SIM_TRIGGER)
 	struct gpio_dt_spec trigger_gpio;
 	uint32_t trigger_timeout;
@@ -356,10 +356,11 @@ static int generate_toggle(const struct device *dev, enum sensor_channel chan,
 			   size_t val_cnt, double *out_val)
 {
 	struct sensor_sim_data *data = dev->data;
+	const struct sensor_sim_config *config = dev->config;
 
 	ARG_UNUSED(chan);
 
-	double res_val = data->amplitude * data->val_sign;
+	double res_val = config->acc_toggle_amplitude * data->val_sign;
 
 	while (val_cnt > 0) {
 		*out_val = res_val;
@@ -588,7 +589,6 @@ static const struct sensor_driver_api sensor_sim_api_funcs = {
 
 #define SENSOR_SIM_DEFINE(n)						       \
 	static struct sensor_sim_data data##n = {			       \
-		.amplitude = 20.0,					       \
 		.val_sign = 1.0,					       \
 	};								       \
 									       \
@@ -602,6 +602,7 @@ static const struct sensor_driver_api sensor_sim_api_funcs = {
 			.amplitude = DT_INST_PROP(n, acc_wave_amplitude),      \
 			.period_ms = DT_INST_PROP(n, acc_wave_period),	       \
 		},							       \
+		.acc_toggle_amplitude = DT_INST_PROP(n, acc_toggle_amplitude), \
 		SENSOR_SIM_TRIGGER_INIT(n)				       \
 	};								       \
 									       \
