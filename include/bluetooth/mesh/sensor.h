@@ -24,7 +24,9 @@ extern "C" {
 
 /** Largest period divisor value allowed. */
 #define BT_MESH_SENSOR_PERIOD_DIV_MAX 15
-/** Largest sensor interval allowed (in seconds). */
+/** Largest sensor interval allowed. The value is represented as
+ *  2 to the power of N milliseconds.
+ */
 #define BT_MESH_SENSOR_INTERVAL_MAX 26
 
 /** String length for representing a single sensor channel. */
@@ -389,8 +391,8 @@ struct bt_mesh_sensor {
 		/** Sequence number of the previous publication. */
 		uint16_t seq;
 
-		/** Minimum possible interval for fast cadence value publishing
-		 *  in seconds.
+		/** Minimum possible interval for fast cadence value publishing.
+		 *  The value is represented as 2 to the power of N milliseconds.
 		 *
 		 *  @see BT_MESH_SENSOR_INTERVAL_MAX
 		 */
