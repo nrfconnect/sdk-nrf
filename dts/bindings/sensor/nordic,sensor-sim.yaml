@@ -48,6 +48,13 @@ properties:
         generating library to generate acceleration readouts. By default a sine
         wave is generated.
 
+    acc-toggle-amplitude:
+      type: int
+      default: 20
+      description: |
+        The amplitude of the acceleration signal when signal type is 'toggle'.
+        Defaults to 20 (simulation default).
+
     acc-wave-type:
       type: string
       default: "sine"
