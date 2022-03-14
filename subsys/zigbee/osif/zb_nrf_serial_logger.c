@@ -29,8 +29,8 @@ static void handle_tx_ready_evt(const struct device *dev)
 {
 	zb_uint32_t data_len;
 	zb_uint32_t data_taken;
-	zb_uint8_t *data_ptr;
 	int ret_val;
+	zb_uint8_t *data_ptr = NULL;
 
 	ret_val = k_sem_take(&ringbuf_sem, K_NO_WAIT);
 
