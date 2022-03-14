@@ -47,3 +47,29 @@ properties:
         When 'wave' option is selected, simulated sensor uses wave signal
         generating library to generate acceleration readouts. By default a sine
         wave is generated.
+
+    acc-wave-type:
+      type: string
+      default: "sine"
+      enum:
+        - "sine"
+        - "triangle"
+        - "square"
+        - "none"
+      description: |
+        The type of wave to generate for acceleration signal. Defaults to 'sine'
+        (simulation default).
+
+    acc-wave-amplitude:
+      type: int
+      default: 20
+      description: |
+        The amplitude of the wave to generate for acceleration signal. Defaults
+        to 20 (simulation default).
+
+    acc-wave-period:
+      type: int
+      default: 10000
+      description: |
+        The period of the wave in milliseconds to generate for acceleration
+        signal. Defaults to 10000 (simulation default).
