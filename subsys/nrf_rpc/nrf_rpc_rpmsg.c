@@ -101,7 +101,7 @@ int nrf_rpc_tr_init(nrf_rpc_tr_receive_handler_t callback)
 	nrf_rpc_ipc_instance = DEVICE_DT_GET(DT_NODELABEL(ipc0));
 
 	err = ipc_service_open_instance(nrf_rpc_ipc_instance);
-	if (err < 0) {
+	if (err < 0 && err != -EALREADY) {
 		NRF_RPC_ERR("IPC service instance initialization failed: %d\n", err);
 		return translate_error(err);
 	}
