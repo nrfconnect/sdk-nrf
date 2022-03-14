@@ -14,6 +14,10 @@ int cmd_zb_subscribe_on(const struct shell *shell, size_t argc, char **argv);
 int cmd_zb_subscribe_off(const struct shell *shell, size_t argc, char **argv);
 int cmd_zb_generic_cmd(const struct shell *shell, size_t argc, char **argv);
 int cmd_zb_zcl_raw(const struct shell *shell, size_t argc, char **argv);
+int cmd_zb_get_group_mem(const struct shell *shell, size_t argc, char **argv);
+int cmd_zb_add_remove_group(const struct shell *shell, size_t argc, char **argv);
+int cmd_zb_remove_all_groups(const struct shell *shell, size_t argc, char **argv);
+int cmd_zb_add_group_if_identifying(const struct shell *shell, size_t argc, char **argv);
 
 /* Structure used to pass information required to send ZCL frame. */
 struct zcl_packet_info {
