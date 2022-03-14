@@ -304,43 +304,6 @@ static int sensor_sim_trigger_set(const struct device *dev,
 #endif /* CONFIG_SENSOR_SIM_TRIGGER */
 
 /**
- * @brief Initializes sensor simulator
- *
- * @param dev Pointer to device instance.
- *
- * @return 0 when successful or negative error code
- */
-static int sensor_sim_init(const struct device *dev)
-{
-	struct sensor_sim_data *data = dev->data;
-	const struct sensor_sim_config *config = dev->config;
-
-	data->dev = dev;
-
-#if defined(CONFIG_SENSOR_SIM_TRIGGER)
-	int ret;
-
-	ret = sensor_sim_init_thread(dev);
-	if (ret < 0) {
-		LOG_ERR("Failed to initialize trigger interrupt");
-		return ret;
-	}
-#endif
-	srand(k_cycle_get_32());
-
-	k_mutex_init(&data->accel_param_mutex);
-
-	if (config->acc_signal == ACC_SIGNAL_WAVE) {
-		for (size_t i = 0; i < ARRAY_SIZE(data->accel_param); i++) {
-			memcpy(&data->accel_param[i], &config->acc_param,
-			       sizeof(config->acc_param));
-		}
-	}
-
-	return 0;
-}
-
-/**
  * @brief Generates a pseudo-random number between -1 and 1.
  */
 static double generate_pseudo_random(void)
@@ -576,6 +539,36 @@ static const struct sensor_driver_api sensor_sim_api_funcs = {
 	.trigger_set = sensor_sim_trigger_set
 #endif
 };
+
+static int sensor_sim_init(const struct device *dev)
+{
+	struct sensor_sim_data *data = dev->data;
+	const struct sensor_sim_config *config = dev->config;
+
+	data->dev = dev;
+
+#if defined(CONFIG_SENSOR_SIM_TRIGGER)
+	int ret;
+
+	ret = sensor_sim_init_thread(dev);
+	if (ret < 0) {
+		LOG_ERR("Failed to initialize trigger interrupt");
+		return ret;
+	}
+#endif
+	srand(k_cycle_get_32());
+
+	k_mutex_init(&data->accel_param_mutex);
+
+	if (config->acc_signal == ACC_SIGNAL_WAVE) {
+		for (size_t i = 0; i < ARRAY_SIZE(data->accel_param); i++) {
+			memcpy(&data->accel_param[i], &config->acc_param,
+			       sizeof(config->acc_param));
+		}
+	}
+
+	return 0;
+}
 
 #ifdef CONFIG_SENSOR_SIM_TRIGGER
 #define SENSOR_SIM_TRIGGER_INIT(n)					       \
