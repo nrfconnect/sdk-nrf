@@ -20,10 +20,6 @@
 
 LOG_MODULE_REGISTER(sensor_sim, CONFIG_SENSOR_SIM_LOG_LEVEL);
 
-#define ACCEL_DEFAULT_TYPE		WAVE_GEN_TYPE_SINE
-#define ACCEL_DEFAULT_AMPLITUDE		20.0
-#define ACCEL_DEFAULT_PERIOD_MS		10000
-
 enum acc_signal {
 	ACC_SIGNAL_TOGGLE,
 	ACC_SIGNAL_WAVE,
@@ -59,6 +55,7 @@ struct sensor_sim_config {
 	uint8_t base_humidity;
 	uint32_t base_pressure;
 	enum acc_signal acc_signal;
+	struct wave_gen_param acc_param;
 };
 
 /**
@@ -319,9 +316,8 @@ static int sensor_sim_init(const struct device *dev)
 
 	if (config->acc_signal == ACC_SIGNAL_WAVE) {
 		for (size_t i = 0; i < ARRAY_SIZE(data->accel_param); i++) {
-			data->accel_param[i].type = ACCEL_DEFAULT_TYPE;
-			data->accel_param[i].period_ms = ACCEL_DEFAULT_PERIOD_MS;
-			data->accel_param[i].amplitude = ACCEL_DEFAULT_AMPLITUDE;
+			memcpy(&data->accel_param[i], &config->acc_param,
+			       sizeof(config->acc_param));
 		}
 	}
 
@@ -584,6 +580,11 @@ static const struct sensor_driver_api sensor_sim_api_funcs = {
 		.base_humidity = DT_INST_PROP(n, base_humidity),	       \
 		.base_pressure = DT_INST_PROP(n, base_pressure),	       \
 		.acc_signal = DT_INST_ENUM_IDX(n, acc_signal),		       \
+		.acc_param = {						       \
+			.type = DT_INST_ENUM_IDX(n, acc_wave_type),	       \
+			.amplitude = DT_INST_PROP(n, acc_wave_amplitude),      \
+			.period_ms = DT_INST_PROP(n, acc_wave_period),	       \
+		},							       \
 	};								       \
 									       \
 	DEVICE_DT_INST_DEFINE(n, sensor_sim_init, NULL, &data##n, &config##n,  \
