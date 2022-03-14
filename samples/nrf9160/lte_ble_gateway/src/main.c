@@ -7,18 +7,23 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <string.h>
-#include <drivers/gps.h>
+#include <nrf_modem_at.h>
+#include <nrf_modem_gnss.h>
 #include <drivers/sensor.h>
 #include <console/console.h>
 #include <net/nrf_cloud.h>
+#include <net/nrf_cloud_agps.h>
 #include <dk_buttons_and_leds.h>
 #include <modem/lte_lc.h>
 #include <sys/reboot.h>
 #include <modem/nrf_modem_lib.h>
+#include <logging/log.h>
 
 #include "aggregator.h"
 #include "ble.h"
 #include "alarm.h"
+
+LOG_MODULE_REGISTER(lte_ble_gw, CONFIG_LTE_BLE_GW_LOG_LEVEL);
 
 /* Interval in milliseconds between each time status LEDs are updated. */
 #define LEDS_UPDATE_INTERVAL K_MSEC(500)
@@ -57,19 +62,18 @@ enum {
 static atomic_val_t association_requested;
 
 /* Sensor data */
-static struct gps_nmea gps_nmea_data;
-static struct nrf_cloud_sensor_data gps_cloud_data = {
-	.type = NRF_CLOUD_SENSOR_GPS,
-	.tag = 0x1,
-	.data.ptr = gps_nmea_data.buf,
-	.data.len = GPS_NMEA_SENTENCE_MAX_LENGTH,
-};
+static struct nrf_modem_gnss_nmea_data_frame gnss_nmea_data;
+static uint32_t gnss_cloud_data_tag = 0x1;
 static atomic_val_t send_data_enable;
 
 /* Structures for work */
 static struct k_work_delayable leds_update_work;
 static struct k_work_delayable connect_work;
 struct k_work_delayable aggregated_work;
+static struct k_work agps_request_work;
+
+static struct nrf_modem_gnss_pvt_data_frame last_pvt;
+static bool nrf_modem_gnss_fix;
 
 static bool cloud_connected;
 
@@ -78,7 +82,7 @@ enum error_type {
 	ERROR_MODEM_RECOVERABLE,
 };
 
-/* Forward declaration of functions */
+/* Forward declaration of functions. */
 static void cloud_connect(struct k_work *work);
 static void sensors_init(void);
 static void work_init(void);
@@ -109,14 +113,14 @@ void error_handler(enum error_type err_type, int err)
 		 * if there is an application error.
 		 */
 		led_pattern = DK_LED1_MSK | DK_LED4_MSK;
-		printk("Error of type ERROR_NRF_CLOUD: %d\n", err);
+		LOG_ERR("Error of type ERROR_NRF_CLOUD: %d", err);
 		break;
 	case ERROR_MODEM_RECOVERABLE:
 		/* Blinking all LEDs ON/OFF in pairs (1 and 3, 2 and 4)
 		 * if there is a recoverable error.
 		 */
 		led_pattern = DK_LED1_MSK | DK_LED3_MSK;
-		printk("Error of type ERROR_MODEM_RECOVERABLE: %d\n", err);
+		LOG_ERR("Error of type ERROR_MODEM_RECOVERABLE: %d", err);
 		break;
 	default:
 		/* Blinking all LEDs ON/OFF in pairs (1 and 2, 3 and 4)
@@ -146,34 +150,89 @@ void nrf_modem_recoverable_error_handler(uint32_t err)
 	error_handler(ERROR_MODEM_RECOVERABLE, (int)err);
 }
 
-/**@brief Callback for GPS events */
-static void gps_handler(const struct device *dev, struct gps_event *evt)
+/**@brief Request assisted GPS data from nRF Cloud. */
+static void agps_request(struct k_work *work)
 {
+	int retval;
+	struct nrf_modem_gnss_agps_data_frame agps_data;
+
+	if (!nrf_cloud_agps_request_in_progress()) {
+		retval = nrf_modem_gnss_read(&agps_data, sizeof(agps_data),
+					     NRF_MODEM_GNSS_DATA_AGPS_REQ);
+		if (retval) {
+			LOG_ERR("Failed to read AGPS data, err %d", retval);
+			return;
+		}
+
+		retval = nrf_cloud_agps_request(&agps_data);
+		if (retval) {
+			LOG_ERR("Failed to request AGPS data, err %d", retval);
+			return;
+		}
+	}
+}
+
+/**@brief Callback for GNSS events */
+static void gnss_event_handler(int event)
+{
+	int retval;
+
 	uint32_t button_state, has_changed;
 	struct sensor_data in_data = {
-		.type = GPS_POSITION,
-		.length = evt->nmea.len,
+		.type = GNSS_POSITION,
 	};
 
-	ARG_UNUSED(dev);
+	switch (event) {
+	case NRF_MODEM_GNSS_EVT_PVT:
+		retval = nrf_modem_gnss_read(&last_pvt, sizeof(last_pvt), NRF_MODEM_GNSS_DATA_PVT);
+		if (retval) {
+			LOG_ERR("nrf_modem_gnss_read failed, err %d", retval);
+			return;
+		}
+		if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
+			nrf_modem_gnss_fix = true;
+		} else {
+			nrf_modem_gnss_fix = false;
+		}
+		return;
+	case NRF_MODEM_GNSS_EVT_FIX:
+		LOG_DBG("NRF_MODEM_GNSS_EVT_FIX");
+		return;
+	case NRF_MODEM_GNSS_EVT_NMEA:
+		if (nrf_modem_gnss_fix == true) {
+			retval = nrf_modem_gnss_read(&gnss_nmea_data,
+						     sizeof(struct nrf_modem_gnss_nmea_data_frame),
+						     NRF_MODEM_GNSS_DATA_NMEA);
+			if (retval) {
+				LOG_ERR("nrf_modem_gnss_read failed, err: %d", retval);
+				return;
+			}
+			LOG_INF("GNSS NMEA data ready");
+			break;
+		}
+		return;
 
-	switch (evt->type) {
-	case GPS_EVT_SEARCH_STARTED:
-		printk("GPS_EVT_SEARCH_STARTED\n");
+	case NRF_MODEM_GNSS_EVT_AGPS_REQ:
+		LOG_INF("Requesting AGPS Data");
+		k_work_submit(&agps_request_work);
 		return;
-	case GPS_EVT_SEARCH_STOPPED:
-		printk("GPS_EVT_SEARCH_STOPPED\n");
+	case NRF_MODEM_GNSS_EVT_BLOCKED:
+		LOG_DBG("NRF_MODEM_GNSS_EVT_BLOCKED");
 		return;
-	case GPS_EVT_SEARCH_TIMEOUT:
-		printk("GPS_EVT_SEARCH_TIMEOUT\n");
+	case NRF_MODEM_GNSS_EVT_UNBLOCKED:
+		LOG_DBG("NRF_MODEM_GNSS_EVT_UNBLOCKED");
 		return;
-	case GPS_EVT_PVT_FIX:
-		printk("GPS_EVT_PVT_FIX\n");
+	case NRF_MODEM_GNSS_EVT_PERIODIC_WAKEUP:
+		LOG_DBG("NRF_MODEM_GNSS_EVT_PERIODIC_WAKEUP");
 		return;
-	case GPS_EVT_NMEA_FIX:
-		printk("GPS_EVT_NMEA_FIX\n");
-		break;
+	case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT:
+		LOG_DBG("NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT");
+		return;
+	case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_FIX:
+		LOG_DBG("NRF_MODEM_GNSS_EVT_SLEEP_AFTER_FIX");
+		return;
 	default:
+		LOG_WRN("Unknown GNSS event %d", event);
 		return;
 	}
 
@@ -183,20 +242,18 @@ static void gps_handler(const struct device *dev, struct gps_event *evt)
 		return;
 	}
 
-	gps_cloud_data.tag++;
+	gnss_cloud_data_tag++;
 
-	if (gps_cloud_data.tag == 0) {
-		gps_cloud_data.tag = 0x1;
-	}
+	memcpy(in_data.data, &gnss_cloud_data_tag, sizeof(gnss_cloud_data_tag));
 
-	memcpy(&in_data.data[0], &gps_cloud_data.tag,
-		sizeof(gps_cloud_data.tag));
+	in_data.length = sizeof(gnss_cloud_data_tag) + sizeof(gnss_nmea_data.nmea_str);
 
-	memcpy(&in_data.data[sizeof(gps_cloud_data.tag)],
-		evt->nmea.buf, evt->nmea.len);
+	memcpy(&in_data.data[sizeof(gnss_cloud_data_tag)], gnss_nmea_data.nmea_str,
+	       sizeof(gnss_nmea_data.nmea_str));
 
-	if (aggregator_put(in_data) != 0) {
-		printk("Failed to store GPS data.\n");
+	retval = aggregator_put(in_data);
+	if (retval) {
+		LOG_ERR("Failed to store GNSS data.");
 	}
 }
 
@@ -246,17 +303,17 @@ void sensor_data_send(struct nrf_cloud_sensor_data *data)
 	}
 
 	if (err) {
-		printk("Failed to send data to cloud: %d\n", err);
+		LOG_ERR("Failed to send data to cloud: %d", err);
 		nrf_cloud_error_handler(err);
 	}
 }
 
 static void on_cloud_evt_user_association_request(void)
 {
-	if (atomic_get(&association_requested) == 0) {
+	if (!atomic_get(&association_requested)) {
 		atomic_set(&association_requested, 1);
-		printk("Add device to cloud account.\n");
-		printk("Waiting for cloud association...\n");
+		LOG_INF("Add device to cloud account");
+		LOG_INF("Waiting for cloud association...");
 	}
 }
 
@@ -270,16 +327,16 @@ static void on_cloud_evt_user_associated(void)
 		/* after successful association, the device must
 		 * reconnect to aws.
 		 */
-		printk("Device associated with cloud.\n");
-		printk("Reconnecting for settings to take effect.\n");
-		printk("Disconnecting from cloud...\n");
+		LOG_INF("Device associated with cloud");
+		LOG_INF("Reconnecting for settings to take effect");
+		LOG_INF("Disconnecting from cloud...");
 
 		err = nrf_cloud_disconnect();
 
 		if (err == 0) {
 			return;
 		} else {
-			printk("Disconnect failed, rebooting...\n");
+			LOG_ERR("Disconnect failed, rebooting...");
 			nrf_cloud_error_handler(err);
 		}
 	}
@@ -288,9 +345,11 @@ static void on_cloud_evt_user_associated(void)
 /**@brief Callback for nRF Cloud events. */
 static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 {
+	int err;
+
 	switch (evt->type) {
 	case NRF_CLOUD_EVT_TRANSPORT_CONNECTED:
-		printk("NRF_CLOUD_EVT_TRANSPORT_CONNECTED\n");
+		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_CONNECTED");
 		cloud_connected = true;
 		/* This may fail if the work item is already being processed,
 		 * but in such case, the next time the work handler is executed,
@@ -299,27 +358,40 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 		 */
 		(void)k_work_cancel_delayable(&connect_work);
 		break;
+	case NRF_CLOUD_EVT_TRANSPORT_CONNECTING:
+		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_CONNECTING");
+		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
-		printk("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST\n");
+		LOG_DBG("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");
 		display_state = LEDS_CLOUD_PAIRING_WAIT;
 		on_cloud_evt_user_association_request();
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATED:
-		printk("NRF_CLOUD_EVT_USER_ASSOCIATED\n");
+		LOG_DBG("NRF_CLOUD_EVT_USER_ASSOCIATED");
 		on_cloud_evt_user_associated();
 		break;
 	case NRF_CLOUD_EVT_READY:
-		printk("NRF_CLOUD_EVT_READY\n");
+		LOG_DBG("NRF_CLOUD_EVT_READY");
 		display_state = LEDS_CLOUD_CONNECTED;
 		sensors_init();
 		atomic_set(&send_data_enable, 1);
 		k_work_schedule(&aggregated_work, K_MSEC(100));
 		break;
+	case NRF_CLOUD_EVT_RX_DATA:
+		LOG_DBG("NRF_CLOUD_EVT_RX_DATA");
+
+		LOG_INF("Processing AGPS data");
+		err = nrf_cloud_agps_process(evt->data.ptr, evt->data.len);
+		if (err) {
+			LOG_ERR("Processing AGPS data failed");
+		}
+
+		break;
 	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
-		printk("NRF_CLOUD_EVT_SENSOR_DATA_ACK\n");
+		LOG_DBG("NRF_CLOUD_EVT_SENSOR_DATA_ACK");
 		break;
 	case NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED:
-		printk("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED\n");
+		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED");
 		atomic_set(&send_data_enable, 0);
 		k_work_cancel_delayable(&aggregated_work);
 		display_state = LEDS_INITIALIZING;
@@ -329,13 +401,13 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 		k_work_schedule(&connect_work, K_NO_WAIT);
 		break;
 	case NRF_CLOUD_EVT_ERROR:
-		printk("NRF_CLOUD_EVT_ERROR, status: %d\n", evt->status);
+		LOG_DBG("NRF_CLOUD_EVT_ERROR, status: %d", evt->status);
 		atomic_set(&send_data_enable, 0);
 		display_state = LEDS_ERROR;
 		nrf_cloud_error_handler(evt->status);
 		break;
 	default:
-		printk("Received unknown event %d\n", evt->type);
+		LOG_WRN("Received unknown event %d", evt->type);
 		break;
 	}
 }
@@ -376,9 +448,8 @@ static void cloud_connect(struct k_work *work)
 	};
 
 	err = nrf_cloud_connect(&param);
-
 	if (err) {
-		printk("nrf_cloud_connect failed: %d\n", err);
+		LOG_ERR("nrf_cloud_connect failed: %d", err);
 		nrf_cloud_error_handler(err);
 	}
 
@@ -389,15 +460,16 @@ static void cloud_connect(struct k_work *work)
 /**@brief Callback for button events from the DK buttons and LEDs library. */
 static void button_handler(uint32_t buttons, uint32_t has_changed)
 {
-	printk("button_handler: button 1: %u, button 2: %u "
-	       "switch 1: %u, switch 2: %u\n",
-	       (bool)(buttons & BUTTON_1), (bool)(buttons & BUTTON_2),
-	       (bool)(buttons & SWITCH_1), (bool)(buttons & SWITCH_2));
+	LOG_INF("button_handler: button 1: %u, button 2: %u "
+		"switch 1: %u, switch 2: %u",
+		(bool)(buttons & BUTTON_1), (bool)(buttons & BUTTON_2), (bool)(buttons & SWITCH_1),
+		(bool)(buttons & SWITCH_2));
 }
 
 /**@brief Initializes and submits delayed work. */
 static void work_init(void)
 {
+	k_work_init(&agps_request_work, agps_request);
 	k_work_init_delayable(&leds_update_work, leds_update);
 	k_work_init_delayable(&connect_work, cloud_connect);
 	k_work_init_delayable(&aggregated_work, send_aggregated_data);
@@ -409,14 +481,32 @@ static void work_init(void)
  */
 static void modem_configure(void)
 {
+	int err;
+
 	display_state = LEDS_LTE_CONNECTING;
+
+	if (strlen(CONFIG_GNSS_AT_MAGPIO) > 0) {
+		err = nrf_modem_at_printf("%s", CONFIG_GNSS_AT_MAGPIO);
+		if (err) {
+			LOG_ERR("Failed to set MAGPIO configuration");
+
+			return;
+		}
+	}
+
+	if (strlen(CONFIG_GNSS_AT_COEX0) > 0) {
+		err = nrf_modem_at_printf("%s", CONFIG_GNSS_AT_COEX0);
+		if (err) {
+			LOG_ERR("Failed to set COEX0 configuration");
+
+			return;
+		}
+	}
 
 	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
 		/* Do nothing, modem is already turned on and connected. */
 	} else {
-		int err;
-
-		printk("Establishing LTE link (this may take some time) ...\n");
+		LOG_INF("Establishing LTE link (this may take some time) ...");
 		err = lte_lc_init_and_connect();
 		__ASSERT(err == 0, "LTE link could not be established.");
 		display_state = LEDS_LTE_CONNECTED;
@@ -427,34 +517,57 @@ static void modem_configure(void)
 static void sensors_init(void)
 {
 	int err;
-	const struct device *gps_dev = device_get_binding(CONFIG_GPS_DEV_NAME);
-	struct gps_config gps_cfg = {
-		.nav_mode = GPS_NAV_MODE_PERIODIC,
-		.interval = CONFIG_GPS_SEARCH_INTERVAL,
-		.timeout = CONFIG_GPS_SEARCH_TIMEOUT,
-	};
 
-	if (gps_dev == NULL) {
-		printk("Could not get %s device\n", CONFIG_GPS_DEV_NAME);
-		return;
-	}
+	LOG_INF("Initializing GNSS");
 
-	err = gps_init(gps_dev, gps_handler);
+	nrf_modem_gnss_fix = false;
+
+	/* Configure GNSS. */
+	err = nrf_modem_gnss_event_handler_set(gnss_event_handler);
 	if (err) {
-		printk("Could not initialize GPS, error: %d\n", err);
+		LOG_ERR("Failed to set GNSS event handler");
 		return;
 	}
 
-	printk("GPS initialized\n");
+	/* Enable position NMEA GGA messages only. */
+	uint16_t nmea_mask = NRF_MODEM_GNSS_NMEA_GGA_MASK;
 
-	err = gps_start(gps_dev, &gps_cfg);
+	err = nrf_modem_gnss_nmea_mask_set(nmea_mask);
 	if (err) {
-		printk("Failed to start GPS, error: %d\n", err);
+		LOG_ERR("Failed to set GNSS NMEA mask");
 		return;
 	}
 
-	printk("GPS started with interval %d seconds, and timeout %d seconds\n",
-	       CONFIG_GPS_SEARCH_INTERVAL, CONFIG_GPS_SEARCH_TIMEOUT);
+	/* This use case flag should always be set. */
+	uint8_t use_case = NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START;
+
+	err = nrf_modem_gnss_use_case_set(use_case);
+	if (err) {
+		LOG_WRN("Failed to set GNSS use case");
+	}
+
+	err = nrf_modem_gnss_fix_retry_set(CONFIG_GNSS_SEARCH_TIMEOUT);
+	if (err) {
+		LOG_ERR("Failed to set GNSS fix retry");
+		return;
+	}
+
+	err = nrf_modem_gnss_fix_interval_set(CONFIG_GNSS_SEARCH_INTERVAL);
+	if (err) {
+		LOG_ERR("Failed to set GNSS fix interval");
+		return;
+	}
+
+	LOG_INF("GNSS initialized");
+
+	err = nrf_modem_gnss_start();
+	if (err) {
+		LOG_ERR("Failed to start GNSS, err: %d", err);
+		return;
+	}
+
+	LOG_INF("GNSS started with interval %d seconds, and timeout %d seconds",
+		CONFIG_GNSS_SEARCH_INTERVAL, CONFIG_GNSS_SEARCH_TIMEOUT);
 }
 
 /**@brief Initializes buttons and LEDs, using the DK buttons and LEDs
@@ -466,23 +579,23 @@ static void buttons_leds_init(void)
 
 	err = dk_buttons_init(button_handler);
 	if (err) {
-		printk("Could not initialize buttons, err code: %d\n", err);
+		LOG_ERR("Could not initialize buttons, err code: %d", err);
 	}
 
 	err = dk_leds_init();
 	if (err) {
-		printk("Could not initialize leds, err code: %d\n", err);
+		LOG_ERR("Could not initialize leds, err code: %d", err);
 	}
 
 	err = dk_set_leds_state(0x00, DK_ALL_LEDS_MSK);
 	if (err) {
-		printk("Could not set leds state, err code: %d\n", err);
+		LOG_ERR("Could not set leds state, err code: %d", err);
 	}
 }
 
 void main(void)
 {
-	printk("LTE Sensor Gateway sample started\n");
+	LOG_INF("LTE Sensor Gateway sample started");
 
 	buttons_leds_init();
 	ble_init();
