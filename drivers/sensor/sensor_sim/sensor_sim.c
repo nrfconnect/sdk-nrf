@@ -152,19 +152,6 @@ int sensor_sim_set_wave_param(const struct device *dev,
 	return 0;
 }
 
-/**
- * @brief Helper function to convert from double to sensor_value struct
- *
- * @param[in]	val		Sensor value to convert.
- * @param[out]	sense_val	Pointer to sensor_value to store the converted data.
- */
-static void double_to_sensor_value(double val,
-				struct sensor_value *sense_val)
-{
-	sense_val->val1 = (int)val;
-	sense_val->val2 = (val - (int)val) * 1000000;
-}
-
 #if defined(CONFIG_SENSOR_SIM_TRIGGER)
 /**
  * @brief Callback for GPIO when using button as trigger.
@@ -503,27 +490,27 @@ static int sensor_sim_channel_get(const struct device *dev,
 
 	switch (chan) {
 	case SENSOR_CHAN_ACCEL_X:
-		double_to_sensor_value(data->accel_samples[0], sample);
+		sensor_value_from_double(sample, data->accel_samples[0]);
 		break;
 	case SENSOR_CHAN_ACCEL_Y:
-		double_to_sensor_value(data->accel_samples[1], sample);
+		sensor_value_from_double(sample, data->accel_samples[1]);
 		break;
 	case SENSOR_CHAN_ACCEL_Z:
-		double_to_sensor_value(data->accel_samples[2], sample);
+		sensor_value_from_double(sample, data->accel_samples[2]);
 		break;
 	case SENSOR_CHAN_ACCEL_XYZ:
-		double_to_sensor_value(data->accel_samples[0], sample);
-		double_to_sensor_value(data->accel_samples[1], ++sample);
-		double_to_sensor_value(data->accel_samples[2], ++sample);
+		sensor_value_from_double(sample, data->accel_samples[0]);
+		sensor_value_from_double(++sample, data->accel_samples[1]);
+		sensor_value_from_double(++sample, data->accel_samples[2]);
 		break;
 	case SENSOR_CHAN_AMBIENT_TEMP:
-		double_to_sensor_value(data->temp_sample, sample);
+		sensor_value_from_double(sample, data->temp_sample);
 		break;
 	case SENSOR_CHAN_HUMIDITY:
-		double_to_sensor_value(data->humidity_sample, sample);
+		sensor_value_from_double(sample, data->humidity_sample);
 		break;
 	case SENSOR_CHAN_PRESS:
-		double_to_sensor_value(data->pressure_sample, sample);
+		sensor_value_from_double(sample, data->pressure_sample);
 		break;
 	default:
 		return -ENOTSUP;
