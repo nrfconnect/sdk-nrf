@@ -70,9 +70,9 @@ Thread
 Zigbee
 ------
 
-* Added:
+* Updated:
 
-  * Zigbee Shell command for monitoring the list of active Zigbee neighbors.
+  * :ref:` Zigbee shell library <lib_zigbee_shell>`. For details, see `Libraries for Zigbee`_.
 
 Applications
 ============
@@ -373,9 +373,11 @@ Libraries for Zigbee
 
 * :ref:`lib_zigbee_shell`:
 
+  * Added ``nbr monitor`` shell command for monitoring the list of active Zigbee neighbors.
   * Extended ``zcl cmd`` shell command to allow sending groupcasts.
   * Extended ``zdo`` shell commands to allow binding to a group addresses.
   * Fixed an issue where printing binding table containing group-binding entries results in corrupted output.
+  * Aded a set of ``zcl groups`` shell commands for managing Zigbee groups.
 
 Scripts
 =======

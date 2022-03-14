@@ -24,7 +24,8 @@ enum ctx_entry_type {
 	CTX_MGR_PING_REPLY_ENTRY_TYPE,
 	CTX_MGR_ATTR_REQ_ENTRY_TYPE,
 	CTX_MGR_CFG_REPORT_REQ_ENTRY_TYPE,
-	CTX_MGR_GENERIC_CMD_ENTRY_TYPE
+	CTX_MGR_GENERIC_CMD_ENTRY_TYPE,
+	CTX_MGR_GROUPS_CMD_ENTRY_TYPE
 };
 
 /* A context manager entry structure associated with a given frame,
@@ -54,6 +55,7 @@ struct ctx_entry {
 		struct read_write_attr_req_data read_write_attr_req_data;
 		struct configure_reporting_req_data configure_reporting_req_data;
 		struct generic_cmd_data generic_cmd_data;
+		struct groups_cmd_data groups_cmd_data;
 	};
 };
 
