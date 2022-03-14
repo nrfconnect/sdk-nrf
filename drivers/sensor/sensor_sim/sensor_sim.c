@@ -191,13 +191,18 @@ static void sensor_sim_gpio_callback(const struct device *port,
 /**
  * @brief Function that runs in the sensor simulator thread when using trigger.
  *
- * @param dev_ptr Pointer to sensor simulator device.
+ * @param p1 Thread parameter 1 (device instance).
+ * @param p2 Thread parameter 2 (unused).
+ * @param p3 Thread parameter 3 (unused).
  */
-static void sensor_sim_thread(int dev_ptr)
+static void sensor_sim_thread(void *p1, void *p2, void *p3)
 {
-	struct device *dev = INT_TO_POINTER(dev_ptr);
+	struct device *dev = p1;
 	struct sensor_sim_data *data = dev->data;
 	const struct sensor_sim_config *config = dev->config;
+
+	ARG_UNUSED(p2);
+	ARG_UNUSED(p3);
 
 	while (true) {
 		if (config->trigger_gpio.port != NULL) {
@@ -255,9 +260,7 @@ static int sensor_sim_init_thread(const struct device *dev)
 
 	k_thread_create(&data->thread, data->thread_stack,
 			CONFIG_SENSOR_SIM_THREAD_STACK_SIZE,
-			// TODO TORA: upmerge confirmation from Jan Tore needed.
-			(k_thread_entry_t)sensor_sim_thread, (void *)dev,
-			NULL, NULL,
+			sensor_sim_thread, (void *)dev, NULL, NULL,
 			K_PRIO_COOP(CONFIG_SENSOR_SIM_THREAD_PRIORITY),
 			0, K_NO_WAIT);
 
