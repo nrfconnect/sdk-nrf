@@ -130,18 +130,22 @@ static void start_identifying(zb_bufid_t bufid)
 
 	ZVUNUSED(bufid);
 
-	/* Check if endpoint is in identifying mode,
-	 * if not put desired endpoint in identifying mode.
-	 */
-	if (dev_ctx.identify_attr.identify_time ==
-	    ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE) {
-		LOG_INF("Enter identify mode");
-		zb_err_code = zb_bdb_finding_binding_target(
-			APP_TEMPLATE_ENDPOINT);
-		ZB_ERROR_CHECK(zb_err_code);
+	if (ZB_JOINED()) {
+		/* Check if endpoint is in identifying mode,
+		 * if not put desired endpoint in identifying mode.
+		 */
+		if (dev_ctx.identify_attr.identify_time ==
+		ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE) {
+			LOG_INF("Enter identify mode");
+			zb_err_code = zb_bdb_finding_binding_target(
+				APP_TEMPLATE_ENDPOINT);
+			ZB_ERROR_CHECK(zb_err_code);
+		} else {
+			LOG_INF("Cancel identify mode");
+			zb_bdb_finding_binding_target_cancel();
+		}
 	} else {
-		LOG_INF("Cancel identify mode");
-		zb_bdb_finding_binding_target_cancel();
+		LOG_WRN("Device not in a network - cannot identify itself");
 	}
 }
 
