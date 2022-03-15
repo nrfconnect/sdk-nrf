@@ -9,9 +9,9 @@ Location
 
 The location library provides functionality for retrieving the location of a device using different positioning methods such as:
 
- * GNSS satellite positioning including Assisted GPS (A-GPS) and Predicted GPS (P-GPS) data.
- * Cellular positioning.
- * Wi-Fi positioning.
+* GNSS satellite positioning including Assisted GPS (A-GPS) and Predicted GPS (P-GPS) data.
+* Cellular positioning.
+* Wi-Fi positioning.
 
 Overview
 ********
@@ -31,29 +31,38 @@ The location library has a compact API and a location core that handles the func
 Each location method has its own implementation for the location retrieval:
 
 * GNSS positioning
-   * :ref:`gnss_interface` for getting the location.
-   * A-GPS and P-GPS are managed with :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps`.
-   * The application may also use some other source for the data and use :c:func:`location_agps_data_process` to pass the data to the location library.
-   * The data format of A-GPS or P-GPS must be as received from :ref:`lib_nrf_cloud_agps`.
-   * The data transport method for :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` can be configured to be either MQTT (:kconfig:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:`CONFIG_NRF_CLOUD_REST`).
-     If different transport is desired for different location methods, (:kconfig:`CONFIG_NRF_CLOUD_MQTT`) and (:kconfig:`CONFIG_NRF_CLOUD_REST`) can be enabled simultaneously. In such a case, MQTT takes
-     precedence as the transport method of GNSS assistance data.
-   * Note that acquiring GNSS fix only starts when LTE connection, more specifically Radio Resource Control (RRC) connection, is idle.
-     Also, if A-GPS is not used and Power Saving Mode (PSM) is enabled, Location library will wait for the modem to enter PSM.
-   * Selectable location accuracy (low/normal/high).
+
+  * :ref:`gnss_interface` for getting the location.
+  * A-GPS and P-GPS are managed with :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps`.
+  * The application may also use some other source for the data and use :c:func:`location_agps_data_process` to pass the data to the location library.
+  * The data format of A-GPS or P-GPS must be as received from :ref:`lib_nrf_cloud_agps`.
+  * The data transport method for :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` can be configured to be either MQTT (:kconfig:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:`CONFIG_NRF_CLOUD_REST`).
+
+    If different transport is desired for different location methods, (:kconfig:`CONFIG_NRF_CLOUD_MQTT`) and (:kconfig:`CONFIG_NRF_CLOUD_REST`) can be enabled simultaneously. In such a case, MQTT takes
+    precedence as the transport method of GNSS assistance data.
+  * Note that acquiring GNSS fix only starts when LTE connection, more specifically Radio Resource Control (RRC) connection, is idle.
+
+    Also, if A-GPS is not used and Power Saving Mode (PSM) is enabled, Location library will wait for the modem to enter PSM.
+  * Selectable location accuracy (low/normal/high).
+
 * Cellular positioning
-   * :ref:`lte_lc_readme` for getting visible cellular base stations.
-   * :ref:`lib_multicell_location` for sending cell information to the selected location service and getting the calculated location back to the device.
-      * The service is selected in the :c:struct:`location_method_config` structure when requesting for location.
-      * The services available are `nRF Cloud Location Services`_, `HERE Positioning`_, `Skyhook Precision Location`_ and `Polte Location API`_
-      * The data transport method for the service is mainly REST. However, either MQTT (:kconfig:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:`CONFIG_NRF_CLOUD_REST`) can be configured for `nRF Cloud Location Services`_.
+
+  * :ref:`lte_lc_readme` for getting visible cellular base stations.
+  * :ref:`lib_multicell_location` for sending cell information to the selected location service and getting the calculated location back to the device.
+
+    * The service is selected in the :c:struct:`location_method_config` structure when requesting for location.
+    * The services available are `nRF Cloud Location Services`_, `HERE Positioning`_, `Skyhook Precision Location`_ and `Polte Location API`_
+    * The data transport method for the service is mainly REST. However, either MQTT (:kconfig:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:`CONFIG_NRF_CLOUD_REST`) can be configured for `nRF Cloud Location Services`_.
+
 * Wi-Fi positioning
-   * Zephyr's Network Management API :ref:`zephyr:net_mgmt_interface` for getting the visible Wi-Fi access points.
-   * Sending access point information to the selected location service and getting the calculated location back to the device:
-      * The location library has an implementation for the Wi-Fi location services.
-      * The service is selected in the :c:struct:`location_method_config` structure when requesting for location.
-      * The services available are `nRF Cloud Location Services`_, `HERE Positioning`_ and `Skyhook Precision Location`_.
-      * The data transport method for the service is REST.
+
+  * Zephyr's Network Management API :ref:`zephyr:net_mgmt_interface` for getting the visible Wi-Fi access points.
+  * Sending access point information to the selected location service and getting the calculated location back to the device:
+
+    * The location library has an implementation for the Wi-Fi location services.
+    * The service is selected in the :c:struct:`location_method_config` structure when requesting for location.
+    * The services available are `nRF Cloud Location Services`_, `HERE Positioning`_ and `Skyhook Precision Location`_.
+    * The data transport method for the service is REST.
 
 Requirements
 ************
