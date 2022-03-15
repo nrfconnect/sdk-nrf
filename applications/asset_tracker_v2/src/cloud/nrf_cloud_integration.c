@@ -1,6 +1,8 @@
 #include <zephyr.h>
 #include <net/nrf_cloud.h>
 #include <net/mqtt.h>
+#include <stdio.h>
+#include <nrf_modem_at.h>
 
 #include "cJSON.h"
 #include "json_helpers.h"
@@ -18,6 +20,14 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
  * cellular position requests (neighbor cell measurements).
  */
 #define CELL_POS_FILTER_STRING "CELL_POS"
+
+#if !defined(CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM)
+#define NRF_CLOUD_CLIENT_ID_LEN 15
+#else
+#define NRF_CLOUD_CLIENT_ID_LEN (sizeof(CONFIG_CLOUD_CLIENT_ID) - 1)
+#endif
+
+static char client_id_buf[NRF_CLOUD_CLIENT_ID_LEN + 1];
 
 static struct k_work_delayable user_associating_work;
 
@@ -233,6 +243,27 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 	struct nrf_cloud_init_param config = {
 		.event_handler = nrf_cloud_event_handler,
 	};
+
+#if !defined(CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM)
+	char imei_buf[20 + sizeof("OK\r\n")];
+
+	/* Retrieve device IMEI from modem. */
+	err = nrf_modem_at_cmd(imei_buf, sizeof(imei_buf), "AT+CGSN");
+	if (err) {
+		LOG_ERR("Not able to retrieve device IMEI from modem");
+		return err;
+	}
+
+	/* Set null character at the end of the device IMEI. */
+	imei_buf[NRF_CLOUD_CLIENT_ID_LEN] = 0;
+
+	strncpy(client_id_buf, imei_buf, sizeof(client_id_buf) - 1);
+
+#else
+	snprintf(client_id_buf, sizeof(client_id_buf), "%s", CONFIG_CLOUD_CLIENT_ID);
+#endif
+
+	config.client_id = client_id_buf;
 
 	err = nrf_cloud_init(&config);
 	if (err) {
