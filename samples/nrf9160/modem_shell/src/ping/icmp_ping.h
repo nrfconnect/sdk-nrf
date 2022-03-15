@@ -34,6 +34,10 @@
 
 /**@ ICMP Ping command arguments */
 struct icmp_ping_shell_cmd_argv {
+	struct k_poll_signal *kill_signal;
+	char *print_buf;
+	int print_buf_len;
+
 	char target_name[ICMP_MAX_URL];
 	struct addrinfo *src;
 	struct addrinfo *dest;
