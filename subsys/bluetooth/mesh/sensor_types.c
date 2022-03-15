@@ -162,8 +162,8 @@ enum scalar_repr_flags {
 	/** The highest encoded value represents "undefined" */
 	HAS_UNDEFINED = BIT(3),
 	/**
-	 * The second highest encoded value represents
-	 * "value is higher than xxx".
+	 * The highest encoded value represents
+	 * the maximum value or higher.
 	 */
 	HAS_HIGHER_THAN = (BIT(4)),
 	/** The second highest encoded value represents "value is invalid" */
@@ -206,7 +206,7 @@ static int64_t scalar_max(const struct bt_mesh_sensor_format *format)
 		max_value = BIT64(8 * format->size - 1) - 1;
 	}
 
-	if (repr->flags & (HAS_HIGHER_THAN | HAS_INVALID)) {
+	if (repr->flags & HAS_INVALID) {
 		max_value -= 2;
 	} else if (repr->flags & HAS_UNDEFINED) {
 		max_value -= 1;
@@ -256,8 +256,8 @@ static int scalar_encode(const struct bt_mesh_sensor_format *format,
 		}
 
 		if ((repr->flags & HAS_HIGHER_THAN) &&
-			!((repr->flags & HAS_UNDEFINED) && (raw == type_max))) {
-			raw = type_max - 1;
+			!((repr->flags & HAS_UNDEFINED) && (val->val1 == type_max))) {
+			raw = max_value;
 		} else if ((repr->flags & HAS_INVALID) && val->val1 == type_max - 1) {
 			raw = type_max - 1;
 		} else if ((repr->flags & HAS_UNDEFINED) && val->val1 == type_max) {
@@ -344,7 +344,7 @@ static int scalar_decode(const struct bt_mesh_sensor_format *format,
 
 		if (repr->flags & HAS_UNDEFINED_MIN) {
 			type_max += 1;
-		} else if (repr->flags & (HAS_HIGHER_THAN | HAS_INVALID) && raw == type_max - 1) {
+		} else if ((repr->flags & HAS_INVALID) && raw == type_max - 1) {
 			type_max -= 1;
 		} else if (raw != type_max) {
 			return -ERANGE;
@@ -517,21 +517,21 @@ FORMAT(co2_concentration)     = SCALAR_FORMAT_MAX(2,
 					      HAS_UNDEFINED),
 					      ppm,
 					      SCALAR(1, 0),
-					      65533);
+					      65534);
 FORMAT(noise)			     = SCALAR_FORMAT_MAX(1,
 					       (UNSIGNED |
 					       HAS_HIGHER_THAN |
 					       HAS_UNDEFINED),
 					       db,
 					       SCALAR(1, 0),
-					       253);
+					       254);
 FORMAT(voc_concentration)     = SCALAR_FORMAT_MAX(2,
 					       (UNSIGNED |
 					       HAS_HIGHER_THAN |
 					       HAS_UNDEFINED),
 					       ppb,
 					       SCALAR(1, 0),
-					       65533);
+					       65534);
 FORMAT(wind_speed)            = SCALAR_FORMAT(2,
 					      UNSIGNED,
 					      mps,
@@ -602,10 +602,12 @@ FORMAT(electric_current) = SCALAR_FORMAT_MAX(2,
 					 SCALAR(1e-2, 0),
 					 65534);
 FORMAT(voltage)		 = SCALAR_FORMAT_MAX(2,
-					 (UNSIGNED | HAS_UNDEFINED),
+					 (UNSIGNED |
+					 HAS_UNDEFINED |
+					 HAS_HIGHER_THAN),
 					 volt,
 					 SCALAR(1, -6),
-					 10220);
+					 65408);
 FORMAT(energy32)	 = SCALAR_FORMAT(4,
 					 UNSIGNED | HAS_INVALID | HAS_UNDEFINED,
 					 kwh,
