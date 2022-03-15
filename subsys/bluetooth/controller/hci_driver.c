@@ -493,15 +493,17 @@ static int configure_supported_features(void)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_OBSERVER)) {
-		if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
-			err = sdc_support_ext_scan();
-			if (err) {
-				return -ENOTSUP;
-			}
-		} else {
-			err = sdc_support_scan();
-			if (err) {
-				return -ENOTSUP;
+		if (!IS_ENABLED(CONFIG_BT_CENTRAL)) {
+			if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
+				err = sdc_support_ext_scan();
+				if (err) {
+					return -ENOTSUP;
+				}
+			} else {
+				err = sdc_support_scan();
+				if (err) {
+					return -ENOTSUP;
+				}
 			}
 		}
 
@@ -514,9 +516,16 @@ static int configure_supported_features(void)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
-		err = sdc_support_master();
-		if (err) {
-			return -ENOTSUP;
+		if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
+			err = sdc_support_ext_master();
+			if (err) {
+				return -ENOTSUP;
+			}
+		} else {
+			err = sdc_support_master();
+			if (err) {
+				return -ENOTSUP;
+			}
 		}
 	}
 
