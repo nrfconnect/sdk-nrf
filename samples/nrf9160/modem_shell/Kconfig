@@ -110,15 +110,15 @@ config MOSH_COMMON_WORKQUEUE_PRIORITY
 	int "Common workqueue priority"
 	default 5
 
-if MOSH_IPERF3
-menu "MoSH iperf3 command selections"
+if MOSH_IPERF3 || MOSH_PING
+menu "MoSH iperf3 and ping command selections"
 
 config MOSH_WORKER_THREADS
-	bool "Possibility to run iperf3 instances in separate threads"
+	bool "Possibility to run iperf3 or ping instances in separate threads"
 	default y
 
 endmenu
-endif #MOSH_IPERF3
+endif
 
 if MOSH_AT_CMD_MODE
 choice

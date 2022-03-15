@@ -46,7 +46,7 @@ static bool mosh_print_shell_ptr_update(void)
 	return true;
 }
 
-static const char *create_timestamp_string(void)
+bool create_timestamp_string(char *timestamp_buf, int timestamp_buf_len)
 {
 	uint32_t year;
 	uint32_t month;
@@ -56,6 +56,8 @@ static const char *create_timestamp_string(void)
 	uint32_t mins;
 	uint32_t secs;
 	uint32_t msec;
+
+	int chars = 0;
 
 	struct timespec tp;
 	struct tm ltm = { 0 };
@@ -73,18 +75,18 @@ static const char *create_timestamp_string(void)
 	/* Relative to 1900, as per POSIX */
 	year = 1900 + ltm.tm_year;
 
-	sprintf(timestamp_str,
+	chars = snprintf(timestamp_buf, timestamp_buf_len,
 		"[%04d-%02d-%02d %02d:%02d:%02d.%03d] ",
 		year, month, day, hours, mins, secs, msec);
-
-	return timestamp_str;
+	if (chars < 0) {
+		return false;
+	}
+	return true;
 }
 
-void mosh_fprintf(enum mosh_print_level print_level, const char *fmt, ...)
+void mosh_fprintf_valist(enum mosh_print_level print_level, const char *fmt, va_list args)
 {
-	va_list args;
 	int chars = 0;
-	const char *timestamp;
 
 #if defined(CONFIG_MOSH_AT_CMD_MODE)
 	if (at_cmd_mode_dont_print) {
@@ -94,8 +96,6 @@ void mosh_fprintf(enum mosh_print_level print_level, const char *fmt, ...)
 
 	k_mutex_lock(&mosh_print_buf_mutex, K_FOREVER);
 
-	va_start(args, fmt);
-
 	if (!mosh_print_shell_ptr_update()) {
 		vsnprintf(mosh_print_buf, sizeof(mosh_print_buf), fmt, args);
 		printk("%s", mosh_print_buf);
@@ -104,8 +104,8 @@ void mosh_fprintf(enum mosh_print_level print_level, const char *fmt, ...)
 
 	/* Add timestamp to print buffer if requested */
 	if (mosh_print_timestamp_use) {
-		timestamp = create_timestamp_string();
-		chars = snprintf(mosh_print_buf, sizeof(mosh_print_buf), "%s", timestamp);
+		(void)create_timestamp_string(timestamp_str, sizeof(timestamp_str));
+		chars = snprintf(mosh_print_buf, sizeof(mosh_print_buf), "%s", timestamp_str);
 		if (chars < 0) {
 			shell_error(mosh_shell, "Error while printing timestamp...");
 			chars = 0;
@@ -143,6 +143,14 @@ void mosh_fprintf(enum mosh_print_level print_level, const char *fmt, ...)
 
 exit:
 	k_mutex_unlock(&mosh_print_buf_mutex);
+}
+
+void mosh_fprintf(enum mosh_print_level print_level, const char *fmt, ...)
+{
+	va_list args;
+
+	va_start(args, fmt);
+	mosh_fprintf_valist(print_level, fmt, args);
 	va_end(args);
 }
 

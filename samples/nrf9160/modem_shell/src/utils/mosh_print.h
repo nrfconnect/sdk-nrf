@@ -21,10 +21,20 @@ enum mosh_print_level {
 void mosh_print_no_format(const char *usage);
 
 /**
+ * Create a timestamp for printing.
+ */
+bool create_timestamp_string(char *timestamp_buf, int timestamp_buf_len);
+
+/**
  * printf-like function which sends formatted data stream to the shell output.
  * Not inteded to be used outside below macros.
  */
 void mosh_fprintf(enum mosh_print_level print_level, const char *fmt, ...);
+
+/**
+ * Similar to mosh_fprintf but vargs are passed as va_list.
+ */
+void mosh_fprintf_valist(enum mosh_print_level print_level, const char *fmt, va_list args);
 
 /** Print normal level information to output. This should be used for normal application output. */
 #define mosh_print(fmt, ...) mosh_fprintf(MOSH_PRINT_LEVEL_PRINT, fmt, ##__VA_ARGS__)

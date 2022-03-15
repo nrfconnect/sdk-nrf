@@ -26,8 +26,8 @@
 #include "utils/net_utils.h"
 #include "link_api.h"
 #include "mosh_defines.h"
-#include "mosh_print.h"
 
+#include "icmp_ping_print.h"
 #include "icmp_ping.h"
 
 /* Protocol field: */
@@ -51,9 +51,6 @@ enum ping_rai {
 	PING_RAI_ONGOING,
 	PING_RAI_LAST_PACKET
 };
-
-/* ICMP Ping command arguments */
-static struct icmp_ping_shell_cmd_argv ping_argv;
 
 /*****************************************************************************/
 
@@ -124,7 +121,7 @@ static void calc_ics(uint8_t *buffer, int len, int hcs_pos)
 
 /*****************************************************************************/
 
-static uint32_t send_ping_wait_reply(enum ping_rai rai)
+static uint32_t send_ping_wait_reply(struct icmp_ping_shell_cmd_argv *ping_args, enum ping_rai rai)
 {
 	static int64_t start_t;
 	int64_t delta_t;
@@ -135,7 +132,7 @@ static uint32_t send_ping_wait_reply(enum ping_rai rai)
 	uint8_t *data = NULL;
 	uint8_t rep = 0;
 	uint8_t header_len = 0;
-	struct addrinfo *si = ping_argv.src;
+	struct addrinfo *si = ping_args->src;
 	const int alloc_size = ICMP_DEFAULT_LINK_MTU;
 	struct pollfd fds[1];
 	int dpllen, pllen, len;
@@ -150,12 +147,12 @@ static uint32_t send_ping_wait_reply(enum ping_rai rai)
 		/* Ping header */
 		header_len = ICMP_IPV4_HDR_LEN;
 
-		total_length = ping_argv.len + header_len + icmp_hdr_len;
+		total_length = ping_args->len + header_len + icmp_hdr_len;
 
 		buf = calloc(1, alloc_size);
 
 		if (buf == NULL) {
-			mosh_error("No RAM memory available for sending ping.");
+			ping_error(ping_args, "No RAM memory available for sending ping.");
 			return -1;
 		}
 
@@ -171,9 +168,9 @@ static uint32_t send_ping_wait_reply(enum ping_rai rai)
 		/* buf[10..11] = ICS, calculated later */
 
 		struct sockaddr_in *sa =
-			(struct sockaddr_in *)ping_argv.src->ai_addr;
+			(struct sockaddr_in *)ping_args->src->ai_addr;
 		setip(buf + 12, sa->sin_addr.s_addr);   /* Source */
-		sa = (struct sockaddr_in *)ping_argv.dest->ai_addr;
+		sa = (struct sockaddr_in *)ping_args->dest->ai_addr;
 		setip(buf + 16, sa->sin_addr.s_addr);   /* Destination */
 
 		calc_ics(buf, header_len, 10);
@@ -201,13 +198,13 @@ static uint32_t send_ping_wait_reply(enum ping_rai rai)
 
 		/* ipv6 header */
 		header_len = ICMP_IPV6_HDR_LEN;
-		uint16_t payload_length = ping_argv.len + icmp_hdr_len;
+		uint16_t payload_length = ping_args->len + icmp_hdr_len;
 
 		total_length = payload_length + header_len;
 		buf = calloc(1, alloc_size);
 
 		if (buf == NULL) {
-			mosh_error("No RAM memory available for sending ping.");
+			ping_error(ping_args, "No RAM memory available for sending ping.");
 			return -1;
 		}
 
@@ -219,10 +216,10 @@ static uint32_t send_ping_wait_reply(enum ping_rai rai)
 		buf[7] = 64;                    /* Hop limit */
 
 		struct sockaddr_in6 *sa =
-			(struct sockaddr_in6 *)ping_argv.src->ai_addr;
+			(struct sockaddr_in6 *)ping_args->src->ai_addr;
 		memcpy(buf + 8, sa->sin6_addr.s6_addr, 16); /* Source address */
 
-		sa = (struct sockaddr_in6 *)ping_argv.dest->ai_addr;
+		sa = (struct sockaddr_in6 *)ping_args->dest->ai_addr;
 		memcpy(buf + 24, sa->sin6_addr.s6_addr,
 		       16); /* Destination address */
 
@@ -236,7 +233,7 @@ static uint32_t send_ping_wait_reply(enum ping_rai rai)
 		data[7] = ++seqnr;
 
 		/* Payload */
-		for (int i = 0; i < ping_argv.len; i++) {
+		for (int i = 0; i < ping_args->len; i++) {
 			data[i + icmp_hdr_len] = (i + seqnr) % 10 + '0';
 		}
 
@@ -257,7 +254,7 @@ static uint32_t send_ping_wait_reply(enum ping_rai rai)
 		hcs += check_ics(data, 2);      /* ICMP: Type & Code */
 		hcs += check_ics(
 			data + 4,
-			4 + ping_argv.len); /* ICMP: Header data + Data */
+			4 + ping_args->len); /* ICMP: Header data + Data */
 
 		while (hcs > 0xFFFF) {
 			hcs = (hcs & 0xFFFF) + (hcs >> 16);
@@ -275,19 +272,20 @@ static uint32_t send_ping_wait_reply(enum ping_rai rai)
 
 	fd = socket(AF_PACKET, SOCK_RAW, 0);
 	if (fd < 0) {
-		mosh_error("socket() failed: (%d)", -errno);
+		ping_error(ping_args, "socket() failed: (%d)", -errno);
 		free(buf);
 		return (uint32_t)delta_t;
 	}
-	if (ping_argv.cid != MOSH_ARG_NOT_SET) {
-		if (ping_argv.pdn_id_for_cid != MOSH_ARG_NOT_SET) {
+	if (ping_args->cid != MOSH_ARG_NOT_SET) {
+		if (ping_args->pdn_id_for_cid != MOSH_ARG_NOT_SET) {
 			/* Binding a data socket with PDN ID: */
 			ret = net_utils_socket_pdn_id_set(
-				fd, ping_argv.pdn_id_for_cid);
+				fd, ping_args->pdn_id_for_cid);
 			if (ret != 0) {
-				mosh_error(
+				ping_error(
+					ping_args,
 					"Cannot bind socket to PDN ID %d",
-					ping_argv.pdn_id_for_cid);
+					ping_args->pdn_id_for_cid);
 				goto close_end;
 			}
 		}
@@ -300,13 +298,13 @@ static uint32_t send_ping_wait_reply(enum ping_rai rai)
 	 */
 
 	struct timeval tv = {
-		.tv_sec = (ping_argv.timeout / 1000),
-		.tv_usec = (ping_argv.timeout % 1000) * 1000,
+		.tv_sec = (ping_args->timeout / 1000),
+		.tv_usec = (ping_args->timeout % 1000) * 1000,
 	};
 
 	if (setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (struct timeval *)&tv,
 		       sizeof(struct timeval)) < 0) {
-		mosh_error("Unable to set socket SO_SNDTIMEO, continue");
+		ping_error(ping_args, "Unable to set socket SO_SNDTIMEO, continue");
 	}
 
 	/* Just for sure, let's put the timeout for rcv as well
@@ -314,7 +312,7 @@ static uint32_t send_ping_wait_reply(enum ping_rai rai)
 	 */
 	if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (struct timeval *)&tv,
 		       sizeof(struct timeval)) < 0) {
-		mosh_error("Unable to set socket SO_RCVTIMEO, continue");
+		ping_error(ping_args, "Unable to set socket SO_RCVTIMEO, continue");
 	}
 #endif
 #endif
@@ -327,18 +325,18 @@ static uint32_t send_ping_wait_reply(enum ping_rai rai)
 		}
 		ret = setsockopt(fd, SOL_SOCKET, rai_option, NULL, 0);
 		if (ret) {
-			mosh_error("setsockopt() for RAI failed with error %d", errno);
+			ping_error(ping_args, "setsockopt() for RAI failed with error %d", errno);
 			goto close_end;
 		}
 	}
 
 	/* Include also a sending time to measured RTT: */
 	start_t = k_uptime_get();
-	timeout = ping_argv.timeout;
+	timeout = ping_args->timeout;
 
 	ret = send(fd, buf, total_length, 0);
 	if (ret <= 0) {
-		mosh_error("send() failed: (%d)", -errno);
+		ping_error(ping_args, "send() failed: (%d)", -errno);
 		goto close_end;
 	}
 
@@ -351,7 +349,7 @@ static uint32_t send_ping_wait_reply(enum ping_rai rai)
 
 	/* Now after send(), calculate how much there's still time left */
 	delta_t = k_uptime_delta(&start_t);
-	timeout = ping_argv.timeout - (int32_t)delta_t;
+	timeout = ping_args->timeout - (int32_t)delta_t;
 
 wait_for_data:
 	fds[0].fd = fd;
@@ -359,22 +357,24 @@ wait_for_data:
 
 	do {
 		if (timeout <= 0) {
-			mosh_print(
+			ping_print(
+				ping_args,
 				"Pinging %s results: no ping response in given timeout %d msec",
-				ping_argv.target_name, ping_argv.timeout);
+				ping_args->target_name, ping_args->timeout);
 			delta_t = 0;
 			goto close_end;
 		}
 
 		ret = poll(fds, 1, timeout);
 		if (ret == 0) {
-			mosh_print(
+			ping_print(
+				ping_args,
 				"Pinging %s results: no response in given timeout %d msec",
-				ping_argv.target_name, ping_argv.timeout);
+				ping_args->target_name, ping_args->timeout);
 			delta_t = 0;
 			goto close_end;
 		} else if (ret < 0) {
-			mosh_error("poll() failed: (%d) (%d)", -errno, ret);
+			ping_error(ping_args, "poll() failed: (%d) (%d)", -errno, ret);
 			delta_t = 0;
 			goto close_end;
 		}
@@ -383,11 +383,12 @@ wait_for_data:
 
 		/* Calculate again, how much there's still time left */
 		delta_t = k_uptime_delta(&start_t);
-		timeout = ping_argv.timeout - (int32_t)delta_t;
+		timeout = ping_args->timeout - (int32_t)delta_t;
 
 		if (len <= 0) {
 			if (errno != EAGAIN && errno != EWOULDBLOCK) {
-				mosh_error(
+				ping_error(
+					ping_args,
 					"recv() failed with errno (%d) and return value (%d)",
 					-errno, len);
 				delta_t = 0;
@@ -396,7 +397,7 @@ wait_for_data:
 		}
 		if (len < header_len) {
 			/* Data length error, ignore "silently" */
-			mosh_error("recv() wrong data (%d)", len);
+			ping_error(ping_args, "recv() wrong data (%d)", len);
 		}
 
 		if ((rep == ICMP_ECHO_REP && buf[IP_PROTOCOL_POS] == ICMP) ||
@@ -413,7 +414,8 @@ wait_for_data:
 		/* Set RAI option NO_DATA after last response has been received */
 		ret = setsockopt(fd, SOL_SOCKET, SO_RAI_NO_DATA, NULL, 0);
 		if (ret) {
-			mosh_error("setsockopt() for SO_RAI_NO_DATA failed with error %d",
+			ping_error(
+				ping_args, "setsockopt() for SO_RAI_NO_DATA failed with error %d",
 				    errno);
 			goto close_end;
 		}
@@ -424,7 +426,7 @@ wait_for_data:
 		int hcs = check_ics(data, len - header_len);
 
 		if (hcs != 0) {
-			mosh_error("IPv4 HCS error, hcs: %d, len: %d\r\n", hcs, len);
+			ping_error(ping_args, "IPv4 HCS error, hcs: %d, len: %d\r\n", hcs, len);
 			delta_t = 0;
 			goto close_end;
 		}
@@ -449,7 +451,7 @@ wait_for_data:
 		int plhcs = data[2] + (data[3] << 8);
 
 		if (plhcs != hcs) {
-			mosh_error("IPv6 HCS error: 0x%x 0x%x\r\n", plhcs, hcs);
+			ping_error(ping_args, "IPv6 HCS error: 0x%x 0x%x\r\n", plhcs, hcs);
 			delta_t = 0;
 			goto close_end;
 		}
@@ -475,16 +477,17 @@ wait_for_data:
 		}
 	}
 	if (pllen != len) {
-		mosh_error("Expected length %d, got %d", len, pllen);
+		ping_error(ping_args, "Expected length %d, got %d", len, pllen);
 		delta_t = 0;
 		goto close_end;
 	}
 
 	/* Result */
-	mosh_print(
+	ping_print(
+		ping_args,
 		"Pinging %s results: time=%d.%03dsecs, payload sent: %d, payload received %d",
-		ping_argv.target_name, (uint32_t)(delta_t) / 1000,
-		(uint32_t)(delta_t) % 1000, ping_argv.len, dpllen);
+		ping_args->target_name, (uint32_t)(delta_t) / 1000,
+		(uint32_t)(delta_t) % 1000, ping_args->len, dpllen);
 
 close_end:
 	(void)close(fd);
@@ -494,10 +497,10 @@ close_end:
 
 /*****************************************************************************/
 
-static void icmp_ping_tasks_execute(void)
+static void icmp_ping_tasks_execute(struct icmp_ping_shell_cmd_argv *ping_args)
 {
-	struct addrinfo *si = ping_argv.src;
-	struct addrinfo *di = ping_argv.dest;
+	struct addrinfo *si = ping_args->src;
+	struct addrinfo *di = ping_args->dest;
 	uint32_t sum = 0;
 	uint32_t count = 0;
 	uint32_t rtt_min = 0xFFFFFFFF;
@@ -506,22 +509,22 @@ static void icmp_ping_tasks_execute(void)
 	enum ping_rai rai;
 	uint32_t ping_t;
 
-	for (int i = 0; i < ping_argv.count; i++) {
+	for (int i = 0; i < ping_args->count; i++) {
 		rai = PING_RAI_NONE;
-		if (ping_argv.rai) {
-			if (i == ping_argv.count - 1) {
+		if (ping_args->rai) {
+			if (i == ping_args->count - 1) {
 				/* For last packet */
 				rai = PING_RAI_LAST_PACKET;
 			} else {
 				rai = PING_RAI_ONGOING;
 			}
 		}
-		ping_t = send_ping_wait_reply(rai);
+		ping_t = send_ping_wait_reply(ping_args, rai);
 
-		k_poll_signal_check(&mosh_signal, &set, &res);
-		if (set && res == MOSH_SIGNAL_KILL) {
-			k_poll_signal_reset(&mosh_signal);
-			mosh_error("KILL signal received - exiting");
+		k_poll_signal_check(ping_args->kill_signal, &set, &res);
+		if (set) {
+			k_poll_signal_reset(ping_args->kill_signal);
+			ping_error(ping_args, "KILL signal received - exiting");
 			break;
 		}
 
@@ -531,29 +534,31 @@ static void icmp_ping_tasks_execute(void)
 			rtt_max = MAX(rtt_max, ping_t);
 			rtt_min = MIN(rtt_min, ping_t);
 		}
-		k_sleep(K_MSEC(ping_argv.interval));
+		k_sleep(K_MSEC(ping_args->interval));
 	}
 
 	freeaddrinfo(si);
 	freeaddrinfo(di);
 
-	uint32_t lost = ping_argv.count - count;
+	uint32_t lost = ping_args->count - count;
 
-	mosh_print("Ping statistics for %s:", ping_argv.target_name);
-	mosh_print(
+	ping_print(ping_args, "Ping statistics for %s:", ping_args->target_name);
+	ping_print(
+		ping_args,
 		"    Packets: Sent = %d, Received = %d, Lost = %d (%d%% loss)",
-		ping_argv.count,
+		ping_args->count,
 		count,
 		lost,
-		lost * 100 / ping_argv.count);
+		lost * 100 / ping_args->count);
 
 	if (count > 0) {
-		mosh_print("Approximate round trip times in milli-seconds:");
-		mosh_print(
+		ping_print(ping_args, "Approximate round trip times in milli-seconds:");
+		ping_print(
+			ping_args,
 			"    Minimum = %dms, Maximum = %dms, Average = %dms",
 			rtt_min, rtt_max, sum / count);
 	}
-	mosh_print("Pinging DONE");
+	ping_print(ping_args, "Pinging DONE");
 }
 
 /*****************************************************************************/
@@ -596,6 +601,7 @@ void icmp_ping_cmd_defaults_set(struct icmp_ping_shell_cmd_argv *ping_args)
 {
 	memset(ping_args, 0, sizeof(struct icmp_ping_shell_cmd_argv));
 	/* ping_args->dest = NULL; */
+	ping_args->kill_signal = &mosh_signal;
 	ping_args->count = ICMP_PARAM_COUNT_DEFAULT;
 	ping_args->interval = ICMP_PARAM_INTERVAL_DEFAULT;
 	ping_args->timeout = ICMP_PARAM_TIMEOUT_DEFAULT;
@@ -615,12 +621,13 @@ int icmp_ping_start(struct icmp_ping_shell_cmd_argv *ping_args)
 	char *service = NULL;
 	bool set_flags = false;
 	int ret = 0;
-	struct pdp_context_info_array pdp_context_info_tbl = { 0 };
+	struct pdp_context_info_array pdp_context_info_tbl;
+	struct icmp_ping_shell_cmd_argv ping_argv;
 
 	/* All good for args, get the current connection info and start the ping: */
 	ret = link_api_pdp_contexts_read(&pdp_context_info_tbl);
 	if (ret) {
-		mosh_error("cannot read current connection info: %d", ret);
+		ping_error(ping_args, "cannot read current connection info: %d", ret);
 		return -1;
 	}
 	if (pdp_context_info_tbl.size > 0) {
@@ -639,12 +646,12 @@ int icmp_ping_start(struct icmp_ping_shell_cmd_argv *ping_args)
 				ping_args, &pdp_context_info_tbl);
 
 			if (!found) {
-				mosh_error("cannot find CID: %d", ping_args->cid);
+				ping_error(ping_args, "cannot find CID: %d", ping_args->cid);
 				goto exit;
 			}
 		}
 	} else {
-		mosh_error("cannot read current connection info");
+		ping_error(ping_args, "cannot read current connection info");
 		goto exit;
 	}
 
@@ -656,7 +663,8 @@ int icmp_ping_start(struct icmp_ping_shell_cmd_argv *ping_args)
 	uint32_t ipv4_max_payload_len = ping_args->mtu - ICMP_IPV4_HDR_LEN - ICMP_HDR_LEN;
 
 	if (!ping_args->force_ipv6 && ping_args->len > ipv4_max_payload_len) {
-		mosh_warn(
+		ping_warn(
+			ping_args,
 			"Payload size exceeds the link limits: MTU %d - headers %d = %d ",
 			ping_args->force_ipv6,
 			(ICMP_IPV4_HDR_LEN - ICMP_HDR_LEN),
@@ -667,7 +675,7 @@ int icmp_ping_start(struct icmp_ping_shell_cmd_argv *ping_args)
 	/* Finally copy args in local storage here and start pinging */
 	memcpy(&ping_argv, ping_args, sizeof(struct icmp_ping_shell_cmd_argv));
 
-	mosh_print("Initiating ping to: %s", ping_argv.target_name);
+	ping_print(&ping_argv, "Initiating ping to: %s", ping_argv.target_name);
 
 	/* Sets getaddrinfo hints by using current host address(es): */
 	struct addrinfo hints = {
@@ -700,7 +708,7 @@ int icmp_ping_start(struct icmp_ping_shell_cmd_argv *ping_args)
 
 	st = getaddrinfo(src_ipv_addr, service, &hints, &res);
 	if (st != 0) {
-		mosh_error("getaddrinfo(src) error: %d", st);
+		ping_error(&ping_argv, "getaddrinfo(src) error: %d", st);
 		return -st;
 	}
 	ping_argv.src = res;
@@ -711,15 +719,15 @@ int icmp_ping_start(struct icmp_ping_shell_cmd_argv *ping_args)
 	st = getaddrinfo(ping_argv.target_name, service, &hints, &res);
 
 	if (st != 0) {
-		mosh_error("getaddrinfo(dest) error: %d", st);
-		mosh_error("Cannot resolve remote host\r\n");
+		ping_error(&ping_argv, "getaddrinfo(dest) error: %d", st);
+		ping_error(&ping_argv, "Cannot resolve remote host\r\n");
 		freeaddrinfo(ping_argv.src);
 		return -st;
 	}
 	ping_argv.dest = res;
 
 	if (ping_argv.src->ai_family != ping_argv.dest->ai_family) {
-		mosh_error("Source/Destination address family error");
+		ping_error(&ping_argv, "Source/Destination address family error");
 		freeaddrinfo(ping_argv.dest);
 		freeaddrinfo(ping_argv.src);
 		return -1;
@@ -728,23 +736,24 @@ int icmp_ping_start(struct icmp_ping_shell_cmd_argv *ping_args)
 	struct sockaddr *sa;
 
 	sa = ping_argv.src->ai_addr;
-	mosh_print("Source IP addr: %s", net_utils_sckt_addr_ntop(sa));
+	ping_print(&ping_argv, "Source IP addr: %s", net_utils_sckt_addr_ntop(sa));
 	sa = ping_argv.dest->ai_addr;
-	mosh_print("Destination IP addr: %s", net_utils_sckt_addr_ntop(sa));
+	ping_print(&ping_argv, "Destination IP addr: %s", net_utils_sckt_addr_ntop(sa));
 
 	/* Now we can check the max payload len for IPv6: */
 	uint32_t ipv6_max_payload_len = ping_argv.mtu - ICMP_IPV6_HDR_LEN - ICMP_HDR_LEN;
 
 	if (ping_argv.src->ai_family == AF_INET6 &&
 	    ping_argv.len > ipv6_max_payload_len) {
-		mosh_warn(
+		ping_warn(
+			&ping_argv,
 			"Payload size exceeds the link limits: MTU %d - headers %d = %d ",
 			ping_argv.mtu, (ICMP_IPV4_HDR_LEN - ICMP_HDR_LEN),
 			ipv6_max_payload_len);
 		/* Continue still: */
 	}
 
-	icmp_ping_tasks_execute();
+	icmp_ping_tasks_execute(&ping_argv);
 	return 0;
 exit:
 	if (pdp_context_info_tbl.array != NULL) {

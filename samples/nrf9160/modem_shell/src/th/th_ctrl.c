@@ -6,6 +6,7 @@
 
 #include <zephyr.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 #include <shell/shell.h>
 #include "utils/str_utils.h"
@@ -15,14 +16,17 @@
 #include <sys/select.h>
 #include <iperf_api.h>
 #endif
+#if defined(CONFIG_MOSH_PING)
+#include "icmp_ping_shell.h"
+#endif
 
 #define TH_RESPONSE_BUFFER_SIZE 10240
 
-#define TH_1_STACK_SIZE 6144
+#define TH_1_STACK_SIZE 8190
 #define TH_1_PRIORITY 5
 K_THREAD_STACK_DEFINE(th_stack_area_1, TH_1_STACK_SIZE);
 
-#define TH_2_STACK_SIZE 6144
+#define TH_2_STACK_SIZE 8190
 #define TH_2_PRIORITY 5
 K_THREAD_STACK_DEFINE(th_stack_area_2, TH_2_STACK_SIZE);
 
@@ -97,7 +101,7 @@ static void th_ctrl_util_duplicate_argv_free(int argc, char **argv)
 static void th_ctrl_work_handler(struct k_work *work_item)
 {
 	struct th_ctrl_data *data = CONTAINER_OF(work_item, struct th_ctrl_data, work);
-	int ret;
+	int ret = -1;
 
 	mosh_print("Starting thread #%d", data->th_nbr);
 
@@ -106,16 +110,39 @@ static void th_ctrl_work_handler(struct k_work *work_item)
 	if (data->background) {
 		assert(data->results_str != NULL);
 
-		ret = iperf_main(data->argc, data->argv, data->results_str,
-				 TH_RESPONSE_BUFFER_SIZE, &(data->kill_signal));
+#if defined(CONFIG_MOSH_IPERF3)
+		if (!strcmp(data->argv[0], "iperf3")) {
+			ret = iperf_main(data->argc, data->argv, data->results_str,
+					TH_RESPONSE_BUFFER_SIZE, &(data->kill_signal));
+		}
+#endif
+#if defined(CONFIG_MOSH_PING)
+		if (!strcmp(data->argv[0], "ping")) {
+			ret = icmp_ping_shell_th(data->shell, data->argc, data->argv,
+					      data->results_str,
+					      TH_RESPONSE_BUFFER_SIZE,
+					      &(data->kill_signal));
+		}
+#endif
 	} else {
 		assert(data->results_str == NULL);
-		ret = iperf_main(data->argc, data->argv, NULL, 0,
-				 &(data->kill_signal));
+
+#if defined(CONFIG_MOSH_IPERF3)
+		if (!strcmp(data->argv[0], "iperf3")) {
+			ret = iperf_main(data->argc, data->argv, NULL, 0, &(data->kill_signal));
+		}
+#endif
+#if defined(CONFIG_MOSH_PING)
+		if (!strcmp(data->argv[0], "ping")) {
+			ret = icmp_ping_shell_th(data->shell, data->argc, data->argv,
+					      NULL, 0,
+					      &(data->kill_signal));
+		}
+#endif
 	}
 
 	mosh_print("--------------------------------------------------");
-	mosh_print("iperf_main returned %d from a thread #%d", ret, data->th_nbr);
+	mosh_print("%s returned %d from a thread #%d", data->argv[0], ret, data->th_nbr);
 	if (data->background) {
 		mosh_print("Use shell command to print results: \"th results %d\"", data->th_nbr);
 	}
@@ -264,9 +291,21 @@ static void th_ctrl_data_start(struct th_ctrl_data *data,
 
 void th_ctrl_start(const struct shell *shell, size_t argc, char **argv, bool is_background)
 {
-	/* Only iperf3 currently supported */
-	if (strcmp(argv[1], "iperf3") != 0) {
-		mosh_error("Only iperf3 is supported currently.");
+	bool start = false;
+
+	/* Only iperf3 and ping are currently supported */
+#if defined(CONFIG_MOSH_IPERF3)
+	if (!strcmp(argv[1], "iperf3")) {
+		start = true;
+	}
+#endif
+#if defined(CONFIG_MOSH_PING)
+	if (!strcmp(argv[1], "ping")) {
+		start = true;
+	}
+#endif
+	if (!start) {
+		mosh_error("Cannot start a thread: command %s", argv[1]);
 		return;
 	}
 
