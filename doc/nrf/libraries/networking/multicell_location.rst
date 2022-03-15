@@ -38,7 +38,7 @@ To use the location services, see the respective documentation for account setup
    To start using the Multicell location library with nRF Cloud, you must perform either of the following actions:
 
       * Delete the device from nRF Cloud and reprovision it with a new ES256 device certificate. See :ref:`nrf9160_ug_updating_cloud_certificate` for more information.
-      * Register a separate key for JWT signing as described in `Securely Generating Credentials on the nRF9160`_ and set :kconfig:`CONFIG_MULTICELL_LOCATION_NRF_CLOUD_JWT_SEC_TAG` accordingly.
+      * Register a separate key for JWT signing as described in `Securely Generating Credentials on the nRF9160`_.
 
 .. reprovision_cert_note_end
 
