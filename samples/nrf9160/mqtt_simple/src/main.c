@@ -11,7 +11,9 @@
 #include <random/rand32.h>
 #include <net/mqtt.h>
 #include <net/socket.h>
+#if defined(CONFIG_NRF_MODEM_LIB)
 #include <nrf_modem_at.h>
+#endif /* CONFIG_NRF_MODEM_LIB */
 #include <modem/lte_lc.h>
 #include <logging/log.h>
 #if defined(CONFIG_MODEM_KEY_MGMT)
