@@ -73,27 +73,33 @@ Configuration
 
 |config|
 
+Matter door lock build types
+============================
+
 .. matter_door_lock_sample_configuration_file_types_start
 
 The sample uses different configuration files depending on the supported features.
-The configuration files are automatically attached to the build based on the build type suffix of the file name, such as :file:`_single_image_smp_dfu` in the :file:`prj_single_image_smp_dfu.conf` file.
-To modify the configuration options, apply the modifications to the files with the appropriate suffix.
-See the table for information about available configuration types:
+Configuration files are provided for different build types and they are located in the :file:`configuration/<board_name>` directory.
 
-+----------------------------------+----------------------------------------------------------+-----------------------------+------------------------------+
-| Config suffix                    | Enabled feature                                          | Enabling build option       | Supported boards             |
-+==================================+==========================================================+=============================+==============================+
-| none                             | none (basic build)                                       | ``-DBUILD_WITH_DFU=OFF``    | ``nrf52840dk_nrf52840``      |
-|                                  |                                                          |                             | ``nrf5340dk_nrf5340_cpuapp`` |
-+----------------------------------+----------------------------------------------------------+-----------------------------+------------------------------+
-| :file:`_single_image_matter_dfu` | Single-image Device Firmware Upgrade over Matter         | ``-DBUILD_WITH_DFU=MATTER`` | ``nrf52840dk_nrf52840``      |
-+----------------------------------+----------------------------------------------------------+-----------------------------+------------------------------+
-| :file:`_multi_image_matter_dfu`  | Multi-image Device Firmware Upgrade over Matter          | ``-DBUILD_WITH_DFU=MATTER`` | ``nrf5340dk_nrf5340_cpuapp`` |
-+----------------------------------+----------------------------------------------------------+-----------------------------+------------------------------+
-| :file:`_single_image_smp_dfu`    | Single-image Device Firmware Upgrade over Matter and SMP | ``-DBUILD_WITH_DFU=BLE``    | ``nrf52840dk_nrf52840``      |
-+----------------------------------+----------------------------------------------------------+-----------------------------+------------------------------+
-| :file:`_multi_image_smp_dfu`     | Multi-image Device Firmware Upgrade over Matter and SMP  | ``-DBUILD_WITH_DFU=BLE``    | ``nrf5340dk_nrf5340_cpuapp`` |
-+----------------------------------+----------------------------------------------------------+-----------------------------+------------------------------+
+The :file:`prj.conf` file represents a ``debug`` build type.
+Other build types are covered by dedicated files with the build type added as a suffix to the ``prj`` part, as per the following list.
+For example, the ``release`` build type file name is :file:`prj_release.conf`.
+If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
+
+.. include:: /gs_modifying.rst
+   :start-after: build_types_overview_start
+   :end-before: build_types_overview_end
+
+Before you start testing the application, you can select one of the build types supported by the sample.
+This sample supports the following build types, depending on the selected board:
+
+* ``debug`` -- Debug version of the application - can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
+* ``release`` -- Release version of the application - can be used to enable only the necessary application functionalities to optimize its performance.
+* ``no_dfu`` -- Debug version of the application without Device Firmware Upgrade feature support - can be used only for the nRF52840 DK and nRF5340 DK, as those platforms have DFU enabled by default.
+
+.. note::
+    `Selecting a build type`_ is optional.
+    The ``debug`` build type is used by default if no build type is explicitly selected.
 
 .. matter_door_lock_sample_configuration_file_types_end
 
@@ -104,6 +110,7 @@ Device Firmware Upgrade support
 
 .. note::
    You can enable over-the-air Device Firmware Upgrade only on hardware platforms that have external flash memory.
+   Currently only nRF52840 DK and nRF5340 DK support Device Firmware Upgrade feature.
 
 The sample supports over-the-air (OTA) device firmware upgrade (DFU) using one of the two following protocols:
 
@@ -115,17 +122,17 @@ The sample supports over-the-air (OTA) device firmware upgrade (DFU) using one o
 In both cases, MCUboot secure bootloader is used to apply the new firmware image.
 
 The DFU over Matter is enabled by default.
-To configure the sample to support the DFU over Matter and SMP, use the ``-DBUILD_WITH_DFU=BLE`` build flag during the build process.
-To configure the sample to disable the DFU and the secure bootloader, use the ``-DBUILD_WITH_DFU=OFF`` build flag during the build process.
+To configure the sample to support the DFU over Matter and SMP, use the ``-DOVERLAY_CONFIG=../../overlay-smp_dfu.conf`` build flag during the build process.
+To configure the sample to disable the DFU and the secure bootloader, use the ``-DCONF_FILE=prj_no_dfu.conf`` build flag during the build process.
 
 See :ref:`cmake_options` for instructions on how to add these options to your build.
 
-When building on the command line, run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_), and *dfu_method* replaced with the desired DFU method:
+When building on the command line, run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_), and *dfu_build_flag* replaced with the desired DFU build flag:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b *build_target* -- -DBUILD_WITH_DFU=\ *dfu_method*
+   west build -b *build_target* -- *dfu_build_flag*
 
 .. matter_door_lock_sample_build_with_dfu_end
 
@@ -140,7 +147,7 @@ Low-power build
 To configure the sample to consume less power, use the low-power build.
 It enables Thread's Sleepy End Device mode and disables debug features, such as the UART console or the **LED 1** usage.
 
-To trigger the low-power build, use the ``-DOVERLAY_CONFIG="overlay-low_power.conf"`` option when building the sample.
+To trigger the low-power build, use the ``-DOVERLAY_CONFIG="../../overlay-low_power.conf"`` option when building the sample.
 See :ref:`cmake_options` for instructions on how to add this option to your build.
 
 When building on the command line, run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_):
@@ -148,7 +155,7 @@ When building on the command line, run the following command with *build_target*
 .. parsed-literal::
    :class: highlight
 
-   west build -b *build_target* -- -DOVERLAY_CONFIG="overlay-low_power.conf"
+   west build -b *build_target* -- -DOVERLAY_CONFIG="../../overlay-low_power.conf"
 
 User interface
 **************
@@ -213,6 +220,42 @@ Building and running
 .. include:: /includes/build_and_run.txt
 
 See `Configuration`_ for information about building the sample with the DFU support.
+
+Selecting a build type
+======================
+
+Before you start testing the application, you can select one of the `Matter door lock build types`_, depending on your building method.
+
+Selecting a build type in |VSC|
+-------------------------------
+
+.. include:: /gs_modifying.rst
+   :start-after: build_types_selection_vsc_start
+   :end-before: build_types_selection_vsc_end
+
+Selecting a build type from command line
+----------------------------------------
+
+.. include:: /gs_modifying.rst
+   :start-after: build_types_selection_cmd_start
+   :end-before: For example, you can replace the
+
+For example, you can replace the *selected_build_type* variable to build the ``release`` firmware for ``nrf52840dk_nrf52840`` by running the following command in the project directory:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b nrf52840dk_nrf52840 -d build_nrf52840dk_nrf52840 -- -DCONF_FILE=prj_release.conf
+
+The ``build_nrf52840dk_nrf52840`` parameter specifies the output directory for the build files.
+
+.. note::
+   If the selected board does not support the selected build type, the build is interrupted.
+   For example, if the ``shell`` build type is not supported by the selected board, the following notification appears:
+
+   .. code-block:: console
+
+      File not found: ./ncs/nrf/samples/matter/lock/configuration/nrf52840dk_nrf52840/prj_shell.conf
 
 Testing
 =======
