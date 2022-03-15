@@ -213,7 +213,7 @@ static void start_identifying(zb_bufid_t bufid)
 			zb_bdb_finding_binding_target_cancel();
 		}
 	} else {
-		LOG_WRN("Device not in a network - cannot identify itself");
+		LOG_WRN("Device not in a network - cannot enter identify mode");
 	}
 }
 
