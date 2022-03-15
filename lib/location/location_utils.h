@@ -7,6 +7,8 @@
 #ifndef LOCATION_UTILS_H
 #define LOCATION_UTILS_H
 
+#include <modem/location.h>
+
 /** Modem parameters. */
 struct location_utils_modem_params_info {
 	/** Mobile Country Code. */
@@ -52,5 +54,11 @@ int location_utils_modem_params_read(struct location_utils_modem_params_info *mo
  * @return JWT buffer if generation was successful. NULL if generation failed.
  */
 const char *location_utils_nrf_cloud_jwt_generate(void);
+
+/**
+ * @brief Get current system time and fill that into a given location_datetime.
+ *
+ */
+void location_utils_systime_to_location_datetime(struct location_datetime *datetime);
 
 #endif /* LOCATION_UTILS_H */

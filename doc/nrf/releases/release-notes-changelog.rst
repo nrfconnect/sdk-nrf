@@ -280,6 +280,16 @@ Libraries for networking
 
     * Validation of bootloader FOTA updates.
 
+Modem libraries
+---------------
+
+* Updated:
+
+  * :ref:`lib_location`:
+
+    * Current system time is attached to the ``location_datetime`` parameter of the location request response with Wi-Fi and cellular methods.
+      The timestamp comes from the moment of scanning or neighbor measurements.
+
 Other libraries
 ---------------
 

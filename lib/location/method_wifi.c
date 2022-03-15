@@ -29,7 +29,6 @@ struct method_wifi_start_work_args {
 	struct k_work work_item;
 	struct location_wifi_config wifi_config;
 	int64_t starting_uptime_ms;
-
 };
 
 static struct net_if *wifi_iface;
@@ -169,6 +168,9 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 	if (!running) {
 		goto end;
 	}
+
+	/* Scanning done at this point of time. Store current time to response. */
+	location_utils_systime_to_location_datetime(&location_result.datetime);
 
 	if (!location_utils_is_default_pdn_active()) {
 		/* Not worth to start trying to fetch with the REST api over cellular.
