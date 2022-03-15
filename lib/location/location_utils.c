@@ -10,10 +10,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <posix/time.h>
+
 #include <nrf_modem_at.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 #include <net/nrf_cloud.h>
+#include <modem/location.h>
 
 #include "location_utils.h"
 
@@ -114,4 +117,34 @@ const char *location_utils_nrf_cloud_jwt_generate(void)
 	}
 
 	return jwt_buf;
+}
+
+void location_utils_systime_to_location_datetime(struct location_datetime *datetime)
+{
+	struct timespec tp;
+	struct tm ltm = { 0 };
+
+	__ASSERT_NO_MSG(datetime != NULL);
+
+	clock_gettime(CLOCK_REALTIME, &tp);
+	gmtime_r(&tp.tv_sec, &ltm);
+
+	/* System time should have been set when date_time lib is in use */
+	if (IS_ENABLED(CONFIG_DATE_TIME)) {
+		datetime->valid = true;
+	} else {
+		datetime->valid = false;
+	}
+
+	/* Relative to 1900, as per POSIX */
+	datetime->year = 1900 + ltm.tm_year;
+
+	/* Range is 0-11, as per POSIX */
+	datetime->month = ltm.tm_mon + 1;
+
+	datetime->day = ltm.tm_mday;
+	datetime->hour = ltm.tm_hour;
+	datetime->minute = ltm.tm_min;
+	datetime->second = ltm.tm_sec;
+	datetime->ms = tp.tv_nsec / 1000000;
 }
