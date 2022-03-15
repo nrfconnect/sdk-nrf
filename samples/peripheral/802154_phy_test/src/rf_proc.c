@@ -395,16 +395,45 @@ void ptt_rf_set_short_address_ext(const uint8_t *short_address)
 	nrf_802154_short_address_set(short_address);
 }
 
+/**@brief Converts IEEE 802.15.4-compliant CCA mode value used by the nRF 802.15.4 Radio Driver.
+ * @param[in]  ieee802154_cca_mode  CCA mode value as specified by IEEE Std. 802.15.4-2015
+ *                                  chapter 10.2.7.
+ * @param[out] drv_cca_mode         CCA mode value used by nRF 802.15.4 Radio Driver.
+ *
+ * @retval true  Conversion successful
+ * @retval false Requested value cannot be converted.
+ */
+static bool convert_cca_mode_ieee802154_to_nrf_802154(uint8_t ieee802154_cca_mode,
+				uint8_t *drv_cca_mode)
+{
+	switch (ieee802154_cca_mode) {
+	case 1:
+		*drv_cca_mode = NRF_RADIO_CCA_MODE_ED;
+		break;
+	case 2:
+		*drv_cca_mode = NRF_RADIO_CCA_MODE_CARRIER;
+		break;
+	case 3:
+		*drv_cca_mode = NRF_RADIO_CCA_MODE_CARRIER_AND_ED;
+		break;
+	default:
+		return false;
+	}
+
+	return true;
+}
+
 bool ptt_rf_cca_ext(uint8_t mode)
 {
 	bool ret = false;
+	uint8_t drv_cca_mode = NRF_RADIO_CCA_MODE_ED;
 
-	if ((mode >= NRF_RADIO_CCA_MODE_CARRIER) && (mode <= NRF_RADIO_CCA_MODE_CARRIER_OR_ED)) {
+	if (convert_cca_mode_ieee802154_to_nrf_802154(mode, &drv_cca_mode)) {
 		nrf_802154_cca_cfg_t cca_cfg;
 
 		nrf_802154_cca_cfg_get(&cca_cfg);
 
-		cca_cfg.mode = mode;
+		cca_cfg.mode = drv_cca_mode;
 
 		nrf_802154_cca_cfg_set(&cca_cfg);
 
