@@ -134,6 +134,9 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 		return;
 	}
 
+	/* NCELLMEAS done at this point of time. Store current time to response. */
+	location_utils_systime_to_location_datetime(&location_result.datetime);
+
 	/* enum multicell_service can be used directly because of BUILD_ASSERT */
 	ret = multicell_location_get(cellular_config.service, &cell_data, &location);
 	if (ret) {
