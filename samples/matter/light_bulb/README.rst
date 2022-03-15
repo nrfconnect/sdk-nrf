@@ -71,6 +71,9 @@ Configuration
 
 |config|
 
+Matter light bulb build types
+=============================
+
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_configuration_file_types_start
     :end-before: matter_door_lock_sample_configuration_file_types_end
@@ -133,6 +136,42 @@ Building and running
 .. include:: /includes/build_and_run.txt
 
 See `Configuration`_ for information about building the sample with the DFU support.
+
+Selecting a build type
+======================
+
+Before you start testing the application, you can select one of the `Matter light bulb build types`_, depending on your building method.
+
+Selecting a build type in |VSC|
+-------------------------------
+
+.. include:: /gs_modifying.rst
+   :start-after: build_types_selection_vsc_start
+   :end-before: build_types_selection_vsc_end
+
+Selecting a build type from command line
+----------------------------------------
+
+.. include:: /gs_modifying.rst
+   :start-after: build_types_selection_cmd_start
+   :end-before: For example, you can replace the
+
+For example, you can replace the *selected_build_type* variable to build the ``release`` firmware for ``nrf52840dk_nrf52840`` by running the following command in the project directory:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b nrf52840dk_nrf52840 -d build_nrf52840dk_nrf52840 -- -DCONF_FILE=prj_release.conf
+
+The ``build_nrf52840dk_nrf52840`` parameter specifies the output directory for the build files.
+
+.. note::
+   If the selected board does not support the selected build type, the build is interrupted.
+   For example, if the ``shell`` build type is not supported by the selected board, the following notification appears:
+
+   .. code-block:: console
+
+      File not found: ./ncs/nrf/samples/matter/light_bulb/configuration/nrf52840dk_nrf52840/prj_shell.conf
 
 Testing
 =======

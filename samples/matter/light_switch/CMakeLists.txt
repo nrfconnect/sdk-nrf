@@ -6,6 +6,8 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
+set(APPLICATION_CONFIG_DIR "configuration/\${BOARD}")
+
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(matter-light-switch)
