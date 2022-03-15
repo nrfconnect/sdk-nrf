@@ -188,13 +188,10 @@ nRF9160 samples
     * Enabled building of bootloader FOTA update files.
     * Corrected handling of the bootloader FOTA updates.
 
-  * :ref:`lib_lwm2m_client_utils` library:
-
-    * Updated the library to store credentials and server settings permanently on bootstrap.
-
   * :ref:`lwm2m_client` sample:
 
     * Reworked the retry logic so that the sample can fall back to bootstrap mode and need not always restart the LTE connection.
+      Added :ref:`state_diagram` to the sample documentation.
 
   * :ref:`download_sample` sample:
 
@@ -257,42 +254,48 @@ Bluetooth libraries and services
 Libraries for networking
 ------------------------
 
-* :ref:`lib_nrf_cloud_rest` library:
+* Updated:
 
-  * Added JSON Web Token (JWT) autogeneration feature.
-    If enabled, the nRF Cloud REST library automatically generates a JWT if none is provided by the user when making REST requests.
+  * :ref:`lib_nrf_cloud_rest` library:
 
-  * Updated:
+    * Added JSON Web Token (JWT) autogeneration feature.
+      If enabled, the nRF Cloud REST library automatically generates a JWT if none is provided by the user when making REST requests.
 
-    * During the connection process, shadow data is sent to the application even if no "config" section is present.
-    * The application can now send shadow updates earlier in the connection process.
-    * Centralized error handling.
-      Changes to error return values.
+    * Updated:
 
-* :ref:`lib_download_client` library:
+      * During the connection process, shadow data is sent to the application even if no "config" section is present.
+      * The application can now send shadow updates earlier in the connection process.
+      * Centralized error handling.
+        Changes to error return values.
 
-  * Fixed an issue where downloads of COAP URIs would fail when they contained multiple path elements.
+  * :ref:`lib_download_client` library:
 
-* :ref:`lib_fota_download` library:
+    * Fixed an issue where downloads of COAP URIs would fail when they contained multiple path elements.
 
-  * Added:
+  * :ref:`lib_fota_download` library:
 
-    * :c:func:`fota_download_s0_active_get` function that gets the active B1 slot.
+    * Added:
 
-* :ref:`lib_nrf_cloud` library:
+      * :c:func:`fota_download_s0_active_get` function that gets the active B1 slot.
 
-  * Added:
+  * :ref:`lib_nrf_cloud` library:
 
-    * :c:func:`nrf_cloud_bootloader_fota_slot_set` function that sets the active bootloader slot flag during bootloader FOTA updates.
-    * :c:func:`nrf_cloud_pending_fota_job_process` function that processes the state of pending FOTA jobs.
+    * Added:
 
-  * Fixed:
+      * :c:func:`nrf_cloud_bootloader_fota_slot_set` function that sets the active bootloader slot flag during bootloader FOTA updates.
+      * :c:func:`nrf_cloud_pending_fota_job_process` function that processes the state of pending FOTA jobs.
 
-    * Validation of bootloader FOTA updates.
+    * Fixed:
 
-* :ref:`lib_aws_iot` library:
+      * Validation of bootloader FOTA updates.
 
-  * Renamed ``aws_iot_topic_type`` to ``aws_iot_shadow_topic_type`` and removed ``AWS_IOT_SHADOW_TOPIC_UNKNOWN``.
+  * :ref:`lib_aws_iot` library:
+
+    * Renamed ``aws_iot_topic_type`` to ``aws_iot_shadow_topic_type`` and removed ``AWS_IOT_SHADOW_TOPIC_UNKNOWN``.
+
+  * :ref:`lib_lwm2m_client_utils` library:
+
+    * Updated the library to store credentials and server settings permanently on bootstrap.
 
 Modem libraries
 ---------------

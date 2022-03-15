@@ -107,6 +107,21 @@ The following LwM2M objects are implemented in this sample:
       - No
       - Yes
 
+.. _state_diagram:
+
+State diagram
+=============
+
+The following diagram shows states and transitions for the LwM2M Client:
+
+.. figure:: /images/lwm2m_client_state_diagram.svg
+   :alt: LwM2M client state diagram
+
+When the device boots up, the sample first connects to the LTE network and initiates the LwM2M connection.
+If there are errors, in most error cases, the sample tries to reconnect the LwM2M client.
+In the case of network errors, it tries to reconnect the LTE network.
+When the number of retries to restore the network connection exceeds three times, the sample falls back to the bootstrap.
+This enables the recovery in the cases where the LwM2M client credentials are outdated or removed from the server.
 
 .. _dtls_support:
 
