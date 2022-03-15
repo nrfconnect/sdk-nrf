@@ -13,6 +13,7 @@
 #include "link_api.h"
 #include "mosh_print.h"
 #include "icmp_ping.h"
+#include "icmp_ping_print.h"
 #include "icmp_ping_shell.h"
 
 static const char icmp_ping_shell_cmd_usage_str[] =
@@ -56,11 +57,25 @@ static void icmp_ping_shell_usage_print(void)
 
 int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 {
+	return icmp_ping_shell_th(shell, argc, argv, NULL, 0, NULL);
+}
+
+int icmp_ping_shell_th(const struct shell *shell, size_t argc, char **argv,
+	char *print_buf, int print_buf_len, struct k_poll_signal *kill_signal)
+{
 	struct icmp_ping_shell_cmd_argv ping_args;
 	int flag, dest_len;
 
 	icmp_ping_cmd_defaults_set(&ping_args);
 
+#if defined(CONFIG_MOSH_WORKER_THREADS)
+	ping_args.print_buf = print_buf;
+	ping_args.print_buf_len = print_buf_len;
+
+	if (kill_signal != NULL) {
+		ping_args.kill_signal = kill_signal;
+	}
+#endif
 	if (argc < 3) {
 		goto show_usage;
 	}
@@ -74,7 +89,7 @@ int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 		case 'd': /* destination */
 			dest_len = strlen(optarg);
 			if (dest_len > ICMP_MAX_URL) {
-				mosh_error("too long destination name");
+				ping_error(&ping_args, "too long destination name");
 				goto show_usage;
 			}
 			strcpy(ping_args.target_name, optarg);
@@ -82,7 +97,8 @@ int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 		case 't': /* timeout */
 			ping_args.timeout = atoi(optarg);
 			if (ping_args.timeout == 0) {
-				mosh_warn(
+				ping_warn(
+					&ping_args,
 					"timeout not an integer (> 0), defaulting to %d msecs",
 					ICMP_PARAM_TIMEOUT_DEFAULT);
 				ping_args.timeout = ICMP_PARAM_TIMEOUT_DEFAULT;
@@ -91,14 +107,15 @@ int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 		case 'I': /* PDN CID */
 			ping_args.cid = atoi(optarg);
 			if (ping_args.cid == 0) {
-				mosh_warn("CID not an integer (> 0), default context used");
+				ping_warn(&ping_args, "CID not an integer (> 0), default context used");
 				ping_args.cid = MOSH_ARG_NOT_SET;
 			}
 			break;
 		case 'c': /* count */
 			ping_args.count = atoi(optarg);
 			if (ping_args.count == 0) {
-				mosh_warn(
+				ping_warn(
+					&ping_args,
 					"count not an integer (> 0), defaulting to %d",
 					ICMP_PARAM_COUNT_DEFAULT);
 				ping_args.timeout = ICMP_PARAM_COUNT_DEFAULT;
@@ -107,7 +124,8 @@ int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 		case 'i': /* interval */
 			ping_args.interval = atoi(optarg);
 			if (ping_args.interval == 0) {
-				mosh_warn(
+				ping_warn(
+					&ping_args,
 					"interval not an integer (> 0), defaulting to %d",
 					ICMP_PARAM_INTERVAL_DEFAULT);
 				ping_args.interval = ICMP_PARAM_INTERVAL_DEFAULT;
@@ -116,7 +134,8 @@ int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 		case 'l': /* payload length */
 			ping_args.len = atoi(optarg);
 			if (ping_args.len > ICMP_IPV4_MAX_LEN) {
-				mosh_error(
+				ping_error(
+					&ping_args,
 					"Payload size exceeds the ultimate max limit %d",
 					ICMP_IPV4_MAX_LEN);
 				goto show_usage;
@@ -136,7 +155,8 @@ int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 			 * to normal mode since changing it.
 			 */
 			if (!rai_status) {
-				mosh_warn(
+				ping_warn(
+					&ping_args,
 					"RAI is requested but RAI is disabled.\n"
 					"Use 'link rai' command to enable it for ping usage.");
 			}
@@ -150,7 +170,7 @@ int icmp_ping_shell(const struct shell *shell, size_t argc, char **argv)
 
 	/* Check that all mandatory args were given: */
 	if (ping_args.target_name == NULL) {
-		mosh_error("-d destination, MUST be given. See usage:");
+		ping_error(&ping_args, "-d destination, MUST be given. See usage:");
 		goto show_usage;
 	}
 
