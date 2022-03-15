@@ -61,6 +61,16 @@ static void sensor_type_sanitize(const struct bt_mesh_sensor_type *sensor_type)
 	}
 }
 
+static void voltage_helper(uint16_t test_value, struct sensor_value *in_value, uint16_t *expected)
+{
+	in_value->val1 = test_value;
+	in_value->val2 = 0;
+	*expected = test_value > 1022 ?
+			test_value == UINT16_MAX ? UINT16_MAX
+			: raw_scalar_value_get(1022, 1, 0, -6)
+			: raw_scalar_value_get(test_value, 1, 0, -6);
+}
+
 static void encoding_checking_proceed(const struct bt_mesh_sensor_type *sensor_type,
 				      const struct sensor_value *value,
 				      const void *expected,
@@ -1265,7 +1275,7 @@ static void electric_current_check(const struct bt_mesh_sensor_type *sensor_type
 static void voltage_check(const struct bt_mesh_sensor_type *sensor_type)
 {
 	struct sensor_value in_value[sensor_type->channel_count];
-	uint16_t test_vector[] = {0, 123, 159, 160, UINT16_MAX};
+	uint16_t test_vector[] = {0, 1, 159, 1000, 1022, 1023, UINT16_MAX};
 
 	memset(in_value, 0, sizeof(in_value));
 
@@ -1273,14 +1283,15 @@ static void voltage_check(const struct bt_mesh_sensor_type *sensor_type)
 		uint16_t expected[sensor_type->channel_count];
 
 		for (int j = 0; j < sensor_type->channel_count; j++) {
-			in_value[j].val1 = test_vector[i] > 159 ?
-					UINT16_MAX : test_vector[i];
-			in_value[j].val2 = 0;
-			expected[j] = test_vector[i] > 159 ?
-				UINT16_MAX : raw_scalar_value_get(test_vector[i], 1, 0, -6);
+			voltage_helper(test_vector[i], &in_value[j], &expected[j]);
 		}
 
 		encoding_checking_proceed(sensor_type, in_value, expected, sizeof(expected));
+		for (int j = 0; j < sensor_type->channel_count; j++) {
+			in_value[j].val1 = test_vector[i] > 1022 ?
+				test_vector[i] == UINT16_MAX ? UINT16_MAX
+				: 1022 : test_vector[i];
+		}
 		decoding_checking_proceed(sensor_type, expected, sizeof(expected), in_value);
 	}
 }
@@ -1326,7 +1337,7 @@ static void average_current_check(const struct bt_mesh_sensor_type *sensor_type)
 static void average_voltage_check(const struct bt_mesh_sensor_type *sensor_type)
 {
 	struct sensor_value in_value[sensor_type->channel_count];
-	uint16_t test_vector_voltage[] = {0, 123, 159, 160, UINT16_MAX};
+	uint16_t test_vector_voltage[] = {0, 1, 159, 1022, 1023, UINT16_MAX};
 
 	memset(in_value, 0, sizeof(in_value));
 
@@ -1344,15 +1355,14 @@ static void average_voltage_check(const struct bt_mesh_sensor_type *sensor_type)
 	} expected;
 
 	for (int i = 0; i < ARRAY_SIZE(test_vector_voltage); i++) {
-		in_value[0].val1 = test_vector_voltage[i] > 159 ?
-				UINT16_MAX : test_vector_voltage[i];
-		in_value[0].val2 = 0;
+		uint16_t tmp;
+
+		voltage_helper(test_vector_voltage[i], &in_value[0], &tmp);
+		expected.expected_voltage = tmp;
 
 		in_value[1].val1 = test_vector_time[i];
 		in_value[1].val2 = 0;
 
-		expected.expected_voltage = test_vector_voltage[i] > 159 ?
-				UINT16_MAX : raw_scalar_value_get(test_vector_voltage[i], 1, 0, -6);
 		expected.expected_time = expected_time[i];
 
 		encoding_checking_proceed(sensor_type, in_value, &expected, sizeof(expected));
@@ -1403,7 +1413,7 @@ static void current_stat_check(const struct bt_mesh_sensor_type *sensor_type)
 static void voltage_stat_check(const struct bt_mesh_sensor_type *sensor_type)
 {
 	struct sensor_value in_value[sensor_type->channel_count];
-	uint16_t test_vector_voltage[] = {0, 123, 159, 160, UINT16_MAX};
+	uint16_t test_vector_voltage[] = {0, 1, 159, 1022, 1023, UINT16_MAX};
 
 	memset(in_value, 0, sizeof(in_value));
 
@@ -1422,12 +1432,10 @@ static void voltage_stat_check(const struct bt_mesh_sensor_type *sensor_type)
 
 	for (int i = 0; i < ARRAY_SIZE(test_vector_voltage); i++) {
 		for (int j = 0; j < sensor_type->channel_count - 1; j++) {
-			in_value[j].val1 = test_vector_voltage[i] > 159 ?
-					UINT16_MAX : test_vector_voltage[i];
-			in_value[j].val2 = 0;
-			expected.expected_voltage[j] = test_vector_voltage[i] > 159 ?
-				UINT16_MAX :
-				raw_scalar_value_get(test_vector_voltage[i], 1, 0, -6);
+			uint16_t tmp;
+
+			voltage_helper(test_vector_voltage[i], &in_value[j], &tmp);
+			expected.expected_voltage[j] = tmp;
 		}
 
 		in_value[sensor_type->channel_count - 1].val1 = test_vector_time[i];
@@ -1474,7 +1482,7 @@ static void rel_runtime_in_current_range_check(const struct bt_mesh_sensor_type 
 static void rel_runtime_in_voltage_range_check(const struct bt_mesh_sensor_type *sensor_type)
 {
 	struct sensor_value in_value[sensor_type->channel_count];
-	uint16_t test_vector_voltage[] = {0, 123, 159, 160, UINT16_MAX};
+	uint16_t test_vector_voltage[] = {0, 1, 159, 1022, 1023, UINT16_MAX};
 	uint8_t test_vector_percentage8[] = {0, 25, 50, 75, 100, 0xFF};
 	struct __packed {
 		uint8_t expected_percentage8;
@@ -1485,18 +1493,22 @@ static void rel_runtime_in_voltage_range_check(const struct bt_mesh_sensor_type 
 
 	for (int i = 0; i < ARRAY_SIZE(test_vector_voltage); i++) {
 		for (int j = 1; j < sensor_type->channel_count; j++) {
-			in_value[j].val1 = test_vector_voltage[i] > 159 ?
-					UINT16_MAX : test_vector_voltage[i];
-			in_value[j].val2 = 0;
-			expected.expected_voltage[j - 1] = test_vector_voltage[i] > 159 ?
-				UINT16_MAX :
-				raw_scalar_value_get(test_vector_voltage[i], 1, 0, -6);
+			uint16_t tmp;
+
+			voltage_helper(test_vector_voltage[i], &in_value[j], &tmp);
+			expected.expected_voltage[j - 1] = tmp;
 		}
 
 		in_value[0].val1 = test_vector_percentage8[i];
 		in_value[0].val2 = 0;
 		expected.expected_percentage8 = test_vector_percentage8[i] == 0xFF ?
 			0xFF : raw_scalar_value_get(test_vector_percentage8[i], 1, 0, -1);
+
+		for (int j = 1; j < sensor_type->channel_count; j++) {
+			in_value[j].val1 = test_vector_voltage[i] > 1022 ?
+				test_vector_voltage[i] == UINT16_MAX ? UINT16_MAX
+				: 1022 : test_vector_voltage[i];
+		}
 
 		encoding_checking_proceed(sensor_type, in_value, &expected, sizeof(expected));
 		decoding_checking_proceed(sensor_type, &expected, sizeof(expected), in_value);
