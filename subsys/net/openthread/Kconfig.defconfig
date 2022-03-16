@@ -24,7 +24,7 @@ config SYSTEM_WORKQUEUE_STACK_SIZE
 
 config MAIN_STACK_SIZE
 	int
-	default 2048
+	default 2560
 
 config INIT_STACKS
 	bool
