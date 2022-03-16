@@ -15,4 +15,7 @@ target_sources(app PRIVATE src/main.c)
 # NORDIC SDK APP END
 
 zephyr_include_directories(src)
-zephyr_include_directories(certs)
+
+# Make folder containing certificates global so that it can be located by
+# the Azure IoT Hub library.
+zephyr_include_directories_ifdef(CONFIG_AZURE_IOT_HUB_PROVISION_CERTIFICATES certs)

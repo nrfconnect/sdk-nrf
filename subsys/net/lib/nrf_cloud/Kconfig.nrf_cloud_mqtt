@@ -31,6 +31,8 @@ config NRF_CLOUD_STATIC_IPV4_ADDR
 config NRF_CLOUD_PROVISION_CERTIFICATES
 	bool "nRF Cloud library provision of certificate"
 	select MODEM_KEY_MGMT if NRF_MODEM_LIB
+	default y if BOARD_QEMU_X86
+	imply MBEDTLS_PEM_CERTIFICATE_FORMAT if MBEDTLS
 	help
 	  Enable run-time provisioning of certificates from the
 	  certificates header file selected by using NRF_CLOUD_CERTIFICATES_FILE
@@ -38,7 +40,12 @@ config NRF_CLOUD_PROVISION_CERTIFICATES
 config NRF_CLOUD_CERTIFICATES_FILE
 	string "nRF Cloud certificates"
 	depends on NRF_CLOUD_PROVISION_CERTIFICATES
-	default "certificates.h"
+	default "../include/nrf_cloud-certs.h"
+	help
+	  The default path for a header file that contains definitions for certificates that are
+	  used during run-time provisioning of TLS credentials.
+	  By default, the library expects the credentials to be in
+	  Privacy Enhanced Mail (PEM) format. See "nrf_cloud-certs.h" for a template.
 
 config NRF_CLOUD_PORT
 	int "nRF Cloud server port"
