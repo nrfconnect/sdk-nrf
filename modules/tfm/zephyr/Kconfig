@@ -12,3 +12,10 @@ config TFM_BOARD
 	help
 	  Redefintition of TFM_BOARD to use out-of-tree boards. These depend on
 	  ${TFM_BOARD_BASE_DIR} being set to the TFM board dir inside sdk-nrf.
+
+if BUILD_WITH_TFM
+
+config TFM_SECURE_UART1
+	select NRF_UARTE1_SECURE
+
+endif # BUILD_WITH_TFM
