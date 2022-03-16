@@ -100,4 +100,15 @@ uint8_t ctx_mgr_get_index_by_entry(struct ctx_entry *ctx_entry);
  */
 struct ctx_entry *ctx_mgr_get_entry_by_index(uint8_t index);
 
+/**@brief Return a pointer to the context manager entry of the given type
+ *        and associated with the given buffer ID.
+ *
+ * @param bufid      Buffer ID associated with the context manager entry.
+ *
+ * @param type       Type of a data to be stored in an entry.
+ *
+ * @return  Pointer to the context manager entry if the entry was found, NULL otherwise.
+ */
+struct ctx_entry *ctx_mgr_find_zcl_entry_by_bufid(zb_bufid_t bufid, enum ctx_entry_type type);
+
 #endif /* ZIGBEE_CLI_CTX_MGR_H__ */

@@ -94,3 +94,26 @@ struct ctx_entry *ctx_mgr_get_entry_by_index(uint8_t index)
 
 	return NULL;
 }
+
+struct ctx_entry *ctx_mgr_find_zcl_entry_by_bufid(zb_bufid_t bufid, enum ctx_entry_type type)
+{
+	uint8_t i;
+
+	k_mutex_lock(&ctx_mgr_mutex, K_FOREVER);
+
+	/* Iterate over the context entries to find a matching entry. */
+	for (i = 0; i < CONFIG_ZIGBEE_SHELL_CTX_MGR_ENTRIES_NBR; i++) {
+		if ((!zb_cli_ctx[i].taken) || (zb_cli_ctx[i].type != type)) {
+			continue;
+		}
+
+		if (zb_cli_ctx[i].zcl_data.pkt_info.buffer == bufid) {
+			k_mutex_unlock(&ctx_mgr_mutex);
+			return (zb_cli_ctx + i);
+		}
+	}
+
+	k_mutex_unlock(&ctx_mgr_mutex);
+
+	return NULL;
+}
