@@ -74,7 +74,7 @@ static void zb_zcl_cmd_acked(zb_uint8_t bufid)
 			continue;
 		}
 
-		if (entry->generic_cmd_data.packet_info.buffer == bufid) {
+		if (entry->zcl_data.pkt_info.buffer == bufid) {
 			break;
 		}
 
@@ -109,7 +109,7 @@ exit:
 static zb_bool_t is_response(zb_zcl_parsed_hdr_t *zcl_hdr, struct ctx_entry *entry)
 {
 	zb_uint16_t remote_node_short = 0;
-	struct zcl_packet_info *packet_info = &entry->generic_cmd_data.packet_info;
+	struct zcl_packet_info *packet_info = &(entry->zcl_data.pkt_info);
 
 	if (packet_info->dst_addr_mode == ZB_APS_ADDR_MODE_64_ENDP_PRESENT) {
 		remote_node_short = zb_address_short_by_ieee(packet_info->dst_addr.addr_long);
@@ -153,28 +153,31 @@ static zb_bool_t is_response(zb_zcl_parsed_hdr_t *zcl_hdr, struct ctx_entry *ent
  */
 static void construct_zcl_cmd_frame(struct ctx_entry *entry)
 {
-	struct generic_cmd_data *req_data = &(entry->generic_cmd_data);
+	struct generic_cmd *req_data = &(entry->zcl_data.generic_cmd);
 
 	/* Get the ZCL packet sequence number. */
 	entry->id = ZCL_CTX().seq_number;
 
 	if (req_data->cmd_id != ZCL_CMD_ID_RAW) {
 		/* Start filling buffer with packet data. */
-		req_data->packet_info.ptr = ZB_ZCL_START_PACKET_REQ(req_data->packet_info.buffer)
+		entry->zcl_data.pkt_info.ptr =
+			ZB_ZCL_START_PACKET_REQ(entry->zcl_data.pkt_info.buffer)
 
-		ZB_ZCL_CONSTRUCT_SPECIFIC_COMMAND_REQ_FRAME_CONTROL(req_data->packet_info.ptr,
-								    (req_data->def_resp))
-		ZB_ZCL_CONSTRUCT_COMMAND_HEADER_REQ(req_data->packet_info.ptr,
-						    ZB_ZCL_GET_SEQ_NUM(),
-						    req_data->cmd_id);
+		ZB_ZCL_CONSTRUCT_SPECIFIC_COMMAND_REQ_FRAME_CONTROL(
+			entry->zcl_data.pkt_info.ptr,
+			(req_data->def_resp))
+		ZB_ZCL_CONSTRUCT_COMMAND_HEADER_REQ(
+			entry->zcl_data.pkt_info.ptr,
+			ZB_ZCL_GET_SEQ_NUM(),
+			req_data->cmd_id);
 	} else {
 		/* Start filling buffer with packet data. */
-		req_data->packet_info.ptr = ZB_ZCL_START_PACKET(req_data->packet_info.buffer);
+		entry->zcl_data.pkt_info.ptr = ZB_ZCL_START_PACKET(entry->zcl_data.pkt_info.buffer);
 	}
 
 	/* Put payload in buffer with command to send. */
 	for (zb_uint8_t i = 0; i < req_data->payload_length; i++) {
-		ZB_ZCL_PACKET_PUT_DATA8(req_data->packet_info.ptr, (req_data->payload[i]));
+		ZB_ZCL_PACKET_PUT_DATA8(entry->zcl_data.pkt_info.ptr, (req_data->payload[i]));
 	}
 }
 
@@ -195,7 +198,7 @@ static void zb_zcl_send_cmd_frame(zb_uint8_t index)
 
 	construct_zcl_cmd_frame(entry);
 
-	packet_info = &(entry->generic_cmd_data.packet_info);
+	packet_info = &(entry->zcl_data.pkt_info);
 
 	/* Send the actual frame. */
 	zb_err_code = zb_zcl_finish_and_send_packet_new(
@@ -259,7 +262,7 @@ static int zcl_cmd_send(struct ctx_entry *entry)
 error:
 	/* Make sure ZBOSS buffer API is called safely. */
 	zb_osif_disable_all_inter();
-	zb_buf_free(entry->generic_cmd_data.packet_info.buffer);
+	zb_buf_free(entry->zcl_data.pkt_info.buffer);
 	zb_osif_enable_all_inter();
 
 	/* Invalidate an entry with frame data in the context manager. */
@@ -290,7 +293,7 @@ int cmd_zb_generic_cmd(const struct shell *shell, size_t argc, char **argv)
 	size_t len;
 	int ret_val;
 	zb_bufid_t bufid;
-	struct generic_cmd_data *req_data;
+	struct generic_cmd *req_data;
 	struct zcl_packet_info *packet_info;
 	char **arg = &argv[1];
 	struct ctx_entry *entry = ctx_mgr_new_entry(CTX_MGR_GENERIC_CMD_ENTRY_TYPE);
@@ -298,12 +301,15 @@ int cmd_zb_generic_cmd(const struct shell *shell, size_t argc, char **argv)
 	ARG_UNUSED(argc);
 
 	if (entry == NULL) {
-		zb_cli_print_error(shell, "Request pool empty - wait a bit", ZB_FALSE);
+		zb_cli_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 		return -ENOEXEC;
 	}
 
-	req_data = &(entry->generic_cmd_data);
-	packet_info = &(req_data->packet_info);
+	req_data = &(entry->zcl_data.generic_cmd);
+	packet_info = &(entry->zcl_data.pkt_info);
 
 	/*  Set default command values. */
 	req_data->def_resp = ZB_ZCL_DISABLE_DEFAULT_RESPONSE;
@@ -453,7 +459,7 @@ int cmd_zb_zcl_raw(const struct shell *shell, size_t argc, char **argv)
 	size_t len;
 	int ret_val;
 	zb_bufid_t bufid;
-	struct generic_cmd_data *req_data;
+	struct generic_cmd *req_data;
 	struct zcl_packet_info *packet_info;
 	char **arg = &argv[1];
 	struct ctx_entry *entry;
@@ -471,12 +477,15 @@ int cmd_zb_zcl_raw(const struct shell *shell, size_t argc, char **argv)
 	entry = ctx_mgr_new_entry(CTX_MGR_GENERIC_CMD_ENTRY_TYPE);
 
 	if (entry == NULL) {
-		zb_cli_print_error(shell, "Request pool empty - wait a bit", ZB_FALSE);
+		zb_cli_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 		return -ENOEXEC;
 	}
 
-	req_data = &(entry->generic_cmd_data);
-	packet_info = &(req_data->packet_info);
+	req_data = &(entry->zcl_data.generic_cmd);
+	packet_info = &(entry->zcl_data.pkt_info);
 
 	/*  Reset the counter. */
 	req_data->payload_length = 0;
@@ -638,7 +647,7 @@ zb_uint8_t cli_agent_ep_handler_generic_cmd(zb_bufid_t bufid)
 		zb_cli_print_error(entry->shell, "Unknown response", ZB_FALSE);
 	}
 	/* Cancel the ongoing alarm which was to delete entry in the context manager ... */
-	if (entry->generic_cmd_data.def_resp == ZB_ZCL_ENABLE_DEFAULT_RESPONSE) {
+	if (entry->zcl_data.generic_cmd.def_resp == ZB_ZCL_ENABLE_DEFAULT_RESPONSE) {
 		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(cmd_zb_zcl_cmd_timeout,
 							   ctx_mgr_get_index_by_entry(entry));
 		ZB_ERROR_CHECK(zb_err_code);

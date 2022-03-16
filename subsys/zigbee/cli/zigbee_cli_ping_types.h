@@ -60,7 +60,7 @@ typedef void (*ping_time_cb_t)(enum ping_time_evt evt, zb_uint32_t delay_ms,
 			     struct ctx_entry *entry);
 
 /* Structure used to store PING request data in the context manager entry. */
-struct ping_req_data {
+struct ping_req {
 	zb_uint8_t ping_seq;
 	zb_uint8_t request_ack;
 	zb_uint8_t request_echo;
@@ -68,15 +68,13 @@ struct ping_req_data {
 	zb_uint16_t timeout_ms;
 	ping_time_cb_t cb;
 	volatile int64_t sent_time;
-	struct zcl_packet_info packet_info;
 };
 
 /* Structure used to store PING reply data in the context manager entry. */
-struct ping_reply_data {
+struct ping_reply {
 	zb_uint8_t ping_seq;
 	zb_uint8_t count;
 	zb_uint8_t send_ack;
-	struct zcl_packet_info packet_info;
 };
 
 /**@brief Set ping request indication callback.
