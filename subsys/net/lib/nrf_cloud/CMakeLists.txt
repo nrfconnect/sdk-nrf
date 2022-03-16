@@ -14,8 +14,7 @@ zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_MQTT
 	src/nrf_cloud.c
 	src/nrf_cloud_fsm.c
-	src/nrf_cloud_transport.c
-	src/nrf_cloud_sanity.c)
+	src/nrf_cloud_transport.c)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_AGPS
 	src/nrf_cloud_agps.c

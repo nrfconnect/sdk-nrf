@@ -575,10 +575,10 @@ static int nct_provision(void)
 		/* Provision CA Certificate. */
 		err = modem_key_mgmt_write(CONFIG_NRF_CLOUD_SEC_TAG,
 					   MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-					   NRF_CLOUD_CA_CERTIFICATE,
-					   strlen(NRF_CLOUD_CA_CERTIFICATE));
+					   ca_certificate,
+					   strlen(ca_certificate));
 		if (err) {
-			LOG_ERR("NRF_CLOUD_CA_CERTIFICATE err: %d", err);
+			LOG_ERR("ca_certificate err: %d", err);
 			return err;
 		}
 
@@ -586,10 +586,10 @@ static int nct_provision(void)
 		err = modem_key_mgmt_write(
 			CONFIG_NRF_CLOUD_SEC_TAG,
 			MODEM_KEY_MGMT_CRED_TYPE_PRIVATE_CERT,
-			NRF_CLOUD_CLIENT_PRIVATE_KEY,
-			strlen(NRF_CLOUD_CLIENT_PRIVATE_KEY));
+			private_key,
+			strlen(private_key));
 		if (err) {
-			LOG_ERR("NRF_CLOUD_CLIENT_PRIVATE_KEY err: %d", err);
+			LOG_ERR("private_key err: %d", err);
 			return err;
 		}
 
@@ -597,10 +597,10 @@ static int nct_provision(void)
 		err = modem_key_mgmt_write(
 			CONFIG_NRF_CLOUD_SEC_TAG,
 			MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT,
-			NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE,
-			strlen(NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE));
+			device_certificate,
+			strlen(device_certificate));
 		if (err) {
-			LOG_ERR("NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE err: %d",
+			LOG_ERR("device_certificate err: %d",
 				err);
 			return err;
 		}
@@ -611,16 +611,16 @@ static int nct_provision(void)
 
 		err = tls_credential_add(CONFIG_NRF_CLOUD_SEC_TAG,
 					 TLS_CREDENTIAL_CA_CERTIFICATE,
-					 NRF_CLOUD_CA_CERTIFICATE,
-					 sizeof(NRF_CLOUD_CA_CERTIFICATE));
+					 ca_certificate,
+					 sizeof(ca_certificate));
 		if (err < 0) {
 			LOG_ERR("Failed to register ca certificate: %d", err);
 			return err;
 		}
 		err = tls_credential_add(CONFIG_NRF_CLOUD_SEC_TAG,
 					 TLS_CREDENTIAL_PRIVATE_KEY,
-					 NRF_CLOUD_CLIENT_PRIVATE_KEY,
-					 sizeof(NRF_CLOUD_CLIENT_PRIVATE_KEY));
+					 private_key,
+					 sizeof(private_key));
 		if (err < 0) {
 			LOG_ERR("Failed to register private key: %d", err);
 			return err;
@@ -628,8 +628,8 @@ static int nct_provision(void)
 		err = tls_credential_add(
 			CONFIG_NRF_CLOUD_SEC_TAG,
 			TLS_CREDENTIAL_SERVER_CERTIFICATE,
-			NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE,
-			sizeof(NRF_CLOUD_CLIENT_PUBLIC_CERTIFICATE));
+			device_certificate,
+			sizeof(device_certificate));
 		if (err < 0) {
 			LOG_ERR("Failed to register public certificate: %d",
 				err);
