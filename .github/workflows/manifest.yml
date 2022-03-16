@@ -35,5 +35,5 @@ jobs:
           # zephyr module or the nrfxlib module is changed. Each line is comma-
           # separated.
           labels: >
-            manifest,
+            manifest
           dnm-labels: 'DNM'
