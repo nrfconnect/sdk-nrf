@@ -42,24 +42,6 @@
 
 LOG_MODULE_REGISTER(zigbee_shell_report, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
 
-/**@brief Handles timeout error and invalidates Configure Reporting entry in context manager.
- *
- * @param[in] index   Index of context entry with Configre Reporting data to invalidate.
- */
-static void cmd_zb_subscribe_unsubscribe_timeout(zb_uint8_t index)
-{
-	struct ctx_entry *entry = ctx_mgr_get_entry_by_index(index);
-
-	if (entry == NULL) {
-		LOG_ERR("Couldn't get attr entry %d - entry not found", index);
-		return;
-	}
-
-	zb_cli_print_error(entry->shell, "Request timed out", ZB_FALSE);
-
-	ctx_mgr_delete_entry(entry);
-}
-
 /**@brief Prints the Configure Reporting Response.
  *
  * @param[in] entry         Pointer to the entry in the context manager.
@@ -71,8 +53,7 @@ static void cmd_zb_subscribe_unsubscribe_cb(struct ctx_entry *entry, zb_bufid_t 
 	zb_bool_t failed = ZB_FALSE;
 	zb_zcl_configure_reporting_res_t *resp = NULL;
 
-	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(cmd_zb_subscribe_unsubscribe_timeout,
-						   ZB_ALARM_ANY_PARAM);
+	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_cli_zcl_cmd_timeout_cb, ZB_ALARM_ANY_PARAM);
 	if (zb_err_code != RET_OK) {
 		zb_cli_print_error(entry->shell, "Unable to cancel timeout timer", ZB_TRUE);
 		goto delete_ctx_entry;
@@ -314,7 +295,7 @@ static int send_reporting_frame(struct ctx_entry *entry)
 	uint8_t entry_index = ctx_mgr_get_index_by_entry(entry);
 
 	zb_err_code = ZB_SCHEDULE_APP_ALARM(
-			cmd_zb_subscribe_unsubscribe_timeout,
+			zb_cli_zcl_cmd_timeout_cb,
 			entry_index,
 			(ZIGBEE_CLI_CONFIGURE_REPORT_RESP_TIMEOUT * ZB_TIME_ONE_SECOND));
 
@@ -328,8 +309,7 @@ static int send_reporting_frame(struct ctx_entry *entry)
 	if (zb_err_code != RET_OK) {
 		zb_cli_print_error(entry->shell, "Can not schedule zcl frame.", ZB_FALSE);
 
-		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(cmd_zb_subscribe_unsubscribe_timeout,
-							   entry_index);
+		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_cli_zcl_cmd_timeout_cb, entry_index);
 		if (zb_err_code != RET_OK) {
 			zb_cli_print_error(entry->shell, "Unable to cancel timeout timer", ZB_TRUE);
 		}

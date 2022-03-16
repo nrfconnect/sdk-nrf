@@ -24,24 +24,6 @@
 
 LOG_MODULE_DECLARE(zigbee_shell, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
 
-/**@brief Handles timeout error and invalidates ZCL command entry in context manager.
- *
- * @param[in] index   Index of context entry with ZCL command data to invalidate.
- */
-static void cmd_zb_zcl_cmd_timeout(zb_uint8_t index)
-{
-	struct ctx_entry *entry = ctx_mgr_get_entry_by_index(index);
-
-	if (entry == NULL) {
-		LOG_ERR("Couldn't get attr entry %d - entry not found", index);
-		return;
-	}
-
-	zb_cli_print_error(entry->shell, "Request timed out", ZB_FALSE);
-
-	ctx_mgr_delete_entry(entry);
-}
-
 /**@brief Function called when command is APS ACKed - prints done and invalidates ZCL command entry
  *        in context manager.
  *
@@ -65,22 +47,8 @@ static void zb_zcl_cmd_acked(zb_uint8_t bufid)
 		goto exit;
 	}
 
-	/* Find entry of CTX_MGR_GENERIC_CMD_ENTRY_TYPE type with matching buffer id.
-	 * When ZCL command is APS ACKed, callback is called with the same buffer id.
-	 * This is used to find matching ctx entry.
-	 */
-	while (entry != NULL) {
-		if ((entry->type != CTX_MGR_GENERIC_CMD_ENTRY_TYPE) || (entry->taken != true)) {
-			continue;
-		}
-
-		if (entry->zcl_data.pkt_info.buffer == bufid) {
-			break;
-		}
-
-		index++;
-		entry = ctx_mgr_get_entry_by_index(index);
-	}
+	/* Find entry of CTX_MGR_GENERIC_CMD_ENTRY_TYPE type with matching buffer id. */
+	entry = ctx_mgr_find_zcl_entry_by_bufid(bufid, CTX_MGR_GENERIC_CMD_ENTRY_TYPE);
 
 	if (entry == NULL) {
 		LOG_ERR("Couldn't find matching entry for ZCL generic cmd");
@@ -89,7 +57,7 @@ static void zb_zcl_cmd_acked(zb_uint8_t bufid)
 
 	zb_cli_print_done(entry->shell, ZB_FALSE);
 
-	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(cmd_zb_zcl_cmd_timeout, index);
+	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_cli_zcl_cmd_timeout_cb, index);
 	if (zb_err_code != RET_OK) {
 		zb_cli_print_error(entry->shell, "Unable to cancel timeout timer", ZB_TRUE);
 	}
@@ -98,52 +66,6 @@ static void zb_zcl_cmd_acked(zb_uint8_t bufid)
 exit:
 	zb_buf_free(bufid);
 }
-
-/**@brief Check if the frame we received is the response to our request in the table.
- *
- * @param zcl_hdr           Pointer to the parsed header of the frame.
- * @param entry             Pointer to the entry in the context manager to check against.
- *
- * @return Whether it is response or not.
- */
-static zb_bool_t is_response(zb_zcl_parsed_hdr_t *zcl_hdr, struct ctx_entry *entry)
-{
-	zb_uint16_t remote_node_short = 0;
-	struct zcl_packet_info *packet_info = &(entry->zcl_data.pkt_info);
-
-	if (packet_info->dst_addr_mode == ZB_APS_ADDR_MODE_64_ENDP_PRESENT) {
-		remote_node_short = zb_address_short_by_ieee(packet_info->dst_addr.addr_long);
-	} else {
-		remote_node_short = packet_info->dst_addr.addr_short;
-	}
-
-	if (zcl_hdr->cluster_id != packet_info->cluster_id) {
-		return ZB_FALSE;
-	}
-
-	if (zcl_hdr->profile_id != packet_info->prof_id) {
-		return ZB_FALSE;
-	}
-
-	if (zcl_hdr->addr_data.common_data.src_endpoint != packet_info->dst_ep) {
-		return ZB_FALSE;
-	}
-
-	if (zcl_hdr->addr_data.common_data.source.addr_type == ZB_ZCL_ADDR_TYPE_SHORT) {
-		if (zcl_hdr->addr_data.common_data.source.u.short_addr != remote_node_short) {
-			return ZB_FALSE;
-		}
-	} else {
-		return ZB_FALSE;
-	}
-
-	if (zcl_hdr->cmd_id != ZB_ZCL_CMD_DEFAULT_RESP) {
-		return ZB_FALSE;
-	}
-
-	return ZB_TRUE;
-}
-
 
 /**@brief Function to construct ZCL command in the buffer.
  *        Function to be called in ZBOSS thread context to prevent non thread-safe operations.
@@ -239,8 +161,12 @@ static int zcl_cmd_send(struct ctx_entry *entry)
 	zb_ret_t zb_err_code;
 	uint8_t entry_index = ctx_mgr_get_index_by_entry(entry);
 
-	zb_err_code = ZB_SCHEDULE_APP_ALARM(cmd_zb_zcl_cmd_timeout, entry_index,
-					    (CMD_ENTRY_TIMEOUT_S * ZB_TIME_ONE_SECOND));
+	zb_err_code =
+		ZB_SCHEDULE_APP_ALARM(
+			zb_cli_zcl_cmd_timeout_cb,
+			entry_index,
+			(CONFIG_ZIGBEE_SHELL_ZCL_CMD_TIMEOUT * ZB_TIME_ONE_SECOND));
+
 	if (zb_err_code != RET_OK) {
 		zb_cli_print_error(entry->shell, "Couldn't schedule timeout cb.", ZB_FALSE);
 		goto error;
@@ -250,7 +176,7 @@ static int zcl_cmd_send(struct ctx_entry *entry)
 	if (zb_err_code != RET_OK) {
 		zb_cli_print_error(entry->shell, "Can not schedule zcl frame.", ZB_FALSE);
 
-		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(cmd_zb_zcl_cmd_timeout, entry_index);
+		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_cli_zcl_cmd_timeout_cb, entry_index);
 		if (zb_err_code != RET_OK) {
 			zb_cli_print_error(entry->shell, "Unable to cancel timeout timer", ZB_TRUE);
 		}
@@ -618,7 +544,7 @@ zb_uint8_t cli_agent_ep_handler_generic_cmd(zb_bufid_t bufid)
 		return ZB_FALSE;
 	}
 
-	if (!is_response(cmd_info, entry)) {
+	if (!zb_cli_is_zcl_cmd_response(cmd_info, entry)) {
 		return ZB_FALSE;
 	}
 
@@ -644,11 +570,11 @@ zb_uint8_t cli_agent_ep_handler_generic_cmd(zb_bufid_t bufid)
 		}
 	} else {
 		/* In case of unknown response. */
-		zb_cli_print_error(entry->shell, "Unknown response", ZB_FALSE);
+		return ZB_FALSE;
 	}
 	/* Cancel the ongoing alarm which was to delete entry in the context manager ... */
 	if (entry->zcl_data.generic_cmd.def_resp == ZB_ZCL_ENABLE_DEFAULT_RESPONSE) {
-		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(cmd_zb_zcl_cmd_timeout,
+		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_cli_zcl_cmd_timeout_cb,
 							   ctx_mgr_get_index_by_entry(entry));
 		ZB_ERROR_CHECK(zb_err_code);
 

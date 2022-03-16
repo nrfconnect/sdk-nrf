@@ -15,6 +15,9 @@
 #include <zigbee/zigbee_logger_eprxzcl.h>
 #include "zigbee_cli_utils.h"
 
+
+LOG_MODULE_DECLARE(zigbee_shell, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
+
 extern zb_uint8_t cli_agent_ep_handler_attr(zb_bufid_t bufid);
 extern zb_uint8_t cli_agent_ep_handler_generic_cmd(zb_bufid_t bufid);
 extern zb_uint8_t cli_agent_ep_handler_report(zb_bufid_t bufid);
@@ -138,6 +141,49 @@ int zb_cli_zcl_attr_to_str(char *str_buf, uint16_t buf_len,
 	}
 
 	return bytes_written;
+}
+
+zb_bool_t zb_cli_is_zcl_cmd_response(zb_zcl_parsed_hdr_t *zcl_hdr, struct ctx_entry *entry)
+{
+	zb_uint16_t remote_node_short = 0;
+	struct zcl_packet_info *packet_info = &entry->zcl_data.pkt_info;
+
+	if (zcl_hdr->addr_data.common_data.source.addr_type != ZB_ZCL_ADDR_TYPE_SHORT) {
+		return ZB_FALSE;
+	}
+
+	if (packet_info->dst_addr_mode == ZB_APS_ADDR_MODE_64_ENDP_PRESENT) {
+		remote_node_short = zb_address_short_by_ieee(packet_info->dst_addr.addr_long);
+	} else {
+		remote_node_short = packet_info->dst_addr.addr_short;
+	}
+
+	if (zcl_hdr->addr_data.common_data.source.u.short_addr != remote_node_short) {
+		return ZB_FALSE;
+	}
+
+	if (zcl_hdr->profile_id != packet_info->prof_id) {
+		return ZB_FALSE;
+	}
+
+	if (zcl_hdr->addr_data.common_data.src_endpoint != packet_info->dst_ep) {
+		return ZB_FALSE;
+	}
+
+	return ZB_TRUE;
+}
+
+void zb_cli_zcl_cmd_timeout_cb(zb_uint8_t index)
+{
+	struct ctx_entry *entry = ctx_mgr_get_entry_by_index(index);
+
+	if (entry == NULL) {
+		LOG_ERR("Couldn't get attr entry %d - entry not found", index);
+		return;
+	}
+
+	zb_cli_print_error(entry->shell, "Request timed out", ZB_FALSE);
+	ctx_mgr_delete_entry(entry);
 }
 
 int zb_cli_sscan_uint8(const char *bp, uint8_t *value)

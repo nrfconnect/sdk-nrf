@@ -20,71 +20,6 @@
 
 LOG_MODULE_DECLARE(zigbee_shell, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
 
-/**@brief Invalidate an entry with Read/Write Attributes request data after the timeout.
- *        This function is called as the ZBOSS callback.
- *
- * @param index   Index of context entry with Read/Write Attributes data to invalidate.
- */
-static void invalidate_read_write_attr_entry_cb(zb_uint8_t index)
-{
-	struct ctx_entry *entry = ctx_mgr_get_entry_by_index(index);
-
-	if (entry == NULL) {
-		LOG_ERR("Couldn't get attr entry %d - entry not found", index);
-		return;
-	}
-
-	zb_cli_print_error(entry->shell, "Request timed out", ZB_FALSE);
-	ctx_mgr_delete_entry(entry);
-}
-
-/**@brief Check if the frame we received is the response to our request in the context manager.
- *
- * @param zcl_hdr           Pointer to the parsed header of the frame.
- * @param entry             Pointer to the entry in the context manager to check against.
- *
- * @return Whether it is response or not.
- */
-static zb_bool_t is_response(zb_zcl_parsed_hdr_t *zcl_hdr, struct ctx_entry *entry)
-{
-	zb_uint16_t remote_node_short = 0;
-	struct zcl_packet_info *packet_info = &(entry->zcl_data.pkt_info);
-
-	if (packet_info->dst_addr_mode == ZB_APS_ADDR_MODE_64_ENDP_PRESENT) {
-		remote_node_short = zb_address_short_by_ieee(packet_info->dst_addr.addr_long);
-	} else {
-		remote_node_short = packet_info->dst_addr.addr_short;
-	}
-
-	if (zcl_hdr->cluster_id != packet_info->cluster_id) {
-		return ZB_FALSE;
-	}
-
-	if (zcl_hdr->profile_id != packet_info->prof_id) {
-		return ZB_FALSE;
-	}
-
-	if (zcl_hdr->addr_data.common_data.src_endpoint != packet_info->dst_ep) {
-		return ZB_FALSE;
-	}
-
-	if (zcl_hdr->addr_data.common_data.source.addr_type == ZB_ZCL_ADDR_TYPE_SHORT) {
-		if (zcl_hdr->addr_data.common_data.source.u.short_addr != remote_node_short) {
-			return ZB_FALSE;
-		}
-	} else {
-		return ZB_FALSE;
-	}
-
-	if (zcl_hdr->cmd_id != ZB_ZCL_CMD_DEFAULT_RESP &&
-	    zcl_hdr->cmd_id != ZB_ZCL_CMD_READ_ATTRIB_RESP &&
-	    zcl_hdr->cmd_id != ZB_ZCL_CMD_WRITE_ATTRIB_RESP) {
-		return ZB_FALSE;
-	}
-
-	return ZB_TRUE;
-}
-
 /**@brief Print the Read Attribute Response.
  *
  * @param bufid             Zigbee buffer ID with Read Attribute Response packet.
@@ -152,8 +87,9 @@ static void print_write_attr_response(zb_bufid_t bufid, struct ctx_entry *entry)
 zb_uint8_t cli_agent_ep_handler_attr(zb_bufid_t bufid)
 {
 	zb_ret_t zb_err_code;
-	zb_zcl_parsed_hdr_t *zcl_hdr;
 	struct ctx_entry *entry;
+	zb_zcl_parsed_hdr_t *zcl_hdr;
+	zb_zcl_default_resp_payload_t *def_resp;
 
 	zcl_hdr = ZB_BUF_GET_PARAM(bufid, zb_zcl_parsed_hdr_t);
 
@@ -164,28 +100,32 @@ zb_uint8_t cli_agent_ep_handler_attr(zb_bufid_t bufid)
 		return ZB_FALSE;
 	}
 
-	if (!is_response(zcl_hdr, entry)) {
+	if (!zb_cli_is_zcl_cmd_response(zcl_hdr, entry)) {
 		return ZB_FALSE;
 	}
 
-	if (zcl_hdr->cmd_id == ZB_ZCL_CMD_DEFAULT_RESP) {
-		zb_zcl_default_resp_payload_t *def_resp;
-
+	switch (zcl_hdr->cmd_id) {
+	case ZB_ZCL_CMD_DEFAULT_RESP:
 		def_resp = ZB_ZCL_READ_DEFAULT_RESP(bufid);
 		shell_error(entry->shell, "Error: Default Response received; ");
 		shell_error(entry->shell,
 			    "Command: %d, Status: %d ",
 			    def_resp->command_id,
 			    def_resp->status);
-	} else {
-		if (entry->zcl_data.read_write_attr_req.req_type == ATTR_READ_REQUEST) {
-			print_read_attr_response(bufid, entry);
-		} else {
-			print_write_attr_response(bufid, entry);
-		}
+		break;
+	case ZB_ZCL_CMD_READ_ATTRIB_RESP:
+		print_read_attr_response(bufid, entry);
+		break;
+	case ZB_ZCL_CMD_WRITE_ATTRIB_RESP:
+		print_write_attr_response(bufid, entry);
+		break;
+	default:
+		/* Unknown response. */
+		return ZB_FALSE;
 	}
+
 	/* Cancel the ongoing alarm which was to delete entry with frame data ... */
-	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(invalidate_read_write_attr_entry_cb,
+	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_cli_zcl_cmd_timeout_cb,
 						   ctx_mgr_get_index_by_entry(entry));
 	ZB_ERROR_CHECK(zb_err_code);
 
@@ -289,9 +229,12 @@ static int read_write_attr_send(struct ctx_entry *entry)
 	zb_ret_t zb_err_code;
 	uint8_t entry_index = ctx_mgr_get_index_by_entry(entry);
 
-	zb_err_code = ZB_SCHEDULE_APP_ALARM(invalidate_read_write_attr_entry_cb,
-					    entry_index,
-					    (ATTRIBUTE_ENTRY_TIMEOUT_S * ZB_TIME_ONE_SECOND));
+	zb_err_code =
+		ZB_SCHEDULE_APP_ALARM(
+			zb_cli_zcl_cmd_timeout_cb,
+			entry_index,
+			(CONFIG_ZIGBEE_SHELL_ZCL_CMD_TIMEOUT * ZB_TIME_ONE_SECOND));
+
 	if (zb_err_code != RET_OK) {
 		zb_cli_print_error(entry->shell,
 				   "Couldn't schedule timeout cb.",
@@ -303,8 +246,7 @@ static int read_write_attr_send(struct ctx_entry *entry)
 	if (zb_err_code != RET_OK) {
 		zb_cli_print_error(entry->shell, "Can not schedule zcl frame.", ZB_FALSE);
 
-		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(invalidate_read_write_attr_entry_cb,
-							   entry_index);
+		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_cli_zcl_cmd_timeout_cb, entry_index);
 		if (zb_err_code != RET_OK) {
 			zb_cli_print_error(entry->shell, "Unable to cancel timeout timer", ZB_TRUE);
 		}
