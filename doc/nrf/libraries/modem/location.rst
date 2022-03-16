@@ -121,7 +121,8 @@ Configure the following options to enable location methods of your choice:
 
 The following options control the use of GNSS assistance data:
 
-* :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL` - Enables A-GPS data retrieval from an external source which the application implements separately. If enabled, Location library throws event :c:enum:`LOCATION_EVT_GNSS_ASSISTANCE_REQUEST` when assistance is needed. Once application has obtained the assistance data it should call :c:func:`location_agps_data_process` function to feed it into Location library.
+* :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL` - Enables A-GPS data retrieval from an external source, implemented separately by the application. If enabled, the library triggers a :c:enum:`LOCATION_EVT_GNSS_ASSISTANCE_REQUEST` event when assistance is needed. Once the application has obtained the assistance data, it should call the :c:func:`location_agps_data_process` function to feed it into the library.
+* :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL` - Enables P-GPS data retrieval from an external source, implemented separately by the application. If enabled, the library triggers a :c:enum:`LOCATION_EVT_GNSS_PREDICTION_REQUEST` event when assistance is needed. Once the application has obtained the assistance data, it should call the :c:func:`location_pgps_data_process` function to feed it into the library.
 * :kconfig:option:`CONFIG_NRF_CLOUD_AGPS` - Enables A-GPS data retrieval from `nRF Cloud`_.
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` - Enables P-GPS data retrieval from `nRF Cloud`_.
 * :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED` - Reduces assistance size by only downloading ephemerides for visible satellites.
