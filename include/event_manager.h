@@ -142,7 +142,7 @@ extern "C" {
  *
  * @param event  Pointer to the event object.
  */
-#define EVENT_SUBMIT(event) _event_submit(&event->header)
+#define EVENT_SUBMIT(event) _event_submit(&((event)->header))
 
 /**
  * @brief Register event hook after the event manager is initialized.
