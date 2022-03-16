@@ -15,6 +15,7 @@
 
 #include <zboss_api.h>
 #include <zigbee/zigbee_app_utils.h>
+#include "zigbee_cli_ctx_mgr.h"
 
 /**@brief Finish the command by dumping 'Done'.
  *
@@ -83,6 +84,22 @@ static inline void zb_cli_print_error(const struct shell *shell,
  */
 int zb_cli_zcl_attr_to_str(char *str_buf, uint16_t buf_len,
 			   zb_uint16_t attr_type, zb_uint8_t *attr);
+
+/**@brief Check if the ZCL frame we received is the response to our command in the table entry.
+ *
+ * @param zcl_hdr   Pointer to the parsed header of the frame.
+ * @param entry     Pointer to the entry in the context manager to check against.
+ *
+ * @return ZB_TRUE if is response to command, ZB_FALSE otherwise.
+ */
+zb_bool_t zb_cli_is_zcl_cmd_response(zb_zcl_parsed_hdr_t *zcl_hdr, struct ctx_entry *entry);
+
+/**@brief Function to invalidate an entry with ZCL cmd request data, to be called after the timeout.
+ *        This function is called as the ZBOSS callback.
+ *
+ * @param index   Index of context entry to invalidate.
+ */
+void zb_cli_zcl_cmd_timeout_cb(zb_uint8_t index);
 
 /**@brief Parse uint8_t from input string.
  *
