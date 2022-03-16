@@ -295,11 +295,7 @@ static void zb_zcl_send_attr_report_frame(zb_uint8_t index)
 
 	if (zb_err_code != RET_OK) {
 		zb_cli_print_error(entry->shell, "Can not send ZCL frame", ZB_FALSE);
-
-		/* Make sure ZBOSS buffer API is called safely. */
-		zb_osif_disable_all_inter();
 		zb_buf_free(packet_info->buffer);
-		zb_osif_enable_all_inter();
 
 		/* Invalidate an entry with frame data in the context manager. */
 		ctx_mgr_delete_entry(entry);
