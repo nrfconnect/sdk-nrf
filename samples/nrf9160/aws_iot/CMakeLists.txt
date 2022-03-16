@@ -14,3 +14,7 @@ target_sources(app PRIVATE src/main.c)
 # NORDIC SDK APP END
 
 zephyr_include_directories(src)
+
+# Make folder containing certificates global so that it can be located by
+# the AWS IoT library.
+zephyr_include_directories_ifdef(CONFIG_AWS_IOT_PROVISION_CERTIFICATES certs)
