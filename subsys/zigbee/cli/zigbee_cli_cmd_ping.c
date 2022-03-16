@@ -69,8 +69,7 @@ static struct ctx_entry *find_ping_entry_by_short(zb_uint16_t addr_short)
 			continue;
 		}
 
-		if ((ping_entry->type == CTX_MGR_PING_REQ_ENTRY_TYPE) &&
-		    ping_entry->taken) {
+		if ((ping_entry->type == CTX_MGR_PING_REQ_ENTRY_TYPE) && ping_entry->taken) {
 			req_remote_addr = ping_entry->zcl_data.pkt_info.dst_addr;
 		} else {
 			continue;
@@ -82,9 +81,7 @@ static struct ctx_entry *find_ping_entry_by_short(zb_uint16_t addr_short)
 				return ping_entry;
 			}
 		} else {
-			if (zb_address_short_by_ieee(
-				req_remote_addr.addr_long) == addr_short) {
-
+			if (zb_address_short_by_ieee(req_remote_addr.addr_long) == addr_short) {
 				return ping_entry;
 			}
 		}
@@ -134,17 +131,16 @@ static void zb_zcl_send_ping_frame(zb_uint8_t index)
 
 	if (ping_entry->type == CTX_MGR_PING_REQ_ENTRY_TYPE) {
 		if (zb_err_code != RET_OK) {
-			zb_cli_print_error(ping_entry->shell,
-					   "Can not send zcl frame", ZB_FALSE);
+			zb_cli_print_error(ping_entry->shell, "Can not send zcl frame", ZB_FALSE);
 			zb_buf_free(packet_info->buffer);
 			ctx_mgr_delete_entry(ping_entry);
 			return;
 		}
 
-		zb_err_code = ZB_SCHEDULE_APP_ALARM(
-				invalidate_ping_entry_cb, index,
-				ZB_MILLISECONDS_TO_BEACON_INTERVAL(
-					ping_entry->zcl_data.ping_req.timeout_ms));
+		zb_err_code = ZB_SCHEDULE_APP_ALARM(invalidate_ping_entry_cb,
+						    index,
+						    ZB_MILLISECONDS_TO_BEACON_INTERVAL(
+						    ping_entry->zcl_data.ping_req.timeout_ms));
 
 		if (zb_err_code != RET_OK) {
 			zb_cli_print_error(ping_entry->shell,
@@ -163,8 +159,7 @@ static void zb_zcl_send_ping_frame(zb_uint8_t index)
 		}
 	} else {
 		if (zb_err_code != RET_OK) {
-			zb_cli_print_error(ping_entry->shell,
-					   "Can not send zcl frame", ZB_FALSE);
+			zb_cli_print_error(ping_entry->shell, "Can not send zcl frame", ZB_FALSE);
 			zb_buf_free(packet_info->buffer);
 		}
 		/* We don't need the entry anymore,
@@ -221,18 +216,15 @@ static void dispatch_user_callback(zb_bufid_t bufid)
 		return;
 	}
 
-	ping_cmd_status = ZB_BUF_GET_PARAM(bufid,
-					   zb_zcl_command_send_status_t);
+	ping_cmd_status = ZB_BUF_GET_PARAM(bufid, zb_zcl_command_send_status_t);
 
 	if (ping_cmd_status->dst_addr.addr_type == ZB_ZCL_ADDR_TYPE_SHORT) {
 		short_addr = ping_cmd_status->dst_addr.u.short_addr;
-	} else if (ping_cmd_status->dst_addr.addr_type ==
-		   ZB_ZCL_ADDR_TYPE_IEEE) {
-		short_addr = zb_address_short_by_ieee(
-				ping_cmd_status->dst_addr.u.ieee_addr);
+	} else if (ping_cmd_status->dst_addr.addr_type == ZB_ZCL_ADDR_TYPE_IEEE) {
+		short_addr = zb_address_short_by_ieee(ping_cmd_status->dst_addr.u.ieee_addr);
 	} else {
 		LOG_ERR("Ping request acked with an unknown dest address type: %d",
-				ping_cmd_status->dst_addr.addr_type);
+			ping_cmd_status->dst_addr.addr_type);
 		zb_buf_free(bufid);
 		return;
 	}
@@ -246,13 +238,13 @@ static void dispatch_user_callback(zb_bufid_t bufid)
 			/* Inform user about ACK reception. */
 			if (req_data->zcl_data.ping_req.cb) {
 				if (req_data->zcl_data.ping_req.request_ack == 0) {
-					req_data->zcl_data.ping_req.cb(
-						PING_EVT_FRAME_SENT, delay_ms,
-						req_data);
+					req_data->zcl_data.ping_req.cb(PING_EVT_FRAME_SENT,
+								       delay_ms,
+								       req_data);
 				} else {
-					req_data->zcl_data.ping_req.cb(
-						PING_EVT_ACK_RECEIVED, delay_ms,
-						req_data);
+					req_data->zcl_data.ping_req.cb(PING_EVT_ACK_RECEIVED,
+								       delay_ms,
+								       req_data);
 				}
 			}
 
@@ -260,8 +252,7 @@ static void dispatch_user_callback(zb_bufid_t bufid)
 			if (req_data->zcl_data.ping_req.request_echo == 0) {
 				zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(
 						invalidate_ping_entry_cb,
-						ctx_mgr_get_index_by_entry(
-							req_data));
+						ctx_mgr_get_index_by_entry(req_data));
 
 				if (zb_err_code == RET_OK) {
 					ctx_mgr_delete_entry(req_data);
@@ -296,8 +287,7 @@ static void ping_cli_evt_handler(enum ping_time_evt evt, zb_uint32_t delay_ms,
 		break;
 
 	case PING_EVT_FRAME_TIMEOUT:
-		shell_error(req_data->shell,
-			    "Error: Request timed out after %u ms.", delay_ms);
+		shell_error(req_data->shell, "Error: Request timed out after %u ms.", delay_ms);
 		break;
 
 	case PING_EVT_ECHO_RECEIVED:
@@ -307,8 +297,7 @@ static void ping_cli_evt_handler(enum ping_time_evt evt, zb_uint32_t delay_ms,
 
 	case PING_EVT_ACK_RECEIVED:
 		if (req_data->zcl_data.ping_req.request_echo == 0) {
-			shell_print(req_data->shell, "Ping time: %u ms",
-				    delay_ms);
+			shell_print(req_data->shell, "Ping time: %u ms", delay_ms);
 			zb_cli_print_done(req_data->shell, ZB_FALSE);
 		}
 		break;
@@ -321,8 +310,7 @@ static void ping_cli_evt_handler(enum ping_time_evt evt, zb_uint32_t delay_ms,
 		break;
 
 	case PING_EVT_ERROR:
-		zb_cli_print_error(req_data->shell,
-				   "Unable to send ping request", ZB_FALSE);
+		zb_cli_print_error(req_data->shell, "Unable to send ping request", ZB_FALSE);
 		break;
 
 	default:
@@ -347,8 +335,7 @@ static void ping_request_send(struct ctx_entry *ping_entry)
 	zb_bufid_t bufid;
 	zb_uint8_t *cmd_buf_ptr;
 	zb_uint8_t cli_ep = zb_cli_get_endpoint();
-	struct zcl_packet_info *packet_info =
-		&(ping_entry->zcl_data.pkt_info);
+	struct zcl_packet_info *packet_info = &(ping_entry->zcl_data.pkt_info);
 
 	if (ping_entry->zcl_data.ping_req.count > PING_MAX_LENGTH) {
 		if (ping_entry->zcl_data.ping_req.cb) {
@@ -393,8 +380,7 @@ static void ping_request_send(struct ctx_entry *ping_entry)
 		*(cmd_buf_ptr++) = PING_NO_ECHO_REQUEST;
 	}
 
-	memset(cmd_buf_ptr, PING_ECHO_REQUEST_BYTE,
-	       ping_entry->zcl_data.ping_req.count);
+	memset(cmd_buf_ptr, PING_ECHO_REQUEST_BYTE, ping_entry->zcl_data.ping_req.count);
 	cmd_buf_ptr += ping_entry->zcl_data.ping_req.count;
 	ping_entry->zcl_data.ping_req.ping_seq = ping_seq_num;
 	ping_entry->id  = ping_seq_num;
@@ -413,11 +399,9 @@ static void ping_request_send(struct ctx_entry *ping_entry)
 		(ping_entry->zcl_data.ping_req.request_ack ? ZB_FALSE : ZB_TRUE);
 
 	zb_err_code = ZB_SCHEDULE_APP_CALLBACK(zb_zcl_send_ping_frame,
-					       ctx_mgr_get_index_by_entry(
-							ping_entry));
+					       ctx_mgr_get_index_by_entry(ping_entry));
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(ping_entry->shell,
-				   "Can not schedule zcl frame.", ZB_FALSE);
+		zb_cli_print_error(ping_entry->shell, "Can not schedule zcl frame.", ZB_FALSE);
 
 		/* Make sure ZBOSS buffer API is called safely. */
 		zb_osif_disable_all_inter();
@@ -439,8 +423,7 @@ static void ping_reply_send(struct ctx_entry *ping_entry)
 	zb_uint8_t *cmd_buf_ptr;
 	zb_uint8_t cli_ep = zb_cli_get_endpoint();
 	zb_ret_t zb_err_code;
-	struct zcl_packet_info *packet_info =
-		&(ping_entry->zcl_data.pkt_info);
+	struct zcl_packet_info *packet_info = &(ping_entry->zcl_data.pkt_info);
 
 	/* Make sure ZBOSS buffer API is called safely. */
 	zb_osif_disable_all_inter();
@@ -458,16 +441,14 @@ static void ping_reply_send(struct ctx_entry *ping_entry)
 	*(cmd_buf_ptr++) = ZIGBEE_PING_FRAME_CONTROL_FIELD;
 	*(cmd_buf_ptr++) = ping_entry->zcl_data.ping_reply.ping_seq;
 	*(cmd_buf_ptr++) = PING_ECHO_REPLY;
-	memset(cmd_buf_ptr, PING_ECHO_REPLY_BYTE,
-	       ping_entry->zcl_data.ping_reply.count);
+	memset(cmd_buf_ptr, PING_ECHO_REPLY_BYTE, ping_entry->zcl_data.ping_reply.count);
 	cmd_buf_ptr += ping_entry->zcl_data.ping_reply.count;
 
 	/* Schedule frame to send. */
 	packet_info->buffer = bufid;
 	packet_info->ptr = cmd_buf_ptr;
 	/* DstAddr is already set. */
-	packet_info->dst_addr_mode =
-		ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
+	packet_info->dst_addr_mode = ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
 	packet_info->dst_ep = cli_ep;
 	packet_info->ep = cli_ep;
 	packet_info->prof_id = ZB_AF_HA_PROFILE_ID;
@@ -477,11 +458,9 @@ static void ping_reply_send(struct ctx_entry *ping_entry)
 		(ping_entry->zcl_data.ping_reply.send_ack ? ZB_FALSE : ZB_TRUE);
 
 	zb_err_code = ZB_SCHEDULE_APP_CALLBACK(zb_zcl_send_ping_frame,
-					       ctx_mgr_get_index_by_entry(
-							ping_entry));
+					       ctx_mgr_get_index_by_entry(ping_entry));
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(ping_entry->shell,
-				   "Can not schedule zcl frame.", ZB_FALSE);
+		zb_cli_print_error(ping_entry->shell, "Can not schedule zcl frame.", ZB_FALSE);
 
 		/* Make sure ZBOSS buffer API is called safely. */
 		zb_osif_disable_all_inter();
@@ -500,8 +479,7 @@ static void ping_req_indicate(zb_bufid_t zcl_cmd_bufid)
 {
 	struct ctx_entry tmp_request;
 	zb_zcl_addr_t remote_node_addr;
-	zb_zcl_parsed_hdr_t *zcl_hdr = ZB_BUF_GET_PARAM(zcl_cmd_bufid,
-							zb_zcl_parsed_hdr_t);
+	zb_zcl_parsed_hdr_t *zcl_hdr = ZB_BUF_GET_PARAM(zcl_cmd_bufid, zb_zcl_parsed_hdr_t);
 
 	remote_node_addr = zcl_hdr->addr_data.common_data.source;
 
@@ -536,14 +514,12 @@ static void ping_req_indicate(zb_bufid_t zcl_cmd_bufid)
 
 	if (remote_node_addr.addr_type != ZB_ZCL_ADDR_TYPE_SHORT) {
 		LOG_INF("Ping request received, but indication will not be generated"
-				"due to the unsupported address type.");
+			" due to the unsupported address type.");
 		/* Not supported. */
 		return;
 	}
-	tmp_request.zcl_data.pkt_info.dst_addr_mode =
-		ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
-	tmp_request.zcl_data.pkt_info.dst_addr.addr_short =
-		remote_node_addr.u.short_addr;
+	tmp_request.zcl_data.pkt_info.dst_addr_mode = ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
+	tmp_request.zcl_data.pkt_info.dst_addr.addr_short = remote_node_addr.u.short_addr;
 
 	ping_ind_cb(PING_EVT_REQUEST_RECEIVED,
 		    k_ticks_to_us_near32(tmp_request.zcl_data.ping_req.sent_time),
@@ -558,8 +534,7 @@ zb_uint8_t cli_agent_ep_handler_ping(zb_bufid_t bufid)
 {
 	zb_uint32_t time_diff;
 	zb_zcl_addr_t remote_node_addr;
-	zb_zcl_parsed_hdr_t *zcl_hdr = ZB_BUF_GET_PARAM(bufid,
-							zb_zcl_parsed_hdr_t);
+	zb_zcl_parsed_hdr_t *zcl_hdr = ZB_BUF_GET_PARAM(bufid, zb_zcl_parsed_hdr_t);
 
 	remote_node_addr = zcl_hdr->addr_data.common_data.source;
 
@@ -577,8 +552,7 @@ zb_uint8_t cli_agent_ep_handler_ping(zb_bufid_t bufid)
 
 		/* We have our ping reply. */
 		struct ctx_entry *req_data =
-			ctx_mgr_find_ctx_entry(zcl_hdr->seq_number,
-					       CTX_MGR_PING_REQ_ENTRY_TYPE);
+			ctx_mgr_find_ctx_entry(zcl_hdr->seq_number, CTX_MGR_PING_REQ_ENTRY_TYPE);
 
 		if (req_data == NULL) {
 			return ZB_FALSE;
@@ -586,13 +560,11 @@ zb_uint8_t cli_agent_ep_handler_ping(zb_bufid_t bufid)
 
 		packet_info = &(req_data->zcl_data.pkt_info);
 
-		if (packet_info->dst_addr_mode ==
-		    ZB_APS_ADDR_MODE_16_ENDP_PRESENT) {
+		if (packet_info->dst_addr_mode == ZB_APS_ADDR_MODE_16_ENDP_PRESENT) {
 			remote_short_addr = packet_info->dst_addr.addr_short;
 		} else {
 			remote_short_addr =
-				zb_address_short_by_ieee(
-					packet_info->dst_addr.addr_long);
+				zb_address_short_by_ieee(packet_info->dst_addr.addr_long);
 		}
 
 		if (remote_node_addr.addr_type != ZB_ZCL_ADDR_TYPE_SHORT) {
@@ -606,19 +578,17 @@ zb_uint8_t cli_agent_ep_handler_ping(zb_bufid_t bufid)
 		time_diff = get_request_duration(req_data);
 
 		/* Cancel the ongoing alarm which was to erase the row ... */
-		zb_ret_t zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(
-						invalidate_ping_entry_cb,
-						ctx_mgr_get_index_by_entry(
-							req_data));
+		zb_ret_t zb_err_code =
+			ZB_SCHEDULE_APP_ALARM_CANCEL(
+				invalidate_ping_entry_cb,
+				ctx_mgr_get_index_by_entry(req_data));
 		ZB_ERROR_CHECK(zb_err_code);
 
 		/* Call callback function in order to indicate
 		 * echo response reception.
 		 */
 		if (req_data->zcl_data.ping_req.cb) {
-			req_data->zcl_data.ping_req.cb(PING_EVT_ECHO_RECEIVED,
-							    time_diff,
-							    req_data);
+			req_data->zcl_data.ping_req.cb(PING_EVT_ECHO_RECEIVED, time_diff, req_data);
 		}
 
 		/* ... and erase it manually. */
@@ -631,8 +601,7 @@ zb_uint8_t cli_agent_ep_handler_ping(zb_bufid_t bufid)
 
 		zb_uint8_t len = zb_buf_len(bufid);
 		struct zcl_packet_info *packet_info;
-		struct ctx_entry *ping_entry =
-			ctx_mgr_new_entry(CTX_MGR_PING_REPLY_ENTRY_TYPE);
+		struct ctx_entry *ping_entry = ctx_mgr_new_entry(CTX_MGR_PING_REPLY_ENTRY_TYPE);
 
 		if (ping_entry == NULL) {
 			LOG_WRN("Request pool empty - wait for ongoing command to finish");
@@ -655,11 +624,9 @@ zb_uint8_t cli_agent_ep_handler_ping(zb_bufid_t bufid)
 		}
 
 		if (remote_node_addr.addr_type == ZB_ZCL_ADDR_TYPE_SHORT) {
-			packet_info->dst_addr.addr_short =
-				remote_node_addr.u.short_addr;
+			packet_info->dst_addr.addr_short = remote_node_addr.u.short_addr;
 		} else {
-			LOG_WRN("Drop ping request "
-					"due to incorrect address type");
+			LOG_WRN("Drop ping request due to incorrect address type");
 			ctx_mgr_delete_entry(ping_entry);
 			zb_buf_free(bufid);
 			return ZB_TRUE;
@@ -670,8 +637,7 @@ zb_uint8_t cli_agent_ep_handler_ping(zb_bufid_t bufid)
 	} else if (zcl_hdr->cmd_id == PING_NO_ECHO_REQUEST) {
 		LOG_DBG("PING request without ECHO received");
 	} else {
-		LOG_WRN("Unsupported Ping message received, cmd_id %d",
-			zcl_hdr->cmd_id);
+		LOG_WRN("Unsupported Ping message received, cmd_id %d", zcl_hdr->cmd_id);
 	}
 
 	zb_buf_free(bufid);
@@ -762,8 +728,7 @@ zb_uint8_t cli_agent_ep_handler_ping(zb_bufid_t bufid)
 int cmd_zb_ping(const struct shell *shell, size_t argc, char **argv)
 {
 	uint8_t i;
-	struct ctx_entry *ping_entry =
-		ctx_mgr_new_entry(CTX_MGR_PING_REQ_ENTRY_TYPE);
+	struct ctx_entry *ping_entry = ctx_mgr_new_entry(CTX_MGR_PING_REQ_ENTRY_TYPE);
 
 	if (!ping_entry) {
 		zb_cli_print_error(
@@ -776,8 +741,7 @@ int cmd_zb_ping(const struct shell *shell, size_t argc, char **argv)
 	ping_entry->zcl_data.ping_req.cb = ping_cli_evt_handler;
 	ping_entry->zcl_data.ping_req.request_ack = 0;
 	ping_entry->zcl_data.ping_req.request_echo = 1;
-	ping_entry->zcl_data.ping_req.timeout_ms =
-		PING_ECHO_REQUEST_TIMEOUT_S * MSEC_PER_SEC;
+	ping_entry->zcl_data.ping_req.timeout_ms = (PING_ECHO_REQUEST_TIMEOUT_S * MSEC_PER_SEC);
 
 	for (i = 1; i < (argc - 2); i++) {
 		if (strcmp(argv[i], "--aps-ack") == 0) {
@@ -792,8 +756,7 @@ int cmd_zb_ping(const struct shell *shell, size_t argc, char **argv)
 			      &(ping_entry->zcl_data.pkt_info.dst_addr),
 			      ADDR_ANY);
 
-	if (ping_entry->zcl_data.pkt_info.dst_addr_mode ==
-	    ADDR_INVALID) {
+	if (ping_entry->zcl_data.pkt_info.dst_addr_mode == ADDR_INVALID) {
 		zb_cli_print_error(shell, "Wrong address format", ZB_FALSE);
 		ctx_mgr_delete_entry(ping_entry);
 		return -EINVAL;
@@ -803,16 +766,14 @@ int cmd_zb_ping(const struct shell *shell, size_t argc, char **argv)
 			       (uint8_t *)&ping_entry->zcl_data.ping_req.count, 2,
 			       10)) {
 
-		zb_cli_print_error(shell, "Incorrect ping payload size",
-				   ZB_FALSE);
+		zb_cli_print_error(shell, "Incorrect ping payload size", ZB_FALSE);
 		ctx_mgr_delete_entry(ping_entry);
 		return -EINVAL;
 	}
 
 	if (ping_entry->zcl_data.ping_req.count > PING_MAX_LENGTH) {
-		shell_print(shell, "Note: Ping payload size"
-							"exceeds maximum possible,"
-							"assuming maximum");
+		shell_print(shell,
+			    "Note: Ping payload size exceeds maximum possible, assuming maximum");
 		ping_entry->zcl_data.ping_req.count = PING_MAX_LENGTH;
 	}
 

@@ -151,6 +151,7 @@ static void print_write_attr_response(zb_bufid_t bufid, struct ctx_entry *entry)
  */
 zb_uint8_t cli_agent_ep_handler_attr(zb_bufid_t bufid)
 {
+	zb_ret_t zb_err_code;
 	zb_zcl_parsed_hdr_t *zcl_hdr;
 	struct ctx_entry *entry;
 
@@ -184,8 +185,10 @@ zb_uint8_t cli_agent_ep_handler_attr(zb_bufid_t bufid)
 		}
 	}
 	/* Cancel the ongoing alarm which was to delete entry with frame data ... */
-	(void)(ZB_SCHEDULE_APP_ALARM_CANCEL(invalidate_read_write_attr_entry_cb,
-					    ctx_mgr_get_index_by_entry(entry)));
+	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(invalidate_read_write_attr_entry_cb,
+						   ctx_mgr_get_index_by_entry(entry));
+	ZB_ERROR_CHECK(zb_err_code);
+
 	/* ... and delete it manually. */
 	ctx_mgr_delete_entry(entry);
 
@@ -343,17 +346,17 @@ int cmd_zb_readattr(const struct shell *shell, size_t argc, char **argv)
 
 	is_direction_present = ((argc == 7) && !strcmp(argv[4], "-c"));
 
-	if (argc != 6 && !is_direction_present) {
-		zb_cli_print_error(shell, "Wrong number of arguments", ZB_FALSE);
-		return -EINVAL;
-	}
-
 	if (entry == NULL) {
 		zb_cli_print_error(
 			shell,
 			"Request pool empty - wait for ongoing command to finish",
 			ZB_FALSE);
 		return -ENOEXEC;
+	}
+
+	if (argc != 6 && !is_direction_present) {
+		zb_cli_print_error(shell, "Wrong number of arguments", ZB_FALSE);
+		goto readattr_error;
 	}
 
 	req_data = &(entry->zcl_data.read_write_attr_req);
@@ -363,14 +366,17 @@ int cmd_zb_readattr(const struct shell *shell, size_t argc, char **argv)
 
 	if (packet_info->dst_addr_mode == ADDR_INVALID) {
 		zb_cli_print_error(shell, "Invalid address", ZB_FALSE);
-		return -EINVAL;
+		goto readattr_error;
 	}
 
-	(void)(zb_cli_sscan_uint8(*(++argv), &(packet_info->dst_ep)));
+	if (!zb_cli_sscan_uint8(*(++argv), &(packet_info->dst_ep))) {
+		zb_cli_print_error(shell, "Incorrect remote endpoint", ZB_FALSE);
+		goto readattr_error;
+	}
 
 	if (!parse_hex_u16(*(++argv), &(packet_info->cluster_id))) {
 		zb_cli_print_error(shell, "Invalid cluster id", ZB_FALSE);
-		return -EINVAL;
+		goto readattr_error;
 	}
 
 	if (is_direction_present) {
@@ -382,12 +388,12 @@ int cmd_zb_readattr(const struct shell *shell, size_t argc, char **argv)
 
 	if (!parse_hex_u16(*(++argv), &(packet_info->prof_id))) {
 		zb_cli_print_error(shell, "Invalid profile id", ZB_FALSE);
-		return -EINVAL;
+		goto readattr_error;
 	}
 
 	if (!parse_hex_u16(*(++argv), &(req_data->attr_id))) {
 		zb_cli_print_error(shell, "Invalid attribute id", ZB_FALSE);
-		return -EINVAL;
+		goto readattr_error;
 	}
 
 	req_data->req_type = ATTR_READ_REQUEST;
@@ -413,6 +419,11 @@ int cmd_zb_readattr(const struct shell *shell, size_t argc, char **argv)
 	packet_info->disable_aps_ack = ZB_FALSE;
 
 	return read_write_attr_send(entry);
+
+readattr_error:
+	/* Mark data structure as free. */
+	ctx_mgr_delete_entry(entry);
+	return -EINVAL;
 }
 
 /**@brief Write the attribute value to the remote node.
@@ -459,14 +470,17 @@ int cmd_zb_writeattr(const struct shell *shell, size_t argc, char **argv)
 
 	if (packet_info->dst_addr_mode == ADDR_INVALID) {
 		zb_cli_print_error(shell, "Invalid address", ZB_FALSE);
-		return -EINVAL;
+		goto writeattr_error;
 	}
 
-	(void)(zb_cli_sscan_uint8(*(++argv), &(packet_info->dst_ep)));
+	if (!zb_cli_sscan_uint8(*(++argv), &(packet_info->dst_ep))) {
+		zb_cli_print_error(shell, "Incorrect remote endpoint", ZB_FALSE);
+		goto writeattr_error;
+	}
 
 	if (!parse_hex_u16(*(++argv), &(packet_info->cluster_id))) {
 		zb_cli_print_error(shell, "Invalid cluster id", ZB_FALSE);
-		return -EINVAL;
+		goto writeattr_error;
 	}
 
 	if (is_direction_present) {
@@ -478,17 +492,17 @@ int cmd_zb_writeattr(const struct shell *shell, size_t argc, char **argv)
 
 	if (!parse_hex_u16(*(++argv), &(packet_info->prof_id))) {
 		zb_cli_print_error(shell, "Invalid profile id", ZB_FALSE);
-		return -EINVAL;
+		goto writeattr_error;
 	}
 
 	if (!parse_hex_u16(*(++argv), &(req_data->attr_id))) {
 		zb_cli_print_error(shell, "Invalid attribute id", ZB_FALSE);
-		return -EINVAL;
+		goto writeattr_error;
 	}
 
 	if (!parse_hex_u8(*(++argv), &(req_data->attr_type))) {
 		zb_cli_print_error(shell, "Invalid attribute type", ZB_FALSE);
-		return -EINVAL;
+		goto writeattr_error;
 	}
 
 	uint8_t len = strlen(*(++argv));
@@ -502,7 +516,7 @@ int cmd_zb_writeattr(const struct shell *shell, size_t argc, char **argv)
 				  sizeof(req_data->attr_value), true)) {
 
 		zb_cli_print_error(shell, "Invalid attribute value", ZB_FALSE);
-		return -EINVAL;
+		goto writeattr_error;
 	}
 
 	req_data->req_type = ATTR_WRITE_REQUEST;
@@ -527,4 +541,9 @@ int cmd_zb_writeattr(const struct shell *shell, size_t argc, char **argv)
 	packet_info->disable_aps_ack = ZB_FALSE;
 
 	return read_write_attr_send(entry);
+
+writeattr_error:
+	/* Mark data structure as free. */
+	ctx_mgr_delete_entry(entry);
+	return -EINVAL;
 }
