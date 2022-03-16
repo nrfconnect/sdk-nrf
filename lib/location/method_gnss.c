@@ -37,6 +37,16 @@ BUILD_ASSERT(
 	"CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL must be enabled");
 #endif
 
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+/* Verify that MQTT, REST or external PGPS is enabled */
+BUILD_ASSERT(
+	IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) ||
+	IS_ENABLED(CONFIG_NRF_CLOUD_REST) ||
+	IS_ENABLED(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL),
+	"CONFIG_NRF_CLOUD_MQTT, CONFIG_NRF_CLOUD_REST or "
+	"CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL must be enabled");
+#endif
+
 /* Maximun waiting time before GNSS is started regardless of RRC or PSM state [min]. This prevents
  * Location library from getting stuck indefinitely if the application keeps LTE connection
  * constantly active.
@@ -79,17 +89,23 @@ static bool running;
 static K_SEM_DEFINE(entered_psm_mode, 0, 1);
 static K_SEM_DEFINE(entered_rrc_idle, 0, 1);
 
-#if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS))
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 static struct nrf_modem_gnss_agps_data_frame agps_request;
 #if defined(CONFIG_NRF_CLOUD_REST) && !defined(CONFIG_NRF_CLOUD_MQTT)
+#if defined(CONFIG_NRF_CLOUD_PGPS) || !defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
 static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE +
 			      AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE];
+#endif
 #endif
 #endif
 
 #if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
 static struct k_work method_gnss_agps_ext_work;
 static void method_gnss_agps_ext_work_fn(struct k_work *item);
+#endif
+#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+static struct k_work method_gnss_pgps_ext_work;
+static void method_gnss_pgps_ext_work_fn(struct k_work *item);
 #endif
 
 static int fixes_remaining;
@@ -123,8 +139,12 @@ void method_gnss_pgps_handler(struct nrf_cloud_pgps_event *event)
 				       &method_gnss_manage_pgps_work);
 	} else if (event->type == PGPS_EVT_REQUEST) {
 		memcpy(&pgps_request, event->request, sizeof(pgps_request));
+#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+		k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_pgps_ext_work);
+#else
 		k_work_submit_to_queue(location_core_work_queue_get(),
 				       &method_gnss_pgps_request_work);
+#endif
 	}
 }
 
@@ -414,7 +434,7 @@ int method_gnss_cancel(void)
 	int sleeping;
 	int rrc_idling;
 
-	if (err) {
+	if ((err != 0) && (err != -NRF_EPERM)) {
 		LOG_ERR("Failed to stop GNSS");
 	}
 
@@ -618,7 +638,14 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 #if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
 static void method_gnss_agps_ext_work_fn(struct k_work *item)
 {
-	location_core_event_cb_assistance_request(&agps_request);
+	location_core_event_cb_agps_request(&agps_request);
+}
+#endif
+
+#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+static void method_gnss_pgps_ext_work_fn(struct k_work *item)
+{
+	location_core_event_cb_pgps_request(&pgps_request);
 }
 #endif
 
@@ -748,6 +775,9 @@ int method_gnss_init(void)
 	k_work_init(&method_gnss_agps_request_work, method_gnss_agps_request_work_fn);
 #endif
 
+#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+	k_work_init(&method_gnss_pgps_ext_work, method_gnss_pgps_ext_work_fn);
+#endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #if !defined(CONFIG_NRF_CLOUD_MQTT)
 	k_work_init(&method_gnss_pgps_request_work, method_gnss_pgps_request_work_fn);
@@ -756,6 +786,7 @@ int method_gnss_init(void)
 	k_work_init(&method_gnss_notify_pgps_work, method_gnss_notify_pgps);
 
 #endif
+
 #if !defined(CONFIG_NRF_CLOUD_AGPS)
 	/* Subscribe to sleep notification to monitor when modem enters power saving mode */
 	method_gnss_modem_sleep_notif_subscribe(MIN_SLEEP_DURATION_FOR_STARTING_GNSS);

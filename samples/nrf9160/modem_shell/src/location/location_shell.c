@@ -161,9 +161,20 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 		mosh_print(
 			"MoSh: A-GPS request from Location library "
 			"(ephe: 0x%08x alm: 0x%08x flags: 0x%02x)",
-			event_data->request.sv_mask_ephe,
-			event_data->request.sv_mask_alm,
-			event_data->request.data_flags);
+			event_data->agps_request.sv_mask_ephe,
+			event_data->agps_request.sv_mask_alm,
+			event_data->agps_request.data_flags);
+#endif
+		break;
+	case LOCATION_EVT_GNSS_PREDICTION_REQUEST:
+#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+		mosh_print(
+			"MoSh: P-GPS request from Location library "
+			"(prediction count: %d validity time: %d gps day: %d time of day: %d)",
+			event_data->pgps_request.prediction_count,
+			event_data->pgps_request.prediction_period_min,
+			event_data->pgps_request.gps_day,
+			event_data->pgps_request.gps_time_of_day);
 #endif
 		break;
 	}

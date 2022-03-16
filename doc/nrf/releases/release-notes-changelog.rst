@@ -269,7 +269,22 @@ Bluetooth libraries and services
 
   * Added host callback handlers for the ``write`` and ``match`` operations of the CCC descriptor.
   * Fixed the serialization of the write callback applied to the GATT attribute.
-  * Fixed the serialization of the :c:func:`bt_gatt_service_unregister` function call .
+  * Fixed the serialization of the :c:func:`bt_gatt_service_unregister` function call.
+
+Modem libraries
+------------------------
+
+* :ref:`lib_location` library:
+
+  * Added:
+
+    * Support for P-GPS data retrieval from an external source, implemented separately by the application.
+      Enabled by setting the :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL` option.
+      The library triggers a :c:enum:`LOCATION_EVT_GNSS_PREDICTION_REQUEST` event when assistance is needed.
+
+  * Updated:
+
+    * The :c:member:`request` member of the :c:struct:`location_event_data` structure was renamed to :c:member:`agps_request`.
 
 Libraries for networking
 ------------------------

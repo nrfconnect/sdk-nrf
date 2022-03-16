@@ -20,6 +20,9 @@
 #if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
 #include <nrf_modem_gnss.h>
 #endif
+#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+#include <net/nrf_cloud_pgps.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,10 +47,15 @@ enum location_event_id {
 	/** An error occurred when trying to get the location. */
 	LOCATION_EVT_ERROR,
 	/**
-	 * GNSS is requesting assistance data. Application should obtain the data and send it to
+	 * GNSS is requesting A-GPS data. Application should obtain the data and send it to
 	 * location_agps_data_process().
 	 */
-	LOCATION_EVT_GNSS_ASSISTANCE_REQUEST
+	LOCATION_EVT_GNSS_ASSISTANCE_REQUEST,
+	/**
+	 * GNSS is requesting P-GPS data. Application should obtain the data and send it to
+	 * location_pgps_data_process().
+	 */
+	LOCATION_EVT_GNSS_PREDICTION_REQUEST
 };
 
 /** Location accuracy. */
@@ -126,7 +134,14 @@ struct location_event_data {
 		 * A-GPS notification data frame used by GNSS to let the application know it
 		 * needs new assistance data, used with event LOCATION_EVT_GNSS_ASSISTANCE_REQUEST.
 		 */
-		struct nrf_modem_gnss_agps_data_frame request;
+		struct nrf_modem_gnss_agps_data_frame agps_request;
+#endif
+#if  defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+		/**
+		 * P-GPS notification data frame used by GNSS to let the application know it
+		 * needs new assistance data, used with event LOCATION_EVT_GNSS_PREDICTION_REQUEST.
+		 */
+		struct gps_pgps_request pgps_request;
 #endif
 	};
 };
@@ -308,8 +323,9 @@ const char *location_method_str(enum location_method method);
  * @brief Feed in A-GPS data to be processed by library.
  *
  * @details If Location library is not receiving A-GPS assistance data directly from nRF Cloud,
- * it throws event LOCATION_EVT_GNSS_ASSISTANCE_REQUEST when assistance is needed. Once application
- * has obtained the assistance data it can be handed over to Location library using this function.
+ * it triggers the LOCATION_EVT_GNSS_ASSISTANCE_REQUEST event when assistance is needed. Once
+ * application has obtained the assistance data it can be handed over to Location library using this
+ * function.
  *
  * Note that the data must be formatted similarly to the nRF Cloud A-GPS data, see for example
  * nrf_cloud_agps_schema_v1.h.
@@ -318,9 +334,29 @@ const char *location_method_str(enum location_method method);
  * @param[in] buf_len Buffer size of data to be processed.
  *
  * @return 0 on success, or negative error code on failure.
- * @retval -EINVAL Given buffer NULL or buffer length zero.
+ * @retval -EINVAL Given buffer is NULL or buffer length zero.
  */
 int location_agps_data_process(const char *buf, size_t buf_len);
+
+/**
+ * @brief Feed in P-GPS data to be processed by library.
+ *
+ * @details If Location library is not receiving P-GPS assistance data directly from nRF Cloud,
+ * it triggers the LOCATION_EVT_GNSS_PREDICTION_REQUEST event when assistance is needed. Once
+ * application has obtained the assistance data it can be handed over to Location library using this
+ * function.
+ *
+ * Note that the data must be formatted similarly to the nRF Cloud P-GPS data, see for example
+ * nrf_cloud_pgps_schema_v1.h.
+ *
+ * @param[in] buf Data received.
+ * @param[in] buf_len Buffer size of data to be processed.
+ *
+ * @return 0 on success, or negative error code on failure.
+ * @retval -EINVAL Given buffer is NULL or buffer length zero.
+ */
+int location_pgps_data_process(const char *buf, size_t buf_len);
+
 
 /** @} */
 

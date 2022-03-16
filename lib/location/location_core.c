@@ -365,13 +365,24 @@ void location_core_event_cb_timeout(void)
 }
 
 #if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
-void location_core_event_cb_assistance_request(const struct nrf_modem_gnss_agps_data_frame *request)
+void location_core_event_cb_agps_request(const struct nrf_modem_gnss_agps_data_frame *request)
 {
 	struct location_event_data agps_request_event_data;
 
 	agps_request_event_data.id = LOCATION_EVT_GNSS_ASSISTANCE_REQUEST;
-	agps_request_event_data.request = *request;
+	agps_request_event_data.agps_request = *request;
 	event_handler(&agps_request_event_data);
+}
+#endif
+
+#if defined(CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL)
+void location_core_event_cb_pgps_request(const struct gps_pgps_request *request)
+{
+	struct location_event_data pgps_request_event_data;
+
+	pgps_request_event_data.id = LOCATION_EVT_GNSS_PREDICTION_REQUEST;
+	pgps_request_event_data.pgps_request = *request;
+	event_handler(&pgps_request_event_data);
 }
 #endif
 
