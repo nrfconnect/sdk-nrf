@@ -543,7 +543,7 @@ static int cmd_zb_active_ep(const struct shell *shell, size_t argc, char **argv)
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (!ctx_entry) {
-		zb_cli_print_error(shell, "Too many ZDO transactions",
+		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
 				   ZB_FALSE);
 
 		/* Make sure ZBOSS buffer API is called safely. */
@@ -656,7 +656,7 @@ static int cmd_zb_simple_desc(const struct shell *shell, size_t argc,
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (!ctx_entry) {
-		zb_cli_print_error(shell, "Too many ZDO transactions",
+		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
 				   ZB_FALSE);
 
 		/* Make sure ZBOSS buffer API is called safely. */
@@ -920,7 +920,7 @@ static int cmd_zb_match_desc(const struct shell *shell, size_t argc,
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (!ctx_entry) {
-		zb_cli_print_error(shell, "Too many ZDO transactions",
+		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
 				   ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
@@ -1099,7 +1099,7 @@ static int cmd_zb_bind(const struct shell *shell, size_t argc, char **argv)
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (!ctx_entry) {
-		zb_cli_print_error(shell, "Too many ZDO transactions",
+		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
 				   ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
@@ -1198,7 +1198,7 @@ static int cmd_zb_nwk_addr(const struct shell *shell, size_t argc, char **argv)
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (!ctx_entry) {
-		zb_cli_print_error(shell, "Too many ZDO transactions",
+		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
 				   ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
@@ -1299,7 +1299,7 @@ static int cmd_zb_ieee_addr(const struct shell *shell, size_t argc, char **argv)
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (!ctx_entry) {
-		zb_cli_print_error(shell, "Too many ZDO transactions",
+		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
 				   ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
@@ -1655,7 +1655,7 @@ static int cmd_zb_mgmt_leave(const struct shell *shell, size_t argc,
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (ctx_entry == NULL) {
-		zb_cli_print_error(shell, "Too many ZDO transactions",
+		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
 				   ZB_FALSE);
 		goto error;
 	}
@@ -2018,7 +2018,7 @@ static int cmd_zb_mgmt_bind(const struct shell *shell, size_t argc, char **argv)
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (ctx_entry == NULL) {
-		zb_cli_print_error(shell, "Too many ZDO transactions",
+		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
 				   ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
@@ -2265,7 +2265,7 @@ static int cmd_zb_mgmt_lqi(const struct shell *shell, size_t argc, char **argv)
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (ctx_entry == NULL) {
-		zb_cli_print_error(shell, "Too many ZDO transactions",
+		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
 				   ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;

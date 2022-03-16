@@ -50,12 +50,7 @@ struct ctx_entry {
 	 */
 	union {
 		struct zdo_data zdo_data;
-		struct ping_req_data ping_req_data;
-		struct ping_reply_data ping_reply_data;
-		struct read_write_attr_req_data read_write_attr_req_data;
-		struct configure_reporting_req_data configure_reporting_req_data;
-		struct generic_cmd_data generic_cmd_data;
-		struct groups_cmd_data groups_cmd_data;
+		struct zcl_data zcl_data;
 	};
 };
 

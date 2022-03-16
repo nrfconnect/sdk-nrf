@@ -35,7 +35,7 @@ static void zb_zcl_send_add_group_cmd(zb_uint8_t index)
 	/* Get the ZCL packet sequence number. */
 	entry->id = ZCL_CTX().seq_number;
 
-	packet_info = &(entry->groups_cmd_data.packet_info);
+	packet_info = &(entry->zcl_data.pkt_info);
 
 	ZB_ZCL_GROUPS_SEND_ADD_GROUP_REQ(
 				packet_info->buffer,
@@ -46,7 +46,7 @@ static void zb_zcl_send_add_group_cmd(zb_uint8_t index)
 				packet_info->prof_id,
 				ZB_ZCL_DISABLE_DEFAULT_RESPONSE,
 				packet_info->cb,
-				entry->groups_cmd_data.group_id);
+				entry->zcl_data.groups_cmd.group_id);
 }
 
 /**@brief Function to construct and send Remove Group command.
@@ -66,7 +66,7 @@ static void zb_zcl_send_remove_group_cmd(zb_uint8_t index)
 	/* Get the ZCL packet sequence number. */
 	entry->id = ZCL_CTX().seq_number;
 
-	packet_info = &(entry->groups_cmd_data.packet_info);
+	packet_info = &(entry->zcl_data.pkt_info);
 
 	ZB_ZCL_GROUPS_SEND_REMOVE_GROUP_REQ(
 				packet_info->buffer,
@@ -77,7 +77,7 @@ static void zb_zcl_send_remove_group_cmd(zb_uint8_t index)
 				packet_info->prof_id,
 				ZB_ZCL_DISABLE_DEFAULT_RESPONSE,
 				packet_info->cb,
-				entry->groups_cmd_data.group_id);
+				entry->zcl_data.groups_cmd.group_id);
 }
 
 /**@brief Function to construct and send Get Group Membership command.
@@ -98,18 +98,18 @@ static void zb_zcl_send_get_group_mem_cmd(zb_uint8_t index)
 	/* Get the ZCL packet sequence number. */
 	entry->id = ZCL_CTX().seq_number;
 
-	packet_info = &(entry->groups_cmd_data.packet_info);
+	packet_info = &(entry->zcl_data.pkt_info);
 
 	ZB_ZCL_GROUPS_INIT_GET_GROUP_MEMBERSHIP_REQ(
 				packet_info->buffer,
 				data_ptr,
 				ZB_ZCL_DISABLE_DEFAULT_RESPONSE,
-				entry->groups_cmd_data.group_list_cnt);
+				entry->zcl_data.groups_cmd.group_list_cnt);
 
-	for (uint8_t i = 0; i < entry->groups_cmd_data.group_list_cnt; i++) {
+	for (uint8_t i = 0; i < entry->zcl_data.groups_cmd.group_list_cnt; i++) {
 		ZB_ZCL_GROUPS_ADD_ID_GET_GROUP_MEMBERSHIP_REQ(
 				data_ptr,
-				entry->groups_cmd_data.group_list[i]);
+				entry->zcl_data.groups_cmd.group_list[i]);
 	}
 
 	ZB_ZCL_GROUPS_SEND_GET_GROUP_MEMBERSHIP_REQ(
@@ -140,7 +140,7 @@ static void zb_zcl_send_add_group_if_identifying_cmd(zb_uint8_t index)
 	/* Get the ZCL packet sequence number. */
 	entry->id = ZCL_CTX().seq_number;
 
-	packet_info = &(entry->groups_cmd_data.packet_info);
+	packet_info = &(entry->zcl_data.pkt_info);
 
 	ZB_ZCL_GROUPS_SEND_ADD_GROUP_IF_IDENT_REQ(
 				packet_info->buffer,
@@ -151,7 +151,7 @@ static void zb_zcl_send_add_group_if_identifying_cmd(zb_uint8_t index)
 				packet_info->prof_id,
 				ZB_ZCL_DISABLE_DEFAULT_RESPONSE,
 				packet_info->cb,
-				entry->groups_cmd_data.group_id);
+				entry->zcl_data.groups_cmd.group_id);
 }
 
 /**@brief Function to construct and send Remove All Groups command.
@@ -171,7 +171,7 @@ static void zb_zcl_send_remove_all_groups_cmd(zb_uint8_t index)
 	/* Get the ZCL packet sequence number. */
 	entry->id = ZCL_CTX().seq_number;
 
-	packet_info = &(entry->groups_cmd_data.packet_info);
+	packet_info = &(entry->zcl_data.pkt_info);
 
 	ZB_ZCL_GROUPS_SEND_REMOVE_ALL_GROUPS_REQ(
 				packet_info->buffer,
@@ -220,7 +220,7 @@ static int zcl_groups_cmd_send(struct ctx_entry *entry)
 		goto cmd_send_error;
 	}
 
-	zb_err_code = ZB_SCHEDULE_APP_CALLBACK(entry->groups_cmd_data.send_fn, entry_index);
+	zb_err_code = ZB_SCHEDULE_APP_CALLBACK(entry->zcl_data.groups_cmd.send_fn, entry_index);
 
 	if (zb_err_code != RET_OK) {
 		zb_cli_print_error(entry->shell, "Can not schedule zcl frame.", ZB_FALSE);
@@ -237,7 +237,7 @@ static int zcl_groups_cmd_send(struct ctx_entry *entry)
 cmd_send_error:
 	/* Make sure ZBOSS buffer API is called safely. */
 	zb_osif_disable_all_inter();
-	zb_buf_free(entry->groups_cmd_data.packet_info.buffer);
+	zb_buf_free(entry->zcl_data.pkt_info.buffer);
 	zb_osif_enable_all_inter();
 
 	/* Invalidate an entry with frame data in the context manager. */
@@ -350,17 +350,20 @@ static zb_bool_t is_sent_unicast(struct zcl_packet_info *packet_info)
 int cmd_zb_add_remove_group(const struct shell *shell, size_t argc, char **argv)
 {
 	zb_bufid_t bufid;
-	struct groups_cmd_data *req_data;
+	struct groups_cmd *req_data;
 	struct zcl_packet_info *packet_info;
 	struct ctx_entry *entry = ctx_mgr_new_entry(CTX_MGR_GROUPS_CMD_ENTRY_TYPE);
 
 	if (entry == NULL) {
-		zb_cli_print_error(shell, "Request pool empty - wait a bit", ZB_FALSE);
+		zb_cli_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 		return -ENOEXEC;
 	}
 
-	req_data = &(entry->groups_cmd_data);
-	packet_info = &(req_data->packet_info);
+	req_data = &(entry->zcl_data.groups_cmd);
+	packet_info = &(entry->zcl_data.pkt_info);
 
 	/*  Set default profile ID to Home Automation. */
 	packet_info->prof_id = ZB_AF_HA_PROFILE_ID;
@@ -477,17 +480,20 @@ add_remove_group_error:
 int cmd_zb_get_group_mem(const struct shell *shell, size_t argc, char **argv)
 {
 	zb_bufid_t bufid;
-	struct groups_cmd_data *req_data;
+	struct groups_cmd *req_data;
 	struct zcl_packet_info *packet_info;
 	struct ctx_entry *entry = ctx_mgr_new_entry(CTX_MGR_GROUPS_CMD_ENTRY_TYPE);
 
 	if (entry == NULL) {
-		zb_cli_print_error(shell, "Request pool empty - wait a bit", ZB_FALSE);
+		zb_cli_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 		return -ENOEXEC;
 	}
 
-	req_data = &(entry->groups_cmd_data);
-	packet_info = &(req_data->packet_info);
+	req_data = &(entry->zcl_data.groups_cmd);
+	packet_info = &(entry->zcl_data.pkt_info);
 
 	/*  Set default profile ID to Home Automation. */
 	packet_info->prof_id = ZB_AF_HA_PROFILE_ID;
@@ -605,17 +611,20 @@ get_group_mem_error:
 int cmd_zb_add_group_if_identifying(const struct shell *shell, size_t argc, char **argv)
 {
 	zb_bufid_t bufid;
-	struct groups_cmd_data *req_data;
+	struct groups_cmd *req_data;
 	struct zcl_packet_info *packet_info;
 	struct ctx_entry *entry = ctx_mgr_new_entry(CTX_MGR_GROUPS_CMD_ENTRY_TYPE);
 
 	if (entry == NULL) {
-		zb_cli_print_error(shell, "Request pool empty - wait a bit", ZB_FALSE);
+		zb_cli_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 		return -ENOEXEC;
 	}
 
-	req_data = &(entry->groups_cmd_data);
-	packet_info = &(req_data->packet_info);
+	req_data = &(entry->zcl_data.groups_cmd);
+	packet_info = &(entry->zcl_data.pkt_info);
 
 	/*  Set default profile ID to Home Automation. */
 	packet_info->prof_id = ZB_AF_HA_PROFILE_ID;
@@ -718,17 +727,20 @@ add_group_if_identifying_error:
 int cmd_zb_remove_all_groups(const struct shell *shell, size_t argc, char **argv)
 {
 	zb_bufid_t bufid;
-	struct groups_cmd_data *req_data;
+	struct groups_cmd *req_data;
 	struct zcl_packet_info *packet_info;
 	struct ctx_entry *entry = ctx_mgr_new_entry(CTX_MGR_GROUPS_CMD_ENTRY_TYPE);
 
 	if (entry == NULL) {
-		zb_cli_print_error(shell, "Request pool empty - wait a bit", ZB_FALSE);
+		zb_cli_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 		return -ENOEXEC;
 	}
 
-	req_data = &(entry->groups_cmd_data);
-	packet_info = &(req_data->packet_info);
+	req_data = &(entry->zcl_data.groups_cmd);
+	packet_info = &(entry->zcl_data.pkt_info);
 
 	/*  Set default profile ID to Home Automation. */
 	packet_info->prof_id = ZB_AF_HA_PROFILE_ID;
@@ -821,7 +833,7 @@ remove_all_groups_error:
 static zb_bool_t is_response(zb_zcl_parsed_hdr_t *zcl_hdr, struct ctx_entry *entry)
 {
 	zb_uint16_t remote_node_short = 0;
-	struct zcl_packet_info *packet_info = &entry->groups_cmd_data.packet_info;
+	struct zcl_packet_info *packet_info = &entry->zcl_data.pkt_info;
 
 	if (packet_info->dst_addr_mode == ZB_APS_ADDR_MODE_64_ENDP_PRESENT) {
 		remote_node_short = zb_address_short_by_ieee(packet_info->dst_addr.addr_long);
@@ -873,7 +885,7 @@ zb_uint8_t cli_agent_ep_handler_groups_cmd(zb_bufid_t bufid)
 		return ZB_FALSE;
 	}
 
-	packet_info = &entry->groups_cmd_data.packet_info;
+	packet_info = &entry->zcl_data.pkt_info;
 
 	/* Get sender device short address for printing the response command. */
 	if (packet_info->dst_addr_mode == ZB_APS_ADDR_MODE_64_ENDP_PRESENT) {
