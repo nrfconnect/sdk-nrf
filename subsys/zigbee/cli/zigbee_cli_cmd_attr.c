@@ -48,7 +48,7 @@ static void invalidate_read_write_attr_entry_cb(zb_uint8_t index)
 static zb_bool_t is_response(zb_zcl_parsed_hdr_t *zcl_hdr, struct ctx_entry *entry)
 {
 	zb_uint16_t remote_node_short = 0;
-	struct zcl_packet_info *packet_info = &(entry->read_write_attr_req_data.packet_info);
+	struct zcl_packet_info *packet_info = &(entry->zcl_data.pkt_info);
 
 	if (packet_info->dst_addr_mode == ZB_APS_ADDR_MODE_64_ENDP_PRESENT) {
 		remote_node_short = zb_address_short_by_ieee(packet_info->dst_addr.addr_long);
@@ -177,7 +177,7 @@ zb_uint8_t cli_agent_ep_handler_attr(zb_bufid_t bufid)
 			    def_resp->command_id,
 			    def_resp->status);
 	} else {
-		if (entry->read_write_attr_req_data.req_type == ATTR_READ_REQUEST) {
+		if (entry->zcl_data.read_write_attr_req.req_type == ATTR_READ_REQUEST) {
 			print_read_attr_response(bufid, entry);
 		} else {
 			print_write_attr_response(bufid, entry);
@@ -202,25 +202,26 @@ zb_uint8_t cli_agent_ep_handler_attr(zb_bufid_t bufid)
  */
 static void construct_read_write_attr_frame(struct ctx_entry *entry)
 {
-	struct read_write_attr_req_data *req_data = &(entry->read_write_attr_req_data);
+	struct zcl_packet_info *packet_info = &(entry->zcl_data.pkt_info);
+	struct read_write_attr_req *req_data = &(entry->zcl_data.read_write_attr_req);
 
 	/* Get the ZCL packet sequence number. */
 	entry->id = ZCL_CTX().seq_number;
 
 	/* Fill the buffer with data depending on the request type. */
 	if (req_data->req_type == ATTR_READ_REQUEST) {
-		ZB_ZCL_GENERAL_INIT_READ_ATTR_REQ_A(req_data->packet_info.buffer,
-						    req_data->packet_info.ptr,
+		ZB_ZCL_GENERAL_INIT_READ_ATTR_REQ_A(packet_info->buffer,
+						    packet_info->ptr,
 						    req_data->direction,
 						    ZB_ZCL_ENABLE_DEFAULT_RESPONSE);
-		ZB_ZCL_GENERAL_ADD_ID_READ_ATTR_REQ(req_data->packet_info.ptr,
+		ZB_ZCL_GENERAL_ADD_ID_READ_ATTR_REQ(packet_info->ptr,
 						    req_data->attr_id);
 	} else {
-		ZB_ZCL_GENERAL_INIT_WRITE_ATTR_REQ_A(req_data->packet_info.buffer,
-						     req_data->packet_info.ptr,
+		ZB_ZCL_GENERAL_INIT_WRITE_ATTR_REQ_A(packet_info->buffer,
+						     packet_info->ptr,
 						     req_data->direction,
 						     ZB_ZCL_ENABLE_DEFAULT_RESPONSE);
-		ZB_ZCL_GENERAL_ADD_VALUE_WRITE_ATTR_REQ(req_data->packet_info.ptr,
+		ZB_ZCL_GENERAL_ADD_VALUE_WRITE_ATTR_REQ(packet_info->ptr,
 							req_data->attr_id,
 							req_data->attr_type,
 							req_data->attr_value);
@@ -244,7 +245,7 @@ static void zb_zcl_send_read_write_attr_frame(zb_uint8_t index)
 
 	construct_read_write_attr_frame(entry);
 
-	packet_info = &(entry->read_write_attr_req_data.packet_info);
+	packet_info = &(entry->zcl_data.pkt_info);
 
 	/* Send the actual frame. */
 	zb_err_code = zb_zcl_finish_and_send_packet_new(
@@ -312,7 +313,7 @@ static int read_write_attr_send(struct ctx_entry *entry)
 error:
 	/* Make sure ZBOSS buffer API is called safely. */
 	zb_osif_disable_all_inter();
-	zb_buf_free(entry->read_write_attr_req_data.packet_info.buffer);
+	zb_buf_free(entry->zcl_data.pkt_info.buffer);
 	zb_osif_enable_all_inter();
 
 	/* Invalidate an entry with frame data in the context manager. */
@@ -337,7 +338,7 @@ int cmd_zb_readattr(const struct shell *shell, size_t argc, char **argv)
 	bool is_direction_present;
 	zb_bufid_t bufid;
 	struct zcl_packet_info *packet_info;
-	struct read_write_attr_req_data *req_data;
+	struct read_write_attr_req *req_data;
 	struct ctx_entry *entry = ctx_mgr_new_entry(CTX_MGR_ATTR_REQ_ENTRY_TYPE);
 
 	is_direction_present = ((argc == 7) && !strcmp(argv[4], "-c"));
@@ -348,12 +349,15 @@ int cmd_zb_readattr(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	if (entry == NULL) {
-		zb_cli_print_error(shell, "Request pool empty - wait a bit", ZB_FALSE);
+		zb_cli_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 		return -ENOEXEC;
 	}
 
-	req_data = &(entry->read_write_attr_req_data);
-	packet_info = &(req_data->packet_info);
+	req_data = &(entry->zcl_data.read_write_attr_req);
+	packet_info = &(entry->zcl_data.pkt_info);
 
 	packet_info->dst_addr_mode = parse_address(*(++argv), &(packet_info->dst_addr), ADDR_ANY);
 
@@ -430,7 +434,7 @@ int cmd_zb_writeattr(const struct shell *shell, size_t argc, char **argv)
 {
 	zb_bufid_t bufid;
 	struct zcl_packet_info *packet_info;
-	struct read_write_attr_req_data *req_data;
+	struct read_write_attr_req *req_data;
 	struct ctx_entry *entry = ctx_mgr_new_entry(CTX_MGR_ATTR_REQ_ENTRY_TYPE);
 
 	bool is_direction_present = ((argc == 9) && !strcmp(argv[4], "-c"));
@@ -441,12 +445,15 @@ int cmd_zb_writeattr(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	if (entry == NULL) {
-		zb_cli_print_error(shell, "Request pool empty - wait a bit", ZB_FALSE);
+		zb_cli_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 		return -ENOEXEC;
 	}
 
-	req_data = &(entry->read_write_attr_req_data);
-	packet_info = &(req_data->packet_info);
+	req_data = &(entry->zcl_data.read_write_attr_req);
+	packet_info = &(entry->zcl_data.pkt_info);
 
 	packet_info->dst_addr_mode = parse_address(*(++argv), &(packet_info->dst_addr), ADDR_ANY);
 

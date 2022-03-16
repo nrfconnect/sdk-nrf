@@ -461,7 +461,8 @@ Libraries for Zigbee
   * Extended ``zcl cmd`` shell command to allow sending groupcasts.
   * Extended ``zdo`` shell commands to allow binding to a group addresses.
   * Fixed an issue where printing binding table containing group-binding entries results in corrupted output.
-  * Aded a set of ``zcl groups`` shell commands for managing Zigbee groups.
+  * Added a set of ``zcl groups`` shell commands for managing Zigbee groups.
+  * Changed internal context manager structures.
 
 Scripts
 =======

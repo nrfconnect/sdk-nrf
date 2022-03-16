@@ -239,18 +239,18 @@ zb_uint8_t cli_agent_ep_handler_report(zb_bufid_t bufid)
  */
 static void construct_reporting_frame(struct ctx_entry *entry)
 {
-	struct configure_reporting_req_data *req_data = &(entry->configure_reporting_req_data);
+	struct configure_reporting_req *req_data = &(entry->zcl_data.configure_reporting_req);
 
 	/* Get the ZCL packet sequence number. */
 	entry->id = ZCL_CTX().seq_number;
 
 	/* Construct and send request. */
 	ZB_ZCL_GENERAL_INIT_CONFIGURE_REPORTING_SRV_REQ(
-		req_data->packet_info.buffer,
-		req_data->packet_info.ptr,
+		entry->zcl_data.pkt_info.buffer,
+		entry->zcl_data.pkt_info.ptr,
 		ZB_ZCL_ENABLE_DEFAULT_RESPONSE);
 	ZB_ZCL_GENERAL_ADD_SEND_REPORT_CONFIGURE_REPORTING_REQ(
-		req_data->packet_info.ptr,
+		entry->zcl_data.pkt_info.ptr,
 		req_data->attr_id,
 		req_data->attr_type,
 		req_data->interval_min,
@@ -276,7 +276,7 @@ static void zb_zcl_send_attr_report_frame(zb_uint8_t index)
 
 	construct_reporting_frame(entry);
 
-	packet_info = &(entry->configure_reporting_req_data.packet_info);
+	packet_info = &(entry->zcl_data.pkt_info);
 
 	/* Send the actual frame. */
 	zb_err_code = zb_zcl_finish_and_send_packet_new(
@@ -345,7 +345,7 @@ static int send_reporting_frame(struct ctx_entry *entry)
 error:
 	/* Make sure ZBOSS buffer API is called safely. */
 	zb_osif_disable_all_inter();
-	zb_buf_free(entry->configure_reporting_req_data.packet_info.buffer);
+	zb_buf_free(entry->zcl_data.pkt_info.buffer);
 	zb_osif_enable_all_inter();
 
 	/* Invalidate an entry with frame data in the context manager. */
@@ -360,28 +360,27 @@ error:
  */
 static int cmd_zb_subscribe_parse_input(size_t argc, char **argv, struct ctx_entry *entry)
 {
-	struct configure_reporting_req_data *req_data = &(entry->configure_reporting_req_data);
+	struct zcl_packet_info *packet_info = &(entry->zcl_data.pkt_info);
+	struct configure_reporting_req *req_data = &(entry->zcl_data.configure_reporting_req);
 
-	req_data->packet_info.dst_addr_mode = parse_address(argv[1],
-							    &req_data->packet_info.dst_addr,
-							    ADDR_ANY);
+	packet_info->dst_addr_mode = parse_address(argv[1], &packet_info->dst_addr, ADDR_ANY);
 
-	if (req_data->packet_info.dst_addr_mode == ADDR_INVALID) {
+	if (packet_info->dst_addr_mode == ADDR_INVALID) {
 		zb_cli_print_error(entry->shell, "Invalid remote address", ZB_FALSE);
 		return -EINVAL;
 	}
 
-	if (!zb_cli_sscan_uint8(argv[2], &(req_data->packet_info.dst_ep))) {
+	if (!zb_cli_sscan_uint8(argv[2], &(packet_info->dst_ep))) {
 		zb_cli_print_error(entry->shell, "Incorrect remote endpoint", ZB_FALSE);
 		return -EINVAL;
 	}
 
-	if (!parse_hex_u16(argv[3], &(req_data->packet_info.cluster_id))) {
+	if (!parse_hex_u16(argv[3], &(packet_info->cluster_id))) {
 		zb_cli_print_error(entry->shell, "Incorrect cluster ID", ZB_FALSE);
 		return -EINVAL;
 	}
 
-	if (!parse_hex_u16(argv[4], &(req_data->packet_info.prof_id))) {
+	if (!parse_hex_u16(argv[4], &(packet_info->prof_id))) {
 		zb_cli_print_error(entry->shell, "Incorrect profile ID", ZB_FALSE);
 		return -EINVAL;
 	}
@@ -433,15 +432,18 @@ int cmd_zb_subscribe_on(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret_val;
 	zb_bufid_t bufid;
-	struct configure_reporting_req_data *req_data;
+	struct configure_reporting_req *req_data;
 	struct ctx_entry *entry = ctx_mgr_new_entry(CTX_MGR_CFG_REPORT_REQ_ENTRY_TYPE);
 
 	if (entry == NULL) {
-		zb_cli_print_error(shell, "Request pool empty - wait a bit", ZB_FALSE);
+		zb_cli_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 		return -ENOEXEC;
 	}
 
-	req_data = &(entry->configure_reporting_req_data);
+	req_data = &(entry->zcl_data.configure_reporting_req);
 
 	/* Set default interval values. */
 	req_data->interval_min = ZIGBEE_CLI_CONFIGURE_REPORT_DEFAULT_MIN_INTERVAL;
@@ -471,12 +473,12 @@ int cmd_zb_subscribe_on(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	/* Fill the structure for sending ZCL frame. */
-	req_data->packet_info.buffer = bufid;
+	entry->zcl_data.pkt_info.buffer = bufid;
 	/* DstAddr, DstAddr Mode and dst endpoint are already set. */
-	req_data->packet_info.ep = zb_cli_get_endpoint();
+	entry->zcl_data.pkt_info.ep = zb_cli_get_endpoint();
 	/* Profile ID and Cluster ID are already set. */
-	req_data->packet_info.cb = NULL;
-	req_data->packet_info.disable_aps_ack = ZB_FALSE;
+	entry->zcl_data.pkt_info.cb = NULL;
+	entry->zcl_data.pkt_info.disable_aps_ack = ZB_FALSE;
 
 	return send_reporting_frame(entry);
 }
@@ -496,15 +498,18 @@ int cmd_zb_subscribe_off(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret_val;
 	zb_bufid_t bufid;
-	struct configure_reporting_req_data *req_data;
+	struct configure_reporting_req *req_data;
 	struct ctx_entry *entry = ctx_mgr_new_entry(CTX_MGR_CFG_REPORT_REQ_ENTRY_TYPE);
 
 	if (entry == NULL) {
-		zb_cli_print_error(shell, "Request pool empty - wait a bit", ZB_FALSE);
+		zb_cli_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 		return -ENOEXEC;
 	}
 
-	req_data = &(entry->configure_reporting_req_data);
+	req_data = &(entry->zcl_data.configure_reporting_req);
 
 	/* Set default interval values. */
 	req_data->interval_min = ZIGBEE_CLI_CONFIGURE_REPORT_OFF_MIN_INTERVAL;
@@ -534,12 +539,12 @@ int cmd_zb_subscribe_off(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	/* Fill the structure for sending ZCL frame. */
-	req_data->packet_info.buffer = bufid;
+	entry->zcl_data.pkt_info.buffer = bufid;
 	/* DstAddr, DstAddr Mode and dst endpoint are already set. */
-	req_data->packet_info.ep = zb_cli_get_endpoint();
+	entry->zcl_data.pkt_info.ep = zb_cli_get_endpoint();
 	/* Profile ID and Cluster ID are already set. */
-	req_data->packet_info.cb = NULL;
-	req_data->packet_info.disable_aps_ack = ZB_FALSE;
+	entry->zcl_data.pkt_info.cb = NULL;
+	entry->zcl_data.pkt_info.disable_aps_ack = ZB_FALSE;
 
 	return send_reporting_frame(entry);
 }
