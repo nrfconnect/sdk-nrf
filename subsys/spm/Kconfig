@@ -159,6 +159,7 @@ endif
 endif # SPM_SECURE_SERVICES
 
 if IS_SPM
+
 config SPM_BLOCK_NON_SECURE_RESET
 	bool "Block system reset calls from Non-Secure domain"
 	default n #FIXME: Remove mention of debugger with regards to reboot in help text when NRF91-313 has been resolved
@@ -168,236 +169,29 @@ config SPM_BLOCK_NON_SECURE_RESET
 	  service. If not enabled, a debugger will not be able to issue a
 	  system reset while the core is executing Non-Secure code.
 
-menu "Configure Non-Secure peripherals"
-
-config SPM_NRF_CLOCK_NS
-	bool "Clock control is Non-Secure"
-	default y
-
-config SPM_NRF_RTC0_NS
-	bool "RTC0 is Non-Secure"
-	default y
-
-config SPM_NRF_RTC1_NS
-	bool "RTC1 is Non-Secure"
-	default y
 
 config NRF_RTC_TIMER
-	depends on !SPM_NRF_RTC1_NS
+	depends on NRF_RTC1_SECURE
 	help
-	  RTC1 cannot be used the system clock driver for SPM if it is Non-Secure
+	  RTC1 cannot be used the system clock driver for SPM if it is not Secure
 
 config CORTEX_M_SYSTICK
-	default y if SPM_NRF_RTC1_NS
+	default y if !NRF_RTC1_SECURE
 	help
 	  Use the Cortex-M SYSTICK timer as the system clock driver since RTC1 is Non-Secure
 
-config SPM_NRF_IPC_NS
-	bool "IPC is Non-Secure"
+
+config NRF_UARTE2_SECURE
+	bool
 	default y
 
-config SPM_NRF_NVMC_NS
-	bool "NVMC is Non-Secure"
+config NRF_DCNF_SECURE
+	bool
 	default y
 
-config SPM_NRF_VMC_NS
-	bool "VMC is Non-Secure"
+config NRF_CTRLAP_SECURE
+	bool
 	default y
-
-config SPM_NRF_P0_NS
-	bool "GPIO is Non-Secure"
-	default y
-
-config SPM_NRF_GPIOTE1_NS
-	bool "GPIOTE1 IRQ available in Non-Secure domain"
-	default y
-
-config SPM_NRF_UARTE1_NS
-	bool "UARTE1 is Non-Secure"
-	default y
-
-config SPM_NRF_UARTE2_NS
-	bool "UARTE2 is Non-Secure"
-	default n
-
-config SPM_NRF_EGU0_NS
-	bool "EGU0 is Non-Secure"
-	default y
-
-config SPM_NRF_EGU1_NS
-	bool "EGU1 is Non-Secure"
-	default y
-
-config SPM_NRF_EGU2_NS
-	bool "EGU2 is Non-Secure"
-	default y
-
-config SPM_NRF_EGU3_NS
-	bool "EGU3 is Non-Secure"
-	default y
-
-config SPM_NRF_EGU4_NS
-	bool "EGU4 is Non-Secure"
-	default y
-
-config SPM_NRF_EGU5_NS
-	bool "EGU5 is Non-Secure"
-	default y
-
-config SPM_NRF_FPU_NS
-	bool "FPU is Non-Secure"
-	default y
-
-config SPM_NRF_TWIM2_NS
-	bool "TWIM2 is Non-Secure"
-	default y
-
-config SPM_NRF_SPIM3_NS
-	bool "SPIM3 is Non-Secure"
-	default y
-
-config SPM_NRF_TIMER0_NS
-	bool "TIMER0 is Non-Secure"
-	default y
-
-config SPM_NRF_TIMER1_NS
-	bool "TIMER1 is Non-Secure"
-	default y
-
-config SPM_NRF_TIMER2_NS
-	bool "TIMER2 is Non-Secure"
-	default y
-
-config SPM_NRF_SAADC_NS
-	bool "SAADC is Non-Secure"
-	default y
-
-config SPM_NRF_PWM0_NS
-	bool "PWM0 is Non-Secure"
-	default y
-
-config SPM_NRF_PWM1_NS
-	bool "PWM1 is Non-Secure"
-	default y
-
-config SPM_NRF_PWM2_NS
-	bool "PWM2 is Non-Secure"
-	default y
-
-config SPM_NRF_PWM3_NS
-	bool "PWM3 is Non-Secure"
-	default y
-
-config SPM_NRF_REGULATORS_NS
-	bool "Regulators is Non-Secure"
-	default y
-
-config SPM_NRF_DPPIC_NS
-	bool "DPPIC is Non-Secure"
-	default y
-
-if SOC_NRF9160
-config SPM_NRF_WDT_NS
-	bool "WDT is Non-Secure"
-	default y
-
-config SPM_NRF_PDM_NS
-	bool "PDM is Non-Secure"
-	default y
-
-config SPM_NRF_I2S_NS
-	bool "I2S is Non-Secure"
-	default y
-endif #SOC_NRF9160
-
-if SOC_NRF5340_CPUAPP
-config SPM_NRF_DCNF_NS
-	bool "DCNF is Non-Secure"
-	default n
-
-config SPM_NRF_CTRLAP_NS
-	bool "CTRLAP is Non-Secure"
-	default n
-
-config SPM_NRF_OSCILLATORS_NS
-	bool "Oscillators is Non-Secure"
-	default y
-
-config SPM_NRF_RESET_NS
-	bool "Reset is Non-Secure"
-	default y
-
-config SPM_NRF_SPIM4_NS
-	bool "SPIM4 is Non-Secure"
-	default y
-
-config SPM_NRF_WDT0_NS
-	bool "WDT0 is Non-Secure"
-	default y
-
-config SPM_NRF_WDT1_NS
-	bool "WDT1 is Non-Secure"
-	default y
-
-config SPM_NRF_COMP_NS
-	bool "COMP is Non-Secure"
-	default y
-
-config SPM_NRF_LPCOMP_NS
-	bool "LPCOMP is Non-Secure"
-	default y
-
-config SPM_NRF_PDM0_NS
-	bool "PDM0 is Non-Secure"
-	default y
-
-config SPM_NRF_I2S0_NS
-	bool "I2S0 is Non-Secure"
-	default y
-
-config SPM_NRF_QSPI_NS
-	bool "QSPI is Non-Secure"
-	default y
-
-config SPM_NRF_NFCT_NS
-	bool "NFCT is Non-Secure"
-	default y
-
-config SPM_NRF_MUTEX_NS
-	bool "Mutex is Non-Secure"
-	default y
-
-config SPM_NRF_QDEC0_NS
-	bool "QDEC0 is Non-Secure"
-	default y
-
-config SPM_NRF_QDEC1_NS
-	bool "QUDEC1 is Non-Secure"
-	default y
-
-config SPM_NRF_USBD_NS
-	bool "USBD is Non-Secure"
-	default y
-
-config SPM_NRF_USBREGULATOR_NS
-	bool "USB Regulator is Non-Secure"
-	default y
-
-config SPM_NRF_P1_NS
-	bool "P1 is Non-Secure"
-	default y
-endif #SOC_NRF5340_CPUAPP
-endmenu
-
-config SPM_NRF_DPPIC_PERM_MASK
-	hex "Set DPPIC PERM mask for Non-secure"
-	default 0x00000000
-	depends on SPM_NRF_DPPIC_NS
-	help
-	  The input mask is a mirror of the permission bits set in
-	  register SPU.DPPI.PERM[] to allow non-secure application to
-	  control DPPIC per the given input mask.
-	  The default value is to allow all DPPI channels to non-secure region.
 
 endif # IS_SPM
 
