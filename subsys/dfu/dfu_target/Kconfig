@@ -55,7 +55,6 @@ config DFU_TARGET_MODEM_DELTA
 	help
 	  Enable support for updates to the modem firmware.
 
-if (DFU_TARGET_MODEM_DELTA)
 config DFU_TARGET_MODEM_TIMEOUT
 	int "Erase pending timeout"
 	default 60
@@ -68,8 +67,13 @@ config DFU_TARGET_MODEM_TIMEOUT
 	  DFU_ERASE_PENDING request. It's also possible to reboot the device to
 	  achive the same desired behavior.
 
-
-endif # DFU_TARGET_MODEM_DELTA
+config DFU_TARGET_MODEM_ERASE_ON_INIT
+	bool "Erase on init"
+	default y
+	depends on DFU_TARGET_MODEM_DELTA
+	help
+	  Enable erasing the modem delta update DFU bank on initialization of
+	  the DFU target.
 
 config DFU_TARGET_FULL_MODEM
 	bool "Full Modem update support"

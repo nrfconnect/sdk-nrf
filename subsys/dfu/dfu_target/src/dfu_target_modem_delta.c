@@ -23,6 +23,7 @@ struct modem_delta_header {
 };
 
 static dfu_target_callback_t callback;
+int dfu_target_modem_delta_erase(int slot, bool force);
 
 #define SLEEP_TIME 1
 static int delete_banked_modem_delta_fw(void)
@@ -69,7 +70,6 @@ bool dfu_target_modem_delta_identify(const void *const buf)
 int dfu_target_modem_delta_init(size_t file_size, dfu_target_callback_t cb)
 {
 	int err;
-	int offset;
 	size_t scratch_space;
 	struct nrf_modem_delta_dfu_uuid version;
 	char version_string[NRF_MODEM_DELTA_DFU_UUID_LEN+1];
@@ -99,6 +99,25 @@ int dfu_target_modem_delta_init(size_t file_size, dfu_target_callback_t cb)
 		LOG_ERR("Requested file too big to fit in flash %d > %d",
 			file_size, scratch_space);
 		return -EFBIG;
+	}
+
+	if (IS_ENABLED(CONFIG_DFU_TARGET_MODEM_ERASE_ON_INIT)) {
+		dfu_target_modem_delta_erase(0, false);
+	}
+
+	return 0;
+}
+
+int dfu_target_modem_delta_erase(int slot, bool force)
+{
+	ARG_UNUSED(slot);
+
+	int err;
+	int offset;
+
+	if (force) {
+		err = delete_banked_modem_delta_fw();
+		return err;
 	}
 
 	/* Check offset and erase firmware if necessary */

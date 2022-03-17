@@ -107,6 +107,17 @@ int dfu_target_full_modem_write(const void *const buf, size_t len);
  */
 int dfu_target_full_modem_done(bool successful);
 
+/**
+ * @brief Erase the DFU storage for the initialized DFU target.
+ *
+ * @param[in] force Indicate whether the erase should be exectued even if the
+ *		    area already reports as empty.
+ *
+ * @return 0 for an successful erase or a negative error
+ *	   code identicating reason of failure.
+ */
+int dfu_target_full_modem_erase(int slot, bool force);
+
 #endif /* DFU_TARGET_FULL_MODEM_H__ */
 
 /**@} */

@@ -150,6 +150,14 @@ int dfu_target_mcuboot_offset_get(size_t *out)
 	return err;
 }
 
+int dfu_target_mcuboot_erase(int slot, bool force)
+{
+	if (force) {
+		return boot_erase_img_bank(slot);
+	}
+	return 0;
+}
+
 int dfu_target_mcuboot_write(const void *const buf, size_t len)
 {
 	stream_buf_bytes = (stream_buf_bytes + len) % stream_buf_len;

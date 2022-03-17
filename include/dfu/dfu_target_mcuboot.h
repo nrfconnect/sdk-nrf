@@ -94,6 +94,18 @@ int dfu_target_mcuboot_write(const void *const buf, size_t len);
  */
 int dfu_target_mcuboot_done(bool successful);
 
+/**
+ * @brief Erase the DFU storage for the initialized DFU target.
+ *
+ * @param[in] force Indicate whether the erase should be exectued even if the
+ *		    area already reports as empty.
+ *
+ * @return 0 for an successful erase or a negative error
+ *	   code identicating reason of failure.
+ **/
+
+int dfu_target_mcuboot_erase(int slot, bool force);
+
 #ifdef __cplusplus
 }
 #endif

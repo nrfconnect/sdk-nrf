@@ -58,6 +58,15 @@ int dfu_target_full_modem_init(size_t file_size,
 	return 0;
 }
 
+int dfu_target_full_modem_erase(int slot, bool force)
+{
+	ARG_UNUSED(slot);
+	ARG_UNUSED(force);
+
+	return -ENOSYS;
+}
+
+
 int dfu_target_full_modem_offset_get(size_t *out)
 {
 	return dfu_target_stream_offset_get(out);

@@ -40,6 +40,7 @@ struct dfu_target {
 	int (*init)(size_t file_size, dfu_target_callback_t cb);
 	int (*offset_get)(size_t *offset);
 	int (*write)(const void *const buf, size_t len);
+	int (*erase)(int slot, bool force);
 	int (*done)(bool successful);
 };
 
@@ -98,6 +99,17 @@ int dfu_target_offset_get(size_t *offset);
  *	   code identicating reason of failure.
  **/
 int dfu_target_write(const void *const buf, size_t len);
+
+/**
+ * @brief Erase the DFU storage for the initialized DFU target.
+ *
+ * @param[in] force Indicate whether the erase should be exectued even if the
+ *		    area already reports as empty.
+ *
+ * @return 0 for an successful erase or a negative error
+ *	   code identicating reason of failure.
+ **/
+int dfu_target_erase(int slot, bool force);
 
 /**
  * @brief Deinitialize the resources that were needed for the current DFU

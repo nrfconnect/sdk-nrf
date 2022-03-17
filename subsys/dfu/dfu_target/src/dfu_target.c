@@ -13,6 +13,7 @@ static const struct dfu_target dfu_target_ ## name  = { \
 	.init = dfu_target_ ## name ## _init, \
 	.offset_get = dfu_target_## name ##_offset_get, \
 	.write = dfu_target_ ## name ## _write, \
+	.erase = dfu_target_ ## name ## _erase, \
 	.done = dfu_target_ ## name ## _done, \
 }
 
@@ -106,6 +107,15 @@ int dfu_target_offset_get(size_t *offset)
 	}
 
 	return current_target->offset_get(offset);
+}
+
+int dfu_target_erase(int slot, bool force)
+{
+	if (current_target == NULL) {
+		return -EACCES;
+	}
+
+	return current_target->erase(slot, force);
 }
 
 int dfu_target_write(const void *const buf, size_t len)
