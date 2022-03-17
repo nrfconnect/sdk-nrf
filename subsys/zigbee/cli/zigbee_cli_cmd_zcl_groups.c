@@ -12,9 +12,6 @@
 #include "zigbee_cli.h"
 #include "zigbee_cli_utils.h"
 
-/* Timeout after which packet data entry in ctx manager is invalidated if response not received. */
-#define CMD_ENTRY_TIMEOUT_S   10U
-
 LOG_MODULE_DECLARE(zigbee_shell, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
 
 

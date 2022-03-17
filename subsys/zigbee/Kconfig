@@ -387,6 +387,11 @@ config ZIGBEE_SHELL_ENDPOINT
 	int "Number of endpoint to be used by the Zigbee Shell instance"
 	range 1 240
 
+config ZIGBEE_SHELL_ZCL_CMD_TIMEOUT
+	int "Amount of time in seconds after which the ZCL cmd commands time out if no response is received"
+	default 10
+	range 5 60
+
 config ZIGBEE_SHELL_CTX_MGR_ENTRIES_NBR
 	int "Number of entries in context manager"
 	default 24
