@@ -15,6 +15,7 @@ target_sources(app PRIVATE src/main.c)
 # Add needed Fast Pair crypto as part of the test (app target)
 get_filename_component(NRF_BASE ${CMAKE_CURRENT_LIST_DIR}/../../../../../../ DIRECTORY)
 set(NCS_FAST_PAIR_BASE ${NRF_BASE}/subsys/bluetooth/services/fast_pair)
+target_sources(app PRIVATE ${NCS_FAST_PAIR_BASE}/fp_crypto_common.c)
 target_sources_ifdef(CONFIG_BT_FAST_PAIR_CRYPTO_MBEDTLS app
 		     PRIVATE ${NCS_FAST_PAIR_BASE}/fp_crypto_mbedtls.c)
 target_sources_ifdef(CONFIG_BT_FAST_PAIR_CRYPTO_TINYCRYPT app

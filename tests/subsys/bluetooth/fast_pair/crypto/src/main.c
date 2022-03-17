@@ -101,12 +101,76 @@ static void test_ecdh(void)
 			  "Invalid key on Alice's side.");
 }
 
+static void test_aes_key_from_ecdh_shared_secret(void)
+{
+	const uint8_t ecdh_shared_key[] = {0x9D, 0xAD, 0xE4, 0xF8, 0x6A, 0xC3, 0x48, 0x8B, 0xBA,
+					   0xC2, 0xAC, 0x34, 0xB5, 0xFE, 0x68, 0xA0, 0xEE, 0x5A,
+					   0x67, 0x06, 0xF5, 0x43, 0xD9, 0x06, 0x1A, 0xD5, 0x78,
+					   0x89, 0x49, 0x8A, 0xE6, 0xBA};
+
+	const uint8_t aes_key[] = {0xB0, 0x7F, 0x1F, 0x17, 0xC2, 0x36, 0xCB, 0xD3, 0x35, 0x23, 0xC5,
+				   0x15, 0xF3, 0x50, 0xAE, 0x57};
+
+	uint8_t result_buf[FP_AES128_BLOCK_LEN];
+
+	zassert_equal(sizeof(result_buf), sizeof(aes_key), "Invalid size of expected result.");
+	zassert_ok(fp_aes_key_compute(result_buf, ecdh_shared_key),
+		   "Error during key computing.");
+	zassert_mem_equal(result_buf, aes_key, sizeof(aes_key), "Invalid resulting key.");
+}
+
+static void test_bloom_filter(void)
+{
+	const uint8_t salt = 0xC7;
+
+	const uint8_t first_account_key_list[][FP_ACCOUNT_KEY_LEN] = {
+		{0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0xAA, 0xBB, 0xCC, 0xDD,
+		 0xEE, 0xFF}
+		};
+
+	const uint8_t first_bloom_filter[] = {0x0A, 0x42, 0x88, 0x10};
+
+	uint8_t first_result_buf[sizeof(first_bloom_filter)];
+
+	size_t s = fp_account_key_filter_size(ARRAY_SIZE(first_account_key_list));
+
+	zassert_equal(s, sizeof(first_bloom_filter),
+		      "Invalid size of expected result.");
+	zassert_ok(fp_account_key_filter(first_result_buf, first_account_key_list,
+					 ARRAY_SIZE(first_account_key_list), salt),
+		   "Error during filter computing");
+	zassert_mem_equal(first_result_buf, first_bloom_filter, sizeof(first_bloom_filter),
+			  "Invalid resulting filter.");
+
+	const uint8_t second_account_key_list[][FP_ACCOUNT_KEY_LEN] = {
+		{0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0xAA, 0xBB, 0xCC, 0xDD,
+		 0xEE, 0xFF},
+		{0x11, 0x11, 0x22, 0x22, 0x33, 0x33, 0x44, 0x44, 0x55, 0x55, 0x66, 0x66, 0x77, 0x77,
+		 0x88, 0x88}
+		};
+
+	const uint8_t second_bloom_filter[] = {0x2F, 0xBA, 0x06, 0x42, 0x00};
+
+	uint8_t second_result_buf[sizeof(second_bloom_filter)];
+
+	s = fp_account_key_filter_size(ARRAY_SIZE(second_account_key_list));
+	zassert_equal(s, sizeof(second_bloom_filter),
+		      "Invalid size of expected result.");
+	zassert_ok(fp_account_key_filter(second_result_buf, second_account_key_list,
+					 ARRAY_SIZE(second_account_key_list), salt),
+		   "Error during filter computing");
+	zassert_mem_equal(second_result_buf, second_bloom_filter, sizeof(second_bloom_filter),
+			  "Invalid resulting filter.");
+}
+
 void test_main(void)
 {
 	ztest_test_suite(fast_pair_crypto_tests,
 			 ztest_unit_test(test_sha256),
 			 ztest_unit_test(test_aes128),
-			 ztest_unit_test(test_ecdh)
+			 ztest_unit_test(test_ecdh),
+			 ztest_unit_test(test_aes_key_from_ecdh_shared_secret),
+			 ztest_unit_test(test_bloom_filter)
 			 );
 
 	ztest_run_test_suite(fast_pair_crypto_tests);
