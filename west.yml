@@ -167,7 +167,7 @@ manifest:
       path: modules/lib/cddl-gen
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 0.28.2
+      revision: 0.29.1
       remote: memfault
     - name: openthread
       repo-path: sdk-openthread
