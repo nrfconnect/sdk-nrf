@@ -741,7 +741,8 @@ int cmd_zb_ping(const struct shell *shell, size_t argc, char **argv)
 	ping_entry->zcl_data.ping_req.cb = ping_cli_evt_handler;
 	ping_entry->zcl_data.ping_req.request_ack = 0;
 	ping_entry->zcl_data.ping_req.request_echo = 1;
-	ping_entry->zcl_data.ping_req.timeout_ms = (PING_ECHO_REQUEST_TIMEOUT_S * MSEC_PER_SEC);
+	ping_entry->zcl_data.ping_req.timeout_ms =
+		(CONFIG_ZIGBEE_SHELL_ZCL_CMD_TIMEOUT * MSEC_PER_SEC);
 
 	for (i = 1; i < (argc - 2); i++) {
 		if (strcmp(argv[i], "--aps-ack") == 0) {
