@@ -16,9 +16,6 @@
 #include "zigbee_cli_cmd_zcl.h"
 
 
-/* Timeout after which packet data entry in ctx manager is invalidated if response not received. */
-#define CMD_ENTRY_TIMEOUT_S   10U
-
 /* CMD ID used to mark that frame is to be constructed as `zcl raw`. */
 #define ZCL_CMD_ID_RAW        0xFFFF
 

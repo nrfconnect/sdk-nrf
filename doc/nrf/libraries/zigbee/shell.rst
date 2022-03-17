@@ -29,6 +29,7 @@ To configure the Zigbee shell library, use the following options:
 * :kconfig:option:`CONFIG_ZIGBEE_SHELL_LOG_LEVEL`
 * :kconfig:option:`CONFIG_ZIGBEE_SHELL_CTX_MGR_ENTRIES_NBR`
 * :kconfig:option:`CONFIG_ZIGBEE_SHELL_MONITOR_CACHE_SIZE`
+* :kconfig:option:`CONFIG_ZIGBEE_SHELL_ZCL_CMD_TIMEOUT`
 
 For detailed steps about configuring the library in a Zigbee sample or application, see :ref:`ug_zigbee_configuring_components_logger_ep`.
 

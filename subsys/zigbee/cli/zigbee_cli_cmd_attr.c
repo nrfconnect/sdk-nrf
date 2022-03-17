@@ -14,10 +14,6 @@
 #include "zigbee_cli_cmd_zcl.h"
 
 
-/* Timeout after which packet data entry in ctx manager is invalidated if response not received. */
-#define ATTRIBUTE_ENTRY_TIMEOUT_S  10
-
-
 LOG_MODULE_DECLARE(zigbee_shell, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
 
 /**@brief Print the Read Attribute Response.

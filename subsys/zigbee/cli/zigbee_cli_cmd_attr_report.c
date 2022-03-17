@@ -16,9 +16,6 @@
 #include "zigbee_cli_cmd_zcl.h"
 
 
-/* Defines how long to wait, in seconds, for Configure Reporting Response. */
-#define ZIGBEE_CLI_CONFIGURE_REPORT_RESP_TIMEOUT         5
-
 /* Defines default value for minimum interval inside configure reporting request. */
 #define ZIGBEE_CLI_CONFIGURE_REPORT_DEFAULT_MIN_INTERVAL 1
 
@@ -297,7 +294,7 @@ static int send_reporting_frame(struct ctx_entry *entry)
 	zb_err_code = ZB_SCHEDULE_APP_ALARM(
 			zb_cli_zcl_cmd_timeout_cb,
 			entry_index,
-			(ZIGBEE_CLI_CONFIGURE_REPORT_RESP_TIMEOUT * ZB_TIME_ONE_SECOND));
+			(CONFIG_ZIGBEE_SHELL_ZCL_CMD_TIMEOUT * ZB_TIME_ONE_SECOND));
 
 	if (zb_err_code != RET_OK) {
 		zb_cli_print_error(entry->shell, "Couldn't schedule timeout cb.", ZB_FALSE);

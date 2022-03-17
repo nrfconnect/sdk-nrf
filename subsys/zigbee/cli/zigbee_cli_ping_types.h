@@ -21,7 +21,6 @@
 #define PING_NO_ECHO_REQUEST          0x03
 #define PING_ECHO_REQUEST_BYTE        0xAB
 #define PING_ECHO_REPLY_BYTE          0xCD
-#define PING_ECHO_REQUEST_TIMEOUT_S   10
 
 /**@brief  Ping event type. Informs what kind of acknowledgment was received.
  */
