@@ -24,6 +24,8 @@ extern "C" {
 #define FP_AES128_BLOCK_LEN    16U
 /** Length of ECDH shared key (256 bits = 32 bytes). */
 #define FP_ECDH_SHARED_KEY_LEN 32U
+/** Length of Account Key (128 bits = 16 bytes). */
+#define FP_ACCOUNT_KEY_LEN 16U
 
 /** Hash value using SHA-256.
  *
@@ -67,6 +69,38 @@ int fp_aes128_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k);
  */
 int fp_ecdh_shared_secret(const uint8_t *public_key, const uint8_t *private_key,
 			  uint8_t *secret_key);
+
+/** Compute an Anti-Spoofing AES key from an ECDH shared secret key.
+ *
+ * @param[out] out 128-bit (16-byte) buffer to receive AES key.
+ * @param[in] in 256-bit (32-byte) ECDH shared secret key.
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int fp_aes_key_compute(uint8_t *out, const uint8_t *in);
+
+/** Get Account Key Filter size.
+ *
+ * @param[in] n Number of account keys.
+ *
+ * @return Account Key Filter size.
+ */
+size_t fp_account_key_filter_size(size_t n);
+
+/** Compute an Account Key Filter (variable-length Bloom filter).
+ *
+ * @param[out] out Buffer to receive account key filter. Buffer size must be at least
+ *                 @ref fp_account_key_filter_size.
+ * @param[in] account_key_list Pointer to 2-dimensional array containing Account Keys. Array shape
+ *                             has to be n x 16 bytes (number of Account Keys x length of Account
+ *                             Key in bytes).
+ * @param[in] n Number of account keys (n >= 1).
+ * @param[in] salt Random byte - Salt.
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int fp_account_key_filter(uint8_t *out, const uint8_t account_key_list[][FP_ACCOUNT_KEY_LEN],
+			  size_t n, uint8_t salt);
 
 #ifdef __cplusplus
 }
