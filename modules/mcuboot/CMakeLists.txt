@@ -265,6 +265,10 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
   endif ()
 
   foreach (filepath ${mcuboot_CONF_FILE})
+    get_filename_component(CONF_DIR ${filepath} DIRECTORY)
+    if(NOT EXISTS ${CONF_DIR})
+        set(filepath "${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr/${filepath}")
+    endif()
     file(STRINGS ${filepath} mcuboot_CONFIG_BOOT_SIGNATURE_KEY_FILE
          REGEX "^CONFIG_BOOT_SIGNATURE_KEY_FILE=")
     if (mcuboot_CONFIG_BOOT_SIGNATURE_KEY_FILE)
