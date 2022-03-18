@@ -1,5 +1,5 @@
 tests:
-  zigbee.osif.logger:
+  zigbee.osif.crypto:
     platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833
     tags: osif_crypto
     integration_platforms:
