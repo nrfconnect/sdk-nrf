@@ -219,9 +219,10 @@ cleanup:
 
 int nrf_cloud_agps_request_all(void)
 {
+	const uint32_t mask = IS_ENABLED(CONFIG_NRF_CLOUD_PGPS) ? 0u : 0xFFFFFFFFu;
 	struct nrf_modem_gnss_agps_data_frame request = {
-		.sv_mask_ephe = 0xFFFFFFFF,
-		.sv_mask_alm = 0xFFFFFFFF,
+		.sv_mask_ephe = mask,
+		.sv_mask_alm = mask,
 		.data_flags =
 			NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST |
 			NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST |
