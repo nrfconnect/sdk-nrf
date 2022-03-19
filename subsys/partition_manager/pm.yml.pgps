@@ -1,0 +1,6 @@
+#include <autoconf.h>
+
+pgps:
+  placement: {before: [tfm_storage, end]}
+  size: CONFIG_NRF_CLOUD_PGPS_PARTITION_SIZE
+  align: {start: CONFIG_NRF_CLOUD_PGPS_PARTITION_ALIGN}

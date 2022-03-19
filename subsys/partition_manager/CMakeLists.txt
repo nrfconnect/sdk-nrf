@@ -93,6 +93,9 @@ if (CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP)
   ncs_add_partition_manager_config(pm.yml.memfault)
 endif()
 
+if(CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION)
+  ncs_add_partition_manager_config(pm.yml.pgps)
+endif()
 
 # We are using partition manager if we are a child image or if we are
 # the root image and the 'partition_manager' target exists.

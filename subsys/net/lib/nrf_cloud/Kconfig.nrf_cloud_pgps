@@ -72,7 +72,7 @@ choice NRF_CLOUD_PGPS_TRANSPORT
 	default NRF_CLOUD_PGPS_TRANSPORT_NONE
 
 config NRF_CLOUD_PGPS_TRANSPORT_NONE
-	bool "No transport"
+	bool "Application-provided transport"
 	help
 	  Enabling this option will make the nRF Cloud P-GPS library not request
 	  data from nRF Cloud when its APIs are called. This will instead let
@@ -92,5 +92,60 @@ config NRF_CLOUD_PGPS_SOCKET_RETRIES
 	default 2
 	help
 	  This sets the maximum number of times to retry a download.
+
+choice NRF_CLOUD_PGPS_STORAGE
+	prompt "nRF Cloud P-GPS persistent storage location"
+	default NRF_CLOUD_PGPS_STORAGE_PARTITION if BUILD_S1_VARIANT
+	default NRF_CLOUD_PGPS_STORAGE_MCUBOOT_SECONDARY if BOARD_THINGY91_NRF9160_NS
+	help
+	  The P-GPS subsystem requires a contiguous section of flash memory in
+	  which to store predictions. The amount required is 2048 bytes times
+	  the number of predictions set by NRF_CLOUD_PGPS_NUM_PREDICTIONS.
+	  If mcuboot DFU is enabled, default to NRF_CLOUD_PGPS_STORAGE_PARTITION.
+	  Otherwise, P-GPS will prevent a successful mcuboot update, causing it
+	  to revert to the previous image.
+
+config NRF_CLOUD_PGPS_STORAGE_PARTITION
+	bool "Define P-GPS subsystem flash partition"
+	select PM_SINGLE_IMAGE if !SPM
+	help
+	  If set, allocates flash for storing predictions.
+
+config NRF_CLOUD_PGPS_STORAGE_MCUBOOT_SECONDARY
+	bool "Reuse MCUboot secondary partition for P-GPS storage"
+	depends on BOOTLOADER_MCUBOOT
+	depends on IMG_MANAGER
+	depends on !BUILD_S1_VARIANT
+	help
+	  If set, use the secondary MCUboot partition to also store P-GPS data.
+	  Note that when a FOTA job executes, this data will be lost and will
+	  have to be downloaded again after the FOTA job is complete. This is
+	  not compatible with FOTA updates of MUCboot itself, which is possible
+	  when SECURE_BOOT and BUILD_S1_VARIANT are enabled.
+
+config NRF_CLOUD_PGPS_STORAGE_CUSTOM
+	bool "Use application-provided location and size in flash"
+	help
+	  The application is responsible for providing the location in flash
+	  in which to store P-GPS data.  The location must be aligned to a
+	  flash page boundary (4096 bytes), and the size must be at least 2048
+	  bytes times NRF_COUND_PGPS_NUM_PREDICTIONS.
+
+endchoice # NRF_CLOUD_PGPS_STORAGE
+
+if NRF_CLOUD_PGPS_STORAGE_PARTITION
+
+config NRF_CLOUD_PGPS_PARTITION_SIZE
+	int "Size of flash partition for P-GPS data storage"
+	default 86016
+	help
+	  This must be >= NRF_CLOUD_PGPS_NUM_PREDICTIONS times 2048, which is
+	  the nRF9160 flash page size.
+
+config NRF_CLOUD_PGPS_PARTITION_ALIGN
+	hex "Align P-GPS partition to flash block boundary"
+	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
+
+endif # NRF_CLOUD_PGPS_STORAGE_PARTITION
 
 endif # NRF_CLOUD_PGPS
