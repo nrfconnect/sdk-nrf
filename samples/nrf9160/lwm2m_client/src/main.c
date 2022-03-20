@@ -33,7 +33,7 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 #include "lwm2m_client_app.h"
 #include "lwm2m_app_utils.h"
 #include "sensor_module.h"
-#include "gps_module.h"
+#include "gnss_module.h"
 #include "lwm2m_engine.h"
 
 #if !defined(CONFIG_LTE_LINK_CONTROL)
@@ -132,9 +132,6 @@ static int lwm2m_setup(void)
 #if defined(CONFIG_LWM2M_APP_LIGHT_SENSOR)
 	lwm2m_init_light_sensor();
 #endif
-#if defined(CONFIG_LWM2M_LOCATION_OBJ_SUPPORT)
-	initialise_gps();
-#endif
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
 	init_neighbour_cell_info();
 #endif
@@ -204,8 +201,8 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 		LOG_DBG("Registration complete");
 		/* Get current time and date */
 		date_time_update_async(date_time_event_handler);
-#if defined(CONFIG_APP_GPS)
-		start_gps_search();
+#if defined(CONFIG_APP_GNSS)
+		start_gnss();
 #endif
 		break;
 
@@ -269,6 +266,25 @@ static void modem_connect(void)
 	} while (ret < 0);
 }
 
+#if defined(CONFIG_APP_GNSS)
+static void modem_gnss_configure(void)
+{
+	if (strlen(CONFIG_GNSS_AT_MAGPIO) > 0) {
+		if (nrf_modem_at_printf("%s", CONFIG_GNSS_AT_MAGPIO) != 0) {
+			LOG_ERR("Failed to set MAGPIO configuration");
+			return;
+		}
+	}
+
+	if (strlen(CONFIG_GNSS_AT_COEX0) > 0) {
+		if (nrf_modem_at_printf("%s", CONFIG_GNSS_AT_COEX0) != 0) {
+			LOG_ERR("Failed to set COEX0 configuration");
+			return;
+		}
+	}
+}
+#endif
+
 void main(void)
 {
 	int ret;
@@ -299,6 +315,9 @@ void main(void)
 	}
 #endif
 
+#if defined(CONFIG_APP_GNSS)
+	modem_gnss_configure();
+#endif
 	LOG_INF("Initializing modem.");
 	ret = lte_lc_init();
 	if (ret < 0) {
@@ -347,6 +366,10 @@ void main(void)
 
 	reconnection_counter = 0;
 	modem_connect();
+
+#if defined(CONFIG_APP_GNSS)
+	initialise_gnss();
+#endif
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT)
 	ret = lwm2m_update_connmon();
