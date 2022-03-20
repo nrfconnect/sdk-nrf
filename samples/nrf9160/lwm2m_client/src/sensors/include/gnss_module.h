@@ -4,29 +4,29 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef GPS_MODULE_H__
-#define GPS_MODULE_H__
+#ifndef GNSS_MODULE_H__
+#define GNSS_MODULE_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /**
- * @brief Initialise GPS driver.
+ * @brief Initialise GNSS interface.
  *
  * @return int 0 if successful, negative error code if not.
  */
-int initialise_gps(void);
+int initialise_gnss(void);
 
 /**
- * @brief Start GPS search.
+ * @brief Start GNSS.
  *
  * @return int 0 if successful, negative error code if not.
  */
-int start_gps_search(void);
+int start_gnss(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* GPS_MODULE_H__ */
+#endif /* GNSS_MODULE_H__ */

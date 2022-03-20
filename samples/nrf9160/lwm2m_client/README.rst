@@ -34,7 +34,7 @@ It can also receive activation commands such as buzzer activation and light cont
 .. note::
    The GNSS module interferes with the LTE connection.
    If GNSS is not needed or if the device is in an area with poor connection, disable the GNSS module.
-   You can disable the GNSS module by setting the configuration option :ref:`CONFIG_APP_GPS <CONFIG_APP_GPS>` to ``n``.
+   You can disable the GNSS module by setting the configuration option :ref:`CONFIG_APP_GNSS <CONFIG_APP_GNSS>` to ``n``.
 
 
 The following LwM2M objects are implemented in this sample:
@@ -369,15 +369,15 @@ CONFIG_APP_TEMP_SENSOR - Configuration for enabling an LwM2M Temperature sensor 
    Disabled objects will not be visible in the server.
    This configuration option can be used for other LwM2M objects also by modifying the option accordingly.
 
-.. _CONFIG_APP_GPS:
+.. _CONFIG_APP_GNSS:
 
-CONFIG_APP_GPS - Configuration for enabling GNSS functionality
+CONFIG_APP_GNSS - Configuration for enabling GNSS functionality
    This configuration might interfere with LTE if the GNSS conditions are not optimal.
    Disable this option if GNSS is not needed.
 
-.. _CONFIG_GPS_PRIORITY_ON_FIRST_FIX:
+.. _CONFIG_GNSS_PRIORITY_ON_FIRST_FIX:
 
-CONFIG_GPS_PRIORITY_ON_FIRST_FIX - Configuration for prioritizing GNSS over LTE during the search for first fix.
+CONFIG_GNSS_PRIORITY_ON_FIRST_FIX - Configuration for prioritizing GNSS over LTE during the search for first fix.
    Enabling this option makes it significantly easier for the GNSS module to find a position but will also affect performance for the rest of the application during the search for first fix.
 
 .. _CONFIG_ENV_SENSOR_USE_SIM:
@@ -535,7 +535,7 @@ Testing
    #. Retrieve sensor data from various sensors and check if values are reasonable.
    #. Test GNSS module:
 
-      a. Ensure that :ref:`CONFIG_GPS_PRIORITY_ON_FIRST_FIX <CONFIG_GPS_PRIORITY_ON_FIRST_FIX>` is enabled.
+      a. Ensure that :ref:`CONFIG_GNSS_PRIORITY_ON_FIRST_FIX <CONFIG_GNSS_PRIORITY_ON_FIRST_FIX>` is enabled.
       #. Ensure that you are in a location with good GNSS signal, preferably outside.
       #. Wait for the GNSS to receive a fix, which will be displayed in the terminal.
          It might take several minutes for the first fix.

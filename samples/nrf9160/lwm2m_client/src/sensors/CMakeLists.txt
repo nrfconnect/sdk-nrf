@@ -15,5 +15,5 @@ target_sources_ifdef(CONFIG_ENVIRONMENT_SENSOR
 target_sources_ifdef(CONFIG_LIGHT_SENSOR
 	app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/light_sensor.c)
 
-target_sources_ifdef(CONFIG_GPS
-	app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/gps_module.c)
+target_sources_ifdef(CONFIG_GNSS
+	app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/gnss_module.c)

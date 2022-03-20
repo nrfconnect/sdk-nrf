@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef GPS_PVT_EVENT_H__
-#define GPS_PVT_EVENT_H__
+#ifndef GNSS_PVT_EVENT_H__
+#define GNSS_PVT_EVENT_H__
 
 #include <zephyr.h>
-#include <drivers/gps.h>
+#include <nrf_modem_gnss.h>
 #include <event_manager.h>
 #include <event_manager_profiler_tracer.h>
 
@@ -16,16 +16,16 @@
 extern "C" {
 #endif
 
-struct gps_pvt_event {
+struct gnss_pvt_event {
 	struct event_header header;
 
-	struct gps_pvt pvt;
+	struct nrf_modem_gnss_pvt_data_frame pvt;
 };
 
-EVENT_TYPE_DECLARE(gps_pvt_event);
+EVENT_TYPE_DECLARE(gnss_pvt_event);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* GPS_PVT_EVENT_H__ */
+#endif /* GNSS_PVT_EVENT_H__ */

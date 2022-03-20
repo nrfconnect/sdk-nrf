@@ -1,0 +1,63 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config GNSS
+	bool
+	help
+	  Enable GNSS
+
+if GNSS
+
+config GNSS_SEARCH_INTERVAL_TIME
+	int "GNSS search interval [s]"
+	default 300
+	help
+	  Length of time between GNSS searches in seconds.
+
+config GNSS_SEARCH_TIMEOUT_TIME
+	int "GNSS search timeout [s]"
+	default 150
+	help
+	  Length of time the GNSS can spend looking for a fix in seconds.
+	  In areas with poor connection, this should be increased.
+
+config GNSS_PRIORITY_ON_FIRST_FIX
+	bool "Give GNSS priority when looking for first fix"
+	help
+	  Gives the GNSS priority while it is performing its first search.
+	  Enabling this will make it significantly easier for the GNSS module to find a position, but
+	  will also affect performance for the rest of the app.
+	  Subsequent fixes are much quicker and therefore no priority is needed.
+
+choice
+	default GNSS_ANTENNA_ONBOARD
+	prompt "Select which antenna to use for GNSS"
+
+config GNSS_ANTENNA_ONBOARD
+	bool "Use onboard antenna"
+
+config GNSS_ANTENNA_EXTERNAL
+	bool "Use external antenna"
+
+endchoice
+
+config GNSS_AT_MAGPIO
+	string "AT%XMAGPIO command"
+	default "AT\%XMAGPIO=1,0,0,1,1,1574,1577" if BOARD_NRF9160DK_NRF9160_NS
+	default "AT\%XMAGPIO=1,1,1,7,1,746,803,2,698,748,2,1710,2200,3,824,894,4,880,960,5,791,849,7,1565,1586" if BOARD_THINGY91_NRF9160_NS
+	help
+	  Defines the AT%XMAGPIO command to be sent to GNSS module. Leave
+	  empty if this command should not be sent.
+
+config GNSS_AT_COEX0
+	string "AT%XCOEX0 command"
+	default "AT\%XCOEX0=1,1,1565,1586" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && GNSS_ANTENNA_ONBOARD
+	default "AT\%XCOEX0" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && GNSS_ANTENNA_EXTERNAL
+	help
+	  Defines the AT%XCOEX0 command to be sent to GNSS module. Leave
+	  empty if this command should not be sent.
+
+endif #GNSS

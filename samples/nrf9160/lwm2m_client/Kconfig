@@ -97,20 +97,15 @@ if APP_ACCELEROMETER
 	rsource "src/sensors/Kconfig.accelerometer"
 endif # APP_ACCELEROMETER
 
-menuconfig APP_GPS
-	bool "Enable GPS"
-	select GPS
+menuconfig APP_GNSS
+	bool "Enable GNSS"
+	select GNSS
 	select LWM2M_LOCATION_OBJ_SUPPORT
 
-if APP_GPS
-	rsource "src/sensors/Kconfig.gps"
+if APP_GNSS
+	rsource "src/sensors/Kconfig.gnss"
+endif # APP_GNSS
 
-config APP_GPS_HOLD_TIME
-	int "Minimum time [s] between location data notification messages"
-	default 60
-	help
-	  The minimum time in seconds that notifications can be sent to observers of the Location data.
-endif # APP_GPS
 endmenu # LwM2M objects
 
 config APP_LWM2M_PSK
