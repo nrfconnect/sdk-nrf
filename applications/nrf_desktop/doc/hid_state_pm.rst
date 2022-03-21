@@ -22,7 +22,7 @@ Module events
 Configuration
 *************
 
-The module is enabled by :kconfig:option:`CONFIG_DESKTOP_HID_STATE_PM_ENABLE` Kconfig option.
+The module is enabled by :ref:`CONFIG_DESKTOP_HID_STATE_PM_ENABLE <config_desktop_app_options>` Kconfig option.
 The option depends on :kconfig:option:`CONFIG_CAF_POWER_MANAGER` and it is enabled by default.
 
 Implementation details

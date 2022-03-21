@@ -23,7 +23,7 @@ Module events
 Configuration
 *************
 
-Enable the module with the :kconfig:option:`CONFIG_DESKTOP_CONSTLAT_ENABLE` Kconfig option.
+Enable the module with the :ref:`CONFIG_DESKTOP_CONSTLAT_ENABLE <config_desktop_app_options>` option.
 
-You can set the :kconfig:option:`CONFIG_DESKTOP_CONSTLAT_DISABLE_ON_STANDBY` to disable the constant latency interrupts when the device goes to the low power mode (on ``power_down_event``).
+You can set the :ref:`CONFIG_DESKTOP_CONSTLAT_DISABLE_ON_STANDBY <config_desktop_app_options>` to disable the constant latency interrupts when the device goes to the low power mode (on ``power_down_event``).
 The constant latency interrupts are reenabled on ``wake_up_event``.
