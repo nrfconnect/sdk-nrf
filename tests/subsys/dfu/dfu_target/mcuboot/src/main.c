@@ -19,6 +19,7 @@ static void const *write_param_buf;
 static int done_retval;
 static int init_retval;
 static bool identify_retval;
+static int schedule_retval;
 
 bool dfu_target_mcuboot_identify(const void *const buf)
 {
@@ -50,7 +51,14 @@ int dfu_target_mcuboot_done(bool successful)
 
 int dfu_target_mcuboot_schedule_update(int img_num)
 {
-	return 0;
+	return schedule_retval;
+}
+
+void test_setup(void)
+{
+	init_retval = 0;
+	done_retval = 0;
+	schedule_retval = 0;
 }
 
 static void init(void)
@@ -83,8 +91,6 @@ static void test_init(void)
 	uint8_t buf[64];
 
 	done();
-	init_retval = 0;
-	done_retval = 0;
 
 	identify_retval = true;
 	ret = dfu_target_img_type(buf, sizeof(buf));
@@ -124,6 +130,7 @@ static void test_done(void)
 
 	/* Un-initialize */
 	dfu_target_done(true);
+	dfu_target_schedule_update(0);
 
 	err = dfu_target_done(true);
 	zassert_true(err < 0, "Should get error code when not initialized");
@@ -144,6 +151,30 @@ static void test_done(void)
 	done_retval = -42;
 	err = dfu_target_done(true);
 	zassert_equal(err, -42, "Did not get error from dfu target");
+	done();
+
+}
+
+static void test_schedule(void)
+{
+	int err;
+
+	/* Un-initialize */
+	dfu_target_done(true);
+	dfu_target_schedule_update(0);
+
+	err = dfu_target_schedule_update(0);
+	zassert_true(err < 0, "Should get error code when not initialized");
+
+	init();
+	err = dfu_target_schedule_update(0);
+	zassert_equal(err, 0, "Should not get error code when initialized");
+	done();
+
+	init();
+	schedule_retval = -91;
+	err = dfu_target_schedule_update(0);
+	zassert_equal(err, -91, "Did not get error from dfu target");
 	done();
 
 }
@@ -193,7 +224,10 @@ void test_main(void)
 			 ztest_unit_test(test_write),
 			 ztest_unit_test(test_offset_get),
 			 ztest_unit_test(test_done),
-			 ztest_unit_test(test_init)
+			 ztest_user_unit_test_setup_teardown(test_init,
+				test_setup, unit_test_noop),
+			 ztest_user_unit_test_setup_teardown(test_schedule,
+				test_setup, unit_test_noop)
 			 );
 
 	ztest_run_test_suite(dfu_target_test);
