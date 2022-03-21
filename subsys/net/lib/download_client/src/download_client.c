@@ -197,15 +197,14 @@ static int host_lookup(const char *host, int family, uint8_t pdn_id,
 	return 0;
 }
 
-static int client_connect(struct download_client *dl, const char *host,
-			  struct sockaddr *sa, int *fd)
+static int client_connect(struct download_client *dl)
 {
 	int err;
 	int type;
 	uint16_t port;
 	socklen_t addrlen;
 
-	err = url_parse_proto(host, &dl->proto, &type);
+	err = url_parse_proto(dl->host, &dl->proto, &type);
 	if (err) {
 		LOG_DBG("Protocol not specified, defaulting to HTTP(S)");
 		type = SOCK_STREAM;
@@ -234,7 +233,7 @@ static int client_connect(struct download_client *dl, const char *host,
 		return -EINVAL;
 	}
 
-	err = url_parse_port(host, &port);
+	err = url_parse_port(dl->host, &port);
 	if (err) {
 		switch (dl->proto) {
 		case IPPROTO_TLS_1_2:
@@ -253,13 +252,13 @@ static int client_connect(struct download_client *dl, const char *host,
 		LOG_DBG("Port not specified, using default: %d", port);
 	}
 
-	switch (sa->sa_family) {
+	switch (dl->remote_addr.sa_family) {
 	case AF_INET6:
-		SIN6(sa)->sin6_port = htons(port);
+		SIN6(&dl->remote_addr)->sin6_port = htons(port);
 		addrlen = sizeof(struct sockaddr_in6);
 		break;
 	case AF_INET:
-		SIN(sa)->sin_port = htons(port);
+		SIN(&dl->remote_addr)->sin_port = htons(port);
 		addrlen = sizeof(struct sockaddr_in);
 		break;
 	default:
@@ -267,16 +266,16 @@ static int client_connect(struct download_client *dl, const char *host,
 	}
 
 	LOG_DBG("family: %d, type: %d, proto: %d",
-		sa->sa_family, type, dl->proto);
+		dl->remote_addr.sa_family, type, dl->proto);
 
-	*fd = socket(sa->sa_family, type, dl->proto);
-	if (*fd < 0) {
+	dl->fd = socket(dl->remote_addr.sa_family, type, dl->proto);
+	if (dl->fd < 0) {
 		LOG_ERR("Failed to create socket, err %d", errno);
 		return -errno;
 	}
 
 	if (dl->config.pdn_id) {
-		err = socket_pdn_id_set(*fd, dl->config.pdn_id);
+		err = socket_pdn_id_set(dl->fd, dl->config.pdn_id);
 		if (err) {
 			goto cleanup;
 		}
@@ -284,13 +283,13 @@ static int client_connect(struct download_client *dl, const char *host,
 
 	if ((dl->proto == IPPROTO_TLS_1_2 || dl->proto == IPPROTO_DTLS_1_2)
 	     && (dl->config.sec_tag != -1)) {
-		err = socket_sectag_set(*fd, dl->config.sec_tag);
+		err = socket_sectag_set(dl->fd, dl->config.sec_tag);
 		if (err) {
 			goto cleanup;
 		}
 
 		if (dl->config.set_tls_hostname) {
-			err = socket_tls_hostname_set(*fd, host);
+			err = socket_tls_hostname_set(dl->fd, dl->host);
 			if (err) {
 				goto cleanup;
 			}
@@ -298,16 +297,16 @@ static int client_connect(struct download_client *dl, const char *host,
 	}
 
 	/* Set socket timeout, if configured */
-	err = socket_timeout_set(*fd, type);
+	err = socket_timeout_set(dl->fd, type);
 	if (err) {
 		goto cleanup;
 	}
 
-	LOG_INF("Connecting to %s", log_strdup(host));
+	LOG_INF("Connecting to %s", log_strdup(dl->host));
 	LOG_DBG("fd %d, addrlen %d, fam %s, port %d",
-		*fd, addrlen, str_family(sa->sa_family), port);
+		dl->fd, addrlen, str_family(dl->remote_addr.sa_family), port);
 
-	err = connect(*fd, sa, addrlen);
+	err = connect(dl->fd, &dl->remote_addr, addrlen);
 	if (err) {
 		LOG_ERR("Unable to connect, errno %d", errno);
 		err = -errno;
@@ -316,8 +315,8 @@ static int client_connect(struct download_client *dl, const char *host,
 cleanup:
 	if (err) {
 		/* Unable to connect, close socket */
-		close(*fd);
-		*fd = -1;
+		close(dl->fd);
+		dl->fd = -1;
 	}
 
 	return err;
@@ -600,7 +599,6 @@ int download_client_connect(struct download_client *client, const char *host,
 			    const struct download_client_cfg *config)
 {
 	int err;
-	struct sockaddr sa;
 
 	if (client == NULL || host == NULL || config == NULL) {
 		return -EINVAL;
@@ -619,10 +617,10 @@ int download_client_connect(struct download_client *client, const char *host,
 	err = 0;
 	/* Attempt IPv6 connection if configured, fallback to IPv4 */
 	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_IPV6)) {
-		err = host_lookup(host, AF_INET6, config->pdn_id, &sa);
+		err = host_lookup(host, AF_INET6, config->pdn_id, &client->remote_addr);
 	}
 	if (err || !IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_IPV6)) {
-		err = host_lookup(host, AF_INET, config->pdn_id, &sa);
+		err = host_lookup(host, AF_INET, config->pdn_id, &client->remote_addr);
 	}
 
 	if (err) {
@@ -632,7 +630,7 @@ int download_client_connect(struct download_client *client, const char *host,
 	client->config = *config;
 	client->host = host;
 
-	err = client_connect(client, host, &sa, &client->fd);
+	err = client_connect(client);
 	if (client->fd < 0) {
 		return err;
 	}

@@ -126,6 +126,10 @@ typedef int (*download_client_callback_t)(
 struct download_client {
 	/** Socket descriptor. */
 	int fd;
+
+	/** Destination address storage */
+	struct sockaddr remote_addr;
+
 	/** Response buffer. */
 	char buf[CONFIG_DOWNLOAD_CLIENT_BUF_SIZE];
 	/** Buffer offset. */
