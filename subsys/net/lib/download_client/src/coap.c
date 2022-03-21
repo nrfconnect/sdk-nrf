@@ -36,11 +36,41 @@ static int coap_get_current_from_response_pkt(const struct coap_packet *cpkt)
 	return GET_BLOCK_NUM(block) << (GET_BLOCK_SIZE(block) + 4);
 }
 
+static bool has_pending(struct download_client *client)
+{
+	return client->coap.pending.timeout > 0;
+}
+
 int coap_block_init(struct download_client *client, size_t from)
 {
 	coap_block_transfer_init(&client->coap.block_ctx,
 				 CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE, 0);
 	client->coap.block_ctx.current = from;
+	return 0;
+}
+
+int coap_poll_timeout(struct download_client *dl)
+{
+	if (dl->coap.pending.timeout > 0) {
+		return dl->coap.pending.timeout;
+	}
+
+	return CONFIG_COAP_INIT_ACK_TIMEOUT_MS / 1000;
+}
+
+int coap_initiate_retransmission(struct download_client *dl)
+{
+	LOG_DBG("Initiating retransmission");
+
+	if (dl->coap.pending.timeout > 0) {
+		/* TODO: track send attempts before first request send was successful.
+		 * Without this we may wait infinitely for each initial request to be sent
+		 */
+	} else if (!coap_pending_cycle(&dl->coap.pending)) {
+		LOG_ERR("CoAP max-retransmissions exceeded");
+		return -1;
+	}
+
 	return 0;
 }
 
@@ -93,12 +123,18 @@ int coap_block_update(struct download_client *client, struct coap_packet *pkt,
 
 int coap_parse(struct download_client *client, size_t len)
 {
+	uint8_t type;
 	int err;
 	size_t blk_off;
 	uint8_t response_code;
+	uint16_t response_id;
 	uint16_t payload_len;
 	const uint8_t *payload;
 	struct coap_packet response;
+
+	/* TODO: currently we stop download on every error, but this is mostly not necessary
+	 * and we can just request the same block again using retry mechanism
+	 */
 
 	err = coap_packet_parse(&response, client->buf, len, NULL, 0);
 	if (err) {
@@ -109,6 +145,20 @@ int coap_parse(struct download_client *client, size_t len)
 	err = coap_block_update(client, &response, &blk_off);
 	if (err) {
 		return err;
+	}
+
+	response_id = coap_header_get_id(&response);
+	if (response_id != client->coap.pending.id) {
+		LOG_ERR("Response is not pending");
+		return -1;
+	}
+
+	type = coap_header_get_type(&response);
+	if (type == COAP_TYPE_ACK) {
+		coap_pending_clear(&client->coap.pending);
+	} else {
+		LOG_ERR("Response must be of coap type ACK");
+		return -1;
 	}
 
 	response_code = coap_header_get_code(&response);
@@ -143,15 +193,22 @@ int coap_parse(struct download_client *client, size_t len)
 int coap_request_send(struct download_client *client)
 {
 	int err;
+	uint16_t id;
 	char file[FILENAME_SIZE];
 	char *path_elem;
 	char *path_elem_saveptr;
 	struct coap_packet request;
 
+	if (has_pending(client)) {
+		id = client->coap.pending.id;
+	} else {
+		id = coap_next_id();
+	}
+
 	err = coap_packet_init(
 		&request, client->buf, CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
 		COAP_VER, COAP_TYPE_CON, 8, coap_next_token(),
-		COAP_METHOD_GET, coap_next_id()
+		COAP_METHOD_GET, id
 	);
 	if (err) {
 		LOG_ERR("Failed to init CoAP message, err %d", err);
@@ -160,6 +217,7 @@ int coap_request_send(struct download_client *client)
 
 	err = url_parse_file(client->file, file, sizeof(file));
 	if (err) {
+		LOG_ERR("Unable to parse url");
 		return err;
 	}
 
@@ -183,6 +241,16 @@ int coap_request_send(struct download_client *client)
 	if (err) {
 		LOG_ERR("Unable to add size2 option");
 		return err;
+	}
+
+	if (!has_pending(client)) {
+		err = coap_pending_init(&client->coap.pending, &request, &client->remote_addr,
+					CONFIG_DOWNLOAD_CLIENT_COAP_MAX_RETRANSMIT_REQUEST_COUNT);
+		if (err < 0) {
+			return -EINVAL;
+		}
+
+		coap_pending_cycle(&client->coap.pending);
 	}
 
 	LOG_DBG("CoAP next block: %d", client->coap.block_ctx.current);

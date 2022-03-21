@@ -24,6 +24,13 @@
 #include <zephyr/types.h>
 #include <net/coap.h>
 
+#if defined(CONFIG_POSIX_API)
+#include <posix/sys/socket.h>
+#include <posix/poll.h>
+#else
+#include <net/socket.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -127,6 +134,10 @@ struct download_client {
 	/** Socket descriptor. */
 	int fd;
 
+#ifdef CONFIG_NET_SOCKETS
+	struct pollfd pfd;
+#endif
+
 	/** Destination address storage */
 	struct sockaddr remote_addr;
 
@@ -162,6 +173,9 @@ struct download_client {
 	struct {
 		/** CoAP block context. */
 		struct coap_block_context block_ctx;
+
+		/** Private CoAP and networking structures */
+		struct coap_pending pending;
 	} coap;
 
 	/** Internal thread ID. */

@@ -13,9 +13,6 @@
 #include <posix/unistd.h>
 #include <posix/netdb.h>
 #include <posix/sys/time.h>
-#include <posix/sys/socket.h>
-#else
-#include <net/socket.h>
 #endif
 #include <net/tls_credentials.h>
 #include <net/download_client.h>
@@ -50,40 +47,6 @@ static const char *str_family(int family)
 		__ASSERT(false, "Unsupported family");
 		return NULL;
 	}
-}
-
-static int socket_timeout_set(int fd, int type)
-{
-	int err;
-	uint32_t timeout_ms;
-
-	if (type == SOCK_STREAM) {
-		timeout_ms = CONFIG_DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS;
-	} else {
-		timeout_ms = CONFIG_DOWNLOAD_CLIENT_UDP_SOCK_TIMEO_MS;
-	}
-
-	if (timeout_ms <= 0) {
-		return 0;
-	}
-
-	struct timeval timeo = {
-		.tv_sec = (timeout_ms / 1000),
-		.tv_usec = (timeout_ms % 1000) * 1000,
-	};
-
-#if defined(CONFIG_POSIX_API)
-	LOG_INF("Configuring socket timeout (%d s)", (int32_t)timeo.tv_sec);
-#else
-	LOG_INF("Configuring socket timeout (%lld s)", timeo.tv_sec);
-#endif
-	err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo));
-	if (err) {
-		LOG_WRN("Failed to set socket timeout, errno %d", errno);
-		return -errno;
-	}
-
-	return 0;
 }
 
 static int socket_sectag_set(int fd, int sec_tag)
@@ -296,21 +259,18 @@ static int client_connect(struct download_client *dl)
 		}
 	}
 
-	/* Set socket timeout, if configured */
-	err = socket_timeout_set(dl->fd, type);
-	if (err) {
-		goto cleanup;
-	}
-
 	LOG_INF("Connecting to %s", log_strdup(dl->host));
-	LOG_DBG("fd %d, addrlen %d, fam %s, port %d",
-		dl->fd, addrlen, str_family(dl->remote_addr.sa_family), port);
+	LOG_DBG("fd %d, addrlen %d, fam %s, port %d", dl->fd, addrlen,
+		str_family(dl->remote_addr.sa_family), port);
 
 	err = connect(dl->fd, &dl->remote_addr, addrlen);
 	if (err) {
 		LOG_ERR("Unable to connect, errno %d", errno);
 		err = -errno;
 	}
+
+	dl->pfd.fd = dl->fd;
+	memset(&dl->coap.pending, 0, sizeof(dl->coap.pending));
 
 cleanup:
 	if (err) {
@@ -340,19 +300,73 @@ int socket_send(const struct download_client *client, size_t len)
 	return 0;
 }
 
-static int request_send(struct download_client *dl)
+int poll_timeout(struct download_client *dl)
 {
 	switch (dl->proto) {
 	case IPPROTO_TCP:
 	case IPPROTO_TLS_1_2:
-		return http_get_request_send(dl);
+		return CONFIG_DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS;
 	case IPPROTO_UDP:
 	case IPPROTO_DTLS_1_2:
 		if (IS_ENABLED(CONFIG_COAP)) {
-			return coap_request_send(dl);
+			return coap_poll_timeout(dl);
 		}
 	}
 
+	return 0;
+}
+
+static int request_send(struct download_client *dl)
+{
+	/* Request next fragment, if necessary (HTTPS/CoAP) */
+	if (dl->progress == 0 || dl->proto != IPPROTO_TCP ||
+	    IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS)) {
+		dl->http.has_header = false;
+
+		switch (dl->proto) {
+		case IPPROTO_TCP:
+		case IPPROTO_TLS_1_2:
+			return http_get_request_send(dl);
+		case IPPROTO_UDP:
+		case IPPROTO_DTLS_1_2:
+			if (IS_ENABLED(CONFIG_COAP)) {
+				return coap_request_send(dl);
+			}
+		}
+	}
+
+	return 0;
+}
+
+static int initiate_retransmission(struct download_client *dl)
+{
+	int err;
+
+	if (dl->progress == 0 || dl->proto != IPPROTO_TCP ||
+	    IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS)) {
+		switch (dl->proto) {
+		case IPPROTO_TCP:
+		case IPPROTO_TLS_1_2:
+			break;
+		case IPPROTO_UDP:
+		case IPPROTO_DTLS_1_2:
+			if (IS_ENABLED(CONFIG_COAP)) {
+				err = coap_initiate_retransmission(dl);
+				if (err) {
+					return err;
+				}
+			}
+		}
+	}
+
+	/* try to send another request whenever POLLOUT is available.
+	 * For coap POLLOUT is set as long retransmission is permitted.
+	 * In case the socket is open for writing another request is sent.
+	 * For http there is no mechanism such as CoAP exponential backoff
+	 * implemented. The code relies on any kind of http error/close in
+	 * case of network issues
+	 */
+	dl->pfd.events = POLLOUT;
 	return 0;
 }
 
@@ -372,7 +386,7 @@ static int fragment_evt_send(const struct download_client *client)
 	return client->callback(&evt);
 }
 
-static int error_evt_send(const struct download_client *dl, int error)
+static int error_evt_send(struct download_client *dl, int error)
 {
 	/* Error will be sent as negative. */
 	__ASSERT_NO_MSG(error > 0);
@@ -385,33 +399,169 @@ static int error_evt_send(const struct download_client *dl, int error)
 	return dl->callback(&evt);
 }
 
-static int reconnect(struct download_client *dl)
+static int reconnect(struct download_client *dl, int error_cause)
 {
 	int err;
 
 	LOG_INF("Reconnecting..");
+
+	/* Notify the application of the error via en event.
+	 * Attempt to reconnect and resume the download
+	 * if the application returns Zero via the event.
+	 */
+	err = error_evt_send(dl, error_cause);
+	if (err) {
+		return -1;
+	}
+
 	err = download_client_disconnect(dl);
 	if (err) {
-		return err;
+		LOG_ERR("Failed to disconnect");
+		error_evt_send(dl, EHOSTDOWN);
+		return -1;
 	}
 
 	err = download_client_connect(dl, dl->host, &dl->config);
 	if (err) {
-		return err;
+		LOG_ERR("Failed to connect");
+		error_evt_send(dl, EHOSTDOWN);
+		return -1;
 	}
 
 	return 0;
 }
 
-void download_thread(void *client, void *a, void *b)
+static int read_from_socket(struct download_client *dl)
 {
-	int rc = 0;
+	int err = 0;
 	int error_cause;
 	size_t len;
+
+	LOG_DBG("Receiving up to %d bytes at %p...", (sizeof(dl->buf) - dl->offset),
+		(dl->buf + dl->offset));
+
+	len = recv(dl->fd, dl->buf + dl->offset, sizeof(dl->buf) - dl->offset, MSG_DONTWAIT);
+
+	if (len == 0 || len == -1) {
+		/* We just had an unexpected socket error or closure */
+
+		/* If there is a partial data payload in our buffer,
+		 * and it has been accounted in our progress, we have
+		 * to hand it to the application before discarding it.
+		 */
+		if ((dl->offset > 0) && (dl->http.has_header)) {
+			err = fragment_evt_send(dl);
+			if (err) {
+				/* Restart and suspend */
+				LOG_INF("Fragment refused, download stopped.");
+				return -1;
+			}
+		}
+
+		error_cause = ECONNRESET;
+
+		if (len == -1) {
+			if ((errno == EWOULDBLOCK) || (errno == EAGAIN)) {
+				/* Should only happen if socket is read by somebody else.
+				 * Continue waiting for receive data
+				 */
+				return 1;
+			}
+			LOG_ERR("Error in recv(), errno %d", errno);
+		} else if (len == 0) {
+			LOG_WRN("Peer closed connection!");
+		}
+
+		err = reconnect(dl, error_cause);
+		if (err < 0) {
+			LOG_ERR("Failed to reconnect");
+			return -1;
+		}
+
+		err = initiate_retransmission(dl);
+		if (err < 0) {
+			LOG_ERR("Failed to initiate retransmission");
+			return -1;
+		}
+
+		return 0;
+	}
+
+	LOG_DBG("Read %d bytes from socket", len);
+
+	if (dl->proto == IPPROTO_TCP || dl->proto == IPPROTO_TLS_1_2) {
+		err = http_parse(dl, len);
+		if (err > 0) {
+			/* Wait for more data (fragment/header) */
+			return 1;
+		}
+	} else if (IS_ENABLED(CONFIG_COAP)) {
+		err = coap_parse(dl, len);
+		if (err == 1) {
+			/* Duplicate packet received */
+			return 1;
+		}
+	}
+
+	if (err < 0) {
+		/* Something was wrong with the packet
+		 * Restart and suspend
+		 */
+		error_evt_send(dl, EBADMSG);
+		return -1;
+	}
+
+	if (dl->file_size) {
+		LOG_INF("Downloaded %u/%u bytes (%d%%)", dl->progress, dl->file_size,
+			(dl->progress * 100) / dl->file_size);
+	} else {
+		LOG_INF("Downloaded %u bytes", dl->progress);
+	}
+
+	/* Send fragment to application.
+	 * If the application callback returns non-zero, stop.
+	 */
+	err = fragment_evt_send(dl);
+	if (err) {
+		/* Restart and suspend */
+		LOG_INF("Fragment refused, download stopped.");
+		return -1;
+	}
+
+	/* Attempt to reconnect if the connection was closed */
+	if (dl->http.connection_close) {
+		dl->http.connection_close = false;
+
+		err = reconnect(dl, ECONNRESET);
+		if (err < 0) {
+			LOG_ERR("Failed to reconnect");
+			return -1;
+		}
+
+		err = initiate_retransmission(dl);
+		if (err < 0) {
+			LOG_ERR("Failed to initiate retransmission");
+			return -1;
+		}
+	}
+
+	dl->offset = 0;
+
+	/* send packet request */
+	return 0;
+}
+
+void download_thread(void *client, void *a, void *b)
+{
+	int err;
+	int next_poll_timeout;
 	struct download_client *const dl = client;
 
 restart_and_suspend:
 	k_thread_suspend(dl->tid);
+
+	/* first message is send request */
+	dl->pfd.events = POLLOUT;
 
 	while (true) {
 		__ASSERT(dl->offset < sizeof(dl->buf), "Buffer overflow");
@@ -423,109 +573,111 @@ restart_and_suspend:
 			break;
 		}
 
-		LOG_DBG("Receiving up to %d bytes at %p...",
-			(sizeof(dl->buf) - dl->offset), (dl->buf + dl->offset));
+		/* reset poll events */
+		dl->pfd.revents = 0;
+		next_poll_timeout = poll_timeout(dl);
 
-		len = recv(dl->fd, dl->buf + dl->offset,
-			   sizeof(dl->buf) - dl->offset, 0);
+		err = poll(&dl->pfd, 1, next_poll_timeout);
+		if (err < 0) {
+			LOG_ERR("Error in poll:%d", errno);
 
-		if ((len == 0) || (len == -1)) {
-			/* We just had an unexpected socket error or closure */
+			err = reconnect(dl, ECONNRESET);
+			if (err < 0) {
+				LOG_ERR("Failed to reconnect");
+				/* critical error, stop downloading */
+				break;
+			}
 
-			/* If there is a partial data payload in our buffer,
-			 * and it has been accounted in our progress, we have
-			 * to hand it to the application before discarding it.
-			 */
-			if ((dl->offset > 0) && (dl->http.has_header)) {
-				rc = fragment_evt_send(dl);
-				if (rc) {
-					/* Restart and suspend */
-					LOG_INF("Fragment refused, download stopped.");
+			err = initiate_retransmission(dl);
+			if (err < 0) {
+				LOG_ERR("Failed to initiate retransmission");
+				/* critical error, stop downloading */
+				break;
+			}
+
+			continue;
+		}
+
+		if (dl->pfd.revents & POLLERR || dl->pfd.revents & POLLNVAL ||
+		    dl->pfd.revents & POLLHUP) {
+			if (dl->pfd.revents & POLLHUP) {
+				LOG_WRN("Peer closed connection!");
+			} else {
+				LOG_ERR("Poll reported a socket error, %02x.", dl->pfd.revents);
+			}
+
+			err = reconnect(dl, ECONNRESET);
+			if (err < 0) {
+				LOG_ERR("Failed to reconnect");
+				/* critical error, stop downloading */
+				break;
+			}
+
+			err = initiate_retransmission(dl);
+			if (err < 0) {
+				LOG_ERR("Failed to initiate retransmission");
+				/* critical error, stop downloading */
+				break;
+			}
+
+			continue;
+		}
+
+		if (err == 0) {
+			/* timeout occurred */
+			LOG_DBG("Socket timeout, waiting for socket to write");
+
+			err = initiate_retransmission(dl);
+			if (err < 0) {
+				LOG_ERR("Failed to send request again");
+				/* critical error, stop downloading */
+				break;
+			}
+
+			continue;
+		}
+
+		if (dl->pfd.revents & POLLIN) {
+			err = read_from_socket(dl);
+			if (err < 0) {
+				LOG_ERR("Failed to read from socket");
+				/* critical error, stop downloading */
+				break;
+			} else if (err == 1) {
+				/* continue receiving data */
+			} else {
+				/* receive okay - request new block */
+				dl->pfd.events = POLLOUT;
+			}
+		}
+
+		if (dl->pfd.revents & POLLOUT) {
+			err = request_send(dl);
+			if (err < 0) {
+				LOG_ERR("Failed to send request, reconnecting ...");
+
+				err = reconnect(dl, ECONNRESET);
+				if (err < 0) {
+					LOG_ERR("Failed to reconnect");
+					/* critical error, stop downloading */
 					break;
 				}
-			}
 
-			error_cause = ECONNRESET;
-
-			if (len == -1) {
-				if ((errno == ETIMEDOUT) || (errno == EWOULDBLOCK) ||
-				    (errno == EAGAIN)) {
-					if (dl->proto == IPPROTO_UDP ||
-					    dl->proto == IPPROTO_DTLS_1_2) {
-						LOG_DBG("Socket timeout, resending");
-						goto send_again;
-					}
-					error_cause = ETIMEDOUT;
+				err = initiate_retransmission(dl);
+				if (err < 0) {
+					LOG_ERR("Failed to initiate retransmission");
+					/* critical error, stop downloading */
+					break;
 				}
-				LOG_ERR("Error in recv(), errno %d", errno);
-			}
 
-			if (len == 0) {
-				LOG_WRN("Peer closed connection!");
-			}
-
-			/* Notify the application of the error via en event.
-			 * Attempt to reconnect and resume the download
-			 * if the application returns Zero via the event.
-			 */
-			rc = error_evt_send(dl, error_cause);
-			if (rc) {
-				/* Restart and suspend */
-				break;
-			}
-
-			rc = reconnect(dl);
-			if (rc) {
-				error_evt_send(dl, EHOSTDOWN);
-				break;
-			}
-
-			goto send_again;
-		}
-
-		LOG_DBG("Read %d bytes from socket", len);
-
-		if (dl->proto == IPPROTO_TCP || dl->proto == IPPROTO_TLS_1_2) {
-			rc = http_parse(client, len);
-			if (rc > 0) {
-				/* Wait for more data (fragment/header) */
 				continue;
 			}
-		} else if (IS_ENABLED(CONFIG_COAP)) {
-			rc = coap_parse(client, len);
-			if (rc == 1) {
-				/* Duplicate packet received */
-				continue;
-			}
+
+			/* wait for incoming data */
+			dl->pfd.events = POLLIN;
 		}
 
-		if (rc < 0) {
-			/* Something was wrong with the packet
-			 * Restart and suspend
-			 */
-			error_evt_send(dl, EBADMSG);
-			break;
-		}
-
-		if (dl->file_size) {
-			LOG_INF("Downloaded %u/%u bytes (%d%%)",
-				dl->progress, dl->file_size,
-				(dl->progress * 100) / dl->file_size);
-		} else {
-			LOG_INF("Downloaded %u bytes", dl->progress);
-		}
-
-		/* Send fragment to application.
-		 * If the application callback returns non-zero, stop.
-		 */
-		rc = fragment_evt_send(dl);
-		if (rc) {
-			/* Restart and suspend */
-			LOG_INF("Fragment refused, download stopped.");
-			break;
-		}
-
-		if (dl->progress == dl->file_size) {
+		if (dl->file_size > 0 && dl->progress == dl->file_size) {
 			LOG_INF("Download complete");
 			const struct download_client_evt evt = {
 				.id = DOWNLOAD_CLIENT_EVT_DONE,
@@ -535,37 +687,10 @@ restart_and_suspend:
 			break;
 		}
 
-		/* Attempt to reconnect if the connection was closed */
-		if (dl->http.connection_close) {
-			dl->http.connection_close = false;
-			reconnect(dl);
-		}
-
-send_again:
-		dl->offset = 0;
-		/* Request next fragment, if necessary (HTTPS/CoAP) */
-		if (dl->proto != IPPROTO_TCP || len == 0
-		   || IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS)) {
-			dl->http.has_header = false;
-
-			rc = request_send(dl);
-			if (rc) {
-				rc = error_evt_send(dl, ECONNRESET);
-				if (rc) {
-					/* Restart and suspend */
-					break;
-				}
-
-				rc = reconnect(dl);
-				if (rc) {
-					error_evt_send(dl, EHOSTDOWN);
-					break;
-				}
-
-				goto send_again;
-			}
-		}
+		continue;
 	}
+
+	dl->pfd.events = POLLOUT;
 
 	/* Do not let the thread return, since it can't be restarted */
 	goto restart_and_suspend;
@@ -660,8 +785,6 @@ int download_client_disconnect(struct download_client *const client)
 int download_client_start(struct download_client *client, const char *file,
 			  size_t from)
 {
-	int err;
-
 	if (client == NULL) {
 		return -EINVAL;
 	}
@@ -674,18 +797,10 @@ int download_client_start(struct download_client *client, const char *file,
 	client->file_size = 0;
 	client->progress = from;
 
-	client->offset = 0;
-	client->http.has_header = false;
-
 	if (client->proto == IPPROTO_UDP || client->proto == IPPROTO_DTLS_1_2) {
 		if (IS_ENABLED(CONFIG_COAP)) {
 			coap_block_init(client, from);
 		}
-	}
-
-	err = request_send(client);
-	if (err) {
-		return err;
 	}
 
 	LOG_INF("Downloading: %s [%u]", log_strdup(client->file),
