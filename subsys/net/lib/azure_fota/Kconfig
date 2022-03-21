@@ -8,7 +8,9 @@ menuconfig AZURE_FOTA
 	bool "Azure FOTA library [EXPERIMENTAL]"
 	depends on FOTA_DOWNLOAD
 	depends on CJSON_LIB
+	depends on !BOARD_QEMU_X86
 	select EXPERIMENTAL
+	default y if AZURE_IOT_HUB
 
 if AZURE_FOTA
 

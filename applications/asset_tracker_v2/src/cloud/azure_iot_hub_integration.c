@@ -308,8 +308,10 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 	LOG_DBG(" Version:      %s", CONFIG_ASSET_TRACKER_V2_APP_VERSION);
 	LOG_DBG(" Client ID:    %s", log_strdup(client_id_buf));
 	LOG_DBG(" Cloud:        %s", "Azure IoT Hub");
+#if defined(CONFIG_AZURE_IOT_HUB_DPS)
 	LOG_DBG(" DPS endpoint: %s", CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME);
 	LOG_DBG(" ID scope:     %s", CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE);
+#endif /* CONFIG_AZURE_IOT_HUB_DPS */
 	LOG_DBG("********************************************");
 
 	wrapper_evt_handler = event_handler;

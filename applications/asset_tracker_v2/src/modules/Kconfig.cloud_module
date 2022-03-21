@@ -32,9 +32,9 @@ choice NRF_CLOUD_SEND_SOCKET
 	default NRF_CLOUD_SEND_TIMEOUT
 endchoice
 
-# MQTT Transport library
-config MQTT_CLEAN_SESSION
-	default y
+choice NRF_CLOUD_CLIENT_ID_SRC
+	default NRF_CLOUD_CLIENT_ID_SRC_RUNTIME
+endchoice
 
 endif # NRF_CLOUD_MQTT
 

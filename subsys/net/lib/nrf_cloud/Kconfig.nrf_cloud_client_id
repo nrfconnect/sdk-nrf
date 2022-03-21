@@ -4,7 +4,7 @@
 #
 
 menu "Client ID (nRF Cloud Device ID)"
-choice
+choice NRF_CLOUD_CLIENT_ID_SRC
 	prompt "Client ID Source"
 	default NRF_CLOUD_CLIENT_ID_SRC_IMEI
 
