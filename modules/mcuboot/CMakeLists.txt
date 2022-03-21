@@ -276,19 +276,19 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     endif()
   endif()
 
-  # Set default key
-  if (NOT DEFINED mcuboot_key_file)
-    message(WARNING "
-      ---------------------------------------------------------
-      --- WARNING: Using default MCUBoot key, it should not ---
-      --- be used for production.                           ---
-      ---------------------------------------------------------
-      \n"
-    )
-    set(mcuboot_key_file ${ZEPHYR_MCUBOOT_MODULE_DIR}/${CONFIG_BOOT_SIGNATURE_KEY_FILE})
-  endif()
-
   if(CONFIG_SIGN_IMAGES)
+    # Set default key
+    if (NOT DEFINED mcuboot_key_file)
+      message(WARNING "
+        ---------------------------------------------------------
+        --- WARNING: Using default MCUBoot key, it should not ---
+        --- be used for production.                           ---
+        ---------------------------------------------------------
+        \n"
+      )
+      set(mcuboot_key_file ${ZEPHYR_MCUBOOT_MODULE_DIR}/${CONFIG_BOOT_SIGNATURE_KEY_FILE})
+    endif()
+
     set(app_core_binary_name app_update.bin)
 
     execute_process(COMMAND
