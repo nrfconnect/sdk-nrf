@@ -18,3 +18,9 @@ config AZURE_FOTA_VERSION_MAX_LEN
 	default ASSET_TRACKER_V2_APP_VERSION_MAX_LEN if AZURE_IOT_HUB && AZURE_FOTA && !AZURE_FOTA_APP_VERSION_AUTO
 	help
 	  Kconfig redefinition that aligns the azure fota and application version string length.
+
+# Set the Azure FOTA security tag to point to the same credentials used for the connection
+# to Azure IoT Hub. If this Kconfig is not set when building with Azure FOTA, the library will
+# throw a build assert.
+config AZURE_FOTA_SEC_TAG
+	default AZURE_IOT_HUB_SEC_TAG

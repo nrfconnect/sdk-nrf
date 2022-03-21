@@ -34,6 +34,17 @@ enum debug_module_event_type {
 	 */
 	DEBUG_EVT_MEMFAULT_DATA_READY,
 
+	/** Event sent after boot when building for QEMU x86. This event acts as a placeholder for
+	 *  MODEM_EVT_INITIALIZED which is not sent due to the modem module being disabled for
+	 *  QEMU x86 builds.
+	 */
+	DEBUG_EVT_QEMU_X86_INITIALIZED,
+
+	/** Event sent when the application is built for QEMU x86.
+	 *  When built for QEMU x86 it is assumed that the application is connected to the network.
+	 */
+	DEBUG_EVT_QEMU_X86_NETWORK_CONNECTED,
+
 	/** An irrecoverable error has occurred in the debug module. Error details are
 	 *  attached in the event structure.
 	 */

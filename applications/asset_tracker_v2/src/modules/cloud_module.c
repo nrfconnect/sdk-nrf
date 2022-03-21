@@ -44,6 +44,13 @@ BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) ||
 	     IS_ENABLED(CONFIG_AZURE_IOT_HUB),
 	     "A cloud transport service must be enabled");
 
+#if defined(CONFIG_BOARD_QEMU_X86)
+BUILD_ASSERT(IS_ENABLED(CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM),
+	     "Passing IMEI as cloud client ID is not supported when building for QEMU x86. "
+	     "This is because IMEI is retrieved from the modem and not available when running "
+	     "Zephyr's native TCP/IP stack.");
+#endif
+
 struct cloud_msg_data {
 	union {
 		struct app_module_event app;
@@ -126,6 +133,8 @@ static void send_config_received(void);
 static char *state2str(enum state_type state)
 {
 	switch (state) {
+	case STATE_LTE_INIT:
+		return "STATE_LTE_INIT";
 	case STATE_LTE_DISCONNECTED:
 		return "STATE_LTE_DISCONNECTED";
 	case STATE_LTE_CONNECTED:
@@ -731,10 +740,12 @@ static int setup(void)
 		return err;
 	}
 
+#if defined(CONFIG_MCUBOOT_IMG_MANAGER)
 	/* After a successful initializaton, tell the bootloader that the
 	 * current image is confirmed to be working.
 	 */
 	boot_write_img_confirmed();
+#endif /* CONFIG_MCUBOOT_IMG_MANAGER */
 
 	return 0;
 }
@@ -742,7 +753,8 @@ static int setup(void)
 /* Message handler for STATE_LTE_INIT. */
 static void on_state_init(struct cloud_msg_data *msg)
 {
-	if (IS_EVENT(msg, modem, MODEM_EVT_INITIALIZED)) {
+	if ((IS_EVENT(msg, modem, MODEM_EVT_INITIALIZED)) ||
+	    (IS_EVENT(msg, debug, DEBUG_EVT_QEMU_X86_INITIALIZED))) {
 		int err;
 
 		state_set(STATE_LTE_DISCONNECTED);
@@ -778,7 +790,8 @@ static void on_state_lte_connected(struct cloud_msg_data *msg)
 /* Message handler for STATE_LTE_DISCONNECTED. */
 static void on_state_lte_disconnected(struct cloud_msg_data *msg)
 {
-	if (IS_EVENT(msg, modem, MODEM_EVT_LTE_CONNECTED)) {
+	if ((IS_EVENT(msg, modem, MODEM_EVT_LTE_CONNECTED)) ||
+	    (IS_EVENT(msg, debug, DEBUG_EVT_QEMU_X86_NETWORK_CONNECTED))) {
 		state_set(STATE_LTE_CONNECTED);
 
 		/* LTE is now connected, cloud connection can be attempted */

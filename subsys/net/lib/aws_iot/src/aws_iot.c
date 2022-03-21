@@ -1002,7 +1002,7 @@ static int connect_client(struct aws_iot_config *const config)
 		return err;
 	}
 
-	if (IS_ENABLED(CONFIG_AWS_IOT_SEND_TIMEOUT)) {
+#if defined(CONFIG_AWS_IOT_SEND_TIMEOUT)
 		struct timeval timeout = {
 			.tv_sec = CONFIG_AWS_IOT_SEND_TIMEOUT_SEC
 		};
@@ -1021,7 +1021,7 @@ static int connect_client(struct aws_iot_config *const config)
 			LOG_DBG("Using send socket timeout of %d seconds",
 				CONFIG_AWS_IOT_SEND_TIMEOUT_SEC);
 		}
-	}
+#endif /* CONFIG_AWS_IOT_SEND_TIMEOUT */
 
 	if (config != NULL) {
 		config->socket = client.transport.tls.sock;

@@ -18,7 +18,6 @@ choice
 
 config CLOUD_CODEC_NRF_CLOUD
 	bool "Enable nRF Cloud codec backend"
-	select NRF_CLOUD_CELL_POS
 	help
 	  The nRF Cloud codec backend uses the nRF Cloud cell position library to
 	  generate a JSON cell position request based on neighbor cell measurements.

@@ -15,7 +15,9 @@
 
 #define MODULE debug_module
 
+#if defined(CONFIG_WATCHDOG_APPLICATION)
 #include "watchdog_app.h"
+#endif /* CONFIG_WATCHDOG_APPLICATION */
 #include "modules_common.h"
 #include "events/app_module_event.h"
 #include "events/cloud_module_event.h"
@@ -328,6 +330,14 @@ static void message_handler(struct debug_msg_data *msg)
 		if (err) {
 			LOG_ERR("Failed starting module, error: %d", err);
 			SEND_ERROR(debug, DEBUG_EVT_ERROR, err);
+		}
+
+		/* Notify the rest of the application that it is connected to network
+		 * when building for QEMU x86.
+		 */
+		if (IS_ENABLED(CONFIG_BOARD_QEMU_X86)) {
+			{ SEND_EVENT(debug, DEBUG_EVT_QEMU_X86_INITIALIZED); }
+			SEND_EVENT(debug, DEBUG_EVT_QEMU_X86_NETWORK_CONNECTED);
 		}
 	}
 

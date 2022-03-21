@@ -944,7 +944,7 @@ static int connect_client(struct azure_iot_hub_config *cfg)
 	/* Set the current socket and start reading from it in polling thread */
 	conn_config.socket = client.transport.tls.sock;
 
-	if (IS_ENABLED(CONFIG_AZURE_IOT_HUB_SEND_TIMEOUT)) {
+#if defined(CONFIG_AZURE_IOT_HUB_SEND_TIMEOUT)
 		struct timeval timeout = {
 			.tv_sec = CONFIG_AZURE_IOT_HUB_SEND_TIMEOUT_SEC
 		};
@@ -963,7 +963,7 @@ static int connect_client(struct azure_iot_hub_config *cfg)
 			LOG_DBG("Using send socket timeout of %d seconds",
 				CONFIG_AZURE_IOT_HUB_SEND_TIMEOUT_SEC);
 		}
-	}
+#endif /* CONFIG_AZURE_IOT_HUB_SEND_TIMEOUT */
 
 	return 0;
 }
