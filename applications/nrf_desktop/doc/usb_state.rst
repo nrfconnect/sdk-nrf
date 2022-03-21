@@ -23,7 +23,7 @@ Module events
 Configuration
 *************
 
-The module is enabled by selecting :kconfig:option:`CONFIG_DESKTOP_USB_ENABLE`.
+The module is enabled by selecting :ref:`CONFIG_DESKTOP_USB_ENABLE <config_desktop_app_options>` option.
 It depends on :kconfig:option:`CONFIG_USB_DEVICE_HID`.
 
 When enabling the USB support for the device, set the following generic device options:
@@ -64,7 +64,7 @@ nRF Desktop Peripheral
 The nRF Desktop Peripheral devices by default use only a single HID-class USB instance.
 In that case, this instance is used for all the HID reports.
 
-Enable :kconfig:option:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION` to use more than one HID-class USB instance on nRF Desktop Peripheral.
+Enable :ref:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION <config_desktop_app_options>` to use more than one HID-class USB instance on nRF Desktop Peripheral.
 Make sure to set a greater value in the :kconfig:option:`CONFIG_USB_HID_DEVICE_COUNT` option and create an additional :file:`usb_state_def.h` header in the configuration.
 The header assigns HID reports to the HID-class USB instances.
 A given HID report can be handled only by a single HID-class USB instance.

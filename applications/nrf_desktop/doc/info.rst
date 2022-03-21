@@ -31,7 +31,7 @@ Configuration
 The module uses Zephyr's :ref:`zephyr:hwinfo_api` to obtain the hardware ID.
 Enable the required driver using :kconfig:option:`CONFIG_HWINFO`.
 
-The module is enabled with the same Kconfig option as the :ref:`nrf_desktop_config_channel`: :kconfig:option:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE`.
+The module is enabled with the same Kconfig option as the :ref:`nrf_desktop_config_channel`: :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE <config_desktop_app_options>`.
 
 Implementation details
 **********************

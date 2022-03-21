@@ -295,7 +295,7 @@ The report is used by the :ref:`nrf_desktop_config_channel`.
 
 .. note::
    The nRF Desktop also uses a dedicated HID output report to forward the :ref:`nrf_desktop_config_channel` data through the nRF Desktop dongle.
-   This report is handled using the configuration channel's infrastructure and it can be enabled using :kconfig:option:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT`.
+   This report is handled using the configuration channel's infrastructure and it can be enabled using :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT <config_desktop_app_options>`.
    See the Kconfig option's help for details about the report.
 
 HID protocols
@@ -864,7 +864,7 @@ After building the application with or without :ref:`specifying the build type <
    .. note::
         You can manually start the scanning for new peripheral devices by pressing the **SW1** button on the dongle for a short time.
         This might be needed if the dongle does not connect with all the peripherals before timeout.
-        The scanning is interrupted after the amount of time predefined in :kconfig:option:`CONFIG_DESKTOP_BLE_SCAN_DURATION_S`, because it negatively affects the performance of already connected peripherals.
+        The scanning is interrupted after the amount of time predefined in :ref:`CONFIG_DESKTOP_BLE_SCAN_DURATION_S <config_desktop_app_options>`, because it negatively affects the performance of already connected peripherals.
 
 #. Move the mouse and press any key on the keyboard.
    The input is reflected on the host.
@@ -1064,7 +1064,7 @@ To use the nRF Desktop application with your custom board:
    a. Ensure that the Bluetooth role is properly configured.
       For mouse, it should be configured as peripheral.
    #. Update the configuration related to peer control.
-      You can also disable the peer control using the :kconfig:option:`CONFIG_DESKTOP_BLE_PEER_CONTROL` option.
+      You can also disable the peer control using the :ref:`CONFIG_DESKTOP_BLE_PEER_CONTROL <config_desktop_app_options>` option.
       Peer control details are described in the :ref:`nrf_desktop_ble_bond` documentation.
 
    Refer to the :ref:`nrf_desktop_bluetooth_guide` section and Zephyr's :ref:`zephyr:bluetooth` page for more detailed information about the Bluetooth configuration.
@@ -1831,8 +1831,12 @@ These are valid for events that have many listeners or sources, and are gathered
    doc/hfclk_lock.rst
    doc/event_rel_modules.rst
 
+.. _config_desktop_app_options:
+
 Application configuration options
 *********************************
+
+Following are the application specific configuration options that can be configured for the nRF desktop and the internal modules:
 
 .. options-from-kconfig::
    :show-type:

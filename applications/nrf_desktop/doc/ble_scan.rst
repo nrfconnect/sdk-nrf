@@ -63,7 +63,7 @@ Complete the following steps to enable the |ble_scan|:
    * When you request scan start or peer erase.
 
    If filters are not cleared by the application, the Bluetooth Central will be unable to reconnect to the peripheral after exceeding the maximum connection attempts.
-#. Configure the maximum number of bonded mice (:kconfig:option:`CONFIG_DESKTOP_BLE_SCAN_MOUSE_LIMIT`) and keyboards (:kconfig:option:`CONFIG_DESKTOP_BLE_SCAN_KEYBOARD_LIMIT`) for the nRF Desktop central.
+#. Configure the maximum number of bonded mice (:ref:`CONFIG_DESKTOP_BLE_SCAN_MOUSE_LIMIT <config_desktop_app_options>`) and keyboards (:ref:`CONFIG_DESKTOP_BLE_SCAN_KEYBOARD_LIMIT <config_desktop_app_options>`) for the nRF Desktop central.
    By default, the nRF Desktop central connects and bonds with only one mouse and one keyboard.
 #. Define the Bluetooth name filters in the :file:`ble_scan_def.h` file that is located in the board-specific directory in the application configuration directory.
    You must define a Bluetooth name filter for every peripheral type the nRF Desktop central connects to.
@@ -73,20 +73,20 @@ Complete the following steps to enable the |ble_scan|:
       The Bluetooth device name for given peripheral is defined as the :kconfig:option:`CONFIG_BT_DEVICE_NAME` Kconfig option in the peripheral's configuration.
       For more detailed information about the Bluetooth advertising configuration in the nRF Desktop application, see the :ref:`nrf_desktop_ble_adv` documentation.
 
-#. Set the :kconfig:option:`CONFIG_DESKTOP_BLE_SCANNING_ENABLE` option to enable the |ble_scan|.
+#. Set the :ref:`CONFIG_DESKTOP_BLE_SCANNING_ENABLE <config_desktop_app_options>` option to enable the |ble_scan|.
 
 By default, the nRF Desktop central always looks for both bonded and unbonded peripherals.
-You can set the :kconfig:option:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST` option to make the device look for unbonded peripherals only on user request.
+You can set the :ref:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST <config_desktop_app_options>` option to make the device look for unbonded peripherals only on user request.
 The request is submitted by :ref:`nrf_desktop_ble_bond` as :c:struct:`ble_peer_operation_event` with :c:member:`ble_peer_operation_event.op` set to :c:enumerator:`PEER_OPERATION_SCAN_REQUEST`.
 
 The central always looks for new bonds also after the bond erase (on :c:struct:`ble_peer_operation_event` with :c:member:`ble_peer_operation_event.op` set to :c:enumerator:`PEER_OPERATION_ERASED`).
-If :kconfig:option:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST` is enabled, you can also set the :kconfig:option:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_ON_BOOT` option to make the central scan for new peers after every boot.
+If :ref:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST <config_desktop_app_options>` is enabled, you can also set the :ref:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_ON_BOOT <config_desktop_app_options>` option to make the central scan for new peers after every boot.
 
 The following scanning scenarios are possible:
 
 * If no peripheral is connected, the central scans for the peripheral devices without interruption.
 * If a peripheral is connected, the scanning is triggered periodically.
-  If none of the connected peripherals is in use for at least :kconfig:option:`CONFIG_DESKTOP_BLE_SCAN_START_TIMEOUT_S`, the scanning is started.
+  If none of the connected peripherals is in use for at least :ref:`CONFIG_DESKTOP_BLE_SCAN_START_TIMEOUT_S <config_desktop_app_options>`, the scanning is started.
 
 Scanning not started
 ====================
@@ -106,7 +106,7 @@ The scanning is interrupted if one of the following conditions occurs:
 
 * A connected peripheral is in use.
   Scanning in this situation will have a negative impact on user experience.
-* The maximum scan duration specified by :kconfig:option:`CONFIG_DESKTOP_BLE_SCAN_DURATION_S` times out.
+* The maximum scan duration specified by :ref:`CONFIG_DESKTOP_BLE_SCAN_DURATION_S <config_desktop_app_options>` times out.
 
 The scanning is never interrupted if there is no connected Bluetooth peer.
 
