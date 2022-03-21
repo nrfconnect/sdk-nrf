@@ -19,7 +19,7 @@ The module selects the backend based on the link layer enabled.
 Log information about connection waiting
 ========================================
 
-The option :kconfig:option:`CONFIG_CAF_NET_STATE_WAITING` enables periodically logging message, while the module is waiting for network connection.
+The option :kconfig:option:`CONFIG_CAF_LOG_NET_STATE_WAITING` enables periodically logging message, while the module is waiting for network connection.
 The period between logs may be configured by :kconfig:option:`CONFIG_CAF_LOG_NET_STATE_WAITING_PERIOD`.
 
 Implementation details

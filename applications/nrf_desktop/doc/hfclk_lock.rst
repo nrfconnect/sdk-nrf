@@ -24,7 +24,7 @@ Module events
 Configuration
 *************
 
-Enable the module with the :kconfig:option:`CONFIG_DESKTOP_HFCLK_LOCK_ENABLE` Kconfig option.
+Enable the module with the :ref:`CONFIG_DESKTOP_HFCLK_LOCK_ENABLE <config_desktop_app_options>` Kconfig option.
 
 Implementation details
 **********************
