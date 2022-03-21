@@ -244,6 +244,31 @@ static void lte_evt_handler(const struct lte_lc_evt *const evt)
 	case LTE_LC_EVT_LTE_MODE_UPDATE:
 		nw_mode_latest = evt->lte_mode;
 		break;
+	case LTE_LC_EVT_MODEM_EVENT:
+		LOG_DBG("Modem domain event, type: %s",
+			evt->modem_evt == LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE ?
+				"Light search done" :
+			evt->modem_evt == LTE_LC_MODEM_EVT_SEARCH_DONE ?
+				"Search done" :
+			evt->modem_evt == LTE_LC_MODEM_EVT_RESET_LOOP ?
+				"Reset loop" :
+			evt->modem_evt == LTE_LC_MODEM_EVT_BATTERY_LOW ?
+				"Low battery" :
+			evt->modem_evt == LTE_LC_MODEM_EVT_OVERHEATED ?
+				"Modem is overheated" :
+				"Unknown");
+
+		/* If a reset loop happens in the field, it should not be necessary
+		 * to perform any action. The modem will try to re-attach to the LTE network after
+		 * the 30-minute block.
+		 */
+		if (evt->modem_evt == LTE_LC_MODEM_EVT_RESET_LOOP) {
+			LOG_WRN("The modem has detected a reset loop. LTE network attach is now "
+				"restricted for the next 30 minutes. Power-cycle the device to "
+				"circumvent this restriction. For more information see the "
+				"nRF91 AT Commands - Command Reference Guide v2.0 - chpt. 5.36");
+		}
+		break;
 	default:
 		break;
 	}
@@ -819,6 +844,12 @@ static int setup(void)
 	err = configure_low_power();
 	if (err) {
 		LOG_ERR("configure_low_power, error: %d", err);
+		return err;
+	}
+
+	err = lte_lc_modem_events_enable();
+	if (err) {
+		LOG_ERR("lte_lc_modem_events_enable failed, error: %d", err);
 		return err;
 	}
 
