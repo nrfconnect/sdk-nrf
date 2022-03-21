@@ -9,7 +9,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <event_manager.h>
+#if defined(CONFIG_NRF_MODEM_LIB)
 #include <modem/nrf_modem_lib.h>
+#endif /* CONFIG_NRF_MODEM_LIB */
 #include <sys/reboot.h>
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
@@ -175,6 +177,7 @@ static void sub_state_set(enum sub_state_type new_state)
  */
 static void handle_nrf_modem_lib_init_ret(void)
 {
+#if defined(CONFIG_NRF_MODEM_LIB)
 	int ret = nrf_modem_lib_get_init_ret();
 
 	/* Handle return values relating to modem firmware update */
@@ -204,6 +207,7 @@ static void handle_nrf_modem_lib_init_ret(void)
 	LOG_WRN("Rebooting...");
 	LOG_PANIC();
 	sys_reboot(SYS_REBOOT_COLD);
+#endif /* CONFIG_NRF_MODEM_LIB */
 }
 
 /* Event manager handler. Puts event data into messages and adds them to the
