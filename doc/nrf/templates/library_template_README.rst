@@ -63,12 +63,15 @@ Requirements*
    Use this section to list the requirements needed to use the library.
    This is not required if there are no specific requirements to use the library. It is a mandatory section if there are specific requirements that have to be met to use the library.
 
-Configuration*
-**************
+Configuration
+*************
 
 .. note::
-   Use this section to list available library configuration options, if applicable.
-   This is optional.
+   Use this section to describe how to enable the library for a project.
+   This information is mandatory.
+
+   You can also use this section to list available library configuration options, if applicable.
+   This information is optional.
 
 Shell commands list*
 ====================
