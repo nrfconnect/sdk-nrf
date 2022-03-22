@@ -16,7 +16,6 @@
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
-#include <pm_config.h>
 #endif
 
 #include "cloud_wrapper.h"
@@ -906,8 +905,9 @@ static void on_all_states(struct cloud_msg_data *msg)
 	if (IS_EVENT(msg, data, DATA_EVT_DATE_TIME_OBTAINED)) {
 		struct nrf_cloud_pgps_init_param param = {
 			.event_handler = pgps_handler,
-			.storage_base = PM_MCUBOOT_SECONDARY_ADDRESS,
-			.storage_size = PM_MCUBOOT_SECONDARY_SIZE
+			/* storage is defined by CONFIG_NRF_CLOUD_PGPS_STORAGE */
+			.storage_base = 0u,
+			.storage_size = 0u
 		};
 
 		int err = nrf_cloud_pgps_init(&param);
