@@ -21,7 +21,6 @@
 #include <net/nrf_cloud_agps.h>
 #endif /* CONFIG_NRF_CLOUD_AGPS */
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-#include <pm_config.h>
 #include <net/nrf_cloud_pgps.h>
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 #endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_NRF_CLOUD_PGPS */
@@ -786,6 +785,15 @@ static void get_pgps_data_work_fn(struct k_work *work)
 	}
 
 	mosh_print("GNSS: P-GPS response processed");
+
+	err = nrf_cloud_pgps_notify_prediction();
+	if (err) {
+		mosh_error("GNSS: Failed to request current prediction, error: %d", err);
+
+		return;
+	}
+
+	mosh_print("GNSS: P-GPS prediction requested");
 }
 
 static void inject_pgps_data_work_fn(struct k_work *work)
@@ -810,10 +818,13 @@ static void inject_pgps_data_work_fn(struct k_work *work)
 static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 {
 	switch (event->type) {
+	case PGPS_EVT_READY:
 	case PGPS_EVT_AVAILABLE:
-		prediction = event->prediction;
+		if (event->prediction != NULL) {
+			prediction = event->prediction;
 
-		k_work_submit_to_queue(&gnss_work_q, &inject_pgps_data_work);
+			k_work_submit_to_queue(&gnss_work_q, &inject_pgps_data_work);
+		}
 		break;
 
 	case PGPS_EVT_REQUEST:
@@ -1396,8 +1407,9 @@ int gnss_enable_pgps(void)
 
 	struct nrf_cloud_pgps_init_param pgps_param = {
 		.event_handler = pgps_event_handler,
-		.storage_base = PM_MCUBOOT_SECONDARY_ADDRESS,
-		.storage_size = PM_MCUBOOT_SECONDARY_SIZE
+		/* storage is defined by CONFIG_NRF_CLOUD_PGPS_STORAGE */
+		.storage_base = 0u,
+		.storage_size = 0u
 	};
 
 	err = nrf_cloud_pgps_init(&pgps_param);
