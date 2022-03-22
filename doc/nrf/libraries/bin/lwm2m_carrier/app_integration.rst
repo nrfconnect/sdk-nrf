@@ -32,8 +32,11 @@ It provides an abstraction of the following modules:
 
 The OS abstraction layer is fully implemented for the |NCS|, and it would have to be ported if used with other RTOS or on other systems.
 
+Configuration
+*************
+
 To run the library in an application, you must implement the application with the API of the library.
-You can enable the module using the :kconfig:option:`CONFIG_LWM2M_CARRIER` Kconfig option.
+Enable the library by setting the :kconfig:option:`CONFIG_LWM2M_CARRIER` Kconfig option to ``y``.
 
 The :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/nrf9160/lwm2m_carrier/prj.conf`) contains all the configurations that are needed by the LwM2M carrier library.
 
