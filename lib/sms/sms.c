@@ -26,6 +26,8 @@ LOG_MODULE_REGISTER(sms, CONFIG_SMS_LOG_LEVEL);
 #define AT_SMS_SUBSCRIBER_UNREGISTER "AT+CNMI=0,0,0,0"
 /** @brief AT command to an ACK in PDU mode. */
 #define AT_SMS_PDU_ACK "AT+CNMA=1"
+/** @brief AT notification informing that SMS client has been unregistered. */
+#define AT_SMS_UNREGISTERED_NTF "+CMS ERROR: 524"
 
 /** @brief SMS structure where received SMS is parsed. */
 static struct sms_data sms_data_info;
@@ -40,6 +42,10 @@ static struct k_work sms_ack_work;
  * notify subscribers in ISR context where AT notifications are received.
  */
 static struct k_work sms_notify_work;
+/**
+ * @brief Worker handling re-registration in case modem performs SMS client unregistration.
+ */
+static struct k_work_delayable sms_reregister_work;
 
 /* Reserving internal temporary buffers that are used for various functions requiring memory. */
 uint8_t sms_buf_tmp[SMS_BUF_TMP_LEN];
@@ -62,14 +68,17 @@ struct sms_subscriber {
 /** @brief List of subscribers. */
 static struct sms_subscriber subscribers[CONFIG_SMS_SUBSCRIBERS_MAX_CNT];
 
-/* AT monitors for received SMS messages (CMT) and status reports (CDS). */
+/* AT monitors for received SMS messages (CMT), status reports (CDS) and message service
+ * errors (CMS).
+ */
 AT_MONITOR_ISR(sms_at_handler_cmt, "+CMT", sms_at_cmd_handler_cmt, PAUSED);
 AT_MONITOR_ISR(sms_at_handler_cds, "+CDS", sms_at_cmd_handler_cds, PAUSED);
+AT_MONITOR_ISR(sms_at_handler_cms, "+CMS", sms_at_cmd_handler_cms, PAUSED);
 
 /**
  * @brief Acknowledge SMS messages towards network.
  *
- * @param[in] work Unused k_work instance required for k_work_submit signature.
+ * @param[in] work Unused k_work instance required for work handler signature.
  */
 static void sms_ack(struct k_work *work)
 {
@@ -83,7 +92,7 @@ static void sms_ack(struct k_work *work)
 /**
  * @brief Notify SMS subscribers about received SMS or status report.
  *
- * @param[in] work Unused k_work instance required for k_work_submit signature.
+ * @param[in] work Unused k_work instance required for work handler signature.
  */
 static void sms_notify(struct k_work *work)
 {
@@ -91,6 +100,26 @@ static void sms_notify(struct k_work *work)
 		if (subscribers[i].listener != NULL) {
 			subscribers[i].listener(&sms_data_info, subscribers[i].ctx);
 		}
+	}
+}
+
+/**
+ * @brief Re-register SMS client.
+ *
+ * @param[in] work Unused k_work instance required for work handler signature.
+ */
+static void sms_reregister(struct k_work *work)
+{
+	int err;
+
+	/* Re-registration is triggered when modem informs that the SMS client has been
+	 * unregistered. When there is no existing registration, the registration is expected to
+	 * succeed. Because of this there is no error handling or retry logic for the
+	 * re-registration.
+	 */
+	err = nrf_modem_at_printf(AT_SMS_SUBSCRIBER_REGISTER);
+	if (err) {
+		LOG_ERR("Unable to re-register SMS client, err: %d", err);
 	}
 }
 
@@ -152,6 +181,23 @@ static void sms_at_cmd_handler_cds(const char *at_notif)
 }
 
 /**
+ * @brief Callback handler for CMS notification.
+ *
+ * @param[in] at_notif AT notification string.
+ */
+static void sms_at_cmd_handler_cms(const char *at_notif)
+{
+	if (strstr(at_notif, AT_SMS_UNREGISTERED_NTF) != NULL) {
+		LOG_WRN("Modem unregistered the SMS client, performing re-registration");
+
+		/* Trigger re-registration after a short delay, re-registering immediately may
+		 * cause the modem to send another unregistration notification.
+		 */
+		k_work_schedule(&sms_reregister_work, K_SECONDS(1));
+	}
+}
+
+/**
  * @brief Initialize the SMS subscriber module.
  *
  * @return Zero on success, or a negative error code. The EBUSY error
@@ -167,6 +213,7 @@ static int sms_init(void)
 
 	k_work_init(&sms_ack_work, &sms_ack);
 	k_work_init(&sms_notify_work, &sms_notify);
+	k_work_init_delayable(&sms_reregister_work, &sms_reregister);
 
 	/* Check if one SMS client has already been registered. */
 	ret = nrf_modem_at_cmd(sms_buf_tmp, SMS_BUF_TMP_LEN, AT_SMS_SUBSCRIBER_READ);
@@ -192,12 +239,14 @@ static int sms_init(void)
 	/* Register for AT commands notifications before creating the client. */
 	at_monitor_resume(sms_at_handler_cmt);
 	at_monitor_resume(sms_at_handler_cds);
+	at_monitor_resume(sms_at_handler_cms);
 
 	/* Register this module as an SMS client. */
 	ret = nrf_modem_at_printf(AT_SMS_SUBSCRIBER_REGISTER);
 	if (ret) {
 		at_monitor_pause(sms_at_handler_cmt);
 		at_monitor_pause(sms_at_handler_cds);
+		at_monitor_pause(sms_at_handler_cms);
 		LOG_ERR("Unable to register a new SMS client, err: %d", ret);
 		return ret;
 	}
@@ -264,6 +313,11 @@ static void sms_uninit(void)
 	int ret;
 	int count;
 
+	/* Check if SMS client is registered. */
+	if (!sms_client_registered) {
+		return;
+	}
+
 	/* Don't do anything if there are subscribers */
 	count = sms_subscriber_count();
 	if (count > 0) {
@@ -272,24 +326,26 @@ static void sms_uninit(void)
 		return;
 	}
 
-	if (sms_client_registered) {
-		ret = nrf_modem_at_printf(AT_SMS_SUBSCRIBER_UNREGISTER);
-		if (ret) {
-			LOG_ERR("Unable to unregister the SMS client, err: %d",
-				ret);
-			return;
-		}
-		LOG_DBG("SMS client unregistered");
+	ret = nrf_modem_at_printf(AT_SMS_SUBSCRIBER_UNREGISTER);
+	if (ret < 0) {
+		LOG_ERR("Sending AT command failed, err: %d", ret);
+		return;
+	} else if (ret > 0) {
+		/* Modem returned an error, assume that there is no registration anymore. */
+		LOG_WRN("Failed to unregister the SMS client from modem, err: %d", ret);
+	}
 
-		/* Pause AT commands notifications. */
-		at_monitor_pause(sms_at_handler_cmt);
-		at_monitor_pause(sms_at_handler_cds);
+	LOG_DBG("SMS client unregistered");
 
-		/* Clear all observers. */
-		for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
-			subscribers[i].ctx = NULL;
-			subscribers[i].listener = NULL;
-		}
+	/* Pause AT commands notifications. */
+	at_monitor_pause(sms_at_handler_cmt);
+	at_monitor_pause(sms_at_handler_cds);
+	at_monitor_pause(sms_at_handler_cms);
+
+	/* Clear all observers. */
+	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
+		subscribers[i].ctx = NULL;
+		subscribers[i].listener = NULL;
 	}
 
 	sms_client_registered = false;
