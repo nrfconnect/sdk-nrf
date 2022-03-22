@@ -342,6 +342,8 @@ Modem libraries
 
     * Current system time is attached to the ``location_datetime`` parameter of the location request response with Wi-Fi and cellular methods.
       The timestamp comes from the moment of scanning or neighbor measurements.
+    * Removed dependency on the :ref:`lib_modem_jwt` library.
+      The :ref:`lib_location` library now selects :kconfig:option:`CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT` when using :kconfig:option:`CONFIG_NRF_CLOUD_REST`.
 
 Other libraries
 ---------------
