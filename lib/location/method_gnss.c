@@ -22,7 +22,6 @@
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_rest.h>
 #include <net/nrf_cloud_pgps.h>
-#include <pm_config.h>
 #endif
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
@@ -90,6 +89,7 @@ static K_SEM_DEFINE(entered_rrc_idle, 0, 1);
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 static struct nrf_modem_gnss_agps_data_frame agps_request;
+static struct nrf_modem_gnss_agps_data_frame pgps_agps_request;
 #if defined(CONFIG_NRF_CLOUD_REST) && !defined(CONFIG_NRF_CLOUD_MQTT)
 #if defined(CONFIG_NRF_CLOUD_PGPS) || !defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
 static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE +
@@ -117,7 +117,7 @@ static void method_gnss_manage_pgps(struct k_work *work)
 
 	LOG_DBG("Sending prediction to modem...");
 
-	err = nrf_cloud_pgps_inject(prediction, &agps_request);
+	err = nrf_cloud_pgps_inject(prediction, &pgps_agps_request);
 	if (err) {
 		LOG_ERR("Unable to send prediction to modem: %d", err);
 	}
@@ -132,7 +132,8 @@ void method_gnss_pgps_handler(struct nrf_cloud_pgps_event *event)
 {
 	LOG_DBG("P-GPS event type: %d", event->type);
 
-	if (event->type == PGPS_EVT_AVAILABLE) {
+	if ((event->type == PGPS_EVT_AVAILABLE) ||
+	    ((event->type == PGPS_EVT_READY) && (event->prediction != NULL))) {
 		prediction = event->prediction;
 		k_work_submit_to_queue(location_core_work_queue_get(),
 				       &method_gnss_manage_pgps_work);
@@ -280,6 +281,12 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 	}
 
 	LOG_DBG("A-GPS data processed");
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+	k_work_submit_to_queue(
+		location_core_work_queue_get(),
+		&method_gnss_notify_pgps_work);
+#endif
 }
 #endif /* #elif defined(CONFIG_NRF_CLOUD_REST) */
 #endif /* defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL) */
@@ -325,6 +332,13 @@ static void method_gnss_pgps_request_work_fn(struct k_work *item)
 	}
 
 	LOG_DBG("P-GPS data processed");
+
+	err = nrf_cloud_pgps_notify_prediction();
+	if (err) {
+		LOG_ERR("GNSS: Failed to request current prediction, error: %d", err);
+	} else {
+		LOG_DBG("P-GPS prediction requested");
+	}
 }
 #endif
 
@@ -382,6 +396,13 @@ static void method_gnss_request_assistance(void)
 	if (err) {
 		LOG_WRN("Reading A-GPS req data from GNSS failed, error: %d", err);
 		return;
+	}
+
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS)) {
+		/* ephemerides come from P-GPS; almanacs not desired in this configuration */
+		pgps_agps_request.sv_mask_ephe = agps_request.sv_mask_ephe;
+		agps_request.sv_mask_ephe = 0;
+		agps_request.sv_mask_alm = 0;
 	}
 
 	LOG_DBG("A-GPS request from modem (ephe: 0x%08x alm: 0x%08x flags: 0x%02x)",
@@ -738,8 +759,10 @@ int method_gnss_location_get(const struct location_method_config *config)
 	if (!initialized) {
 		struct nrf_cloud_pgps_init_param param = {
 			.event_handler = method_gnss_pgps_handler,
-			.storage_base = PM_MCUBOOT_SECONDARY_ADDRESS,
-			.storage_size = PM_MCUBOOT_SECONDARY_SIZE};
+			/* storage is defined by CONFIG_NRF_CLOUD_PGPS_STORAGE */
+			.storage_base = 0u,
+			.storage_size = 0u
+		};
 
 		err = nrf_cloud_pgps_init(&param);
 		if (err) {
