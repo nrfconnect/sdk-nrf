@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <logging/log.h>
 #include <date_time.h>
-#include <pm_config.h>
 #include <net/cloud.h>
 #include <nrf_modem_gnss.h>
 #include <net/nrf_cloud_agps.h>
@@ -950,8 +949,10 @@ int handle_at_pgps(enum at_cmd_type cmd_type)
 
 			struct nrf_cloud_pgps_init_param param = {
 				.event_handler = pgps_event_handler,
-				.storage_base = PM_MCUBOOT_SECONDARY_ADDRESS,
-				.storage_size = PM_MCUBOOT_SECONDARY_SIZE};
+				/* storage is defined by CONFIG_NRF_CLOUD_PGPS_STORAGE */
+				.storage_base = 0u,
+				.storage_size = 0u
+			};
 
 			err = nrf_cloud_pgps_init(&param);
 			if (err) {
