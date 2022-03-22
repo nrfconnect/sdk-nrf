@@ -273,19 +273,29 @@ Bluetooth libraries and services
   * Fixed the serialization of the :c:func:`bt_gatt_service_unregister` function call.
 
 Modem libraries
-------------------------
+---------------
 
-* :ref:`lib_location` library:
+* Updated:
 
-  * Added:
+  * :ref:`sms_readme` library:
 
-    * Support for P-GPS data retrieval from an external source, implemented separately by the application.
+    * Added handling for SMS client unregistration notification from the modem.
+      When the notification is received, the library re-registers the SMS client automatically.
+
+  * :ref:`lib_location` library:
+
+    * Added support for P-GPS data retrieval from an external source, implemented separately by the application.
       Enabled by setting the :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL` option.
       The library triggers a :c:enum:`LOCATION_EVT_GNSS_PREDICTION_REQUEST` event when assistance is needed.
-
-  * Updated:
-
     * The :c:member:`request` member of the :c:struct:`location_event_data` structure was renamed to :c:member:`agps_request`.
+    * Current system time is attached to the ``location_datetime`` parameter of the location request response with Wi-Fi and cellular methods.
+      The timestamp comes from the moment of scanning or neighbor measurements.
+    * Removed dependency on the :ref:`lib_modem_jwt` library.
+      The :ref:`lib_location` library now selects :kconfig:option:`CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT` when using :kconfig:option:`CONFIG_NRF_CLOUD_REST`.
+
+  * :ref:`nrf_modem_lib_readme`:
+
+    * Moved modem trace processing to a thread.
 
 Libraries for networking
 ------------------------
@@ -332,22 +342,6 @@ Libraries for networking
   * :ref:`lib_lwm2m_client_utils` library:
 
     * Updated the library to store credentials and server settings permanently on bootstrap.
-
-Modem libraries
----------------
-
-* Updated:
-
-  * :ref:`lib_location`:
-
-    * Current system time is attached to the ``location_datetime`` parameter of the location request response with Wi-Fi and cellular methods.
-      The timestamp comes from the moment of scanning or neighbor measurements.
-    * Removed dependency on the :ref:`lib_modem_jwt` library.
-      The :ref:`lib_location` library now selects :kconfig:option:`CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT` when using :kconfig:option:`CONFIG_NRF_CLOUD_REST`.
-
-  * :ref:`nrf_modem_lib_readme`:
-
-    * Moved modem trace processing to a thread.
 
 Other libraries
 ---------------
