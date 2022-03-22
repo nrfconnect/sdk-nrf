@@ -164,6 +164,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
 
       DEPENDS
       ${SIGN_ARG_DEPENDS}
+      ${update_bin}
       )
   endfunction()
 
