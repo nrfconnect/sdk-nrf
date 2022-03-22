@@ -20,7 +20,8 @@ if MULTICELL_LOCATION
 
 config MULTICELL_LOCATION_SERVICE_NRF_CLOUD
 	bool "nRF Cloud location service"
-	depends on MODEM_JWT
+	depends on NRF_CLOUD_REST || NRF_CLOUD_MQTT
+	select NRF_CLOUD_REST_AUTOGEN_JWT if NRF_CLOUD_REST
 	help
 	  Use nRF Cloud location service
 
