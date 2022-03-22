@@ -30,26 +30,5 @@ The LwM2M carrier library is also used in the :ref:`asset_tracker_v2` applicatio
     app_integration
     requirements
     msc
+    API_documentation
     CHANGELOG
-
-
-
-API documentation
-*****************
-
-| Header files: :file:`lib/bin/lwm2m_carrier/include`
-| Source files: :file:`lib/bin/lwm2m_carrier`
-
-LWM2M carrier library API
-=========================
-
-.. doxygengroup:: lwm2m_carrier_api
-   :project: nrf
-   :members:
-
-LWM2M OS layer
-==============
-
-.. doxygengroup:: lwm2m_carrier_os
-   :project: nrf
-   :members:
