@@ -15,7 +15,6 @@
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_pgps.h>
-#include <pm_config.h>
 #endif
 
 #include "cloud/cloud_codec/cloud_codec.h"
@@ -695,8 +694,11 @@ static int agps_request_encode(struct nrf_modem_gnss_agps_data_frame *incoming_r
 	}
 
 	if (incoming_request == NULL) {
-		cloud_agps_request.request.sv_mask_ephe = 0xFFFFFFFF,
-		cloud_agps_request.request.sv_mask_alm = 0xFFFFFFFF,
+		const uint32_t mask = IS_ENABLED(CONFIG_NRF_CLOUD_PGPS) ? 0u : 0xFFFFFFFFu;
+
+		LOG_DBG("Requesting all A-GPS elements");
+		cloud_agps_request.request.sv_mask_ephe = mask,
+		cloud_agps_request.request.sv_mask_alm = mask,
 		cloud_agps_request.request.data_flags =
 					NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST |
 					NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST |
@@ -996,13 +998,11 @@ static void agps_request_handle(struct nrf_modem_gnss_agps_data_frame *incoming_
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 	struct nrf_modem_gnss_agps_data_frame request;
 
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS) && incoming_request != NULL) {
-		request.sv_mask_ephe = 0;
-		request.sv_mask_alm = 0;
-		request.data_flags = incoming_request->data_flags;
-	} else if (incoming_request != NULL) {
-		request.sv_mask_ephe = incoming_request->sv_mask_ephe;
-		request.sv_mask_alm = incoming_request->sv_mask_alm;
+	if (incoming_request != NULL) {
+		request.sv_mask_ephe = IS_ENABLED(CONFIG_NRF_CLOUD_PGPS) ?
+				       0u : incoming_request->sv_mask_ephe;
+		request.sv_mask_alm = IS_ENABLED(CONFIG_NRF_CLOUD_PGPS) ?
+				       0u : incoming_request->sv_mask_alm;
 		request.data_flags = incoming_request->data_flags;
 	}
 
