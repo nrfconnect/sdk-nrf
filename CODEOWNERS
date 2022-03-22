@@ -156,6 +156,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf9160/location/                @trantanen @hiltunent @jhirsi @tokangas
 /samples/nrf9160/lwm2m_client/            @rlubos @SeppoTakalo @jarlamsa @jheiskan81 @juhaylinen @VeijoPesonen
 /samples/nrf9160/modem_shell/             @trantanen @hiltunent @jhirsi @tokangas
+/samples/nrf9160/nidd/                    @stig-bjorlykke
 /samples/nrf9160/nrf_cloud_*              @plskeggs @jayteemo @glarsennordic
 /samples/nrf9160/modem_trace_flash/       @gregersrygg @balaji-nordic
 /samples/openthread/                      @rlubos @edmont @canisLupus1313 @mariuszpos

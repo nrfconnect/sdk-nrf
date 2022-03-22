@@ -351,6 +351,10 @@ Bluetooth mesh samples
 nRF9160 samples
 ---------------
 
+* Added:
+
+  * :ref:`nidd_sample` sample that demonstrates how to use Non-IP Data Delivery (NIDD).
+
 * :ref:`modem_shell_application` sample:
 
   * Added:
