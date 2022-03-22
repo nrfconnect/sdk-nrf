@@ -40,6 +40,7 @@ enum state {
 static enum state state;
 static uint8_t cur_wave_idx;
 static struct k_work_delayable change_wave;
+static const struct device *dev = DEVICE_DT_GET(DT_NODELABEL(sensor_sim));
 
 
 static void report_error(void)
@@ -58,8 +59,6 @@ static void broadcast_wave_label(const char *label)
 
 static void set_wave(void)
 {
-	/* NOTE: sensor device should be propagated instead */
-	const struct device *dev = DEVICE_DT_GET_ONE(nordic_sensor_sim);
 	const struct sim_wave *w = &sim_signal_params.waves[cur_wave_idx];
 	int err = sensor_sim_set_wave_param(dev, sim_signal_params.chan, &w->wave_param);
 
@@ -119,6 +118,10 @@ static void verify_wave_params(void)
 
 static int init(void)
 {
+	if (!device_is_ready(dev)) {
+		return -ENODEV;
+	}
+
 	if (IS_ENABLED(CONFIG_ML_APP_SENSOR_SIM_CTRL_TRIG_TIMEOUT)) {
 		k_work_init_delayable(&change_wave, change_wave_fn);
 		k_work_reschedule(&change_wave, WAVE_SWAP_PERIOD);
