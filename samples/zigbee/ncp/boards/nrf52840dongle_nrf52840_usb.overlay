@@ -14,7 +14,7 @@
 / {
 	chosen {
 		ncs,zigbee-uart = &cdc_acm_uart0;
-		ncs,zboss-trace-uart = &uart1;
+		ncs,zboss-trace-uart = &cdc_acm_uart1;
 	};
 
 	buttons {
@@ -34,5 +34,10 @@
 	cdc_acm_uart0: cdc_acm_uart0 {
 		compatible = "zephyr,cdc-acm-uart";
 		label = "CDC_ACM_0";
+	};
+
+	cdc_acm_uart1: cdc_acm_uart1 {
+		compatible = "zephyr,cdc-acm-uart";
+		label = "CDC_ACM_1";
 	};
 };
