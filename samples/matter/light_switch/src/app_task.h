@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Nordic Semiconductor ASA
+ * Copyright (c) 2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -10,29 +10,61 @@
 #include "led_widget.h"
 
 #include <core/CHIPError.h>
+#include <platform/CHIPDeviceLayer.h>
+
+#ifdef CONFIG_MCUMGR_SMP_BT
+#include "dfu_over_smp.h"
+#endif
 
 #include <cstdint>
 
 struct k_timer;
+struct Identify;
 
 class AppTask {
 public:
 	CHIP_ERROR StartApp();
-	void PostEvent(const AppEvent &event);
+	void PostEvent(AppEvent *);
+	void UpdateClusterState();
+	static void IdentifyStartHandler(Identify *);
+	static void IdentifyStopHandler(Identify *);
 
 private:
-	CHIP_ERROR Init();
+	enum class Timer : uint8_t { Function, DimmerTrigger, Dimmer };
+	enum class TimerFunction : uint8_t { NoneSelected = 0, SoftwareUpdate, FactoryReset };
+	TimerFunction mFunction = TimerFunction::NoneSelected;
 
-	void DispatchEvent(const AppEvent &event);
-	void StartDiscoveryHandler();
-
-	static void ButtonEventHandler(uint32_t buttonsState, uint32_t hasChanged);
-	static void LightLevelTimerHandler(k_timer *);
-	static void DiscoveryTimeoutHandler(k_timer *);
-	static void LEDStateUpdateHandler(LEDWidget &ledWidget);
+	enum class Button : uint8_t {
+		Function,
+		Dimmer,
+	};
 
 	friend AppTask &GetAppTask();
 	static AppTask sAppTask;
+
+	CHIP_ERROR Init();
+
+	void DispatchEvent(AppEvent *);
+	void InitOTARequestor();
+
+	static void ButtonPushHandler(AppEvent *);
+	static void ButtonReleaseHandler(AppEvent *);
+	static void TimerEventHandler(AppEvent *);
+	static void StartBLEAdvertisingHandler(AppEvent *);
+	static void UpdateLedStateEventHandler(AppEvent *);
+
+	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *, intptr_t);
+	static void UpdateStatusLED();
+	static void ButtonEventHandler(uint32_t, uint32_t);
+	static void LEDStateUpdateHandler(LEDWidget &);
+
+	static void StartTimer(Timer, uint32_t);
+	static void CancelTimer(Timer);
+	static void TimerEventHandler(k_timer *);
+
+#ifdef CONFIG_MCUMGR_SMP_BT
+	static void RequestSMPAdvertisingStart(void);
+#endif
 };
 
 inline AppTask &GetAppTask()

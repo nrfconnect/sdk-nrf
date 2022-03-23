@@ -185,10 +185,10 @@ LED 2:
 Button 1:
     Depending on how long you press the button:
 
-    * If pressed for six seconds, it initiates the factory reset of the device.
-      Releasing the button within the six-second window cancels the factory reset procedure.
-    * If pressed for less than three seconds, it initiates the OTA software update process.
-      The OTA process is disabled by default, but you can enable it when you build the sample with the DFU support (see `Configuration`_).
+   * If pressed for less than three seconds, it initiates the SMP server (Security Manager Protocol).
+     After that the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started. (see `Upgrading the device firmware`_).
+   * If pressed for more than three seconds, it initiates the factory reset of the device.
+     Releasing the button within the 3-second window cancels the factory reset procedure.
 
 .. matter_door_lock_sample_button1_end
 
@@ -198,9 +198,13 @@ Button 2:
 Button 3:
     Starts the Thread networking in the :ref:`test mode <matter_lock_sample_test_mode>` using the default configuration.
 
+.. matter_door_lock_sample_button4_start
+
 Button 4:
     Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
     This button is used during the :ref:`commissioning procedure <matter_lock_sample_remote_control_commissioning>`.
+
+.. matter_door_lock_sample_button4_end
 
 .. matter_door_lock_sample_jlink_start
 

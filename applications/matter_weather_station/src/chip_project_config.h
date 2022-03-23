@@ -15,13 +15,6 @@
 
 #pragma once
 
-/**
- * CHIP_DEVICE_CONFIG_DEVICE_PRODUCT_ID
- *
- * 0x4E57: nrfconnect weather-station
- */
-#define CHIP_DEVICE_CONFIG_DEVICE_PRODUCT_ID 0x4E57
-
 /* Use a default pairing code if one hasn't been provisioned in flash. */
 #define CHIP_DEVICE_CONFIG_USE_TEST_SETUP_PIN_CODE 20202021
 #define CHIP_DEVICE_CONFIG_USE_TEST_SETUP_DISCRIMINATOR 0xF00
@@ -30,7 +23,6 @@
 
 /* Configure device configuration with exemplary data */
 #define CHIP_DEVICE_CONFIG_DEVICE_VENDOR_NAME "Nordic"
-#define CHIP_DEVICE_CONFIG_DEVICE_VENDOR_ID 0x127f
 #define CHIP_DEVICE_CONFIG_DEVICE_PRODUCT_NAME "WeatherStation"
 #define CHIP_DEVICE_CONFIG_DEFAULT_DEVICE_PRODUCT_REVISION_STRING "Prerelease weather station device"
 #define CHIP_DEVICE_CONFIG_DEFAULT_DEVICE_PRODUCT_REVISION 1

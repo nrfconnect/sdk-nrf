@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Nordic Semiconductor ASA
+ * Copyright (c) 2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -12,31 +12,40 @@
 
 #include "led_widget.h"
 
+struct AppEvent;
+typedef void (*EventHandler)(AppEvent *);
+
 struct AppEvent {
-	using IPAddress = chip::Inet::IPAddress;
+	constexpr static uint8_t kButtonPushEvent = 1;
+	constexpr static uint8_t kButtonReleaseEvent = 0;
 
-	enum SimpleEventType : uint8_t { FactoryReset, StartDiscovery, StopDiscovery, ToggleLight };
-	enum LightLevelEventType : uint8_t { SetLevel = ToggleLight + 1 };
-	enum LightFoundEventType : uint8_t { LightFound = SetLevel + 1 };
-	enum UpdateLedStateEventType : uint8_t { UpdateLedState = LightFound + 1 };
-
-	AppEvent() = default;
-	explicit AppEvent(SimpleEventType type) : Type(type) {}
-	AppEvent(LightLevelEventType type, uint8_t level) : Type(type), LightLevelEvent{ level } {}
-	AppEvent(LightFoundEventType type, const IPAddress &addr) : Type(type), LightFoundEvent{ addr } {}
-	AppEvent(UpdateLedStateEventType type, LEDWidget *ledWidget) : Type(type), UpdateLedStateEvent{ ledWidget } {}
+	enum AppEventTypes : uint8_t {
+		kEventType_StartBLEAdvertising,
+		kEventType_Button,
+		kEventType_Timer,
+		kEventType_UpdateLedState,
+		kEventType_IdentifyStart,
+		kEventType_IdentifyStop,
+#ifdef CONFIG_MCUMGR_SMP_BT
+		kEventType_StartSMPAdvertising,
+#endif
+	};
 
 	uint8_t Type;
 
 	union {
 		struct {
-			uint8_t Level;
-		} LightLevelEvent;
+			uint8_t PinNo;
+			uint8_t Action;
+		} ButtonEvent;
 		struct {
-			IPAddress PeerAddress;
-		} LightFoundEvent;
+			uint8_t TimerType;
+			void *Context;
+		} TimerEvent;
 		struct {
 			LEDWidget *LedWidget;
 		} UpdateLedStateEvent;
 	};
+
+	EventHandler Handler;
 };
