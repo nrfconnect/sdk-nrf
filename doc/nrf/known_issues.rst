@@ -1611,6 +1611,16 @@ SoftDevice Controller
 
 In addition to the known issues listed here, see also :ref:`softdevice_controller_limitations` for permanent limitations.
 
+.. rst-class:: v1-9-1 v1-9-0
+
+DRGN-17110: Wrong address type in the LE Periodic Advertising Sync Established event when the Periodic Advertiser List is used to establish a synchronization.
+  The SoftDevice Controller sometimes does not set the address type when the Periodic Advertiser List is used to establish a synchronization to a Periodic Advertiser.
+
+.. rst-class:: v1-9-1 v1-9-0
+
+DRGN-17110: The Advertiser Address Type in the LE Periodic Advertising Sync Established event is not set to 0x02 or 0x03, even if the advertiser's address was resolved (DRGN-17110).
+  In the case the address is resolved, the reported address type is still set to 0x00 or 0x01.
+
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
 DRGN-16859: The vendor-specific HCI commands Zephyr Write TX Power Level and Zephyr Read TX Power Level may return "Unknown Advertiser Identifier (0x42)" when setting advertising output power.
