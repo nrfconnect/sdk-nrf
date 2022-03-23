@@ -16,6 +16,16 @@
 extern "C" {
 #endif
 
+/* Number of PSEL_DFEGPIO[n] registers in the radio peripheral. */
+#define DTM_HW_MAX_DFE_GPIO 8
+
+/* Indicates that GPIO pin is not connected to the radio */
+#define DTM_HW_DFE_PSEL_NOT_SET 0xFF
+
+/* Disconnect pin from the RADIO DFGPIO register. */
+#define DTM_HW_DFE_GPIO_PIN_DISCONNECT (RADIO_PSEL_DFEGPIO_CONNECT_Disconnected << \
+					RADIO_PSEL_DFEGPIO_CONNECT_Pos)
+
 /**@brief Function for validating tx power and radio mode settings.
  * @param[in] tx_power    TX power for transmission test.
  * @param[in] radio_mode  Radio mode value.
@@ -65,15 +75,21 @@ const uint32_t *dtm_hw_radio_power_array_get(void);
 /**@brief Function for getting antenna pins array. This array contains
  *        all antenna pins data.
  *
- * @retval Size of the antenna pin array.
- */
-size_t dtm_radio_antenna_pin_array_size_get(void);
-
-/**@brief Function for getting antenna pins array size.
- *
  * @retval Pointer to the first element in antenna pins array.
  */
-const uint32_t *dtm_hw_radion_antenna_pin_array_get(void);
+const uint8_t *dtm_hw_radio_antenna_pin_array_get(void);
+
+/**@brief Function for getting available antenna number.
+ *
+ * @retval Maximum antenna number that DTM can use.
+ */
+size_t dtm_hw_radio_antenna_number_get(void);
+
+/**@brief Function for getting the PDU antenna.
+ *
+ * @retval The PDU antenna.
+ */
+uint8_t dtm_hw_radio_pdu_antenna_get(void);
 
 #ifdef __cplusplus
 }
