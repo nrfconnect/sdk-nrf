@@ -100,6 +100,10 @@
 
 .. _`fwupd`: https://github.com/fwupd/fwupd
 
+.. _`PR #329 in sdk-homekit repo`: https://github.com/nrfconnect/sdk-homekit/pull/329
+
+.. _`PR #332 in sdk-homekit repo`: https://github.com/nrfconnect/sdk-homekit/pull/332
+
 .. ### Source: github.io
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
