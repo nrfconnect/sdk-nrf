@@ -170,6 +170,13 @@ Matter samples
 * Added:
 
   * Release configuration for all samples.
+  * A binding cluster to the Light Switch sample.
+  * The Groupcast communication to the Light Switch example.
+
+* Updated:
+
+  * All ZAP configurations due to changes in Matter upstream.
+  * Pairing process to Binding process in the Light Switch sample.
 
 nrf5340 Samples
 ---------------
@@ -482,11 +489,11 @@ The current |NCS| main branch is based on revision ``45ef0d2`` of Zephyr, which 
 Matter (Project CHIP)
 =====================
 
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``77ab003e5fcd409cd225b68daa3cdaf506ed1107``.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``80da8ab1c0aa315a6ee2ce6adf448606372b0a2d``.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
-|no_changes_yet_note|
+* Added the Binding cluster and Groupcast communication to the Light Switch sample.
 
 cddl-gen
 ========
