@@ -119,6 +119,11 @@ CIA-463: Wrong network mode parameter reported to cloud
   The network mode string present in ``deviceInfo`` (nRF Cloud) and ``dev`` (Azure IoT Hub and AWS IoT) JSON objects that is reported to cloud might contain wrong network modes.
   The network mode string contains the network modes that the modem is configured to use, not what the modem actually connects to the LTE network with.
 
+.. rst-class:: v1-9-1 v1-9-0
+
+NCSDK-14235: Timestamps that are sent in cloud messages drift over time
+  Due to a bug in the :ref:`lib_date_time` library, timestamps that are sent to cloud drift because they are calculated incorrectly.
+
 Serial LTE Modem
 ================
 
