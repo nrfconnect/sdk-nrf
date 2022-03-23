@@ -823,11 +823,41 @@ KRKNWK-9214: Pigweed submodule may not be accessible from some regions
 
 HomeKit
 =======
-.. rst-class:: v1-9-0 v1-8-0
 
-KRKNWK-13095: Change in KVS key naming scheme causes an error for updated devices.
+.. rst-class:: v1-9-1 v1-9-0
+
+KRKNWK-13063: RTT logs do not work with the Light Bulb multiprotocol sample with DFU on nRF52840
+  The Light Bulb multiprotocol sample with Nordic DFU activated in debug version for nRF52840 platform does not display RTT logs properly.
+
+  **Workaround:** Disable RTT logs for the bootloader.
+
+.. rst-class:: v1-9-1 v1-9-0
+
+KRKNWK-13947: Net core downgrade prevention does not work on nRF5340
+  HAP certification requirements are not met because of this issue.
+
+.. rst-class:: v1-9-1 v1-9-0
+
+KRKNWK-13064: Nordic DFU is not compliant with HAP certification requirements
+  Some of the HAP certification requirements are not met by the Nordic DFU solution.
+
+  **Workaround:** Cherry-pick changes from `PR #332 in sdk-homekit repo`_.
+
+.. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0
+
+KRKNWK-12474: Multiprotocol samples on nRF52840 might not switch to Thread
+  Samples might not switch to Thread mode as expected and remain in Bluetooth mode instead.
+  The issue is related to older iOS versions.
+
+  **Workaround:** Update your iPhone to iOS 15.4.
+
+.. rst-class:: v1-9-1 v1-9-0 v1-8-0
+
+KRKNWK-13095: Change in KVS key naming scheme causes an error for updated devices
   A previous implementation allowed for empty key in domain.
   This has been restricted during refactoring.
+
+  **Workaround:** Cherry-pick changes from `PR #329 in sdk-homekit repo`_.
 
 .. rst-class:: v1-9-1 v1-9-0
 
@@ -842,7 +872,7 @@ KRKNWK-10611: DFU fails with external flash memory
   DFU will fail when using external flash memory for update image storage.
   For this reason, DFU with external flash memory cannot be performed on HomeKit accessories.
 
-.. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+.. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
 KRKNWK-9422: On-mesh commissioning does not work
   Thread's on-mesh commissioning does not work for the HomeKit accessories.
