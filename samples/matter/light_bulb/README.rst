@@ -27,8 +27,8 @@ The sample supports the following development kits:
 
 For remote testing scenarios, you also need the following:
 
-* To commission the light bulb device and :ref:`control it remotely <matter_light_bulb_network_mode>` through a Thread network, a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>` (which requires additional hardware depending on which setup you choose).
-* To use the :ref:`test mode <matter_light_bulb_sample_test_mode>` and control the light bulb using light switch, the :ref:`Matter light switch <matter_light_switch_sample>` sample programmed to another supported development kit.
+* To commission the light bulb device and :ref:`control it remotely <matter_light_bulb_network_mode>` through a Thread network: a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>` (which requires additional hardware depending on which setup you choose).
+* To use the :ref:`test mode <matter_light_bulb_sample_test_mode>` and control the light bulb using light switch: the :ref:`Matter light switch <matter_light_switch_sample>` sample programmed to another supported development kit.
 
 .. note::
     |matter_gn_required_note|
@@ -176,7 +176,9 @@ The ``build_nrf52840dk_nrf52840`` parameter specifies the output directory for t
 Testing
 =======
 
-You can either test the sample's :ref:`basic features <matter_light_bulb_sample_basic_features_tests>` or use the light switch sample to test the light bulb's :ref:`communication with another device <matter_light_bulb_sample_light_switch_tests>`.
+After building the sample and programming it to your development kit, complete the following steps to test its basic features.
+
+You can either test the sample's basic features or use the light switch sample to test the light bulb's :ref:`communication with another device <matter_light_bulb_sample_light_switch_tests>`.
 
 .. _matter_light_bulb_sample_basic_features_tests:
 
@@ -211,11 +213,21 @@ After building the sample and programming it to your development kit, complete t
 Testing communication with another device
 -----------------------------------------
 
-After building this sample and the :ref:`Matter light switch <matter_light_switch_sample>` sample and programming them to the development kits, complete the following steps to test communication between both devices:
+After building this sample and the :ref:`Matter light switch <matter_light_switch_sample>` sample and programming them to the development kits, complete the steps in the following sections to test communication between both devices.
+
+Bind both devices
++++++++++++++++++
 
 .. include:: ../light_switch/README.rst
-    :start-after: matter_light_switch_sample_testing_start
-    :end-before: matter_light_switch_sample_testing_end
+   :start-after: matter_light_switch_sample_prepare_to_testing_start
+   :end-before: matter_light_switch_sample_prepare_to_testing_end
+
+Test connection
++++++++++++++++
+
+.. include:: ../light_switch/README.rst
+   :start-after: matter_light_switch_sample_testing_start
+   :end-before: matter_light_switch_sample_testing_end
 
 .. _matter_light_bulb_sample_remote_control:
 

@@ -17,3 +17,5 @@ This documentation is based on the documentation in the `Matter <https://github.
    python_chip_controller_advanced_usage
    android_*
    openthread_*
+   chip_tool_guide
+   access-control-guide

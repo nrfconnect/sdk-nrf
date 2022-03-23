@@ -19,3 +19,19 @@ tests:
       - nrf21540dk_nrf52840
     tags: ci_build
     extra_args: CONF_FILE=prj_release.conf
+  matter.light_switch.no_dfu:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
+    extra_args: CONF_FILE=prj_no_dfu.conf
+  matter.light_switch.smp_dfu:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
+    extra_args: "OVERLAY_CONFIG=../../overlay-smp_dfu.conf"

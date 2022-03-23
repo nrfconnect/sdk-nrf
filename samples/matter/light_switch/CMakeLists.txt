@@ -8,13 +8,16 @@ cmake_minimum_required(VERSION 3.20.0)
 
 set(APPLICATION_CONFIG_DIR "configuration/\${BOARD}")
 
+if(NOT CONF_FILE STREQUAL "prj_no_dfu.conf")
+    set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static_dfu.yml)
+endif()
+
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(matter-light-switch)
 
 set(COMMON_ROOT ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common)
 set(NLIO_ROOT ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/third_party/nlio/repo)
-set(DATA_MODEL_ROOT ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/zzz_generated)
 include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/app/enable-gnu-std.cmake)
 include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/chip_data_model.cmake)
 
@@ -23,9 +26,7 @@ target_include_directories(app PRIVATE
     src
     ${COMMON_ROOT}/src
     ${NLIO_ROOT}/include
-    ${DATA_MODEL_ROOT}
-    ${DATA_MODEL_ROOT}/app-common
-    ${DATA_MODEL_ROOT}/controller-clusters
+    ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/zzz_generated/app-common
 )
 
 target_compile_options(app PRIVATE -Wno-deprecated-declarations)
@@ -34,14 +35,20 @@ target_sources(app PRIVATE
     src/app_task.cpp
     src/light_switch.cpp
     src/main.cpp
+    src/binding_handler.cpp
+    src/shell_commands.cpp
     ${COMMON_ROOT}/src/led_widget.cpp
     ${COMMON_ROOT}/src/thread_util.cpp
-    ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/util/im-client-callbacks.cpp
-    ${DATA_MODEL_ROOT}/controller-clusters/zap-generated/callback-stub.cpp
-    ${DATA_MODEL_ROOT}/controller-clusters/zap-generated/CHIPClientCallbacks.cpp
-    ${DATA_MODEL_ROOT}/controller-clusters/zap-generated/CHIPClusters.cpp
-    ${DATA_MODEL_ROOT}/controller-clusters/zap-generated/IMClusterCommandHandler.cpp
+    src/zap-generated/IMClusterCommandHandler.cpp
+    src/zap-generated/callback-stub.cpp
 )
 
-chip_configure_data_model(app)
+if(CONFIG_MCUMGR_SMP_BT)
+    target_sources(app PRIVATE ${COMMON_ROOT}/src/dfu_over_smp.cpp)
+endif()
+
+chip_configure_data_model(app
+    INCLUDE_SERVER
+    ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/light_switch.zap
+)
 # NORDIC SDK APP END

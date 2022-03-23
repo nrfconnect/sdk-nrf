@@ -18,13 +18,13 @@
   "package": [
     {
       "pathRelativity": "relativeToZap",
-      "path": "../../../../modules/lib/matter/src/app/zap-templates/zcl/zcl.json",
+      "path": "../../../../../matter/connectedhomeip/src/app/zap-templates/zcl/zcl.json",
       "version": "ZCL Test Data",
       "type": "zcl-properties"
     },
     {
       "pathRelativity": "relativeToZap",
-      "path": "../../../../modules/lib/matter/src/app/zap-templates/app-templates.json",
+      "path": "../../../../../matter/connectedhomeip/src/app/zap-templates/app-templates.json",
       "version": "chip-v1",
       "type": "gen-templates-json"
     }
@@ -282,7 +282,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -666,7 +666,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -763,7 +763,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -778,7 +778,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -793,7 +793,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -885,7 +885,7 @@
           "commands": [],
           "attributes": [
             {
-              "name": "InteractionModelVersion",
+              "name": "DataModelRevision",
               "code": 0,
               "mfgCode": null,
               "side": "server",
@@ -1175,7 +1175,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 1,
               "bounded": 0,
               "defaultValue": "",
@@ -1403,11 +1403,11 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
-              "reportable": 0,
+              "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
               "reportableChange": 0
@@ -1635,7 +1635,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -1935,7 +1935,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -1950,7 +1950,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -2107,7 +2107,7 @@
               "reportableChange": 0
             },
             {
-              "name": "BasicCommissioningInfoList",
+              "name": "BasicCommissioningInfo",
               "code": 1,
               "mfgCode": null,
               "side": "server",
@@ -2157,7 +2157,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -2335,7 +2335,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -2440,7 +2440,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -2612,7 +2612,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -2627,7 +2627,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -2642,7 +2642,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -2657,7 +2657,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -2748,7 +2748,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -2808,7 +2808,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -3844,7 +3844,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -4011,7 +4011,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -4077,7 +4077,7 @@
               "outgoing": 0
             },
             {
-              "name": "OpCSRRequest",
+              "name": "CSRRequest",
               "code": 4,
               "mfgCode": null,
               "source": "client",
@@ -4191,7 +4191,7 @@
               "outgoing": 1
             },
             {
-              "name": "OpCSRResponse",
+              "name": "CSRResponse",
               "code": 5,
               "mfgCode": null,
               "source": "server",
@@ -4224,7 +4224,7 @@
               "reportableChange": 0
             },
             {
-              "name": "fabrics list",
+              "name": "Fabrics",
               "code": 1,
               "mfgCode": null,
               "side": "server",
@@ -4304,7 +4304,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 0,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -4446,12 +4446,12 @@
           ],
           "attributes": [
             {
-              "name": "groupKeyMap",
+              "name": "GroupKeyMap",
               "code": 0,
               "mfgCode": null,
               "side": "server",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -4461,12 +4461,12 @@
               "reportableChange": 0
             },
             {
-              "name": "groupTable",
+              "name": "GroupTable",
               "code": 1,
               "mfgCode": null,
               "side": "server",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -4476,7 +4476,7 @@
               "reportableChange": 0
             },
             {
-              "name": "maxGroupsPerFabric",
+              "name": "MaxGroupsPerFabric",
               "code": 2,
               "mfgCode": null,
               "side": "server",
@@ -4491,7 +4491,7 @@
               "reportableChange": 0
             },
             {
-              "name": "maxGroupKeysPerFabric",
+              "name": "MaxGroupKeysPerFabric",
               "code": 3,
               "mfgCode": null,
               "side": "server",
@@ -4511,7 +4511,7 @@
               "mfgCode": null,
               "side": "server",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
               "defaultValue": "",
@@ -5395,24 +5395,7 @@
           "define": "BINDING_CLUSTER",
           "side": "client",
           "enabled": 0,
-          "commands": [
-            {
-              "name": "Bind",
-              "code": 0,
-              "mfgCode": null,
-              "source": "client",
-              "incoming": 0,
-              "outgoing": 1
-            },
-            {
-              "name": "Unbind",
-              "code": 1,
-              "mfgCode": null,
-              "source": "client",
-              "incoming": 0,
-              "outgoing": 1
-            }
-          ],
+          "commands": [],
           "attributes": [
             {
               "name": "FeatureMap",
@@ -5538,7 +5521,7 @@
           "commands": [],
           "attributes": [
             {
-              "name": "InteractionModelVersion",
+              "name": "DataModelRevision",
               "code": 0,
               "mfgCode": null,
               "side": "server",
@@ -6622,24 +6605,7 @@
           "define": "BINDING_CLUSTER",
           "side": "client",
           "enabled": 0,
-          "commands": [
-            {
-              "name": "Bind",
-              "code": 0,
-              "mfgCode": null,
-              "source": "client",
-              "incoming": 0,
-              "outgoing": 1
-            },
-            {
-              "name": "Unbind",
-              "code": 1,
-              "mfgCode": null,
-              "source": "client",
-              "incoming": 0,
-              "outgoing": 1
-            }
-          ],
+          "commands": [],
           "attributes": [
             {
               "name": "FeatureMap",
@@ -6765,7 +6731,7 @@
           "commands": [],
           "attributes": [
             {
-              "name": "InteractionModelVersion",
+              "name": "DataModelRevision",
               "code": 0,
               "mfgCode": null,
               "side": "server",
@@ -7946,24 +7912,7 @@
           "define": "BINDING_CLUSTER",
           "side": "client",
           "enabled": 0,
-          "commands": [
-            {
-              "name": "Bind",
-              "code": 0,
-              "mfgCode": null,
-              "source": "client",
-              "incoming": 0,
-              "outgoing": 1
-            },
-            {
-              "name": "Unbind",
-              "code": 1,
-              "mfgCode": null,
-              "source": "client",
-              "incoming": 0,
-              "outgoing": 1
-            }
-          ],
+          "commands": [],
           "attributes": [
             {
               "name": "FeatureMap",
@@ -8089,7 +8038,7 @@
           "commands": [],
           "attributes": [
             {
-              "name": "InteractionModelVersion",
+              "name": "DataModelRevision",
               "code": 0,
               "mfgCode": null,
               "side": "server",

@@ -8,8 +8,8 @@ Matter: Light switch
    :local:
    :depth: 2
 
-This light switch sample demonstrates the usage of the :ref:`Matter <ug_matter>` (formerly Project Connected Home over IP, Project CHIP) application layer to build a basic controller device for the :ref:`Matter light bulb <matter_light_bulb_sample>` sample.
-This device works as a Matter controller, meaning that it can control a light bulb remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
+This light switch sample demonstrates the usage of the :ref:`Matter <ug_matter>` (formerly Project Connected Home over IP, Project CHIP) application layer to build a switch device that binds with lighting devices and changes the state of their LEDs.
+When configured together with the :ref:`Matter light bulb <matter_light_bulb_sample>` sample (or other lighting sample) and when using a Matter controller, the light switch can control one light bulb directly or a group of light bulbs remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
 You can use this sample as a reference for creating your own application.
 
 Requirements
@@ -21,7 +21,13 @@ The sample supports the following development kits:
    :header: heading
    :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp, nrf21540dk_nrf52840
 
-For this sample to work, you also need the :ref:`Matter light bulb <matter_light_bulb_sample>` sample programmed to another supported development kit.
+For this sample to work, you also need at least one :ref:`Matter light bulb <matter_light_bulb_sample>` sample programmed to another supported development kit.
+
+To commission the device and run all required commands, you need also a :ref:`Matter controller <ug_matter_configuring_controller>`.
+By default, this sample is configured to use the CHIP Tool as Matter controller.
+See the :doc:`matter:chip_tool_guide` page in the Matter documentation for the CHIP Tool's setup information.
+
+If you decide to use :ref:`matter_light_switch_sample_remote_control_cli`, you also need a USB cable for the serial connection.
 
 .. note::
     |matter_gn_required_note|
@@ -29,26 +35,55 @@ For this sample to work, you also need the :ref:`Matter light bulb <matter_light
 Overview
 ********
 
-You must set the light switch in the test mode and pair it with a light bulb device to be able to send Matter light bulb control commands such as toggling the light and setting its brightness level.
+The sample controls the state of the **LED 2** on connected light bulbs devices.
+After configuring the light switch sample, the lighting devices get proper `Access Control List`_ from the Matter controller to start receiving commands sent from the light switch.
+Then, the light switch device prepares a new binding table to be able to discover light bulb devices and perform :ref:`matter_light_switch_sample_binding`.
 
-.. _matter_light_switch_sample_test_mode:
+After the binding is complete, the application can control the state of the connected lighting devices in one of the following ways:
 
-Test mode
-=========
+* With a single light bulb, it uses a Certificate-Authenticated Session Establishment session (CASE session) for direct communication with the single light bulb.
+* With a group of light bulbs, it uses multicast messages sent through the Thread network using :ref:`matter_light_switch_sample_groupcast` with all light bulbs in the group.
 
-Unlike other samples, such as :ref:`Matter door lock <matter_lock_sample>`, this sample does not support Matter commissioning over Bluetooth® LE.
-To enable communication between the light switch and the light bulb devices, they must be initialized with the same static Thread network parameters and static Matter cryptographic keys.
+.. _matter_light_switch_sample_acl:
 
-Press **Button 3** to activate the test mode before enabling the pairing phase on the device.
+Access Control List
+===================
 
-.. _matter_light_switch_sample_pairing:
+The Access Control List (ACL) is a list related to the Access Control cluster.
+The list contains rules for managing and enforcing access control for a node's endpoints and their associated cluster instances.
+In this sample's case, this allows the lighting devices to receive messages from the light switch and run them.
 
-Pairing
+You can read more about ACLs on the :doc:`matter:access-control-guide` in the Matter documentation.
+
+.. _matter_light_switch_sample_groupcast:
+
+Group communication
+===================
+
+Group communication (groupcast or multicast) refers to messages and commands sent to the address of a group that includes multiple devices with the same Groups cluster.
+The cluster manages the content of a node-wide Group Table that is part of the underlying interaction layer.
+This is done on per endpoint basis.
+After creating the Group cluster with specific ``ID`` and ``Name``, a device gets its own IPv6 multicast Thread address and is ready to receive groupcast commands.
+
+In this sample, the light switch device is able to create a groupcast message and send it to the chosen IPv6 multicast Thread address.
+This allows the light switch more than one lighting devices at the same time.
+
+.. note::
+   Writing the groupcast table on the devices blocks sending unicast commands.
+   If you want to go back to the original state, perform factory reset of the device.
+
+.. _matter_light_switch_sample_binding:
+
+Binding
 =======
 
-The pairing phase starts when you have activated the test mode and both devices are initialized with the same network parameters.
-During this phase, the light bulb device periodically sends multicast messages with static content.
-Once the light switch device receives such a message, it becomes aware of the IP address of the nearby light bulb device and the pairing is done.
+Binding refers to establishing a relationship between endpoints on the local and remote nodes.
+With binding, local endpoints are pointed and bound to the corresponding remote endpoints.
+Both must belong to the same cluster type.
+Binding lets the local endpoint know which endpoints are going to be the target for the client-generated actions on one or more remote nodes.
+
+In this sample, the light switch controls one or more lighting devices, but does not know the remote endpoints of the lights (on remote nodes).
+Using binding, the light switch device updates its Binding cluster with all relevant information about the lighting devices, such as their IPv6 Thread address, node ID, and the IDs of the remote endpoints that contains the On/Off cluster and the LevelControl cluster, respectively.
 
 Configuration
 *************
@@ -66,50 +101,173 @@ Other build types are covered by dedicated files with the build type added as a 
 For example, the ``release`` build type file name is :file:`prj_release.conf`.
 If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
 
+.. include:: /gs_modifying.rst
+   :start-after: build_types_overview_start
+   :end-before: build_types_overview_end
+
 Before you start testing the application, you can select one of the build types supported by the sample.
 This sample supports the following build types, depending on the selected board:
 
 * ``debug`` -- Debug version of the application - can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
 * ``release`` -- Release version of the application - can be used to enable only the necessary application functionalities to optimize its performance.
+* ``no_dfu`` -- Debug version of the application without Device Firmware Upgrade feature support - can be used only for the nRF52840 DK and nRF5340 DK, as those platforms have DFU enabled by default.
 
 .. note::
     `Selecting a build type`_ is optional.
     The ``debug`` build type is used by default if no build type is explicitly selected.
+
 
 FEM support
 ===========
 
 .. include:: /includes/sample_fem_support.txt
 
+.. _matter_light_switch_sample_remote_control_cli:
+
+Matter CLI support
+==================
+
+The Matter CLI allows to run commands through the serial interface using the USB cable connected to the USB port on Nordic Semiconductor's development kit.
+
+To enable the Matter CLI, you must build the light switch application with the additional option ``-DCONFIG_CHIP_LIB_SHELL=y``.
+Use the following command pattern, with ``<build-target>`` replaced with the build target name of Nordic Semiconductor's development kit you are using (see `Requirements`_):
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b <build-target> -- -DCONFIG_CHIP_LIB_SHELL=y
+
+For example:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b nrf52840dk_nrf52840_cpuapp -- -DCONFIG_CHIP_LIB_SHELL=y
+
+Device Firmware Upgrade support
+===============================
+
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_build_with_dfu_start
+    :end-before: matter_door_lock_sample_build_with_dfu_end
+
+.. _matter_light_switch_sample_ui:
+
 User interface
 **************
 
-LED 1:
-    Shows the overall state of the device and its connectivity.
-    The following states are possible:
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_led1_start
+    :end-before: matter_door_lock_sample_led1_end
 
-    * Solid Off - The device is not paired with any light bulb device.
-    * Short Flash On (100 ms on/900 ms off) - The device is in the :ref:`pairing <matter_light_switch_sample_pairing>` phase.
-    * Solid On - The device is paired with a light bulb device.
+LED 2:
+   Shows the state of the Bluetooth LE Direct Firmware Update (DFU) process.
 
-Button 1:
-    Initiates the factory reset of the device.
+   * Off - Bluetooth LE is not advertising and DFU is not ready.
+   * Rapid Even Flashing (30 ms off / 170 ms on) - Bluetooth LE is advertising and the DFU process can be started.
+
+LED 3:
+   Identifies the device after sending the ``identify`` command to the endpoint ``0`` from the Matter controller device.
+   The LED starts blinking evenly (500 ms on/500 ms off) when the Identify command of the Identify cluster is received.
+   The command's argument can be used to specify the duration of the effect.
+
+LED 1-4:
+   Blink in unison when the factory reset procedure is initiated.
+
+.. include:: ../lock/README.rst
+   :start-after: matter_door_lock_sample_button1_start
+   :end-before: matter_door_lock_sample_button1_end
 
 Button 2:
-    Toggles the light on the paired light bulb device.
+   Controls the light on the bound lighting device.
+   Depending on how long you press the button:
 
-Button 3:
-    Enables :ref:`pairing <matter_light_switch_sample_pairing>` for 10 seconds.
-    It also starts the Thread networking in the :ref:`test mode <matter_light_switch_sample_test_mode>` if the Thread network is not yet initialized.
+   * If pressed for less than 0.5 seconds, it changes the light state to the opposite one on the bound lighting device (:ref:`light bulb <matter_light_bulb_sample>`).
+   * If pressed for more than 0.5 seconds, it changes the brightness of the light on the bound lighting bulb device (:ref:`light bulb <matter_light_bulb_sample>`).
+     The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 2** is pressed.
 
 Button 4:
-    Brightens the light on the paired light bulb device.
-    The brightness level is increased gradually while the button is being pressed.
-    When the button is pressed for too long, the brightness level wraps around and becomes the lowest possible.
+    Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
+    This button is used during the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
 
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_jlink_start
     :end-before: matter_door_lock_sample_jlink_end
+
+NFC port with antenna attached:
+    Optionally used for obtaining the commissioning information from the Matter accessory device to start the :ref:`commissioning procedure <matter_light_switch_sample_remote_control_commissioning>`.
+
+.. _matter_light_switch_sample_ui_matter_cli:
+
+Matter CLI commands
+===================
+
+If you build the application with the :ref:`matter_light_switch_sample_remote_control_cli`, you can use a series of commands to control the light switch device.
+These commands can be sent to one device (unicast) or a group of devices (groupcast).
+
+Unicast commands
+-----------------
+
+You can use the following commands for direct communication with the single lighting device:
+
+switch onoff on
+   This command turns on **LED 2** on the bound lighting device.
+   For example:
+
+   .. parsed-literal::
+      :class: highlight
+
+      uart:~$ matter switch onoff on
+
+switch onoff off
+   This command turns off **LED 2** on the bound lighting device.
+   For example:
+
+   .. parsed-literal::
+      :class: highlight
+
+      uart:~$ matter switch onoff off
+
+switch onoff toggle
+   This command changes the **LED 2** state to the opposite one on the bound lighting device.
+   For example:
+
+   .. parsed-literal::
+      :class: highlight
+
+      uart:~$ matter switch onoff toggle
+
+Groupcast commands
+------------------
+
+You can use the following commands a group of devices that are programmed with the Light Switch Example application by using the Matter CLI:
+
+switch groups onoff on
+   This command turns on **LED 2** on each bound lighting device connected to the same group.
+   For example:
+
+   .. parsed-literal::
+      :class: highlight
+
+      uart:~$ matter switch groups onoff on
+
+switch groups onoff off
+   This command turns off **LED 2** on each bound lighting device connected to the same group.
+   For example:
+
+   .. parsed-literal::
+      :class: highlight
+
+      uart:~$ matter switch groups onoff off
+
+switch groups onoff toggle
+   This command changes the **LED 2** state to the opposite one on each bound lighting device connected to the same group.
+   For example:
+
+   .. parsed-literal::
+      :class: highlight
+
+      uart:~$ matter switch groups onoff toggle
 
 Building and running
 ********************
@@ -117,6 +275,8 @@ Building and running
 .. |sample path| replace:: :file:`samples/matter/light_switch`
 
 .. include:: /includes/build_and_run.txt
+
+See `Configuration`_ for information about building the sample with the DFU support.
 
 Selecting a build type
 ======================
@@ -155,64 +315,150 @@ The ``build_nrf52840dk_nrf52840`` parameter specifies the output directory for t
       File not found: ./ncs/nrf/samples/matter/light_switch/configuration/nrf52840dk_nrf52840/prj_shell.conf
 
 Testing
-=======
+*******
 
-After building this and :ref:`Matter light bulb <matter_light_bulb_sample>` samples, and programming them to your development kits, complete the following steps to test communication between the devices:
+After building the sample and programming it to your development kit, complete the steps in the following sections.
+
+.. _matter_light_switch_sample_prepare_for_testing:
+
+Prepare for testing
+===================
+
+After building this and the :ref:`Matter Light Bulb <matter_light_bulb_sample>` samples, and programming them to the development kits, complete the following steps:
+
+.. note::
+   In both samples (light switch and light bulb), a Bluetooth LE discriminator is set with the same value by default (hexidecimal: ``0xF00``; decimal: ``3840``).
+   This means that only one uncommissioned device can be powered up before commissioning.
+   If both are powered up at the same time, the CHIP Tool can commission a random device and the node ID assignment is also random.
+   When one device is commissioned, power up the next device and perform the commissioning.
+   To avoid this unclear situation, you can set up your unique discriminator in :file:`src/chip_project_config.h` file by changing :kconfig:option:`CHIP_DEVICE_CONFIG_USE_TEST_SETUP_DISCRIMINATOR` value.
+   Then build an example and commission with your unique discriminator.
+
+.. matter_light_switch_sample_prepare_to_testing_start
+
+1. |connect_kit|
+#. |connect_terminal_ANSI|
+#. If devices were not erased during the programming, press and hold **Button 1** on each device until the factory reset takes place.
+#. On each device, press **Button 4** to start the Bluetooth LE advertising.
+#. Commission devices to the Matter network.
+   See :ref:`matter_light_switch_sample_remote_control_commissioning` for more information.
+   During the commissioning process, write down the values for the light switch node ID and the light bulb node ID (or IDs, if you are using more than one light bulb).
+   These IDs are going to be used in the next steps (*<light_switch_node_ID>* and *<light_bulb_node_ID>*, respectively).
+#. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the light bulb device.
+   Run the following command, with *<light_switch_node_ID>* and *<light_bulb_node_ID>* values from the previous step about commissioning:
+
+   .. parsed-literal::
+      :class: highlight
+
+      chip-tool accesscontrol write acl '[{"fabricIndex": 1, "privilege": 5, "authMode": 2, "subjects": [112233], "targets": null}, {"fabricIndex": 1, "privilege": 3, "authMode": 2, "subjects": [<light_switch_node_ID>], "targets": [{"cluster": 6, "endpoint": 1, "deviceType": null}, {"cluster": 8, "endpoint": 1, "deviceType": null}]}]' <light_bulb_node_ID> 0
+
+#. If you are using more than one light bulb device, connect all devices to the multicast group by running the following command for each device, including the light switch:
+
+   .. parsed-literal::
+      :class: highlight
+
+      chip-tool tests TestGroupDemoConfig --nodeId <node_ID>
+
+   Use the *<node_ID>* values from the commissioning step.
+#. Write a binding table to the light switch to inform the device about all endpoints by running this command (only for light switch):
+
+   * For unicast binding to bind the light switch with only one light Bulb:
+
+      .. parsed-literal::
+         :class: highlight
+
+         chip-tool binding write binding '[{"fabricIndex": 1, "node": <light bulb node id>, "endpoint": 1, "cluster": 6}, {"fabricIndex": 1, "node": <light bulb node id>, "endpoint": 1, "cluster": 8}]' <light switch node id> 1
+
+   * For groupcast binding to bind the light switch with multiple light bulbs:
+
+      .. parsed-literal::
+         :class: highlight
+
+         chip-tool binding write binding '[{"fabricIndex": 1, "group": 257}]' <light_switch_node_ID> 1
+
+.. matter_light_switch_sample_prepare_to_testing_end
+
+All devices are now bound and ready for testing communication.
+
+.. note::
+
+   In this sample, the ACL cluster is inserted into the light bulb's endpoint ``0``, and the Binding cluster is inserted into the light switch's endpoint ``1``.
+
+Testing with bound light bulbs devices
+======================================
 
 .. matter_light_switch_sample_testing_start
 
-#. Complete the following actions for both devices:
+After :ref:`preparing devices for testing <matter_light_switch_sample_prepare_for_testing>`, you can test the communication of  a single light bulb or a group of light bulbs with the light switch, but not both a single device and a group at the same time.
 
-   a. |connect_kit|
-   #. |connect_terminal_ANSI|
+Complete the following steps:
 
-#. On both devices, press **Button 1** to reset them to factory settings.
-#. Pair both devices by completing the following steps:
+1. On the light switch device, use :ref:`buttons <matter_light_switch_sample_ui>` to control the bound light bulbs:
 
-   a. On the light switch device, press **Button 3** to enable :ref:`pairing <matter_light_switch_sample_pairing>` on this device.
-      The light switch becomes the Thread network Leader.
-      The following messages appear in the console for the light switch device:
+   #. On the light switch device, press **Button 2** to turn off the **LED 2** located on the bound light bulb device.
+   #. On the light switch device, press **Button 2** to turn on the light again.
+      **LED 2** on the light bulb device turns back on.
+   #. Press **Button 2** and hold it for more than 0.5 seconds to test the dimmer functionality.
+      **LED 2** on the bound light bulb device changes its brightness from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 2** is pressed.
 
-      .. code-block:: console
+#. Using the terminal emulator connected to the light switch, run the following :ref:`Matter CLI commands <matter_light_switch_sample_ui_matter_cli>`:
 
-         I: Device is not commissioned to a Thread network. Starting with the default configuration
-         I: Starting light bulb discovery
+   a. Write the following command to turn on **LED 2** located on the bound light bulb devices:
 
-   b. On the light bulb device, press **Button 3** to enable pairing on this device.
-      The following messages appear on the console for the light bulb device:
+      * For a single bound light bulb:
 
-      .. code-block:: console
+        .. parsed-literal::
+           :class: highlight
 
-         I: Device is not commissioned to a Thread network. Starting with the default configuration
-         I: Started Publish service
+           matter switch onoff on
 
-      At this point, the light bulb is discovered by the light switch device and the following messages appear on the console for the light switch device:
+      * For a group of light bulbs:
 
-      .. code-block:: console
+        .. parsed-literal::
+           :class: highlight
 
-         I: Stopping light bulb discovery
-         I: Pairing with light bulb fdde:ad00:beef:0:7b0:750e:6d96:49e9
+           matter switch groups onoff on
 
-#. On the light switch device, press **Button 2** to turn off the light on the light bulb device.
-   The following message appears on the console for the light switch device:
+   #. Write the following command to turn on **LED 2** located on the bound light bulb device:
 
-   .. code-block:: console
+      * For a single bound light bulb:
 
-      I: Toggling the light
+        .. parsed-literal::
+           :class: highlight
 
-   **LED 2** on the light bulb device turns off.
-#. On the light switch device, press **Button 2** to turn on the light again.
-   **LED 2** on the light bulb device turns back on.
-#. On the light switch device, press **Button 4** and hold it for a few seconds.
-   Messages similar to the following one appear in the console:
+           matter switch onoff off
 
-   .. code-block:: console
+      * For a group of light bulbs:
 
-    I: Setting brightness level to 7
+        .. parsed-literal::
+           :class: highlight
 
-   The brightness of **LED 2** on the light bulb device changes while the button is pressed.
+           matter switch groups onoff off
+
 
 .. matter_light_switch_sample_testing_end
+
+.. _matter_light_switch_sample_remote_control_commissioning:
+
+Commissioning the device
+========================
+
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_commissioning_start
+    :end-before: matter_door_lock_sample_commissioning_end
+
+Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE.
+The device becomes discoverable automatically upon the device startup, but only for a predefined period of time (15 minutes by default).
+If the Bluetooth LE advertising times out, press **Button 4** to re-enable it.
+
+When you start the commissioning procedure, the controller must get the commissioning information from the Matter accessory device.
+The data payload includes the device discriminator and setup PIN code.
+It is encoded within a QR code printed to the UART console and can be shared using an NFC tag.
+
+Upgrading the device firmware
+=============================
+
+To upgrade the device firmware, complete the steps listed for the selected method in the :doc:`matter:nrfconnect_examples_software_update` tutorial in the Matter documentation.
 
 Dependencies
 ************

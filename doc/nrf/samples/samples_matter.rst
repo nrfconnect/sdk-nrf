@@ -24,12 +24,12 @@ The following table lists variants and extensions available out of the box for e
       - ✔
     * - DFU support
       - ✔
-      -
+      - ✔
       - ✔
       -
     * - Low power build
       -
-      -
+      - ✔
       - ✔
       -
 

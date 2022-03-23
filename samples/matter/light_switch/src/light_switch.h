@@ -1,14 +1,12 @@
 /*
- * Copyright (c) 2021 Nordic Semiconductor ASA
+ * Copyright (c) 2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #pragma once
-
-#include <controller/CHIPDeviceController.h>
-#include <controller/ExampleOperationalCredentialsIssuer.h>
-#include <transport/raw/UDP.h>
+#include <app/util/basic-types.h>
+#include <lib/core/CHIPError.h>
 
 #include <atomic>
 
@@ -21,38 +19,26 @@
  */
 class LightSwitch {
 public:
-	CHIP_ERROR Init();
+	enum class Action : uint8_t {
+		Toggle, /* Switch state on lighting-app device */
+		On, /* Turn on light on lighting-app device */
+		Off /* Turn off light on lighting-app device */
+	};
 
-	void StartDiscovery();
-	void StopDiscovery();
-	bool IsDiscoveryEnabled() const;
+	void Init(chip::EndpointId aLightSwitchEndpoint);
+	void InitiateActionSwitch(Action);
+	void DimmerChangeBrightness();
+	chip::EndpointId GetLightSwitchEndpointId() { return mLightSwitchEndpoint; }
 
-	CHIP_ERROR Pair(const chip::Inet::IPAddress &lightBulbAddress);
-	CHIP_ERROR ToggleLight();
-	CHIP_ERROR SetLightLevel(uint8_t level);
+	static LightSwitch &GetInstance()
+	{
+		static LightSwitch sLightSwitch;
+		return sLightSwitch;
+	}
 
 private:
-	class DiscoveryHandler : public chip::Transport::RawTransportDelegate {
-	public:
-		void SetEnabled(bool enabled) { mEnabled.store(enabled, std::memory_order_relaxed); }
-		void HandleMessageReceived(const chip::Transport::PeerAddress &source,
-					   chip::System::PacketBufferHandle &&msgBuf) override;
+	constexpr static auto kOnePercentBrightnessApproximation = 3;
+	constexpr static auto kMaximumBrightness = 254;
 
-	private:
-		std::atomic_bool mEnabled;
-	};
-
-	class PlaformPersistentStorageDelegate : public chip::PersistentStorageDelegate {
-	public:
-		CHIP_ERROR SyncGetKeyValue(const char *key, void *buffer, uint16_t &size) override;
-		CHIP_ERROR SyncSetKeyValue(const char *key, const void *value, uint16_t size) override;
-		CHIP_ERROR SyncDeleteKeyValue(const char *key) override;
-	};
-
-	chip::Transport::UDP mDiscoveryServiceEndpoint;
-	chip::Controller::DeviceCommissioner mCommissioner;
-	chip::Controller::ExampleOperationalCredentialsIssuer mOpCredDelegate;
-	chip::SimpleFabricStorage mFabricStorage;
-	PlaformPersistentStorageDelegate mStorageDelegate;
-	DiscoveryHandler mDiscoveryHandler;
+	chip::EndpointId mLightSwitchEndpoint;
 };
