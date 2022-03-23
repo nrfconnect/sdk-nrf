@@ -166,6 +166,10 @@ Bluetooth samples
       * Added the vendor-specific ``FEM_DEFAULT_PARAMS_SET`` command for restoring the default front-end module parameters.
 
     * Fixed handling of the disable Constant Tone Extension command.
+    * The front-end module test parameters are not set to their default value after the DTM reset command.
+    * Added the vendor-specific ``FEM_DEFAULT_PARAMS_SET`` command for restoring the default front-end module parameters.
+    * Changed the radio antennas array hardware description.
+      It is based now on the radio bindings instead of custom configuration.
 
   * :ref:`peripheral_hids_mouse` sample:
 
