@@ -196,8 +196,6 @@ BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(ANOMALY_172_TIMER_INSTANCE) == 1,
 /* Maximum number of valid channels in BLE. */
 #define PHYS_CH_MAX 39
 
-#define DTM_MAX_ANTENNA_COUNT DT_PROP(DT_PATH(zephyr_user), dtm_antenna_count)
-
 #define FEM_USE_DEFAULT_GAIN 0xFF
 
 /* States used for the DTM test implementation */
@@ -446,18 +444,26 @@ static void radio_gpio_pattern_clear(void)
 
 static void antenna_radio_pin_config(void)
 {
-	const uint32_t *pin = dtm_hw_radion_antenna_pin_array_get();
+	const uint8_t *pin = dtm_hw_radio_antenna_pin_array_get();
 
-	for (uint8_t i = 0; i < dtm_radio_antenna_pin_array_size_get(); i++) {
-		NRF_RADIO->PSEL.DFEGPIO[i] = pin[i];
+	for (size_t i = 0; i < DTM_HW_MAX_DFE_GPIO; i++) {
+		uint32_t pin_value = (pin[i] == DTM_HW_DFE_PSEL_NOT_SET) ?
+				     DTM_HW_DFE_GPIO_PIN_DISCONNECT : pin[i];
+
+		nrf_radio_dfe_pattern_pin_set(NRF_RADIO,
+					      pin_value,
+					      i);
 	}
 }
 
 static void switch_pattern_set(void)
 {
-	/* Set antenna for the guard period and for the reference period. */
-	NRF_RADIO->SWITCHPATTERN = 1;
-	NRF_RADIO->SWITCHPATTERN = 1;
+	uint8_t pdu_antenna = dtm_hw_radio_pdu_antenna_get();
+	/* Set antenna for the PDU, guard period and for the reference period.
+	 * The same antenna is used for guard and reference period as for the PDU.
+	 */
+	NRF_RADIO->SWITCHPATTERN = pdu_antenna;
+	NRF_RADIO->SWITCHPATTERN = pdu_antenna;
 
 	switch (dtm_inst.cte_info.antenna_pattern) {
 	case DTM_ANTENNA_PATTERN_123N123N:
@@ -1540,6 +1546,7 @@ static uint32_t constant_tone_slot_set(uint8_t cte_slot)
 
 	case LE_CTE_TYPE_AOD_2US:
 		dtm_inst.cte_info.slot = DTM_CTE_SLOT_2US;
+		break;
 
 	default:
 		dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
@@ -1558,7 +1565,7 @@ static uint32_t antenna_set(uint8_t antenna)
 
 	if ((dtm_inst.cte_info.antenna_number < LE_TEST_ANTENNA_NUMBER_MIN) ||
 	    (dtm_inst.cte_info.antenna_number > LE_TEST_ANTENNA_NUMBER_MAX) ||
-	    (dtm_inst.cte_info.antenna_number > DTM_MAX_ANTENNA_COUNT)) {
+	    (dtm_inst.cte_info.antenna_number > dtm_hw_radio_antenna_number_get())) {
 		dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
 		return DTM_ERROR_ILLEGAL_CONFIGURATION;
 	}

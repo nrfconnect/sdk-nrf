@@ -11,13 +11,16 @@
 extern "C" {
 #endif
 
-#if DT_NODE_HAS_PROP(DT_NODELABEL(radio), dfe_supported) && \
-	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_count) > 0
+/* Devicetree node identifier for the radio node. */
+#define RADIO_NODE DT_NODELABEL(radio)
+
+#if DT_PROP(DT_NODELABEL(radio), dfe_supported) && \
+	DT_NODE_HAS_STATUS(RADIO_NODE, okay)
 #define DIRECTION_FINDING_SUPPORTED 1
 #else
 #define DIRECTION_FINDING_SUPPORTED 0
-#endif /* DT_NODE_HAS_PROP(DT_NODELABEL(radio), dfe_supported) && \
-	* DT_PROP(DT_PATH(zephyr_user), dtm_antenna_count) > 0
+#endif /* DT_PROP(DT_NODELABEL(radio), dfe_supported) && \
+	* DT_NODE_HAS_STATUS(RADIO_NODE, okay)
 	*/
 
 /* Maximum transmit or receive time, in microseconds, that the local

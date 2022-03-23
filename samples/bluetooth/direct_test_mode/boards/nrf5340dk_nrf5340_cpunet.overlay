@@ -7,16 +7,25 @@
 	status = "disabled";
 };
 
-/ {
-     zephyr,user {
-	     dtm_antenna_count = <12>;
-	     dtm_antenna_1_pin = <32>;
-	     dtm_antenna_2_pin = <33>;
-	     dtm_antenna_3_pin = <34>;
-	     dtm_antenna_4_pin = <35>;
-	     dtm_antenna_5_pin = <36>;
-	     dtm_antenna_6_pin = <37>;
-	     dtm_antenna_7_pin = <38>;
-	     dtm_antenna_8_pin = <39>;
-     };
+&radio {
+	status = "okay";
+	/* This is a number of antennas that are available on antenna matrix
+	 * designed by Nordic. For more information see README.rst.
+	 */
+	dfe-antenna-num = <12>;
+	/* This is a setting that enables antenna 12 (in antenna matrix designed
+	 * by Nordic) for PDU. For more information see README.rst.
+	 */
+	dfe-pdu-antenna = <0x0>;
+
+	/* These are GPIO pin numbers that are provided to
+	 * Radio peripheral. The pins will be acquired by Radio to
+	 * drive antenna switching.
+	 * Pin numbers are selected to drive switches on antenna matrix
+	 * desinged by Nordic. For more information see README.rst.
+	 */
+	dfegpio0-gpios = <&gpio0 4 0>;
+	dfegpio1-gpios = <&gpio0 5 0>;
+	dfegpio2-gpios = <&gpio0 6 0>;
+	dfegpio3-gpios = <&gpio0 7 0>;
 };
