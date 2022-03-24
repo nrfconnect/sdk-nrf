@@ -1,0 +1,29 @@
+# Copyright (c) 2022 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: CAF sensor data aggregator
+
+compatible: "caf,aggregator"
+
+include: base.yaml
+
+properties:
+  sensor_descr:
+    description: description of sensor which data is aggregated
+    required: true
+    type: string
+
+  buf_data_length:
+    description: buffer length in bytes, range 1-255.
+    type: int
+    default: 120
+
+  sensor_data_size:
+    description: size in bytes of single sensor data, range 1-255.
+    type: int
+    default: 4
+
+  buf_count:
+    description: Number of buffers in aggregator, range 1-255.
+    type: int
+    default: 2

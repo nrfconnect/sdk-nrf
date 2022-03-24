@@ -32,6 +32,8 @@ zephyr_library_sources_ifdef(CONFIG_CAF_POWER_MANAGER power_manager.c)
 
 zephyr_library_sources_ifdef(CONFIG_CAF_SENSOR_MANAGER sensor_manager.c)
 
+zephyr_library_sources_ifdef(CONFIG_CAF_SENSOR_DATA_AGGREGATOR sensor_data_aggregator.c)
+
 zephyr_library_sources_ifdef(CONFIG_CAF_SETTINGS_LOADER settings_loader.c)
 
 zephyr_library_sources_ifdef(CONFIG_CAF_BLE_SMP ble_smp.c)

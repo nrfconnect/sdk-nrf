@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig CAF_SENSOR_DATA_AGGREGATOR
+	bool "Sensor data aggregator module"
+	depends on CAF_SENSOR_EVENTS
+	select CAF_SENSOR_DATA_AGGREGATOR_EVENTS
+
+if CAF_SENSOR_DATA_AGGREGATOR
+
+module = CAF_SENSOR_DATA_AGGREGATOR
+module-str = caf module sensor event aggregator
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # CAF_SENSOR_DATA_AGGREGATOR
+
+config CAF_SENSOR_DATA_AGGREGATOR_EVENTS
+	bool "Sensor data aggregator module events"
