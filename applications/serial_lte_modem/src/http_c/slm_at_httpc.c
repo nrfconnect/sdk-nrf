@@ -264,7 +264,6 @@ static int do_http_connect(void)
 	if (httpc.sec_tag != INVALID_SEC_TAG) {
 		sec_tag_t sec_tag_list[] = { httpc.sec_tag };
 		int peer_verify = TLS_PEER_VERIFY_REQUIRED;
-		int session_cache = TLS_SESSION_CACHE_ENABLED;
 
 		ret = setsockopt(httpc.fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
 				 sizeof(sec_tag_t));
@@ -287,6 +286,9 @@ static int do_http_connect(void)
 			ret = -errno;
 			goto exit_cli;
 		}
+#if !defined(CONFIG_SLM_NATIVE_TLS)
+		int session_cache = TLS_SESSION_CACHE_ENABLED;
+
 		ret = setsockopt(httpc.fd, SOL_TLS, TLS_SESSION_CACHE, &session_cache,
 				 sizeof(session_cache));
 		if (ret) {
@@ -294,6 +296,7 @@ static int do_http_connect(void)
 			ret = -errno;
 			goto exit_cli;
 		}
+#endif
 	}
 
 	/* Connect to HTTP server */
