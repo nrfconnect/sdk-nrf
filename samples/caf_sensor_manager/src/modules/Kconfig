@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+#rsource "Kconfig.sensor_sim_ctrl"
+
+config WORKLOAD_TIME_PER_SAMPLE
+	int "CPU load time per sample [us]"
+	default 10
+	help
+	  Simulated CPU busy time when processing sensor aggregator event.
+	  Sensor aggregator event comes with number of aggregated events.
+	  Simulated busy time is multiplied by this value.
+
+menuconfig SENSOR_MANAGER_SENSOR_SIM_CTRL
+	bool "Simulated sensor controller"
+
+if SENSOR_MANAGER_SENSOR_SIM_CTRL
+
+module = SENSOR_MANAGER_SENSOR_SIM_CTRL
+module-str = sensor sim controller
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # SENSOR_MANAGER_SENSOR_SIM_CTRL
