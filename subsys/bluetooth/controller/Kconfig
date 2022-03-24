@@ -45,7 +45,6 @@ config BT_LL_SOFTDEVICE_BUILD_TYPE_LIB
 
 endchoice
 
-
 # BT_HCI_TX_STACK_SIZE is declared in Zephyr and also here for a second time,
 # for set the valid default size of the HCI Tx stack.
 config BT_HCI_TX_STACK_SIZE
