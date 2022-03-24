@@ -250,6 +250,7 @@ static void ndef_data_analyze(const uint8_t *ndef_msg_buff, size_t nfc_data_len)
 				 &nfc_data_len);
 	if (err) {
 		printk("Error during parsing a NDEF message, err: %d.\n", err);
+		return;
 	}
 
 	ndef_msg_desc = (struct nfc_ndef_msg_desc *) desc_buf;
