@@ -90,11 +90,10 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 {
 	ARG_UNUSED(dev);
 
-	static uint8_t *current_buf;
 	static size_t aborted_len;
-	static bool buf_release;
 	struct uart_data_t *buf;
 	static uint8_t *aborted_buf;
+	static bool disable_req;
 
 	switch (evt->type) {
 	case UART_TX_DONE:
@@ -131,15 +130,14 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 		LOG_DBG("rx_rdy");
 		buf = CONTAINER_OF(evt->data.rx.buf, struct uart_data_t, data);
 		buf->len += evt->data.rx.len;
-		buf_release = false;
 
-		if (buf->len == UART_BUF_SIZE) {
-			k_fifo_put(&fifo_uart_rx_data, buf);
-		} else if ((evt->data.rx.buf[buf->len - 1] == '\n') ||
-			  (evt->data.rx.buf[buf->len - 1] == '\r')) {
-			k_fifo_put(&fifo_uart_rx_data, buf);
-			current_buf = evt->data.rx.buf;
-			buf_release = true;
+		if (disable_req) {
+			return;
+		}
+
+		if ((evt->data.rx.buf[buf->len - 1] == '\n') ||
+		    (evt->data.rx.buf[buf->len - 1] == '\r')) {
+			disable_req = true;
 			uart_rx_disable(uart);
 		}
 
@@ -147,6 +145,8 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 
 	case UART_RX_DISABLED:
 		LOG_DBG("rx_disabled");
+		disable_req = false;
+
 		buf = k_malloc(sizeof(*buf));
 		if (buf) {
 			buf->len = 0;
@@ -177,10 +177,11 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 		LOG_DBG("rx_buf_released");
 		buf = CONTAINER_OF(evt->data.rx_buf.buf, struct uart_data_t,
 				   data);
-		if (buf_release && (current_buf != evt->data.rx_buf.buf)) {
+
+		if (buf->len > 0) {
+			k_fifo_put(&fifo_uart_rx_data, buf);
+		} else {
 			k_free(buf);
-			buf_release = false;
-			current_buf = NULL;
 		}
 
 		break;
