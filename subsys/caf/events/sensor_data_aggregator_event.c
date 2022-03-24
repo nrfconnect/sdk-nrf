@@ -26,12 +26,12 @@ EVENT_INFO_DEFINE(sensor_data_aggregator_event,
 		  profile_sensor_data_aggregator_event);
 
 EVENT_TYPE_DEFINE(sensor_data_aggregator_event,
-		  true,
 		  log_sensor_data_aggregator_event,
-		  &sensor_data_aggregator_event_info);
+		  &sensor_data_aggregator_event_info,
+		  EVENT_FLAGS_CREATE(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));
 
 
 EVENT_TYPE_DEFINE(sensor_data_aggregator_release_buffer_event,
-		  true,
 		  NULL,
-		  NULL);
+		  NULL,
+		  EVENT_FLAGS_CREATE(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));

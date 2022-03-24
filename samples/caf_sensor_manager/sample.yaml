@@ -1,0 +1,22 @@
+sample:
+  description: Sample showing CAF sensor manager usage
+  name: CAF sensor manager sample
+common:
+  harness: console
+  integration_platforms:
+    - nrf52840dk_nrf52840
+    - qemu_cortex_m3
+
+  platform_exclude: native_posix qemu_x86
+  harness_config:
+    type: multi_line
+    ordered: true
+    regex:
+     - "sensor_sim_ctrl state:READY"
+     - "accel_sim_xyz state:ACTIVE"
+     - "Send sensor buffer desc: accel_sim_xyz"
+     - "sensor_data_aggregator_release_buffer_event"
+
+tests:
+  sample.caf_sensor_manager:
+    build_only: false

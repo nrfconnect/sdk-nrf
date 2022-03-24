@@ -276,6 +276,8 @@ Other Samples
 
 * Added the :ref:`ipc_service_sample` sample, showing throughtput of IPC service with available backends.
 
+* Added the :ref:`caf_sensor_manager_sample`.
+
 * Updated:
 
   * :ref:`radio_test`:
