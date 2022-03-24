@@ -27,8 +27,6 @@ config BT_LL_SOFTDEVICE
 	select BT_CTLR_PHY_2M_SUPPORT if HAS_HW_NRF_RADIO_BLE_2M
 	select BT_CTLR_PHY_CODED_SUPPORT if HAS_HW_NRF_RADIO_BLE_CODED
 	select BT_HAS_HCI_VS
-	# The SoftDevice Controller only supports nRF52 and nRF53, it does not support nRF51
-	# or nRF91 (nRF91 doesn't even have the physical HW needed for BLE).
 	depends on (SOC_SERIES_NRF52X || SOC_NRF5340_CPUNET)
 	help
 	  Use SoftDevice Link Layer implementation.
@@ -37,6 +35,16 @@ endchoice
 
 if BT_LL_SOFTDEVICE
 menu "SoftDevice Controller"
+
+choice BT_LL_SOFTDEVICE_BUILD_TYPE
+	prompt "SoftDevice Controller build type"
+	default BT_LL_SOFTDEVICE_BUILD_TYPE_LIB
+
+config BT_LL_SOFTDEVICE_BUILD_TYPE_LIB
+	bool "Use library"
+
+endchoice
+
 
 # BT_HCI_TX_STACK_SIZE is declared in Zephyr and also here for a second time,
 # for set the valid default size of the HCI Tx stack.
