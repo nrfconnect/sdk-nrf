@@ -572,6 +572,9 @@ static void on_cloud_evt_data_received(const struct cloud_event *const evt)
 			run_type = RUN_TYPE_NONE;
 		} else if (err == 1) {
 			LOG_WRN("No position found");
+		} else if (err == -EFAULT) {
+			LOG_ERR("Unable to determine location from cell data, error: %d",
+				result.err);
 		} else {
 			LOG_ERR("Unable to process cell pos data, error: %d", err);
 		}

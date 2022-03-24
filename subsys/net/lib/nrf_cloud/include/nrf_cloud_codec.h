@@ -47,6 +47,7 @@ extern "C" {
 #define NRF_CLOUD_JSON_MSG_MAX_LEN_DISCONNECT   200
 
 #define NRF_CLOUD_JSON_DATA_KEY			"data"
+#define NRF_CLOUD_JSON_ERR_KEY			"err"
 
 #define NRF_CLOUD_JSON_FULFILL_KEY		"fulfilledWith"
 
@@ -107,6 +108,10 @@ extern "C" {
 #define NRF_CLOUD_FOTA_REST_KEY_TYPE		"firmwareType"
 #define NRF_CLOUD_FOTA_REST_KEY_SIZE		"fileSize"
 #define NRF_CLOUD_FOTA_REST_KEY_VER		"version"
+
+/* REST */
+#define NRF_CLOUD_REST_ERROR_CODE_KEY		"code"
+#define NRF_CLOUD_REST_ERROR_MSG_KEY		"message"
 
 /**@brief Initialize the codec used encoding the data to the cloud. */
 int nrf_cloud_codec_init(void);
@@ -213,6 +218,8 @@ int json_send_to_cloud(cJSON * const request);
  * the cJSON object's memory.
  */
 cJSON *json_create_req_obj(const char *const app_id, const char *const msg_type);
+
+int nrf_cloud_parse_rest_error(const char *const buf, enum nrf_cloud_error *const err);
 
 #ifdef CONFIG_NRF_CLOUD_GATEWAY
 typedef int (*gateway_state_handler_t)(void *root_obj);
