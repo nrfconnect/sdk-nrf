@@ -33,7 +33,8 @@ enum nrf_cloud_http_status {
 	NRF_CLOUD_HTTP_STATUS_OK = 200,
 	NRF_CLOUD_HTTP_STATUS_ACCEPTED = 202,
 	NRF_CLOUD_HTTP_STATUS_PARTIAL = 206,
-	NRF_CLOUD_HTTP_STATUS_BAD_REQ = 400,
+	NRF_CLOUD_HTTP_STATUS__ERROR_BEGIN = 400,
+	NRF_CLOUD_HTTP_STATUS_BAD_REQ = NRF_CLOUD_HTTP_STATUS__ERROR_BEGIN,
 	NRF_CLOUD_HTTP_STATUS_UNAUTH = 401,
 	NRF_CLOUD_HTTP_STATUS_FORBIDDEN = 403,
 	NRF_CLOUD_HTTP_STATUS_NOT_FOUND = 404,
@@ -107,6 +108,9 @@ struct nrf_cloud_rest_context {
 	size_t response_len;
 	/** Length of HTTPS headers + response content data */
 	size_t total_response_len;
+
+	/** Error code from nRF Cloud */
+	enum nrf_cloud_error nrf_err;
 };
 
 /** @brief Data required for nRF Cloud cellular positioning request */

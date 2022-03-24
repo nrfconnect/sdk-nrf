@@ -114,6 +114,9 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 #endif
 			/* data was valid; no need to pass to other handlers */
 			break;
+		} else if (err == -EFAULT) {
+			/* data was an A-GPS error; no need to pass to other handlers */
+			break;
 		}
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)

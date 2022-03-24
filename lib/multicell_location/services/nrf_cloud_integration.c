@@ -78,13 +78,17 @@ const char *location_service_get_certificate_nrf_cloud(void)
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 static void location_service_location_ready_cb(const struct nrf_cloud_cell_pos_result *const result)
 {
-	if (result != NULL) {
+	if ((result != NULL) && (result->err == NRF_CLOUD_ERROR_NONE)) {
 		nrf_cloud_location.latitude = result->lat;
 		nrf_cloud_location.longitude = result->lon;
 		nrf_cloud_location.accuracy = (double)result->unc;
 
 		k_sem_give(&location_ready);
 	} else {
+		if (result) {
+			LOG_ERR("Unable to determine location from cellular data, error: %d",
+				result->err);
+		}
 		/* Reset the semaphore to unblock location_service_get_cell_location_nrf_cloud()
 		 * and make it return an error.
 		 */

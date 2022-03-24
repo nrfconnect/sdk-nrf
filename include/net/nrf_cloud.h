@@ -138,6 +138,28 @@ enum nrf_cloud_connect_result {
 	NRF_CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED = -11,
 };
 
+/**@ nRF Cloud error codes. */
+enum nrf_cloud_error {
+	NRF_CLOUD_ERROR_UNKNOWN			= -1,
+	NRF_CLOUD_ERROR_NONE			= 0,
+	/* nRF Cloud API error codes */
+	NRF_CLOUD_ERROR_BAD_REQUEST		= 40000,
+	NRF_CLOUD_ERROR_INVALID_CERT		= 40001,
+	NRF_CLOUD_ERROR_DISSOCIATE		= 40002,
+	NRF_CLOUD_ERROR_ACCESS_DENIED		= 40100,
+	NRF_CLOUD_ERROR_DEV_ID_IN_USE		= 40101,
+	NRF_CLOUD_ERROR_INVALID_OWNER_CODE	= 40102,
+	NRF_CLOUD_ERROR_DEV_NOT_ASSOCIATED	= 40103,
+	NRF_CLOUD_ERROR_DATA_NOT_FOUND		= 40410,
+	NRF_CLOUD_ERROR_NRF_DEV_NOT_FOUND	= 40411,
+	NRF_CLOUD_ERROR_NO_DEV_NOT_PROV		= 40412,
+	NRF_CLOUD_ERROR_NO_DEV_DISSOCIATE	= 40413,
+	NRF_CLOUD_ERROR_NO_DEV_DELETE		= 40414,
+	NRF_CLOUD_ERROR_BAD_RANGE		= 41600,
+	NRF_CLOUD_ERROR_VALIDATION		= 42200,
+	NRF_CLOUD_ERROR_INTERNAL_SERVER		= 50010,
+};
+
 /** @brief Sensor types supported by the nRF Cloud. */
 enum nrf_cloud_sensor {
 	/** The GPS sensor on the device. */
@@ -640,6 +662,27 @@ int nrf_cloud_pending_fota_job_process(struct nrf_cloud_settings_fota_job * cons
  * @return A negative value indicates an error.
  */
 int nrf_cloud_bootloader_fota_slot_set(struct nrf_cloud_settings_fota_job * const job);
+
+/**
+ * @brief Function to check for a JSON error message in data received from nRF Cloud via MQTT.
+ *
+ * @param[in] buf Data received from nRF Cloud.
+ * @param[in] app_id appId value to check for.
+ *                   Set to NULL to skip appID check.
+ * @param[in] msg_type messageType value to check for.
+ *                     Set to NULL to skip messageType check.
+ * @param[out] err Error code found in message.
+ *
+ * @retval 0 Error code found (and matched app_id and msg_type if provided).
+ * @retval -ENOENT Error code found, but did not match specified app_id and msg_type.
+ * @retval -ENOMSG No error code found.
+ * @retval -EBADMSG Invalid error code data format.
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_handle_error_message(const char *const buf,
+				   const char *const app_id,
+				   const char *const msg_type,
+				   enum nrf_cloud_error *const err);
 
 /** @} */
 

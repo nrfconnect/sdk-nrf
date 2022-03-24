@@ -567,6 +567,22 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len)
 	bool ephemerides_processed = false;
 #endif
 
+	if (!buf || (buf_len == 0)) {
+		return -EINVAL;
+	}
+
+	/* Check for a potential A-GPS JSON error message from nRF Cloud */
+	if (buf[0] == '{') {
+		enum nrf_cloud_error nrf_err;
+
+		err = nrf_cloud_handle_error_message(buf, NRF_CLOUD_JSON_APPID_VAL_AGPS,
+			NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA, &nrf_err);
+		if (!err) {
+			LOG_ERR("nRF Cloud returned A-GPS error: %d", nrf_err);
+			return -EFAULT;
+		}
+	}
+
 	version = buf[NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION_INDEX];
 	parsed_len += NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION_SIZE;
 

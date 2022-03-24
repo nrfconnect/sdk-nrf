@@ -215,6 +215,25 @@ static int json_add_null_cs(cJSON *parent, const char *const str)
 	return cJSON_AddNullToObjectCS(parent, str) ? 0 : -ENOMEM;
 }
 
+static int get_error_code_value(cJSON *const obj, enum nrf_cloud_error * const err)
+{
+	cJSON *err_obj;
+
+	err_obj = cJSON_GetObjectItem(obj, NRF_CLOUD_JSON_ERR_KEY);
+	if (!err_obj) {
+		return -ENOMSG;
+	}
+
+	if (!cJSON_IsNumber(err_obj)) {
+		LOG_WRN("Invalid JSON data type for error value");
+		return -EBADMSG;
+	}
+
+	*err = (enum nrf_cloud_error)cJSON_GetNumberValue(err_obj);
+
+	return 0;
+}
+
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 static int json_add_str_cs(cJSON *parent, const char *str, const char *item)
 {
@@ -1165,8 +1184,19 @@ int nrf_cloud_parse_pgps_response(const char *const response,
 		}
 	} else if (get_string_from_obj(rsp_obj, NRF_CLOUD_PGPS_RCV_REST_HOST, &host_ptr) ||
 		   get_string_from_obj(rsp_obj, NRF_CLOUD_PGPS_RCV_REST_PATH, &path_ptr)) {
-		LOG_ERR("Invalid P-GPS REST response format");
-		err = -EFTYPE;
+		enum nrf_cloud_error nrf_err;
+
+		/* Check for a potential P-GPS JSON error message from nRF Cloud */
+		err = nrf_cloud_handle_error_message(response, NRF_CLOUD_JSON_APPID_VAL_PGPS,
+						     NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA, &nrf_err);
+		if (!err) {
+			LOG_ERR("nRF Cloud returned P-GPS error: %d", nrf_err);
+			err = -EFAULT;
+		} else {
+			LOG_ERR("Invalid P-GPS response format");
+			err = -EFTYPE;
+		}
+
 		goto cleanup;
 	}
 
@@ -1430,6 +1460,7 @@ static int nrf_cloud_parse_cell_pos_json(const cJSON *const cell_pos_obj,
 	}
 
 	cJSON *lat, *lon, *unc;
+	char *type;
 
 	lat = cJSON_GetObjectItem(cell_pos_obj,
 				  NRF_CLOUD_CELL_POS_JSON_KEY_LAT);
@@ -1437,7 +1468,6 @@ static int nrf_cloud_parse_cell_pos_json(const cJSON *const cell_pos_obj,
 				NRF_CLOUD_CELL_POS_JSON_KEY_LON);
 	unc = cJSON_GetObjectItem(cell_pos_obj,
 				NRF_CLOUD_CELL_POS_JSON_KEY_UNCERT);
-
 
 	if (!cJSON_IsNumber(lat) || !cJSON_IsNumber(lon) ||
 	    !cJSON_IsNumber(unc)) {
@@ -1448,14 +1478,63 @@ static int nrf_cloud_parse_cell_pos_json(const cJSON *const cell_pos_obj,
 	location_out->lon = lon->valuedouble;
 	location_out->unc = (uint32_t)unc->valueint;
 
-	if (json_item_string_exists(cell_pos_obj, NRF_CLOUD_JSON_FULFILL_KEY,
-				    NRF_CLOUD_CELL_POS_TYPE_VAL_MCELL)) {
-		location_out->type = CELL_POS_TYPE_MULTI;
+	location_out->type = CELL_POS_TYPE__INVALID;
+
+	if (!get_string_from_obj(cell_pos_obj, NRF_CLOUD_JSON_FULFILL_KEY, &type)) {
+		if (!strcmp(type, NRF_CLOUD_CELL_POS_TYPE_VAL_MCELL)) {
+			location_out->type = CELL_POS_TYPE_MULTI;
+		} else if (!strcmp(type, NRF_CLOUD_CELL_POS_TYPE_VAL_SCELL)) {
+			location_out->type = CELL_POS_TYPE_SINGLE;
+		} else {
+			LOG_WRN("Unhandled cellular positioning type: %s", log_strdup(type));
+		}
 	} else {
-		location_out->type = CELL_POS_TYPE_SINGLE;
+		LOG_WRN("Cellular positioning type not found in message");
 	}
 
 	return 0;
+}
+
+int nrf_cloud_handle_error_message(const char *const buf,
+				   const char *const app_id,
+				   const char *const msg_type,
+				   enum nrf_cloud_error * const err)
+{
+	if (!buf || !err) {
+		return -EINVAL;
+	}
+
+	int ret;
+	cJSON *root_obj;
+
+	*err = NRF_CLOUD_ERROR_NONE;
+
+	root_obj = cJSON_Parse(buf);
+	if (!root_obj) {
+		LOG_DBG("No JSON found");
+		return -ENOMSG;
+	}
+
+	ret = get_error_code_value(root_obj, err);
+	if (ret) {
+		goto clean_up;
+	}
+
+	/* If provided, check for matching app id and msg type */
+	if (msg_type &&
+	    !json_item_string_exists(root_obj, NRF_CLOUD_JSON_MSG_TYPE_KEY, msg_type)) {
+		ret = -ENOENT;
+		goto clean_up;
+	}
+	if (app_id &&
+	    !json_item_string_exists(root_obj, NRF_CLOUD_JSON_APPID_KEY, app_id)) {
+		ret = -ENOENT;
+		goto clean_up;
+	}
+
+clean_up:
+	cJSON_Delete(root_obj);
+	return ret;
 }
 
 int nrf_cloud_parse_cell_pos_response(const char *const buf,
@@ -1465,7 +1544,7 @@ int nrf_cloud_parse_cell_pos_response(const char *const buf,
 	cJSON *cell_pos_obj;
 	cJSON *data_obj;
 
-	if (buf == NULL) {
+	if ((buf == NULL) || (result == NULL)) {
 		return -EINVAL;
 	}
 
@@ -1483,6 +1562,8 @@ int nrf_cloud_parse_cell_pos_response(const char *const buf,
 		goto cleanup;
 	}
 
+	/* Clear the error flag and check for MQTT payload format */
+	result->err = NRF_CLOUD_ERROR_NONE;
 	ret = 1;
 
 	/* Check for nRF Cloud MQTT message; valid appId and msgType */
@@ -1494,17 +1575,89 @@ int nrf_cloud_parse_cell_pos_response(const char *const buf,
 		goto cleanup;
 	}
 
+	/* MQTT payload format found, parse the data */
 	data_obj = cJSON_GetObjectItem(cell_pos_obj, NRF_CLOUD_JSON_DATA_KEY);
-	if (!data_obj) {
-		LOG_ERR("Expected data not found in cellular positioning message");
-		ret = -EBADMSG;
+	if (data_obj) {
+		ret = nrf_cloud_parse_cell_pos_json(data_obj, result);
+		if (ret) {
+			LOG_ERR("Failed to parse cellular positioning data");
+		}
+		/* A message with "data" should not also contain an error code */
 		goto cleanup;
 	}
 
-	ret = nrf_cloud_parse_cell_pos_json(data_obj, result);
+	/* Check for error code */
+	ret = get_error_code_value(cell_pos_obj, &result->err);
+	if (ret) {
+		/* Indicate that an nRF Cloud error code was found */
+		ret = -EFAULT;
+	} else {
+		/* No data or error was found */
+		LOG_ERR("Expected data not found in cellular positioning message");
+		ret = -EBADMSG;
+	}
 
 cleanup:
 	cJSON_Delete(cell_pos_obj);
+
+	if (ret < 0) {
+		/* Clear data on error */
+		result->lat = 0.0;
+		result->lon = 0.0;
+		result->unc = 0;
+		result->type = CELL_POS_TYPE__INVALID;
+
+		/* Set to unknown error if an error code was not found */
+		if (result->err == NRF_CLOUD_ERROR_NONE) {
+			result->err = NRF_CLOUD_ERROR_UNKNOWN;
+		}
+	}
+
+	return ret;
+}
+
+int nrf_cloud_parse_rest_error(const char *const buf, enum nrf_cloud_error *const err)
+{
+	int ret = -ENOMSG;
+	cJSON *root_obj;
+	cJSON *err_obj;
+	char *msg = NULL;
+
+	if ((buf == NULL) || (err == NULL)) {
+		return -EINVAL;
+	}
+
+	*err = NRF_CLOUD_ERROR_NONE;
+
+	root_obj = cJSON_Parse(buf);
+	if (!root_obj) {
+		LOG_DBG("No JSON found in REST response");
+		return ret;
+	}
+
+	/* Some responses are only an array of strings */
+	if (cJSON_IsArray(root_obj) && (get_string_from_array(root_obj, 0, &msg) == 0)) {
+		goto cleanup;
+	}
+
+	/* Check for a message string. Ignore return, just for debug printing */
+	(void)get_string_from_obj(root_obj, NRF_CLOUD_REST_ERROR_MSG_KEY, &msg);
+
+	/* Get the error code */
+	err_obj = cJSON_GetObjectItem(root_obj, NRF_CLOUD_REST_ERROR_CODE_KEY);
+	if (cJSON_IsNumber(err_obj)) {
+		ret = 0;
+		*err = (enum nrf_cloud_error)cJSON_GetNumberValue(err_obj);
+		LOG_ERR("nRF Cloud REST error code: %d", *err);
+	}
+
+cleanup:
+	if (msg) {
+		LOG_DBG("REST error msg: %s", msg);
+	}
+
+	cJSON_Delete(root_obj);
+
 	return ret;
 }
 
