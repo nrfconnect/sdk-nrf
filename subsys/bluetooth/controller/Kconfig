@@ -204,8 +204,8 @@ endchoice
 
 config BT_CTLR_ECDH_STACK_SIZE
 	int
-	default 800 if BT_CTLR_ECDH_LIB_OBERON
-	default 1024 if BT_CTLR_ECDH_LIB_TINYCRYPT
+	default 900 if BT_CTLR_ECDH_LIB_OBERON
+	default 1200 if BT_CTLR_ECDH_LIB_TINYCRYPT
 	help
 	  Size of the ECDH processing thread stack.
 
