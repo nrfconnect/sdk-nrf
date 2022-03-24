@@ -13,6 +13,8 @@
 #include "mosh_print.h"
 #include "gnss.h"
 
+#define AGPS_CMD_LINE_INJECT_MAX_LENGTH MIN(3500, CONFIG_SHELL_CMD_BUFF_SIZE)
+
 static bool gnss_running;
 
 static int print_help(const struct shell *shell, size_t argc, char **argv)
@@ -522,7 +524,42 @@ static int cmd_gnss_agps(const struct shell *shell, size_t argc, char **argv)
 
 static int cmd_gnss_agps_inject(const struct shell *shell, size_t argc, char **argv)
 {
-	return gnss_inject_agps_data();
+	size_t bin_array_length = 0;
+	int ret = 0;
+
+	if (argc == 1) {
+		/* Fetch assistance data from nRF cloud or from SUPL server and inject */
+		ret = gnss_inject_agps_data();
+	} else if (argc == 2) {
+		/* Assistance data provided as command line argument */
+		if (strlen(argv[1]) <= AGPS_CMD_LINE_INJECT_MAX_LENGTH) {
+			char *buf = k_malloc(sizeof(char) * AGPS_CMD_LINE_INJECT_MAX_LENGTH);
+
+			if (buf == NULL) {
+				mosh_error("Cannot allocate memory for the assistance data");
+				return -ENOMEM;
+			}
+			bin_array_length = hex2bin(argv[1],
+						   strlen(argv[1]),
+						   buf,
+						   AGPS_CMD_LINE_INJECT_MAX_LENGTH);
+
+			if (bin_array_length) {
+				mosh_print("Injecting %d bytes", bin_array_length);
+				ret = nrf_cloud_agps_process(buf, bin_array_length);
+			} else {
+				mosh_error("Assistance data not in valid hexadecimal format");
+				ret = -EINVAL;
+			}
+			k_free(buf);
+		} else {
+			mosh_error("Assistance data length %d exceeds the maximum length of %d",
+				   strlen(argv[1]),
+				   AGPS_CMD_LINE_INJECT_MAX_LENGTH);
+			ret = -EINVAL;
+		}
+	}
+	return ret;
 }
 
 static int cmd_gnss_agps_expiry(const struct shell *shell, size_t argc, char **argv)
@@ -1031,11 +1068,15 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_gnss_agps,
 	SHELL_CMD(automatic, &sub_gnss_agps_automatic,
 		  "Enable/disable automatic fetching of AGPS data.", cmd_gnss_agps_automatic),
-	SHELL_CMD_ARG(inject, NULL, "Fetch and inject AGPS data to GNSS.",
-		      cmd_gnss_agps_inject, 1, 0),
+	SHELL_CMD_ARG(inject, NULL, "[assistance_data]\nFetch and inject AGPS data to GNSS. "
+				    "Assistance data can be provided on command line in "
+				    "hexadecimal format without spaces. If <assistance_data> is "
+				    "left empty, the data is fetched from either nRF cloud or SUPL "
+				    "server.",
+		      cmd_gnss_agps_inject, 1, 1),
 	SHELL_CMD(filter, NULL,
 		  "<ephe> <alm> <utc> <klob> <neq> <time> <pos> <integrity>\nSet filter for "
-		  "allowed AGPS data.\n0 = disabled, 1 = enabled (default all enabled).",
+		  "allowed AGPS data. 0 = disabled, 1 = enabled (default all enabled).",
 		  cmd_gnss_agps_filter),
 	SHELL_CMD(filtephem, &sub_gnss_agps_filtered,
 		  "Enable/disable AGPS filtered ephemerides.", cmd_gnss_agps_filtered),
