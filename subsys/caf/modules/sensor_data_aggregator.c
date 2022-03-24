@@ -21,7 +21,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_SENSOR_MANAGER_LOG_LEVEL);
 #define DT_DRV_COMPAT caf_aggregator
 
 #define __DEFINE_DATA(i, agg_id, size)							\
-	__ALIGNED(4) static uint8_t agg_ ## agg_id ## _buff_ ## i ## _data[size];
+	static uint8_t agg_ ## agg_id ## _buff_ ## i ## _data[size] __aligned(4);
 
 #define __INITIALIZE_BUF(i, agg_id)							\
 	{(uint8_t *) &agg_ ## agg_id ## _buff_ ## i ## _data},
