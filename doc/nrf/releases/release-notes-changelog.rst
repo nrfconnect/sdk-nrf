@@ -145,6 +145,17 @@ Bluetooth samples
     * Increased the main stack size from 1024 to 1536 bytes.
     * Increased the stack size of the nRF RPC threads from 1024 to 1280.
 
+  * :ref:`peripheral_uart` sample:
+
+    * Fixed handling of Rx buffer releasing in this sample and in the UARTE driver.
+      Before this fix, the Rx buffer might have been released twice by the main thread.
+
+  * :ref:`central_uart` sample:
+
+    * Fixed handling of Rx buffer releasing in this sample and in the UARTE driver.
+      Before this fix, the Rx buffer might have been released twice by the main thread.
+    * Added debug logs for the UART events.
+
 nRF9160 samples
 ---------------
 
