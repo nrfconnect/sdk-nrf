@@ -21,13 +21,16 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
  */
 #define CELL_POS_FILTER_STRING "CELL_POS"
 
+#define IMEI_LEN 15
+#define CLOUD_CLIENT_ID_IMEI_PREFIX_LEN (sizeof(CONFIG_CLOUD_CLIENT_ID_IMEI_PREFIX) - 1)
+
 #if !defined(CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM)
-#define NRF_CLOUD_CLIENT_ID_LEN 15
+#define NRF_CLOUD_CLIENT_ID_LEN (IMEI_LEN + CLOUD_CLIENT_ID_IMEI_PREFIX_LEN)
+static char client_id_buf[NRF_CLOUD_CLIENT_ID_LEN + 1] = CONFIG_CLOUD_CLIENT_ID_IMEI_PREFIX;
 #else
 #define NRF_CLOUD_CLIENT_ID_LEN (sizeof(CONFIG_CLOUD_CLIENT_ID) - 1)
-#endif
-
 static char client_id_buf[NRF_CLOUD_CLIENT_ID_LEN + 1];
+#endif
 
 static struct k_work_delayable user_associating_work;
 
@@ -255,10 +258,9 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 	}
 
 	/* Set null character at the end of the device IMEI. */
-	imei_buf[NRF_CLOUD_CLIENT_ID_LEN] = 0;
+	imei_buf[IMEI_LEN] = 0;
 
-	strncpy(client_id_buf, imei_buf, sizeof(client_id_buf) - 1);
-
+	strncat(client_id_buf, imei_buf, IMEI_LEN);
 #else
 	snprintf(client_id_buf, sizeof(client_id_buf), "%s", CONFIG_CLOUD_CLIENT_ID);
 #endif
