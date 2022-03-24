@@ -219,3 +219,13 @@ CAF sensor events
 .. doxygengroup:: caf_sensor_event
    :project: nrf
    :members:
+
+CAF sensor data aggregator events
+=================================
+
+| Header file: :file:`include/caf/events/sensor_data_aggregator_event.h`
+| Source file: :file:`subsys/caf/events/sensor_data_aggregator_event.c`
+
+.. doxygengroup:: caf_sensor_data_aggregator_event
+   :project: nrf
+   :members:

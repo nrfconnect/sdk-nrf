@@ -391,6 +391,13 @@ Other libraries
     The library is no longer directly referenced from the Event Manager.
     Instead, it uses the Event Manager hooks to connect with the manager.
 
+Common Application Framework (CAF)
+----------------------------------
+
+* Added:
+
+  * :ref:`caf_sensor_data_aggregator`, which buffers sensor events and sends them as packages to the listener.
+
 Other libraries
 ---------------
 
