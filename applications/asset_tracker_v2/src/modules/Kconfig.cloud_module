@@ -44,6 +44,15 @@ config CLOUD_THREAD_STACK_SIZE
 	default 4096 if NRF_CLOUD_MQTT || DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT
 	default 2688
 
+config CLOUD_CLIENT_ID_IMEI_PREFIX
+	string	"Cloud client ID IMEI prefix"
+	depends on NRF_CLOUD_MQTT
+	default "nrf-"
+	help
+	  Prefix used when passing in IMEI as the client ID. The default value "nrf-" is
+	  expected when building for offical devices (e.g. nRF9160 DK and Thingy:91).
+	  This only applies when configuring the application for nRF Cloud.
+
 config CLOUD_CLIENT_ID_USE_CUSTOM
 	bool "Use custom cloud client ID"
 	help
