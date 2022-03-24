@@ -320,6 +320,56 @@ To build with multiple overlay files, ``-DOVERLAY_CONFIG`` must be set to a list
    To build with overlays enabled in |SES|, select :guilabel:`Tools` > :guilabel:`Options` > :guilabel:`nRF Connect` and add the CMake variable.
    See :ref:`cmake_options` for more information.
 
+.. _selecting_build_type_atv2:
+
+Selecting a build type
+======================
+
+Before you start testing the application, you can select the build type, depending on your development kit and building method.
+
+Selecting a build type in |VSC|
+-------------------------------
+
+.. include:: /gs_modifying.rst
+   :start-after: build_types_selection_vsc_start
+   :end-before: build_types_selection_vsc_end
+
+Selecting a build type in |SES|
+-------------------------------
+
+To select the build type in |SES|:
+
+1. Go to :guilabel:`File` > :guilabel:`Open nRF Connect SDK project`, select the current project, and specify the board name and build directory.
+#. Select :guilabel:`Extended Settings`.
+#. In the :guilabel:`Extra CMake Build Options` field, specify ``-DCONF_FILE=prj_<buildtype>.conf``, where *<buildtype>* in the file name corresponds to the desired build type.
+   For example, for a build type named ``QEMU_x86``, set the following value: ``-DCONF_FILE=prj_qemu_x86.conf``.
+#. Do not select :guilabel:`Clean Build Directory`.
+#. Click :guilabel:`OK` to re-open the project.
+
+.. note::
+   You can also specify the build type in the :guilabel:`Additional CMake Options` field in :guilabel:`Tools` > :guilabel:`Options` > :guilabel:`nRF Connect`.
+   However, the changes will only be applied after re-opening the project.
+   Reloading the project is not sufficient.
+
+Selecting a build type from command line
+----------------------------------------
+
+To select the build type when building the application from command line, specify the build type by adding the following parameter to the ``west build`` command:
+
+.. parsed-literal::
+   :class: highlight
+
+   -- -DCONF_FILE=prj_\ *selected_build_type*\.conf
+
+For example, you can replace the *selected_build_type* variable to build the ``QEMU`` firmware for ``nrf9160dk_nrf9160`` by running the following command in the project directory:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b nrf9160dk_nrf9160 -d build_nrf9160dk_nrf9160 -- -DCONF_FILE=prj_qemu_x86.conf
+
+The ``build_nrf9160dk_nrf9160`` parameter specifies the output directory for the build files.
+
 Testing
 =======
 
