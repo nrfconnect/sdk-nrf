@@ -464,6 +464,12 @@ int cloud_codec_decode_config(char *input, size_t input_len,
 		return -ENOENT;
 	}
 
+	/* Check for an nRF Cloud message */
+	if ((json_object_decode(root_obj, DATA_GROUP) != NULL) ||
+	    (json_object_decode(root_obj, DATA_ID) != NULL)) {
+		return -ENOENT;
+	}
+
 	if (has_shadow_update_been_handled(root_obj)) {
 		err = -ECANCELED;
 		goto exit;

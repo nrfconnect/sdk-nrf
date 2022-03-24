@@ -254,6 +254,13 @@ static int do_rest_client_request(struct nrf_cloud_rest_context *const rest_ctx,
 
 	sync_rest_client_data(rest_ctx, req, resp);
 
+	/* Check for an nRF Cloud specific error code */
+	rest_ctx->nrf_err = NRF_CLOUD_ERROR_NONE;
+	if ((ret == 0) && (rest_ctx->status >= NRF_CLOUD_HTTP_STATUS__ERROR_BEGIN) &&
+	    rest_ctx->response && rest_ctx->response_len) {
+		(void)nrf_cloud_parse_rest_error(rest_ctx->response, &rest_ctx->nrf_err);
+	}
+
 	if (ret) {
 		LOG_DBG("REST client request failed with error code %d", ret);
 		return ret;
@@ -633,6 +640,11 @@ clean_up:
 	}
 	if (payload) {
 		cJSON_free(payload);
+	}
+
+	if (result) {
+		/* Add the nRF Cloud error to the cell pos response */
+		result->err = rest_ctx->nrf_err;
 	}
 
 	close_connection(rest_ctx);

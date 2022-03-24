@@ -13,7 +13,7 @@
 
 #include <zephyr.h>
 #include <modem/lte_lc.h>
-#include <cJSON.h>
+#include <net/nrf_cloud.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,7 +26,9 @@ extern "C" {
 /** @brief Cellular positioning request type */
 enum nrf_cloud_cell_pos_type {
 	CELL_POS_TYPE_SINGLE,
-	CELL_POS_TYPE_MULTI
+	CELL_POS_TYPE_MULTI,
+
+	CELL_POS_TYPE__INVALID
 };
 
 /** @brief Cellular positioning request result */
@@ -35,6 +37,8 @@ struct nrf_cloud_cell_pos_result {
 	double lat;
 	double lon;
 	uint32_t unc;
+	/* Error value received from nRF Cloud */
+	enum nrf_cloud_error err;
 };
 
 /** @defgroup nrf_cloud_cell_pos_omit Omit item from cellular positioning request.
@@ -89,7 +93,7 @@ int nrf_cloud_cell_pos_request(const struct lte_lc_cells_info * const cells_inf,
  * @param req_obj_out Pointer used to get the reference to the generated cJSON object.
  *
  * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_cell_pos_request_json_get(const struct lte_lc_cells_info *const cells_inf,
 					const bool request_loc, cJSON **req_obj_out);
@@ -100,8 +104,10 @@ int nrf_cloud_cell_pos_request_json_get(const struct lte_lc_cells_info *const ce
  * @param result Pointer to buffer for parsing result.
  *
  * @retval 0 If processed successfully and cell-based location found.
- * @retval 1 If processed successfully but no cell-based location found.
- *         Otherwise, a (negative) error code is returned.
+ * @retval 1 If processed successfully but no cell-based location data found. This
+ *           indicates that the data is not a cell-based location response.
+ * @retval -EFAULT An nRF Cloud error code was processed.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_cell_pos_process(const char *buf, struct nrf_cloud_cell_pos_result *result);
 

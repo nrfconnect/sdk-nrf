@@ -46,7 +46,9 @@ int nrf_cloud_agps_request_all(void);
  * @param buf Pointer to data received from nRF Cloud.
  * @param buf_len Buffer size of data to be processed.
  *
- * @return 0 if successful, otherwise a (negative) error code.
+ * @retval 0 A-GPS data successfully processed.
+ * @retval -EFAULT An nRF Cloud A-GPS error code was processed.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_agps_process(const char *buf, size_t buf_len);
 

@@ -335,6 +335,7 @@ Libraries for networking
       * Centralized error handling.
       * Changes to error return values.
       * For cellular positioning responses, the type is now set based on the ``fulfilledWith`` response from the nRF Cloud.
+      * nRF Cloud error codes are now parsed and set in the :c:struct:`nrf_cloud_rest_context` structure.
 
   * :ref:`lib_download_client` library:
 
@@ -352,11 +353,13 @@ Libraries for networking
 
       * :c:func:`nrf_cloud_bootloader_fota_slot_set` function that sets the active bootloader slot flag during bootloader FOTA updates.
       * :c:func:`nrf_cloud_pending_fota_job_process` function that processes the state of pending FOTA jobs.
+      * :c:func:`nrf_cloud_handle_error_message` function that handles error message responses (MQTT) from nRF Cloud.
 
     * Updated:
 
       * During the connection process, shadow data is sent to the application even if no "config" section is present.
       * The application can now send shadow updates earlier in the connection process.
+      * nRF Cloud error message responses to location service MQTT requests are now handled.
 
     * Fixed:
 

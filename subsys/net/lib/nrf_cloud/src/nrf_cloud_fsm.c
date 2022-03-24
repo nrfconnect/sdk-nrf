@@ -511,10 +511,9 @@ static int cell_pos_cb_send(const char *const rx_buf)
 		int ret = nrf_cloud_cell_pos_process(rx_buf, &res);
 
 		if (ret <= 0) {
-			if (ret == 0) {
-				/* Successfully parsed, send to callback */
-				cell_pos_cb(&res);
-			}
+			/* A cell-pos response was received, send to callback */
+			cell_pos_cb(&res);
+
 			/* Clear the callback after use */
 			nfsm_set_cell_pos_response_cb(NULL);
 			return 0;

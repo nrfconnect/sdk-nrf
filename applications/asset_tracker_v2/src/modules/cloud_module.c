@@ -260,6 +260,10 @@ static void agps_data_handle(const uint8_t *buf, size_t len)
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 	err = nrf_cloud_agps_process(buf, len);
 	if (err) {
+		if (err == -EFAULT) {
+			/* An A-GPS error code from nRF Cloud was received */
+			return;
+		}
 		LOG_WRN("Unable to process A-GPS data, error: %d", err);
 	} else {
 		LOG_DBG("A-GPS data processed");
@@ -282,6 +286,10 @@ static void agps_data_handle(const uint8_t *buf, size_t len)
 
 	err = nrf_cloud_pgps_process(buf, len);
 	if (err) {
+		if (err == -EFAULT) {
+			/* A P-GPS error code from nRF Cloud was received */
+			return;
+		}
 		LOG_ERR("Unable to process P-GPS data, error: %d", err);
 	}
 #endif

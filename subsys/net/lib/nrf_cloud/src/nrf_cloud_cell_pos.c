@@ -98,7 +98,10 @@ int nrf_cloud_cell_pos_process(const char *buf, struct nrf_cloud_cell_pos_result
 	}
 
 	err = nrf_cloud_parse_cell_pos_response(buf, result);
-	if (err < 0) {
+	if (err == -EFAULT) {
+		LOG_ERR("nRF Cloud cell-based location error: %d",
+			result->err);
+	} else if (err < 0) {
 		LOG_ERR("Error processing cell-based location: %d", err);
 	}
 
