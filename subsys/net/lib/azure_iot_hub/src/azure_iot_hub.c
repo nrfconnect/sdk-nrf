@@ -33,8 +33,15 @@ LOG_MODULE_REGISTER(azure_iot_hub, CONFIG_AZURE_IOT_HUB_LOG_LEVEL);
  */
 #define USER_NAME_TEMPLATE	"%s/%s/?api-version=2020-09-30"
 
+// EDITED TO ALLOW RUNTIME SETTING FROM APPLICATION
+/* BEGIN ORIGINAL
 #define DPS_USER_NAME		CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE \
 				"/registrations/%s/api-version=2019-03-31"
+END ORIGINAL */
+/* BEGIN INSERT */
+uint8_t azure_provisioning_idscope[32] = CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE;
+#define DPS_USER_NAME		"%s/registrations/%s/api-version=2019-03-31"
+/* END INSERT */
 
 /* Topics for data publishing */
 #define TOPIC_TWIN_REPORT	"$iothub/twin/PATCH/properties/reported/?$rid=%d"
@@ -866,9 +873,17 @@ static int client_broker_init(struct mqtt_client *const client, bool dps)
 			.utf8 = dps_user_name_buf,
 		};
 
+		// EDITED TO ALLOW RUNTIME SETTING FROM APPLICATION
+		/* BEGIN ORIGINAL
 		len = snprintk(dps_user_name_buf,
 			       sizeof(dps_user_name_buf),
 			       DPS_USER_NAME, conn_config.device_id);
+		END ORIGINAL */
+		/* BEGIN INSERT */
+		len = snprintk(dps_user_name_buf,
+			       sizeof(dps_user_name_buf),
+			       DPS_USER_NAME, azure_provisioning_idscope, conn_config.device_id);
+		/* END INSERT */
 		if ((len < 0) || len > sizeof(dps_user_name_buf)) {
 			LOG_ERR("Failed to set DPS user name");
 			return -EFAULT;
