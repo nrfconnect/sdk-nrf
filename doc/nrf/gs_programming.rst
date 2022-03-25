@@ -23,10 +23,12 @@ Building with the VS Code extension
 
 |vsc_extension_instructions|
 
+For instructions specifically for building, see `Building an application`_.
+
 .. _gs_programming_ses:
 
-Building with SES
-*****************
+Building with |SES|
+*******************
 
 .. build_SES_projimport_open_start
 
