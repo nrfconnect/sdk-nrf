@@ -625,8 +625,6 @@ int nrf_cloud_rest_cell_pos_get(struct nrf_cloud_rest_context *const rest_ctx,
 			}
 			goto clean_up;
 		}
-		result->type = request->net_info->ncells_count ?
-			       CELL_POS_TYPE_MULTI : CELL_POS_TYPE_SINGLE;
 	}
 
 clean_up:
