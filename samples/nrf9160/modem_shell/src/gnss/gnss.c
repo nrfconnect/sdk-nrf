@@ -991,6 +991,10 @@ int gnss_delete_data(enum gnss_data_delete data)
 			      NRF_MODEM_GNSS_DELETE_UTC_DATA;
 		break;
 
+	case GNSS_DATA_DELETE_TCXO:
+		delete_mask = NRF_MODEM_GNSS_DELETE_TCXO_OFFSET;
+		break;
+
 	default:
 		mosh_error("GNSS: Invalid erase data value");
 		return -1;
