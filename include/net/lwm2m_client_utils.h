@@ -32,7 +32,16 @@ extern "C" {
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT)
 /**
- * @brief Initialize Security object
+ * @brief Initialize Security object support for nrf91
+ *
+ * This wrapper will install hooks that allows device to do a
+ * proper bootstrap and store received server settings to permanent
+ * storage using Zephyr settings API. Credential are stored to
+ * modem and no keys would enter the flash.
+ *
+ * @note This API calls settings_subsys_init() so should
+ *       only be called after the settings backend (Flash or FS)
+ *       is ready.
  */
 int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint);
 

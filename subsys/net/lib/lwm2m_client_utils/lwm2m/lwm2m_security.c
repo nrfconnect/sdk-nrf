@@ -8,6 +8,7 @@
 #include <net/lwm2m.h>
 #include <net/lwm2m_client_utils.h>
 #include <lwm2m_engine.h>
+#include <lwm2m_util.h>
 #include <modem/modem_key_mgmt.h>
 #include <modem/lte_lc.h>
 #include <settings/settings.h>
@@ -17,6 +18,7 @@ LOG_MODULE_REGISTER(lwm2m_security, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
 /* LWM2M_OBJECT_SECURITY_ID */
 #define SECURITY_SERVER_URI_ID 0
+#define SECURITY_BOOTSTRAP_FLAG_ID 1
 #define SECURITY_MODE_ID 2
 #define SECURITY_CLIENT_PK_ID 3
 #define SECURITY_SERVER_PK_ID 4
@@ -30,11 +32,9 @@ LOG_MODULE_REGISTER(lwm2m_security, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 #define SETTINGS_PREFIX "lwm2m:sec"
 
 static bool have_permanently_stored_keys;
-static bool loading_in_progress = true;
+static int bootstrap_settings_loaded_inst = -1;
 
-static int write_to_settings(int obj, int inst, int res, uint8_t *data, uint16_t data_len);
-
-static int write_credential_type(struct lwm2m_ctx *ctx, int res_id,
+static int write_credential_type(int sec_obj_inst, int sec_tag, int res_id,
 				 enum modem_key_mgmt_cred_type type)
 {
 	int ret;
@@ -44,7 +44,7 @@ static int write_credential_type(struct lwm2m_ctx *ctx, int res_id,
 	char pathstr[sizeof("0/0/0")];
 	char psk_hex[65];
 
-	snprintk(pathstr, sizeof(pathstr), "0/%d/%d", ctx->sec_obj_inst, res_id);
+	snprintk(pathstr, sizeof(pathstr), "0/%d/%d", sec_obj_inst, res_id);
 	ret = lwm2m_engine_get_res_data(pathstr, &cred, &cred_len, &cred_flags);
 	if (ret < 0) {
 		LOG_ERR("Unable to get resource data for '%s'", log_strdup(pathstr));
@@ -61,16 +61,16 @@ static int write_credential_type(struct lwm2m_ctx *ctx, int res_id,
 		cred = psk_hex;
 	}
 
-	ret = modem_key_mgmt_write(ctx->tls_tag, type, cred, cred_len);
+	ret = modem_key_mgmt_write(sec_tag, type, cred, cred_len);
 	if (ret < 0) {
 		LOG_ERR("Unable to write credentials to modem (%d)", ret);
 		return ret;
 	}
-	LOG_DBG("Written sec_tag %d, type %d", ctx->tls_tag, type);
+	LOG_DBG("Written sec_tag %d, type %d", sec_tag, type);
 	return 0;
 }
 
-static bool sec_obj_has_credentials(struct lwm2m_ctx *ctx)
+static bool sec_obj_has_credentials(int sec_obj_inst)
 {
 	int ret;
 	void *cred = NULL;
@@ -78,7 +78,7 @@ static bool sec_obj_has_credentials(struct lwm2m_ctx *ctx)
 	uint8_t cred_flags;
 	char pathstr[sizeof("0/0/0")];
 
-	snprintk(pathstr, sizeof(pathstr), "0/%d/%d", ctx->sec_obj_inst, SECURITY_SECRET_KEY_ID);
+	snprintk(pathstr, sizeof(pathstr), "0/%d/%d", sec_obj_inst, SECURITY_SECRET_KEY_ID);
 	ret = lwm2m_engine_get_res_data(pathstr, &cred, &cred_len, &cred_flags);
 	if (ret < 0) {
 		LOG_ERR("Unable to get resource data for '%s'", log_strdup(pathstr));
@@ -107,11 +107,11 @@ static int load_credentials_to_modem(struct lwm2m_ctx *ctx)
 		return ret;
 	}
 
-	has_credentials = sec_obj_has_credentials(ctx);
+	has_credentials = sec_obj_has_credentials(ctx->sec_obj_inst);
 
 	/* If we have credentials already in modem, and we have loaded settings from the flash
 	 * assume that the ones in modem are correct.
-	 * Never overwrite bootstrap keys.
+	 * Don't overwrite bootstrap keys with hardcoded keys.
 	 */
 	if (exist &&
 	    (have_permanently_stored_keys ||
@@ -135,24 +135,47 @@ static int load_credentials_to_modem(struct lwm2m_ctx *ctx)
 		lte_lc_offline();
 	}
 
-	ret = write_credential_type(ctx, SECURITY_CLIENT_PK_ID, MODEM_KEY_MGMT_CRED_TYPE_IDENTITY);
+	ret = write_credential_type(ctx->sec_obj_inst, ctx->tls_tag, SECURITY_CLIENT_PK_ID,
+				    MODEM_KEY_MGMT_CRED_TYPE_IDENTITY);
 	if (ret) {
 		goto out;
 	}
 
-	ret = write_credential_type(ctx, SECURITY_SECRET_KEY_ID, MODEM_KEY_MGMT_CRED_TYPE_PSK);
+	ret = write_credential_type(ctx->sec_obj_inst, ctx->tls_tag, SECURITY_SECRET_KEY_ID,
+				    MODEM_KEY_MGMT_CRED_TYPE_PSK);
 	if (ret) {
 		goto out;
+	}
+
+	/* Do I need to update bootstrap keys as well?
+	 * These keys should only be updated when server keys are updated as well,
+	 * so this is after the bootstrap has finished.
+	 */
+	if (bootstrap_settings_loaded_inst != -1 &&
+	    sec_obj_has_credentials(bootstrap_settings_loaded_inst)) {
+		ret = write_credential_type(bootstrap_settings_loaded_inst,
+					    CONFIG_LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG,
+					    SECURITY_CLIENT_PK_ID,
+					    MODEM_KEY_MGMT_CRED_TYPE_IDENTITY);
+		if (ret) {
+			goto out;
+		}
+
+		ret = write_credential_type(bootstrap_settings_loaded_inst,
+					    CONFIG_LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG,
+					    SECURITY_SECRET_KEY_ID, MODEM_KEY_MGMT_CRED_TYPE_PSK);
+		if (ret) {
+			goto out;
+		}
+
+		/* Prevent rewriting the same key on next reconnect or next boostrap */
+		bootstrap_settings_loaded_inst = -1;
 	}
 
 	/* Mark that we have now written those keys, so
 	 * reconnection or rebooting does not cause another rewrite
 	 */
 	if (!have_permanently_stored_keys) {
-		uint8_t mode = 0; /* Hard coded to PSK */
-
-		write_to_settings(LWM2M_OBJECT_SECURITY_ID, ctx->sec_obj_inst, SECURITY_MODE_ID,
-				  &mode, sizeof(mode));
 		have_permanently_stored_keys = true;
 	}
 
@@ -171,6 +194,10 @@ out:
 
 	return ret;
 }
+
+#if defined(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP)
+
+static bool loading_in_progress = true;
 
 static bool object_instance_exist(int obj, int inst)
 {
@@ -194,6 +221,8 @@ static int set(const char *key, size_t len_rd, settings_read_cb read_cb, void *c
 	uint16_t len;
 	void *buf;
 	uint8_t flags;
+	struct lwm2m_obj_path path;
+	int ret;
 
 	if (!key) {
 		return -ENOENT;
@@ -201,17 +230,20 @@ static int set(const char *key, size_t len_rd, settings_read_cb read_cb, void *c
 
 	LOG_DBG("Loading \"%s\"", log_strdup(key));
 
-	int obj = key[0] - '0';
-	int inst = key[2] - '0';
+	ret = lwm2m_string_to_path(key, &path, '/');
+	if (ret) {
+		return ret;
+	}
 
 	/* Create object instance, if it does not exist */
-	if (!object_instance_exist(obj, inst)) {
-		int ret;
-		char o_path[] = "0/0";
+	if (!object_instance_exist(path.obj_id, path.obj_inst_id)) {
+		char o_path[LWM2M_MAX_PATH_STR_LEN];
 
-		/* I only need object number (1 char), and resource (1 char) */
-		o_path[0] = key[0];
-		o_path[2] = key[2];
+		ret = lwm2m_path_to_string(o_path, sizeof(o_path), &path,
+					   LWM2M_PATH_LEVEL_OBJECT_INST);
+		if (ret < 0) {
+			return -EIO;
+		}
 		ret = lwm2m_engine_create_obj_inst(o_path);
 		if (ret) {
 			LOG_ERR("Failed to create object instance %s", log_strdup(o_path));
@@ -228,6 +260,15 @@ static int set(const char *key, size_t len_rd, settings_read_cb read_cb, void *c
 	if (len <= 0) {
 		LOG_ERR("Failed to read data");
 		return -ENOENT;
+	}
+
+	if (path.obj_id == LWM2M_OBJECT_SECURITY_ID && path.res_id == SECURITY_BOOTSTRAP_FLAG_ID) {
+		bool is_bootstrap;
+
+		lwm2m_engine_get_bool(key, &is_bootstrap);
+		if (is_bootstrap) {
+			bootstrap_settings_loaded_inst = path.obj_inst_id;
+		}
 	}
 
 	/* TODO: check that all has been loaded */
@@ -253,8 +294,6 @@ static int write_to_settings(int obj, int inst, int res, uint8_t *data, uint16_t
 	return 0;
 }
 
-#if defined(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP)
-
 static void delete_from_storage(int obj, int inst, int res)
 {
 	char path[sizeof(SETTINGS_PREFIX "/0/0/0")];
@@ -269,8 +308,15 @@ static void delete_from_storage(int obj, int inst, int res)
 static int write_cb_sec(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, uint8_t *data,
 			uint16_t data_len, bool last_block, size_t total_size)
 {
+	/* We need to know which instance have new Boostrap keys */
+	if (res_id == SECURITY_BOOTSTRAP_FLAG_ID) {
+		if (*((bool *)data) == true) {
+			bootstrap_settings_loaded_inst = obj_inst_id;
+		}
+	}
 	return write_to_settings(LWM2M_OBJECT_SECURITY_ID, obj_inst_id, res_id, data, data_len);
 }
+
 static int write_cb_srv(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, uint8_t *data,
 			uint16_t data_len, bool last_block, size_t total_size)
 {
@@ -310,14 +356,15 @@ static int server_created(uint16_t id)
 
 static int security_deleted(uint16_t id)
 {
-	delete_from_storage(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SERVER_URI_ID);
-	delete_from_storage(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_MODE_ID);
-	delete_from_storage(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_CLIENT_PK_ID);
-	delete_from_storage(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SERVER_PK_ID);
-	delete_from_storage(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SECRET_KEY_ID);
-	delete_from_storage(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SHORT_SERVER_ID);
-
-	have_permanently_stored_keys = false;
+	if (!loading_in_progress) {
+		delete_from_storage(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SERVER_URI_ID);
+		delete_from_storage(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_BOOTSTRAP_FLAG_ID);
+		delete_from_storage(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_MODE_ID);
+		delete_from_storage(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_CLIENT_PK_ID);
+		delete_from_storage(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SERVER_PK_ID);
+		delete_from_storage(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SHORT_SERVER_ID);
+		have_permanently_stored_keys = false;
+	}
 	return 0;
 }
 
@@ -325,12 +372,19 @@ static int security_created(uint16_t id)
 {
 	if (!loading_in_progress) {
 		register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SERVER_URI_ID);
+		register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_BOOTSTRAP_FLAG_ID);
 		register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_MODE_ID);
 		register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_CLIENT_PK_ID);
 		register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SERVER_PK_ID);
-		register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SECRET_KEY_ID);
 		register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SHORT_SERVER_ID);
 	}
+
+	/* Empty the PSK key as data length of uninitialized opaque resources is not zero */
+	char path[sizeof("/0/0/10")];
+
+	snprintk(path, sizeof(path), "%d/%d/%d", LWM2M_OBJECT_SECURITY_ID, id,
+		 SECURITY_SECRET_KEY_ID);
+	lwm2m_engine_set_opaque(path, NULL, 0);
 	return 0;
 }
 
@@ -365,16 +419,68 @@ bool lwm2m_security_needs_bootstrap(void)
 #endif /* CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP */
 #endif /* CONFIG_LWM2M_DTLS_SUPPORT */
 
-int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint)
+static int init_default_security_obj(struct lwm2m_ctx *ctx, char *endpoint)
 {
 	int ret;
 	char *server_url;
 	uint16_t server_url_len;
 	uint8_t server_url_flags;
 
+	/* Server URL */
+	ret = lwm2m_engine_get_res_data(LWM2M_PATH(LWM2M_OBJECT_SECURITY_ID, 0,
+						   SECURITY_SERVER_URI_ID),
+					(void **)&server_url, &server_url_len, &server_url_flags);
+	if (ret < 0) {
+		return ret;
+	}
+
+	snprintk(server_url, server_url_len, "%s", CONFIG_LWM2M_CLIENT_UTILS_SERVER);
+
+	/* Security Mode */
+	lwm2m_engine_set_u8(LWM2M_PATH(LWM2M_OBJECT_SECURITY_ID, 0, SECURITY_MODE_ID),
+			    IS_ENABLED(CONFIG_LWM2M_DTLS_SUPPORT) ? 0 : 3);
+#if defined(CONFIG_LWM2M_DTLS_SUPPORT)
+	/* Empty the PSK key as data length of uninitialized opaque resources is not zero */
+	lwm2m_engine_set_opaque(LWM2M_PATH(LWM2M_OBJECT_SECURITY_ID, 0, SECURITY_SECRET_KEY_ID),
+				NULL, 0);
+	lwm2m_engine_set_string(LWM2M_PATH(LWM2M_OBJECT_SECURITY_ID, 0, SECURITY_CLIENT_PK_ID),
+				endpoint);
+#endif /* CONFIG_LWM2M_DTLS_SUPPORT */
+
+#if defined(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP)
+	/* Mark 1st instance of security object as a bootstrap server */
+	lwm2m_engine_set_u8("0/0/1", 1);
+#else
+	/* Security and Server object need matching Short Server ID value. */
+	lwm2m_engine_set_u16("0/0/10", 101);
+	lwm2m_engine_set_u16("1/0/0", 101);
+#endif
+	return 0;
+}
+
+int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint)
+{
 	have_permanently_stored_keys = false;
 
-	ret = settings_subsys_init();
+#if defined(CONFIG_LWM2M_DTLS_SUPPORT)
+	ctx->tls_tag = IS_ENABLED(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP) ?
+			       CONFIG_LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG :
+				     CONFIG_LWM2M_CLIENT_UTILS_SERVER_TLS_TAG;
+	ctx->load_credentials = load_credentials_to_modem;
+
+#endif /* CONFIG_LWM2M_DTLS_SUPPORT */
+
+#if defined(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP)
+	/* Bootsrap server might delete or create our security&server object,
+	 * so I need to be aware of those.
+	 */
+	lwm2m_engine_register_create_callback(LWM2M_OBJECT_SECURITY_ID, security_created);
+	lwm2m_engine_register_delete_callback(LWM2M_OBJECT_SECURITY_ID, security_deleted);
+	lwm2m_engine_register_create_callback(LWM2M_OBJECT_SERVER_ID, server_created);
+	lwm2m_engine_register_delete_callback(LWM2M_OBJECT_SERVER_ID, server_deleted);
+
+	int ret = settings_subsys_init();
+
 	if (ret) {
 		LOG_ERR("Failed to initialize settings subsystem, %d", ret);
 		return ret;
@@ -392,52 +498,15 @@ int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint)
 		return ret;
 	}
 
-	/* setup SECURITY object */
-
-	/* Server URL */
-	ret = lwm2m_engine_get_res_data(
-		LWM2M_PATH(LWM2M_OBJECT_SECURITY_ID, 0, SECURITY_SERVER_URI_ID),
-		(void **)&server_url, &server_url_len, &server_url_flags);
-	if (ret < 0) {
-		return ret;
+	if (have_permanently_stored_keys && bootstrap_settings_loaded_inst > 0) {
+		/* I don't need the default security instance 0 anymore */
+		loading_in_progress = true;
+		lwm2m_engine_delete_obj_inst("0/0");
+		loading_in_progress = false;
+		return 0;
 	}
 
-	snprintk(server_url, server_url_len, "%s", CONFIG_LWM2M_CLIENT_UTILS_SERVER);
+#endif /* CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP */
 
-	/* Security Mode */
-	lwm2m_engine_set_u8(LWM2M_PATH(LWM2M_OBJECT_SECURITY_ID, 0, SECURITY_MODE_ID),
-			    IS_ENABLED(CONFIG_LWM2M_DTLS_SUPPORT) ? 0 : 3);
-	/* Empty the PSK key as data length of uninitialized opaque resources is not zero */
-	lwm2m_engine_set_opaque(LWM2M_PATH(LWM2M_OBJECT_SECURITY_ID, 0, SECURITY_SECRET_KEY_ID),
-				NULL, 0);
-#if defined(CONFIG_LWM2M_DTLS_SUPPORT)
-	ctx->tls_tag = IS_ENABLED(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP) ?
-				  CONFIG_LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG :
-				  CONFIG_LWM2M_CLIENT_UTILS_SERVER_TLS_TAG;
-	ctx->load_credentials = load_credentials_to_modem;
-
-	lwm2m_engine_set_string(LWM2M_PATH(LWM2M_OBJECT_SECURITY_ID, 0, SECURITY_CLIENT_PK_ID),
-				endpoint);
-#endif /* CONFIG_LWM2M_DTLS_SUPPORT */
-
-#if defined(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP)
-	/* Mark 1st instance of security object as a bootstrap server */
-	lwm2m_engine_set_u8("0/0/1", 1);
-
-#if defined(CONFIG_LWM2M_DTLS_SUPPORT)
-	/* Bootsrap server might delete or create our security&server object,
-	 * so I need to be aware of those.
-	 */
-	lwm2m_engine_register_create_callback(LWM2M_OBJECT_SECURITY_ID, security_created);
-	lwm2m_engine_register_delete_callback(LWM2M_OBJECT_SECURITY_ID, security_deleted);
-	lwm2m_engine_register_create_callback(LWM2M_OBJECT_SERVER_ID, server_created);
-	lwm2m_engine_register_delete_callback(LWM2M_OBJECT_SERVER_ID, server_deleted);
-#endif
-#else
-	/* Security and Server object need matching Short Server ID value. */
-	lwm2m_engine_set_u16("0/0/10", 101);
-	lwm2m_engine_set_u16("1/0/0", 101);
-#endif
-
-	return ret;
+	return init_default_security_obj(ctx, endpoint);
 }
