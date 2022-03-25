@@ -1,0 +1,249 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <device.h>
+#include <sys/byteorder.h>
+#include <bluetooth/conn.h>
+
+#include <logging/log.h>
+LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
+
+#include "fp_registration_data.h"
+#include "fp_keys.h"
+#include "fp_crypto.h"
+#include "fp_common.h"
+
+#define EMPTY_AES_KEY_BYTE	0xff
+#define FP_ACCOUNT_KEY_PREFIX	0x04
+
+#define FP_KEY_TIMEOUT				K_SECONDS(10)
+#define FP_KEY_GEN_FAILURE_MAX_CNT		10
+#define FP_KEY_GEN_FAILURE_CNT_RESET_TIMEOUT	K_MINUTES(5)
+
+enum fp_state {
+	FP_STATE_INITIAL,
+	FP_STATE_USE_TEMP_KEY,
+	FP_STATE_WAIT_FOR_ACCOUNT_KEY,
+	FP_STATE_USE_ACCOUNT_KEY,
+};
+
+struct fp_procedure {
+	struct k_work_delayable timeout;
+	enum fp_state state;
+	uint8_t key_gen_failure_cnt;
+	uint8_t aes_key[FP_ACCOUNT_KEY_LEN];
+};
+
+static struct fp_procedure fp_procedures[CONFIG_BT_MAX_CONN];
+
+
+static void invalidate_key(struct fp_procedure *proc)
+{
+	if (proc->state != FP_STATE_INITIAL) {
+		proc->state = FP_STATE_INITIAL;
+		memset(proc->aes_key, EMPTY_AES_KEY_BYTE, sizeof(proc->aes_key));
+		k_work_cancel_delayable(&proc->timeout);
+	}
+}
+
+static void disconnected(struct bt_conn *conn, uint8_t reason)
+{
+	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
+
+	invalidate_key(proc);
+	proc->key_gen_failure_cnt = 0;
+}
+
+BT_CONN_CB_DEFINE(conn_callbacks) = {
+	.disconnected = disconnected,
+};
+
+int fp_keys_encrypt(struct bt_conn *conn, uint8_t *out, const uint8_t *in)
+{
+	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
+	int err = 0;
+
+	switch (proc->state) {
+	case FP_STATE_USE_TEMP_KEY:
+	case FP_STATE_USE_ACCOUNT_KEY:
+	case FP_STATE_WAIT_FOR_ACCOUNT_KEY:
+		break;
+
+	case FP_STATE_INITIAL:
+	default:
+		err = -EACCES;
+		break;
+	}
+
+	if (!err) {
+		err = fp_aes128_encrypt(out, in, proc->aes_key);
+	}
+
+	return err;
+}
+
+int fp_keys_decrypt(struct bt_conn *conn, uint8_t *out, const uint8_t *in)
+{
+	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
+	int err = 0;
+
+	switch (proc->state) {
+	case FP_STATE_USE_TEMP_KEY:
+	case FP_STATE_USE_ACCOUNT_KEY:
+	case FP_STATE_WAIT_FOR_ACCOUNT_KEY:
+		break;
+
+	case FP_STATE_INITIAL:
+	default:
+		err = -EACCES;
+		break;
+	}
+
+	if (!err) {
+		err = fp_aes128_decrypt(out, in, proc->aes_key);
+	}
+
+	return err;
+}
+
+int fp_keys_generate_key(struct bt_conn *conn, struct fp_keys_keygen_params *keygen_params)
+{
+	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
+	int err = 0;
+	uint8_t req[FP_AES128_BLOCK_LEN];
+
+	if (proc->key_gen_failure_cnt >= FP_KEY_GEN_FAILURE_MAX_CNT) {
+		return -EACCES;
+	}
+
+	if (proc->state != FP_STATE_INITIAL) {
+		LOG_WRN("Invalid state during key generation");
+		return -EACCES;
+	}
+
+	if (keygen_params->public_key) {
+		uint8_t priv_key[FP_ANTI_SPOOFING_PRIV_KEY_LEN];
+		uint8_t ecdh_secret[FP_ECDH_SHARED_KEY_LEN];
+
+		err = fp_get_anti_spoofing_priv_key(priv_key, sizeof(priv_key));
+
+		if (!err) {
+			err = fp_ecdh_shared_secret(keygen_params->public_key, priv_key,
+						    ecdh_secret);
+		}
+
+		if (!err) {
+			err = fp_aes_key_compute(proc->aes_key, ecdh_secret);
+		}
+
+		if (!err) {
+			/* Update state to ensure that key could be used for decryption. */
+			proc->state = FP_STATE_USE_TEMP_KEY;
+
+			err = fp_keys_decrypt(conn, req, keygen_params->req_enc);
+		}
+
+		if (!err) {
+			err = keygen_params->req_validate_cb(conn, req, keygen_params->context);
+		}
+
+		if (!err) {
+			k_work_reschedule(&proc->timeout, FP_KEY_TIMEOUT);
+		} else {
+			invalidate_key(proc);
+		}
+	} else {
+		/* Generating keys based on Account Keys is not yet supported. */
+		err = -ENOTSUP;
+	}
+
+	if (err) {
+		proc->key_gen_failure_cnt++;
+		if (proc->key_gen_failure_cnt >= FP_KEY_GEN_FAILURE_MAX_CNT) {
+			LOG_WRN("Key generation failure limit exceeded");
+			k_work_reschedule(&proc->timeout, FP_KEY_GEN_FAILURE_CNT_RESET_TIMEOUT);
+		}
+	} else {
+		proc->key_gen_failure_cnt = 0;
+	}
+
+	return err;
+}
+
+int fp_keys_store_account_key(struct bt_conn *conn, const uint8_t *account_key)
+{
+	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
+	int err = 0;
+
+	if (proc->state != FP_STATE_WAIT_FOR_ACCOUNT_KEY) {
+		LOG_WRN("Invalid state during Account Key write");
+		return -EACCES;
+	}
+
+	/* Invalidate Key to ensure that requests will be rejected until procedure is restarted. */
+	invalidate_key(proc);
+
+	if (account_key[0] != FP_ACCOUNT_KEY_PREFIX) {
+		LOG_WRN("Received invalid Account Key");
+		return -EINVAL;
+	}
+
+	/* TODO: Store Account Key. */
+
+	if (!err) {
+		LOG_DBG("Stored Account Key");
+	} else {
+		LOG_WRN("Store account key error: err=%d", err);
+	}
+
+	return err;
+}
+
+void fp_keys_bt_auth_progress(struct bt_conn *conn, bool authenticated)
+{
+	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
+
+	if (proc->state == FP_STATE_USE_TEMP_KEY) {
+		k_work_reschedule(&proc->timeout, FP_KEY_TIMEOUT);
+		if (authenticated) {
+			proc->state = FP_STATE_WAIT_FOR_ACCOUNT_KEY;
+		}
+	}
+}
+
+void fp_keys_drop_key(struct bt_conn *conn)
+{
+	invalidate_key(&fp_procedures[bt_conn_index(conn)]);
+}
+
+static void timeout_fn(struct k_work *w)
+{
+	struct fp_procedure *proc = CONTAINER_OF(w, struct fp_procedure, timeout);
+
+	if (proc->key_gen_failure_cnt >= FP_KEY_GEN_FAILURE_MAX_CNT) {
+		proc->key_gen_failure_cnt = 0;
+	} else {
+		LOG_WRN("Key discarded (timeout)");
+		invalidate_key(proc);
+	}
+}
+
+static int fp_keys_init(const struct device *unused)
+{
+	ARG_UNUSED(unused);
+
+	for (size_t i = 0; i < ARRAY_SIZE(fp_procedures); i++) {
+		struct fp_procedure *proc = &fp_procedures[i];
+
+		proc->state = FP_STATE_INITIAL;
+		memset(proc->aes_key, EMPTY_AES_KEY_BYTE, sizeof(proc->aes_key));
+		k_work_init_delayable(&proc->timeout, timeout_fn);
+	}
+
+	return 0;
+}
+
+SYS_INIT(fp_keys_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
