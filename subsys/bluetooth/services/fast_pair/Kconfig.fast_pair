@@ -7,6 +7,8 @@
 menuconfig BT_FAST_PAIR
 	bool "Google Fast Pair Service (GFPS)"
 	select BT_NRF_SERVICES
+	select BT_FAST_PAIR_KEYS
+	select BT_FAST_PAIR_AUTH
 	select BT_FAST_PAIR_ADVERTISING
 	select BT_FAST_PAIR_GATT_SERVICE
 	select BT_FAST_PAIR_CRYPTO
@@ -37,6 +39,18 @@ config BT_DIS_FW_REV
 config BT_DIS_FW_REV_STR
 	default MCUBOOT_IMAGE_VERSION if BOOTLOADER_MCUBOOT
 	default "0.0.0+0"
+
+config BT_FAST_PAIR_KEYS
+	bool
+	help
+	  Add Fast Pair key handling source files.
+
+config BT_FAST_PAIR_AUTH
+	bool
+	select BT_SMP
+	select BT_SMP_APP_PAIRING_ACCEPT
+	help
+	  Add Fast Pair Bluetooth authentication source files.
 
 config BT_FAST_PAIR_ADVERTISING
 	bool
