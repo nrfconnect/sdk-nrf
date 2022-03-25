@@ -17,7 +17,8 @@ enum gnss_duty_cycling_policy {
 
 enum gnss_data_delete {
 	GNSS_DATA_DELETE_EPHEMERIDES,
-	GNSS_DATA_DELETE_ALL
+	GNSS_DATA_DELETE_ALL,
+	GNSS_DATA_DELETE_TCXO
 };
 
 enum gnss_dynamics_mode {
