@@ -1415,6 +1415,11 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 		return -EINVAL;
 	}
 
+	err = nrf_cloud_parse_pgps_response(buf, &pgps_dl);
+	if (err) {
+		return err;
+	}
+
 	state = PGPS_LOADING;
 	prev_pnum = 0xff;
 	if (!index.partial_request) {
@@ -1433,6 +1438,7 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 	index.store_block = npgps_alloc_block();
 	if (index.store_block == NO_BLOCK) {
 		LOG_ERR("No free flash space!");
+		state = PGPS_NONE;
 		return -ENOMEM;
 	}
 	index.storage_extent = npgps_get_block_extent(index.store_block);
@@ -1445,10 +1451,6 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 		return err;
 	}
 
-	err = nrf_cloud_parse_pgps_response(buf, &pgps_dl);
-	if (err) {
-		return err;
-	}
 	index.dl_offset = 0;
 	ignore_packets = true;
 	int sec_tag = SEC_TAG;
@@ -1463,8 +1465,12 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 		sec_tag = -1;
 	}
 
-	return npgps_download_start(pgps_dl.host, pgps_dl.path, sec_tag,
-				    0, FRAGMENT_SIZE);
+	err =  npgps_download_start(pgps_dl.host, pgps_dl.path, sec_tag, 0, FRAGMENT_SIZE);
+	if (err) {
+		state = PGPS_NONE;
+	}
+
+	return err;
 }
 
 int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
