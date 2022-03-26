@@ -1115,7 +1115,7 @@ int hci_internal_cmd_put(uint8_t *cmd_in)
 	return 0;
 }
 
-int hci_internal_evt_get(uint8_t *evt_out)
+int hci_internal_packet_get(uint8_t *evt_out, bool *p_is_data_out)
 {
 	if (cmd_complete_or_status.occurred) {
 		struct bt_hci_evt_hdr *evt_hdr = (void *)&cmd_complete_or_status.raw_event[0];
@@ -1125,8 +1125,9 @@ int hci_internal_evt_get(uint8_t *evt_out)
 		       evt_hdr->len + BT_HCI_EVT_HDR_SIZE);
 		cmd_complete_or_status.occurred = false;
 
+		*p_is_data_out = false;
 		return 0;
 	}
 
-	return sdc_hci_evt_get(evt_out);
+	return sdc_hci_get(evt_out, p_is_data_out);
 }

@@ -31,12 +31,14 @@ int hci_internal_cmd_put(uint8_t *cmd_in);
  * @note The application should ensure that the size of the provided buffer is at least
  *       @ref HCI_EVENT_PACKET_MAX_SIZE bytes.
  *
- * @param[in,out] evt_out Buffer where the HCI event will be stored.
+ * @param[in,out] evt_out Buffer where the HCI packet will be stored.
  *                        If an event is retrieved, the first byte corresponds to Event Code,
  *                        as specified by the Bluetooth Core Specification.
  *
+ * @param[out] p_is_data_out Indicates whether the HCI packet contains an event or data.
+ *
  * @return Zero on success or (negative) error code otherwise.
  */
-int hci_internal_evt_get(uint8_t *evt_out);
+int hci_internal_packet_get(uint8_t *evt_out, bool *p_is_data_out);
 
 #endif
