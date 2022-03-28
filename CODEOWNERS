@@ -61,6 +61,7 @@ Kconfig*                                  @tejlmand
 /doc/versions.json                        @carlescufi
 # All subfolders
 /drivers/                                 @anangl
+/drivers/serial/                          @nordic-krch @anangl
 /drivers/flash/                           @de-nordic
 /drivers/sensor/paw3212/                  @anangl @pdunaj @MarekPieta
 /drivers/sensor/pmw3360/                  @anangl @pdunaj @MarekPieta
@@ -202,6 +203,7 @@ Kconfig*                                  @tejlmand
 /tests/drivers/flash_nop_device/          @de-nordic
 /tests/drivers/flash_patch/               @oyvindronningstad
 /tests/drivers/fprotect/                  @oyvindronningstad
+/tests/drivers/lpuart/                    @nordic-krch
 /tests/drivers/nrfx_integration_test/     @anangl
 /tests/lib/at_cmd_parser/                 @rlubos
 /tests/lib/at_sms_cert/                   @eivindj-nordic
