@@ -211,7 +211,7 @@ Configuration files
 ===================
 
 The sample provides predefined configuration files for both the parent image and the child image.
-You can find the configuration files in the :file:`applications/nrf9160/serial_lte_modem` directory.
+You can find the configuration files in the :file:`applications/serial_lte_modem` directory.
 
 The following configuration files are provided:
 
@@ -271,7 +271,7 @@ The configuration options that are required to enable the native TLS socket are 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`applications/nrf9160/serial_lte_modem`
+.. |sample path| replace:: :file:`applications/serial_lte_modem`
 
 .. include:: /includes/build_and_run_nrf9160.txt
 
