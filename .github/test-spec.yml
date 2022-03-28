@@ -265,7 +265,10 @@
     - "subsys/bluetooth/**/*"
     - "!subsys/bluetooth/mesh/**/*"
 
-"CI-gazell-test":
+"CI-esb-test":
+  - "include/esb.h"
+  - "samples/esb/**/*"
+  - "subsys/esb/*"
   - "include/gz*.h"
   - "samples/gazell/**/*"
   - "subsys/gazell/*"
