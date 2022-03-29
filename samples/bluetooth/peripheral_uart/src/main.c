@@ -15,6 +15,7 @@
 #include <usb/usb_device.h>
 
 #include <device.h>
+#include <devicetree.h>
 #include <soc.h>
 
 #include <bluetooth/bluetooth.h>
@@ -58,7 +59,7 @@ static K_SEM_DEFINE(ble_init_ok, 0, 1);
 static struct bt_conn *current_conn;
 static struct bt_conn *auth_conn;
 
-static const struct device *uart;
+static const struct device *uart = DEVICE_DT_GET(DT_CHOSEN(nordic_nus_uart));
 static struct k_work_delayable uart_work;
 
 struct uart_data_t {
@@ -235,9 +236,8 @@ static int uart_init(void)
 	struct uart_data_t *rx;
 	struct uart_data_t *tx;
 
-	uart = device_get_binding(CONFIG_BT_NUS_UART_DEV);
-	if (!uart) {
-		return -ENXIO;
+	if (!device_is_ready(uart)) {
+		return -ENODEV;
 	}
 
 	if (IS_ENABLED(CONFIG_USB_DEVICE_STACK)) {
