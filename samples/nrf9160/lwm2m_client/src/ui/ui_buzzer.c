@@ -6,14 +6,10 @@
 
 #include <zephyr.h>
 #include <drivers/pwm.h>
+#include <devicetree.h>
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(ui_buzzer, CONFIG_UI_LOG_LEVEL);
-
-#define BUZZER_PWM_NODE DT_ALIAS(buzzer_pwm)
-#define BUZZER_PWM_NAME DT_LABEL(BUZZER_PWM_NODE)
-#define BUZZER_PWM_PIN DT_PROP(BUZZER_PWM_NODE, ch0_pin)
-#define BUZZER_PWM_FLAGS DT_PWMS_FLAGS(BUZZER_PWM_NODE)
 
 /* Transform frequency in Hz to period in microseconds */
 #define PERIOD(freq) ((USEC_PER_SEC) / (freq))
@@ -24,7 +20,9 @@ LOG_MODULE_REGISTER(ui_buzzer, CONFIG_UI_LOG_LEVEL);
 /* Affects curvature of pulse width graph */
 #define CURVE_CONST 50
 
-static const struct device *buzzer_pwm_dev;
+static const struct device *buzzer_dev =
+	DEVICE_DT_GET(DT_PWMS_CTLR(DT_NODELABEL(buzzer)));
+static const uint32_t buzzer_pin = DT_PWMS_CHANNEL(DT_NODELABEL(buzzer));
 
 static uint32_t frequency;
 static uint8_t intensity;
@@ -61,14 +59,12 @@ int ui_buzzer_on_off(bool new_state)
 
 	if (frequency == 0) {
 		/* Turn off buzzer when frequency = 0 */
-		ret = pwm_pin_set_usec(buzzer_pwm_dev, BUZZER_PWM_PIN, USEC_PER_SEC, 0,
-				       BUZZER_PWM_FLAGS);
+		ret = pwm_pin_set_usec(buzzer_dev, buzzer_pin, USEC_PER_SEC, 0, 0);
 	} else {
 		uint32_t period = PERIOD(frequency);
 		uint32_t pulse_width = calculate_pulse_width(period, intensity);
 
-		ret = pwm_pin_set_usec(buzzer_pwm_dev, BUZZER_PWM_PIN, period, pulse_width * state,
-				       BUZZER_PWM_FLAGS);
+		ret = pwm_pin_set_usec(buzzer_dev, buzzer_pin, period, pulse_width * state, 0);
 	}
 
 	if (ret) {
@@ -125,9 +121,8 @@ int ui_buzzer_set_intensity(uint8_t new_intensity)
 
 int ui_buzzer_init(void)
 {
-	buzzer_pwm_dev = device_get_binding(BUZZER_PWM_NAME);
-	if (!buzzer_pwm_dev) {
-		LOG_ERR("Could not bind to buzzer PWM device (%d)", -ENODEV);
+	if (!device_is_ready(buzzer_dev)) {
+		LOG_ERR("Buzzer PWM device not ready");
 		return -ENODEV;
 	}
 

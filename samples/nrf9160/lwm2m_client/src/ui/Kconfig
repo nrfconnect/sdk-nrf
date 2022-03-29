@@ -12,7 +12,6 @@ config UI_LED
 config UI_BUZZER
 	bool
 	select PWM
-	select PWM_1
 	help
 	  If enabled, a buzzer will be controllable with PWM.
 
