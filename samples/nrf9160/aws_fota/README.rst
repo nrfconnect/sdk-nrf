@@ -92,13 +92,10 @@ The certificates that you created or added for your thing in AWS IoT must be sto
 Use `LTE Link Monitor`_ to write the certificates to the kit.
 This application, which is part of `nRF Connect for Desktop`_, provides a certificate manager that you can use to store the certificates on your kit.
 
-   .. warning_start
+.. caution::
 
-   .. warning::
-      The LTE Link Monitor will overwrite the certificates stored on the device with the given security tag number.
-      Therefore, make sure that you are using the correct security tag.
-   .. warning_end
-
+   The LTE Link Monitor overwrites the certificates stored on the device with the given security tag number.
+   Therefore, make sure that you are using the correct security tag.
 
 Use LTE Link Monitor to write the certificates to the kit:
 
@@ -111,17 +108,13 @@ Use LTE Link Monitor to write the certificates to the kit:
 
 .. include:: /includes/aws_s3_bucket.txt
 
-Building and running
-********************
+Configuration
+*************
 
-.. |sample path| replace:: :file:`samples/nrf9160/aws_fota`
-
-.. include:: /includes/build_and_run_nrf9160.txt
-
-.. _configuring:
+|config|
 
 Configuration options
-*********************
+=====================
 
 Before you build the sample, check and update the following configuration options:
 
@@ -153,6 +146,17 @@ CONFIG_USE_CUSTOM_CLIENT_ID - Custom MQTT client ID
    If you chose a different name for your thing in AWS IoT, check this option and specify the AWS IoT thing name as client ID.
 
 For all other values, use the default values unless you are using a custom MQTT server.
+
+Building and running
+********************
+
+.. |sample path| replace:: :file:`samples/nrf9160/aws_fota`
+
+.. include:: /includes/build_and_run_nrf9160.txt
+
+.. _configuring:
+
+
 
 Testing
 =======
