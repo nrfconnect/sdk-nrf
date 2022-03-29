@@ -13,7 +13,7 @@
 void main(void)
 {
 	int err;
-	const struct device *uart;
+	const struct device *uart = DEVICE_DT_GET(DT_NODELABEL(uart0));
 	bool is_msb_read = false;
 	uint8_t rx_byte;
 	uint16_t dtm_cmd;
@@ -22,9 +22,8 @@ void main(void)
 
 	printk("Starting Direct Test Mode example\n");
 
-	uart = device_get_binding("UART_0");
-	if (!uart) {
-		printk("Error during UART device initialization\n");
+	if (!device_is_ready(uart)) {
+		printk("UART device not ready\n");
 	}
 
 	err = dtm_init();
