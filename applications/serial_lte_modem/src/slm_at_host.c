@@ -326,7 +326,7 @@ bool verify_datamode_control(uint16_t time_limit, uint16_t *min_time_limit)
 	min_time = UART_RX_LEN * (8 + 1 + 1) * 1000 / slm_uart.baudrate;
 	min_time += UART_RX_MARGIN_MS;
 
-	if (time_limit == 0 || min_time > time_limit) {
+	if (time_limit > 0 && min_time > time_limit) {
 		LOG_ERR("Invalid time_limit: %d, min: %d", time_limit, min_time);
 		return false;
 	}
