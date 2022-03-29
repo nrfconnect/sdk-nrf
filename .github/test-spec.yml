@@ -207,6 +207,7 @@
   - "samples/crypto/**/*"
   - "subsys/partition_manager/**/*"
   - "tests/crypto/**/*"
+  - "modules/cjson/**/*"
 
 "CI-rs-test":
   - "subsys/mpsl/**/*"
