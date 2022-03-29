@@ -11,7 +11,6 @@
 
 #define SAMPLE_PERIOD_MS	100
 
-#define UART_LABEL		DT_LABEL(DT_NODELABEL(uart0))
 #define UART_BUF_SIZE		64
 
 const static enum sensor_channel sensor_channels[] = {
@@ -21,7 +20,7 @@ const static enum sensor_channel sensor_channels[] = {
 };
 
 static const struct device *sensor_dev = DEVICE_DT_GET(DT_NODELABEL(sensor_sim));
-static const struct device *uart_dev;
+static const struct device *uart_dev = DEVICE_DT_GET(DT_NODELABEL(uart0));
 static atomic_t uart_busy;
 
 
@@ -40,11 +39,9 @@ static int init(void)
 		return -ENODEV;
 	}
 
-	uart_dev = device_get_binding(UART_LABEL);
-
-	if (!uart_dev) {
-		printk("Cannot bind UART\n");
-		return -ENXIO;
+	if (!device_is_ready(uart_dev)) {
+		printk("UART device not ready\n");
+		return -ENODEV;
 	}
 
 	int err = uart_callback_set(uart_dev, uart_cb, NULL);
