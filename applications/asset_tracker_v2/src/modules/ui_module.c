@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <device.h>
-#include <event_manager.h>
+#include <app_evt_mgr.h>
 #include <dk_buttons_and_leds.h>
 
 #define MODULE ui_module
@@ -198,10 +198,10 @@ static void sub_sub_state_set(enum sub_sub_state_type new_state)
 }
 
 /* Handlers */
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_app_module_event(eh)) {
-		struct app_module_event *event = cast_app_module_event(eh);
+	if (is_app_module_event(aeh)) {
+		struct app_module_event *event = cast_app_module_event(aeh);
 		struct ui_msg_data ui_msg = {
 			.module.app = *event
 		};
@@ -209,8 +209,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&ui_msg);
 	}
 
-	if (is_data_module_event(eh)) {
-		struct data_module_event *event = cast_data_module_event(eh);
+	if (is_data_module_event(aeh)) {
+		struct data_module_event *event = cast_data_module_event(aeh);
 		struct ui_msg_data ui_msg = {
 			.module.data = *event
 		};
@@ -218,8 +218,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&ui_msg);
 	}
 
-	if (is_modem_module_event(eh)) {
-		struct modem_module_event *event = cast_modem_module_event(eh);
+	if (is_modem_module_event(aeh)) {
+		struct modem_module_event *event = cast_modem_module_event(aeh);
 		struct ui_msg_data ui_msg = {
 			.module.modem = *event
 		};
@@ -227,8 +227,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&ui_msg);
 	}
 
-	if (is_gnss_module_event(eh)) {
-		struct gnss_module_event *event = cast_gnss_module_event(eh);
+	if (is_gnss_module_event(aeh)) {
+		struct gnss_module_event *event = cast_gnss_module_event(aeh);
 		struct ui_msg_data ui_msg = {
 			.module.gnss = *event
 		};
@@ -236,8 +236,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&ui_msg);
 	}
 
-	if (is_util_module_event(eh)) {
-		struct util_module_event *event = cast_util_module_event(eh);
+	if (is_util_module_event(aeh)) {
+		struct util_module_event *event = cast_util_module_event(aeh);
 		struct ui_msg_data ui_msg = {
 			.module.util = *event
 		};
@@ -245,8 +245,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&ui_msg);
 	}
 
-	if (is_cloud_module_event(eh)) {
-		struct cloud_module_event *event = cast_cloud_module_event(eh);
+	if (is_cloud_module_event(aeh)) {
+		struct cloud_module_event *event = cast_cloud_module_event(aeh);
 		struct ui_msg_data ui_msg = {
 			.module.cloud = *event
 		};
@@ -268,7 +268,7 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 		ui_module_event->data.ui.button_number = 1;
 		ui_module_event->data.ui.timestamp = k_uptime_get();
 
-		EVENT_SUBMIT(ui_module_event);
+		APPLICATION_EVENT_SUBMIT(ui_module_event);
 	}
 
 #if defined(CONFIG_BOARD_NRF9160DK_NRF9160_NS)
@@ -281,7 +281,7 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 		ui_module_event->data.ui.button_number = 2;
 		ui_module_event->data.ui.timestamp = k_uptime_get();
 
-		EVENT_SUBMIT(ui_module_event);
+		APPLICATION_EVENT_SUBMIT(ui_module_event);
 
 	}
 #endif
@@ -294,7 +294,7 @@ static void update_led_pattern(enum led_state pattern)
 	struct led_state_event *event = new_led_state_event();
 
 	event->state = pattern;
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 #endif
 }
 
@@ -644,12 +644,12 @@ static void message_handler(struct ui_msg_data *msg)
 	on_all_states(msg);
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, data_module_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, gnss_module_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, util_module_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, data_module_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, gnss_module_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, util_module_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
 
 SYS_INIT(setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);

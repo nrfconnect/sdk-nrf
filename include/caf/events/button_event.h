@@ -14,8 +14,8 @@
  * @brief CAF Button Event.
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,7 +27,7 @@ extern "C" {
  */
 struct button_event {
 	/** Event header. */
-	struct event_header header;
+	struct application_event_header header;
 
 	/** ID of the button. */
 	uint16_t key_id;
@@ -48,7 +48,7 @@ struct button_event {
 extern "C" {
 #endif
 
-EVENT_TYPE_DECLARE(button_event);
+APPLICATION_EVENT_TYPE_DECLARE(button_event);
 
 #ifdef __cplusplus
 }

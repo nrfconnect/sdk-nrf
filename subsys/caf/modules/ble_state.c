@@ -124,7 +124,7 @@ static void broadcast_init_conn_params(struct bt_conn *conn)
 		event->timeout = info.le.timeout;
 		event->updated = true;
 
-		EVENT_SUBMIT(event);
+		APPLICATION_EVENT_SUBMIT(event);
 	}
 }
 
@@ -142,7 +142,7 @@ static void connected(struct bt_conn *conn, uint8_t error)
 
 		event->id = conn;
 		event->state = PEER_STATE_CONN_FAILED;
-		EVENT_SUBMIT(event);
+		APPLICATION_EVENT_SUBMIT(event);
 
 		LOG_WRN("Failed to connect to %s (%u)", log_strdup(addr_str),
 			error);
@@ -174,7 +174,7 @@ static void connected(struct bt_conn *conn, uint8_t error)
 
 	event->id = conn;
 	event->state = PEER_STATE_CONNECTED;
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 
 	broadcast_init_conn_params(conn);
 
@@ -251,7 +251,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 
 	event->id = conn;
 	event->state = PEER_STATE_DISCONNECTED;
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static struct bt_gatt_exchange_params exchange_params;
@@ -289,7 +289,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	struct ble_peer_event *event = new_ble_peer_event();
 	event->id = conn;
 	event->state = PEER_STATE_SECURED;
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 
 	if (IS_ENABLED(CONFIG_CAF_BLE_STATE_EXCHANGE_MTU)) {
 		exchange_params.func = exchange_func;
@@ -312,7 +312,7 @@ static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 	event->timeout = param->timeout;
 	event->updated = false;
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 
 	return false;
 }
@@ -330,7 +330,7 @@ static void le_param_updated(struct bt_conn *conn, uint16_t interval,
 	event->timeout = timeout;
 	event->updated = true;
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static void bt_ready(int err)
@@ -379,11 +379,11 @@ static int ble_state_init(void)
 	return bt_enable(bt_ready);
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
@@ -400,8 +400,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_peer_event(eh)) {
-		const struct ble_peer_event *event = cast_ble_peer_event(eh);
+	if (is_ble_peer_event(aeh)) {
+		const struct ble_peer_event *event = cast_ble_peer_event(aeh);
 
 		switch (event->state) {
 		case PEER_STATE_CONN_FAILED:
@@ -423,6 +423,6 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE_FINAL(MODULE, ble_peer_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, ble_peer_event);

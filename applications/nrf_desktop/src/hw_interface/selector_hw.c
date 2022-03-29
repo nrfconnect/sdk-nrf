@@ -11,7 +11,7 @@
 
 #include "selector_hw_def.h"
 
-#include <event_manager.h>
+#include <app_evt_mgr.h>
 #include "selector_event.h"
 #include <caf/events/power_event.h>
 
@@ -56,7 +56,7 @@ static void selector_event_send(const struct selector *selector)
 	event->selector_id = selector->config->id;
 	event->position = selector->position;
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static int read_state(struct selector *selector)
@@ -299,11 +299,11 @@ static int init(void)
 	return err;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			__ASSERT_NO_MSG(state == STATE_DISABLED);
@@ -321,7 +321,7 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_power_down_event(eh)) {
+	if (is_power_down_event(aeh)) {
 		if (state == STATE_ACTIVE) {
 			int err = sleep();
 
@@ -336,7 +336,7 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_wake_up_event(eh)) {
+	if (is_wake_up_event(aeh)) {
 		if (state == STATE_OFF) {
 			int err = wake_up();
 
@@ -356,7 +356,7 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, power_down_event);
-EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, power_down_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);

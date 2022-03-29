@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <date_time.h>
-#include <event_manager.h>
+#include <app_evt_mgr.h>
 #include <nrf_modem_at.h>
 #include <nrf_modem_gnss.h>
 #if defined(CONFIG_NRF_CLOUD_PGPS) && defined(CONFIG_GNSS_MODULE_PGPS_STORE_LOCATION)
@@ -145,10 +145,10 @@ static void sub_state_set(enum sub_state_type new_state)
 }
 
 /* Handlers */
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_app_module_event(eh)) {
-		struct app_module_event *event = cast_app_module_event(eh);
+	if (is_app_module_event(aeh)) {
+		struct app_module_event *event = cast_app_module_event(aeh);
 		struct gnss_msg_data msg = {
 			.module.app = *event
 		};
@@ -156,8 +156,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&msg);
 	}
 
-	if (is_data_module_event(eh)) {
-		struct data_module_event *event = cast_data_module_event(eh);
+	if (is_data_module_event(aeh)) {
+		struct data_module_event *event = cast_data_module_event(aeh);
 		struct gnss_msg_data msg = {
 			.module.data = *event
 		};
@@ -165,8 +165,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&msg);
 	}
 
-	if (is_util_module_event(eh)) {
-		struct util_module_event *event = cast_util_module_event(eh);
+	if (is_util_module_event(aeh)) {
+		struct util_module_event *event = cast_util_module_event(aeh);
 		struct gnss_msg_data msg = {
 			.module.util = *event
 		};
@@ -174,8 +174,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&msg);
 	}
 
-	if (is_gnss_module_event(eh)) {
-		struct gnss_module_event *event = cast_gnss_module_event(eh);
+	if (is_gnss_module_event(aeh)) {
+		struct gnss_module_event *event = cast_gnss_module_event(aeh);
 		struct gnss_msg_data msg = {
 			.module.gnss = *event
 		};
@@ -183,8 +183,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&msg);
 	}
 
-	if (is_modem_module_event(eh)) {
-		struct modem_module_event *event = cast_modem_module_event(eh);
+	if (is_modem_module_event(aeh)) {
+		struct modem_module_event *event = cast_modem_module_event(aeh);
 		struct gnss_msg_data msg = {
 			.module.modem = *event
 		};
@@ -240,7 +240,7 @@ static void timeout_send(void)
 				set_satellites_tracked(pvt_data.sv, ARRAY_SIZE(pvt_data.sv));
 	gnss_module_event->type = GNSS_EVT_TIMEOUT;
 
-	EVENT_SUBMIT(gnss_module_event);
+	APPLICATION_EVENT_SUBMIT(gnss_module_event);
 }
 
 /* GNSS event handler thread. */
@@ -328,7 +328,7 @@ static void gnss_event_thread_fn(void)
 
 			gnss_module_event->data.agps_request = agps_data;
 			gnss_module_event->type = GNSS_EVT_AGPS_NEEDED;
-			EVENT_SUBMIT(gnss_module_event);
+			APPLICATION_EVENT_SUBMIT(gnss_module_event);
 			break;
 		case NRF_MODEM_GNSS_EVT_BLOCKED:
 			LOG_DBG("NRF_MODEM_GNSS_EVT_BLOCKED");
@@ -379,7 +379,7 @@ static void data_send_pvt(void)
 				set_satellites_tracked(pvt_data.sv, ARRAY_SIZE(pvt_data.sv));
 	gnss_module_event->data.gnss.search_time = (uint32_t)(k_uptime_get() - stats.start_uptime);
 
-	EVENT_SUBMIT(gnss_module_event);
+	APPLICATION_EVENT_SUBMIT(gnss_module_event);
 }
 
 static void data_send_nmea(void)
@@ -397,7 +397,7 @@ static void data_send_nmea(void)
 				set_satellites_tracked(pvt_data.sv, ARRAY_SIZE(pvt_data.sv));
 	gnss_module_event->data.gnss.search_time = (uint32_t)(k_uptime_get() - stats.start_uptime);
 
-	EVENT_SUBMIT(gnss_module_event);
+	APPLICATION_EVENT_SUBMIT(gnss_module_event);
 }
 
 static void print_pvt(void)
@@ -674,9 +674,9 @@ static void message_handler(struct gnss_msg_data *msg)
 	on_all_states(msg);
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
-EVENT_SUBSCRIBE(MODULE, data_module_event);
-EVENT_SUBSCRIBE(MODULE, util_module_event);
-EVENT_SUBSCRIBE(MODULE, modem_module_event);
-EVENT_SUBSCRIBE(MODULE, gnss_module_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, data_module_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, util_module_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, modem_module_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, gnss_module_event);

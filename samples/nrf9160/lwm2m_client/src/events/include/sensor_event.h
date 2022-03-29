@@ -9,8 +9,8 @@
 
 #include <zephyr.h>
 #include <net/lwm2m.h>
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 #include <drivers/sensor.h>
 
 #ifdef __cplusplus
@@ -27,14 +27,14 @@ enum sensor_type {
 };
 
 struct sensor_event {
-	struct event_header header;
+	struct application_event_header header;
 
 	enum sensor_type type;
 	struct sensor_value sensor_value;
 	uint32_t unsigned_value;
 };
 
-EVENT_TYPE_DECLARE(sensor_event);
+APPLICATION_EVENT_TYPE_DECLARE(sensor_event);
 
 #ifdef __cplusplus
 }

@@ -12,7 +12,7 @@
 #include <sys/atomic.h>
 #include <spinlock.h>
 
-#include <event_manager.h>
+#include <app_evt_mgr.h>
 #include <caf/events/power_event.h>
 #include "battery_event.h"
 #include "usb_event.h"
@@ -77,7 +77,7 @@ static void error_check_handler(struct k_work *work)
 		struct battery_state_event *event = new_battery_state_event();
 		event->state = battery_state;
 
-		EVENT_SUBMIT(event);
+		APPLICATION_EVENT_SUBMIT(event);
 	}
 }
 
@@ -192,10 +192,10 @@ error:
 	return err;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
@@ -216,7 +216,7 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_wake_up_event(eh)) {
+	if (is_wake_up_event(aeh)) {
 		if (!atomic_get(&active)) {
 			atomic_set(&active, true);
 
@@ -235,7 +235,7 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_power_down_event(eh)) {
+	if (is_power_down_event(aeh)) {
 		if (atomic_get(&active)) {
 			atomic_set(&active, false);
 
@@ -257,8 +257,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_usb_state_event(eh)) {
-		struct usb_state_event *event = cast_usb_state_event(eh);
+	if (is_usb_state_event(aeh)) {
+		struct usb_state_event *event = cast_usb_state_event(aeh);
 		int err;
 
 		switch (event->state) {
@@ -292,8 +292,8 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
-EVENT_SUBSCRIBE(MODULE, wake_up_event);
-EVENT_SUBSCRIBE(MODULE, usb_state_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, usb_state_event);

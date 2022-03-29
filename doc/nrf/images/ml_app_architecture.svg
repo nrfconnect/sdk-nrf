@@ -96,11 +96,11 @@
 			<text x="5.02" y="464.93" class="st3" v:langID="1033"><v:paragraph v:horizAlign="1" v:bulletSize="0.166667"/><v:tabList/>ML runner</text>		</g>
 		<g id="shape106-25" v:mID="106" v:groupContext="shape" transform="translate(159.808,-189.14)">
 			<title>Nordic Blueslate.142</title>
-			<desc>Event manager</desc>
+			<desc>Application Event Manager</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
 			<v:textRect cx="68.0315" cy="448.378" width="136.07" height="54.6402"/>
 			<rect x="0" y="421.057" width="136.063" height="54.6402" class="st5"/>
-			<text x="30.73" y="451.68" class="st6" v:langID="1033"><v:paragraph v:horizAlign="1" v:bulletSize="0.166667"/><v:tabList/>Event manager</text>		</g>
+			<text x="30.73" y="451.68" class="st6" v:langID="1033"><v:paragraph v:horizAlign="1" v:bulletSize="0.166667"/><v:tabList/>Application Event Manager</text>		</g>
 		<g id="shape107-28" v:mID="107" v:groupContext="shape" v:layerMember="0" transform="translate(301.26,-146.727)">
 			<title>Dynamic connector.145</title>
 			<path d="M0 465.5 L0 465.14 L0 455.6 L-73.42 455.6 L-73.42 443.84" class="st7"/>

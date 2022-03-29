@@ -138,7 +138,7 @@ static void work_handler(struct k_work *work)
 				ready_event->led_id = LED_ID(led);
 				ready_event->led_effect = led->effect;
 
-				EVENT_SUBMIT(ready_event);
+				APPLICATION_EVENT_SUBMIT(ready_event);
 			}
 		}
 	}
@@ -235,12 +235,12 @@ static void leds_stop(void)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
 	static bool initialized;
 
-	if (is_led_event(eh)) {
-		const struct led_event *event = cast_led_event(eh);
+	if (is_led_event(aeh)) {
+		const struct led_event *event = cast_led_event(aeh);
 
 		__ASSERT_NO_MSG(event->led_id < ARRAY_SIZE(leds));
 
@@ -255,9 +255,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			int err = leds_init();
@@ -273,7 +273,7 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_CAF_LEDS_PM_EVENTS) &&
-	    is_wake_up_event(eh)) {
+	    is_wake_up_event(aeh)) {
 		if (!initialized) {
 			leds_start();
 			initialized = true;
@@ -284,9 +284,9 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_CAF_LEDS_PM_EVENTS) &&
-	    is_power_down_event(eh)) {
+	    is_power_down_event(aeh)) {
 		const struct power_down_event *event =
-			cast_power_down_event(eh);
+			cast_power_down_event(aeh);
 
 		/* Leds should keep working on system error. */
 		if (event->error) {
@@ -308,10 +308,10 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, led_event);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, led_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if CONFIG_CAF_LEDS_PM_EVENTS
-EVENT_SUBSCRIBE(MODULE, power_down_event);
-EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, power_down_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #endif

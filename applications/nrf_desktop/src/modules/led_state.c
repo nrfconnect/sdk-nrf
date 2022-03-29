@@ -70,7 +70,7 @@ static void load_peer_state_led(void)
 
 	event->led_id = led_map[LED_ID_PEER_STATE];
 	event->led_effect = &led_peer_state_effect[peer_id][state];
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static void load_system_state_led(void)
@@ -83,7 +83,7 @@ static void load_system_state_led(void)
 
 	event->led_id = led_map[LED_ID_SYSTEM_STATE];
 	event->led_effect = &led_system_state_effect[system_state];
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static void set_system_state_led(enum led_system_state state)
@@ -96,10 +96,10 @@ static void set_system_state_led(enum led_system_state state)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_ble_peer_event(eh)) {
-		struct ble_peer_event *event = cast_ble_peer_event(eh);
+	if (is_ble_peer_event(aeh)) {
+		struct ble_peer_event *event = cast_ble_peer_event(aeh);
 
 		switch (event->state)  {
 		case PEER_STATE_CONNECTED:
@@ -124,9 +124,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_peer_search_event(eh)) {
+	if (is_ble_peer_search_event(aeh)) {
 		struct ble_peer_search_event *event =
-			cast_ble_peer_search_event(eh);
+			cast_ble_peer_search_event(aeh);
 
 		peer_search = event->active;
 		load_peer_state_led();
@@ -134,9 +134,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_peer_operation_event(eh)) {
+	if (is_ble_peer_operation_event(aeh)) {
 		struct ble_peer_operation_event *event =
-			cast_ble_peer_operation_event(eh);
+			cast_ble_peer_operation_event(aeh);
 
 		cur_peer_id = event->bt_app_id;
 		peer_op = event->op;
@@ -145,8 +145,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_battery_state_event(eh)) {
-		struct battery_state_event *event = cast_battery_state_event(eh);
+	if (is_battery_state_event(aeh)) {
+		struct battery_state_event *event = cast_battery_state_event(aeh);
 
 		switch (event->state) {
 		case BATTERY_STATE_CHARGING:
@@ -166,8 +166,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			load_system_state_led();
@@ -183,9 +183,9 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, ble_peer_event);
-EVENT_SUBSCRIBE(MODULE, ble_peer_search_event);
-EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
-EVENT_SUBSCRIBE(MODULE, battery_state_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_search_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, battery_state_event);

@@ -40,18 +40,18 @@ Firmware architecture
 =====================
 
 The Asset Tracker v2 application has a modular structure, where each module has a defined scope of responsibility.
-The application makes use of the :ref:`event_manager` to distribute events between modules in the system.
-The event manager is used for all the communication between the modules.
+The application makes use of the :ref:`app_evt_mgr` to distribute events between modules in the system.
+The Application Event Manager is used for all the communication between the modules.
 A module converts incoming events to messages and processes them in a FIFO manner.
-The processing happens either in a dedicated processing thread in the module, or directly in the event manager callback.
+The processing happens either in a dedicated processing thread in the module, or directly in the Application Event Manager callback.
 
-The following figure shows the relationship between the modules and the event manager.
+The following figure shows the relationship between the modules and the Application Event Manager.
 It also shows the modules with thread and the modules without thread.
 
 .. figure:: /images/asset_tracker_v2_module_hierarchy.svg
     :alt: Module hierarchy
 
-    Relationship between modules and the event manager
+    Relationship between modules and the Application Event Manager
 
 See :ref:`asset_tracker_v2_internal_modules` for more information.
 
@@ -332,34 +332,34 @@ After programming the application and all the prerequisites to your development 
    This is indicated by the following output::
 
       *** Booting Zephyr OS build v2.4.0-ncs1-2616-g3420cde0e37b  ***
-      <inf> event_manager: APP_EVT_START
+      <inf> app_evt_mgr: APP_EVT_START
 
 #. Observe in the terminal window that LTE connection is established, indicated by the following output::
 
-     <inf> event_manager: MODEM_EVT_LTE_CONNECTING
+     <inf> app_evt_mgr: MODEM_EVT_LTE_CONNECTING
      ...
-     <inf> event_manager: MODEM_EVT_LTE_CONNECTED
+     <inf> app_evt_mgr: MODEM_EVT_LTE_CONNECTED
 
 #. Observe that the device establishes connection to the cloud::
 
-    <inf> event_manager: CLOUD_EVT_CONNECTING
+    <inf> app_evt_mgr: CLOUD_EVT_CONNECTING
     ...
-    <inf> event_manager: CLOUD_EVT_CONNECTED
+    <inf> app_evt_mgr: CLOUD_EVT_CONNECTED
 
 #. Observe that data is sampled periodically and sent to the cloud::
 
-    <inf> event_manager: APP_EVT_DATA_GET_ALL
-    <inf> event_manager: APP_EVT_DATA_GET - Requested data types (MOD_DYN, BAT, ENV, GNSS)
-    <inf> event_manager: GNSS_EVT_ACTIVE
-    <inf> event_manager: SENSOR_EVT_ENVIRONMENTAL_NOT_SUPPORTED
-    <inf> event_manager: MODEM_EVT_MODEM_DYNAMIC_DATA_READY
-    <inf> event_manager: MODEM_EVT_BATTERY_DATA_READY
-    <inf> event_manager: GNSS_EVT_DATA_READY
-    <inf> event_manager: DATA_EVT_DATA_READY
-    <inf> event_manager: GNSS_EVT_INACTIVE
-    <inf> event_manager: DATA_EVT_DATA_SEND
+    <inf> app_evt_mgr: APP_EVT_DATA_GET_ALL
+    <inf> app_evt_mgr: APP_EVT_DATA_GET - Requested data types (MOD_DYN, BAT, ENV, GNSS)
+    <inf> app_evt_mgr: GNSS_EVT_ACTIVE
+    <inf> app_evt_mgr: SENSOR_EVT_ENVIRONMENTAL_NOT_SUPPORTED
+    <inf> app_evt_mgr: MODEM_EVT_MODEM_DYNAMIC_DATA_READY
+    <inf> app_evt_mgr: MODEM_EVT_BATTERY_DATA_READY
+    <inf> app_evt_mgr: GNSS_EVT_DATA_READY
+    <inf> app_evt_mgr: DATA_EVT_DATA_READY
+    <inf> app_evt_mgr: GNSS_EVT_INACTIVE
+    <inf> app_evt_mgr: DATA_EVT_DATA_SEND
     <wrn> data_module: No batch data to encode, ringbuffers empty
-    <inf> event_manager: CLOUD_EVT_DATA_ACK
+    <inf> app_evt_mgr: CLOUD_EVT_DATA_ACK
 
 .. _nrf_cloud_limitations:
 
@@ -398,7 +398,7 @@ The application has two types of modules:
 * Module with dedicated thread
 * Module without thread
 
-Every module has an event manager handler function, which subscribes to one or more event types.
+Every module has an Application Event Manager handler function, which subscribes to one or more event types.
 When an event is sent from a module, all subscribers receive that event in the respective handler, and acts on the event in the following ways:
 
 1. The event is converted into a message
@@ -432,7 +432,7 @@ Application-specific threads:
 * Sensor module
 * Modem module
 
-Modules that do not have dedicated threads process events in the context of system work queue in the event manager callback.
+Modules that do not have dedicated threads process events in the context of system work queue in the Application Event Manager callback.
 Therefore, their workloads must be light and non-blocking.
 
 All module threads have the following identical properties by default:
@@ -484,7 +484,7 @@ Memory allocation
 Mostly, the modules use statically allocated memory.
 Following are some features that rely on dynamically allocated memory, using the :ref:`Zephyr heap memory pool implementation <zephyr:heap_v2>`:
 
-* Event manager events
+* Application Event Manager events
 * Encoding of the data that will be sent to cloud
 
 You can configure the heap memory by using the :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE`.
@@ -497,7 +497,7 @@ Dependencies
 
 This application uses the following |NCS| libraries and drivers:
 
-* :ref:`event_manager`
+* :ref:`app_evt_mgr`
 * :ref:`lib_aws_iot`
 * :ref:`lib_aws_fota`
 * :ref:`lib_azure_iot_hub`

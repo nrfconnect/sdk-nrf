@@ -86,10 +86,10 @@ static void state_set(enum state_type new_state)
 }
 
 /* Handlers */
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_modem_module_event(eh)) {
-		struct modem_module_event *event = cast_modem_module_event(eh);
+	if (is_modem_module_event(aeh)) {
+		struct modem_module_event *event = cast_modem_module_event(aeh);
 		struct util_msg_data util_msg = {
 			.module.modem = *event
 		};
@@ -97,8 +97,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&util_msg);
 	}
 
-	if (is_cloud_module_event(eh)) {
-		struct cloud_module_event *event = cast_cloud_module_event(eh);
+	if (is_cloud_module_event(aeh)) {
+		struct cloud_module_event *event = cast_cloud_module_event(aeh);
 		struct util_msg_data util_msg = {
 			.module.cloud = *event
 		};
@@ -106,8 +106,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&util_msg);
 	}
 
-	if (is_gnss_module_event(eh)) {
-		struct gnss_module_event *event = cast_gnss_module_event(eh);
+	if (is_gnss_module_event(aeh)) {
+		struct gnss_module_event *event = cast_gnss_module_event(aeh);
 		struct util_msg_data util_msg = {
 			.module.gnss = *event
 		};
@@ -115,9 +115,9 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&util_msg);
 	}
 
-	if (is_sensor_module_event(eh)) {
+	if (is_sensor_module_event(aeh)) {
 		struct sensor_module_event *event =
-				cast_sensor_module_event(eh);
+				cast_sensor_module_event(aeh);
 		struct util_msg_data util_msg = {
 			.module.sensor = *event
 		};
@@ -125,8 +125,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&util_msg);
 	}
 
-	if (is_ui_module_event(eh)) {
-		struct ui_module_event *event = cast_ui_module_event(eh);
+	if (is_ui_module_event(aeh)) {
+		struct ui_module_event *event = cast_ui_module_event(aeh);
 		struct util_msg_data util_msg = {
 			.module.ui = *event
 		};
@@ -134,8 +134,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&util_msg);
 	}
 
-	if (is_app_module_event(eh)) {
-		struct app_module_event *event = cast_app_module_event(eh);
+	if (is_app_module_event(aeh)) {
+		struct app_module_event *event = cast_app_module_event(aeh);
 		struct util_msg_data util_msg = {
 			.module.app = *event
 		};
@@ -143,8 +143,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&util_msg);
 	}
 
-	if (is_data_module_event(eh)) {
-		struct data_module_event *event = cast_data_module_event(eh);
+	if (is_data_module_event(aeh)) {
+		struct data_module_event *event = cast_data_module_event(aeh);
 		struct util_msg_data util_msg = {
 			.module.data = *event
 		};
@@ -204,7 +204,7 @@ static void send_reboot_request(enum shutdown_reason reason)
 		k_work_reschedule(&reboot_work,
 				      K_SECONDS(CONFIG_REBOOT_TIMEOUT));
 
-		EVENT_SUBMIT(util_module_event);
+		APPLICATION_EVENT_SUBMIT(util_module_event);
 
 		state_set(STATE_REBOOT_PENDING);
 
@@ -337,13 +337,13 @@ static void message_handler(struct util_msg_data *msg)
 	on_all_states(msg);
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, gnss_module_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, ui_module_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, sensor_module_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, data_module_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, gnss_module_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, ui_module_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, sensor_module_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, data_module_event);
 
 SYS_INIT(setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);

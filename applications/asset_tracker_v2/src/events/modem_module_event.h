@@ -15,8 +15,8 @@
 #include <net/net_ip.h>
 #include <modem/lte_lc.h>
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -214,7 +214,7 @@ struct modem_module_neighbor_cells {
 
 /** @brief Modem event. */
 struct modem_module_event {
-	struct event_header header;
+	struct application_event_header header;
 	enum modem_module_event_type type;
 	union {
 		struct modem_module_static_modem_data modem_static;
@@ -230,7 +230,7 @@ struct modem_module_event {
 	} data;
 };
 
-EVENT_TYPE_DECLARE(modem_module_event);
+APPLICATION_EVENT_TYPE_DECLARE(modem_module_event);
 
 #ifdef __cplusplus
 }

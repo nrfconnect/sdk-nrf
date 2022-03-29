@@ -5,8 +5,8 @@
  */
 
 #include <sys/util_macro.h>
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #ifndef _COMMON_MODULE_EVENT_H_
 #define _COMMON_MODULE_EVENT_H_
@@ -22,8 +22,8 @@
 			  ENCODE("type"),				\
 			  profile_func)
 
-#define COMMON_EVENT_TYPE_DEFINE(ename, log_fn, ev_info_struct, flags)	\
-	EVENT_TYPE_DEFINE(ename,					\
+#define COMMON_APPLICATION_EVENT_TYPE_DEFINE(ename, log_fn, ev_info_struct, flags)	\
+	APPLICATION_EVENT_TYPE_DEFINE(ename,					\
 			  log_fn,					\
 			  COND_CODE_1(CONFIG_PROFILER,			\
 				      (ev_info_struct),			\

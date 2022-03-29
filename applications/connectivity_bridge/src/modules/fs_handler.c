@@ -91,11 +91,11 @@ static int fs_init(void)
 	return 0;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			int err;
@@ -116,7 +116,7 @@ static bool event_handler(const struct event_header *eh)
 			event->req = FS_REQUEST_CREATE_FILE;
 			event->mnt_point = fatfs_mnt.mnt_point;
 
-			EVENT_SUBMIT(event);
+			APPLICATION_EVENT_SUBMIT(event);
 		} else if (check_state(event, MODULE_ID(usb_cdc), MODULE_STATE_STANDBY)) {
 			int err;
 
@@ -135,15 +135,15 @@ static bool event_handler(const struct event_header *eh)
 
 			fs_parse_pending = true;
 
-			EVENT_SUBMIT(event);
+			APPLICATION_EVENT_SUBMIT(event);
 		}
 
 		return false;
 	}
 
-	if (is_fs_event(eh)) {
+	if (is_fs_event(aeh)) {
 		const struct fs_event *event =
-			cast_fs_event(eh);
+			cast_fs_event(aeh);
 
 		if (event->req == FS_REQUEST_CREATE_FILE) {
 			int err;
@@ -177,7 +177,7 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_power_down_event(eh)) {
+	if (is_power_down_event(aeh)) {
 		if (fs_parse_pending) {
 			/* Delay power down until file parsing has completed */
 			return true;
@@ -192,7 +192,7 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, power_down_event);
-EVENT_SUBSCRIBE_FINAL(MODULE, fs_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, power_down_event);
+APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, fs_event);

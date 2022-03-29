@@ -13,8 +13,8 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -76,7 +76,7 @@ struct sensor_module_accel_data {
 /** @brief Sensor module event. */
 struct sensor_module_event {
 	/** Sensor module event header. */
-	struct event_header header;
+	struct application_event_header header;
 	/** Sensor module event type. */
 	enum sensor_module_event_type type;
 	union {
@@ -91,7 +91,7 @@ struct sensor_module_event {
 	} data;
 };
 
-EVENT_TYPE_DECLARE(sensor_module_event);
+APPLICATION_EVENT_TYPE_DECLARE(sensor_module_event);
 
 #ifdef __cplusplus
 }

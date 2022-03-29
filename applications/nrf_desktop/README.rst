@@ -26,14 +26,14 @@ Overview: Firmware architecture
 The nRF Desktop application design aims at high performance, while still providing configurability and extensibility.
 
 The application architecture is modular, event-driven and build around :ref:`lib_caf`.
-This means that parts of the application functionality are separated into isolated modules that communicate with each other using application events, which are handled by the :ref:`event_manager`.
+This means that parts of the application functionality are separated into isolated modules that communicate with each other using application events, which are handled by the :ref:`app_evt_mgr`.
 Modules register themselves as listeners of those events that they are configured to react to.
 An application event can be submitted by multiple modules and it can have multiple listeners.
 
 Module and component overview
 =============================
 
-The following figure shows the nRF Desktop modules and how they relate with other components and the :ref:`event_manager`.
+The following figure shows the nRF Desktop modules and how they relate with other components and the :ref:`app_evt_mgr`.
 The figure does not present all the available modules.
 For example, the figure does not include the modules that are used as hotfixes or only for debug or profiling purposes.
 
@@ -85,7 +85,7 @@ Sink Module
 
 .. note::
    Some application modules can have multiple implementations (for example, :ref:`nrf_desktop_motion`).
-   In such case, the table shows the :ref:`event_manager` events received and submitted by all implementations of a given application module.
+   In such case, the table shows the :ref:`app_evt_mgr` events received and submitted by all implementations of a given application module.
 
 Module usage per hardware type
 ==============================
@@ -152,7 +152,7 @@ The following threads are kept running in the application:
     * Settings loading thread (enabled by default only on keyboard)
     * QoS data sampling thread (running only if Bluetooth® LE QoS feature is enabled)
 
-Most of the application activity takes place in the context of the system work queue thread, either through scheduled work objects or through the event manager callbacks (executed from the system workqueue thread).
+Most of the application activity takes place in the context of the system work queue thread, either through scheduled work objects or through the Application Event Manager callbacks (executed from the system workqueue thread).
 Because of this, the application does not need to handle resource protection.
 The only exception are places where the interaction with interrupts or multiple threads cannot be avoided.
 
@@ -163,8 +163,8 @@ Most of memory resources that are used by the application are allocated statical
 
 The application uses dynamic allocation to:
 
-* Create the event manager events.
-  For more information, see the :ref:`event_manager` page.
+* Create the Application Event Manager events.
+  For more information, see the :ref:`app_evt_mgr` page.
 * Temporarily store the HID-related data in the :ref:`nrf_desktop_hid_state` and :ref:`nrf_desktop_hid_forward`.
   For more information, see the documentation pages of these modules.
 
@@ -1316,7 +1316,7 @@ Bluetooth in nRF Desktop
 The nRF Desktop devices use :ref:`Zephyr's Bluetooth API <zephyr:bluetooth>` to handle the Bluetooth LE connections.
 
 This API is used only by the application modules that handle such connections.
-The information about peer and connection state is propagated to other application modules using :ref:`event_manager` events.
+The information about peer and connection state is propagated to other application modules using :ref:`app_evt_mgr` events.
 
 The nRF Desktop devices come in the following types:
 
@@ -1757,7 +1757,7 @@ Dependencies
 This application uses the following |NCS| libraries and drivers:
 
 * :ref:`lib_caf`
-* :ref:`event_manager`
+* :ref:`app_evt_mgr`
 * :ref:`profiler`
 * :ref:`hids_readme`
 * :ref:`hogp_readme`

@@ -221,13 +221,13 @@ int config_channel_transport_set(struct config_channel_transport *transport,
 
 	if (err < 0) {
 		LOG_WRN("Received improper frame");
-		event_manager_free(event);
+		app_evt_mgr_free(event);
 		return -EINVAL;
 	}
 
 	event->transport_id = transport->transport_id;
 	event->is_request = true;
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 
 	BUILD_ASSERT(CONFIG_DESKTOP_CONFIG_CHANNEL_TIMEOUT > 0, "");
 	k_work_reschedule(&transport->timeout, K_SECONDS(CONFIG_DESKTOP_CONFIG_CHANNEL_TIMEOUT));

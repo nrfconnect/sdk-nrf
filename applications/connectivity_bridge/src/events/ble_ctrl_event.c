@@ -9,16 +9,16 @@
 
 #include "ble_ctrl_event.h"
 
-static void log_ble_ctrl_event(const struct event_header *eh)
+static void log_ble_ctrl_event(const struct application_event_header *aeh)
 {
-	const struct ble_ctrl_event *event = cast_ble_ctrl_event(eh);
+	const struct ble_ctrl_event *event = cast_ble_ctrl_event(aeh);
 
-	EVENT_MANAGER_LOG(eh, "cmd:%d", event->cmd);
+	APPLICATION_EVENT_MANAGER_LOG(aeh, "cmd:%d", event->cmd);
 }
 
-EVENT_TYPE_DEFINE(ble_ctrl_event,
+APPLICATION_EVENT_TYPE_DEFINE(ble_ctrl_event,
 		  log_ble_ctrl_event,
 		  NULL,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_BRIDGE_LOG_BLE_CTRL_EVENT,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

@@ -17,8 +17,8 @@
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/conn.h>
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -104,7 +104,7 @@ enum peer_operation {
  */
 struct ble_peer_event {
 	/** Event header. */
-	struct event_header header;
+	struct application_event_header header;
 
 	/** State of the Bluetooth LE peer. */
 	enum peer_state state;
@@ -124,7 +124,7 @@ struct ble_peer_event {
  */
 struct ble_peer_operation_event {
 	/** Event header. */
-	struct event_header header;
+	struct application_event_header header;
 
 	/** Bluetooth LE peer operation. */
 	enum peer_operation op;
@@ -148,7 +148,7 @@ struct ble_peer_operation_event {
  */
 struct ble_peer_conn_params_event {
 	/** Event header. */
-	struct event_header header;
+	struct application_event_header header;
 
 	/** ID used to identify Bluetooth connection - pointer to the bt_conn. */
 	void *id;
@@ -178,7 +178,7 @@ struct ble_peer_conn_params_event {
  */
 struct ble_peer_search_event {
 	/** Event header. */
-	struct event_header header;
+	struct application_event_header header;
 
 	/** Information if application is currently looking for a Bluetooth peer. */
 	bool active;
@@ -196,10 +196,10 @@ struct ble_peer_search_event {
 extern "C" {
 #endif
 
-EVENT_TYPE_DECLARE(ble_peer_event);
-EVENT_TYPE_DECLARE(ble_peer_operation_event);
-EVENT_TYPE_DECLARE(ble_peer_conn_params_event);
-EVENT_TYPE_DECLARE(ble_peer_search_event);
+APPLICATION_EVENT_TYPE_DECLARE(ble_peer_event);
+APPLICATION_EVENT_TYPE_DECLARE(ble_peer_operation_event);
+APPLICATION_EVENT_TYPE_DECLARE(ble_peer_conn_params_event);
+APPLICATION_EVENT_TYPE_DECLARE(ble_peer_search_event);
 
 #ifdef __cplusplus
 }

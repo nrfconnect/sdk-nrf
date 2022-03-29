@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <drivers/sensor.h>
-#include <event_manager.h>
+#include <app_evt_mgr.h>
 
 #if defined(CONFIG_EXTERNAL_SENSORS)
 #include "ext_sensors.h"
@@ -82,27 +82,27 @@ static void state_set(enum state_type new_state)
 }
 
 /* Handlers */
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
 	struct sensor_msg_data msg = {0};
 	bool enqueue_msg = false;
 
-	if (is_app_module_event(eh)) {
-		struct app_module_event *event = cast_app_module_event(eh);
+	if (is_app_module_event(aeh)) {
+		struct app_module_event *event = cast_app_module_event(aeh);
 
 		msg.module.app = *event;
 		enqueue_msg = true;
 	}
 
-	if (is_data_module_event(eh)) {
-		struct data_module_event *event = cast_data_module_event(eh);
+	if (is_data_module_event(aeh)) {
+		struct data_module_event *event = cast_data_module_event(aeh);
 
 		msg.module.data = *event;
 		enqueue_msg = true;
 	}
 
-	if (is_util_module_event(eh)) {
-		struct util_module_event *event = cast_util_module_event(eh);
+	if (is_util_module_event(aeh)) {
+		struct util_module_event *event = cast_util_module_event(aeh);
 
 		msg.module.util = *event;
 		enqueue_msg = true;
@@ -145,7 +145,7 @@ static void movement_data_send(const struct ext_sensor_evt *const acc_data)
 	sensor_module_event->type = SENSOR_EVT_MOVEMENT_DATA_READY;
 
 	accelerometer_callback_set(false);
-	EVENT_SUBMIT(sensor_module_event);
+	APPLICATION_EVENT_SUBMIT(sensor_module_event);
 }
 
 static void ext_sensor_handler(const struct ext_sensor_evt *const evt)
@@ -232,7 +232,7 @@ static void environmental_data_get(void)
 	sensor_module_event = new_sensor_module_event();
 	sensor_module_event->type = SENSOR_EVT_ENVIRONMENTAL_NOT_SUPPORTED;
 #endif
-	EVENT_SUBMIT(sensor_module_event);
+	APPLICATION_EVENT_SUBMIT(sensor_module_event);
 }
 
 static int setup(void)
@@ -380,7 +380,7 @@ K_THREAD_DEFINE(sensor_module_thread, CONFIG_SENSOR_THREAD_STACK_SIZE,
 		module_thread_fn, NULL, NULL, NULL,
 		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, app_module_event);
-EVENT_SUBSCRIBE(MODULE, data_module_event);
-EVENT_SUBSCRIBE(MODULE, util_module_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, app_module_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, data_module_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, util_module_event);

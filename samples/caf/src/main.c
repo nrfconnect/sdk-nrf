@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <event_manager.h>
+#include <app_evt_mgr.h>
 
 #define MODULE main
 #include <caf/events/module_state_event.h>
@@ -14,8 +14,8 @@ LOG_MODULE_REGISTER(MODULE);
 
 void main(void)
 {
-	if (event_manager_init()) {
-		LOG_ERR("Event manager not initialized");
+	if (app_evt_mgr_init()) {
+		LOG_ERR("Application Event Manager not initialized");
 	} else {
 		module_set_state(MODULE_STATE_READY);
 	}

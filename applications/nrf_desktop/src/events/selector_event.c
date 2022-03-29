@@ -9,19 +9,19 @@
 #include "selector_event.h"
 
 
-static void log_selector_event(const struct event_header *eh)
+static void log_selector_event(const struct application_event_header *aeh)
 {
-	const struct selector_event *event = cast_selector_event(eh);
+	const struct selector_event *event = cast_selector_event(aeh);
 
-	EVENT_MANAGER_LOG(eh, "id: %" PRIu8 " position: %" PRIu8,
+	APPLICATION_EVENT_MANAGER_LOG(aeh, "id: %" PRIu8 " position: %" PRIu8,
 			event->selector_id,
 			event->position);
 }
 
 static void profile_selector_event(struct log_event_buf *buf,
-				   const struct event_header *eh)
+				   const struct application_event_header *aeh)
 {
-	const struct selector_event *event = cast_selector_event(eh);
+	const struct selector_event *event = cast_selector_event(aeh);
 
 	profiler_log_encode_uint8(buf, event->selector_id);
 	profiler_log_encode_uint8(buf, event->position);
@@ -32,9 +32,9 @@ EVENT_INFO_DEFINE(selector_event,
 		  ENCODE("selector_id", "position"),
 		  profile_selector_event);
 
-EVENT_TYPE_DEFINE(selector_event,
+APPLICATION_EVENT_TYPE_DEFINE(selector_event,
 		  log_selector_event,
 		  &selector_event_info,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_SELECTOR_EVENT,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

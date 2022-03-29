@@ -44,11 +44,11 @@
 		<v:layer v:name="Connector" v:index="0"/>
 		<g id="shape7-1" v:mID="7" v:groupContext="shape" transform="translate(190.4,-81.3964)">
 			<title>Nordic Lake</title>
-			<desc>Event manager</desc>
+			<desc>Application Event Manager</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
 			<v:textRect cx="68.0315" cy="137.318" width="136.07" height="54.6402"/>
 			<rect x="0" y="109.998" width="136.063" height="54.6402" class="st1"/>
-			<text x="25.17" y="141.52" class="st2" v:langID="1044"><v:paragraph v:horizAlign="1" v:bulletSize="0.166667"/><v:tabList/>Event manager</text>		</g>
+			<text x="25.17" y="141.52" class="st2" v:langID="1044"><v:paragraph v:horizAlign="1" v:bulletSize="0.166667"/><v:tabList/>Application Event Manager</text>		</g>
 		<g id="shape9-4" v:mID="9" v:groupContext="shape" v:layerMember="0" transform="translate(251.345,-81.3964)">
 			<title>Dynamic connector</title>
 			<path d="M7.09 171.32 L7.09 171.68 L7.09 182.39" class="st3"/>

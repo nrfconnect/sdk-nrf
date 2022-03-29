@@ -15,8 +15,8 @@
 
 #include <nrf_modem_gnss.h>
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -131,7 +131,7 @@ struct gnss_module_data {
 
 /** @brief GNSSS module event. */
 struct gnss_module_event {
-	struct event_header header;
+	struct application_event_header header;
 	enum gnss_module_event_type type;
 
 	union {
@@ -144,7 +144,7 @@ struct gnss_module_event {
 	} data;
 };
 
-EVENT_TYPE_DECLARE(gnss_module_event);
+APPLICATION_EVENT_TYPE_DECLARE(gnss_module_event);
 
 #ifdef __cplusplus
 }

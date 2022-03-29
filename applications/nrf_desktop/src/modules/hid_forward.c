@@ -266,7 +266,7 @@ static void drop_enqueued_reports(struct enqueued_reports *enqueued_reports,
 
 		item = get_enqueued_report(enqueued_reports, irep_idx);
 
-		event_manager_free(item->report);
+		app_evt_mgr_free(item->report);
 		k_free(item);
 	}
 }
@@ -359,7 +359,7 @@ static void enqueue_hid_report(struct enqueued_reports *enqueued_reports,
 	} else {
 		LOG_WRN("Enqueue dropped the oldest report");
 		item = get_enqueued_report(enqueued_reports, irep_idx);
-		event_manager_free(item->report);
+		app_evt_mgr_free(item->report);
 	}
 
 	if (!item) {
@@ -393,7 +393,7 @@ static void forward_hid_report(struct hids_peripheral *per, uint8_t report_id,
 	if (suspended) {
 		/* If suspended, report should wake up the board. */
 		struct wake_up_event *event = new_wake_up_event();
-		EVENT_SUBMIT(event);
+		APPLICATION_EVENT_SUBMIT(event);
 	}
 
 	if (!is_report_enabled(sub, report_id)) {
@@ -413,7 +413,7 @@ static void forward_hid_report(struct hids_peripheral *per, uint8_t report_id,
 	if (!sub->busy) {
 		__ASSERT_NO_MSG(!is_report_enqueued(&per->enqueued_reports, irep_idx));
 
-		EVENT_SUBMIT(report);
+		APPLICATION_EVENT_SUBMIT(report);
 		per->enqueued_reports.last_idx = irep_idx;
 		sub->busy = true;
 	} else {
@@ -446,7 +446,7 @@ static uint8_t hogp_read(struct bt_hogp *hids_c,
 	size_t size = bt_hogp_rep_size(rep);
 
 	/* HID boot protocol reports are received with report ID equal 0 (REPORT_ID_RESERVED).
-	 * The report ID must be updated before HID report is submitted as an Event Manager event.
+	 * The report ID must be updated before HID report is submitted as an app_evt_mgr event.
 	 */
 	if (report_id == REPORT_ID_RESERVED) {
 		if (bt_hogp_rep_boot_kbd_in(hids_c)) {
@@ -583,7 +583,7 @@ static void submit_forward_error_rsp(struct hids_peripheral *per,
 	rsp->status = rsp_status;
 	/* Error response has no additional data. */
 	rsp->dyndata.size = 0;
-	EVENT_SUBMIT(rsp);
+	APPLICATION_EVENT_SUBMIT(rsp);
 
 	per->cfg_chan_rsp = NULL;
 }
@@ -648,7 +648,7 @@ static uint8_t hogp_read_cfg(struct bt_hogp *hogp,
 				k_work_reschedule(&per->read_rsp, K_MSEC(CFG_CHAN_RSP_READ_DELAY));
 			}
 		} else {
-			EVENT_SUBMIT(per->cfg_chan_rsp);
+			APPLICATION_EVENT_SUBMIT(per->cfg_chan_rsp);
 			per->cfg_chan_rsp = NULL;
 		}
 	}
@@ -706,7 +706,7 @@ static void hogp_write_cb(struct bt_hogp *hogp,
 	} else {
 		__ASSERT_NO_MSG(per->cfg_chan_rsp->dyndata.size == 0);
 		per->cfg_chan_rsp->status = CONFIG_STATUS_SUCCESS;
-		EVENT_SUBMIT(per->cfg_chan_rsp);
+		APPLICATION_EVENT_SUBMIT(per->cfg_chan_rsp);
 		per->cfg_chan_rsp = NULL;
 	}
 }
@@ -749,7 +749,7 @@ static void send_nodata_response(const struct config_event *event,
 	struct config_event *rsp = generate_response(event, 0);
 
 	rsp->status = rsp_status;
-	EVENT_SUBMIT(rsp);
+	APPLICATION_EVENT_SUBMIT(rsp);
 }
 
 static void handle_config_channel_peers_req(const struct config_event *event)
@@ -810,7 +810,7 @@ static void handle_config_channel_peers_req(const struct config_event *event)
 		}
 
 		rsp->status = CONFIG_STATUS_SUCCESS;
-		EVENT_SUBMIT(rsp);
+		APPLICATION_EVENT_SUBMIT(rsp);
 		break;
 	}
 
@@ -1194,7 +1194,7 @@ static void send_enqueued_report(struct subscriber *sub)
 	}
 
 	if (item) {
-		EVENT_SUBMIT(item->report);
+		APPLICATION_EVENT_SUBMIT(item->report);
 
 		k_free(item);
 
@@ -1358,11 +1358,11 @@ static bool handle_hid_report_event(const struct hid_report_event *event)
 	return false;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_hid_report_sent_event(eh)) {
+	if (is_hid_report_sent_event(aeh)) {
 		const struct hid_report_sent_event *event =
-			cast_hid_report_sent_event(eh);
+			cast_hid_report_sent_event(aeh);
 		struct subscriber *sub = NULL;
 
 		for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
@@ -1379,9 +1379,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(ble_state),
 				MODULE_STATE_READY)) {
@@ -1397,9 +1397,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_discovery_complete_event(eh)) {
+	if (is_ble_discovery_complete_event(aeh)) {
 		const struct ble_discovery_complete_event *event =
-			cast_ble_discovery_complete_event(eh);
+			cast_ble_discovery_complete_event(aeh);
 
 		register_peripheral(event->dm, event->hwid,
 				    sizeof(event->hwid));
@@ -1407,9 +1407,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_hid_report_subscription_event(eh)) {
+	if (is_hid_report_subscription_event(aeh)) {
 		const struct hid_report_subscription_event *event =
-			cast_hid_report_subscription_event(eh);
+			cast_hid_report_subscription_event(aeh);
 
 		struct subscriber *sub = NULL;
 
@@ -1447,13 +1447,13 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_hid_report_event(eh)) {
-		return handle_hid_report_event(cast_hid_report_event(eh));
+	if (is_hid_report_event(aeh)) {
+		return handle_hid_report_event(cast_hid_report_event(aeh));
 	}
 
-	if (is_ble_peer_event(eh)) {
+	if (is_ble_peer_event(aeh)) {
 		const struct ble_peer_event *event =
-			cast_ble_peer_event(eh);
+			cast_ble_peer_event(aeh);
 
 		if (event->state == PEER_STATE_DISCONNECTED) {
 			for (size_t i = 0; i < ARRAY_SIZE(peripherals); i++) {
@@ -1469,9 +1469,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_peer_operation_event(eh)) {
+	if (is_ble_peer_operation_event(aeh)) {
 		const struct ble_peer_operation_event *event =
-			cast_ble_peer_operation_event(eh);
+			cast_ble_peer_operation_event(aeh);
 
 		if (event->op == PEER_OPERATION_ERASED) {
 			reset_peripheral_address();
@@ -1481,21 +1481,21 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_wake_up_event(eh)) {
+	if (is_wake_up_event(aeh)) {
 		suspended = false;
 
 		return false;
 	}
 
-	if (is_power_down_event(eh)) {
+	if (is_power_down_event(aeh)) {
 		suspended = true;
 
 		return false;
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-		if (is_config_event(eh)) {
-			return handle_config_event(cast_config_event(eh));
+		if (is_config_event(aeh)) {
+			return handle_config_event(cast_config_event(aeh));
 		}
 	}
 
@@ -1505,16 +1505,16 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, ble_discovery_complete_event);
-EVENT_SUBSCRIBE(MODULE, ble_peer_event);
-EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
-EVENT_SUBSCRIBE(MODULE, hid_report_event);
-EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
-EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
-EVENT_SUBSCRIBE(MODULE, power_down_event);
-EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, ble_discovery_complete_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, power_down_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif

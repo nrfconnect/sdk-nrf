@@ -14,8 +14,8 @@
  * @brief CAF LED Event.
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 #include <caf/led_effect.h>
 
 #ifdef __cplusplus
@@ -30,7 +30,7 @@ extern "C" {
  */
 struct led_event {
 	/** Event header. */
-	struct event_header header;
+	struct application_event_header header;
 
 	/** ID of the LED. */
 	size_t led_id;
@@ -50,7 +50,7 @@ struct led_event {
  */
 struct led_ready_event {
 	/** Event header. */
-	struct event_header header;
+	struct application_event_header header;
 
 	/** ID of the LED. */
 	size_t led_id;
@@ -71,8 +71,8 @@ struct led_ready_event {
 extern "C" {
 #endif
 
-EVENT_TYPE_DECLARE(led_event);
-EVENT_TYPE_DECLARE(led_ready_event);
+APPLICATION_EVENT_TYPE_DECLARE(led_event);
+APPLICATION_EVENT_TYPE_DECLARE(led_ready_event);
 
 #ifdef __cplusplus
 }

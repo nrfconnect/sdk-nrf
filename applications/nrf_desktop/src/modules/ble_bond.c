@@ -343,7 +343,7 @@ static void cancel_operation(void)
 	}
 	event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static uint8_t next_peer_id(uint8_t id)
@@ -371,7 +371,7 @@ static void select_start(void)
 	event->bt_app_id = tmp_peer_id;
 	event->bt_stack_id = get_bt_stack_peer_id(tmp_peer_id);
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static void select_next(void)
@@ -386,7 +386,7 @@ static void select_next(void)
 	event->bt_app_id = tmp_peer_id;
 	event->bt_stack_id = get_bt_stack_peer_id(tmp_peer_id);
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static int store_peer_id(uint8_t peer_id)
@@ -431,7 +431,7 @@ static void select_confirm(void)
 	event->bt_app_id = get_app_id();
 	event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static void scan_request(void)
@@ -449,7 +449,7 @@ static void scan_request(void)
 	event->bt_app_id = get_app_id();
 	event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static void erase_start(void)
@@ -462,7 +462,7 @@ static void erase_start(void)
 	event->bt_app_id = get_app_id();
 	event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static void erase_confirm(void)
@@ -477,7 +477,7 @@ static void erase_confirm(void)
 	event->bt_app_id = get_app_id();
 	event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static void erase_adv_confirm(void)
@@ -508,7 +508,7 @@ static void erase_adv_confirm(void)
 	event->bt_app_id = get_app_id();
 	event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static void select_dongle_peer(void)
@@ -527,7 +527,7 @@ static void select_dongle_peer(void)
 	event->bt_app_id = get_app_id();
 	event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static void select_ble_peers(void)
@@ -548,7 +548,7 @@ static void select_ble_peers(void)
 	event->bt_app_id = get_app_id();
 	event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static void handle_click(enum click click)
@@ -824,7 +824,7 @@ static bool ble_peer_event_handler(const struct ble_peer_event *event)
 		event->bt_app_id = get_app_id();
 		event->bt_stack_id = get_bt_stack_peer_id(get_app_id());
 
-		EVENT_SUBMIT(event);
+		APPLICATION_EVENT_SUBMIT(event);
 		/* Cancel cannot fail if executed from another work's context. */
 		(void)k_work_cancel_delayable(&timeout);
 	}
@@ -1049,11 +1049,11 @@ static bool handle_wake_up_event(const struct wake_up_event *event)
 	return false;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(settings_loader),
 				MODULE_STATE_READY)) {
@@ -1076,29 +1076,29 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) &&
-	    is_ble_peer_event(eh)) {
-		return ble_peer_event_handler(cast_ble_peer_event(eh));
+	    is_ble_peer_event(aeh)) {
+		return ble_peer_event_handler(cast_ble_peer_event(aeh));
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_PEER_CONTROL) &&
-	    is_click_event(eh)) {
-		return click_event_handler(cast_click_event(eh));
+	    is_click_event(aeh)) {
+		return click_event_handler(cast_click_event(aeh));
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE) &&
-	    is_selector_event(eh)) {
-		selector_event_handler(cast_selector_event(eh));
+	    is_selector_event(aeh)) {
+		selector_event_handler(cast_selector_event(aeh));
 		return false;
 	}
 
 	if (IS_ENABLED(CONFIG_CAF_POWER_MANAGER) &&
-	    is_power_down_event(eh)) {
-		return handle_power_down_event(cast_power_down_event(eh));
+	    is_power_down_event(aeh)) {
+		return handle_power_down_event(cast_power_down_event(aeh));
 	}
 
 	if (IS_ENABLED(CONFIG_CAF_POWER_MANAGER) &&
-	    is_wake_up_event(eh)) {
-		return handle_wake_up_event(cast_wake_up_event(eh));
+	    is_wake_up_event(aeh)) {
+		return handle_wake_up_event(cast_wake_up_event(aeh));
 	}
 
 	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, config_set,
@@ -1109,23 +1109,23 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if IS_ENABLED(CONFIG_BT_PERIPHERAL)
-EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 #endif
 #if IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)
-EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif
 #if IS_ENABLED(CONFIG_DESKTOP_BLE_PEER_CONTROL)
-EVENT_SUBSCRIBE(MODULE, click_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, click_event);
 #endif
 #if IS_ENABLED(CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE)
-EVENT_SUBSCRIBE(MODULE, selector_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, selector_event);
 #endif
 #if IS_ENABLED(CONFIG_CAF_POWER_MANAGER)
-EVENT_SUBSCRIBE(MODULE, power_down_event);
-EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, power_down_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #endif
 
 #if IS_ENABLED(CONFIG_SHELL)

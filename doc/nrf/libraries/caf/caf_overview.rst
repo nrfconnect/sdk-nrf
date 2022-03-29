@@ -7,7 +7,7 @@ Common Application Framework overview
    :local:
    :depth: 2
 
-Common Application Framework (CAF) is a set of ready-for-use modules and events built on top of :ref:`event_manager`.
+Common Application Framework (CAF) is a set of ready-for-use modules and events built on top of :ref:`app_evt_mgr`.
 Using CAF allows you to have a consistent event-based architecture in your application.
 
 You can check the :ref:`caf_preview_sample` for a demonstration of how to add ready-for-use and custom CAF modules into an application.
@@ -17,7 +17,7 @@ You can check the :ref:`caf_preview_sample` for a demonstration of how to add re
 Architecture
 ************
 
-In an event-based application, parts of the application functionality are separated into isolated modules that communicate with each other using Event Manager's events.
+In an event-based application, parts of the application functionality are separated into isolated modules that communicate with each other using Application Event Manager's events.
 These events are defined either by CAF or by the application.
 They are submitted by modules and other modules can subscribe and react to them.
 
@@ -40,14 +40,14 @@ The figure shows an example application that uses one CAF module and one custom 
 Enabling CAF
 ************
 
-To enable CAF, you need to enable the required Kconfig option and enable and initialize Event Manager.
+To enable CAF, you need to enable the required Kconfig option and enable and initialize Application Event Manager.
 You then must submit the first ``module_state_event``, because CAF modules are initialized when they receive a :c:struct:`module_state_event` that reports ``MODULE_STATE_READY`` of the module ``main``.
 
 complete the following steps:
 
 1. Enable :kconfig:option:`CONFIG_CAF` Kconfig option in your project configuration file.
-#. Enable and initialize Event Manager.
-   See :ref:`event_manager_configuration` for more details.
+#. Enable and initialize Application Event Manager.
+   See :ref:`app_evt_mgr_configuration` for more details.
 #. Submit the first :c:struct:`module_state_event`:
 
    a. Add the following in your :file:`main.c` file:
@@ -57,7 +57,7 @@ complete the following steps:
          #define MODULE main
          #include <caf/events/module_state_event.h>
 
-   #. Call the following function after Event Manager is initialized:
+   #. Call the following function after Application Event Manager is initialized:
 
       .. code-block:: c
 
@@ -76,7 +76,7 @@ CAF supports a set of :ref:`predefined modules <lib_caf>`.
 Each of these modules is available for use out of the box and needs to be enabled and configured separately.
 
 There is no limit to the number of modules and events that can be used.
-However, Event Manager sets the limit of event types in an application to 32, and CAF inherits this limitation.
+However, Application Event Manager sets the limit of event types in an application to 32, and CAF inherits this limitation.
 
 .. _caf_overview_modules_configuration:
 
@@ -101,12 +101,12 @@ Adding custom modules
 =====================
 
 As part of your application, you can add your own custom modules.
-These modules can communicate using Event Manager's events.
+These modules can communicate using Application Event Manager's events.
 However, if you want to add custom modules that communicate with CAF modules using CAF events, you must make sure that they meet the following requirements:
 
-* A custom module must register as Event Manager's listener and subscribe for CAF events that should be handled by that custom module.
-  You can subscribe for a CAF event in the same way as you subscribe for any other Event Manager event.
-  See the :ref:`event_manager_register_module_as_listener` documentation for instructions about how to configure this.
+* A custom module must register as Application Event Manager's listener and subscribe for CAF events that should be handled by that custom module.
+  You can subscribe for a CAF event in the same way as you subscribe for any other Application Event Manager event.
+  See the :ref:`app_evt_mgr_register_module_as_listener` documentation for instructions about how to configure this.
 * The module must work with :c:struct:`module_state_event`.
   It must submit it and react to it.
 

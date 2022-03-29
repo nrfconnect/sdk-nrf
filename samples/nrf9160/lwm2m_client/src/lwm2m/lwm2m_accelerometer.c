@@ -226,10 +226,10 @@ int lwm2m_init_accel(void)
 	return 0;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_accel_event(eh)) {
-		struct accel_event *event = cast_accel_event(eh);
+	if (is_accel_event(aeh)) {
+		struct accel_event *event = cast_accel_event(aeh);
 		double received_value;
 
 		accel_read_timestamp[0] = k_uptime_get();
@@ -263,5 +263,5 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, accel_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, accel_event);

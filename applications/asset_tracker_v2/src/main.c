@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <event_manager.h>
+#include <app_evt_mgr.h>
 #if defined(CONFIG_NRF_MODEM_LIB)
 #include <modem/nrf_modem_lib.h>
 #endif /* CONFIG_NRF_MODEM_LIB */
@@ -18,7 +18,7 @@
 #include <net/nrf_cloud_agps.h>
 #endif
 
-/* Module name is used by the event manager macros in this file */
+/* Module name is used by the Application Event Manager macros in this file */
 #define MODULE main
 #include <caf/events/module_state_event.h>
 
@@ -38,7 +38,7 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_APPLICATION_MODULE_LOG_LEVEL);
 
 /* Message structure. Events from other modules are converted to messages
- * in the event manager handler, and then queued up in the message queue
+ * in the Application Event Manager handler, and then queued up in the message queue
  * for processing in the main thread.
  */
 struct app_msg_data {
@@ -210,58 +210,58 @@ static void handle_nrf_modem_lib_init_ret(void)
 #endif /* CONFIG_NRF_MODEM_LIB */
 }
 
-/* Event manager handler. Puts event data into messages and adds them to the
+/* Application Event Manager handler. Puts event data into messages and adds them to the
  * application message queue.
  */
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
 	struct app_msg_data msg = {0};
 	bool enqueue_msg = false;
 
-	if (is_cloud_module_event(eh)) {
-		struct cloud_module_event *evt = cast_cloud_module_event(eh);
+	if (is_cloud_module_event(aeh)) {
+		struct cloud_module_event *evt = cast_cloud_module_event(aeh);
 
 		msg.module.cloud = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_app_module_event(eh)) {
-		struct app_module_event *evt = cast_app_module_event(eh);
+	if (is_app_module_event(aeh)) {
+		struct app_module_event *evt = cast_app_module_event(aeh);
 
 		msg.module.app = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_data_module_event(eh)) {
-		struct data_module_event *evt = cast_data_module_event(eh);
+	if (is_data_module_event(aeh)) {
+		struct data_module_event *evt = cast_data_module_event(aeh);
 
 		msg.module.data = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_sensor_module_event(eh)) {
-		struct sensor_module_event *evt = cast_sensor_module_event(eh);
+	if (is_sensor_module_event(aeh)) {
+		struct sensor_module_event *evt = cast_sensor_module_event(aeh);
 
 		msg.module.sensor = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_util_module_event(eh)) {
-		struct util_module_event *evt = cast_util_module_event(eh);
+	if (is_util_module_event(aeh)) {
+		struct util_module_event *evt = cast_util_module_event(aeh);
 
 		msg.module.util = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_modem_module_event(eh)) {
-		struct modem_module_event *evt = cast_modem_module_event(eh);
+	if (is_modem_module_event(aeh)) {
+		struct modem_module_event *evt = cast_modem_module_event(aeh);
 
 		msg.module.modem = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_ui_module_event(eh)) {
-		struct ui_module_event *evt = cast_ui_module_event(eh);
+	if (is_ui_module_event(aeh)) {
+		struct ui_module_event *evt = cast_ui_module_event(aeh);
 
 		msg.module.ui = *evt;
 		enqueue_msg = true;
@@ -433,7 +433,7 @@ static void data_get(void)
 	app_module_event->count = count;
 	app_module_event->type = APP_EVT_DATA_GET;
 
-	EVENT_SUBMIT(app_module_event);
+	APPLICATION_EVENT_SUBMIT(app_module_event);
 }
 
 /* Message handler for STATE_INIT. */
@@ -542,11 +542,11 @@ void main(void)
 		handle_nrf_modem_lib_init_ret();
 	}
 
-	if (event_manager_init()) {
-		/* Without the event manager, the application will not work
+	if (app_evt_mgr_init()) {
+		/* Without the Application Event Manager, the application will not work
 		 * as intended. A reboot is required in an attempt to recover.
 		 */
-		LOG_ERR("Event manager could not be initialized, rebooting...");
+		LOG_ERR("Application Event Manager could not be initialized, rebooting...");
 		k_sleep(K_SECONDS(5));
 		sys_reboot(SYS_REBOOT_COLD);
 	} else {
@@ -596,11 +596,11 @@ void main(void)
 	}
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
-EVENT_SUBSCRIBE(MODULE, app_module_event);
-EVENT_SUBSCRIBE(MODULE, data_module_event);
-EVENT_SUBSCRIBE(MODULE, util_module_event);
-EVENT_SUBSCRIBE_FINAL(MODULE, ui_module_event);
-EVENT_SUBSCRIBE_FINAL(MODULE, sensor_module_event);
-EVENT_SUBSCRIBE_FINAL(MODULE, modem_module_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, app_module_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, data_module_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, util_module_event);
+APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, ui_module_event);
+APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, sensor_module_event);
+APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, modem_module_event);

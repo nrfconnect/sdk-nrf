@@ -37,7 +37,7 @@ static struct config_event *generate_response(const struct config_event *event,
 static void submit_response(struct config_event *rsp)
 {
 	rsp->status = CONFIG_STATUS_SUCCESS;
-	EVENT_SUBMIT(rsp);
+	APPLICATION_EVENT_SUBMIT(rsp);
 }
 
 static bool handle_config_event(const struct config_event *event)
@@ -102,11 +102,11 @@ static bool handle_config_event(const struct config_event *event)
 	return false;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			module_set_state(MODULE_STATE_READY);
@@ -115,8 +115,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_config_event(eh)) {
-		return handle_config_event(cast_config_event(eh));
+	if (is_config_event(aeh)) {
+		return handle_config_event(cast_config_event(aeh));
 	}
 
 	/* If event is unhandled, unsubscribe. */
@@ -125,6 +125,6 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);

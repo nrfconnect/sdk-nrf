@@ -153,7 +153,7 @@ static void uart_callback(const struct device *dev, struct uart_event *evt,
 		event->dev_idx = dev_idx;
 		event->buf = &evt->data.rx.buf[evt->data.rx.offset];
 		event->len = evt->data.rx.len;
-		EVENT_SUBMIT(event);
+		APPLICATION_EVENT_SUBMIT(event);
 		break;
 	case UART_RX_BUF_RELEASED:
 		if (evt->data.rx_buf.buf) {
@@ -353,13 +353,13 @@ static int uart_tx_enqueue(uint8_t *data, size_t data_len, uint8_t dev_idx)
 	return 0;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
 	int err;
 
-	if (is_uart_data_event(eh)) {
+	if (is_uart_data_event(aeh)) {
 		const struct uart_data_event *event =
-			cast_uart_data_event(eh);
+			cast_uart_data_event(aeh);
 
 		/* All subscribers have gotten a chance to copy data at this point */
 		uart_rx_buf_unref(event->buf);
@@ -367,9 +367,9 @@ static bool event_handler(const struct event_header *eh)
 		return true;
 	}
 
-	if (is_cdc_data_event(eh)) {
+	if (is_cdc_data_event(aeh)) {
 		const struct cdc_data_event *event =
-			cast_cdc_data_event(eh);
+			cast_cdc_data_event(aeh);
 
 		if (event->dev_idx >= UART_DEVICE_COUNT) {
 			return false;
@@ -391,9 +391,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_data_event(eh)) {
+	if (is_ble_data_event(aeh)) {
 		const struct ble_data_event *event =
-			cast_ble_data_event(eh);
+			cast_ble_data_event(aeh);
 		/* Only one BLE Service instance: always map to UART_0 */
 		uint8_t dev_idx = 0;
 
@@ -411,9 +411,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_peer_conn_event(eh)) {
+	if (is_peer_conn_event(aeh)) {
 		const struct peer_conn_event *event =
-			cast_peer_conn_event(eh);
+			cast_peer_conn_event(aeh);
 		int prev_count;
 
 		if (event->dev_idx >= UART_DEVICE_COUNT) {
@@ -454,9 +454,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			for (int i = 0; i < UART_DEVICE_COUNT; ++i) {
@@ -498,9 +498,9 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, peer_conn_event);
-EVENT_SUBSCRIBE(MODULE, ble_data_event);
-EVENT_SUBSCRIBE(MODULE, cdc_data_event);
-EVENT_SUBSCRIBE_FINAL(MODULE, uart_data_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, peer_conn_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_data_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, cdc_data_event);
+APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, uart_data_event);

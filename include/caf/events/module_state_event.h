@@ -15,8 +15,8 @@
  */
 
 #include <sys/atomic.h>
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -227,7 +227,7 @@ enum module_state {
  */
 struct module_state_event {
 	/** Event header. */
-	struct event_header header;
+	struct application_event_header header;
 
 	/** ID of the module. */
 	const void *module_id;
@@ -236,7 +236,7 @@ struct module_state_event {
 	enum module_state state;
 };
 
-EVENT_TYPE_DECLARE(module_state_event);
+APPLICATION_EVENT_TYPE_DECLARE(module_state_event);
 
 
 /** @brief Check if the selected module reported the selected state.
@@ -313,7 +313,7 @@ static inline void module_set_state(enum module_state state)
 
 	event->module_id = MODULE_ID(MODULE);
 	event->state = state;
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 #ifdef __cplusplus

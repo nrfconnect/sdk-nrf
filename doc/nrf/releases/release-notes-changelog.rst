@@ -386,35 +386,35 @@ Libraries for networking
 Other libraries
 ---------------
 
-* :ref:`event_manager`:
+* :ref:`app_evt_mgr`:
 
   * Added:
 
     * Event type flags to represent if event type should be logged, traced and has dynamic data.
-      To update your application, pass a flag variable as a parameter in :c:macro:`EVENT_TYPE_DEFINE` instead of ``init_log``.
-      Use :c:macro:`EVENT_FLAGS_CREATE` to set multiple flags:
+      To update your application, pass a flag variable as a parameter in :c:macro:`APPLICATION_EVENT_TYPE_DEFINE` instead of ``init_log``.
+      Use :c:macro:`APPLICATION_EVENT_FLAGS_CREATE` to set multiple flags:
 
       .. code-block:: c
 
-         EVENT_TYPE_DEFINE(my_event,
+         APPLICATION_EVENT_TYPE_DEFINE(my_event,
            log_my_event,
            &my_event_info,
-           EVENT_FLAGS_CREATE(EVENT_TYPE_FLAGS_1, EVENT_TYPE_FLAGS_2));
+           APPLICATION_EVENT_FLAGS_CREATE(APPLICATION_EVENT_TYPE_FLAGS_1, APPLICATION_EVENT_TYPE_FLAGS_2));
 
-     * :c:func:`event_manager_event_size` function with corresponding :kconfig:option:`CONFIG_EVENT_MANAGER_PROVIDE_EVENT_SIZE` option.
+     * :c:func:`app_evt_mgr_event_size` function with corresponding :kconfig:option:`CONFIG_APPLICATION_EVENT_MANAGER_PROVIDE_EVENT_SIZE` option.
 
-    * Universal hooks for event manager initialization, event submission, preprocessing, and postprocessing.
+    * Universal hooks for Application Event Manager initialization, event submission, preprocessing, and postprocessing.
       This includes implementation of macros that register hooks, grouped as follows:
 
-      * :c:macro:`EVENT_HOOK_ON_SUBMIT_REGISTER`, :c:macro:`EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST`, :c:macro:`EVENT_HOOK_ON_SUBMIT_REGISTER_LAST`
-      * :c:macro:`EVENT_HOOK_PREPROCESS_REGISTER`, :c:macro:`EVENT_HOOK_PREPROCESS_REGISTER_FIRST`, :c:macro:`EVENT_HOOK_PREPROCESS_REGISTER_LAST`
-      * :c:macro:`EVENT_HOOK_POSTPROCESS_REGISTER`, :c:macro:`EVENT_HOOK_POSTPROCESS_REGISTER_FIRST`, :c:macro:`EVENT_HOOK_POSTPROCESS_REGISTER_LAST`
+      * :c:macro:`APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER`, :c:macro:`APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST`, :c:macro:`APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER_LAST`
+      * :c:macro:`APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER`, :c:macro:`APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER_FIRST`, :c:macro:`APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER_LAST`
+      * :c:macro:`APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER`, :c:macro:`APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER_FIRST`, :c:macro:`APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER_LAST`
 
-* :ref:`event_manager_profiler_tracer`:
+* :ref:`app_evt_mgr_profiler_tracer`:
 
-  * Updated the :ref:`event_manager_profiler_tracer` library.
-    The library is no longer directly referenced from the Event Manager.
-    Instead, it uses the Event Manager hooks to connect with the manager.
+  * Updated the :ref:`app_evt_mgr_profiler_tracer` library.
+    The library is no longer directly referenced from the Application Event Manager.
+    Instead, it uses the Application Event Manager hooks to connect with the manager.
 
 Common Application Framework (CAF)
 ----------------------------------

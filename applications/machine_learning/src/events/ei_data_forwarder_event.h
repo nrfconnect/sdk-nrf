@@ -13,8 +13,8 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,12 +32,12 @@ enum ei_data_forwarder_state {
 
 /** @brief Edge Impulse data forwarder event. */
 struct ei_data_forwarder_event {
-	struct event_header header; /**< Event header. */
+	struct application_event_header header; /**< Event header. */
 
 	enum ei_data_forwarder_state state; /**< Edge Impulse data forwarder state. */
 };
 
-EVENT_TYPE_DECLARE(ei_data_forwarder_event);
+APPLICATION_EVENT_TYPE_DECLARE(ei_data_forwarder_event);
 
 #ifdef __cplusplus
 }

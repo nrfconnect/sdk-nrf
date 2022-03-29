@@ -18,22 +18,22 @@ static const char * const state_name[] = {
 };
 
 
-static void log_battery_state_event(const struct event_header *eh)
+static void log_battery_state_event(const struct application_event_header *aeh)
 {
-	const struct battery_state_event *event = cast_battery_state_event(eh);
+	const struct battery_state_event *event = cast_battery_state_event(aeh);
 
 	BUILD_ASSERT(ARRAY_SIZE(state_name) == BATTERY_STATE_COUNT,
 			 "Invalid number of elements");
 
 	__ASSERT_NO_MSG(event->state < BATTERY_STATE_COUNT);
 
-	EVENT_MANAGER_LOG(eh, "battery %s", state_name[event->state]);
+	APPLICATION_EVENT_MANAGER_LOG(aeh, "battery %s", state_name[event->state]);
 }
 
 static void profile_battery_state_event(struct log_event_buf *buf,
-				    const struct event_header *eh)
+				    const struct application_event_header *aeh)
 {
-	const struct battery_state_event *event = cast_battery_state_event(eh);
+	const struct battery_state_event *event = cast_battery_state_event(aeh);
 
 	profiler_log_encode_uint8(buf, event->state);
 }
@@ -43,25 +43,25 @@ EVENT_INFO_DEFINE(battery_state_event,
 		  ENCODE("state"),
 		  profile_battery_state_event);
 
-EVENT_TYPE_DEFINE(battery_state_event,
+APPLICATION_EVENT_TYPE_DEFINE(battery_state_event,
 		  log_battery_state_event,
 		  &battery_state_event_info,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_BATTERY_STATE_EVENT,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 
-static void log_battery_level_event(const struct event_header *eh)
+static void log_battery_level_event(const struct application_event_header *aeh)
 {
-	const struct battery_level_event *event = cast_battery_level_event(eh);
+	const struct battery_level_event *event = cast_battery_level_event(aeh);
 
-	EVENT_MANAGER_LOG(eh, "level=%u", event->level);
+	APPLICATION_EVENT_MANAGER_LOG(aeh, "level=%u", event->level);
 }
 
 static void profile_battery_level_event(struct log_event_buf *buf,
-				    const struct event_header *eh)
+				    const struct application_event_header *aeh)
 {
-	const struct battery_level_event *event = cast_battery_level_event(eh);
+	const struct battery_level_event *event = cast_battery_level_event(aeh);
 
 	profiler_log_encode_uint8(buf, event->level);
 }
@@ -71,9 +71,9 @@ EVENT_INFO_DEFINE(battery_level_event,
 		  ENCODE("level"),
 		  profile_battery_level_event);
 
-EVENT_TYPE_DEFINE(battery_level_event,
+APPLICATION_EVENT_TYPE_DEFINE(battery_level_event,
 		  log_battery_level_event,
 		  &battery_level_event_info,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_BATTERY_LEVEL_EVENT,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

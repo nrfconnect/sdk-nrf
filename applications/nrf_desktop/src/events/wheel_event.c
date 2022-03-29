@@ -8,16 +8,16 @@
 
 #include "wheel_event.h"
 
-static void log_wheel_event(const struct event_header *eh)
+static void log_wheel_event(const struct application_event_header *aeh)
 {
-	const struct wheel_event *event = cast_wheel_event(eh);
+	const struct wheel_event *event = cast_wheel_event(aeh);
 
-	EVENT_MANAGER_LOG(eh, "wheel=%d", event->wheel);
+	APPLICATION_EVENT_MANAGER_LOG(aeh, "wheel=%d", event->wheel);
 }
 
-EVENT_TYPE_DEFINE(wheel_event,
+APPLICATION_EVENT_TYPE_DEFINE(wheel_event,
 		  log_wheel_event,
 		  NULL,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_WHEEL_EVENT,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

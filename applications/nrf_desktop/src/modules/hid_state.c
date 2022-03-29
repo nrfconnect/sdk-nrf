@@ -637,7 +637,7 @@ static void send_report_keyboard(struct report_state *rs, struct report_data *rd
 
 	event->dyndata.data[1] = modifier_bm;
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 
 	rs->update_needed = false;
 }
@@ -710,7 +710,7 @@ static void send_report_mouse(struct report_state *rs, struct report_data *rd)
 	event->dyndata.data[4] = (y_buff[0] << 4) | (x_buff[1] & 0x0f);
 	event->dyndata.data[5] = (y_buff[1] << 4) | (y_buff[0] >> 4);
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 
 	if ((rd->axes.axis[MOUSE_REPORT_AXIS_X] != 0) ||
 	    (rd->axes.axis[MOUSE_REPORT_AXIS_Y] != 0) ||
@@ -775,7 +775,7 @@ static void send_report_boot_mouse(struct report_state *rs, struct report_data *
 	event->dyndata.data[2] = dx;
 	event->dyndata.data[3] = dy;
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 
 	if ((rd->axes.axis[MOUSE_REPORT_AXIS_X] != 0) ||
 	    (rd->axes.axis[MOUSE_REPORT_AXIS_Y] != 0)) {
@@ -817,7 +817,7 @@ static void send_report_ctrl(struct report_state *rs, struct report_data *rd)
 	sys_put_le16(rd->items.item[idx].usage_id,
 		     &event->dyndata.data[sizeof(rs->report_id)]);
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 
 	rs->update_needed = false;
 }
@@ -1070,7 +1070,7 @@ static void update_led(uint8_t led_id, const struct led_effect *effect)
 
 	event->led_id = led_id;
 	event->led_effect = effect;
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static void broadcast_keyboard_leds(void)
@@ -1583,49 +1583,49 @@ static bool handle_module_state_event(const struct module_state_event *event)
 	return false;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
 	if (!IS_ENABLED(CONFIG_DESKTOP_MOTION_NONE) &&
-	    is_motion_event(eh)) {
-		return handle_motion_event(cast_motion_event(eh));
+	    is_motion_event(aeh)) {
+		return handle_motion_event(cast_motion_event(aeh));
 	}
 
-	if (is_hid_report_sent_event(eh)) {
+	if (is_hid_report_sent_event(aeh)) {
 		return handle_hid_report_sent_event(
-				cast_hid_report_sent_event(eh));
+				cast_hid_report_sent_event(aeh));
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_WHEEL_ENABLE) &&
-	    is_wheel_event(eh)) {
-		return handle_wheel_event(cast_wheel_event(eh));
+	    is_wheel_event(aeh)) {
+		return handle_wheel_event(cast_wheel_event(aeh));
 	}
 
 	if (IS_ENABLED(CONFIG_CAF_BUTTON_EVENTS) &&
-	    is_button_event(eh)) {
-		return handle_button_event(cast_button_event(eh));
+	    is_button_event(aeh)) {
+		return handle_button_event(cast_button_event(aeh));
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) &&
-	    is_hid_report_event(eh)) {
-		return handle_hid_report_event(cast_hid_report_event(eh));
+	    is_hid_report_event(aeh)) {
+		return handle_hid_report_event(cast_hid_report_event(aeh));
 	}
 
-	if (is_hid_report_subscription_event(eh)) {
+	if (is_hid_report_subscription_event(aeh)) {
 		return handle_hid_report_subscription_event(
-				cast_hid_report_subscription_event(eh));
+				cast_hid_report_subscription_event(aeh));
 	}
 
-	if (is_ble_peer_event(eh)) {
-		return handle_ble_peer_event(cast_ble_peer_event(eh));
+	if (is_ble_peer_event(aeh)) {
+		return handle_ble_peer_event(cast_ble_peer_event(aeh));
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_USB_ENABLE) &&
-	    is_usb_hid_event(eh)) {
-		return handle_usb_hid_event(cast_usb_hid_event(eh));
+	    is_usb_hid_event(aeh)) {
+		return handle_usb_hid_event(cast_usb_hid_event(aeh));
 	}
 
-	if (is_module_state_event(eh)) {
-		return handle_module_state_event(cast_module_state_event(eh));
+	if (is_module_state_event(aeh)) {
+		return handle_module_state_event(cast_module_state_event(aeh));
 	}
 
 	/* If event is unhandled, unsubscribe. */
@@ -1634,15 +1634,15 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, ble_peer_event);
-EVENT_SUBSCRIBE(MODULE, usb_hid_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, usb_hid_event);
 #ifdef CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT
-EVENT_SUBSCRIBE(MODULE, hid_report_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_event);
 #endif /* CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT */
-EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
-EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE_FINAL(MODULE, button_event);
-EVENT_SUBSCRIBE(MODULE, motion_event);
-EVENT_SUBSCRIBE(MODULE, wheel_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, button_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, motion_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, wheel_event);

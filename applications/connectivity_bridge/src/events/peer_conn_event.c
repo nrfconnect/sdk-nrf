@@ -15,16 +15,16 @@ static const char * const peer_name[] = {
 #undef X
 };
 
-static void log_peer_conn_event(const struct event_header *eh)
+static void log_peer_conn_event(const struct application_event_header *aeh)
 {
-	const struct peer_conn_event *event = cast_peer_conn_event(eh);
+	const struct peer_conn_event *event = cast_peer_conn_event(aeh);
 
 	BUILD_ASSERT(ARRAY_SIZE(peer_name) == PEER_ID_COUNT,
 			 "Invalid number of elements");
 
 	__ASSERT_NO_MSG(event->peer_id < PEER_ID_COUNT);
 
-	EVENT_MANAGER_LOG(eh,
+	APPLICATION_EVENT_MANAGER_LOG(aeh,
 		"%s:%s_%d baud:%d",
 		event->conn_state == PEER_STATE_CONNECTED ?
 			"CONNECTED" : "DISCONNECTED",
@@ -33,9 +33,9 @@ static void log_peer_conn_event(const struct event_header *eh)
 		event->baudrate);
 }
 
-EVENT_TYPE_DEFINE(peer_conn_event,
+APPLICATION_EVENT_TYPE_DEFINE(peer_conn_event,
 		  log_peer_conn_event,
 		  NULL,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_BRIDGE_LOG_PEER_CONN_EVENT,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

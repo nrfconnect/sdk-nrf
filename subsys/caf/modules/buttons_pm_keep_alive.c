@@ -9,10 +9,10 @@
 #include <caf/events/button_event.h>
 #include <caf/events/keep_alive_event.h>
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	__ASSERT_NO_MSG(is_button_event(eh));
-	const struct button_event *event = cast_button_event(eh);
+	__ASSERT_NO_MSG(is_button_event(aeh));
+	const struct button_event *event = cast_button_event(aeh);
 
 	if (event->pressed) {
 		keep_alive();
@@ -20,5 +20,5 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, button_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, button_event);

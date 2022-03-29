@@ -236,11 +236,11 @@
 		</g>
 		<g id="shape32-124" v:mID="32" v:groupContext="shape" transform="translate(222.665,-174.808)">
 			<title>Nordic Blue.2143</title>
-			<desc>Event Manager</desc>
+			<desc>Application Event Manager</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
 			<v:textRect cx="40.3609" cy="486.627" width="80.73" height="28.3465"/>
 			<rect x="0" y="472.453" width="80.7218" height="28.3465" class="st2"/>
-			<text x="6.45" y="489.63" class="st11" v:langID="1033"><v:paragraph v:horizAlign="1" v:bulletSize="0.166667"/><v:tabList/>Event Manager</text>		</g>
+			<text x="6.45" y="489.63" class="st11" v:langID="1033"><v:paragraph v:horizAlign="1" v:bulletSize="0.166667"/><v:tabList/>Application Event Manager</text>		</g>
 		<g id="shape33-127" v:mID="33" v:groupContext="shape" v:layerMember="0" transform="translate(300.803,-259.348)">
 			<title>Dynamic connector.2145</title>
 			<path d="M0 507.76 L0 508.12 L0 513.98 L-37.78 513.98 L-37.78 549.67" class="st9"/>

@@ -13,9 +13,9 @@
 
 
 
-static void log_event(const struct event_header *eh)
+static void log_event(const struct application_event_header *aeh)
 {
-	const struct power_manager_restrict_event *event = cast_power_manager_restrict_event(eh);
+	const struct power_manager_restrict_event *event = cast_power_manager_restrict_event(aeh);
 	enum power_manager_level lvl = event->level;
 	const char *power_state_str;
 
@@ -41,15 +41,15 @@ static void log_event(const struct event_header *eh)
 		break;
 	}
 
-	EVENT_MANAGER_LOG(eh, "module \"%s\" restricts to %s",
+	APPLICATION_EVENT_MANAGER_LOG(aeh, "module \"%s\" restricts to %s",
 			module_name_get(module_id_get(event->module_idx)),
 			power_state_str);
 }
 
 static void profile_event(struct log_event_buf *buf,
-			  const struct event_header *eh)
+			  const struct application_event_header *aeh)
 {
-	const struct power_manager_restrict_event *event = cast_power_manager_restrict_event(eh);
+	const struct power_manager_restrict_event *event = cast_power_manager_restrict_event(aeh);
 
 	profiler_log_encode_uint32(buf, event->module_idx);
 	profiler_log_encode_int8(buf, event->level);
@@ -62,9 +62,9 @@ EVENT_INFO_DEFINE(power_manager_restrict_event,
 		  profile_event
 );
 
-EVENT_TYPE_DEFINE(power_manager_restrict_event,
+APPLICATION_EVENT_TYPE_DEFINE(power_manager_restrict_event,
 		  log_event,
 		  &power_manager_restrict_event_info,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_POWER_MANAGER_EVENTS,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <stdio.h>
-#include <event_manager.h>
+#include <app_evt_mgr.h>
 #include <math.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
@@ -135,34 +135,34 @@ static void state_set(enum state_type new_state)
 }
 
 /* Handlers */
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
 	struct modem_msg_data msg = {0};
 	bool enqueue_msg = false;
 
-	if (is_modem_module_event(eh)) {
-		struct modem_module_event *evt = cast_modem_module_event(eh);
+	if (is_modem_module_event(aeh)) {
+		struct modem_module_event *evt = cast_modem_module_event(aeh);
 
 		msg.module.modem = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_app_module_event(eh)) {
-		struct app_module_event *evt = cast_app_module_event(eh);
+	if (is_app_module_event(aeh)) {
+		struct app_module_event *evt = cast_app_module_event(aeh);
 
 		msg.module.app = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_cloud_module_event(eh)) {
-		struct cloud_module_event *evt = cast_cloud_module_event(eh);
+	if (is_cloud_module_event(aeh)) {
+		struct cloud_module_event *evt = cast_cloud_module_event(aeh);
 
 		msg.module.cloud = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_util_module_event(eh)) {
-		struct util_module_event *evt = cast_util_module_event(eh);
+	if (is_util_module_event(aeh)) {
+		struct util_module_event *evt = cast_util_module_event(aeh);
 
 		msg.module.util = *evt;
 		enqueue_msg = true;
@@ -441,7 +441,7 @@ static void send_cell_update(uint32_t cell_id, uint32_t tac)
 	evt->data.cell.cell_id = cell_id;
 	evt->data.cell.tac = tac;
 
-	EVENT_SUBMIT(evt);
+	APPLICATION_EVENT_SUBMIT(evt);
 }
 
 static void send_psm_update(int tau, int active_time)
@@ -452,7 +452,7 @@ static void send_psm_update(int tau, int active_time)
 	evt->data.psm.tau = tau;
 	evt->data.psm.active_time = active_time;
 
-	EVENT_SUBMIT(evt);
+	APPLICATION_EVENT_SUBMIT(evt);
 }
 
 static void send_edrx_update(float edrx, float ptw)
@@ -463,7 +463,7 @@ static void send_edrx_update(float edrx, float ptw)
 	evt->data.edrx.edrx = edrx;
 	evt->data.edrx.ptw = ptw;
 
-	EVENT_SUBMIT(evt);
+	APPLICATION_EVENT_SUBMIT(evt);
 }
 
 static inline int adjust_rsrp(int input, enum sample_type type)
@@ -527,7 +527,7 @@ static void send_neighbor_cell_update(struct lte_lc_cells_info *cell_info)
 	evt->type = MODEM_EVT_NEIGHBOR_CELLS_DATA_READY;
 	evt->data.neighbor_cells.timestamp = k_uptime_get();
 
-	EVENT_SUBMIT(evt);
+	APPLICATION_EVENT_SUBMIT(evt);
 }
 
 static int static_modem_data_get(void)
@@ -581,7 +581,7 @@ static int static_modem_data_get(void)
 	modem_module_event->data.modem_static.timestamp = k_uptime_get();
 	modem_module_event->type = MODEM_EVT_MODEM_STATIC_DATA_READY;
 
-	EVENT_SUBMIT(modem_module_event);
+	APPLICATION_EVENT_SUBMIT(modem_module_event);
 	return 0;
 }
 
@@ -712,7 +712,7 @@ static int dynamic_modem_data_get(void)
 
 	populate_event_with_dynamic_modem_data(modem_module_event, &modem_param);
 
-	EVENT_SUBMIT(modem_module_event);
+	APPLICATION_EVENT_SUBMIT(modem_module_event);
 	return 0;
 }
 
@@ -750,7 +750,7 @@ static int battery_data_get(void)
 	modem_module_event->data.bat.timestamp = k_uptime_get();
 	modem_module_event->type = MODEM_EVT_BATTERY_DATA_READY;
 
-	EVENT_SUBMIT(modem_module_event);
+	APPLICATION_EVENT_SUBMIT(modem_module_event);
 
 	return 0;
 }
@@ -1076,8 +1076,8 @@ K_THREAD_DEFINE(modem_module_thread, CONFIG_MODEM_THREAD_STACK_SIZE,
 		module_thread_fn, NULL, NULL, NULL,
 		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
-EVENT_SUBSCRIBE(MODULE, app_module_event);
-EVENT_SUBSCRIBE(MODULE, cloud_module_event);
-EVENT_SUBSCRIBE_FINAL(MODULE, util_module_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, app_module_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, cloud_module_event);
+APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, util_module_event);

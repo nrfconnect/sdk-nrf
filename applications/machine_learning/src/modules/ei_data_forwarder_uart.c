@@ -46,7 +46,7 @@ static void broadcast_ei_data_forwarder_state(enum ei_data_forwarder_state forwa
 	struct ei_data_forwarder_event *event = new_ei_data_forwarder_event();
 
 	event->state = forwarder_state;
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static void update_state(enum state new_state)
@@ -193,19 +193,19 @@ static bool handle_module_state_event(const struct module_state_event *event)
 	return false;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_sensor_event(eh)) {
-		return handle_sensor_event(cast_sensor_event(eh));
+	if (is_sensor_event(aeh)) {
+		return handle_sensor_event(cast_sensor_event(aeh));
 	}
 
 	if (ML_APP_MODE_CONTROL &&
-	    is_ml_app_mode_event(eh)) {
-		return handle_ml_app_mode_event(cast_ml_app_mode_event(eh));
+	    is_ml_app_mode_event(aeh)) {
+		return handle_ml_app_mode_event(cast_ml_app_mode_event(aeh));
 	}
 
-	if (is_module_state_event(eh)) {
-		return handle_module_state_event(cast_module_state_event(eh));
+	if (is_module_state_event(aeh)) {
+		return handle_module_state_event(cast_module_state_event(aeh));
 	}
 
 	/* If event is unhandled, unsubscribe. */
@@ -214,9 +214,9 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, sensor_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, sensor_event);
 #if ML_APP_MODE_CONTROL
-EVENT_SUBSCRIBE(MODULE, ml_app_mode_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ml_app_mode_event);
 #endif /* ML_APP_MODE_CONTROL */

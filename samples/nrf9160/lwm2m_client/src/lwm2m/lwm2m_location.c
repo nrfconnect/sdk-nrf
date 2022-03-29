@@ -17,10 +17,10 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_gnss_pvt_event(eh)) {
-		struct gnss_pvt_event *event = cast_gnss_pvt_event(eh);
+	if (is_gnss_pvt_event(aeh)) {
+		struct gnss_pvt_event *event = cast_gnss_pvt_event(aeh);
 
 		double latitude = event->pvt.latitude;
 		double longitude = event->pvt.longitude;
@@ -45,5 +45,5 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, gnss_pvt_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, gnss_pvt_event);

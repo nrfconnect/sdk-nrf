@@ -75,7 +75,7 @@ static void poll_dtr(void)
 			event->baudrate = baudrate;
 			event->conn_state =
 				cdc_val == 0 ? PEER_STATE_DISCONNECTED : PEER_STATE_CONNECTED;
-			EVENT_SUBMIT(event);
+			APPLICATION_EVENT_SUBMIT(event);
 
 			cdc_ready[i] = cdc_val;
 		}
@@ -122,7 +122,7 @@ static void cdc_uart_interrupt_handler(const struct device *dev, void *user_data
 				event->dev_idx = dev_idx;
 				event->buf = rx_buf;
 				event->len = data_length;
-				EVENT_SUBMIT(event);
+				APPLICATION_EVENT_SUBMIT(event);
 			} else {
 				k_mem_slab_free(&cdc_rx_slab, &rx_buf);
 			}
@@ -170,11 +170,11 @@ static void usbd_status(enum usb_dc_status_code cb_status, const uint8_t *param)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_uart_data_event(eh)) {
+	if (is_uart_data_event(aeh)) {
 		const struct uart_data_event *event =
-			cast_uart_data_event(eh);
+			cast_uart_data_event(aeh);
 		int tx_written;
 
 		if (event->dev_idx >= CDC_DEVICE_COUNT) {
@@ -199,9 +199,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_cdc_data_event(eh)) {
+	if (is_cdc_data_event(aeh)) {
 		const struct cdc_data_event *event =
-			cast_cdc_data_event(eh);
+			cast_cdc_data_event(aeh);
 
 		/* All subscribers have gotten a chance to copy data at this point */
 		k_mem_slab_free(&cdc_rx_slab, (void **) &event->buf);
@@ -209,9 +209,9 @@ static bool event_handler(const struct event_header *eh)
 		return true;
 	}
 
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 #if CONFIG_BRIDGE_MSC_ENABLE
 		if (check_state(event, MODULE_ID(fs_handler), MODULE_STATE_STANDBY)) {
@@ -267,7 +267,7 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, uart_data_event);
-EVENT_SUBSCRIBE_FINAL(MODULE, cdc_data_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, uart_data_event);
+APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, cdc_data_event);

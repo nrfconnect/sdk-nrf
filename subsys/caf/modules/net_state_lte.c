@@ -40,7 +40,7 @@ static void send_net_state_event(enum net_state state)
 
 	event->id = MODULE_ID(MODULE);
 	event->state = state;
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static void set_net_state(enum net_state state)
@@ -163,10 +163,10 @@ static int connect_lte(void)
 	return 0;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
@@ -191,7 +191,7 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_CAF_LOG_NET_STATE_WAITING) && is_net_state_event(eh)) {
+	if (IS_ENABLED(CONFIG_CAF_LOG_NET_STATE_WAITING) && is_net_state_event(aeh)) {
 		if (net_state == NET_STATE_DISCONNECTED) {
 			k_work_reschedule(&connecting_work, K_NO_WAIT);
 		} else {
@@ -208,8 +208,8 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if CONFIG_CAF_LOG_NET_STATE_WAITING
-	EVENT_SUBSCRIBE(MODULE, net_state_event);
+	APPLICATION_EVENT_SUBSCRIBE(MODULE, net_state_event);
 #endif

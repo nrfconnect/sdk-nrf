@@ -99,12 +99,12 @@ error:
 	module_set_state(MODULE_STATE_ERROR);
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
 	static bool initialized;
 
-	if (is_module_state_event(eh)) {
-		const struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		const struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			__ASSERT_NO_MSG(!initialized);
@@ -116,7 +116,7 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_wake_up_event(eh)) {
+	if (is_wake_up_event(aeh)) {
 		if (!initialized) {
 			initialized = true;
 
@@ -125,8 +125,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_power_down_event(eh)) {
-		const struct power_down_event *event = cast_power_down_event(eh);
+	if (is_power_down_event(aeh)) {
+		const struct power_down_event *event = cast_power_down_event(aeh);
 
 		/* Do not cut off leds power on error */
 		if (event->error) {
@@ -147,7 +147,7 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, power_down_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, power_down_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);

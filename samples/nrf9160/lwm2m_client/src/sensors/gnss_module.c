@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <nrf_modem_gnss.h>
-#include <event_manager.h>
+#include <app_evt_mgr.h>
 
 #include "gnss_module.h"
 #include "gnss_pvt_event.h"
@@ -33,7 +33,7 @@ static void gnss_event_handler(int event_id)
 		struct gnss_pvt_event *event = new_gnss_pvt_event();
 
 		event->pvt = pvt_data;
-		EVENT_SUBMIT(event);
+		APPLICATION_EVENT_SUBMIT(event);
 		break;
 	case NRF_MODEM_GNSS_EVT_AGPS_REQ:
 		LOG_DBG("GNSS requests AGPS Data. AGPS is not implemented.");
