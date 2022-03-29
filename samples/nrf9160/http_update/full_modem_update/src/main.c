@@ -21,12 +21,11 @@
 
 /* We assume that modem version strings (not UUID) will not be more than this */
 #define MAX_MODEM_VERSION_LEN 256
-#define EXT_FLASH_DEVICE DT_LABEL(DT_INST(0, jedec_spi_nor))
 
 static struct k_work fmfu_work;
 static const struct gpio_dt_spec sw1 = GPIO_DT_SPEC_GET(DT_ALIAS(sw1), gpios);
 static struct gpio_callback sw1_cb;
-static const struct device *flash_dev;
+static const struct device *flash_dev = DEVICE_DT_GET_ONE(jedec_spi_nor);
 static char modem_version[MAX_MODEM_VERSION_LEN];
 
 /* Buffer used as temporary storage when downloading the modem firmware, and
@@ -200,9 +199,8 @@ void main(void)
 
 	printk("HTTP full modem update sample started\n");
 
-	flash_dev = device_get_binding(EXT_FLASH_DEVICE);
-	if (flash_dev == NULL) {
-		printk("Failed to get flash device: %s\n", EXT_FLASH_DEVICE);
+	if (!device_is_ready(flash_dev)) {
+		printk("Flash device %s not ready\n", flash_dev->name);
 		return;
 	}
 
