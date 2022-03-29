@@ -20,10 +20,10 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 #define MIN_RANGE_VALUE 0.0
 #define MAX_RANGE_VALUE 100.0
 
-#if defined(CONFIG_ENV_SENSOR_USE_EXTERNAL)
-#define HUMID_APP_TYPE "BME680 Humidity Sensor"
-#elif defined(CONFIG_ENV_SENSOR_USE_SIM)
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(sensor_sim), okay)
 #define HUMID_APP_TYPE "Simulated Humidity Sensor"
+#else
+#define HUMID_APP_TYPE "BME680 Humidity Sensor"
 #endif
 
 #define HUMID_UNIT "%"

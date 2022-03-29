@@ -140,10 +140,8 @@ See :ref:`server setup <server_setup_lwm2m>` for instructions on providing the i
 Sensor simulation
 =================
 
-You can use the sample for obtaining actual sensor measurements or simulated sensor data for all sensors (including the accelerometer).
-If the sample is running on the nRF9160 DK, only simulated sensor data is available, as it does not have any of the external sensors needed for actual measurements.
-
-For example, you can enable the :ref:`CONFIG_ENV_SENSOR_USE_SIM <CONFIG_ENV_SENSOR_USE_SIM>` configuration option if you require simulated data from the temperature, humidity, pressure, or gas resistance sensors.
+If a sensor simulator is defined in Devicetree with the ``sensor_sim`` node label, it will be used over real devices.
+This is useful, for example, on the nRF9160 DK, where only simulated sensor data is available, as it does not have any of the external sensors needed for actual measurements.
 
 .. _notifications_lwm2m:
 
@@ -379,12 +377,6 @@ CONFIG_APP_GNSS - Configuration for enabling GNSS functionality
 
 CONFIG_GNSS_PRIORITY_ON_FIRST_FIX - Configuration for prioritizing GNSS over LTE during the search for first fix.
    Enabling this option makes it significantly easier for the GNSS module to find a position but will also affect performance for the rest of the application during the search for first fix.
-
-.. _CONFIG_ENV_SENSOR_USE_SIM:
-
-CONFIG_ENV_SENSOR_USE_SIM - Configuration to enable simulated sensor data
-   The configuration when enabled, makes the sensor returns simulated data and not actual measurements.
-   This option is available for all sensors, including the accelerometer.
 
 .. _CONFIG_LWM2M_IPSO_APP_COLOUR_SENSOR_VERSION_1_0:
 

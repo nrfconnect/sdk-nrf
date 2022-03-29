@@ -5,7 +5,7 @@
  */
 
 / {
-	sensor-sim {
+	sensor_sim: sensor-sim {
 		compatible = "nordic,sensor-sim";
 		label = "SENSOR_SIM";
 		acc-signal = "wave";

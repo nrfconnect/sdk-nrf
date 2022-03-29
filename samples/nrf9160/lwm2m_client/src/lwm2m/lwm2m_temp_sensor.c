@@ -20,10 +20,10 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 #define MIN_RANGE_VALUE -40.0
 #define MAX_RANGE_VALUE 85.0
 
-#if defined(CONFIG_ENV_SENSOR_USE_EXTERNAL)
-#define TEMP_APP_TYPE "BME680 Temperature Sensor"
-#elif defined(CONFIG_ENV_SENSOR_USE_SIM)
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(sensor_sim), okay)
 #define TEMP_APP_TYPE "Simulated Temperature Sensor"
+#else
+#define TEMP_APP_TYPE "BME680 Temperature Sensor"
 #endif
 
 #define TEMP_UNIT "°C"
