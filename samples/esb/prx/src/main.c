@@ -3,6 +3,8 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#include <device.h>
+#include <devicetree.h>
 #include <drivers/clock_control.h>
 #include <drivers/clock_control/nrf_clock_control.h>
 #include <drivers/gpio.h>
@@ -15,34 +17,37 @@
 
 LOG_MODULE_REGISTER(esb_prx, CONFIG_ESB_PRX_APP_LOG_LEVEL);
 
-#define LED_ON 0
-#define LED_OFF 1
+static const struct gpio_dt_spec leds[] = {
+	GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios),
+	GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios),
+	GPIO_DT_SPEC_GET(DT_ALIAS(led2), gpios),
+	GPIO_DT_SPEC_GET(DT_ALIAS(led3), gpios),
+};
 
-static const struct device *led_port;
+BUILD_ASSERT(DT_SAME_NODE(DT_GPIO_CTLR(DT_ALIAS(led0), gpios),
+			  DT_GPIO_CTLR(DT_ALIAS(led1), gpios)) &&
+	     DT_SAME_NODE(DT_GPIO_CTLR(DT_ALIAS(led0), gpios),
+			  DT_GPIO_CTLR(DT_ALIAS(led2), gpios)) &&
+	     DT_SAME_NODE(DT_GPIO_CTLR(DT_ALIAS(led0), gpios),
+			  DT_GPIO_CTLR(DT_ALIAS(led3), gpios)),
+	     "All LEDs must be on the same port");
+
 static struct esb_payload rx_payload;
 static struct esb_payload tx_payload = ESB_CREATE_PAYLOAD(0,
 	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17);
 
 static int leds_init(void)
 {
-	led_port = device_get_binding(DT_GPIO_LABEL(DT_ALIAS(led0), gpios));
-	if (!led_port) {
-		LOG_ERR("Could not bind to LED port %s",
-			DT_GPIO_LABEL(DT_ALIAS(led0), gpios));
-		return -EIO;
+	if (!device_is_ready(leds[0].port)) {
+		LOG_ERR("LEDs port not ready");
+		return -ENODEV;
 	}
 
-	const uint8_t pins[] = {DT_GPIO_PIN(DT_ALIAS(led0), gpios),
-			     DT_GPIO_PIN(DT_ALIAS(led1), gpios),
-			     DT_GPIO_PIN(DT_ALIAS(led2), gpios),
-			     DT_GPIO_PIN(DT_ALIAS(led3), gpios)};
-
-	for (size_t i = 0; i < ARRAY_SIZE(pins); i++) {
-		int err = gpio_pin_configure(led_port, pins[i], GPIO_OUTPUT);
+	for (size_t i = 0; i < ARRAY_SIZE(leds); i++) {
+		int err = gpio_pin_configure_dt(&leds[i], GPIO_OUTPUT);
 
 		if (err) {
 			LOG_ERR("Unable to configure LED%u, err %d.", i, err);
-			led_port = NULL;
 			return err;
 		}
 	}
@@ -57,21 +62,15 @@ static void leds_update(uint8_t value)
 	bool led2_status = !(value % 8 > 2 && value % 8 <= 6);
 	bool led3_status = !(value % 8 > 3);
 
-	gpio_port_pins_t mask =
-		1 << DT_GPIO_PIN(DT_ALIAS(led0), gpios) |
-		1 << DT_GPIO_PIN(DT_ALIAS(led1), gpios) |
-		1 << DT_GPIO_PIN(DT_ALIAS(led2), gpios) |
-		1 << DT_GPIO_PIN(DT_ALIAS(led3), gpios);
+	gpio_port_pins_t mask = BIT(leds[0].pin) | BIT(leds[1].pin) |
+				BIT(leds[2].pin) | BIT(leds[3].pin);
 
-	gpio_port_value_t val =
-		led0_status << DT_GPIO_PIN(DT_ALIAS(led0), gpios) |
-		led1_status << DT_GPIO_PIN(DT_ALIAS(led1), gpios) |
-		led2_status << DT_GPIO_PIN(DT_ALIAS(led2), gpios) |
-		led3_status << DT_GPIO_PIN(DT_ALIAS(led3), gpios);
+	gpio_port_value_t val = led0_status << leds[0].pin |
+				led1_status << leds[1].pin |
+				led2_status << leds[2].pin |
+				led3_status << leds[3].pin;
 
-	if (led_port != NULL) {
-		gpio_port_set_masked_raw(led_port, mask, val);
-	}
+	gpio_port_set_masked_raw(leds[0].port, mask, val);
 }
 
 void event_handler(struct esb_evt const *event)
@@ -187,7 +186,10 @@ void main(void)
 		return;
 	}
 
-	leds_init();
+	err = leds_init();
+	if (err) {
+		return;
+	}
 
 	err = esb_initialize();
 	if (err) {
