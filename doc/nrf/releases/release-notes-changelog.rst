@@ -89,6 +89,7 @@ nRF9160: Asset Tracker v2
   * Support for :ref:`Bosch Software Environmental Cluster (BSEC) library <bosch_software_environmental_cluster_library>` driver.
   * Support for Indoor Air Quality (IAQ) readings retrieved from the BME680 sensor on Thingy:91. For more information, see the :ref:`asset_tracker_v2_sensor_module`.
   * Support for QEMU x86 emulation.
+  * Support for the :ref:`lib_nrf_cloud_pgps` flash memory partition under certain conditions.
 
 * Updated:
 
@@ -111,6 +112,11 @@ nRF9160: Serial LTE modem
   * Enhanced the ``#XHTTPCREQ`` AT command for better HTTP upload and download support.
   * Enhanced the ``#XSLEEP`` AT command to support data indication when idle.
   * Enhanced the MQTT client to support the reception of large PUBLISH payloads.
+
+* Fixed:
+
+  * The secondary MCUboot partition information is no longer passed to the P-GPS library if the P-GPS partition is enabled.
+  * The combined use of A-GPS and P-GPS so that ephemeris and almanac data is not requested via A-GPS, saving both power and bandwidth.
 
 nRF Desktop
 -----------
@@ -200,6 +206,7 @@ nRF9160 samples
       * Iperf3 usage over Zephyr native TCP/IP stack and nRF9160 LTE default context.
       * Support for the GNSS features introduced in modem firmware v1.3.2.
         This includes several new fields in the PVT notification and a command to query the expiry times of assistance data.
+      * Support for the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION` option.
 
   * :ref:`nrf_cloud_rest_fota` sample:
 
@@ -225,6 +232,10 @@ nRF9160 samples
   * :ref:`download_sample` sample:
 
     * Updated the default HTTPS URL and certificate due to the old link being broken.
+
+  * :ref:`gnss_sample` sample:
+
+    * Added support for the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION` option.
 
 OpenThread samples
 ------------------
@@ -378,6 +389,9 @@ Modem libraries
 
     * Added:
 
+      * Support for the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION` option.
+      * Improved integration of A-GPS and P-GPS when both are enabled.
+      * A missing call to the :c:func:`nrf_cloud_pgps_notify_prediction` function, when using the REST interface with P-GPS.
       * Support for P-GPS data retrieval from an external source, implemented separately by the application.
         Enabled by setting the :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL` option.
         The library triggers a :c:enum:`LOCATION_EVT_GNSS_PREDICTION_REQUEST` event when assistance is needed.
@@ -469,6 +483,18 @@ Libraries for networking
 
     * Added :kconfig:option:`CONFIG_AZURE_IOT_HUB_NATIVE_TLS` option to configure the socket to be native for TLS instead of offloading TLS operations to the modem.
 
+ * :ref:`lib_nrf_cloud_pgps` library:
+
+    * Added:
+
+      * The passing of the current prediction, if one is available, along with the ``PGPS_EVT_READY`` event.
+      * The following three ways to define the storage location in the flash memory:
+
+        * A dedicated P-GPS partition, enabled with the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION` option.
+        * The use of the MCUboot secondary partition as storage, enabled with the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_MCUBOOT_SECONDARY` option.
+        * An application-specific storage, enabled with the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_CUSTOM` option.
+
+
 Libraries for NFC
 -----------------
 
@@ -527,6 +553,10 @@ Other libraries
   * :ref:`esb_readme`:
 
     * Fixed a compilation error for nRF52833.
+
+  * Partition Manager:
+
+    * Added the :file:`ncs/nrf/subsys/partition_manager/pm.yml.pgps` file.
 
 Common Application Framework (CAF)
 ----------------------------------
