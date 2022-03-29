@@ -13,8 +13,8 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,22 +38,22 @@ enum battery_state {
 
 /** @brief Battery state event. */
 struct battery_state_event {
-	struct event_header header;
+	struct application_event_header header;
 
 	enum battery_state state;
 };
 
-EVENT_TYPE_DECLARE(battery_state_event);
+APPLICATION_EVENT_TYPE_DECLARE(battery_state_event);
 
 
 /** @brief Battery voltage level event. */
 struct battery_level_event {
-	struct event_header header;
+	struct application_event_header header;
 
 	uint8_t level;
 };
 
-EVENT_TYPE_DECLARE(battery_level_event);
+APPLICATION_EVENT_TYPE_DECLARE(battery_level_event);
 
 #ifdef __cplusplus
 }

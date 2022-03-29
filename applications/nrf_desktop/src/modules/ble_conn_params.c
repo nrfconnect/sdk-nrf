@@ -234,11 +234,11 @@ static void peer_discovered(struct bt_conn *conn, bool peer_llpm_support)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(ble_state),
 				MODULE_STATE_READY)) {
@@ -254,9 +254,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_discovery_complete_event(eh)) {
+	if (is_ble_discovery_complete_event(aeh)) {
 		const struct ble_discovery_complete_event *event =
-			cast_ble_discovery_complete_event(eh);
+			cast_ble_discovery_complete_event(aeh);
 
 		peer_discovered(bt_gatt_dm_conn_get(event->dm),
 				event->peer_llpm_support);
@@ -264,9 +264,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_peer_event(eh)) {
+	if (is_ble_peer_event(aeh)) {
 		const struct ble_peer_event *event =
-			cast_ble_peer_event(eh);
+			cast_ble_peer_event(aeh);
 
 		if (event->state == PEER_STATE_CONNECTED) {
 			peer_connected(event->id);
@@ -277,9 +277,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_peer_conn_params_event(eh)) {
+	if (is_ble_peer_conn_params_event(aeh)) {
 		ble_peer_conn_params_event_handler(
-			cast_ble_peer_conn_params_event(eh));
+			cast_ble_peer_conn_params_event(aeh));
 
 		return false;
 	}
@@ -290,8 +290,8 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, ble_discovery_complete_event);
-EVENT_SUBSCRIBE(MODULE, ble_peer_event);
-EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_discovery_complete_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);

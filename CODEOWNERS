@@ -121,7 +121,7 @@ Kconfig*                                  @tejlmand
 /samples/debug/ppi_trace/                 @nordic-krch @anangl
 /samples/edge_impulse/                    @pdunaj
 /samples/esb/                             @lemrey
-/samples/event_manager/                   @pdunaj @MarekPieta
+/samples/app_evt_mgr/                   @pdunaj @MarekPieta
 /samples/gazell/                          @leewkb4567
 /samples/keys/random_hw_unique_key/       @oyvindronningstad @Vge0rge
 /samples/mpsl/                            @rugeGerritsen
@@ -159,8 +159,8 @@ Kconfig*                                  @tejlmand
 /subsys/ieee802154/                       @rlubos @czeslawmakarski
 /subsys/mgmt/                             @hakonfam @sigvartmh
 /subsys/esb/                              @lemrey
-/subsys/event_manager/                    @pdunaj
-/subsys/event_manager_profiler_tracer/    @pdunaj @MarekPieta
+/subsys/app_evt_mgr/                    @pdunaj
+/subsys/app_evt_mgr_profiler_tracer/    @pdunaj @MarekPieta
 /subsys/fw_info/                          @hakonfam
 /subsys/gazell/                           @leewkb4567
 /subsys/mpsl/                             @rugeGerritsen
@@ -209,7 +209,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/bootloader/                 @hakonfam
 /tests/subsys/debug/cpu_load/             @nordic-krch
 /tests/subsys/dfu/                        @hakonfam @sigvartmh
-/tests/subsys/event_manager/              @pdunaj @MarekPieta @rakons
+/tests/subsys/app_evt_mgr/              @pdunaj @MarekPieta @rakons
 /tests/subsys/fw_info/                    @oyvindronningstad
 /tests/subsys/net/lib/aws_*/              @simensrostad
 /tests/subsys/net/lib/azure_iot_hub/      @jtguggedal

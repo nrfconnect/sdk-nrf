@@ -14,8 +14,8 @@
  * @brief CAF Power Event.
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,7 +51,7 @@ extern "C" {
  */
 struct power_down_event {
 	/** Event header. */
-	struct event_header header;
+	struct application_event_header header;
 
 	/** Information if the power down was triggered by a fatal error. */
 	bool error;
@@ -78,7 +78,7 @@ struct power_down_event {
  */
 struct wake_up_event {
 	/** Event header. */
-	struct event_header header;
+	struct application_event_header header;
 };
 
 #ifdef __cplusplus
@@ -93,8 +93,8 @@ struct wake_up_event {
 extern "C" {
 #endif
 
-EVENT_TYPE_DECLARE(power_down_event);
-EVENT_TYPE_DECLARE(wake_up_event);
+APPLICATION_EVENT_TYPE_DECLARE(power_down_event);
+APPLICATION_EVENT_TYPE_DECLARE(wake_up_event);
 
 #ifdef __cplusplus
 }

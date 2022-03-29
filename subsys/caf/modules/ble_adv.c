@@ -98,7 +98,7 @@ static void broadcast_adv_state(bool active)
 {
 	struct ble_peer_search_event *event = new_ble_peer_search_event();
 	event->active = active;
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 
 	LOG_INF("Advertising %s", (active)?("started"):("stopped"));
 }
@@ -436,7 +436,7 @@ static void disconnect_peer(struct bt_conn *conn)
 
 		event->id = conn;
 		event->state = PEER_STATE_DISCONNECTING;
-		EVENT_SUBMIT(event);
+		APPLICATION_EVENT_SUBMIT(event);
 
 		LOG_INF("Peer disconnecting");
 	} else if (err == -ENOTCONN) {
@@ -699,29 +699,29 @@ static bool handle_wake_up_event(const struct wake_up_event *event)
 	return false;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
-		return handle_module_state_event(cast_module_state_event(eh));
+	if (is_module_state_event(aeh)) {
+		return handle_module_state_event(cast_module_state_event(aeh));
 	}
 
-	if (is_ble_peer_event(eh)) {
-		return handle_ble_peer_event(cast_ble_peer_event(eh));
+	if (is_ble_peer_event(aeh)) {
+		return handle_ble_peer_event(cast_ble_peer_event(aeh));
 	}
 
 	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_BLE_BOND_SUPPORTED) &&
-	    is_ble_peer_operation_event(eh)) {
-		return handle_ble_peer_operation_event(cast_ble_peer_operation_event(eh));
+	    is_ble_peer_operation_event(aeh)) {
+		return handle_ble_peer_operation_event(cast_ble_peer_operation_event(aeh));
 	}
 
 	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_PM_EVENTS) &&
-	    is_power_down_event(eh)) {
-		return handle_power_down_event(cast_power_down_event(eh));
+	    is_power_down_event(aeh)) {
+		return handle_power_down_event(cast_power_down_event(aeh));
 	}
 
 	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_PM_EVENTS) &&
-	    is_wake_up_event(eh)) {
-		return handle_wake_up_event(cast_wake_up_event(eh));
+	    is_wake_up_event(aeh)) {
+		return handle_wake_up_event(cast_wake_up_event(aeh));
 	}
 
 	/* If event is unhandled, unsubscribe. */
@@ -729,13 +729,13 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 #if CONFIG_CAF_BLE_ADV_BLE_BOND_SUPPORTED
-EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
 #endif /* CONFIG_CAF_BLE_ADV_BLE_BOND_SUPPORTED */
 #if CONFIG_CAF_BLE_ADV_PM_EVENTS
-EVENT_SUBSCRIBE(MODULE, power_down_event);
-EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, power_down_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #endif /* CONFIG_CAF_BLE_ADV_PM_EVENTS */

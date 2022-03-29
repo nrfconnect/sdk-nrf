@@ -61,7 +61,7 @@ Module states
 *************
 
 The |ble_bond| is implemented as a state machine.
-Every transition is triggered by an :ref:`event_manager` event with a predefined value.
+Every transition is triggered by an :ref:`app_evt_mgr` event with a predefined value.
 Some transitions can be also triggered by internal timeout.
 For example, the transition from :c:enumerator:`STATE_ERASE_PEER` to :c:enumerator:`STATE_IDLE` can be triggered by ``click_event``, ``selector_event``, or an internal timeout.
 

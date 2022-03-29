@@ -18,36 +18,36 @@ static const char * const state_name[] = {
 	[USB_STATE_SUSPENDED]    = "SUSPENDED"
 };
 
-static void log_usb_state_event(const struct event_header *eh)
+static void log_usb_state_event(const struct application_event_header *aeh)
 {
-	const struct usb_state_event *event = cast_usb_state_event(eh);
+	const struct usb_state_event *event = cast_usb_state_event(aeh);
 
 	BUILD_ASSERT(ARRAY_SIZE(state_name) == USB_STATE_COUNT,
 			 "Invalid number of elements");
 
 	__ASSERT_NO_MSG(event->state < USB_STATE_COUNT);
 
-	EVENT_MANAGER_LOG(eh, "state:%s", state_name[event->state]);
+	APPLICATION_EVENT_MANAGER_LOG(aeh, "state:%s", state_name[event->state]);
 }
 
-EVENT_TYPE_DEFINE(usb_state_event,
+APPLICATION_EVENT_TYPE_DEFINE(usb_state_event,
 		  log_usb_state_event,
 		  NULL,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_USB_STATE_EVENT,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
-static void log_usb_hid_event(const struct event_header *eh)
+static void log_usb_hid_event(const struct application_event_header *aeh)
 {
-	const struct usb_hid_event *event = cast_usb_hid_event(eh);
+	const struct usb_hid_event *event = cast_usb_hid_event(aeh);
 
-	EVENT_MANAGER_LOG(eh, "id:%p %sabled", event->id,
+	APPLICATION_EVENT_MANAGER_LOG(aeh, "id:%p %sabled", event->id,
 			(event->enabled)?("en"):("dis"));
 }
 
-EVENT_TYPE_DEFINE(usb_hid_event,
+APPLICATION_EVENT_TYPE_DEFINE(usb_hid_event,
 		  log_usb_hid_event,
 		  NULL,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_USB_HID_EVENT,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

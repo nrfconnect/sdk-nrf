@@ -13,8 +13,8 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,12 +22,12 @@ extern "C" {
 
 /** @brief CPU load event. */
 struct cpu_load_event {
-	struct event_header header; /**< Event header. */
+	struct application_event_header header; /**< Event header. */
 
 	uint32_t load; /**< CPU load [in 0,001% units]. */
 };
 
-EVENT_TYPE_DECLARE(cpu_load_event);
+APPLICATION_EVENT_TYPE_DECLARE(cpu_load_event);
 
 #ifdef __cplusplus
 }

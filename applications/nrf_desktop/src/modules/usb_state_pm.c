@@ -18,10 +18,10 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 #include <caf/events/force_power_down_event.h>
 
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_usb_state_event(eh)) {
-		const struct usb_state_event *event = cast_usb_state_event(eh);
+	if (is_usb_state_event(aeh)) {
+		const struct usb_state_event *event = cast_usb_state_event(aeh);
 
 		LOG_INF("USB state change detected");
 
@@ -45,8 +45,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_module_state_event(eh)) {
-		const struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		const struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
@@ -61,6 +61,6 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, usb_state_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, usb_state_event);

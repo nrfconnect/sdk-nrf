@@ -307,7 +307,7 @@ Make sure to add ``:members:`` when you include the API documentation in RST; ot
     * @warning When event structure is defined event header must be placed
     *          as the first field.
     */
-   struct event_header {
+   struct application_event_header {
 
            /** Linked list node used to chain events. */
       sys_dlist_t node;

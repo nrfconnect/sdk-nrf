@@ -112,7 +112,7 @@ static void send_effect(const struct led_effect *effect, struct led *led)
 
 	__ASSERT_NO_MSG(led_event->led_effect->steps);
 
-	EVENT_SUBMIT(led_event);
+	APPLICATION_EVENT_SUBMIT(led_event);
 }
 
 static size_t count_free_places(struct led *led)
@@ -243,13 +243,13 @@ static void config_get(const uint8_t opt_id, uint8_t *data, size_t *size)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
 	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, config_set,
 				  config_get);
 
-	if (is_led_event(eh)) {
-		const struct led_event *event = cast_led_event(eh);
+	if (is_led_event(aeh)) {
+		const struct led_event *event = cast_led_event(aeh);
 
 		struct led *led = &leds[event->led_id];
 
@@ -265,8 +265,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_led_ready_event(eh)) {
-		const struct led_ready_event *event = cast_led_ready_event(eh);
+	if (is_led_ready_event(aeh)) {
+		const struct led_ready_event *event = cast_led_ready_event(aeh);
 
 		struct led *led = &leds[event->led_id];
 
@@ -277,9 +277,9 @@ static bool event_handler(const struct event_header *eh)
 		return true;
 	}
 
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(leds), MODULE_STATE_READY)) {
 			if (!initialized) {
@@ -303,8 +303,8 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE_EARLY(MODULE, led_event);
-EVENT_SUBSCRIBE(MODULE, led_ready_event);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, led_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, led_ready_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);

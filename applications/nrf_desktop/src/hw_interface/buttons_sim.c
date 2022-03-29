@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 
-#include <event_manager.h>
+#include <app_evt_mgr.h>
 #include <caf/events/button_event.h>
 #include <caf/events/power_event.h>
 
@@ -66,7 +66,7 @@ static void send_button_event(uint16_t key_id, bool pressed)
 
 	event->key_id = key_id;
 	event->pressed = pressed;
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static bool gen_key_id(uint16_t *generated_key)
@@ -108,10 +108,10 @@ void generate_keys_fn(struct k_work *w)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_button_event(eh)) {
-		const struct button_event *event = cast_button_event(eh);
+	if (is_button_event(aeh)) {
+		const struct button_event *event = cast_button_event(aeh);
 
 		if (event->key_id == CONFIG_DESKTOP_BUTTONS_SIM_TRIGGER_KEY_ID) {
 			if (event->pressed) {
@@ -139,8 +139,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_module_state_event(eh)) {
-		const struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		const struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			__ASSERT_NO_MSG(state == STATE_DISABLED);
@@ -153,7 +153,7 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_power_down_event(eh)) {
+	if (is_power_down_event(aeh)) {
 		if (state != STATE_OFF) {
 			/* Cancel cannot fail if executed from another work's context. */
 			(void)k_work_cancel_delayable(&generate_keys);
@@ -164,7 +164,7 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_wake_up_event(eh)) {
+	if (is_wake_up_event(aeh)) {
 		if (state == STATE_OFF) {
 			state = STATE_IDLE;
 			module_set_state(MODULE_STATE_READY);
@@ -179,8 +179,8 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, button_event);
-EVENT_SUBSCRIBE(MODULE, power_down_event);
-EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, button_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, power_down_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);

@@ -37,7 +37,7 @@ static void send_led_event(enum led_id led_id, const struct led_effect *led_effe
 
 	event->led_id = led_id;
 	event->led_effect = led_effect;
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static bool handle_button_event(const struct button_event *evt)
@@ -69,14 +69,14 @@ static bool handle_button_event(const struct button_event *evt)
 	return false;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_button_event(eh)) {
-		return handle_button_event(cast_button_event(eh));
+	if (is_button_event(aeh)) {
+		return handle_button_event(cast_button_event(aeh));
 	}
 
-	if (is_module_state_event(eh)) {
-		const struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		const struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(leds), MODULE_STATE_READY)) {
 			/* Turn on the first LED */
@@ -92,6 +92,6 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, button_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, button_event);

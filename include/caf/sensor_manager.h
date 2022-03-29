@@ -77,7 +77,7 @@ struct sm_sensor_config {
 	 *
 	 * This is a protection against OOM error when event processing is blocked.
 	 * No more events related to this sensor than the number defined would
-	 * be passed to event manager.
+	 * be passed to Application Event Manager.
 	 */
 	uint8_t active_events_limit;
 	/**

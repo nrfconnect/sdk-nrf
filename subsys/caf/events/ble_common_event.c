@@ -19,22 +19,22 @@ static const char * const state_name[] = {
 	"CONN_FAILED"
 };
 
-static void log_ble_peer_event(const struct event_header *eh)
+static void log_ble_peer_event(const struct application_event_header *aeh)
 {
-	const struct ble_peer_event *event = cast_ble_peer_event(eh);
+	const struct ble_peer_event *event = cast_ble_peer_event(aeh);
 
 	BUILD_ASSERT(ARRAY_SIZE(state_name) == PEER_STATE_COUNT, "Invalid number of elements");
 
 	__ASSERT_NO_MSG(event->state < PEER_STATE_COUNT);
 
-	EVENT_MANAGER_LOG(eh, "id=%p %s", event->id,
+	APPLICATION_EVENT_MANAGER_LOG(aeh, "id=%p %s", event->id,
 			state_name[event->state]);
 }
 
 static void profile_ble_peer_event(struct log_event_buf *buf,
-				   const struct event_header *eh)
+				   const struct application_event_header *aeh)
 {
-	const struct ble_peer_event *event = cast_ble_peer_event(eh);
+	const struct ble_peer_event *event = cast_ble_peer_event(aeh);
 
 	profiler_log_encode_uint32(buf, (uint32_t)event->id);
 	profiler_log_encode_uint8(buf, event->state);
@@ -45,24 +45,24 @@ EVENT_INFO_DEFINE(ble_peer_event,
 		  ENCODE("conn_id", "state"),
 		  profile_ble_peer_event);
 
-EVENT_TYPE_DEFINE(ble_peer_event,
+APPLICATION_EVENT_TYPE_DEFINE(ble_peer_event,
 		  log_ble_peer_event,
 		  &ble_peer_event_info,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_BLE_PEER_EVENTS,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
-static void log_ble_peer_search_event(const struct event_header *eh)
+static void log_ble_peer_search_event(const struct application_event_header *aeh)
 {
-	const struct ble_peer_search_event *event = cast_ble_peer_search_event(eh);
+	const struct ble_peer_search_event *event = cast_ble_peer_search_event(aeh);
 
-	EVENT_MANAGER_LOG(eh, "%sactive", (event->active)?(""):("in"));
+	APPLICATION_EVENT_MANAGER_LOG(aeh, "%sactive", (event->active)?(""):("in"));
 }
 
 static void profile_ble_peer_search_event(struct log_event_buf *buf,
-					  const struct event_header *eh)
+					  const struct application_event_header *aeh)
 {
-	const struct ble_peer_search_event *event = cast_ble_peer_search_event(eh);
+	const struct ble_peer_search_event *event = cast_ble_peer_search_event(aeh);
 
 	profiler_log_encode_uint8(buf, (uint8_t)event->active);
 }
@@ -72,12 +72,12 @@ EVENT_INFO_DEFINE(ble_peer_search_event,
 		  ENCODE("active"),
 		  profile_ble_peer_search_event);
 
-EVENT_TYPE_DEFINE(ble_peer_search_event,
+APPLICATION_EVENT_TYPE_DEFINE(ble_peer_search_event,
 		  log_ble_peer_search_event,
 		  &ble_peer_search_event_info,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_BLE_PEER_SEARCH_EVENTS,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 
 static const char * const op_name[] = {
@@ -91,26 +91,26 @@ static const char * const op_name[] = {
 	"CANCEL"
 };
 
-static void log_ble_peer_operation_event(const struct event_header *eh)
+static void log_ble_peer_operation_event(const struct application_event_header *aeh)
 {
 	const struct ble_peer_operation_event *event =
-		cast_ble_peer_operation_event(eh);
+		cast_ble_peer_operation_event(aeh);
 
 	BUILD_ASSERT(ARRAY_SIZE(op_name) == PEER_OPERATION_COUNT, "Invalid number of elements");
 
 	__ASSERT_NO_MSG(event->op < PEER_OPERATION_COUNT);
 
-	EVENT_MANAGER_LOG(eh, "%s bt_app_id=%u bt_stack_id=%u",
+	APPLICATION_EVENT_MANAGER_LOG(aeh, "%s bt_app_id=%u bt_stack_id=%u",
 			op_name[event->op],
 			event->bt_app_id,
 			event->bt_stack_id);
 }
 
 static void profile_ble_peer_operation_event(struct log_event_buf *buf,
-					     const struct event_header *eh)
+					     const struct application_event_header *aeh)
 {
 	const struct ble_peer_operation_event *event =
-		cast_ble_peer_operation_event(eh);
+		cast_ble_peer_operation_event(aeh);
 
 	profiler_log_encode_uint8(buf, event->op);
 	profiler_log_encode_uint8(buf, event->bt_app_id);
@@ -122,28 +122,28 @@ EVENT_INFO_DEFINE(ble_peer_operation_event,
 		  ENCODE("operation", "bt_app_id", "bt_stack_id"),
 		  profile_ble_peer_operation_event);
 
-EVENT_TYPE_DEFINE(ble_peer_operation_event,
+APPLICATION_EVENT_TYPE_DEFINE(ble_peer_operation_event,
 		  log_ble_peer_operation_event,
 		  &ble_peer_operation_event_info,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_BLE_PEER_OPERATION_EVENTS,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
-static void log_ble_peer_conn_params_event(const struct event_header *eh)
+static void log_ble_peer_conn_params_event(const struct application_event_header *aeh)
 {
 	const struct ble_peer_conn_params_event *event =
-		cast_ble_peer_conn_params_event(eh);
+		cast_ble_peer_conn_params_event(aeh);
 
-	EVENT_MANAGER_LOG(eh, "peer=%p min=%"PRIx16 " max=%"PRIx16
+	APPLICATION_EVENT_MANAGER_LOG(aeh, "peer=%p min=%"PRIx16 " max=%"PRIx16
 			" lat=%"PRIu16 " timeout=%" PRIu16 " (%s)",
 			event->id, event->interval_min,	event->interval_max,
 			event->latency, event->timeout,
 			(event->updated ? "updated" : "required"));
 }
 
-EVENT_TYPE_DEFINE(ble_peer_conn_params_event,
+APPLICATION_EVENT_TYPE_DEFINE(ble_peer_conn_params_event,
 		  log_ble_peer_conn_params_event,
 		  NULL,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_BLE_PEER_CONN_PARAMS_EVENTS,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

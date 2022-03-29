@@ -8,7 +8,7 @@ Profiler
    :depth: 2
 
 The Profiler provides an interface for logging and visualizing data for performance measurements, while the system is running.
-You can use the module to profile :ref:`event_manager` events or custom events.
+You can use the module to profile :ref:`app_evt_mgr` events or custom events.
 The output is provided using RTT and can be visualized in a custom Python backend.
 
 See the :ref:`profiler_sample` sample for an example of how to use the Profiler.
@@ -18,7 +18,7 @@ See the :ref:`profiler_sample` sample for an example of how to use the Profiler.
 Configuration
 *************
 
-Since Event Manager events are converted to profiler events, the Profiler can be configured to profile custom events or Event Manager events, or both.
+Since Application Event Manager events are converted to profiler events, the Profiler can be configured to profile custom events or Application Event Manager events, or both.
 
 Configuring for use with custom events
 ======================================
@@ -94,11 +94,11 @@ To profile custom events, complete the following steps:
 	    The ``data_event_id`` and the data that is profiled with the event must be consistent with the registered event type.
 	    The data for every data field must be provided in the correct order.
 
-Configuration for use with Event Manager
-========================================
+Configuration for use with Application Event Manager
+====================================================
 
-If you are using the Event Manager, in order to use the Profiler follow the steps in
-:ref:`event_manager_profiler_tracer_em_implementation` and :ref:`event_manager_profiler_tracer_config` on the :ref:`event_manager_profiler_tracer` documentation page.
+If you are using the Application Event Manager, in order to use the Profiler follow the steps in
+:ref:`app_evt_mgr_profiler_tracer_em_implementation` and :ref:`app_evt_mgr_profiler_tracer_config` on the :ref:`app_evt_mgr_profiler_tracer` documentation page.
 
 .. _profiler_backends:
 
@@ -162,7 +162,7 @@ Running the backend
 To enable and run the custom backend, complete the following steps:
 
 1. Connect device to the computer.
-2. Complete the configuration steps for use with either custom events or Event Manager, as described in the :ref:`profiler_configuration` section.
+2. Complete the configuration steps for use with either custom events or Application Event Manager, as described in the :ref:`profiler_configuration` section.
 #. From the list of `Available scripts`_, choose the Python script that you want to use for event visualization, analysis, and calculating statistics.
 #. Run the script from the command line using its related command.
 
@@ -177,7 +177,7 @@ The visual output can look like the following diagram:
 
 .. profiler_GUI_start
 
-.. figure:: ../../images/event_manager_profiling_sample.png
+.. figure:: ../../images/app_evt_mgr_profiling_sample.png
    :scale: 50 %
    :alt: Example of profiler backend script visualization
 

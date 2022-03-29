@@ -48,10 +48,10 @@ static void bond_erase(void)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
-		const struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		const struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(settings_loader), MODULE_STATE_READY)) {
 			initialized = true;
@@ -66,8 +66,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (BOND_ERASE_CLICK && is_click_event(eh)) {
-		const struct click_event *event = cast_click_event(eh);
+	if (BOND_ERASE_CLICK && is_click_event(aeh)) {
+		const struct click_event *event = cast_click_event(aeh);
 
 		if ((event->key_id == BOND_ERASE_KEY_ID) &&
 		    (event->click == BOND_ERASE_CLICK_TYPE)) {
@@ -91,8 +91,8 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if BOND_ERASE_CLICK
-	EVENT_SUBSCRIBE(MODULE, click_event);
+	APPLICATION_EVENT_SUBSCRIBE(MODULE, click_event);
 #endif /* BOND_ERASE_CLICK */

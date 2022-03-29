@@ -39,9 +39,9 @@
 		<title>Drawing</title>
 		<g id="shape6-1" transform="translate(19,-219.073)">
 			<title>Nordic Blue</title>
-			<desc>Event manager</desc>
+			<desc>Application Event Manager</desc>
 			<rect x="0" y="303.383" width="271.29" height="54.6402" class="st1"/>
-			<text x="88.17" y="334.9" class="st2">Event manager</text>		</g>
+			<text x="88.17" y="334.9" class="st2">Application Event Manager</text>		</g>
 		<g id="shape9-4" transform="translate(19,-111.733)">
 			<title>Nordic Blue.9</title>
 			<desc>LEDs module</desc>

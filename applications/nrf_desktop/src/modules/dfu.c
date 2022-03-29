@@ -12,7 +12,7 @@
 #include <pm_config.h>
 #include <sys/reboot.h>
 
-#include <event_manager.h>
+#include <app_evt_mgr.h>
 #include "config_event.h"
 #include "hid_event.h"
 #include <caf/events/ble_common_event.h>
@@ -678,9 +678,9 @@ static void fetch_config(const uint8_t opt_id, uint8_t *data, size_t *size)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_hid_report_event(eh)) {
+	if (is_hid_report_event(aeh)) {
 		device_in_use = true;
 
 		return false;
@@ -689,15 +689,15 @@ static bool event_handler(const struct event_header *eh)
 	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, update_config,
 				  fetch_config);
 
-	if (is_ble_peer_event(eh)) {
+	if (is_ble_peer_event(aeh)) {
 		device_in_use = true;
 
 		return false;
 	}
 
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 #if CONFIG_BOOTLOADER_MCUBOOT
@@ -723,8 +723,8 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, hid_report_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_event);

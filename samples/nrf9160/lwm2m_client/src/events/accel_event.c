@@ -28,15 +28,15 @@ static const char *accel_orienation_state_to_string(enum accel_orientation_state
 	}
 }
 
-static void log_accel_event(const struct event_header *eh)
+static void log_accel_event(const struct application_event_header *aeh)
 {
-	struct accel_event *event = cast_accel_event(eh);
+	struct accel_event *event = cast_accel_event(aeh);
 
-	EVENT_MANAGER_LOG(eh,
+	APPLICATION_EVENT_MANAGER_LOG(aeh,
 		"Accelerometer event: x = %d.%06d, y = %d.%06d, z = %d.%06d, orientation = %s.",
 		event->data.x.val1, event->data.x.val2, event->data.y.val1, event->data.y.val2,
 		event->data.z.val1, event->data.z.val2,
 		accel_orienation_state_to_string(event->orientation));
 }
 
-EVENT_TYPE_DEFINE(accel_event, log_accel_event, NULL, EVENT_FLAGS_CREATE());
+APPLICATION_EVENT_TYPE_DEFINE(accel_event, log_accel_event, NULL, APPLICATION_EVENT_FLAGS_CREATE());

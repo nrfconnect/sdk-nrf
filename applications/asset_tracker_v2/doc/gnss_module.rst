@@ -62,7 +62,7 @@ In this sense, it differs from the other modules.
 It has a thread for processing GNSS events from the modem library, whereas other modules use a thread for processing messages.
 The thread is used to offload data processing from the GNSS callbacks coming from the modem library, as these are called from interrupt context and no time consuming tasks should be performed there.
 
-All incoming events from other modules are handled in the context of the event manager callback, as they all complete fast enough to not require a separate thread.
+All incoming events from other modules are handled in the context of the Application Event Manager callback, as they all complete fast enough to not require a separate thread.
 
 .. _configuration_options:
 
@@ -129,7 +129,7 @@ Dependencies
 
 The module uses the following |NCS| libraries:
 
-* :ref:`event_manager`
+* :ref:`app_evt_mgr`
 * :ref:`nrfxlib:gnss_interface`
 
 API documentation

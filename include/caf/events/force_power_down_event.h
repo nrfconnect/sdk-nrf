@@ -13,8 +13,8 @@
  * @brief CAF Force Power Down Event.
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,10 +31,10 @@ extern "C" {
  */
 struct force_power_down_event {
 	/** Event header. */
-	struct event_header header;
+	struct application_event_header header;
 };
 
-EVENT_TYPE_DECLARE(force_power_down_event);
+APPLICATION_EVENT_TYPE_DECLARE(force_power_down_event);
 
 /**
  * @brief Force power down now
@@ -43,7 +43,7 @@ static inline void force_power_down(void)
 {
 	struct force_power_down_event *event = new_force_power_down_event();
 
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 

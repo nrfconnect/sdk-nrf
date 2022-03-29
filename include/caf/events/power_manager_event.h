@@ -13,8 +13,8 @@
  * @brief CAF Power Manager Event.
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,7 +54,7 @@ enum power_manager_level {
  */
 struct power_manager_restrict_event {
 	/** Event header. */
-	struct event_header header;
+	struct application_event_header header;
 	/**
 	 * @brief The module index
 	 *
@@ -68,7 +68,7 @@ struct power_manager_restrict_event {
 	enum power_manager_level level;
 };
 
-EVENT_TYPE_DECLARE(power_manager_restrict_event);
+APPLICATION_EVENT_TYPE_DECLARE(power_manager_restrict_event);
 
 /**
  * @brief Set the deepest power sleep mode allowed
@@ -82,7 +82,7 @@ static inline void power_manager_restrict(size_t module_idx, enum power_manager_
 
 	event->module_idx = module_idx;
 	event->level = lvl;
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 #ifdef __cplusplus
