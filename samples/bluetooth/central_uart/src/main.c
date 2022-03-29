@@ -10,6 +10,8 @@
 
 #include <errno.h>
 #include <zephyr.h>
+#include <device.h>
+#include <devicetree.h>
 #include <sys/byteorder.h>
 #include <sys/printk.h>
 
@@ -43,7 +45,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 #define UART_WAIT_FOR_BUF_DELAY K_MSEC(50)
 #define UART_RX_TIMEOUT 50
 
-static const struct device *uart;
+static const struct device *uart = DEVICE_DT_GET(DT_NODELABEL(uart0));
 static struct k_work_delayable uart_work;
 
 K_SEM_DEFINE(nus_write_sem, 0, 1);
@@ -258,10 +260,9 @@ static int uart_init(void)
 	int err;
 	struct uart_data_t *rx;
 
-	uart = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
-	if (!uart) {
-		LOG_ERR("UART binding failed");
-		return -ENXIO;
+	if (!device_is_ready(uart)) {
+		LOG_ERR("UART device not ready");
+		return -ENODEV;
 	}
 
 	rx = k_malloc(sizeof(*rx));
