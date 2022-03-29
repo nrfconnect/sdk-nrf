@@ -6,7 +6,7 @@
 #include <zephyr.h>
 #include <sys/atomic.h>
 
-#include <event_manager.h>
+#include <app_evt_mgr.h>
 #include "motion_event.h"
 #include <caf/events/power_event.h>
 #include "hid_event.h"
@@ -69,7 +69,7 @@ static void motion_event_send(int16_t dx, int16_t dy)
 
 	event->dx = dx;
 	event->dy = dy;
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static void generate_motion_event(void)
@@ -94,11 +94,11 @@ static void generate_motion_event(void)
 	y_cur = y_new;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_hid_report_subscription_event(eh)) {
+	if (is_hid_report_subscription_event(aeh)) {
 		const struct hid_report_subscription_event *event =
-			cast_hid_report_subscription_event(eh);
+			cast_hid_report_subscription_event(aeh);
 
 		if ((event->report_id == REPORT_ID_MOUSE) ||
 		    (event->report_id == REPORT_ID_BOOT_MOUSE)) {
@@ -124,9 +124,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_hid_report_sent_event(eh)) {
+	if (is_hid_report_sent_event(aeh)) {
 		const struct hid_report_sent_event *event =
-			cast_hid_report_sent_event(eh);
+			cast_hid_report_sent_event(aeh);
 
 		if ((event->report_id == REPORT_ID_MOUSE) ||
 		    (event->report_id == REPORT_ID_BOOT_MOUSE)) {
@@ -138,8 +138,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			set_default_state();
@@ -149,13 +149,13 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_power_down_event(eh)) {
+	if (is_power_down_event(aeh)) {
 		atomic_set(&state, STATE_SUSPENDED);
 
 		return false;
 	}
 
-	if (is_wake_up_event(eh)) {
+	if (is_wake_up_event(aeh)) {
 		set_default_state();
 
 		return false;
@@ -167,12 +167,12 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, power_down_event);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, wake_up_event);
-EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
-EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, power_down_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 
 #if CONFIG_SHELL
 

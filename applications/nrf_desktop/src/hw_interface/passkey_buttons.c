@@ -55,7 +55,7 @@ static void input_confirm(struct input_buf *buffer)
 	__ASSERT_NO_MSG(sizeof(event->passkey) == sizeof(uint32_t));
 
 	event->passkey = encode_input(buffer);
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 
 	state = STATE_IDLE;
 }
@@ -187,15 +187,15 @@ static void init(void)
 	state = STATE_IDLE;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_button_event(eh)) {
-		return button_event_handler(cast_button_event(eh));
+	if (is_button_event(aeh)) {
+		return button_event_handler(cast_button_event(aeh));
 	}
 
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			init();
@@ -205,9 +205,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_passkey_req_event(eh)) {
+	if (is_passkey_req_event(aeh)) {
 		const struct passkey_req_event *event =
-			cast_passkey_req_event(eh);
+			cast_passkey_req_event(aeh);
 
 		if (event->active) {
 			__ASSERT_NO_MSG(state != STATE_ACTIVE);
@@ -225,7 +225,7 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, button_event);
-EVENT_SUBSCRIBE(MODULE, passkey_req_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, button_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, passkey_req_event);

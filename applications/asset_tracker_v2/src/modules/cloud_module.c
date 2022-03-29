@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <dfu/mcuboot.h>
 #include <math.h>
-#include <event_manager.h>
+#include <app_evt_mgr.h>
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 #include <net/nrf_cloud_agps.h>
@@ -187,55 +187,55 @@ static void sub_state_set(enum sub_state_type new_state)
 }
 
 /* Handlers */
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
 	struct cloud_msg_data msg = {0};
 	bool enqueue_msg = false;
 
-	if (is_app_module_event(eh)) {
-		struct app_module_event *evt = cast_app_module_event(eh);
+	if (is_app_module_event(aeh)) {
+		struct app_module_event *evt = cast_app_module_event(aeh);
 
 		msg.module.app = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_data_module_event(eh)) {
-		struct data_module_event *evt = cast_data_module_event(eh);
+	if (is_data_module_event(aeh)) {
+		struct data_module_event *evt = cast_data_module_event(aeh);
 
 		msg.module.data = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_modem_module_event(eh)) {
-		struct modem_module_event *evt = cast_modem_module_event(eh);
+	if (is_modem_module_event(aeh)) {
+		struct modem_module_event *evt = cast_modem_module_event(aeh);
 
 		msg.module.modem = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_cloud_module_event(eh)) {
-		struct cloud_module_event *evt = cast_cloud_module_event(eh);
+	if (is_cloud_module_event(aeh)) {
+		struct cloud_module_event *evt = cast_cloud_module_event(aeh);
 
 		msg.module.cloud = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_util_module_event(eh)) {
-		struct util_module_event *evt = cast_util_module_event(eh);
+	if (is_util_module_event(aeh)) {
+		struct util_module_event *evt = cast_util_module_event(aeh);
 
 		msg.module.util = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_gnss_module_event(eh)) {
-		struct gnss_module_event *evt = cast_gnss_module_event(eh);
+	if (is_gnss_module_event(aeh)) {
+		struct gnss_module_event *evt = cast_gnss_module_event(aeh);
 
 		msg.module.gnss = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_debug_module_event(eh)) {
-		struct debug_module_event *evt = cast_debug_module_event(eh);
+	if (is_debug_module_event(aeh)) {
+		struct debug_module_event *evt = cast_debug_module_event(aeh);
 
 		msg.module.debug = *evt;
 		enqueue_msg = true;
@@ -436,7 +436,7 @@ static void send_data_ack(void *ptr, size_t len, bool sent)
 	cloud_module_event->data.ack.sent = sent;
 	cloud_module_event->data.ack.len = len;
 
-	EVENT_SUBMIT(cloud_module_event);
+	APPLICATION_EVENT_SUBMIT(cloud_module_event);
 }
 
 static void send_config_received(void)
@@ -447,7 +447,7 @@ static void send_config_received(void)
 	cloud_module_event->type = CLOUD_EVT_CONFIG_RECEIVED;
 	cloud_module_event->data.config = copy_cfg;
 
-	EVENT_SUBMIT(cloud_module_event);
+	APPLICATION_EVENT_SUBMIT(cloud_module_event);
 }
 
 static void data_send(struct data_module_event *evt)
@@ -978,11 +978,11 @@ K_THREAD_DEFINE(cloud_module_thread, CONFIG_CLOUD_THREAD_STACK_SIZE,
 		module_thread_fn, NULL, NULL, NULL,
 		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, data_module_event);
-EVENT_SUBSCRIBE(MODULE, app_module_event);
-EVENT_SUBSCRIBE(MODULE, modem_module_event);
-EVENT_SUBSCRIBE(MODULE, cloud_module_event);
-EVENT_SUBSCRIBE(MODULE, gnss_module_event);
-EVENT_SUBSCRIBE(MODULE, debug_module_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, util_module_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, data_module_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, app_module_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, modem_module_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, cloud_module_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, gnss_module_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, debug_module_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, util_module_event);

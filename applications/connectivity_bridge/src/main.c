@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 
-#include <event_manager.h>
+#include <app_evt_mgr.h>
 
 #define MODULE main
 #include "module_state_event.h"
@@ -30,8 +30,8 @@ uint8_t *usb_update_sn_string_descriptor(void)
 
 void main(void)
 {
-	if (event_manager_init()) {
-		LOG_ERR("Event manager not initialized");
+	if (app_evt_mgr_init()) {
+		LOG_ERR("Application Event Manager not initialized");
 	} else {
 		module_set_state(MODULE_STATE_READY);
 	}

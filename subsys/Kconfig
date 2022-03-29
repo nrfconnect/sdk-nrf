@@ -21,9 +21,9 @@ rsource "net/Kconfig"
 
 rsource "nfc/Kconfig"
 
-rsource "event_manager/Kconfig"
+rsource "app_evt_mgr/Kconfig"
 
-rsource "event_manager_profiler_tracer/Kconfig"
+rsource "app_evt_mgr_profiler_tracer/Kconfig"
 
 rsource "profiler/Kconfig"
 

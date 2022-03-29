@@ -12,7 +12,7 @@ When enabled for an application, the |ble_state| is responsible for the followin
 
 * Enabling Bluetooth (:c:func:`bt_enable`)
 * Handling Bluetooth connection callbacks (:c:struct:`bt_conn_cb`)
-* Propagating information about the connection state and parameters with :ref:`event_manager` events
+* Propagating information about the connection state and parameters with :ref:`app_evt_mgr` events
 
 The |ble_state| does not handle Bluetooth advertising or scanning.
 If you want to use these functionalities to connect over Bluetooth LE, use :ref:`CAF's Bluetooth LE advertising module <caf_ble_adv>` or Zephyr's :ref:`Bluetooth API <zephyr:bluetooth_api>` directly.
@@ -42,7 +42,7 @@ Implementation details
 
 The |ble_state| is used by both Bluetooth Peripheral and Bluetooth Central devices.
 
-In line with other CAF modules, the |ble_state| uses :ref:`event_manager` events to broadcast changes in connection state and parameters.
+In line with other CAF modules, the |ble_state| uses :ref:`app_evt_mgr` events to broadcast changes in connection state and parameters.
 It also updates connection reference counts to ensure the connections remain valid as long as application modules use them.
 
 Connection state change

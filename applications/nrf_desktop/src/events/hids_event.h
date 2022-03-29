@@ -9,8 +9,8 @@
 
 #include <bluetooth/services/hids.h>
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 #include "profiler.h"
 #include "hid_report_desc.h"
 
@@ -30,13 +30,13 @@ extern "C" {
 
 /** @brief HID notification event. */
 struct hid_notification_event {
-	struct event_header header; /**< Event header. */
+	struct application_event_header header; /**< Event header. */
 
 	uint8_t report_id; /**< HID report id. */
 	bool enabled; /**< True if report is enabled. */
 };
 
-EVENT_TYPE_DECLARE(hid_notification_event);
+APPLICATION_EVENT_TYPE_DECLARE(hid_notification_event);
 
 
 #ifdef __cplusplus

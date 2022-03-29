@@ -80,10 +80,10 @@ int lwm2m_init_push_button(void)
 	return 0;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_ui_input_event(eh)) {
-		struct ui_input_event *event = cast_ui_input_event(eh);
+	if (is_ui_input_event(aeh)) {
+		struct ui_input_event *event = cast_ui_input_event(aeh);
 
 		if (event->type != PUSH_BUTTON) {
 			return false;
@@ -149,5 +149,5 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, ui_input_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ui_input_event);

@@ -13,8 +13,8 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 
 /** @brief Asset Tracker led states in the application. */
@@ -36,12 +36,12 @@ enum led_state {
 
 /** @brief Led state event. */
 struct led_state_event {
-	struct event_header header; /**< Event header. */
+	struct application_event_header header; /**< Event header. */
 
 	enum led_state state;
 };
 
-EVENT_TYPE_DECLARE(led_state_event);
+APPLICATION_EVENT_TYPE_DECLARE(led_state_event);
 
 /** @} */
 

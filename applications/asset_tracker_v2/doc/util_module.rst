@@ -79,7 +79,7 @@ Dependencies
 
 This module uses the following |NCS| libraries and drivers:
 
-* :ref:`event_manager`
+* :ref:`app_evt_mgr`
 * :file:`asset_tracker_v2/src/watchdog/watchdog_app.h`
 
 API documentation

@@ -23,7 +23,7 @@ static void send_cpu_load_event(uint32_t load)
 	struct cpu_load_event *event = new_cpu_load_event();
 
 	event->load = load;
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 }
 
 static void cpu_load_read_fn(struct k_work *work)
@@ -60,10 +60,10 @@ static void init(void)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			init();
@@ -78,5 +78,5 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);

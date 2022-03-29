@@ -81,7 +81,7 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
-* :ref:`event_manager`
+* :ref:`app_evt_mgr`
 * :ref:`nus_service_readme`
 
 In addition, it uses the following Zephyr libraries:

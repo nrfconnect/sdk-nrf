@@ -13,8 +13,8 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,7 +58,7 @@ struct debug_module_memfault_data {
 
 /** @brief Debug event. */
 struct debug_module_event {
-	struct event_header header;
+	struct application_event_header header;
 	enum debug_module_event_type type;
 
 	union {
@@ -68,7 +68,7 @@ struct debug_module_event {
 	} data;
 };
 
-EVENT_TYPE_DECLARE(debug_module_event);
+APPLICATION_EVENT_TYPE_DECLARE(debug_module_event);
 
 #ifdef __cplusplus
 }

@@ -132,9 +132,9 @@
 		</g>
 		<g id="shape2143-86" transform="translate(221.925,-175.128)">
 			<title>Nordic Blue.2143</title>
-			<desc>Event Manager</desc>
+			<desc>Application Event Manager</desc>
 			<rect x="0" y="436.149" width="80.7218" height="28.3465" class="st2"/>
-			<text x="9.46" y="453.32" class="st11">Event Manager</text>		</g>
+			<text x="9.46" y="453.32" class="st11">Application Event Manager</text>		</g>
 		<g id="shape2145-89" transform="translate(274.648,-250.447)">
 			<title>Dynamic connector.2145</title>
 			<path d="M-1.81 471.46 L-1.81 471.82 L-1.81 487.37 L-12.36 487.37 L-12.36 504.15" class="st9"/>

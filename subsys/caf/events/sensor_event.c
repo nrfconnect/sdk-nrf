@@ -16,14 +16,15 @@ static const char * const sensor_state_name[] = {
 	[SENSOR_STATE_ERROR] = "ERROR",
 };
 
-static void log_sensor_event(const struct event_header *eh)
+static void log_sensor_event(const struct application_event_header *aeh)
 {
-	const struct sensor_event *event = cast_sensor_event(eh);
+	const struct sensor_event *event = cast_sensor_event(aeh);
 
-	EVENT_MANAGER_LOG(eh, "%s", event->descr);
+	APPLICATION_EVENT_MANAGER_LOG(aeh, "%s", event->descr);
 }
 
-static void profile_sensor_event(struct log_event_buf *buf, const struct event_header *eh)
+static void profile_sensor_event(struct log_event_buf *buf,
+				 const struct application_event_header *aeh)
 {
 }
 
@@ -32,17 +33,17 @@ EVENT_INFO_DEFINE(sensor_event,
 		  ENCODE(),
 		  profile_sensor_event);
 
-EVENT_TYPE_DEFINE(sensor_event,
+APPLICATION_EVENT_TYPE_DEFINE(sensor_event,
 		  log_sensor_event,
 		  &sensor_event_info,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_SENSOR_EVENTS,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 
-static void log_sensor_state_event(const struct event_header *eh)
+static void log_sensor_state_event(const struct application_event_header *aeh)
 {
-	const struct sensor_state_event *event = cast_sensor_state_event(eh);
+	const struct sensor_state_event *event = cast_sensor_state_event(aeh);
 
 	BUILD_ASSERT(ARRAY_SIZE(sensor_state_name) == SENSOR_STATE_COUNT,
 			 "Invalid number of elements");
@@ -50,13 +51,13 @@ static void log_sensor_state_event(const struct event_header *eh)
 	__ASSERT_NO_MSG(event->state < SENSOR_STATE_COUNT);
 	__ASSERT_NO_MSG(sensor_state_name[event->state] != NULL);
 
-	EVENT_MANAGER_LOG(eh, "sensor:%s state:%s",
+	APPLICATION_EVENT_MANAGER_LOG(aeh, "sensor:%s state:%s",
 			event->descr, sensor_state_name[event->state]);
 }
 
-EVENT_TYPE_DEFINE(sensor_state_event,
+APPLICATION_EVENT_TYPE_DEFINE(sensor_state_event,
 		  log_sensor_state_event,
 		  NULL,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_SENSOR_STATE_EVENTS,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

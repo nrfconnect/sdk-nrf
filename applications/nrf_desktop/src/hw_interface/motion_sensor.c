@@ -15,7 +15,7 @@
 
 #include "motion_sensor.h"
 
-#include <event_manager.h>
+#include <app_evt_mgr.h>
 #include "motion_event.h"
 #include <caf/events/power_event.h>
 #include "hid_event.h"
@@ -201,7 +201,7 @@ static void data_ready_handler(const struct device *dev, const struct sensor_tri
 	case STATE_SUSPENDED:
 	case STATE_SUSPENDED_DISCONNECTED:
 		/* Wake up system - this will wake up thread */
-		EVENT_SUBMIT(new_wake_up_event());
+		APPLICATION_EVENT_SUBMIT(new_wake_up_event());
 		break;
 
 	case STATE_FETCHING:
@@ -256,7 +256,7 @@ static int motion_read(bool send_event)
 
 	event->dx = value_x.val1;
 	event->dy = value_y.val1;
-	EVENT_SUBMIT(event);
+	APPLICATION_EVENT_SUBMIT(event);
 
 	return err;
 }
@@ -528,11 +528,11 @@ static bool handle_usb_state_event(const struct usb_state_event *event)
 	return false;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_hid_report_sent_event(eh)) {
+	if (is_hid_report_sent_event(aeh)) {
 		const struct hid_report_sent_event *event =
-			cast_hid_report_sent_event(eh);
+			cast_hid_report_sent_event(aeh);
 
 		if ((event->report_id == REPORT_ID_MOUSE) ||
 		    (event->report_id == REPORT_ID_BOOT_MOUSE)) {
@@ -547,9 +547,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_hid_report_subscription_event(eh)) {
+	if (is_hid_report_subscription_event(aeh)) {
 		const struct hid_report_subscription_event *event =
-			cast_hid_report_subscription_event(eh);
+			cast_hid_report_subscription_event(aeh);
 
 		if ((event->report_id == REPORT_ID_MOUSE) ||
 		    (event->report_id == REPORT_ID_BOOT_MOUSE)) {
@@ -603,9 +603,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			/* Start state machine thread */
@@ -626,7 +626,7 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_wake_up_event(eh)) {
+	if (is_wake_up_event(aeh)) {
 		k_spinlock_key_t key = k_spin_lock(&state.lock);
 		if ((state.state == STATE_SUSPENDED) ||
 		    (state.state == STATE_SUSPENDED_DISCONNECTED)) {
@@ -648,7 +648,7 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_power_down_event(eh)) {
+	if (is_power_down_event(aeh)) {
 		k_spinlock_key_t key = k_spin_lock(&state.lock);
 
 		switch (state.state) {
@@ -693,8 +693,8 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_MOTION_SENSOR_SLEEP_DISABLE_ON_USB) &&
-	    is_usb_state_event(eh)) {
-		return handle_usb_state_event(cast_usb_state_event(eh));
+	    is_usb_state_event(aeh)) {
+		return handle_usb_state_event(cast_usb_state_event(aeh));
 	}
 
 	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, update_config,
@@ -705,15 +705,15 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, wake_up_event);
-EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
-EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif
 #if CONFIG_DESKTOP_MOTION_SENSOR_SLEEP_DISABLE_ON_USB
-EVENT_SUBSCRIBE(MODULE, usb_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, usb_state_event);
 #endif
-EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);

@@ -628,7 +628,7 @@ static void fetch_config(const uint8_t opt_id, uint8_t *data, size_t *size)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE) &&
 	    IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT)) {
@@ -638,8 +638,8 @@ static bool event_handler(const struct event_header *eh)
 		/* Count number of HID packets received via BLE. */
 		/* Send stats printout via CDC every 100 packets. */
 
-		if (is_hid_report_event(eh)) {
-			const struct hid_report_event *event = cast_hid_report_event(eh);
+		if (is_hid_report_event(aeh)) {
+			const struct hid_report_event *event = cast_hid_report_event(aeh);
 
 			/* Ignore HID output reports. */
 			if (!event->subscriber) {
@@ -658,9 +658,9 @@ static bool event_handler(const struct event_header *eh)
 		}
 	}
 
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(
 			    event,
@@ -791,7 +791,7 @@ static void ble_qos_thread_fn(void)
 		struct ble_qos_event *event = new_ble_qos_event();
 		BUILD_ASSERT(sizeof(event->chmap) == CHMAP_BLE_BITMASK_SIZE, "");
 		memcpy(event->chmap, chmap, CHMAP_BLE_BITMASK_SIZE);
-		EVENT_SUBMIT(event);
+		APPLICATION_EVENT_SUBMIT(event);
 
 		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
 			err = bt_le_set_chan_map(chmap);
@@ -809,11 +809,11 @@ static void ble_qos_thread_fn(void)
 	}
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE
-EVENT_SUBSCRIBE(MODULE, hid_report_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_event);
 #endif
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif

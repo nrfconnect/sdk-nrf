@@ -13,19 +13,19 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 struct power_down_event {
-	struct event_header header;
+	struct application_event_header header;
 	bool error;
 };
 
-EVENT_TYPE_DECLARE(power_down_event);
+APPLICATION_EVENT_TYPE_DECLARE(power_down_event);
 
 #ifdef __cplusplus
 }

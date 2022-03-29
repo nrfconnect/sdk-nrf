@@ -12,18 +12,18 @@
 
 #define BLE_EVENT_LOG_BUF_LEN 128
 
-EVENT_TYPE_DEFINE(ble_discovery_complete_event,
+APPLICATION_EVENT_TYPE_DEFINE(ble_discovery_complete_event,
 		  NULL,
 		  NULL,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_BLE_DISC_COMPLETE_EVENT,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 
 #if CONFIG_DESKTOP_BLE_QOS_ENABLE
-static void log_ble_qos_event(const struct event_header *eh)
+static void log_ble_qos_event(const struct application_event_header *aeh)
 {
-	const struct ble_qos_event *event = cast_ble_qos_event(eh);
+	const struct ble_qos_event *event = cast_ble_qos_event(aeh);
 	int pos = 0;
 	char log_buf[BLE_EVENT_LOG_BUF_LEN];
 	int err;
@@ -34,16 +34,16 @@ static void log_ble_qos_event(const struct event_header *eh)
 		err = snprintf(&log_buf[pos], sizeof(log_buf) - pos, " 0x%02x", event->chmap[i]);
 	}
 	if (err < 0) {
-		EVENT_MANAGER_LOG(eh, "log message preparation failure");
+		APPLICATION_EVENT_MANAGER_LOG(aeh, "log message preparation failure");
 		return;
 	}
-	EVENT_MANAGER_LOG(eh, "%s", log_strdup(log_buf));
+	APPLICATION_EVENT_MANAGER_LOG(aeh, "%s", log_strdup(log_buf));
 }
 
-EVENT_TYPE_DEFINE(ble_qos_event,
+APPLICATION_EVENT_TYPE_DEFINE(ble_qos_event,
 		  log_ble_qos_event,
 		  NULL,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_BLE_QOS_EVENT,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 #endif

@@ -85,7 +85,7 @@ static void hids_discovery_completed(struct bt_gatt_dm *dm, void *context)
 	for (size_t i = 0; i < ARRAY_SIZE(bt_peripherals); i++) {
 		if (bt_peripherals[i].pid == peer_pid) {
 			event->peer_type = bt_peripherals[i].peer_type;
-			EVENT_SUBMIT(event);
+			APPLICATION_EVENT_SUBMIT(event);
 			/* This module is the last one to process this event
 			 * and release the discovery data.
 			 */
@@ -96,7 +96,7 @@ static void hids_discovery_completed(struct bt_gatt_dm *dm, void *context)
 	/* Nothing was found. */
 	LOG_ERR("Unrecognized peer");
 	peer_disconnect(bt_gatt_dm_conn_get(dm));
-	event_manager_free(event);
+	app_evt_mgr_free(event);
 	int err = bt_gatt_dm_data_release(dm);
 
 	if (err) {
@@ -333,11 +333,11 @@ static void init(void)
 	module_set_state(MODULE_STATE_READY);
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_ble_peer_event(eh)) {
+	if (is_ble_peer_event(aeh)) {
 		const struct ble_peer_event *event =
-			cast_ble_peer_event(eh);
+			cast_ble_peer_event(aeh);
 
 		switch (event->state) {
 		case PEER_STATE_SECURED:
@@ -352,9 +352,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_discovery_complete_event(eh)) {
+	if (is_ble_discovery_complete_event(aeh)) {
 		const struct ble_discovery_complete_event *event =
-			cast_ble_discovery_complete_event(eh);
+			cast_ble_discovery_complete_event(aeh);
 
 		int err = bt_gatt_dm_data_release(event->dm);
 
@@ -369,9 +369,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			init();
@@ -385,7 +385,7 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, ble_peer_event);
-EVENT_SUBSCRIBE_FINAL(MODULE, ble_discovery_complete_event);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, ble_discovery_complete_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);

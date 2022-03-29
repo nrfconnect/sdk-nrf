@@ -17,23 +17,23 @@ static const char * const state_name[NET_STATE_COUNT] = {
 	[NET_STATE_CONNECTED] = "NET_STATE_CONNECTED"
 };
 
-static void log_net_state_event(const struct event_header *eh)
+static void log_net_state_event(const struct application_event_header *aeh)
 {
-	const struct net_state_event *event = cast_net_state_event(eh);
+	const struct net_state_event *event = cast_net_state_event(aeh);
 
 	BUILD_ASSERT(ARRAY_SIZE(state_name) == NET_STATE_COUNT,
 		     "Invalid number of elements");
 
 	__ASSERT_NO_MSG(event->state < NET_STATE_COUNT);
 
-	EVENT_MANAGER_LOG(eh, "id=%p %s", event->id,
+	APPLICATION_EVENT_MANAGER_LOG(aeh, "id=%p %s", event->id,
 			state_name[event->state]);
 }
 
 static void profile_net_state_event(struct log_event_buf *buf,
-				    const struct event_header *eh)
+				    const struct application_event_header *aeh)
 {
-	const struct net_state_event *event = cast_net_state_event(eh);
+	const struct net_state_event *event = cast_net_state_event(aeh);
 
 	profiler_log_encode_uint32(buf, (uint32_t)event->id);
 	profiler_log_encode_uint8(buf, event->state);
@@ -44,9 +44,9 @@ EVENT_INFO_DEFINE(net_state_event,
 		  ENCODE("conn_id", "state"),
 		  profile_net_state_event);
 
-EVENT_TYPE_DEFINE(net_state_event,
+APPLICATION_EVENT_TYPE_DEFINE(net_state_event,
 		  log_net_state_event,
 		  &net_state_event_info,
-		  EVENT_FLAGS_CREATE(
+		  APPLICATION_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_NET_STATE_EVENTS,
-				(EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

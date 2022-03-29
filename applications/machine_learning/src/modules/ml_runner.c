@@ -84,7 +84,7 @@ static void submit_result(void)
 	__ASSERT_NO_MSG(!err);
 	ARG_UNUSED(err);
 
-	EVENT_SUBMIT(evt);
+	APPLICATION_EVENT_SUBMIT(evt);
 }
 
 static int buf_cleanup(void)
@@ -272,23 +272,23 @@ static bool handle_ml_result_signin_event(const struct ml_result_signin_event *e
 	return false;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_sensor_event(eh)) {
-		return handle_sensor_event(cast_sensor_event(eh));
+	if (is_sensor_event(aeh)) {
+		return handle_sensor_event(cast_sensor_event(aeh));
 	}
 
 	if (APP_CONTROLS_ML_MODE &&
-	    is_ml_app_mode_event(eh)) {
-		return handle_ml_app_mode_event(cast_ml_app_mode_event(eh));
+	    is_ml_app_mode_event(aeh)) {
+		return handle_ml_app_mode_event(cast_ml_app_mode_event(aeh));
 	}
 
-	if (is_module_state_event(eh)) {
-		return handle_module_state_event(cast_module_state_event(eh));
+	if (is_module_state_event(aeh)) {
+		return handle_module_state_event(cast_module_state_event(aeh));
 	}
 
-	if (is_ml_result_signin_event(eh)) {
-		return handle_ml_result_signin_event(cast_ml_result_signin_event(eh));
+	if (is_ml_result_signin_event(aeh)) {
+		return handle_ml_result_signin_event(cast_ml_result_signin_event(aeh));
 	}
 
 	/* If event is unhandled, unsubscribe. */
@@ -297,10 +297,10 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, sensor_event);
-EVENT_SUBSCRIBE(MODULE, ml_result_signin_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, sensor_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ml_result_signin_event);
 #if APP_CONTROLS_ML_MODE
-EVENT_SUBSCRIBE(MODULE, ml_app_mode_event);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, ml_app_mode_event);
 #endif /* APP_CONTROLS_ML_MODE */

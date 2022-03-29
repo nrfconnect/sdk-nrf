@@ -12,7 +12,7 @@ The main module is the entry point of the nRF Desktop application.
 Module events
 *************
 
-The module does not register itself as an :ref:`event_manager` listener.
+The module does not register itself as an :ref:`app_evt_mgr` listener.
 The module only submits the ``module_state_event`` to inform the other modules that they can continue the application startup.
 
 +-------------------+---------------+-------------+------------------------+---------------------------------------------+
@@ -33,4 +33,4 @@ The module has no configuration options.
 Implementation details
 **********************
 
-The :ref:`nrf_desktop_main` initializes the :ref:`event_manager` and then submits the ``module_state_event`` to inform the other modules that they can continue the application startup.
+The :ref:`nrf_desktop_main` initializes the :ref:`app_evt_mgr` and then submits the ``module_state_event`` to inform the other modules that they can continue the application startup.

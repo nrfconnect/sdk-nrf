@@ -13,21 +13,21 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 struct motion_event {
-	struct event_header header;
+	struct application_event_header header;
 
 	int16_t dx;
 	int16_t dy;
 };
 
-EVENT_TYPE_DECLARE(motion_event);
+APPLICATION_EVENT_TYPE_DECLARE(motion_event);
 
 #ifdef __cplusplus
 }

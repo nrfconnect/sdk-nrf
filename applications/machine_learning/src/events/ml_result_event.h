@@ -13,8 +13,8 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 #include <caf/events/module_state_event.h>
 
 #ifdef __cplusplus
@@ -24,7 +24,7 @@ extern "C" {
 
 /** @brief Machine learning classification result event. */
 struct ml_result_event {
-	struct event_header header; /**< Event header. */
+	struct application_event_header header; /**< Event header. */
 
 	const char *label; /**< Classification label. */
 	float value; /**< Classification value. */
@@ -37,14 +37,14 @@ struct ml_result_event {
  * to mark that the module actively listens for the result event.
  */
 struct ml_result_signin_event {
-	struct event_header header; /**< Event header. */
+	struct application_event_header header; /**< Event header. */
 
 	size_t module_idx; /**< @brief The index of the module */
 	bool state;        /**< @brief  Requested state: true to sign in, false to sign off */
 };
 
-EVENT_TYPE_DECLARE(ml_result_event);
-EVENT_TYPE_DECLARE(ml_result_signin_event);
+APPLICATION_EVENT_TYPE_DECLARE(ml_result_event);
+APPLICATION_EVENT_TYPE_DECLARE(ml_result_signin_event);
 
 #ifdef __cplusplus
 }

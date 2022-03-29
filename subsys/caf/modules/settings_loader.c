@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <settings/settings.h>
 
-#include <event_manager.h>
+#include <app_evt_mgr.h>
 
 #define MODULE settings_loader
 #include <caf/events/module_state_event.h>
@@ -100,10 +100,10 @@ static bool module_event_handler(const struct module_state_event *event)
 	return false;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct application_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
-		return module_event_handler(cast_module_state_event(eh));
+	if (is_module_state_event(aeh)) {
+		return module_event_handler(cast_module_state_event(aeh));
 	}
 
 	/* If event is unhandled, unsubscribe. */
@@ -112,5 +112,5 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);

@@ -8,8 +8,8 @@
 #define ACCEL_EVENT_H__
 
 #include <zephyr.h>
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #include "accelerometer.h"
 
@@ -18,13 +18,13 @@ extern "C" {
 #endif
 
 struct accel_event {
-	struct event_header header;
+	struct application_event_header header;
 
 	struct accelerometer_sensor_data data;
 	enum accel_orientation_state orientation;
 };
 
-EVENT_TYPE_DECLARE(accel_event);
+APPLICATION_EVENT_TYPE_DECLARE(accel_event);
 
 #ifdef __cplusplus
 }

@@ -16,8 +16,8 @@
 #include <string.h>
 #include <toolchain/common.h>
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_evt_mgr.h>
+#include <app_evt_mgr_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,7 +44,7 @@ enum peer_conn_state {
 
 /** Peer connection event. */
 struct peer_conn_event {
-	struct event_header header;
+	struct application_event_header header;
 
 	enum peer_id peer_id;
 	uint8_t dev_idx;
@@ -52,7 +52,7 @@ struct peer_conn_event {
 	uint32_t baudrate;
 };
 
-EVENT_TYPE_DECLARE(peer_conn_event);
+APPLICATION_EVENT_TYPE_DECLARE(peer_conn_event);
 
 #ifdef __cplusplus
 }
