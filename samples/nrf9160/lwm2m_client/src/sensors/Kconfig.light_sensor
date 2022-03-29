@@ -10,18 +10,6 @@ config LIGHT_SENSOR
 	  Enable the light sensor device.
 
 if LIGHT_SENSOR
-choice
-	prompt "Select light sensor device"
-	default LIGHT_SENSOR_USE_EXTERNAL
-
-config LIGHT_SENSOR_USE_EXTERNAL
-	bool "Use the BH1749 light sensor"
-	depends on BH1749
-	select UI_SENSE_LED
-
-config LIGHT_SENSOR_USE_SIM
-	bool "Simulate light sensor"
-endchoice # Light sensor device
 
 config LIGHT_SENSOR_LIGHT_MEASUREMENT_MAX_VALUE
 	int "Max expected light sensor output value"
@@ -43,7 +31,6 @@ config LIGHT_SENSOR_COLOUR_MEASUREMENT_MAX_VALUE
 	  Max of a series of raw measurements during particular use conditions can give a good estimate
 	  (for that condition).
 
-if LIGHT_SENSOR_USE_SIM
 config LIGHT_SENSOR_LIGHT_SIM_VAL
 	int "Base value of simulated light values"
 	default 250
@@ -69,5 +56,5 @@ config LIGHT_SENSOR_COLOUR_SIM_MAX_DIFF
 	default 250
 	help
 	  Maximum difference from the base value when simulating colour data.
-endif # LIGHT_SENSOR_USE_SIM
+
 endif # LIGHT_SENSOR

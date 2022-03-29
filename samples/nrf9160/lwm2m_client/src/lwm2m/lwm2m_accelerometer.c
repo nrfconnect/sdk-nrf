@@ -8,6 +8,7 @@
 #include <net/lwm2m.h>
 #include <lwm2m_resource_ids.h>
 #include <math.h>
+#include <devicetree.h>
 
 #include "accelerometer.h"
 #include "accel_event.h"
@@ -18,10 +19,10 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 
-#if defined(CONFIG_ACCEL_USE_EXTERNAL)
-#define ACCEL_APP_TYPE "ADXL362 Accelerometer"
-#elif defined(CONFIG_ACCEL_USE_SIM)
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(sensor_sim), okay)
 #define ACCEL_APP_TYPE "Simulated Accelerometer"
+#else
+#define ACCEL_APP_TYPE "ADXL362 Accelerometer"
 #endif
 
 #define SENSOR_UNIT_NAME "m/s^2"
