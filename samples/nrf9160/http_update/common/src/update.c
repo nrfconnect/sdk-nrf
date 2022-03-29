@@ -6,6 +6,7 @@
 #include <zephyr.h>
 #include <drivers/gpio.h>
 #include <drivers/flash.h>
+#include <toolchain.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_key_mgmt.h>
 #include <net/socket.h>
@@ -84,7 +85,7 @@ static int led_init(int num_leds)
 		}
 
 		gpio_pin_configure_dt(&led1, GPIO_OUTPUT_ACTIVE);
-		/* Fallthrough */
+		__fallthrough;
 	case 1:
 		if (!device_is_ready(led0.port)) {
 			return -ENODEV;
