@@ -74,8 +74,6 @@ static nrfx_spim_t spim = NRFX_SPIM_INSTANCE(0);
 
 #define NRF21540_SPI DT_PHANDLE(NRF21540_NODE, spi_if)
 #define NRF21540_SPI_BUS DT_BUS(NRF21540_SPI)
-#define NRF21540_SPI_LABEL DT_LABEL(NRF21540_SPI_BUS)
-#define CS_GPIO_PORT DT_SPI_DEV_CS_GPIOS_LABEL(NRF21540_SPI)
 
 #define T_NCS_SCLK 1
 
@@ -113,9 +111,7 @@ struct gpiote_pin {
 };
 
 static struct nrf21540 {
-	const struct device *spi_dev;
-	struct spi_cs_control spi_cs;
-	const struct spi_config spi_cfg;
+	struct spi_dt_spec bus;
 	struct gpiote_pin tx_en;
 	struct gpiote_pin rx_en;
 	struct gpio_dt_spec pdn;
@@ -127,17 +123,11 @@ static struct nrf21540 {
 	gppi_channel_t pin_clr_ch;
 	const nrfx_timer_t timer;
 } nrf21540_cfg = {
-	.spi_cs = {
-		.gpio_pin = DT_SPI_DEV_CS_GPIOS_PIN(NRF21540_SPI),
-		.gpio_dt_flags = DT_SPI_DEV_CS_GPIOS_FLAGS(NRF21540_SPI),
-		.delay = T_NCS_SCLK
-	},
-	.spi_cfg = {
-		.frequency = DT_PROP(NRF21540_SPI, spi_max_frequency),
-		.operation = (SPI_OP_MODE_MASTER | SPI_WORD_SET(8) |
-			      SPI_TRANSFER_MSB | SPI_LINES_SINGLE),
-		.slave = DT_REG_ADDR(NRF21540_SPI),
-	},
+#if !defined(NRF5340_XXAA_NETWORK)
+	.bus = SPI_DT_SPEC_GET(NRF21540_SPI,
+			       SPI_OP_MODE_MASTER | SPI_WORD_SET(8) |
+			       SPI_TRANSFER_MSB | SPI_LINES_SINGLE, T_NCS_SCLK),
+#endif
 	.pdn = GPIO_DT_SPEC_GET(NRF21540_NODE, pdn_gpios),
 	.ant_sel = GPIO_DT_SPEC_GET(NRF21540_NODE, ant_sel_gpios),
 	.tx_en_gpio = GPIO_DT_SPEC_GET(NRF21540_NODE, tx_en_gpios),
@@ -312,34 +302,6 @@ static int gpio_configure(void)
 	return gpio_pin_configure_dt(&nrf21540_cfg.ant_sel, GPIO_OUTPUT_INACTIVE);
 }
 
-static int spi_config(void)
-{
-	int err;
-
-	/* Configure CS pin */
-	nrf21540_cfg.spi_cs.gpio_dev = device_get_binding(CS_GPIO_PORT);
-	if (!nrf21540_cfg.spi_cs.gpio_dev) {
-		return -ENXIO;
-	}
-
-	err = gpio_pin_configure(nrf21540_cfg.spi_cs.gpio_dev,
-				 nrf21540_cfg.spi_cs.gpio_pin,
-				(GPIO_OUTPUT_INACTIVE |
-				 nrf21540_cfg.spi_cs.gpio_dt_flags));
-	if (err) {
-		return err;
-	}
-
-#if !defined(NRF5340_XXAA_NETWORK)
-	nrf21540_cfg.spi_dev = device_get_binding(NRF21540_SPI_LABEL);
-	if (!nrf21540_cfg.spi_dev) {
-		return -ENXIO;
-	}
-#endif
-
-	return 0;
-}
-
 static int gppi_channel_config(void)
 {
 	if (gppi_channel_alloc(&nrf21540_cfg.pin_set_ch) != NRFX_SUCCESS) {
@@ -382,9 +344,8 @@ static int nrf21540_init(void)
 		return err;
 	}
 
-	err = spi_config();
-	if (err) {
-		return err;
+	if (!spi_is_ready(&nrf21540_cfg.bus)) {
+		return -ENODEV;
 	}
 
 	return 0;
@@ -405,8 +366,7 @@ static int nrf21540_power_up(void)
 	}
 
 	/* Set CSN Pin */
-	err = gpio_pin_set(nrf21540_cfg.spi_cs.gpio_dev,
-			   nrf21540_cfg.spi_cs.gpio_pin, 0);
+	err = gpio_pin_set_dt(&nrf21540_cfg.bus.config.cs->gpio, 0);
 	if (err) {
 		goto error;
 	}
@@ -553,10 +513,9 @@ static int spim_gain_transfer(uint8_t gain)
 					NRFX_SPIM_PIN_NOT_USED);
 
 	spim_config.frequency =
-		get_nrf_spim_frequency(nrf21540_cfg.spi_cfg.frequency);
+		get_nrf_spim_frequency(nrf21540_cfg.bus.config.frequency);
 
-	err = gpio_pin_set(nrf21540_cfg.spi_cs.gpio_dev,
-			   nrf21540_cfg.spi_cs.gpio_pin, 0);
+	err = gpio_pin_set_dt(&nrf21540_cfg.bus.config.cs->gpio, 0);
 	if (err) {
 		return err;
 	}
@@ -575,8 +534,7 @@ static int spim_gain_transfer(uint8_t gain)
 	/* Prepare transfer */
 	nrfx_spim_xfer_desc_t xfer_desc = NRFX_SPIM_XFER_TX(buf, sizeof(buf));
 
-	err = gpio_pin_set(nrf21540_cfg.spi_cs.gpio_dev,
-			   nrf21540_cfg.spi_cs.gpio_pin, 1);
+	err = gpio_pin_set_dt(&nrf21540_cfg.bus.config.cs->gpio, 1);
 	if (err) {
 		return err;
 	}
@@ -678,8 +636,7 @@ static int nrf21540_tx_gain_set(uint32_t gain)
 		goto error;
 	}
 
-	err = gpio_pin_set(nrf21540_cfg.spi_cs.gpio_dev,
-			   nrf21540_cfg.spi_cs.gpio_pin, 0);
+	err = gpio_pin_set_dt(&nrf21540_cfg.bus.config.cs->gpio, 0);
 	if (err) {
 		goto error;
 	}
@@ -699,14 +656,12 @@ static int nrf21540_tx_gain_set(uint32_t gain)
 		.count = 1
 	};
 
-	err = gpio_pin_set(nrf21540_cfg.spi_cs.gpio_dev,
-			   nrf21540_cfg.spi_cs.gpio_pin, 1);
+	err = gpio_pin_set_dt(&nrf21540_cfg.bus.config.cs->gpio, 1);
 	if (err) {
 		goto error;
 	}
 
-	err = spi_transceive(nrf21540_cfg.spi_dev, &nrf21540_cfg.spi_cfg,
-			     &tx, NULL);
+	err = spi_transceive_dt(&nrf21540_cfg.bus, &tx, NULL);
 
 error:
 	atomic_set(&state, NRF21540_STATE_READY);
@@ -746,8 +701,7 @@ static int nrf21540_rx_configure(uint32_t activate_event, uint32_t deactivate_ev
 	}
 
 	/* Pull down the CSN pin before RX. */
-	err = gpio_pin_set(nrf21540_cfg.spi_cs.gpio_dev,
-			   nrf21540_cfg.spi_cs.gpio_pin, 1);
+	err = gpio_pin_set_dt(&nrf21540_cfg.bus.config.cs->gpio, 1);
 	if (err) {
 		return err;
 	}
@@ -783,8 +737,7 @@ static int nrf21540_txrx_stop(void)
 				NRF_GPIOTE_INITIAL_VALUE_HIGH);
 
 	/* Set CSN pin */
-	return gpio_pin_set(nrf21540_cfg.spi_cs.gpio_dev,
-			    nrf21540_cfg.spi_cs.gpio_pin, 0);
+	return gpio_pin_set_dt(&nrf21540_cfg.bus.config.cs->gpio, 0);
 }
 
 static void nrf21540_txrx_configuration_clear(void)
