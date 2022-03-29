@@ -124,6 +124,11 @@ CIA-463: Wrong network mode parameter reported to cloud
 NCSDK-14235: Timestamps that are sent in cloud messages drift over time
   Due to a bug in the :ref:`lib_date_time` library, timestamps that are sent to cloud drift because they are calculated incorrectly.
 
+.. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-0
+
+CIA-604: ATv2 cannot be built for the ``thingy91_nrf9160_ns`` build target with ``SECURE_BOOT`` enabled
+  Due to the use of static partitions with the Thingy:91, there is insufficient room in the flash memory to enable both the primary and secondary bootloaders.
+
 Serial LTE Modem
 ================
 

@@ -13,6 +13,10 @@ Glossary
    Access Port Protection (APPROTECT)
       A register used to prevent read and write access to all CPU registers and memory-mapped addresses.
 
+   Almanac data
+      In the :term:`Global Navigation Satellite System (GNSS)`, the data providing coarse orbit and status information for each satellite in the constellation.
+      Each satellite broadcasts Almanac data for all the satellites in the constellation.
+
    Anycast addressing
       An addressing type that routes datagrams to a single member of a group of potential receivers that are all identified by the same destination address.
       This is a one-to-nearest association.
@@ -27,6 +31,11 @@ Glossary
 
    Application Programming Interface (API)
       A language and message format used by an application program to communicate with an operating system, application, or other services.
+
+   Assisted GPS (A-GPS)
+      A form of assistance provided to devices trying to obtain a :term:`Global Navigation Satellite System (GNSS)` fix.
+      It improves the :term:`Time to First Fix (TTFF)` by utilizing a connection (for example, over cellular) to the internet to retrieve the :term:`Almanac data` and :term:`Ephemeris data`.
+      A connection to an internet server that has the Almanac and Ephemeris data is several times quicker than using the data link to the GPS satellites.
 
    Attribute Protocol (ATT)
       "[It] allows a device referred to as the server to expose a set of attributes and their associated values to a peer device referred to as the client."
@@ -147,6 +156,10 @@ Glossary
 
    Endpoint
       In the context of a :ref:`Matter <ug_matter>` or :ref:`Zigbee <ug_zigbee>` network, an addressable container that contains *clusters* appropriate for a single device type such as a sensor or a light bulb.
+
+   Ephemeris data
+      In the :term:`Global Navigation Satellite System (GNSS)`, the data providing information about the orbit of the satellite transmitting it.
+      This data is valid for four hours and becomes inaccurate after that.
 
    Evaluation Kit (EK)
       A platform used to evaluate different development platforms.
@@ -448,6 +461,11 @@ Glossary
       A feature introduced in 3GPP Release 12 to improve the battery life of IoT (Internet of Things) devices by minimizing energy consumption.
       The device stays dormant during the PSM window.
 
+   Predicted GPS (P-GPS)
+      A form of assistance provided to devices trying to obtain a :term:`Global Navigation Satellite System (GNSS)` fix, where the device can download up to two weeks of predicted satellite Ephemerides data.
+      It enables devices to determine the exact orbital location of the satellite without connecting to the network every two hours with a trade-off of reduced accuracy of the calculated position over time.
+      It is available through :term:`nRF Cloud`.
+
    Preview Development Kit (PDK)
       A development platform used for application development.
       A Preview Development Kit uses an engineering sample of the chip and it is not production-ready in comparison to the Development Kit that uses a production-ready version of the chip.
@@ -569,6 +587,9 @@ Glossary
 
    Target
       The goal of an operation, for example, programming a specific image on a device, compiling a specific set of files, or removing previously generated files.
+
+   Time to First Fix (TTFF)
+      The time needed by a :term:`Global Navigation Satellite System (GNSS)` module to estimate its position.
 
    Transmission Control Protocol (TCP)
       A connection-oriented protocol that provides reliable transport.
