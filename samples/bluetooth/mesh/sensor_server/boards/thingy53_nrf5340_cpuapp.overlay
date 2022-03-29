@@ -70,10 +70,6 @@
 	chosen {
 		zephyr,console = &cdc_acm_uart0;
 	};
-
-	aliases {
-		bme680 = &bme680;
-	};
 };
 
 &zephyr_udc0 {

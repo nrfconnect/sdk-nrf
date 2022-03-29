@@ -11,11 +11,11 @@
 #include <dk_buttons_and_leds.h>
 #include "model_handler.h"
 
-#if DT_NODE_EXISTS(DT_ALIAS(bme680))
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(bme680), okay)
 /** Thingy53 */
-#define SENSOR_NODE DT_ALIAS(bme680)
+#define SENSOR_NODE DT_NODELABEL(bme680)
 #define SENSOR_DATA_TYPE SENSOR_CHAN_AMBIENT_TEMP
-#elif DT_NODE_EXISTS(DT_NODELABEL(temp))
+#elif DT_NODE_HAS_STATUS(DT_NODELABEL(temp), okay)
 /** nRF52 DK */
 #define SENSOR_NODE DT_NODELABEL(temp)
 #define SENSOR_DATA_TYPE SENSOR_CHAN_DIE_TEMP
