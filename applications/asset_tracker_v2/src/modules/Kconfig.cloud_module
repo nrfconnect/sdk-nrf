@@ -36,6 +36,9 @@ choice NRF_CLOUD_CLIENT_ID_SRC
 	default NRF_CLOUD_CLIENT_ID_SRC_RUNTIME
 endchoice
 
+config NRF_CLOUD_CELL_POS
+	default y if !BOARD_QEMU_X86
+
 endif # NRF_CLOUD_MQTT
 
 config CLOUD_THREAD_STACK_SIZE

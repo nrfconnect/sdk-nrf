@@ -369,7 +369,7 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 				      struct cloud_data_neighbor_cells *neighbor_cells)
 {
- #if defined(NRF_CLOUD_CELL_POS)
+ #if defined(CONFIG_NRF_CLOUD_CELL_POS)
 	int err;
 	char *buffer;
 	cJSON *root_obj = NULL;
