@@ -23,12 +23,12 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 
 #define SENSOR_FETCH_DELAY_MS 200
 
-#if defined(CONFIG_LIGHT_SENSOR_USE_EXTERNAL)
-#define LIGHT_APP_TYPE "BH1749 Light Sensor"
-#define COLOUR_APP_TYPE "BH1749 Colour Sensor"
-#elif defined(CONFIG_LIGHT_SENSOR_USE_SIM)
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(sensor_sim), okay)
 #define LIGHT_APP_TYPE "Simulated Light Sensor"
 #define COLOUR_APP_TYPE "Simulated Colour Sensor"
+#else
+#define LIGHT_APP_TYPE "BH1749 Light Sensor"
+#define COLOUR_APP_TYPE "BH1749 Colour Sensor"
 #endif
 
 #define LIGHT_SENSOR_APP_NAME "Light sensor"

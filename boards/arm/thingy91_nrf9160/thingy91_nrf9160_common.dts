@@ -117,13 +117,13 @@
 	scl-pin = <12>;
 	clock-frequency = <I2C_BITRATE_FAST>;
 
-	bme680@76 {
+	bme680: bme680@76 {
 		compatible = "bosch,bme680";
 		label = "BME680";
 		reg = <0x76>;
 	};
 
-	bh1749@38 {
+	bh1749: bh1749@38 {
 		compatible = "rohm,bh1749";
 		label = "BH1749";
 		reg = <0x38>;
@@ -139,7 +139,7 @@
 	miso-pin = <5>;
 	cs-gpios = <&gpio0 8 GPIO_ACTIVE_LOW>, <&gpio0 7 GPIO_ACTIVE_LOW>;
 
-	adxl362@0 {
+	adxl362: adxl362@0 {
 		compatible = "adi,adxl362";
 		label = "ADXL362";
 		spi-max-frequency = <8000000>;
@@ -147,7 +147,7 @@
 		int1-gpios = <&gpio0 9 0>;
 	};
 
-	adxl372@1 {
+	adxl372: adxl372@1 {
 		compatible = "adi,adxl372";
 		label = "ADXL372";
 		spi-max-frequency = <8000000>;
