@@ -63,22 +63,6 @@
 
 #define NRF21540_NODE DT_NODELABEL(nrf_radio_fem)
 
-#define TX_EN_REG DT_REG_ADDR(DT_PHANDLE(NRF21540_NODE, tx_en_gpios))
-#define TX_EN_PIN DT_GPIO_PIN(NRF21540_NODE, tx_en_gpios)
-#define TX_EN_FLAGS DT_GPIO_FLAGS(NRF21540_NODE, tx_en_gpios)
-
-#define RX_EN_REG DT_REG_ADDR(DT_PHANDLE(NRF21540_NODE, rx_en_gpios))
-#define RX_EN_PIN DT_GPIO_PIN(NRF21540_NODE, rx_en_gpios)
-#define RX_EN_FLAGS DT_GPIO_FLAGS(NRF21540_NODE, rx_en_gpios)
-
-#define PDN_PORT DT_GPIO_LABEL(NRF21540_NODE, pdn_gpios)
-#define PDN_PIN DT_GPIO_PIN(NRF21540_NODE, pdn_gpios)
-#define PDN_FLAGS DT_GPIO_FLAGS(NRF21540_NODE, pdn_gpios)
-
-#define ANT_SEL_PORT DT_GPIO_LABEL(NRF21540_NODE, ant_sel_gpios)
-#define ANT_SEL_PIN DT_GPIO_PIN(NRF21540_NODE, ant_sel_gpios)
-#define ANT_SEL_FLAGS DT_GPIO_FLAGS(NRF21540_NODE, ant_sel_gpios)
-
 #define PDN_SETTLE_TIME DT_PROP(NRF21540_NODE, pdn_settle_time_us)
 #define TX_EN_SETTLE_TIME DT_PROP(NRF21540_NODE, tx_en_settle_time_us)
 #define RX_EN_SETTLE_TIME DT_PROP(NRF21540_NODE, rx_en_settle_time_us)
@@ -94,10 +78,6 @@ static nrfx_spim_t spim = NRFX_SPIM_INSTANCE(0);
 #define CS_GPIO_PORT DT_SPI_DEV_CS_GPIOS_LABEL(NRF21540_SPI)
 
 #define T_NCS_SCLK 1
-
-#define NRF21540_GPIO_POLARITY_GET(_dt_property)                     \
-	((DT_GPIO_FLAGS(DT_NODELABEL(nrf_radio_fem), _dt_property) & \
-	GPIO_ACTIVE_LOW) ? false : true)
 
 enum nrf21540_ant {
 	/** Antenna 1 output. */
@@ -126,11 +106,6 @@ enum nrf21540_state {
 	NRF21540_STATE_BUSY
 };
 
-struct gpio_data {
-	const struct device *port;
-	gpio_pin_t pin;
-};
-
 struct gpiote_pin {
 	uint32_t abs_pin;
 	uint8_t gpiote_channel;
@@ -143,8 +118,10 @@ static struct nrf21540 {
 	const struct spi_config spi_cfg;
 	struct gpiote_pin tx_en;
 	struct gpiote_pin rx_en;
-	struct gpio_data pdn;
-	struct gpio_data ant_sel;
+	struct gpio_dt_spec pdn;
+	struct gpio_dt_spec ant_sel;
+	struct gpio_dt_spec tx_en_gpio;
+	struct gpio_dt_spec rx_en_gpio;
 	gppi_channel_t timer_ch;
 	gppi_channel_t pin_set_ch;
 	gppi_channel_t pin_clr_ch;
@@ -161,6 +138,10 @@ static struct nrf21540 {
 			      SPI_TRANSFER_MSB | SPI_LINES_SINGLE),
 		.slave = DT_REG_ADDR(NRF21540_SPI),
 	},
+	.pdn = GPIO_DT_SPEC_GET(NRF21540_NODE, pdn_gpios),
+	.ant_sel = GPIO_DT_SPEC_GET(NRF21540_NODE, ant_sel_gpios),
+	.tx_en_gpio = GPIO_DT_SPEC_GET(NRF21540_NODE, tx_en_gpios),
+	.rx_en_gpio = GPIO_DT_SPEC_GET(NRF21540_NODE, rx_en_gpios),
 	.timer = NRFX_TIMER_INSTANCE(NRF21540_TIMER_INSTANCE)
 };
 
@@ -199,16 +180,16 @@ static struct gpiote_pin *nrf21540_gpiote_pin_get(enum nrf21540_trx dir)
 	return dir == NRF21540_TX ? &nrf21540_cfg.tx_en : &nrf21540_cfg.rx_en;
 }
 
-static uint32_t gpio_port_num_decode(NRF_GPIO_Type *reg)
+static uint32_t gpio_port_num_decode(const struct device *dev)
 {
-	if (reg == NRF_P0) {
+	if (dev == DEVICE_DT_GET(DT_NODELABEL(gpio0))) {
 		return 0;
 	}
-#if CONFIG_HAS_HW_NRF_GPIO1
-	else if (reg == NRF_P1) {
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(gpio1), okay)
+	else if (dev == DEVICE_DT_GET(DT_NODELABEL(gpio1))) {
 		return 1;
 	}
-#endif /* CONFIG_HAS_HW_NRF_GPIO1 */
+#endif
 
 	__ASSERT(false, "Unknown GPIO port");
 	return 0;
@@ -221,22 +202,20 @@ static int gpiote_configure(void)
 	}
 
 	nrf21540_cfg.tx_en.abs_pin =
-		NRF_GPIO_PIN_MAP(
-			gpio_port_num_decode((NRF_GPIO_Type *) TX_EN_REG),
-					     TX_EN_PIN);
+		NRF_GPIO_PIN_MAP(gpio_port_num_decode(nrf21540_cfg.tx_en_gpio.port),
+				 nrf21540_cfg.tx_en_gpio.pin);
 	nrf21540_cfg.tx_en.active_high =
-		NRF21540_GPIO_POLARITY_GET(tx_en_gpios);
+		(nrf21540_cfg.tx_en_gpio.dt_flags & GPIO_ACTIVE_HIGH) == GPIO_ACTIVE_HIGH;
 
 	if (nrfx_gpiote_channel_alloc(&nrf21540_cfg.rx_en.gpiote_channel) != NRFX_SUCCESS) {
 		return -ENXIO;
 	}
 
 	nrf21540_cfg.rx_en.abs_pin =
-		NRF_GPIO_PIN_MAP(
-			gpio_port_num_decode((NRF_GPIO_Type *) RX_EN_REG),
-					     RX_EN_PIN);
+		NRF_GPIO_PIN_MAP(gpio_port_num_decode(nrf21540_cfg.rx_en_gpio.port),
+				 nrf21540_cfg.rx_en_gpio.pin);
 	nrf21540_cfg.rx_en.active_high =
-		NRF21540_GPIO_POLARITY_GET(rx_en_gpios);
+		(nrf21540_cfg.rx_en_gpio.dt_flags & GPIO_ACTIVE_HIGH) == GPIO_ACTIVE_HIGH;
 
 	nrf_gpiote_task_configure(NRF_GPIOTE,
 			nrf21540_cfg.tx_en.gpiote_channel,
@@ -311,35 +290,26 @@ static void event_configure(enum nrf21540_trx dir, uint32_t event,
 	}
 }
 
-static int gpio_output_pin_config(struct gpio_data *config,
-				  const char *port_name,
-				  gpio_pin_t pin, gpio_dt_flags_t flags)
-{
-	config->port = device_get_binding(port_name);
-	if (!config->port) {
-		return -ENXIO;
-	}
-
-	config->pin = pin;
-
-	return gpio_pin_configure(config->port, config->pin,
-				  (GPIO_OUTPUT_INACTIVE | flags));
-}
-
 static int gpio_configure(void)
 {
 	int err;
 
 	/* Configure PDN pin */
-	err = gpio_output_pin_config(&nrf21540_cfg.pdn, PDN_PORT,
-				     PDN_PIN, PDN_FLAGS);
+	if (!device_is_ready(nrf21540_cfg.pdn.port)) {
+		return -ENODEV;
+	}
+
+	err = gpio_pin_configure_dt(&nrf21540_cfg.pdn, GPIO_OUTPUT_INACTIVE);
 	if (err) {
 		return err;
 	}
 
 	/* Configure Antenna select pin */
-	return gpio_output_pin_config(&nrf21540_cfg.ant_sel, ANT_SEL_PORT,
-				      ANT_SEL_PIN, ANT_SEL_FLAGS);
+	if (!device_is_ready(nrf21540_cfg.ant_sel.port)) {
+		return -ENODEV;
+	}
+
+	return gpio_pin_configure_dt(&nrf21540_cfg.ant_sel, GPIO_OUTPUT_INACTIVE);
 }
 
 static int spi_config(void)
@@ -429,7 +399,7 @@ static int nrf21540_power_up(void)
 	}
 
 	/* Power-up nRF21540 */
-	err = gpio_pin_set(nrf21540_cfg.pdn.port, nrf21540_cfg.pdn.pin, 1);
+	err = gpio_pin_set_dt(&nrf21540_cfg.pdn, 1);
 	if (err) {
 		goto error;
 	}
@@ -458,7 +428,7 @@ static int nrf21540_power_down(void)
 	}
 
 	/* Power-down nRF21540 */
-	err = gpio_pin_set(nrf21540_cfg.pdn.port, nrf21540_cfg.pdn.pin, 0);
+	err = gpio_pin_set_dt(&nrf21540_cfg.pdn, 0);
 
 	atomic_set(&state, err ? NRF21540_STATE_READY : NRF21540_STATE_OFF);
 
@@ -478,13 +448,11 @@ static int nrf21540_antenna_select(enum fem_antenna ant)
 
 	switch (ant) {
 	case FEM_ANTENNA_1:
-		err = gpio_pin_set(nrf21540_cfg.ant_sel.port,
-				   nrf21540_cfg.ant_sel.pin, 0);
+		err = gpio_pin_set_dt(&nrf21540_cfg.ant_sel, 0);
 		break;
 
 	case FEM_ANTENNA_2:
-		err = gpio_pin_set(nrf21540_cfg.ant_sel.port,
-				   nrf21540_cfg.ant_sel.pin, 1);
+		err = gpio_pin_set_dt(&nrf21540_cfg.ant_sel, 1);
 
 		break;
 
