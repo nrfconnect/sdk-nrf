@@ -19,8 +19,6 @@
 
 LOG_MODULE_REGISTER(coap_client, CONFIG_COAP_CLIENT_LOG_LEVEL);
 
-#define CONSOLE_LABEL DT_LABEL(DT_CHOSEN(zephyr_console))
-
 #define OT_CONNECTION_LED DK_LED1
 #define BLE_CONNECTION_LED DK_LED2
 #define MTD_SED_LED DK_LED3
@@ -92,7 +90,11 @@ static void on_ot_disconnect(struct k_work *item)
 static void on_mtd_mode_toggle(uint32_t med)
 {
 #if IS_ENABLED(CONFIG_PM_DEVICE)
-	const struct device *cons = device_get_binding(CONSOLE_LABEL);
+	const struct device *cons = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
+
+	if (!device_is_ready(cons)) {
+		return;
+	}
 
 	if (med) {
 		pm_device_action_run(cons, PM_DEVICE_ACTION_RESUME);
