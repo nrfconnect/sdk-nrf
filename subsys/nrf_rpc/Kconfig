@@ -20,14 +20,6 @@ config NRF_RPC_TR_RPMSG
 	select IPC_SERVICE
 	select MBOX
 
-if NRF_RPC_TR_RPMSG
-
-choice IPC_SERVICE_BACKEND
-	default IPC_SERVICE_BACKEND_RPMSG
-endchoice
-
-endif
-
 config NRF_RPC_CBOR
 	bool
 	select TINYCBOR
