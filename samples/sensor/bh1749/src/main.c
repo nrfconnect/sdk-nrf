@@ -128,17 +128,18 @@ static void process(const struct device *dev)
 
 void main(void)
 {
-	const struct device *dev;
+	const struct device *dev = DEVICE_DT_GET_ONE(rohm_bh1749);
 
 	if (IS_ENABLED(CONFIG_LOG_BACKEND_RTT)) {
 		/* Give RTT log time to be flushed before executing tests */
 		k_sleep(K_MSEC(500));
 	}
-	dev = device_get_binding("BH1749");
-	if (dev == NULL) {
-		printk("Failed to get device binding\n");
+
+	if (!device_is_ready(dev)) {
+		printk("Sensor device not ready\n");
 		return;
 	}
+
 	printk("device is %p, name is %s\n", dev, dev->name);
 	process(dev);
 }
