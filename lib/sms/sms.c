@@ -45,7 +45,7 @@ static struct k_work sms_notify_work;
 /**
  * @brief Worker handling re-registration in case modem performs SMS client unregistration.
  */
-static struct k_work_delayable sms_reregister_work;
+static struct k_work sms_reregister_work;
 
 /* Reserving internal temporary buffers that are used for various functions requiring memory. */
 uint8_t sms_buf_tmp[SMS_BUF_TMP_LEN];
@@ -190,10 +190,7 @@ static void sms_at_cmd_handler_cms(const char *at_notif)
 	if (strstr(at_notif, AT_SMS_UNREGISTERED_NTF) != NULL) {
 		LOG_WRN("Modem unregistered the SMS client, performing re-registration");
 
-		/* Trigger re-registration after a short delay, re-registering immediately may
-		 * cause the modem to send another unregistration notification.
-		 */
-		k_work_schedule(&sms_reregister_work, K_SECONDS(1));
+		k_work_submit(&sms_reregister_work);
 	}
 }
 
@@ -213,7 +210,7 @@ static int sms_init(void)
 
 	k_work_init(&sms_ack_work, &sms_ack);
 	k_work_init(&sms_notify_work, &sms_notify);
-	k_work_init_delayable(&sms_reregister_work, &sms_reregister);
+	k_work_init(&sms_reregister_work, &sms_reregister);
 
 	/* Check if one SMS client has already been registered. */
 	ret = nrf_modem_at_cmd(sms_buf_tmp, SMS_BUF_TMP_LEN, AT_SMS_SUBSCRIBER_READ);
