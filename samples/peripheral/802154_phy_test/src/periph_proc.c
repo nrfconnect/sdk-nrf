@@ -51,29 +51,15 @@ LOG_MODULE_REGISTER(periph);
 static nrfx_timer_t clk_timer = NRFX_TIMER_INSTANCE(PTT_CLK_TIMER);
 #endif /* IS_ENABLED(CONFIG_PTT_CLK_OUT) */
 
-/* The devicetree node identifier for the "led0" alias. */
-#define LED0_NODE DT_ALIAS(led0)
-
-#if DT_NODE_HAS_STATUS(LED0_NODE, okay)
-#define LED0 DT_GPIO_LABEL(LED0_NODE, gpios)
-#define PIN DT_GPIO_PIN(LED0_NODE, gpios)
-#define FLAGS DT_GPIO_FLAGS(LED0_NODE, gpios)
-#else
-/* A build error here means your board isn't set up to blink an LED. */
-#define LED0 ""
-#define PIN 0
-#define FLAGS 0
-#endif
+static const struct gpio_dt_spec led0 = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
 #define CLOCK_NODE DT_INST(0, nordic_nrf_clock)
 
-static const struct device *indication_led_dev;
-static const struct device *gpio_port0_dev;
+static const struct device *gpio_port0_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 
 /* Check if the system has GPIO port 1 */
 #if DT_NODE_HAS_STATUS(DT_NODELABEL(gpio1), okay)
-static const struct device *gpio_port1_dev;
-
+static const struct device *gpio_port1_dev = DEVICE_DT_GET(DT_NODELABEL(gpio1));
 #endif
 
 #if IS_ENABLED(CONFIG_PTT_CLK_OUT)
@@ -104,24 +90,17 @@ void periph_init(void)
 	NRFX_ASSERT(err_code);
 #endif
 
-#if DT_NODE_HAS_STATUS(LED0_NODE, okay)
-	indication_led_dev = device_get_binding(LED0);
-	assert(indication_led_dev);
+	assert(device_is_ready(led0.port));
 
-	ret = gpio_pin_configure(indication_led_dev, PIN, GPIO_OUTPUT_ACTIVE | FLAGS);
-
+	ret = gpio_pin_configure_dt(&led0, GPIO_OUTPUT_INACTIVE);
 	assert(ret == 0);
-	gpio_pin_set(indication_led_dev, PIN, false);
-#endif
 
 #if DT_NODE_HAS_STATUS(DT_NODELABEL(gpio0), okay)
-	gpio_port0_dev = device_get_binding(DT_LABEL(DT_NODELABEL(gpio0)));
-	assert(gpio_port0_dev);
+	assert(device_is_ready(gpio_port0_dev));
 #endif
 
 #if DT_NODE_HAS_STATUS(DT_NODELABEL(gpio1), okay)
-	gpio_port1_dev = device_get_binding(DT_LABEL(DT_NODELABEL(gpio1)));
-	assert(gpio_port1_dev);
+	assert(device_is_ready(gpio_port1_dev));
 #endif
 }
 
@@ -337,10 +316,10 @@ bool ptt_get_temp_ext(int32_t *temp)
 
 void ptt_ctrl_led_indication_on_ext(void)
 {
-	gpio_pin_set(indication_led_dev, PIN, true);
+	gpio_pin_set_dt(&led0, 1);
 }
 
 void ptt_ctrl_led_indication_off_ext(void)
 {
-	gpio_pin_set(indication_led_dev, PIN, false);
+	gpio_pin_set_dt(&led0, 0);
 }
