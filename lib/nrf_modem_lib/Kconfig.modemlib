@@ -115,6 +115,14 @@ config NRF_MODEM_LIB_SHMEM_TRACE_SIZE
 	help
 	  Size of the shared memory area used to receive modem traces.
 
+config NRF_MODEM_LIB_TRACE_HEAP_SIZE
+	int "Modem trace heap size" if NRF_MODEM_LIB_TRACE_ENABLED
+	default 3072 if NRF_MODEM_LIB_TRACE_ENABLED
+	default 0
+	help
+	  Size of the heap buffer used for modem traces.
+	  This heap is allocated in the application's RAM.
+
 menu "Diagnostics"
 
 config NRF_MODEM_LIB_DEBUG_ALLOC
@@ -130,6 +138,16 @@ config NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
 
 config NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS
 	depends on NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
+	int "Period (millisec)"
+	default 20000
+
+config NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC
+	bool "Periodically dump trace heap contents"
+	depends on NRF_MODEM_LIB_TRACE_ENABLED
+
+config NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIOD_MS
+	depends on NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC
+	depends on NRF_MODEM_LIB_TRACE_ENABLED
 	int "Period (millisec)"
 	default 20000
 

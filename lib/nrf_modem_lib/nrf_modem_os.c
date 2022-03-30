@@ -51,9 +51,13 @@ static struct k_heap shmem_heap;
 /* Library heap, defined here in application RAM */
 static K_HEAP_DEFINE(library_heap, CONFIG_NRF_MODEM_LIB_HEAP_SIZE);
 
+/* Dedicated trace heap, defined here in application RAM */
+static K_HEAP_DEFINE(trace_heap, CONFIG_NRF_MODEM_LIB_TRACE_HEAP_SIZE);
+
 /* Store information about failed allocations */
 static struct mem_diagnostic_info shmem_diag;
 static struct mem_diagnostic_info heap_diag;
+static struct mem_diagnostic_info trace_heap_diag;
 
 /* An array of thread ID and RPC counter pairs, used to avoid race conditions.
  * It allows to identify whether it is safe to put the thread to sleep or not.
@@ -369,6 +373,28 @@ void nrf_modem_os_free(void *mem)
 #endif
 }
 
+void *nrf_modem_os_trace_alloc(size_t bytes)
+{
+	void *addr = k_heap_alloc(&trace_heap, bytes, K_NO_WAIT);
+#ifdef CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC
+	if (addr) {
+		LOG_INF("trace_alloc(%d) -> %p", bytes, addr);
+	} else {
+		trace_heap_diag.failed_allocs++;
+		LOG_WRN("trace_alloc(%d) -> %p", bytes, addr);
+	}
+#endif
+	return addr;
+}
+
+void nrf_modem_os_trace_free(void *mem)
+{
+	k_heap_free(&trace_heap, mem);
+#ifdef CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC
+	LOG_INF("trace_free(%p)", mem);
+#endif
+}
+
 void *nrf_modem_os_shm_tx_alloc(size_t bytes)
 {
 	void *addr = k_heap_alloc(&shmem_heap, bytes, K_NO_WAIT);
@@ -398,6 +424,13 @@ void nrf_modem_lib_heap_diagnose(void)
 	printk("Failed allocations: %u\n", heap_diag.failed_allocs);
 }
 
+void nrf_modem_lib_trace_heap_diagnose(void)
+{
+	printk("nrf_modem trace heap dump:\n");
+	sys_heap_print_info(&trace_heap.heap, false);
+	printk("Failed allocations: %u\n", trace_heap_diag.failed_allocs);
+}
+
 void nrf_modem_lib_shm_tx_diagnose(void)
 {
 	printk("nrf_modem tx dump:\n");
@@ -406,13 +439,14 @@ void nrf_modem_lib_shm_tx_diagnose(void)
 }
 
 #if defined(CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC) || \
-	defined(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC)
+	defined(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC) || \
+	defined(CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC)
 
 static K_THREAD_STACK_DEFINE(work_q_stack_area, 512);
 static struct k_work_q modem_diag_worqk;
 
 enum heap_type {
-	SHMEM, LIBRARY
+	SHMEM, LIBRARY, TRACE
 };
 
 struct task {
@@ -425,6 +459,9 @@ static struct task shmem_task = { .type = SHMEM };
 #endif
 #ifdef CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
 static struct task heap_task  = { .type = LIBRARY };
+#endif
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC
+static struct task trace_heap_task = { .type = TRACE };
 #endif
 
 static void diag_task(struct k_work *item)
@@ -444,6 +481,13 @@ static void diag_task(struct k_work *item)
 		nrf_modem_lib_heap_diagnose();
 		k_work_reschedule(&heap_task.work,
 			K_MSEC(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS));
+#endif
+		break;
+	case TRACE:
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC
+		nrf_modem_lib_trace_heap_diagnose();
+		k_work_reschedule(&trace_heap_task.work,
+			K_MSEC(CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIOD_MS));
 #endif
 		break;
 	}
@@ -556,7 +600,8 @@ void nrf_modem_os_init(void)
 		    CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE);
 
 #if defined(CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC) || \
-	defined(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC)
+	defined(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC) || \
+	defined(CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC)
 	k_work_queue_start(&modem_diag_worqk, work_q_stack_area,
 			   K_THREAD_STACK_SIZEOF(work_q_stack_area),
 			   K_LOWEST_APPLICATION_THREAD_PRIO, NULL);
@@ -572,6 +617,12 @@ void nrf_modem_os_init(void)
 	k_work_init_delayable(&heap_task.work, diag_task);
 	k_work_reschedule(&heap_task.work,
 		K_MSEC(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS));
+#endif
+
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC
+	k_work_init_delayable(&trace_heap_task.work, diag_task);
+	k_work_reschedule(&trace_heap_task.work,
+		K_MSEC(CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIOD_MS));
 #endif
 }
 
