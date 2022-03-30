@@ -108,6 +108,7 @@
   - "subsys/bluetooth/mesh/**/*"
   - "include/bluetooth/mesh/**/*"
   - "tests/subsys/bluetooth/mesh/**/*"
+  - "samples/bluetooth/mesh/**/*"
 
 "CI-zigbee-test":
   - "include/zigbee/**/*"
