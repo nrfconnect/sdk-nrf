@@ -109,7 +109,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 420c9a3bfd22a2c7e9fb8c88a259b8e76c7d20b7
+      revision: pull/700/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -134,7 +134,7 @@ manifest:
       path: nrf-802154
       revision: 6772a02195b9150f7c659275c50141237d1e6799
       groups:
-      - nrf-802154
+        - nrf-802154
     - name: cjson
       repo-path: sdk-cjson
       path: modules/lib/cjson
@@ -143,12 +143,12 @@ manifest:
       repo-path: sdk-homekit
       revision: d9d68a48975d0368dc0c909e0ed85d7833f96409
       groups:
-      - homekit
+        - homekit
     - name: find-my
       repo-path: sdk-find-my
       revision: a98bf7ab58671bf494f6b5edd8c893e165899062
       groups:
-      - find-my
+        - find-my
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
