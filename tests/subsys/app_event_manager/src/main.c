@@ -75,7 +75,7 @@ static void test_multicontext(void)
 
 static void test_event_size_static(void)
 {
-	if (!IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_PROVIDE_EVENT_SIZE)) {
+	if (!IS_ENABLED(CONFIG_APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE)) {
 		ztest_test_skip();
 		return;
 	}
@@ -108,7 +108,7 @@ static void test_event_size_static(void)
 
 static void test_event_size_dynamic(void)
 {
-	if (!IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_PROVIDE_EVENT_SIZE)) {
+	if (!IS_ENABLED(CONFIG_APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE)) {
 		ztest_test_skip();
 		return;
 	}
@@ -133,7 +133,7 @@ static void test_event_size_dynamic(void)
 
 static void test_event_size_dynamic_with_data(void)
 {
-	if (!IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_PROVIDE_EVENT_SIZE)) {
+	if (!IS_ENABLED(CONFIG_APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE)) {
 		ztest_test_skip();
 		return;
 	}
@@ -158,7 +158,7 @@ static void test_event_size_dynamic_with_data(void)
 
 static void test_event_size_disabled(void)
 {
-	if (IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_PROVIDE_EVENT_SIZE)) {
+	if (IS_ENABLED(CONFIG_APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE)) {
 		ztest_test_skip();
 		return;
 	}

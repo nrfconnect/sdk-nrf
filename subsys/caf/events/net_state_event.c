@@ -26,7 +26,7 @@ static void log_net_state_event(const struct application_event_header *aeh)
 
 	__ASSERT_NO_MSG(event->state < NET_STATE_COUNT);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "id=%p %s", event->id,
+	APP_EVENT_MANAGER_LOG(aeh, "id=%p %s", event->id,
 			state_name[event->state]);
 }
 

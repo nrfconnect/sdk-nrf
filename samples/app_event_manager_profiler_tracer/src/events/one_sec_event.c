@@ -12,7 +12,7 @@ static void log_one_sec_event(const struct application_event_header *aeh)
 {
 	struct one_sec_event *event = cast_one_sec_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "timer: %" PRId8, event->five_sec_timer);
+	APP_EVENT_MANAGER_LOG(aeh, "timer: %" PRId8, event->five_sec_timer);
 }
 
 static void profile_one_sec_event(struct log_event_buf *buf,

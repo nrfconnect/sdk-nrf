@@ -12,7 +12,7 @@ static void log_button_event(const struct application_event_header *aeh)
 {
 	const struct button_event *event = cast_button_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "key_id=0x%x %s", event->key_id,
+	APP_EVENT_MANAGER_LOG(aeh, "key_id=0x%x %s", event->key_id,
 			(event->pressed)?("pressed"):("released"));
 }
 

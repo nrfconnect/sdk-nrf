@@ -14,7 +14,7 @@ static void log_cpu_load_event(const struct application_event_header *aeh)
 {
 	const struct cpu_load_event *event = cast_cpu_load_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "CPU load: %03u,%03u%%",
+	APP_EVENT_MANAGER_LOG(aeh, "CPU load: %03u,%03u%%",
 			event->load / 1000, event->load % 1000);
 }
 

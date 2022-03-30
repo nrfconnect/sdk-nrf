@@ -36,10 +36,10 @@ static void log_event(const struct application_event_header *aeh)
 	const struct gnss_module_event *event = cast_gnss_module_event(aeh);
 
 	if (event->type == GNSS_EVT_ERROR_CODE) {
-		APPLICATION_EVENT_MANAGER_LOG(aeh, "%s - Error code %d",
+		APP_EVENT_MANAGER_LOG(aeh, "%s - Error code %d",
 				get_evt_type_str(event->type), event->data.err);
 	} else {
-		APPLICATION_EVENT_MANAGER_LOG(aeh, "%s", get_evt_type_str(event->type));
+		APP_EVENT_MANAGER_LOG(aeh, "%s", get_evt_type_str(event->type));
 	}
 }
 

@@ -22,7 +22,7 @@ static void log_click_event(const struct application_event_header *aeh)
 
 	__ASSERT_NO_MSG(event->click < CLICK_COUNT);
 	__ASSERT_NO_MSG(click_name[event->click]);
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "key_id: %" PRIu16 " click: %s",
+	APP_EVENT_MANAGER_LOG(aeh, "key_id: %" PRIu16 " click: %s",
 			event->key_id,
 			click_name[event->click]);
 }

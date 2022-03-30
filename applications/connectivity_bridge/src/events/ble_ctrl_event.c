@@ -13,7 +13,7 @@ static void log_ble_ctrl_event(const struct application_event_header *aeh)
 {
 	const struct ble_ctrl_event *event = cast_ble_ctrl_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "cmd:%d", event->cmd);
+	APP_EVENT_MANAGER_LOG(aeh, "cmd:%d", event->cmd);
 }
 
 APPLICATION_EVENT_TYPE_DEFINE(ble_ctrl_event,

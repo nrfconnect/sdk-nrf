@@ -13,7 +13,7 @@ static void log_selector_event(const struct application_event_header *aeh)
 {
 	const struct selector_event *event = cast_selector_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "id: %" PRIu8 " position: %" PRIu8,
+	APP_EVENT_MANAGER_LOG(aeh, "id: %" PRIu8 " position: %" PRIu8,
 			event->selector_id,
 			event->position);
 }

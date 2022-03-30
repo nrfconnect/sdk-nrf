@@ -9,8 +9,8 @@
  * Although these defines are globally visible they must not be used directly.
  */
 
-#ifndef _APPLICATION_EVENT_MANAGER_PRIV_H_
-#define _APPLICATION_EVENT_MANAGER_PRIV_H_
+#ifndef _APP_EVENT_MANAGER_PRIV_H_
+#define _APP_EVENT_MANAGER_PRIV_H_
 
 #include <zephyr.h>
 #include <zephyr/types.h>
@@ -214,7 +214,7 @@ extern "C" {
 	_APPLICATION_EVENT_TYPE_DECLARE_COMMON(ename);				\
 	_EVENT_ALLOCATOR_DYNDATA_FN(ename)
 
-#if IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_PROVIDE_EVENT_SIZE)
+#if IS_ENABLED(CONFIG_APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE)
 #define _APPLICATION_EVENT_TYPE_DEFINE_SIZES(ename)             \
 	.struct_size = sizeof(struct ename),
 #else
@@ -244,7 +244,7 @@ typedef	int (*log_event_data_dep)(const struct application_event_header *aeh,
 
 
 
-#if IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN)
+#if IS_ENABLED(CONFIG_APP_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN)
 #define _APPLICATION_EVENT_TYPE_DEFINE_LOG_FUN(log_fn)					\
 	.log_event_func_dep = ((IS_ENABLED(CONFIG_LOG) && Z_C_GENERIC) ?		\
 					((log_event_data_dep)_Generic((log_fn),		\
@@ -279,7 +279,7 @@ struct event_type {
 	/** Function to log data from this event. */
 	log_event_data log_event_func;
 
-#if IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN)
+#if IS_ENABLED(CONFIG_APP_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN)
 	/** Deprecated function to log data from this event. */
 	log_event_data_dep log_event_func_dep;
 #endif
@@ -290,7 +290,7 @@ struct event_type {
 	/** Array of flags dedicated to event type. */
 	const uint8_t flags;
 
-#if IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_PROVIDE_EVENT_SIZE)
+#if IS_ENABLED(CONFIG_APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE)
 	/** The size of the event structure */
 	uint16_t struct_size;
 #endif
@@ -311,7 +311,7 @@ extern struct event_type _event_type_list_end[];
 		.subs_start      = _APPLICATION_EVENT_SUBSCRIBERS_START_TAG(ename),		\
 		.subs_stop       = _APPLICATION_EVENT_SUBSCRIBERS_END_TAG(ename),		\
 		_APPLICATION_EVENT_TYPE_DEFINE_LOG_FUN(log_fn) /* No comma here intentionally */\
-		.trace_data      = (IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_TRACE_EVENT_DATA) ?\
+		.trace_data      = (IS_ENABLED(CONFIG_APP_EVENT_MANAGER_TRACE_EVENT_DATA) ?\
 					(trace_data_pointer) : (NULL)),				\
 		.flags = ((_CONCAT(ename, _HAS_DYNDATA)) ?					\
 				((et_flags) | BIT(APPLICATION_EVENT_TYPE_FLAGS_HAS_DYNDATA)) :	\
@@ -323,7 +323,7 @@ extern struct event_type _event_type_list_end[];
  * @brief Bitmask indicating event is displayed.
  */
 struct app_event_manager_event_display_bm {
-	ATOMIC_DEFINE(flags, CONFIG_APPLICATION_EVENT_MANAGER_MAX_EVENT_CNT);
+	ATOMIC_DEFINE(flags, CONFIG_APP_EVENT_MANAGER_MAX_EVENT_CNT);
 };
 
 extern struct app_event_manager_event_display_bm _app_event_manager_event_display_bm;
@@ -336,24 +336,24 @@ extern struct app_event_manager_event_display_bm _app_event_manager_event_displa
 		.hook = (hook_fn)                                          \
 	}
 
-#define _APPLICATION_EVENT_MANAGER_HOOK_POSTINIT_REGISTER(hook_fn, prio)             \
-	BUILD_ASSERT(IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_POSTINIT_HOOK),     \
-		     "Enable APPLICATION_EVENT_MANAGER_POSTINIT_HOOK before usage"); \
+#define _APP_EVENT_MANAGER_HOOK_POSTINIT_REGISTER(hook_fn, prio)             \
+	BUILD_ASSERT(IS_ENABLED(CONFIG_APP_EVENT_MANAGER_POSTINIT_HOOK),     \
+		     "Enable APP_EVENT_MANAGER_POSTINIT_HOOK before usage"); \
 	_APPLICATION_EVENT_HOOK_REGISTER(app_event_manager_postinit_hook, hook_fn, prio)
 
 #define _APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER(hook_fn, prio)                   \
-	BUILD_ASSERT(IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_SUBMIT_HOOKS),     \
-		     "Enable APPLICATION_EVENT_MANAGER_SUBMIT_HOOKS before usage"); \
+	BUILD_ASSERT(IS_ENABLED(CONFIG_APP_EVENT_MANAGER_SUBMIT_HOOKS),     \
+		     "Enable APP_EVENT_MANAGER_SUBMIT_HOOKS before usage"); \
 	_APPLICATION_EVENT_HOOK_REGISTER(event_submit_hook, hook_fn, prio)
 
 #define _APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER(hook_fn, prio)                      \
-	BUILD_ASSERT(IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_PREPROCESS_HOOKS),     \
-		     "Enable APPLICATION_EVENT_MANAGER_PREPROCESS_HOOKS before usage"); \
+	BUILD_ASSERT(IS_ENABLED(CONFIG_APP_EVENT_MANAGER_PREPROCESS_HOOKS),     \
+		     "Enable APP_EVENT_MANAGER_PREPROCESS_HOOKS before usage"); \
 	_APPLICATION_EVENT_HOOK_REGISTER(event_preprocess_hook, hook_fn, prio)
 
 #define _APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER(hook_fn, prio)                      \
-	BUILD_ASSERT(IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_POSTPROCESS_HOOKS),     \
-		     "Enable APPLICATION_EVENT_MANAGER_POSTPROCESS_HOOKS before usage"); \
+	BUILD_ASSERT(IS_ENABLED(CONFIG_APP_EVENT_MANAGER_POSTPROCESS_HOOKS),     \
+		     "Enable APP_EVENT_MANAGER_POSTPROCESS_HOOKS before usage"); \
 	_APPLICATION_EVENT_HOOK_REGISTER(event_postprocess_hook, hook_fn, prio)
 
 /**
@@ -439,4 +439,4 @@ void _event_submit(struct application_event_header *aeh);
 }
 #endif
 
-#endif /* _APPLICATION_EVENT_MANAGER_PRIV_H_ */
+#endif /* _APP_EVENT_MANAGER_PRIV_H_ */

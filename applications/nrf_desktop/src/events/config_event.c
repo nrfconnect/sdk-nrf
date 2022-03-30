@@ -20,7 +20,7 @@ static void log_config_event(const struct application_event_header *aeh)
 
 	__ASSERT_NO_MSG(event->status < ARRAY_SIZE(status_name));
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "%s %s rcpt: %02x id: %02x",
+	APP_EVENT_MANAGER_LOG(aeh, "%s %s rcpt: %02x id: %02x",
 			status_name[event->status],
 			event->is_request ? "req" : "rsp",
 			event->recipient,

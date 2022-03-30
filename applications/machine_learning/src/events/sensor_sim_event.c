@@ -13,7 +13,7 @@ static void log_sensor_sim_event(const struct application_event_header *aeh)
 {
 	const struct sensor_sim_event *event = cast_sensor_sim_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "%s", event->label);
+	APP_EVENT_MANAGER_LOG(aeh, "%s", event->label);
 }
 
 static void profile_sensor_sim_event(struct log_event_buf *buf,

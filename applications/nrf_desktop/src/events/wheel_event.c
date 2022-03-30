@@ -12,7 +12,7 @@ static void log_wheel_event(const struct application_event_header *aeh)
 {
 	const struct wheel_event *event = cast_wheel_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "wheel=%d", event->wheel);
+	APP_EVENT_MANAGER_LOG(aeh, "wheel=%d", event->wheel);
 }
 
 APPLICATION_EVENT_TYPE_DEFINE(wheel_event,

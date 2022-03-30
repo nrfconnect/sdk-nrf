@@ -12,7 +12,7 @@ static void log_motion_event(const struct application_event_header *aeh)
 {
 	const struct motion_event *event = cast_motion_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "dx=%d, dy=%d", event->dx, event->dy);
+	APP_EVENT_MANAGER_LOG(aeh, "dx=%d, dy=%d", event->dx, event->dy);
 }
 
 static void profile_motion_event(struct log_event_buf *buf,

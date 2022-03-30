@@ -26,7 +26,7 @@ static void log_ui_input_event(const struct application_event_header *aeh)
 {
 	struct ui_input_event *event = cast_ui_input_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "%s event: device number = %d, state = %d",
+	APP_EVENT_MANAGER_LOG(aeh, "%s event: device number = %d, state = %d",
 			ui_input_type_to_string(event->type), event->device_number, event->type);
 }
 

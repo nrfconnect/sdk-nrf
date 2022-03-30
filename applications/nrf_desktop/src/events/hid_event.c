@@ -40,10 +40,10 @@ static void log_hid_report_event(const struct application_event_header *aeh)
 		}
 	}
 	if (pos < 0) {
-		APPLICATION_EVENT_MANAGER_LOG(aeh, "log message preparation failure");
+		APP_EVENT_MANAGER_LOG(aeh, "log message preparation failure");
 		return;
 	}
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "%s", log_strdup(log_buf));
+	APP_EVENT_MANAGER_LOG(aeh, "%s", log_strdup(log_buf));
 }
 
 static void profile_hid_report_event(struct log_event_buf *buf,
@@ -75,7 +75,7 @@ static void log_hid_report_subscriber_event(const struct application_event_heade
 	const struct hid_report_subscriber_event *event =
 		cast_hid_report_subscriber_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "report subscriber %p was %sconnected",
+	APP_EVENT_MANAGER_LOG(aeh, "report subscriber %p was %sconnected",
 			event->subscriber, (event->connected)?(""):("dis"));
 }
 
@@ -107,12 +107,12 @@ static void log_hid_report_sent_event(const struct application_event_header *aeh
 		cast_hid_report_sent_event(aeh);
 
 	if (event->error) {
-		APPLICATION_EVENT_MANAGER_LOG(aeh,
+		APP_EVENT_MANAGER_LOG(aeh,
 				"error while sending 0x%x report by %p",
 				event->report_id,
 				event->subscriber);
 	} else {
-		APPLICATION_EVENT_MANAGER_LOG(aeh,
+		APP_EVENT_MANAGER_LOG(aeh,
 				"report 0x%x sent by %p",
 				event->report_id,
 				event->subscriber);
@@ -147,7 +147,7 @@ static void log_hid_report_subscription_event(const struct application_event_hea
 	const struct hid_report_subscription_event *event =
 		cast_hid_report_subscription_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh,
+	APP_EVENT_MANAGER_LOG(aeh,
 			"report 0x%x notification %sabled by %p",
 			event->report_id,
 			(event->enabled)?("en"):("dis"), event->subscriber);

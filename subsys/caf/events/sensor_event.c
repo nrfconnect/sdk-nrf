@@ -20,7 +20,7 @@ static void log_sensor_event(const struct application_event_header *aeh)
 {
 	const struct sensor_event *event = cast_sensor_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "%s", event->descr);
+	APP_EVENT_MANAGER_LOG(aeh, "%s", event->descr);
 }
 
 static void profile_sensor_event(struct log_event_buf *buf,
@@ -51,7 +51,7 @@ static void log_sensor_state_event(const struct application_event_header *aeh)
 	__ASSERT_NO_MSG(event->state < SENSOR_STATE_COUNT);
 	__ASSERT_NO_MSG(sensor_state_name[event->state] != NULL);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "sensor:%s state:%s",
+	APP_EVENT_MANAGER_LOG(aeh, "sensor:%s state:%s",
 			event->descr, sensor_state_name[event->state]);
 }
 

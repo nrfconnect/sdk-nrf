@@ -13,7 +13,7 @@ static void log_measurement_event(const struct application_event_header *aeh)
 {
 	struct measurement_event *event = cast_measurement_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "val1=%d val2=%d val3=%d", event->value1,
+	APP_EVENT_MANAGER_LOG(aeh, "val1=%d val2=%d val3=%d", event->value1,
 			event->value2, event->value3);
 }
 

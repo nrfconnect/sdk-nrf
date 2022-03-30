@@ -13,7 +13,7 @@ static void log_hid_notification_event(const struct application_event_header *ae
 	const struct hid_notification_event *event =
 		cast_hid_notification_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh,
+	APP_EVENT_MANAGER_LOG(aeh,
 			"report_id 0x%x %sabled",
 			event->report_id, (event->enabled)?"en":"dis");
 }

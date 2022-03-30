@@ -21,7 +21,7 @@ static void log_ml_app_mode_event(const struct application_event_header *aeh)
 	__ASSERT_NO_MSG(event->mode < ML_APP_MODE_COUNT);
 	__ASSERT_NO_MSG(ml_app_mode_name[event->mode] != NULL);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "state: %s", ml_app_mode_name[event->mode]);
+	APP_EVENT_MANAGER_LOG(aeh, "state: %s", ml_app_mode_name[event->mode]);
 }
 
 APPLICATION_EVENT_TYPE_DEFINE(ml_app_mode_event,
