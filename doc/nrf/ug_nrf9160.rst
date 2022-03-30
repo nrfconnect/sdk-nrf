@@ -20,7 +20,7 @@ The nRF9160 DK contains an nRF52840 SoC that is used to route some of the nRF916
 For a complete list of all the routing options available, see the `nRF9160 DK board control section in the nRF9160 DK User Guide`_.
 
 The nRF52840 SoC on the DK comes preprogrammed with a firmware.
-If you need to restore the original firmware at some point, download the nRF9160 DK board controller firmware from the `nRF9160 DK product page`_.
+If you need to restore the original firmware at some point, download the nRF9160 DK board controller firmware from the `nRF9160 DK downloads`_ page.
 To program the HEX file, use nrfjprog (which is part of the `nRF Command Line Tools`_).
 
 If you want to route some pins differently from what is done in the preprogrammed firmware, program the :ref:`zephyr:hello_world` sample instead of the preprogrammed firmware.
