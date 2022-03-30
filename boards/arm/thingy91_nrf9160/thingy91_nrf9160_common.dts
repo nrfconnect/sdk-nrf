@@ -51,6 +51,19 @@
 		};
 	};
 
+	pwmleds {
+		compatible = "pwm-leds";
+		pwm_led0: pwm_led_0 {
+			pwms = <&pwm0 29>;
+		};
+		pwm_led1: pwm_led_1 {
+			pwms = <&pwm0 30>;
+		};
+		pwm_led2: pwm_led_2 {
+			pwms = <&pwm0 31>;
+		};
+	};
+
 	nrf52840_reset: gpio-reset {
 		compatible = "nordic,thingy91-nrf52840-reset";
 		status = "okay";
@@ -65,6 +78,9 @@
 		sense-led0 = &sense_red_led;
 		sense-led1 = &sense_green_led;
 		sense-led2 = &sense_blue_led;
+		pwm-led0 = &pwm_led0;
+		pwm-led1 = &pwm_led1;
+		pwm-led2 = &pwm_led2;
 		rgb-pwm = &pwm0;
 		nmos-pwm = &pwm2;
 	};
