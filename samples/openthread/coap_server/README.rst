@@ -24,11 +24,6 @@ The sample supports the following development kits:
 You can use one or more of these development kits as the Thread CoAP Server.
 You also need one or more compatible development kits programmed with the :ref:`coap_client_sample` sample.
 
-Trusted Firmware-M support
-==========================
-
-.. include:: /includes/tfm.txt
-
 Overview
 ********
 
@@ -44,11 +39,6 @@ This sample uses the native `OpenThread CoAP API`_ for communication.
 For new application development, use :ref:`Zephyr's CoAP API<zephyr:coap_sock_interface>`.
 For example usage of the Zephyr CoAP API, see the :ref:`coap_client_sample` sample.
 
-FEM support
-===========
-
-.. include:: /includes/sample_fem_support.txt
-
 User interface
 **************
 
@@ -63,6 +53,21 @@ LED 3:
 
 LED 4:
   Turned on and off by messages sent from the client nodes.
+
+Configuration
+*************
+
+|config|
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
+
+Trusted Firmware-M support
+==========================
+
+.. include:: /includes/tfm.txt
 
 Building and running
 ********************

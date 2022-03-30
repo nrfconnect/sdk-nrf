@@ -60,12 +60,6 @@ By default, the log levels for all modules are set to critical to not engage the
 To make the solution flexible, you can change independently the log levels for your modules, for the whole Zephyr system, and for OpenThread.
 Use the :file:`overlay-logging.conf` overlay file as reference for this purpose.
 
-FEM support
-===========
-
-.. include:: /includes/sample_fem_support.txt
-
-
 User interface
 **************
 
@@ -109,6 +103,11 @@ The following configuration files are available:
   This file enables the RCP architecture with basic functionality and optimizes stacks and buffer sizes.
   For more information, see :ref:`app_memory`.
 * :file:`overlay-usb.conf` - Enables emulating a serial port over USB for Spinel communication with the host. Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to :file:`usb.overlay`.
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
 
 Building and running
 ********************
