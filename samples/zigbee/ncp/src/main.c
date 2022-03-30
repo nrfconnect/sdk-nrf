@@ -26,12 +26,6 @@
 
 LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
-#if DT_NODE_EXISTS(DT_ALIAS(rst0))
-#define RST_PIN_PORT DT_GPIO_LABEL(DT_ALIAS(rst0), gpios)
-#define RST_PIN_NUMBER DT_GPIO_PIN(DT_ALIAS(rst0), gpios)
-#define RST_PIN_LVL	0
-#endif
-
 #define VENDOR_SPECIFIC_LED DK_LED2
 
 #define VENDOR_SPECIFIC_LED_ACTION_OFF (0U)
@@ -53,19 +47,13 @@ zb_ret_t zb_osif_bootloader_run_after_reboot(void)
 {
 #if DT_NODE_EXISTS(DT_ALIAS(rst0))
 	int err = 0;
-	const struct device *rst_dev = device_get_binding(RST_PIN_PORT);
+	const struct gpio_dt_spec rst0 = GPIO_DT_SPEC_GET(DT_ALIAS(rst0), gpios);
 
-	if (!rst_dev) {
+	if (!device_is_ready(rst0.port)) {
 		return RET_ERROR;
 	}
 
-	err = gpio_pin_configure(rst_dev, RST_PIN_NUMBER, GPIO_OUTPUT);
-	if (err) {
-		return RET_ERROR;
-	}
-
-	/* Perform pin reset */
-	err = gpio_pin_set_raw(rst_dev, RST_PIN_NUMBER, RST_PIN_LVL);
+	err = gpio_pin_configure_dt(&rst0, GPIO_OUTPUT_ACTIVE);
 	if (err) {
 		return RET_ERROR;
 	}
