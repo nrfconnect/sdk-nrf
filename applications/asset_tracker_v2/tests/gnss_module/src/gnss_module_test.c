@@ -240,17 +240,21 @@ static int validate_date_time(const struct tm *new_date_time, int no_of_calls)
 	return 0;
 }
 
+/* Stub used to verify parameters passed into module_start(). */
+static int module_start_stub(struct module_data *module, int num_calls)
+{
+	TEST_ASSERT_EQUAL_STRING("gnss", module->name);
+	TEST_ASSERT_NULL(module->msg_q);
+	TEST_ASSERT_TRUE(module->supports_shutdown);
+
+	return 0;
+}
+
 static void setup_gnss_module_in_init_state(void)
 {
 	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
 	__wrap_event_manager_free_ExpectAnyArgs();
 	struct app_module_event *app_module_event = new_app_module_event();
-
-	static struct module_data expected_module_data = {
-		.name = "gnss",
-		.msg_q = NULL,
-		.supports_shutdown = true,
-	};
 
 	/* AT%XMAGPIO and AT%XCOEX0 AT commands for LNA configuration. */
 	__wrap_nrf_modem_at_printf_ExpectAnyArgsAndReturn(0);
@@ -259,7 +263,7 @@ static void setup_gnss_module_in_init_state(void)
 	__wrap_nrf_modem_gnss_event_handler_set_AddCallback(
 		&nrf_modem_gnss_event_handler_set_callback);
 	__wrap_nrf_modem_gnss_event_handler_set_ExpectAnyArgsAndReturn(0);
-	__wrap_module_start_ExpectAndReturn(&expected_module_data, 0);
+	__wrap_module_start_Stub(&module_start_stub);
 
 	app_module_event->type = APP_EVT_START;
 
