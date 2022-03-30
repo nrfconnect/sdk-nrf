@@ -356,6 +356,14 @@
 .. _`SWD Select`: https://infocenter.nordicsemi.com/topic/ug_thingy91/UG/thingy91/hw_description/programming_debugging_interface.html
 
 
+.. ### Source: academy.nordicsemi.com
+
+.. _`DevAcademy`:
+.. _`Nordic Developer Academy`: https://academy.nordicsemi.com/
+
+.. _`nRF Connect SDK Fundamentals course`: https://academy.nordicsemi.com/courses/nrf-connect-sdk-fundamentals/
+
+
 .. ### Source: devzone.nordicsemi.com
 
 .. _`DevZone`: https://devzone.nordicsemi.com/

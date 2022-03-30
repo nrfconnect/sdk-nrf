@@ -4,7 +4,13 @@ Getting started
 ###############
 
 To quickly get started with the |NCS|, use :ref:`nRF Connect for Desktop <gs_assistant>` to set up your development environment.
-Alternatively, check the :ref:`gs_installing` section for instructions on setting up your environment manually.
+Alternatively, you can enroll in the `nRF Connect SDK Fundamentals course`_ in the `Nordic Developer Academy`_.
+You can also check the :ref:`gs_installing` documentation for instructions on setting up your environment manually.
+
+.. rst-class:: doc-link-image
+
+.. image:: /images/ncs_get_started_banner.png
+   :target: `nRF Connect SDK Fundamentals course`_
 
 We recommend using the `nRF Connect for Visual Studio Code`_ extension or |SES| to build applications.
 See the |VSC| README file for more information about the extension.
