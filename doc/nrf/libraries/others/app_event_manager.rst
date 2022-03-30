@@ -49,12 +49,12 @@ Every listener is identified by a unique name.
 Configuration
 *************
 
-To use the Application Event Manager, enable it using the :kconfig:option:`CONFIG_APPLICATION_EVENT_MANAGER` Kconfig option and initialize it in your :file:`main.c` file.
+To use the Application Event Manager, enable it using the :kconfig:option:`CONFIG_APP_EVENT_MANAGER` Kconfig option and initialize it in your :file:`main.c` file.
 Initializing the Application Event Manager allows it to handle submitted events and deliver them to modules that subscribe to the specified event type.
 
 Complete the following steps:
 
-1. Enable the :kconfig:option:`CONFIG_APPLICATION_EVENT_MANAGER` Kconfig option.
+1. Enable the :kconfig:option:`CONFIG_APP_EVENT_MANAGER` Kconfig option.
 #. Include :file:`app_event_manager.h` in your :file:`main.c` file.
 #. Call :c:func:`app_event_manager_init()`.
 
@@ -157,7 +157,7 @@ The following code example shows a source file for the event type ``sample_event
    {
 	   struct sample_event *event = cast_sample_event(aeh);
 
-	   APPLICATION_EVENT_MANAGER_LOG(aeh, "val1=%d val2=%d val3=%d", event->value1,
+	   APP_EVENT_MANAGER_LOG(aeh, "val1=%d val2=%d val3=%d", event->value1,
 			   event->value2, event->value3);
    }
 
@@ -168,7 +168,7 @@ The following code example shows a source file for the event type ``sample_event
 
 .. note::
 	There is a deprecated way of logging Application Event Manager events by writing a string to the provided buffer that will be supported until a future release of |NCS|.
-	To use the deprecated way, you need to set the :kconfig:option:`CONFIG_APPLICATION_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN` option.
+	To use the deprecated way, you need to set the :kconfig:option:`CONFIG_APP_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN` option.
 	You can then use both ways of logging events.
 	Application Event Manager figures out which way to be used based on the type of the logging function passed.
 
@@ -316,7 +316,7 @@ The Application Event Manager provides an initialization hook for any module tha
 The hook function should be declared in the ``int hook(void)`` format.
 If the hook function returns a non-zero value, the initialization process is interrupted and a related error is returned.
 
-To register the initialization hook, use the macro :c:macro:`APPLICATION_EVENT_MANAGER_HOOK_POSTINIT_REGISTER`.
+To register the initialization hook, use the macro :c:macro:`APP_EVENT_MANAGER_HOOK_POSTINIT_REGISTER`.
 For details, refer to :ref:`app_event_manager_api`.
 
 .. em_initialization_hook_end

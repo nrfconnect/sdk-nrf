@@ -13,7 +13,7 @@ static void log_ble_data_event(const struct application_event_header *aeh)
 {
 	const struct ble_data_event *event = cast_ble_data_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "buf:%p len:%d", event->buf, event->len);
+	APP_EVENT_MANAGER_LOG(aeh, "buf:%p len:%d", event->buf, event->len);
 }
 
 APPLICATION_EVENT_TYPE_DEFINE(ble_data_event,

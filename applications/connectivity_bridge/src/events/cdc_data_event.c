@@ -13,7 +13,7 @@ static void log_cdc_data_event(const struct application_event_header *aeh)
 {
 	const struct cdc_data_event *event = cast_cdc_data_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh,
+	APP_EVENT_MANAGER_LOG(aeh,
 		"dev:%u buf:%p len:%d",
 		event->dev_idx,
 		event->buf,

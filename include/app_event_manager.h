@@ -8,8 +8,8 @@
  * @brief Application Event Manager header.
  */
 
-#ifndef _APPLICATION_EVENT_MANAGER_H_
-#define _APPLICATION_EVENT_MANAGER_H_
+#ifndef _APP_EVENT_MANAGER_H_
+#define _APP_EVENT_MANAGER_H_
 
 
 /**
@@ -193,8 +193,8 @@ static inline bool get_app_event_type_flag(const struct event_type *et,
  *
  * @param hook_fn Hook function.
  */
-#define APPLICATION_EVENT_MANAGER_HOOK_POSTINIT_REGISTER(hook_fn)	\
-	_APPLICATION_EVENT_MANAGER_HOOK_POSTINIT_REGISTER(hook_fn,	\
+#define APP_EVENT_MANAGER_HOOK_POSTINIT_REGISTER(hook_fn)	\
+	_APP_EVENT_MANAGER_HOOK_POSTINIT_REGISTER(hook_fn,	\
 	_EM_SUBS_PRIO_ID(_EM_SUBS_PRIO_NORMAL))
 
 /**
@@ -203,7 +203,7 @@ static inline bool get_app_event_type_flag(const struct event_type *et,
  * Function that calculates the event size using its header.
  * @note
  * For this function to be available the
- * @kconfig{CONFIG_APPLICATION_EVENT_MANAGER_PROVIDE_EVENT_SIZE} option needs to be enabled.
+ * @kconfig{CONFIG_APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE} option needs to be enabled.
  *
  * @param aeh Pointer to the event header.
  *
@@ -211,7 +211,7 @@ static inline bool get_app_event_type_flag(const struct event_type *et,
  */
 static inline size_t app_event_manager_event_size(const struct application_event_header *aeh)
 {
-#if IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_PROVIDE_EVENT_SIZE)
+#if IS_ENABLED(CONFIG_APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE)
 	size_t size = aeh->type_id->struct_size;
 
 	if (get_app_event_type_flag(aeh->type_id, APPLICATION_EVENT_TYPE_FLAGS_HAS_DYNDATA)) {
@@ -362,7 +362,7 @@ static inline size_t app_event_manager_event_size(const struct application_event
 /** @brief Initialize the Application Event Manager.
  *
  * @retval 0 If the operation was successful. Error values can be added by the hooks registered
- *         by @ref APPLICATION_EVENT_MANAGER_HOOK_POSTINIT_REGISTER macro.
+ *         by @ref APP_EVENT_MANAGER_HOOK_POSTINIT_REGISTER macro.
  */
 int app_event_manager_init(void);
 
@@ -397,9 +397,9 @@ void app_event_manager_free(void *addr);
  * @param ... `printf`- like format string and variadic list of arguments corresponding to
  *            the format string.
  */
-#define APPLICATION_EVENT_MANAGER_LOG(aeh, ...) do {						\
-	LOG_MODULE_DECLARE(app_event_manager, CONFIG_APPLICATION_EVENT_MANAGER_LOG_LEVEL);		\
-	if (IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_LOG_EVENT_TYPE)) {			\
+#define APP_EVENT_MANAGER_LOG(aeh, ...) do {						\
+	LOG_MODULE_DECLARE(app_event_manager, CONFIG_APP_EVENT_MANAGER_LOG_LEVEL);		\
+	if (IS_ENABLED(CONFIG_APP_EVENT_MANAGER_LOG_EVENT_TYPE)) {			\
 		LOG_INF("e:%s " GET_ARG_N(1, __VA_ARGS__), aeh->type_id->name			\
 			COND_CODE_0(NUM_VA_ARGS_LESS_1(__VA_ARGS__),				\
 			    (),									\
@@ -429,4 +429,4 @@ void app_event_manager_free(void *addr);
  * @}
  */
 
-#endif /* _APPLICATION_EVENT_MANAGER_H_ */
+#endif /* _APP_EVENT_MANAGER_H_ */

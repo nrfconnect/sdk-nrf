@@ -14,7 +14,7 @@ static void log_fs_event(const struct application_event_header *aeh)
 {
 	const struct fs_event *event = cast_fs_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "req:%d", event->req);
+	APP_EVENT_MANAGER_LOG(aeh, "req:%d", event->req);
 }
 
 int fs_event_helper_file_write(

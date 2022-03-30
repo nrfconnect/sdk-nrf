@@ -25,7 +25,7 @@ static void log_module_state_event(const struct application_event_header *aeh)
 
 	__ASSERT_NO_MSG(event->state < MODULE_STATE_COUNT);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "module:%s state:%s",
+	APP_EVENT_MANAGER_LOG(aeh, "module:%s state:%s",
 		      (const char *)event->module_id, state_name[event->state]);
 }
 

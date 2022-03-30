@@ -13,7 +13,7 @@ static void log_passkey_input_event(const struct application_event_header *aeh)
 {
 	const struct passkey_input_event *event = cast_passkey_input_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "passkey: %" PRIu32, event->passkey);
+	APP_EVENT_MANAGER_LOG(aeh, "passkey: %" PRIu32, event->passkey);
 }
 
 static void profile_passkey_input_event(struct log_event_buf *buf,
@@ -41,7 +41,7 @@ static void log_passkey_req_event(const struct application_event_header *aeh)
 {
 	const struct passkey_req_event *event = cast_passkey_req_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "input %s", (event->active) ?
+	APP_EVENT_MANAGER_LOG(aeh, "input %s", (event->active) ?
 						  ("started") : ("stopped"));
 }
 

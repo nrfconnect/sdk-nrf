@@ -12,7 +12,7 @@ static void log_led_event(const struct application_event_header *aeh)
 {
 	const struct led_event *event = cast_led_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "led_id:%u effect:%p",
+	APP_EVENT_MANAGER_LOG(aeh, "led_id:%u effect:%p",
 			event->led_id, event->led_effect);
 }
 
@@ -27,7 +27,7 @@ static void log_led_ready_event(const struct application_event_header *aeh)
 {
 	const struct led_ready_event *event = cast_led_ready_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "led_id:%u effect:%p",
+	APP_EVENT_MANAGER_LOG(aeh, "led_id:%u effect:%p",
 			event->led_id, event->led_effect);
 }
 

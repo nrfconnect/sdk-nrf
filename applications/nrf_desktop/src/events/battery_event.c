@@ -27,7 +27,7 @@ static void log_battery_state_event(const struct application_event_header *aeh)
 
 	__ASSERT_NO_MSG(event->state < BATTERY_STATE_COUNT);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "battery %s", state_name[event->state]);
+	APP_EVENT_MANAGER_LOG(aeh, "battery %s", state_name[event->state]);
 }
 
 static void profile_battery_state_event(struct log_event_buf *buf,
@@ -55,7 +55,7 @@ static void log_battery_level_event(const struct application_event_header *aeh)
 {
 	const struct battery_level_event *event = cast_battery_level_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "level=%u", event->level);
+	APP_EVENT_MANAGER_LOG(aeh, "level=%u", event->level);
 }
 
 static void profile_battery_level_event(struct log_event_buf *buf,

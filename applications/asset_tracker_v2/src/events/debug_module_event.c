@@ -29,7 +29,7 @@ static void log_event(const struct application_event_header *aeh)
 {
 	const struct debug_module_event *event = cast_debug_module_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "%s", get_evt_type_str(event->type));
+	APP_EVENT_MANAGER_LOG(aeh, "%s", get_evt_type_str(event->type));
 }
 
 #if defined(CONFIG_PROFILER)

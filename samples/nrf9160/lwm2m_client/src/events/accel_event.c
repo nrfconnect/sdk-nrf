@@ -32,7 +32,7 @@ static void log_accel_event(const struct application_event_header *aeh)
 {
 	struct accel_event *event = cast_accel_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh,
+	APP_EVENT_MANAGER_LOG(aeh,
 		"Accelerometer event: x = %d.%06d, y = %d.%06d, z = %d.%06d, orientation = %s.",
 		event->data.x.val1, event->data.x.val2, event->data.y.val1, event->data.y.val2,
 		event->data.z.val1, event->data.z.val2,

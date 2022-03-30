@@ -27,7 +27,7 @@ static void log_usb_state_event(const struct application_event_header *aeh)
 
 	__ASSERT_NO_MSG(event->state < USB_STATE_COUNT);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "state:%s", state_name[event->state]);
+	APP_EVENT_MANAGER_LOG(aeh, "state:%s", state_name[event->state]);
 }
 
 APPLICATION_EVENT_TYPE_DEFINE(usb_state_event,
@@ -41,7 +41,7 @@ static void log_usb_hid_event(const struct application_event_header *aeh)
 {
 	const struct usb_hid_event *event = cast_usb_hid_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "id:%p %sabled", event->id,
+	APP_EVENT_MANAGER_LOG(aeh, "id:%p %sabled", event->id,
 			(event->enabled)?("en"):("dis"));
 }
 

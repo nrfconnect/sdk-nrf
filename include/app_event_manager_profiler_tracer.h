@@ -8,8 +8,8 @@
  * @brief Application Event Manager profiler tracer header.
  */
 
-#ifndef _APPLICATION_EVENT_MANAGER_PROFILER_TRACER_H_
-#define _APPLICATION_EVENT_MANAGER_PROFILER_TRACER_H_
+#ifndef _APP_EVENT_MANAGER_PROFILER_TRACER_H_
+#define _APP_EVENT_MANAGER_PROFILER_TRACER_H_
 
 
 /**
@@ -80,4 +80,4 @@ struct profiler_info {
  * @}
  */
 
-#endif /* _APPLICATION_EVENT_MANAGER_PROFILER_TRACER_H_ */
+#endif /* _APP_EVENT_MANAGER_PROFILER_TRACER_H_ */
