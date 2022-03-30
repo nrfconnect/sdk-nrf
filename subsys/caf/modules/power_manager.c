@@ -14,7 +14,7 @@
 #include <helpers/nrfx_reset_reason.h>
 #include <sys/reboot.h>
 
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 #include <profiler.h>
 
 #include <caf/events/power_event.h>

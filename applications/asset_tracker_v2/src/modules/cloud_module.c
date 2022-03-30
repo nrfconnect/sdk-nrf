@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <dfu/mcuboot.h>
 #include <math.h>
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 #include <net/nrf_cloud_agps.h>

@@ -1,4 +1,4 @@
-.. _app_evt_mgr:
+.. _app_event_manager:
 
 Application Event Manager
 #########################
@@ -17,7 +17,7 @@ The Application Event Manager acts as coordinator of the event-based communicati
 
 For a usage example of the Event Manger module and event structure in the |NCS|, see the :ref:`lib_caf` (CAF).
 
-See the :ref:`app_evt_mgr_sample` sample for a simple example of how to use the Application Event Manager.
+See the :ref:`app_event_manager_sample` sample for a simple example of how to use the Application Event Manager.
 
 Events
 ******
@@ -44,7 +44,7 @@ The Application Event Manager provides an API for subscribing modules to specifi
 When a module subscribes to a specific event, it is called a listener module.
 Every listener is identified by a unique name.
 
-.. _app_evt_mgr_configuration:
+.. _app_event_manager_configuration:
 
 Configuration
 *************
@@ -55,10 +55,10 @@ Initializing the Application Event Manager allows it to handle submitted events 
 Complete the following steps:
 
 1. Enable the :kconfig:option:`CONFIG_APPLICATION_EVENT_MANAGER` Kconfig option.
-#. Include :file:`app_evt_mgr.h` in your :file:`main.c` file.
-#. Call :c:func:`app_evt_mgr_init()`.
+#. Include :file:`app_event_manager.h` in your :file:`main.c` file.
+#. Call :c:func:`app_event_manager_init()`.
 
-.. _app_evt_mgr_implementing_events:
+.. _app_event_manager_implementing_events:
 
 Implementing events and modules
 *******************************
@@ -84,7 +84,7 @@ To create a header file for the event type you want to define:
 
    .. code-block:: c
 
-	   #include <app_evt_mgr.h>
+	   #include <app_event_manager.h>
 
 #. Define the new event type by creating a structure that contains an :c:struct:`application_event_header` named ``header`` as the first field.
 #. Optionally, add additional custom data fields to the structure.
@@ -94,7 +94,7 @@ The following code example shows a header file for the event type :c:struct:`sam
 
 .. code-block:: c
 
-   #include <app_evt_mgr.h>
+   #include <app_event_manager.h>
 
    struct sample_event {
 	   struct application_event_header header;
@@ -114,7 +114,7 @@ For example, you can add variable sized data to the previously defined event by 
 
 .. code-block:: c
 
-   #include <app_evt_mgr.h>
+   #include <app_event_manager.h>
 
    struct sample_event {
 	   struct application_event_header header;
@@ -223,7 +223,7 @@ When the event is processed, the Application Event Manager notifies all modules 
 	Events are dynamically allocated and must be submitted.
 	If an event is not submitted, it will not be handled and the memory will not be freed.
 
-.. _app_evt_mgr_register_module_as_listener:
+.. _app_event_manager_register_module_as_listener:
 
 Registering a module as listener
 ================================
@@ -233,7 +233,7 @@ If you want a module to receive events managed by the Application Event Manager,
 To turn a module into a listener for specific event types, complete the following steps:
 
 1. Include the header files for the respective event types, for example, ``#include "sample_event.h"``.
-#. :ref:`Implement an Event handler function <app_evt_mgr_register_module_as_listener_handler>` and define the module as a listener with the :c:macro:`APPLICATION_EVENT_LISTENER` macro, passing both the name of the module and the event handler function as arguments.
+#. :ref:`Implement an Event handler function <app_event_manager_register_module_as_listener_handler>` and define the module as a listener with the :c:macro:`APPLICATION_EVENT_LISTENER` macro, passing both the name of the module and the event handler function as arguments.
 #. Subscribe the listener to specific event types.
 
 For subscribing to an event type, the Application Event Manager provides three types of subscriptions, differing in priority.
@@ -249,7 +249,7 @@ There is no defined order in which subscribers of the same priority are notified
 The module will receive events for the subscribed event types only.
 The listener name passed to the subscribe macro must be the same one used in the macro :c:macro:`APPLICATION_EVENT_LISTENER`.
 
-.. _app_evt_mgr_register_module_as_listener_handler:
+.. _app_event_manager_register_module_as_listener_handler:
 
 Implementing an event handler function
 --------------------------------------
@@ -305,7 +305,7 @@ Application Event Manager extensions
 
 The Application Event Manager provides additional features that could be helpful when debugging event-based applications.
 
-.. _app_evt_mgr_profiling_init_hooks:
+.. _app_event_manager_profiling_init_hooks:
 
 Initialization hook
 ===================
@@ -317,11 +317,11 @@ The hook function should be declared in the ``int hook(void)`` format.
 If the hook function returns a non-zero value, the initialization process is interrupted and a related error is returned.
 
 To register the initialization hook, use the macro :c:macro:`APPLICATION_EVENT_MANAGER_HOOK_POSTINIT_REGISTER`.
-For details, refer to :ref:`app_evt_mgr_api`.
+For details, refer to :ref:`app_event_manager_api`.
 
 .. em_initialization_hook_end
 
-.. _app_evt_mgr_profiling_tracing_hooks:
+.. _app_event_manager_profiling_tracing_hooks:
 
 Tracing hooks
 =============
@@ -338,11 +338,11 @@ The following macros are implemented to register event tracing hooks:
 * :c:macro:`APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER_FIRST`, :c:macro:`APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER`, :c:macro:`APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER_LAST`
 * :c:macro:`APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER_FIRST`, :c:macro:`APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER`, :c:macro:`APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER_LAST`
 
-For details, refer to :ref:`app_evt_mgr_api`.
+For details, refer to :ref:`app_event_manager_api`.
 
 .. em_tracing_hooks_end
 
-.. _app_evt_mgr_profiling_mem_hooks:
+.. _app_event_manager_profiling_mem_hooks:
 
 Memory management hooks
 =======================
@@ -352,10 +352,10 @@ You can override this implementation to implement other types of memory allocati
 
 The following weak functions are provided by the Application Event Manager as the memory management hooks:
 
-* :c:func:`app_evt_mgr_alloc`
-* :c:func:`app_evt_mgr_free`
+* :c:func:`app_event_manager_alloc`
+* :c:func:`app_event_manager_free`
 
-For details, refer to :ref:`app_evt_mgr_api`.
+For details, refer to :ref:`app_event_manager_api`.
 
 Shell integration
 =================
@@ -363,7 +363,7 @@ Shell integration
 Shell integration is available to display additional information and to dynamically enable or disable logging for given event types.
 
 The Application Event Manager is integrated with Zephyr's :ref:`zephyr:shell_api` module.
-When the shell is turned on, an additional subcommand set (:command:`app_evt_mgr`) is added.
+When the shell is turned on, an additional subcommand set (:command:`app_event_manager`) is added.
 
 This subcommand set contains the following commands:
 
@@ -382,14 +382,14 @@ This subcommand set contains the following commands:
   If called without additional arguments, the command applies to all event types.
   To enable or disable logging for specific event types, pass the event type indexes, as displayed by :command:`show_events`, as arguments.
 
-.. _app_evt_mgr_api:
+.. _app_event_manager_api:
 
 API documentation
 *****************
 
-| Header file: :file:`include/app_evt_mgr.h`
-| Source files: :file:`subsys/app_evt_mgr/`
+| Header file: :file:`include/app_event_manager.h`
+| Source files: :file:`subsys/app_event_manager/`
 
-.. doxygengroup:: app_evt_mgr
+.. doxygengroup:: app_event_manager
    :project: nrf
    :members:

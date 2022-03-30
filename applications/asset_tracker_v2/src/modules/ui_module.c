@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <device.h>
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 #include <dk_buttons_and_leds.h>
 
 #define MODULE ui_module

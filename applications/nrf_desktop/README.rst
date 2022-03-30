@@ -26,14 +26,14 @@ Overview: Firmware architecture
 The nRF Desktop application design aims at high performance, while still providing configurability and extensibility.
 
 The application architecture is modular, event-driven and build around :ref:`lib_caf`.
-This means that parts of the application functionality are separated into isolated modules that communicate with each other using application events, which are handled by the :ref:`app_evt_mgr`.
+This means that parts of the application functionality are separated into isolated modules that communicate with each other using application events, which are handled by the :ref:`app_event_manager`.
 Modules register themselves as listeners of those events that they are configured to react to.
 An application event can be submitted by multiple modules and it can have multiple listeners.
 
 Module and component overview
 =============================
 
-The following figure shows the nRF Desktop modules and how they relate with other components and the :ref:`app_evt_mgr`.
+The following figure shows the nRF Desktop modules and how they relate with other components and the :ref:`app_event_manager`.
 The figure does not present all the available modules.
 For example, the figure does not include the modules that are used as hotfixes or only for debug or profiling purposes.
 
@@ -85,7 +85,7 @@ Sink Module
 
 .. note::
    Some application modules can have multiple implementations (for example, :ref:`nrf_desktop_motion`).
-   In such case, the table shows the :ref:`app_evt_mgr` events received and submitted by all implementations of a given application module.
+   In such case, the table shows the :ref:`app_event_manager` events received and submitted by all implementations of a given application module.
 
 Module usage per hardware type
 ==============================
@@ -164,7 +164,7 @@ Most of memory resources that are used by the application are allocated statical
 The application uses dynamic allocation to:
 
 * Create the Application Event Manager events.
-  For more information, see the :ref:`app_evt_mgr` page.
+  For more information, see the :ref:`app_event_manager` page.
 * Temporarily store the HID-related data in the :ref:`nrf_desktop_hid_state` and :ref:`nrf_desktop_hid_forward`.
   For more information, see the documentation pages of these modules.
 
@@ -1316,7 +1316,7 @@ Bluetooth in nRF Desktop
 The nRF Desktop devices use :ref:`Zephyr's Bluetooth API <zephyr:bluetooth>` to handle the Bluetooth LE connections.
 
 This API is used only by the application modules that handle such connections.
-The information about peer and connection state is propagated to other application modules using :ref:`app_evt_mgr` events.
+The information about peer and connection state is propagated to other application modules using :ref:`app_event_manager` events.
 
 The nRF Desktop devices come in the following types:
 
@@ -1757,7 +1757,7 @@ Dependencies
 This application uses the following |NCS| libraries and drivers:
 
 * :ref:`lib_caf`
-* :ref:`app_evt_mgr`
+* :ref:`app_event_manager`
 * :ref:`profiler`
 * :ref:`hids_readme`
 * :ref:`hogp_readme`

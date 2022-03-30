@@ -13,8 +13,8 @@
  * @{
  */
 
-#include <app_evt_mgr.h>
-#include <app_evt_mgr_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 #include <caf/events/module_state_event.h>
 
 #ifdef __cplusplus

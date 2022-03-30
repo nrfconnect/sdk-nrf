@@ -266,7 +266,7 @@ static void drop_enqueued_reports(struct enqueued_reports *enqueued_reports,
 
 		item = get_enqueued_report(enqueued_reports, irep_idx);
 
-		app_evt_mgr_free(item->report);
+		app_event_manager_free(item->report);
 		k_free(item);
 	}
 }
@@ -359,7 +359,7 @@ static void enqueue_hid_report(struct enqueued_reports *enqueued_reports,
 	} else {
 		LOG_WRN("Enqueue dropped the oldest report");
 		item = get_enqueued_report(enqueued_reports, irep_idx);
-		app_evt_mgr_free(item->report);
+		app_event_manager_free(item->report);
 	}
 
 	if (!item) {
@@ -446,7 +446,7 @@ static uint8_t hogp_read(struct bt_hogp *hids_c,
 	size_t size = bt_hogp_rep_size(rep);
 
 	/* HID boot protocol reports are received with report ID equal 0 (REPORT_ID_RESERVED).
-	 * The report ID must be updated before HID report is submitted as an app_evt_mgr event.
+	 * The report ID must be updated before HID report is submitted as an app_event_manager event.
 	 */
 	if (report_id == REPORT_ID_RESERVED) {
 		if (bt_hogp_rep_boot_kbd_in(hids_c)) {

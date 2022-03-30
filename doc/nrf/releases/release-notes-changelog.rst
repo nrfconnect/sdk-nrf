@@ -386,7 +386,7 @@ Libraries for networking
 Other libraries
 ---------------
 
-* :ref:`app_evt_mgr`:
+* :ref:`app_event_manager`:
 
   * Added:
 
@@ -401,7 +401,7 @@ Other libraries
            &my_event_info,
            APPLICATION_EVENT_FLAGS_CREATE(APPLICATION_EVENT_TYPE_FLAGS_1, APPLICATION_EVENT_TYPE_FLAGS_2));
 
-     * :c:func:`app_evt_mgr_event_size` function with corresponding :kconfig:option:`CONFIG_APPLICATION_EVENT_MANAGER_PROVIDE_EVENT_SIZE` option.
+     * :c:func:`app_event_manager_event_size` function with corresponding :kconfig:option:`CONFIG_APPLICATION_EVENT_MANAGER_PROVIDE_EVENT_SIZE` option.
 
     * Universal hooks for Application Event Manager initialization, event submission, preprocessing, and postprocessing.
       This includes implementation of macros that register hooks, grouped as follows:
@@ -410,9 +410,9 @@ Other libraries
       * :c:macro:`APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER`, :c:macro:`APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER_FIRST`, :c:macro:`APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER_LAST`
       * :c:macro:`APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER`, :c:macro:`APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER_FIRST`, :c:macro:`APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER_LAST`
 
-* :ref:`app_evt_mgr_profiler_tracer`:
+* :ref:`app_event_manager_profiler_tracer`:
 
-  * Updated the :ref:`app_evt_mgr_profiler_tracer` library.
+  * Updated the :ref:`app_event_manager_profiler_tracer` library.
     The library is no longer directly referenced from the Application Event Manager.
     Instead, it uses the Application Event Manager hooks to connect with the manager.
 

@@ -5,7 +5,7 @@
  */
 
 #include <zephyr.h>
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 #include <settings/settings.h>
 #include <date_time.h>
 #include <modem/modem_info.h>

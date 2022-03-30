@@ -13,13 +13,13 @@
 
 
 /**
- * @defgroup app_evt_mgr_profiler_tracer Application Event Manager profiler tracer
+ * @defgroup app_event_manager_profiler_tracer Application Event Manager profiler tracer
  * @brief Application Event Manager profiler tracer
  *
  * @{
  */
 
-#include <app_evt_mgr_profiler_tracer_priv.h>
+#include <app_event_manager_profiler_tracer_priv.h>
 #include <profiler.h>
 
 #ifdef __cplusplus
