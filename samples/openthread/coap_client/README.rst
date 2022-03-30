@@ -49,11 +49,6 @@ The following CoAP resources are accessed on the server side:
 This sample uses :ref:`Zephyr CoAP API<zephyr:coap_sock_interface>` for communication, which is the preferred API to use for new CoAP applications.
 For example usage of the native Thread CoAP API, see the :ref:`coap_server_sample` sample.
 
-FEM support
-===========
-
-.. include:: /includes/sample_fem_support.txt
-
 .. _coap_client_sample_multi_ext:
 
 Multiprotocol Bluetooth LE extension
@@ -62,11 +57,6 @@ Multiprotocol Bluetooth LE extension
 This optional extension demonstrates the OpenThread stack and :ref:`nrfxlib:softdevice_controller` working concurrently.
 It uses the :ref:`nus_service_readme` library to control the LED states over Bluetooth® LE in a Thread network.
 For more information about the multiprotocol feature, see :ref:`ug_multiprotocol_support`.
-
-Trusted Firmware-M support
-==========================
-
-.. include:: /includes/tfm.txt
 
 User interface
 **************
@@ -116,6 +106,39 @@ UART command assignments:
    * ``m`` - Send a multicast CoAP message over Thread (the same operation as **Button 2**).
    * ``p`` - Send a pairing request as CoAP message over Thread (the same operation as **Button 4**).
 
+Configuration
+*************
+
+|config|
+
+.. _coap_client_sample_activating_variants:
+
+Configuration files
+===================
+
+The sample provides predefined configuration files for typical use cases, and to activate sample extensions.
+You can find the configuration files in the root directory of the sample.
+
+Specify the corresponding file names in the :makevar:`OVERLAY_CONFIG` option when building.
+See :ref:`cmake_options` for instructions on how to add this option.
+For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+
+The following configuration files are available:
+
+* :file:`overlay-mtd.conf` - Enables the Minimal Thread Device variant.
+* :file:`overlay-multiprotocol_ble.conf` - Enables the Multiprotocol Bluetooth LE extension.
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
+
+
+Trusted Firmware-M support
+==========================
+
+.. include:: /includes/tfm.txt
+
 Building and running
 ********************
 
@@ -124,19 +147,6 @@ Building and running
 |enable_thread_before_testing|
 
 .. include:: /includes/build_and_run.txt
-
-.. _coap_client_sample_activating_variants:
-
-Activating sample extensions
-============================
-
-To activate the optional extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` in the following manner:
-
-* For the Minimal Thread Device variant, set :file:`overlay-mtd.conf`.
-* For the Multiprotocol Bluetooth LE extension, set :file:`overlay-multiprotocol_ble.conf`.
-
-See :ref:`cmake_options` for instructions on how to add this option.
-For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
 Testing
 =======

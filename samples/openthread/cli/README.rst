@@ -50,6 +50,12 @@ Certification tests with CLI sample
 You can use the Thread CLI sample to run certification tests.
 See :ref:`ug_thread_cert` for information on how to use this sample on Thread Certification Test Harness.
 
+User interface
+**************
+
+All interactions with the application are handled using serial communication.
+See `OpenThread CLI Reference`_ for the list of available serial commands.
+
 .. _ot_cli_sample_diag_module:
 
 Diagnostic module
@@ -62,6 +68,38 @@ See `Testing diagnostic module`_ section for an example.
 
 .. note::
     If you disable the :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` feature set, you can enable the diagnostic module with the :kconfig:option:`CONFIG_OPENTHREAD_DIAG` Kconfig option.
+
+Configuration
+*************
+
+|config|
+
+.. _ot_cli_sample_activating_variants:
+
+Configuration files
+===================
+
+The sample provides predefined configuration files for typical use cases, and to activate sample extensions.
+You can find the configuration files in the root directory of the sample.
+
+Specify the corresponding file names in the :makevar:`OVERLAY_CONFIG` option when building.
+See :ref:`cmake_options` for instructions on how to add this option.
+For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+
+The following configuration files are available:
+
+* :file:`overlay-minimal_singleprotocol.conf` - Enables the minimal single protocol variant.
+  Optimizes the memory footprint for single protocol use.
+  For more information, see :ref:`app_memory`.
+* :file:`overlay-minimal_multiprotocol.conf` - Enables the minimal multiprotocol variant.
+  Optimizes the memory footprint for multiprotocol use.
+  For more information, see :ref:`app_memory`.
+* :file:`overlay-usb.conf` - Enables USB transport support.
+  Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to :file:`usb.overlay`.
+* :file:`overlay-logging.conf` - Turns on logging.
+* :file:`overlay-rtt.conf` - Redirects logs to RTT.
+  For more information about RTT please refer to :ref:`RTT logging <ug_logging>`.
+* :file:`overlay-debug.conf` - Enables debbuging the Thread sample with GDB thread awareness.
 
 .. _ot_cli_sample_thread_v12:
 
@@ -99,12 +137,6 @@ Trusted Firmware-M support
 
 .. include:: /includes/tfm.txt
 
-User interface
-**************
-
-All interactions with the application are handled using serial communication.
-See `OpenThread CLI Reference`_ for the list of available serial commands.
-
 Building and running
 ********************
 
@@ -115,25 +147,6 @@ Building and running
 .. include:: /includes/build_and_run.txt
 
 To update the OpenThread libraries provided by ``nrfxlib``, invoke ``west build -b nrf52840dk_nrf52840 -t install_openthread_libraries``.
-
-.. _ot_cli_sample_activating_variants:
-
-Activating sample extensions
-============================
-
-To activate the optional extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` as follows:
-
-* For the minimal single protocol variant, set :file:`overlay-minimal_singleprotocol.conf`.
-* For the minimal multiprotocol variant, set :file:`overlay-minimal_multiprotocol.conf`.
-* For USB transport support, set :file:`overlay-usb.conf`.
-  Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to :file:`usb.overlay`.
-* For turning on logging, set :file:`overlay-logging.conf`.
-* For redirecting logs to RTT, set :file:`overlay-rtt.conf`.
-  For more information about RTT please refer to :ref:`RTT logging <ug_logging>`.
-* For debbuging a Thread sample with GDB thread awareness, set :file:`overlay-debug.conf`.
-
-See :ref:`cmake_options` for instructions on how to add this option.
-For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
 .. _ot_cli_sample_testing:
 
