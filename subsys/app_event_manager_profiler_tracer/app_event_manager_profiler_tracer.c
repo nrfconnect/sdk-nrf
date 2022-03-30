@@ -8,9 +8,9 @@
 #include <app_event_manager_profiler_tracer.h>
 #include <logging/log.h>
 
-LOG_MODULE_REGISTER(app_event_manager_profiler_tracer, CONFIG_APPLICATION_EVENT_MANAGER_LOG_LEVEL);
+LOG_MODULE_REGISTER(app_event_manager_profiler_tracer, CONFIG_APP_EVENT_MANAGER_LOG_LEVEL);
 
-#define IDS_COUNT (CONFIG_APPLICATION_EVENT_MANAGER_MAX_EVENT_CNT + 2)
+#define IDS_COUNT (CONFIG_APP_EVENT_MANAGER_MAX_EVENT_CNT + 2)
 
 extern struct profiler_info _profiler_info_list_start[];
 extern struct profiler_info _profiler_info_list_end[];
@@ -30,7 +30,7 @@ static void app_event_manager_trace_event_execution(const struct application_eve
 	size_t event_idx = event_cnt + (is_start ? 0 : 1);
 	size_t trace_evt_id = profiler_event_ids[event_idx];
 
-	if (!IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_PROFILER_TRACER_TRACE_EVENT_EXECUTION) ||
+	if (!IS_ENABLED(CONFIG_APP_EVENT_MANAGER_PROFILER_TRACER_TRACE_EVENT_EXECUTION) ||
 	    !is_profiling_enabled(trace_evt_id)) {
 		return;
 	}
@@ -82,10 +82,10 @@ static void app_event_manager_trace_event_submission(const struct application_ev
 
 	profiler_log_start(&buf);
 
-	if (IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_PROFILER_TRACER_TRACE_EVENT_EXECUTION)) {
+	if (IS_ENABLED(CONFIG_APP_EVENT_MANAGER_PROFILER_TRACER_TRACE_EVENT_EXECUTION)) {
 		profiler_log_add_mem_address(&buf, aeh);
 	}
-	if (IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_PROFILER_TRACER_PROFILE_EVENT_DATA)) {
+	if (IS_ENABLED(CONFIG_APP_EVENT_MANAGER_PROFILER_TRACER_PROFILE_EVENT_DATA)) {
 		((const struct profiler_info *)profiler_info)->profile_fn(&buf, aeh);
 	}
 
@@ -131,7 +131,7 @@ static void trace_register_events(void)
 		profiler_event_ids[event_idx] = profiler_event_id;
 	}
 
-	if (IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_PROFILER_TRACER_TRACE_EVENT_EXECUTION)) {
+	if (IS_ENABLED(CONFIG_APP_EVENT_MANAGER_PROFILER_TRACER_TRACE_EVENT_EXECUTION)) {
 		trace_register_execution_tracking_events();
 	}
 }
@@ -159,4 +159,4 @@ static int app_event_manager_trace_event_init(void)
 	return 0;
 }
 
-APPLICATION_EVENT_MANAGER_HOOK_POSTINIT_REGISTER(app_event_manager_trace_event_init);
+APP_EVENT_MANAGER_HOOK_POSTINIT_REGISTER(app_event_manager_trace_event_init);

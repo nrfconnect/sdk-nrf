@@ -401,7 +401,7 @@ Other libraries
            &my_event_info,
            APPLICATION_EVENT_FLAGS_CREATE(APPLICATION_EVENT_TYPE_FLAGS_1, APPLICATION_EVENT_TYPE_FLAGS_2));
 
-     * :c:func:`app_event_manager_event_size` function with corresponding :kconfig:option:`CONFIG_APPLICATION_EVENT_MANAGER_PROVIDE_EVENT_SIZE` option.
+     * :c:func:`app_event_manager_event_size` function with corresponding :kconfig:option:`CONFIG_APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE` option.
 
     * Universal hooks for Application Event Manager initialization, event submission, preprocessing, and postprocessing.
       This includes implementation of macros that register hooks, grouped as follows:

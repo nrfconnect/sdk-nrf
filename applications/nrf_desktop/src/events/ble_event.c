@@ -34,10 +34,10 @@ static void log_ble_qos_event(const struct application_event_header *aeh)
 		err = snprintf(&log_buf[pos], sizeof(log_buf) - pos, " 0x%02x", event->chmap[i]);
 	}
 	if (err < 0) {
-		APPLICATION_EVENT_MANAGER_LOG(aeh, "log message preparation failure");
+		APP_EVENT_MANAGER_LOG(aeh, "log message preparation failure");
 		return;
 	}
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "%s", log_strdup(log_buf));
+	APP_EVENT_MANAGER_LOG(aeh, "%s", log_strdup(log_buf));
 }
 
 APPLICATION_EVENT_TYPE_DEFINE(ble_qos_event,

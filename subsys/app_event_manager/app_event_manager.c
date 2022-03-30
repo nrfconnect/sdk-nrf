@@ -12,7 +12,7 @@
 #include <logging/log.h>
 #include <sys/reboot.h>
 
-LOG_MODULE_REGISTER(app_event_manager, CONFIG_APPLICATION_EVENT_MANAGER_LOG_LEVEL);
+LOG_MODULE_REGISTER(app_event_manager, CONFIG_APP_EVENT_MANAGER_LOG_LEVEL);
 
 
 static void event_processor_fn(struct k_work *work);
@@ -30,11 +30,11 @@ static bool log_is_event_displayed(const struct event_type *et)
 	return atomic_test_bit(_app_event_manager_event_display_bm.flags, idx);
 }
 
-#if IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN)
+#if IS_ENABLED(CONFIG_APP_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN)
 static void log_event_using_buffer(const struct application_event_header *aeh,
 				   const struct event_type *et)
 {
-	char log_buf[CONFIG_APPLICATION_EVENT_MANAGER_EVENT_LOG_BUF_LEN];
+	char log_buf[CONFIG_APP_EVENT_MANAGER_EVENT_LOG_BUF_LEN];
 
 	int pos = et->log_event_func_dep(aeh, log_buf, sizeof(log_buf));
 
@@ -44,19 +44,19 @@ static void log_event_using_buffer(const struct application_event_header *aeh,
 		log_buf[sizeof(log_buf) - 2] = '~';
 	}
 
-	if (IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_LOG_EVENT_TYPE)) {
+	if (IS_ENABLED(CONFIG_APP_EVENT_MANAGER_LOG_EVENT_TYPE)) {
 		LOG_INF("e: %s %s", et->name, log_strdup(log_buf));
 	} else {
 		LOG_INF("%s", log_strdup(log_buf));
 	}
 }
-#endif /*CONFIG_APPLICATION_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN*/
+#endif /*CONFIG_APP_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN*/
 
 static void log_event(const struct application_event_header *aeh)
 {
 	const struct event_type *et = aeh->type_id;
 
-	if (!IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_SHOW_EVENTS) ||
+	if (!IS_ENABLED(CONFIG_APP_EVENT_MANAGER_SHOW_EVENTS) ||
 	    !log_is_event_displayed(et)) {
 		return;
 	}
@@ -65,13 +65,13 @@ static void log_event(const struct application_event_header *aeh)
 	if (et->log_event_func) {
 		et->log_event_func(aeh);
 	}
-#ifdef CONFIG_APPLICATION_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN
+#ifdef CONFIG_APP_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN
 	else if (et->log_event_func_dep) {
 		log_event_using_buffer(aeh, et);
 	}
 #endif
 
-	else if (IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_LOG_EVENT_TYPE)) {
+	else if (IS_ENABLED(CONFIG_APP_EVENT_MANAGER_LOG_EVENT_TYPE)) {
 		LOG_INF("e: %s", et->name);
 	}
 }
@@ -79,8 +79,8 @@ static void log_event(const struct application_event_header *aeh)
 static void log_event_progress(const struct event_type *et,
 			       const struct event_listener *el)
 {
-	if (!IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_SHOW_EVENTS) ||
-	    !IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_SHOW_EVENT_HANDLERS) ||
+	if (!IS_ENABLED(CONFIG_APP_EVENT_MANAGER_SHOW_EVENTS) ||
+	    !IS_ENABLED(CONFIG_APP_EVENT_MANAGER_SHOW_EVENT_HANDLERS) ||
 	    !log_is_event_displayed(et)) {
 		return;
 	}
@@ -90,8 +90,8 @@ static void log_event_progress(const struct event_type *et,
 
 static void log_event_consumed(const struct event_type *et)
 {
-	if (!IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_SHOW_EVENTS) ||
-	    !IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_SHOW_EVENT_HANDLERS) ||
+	if (!IS_ENABLED(CONFIG_APP_EVENT_MANAGER_SHOW_EVENTS) ||
+	    !IS_ENABLED(CONFIG_APP_EVENT_MANAGER_SHOW_EVENT_HANDLERS) ||
 	    !log_is_event_displayed(et)) {
 		return;
 	}
@@ -164,7 +164,7 @@ static void event_processor_fn(struct k_work *work)
 
 		const struct event_type *et = aeh->type_id;
 
-		if (IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_PREPROCESS_HOOKS)) {
+		if (IS_ENABLED(CONFIG_APP_EVENT_MANAGER_PREPROCESS_HOOKS)) {
 			STRUCT_SECTION_FOREACH(event_preprocess_hook, h) {
 				h->hook(aeh);
 			}
@@ -194,7 +194,7 @@ static void event_processor_fn(struct k_work *work)
 			}
 		}
 
-		if (IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_POSTPROCESS_HOOKS)) {
+		if (IS_ENABLED(CONFIG_APP_EVENT_MANAGER_POSTPROCESS_HOOKS)) {
 			STRUCT_SECTION_FOREACH(event_postprocess_hook, h) {
 				h->hook(aeh);
 			}
@@ -211,7 +211,7 @@ void _event_submit(struct application_event_header *aeh)
 
 	k_spinlock_key_t key = k_spin_lock(&lock);
 
-	if (IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_SUBMIT_HOOKS)) {
+	if (IS_ENABLED(CONFIG_APP_EVENT_MANAGER_SUBMIT_HOOKS)) {
 		STRUCT_SECTION_FOREACH(event_submit_hook, h) {
 			h->hook(aeh);
 		}
@@ -227,11 +227,11 @@ int app_event_manager_init(void)
 	int ret = 0;
 
 	__ASSERT_NO_MSG(_event_type_list_end - _event_type_list_start <=
-			CONFIG_APPLICATION_EVENT_MANAGER_MAX_EVENT_CNT);
+			CONFIG_APP_EVENT_MANAGER_MAX_EVENT_CNT);
 
 	log_event_init();
 
-	if (IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_POSTINIT_HOOK)) {
+	if (IS_ENABLED(CONFIG_APP_EVENT_MANAGER_POSTINIT_HOOK)) {
 		STRUCT_SECTION_FOREACH(app_event_manager_postinit_hook, h) {
 			ret = h->hook();
 			if (ret) {

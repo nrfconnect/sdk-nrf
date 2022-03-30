@@ -23,7 +23,7 @@ static void log_ei_data_forwarder_event(const struct application_event_header *a
 	__ASSERT_NO_MSG(event->state < EI_DATA_FORWARDER_STATE_COUNT);
 	__ASSERT_NO_MSG(ei_data_forwarder_state_name[event->state] != NULL);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "state: %s", ei_data_forwarder_state_name[event->state]);
+	APP_EVENT_MANAGER_LOG(aeh, "state: %s", ei_data_forwarder_state_name[event->state]);
 }
 
 APPLICATION_EVENT_TYPE_DEFINE(ei_data_forwarder_event,

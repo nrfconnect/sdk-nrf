@@ -22,7 +22,7 @@ static void log_config_event(const struct application_event_header *aeh)
 {
 	struct config_event *event = cast_config_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "init_val_1=%d", event->init_value1);
+	APP_EVENT_MANAGER_LOG(aeh, "init_val_1=%d", event->init_value1);
 }
 
 EVENT_INFO_DEFINE(config_event,

@@ -64,10 +64,10 @@ static void log_event(const struct application_event_header *aeh)
 	const struct modem_module_event *event = cast_modem_module_event(aeh);
 
 	if (event->type == MODEM_EVT_ERROR) {
-		APPLICATION_EVENT_MANAGER_LOG(aeh, "%s - Error code %d",
+		APP_EVENT_MANAGER_LOG(aeh, "%s - Error code %d",
 				get_evt_type_str(event->type), event->data.err);
 	} else {
-		APPLICATION_EVENT_MANAGER_LOG(aeh, "%s", get_evt_type_str(event->type));
+		APP_EVENT_MANAGER_LOG(aeh, "%s", get_evt_type_str(event->type));
 	}
 }
 

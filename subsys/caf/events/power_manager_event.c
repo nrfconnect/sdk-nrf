@@ -41,7 +41,7 @@ static void log_event(const struct application_event_header *aeh)
 		break;
 	}
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh, "module \"%s\" restricts to %s",
+	APP_EVENT_MANAGER_LOG(aeh, "module \"%s\" restricts to %s",
 			module_name_get(module_id_get(event->module_idx)),
 			power_state_str);
 }

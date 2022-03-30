@@ -38,7 +38,7 @@ static void log_sensor_event(const struct application_event_header *aeh)
 {
 	struct sensor_event *event = cast_sensor_event(aeh);
 
-	APPLICATION_EVENT_MANAGER_LOG(aeh,
+	APP_EVENT_MANAGER_LOG(aeh,
 			"%s sensor event: sensor_value: val1 = %d, val2 = %d; unsigned_value = %d",
 			sensor_type_to_string(event->type), event->sensor_value.val1,
 			event->sensor_value.val2, event->unsigned_value);
