@@ -31,6 +31,18 @@ In addition to the |NCS| documentation, information is available in the followin
 
     .. rst-class:: doc-link-image
 
+    .. image:: /images/DevAcademy.svg
+       :target: `DevAcademy`_
+
+    .. rst-class:: doc-link-text
+
+    `Developer Academy online learning <DevAcademy_>`_
+
+.. rst-class:: doc-link gray-box
+..
+
+    .. rst-class:: doc-link-image
+
     .. image:: /images/DevZone.svg
        :target: `DevZone`_
 
