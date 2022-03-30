@@ -13,16 +13,34 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(ui_led, CONFIG_UI_LOG_LEVEL);
 
-#define LED_PWM_NODE				DT_NODELABEL(pwm0)
-#define LED_PWM_CHANNEL(channel)	DT_PROP(LED_PWM_NODE, ch##channel##_pin)
-#define LED_PWM_FLAGS				DT_PWMS_FLAGS(LED_PWM_NODE)
-#define LED_PWM_DEV_LABEL			DT_LABEL(LED_PWM_NODE)
-
 #define PWM_PERIOD_USEC				(USEC_PER_SEC / 100U)
 
-static const struct device *led_dev;
-static uint32_t pulse_width[NUM_LEDS];
-static bool state[NUM_LEDS];
+struct pwm_dt_spec {
+	const struct device *dev;
+	uint32_t channel;
+	pwm_flags_t flags;
+};
+
+#define PWM_DT_SPEC_GET(node_id)					\
+	{								\
+		.dev = DEVICE_DT_GET(DT_PWMS_CTLR(node_id)),		\
+		.channel = DT_PWMS_CHANNEL(node_id),			\
+		.flags = DT_PWMS_FLAGS(node_id),			\
+	}
+
+#define PWM_DT_SPEC_GET_OR(node_id, default_value)			\
+	COND_CODE_1(DT_NODE_HAS_PROP(node_id, pwms),			\
+		    (PWM_DT_SPEC_GET(node_id)),				\
+		    (default_value))
+
+static const struct pwm_dt_spec pwm_leds[] = {
+	PWM_DT_SPEC_GET_OR(DT_ALIAS(pwm_led0), {}),
+	PWM_DT_SPEC_GET_OR(DT_ALIAS(pwm_led1), {}),
+	PWM_DT_SPEC_GET_OR(DT_ALIAS(pwm_led2), {}),
+};
+
+static uint32_t pulse_width[ARRAY_SIZE(pwm_leds)];
+static bool state[ARRAY_SIZE(pwm_leds)];
 
 static const struct gpio_dt_spec leds[] = {
 	GPIO_DT_SPEC_GET_OR(DT_ALIAS(led0), gpios, {}),
@@ -31,41 +49,20 @@ static const struct gpio_dt_spec leds[] = {
 	GPIO_DT_SPEC_GET_OR(DT_ALIAS(led3), gpios, {}),
 };
 
-static int get_pwm_channel(uint8_t led_num, uint32_t *pwm_channel)
-{
-	switch (led_num) {
-	case 0:
-		*pwm_channel = LED_PWM_CHANNEL(0);
-		break;
-#if defined(CONFIG_BOARD_THINGY91_NRF9160_NS)
-	case 1:
-		*pwm_channel = LED_PWM_CHANNEL(1);
-		break;
-	case 2:
-		*pwm_channel = LED_PWM_CHANNEL(2);
-		break;
-#endif
-	default:
-		LOG_ERR("PWM channel %u not supported (%d)", led_num, -ENOTSUP);
-		return -ENOTSUP;
-	}
-
-	return 0;
-}
-
 int ui_led_pwm_on_off(uint8_t led_num, bool new_state)
 {
 	int ret;
-	uint32_t pwm_channel;
+
+	if (led_num >= ARRAY_SIZE(pwm_leds) || pwm_leds[led_num].dev == NULL) {
+		return -EINVAL;
+	}
 
 	state[led_num] = new_state;
 
-	ret = get_pwm_channel(led_num, &pwm_channel);
-	if (ret) {
-		return ret;
-	}
-	ret = pwm_pin_set_usec(led_dev, pwm_channel, PWM_PERIOD_USEC,
-			pulse_width[led_num] * new_state, LED_PWM_FLAGS);
+	ret = pwm_pin_set_usec(pwm_leds[led_num].dev, pwm_leds[led_num].channel,
+			       PWM_PERIOD_USEC,
+			       pulse_width[led_num] * new_state,
+			       pwm_leds[led_num].flags);
 	if (ret) {
 		LOG_ERR("Set LED PWM pin %u failed  (%d)", led_num, ret);
 		return ret;
@@ -82,16 +79,17 @@ static uint32_t calculate_pulse_width(uint8_t led_intensity)
 int ui_led_pwm_set_intensity(uint8_t led_num, uint8_t led_intensity)
 {
 	int ret;
-	uint32_t pwm_channel;
+
+	if (led_num >= ARRAY_SIZE(pwm_leds) || pwm_leds[led_num].dev == NULL) {
+		return -EINVAL;
+	}
 
 	pulse_width[led_num] = calculate_pulse_width(led_intensity);
 
-	ret = get_pwm_channel(led_num, &pwm_channel);
-	if (ret) {
-		return ret;
-	}
-	ret = pwm_pin_set_usec(led_dev, pwm_channel, PWM_PERIOD_USEC,
-				pulse_width[led_num] * state[led_num], LED_PWM_FLAGS);
+	ret = pwm_pin_set_usec(pwm_leds[led_num].dev, pwm_leds[led_num].channel,
+			       PWM_PERIOD_USEC,
+			       pulse_width[led_num] * state[led_num],
+			       pwm_leds[led_num].flags);
 	if (ret) {
 		LOG_ERR("Set LED PWM pin %u failed (%d)", led_num, ret);
 		return ret;
@@ -102,10 +100,10 @@ int ui_led_pwm_set_intensity(uint8_t led_num, uint8_t led_intensity)
 
 int ui_led_pwm_init(void)
 {
-	led_dev = device_get_binding(LED_PWM_DEV_LABEL);
-	if (!led_dev) {
-		LOG_DBG("Could not bind to LED PWM device (%d)", -ENODEV);
-		return -ENODEV;
+	for (size_t i = 0; i < ARRAY_SIZE(pwm_leds); ++i) {
+		if (pwm_leds[i].dev != NULL && !device_is_ready(pwm_leds[i].dev)) {
+			return -ENODEV;
+		}
 	}
 
 	return 0;
