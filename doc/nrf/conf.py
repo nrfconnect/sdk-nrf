@@ -40,6 +40,7 @@ extensions = [
     "zephyr.external_content",
     "zephyr.doxyrunner",
     "sphinx_tabs.tabs",
+    "software_maturity_table",
 ]
 
 linkcheck_ignore = [
