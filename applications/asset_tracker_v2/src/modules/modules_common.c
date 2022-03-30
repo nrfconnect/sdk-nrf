@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <zephyr/types.h>
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 #include "modules_common.h"
 
 #include <logging/log.h>

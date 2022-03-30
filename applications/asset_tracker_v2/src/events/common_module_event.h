@@ -5,8 +5,8 @@
  */
 
 #include <sys/util_macro.h>
-#include <app_evt_mgr.h>
-#include <app_evt_mgr_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifndef _COMMON_MODULE_EVENT_H_
 #define _COMMON_MODULE_EVENT_H_

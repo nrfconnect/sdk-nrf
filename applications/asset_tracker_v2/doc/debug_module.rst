@@ -86,7 +86,7 @@ Dependencies
 
 This application uses the following |NCS| libraries and drivers:
 
-* :ref:`app_evt_mgr`
+* :ref:`app_event_manager`
 * :ref:`mod_memfault`
 
 API documentation

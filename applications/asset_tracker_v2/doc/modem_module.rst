@@ -88,7 +88,7 @@ Module internals
 ****************
 
 The modem module has an internal thread with a message queue for processing.
-When an event is received in the :ref:`app_evt_mgr` handler, the event is converted to a message and put into the module's queue for processing in thread context.
+When an event is received in the :ref:`app_event_manager` handler, the event is converted to a message and put into the module's queue for processing in thread context.
 This gives the module the flexibility to call functions that might take some time to complete.
 
 Module states
@@ -148,7 +148,7 @@ Dependencies
 
 The module uses the following |NCS| libraries:
 
-* :ref:`app_evt_mgr`
+* :ref:`app_event_manager`
 * :ref:`lte_lc_readme`
 * :ref:`modem_info_readme`
 

@@ -129,7 +129,7 @@ extern "C" {
 	static inline struct ename *_CONCAT(new_, ename)(void)			\
 	{									\
 		struct ename *event =						\
-			(struct ename *)app_evt_mgr_alloc(sizeof(*event));	\
+			(struct ename *)app_event_manager_alloc(sizeof(*event));	\
 		BUILD_ASSERT(offsetof(struct ename, header) == 0,		\
 				 "");						\
 		if (event != NULL) {						\
@@ -147,7 +147,7 @@ extern "C" {
 	static inline struct ename *_CONCAT(new_, ename)(size_t size)			\
 	{										\
 		struct ename *event =							\
-			(struct ename *)app_evt_mgr_alloc(sizeof(*event) + size);	\
+			(struct ename *)app_event_manager_alloc(sizeof(*event) + size);	\
 		BUILD_ASSERT((offsetof(struct ename, dyndata) +				\
 				  sizeof(event->dyndata.size)) ==			\
 				 sizeof(*event), "");					\
@@ -322,11 +322,11 @@ extern struct event_type _event_type_list_end[];
 /**
  * @brief Bitmask indicating event is displayed.
  */
-struct app_evt_mgr_event_display_bm {
+struct app_event_manager_event_display_bm {
 	ATOMIC_DEFINE(flags, CONFIG_APPLICATION_EVENT_MANAGER_MAX_EVENT_CNT);
 };
 
-extern struct app_evt_mgr_event_display_bm _app_evt_mgr_event_display_bm;
+extern struct app_event_manager_event_display_bm _app_event_manager_event_display_bm;
 
 
 /* Event hooks subscribers */
@@ -339,7 +339,7 @@ extern struct app_evt_mgr_event_display_bm _app_evt_mgr_event_display_bm;
 #define _APPLICATION_EVENT_MANAGER_HOOK_POSTINIT_REGISTER(hook_fn, prio)             \
 	BUILD_ASSERT(IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_POSTINIT_HOOK),     \
 		     "Enable APPLICATION_EVENT_MANAGER_POSTINIT_HOOK before usage"); \
-	_APPLICATION_EVENT_HOOK_REGISTER(app_evt_mgr_postinit_hook, hook_fn, prio)
+	_APPLICATION_EVENT_HOOK_REGISTER(app_event_manager_postinit_hook, hook_fn, prio)
 
 #define _APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER(hook_fn, prio)                   \
 	BUILD_ASSERT(IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_SUBMIT_HOOKS),     \
@@ -402,7 +402,7 @@ struct event_subscriber {
 
 /** @brief Structure used to register Application Event Manager initialization hook
  */
-struct app_evt_mgr_postinit_hook {
+struct app_event_manager_postinit_hook {
 	/** @brief Hook function */
 	int (*hook)(void);
 };

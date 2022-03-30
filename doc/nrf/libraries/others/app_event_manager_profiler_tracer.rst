@@ -1,4 +1,4 @@
-.. _app_evt_mgr_profiler_tracer:
+.. _app_event_manager_profiler_tracer:
 
 Application Event Manager profiler tracer
 #########################################
@@ -8,16 +8,16 @@ Application Event Manager profiler tracer
    :depth: 2
 
 The Application Event Manager profiler tracer is a library that enables profiling Application Event Manager events.
-It serves as a linking layer between :ref:`app_evt_mgr` and the :ref:`profiler` and allows to profile Application Event Manager event submissions and processings as the Profiler events.
+It serves as a linking layer between :ref:`app_event_manager` and the :ref:`profiler` and allows to profile Application Event Manager event submissions and processings as the Profiler events.
 The Profiler allows you to observe the propagation of an profiler event in the system, view the data connected with the event, or create statistics.
 
 The events managed by the Application Event Manager are structured data types that are defined by the application and can contain additional data.
 The Application Event Manager profiler tracer registers :c:struct:`profiler_info` as trace_data of event types.
 The tracer uses this additional information to track the usage of events within the application.
 
-See the :ref:`app_evt_mgr_profiling_tracer_sample` sample for an example of how to use the library with the :ref:`profiler`.
+See the :ref:`app_event_manager_profiling_tracer_sample` sample for an example of how to use the library with the :ref:`profiler`.
 
-.. _app_evt_mgr_profiler_tracer_config:
+.. _app_event_manager_profiler_tracer_config:
 
 Configuration
 *************
@@ -33,13 +33,13 @@ You can also set the following Kconfig options when working with the Application
 * :kconfig:option:`CONFIG_APPLICATION_EVENT_MANAGER_PROFILER_TRACER_TRACE_EVENT_EXECUTION` - With this Kconfig option set, the Application Event Manager profiler tracer will track two additional events that mark the start and the end of each event execution, respectively.
 * :kconfig:option:`CONFIG_APPLICATION_EVENT_MANAGER_PROFILER_TRACER_PROFILE_EVENT_DATA` - With this Kconfig option set, the Application Event Manager profiler tracer will trigger logging of event data during profiling, allowing you to see what event data values were sent.
 
-.. _app_evt_mgr_profiler_tracer_em_implementation:
+.. _app_event_manager_profiler_tracer_em_implementation:
 
 Implementing profiling for Application Event Manager events
 ***********************************************************
 
 .. note::
-	Before you complete the following steps, make sure to :ref:`implement Application Event Manager events and modules <app_evt_mgr_implementing_events>`.
+	Before you complete the following steps, make sure to :ref:`implement Application Event Manager events and modules <app_event_manager_implementing_events>`.
 
 To profile an Application Event Manager event, you must complete the following steps:
 
@@ -106,7 +106,7 @@ The profiler tracer uses some of the Application Event Manager hooks to connect 
 Initialization hook usage
 =========================
 
-.. include:: app_evt_mgr.rst
+.. include:: app_event_manager.rst
    :start-after: em_initialization_hook_start
    :end-before: em_initialization_hook_end
 
@@ -115,13 +115,13 @@ The Application Event Manager profiled tracer uses the hook to append itself to 
 Tracing hook usage
 ==================
 
-.. include:: app_evt_mgr.rst
+.. include:: app_event_manager.rst
    :start-after: em_initialization_hook_start
    :end-before: em_initialization_hook_end
 
 The Application Event Manager profiled tracer uses the hook to append itself to the initialization procedure.
 
-.. include:: app_evt_mgr.rst
+.. include:: app_event_manager.rst
    :start-after: em_tracing_hooks_start
    :end-before: em_tracing_hooks_end
 
@@ -130,9 +130,9 @@ The Application Event Manager profiler tracer uses the tracing hooks to register
 API documentation
 *****************
 
-| Header file: :file:`include/app_evt_mgr_profiler_tracer.h`
-| Source files: :file:`subsys/app_evt_mgr_profiler_tracer/`
+| Header file: :file:`include/app_event_manager_profiler_tracer.h`
+| Source files: :file:`subsys/app_event_manager_profiler_tracer/`
 
-.. doxygengroup:: app_evt_mgr_profiler_tracer
+.. doxygengroup:: app_event_manager_profiler_tracer
    :project: nrf
    :members:

@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 #if defined(CONFIG_NRF_MODEM_LIB)
 #include <modem/nrf_modem_lib.h>
 #endif /* CONFIG_NRF_MODEM_LIB */
@@ -542,7 +542,7 @@ void main(void)
 		handle_nrf_modem_lib_init_ret();
 	}
 
-	if (app_evt_mgr_init()) {
+	if (app_event_manager_init()) {
 		/* Without the Application Event Manager, the application will not work
 		 * as intended. A reboot is required in an attempt to recover.
 		 */

@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <drivers/sensor.h>
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 
 #if defined(CONFIG_EXTERNAL_SENSORS)
 #include "ext_sensors.h"

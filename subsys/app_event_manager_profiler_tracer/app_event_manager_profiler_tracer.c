@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <app_evt_mgr.h>
-#include <app_evt_mgr_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 #include <logging/log.h>
 
-LOG_MODULE_REGISTER(app_evt_mgr_profiler_tracer, CONFIG_APPLICATION_EVENT_MANAGER_LOG_LEVEL);
+LOG_MODULE_REGISTER(app_event_manager_profiler_tracer, CONFIG_APPLICATION_EVENT_MANAGER_LOG_LEVEL);
 
 #define IDS_COUNT (CONFIG_APPLICATION_EVENT_MANAGER_MAX_EVENT_CNT + 2)
 
@@ -19,11 +19,11 @@ static uint16_t profiler_event_ids[IDS_COUNT];
 
 /** @brief Trace event execution.
  *
- * @param aeh        Pointer to the event header of the event that is processed by app_evt_mgr.
+ * @param aeh        Pointer to the event header of the event that is processed by app_event_manager.
  * @param is_start  Bool value indicating if this occurrence is related
  *                  to start or end of the event processing.
  **/
-static void app_evt_mgr_trace_event_execution(const struct application_event_header *aeh,
+static void app_event_manager_trace_event_execution(const struct application_event_header *aeh,
 					      bool is_start)
 {
 	size_t event_cnt = _profiler_info_list_end - _profiler_info_list_start;
@@ -44,24 +44,24 @@ static void app_evt_mgr_trace_event_execution(const struct application_event_hea
 	profiler_log_send(&buf, trace_evt_id);
 }
 
-static void app_evt_mgr_trace_event_preprocess(const struct application_event_header *aeh)
+static void app_event_manager_trace_event_preprocess(const struct application_event_header *aeh)
 {
-	app_evt_mgr_trace_event_execution(aeh, true);
+	app_event_manager_trace_event_execution(aeh, true);
 }
 
-static void app_evt_mgr_trace_event_postprocess(const struct application_event_header *aeh)
+static void app_event_manager_trace_event_postprocess(const struct application_event_header *aeh)
 {
-	app_evt_mgr_trace_event_execution(aeh, false);
+	app_event_manager_trace_event_execution(aeh, false);
 }
 
-APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER_FIRST(app_evt_mgr_trace_event_preprocess);
-APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER_LAST(app_evt_mgr_trace_event_postprocess);
+APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER_FIRST(app_event_manager_trace_event_preprocess);
+APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER_LAST(app_event_manager_trace_event_postprocess);
 
 /** @brief Trace event submission.
  *
- * @param aeh Pointer to the event header of the event that is submitted to app_evt_mgr.
+ * @param aeh Pointer to the event header of the event that is submitted to app_event_manager.
  **/
-static void app_evt_mgr_trace_event_submission(const struct application_event_header *aeh)
+static void app_event_manager_trace_event_submission(const struct application_event_header *aeh)
 {
 	const void *profiler_info = aeh->type_id->trace_data;
 
@@ -92,7 +92,7 @@ static void app_evt_mgr_trace_event_submission(const struct application_event_he
 	profiler_log_send(&buf, trace_evt_id);
 }
 
-APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST(app_evt_mgr_trace_event_submission);
+APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST(app_event_manager_trace_event_submission);
 
 static void trace_register_execution_tracking_events(void)
 {
@@ -141,7 +141,7 @@ static void trace_register_events(void)
  * @retval 0 If the operation was successful.
  * @retval other Error code
  **/
-static int app_evt_mgr_trace_event_init(void)
+static int app_event_manager_trace_event_init(void)
 {
 	/* Every profiled Application Event Manager event registers a single profiler event.
 	 * Apart from that 2 additional profiler events are used to indicate processing
@@ -159,4 +159,4 @@ static int app_evt_mgr_trace_event_init(void)
 	return 0;
 }
 
-APPLICATION_EVENT_MANAGER_HOOK_POSTINIT_REGISTER(app_evt_mgr_trace_event_init);
+APPLICATION_EVENT_MANAGER_HOOK_POSTINIT_REGISTER(app_event_manager_trace_event_init);

@@ -14,7 +14,7 @@
 
 #include <net/lwm2m_client_utils.h>
 #include <net/lwm2m_client_utils_fota.h>
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 #include <date_time.h>
 
 #include <logging/log.h>
@@ -298,7 +298,7 @@ void main(void)
 
 	k_sem_init(&lwm2m_restart, 0, 1);
 
-	ret = app_evt_mgr_init();
+	ret = app_event_manager_init();
 	if (ret) {
 		LOG_ERR("Unable to init Application Event Manager (%d)", ret);
 		return;

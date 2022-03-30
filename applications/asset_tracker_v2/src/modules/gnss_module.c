@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <date_time.h>
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 #include <nrf_modem_at.h>
 #include <nrf_modem_gnss.h>
 #if defined(CONFIG_NRF_CLOUD_PGPS) && defined(CONFIG_GNSS_MODULE_PGPS_STORE_LOCATION)

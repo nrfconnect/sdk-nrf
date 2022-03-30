@@ -16,8 +16,8 @@
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/conn.h>
 
-#include <app_evt_mgr.h>
-#include <app_evt_mgr_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 #include "hwid.h"
 
 #if CONFIG_DESKTOP_BLE_QOS_ENABLE

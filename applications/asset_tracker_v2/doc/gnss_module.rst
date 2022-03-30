@@ -129,7 +129,7 @@ Dependencies
 
 The module uses the following |NCS| libraries:
 
-* :ref:`app_evt_mgr`
+* :ref:`app_event_manager`
 * :ref:`nrfxlib:gnss_interface`
 
 API documentation

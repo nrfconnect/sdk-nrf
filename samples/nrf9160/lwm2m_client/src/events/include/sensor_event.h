@@ -9,8 +9,8 @@
 
 #include <zephyr.h>
 #include <net/lwm2m.h>
-#include <app_evt_mgr.h>
-#include <app_evt_mgr_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 #include <drivers/sensor.h>
 
 #ifdef __cplusplus

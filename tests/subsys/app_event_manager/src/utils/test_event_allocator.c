@@ -7,7 +7,7 @@
 #include "test_oom.h"
 #include <zephyr.h>
 
-void *app_evt_mgr_alloc(size_t size)
+void *app_event_manager_alloc(size_t size)
 {
 	void *event = k_malloc(size);
 
@@ -18,7 +18,7 @@ void *app_evt_mgr_alloc(size_t size)
 	return event;
 }
 
-void app_evt_mgr_free(void *addr)
+void app_event_manager_free(void *addr)
 {
 	k_free(addr);
 }
