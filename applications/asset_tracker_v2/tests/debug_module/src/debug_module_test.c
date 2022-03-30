@@ -97,6 +97,16 @@ static void validate_debug_data_ready_evt(struct event_header *eh, int no_of_cal
 	TEST_ASSERT_EQUAL(DEBUG_EVT_MEMFAULT_DATA_READY, event->type);
 }
 
+/* Stub used to verify parameters passed into module_start(). */
+static int module_start_stub(struct module_data *module, int num_calls)
+{
+	TEST_ASSERT_EQUAL_STRING("debug", module->name);
+	TEST_ASSERT_NULL(module->msg_q);
+	TEST_ASSERT_FALSE(module->supports_shutdown);
+
+	return 0;
+}
+
 void setup_debug_module_in_init_state(void)
 {
 	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
@@ -105,15 +115,9 @@ void setup_debug_module_in_init_state(void)
 
 	app_module_event->type = APP_EVT_START;
 
-	static struct module_data expected_module_data = {
-		.name = "debug",
-		.msg_q = NULL,
-		.supports_shutdown = false,
-	};
-
 	__wrap_watchdog_register_handler_ExpectAnyArgs();
 	__wrap_watchdog_register_handler_AddCallback(&latch_watchdog_callback);
-	__wrap_module_start_ExpectAndReturn(&expected_module_data, 0);
+	__wrap_module_start_Stub(&module_start_stub);
 
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER((struct event_header *)app_module_event));
 	event_manager_free(app_module_event);
