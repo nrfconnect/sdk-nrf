@@ -8,8 +8,8 @@
 #define UI_INPUT_EVENT_H__
 
 #include <zephyr.h>
-#include <app_evt_mgr.h>
-#include <app_evt_mgr_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {

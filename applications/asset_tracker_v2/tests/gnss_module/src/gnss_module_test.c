@@ -7,8 +7,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <mock_modules_common.h>
-#include <mock_app_evt_mgr.h>
-#include <mock_app_evt_mgr_priv.h>
+#include <mock_app_event_manager.h>
+#include <mock_app_event_manager_priv.h>
 #include <mock_date_time.h>
 #include <mock_nrf_modem_at.h>
 #include <mock_nrf_modem_gnss.h>
@@ -20,7 +20,7 @@
 
 extern struct event_listener __event_listener_gnss_module;
 
-/* The addresses of the following structures will be returned when the app_evt_mgr_alloc()
+/* The addresses of the following structures will be returned when the app_event_manager_alloc()
  * function is called.
  */
 static struct app_module_event app_module_event_memory;
@@ -121,7 +121,7 @@ int test_suiteTearDown(int num_failures)
 void setUp(void)
 {
 	mock_modules_common_Init();
-	mock_app_evt_mgr_Init();
+	mock_app_event_manager_Init();
 	mock_date_time_Init();
 
 	gnss_module_event_count = 0;
@@ -138,7 +138,7 @@ void tearDown(void)
 	TEST_ASSERT_EQUAL(expected_gnss_module_event_count, gnss_module_event_count);
 
 	mock_modules_common_Verify();
-	mock_app_evt_mgr_Verify();
+	mock_app_event_manager_Verify();
 	mock_date_time_Verify();
 	mock_nrf_modem_gnss_Verify();
 }
@@ -252,8 +252,8 @@ static int module_start_stub(struct module_data *module, int num_calls)
 
 static void setup_gnss_module_in_init_state(void)
 {
-	__wrap_app_evt_mgr_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
-	__wrap_app_evt_mgr_free_ExpectAnyArgs();
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
+	__wrap_app_event_manager_free_ExpectAnyArgs();
 	struct app_module_event *app_module_event = new_app_module_event();
 
 	/* AT%XMAGPIO and AT%XCOEX0 AT commands for LNA configuration. */
@@ -267,10 +267,10 @@ static void setup_gnss_module_in_init_state(void)
 
 	app_module_event->type = APP_EVT_START;
 
-	__wrap_app_evt_mgr_alloc_ExpectAnyArgsAndReturn(&gnss_module_event_memory);
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&gnss_module_event_memory);
 	bool ret = GNSS_MODULE_EVT_HANDLER((struct application_event_header *)app_module_event);
 
-	app_evt_mgr_free(app_module_event);
+	app_event_manager_free(app_module_event);
 
 	TEST_ASSERT_EQUAL(0, ret);
 }
@@ -279,15 +279,15 @@ static void setup_gnss_module_in_running_state(void)
 {
 	setup_gnss_module_in_init_state();
 
-	__wrap_app_evt_mgr_alloc_ExpectAnyArgsAndReturn(&modem_module_event_memory);
-	__wrap_app_evt_mgr_free_ExpectAnyArgs();
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&modem_module_event_memory);
+	__wrap_app_event_manager_free_ExpectAnyArgs();
 	struct modem_module_event *modem_module_event = new_modem_module_event();
 
 	modem_module_event->type = MODEM_EVT_INITIALIZED;
 
 	bool ret = GNSS_MODULE_EVT_HANDLER((struct application_event_header *)modem_module_event);
 
-	app_evt_mgr_free(modem_module_event);
+	app_event_manager_free(modem_module_event);
 
 	TEST_ASSERT_EQUAL(0, ret);
 }
@@ -319,18 +319,18 @@ void test_gnss_start(void)
 	expected_gnss_module_events[0].type = GNSS_EVT_ACTIVE;
 
 	/* Stimulus. */
-	__wrap_app_evt_mgr_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
-	__wrap_app_evt_mgr_free_ExpectAnyArgs();
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
+	__wrap_app_event_manager_free_ExpectAnyArgs();
 	struct app_module_event *app_module_event = new_app_module_event();
 
 	app_module_event->type = APP_EVT_DATA_GET;
 	app_module_event->count = 1;
 	app_module_event->data_list[0] = APP_DATA_GNSS;
 
-	__wrap_app_evt_mgr_alloc_IgnoreAndReturn(&gnss_module_event_memory);
+	__wrap_app_event_manager_alloc_IgnoreAndReturn(&gnss_module_event_memory);
 	bool ret = GNSS_MODULE_EVT_HANDLER((struct application_event_header *)app_module_event);
 
-	app_evt_mgr_free(app_module_event);
+	app_event_manager_free(app_module_event);
 
 	TEST_ASSERT_EQUAL(0, ret);
 }
@@ -371,18 +371,18 @@ void test_gnss_fix(void)
 	/* Set callback to validate setting of date and time. */
 	__wrap_date_time_set_Stub(&validate_date_time);
 
-	__wrap_app_evt_mgr_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
-	__wrap_app_evt_mgr_free_ExpectAnyArgs();
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
+	__wrap_app_event_manager_free_ExpectAnyArgs();
 	struct app_module_event *app_module_event = new_app_module_event();
 
 	app_module_event->type = APP_EVT_DATA_GET;
 	app_module_event->count = 1;
 	app_module_event->data_list[0] = APP_DATA_GNSS;
 
-	__wrap_app_evt_mgr_alloc_IgnoreAndReturn(&gnss_module_event_memory);
+	__wrap_app_event_manager_alloc_IgnoreAndReturn(&gnss_module_event_memory);
 	bool ret = GNSS_MODULE_EVT_HANDLER((struct application_event_header *)app_module_event);
 
-	app_evt_mgr_free(app_module_event);
+	app_event_manager_free(app_module_event);
 
 	TEST_ASSERT_EQUAL(0, ret);
 
@@ -425,18 +425,18 @@ void test_agps_request(void)
 	/* Set callback to handle all reads from GNSS API. */
 	__wrap_nrf_modem_gnss_read_Stub(&gnss_read_callback);
 
-	__wrap_app_evt_mgr_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
-	__wrap_app_evt_mgr_free_ExpectAnyArgs();
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
+	__wrap_app_event_manager_free_ExpectAnyArgs();
 	struct app_module_event *app_module_event = new_app_module_event();
 
 	app_module_event->type = APP_EVT_DATA_GET;
 	app_module_event->count = 1;
 	app_module_event->data_list[0] = APP_DATA_GNSS;
 
-	__wrap_app_evt_mgr_alloc_IgnoreAndReturn(&gnss_module_event_memory);
+	__wrap_app_event_manager_alloc_IgnoreAndReturn(&gnss_module_event_memory);
 	bool ret = GNSS_MODULE_EVT_HANDLER((struct application_event_header *)app_module_event);
 
-	app_evt_mgr_free(app_module_event);
+	app_event_manager_free(app_module_event);
 
 	TEST_ASSERT_EQUAL(0, ret);
 
@@ -474,18 +474,18 @@ void test_msgq_full(void)
 	/* Set callback to handle all reads from GNSS API. */
 	__wrap_nrf_modem_gnss_read_Stub(&gnss_read_callback);
 
-	__wrap_app_evt_mgr_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
-	__wrap_app_evt_mgr_free_ExpectAnyArgs();
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
+	__wrap_app_event_manager_free_ExpectAnyArgs();
 	struct app_module_event *app_module_event = new_app_module_event();
 
 	app_module_event->type = APP_EVT_DATA_GET;
 	app_module_event->count = 1;
 	app_module_event->data_list[0] = APP_DATA_GNSS;
 
-	__wrap_app_evt_mgr_alloc_IgnoreAndReturn(&gnss_module_event_memory);
+	__wrap_app_event_manager_alloc_IgnoreAndReturn(&gnss_module_event_memory);
 	bool ret = GNSS_MODULE_EVT_HANDLER((struct application_event_header *)app_module_event);
 
-	app_evt_mgr_free(app_module_event);
+	app_event_manager_free(app_module_event);
 
 	TEST_ASSERT_EQUAL(0, ret);
 

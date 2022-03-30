@@ -6,7 +6,7 @@
 
 #include <stdlib.h>
 #include <shell/shell.h>
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 
 
 static int show_events(const struct shell *shell, size_t argc,
@@ -23,7 +23,7 @@ static int show_events(const struct shell *shell, size_t argc,
 		shell_fprintf(shell,
 			      SHELL_NORMAL,
 			      "%c %d:\t%s\n",
-			      (atomic_test_bit(_app_evt_mgr_event_display_bm.flags, ev_id)) ?
+			      (atomic_test_bit(_app_event_manager_event_display_bm.flags, ev_id)) ?
 				'E' : 'D',
 			      ev_id,
 			      et->name);
@@ -92,7 +92,7 @@ static void set_event_displaying(const struct shell *shell, size_t argc,
 
 			size_t ev_id = et - _event_type_list_start;
 
-			atomic_set_bit_to(_app_evt_mgr_event_display_bm.flags, ev_id, enable);
+			atomic_set_bit_to(_app_event_manager_event_display_bm.flags, ev_id, enable);
 		}
 
 		shell_fprintf(shell,
@@ -118,7 +118,7 @@ static void set_event_displaying(const struct shell *shell, size_t argc,
 		}
 
 		for (size_t i = 0; i < ARRAY_SIZE(event_indexes); i++) {
-			atomic_set_bit_to(_app_evt_mgr_event_display_bm.flags, event_indexes[i],
+			atomic_set_bit_to(_app_event_manager_event_display_bm.flags, event_indexes[i],
 					  enable);
 			const struct event_type *et =
 				_event_type_list_start + event_indexes[i];
@@ -148,7 +148,7 @@ static int disable_event_displaying(const struct shell *shell, size_t argc,
 }
 
 
-SHELL_STATIC_SUBCMD_SET_CREATE(sub_app_evt_mgr,
+SHELL_STATIC_SUBCMD_SET_CREATE(sub_app_event_manager,
 	SHELL_CMD_ARG(show_listeners, NULL, "Show listeners",
 		      show_listeners, 0, 0),
 	SHELL_CMD_ARG(show_subscribers, NULL, "Show subscribers",
@@ -156,12 +156,12 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_app_evt_mgr,
 	SHELL_CMD_ARG(show_events, NULL, "Show events", show_events, 0, 0),
 	SHELL_CMD_ARG(disable, NULL, "Disable displaying event with given ID",
 		      disable_event_displaying, 0,
-		      sizeof(_app_evt_mgr_event_display_bm) * 8 - 1),
+		      sizeof(_app_event_manager_event_display_bm) * 8 - 1),
 	SHELL_CMD_ARG(enable, NULL, "Enable displaying event with given ID",
 		      enable_event_displaying, 0,
-		      sizeof(_app_evt_mgr_event_display_bm) * 8 - 1),
+		      sizeof(_app_event_manager_event_display_bm) * 8 - 1),
 	SHELL_SUBCMD_SET_END
 );
 
-SHELL_CMD_REGISTER(app_evt_mgr, &sub_app_evt_mgr,
+SHELL_CMD_REGISTER(app_event_manager, &sub_app_event_manager,
 		   "Application Event Manager commands", NULL);

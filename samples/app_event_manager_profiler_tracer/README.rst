@@ -1,4 +1,4 @@
-.. _app_evt_mgr_profiling_tracer_sample:
+.. _app_event_manager_profiling_tracer_sample:
 
 Application Event Manager profiling tracer
 ##########################################
@@ -7,7 +7,7 @@ Application Event Manager profiling tracer
    :local:
    :depth: 2
 
-The Application Event Manager profiling tracer sample demonstrates the functionality of profiling :ref:`app_evt_mgr` events using the :ref:`profiler` and the :ref:`app_evt_mgr_profiler_tracer` modules.
+The Application Event Manager profiling tracer sample demonstrates the functionality of profiling :ref:`app_event_manager` events using the :ref:`profiler` and the :ref:`app_event_manager_profiler_tracer` modules.
 
 Requirements
 ************
@@ -64,7 +64,7 @@ Configuration
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/app_evt_mgr_profiler_tracer`
+.. |sample path| replace:: :file:`samples/app_event_manager_profiler_tracer`
 
 .. include:: /includes/build_and_run.txt
 
@@ -91,7 +91,7 @@ After programming the sample to your development kit, test it by performing the 
    See the :ref:`profiler_backends_custom_visualization` in the Profiler documentation for more information about how to work with the diagram.
 #. Click the middle mouse button to highlight an event submission or processing for tracking, and to display the event data as on a figure:
 
-   .. figure:: ../../doc/nrf/images/app_evt_mgr_profiling_sample_zoom.png
+   .. figure:: ../../doc/nrf/images/app_event_manager_profiling_sample_zoom.png
       :scale: 50 %
       :alt: Diagram of GUI output zoomed in
 
@@ -108,8 +108,8 @@ Dependencies
 
 This sample uses the following |NCS| subsystems:
 
-* :ref:`app_evt_mgr`
-* :ref:`app_evt_mgr_profiler_tracer`
+* :ref:`app_event_manager`
+* :ref:`app_event_manager_profiler_tracer`
 
 In addition, it uses the following Zephyr subsystems:
 

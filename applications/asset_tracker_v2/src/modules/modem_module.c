@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <stdio.h>
 #include <stdio.h>
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 #include <math.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>

@@ -8,7 +8,7 @@ Profiler
    :depth: 2
 
 The Profiler provides an interface for logging and visualizing data for performance measurements, while the system is running.
-You can use the module to profile :ref:`app_evt_mgr` events or custom events.
+You can use the module to profile :ref:`app_event_manager` events or custom events.
 The output is provided using RTT and can be visualized in a custom Python backend.
 
 See the :ref:`profiler_sample` sample for an example of how to use the Profiler.
@@ -98,7 +98,7 @@ Configuration for use with Application Event Manager
 ====================================================
 
 If you are using the Application Event Manager, in order to use the Profiler follow the steps in
-:ref:`app_evt_mgr_profiler_tracer_em_implementation` and :ref:`app_evt_mgr_profiler_tracer_config` on the :ref:`app_evt_mgr_profiler_tracer` documentation page.
+:ref:`app_event_manager_profiler_tracer_em_implementation` and :ref:`app_event_manager_profiler_tracer_config` on the :ref:`app_event_manager_profiler_tracer` documentation page.
 
 .. _profiler_backends:
 
@@ -177,7 +177,7 @@ The visual output can look like the following diagram:
 
 .. profiler_GUI_start
 
-.. figure:: ../../images/app_evt_mgr_profiling_sample.png
+.. figure:: ../../images/app_event_manager_profiling_sample.png
    :scale: 50 %
    :alt: Example of profiler backend script visualization
 

@@ -8,8 +8,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <mock_modules_common.h>
-#include <mock_app_evt_mgr.h>
-#include <mock_app_evt_mgr_priv.h>
+#include <mock_app_event_manager.h>
+#include <mock_app_event_manager_priv.h>
 #include <mock_watchdog_app.h>
 #include <memfault/metrics/mock_metrics.h>
 #include <memfault/core/mock_data_packetizer.h>
@@ -22,7 +22,7 @@
 
 extern struct event_listener __event_listener_debug_module;
 
-/* The addresses of the following structures will be returned when the app_evt_mgr_alloc()
+/* The addresses of the following structures will be returned when the app_event_manager_alloc()
  * function is called.
  */
 static struct app_module_event app_module_event_memory;
@@ -75,14 +75,14 @@ void setUp(void)
 {
 	mock_watchdog_app_Init();
 	mock_modules_common_Init();
-	mock_app_evt_mgr_Init();
+	mock_app_event_manager_Init();
 }
 
 void tearDown(void)
 {
 	mock_watchdog_app_Verify();
 	mock_modules_common_Verify();
-	mock_app_evt_mgr_Verify();
+	mock_app_event_manager_Verify();
 }
 
 static void latch_watchdog_callback(watchdog_evt_handler_t handler, int no_of_calls)
@@ -109,8 +109,8 @@ static int module_start_stub(struct module_data *module, int num_calls)
 
 void setup_debug_module_in_init_state(void)
 {
-	__wrap_app_evt_mgr_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
-	__wrap_app_evt_mgr_free_ExpectAnyArgs();
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&app_module_event_memory);
+	__wrap_app_event_manager_free_ExpectAnyArgs();
 	struct app_module_event *app_module_event = new_app_module_event();
 
 	app_module_event->type = APP_EVT_START;
@@ -121,7 +121,7 @@ void setup_debug_module_in_init_state(void)
 
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
 		(struct application_event_header *)app_module_event));
-	app_evt_mgr_free(app_module_event);
+	app_event_manager_free(app_module_event);
 }
 
 /* Test whether the correct Memfault metrics are set upon a GNSS fix. */
@@ -139,8 +139,8 @@ void test_memfault_trigger_metric_sampling_on_gnss_fix(void)
 						0);
 	__wrap_memfault_metrics_heartbeat_debug_trigger_Expect();
 
-	__wrap_app_evt_mgr_alloc_ExpectAnyArgsAndReturn(&gnss_module_event_memory);
-	__wrap_app_evt_mgr_free_ExpectAnyArgs();
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&gnss_module_event_memory);
+	__wrap_app_event_manager_free_ExpectAnyArgs();
 	struct gnss_module_event *gnss_module_event = new_gnss_module_event();
 
 	gnss_module_event->type = GNSS_EVT_DATA_READY;
@@ -149,7 +149,7 @@ void test_memfault_trigger_metric_sampling_on_gnss_fix(void)
 
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
 		(struct application_event_header *)gnss_module_event));
-	app_evt_mgr_free(gnss_module_event);
+	app_event_manager_free(gnss_module_event);
 }
 
 /* Test whether the correct Memfault metrics are set upon a GNSS timeout. */
@@ -169,8 +169,8 @@ void test_memfault_trigger_metric_sampling_on_gnss_timeout(void)
 						0);
 	__wrap_memfault_metrics_heartbeat_debug_trigger_Ignore();
 
-	__wrap_app_evt_mgr_alloc_ExpectAnyArgsAndReturn(&gnss_module_event_memory);
-	__wrap_app_evt_mgr_free_ExpectAnyArgs();
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&gnss_module_event_memory);
+	__wrap_app_event_manager_free_ExpectAnyArgs();
 	struct gnss_module_event *gnss_module_event = new_gnss_module_event();
 
 	gnss_module_event->type = GNSS_EVT_TIMEOUT;
@@ -179,7 +179,7 @@ void test_memfault_trigger_metric_sampling_on_gnss_timeout(void)
 
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
 		(struct application_event_header *)gnss_module_event));
-	app_evt_mgr_free(gnss_module_event);
+	app_event_manager_free(gnss_module_event);
 }
 
 /* Test that the debug module is able to submit Memfault data externally through events
@@ -199,16 +199,16 @@ void test_memfault_trigger_data_send(void)
 	/* Expect the debug module to generate an event with accompanied Memfault metric data. */
 	__wrap__event_submit_Stub(&validate_debug_data_ready_evt);
 
-	__wrap_app_evt_mgr_alloc_ExpectAnyArgsAndReturn(&data_module_event_memory);
-	__wrap_app_evt_mgr_free_ExpectAnyArgs();
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&data_module_event_memory);
+	__wrap_app_event_manager_free_ExpectAnyArgs();
 	struct data_module_event *data_module_event = new_data_module_event();
 
 	data_module_event->type = DATA_EVT_DATA_SEND;
 
-	__wrap_app_evt_mgr_alloc_IgnoreAndReturn(&debug_module_event_memory);
+	__wrap_app_event_manager_alloc_IgnoreAndReturn(&debug_module_event_memory);
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
 		(struct application_event_header *)data_module_event));
-	app_evt_mgr_free(data_module_event);
+	app_event_manager_free(data_module_event);
 }
 
 /* Test that no Memfault SDK specific APIs are called on GNSS module events
@@ -221,8 +221,8 @@ void test_memfault_unhandled_event(void)
 
 	/* Expect no memfault APIs to be called on GNSS_EVT_ACTIVE */
 
-	__wrap_app_evt_mgr_alloc_ExpectAnyArgsAndReturn(&gnss_module_event_memory);
-	__wrap_app_evt_mgr_free_ExpectAnyArgs();
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&gnss_module_event_memory);
+	__wrap_app_event_manager_free_ExpectAnyArgs();
 	struct gnss_module_event *gnss_module_event = new_gnss_module_event();
 
 	gnss_module_event->type = GNSS_EVT_ACTIVE;
@@ -244,7 +244,7 @@ void test_memfault_unhandled_event(void)
 	gnss_module_event->type = GNSS_EVT_ERROR_CODE;
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
 		(struct application_event_header *)gnss_module_event));
-	app_evt_mgr_free(gnss_module_event);
+	app_event_manager_free(gnss_module_event);
 }
 
 /* Test whether the correct Memfault software watchdog APIs are called on callbacks from the

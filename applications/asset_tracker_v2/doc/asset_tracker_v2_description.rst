@@ -40,7 +40,7 @@ Firmware architecture
 =====================
 
 The Asset Tracker v2 application has a modular structure, where each module has a defined scope of responsibility.
-The application makes use of the :ref:`app_evt_mgr` to distribute events between modules in the system.
+The application makes use of the :ref:`app_event_manager` to distribute events between modules in the system.
 The Application Event Manager is used for all the communication between the modules.
 A module converts incoming events to messages and processes them in a FIFO manner.
 The processing happens either in a dedicated processing thread in the module, or directly in the Application Event Manager callback.
@@ -332,34 +332,34 @@ After programming the application and all the prerequisites to your development 
    This is indicated by the following output::
 
       *** Booting Zephyr OS build v2.4.0-ncs1-2616-g3420cde0e37b  ***
-      <inf> app_evt_mgr: APP_EVT_START
+      <inf> app_event_manager: APP_EVT_START
 
 #. Observe in the terminal window that LTE connection is established, indicated by the following output::
 
-     <inf> app_evt_mgr: MODEM_EVT_LTE_CONNECTING
+     <inf> app_event_manager: MODEM_EVT_LTE_CONNECTING
      ...
-     <inf> app_evt_mgr: MODEM_EVT_LTE_CONNECTED
+     <inf> app_event_manager: MODEM_EVT_LTE_CONNECTED
 
 #. Observe that the device establishes connection to the cloud::
 
-    <inf> app_evt_mgr: CLOUD_EVT_CONNECTING
+    <inf> app_event_manager: CLOUD_EVT_CONNECTING
     ...
-    <inf> app_evt_mgr: CLOUD_EVT_CONNECTED
+    <inf> app_event_manager: CLOUD_EVT_CONNECTED
 
 #. Observe that data is sampled periodically and sent to the cloud::
 
-    <inf> app_evt_mgr: APP_EVT_DATA_GET_ALL
-    <inf> app_evt_mgr: APP_EVT_DATA_GET - Requested data types (MOD_DYN, BAT, ENV, GNSS)
-    <inf> app_evt_mgr: GNSS_EVT_ACTIVE
-    <inf> app_evt_mgr: SENSOR_EVT_ENVIRONMENTAL_NOT_SUPPORTED
-    <inf> app_evt_mgr: MODEM_EVT_MODEM_DYNAMIC_DATA_READY
-    <inf> app_evt_mgr: MODEM_EVT_BATTERY_DATA_READY
-    <inf> app_evt_mgr: GNSS_EVT_DATA_READY
-    <inf> app_evt_mgr: DATA_EVT_DATA_READY
-    <inf> app_evt_mgr: GNSS_EVT_INACTIVE
-    <inf> app_evt_mgr: DATA_EVT_DATA_SEND
+    <inf> app_event_manager: APP_EVT_DATA_GET_ALL
+    <inf> app_event_manager: APP_EVT_DATA_GET - Requested data types (MOD_DYN, BAT, ENV, GNSS)
+    <inf> app_event_manager: GNSS_EVT_ACTIVE
+    <inf> app_event_manager: SENSOR_EVT_ENVIRONMENTAL_NOT_SUPPORTED
+    <inf> app_event_manager: MODEM_EVT_MODEM_DYNAMIC_DATA_READY
+    <inf> app_event_manager: MODEM_EVT_BATTERY_DATA_READY
+    <inf> app_event_manager: GNSS_EVT_DATA_READY
+    <inf> app_event_manager: DATA_EVT_DATA_READY
+    <inf> app_event_manager: GNSS_EVT_INACTIVE
+    <inf> app_event_manager: DATA_EVT_DATA_SEND
     <wrn> data_module: No batch data to encode, ringbuffers empty
-    <inf> app_evt_mgr: CLOUD_EVT_DATA_ACK
+    <inf> app_event_manager: CLOUD_EVT_DATA_ACK
 
 .. _nrf_cloud_limitations:
 
@@ -497,7 +497,7 @@ Dependencies
 
 This application uses the following |NCS| libraries and drivers:
 
-* :ref:`app_evt_mgr`
+* :ref:`app_event_manager`
 * :ref:`lib_aws_iot`
 * :ref:`lib_aws_fota`
 * :ref:`lib_azure_iot_hub`

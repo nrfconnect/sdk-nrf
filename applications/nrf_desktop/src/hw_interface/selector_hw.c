@@ -11,7 +11,7 @@
 
 #include "selector_hw_def.h"
 
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 #include "selector_event.h"
 #include <caf/events/power_event.h>
 

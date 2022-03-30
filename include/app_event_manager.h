@@ -13,7 +13,7 @@
 
 
 /**
- * @defgroup app_evt_mgr Application Event Manager
+ * @defgroup app_event_manager Application Event Manager
  * @brief Application Event Manager
  *
  * @{
@@ -24,7 +24,7 @@
 #include <sys/__assert.h>
 #include <logging/log.h>
 
-#include <app_evt_mgr_priv.h>
+#include <app_event_manager_priv.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,7 +32,7 @@ extern "C" {
 
 /** @brief Pointer to the event handler function.
  *
- * @param aeh  Pointer to the event header of the event that is processed by app_evt_mgr.
+ * @param aeh  Pointer to the event header of the event that is processed by app_event_manager.
  * @retval    True if event was consumed and should not be propagated to other listeners,
  *            false otherwise.
  */
@@ -186,7 +186,7 @@ static inline bool get_app_event_type_flag(const struct event_type *et,
 /**
  * @brief Register event hook after the Application Event Manager is initialized.
  *
- * The event hook called after the app_evt_mgr is initialized to provide some additional
+ * The event hook called after the app_event_manager is initialized to provide some additional
  * initialization of the modules that depends on it.
  * The hook function should have a form `int hook(void)`.
  * If the initialization hook returns non-zero value the initialization process is interrupted.
@@ -209,7 +209,7 @@ static inline bool get_app_event_type_flag(const struct event_type *et,
  *
  * @return Event size in bytes.
  */
-static inline size_t app_evt_mgr_event_size(const struct application_event_header *aeh)
+static inline size_t app_event_manager_event_size(const struct application_event_header *aeh)
 {
 #if IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_PROVIDE_EVENT_SIZE)
 	size_t size = aeh->type_id->struct_size;
@@ -364,7 +364,7 @@ static inline size_t app_evt_mgr_event_size(const struct application_event_heade
  * @retval 0 If the operation was successful. Error values can be added by the hooks registered
  *         by @ref APPLICATION_EVENT_MANAGER_HOOK_POSTINIT_REGISTER macro.
  */
-int app_evt_mgr_init(void);
+int app_event_manager_init(void);
 
 /** @brief Allocate event.
  *
@@ -375,7 +375,7 @@ int app_evt_mgr_init(void);
  * @param size  Amount of memory requested (in bytes).
  * @retval Address of the allocated memory if successful, otherwise NULL.
  **/
-void *app_evt_mgr_alloc(size_t size);
+void *app_event_manager_alloc(size_t size);
 
 
 /** @brief Free memory occupied by the event.
@@ -386,19 +386,19 @@ void *app_evt_mgr_alloc(size_t size);
  *
  * @param addr  Pointer to previously allocated memory.
  **/
-void app_evt_mgr_free(void *addr);
+void app_event_manager_free(void *addr);
 
 
 /** @brief Log event.
  *
  * This helper macro simplifies event logging.
  *
- * @param aeh  Pointer to the event header of the event that is processed by app_evt_mgr.
+ * @param aeh  Pointer to the event header of the event that is processed by app_event_manager.
  * @param ... `printf`- like format string and variadic list of arguments corresponding to
  *            the format string.
  */
 #define APPLICATION_EVENT_MANAGER_LOG(aeh, ...) do {						\
-	LOG_MODULE_DECLARE(app_evt_mgr, CONFIG_APPLICATION_EVENT_MANAGER_LOG_LEVEL);		\
+	LOG_MODULE_DECLARE(app_event_manager, CONFIG_APPLICATION_EVENT_MANAGER_LOG_LEVEL);		\
 	if (IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_LOG_EVENT_TYPE)) {			\
 		LOG_INF("e:%s " GET_ARG_N(1, __VA_ARGS__), aeh->type_id->name			\
 			COND_CODE_0(NUM_VA_ARGS_LESS_1(__VA_ARGS__),				\

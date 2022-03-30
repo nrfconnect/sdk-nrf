@@ -25,8 +25,8 @@ cmock_handle(${MEMFAULT_SDK_DIR}/components/include/memfault/core/trace_event.h 
 cmock_handle(${MEMFAULT_SDK_DIR}/ports/include/memfault/ports/watchdog.h memfault/ports)
 
 # Create mock for nRF SDK
-cmock_handle(${NRF_SDK_DIR}/include/app_evt_mgr.h)
-cmock_handle(${NRF_SDK_DIR}/subsys/app_evt_mgr/app_evt_mgr_priv.h )
+cmock_handle(${NRF_SDK_DIR}/include/app_event_manager.h)
+cmock_handle(${NRF_SDK_DIR}/subsys/app_event_manager/app_event_manager_priv.h )
 
 # Create mock for Asset Tracker v2 application source files
 cmock_handle(${ASSET_TRACKER_V2_DIR}/src/modules/modules_common.h)
@@ -47,7 +47,7 @@ target_include_directories(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/events/)
 target_include_directories(app PRIVATE ${ASSET_TRACKER_V2_DIR}/configuration/memfault/)
 
 # Include nRF SDK directories
-target_include_directories(app PRIVATE ${NRF_SDK_DIR}/subsys/app_evt_mgr)
+target_include_directories(app PRIVATE ${NRF_SDK_DIR}/subsys/app_event_manager)
 target_include_directories(app PRIVATE ${NRF_SDK_DIR}/modules/cjson/include)
 
 # Include Memfault SDK directories

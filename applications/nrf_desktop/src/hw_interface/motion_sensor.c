@@ -15,7 +15,7 @@
 
 #include "motion_sensor.h"
 
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 #include "motion_event.h"
 #include <caf/events/power_event.h>
 #include "hid_event.h"

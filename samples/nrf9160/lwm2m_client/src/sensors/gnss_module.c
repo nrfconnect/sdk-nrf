@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <nrf_modem_gnss.h>
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 
 #include "gnss_module.h"
 #include "gnss_pvt_event.h"

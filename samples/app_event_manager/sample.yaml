@@ -19,5 +19,5 @@ common:
       - "ack_event"
       - "Average value3: 45"
 tests:
-  samples.app_evt_mgr:
+  samples.app_event_manager:
     build_only: false

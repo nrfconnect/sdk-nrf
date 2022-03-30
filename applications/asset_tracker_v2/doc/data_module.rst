@@ -97,7 +97,7 @@ Dependencies
 
 This module uses the following |NCS| libraries and drivers:
 
-* :ref:`app_evt_mgr`
+* :ref:`app_event_manager`
 * :ref:`lib_nrf_cloud_agps`
 * :ref:`lib_nrf_cloud_pgps`
 * :ref:`settings_api`

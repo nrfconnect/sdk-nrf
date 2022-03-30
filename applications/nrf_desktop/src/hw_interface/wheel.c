@@ -14,7 +14,7 @@
 #include <drivers/gpio.h>
 #include <pm/device.h>
 
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 #include "wheel_event.h"
 #include <caf/events/power_event.h>
 

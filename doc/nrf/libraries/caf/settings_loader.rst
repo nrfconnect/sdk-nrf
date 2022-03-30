@@ -50,7 +50,7 @@ Implementation details
 
 Getting the required modules is wrapped into the :c:func:`get_req_modules` function due to implementation limitations.
 
-Settings are loaded in the :ref:`app_evt_mgr` handler, which by default is invoked from a system workqueue context.
+Settings are loaded in the :ref:`app_event_manager` handler, which by default is invoked from a system workqueue context.
 This blocks the workqueue until the operation is finished.
 You can set the :kconfig:option:`CONFIG_CAF_SETTINGS_LOADER_USE_THREAD` Kconfig option to load the settings in a separate thread in the background instead of using the system workqueue for that purpose.
 This prevents blocking the system workqueue, but it requires creating an additional thread.

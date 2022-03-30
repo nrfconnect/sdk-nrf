@@ -6,8 +6,8 @@
 #ifndef _FACTORY_RESET_EVENT_H_
 #define _FACTORY_RESET_EVENT_H_
 
-#include <app_evt_mgr.h>
-#include <app_evt_mgr_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 #include <stdbool.h>
 
 #ifdef __cplusplus

@@ -8,16 +8,16 @@
 #include <zephyr.h>
 #include <spinlock.h>
 #include <sys/slist.h>
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 #include <logging/log.h>
 #include <sys/reboot.h>
 
-LOG_MODULE_REGISTER(app_evt_mgr, CONFIG_APPLICATION_EVENT_MANAGER_LOG_LEVEL);
+LOG_MODULE_REGISTER(app_event_manager, CONFIG_APPLICATION_EVENT_MANAGER_LOG_LEVEL);
 
 
 static void event_processor_fn(struct k_work *work);
 
-struct app_evt_mgr_event_display_bm _app_evt_mgr_event_display_bm;
+struct app_event_manager_event_display_bm _app_event_manager_event_display_bm;
 
 static K_WORK_DEFINE(event_processor, event_processor_fn);
 static sys_slist_t eventq = SYS_SLIST_STATIC_INIT(&eventq);
@@ -27,7 +27,7 @@ static bool log_is_event_displayed(const struct event_type *et)
 {
 	size_t idx = et - _event_type_list_start;
 
-	return atomic_test_bit(_app_evt_mgr_event_display_bm.flags, idx);
+	return atomic_test_bit(_app_event_manager_event_display_bm.flags, idx);
 }
 
 #if IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN)
@@ -109,12 +109,12 @@ static void log_event_init(void)
 		if (get_app_event_type_flag(et, APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE)) {
 			size_t idx = et - _event_type_list_start;
 
-			atomic_set_bit(_app_evt_mgr_event_display_bm.flags, idx);
+			atomic_set_bit(_app_event_manager_event_display_bm.flags, idx);
 		}
 	}
 }
 
-void * __weak app_evt_mgr_alloc(size_t size)
+void * __weak app_event_manager_alloc(size_t size)
 {
 	void *event = k_malloc(size);
 
@@ -132,7 +132,7 @@ void * __weak app_evt_mgr_alloc(size_t size)
 	return event;
 }
 
-void __weak app_evt_mgr_free(void *addr)
+void __weak app_event_manager_free(void *addr)
 {
 	k_free(addr);
 }
@@ -200,7 +200,7 @@ static void event_processor_fn(struct k_work *work)
 			}
 		}
 
-		app_evt_mgr_free(aeh);
+		app_event_manager_free(aeh);
 	}
 }
 
@@ -222,7 +222,7 @@ void _event_submit(struct application_event_header *aeh)
 	k_work_submit(&event_processor);
 }
 
-int app_evt_mgr_init(void)
+int app_event_manager_init(void)
 {
 	int ret = 0;
 
@@ -232,7 +232,7 @@ int app_evt_mgr_init(void)
 	log_event_init();
 
 	if (IS_ENABLED(CONFIG_APPLICATION_EVENT_MANAGER_POSTINIT_HOOK)) {
-		STRUCT_SECTION_FOREACH(app_evt_mgr_postinit_hook, h) {
+		STRUCT_SECTION_FOREACH(app_event_manager_postinit_hook, h) {
 			ret = h->hook();
 			if (ret) {
 				break;

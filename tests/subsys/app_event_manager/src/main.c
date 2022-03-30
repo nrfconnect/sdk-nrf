@@ -5,7 +5,7 @@
  */
 
 #include <ztest.h>
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 
 #include "sized_events.h"
 #include "test_events.h"
@@ -32,7 +32,7 @@ void assert_post_action(const char *file, unsigned int line)
 
 void test_init(void)
 {
-	zassert_false(app_evt_mgr_init(), "Error when initializing");
+	zassert_false(app_event_manager_init(), "Error when initializing");
 }
 
 static void test_start(enum test_id test_id)
@@ -86,24 +86,24 @@ static void test_event_size_static(void)
 	struct test_size_big_event *ev_sb;
 
 	ev_s1 = new_test_size1_event();
-	zassert_equal(sizeof(*ev_s1), app_evt_mgr_event_size(&ev_s1->header),
+	zassert_equal(sizeof(*ev_s1), app_event_manager_event_size(&ev_s1->header),
 		"Event size1 unexpected size");
-	app_evt_mgr_free(ev_s1);
+	app_event_manager_free(ev_s1);
 
 	ev_s2 = new_test_size2_event();
-	zassert_equal(sizeof(*ev_s2), app_evt_mgr_event_size(&ev_s2->header),
+	zassert_equal(sizeof(*ev_s2), app_event_manager_event_size(&ev_s2->header),
 		"Event size2 unexpected size");
-	app_evt_mgr_free(ev_s2);
+	app_event_manager_free(ev_s2);
 
 	ev_s3 = new_test_size3_event();
-	zassert_equal(sizeof(*ev_s3), app_evt_mgr_event_size(&ev_s3->header),
+	zassert_equal(sizeof(*ev_s3), app_event_manager_event_size(&ev_s3->header),
 		"Event size3 unexpected size");
-	app_evt_mgr_free(ev_s3);
+	app_event_manager_free(ev_s3);
 
 	ev_sb = new_test_size_big_event();
-	zassert_equal(sizeof(*ev_sb), app_evt_mgr_event_size(&ev_sb->header),
+	zassert_equal(sizeof(*ev_sb), app_event_manager_event_size(&ev_sb->header),
 		"Event size_big unexpected size");
-	app_evt_mgr_free(ev_sb);
+	app_event_manager_free(ev_sb);
 }
 
 static void test_event_size_dynamic(void)
@@ -116,19 +116,19 @@ static void test_event_size_dynamic(void)
 	struct test_dynamic_event *ev;
 
 	ev = new_test_dynamic_event(0);
-	zassert_equal(sizeof(*ev) + 0, app_evt_mgr_event_size(&ev->header),
+	zassert_equal(sizeof(*ev) + 0, app_event_manager_event_size(&ev->header),
 		"Event dynamic with 0 elements unexpected size");
-	app_evt_mgr_free(ev);
+	app_event_manager_free(ev);
 
 	ev = new_test_dynamic_event(10);
-	zassert_equal(sizeof(*ev) + 10, app_evt_mgr_event_size(&ev->header),
+	zassert_equal(sizeof(*ev) + 10, app_event_manager_event_size(&ev->header),
 		"Event dynamic with 10 elements unexpected size");
-	app_evt_mgr_free(ev);
+	app_event_manager_free(ev);
 
 	ev = new_test_dynamic_event(100);
-	zassert_equal(sizeof(*ev) + 100, app_evt_mgr_event_size(&ev->header),
+	zassert_equal(sizeof(*ev) + 100, app_event_manager_event_size(&ev->header),
 		"Event dynamic with 100 elements unexpected size");
-	app_evt_mgr_free(ev);
+	app_event_manager_free(ev);
 }
 
 static void test_event_size_dynamic_with_data(void)
@@ -141,19 +141,19 @@ static void test_event_size_dynamic_with_data(void)
 	struct test_dynamic_with_data_event *ev;
 
 	ev = new_test_dynamic_with_data_event(0);
-	zassert_equal(sizeof(*ev) + 0, app_evt_mgr_event_size(&ev->header),
+	zassert_equal(sizeof(*ev) + 0, app_event_manager_event_size(&ev->header),
 		"Event dynamic with 0 elements unexpected size");
-	app_evt_mgr_free(ev);
+	app_event_manager_free(ev);
 
 	ev = new_test_dynamic_with_data_event(10);
-	zassert_equal(sizeof(*ev) + 10, app_evt_mgr_event_size(&ev->header),
+	zassert_equal(sizeof(*ev) + 10, app_event_manager_event_size(&ev->header),
 		"Event dynamic with 10 elements unexpected size");
-	app_evt_mgr_free(ev);
+	app_event_manager_free(ev);
 
 	ev = new_test_dynamic_with_data_event(100);
-	zassert_equal(sizeof(*ev) + 100, app_evt_mgr_event_size(&ev->header),
+	zassert_equal(sizeof(*ev) + 100, app_event_manager_event_size(&ev->header),
 		"Event dynamic with 100 elements unexpected size");
-	app_evt_mgr_free(ev);
+	app_event_manager_free(ev);
 }
 
 static void test_event_size_disabled(void)
@@ -167,18 +167,18 @@ static void test_event_size_disabled(void)
 
 	ev_s1 = new_test_size1_event();
 	expect_assert = true;
-	zassert_equal(0, app_evt_mgr_event_size(&ev_s1->header),
+	zassert_equal(0, app_event_manager_event_size(&ev_s1->header),
 		"Event size1 unexpected size");
 	zassert_false(expect_assert,
-		"Assertion during app_evt_mgr_event_size function execution was expected");
-	app_evt_mgr_free(ev_s1);
+		"Assertion during app_event_manager_event_size function execution was expected");
+	app_event_manager_free(ev_s1);
 }
 
 void test_oom_reset(void);
 
 void test_main(void)
 {
-	ztest_test_suite(app_evt_mgr_tests,
+	ztest_test_suite(app_event_manager_tests,
 			 ztest_unit_test(test_init),
 			 ztest_unit_test(test_basic),
 			 ztest_unit_test(test_data),
@@ -192,7 +192,7 @@ void test_main(void)
 			 ztest_unit_test(test_event_size_disabled)
 			 );
 
-	ztest_run_test_suite(app_evt_mgr_tests);
+	ztest_run_test_suite(app_event_manager_tests);
 }
 
 static bool event_handler(const struct application_event_header *aeh)

@@ -110,7 +110,7 @@ Firmware architecture
 =====================
 
 The nRF Machine Learning application has a modular structure, where each module has a defined scope of responsibility.
-The application uses the :ref:`app_evt_mgr` to distribute events between modules in the system.
+The application uses the :ref:`app_event_manager` to distribute events between modules in the system.
 
 The following figure shows the application architecture.
 The figure visualizes relations between Application Event Manager, modules, drivers, and libraries.
@@ -599,7 +599,7 @@ The application uses the following Zephyr drivers and libraries:
 
 The application uses the following |NCS| libraries and drivers:
 
-* :ref:`app_evt_mgr`
+* :ref:`app_event_manager`
 * :ref:`lib_caf`
 * :ref:`ei_wrapper`
 * :ref:`nus_service_readme`

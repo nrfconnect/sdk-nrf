@@ -9,11 +9,11 @@
 
 /**
  * @brief Events with different sizes
- * @defgroup sized_events Events used to test @ref app_evt_mgr_event_size
+ * @defgroup sized_events Events used to test @ref app_event_manager_event_size
  * @{
  */
 
-#include <app_evt_mgr.h>
+#include <app_event_manager.h>
 #include <stdint.h>
 
 #ifdef __cplusplus

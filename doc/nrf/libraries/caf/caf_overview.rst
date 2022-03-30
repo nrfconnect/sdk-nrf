@@ -7,7 +7,7 @@ Common Application Framework overview
    :local:
    :depth: 2
 
-Common Application Framework (CAF) is a set of ready-for-use modules and events built on top of :ref:`app_evt_mgr`.
+Common Application Framework (CAF) is a set of ready-for-use modules and events built on top of :ref:`app_event_manager`.
 Using CAF allows you to have a consistent event-based architecture in your application.
 
 You can check the :ref:`caf_preview_sample` for a demonstration of how to add ready-for-use and custom CAF modules into an application.
@@ -47,7 +47,7 @@ complete the following steps:
 
 1. Enable :kconfig:option:`CONFIG_CAF` Kconfig option in your project configuration file.
 #. Enable and initialize Application Event Manager.
-   See :ref:`app_evt_mgr_configuration` for more details.
+   See :ref:`app_event_manager_configuration` for more details.
 #. Submit the first :c:struct:`module_state_event`:
 
    a. Add the following in your :file:`main.c` file:
@@ -106,7 +106,7 @@ However, if you want to add custom modules that communicate with CAF modules usi
 
 * A custom module must register as Application Event Manager's listener and subscribe for CAF events that should be handled by that custom module.
   You can subscribe for a CAF event in the same way as you subscribe for any other Application Event Manager event.
-  See the :ref:`app_evt_mgr_register_module_as_listener` documentation for instructions about how to configure this.
+  See the :ref:`app_event_manager_register_module_as_listener` documentation for instructions about how to configure this.
 * The module must work with :c:struct:`module_state_event`.
   It must submit it and react to it.
 
