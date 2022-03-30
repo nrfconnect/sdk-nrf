@@ -9,7 +9,6 @@
 #include <string.h>
 #include <nrf_modem_lib_trace.h>
 #include "mock_SEGGER_RTT.h"
-#include "mock_nrf_modem.h"
 
 extern int unity_main(void);
 
@@ -20,21 +19,17 @@ static unsigned int exp_trace_mode;
 static int nrf_modem_at_printf_retval;
 static bool exp_trace_stop;
 
-static K_HEAP_DEFINE(trace_heap, CONFIG_NRF_MODEM_LIB_TRACE_HEAP_SIZE);
-
 /* Suite teardown shall finalize with mandatory call to generic_suiteTearDown. */
 extern int generic_suiteTearDown(int num_failures);
 
 void setUp(void)
 {
 	mock_SEGGER_RTT_Init();
-	mock_nrf_modem_Init();
 }
 
 void tearDown(void)
 {
 	mock_SEGGER_RTT_Verify();
-	mock_nrf_modem_Verify();
 
 	exp_trace_stop = false;
 }
@@ -91,7 +86,7 @@ static void trace_session_setup_with_rtt_transport(void)
 	__wrap_SEGGER_RTT_AllocUpBuffer_AddCallback(&rtt_allocupbuffer_callback);
 	__wrap_SEGGER_RTT_AllocUpBuffer_ExpectAnyArgsAndReturn(0);
 
-	TEST_ASSERT_EQUAL(0, nrf_modem_lib_trace_init(&trace_heap));
+	TEST_ASSERT_EQUAL(0, nrf_modem_lib_trace_init());
 
 	nrf_modem_at_printf_ExpectTraceModeAndReturn(NRF_MODEM_LIB_TRACE_ALL, 0);
 
@@ -105,7 +100,7 @@ void test_modem_trace_init_rtt_transport_medium(void)
 	__wrap_SEGGER_RTT_AllocUpBuffer_ExpectAnyArgsAndReturn(trace_rtt_channel);
 	__wrap_SEGGER_RTT_AllocUpBuffer_AddCallback(&rtt_allocupbuffer_callback);
 
-	TEST_ASSERT_EQUAL(0, nrf_modem_lib_trace_init(&trace_heap));
+	TEST_ASSERT_EQUAL(0, nrf_modem_lib_trace_init());
 }
 
 static void expect_rtt_write(const uint8_t *buffer, uint16_t size)
@@ -133,15 +128,6 @@ void test_modem_trace_forwarding_to_rtt(void)
 		sizeof(sample_trace_data) - CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT_BUF_SIZE);
 
 	nrf_modem_lib_trace_process(sample_trace_data, sizeof(sample_trace_data));
-
-	__wrap_nrf_modem_trace_processed_callback_ExpectAndReturn(sample_trace_data,
-		sizeof(sample_trace_data), 0);
-
-	/* Make the test thread sleep so that the trace handler thread is allowed to run.
-	 * This should make the trace handler thread pick up the trace from its fifo and send it
-	 * over RTT.
-	 */
-	k_sleep(K_MSEC(1));
 }
 
 /* Test that the module drops traces if RTT channel allocation had failed. */
@@ -150,18 +136,11 @@ void test_modem_trace_when_rtt_channel_allocation_fails(void)
 	/* Simulate failure by returning negative rtt channel. */
 	__wrap_SEGGER_RTT_AllocUpBuffer_ExpectAnyArgsAndReturn(-1);
 
-	TEST_ASSERT_EQUAL(-EBUSY, nrf_modem_lib_trace_init(&trace_heap));
+	TEST_ASSERT_EQUAL(-EBUSY, nrf_modem_lib_trace_init());
 	TEST_ASSERT_EQUAL(-ENXIO, nrf_modem_lib_trace_start(NRF_MODEM_LIB_TRACE_ALL));
 
 	const uint16_t sample_trace_buffer_size = 10;
 	const uint8_t sample_trace_data[sample_trace_buffer_size];
-
-	/* Verify that nrf_modem_trace_processed_callback is called even if the channel allocation
-	 * had failed.
-	 */
-	__wrap_nrf_modem_trace_processed_callback_ExpectAndReturn(sample_trace_data,
-		sizeof(sample_trace_data), 0);
-
 
 	/* Simulate the reception of modem trace and expect no RTT API to be called. */
 	TEST_ASSERT_EQUAL(-ENXIO,
@@ -173,12 +152,6 @@ void test_modem_trace_process_when_not_initialized(void)
 {
 	const uint16_t sample_trace_buffer_size = 10;
 	const uint8_t sample_trace_data[sample_trace_buffer_size];
-
-	/* Verify that nrf_modem_trace_processed_callback is called even if the trace module was
-	 * not initialized.
-	 */
-	__wrap_nrf_modem_trace_processed_callback_ExpectAndReturn(sample_trace_data,
-		sizeof(sample_trace_data), 0);
 
 	/* Simulate the reception of modem trace and expect no RTT API to be called. */
 	TEST_ASSERT_EQUAL(-ENXIO,
