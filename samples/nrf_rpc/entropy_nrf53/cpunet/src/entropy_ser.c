@@ -25,7 +25,7 @@ enum call_type {
 
 NRF_RPC_GROUP_DEFINE(entropy_group, "nrf_sample_entropy", NULL, NULL, NULL);
 
-static const struct device *entropy;
+static const struct device *entropy = DEVICE_DT_GET(DT_CHOSEN(zephyr_entropy));
 
 static void rsp_error_code_send(int err_code)
 {
@@ -42,8 +42,7 @@ static void entropy_init_handler(CborValue *packet, void *handler_data)
 {
 	nrf_rpc_cbor_decoding_done(packet);
 
-	entropy = device_get_binding(DT_CHOSEN_ZEPHYR_ENTROPY_LABEL);
-	if (!entropy) {
+	if (!device_is_ready(entropy)) {
 		rsp_error_code_send(-NRF_EINVAL);
 		return;
 	}
