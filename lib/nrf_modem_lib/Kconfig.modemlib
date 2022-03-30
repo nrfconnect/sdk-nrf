@@ -137,8 +137,14 @@ config NRF_MODEM_LIB_SHMEM_TRACE_SIZE
 	help
 	  Size of the shared memory area used to receive modem traces.
 
+config NRF_MODEM_LIB_TRACE_HEAP_SIZE_OVERRIDE
+	bool "Custom trace heap size"
+	depends on NRF_MODEM_LIB_TRACE_ENABLED
+	help
+	  Override the default trace heap size.
+
 config NRF_MODEM_LIB_TRACE_HEAP_SIZE
-	int "Modem trace heap size" if NRF_MODEM_LIB_TRACE_ENABLED
+	int "Modem trace heap size" if NRF_MODEM_LIB_TRACE_HEAP_SIZE_OVERRIDE
 	default 2048 if NRF_MODEM_LIB_TRACE_ENABLED
 	default 0
 	help
