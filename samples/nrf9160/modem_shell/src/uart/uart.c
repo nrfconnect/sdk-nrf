@@ -8,6 +8,7 @@
 
 #include <zephyr.h>
 #include <device.h>
+#include <devicetree.h>
 #include <pm/device.h>
 #include "uart.h"
 
@@ -48,11 +49,9 @@ static void uart1_set_enable(bool enable)
  */
 static void uart0_set_enable(bool enable)
 {
-	const struct device *uart_dev;
+	const struct device *uart_dev = DEVICE_DT_GET(DT_NODELABEL(uart0));
 
-	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
-
-	if (!uart_dev) {
+	if (!device_is_ready(uart_dev)) {
 		return;
 	}
 

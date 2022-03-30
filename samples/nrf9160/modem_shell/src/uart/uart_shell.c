@@ -8,6 +8,7 @@
 
 #include <zephyr.h>
 #include <device.h>
+#include <devicetree.h>
 #include <pm/device.h>
 #include <shell/shell.h>
 #include <shell/shell_uart.h>
@@ -85,13 +86,12 @@ void uart_toggle_power_state_at_event(const struct lte_lc_evt *const evt)
 
 void uart_toggle_power_state(void)
 {
-	const struct device *uart_dev;
+	const struct device *uart_dev = DEVICE_DT_GET(DT_NODELABEL(uart0));
 	enum pm_device_state uart0_power_state;
 	int err;
 
-	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
-	if (uart_dev == NULL) {
-		mosh_print("Could not get UART device");
+	if (!device_is_ready(uart_dev)) {
+		mosh_print("UART device not ready");
 		return;
 	}
 
