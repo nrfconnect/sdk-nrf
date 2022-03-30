@@ -25,6 +25,19 @@ config BT_RPA_TIMEOUT
 	  rotation should be done together with Fast Pair payload update (responsibility of
 	  sample/application).
 
+config BT_DIS
+	default y
+
+config BT_DIS_FW_REV
+	default y
+	help
+	  Firmware revision characteristic is required by the Fast Pair specification. Enable it
+	  by default if Fast Pair Service is enabled to simplify configuration.
+
+config BT_DIS_FW_REV_STR
+	default MCUBOOT_IMAGE_VERSION if BOOTLOADER_MCUBOOT
+	default "0.0.0+0"
+
 config BT_FAST_PAIR_ADVERTISING
 	bool
 	depends on BT_PERIPHERAL
