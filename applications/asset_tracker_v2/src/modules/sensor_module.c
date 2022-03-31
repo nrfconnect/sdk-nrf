@@ -82,7 +82,7 @@ static void state_set(enum state_type new_state)
 }
 
 /* Handlers */
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	struct sensor_msg_data msg = {0};
 	bool enqueue_msg = false;
@@ -145,7 +145,7 @@ static void movement_data_send(const struct ext_sensor_evt *const acc_data)
 	sensor_module_event->type = SENSOR_EVT_MOVEMENT_DATA_READY;
 
 	accelerometer_callback_set(false);
-	APPLICATION_EVENT_SUBMIT(sensor_module_event);
+	APP_EVENT_SUBMIT(sensor_module_event);
 }
 
 static void ext_sensor_handler(const struct ext_sensor_evt *const evt)
@@ -232,7 +232,7 @@ static void environmental_data_get(void)
 	sensor_module_event = new_sensor_module_event();
 	sensor_module_event->type = SENSOR_EVT_ENVIRONMENTAL_NOT_SUPPORTED;
 #endif
-	APPLICATION_EVENT_SUBMIT(sensor_module_event);
+	APP_EVENT_SUBMIT(sensor_module_event);
 }
 
 static int setup(void)
@@ -380,7 +380,7 @@ K_THREAD_DEFINE(sensor_module_thread, CONFIG_SENSOR_THREAD_STACK_SIZE,
 		module_thread_fn, NULL, NULL, NULL,
 		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, app_module_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, data_module_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, util_module_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, app_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, data_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, util_module_event);

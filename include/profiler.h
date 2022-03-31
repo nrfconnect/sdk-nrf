@@ -19,9 +19,9 @@
 #include <sys/util.h>
 #include <sys/__assert.h>
 
-#ifndef CONFIG_PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS
+#ifndef CONFIG_PROFILER_MAX_NUMBER_OF_APP_EVENTS
 /** Maximum number of events. */
-#define CONFIG_PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS 0
+#define CONFIG_PROFILER_MAX_NUMBER_OF_APP_EVENTS 0
 #endif
 
 #ifndef CONFIG_PROFILER_NUMBER_OF_INTERNAL_EVENTS
@@ -31,7 +31,7 @@
 
 /** Maximum number of events including user application events and internal events. */
 #define PROFILER_MAX_NUMBER_OF_APPLICATION_AND_INTERNAL_EVENTS \
-	((CONFIG_PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS) + \
+	((CONFIG_PROFILER_MAX_NUMBER_OF_APP_EVENTS) + \
 	(CONFIG_PROFILER_NUMBER_OF_INTERNAL_EVENTS))
 
 /** @brief Bitmask indicating event is enabled.

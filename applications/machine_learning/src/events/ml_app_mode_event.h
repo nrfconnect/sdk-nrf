@@ -31,13 +31,13 @@ enum ml_app_mode {
 
 /** @brief Machine learning application mode event. */
 struct ml_app_mode_event {
-	struct application_event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	enum ml_app_mode mode; /**< Machine learning application mode. */
 };
 
 
-APPLICATION_EVENT_TYPE_DECLARE(ml_app_mode_event);
+APP_EVENT_TYPE_DECLARE(ml_app_mode_event);
 
 #ifdef __cplusplus
 }

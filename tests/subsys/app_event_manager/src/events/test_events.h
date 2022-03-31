@@ -33,20 +33,20 @@ enum test_id {
 };
 
 struct test_start_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	enum test_id test_id;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(test_start_event);
+APP_EVENT_TYPE_DECLARE(test_start_event);
 
 struct test_end_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	enum test_id test_id;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(test_end_event);
+APP_EVENT_TYPE_DECLARE(test_end_event);
 
 #ifdef __cplusplus
 }

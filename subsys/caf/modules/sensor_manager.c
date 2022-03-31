@@ -50,7 +50,7 @@ static void update_sensor_state(const struct sm_sensor_config *sc, struct sensor
 	event->state = state;
 
 	atomic_set(&sd->state, state);
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void send_sensor_event(const char *descr, const float *data, const size_t data_cnt,
@@ -65,7 +65,7 @@ static void send_sensor_event(const char *descr, const float *data, const size_t
 	memcpy(data_ptr, data, sizeof(float) * data_cnt);
 
 	atomic_inc(event_cnt);
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static struct sensor_data *get_sensor_data(const struct device *dev)
@@ -196,7 +196,7 @@ static void trigger_handler(const struct device *dev, const struct sensor_trigge
 	if (IS_ENABLED(CONFIG_CAF_SENSOR_MANAGER_ACTIVE_PM)) {
 		LOG_INF("Event (%d) from sensor %s triggers wake up",
 			trigger->type, sc->dev->name);
-		APPLICATION_EVENT_SUBMIT(new_wake_up_event());
+		APP_EVENT_SUBMIT(new_wake_up_event());
 	}
 
 	k_sem_give(&can_sample);
@@ -444,7 +444,7 @@ static void init(void)
 	k_thread_name_set(&sample_thread, "caf_sensor_manager");
 }
 
-static bool handle_power_down_event(const struct application_event_header *aeh)
+static bool handle_power_down_event(const struct app_event_header *aeh)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(sensor_data); i++) {
 		struct sensor_data *sd = &sensor_data[i];
@@ -478,7 +478,7 @@ static bool handle_power_down_event(const struct application_event_header *aeh)
 	return false;
 }
 
-static bool handle_wake_up_event(const struct application_event_header *aeh)
+static bool handle_wake_up_event(const struct app_event_header *aeh)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(sensor_data); i++) {
 		struct sensor_data *sd = &sensor_data[i];
@@ -511,7 +511,7 @@ static bool handle_wake_up_event(const struct application_event_header *aeh)
 	return false;
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_module_state_event(aeh)) {
 		struct module_state_event *event = cast_module_state_event(aeh);
@@ -557,10 +557,10 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, sensor_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE_FINAL(MODULE, sensor_event);
 #if CONFIG_CAF_SENSOR_MANAGER_PM
-APPLICATION_EVENT_SUBSCRIBE(MODULE, power_down_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
+APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #endif /* CONFIG_AF_SENSOR_MANAGER_PM */

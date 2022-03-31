@@ -9,7 +9,7 @@
 #include "sensor_sim_event.h"
 
 
-static void log_sensor_sim_event(const struct application_event_header *aeh)
+static void log_sensor_sim_event(const struct app_event_header *aeh)
 {
 	const struct sensor_sim_event *event = cast_sensor_sim_event(aeh);
 
@@ -17,18 +17,18 @@ static void log_sensor_sim_event(const struct application_event_header *aeh)
 }
 
 static void profile_sensor_sim_event(struct log_event_buf *buf,
-				     const struct application_event_header *aeh)
+				     const struct app_event_header *aeh)
 {
 }
 
-EVENT_INFO_DEFINE(sensor_sim_event,
+APP_EVENT_INFO_DEFINE(sensor_sim_event,
 		  ENCODE(),
 		  ENCODE(),
 		  profile_sensor_sim_event);
 
-APPLICATION_EVENT_TYPE_DEFINE(sensor_sim_event,
+APP_EVENT_TYPE_DEFINE(sensor_sim_event,
 		  log_sensor_sim_event,
 		  &sensor_sim_event_info,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_ML_APP_INIT_LOG_SENSOR_SIM_EVENTS,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

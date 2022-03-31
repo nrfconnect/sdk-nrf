@@ -21,12 +21,12 @@ extern "C" {
 #endif
 
 struct one_sec_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	int8_t five_sec_timer;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(one_sec_event);
+APP_EVENT_TYPE_DECLARE(one_sec_event);
 
 #ifdef __cplusplus
 }

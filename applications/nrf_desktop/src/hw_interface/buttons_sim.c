@@ -66,7 +66,7 @@ static void send_button_event(uint16_t key_id, bool pressed)
 
 	event->key_id = key_id;
 	event->pressed = pressed;
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static bool gen_key_id(uint16_t *generated_key)
@@ -108,7 +108,7 @@ void generate_keys_fn(struct k_work *w)
 	}
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_button_event(aeh)) {
 		const struct button_event *event = cast_button_event(aeh);
@@ -179,8 +179,8 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, button_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, power_down_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, button_event);
+APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
+APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);

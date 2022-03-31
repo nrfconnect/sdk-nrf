@@ -39,7 +39,7 @@ const char * const g_memfault_metrics_id_GnssTimeToFix;
 const char * const g_memfault_metrics_id_GnssSatellitesTracked;
 const char * const g_memfault_metrics_id_GnssTimeoutSearchTime;
 
-/* Dummy structs to please linker. The APPLICATION_EVENT_SUBSCRIBE macros in debug_module.c
+/* Dummy structs to please linker. The APP_EVENT_SUBSCRIBE macros in debug_module.c
  * depend on these to exist. But since we are unit testing, we dont need
  * these subscriptions and hence these structs can remain uninitialized.
  */
@@ -90,7 +90,7 @@ static void latch_watchdog_callback(watchdog_evt_handler_t handler, int no_of_ca
 	debug_module_watchdog_callback = handler;
 }
 
-static void validate_debug_data_ready_evt(struct application_event_header *aeh, int no_of_calls)
+static void validate_debug_data_ready_evt(struct app_event_header *aeh, int no_of_calls)
 {
 	struct debug_module_event *event = cast_debug_module_event(aeh);
 
@@ -120,7 +120,7 @@ void setup_debug_module_in_init_state(void)
 	__wrap_module_start_Stub(&module_start_stub);
 
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
-		(struct application_event_header *)app_module_event));
+		(struct app_event_header *)app_module_event));
 	app_event_manager_free(app_module_event);
 }
 
@@ -148,7 +148,7 @@ void test_memfault_trigger_metric_sampling_on_gnss_fix(void)
 	gnss_module_event->data.gnss.search_time = 60000;
 
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
-		(struct application_event_header *)gnss_module_event));
+		(struct app_event_header *)gnss_module_event));
 	app_event_manager_free(gnss_module_event);
 }
 
@@ -178,7 +178,7 @@ void test_memfault_trigger_metric_sampling_on_gnss_timeout(void)
 	gnss_module_event->data.gnss.search_time = 30000;
 
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
-		(struct application_event_header *)gnss_module_event));
+		(struct app_event_header *)gnss_module_event));
 	app_event_manager_free(gnss_module_event);
 }
 
@@ -207,7 +207,7 @@ void test_memfault_trigger_data_send(void)
 
 	__wrap_app_event_manager_alloc_IgnoreAndReturn(&debug_module_event_memory);
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
-		(struct application_event_header *)data_module_event));
+		(struct app_event_header *)data_module_event));
 	app_event_manager_free(data_module_event);
 }
 
@@ -227,23 +227,23 @@ void test_memfault_unhandled_event(void)
 
 	gnss_module_event->type = GNSS_EVT_ACTIVE;
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
-		(struct application_event_header *)gnss_module_event));
+		(struct app_event_header *)gnss_module_event));
 
 	gnss_module_event->type = GNSS_EVT_INACTIVE;
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
-		(struct application_event_header *)gnss_module_event));
+		(struct app_event_header *)gnss_module_event));
 
 	gnss_module_event->type = GNSS_EVT_SHUTDOWN_READY;
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
-		(struct application_event_header *)gnss_module_event));
+		(struct app_event_header *)gnss_module_event));
 
 	gnss_module_event->type = GNSS_EVT_AGPS_NEEDED;
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
-		(struct application_event_header *)gnss_module_event));
+		(struct app_event_header *)gnss_module_event));
 
 	gnss_module_event->type = GNSS_EVT_ERROR_CODE;
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
-		(struct application_event_header *)gnss_module_event));
+		(struct app_event_header *)gnss_module_event));
 	app_event_manager_free(gnss_module_event);
 }
 

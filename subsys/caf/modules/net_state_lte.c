@@ -40,7 +40,7 @@ static void send_net_state_event(enum net_state state)
 
 	event->id = MODULE_ID(MODULE);
 	event->state = state;
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void set_net_state(enum net_state state)
@@ -163,7 +163,7 @@ static int connect_lte(void)
 	return 0;
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_module_state_event(aeh)) {
 		struct module_state_event *event = cast_module_state_event(aeh);
@@ -208,8 +208,8 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if CONFIG_CAF_LOG_NET_STATE_WAITING
-	APPLICATION_EVENT_SUBSCRIBE(MODULE, net_state_event);
+	APP_EVENT_SUBSCRIBE(MODULE, net_state_event);
 #endif

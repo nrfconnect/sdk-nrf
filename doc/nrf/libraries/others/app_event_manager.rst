@@ -86,9 +86,9 @@ To create a header file for the event type you want to define:
 
 	   #include <app_event_manager.h>
 
-#. Define the new event type by creating a structure that contains an :c:struct:`application_event_header` named ``header`` as the first field.
+#. Define the new event type by creating a structure that contains an :c:struct:`app_event_header` named ``header`` as the first field.
 #. Optionally, add additional custom data fields to the structure.
-#. Declare the event type with the :c:macro:`APPLICATION_EVENT_TYPE_DECLARE` macro, passing the name of the created structure as an argument.
+#. Declare the event type with the :c:macro:`APP_EVENT_TYPE_DECLARE` macro, passing the name of the created structure as an argument.
 
 The following code example shows a header file for the event type :c:struct:`sample_event`:
 
@@ -97,7 +97,7 @@ The following code example shows a header file for the event type :c:struct:`sam
    #include <app_event_manager.h>
 
    struct sample_event {
-	   struct application_event_header header;
+	   struct app_event_header header;
 
 	   /* Custom data fields. */
 	   int8_t value1;
@@ -105,10 +105,10 @@ The following code example shows a header file for the event type :c:struct:`sam
 	   int32_t value3;
    };
 
-   APPLICATION_EVENT_TYPE_DECLARE(sample_event);
+   APP_EVENT_TYPE_DECLARE(sample_event);
 
 In some use cases, the length of the data associated with an event may vary.
-You can use the :c:macro:`APPLICATION_EVENT_TYPE_DYNDATA_DECLARE` macro instead of :c:macro:`APPLICATION_EVENT_TYPE_DECLARE` to declare an event type with variable data size.
+You can use the :c:macro:`APP_EVENT_TYPE_DYNDATA_DECLARE` macro instead of :c:macro:`APP_EVENT_TYPE_DECLARE` to declare an event type with variable data size.
 In such case, add the data with the variable size as the last member of the event structure.
 For example, you can add variable sized data to the previously defined event by applying the following change to the code:
 
@@ -117,7 +117,7 @@ For example, you can add variable sized data to the previously defined event by 
    #include <app_event_manager.h>
 
    struct sample_event {
-	   struct application_event_header header;
+	   struct app_event_header header;
 
 	   /* Custom data fields. */
 	   int8_t value1;
@@ -126,7 +126,7 @@ For example, you can add variable sized data to the previously defined event by 
 	   struct event_dyndata dyndata;
    };
 
-   APPLICATION_EVENT_TYPE_DYNDATA_DECLARE(sample_event);
+   APP_EVENT_TYPE_DYNDATA_DECLARE(sample_event);
 
 In this example, the :c:struct:`event_dyndata` structure contains the following information:
 
@@ -139,13 +139,13 @@ Create a source file
 To create a source file for the event type you defined in the header file:
 
 1. Include the header file for the new event type in your source file.
-#. Define the event type with the :c:macro:`APPLICATION_EVENT_TYPE_DEFINE` macro.
+#. Define the event type with the :c:macro:`APP_EVENT_TYPE_DEFINE` macro.
    Pass the name of the event type as declared in the header along with additional parameters.
    For example, you can provide a function that fills a buffer with a string version of the event data (used for logging).
-   The :c:macro:`APPLICATION_EVENT_TYPE_DEFINE` macro adds flags as a last parameter.
-   These flags are constant and can only be set using :c:macro:`APPLICATION_EVENT_FLAGS_CREATE` on :c:macro:`APPLICATION_EVENT_TYPE_DEFINE` macro.
-   To not set any flag, use :c:macro:`APPLICATION_EVENT_FLAGS_CREATE` without any argument as shown in the below example.
-   To get value of specific flag, use :c:func:`get_app_event_type_flag` function.
+   The :c:macro:`APP_EVENT_TYPE_DEFINE` macro adds flags as a last parameter.
+   These flags are constant and can only be set using :c:macro:`APP_EVENT_FLAGS_CREATE` on :c:macro:`APP_EVENT_TYPE_DEFINE` macro.
+   To not set any flag, use :c:macro:`APP_EVENT_FLAGS_CREATE` without any argument as shown in the below example.
+   To get value of specific flag, use :c:func:`app_event_get_type_flag` function.
 
 The following code example shows a source file for the event type ``sample_event``:
 
@@ -153,7 +153,7 @@ The following code example shows a source file for the event type ``sample_event
 
    #include "sample_event.h"
 
-   static void log_sample_event(const struct application_event_header *aeh)
+   static void log_sample_event(const struct app_event_header *aeh)
    {
 	   struct sample_event *event = cast_sample_event(aeh);
 
@@ -161,10 +161,10 @@ The following code example shows a source file for the event type ``sample_event
 			   event->value2, event->value3);
    }
 
-   APPLICATION_EVENT_TYPE_DEFINE(sample_event,			/* Unique event name. */
+   APP_EVENT_TYPE_DEFINE(sample_event,			/* Unique event name. */
 		     log_sample_event,			/* Function logging event data. */
 		     NULL,				/* No event info provided. */
-		     APPLICATION_EVENT_FLAGS_CREATE());		/* Flags managing event type. */
+		     APP_EVENT_FLAGS_CREATE());		/* Flags managing event type. */
 
 .. note::
 	There is a deprecated way of logging Application Event Manager events by writing a string to the provided buffer that will be supported until a future release of |NCS|.
@@ -180,7 +180,7 @@ To submit an event of a given type, for example ``sample_event``:
 1. Allocate the event by calling the function with the name *new_event_type_name*.
    For example, ``new_sample_event()``.
 #. Write values to the data fields.
-#. Use :c:macro:`APPLICATION_EVENT_SUBMIT` to submit the event.
+#. Use :c:macro:`APP_EVENT_SUBMIT` to submit the event.
 
 The following code example shows how to create and submit an event of type ``sample_event`` that has three data fields:
 
@@ -195,7 +195,7 @@ The following code example shows how to create and submit an event of type ``sam
 	event->value3 = value3;
 
 	/* Submit event. */
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 
 If an event type also defines data with variable size, you must pass also the size of the data as an argument to the function that allocates the event.
 For example, if the ``sample_event`` also contains data with variable size, you must apply the following changes to the code:
@@ -214,7 +214,7 @@ For example, if the ``sample_event`` also contains data with variable size, you 
 	memcpy(event->dyndata.data, my_buf, my_data_size);
 
 	/* Submit event. */
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 
 After the event is submitted, the Application Event Manager adds it to the processing queue.
 When the event is processed, the Application Event Manager notifies all modules that subscribe to this event type.
@@ -233,21 +233,21 @@ If you want a module to receive events managed by the Application Event Manager,
 To turn a module into a listener for specific event types, complete the following steps:
 
 1. Include the header files for the respective event types, for example, ``#include "sample_event.h"``.
-#. :ref:`Implement an Event handler function <app_event_manager_register_module_as_listener_handler>` and define the module as a listener with the :c:macro:`APPLICATION_EVENT_LISTENER` macro, passing both the name of the module and the event handler function as arguments.
+#. :ref:`Implement an Event handler function <app_event_manager_register_module_as_listener_handler>` and define the module as a listener with the :c:macro:`APP_EVENT_LISTENER` macro, passing both the name of the module and the event handler function as arguments.
 #. Subscribe the listener to specific event types.
 
 For subscribing to an event type, the Application Event Manager provides three types of subscriptions, differing in priority.
 They can be registered with the following macros:
 
-* :c:macro:`APPLICATION_EVENT_SUBSCRIBE_FIRST` - notification as the first subscriber
-* :c:macro:`APPLICATION_EVENT_SUBSCRIBE_EARLY` - notification before other listeners
-* :c:macro:`APPLICATION_EVENT_SUBSCRIBE` - standard notification
-* :c:macro:`APPLICATION_EVENT_SUBSCRIBE_FINAL` - notification as the last, final subscriber
+* :c:macro:`APP_EVENT_SUBSCRIBE_FIRST` - notification as the first subscriber
+* :c:macro:`APP_EVENT_SUBSCRIBE_EARLY` - notification before other listeners
+* :c:macro:`APP_EVENT_SUBSCRIBE` - standard notification
+* :c:macro:`APP_EVENT_SUBSCRIBE_FINAL` - notification as the last, final subscriber
 
 There is no defined order in which subscribers of the same priority are notified.
 
 The module will receive events for the subscribed event types only.
-The listener name passed to the subscribe macro must be the same one used in the macro :c:macro:`APPLICATION_EVENT_LISTENER`.
+The listener name passed to the subscribe macro must be the same one used in the macro :c:macro:`APP_EVENT_LISTENER`.
 
 .. _app_event_manager_register_module_as_listener_handler:
 
@@ -258,13 +258,13 @@ The event handler function is called when any of the subscribed event types are 
 Only one event handler function can be registered per listener.
 Therefore, if a listener subscribes to multiple event types, the function must handle all of them.
 
-The event handler gets a pointer to the :c:struct:`application_event_header` structure as the function argument.
+The event handler gets a pointer to the :c:struct:`app_event_header` structure as the function argument.
 The function should return ``true`` to consume the event, which means that the event is not propagated to further listeners, or ``false``, otherwise.
 
-To check if an event has a given type, call the function with the name *is*\_\ *event_type_name* (for example, ``is_sample_event()``), passing the pointer to the event header as the argument.
+To check if an event has a given type, call the function with the name *is*\_\ *event_type_name* (for example, ``is_sample_event()``), passing the pointer to the application event header as the argument.
 This function returns ``true`` if the event matches the given type, or ``false`` otherwise.
 
-To access the event data, cast the :c:struct:`application_event_header` structure to a proper event type, using the function with the name *cast*\_\ *event_type_name* (for example, ``cast_sample_event()``), passing the pointer to the event header as the argument.
+To access the event data, cast the :c:struct:`app_event_header` structure to a proper event type, using the function with the name *cast*\_\ *event_type_name* (for example, ``cast_sample_event()``), passing the pointer to the application event header as the argument.
 
 Code example
 ------------
@@ -275,7 +275,7 @@ The following code example shows how to register an event listener with an event
 
 	#include "sample_event.h"
 
-	static bool event_handler(const struct application_event_header *aeh)
+	static bool app_event_handler(const struct app_event_header *aeh)
 	{
 		if (is_sample_event(aeh)) {
 
@@ -295,8 +295,8 @@ The following code example shows how to register an event listener with an event
 		return false;
 	}
 
-	APPLICATION_EVENT_LISTENER(sample_module, event_handler);
-	APPLICATION_EVENT_SUBSCRIBE(sample_module, sample_event);
+	APP_EVENT_LISTENER(sample_module, app_event_handler);
+	APP_EVENT_SUBSCRIBE(sample_module, sample_event);
 
 The variable size data is accessed in the same way as the other members of the structure defining an event.
 
@@ -330,13 +330,13 @@ Tracing hooks
 
 The Application Event Manager uses flexible mechanism to implement hooks when an event is submitted, before it is processed, and after its processing.
 Oryginally designed to implement event tracing, the tracing hooks can be used for other purposes as well.
-The registered hook function should be declared in the ``void hook(const struct application_event_header *aeh)`` format.
+The registered hook function should be declared in the ``void hook(const struct app_event_header *aeh)`` format.
 
 The following macros are implemented to register event tracing hooks:
 
-* :c:macro:`APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST`, :c:macro:`APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER`, :c:macro:`APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER_LAST`
-* :c:macro:`APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER_FIRST`, :c:macro:`APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER`, :c:macro:`APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER_LAST`
-* :c:macro:`APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER_FIRST`, :c:macro:`APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER`, :c:macro:`APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER_LAST`
+* :c:macro:`APP_EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST`, :c:macro:`APP_EVENT_HOOK_ON_SUBMIT_REGISTER`, :c:macro:`APP_EVENT_HOOK_ON_SUBMIT_REGISTER_LAST`
+* :c:macro:`APP_EVENT_HOOK_PREPROCESS_REGISTER_FIRST`, :c:macro:`APP_EVENT_HOOK_PREPROCESS_REGISTER`, :c:macro:`APP_EVENT_HOOK_PREPROCESS_REGISTER_LAST`
+* :c:macro:`APP_EVENT_HOOK_POSTPROCESS_REGISTER_FIRST`, :c:macro:`APP_EVENT_HOOK_POSTPROCESS_REGISTER`, :c:macro:`APP_EVENT_HOOK_POSTPROCESS_REGISTER_LAST`
 
 For details, refer to :ref:`app_event_manager_api`.
 

@@ -58,7 +58,7 @@ struct debug_module_memfault_data {
 
 /** @brief Debug event. */
 struct debug_module_event {
-	struct application_event_header header;
+	struct app_event_header header;
 	enum debug_module_event_type type;
 
 	union {
@@ -68,7 +68,7 @@ struct debug_module_event {
 	} data;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(debug_module_event);
+APP_EVENT_TYPE_DECLARE(debug_module_event);
 
 #ifdef __cplusplus
 }

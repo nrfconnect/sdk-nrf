@@ -30,13 +30,13 @@ extern "C" {
 
 /** @brief HID notification event. */
 struct hid_notification_event {
-	struct application_event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	uint8_t report_id; /**< HID report id. */
 	bool enabled; /**< True if report is enabled. */
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(hid_notification_event);
+APP_EVENT_TYPE_DECLARE(hid_notification_event);
 
 
 #ifdef __cplusplus

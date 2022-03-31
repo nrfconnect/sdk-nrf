@@ -153,7 +153,7 @@ static void uart_callback(const struct device *dev, struct uart_event *evt,
 		event->dev_idx = dev_idx;
 		event->buf = &evt->data.rx.buf[evt->data.rx.offset];
 		event->len = evt->data.rx.len;
-		APPLICATION_EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 		break;
 	case UART_RX_BUF_RELEASED:
 		if (evt->data.rx_buf.buf) {
@@ -353,7 +353,7 @@ static int uart_tx_enqueue(uint8_t *data, size_t data_len, uint8_t dev_idx)
 	return 0;
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	int err;
 
@@ -498,9 +498,9 @@ static bool event_handler(const struct application_event_header *aeh)
 
 	return false;
 }
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, peer_conn_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_data_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, cdc_data_event);
-APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, uart_data_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, peer_conn_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_data_event);
+APP_EVENT_SUBSCRIBE(MODULE, cdc_data_event);
+APP_EVENT_SUBSCRIBE_FINAL(MODULE, uart_data_event);

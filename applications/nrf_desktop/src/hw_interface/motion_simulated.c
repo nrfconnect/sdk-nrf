@@ -69,7 +69,7 @@ static void motion_event_send(int16_t dx, int16_t dy)
 
 	event->dx = dx;
 	event->dy = dy;
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void generate_motion_event(void)
@@ -94,7 +94,7 @@ static void generate_motion_event(void)
 	y_cur = y_new;
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_hid_report_subscription_event(aeh)) {
 		const struct hid_report_subscription_event *event =
@@ -167,12 +167,12 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, power_down_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 
 #if CONFIG_SHELL
 

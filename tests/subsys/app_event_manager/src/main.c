@@ -42,7 +42,7 @@ static void test_start(enum test_id test_id)
 
 	zassert_not_null(ts, "Failed to allocate event");
 	ts->test_id = test_id;
-	APPLICATION_EVENT_SUBMIT(ts);
+	APP_EVENT_SUBMIT(ts);
 
 	int err = k_sem_take(&test_end_sem, K_SECONDS(30));
 	zassert_equal(err, 0, "Test execution hanged");
@@ -195,7 +195,7 @@ void test_main(void)
 	ztest_run_test_suite(app_event_manager_tests);
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_test_end_event(aeh)) {
 		struct test_end_event *ev = cast_test_end_event(aeh);
@@ -212,5 +212,5 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(test_main, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(test_main, test_end_event);
+APP_EVENT_LISTENER(test_main, app_event_handler);
+APP_EVENT_SUBSCRIBE(test_main, test_end_event);

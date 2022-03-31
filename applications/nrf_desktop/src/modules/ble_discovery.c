@@ -85,7 +85,7 @@ static void hids_discovery_completed(struct bt_gatt_dm *dm, void *context)
 	for (size_t i = 0; i < ARRAY_SIZE(bt_peripherals); i++) {
 		if (bt_peripherals[i].pid == peer_pid) {
 			event->peer_type = bt_peripherals[i].peer_type;
-			APPLICATION_EVENT_SUBMIT(event);
+			APP_EVENT_SUBMIT(event);
 			/* This module is the last one to process this event
 			 * and release the discovery data.
 			 */
@@ -333,7 +333,7 @@ static void init(void)
 	module_set_state(MODULE_STATE_READY);
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_ble_peer_event(aeh)) {
 		const struct ble_peer_event *event =
@@ -385,7 +385,7 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
-APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, ble_discovery_complete_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APP_EVENT_SUBSCRIBE_FINAL(MODULE, ble_discovery_complete_event);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);

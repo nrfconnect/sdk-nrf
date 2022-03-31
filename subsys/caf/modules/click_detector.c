@@ -50,7 +50,7 @@ static void submit_click_event(uint16_t key_id, enum click click)
 	event->key_id = key_id;
 	event->click = click;
 
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static enum click get_click(int32_t time_diff)
@@ -191,7 +191,7 @@ static void wake_up(void)
 	module_set_state(MODULE_STATE_READY);
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_button_event(aeh)) {
 		return button_event_handler(cast_button_event(aeh));
@@ -232,10 +232,10 @@ static bool event_handler(const struct application_event_header *aeh)
 
 	return false;
 }
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, button_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, button_event);
 #if CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS
-APPLICATION_EVENT_SUBSCRIBE(MODULE, power_down_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
+APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #endif /* CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS */

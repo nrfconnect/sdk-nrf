@@ -11,7 +11,7 @@
 #define HID_EVENT_LOG_BUF_LEN 128
 
 
-static void log_hid_report_event(const struct application_event_header *aeh)
+static void log_hid_report_event(const struct app_event_header *aeh)
 {
 	const struct hid_report_event *event = cast_hid_report_event(aeh);
 	int pos;
@@ -47,7 +47,7 @@ static void log_hid_report_event(const struct application_event_header *aeh)
 }
 
 static void profile_hid_report_event(struct log_event_buf *buf,
-				     const struct application_event_header *aeh)
+				     const struct app_event_header *aeh)
 {
 	const struct hid_report_event *event = cast_hid_report_event(aeh);
 
@@ -58,19 +58,19 @@ static void profile_hid_report_event(struct log_event_buf *buf,
 	profiler_log_encode_uint32(buf, (uint32_t)event->subscriber);
 }
 
-EVENT_INFO_DEFINE(hid_report_event,
+APP_EVENT_INFO_DEFINE(hid_report_event,
 		  ENCODE(PROFILER_ARG_U8, PROFILER_ARG_U32, PROFILER_ARG_U32),
 		  ENCODE("report_id", "source", "subscriber"),
 		  profile_hid_report_event);
 
-APPLICATION_EVENT_TYPE_DEFINE(hid_report_event,
+APP_EVENT_TYPE_DEFINE(hid_report_event,
 		  log_hid_report_event,
 		  &hid_report_event_info,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_REPORT_EVENT,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
-static void log_hid_report_subscriber_event(const struct application_event_header *aeh)
+static void log_hid_report_subscriber_event(const struct app_event_header *aeh)
 {
 	const struct hid_report_subscriber_event *event =
 		cast_hid_report_subscriber_event(aeh);
@@ -80,7 +80,7 @@ static void log_hid_report_subscriber_event(const struct application_event_heade
 }
 
 static void profile_hid_report_subscriber_event(struct log_event_buf *buf,
-						const struct application_event_header *aeh)
+						const struct app_event_header *aeh)
 {
 	const struct hid_report_subscriber_event *event =
 		cast_hid_report_subscriber_event(aeh);
@@ -89,19 +89,19 @@ static void profile_hid_report_subscriber_event(struct log_event_buf *buf,
 	profiler_log_encode_uint8(buf, event->connected);
 }
 
-EVENT_INFO_DEFINE(hid_report_subscriber_event,
+APP_EVENT_INFO_DEFINE(hid_report_subscriber_event,
 		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8),
 		  ENCODE("subscriber", "connected"),
 		  profile_hid_report_subscriber_event);
 
-APPLICATION_EVENT_TYPE_DEFINE(hid_report_subscriber_event,
+APP_EVENT_TYPE_DEFINE(hid_report_subscriber_event,
 		  log_hid_report_subscriber_event,
 		  &hid_report_subscriber_event_info,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_SUBSCRIBER_EVENT,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
-static void log_hid_report_sent_event(const struct application_event_header *aeh)
+static void log_hid_report_sent_event(const struct app_event_header *aeh)
 {
 	const struct hid_report_sent_event *event =
 		cast_hid_report_sent_event(aeh);
@@ -120,7 +120,7 @@ static void log_hid_report_sent_event(const struct application_event_header *aeh
 }
 
 static void profile_hid_report_sent_event(struct log_event_buf *buf,
-						const struct application_event_header *aeh)
+						const struct app_event_header *aeh)
 {
 	const struct hid_report_sent_event *event =
 		cast_hid_report_sent_event(aeh);
@@ -130,19 +130,19 @@ static void profile_hid_report_sent_event(struct log_event_buf *buf,
 	profiler_log_encode_uint8(buf, event->error);
 }
 
-EVENT_INFO_DEFINE(hid_report_sent_event,
+APP_EVENT_INFO_DEFINE(hid_report_sent_event,
 		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8, PROFILER_ARG_U8),
 		  ENCODE("subscriber", "report_id", "error"),
 		  profile_hid_report_sent_event);
 
-APPLICATION_EVENT_TYPE_DEFINE(hid_report_sent_event,
+APP_EVENT_TYPE_DEFINE(hid_report_sent_event,
 		  log_hid_report_sent_event,
 		  &hid_report_sent_event_info,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_REPORT_SENT_EVENT,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
-static void log_hid_report_subscription_event(const struct application_event_header *aeh)
+static void log_hid_report_subscription_event(const struct app_event_header *aeh)
 {
 	const struct hid_report_subscription_event *event =
 		cast_hid_report_subscription_event(aeh);
@@ -154,7 +154,7 @@ static void log_hid_report_subscription_event(const struct application_event_hea
 }
 
 static void profile_hid_report_subscription_event(struct log_event_buf *buf,
-						  const struct application_event_header *aeh)
+						  const struct app_event_header *aeh)
 {
 	const struct hid_report_subscription_event *event =
 		cast_hid_report_subscription_event(aeh);
@@ -164,14 +164,14 @@ static void profile_hid_report_subscription_event(struct log_event_buf *buf,
 	profiler_log_encode_uint8(buf, event->enabled);
 }
 
-EVENT_INFO_DEFINE(hid_report_subscription_event,
+APP_EVENT_INFO_DEFINE(hid_report_subscription_event,
 		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8, PROFILER_ARG_U8),
 		  ENCODE("subscriber", "report_id", "enabled"),
 		  profile_hid_report_subscription_event);
 
-APPLICATION_EVENT_TYPE_DEFINE(hid_report_subscription_event,
+APP_EVENT_TYPE_DEFINE(hid_report_subscription_event,
 		  log_hid_report_subscription_event,
 		  &hid_report_subscription_event_info,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_HID_SUBSCRIPTION_EVENT,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

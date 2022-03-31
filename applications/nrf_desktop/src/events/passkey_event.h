@@ -22,21 +22,21 @@ extern "C" {
 
 /** @brief Passkey input event. */
 struct passkey_input_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	uint32_t passkey;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(passkey_input_event);
+APP_EVENT_TYPE_DECLARE(passkey_input_event);
 
 /** @brief Passkey request event. */
 struct passkey_req_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	bool active;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(passkey_req_event);
+APP_EVENT_TYPE_DECLARE(passkey_req_event);
 
 #ifdef __cplusplus
 }

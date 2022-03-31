@@ -19,7 +19,7 @@ static char *get_evt_type_str(enum util_module_event_type type)
 	}
 }
 
-static void log_event(const struct application_event_header *aeh)
+static void log_event(const struct app_event_header *aeh)
 {
 	const struct util_module_event *event = cast_util_module_event(aeh);
 
@@ -29,7 +29,7 @@ static void log_event(const struct application_event_header *aeh)
 #if defined(CONFIG_PROFILER)
 
 static void profile_event(struct log_event_buf *buf,
-			 const struct application_event_header *aeh)
+			 const struct app_event_header *aeh)
 {
 	const struct util_module_event *event = cast_util_module_event(aeh);
 
@@ -40,14 +40,14 @@ static void profile_event(struct log_event_buf *buf,
 #endif
 }
 
-COMMON_EVENT_INFO_DEFINE(util_module_event,
+COMMON_APP_EVENT_INFO_DEFINE(util_module_event,
 			 profile_event);
 
 #endif /* CONFIG_PROFILER */
 
-COMMON_APPLICATION_EVENT_TYPE_DEFINE(util_module_event,
+COMMON_APP_EVENT_TYPE_DEFINE(util_module_event,
 			 log_event,
 			 &util_module_event_info,
-			 APPLICATION_EVENT_FLAGS_CREATE(
+			 APP_EVENT_FLAGS_CREATE(
 				IF_ENABLED(CONFIG_UTIL_EVENTS_LOG,
-					(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+					(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

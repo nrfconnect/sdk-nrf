@@ -22,6 +22,6 @@ void main(void)
 		struct config_event *event = new_config_event();
 
 		event->init_value1 = INIT_VALUE1;
-		APPLICATION_EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 	}
 }

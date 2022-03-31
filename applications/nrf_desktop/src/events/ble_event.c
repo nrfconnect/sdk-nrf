@@ -12,16 +12,16 @@
 
 #define BLE_EVENT_LOG_BUF_LEN 128
 
-APPLICATION_EVENT_TYPE_DEFINE(ble_discovery_complete_event,
+APP_EVENT_TYPE_DEFINE(ble_discovery_complete_event,
 		  NULL,
 		  NULL,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_BLE_DISC_COMPLETE_EVENT,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 
 #if CONFIG_DESKTOP_BLE_QOS_ENABLE
-static void log_ble_qos_event(const struct application_event_header *aeh)
+static void log_ble_qos_event(const struct app_event_header *aeh)
 {
 	const struct ble_qos_event *event = cast_ble_qos_event(aeh);
 	int pos = 0;
@@ -40,10 +40,10 @@ static void log_ble_qos_event(const struct application_event_header *aeh)
 	APP_EVENT_MANAGER_LOG(aeh, "%s", log_strdup(log_buf));
 }
 
-APPLICATION_EVENT_TYPE_DEFINE(ble_qos_event,
+APP_EVENT_TYPE_DEFINE(ble_qos_event,
 		  log_ble_qos_event,
 		  NULL,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_BLE_QOS_EVENT,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 #endif

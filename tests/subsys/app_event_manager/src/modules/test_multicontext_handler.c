@@ -24,10 +24,10 @@ static void end_test(void)
 	zassert_not_null(event, "Failed to allocate event");
 	event->test_id = cur_test_id;
 
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_test_start_event(aeh)) {
 		struct test_start_event *st = cast_test_start_event(aeh);
@@ -91,6 +91,6 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, test_start_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, multicontext_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, test_start_event);
+APP_EVENT_SUBSCRIBE(MODULE, multicontext_event);

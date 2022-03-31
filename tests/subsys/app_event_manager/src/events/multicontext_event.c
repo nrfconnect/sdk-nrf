@@ -6,7 +6,7 @@
 
 #include "multicontext_event.h"
 
-APPLICATION_EVENT_TYPE_DEFINE(multicontext_event,
+APP_EVENT_TYPE_DEFINE(multicontext_event,
 		  NULL,
 		  NULL,
-		  APPLICATION_EVENT_FLAGS_CREATE());
+		  APP_EVENT_FLAGS_CREATE());

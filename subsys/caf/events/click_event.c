@@ -16,7 +16,7 @@ static const char * const click_name[] = {
 	[CLICK_DOUBLE] = "DOUBLE",
 };
 
-static void log_click_event(const struct application_event_header *aeh)
+static void log_click_event(const struct app_event_header *aeh)
 {
 	const struct click_event *event = cast_click_event(aeh);
 
@@ -28,7 +28,7 @@ static void log_click_event(const struct application_event_header *aeh)
 }
 
 static void profile_click_event(struct log_event_buf *buf,
-				const struct application_event_header *aeh)
+				const struct app_event_header *aeh)
 {
 	const struct click_event *event = cast_click_event(aeh);
 
@@ -36,14 +36,14 @@ static void profile_click_event(struct log_event_buf *buf,
 	profiler_log_encode_uint8(buf, event->click);
 }
 
-EVENT_INFO_DEFINE(click_event,
+APP_EVENT_INFO_DEFINE(click_event,
 		  ENCODE(PROFILER_ARG_U16, PROFILER_ARG_U8),
 		  ENCODE("key_id", "click"),
 		  profile_click_event);
 
-APPLICATION_EVENT_TYPE_DEFINE(click_event,
+APP_EVENT_TYPE_DEFINE(click_event,
 		  log_click_event,
 		  &click_event_info,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_CLICK_EVENTS,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

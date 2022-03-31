@@ -69,7 +69,7 @@ static void send_led_event(size_t led_id, const struct led_effect *led_effect)
 
 	event->led_id = led_id;
 	event->led_effect = led_effect;
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static const struct ml_result_led_effect *get_led_effect(const char *label)
@@ -98,7 +98,7 @@ static void ml_result_set_signin_state(bool state)
 
 	event->module_idx = MODULE_IDX(MODULE);
 	event->state = state;
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 	LOG_INF("Currently %s result event", state ? "signed in" : "signed off from");
 }
 
@@ -293,7 +293,7 @@ static bool handle_module_state_event(const struct module_state_event *event)
 	return false;
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (DISPLAY_ML_RESULTS &&
 	    is_ml_result_event(aeh)) {
@@ -328,16 +328,16 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ml_app_mode_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, led_ready_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, ml_app_mode_event);
+APP_EVENT_SUBSCRIBE(MODULE, led_ready_event);
 #if DISPLAY_DATA_FORWARDER
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ei_data_forwarder_event);
+APP_EVENT_SUBSCRIBE(MODULE, ei_data_forwarder_event);
 #endif /* DISPLAY_DATA_FORWARDER */
 #if DISPLAY_ML_RESULTS
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ml_result_event);
+APP_EVENT_SUBSCRIBE(MODULE, ml_result_event);
 #endif /* DISPLAY_ML_RESULTS */
 #if DISPLAY_SIM_SIGNAL
-APPLICATION_EVENT_SUBSCRIBE(MODULE, sensor_sim_event);
+APP_EVENT_SUBSCRIBE(MODULE, sensor_sim_event);
 #endif /* DISPLAY_SIM_SIGNAL */

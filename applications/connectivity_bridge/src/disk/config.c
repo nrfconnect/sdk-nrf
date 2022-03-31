@@ -135,7 +135,7 @@ static bool ble_enable_opt_cb(char *opt)
 	struct ble_ctrl_event *event = new_ble_ctrl_event();
 
 	event->cmd = cmd;
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 
 	return true;
 }
@@ -152,7 +152,7 @@ static bool ble_name_opt_cb(char *opt)
 
 	event->cmd = BLE_CTRL_NAME_UPDATE;
 	event->param.name_update = ble_name_buffer;
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 
 	return true;
 }
@@ -395,7 +395,7 @@ static void parse_file(const char *mnt_point)
 	}
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_fs_event(aeh)) {
 		const struct fs_event *event =
@@ -461,6 +461,6 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, fs_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, fs_event);

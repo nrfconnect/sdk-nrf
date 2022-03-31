@@ -8,7 +8,7 @@
 
 #include <caf/events/button_event.h>
 
-static void log_button_event(const struct application_event_header *aeh)
+static void log_button_event(const struct app_event_header *aeh)
 {
 	const struct button_event *event = cast_button_event(aeh);
 
@@ -17,7 +17,7 @@ static void log_button_event(const struct application_event_header *aeh)
 }
 
 static void profile_button_event(struct log_event_buf *buf,
-				 const struct application_event_header *aeh)
+				 const struct app_event_header *aeh)
 {
 	const struct button_event *event = cast_button_event(aeh);
 
@@ -25,14 +25,14 @@ static void profile_button_event(struct log_event_buf *buf,
 	profiler_log_encode_uint8(buf, (event->pressed)?(1):(0));
 }
 
-EVENT_INFO_DEFINE(button_event,
+APP_EVENT_INFO_DEFINE(button_event,
 		  ENCODE(PROFILER_ARG_U16, PROFILER_ARG_U8),
 		  ENCODE("button_id", "status"),
 		  profile_button_event);
 
-APPLICATION_EVENT_TYPE_DEFINE(button_event,
+APP_EVENT_TYPE_DEFINE(button_event,
 		  log_button_event,
 		  &button_event_info,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_BUTTON_EVENTS,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

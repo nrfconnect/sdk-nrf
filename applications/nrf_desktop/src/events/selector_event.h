@@ -22,13 +22,13 @@ extern "C" {
 
 
 struct selector_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	uint8_t selector_id;
 	uint8_t position;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(selector_event);
+APP_EVENT_TYPE_DECLARE(selector_event);
 
 #ifdef __cplusplus
 }

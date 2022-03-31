@@ -38,22 +38,22 @@ enum battery_state {
 
 /** @brief Battery state event. */
 struct battery_state_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	enum battery_state state;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(battery_state_event);
+APP_EVENT_TYPE_DECLARE(battery_state_event);
 
 
 /** @brief Battery voltage level event. */
 struct battery_level_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	uint8_t level;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(battery_level_event);
+APP_EVENT_TYPE_DECLARE(battery_level_event);
 
 #ifdef __cplusplus
 }

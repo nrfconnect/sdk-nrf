@@ -201,7 +201,7 @@ static void data_ready_handler(const struct device *dev, const struct sensor_tri
 	case STATE_SUSPENDED:
 	case STATE_SUSPENDED_DISCONNECTED:
 		/* Wake up system - this will wake up thread */
-		APPLICATION_EVENT_SUBMIT(new_wake_up_event());
+		APP_EVENT_SUBMIT(new_wake_up_event());
 		break;
 
 	case STATE_FETCHING:
@@ -256,7 +256,7 @@ static int motion_read(bool send_event)
 
 	event->dx = value_x.val1;
 	event->dy = value_y.val1;
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 
 	return err;
 }
@@ -528,7 +528,7 @@ static bool handle_usb_state_event(const struct usb_state_event *event)
 	return false;
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_hid_report_sent_event(aeh)) {
 		const struct hid_report_sent_event *event =
@@ -705,15 +705,15 @@ static bool event_handler(const struct application_event_header *aeh)
 
 	return false;
 }
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif
 #if CONFIG_DESKTOP_MOTION_SENSOR_SLEEP_DISABLE_ON_USB
-APPLICATION_EVENT_SUBSCRIBE(MODULE, usb_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, usb_state_event);
 #endif
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);

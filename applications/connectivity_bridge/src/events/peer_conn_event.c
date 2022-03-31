@@ -15,7 +15,7 @@ static const char * const peer_name[] = {
 #undef X
 };
 
-static void log_peer_conn_event(const struct application_event_header *aeh)
+static void log_peer_conn_event(const struct app_event_header *aeh)
 {
 	const struct peer_conn_event *event = cast_peer_conn_event(aeh);
 
@@ -33,9 +33,9 @@ static void log_peer_conn_event(const struct application_event_header *aeh)
 		event->baudrate);
 }
 
-APPLICATION_EVENT_TYPE_DEFINE(peer_conn_event,
+APP_EVENT_TYPE_DEFINE(peer_conn_event,
 		  log_peer_conn_event,
 		  NULL,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_BRIDGE_LOG_PEER_CONN_EVENT,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

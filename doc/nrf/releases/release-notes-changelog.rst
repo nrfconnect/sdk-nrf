@@ -388,27 +388,29 @@ Other libraries
 
 * :ref:`app_event_manager`:
 
+  * Renamed Event Manager to Application Event Manager.
+
   * Added:
 
     * Event type flags to represent if event type should be logged, traced and has dynamic data.
-      To update your application, pass a flag variable as a parameter in :c:macro:`APPLICATION_EVENT_TYPE_DEFINE` instead of ``init_log``.
-      Use :c:macro:`APPLICATION_EVENT_FLAGS_CREATE` to set multiple flags:
+      To update your application, pass a flag variable as a parameter in :c:macro:`APP_EVENT_TYPE_DEFINE` instead of ``init_log``.
+      Use :c:macro:`APP_EVENT_FLAGS_CREATE` to set multiple flags:
 
       .. code-block:: c
 
-         APPLICATION_EVENT_TYPE_DEFINE(my_event,
+         APP_EVENT_TYPE_DEFINE(my_event,
            log_my_event,
            &my_event_info,
-           APPLICATION_EVENT_FLAGS_CREATE(APPLICATION_EVENT_TYPE_FLAGS_1, APPLICATION_EVENT_TYPE_FLAGS_2));
+           APP_EVENT_FLAGS_CREATE(APP_EVENT_TYPE_FLAGS_1, APP_EVENT_TYPE_FLAGS_2));
 
-     * :c:func:`app_event_manager_event_size` function with corresponding :kconfig:option:`CONFIG_APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE` option.
+     * :c:func:`app_event_manager_event_size` function with corresponding :kconfig:option:`CONFIG_APP_EVENT_MANAGER_PROVIDE_APP_EVENT_SIZE` option.
 
     * Universal hooks for Application Event Manager initialization, event submission, preprocessing, and postprocessing.
       This includes implementation of macros that register hooks, grouped as follows:
 
-      * :c:macro:`APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER`, :c:macro:`APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST`, :c:macro:`APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER_LAST`
-      * :c:macro:`APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER`, :c:macro:`APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER_FIRST`, :c:macro:`APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER_LAST`
-      * :c:macro:`APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER`, :c:macro:`APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER_FIRST`, :c:macro:`APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER_LAST`
+      * :c:macro:`APP_EVENT_HOOK_ON_SUBMIT_REGISTER`, :c:macro:`APP_EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST`, :c:macro:`APP_EVENT_HOOK_ON_SUBMIT_REGISTER_LAST`
+      * :c:macro:`APP_EVENT_HOOK_PREPROCESS_REGISTER`, :c:macro:`APP_EVENT_HOOK_PREPROCESS_REGISTER_FIRST`, :c:macro:`APP_EVENT_HOOK_PREPROCESS_REGISTER_LAST`
+      * :c:macro:`APP_EVENT_HOOK_POSTPROCESS_REGISTER`, :c:macro:`APP_EVENT_HOOK_POSTPROCESS_REGISTER_FIRST`, :c:macro:`APP_EVENT_HOOK_POSTPROCESS_REGISTER_LAST`
 
 * :ref:`app_event_manager_profiler_tracer`:
 

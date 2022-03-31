@@ -36,12 +36,12 @@ enum led_state {
 
 /** @brief Led state event. */
 struct led_state_event {
-	struct application_event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	enum led_state state;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(led_state_event);
+APP_EVENT_TYPE_DECLARE(led_state_event);
 
 /** @} */
 

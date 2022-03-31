@@ -25,13 +25,13 @@ extern "C" {
 
 /** Peer connection event. */
 struct ble_data_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	uint8_t *buf;
 	size_t len;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(ble_data_event);
+APP_EVENT_TYPE_DECLARE(ble_data_event);
 
 #ifdef __cplusplus
 }

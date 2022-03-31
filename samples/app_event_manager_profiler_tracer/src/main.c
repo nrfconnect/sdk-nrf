@@ -19,6 +19,6 @@ void main(void)
 	} else {
 		struct config_event *event = new_config_event();
 
-		APPLICATION_EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 	}
 }

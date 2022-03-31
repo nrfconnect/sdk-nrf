@@ -558,7 +558,7 @@ In addition to documentation related to the changes listed above, the following 
 * :ref:`sample` - updated to include configuration information and to clarify the instructions for using the template
 * :ref:`lib_bluetooth_services` - renamed several :file:`.rst` files for Bluetooth services
 * :ref:`gs_testing` - updated with information about :ref:`testing_rtt`
-* :ref:`ble_samples` and :ref:`event_manager_sample` sample - removed the outdated nRF51 DK entry from Requirements
+* :ref:`ble_samples` and :ref:`app_event_manager_sample` sample - removed the outdated nRF51 DK entry from Requirements
 
 nRF9160
 -------

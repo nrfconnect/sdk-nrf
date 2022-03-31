@@ -81,7 +81,7 @@ enum config_status {
  * Used to forward configuration channel request/response.
  */
 struct config_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	uint16_t transport_id;
 	bool is_request;
@@ -93,7 +93,7 @@ struct config_event {
 	struct event_dyndata dyndata;
 };
 
-APPLICATION_EVENT_TYPE_DYNDATA_DECLARE(config_event);
+APP_EVENT_TYPE_DYNDATA_DECLARE(config_event);
 
 extern const uint8_t __start_config_channel_modules[];
 
@@ -171,7 +171,7 @@ extern const uint8_t __start_config_channel_modules[];
 				memcpy(rsp->dyndata.data, rsp_data_buf, rsp_data_size);		\
 			}									\
 												\
-			APPLICATION_EVENT_SUBMIT(rsp);						\
+			APP_EVENT_SUBMIT(rsp);						\
 		}										\
 												\
 		return consume;									\

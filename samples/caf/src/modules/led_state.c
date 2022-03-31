@@ -37,7 +37,7 @@ static void send_led_event(enum led_id led_id, const struct led_effect *led_effe
 
 	event->led_id = led_id;
 	event->led_effect = led_effect;
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static bool handle_button_event(const struct button_event *evt)
@@ -69,7 +69,7 @@ static bool handle_button_event(const struct button_event *evt)
 	return false;
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_button_event(aeh)) {
 		return handle_button_event(cast_button_event(aeh));
@@ -92,6 +92,6 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, button_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, button_event);

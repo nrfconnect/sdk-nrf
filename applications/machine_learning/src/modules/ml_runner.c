@@ -84,7 +84,7 @@ static void submit_result(void)
 	__ASSERT_NO_MSG(!err);
 	ARG_UNUSED(err);
 
-	APPLICATION_EVENT_SUBMIT(evt);
+	APP_EVENT_SUBMIT(evt);
 }
 
 static int buf_cleanup(void)
@@ -272,7 +272,7 @@ static bool handle_ml_result_signin_event(const struct ml_result_signin_event *e
 	return false;
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_sensor_event(aeh)) {
 		return handle_sensor_event(cast_sensor_event(aeh));
@@ -297,10 +297,10 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, sensor_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ml_result_signin_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, sensor_event);
+APP_EVENT_SUBSCRIBE(MODULE, ml_result_signin_event);
 #if APP_CONTROLS_ML_MODE
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ml_app_mode_event);
+APP_EVENT_SUBSCRIBE(MODULE, ml_app_mode_event);
 #endif /* APP_CONTROLS_ML_MODE */

@@ -32,12 +32,12 @@ enum net_state {
 
 /** @brief NET state event. */
 struct net_state_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	enum net_state state;
 	const void *id;
 };
-APPLICATION_EVENT_TYPE_DECLARE(net_state_event);
+APP_EVENT_TYPE_DECLARE(net_state_event);
 
 
 #ifdef __cplusplus

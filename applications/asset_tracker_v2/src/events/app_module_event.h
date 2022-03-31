@@ -89,7 +89,7 @@ enum app_module_data_type {
 
 /** @brief Application module event. */
 struct app_module_event {
-	struct application_event_header header;
+	struct app_event_header header;
 	enum app_module_event_type type;
 	enum app_module_data_type data_list[APP_DATA_COUNT];
 
@@ -109,7 +109,7 @@ struct app_module_event {
 };
 
 /** Register app module events as an event type with the Application Event Manager. */
-APPLICATION_EVENT_TYPE_DECLARE(app_module_event);
+APP_EVENT_TYPE_DECLARE(app_module_event);
 
 #ifdef __cplusplus
 }

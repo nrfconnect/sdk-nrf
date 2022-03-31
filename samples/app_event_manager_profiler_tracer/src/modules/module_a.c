@@ -32,7 +32,7 @@ void send_one_sec_event(void)
 
 	event->five_sec_timer = atomic_get(&cnt);
 
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void module_a_thread_fn(void)
@@ -60,12 +60,12 @@ static void send_event_burst(size_t number_of_send_events)
 	for (size_t i = 0; i < number_of_send_events; i++) {
 		struct burst_event *event = new_burst_event();
 
-		APPLICATION_EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 		k_busy_wait(MODULE_A_BURST_INTERVAL_US);
 	}
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_config_event(aeh)) {
 		init();
@@ -85,6 +85,6 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, config_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, five_sec_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, config_event);
+APP_EVENT_SUBSCRIBE(MODULE, five_sec_event);

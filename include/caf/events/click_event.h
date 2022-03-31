@@ -50,7 +50,7 @@ enum click {
  */
 struct click_event {
 	/** Event header. */
-	struct application_event_header header;
+	struct app_event_header header;
 
 	/** ID of the button - matching the key_id used by the @ref button_event. */
 	uint16_t key_id;
@@ -71,7 +71,7 @@ struct click_event {
 extern "C" {
 #endif
 
-APPLICATION_EVENT_TYPE_DECLARE(click_event);
+APP_EVENT_TYPE_DECLARE(click_event);
 
 #ifdef __cplusplus
 }

@@ -44,7 +44,7 @@ extern "C" {
 
 
 /* Declarations and definitions - for more details refer to public API. */
-#define _EVENT_INFO_DEFINE(ename, types, labels, profile_func)					\
+#define _APP_EVENT_INFO_DEFINE(ename, types, labels, profile_func)				\
 	const static char *_CONCAT(ename, _profiler_arg_labels[]) __used =			\
 					_ARG_LABELS_DEFINE(labels);				\
 	const static enum profiler_arg _CONCAT(ename, _profiler_arg_types[]) __used =		\

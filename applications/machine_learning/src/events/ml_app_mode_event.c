@@ -13,7 +13,7 @@ static const char * const ml_app_mode_name[] = {
 	[ML_APP_MODE_DATA_FORWARDING] = "DATA_FORWARDING",
 };
 
-static void log_ml_app_mode_event(const struct application_event_header *aeh)
+static void log_ml_app_mode_event(const struct app_event_header *aeh)
 {
 	const struct ml_app_mode_event *event = cast_ml_app_mode_event(aeh);
 
@@ -24,9 +24,9 @@ static void log_ml_app_mode_event(const struct application_event_header *aeh)
 	APP_EVENT_MANAGER_LOG(aeh, "state: %s", ml_app_mode_name[event->mode]);
 }
 
-APPLICATION_EVENT_TYPE_DEFINE(ml_app_mode_event,
+APP_EVENT_TYPE_DEFINE(ml_app_mode_event,
 		  log_ml_app_mode_event,
 		  NULL,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_ML_APP_INIT_LOG_ML_APP_MODE_EVENTS,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

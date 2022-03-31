@@ -178,7 +178,7 @@ static bool button_event_handler(const struct button_event *event)
 		new_event->pressed = true;
 		new_event->key_id = FN_KEY_ID(KEY_COL(event->key_id),
 					      KEY_ROW(event->key_id));
-		APPLICATION_EVENT_SUBMIT(new_event);
+		APP_EVENT_SUBMIT(new_event);
 
 		return true;
 	}
@@ -203,7 +203,7 @@ static bool button_event_handler(const struct button_event *event)
 			new_event->pressed = false;
 			new_event->key_id = FN_KEY_ID(KEY_COL(event->key_id),
 						      KEY_ROW(event->key_id));
-			APPLICATION_EVENT_SUBMIT(new_event);
+			APP_EVENT_SUBMIT(new_event);
 
 			return true;
 		}
@@ -220,7 +220,7 @@ static void silence_unused(void)
 	}
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_button_event(aeh)) {
 		return button_event_handler(cast_button_event(aeh));
@@ -244,6 +244,6 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, button_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, button_event);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);

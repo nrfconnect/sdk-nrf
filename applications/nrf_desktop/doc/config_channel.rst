@@ -413,13 +413,13 @@ To register an application module as a configuration channel listener, complete 
 
 1. Make sure that the application module is an :ref:`app_event_manager` listener.
 #. Include the :file:`config_event.h` header.
-#. Subscribe for the :c:struct:`config_event` using the :c:macro:`APPLICATION_EVENT_SUBSCRIBE_EARLY` macro:
+#. Subscribe for the :c:struct:`config_event` using the :c:macro:`APP_EVENT_SUBSCRIBE_EARLY` macro:
 
    .. code-block:: c
 
-       APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+       APP_EVENT_LISTENER(MODULE, app_event_handler);
        #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-       APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+       APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
        #endif
 
    The module should subscribe only if the configuration channel is enabled.
@@ -433,7 +433,7 @@ To register an application module as a configuration channel listener, complete 
 
    .. code-block:: c
 
-       static bool event_handler(const struct application_event_header *aeh)
+       static bool app_event_handler(const struct app_event_header *aeh)
        {
            /* Functions used to handle other events. */
            ...

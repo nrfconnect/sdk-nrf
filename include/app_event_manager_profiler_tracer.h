@@ -31,7 +31,7 @@ extern "C" {
  */
 struct profiler_info {
 	/** Function for profiling data related with this event */
-	void (*profile_fn)(struct log_event_buf *buf, const struct application_event_header *aeh);
+	void (*profile_fn)(struct log_event_buf *buf, const struct app_event_header *aeh);
 
 	/** Number of profiled data fields. */
 	const uint8_t profiler_arg_cnt;
@@ -66,9 +66,9 @@ struct profiler_info {
  * @param labels Labels of values to profile.
  * @param profile_func Function used to profile event data.
  */
-#define EVENT_INFO_DEFINE(ename, types, labels, profile_func) \
+#define APP_EVENT_INFO_DEFINE(ename, types, labels, profile_func) \
 	BUILD_ASSERT(profile_func != NULL);			\
-	_EVENT_INFO_DEFINE(ename, ENCODE(types), ENCODE(labels), profile_func)
+	_APP_EVENT_INFO_DEFINE(ename, ENCODE(types), ENCODE(labels), profile_func)
 
 
 

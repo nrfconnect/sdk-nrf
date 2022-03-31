@@ -21,10 +21,10 @@ extern "C" {
 #endif
 
 struct ack_event {
-	struct application_event_header header;
+	struct app_event_header header;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(ack_event);
+APP_EVENT_TYPE_DECLARE(ack_event);
 
 #ifdef __cplusplus
 }

@@ -39,15 +39,15 @@ static struct gnss_module_event gnss_module_event_memory;
 
 /* Macro used to submit module events of a specific type to the UI module. */
 #define TEST_SEND_EVENT(_mod, _type, _event)							\
-	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&_mod##_module_event_memory);		\
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&_mod##_module_event_memory);	\
 	__wrap_app_event_manager_free_ExpectAnyArgs();						\
 	_event = new_##_mod##_module_event();							\
 	_event->type = _type;									\
 	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER(						\
-		(struct application_event_header *)_event));					\
+		(struct app_event_header *)_event));					\
 	app_event_manager_free(_event)
 
-/* Dummy structs to please linker. The APPLICATION_EVENT_SUBSCRIBE macros in ui_module.c
+/* Dummy structs to please linker. The APP_EVENT_SUBSCRIBE macros in ui_module.c
  * depend on these to exist. But since we are unit testing, we dont need
  * these subscriptions and hence these structs can remain uninitialized.
  */
@@ -105,7 +105,7 @@ static int module_start_stub(struct module_data *module, int num_calls)
 }
 
 /* Handler that validates events sent from the UI module. */
-static void validate_ui_evt(struct application_event_header *aeh, int no_of_calls)
+static void validate_ui_evt(struct app_event_header *aeh, int no_of_calls)
 {
 	struct ui_module_event *event = cast_ui_module_event(aeh);
 
@@ -317,7 +317,7 @@ void test_state_shutdown_fota(void)
 	util_module_event->reason = REASON_FOTA_UPDATE;
 
 	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER(
-		(struct application_event_header *)util_module_event));
+		(struct app_event_header *)util_module_event));
 	app_event_manager_free(util_module_event);
 
 	state_verify(STATE_SHUTDOWN, SUB_STATE_ACTIVE, SUB_SUB_STATE_GNSS_INACTIVE);
@@ -347,7 +347,7 @@ void test_state_shutdown_error(void)
 	util_module_event->reason = REASON_GENERIC;
 
 	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER(
-		(struct application_event_header *)util_module_event));
+		(struct app_event_header *)util_module_event));
 	app_event_manager_free(util_module_event);
 
 	state_verify(STATE_SHUTDOWN, SUB_STATE_ACTIVE, SUB_SUB_STATE_GNSS_INACTIVE);
@@ -398,7 +398,7 @@ void test_mode_transition(void)
 	data_module_event->data.cfg.active_mode = false;
 
 	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER(
-		(struct application_event_header *)data_module_event));
+		(struct app_event_header *)data_module_event));
 	app_event_manager_free(data_module_event);
 
 	state_verify(STATE_RUNNING, SUB_STATE_PASSIVE, SUB_SUB_STATE_GNSS_INACTIVE);
@@ -411,7 +411,7 @@ void test_mode_transition(void)
 	data_module_event->data.cfg.active_mode = true;
 
 	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER(
-		(struct application_event_header *)data_module_event));
+		(struct app_event_header *)data_module_event));
 	app_event_manager_free(data_module_event);
 
 	state_verify(STATE_RUNNING, SUB_STATE_ACTIVE, SUB_SUB_STATE_GNSS_INACTIVE);

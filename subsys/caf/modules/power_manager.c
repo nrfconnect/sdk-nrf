@@ -187,14 +187,14 @@ static void power_down(struct k_work *work)
 
 	event->error = false;
 	set_power_state(POWER_STATE_SUSPENDING);
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void send_wake_up(void)
 {
 	struct wake_up_event *event = new_wake_up_event();
 
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 const struct pm_state_info *pm_policy_next_state(uint8_t cpu, int32_t ticks)
@@ -209,11 +209,11 @@ static void error(struct k_work *work)
 
 	/* Turning off all the modules (including leds). */
 	event->error = false;
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 	set_power_state(POWER_STATE_ERROR_SUSPENDED);
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (IS_ENABLED(CONFIG_CAF_KEEP_ALIVE_EVENTS) && is_keep_alive_event(aeh)) {
 		keep_alive_flag = true;
@@ -231,7 +231,7 @@ static bool event_handler(const struct application_event_header *aeh)
 		LOG_INF("Force power down processing ");
 		event->error = false;
 		set_power_state(POWER_STATE_SUSPENDING);
-		APPLICATION_EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 		return false;
 	}
 
@@ -342,7 +342,7 @@ static bool event_handler(const struct application_event_header *aeh)
 
 				event->error =
 					(power_state == POWER_STATE_ERROR);
-				APPLICATION_EVENT_SUBMIT(event);
+				APP_EVENT_SUBMIT(event);
 				return false;
 			}
 		}
@@ -365,7 +365,7 @@ static bool event_handler(const struct application_event_header *aeh)
 			struct power_down_event *event = new_power_down_event();
 
 			event->error = true;
-			APPLICATION_EVENT_SUBMIT(event);
+			APP_EVENT_SUBMIT(event);
 		}
 
 		return false;
@@ -376,14 +376,14 @@ static bool event_handler(const struct application_event_header *aeh)
 
 	return false;
 }
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
 #if IS_ENABLED(CONFIG_CAF_FORCE_POWER_DOWN_EVENTS)
-	APPLICATION_EVENT_SUBSCRIBE(MODULE, force_power_down_event);
+	APP_EVENT_SUBSCRIBE(MODULE, force_power_down_event);
 #endif
 #if IS_ENABLED(CONFIG_CAF_KEEP_ALIVE_EVENTS)
-	APPLICATION_EVENT_SUBSCRIBE(MODULE, keep_alive_event);
+	APP_EVENT_SUBSCRIBE(MODULE, keep_alive_event);
 #endif
-APPLICATION_EVENT_SUBSCRIBE(MODULE, power_manager_restrict_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, wake_up_event);
-APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, power_down_event);
+APP_EVENT_SUBSCRIBE(MODULE, power_manager_restrict_event);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE_FINAL(MODULE, power_down_event);

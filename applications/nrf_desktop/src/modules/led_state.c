@@ -70,7 +70,7 @@ static void load_peer_state_led(void)
 
 	event->led_id = led_map[LED_ID_PEER_STATE];
 	event->led_effect = &led_peer_state_effect[peer_id][state];
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void load_system_state_led(void)
@@ -83,7 +83,7 @@ static void load_system_state_led(void)
 
 	event->led_id = led_map[LED_ID_SYSTEM_STATE];
 	event->led_effect = &led_system_state_effect[system_state];
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void set_system_state_led(enum led_system_state state)
@@ -96,7 +96,7 @@ static void set_system_state_led(enum led_system_state state)
 	}
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_ble_peer_event(aeh)) {
 		struct ble_peer_event *event = cast_ble_peer_event(aeh);
@@ -183,9 +183,9 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_search_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, battery_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_search_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
+APP_EVENT_SUBSCRIBE(MODULE, battery_state_event);

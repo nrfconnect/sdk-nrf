@@ -29,7 +29,7 @@ static void send_passkey_req(bool active)
 		struct passkey_req_event *event = new_passkey_req_event();
 
 		event->active = active;
-		APPLICATION_EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 
 		passkey_input = active;
 	}
@@ -79,7 +79,7 @@ static int ble_passkey_init(void)
 	return bt_conn_auth_cb_register(&conn_auth_callbacks);
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
@@ -123,6 +123,6 @@ static bool event_handler(const struct application_event_header *aeh)
 
 	return false;
 }
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, passkey_input_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, passkey_input_event);

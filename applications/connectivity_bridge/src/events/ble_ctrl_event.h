@@ -31,7 +31,7 @@ enum ble_ctrl_cmd {
 
 /** BLE control event. */
 struct ble_ctrl_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	enum ble_ctrl_cmd cmd;
 	union {
@@ -39,7 +39,7 @@ struct ble_ctrl_event {
 	} param;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(ble_ctrl_event);
+APP_EVENT_TYPE_DECLARE(ble_ctrl_event);
 
 #ifdef __cplusplus
 }

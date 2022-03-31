@@ -86,8 +86,8 @@ struct cloud_module_data_ack {
 
 /** @brief Cloud module event. */
 struct cloud_module_event {
-	/** Cloud module event header. */
-	struct application_event_header header;
+	/** Cloud module application event header. */
+	struct app_event_header header;
 	/** Cloud module event type. */
 	enum cloud_module_event_type type;
 
@@ -105,7 +105,7 @@ struct cloud_module_event {
 	} data;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(cloud_module_event);
+APP_EVENT_TYPE_DECLARE(cloud_module_event);
 
 #ifdef __cplusplus
 }

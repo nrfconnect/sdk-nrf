@@ -213,7 +213,7 @@ static void handle_nrf_modem_lib_init_ret(void)
 /* Application Event Manager handler. Puts event data into messages and adds them to the
  * application message queue.
  */
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	struct app_msg_data msg = {0};
 	bool enqueue_msg = false;
@@ -433,7 +433,7 @@ static void data_get(void)
 	app_module_event->count = count;
 	app_module_event->type = APP_EVT_DATA_GET;
 
-	APPLICATION_EVENT_SUBMIT(app_module_event);
+	APP_EVENT_SUBMIT(app_module_event);
 }
 
 /* Message handler for STATE_INIT. */
@@ -596,11 +596,11 @@ void main(void)
 	}
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, app_module_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, data_module_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, util_module_event);
-APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, ui_module_event);
-APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, sensor_module_event);
-APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, modem_module_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, app_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, data_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, util_module_event);
+APP_EVENT_SUBSCRIBE_FINAL(MODULE, ui_module_event);
+APP_EVENT_SUBSCRIBE_FINAL(MODULE, sensor_module_event);
+APP_EVENT_SUBSCRIBE_FINAL(MODULE, modem_module_event);

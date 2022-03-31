@@ -20,10 +20,10 @@ void send_control_event(void)
 	ack_req = true;
 	struct control_event *event = new_control_event();
 
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_measurement_event(aeh)) {
 		__ASSERT_NO_MSG(!ack_req);
@@ -49,6 +49,6 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, measurement_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ack_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, measurement_event);
+APP_EVENT_SUBSCRIBE(MODULE, ack_event);

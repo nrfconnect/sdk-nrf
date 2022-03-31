@@ -156,7 +156,7 @@ Event Manager
 * Optimized and cleaned up the code
 * Added events logging dynamic control over shell
 * Updated to use logger instead of printk
-* Added a sample (:ref:`event_manager_sample`)
+* Added a sample (:ref:`app_event_manager_sample`)
 
 Profiler
 --------
@@ -178,14 +178,14 @@ Documentation
   * nRF9160: Asset Tracker, :ref:`nrf_coap_client_sample`,  :ref:`mqtt_simple_sample`, and :ref:`http_application_update_sample`
   * :ref:`peripheral_hids_mouse`, :ref:`peripheral_hids_keyboard`,  :ref:`bluetooth_central_hids`, and :ref:`bluetooth_central_dfu_smp`
   * :ref:`record_text`, :ref:`writable_ndef_msg`, and :ref:`nfc_tag_reader`
-  * :ref:`event_manager_sample` and :ref:`profiler_sample`
+  * :ref:`app_event_manager_sample` and :ref:`profiler_sample`
 
 * Added or updated documentation for the following libraries:
 
   * :ref:`bt_conn_ctx_readme`
   * :ref:`dk_buttons_and_leds_readme`
   * :ref:`lib_nfc_ndef`
-  * :ref:`event_manager` and :ref:`profiler`
+  * :ref:`app_event_manager` and :ref:`profiler`
   * :ref:`at_cmd_parser_readme`, :ref:`at_params_readme`, and :ref:`modem_info_readme`
   * :ref:`lib_download_client`
   * :ref:`lib_spm`

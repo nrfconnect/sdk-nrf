@@ -51,7 +51,7 @@ extern "C" {
  */
 struct power_down_event {
 	/** Event header. */
-	struct application_event_header header;
+	struct app_event_header header;
 
 	/** Information if the power down was triggered by a fatal error. */
 	bool error;
@@ -78,7 +78,7 @@ struct power_down_event {
  */
 struct wake_up_event {
 	/** Event header. */
-	struct application_event_header header;
+	struct app_event_header header;
 };
 
 #ifdef __cplusplus
@@ -93,8 +93,8 @@ struct wake_up_event {
 extern "C" {
 #endif
 
-APPLICATION_EVENT_TYPE_DECLARE(power_down_event);
-APPLICATION_EVENT_TYPE_DECLARE(wake_up_event);
+APP_EVENT_TYPE_DECLARE(power_down_event);
+APP_EVENT_TYPE_DECLARE(wake_up_event);
 
 #ifdef __cplusplus
 }

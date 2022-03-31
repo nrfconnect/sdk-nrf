@@ -31,7 +31,7 @@ static bool log_is_event_displayed(const struct event_type *et)
 }
 
 #if IS_ENABLED(CONFIG_APP_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN)
-static void log_event_using_buffer(const struct application_event_header *aeh,
+static void log_event_using_buffer(const struct app_event_header *aeh,
 				   const struct event_type *et)
 {
 	char log_buf[CONFIG_APP_EVENT_MANAGER_EVENT_LOG_BUF_LEN];
@@ -52,7 +52,7 @@ static void log_event_using_buffer(const struct application_event_header *aeh,
 }
 #endif /*CONFIG_APP_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN*/
 
-static void log_event(const struct application_event_header *aeh)
+static void log_event(const struct app_event_header *aeh)
 {
 	const struct event_type *et = aeh->type_id;
 
@@ -106,7 +106,7 @@ static void log_event_init(void)
 	}
 
 	STRUCT_SECTION_FOREACH(event_type, et) {
-		if (get_app_event_type_flag(et, APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE)) {
+		if (app_event_get_type_flag(et, APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE)) {
 			size_t idx = et - _event_type_list_start;
 
 			atomic_set_bit(_app_event_manager_event_display_bm.flags, idx);
@@ -156,11 +156,11 @@ static void event_processor_fn(struct k_work *work)
 	/* Traverse the list of events. */
 	sys_snode_t *node;
 	while (NULL != (node = sys_slist_get(&events))) {
-		struct application_event_header *aeh = CONTAINER_OF(node,
-						       struct application_event_header,
+		struct app_event_header *aeh = CONTAINER_OF(node,
+						       struct app_event_header,
 						       node);
 
-		ASSERT_APPLICATION_EVENT_ID(aeh->type_id);
+		APP_EVENT_ASSERT_ID(aeh->type_id);
 
 		const struct event_type *et = aeh->type_id;
 
@@ -204,10 +204,10 @@ static void event_processor_fn(struct k_work *work)
 	}
 }
 
-void _event_submit(struct application_event_header *aeh)
+void _event_submit(struct app_event_header *aeh)
 {
 	__ASSERT_NO_MSG(aeh);
-	ASSERT_APPLICATION_EVENT_ID(aeh->type_id);
+	APP_EVENT_ASSERT_ID(aeh->type_id);
 
 	k_spinlock_key_t key = k_spin_lock(&lock);
 

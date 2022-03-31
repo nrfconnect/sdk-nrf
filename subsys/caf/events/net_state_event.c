@@ -17,7 +17,7 @@ static const char * const state_name[NET_STATE_COUNT] = {
 	[NET_STATE_CONNECTED] = "NET_STATE_CONNECTED"
 };
 
-static void log_net_state_event(const struct application_event_header *aeh)
+static void log_net_state_event(const struct app_event_header *aeh)
 {
 	const struct net_state_event *event = cast_net_state_event(aeh);
 
@@ -31,7 +31,7 @@ static void log_net_state_event(const struct application_event_header *aeh)
 }
 
 static void profile_net_state_event(struct log_event_buf *buf,
-				    const struct application_event_header *aeh)
+				    const struct app_event_header *aeh)
 {
 	const struct net_state_event *event = cast_net_state_event(aeh);
 
@@ -39,14 +39,14 @@ static void profile_net_state_event(struct log_event_buf *buf,
 	profiler_log_encode_uint8(buf, event->state);
 }
 
-EVENT_INFO_DEFINE(net_state_event,
+APP_EVENT_INFO_DEFINE(net_state_event,
 		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8),
 		  ENCODE("conn_id", "state"),
 		  profile_net_state_event);
 
-APPLICATION_EVENT_TYPE_DEFINE(net_state_event,
+APP_EVENT_TYPE_DEFINE(net_state_event,
 		  log_net_state_event,
 		  &net_state_event_info,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_NET_STATE_EVENTS,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

@@ -97,7 +97,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	event->dev_idx = 0;
 	event->baudrate = 0; /* Don't care */
 	event->conn_state = PEER_STATE_CONNECTED;
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
@@ -118,7 +118,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	event->dev_idx = 0;
 	event->baudrate = 0; /* Don't care */
 	event->conn_state = PEER_STATE_DISCONNECTED;
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static struct bt_conn_cb conn_callbacks = {
@@ -184,7 +184,7 @@ static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data,
 
 		event->buf = buf;
 		event->len = copy_len;
-		APPLICATION_EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 	} while (remainder);
 }
 
@@ -282,7 +282,7 @@ static void bt_ready(int err)
 	}
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_uart_data_event(aeh)) {
 		const struct uart_data_event *event =
@@ -384,8 +384,8 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_ctrl_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, uart_data_event);
-APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, ble_data_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_ctrl_event);
+APP_EVENT_SUBSCRIBE(MODULE, uart_data_event);
+APP_EVENT_SUBSCRIBE_FINAL(MODULE, ble_data_event);

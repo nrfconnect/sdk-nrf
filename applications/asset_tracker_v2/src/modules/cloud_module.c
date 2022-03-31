@@ -187,7 +187,7 @@ static void sub_state_set(enum sub_state_type new_state)
 }
 
 /* Handlers */
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	struct cloud_msg_data msg = {0};
 	bool enqueue_msg = false;
@@ -436,7 +436,7 @@ static void send_data_ack(void *ptr, size_t len, bool sent)
 	cloud_module_event->data.ack.sent = sent;
 	cloud_module_event->data.ack.len = len;
 
-	APPLICATION_EVENT_SUBMIT(cloud_module_event);
+	APP_EVENT_SUBMIT(cloud_module_event);
 }
 
 static void send_config_received(void)
@@ -447,7 +447,7 @@ static void send_config_received(void)
 	cloud_module_event->type = CLOUD_EVT_CONFIG_RECEIVED;
 	cloud_module_event->data.config = copy_cfg;
 
-	APPLICATION_EVENT_SUBMIT(cloud_module_event);
+	APP_EVENT_SUBMIT(cloud_module_event);
 }
 
 static void data_send(struct data_module_event *evt)
@@ -978,11 +978,11 @@ K_THREAD_DEFINE(cloud_module_thread, CONFIG_CLOUD_THREAD_STACK_SIZE,
 		module_thread_fn, NULL, NULL, NULL,
 		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, data_module_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, app_module_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, modem_module_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, cloud_module_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, gnss_module_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, debug_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, util_module_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, data_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, app_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, modem_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, cloud_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, gnss_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, debug_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, util_module_event);

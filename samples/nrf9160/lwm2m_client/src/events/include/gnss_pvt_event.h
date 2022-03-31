@@ -17,12 +17,12 @@ extern "C" {
 #endif
 
 struct gnss_pvt_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	struct nrf_modem_gnss_pvt_data_frame pvt;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(gnss_pvt_event);
+APP_EVENT_TYPE_DECLARE(gnss_pvt_event);
 
 #ifdef __cplusplus
 }
