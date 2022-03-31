@@ -128,7 +128,7 @@ Configuration options*
    * For each configuration option, list the symbol name and the string describing it.
    * For |VSC| instructions, list the configuration options as they are stated on the Generate Configuration screen.
 
-Check and configure the following configuration options for the sample:
+Check and configure the following Kconfig options:
 
 .. _SAMPLE_CONFIG:
 
