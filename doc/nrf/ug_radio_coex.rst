@@ -81,7 +81,7 @@ However, the role of each of the pins is dependent on the Wi-Fi Coexistence impl
 
    * You can add a new device binding and use it as the ``compatible`` property for the node, if ``generic-radio-coex-three-wire`` is unsuitable.
 
-.. figure:: images/coex_generic_3pin_pta.png
+.. figure:: images/coex_generic_3pin_pta.svg
    :alt: PTA interface supported by the ``nrf_radio_coex`` node with an nRF52 Series SoC
 
 To configure the hardware for a PTA using a 3-wire interface:
