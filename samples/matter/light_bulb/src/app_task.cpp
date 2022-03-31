@@ -46,7 +46,7 @@ using namespace ::chip::DeviceLayer;
 #define PWM_DEVICE DEVICE_DT_GET(DT_PWMS_CTLR(DT_ALIAS(pwm_led1)))
 #define PWM_CHANNEL DT_PWMS_CHANNEL(DT_ALIAS(pwm_led1))
 
-LOG_MODULE_DECLARE(app);
+LOG_MODULE_DECLARE(app, CONFIG_MATTER_LOG_LEVEL);
 K_MSGQ_DEFINE(sAppEventQueue, sizeof(AppEvent), AppTask::APP_EVENT_QUEUE_SIZE, alignof(AppEvent));
 
 namespace

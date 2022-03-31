@@ -20,7 +20,7 @@
 
 using namespace ::chip::DeviceLayer;
 
-LOG_MODULE_DECLARE(app);
+LOG_MODULE_DECLARE(app, CONFIG_MATTER_LOG_LEVEL);
 
 namespace
 {

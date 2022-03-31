@@ -20,7 +20,7 @@
 #include <logging/log.h>
 #include <net/net_ip.h>
 
-LOG_MODULE_DECLARE(app);
+LOG_MODULE_DECLARE(app, CONFIG_MATTER_LOG_LEVEL);
 
 namespace
 {
