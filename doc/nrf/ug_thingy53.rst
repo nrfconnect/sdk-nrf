@@ -353,14 +353,19 @@ In addition to the configurations mentioned above, an application compatible wit
 Samples and applications compatible with Thingy:53
 ==================================================
 
-There are already samples and applications in the |NCS| that comply with Thingy:53 application guide.
-Some of the samples that are compatible with Thingy:53 are:
+The following samples and applications in the |NCS| are already compatible with Thingy:53:
 
-* :ref:`nrf_machine_learning_app`
-* :ref:`matter_weather_station_app`
-* :ref:`peripheral_lbs`
-* :ref:`peripheral_uart`
-* :ref:`bluetooth_mesh_light`
-* :ref:`bluetooth_mesh_light_lc`
-* :ref:`bluetooth_mesh_light_switch`
-* :ref:`bluetooth_mesh_sensor_server`
+* Applications:
+
+  * :ref:`matter_weather_station_app`
+  * :ref:`zigbee_weather_station_app`
+  * :ref:`nrf_machine_learning_app`
+
+* Samples:
+
+  * :ref:`peripheral_lbs`
+  * :ref:`peripheral_uart`
+  * :ref:`bluetooth_mesh_light`
+  * :ref:`bluetooth_mesh_light_lc`
+  * :ref:`bluetooth_mesh_light_switch`
+  * :ref:`bluetooth_mesh_sensor_server`
