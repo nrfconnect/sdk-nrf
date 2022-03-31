@@ -8,6 +8,10 @@ cmake_minimum_required(VERSION 3.20.0)
 
 set(APPLICATION_CONFIG_DIR "configuration/\${BOARD}")
 
+if(NOT CONF_FILE STREQUAL "prj_no_dfu.conf")
+    set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/configuration/${BOARD}/pm_static_dfu.yml)
+endif()
+
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
 project(matter-lock)
