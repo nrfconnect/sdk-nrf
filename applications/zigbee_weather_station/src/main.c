@@ -122,6 +122,24 @@ static void mandatory_clusters_attr_init(void)
 	dev_ctx.identify_attr.identify_time = ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE;
 }
 
+static void measurements_clusters_attr_init(void)
+{
+	/* Temperature */
+	dev_ctx.temp_attrs.min_measure_value = WEATHER_STATION_ATTR_TEMP_MIN;
+	dev_ctx.temp_attrs.max_measure_value = WEATHER_STATION_ATTR_TEMP_MAX;
+	dev_ctx.temp_attrs.tolerance = WEATHER_STATION_ATTR_TEMP_TOLERANCE;
+
+	/* Pressure */
+	dev_ctx.pres_attrs.min_measure_value = WEATHER_STATION_ATTR_PRESSURE_MIN;
+	dev_ctx.pres_attrs.max_measure_value = WEATHER_STATION_ATTR_PRESSURE_MAX;
+	dev_ctx.pres_attrs.tolerance = WEATHER_STATION_ATTR_PRESSURE_TOLERANCE;
+
+	/* Humidity */
+	dev_ctx.humidity_attrs.min_measure_value = WEATHER_STATION_ATTR_HUMIDITY_MIN;
+	dev_ctx.humidity_attrs.max_measure_value = WEATHER_STATION_ATTR_HUMIDITY_MAX;
+	/* Humidity measurements tolerance is not supported at the moment */
+}
+
 static void toggle_identify_led(zb_bufid_t bufid)
 {
 	static bool led_on;
@@ -342,6 +360,9 @@ void main(void)
 
 	/* Init Basic and Identify attributes */
 	mandatory_clusters_attr_init();
+
+	/* Init measurements-related attributes */
+	measurements_clusters_attr_init();
 
 	/* Register callback to identify notifications */
 	ZB_AF_SET_IDENTIFY_NOTIFICATION_HANDLER(WEATHER_STATION_ENDPOINT_NB, identify_callback);
