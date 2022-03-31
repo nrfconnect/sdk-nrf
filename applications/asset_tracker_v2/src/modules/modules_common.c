@@ -14,7 +14,7 @@
 LOG_MODULE_REGISTER(modules_common, CONFIG_MODULES_COMMON_LOG_LEVEL);
 
 struct event_prototype {
-	struct application_event_header header;
+	struct app_event_header header;
 	uint8_t event_id;
 };
 

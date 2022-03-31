@@ -30,13 +30,13 @@ enum fs_request {
 
 /** Peer connection event. */
 struct fs_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	enum fs_request req;
 	const char *mnt_point;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(fs_event);
+APP_EVENT_TYPE_DECLARE(fs_event);
 
 int fs_event_helper_file_write(
 	const char *mnt_point,

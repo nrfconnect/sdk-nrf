@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 
-static void log_gnss_event(const struct application_event_header *aeh)
+static void log_gnss_event(const struct app_event_header *aeh)
 {
 	struct gnss_pvt_event *event = cast_gnss_pvt_event(aeh);
 
@@ -17,7 +17,7 @@ static void log_gnss_event(const struct application_event_header *aeh)
 			  event->pvt.altitude);
 }
 
-APPLICATION_EVENT_TYPE_DEFINE(gnss_pvt_event,
+APP_EVENT_TYPE_DEFINE(gnss_pvt_event,
 			      log_gnss_event,
 			      NULL,
-			      APPLICATION_EVENT_FLAGS_CREATE());
+			      APP_EVENT_FLAGS_CREATE());

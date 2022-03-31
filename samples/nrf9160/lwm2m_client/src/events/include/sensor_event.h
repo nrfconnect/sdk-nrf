@@ -27,14 +27,14 @@ enum sensor_type {
 };
 
 struct sensor_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	enum sensor_type type;
 	struct sensor_value sensor_value;
 	uint32_t unsigned_value;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(sensor_event);
+APP_EVENT_TYPE_DECLARE(sensor_event);
 
 #ifdef __cplusplus
 }

@@ -1028,7 +1028,7 @@ Libraries and drivers
 * :ref:`liblwm2m_carrier_readme` - Removed the version dependency table from :ref:`lwm2m_certification`.
 * :ref:`lib_dfu_target` - Added information about full modem upgrade and updated the configuration.
 * :ref:`lib_aws_iot` - Added information on initializing the library and connecting to AWS IoT broker.
-* :ref:`event_manager` - Updated the documentation to describe events with dynamic data size.
+* :ref:`app_event_manager` - Updated the documentation to describe events with dynamic data size.
 * :ref:`lib_entropy_cc310` - Updated information about driver behavior in secure and non-secure applications.
 
 nrfxlib

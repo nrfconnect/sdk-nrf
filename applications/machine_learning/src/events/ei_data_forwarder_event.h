@@ -32,12 +32,12 @@ enum ei_data_forwarder_state {
 
 /** @brief Edge Impulse data forwarder event. */
 struct ei_data_forwarder_event {
-	struct application_event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	enum ei_data_forwarder_state state; /**< Edge Impulse data forwarder state. */
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(ei_data_forwarder_event);
+APP_EVENT_TYPE_DECLARE(ei_data_forwarder_event);
 
 #ifdef __cplusplus
 }

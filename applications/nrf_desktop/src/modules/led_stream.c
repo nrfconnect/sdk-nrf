@@ -112,7 +112,7 @@ static void send_effect(const struct led_effect *effect, struct led *led)
 
 	__ASSERT_NO_MSG(led_event->led_effect->steps);
 
-	APPLICATION_EVENT_SUBMIT(led_event);
+	APP_EVENT_SUBMIT(led_event);
 }
 
 static size_t count_free_places(struct led *led)
@@ -243,7 +243,7 @@ static void config_get(const uint8_t opt_id, uint8_t *data, size_t *size)
 	}
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, config_set,
 				  config_get);
@@ -303,8 +303,8 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, led_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, led_ready_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, led_event);
+APP_EVENT_SUBSCRIBE(MODULE, led_ready_event);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);

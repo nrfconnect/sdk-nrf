@@ -10,7 +10,7 @@
 
 
 static void profile_config_event(struct log_event_buf *buf,
-				 const struct application_event_header *aeh)
+				 const struct app_event_header *aeh)
 {
 	struct config_event *event = cast_config_event(aeh);
 
@@ -18,19 +18,19 @@ static void profile_config_event(struct log_event_buf *buf,
 	profiler_log_encode_int8(buf, event->init_value1);
 }
 
-static void log_config_event(const struct application_event_header *aeh)
+static void log_config_event(const struct app_event_header *aeh)
 {
 	struct config_event *event = cast_config_event(aeh);
 
 	APP_EVENT_MANAGER_LOG(aeh, "init_val_1=%d", event->init_value1);
 }
 
-EVENT_INFO_DEFINE(config_event,
+APP_EVENT_INFO_DEFINE(config_event,
 		  ENCODE(PROFILER_ARG_S8),
 		  ENCODE("init_val_1"),
 		  profile_config_event);
 
-APPLICATION_EVENT_TYPE_DEFINE(config_event,
+APP_EVENT_TYPE_DEFINE(config_event,
 		  log_config_event,
 		  &config_event_info,
-		  APPLICATION_EVENT_FLAGS_CREATE(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));
+		  APP_EVENT_FLAGS_CREATE(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));

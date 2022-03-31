@@ -91,7 +91,7 @@ static void data_ready_handler(const struct device *dev, const struct sensor_tri
 
 	event->wheel = MAX(MIN(wheel, SCHAR_MAX), SCHAR_MIN);
 
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 
 	qdec_triggered = true;
 }
@@ -147,7 +147,7 @@ static void wakeup_cb(const struct device *gpio_dev, struct gpio_callback *cb,
 
 		case STATE_SUSPENDED:
 			event = new_wake_up_event();
-			APPLICATION_EVENT_SUBMIT(event);
+			APP_EVENT_SUBMIT(event);
 			break;
 
 		case STATE_ACTIVE:
@@ -317,7 +317,7 @@ static int init(void)
 	return err;
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_module_state_event(aeh)) {
 		struct module_state_event *event = cast_module_state_event(aeh);
@@ -420,7 +420,7 @@ static bool event_handler(const struct application_event_header *aeh)
 
 	return false;
 }
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);

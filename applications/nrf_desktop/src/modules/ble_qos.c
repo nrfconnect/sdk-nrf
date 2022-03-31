@@ -628,7 +628,7 @@ static void fetch_config(const uint8_t opt_id, uint8_t *data, size_t *size)
 	}
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE) &&
 	    IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT)) {
@@ -791,7 +791,7 @@ static void ble_qos_thread_fn(void)
 		struct ble_qos_event *event = new_ble_qos_event();
 		BUILD_ASSERT(sizeof(event->chmap) == CHMAP_BLE_BITMASK_SIZE, "");
 		memcpy(event->chmap, chmap, CHMAP_BLE_BITMASK_SIZE);
-		APPLICATION_EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 
 		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
 			err = bt_le_set_chan_map(chmap);
@@ -809,11 +809,11 @@ static void ble_qos_thread_fn(void)
 	}
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE
-APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
 #endif
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif

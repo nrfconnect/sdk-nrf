@@ -59,13 +59,13 @@ To profile an Application Event Manager event, you must complete the following s
       The :c:func:`profiler_log_start` and :c:func:`profiler_log_send` are called automatically by the Application Event Manager profiler tracer.
       You do not need to call these functions for Application Event Manager events.
       Mapping the profiler event ID to an Application Event Manager event is also handled by the Application Event Manager profiler tracer.
-   #. Define an :c:struct:`profiler_info` structure using :c:macro:`EVENT_INFO_DEFINE` in your event source file and provide it as an argument when defining the event type with :c:macro:`APPLICATION_EVENT_TYPE_DEFINE` macro.
+   #. Define an :c:struct:`profiler_info` structure using :c:macro:`APP_EVENT_INFO_DEFINE` in your event source file and provide it as an argument when defining the event type with :c:macro:`APP_EVENT_TYPE_DEFINE` macro.
       This structure contains a profiling function and information about the data fields that are logged.
       The following code example shows a profiling function for the event type ``sample_event``:
 
       .. code-block:: c
 
-         static void profile_sample_event(struct log_event_buf *buf, const struct application_event_header *aeh)
+         static void profile_sample_event(struct log_event_buf *buf, const struct app_event_header *aeh)
 		{
 			struct sample_event *event = cast_sample_event(aeh);
 
@@ -78,7 +78,7 @@ To profile an Application Event Manager event, you must complete the following s
 
       .. code-block:: c
 
-         EVENT_INFO_DEFINE(sample_event,
+         APP_EVENT_INFO_DEFINE(sample_event,
 				/* Profiled datafield types. */
 				ENCODE(PROFILER_ARG_S8, PROFILER_ARG_S16, PROFILER_ARG_S32),
 				/* Profiled data field names - displayed by profiler. */
@@ -86,20 +86,20 @@ To profile an Application Event Manager event, you must complete the following s
 				/* Function used to profile event data. */
 				profile_sample_event);
 
-         APPLICATION_EVENT_TYPE_DEFINE(sample_event,
+         APP_EVENT_TYPE_DEFINE(sample_event,
 				log_sample_event,	/* Function for logging event data. */
 				&sample_event_info,	/* Structure with data for profiling. */
-				APPLICATION_EVENT_FLAGS_CREATE(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));	/* Flags managing event type. */
+				APP_EVENT_FLAGS_CREATE(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));	/* Flags managing event type. */
 
       .. note::
          * By default, all Application Event Manager events that are defined with an :c:struct:`event_info` argument are profiled.
-         * :c:struct:`sample_event_info` is defined within the :c:macro:`EVENT_INFO_DEFINE` macro.
+         * :c:struct:`sample_event_info` is defined within the :c:macro:`APP_EVENT_INFO_DEFINE` macro.
 
 #. Use the Profiler Python scripts to profile the application.
    See :ref:`profiler_backends` in the Profiler documentation for details.
 
-Application Event Manager profiler tracer implementation details
-****************************************************************
+Implementation details
+**********************
 
 The profiler tracer uses some of the Application Event Manager hooks to connect with the manager.
 

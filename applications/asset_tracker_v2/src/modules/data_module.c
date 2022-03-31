@@ -199,7 +199,7 @@ static void state_set(enum state_type new_state)
 }
 
 /* Handlers */
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	struct data_msg_data msg = {0};
 	bool enqueue_msg = false;
@@ -411,7 +411,7 @@ static void data_resend(void)
 			evt->data.buffer.len = failed_data[i].len;
 			LOG_WRN("Resending data: %.*s", failed_data[i].len,
 				log_strdup(failed_data[i].ptr));
-			APPLICATION_EVENT_SUBMIT(evt);
+			APP_EVENT_SUBMIT(evt);
 
 			/* Move data from failed to pending data list after
 			 * resend.
@@ -533,7 +533,7 @@ static void config_distribute(enum data_module_event_type type)
 	data_module_event->type = type;
 	data_module_event->data.cfg = current_cfg;
 
-	APPLICATION_EVENT_SUBMIT(data_module_event);
+	APP_EVENT_SUBMIT(data_module_event);
 }
 
 static void data_send(enum data_module_event_type event,
@@ -547,7 +547,7 @@ static void data_send(enum data_module_event_type event,
 	module_event->data.buffer.len = data->len;
 
 	data_list_add_pending(data->buf, data->len, type);
-	APPLICATION_EVENT_SUBMIT(module_event);
+	APP_EVENT_SUBMIT(module_event);
 
 	/* Reset buffer */
 	data->buf = NULL;
@@ -765,7 +765,7 @@ static void config_send(void)
 	evt->data.buffer.len = codec.len;
 
 	data_list_add_pending(codec.buf, codec.len, CONFIG);
-	APPLICATION_EVENT_SUBMIT(evt);
+	APP_EVENT_SUBMIT(evt);
 
 }
 
@@ -800,7 +800,7 @@ static void data_ui_send(void)
 
 	data_list_add_pending(codec.buf, codec.len, UI);
 
-	APPLICATION_EVENT_SUBMIT(evt);
+	APP_EVENT_SUBMIT(evt);
 }
 
 static void requested_data_clear(void)
@@ -1435,12 +1435,12 @@ K_THREAD_DEFINE(data_module_thread, CONFIG_DATA_THREAD_STACK_SIZE,
 		module_thread_fn, NULL, NULL, NULL,
 		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, app_module_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, util_module_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, data_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, gnss_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, ui_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, sensor_module_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, app_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, util_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, data_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, gnss_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, ui_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, sensor_module_event);

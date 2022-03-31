@@ -48,7 +48,7 @@ BT_GATT_SERVICE_DEFINE(bas_svc,
 		    BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
 );
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_battery_level_event(aeh)) {
 		struct battery_level_event *event = cast_battery_level_event(aeh);
@@ -88,6 +88,6 @@ static bool event_handler(const struct application_event_header *aeh)
 
 	return false;
 }
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, battery_level_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, battery_level_event);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);

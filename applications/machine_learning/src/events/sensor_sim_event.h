@@ -22,12 +22,12 @@ extern "C" {
 
 /** @brief Simulated sensor event. */
 struct sensor_sim_event {
-	struct application_event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	const char *label; /**< Label of generated signal. */
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(sensor_sim_event);
+APP_EVENT_TYPE_DECLARE(sensor_sim_event);
 
 #ifdef __cplusplus
 }

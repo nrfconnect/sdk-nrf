@@ -21,14 +21,14 @@ enum ui_input_type {
 };
 
 struct ui_input_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	enum ui_input_type type;
 	uint8_t device_number;
 	bool state;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(ui_input_event);
+APP_EVENT_TYPE_DECLARE(ui_input_event);
 
 #ifdef __cplusplus
 }

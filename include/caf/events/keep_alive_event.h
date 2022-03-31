@@ -29,10 +29,10 @@ extern "C" {
  */
 struct keep_alive_event {
 	/** Event header. */
-	struct application_event_header header;
+	struct app_event_header header;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(keep_alive_event);
+APP_EVENT_TYPE_DECLARE(keep_alive_event);
 
 /**
  * @brief Keep the device alive
@@ -44,7 +44,7 @@ static inline void keep_alive(void)
 {
 	struct keep_alive_event *event = new_keep_alive_event();
 
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 #ifdef __cplusplus

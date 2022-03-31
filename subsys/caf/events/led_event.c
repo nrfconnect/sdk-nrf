@@ -8,7 +8,7 @@
 
 #include <caf/events/led_event.h>
 
-static void log_led_event(const struct application_event_header *aeh)
+static void log_led_event(const struct app_event_header *aeh)
 {
 	const struct led_event *event = cast_led_event(aeh);
 
@@ -16,14 +16,14 @@ static void log_led_event(const struct application_event_header *aeh)
 			event->led_id, event->led_effect);
 }
 
-APPLICATION_EVENT_TYPE_DEFINE(led_event,
+APP_EVENT_TYPE_DEFINE(led_event,
 		  log_led_event,
 		  NULL,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_LED_EVENTS,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
-static void log_led_ready_event(const struct application_event_header *aeh)
+static void log_led_ready_event(const struct app_event_header *aeh)
 {
 	const struct led_ready_event *event = cast_led_ready_event(aeh);
 
@@ -31,9 +31,9 @@ static void log_led_ready_event(const struct application_event_header *aeh)
 			event->led_id, event->led_effect);
 }
 
-APPLICATION_EVENT_TYPE_DEFINE(led_ready_event,
+APP_EVENT_TYPE_DEFINE(led_ready_event,
 		  log_led_ready_event,
 		  NULL,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_LED_READY_EVENTS,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

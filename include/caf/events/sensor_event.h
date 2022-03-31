@@ -53,13 +53,13 @@ enum sensor_state {
  *          #sensor_event related to the sensor.
  */
 struct sensor_state_event {
-	struct application_event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	const char *descr; /**< Description of the sensor. */
 	enum sensor_state state; /**< New state of the sensor. */
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(sensor_state_event);
+APP_EVENT_TYPE_DECLARE(sensor_state_event);
 
 /** @brief Sensor event.
  *
@@ -78,7 +78,7 @@ APPLICATION_EVENT_TYPE_DECLARE(sensor_state_event);
  *          #sensor_state_event related to the sensor.
  */
 struct sensor_event {
-	struct application_event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	const char *descr; /**< Description of the sensor. */
 	struct event_dyndata dyndata; /**< Sensor data. Provided as floating-point values. */
@@ -120,7 +120,7 @@ static inline float *sensor_event_get_data_ptr(const struct sensor_event *event)
 extern "C" {
 #endif
 
-APPLICATION_EVENT_TYPE_DYNDATA_DECLARE(sensor_event);
+APP_EVENT_TYPE_DYNDATA_DECLARE(sensor_event);
 
 #ifdef __cplusplus
 }

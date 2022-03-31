@@ -18,7 +18,7 @@
 
 static enum test_id cur_test_id;
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_test_start_event(aeh)) {
 		struct test_start_event *event = cast_test_start_event(aeh);
@@ -46,7 +46,7 @@ static bool event_handler(const struct application_event_header *aeh)
 
 			zassert_not_null(te, "Failed to allocate event");
 			te->test_id = TEST_DATA;
-			APPLICATION_EVENT_SUBMIT(te);
+			APP_EVENT_SUBMIT(te);
 		}
 
 		return false;
@@ -65,7 +65,7 @@ static bool event_handler(const struct application_event_header *aeh)
 
 				zassert_not_null(te, "Failed to allocate event");
 				te->test_id = TEST_EVENT_ORDER;
-				APPLICATION_EVENT_SUBMIT(te);
+				APP_EVENT_SUBMIT(te);
 			}
 		}
 
@@ -77,7 +77,7 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, data_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, order_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, test_start_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, data_event);
+APP_EVENT_SUBSCRIBE(MODULE, order_event);
+APP_EVENT_SUBSCRIBE(MODULE, test_start_event);

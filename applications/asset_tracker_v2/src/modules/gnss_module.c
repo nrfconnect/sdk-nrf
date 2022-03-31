@@ -145,7 +145,7 @@ static void sub_state_set(enum sub_state_type new_state)
 }
 
 /* Handlers */
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_app_module_event(aeh)) {
 		struct app_module_event *event = cast_app_module_event(aeh);
@@ -240,7 +240,7 @@ static void timeout_send(void)
 				set_satellites_tracked(pvt_data.sv, ARRAY_SIZE(pvt_data.sv));
 	gnss_module_event->type = GNSS_EVT_TIMEOUT;
 
-	APPLICATION_EVENT_SUBMIT(gnss_module_event);
+	APP_EVENT_SUBMIT(gnss_module_event);
 }
 
 /* GNSS event handler thread. */
@@ -328,7 +328,7 @@ static void gnss_event_thread_fn(void)
 
 			gnss_module_event->data.agps_request = agps_data;
 			gnss_module_event->type = GNSS_EVT_AGPS_NEEDED;
-			APPLICATION_EVENT_SUBMIT(gnss_module_event);
+			APP_EVENT_SUBMIT(gnss_module_event);
 			break;
 		case NRF_MODEM_GNSS_EVT_BLOCKED:
 			LOG_DBG("NRF_MODEM_GNSS_EVT_BLOCKED");
@@ -379,7 +379,7 @@ static void data_send_pvt(void)
 				set_satellites_tracked(pvt_data.sv, ARRAY_SIZE(pvt_data.sv));
 	gnss_module_event->data.gnss.search_time = (uint32_t)(k_uptime_get() - stats.start_uptime);
 
-	APPLICATION_EVENT_SUBMIT(gnss_module_event);
+	APP_EVENT_SUBMIT(gnss_module_event);
 }
 
 static void data_send_nmea(void)
@@ -397,7 +397,7 @@ static void data_send_nmea(void)
 				set_satellites_tracked(pvt_data.sv, ARRAY_SIZE(pvt_data.sv));
 	gnss_module_event->data.gnss.search_time = (uint32_t)(k_uptime_get() - stats.start_uptime);
 
-	APPLICATION_EVENT_SUBMIT(gnss_module_event);
+	APP_EVENT_SUBMIT(gnss_module_event);
 }
 
 static void print_pvt(void)
@@ -674,9 +674,9 @@ static void message_handler(struct gnss_msg_data *msg)
 	on_all_states(msg);
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, data_module_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, util_module_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, modem_module_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, gnss_module_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, data_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, util_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, modem_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, gnss_module_event);

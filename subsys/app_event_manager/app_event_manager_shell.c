@@ -118,7 +118,8 @@ static void set_event_displaying(const struct shell *shell, size_t argc,
 		}
 
 		for (size_t i = 0; i < ARRAY_SIZE(event_indexes); i++) {
-			atomic_set_bit_to(_app_event_manager_event_display_bm.flags, event_indexes[i],
+			atomic_set_bit_to(_app_event_manager_event_display_bm.flags,
+					  event_indexes[i],
 					  enable);
 			const struct event_type *et =
 				_event_type_list_start + event_indexes[i];

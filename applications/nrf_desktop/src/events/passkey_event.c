@@ -9,7 +9,7 @@
 #include "passkey_event.h"
 
 
-static void log_passkey_input_event(const struct application_event_header *aeh)
+static void log_passkey_input_event(const struct app_event_header *aeh)
 {
 	const struct passkey_input_event *event = cast_passkey_input_event(aeh);
 
@@ -17,27 +17,27 @@ static void log_passkey_input_event(const struct application_event_header *aeh)
 }
 
 static void profile_passkey_input_event(struct log_event_buf *buf,
-					const struct application_event_header *aeh)
+					const struct app_event_header *aeh)
 {
 	const struct passkey_input_event *event = cast_passkey_input_event(aeh);
 
 	profiler_log_encode_uint32(buf, event->passkey);
 }
 
-EVENT_INFO_DEFINE(passkey_input_event,
+APP_EVENT_INFO_DEFINE(passkey_input_event,
 		  ENCODE(PROFILER_ARG_U32),
 		  ENCODE("passkey"),
 		  profile_passkey_input_event);
 
-APPLICATION_EVENT_TYPE_DEFINE(passkey_input_event,
+APP_EVENT_TYPE_DEFINE(passkey_input_event,
 		  log_passkey_input_event,
 		  &passkey_input_event_info,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_PASSKEY_EVENT,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 
-static void log_passkey_req_event(const struct application_event_header *aeh)
+static void log_passkey_req_event(const struct app_event_header *aeh)
 {
 	const struct passkey_req_event *event = cast_passkey_req_event(aeh);
 
@@ -46,21 +46,21 @@ static void log_passkey_req_event(const struct application_event_header *aeh)
 }
 
 static void profile_passkey_req_event(struct log_event_buf *buf,
-				      const struct application_event_header *aeh)
+				      const struct app_event_header *aeh)
 {
 	const struct passkey_req_event *event = cast_passkey_req_event(aeh);
 
 	profiler_log_encode_uint8(buf, event->active);
 }
 
-EVENT_INFO_DEFINE(passkey_req_event,
+APP_EVENT_INFO_DEFINE(passkey_req_event,
 		  ENCODE(PROFILER_ARG_U8),
 		  ENCODE("active"),
 		  profile_passkey_req_event);
 
-APPLICATION_EVENT_TYPE_DEFINE(passkey_req_event,
+APP_EVENT_TYPE_DEFINE(passkey_req_event,
 		  log_passkey_req_event,
 		  &passkey_req_event_info,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_PASSKEY_EVENT,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

@@ -12,7 +12,7 @@
 #define MODULE module_b
 
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_one_sec_event(aeh)) {
 		struct one_sec_event *ose = cast_one_sec_event(aeh);
@@ -20,7 +20,7 @@ static bool event_handler(const struct application_event_header *aeh)
 		if (ose->five_sec_timer == 5) {
 			struct five_sec_event *event = new_five_sec_event();
 
-			APPLICATION_EVENT_SUBMIT(event);
+			APP_EVENT_SUBMIT(event);
 		}
 
 		return false;
@@ -32,5 +32,5 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, one_sec_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, one_sec_event);

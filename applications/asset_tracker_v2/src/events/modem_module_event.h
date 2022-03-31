@@ -214,7 +214,7 @@ struct modem_module_neighbor_cells {
 
 /** @brief Modem event. */
 struct modem_module_event {
-	struct application_event_header header;
+	struct app_event_header header;
 	enum modem_module_event_type type;
 	union {
 		struct modem_module_static_modem_data modem_static;
@@ -230,7 +230,7 @@ struct modem_module_event {
 	} data;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(modem_module_event);
+APP_EVENT_TYPE_DECLARE(modem_module_event);
 
 #ifdef __cplusplus
 }

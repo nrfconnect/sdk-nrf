@@ -640,14 +640,14 @@ Other libraries
 * New libraries:
 
   * Added API documentation and :ref:`conceptual documentation page <wave_gen>` for the wave generator library.
-  * Added documentation for the :ref:`event_manager_profiler_tracer` module.
+  * Added documentation for the :ref:`app_event_manager_profiler_tracer` module.
   * Added documentation for :ref:`lib_fatal_error`.
 
-* :ref:`event_manager` library:
+* :ref:`app_event_manager` library:
 
   * Added a weak function to allow overriding the allocation in Event Manager.
   * Increased the number of supported Event Manager events.
-  * Moved the Event Manager features responsible for profiling events into the :ref:`event_manager_profiler_tracer` module.
+  * Moved the Event Manager features responsible for profiling events into the :ref:`app_event_manager_profiler_tracer` module.
   * Added a sample showing the use of the profiler for Event Manager events.
 
 * :ref:`ei_wrapper` library:

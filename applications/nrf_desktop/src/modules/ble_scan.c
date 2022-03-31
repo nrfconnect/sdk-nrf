@@ -134,7 +134,7 @@ static void broadcast_scan_state(bool active)
 {
 	struct ble_peer_search_event *event = new_ble_peer_search_event();
 	event->active = active;
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void scan_stop(void)
@@ -506,7 +506,7 @@ static void scan_init(void)
 	k_work_init_delayable(&scan_stop_trigger, scan_stop_trigger_fn);
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_hid_report_event(aeh)) {
 		/* Do not scan when devices are in use. */
@@ -659,9 +659,9 @@ static bool event_handler(const struct application_event_header *aeh)
 
 	return false;
 }
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_discovery_complete_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_discovery_complete_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);

@@ -9,7 +9,7 @@
 #include "measurement_event.h"
 
 
-static void log_measurement_event(const struct application_event_header *aeh)
+static void log_measurement_event(const struct app_event_header *aeh)
 {
 	struct measurement_event *event = cast_measurement_event(aeh);
 
@@ -18,7 +18,7 @@ static void log_measurement_event(const struct application_event_header *aeh)
 }
 
 static void profile_measurement_event(struct log_event_buf *buf,
-				      const struct application_event_header *aeh)
+				      const struct app_event_header *aeh)
 {
 	struct measurement_event *event = cast_measurement_event(aeh);
 
@@ -28,12 +28,12 @@ static void profile_measurement_event(struct log_event_buf *buf,
 	profiler_log_encode_int32(buf, event->value3);
 }
 
-EVENT_INFO_DEFINE(measurement_event,
+APP_EVENT_INFO_DEFINE(measurement_event,
 		  ENCODE(PROFILER_ARG_S8, PROFILER_ARG_S16, PROFILER_ARG_S32),
 		  ENCODE("value1", "value2", "value3"),
 		  profile_measurement_event);
 
-APPLICATION_EVENT_TYPE_DEFINE(measurement_event,
+APP_EVENT_TYPE_DEFINE(measurement_event,
 		  log_measurement_event,
 		  &measurement_event_info,
-		  APPLICATION_EVENT_FLAGS_CREATE(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));
+		  APP_EVENT_FLAGS_CREATE(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE));

@@ -8,7 +8,7 @@
 
 
 static void profile_data_event(struct log_event_buf *buf,
-			       const struct application_event_header *aeh)
+			       const struct app_event_header *aeh)
 {
 	struct data_event *event = cast_data_event(aeh);
 
@@ -22,7 +22,7 @@ static void profile_data_event(struct log_event_buf *buf,
 	profiler_log_encode_string(buf, event->descr);
 }
 
-EVENT_INFO_DEFINE(data_event,
+APP_EVENT_INFO_DEFINE(data_event,
 		  ENCODE(PROFILER_ARG_S8, PROFILER_ARG_S16, PROFILER_ARG_S32,
 			 PROFILER_ARG_U8, PROFILER_ARG_U16, PROFILER_ARG_U32,
 			 PROFILER_ARG_STRING),
@@ -31,7 +31,7 @@ EVENT_INFO_DEFINE(data_event,
 			 "descr"),
 		  profile_data_event);
 
-APPLICATION_EVENT_TYPE_DEFINE(data_event,
+APP_EVENT_TYPE_DEFINE(data_event,
 		  NULL,
 		  &data_event_info,
-		  APPLICATION_EVENT_FLAGS_CREATE());
+		  APP_EVENT_FLAGS_CREATE());

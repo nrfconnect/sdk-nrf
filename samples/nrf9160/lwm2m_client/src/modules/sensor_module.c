@@ -153,7 +153,7 @@ static void accel_work_cb(struct k_work *work)
 
 		event->data = new_data;
 
-		APPLICATION_EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 	}
 
 	k_work_schedule(&accel_work, K_SECONDS(ACCEL_PERIOD));
@@ -181,7 +181,7 @@ static void temp_work_cb(struct k_work *work)
 		event->type = TEMPERATURE_SENSOR;
 		event->sensor_value = new_temp_val;
 
-		APPLICATION_EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 	}
 
 	k_work_schedule(&temp_work, K_SECONDS(TEMP_PERIOD));
@@ -209,7 +209,7 @@ static void press_work_cb(struct k_work *work)
 		event->type = PRESSURE_SENSOR;
 		event->sensor_value = new_press_val;
 
-		APPLICATION_EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 	}
 
 	k_work_schedule(&press_work, K_SECONDS(PRESS_PERIOD));
@@ -237,7 +237,7 @@ static void humid_work_cb(struct k_work *work)
 		event->type = HUMIDITY_SENSOR;
 		event->sensor_value = new_humid_val;
 
-		APPLICATION_EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 	}
 
 	k_work_schedule(&humid_work, K_SECONDS(HUMID_PERIOD));
@@ -265,7 +265,7 @@ static void gas_res_work_cb(struct k_work *work)
 		event->type = GAS_RESISTANCE_SENSOR;
 		event->sensor_value = new_gas_res_val;
 
-		APPLICATION_EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 	}
 
 	k_work_schedule(&gas_res_work, K_SECONDS(GAS_RES_PERIOD));
@@ -325,7 +325,7 @@ static void light_work_cb(struct k_work *work)
 		event->type = LIGHT_SENSOR;
 		event->unsigned_value = new_light_val;
 
-		APPLICATION_EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 	}
 
 	k_work_schedule(&light_work, K_SECONDS(LIGHT_PERIOD));
@@ -359,7 +359,7 @@ static void colour_work_cb(struct k_work *work)
 		event->type = COLOUR_SENSOR;
 		event->unsigned_value = new_colour_val;
 
-		APPLICATION_EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 	}
 
 	k_work_schedule(&colour_work, K_SECONDS(COLOUR_PERIOD));

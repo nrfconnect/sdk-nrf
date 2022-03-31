@@ -24,7 +24,7 @@ extern "C" {
 
 /** @brief Machine learning classification result event. */
 struct ml_result_event {
-	struct application_event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	const char *label; /**< Classification label. */
 	float value; /**< Classification value. */
@@ -37,14 +37,14 @@ struct ml_result_event {
  * to mark that the module actively listens for the result event.
  */
 struct ml_result_signin_event {
-	struct application_event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	size_t module_idx; /**< @brief The index of the module */
 	bool state;        /**< @brief  Requested state: true to sign in, false to sign off */
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(ml_result_event);
-APPLICATION_EVENT_TYPE_DECLARE(ml_result_signin_event);
+APP_EVENT_TYPE_DECLARE(ml_result_event);
+APP_EVENT_TYPE_DECLARE(ml_result_signin_event);
 
 #ifdef __cplusplus
 }

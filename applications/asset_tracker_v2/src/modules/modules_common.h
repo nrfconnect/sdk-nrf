@@ -43,7 +43,7 @@ extern "C" {
 #define SEND_EVENT(_mod, _type)								\
 	struct _mod ## _module_event *event = new_ ## _mod ## _module_event();		\
 	event->type = _type;								\
-	APPLICATION_EVENT_SUBMIT(event)
+	APP_EVENT_SUBMIT(event)
 
 /** @brief Macro used to submit an error event.
  *
@@ -55,7 +55,7 @@ extern "C" {
 	struct _mod ## _module_event *event = new_ ## _mod ## _module_event();		\
 	event->type = _type;								\
 	event->data.err = _error_code;							\
-	APPLICATION_EVENT_SUBMIT(event)
+	APP_EVENT_SUBMIT(event)
 
 /** @brief Macro used to submit an shutdown event.
  *
@@ -67,7 +67,7 @@ extern "C" {
 	struct _mod ## _module_event *event = new_ ## _mod ## _module_event();		\
 	event->type = _type;								\
 	event->data.id = _id;								\
-	APPLICATION_EVENT_SUBMIT(event)
+	APP_EVENT_SUBMIT(event)
 
 /** @brief Structure that contains module metadata. */
 struct module_data {

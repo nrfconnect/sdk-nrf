@@ -88,7 +88,7 @@ static void broadcast_subscription_change(uint8_t report_id, bool enabled)
 	LOG_INF("Notifications for report 0x%x are %sabled", report_id,
 		(event->enabled)?("en"):("dis"));
 
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void pm_evt_handler(enum bt_hids_pm_evt evt, struct bt_conn *conn)
@@ -138,7 +138,7 @@ static void async_notif_handler(uint8_t report_id, enum bt_hids_notify_evt evt)
 	event->report_id = report_id;
 	event->enabled = (evt == BT_HIDS_CCCD_EVT_NOTIFY_ENABLED);
 
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void hid_report_sent(const struct bt_conn *conn, uint8_t report_id, bool error)
@@ -149,7 +149,7 @@ static void hid_report_sent(const struct bt_conn *conn, uint8_t report_id, bool 
 	event->subscriber = conn;
 	event->error = error;
 
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void boot_mouse_report_sent_cb(struct bt_conn *conn, void *user_data)
@@ -229,7 +229,7 @@ static void broadcast_kbd_leds_report(struct bt_hids_rep *rep, struct bt_conn *c
 	event->dyndata.data[0] = REPORT_ID_KEYBOARD_LEDS;
 	memcpy(&event->dyndata.data[1], rep->data, rep->size);
 
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void feature_report_handler(struct bt_hids_rep *rep,
@@ -548,7 +548,7 @@ static void notify_hids(const struct ble_peer_event *event)
 	}
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_hid_report_event(aeh)) {
 		send_hid_report(cast_hid_report_event(aeh));
@@ -609,11 +609,11 @@ static bool event_handler(const struct application_event_header *aeh)
 
 	return false;
 }
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_notification_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_notification_event);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-APPLICATION_EVENT_SUBSCRIBE(MODULE, config_event);
+APP_EVENT_SUBSCRIBE(MODULE, config_event);
 #endif
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, ble_peer_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, ble_peer_event);

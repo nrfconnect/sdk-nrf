@@ -393,7 +393,7 @@ static void forward_hid_report(struct hids_peripheral *per, uint8_t report_id,
 	if (suspended) {
 		/* If suspended, report should wake up the board. */
 		struct wake_up_event *event = new_wake_up_event();
-		APPLICATION_EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 	}
 
 	if (!is_report_enabled(sub, report_id)) {
@@ -413,7 +413,7 @@ static void forward_hid_report(struct hids_peripheral *per, uint8_t report_id,
 	if (!sub->busy) {
 		__ASSERT_NO_MSG(!is_report_enqueued(&per->enqueued_reports, irep_idx));
 
-		APPLICATION_EVENT_SUBMIT(report);
+		APP_EVENT_SUBMIT(report);
 		per->enqueued_reports.last_idx = irep_idx;
 		sub->busy = true;
 	} else {
@@ -446,7 +446,8 @@ static uint8_t hogp_read(struct bt_hogp *hids_c,
 	size_t size = bt_hogp_rep_size(rep);
 
 	/* HID boot protocol reports are received with report ID equal 0 (REPORT_ID_RESERVED).
-	 * The report ID must be updated before HID report is submitted as an app_event_manager event.
+	 * The report ID must be updated before HID report is submitted as an app_event_manager
+	 * event.
 	 */
 	if (report_id == REPORT_ID_RESERVED) {
 		if (bt_hogp_rep_boot_kbd_in(hids_c)) {
@@ -583,7 +584,7 @@ static void submit_forward_error_rsp(struct hids_peripheral *per,
 	rsp->status = rsp_status;
 	/* Error response has no additional data. */
 	rsp->dyndata.size = 0;
-	APPLICATION_EVENT_SUBMIT(rsp);
+	APP_EVENT_SUBMIT(rsp);
 
 	per->cfg_chan_rsp = NULL;
 }
@@ -648,7 +649,7 @@ static uint8_t hogp_read_cfg(struct bt_hogp *hogp,
 				k_work_reschedule(&per->read_rsp, K_MSEC(CFG_CHAN_RSP_READ_DELAY));
 			}
 		} else {
-			APPLICATION_EVENT_SUBMIT(per->cfg_chan_rsp);
+			APP_EVENT_SUBMIT(per->cfg_chan_rsp);
 			per->cfg_chan_rsp = NULL;
 		}
 	}
@@ -706,7 +707,7 @@ static void hogp_write_cb(struct bt_hogp *hogp,
 	} else {
 		__ASSERT_NO_MSG(per->cfg_chan_rsp->dyndata.size == 0);
 		per->cfg_chan_rsp->status = CONFIG_STATUS_SUCCESS;
-		APPLICATION_EVENT_SUBMIT(per->cfg_chan_rsp);
+		APP_EVENT_SUBMIT(per->cfg_chan_rsp);
 		per->cfg_chan_rsp = NULL;
 	}
 }
@@ -749,7 +750,7 @@ static void send_nodata_response(const struct config_event *event,
 	struct config_event *rsp = generate_response(event, 0);
 
 	rsp->status = rsp_status;
-	APPLICATION_EVENT_SUBMIT(rsp);
+	APP_EVENT_SUBMIT(rsp);
 }
 
 static void handle_config_channel_peers_req(const struct config_event *event)
@@ -810,7 +811,7 @@ static void handle_config_channel_peers_req(const struct config_event *event)
 		}
 
 		rsp->status = CONFIG_STATUS_SUCCESS;
-		APPLICATION_EVENT_SUBMIT(rsp);
+		APP_EVENT_SUBMIT(rsp);
 		break;
 	}
 
@@ -1194,7 +1195,7 @@ static void send_enqueued_report(struct subscriber *sub)
 	}
 
 	if (item) {
-		APPLICATION_EVENT_SUBMIT(item->report);
+		APP_EVENT_SUBMIT(item->report);
 
 		k_free(item);
 
@@ -1358,7 +1359,7 @@ static bool handle_hid_report_event(const struct hid_report_event *event)
 	return false;
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_hid_report_sent_event(aeh)) {
 		const struct hid_report_sent_event *event =
@@ -1505,16 +1506,16 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, ble_discovery_complete_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, power_down_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, ble_discovery_complete_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
+APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
+APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif

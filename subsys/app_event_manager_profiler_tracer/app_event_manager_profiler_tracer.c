@@ -19,11 +19,12 @@ static uint16_t profiler_event_ids[IDS_COUNT];
 
 /** @brief Trace event execution.
  *
- * @param aeh        Pointer to the event header of the event that is processed by app_event_manager.
+ * @param aeh        Pointer to the application event header of the event that is
+ *                   processed by app_event_manager.
  * @param is_start  Bool value indicating if this occurrence is related
  *                  to start or end of the event processing.
  **/
-static void app_event_manager_trace_event_execution(const struct application_event_header *aeh,
+static void app_event_manager_trace_event_execution(const struct app_event_header *aeh,
 					      bool is_start)
 {
 	size_t event_cnt = _profiler_info_list_end - _profiler_info_list_start;
@@ -44,24 +45,25 @@ static void app_event_manager_trace_event_execution(const struct application_eve
 	profiler_log_send(&buf, trace_evt_id);
 }
 
-static void app_event_manager_trace_event_preprocess(const struct application_event_header *aeh)
+static void app_event_manager_trace_event_preprocess(const struct app_event_header *aeh)
 {
 	app_event_manager_trace_event_execution(aeh, true);
 }
 
-static void app_event_manager_trace_event_postprocess(const struct application_event_header *aeh)
+static void app_event_manager_trace_event_postprocess(const struct app_event_header *aeh)
 {
 	app_event_manager_trace_event_execution(aeh, false);
 }
 
-APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER_FIRST(app_event_manager_trace_event_preprocess);
-APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER_LAST(app_event_manager_trace_event_postprocess);
+APP_EVENT_HOOK_PREPROCESS_REGISTER_FIRST(app_event_manager_trace_event_preprocess);
+APP_EVENT_HOOK_POSTPROCESS_REGISTER_LAST(app_event_manager_trace_event_postprocess);
 
 /** @brief Trace event submission.
  *
- * @param aeh Pointer to the event header of the event that is submitted to app_event_manager.
+ * @param aeh Pointer to the application event header of the event that is
+ *            submitted to app_event_manager.
  **/
-static void app_event_manager_trace_event_submission(const struct application_event_header *aeh)
+static void app_event_manager_trace_event_submission(const struct app_event_header *aeh)
 {
 	const void *profiler_info = aeh->type_id->trace_data;
 
@@ -92,7 +94,7 @@ static void app_event_manager_trace_event_submission(const struct application_ev
 	profiler_log_send(&buf, trace_evt_id);
 }
 
-APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST(app_event_manager_trace_event_submission);
+APP_EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST(app_event_manager_trace_event_submission);
 
 static void trace_register_execution_tracking_events(void)
 {
@@ -148,7 +150,7 @@ static int app_event_manager_trace_event_init(void)
 	 * start and end of an Application Event Manager event.
 	 */
 	__ASSERT_NO_MSG(_profiler_info_list_end - _profiler_info_list_start + 2 <=
-			CONFIG_PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS);
+			CONFIG_PROFILER_MAX_NUMBER_OF_APP_EVENTS);
 
 	if (profiler_init()) {
 		LOG_ERR("System profiler: initialization problem\n");
