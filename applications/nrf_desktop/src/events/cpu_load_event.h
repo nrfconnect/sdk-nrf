@@ -22,12 +22,12 @@ extern "C" {
 
 /** @brief CPU load event. */
 struct cpu_load_event {
-	struct application_event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	uint32_t load; /**< CPU load [in 0,001% units]. */
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(cpu_load_event);
+APP_EVENT_TYPE_DECLARE(cpu_load_event);
 
 #ifdef __cplusplus
 }

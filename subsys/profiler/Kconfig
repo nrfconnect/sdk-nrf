@@ -9,7 +9,7 @@ menuconfig PROFILER
 
 if PROFILER
 
-config PROFILER_MAX_NUMBER_OF_APPLICATION_EVENTS
+config PROFILER_MAX_NUMBER_OF_APP_EVENTS
 	int "Maximum number of stored application event types"
 	default 32
 	range 0 255

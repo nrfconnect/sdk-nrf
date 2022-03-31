@@ -86,7 +86,7 @@ static void state_set(enum state_type new_state)
 }
 
 /* Handlers */
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_modem_module_event(aeh)) {
 		struct modem_module_event *event = cast_modem_module_event(aeh);
@@ -204,7 +204,7 @@ static void send_reboot_request(enum shutdown_reason reason)
 		k_work_reschedule(&reboot_work,
 				      K_SECONDS(CONFIG_REBOOT_TIMEOUT));
 
-		APPLICATION_EVENT_SUBMIT(util_module_event);
+		APP_EVENT_SUBMIT(util_module_event);
 
 		state_set(STATE_REBOOT_PENDING);
 
@@ -337,13 +337,13 @@ static void message_handler(struct util_msg_data *msg)
 	on_all_states(msg);
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, gnss_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, ui_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, sensor_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, data_module_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, gnss_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, ui_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, sensor_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, data_module_event);
 
 SYS_INIT(setup, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);

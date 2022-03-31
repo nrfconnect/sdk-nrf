@@ -75,7 +75,7 @@ static void poll_dtr(void)
 			event->baudrate = baudrate;
 			event->conn_state =
 				cdc_val == 0 ? PEER_STATE_DISCONNECTED : PEER_STATE_CONNECTED;
-			APPLICATION_EVENT_SUBMIT(event);
+			APP_EVENT_SUBMIT(event);
 
 			cdc_ready[i] = cdc_val;
 		}
@@ -122,7 +122,7 @@ static void cdc_uart_interrupt_handler(const struct device *dev, void *user_data
 				event->dev_idx = dev_idx;
 				event->buf = rx_buf;
 				event->len = data_length;
-				APPLICATION_EVENT_SUBMIT(event);
+				APP_EVENT_SUBMIT(event);
 			} else {
 				k_mem_slab_free(&cdc_rx_slab, &rx_buf);
 			}
@@ -170,7 +170,7 @@ static void usbd_status(enum usb_dc_status_code cb_status, const uint8_t *param)
 	}
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_uart_data_event(aeh)) {
 		const struct uart_data_event *event =
@@ -267,7 +267,7 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, uart_data_event);
-APPLICATION_EVENT_SUBSCRIBE_FINAL(MODULE, cdc_data_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, uart_data_event);
+APP_EVENT_SUBSCRIBE_FINAL(MODULE, cdc_data_event);

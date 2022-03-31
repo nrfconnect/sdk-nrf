@@ -22,9 +22,9 @@ extern "C" {
 
 /** @brief Bluetooth LE SMP transfer event. */
 struct ble_smp_transfer_event {
-	struct application_event_header header;
+	struct app_event_header header;
 };
-APPLICATION_EVENT_TYPE_DECLARE(ble_smp_transfer_event);
+APP_EVENT_TYPE_DECLARE(ble_smp_transfer_event);
 
 #ifdef __cplusplus
 }

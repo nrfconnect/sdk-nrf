@@ -9,7 +9,7 @@
 
 #include "uart_data_event.h"
 
-static void log_uart_data_event(const struct application_event_header *aeh)
+static void log_uart_data_event(const struct app_event_header *aeh)
 {
 	const struct uart_data_event *event = cast_uart_data_event(aeh);
 
@@ -20,9 +20,9 @@ static void log_uart_data_event(const struct application_event_header *aeh)
 		event->len);
 }
 
-APPLICATION_EVENT_TYPE_DEFINE(uart_data_event,
+APP_EVENT_TYPE_DEFINE(uart_data_event,
 		  log_uart_data_event,
 		  NULL,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_BRIDGE_LOG_UART_DATA_EVENT,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

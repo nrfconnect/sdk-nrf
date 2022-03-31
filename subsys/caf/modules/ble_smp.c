@@ -22,7 +22,7 @@ static void submit_smp_transfer_event(void)
 {
 	struct ble_smp_transfer_event *event = new_ble_smp_transfer_event();
 
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static int upload_confirm(uint32_t offset, uint32_t size, void *arg)
@@ -32,7 +32,7 @@ static int upload_confirm(uint32_t offset, uint32_t size, void *arg)
 	return 0;
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_module_state_event(aeh)) {
 		struct module_state_event *event = cast_module_state_event(aeh);
@@ -68,5 +68,5 @@ static bool event_handler(const struct application_event_header *aeh)
 
 	return false;
 }
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);

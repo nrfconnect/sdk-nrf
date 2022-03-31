@@ -27,7 +27,7 @@ extern "C" {
  */
 struct button_event {
 	/** Event header. */
-	struct application_event_header header;
+	struct app_event_header header;
 
 	/** ID of the button. */
 	uint16_t key_id;
@@ -48,7 +48,7 @@ struct button_event {
 extern "C" {
 #endif
 
-APPLICATION_EVENT_TYPE_DECLARE(button_event);
+APP_EVENT_TYPE_DECLARE(button_event);
 
 #ifdef __cplusplus
 }

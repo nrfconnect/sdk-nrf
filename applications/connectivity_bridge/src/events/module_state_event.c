@@ -16,7 +16,7 @@ static const char * const state_name[] = {
 #undef X
 };
 
-static void log_module_state_event(const struct application_event_header *aeh)
+static void log_module_state_event(const struct app_event_header *aeh)
 {
 	const struct module_state_event *event = cast_module_state_event(aeh);
 
@@ -29,9 +29,9 @@ static void log_module_state_event(const struct application_event_header *aeh)
 		      (const char *)event->module_id, state_name[event->state]);
 }
 
-APPLICATION_EVENT_TYPE_DEFINE(module_state_event,
+APP_EVENT_TYPE_DEFINE(module_state_event,
 		  log_module_state_event,
 		  NULL,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_BRIDGE_LOG_MODULE_STATE_EVENT,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

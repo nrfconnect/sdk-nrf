@@ -21,12 +21,12 @@ extern "C" {
 #endif
 
 struct wheel_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	int16_t wheel;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(wheel_event);
+APP_EVENT_TYPE_DECLARE(wheel_event);
 
 #ifdef __cplusplus
 }

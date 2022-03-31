@@ -44,7 +44,7 @@ enum peer_conn_state {
 
 /** Peer connection event. */
 struct peer_conn_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	enum peer_id peer_id;
 	uint8_t dev_idx;
@@ -52,7 +52,7 @@ struct peer_conn_event {
 	uint32_t baudrate;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(peer_conn_event);
+APP_EVENT_TYPE_DECLARE(peer_conn_event);
 
 #ifdef __cplusplus
 }

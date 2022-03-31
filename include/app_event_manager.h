@@ -32,29 +32,30 @@ extern "C" {
 
 /** @brief Pointer to the event handler function.
  *
- * @param aeh  Pointer to the event header of the event that is processed by app_event_manager.
+ * @param aeh  Pointer to the application event header of the event that is
+ *             processed by app_event_manager.
  * @retval    True if event was consumed and should not be propagated to other listeners,
  *            false otherwise.
  */
-typedef bool (*cb_fn)(const struct application_event_header *aeh);
+typedef bool (*cb_fn)(const struct app_event_header *aeh);
 /**
  * @brief List of bits in event type flags.
  */
-enum application_event_type_flags {
+enum app_event_type_flags {
 	/* Flags set internally by Application Event Manager. */
-	APPLICATION_EVENT_TYPE_FLAGS_SYSTEM_START,
-	APPLICATION_EVENT_TYPE_FLAGS_HAS_DYNDATA = APPLICATION_EVENT_TYPE_FLAGS_SYSTEM_START,
+	APP_EVENT_TYPE_FLAGS_SYSTEM_START,
+	APP_EVENT_TYPE_FLAGS_HAS_DYNDATA = APP_EVENT_TYPE_FLAGS_SYSTEM_START,
 
 	/* Flags available for user. */
-	APPLICATION_EVENT_TYPE_FLAGS_USER_SETTABLE_START,
-	APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE =
-		APPLICATION_EVENT_TYPE_FLAGS_USER_SETTABLE_START,
+	APP_EVENT_TYPE_FLAGS_USER_SETTABLE_START,
+	APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE =
+		APP_EVENT_TYPE_FLAGS_USER_SETTABLE_START,
 
 	/* Number of predefined flags. */
-	APPLICATION_EVENT_TYPE_FLAGS_COUNT,
+	APP_EVENT_TYPE_FLAGS_COUNT,
 
 	/* Value greater or equal are user-specific. */
-	APPLICATION_EVENT_TYPE_FLAGS_USER_DEFINED_START = APPLICATION_EVENT_TYPE_FLAGS_COUNT,
+	APP_EVENT_TYPE_FLAGS_USER_DEFINED_START = APP_EVENT_TYPE_FLAGS_COUNT,
 };
 
 /** @brief Get event type flag's value.
@@ -63,8 +64,8 @@ enum application_event_type_flags {
  * @param et   Pointer to the event type.
  * @retval Boolean value of requested flag.
  */
-static inline bool get_app_event_type_flag(const struct event_type *et,
-					   enum application_event_type_flags flag)
+static inline bool app_event_get_type_flag(const struct event_type *et,
+					   enum app_event_type_flags flag)
 {
 	return (et->flags & BIT(flag)) != 0;
 }
@@ -74,7 +75,7 @@ static inline bool get_app_event_type_flag(const struct event_type *et,
  * @param lname   Module name.
  * @param cb_fn  Pointer to the event handler function.
  */
-#define APPLICATION_EVENT_LISTENER(lname, cb_fn) _APPLICATION_EVENT_LISTENER(lname, cb_fn)
+#define APP_EVENT_LISTENER(lname, cb_fn) _APP_EVENT_LISTENER(lname, cb_fn)
 
 
 /** @brief Subscribe a listener to an event type as first module that is
@@ -83,8 +84,8 @@ static inline bool get_app_event_type_flag(const struct event_type *et,
  * @param lname  Name of the listener.
  * @param ename  Name of the event.
  */
-#define APPLICATION_EVENT_SUBSCRIBE_FIRST(lname, ename)						\
-	_APPLICATION_EVENT_SUBSCRIBE(lname, ename, _EM_MARKER_FIRST_ELEMENT);			\
+#define APP_EVENT_SUBSCRIBE_FIRST(lname, ename)						\
+	_APP_EVENT_SUBSCRIBE(lname, ename, _APP_EM_MARKER_FIRST_ELEMENT);			\
 	const struct {} _CONCAT(_CONCAT(__event_subscriber_, ename), first_sub_redefined) = {}
 
 
@@ -94,8 +95,8 @@ static inline bool get_app_event_type_flag(const struct event_type *et,
  * @param lname  Name of the listener.
  * @param ename  Name of the event.
  */
-#define APPLICATION_EVENT_SUBSCRIBE_EARLY(lname, ename) \
-	_APPLICATION_EVENT_SUBSCRIBE(lname, ename, _EM_SUBS_PRIO_ID(_EM_SUBS_PRIO_EARLY))
+#define APP_EVENT_SUBSCRIBE_EARLY(lname, ename) \
+	_APP_EVENT_SUBSCRIBE(lname, ename, _APP_EM_SUBS_PRIO_ID(_APP_EM_SUBS_PRIO_EARLY))
 
 
 /** @brief Subscribe a listener to the normal notification list for an event
@@ -104,8 +105,8 @@ static inline bool get_app_event_type_flag(const struct event_type *et,
  * @param lname  Name of the listener.
  * @param ename  Name of the event.
  */
-#define APPLICATION_EVENT_SUBSCRIBE(lname, ename) \
-	_APPLICATION_EVENT_SUBSCRIBE(lname, ename, _EM_SUBS_PRIO_ID(_EM_SUBS_PRIO_NORMAL))
+#define APP_EVENT_SUBSCRIBE(lname, ename) \
+	_APP_EVENT_SUBSCRIBE(lname, ename, _APP_EM_SUBS_PRIO_ID(_APP_EM_SUBS_PRIO_NORMAL))
 
 
 /** @brief Subscribe a listener to an event type as final module that is
@@ -114,8 +115,8 @@ static inline bool get_app_event_type_flag(const struct event_type *et,
  * @param lname  Name of the listener.
  * @param ename  Name of the event.
  */
-#define APPLICATION_EVENT_SUBSCRIBE_FINAL(lname, ename)						\
-	_APPLICATION_EVENT_SUBSCRIBE(lname, ename, _EM_MARKER_FINAL_ELEMENT);			\
+#define APP_EVENT_SUBSCRIBE_FINAL(lname, ename)						\
+	_APP_EVENT_SUBSCRIBE(lname, ename, _APP_EM_MARKER_FINAL_ELEMENT);			\
 	const struct {} _CONCAT(_CONCAT(__event_subscriber_, ename), final_sub_redefined) = {}
 
 
@@ -126,7 +127,7 @@ static inline bool get_app_event_type_flag(const struct event_type *et,
  *
  * @param ename  Name of the event.
  */
-#define APPLICATION_EVENT_TYPE_DECLARE(ename) _APPLICATION_EVENT_TYPE_DECLARE(ename)
+#define APP_EVENT_TYPE_DECLARE(ename) _APP_EVENT_TYPE_DECLARE(ename)
 
 
 /** @brief Declare an event type with dynamic data size.
@@ -137,7 +138,7 @@ static inline bool get_app_event_type_flag(const struct event_type *et,
  *
  * @param ename  Name of the event.
  */
-#define APPLICATION_EVENT_TYPE_DYNDATA_DECLARE(ename) _APPLICATION_EVENT_TYPE_DYNDATA_DECLARE(ename)
+#define APP_EVENT_TYPE_DYNDATA_DECLARE(ename) _APP_EVENT_TYPE_DYNDATA_DECLARE(ename)
 
 
 /** @brief Define an event type.
@@ -149,19 +150,19 @@ static inline bool get_app_event_type_flag(const struct event_type *et,
  * <i>%event_type</i> is replaced with the given event type name @p ename
  * (for example, button_event):
  * - new_<i>%event_type</i>  - Allocates an event of a given type.
- * - is_<i>%event_type</i>   - Checks if the event header that is provided
+ * - is_<i>%event_type</i>   - Checks if the application event header that is provided
  *                            as argument represents the given event type.
- * - cast_<i>%event_type</i> - Casts the event header that is provided
+ * - cast_<i>%event_type</i> - Casts the application event header that is provided
  *                            as argument to an event of the given type.
  *
  * @param ename     	   Name of the event.
  * @param log_fn  	   Function to stringify an event of this type.
  * @param ev_info_struct   Data structure describing the event type.
- * @param application_event_type_flags Event type flags.
- *                         You should use APPLICATION_EVENT_FLAGS_CREATE to define them.
+ * @param app_event_type_flags Event type flags.
+ *                         You should use APP_EVENT_FLAGS_CREATE to define them.
  */
-#define APPLICATION_EVENT_TYPE_DEFINE(ename, log_fn, ev_info_struct, application_event_type_flags) \
-	_APPLICATION_EVENT_TYPE_DEFINE(ename, log_fn, ev_info_struct, application_event_type_flags)
+#define APP_EVENT_TYPE_DEFINE(ename, log_fn, ev_info_struct, app_event_type_flags) \
+	_APP_EVENT_TYPE_DEFINE(ename, log_fn, ev_info_struct, app_event_type_flags)
 
 
 /** @brief Verify if an event ID is valid.
@@ -172,7 +173,7 @@ static inline bool get_app_event_type_flag(const struct event_type *et,
  *
  * @param id  ID.
  */
-#define ASSERT_APPLICATION_EVENT_ID(id) \
+#define APP_EVENT_ASSERT_ID(id) \
 	__ASSERT_NO_MSG((id >= _event_type_list_start) && (id < _event_type_list_end))
 
 /** @brief Submit an event.
@@ -181,7 +182,7 @@ static inline bool get_app_event_type_flag(const struct event_type *et,
  *
  * @param event  Pointer to the event object.
  */
-#define APPLICATION_EVENT_SUBMIT(event) _event_submit(&event->header)
+#define APP_EVENT_SUBMIT(event) _event_submit(&event->header)
 
 /**
  * @brief Register event hook after the Application Event Manager is initialized.
@@ -195,7 +196,7 @@ static inline bool get_app_event_type_flag(const struct event_type *et,
  */
 #define APP_EVENT_MANAGER_HOOK_POSTINIT_REGISTER(hook_fn)	\
 	_APP_EVENT_MANAGER_HOOK_POSTINIT_REGISTER(hook_fn,	\
-	_EM_SUBS_PRIO_ID(_EM_SUBS_PRIO_NORMAL))
+	_APP_EM_SUBS_PRIO_ID(_APP_EM_SUBS_PRIO_NORMAL))
 
 /**
  * @brief Get the event size
@@ -205,16 +206,16 @@ static inline bool get_app_event_type_flag(const struct event_type *et,
  * For this function to be available the
  * @kconfig{CONFIG_APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE} option needs to be enabled.
  *
- * @param aeh Pointer to the event header.
+ * @param aeh Pointer to the application event header.
  *
  * @return Event size in bytes.
  */
-static inline size_t app_event_manager_event_size(const struct application_event_header *aeh)
+static inline size_t app_event_manager_event_size(const struct app_event_header *aeh)
 {
 #if IS_ENABLED(CONFIG_APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE)
 	size_t size = aeh->type_id->struct_size;
 
-	if (get_app_event_type_flag(aeh->type_id, APPLICATION_EVENT_TYPE_FLAGS_HAS_DYNDATA)) {
+	if (app_event_get_type_flag(aeh->type_id, APP_EVENT_TYPE_FLAGS_HAS_DYNDATA)) {
 		size += ((const struct event_dyndata *)
 			 (((const uint8_t *)aeh) + size - sizeof(struct event_dyndata)))->size;
 	}
@@ -230,7 +231,7 @@ static inline size_t app_event_manager_event_size(const struct application_event
  * @brief Register hook called on event submission. The hook would be called first.
  *
  * The event hook called when the event is submitted.
- * The hook function should have a form `void hook(const struct application_event_header *aeh)`.
+ * The hook function should have a form `void hook(const struct app_event_header *aeh)`.
  * The macro makes sure that the hook provided here is called first.
  * Only one hook can be registered with this macro.
  *
@@ -241,15 +242,15 @@ static inline size_t app_event_manager_event_size(const struct application_event
  *
  * @param hook_fn Hook function.
  */
-#define APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST(hook_fn)                      \
+#define APP_EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST(hook_fn)                      \
 	const struct {} __event_hook_on_submit_first_sub_redefined = {};  \
-	_APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER(hook_fn, _EM_MARKER_FIRST_ELEMENT)
+	_APP_EVENT_HOOK_ON_SUBMIT_REGISTER(hook_fn, _APP_EM_MARKER_FIRST_ELEMENT)
 
 /**
  * @brief Register event hook on submission.
  *
  * The event hook called when the event is submitted.
- * The hook function should have a form `void hook(const struct application_event_header *aeh)`.
+ * The hook function should have a form `void hook(const struct app_event_header *aeh)`.
  *
  * @note
  * The registered hook may be called from many contexts.
@@ -258,14 +259,14 @@ static inline size_t app_event_manager_event_size(const struct application_event
  *
  * @param hook_fn Hook function.
  */
-#define APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER(hook_fn) \
-	_APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER(hook_fn, _EM_SUBS_PRIO_ID(_EM_SUBS_PRIO_NORMAL))
+#define APP_EVENT_HOOK_ON_SUBMIT_REGISTER(hook_fn) \
+	_APP_EVENT_HOOK_ON_SUBMIT_REGISTER(hook_fn, _APP_EM_SUBS_PRIO_ID(_APP_EM_SUBS_PRIO_NORMAL))
 
 /**
  * @brief Register event hook on submission. The hook would be called last.
  *
  * The event hook called when the event is submitted.
- * The hook function should have a form `void hook(const struct application_event_header *aeh)`.
+ * The hook function should have a form `void hook(const struct app_event_header *aeh)`.
  * The macro makes sure that the hook provided here is called last.
  * Only one hook can be registered with this macro.
  *
@@ -276,87 +277,87 @@ static inline size_t app_event_manager_event_size(const struct application_event
  *
  * @param hook_fn Hook function.
  */
-#define APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER_LAST(hook_fn)                      \
+#define APP_EVENT_HOOK_ON_SUBMIT_REGISTER_LAST(hook_fn)                      \
 	const struct {} __event_hook_on_submit_last_sub_redefined = {};  \
-	_APPLICATION_EVENT_HOOK_ON_SUBMIT_REGISTER(hook_fn, _EM_MARKER_FINAL_ELEMENT)
+	_APP_EVENT_HOOK_ON_SUBMIT_REGISTER(hook_fn, _APP_EM_MARKER_FINAL_ELEMENT)
 
 /**
  * @brief Register event hook on the start of event processing. The hook would be called first.
  *
- * The hook function should have a form `void hook(const struct application_event_header *aeh)`.
+ * The hook function should have a form `void hook(const struct app_event_header *aeh)`.
  * The macro makes sure that the hook provided here is called first.
  * Only one hook can be registered with this macro.
  *
  * @param hook_fn Hook function.
  */
-#define APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER_FIRST(hook_fn)                      \
+#define APP_EVENT_HOOK_PREPROCESS_REGISTER_FIRST(hook_fn)                      \
 	const struct {} __event_hook_preprocess_first_sub_redefined = {};  \
-	_APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER(hook_fn, _EM_MARKER_FIRST_ELEMENT)
+	_APP_EVENT_HOOK_PREPROCESS_REGISTER(hook_fn, _APP_EM_MARKER_FIRST_ELEMENT)
 
 /**
  * @brief Register event hook on the start of event processing.
  *
  * The event hook called when the event is being processed.
- * The hook function should have a form `void hook(const struct application_event_header *aeh)`.
+ * The hook function should have a form `void hook(const struct app_event_header *aeh)`.
  *
  * @param hook_fn Hook function.
  */
-#define APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER(hook_fn) \
-	_APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER(hook_fn, _EM_SUBS_PRIO_ID(_EM_SUBS_PRIO_NORMAL))
+#define APP_EVENT_HOOK_PREPROCESS_REGISTER(hook_fn) \
+	_APP_EVENT_HOOK_PREPROCESS_REGISTER(hook_fn, _APP_EM_SUBS_PRIO_ID(_APP_EM_SUBS_PRIO_NORMAL))
 
 /**
  * @brief Register event hook on the start of event processing. The hook would be called last.
  *
  * The event hook called when the event is being processed.
- * The hook function should have a form `void hook(const struct application_event_header *aeh)`.
+ * The hook function should have a form `void hook(const struct app_event_header *aeh)`.
  * The macro makes sure that the hook provided here is called last.
  * Only one hook can be registered with this macro.
  *
  * @param hook_fn Hook function.
  */
-#define APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER_LAST(hook_fn)                      \
+#define APP_EVENT_HOOK_PREPROCESS_REGISTER_LAST(hook_fn)                      \
 	const struct {} __event_hook_preprocess_last_sub_redefined = {};  \
-	_APPLICATION_EVENT_HOOK_PREPROCESS_REGISTER(hook_fn, _EM_MARKER_FINAL_ELEMENT)
+	_APP_EVENT_HOOK_PREPROCESS_REGISTER(hook_fn, _APP_EM_MARKER_FINAL_ELEMENT)
 
 /**
  * @brief Register event hook on the end of event processing. The hook would be called first.
  *
  * The event hook called after the event is processed.
- * The hook function should have a form `void hook(const struct application_event_header *aeh)`.
+ * The hook function should have a form `void hook(const struct app_event_header *aeh)`.
  * The macro makes sure that the hook provided here is called first.
  * Only one hook can be registered with this macro.
  *
  * @param hook_fn Hook function.
  */
-#define APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER_FIRST(hook_fn)                      \
+#define APP_EVENT_HOOK_POSTPROCESS_REGISTER_FIRST(hook_fn)                      \
 	const struct {} __event_hook_postprocess_first_sub_redefined = {};  \
-	_APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER(hook_fn, _EM_MARKER_FIRST_ELEMENT)
+	_APP_EVENT_HOOK_POSTPROCESS_REGISTER(hook_fn, _APP_EM_MARKER_FIRST_ELEMENT)
 
 /**
  * @brief Register event hook on the end of event processing.
  *
  * The event hook called after the event is processed.
- * The hook function should have a form `void hook(const struct application_event_header *aeh)`.
+ * The hook function should have a form `void hook(const struct app_event_header *aeh)`.
  *
  * @param hook_fn Hook function.
  */
-#define APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER(hook_fn)	\
-	_APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER(hook_fn,	\
-	_EM_SUBS_PRIO_ID(_EM_SUBS_PRIO_NORMAL))
+#define APP_EVENT_HOOK_POSTPROCESS_REGISTER(hook_fn)	\
+	_APP_EVENT_HOOK_POSTPROCESS_REGISTER(hook_fn,	\
+	_APP_EM_SUBS_PRIO_ID(_APP_EM_SUBS_PRIO_NORMAL))
 
 /**
  * @brief Register event hook on the end of event processing. The hook would be called last.
  *
  * The event hook called after the event is processed.
- * The hook function should have a form `void hook(const struct application_event_header *aeh)`.
+ * The hook function should have a form `void hook(const struct app_event_header *aeh)`.
  * The macro makes sure that the hook provided here is called last.
  * Only one hook can be registered with this macro.
  *
  * @param hook_fn Hook function.
  */
-#define APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER_LAST(hook_fn)                      \
+#define APP_EVENT_HOOK_POSTPROCESS_REGISTER_LAST(hook_fn)                      \
 	const struct {} __event_hook_postprocess_last_sub_redefined = {};  \
-	_APPLICATION_EVENT_HOOK_POSTPROCESS_REGISTER(hook_fn, _EM_MARKER_FINAL_ELEMENT)
+	_APP_EVENT_HOOK_POSTPROCESS_REGISTER(hook_fn, _APP_EM_MARKER_FINAL_ELEMENT)
 
 
 /** @brief Initialize the Application Event Manager.
@@ -393,13 +394,14 @@ void app_event_manager_free(void *addr);
  *
  * This helper macro simplifies event logging.
  *
- * @param aeh  Pointer to the event header of the event that is processed by app_event_manager.
+ * @param aeh  Pointer to the application event header of the event that is
+ *             processed by app_event_manager.
  * @param ... `printf`- like format string and variadic list of arguments corresponding to
  *            the format string.
  */
-#define APP_EVENT_MANAGER_LOG(aeh, ...) do {						\
+#define APP_EVENT_MANAGER_LOG(aeh, ...) do {							\
 	LOG_MODULE_DECLARE(app_event_manager, CONFIG_APP_EVENT_MANAGER_LOG_LEVEL);		\
-	if (IS_ENABLED(CONFIG_APP_EVENT_MANAGER_LOG_EVENT_TYPE)) {			\
+	if (IS_ENABLED(CONFIG_APP_EVENT_MANAGER_LOG_EVENT_TYPE)) {				\
 		LOG_INF("e:%s " GET_ARG_N(1, __VA_ARGS__), aeh->type_id->name			\
 			COND_CODE_0(NUM_VA_ARGS_LESS_1(__VA_ARGS__),				\
 			    (),									\
@@ -417,8 +419,8 @@ void app_event_manager_free(void *addr);
  * @param ... Comma-separated list of flags which should be set.
  *            In case no flags should be set leave it empty.
  */
- #define APPLICATION_EVENT_FLAGS_CREATE(...)				\
-	(FOR_EACH_NONEMPTY_TERM(_EVENT_FLAGS_JOIN, (|), __VA_ARGS__) 0)
+ #define APP_EVENT_FLAGS_CREATE(...)				\
+	(FOR_EACH_NONEMPTY_TERM(_APP_EVENT_FLAGS_JOIN, (|), __VA_ARGS__) 0)
 
 
 #ifdef __cplusplus

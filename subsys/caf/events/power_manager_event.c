@@ -13,7 +13,7 @@
 
 
 
-static void log_event(const struct application_event_header *aeh)
+static void log_event(const struct app_event_header *aeh)
 {
 	const struct power_manager_restrict_event *event = cast_power_manager_restrict_event(aeh);
 	enum power_manager_level lvl = event->level;
@@ -47,7 +47,7 @@ static void log_event(const struct application_event_header *aeh)
 }
 
 static void profile_event(struct log_event_buf *buf,
-			  const struct application_event_header *aeh)
+			  const struct app_event_header *aeh)
 {
 	const struct power_manager_restrict_event *event = cast_power_manager_restrict_event(aeh);
 
@@ -56,15 +56,15 @@ static void profile_event(struct log_event_buf *buf,
 }
 
 
-EVENT_INFO_DEFINE(power_manager_restrict_event,
+APP_EVENT_INFO_DEFINE(power_manager_restrict_event,
 		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_S8),
 		  ENCODE("module", "level"),
 		  profile_event
 );
 
-APPLICATION_EVENT_TYPE_DEFINE(power_manager_restrict_event,
+APP_EVENT_TYPE_DEFINE(power_manager_restrict_event,
 		  log_event,
 		  &power_manager_restrict_event_info,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_POWER_MANAGER_EVENTS,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

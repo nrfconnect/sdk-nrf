@@ -14,7 +14,7 @@
 #include <caf/events/keep_alive_event.h>
 
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	__ASSERT_NO_MSG(is_ble_peer_event(aeh));
 
@@ -47,5 +47,5 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);

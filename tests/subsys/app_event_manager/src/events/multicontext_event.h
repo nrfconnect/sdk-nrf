@@ -21,13 +21,13 @@ extern "C" {
 #endif
 
 struct multicontext_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	int val1;
 	int val2;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(multicontext_event);
+APP_EVENT_TYPE_DECLARE(multicontext_event);
 
 #ifdef __cplusplus
 }

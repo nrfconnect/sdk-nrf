@@ -76,7 +76,7 @@ static struct module_data self = {
 };
 
 /* Handlers */
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_modem_module_event(aeh)) {
 		struct modem_module_event *event = cast_modem_module_event(aeh);
@@ -230,7 +230,7 @@ static void send_memfault_data(bool lte_connected)
 			memcpy(debug_module_event->data.memfault.buf, data,
 			       sizeof(debug_module_event->data.memfault.buf));
 
-			APPLICATION_EVENT_SUBMIT(debug_module_event);
+			APP_EVENT_SUBMIT(debug_module_event);
 		}
 	}
 
@@ -346,12 +346,12 @@ static void message_handler(struct debug_msg_data *msg)
 #endif
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, gnss_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, ui_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, sensor_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, data_module_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, util_module_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, modem_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, gnss_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, ui_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, sensor_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, data_module_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, util_module_event);

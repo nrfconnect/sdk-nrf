@@ -21,7 +21,7 @@ extern "C" {
 #endif
 
 struct data_event {
-	struct application_event_header header;
+	struct app_event_header header;
 
 	int8_t val1;
 	int16_t val2;
@@ -33,7 +33,7 @@ struct data_event {
 	char *descr;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(data_event);
+APP_EVENT_TYPE_DECLARE(data_event);
 
 #ifdef __cplusplus
 }

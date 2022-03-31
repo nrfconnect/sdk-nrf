@@ -33,7 +33,7 @@ static void gnss_event_handler(int event_id)
 		struct gnss_pvt_event *event = new_gnss_pvt_event();
 
 		event->pvt = pvt_data;
-		APPLICATION_EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 		break;
 	case NRF_MODEM_GNSS_EVT_AGPS_REQ:
 		LOG_DBG("GNSS requests AGPS Data. AGPS is not implemented.");

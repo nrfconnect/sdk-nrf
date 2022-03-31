@@ -10,7 +10,7 @@
 #include <fs_event.h>
 #include <fs/fs.h>
 
-static void log_fs_event(const struct application_event_header *aeh)
+static void log_fs_event(const struct app_event_header *aeh)
 {
 	const struct fs_event *event = cast_fs_event(aeh);
 
@@ -57,9 +57,9 @@ int fs_event_helper_file_write(
 	return 0;
 }
 
-APPLICATION_EVENT_TYPE_DEFINE(fs_event,
+APP_EVENT_TYPE_DEFINE(fs_event,
 		  log_fs_event,
 		  NULL,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_BRIDGE_LOG_FS_EVENT,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

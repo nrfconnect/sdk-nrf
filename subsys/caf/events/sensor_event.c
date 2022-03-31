@@ -16,7 +16,7 @@ static const char * const sensor_state_name[] = {
 	[SENSOR_STATE_ERROR] = "ERROR",
 };
 
-static void log_sensor_event(const struct application_event_header *aeh)
+static void log_sensor_event(const struct app_event_header *aeh)
 {
 	const struct sensor_event *event = cast_sensor_event(aeh);
 
@@ -24,24 +24,24 @@ static void log_sensor_event(const struct application_event_header *aeh)
 }
 
 static void profile_sensor_event(struct log_event_buf *buf,
-				 const struct application_event_header *aeh)
+				 const struct app_event_header *aeh)
 {
 }
 
-EVENT_INFO_DEFINE(sensor_event,
+APP_EVENT_INFO_DEFINE(sensor_event,
 		  ENCODE(),
 		  ENCODE(),
 		  profile_sensor_event);
 
-APPLICATION_EVENT_TYPE_DEFINE(sensor_event,
+APP_EVENT_TYPE_DEFINE(sensor_event,
 		  log_sensor_event,
 		  &sensor_event_info,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_SENSOR_EVENTS,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 
-static void log_sensor_state_event(const struct application_event_header *aeh)
+static void log_sensor_state_event(const struct app_event_header *aeh)
 {
 	const struct sensor_state_event *event = cast_sensor_state_event(aeh);
 
@@ -55,9 +55,9 @@ static void log_sensor_state_event(const struct application_event_header *aeh)
 			event->descr, sensor_state_name[event->state]);
 }
 
-APPLICATION_EVENT_TYPE_DEFINE(sensor_state_event,
+APP_EVENT_TYPE_DEFINE(sensor_state_event,
 		  log_sensor_state_event,
 		  NULL,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_SENSOR_STATE_EVENTS,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

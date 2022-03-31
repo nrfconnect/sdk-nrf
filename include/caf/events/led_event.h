@@ -30,7 +30,7 @@ extern "C" {
  */
 struct led_event {
 	/** Event header. */
-	struct application_event_header header;
+	struct app_event_header header;
 
 	/** ID of the LED. */
 	size_t led_id;
@@ -50,7 +50,7 @@ struct led_event {
  */
 struct led_ready_event {
 	/** Event header. */
-	struct application_event_header header;
+	struct app_event_header header;
 
 	/** ID of the LED. */
 	size_t led_id;
@@ -71,8 +71,8 @@ struct led_ready_event {
 extern "C" {
 #endif
 
-APPLICATION_EVENT_TYPE_DECLARE(led_event);
-APPLICATION_EVENT_TYPE_DECLARE(led_ready_event);
+APP_EVENT_TYPE_DECLARE(led_event);
+APP_EVENT_TYPE_DECLARE(led_ready_event);
 
 #ifdef __cplusplus
 }

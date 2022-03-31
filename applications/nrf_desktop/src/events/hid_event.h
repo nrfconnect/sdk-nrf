@@ -30,49 +30,49 @@ extern "C" {
 
 /** @brief HID report event. */
 struct hid_report_event {
-	struct application_event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	const void *source; /**< Id of the report source. */
 	const void *subscriber; /**< Id of the report subscriber. */
 	struct event_dyndata dyndata; /**< Report data. The first byte is a report id. */
 };
 
-APPLICATION_EVENT_TYPE_DYNDATA_DECLARE(hid_report_event);
+APP_EVENT_TYPE_DYNDATA_DECLARE(hid_report_event);
 
 
 /** @brief Report subscriber event. */
 struct hid_report_subscriber_event {
-	struct application_event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	const void *subscriber; /**< Id of the report subscriber. */
 	bool connected; /**< True if subscriber is connected to the system. */
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(hid_report_subscriber_event);
+APP_EVENT_TYPE_DECLARE(hid_report_subscriber_event);
 
 
 /** @brief Report sent event. */
 struct hid_report_sent_event {
-	struct application_event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	const void *subscriber; /**< Id of the report subscriber. */
 	uint8_t report_id; /**< Report id. */
 	bool error; /**< If true error occured on send. */
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(hid_report_sent_event);
+APP_EVENT_TYPE_DECLARE(hid_report_sent_event);
 
 
 /** @brief Report subscription event. */
 struct hid_report_subscription_event {
-	struct application_event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	const void *subscriber; /**< Id of the report subscriber. */
 	uint8_t report_id; /**< Report id. */
 	bool enabled; /**< True if notification are enabled. */
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(hid_report_subscription_event);
+APP_EVENT_TYPE_DECLARE(hid_report_subscription_event);
 
 
 #ifdef __cplusplus

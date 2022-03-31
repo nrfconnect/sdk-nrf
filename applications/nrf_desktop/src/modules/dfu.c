@@ -678,7 +678,7 @@ static void fetch_config(const uint8_t opt_id, uint8_t *data, size_t *size)
 	}
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_hid_report_event(aeh)) {
 		device_in_use = true;
@@ -723,8 +723,8 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, hid_report_event);
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);

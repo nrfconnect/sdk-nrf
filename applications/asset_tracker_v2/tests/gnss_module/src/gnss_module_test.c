@@ -87,7 +87,7 @@ void *k_malloc(size_t size)
 	return malloc(size);
 }
 
-/* Dummy structs to please the linker. The APPLICATION_EVENT_SUBSCRIBE macros in gnss_module.c
+/* Dummy structs to please the linker. The APP_EVENT_SUBSCRIBE macros in gnss_module.c
  * depend on these to exist. But since we are unit testing, we dont need
  * these subscriptions and hence these structs can remain uninitialized.
  */
@@ -152,7 +152,7 @@ static int nrf_modem_gnss_event_handler_set_callback(
 	return 0;
 }
 
-static void validate_gnss_evt(struct application_event_header *aeh, int no_of_calls)
+static void validate_gnss_evt(struct app_event_header *aeh, int no_of_calls)
 {
 	uint32_t index = gnss_module_event_count;
 	struct gnss_module_event *event = cast_gnss_module_event(aeh);
@@ -268,7 +268,7 @@ static void setup_gnss_module_in_init_state(void)
 	app_module_event->type = APP_EVT_START;
 
 	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&gnss_module_event_memory);
-	bool ret = GNSS_MODULE_EVT_HANDLER((struct application_event_header *)app_module_event);
+	bool ret = GNSS_MODULE_EVT_HANDLER((struct app_event_header *)app_module_event);
 
 	app_event_manager_free(app_module_event);
 
@@ -285,7 +285,7 @@ static void setup_gnss_module_in_running_state(void)
 
 	modem_module_event->type = MODEM_EVT_INITIALIZED;
 
-	bool ret = GNSS_MODULE_EVT_HANDLER((struct application_event_header *)modem_module_event);
+	bool ret = GNSS_MODULE_EVT_HANDLER((struct app_event_header *)modem_module_event);
 
 	app_event_manager_free(modem_module_event);
 
@@ -328,7 +328,7 @@ void test_gnss_start(void)
 	app_module_event->data_list[0] = APP_DATA_GNSS;
 
 	__wrap_app_event_manager_alloc_IgnoreAndReturn(&gnss_module_event_memory);
-	bool ret = GNSS_MODULE_EVT_HANDLER((struct application_event_header *)app_module_event);
+	bool ret = GNSS_MODULE_EVT_HANDLER((struct app_event_header *)app_module_event);
 
 	app_event_manager_free(app_module_event);
 
@@ -380,7 +380,7 @@ void test_gnss_fix(void)
 	app_module_event->data_list[0] = APP_DATA_GNSS;
 
 	__wrap_app_event_manager_alloc_IgnoreAndReturn(&gnss_module_event_memory);
-	bool ret = GNSS_MODULE_EVT_HANDLER((struct application_event_header *)app_module_event);
+	bool ret = GNSS_MODULE_EVT_HANDLER((struct app_event_header *)app_module_event);
 
 	app_event_manager_free(app_module_event);
 
@@ -434,7 +434,7 @@ void test_agps_request(void)
 	app_module_event->data_list[0] = APP_DATA_GNSS;
 
 	__wrap_app_event_manager_alloc_IgnoreAndReturn(&gnss_module_event_memory);
-	bool ret = GNSS_MODULE_EVT_HANDLER((struct application_event_header *)app_module_event);
+	bool ret = GNSS_MODULE_EVT_HANDLER((struct app_event_header *)app_module_event);
 
 	app_event_manager_free(app_module_event);
 
@@ -483,7 +483,7 @@ void test_msgq_full(void)
 	app_module_event->data_list[0] = APP_DATA_GNSS;
 
 	__wrap_app_event_manager_alloc_IgnoreAndReturn(&gnss_module_event_memory);
-	bool ret = GNSS_MODULE_EVT_HANDLER((struct application_event_header *)app_module_event);
+	bool ret = GNSS_MODULE_EVT_HANDLER((struct app_event_header *)app_module_event);
 
 	app_event_manager_free(app_module_event);
 

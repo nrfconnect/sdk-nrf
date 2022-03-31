@@ -218,7 +218,7 @@ static void use_low_latency(void)
 	}
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
@@ -321,17 +321,17 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
 #if CONFIG_CAF_BLE_SMP
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_smp_transfer_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_smp_transfer_event);
 #endif
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-APPLICATION_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif
 #if CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK
-APPLICATION_EVENT_SUBSCRIBE(MODULE, power_down_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
+APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #endif

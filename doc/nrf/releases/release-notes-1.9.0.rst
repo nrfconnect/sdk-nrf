@@ -669,11 +669,11 @@ Other libraries
       * Experimental functionality to automatically power up and down RAM sections based on the libc heap usage.
       * Support for nRF5340 application core to power up and power down RAM sections.
 
-  * :ref:`event_manager`:
+  * :ref:`app_event_manager`:
 
     * Added:
 
-      * ``EVENT_SUBSCRIBE_FIRST`` subscriber priority and updated the documentation about this functionality.
+      * ``APP_EVENT_SUBSCRIBE_FIRST`` subscriber priority and updated the documentation about this functionality.
 
     * Updated:
 
@@ -688,7 +688,7 @@ Other libraries
 
       *  Forced alignment for x86.
 
-  * :ref:`event_manager_profiler_tracer`:
+  * :ref:`app_event_manager_profiler_tracer`:
 
     * Updated:
 

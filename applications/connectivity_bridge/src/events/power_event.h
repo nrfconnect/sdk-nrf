@@ -21,11 +21,11 @@ extern "C" {
 #endif
 
 struct power_down_event {
-	struct application_event_header header;
+	struct app_event_header header;
 	bool error;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(power_down_event);
+APP_EVENT_TYPE_DECLARE(power_down_event);
 
 #ifdef __cplusplus
 }

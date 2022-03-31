@@ -32,7 +32,7 @@ static void broadcast_mode(void)
 	struct ml_app_mode_event *event = new_ml_app_mode_event();
 
 	event->mode = mode;
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static bool handle_click_event(const struct click_event *event)
@@ -60,7 +60,7 @@ static bool handle_click_event(const struct click_event *event)
 	return false;
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (MODE_CONTROL &&
 	    is_click_event(aeh)) {
@@ -88,8 +88,8 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if MODE_CONTROL
-APPLICATION_EVENT_SUBSCRIBE(MODULE, click_event);
+APP_EVENT_SUBSCRIBE(MODULE, click_event);
 #endif /* MODE_CONTROL */

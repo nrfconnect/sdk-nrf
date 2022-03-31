@@ -234,7 +234,7 @@ static void peer_discovered(struct bt_conn *conn, bool peer_llpm_support)
 	}
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
@@ -290,8 +290,8 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_discovery_complete_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_discovery_complete_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);

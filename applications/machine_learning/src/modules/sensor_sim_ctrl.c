@@ -54,7 +54,7 @@ static void broadcast_wave_label(const char *label)
 	struct sensor_sim_event *event = new_sensor_sim_event();
 
 	event->label = label;
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void set_wave(void)
@@ -136,7 +136,7 @@ static int init(void)
 	return 0;
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (IS_ENABLED(CONFIG_ML_APP_SENSOR_SIM_CTRL_TRIG_BUTTON) &&
 	    is_button_event(aeh)) {
@@ -166,8 +166,8 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if CONFIG_ML_APP_SENSOR_SIM_CTRL_TRIG_BUTTON
-APPLICATION_EVENT_SUBSCRIBE(MODULE, button_event);
+APP_EVENT_SUBSCRIBE(MODULE, button_event);
 #endif /* CONFIG_ML_APP_SENSOR_SIM_CTRL_TRIG_BUTTON */

@@ -75,7 +75,7 @@ static void broadcast_ei_data_forwarder_state(enum ei_data_forwarder_state forwa
 	struct ei_data_forwarder_event *event = new_ei_data_forwarder_event();
 
 	event->state = forwarder_state;
-	APPLICATION_EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static bool is_nus_conn_valid(struct bt_conn *conn, uint8_t conn_state)
@@ -407,7 +407,7 @@ static bool handle_ble_peer_conn_params_event(const struct ble_peer_conn_params_
 	return false;
 }
 
-static bool event_handler(const struct application_event_header *aeh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_sensor_event(aeh)) {
 		return handle_sensor_event(cast_sensor_event(aeh));
@@ -436,11 +436,11 @@ static bool event_handler(const struct application_event_header *aeh)
 	return false;
 }
 
-APPLICATION_EVENT_LISTENER(MODULE, event_handler);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, sensor_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, sensor_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
 #if ML_APP_MODE_CONTROL
-APPLICATION_EVENT_SUBSCRIBE(MODULE, ml_app_mode_event);
+APP_EVENT_SUBSCRIBE(MODULE, ml_app_mode_event);
 #endif /* ML_APP_MODE_CONTROL */

@@ -14,7 +14,7 @@ static const char * const status_name[] = {
 #undef X
 };
 
-static void log_config_event(const struct application_event_header *aeh)
+static void log_config_event(const struct app_event_header *aeh)
 {
 	const struct config_event *event = cast_config_event(aeh);
 
@@ -27,9 +27,9 @@ static void log_config_event(const struct application_event_header *aeh)
 			event->event_id);
 }
 
-APPLICATION_EVENT_TYPE_DEFINE(config_event,
+APP_EVENT_TYPE_DEFINE(config_event,
 		  log_config_event,
 		  NULL,
-		  APPLICATION_EVENT_FLAGS_CREATE(
+		  APP_EVENT_FLAGS_CREATE(
 			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_CONFIG_EVENT,
-				(APPLICATION_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

@@ -20,10 +20,10 @@ extern "C" {
  * The event that informs that factory reset was requested.
  */
 struct factory_reset_event {
-	struct application_event_header header;
+	struct app_event_header header;
 };
 
-APPLICATION_EVENT_TYPE_DECLARE(factory_reset_event);
+APP_EVENT_TYPE_DECLARE(factory_reset_event);
 
 
 #ifdef __cplusplus
