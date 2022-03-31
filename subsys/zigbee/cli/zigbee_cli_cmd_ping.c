@@ -253,10 +253,9 @@ static void dispatch_user_callback(zb_bufid_t bufid)
 				zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(
 						invalidate_ping_entry_cb,
 						ctx_mgr_get_index_by_entry(req_data));
+				ZB_ERROR_CHECK(zb_err_code);
 
-				if (zb_err_code == RET_OK) {
-					ctx_mgr_delete_entry(req_data);
-				}
+				ctx_mgr_delete_entry(req_data);
 			}
 		} else {
 			LOG_ERR("Ping request returned error status: %d",
@@ -592,9 +591,7 @@ zb_uint8_t cli_agent_ep_handler_ping(zb_bufid_t bufid)
 		}
 
 		/* ... and erase it manually. */
-		if (zb_err_code == RET_OK) {
-			ctx_mgr_delete_entry(req_data);
-		}
+		ctx_mgr_delete_entry(req_data);
 
 	} else if ((zcl_hdr->cmd_id == PING_ECHO_REQUEST) ||
 		   (zcl_hdr->cmd_id == PING_ECHO_NO_ACK_REQUEST)) {

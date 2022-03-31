@@ -339,10 +339,7 @@ void cmd_zb_bind_unbind_cb(zb_bufid_t bufid)
 
 	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(cmd_zb_bind_unbind_timeout,
 						   ZB_ALARM_ANY_PARAM);
-	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(ctx_entry->shell,
-				   "Unable to cancel timeout timer", ZB_FALSE);
-	}
+	ZB_ERROR_CHECK(zb_err_code);
 
 	if (bind_resp->status == ZB_ZDP_STATUS_SUCCESS) {
 		zb_cli_print_done(ctx_entry->shell, ZB_FALSE);
@@ -395,10 +392,7 @@ void cmd_zb_nwk_addr_cb(zb_bufid_t bufid)
 
 	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(cmd_zb_nwk_addr_timeout,
 						   ZB_ALARM_ANY_PARAM);
-	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(ctx_entry->shell,
-				   "Unable to cancel timeout timer", ZB_FALSE);
-	}
+	ZB_ERROR_CHECK(zb_err_code);
 
 	if (nwk_addr_resp->status == ZB_ZDP_STATUS_SUCCESS) {
 		zb_uint16_t nwk_addr;
@@ -452,10 +446,7 @@ void cmd_zb_ieee_addr_cb(zb_bufid_t bufid)
 
 	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(cmd_zb_ieee_addr_timeout,
 						   ZB_ALARM_ANY_PARAM);
-	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(ctx_entry->shell,
-				   "Unable to cancel timeout timer", ZB_FALSE);
-	}
+	ZB_ERROR_CHECK(zb_err_code);
 
 	if (ieee_addr_resp->status == ZB_ZDP_STATUS_SUCCESS) {
 		zb_address_ieee_ref_t addr_ref;
@@ -1478,11 +1469,7 @@ static void cmd_zb_mgmt_leave_cb(zb_bufid_t bufid)
 		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(
 					cmd_zb_mgmt_leave_timeout_cb,
 					mgmt_leave_resp->tsn);
-		if (zb_err_code != RET_OK) {
-			zb_cli_print_error(ctx_entry->shell,
-					   "Unable to cancel timeout timer",
-					   ZB_TRUE);
-		}
+		ZB_ERROR_CHECK(zb_err_code);
 
 		if (mgmt_leave_resp->status == ZB_ZDP_STATUS_SUCCESS) {
 			zb_cli_print_done(ctx_entry->shell, ZB_FALSE);

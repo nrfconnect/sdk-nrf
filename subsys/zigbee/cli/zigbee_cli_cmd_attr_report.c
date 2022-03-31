@@ -51,10 +51,7 @@ static void cmd_zb_subscribe_unsubscribe_cb(struct ctx_entry *entry, zb_bufid_t 
 	zb_zcl_configure_reporting_res_t *resp = NULL;
 
 	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_cli_zcl_cmd_timeout_cb, ZB_ALARM_ANY_PARAM);
-	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(entry->shell, "Unable to cancel timeout timer", ZB_TRUE);
-		goto delete_ctx_entry;
-	}
+	ZB_ERROR_CHECK(zb_err_code);
 
 	/* Check if response contains only status code. */
 	if (sizeof(zb_zcl_configure_reporting_res_t) > zb_buf_len(bufid)) {
@@ -307,9 +304,7 @@ static int send_reporting_frame(struct ctx_entry *entry)
 		zb_cli_print_error(entry->shell, "Can not schedule zcl frame.", ZB_FALSE);
 
 		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_cli_zcl_cmd_timeout_cb, entry_index);
-		if (zb_err_code != RET_OK) {
-			zb_cli_print_error(entry->shell, "Unable to cancel timeout timer", ZB_TRUE);
-		}
+		ZB_ERROR_CHECK(zb_err_code);
 		goto error;
 	}
 
