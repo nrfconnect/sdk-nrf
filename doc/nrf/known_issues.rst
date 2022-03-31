@@ -566,13 +566,18 @@ KRKNWK-11826: Zigbee Router does not accept new child devices if the maximum num
 
 **Workaround**: If the maximum number of child devices has been reached, call ``bdb_start_top_level_commissioning(ZB_BDB_NETWORK_STEERING)`` on the parent router from the ``ZB_ZDO_SIGNAL_LEAVE_INDICATION`` signal handler.
 
-.. rst-class:: v1-9-1 v1-9-0 v1-8-0
+.. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 KRKNWK-11602: Zigbee device becomes not operable after receiving malformed packet
-  When any Zigbee device receives a malformed packet that does not match the Zigbee packet structure, it causes ZBOSS to assert.
-  The device is not automatically restarted.
+  When any Zigbee device receives a malformed packet that does not match the Zigbee packet structure, the ZBOSS stack asserts.
+  In the |NCS| versions before the v1.9.0 release, the device is not automatically restarted.
 
-**Workaround**: Power-cycle the Zigbee device.
+**Workaround**: Depends on your version of the |NCS|:
+
+* Before the |NCS| v1.9.0: Power-cycle the Zigbee device.
+* After and including the |NCS| v1.9.0: Wait for the device to restart automatically.
+
+Given these two options, we recommend to upgrade your |NCS| version to the latest available one.
 
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0
 
