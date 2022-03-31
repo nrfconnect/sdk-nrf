@@ -33,6 +33,8 @@ manifest:
       url-base: https://github.com/NordicSemiconductor
     - name: memfault
       url-base: https://github.com/memfault
+    - name: gregersrygg
+      url-base: https://github.com/gregersrygg
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -109,7 +111,8 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: d071b4c469cd35bb61f2f1bc08cd68d6d545f2d1
+      remote: gregersrygg
+      revision: 461bc86d669451a0c8f7855af6f14d1edbd5e633
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
