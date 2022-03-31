@@ -209,9 +209,7 @@ static int zcl_groups_cmd_send(struct ctx_entry *entry)
 		zb_cli_print_error(entry->shell, "Can not schedule zcl frame.", ZB_FALSE);
 
 		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_cli_zcl_cmd_timeout_cb, entry_index);
-		if (zb_err_code != RET_OK) {
-			zb_cli_print_error(entry->shell, "Unable to cancel timeout timer", ZB_TRUE);
-		}
+		ZB_ERROR_CHECK(zb_err_code);
 		goto cmd_send_error;
 	}
 
