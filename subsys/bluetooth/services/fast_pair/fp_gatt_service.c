@@ -5,6 +5,7 @@
  */
 
 #include <bluetooth/bluetooth.h>
+#include <bluetooth/l2cap.h>
 #include <bluetooth/gatt.h>
 
 #include "fp_registration_data.h"
@@ -20,6 +21,11 @@
 	BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0xFE2C1235, 0x8366, 0x4814, 0x8EB0, 0x01DE32100BEA))
 #define BT_UUID_FAST_PAIR_ACCOUNT_KEY \
 	BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0xFE2C1236, 0x8366, 0x4814, 0x8EB0, 0x01DE32100BEA))
+
+/* Make sure that MTU value of at least 83 is used (recommended by the Fast Pair specification). */
+#define FP_RECOMMENDED_MTU	83
+BUILD_ASSERT(BT_L2CAP_TX_MTU >= FP_RECOMMENDED_MTU);
+BUILD_ASSERT(BT_L2CAP_RX_MTU >= FP_RECOMMENDED_MTU);
 
 
 static ssize_t read_model_id(struct bt_conn *conn,

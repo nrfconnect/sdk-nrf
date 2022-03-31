@@ -50,6 +50,30 @@ config BT_FAST_PAIR_GATT_SERVICE
 	help
 	  Add Fast Pair GATT Service source files.
 
+if BT_FAST_PAIR_GATT_SERVICE
+
+config BT_L2CAP_TX_MTU
+	default 83
+	help
+	  If Fast Pair is enabled, use MTU value of 83 (recommended by the specification).
+
+config BT_BUF_ACL_TX_SIZE
+	default 87
+	help
+	  If Fast Pair is enabled, use MTU value of 83 (recommended by the specification).
+
+config BT_BUF_ACL_RX_SIZE
+	default 87
+	help
+	  If Fast Pair is enabled, use MTU value of 83 (recommended by the specification).
+
+config BT_CTLR_DATA_LENGTH_MAX
+	default 87 if BT_CTLR
+	help
+	  If Fast Pair is enabled, use MTU value of 83 (recommended by the specification).
+
+endif # BT_FAST_PAIR_GATT_SERVICE
+
 config BT_FAST_PAIR_CRYPTO
 	bool
 	help
