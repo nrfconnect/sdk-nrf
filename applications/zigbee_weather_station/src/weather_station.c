@@ -7,14 +7,6 @@
 #include <logging/log.h>
 
 #include "weather_station.h"
-#include "sensor.h"
-
-/* Zigbee Cluster Library 4.4.2.2.1.1: MeasuredValue = 100x temperature in degrees Celsius */
-#define ZCL_TEMPERATURE_MEMASUREMENT_MEASURED_VALUE_MULTIPLIER 100
-/* Zigbee Cluster Library 4.5.2.2.1.1: MeasuredValue = 10x pressure in kPa */
-#define ZCL_PRESSURE_MEMASUREMENT_MEASURED_VALUE_MULTIPLIER 10
-/* Zigbee Cluster Library 4.7.2.1.1: MeasuredValue = 100x water content in % */
-#define ZCL_HUMIDITY_MEMASUREMENT_MEASURED_VALUE_MULTIPLIER 100
 
 LOG_MODULE_DECLARE(app, CONFIG_ZIGBEE_WEATHER_STATION_LOG_LEVEL);
 
@@ -54,7 +46,7 @@ int weather_station_update_temperature(void)
 		/* Convert measured value to attribute value, as specified in ZCL */
 		temperature_attribute = (int16_t)
 					(measured_temperature *
-					 ZCL_TEMPERATURE_MEMASUREMENT_MEASURED_VALUE_MULTIPLIER);
+					 ZCL_TEMPERATURE_MEASUREMENT_MEASURED_VALUE_MULTIPLIER);
 		LOG_INF("Attribute T:%10d", temperature_attribute);
 
 		/* Set ZCL attribute */
@@ -87,7 +79,7 @@ int weather_station_update_pressure(void)
 		/* Convert measured value to attribute value, as specified in ZCL */
 		pressure_attribute = (int16_t)
 				     (measured_pressure *
-				      ZCL_PRESSURE_MEMASUREMENT_MEASURED_VALUE_MULTIPLIER);
+				      ZCL_PRESSURE_MEASUREMENT_MEASURED_VALUE_MULTIPLIER);
 		LOG_INF("Attribute P:%10d", pressure_attribute);
 
 		/* Set ZCL attribute */
@@ -121,7 +113,7 @@ int weather_station_update_humidity(void)
 		/* Convert measured value to attribute value, as specified in ZCL */
 		humidity_attribute = (int16_t)
 				     (measured_humidity *
-				      ZCL_HUMIDITY_MEMASUREMENT_MEASURED_VALUE_MULTIPLIER);
+				      ZCL_HUMIDITY_MEASUREMENT_MEASURED_VALUE_MULTIPLIER);
 		LOG_INF("Attribute H:%10d", humidity_attribute);
 
 		zb_zcl_status_t status = zb_zcl_set_attr_val(
