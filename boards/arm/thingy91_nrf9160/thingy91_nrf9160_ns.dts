@@ -15,3 +15,10 @@
 		zephyr,code-partition = &slot0_ns_partition;
 	};
 };
+
+/* Disable Zephyr driver for UART1. The nrfx driver is used for interfacing with UART1
+ * for sending modem traces.
+ */
+&uart1 {
+	status = "disabled";
+};
