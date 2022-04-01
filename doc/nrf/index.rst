@@ -36,7 +36,7 @@ In addition to the |NCS| documentation, information is available in the followin
 
     .. rst-class:: doc-link-text
 
-    `Developer Academy online learning <DevAcademy_>`_
+    `Accelerated learning <DevAcademy_>`_
 
 .. rst-class:: doc-link gray-box
 ..
