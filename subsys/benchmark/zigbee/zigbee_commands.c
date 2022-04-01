@@ -3,9 +3,12 @@
 #include <zephyr.h>
 #include <shell/shell.h>
 #include <logging/log.h>
+#include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include <benchmark_cli_util.h>
+#include <zigbee/zigbee_app_utils.h>
 #include "protocol_api.h"
 #include "benchmark_zigbee_common.h"
 
@@ -108,49 +111,115 @@ static bool isdigit(char possible_digit)
     return (possible_digit <= '9') && (possible_digit >= '0');
 }
 
-static void tx_power_cmd(const struct shell *shell, size_t argc, char **argv)
+static bool parse_tx_power(char *tx_power_str, int8_t *tx_power_parsed)
 {
+    uint32_t arg_len;
+    bool is_negative;
+
+    if (!tx_power_str) {
+        goto parse_failed;
+    }
+
+    arg_len = strlen(tx_power_str);
+    if (arg_len < 1 || arg_len > 4) {
+        goto parse_failed;
+    }
+
+    is_negative = tx_power_str[0] == '-';
+    if (!(is_negative || isdigit(tx_power_str[0]))) {
+        goto parse_failed;
+    }
+
+    for (int i = (int)is_negative; i < arg_len; i++) {
+        if (!isdigit(tx_power_str[i])) {
+            goto parse_failed;
+        }
+    }
+
+    *tx_power_parsed = atoi(tx_power_str);
+    return true;
+
+parse_failed:
+    return false;
+}
+
+static void tx_power_cmd_local(const struct shell *shell, size_t argc, char **argv)
+{
+    zb_int8_t tx_power;
+
     if (argc == 1)
     {
-        zb_int8_t tx_power = zb_mac_get_tx_power();
-
+        tx_power = zb_mac_get_tx_power();
         shell_info(shell, "Zigbee TX power is set to: %d dBm", tx_power);
     }
-
-    if (argc == 2)
+    else if (argc == 2 && parse_tx_power(argv[1], &tx_power))
     {
-        int8_t tx_power;
-        char *new_tx_power = argv[1];
-        uint32_t arg_len = strlen(argv[1]);
-        bool is_negative = new_tx_power[0] == '-';
-
-        if (arg_len > 4) {
-            goto parse_failed;
-        }
-
-        if (!(is_negative || isdigit(new_tx_power[0]))) {
-            goto parse_failed;
-        }
-
-        for (int i = (int)is_negative; i < arg_len; i++) {
-            if (!isdigit(new_tx_power[i])) {
-                goto parse_failed;
-            }
-        }
-
-        tx_power = atoi(new_tx_power);
         zb_mac_set_tx_power(tx_power);
-
         shell_info(shell, "Setting the tx power to %d dBm", tx_power);
     }
+    else
+    {
+        shell_error(shell, "Invalid value (%s) The tx power can be set to value between: <-127, 127>", argv[1]);
+    }
+}
 
-    return;
-parse_failed:
-    shell_error(shell, "Invalid value (%s) The tx power can be set to value between: <-127, 127>", argv[1]);
+static void tx_power_get_remote(const struct shell *shell, size_t argc, char **argv)
+{
+    ARG_UNUSED(argc);
+    zb_uint16_t peer_addr;
+
+    if (parse_hex_u16(argv[1], &peer_addr)) {
+        shell_info(shell, "Getting tx power from %.4x", peer_addr);
+        zb_buf_get_out_delayed_ext(zigbee_benchmark_get_tx_power_remote, peer_addr, 0);
+    } else {
+        shell_error(shell, "Failed to parse remote peer's address");
+    }
+}
+
+static void tx_power_set_remote(const struct shell *shell, size_t argc, char **argv)
+{
+    ARG_UNUSED(argc);
+    uint16_t peer_addr;
+    int8_t tx_power;
+
+
+    if (parse_hex_u16(argv[1], &peer_addr) && parse_tx_power(argv[2], &tx_power)) {
+        shell_info(shell, "Setting tx power of %.4x to %d", peer_addr, tx_power);
+        zigbee_benchmark_set_tx_power_remote(peer_addr, tx_power);
+    } else {
+        shell_error(shell, "Failed to parse remote peer's address");
+    }
+}
+
+static void open_network_request(const struct shell *shell, size_t argc, char **argv)
+{
+    ARG_UNUSED(argc);
+
+    zb_buf_get_out_delayed(zigbee_benchmark_open_network_remote);
+
+    shell_info(shell, "Requested opening the network");
+}
+
+static void device_reset_request(const struct shell *shell, size_t argc, char **argv)
+{
+    ARG_UNUSED(argc);
+
+    zb_uint16_t peer_addr;
+
+    if (parse_hex_u16(argv[1], &peer_addr)) {
+        shell_info(shell, "Reseting remote peer %.4x", peer_addr);
+        zb_buf_get_out_delayed_ext(zigbee_benchmark_device_reset_remote, peer_addr, 0);
+    } else {
+        shell_error(shell, "Failed to parse remote peer's address");
+    }
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(bm_zigbee_extension,
-    SHELL_CMD_ARG(tx_power, NULL, "Get/Set radio power", tx_power_cmd, 1, 1),
+    SHELL_CMD_ARG(tx_power_local, NULL, "Get/Set tx power of the local device", tx_power_cmd_local, 1, 1),
+    SHELL_CMD_ARG(tx_power_get,   NULL, "Get radio power of the remote peer", tx_power_get_remote, 2, 0),
+    SHELL_CMD_ARG(tx_power_set,   NULL, "Set radio power of the remote peer", tx_power_set_remote, 3, 0),
+    SHELL_CMD_ARG(open_network,   NULL, "Request the network coordinator to open the network", open_network_request, 1, 0),
+    SHELL_CMD_ARG(device_reset,   NULL, "Reset remote device", device_reset_request, 2, 0),
     SHELL_SUBCMD_SET_END
 );
 

@@ -3,6 +3,7 @@
 #include <zephyr.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <shell/shell.h>
 #include <logging/log.h>
 
@@ -16,7 +17,6 @@ LOG_MODULE_DECLARE(benchmark, CONFIG_LOG_DEFAULT_LEVEL);
 #define DECIMAL_PRECISION 100
 #define BPS_TO_KBPS       1024
 
-#define LOG_BUFFER_STRDUP_NUM 8
 #define LOG_BUFFER_SIZE   (1024)
 
 typedef struct log_buffer {
@@ -367,7 +367,7 @@ static void parse_decimal(char *buf_out, const char *p_description, const char *
         uint32_t value_int       = value / DECIMAL_PRECISION;
         uint32_t value_remainder = value % DECIMAL_PRECISION;
 
-        sprintf(buf_out, "%s: %lu.%02lu%s", p_description, value_int, value_remainder, p_unit);
+        sprintf(buf_out, "%s: %u.%02u%s", p_description, value_int, value_remainder, p_unit);
     }
     else
     {
@@ -535,7 +535,7 @@ static void print_test_results(benchmark_event_context_t * p_context)
             (void)log_buffer_has_space(&results_log_buf, 40, true);
             results_log_buf.buf_usage += sprintf(results_log_buf.buf + results_log_buf.buf_usage,
                                "\r\nUnidirectional:"
-                               "\r\n    Throughput: %lukbps", throughput);
+                               "\r\n    Throughput: %ukbps", throughput);
         }
         else
         {
@@ -553,9 +553,9 @@ static void print_test_results(benchmark_event_context_t * p_context)
             (void)log_buffer_has_space(&results_log_buf, 150, true);
             results_log_buf.buf_usage += sprintf(results_log_buf.buf + results_log_buf.buf_usage,
                                                  "\r\nWithout retransmissions:"
-                                                 "\r\n%s" "\r\n    Throughput: %lukbps"
+                                                 "\r\n%s" "\r\n    Throughput: %ukbps"
                                                  "\r\nWith retransmissions:"
-                                                 "\r\n%s" "\r\n    Throughput: %lukbps",
+                                                 "\r\n%s" "\r\n    Throughput: %ukbps",
                                                  per_str[0], throughput, per_str[1], throughput_rtx);
         }
 

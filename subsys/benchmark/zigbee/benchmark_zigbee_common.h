@@ -9,18 +9,26 @@
 /**@brief Benchmark control command type definition. */
 typedef enum
 {
-    TEST_START_REQUEST    = 0x00, /**< Notify the receiver about the intention to start the test. */
-    TEST_STOP_REQUEST     = 0x01, /**< Notify the receiver about the intention to stop the test. */
-    TEST_RESULTS_REQUEST  = 0x02, /**< Notify the receiver about the intention to receive test results. */
-    TEST_RESULTS_RESPONSE = 0x03, /**< Notify the receiver that the payload contains remote peer's test results. */
+    TEST_START_REQUEST        = 0x00, /**< Notify the receiver about the intention to start the test. */
+    TEST_STOP_REQUEST         = 0x01, /**< Notify the receiver about the intention to stop the test. */
+    TEST_RESULTS_REQUEST      = 0x02, /**< Notify the receiver about the intention to receive test results. */
+    TEST_RESULTS_RESPONSE     = 0x03, /**< Notify the receiver that the payload contains remote peer's test results. */
+    TEST_SET_TX_POWER         = 0x04, /**< Notify the received about the intention to change its tx power. */
+    TEST_GET_TX_POWER         = 0x05, /**< Notify the received about the intention to get its tx power. */
+    TEST_TX_POWER_RESPONSE    = 0x06, /**< Provide the receiver with a current configuration of sender's tx power. */
+    TEST_OPEN_NETWORK_REQUEST = 0x07, /**< Request the receiver to open the network for joining, doesn't have any effect
+                                           if the receiver isn't the network coordinator */
+    TEST_RESET_REQUEST        = 0x08, /**< Request the receiver to perform device reset. */
 } zigbee_benchmark_ctrl_t;
-
 
 struct benchmark_address_context_t
 {
     zb_uint16_t nwk_addr; /**< Remember only network address. EUI64 address is stored as device_id inside global device table. */
 };
 
+struct __packed benchmark_tx_power {
+    int8_t power;
+};
 
 /**************************************************************************************************
  * Internal API.
@@ -81,5 +89,30 @@ void zigbee_benchmark_peer_start_request_send(zb_bufid_t bufid, zb_uint16_t peer
  * @param[in] nwk_addr  Network address of the remote peer.
  */
 void zigbee_benchmark_peer_stop_request_send(zb_bufid_t bufid, zb_uint16_t peer_addr);
+
+/**@brief Function for sending SET TX POWER to the remote peer.
+ *
+ * @param[in]           Network address of the remote peer.
+ * @param[in]           Tx power required to set by remote peer.
+ */
+void zigbee_benchmark_set_tx_power_remote(zb_uint16_t peer_addr, zb_int8_t tx_power);
+
+/**@brief Function for sending GET TX POWER to the remote peer.
+ *
+ * @param[in]           Network address of the remote peer.
+ */
+void zigbee_benchmark_get_tx_power_remote(zb_bufid_t bufid, zb_uint16_t peer_addr);
+
+/**@brief Function for sending DEVICE RESET to the remote peer.
+ *
+ * @param[in]           Network address of the remote peer.
+ */
+void zigbee_benchmark_device_reset_remote(zb_bufid_t bufid, zb_uint16_t peer_addr);
+
+/**@brief Function for sending OPEN NETWORK to the remote peer.
+ *
+ * @param[in]           Network address of the remote peer.
+ */
+void zigbee_benchmark_open_network_remote(zb_bufid_t bufid);
 
 #endif /* BENCHMARK_ZIGBEE_COMMON_H__ */

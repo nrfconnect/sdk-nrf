@@ -42,4 +42,6 @@ void timer_stop(void);
  */
 uint32_t timer_ticks_to_ms(uint32_t ticks);
 
+uint32_t timer_ticks_from_uptime(void);
+
 #endif // TIMER_API_H
