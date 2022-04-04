@@ -44,6 +44,24 @@ The remote configuration is added to the host as a subproject, which means that 
 
 Both the remote and the host use common event declarations and definitions that are located in the :file:`samples/event_manager_proxy/common_events` folder, and modules that are located in the :file:`samples/event_manager_proxy/modules` folder.
 
+Configuration
+*************
+
+|config|
+
+Selecting ICMSG backend
+=======================
+
+By default, the Event Manager Proxy sample uses the OpenAMP backend provided by the IPC Service.
+You can instead select the ICMSG backend configuration, which has smaller memory requirements.
+
+The ICMSG backend configuration is provided in the :file:`prj_icmsg.conf` file.
+To provide the ICMSG backend configuration, specify the ``-DCONF_FILE=prj_icmsg.conf`` parameter along with the build command when building the sample:
+
+   .. code-block:: console
+
+      west build -p -b nrf5340dk_nrf5340_cpuapp -- -DCONF_FILE=prj_icmsg.conf
+
 Building and running
 ********************
 .. |sample path| replace:: :file:`samples/event_manager_proxy`
@@ -65,13 +83,6 @@ For example, you can do this from the command line using west by completing the 
 
    .. code-block:: console
 
-      west flash
-
-#. Go to the remote build directory and program the remote core:
-
-   .. code-block:: console
-
-      cd build/event_manager_proxy_remote-prefix/src/event_manager_proxy_remote-build/
       west flash
 
 Testing
@@ -152,4 +163,5 @@ This sample uses the following |NCS| subsystems:
 
 In addition, it uses the following Zephyr subsystems:
 
+* :file:`include/ipc/ipc_service.h`
 * :ref:`zephyr:logging_api`

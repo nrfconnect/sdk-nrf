@@ -257,7 +257,10 @@ Zigbee samples
 Other Samples
 -------------
 
-* Added the :ref:`ipc_service_sample` sample, showing throughtput of IPC service with available backends.
+* Added:
+
+  * :ref:`ipc_service_sample` sample, which demonstrates throughput of the IPC service with available backends.
+  * :ref:`event_manager_proxy_sample` sample, which demonstrates the usage of :ref:`event_manager_proxy`.
 
 * Updated:
 
@@ -399,6 +402,8 @@ Libraries for networking
 
 Other libraries
 ---------------
+
+* Added :ref:`event_manager_proxy`.
 
 * :ref:`app_event_manager`:
 
