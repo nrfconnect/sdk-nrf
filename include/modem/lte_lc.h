@@ -24,6 +24,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <zephyr.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -749,6 +750,28 @@ struct lte_lc_periodic_search_cfg {
 	/** Array of periodic search patterns. */
 	struct lte_lc_periodic_search_pattern patterns[4];
 };
+
+/**
+ * @brief Link controller callback for modem functional mode changes.
+ */
+struct lte_lc_cfun_cb {
+	void (*callback)(enum lte_lc_func_mode, void *ctx);
+	void *context;
+};
+
+/**
+ * @brief Define a callback for functional mode changes through @ref lte_lc_func_mode_set.
+ *
+ * @param name Callback name
+ * @param _callback Callback function
+ * @param _context User-defined context
+ */
+#define LTE_LC_ON_CFUN(name, _callback, _context)                                                  \
+	static void _callback(enum lte_lc_func_mode, void *ctx);                                   \
+	STRUCT_SECTION_ITERABLE(lte_lc_cfun_cb, lte_lc_cfun_cb_##name) = {                         \
+		.callback = _callback,                                                             \
+		.context = _context,                                                               \
+	};
 
 struct lte_lc_evt {
 	enum lte_lc_evt_type type;

@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <zephyr.h>
 #include <modem/nrf_modem_lib.h>
+#include <modem/lte_lc.h>
 
 NRF_MODEM_LIB_ON_INIT(init_hook, on_modem_init, NULL);
 NRF_MODEM_LIB_ON_SHUTDOWN(shutdown_hook, on_modem_shutdown, NULL);
@@ -20,6 +21,13 @@ static void on_modem_init(int ret, void *ctx)
 static void on_modem_shutdown(void *ctx)
 {
 	printk("> Shutting down\n");
+}
+
+LTE_LC_ON_CFUN(cfun_monitor, on_cfun, NULL);
+
+static void on_cfun(enum lte_lc_func_mode mode, void *ctx)
+{
+	printk("> Function mode has changed to %d\n", mode);
 }
 
 void main(void)
@@ -39,6 +47,30 @@ void main(void)
 	err = nrf_modem_lib_shutdown();
 	if (err) {
 		printk("Modem initialization failed, err %d\n", err);
+		return;
+	}
+
+	printk("Initializing modem library (again)\n");
+
+	err = nrf_modem_lib_init(NORMAL_MODE);
+	if (err) {
+		printk("libmodem initialization failed, err %d\n", err);
+		return;
+	}
+
+	printk("Changing function mode\n");
+
+	err = lte_lc_init_and_connect();
+	if (err) {
+		printk("lte_lc_init_and_connect() failed, err %d\n", err);
+	}
+
+
+	printk("Shutting down modem library (again)\n");
+
+	err = nrf_modem_lib_shutdown();
+	if (err) {
+		printk("libmodem initialization failed, err %d\n", err);
 		return;
 	}
 
