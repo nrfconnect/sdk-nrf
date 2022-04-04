@@ -11,7 +11,7 @@
 
 .. |config| replace:: See :ref:`configure_application` for information about how to permanently or temporarily change the configuration.
 
-.. |test_sample| replace:: After programming the sample to your development kit, test it by performing the following steps:
+.. |test_sample| replace:: After programming the sample to your development kit, complete the following steps to test it:
 
 .. |connect_generic| replace:: Connect the device to the computer using a USB cable.
    The device is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
