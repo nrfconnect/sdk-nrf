@@ -8,7 +8,7 @@ nRF9160: HTTP full modem update
    :depth: 2
 
 The HTTP full modem update sample shows how to perform a full firmware update of the modem.
-The sample downloads a modem firmware signed by Nordic Semiconductor and then performs the firmware update of the modem.
+The sample downloads the modem firmware signed by Nordic Semiconductor and updates the firmware.
 
 Requirements
 ************
@@ -29,7 +29,7 @@ Overview
 ********
 
 An |external_flash_size| of free space is required to perform a full modem update.
-Hence, only versions 0.14.0 and later of the nrf9160 DK support this sample as the prior versions do not have any external flash memory.
+Hence, only versions 0.14.0 and later of the nrf9160 DK support this sample as the earlier versions do not have any external flash memory.
 
 The sample proceeds as follows:
 
@@ -41,36 +41,39 @@ The sample proceeds as follows:
 The current version of this sample downloads two different versions of the firmware, namely 1.3.0 and 1.3.1.
 The sample then selects the version which is currently not installed.
 
+Configuration
+*************
+
+|config|
+
 Configuration options
-*********************
+=====================
 
 You can customize the firmware files downloaded by the sample through the following Kconfig options in the :file:`prj.conf` file:
 
 .. _CONFIG_DOWNLOAD_HOST:
 
 CONFIG_DOWNLOAD_HOST
-   It sets the hostname of the server where the updates are located.
+   Sets the hostname of the server where the updates are located.
 
 .. _CONFIG_DOWNLOAD_MODEM_0_FILE:
 
 CONFIG_DOWNLOAD_MODEM_0_FILE
-   It sets the file name of the first firmware.
+   Sets the file name of the first firmware.
    It supports files encoded in the serialized :file:`.cbor` format.
    See :ref:`lib_fmfu_fdev_serialization` for additional information.
 
 .. _CONFIG_DOWNLOAD_MODEM_0_VERSION:
 
 CONFIG_DOWNLOAD_MODEM_0_VERSION
-   It sets the version of the first firmware.
+   Sets the version of the first firmware.
 
 .. _CONFIG_DOWNLOAD_MODEM_1_FILE:
 
 CONFIG_DOWNLOAD_MODEM_1_FILE
-   It sets the file name of the second firmware.
+   Sets the file name of the second firmware.
    It supports files encoded in the serialized :file:`.cbor` format.
    See :ref:`lib_fmfu_fdev_serialization` for additional information.
-
-See :ref:`configure_application` for more information on how to customize configuration options.
 
 Building and running
 ********************
@@ -85,12 +88,12 @@ Because of this, it automatically includes the :ref:`secure_partition_manager`.
 Testing
 =======
 
-After programming the sample to the development kit, test it by performing the following steps:
+|test_sample|
 
 1. Start the application and wait for a prompt for pressing a button.
 #. Press the button or type "download" in the terminal emulator to start the update procedure.
-#. Once the download is completed, the modem update procedure will begin automatically.
-#. Reset the development kit by pressing the **Reset** button or typing "reset" in the terminal emulator.
+#. Once the download has completed, the modem update procedure begins automatically.
+#. Press the **Reset** button or type "reset" in the terminal emulator to reset the development kit.
 #. Observe that the LED pattern has changed.
 
 Dependencies
