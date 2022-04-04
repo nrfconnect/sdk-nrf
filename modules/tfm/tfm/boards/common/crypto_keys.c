@@ -66,7 +66,7 @@ tfm_plat_get_initial_attest_key(uint8_t *key_buf, uint32_t size,
 	}
 
 	ecc_key->priv_key = key_buf;
-	ecc_key->priv_key_size = size;
+	ecc_key->priv_key_size = 32;
 
 	ecc_key->pubx_key = NULL;
 	ecc_key->pubx_key_size = 0;
