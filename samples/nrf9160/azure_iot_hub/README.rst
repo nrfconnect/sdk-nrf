@@ -31,8 +31,8 @@ See the documentation on :ref:`lib_azure_iot_hub` library for more information.
 
 The sample periodically publishes telemetry messages (events) to the connected Azure IoT Hub instance.
 By default, telemetry messages are sent every 20 seconds.
-The default interval can be configured by setting the device twin property ``desired.telemetryInterval``, which will be interpreted by the sample in units of seconds.
-The format of a telemetry message is shown below:
+To configure the default interval, set the device twin property ``desired.telemetryInterval``, which will be interpreted by the sample as seconds.
+Here is an example of a telemetry message:
 
 .. parsed-literal::
    :class: highlight
@@ -42,18 +42,22 @@ The format of a telemetry message is shown below:
      "timestamp": 151325
    }
 
-where ``temperature`` is a value between ``25.0`` and ``25.9``, and ``timestamp`` is the uptime of the device in milliseconds.
+In a telemetry message, ``temperature`` is a value between ``25.0`` and ``25.9``, and ``timestamp`` is the uptime of the device in milliseconds.
 
 The sample has implemented the handling of `Azure IoT Hub direct method`_ with the name ``led``.
 If the device receives a direct method invocation with the name ``led`` and payload ``1`` or ``0``, LED 1 on the device is turned on or off, depending on the payload.
 On Thingy:91, the LED turns red if the payload is ``1``.
 
+Configuration
+*************
+
+|config|
 
 Setup
 =====
 
-For the sample to work as intended, you must setup and configure an Azure IoT Hub instance.
-See :ref:`configure_options_azure_iot` for information on the configuration options that can be used to create an Azure IoT Hub instance.
+For the sample to work as intended, you must set up and configure an Azure IoT Hub instance.
+See :ref:`configure_options_azure_iot` for information on the configuration options that you can use to create an Azure IoT Hub instance.
 Also, for a successful TLS connection to the Azure IoT Hub instance, the device needs to have certificates provisioned.
 See :ref:`prereq_connect_to_azure_iot_hub` for information on provisioning the certificates.
 
@@ -105,14 +109,14 @@ Optionally, follow the instructions at `Azure IoT Explorer`_ to install and conf
 #. Verify that the ``reported`` object in the device twin now has a ``telemetryInterval`` property with the correct value reported back from the device.
 #. In the `Azure IoT Explorer`_ or device page in `Azure Portal`_, navigate to the :guilabel:`Direct method` tab.
 #. Enter ``led`` as the method name. In the ``payload`` field, enter the value ``1`` (or ``0``) and click :guilabel:`Invoke method`.
-#. Observe that LED 1 on the development kit lights up (or switches off if ``0`` is entered as the payload).
+#. Observe that **LED 1** on the development kit lights up (or switches off if ``0`` is entered as the payload).
    If you are using `Azure IoT Explorer`_, you can observe a notification in the top right corner stating if the direct method was successfully invoked based on the report received from the device.
-#. If you are using the `Azure IoT Explorer`_, navigate to the :guilabel:`Telemetry` tab and click :guilabel:`start`.
+#. In the `Azure IoT Explorer`_, navigate to the :guilabel:`Telemetry` tab and click :guilabel:`start`.
 #. Observe that the event messages from the device are displayed in the terminal within the specified telemetry interval.
 
 .. _sampoutput_azure_iot:
 
-Sample Output
+Sample output
 =============
 
 When the sample runs, the device boots, and the sample displays the following output in the terminal over UART:
