@@ -191,6 +191,7 @@ nrf9160 Samples
 * Added:
 
   * Shell functionality to HTTP Update samples.
+  * :ref:`modem_callbacks_sample` sample, showcasing initialization and de-initialization callbacks.
 
 * Updated:
 
