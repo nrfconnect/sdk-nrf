@@ -8,3 +8,10 @@ tests:
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
     tags: ci_build
+  samples.event_manager_proxy.icmsg:
+    build_only: true
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
+    extra_args: CONF_FILE=prj_icmsg.conf

@@ -18,6 +18,11 @@ config APP_EVENT_MANAGER_REMOTE_WAIT_TO
 	  The time to wait for second core to report its readines to transport the events.
 	  The time is given in miliseconds.
 
+config APP_INCLUDE_REMOTE_IMAGE
+	bool "Inclute remote image as sub image"
+	default y
+	select PARTITION_MANAGER_ENABLED
+
 rsource "common_events/Kconfig"
 rsource "modules/Kconfig"
 endmenu
