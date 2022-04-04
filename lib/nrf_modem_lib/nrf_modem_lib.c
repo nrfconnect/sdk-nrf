@@ -15,10 +15,6 @@
 #include <logging/log.h>
 #include <pm_config.h>
 
-#ifdef CONFIG_LTE_LINK_CONTROL
-#include <modem/lte_lc.h>
-#endif
-
 #ifndef CONFIG_TRUSTED_EXECUTION_NONSECURE
 #error  nrf_modem_lib must be run as non-secure firmware.\
 	Are you building for the correct board ?
@@ -138,9 +134,6 @@ int nrf_modem_lib_get_init_ret(void)
 
 int nrf_modem_lib_shutdown(void)
 {
-#ifdef CONFIG_LTE_LINK_CONTROL
-	lte_lc_deinit();
-#endif
 	LOG_DBG("Shutting down modem library");
 	STRUCT_SECTION_FOREACH(nrf_modem_lib_shutdown_cb, e) {
 		LOG_DBG("Modem shutdown callback: %p", e->callback);
