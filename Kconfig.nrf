@@ -8,6 +8,9 @@ rsource "subsys/net/openthread/Kconfig.defconfig"
 
 menu "Nordic nRF Connect"
 
+config ROM_START_OFFSET
+	default 0
+
 #
 # Provide a new choice to override the mbedtls_external library completely
 # and not have to provide a "dummy" path for the implementation
