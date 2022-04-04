@@ -2122,6 +2122,13 @@ NCSDK-13949: TF-M Secure Image copies FICR to RAM on nRF9160
 NCSDK-12306: Enabling debug configuration causes usage fault on nRF9160
   When the debug configuration :kconfig:option:`CONFIG_TFM_CMAKE_BUILD_TYPE_DEBUG` is enabled, a usage fault is triggered during boot on nRF9160.
 
+.. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+NCSDK-14590: Usage fault in interrupt handlers when using FPU extensions
+  When the :kconfig:option:`ARM_NONSECURE_PREEMPTIBLE_SECURE_CALLS` Kconfig option is disabled, a usage fault can be triggered when an interrupt handler uses FPU extensions while interrupting the secure processing environment.
+
+  **Workaround:** Do not disable the :kconfig:option:`ARM_NONSECURE_PREEMPTIBLE_SECURE_CALLS` option when the :kconfig:option:`FPU` option is enabled.
+
 Zephyr
 ******
 
