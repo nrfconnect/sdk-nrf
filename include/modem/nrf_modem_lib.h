@@ -113,7 +113,7 @@ struct nrf_modem_lib_shutdown_cb {
  * When nrf_modem_lib_shutdown() is called a thread can call this function to be
  * woken up next time nrf_modem_lib_init() is called.
  */
-void nrf_modem_lib_shutdown_wait(void);
+__deprecated void nrf_modem_lib_shutdown_wait(void);
 
 /**
  * @brief Get the last return value of nrf_modem_lib_init.
