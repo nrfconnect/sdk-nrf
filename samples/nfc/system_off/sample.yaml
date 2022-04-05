@@ -1,13 +1,14 @@
 sample:
-  name: NFC System Off
   description: Wake up from system off by NFC field detect sample
+  name: NFC System Off
 tests:
-  samples.nfc.system_off:
+  sample.nfc.system_off:
     build_only: true
-    platform_allow: nrf52840dk_nrf52840 nrf52dk_nrf52832 nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf52dk_nrf52832
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
+    platform_allow: nrf52840dk_nrf52840 nrf52dk_nrf52832 nrf5340dk_nrf5340_cpuapp
+      nrf5340dk_nrf5340_cpuapp_ns
     tags: ci_build

@@ -1,10 +1,10 @@
 sample:
-  name: nRF RPC host for BLE API
   description: nRF RPC host providing BLE API access
+  name: nRF RPC host for BLE API
 tests:
-  samples.bluetooth.rpc_host:
+  sample.bluetooth.rpc_host:
     build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpunet
     integration_platforms:
       - nrf5340dk_nrf5340_cpunet
+    platform_allow: nrf5340dk_nrf5340_cpunet
     tags: bluetooth ci_build
