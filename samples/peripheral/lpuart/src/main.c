@@ -5,6 +5,8 @@
  */
 
 #include <zephyr.h>
+#include <device.h>
+#include <devicetree.h>
 #include <logging/log.h>
 #include <drivers/uart.h>
 
@@ -119,10 +121,9 @@ static void async(const struct device *lpuart)
 
 void main(void)
 {
-	const struct device *lpuart;
+	const struct device *lpuart = DEVICE_DT_GET(DT_NODELABEL(lpuart));
 
-	lpuart = device_get_binding("LPUART");
-	__ASSERT(lpuart, "Failed to get the device");
+	__ASSERT(device_is_ready(lpuart), "LPUART device not ready");
 
 	if (IS_ENABLED(CONFIG_NRF_SW_LPUART_INT_DRIVEN)) {
 		interrupt_driven(lpuart);
