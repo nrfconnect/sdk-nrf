@@ -1,0 +1,52 @@
+sample:
+    name: IPC Service integration test
+    description: IPC Service integration and efficiency test
+tests:
+  sample.ipc.ipc_service.rpmsg_default:
+    build_only: true
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    tags: ipc
+  sample.ipc.ipc_service.rpmsg_cpuapp_sending:
+    build_only: true
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    tags: ipc
+    extra_args:
+      OVERLAY_CONFIG=overlay-cpuapp-sending.conf
+  sample.ipc.ipc_service.rpmsg_cpunet_sending:
+    build_only: true
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    tags: ipc
+    extra_args:
+      OVERLAY_CONFIG=overlay-cpunet-sending.conf
+  sample.ipc.ipc_service.icmsg_default:
+    build_only: true
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    tags: ipc
+    extra_args:
+      CONF_FILE=prj_icmsg.conf
+  sample.ipc.ipc_service.icmsg_cpuapp_sending:
+    build_only: true
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    tags: ipc
+    extra_args:
+      CONF_FILE=prj_icmsg.conf
+      OVERLAY_CONFIG=overlay-cpuapp-sending.conf
+  sample.ipc.ipc_service.icmsg_cpunet_sending:
+    build_only: true
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    tags: ipc
+    extra_args:
+      CONF_FILE=prj_icmsg.conf
+      OVERLAY_CONFIG=overlay-cpunet-sending.conf

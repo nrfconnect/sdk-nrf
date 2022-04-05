@@ -256,6 +256,8 @@ Zigbee samples
 Other Samples
 -------------
 
+* Added the :ref:`ipc_service_sample` sample, showing throughtput of IPC service with available backends.
+
 * Updated:
 
   * :ref:`radio_test`:
