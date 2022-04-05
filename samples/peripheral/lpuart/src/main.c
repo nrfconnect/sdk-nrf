@@ -121,8 +121,6 @@ void main(void)
 {
 	const struct device *lpuart;
 
-	k_msleep(1000);
-
 	lpuart = device_get_binding("LPUART");
 	__ASSERT(lpuart, "Failed to get the device");
 
