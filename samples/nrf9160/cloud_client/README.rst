@@ -29,7 +29,7 @@ The current version of the sample supports the following libraries as cloud back
 *  :ref:`lib_aws_iot`
 *  :ref:`lib_azure_iot_hub`
 
-To swap between the supported libraries, change the option :kconfig:option:`CONFIG_CLOUD_BACKEND` to match the configuration string of a compatible cloud backend.
+To swap between the supported libraries, change the :ref:`CONFIG_CLOUD_BACKEND <cloud_client_configuration>` option to match the configuration string of a compatible cloud backend.
 The identification strings for the different cloud backends are listed in the following table:
 
 .. list-table::
@@ -48,19 +48,20 @@ The identification strings for the different cloud backends are listed in the fo
 Setup
 *****
 
-For configuring the different cloud backends, refer to the documentation on :ref:`lib_nrf_cloud`, :ref:`lib_aws_iot`, and :ref:`lib_azure_iot_hub`.
-Each cloud backend has specific setup steps that must be executed before it can be used.
+For configuring the different cloud backends, refer to the documentation on :ref:`lib_nrf_cloud`, :ref:`lib_aws_iot`, and :ref:`lib_azure_iot_hub` libraries.
+Each cloud backend has specific setup steps that you must complete before using them.
 
 .. note::
    The nRF9160 DK and Thingy:91 are preprogrammed with the certificates required for a connection to `nRF Cloud`_.
    No extra steps are required to use the Cloud client sample with nRF Cloud.
 
+.. _cloud_client_configuration:
 
 Configurations
 **************
 
 The configurations used in the sample are listed below.
-They can be added to :file:`cloud_client/prj.conf`.
+To use them, add them to the :file:`cloud_client/prj.conf` file.
 
 .. options-from-kconfig::
    :prefix: "This option "
@@ -69,7 +70,7 @@ They can be added to :file:`cloud_client/prj.conf`.
    :only-visible:
 
 .. note::
-   To output data in the terminal window located in the `nRF Cloud`_ web interface, the data format must be in JSON format.
+   To output data in the terminal window located in the `nRF Cloud`_ portal, the data format must be JSON.
 
 .. note::
    The sample sets the option :kconfig:option:`CONFIG_MQTT_KEEPALIVE` to the maximum allowed value that is specified by the configured cloud backend.
@@ -84,6 +85,7 @@ The communication protocol supported by the sample depends on the cloud backend 
 
 Functions
 =========
+
 The sample uses the following functions:
 
 * :c:func:`cloud_get_binding` : Binds to a desired cloud backend using an identifiable string.
@@ -106,6 +108,7 @@ The sample uses the following functions:
 
 Cloud events used in the sample
 ===============================
+
 The sample uses the following cloud events:
 
 * :c:enumerator:`CLOUD_EVT_CONNECTED` : Connected to the cloud service.
@@ -120,7 +123,7 @@ The sample uses the following cloud events:
 * :c:enumerator:`CLOUD_EVT_DATA_RECEIVED` : Data received from the cloud service.
 
 .. note::
-   Not all functionalities present in the generic cloud API are used by the different cloud backends.
+   Different cloud backends are not necessarily using all functionalities present in the generic cloud API.
 
 Building and running
 ********************
@@ -133,7 +136,7 @@ Testing
 =======
 
 Before testing, ensure that your device is already set up with your nRF Cloud account.
-After programming the sample to your device, test it by performing the following steps:
+|test_sample|
 
 1. Open a web browser and navigate to the correct device in `nRF Cloud`_.
 #. Connect the USB cable and power on or reset your device.
@@ -158,7 +161,7 @@ After programming the sample to your device, test it by performing the following
 
     The device is now connected to nRF Cloud.
 
-#. Press button 1 on the device and observe that the following output is displayed in the terminal:
+#. Press **Button 1** on the device and observe that the following output is displayed in the terminal:
 
    .. code-block:: console
 
