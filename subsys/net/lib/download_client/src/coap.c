@@ -22,7 +22,7 @@ LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 extern char *strtok_r(char *str, const char *sep, char **state);
 
 int url_parse_file(const char *url, char *file, size_t len);
-int socket_send(const struct download_client *client, size_t len);
+int socket_send(const struct download_client *client, size_t len, int timeout);
 
 static int coap_get_current_from_response_pkt(const struct coap_packet *cpkt)
 {
@@ -187,7 +187,7 @@ int coap_request_send(struct download_client *client)
 
 	LOG_DBG("CoAP next block: %d", client->coap.block_ctx.current);
 
-	err = socket_send(client, request.offset);
+	err = socket_send(client, request.offset, 0);
 	if (err) {
 		LOG_ERR("Failed to send CoAP request, errno %d", errno);
 		return err;
