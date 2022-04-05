@@ -52,16 +52,9 @@ static const char *str_family(int family)
 	}
 }
 
-static int socket_timeout_set(int fd, int type)
+static int set_recv_socket_timeout(int fd, int timeout_ms)
 {
 	int err;
-	uint32_t timeout_ms;
-
-	if (type == SOCK_STREAM) {
-		timeout_ms = CONFIG_DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS;
-	} else {
-		timeout_ms = CONFIG_DOWNLOAD_CLIENT_UDP_SOCK_TIMEO_MS;
-	}
 
 	if (timeout_ms <= 0) {
 		return 0;
@@ -72,15 +65,32 @@ static int socket_timeout_set(int fd, int type)
 		.tv_usec = (timeout_ms % 1000) * 1000,
 	};
 
-#if defined(CONFIG_POSIX_API)
-	LOG_INF("Configuring socket timeout (%d s)", (int32_t)timeo.tv_sec);
-#else
-	LOG_INF("Configuring socket timeout (%lld s)", timeo.tv_sec);
-#endif
 	err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo));
 	if (err) {
 		LOG_WRN("Failed to set socket timeout, errno %d", errno);
-		return -errno;
+		return -1;
+	}
+
+	return 0;
+}
+
+static int set_snd_socket_timeout(int fd, int timeout_ms)
+{
+	int err;
+
+	if (timeout_ms <= 0) {
+		return 0;
+	}
+
+	struct timeval timeo = {
+		.tv_sec = (timeout_ms / 1000),
+		.tv_usec = (timeout_ms % 1000) * 1000,
+	};
+
+	err = setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeo, sizeof(timeo));
+	if (err) {
+		LOG_WRN("Failed to set socket timeout, errno %d", errno);
+		return -1;
 	}
 
 	return 0;
@@ -296,12 +306,6 @@ static int client_connect(struct download_client *dl)
 		}
 	}
 
-	/* Set socket timeout, if configured */
-	err = socket_timeout_set(dl->fd, type);
-	if (err) {
-		goto cleanup;
-	}
-
 	LOG_INF("Connecting to %s", log_strdup(dl->host));
 	LOG_DBG("fd %d, addrlen %d, fam %s, port %d",
 		dl->fd, addrlen, str_family(dl->remote_addr.sa_family), port);
@@ -322,10 +326,16 @@ cleanup:
 	return err;
 }
 
-int socket_send(const struct download_client *client, size_t len)
+int socket_send(const struct download_client *client, size_t len, int timeout)
 {
+	int err;
 	int sent;
 	size_t off = 0;
+
+	err = set_snd_socket_timeout(client->fd, timeout);
+	if (err) {
+		return -errno;
+	}
 
 	while (len) {
 		sent = send(client->fd, client->buf + off, len, 0);
@@ -403,6 +413,34 @@ static int reconnect(struct download_client *dl)
 	return 0;
 }
 
+static size_t socket_recv(struct download_client *dl)
+{
+	int err, timeout = 0;
+
+	switch (dl->proto) {
+	case IPPROTO_TCP:
+	case IPPROTO_TLS_1_2:
+		timeout = CONFIG_DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS;
+		break;
+	case IPPROTO_UDP:
+	case IPPROTO_DTLS_1_2:
+		if (IS_ENABLED(CONFIG_COAP)) {
+			timeout = CONFIG_DOWNLOAD_CLIENT_UDP_SOCK_TIMEO_MS;
+			break;
+		}
+	default:
+		LOG_ERR("unhandled proto");
+		return -1;
+	}
+
+	err = set_recv_socket_timeout(dl->fd, timeout);
+	if (err) {
+		return -1;
+	}
+
+	return recv(dl->fd, dl->buf + dl->offset, sizeof(dl->buf) - dl->offset, 0);
+}
+
 void download_thread(void *client, void *a, void *b)
 {
 	int rc = 0;
@@ -426,8 +464,7 @@ restart_and_suspend:
 		LOG_DBG("Receiving up to %d bytes at %p...",
 			(sizeof(dl->buf) - dl->offset), (dl->buf + dl->offset));
 
-		len = recv(dl->fd, dl->buf + dl->offset,
-			   sizeof(dl->buf) - dl->offset, 0);
+		len = socket_recv(dl);
 
 		if ((len == 0) || (len == -1)) {
 			/* We just had an unexpected socket error or closure */
