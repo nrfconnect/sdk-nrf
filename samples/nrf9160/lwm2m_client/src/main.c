@@ -23,6 +23,7 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
 #include <nrf_modem_at.h>
+#include <modem/pdn.h>
 
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
 #if defined(CONFIG_MODEM_KEY_MGMT)
@@ -298,26 +299,39 @@ void main(void)
 
 	k_sem_init(&lwm2m_restart, 0, 1);
 
+#if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
+	ret = nrf_modem_lib_init(NORMAL_MODE);
+	if (ret < 0) {
+		LOG_ERR("Unable to init modem library (%d)", ret);
+		return;
+	}
+#endif
+
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
+	ret = fota_settings_init();
+	if (ret < 0) {
+		LOG_WRN("Unable to init settings (%d)", ret);
+	} else {
+		/* Load *all* persistent settings */
+		settings_load();
+	}
+	/* Modem FW update needs to be verified before modem is used. */
+	lwm2m_verify_modem_fw_update();
+#endif
+
+#if defined(CONFIG_PDN)
+	ret = pdn_init();
+	if (ret < 0) {
+		LOG_ERR("Unable to init pdn (%d)", ret);
+		return;
+	}
+#endif
+
 	ret = app_event_manager_init();
 	if (ret) {
 		LOG_ERR("Unable to init Application Event Manager (%d)", ret);
 		return;
 	}
-
-#if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
-	ret = nrf_modem_lib_init(NORMAL_MODE);
-	if (ret != 0 && ret != MODEM_DFU_RESULT_OK) {
-		LOG_ERR("Unable to init modem library (%d)", ret);
-		return;
-	}
-#endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
-	ret = fota_settings_init();
-	if (ret < 0) {
-		LOG_ERR("Unable to init settings (%d)", ret);
-		return;
-	}
-#endif
 
 #if defined(CONFIG_APP_GNSS)
 	modem_gnss_configure();
@@ -353,14 +367,6 @@ void main(void)
 		LOG_ERR("Failed to setup LWM2M fields (%d)", ret);
 		return;
 	}
-
-	/* Load *all* persistent settings */
-	settings_load();
-
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
-	/* Modem FW update needs to be verified before modem is used. */
-	lwm2m_verify_modem_fw_update();
-#endif
 
 	ret = lwm2m_init_image();
 	if (ret < 0) {
