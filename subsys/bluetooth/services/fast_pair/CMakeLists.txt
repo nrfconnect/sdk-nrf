@@ -16,3 +16,4 @@ zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_CRYPTO_TINYCRYPT  crypto/fp_cry
 zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_GATT_SERVICE	   fp_gatt_service.c)
 zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_KEYS		   fp_keys.c)
 zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_REGISTRATION_DATA fp_registration_data.c)
+zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_STORAGE	   fp_storage.c)
