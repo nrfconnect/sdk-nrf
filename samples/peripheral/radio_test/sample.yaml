@@ -1,19 +1,19 @@
 sample:
-  name: Radio Test
   description: Radio Test sample
+  name: Radio Test
 tests:
-  samples.peripheral.radio_test:
+  sample.peripheral.radio_test:
     build_only: true
-    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpunet
     integration_platforms:
       - nrf52dk_nrf52832
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpunet
+    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpunet
     tags: ci_build
-  samples.peripheral.radio_test.nrf5340_nrf21540:
+  sample.peripheral.radio_test.nrf5340_nrf21540:
     build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpunet
+    extra_args: SHIELD=nrf21540_ek
     integration_platforms:
       - nrf5340dk_nrf5340_cpunet
-    extra_args: SHIELD=nrf21540_ek
+    platform_allow: nrf5340dk_nrf5340_cpunet
     tags: ci_build

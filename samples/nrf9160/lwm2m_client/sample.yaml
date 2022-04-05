@@ -1,10 +1,10 @@
 sample:
   name: nrf LwM2M Sample
 tests:
-  samples.nrf9160.lwm2m_client:
+  sample.nrf9160.lwm2m_client:
     build_only: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
       - thingy91_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
     tags: ci_build

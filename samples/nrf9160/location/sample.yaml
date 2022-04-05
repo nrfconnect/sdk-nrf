@@ -1,24 +1,23 @@
 sample:
   name: location Sample
 tests:
-  samples.nrf9160.location:
+  sample.nrf9160.location:
     build_only: true
-    platform_allow: nrf9160dk_nrf9160_ns
     integration_platforms:
       - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
     tags: ci_build
-  samples.nrf9160.location.esp_wifi:
+  sample.nrf9160.location.esp_wifi:
     build_only: true
-    platform_allow: nrf9160dk_nrf9160_ns
+    extra_args: OVERLAY_CONFIG=overlay-esp-wifi.conf DTC_OVERLAY_FILE="esp_8266_nrf9160ns.overlay"
     integration_platforms:
       - nrf9160dk_nrf9160_ns
-    extra_args: OVERLAY_CONFIG=overlay-esp-wifi.conf
-                DTC_OVERLAY_FILE="esp_8266_nrf9160ns.overlay"
+    platform_allow: nrf9160dk_nrf9160_ns
     tags: ci_build
-  samples.nrf9160.location.pgps:
+  sample.nrf9160.location.pgps:
     build_only: true
-    platform_allow: nrf9160dk_nrf9160_ns
-    integration_platforms:
-      - nrf9160dk_nrf9160_ns
     extra_args: OVERLAY_CONFIG=overlay-pgps.conf
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    platform_allow: nrf9160dk_nrf9160_ns
     tags: ci_build

@@ -1,13 +1,14 @@
 sample:
-  name: NFC Launch App
   description: NFC Launch App sample
+  name: NFC Launch App
 tests:
-  samples.nfc.launch_app:
+  sample.nfc.launch_app:
     build_only: true
-    platform_allow: nrf52840dk_nrf52840 nrf52dk_nrf52832 nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf52dk_nrf52832
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
+    platform_allow: nrf52840dk_nrf52840 nrf52dk_nrf52832 nrf5340dk_nrf5340_cpuapp
+      nrf5340dk_nrf5340_cpuapp_ns
     tags: ci_build

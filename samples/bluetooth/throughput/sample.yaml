@@ -1,14 +1,14 @@
 sample:
-  name: BLE throughput
   description: Bluetooth Low Energy throughput sample
+  name: BLE throughput
 tests:
-  samples.bluetooth.throughput:
+  sample.bluetooth.throughput:
     build_only: true
-    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840
-      nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns
     integration_platforms:
       - nrf52dk_nrf52832
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
+    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+      nrf5340dk_nrf5340_cpuapp_ns
     tags: bluetooth ci_build

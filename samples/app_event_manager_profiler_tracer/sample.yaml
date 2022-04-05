@@ -2,7 +2,7 @@ sample:
   description: Sample showing usage of profiling Application Event Manager events
   name: Application Event Manager profiler tracer sample
 tests:
-  samples.app_event_manager_profiler_tracer:
+  sample.app_event_manager_profiler_tracer:
     build_only: true
     integration_platforms:
       - nrf52dk_nrf52832

@@ -1,10 +1,10 @@
 sample:
   name: BH1749 Sensor Sample
 tests:
-  samples.sensor.bh1749:
+  sample.sensor.bh1749:
+    depends_on: i2c
     harness: sensor
-    tags: sensors
-    platform_allow: thingy91_nrf9160
     integration_platforms:
       - thingy91_nrf9160
-    depends_on: i2c
+    platform_allow: thingy91_nrf9160
+    tags: sensors

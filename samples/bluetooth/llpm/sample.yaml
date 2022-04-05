@@ -1,13 +1,12 @@
 sample:
-  name: BLE LLPM
   description: Buetooth Low Energy LLPM sample
+  name: BLE LLPM
 tests:
-  samples.bluetooth.llpm:
+  sample.bluetooth.llpm:
     build_only: true
-    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840
-      nrf52840dongle_nrf52840
     integration_platforms:
       - nrf52dk_nrf52832
       - nrf52840dk_nrf52840
       - nrf52840dongle_nrf52840
+    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf52840dongle_nrf52840
     tags: bluetooth ci_build

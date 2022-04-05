@@ -1,17 +1,17 @@
 sample:
-  name: Remote IPC shell sample
   description: Remote shell sample based on IPC service shell backend.
+  name: Remote IPC shell sample
 tests:
-  samples.nrf5340.empty_app_core.build:
+  sample.nrf5340.empty_app_core.build:
     build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpuapp
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-    tags: ci_build
-  samples.nrf5340.remote_shell.uart.build:
-    build_only: true
     platform_allow: nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
+  sample.nrf5340.remote_shell.uart.build:
+    build_only: true
     extra_args: CONF_FILE=prj_uart.conf
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk_nrf5340_cpuapp
     tags: ci_build

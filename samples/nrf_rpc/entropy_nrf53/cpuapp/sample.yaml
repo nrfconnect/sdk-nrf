@@ -1,9 +1,9 @@
 sample:
-  name: Entropy remote application core
   description: Entropy driver application core sample
+  name: Entropy remote application core
 tests:
-  samples.nrf_rpc.entropy_cpuapp:
+  sample.nrf_rpc.entropy_cpuapp:
     build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpuapp
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk_nrf5340_cpuapp
