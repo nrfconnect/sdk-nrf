@@ -15,6 +15,7 @@ LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 #include "fp_keys.h"
 #include "fp_crypto.h"
 #include "fp_common.h"
+#include "fp_storage.h"
 
 #define EMPTY_AES_KEY_BYTE	0xff
 #define FP_ACCOUNT_KEY_PREFIX	0x04
@@ -212,11 +213,9 @@ int fp_keys_store_account_key(struct bt_conn *conn, const uint8_t *account_key)
 		LOG_WRN("Received invalid Account Key");
 		return -EINVAL;
 	}
-
-	/* TODO: Store Account Key. */
-
+	err = fp_storage_account_key_save(account_key);
 	if (!err) {
-		LOG_DBG("Stored Account Key");
+		LOG_DBG("Account Key stored");
 	} else {
 		LOG_WRN("Store account key error: err=%d", err);
 	}
