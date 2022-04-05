@@ -162,6 +162,9 @@ struct download_client {
 	struct {
 		/** CoAP block context. */
 		struct coap_block_context block_ctx;
+
+		/** CoAP pending object. */
+		struct coap_pending pending;
 	} coap;
 
 	/** Internal thread ID. */
