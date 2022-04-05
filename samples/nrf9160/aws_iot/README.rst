@@ -7,7 +7,7 @@ nRF9160: AWS IoT
    :local:
    :depth: 2
 
-The AWS IoT sample shows the communication of an nRF9160-based device with the AWS IoT message broker over MQTT.
+The AWS IoT sample demonstrates how an nRF9160-based device communicates with the AWS IoT message broker over MQTT.
 This sample uses the :ref:`lib_aws_iot` library.
 
 Requirements
@@ -31,32 +31,41 @@ Below are the two types of messages that are published:
 
 * Type 1: The message comprises of a battery voltage value sampled from the nRF9160 SiP and a corresponding timestamp in milliseconds (UNIX time), that is retrieved from the :ref:`lib_date_time` library.
 
-* Type 2: The message adds a configurable firmware version number to type 1 messages. This firmware version number is used in correlation with FOTA DFU, which is supported by the sample and the :ref:`lib_aws_iot` library.
+* Type 2: The message adds a configurable firmware version number to type 1 messages.
+  This firmware version number is used in correlation with FOTA DFU, which is supported by the sample and the :ref:`lib_aws_iot` library.
 
 A type 2 message is only published upon an initial connection to the sample, while a type 1 message is published sequentially with a configurable time in between each publishing of the data.
-In addition to publishing data, the sample also subscribes to the AWS IoT shadow delta topic, and two customizable application specific topics.
+In addition to publishing data, the sample also subscribes to the AWS IoT shadow delta topic, and two customizable application-specific topics.
 The customizable topics are not part of the AWS IoT shadow and must therefore be passed to the :ref:`lib_aws_iot` library using the :c:func:`aws_iot_subscription_topics_add` function.
+
+Configuration
+*************
+
+|config|
 
 .. _setup_awsiot:
 
 Setup
-*****
+=====
 
-Before starting this sample, you should complete the following steps that are described in the :ref:`lib_aws_iot` documentation:
+Before starting this sample, complete the following steps that are described in the :ref:`lib_aws_iot` library documentation:
 
-1. `Setting up an AWS account`_
-#. :ref:`set_up_conn_to_iot`
-#. :ref:`Programming device certificates <flash_certi_device>`
-#. :ref:`Configuring the sample options <configure_options>`
+1. `Set up an AWS account <Setting up an AWS account_>`_.
+#. :ref:`Set up a connection to AWS IoT <set_up_conn_to_iot>`.
+#. :ref:`Program device certificates <flash_certi_device>`.
+#. :ref:`Configure the sample options <configure_options>`.
 
-For FOTA DFU related documentation, see :ref:`aws_fota_sample`.
+This retrieves the AWS IoT broker hostname, security tag, and client-id.
+Set the :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`, :kconfig:option:`CONFIG_AWS_IOT_SEC_TAG`, and :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` options to reflect the values retrieved during the setup process.
+
+For documentation related to FOTA DFU, see :ref:`aws_fota_sample`.
 
 .. _configure_options:
 
 Configuration options
-*********************
+=====================
 
-The application specific configurations used in the sample are listed below.
+The application-specific configurations used in the sample are listed below.
 They are located in :file:`samples/nrf9160/aws_iot/Kconfig`.
 
 .. _CONFIG_APP_VERSION:
@@ -88,18 +97,22 @@ Building and running
 .. include:: /includes/build_and_run.txt
 .. include:: /includes/spm.txt
 
-Testing
-=======
-
-1. Make sure that you have completed the steps in :ref:`setup_awsiot`.
-   This retrieves the AWS IoT broker hostname, security tag, and client-id.
-
-#. Set the :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`, :kconfig:option:`CONFIG_AWS_IOT_SEC_TAG`, and :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` options to reflect the values retrieved during step 1.
-#. Program the sample to hardware.
 
 .. note::
 
    The sample might require increasing the values of :kconfig:option:`CONFIG_AWS_IOT_MQTT_RX_TX_BUFFER_LEN` and :kconfig:option:`CONFIG_AWS_IOT_MQTT_PAYLOAD_BUFFER_LEN` options.
+
+After building the sample, program it to your development kit.
+
+Testing
+=======
+
+|test_sample|
+
+1. |connect_kit|
+#. |connect_terminal|
+#. Power on or reset the kit.
+#. Observe the output in the terminal over UART.
 
 Sample output
 =============
