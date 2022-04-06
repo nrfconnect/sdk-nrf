@@ -1313,7 +1313,17 @@ int lte_lc_func_mode_set(enum lte_lc_func_mode mode)
 		return -EINVAL;
 	}
 
-	return nrf_modem_at_printf("AT+CFUN=%d", mode) ? -EFAULT : 0;
+	err = nrf_modem_at_printf("AT+CFUN=%d", mode);
+	if (err) {
+		return -EFAULT;
+	}
+
+	STRUCT_SECTION_FOREACH(lte_lc_cfun_cb, e) {
+		LOG_DBG("CFUN monitor callback: %p", e->callback);
+		e->callback(mode, e->context);
+	}
+
+	return 0;
 }
 
 int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode)
