@@ -16,6 +16,9 @@
 #include <modem/pdn.h>
 #include <modem/at_monitor.h>
 #include <modem/nrf_modem_lib.h>
+#if defined(CONFIG_LTE_LINK_CONTROL)
+#include <modem/lte_lc.h>
+#endif
 
 LOG_MODULE_REGISTER(pdn, CONFIG_PDN_LOG_LEVEL);
 
@@ -437,6 +440,28 @@ int pdn_default_apn_get(char *buf, size_t len)
 	strcpy(buf, apn);
 	return 0;
 }
+
+#if defined(CONFIG_LTE_LINK_CONTROL)
+LTE_LC_ON_CFUN(pdn_cfun_hook, on_cfun, NULL);
+
+static void on_cfun(enum lte_lc_func_mode mode, void *ctx)
+{
+	int err;
+
+	if (mode == LTE_LC_FUNC_MODE_NORMAL ||
+	    mode == LTE_LC_FUNC_MODE_ACTIVATE_LTE) {
+		LOG_DBG("Subscribing to +CNEC=16 and +CGEREP=1");
+		err = nrf_modem_at_printf("AT+CNEC=16");
+		if (err) {
+			LOG_ERR("Unable to subscribe to +CNEC=16, err %d", err);
+		}
+		err = nrf_modem_at_printf("AT+CGEREP=1");
+		if (err) {
+			LOG_ERR("Unable to subscribe to +CGEREP=1, err %d", err);
+		}
+	}
+}
+#endif /* CONFIG_LTE_LINK_CONTROL */
 
 static int pdn_sys_init(const struct device *unused)
 {

@@ -48,19 +48,6 @@ void main(void)
 
 	printk("PDN sample started\n");
 
-	/* Register to the necessary packet domain AT notifications */
-	err = nrf_modem_at_printf("AT+CNEC=16");
-	if (err) {
-		printk("AT+CNEC=16 failed, err %d\n", err);
-		return;
-	}
-
-	err = nrf_modem_at_printf("AT+CGEREP=1");
-	if (err) {
-		printk("AT+CGEREP=1 failed, err %d\n", err);
-		return;
-	}
-
 	/* Setup a callback for the default PDP context (zero).
 	 * Do this before switching to function mode 1 (CFUN=1)
 	 * to receive the first activation event.

@@ -277,6 +277,10 @@ Modem libraries
     * Fixed:
       * An issue that would cause AT command responses like ``+CNCEC_EMM`` with underscore to be filtered out.
 
+  * :ref:`pdn_readme` library:
+
+    * Automatically subscribe to ``+CNEC=16`` and ``+CGEREP=1`` if the :ref:`lte_lc_readme` library is used to change the modem's functional mode.
+
 Libraries for networking
 ------------------------
 
