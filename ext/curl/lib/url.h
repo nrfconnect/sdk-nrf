@@ -44,7 +44,7 @@
 #include <nrf_modem_limits.h>
 /* In embedded this needs to be a lot of smaller */
 #define UPLOADBUFFER_DEFAULT (708)
-#define UPLOADBUFFER_MAX (NRF_MODEM_IP_MAX_MESSAGE_SIZE)
+#define UPLOADBUFFER_MAX (4096)
 #define UPLOADBUFFER_MIN (CURL_MAX_WRITE_SIZE)
 #else
 #define UPLOADBUFFER_DEFAULT 65536
