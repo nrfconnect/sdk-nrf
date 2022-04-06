@@ -164,6 +164,7 @@ external_content_keep = ["versions.txt"]
 # Options for table_from_rows --------------------------------------------------
 
 table_from_rows_base_dir = NRF_BASE
+table_from_sample_yaml_board_reference = "/includes/sample_board_rows.txt"
 
 # Options for options_from_kconfig ---------------------------------------------
 
