@@ -63,7 +63,7 @@ You can change this with :kconfig:option:`CONFIG_CAF_BUTTONS_POLARITY_INVERSED`,
 Implementation details
 **********************
 
-Depending on the configuration, the module can use from two to four states.
+Depending on the configuration, the module can use from two to five states.
 
 .. figure:: images/caf_buttons_states.svg
    :alt: State transitions of the buttons module
@@ -72,20 +72,20 @@ Depending on the configuration, the module can use from two to four states.
 
 By default, the module uses the following states:
 
-* ``STATE_SCANNING``
-* ``STATE_ACTIVE``
+* :c:enumerator:`STATE_SCANNING`
+* :c:enumerator:`STATE_ACTIVE`
 
-After initialization, the module starts in ``STATE_SCANNING`` and performs initial scan of configured pins.
-If no buttons are pressed the module switches to ``STATE_ACTIVE``.
+After initialization, the module starts in :c:enumerator:`STATE_SCANNING` and performs initial scan of configured pins.
+If no buttons are pressed the module switches to :c:enumerator:`STATE_ACTIVE`.
 In this state, the module enables the GPIO interrupts and waits for the pin state to change.
 
-Whenever a button is pressed, the module switches to ``STATE_SCANNING``.
+Whenever a button is pressed, the module switches to :c:enumerator:`STATE_SCANNING`.
 When the switch occurs, the module submits a work with a delay set to :kconfig:option:`CONFIG_CAF_BUTTONS_DEBOUNCE_INTERVAL`.
 The work scans the keyboard matrix, or directly connected buttons (depends on configuration).
 If any button state change occurs, the module sends an event with the :c:member:`button_event.key_id` of that button.
 
 * If the button is kept pressed while the scanning is performed, the work will be resubmitted with a delay set to :kconfig:option:`CONFIG_CAF_BUTTONS_SCAN_INTERVAL`.
-* If no button is pressed, the module switches back to ``STATE_ACTIVE``.
+* If no button is pressed, the module switches back to :c:enumerator:`STATE_ACTIVE`.
 
 Key ID
 ======
@@ -119,20 +119,28 @@ For example, if the configuration file looks as described in the `Configuration`
 Power management states
 =======================
 
-If the :kconfig:option:`CONFIG_CAF_BUTTONS_PM_EVENTS` Kconfig option is enabled, the module can react to power management events and submit ``wake_up_event``.
+If the :kconfig:option:`CONFIG_CAF_BUTTONS_PM_EVENTS` Kconfig option is enabled, the module can react to power management events and submit :c:struct:`wake_up_event`.
 In that case, the following additional states are available:
 
-* ``STATE_SUSPENDING``
-* ``STATE_IDLE``
+* :c:enumerator:`STATE_SUSPENDING`
+* :c:enumerator:`STATE_IDLE`
+* :c:enumerator:`STATE_RESUMING`
 
 The power management events that module can react to are the following:
 
-* ``power_down_event``
-* ``wake_up_event``
+* :c:struct:`power_down_event`
+* :c:struct:`wake_up_event`
 
-If a ``power_down_event`` comes while the module is in the ``STATE_SCANNING`` state, the module switches to ``STATE_SUSPENDING`` and remains in this state until no button is pressed.
-Then, it switches to ``STATE_IDLE``.
+On a :c:struct:`power_down_event` event, the module switches to a different state depending on the currrent state of the module:
 
-If a ``power_down_event`` comes while the module is in the ``STATE_ACTIVE`` state, the module switches to ``STATE_IDLE`` immediately.
-Similarly as in ``STATE_ACTIVE``, in ``STATE_IDLE`` the module enables the GPIO interrupts and waits for the pin state to change.
-However, in ``STATE_IDLE`` the module can also invoke ``wake_up_event`` and send it to all subscribing modules.
+* :c:enumerator:`STATE_SCANNING` state - The module switches to :c:enumerator:`STATE_SUSPENDING` state and remains in this state until no button is pressed.
+  Then, it switches to :c:enumerator:`STATE_IDLE` state.
+* :c:enumerator:`STATE_ACTIVE` state - The module immediately switches to :c:enumerator:`STATE_IDLE` state.
+  Similarly, as in :c:enumerator:`STATE_ACTIVE` state, in :c:enumerator:`STATE_IDLE` state the module enables the GPIO to interrupt and wait for the pin state to change.
+* :c:enumerator:`STATE_RESUMING` state - The module immediately switches to :c:enumerator:`STATE_IDLE` state.
+
+If the module is in :c:enumerator:`STATE_IDLE` state and the button is pressed, the module submits :c:struct:`wake_up_event` and switches to :c:enumerator:`STATE_RESUMING` state.
+In :c:enumerator:`STATE_RESUMING` state, the module waits for this :c:struct:`wake_up_event`.
+
+If the :c:struct:`wake_up_event` comes while the module is in the :c:enumerator:`STATE_RESUMING` state, the module switches to the :c:enumerator:`STATE_SCANNING` state.
+If the :c:struct:`wake_up_event` does not come within the time specified in :kconfig:option:`CONFIG_CAF_BUTTONS_PM_WAKEUP_TIMEOUT` option, the module switches back to :c:enumerator:`STATE_IDLE` state.

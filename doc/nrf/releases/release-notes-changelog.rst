@@ -334,6 +334,13 @@ Modem libraries
 
     * Added :c:macro:`LTE_LC_ON_CFUN` macro for compile-time registration of callbacks on modem functional mode changes using :c:func:`lte_lc_func_mode_set`.
 
+Common Application Framework (CAF)
+----------------------------------
+
+* Fixed:
+
+  * Issue where :ref:`caf_buttons` module can hang in idle state if :c:struct:`wake_up_event` is submitted on button press and later consumed by any other module (NCSDK-13619).
+
 Libraries for networking
 ------------------------
 

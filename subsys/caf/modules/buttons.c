@@ -29,6 +29,12 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BUTTONS_LOG_LEVEL);
 #define SCAN_INTERVAL CONFIG_CAF_BUTTONS_SCAN_INTERVAL
 #define DEBOUNCE_INTERVAL CONFIG_CAF_BUTTONS_DEBOUNCE_INTERVAL
 
+#ifdef CONFIG_CAF_BUTTONS_PM_WAKEUP_TIMEOUT
+#define WAKEUP_TIMEOUT CONFIG_CAF_BUTTONS_PM_WAKEUP_TIMEOUT
+#else
+#define WAKEUP_TIMEOUT 0
+#endif
+
 /* For directly connected GPIO, scan rows once. */
 #define COLUMNS MAX(ARRAY_SIZE(col), 1)
 
@@ -36,7 +42,8 @@ enum state {
 	STATE_IDLE,
 	STATE_ACTIVE,
 	STATE_SCANNING,
-	STATE_SUSPENDING
+	STATE_SUSPENDING,
+	STATE_RESUMING,
 };
 
 static const struct device * const gpio_devs[] = {
@@ -46,6 +53,7 @@ static const struct device * const gpio_devs[] = {
 static struct gpio_callback gpio_cb[ARRAY_SIZE(gpio_devs)];
 static struct k_work_delayable matrix_scan;
 static struct k_work_delayable button_pressed;
+static struct k_work_delayable reenable_isr;
 static enum state state;
 
 
@@ -178,6 +186,9 @@ static int suspend(void)
 		/* Waiting for scanning to stop */
 		break;
 
+	case STATE_RESUMING:
+		(void)k_work_cancel_delayable(&reenable_isr);
+		/* Fall-through */
 	case STATE_ACTIVE:
 		state = STATE_IDLE;
 		err = callback_ctrl(true);
@@ -197,9 +208,13 @@ static int suspend(void)
 
 static void resume(void)
 {
-	if (state != STATE_IDLE) {
+	if ((state != STATE_IDLE) && (state != STATE_RESUMING)) {
 		/* Already activated. */
 		return;
+	}
+
+	if (state == STATE_RESUMING) {
+		(void)k_work_cancel_delayable(&reenable_isr);
 	}
 
 	int err = callback_ctrl(false);
@@ -354,6 +369,21 @@ error:
 	module_set_state(MODULE_STATE_ERROR);
 }
 
+static void reenable_isr_fn(struct k_work *work)
+{
+	__ASSERT_NO_MSG(state == STATE_RESUMING);
+
+	int err = callback_ctrl(true);
+
+	if (err) {
+		LOG_ERR("Cannot disable callbacks");
+		module_set_state(MODULE_STATE_ERROR);
+		return;
+	}
+
+	state = STATE_IDLE;
+}
+
 static void button_pressed_isr(const struct device *gpio_dev,
 			       struct gpio_callback *cb,
 			       uint32_t pins)
@@ -408,7 +438,9 @@ static void button_pressed_fn(struct k_work *work)
 	switch (state) {
 	case STATE_IDLE:
 		if (IS_ENABLED(CONFIG_CAF_BUTTONS_PM_EVENTS)) {
+			state = STATE_RESUMING;
 			APP_EVENT_SUBMIT(new_wake_up_event());
+			(void)k_work_reschedule(&reenable_isr, K_MSEC(WAKEUP_TIMEOUT));
 		}
 		break;
 
@@ -419,6 +451,7 @@ static void button_pressed_fn(struct k_work *work)
 
 	case STATE_SCANNING:
 	case STATE_SUSPENDING:
+	case STATE_RESUMING:
 	default:
 		/* Invalid state */
 		__ASSERT_NO_MSG(false);
@@ -514,6 +547,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 			k_work_init_delayable(&matrix_scan, scan_fn);
 			k_work_init_delayable(&button_pressed, button_pressed_fn);
+			k_work_init_delayable(&reenable_isr, reenable_isr_fn);
 
 			init_fn();
 

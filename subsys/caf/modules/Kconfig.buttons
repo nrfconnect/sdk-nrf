@@ -31,6 +31,14 @@ config CAF_BUTTONS_PM_KEEP_ALIVE
 	help
 	  Every button press would generate keep alive event.
 
+config CAF_BUTTONS_PM_WAKEUP_TIMEOUT
+	int "Module interrupt re-enable timeout in ms"
+	depends on CAF_BUTTONS_PM_EVENTS
+	default 10
+	help
+	  Timeout after which buttons module re-enables interrupts in case
+	  wake_up_event was consumed.
+
 config CAF_BUTTONS_SCAN_INTERVAL
 	int "Buttons scan interval in ms"
 	default 2
