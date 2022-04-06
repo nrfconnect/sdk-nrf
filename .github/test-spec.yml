@@ -143,6 +143,16 @@
   - "samples/nrf9160/aws_iot/**/*"
   - "samples/nrf9160/azure_iot_hub/**/*"
 
+"CI-apps-test":
+  - "applications/machine_learning/**/*"
+  - "samples/bluetooth/direction_finding_*/**/*"
+  - "include/caf/**/*"
+  - "include/event_manager.h"
+  - "include/profiler.h"
+  - "subsys/bluetooth/*"
+  - "subsys/caf/**/*"
+  - "subsys/partition_manager/**/*"
+
 "CI-desktop-test":
   - "applications/nrf_desktop/**/*"
   - "boards/arm/*dmouse*/**/*"
