@@ -591,7 +591,7 @@ BUILD_ASSERT(
 
 int lwm2m_os_pdn_init(void)
 {
-	return pdn_init();
+	return 0;
 }
 
 int lwm2m_os_pdn_ctx_create(uint8_t *cid, lwm2m_os_pdn_event_handler_t cb)

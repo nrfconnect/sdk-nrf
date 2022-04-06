@@ -11,10 +11,11 @@
 #include <stdbool.h>
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
+#include <zephyr/logging/log.h>
 #include <nrf_modem_at.h>
 #include <modem/pdn.h>
 #include <modem/at_monitor.h>
-#include <zephyr/logging/log.h>
+#include <modem/nrf_modem_lib.h>
 
 LOG_MODULE_REGISTER(pdn, CONFIG_PDN_LOG_LEVEL);
 
@@ -39,6 +40,7 @@ static struct {
 	struct k_sem sem_cgev;
 	struct k_sem sem_cnec;
 } pdn_act_notif;
+
 static K_MUTEX_DEFINE(pdn_act_mutex);
 static struct pdn pdn_contexts[CONFIG_PDN_CONTEXTS_MAX];
 static pdn_event_handler_t default_callback;
@@ -46,8 +48,8 @@ static pdn_event_handler_t default_callback;
 /* Use one monitor for all CGEV events and distinguish
  * between the different type of events later (ME, IPV6, etc).
  */
-AT_MONITOR(pdn_cgev, "+CGEV", on_cgev);
-AT_MONITOR(pdn_cnec_esm, "+CNEC_ESM", on_cnec_esm);
+AT_MONITOR(pdn_cgev, "+CGEV", on_cgev, PAUSED);
+AT_MONITOR(pdn_cnec_esm, "+CNEC_ESM", on_cnec_esm, PAUSED);
 
 static struct pdn *pdn_find(int cid)
 {
@@ -150,25 +152,18 @@ static void on_cgev(const char *notif)
 	}
 }
 
-int pdn_init(void)
+NRF_MODEM_LIB_ON_INIT(modem_init_hook, on_modem_init, NULL);
+
+static void on_modem_init(int ret, void *ctx)
 {
 	int err;
-	(void)err;
-
-	static bool has_init;
-
-	if (has_init) {
-		return 0;
-	}
-
-	pdn_act_notif.cid = CID_UNASSIGNED;
-	k_sem_init(&pdn_act_notif.sem_cgev, 0, 1);
-	k_sem_init(&pdn_act_notif.sem_cnec, 0, 1);
+	(void) err;
 
 #if defined(CONFIG_PDN_LEGACY_PCO)
 	err = nrf_modem_at_printf("AT%%XEPCO=0");
 	if (err) {
-		LOG_WRN("Failed to set legacy PCO mode, err %d", err);
+		LOG_ERR("Failed to set legacy PCO mode, err %d", err);
+		return;
 	}
 #endif
 
@@ -177,7 +172,7 @@ int pdn_init(void)
 				CONFIG_PDN_DEFAULT_FAM, NULL);
 	if (err) {
 		LOG_ERR("Failed to configure default CID, err %d", err);
-		return err;
+		return;
 	}
 
 #if defined(CONFIG_PDN_DEFAULT_AUTH_PAP) || defined(CONFIG_PDN_DEFAULT_AUTH_CHAP)
@@ -189,17 +184,10 @@ int pdn_init(void)
 			       CONFIG_PDN_DEFAULT_PASSWORD);
 	if (err) {
 		LOG_ERR("Failed to set auth params for default CID, err %d", err);
-		return err;
+		return;
 	}
 #endif /* CONFIG_PDN_DEFAULT_AUTH_PAP || CONFIG_PDN_DEFAULT_AUTH_CHAP */
 #endif /* CONFIG_PDN_DEFAULTS_OVERRIDE */
-
-	for (size_t i = 0; i < ARRAY_SIZE(pdn_contexts); i++) {
-		pdn_contexts[i].context_id = CID_UNASSIGNED;
-	}
-
-	has_init = true;
-	return 0;
 }
 
 int pdn_default_callback_set(pdn_event_handler_t cb)
@@ -450,18 +438,25 @@ int pdn_default_apn_get(char *buf, size_t len)
 	return 0;
 }
 
-#if defined(CONFIG_PDN_SYS_INIT)
 static int pdn_sys_init(const struct device *unused)
 {
-	int err;
+	pdn_act_notif.cid = CID_UNASSIGNED;
 
-	err = pdn_init();
-	if (err) {
-		return err;
+	k_sem_init(&pdn_act_notif.sem_cgev, 0, 1);
+	k_sem_init(&pdn_act_notif.sem_cnec, 0, 1);
+
+	for (size_t i = 0; i < ARRAY_SIZE(pdn_contexts); i++) {
+		pdn_contexts[i].context_id = CID_UNASSIGNED;
 	}
+
+	/* Do not process notifications until the PDN contexts
+	 * and the semaphores are initialized.
+	 */
+
+	at_monitor_resume(pdn_cgev);
+	at_monitor_resume(pdn_cnec_esm);
 
 	return 0;
 }
 
 SYS_INIT(pdn_sys_init, APPLICATION, CONFIG_PDN_INIT_PRIORITY);
-#endif /* CONFIG_PDN_SYS_INIT */

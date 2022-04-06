@@ -87,13 +87,6 @@ typedef void (*pdn_event_handler_t)(uint8_t cid, enum pdn_event event,
 				    int reason);
 
 /**
- * @brief Initialize the PDN library.
- *
- * @return int Zero on success or a negative errno otherwise.
- */
-int pdn_init(void);
-
-/**
  * @brief Create a Packet Data Protocol (PDP) context.
  *
  * If a callback is provided via the @p cb parameter, the library will

@@ -377,8 +377,6 @@ int link_shell_pdn_event_forward_cb_set(pdn_event_handler_t cb)
 
 void link_shell_pdn_init(void)
 {
-
-	pdn_init();
 	link_shell_pdn_events_subscribe();
 	sys_dlist_init(&pdn_info_list);
 }
