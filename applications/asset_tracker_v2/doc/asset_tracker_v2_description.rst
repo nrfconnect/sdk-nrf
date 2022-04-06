@@ -213,9 +213,6 @@ To set up the application to work with a specific cloud example, see the followi
 
 By default, the application is configured to communicate with `nRF Cloud`_ using the factory-provisioned certificates on Thingy:91 and nRF9160 DK.
 This enables the application to function out-of-the-box with nRF Cloud.
-However, nRF Cloud does not fully support the application firmware and has limitations.
-For more information, see :ref:`nrf_cloud_limitations`.
-To enable all features of the Asset Tracker v2, use any of the other supported cloud service implementations.
 
 .. note::
    Before building and running the firmware, make sure you have set up the cloud side and provisioned the device with the correct TLS certificates.
@@ -364,33 +361,6 @@ After programming the application and all the prerequisites to your development 
     <inf> app_event_manager: DATA_EVT_DATA_SEND
     <wrn> data_module: No batch data to encode, ringbuffers empty
     <inf> app_event_manager: CLOUD_EVT_DATA_ACK
-
-.. _nrf_cloud_limitations:
-
-Support for nRF Cloud
-*********************
-
-Enabling full support for nRF Cloud is currently a work in progress.
-Manipulation of the application's real-time configurations is not supported through the nRF Cloud Web UI.
-However, this is possible by using the REST API calls described in `nRF Cloud Patch Device State`_.
-The following schema sets the various device configuration parameters to their default values:
-
-   .. parsed-literal::
-      :class: highlight
-
-	{
-		"desired":{
-			"config":{
-				"activeMode":true,
-				"activeWaitTime":120,
-				"movementTimeout":3600,
-				"movementResolution":120,
-				"gnssTimeout":60,
-				"movementThreshold":10,
-				"nod":[]
-			}
-		}
-	}
 
 .. _asset_tracker_v2_internal_modules:
 
