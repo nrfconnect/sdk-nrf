@@ -9,8 +9,6 @@ menuconfig APP_EVENT_MANAGER
 	prompt "Application Event Manager"
 	help
 	  Enable Application Event Manager.
-	  Note that Application Event Manager uses orphan sections to handle its
-	  data structures.
 
 if APP_EVENT_MANAGER
 
@@ -19,7 +17,7 @@ config APP_EVENT_MANAGER_SHOW_EVENTS
 	depends on LOG
 	default y
 	help
-	  This option controls if events are printed to console.
+	  This option controls if events are logged.
 
 config APP_EVENT_MANAGER_SHOW_EVENT_HANDLERS
 	bool "Show event handlers"
