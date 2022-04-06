@@ -15,6 +15,7 @@ Thingy:91 integrates an nRF9160 SiP that supports LTE-M, NB-IoT, and Global Navi
 
 You can find more information on the product in the `Thingy:91 product page`_ and in the `Nordic Thingy:91 User Guide`_.
 The |NCS| provides support for developing applications on the Thingy:91.
+If you are not familiar with the |NCS| and the development environment, see the :ref:`introductory documentation <getting_started>`.
 
 This guide gives you more information on the various aspects of Thingy:91.
 

@@ -8,8 +8,10 @@ Developing with nRF9160 DK
    :depth: 2
 
 The nRF9160 DK is a hardware development platform used to design and develop application firmware on the nRF9160 LTE Cat-M1 and Cat-NB1 :term:`System in Package (SiP)`.
+
 See the `nRF9160 DK Hardware`_ guide for detailed information about the nRF9160 DK hardware.
 To get started with the nRF9160 DK, follow the steps in the :ref:`ug_nrf9160_gs` section.
+If you are not familiar with the |NCS| and the development environment, see the :ref:`introductory documentation <getting_started>`.
 
 .. _nrf9160_ug_intro:
 
