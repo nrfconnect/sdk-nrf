@@ -14,9 +14,7 @@ Requirements
 
 The sample supports any one of the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpunet, nrf52840dk_nrf52840, nrf52dk_nrf52832
+.. table-from-sample-yaml::
 
 .. note::
    For the nRF5340 DK, this sample is only supported on the network core (``nrf5340dk_nrf5340_cpunet``), and the :ref:`nrf5340_empty_app_core` sample must be programmed to the application core.

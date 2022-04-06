@@ -131,9 +131,7 @@ Requirements
 
 The application supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: thingy52_nrf52832, thingy53_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp
+.. table-from-sample-yaml::
 
 The available configurations use only built-in sensors or the simulated sensor signal.
 There is no need to connect any additional components to the board.

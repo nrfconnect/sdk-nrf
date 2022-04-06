@@ -23,9 +23,7 @@ Requirements
 
 The application supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf9160dk_nrf9160_ns, thingy91_nrf9160_ns
+.. table-from-sample-yaml::
 
 .. include:: /includes/spm.txt
 

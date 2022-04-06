@@ -27,9 +27,7 @@ Requirements
 
 The sample supports the following development kits for testing the network status:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52840dongle_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
+.. table-from-sample-yaml::
 
 To test the sample, you need at least one development kit.
 You can use additional development kits programmed with the Co-processor sample for testing network joining.

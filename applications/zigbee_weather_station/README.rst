@@ -88,9 +88,7 @@ Requirements
 
 The application supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: thingy53_nrf5340_cpuapp
+.. table-from-sample-yaml::
 
 To commission the Zigbee weather station device and control it remotely through a Zigbee network, you also need to progam a Zigbee network coordinator on a separate compatible development kit.
 The Zigbee network coordinator forms the network that the weather station node will join and onto which it will share its measurement data.
