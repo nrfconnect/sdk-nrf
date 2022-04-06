@@ -210,6 +210,7 @@ nrf9160 Samples
         The default method is CR termination.
         In AT command mode, a maximum of 10 AT commands can be pipelined with ``|`` as the delimiter character between pipelined AT commands.
       * Threading support for the ``ping`` command.
+      * Iperf3 usage over Zephyr native TCP/IP stack and nRF9160 LTE default context.
 
   * :ref:`nrf_cloud_rest_fota` sample:
 

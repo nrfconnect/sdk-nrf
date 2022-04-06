@@ -117,6 +117,9 @@ config MOSH_WORKER_THREADS
 	bool "Possibility to run iperf3 or ping instances in separate threads"
 	default y
 
+config MOSH_NRF91_NON_OFFLOADING_DEV
+	bool "Possibility to run iperf3 with Zephyr TCP/IP stack"
+
 endmenu
 endif
 
