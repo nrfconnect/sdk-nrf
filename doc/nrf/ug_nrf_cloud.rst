@@ -82,3 +82,5 @@ The following samples demonstrate specific nRF Cloud functionality:
 * :ref:`lte_sensor_gateway`
 * :ref:`multicell_location`
 * :ref:`nrf_cloud_mqtt_multi_service`
+* :ref:`nrf_cloud_rest_fota`
+* :ref:`nrf_cloud_rest_device_message`
