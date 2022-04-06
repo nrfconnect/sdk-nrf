@@ -15,6 +15,7 @@
 #include <net/lwm2m_client_utils.h>
 #include <net/lwm2m_client_utils_fota.h>
 #include <app_event_manager.h>
+#include <net/lwm2m_client_utils_location.h>
 #include <date_time.h>
 
 #include <logging/log.h>
@@ -133,12 +134,16 @@ static int lwm2m_setup(void)
 #if defined(CONFIG_LWM2M_APP_LIGHT_SENSOR)
 	lwm2m_init_light_sensor();
 #endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT) && \
+	defined(CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER)
 	init_neighbour_cell_info();
 #endif
-
 #if defined(CONFIG_LWM2M_PORTFOLIO_OBJ_SUPPORT)
 	lwm2m_init_portfolio_object();
+#endif
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT) && \
+	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS)
+	location_event_handler_init(&client);
 #endif
 	return 0;
 }
@@ -208,6 +213,12 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 		date_time_update_async(date_time_event_handler);
 #if defined(CONFIG_APP_GNSS)
 		start_gnss();
+#endif
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
+		LOG_INF("Send cell location request event");
+		struct cell_location_request_event *event = new_cell_location_request_event();
+
+		EVENT_SUBMIT(event);
 #endif
 		break;
 
@@ -336,6 +347,7 @@ void main(void)
 #if defined(CONFIG_APP_GNSS)
 	modem_gnss_configure();
 #endif
+
 	LOG_INF("Initializing modem.");
 	ret = lte_lc_init();
 	if (ret < 0) {
