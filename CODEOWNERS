@@ -20,6 +20,7 @@
 # Github Actions
 /.github/                                 @thst-nordic
 /.github/labeler.yml                      @thst-nordic @carlescufi @datgizmo
+/.github/mergify.yml                      @thst-nordic @carlescufi @datgizmo
 /.github/test-spec.yml                    @nrfconnect/ncs-test-leads
 /.github/workflows/manifest.yml           @thst-nordic @carlescufi @datgizmo
 
