@@ -18,9 +18,7 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :sample-yaml-rows:
+.. table-from-sample-yaml::
 
 .. _nrf_cloud_mqtt_multi_service_features:
 
