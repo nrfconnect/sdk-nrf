@@ -512,8 +512,6 @@ int64_t bt_mesh_time_srv_mktime(struct bt_mesh_time_srv *srv, struct tm *timeptr
 	}
 
 	sec = tai.sec;
-	sec -= curr_time_zone;
-	sec += curr_utc_delta;
 
 	int64_t new_time_zone =
 		zone_offset_to_sec(srv->data.time_zone_change.new_offset);
@@ -555,7 +553,7 @@ struct tm *bt_mesh_time_srv_localtime_r(struct bt_mesh_time_srv *srv,
 	struct bt_mesh_time_tai tai = tai_at(srv, uptime);
 
 	tai.sec += zone_offset_to_sec(get_zone_offset(srv, uptime));
-	tai.sec += get_utc_delta(srv, uptime);
+	tai.sec -= get_utc_delta(srv, uptime);
 
 	tai_to_ts(&tai, timeptr);
 	return timeptr;
