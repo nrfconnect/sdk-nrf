@@ -347,20 +347,6 @@ int link_shell_pdn_activate(int pdn_cid)
 
 void link_shell_pdn_events_subscribe(void)
 {
-	int err;
-
-	/* Register to the necessary packet domain AT notifications */
-	err = nrf_modem_at_printf("AT+CNEC=16");
-	if (err) {
-		mosh_error("AT+CNEC=16 failed, err %d\n", err);
-		return;
-	}
-
-	err = nrf_modem_at_printf("AT+CGEREP=1");
-	if (err) {
-		mosh_error("AT+CGEREP=1 failed, err %d\n", err);
-		return;
-	}
 	pdn_default_callback_set(link_pdn_event_handler);
 }
 

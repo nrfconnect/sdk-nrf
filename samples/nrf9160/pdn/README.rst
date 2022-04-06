@@ -21,12 +21,16 @@ The sample supports the following development kit:
 Overview
 ********
 
-The sample first initializes the :ref:`nrfxlib:nrf_modem` and registers to the Packet Domain Events notifications (using the `AT+CGEREP=1 <AT+CGEREP set command_>`_ AT command) and notifications for unsolicited reporting of error codes sent by the network (using the `AT+CNEC=16 <AT+CNEC set command_>`_ AT command).
+The sample first initializes the :ref:`nrfxlib:nrf_modem`.
 Next, the sample initializes the :ref:`pdn_readme` library and registers a callback for events pertaining to the default PDP context.
 This is done before changing the function mode to 1 (``AT+CFUN=1``) to receive the activation event for the default PDP context.
 The sample then creates a new PDP context and configures it to use the default APN, registers a callback for its events and activates the PDN connection.
 Finally, the sample prints the PDP context IDs and PDN IDs of both the default PDP context and the new PDP context that it has created.
 
+.. note::
+   The sample uses the :ref:`lte_lc_readme` library to change the modem's functional mode.
+   Hence, the :ref:`pdn_readme` library can automatically register to the necessary packet domain events notifications using the `AT+CGEREP=1 <AT+CGEREP set command_>`_ AT command, and notifications for unsolicited reporting of error codes sent by the network using the `AT+CNEC=16 <AT+CNEC set command_>`_ AT command.
+   If your application does not use the :ref:`lte_lc_readme` library to change the modem's functional mode, you have to subscribe to these notifications manually before the functional mode is changed.
 
 Building and running
 ********************
