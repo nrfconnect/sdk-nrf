@@ -324,6 +324,10 @@ Modem libraries
     * Added :c:macro:`NRF_MODEM_LIB_ON_INIT` macro for compile-time registration of callbacks on modem initialization.
     * Added :c:macro:`NRF_MODEM_LIB_ON_SHUTDOWN` macro for compile-time registration of callbacks on modem de-initialization.
 
+  * :ref:`lte_lc_readme` library:
+
+    * Added :c:macro:`LTE_LC_ON_CFUN` macro for compile-time registration of callbacks on modem functional mode changes using :c:func:`lte_lc_func_mode_set`.
+
 Libraries for networking
 ------------------------
 
