@@ -11,6 +11,11 @@ Getting started with Thingy:91
 This guide helps you get started with Thingy:91.
 It tells you how to update the Thingy:91 application and modem firmware and connect the Thingy:91 to `nRF Cloud`_.
 
+If you have already set up your Thingy:91 and want to learn more, see the following documentation:
+
+* :ref:`ug_thingy91` for more advanced topics related to the Thingy:91.
+* The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.
+
 Requirements for setting up the Thingy:91
 *****************************************
 
@@ -579,3 +584,12 @@ complete the following steps:
    .. note::
 
       It might take a while for the sensor data to appear in the nRF Cloud UI, depending on the duration of time GNSS uses to search for a fix.
+
+Next steps
+**********
+
+You have now completed getting started with the Thingy:91.
+See the following links for where to go next:
+
+* :ref:`ug_thingy91` for more advanced topics related to the Thingy:91.
+* The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.
