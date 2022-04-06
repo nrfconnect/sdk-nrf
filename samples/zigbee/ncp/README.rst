@@ -19,9 +19,7 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52840dongle_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840, nrf5340dk_nrf5340_cpuapp
+.. table-from-sample-yaml::
 
 The nRF5340 DK (``nrf5340dk_nrf5340_cpuapp``) is supported only for development.
 

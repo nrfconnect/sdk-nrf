@@ -19,9 +19,7 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52dk_nrf52832
+.. table-from-sample-yaml::
 
 The sample also requires a device running a CTS Server to connect with (for example, a Bluetooth® Low Energy dongle and nRF Connect for Desktop).
 

@@ -15,9 +15,7 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf52dk_nrf52832, nrf52840dk_nrf52840, nrf9160dk_nrf9160, nrf21540dk_nrf52840
+.. table-from-sample-yaml::
 
 The sample also requires a logic analyzer.
 

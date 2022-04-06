@@ -15,9 +15,7 @@ Requirements
 
 The sample supports the following development kit:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf9160dk_nrf9160_ns
+.. table-from-sample-yaml::
 
 The sample also requires two signed firmware images that have to be available for download from an HTTP server.
 The images are generated automatically when building the sample, but you must upload them to a server and configure the location from where they can be downloaded.

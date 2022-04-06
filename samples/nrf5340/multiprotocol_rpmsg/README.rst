@@ -14,9 +14,7 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpunet
+.. table-from-sample-yaml::
 
 The testing procedure of the sample also requires a second development kit that supports IEEE 802.15.4.
 

@@ -14,9 +14,7 @@ Requirements
 
 The mesh and peripheral coexistence sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf21540dk_nrf52840
+.. table-from-sample-yaml::
 
 The sample also requires a smartphone with `nRF Connect for Mobile`_ and one of the following apps:
 

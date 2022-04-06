@@ -79,9 +79,7 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52dk_nrf52832, nrf52840dongle_nrf52840
+.. table-from-sample-yaml::
 
 The sample also supports other development kits running SoftDevice Controller variants that support LLPM (see :ref:`nrfxlib:softdevice_controller` Proprietary feature support).
 You can use any two of the development kits mentioned above and mix different development kits.
