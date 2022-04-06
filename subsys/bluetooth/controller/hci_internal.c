@@ -452,6 +452,10 @@ static void le_supported_features(sdc_hci_le_le_features_t *features)
 #endif
 
 	features->channel_selection_algorithm_2 = 1;
+
+#if defined(CONFIG_BT_CTLR_ADV_PERIODIC_ADI_SUPPORT)
+	features->periodic_advertising_adi_support = 1;
+#endif
 }
 
 static void le_read_supported_states(uint8_t *buf)
