@@ -61,11 +61,6 @@ void main(void)
 		return;
 	}
 
-	err = pdn_init();
-	if (err) {
-		return;
-	}
-
 	/* Setup a callback for the default PDP context (zero).
 	 * Do this before switching to function mode 1 (CFUN=1)
 	 * to receive the first activation event.

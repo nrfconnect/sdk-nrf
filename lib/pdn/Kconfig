@@ -29,21 +29,14 @@ config PDN_ESM_TIMEOUT
 	help
 	  Timeout for waiting for an ESM notification when activating a PDN, in milliseconds.
 
-config PDN_SYS_INIT
-	bool "Initialize during SYS_INIT"
-	depends on NRF_MODEM_LIB_SYS_INIT
-	default y if NRF_MODEM_LIB_SYS_INIT
-
-if PDN_SYS_INIT
-
 config PDN_INIT_PRIORITY
 	int "Initialization priority"
 	default APPLICATION_INIT_PRIORITY
 
-endif # PDN_SYS_INIT
-
 config PDN_DEFAULTS_OVERRIDE
 	bool "Override defaults for PDP context 0"
+	help
+	  The defaults are overridden automatically as soon as the modem has been initialized.
 
 if PDN_DEFAULTS_OVERRIDE
 

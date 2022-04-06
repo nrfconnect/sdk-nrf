@@ -42,7 +42,7 @@ Multiple PDP contexts might share the same PDN connection if they are configured
 Configuration
 *************
 
-The PDN library overrides the default PDP context configuration during initialization (:c:func:`pdn_init`) if you have set the :kconfig:option:`CONFIG_PDN_DEFAULTS_OVERRIDE` Kconfig option.
+The PDN library overrides the default PDP context configuration automatically after the :ref:`nrfxlib:nrf_modem` is initialized, if the :kconfig:option:`CONFIG_PDN_DEFAULTS_OVERRIDE` Kconfig option is set.
 The default PDP context configuration consists of the following parameters, each controlled with a Kconfig setting:
 
 * Access point name, :kconfig:option:`CONFIG_PDN_DEFAULT_APN`
