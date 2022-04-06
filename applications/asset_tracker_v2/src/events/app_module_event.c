@@ -9,6 +9,9 @@
 #include "app_module_event.h"
 #include "common_module_event.h"
 
+#define LOG_EVENT_BUF_SIZE 50
+#define LOG_EVENT_TYPE_SEPARATOR ", "
+
 static char *type2str(enum app_module_data_type type)
 {
 	switch (type) {
@@ -64,20 +67,35 @@ static char *get_evt_type_str(enum app_module_event_type type)
 static void log_event(const struct app_event_header *aeh)
 {
 	const struct app_module_event *event = cast_app_module_event(aeh);
-	char data_types[50] = "\0";
+	uint16_t size = 0;
+	char data_types[LOG_EVENT_BUF_SIZE] = "\0";
 
 	if (event->type == APP_EVT_ERROR) {
 		APP_EVENT_MANAGER_LOG(aeh, "%s - Error code %d",
 				get_evt_type_str(event->type), event->data.err);
 	} else if (event->type == APP_EVT_DATA_GET) {
 		for (int i = 0; i < event->count; i++) {
-			strcat(data_types, type2str(event->data_list[i]));
+			strncat(data_types, type2str(event->data_list[i]),
+					LOG_EVENT_BUF_SIZE - size - 1);
+			size += strlen(type2str(event->data_list[i]));
 
-			if (i == event->count - 1) {
+			/* Do not add separator if it is the last element or if buffer has less
+			 * than one char left, since last character in buffer must be \0
+			 */
+			if (i == event->count - 1 ||  (LOG_EVENT_BUF_SIZE - 1) <= size) {
 				break;
 			}
 
-			strcat(data_types, ", ");
+			strncat(data_types, LOG_EVENT_TYPE_SEPARATOR,
+							LOG_EVENT_BUF_SIZE - size - 1);
+			size += sizeof(LOG_EVENT_TYPE_SEPARATOR) - 1;
+
+			/* Do not continue to add types if there is less than one char left
+			 * in buffer, since last character in buffer must be \0
+			 */
+			if ((LOG_EVENT_BUF_SIZE - 1) <= size) {
+				break;
+			}
 		}
 
 		APP_EVENT_MANAGER_LOG(aeh, "%s - Requested data types (%s)",
