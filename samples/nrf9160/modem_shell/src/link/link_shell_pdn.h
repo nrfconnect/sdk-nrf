@@ -33,4 +33,6 @@ void link_shell_pdn_info_list_remove(uint8_t cid);
 
 int link_shell_pdn_auth_prot_to_pdn_lib_method_map(int auth_proto, enum pdn_auth *method);
 
+int link_shell_pdn_event_forward_cb_set(pdn_event_handler_t cb);
+
 #endif /* MOSH_LINK_SHELL_PDN_H */
