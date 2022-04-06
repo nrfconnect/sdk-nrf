@@ -21,6 +21,10 @@
 
 static sys_dlist_t pdn_info_list;
 
+/* There cannot be multiple PDN lib event handlers and we need these elsewhere in MoSh.
+ * Thus, we need a forwarder for PDN events.
+ */
+static pdn_event_handler_t pdn_event_forward_callback;
 struct link_shell_pdn_info {
 	sys_dnode_t dnode;
 	int pdn_id;
@@ -127,6 +131,10 @@ void link_pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 		}
 #endif
 		break;
+	}
+
+	if (pdn_event_forward_callback) {
+		pdn_event_forward_callback(cid, event, reason);
 	}
 }
 
@@ -354,6 +362,17 @@ void link_shell_pdn_events_subscribe(void)
 		return;
 	}
 	pdn_default_callback_set(link_pdn_event_handler);
+}
+
+int link_shell_pdn_event_forward_cb_set(pdn_event_handler_t cb)
+{
+	if (!cb) {
+		return -EINVAL;
+	}
+
+	pdn_event_forward_callback = cb;
+
+	return 0;
 }
 
 void link_shell_pdn_init(void)
