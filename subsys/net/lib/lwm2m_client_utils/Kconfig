@@ -100,6 +100,30 @@ config LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_INSTANCE_COUNT
 	default 3
 	depends on LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
 
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
+	bool "Support for location assist object (ID 50001) EXPERIMENTAL"
+	select EXPERIMENTAL
+
+if LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
+
+choice
+	default LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL
+	prompt "Select which method is used for device location"
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL
+	bool "Use location based on current cell and possibly neighboring cells"
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS
+	bool "Use location based on A-GPS"
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
+	bool "Use location based on P-GPS"
+
+endchoice
+
+endif # LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
+
+
 module = LWM2M_CLIENT_UTILS
 module-dep = LOG
 module-str = LwM2M client utilities library

@@ -115,10 +115,16 @@ int lwm2m_update_connmon(void);
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
 #define ECID_SIGNAL_MEASUREMENT_INFO_OBJECT_ID 10256
-
 int lwm2m_signal_meas_info_inst_id_to_index(uint16_t obj_inst_id);
 int lwm2m_signal_meas_info_index_to_inst_id(int index);
 int init_neighbour_cell_info(void);
+#endif
+
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT)
+#define LOCATION_ASSIST_OBJECT_ID 50001
+void location_assist_agps_request_set(uint32_t request_mask);
+void location_assist_cell_request_set(void);
+void location_assist_cell_inform_set(void);
 #endif
 
 #ifdef __cplusplus
