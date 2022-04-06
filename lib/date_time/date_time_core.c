@@ -42,18 +42,23 @@ static void date_time_core_notify_event(enum date_time_evt_type time_source)
 	}
 }
 
-static void date_time_core_schedule_update(void)
+static void date_time_core_schedule_update(bool check_pending)
 {
-	/* If periodic updates are requested in the configuration
-	 * and next update hasn't been already scheduled.
+	/* (Re-)schedule time update work
+	 * if periodic updates are requested in the configuration.
 	 */
-	if (CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS > 0 &&
-	    !k_work_delayable_is_pending(&time_work)) {
+	if (CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS > 0) {
+		/* Don't reschedule time update work in some cases,
+		 * e.g. if time is not obtained and the work is already pending.
+		 */
+		if (check_pending && k_work_delayable_is_pending(&time_work)) {
+			return;
+		}
 
-		LOG_DBG("New date time update in: %d seconds",
+		LOG_DBG("New periodic date time update in: %d seconds",
 			CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS);
 
-		k_work_schedule(&time_work, K_SECONDS(CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS));
+		k_work_reschedule(&time_work, K_SECONDS(CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS));
 	}
 }
 
@@ -69,7 +74,7 @@ static void date_time_update_thread(void)
 		err = date_time_core_current_check();
 		if (err == 0) {
 			LOG_DBG("Using previously obtained time");
-			date_time_core_schedule_update();
+			date_time_core_schedule_update(true);
 			date_time_core_notify_event(DATE_TIME_EVT_TYPE_PREVIOUS);
 			continue;
 		}
@@ -96,7 +101,7 @@ static void date_time_update_thread(void)
 #endif
 		LOG_DBG("Did not get time from any time source");
 
-		date_time_core_schedule_update();
+		date_time_core_schedule_update(true);
 		date_time_core_notify_event(DATE_TIME_NOT_OBTAINED);
 	}
 }
@@ -120,8 +125,8 @@ void date_time_lte_ind_handler(const struct lte_lc_evt *const evt)
 		case LTE_LC_NW_REG_REGISTERED_EMERGENCY:
 		case LTE_LC_NW_REG_REGISTERED_HOME:
 		case LTE_LC_NW_REG_REGISTERED_ROAMING:
-			if (!date_time_is_valid() && !k_work_delayable_is_pending(&time_work)) {
-				k_work_schedule(&time_work, K_SECONDS(1));
+			if (!date_time_is_valid()) {
+				k_work_reschedule(&time_work, K_SECONDS(1));
 			}
 			break;
 #if defined(CONFIG_DATE_TIME_MODEM)
@@ -145,9 +150,8 @@ void date_time_core_init(void)
 		lte_lc_register_handler(date_time_lte_ind_handler);
 	}
 
-	if (!IS_ENABLED(CONFIG_DATE_TIME_AUTO_UPDATE) &&
-	    CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS > 0) {
-		k_work_schedule(&time_work, K_SECONDS(CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS));
+	if (!IS_ENABLED(CONFIG_DATE_TIME_AUTO_UPDATE)) {
+		date_time_core_schedule_update(false);
 	}
 }
 
@@ -229,7 +233,7 @@ void date_time_core_store(int64_t curr_time_ms, enum date_time_evt_type time_sou
 
 	date_time_last_update_uptime = k_uptime_get();
 
-	date_time_core_schedule_update();
+	date_time_core_schedule_update(false);
 
 	tp.tv_sec = curr_time_ms / 1000;
 	tp.tv_nsec = (curr_time_ms % 1000) * 1000000;
