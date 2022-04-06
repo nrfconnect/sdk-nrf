@@ -230,6 +230,33 @@ You can use the following configuration options to configure the connection fall
 * :kconfig:option:`CONFIG_LTE_NETWORK_USE_FALLBACK`
 * :kconfig:option:`CONFIG_LTE_NETWORK_TIMEOUT`
 
+Functional mode changes callback
+================================
+
+The library allows the application to define compile-time callbacks to receive the modem's functional mode changes.
+These callbacks allow any part of the application to perform certain operations when the modem enters or re-enters a certain functional mode using the library :c:func:`lte_lc_func_mode_set` API.
+For example, one kind of operation that the application or a library may need to perform and repeat, whenever the modem enters a certain functional mode is the subscription to AT notifications.
+The application can set up a callback for modem`s functional mode changes using :c:macro:`LTE_LC_ON_CFUN` macro.
+
+The following code snippet shows how to use :c:macro:`LTE_LC_ON_CFUN` macro:
+
+.. code-block:: C
+
+  /* define callback */
+  LTE_LC_ON_CFUN(cfun_hook, on_cfun, NULL);
+
+  /* callback implementation */
+  static void on_cfun(enum lte_lc_func_mode mode, void *context)
+  {
+      printk("Functional mode changed to %d\n", mode);
+  }
+
+  void main(void)
+  {
+      /* change functional mode using the Link Controller API */
+      lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
+  }
+
 API documentation
 *****************
 
