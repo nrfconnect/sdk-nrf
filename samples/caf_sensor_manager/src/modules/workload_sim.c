@@ -4,15 +4,18 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#define MODULE workload_sim
 #include <stdlib.h>
-#include <caf/events/module_state_event.h>
 #include <caf/events/sensor_data_aggregator_event.h>
+
+#define MODULE workload_sim
+#include <caf/events/module_state_event.h>
 
 #define BUSY_TIME CONFIG_WORKLOAD_TIME_PER_SAMPLE
 #define WORKLOAD_SIMULATED_THREAD_STACK_SIZE 800
-#define WORKLOAD_SIMULATED_THREAD_PRIORITY K_LOWEST_APPLICATION_THREAD_PRIO
+#define WORKLOAD_SIMULATED_THREAD_PRIORITY (K_LOWEST_THREAD_PRIO - 2)
 #define NUMBER_OF_WORKLOADS DT_PROP(DT_NODELABEL(agg0), buf_count)
+
+BUILD_ASSERT(WORKLOAD_SIMULATED_THREAD_PRIORITY >= 0);
 
 LOG_MODULE_REGISTER(MODULE);
 
@@ -56,7 +59,7 @@ static struct workload *get_free_workload(void)
 	return NULL;
 }
 
-static bool init(void)
+static void init(void)
 {
 	k_work_queue_init(&workload_simulated_work_q);
 	k_work_queue_start(&workload_simulated_work_q,
@@ -68,8 +71,6 @@ static bool init(void)
 	for (size_t i = 0; i < NUMBER_OF_WORKLOADS; i++) {
 		k_work_init(&workloads[i].work, simulated_work_handler);
 	}
-
-	return false;
 }
 
 static bool event_handler(const struct app_event_header *aeh)
@@ -92,11 +93,7 @@ static bool event_handler(const struct app_event_header *aeh)
 		const struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-			if (!init()) {
-				module_set_state(MODULE_STATE_READY);
-			} else {
-				module_set_state(MODULE_STATE_ERROR);
-			}
+			init();
 		}
 
 		return false;

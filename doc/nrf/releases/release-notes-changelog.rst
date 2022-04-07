@@ -333,9 +333,9 @@ Other Samples
 
 * Added:
 
-  * :ref:`ipc_service_sample` sample, which demonstrates throughput of the IPC service with available backends.
+  * :ref:`ipc_service_sample` sample that demonstrates throughput of the IPC service with available backends.
   * :ref:`event_manager_proxy_sample` sample, which demonstrates the usage of :ref:`event_manager_proxy`.
-  * :ref:`caf_sensor_manager_sample`.
+  * :ref:`caf_sensor_manager_sample` for single-core and multi-core SoCs.
 
 * Updated:
 

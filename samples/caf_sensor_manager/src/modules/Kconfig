@@ -4,7 +4,13 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-#rsource "Kconfig.sensor_sim_ctrl"
+config SAMPLE_SENSOR_MANAGER_REMOTE_CORE_INITIALIZATION_TIMEOUT
+	int "Waiting period for the remote core to finish the initialization"
+	range 10 5000
+	default 1000
+	help
+	  The time to wait for second core to report its readines to transport the events.
+	  The time is given in miliseconds.
 
 config WORKLOAD_TIME_PER_SAMPLE
 	int "CPU load time per sample [us]"
