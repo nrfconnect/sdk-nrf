@@ -205,6 +205,9 @@ static void connected(struct bt_conn *conn, uint8_t error)
 			LOG_INF("Already bonded to %s", log_strdup(addr_str));
 			goto disconnect;
 		}
+	}
+
+	if (IS_ENABLED(CONFIG_CAF_BLE_STATE_SECURITY_REQ)) {
 		/* Security must be enabled after peer event is sent.
 		 * This is to make sure notification events are propagated
 		 * in the right order.
@@ -279,7 +282,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	} else {
 		LOG_WRN("Security with %s failed, level %u err %d",
 			log_strdup(addr), level, bt_err);
-		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+		if (IS_ENABLED(CONFIG_CAF_BLE_STATE_SECURITY_REQ)) {
 			disconnect_peer(conn);
 		}
 
