@@ -110,6 +110,14 @@ config SLM_SOCKET_RX_MAX
 	  Default: NET_IPV4_MTU (576)
 	  Maximum: MSS setting in modem (708)
 
+config SLM_SOCKET_MAX_SOCKETS
+	int "Maximum number of sockets"
+	range 1 10
+	default 1
+	help
+	  Default: 1
+	  Maximum: 10
+
 #
 # TCP/TLS proxy
 #

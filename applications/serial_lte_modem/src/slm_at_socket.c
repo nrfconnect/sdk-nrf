@@ -20,7 +20,6 @@ LOG_MODULE_REGISTER(slm_sock, CONFIG_SLM_LOG_LEVEL);
 
 /*
  * Known limitation in this version
- * - Multiple concurrent sockets
  * - TCP server accept one connection only
  * - Receive more than IPv4 MTU one-time
  */
@@ -29,7 +28,8 @@ LOG_MODULE_REGISTER(slm_sock, CONFIG_SLM_LOG_LEVEL);
 enum slm_socket_operation {
 	AT_SOCKET_CLOSE,
 	AT_SOCKET_OPEN,
-	AT_SOCKET_OPEN6
+	AT_SOCKET_OPEN6,
+	AT_SOCKET_SWITCH
 };
 
 /**@brief Socketopt operations. */
@@ -47,14 +47,16 @@ enum slm_socket_role {
 static char udp_url[SLM_MAX_URL];
 static uint16_t udp_port;
 
-static struct {
+static struct slm_socket {
 	uint16_t type;     /* SOCK_STREAM or SOCK_DGRAM */
 	uint16_t role;     /* Client or Server */
 	sec_tag_t sec_tag; /* Security tag of the credential */
 	int family;        /* Socket address family */
 	int fd;            /* Socket descriptor. */
 	int fd_peer;       /* Socket descriptor for peer. */
-} sock;
+} sockets[CONFIG_SLM_SOCKET_MAX_SOCKETS];
+
+struct slm_socket *sock;
 
 /* global variable defined in different files */
 extern struct at_param_list at_param_list;
@@ -63,29 +65,53 @@ extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
 /* forward declarations */
 #define SOCKET_SEND_TMO_SEC      30
 static int socket_poll(int sock_fd, int event, int timeout);
+static int slm_at_socket_reset(struct slm_socket *socket);
+
+static int get_socket_position(struct slm_socket *socket)
+{
+	for (int i = 0; i < CONFIG_SLM_SOCKET_MAX_SOCKETS; i++) {
+		if (sockets[i].fd == socket->fd) {
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+static int do_socket_switch(int handle) 
+{
+	if (handle < 1 || handle > CONFIG_SLM_SOCKET_MAX_SOCKETS) {
+		LOG_WRN("Invalid handle: %d", handle);
+		return -EINVAL;
+	}
+	sock = &sockets[handle - 1];
+	sprintf(rsp_buf, "\r\n#XSOCKET: %d\r\n", handle);
+	rsp_send(rsp_buf, strlen(rsp_buf));
+	return 0;
+}
 
 static int do_socket_open(void)
 {
 	int ret = 0;
 	int proto = IPPROTO_TCP;
 
-	if (sock.fd != INVALID_SOCKET) {
+	if (sock->fd != INVALID_SOCKET) {
 		LOG_WRN("Socket is already opened");
 		return -EINVAL;
 	}
 
-	if (sock.type == SOCK_STREAM) {
-		ret = socket(sock.family, SOCK_STREAM, IPPROTO_TCP);
-	} else if (sock.type == SOCK_DGRAM) {
-		ret = socket(sock.family, SOCK_DGRAM, IPPROTO_UDP);
+	if (sock->type == SOCK_STREAM) {
+		ret = socket(sock->family, SOCK_STREAM, IPPROTO_TCP);
+	} else if (sock->type == SOCK_DGRAM) {
+		ret = socket(sock->family, SOCK_DGRAM, IPPROTO_UDP);
 		proto = IPPROTO_UDP;
-	} else if (sock.type == SOCK_RAW) {
-		sock.family = AF_PACKET;
-		sock.role = AT_SOCKET_ROLE_CLIENT;
-		ret = socket(sock.family, SOCK_RAW, IPPROTO_IP);
+	} else if (sock->type == SOCK_RAW) {
+		sock->family = AF_PACKET;
+		sock->role = AT_SOCKET_ROLE_CLIENT;
+		ret = socket(sock->family, SOCK_RAW, IPPROTO_IP);
 		proto = IPPROTO_IP;
 	} else {
-		LOG_ERR("socket type %d not supported", sock.type);
+		LOG_ERR("socket type %d not supported", sock->type);
 		return -ENOTSUP;
 	}
 	if (ret < 0) {
@@ -93,8 +119,8 @@ static int do_socket_open(void)
 		return -errno;
 	}
 
-	sock.fd = ret;
-	sprintf(rsp_buf, "\r\n#XSOCKET: %d,%d,%d\r\n", sock.fd, sock.type, proto);
+	sock->fd = ret;
+	sprintf(rsp_buf, "\r\n#XSOCKET: %d,%d,%d\r\n", get_socket_position(sock) + 1, sock->type, proto);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
 	return 0;
@@ -105,37 +131,37 @@ static int do_secure_socket_open(int peer_verify)
 	int ret = 0;
 	int proto = IPPROTO_TLS_1_2;
 
-	if (sock.fd != INVALID_SOCKET) {
+	if (sock->fd != INVALID_SOCKET) {
 		LOG_WRN("Secure socket is already opened");
 		return -EINVAL;
 	}
 
-	if (sock.type == SOCK_STREAM) {
-		ret = socket(sock.family, SOCK_STREAM, IPPROTO_TLS_1_2);
-	} else if (sock.type == SOCK_DGRAM) {
-		ret = socket(sock.family, SOCK_DGRAM, IPPROTO_DTLS_1_2);
+	if (sock->type == SOCK_STREAM) {
+		ret = socket(sock->family, SOCK_STREAM, IPPROTO_TLS_1_2);
+	} else if (sock->type == SOCK_DGRAM) {
+		ret = socket(sock->family, SOCK_DGRAM, IPPROTO_DTLS_1_2);
 		proto = IPPROTO_DTLS_1_2;
 	} else {
-		LOG_ERR("socket type %d not supported", sock.type);
+		LOG_ERR("socket type %d not supported", sock->type);
 		return -ENOTSUP;
 	}
 	if (ret < 0) {
 		LOG_ERR("socket() error: %d", -errno);
 		return -errno;
 	}
-	sock.fd = ret;
+	sock->fd = ret;
 
-	sec_tag_t sec_tag_list[1] = { sock.sec_tag };
+	sec_tag_t sec_tag_list[1] = { sock->sec_tag };
 #if defined(CONFIG_SLM_NATIVE_TLS)
-	ret = slm_tls_loadcrdl(sock.sec_tag);
+	ret = slm_tls_loadcrdl(sock->sec_tag);
 	if (ret < 0) {
 		LOG_ERR("Fail to load credential: %d", ret);
-		close(sock.fd);
-		slm_at_socket_init();
+		close(sock->fd);
+		slm_at_socket_reset(sock);
 		return -EAGAIN;
 	}
 #endif
-	ret = setsockopt(sock.fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list, sizeof(sec_tag_t));
+	ret = setsockopt(sock->fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list, sizeof(sec_tag_t));
 	if (ret) {
 		LOG_ERR("setsockopt(TLS_SEC_TAG_LIST) error: %d", -errno);
 		ret = -errno;
@@ -143,17 +169,17 @@ static int do_secure_socket_open(int peer_verify)
 	}
 
 	/* Set up (D)TLS peer verification */
-	ret = setsockopt(sock.fd, SOL_TLS, TLS_PEER_VERIFY, &peer_verify, sizeof(peer_verify));
+	ret = setsockopt(sock->fd, SOL_TLS, TLS_PEER_VERIFY, &peer_verify, sizeof(peer_verify));
 	if (ret) {
 		LOG_ERR("setsockopt(TLS_PEER_VERIFY) error: %d", errno);
 		ret = -errno;
 		goto error_exit;
 	}
 	/* Set up (D)TLS server role if applicable */
-	if (sock.role == AT_SOCKET_ROLE_SERVER) {
+	if (sock->role == AT_SOCKET_ROLE_SERVER) {
 		int tls_role = TLS_DTLS_ROLE_SERVER;
 
-		ret = setsockopt(sock.fd, SOL_TLS, TLS_DTLS_ROLE, &tls_role, sizeof(int));
+		ret = setsockopt(sock->fd, SOL_TLS, TLS_DTLS_ROLE, &tls_role, sizeof(int));
 		if (ret) {
 			LOG_ERR("setsockopt(TLS_DTLS_ROLE) error: %d", -errno);
 			ret = -errno;
@@ -161,21 +187,21 @@ static int do_secure_socket_open(int peer_verify)
 		}
 	}
 
-	sprintf(rsp_buf, "\r\n#XSSOCKET: %d,%d,%d\r\n", sock.fd, sock.type, proto);
+	sprintf(rsp_buf, "\r\n#XSSOCKET: %d,%d,%d\r\n", sock->fd, sock->type, proto);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
 	return 0;
 
 error_exit:
-	close(sock.fd);
-	slm_at_socket_init();
+	close(sock->fd);
+	slm_at_socket_reset(sock);
 #if defined(CONFIG_SLM_NATIVE_TLS)
-	if (sock.sec_tag != INVALID_SEC_TAG) {
-		(void)slm_tls_unloadcrdl(sock.sec_tag);
+	if (sock->sec_tag != INVALID_SEC_TAG) {
+		(void)slm_tls_unloadcrdl(sock->sec_tag);
 	}
 #endif
-	close(sock.fd);
-	slm_at_socket_init();
+	close(sock->fd);
+	slm_at_socket_reset(sock);
 	return ret;
 }
 
@@ -183,31 +209,31 @@ static int do_socket_close(void)
 {
 	int ret;
 
-	if (sock.fd == INVALID_SOCKET) {
+	if (sock->fd == INVALID_SOCKET) {
 		return 0;
 	}
 
 #if defined(CONFIG_SLM_NATIVE_TLS)
-	if (sock.sec_tag != INVALID_SEC_TAG) {
-		ret = slm_tls_unloadcrdl(sock.sec_tag);
+	if (sock->sec_tag != INVALID_SEC_TAG) {
+		ret = slm_tls_unloadcrdl(sock->sec_tag);
 		if (ret < 0) {
 			LOG_ERR("Fail to load credential: %d", ret);
 			return ret;
 		}
 	}
 #endif
-	if (sock.fd_peer != INVALID_SOCKET) {
-		ret = close(sock.fd_peer);
+	if (sock->fd_peer != INVALID_SOCKET) {
+		ret = close(sock->fd_peer);
 		if (ret) {
 			LOG_WRN("peer close() error: %d", -errno);
 		}
 	}
-	ret = close(sock.fd);
+	ret = close(sock->fd);
 	if (ret) {
 		LOG_WRN("close() error: %d", -errno);
 		ret = -errno;
 	}
-	slm_at_socket_init();
+	slm_at_socket_reset(sock);
 	sprintf(rsp_buf, "\r\n#XSOCKET: %d,\"closed\"\r\n", ret);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
@@ -220,7 +246,7 @@ static int do_socketopt_set_str(int option, const char *value)
 
 	switch (option) {
 	case SO_BINDTODEVICE:
-		ret = setsockopt(sock.fd, SOL_SOCKET, option, value, strlen(value));
+		ret = setsockopt(sock->fd, SOL_SOCKET, option, value, strlen(value));
 		if (ret < 0) {
 			LOG_ERR("setsockopt(%d) error: %d", option, -errno);
 		}
@@ -240,7 +266,7 @@ static int do_socketopt_set_int(int option, int value)
 
 	switch (option) {
 	case SO_REUSEADDR:
-		ret = setsockopt(sock.fd, SOL_SOCKET, option, &value, sizeof(int));
+		ret = setsockopt(sock->fd, SOL_SOCKET, option, &value, sizeof(int));
 		if (ret < 0) {
 			LOG_ERR("setsockopt(%d) error: %d", option, -errno);
 		}
@@ -251,7 +277,7 @@ static int do_socketopt_set_int(int option, int value)
 		struct timeval tmo = { .tv_sec = value };
 		socklen_t len = sizeof(struct timeval);
 
-		ret = setsockopt(sock.fd, SOL_SOCKET, option, &tmo, len);
+		ret = setsockopt(sock->fd, SOL_SOCKET, option, &tmo, len);
 		if (ret < 0) {
 			LOG_ERR("setsockopt(%d) error: %d", option, -errno);
 		}
@@ -262,7 +288,7 @@ static int do_socketopt_set_int(int option, int value)
 	case SO_IP_ECHO_REPLY:
 	case SO_IPV6_ECHO_REPLY:
 	case SO_TCP_SRV_SESSTIMEO:
-		ret = setsockopt(sock.fd, SOL_SOCKET, option, &value, sizeof(int));
+		ret = setsockopt(sock->fd, SOL_SOCKET, option, &value, sizeof(int));
 		if (ret < 0) {
 			LOG_ERR("setsockopt(%d) error: %d", option, -errno);
 		}
@@ -274,7 +300,7 @@ static int do_socketopt_set_int(int option, int value)
 	case SO_RAI_ONE_RESP:
 	case SO_RAI_ONGOING:
 	case SO_RAI_WAIT_MORE:
-		ret = setsockopt(sock.fd, SOL_SOCKET, option, NULL, 0);
+		ret = setsockopt(sock->fd, SOL_SOCKET, option, NULL, 0);
 		if (ret < 0) {
 			LOG_ERR("setsockopt(%d) error: %d", option, -errno);
 		}
@@ -307,7 +333,7 @@ static int do_socketopt_get(int option)
 		int value;
 		socklen_t len = sizeof(int);
 
-		ret = getsockopt(sock.fd, SOL_SOCKET, option, &value, &len);
+		ret = getsockopt(sock->fd, SOL_SOCKET, option, &value, &len);
 		if (ret) {
 			LOG_ERR("getsockopt(%d) error: %d", option, -errno);
 		} else {
@@ -321,7 +347,7 @@ static int do_socketopt_get(int option)
 		struct timeval tmo;
 		socklen_t len = sizeof(struct timeval);
 
-		ret = getsockopt(sock.fd, SOL_SOCKET, option, &tmo, &len);
+		ret = getsockopt(sock->fd, SOL_SOCKET, option, &tmo, &len);
 		if (ret) {
 			LOG_ERR("getsockopt(%d) error: %d", option, -errno);
 		} else {
@@ -354,9 +380,9 @@ static int do_secure_socketopt_set_str(int option, const char *value)
 		 *  the hostname (may be NULL to disable hostname verification).
 		 */
 		if (slm_util_cmd_casecmp(value, "NULL")) {
-			ret = setsockopt(sock.fd, SOL_TLS, option, NULL, 0);
+			ret = setsockopt(sock->fd, SOL_TLS, option, NULL, 0);
 		} else {
-			ret = setsockopt(sock.fd, SOL_TLS, option, value, strlen(value));
+			ret = setsockopt(sock->fd, SOL_TLS, option, value, strlen(value));
 		}
 		if (ret < 0) {
 			LOG_ERR("setsockopt(%d) error: %d", option, -errno);
@@ -380,7 +406,7 @@ static int do_secure_socketopt_set_int(int option, int value)
 	case TLS_SESSION_CACHE:
 	case TLS_SESSION_CACHE_PURGE:
 	case TLS_DTLS_HANDSHAKE_TIMEO:
-		ret = setsockopt(sock.fd, SOL_TLS, option, &value, sizeof(int));
+		ret = setsockopt(sock->fd, SOL_TLS, option, &value, sizeof(int));
 		if (ret < 0) {
 			LOG_ERR("setsockopt(%d) error: %d", option, -errno);
 		}
@@ -411,7 +437,7 @@ static int do_secure_socketopt_get(int option)
 		int value;
 		socklen_t len = sizeof(int);
 
-		ret = getsockopt(sock.fd, SOL_SOCKET, option, &value, &len);
+		ret = getsockopt(sock->fd, SOL_SOCKET, option, &value, &len);
 		if (ret) {
 			LOG_ERR("getsockopt(%d) error: %d", option, -errno);
 		} else {
@@ -431,7 +457,7 @@ static int do_bind(uint16_t port)
 {
 	int ret;
 
-	if (sock.family == AF_INET) {
+	if (sock->family == AF_INET) {
 		char ipv4_addr[INET_ADDRSTRLEN] = {0};
 
 		util_get_ip_addr(0, ipv4_addr, NULL);
@@ -450,13 +476,13 @@ static int do_bind(uint16_t port)
 			return -EAGAIN;
 		}
 
-		ret = bind(sock.fd, (struct sockaddr *)&local, sizeof(struct sockaddr_in));
+		ret = bind(sock->fd, (struct sockaddr *)&local, sizeof(struct sockaddr_in));
 		if (ret) {
 			LOG_ERR("bind() failed: %d", -errno);
 			return -errno;
 		}
 		LOG_DBG("bind to %s", log_strdup(ipv4_addr));
-	} else if (sock.family == AF_INET6) {
+	} else if (sock->family == AF_INET6) {
 		char ipv6_addr[INET6_ADDRSTRLEN] = {0};
 
 		util_get_ip_addr(0, NULL, ipv6_addr);
@@ -474,7 +500,7 @@ static int do_bind(uint16_t port)
 			LOG_ERR("Parse local IPv6 address failed: %d", -errno);
 			return -EAGAIN;
 		}
-		ret = bind(sock.fd, (struct sockaddr *)&local, sizeof(struct sockaddr_in6));
+		ret = bind(sock->fd, (struct sockaddr *)&local, sizeof(struct sockaddr_in6));
 		if (ret) {
 			LOG_ERR("bind() failed: %d", -errno);
 			return -errno;
@@ -495,15 +521,15 @@ static int do_connect(const char *url, uint16_t port)
 	};
 
 	LOG_DBG("connect %s:%d", log_strdup(url), port);
-	ret = util_resolve_host(0, url, port, sock.family, &sa);
+	ret = util_resolve_host(0, url, port, sock->family, &sa);
 	if (ret) {
 		LOG_ERR("getaddrinfo() error: %s", log_strdup(gai_strerror(ret)));
 		return -EAGAIN;
 	}
 	if (sa.sa_family == AF_INET) {
-		ret = connect(sock.fd, &sa, sizeof(struct sockaddr_in));
+		ret = connect(sock->fd, &sa, sizeof(struct sockaddr_in));
 	} else {
-		ret = connect(sock.fd, &sa, sizeof(struct sockaddr_in6));
+		ret = connect(sock->fd, &sa, sizeof(struct sockaddr_in6));
 	}
 	if (ret) {
 		LOG_ERR("connect() error: %d", -errno);
@@ -521,7 +547,7 @@ static int do_listen(void)
 	int ret;
 
 	/* hardcode backlog to be 1 for now */
-	ret = listen(sock.fd, 1);
+	ret = listen(sock->fd, 1);
 	if (ret < 0) {
 		LOG_ERR("listen() error: %d", -errno);
 		return -errno;
@@ -535,39 +561,39 @@ static int do_accept(int timeout)
 	int ret;
 	char peer_addr[INET6_ADDRSTRLEN] = {0};
 
-	ret = socket_poll(sock.fd, POLLIN, timeout);
+	ret = socket_poll(sock->fd, POLLIN, timeout);
 	if (ret) {
 		return ret;
 	}
 
-	if (sock.family == AF_INET) {
+	if (sock->family == AF_INET) {
 		struct sockaddr_in client;
 		socklen_t len = sizeof(struct sockaddr_in);
 
-		ret = accept(sock.fd, (struct sockaddr *)&client, &len);
+		ret = accept(sock->fd, (struct sockaddr *)&client, &len);
 		if (ret == -1) {
 			LOG_ERR("accept() error: %d", -errno);
-			sock.fd_peer = INVALID_SOCKET;
+			sock->fd_peer = INVALID_SOCKET;
 			return -errno;
 		}
-		sock.fd_peer = ret;
+		sock->fd_peer = ret;
 		(void)inet_ntop(AF_INET, &client.sin_addr, peer_addr, sizeof(peer_addr));
-	} else if (sock.family == AF_INET6) {
+	} else if (sock->family == AF_INET6) {
 		struct sockaddr_in6 client;
 		socklen_t len = sizeof(struct sockaddr_in6);
 
-		ret = accept(sock.fd, (struct sockaddr *)&client, &len);
+		ret = accept(sock->fd, (struct sockaddr *)&client, &len);
 		if (ret == -1) {
 			LOG_ERR("accept() error: %d", -errno);
-			sock.fd_peer = INVALID_SOCKET;
+			sock->fd_peer = INVALID_SOCKET;
 			return -errno;
 		}
-		sock.fd_peer = ret;
+		sock->fd_peer = ret;
 		(void)inet_ntop(AF_INET6, &client.sin6_addr, peer_addr, sizeof(peer_addr));
 	} else {
 		return -EINVAL;
 	}
-	sprintf(rsp_buf, "\r\n#XACCEPT: %d,\"%s\"\r\n", sock.fd_peer, peer_addr);
+	sprintf(rsp_buf, "\r\n#XACCEPT: %d,\"%s\"\r\n", sock->fd_peer, peer_addr);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 
 	return 0;
@@ -576,12 +602,12 @@ static int do_accept(int timeout)
 static int do_send(const uint8_t *data, int datalen)
 {
 	int ret = 0;
-	int sockfd = sock.fd;
+	int sockfd = sock->fd;
 
 	/* For TCP/TLS Server, send to incoming socket */
-	if (sock.type == SOCK_STREAM && sock.role == AT_SOCKET_ROLE_SERVER) {
-		if (sock.fd_peer != INVALID_SOCKET) {
-			sockfd = sock.fd_peer;
+	if (sock->type == SOCK_STREAM && sock->role == AT_SOCKET_ROLE_SERVER) {
+		if (sock->fd_peer != INVALID_SOCKET) {
+			sockfd = sock->fd_peer;
 		} else {
 			LOG_ERR("No connection");
 			return -EINVAL;
@@ -617,12 +643,12 @@ static int do_send(const uint8_t *data, int datalen)
 static int do_send_datamode(const uint8_t *data, int datalen)
 {
 	int ret = 0;
-	int sockfd = sock.fd;
+	int sockfd = sock->fd;
 
 	/* For TCP/TLS Server, send to incoming socket */
-	if (sock.type == SOCK_STREAM && sock.role == AT_SOCKET_ROLE_SERVER) {
-		if (sock.fd_peer != INVALID_SOCKET) {
-			sockfd = sock.fd_peer;
+	if (sock->type == SOCK_STREAM && sock->role == AT_SOCKET_ROLE_SERVER) {
+		if (sock->fd_peer != INVALID_SOCKET) {
+			sockfd = sock->fd_peer;
 		} else {
 			LOG_ERR("No connection");
 			return -EINVAL;
@@ -650,28 +676,28 @@ static int do_send_datamode(const uint8_t *data, int datalen)
 static int do_recv(int timeout)
 {
 	int ret;
-	int sockfd = sock.fd;
+	int sockfd = sock->fd;
 	char rx_data[SLM_MAX_PAYLOAD];
 	uint16_t length;
 
 	/* For TCP/TLS Server, receive from incoming socket */
-	if (sock.type == SOCK_STREAM && sock.role == AT_SOCKET_ROLE_SERVER) {
-		if (sock.fd_peer != INVALID_SOCKET) {
-			sockfd = sock.fd_peer;
+	if (sock->type == SOCK_STREAM && sock->role == AT_SOCKET_ROLE_SERVER) {
+		if (sock->fd_peer != INVALID_SOCKET) {
+			sockfd = sock->fd_peer;
 		} else {
 			LOG_ERR("No remote connection");
 			return -EINVAL;
 		}
 	}
 
-	if (sock.family == AF_INET) {
-		if (sock.type == SOCK_STREAM) {
+	if (sock->family == AF_INET) {
+		if (sock->type == SOCK_STREAM) {
 			length = TCP_MAX_PAYLOAD_IPV4;
 		} else {
 			length = UDP_MAX_PAYLOAD_IPV4;
 		}
-	} else if (sock.family == AF_INET6) {
-		if (sock.type == SOCK_STREAM) {
+	} else if (sock->family == AF_INET6) {
+		if (sock->type == SOCK_STREAM) {
 			length = TCP_MAX_PAYLOAD_IPV6;
 		} else {
 			length = UDP_MAX_PAYLOAD_IPV6;
@@ -717,22 +743,22 @@ static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int da
 	};
 
 	LOG_DBG("sendto %s:%d", log_strdup(url), port);
-	ret = util_resolve_host(0, url, port, sock.family, &sa);
+	ret = util_resolve_host(0, url, port, sock->family, &sa);
 	if (ret) {
 		LOG_ERR("getaddrinfo() error: %s", log_strdup(gai_strerror(ret)));
 		return -EAGAIN;
 	}
 
 	while (offset < datalen) {
-		ret = socket_poll(sock.fd, POLLOUT, SOCKET_SEND_TMO_SEC);
+		ret = socket_poll(sock->fd, POLLOUT, SOCKET_SEND_TMO_SEC);
 		if (ret) {
 			break;
 		}
 		if (sa.sa_family == AF_INET) {
-			ret = sendto(sock.fd, data + offset, datalen - offset, 0,
+			ret = sendto(sock->fd, data + offset, datalen - offset, 0,
 				&sa, sizeof(struct sockaddr_in));
 		} else {
-			ret = sendto(sock.fd, data + offset, datalen - offset, 0,
+			ret = sendto(sock->fd, data + offset, datalen - offset, 0,
 				&sa, sizeof(struct sockaddr_in6));
 		}
 		if (ret <= 0) {
@@ -761,7 +787,7 @@ static int do_sendto_datamode(const uint8_t *data, int datalen)
 	};
 
 	LOG_DBG("sendto %s:%d", log_strdup(udp_url), udp_port);
-	ret = util_resolve_host(0, udp_url, udp_port, sock.family, &sa);
+	ret = util_resolve_host(0, udp_url, udp_port, sock->family, &sa);
 	if (ret) {
 		LOG_ERR("getaddrinfo() error: %s", log_strdup(gai_strerror(ret)));
 		return -EAGAIN;
@@ -770,15 +796,15 @@ static int do_sendto_datamode(const uint8_t *data, int datalen)
 	uint32_t offset = 0;
 
 	while (offset < datalen) {
-		ret = socket_poll(sock.fd, POLLOUT, SOCKET_SEND_TMO_SEC);
+		ret = socket_poll(sock->fd, POLLOUT, SOCKET_SEND_TMO_SEC);
 		if (ret) {
 			break;
 		}
 		if (sa.sa_family == AF_INET) {
-			ret = sendto(sock.fd, data + offset, datalen - offset, 0,
+			ret = sendto(sock->fd, data + offset, datalen - offset, 0,
 				&sa, sizeof(struct sockaddr_in));
 		} else {
-			ret = sendto(sock.fd, data + offset, datalen - offset, 0,
+			ret = sendto(sock->fd, data + offset, datalen - offset, 0,
 				&sa, sizeof(struct sockaddr_in6));
 		}
 		if (ret <= 0) {
@@ -799,16 +825,16 @@ static int do_recvfrom(int timeout)
 	char rx_data[SLM_MAX_PAYLOAD];
 	int length;
 
-	if (sock.family == AF_INET) {
+	if (sock->family == AF_INET) {
 		length = UDP_MAX_PAYLOAD_IPV4;
 	} else {
 		length = UDP_MAX_PAYLOAD_IPV6;
 	}
-	ret = socket_poll(sock.fd, POLLIN, timeout);
+	ret = socket_poll(sock->fd, POLLIN, timeout);
 	if (ret) {
 		return ret;
 	}
-	ret = recvfrom(sock.fd, (void *)rx_data, length, 0, &remote, &addrlen);
+	ret = recvfrom(sock->fd, (void *)rx_data, length, 0, &remote, &addrlen);
 	if (ret < 0) {
 		LOG_ERR("recvfrom() error: %d", -errno);
 		return -errno;
@@ -887,7 +913,7 @@ static int socket_datamode_callback(uint8_t op, const uint8_t *data, int len)
 }
 
 /**@brief handle AT#XSOCKET commands
- *  AT#XSOCKET=<op>[,<type>,<role>]
+ *  AT#XSOCKET=<op>[,<type>,<role>][,<handle>]
  *  AT#XSOCKET?
  *  AT#XSOCKET=?
  */
@@ -903,28 +929,58 @@ int handle_at_socket(enum at_cmd_type cmd_type)
 			return err;
 		}
 		if (op == AT_SOCKET_OPEN || op == AT_SOCKET_OPEN6) {
-			if (sock.fd >= 0) {
-				LOG_WRN("Socket is already opened");
-				return -EINVAL;
+			int i;
+			for (i = 0; i < CONFIG_SLM_SOCKET_MAX_SOCKETS; i++) {
+				if (sockets[i].fd == INVALID_SOCKET) {
+					sock = &sockets[i];
+					break;
+				}
 			}
-			err = at_params_unsigned_short_get(&at_param_list, 2, &sock.type);
+			if (i == CONFIG_SLM_SOCKET_MAX_SOCKETS) {
+				LOG_WRN("No more sockets available");
+				return -ENOMEM;
+			}
+			err = at_params_unsigned_short_get(&at_param_list, 2, &sock->type);
 			if (err) {
 				return err;
 			}
-			err = at_params_unsigned_short_get(&at_param_list, 3, &sock.role);
+			err = at_params_unsigned_short_get(&at_param_list, 3, &sock->role);
 			if (err) {
 				return err;
 			}
-			sock.family = (op == AT_SOCKET_OPEN) ? AF_INET : AF_INET6;
+			sock->family = (op == AT_SOCKET_OPEN) ? AF_INET : AF_INET6;
 			err = do_socket_open();
 		} else if (op == AT_SOCKET_CLOSE) {
+			if (at_params_valid_count_get(&at_param_list) > 2) {
+				err = at_params_unsigned_short_get(&at_param_list, 2, &op);
+				if (err) {
+					return err;
+				}
+				if (op < 1 || op > CONFIG_SLM_SOCKET_MAX_SOCKETS) {
+					LOG_WRN("Invalid handle specified to close");
+					return -EINVAL;
+				}
+				sock = &sockets[op - 1];
+			}
 			err = do_socket_close();
-		} break;
+		} else if (op == AT_SOCKET_SWITCH) {
+			if (at_params_valid_count_get(&at_param_list) > 2) {
+				err = at_params_unsigned_short_get(&at_param_list, 2, &op);
+				if (err) {
+					return err;
+				}
+				err = do_socket_switch(op);
+			} else {
+				LOG_WRN("No socket specified to switch to");
+				return -EINVAL;
+			}
+		}
+		break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		if (sock.fd != INVALID_SOCKET) {
-			sprintf(rsp_buf, "\r\n#XSOCKET: %d,%d,%d\r\n", sock.fd,
-				sock.family, sock.role);
+		if (sock->fd != INVALID_SOCKET) {
+			sprintf(rsp_buf, "\r\n#XSOCKET: %d,%d,%d\r\n", get_socket_position(sock) + 1,
+				sock->family, sock->role);
 		} else {
 			sprintf(rsp_buf, "\r\n#XSOCKET: 0\r\n");
 		}
@@ -974,26 +1030,33 @@ int handle_at_secure_socket(enum at_cmd_type cmd_type)
 			 */
 			uint16_t peer_verify;
 
-			if (sock.fd >= 0) {
-				LOG_WRN("Socket is already opened");
-				return -EINVAL;
+			int i;
+			for (i = 0; i < CONFIG_SLM_SOCKET_MAX_SOCKETS; i++) {
+				if (sockets[i].fd == INVALID_SOCKET) {
+					sock = &sockets[i];
+					break;
+				}
 			}
-			err = at_params_unsigned_short_get(&at_param_list, 2, &sock.type);
+			if (i == CONFIG_SLM_SOCKET_MAX_SOCKETS) {
+				LOG_WRN("No more sockets available");
+				return -ENOMEM;
+			}
+			err = at_params_unsigned_short_get(&at_param_list, 2, &sock->type);
 			if (err) {
 				return err;
 			}
-			err = at_params_unsigned_short_get(&at_param_list, 3, &sock.role);
+			err = at_params_unsigned_short_get(&at_param_list, 3, &sock->role);
 			if (err) {
 				return err;
 			}
-			if (sock.role == AT_SOCKET_ROLE_SERVER) {
+			if (sock->role == AT_SOCKET_ROLE_SERVER) {
 				peer_verify = TLS_PEER_VERIFY_NONE;
-			} else if (sock.role == AT_SOCKET_ROLE_CLIENT) {
+			} else if (sock->role == AT_SOCKET_ROLE_CLIENT) {
 				peer_verify = TLS_PEER_VERIFY_REQUIRED;
 			} else {
 				return -EINVAL;
 			}
-			err = at_params_unsigned_int_get(&at_param_list, 4, &sock.sec_tag);
+			err = at_params_unsigned_int_get(&at_param_list, 4, &sock->sec_tag);
 			if (err) {
 				return err;
 			}
@@ -1004,16 +1067,39 @@ int handle_at_secure_socket(enum at_cmd_type cmd_type)
 					return err;
 				}
 			}
-			sock.family = (op == AT_SOCKET_OPEN) ? AF_INET : AF_INET6;
+			sock->family = (op == AT_SOCKET_OPEN) ? AF_INET : AF_INET6;
 			err = do_secure_socket_open(peer_verify);
 		} else if (op == AT_SOCKET_CLOSE) {
+			if (at_params_valid_count_get(&at_param_list) > 2) {
+				err = at_params_unsigned_short_get(&at_param_list, 2, &op);
+				if (err) {
+					return err;
+				}
+				if (op < 1 || op > CONFIG_SLM_SOCKET_MAX_SOCKETS) {
+					LOG_WRN("Invalid handle specified to close");
+					return -EINVAL;
+				}
+				sock = &sockets[op - 1];
+			}
 			err = do_socket_close();
-		} break;
+		} else if (op == AT_SOCKET_SWITCH) {
+			if (at_params_valid_count_get(&at_param_list) > 2) {
+				err = at_params_unsigned_short_get(&at_param_list, 2, &op);
+				if (err) {
+					return err;
+				}
+				err = do_socket_switch(op);
+			} else {
+				LOG_WRN("No socket specified to switch to");
+				return -EINVAL;
+			}
+		}
+		break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		if (sock.fd != INVALID_SOCKET) {
-			sprintf(rsp_buf, "\r\n#XSSOCKET: %d,%d,%d\r\n", sock.fd,
-				sock.family, sock.role);
+		if (sock->fd != INVALID_SOCKET) {
+			sprintf(rsp_buf, "\r\n#XSSOCKET: %d,%d,%d\r\n", get_socket_position(sock) + 1,
+				sock->family, sock->role);
 		} else {
 			sprintf(rsp_buf, "\r\n#XSSOCKET: 0\r\n");
 		}
@@ -1118,7 +1204,7 @@ int handle_at_secure_socketopt(enum at_cmd_type cmd_type)
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
-		if (sock.sec_tag == INVALID_SEC_TAG) {
+		if (sock->sec_tag == INVALID_SEC_TAG) {
 			LOG_ERR("Not secure socket");
 			return err;
 		}
@@ -1207,7 +1293,7 @@ int handle_at_connect(enum at_cmd_type cmd_type)
 	int size = SLM_MAX_URL;
 	uint16_t port;
 
-	if (sock.role != AT_SOCKET_ROLE_CLIENT) {
+	if (sock->role != AT_SOCKET_ROLE_CLIENT) {
 		LOG_ERR("Invalid role");
 		return err;
 	}
@@ -1241,7 +1327,7 @@ int handle_at_listen(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 
-	if (sock.role != AT_SOCKET_ROLE_SERVER) {
+	if (sock->role != AT_SOCKET_ROLE_SERVER) {
 		LOG_ERR("Invalid role");
 		return err;
 	}
@@ -1268,7 +1354,7 @@ int handle_at_accept(enum at_cmd_type cmd_type)
 	int err = -EINVAL;
 	int timeout;
 
-	if (sock.role != AT_SOCKET_ROLE_SERVER) {
+	if (sock->role != AT_SOCKET_ROLE_SERVER) {
 		LOG_ERR("Invalid role");
 		return err;
 	}
@@ -1283,8 +1369,8 @@ int handle_at_accept(enum at_cmd_type cmd_type)
 		break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		if (sock.fd_peer != INVALID_SOCKET) {
-			sprintf(rsp_buf, "\r\n#XTCPACCEPT: %d\r\n", sock.fd_peer);
+		if (sock->fd_peer != INVALID_SOCKET) {
+			sprintf(rsp_buf, "\r\n#XTCPACCEPT: %d\r\n", sock->fd_peer);
 		} else {
 			sprintf(rsp_buf, "\r\n#XTCPACCEPT: 0\r\n");
 		}
@@ -1490,14 +1576,23 @@ int handle_at_getaddrinfo(enum at_cmd_type cmd_type)
 
 /**@brief API to initialize Socket AT commands handler
  */
+int slm_at_socket_reset(struct slm_socket *socket)
+{
+	socket->family  = AF_UNSPEC;
+	socket->sec_tag = INVALID_SEC_TAG;
+	socket->role    = AT_SOCKET_ROLE_CLIENT;
+	socket->fd      = INVALID_SOCKET;
+	socket->fd_peer = INVALID_SOCKET;
+
+	return 0;
+}
+
 int slm_at_socket_init(void)
 {
-	sock.family  = AF_UNSPEC;
-	sock.sec_tag = INVALID_SEC_TAG;
-	sock.role    = AT_SOCKET_ROLE_CLIENT;
-	sock.fd      = INVALID_SOCKET;
-	sock.fd_peer = INVALID_SOCKET;
-
+	sock = &sockets[0];
+	for (int i = 0; i < CONFIG_SLM_SOCKET_MAX_SOCKETS; i++) {
+		slm_at_socket_reset(&sockets[i]);
+	}
 	return 0;
 }
 

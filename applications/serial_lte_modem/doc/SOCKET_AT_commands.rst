@@ -26,13 +26,14 @@ Syntax
 
 ::
 
-   #XSOCKET=<op>[,<type>,<role>]]
+   #XSOCKET=<op>[,<type>,<role>][,<handle>]]
 
 * The ``<op>`` parameter can accept one of the following values:
 
   * ``0`` - Close a socket.
   * ``1`` - Open a socket for IP protocol family version 4.
   * ``2`` - Open a socket for IP protocol family version 6.
+  * ``3`` - Switch the current socket in use to the provided handle.
 
 * The ``<type>`` parameter can accept one of the following values:
 
@@ -199,13 +200,14 @@ Syntax
 
 ::
 
-   #XSSOCKET=<op>[,<type>,<role>,<sec_tag>[,<peer_verify>]]
+   #XSSOCKET=<op>[,<type>,<role>,<sec_tag>[,<peer_verify>]][,<handle>]
 
 * The ``<op>`` parameter can accept one of the following values:
 
   * ``0`` - Close a socket.
   * ``1`` - Open a socket for IP protocol family version 4.
   * ``2`` - Open a socket for IP protocol family version 6.
+  * ``3`` - Switch the current socket in use to the provided handle.
 
 * The ``<type>`` parameter can accept one of the following values:
 
