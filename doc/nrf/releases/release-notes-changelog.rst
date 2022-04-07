@@ -228,6 +228,7 @@ nrf9160 Samples
     * Replaced the deprecated GPS-driver with the new GNSS interface.
     * Added minimal Portfolio object support that is required for LwM2M conformance testing.
     * Added guidelines on :ref:`setting up the sample for production <lwm2m_client_provisioning>` using AVSystem’s Coiote Device Management server.
+    * Added support for using location assistance when using Coiote LwM2M server.
 
   * :ref:`download_sample` sample:
 
@@ -394,6 +395,7 @@ Libraries for networking
   * :ref:`lib_lwm2m_client_utils` library:
 
     * Updated the library to store credentials and server settings permanently on bootstrap.
+    * Added support for using location assistance when using Coiote LwM2M server.
 
 Other libraries
 ---------------
