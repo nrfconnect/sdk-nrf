@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Events"
+
+menu "Log levels"
+
+config LOG_CTRL_EVENTS_LEVEL
+	int "Log level for ctrl_events.c"
+	default 2
+
+endmenu # Log levels
+endmenu # Events

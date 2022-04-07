@@ -39,7 +39,7 @@ manifest:
   defaults:
     remote: ncs
 
-  group-filter: [-homekit, -nrf-802154, -find-my]
+  group-filter: [-homekit, -nrf-802154, -find-my, -nrf5340_audio]
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
@@ -149,6 +149,11 @@ manifest:
       revision: 2cbb43aa7ace134a6d437330f0755e262743da81
       groups:
       - find-my
+    - name: sdk-lc3
+      revision: c47d9ee21c9cd8626a903c2e2f0c80c0920a1eb8
+      path: modules/lib/lc3
+      groups:
+      - nrf5340_audio
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
@@ -170,6 +175,12 @@ manifest:
       path: modules/lib/memfault-firmware-sdk
       revision: 0.29.1
       remote: memfault
+    - name: cirrus
+      repo-path: sdk-mcu-drivers
+      path: modules/hal/cirrus-logic
+      revision: 9f6b3812237fbb0d4157ba3584c13f1644fcbe3a
+      groups:
+      - nrf5340_audio
 
   # West-related configuration for the nrf repository.
   self:
