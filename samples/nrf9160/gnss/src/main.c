@@ -9,6 +9,7 @@
 #include <logging/log.h>
 #include <nrf_modem_at.h>
 #include <nrf_modem_gnss.h>
+#include <modem/nrf_modem_lib.h>
 #include <modem/lte_lc.h>
 #include <date_time.h>
 
@@ -67,6 +68,28 @@ BUILD_ASSERT(IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_GPS) ||
 void nrf_modem_recoverable_error_handler(uint32_t error)
 {
 	LOG_ERR("Modem library recoverable error: %u", error);
+}
+
+NRF_MODEM_LIB_ON_INIT(init_hook, on_modem_lib_init, NULL);
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	if (ret != 0) {
+		LOG_ERR("Modem library initialization failed, error: %d", ret);
+		return;
+	}
+
+	if (strlen(CONFIG_GNSS_SAMPLE_AT_MAGPIO) > 0) {
+		if (nrf_modem_at_printf("%s", CONFIG_GNSS_SAMPLE_AT_MAGPIO) != 0) {
+			LOG_ERR("Failed to set MAGPIO configuration");
+		}
+	}
+
+	if (strlen(CONFIG_GNSS_SAMPLE_AT_COEX0) > 0) {
+		if (nrf_modem_at_printf("%s", CONFIG_GNSS_SAMPLE_AT_COEX0) != 0) {
+			LOG_ERR("Failed to set COEX0 configuration");
+		}
+	}
 }
 
 static void gnss_event_handler(int event)
@@ -331,20 +354,6 @@ static void date_time_evt_handler(const struct date_time_evt *evt)
 
 static int modem_init(void)
 {
-	if (strlen(CONFIG_GNSS_SAMPLE_AT_MAGPIO) > 0) {
-		if (nrf_modem_at_printf("%s", CONFIG_GNSS_SAMPLE_AT_MAGPIO) != 0) {
-			LOG_ERR("Failed to set MAGPIO configuration");
-			return -1;
-		}
-	}
-
-	if (strlen(CONFIG_GNSS_SAMPLE_AT_COEX0) > 0) {
-		if (nrf_modem_at_printf("%s", CONFIG_GNSS_SAMPLE_AT_COEX0) != 0) {
-			LOG_ERR("Failed to set COEX0 configuration");
-			return -1;
-		}
-	}
-
 	if (IS_ENABLED(CONFIG_DATE_TIME)) {
 		date_time_register_handler(date_time_evt_handler);
 	}
