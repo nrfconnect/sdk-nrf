@@ -7,26 +7,30 @@
 #include <string.h>
 #include <zephyr.h>
 #include <nrf_modem_at.h>
+#include <modem/nrf_modem_lib.h>
 #include <modem/lte_lc.h>
 #include <modem/location.h>
 #include <date_time.h>
 
 static K_SEM_DEFINE(location_event, 0, 1);
 
-static void antenna_configure(void)
+NRF_MODEM_LIB_ON_INIT(init_hook, on_modem_lib_init, NULL);
+
+static void on_modem_lib_init(int ret, void *ctx)
 {
-	int err;
+	if (ret != 0) {
+		printk("Modem library initialization failed, error: %d\n", ret);
+		return;
+	}
 
 	if (strlen(CONFIG_LOCATION_SAMPLE_GNSS_AT_MAGPIO) > 0) {
-		err = nrf_modem_at_printf("%s", CONFIG_LOCATION_SAMPLE_GNSS_AT_MAGPIO);
-		if (err) {
+		if (nrf_modem_at_printf("%s", CONFIG_LOCATION_SAMPLE_GNSS_AT_MAGPIO) != 0) {
 			printk("Failed to set MAGPIO configuration\n");
 		}
 	}
 
 	if (strlen(CONFIG_LOCATION_SAMPLE_GNSS_AT_COEX0) > 0) {
-		err = nrf_modem_at_printf("%s", CONFIG_LOCATION_SAMPLE_GNSS_AT_COEX0);
-		if (err) {
+		if (nrf_modem_at_printf("%s", CONFIG_LOCATION_SAMPLE_GNSS_AT_COEX0) != 0) {
 			printk("Failed to set COEX0 configuration\n");
 		}
 	}
@@ -241,8 +245,6 @@ int main(void)
 	int err;
 
 	printk("Location sample started\n\n");
-
-	antenna_configure();
 
 	if (IS_ENABLED(CONFIG_DATE_TIME)) {
 		/* Registering early for date_time event handler to avoid missing
