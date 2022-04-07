@@ -4,8 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef ZIGBEE_CLI_CMD_ZCL_H__
-#define ZIGBEE_CLI_CMD_ZCL_H__
+#ifndef ZIGBEE_SHELL_CMD_ZCL_H__
+#define ZIGBEE_SHELL_CMD_ZCL_H__
+
+#include <shell/shell.h>
+
 
 int cmd_zb_ping(const struct shell *shell, size_t argc, char **argv);
 int cmd_zb_readattr(const struct shell *shell, size_t argc, char **argv);
@@ -19,4 +22,4 @@ int cmd_zb_add_remove_group(const struct shell *shell, size_t argc, char **argv)
 int cmd_zb_remove_all_groups(const struct shell *shell, size_t argc, char **argv);
 int cmd_zb_add_group_if_identifying(const struct shell *shell, size_t argc, char **argv);
 
-#endif /* ZIGBEE_CLI_CMD_ZCL_H__ */
+#endif /* ZIGBEE_SHELL_CMD_ZCL_H__ */

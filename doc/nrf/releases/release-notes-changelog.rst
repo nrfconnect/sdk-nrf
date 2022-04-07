@@ -466,6 +466,9 @@ Libraries for Zigbee
   * Added a set of ``zcl groups`` shell commands for managing Zigbee groups.
   * Added :kconfig:option:`CONFIG_ZIGBEE_SHELL_ZCL_CMD_TIMEOUT` for timing out ZCL cmd commands.
   * Changed internal context manager structures.
+  * Changed :ref:`lib_zigbee_shell` structure to be an independent library.
+  * Changed file names from ``zigbee_cli*`` to ``zigbee_shell*``.
+  * Changed function names from ``zigbee_cli*`` to ``zigbee_shell*``.
   * Extended ``zcl cmd`` shell command to allow sending groupcasts.
   * Extended ``zdo`` shell commands to allow binding to a group addresses.
   * Fixed an issue where printing binding table containing group-binding entries results in corrupted output.

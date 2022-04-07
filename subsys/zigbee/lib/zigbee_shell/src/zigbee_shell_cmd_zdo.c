@@ -11,7 +11,8 @@
 #include <zboss_api.h>
 #include <zigbee/zigbee_error_handler.h>
 #include <zb_nrf_platform.h>
-#include "zigbee_cli.h"
+#include <zigbee/zigbee_shell.h>
+#include "zigbee_shell_utils.h"
 
 #define BIND_ON_HELP \
 	("Create bind entry.\n" \
@@ -67,15 +68,15 @@
 	"Usage: mgmt_lqi <h:short> [d:start index]")
 
 /* Defines how long to wait, in seconds, for Match Descriptor Response. */
-#define ZIGBEE_CLI_MATCH_DESC_RESP_TIMEOUT 5
+#define ZIGBEE_SHELL_MATCH_DESC_RESP_TIMEOUT 5
 /* Defines how long to wait, in seconds, for Bind Response. */
-#define ZIGBEE_CLI_BIND_RESP_TIMEOUT       5
+#define ZIGBEE_SHELL_BIND_RESP_TIMEOUT       5
 /* Defines how long to wait, in seconds, for Network Addrees Response. */
-#define ZIGBEE_CLI_NWK_ADDR_RESP_TIMEOUT   5
+#define ZIGBEE_SHELL_NWK_ADDR_RESP_TIMEOUT   5
 /* Defines how long to wait, in seconds, for IEEE (EUI64) Addrees Response. */
-#define ZIGBEE_CLI_IEEE_ADDR_RESP_TIMEOUT  5
+#define ZIGBEE_SHELL_IEEE_ADDR_RESP_TIMEOUT  5
 /* Defines how long to wait, in seconds, for mgmt_leave response. */
-#define ZIGBEE_CLI_MGMT_LEAVE_RESP_TIMEOUT 5
+#define ZIGBEE_SHELL_MGMT_LEAVE_RESP_TIMEOUT 5
 /* In case of group binding, the addressing field contains a short address but the endpoint number
  * is not included.
  */
@@ -129,8 +130,7 @@ static void zb_zdo_req(uint8_t idx)
 	ctx_entry->id = req_ctx->req_fn(req_ctx->buffer_id, req_ctx->req_cb_fn);
 
 	if (ctx_entry->id == ZB_ZDO_INVALID_TSN) {
-		zb_cli_print_error(ctx_entry->shell, "Failed to send request",
-				   ZB_FALSE);
+		zb_shell_print_error(ctx_entry->shell, "Failed to send request", ZB_FALSE);
 		zb_buf_free(req_ctx->buffer_id);
 		ctx_mgr_delete_entry(ctx_entry);
 
@@ -140,8 +140,10 @@ static void zb_zdo_req(uint8_t idx)
 						    req_ctx->ctx_timeout *
 						     ZB_TIME_ONE_SECOND);
 		if (zb_err_code != RET_OK) {
-			zb_cli_print_error(ctx_entry->shell, "Unable to schedule timeout callback",
-					   ZB_FALSE);
+			zb_shell_print_error(
+				ctx_entry->shell,
+				"Unable to schedule timeout callback",
+				ZB_FALSE);
 			ctx_mgr_delete_entry(ctx_entry);
 		}
 	}
@@ -161,7 +163,7 @@ static void cmd_zb_match_desc_timeout(zb_uint8_t tsn)
 		return;
 	}
 
-	zb_cli_print_done(ctx_entry->shell, ZB_FALSE);
+	zb_shell_print_done(ctx_entry->shell, ZB_FALSE);
 	ctx_mgr_delete_entry(ctx_entry);
 }
 
@@ -199,11 +201,11 @@ static void cmd_zb_match_desc_cb(zb_bufid_t bufid)
 			}
 
 			if (!ctx_entry->zdo_data.is_broadcast) {
-				zb_cli_print_done(ctx_entry->shell, ZB_FALSE);
+				zb_shell_print_done(ctx_entry->shell, ZB_FALSE);
 				ctx_mgr_delete_entry(ctx_entry);
 			}
 		} else if (match_desc_resp->status == ZB_ZDP_STATUS_TIMEOUT) {
-			zb_cli_print_done(ctx_entry->shell, ZB_FALSE);
+			zb_shell_print_done(ctx_entry->shell, ZB_FALSE);
 			ctx_mgr_delete_entry(ctx_entry);
 		}
 	}
@@ -237,10 +239,9 @@ static void cmd_zb_active_ep_cb(zb_bufid_t bufid)
 
 		shell_print(ctx_entry->shell, "%s", text_buffer);
 
-		zb_cli_print_done(ctx_entry->shell, ZB_FALSE);
+		zb_shell_print_done(ctx_entry->shell, ZB_FALSE);
 	} else {
-		zb_cli_print_error(ctx_entry->shell, "Active ep request failed",
-				   ZB_FALSE);
+		zb_shell_print_error(ctx_entry->shell, "Active ep request failed", ZB_FALSE);
 	}
 
 	ctx_mgr_delete_entry(ctx_entry);
@@ -290,11 +291,12 @@ static void cmd_zb_simple_desc_req_cb(zb_bufid_t bufid)
 
 		shell_print(ctx_entry->shell, "%s", text_buffer);
 
-		zb_cli_print_done(ctx_entry->shell, ZB_FALSE);
+		zb_shell_print_done(ctx_entry->shell, ZB_FALSE);
 	} else {
-		zb_cli_print_error(ctx_entry->shell,
-				   "Simple descriptor request failed",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			ctx_entry->shell,
+			"Simple descriptor request failed",
+			ZB_FALSE);
 	}
 
 	ctx_mgr_delete_entry(ctx_entry);
@@ -314,8 +316,7 @@ static void cmd_zb_bind_unbind_timeout(zb_uint8_t tsn)
 		return;
 	}
 
-	zb_cli_print_error(ctx_entry->shell, "Bind/unbind request timed out",
-			   ZB_FALSE);
+	zb_shell_print_error(ctx_entry->shell, "Bind/unbind request timed out", ZB_FALSE);
 	ctx_mgr_delete_entry(ctx_entry);
 }
 
@@ -342,7 +343,7 @@ void cmd_zb_bind_unbind_cb(zb_bufid_t bufid)
 	ZB_ERROR_CHECK(zb_err_code);
 
 	if (bind_resp->status == ZB_ZDP_STATUS_SUCCESS) {
-		zb_cli_print_done(ctx_entry->shell, ZB_FALSE);
+		zb_shell_print_done(ctx_entry->shell, ZB_FALSE);
 	} else {
 		shell_error(ctx_entry->shell,
 			    "Error: Unable to modify binding. Status: %d",
@@ -367,8 +368,7 @@ static void cmd_zb_nwk_addr_timeout(zb_uint8_t tsn)
 		return;
 	}
 
-	zb_cli_print_error(ctx_entry->shell,
-			   "Network address request timed out", ZB_FALSE);
+	zb_shell_print_error(ctx_entry->shell, "Network address request timed out", ZB_FALSE);
 	ctx_mgr_delete_entry(ctx_entry);
 }
 
@@ -399,7 +399,7 @@ void cmd_zb_nwk_addr_cb(zb_bufid_t bufid)
 
 		ZB_LETOH16(&nwk_addr, &(nwk_addr_resp->nwk_addr));
 		shell_print(ctx_entry->shell, "%04hx", nwk_addr);
-		zb_cli_print_done(ctx_entry->shell, ZB_FALSE);
+		zb_shell_print_done(ctx_entry->shell, ZB_FALSE);
 	} else {
 		shell_error(ctx_entry->shell, "Error: Unable to resolve EUI64 source address. Status: %d",
 			    nwk_addr_resp->status);
@@ -420,8 +420,7 @@ static void cmd_zb_ieee_addr_timeout(zb_uint8_t tsn)
 		ctx_mgr_find_ctx_entry(tsn, CTX_MGR_ZDO_ENTRY_TYPE);
 
 	if (ctx_entry) {
-		zb_cli_print_error(ctx_entry->shell,
-				   "IEEE address request timed out", ZB_FALSE);
+		zb_shell_print_error(ctx_entry->shell, "IEEE address request timed out", ZB_FALSE);
 		ctx_mgr_delete_entry(ctx_entry);
 	}
 }
@@ -461,11 +460,11 @@ void cmd_zb_ieee_addr_cb(zb_bufid_t bufid)
 		ret = zb_address_update(ieee_addr, nwk_addr, ZB_TRUE,
 					&addr_ref);
 		if (ret == RET_OK) {
-			zb_cli_print_eui64(ctx_entry->shell, ieee_addr);
-			/* Prepend newline because `zb_cli_print_eui64`
+			zb_shell_print_eui64(ctx_entry->shell, ieee_addr);
+			/* Prepend newline because `zb_shell_print_eui64`
 			 * does not print LF.
 			 */
-			zb_cli_print_done(ctx_entry->shell, ZB_TRUE);
+			zb_shell_print_done(ctx_entry->shell, ZB_TRUE);
 		} else {
 			shell_error(ctx_entry->shell, "Error: Failed to updated address table. Status: %d",
 				    ret);
@@ -512,16 +511,17 @@ static int cmd_zb_active_ep(const struct shell *shell, size_t argc, char **argv)
 	zb_osif_enable_all_inter();
 
 	if (!bufid) {
-		zb_cli_print_error(shell, "Failed to execute command (buf alloc failed)",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Failed to execute command (buf alloc failed)",
+			ZB_FALSE);
 		return -ENOEXEC;
 	}
 
 	active_ep_req = zb_buf_initial_alloc(bufid, sizeof(*active_ep_req));
 
 	if (!parse_hex_u16(argv[1], &addr)) {
-		zb_cli_print_error(shell, "Incorrect network address",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Incorrect network address", ZB_FALSE);
 
 		/* Make sure ZBOSS buffer API is called safely. */
 		zb_osif_disable_all_inter();
@@ -534,8 +534,10 @@ static int cmd_zb_active_ep(const struct shell *shell, size_t argc, char **argv)
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (!ctx_entry) {
-		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 
 		/* Make sure ZBOSS buffer API is called safely. */
 		zb_osif_disable_all_inter();
@@ -556,7 +558,7 @@ static int cmd_zb_active_ep(const struct shell *shell, size_t argc, char **argv)
 	uint8_t ctx_entry_index = ctx_mgr_get_index_by_entry(ctx_entry);
 
 	if (ctx_entry_index == CTX_MGR_ENTRY_IVALID_INDEX) {
-		zb_cli_print_error(shell, "Invalid index of entry", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid index of entry", ZB_FALSE);
 		ctx_mgr_delete_entry(ctx_entry);
 
 		/* Make sure ZBOSS buffer API is called safely. */
@@ -569,8 +571,7 @@ static int cmd_zb_active_ep(const struct shell *shell, size_t argc, char **argv)
 	zb_err_code = ZB_SCHEDULE_APP_CALLBACK(zb_zdo_req, ctx_entry_index);
 
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(shell, "Unable to schedule zdo request",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Unable to schedule zdo request", ZB_FALSE);
 		ctx_mgr_delete_entry(ctx_entry);
 
 		/* Make sure ZBOSS buffer API is called safely. */
@@ -619,36 +620,37 @@ static int cmd_zb_simple_desc(const struct shell *shell, size_t argc,
 	zb_osif_enable_all_inter();
 
 	if (!bufid) {
-		zb_cli_print_error(shell, "Failed to execute command (buf alloc failed)",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Failed to execute command (buf alloc failed)",
+			ZB_FALSE);
 		return -ENOEXEC;
 	}
 
 	simple_desc_req = zb_buf_initial_alloc(bufid, sizeof(*simple_desc_req));
 
 	if (!parse_hex_u16(argv[1], &addr)) {
-		zb_cli_print_error(shell, "Invalid network address", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid network address", ZB_FALSE);
 		goto error;
 	}
 	simple_desc_req->nwk_addr = addr;
 
-	if (!zb_cli_sscan_uint8(argv[2], &(simple_desc_req->endpoint))) {
-		zb_cli_print_error(shell, "Invalid endpoint", ZB_FALSE);
+	if (!zb_shell_sscan_uint8(argv[2], &(simple_desc_req->endpoint))) {
+		zb_shell_print_error(shell, "Invalid endpoint", ZB_FALSE);
 		goto error;
 	}
 
-	if ((simple_desc_req->endpoint < 1) ||
-	    (simple_desc_req->endpoint > 254)) {
-		zb_cli_print_error(shell,
-				   "Invalid endpoint value, should be <1-254>",
-				   ZB_FALSE);
+	if ((simple_desc_req->endpoint < 1) || (simple_desc_req->endpoint > 254)) {
+		zb_shell_print_error(shell, "Invalid endpoint value, should be <1-254>", ZB_FALSE);
 		goto error;
 	}
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (!ctx_entry) {
-		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 
 		/* Make sure ZBOSS buffer API is called safely. */
 		zb_osif_disable_all_inter();
@@ -669,7 +671,7 @@ static int cmd_zb_simple_desc(const struct shell *shell, size_t argc,
 	uint8_t ctx_entry_index = ctx_mgr_get_index_by_entry(ctx_entry);
 
 	if (ctx_entry_index == CTX_MGR_ENTRY_IVALID_INDEX) {
-		zb_cli_print_error(shell, "Invalid index of entry", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid index of entry", ZB_FALSE);
 		ctx_mgr_delete_entry(ctx_entry);
 
 		/* Make sure ZBOSS buffer API is called safely. */
@@ -682,8 +684,7 @@ static int cmd_zb_simple_desc(const struct shell *shell, size_t argc,
 	zb_err_code = ZB_SCHEDULE_APP_CALLBACK(zb_zdo_req, ctx_entry_index);
 
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(shell, "Unable to schedule zdo request",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Unable to schedule zdo request", ZB_FALSE);
 		ctx_mgr_delete_entry(ctx_entry);
 
 		/* Make sure ZBOSS buffer API is called safely. */
@@ -746,7 +747,7 @@ static int cmd_zb_match_desc(const struct shell *shell, size_t argc,
 	uint16_t *cluster_list = NULL;
 	zb_bool_t use_timeout = ZB_FALSE;
 	uint8_t len = sizeof(match_desc_req->cluster_list);
-	zb_uint16_t timeout = ZIGBEE_CLI_MATCH_DESC_RESP_TIMEOUT;
+	zb_uint16_t timeout = ZIGBEE_SHELL_MATCH_DESC_RESP_TIMEOUT;
 
 	/* We use cluster_list for calls to ZBOSS API but we're not using
 	 * cluster_list value in any way.
@@ -754,8 +755,10 @@ static int cmd_zb_match_desc(const struct shell *shell, size_t argc,
 	(void)(cluster_list);
 
 	if (!strcmp(argv[1], "-t") || !strcmp(argv[1], "--timeout")) {
-		zb_cli_print_error(shell, "Place option 'timeout' at the end of input parameters",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Place option 'timeout' at the end of input parameters",
+			ZB_FALSE);
 		return -EINVAL;
 	}
 
@@ -765,31 +768,31 @@ static int cmd_zb_match_desc(const struct shell *shell, size_t argc,
 	zb_osif_enable_all_inter();
 
 	if (!bufid) {
-		zb_cli_print_error(shell, "Failed to execute command (buf alloc failed)",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Failed to execute command (buf alloc failed)",
+			ZB_FALSE);
 		return -ENOEXEC;
 	}
 
 	match_desc_req = zb_buf_initial_alloc(bufid, sizeof(*match_desc_req));
 
 	if (!parse_hex_u16(argv[1], &temp)) {
-		zb_cli_print_error(shell, "Incorrect network address",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Incorrect network address", ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
 	match_desc_req->nwk_addr = temp;
 
 	if (!parse_hex_u16(argv[2], &temp)) {
-		zb_cli_print_error(shell, "Incorrect address of interest",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Incorrect address of interest", ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
 	match_desc_req->addr_of_interest = temp;
 
 	if (!parse_hex_u16(argv[3], &temp)) {
-		zb_cli_print_error(shell, "Incorrect profile id", ZB_FALSE);
+		zb_shell_print_error(shell, "Incorrect profile id", ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
@@ -800,17 +803,15 @@ static int cmd_zb_match_desc(const struct shell *shell, size_t argc,
 	 * is limited by @p SHELL_ARGC_MAX which defaults to 12 arguments.
 	 */
 
-	if (!zb_cli_sscan_uint8(argv[4], &(match_desc_req->num_in_clusters))) {
-		zb_cli_print_error(shell, "Incorrect number of input clusters",
-				   ZB_FALSE);
+	if (!zb_shell_sscan_uint8(argv[4], &(match_desc_req->num_in_clusters))) {
+		zb_shell_print_error(shell, "Incorrect number of input clusters", ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
 
 	/* Check that number of output clusters is present in argv. */
 	if ((6 + match_desc_req->num_in_clusters) > argc) {
-		zb_cli_print_error(shell, "Incorrect number of input clusters",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Incorrect number of input clusters", ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
@@ -840,19 +841,16 @@ static int cmd_zb_match_desc(const struct shell *shell, size_t argc,
 				match_desc_req->cluster_list);
 
 		if (!result) {
-			zb_cli_print_error(shell,
-					   "Failed to parse input cluster list",
-					   ZB_FALSE);
+			zb_shell_print_error(shell, "Failed to parse input cluster list", ZB_FALSE);
 			ret_err = -EINVAL;
 			goto error;
 		}
 	}
 
-	if (!zb_cli_sscan_uint8(argv[5 + match_desc_req->num_in_clusters],
-				&(match_desc_req->num_out_clusters))) {
+	if (!zb_shell_sscan_uint8(argv[5 + match_desc_req->num_in_clusters],
+				  &(match_desc_req->num_out_clusters))) {
 
-		zb_cli_print_error(shell, "Incorrect number of output clusters",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Incorrect number of output clusters", ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
@@ -860,8 +858,7 @@ static int cmd_zb_match_desc(const struct shell *shell, size_t argc,
 	/* Check if enough output clusters IDs are provided. */
 	if ((6 + match_desc_req->num_in_clusters +
 	     match_desc_req->num_out_clusters) > argc) {
-		zb_cli_print_error(shell, "Incorrect number of output clusters",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Incorrect number of output clusters", ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
@@ -881,8 +878,10 @@ static int cmd_zb_match_desc(const struct shell *shell, size_t argc,
 				 match_desc_req->num_in_clusters));
 
 		if (!result) {
-			zb_cli_print_error(shell, "Failed to parse output cluster list",
-					   ZB_FALSE);
+			zb_shell_print_error(
+				shell,
+				"Failed to parse output cluster list",
+				ZB_FALSE);
 			ret_err = -EINVAL;
 			goto error;
 		}
@@ -897,12 +896,12 @@ static int cmd_zb_match_desc(const struct shell *shell, size_t argc,
 		    !strcmp(argv[timeout_offset], "--timeout")) {
 
 			use_timeout = ZB_TRUE;
-			if (zb_cli_sscan_uint(argv[timeout_offset + 1],
-					      (uint8_t *)&timeout,
-					      2, 10) != 1) {
+			if (zb_shell_sscan_uint(argv[timeout_offset + 1],
+						(uint8_t *)&timeout,
+						2, 10) != 1) {
 
 				/* Let's set the timeout to default. */
-				timeout = ZIGBEE_CLI_MATCH_DESC_RESP_TIMEOUT;
+				timeout = ZIGBEE_SHELL_MATCH_DESC_RESP_TIMEOUT;
 				shell_warn(shell, "Could not parse the timeout value, setting to default.");
 			}
 			shell_print(shell, "Timeout set to %d.", timeout);
@@ -911,8 +910,10 @@ static int cmd_zb_match_desc(const struct shell *shell, size_t argc,
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (!ctx_entry) {
-		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
 	}
@@ -939,7 +940,7 @@ static int cmd_zb_match_desc(const struct shell *shell, size_t argc,
 	uint8_t ctx_entry_index = ctx_mgr_get_index_by_entry(ctx_entry);
 
 	if (ctx_entry_index == CTX_MGR_ENTRY_IVALID_INDEX) {
-		zb_cli_print_error(shell, "Invalid index of entry", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid index of entry", ZB_FALSE);
 		ctx_mgr_delete_entry(ctx_entry);
 
 		/* Make sure ZBOSS buffer API is called safely. */
@@ -952,8 +953,7 @@ static int cmd_zb_match_desc(const struct shell *shell, size_t argc,
 	zb_err_code = ZB_SCHEDULE_APP_CALLBACK(zb_zdo_req, ctx_entry_index);
 
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(shell, "Unable to schedule zdo request",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Unable to schedule zdo request", ZB_FALSE);
 		ctx_mgr_delete_entry(ctx_entry);
 		ret_err = -ENOEXEC;
 		goto error;
@@ -1014,24 +1014,23 @@ static int cmd_zb_bind(const struct shell *shell, size_t argc, char **argv)
 	zb_osif_enable_all_inter();
 
 	if (!bufid) {
-		zb_cli_print_error(shell, "Failed to execute command (buf alloc failed)",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Failed to execute command (buf alloc failed)",
+			ZB_FALSE);
 		return -ENOEXEC;
 	}
 
 	bind_req = ZB_BUF_GET_PARAM(bufid, zb_zdo_bind_req_param_t);
 
 	if (!parse_long_address(argv[1], bind_req->src_address)) {
-		zb_cli_print_error(shell,
-				   "Incorrect EUI64 source address format",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Incorrect EUI64 source address format", ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
 
-	if (!zb_cli_sscan_uint8(argv[2], &(bind_req->src_endp))) {
-		zb_cli_print_error(shell, "Incorrect source endpoint",
-				   ZB_FALSE);
+	if (!zb_shell_sscan_uint8(argv[2], &(bind_req->src_endp))) {
+		zb_shell_print_error(shell, "Incorrect source endpoint", ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
@@ -1040,16 +1039,13 @@ static int cmd_zb_bind(const struct shell *shell, size_t argc, char **argv)
 						&(bind_req->dst_address),
 						ADDR_ANY);
 	if (bind_req->dst_addr_mode == ADDR_INVALID) {
-		zb_cli_print_error(shell,
-				   "Incorrect destination address format",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Incorrect destination address format", ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
 
-	if (!zb_cli_sscan_uint8(argv[4], &(bind_req->dst_endp))) {
-		zb_cli_print_error(shell, "Incorrect destination endpoint",
-				   ZB_FALSE);
+	if (!zb_shell_sscan_uint8(argv[4], &(bind_req->dst_endp))) {
+		zb_shell_print_error(shell, "Incorrect destination endpoint", ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
@@ -1059,15 +1055,17 @@ static int cmd_zb_bind(const struct shell *shell, size_t argc, char **argv)
 
 		/* Verify that dst_endp == 0, prevent binding to device by short address. */
 		if (bind_req->dst_endp != 0) {
-			zb_cli_print_error(shell, "Set destination_ep to zero to bind to group",
-					   ZB_FALSE);
+			zb_shell_print_error(
+				shell,
+				"Set destination_ep to zero to bind to group",
+				ZB_FALSE);
 			ret_err = -EINVAL;
 			goto error;
 		}
 		/* Verify group address. */
 		if ((group_addr < ZB_ZCL_ATTR_SCENES_CURRENT_GROUP_MIN_VALUE)
 		    || (group_addr > ZB_ZCL_ATTR_SCENES_CURRENT_GROUP_MAX_VALUE)) {
-			zb_cli_print_error(shell, "Incorrect group address", ZB_FALSE);
+			zb_shell_print_error(shell, "Incorrect group address", ZB_FALSE);
 			ret_err = -EINVAL;
 			goto error;
 		}
@@ -1076,22 +1074,26 @@ static int cmd_zb_bind(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	if (!parse_hex_u16(argv[5], &(bind_req->cluster_id))) {
-		zb_cli_print_error(shell, "Incorrect cluster ID", ZB_FALSE);
+		zb_shell_print_error(shell, "Incorrect cluster ID", ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
 
 	if (!parse_short_address(argv[6], &(bind_req->req_dst_addr))) {
-		zb_cli_print_error(shell, "Incorrect destination network address for the request",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Incorrect destination network address for the request",
+			ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (!ctx_entry) {
-		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
 	}
@@ -1106,13 +1108,13 @@ static int cmd_zb_bind(const struct shell *shell, size_t argc, char **argv)
 		ctx_entry->zdo_data.zdo_req.req_fn = zb_zdo_unbind_req;
 		ctx_entry->zdo_data.zdo_req.req_cb_fn = cmd_zb_bind_unbind_cb;
 	}
-	ctx_entry->zdo_data.zdo_req.ctx_timeout = ZIGBEE_CLI_BIND_RESP_TIMEOUT;
+	ctx_entry->zdo_data.zdo_req.ctx_timeout = ZIGBEE_SHELL_BIND_RESP_TIMEOUT;
 	ctx_entry->zdo_data.zdo_req.timeout_cb_fn = cmd_zb_bind_unbind_timeout;
 
 	uint8_t ctx_entry_index = ctx_mgr_get_index_by_entry(ctx_entry);
 
 	if (ctx_entry_index == CTX_MGR_ENTRY_IVALID_INDEX) {
-		zb_cli_print_error(shell, "Invalid index of entry", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid index of entry", ZB_FALSE);
 		ctx_mgr_delete_entry(ctx_entry);
 
 		/* Make sure ZBOSS buffer API is called safely. */
@@ -1125,8 +1127,7 @@ static int cmd_zb_bind(const struct shell *shell, size_t argc, char **argv)
 	zb_err_code = ZB_SCHEDULE_APP_CALLBACK(zb_zdo_req, ctx_entry_index);
 
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(shell, "Unable to schedule zdo request",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Unable to schedule zdo request", ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
 	}
@@ -1173,24 +1174,27 @@ static int cmd_zb_nwk_addr(const struct shell *shell, size_t argc, char **argv)
 	zb_osif_enable_all_inter();
 
 	if (!bufid) {
-		zb_cli_print_error(shell, "Failed to execute command (buf alloc failed)",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Failed to execute command (buf alloc failed)",
+			ZB_FALSE);
 		return -ENOEXEC;
 	}
 
 	nwk_addr_req = ZB_BUF_GET_PARAM(bufid, zb_zdo_nwk_addr_req_param_t);
 
 	if (!parse_long_address(argv[1], nwk_addr_req->ieee_addr)) {
-		zb_cli_print_error(shell, "Incorrect EUI64 address format",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Incorrect EUI64 address format", ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (!ctx_entry) {
-		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
 	}
@@ -1205,14 +1209,13 @@ static int cmd_zb_nwk_addr(const struct shell *shell, size_t argc, char **argv)
 	ctx_entry->zdo_data.zdo_req.buffer_id = bufid;
 	ctx_entry->zdo_data.zdo_req.req_fn = zb_zdo_nwk_addr_req;
 	ctx_entry->zdo_data.zdo_req.req_cb_fn = cmd_zb_nwk_addr_cb;
-	ctx_entry->zdo_data.zdo_req.ctx_timeout =
-		ZIGBEE_CLI_NWK_ADDR_RESP_TIMEOUT;
+	ctx_entry->zdo_data.zdo_req.ctx_timeout = ZIGBEE_SHELL_NWK_ADDR_RESP_TIMEOUT;
 	ctx_entry->zdo_data.zdo_req.timeout_cb_fn = cmd_zb_nwk_addr_timeout;
 
 	uint8_t ctx_entry_index = ctx_mgr_get_index_by_entry(ctx_entry);
 
 	if (ctx_entry_index == CTX_MGR_ENTRY_IVALID_INDEX) {
-		zb_cli_print_error(shell, "Invalid index of entry", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid index of entry", ZB_FALSE);
 		ctx_mgr_delete_entry(ctx_entry);
 
 		/* Make sure ZBOSS buffer API is called safely. */
@@ -1225,8 +1228,7 @@ static int cmd_zb_nwk_addr(const struct shell *shell, size_t argc, char **argv)
 	zb_err_code = ZB_SCHEDULE_APP_CALLBACK(zb_zdo_req, ctx_entry_index);
 
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(shell, "Unable to schedule zdo request",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Unable to schedule zdo request", ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
 	}
@@ -1269,8 +1271,10 @@ static int cmd_zb_ieee_addr(const struct shell *shell, size_t argc, char **argv)
 	zb_osif_enable_all_inter();
 
 	if (!bufid) {
-		zb_cli_print_error(shell, "Failed to execute command (buf alloc failed)",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Failed to execute command (buf alloc failed)",
+			ZB_FALSE);
 		return -ENOEXEC;
 	}
 
@@ -1280,8 +1284,7 @@ static int cmd_zb_ieee_addr(const struct shell *shell, size_t argc, char **argv)
 	ieee_addr_req->request_type = 0;
 
 	if (!parse_hex_u16(argv[1], &addr)) {
-		zb_cli_print_error(shell, "Incorrect network address",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Incorrect network address", ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
@@ -1290,8 +1293,10 @@ static int cmd_zb_ieee_addr(const struct shell *shell, size_t argc, char **argv)
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (!ctx_entry) {
-		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
 	}
@@ -1301,14 +1306,13 @@ static int cmd_zb_ieee_addr(const struct shell *shell, size_t argc, char **argv)
 	ctx_entry->zdo_data.zdo_req.buffer_id = bufid;
 	ctx_entry->zdo_data.zdo_req.req_fn = zb_zdo_ieee_addr_req;
 	ctx_entry->zdo_data.zdo_req.req_cb_fn = cmd_zb_ieee_addr_cb;
-	ctx_entry->zdo_data.zdo_req.ctx_timeout =
-		ZIGBEE_CLI_IEEE_ADDR_RESP_TIMEOUT;
+	ctx_entry->zdo_data.zdo_req.ctx_timeout = ZIGBEE_SHELL_IEEE_ADDR_RESP_TIMEOUT;
 	ctx_entry->zdo_data.zdo_req.timeout_cb_fn = cmd_zb_ieee_addr_timeout;
 
 	uint8_t ctx_entry_index = ctx_mgr_get_index_by_entry(ctx_entry);
 
 	if (ctx_entry_index == CTX_MGR_ENTRY_IVALID_INDEX) {
-		zb_cli_print_error(shell, "Invalid index of entry", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid index of entry", ZB_FALSE);
 		ctx_mgr_delete_entry(ctx_entry);
 
 		/* Make sure ZBOSS buffer API is called safely. */
@@ -1321,8 +1325,7 @@ static int cmd_zb_ieee_addr(const struct shell *shell, size_t argc, char **argv)
 	zb_err_code = ZB_SCHEDULE_APP_CALLBACK(zb_zdo_req, ctx_entry_index);
 
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(shell, "Unable to schedule zdo request",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Unable to schedule zdo request", ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
 	}
@@ -1367,12 +1370,11 @@ static int cmd_zb_short(const struct shell *shell, size_t argc, char **argv)
 				      *((zb_uint8_t *)(&short_addr) + i));
 		}
 
-		zb_cli_print_done(shell, ZB_TRUE);
+		zb_shell_print_done(shell, ZB_TRUE);
 		return 0;
 	} else {
 		/* Most probably there was no network to join. */
-		zb_cli_print_error(shell, "Check if device was commissioned",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Check if device was commissioned", ZB_FALSE);
 		return -ENOEXEC;
 	}
 }
@@ -1393,15 +1395,13 @@ static int cmd_zb_eui64(const struct shell *shell, size_t argc, char **argv)
 		zb_get_long_address(addr);
 	} else {
 		if (zigbee_is_stack_started()) {
-			zb_cli_print_error(shell,
-					   "Stack already started",
-					   ZB_FALSE);
+			zb_shell_print_error(shell, "Stack already started", ZB_FALSE);
 			return -ENOEXEC;
 		}
 
 		if (zigbee_is_nvram_initialised()
 #ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
-		    && zb_cli_nvram_enabled()
+		    && zb_shell_nvram_enabled()
 #endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
 		    ) {
 			shell_warn(
@@ -1409,25 +1409,24 @@ static int cmd_zb_eui64(const struct shell *shell, size_t argc, char **argv)
 				"Zigbee stack has been configured in the past.\r\n"
 				"Please disable NVRAM to change the EUI64.");
 
-			zb_cli_print_error(shell,
-					   "Can't change EUI64 - NVRAM not empty",
-					   ZB_FALSE);
+			zb_shell_print_error(
+				shell,
+				"Can't change EUI64 - NVRAM not empty",
+				ZB_FALSE);
 			return -ENOEXEC;
 		}
 
 		if (parse_long_address(argv[1], addr)) {
 			zb_set_long_address(addr);
 		} else {
-			zb_cli_print_error(shell,
-					   "Incorrect EUI64 address format",
-					   ZB_FALSE);
+			zb_shell_print_error(shell, "Incorrect EUI64 address format", ZB_FALSE);
 			return -EINVAL;
 		}
 	}
 
-	zb_cli_print_eui64(shell, addr);
-	/* Prepend newline because `zb_cli_print_eui64` does not print LF. */
-	zb_cli_print_done(shell, ZB_TRUE);
+	zb_shell_print_eui64(shell, addr);
+	/* Prepend newline because `zb_shell_print_eui64` does not print LF. */
+	zb_shell_print_done(shell, ZB_TRUE);
 
 	return 0;
 }
@@ -1446,8 +1445,7 @@ static void cmd_zb_mgmt_leave_timeout_cb(zb_uint8_t tsn)
 		return;
 	}
 
-	zb_cli_print_error(ctx_entry->shell, "mgmt_leave request timed out",
-			   ZB_FALSE);
+	zb_shell_print_error(ctx_entry->shell, "mgmt_leave request timed out", ZB_FALSE);
 	ctx_mgr_delete_entry(ctx_entry);
 }
 
@@ -1472,7 +1470,7 @@ static void cmd_zb_mgmt_leave_cb(zb_bufid_t bufid)
 		ZB_ERROR_CHECK(zb_err_code);
 
 		if (mgmt_leave_resp->status == ZB_ZDP_STATUS_SUCCESS) {
-			zb_cli_print_done(ctx_entry->shell, ZB_FALSE);
+			zb_shell_print_done(ctx_entry->shell, ZB_FALSE);
 		} else {
 			shell_error(ctx_entry->shell, "Error: Unable to remove device. Status: %u",
 				    (uint32_t)mgmt_leave_resp->status);
@@ -1511,13 +1509,12 @@ static bool cmd_zb_mgmt_leave_parse(zb_zdo_mgmt_leave_param_t *mgmt_leave_req,
 	/* Let it be index of the first argument to parse. */
 	arg_idx = 1U;
 	if (arg_idx >= argc) {
-		zb_cli_print_error(shell, "Lack of dst_addr parameter",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Lack of dst_addr parameter", ZB_FALSE);
 		return false;
 	}
 
 	if (parse_hex_u16(argv[arg_idx], &addr) != 1) {
-		zb_cli_print_error(shell, "Incorrect dst_addr", ZB_FALSE);
+		zb_shell_print_error(shell, "Incorrect dst_addr", ZB_FALSE);
 		return false;
 	}
 
@@ -1533,9 +1530,7 @@ static bool cmd_zb_mgmt_leave_parse(zb_zdo_mgmt_leave_param_t *mgmt_leave_req,
 						curr_arg,
 						mgmt_leave_req->device_address);
 			if (!result) {
-				zb_cli_print_error(shell,
-						   "Incorrect device_address",
-						   ZB_FALSE);
+				zb_shell_print_error(shell, "Incorrect device_address", ZB_FALSE);
 				return false;
 			}
 
@@ -1554,8 +1549,7 @@ static bool cmd_zb_mgmt_leave_parse(zb_zdo_mgmt_leave_param_t *mgmt_leave_req,
 		} else if (strcmp(curr_arg, "--rejoin") == 0) {
 			mgmt_leave_req->rejoin = ZB_TRUE;
 		} else {
-			zb_cli_print_error(shell, "Incorrect argument",
-					   ZB_FALSE);
+			zb_shell_print_error(shell, "Incorrect argument", ZB_FALSE);
 			return false;
 		}
 		arg_idx++;
@@ -1622,8 +1616,10 @@ static int cmd_zb_mgmt_leave(const struct shell *shell, size_t argc,
 	zb_osif_enable_all_inter();
 
 	if (bufid == 0) {
-		zb_cli_print_error(shell, "Failed to execute command (buf alloc failed)",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Failed to execute command (buf alloc failed)",
+			ZB_FALSE);
 		goto error;
 	}
 
@@ -1642,8 +1638,10 @@ static int cmd_zb_mgmt_leave(const struct shell *shell, size_t argc,
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (ctx_entry == NULL) {
-		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 		goto error;
 	}
 
@@ -1652,15 +1650,14 @@ static int cmd_zb_mgmt_leave(const struct shell *shell, size_t argc,
 	ctx_entry->zdo_data.zdo_req.buffer_id = bufid;
 	ctx_entry->zdo_data.zdo_req.req_fn = zdo_mgmt_leave_req;
 	ctx_entry->zdo_data.zdo_req.req_cb_fn = cmd_zb_mgmt_leave_cb;
-	ctx_entry->zdo_data.zdo_req.ctx_timeout =
-		ZIGBEE_CLI_MGMT_LEAVE_RESP_TIMEOUT;
+	ctx_entry->zdo_data.zdo_req.ctx_timeout = ZIGBEE_SHELL_MGMT_LEAVE_RESP_TIMEOUT;
 	ctx_entry->zdo_data.zdo_req.timeout_cb_fn =
 		cmd_zb_mgmt_leave_timeout_cb;
 
 	uint8_t ctx_entry_index = ctx_mgr_get_index_by_entry(ctx_entry);
 
 	if (ctx_entry_index == CTX_MGR_ENTRY_IVALID_INDEX) {
-		zb_cli_print_error(shell, "Invalid index of entry", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid index of entry", ZB_FALSE);
 		ctx_mgr_delete_entry(ctx_entry);
 
 		/* Make sure ZBOSS buffer API is called safely. */
@@ -1673,8 +1670,7 @@ static int cmd_zb_mgmt_leave(const struct shell *shell, size_t argc,
 	zb_err_code = ZB_SCHEDULE_APP_CALLBACK(zb_zdo_req, ctx_entry_index);
 
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(shell, "Unable to schedule zdo request",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Unable to schedule zdo request", ZB_FALSE);
 		goto error;
 	}
 
@@ -1756,7 +1752,7 @@ static void zdo_request_cb(zb_bufid_t bufid)
 		if (cb_info->status == ZB_ZDP_STATUS_SUCCESS) {
 			shell_print(ctx_entry->shell, "ZDO request %u complete",
 				    cb_info->tsn);
-			zb_cli_print_done(ctx_entry->shell, ZB_FALSE);
+			zb_shell_print_done(ctx_entry->shell, ZB_FALSE);
 		} else {
 			shell_error(ctx_entry->shell, "Error: ZDO request %u failed with status %u",
 				    (uint32_t)cb_info->tsn,
@@ -1766,13 +1762,16 @@ static void zdo_request_cb(zb_bufid_t bufid)
 		/* The request isn't complete, i.e., another ZDO transaction
 		 * went out, hence we need to reschedule a timeout callback.
 		 */
-		zb_err_code = ZB_SCHEDULE_APP_ALARM(
-					ctx_timeout_cb, ctx_entry->id,
-					(ZIGBEE_CLI_MGMT_LEAVE_RESP_TIMEOUT *
-					 ZB_TIME_ONE_SECOND));
+		zb_err_code =
+			ZB_SCHEDULE_APP_ALARM(
+				ctx_timeout_cb,
+				ctx_entry->id,
+				(ZIGBEE_SHELL_MGMT_LEAVE_RESP_TIMEOUT * ZB_TIME_ONE_SECOND));
 		if (zb_err_code != RET_OK) {
-			zb_cli_print_error(ctx_entry->shell, "Unable to schedule timeout callback",
-					   ZB_FALSE);
+			zb_shell_print_error(
+				ctx_entry->shell,
+				"Unable to schedule timeout callback",
+				ZB_FALSE);
 			is_request_complete = true;
 		}
 	}
@@ -1942,7 +1941,7 @@ static void cmd_zb_mgmt_bind_cb(zb_bufid_t bufid)
 							bufid,
 							cmd_zb_mgmt_bind_cb);
 				if (ctx_entry->id == ZB_ZDO_INVALID_TSN) {
-					zb_cli_print_error(
+					zb_shell_print_error(
 						ctx_entry->shell,
 						"Failed to send request",
 						ZB_FALSE);
@@ -1958,7 +1957,7 @@ static void cmd_zb_mgmt_bind_cb(zb_bufid_t bufid)
 					ctx_entry->shell,
 					"Total entries for the binding table: %u",
 					(uint32_t)resp->binding_table_entries);
-				zb_cli_print_done(ctx_entry->shell, ZB_FALSE);
+				zb_shell_print_done(ctx_entry->shell, ZB_FALSE);
 			}
 		} else {
 			shell_error(ctx_entry->shell, "Error: Unable to get binding table. Status: %u",
@@ -2005,8 +2004,10 @@ static int cmd_zb_mgmt_bind(const struct shell *shell, size_t argc, char **argv)
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (ctx_entry == NULL) {
-		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
 	}
@@ -2017,26 +2018,23 @@ static int cmd_zb_mgmt_bind(const struct shell *shell, size_t argc, char **argv)
 			argv[arg_idx],
 			&(ctx_entry->zdo_data.req_seq.dst_addr))) {
 
-			zb_cli_print_error(shell, "Incorrect dst_addr",
-					   ZB_FALSE);
+			zb_shell_print_error(shell, "Incorrect dst_addr", ZB_FALSE);
 			ret_err = -EINVAL;
 			goto error;
 		}
 		arg_idx++;
 	} else {
-		zb_cli_print_error(shell, "dst_addr parameter missing",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "dst_addr parameter missing", ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
 
 	if (arg_idx < argc) {
-		if (!zb_cli_sscan_uint8(
+		if (!zb_shell_sscan_uint8(
 			argv[arg_idx],
 			&ctx_entry->zdo_data.req_seq.start_index)) {
 
-			zb_cli_print_error(shell, "Incorrect start_index",
-					   ZB_FALSE);
+			zb_shell_print_error(shell, "Incorrect start_index", ZB_FALSE);
 			ret_err = -EINVAL;
 			goto error;
 		}
@@ -2047,8 +2045,7 @@ static int cmd_zb_mgmt_bind(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	if (arg_idx < argc) {
-		zb_cli_print_error(shell, "Unexpected extra parameters",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Unexpected extra parameters", ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
@@ -2059,8 +2056,10 @@ static int cmd_zb_mgmt_bind(const struct shell *shell, size_t argc, char **argv)
 	zb_osif_enable_all_inter();
 
 	if (!bufid) {
-		zb_cli_print_error(shell, "Failed to execute command (buf alloc failed)",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Failed to execute command (buf alloc failed)",
+			ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
 	}
@@ -2081,7 +2080,7 @@ static int cmd_zb_mgmt_bind(const struct shell *shell, size_t argc, char **argv)
 	uint8_t ctx_entry_index = ctx_mgr_get_index_by_entry(ctx_entry);
 
 	if (ctx_entry_index == CTX_MGR_ENTRY_IVALID_INDEX) {
-		zb_cli_print_error(shell, "Invalid index of entry", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid index of entry", ZB_FALSE);
 		ctx_mgr_delete_entry(ctx_entry);
 
 		/* Make sure ZBOSS buffer API is called safely. */
@@ -2094,8 +2093,7 @@ static int cmd_zb_mgmt_bind(const struct shell *shell, size_t argc, char **argv)
 	zb_err_code = ZB_SCHEDULE_APP_CALLBACK(zb_zdo_req, ctx_entry_index);
 
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(shell, "Unable to schedule zdo request",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Unable to schedule zdo request", ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
 	}
@@ -2147,12 +2145,10 @@ static bool zdo_mgmt_lqi_cb(struct ctx_entry *ctx_entry, zb_bufid_t bufid)
 			shell_fprintf(ctx_entry->shell, SHELL_NORMAL,
 				      "[%3u] ", resp->start_index + i);
 
-			zb_cli_print_eui64(ctx_entry->shell,
-					   tbl_rec->ext_pan_id);
+			zb_shell_print_eui64(ctx_entry->shell, tbl_rec->ext_pan_id);
 
 			shell_fprintf(ctx_entry->shell, SHELL_NORMAL, " ");
-			zb_cli_print_eui64(ctx_entry->shell,
-					   tbl_rec->ext_addr);
+			zb_shell_print_eui64(ctx_entry->shell, tbl_rec->ext_addr);
 
 			shell_print(ctx_entry->shell,
 				    "%#7.4x %#8.2x  %u %11u %5u",
@@ -2225,24 +2221,21 @@ static int cmd_zb_mgmt_lqi(const struct shell *shell, size_t argc, char **argv)
 	zb_osif_enable_all_inter();
 
 	if (!bufid) {
-		zb_cli_print_error(shell, "Failed to allocate request buffer",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Failed to allocate request buffer", ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
 	}
 
 	request = ZB_BUF_GET_PARAM(bufid, zb_zdo_mgmt_lqi_param_t);
 	if (!parse_short_address(argv[1], &(request->dst_addr))) {
-		zb_cli_print_error(shell, "Failed to parse destination address",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Failed to parse destination address", ZB_FALSE);
 		ret_err = -EINVAL;
 		goto error;
 	}
 
 	if (argc >= 3) {
-		if (!zb_cli_sscan_uint8(argv[2], &(request->start_index))) {
-			zb_cli_print_error(shell, "Failed to parse start index",
-					   ZB_FALSE);
+		if (!zb_shell_sscan_uint8(argv[2], &(request->start_index))) {
+			zb_shell_print_error(shell, "Failed to parse start index", ZB_FALSE);
 			ret_err = -EINVAL;
 			goto error;
 		}
@@ -2252,8 +2245,10 @@ static int cmd_zb_mgmt_lqi(const struct shell *shell, size_t argc, char **argv)
 
 	ctx_entry = ctx_mgr_new_entry(CTX_MGR_ZDO_ENTRY_TYPE);
 	if (ctx_entry == NULL) {
-		zb_cli_print_error(shell, "Request pool empty - wait for ongoing command to finish",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Request pool empty - wait for ongoing command to finish",
+			ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
 	}
@@ -2264,14 +2259,13 @@ static int cmd_zb_mgmt_lqi(const struct shell *shell, size_t argc, char **argv)
 	ctx_entry->zdo_data.app_cb_fn = zdo_mgmt_lqi_cb;
 	ctx_entry->zdo_data.zdo_req.req_fn = zb_zdo_mgmt_lqi_req;
 	ctx_entry->zdo_data.zdo_req.req_cb_fn = zdo_request_cb;
-	ctx_entry->zdo_data.zdo_req.ctx_timeout =
-		ZIGBEE_CLI_MGMT_LEAVE_RESP_TIMEOUT;
+	ctx_entry->zdo_data.zdo_req.ctx_timeout = ZIGBEE_SHELL_MGMT_LEAVE_RESP_TIMEOUT;
 	ctx_entry->zdo_data.zdo_req.timeout_cb_fn = ctx_timeout_cb;
 
 	uint8_t ctx_entry_index = ctx_mgr_get_index_by_entry(ctx_entry);
 
 	if (ctx_entry_index == CTX_MGR_ENTRY_IVALID_INDEX) {
-		zb_cli_print_error(shell, "Invalid index of entry", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid index of entry", ZB_FALSE);
 		ctx_mgr_delete_entry(ctx_entry);
 
 		/* Make sure ZBOSS buffer API is called safely. */
@@ -2284,8 +2278,7 @@ static int cmd_zb_mgmt_lqi(const struct shell *shell, size_t argc, char **argv)
 	zb_err_code = ZB_SCHEDULE_APP_CALLBACK(zb_zdo_req, ctx_entry_index);
 
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(shell, "Unable to schedule zdo request",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Unable to schedule zdo request", ZB_FALSE);
 		ret_err = -ENOEXEC;
 		goto error;
 	}

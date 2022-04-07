@@ -13,26 +13,26 @@
 #include <zboss_api.h>
 #include <zigbee/zigbee_error_handler.h>
 #include <zigbee/zigbee_logger_eprxzcl.h>
-#include "zigbee_cli_utils.h"
+#include "zigbee_shell_utils.h"
 
 
 LOG_MODULE_DECLARE(zigbee_shell, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
 
-extern zb_uint8_t cli_agent_ep_handler_attr(zb_bufid_t bufid);
-extern zb_uint8_t cli_agent_ep_handler_generic_cmd(zb_bufid_t bufid);
-extern zb_uint8_t cli_agent_ep_handler_report(zb_bufid_t bufid);
-extern zb_uint8_t cli_agent_ep_handler_ping(zb_bufid_t bufid);
-extern zb_uint8_t cli_agent_ep_handler_groups_cmd(zb_bufid_t bufid);
+extern zb_uint8_t zb_shell_ep_handler_attr(zb_bufid_t bufid);
+extern zb_uint8_t zb_shell_ep_handler_generic_cmd(zb_bufid_t bufid);
+extern zb_uint8_t zb_shell_ep_handler_report(zb_bufid_t bufid);
+extern zb_uint8_t zb_shell_ep_handler_ping(zb_bufid_t bufid);
+extern zb_uint8_t zb_shell_ep_handler_groups_cmd(zb_bufid_t bufid);
 
 static zb_device_handler_t zb_ep_handlers[] = {
-	cli_agent_ep_handler_attr,
-	cli_agent_ep_handler_generic_cmd,
-	cli_agent_ep_handler_report,
-	cli_agent_ep_handler_ping,
-	cli_agent_ep_handler_groups_cmd
+	zb_shell_ep_handler_attr,
+	zb_shell_ep_handler_generic_cmd,
+	zb_shell_ep_handler_report,
+	zb_shell_ep_handler_ping,
+	zb_shell_ep_handler_groups_cmd
 };
 
-zb_uint8_t zb_cli_ep_handler(zb_bufid_t bufid)
+zb_uint8_t zb_shell_ep_handler(zb_bufid_t bufid)
 {
 	unsigned int idx;
 	uint8_t ep_handler_cnt = (sizeof(zb_ep_handlers) /
@@ -51,8 +51,8 @@ zb_uint8_t zb_cli_ep_handler(zb_bufid_t bufid)
 	return ZB_FALSE;
 }
 
-int zb_cli_zcl_attr_to_str(char *str_buf, uint16_t buf_len,
-			   zb_uint16_t attr_type, zb_uint8_t *attr)
+int zb_shell_zcl_attr_to_str(char *str_buf, uint16_t buf_len, zb_uint16_t attr_type,
+			     zb_uint8_t *attr)
 {
 	int bytes_written = 0;
 	int string_len;
@@ -143,7 +143,7 @@ int zb_cli_zcl_attr_to_str(char *str_buf, uint16_t buf_len,
 	return bytes_written;
 }
 
-zb_bool_t zb_cli_is_zcl_cmd_response(zb_zcl_parsed_hdr_t *zcl_hdr, struct ctx_entry *entry)
+zb_bool_t zb_shell_is_zcl_cmd_response(zb_zcl_parsed_hdr_t *zcl_hdr, struct ctx_entry *entry)
 {
 	zb_uint16_t remote_node_short = 0;
 	struct zcl_packet_info *packet_info = &entry->zcl_data.pkt_info;
@@ -173,7 +173,7 @@ zb_bool_t zb_cli_is_zcl_cmd_response(zb_zcl_parsed_hdr_t *zcl_hdr, struct ctx_en
 	return ZB_TRUE;
 }
 
-void zb_cli_zcl_cmd_timeout_cb(zb_uint8_t index)
+void zb_shell_zcl_cmd_timeout_cb(zb_uint8_t index)
 {
 	struct ctx_entry *entry = ctx_mgr_get_entry_by_index(index);
 
@@ -182,11 +182,11 @@ void zb_cli_zcl_cmd_timeout_cb(zb_uint8_t index)
 		return;
 	}
 
-	zb_cli_print_error(entry->shell, "Request timed out", ZB_FALSE);
+	zb_shell_print_error(entry->shell, "Request timed out", ZB_FALSE);
 	ctx_mgr_delete_entry(entry);
 }
 
-int zb_cli_sscan_uint8(const char *bp, uint8_t *value)
+int zb_shell_sscan_uint8(const char *bp, uint8_t *value)
 {
 	/* strtoul() used as a replacement for lacking sscanf() and its output
 	 * is validated to ensure that conversion was successful.
@@ -205,8 +205,7 @@ int zb_cli_sscan_uint8(const char *bp, uint8_t *value)
 	return 1;
 }
 
-int zb_cli_sscan_uint(const char *bp, uint8_t *value, uint8_t size,
-		      uint8_t base)
+int zb_shell_sscan_uint(const char *bp, uint8_t *value, uint8_t size, uint8_t base)
 {
 	char *end = NULL;
 	unsigned long tmp_val;
@@ -236,8 +235,8 @@ int zb_cli_sscan_uint(const char *bp, uint8_t *value, uint8_t size,
 	return 1;
 }
 
-void zb_cli_print_hexdump(const struct shell *shell, const uint8_t *data,
-			  uint8_t size, bool reverse)
+void zb_shell_print_hexdump(const struct shell *shell, const uint8_t *data, uint8_t size,
+			    bool reverse)
 {
 	char addr_buf[2 * size + 1];
 	int bytes_written = 0;
