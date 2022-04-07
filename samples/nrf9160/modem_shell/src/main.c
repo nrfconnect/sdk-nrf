@@ -10,6 +10,7 @@
 #include <zephyr.h>
 #include <init.h>
 #include <nrf_modem.h>
+#include <nrf_modem_at.h>
 
 #include <sys/types.h>
 #include <logging/log_ctrl.h>
@@ -68,6 +69,28 @@ struct modem_param_info modem_param;
 struct k_poll_signal mosh_signal;
 
 K_SEM_DEFINE(nrf_modem_lib_initialized, 0, 1);
+
+NRF_MODEM_LIB_ON_INIT(init_hook, on_modem_lib_init, NULL);
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	if (ret != 0) {
+		printk("Modem library initialization failed, error: %d\n", ret);
+		return;
+	}
+
+	if (strlen(CONFIG_MOSH_AT_MAGPIO) > 0) {
+		if (nrf_modem_at_printf("%s", CONFIG_MOSH_AT_MAGPIO) != 0) {
+			printk("Failed to set MAGPIO configuration\n");
+		}
+	}
+
+	if (strlen(CONFIG_MOSH_AT_COEX0) > 0) {
+		if (nrf_modem_at_printf("%s", CONFIG_MOSH_AT_COEX0) != 0) {
+			printk("Failed to set COEX0 configuration\n");
+		}
+	}
+}
 
 static void mosh_print_version_info(void)
 {
@@ -172,9 +195,6 @@ void main(void)
 #endif
 #if defined(CONFIG_MOSH_WORKER_THREADS)
 	th_ctrl_init();
-#endif
-#if defined(CONFIG_MOSH_GNSS)
-	gnss_configure_lna();
 #endif
 #if defined(CONFIG_MOSH_FOTA)
 	err = fota_init();
