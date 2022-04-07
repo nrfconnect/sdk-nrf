@@ -39,6 +39,10 @@ enum cloud_wrap_event_type {
 	CLOUD_WRAP_EVT_USER_ASSOCIATION_REQUEST,
 	/** User association completed. */
 	CLOUD_WRAP_EVT_USER_ASSOCIATED,
+	/** Event received when data has been acknowledged by cloud. */
+	CLOUD_WRAP_EVT_DATA_ACK,
+	/** Event received when a ping response has been received. */
+	CLOUD_WRAP_EVT_PING_ACK,
 	/** A-GPS data received from the cloud integration layer.
 	 *  Payload is of type @ref cloud_wrap_event_data.
 	 */

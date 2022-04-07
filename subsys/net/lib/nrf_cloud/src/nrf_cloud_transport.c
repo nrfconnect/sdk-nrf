@@ -994,6 +994,13 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 		event_notify = true;
 		break;
 	}
+	case MQTT_EVT_PINGRESP: {
+		LOG_DBG("MQTT_EVT_PINGRESP");
+
+		evt.type = NCT_EVT_PINGRESP;
+		event_notify = true;
+		break;
+	}
 	case MQTT_EVT_DISCONNECT: {
 		LOG_DBG("MQTT_EVT_DISCONNECT: result = %d", _mqtt_evt->result);
 

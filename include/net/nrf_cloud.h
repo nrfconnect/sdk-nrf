@@ -95,6 +95,8 @@ enum nrf_cloud_evt_type {
 	NRF_CLOUD_EVT_READY,
 	/** The device received data from the cloud. */
 	NRF_CLOUD_EVT_RX_DATA,
+	/** The device has received a ping response from the cloud. */
+	NRF_CLOUD_EVT_PINGRESP,
 	/** The data sent to the cloud was acknowledged. */
 	NRF_CLOUD_EVT_SENSOR_DATA_ACK,
 	/** The transport was disconnected. */
@@ -326,6 +328,8 @@ struct nrf_cloud_tx_data {
 	enum nrf_cloud_topic_type topic_type;
 	/** Quality of Service of the message. */
 	enum mqtt_qos qos;
+	/** Message ID */
+	uint32_t id;
 };
 
 /**@brief Controls which values are added to the FOTA array in the "serviceInfo" shadow section */
