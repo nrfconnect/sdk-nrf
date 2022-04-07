@@ -134,6 +134,7 @@ Bluetooth samples
   * :ref:`peripheral_hids_mouse` sample:
 
     * Increased the main stack size from 1024 to 1536 bytes.
+    * Increased the stack size of the nRF RPC threads from 1024 to 1280.
 
 nRF9160 samples
 ---------------
