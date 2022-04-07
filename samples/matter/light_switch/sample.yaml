@@ -1,37 +1,37 @@
 sample:
-  name: Matter Light Switch
   description: Matter Light Switch example
+  name: Matter Light Switch
 tests:
-  matter.light_switch.debug:
+  sample.matter.light_switch.debug:
     build_only: true
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf21540dk_nrf52840
-    tags: ci_build
-  matter.light_switch.release:
-    build_only: true
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
-    integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf21540dk_nrf52840
     tags: ci_build
-    extra_args: CONF_FILE=prj_release.conf
-  matter.light_switch.no_dfu:
+  sample.matter.light_switch.no_dfu:
     build_only: true
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
-    integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-    tags: ci_build
     extra_args: CONF_FILE=prj_no_dfu.conf
-  matter.light_switch.smp_dfu:
-    build_only: true
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
     tags: ci_build
-    extra_args: "OVERLAY_CONFIG=../../overlay-smp_dfu.conf"
+  sample.matter.light_switch.release:
+    build_only: true
+    extra_args: CONF_FILE=prj_release.conf
+    integration_platforms:
+    - nrf52840dk_nrf52840
+    - nrf5340dk_nrf5340_cpuapp
+    - nrf21540dk_nrf52840
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    tags: ci_build
+  sample.matter.light_switch.smp_dfu:
+    build_only: true
+    extra_args: OVERLAY_CONFIG=../../overlay-smp_dfu.conf
+    integration_platforms:
+    - nrf52840dk_nrf52840
+    - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
