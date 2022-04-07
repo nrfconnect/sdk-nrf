@@ -35,6 +35,7 @@
 /applications/machine_learning/           @pdunaj
 /applications/matter_weather_station/     @Damian-Nordic @kkasperczyk-no
 /applications/nrf_desktop/                @pdunaj
+/applications/nrf5340_audio/              @koffes @alexsven @erikrobstad @rick1082 @nordic-auko
 /applications/serial_lte_modem/           @junqingzou @pirun @rlubos
 /applications/zigbee_weather_station/     @adsz-nordic @tomchy
 # Boards
@@ -203,6 +204,7 @@ Kconfig*                                  @tejlmand
 /tests/modules/lib/zcbor/                 @oyvindronningstad
 /tests/modules/mcuboot/external_flash/    @hakonfam @sigvartmh
 /tests/modules/tfm/                       @SebastianBoe @joerchan @torsteingrindvik @magnev
+/tests/nrf5340_audio/                     @koffes @alexsven @erikrobstad @rick1082 @nordic-auko
 /tests/subsys/bluetooth/gatt_dm/          @doki-nordic
 /tests/subsys/bluetooth/mesh/             @trond-snekvik
 /tests/subsys/bootloader/                 @hakonfam

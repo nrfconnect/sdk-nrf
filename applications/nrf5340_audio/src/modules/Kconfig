@@ -1,0 +1,106 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Modules"
+
+config BUTTON_DEBOUNCE_MS
+	int "Button debounce time in ms"
+	default 50
+
+#----------------------------------------------------------------------------#
+menu "Power measurement"
+
+config POWER_MODULE_MIN_MEAS_TIME_MS
+	int "Power measurement interval in milliseconds"
+	default 200
+
+config POWER_MODULE_MEAS_START_ON_BOOT
+	bool "Start power measurements for all rails on boot"
+	default n
+	help
+		This option will automatically start and periodically print
+		the voltage, current consumption, and power usage for the
+		following rails: VBAT, VDD1_CODEC, VDD2_CODEC, and VDD2_NRF
+
+endmenu # Power measurement
+
+#----------------------------------------------------------------------------#
+menu "I2S"
+
+config I2S_LRCK_FREQ_HZ
+	int
+	default AUDIO_SAMPLE_RATE_HZ
+	help
+	 The sample rate of I2S. For now this is tied directly to
+	 AUDIO_SAMPLE_RATE_HZ
+	 Note that this setting is only valid in I2S master mode.
+
+config I2S_CH_NUM
+	int
+	default 2
+	help
+	 The I2S driver itself supports both mono and stereo.
+	 Parts of the implementation are configured for only stereo.
+
+endmenu # I2S
+
+#----------------------------------------------------------------------------#
+menu "Log levels"
+
+config LOG_I2S_LEVEL
+	int "Log level for audio_i2s"
+	default 2
+
+config LOG_LED_LEVEL
+	int "Log level for LED"
+	default 2
+
+config LOG_AUDIO_USB_LEVEL
+	int "Log level for USB audio"
+	default 2
+
+config LOG_POWER_MODULE_LEVEL
+	int "Log level for power module"
+	default 3
+
+config LOG_PMIC_LEVEL
+	int "Log level for PMIC"
+	default 2
+
+config LOG_HW_CODEC_LEVEL
+	int "Log level for HW_CODEC"
+	default 2
+
+config LOG_BUTTON_HANDLER_LEVEL
+	int "Log level for button_handler.c"
+	default 2
+
+config LOG_SD_CARD_LEVEL
+	int "Log level for SD card"
+	default 2
+
+endmenu # Log levels
+
+#----------------------------------------------------------------------------#
+menu "Thread priorities"
+
+config POWER_MODULE_THREAD_PRIO
+	int "Priority for power measurement thread"
+	default 6
+	help
+		This is a preemptible thread
+
+endmenu # Thread priorities
+
+#----------------------------------------------------------------------------#
+menu "Stack sizes"
+
+config POWER_MODULE_STACK_SIZE
+	int "Stack size for power module"
+	default 1152
+
+endmenu # Stack sizes
+endmenu # Modules

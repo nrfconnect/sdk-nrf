@@ -1,0 +1,57 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Bluetooth"
+
+config BLE_ACL_CONN_INTERVAL
+	int "BLE ACL Connection Interval (x*1.25ms)"
+	default 100
+
+config BLE_ACL_SLAVE_LATENCY
+	int "BLE Slave Latency"
+	default 0
+
+config BLE_ACL_SUP_TIMEOUT
+	int "BLE Supervision Timeout (x*10ms)"
+	default 400
+
+config BLE_LE_POWER_CONTROL_ENABLED
+	bool "Enable LE power control feature"
+	default n
+	help
+	 The LE power control feature makes devices be able to change TX power
+	 dynamically and automatically during connection, which provides effective
+	 communication.
+
+config BLE_DEVICE_NAME_BASE
+	string
+	default "NRF5340_AUDIO"
+	help
+	 Base for the device name that will be visible over the air. The actual
+	 name on air could look like: NRF5340_AUDIO_DEV_H_L or NRF5340_AUDIO_DEV_H_R
+	 depending on which device it is.
+
+config BLE_ISO_TEST_PATTERN
+	bool "Transmit a test pattern to measure link performance"
+	default n
+	help
+	 This will transmit the same amount of data as an audio stream, but the
+	 data will be an incrementing value ranging from 0-255 and repeating.
+	 Note that enabling this feature will disable the audio stream.
+
+config BLE_ISO_RX_STATS_S
+	int "Interval in seconds to print BLE ISO RX stats. 0 to deactivate"
+	default 0
+
+#----------------------------------------------------------------------------#
+menu "Log levels"
+
+config LOG_BLE_LEVEL
+	int "Log level for Bluetooth related files"
+	default 3
+
+endmenu # Log levels
+endmenu # Bluetooth
