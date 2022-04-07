@@ -14,8 +14,8 @@
  * @brief CAF Sensor Data Aggregator Event.
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 #include "sensor_event.h"
 
 #ifdef __cplusplus
@@ -25,7 +25,7 @@ extern "C" {
 /** @brief Sensor data aggregator event.
  */
 struct sensor_data_aggregator_event {
-	struct event_header header;
+	struct app_event_header header;
 	const char *sensor_descr;
 	uint8_t *buf;
 	enum sensor_state sensor_state;
@@ -37,7 +37,7 @@ struct sensor_data_aggregator_event {
  *  It is expected that exactly one release event is sent for each buffer.
  */
 struct sensor_data_aggregator_release_buffer_event {
-	struct event_header header;
+	struct app_event_header header;
 	uint8_t *buf;
 	const char *sensor_descr;
 };
@@ -46,8 +46,8 @@ struct sensor_data_aggregator_release_buffer_event {
  * @}
  */
 
-EVENT_TYPE_DECLARE(sensor_data_aggregator_event);
-EVENT_TYPE_DECLARE(sensor_data_aggregator_release_buffer_event);
+APP_EVENT_TYPE_DECLARE(sensor_data_aggregator_event);
+APP_EVENT_TYPE_DECLARE(sensor_data_aggregator_release_buffer_event);
 
 #ifdef __cplusplus
 }

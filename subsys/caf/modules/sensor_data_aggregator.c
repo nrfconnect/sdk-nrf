@@ -6,7 +6,7 @@
 
 #include <zephyr.h>
 #include <drivers/sensor.h>
-#include <event_manager.h>
+#include <app_event_manager.h>
 
 #include <caf/events/sensor_event.h>
 #include <caf/events/sensor_data_aggregator_event.h>
@@ -113,7 +113,7 @@ static void send_buffer(struct aggregator *agg, struct aggregator_buffer *ab)
 	event->sample_cnt = ab->sample_cnt;
 	event->sensor_state = agg->sensor_state;
 	event->sensor_descr = agg->sensor_descr;
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static int enqueue_sample(struct aggregator *agg, struct sensor_event *event)
@@ -146,10 +146,10 @@ static int enqueue_sample(struct aggregator *agg, struct sensor_event *event)
 	return 0;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool event_handler(const struct app_event_header *aeh)
 {
-	if (is_sensor_event(eh)) {
-		struct sensor_event *event = cast_sensor_event(eh);
+	if (is_sensor_event(aeh)) {
+		struct sensor_event *event = cast_sensor_event(aeh);
 		struct aggregator *agg = get_aggregator(event->descr);
 
 		if (agg) {
@@ -165,9 +165,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_sensor_data_aggregator_release_buffer_event(eh)) {
+	if (is_sensor_data_aggregator_release_buffer_event(aeh)) {
 		const struct sensor_data_aggregator_release_buffer_event *event =
-				cast_sensor_data_aggregator_release_buffer_event(eh);
+				cast_sensor_data_aggregator_release_buffer_event(aeh);
 		struct aggregator *agg = get_aggregator(event->sensor_descr);
 
 		__ASSERT_NO_MSG(agg);
@@ -182,8 +182,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_sensor_state_event(eh)) {
-		struct sensor_state_event *event = cast_sensor_state_event(eh);
+	if (is_sensor_state_event(aeh)) {
+		struct sensor_state_event *event = cast_sensor_state_event(aeh);
 		struct aggregator *agg = get_aggregator(event->descr);
 
 		if (agg) {
@@ -203,7 +203,7 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, sensor_data_aggregator_release_buffer_event);
-EVENT_SUBSCRIBE(MODULE, sensor_state_event);
-EVENT_SUBSCRIBE(MODULE, sensor_event);
+APP_EVENT_LISTENER(MODULE, event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, sensor_data_aggregator_release_buffer_event);
+APP_EVENT_SUBSCRIBE(MODULE, sensor_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, sensor_event);
