@@ -260,9 +260,6 @@ static int m_ble_transport_init(void)
 		return ret;
 	}
 
-	ret = ble_hci_vsc_set_adv_tx_pwr(BLE_HCI_VSC_TX_PWR_Pos3dBm);
-	ERR_CHK(ret);
-
 #if (CONFIG_TRANSPORT_BIS)
 #if (CONFIG_AUDIO_DEV == GATEWAY)
 	ret = ble_trans_iso_init(TRANS_TYPE_BIS, DIR_TX, NULL);

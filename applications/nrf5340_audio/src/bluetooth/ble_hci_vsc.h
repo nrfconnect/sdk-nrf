@@ -15,6 +15,7 @@
 #define HCI_OPCODE_VS_SET_CONN_TX_PWR BT_OP(BT_OGF_VS, 0x3F6)
 #define HCI_OPCODE_VS_SET_LED_PIN_MAP BT_OP(BT_OGF_VS, 0x3A2)
 #define HCI_OPCODE_VS_SET_RADIO_FE_CFG BT_OP(BT_OGF_VS, 0x3A3)
+#define HCI_OPCODE_VS_SET_PRI_EXT_ADV_MAX_TX_PWR BT_OP(BT_OGF_VS, 0x000)
 
 /* This bit setting enables the flag from controller from controller
  * if an ISO packet is lost.
@@ -56,7 +57,6 @@ struct ble_hci_vs_cp_set_radio_fe_cfg {
 } __packed;
 
 enum ble_hci_vs_tx_power {
-	BLE_HCI_VSC_TX_PWR_Pos3dBm = 3,
 	BLE_HCI_VSC_TX_PWR_0dBm = 0,
 	BLE_HCI_VSC_TX_PWR_Neg1dBm = -1,
 	BLE_HCI_VSC_TX_PWR_Neg2dBm = -2,
@@ -70,6 +70,7 @@ enum ble_hci_vs_tx_power {
 	BLE_HCI_VSC_TX_PWR_Neg16dBm = -16,
 	BLE_HCI_VSC_TX_PWR_Neg20dBm = -20,
 	BLE_HCI_VSC_TX_PWR_Neg40dBm = -40,
+	BLE_HCI_VSC_PRI_EXT_ADV_MAX_TX_PWR_DISABLE = 127,
 };
 
 enum ble_hci_vs_led_function_id {
@@ -84,6 +85,16 @@ enum ble_hci_vs_led_function_mode {
 	PAL_LED_MODE_ACTIVE_HIGH = 0x01,
 	PAL_LED_MODE_DISABLE_TOGGLE = 0xFF,
 };
+
+/**
+ * @brief Enable VREGRADIO.VREQH in NET core for getting +3dBm TX power
+ *        Note, this will add +3 dBm for the primary advertisement channels
+ *        as well even ble_hci_vsc_set_pri_ext_adv_max_tx_pwr() has been used
+ * @param high_power_mode	Enable VREGRADIO.VREQH or not
+ *
+ * @return 0 for success, error otherwise.
+ */
+int ble_hci_vsc_set_radio_high_pwr_mode(bool high_power_mode);
 
 /**
  * @brief Set Bluetooth MAC device address
@@ -120,6 +131,18 @@ int ble_hci_vsc_set_adv_tx_pwr(enum ble_hci_vs_tx_power tx_power);
  * @return 0 for success, error otherwise.
  */
 int ble_hci_vsc_set_conn_tx_pwr(uint16_t conn_handle, enum ble_hci_vs_tx_power tx_power);
+
+/**
+ * @brief Set the maximum transmit power on primary advertising channels
+ * @param tx_power TX power setting for the primary advertising channels
+ *                 in advertising extension, which are BLE channel 37, 38 and 39
+ *                 Please check ble_hci_vs_tx_power for possible settings
+ *                 Set to BLE_HCI_VSC_PRI_EXT_ADV_MAX_TX_PWR_DISABLE (-127) for
+ *                 disabling this feature
+ *
+ * @return 0 for success, error otherwise.
+ */
+int ble_hci_vsc_set_pri_ext_adv_max_tx_pwr(enum ble_hci_vs_tx_power tx_power);
 
 /**
  * @brief Map LED pin to a specific controller function
