@@ -16,7 +16,15 @@ from west import log
 from west.commands import WestCommand
 from west.manifest import Manifest, MalformedManifest, ImportFlag, \
     MANIFEST_PROJECT_INDEX
+from west.version import __version__ as west_version
 import yaml
+
+try:
+    from packaging import version
+except ImportError:
+    sys.exit("Can't import extra dependencies needed for NCS west extensions.\n"
+             "Please install packages in nrf/scripts/requirements-extra.txt "
+             "with pip3.")
 
 import ncs_west_helpers as nwh
 
@@ -24,6 +32,8 @@ import ncs_west_helpers as nwh
 sys.path.append(os.fspath(Path(__file__).parent.parent))
 
 from pygit2_helpers import commit_affects_files, commit_shortlog
+
+WEST_V0_13_0_OR_LATER = version.parse(west_version) >= version.parse('0.13.0')
 
 def add_zephyr_rev_arg(parser):
     parser.add_argument('-z', '--zephyr-rev', metavar='REF',
