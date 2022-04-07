@@ -8,7 +8,8 @@
 
 #include <zboss_api.h>
 #include <zb_nrf_platform.h>
-#include "zigbee_cli.h"
+#include <zigbee/zigbee_shell.h>
+#include "zigbee_shell_utils.h"
 
 
 #ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
@@ -27,15 +28,14 @@ static int cmd_zb_nvram_enable(const struct shell *shell, size_t argc, char **ar
 	ARG_UNUSED(argv);
 
 	if (zigbee_is_stack_started()) {
-		zb_cli_print_error(shell, "Stack already started",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Stack already started", ZB_FALSE);
 		return -ENOEXEC;
 	}
 
 	/* Keep Zigbee NVRAM after device reboot or power-off. */
 	zb_set_nvram_erase_at_start(ZB_FALSE);
 	nvram_enabled = ZB_TRUE;
-	zb_cli_print_done(shell, ZB_FALSE);
+	zb_shell_print_done(shell, ZB_FALSE);
 
 	return 0;
 }
@@ -57,20 +57,19 @@ static int cmd_zb_nvram_disable(const struct shell *shell, size_t argc, char **a
 	ARG_UNUSED(argv);
 
 	if (zigbee_is_stack_started()) {
-		zb_cli_print_error(shell, "Stack already started",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Stack already started", ZB_FALSE);
 		return -ENOEXEC;
 	}
 
 	/* Erase Zigbee NVRAM after device reboot or power-off. */
 	zb_set_nvram_erase_at_start(ZB_TRUE);
 	nvram_enabled = ZB_FALSE;
-	zb_cli_print_done(shell, ZB_FALSE);
+	zb_shell_print_done(shell, ZB_FALSE);
 
 	return 0;
 }
 
-zb_bool_t zb_cli_nvram_enabled(void)
+zb_bool_t zb_shell_nvram_enabled(void)
 {
 	return nvram_enabled;
 }

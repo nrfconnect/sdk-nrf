@@ -10,31 +10,29 @@
 
 #include <zboss_api.h>
 #include <zigbee/zigbee_error_handler.h>
-#include <zb_nrf_platform.h>
-#include "zigbee_cli.h"
-#include "zigbee_cli_utils.h"
-#include "zigbee_cli_cmd_zcl.h"
+#include <zigbee/zigbee_shell.h>
+#include "zigbee_shell_utils.h"
 
 
 /* Defines default value for minimum interval inside configure reporting request. */
-#define ZIGBEE_CLI_CONFIGURE_REPORT_DEFAULT_MIN_INTERVAL 1
+#define ZIGBEE_SHELL_CONFIGURE_REPORT_DEFAULT_MIN_INTERVAL 1
 
 /* Defines default value for maximum interval inside configure reporting request. */
-#define ZIGBEE_CLI_CONFIGURE_REPORT_DEFAULT_MAX_INTERVAL 60
+#define ZIGBEE_SHELL_CONFIGURE_REPORT_DEFAULT_MAX_INTERVAL 60
 
 /* Defines default value for minimum value change inside configure reporting request. */
-#define ZIGBEE_CLI_CONFIGURE_REPORT_DEFAULT_VALUE_CHANGE NULL
+#define ZIGBEE_SHELL_CONFIGURE_REPORT_DEFAULT_VALUE_CHANGE NULL
 
 /* Defines default value for minimum interval configured in order to turn off reporting.
  * See ZCL specification, sec. 2.5.7.1.5.
  * This can be any value, only max_interval parameters is relevant.
  */
-#define ZIGBEE_CLI_CONFIGURE_REPORT_OFF_MIN_INTERVAL 0x000F
+#define ZIGBEE_SHELL_CONFIGURE_REPORT_OFF_MIN_INTERVAL 0x000F
 
 /* Defines default value for maximum interval inside configure reporting request.
  * See ZCL specification, sec. 2.5.7.1.6.
  */
-#define ZIGBEE_CLI_CONFIGURE_REPORT_OFF_MAX_INTERVAL 0xFFFF
+#define ZIGBEE_SHELL_CONFIGURE_REPORT_OFF_MAX_INTERVAL 0xFFFF
 
 
 LOG_MODULE_REGISTER(zigbee_shell_report, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
@@ -50,7 +48,7 @@ static void cmd_zb_subscribe_unsubscribe_cb(struct ctx_entry *entry, zb_bufid_t 
 	zb_bool_t failed = ZB_FALSE;
 	zb_zcl_configure_reporting_res_t *resp = NULL;
 
-	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_cli_zcl_cmd_timeout_cb, ZB_ALARM_ANY_PARAM);
+	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_shell_zcl_cmd_timeout_cb, ZB_ALARM_ANY_PARAM);
 	ZB_ERROR_CHECK(zb_err_code);
 
 	/* Check if response contains only status code. */
@@ -58,7 +56,7 @@ static void cmd_zb_subscribe_unsubscribe_cb(struct ctx_entry *entry, zb_bufid_t 
 		resp = (zb_zcl_configure_reporting_res_t *)zb_buf_begin(bufid);
 
 		if (resp->status == ZB_ZCL_STATUS_SUCCESS) {
-			zb_cli_print_done(entry->shell, ZB_FALSE);
+			zb_shell_print_done(entry->shell, ZB_FALSE);
 		} else {
 			shell_error(entry->shell,
 				    "Error: Unable to configure reporting. Status: %d",
@@ -70,9 +68,10 @@ static void cmd_zb_subscribe_unsubscribe_cb(struct ctx_entry *entry, zb_bufid_t 
 	/* Received a full Configure Reporting Response frame. */
 	ZB_ZCL_GENERAL_GET_NEXT_CONFIGURE_REPORTING_RES(bufid, resp);
 	if (resp == NULL) {
-		zb_cli_print_error(entry->shell,
-				   "Unable to parse configure reporting response",
-				   ZB_TRUE);
+		zb_shell_print_error(
+			entry->shell,
+			"Unable to parse configure reporting response",
+			ZB_TRUE);
 		goto delete_ctx_entry;
 	}
 
@@ -110,12 +109,12 @@ static void cmd_zb_subscribe_unsubscribe_cb(struct ctx_entry *entry, zb_bufid_t 
 	}
 
 	if (failed == ZB_TRUE) {
-		zb_cli_print_error(
+		zb_shell_print_error(
 			entry->shell,
 			"One or more attributes reporting were not configured successfully",
 			ZB_TRUE);
 	} else {
-		zb_cli_print_done(entry->shell, ZB_FALSE);
+		zb_shell_print_done(entry->shell, ZB_FALSE);
 	}
 
 delete_ctx_entry:
@@ -154,11 +153,12 @@ static void print_attr_update(zb_zcl_parsed_hdr_t *zcl_hdr, zb_bufid_t bufid)
 	ZB_ZCL_GENERAL_GET_NEXT_REPORT_ATTR_REQ(bufid, attr_resp);
 	while (attr_resp != NULL) {
 		bytes_written = 0;
-		bytes_written = zb_cli_zcl_attr_to_str(
-					print_buf,
-					sizeof(print_buf),
-					attr_resp->attr_type,
-					attr_resp->attr_value);
+		bytes_written =
+			zb_shell_zcl_attr_to_str(
+				print_buf,
+				sizeof(print_buf),
+				attr_resp->attr_type,
+				attr_resp->attr_value);
 
 		if (bytes_written < 0) {
 			LOG_ERR("    Unable to print updated attribute value");
@@ -182,7 +182,7 @@ static void print_attr_update(zb_zcl_parsed_hdr_t *zcl_hdr, zb_bufid_t bufid)
  *
  * @returns ZB_TRUE if ZCL command was processed.
  */
-zb_uint8_t cli_agent_ep_handler_report(zb_bufid_t bufid)
+zb_uint8_t zb_shell_ep_handler_report(zb_bufid_t bufid)
 {
 	struct ctx_entry *entry;
 	zb_zcl_parsed_hdr_t *cmd_info = ZB_BUF_GET_PARAM(bufid, zb_zcl_parsed_hdr_t);
@@ -230,7 +230,7 @@ static void construct_reporting_frame(struct ctx_entry *entry)
 		req_data->attr_type,
 		req_data->interval_min,
 		req_data->interval_max,
-		ZIGBEE_CLI_CONFIGURE_REPORT_DEFAULT_VALUE_CHANGE);
+		ZIGBEE_SHELL_CONFIGURE_REPORT_DEFAULT_VALUE_CHANGE);
 }
 
 /**@brief Actually send the Configure Reporting frame.
@@ -269,7 +269,7 @@ static void zb_zcl_send_attr_report_frame(zb_uint8_t index)
 				0);
 
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(entry->shell, "Can not send ZCL frame", ZB_FALSE);
+		zb_shell_print_error(entry->shell, "Can not send ZCL frame", ZB_FALSE);
 		zb_buf_free(packet_info->buffer);
 
 		/* Invalidate an entry with frame data in the context manager. */
@@ -289,21 +289,22 @@ static int send_reporting_frame(struct ctx_entry *entry)
 	uint8_t entry_index = ctx_mgr_get_index_by_entry(entry);
 
 	zb_err_code = ZB_SCHEDULE_APP_ALARM(
-			zb_cli_zcl_cmd_timeout_cb,
+			zb_shell_zcl_cmd_timeout_cb,
 			entry_index,
 			(CONFIG_ZIGBEE_SHELL_ZCL_CMD_TIMEOUT * ZB_TIME_ONE_SECOND));
 
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(entry->shell, "Couldn't schedule timeout cb.", ZB_FALSE);
+		zb_shell_print_error(entry->shell, "Couldn't schedule timeout cb.", ZB_FALSE);
 		goto error;
 	}
 
 	zb_err_code = ZB_SCHEDULE_APP_CALLBACK(zb_zcl_send_attr_report_frame,
 					       entry_index);
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(entry->shell, "Can not schedule zcl frame.", ZB_FALSE);
+		zb_shell_print_error(entry->shell, "Can not schedule zcl frame.", ZB_FALSE);
 
-		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_cli_zcl_cmd_timeout_cb, entry_index);
+		zb_err_code =
+			ZB_SCHEDULE_APP_ALARM_CANCEL(zb_shell_zcl_cmd_timeout_cb, entry_index);
 		ZB_ERROR_CHECK(zb_err_code);
 		goto error;
 	}
@@ -334,46 +335,46 @@ static int cmd_zb_subscribe_parse_input(size_t argc, char **argv, struct ctx_ent
 	packet_info->dst_addr_mode = parse_address(argv[1], &packet_info->dst_addr, ADDR_ANY);
 
 	if (packet_info->dst_addr_mode == ADDR_INVALID) {
-		zb_cli_print_error(entry->shell, "Invalid remote address", ZB_FALSE);
+		zb_shell_print_error(entry->shell, "Invalid remote address", ZB_FALSE);
 		return -EINVAL;
 	}
 
-	if (!zb_cli_sscan_uint8(argv[2], &(packet_info->dst_ep))) {
-		zb_cli_print_error(entry->shell, "Incorrect remote endpoint", ZB_FALSE);
+	if (!zb_shell_sscan_uint8(argv[2], &(packet_info->dst_ep))) {
+		zb_shell_print_error(entry->shell, "Incorrect remote endpoint", ZB_FALSE);
 		return -EINVAL;
 	}
 
 	if (!parse_hex_u16(argv[3], &(packet_info->cluster_id))) {
-		zb_cli_print_error(entry->shell, "Incorrect cluster ID", ZB_FALSE);
+		zb_shell_print_error(entry->shell, "Incorrect cluster ID", ZB_FALSE);
 		return -EINVAL;
 	}
 
 	if (!parse_hex_u16(argv[4], &(packet_info->prof_id))) {
-		zb_cli_print_error(entry->shell, "Incorrect profile ID", ZB_FALSE);
+		zb_shell_print_error(entry->shell, "Incorrect profile ID", ZB_FALSE);
 		return -EINVAL;
 	}
 
 	if (!parse_hex_u16(argv[5], &(req_data->attr_id))) {
-		zb_cli_print_error(entry->shell, "Incorrect attribute ID", ZB_FALSE);
+		zb_shell_print_error(entry->shell, "Incorrect attribute ID", ZB_FALSE);
 		return -EINVAL;
 	}
 
-	if (!zb_cli_sscan_uint8(argv[6], &(req_data->attr_type))) {
-		zb_cli_print_error(entry->shell, "Incorrect attribute type", ZB_FALSE);
+	if (!zb_shell_sscan_uint8(argv[6], &(req_data->attr_type))) {
+		zb_shell_print_error(entry->shell, "Incorrect attribute type", ZB_FALSE);
 		return -EINVAL;
 	}
 
 	/* Optional parameters parsing. */
 	if (argc > 7) {
-		if (!zb_cli_sscan_uint(argv[7], (uint8_t *)&req_data->interval_min, 2, 10)) {
-			zb_cli_print_error(entry->shell, "Incorrect minimum interval", ZB_FALSE);
+		if (!zb_shell_sscan_uint(argv[7], (uint8_t *)&req_data->interval_min, 2, 10)) {
+			zb_shell_print_error(entry->shell, "Incorrect minimum interval", ZB_FALSE);
 			return -EINVAL;
 		}
 	}
 
 	if (argc > 8) {
-		if (!zb_cli_sscan_uint(argv[8], (uint8_t *)&req_data->interval_max, 2, 10)) {
-			zb_cli_print_error(entry->shell, "Incorrect maximum interval", ZB_FALSE);
+		if (!zb_shell_sscan_uint(argv[8], (uint8_t *)&req_data->interval_max, 2, 10)) {
+			zb_shell_print_error(entry->shell, "Incorrect maximum interval", ZB_FALSE);
 			return -EINVAL;
 		}
 	}
@@ -404,7 +405,7 @@ int cmd_zb_subscribe_on(const struct shell *shell, size_t argc, char **argv)
 	struct ctx_entry *entry = ctx_mgr_new_entry(CTX_MGR_CFG_REPORT_REQ_ENTRY_TYPE);
 
 	if (entry == NULL) {
-		zb_cli_print_error(
+		zb_shell_print_error(
 			shell,
 			"Request pool empty - wait for ongoing command to finish",
 			ZB_FALSE);
@@ -414,8 +415,8 @@ int cmd_zb_subscribe_on(const struct shell *shell, size_t argc, char **argv)
 	req_data = &(entry->zcl_data.configure_reporting_req);
 
 	/* Set default interval values. */
-	req_data->interval_min = ZIGBEE_CLI_CONFIGURE_REPORT_DEFAULT_MIN_INTERVAL;
-	req_data->interval_max = ZIGBEE_CLI_CONFIGURE_REPORT_DEFAULT_MAX_INTERVAL;
+	req_data->interval_min = ZIGBEE_SHELL_CONFIGURE_REPORT_DEFAULT_MIN_INTERVAL;
+	req_data->interval_max = ZIGBEE_SHELL_CONFIGURE_REPORT_DEFAULT_MAX_INTERVAL;
 
 	/* Set pointer to the shell to be used by the command handler. */
 	entry->shell = shell;
@@ -435,7 +436,10 @@ int cmd_zb_subscribe_on(const struct shell *shell, size_t argc, char **argv)
 	zb_osif_enable_all_inter();
 
 	if (!bufid) {
-		zb_cli_print_error(shell, "Failed to execute command (buf alloc failed)", ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Failed to execute command (buf alloc failed)",
+			ZB_FALSE);
 		ctx_mgr_delete_entry(entry);
 		return -ENOEXEC;
 	}
@@ -443,7 +447,7 @@ int cmd_zb_subscribe_on(const struct shell *shell, size_t argc, char **argv)
 	/* Fill the structure for sending ZCL frame. */
 	entry->zcl_data.pkt_info.buffer = bufid;
 	/* DstAddr, DstAddr Mode and dst endpoint are already set. */
-	entry->zcl_data.pkt_info.ep = zb_cli_get_endpoint();
+	entry->zcl_data.pkt_info.ep = zb_shell_get_endpoint();
 	/* Profile ID and Cluster ID are already set. */
 	entry->zcl_data.pkt_info.cb = NULL;
 	entry->zcl_data.pkt_info.disable_aps_ack = ZB_FALSE;
@@ -470,7 +474,7 @@ int cmd_zb_subscribe_off(const struct shell *shell, size_t argc, char **argv)
 	struct ctx_entry *entry = ctx_mgr_new_entry(CTX_MGR_CFG_REPORT_REQ_ENTRY_TYPE);
 
 	if (entry == NULL) {
-		zb_cli_print_error(
+		zb_shell_print_error(
 			shell,
 			"Request pool empty - wait for ongoing command to finish",
 			ZB_FALSE);
@@ -480,8 +484,8 @@ int cmd_zb_subscribe_off(const struct shell *shell, size_t argc, char **argv)
 	req_data = &(entry->zcl_data.configure_reporting_req);
 
 	/* Set default interval values. */
-	req_data->interval_min = ZIGBEE_CLI_CONFIGURE_REPORT_OFF_MIN_INTERVAL;
-	req_data->interval_max = ZIGBEE_CLI_CONFIGURE_REPORT_OFF_MAX_INTERVAL;
+	req_data->interval_min = ZIGBEE_SHELL_CONFIGURE_REPORT_OFF_MIN_INTERVAL;
+	req_data->interval_max = ZIGBEE_SHELL_CONFIGURE_REPORT_OFF_MAX_INTERVAL;
 
 	/* Set pointer to the shell to be used by the command handler. */
 	entry->shell = shell;
@@ -501,7 +505,10 @@ int cmd_zb_subscribe_off(const struct shell *shell, size_t argc, char **argv)
 	zb_osif_enable_all_inter();
 
 	if (!bufid) {
-		zb_cli_print_error(shell, "Failed to execute command (buf alloc failed)", ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Failed to execute command (buf alloc failed)",
+			ZB_FALSE);
 		ctx_mgr_delete_entry(entry);
 		return -ENOEXEC;
 	}
@@ -509,7 +516,7 @@ int cmd_zb_subscribe_off(const struct shell *shell, size_t argc, char **argv)
 	/* Fill the structure for sending ZCL frame. */
 	entry->zcl_data.pkt_info.buffer = bufid;
 	/* DstAddr, DstAddr Mode and dst endpoint are already set. */
-	entry->zcl_data.pkt_info.ep = zb_cli_get_endpoint();
+	entry->zcl_data.pkt_info.ep = zb_shell_get_endpoint();
 	/* Profile ID and Cluster ID are already set. */
 	entry->zcl_data.pkt_info.cb = NULL;
 	entry->zcl_data.pkt_info.disable_aps_ack = ZB_FALSE;

@@ -10,7 +10,8 @@
 #include <zboss_api.h>
 #include <zigbee/zigbee_error_handler.h>
 #include <zb_nrf_platform.h>
-#include "zigbee_cli.h"
+#include <zigbee/zigbee_shell.h>
+#include "zigbee_shell_utils.h"
 
 #define IC_ADD_HELP \
 	("Add install code for device with given eui64.\n" \
@@ -89,7 +90,7 @@ static zb_nwk_device_type_t default_role = ZB_NWK_DEVICE_TYPE_ED;
  *
  * @return Zigbee role already set or role planned to set if stack is not yet started.
  */
-static zb_nwk_device_type_t zb_cli_get_network_role(void)
+static zb_nwk_device_type_t zb_shell_get_network_role(void)
 {
 	if (zigbee_is_stack_started()) {
 		return zb_get_network_role();
@@ -114,7 +115,7 @@ static int cmd_zb_role(const struct shell *shell, size_t argc, char **argv)
 	if (!zigbee_is_stack_started()
 	    && zigbee_is_nvram_initialised()
 #ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
-	    && zb_cli_nvram_enabled()
+	    && zb_shell_nvram_enabled()
 #endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
 	    ) {
 		shell_warn(
@@ -122,13 +123,14 @@ static int cmd_zb_role(const struct shell *shell, size_t argc, char **argv)
 			"Zigbee stack has been configured in the past.\r\n"
 			"Please start the Zigbee stack to check the configured role.");
 
-		zb_cli_print_error(shell,
-				   "Can't get role before stack is started - NVRAM not empty",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Can't get role before stack is started - NVRAM not empty",
+			ZB_FALSE);
 		return -ENOEXEC;
 	}
 
-	role = zb_cli_get_network_role();
+	role = zb_shell_get_network_role();
 
 	if (role == ZB_NWK_DEVICE_TYPE_COORDINATOR) {
 		shell_print(shell, "zc");
@@ -138,7 +140,7 @@ static int cmd_zb_role(const struct shell *shell, size_t argc, char **argv)
 		shell_print(shell, "zed");
 	}
 
-	zb_cli_print_done(shell, ZB_FALSE);
+	zb_shell_print_done(shell, ZB_FALSE);
 	return 0;
 }
 
@@ -154,18 +156,17 @@ static int cmd_zb_role(const struct shell *shell, size_t argc, char **argv)
 static int cmd_zb_role_zc(const struct shell *shell, size_t argc, char **argv)
 {
 	if (zigbee_is_stack_started()) {
-		zb_cli_print_error(shell, "Stack already started",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Stack already started", ZB_FALSE);
 		return -ENOEXEC;
 	}
 
 #ifdef ZB_ED_ROLE
-	zb_cli_print_error(shell, "Role unsupported", ZB_FALSE);
+	zb_shell_print_error(shell, "Role unsupported", ZB_FALSE);
 	return -ENOEXEC;
 #else
 	if (zigbee_is_nvram_initialised()
 #ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
-	    && zb_cli_nvram_enabled()
+	    && zb_shell_nvram_enabled()
 #endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
 	    ) {
 		shell_warn(
@@ -181,7 +182,7 @@ static int cmd_zb_role_zc(const struct shell *shell, size_t argc, char **argv)
 
 	default_role = ZB_NWK_DEVICE_TYPE_COORDINATOR;
 	shell_print(shell, "Coordinator set");
-	zb_cli_print_done(shell, ZB_FALSE);
+	zb_shell_print_done(shell, ZB_FALSE);
 	return 0;
 #endif
 }
@@ -201,18 +202,17 @@ static int cmd_zb_role_zc(const struct shell *shell, size_t argc, char **argv)
 static int cmd_zb_role_zed(const struct shell *shell, size_t argc, char **argv)
 {
 	if (zigbee_is_stack_started()) {
-		zb_cli_print_error(shell, "Stack already started",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Stack already started", ZB_FALSE);
 		return -ENOEXEC;
 	}
 
 #ifdef ZB_ED_ROLE
 	default_role = ZB_NWK_DEVICE_TYPE_ED;
 	shell_print(shell, "End Device role set");
-	zb_cli_print_done(shell, ZB_FALSE);
+	zb_shell_print_done(shell, ZB_FALSE);
 	return 0;
 #else
-	zb_cli_print_error(shell, "Role unsupported", ZB_FALSE);
+	zb_shell_print_error(shell, "Role unsupported", ZB_FALSE);
 	return -ENOEXEC;
 #endif
 }
@@ -229,18 +229,17 @@ static int cmd_zb_role_zed(const struct shell *shell, size_t argc, char **argv)
 static int cmd_zb_role_zr(const struct shell *shell, size_t argc, char **argv)
 {
 	if (zigbee_is_stack_started()) {
-		zb_cli_print_error(shell, "Stack already started",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Stack already started", ZB_FALSE);
 		return -ENOEXEC;
 	}
 
 #ifdef ZB_ED_ROLE
-	zb_cli_print_error(shell, "Role unsupported", ZB_FALSE);
+	zb_shell_print_error(shell, "Role unsupported", ZB_FALSE);
 	return -ENOEXEC;
 #else
 	if (zigbee_is_nvram_initialised()
 #ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
-	    && zb_cli_nvram_enabled()
+	    && zb_shell_nvram_enabled()
 #endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
 	    ) {
 		shell_warn(
@@ -251,7 +250,7 @@ static int cmd_zb_role_zr(const struct shell *shell, size_t argc, char **argv)
 
 	default_role = ZB_NWK_DEVICE_TYPE_ROUTER;
 	shell_print(shell, "Router role set");
-	zb_cli_print_done(shell, ZB_FALSE);
+	zb_shell_print_done(shell, ZB_FALSE);
 	return 0;
 #endif
 }
@@ -312,7 +311,7 @@ static int cmd_zb_start(const struct shell *shell, size_t argc, char **argv)
 			break;
 #endif
 		default:
-			zb_cli_print_error(shell, "Role unsupported", ZB_FALSE);
+			zb_shell_print_error(shell, "Role unsupported", ZB_FALSE);
 			return -ENOEXEC;
 		}
 
@@ -322,11 +321,10 @@ static int cmd_zb_start(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	if (ret) {
-		zb_cli_print_done(shell, ZB_FALSE);
+		zb_shell_print_done(shell, ZB_FALSE);
 		return 0;
 	} else {
-		zb_cli_print_error(shell, "Could not start top level commissioning",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Could not start top level commissioning", ZB_FALSE);
 		return -ENOEXEC;
 	}
 }
@@ -353,21 +351,20 @@ static int cmd_zb_extpanid(const struct shell *shell, size_t argc, char **argv)
 
 	if (argc == 1) {
 		zb_get_extended_pan_id(extpanid);
-		zb_cli_print_eui64(shell, extpanid);
-		/* Prepend newline because `zb_cli_print_eui64` does not
+		zb_shell_print_eui64(shell, extpanid);
+		/* Prepend newline because `zb_shell_print_eui64` does not
 		 * print LF.
 		 */
-		zb_cli_print_done(shell, ZB_TRUE);
+		zb_shell_print_done(shell, ZB_TRUE);
 	} else if (argc == 2) {
 		if (zigbee_is_stack_started()) {
-			zb_cli_print_error(shell, "Stack already started",
-					   ZB_FALSE);
+			zb_shell_print_error(shell, "Stack already started", ZB_FALSE);
 			return -ENOEXEC;
 		}
 
 		if (zigbee_is_nvram_initialised()
 #ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
-		    && zb_cli_nvram_enabled()
+		    && zb_shell_nvram_enabled()
 #endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
 		    ) {
 			shell_warn(
@@ -375,18 +372,18 @@ static int cmd_zb_extpanid(const struct shell *shell, size_t argc, char **argv)
 				"Zigbee stack has been configured in the past.\r\n"
 				"Please disable NVRAM to change the Extended PAN ID.");
 
-			zb_cli_print_error(shell,
-					   "Can't change extpanid - NVRAM not empty",
-					   ZB_FALSE);
+			zb_shell_print_error(
+				shell,
+				"Can't change extpanid - NVRAM not empty",
+				ZB_FALSE);
 			return -ENOEXEC;
 		}
 
 		if (parse_long_address(argv[1], extpanid)) {
 			zb_set_extended_pan_id(extpanid);
-			zb_cli_print_done(shell, ZB_FALSE);
+			zb_shell_print_done(shell, ZB_FALSE);
 		} else {
-			zb_cli_print_error(shell, "Failed to parse extpanid",
-					   ZB_FALSE);
+			zb_shell_print_error(shell, "Failed to parse extpanid", ZB_FALSE);
 			return -EINVAL;
 		}
 	}
@@ -414,17 +411,16 @@ static int cmd_zb_panid(const struct shell *shell, size_t argc, char **argv)
 
 	if (argc == 1) {
 		shell_print(shell, "%0X", ZB_PIBCACHE_PAN_ID());
-		zb_cli_print_done(shell, ZB_FALSE);
+		zb_shell_print_done(shell, ZB_FALSE);
 	} else if (argc == 2) {
 		if (zigbee_is_stack_started()) {
-			zb_cli_print_error(shell, "Stack already started",
-					   ZB_FALSE);
+			zb_shell_print_error(shell, "Stack already started", ZB_FALSE);
 			return -ENOEXEC;
 		}
 
 		if (zigbee_is_nvram_initialised()
 #ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
-		    && zb_cli_nvram_enabled()
+		    && zb_shell_nvram_enabled()
 #endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
 		    ) {
 			shell_warn(
@@ -432,23 +428,22 @@ static int cmd_zb_panid(const struct shell *shell, size_t argc, char **argv)
 				"Zigbee stack has been configured in the past.\r\n"
 				"Please disable NVRAM to change the PAN ID.");
 
-			zb_cli_print_error(shell,
-					   "Can't change PAN ID - NVRAM not empty",
-					   ZB_FALSE);
+			zb_shell_print_error(
+				shell,
+				"Can't change PAN ID - NVRAM not empty",
+				ZB_FALSE);
 			return -ENOEXEC;
 		}
 
 		if (parse_hex_u16(argv[1], &pan_id)) {
 			ZB_PIBCACHE_PAN_ID() = pan_id;
-			zb_cli_print_done(shell, ZB_FALSE);
+			zb_shell_print_done(shell, ZB_FALSE);
 		} else {
-			zb_cli_print_error(shell, "Failed to parse PAN ID",
-					   ZB_FALSE);
+			zb_shell_print_error(shell, "Failed to parse PAN ID", ZB_FALSE);
 			return -EINVAL;
 		}
 	} else {
-		zb_cli_print_error(shell, "Unsupported format. Expected panid <h:id>",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Unsupported format. Expected panid <h:id>", ZB_FALSE);
 		return -EINVAL;
 	}
 
@@ -495,7 +490,7 @@ static int cmd_zb_channel(const struct shell *shell, size_t argc, char **argv)
 		/* Chech for case in which channel mask can not be read. */
 		if (zigbee_is_nvram_initialised() && !zigbee_is_stack_started()
 #ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
-		    && zb_cli_nvram_enabled()
+		    && zb_shell_nvram_enabled()
 #endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
 		   ) {
 			shell_warn(
@@ -503,9 +498,10 @@ static int cmd_zb_channel(const struct shell *shell, size_t argc, char **argv)
 				"Zigbee stack has been configured in the past.\r\n"
 				"Please start the Zigbee stack to check the configured channels.");
 
-			zb_cli_print_error(shell,
-					   "Can't get channel mask - NVRAM not empty",
-					   ZB_FALSE);
+			zb_shell_print_error(
+				shell,
+				"Can't get channel mask - NVRAM not empty",
+				ZB_FALSE);
 			return -ENOEXEC;
 		}
 
@@ -535,18 +531,17 @@ static int cmd_zb_channel(const struct shell *shell, size_t argc, char **argv)
 			shell_print(shell, "");
 		}
 
-		zb_cli_print_done(shell, ZB_FALSE);
+		zb_shell_print_done(shell, ZB_FALSE);
 		return 0;
 	} else if (argc == 2) {
 		if (zigbee_is_stack_started()) {
-			zb_cli_print_error(shell, "Stack already started",
-					   ZB_FALSE);
+			zb_shell_print_error(shell, "Stack already started", ZB_FALSE);
 			return -ENOEXEC;
 		}
 
 		if (zigbee_is_nvram_initialised()
 #ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
-		    && zb_cli_nvram_enabled()
+		    && zb_shell_nvram_enabled()
 #endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
 		    ) {
 			shell_warn(
@@ -554,22 +549,21 @@ static int cmd_zb_channel(const struct shell *shell, size_t argc, char **argv)
 				"Zigbee stack has been configured in the past.\r\n"
 				"Please disable NVRAM to change the channel mask.");
 
-			zb_cli_print_error(shell,
-					   "Can't change channel mask - NVRAM not empty",
-					   ZB_FALSE);
+			zb_shell_print_error(
+				shell,
+				"Can't change channel mask - NVRAM not empty",
+				ZB_FALSE);
 			return -ENOEXEC;
 		}
 
-		zb_cli_sscan_uint(argv[1], (uint8_t *)&channel_number, 4, 10);
+		zb_shell_sscan_uint(argv[1], (uint8_t *)&channel_number, 4, 10);
 		if (channel_number < 11 || channel_number > 26) {
 			/* Treat as a bitmask. */
 			channel_number = 0;
-			zb_cli_sscan_uint(argv[1], (uint8_t *)&channel_mask,
-					  4, 16);
-			if ((!(channel_mask & 0x7FFF800)) ||
-			    (channel_mask & (~0x7FFF800))) {
-				zb_cli_print_error(shell, "Bitmask invalid",
-						   ZB_FALSE);
+			zb_shell_sscan_uint(argv[1], (uint8_t *)&channel_mask, 4, 16);
+
+			if ((!(channel_mask & 0x7FFF800)) || (channel_mask & (~0x7FFF800))) {
+				zb_shell_print_error(shell, "Bitmask invalid", ZB_FALSE);
 				return -EINVAL;
 			}
 		} else {
@@ -592,7 +586,7 @@ static int cmd_zb_channel(const struct shell *shell, size_t argc, char **argv)
 			zb_set_channel_mask(channel_mask);
 		}
 
-		zb_cli_print_done(shell, ZB_FALSE);
+		zb_shell_print_done(shell, ZB_FALSE);
 	}
 	return 0;
 }
@@ -602,10 +596,9 @@ static int cmd_zb_channel(const struct shell *shell, size_t argc, char **argv)
 static void zb_secur_ic_add_cb(zb_ret_t status)
 {
 	if (status != RET_OK) {
-		zb_cli_print_error(ic_add_ctx.shell, "Failed to add IC",
-				   ZB_FALSE);
+		zb_shell_print_error(ic_add_ctx.shell, "Failed to add IC", ZB_FALSE);
 	} else {
-		zb_cli_print_done(ic_add_ctx.shell, ZB_FALSE);
+		zb_shell_print_done(ic_add_ctx.shell, ZB_FALSE);
 	}
 
 	ic_add_ctx.taken = false;
@@ -620,9 +613,10 @@ void zb_install_code_add(zb_uint8_t param)
 	ARG_UNUSED(param);
 
 	if (zb_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
-		zb_cli_print_error(ic_add_ctx.shell,
-				   "Failed to add IC. Device must be a coordinator",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			ic_add_ctx.shell,
+			"Failed to add IC. Device must be a coordinator",
+			ZB_FALSE);
 		return;
 	}
 
@@ -658,14 +652,15 @@ static void zb_install_code_list_print_row(struct zb_secur_ic_list_entry *ic, zb
 	/* Print row index. */
 	shell_fprintf(ic_list_ctx.shell, SHELL_NORMAL, "[%3d] ", index);
 	/* Print device long address. */
-	zb_cli_print_eui64(ic_list_ctx.shell, ic->device_address);
+	zb_shell_print_eui64(ic_list_ctx.shell, ic->device_address);
 	/* Print space to separate device address and install code fields. */
 	shell_fprintf(ic_list_ctx.shell, SHELL_NORMAL, " ");
 	/* Print the install code. */
-	zb_cli_print_hexdump(ic_list_ctx.shell,
-			     ic->installcode,
-			     (ZB_CCM_KEY_SIZE + ZB_CCM_KEY_CRC_SIZE),
-			     false);
+	zb_shell_print_hexdump(
+		ic_list_ctx.shell,
+		ic->installcode,
+		(ZB_CCM_KEY_SIZE + ZB_CCM_KEY_CRC_SIZE),
+		false);
 	/* Print space to separate install code and options fields. */
 	shell_fprintf(ic_list_ctx.shell, SHELL_NORMAL, " ");
 	/* Print options with additional newline character. */
@@ -689,16 +684,20 @@ static void zb_install_code_list_read_cb(zb_uint8_t buffer)
 
 	/* Check if buffer id is correct. */
 	if (buffer == ZB_BUF_INVALID) {
-		zb_cli_print_error(ic_list_ctx.shell, "Invalid buffer ID received in cb", ZB_FALSE);
+		zb_shell_print_error(
+			ic_list_ctx.shell,
+			"Invalid buffer ID received in cb",
+			ZB_FALSE);
 		goto exit;
 	}
 
 	ic_list_resp = ZB_BUF_GET_PARAM(buffer, zb_secur_ic_get_list_resp_t);
 
 	if (ic_list_resp->status != RET_OK) {
-		zb_cli_print_error(ic_list_ctx.shell,
-				   "Error status when reading IC list.",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			ic_list_ctx.shell,
+			"Error status when reading IC list.",
+			ZB_FALSE);
 		goto exit;
 	}
 
@@ -731,7 +730,7 @@ static void zb_install_code_list_read_cb(zb_uint8_t buffer)
 
 	/* All install codes have been read, print summary and done msg and clean up. */
 	zb_install_code_list_print_summary(ic_list_resp->ic_table_entries);
-	zb_cli_print_done(ic_list_ctx.shell, ZB_FALSE);
+	zb_shell_print_done(ic_list_ctx.shell, ZB_FALSE);
 
 exit:
 	ic_list_ctx.taken = false;
@@ -752,7 +751,7 @@ static void zb_install_code_list_read(zb_uint8_t buffer, zb_uint16_t start_index
 
 	/* Check if buffer id is correct. */
 	if (buffer == ZB_BUF_INVALID) {
-		zb_cli_print_error(ic_list_ctx.shell, "Invalid buffer ID received", ZB_FALSE);
+		zb_shell_print_error(ic_list_ctx.shell, "Invalid buffer ID received", ZB_FALSE);
 		ic_list_ctx.taken = false;
 		return;
 	}
@@ -809,15 +808,13 @@ static int cmd_zb_install_code(const struct shell *shell, size_t argc,
 	if ((argc == 2) && (strcmp(argv[0], "set") == 0)) {
 		zb_uint8_t ic[ZB_CCM_KEY_SIZE + ZB_CCM_KEY_CRC_SIZE];
 
-		if (zb_cli_get_network_role() == ZB_NWK_DEVICE_TYPE_COORDINATOR) {
-			zb_cli_print_error(shell, "Device can't be a coordinator",
-					   ZB_FALSE);
+		if (zb_shell_get_network_role() == ZB_NWK_DEVICE_TYPE_COORDINATOR) {
+			zb_shell_print_error(shell, "Device can't be a coordinator", ZB_FALSE);
 			return -ENOEXEC;
 		}
 
 		if (zigbee_is_stack_started()) {
-			zb_cli_print_error(shell, "Stack already started",
-					   ZB_FALSE);
+			zb_shell_print_error(shell, "Stack already started", ZB_FALSE);
 			return -ENOEXEC;
 		}
 
@@ -836,15 +833,13 @@ static int cmd_zb_install_code(const struct shell *shell, size_t argc,
 		/* Check if stack is initialized as Install Code can not
 		 * be added until production config is initialised.
 		 */
-		if (zb_cli_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
-			zb_cli_print_error(shell, "Device must be a coordinator",
-					   ZB_FALSE);
+		if (zb_shell_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
+			zb_shell_print_error(shell, "Device must be a coordinator", ZB_FALSE);
 			return -ENOEXEC;
 		}
 
 		if (!zigbee_is_stack_started()) {
-			zb_cli_print_error(shell, "Stack not started",
-					   ZB_FALSE);
+			zb_shell_print_error(shell, "Stack not started", ZB_FALSE);
 			return -ENOEXEC;
 		}
 
@@ -879,9 +874,8 @@ static int cmd_zb_install_code(const struct shell *shell, size_t argc,
 		return 0;
 
 	} else if ((argc == 2) && (strcmp(argv[0], "policy") == 0)) {
-		if (zb_cli_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
-			zb_cli_print_error(shell, "Device must be a coordinator",
-					   ZB_FALSE);
+		if (zb_shell_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
+			zb_shell_print_error(shell, "Device must be a coordinator", ZB_FALSE);
 			return -ENOEXEC;
 		}
 
@@ -896,20 +890,21 @@ static int cmd_zb_install_code(const struct shell *shell, size_t argc,
 	} else if ((argc == 1) && (strcmp(argv[0], "list") == 0)) {
 		zb_ret_t ret_val = RET_OK;
 
-		if (zb_cli_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
-			zb_cli_print_error(shell, "Device must be a coordinator", ZB_FALSE);
+		if (zb_shell_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
+			zb_shell_print_error(shell, "Device must be a coordinator", ZB_FALSE);
 			return -ENOEXEC;
 		}
 
 		if (!zigbee_is_stack_started()) {
-			zb_cli_print_error(shell, "Stack not started", ZB_FALSE);
+			zb_shell_print_error(shell, "Stack not started", ZB_FALSE);
 			return -ENOEXEC;
 		}
 
 		if (ic_list_ctx.taken == true) {
-			zb_cli_print_error(shell,
-					   "Can't start reading IC list - already in progress.",
-					   ZB_FALSE);
+			zb_shell_print_error(
+				shell,
+				"Can't start reading IC list - already in progress.",
+				ZB_FALSE);
 			return -ENOEXEC;
 		}
 
@@ -921,9 +916,10 @@ static int cmd_zb_install_code(const struct shell *shell, size_t argc,
 
 		if (ret_val != RET_OK) {
 			ic_list_ctx.taken = false;
-			zb_cli_print_error(shell,
-					   "Couldn't get buffer for reading IC list.",
-					   ZB_FALSE);
+			zb_shell_print_error(
+				shell,
+				"Couldn't get buffer for reading IC list.",
+				ZB_FALSE);
 			return -ENOEXEC;
 		}
 
@@ -935,10 +931,10 @@ static int cmd_zb_install_code(const struct shell *shell, size_t argc,
 
 exit:
 	if (err_msg) {
-		zb_cli_print_error(shell, err_msg, ZB_FALSE);
+		zb_shell_print_error(shell, err_msg, ZB_FALSE);
 		return -EINVAL;
 	} else {
-		zb_cli_print_done(shell, ZB_FALSE);
+		zb_shell_print_done(shell, ZB_FALSE);
 		return 0;
 	}
 }
@@ -958,14 +954,13 @@ exit:
  */
 static int cmd_zb_legacy(const struct shell *shell, size_t argc, char **argv)
 {
-	if (zb_cli_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
-		zb_cli_print_error(shell, "Device must be a coordinator",
-				   ZB_FALSE);
+	if (zb_shell_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
+		zb_shell_print_error(shell, "Device must be a coordinator", ZB_FALSE);
 		return -ENOEXEC;
 	}
 
 	shell_print(shell, "%s", legacy_mode ? "on" : "off");
-	zb_cli_print_done(shell, ZB_FALSE);
+	zb_shell_print_done(shell, ZB_FALSE);
 	return 0;
 }
 
@@ -989,26 +984,24 @@ static int cmd_zb_legacy_enable(const struct shell *shell, size_t argc,
 				char **argv)
 {
 	if (!zigbee_is_stack_started()) {
-		zb_cli_print_error(shell, "Stack not started", ZB_FALSE);
+		zb_shell_print_error(shell, "Stack not started", ZB_FALSE);
 		return -ENOEXEC;
 	}
 
 	if (zb_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
-		zb_cli_print_error(shell, "Device must be a coordinator",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Device must be a coordinator", ZB_FALSE);
 		return -ENOEXEC;
 	}
 
 	zb_bdb_set_legacy_device_support(1);
 	legacy_mode = ZB_TRUE;
 
-	if (ZB_SCHEDULE_APP_CALLBACK(zb_bdb_set_legacy_device_support,
-				     legacy_mode)) {
-		zb_cli_print_error(shell, "Can not execute command", ZB_FALSE);
+	if (ZB_SCHEDULE_APP_CALLBACK(zb_bdb_set_legacy_device_support, legacy_mode)) {
+		zb_shell_print_error(shell, "Can not execute command", ZB_FALSE);
 		return -ENOEXEC;
 	}
 
-	zb_cli_print_done(shell, ZB_FALSE);
+	zb_shell_print_done(shell, ZB_FALSE);
 	return 0;
 }
 
@@ -1032,26 +1025,24 @@ static int cmd_zb_legacy_disable(const struct shell *shell, size_t argc,
 				 char **argv)
 {
 	if (!zigbee_is_stack_started()) {
-		zb_cli_print_error(shell, "Stack not started", ZB_FALSE);
+		zb_shell_print_error(shell, "Stack not started", ZB_FALSE);
 		return -ENOEXEC;
 	}
 
 	if (zb_get_network_role() != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
-		zb_cli_print_error(shell, "Device must be a coordinator",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Device must be a coordinator", ZB_FALSE);
 		return -ENOEXEC;
 	}
 
 	zb_bdb_set_legacy_device_support(0);
 	legacy_mode = ZB_FALSE;
 
-	if (ZB_SCHEDULE_APP_CALLBACK(zb_bdb_set_legacy_device_support,
-				     legacy_mode)) {
-		zb_cli_print_error(shell, "Can not execute command", ZB_FALSE);
+	if (ZB_SCHEDULE_APP_CALLBACK(zb_bdb_set_legacy_device_support, legacy_mode)) {
+		zb_shell_print_error(shell, "Can not execute command", ZB_FALSE);
 		return -ENOEXEC;
 	}
 
-	zb_cli_print_done(shell, ZB_FALSE);
+	zb_shell_print_done(shell, ZB_FALSE);
 	return 0;
 }
 
@@ -1076,13 +1067,13 @@ static int cmd_zb_nwkkey(const struct shell *shell, size_t argc, char **argv)
 	ARG_UNUSED(argc);
 
 	if (zigbee_is_stack_started()) {
-		zb_cli_print_error(shell, "Stack already started", ZB_FALSE);
+		zb_shell_print_error(shell, "Stack already started", ZB_FALSE);
 		return -ENOEXEC;
 	}
 
 	if (zigbee_is_nvram_initialised()
 #ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
-	    && zb_cli_nvram_enabled()
+	    && zb_shell_nvram_enabled()
 #endif /* CONFIG_ZIGBEE_SHELL_DEBUG_CMD */
 	    ) {
 		shell_warn(
@@ -1090,9 +1081,7 @@ static int cmd_zb_nwkkey(const struct shell *shell, size_t argc, char **argv)
 			"Zigbee stack has been configured in the past.\r\n"
 			"Please disable NVRAM to change the preconfigured network key.");
 
-		zb_cli_print_error(shell,
-				   "Can't change NWK key - NVRAM not empty",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Can't change NWK key - NVRAM not empty", ZB_FALSE);
 		return -ENOEXEC;
 	}
 
@@ -1101,11 +1090,11 @@ static int cmd_zb_nwkkey(const struct shell *shell, size_t argc, char **argv)
 	if (parse_hex_str(argv[1], strlen(argv[1]), key, sizeof(key), false)) {
 		zb_secur_setup_nwk_key(key, 0);
 	} else {
-		zb_cli_print_error(shell, "Failed to parse key", ZB_FALSE);
+		zb_shell_print_error(shell, "Failed to parse key", ZB_FALSE);
 		return -EINVAL;
 	}
 
-	zb_cli_print_done(shell, ZB_FALSE);
+	zb_shell_print_done(shell, ZB_FALSE);
 	return 0;
 }
 
@@ -1125,7 +1114,7 @@ static int cmd_zb_factory_reset(const struct shell *shell, size_t argc,
 	ARG_UNUSED(argv);
 
 	ZB_SCHEDULE_APP_CALLBACK(zb_bdb_reset_via_local_action, 0);
-	zb_cli_print_done(shell, ZB_FALSE);
+	zb_shell_print_done(shell, ZB_FALSE);
 	return 0;
 }
 
@@ -1157,14 +1146,16 @@ static int cmd_child_max(const struct shell *shell, size_t argc, char **argv)
 
 	/* Two argc - set the amount of the max_children. */
 	if (zigbee_is_stack_started()) {
-		zb_cli_print_error(shell, "Stack already started", ZB_FALSE);
+		zb_shell_print_error(shell, "Stack already started", ZB_FALSE);
 		return -ENOEXEC;
 	}
 
-	zb_cli_sscan_uint(argv[1], (uint8_t *)&child_max, 4, 10);
+	zb_shell_sscan_uint(argv[1], (uint8_t *)&child_max, 4, 10);
 	if (child_max > 32) {
-		zb_cli_print_error(shell, "Children device number must be within [0:32]",
-				   ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Children device number must be within [0:32]",
+			ZB_FALSE);
 		return -EINVAL;
 	} else {
 		/* Set the value by calling ZBOSS API. */
@@ -1172,7 +1163,7 @@ static int cmd_child_max(const struct shell *shell, size_t argc, char **argv)
 		shell_print(shell, "Setting max children to: %d", child_max);
 	}
 
-	zb_cli_print_done(shell, ZB_FALSE);
+	zb_shell_print_done(shell, ZB_FALSE);
 	return 0;
 }
 #endif

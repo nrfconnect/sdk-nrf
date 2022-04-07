@@ -8,12 +8,12 @@
 #include <version.h>
 #include <string.h>
 #include <shell/shell.h>
-#include <sys/reboot.h>
 
 #include <zboss_api.h>
 #include <zigbee/zigbee_error_handler.h>
 #include <zb_version.h>
-#include "zigbee_cli.h"
+#include <zigbee/zigbee_shell.h>
+#include "zigbee_shell_utils.h"
 
 #define DEBUG_HELP \
 	"Return state of debug mode."
@@ -26,10 +26,11 @@
 
 #define DEBUG_WARN_MSG \
 	"You are about to turn the debug mode on. This unblocks several\n" \
-	"additional commands in the CLI. They can render the device unstable.\n" \
+	"additional commands in the Shell. They can render the device unstable.\n" \
 	"It is implied that you know what you are doing."
 
-/**@brief Print CLI, ZBOSS and Zephyr kernel version
+
+/**@brief Print Shell, ZBOSS and Zephyr kernel version
  *
  * @code
  * version
@@ -37,7 +38,7 @@
  *
  * @code
  * > version
- * CLI: Jul 2 2020 16:14:18
+ * Shell: Jul 2 2020 16:14:18
  * ZBOSS: 3.1.0.59
  * Done
  * @endcode
@@ -47,16 +48,16 @@ static int cmd_version(const struct shell *shell, size_t argc, char **argv)
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
 
-	shell_print(shell, "CLI: " __DATE__ " " __TIME__);
+	shell_print(shell, "Shell: " __DATE__ " " __TIME__);
 	shell_print(shell, "ZBOSS: %d.%d.0.%d", ZBOSS_MAJOR, ZBOSS_MINOR,
 		    ZBOSS_SDK_REVISION);
 	shell_print(shell, "Zephyr kernel version: %s", KERNEL_VERSION_STRING);
 
-	zb_cli_print_done(shell, false);
+	zb_shell_print_done(shell, false);
 	return 0;
 }
 
-/**@brief Get state of debug mode in the CLI.
+/**@brief Get state of debug mode in the shell.
  *
  * @code
  * debug
@@ -68,9 +69,9 @@ static int cmd_debug(const struct shell *shell, size_t argc, char **argv)
 	ARG_UNUSED(argv);
 
 	shell_print(shell, "Debug mode is %s.",
-		    zb_cli_debug_get() ? "on" : "off");
+		    zb_shell_debug_get() ? "on" : "off");
 
-	zb_cli_print_done(shell, false);
+	zb_shell_print_done(shell, false);
 	return 0;
 }
 
@@ -90,10 +91,10 @@ static int cmd_debug_on(const struct shell *shell, size_t argc, char **argv)
 	ARG_UNUSED(argv);
 
 	shell_warn(shell, DEBUG_WARN_MSG);
-	zb_cli_debug_set(ZB_TRUE);
+	zb_shell_debug_set(ZB_TRUE);
 	shell_print(shell, "Debug mode is on.");
 
-	zb_cli_print_done(shell, false);
+	zb_shell_print_done(shell, false);
 	return 0;
 }
 
@@ -112,10 +113,10 @@ static int cmd_debug_off(const struct shell *shell, size_t argc, char **argv)
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
 
-	zb_cli_debug_set(ZB_FALSE);
+	zb_shell_debug_set(ZB_FALSE);
 	shell_print(shell, "Debug mode is off.");
 
-	zb_cli_print_done(shell, false);
+	zb_shell_print_done(shell, false);
 	return 0;
 }
 

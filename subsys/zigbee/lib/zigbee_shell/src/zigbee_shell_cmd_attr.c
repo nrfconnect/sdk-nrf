@@ -8,10 +8,8 @@
 
 #include <zboss_api.h>
 #include <zigbee/zigbee_error_handler.h>
-#include <zb_nrf_platform.h>
-#include "zigbee_cli.h"
-#include "zigbee_cli_utils.h"
-#include "zigbee_cli_cmd_zcl.h"
+#include <zigbee/zigbee_shell.h>
+#include "zigbee_shell_utils.h"
 
 
 LOG_MODULE_DECLARE(zigbee_shell, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
@@ -29,22 +27,25 @@ static void print_read_attr_response(zb_bufid_t bufid, struct ctx_entry *entry)
 	ZB_ZCL_GENERAL_GET_NEXT_READ_ATTR_RES(bufid, attr_resp);
 	if (attr_resp->status == ZB_ZCL_STATUS_SUCCESS) {
 		char attr_buf[40];
-		int bytes_written = zb_cli_zcl_attr_to_str(attr_buf,
-							   sizeof(attr_buf),
-							   attr_resp->attr_type,
-							   attr_resp->attr_value);
+		int bytes_written =
+			zb_shell_zcl_attr_to_str(
+				attr_buf,
+				sizeof(attr_buf),
+				attr_resp->attr_type,
+				attr_resp->attr_value);
 
 		if (bytes_written < 0) {
-			zb_cli_print_error(entry->shell,
-					   "Unable to print attribute value",
-					   ZB_TRUE);
+			zb_shell_print_error(
+				entry->shell,
+				"Unable to print attribute value",
+				ZB_TRUE);
 		} else {
 			shell_print(entry->shell,
 				    "ID: %d Type: %x Value: %s",
 				    attr_resp->attr_id,
 				    attr_resp->attr_type,
 				    attr_buf);
-			zb_cli_print_done(entry->shell, ZB_FALSE);
+			zb_shell_print_done(entry->shell, ZB_FALSE);
 		}
 	} else {
 		shell_print(entry->shell, "Error: Status %d", attr_resp->status);
@@ -64,7 +65,7 @@ static void print_write_attr_response(zb_bufid_t bufid, struct ctx_entry *entry)
 	ZB_ZCL_GET_NEXT_WRITE_ATTR_RES(bufid, attr_resp);
 
 	if (!attr_resp) {
-		zb_cli_print_error(entry->shell, "No attribute could be retrieved", ZB_TRUE);
+		zb_shell_print_error(entry->shell, "No attribute could be retrieved", ZB_TRUE);
 		return;
 	}
 
@@ -73,14 +74,14 @@ static void print_write_attr_response(zb_bufid_t bufid, struct ctx_entry *entry)
 		return;
 	}
 
-	zb_cli_print_done(entry->shell, ZB_FALSE);
+	zb_shell_print_done(entry->shell, ZB_FALSE);
 }
 
 /**@brief The Handler to 'intercept' every frame coming to the endpoint.
  *
  * @param bufid   ZBOSS buffer id.
  */
-zb_uint8_t cli_agent_ep_handler_attr(zb_bufid_t bufid)
+zb_uint8_t zb_shell_ep_handler_attr(zb_bufid_t bufid)
 {
 	zb_ret_t zb_err_code;
 	struct ctx_entry *entry;
@@ -96,7 +97,7 @@ zb_uint8_t cli_agent_ep_handler_attr(zb_bufid_t bufid)
 		return ZB_FALSE;
 	}
 
-	if (!zb_cli_is_zcl_cmd_response(zcl_hdr, entry)) {
+	if (!zb_shell_is_zcl_cmd_response(zcl_hdr, entry)) {
 		return ZB_FALSE;
 	}
 
@@ -121,7 +122,7 @@ zb_uint8_t cli_agent_ep_handler_attr(zb_bufid_t bufid)
 	}
 
 	/* Cancel the ongoing alarm which was to delete entry with frame data ... */
-	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_cli_zcl_cmd_timeout_cb,
+	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_shell_zcl_cmd_timeout_cb,
 						   ctx_mgr_get_index_by_entry(entry));
 	ZB_ERROR_CHECK(zb_err_code);
 
@@ -202,7 +203,7 @@ static void zb_zcl_send_read_write_attr_frame(zb_uint8_t index)
 				0);
 
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(entry->shell, "Can not send ZCL frame", ZB_FALSE);
+		zb_shell_print_error(entry->shell, "Can not send ZCL frame", ZB_FALSE);
 
 		/* Make sure ZBOSS buffer API is called safely. */
 		zb_osif_disable_all_inter();
@@ -227,22 +228,21 @@ static int read_write_attr_send(struct ctx_entry *entry)
 
 	zb_err_code =
 		ZB_SCHEDULE_APP_ALARM(
-			zb_cli_zcl_cmd_timeout_cb,
+			zb_shell_zcl_cmd_timeout_cb,
 			entry_index,
 			(CONFIG_ZIGBEE_SHELL_ZCL_CMD_TIMEOUT * ZB_TIME_ONE_SECOND));
 
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(entry->shell,
-				   "Couldn't schedule timeout cb.",
-				   ZB_FALSE);
+		zb_shell_print_error(entry->shell, "Couldn't schedule timeout cb.", ZB_FALSE);
 		goto error;
 	}
 
 	zb_err_code = ZB_SCHEDULE_APP_CALLBACK(zb_zcl_send_read_write_attr_frame, entry_index);
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(entry->shell, "Can not schedule zcl frame.", ZB_FALSE);
+		zb_shell_print_error(entry->shell, "Can not schedule zcl frame.", ZB_FALSE);
 
-		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_cli_zcl_cmd_timeout_cb, entry_index);
+		zb_err_code =
+			ZB_SCHEDULE_APP_ALARM_CANCEL(zb_shell_zcl_cmd_timeout_cb, entry_index);
 		ZB_ERROR_CHECK(zb_err_code);
 		goto error;
 	}
@@ -283,7 +283,7 @@ int cmd_zb_readattr(const struct shell *shell, size_t argc, char **argv)
 	is_direction_present = ((argc == 7) && !strcmp(argv[4], "-c"));
 
 	if (entry == NULL) {
-		zb_cli_print_error(
+		zb_shell_print_error(
 			shell,
 			"Request pool empty - wait for ongoing command to finish",
 			ZB_FALSE);
@@ -291,7 +291,7 @@ int cmd_zb_readattr(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	if (argc != 6 && !is_direction_present) {
-		zb_cli_print_error(shell, "Wrong number of arguments", ZB_FALSE);
+		zb_shell_print_error(shell, "Wrong number of arguments", ZB_FALSE);
 		goto readattr_error;
 	}
 
@@ -301,17 +301,17 @@ int cmd_zb_readattr(const struct shell *shell, size_t argc, char **argv)
 	packet_info->dst_addr_mode = parse_address(*(++argv), &(packet_info->dst_addr), ADDR_ANY);
 
 	if (packet_info->dst_addr_mode == ADDR_INVALID) {
-		zb_cli_print_error(shell, "Invalid address", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid address", ZB_FALSE);
 		goto readattr_error;
 	}
 
-	if (!zb_cli_sscan_uint8(*(++argv), &(packet_info->dst_ep))) {
-		zb_cli_print_error(shell, "Incorrect remote endpoint", ZB_FALSE);
+	if (!zb_shell_sscan_uint8(*(++argv), &(packet_info->dst_ep))) {
+		zb_shell_print_error(shell, "Incorrect remote endpoint", ZB_FALSE);
 		goto readattr_error;
 	}
 
 	if (!parse_hex_u16(*(++argv), &(packet_info->cluster_id))) {
-		zb_cli_print_error(shell, "Invalid cluster id", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid cluster id", ZB_FALSE);
 		goto readattr_error;
 	}
 
@@ -323,12 +323,12 @@ int cmd_zb_readattr(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	if (!parse_hex_u16(*(++argv), &(packet_info->prof_id))) {
-		zb_cli_print_error(shell, "Invalid profile id", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid profile id", ZB_FALSE);
 		goto readattr_error;
 	}
 
 	if (!parse_hex_u16(*(++argv), &(req_data->attr_id))) {
-		zb_cli_print_error(shell, "Invalid attribute id", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid attribute id", ZB_FALSE);
 		goto readattr_error;
 	}
 
@@ -343,7 +343,10 @@ int cmd_zb_readattr(const struct shell *shell, size_t argc, char **argv)
 	zb_osif_enable_all_inter();
 
 	if (!bufid) {
-		zb_cli_print_error(shell, "Failed to execute command (buf alloc failed)", ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Failed to execute command (buf alloc failed)",
+			ZB_FALSE);
 		ctx_mgr_delete_entry(entry);
 		return -ENOEXEC;
 	}
@@ -351,7 +354,7 @@ int cmd_zb_readattr(const struct shell *shell, size_t argc, char **argv)
 	/* Fill the structure for sending ZCL frame. */
 	packet_info->buffer = bufid;
 	/* DstAddr, DstAddr Mode, Destination endpoint are already set. */
-	packet_info->ep = zb_cli_get_endpoint();
+	packet_info->ep = zb_shell_get_endpoint();
 	packet_info->disable_aps_ack = ZB_FALSE;
 
 	return read_write_attr_send(entry);
@@ -387,12 +390,12 @@ int cmd_zb_writeattr(const struct shell *shell, size_t argc, char **argv)
 	bool is_direction_present = ((argc == 9) && !strcmp(argv[4], "-c"));
 
 	if (argc != 8 && !is_direction_present) {
-		zb_cli_print_error(shell, "Wrong number of arguments", ZB_FALSE);
+		zb_shell_print_error(shell, "Wrong number of arguments", ZB_FALSE);
 		return -EINVAL;
 	}
 
 	if (entry == NULL) {
-		zb_cli_print_error(
+		zb_shell_print_error(
 			shell,
 			"Request pool empty - wait for ongoing command to finish",
 			ZB_FALSE);
@@ -405,17 +408,17 @@ int cmd_zb_writeattr(const struct shell *shell, size_t argc, char **argv)
 	packet_info->dst_addr_mode = parse_address(*(++argv), &(packet_info->dst_addr), ADDR_ANY);
 
 	if (packet_info->dst_addr_mode == ADDR_INVALID) {
-		zb_cli_print_error(shell, "Invalid address", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid address", ZB_FALSE);
 		goto writeattr_error;
 	}
 
-	if (!zb_cli_sscan_uint8(*(++argv), &(packet_info->dst_ep))) {
-		zb_cli_print_error(shell, "Incorrect remote endpoint", ZB_FALSE);
+	if (!zb_shell_sscan_uint8(*(++argv), &(packet_info->dst_ep))) {
+		zb_shell_print_error(shell, "Incorrect remote endpoint", ZB_FALSE);
 		goto writeattr_error;
 	}
 
 	if (!parse_hex_u16(*(++argv), &(packet_info->cluster_id))) {
-		zb_cli_print_error(shell, "Invalid cluster id", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid cluster id", ZB_FALSE);
 		goto writeattr_error;
 	}
 
@@ -427,17 +430,17 @@ int cmd_zb_writeattr(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	if (!parse_hex_u16(*(++argv), &(packet_info->prof_id))) {
-		zb_cli_print_error(shell, "Invalid profile id", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid profile id", ZB_FALSE);
 		goto writeattr_error;
 	}
 
 	if (!parse_hex_u16(*(++argv), &(req_data->attr_id))) {
-		zb_cli_print_error(shell, "Invalid attribute id", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid attribute id", ZB_FALSE);
 		goto writeattr_error;
 	}
 
 	if (!parse_hex_u8(*(++argv), &(req_data->attr_type))) {
-		zb_cli_print_error(shell, "Invalid attribute type", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid attribute type", ZB_FALSE);
 		goto writeattr_error;
 	}
 
@@ -451,7 +454,7 @@ int cmd_zb_writeattr(const struct shell *shell, size_t argc, char **argv)
 	} else if (!parse_hex_str(*argv, len, req_data->attr_value,
 				  sizeof(req_data->attr_value), true)) {
 
-		zb_cli_print_error(shell, "Invalid attribute value", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid attribute value", ZB_FALSE);
 		goto writeattr_error;
 	}
 
@@ -465,7 +468,10 @@ int cmd_zb_writeattr(const struct shell *shell, size_t argc, char **argv)
 	zb_osif_enable_all_inter();
 
 	if (!bufid) {
-		zb_cli_print_error(shell, "Failed to execute command (buf alloc failed)", ZB_FALSE);
+		zb_shell_print_error(
+			shell,
+			"Failed to execute command (buf alloc failed)",
+			ZB_FALSE);
 		ctx_mgr_delete_entry(entry);
 		return -ENOEXEC;
 	}
@@ -473,7 +479,7 @@ int cmd_zb_writeattr(const struct shell *shell, size_t argc, char **argv)
 	/* Fill the structure for sending ZCL frame. */
 	packet_info->buffer = bufid;
 	/* DstAddr, DstAddr Mode, Destination endpoint are already set. */
-	packet_info->ep = zb_cli_get_endpoint();
+	packet_info->ep = zb_shell_get_endpoint();
 	packet_info->disable_aps_ack = ZB_FALSE;
 
 	return read_write_attr_send(entry);

@@ -4,13 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef ZIGBEE_CLI_ZCL_TYPES_H__
-#define ZIGBEE_CLI_ZCL_TYPES_H__
+#ifndef ZIGBEE_SHELL_ZCL_TYPES_H__
+#define ZIGBEE_SHELL_ZCL_TYPES_H__
 
 #include <zboss_api.h>
-#include <zboss_api_addons.h>
-#include "zigbee_cli_ping_types.h"
-
+#include "zigbee_shell_ping_types.h"
 
 /* Payload size in bytes, payload read from string is twice the size. */
 #define CMD_PAYLOAD_SIZE    25
@@ -86,4 +84,4 @@ struct zcl_data {
 	};
 };
 
-#endif /* ZIGBEE_CLI_ZCL_TYPES_H__ */
+#endif /* ZIGBEE_SHELL_ZCL_TYPES_H__ */
