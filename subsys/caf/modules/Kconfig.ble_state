@@ -17,6 +17,11 @@ menuconfig CAF_BLE_STATE
 
 if CAF_BLE_STATE
 
+config CAF_BLE_STATE_SECURITY_REQ
+	bool "Request connection encryption (security level 2)"
+	help
+	  Automatically request connection encryption right after the connection is established.
+
 config CAF_BLE_STATE_PM
 	bool "Enable bluetooth LE power manager integration"
 	depends on CAF_BLE_STATE
