@@ -36,6 +36,8 @@ int http_parse(struct download_client *client, size_t len);
 int http_get_request_send(struct download_client *client);
 
 int coap_block_init(struct download_client *client, size_t from);
+int coap_get_recv_timeout(struct download_client *dl);
+int coap_initiate_retransmission(struct download_client *dl);
 int coap_parse(struct download_client *client, size_t len);
 int coap_request_send(struct download_client *client);
 
@@ -425,7 +427,11 @@ static size_t socket_recv(struct download_client *dl)
 	case IPPROTO_UDP:
 	case IPPROTO_DTLS_1_2:
 		if (IS_ENABLED(CONFIG_COAP)) {
-			timeout = CONFIG_DOWNLOAD_CLIENT_UDP_SOCK_TIMEO_MS;
+			timeout = coap_get_recv_timeout(dl);
+			if (timeout <= 0) {
+				errno = ETIMEDOUT;
+				return -1;
+			}
 			break;
 		}
 	default:
@@ -439,6 +445,27 @@ static size_t socket_recv(struct download_client *dl)
 	}
 
 	return recv(dl->fd, dl->buf + dl->offset, sizeof(dl->buf) - dl->offset, 0);
+}
+
+static int request_resend(struct download_client *dl)
+{
+	int rc;
+
+	if (dl->proto == IPPROTO_UDP || dl->proto == IPPROTO_DTLS_1_2) {
+		LOG_DBG("Socket timeout, resending");
+
+		if (IS_ENABLED(CONFIG_COAP)) {
+			rc = coap_initiate_retransmission(dl);
+			if (rc) {
+				error_evt_send(dl, errno);
+				return -1;
+			}
+		}
+
+		return 1;
+	}
+
+	return 0;
 }
 
 void download_thread(void *client, void *a, void *b)
@@ -487,9 +514,10 @@ restart_and_suspend:
 			if (len == -1) {
 				if ((errno == ETIMEDOUT) || (errno == EWOULDBLOCK) ||
 				    (errno == EAGAIN)) {
-					if (dl->proto == IPPROTO_UDP ||
-					    dl->proto == IPPROTO_DTLS_1_2) {
-						LOG_DBG("Socket timeout, resending");
+					rc = request_resend(dl);
+					if (rc == -1) {
+						break;
+					} else if (rc == 1) {
 						goto send_again;
 					}
 					error_cause = ETIMEDOUT;
