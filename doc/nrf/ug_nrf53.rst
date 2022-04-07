@@ -8,6 +8,8 @@ The |NCS| provides support for developing on the nRF5340 System on Chip (SoC) us
 .. note::
   |thingy53_unreleased|
 
+|nrf5340_octave_note|
+
 .. toctree::
    :maxdepth: 2
    :caption: Subpages:
