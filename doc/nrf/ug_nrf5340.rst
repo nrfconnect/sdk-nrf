@@ -21,6 +21,10 @@ To get started with the nRF5340 DK, follow the steps in the `Getting started wit
 
    See the `nRF Connect SDK v1.4.0 documentation`_ for the last release supporting the nRF5340 PDK.
 
+|nrf5340_octave_note|
+Given its complexity, the application uses custom building and programming procedures.
+Refer to its documentation for more information.
+
 .. _ug_nrf5340_intro:
 
 Introduction

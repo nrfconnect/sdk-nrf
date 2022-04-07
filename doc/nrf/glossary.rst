@@ -52,6 +52,10 @@ Glossary
    Branch
       A line of development composed of a sequence of Git :term:`commits <Commit>`.
 
+   Broadcast Isochronous Stream (BIS)
+      A configuration of the :term:`Isochronous channels (ISO)` feature of the :term:`LE Audio` standard.
+      In this configuration, one audio source can broadcast audio to multiple audio receivers.
+
    Carrier Wave (CW)
       A single-frequency electromagnetic wave that can be modulated in amplitude, frequency, or phase to convey information.
 
@@ -89,6 +93,10 @@ Glossary
 
    Commit tag
       A tag prepended to the first line of the commit message to ease filtering and identification of particular :term:`commit <Commit>` types.
+
+   Connected Isochronous Stream (CIS)
+      A configuration of the :term:`Isochronous channels (ISO)` feature of the :term:`LE Audio` standard.
+      In this configuration, one audio source sends the audio data using both the left and the right ISO channels at the same time, allowing for stereophonic sound reproduction with synchronized playback.
 
    Contribution
       A change to the codebase sent to a remote :term:`repository <Repository>` for inclusion.
@@ -208,6 +216,9 @@ Glossary
    Integrated Development Environment (IDE)
       A software application that provides facilities for software development.
 
+   Inter-IC sound (I2S)
+      A serial bus interface standard used for connecting digital audio devices for tranmission of the pulse-code modulation (PCM) data.
+
    International Mobile (Station) Equipment Identity (IMEI)
       A unique code consisting of 14 digits and one check digit for identifying 3GPP-based mobile devices.
 
@@ -229,6 +240,9 @@ Glossary
 
    IPv6 address
       An alphanumerical label that is used to identify a network interface of a computer or other network node participating in an IPv6 computer network.
+
+   Isochronous channels (ISO)
+      A feature of the :term:`LE Audio` standard that allows for relaying audio data to multiple devices at the same time (isochronously) without having to split the stereo stream.
 
    Kconfig file
       A configuration file for a module or a sample, written in the :term:`Kconfig language` syntax.
@@ -253,6 +267,17 @@ Glossary
       A :term:`Kconfig fragment`, usually called :file:`prj.conf`, used to define default :term:`Kconfig options <Kconfig option>` for an application.
       These are foundational options for the application that will always be applied to its built image.
       However, they can be overridden by applying an additional :term:`Kconfig fragment` at build time.
+
+   LC3 codec
+      The Low Complexity Communication Codec, or LC3 codec, is the new codec for the :term:`LE Audio` standard.
+      It replaces the dated :term:`SBC codec` that is used in the Bluetooth Classic Audio streaming.
+      The LC3 codec uses half the data rate and delivers higher audio quality than the SBC codec.
+
+   LE Audio
+      Audio transmission standard based on Bluetooth® LE.
+      It is independent from Bluetooth® 5.0 and Bluetooth® 5.1.
+      Audio LE reduces power consumption for audio transmission, allows for isochronous audio streams between a source and multiple sink devices, and enables broadcasting to an unlimited number of audio devices.
+      The standard uses the new :term:`LC3 codec`.
 
    Link Layer (LL)
       "A control protocol for the link and physical layers that is carried over logical links in addition to user data."
@@ -486,6 +511,11 @@ Glossary
    Sample
       An implementation example that showcases a single feature or library.
       It is possible to create a programmable image from it, as it includes a ``main()`` entry point.
+
+   SBC codec
+      The Low Complexity Subband Codec (SBC) is the default software codec for the Bluetooth Classic Audio.
+      It comes with digital encoder and decoder for transferring audio data.
+      It is being gradually supplanted by the :term:`LC3 codec` developed for :term:`LE Audio`.
 
    Secure Access Port Protection (SECUREAPPROTECT)
       A register used to prevent read and write access to all secure CPU registers and secure memory-mapped addresses.
