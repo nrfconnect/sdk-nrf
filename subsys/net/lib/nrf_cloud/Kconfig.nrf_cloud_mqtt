@@ -7,7 +7,7 @@ module = NRF_CLOUD_MQTT
 module-prompt = "nRF Cloud MQTT library"
 orsource "../Kconfig.cloud_$(CLOUD_SERVICE_SELECTOR)"
 
-config $(module)
+menuconfig $(module)
 	bool
 	prompt "nRF Cloud MQTT Library" if !CLOUD_SERVICE_MUTUAL_EXCLUSIVE
 	select MQTT_LIB
@@ -16,8 +16,6 @@ config $(module)
 	select CJSON_LIB
 
 if NRF_CLOUD_MQTT
-
-menu "nRF Cloud MQTT Library"
 
 config NRF_CLOUD_STATIC_IPV4
 	bool "Enable use of static IPv4"
@@ -112,7 +110,5 @@ config NRF_CLOUD_MQTT_KEEPALIVE
 	  Keep alive time for MQTT connection to nRF Cloud, in seconds. This option overwrites
 	  the CONFIG_MQTT_KEEPALIVE value. Default is set to the maximum specified MQTT keepalive
 	  for nRF Cloud.
-
-endmenu
 
 endif # NRF_CLOUD_MQTT
