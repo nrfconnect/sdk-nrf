@@ -44,45 +44,51 @@
   0x00, 0x00, 0x00, 0x00, \
 \
 \
+  /* Endpoint: 0, Cluster: OTA Software Update Requestor (server), big-endian */\
+\
+  /* 12 - FeatureMap, */\
+  0x00, 0x00, 0x00, 0x00, \
+\
+\
   /* Endpoint: 0, Cluster: General Commissioning (server), big-endian */\
 \
-  /* 12 - Breadcrumb, */\
+  /* 16 - Breadcrumb, */\
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
 \
-  /* 20 - FeatureMap, */\
+  /* 24 - FeatureMap, */\
   0x00, 0x00, 0x00, 0x00, \
 \
 \
   /* Endpoint: 0, Cluster: Network Commissioning (server), big-endian */\
 \
-  /* 24 - LastConnectErrorValue, */\
+  /* 28 - LastConnectErrorValue, */\
   0x00, 0x00, 0x00, 0x00, \
-\
-  /* 28 - FeatureMap, */\
-  0x00, 0x00, 0x00, 0x00, \
-\
-\
-  /* Endpoint: 0, Cluster: General Diagnostics (server), big-endian */\
 \
   /* 32 - FeatureMap, */\
   0x00, 0x00, 0x00, 0x00, \
 \
 \
-  /* Endpoint: 0, Cluster: Software Diagnostics (server), big-endian */\
+  /* Endpoint: 0, Cluster: General Diagnostics (server), big-endian */\
 \
   /* 36 - FeatureMap, */\
   0x00, 0x00, 0x00, 0x00, \
 \
 \
-  /* Endpoint: 0, Cluster: AdministratorCommissioning (server), big-endian */\
+  /* Endpoint: 0, Cluster: Software Diagnostics (server), big-endian */\
 \
   /* 40 - FeatureMap, */\
   0x00, 0x00, 0x00, 0x00, \
 \
 \
-  /* Endpoint: 0, Cluster: Operational Credentials (server), big-endian */\
+  /* Endpoint: 0, Cluster: AdministratorCommissioning (server), big-endian */\
 \
   /* 44 - FeatureMap, */\
+  0x00, 0x00, 0x00, 0x00, \
+\
+\
+  /* Endpoint: 0, Cluster: Operational Credentials (server), big-endian */\
+\
+  /* 48 - FeatureMap, */\
   0x00, 0x00, 0x00, 0x00, \
 \
 }
@@ -106,52 +112,58 @@
   0x00, 0x00, 0x00, 0x00, \
 \
 \
+  /* Endpoint: 0, Cluster: OTA Software Update Requestor (server), little-endian */\
+\
+  /* 12 - FeatureMap, */\
+  0x00, 0x00, 0x00, 0x00, \
+\
+\
   /* Endpoint: 0, Cluster: General Commissioning (server), little-endian */\
 \
-  /* 12 - Breadcrumb, */\
+  /* 16 - Breadcrumb, */\
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
 \
-  /* 20 - FeatureMap, */\
+  /* 24 - FeatureMap, */\
   0x00, 0x00, 0x00, 0x00, \
 \
 \
   /* Endpoint: 0, Cluster: Network Commissioning (server), little-endian */\
 \
-  /* 24 - LastConnectErrorValue, */\
+  /* 28 - LastConnectErrorValue, */\
   0x00, 0x00, 0x00, 0x00, \
-\
-  /* 28 - FeatureMap, */\
-  0x00, 0x00, 0x00, 0x00, \
-\
-\
-  /* Endpoint: 0, Cluster: General Diagnostics (server), little-endian */\
 \
   /* 32 - FeatureMap, */\
   0x00, 0x00, 0x00, 0x00, \
 \
 \
-  /* Endpoint: 0, Cluster: Software Diagnostics (server), little-endian */\
+  /* Endpoint: 0, Cluster: General Diagnostics (server), little-endian */\
 \
   /* 36 - FeatureMap, */\
   0x00, 0x00, 0x00, 0x00, \
 \
 \
-  /* Endpoint: 0, Cluster: AdministratorCommissioning (server), little-endian */\
+  /* Endpoint: 0, Cluster: Software Diagnostics (server), little-endian */\
 \
   /* 40 - FeatureMap, */\
   0x00, 0x00, 0x00, 0x00, \
 \
 \
-  /* Endpoint: 0, Cluster: Operational Credentials (server), little-endian */\
+  /* Endpoint: 0, Cluster: AdministratorCommissioning (server), little-endian */\
 \
   /* 44 - FeatureMap, */\
+  0x00, 0x00, 0x00, 0x00, \
+\
+\
+  /* Endpoint: 0, Cluster: Operational Credentials (server), little-endian */\
+\
+  /* 48 - FeatureMap, */\
   0x00, 0x00, 0x00, 0x00, \
 \
 }
 
 #endif // BIGENDIAN_CPU
 
-#define GENERATED_DEFAULTS_COUNT (11)
+#define GENERATED_DEFAULTS_COUNT (12)
 
 #define ZAP_TYPE(type) ZCL_ ## type ## _ATTRIBUTE_TYPE
 #define ZAP_LONG_DEFAULTS_INDEX(index) { &generatedDefaults[index] }
@@ -167,7 +179,7 @@
 
 #define ZAP_ATTRIBUTE_MASK(mask) ATTRIBUTE_MASK_ ## mask
 // This is an array of EmberAfAttributeMetadata structures.
-#define GENERATED_ATTRIBUTE_COUNT 124
+#define GENERATED_ATTRIBUTE_COUNT 130
 #define GENERATED_ATTRIBUTES { \
 \
   /* Endpoint: 0, Cluster: Descriptor (server) */ \
@@ -193,12 +205,20 @@
   { 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, ZAP_ATTRIBUTE_MASK(SINGLETON), ZAP_LONG_DEFAULTS_INDEX(8) }, /* FeatureMap */  \
   { 0x0000FFFD, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(SINGLETON), ZAP_SIMPLE_DEFAULT(3) }, /* ClusterRevision */  \
 \
+  /* Endpoint: 0, Cluster: OTA Software Update Requestor (server) */ \
+  { 0x00000000, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) | ZAP_ATTRIBUTE_MASK(WRITABLE), ZAP_EMPTY_DEFAULT() }, /* DefaultOtaProviders */  \
+  { 0x00000001, ZAP_TYPE(BOOLEAN), 1, 0, ZAP_SIMPLE_DEFAULT(1) }, /* UpdatePossible */  \
+  { 0x00000002, ZAP_TYPE(ENUM8), 1, 0, ZAP_SIMPLE_DEFAULT(0) }, /* UpdateState */  \
+  { 0x00000003, ZAP_TYPE(INT8U), 1, ZAP_ATTRIBUTE_MASK(NULLABLE), ZAP_EMPTY_DEFAULT() }, /* UpdateStateProgress */  \
+  { 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0, ZAP_LONG_DEFAULTS_INDEX(12) }, /* FeatureMap */  \
+  { 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(1) }, /* ClusterRevision */  \
+\
   /* Endpoint: 0, Cluster: General Commissioning (server) */ \
-  { 0x00000000, ZAP_TYPE(INT64U), 8, ZAP_ATTRIBUTE_MASK(WRITABLE), ZAP_LONG_DEFAULTS_INDEX(12) }, /* Breadcrumb */  \
+  { 0x00000000, ZAP_TYPE(INT64U), 8, ZAP_ATTRIBUTE_MASK(WRITABLE), ZAP_LONG_DEFAULTS_INDEX(16) }, /* Breadcrumb */  \
   { 0x00000001, ZAP_TYPE(STRUCT), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE), ZAP_EMPTY_DEFAULT() }, /* BasicCommissioningInfo */  \
   { 0x00000002, ZAP_TYPE(ENUM8), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE), ZAP_EMPTY_DEFAULT() }, /* RegulatoryConfig */  \
   { 0x00000003, ZAP_TYPE(ENUM8), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE), ZAP_EMPTY_DEFAULT() }, /* LocationCapability */  \
-  { 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0, ZAP_LONG_DEFAULTS_INDEX(20) }, /* FeatureMap */  \
+  { 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0, ZAP_LONG_DEFAULTS_INDEX(24) }, /* FeatureMap */  \
   { 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* ClusterRevision */  \
 \
   /* Endpoint: 0, Cluster: Network Commissioning (server) */ \
@@ -209,8 +229,8 @@
   { 0x00000004, ZAP_TYPE(BOOLEAN), 1, ZAP_ATTRIBUTE_MASK(WRITABLE), ZAP_EMPTY_DEFAULT() }, /* InterfaceEnabled */  \
   { 0x00000005, ZAP_TYPE(ENUM8), 1, ZAP_ATTRIBUTE_MASK(NULLABLE), ZAP_EMPTY_DEFAULT() }, /* LastNetworkingStatus */  \
   { 0x00000006, ZAP_TYPE(OCTET_STRING), 33, ZAP_ATTRIBUTE_MASK(NULLABLE), ZAP_EMPTY_DEFAULT() }, /* LastNetworkID */  \
-  { 0x00000007, ZAP_TYPE(INT32S), 4, ZAP_ATTRIBUTE_MASK(NULLABLE), ZAP_LONG_DEFAULTS_INDEX(24) }, /* LastConnectErrorValue */  \
-  { 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0, ZAP_LONG_DEFAULTS_INDEX(28) }, /* FeatureMap */  \
+  { 0x00000007, ZAP_TYPE(INT32S), 4, ZAP_ATTRIBUTE_MASK(NULLABLE), ZAP_LONG_DEFAULTS_INDEX(28) }, /* LastConnectErrorValue */  \
+  { 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0, ZAP_LONG_DEFAULTS_INDEX(32) }, /* FeatureMap */  \
   { 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* ClusterRevision */  \
 \
   /* Endpoint: 0, Cluster: General Diagnostics (server) */ \
@@ -219,14 +239,14 @@
   { 0x00000002, ZAP_TYPE(INT64U), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE), ZAP_EMPTY_DEFAULT() }, /* UpTime */  \
   { 0x00000003, ZAP_TYPE(INT32U), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE), ZAP_EMPTY_DEFAULT() }, /* TotalOperationalHours */  \
   { 0x00000004, ZAP_TYPE(ENUM8), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE), ZAP_EMPTY_DEFAULT() }, /* BootReasons */  \
-  { 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0, ZAP_LONG_DEFAULTS_INDEX(32) }, /* FeatureMap */  \
+  { 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0, ZAP_LONG_DEFAULTS_INDEX(36) }, /* FeatureMap */  \
   { 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* ClusterRevision */  \
 \
   /* Endpoint: 0, Cluster: Software Diagnostics (server) */ \
   { 0x00000001, ZAP_TYPE(INT64U), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE), ZAP_EMPTY_DEFAULT() }, /* CurrentHeapFree */  \
   { 0x00000002, ZAP_TYPE(INT64U), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE), ZAP_EMPTY_DEFAULT() }, /* CurrentHeapUsed */  \
   { 0x00000003, ZAP_TYPE(INT64U), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE), ZAP_EMPTY_DEFAULT() }, /* CurrentHeapHighWatermark */  \
-  { 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0, ZAP_LONG_DEFAULTS_INDEX(36) }, /* FeatureMap */  \
+  { 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0, ZAP_LONG_DEFAULTS_INDEX(40) }, /* FeatureMap */  \
   { 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* ClusterRevision */  \
 \
   /* Endpoint: 0, Cluster: Thread Network Diagnostics (server) */ \
@@ -299,7 +319,7 @@
   { 0x00000000, ZAP_TYPE(INT8U), 1, 0, ZAP_EMPTY_DEFAULT() }, /* WindowStatus */  \
   { 0x00000001, ZAP_TYPE(FABRIC_IDX), 1, 0, ZAP_EMPTY_DEFAULT() }, /* AdminFabricIndex */  \
   { 0x00000002, ZAP_TYPE(INT16U), 2, 0, ZAP_EMPTY_DEFAULT() }, /* AdminVendorId */  \
-  { 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0, ZAP_LONG_DEFAULTS_INDEX(40) }, /* FeatureMap */  \
+  { 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0, ZAP_LONG_DEFAULTS_INDEX(44) }, /* FeatureMap */  \
   { 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(1) }, /* ClusterRevision */  \
 \
   /* Endpoint: 0, Cluster: Operational Credentials (server) */ \
@@ -309,7 +329,7 @@
   { 0x00000003, ZAP_TYPE(INT8U), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE), ZAP_EMPTY_DEFAULT() }, /* CommissionedFabrics */  \
   { 0x00000004, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE), ZAP_EMPTY_DEFAULT() }, /* TrustedRootCertificates */  \
   { 0x00000005, ZAP_TYPE(FABRIC_IDX), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE), ZAP_EMPTY_DEFAULT() }, /* CurrentFabricIndex */  \
-  { 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0, ZAP_LONG_DEFAULTS_INDEX(44) }, /* FeatureMap */  \
+  { 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0, ZAP_LONG_DEFAULTS_INDEX(48) }, /* FeatureMap */  \
   { 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0, ZAP_SIMPLE_DEFAULT(0x0001) }, /* ClusterRevision */  \
 }
 
@@ -329,6 +349,10 @@ const EmberAfGenericClusterFunction chipFuncArrayBasicServer[] = {\
 
 // clang-format off
 #define GENERATED_COMMANDS { \
+  /* Endpoint: 0, Cluster: OTA Software Update Requestor (server) */\
+  /*   client_generated */ \
+  0x00000000 /* AnnounceOtaProvider */, \
+  chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 0, Cluster: General Commissioning (server) */\
   /*   client_generated */ \
   0x00000000 /* ArmFailSafe */, \
@@ -388,7 +412,7 @@ const EmberAfGenericClusterFunction chipFuncArrayBasicServer[] = {\
 // clang-format on
 
 #define ZAP_CLUSTER_MASK(mask) CLUSTER_MASK_ ## mask
-#define GENERATED_CLUSTER_COUNT 9
+#define GENERATED_CLUSTER_COUNT 11
 
 
 // clang-format off
@@ -416,31 +440,53 @@ const EmberAfGenericClusterFunction chipFuncArrayBasicServer[] = {\
       .generatedCommandList = nullptr ,\
     },\
   { \
+      /* Endpoint: 0, Cluster: OTA Software Update Provider (client) */ \
+      .clusterId = 0x00000029,  \
+      .attributes = ZAP_ATTRIBUTE_INDEX(19), \
+      .attributeCount = 0, \
+      .clusterSize = 0, \
+      .mask = ZAP_CLUSTER_MASK(CLIENT), \
+      .functions = NULL, \
+      .acceptedCommandList = nullptr ,\
+      .generatedCommandList = nullptr ,\
+    },\
+  { \
+      /* Endpoint: 0, Cluster: OTA Software Update Requestor (server) */ \
+      .clusterId = 0x0000002A,  \
+      .attributes = ZAP_ATTRIBUTE_INDEX(19), \
+      .attributeCount = 6, \
+      .clusterSize = 9, \
+      .mask = ZAP_CLUSTER_MASK(SERVER), \
+      .functions = NULL, \
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 0 ) ,\
+      .generatedCommandList = nullptr ,\
+    },\
+  { \
       /* Endpoint: 0, Cluster: General Commissioning (server) */ \
       .clusterId = 0x00000030,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(19), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(25), \
       .attributeCount = 6, \
       .clusterSize = 14, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 0 ) ,\
-      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 4 ) ,\
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 2 ) ,\
+      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 6 ) ,\
     },\
   { \
       /* Endpoint: 0, Cluster: Network Commissioning (server) */ \
       .clusterId = 0x00000031,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(25), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(31), \
       .attributeCount = 10, \
       .clusterSize = 48, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 7 ) ,\
-      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 13 ) ,\
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 9 ) ,\
+      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 15 ) ,\
     },\
   { \
       /* Endpoint: 0, Cluster: General Diagnostics (server) */ \
       .clusterId = 0x00000033,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(35), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(41), \
       .attributeCount = 7, \
       .clusterSize = 6, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
@@ -451,46 +497,46 @@ const EmberAfGenericClusterFunction chipFuncArrayBasicServer[] = {\
   { \
       /* Endpoint: 0, Cluster: Software Diagnostics (server) */ \
       .clusterId = 0x00000034,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(42), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(48), \
       .attributeCount = 5, \
       .clusterSize = 6, \
-      .mask = ZAP_CLUSTER_MASK(SERVER), \
-      .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 16 ) ,\
-      .generatedCommandList = nullptr ,\
-    },\
-  { \
-      /* Endpoint: 0, Cluster: Thread Network Diagnostics (server) */ \
-      .clusterId = 0x00000035,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(47), \
-      .attributeCount = 64, \
-      .clusterSize = 2, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
       .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 18 ) ,\
       .generatedCommandList = nullptr ,\
     },\
   { \
-      /* Endpoint: 0, Cluster: AdministratorCommissioning (server) */ \
-      .clusterId = 0x0000003C,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(111), \
-      .attributeCount = 5, \
-      .clusterSize = 10, \
+      /* Endpoint: 0, Cluster: Thread Network Diagnostics (server) */ \
+      .clusterId = 0x00000035,  \
+      .attributes = ZAP_ATTRIBUTE_INDEX(53), \
+      .attributeCount = 64, \
+      .clusterSize = 2, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
       .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 20 ) ,\
       .generatedCommandList = nullptr ,\
     },\
   { \
+      /* Endpoint: 0, Cluster: AdministratorCommissioning (server) */ \
+      .clusterId = 0x0000003C,  \
+      .attributes = ZAP_ATTRIBUTE_INDEX(117), \
+      .attributeCount = 5, \
+      .clusterSize = 10, \
+      .mask = ZAP_CLUSTER_MASK(SERVER), \
+      .functions = NULL, \
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 22 ) ,\
+      .generatedCommandList = nullptr ,\
+    },\
+  { \
       /* Endpoint: 0, Cluster: Operational Credentials (server) */ \
       .clusterId = 0x0000003E,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(116), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(122), \
       .attributeCount = 8, \
       .clusterSize = 6, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 24 ) ,\
-      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 34 ) ,\
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 26 ) ,\
+      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 36 ) ,\
     },\
 }
 
@@ -498,11 +544,11 @@ const EmberAfGenericClusterFunction chipFuncArrayBasicServer[] = {\
 
 #define ZAP_CLUSTER_INDEX(index) (&generatedClusters[index])
 
-#define ZAP_FIXED_ENDPOINT_DATA_VERSION_COUNT 9
+#define ZAP_FIXED_ENDPOINT_DATA_VERSION_COUNT 10
 
 // This is an array of EmberAfEndpointType structures.
 #define GENERATED_ENDPOINT_TYPES { \
-  { ZAP_CLUSTER_INDEX(0), 9, 348 }, \
+  { ZAP_CLUSTER_INDEX(0), 11, 357 }, \
 }
 
 
@@ -517,7 +563,7 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 #define ATTRIBUTE_SINGLETONS_SIZE (250)
 
 // Total size of attribute storage
-#define ATTRIBUTE_MAX_SIZE (348)
+#define ATTRIBUTE_MAX_SIZE (357)
 
 // Number of fixed endpoints
 #define FIXED_ENDPOINT_COUNT (1)

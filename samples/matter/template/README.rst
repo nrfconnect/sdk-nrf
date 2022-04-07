@@ -80,10 +80,18 @@ This sample supports the following build types, depending on the selected board:
 
 * ``debug`` -- Debug version of the application - can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
 * ``release`` -- Release version of the application - can be used to enable only the necessary application functionalities to optimize its performance.
+* ``no_dfu`` -- Debug version of the application without Device Firmware Upgrade feature support - can be used only for the nRF52840 DK and nRF5340 DK, as those platforms have DFU enabled by default.
 
 .. note::
     `Selecting a build type`_ is optional.
     The ``debug`` build type is used by default if no build type is explicitly selected.
+
+Device Firmware Upgrade support
+===============================
+
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_build_with_dfu_start
+    :end-before: matter_door_lock_sample_build_with_dfu_end
 
 FEM support
 ===========
@@ -181,6 +189,11 @@ To test the sample in a Matter-enabled Thread network, complete the following st
 #. Press **Button 1** for six seconds to initiate the factory reset of the device.
 
 The device reboots after all its settings are erased.
+
+Upgrading the device firmware
+=============================
+
+To upgrade the device firmware, complete the steps listed for the selected method in the :doc:`matter:nrfconnect_examples_software_update` tutorial of the Matter documentation.
 
 Dependencies
 ************
