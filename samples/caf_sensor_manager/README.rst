@@ -17,7 +17,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840
+   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp
 
 Overview
 ********
@@ -30,6 +30,9 @@ The data from the events is then passed to the :ref:`caf_sensor_data_aggregator`
 When the aggregator's buffer is full, the application sends aggregated data to the workload simulator module (``workload_sim``).
 The workload simulator is a custom module used by this sample only.
 This module handles the data received from the :ref:`caf_sensor_data_aggregator`, simulates workload on data using :c:func:`k_busy_wait` and notifies the aggregator module when the aggregator buffer can be freed.
+
+If you are running this sample on an SoC with multiple cores, the workload simulator module (``workload_sim``) is placed on the second core.
+All communication between the cores is done using :ref:`event_manager_proxy` and Zephyr subsystem :file:`include/ipc/ipc_service.h`.
 
 Building and running
 ********************
@@ -73,7 +76,13 @@ This sample uses the following |NCS| libraries:
 * :ref:`caf_sensor_data_aggregator`
 * :ref:`wave_gen`
 * :ref:`app_event_manager`
+* :ref:`event_manager_proxy`
 
 This sample uses the following |NCS| drivers:
 
 * :ref:`sensor_sim`
+
+In addition, it uses the following Zephyr subsystems:
+
+* :file:`include/ipc/ipc_service.h`
+* :ref:`zephyr:logging_api`

@@ -5,6 +5,7 @@ common:
   harness: console
   integration_platforms:
     - nrf52840dk_nrf52840
+    - nrf5340dk_nrf5340_cpuapp
     - qemu_cortex_m3
 
   platform_exclude: native_posix qemu_x86
@@ -14,7 +15,7 @@ common:
     regex:
      - "sensor_sim_ctrl state:READY"
      - "accel_sim_xyz state:ACTIVE"
-     - "Send sensor buffer desc: accel_sim_xyz"
+     - "Send sensor buffer desc address:"
      - "sensor_data_aggregator_release_buffer_event"
 
 tests:

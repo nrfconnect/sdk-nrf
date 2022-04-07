@@ -6,6 +6,18 @@
 
 menu "Sensor manager sample"
 rsource "src/modules/Kconfig"
+
+config INCLUDE_REMOTE_IMAGE
+	bool "Execute part of application on remote core"
+	depends on SOC_NRF5340_CPUAPP
+	default y if (BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF5340DK_NRF5340_CPUAPPNS)
+	select PARTITION_MANAGER_ENABLED
+	select BOARD_ENABLE_CPUNET
+
+config REMOTE_CORE_BOARD
+	string "The name of the CORE to be used by net image"
+	depends on INCLUDE_REMOTE_IMAGE
+
 endmenu
 
 menu "Zephyr Kernel"
