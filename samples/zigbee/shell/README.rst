@@ -70,7 +70,7 @@ Button 4:
     Starts or cancels the Identify mode.
 
 All other interactions with the application can be handled using serial communication.
-See :ref:`zigbee_cli_reference` for available serial commands.
+See :ref:`zigbee_shell_reference` for available serial commands.
 
 Configuration
 *************

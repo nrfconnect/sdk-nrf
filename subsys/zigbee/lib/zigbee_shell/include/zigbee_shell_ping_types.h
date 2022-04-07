@@ -4,14 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef ZIGBEE_CLI_PING_TYPES_H__
-#define ZIGBEE_CLI_PING_TYPES_H__
-
-#include <shell/shell.h>
+#ifndef ZIGBEE_SHELL_PING_TYPES_H__
+#define ZIGBEE_SHELL_PING_TYPES_H__
 
 #include <zboss_api.h>
 #include <zboss_api_addons.h>
-#include "zigbee_cli_cmd_zcl.h"
 
 #define PING_CUSTOM_CLUSTER           0xBEEF
 #define PING_MAX_LENGTH               79
@@ -21,6 +18,7 @@
 #define PING_NO_ECHO_REQUEST          0x03
 #define PING_ECHO_REQUEST_BYTE        0xAB
 #define PING_ECHO_REPLY_BYTE          0xCD
+
 
 /**@brief  Ping event type. Informs what kind of acknowledgment was received.
  */
@@ -83,4 +81,4 @@ struct ping_reply {
  */
 void zb_ping_set_ping_indication_cb(ping_time_cb_t cb);
 
-#endif /* ZIGBEE_CLI_PING_TYPES_H__ */
+#endif /* ZIGBEE_SHELL_PING_TYPES_H__ */

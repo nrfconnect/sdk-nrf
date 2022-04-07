@@ -4,14 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef ZIGBEE_CLI_CTX_MGR_H__
-#define ZIGBEE_CLI_CTX_MGR_H__
+#ifndef ZIGBEE_SHELL_CTX_MGR_H__
+#define ZIGBEE_SHELL_CTX_MGR_H__
 
 #include <shell/shell.h>
 
-#include "zigbee_cli_zdo_types.h"
-#include "zigbee_cli_ping_types.h"
-#include "zigbee_cli_zcl_types.h"
+#include "zigbee_shell_zdo_types.h"
+#include "zigbee_shell_zcl_types.h"
 
 #define CTX_MGR_ENTRY_IVALID_INDEX 0xFF
 
@@ -111,4 +110,4 @@ struct ctx_entry *ctx_mgr_get_entry_by_index(uint8_t index);
  */
 struct ctx_entry *ctx_mgr_find_zcl_entry_by_bufid(zb_bufid_t bufid, enum ctx_entry_type type);
 
-#endif /* ZIGBEE_CLI_CTX_MGR_H__ */
+#endif /* ZIGBEE_SHELL_CTX_MGR_H__ */

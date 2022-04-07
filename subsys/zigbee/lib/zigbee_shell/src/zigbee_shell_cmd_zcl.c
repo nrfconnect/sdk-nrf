@@ -4,12 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <shell/shell.h>
-
-#include <zboss_api.h>
-#include <zigbee/zigbee_error_handler.h>
-#include "zigbee_cli.h"
-#include "zigbee_cli_cmd_zcl.h"
+#include "zigbee_shell_cmd_zcl.h"
 
 #define ATTR_HELP "Read/write an attribute."
 

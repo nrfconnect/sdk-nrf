@@ -195,7 +195,7 @@ For more information about the library, see :ref:`lib_zigbee_zcl_scenes`.
 Configuring Zigbee shell
 ************************
 
-The Zigbee shell library implements a set of :ref:`Zigbee shell commands <zigbee_cli_reference>` that can be used with all Zigbee samples for testing and debugging.
+The Zigbee shell library implements a set of :ref:`Zigbee shell commands <zigbee_shell_reference>` that can be used with all Zigbee samples for testing and debugging.
 
 |zigbee_shell_config|
 

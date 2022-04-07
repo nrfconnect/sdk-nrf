@@ -9,10 +9,8 @@
 #include <shell/shell.h>
 
 #include <zboss_api.h>
-#include <zigbee/zigbee_app_utils.h>
 #include <zigbee/zigbee_error_handler.h>
-#include <zigbee_cli_utils.h>
-
+#include "zigbee_shell_utils.h"
 
 #define MONITOR_ON_HELP \
 	("Start monitoring the list of active Zigbee neighbors.\n" \
@@ -220,7 +218,7 @@ static int cmd_zb_nbr_monitor(const struct shell *shell, size_t argc, char **arg
 	if (strcmp(argv[0], "trigger") == 0) {
 		/* This will trigger logging (if monitor is active). */
 		last_update_count = UPDATE_COUNT_RELOAD;
-		zb_cli_print_done(shell, ZB_FALSE);
+		zb_shell_print_done(shell, ZB_FALSE);
 		return 0;
 	}
 
@@ -232,7 +230,7 @@ static int cmd_zb_nbr_monitor(const struct shell *shell, size_t argc, char **arg
 
 	if (monitor_active == start) {
 		/* Make sure that the monitor is not started twice. */
-		zb_cli_print_done(shell, ZB_FALSE);
+		zb_shell_print_done(shell, ZB_FALSE);
 		return 0;
 	}
 
@@ -243,8 +241,10 @@ static int cmd_zb_nbr_monitor(const struct shell *shell, size_t argc, char **arg
 		zb_osif_enable_all_inter();
 
 		if (!monitor_buf) {
-			zb_cli_print_error(shell, "Failed to execute command (buf alloc failed)",
-					   ZB_FALSE);
+			zb_shell_print_error(
+				shell,
+				"Failed to execute command (buf alloc failed)",
+				ZB_FALSE);
 			return -ENOEXEC;
 		}
 
@@ -256,7 +256,7 @@ static int cmd_zb_nbr_monitor(const struct shell *shell, size_t argc, char **arg
 		/* monitor_buf will be freed from refresh_active_nbt_table. */
 	}
 
-	zb_cli_print_done(shell, ZB_FALSE);
+	zb_shell_print_done(shell, ZB_FALSE);
 	return 0;
 }
 

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef ZIGBEE_CLI_UTILS_H__
-#define ZIGBEE_CLI_UTILS_H__
+#ifndef ZIGBEE_SHELL_UTILS_H__
+#define ZIGBEE_SHELL_UTILS_H__
 
 #include <stdio.h>
 #include <string.h>
@@ -15,14 +15,14 @@
 
 #include <zboss_api.h>
 #include <zigbee/zigbee_app_utils.h>
-#include "zigbee_cli_ctx_mgr.h"
+#include "zigbee_shell_ctx_mgr.h"
+
 
 /**@brief Finish the command by dumping 'Done'.
  *
  * @param prepend_newline      Whether to prepend a newline.
  */
-static inline void zb_cli_print_done(const struct shell *shell,
-				     bool prepend_newline)
+static inline void zb_shell_print_done(const struct shell *shell, bool prepend_newline)
 {
 	shell_fprintf(shell, SHELL_NORMAL,
 		      (prepend_newline ? "\nDone\n" : "Done\n"));
@@ -34,8 +34,8 @@ static inline void zb_cli_print_done(const struct shell *shell,
  *                         as an error.
  * @param prepend_newline  Whether to prepend a newline.
  */
-static inline void zb_cli_print_error(const struct shell *shell,
-				      const char *message, bool prepend_newline)
+static inline void zb_shell_print_error(const struct shell *shell, const char *message,
+					bool prepend_newline)
 {
 	if (message) {
 		shell_error(shell, prepend_newline ?
@@ -82,8 +82,8 @@ static inline void zb_cli_print_error(const struct shell *shell,
  * @return Number of bytes written into string buffer or negative value
  *         on error.
  */
-int zb_cli_zcl_attr_to_str(char *str_buf, uint16_t buf_len,
-			   zb_uint16_t attr_type, zb_uint8_t *attr);
+int zb_shell_zcl_attr_to_str(char *str_buf, uint16_t buf_len, zb_uint16_t attr_type,
+			     zb_uint8_t *attr);
 
 /**@brief Check if the ZCL frame we received is the response to our command in the table entry.
  *
@@ -92,14 +92,14 @@ int zb_cli_zcl_attr_to_str(char *str_buf, uint16_t buf_len,
  *
  * @return ZB_TRUE if is response to command, ZB_FALSE otherwise.
  */
-zb_bool_t zb_cli_is_zcl_cmd_response(zb_zcl_parsed_hdr_t *zcl_hdr, struct ctx_entry *entry);
+zb_bool_t zb_shell_is_zcl_cmd_response(zb_zcl_parsed_hdr_t *zcl_hdr, struct ctx_entry *entry);
 
 /**@brief Function to invalidate an entry with ZCL cmd request data, to be called after the timeout.
  *        This function is called as the ZBOSS callback.
  *
  * @param index   Index of context entry to invalidate.
  */
-void zb_cli_zcl_cmd_timeout_cb(zb_uint8_t index);
+void zb_shell_zcl_cmd_timeout_cb(zb_uint8_t index);
 
 /**@brief Parse uint8_t from input string.
  *
@@ -111,7 +111,7 @@ void zb_cli_zcl_cmd_timeout_cb(zb_uint8_t index);
  *
  * @return 1 on success, 0 otherwise.
  */
-int zb_cli_sscan_uint8(const char *bp, uint8_t *value);
+int zb_shell_sscan_uint8(const char *bp, uint8_t *value);
 
 /**@brief Parse unsigned integers from input string.
  *
@@ -128,8 +128,7 @@ int zb_cli_sscan_uint8(const char *bp, uint8_t *value);
  *
  * @return 1 on success, 0 otherwise.
  */
-int zb_cli_sscan_uint(const char *bp, uint8_t *value, uint8_t size,
-		      uint8_t base);
+int zb_shell_sscan_uint(const char *bp, uint8_t *value, uint8_t size, uint8_t base);
 
 /**@brief Print buffer as hex string.
  *
@@ -138,8 +137,8 @@ int zb_cli_sscan_uint(const char *bp, uint8_t *value, uint8_t size,
  * @param size     Data size in bytes
  * @param reverse  If True then data is printed out in reverse order.
  */
-void zb_cli_print_hexdump(const struct shell *shell, const uint8_t *data,
-			  uint8_t size, bool reverse);
+void zb_shell_print_hexdump(const struct shell *shell, const uint8_t *data, uint8_t size,
+			    bool reverse);
 
 /**@brief Print 64bit value (address, extpan) as hex string.
  *
@@ -148,11 +147,9 @@ void zb_cli_print_hexdump(const struct shell *shell, const uint8_t *data,
  * @param shell     Pointer to the shell instance.
  * @param addr      64 data to be printed out.
  */
-static inline void zb_cli_print_eui64(const struct shell *shell,
-				      const zb_64bit_addr_t addr)
+static inline void zb_shell_print_eui64(const struct shell *shell, const zb_64bit_addr_t addr)
 {
-	zb_cli_print_hexdump(shell, (const uint8_t *)addr,
-			     sizeof(zb_64bit_addr_t), true);
+	zb_shell_print_hexdump(shell, (const uint8_t *)addr, sizeof(zb_64bit_addr_t), true);
 }
 
-#endif /* ZIGBEE_CLI_UTILS_H__ */
+#endif /* ZIGBEE_SHELL_UTILS_H__ */

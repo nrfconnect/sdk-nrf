@@ -9,7 +9,6 @@ add_subdirectory(lib)
 zephyr_interface_library_named(zigbee)
 
 target_include_directories(zigbee INTERFACE osif)
-target_include_directories_ifdef(CONFIG_ZIGBEE_SHELL zigbee INTERFACE cli)
 
 zephyr_library()
 
@@ -27,24 +26,6 @@ zephyr_library_sources_ifdef(CONFIG_ZIGBEE_HAVE_SERIAL osif/zb_nrf_serial.c)
 zephyr_library_sources_ifdef(CONFIG_ZIGBEE_HAVE_ASYNC_SERIAL osif/zb_nrf_async_serial.c)
 zephyr_library_sources_ifdef(CONFIG_ZBOSS_TRACE_HEXDUMP_LOGGING osif/zb_nrf_logger.c)
 zephyr_library_sources_ifdef(CONFIG_ZBOSS_TRACE_BINARY_LOGGING osif/zb_nrf_serial_logger.c)
-zephyr_library_sources_ifdef(
-	CONFIG_ZIGBEE_SHELL
-	cli/zigbee_cli.c
-	cli/zigbee_cli_utils.c
-	cli/zigbee_cli_cmd.c
-	cli/zigbee_cli_cmd_attr.c
-	cli/zigbee_cli_cmd_zcl.c
-	cli/zigbee_cli_cmd_attr_report.c
-	cli/zigbee_cli_cmd_ping.c
-	cli/zigbee_cli_cmd_bdb.c
-	cli/zigbee_cli_cmd_generic_cmd.c
-	cli/zigbee_cli_cmd_zdo.c
-	cli/zigbee_cli_cmd_zscheduler.c
-	cli/zigbee_cli_cmd_nvram.c
-	cli/zigbee_cli_cmd_zcl_groups.c
-	cli/zigbee_cli_ctx_mgr.c
-	cli/zigbee_cli_cmd_nbr.c
-)
 
 zephyr_library_link_libraries(zboss)
 

@@ -9,8 +9,8 @@
 
 #include <zboss_api.h>
 #include <zigbee/zigbee_error_handler.h>
-#include "zigbee_cli.h"
-#include "zigbee_cli_utils.h"
+#include <zigbee/zigbee_shell.h>
+#include "zigbee_shell_utils.h"
 
 LOG_MODULE_DECLARE(zigbee_shell, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
 
@@ -194,21 +194,22 @@ static int zcl_groups_cmd_send(struct ctx_entry *entry)
 
 	zb_err_code =
 		ZB_SCHEDULE_APP_ALARM(
-			zb_cli_zcl_cmd_timeout_cb,
+			zb_shell_zcl_cmd_timeout_cb,
 			entry_index,
 			(CONFIG_ZIGBEE_SHELL_ZCL_CMD_TIMEOUT * ZB_TIME_ONE_SECOND));
 
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(entry->shell, "Couldn't schedule timeout cb.", ZB_FALSE);
+		zb_shell_print_error(entry->shell, "Couldn't schedule timeout cb.", ZB_FALSE);
 		goto cmd_send_error;
 	}
 
 	zb_err_code = ZB_SCHEDULE_APP_CALLBACK(entry->zcl_data.groups_cmd.send_fn, entry_index);
 
 	if (zb_err_code != RET_OK) {
-		zb_cli_print_error(entry->shell, "Can not schedule zcl frame.", ZB_FALSE);
+		zb_shell_print_error(entry->shell, "Can not schedule zcl frame.", ZB_FALSE);
 
-		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_cli_zcl_cmd_timeout_cb, entry_index);
+		zb_err_code =
+			ZB_SCHEDULE_APP_ALARM_CANCEL(zb_shell_zcl_cmd_timeout_cb, entry_index);
 		ZB_ERROR_CHECK(zb_err_code);
 		goto cmd_send_error;
 	}
@@ -258,9 +259,9 @@ static void zb_zcl_cmd_acked(zb_uint8_t bufid)
 		goto exit;
 	}
 
-	zb_cli_print_done(entry->shell, ZB_FALSE);
+	zb_shell_print_done(entry->shell, ZB_FALSE);
 
-	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_cli_zcl_cmd_timeout_cb, index);
+	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_shell_zcl_cmd_timeout_cb, index);
 	ZB_ERROR_CHECK(zb_err_code);
 
 	ctx_mgr_delete_entry(entry);
@@ -324,7 +325,7 @@ int cmd_zb_add_remove_group(const struct shell *shell, size_t argc, char **argv)
 	struct ctx_entry *entry = ctx_mgr_new_entry(CTX_MGR_GROUPS_CMD_ENTRY_TYPE);
 
 	if (entry == NULL) {
-		zb_cli_print_error(
+		zb_shell_print_error(
 			shell,
 			"Request pool empty - wait for ongoing command to finish",
 			ZB_FALSE);
@@ -342,19 +343,19 @@ int cmd_zb_add_remove_group(const struct shell *shell, size_t argc, char **argv)
 	} else if (strcmp(*(argv), "remove") == 0) {
 		req_data->send_fn = zb_zcl_send_remove_group_cmd;
 	} else {
-		zb_cli_print_error(entry->shell, "Failed to parse command name", ZB_FALSE);
+		zb_shell_print_error(entry->shell, "Failed to parse command name", ZB_FALSE);
 		goto add_remove_group_error;
 	}
 
 	packet_info->dst_addr_mode = parse_address(*(++argv), &(packet_info->dst_addr), ADDR_ANY);
 
 	if (packet_info->dst_addr_mode == ADDR_INVALID) {
-		zb_cli_print_error(shell, "Invalid address", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid address", ZB_FALSE);
 		goto add_remove_group_error;
 	}
 
-	if (!zb_cli_sscan_uint8(*(++argv), &(packet_info->dst_ep))) {
-		zb_cli_print_error(shell, "Incorrect remote endpoint", ZB_FALSE);
+	if (!zb_shell_sscan_uint8(*(++argv), &(packet_info->dst_ep))) {
+		zb_shell_print_error(shell, "Incorrect remote endpoint", ZB_FALSE);
 		goto add_remove_group_error;
 	}
 
@@ -366,7 +367,7 @@ int cmd_zb_add_remove_group(const struct shell *shell, size_t argc, char **argv)
 		/* Verify group address. */
 		if ((group_addr < ZB_ZCL_ATTR_SCENES_CURRENT_GROUP_MIN_VALUE) ||
 		    (group_addr > ZB_ZCL_ATTR_SCENES_CURRENT_GROUP_MAX_VALUE)) {
-			zb_cli_print_error(shell, "Incorrect group address", ZB_FALSE);
+			zb_shell_print_error(shell, "Incorrect group address", ZB_FALSE);
 			goto add_remove_group_error;
 		}
 
@@ -377,19 +378,19 @@ int cmd_zb_add_remove_group(const struct shell *shell, size_t argc, char **argv)
 	if (strcmp(*(++argv), "-p") == 0) {
 		/* Check if argument with group id is present. */
 		if (argc < 6) {
-			zb_cli_print_error(shell, "Invalid number of arguments", ZB_FALSE);
+			zb_shell_print_error(shell, "Invalid number of arguments", ZB_FALSE);
 			goto add_remove_group_error;
 		}
 
 		if (!parse_hex_u16(*(++argv), &(packet_info->prof_id))) {
-			zb_cli_print_error(shell, "Invalid profile id", ZB_FALSE);
+			zb_shell_print_error(shell, "Invalid profile id", ZB_FALSE);
 			goto add_remove_group_error;
 		}
 		argv++;
 	}
 
 	if (!parse_hex_u16(*argv, &(req_data->group_id))) {
-		zb_cli_print_error(shell, "Invalid group id", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid group id", ZB_FALSE);
 		goto add_remove_group_error;
 	}
 
@@ -402,7 +403,7 @@ int cmd_zb_add_remove_group(const struct shell *shell, size_t argc, char **argv)
 	zb_osif_enable_all_inter();
 
 	if (!bufid) {
-		zb_cli_print_error(entry->shell, "Can not get buffer.", ZB_FALSE);
+		zb_shell_print_error(entry->shell, "Can not get buffer.", ZB_FALSE);
 		/* Mark data structure as free. */
 		ctx_mgr_delete_entry(entry);
 		return -ENOEXEC;
@@ -410,7 +411,7 @@ int cmd_zb_add_remove_group(const struct shell *shell, size_t argc, char **argv)
 
 	packet_info->buffer = bufid;
 	/* DstAddr, Dst Addr Mode and Dst endpoint are already set. */
-	packet_info->ep = zb_cli_get_endpoint();
+	packet_info->ep = zb_shell_get_endpoint();
 	/* Profile ID is already set, Cluster ID does not have to be. */
 	if (is_sent_unicast(packet_info) == ZB_TRUE) {
 		packet_info->cb = NULL;
@@ -454,7 +455,7 @@ int cmd_zb_get_group_mem(const struct shell *shell, size_t argc, char **argv)
 	struct ctx_entry *entry = ctx_mgr_new_entry(CTX_MGR_GROUPS_CMD_ENTRY_TYPE);
 
 	if (entry == NULL) {
-		zb_cli_print_error(
+		zb_shell_print_error(
 			shell,
 			"Request pool empty - wait for ongoing command to finish",
 			ZB_FALSE);
@@ -473,12 +474,12 @@ int cmd_zb_get_group_mem(const struct shell *shell, size_t argc, char **argv)
 	argc--;
 
 	if (packet_info->dst_addr_mode == ADDR_INVALID) {
-		zb_cli_print_error(shell, "Invalid address", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid address", ZB_FALSE);
 		goto get_group_mem_error;
 	}
 
-	if (!zb_cli_sscan_uint8(*(++argv), &(packet_info->dst_ep))) {
-		zb_cli_print_error(shell, "Incorrect remote endpoint", ZB_FALSE);
+	if (!zb_shell_sscan_uint8(*(++argv), &(packet_info->dst_ep))) {
+		zb_shell_print_error(shell, "Incorrect remote endpoint", ZB_FALSE);
 		goto get_group_mem_error;
 	}
 	argc--;
@@ -491,7 +492,7 @@ int cmd_zb_get_group_mem(const struct shell *shell, size_t argc, char **argv)
 		/* Verify group address. */
 		if ((group_addr < ZB_ZCL_ATTR_SCENES_CURRENT_GROUP_MIN_VALUE) ||
 		    (group_addr > ZB_ZCL_ATTR_SCENES_CURRENT_GROUP_MAX_VALUE)) {
-			zb_cli_print_error(shell, "Incorrect group address", ZB_FALSE);
+			zb_shell_print_error(shell, "Incorrect group address", ZB_FALSE);
 			goto get_group_mem_error;
 		}
 
@@ -502,12 +503,12 @@ int cmd_zb_get_group_mem(const struct shell *shell, size_t argc, char **argv)
 	if ((argc > 1) && (strcmp(*(++argv), "-p") == 0)) {
 		/* Check if argument with profile ID is present. */
 		if (argc < 3) {
-			zb_cli_print_error(shell, "Invalid number of arguments", ZB_FALSE);
+			zb_shell_print_error(shell, "Invalid number of arguments", ZB_FALSE);
 			goto get_group_mem_error;
 		}
 
 		if (!parse_hex_u16(*(++argv), &(packet_info->prof_id))) {
-			zb_cli_print_error(shell, "Invalid profile id", ZB_FALSE);
+			zb_shell_print_error(shell, "Invalid profile id", ZB_FALSE);
 			goto get_group_mem_error;
 		}
 		argv++;
@@ -523,7 +524,7 @@ int cmd_zb_get_group_mem(const struct shell *shell, size_t argc, char **argv)
 
 	for (uint8_t i = 0; i < req_data->group_list_cnt; i++) {
 		if (!parse_hex_u16(*argv, &(req_data->group_list[i]))) {
-			zb_cli_print_error(shell, "Invalid group id", ZB_FALSE);
+			zb_shell_print_error(shell, "Invalid group id", ZB_FALSE);
 			goto get_group_mem_error;
 		}
 		argv++;
@@ -538,7 +539,7 @@ int cmd_zb_get_group_mem(const struct shell *shell, size_t argc, char **argv)
 	zb_osif_enable_all_inter();
 
 	if (!bufid) {
-		zb_cli_print_error(entry->shell, "Can not get buffer.", ZB_FALSE);
+		zb_shell_print_error(entry->shell, "Can not get buffer.", ZB_FALSE);
 		/* Mark data structure as free. */
 		ctx_mgr_delete_entry(entry);
 		return -ENOEXEC;
@@ -546,7 +547,7 @@ int cmd_zb_get_group_mem(const struct shell *shell, size_t argc, char **argv)
 
 	packet_info->buffer = bufid;
 	/* DstAddr, Dst Addr Mode and Dst endpoint are already set. */
-	packet_info->ep = zb_cli_get_endpoint();
+	packet_info->ep = zb_shell_get_endpoint();
 	/* Profile ID is already set, Cluster ID does not have to be. */
 	if (is_sent_unicast(packet_info) == ZB_TRUE) {
 		packet_info->cb = NULL;
@@ -585,7 +586,7 @@ int cmd_zb_add_group_if_identifying(const struct shell *shell, size_t argc, char
 	struct ctx_entry *entry = ctx_mgr_new_entry(CTX_MGR_GROUPS_CMD_ENTRY_TYPE);
 
 	if (entry == NULL) {
-		zb_cli_print_error(
+		zb_shell_print_error(
 			shell,
 			"Request pool empty - wait for ongoing command to finish",
 			ZB_FALSE);
@@ -603,12 +604,12 @@ int cmd_zb_add_group_if_identifying(const struct shell *shell, size_t argc, char
 	packet_info->dst_addr_mode = parse_address(*(++argv), &(packet_info->dst_addr), ADDR_ANY);
 
 	if (packet_info->dst_addr_mode == ADDR_INVALID) {
-		zb_cli_print_error(shell, "Invalid address", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid address", ZB_FALSE);
 		goto add_group_if_identifying_error;
 	}
 
-	if (!zb_cli_sscan_uint8(*(++argv), &(packet_info->dst_ep))) {
-		zb_cli_print_error(shell, "Incorrect remote endpoint", ZB_FALSE);
+	if (!zb_shell_sscan_uint8(*(++argv), &(packet_info->dst_ep))) {
+		zb_shell_print_error(shell, "Incorrect remote endpoint", ZB_FALSE);
 		goto add_group_if_identifying_error;
 	}
 
@@ -620,7 +621,7 @@ int cmd_zb_add_group_if_identifying(const struct shell *shell, size_t argc, char
 		/* Verify group address. */
 		if ((group_addr < ZB_ZCL_ATTR_SCENES_CURRENT_GROUP_MIN_VALUE) ||
 		    (group_addr > ZB_ZCL_ATTR_SCENES_CURRENT_GROUP_MAX_VALUE)) {
-			zb_cli_print_error(shell, "Incorrect group address", ZB_FALSE);
+			zb_shell_print_error(shell, "Incorrect group address", ZB_FALSE);
 			goto add_group_if_identifying_error;
 		}
 
@@ -631,19 +632,19 @@ int cmd_zb_add_group_if_identifying(const struct shell *shell, size_t argc, char
 	if (strcmp(*(++argv), "-p") == 0) {
 		/* Check if argument with group id is present. */
 		if (argc < 6) {
-			zb_cli_print_error(shell, "Invalid number of arguments", ZB_FALSE);
+			zb_shell_print_error(shell, "Invalid number of arguments", ZB_FALSE);
 			goto add_group_if_identifying_error;
 		}
 
 		if (!parse_hex_u16(*(++argv), &(packet_info->prof_id))) {
-			zb_cli_print_error(shell, "Invalid profile id", ZB_FALSE);
+			zb_shell_print_error(shell, "Invalid profile id", ZB_FALSE);
 			goto add_group_if_identifying_error;
 		}
 		argv++;
 	}
 
 	if (!parse_hex_u16(*argv, &(req_data->group_id))) {
-		zb_cli_print_error(shell, "Invalid group id", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid group id", ZB_FALSE);
 		goto add_group_if_identifying_error;
 	}
 
@@ -656,7 +657,7 @@ int cmd_zb_add_group_if_identifying(const struct shell *shell, size_t argc, char
 	zb_osif_enable_all_inter();
 
 	if (!bufid) {
-		zb_cli_print_error(entry->shell, "Can not get buffer.", ZB_FALSE);
+		zb_shell_print_error(entry->shell, "Can not get buffer.", ZB_FALSE);
 		/* Mark data structure as free. */
 		ctx_mgr_delete_entry(entry);
 		return -ENOEXEC;
@@ -664,7 +665,7 @@ int cmd_zb_add_group_if_identifying(const struct shell *shell, size_t argc, char
 
 	packet_info->buffer = bufid;
 	/* DstAddr, Dst Addr Mode and Dst endpoint are already set. */
-	packet_info->ep = zb_cli_get_endpoint();
+	packet_info->ep = zb_shell_get_endpoint();
 	/* Profile ID is already set, Cluster ID does not have to be. */
 	packet_info->cb = zb_zcl_cmd_acked;
 	if (is_sent_unicast(packet_info) == ZB_TRUE) {
@@ -701,7 +702,7 @@ int cmd_zb_remove_all_groups(const struct shell *shell, size_t argc, char **argv
 	struct ctx_entry *entry = ctx_mgr_new_entry(CTX_MGR_GROUPS_CMD_ENTRY_TYPE);
 
 	if (entry == NULL) {
-		zb_cli_print_error(
+		zb_shell_print_error(
 			shell,
 			"Request pool empty - wait for ongoing command to finish",
 			ZB_FALSE);
@@ -719,12 +720,12 @@ int cmd_zb_remove_all_groups(const struct shell *shell, size_t argc, char **argv
 	packet_info->dst_addr_mode = parse_address(*(++argv), &(packet_info->dst_addr), ADDR_ANY);
 
 	if (packet_info->dst_addr_mode == ADDR_INVALID) {
-		zb_cli_print_error(shell, "Invalid address", ZB_FALSE);
+		zb_shell_print_error(shell, "Invalid address", ZB_FALSE);
 		goto remove_all_groups_error;
 	}
 
-	if (!zb_cli_sscan_uint8(*(++argv), &(packet_info->dst_ep))) {
-		zb_cli_print_error(shell, "Incorrect remote endpoint", ZB_FALSE);
+	if (!zb_shell_sscan_uint8(*(++argv), &(packet_info->dst_ep))) {
+		zb_shell_print_error(shell, "Incorrect remote endpoint", ZB_FALSE);
 		goto remove_all_groups_error;
 	}
 
@@ -736,7 +737,7 @@ int cmd_zb_remove_all_groups(const struct shell *shell, size_t argc, char **argv
 		/* Verify group address. */
 		if ((group_addr < ZB_ZCL_ATTR_SCENES_CURRENT_GROUP_MIN_VALUE) ||
 		    (group_addr > ZB_ZCL_ATTR_SCENES_CURRENT_GROUP_MAX_VALUE)) {
-			zb_cli_print_error(shell, "Incorrect group address", ZB_FALSE);
+			zb_shell_print_error(shell, "Incorrect group address", ZB_FALSE);
 			goto remove_all_groups_error;
 		}
 
@@ -747,12 +748,12 @@ int cmd_zb_remove_all_groups(const struct shell *shell, size_t argc, char **argv
 	if (strcmp(*(++argv), "-p") == 0) {
 		/* Check if argument with group id is present. */
 		if (argc < 5) {
-			zb_cli_print_error(shell, "Invalid number of arguments", ZB_FALSE);
+			zb_shell_print_error(shell, "Invalid number of arguments", ZB_FALSE);
 			goto remove_all_groups_error;
 		}
 
 		if (!parse_hex_u16(*(++argv), &(packet_info->prof_id))) {
-			zb_cli_print_error(shell, "Invalid profile id", ZB_FALSE);
+			zb_shell_print_error(shell, "Invalid profile id", ZB_FALSE);
 			goto remove_all_groups_error;
 		}
 		argv++;
@@ -767,7 +768,7 @@ int cmd_zb_remove_all_groups(const struct shell *shell, size_t argc, char **argv
 	zb_osif_enable_all_inter();
 
 	if (!bufid) {
-		zb_cli_print_error(entry->shell, "Can not get buffer.", ZB_FALSE);
+		zb_shell_print_error(entry->shell, "Can not get buffer.", ZB_FALSE);
 		/* Mark data structure as free. */
 		ctx_mgr_delete_entry(entry);
 		return -ENOEXEC;
@@ -775,7 +776,7 @@ int cmd_zb_remove_all_groups(const struct shell *shell, size_t argc, char **argv
 
 	packet_info->buffer = bufid;
 	/* DstAddr, Dst Addr Mode and Dst endpoint are already set. */
-	packet_info->ep = zb_cli_get_endpoint();
+	packet_info->ep = zb_shell_get_endpoint();
 	/* Profile ID is already set, Cluster ID does not have to be. */
 	packet_info->cb = zb_zcl_cmd_acked;
 	if (is_sent_unicast(packet_info) == ZB_TRUE) {
@@ -798,7 +799,7 @@ remove_all_groups_error:
  *
  * @return ZB_TRUE if command was handled by the function, ZB_FALSE otherwise.
  */
-zb_uint8_t cli_agent_ep_handler_groups_cmd(zb_bufid_t bufid)
+zb_uint8_t zb_shell_ep_handler_groups_cmd(zb_bufid_t bufid)
 {
 	zb_ret_t zb_err_code;
 	struct ctx_entry *entry;
@@ -813,7 +814,7 @@ zb_uint8_t cli_agent_ep_handler_groups_cmd(zb_bufid_t bufid)
 		return ZB_FALSE;
 	}
 
-	if (!zb_cli_is_zcl_cmd_response(cmd_info, entry)) {
+	if (!zb_shell_is_zcl_cmd_response(cmd_info, entry)) {
 		return ZB_FALSE;
 	}
 
@@ -842,7 +843,7 @@ zb_uint8_t cli_agent_ep_handler_groups_cmd(zb_bufid_t bufid)
 			      def_resp->status);
 
 		if (def_resp->status != ZB_ZCL_STATUS_SUCCESS) {
-			zb_cli_print_error(entry->shell, "Command not successful", ZB_FALSE);
+			zb_shell_print_error(entry->shell, "Command not successful", ZB_FALSE);
 		}
 	} else if (cmd_info->cmd_id == ZB_ZCL_CMD_GROUPS_ADD_GROUP_RES) {
 		zb_zcl_groups_add_group_res_t *add_group_resp;
@@ -850,9 +851,10 @@ zb_uint8_t cli_agent_ep_handler_groups_cmd(zb_bufid_t bufid)
 		ZB_ZCL_GROUPS_GET_ADD_GROUP_RES(bufid, add_group_resp);
 
 		if (add_group_resp == NULL) {
-			zb_cli_print_error(entry->shell,
-					   "Failed to parse response command",
-					   ZB_FALSE);
+			zb_shell_print_error(
+				entry->shell,
+				"Failed to parse response command",
+				ZB_FALSE);
 		} else {
 			shell_fprintf(entry->shell,
 				      (add_group_resp->status == ZB_ZCL_STATUS_SUCCESS) ?
@@ -862,11 +864,12 @@ zb_uint8_t cli_agent_ep_handler_groups_cmd(zb_bufid_t bufid)
 				      add_group_resp->status);
 
 			if (add_group_resp->status != ZB_ZCL_STATUS_SUCCESS) {
-				zb_cli_print_error(entry->shell,
-						   "Command not successful",
-						   ZB_FALSE);
+				zb_shell_print_error(
+					entry->shell,
+					"Command not successful",
+					ZB_FALSE);
 			} else {
-				zb_cli_print_done(entry->shell, ZB_FALSE);
+				zb_shell_print_done(entry->shell, ZB_FALSE);
 			}
 		}
 	} else if (cmd_info->cmd_id == ZB_ZCL_CMD_GROUPS_REMOVE_GROUP_RES) {
@@ -875,9 +878,10 @@ zb_uint8_t cli_agent_ep_handler_groups_cmd(zb_bufid_t bufid)
 		ZB_ZCL_GROUPS_GET_REMOVE_GROUP_RES(bufid, remove_group_resp);
 
 		if (remove_group_resp == NULL) {
-			zb_cli_print_error(entry->shell,
-					   "Failed to parse response command",
-					   ZB_FALSE);
+			zb_shell_print_error(
+				entry->shell,
+				"Failed to parse response command",
+				ZB_FALSE);
 		} else {
 			shell_fprintf(entry->shell,
 				      (remove_group_resp->status == ZB_ZCL_STATUS_SUCCESS) ?
@@ -887,11 +891,12 @@ zb_uint8_t cli_agent_ep_handler_groups_cmd(zb_bufid_t bufid)
 				      remove_group_resp->status);
 
 			if (remove_group_resp->status != ZB_ZCL_STATUS_SUCCESS) {
-				zb_cli_print_error(entry->shell,
-						   "Command not successful",
-						   ZB_FALSE);
+				zb_shell_print_error(
+					entry->shell,
+					"Command not successful",
+					ZB_FALSE);
 			} else {
-				zb_cli_print_done(entry->shell, ZB_FALSE);
+				zb_shell_print_done(entry->shell, ZB_FALSE);
 			}
 		}
 	} else if (cmd_info->cmd_id == ZB_ZCL_CMD_GROUPS_GET_GROUP_MEMBERSHIP_RES) {
@@ -902,9 +907,10 @@ zb_uint8_t cli_agent_ep_handler_groups_cmd(zb_bufid_t bufid)
 		ZB_ZCL_GROUPS_GET_GROUP_MEMBERSHIP_RES(bufid, get_group_mem_resp);
 
 		if (get_group_mem_resp == NULL) {
-			zb_cli_print_error(entry->shell,
-					   "Failed to parse response command",
-					   ZB_FALSE);
+			zb_shell_print_error(
+				entry->shell,
+				"Failed to parse response command",
+				ZB_FALSE);
 		} else {
 			for (uint8_t i = 0; i < get_group_mem_resp->group_count; i++) {
 				sprintf((text_buffer + 7 * i),
@@ -920,7 +926,7 @@ zb_uint8_t cli_agent_ep_handler_groups_cmd(zb_bufid_t bufid)
 				      get_group_mem_resp->group_count,
 				      text_buffer);
 
-			zb_cli_print_done(entry->shell, ZB_FALSE);
+			zb_shell_print_done(entry->shell, ZB_FALSE);
 		}
 	} else {
 		/* In case of unknown response. */
@@ -928,7 +934,7 @@ zb_uint8_t cli_agent_ep_handler_groups_cmd(zb_bufid_t bufid)
 	}
 
 	/* Cancel the ongoing alarm which was to delete entry in the context manager ... */
-	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_cli_zcl_cmd_timeout_cb,
+	zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(zb_shell_zcl_cmd_timeout_cb,
 						   ctx_mgr_get_index_by_entry(entry));
 	ZB_ERROR_CHECK(zb_err_code);
 

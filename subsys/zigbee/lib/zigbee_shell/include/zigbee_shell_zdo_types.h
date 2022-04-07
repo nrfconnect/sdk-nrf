@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef ZIGBEE_CLI_ZDO_TYPES_H__
-#define ZIGBEE_CLI_ZDO_TYPES_H__
+#ifndef ZIGBEE_SHELL_ZDO_TYPES_H__
+#define ZIGBEE_SHELL_ZDO_TYPES_H__
 
 #include <zboss_api.h>
 
@@ -38,4 +38,4 @@ struct zdo_data {
 	struct zdo_req_info zdo_req;
 };
 
-#endif /* ZIGBEE_CLI_ZDO_TYPES_H__ */
+#endif /* ZIGBEE_SHELL_ZDO_TYPES_H__ */
