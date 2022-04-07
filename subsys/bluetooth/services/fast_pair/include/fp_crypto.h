@@ -22,6 +22,8 @@ extern "C" {
 #define FP_SHA256_HASH_LEN     32U
 /** Length of AES-128 block (128 bits = 16 bytes). */
 #define FP_AES128_BLOCK_LEN    16U
+/** Length of ECDH public key (512 bits = 64 bytes). */
+#define FP_ECDH_PUBLIC_KEY_LEN 64U
 /** Length of ECDH shared key (256 bits = 32 bytes). */
 #define FP_ECDH_SHARED_KEY_LEN 32U
 /** Length of Account Key (128 bits = 16 bytes). */
