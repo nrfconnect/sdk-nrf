@@ -24,7 +24,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 #define BUTTON2_OBJ_INST_ID 1
 #define BUTTON2_APP_NAME "Push button 2"
 
-static int32_t lwm2m_timstamp[2];
+static int32_t lwm2m_timestamp[2];
 
 int lwm2m_init_push_button(void)
 {
@@ -40,8 +40,8 @@ int lwm2m_init_push_button(void)
 	if (IS_ENABLED(CONFIG_LWM2M_IPSO_PUSH_BUTTON_VERSION_1_1)) {
 		lwm2m_engine_set_res_data(
 			LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID, TIMESTAMP_RID),
-			&lwm2m_timstamp[BUTTON1_OBJ_INST_ID],
-			sizeof(lwm2m_timstamp[BUTTON1_OBJ_INST_ID]), LWM2M_RES_DATA_FLAG_RW);
+			&lwm2m_timestamp[BUTTON1_OBJ_INST_ID],
+			sizeof(lwm2m_timestamp[BUTTON1_OBJ_INST_ID]), LWM2M_RES_DATA_FLAG_RW);
 	}
 
 	if (CONFIG_LWM2M_IPSO_PUSH_BUTTON_INSTANCE_COUNT == 2) {
@@ -57,8 +57,8 @@ int lwm2m_init_push_button(void)
 		if (IS_ENABLED(CONFIG_LWM2M_IPSO_PUSH_BUTTON_VERSION_1_1)) {
 			lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID,
 							     BUTTON2_OBJ_INST_ID, TIMESTAMP_RID),
-						  &lwm2m_timstamp[BUTTON2_OBJ_INST_ID],
-						  sizeof(lwm2m_timstamp[BUTTON2_OBJ_INST_ID]),
+						  &lwm2m_timestamp[BUTTON2_OBJ_INST_ID],
+						  sizeof(lwm2m_timestamp[BUTTON2_OBJ_INST_ID]),
 						  LWM2M_RES_DATA_FLAG_RW);
 		}
 	}
