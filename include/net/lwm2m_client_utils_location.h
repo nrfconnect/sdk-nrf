@@ -57,3 +57,5 @@ APP_EVENT_TYPE_DECLARE(cell_location_inform_event);
 int location_event_handler_init(struct lwm2m_ctx *ctx);
 
 #endif /* LWM2M_CLIENT_UTILS_LOCATION_H__ */
+
+/**@} */
