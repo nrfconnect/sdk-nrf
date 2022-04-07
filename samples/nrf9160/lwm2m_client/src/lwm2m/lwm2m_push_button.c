@@ -94,7 +94,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			lwm2m_engine_set_bool(LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID,
 							 BUTTON2_OBJ_INST_ID,
 							 DIGITAL_INPUT_STATE_RID),
-					      event->device_number);
+					      event->state);
 
 			if (event->state) {
 				if (IS_ENABLED(CONFIG_LWM2M_IPSO_PUSH_BUTTON_VERSION_1_1)) {
