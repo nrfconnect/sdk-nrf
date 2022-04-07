@@ -158,6 +158,14 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		break;
 	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
 		LOG_DBG("NRF_CLOUD_EVT_SENSOR_DATA_ACK");
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_DATA_ACK;
+		cloud_wrap_evt.message_id = *(uint16_t *)evt->data.ptr;
+		notify = true;
+		break;
+	case NRF_CLOUD_EVT_PINGRESP:
+		LOG_DBG("NRF_CLOUD_EVT_PINGRESP");
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_PING_ACK;
+		notify = true;
 		break;
 	case NRF_CLOUD_EVT_FOTA_START:
 		LOG_DBG("NRF_CLOUD_EVT_FOTA_START");

@@ -636,7 +636,12 @@ static void mqtt_evt_handler(struct mqtt_client *const client,
 
 		evt.type = AZURE_IOT_HUB_EVT_PUBACK;
 		evt.data.message_id = mqtt_evt->param.puback.message_id;
+		azure_iot_hub_notify_event(&evt);
+		break;
+	case MQTT_EVT_PINGRESP:
+		LOG_DBG("MQTT_EVT_PINGRESP");
 
+		evt.type = AZURE_IOT_HUB_EVT_PINGRESP;
 		azure_iot_hub_notify_event(&evt);
 		break;
 	case MQTT_EVT_SUBACK:

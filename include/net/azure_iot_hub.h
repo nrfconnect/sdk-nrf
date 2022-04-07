@@ -44,6 +44,8 @@ enum azure_iot_hub_evt_type {
 	AZURE_IOT_HUB_EVT_DATA_RECEIVED,
 	/** Acknowledgment for data sent to Azure IoT Hub. */
 	AZURE_IOT_HUB_EVT_PUBACK,
+	/** Acknowledgment for pings sent to Azure IoT Hub. */
+	AZURE_IOT_HUB_EVT_PINGRESP,
 	/** Device twin has been received. */
 	AZURE_IOT_HUB_EVT_TWIN_RECEIVED,
 	/** Device twin has received a desired property update. */

@@ -358,7 +358,7 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 			.opcode = NCT_CC_OPCODE_UPDATE_REQ,
 			.data.ptr = msg->data.ptr,
 			.data.len = msg->data.len,
-			.message_id = NCT_MSG_ID_USE_NEXT_INCREMENT
+			.message_id = (msg->id > 0) ? msg->id : NCT_MSG_ID_USE_NEXT_INCREMENT
 		};
 
 		err = nct_cc_send(&shadow_data);
@@ -376,7 +376,7 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 		const struct nct_dc_data buf = {
 			.data.ptr = msg->data.ptr,
 			.data.len = msg->data.len,
-			.message_id = NCT_MSG_ID_USE_NEXT_INCREMENT
+			.message_id = (msg->id > 0) ? msg->id : NCT_MSG_ID_USE_NEXT_INCREMENT
 		};
 
 		if (msg->qos == MQTT_QOS_0_AT_MOST_ONCE) {
@@ -398,7 +398,7 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 		const struct nct_dc_data buf = {
 			.data.ptr = msg->data.ptr,
 			.data.len = msg->data.len,
-			.message_id = NCT_MSG_ID_USE_NEXT_INCREMENT
+			.message_id = (msg->id > 0) ? msg->id : NCT_MSG_ID_USE_NEXT_INCREMENT
 		};
 
 		err = nct_dc_bulk_send(&buf, msg->qos);

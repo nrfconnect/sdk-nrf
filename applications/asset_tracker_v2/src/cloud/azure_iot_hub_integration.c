@@ -228,6 +228,14 @@ static void azure_iot_hub_event_handler(struct azure_iot_hub_evt *const evt)
 		break;
 	case AZURE_IOT_HUB_EVT_PUBACK:
 		LOG_DBG("AZURE_IOT_HUB_EVT_PUBACK");
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_DATA_ACK;
+		cloud_wrap_evt.message_id = evt->data.message_id;
+		notify = true;
+		break;
+	case AZURE_IOT_HUB_EVT_PINGRESP:
+		LOG_DBG("AZURE_IOT_HUB_EVT_PINGRESP");
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_PING_ACK;
+		notify = true;
 		break;
 	case AZURE_IOT_HUB_EVT_ERROR:
 		LOG_DBG("AZURE_IOT_HUB_EVT_ERROR");
