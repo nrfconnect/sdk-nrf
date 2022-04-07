@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig MODEM_KEY_MGMT
+config MODEM_KEY_MGMT
 	bool "nRF9160 modem key management library"
 	depends on NRF_MODEM_LIB
 
