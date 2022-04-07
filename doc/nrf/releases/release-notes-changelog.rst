@@ -172,6 +172,7 @@ Matter samples
   * Release configuration for all samples.
   * A binding cluster to the Light Switch sample.
   * The Groupcast communication to the Light Switch example.
+  * OTA DFU support for template application
 
 * Updated:
 
