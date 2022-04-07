@@ -12,8 +12,12 @@
 #include <logging/log.h>
 LOG_MODULE_DECLARE(ble, CONFIG_LOG_BLE_LEVEL);
 
-/* Enable VREGRADIO.VREQH in NET core for getting +3dBm */
-static int ble_hci_vsc_radio_pwr_cfg(bool high_power_mode)
+enum ble_hci_vs_max_tx_power {
+	BLE_HCI_VSC_MAX_TX_PWR_0dBm = 0,
+	BLE_HCI_VSC_MAX_TX_PWR_3dBm = 3,
+};
+
+int ble_hci_vsc_set_radio_high_pwr_mode(bool high_power_mode)
 {
 	int ret;
 	struct ble_hci_vs_cp_set_radio_fe_cfg *cp;
@@ -28,10 +32,10 @@ static int ble_hci_vsc_radio_pwr_cfg(bool high_power_mode)
 	cp = net_buf_add(buf, sizeof(*cp));
 	if (high_power_mode) {
 		LOG_DBG("Enable VREGRADIO.VREQH");
-		cp->max_tx_power = BLE_HCI_VSC_TX_PWR_Pos3dBm;
+		cp->max_tx_power = BLE_HCI_VSC_MAX_TX_PWR_3dBm;
 	} else {
 		LOG_DBG("Disable VREGRADIO.VREQH");
-		cp->max_tx_power = BLE_HCI_VSC_TX_PWR_0dBm;
+		cp->max_tx_power = BLE_HCI_VSC_MAX_TX_PWR_0dBm;
 	}
 	cp->ant_id = 0;
 
@@ -101,16 +105,6 @@ int ble_hci_vsc_set_adv_tx_pwr(enum ble_hci_vs_tx_power tx_power)
 	struct ble_hci_vs_rp_status *rp;
 	struct net_buf *buf, *rsp = NULL;
 
-	if (tx_power == BLE_HCI_VSC_TX_PWR_Pos3dBm) {
-		ret = ble_hci_vsc_radio_pwr_cfg(true);
-	} else {
-		ret = ble_hci_vsc_radio_pwr_cfg(false);
-	}
-	if (ret) {
-		LOG_ERR("Failed to set maximum TX power when set ADV TX power");
-		return ret;
-	}
-
 	buf = bt_hci_cmd_create(HCI_OPCODE_VS_SET_ADV_TX_PWR, sizeof(*cp));
 	if (!buf) {
 		LOG_ERR("Unable to allocate command buffer");
@@ -139,16 +133,6 @@ int ble_hci_vsc_set_conn_tx_pwr(uint16_t conn_handle, enum ble_hci_vs_tx_power t
 	struct ble_hci_vs_rp_status *rp;
 	struct net_buf *buf, *rsp = NULL;
 
-	if (tx_power == BLE_HCI_VSC_TX_PWR_Pos3dBm) {
-		ret = ble_hci_vsc_radio_pwr_cfg(true);
-	} else {
-		ret = ble_hci_vsc_radio_pwr_cfg(false);
-	}
-	if (ret) {
-		LOG_ERR("Failed to set maximum TX power when set CONN TX power");
-		return ret;
-	}
-
 	buf = bt_hci_cmd_create(HCI_OPCODE_VS_SET_CONN_TX_PWR, sizeof(*cp));
 	if (!buf) {
 		LOG_ERR("Unable to allocate command buffer");
@@ -168,6 +152,33 @@ int ble_hci_vsc_set_conn_tx_pwr(uint16_t conn_handle, enum ble_hci_vs_tx_power t
 	ret = rp->status;
 	net_buf_unref(rsp);
 
+	return ret;
+}
+
+int ble_hci_vsc_set_pri_ext_adv_max_tx_pwr(enum ble_hci_vs_tx_power tx_power)
+{
+	int ret;
+	struct ble_hci_vs_cp_set_adv_tx_pwr *cp;
+	struct ble_hci_vs_rp_status *rp;
+	struct net_buf *buf, *rsp = NULL;
+
+	buf = bt_hci_cmd_create(HCI_OPCODE_VS_SET_PRI_EXT_ADV_MAX_TX_PWR, sizeof(*cp));
+	if (!buf) {
+		LOG_ERR("Unable to allocate command buffer");
+		return -ENOMEM;
+	}
+	cp = net_buf_add(buf, sizeof(*cp));
+	cp->tx_power = tx_power;
+
+	ret = bt_hci_cmd_send_sync(HCI_OPCODE_VS_SET_PRI_EXT_ADV_MAX_TX_PWR, buf, &rsp);
+	if (ret) {
+		LOG_ERR("Error for HCI VS command HCI_OPCODE_VS_SET_PRI_EXT_ADV_MAX_TX_PWR");
+		return ret;
+	}
+
+	rp = (void *)rsp->data;
+	ret = rp->status;
+	net_buf_unref(rsp);
 	return ret;
 }
 

@@ -43,7 +43,6 @@ static void on_connected_cb(struct bt_conn *conn, uint8_t err)
 {
 	int ret;
 	char addr[BT_ADDR_LE_STR_LEN];
-	uint16_t peer_conn_handle;
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 	ARG_UNUSED(ret);
@@ -52,14 +51,6 @@ static void on_connected_cb(struct bt_conn *conn, uint8_t err)
 	} else {
 		/* ACL connection established */
 		LOG_DBG("ACL connection to %s established", addr);
-		ret = bt_hci_get_conn_handle(conn, &peer_conn_handle);
-		if (ret) {
-			LOG_ERR("Unable to get handle, ret = %d", ret);
-		} else {
-			ret = ble_hci_vsc_set_conn_tx_pwr(peer_conn_handle,
-							  BLE_HCI_VSC_TX_PWR_Pos3dBm);
-			ERR_CHK(ret);
-		}
 #if (CONFIG_AUDIO_DEV == HEADSET)
 		ble_acl_headset_on_connected(conn);
 #elif (CONFIG_AUDIO_DEV == GATEWAY)
