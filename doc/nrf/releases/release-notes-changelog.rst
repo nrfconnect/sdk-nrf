@@ -227,6 +227,13 @@ nRF9160 samples
         This includes several new fields in the PVT notification and a command to query the expiry times of assistance data.
       * Support for the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION` option.
 
+    * Updated:
+
+      * The behavior of this sample when built with the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART` option enabled, is changed as follows:
+
+        * When disabling of UART is requested either by a shell command or by a button press, modem traces are disabled before disabling UART1.
+        * When the UART1 is re-enabled (either after timer expiry or button press), the modem traces are also re-enabled.
+
   * :ref:`nrf_cloud_rest_fota` sample:
 
     * Updated:
