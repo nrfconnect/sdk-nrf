@@ -54,7 +54,6 @@ Kconfig*                                  @tejlmand
 /doc/**/conf.py                           @carlescufi
 /doc/kconfig/                             @gmarull
 /doc/nrf/                                 @carlescufi
-/doc/nrf/images/                          @Avalei
 /doc/nrfx/                                @gmarull
 /doc/matter/                              @gmarull
 /doc/mcuboot/                             @carlescufi
