@@ -405,6 +405,7 @@ static void le_supported_features(sdc_hci_le_le_features_t *features)
 
 	features->le_encryption = 1;
 	features->extended_reject_indication = 1;
+	features->slave_initiated_features_exchange = 1;
 	features->le_ping = 1;
 
 #ifdef CONFIG_BT_CTLR_DATA_LENGTH
