@@ -471,6 +471,8 @@ Libraries for Zigbee
   * Changed :ref:`lib_zigbee_shell` structure to be an independent library.
   * Changed file names from ``zigbee_cli*`` to ``zigbee_shell*``.
   * Changed function names from ``zigbee_cli*`` to ``zigbee_shell*``.
+  * Changed ``bdb factory_reset`` command.
+    Now the command checks if the ZBOSS stack is started before performing the factory reset.
   * Extended ``zcl cmd`` shell command to allow sending groupcasts.
   * Extended ``zdo`` shell commands to allow binding to a group addresses.
   * Fixed an issue where printing binding table containing group-binding entries results in corrupted output.
