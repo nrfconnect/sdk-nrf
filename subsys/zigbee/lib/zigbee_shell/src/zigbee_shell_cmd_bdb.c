@@ -317,6 +317,12 @@ static int cmd_zb_start(const struct shell *shell, size_t argc, char **argv)
 
 		zigbee_enable();
 	} else {
+		/* Handle case where Zigbee coordinator has left the network
+		 * and a new network needs to be formed.
+		 */
+		if ((default_role == ZB_NWK_DEVICE_TYPE_COORDINATOR) && !ZB_JOINED()) {
+			mode_mask = ZB_BDB_NETWORK_FORMATION;
+		}
 		ret = bdb_start_top_level_commissioning(mode_mask);
 	}
 
