@@ -463,10 +463,14 @@ Configuration
 
 To enable the Zigbee application utilities library, set the :kconfig:option:`CONFIG_ZIGBEE_APP_UTILS` Kconfig option.
 
-To configure the logging level of the library, use the :kconfig:option:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL` Kconfig option.
+Logging
+    To configure the logging level of the library, use the :kconfig:option:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL` Kconfig option.
 
-To configure the time of the button press that initiates the device factory reset, use the :kconfig:option:`CONFIG_FACTORY_RESET_PRESS_TIME_SECONDS` Kconfig option.
-This option is set to 5 seconds by default.
+Factory reset button
+    To configure the time of the button press that initiates the device factory reset, use the :kconfig:option:`CONFIG_FACTORY_RESET_PRESS_TIME_SECONDS` Kconfig option.
+    This option is set to 5 seconds by default.
+
+    For more information about the factory reset, see the `Resetting to factory defaults`_ section in the ZBOSS stack documentation.
 
 For detailed steps about configuring the library in a Zigbee sample or application, see :ref:`ug_zigbee_configuring_components_application_utilities`.
 
