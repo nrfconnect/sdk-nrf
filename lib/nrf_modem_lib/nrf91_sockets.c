@@ -1311,9 +1311,6 @@ static int nrf91_socket_create(int family, int type, int proto)
 
 #define NRF91_SOCKET_PRIORITY 40
 
-BUILD_ASSERT(NRF91_SOCKET_PRIORITY < CONFIG_NET_SOCKETS_TLS_PRIORITY,
-	     "NRF91_SOCKET_PRIORITY have to be smaller than NET_SOCKETS_TLS_PRIORITY");
-
 NET_SOCKET_REGISTER(nrf91_socket, NRF91_SOCKET_PRIORITY, AF_UNSPEC,
 		    nrf91_socket_is_supported, nrf91_socket_create);
 
