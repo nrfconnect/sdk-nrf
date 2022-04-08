@@ -57,15 +57,6 @@ endif # NRF_MODEM_LIB_TRACE_MEDIUM_RTT
 
 endif # NRF_MODEM_LIB_TRACE_ENABLED
 
-config NRF91_SOCKET_SEND_SPLIT_LARGE_BLOCKS
-	bool "Split large blocks passed to send() or sendto()"
-	default n
-	help
-	  Workaround a limitation in the Modem library regarding the return
-	  value for send() or sendto() calls larger than the module can handle.
-	  It should send the data up to the maximum, and return that as the return value.
-	  Instead, it returns error 22.
-
 config NRF91_SOCKET_BLOCK_LIMIT
 	int "Maximum size the modem can send"
 	default 2048

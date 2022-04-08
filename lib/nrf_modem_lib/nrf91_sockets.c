@@ -838,10 +838,6 @@ static ssize_t nrf91_socket_offload_sendto(void *obj, const void *buf,
 	int sd = OBJ_TO_SD(obj);
 	ssize_t retval;
 
-	if (IS_ENABLED(CONFIG_NRF91_SOCKET_SEND_SPLIT_LARGE_BLOCKS)) {
-		len = MIN(len, CONFIG_NRF91_SOCKET_BLOCK_LIMIT);
-	}
-
 	if (to == NULL) {
 		retval = nrf_sendto(sd, buf, len, z_to_nrf_flags(flags), NULL,
 				    0);
