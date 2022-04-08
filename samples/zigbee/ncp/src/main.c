@@ -147,8 +147,9 @@ static zb_uint16_t ncp_vendor_specific_req_handler(zb_uint8_t buf)
 
 	resp_args->tsn = tsn;
 	*resp_data = vendor_specific_led_state;
+	ZVUNUSED(zb_ncp_custom_response(resp_buf));
 
-	return zb_ncp_custom_response(resp_buf);
+	return NCP_RET_LATER;
 }
 
 static void ncp_vendor_specific_init(void)
