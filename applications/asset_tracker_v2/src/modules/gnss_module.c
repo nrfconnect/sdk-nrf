@@ -31,7 +31,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_GNSS_MODULE_LOG_LEVEL);
  * with pre-v1.3.0 MFWs, which do not support the sleep events.
  */
 #define GNSS_INACTIVITY_TIMEOUT	     5
-#define GNSS_EVENT_THREAD_STACK_SIZE 896
+#define GNSS_EVENT_THREAD_STACK_SIZE 1024
 #define GNSS_EVENT_THREAD_PRIORITY   5
 
 struct gnss_msg_data {
