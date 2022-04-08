@@ -1113,6 +1113,12 @@ static int cmd_zb_factory_reset(const struct shell *shell, size_t argc,
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
 
+	/* Do not allow to call factory_reset before the ZBOSS stack is started. */
+	if (!zigbee_is_stack_started()) {
+		zb_shell_print_error(shell, "Stack not started", ZB_FALSE);
+		return -ENOEXEC;
+	}
+
 	ZB_SCHEDULE_APP_CALLBACK(zb_bdb_reset_via_local_action, 0);
 	zb_shell_print_done(shell, ZB_FALSE);
 	return 0;
