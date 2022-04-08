@@ -149,7 +149,7 @@ Button 2:
     Pressing this button for a longer period of time decreases the brightness of the **LED 4** of the connected light bulb.
 
 Button 4:
-    When pressed for five seconds, it initiates the factory reset of the device.
+    When pressed for five seconds, it initiates the `factory reset of the device <Resetting to factory defaults_>`_.
     The length of the button press can be edited using the :kconfig:option:`CONFIG_FACTORY_RESET_PRESS_TIME_SECONDS` Kconfig option from :ref:`lib_zigbee_application_utilities`.
     Releasing the button within this time does not trigger the factory reset procedure.
 

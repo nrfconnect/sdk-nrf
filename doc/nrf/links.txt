@@ -167,6 +167,7 @@
 .. _`Declaring simple descriptors`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.1.0/using_zigbee__z_c_l.html#simple_desc_declaration
 .. _`Declaring Zigbee device context`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.1.0/using_zigbee__z_c_l.html#zigbee_device_context_dec
 .. _`Declaring Zigbee device context with multiple endpoints`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.1.0/using_zigbee__z_c_l.html#zigbee_device_context_mult_ep_dec
+.. _`Resetting to factory defaults`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.1.0/using_zigbee__z_c_l.html#reset_factory_defaults
 .. _`Registering device context`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.1.0/using_zigbee__z_c_l.html#register_zigbee_device
 
 .. _`ZB_BDB_SIGNAL_FINDING_AND_BINDING_INITIATOR_FINISHED`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.1.0/group__zb__comm__signals.html#ga18f5e7ddfefb7d01ef98f696a9694d79
