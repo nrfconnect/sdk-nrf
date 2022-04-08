@@ -51,6 +51,13 @@ Bluetooth mesh
   * :c:struct:`bt_mesh_sensor_srv` context to relevant callbacks and APIs to help resolve the associated sensor model instance.
     For details, see `Bluetooth mesh samples`_ and `Bluetooth libraries and services`_.
 
+Matter
+------
+
+* The CHIP Tool controller is now the recommended controller for Matter.
+  The documentation about :ref:`ug_matter_configuring_controller` has been updated accordingly.
+  For more information about the CHIP Tool controller, read the :doc:`matter:chip_tool_guide` page in the Matter documentation.
+
 Thread
 ------
 

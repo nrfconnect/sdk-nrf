@@ -185,10 +185,10 @@ LED 2:
 Button 1:
     Depending on how long you press the button:
 
-   * If pressed for less than three seconds, it initiates the SMP server (Security Manager Protocol).
-     After that the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started. (see `Upgrading the device firmware`_).
-   * If pressed for more than three seconds, it initiates the factory reset of the device.
-     Releasing the button within the 3-second window cancels the factory reset procedure.
+    * If pressed for less than three seconds, it initiates the SMP server (Security Manager Protocol).
+      After that the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started. (see `Upgrading the device firmware`_).
+    * If pressed for more than three seconds, it initiates the factory reset of the device.
+      Releasing the button within the 3-second window cancels the factory reset procedure.
 
 .. matter_door_lock_sample_button1_end
 
@@ -324,7 +324,7 @@ The guide walks you through the following steps:
 * Commission the device.
 * Send Matter commands that cover scenarios described in the `Testing`_ section.
 
-If you are new to Matter, the recommended approach is :ref:`ug_matter_configuring_mobile` using an Android smartphone.
+If you are new to Matter, the recommended approach is to use :ref:`ug_matter_configuring_controller_chip_tool`.
 
 .. matter_door_lock_sample_commissioning_end
 

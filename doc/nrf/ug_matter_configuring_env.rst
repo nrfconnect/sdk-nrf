@@ -31,62 +31,13 @@ In this setup, Raspberry Pi runs the Thread Border Router, which provides commun
 The controller can be installed on a PC or a mobile phone.
 Both the Thread Border Router and the Matter controller must support IPv6 communication over backbone network, for example Wi-Fi or Ethernet.
 
-.. _ug_matter_configuring_mobile:
+.. _ug_matter_configuring_pc_chip_tool:
 
-Configuring Thread Border Router and mobile Matter Controller
-=============================================================
+Configuring Thread Border Router and the CHIP Tool Matter controller on PC
+==========================================================================
 
-In this setup, the Matter controller is installed on mobile and a dedicated Wi-Fi Access Point is used.
-
-.. matter_env_ctrl_mobile_start
-
-.. figure:: images/matter_otbr_controller_separate_mobile.svg
-   :width: 600
-   :alt: Setup with OpenThread Border Router and Matter controller on mobile
-
-.. matter_env_ctrl_mobile_end
-
-Requirements
-------------
-
-To use this setup, you need the following hardware:
-
-* 1x smartphone with Android 8+
-* 1x Raspberry Pi Model 3B+ or newer (along with an SD card with at least 8 GB of memory)
-* 1x Wi-Fi Access Point supporting IPv6 (without the IPv6 Router Advertisement Guard enabled on the router)
-* 1x nRF52840 DK or nRF52840 Dongle - for the Radio Co-Processor (RCP) device
-* 1x nRF52840 DK or nRF5340 DK - for the Matter accessory device (programmed with one of :ref:`matter_samples`)
-
-Configuring the environment
----------------------------
-
-To configure and use Thread Border Router and mobile Matter controller on separate devices, complete the following steps:
-
-1. Program the development kit for the Matter accessory device with one of available :ref:`matter_samples`.
-#. Configure the Thread Border Router on a Raspberry Pi.
-   See :ref:`ug_thread_tools_tbr` in the |NCS| documentation for details.
-#. Configure the mobile Matter controller:
-
-   a. Install the controller using one of the options described in :ref:`ug_matter_configuring_controller_mobile`.
-   #. Complete the following steps from the :doc:`matter:nrfconnect_android_commissioning` user guide in the Matter documentation:
-
-      * Building and installing Android CHIPTool - which prepares your CHIPTool for commissioning.
-      * Preparing accessory device - which prepares your device programmed with the Matter sample for commissioning and provides you with the commissioning QR code.
-
-        .. note::
-            In the |NCS|, you can also use :ref:`NFC tag for Matter commissioning <ug_matter_configuring_optional_nfc>`.
-
-      * Commissioning accessory device - which lets you commission your device into the network you created when configuring the Thread Border Router on Raspberry Pi.
-      * Sending Matter commands - which checks the IPv6 connectivity.
-
-#. Depending on which Matter sample you programmed onto the development kit, go to this sample's documentation page and complete the steps from the Testing section.
-
-.. _ug_matter_configuring_pc:
-
-Configuring Thread Border Router and Matter Controller on PC
-============================================================
-
-In this setup, the Matter controller is installed on PC and a dedicated Wi-Fi Access Point is used.
+In this setup, the Matter controller is installed on PC, and a dedicated Wi-Fi Access Point and the CHIP Tool Matter controller are used.
+This is the recommended setup.
 
 .. matter_env_ctrl_pc_start
 
@@ -105,7 +56,98 @@ To use this setup, you need the following hardware:
 * 1x Raspberry Pi Model 3B+ or newer (along with an SD card with at least 8 GB of memory)
 * 1x Wi-Fi Access Point supporting IPv6 (without the IPv6 Router Advertisement Guard enabled on the router)
 * 1x nRF52840 DK or nRF52840 Dongle - for the Radio Co-Processor (RCP) device
-* 1x nRF52840 DK or nRF5340 DK - for the Matter accessory device (programmed with one of :ref:`matter_samples`)
+* 1x compatible Nordic Semiconductor's DK - for the Matter accessory device (compatible and programmed with one of :ref:`matter_samples`)
+
+Configuring the environment
+---------------------------
+
+To configure and use Thread Border Router and PC Matter controller on separate devices, complete the following steps:
+
+1. Program the development kit for the Matter accessory device with one of available :ref:`matter_samples`.
+#. Configure the Thread Border Router on a Raspberry Pi.
+   See :ref:`ug_thread_tools_tbr` in the |NCS| documentation for details.
+#. Configure the CHIP Tool controller by following the steps in the sections of the :doc:`matter:chip_tool_guide` in the Matter documentation:
+
+   a. Build and run the CHIP Tool by completing the steps listed in "Building and running CHIP Tool".
+   #. Prepare the environment for testing by completing the steps listed in "Using CHIP Tool for Matter device testing".
+
+#. Depending on which Matter sample you programmed onto the development kit, go to this sample's documentation page and complete the steps from the Testing section.
+
+.. _ug_matter_configuring_mobile:
+
+Configuring Thread Border Router and mobile Matter controller
+=============================================================
+
+In this setup, the Matter controller is installed on mobile, and a dedicated Wi-Fi Access Point and mobile Matter controller for Android are used.
+
+.. matter_env_ctrl_mobile_start
+
+.. figure:: images/matter_otbr_controller_separate_mobile.svg
+   :width: 600
+   :alt: Setup with OpenThread Border Router and Matter controller on mobile
+
+.. matter_env_ctrl_mobile_end
+
+Requirements
+------------
+
+To use this setup, you need the following hardware:
+
+* 1x smartphone with Android 8+
+* 1x Raspberry Pi Model 3B+ or newer (along with an SD card with at least 8 GB of memory)
+* 1x Wi-Fi Access Point supporting IPv6 (without the IPv6 Router Advertisement Guard enabled on the router)
+* 1x nRF52840 DK or nRF52840 Dongle - for the Radio Co-Processor (RCP) device
+* 1x compatible Nordic Semiconductor's DK - for the Matter accessory device (compatible and programmed with one of :ref:`matter_samples`)
+
+Configuring the environment
+---------------------------
+
+To configure and use Thread Border Router and mobile Matter controller on separate devices, complete the following steps:
+
+1. Program the development kit for the Matter accessory device with one of available :ref:`matter_samples`.
+#. Configure the Thread Border Router on a Raspberry Pi.
+   See :ref:`ug_thread_tools_tbr` in the |NCS| documentation for details.
+#. Configure the mobile Matter controller:
+
+   a. Install the controller using one of the options described in :ref:`ug_matter_configuring_controller_mobile`.
+   #. Complete the following steps from the :doc:`matter:nrfconnect_android_commissioning` user guide in the Matter documentation:
+
+      * Building and installing Android CHIPTool - which prepares the controller for commissioning.
+      * Preparing accessory device - which prepares your device programmed with the Matter sample for commissioning and provides you with the commissioning QR code.
+
+        .. note::
+            In the |NCS|, you can also use :ref:`NFC tag for Matter commissioning <ug_matter_configuring_optional_nfc>`.
+
+      * Commissioning accessory device - which lets you commission your device into the network you created when configuring the Thread Border Router on Raspberry Pi.
+      * Sending Matter commands - which checks the IPv6 connectivity.
+
+#. Depending on which Matter sample you programmed onto the development kit, go to this sample's documentation page and complete the steps from the Testing section.
+
+.. _ug_matter_configuring_pc_python_ctrl:
+
+Configuring Thread Border Router and Python Matter controller on PC
+===================================================================
+
+In this setup, the Matter controller is installed on PC, and a dedicated Wi-Fi Access Point and the Python Matter controller are used.
+
+.. matter_env_ctrl_pc_start
+
+.. figure:: images/matter_otbr_controller_separate_pc.svg
+   :width: 600
+   :alt: Setup with OpenThread Border Router and Matter controller on PC
+
+.. matter_env_ctrl_pc_end
+
+Requirements
+------------
+
+To use this setup, you need the following hardware:
+
+* 1x PC with Ubuntu (20.04 or newer)
+* 1x Raspberry Pi Model 3B+ or newer (along with an SD card with at least 8 GB of memory)
+* 1x Wi-Fi Access Point supporting IPv6 (without the IPv6 Router Advertisement Guard enabled on the router)
+* 1x nRF52840 DK or nRF52840 Dongle - for the Radio Co-Processor (RCP) device
+* 1x compatible Nordic Semiconductor's DK - for the Matter accessory device (compatible and programmed with one of :ref:`matter_samples`)
 
 Configuring the environment
 ---------------------------
@@ -120,7 +162,7 @@ To configure and use Thread Border Router and PC Matter controller on separate d
    a. Build the controller using one of the options described in :ref:`ug_matter_configuring_controller_pc`.
    #. Complete the following steps from the :doc:`matter:python_chip_controller_building` user guide in the Matter documentation:
 
-      * Building and installing - which prepares your CHIPTool for commissioning.
+      * Building and installing - which prepares the controller for commissioning.
       * Running the tool - which gives you access to Bluetooth interface.
       * Using Python CHIP Controller for Matter accessory testing - which prepares your device programmed with the Matter sample for commissioning and testing.
 
@@ -134,7 +176,7 @@ Running Thread Border Router and Matter controller on the same device
 
 If you only have one device, be it a PC with Linux or a Raspberry Pi, you can set up and test the development environment with both the Thread Border Router and the Matter controller running on this one device.
 
-In this setup, a PC or a Raspberry Pi runs the Thread Border Router and the Python Matter controller simultaneously.
+In this setup, a PC or a Raspberry Pi runs the Thread Border Router and the CHIP Tool Matter controller simultaneously.
 To simplify enabling the Thread communication with the Matter accessory device, use a Docker container with the OpenThread Border Router image instead of installing the OpenThread Border Router natively.
 
 .. matter_env_ctrl_one_start
@@ -147,10 +189,12 @@ To simplify enabling the Thread communication with the Matter accessory device, 
 
 .. matter_env_ctrl_one_end
 
+You can use this setup with both Python Matter controller and the CHIP Tool controller.
+
 Requirements
 ============
 
-To use this setup, you need the following hardware:
+To use this setup, regardless of whether you use Python Matter controller or CHIP Tool, you need the following hardware:
 
 * One of the following:
 
@@ -173,16 +217,25 @@ To configure and use Thread Border Router and Matter controller on the same devi
 1. Program the Matter accessory device with one of available :ref:`matter_samples`.
 #. Configure the Thread Border Router on a PC or on a Raspberry Pi, depending on what hardware you are using.
    For detailed steps, see the Running OTBR using Docker section on the :ref:`ug_thread_tools_tbr` page in the |NCS| documentation.
-#. Configure the Python Matter controller:
+#. Configure the controller, depending on the controller you want to use:
 
-   a. Build the controller using one of the options described in :ref:`ug_matter_configuring_controller_pc`.
-   #. Complete the following steps from the :doc:`matter:python_chip_controller_building` user guide in the Matter documentation:
+   * CHIP Tool controller:
 
-      * Building and installing - which prepares your CHIPTool for commissioning.
-      * Running the tool - which gives you access to Bluetooth interface.
-      * Using Python CHIP Controller for Matter accessory testing - which prepares your device programmed with the Matter sample for commissioning and testing.
+      a. Complete the following actions by following the steps in the :doc:`matter:chip_tool_guide` user guide in the Matter documentation:
 
-        .. note::
-            Skip Step 1, as you have the development kit programmed with a Matter sample.
+         * Build and run the CHIP Tool by completing the steps listed in "Building and running CHIP Tool".
+         * Prepare the environment for testing by completing the steps listed in "Using CHIP Tool for Matter device testing".
+
+   * Python Matter controller:
+
+      a. Build the controller using one of the options described in :ref:`ug_matter_configuring_controller_pc`.
+      #. Complete the following steps from the :doc:`matter:python_chip_controller_building` user guide in the Matter documentation:
+
+         * Building and installing - which prepares the controller for commissioning.
+         * Running the tool - which opens the command-line interface.
+         * Using Python CHIP Controller for Matter accessory testing - which prepares your device programmed with the Matter sample for commissioning and testing.
+
+         .. note::
+               Skip Step 1, as you have the development kit programmed with a Matter sample.
 
 #. Depending on which Matter sample you programmed onto the development kit, go to this sample's documentation page and complete the steps from the Testing section.
