@@ -21,17 +21,8 @@ static void uart1_set_enable(bool enable)
 {
 	if (enable) {
 		NRF_UARTE1_NS->ENABLE = UARTE_ENABLE_ENABLE_Enabled;
-		NRF_UARTE1_NS->TASKS_STARTRX = 1;
-		NRF_UARTE1_NS->TASKS_STARTTX = 1;
 	} else {
-		/* Stop TX and RX operation and wait for the corresponding events to be generated
-		 * before disabling the peripheral.
-		 * Ref: https://infocenter.nordicsemi.com/topic/ps_nrf9160/uarte.html
-		 */
-		NRF_UARTE1_NS->TASKS_STOPRX = 1;
-		while (NRF_UARTE1_NS->EVENTS_RXTO == 0) {
-			/* Wait until RX Timeout event is raised. */
-		}
+		/* Stop any ongoing transmission.*/
 		NRF_UARTE1_NS->TASKS_STOPTX = 1;
 		while (NRF_UARTE1_NS->EVENTS_TXSTOPPED == 0) {
 			/* Wait until TX Stopped event is raised. */
