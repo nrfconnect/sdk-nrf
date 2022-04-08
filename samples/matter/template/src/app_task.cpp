@@ -226,7 +226,7 @@ void AppTask::FunctionTimerEventHandler()
 		sUnusedLED_1.Set(true);
 		sUnusedLED_2.Set(true);
 
-		ConfigurationMgr().InitiateFactoryReset();
+		chip::Server::GetInstance().ScheduleFactoryReset();
 	}
 }
 
