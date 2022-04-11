@@ -41,9 +41,11 @@ Currently, you can use the sample with the following location services supported
 
 Before you use the services, see the :ref:`lib_multicell_location` library documentation and the respective location service documentation for the required setup.
 
-.. include:: ../../../doc/nrf/libraries/networking/multicell_location.rst
-   :start-after: reprovision_cert_note_start
-   :end-before: reprovision_cert_note_end
+.. note::
+   To use `nRF Cloud Location Services`_, your device must have a valid JWT signing key installed and registered with `nRF Cloud`_.
+
+   .. include:: /includes/nrf_cloud_rest_sample_requirements.txt
+      :start-after: requirement_keysign_moreinfo_start
 
 Trigger location requests
 *************************
