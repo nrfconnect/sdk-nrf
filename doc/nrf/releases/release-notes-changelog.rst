@@ -360,6 +360,12 @@ Bluetooth libraries and services
 Modem libraries
 ---------------
 
+* Added:
+
+  * :ref:`lib_modem_antenna` library:
+
+    * A new library for setting the antenna configuration on an nRF9160 DK or a Thingy:91.
+
 * Updated:
 
   * :ref:`sms_readme` library:
