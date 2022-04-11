@@ -1,7 +1,7 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v1.9.99
-###########################
+Changelog for |NCS| v1.9.99-dev1
+################################
 
 .. contents::
    :local:
@@ -33,9 +33,7 @@ The following sections provide detailed lists of changes by component.
 Application development
 =======================
 
-* Fixed:
-
-  * Issue with NCS Toolchain delimiter handling on MacOS, which could in special situations result in the build system not being able to properly locate the correct program needed.
+* Fixed an issue with |NCS| Toolchain delimiter handling on MacOS, which could in special situations result in the build system not being able to properly locate the correct program needed.
 
 Protocols
 =========
@@ -46,10 +44,8 @@ See `Samples`_ for lists of changes for the protocol-related samples.
 Bluetooth mesh
 --------------
 
-* Added:
-
-  * :c:struct:`bt_mesh_sensor_srv` context to relevant callbacks and APIs to help resolve the associated sensor model instance.
-    For details, see `Bluetooth mesh samples`_ and `Bluetooth libraries and services`_.
+* Added :c:struct:`bt_mesh_sensor_srv` context to relevant callbacks and APIs to help resolve the associated sensor model instance.
+  For details, see `Bluetooth mesh samples`_ and `Bluetooth libraries and services`_.
 
 Matter
 ------
@@ -61,13 +57,8 @@ Matter
 Thread
 ------
 
-* Added:
-
-  *  Support for the Link Metrics and CSL Thread v1.2 features for the nRF53 Series devices.
-
-* Removed:
-
-  *  Support for the :ref:`thread_architectures_designs_cp_ncp` architecture and the related tools.
+* Added support for the Link Metrics and CSL Thread v1.2 features for the nRF53 Series devices.
+* Removed support for the :ref:`thread_architectures_designs_cp_ncp` architecture and the related tools.
 
 Zigbee
 ------
@@ -81,9 +72,8 @@ Zigbee
     This implementation must not be used in production.
     It is meant to be used only for debugging purposes.
 
-* Updated:
-
-  * :ref:` Zigbee shell library <lib_zigbee_shell>`. For details, see `Libraries for Zigbee`_.
+* Updated :ref:`Zigbee shell library <lib_zigbee_shell>`.
+  For details, see `Libraries for Zigbee`_.
 
 Applications
 ============
@@ -95,35 +85,36 @@ nRF9160: Asset Tracker v2
 
 * Added:
 
-   * Support for :ref:`Bosch Software Environmental Cluster (BSEC) library <bosch_software_environmental_cluster_library>` driver .
-   * Support for indoor air quality (IAQ) readings retrieved from the BME680 sensor on Thingy:91. For more information, see the :ref:`asset_tracker_v2_sensor_module`.
-   * Support for QEMU x86 emulation.
+  * Support for :ref:`Bosch Software Environmental Cluster (BSEC) library <bosch_software_environmental_cluster_library>` driver.
+  * Support for Indoor Air Quality (IAQ) readings retrieved from the BME680 sensor on Thingy:91. For more information, see the :ref:`asset_tracker_v2_sensor_module`.
+  * Support for QEMU x86 emulation.
 
 * Updated:
 
   * For nRF Cloud builds, the configuration section in the shadow is now initialized during the cloud connection process.
   * Allow the :ref:`lib_nrf_cloud` library to handle modem FOTA updates if :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` is enabled.
 
-nRF9160: Serial LTE Modem
+nRF9160: Serial LTE modem
 -------------------------
+
+* Added:
+
+  * ``#XDFUGET`` and ``#XDFURUN`` AT commands to support the cloud-to-nRF52 DFU service.
+  * Native TLS support to the HTTPS client.
+  * ``#XCMNG`` command to support the use of native TLS.
+  * ``#XSOCKETSELECT`` AT command to support multiple sockets in the Socket service.
+  * ``#XPOLL`` AT command to poll selected or all sockets for incoming data.
 
 * Updated:
 
-  * Enhanced the #XHTTPCREQ AT command for better HTTP upload and download support.
-  * Enhanced the #XSLEEP AT command to support data indication when idle.
+  * Enhanced the ``#XHTTPCREQ`` AT command for better HTTP upload and download support.
+  * Enhanced the ``#XSLEEP`` AT command to support data indication when idle.
   * Enhanced the MQTT client to support the reception of large PUBLISH payloads.
-  * Added the #XDFUGET and #XDFURUN AT commands to support the cloud-to-nRF52 DFU service.
-  * Added native TLS support to the HTTPS client.
-  * Added the #XCMNG command to support the use of native TLS.
-  * Added the #XSOCKETSELECT AT command to support multiple sockets in the Socket service.
-  * Added the #XPOLL AT command to poll selected or all sockets for incoming data.
 
 nRF Desktop
 -----------
 
-* Added:
-
-  * Documentation for selective HID report subscription in :ref:`nrf_desktop_usb_state` using :kconfig:option:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION` option.
+* Added documentation for selective HID report subscription in :ref:`nrf_desktop_usb_state` using :ref:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION <config_desktop_app_options>` option.
 
 Thingy:53 Zigbee weather station
 --------------------------------
@@ -139,33 +130,44 @@ For lists of protocol-specific changes, see `Protocols`_.
 Bluetooth samples
 -----------------
 
-* Added:
-
-  * :ref:`peripheral_ams_client` sample.
+* Added :ref:`peripheral_ams_client` sample.
 
 * Updated:
 
   * :ref:`direct_test_mode` sample:
 
+    * Updated:
+
+      * The front-end module test parameters are not set to their default value after the DTM reset command anymore.
+      * Added the vendor-specific ``FEM_DEFAULT_PARAMS_SET`` command for restoring the default front-end module parameters.
+
     * Fixed handling of the disable Constant Tone Extension command.
-    * The front-end module test parameters are not set to their default value after the DTM reset command.
-    * Added the vendor-specific ``FEM_DEFAULT_PARAMS_SET`` command for restoring the default front-end module parameters.
 
   * :ref:`peripheral_hids_mouse` sample:
 
     * Increased the main stack size from 1024 to 1536 bytes.
-    * Increased the stack size of the nRF RPC threads from 1024 to 1280.
+    * Increased the stack size of the nRF RPC threads from 1024 to 1280 bytes.
 
   * :ref:`peripheral_uart` sample:
 
-    * Fixed handling of Rx buffer releasing in this sample and in the UARTE driver.
-      Before this fix, the Rx buffer might have been released twice by the main thread.
+    * Fixed handling of RX buffer releasing in this sample and in the UARTE driver.
+      Before this fix, the RX buffer might have been released twice by the main thread.
 
   * :ref:`central_uart` sample:
 
-    * Fixed handling of Rx buffer releasing in this sample and in the UARTE driver.
-      Before this fix, the Rx buffer might have been released twice by the main thread.
+    * Fixed handling of RX buffer releasing in this sample and in the UARTE driver.
+      Before this fix, the RX buffer might have been released twice by the main thread.
     * Added debug logs for the UART events.
+
+Bluetooth mesh samples
+----------------------
+
+* Updated:
+
+  * All samples to use the Partition Manager, replacing the use of the Device Tree Source flash partitions.
+  * :ref:`bluetooth_mesh_sensor_server` sample:
+
+    * Definitions for sensor callbacks now include the :c:struct:`bt_mesh_sensor_srv` context.
 
 nRF9160 samples
 ---------------
@@ -173,71 +175,9 @@ nRF9160 samples
 * Added:
 
   * :ref:`nrf_cloud_rest_device_message` sample, demonstrating how to send an arbitrary device message with the nRF Cloud REST API.
-  * :ref:`nrf_cloud_mqtt_multi_service` sample, demonstrating a simple but robust integration of location services, FOTA, sensor sampling, and more.
-
-Bluetooth mesh samples
-----------------------
-
-* Updated
-
-  * All samples are using the Partition Manager, replacing the use of the Device Tree Source flash partitions.
-  * :ref:`bluetooth_mesh_sensor_server` sample:
-
-    * Updated definitions for sensor callbacks to include the :c:struct:`bt_mesh_sensor_srv` context.
-
-Thread samples
---------------
-
-* Updated:
-
-  * Thread 1.2 version made the default configuration option.
-  * The relevant sample documentation pages with information about support for :ref:`Trusted Firmware-M <ug_tfm>`.
-  * All sample documentation with a Configuration section, and organized relevant information under that section.
-  * Thread Beacon payload has been removed after changes in latest Thread Specification.
-
-Matter samples
---------------
-
-* Added:
-
-  * Release configuration for all samples.
-  * A binding cluster to the Light Switch sample.
-  * The Groupcast communication to the Light Switch example.
-  * OTA DFU support for template application
-
-* Updated:
-
-  * All ZAP configurations due to changes in Matter upstream.
-  * Pairing process to Binding process in the Light Switch sample.
-
-NFC samples
------------
-
-* Updated:
-
-  * :ref:`nfc_tag_reader` sample:
-
-    * Skip NDEF content printing when message parsing returns an error.
-
-nrf5340 Samples
----------------
-
-* Added:
-
-  * :ref:`nrf5340_remote_shell` sample.
-  * :ref:`nrf5340_multicore` sample.
-
-* Changed the transport layer for inter-core communication on the nRF5340 device from the RPMsg to the IPC service library.
-  The IPC service library can work with different transport backends and uses the RPMsg backend with static VRINGs by default.
-  This transport layer change affects all samples that use Bluetooth HCI driver over RPMsg, 802.15.4 spinel backend over IPC or nRF RPC libraries.
-
-nrf9160 Samples
----------------
-
-* Added:
-
-  * Shell functionality to HTTP Update samples.
   * :ref:`modem_callbacks_sample` sample, showcasing initialization and de-initialization callbacks.
+  * :ref:`nrf_cloud_mqtt_multi_service` sample, demonstrating a simple but robust integration of location services, FOTA, sensor sampling, and more.
+  * Shell functionality to HTTP Update samples.
 
 * Updated:
 
@@ -262,35 +202,93 @@ nrf9160 Samples
 
   * :ref:`nrf_cloud_rest_fota` sample:
 
-    * Enabled building of bootloader FOTA update files.
-    * Corrected handling of the bootloader FOTA updates.
+    * Updated:
+
+      * Enabled building of bootloader FOTA update files.
+      * Corrected handling of the bootloader FOTA updates.
 
   * :ref:`lwm2m_client` sample:
 
-    * Reworked the retry logic so that the sample can fall back to bootstrap mode and need not always restart the LTE connection.
-      Added :ref:`state_diagram` to the sample documentation.
-    * Replaced the deprecated GPS-driver with the new GNSS interface.
-    * Added minimal Portfolio object support that is required for LwM2M conformance testing.
-    * Added guidelines on :ref:`setting up the sample for production <lwm2m_client_provisioning>` using AVSystem’s Coiote Device Management server.
-    * Added support for using location assistance when using Coiote LwM2M server.
+    * Added:
+
+      * Minimal Portfolio object support that is required for LwM2M conformance testing.
+      * Support for using :ref:`location_assistance` with Coiote LwM2M server.
+      * Guidelines on :ref:`setting up the sample for production <lwm2m_client_provisioning>` using AVSystem’s Coiote Device Management server.
+      * :ref:`state_diagram` to the sample documentation.
+
+    * Updated:
+
+      * Reworked the retry logic so that the sample can fall back to bootstrap mode and need not always restart the LTE connection.
+      * Replaced the deprecated GPS-driver with the new GNSS interface.
 
   * :ref:`download_sample` sample:
 
     * Updated the default HTTPS URL and certificate due to the old link being broken.
 
-Gazell samples
---------------
+OpenThread samples
+------------------
 
 * Updated:
 
-  * Separated the :ref:`gazell_samples` into their own pages for Host and Device.
+  * Thread 1.2 version made the default configuration option.
+  * Thread Beacon payload has been removed after changes in latest Thread Specification.
+  * The relevant sample documentation pages with information about support for :ref:`Trusted Firmware-M <ug_tfm>`.
+  * All sample documentation with a Configuration section, and organized relevant information under that section.
 
-    There are now four different sample pages, where each Host sample must be used along with its corresponding Device sample.
+Matter samples
+--------------
+
+* Added release configuration for all samples.
+
+* Updated:
+
+  * All ZAP configurations due to changes in Matter upstream.
+  * :ref:`matter_template_sample`:
+
+    * Added OTA DFU support.
+
+  * :ref:`matter_light_switch_sample` sample:
+
+    * Added:
+
+      * A binding cluster to the sample.
+      * Groupcast communication.
+
+    * Updated the Pairing process to Binding process in the sample.
+
+NFC samples
+-----------
+
+* Updated:
+
+  * :ref:`nfc_tag_reader` sample:
+
+    * Skip NDEF content printing when message parsing returns an error.
+
+nRF5340 samples
+---------------
+
+* Added:
+
+  * :ref:`nrf5340_remote_shell` sample.
+  * :ref:`nrf5340_multicore` sample.
+
+* Updated:
+
+  * Changed the transport layer for inter-core communication on the nRF5340 device from the RPMsg to the IPC service library.
+    The IPC service library can work with different transport backends and uses the RPMsg backend with static VRINGs by default.
+    This transport layer change affects all samples that use Bluetooth HCI driver over RPMsg, 802.15.4 spinel backend over IPC or nRF RPC libraries.
+
+Gazell samples
+--------------
+
+* Updated the documentation by separating the :ref:`gazell_samples` into their own pages for Host and Device.
+  There are now four different sample pages, where each Host sample must be used along with its corresponding Device sample.
 
 Zigbee samples
 --------------
 
-* Added support for the factory reset functionality from :ref:`lib_zigbee_application_utilities` in the following:
+* Added support for the factory reset functionality from :ref:`lib_zigbee_application_utilities` in the following samples:
 
   * :ref:`zigbee_light_bulb_sample`
   * :ref:`zigbee_light_switch_sample`
@@ -305,8 +303,7 @@ Other Samples
 
   * :ref:`ipc_service_sample` sample, which demonstrates throughput of the IPC service with available backends.
   * :ref:`event_manager_proxy_sample` sample, which demonstrates the usage of :ref:`event_manager_proxy`.
-
-* Added the :ref:`caf_sensor_manager_sample`.
+  * :ref:`caf_sensor_manager_sample`.
 
 * Updated:
 
@@ -319,55 +316,46 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-* Removed:
-
-  * GPS driver:
-
-    * Removed the deprecated GPS driver.
+* Removed the deprecated GPS driver.
 
 Libraries
 =========
 
 This section provides detailed lists of changes by :ref:`library <libraries>`.
 
-Libraries for NFC
------------------
-
-* :ref:`nfc_ndef_parser_readme`
-
-  * :c:func:`nfc_ndef_msg_parse`: fixed declaration, added an assertion to avoid a potential usage fault and added a note in the function documentation.
-  * Renamed the :c:macro:`NFC_NDEF_PARSER_REQUIRED_MEM` macro.
-
 Bluetooth libraries and services
 --------------------------------
 
-* Added:
+* Added :ref:`ams_client_readme` library.
 
-  * :ref:`ams_client_readme` library.
+* Updated:
 
-* :ref:`gatt_dm_readme` library:
+  * :ref:`gatt_dm_readme` library:
 
-  * Fixed discovery of empty services.
-  * Added option to discover several service instances using the UUID.
+    * Added option to discover several service instances using the UUID.
+    * Fixed discovery of empty services.
 
-* :ref:`bt_mesh` library:
+  * :ref:`bt_mesh` library:
 
-  * Added:
+    * Added:
 
-    * :c:struct:`bt_mesh_sensor_srv` context to the following API and callbacks:
+      * :c:struct:`bt_mesh_sensor_srv` context to the following API and callbacks:
 
-      * :c:func:`sensor_column_encode` API.
-      * :c:member:`get` and :c:member:`set` callbacks in :c:struct:`bt_mesh_sensor_setting`.
-      * :c:member:`get` callback in :c:struct:`bt_mesh_sensor_series`.
-      * :c:member:`get` callback in :c:struct:`bt_mesh_sensor`.
+        * :c:func:`sensor_column_encode` API.
+        * :c:member:`get` and :c:member:`set` callbacks in :c:struct:`bt_mesh_sensor_setting`.
+        * :c:member:`get` callback in :c:struct:`bt_mesh_sensor_series`.
+        * :c:member:`get` callback in :c:struct:`bt_mesh_sensor`.
 
-    * Shell commands for client models.
+      * Shell commands for client models.
 
-* :ref:`ble_rpc` library:
+  * :ref:`ble_rpc` library:
 
-  * Added host callback handlers for the ``write`` and ``match`` operations of the CCC descriptor.
-  * Fixed the serialization of the write callback applied to the GATT attribute.
-  * Fixed the serialization of the :c:func:`bt_gatt_service_unregister` function call.
+    * Added host callback handlers for the ``write`` and ``match`` operations of the CCC descriptor.
+
+    * Fixed:
+
+      * Serialization of the write callback applied to the GATT attribute.
+      * Serialization of the :c:func:`bt_gatt_service_unregister` function call.
 
 Modem libraries
 ---------------
@@ -381,35 +369,41 @@ Modem libraries
 
   * :ref:`lib_location` library:
 
-    * Added support for P-GPS data retrieval from an external source, implemented separately by the application.
-      Enabled by setting the :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL` option.
-      The library triggers a :c:enum:`LOCATION_EVT_GNSS_PREDICTION_REQUEST` event when assistance is needed.
-    * The :c:member:`request` member of the :c:struct:`location_event_data` structure was renamed to :c:member:`agps_request`.
-    * Current system time is attached to the ``location_datetime`` parameter of the location request response with Wi-Fi and cellular methods.
-      The timestamp comes from the moment of scanning or neighbor measurements.
-    * Removed dependency on the :ref:`lib_modem_jwt` library.
-      The :ref:`lib_location` library now selects :kconfig:option:`CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT` when using :kconfig:option:`CONFIG_NRF_CLOUD_REST`.
-    * Added a new feature, obstructed satellite visibility detection for GNSS.
-      When this feature is enabled, the library tries to detect occurrences where getting a GNSS fix is unlikely or would consume a lot of energy.
-      When such an occurrence is detected, GNSS is stopped without waiting for a fix or a timeout.
+    * Added:
+
+      * Support for P-GPS data retrieval from an external source, implemented separately by the application.
+        Enabled by setting the :kconfig:option:`CONFIG_LOCATION_METHOD_GNSS_PGPS_EXTERNAL` option.
+        The library triggers a :c:enum:`LOCATION_EVT_GNSS_PREDICTION_REQUEST` event when assistance is needed.
+      * Obstructed satellite visibility detection feature for GNSS.
+        When this feature is enabled, the library tries to detect occurrences where getting a GNSS fix is unlikely or would consume a lot of energy.
+        When such an occurrence is detected, GNSS is stopped without waiting for a fix or a timeout.
+
+    * Updated:
+
+      * The :c:member:`request` member of the :c:struct:`location_event_data` structure renamed to :c:member:`agps_request`.
+      * Current system time is attached to the ``location_datetime`` parameter of the location request response with Wi-Fi and cellular methods.
+        The timestamp comes from the moment of scanning or neighbor measurements.
+      * Removed dependency on the :ref:`lib_modem_jwt` library.
+        The :ref:`lib_location` library now selects :kconfig:option:`CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT` when using :kconfig:option:`CONFIG_NRF_CLOUD_REST`.
 
   * :ref:`nrf_modem_lib_readme` library:
 
-    * Added :c:macro:`NRF_MODEM_LIB_ON_INIT` macro for compile-time registration of callbacks on modem initialization.
-    * Added :c:macro:`NRF_MODEM_LIB_ON_SHUTDOWN` macro for compile-time registration of callbacks on modem de-initialization.
+    * Added:
+
+      * :c:macro:`NRF_MODEM_LIB_ON_INIT` macro for compile-time registration of callbacks on modem initialization.
+      * :c:macro:`NRF_MODEM_LIB_ON_SHUTDOWN` macro for compile-time registration of callbacks on modem de-initialization.
+      * :kconfig:option:`CONFIG_NRF_MODEM_LIB_LOG_FW_VERSION_UUID` to enable logging for both FW version and UUID at the end of the library initialization step.
+
     * Deprecated :c:func:`nrf_modem_lib_shutdown_wait` function, in favor of :c:macro:`NRF_MODEM_LIB_ON_INIT`.
-    * Added :kconfig:option:`CONFIG_NRF_MODEM_LIB_LOG_FW_VERSION_UUID` to enable logging for both FW version and UUID at the end of the library initialization step.
 
   * :ref:`lte_lc_readme` library:
 
-    * Added :c:macro:`LTE_LC_ON_CFUN` macro for compile-time registration of callbacks on modem functional mode changes using :c:func:`lte_lc_func_mode_set`.
-    * Added support for simple shell commands.
+    * Added:
 
-* Removed:
+      * :c:macro:`LTE_LC_ON_CFUN` macro for compile-time registration of callbacks on modem functional mode changes using :c:func:`lte_lc_func_mode_set`.
+      * Support for simple shell commands.
 
-  * A-GPS library:
-
-    * Removed the deprecated A-GPS library.
+* Removed the deprecated A-GPS library.
 
 Libraries for networking
 ------------------------
@@ -424,7 +418,7 @@ Libraries for networking
     * Updated:
 
       * Centralized error handling.
-      * Changes to error return values.
+      * Error return values.
       * For cellular positioning responses, the type is now set based on the ``fulfilledWith`` response from the nRF Cloud.
       * nRF Cloud error codes are now parsed and set in the :c:struct:`nrf_cloud_rest_context` structure.
 
@@ -434,9 +428,7 @@ Libraries for networking
 
   * :ref:`lib_fota_download` library:
 
-    * Added:
-
-      * :c:func:`fota_download_s0_active_get` function that gets the active B1 slot.
+    * Added :c:func:`fota_download_s0_active_get` function that gets the active B1 slot.
 
   * :ref:`lib_nrf_cloud` library:
 
@@ -448,107 +440,135 @@ Libraries for networking
 
     * Updated:
 
-      * During the connection process, shadow data is sent to the application even if no "config" section is present.
+      * Shadow data behavior during the connection process.
+        The data is now sent to the application even if no ``"config"`` section is present.
       * The application can now send shadow updates earlier in the connection process.
       * nRF Cloud error message responses to location service MQTT requests are now handled.
 
-    * Fixed:
-
-      * Validation of bootloader FOTA updates.
+    * Fixed the validation of bootloader FOTA updates.
 
   * :ref:`lib_aws_iot` library:
 
-    * Renamed ``aws_iot_topic_type`` to ``aws_iot_shadow_topic_type`` and removed ``AWS_IOT_SHADOW_TOPIC_UNKNOWN``.
+    * Updated:
+
+      * Renamed ``aws_iot_topic_type`` to ``aws_iot_shadow_topic_type`` and removed ``AWS_IOT_SHADOW_TOPIC_UNKNOWN``.
 
   * :ref:`lib_lwm2m_client_utils` library:
 
-    * Updated the library to store credentials and server settings permanently on bootstrap.
     * Added support for using location assistance when using Coiote LwM2M server.
+    * Updated the library to store credentials and server settings permanently on bootstrap.
+
+
+
+Libraries for NFC
+-----------------
+
+* Updated:
+
+  * :ref:`nfc_ndef_parser_readme`:
+
+    * Updated:
+
+      * :c:func:`nfc_ndef_msg_parse` with a fix to the declaration, a new assertion to avoid a potential usage fault, and added a note in the function documentation.
+      * ``NFC_NDEF_PARSER_REQUIRED_MEMO_SIZE_CALC`` macro has been renamed to :c:macro:`NFC_NDEF_PARSER_REQUIRED_MEM`.
+
 
 Other libraries
 ---------------
 
 * Added :ref:`event_manager_proxy`.
 
-* :ref:`app_event_manager`:
-
-  * Renamed Event Manager to Application Event Manager.
-
-  * Added:
-
-    * Event type flags to represent if event type should be logged, traced and has dynamic data.
-      To update your application, pass a flag variable as a parameter in :c:macro:`APP_EVENT_TYPE_DEFINE` instead of ``init_log``.
-      Use :c:macro:`APP_EVENT_FLAGS_CREATE` to set multiple flags:
-
-      .. code-block:: c
-
-         APP_EVENT_TYPE_DEFINE(my_event,
-           log_my_event,
-           &my_event_info,
-           APP_EVENT_FLAGS_CREATE(APP_EVENT_TYPE_FLAGS_1, APP_EVENT_TYPE_FLAGS_2));
-
-     * :c:func:`app_event_manager_event_size` function with corresponding :kconfig:option:`CONFIG_APP_EVENT_MANAGER_PROVIDE_APP_EVENT_SIZE` option.
-
-    * Universal hooks for Application Event Manager initialization, event submission, preprocessing, and postprocessing.
-      This includes implementation of macros that register hooks, grouped as follows:
-
-      * :c:macro:`APP_EVENT_HOOK_ON_SUBMIT_REGISTER`, :c:macro:`APP_EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST`, :c:macro:`APP_EVENT_HOOK_ON_SUBMIT_REGISTER_LAST`
-      * :c:macro:`APP_EVENT_HOOK_PREPROCESS_REGISTER`, :c:macro:`APP_EVENT_HOOK_PREPROCESS_REGISTER_FIRST`, :c:macro:`APP_EVENT_HOOK_PREPROCESS_REGISTER_LAST`
-      * :c:macro:`APP_EVENT_HOOK_POSTPROCESS_REGISTER`, :c:macro:`APP_EVENT_HOOK_POSTPROCESS_REGISTER_FIRST`, :c:macro:`APP_EVENT_HOOK_POSTPROCESS_REGISTER_LAST`
-
-* :ref:`app_event_manager_profiler_tracer`:
-
-  * Updated the :ref:`app_event_manager_profiler_tracer` library.
-    The library is no longer directly referenced from the Application Event Manager.
-    Instead, it uses the Application Event Manager hooks to connect with the manager.
-
-Common Application Framework (CAF)
-----------------------------------
-
-* Added:
-
-  * :ref:`caf_sensor_data_aggregator`, which buffers sensor events and sends them as packages to the listener.
-
-Other libraries
----------------
-
 * Updated:
+
+  * :ref:`app_event_manager`:
+
+    * Added:
+
+      * Event type flags to represent if event type should be logged, traced and has dynamic data.
+        To update your application, pass a flag variable as a parameter in :c:macro:`APP_EVENT_TYPE_DEFINE` instead of ``init_log``.
+        Use :c:macro:`APP_EVENT_FLAGS_CREATE` to set multiple flags:
+
+        .. code-block:: c
+
+           APP_EVENT_TYPE_DEFINE(my_event,
+             log_my_event,
+             &my_event_info,
+             APP_EVENT_FLAGS_CREATE(APP_EVENT_TYPE_FLAGS_1, APP_EVENT_TYPE_FLAGS_2));
+
+      * :c:func:`app_event_manager_event_size` function with corresponding :kconfig:option:`CONFIG_APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE` option.
+
+      * Universal hooks for Application Event Manager initialization, event submission, preprocessing, and postprocessing.
+        This includes implementation of macros that register hooks, grouped as follows:
+
+        * :c:macro:`APP_EVENT_HOOK_ON_SUBMIT_REGISTER`, :c:macro:`APP_EVENT_HOOK_ON_SUBMIT_REGISTER_FIRST`,  :c:macro:`APP_EVENT_HOOK_ON_SUBMIT_REGISTER_LAST`
+        * :c:macro:`APP_EVENT_HOOK_PREPROCESS_REGISTER`, :c:macro:`APP_EVENT_HOOK_PREPROCESS_REGISTER_FIRST`, :c:macro:`APP_EVENT_HOOK_PREPROCESS_REGISTER_LAST`
+        * :c:macro:`APP_EVENT_HOOK_POSTPROCESS_REGISTER`, :c:macro:`APP_EVENT_HOOK_POSTPROCESS_REGISTER_FIRST`, :c:macro:`APP_EVENT_HOOK_POSTPROCESS_REGISTER_LAST`
+
+    * Updated:
+
+      * Renamed Event Manager to Application Event Manager.
+
+  * :ref:`app_event_manager_profiler_tracer`:
+
+    * Updated:
+
+      * The library is no longer directly referenced from the Application Event Manager.
+        Instead, it uses the Application Event Manager hooks to connect with the manager.
+
 
   * :ref:`esb_readme`:
 
     * Fixed a compilation error for nRF52833.
 
-* Added:
+Common Application Framework (CAF)
+----------------------------------
 
-  * :ref:`shell_ipc_readme`.
+* Added :ref:`caf_sensor_data_aggregator`, which buffers sensor events and sends them as packages to the listener.
 
-sdk-nrfxlib
------------
+Shell libraries
+---------------
 
-See the changelog for each library in the :doc:`nfxlib documentation <nrfxlib:README>` for additional information.
+* Added :ref:`shell_ipc_readme`.
+
 
 Libraries for Zigbee
 --------------------
 
-* :ref:`lib_zigbee_application_utilities`:
+* Updated:
 
-  * Added factory reset functionality in :ref:`lib_zigbee_application_utilities`.
+  * :ref:`lib_zigbee_application_utilities`:
 
-* :ref:`lib_zigbee_shell`:
+    * Added factory reset functionality in :ref:`lib_zigbee_application_utilities`.
 
-  * Added ``nbr monitor`` shell command for monitoring the list of active Zigbee neighbors.
-  * Added a set of ``zcl groups`` shell commands for managing Zigbee groups.
-  * Added :kconfig:option:`CONFIG_ZIGBEE_SHELL_ZCL_CMD_TIMEOUT` for timing out ZCL cmd commands.
-  * Changed internal context manager structures.
-  * Changed :ref:`lib_zigbee_shell` structure to be an independent library.
-  * Changed file names from ``zigbee_cli*`` to ``zigbee_shell*``.
-  * Changed function names from ``zigbee_cli*`` to ``zigbee_shell*``.
-  * Changed ``bdb factory_reset`` command.
-    Now the command checks if the ZBOSS stack is started before performing the factory reset.
-  * Extended ``zcl cmd`` shell command to allow sending groupcasts.
-  * Extended ``zdo`` shell commands to allow binding to a group addresses.
-  * Fixed an issue where printing binding table containing group-binding entries results in corrupted output.
-  * Fixed an issue where Zigbee shell coordinator would not form a new network after the factory reset operation.
+  * :ref:`lib_zigbee_shell`:
+
+    * Added:
+
+      * ``nbr monitor`` shell command for monitoring the list of active Zigbee neighbors.
+      * Set of ``zcl groups`` shell commands for managing Zigbee groups.
+      * :kconfig:option:`CONFIG_ZIGBEE_SHELL_ZCL_CMD_TIMEOUT` for timing out ZCL cmd commands.
+
+    * Updated:
+
+      * :ref:`lib_zigbee_shell` structure to make it an independent library.
+      * File names ``zigbee_cli*`` and changed it to ``zigbee_shell*``.
+      * Function names ``zigbee_cli*`` and changed it to ``zigbee_shell*``.
+      * ``bdb factory_reset`` command.
+        Now the command checks if the ZBOSS stack is started before performing the factory reset.
+      * ``zcl cmd`` shell command extended to allow sending groupcasts.
+      *  ``zdo`` shell commands extended to allow binding to a group address.
+      * Internal context manager structures.
+
+  * Fixed:
+
+    * An issue where printing binding table containing group-binding entries results in corrupted output.
+    * An issue where Zigbee shell coordinator would not form a new network after the factory reset operation.
+
+
+sdk-nrfxlib
+-----------
+
+See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
 
 Scripts
 =======
@@ -559,12 +579,6 @@ Unity
 -----
 
 |no_changes_yet_note|
-
-Trusted Firmware-M
-==================
-
-* Fixed the NCSDK-13949 known issue where the TF-M Secure Image would copy FICR to RAM on nRF9160.
-* Fixed the NCSDK-12306 known issue where a usage fault would be triggered in the debug build on nRF9160.
 
 MCUboot
 =======
@@ -626,19 +640,23 @@ The following major changes have been implemented:
 Trusted Firmware-M
 ==================
 
-* Fixed the NCSDK-14015 known issue that would cause crash during boot when the :kconfig:option:`CONFIG_RPMSG_SERVICE` Kconfig option was enabled on the nRF5340 SoC.
+* Fixed:
+
+  * NCSDK-13949 known issue where the TF-M Secure Image would copy FICR to RAM on nRF9160.
+  * NCSDK-12306 known issue where a usage fault would be triggered in the debug build on nRF9160.
+  * NCSDK-14015 known issue that would cause crash during boot when the :kconfig:option:`CONFIG_RPMSG_SERVICE` Kconfig option is enabled on the nRF5340 SoC.
 
 cJSON
 =====
 
-*  Fixed an issue with floats in the cJSON module when using NEWLIB_LIBC without the :kconfig:option:`NEWLIB_LIBC_FLOAT_PRINTF` Kconfig option.
+*  Fixed an issue with floats in the cJSON module when using NEWLIB_LIBC without the :kconfig:option:`CONFIG_NEWLIB_LIBC_FLOAT_PRINTF` Kconfig option.
 
 Documentation
 =============
 
 * Added:
 
-  * Documentation for :ref:`degugging of nRF5340 <debugging>` in :ref:`working with nRF5340 DK<ug_nrf5340>` user guide.
+  * Documentation for :ref:`debugging of nRF5340 <debugging>` in :ref:`working with nRF5340 DK<ug_nrf5340>` user guide.
   * Section describing how to enable Amazon Frustration-Free Setup (FFS) support in :ref:`ug_matter_configuring_device_identification`.
   * Notes to the :ref:`bluetooth_central_dfu_smp` sample document specifying the intended use of the sample.
   * DevAcademy links to the :ref:`index` and :ref:`getting_started` pages.
