@@ -7,15 +7,18 @@ Preparing for production
    :local:
    :depth: 2
 
-.. figure:: /images/lwm2m_client_production.png
-
-To use this LwM2M-based sample in production, you must prepare the sample for production by completing the following steps:
+To use the :ref:`lwm2m_client` sample in production, you must prepare the sample for production by completing the following steps:
 
 1. Program the :ref:`at_client_sample` sample to the device.
 2. Provision the identity and security credentials.
 3. Program the LwM2M client sample.
 
-The following examples provide the guidelines on setting up the sample for production using AVSystem's `Coiote Device Management`_ server.
+.. figure:: /images/lwm2m_client_production.svg
+   :alt: LwM2M client production diagram
+
+   Preparing the sample for production
+
+The following sections provide the guidelines on setting up the sample for production using AVSystem's `Coiote Device Management`_ server.
 
 Programming the AT Client sample
 ================================
