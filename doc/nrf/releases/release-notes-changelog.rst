@@ -227,7 +227,7 @@ nrf9160 Samples
       Added :ref:`state_diagram` to the sample documentation.
     * Replaced the deprecated GPS-driver with the new GNSS interface.
     * Added minimal Portfolio object support that is required for LwM2M conformance testing.
-    * Added guidelines on how to provision devices into AVSystem's Coiote Device Management server in production.
+    * Added guidelines on :ref:`setting up the sample for production <lwm2m_client_provisioning>` using AVSystem’s Coiote Device Management server.
 
   * :ref:`download_sample` sample:
 
