@@ -12,8 +12,10 @@ This is achieved by using LwM2M objects ECID-Signal Measurement Information obje
 There are two different methods of obtaining the location assistance:
 
 * Location based on cell information - The device sends information about the current cell and possibly about the neighboring cells to the  LwM2M server. The LwM2M server then sends the location request to nRF Cloud, which responds with the location data.
+  Use :file:`overlay-assist-cell.conf` to enable this functionality in the sample.
 
 * Query of A-GPS assistance data - The A-GPS assistance data is queried from nRF Cloud and provided back to the device through the LwM2M server. The A-GPS assistance data is then provided to the GNSS module for obtaining the position fix faster.
+  Use :file:`overlay-assist-agps.conf` to enable this functionality in the sample.
 
 Location assistance options
 ===========================
