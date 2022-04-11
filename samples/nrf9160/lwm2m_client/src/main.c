@@ -218,7 +218,7 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 		LOG_INF("Send cell location request event");
 		struct cell_location_request_event *event = new_cell_location_request_event();
 
-		EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 #endif
 		break;
 
