@@ -1550,6 +1550,12 @@ Closing sockets
 Multiprotocol Service Layer (MPSL)
 ==================================
 
+.. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+
+DRGN-17014: High Frequency Clock staying active
+  The High Frequency Clock will stay active if it is turned on between timing events.
+  This could occur during Low Frequency Clock calibration when using the RC oscillator as the Low Frequency Clock source.
+
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 DRGN-16642: If radio notifications on ACTIVE are used, MPSL may assert
