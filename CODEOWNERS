@@ -91,6 +91,7 @@ Kconfig*                                  @tejlmand
 /lib/flash_patch/                         @hakonfam
 /lib/location/                            @trantanen @hiltunent @jhirsi @tokangas
 /lib/lte_link_control/                    @jtguggedal @tokangas @simensrostad
+/lib/modem_antenna/                       @tokangas
 /lib/modem_info/                          @rlubos
 /lib/modem_key_mgmt/                      @rlubos
 /lib/multicell_location/                  @jhirsi @tokangas
