@@ -16,6 +16,7 @@ config TFM_BOARD
 if BUILD_WITH_TFM
 
 config TFM_SECURE_UART1
+	bool
 	select NRF_UARTE1_SECURE
 
 endif # BUILD_WITH_TFM
