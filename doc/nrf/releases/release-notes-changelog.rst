@@ -730,6 +730,7 @@ Documentation
   * :ref:`app_memory` with sections for Matter and Zigbee.
   * :ref:`thread_ug_feature_updating_libs` to clarify the use, and added |VSC| instructions.
   * :ref:`ug_thread_communication` by moving it to a separate page instead of it being under :ref:`ug_thread_architectures`.
+  * Added a note to several nRF Cloud samples using the `nRF Cloud REST API`_ indicating the need for valid and registered request signing credentials.
 
 * Removed:
 

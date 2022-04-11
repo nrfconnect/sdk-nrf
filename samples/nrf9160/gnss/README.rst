@@ -75,6 +75,12 @@ When assistance support is enabled, the sample receives an A-GPS data request no
 The sample then displays the information in the terminal about the download process.
 Finally, after the download completes, the sample switches back to the previous display mode.
 
+.. note::
+   To download assistance data, your device must have a valid JWT signing key installed and registered with `nRF Cloud`_.
+
+   .. include:: /includes/nrf_cloud_rest_sample_requirements.txt
+       :start-after: requirement_keysign_moreinfo_start
+
 Minimal assistance
 ==================
 

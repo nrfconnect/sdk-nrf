@@ -23,6 +23,9 @@ The sample supports the following development kits:
 
 See also the requirements in :ref:`lib_location` library document.
 
+.. note::
+   .. include:: /includes/nrf_cloud_rest_sample_requirements.txt
+
 Overview
 ********
 
