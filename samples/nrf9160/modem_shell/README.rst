@@ -629,6 +629,13 @@ CONFIG_MOSH_REST
    You may not be able to use all features at the same time due to memory restrictions.
    To see which features are enabled simultaneously, check the configuration files and overlays.
 
+Additional configuration
+========================
+
+Check and configure the following library option that is used by the sample:
+
+* :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` - Selects an external GNSS antenna.
+
 Building and running
 ********************
 

@@ -282,25 +282,6 @@ static void modem_connect(void)
 	} while (ret < 0);
 }
 
-#if defined(CONFIG_APP_GNSS)
-static void modem_gnss_configure(void)
-{
-	if (strlen(CONFIG_GNSS_AT_MAGPIO) > 0) {
-		if (nrf_modem_at_printf("%s", CONFIG_GNSS_AT_MAGPIO) != 0) {
-			LOG_ERR("Failed to set MAGPIO configuration");
-			return;
-		}
-	}
-
-	if (strlen(CONFIG_GNSS_AT_COEX0) > 0) {
-		if (nrf_modem_at_printf("%s", CONFIG_GNSS_AT_COEX0) != 0) {
-			LOG_ERR("Failed to set COEX0 configuration");
-			return;
-		}
-	}
-}
-#endif
-
 void main(void)
 {
 	int ret;
@@ -340,10 +321,6 @@ void main(void)
 		LOG_ERR("Unable to init Application Event Manager (%d)", ret);
 		return;
 	}
-
-#if defined(CONFIG_APP_GNSS)
-	modem_gnss_configure();
-#endif
 
 	LOG_INF("Initializing modem.");
 	ret = lte_lc_init();

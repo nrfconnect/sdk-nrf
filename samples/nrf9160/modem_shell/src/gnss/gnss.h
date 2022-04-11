@@ -63,12 +63,6 @@ struct gnss_1pps_mode {
 	uint8_t second;
 };
 
-/* Common functions */
-
-int gnss_configure_lna(void);
-
-/* Functions implemented by different API implementations */
-
 /**
  * @brief Starts GNSS.
  *

@@ -13,25 +13,6 @@
 
 static K_SEM_DEFINE(location_event, 0, 1);
 
-static void antenna_configure(void)
-{
-	int err;
-
-	if (strlen(CONFIG_LOCATION_SAMPLE_GNSS_AT_MAGPIO) > 0) {
-		err = nrf_modem_at_printf("%s", CONFIG_LOCATION_SAMPLE_GNSS_AT_MAGPIO);
-		if (err) {
-			printk("Failed to set MAGPIO configuration\n");
-		}
-	}
-
-	if (strlen(CONFIG_LOCATION_SAMPLE_GNSS_AT_COEX0) > 0) {
-		err = nrf_modem_at_printf("%s", CONFIG_LOCATION_SAMPLE_GNSS_AT_COEX0);
-		if (err) {
-			printk("Failed to set COEX0 configuration\n");
-		}
-	}
-}
-
 static K_SEM_DEFINE(time_update_finished, 0, 1);
 
 static void date_time_evt_handler(const struct date_time_evt *evt)
@@ -241,8 +222,6 @@ int main(void)
 	int err;
 
 	printk("Location sample started\n\n");
-
-	antenna_configure();
 
 	if (IS_ENABLED(CONFIG_DATE_TIME)) {
 		/* Registering early for date_time event handler to avoid missing

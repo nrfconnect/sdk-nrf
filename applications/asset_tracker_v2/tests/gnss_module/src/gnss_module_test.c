@@ -256,10 +256,6 @@ static void setup_gnss_module_in_init_state(void)
 	__wrap_app_event_manager_free_ExpectAnyArgs();
 	struct app_module_event *app_module_event = new_app_module_event();
 
-	/* AT%XMAGPIO and AT%XCOEX0 AT commands for LNA configuration. */
-	__wrap_nrf_modem_at_printf_ExpectAnyArgsAndReturn(0);
-	__wrap_nrf_modem_at_printf_ExpectAnyArgsAndReturn(0);
-
 	__wrap_nrf_modem_gnss_event_handler_set_AddCallback(
 		&nrf_modem_gnss_event_handler_set_callback);
 	__wrap_nrf_modem_gnss_event_handler_set_ExpectAnyArgsAndReturn(0);

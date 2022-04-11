@@ -508,42 +508,9 @@ static bool gnss_data_requested(enum app_module_data_type *data_list,
 	return false;
 }
 
-static int lna_configure(void)
-{
-	int err;
-	const char *xmagpio_command = CONFIG_GNSS_MODULE_AT_MAGPIO;
-	const char *xcoex0_command = CONFIG_GNSS_MODULE_AT_COEX0;
-
-	LOG_DBG("MAGPIO command: %s", log_strdup(xmagpio_command));
-	LOG_DBG("COEX0 command: %s", log_strdup(xcoex0_command));
-
-	/* Make sure the AT command is not empty. */
-	if (xmagpio_command[0] != '\0') {
-		err = nrf_modem_at_printf("%s", xmagpio_command);
-		if (err) {
-			return err;
-		}
-	}
-
-	if (xcoex0_command[0] != '\0') {
-		err = nrf_modem_at_printf("%s", xcoex0_command);
-		if (err) {
-			return err;
-		}
-	}
-
-	return 0;
-}
-
 static int setup(void)
 {
 	int err;
-
-	err = lna_configure();
-	if (err) {
-		LOG_ERR("Failed to configure LNA, error %d", err);
-		return err;
-	}
 
 	err = nrf_modem_gnss_event_handler_set(gnss_event_handler);
 	if (err) {

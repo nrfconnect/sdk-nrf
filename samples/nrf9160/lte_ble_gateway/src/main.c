@@ -485,24 +485,6 @@ static void modem_configure(void)
 
 	display_state = LEDS_LTE_CONNECTING;
 
-	if (strlen(CONFIG_GNSS_AT_MAGPIO) > 0) {
-		err = nrf_modem_at_printf("%s", CONFIG_GNSS_AT_MAGPIO);
-		if (err) {
-			LOG_ERR("Failed to set MAGPIO configuration");
-
-			return;
-		}
-	}
-
-	if (strlen(CONFIG_GNSS_AT_COEX0) > 0) {
-		err = nrf_modem_at_printf("%s", CONFIG_GNSS_AT_COEX0);
-		if (err) {
-			LOG_ERR("Failed to set COEX0 configuration");
-
-			return;
-		}
-	}
-
 	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
 		/* Do nothing, modem is already turned on and connected. */
 	} else {

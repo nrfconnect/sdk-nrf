@@ -173,9 +173,6 @@ void main(void)
 #if defined(CONFIG_MOSH_WORKER_THREADS)
 	th_ctrl_init();
 #endif
-#if defined(CONFIG_MOSH_GNSS)
-	gnss_configure_lna();
-#endif
 #if defined(CONFIG_MOSH_FOTA)
 	err = fota_init();
 	if (err) {
