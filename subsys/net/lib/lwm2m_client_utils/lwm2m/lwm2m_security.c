@@ -374,7 +374,23 @@ int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint)
 
 	have_permanently_stored_keys = false;
 
-	settings_register(&lwm2m_security_settings);
+	ret = settings_subsys_init();
+	if (ret) {
+		LOG_ERR("Failed to initialize settings subsystem, %d", ret);
+		return ret;
+	}
+
+	ret = settings_register(&lwm2m_security_settings);
+	if (ret) {
+		LOG_ERR("Failed to register settings, %d", ret);
+		return ret;
+	}
+
+	ret = settings_load_subtree(SETTINGS_PREFIX);
+	if (ret) {
+		LOG_ERR("Failed to load settings, %d", ret);
+		return ret;
+	}
 
 	/* setup SECURITY object */
 
