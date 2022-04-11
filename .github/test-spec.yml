@@ -1,5 +1,10 @@
 # This is the Jenkins ci variant of the .github/labler.yaml
 
+"CI-audio-test":
+  - "applications/nrf5340_audio/**/*"
+  - "boards/arm/nrf5340_audio_dk_nrf5340/**/*"
+  - "tests/nrf5340_audio/**/*"
+
 "CI-iot-samples-test":
   - "include/modem/at_monitor.h"
   - "include/modem/at_params.h"
