@@ -265,7 +265,11 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-|no_changes_yet_note|
+* Removed:
+
+  * GPS driver:
+
+    * Removed the deprecated GPS driver.
 
 Libraries
 =========
