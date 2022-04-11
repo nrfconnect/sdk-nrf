@@ -14,11 +14,16 @@ This page describes what is needed to start working with Matter in the |NCS|.
 Mandatory configuration
 ***********************
 
-To use the Matter protocol, enable the :kconfig:option:`CONFIG_CHIP` Kconfig option.
-Setting this option enables the Matter protocol stack and other associated Kconfig options, including :kconfig:option:`CONFIG_CHIP_ENABLE_DNSSD_SRP` that is required for the discovery of the Matter device using DNS-SD.
+To use the Matter protocol, set the following Kconfig options:
 
-After that, make sure to set the :kconfig:option:`CONFIG_CHIP_PROJECT_CONFIG` Kconfig option and define the path to the configuration file that specifies Vendor ID, Product ID, and other project-specific Matter settings.
+* :kconfig:option:`CONFIG_CHIP` - This option enables the Matter protocol stack and other associated Kconfig options, including :kconfig:option:`CONFIG_CHIP_ENABLE_DNSSD_SRP` that is required for the discovery of the Matter device using DNS-SD.
+* :kconfig:option:`CONFIG_CHIP_PROJECT_CONFIG` - This option defines the path to the configuration file that specifies Vendor ID, Product ID, and other project-specific Matter settings.
 
+Because Matter is an application layer protocol on top of the other IPv6-based transport protocols (see :ref:`ug_matter_architecture`), it uses multiple software modules with their own configuration options to provide the communication between the devices and the necessary functionalities.
+It uses modules such as Bluetooth® LE, the IPv6 stack (currently, only :ref:`Thread <ug_thread_configuring>` is supported), :ref:`nRF Security <nrfxlib:nrf_security_config>`, or :ref:`MCUboot <mcuboot:mcuboot_ncs>`.
+Make sure to review the configuration options of these modules when configuring Matter.
+
+For an example configuration, see the :ref:`Matter Template sample's <matter_template_sample>` :file:`prj.conf` files in the :file:`configuration` directory for each supported board target.
 For instructions about how to set Kconfig options, see :ref:`configure_application`.
 
 .. _ug_matter_configuring_optional:
