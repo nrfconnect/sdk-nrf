@@ -18,8 +18,8 @@ class Coiote():
     """Interact with Coiote server"""
     def __init__(self):
         self.api_url = "https://eu.iot.avsystem.cloud/api/coiotedm/v3"
-        self.user = os.environ.get("COIOTE-USER")
-        self.passwd = os.environ.get("COIOTE-PASSWD")
+        self.user = os.environ.get("COIOTE_USER")
+        self.passwd = os.environ.get("COIOTE_PASSWD")
         self.headers = {'accept': 'application/json',
                         'content-type': 'application/json'}
         self.domain = os.environ.get("COIOTE-DOMAIN")

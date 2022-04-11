@@ -76,8 +76,8 @@ See the following code:
 .. code-block:: console
 
    # Setup phase
-   [nrf@dev]:~/scripts# export COIOTE-PASSWD='my-password'
-   [nrf@dev]:~/scripts# export COIOTE-USER='my-username'
+   [nrf@dev]:~/scripts# export COIOTE_PASSWD='my-password'
+   [nrf@dev]:~/scripts# export COIOTE_USER='my-username'
 
    # Find the serial port
    [nrf@dev]:~/scripts# nrfjprog -f NRF91 --com
