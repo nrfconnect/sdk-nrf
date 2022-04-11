@@ -366,6 +366,12 @@ Modem libraries
 
     * Added :c:macro:`LTE_LC_ON_CFUN` macro for compile-time registration of callbacks on modem functional mode changes using :c:func:`lte_lc_func_mode_set`.
 
+* Removed:
+
+  * A-GPS library:
+
+    * Removed the deprecated A-GPS library.
+
 Libraries for networking
 ------------------------
 

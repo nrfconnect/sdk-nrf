@@ -6,7 +6,6 @@
 
 menu "Libraries"
 
-rsource "agps/Kconfig"
 rsource "bin/Kconfig"
 rsource "nrf_modem_lib/Kconfig"
 rsource "adp536x/Kconfig"
