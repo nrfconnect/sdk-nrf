@@ -243,6 +243,10 @@ You can add the following optional configurations to configure the heap or to pr
 * :kconfig:option:`CONFIG_PDN_DEFAULTS_OVERRIDE` - Used for manual configuration of the APN. Set the option to ``y`` to override the default PDP context configuration.
 * :kconfig:option:`CONFIG_PDN_DEFAULT_APN` - Used for manual configuration of the APN. An example is ``apn.example.com``.
 
+If you use an external GNSS antenna, add the following configuration:
+
+* :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` - Selects an external GNSS antenna.
+
 Configuration files
 ===================
 
@@ -292,7 +296,7 @@ See :ref:`Building with overlays <building_with_overlays>` for information on ho
 
 .. note::
 
-   When you build the application for the nRF9160 DK v0.15.0 and later, set the :ref:`CONFIG_GNSS_MODULE_ANTENNA_EXTERNAL <CONFIG_GNSS_MODULE_ANTENNA_EXTERNAL>` option to ``y`` to achieve the best external antenna performance.
+   When you build the application for the nRF9160 DK v0.15.0 and later, set the :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` option to ``y`` to achieve the best external antenna performance.
 
 .. external_antenna_note_end
 

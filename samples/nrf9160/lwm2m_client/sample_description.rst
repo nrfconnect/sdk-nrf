@@ -459,6 +459,10 @@ For Thingy:91, configure the ADXL362 accelerometer sensor range by choosing one 
 
 Resolution depends on range: |plusminus| 2 g has higher resolution than |plusminus| 4 g, which again has higher resolution than |plusminus| 8 g.
 
+If you use an external GNSS antenna, add the following configuration:
+
+* :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` - Selects an external GNSS antenna.
+
 Configuration files
 ===================
 
