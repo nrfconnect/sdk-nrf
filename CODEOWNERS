@@ -84,7 +84,6 @@ Kconfig*                                  @tejlmand
 /lib/at_monitor/                          @lemrey @rlubos
 /lib/at_shell/                            @jtguggedal @simensrostad
 /lib/at_sms_cert/                         @eivindj-nordic
-/lib/agps/                                @jtguggedal @simensrostad
 /lib/nrf_modem_lib/                       @rlubos @lemrey
 /lib/edge_impulse/                        @pdunaj
 /lib/fprotect/                            @hakonfam

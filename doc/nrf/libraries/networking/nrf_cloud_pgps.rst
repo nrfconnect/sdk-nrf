@@ -53,12 +53,11 @@ Configure these additional options to refine the behavior of P-GPS:
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_FRAGMENT_SIZE`
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REQUEST_UPON_INIT`
 
-Configure both of the following options if you need your application to use A-GPS as well, for coarse time and position data and to get the fastest TTFF:
+Configure the following option if you need your application to use A-GPS as well, for coarse time and position data and to get the fastest TTFF:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_AGPS`
-* :kconfig:option:`CONFIG_AGPS`
 
-If A-GPS is not desired (due to data costs, low power requirements, or expected frequent loss of cloud connectivity), both options listed above must be disabled.
+If A-GPS is not desired (due to data costs, low power requirements, or expected frequent loss of cloud connectivity), you must disable the option.
 
 For an application that uses P-GPS, the following options must be configured for storing settings, for having accurate clock time, and for having a location to store predictions:
 
