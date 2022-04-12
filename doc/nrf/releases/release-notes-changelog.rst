@@ -574,6 +574,7 @@ Documentation
 * Changed:
 
   * Updated the outdated protocol architecture diagram on the :ref:`ug_matter_architecture` page.
+  * Updated the :ref:`thread_ug_feature_updating_libs` section to clarify the use, and added |VSC| instructions.
 
 * Removed:
 
