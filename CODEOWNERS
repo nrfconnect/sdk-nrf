@@ -68,6 +68,7 @@ Kconfig*                                  @tejlmand
 /ext/                                     @carlescufi
 /include/                                 @anangl @rlubos
 /include/net/azure_*                      @jtguggedal @simensrostad @coderbyheart
+/include/net/nrf_cloud_*                  @plskeggs @jayteemo @glarsennordic
 /include/bluetooth/                       @alwa-nordic @KAGA164
 /include/bluetooth/mesh/                  @trond-snekvik
 /include/caf/                             @pdunaj
@@ -132,6 +133,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf9160/azure_*                  @jtguggedal @simensrostad @coderbyheart
 /samples/nrf9160/location/                @trantanen @hiltunent @jhirsi @tokangas
 /samples/nrf9160/lwm2m_client/            @rlubos @VeijoPesonen
+/samples/nrf9160/nrf_cloud_*              @plskeggs @jayteemo @glarsennordic
 /samples/spm/                             @lemrey @hakonfam @SebastianBoe
 /samples/openthread/                      @lmaciejonczyk @rlubos @edmont @canisLupus1313
 /samples/profiler/                        @pdunaj
@@ -172,6 +174,7 @@ Kconfig*                                  @tejlmand
 /subsys/net/lib/ftp_client/               @junqingzou
 /subsys/net/lib/icalendar_parser/         @lats1980
 /subsys/net/lib/lwm2m_client_utils/       @rlubos @VeijoPesonen
+/subsys/net/lib/nrf_cloud/                @plskeggs @jayteemo @glarsennordic
 /subsys/net/lib/zzhc/                     @junqingzou
 /subsys/nfc/                              @grochu @anangl
 /subsys/nrf_rpc/                          @doki-nordic @KAGA164
