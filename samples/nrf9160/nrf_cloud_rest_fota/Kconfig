@@ -77,5 +77,5 @@ source "Kconfig.zephyr"
 endmenu
 
 module = NRF_CLOUD_REST_FOTA_SAMPLE
-module-str = nRF Cloud Rest Sample
+module-str = nRF Cloud Rest FOTA Sample
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
