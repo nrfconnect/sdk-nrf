@@ -190,6 +190,7 @@ nRF9160 samples
   * :ref:`modem_callbacks_sample` sample, showcasing initialization and de-initialization callbacks.
   * :ref:`nrf_cloud_mqtt_multi_service` sample, demonstrating a simple but robust integration of location services, FOTA, sensor sampling, and more.
   * Shell functionality to HTTP Update samples.
+  * :ref:`nrf_cloud_rest_cell_pos_sample` sample, demonstrating how to use the :ref:`lib_nrf_cloud_rest` library to perform cellular positioning requests.
 
 * Updated:
 

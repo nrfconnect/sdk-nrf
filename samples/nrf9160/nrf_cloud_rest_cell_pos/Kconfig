@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "nRF Cloud REST Cellular Positioning Sample"
+
+config REST_CELL_POS_DO_JITP
+	bool "Ask to perform just-in-time provisioning (JITP) via REST on startup"
+	help
+	  If a device has JITP certificates and has not yet been provisioned to
+	  nRF Cloud, enable this option and press the configured button when
+	  prompted after the sample starts.
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
+
+module = NRF_CLOUD_REST_CELL_POS_SAMPLE
+module-str = nRF Cloud REST Cellular Positioning Sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
