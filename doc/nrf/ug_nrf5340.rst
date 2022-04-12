@@ -56,10 +56,12 @@ Use this core for tasks that require high performance and for application-level 
 The M33 TrustZone divides the application MCU into secure and non-secure domains.
 When the MCU boots, it always starts executing from the secure area.
 
-In Zephyr, the application core is divided into two different build targets:
+In Zephyr, the firmware of the application core is built using one of the following build targets:
 
-* ``nrf5340dk_nrf5340_cpuapp`` for the secure domain
-* ``nrf5340dk_nrf5340_cpuapp_ns`` for the non-secure domain
+* ``nrf5340dk_nrf5340_cpuapp`` for the secure domain.
+* ``nrf5340dk_nrf5340_cpuapp_ns`` for the non-secure domain.
+  On selecting this build target, the build system includes an additional secure firmware component before building the main firmware on the non-secure domain.
+  The additional component can either be :ref:`Secure Partition Manager (SPM) <secure_partition_manager>` or :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`.
 
 .. note::
    In |NCS| releases before v1.6.1, the build target ``nrf5340dk_nrf5340_cpuapp_ns`` was named ``nrf5340dk_nrf5340_cpuappns``.
