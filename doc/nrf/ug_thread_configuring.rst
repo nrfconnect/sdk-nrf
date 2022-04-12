@@ -477,17 +477,22 @@ Updating pre-built OpenThread libraries
 You can update the :ref:`nrfxlib:ot_libs` in nrfxlib when using any Thread sample if you configure the sample to build the OpenThread stack from source with :kconfig:option:`CONFIG_OPENTHREAD_SOURCES`.
 Use this functionality for :ref:`certification <ug_thread_cert>` of your configuration of the OpenThread libraries, for example.
 
+You can install the libraries either with or without debug symbols.
+Installing the libraries with debug symbols can be useful when debugging, but will take a significant amount of storage memory.
+You can remove the symbols when updating with the :kconfig:option:`CONFIG_OPENTHREAD_BUILD_OUTPUT_STRIPPED` Kconfig option enabled.
+The option is disabled by default.
+
 .. note::
     When you select :kconfig:option:`CONFIG_OPENTHREAD_USER_CUSTOM_LIBRARY`, the location of the destination directory for the libraries depends on the chosen :ref:`nrf_security backend <nrfxlib:nrf_security_readme>`, either :kconfig:option:`CONFIG_CC3XX_BACKEND` or :kconfig:option:`CONFIG_OBERON_BACKEND`.
 
-Updating libraries without debug symbols
-----------------------------------------
+Updating the libraries without debug symbols
+--------------------------------------------
 
-You can install the release version of the latest nrfxlib libraries without the debug symbols.
-This is handled with the :kconfig:option:`CONFIG_OPENTHREAD_BUILD_OUTPUT_STRIPPED` Kconfig option.
-This option is disabled by default.
+There is a single command to update the libraries without debug symbols.
+When using the command line, run the command in the project folder.
+When using |VSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the command there.
 
-Run the following command to update the nrfxlib libraries:
+Use the following command:
 
 .. parsed-literal::
    :class: highlight
@@ -498,19 +503,21 @@ This command builds two versions of the libraries, with and without debug symbol
 |board_note_for_updating_libs|
 The :kconfig:option:`CONFIG_OPENTHREAD_BUILD_OUTPUT_STRIPPED` Kconfig option will be disabled again after this command completes.
 
-Updating libraries to debug version
------------------------------------
+Updating the libraries with debug symbols
+-----------------------------------------
 
-You can also install the debug version of the current OpenThread libraries (from Zephyr).
-This can be useful when debugging, but will take a significant amount of storage memory.
-Take this into account while committing those libraries to the repository.
+There is a single command to update the libraries with debug symbols.
+When using the command line, run the command in the project folder.
+When using |VSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the command there.
 
-To update the nrfxlib libraries with debug symbols, run the following command:
+Use the following command:
 
 .. parsed-literal::
    :class: highlight
 
    west build -b nrf52840dk_nrf52840 -t install_openthread_libraries
+
+|board_note_for_updating_libs|
 
 .. |board_note_for_updating_libs| replace:: This command also builds the sample on the specified board.
    Make sure that the board you mention is compatible with the chosen sample.
