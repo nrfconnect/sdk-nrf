@@ -20,22 +20,9 @@ There are two different methods of obtaining the location assistance:
 Location assistance options
 ===========================
 
-.. _CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL:
+Check and configure the following library options that are used by the sample:
 
-CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL - Configuration for using cell based location as a location assistance method
-   nRF Cloud estimates the location of the device based on the cell neighborhood.
-
-.. _CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS:
-
-CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS - Configuration for using A-GPS as location assistance method
-   nRF Cloud provides A-GPS assistance data and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M server.
-
-.. _CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS:
-
-CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS - Configuration for using events from :ref:`lib_lwm2m_client_utils` library for sending assistance requests
-   Disable this option if you provide your own method of sending the assistance requests to the LwM2M server.
-
-.. _CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER:
-
-CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER - Configuration for using a listener from :ref:`lib_lwm2m_client_utils` library for populating the cell neighborhood
-   Disable this option if you provide your own method of populating the LwM2M objects (ID 10256) containing the cell neighborhood information.
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL` - nRF Cloud estimates the location of the device based on the cell neighborhood.
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS` -  nRF Cloud provides A-GPS assistance data and the GNSS-module in the device uses the data for obtaining a GNSS fix, which is reported back to the LwM2M server.
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS` - Disable this option if you provide your own method of sending the assistance requests to the LwM2M server.
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER` - Disable this option if you provide your own method of populating the LwM2M objects (ID 10256) containing the cell neighborhood information.
