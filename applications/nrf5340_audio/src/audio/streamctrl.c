@@ -268,6 +268,12 @@ static int m_ble_transport_init(void)
 		return ret;
 	}
 
+	/* Setting TX power for advertising if config is set to anything other than 0 */
+	if (CONFIG_BLE_ADV_TX_POWER_DBM) {
+		ret = ble_hci_vsc_set_adv_tx_pwr(CONFIG_BLE_ADV_TX_POWER_DBM);
+		ERR_CHK(ret);
+	}
+
 #if (CONFIG_TRANSPORT_BIS)
 #if (CONFIG_AUDIO_DEV == GATEWAY)
 	ret = ble_trans_iso_init(TRANS_TYPE_BIS, DIR_TX, NULL);
