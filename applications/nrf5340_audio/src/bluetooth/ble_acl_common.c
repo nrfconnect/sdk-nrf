@@ -8,6 +8,9 @@
 #include "ctrl_events.h"
 #include "ble_trans.h"
 #include <zephyr.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <shell/shell.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/iso.h>
 #include "ble_trans.h"
@@ -26,6 +29,8 @@
 #include <logging/log.h>
 LOG_MODULE_DECLARE(ble, CONFIG_LOG_BLE_LEVEL);
 
+#define BASE_10 10
+
 /* Connection to the peer device - the other nRF5340 Audio device
  * This is the device we are streaming audio to/from.
  */
@@ -43,6 +48,7 @@ static void on_connected_cb(struct bt_conn *conn, uint8_t err)
 {
 	int ret;
 	char addr[BT_ADDR_LE_STR_LEN];
+	uint16_t peer_conn_handle;
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 	ARG_UNUSED(ret);
@@ -51,6 +57,17 @@ static void on_connected_cb(struct bt_conn *conn, uint8_t err)
 	} else {
 		/* ACL connection established */
 		LOG_DBG("ACL connection to %s established", addr);
+		/* Setting TX power for connection if set to anything but 0 */
+		if (CONFIG_BLE_CONN_TX_POWER_DBM) {
+			ret = bt_hci_get_conn_handle(conn, &peer_conn_handle);
+			if (ret) {
+				LOG_ERR("Unable to get handle, ret = %d", ret);
+			} else {
+				ret = ble_hci_vsc_set_conn_tx_pwr(peer_conn_handle,
+								  CONFIG_BLE_CONN_TX_POWER_DBM);
+				ERR_CHK(ret);
+			}
+		}
 #if (CONFIG_AUDIO_DEV == HEADSET)
 		ble_acl_headset_on_connected(conn);
 #elif (CONFIG_AUDIO_DEV == GATEWAY)
@@ -213,3 +230,170 @@ int ble_acl_common_init(void)
 
 	return 0;
 }
+
+static enum ble_hci_vs_tx_power selection_to_enum_val(int selection)
+{
+	switch (selection) {
+	case 0:
+		return BLE_HCI_VSC_TX_PWR_0dBm;
+	case 1:
+		return BLE_HCI_VSC_TX_PWR_Neg1dBm;
+	case 2:
+		return BLE_HCI_VSC_TX_PWR_Neg2dBm;
+	case 3:
+		return BLE_HCI_VSC_TX_PWR_Neg3dBm;
+	case 4:
+		return BLE_HCI_VSC_TX_PWR_Neg4dBm;
+	case 5:
+		return BLE_HCI_VSC_TX_PWR_Neg5dBm;
+	case 6:
+		return BLE_HCI_VSC_TX_PWR_Neg6dBm;
+	case 7:
+		return BLE_HCI_VSC_TX_PWR_Neg7dBm;
+	case 8:
+		return BLE_HCI_VSC_TX_PWR_Neg8dBm;
+	case 9:
+		return BLE_HCI_VSC_TX_PWR_Neg12dBm;
+	case 10:
+		return BLE_HCI_VSC_TX_PWR_Neg16dBm;
+	case 11:
+		return BLE_HCI_VSC_TX_PWR_Neg20dBm;
+	case 12:
+		return BLE_HCI_VSC_TX_PWR_Neg40dBm;
+	default:
+		return BLE_HCI_VSC_TX_PWR_INVALID;
+	}
+}
+
+static void shell_print_selection(const struct shell *shell)
+{
+	shell_print(shell, "Possible settings:");
+	shell_print(shell, "\t0: 0dBm");
+	shell_print(shell, "\t1: -1dBm");
+	shell_print(shell, "\t2: -2dBm");
+	shell_print(shell, "\t3: -3dBm");
+	shell_print(shell, "\t4: -4dBm");
+	shell_print(shell, "\t5: -5dBm");
+	shell_print(shell, "\t6: -6dBm");
+	shell_print(shell, "\t7: -7dBm");
+	shell_print(shell, "\t8: -8dBm");
+	shell_print(shell, "\t9: -12dBm");
+	shell_print(shell, "\t10: -16dBm");
+	shell_print(shell, "\t11: -20dBm");
+	shell_print(shell, "\t12: -40dBm");
+}
+
+static int cmd_ble_tx_pwr_conn(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+	struct bt_conn *conn;
+	uint8_t num_conn = 0;
+	uint16_t peer_conn_handle;
+
+	if (argc != 2) {
+		shell_error(shell, "Wrong number of arguments provided");
+		return -EINVAL;
+	}
+
+	if (strcmp(argv[1], "help") == 0) {
+		shell_print_selection(shell);
+		return 0;
+
+	} else if (!isdigit((int)argv[1][0])) {
+		shell_error(shell, "Supplied argument is not numeric");
+		shell_print_selection(shell);
+		return -EINVAL;
+	}
+
+	enum ble_hci_vs_tx_power tx_power;
+
+	tx_power = selection_to_enum_val(strtoul(argv[1], NULL, BASE_10));
+
+	if (tx_power == BLE_HCI_VSC_TX_PWR_INVALID) {
+		shell_error(shell, "Selection not valid");
+		shell_print_selection(shell);
+		return -EINVAL;
+	}
+
+#if (CONFIG_AUDIO_DEV == GATEWAY)
+	for (uint8_t i = 0; i < CONFIG_BT_MAX_CONN; i++) {
+		ret = ble_acl_gateway_conn_peer_get(i, &conn);
+		ERR_CHK_MSG(ret, "Connection peer get error");
+		if (conn != NULL) {
+			ret = bt_hci_get_conn_handle(conn, &peer_conn_handle);
+			if (ret) {
+				LOG_ERR("Unable to get handle, ret = %d", ret);
+			} else {
+				ret = ble_hci_vsc_set_conn_tx_pwr(peer_conn_handle, tx_power);
+				ERR_CHK(ret);
+				num_conn++;
+			}
+		}
+	}
+#elif (CONFIG_AUDIO_DEV == HEADSET)
+	ble_acl_headset_conn_peer_get(&conn);
+	if (conn != NULL) {
+		ret = bt_hci_get_conn_handle(conn, &peer_conn_handle);
+		if (ret) {
+			LOG_ERR("Unable to get handle, ret = %d", ret);
+		} else {
+			ret = ble_hci_vsc_set_conn_tx_pwr(peer_conn_handle, tx_power);
+			ERR_CHK(ret);
+			num_conn++;
+		}
+	}
+#endif /* (CONFIG_AUDIO_DEV == GATEWAY) */
+
+	shell_print(shell, "TX power for set to %d dBm for %d connection(s)", tx_power, num_conn);
+
+	return 0;
+}
+
+static int cmd_ble_tx_pwr_adv(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+
+	if (argc != 2) {
+		shell_error(shell, "Wrong number of arguments provided");
+		return -EINVAL;
+	}
+
+	if (strcmp(argv[1], "help") == 0) {
+		shell_print_selection(shell);
+		return 0;
+
+	} else if (!isdigit((int)argv[1][0])) {
+		shell_error(shell, "Supplied argument is not numeric");
+		shell_print_selection(shell);
+		return -EINVAL;
+	}
+
+	enum ble_hci_vs_tx_power tx_power;
+
+	tx_power = selection_to_enum_val(strtoul(argv[1], NULL, BASE_10));
+
+	if (tx_power == BLE_HCI_VSC_TX_PWR_INVALID) {
+		shell_error(shell, "Selection not valid");
+		shell_print_selection(shell);
+		return -EINVAL;
+	}
+
+	ret = ble_hci_vsc_set_adv_tx_pwr(tx_power);
+	if (ret) {
+		shell_error(shell, "Failed to set adv TX power");
+		return ret;
+	}
+
+	shell_print(shell, "TX power for advertising set to %d dBm", tx_power);
+
+	return 0;
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(ble_cmd,
+			       SHELL_COND_CMD(CONFIG_SHELL, tx_pwr_conn, NULL,
+					      "Set connection TX power", cmd_ble_tx_pwr_conn),
+			       SHELL_COND_CMD(CONFIG_SHELL, tx_pwr_adv, NULL,
+					      "Set advertising TX power", cmd_ble_tx_pwr_adv),
+			       SHELL_SUBCMD_SET_END);
+
+SHELL_CMD_REGISTER(bluetooth, &ble_cmd, "Settings related to Bluetooth", NULL);

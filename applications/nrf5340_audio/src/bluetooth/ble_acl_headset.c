@@ -63,6 +63,11 @@ void work_adv_start(struct k_work *item)
 	}
 }
 
+void ble_acl_headset_conn_peer_get(struct bt_conn **p_conn)
+{
+	*p_conn = headset_conn_peer;
+}
+
 void ble_acl_headset_on_connected(struct bt_conn *conn)
 {
 	LOG_DBG("Connected - nRF5340 Audio headset");
