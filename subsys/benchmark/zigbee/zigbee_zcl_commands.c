@@ -1,3 +1,5 @@
+/*$$$LICENCE_NORDIC_STANDARD<2022>$$$*/
+
 #include "benchmark_api.h"
 #include "benchmark_zigbee_common.h"
 #include "zboss_api.h"
@@ -153,7 +155,7 @@ zb_uint8_t zigbee_benchmark_ep_handler(zb_bufid_t bufid)
                 LOG_INF("Remote peer 0x%04x requested to open the network", remote_short_addr);
                 zb_zcl_status = ZB_ZCL_STATUS_SUCCESS;
 
-		        if (bdb_start_top_level_commissioning(ZB_BDB_NETWORK_STEERING)) {
+                if (bdb_start_top_level_commissioning(ZB_BDB_NETWORK_STEERING)) {
                     LOG_INF("Opened the network for joining");
                 } else {
                     LOG_INF("Commissioning hasn't finished yet!");
@@ -343,7 +345,7 @@ void zigbee_benchmark_open_network_remote(zb_bufid_t bufid)
 
 void zigbee_benchmark_set_tx_power_remote(zb_uint16_t peer_addr, zb_int8_t tx_power_val)
 {
-    zb_uint8_t   cli_ep = zb_cli_get_endpoint();
+    zb_uint8_t   cli_ep = zb_shell_get_endpoint();
     zb_ret_t     zb_err_code;
     zb_uint8_t  *p_cmd_buf;
     zb_addr_u    remote_addr = {.addr_short = peer_addr};
@@ -418,7 +420,7 @@ static zb_zcl_status_t zigbee_benchmark_set_tx_power(struct benchmark_tx_power *
 
 static zb_zcl_status_t zigbee_benchmark_send_tx_power_response(zb_bufid_t bufid, zb_uint16_t peer_addr)
 {
-    zb_uint8_t   cli_ep = zb_cli_get_endpoint();
+    zb_uint8_t   cli_ep = zb_shell_get_endpoint();
     zb_addr_u    remote_addr = {.addr_short = peer_addr};
     struct benchmark_tx_power power;
     zb_ret_t     zb_err_code;

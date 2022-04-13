@@ -4,13 +4,7 @@
 
 #include <logging/log.h>
 #include <zboss_api.h>
-
-// #include "zb_ha_configuration_tool.h"
 #include <zigbee/zigbee_error_handler.h>
-
-#define IEEE_CHANNEL_MASK                   (1l << ZIGBEE_CHANNEL)              /**< Scan only one, predefined channel to find the coordinator. */
-#define ERASE_PERSISTENT_CONFIG             ZB_TRUE                             /**< Do not erase NVRAM to save the network parameters after device reboot or power-off. NOTE: If this option is set to ZB_TRUE then do full device erase for all network devices before running other samples. */
-#define ZIGBEE_NETWORK_STATE_LED            BSP_BOARD_LED_2                     /**< LED indicating that light switch successfully joind Zigbee network. */
 
 #define ZIGBEE_CLI_ENDPOINT                 64
 
@@ -61,7 +55,7 @@ void protocol_init(void)
     zb_osif_get_ieee_eui64(ieee_addr);
     zb_set_long_address(ieee_addr);
 
-    zb_set_nvram_erase_at_start(ERASE_PERSISTENT_CONFIG);
+    // zb_set_nvram_erase_at_start(ERASE_PERSISTENT_CONFIG);
 
     /* Register CLI Agent device context (endpoints). */
     // ZB_AF_REGISTER_DEVICE_CTX(&cli_agent_ctx);

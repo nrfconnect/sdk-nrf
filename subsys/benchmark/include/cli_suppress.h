@@ -4,6 +4,10 @@
 #define _CLI_SUPPRESS_H__
 
 #include <stdbool.h>
+#include <shell/shell.h>
+
+/** @brief Initialize cli suppress submodule */
+void cli_suppress_init(struct shell *shell);
 
 /** @brief Enable processing of cli and pending logs. */
 void cli_suppress_enable(void);
@@ -11,10 +15,10 @@ void cli_suppress_enable(void);
 /** @brief Disable processing of cli and pending logs. */
 void cli_suppress_disable(void);
 
-/** 
+/**
  * @brief Check if cli and logs should be suppressed.
- * 
- * @return If cli and logs should be suppressed. 
+ *
+ * @return If cli and logs should be suppressed.
  */
 bool cli_suppress_is_enabled(void);
 

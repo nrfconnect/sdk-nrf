@@ -100,12 +100,6 @@ void protocol_cmd_peer_get(const struct shell *shell, const benchmark_peer_entry
     shell_info(shell, "Network address: %04x", short_addr);
 }
 
-void protocol_cmd_remote_send(const struct shell *shell, const nrf_cli_t * p_peer_cli, size_t argc, char ** argv)
-{
-    /* Remote command execution is not implemented in Zigbee benchmark. */
-    return;
-}
-
 static bool isdigit(char possible_digit)
 {
     return (possible_digit <= '9') && (possible_digit >= '0');

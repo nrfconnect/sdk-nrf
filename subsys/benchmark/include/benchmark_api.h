@@ -9,7 +9,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "stub_api.h"
 #include "timer_api.h"
 
 #define BENCHMARK_MAX_PEER_NUMBER               16         /**< Maximal number of discovered peers that can be stored in the database. */

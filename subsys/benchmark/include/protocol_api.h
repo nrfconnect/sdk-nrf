@@ -58,18 +58,6 @@ void protocol_cmd_peer_get(const struct shell *shell, const benchmark_peer_entry
  */
 void protocol_cmd_config_get(const struct shell *shell);
 
-/**@brief   Function that sends a command to a remote peer.
- *
- * @note    This function receives the whole shell input as an argument. The command that ought to be sent
- *          to the specified peer should be parsed from a full shell command.
- *
- * @param[in]  shell       Pointer to a shell instance.
- * @param[in]  p_peer_cli  Pointer to a peer shell instance.
- * @param[in]  argc        Number of words the command contains.
- * @param[in]  argv        Array of pointers to the words the command contains.
- */
-void protocol_cmd_remote_send(const struct shell *shell, const nrf_cli_t * p_peer_cli, size_t argc, char ** argv);
-
 #endif // PROTOCOL_API_H__
 
 /**
