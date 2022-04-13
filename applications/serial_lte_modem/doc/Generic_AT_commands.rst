@@ -388,11 +388,11 @@ Test command
 
 The test command is not supported.
 
-SLM CMNG #XCMNG
-===============
+Native TLS CMNG #XCMNG
+======================
 
 The ``#XCMNG`` command manages the credentials to support :ref:`CONFIG_SLM_NATIVE_TLS <CONFIG_SLM_NATIVE_TLS>`.
-This command is implemented similarly to the modem ``%CMNG`` command.
+This command is similar to the modem ``%CMNG`` command.
 
 Set command
 -----------
@@ -429,7 +429,7 @@ It accepts the following values:
 
 The ``<content>`` parameter is a string.
 It is mandatory if ``<opcode>`` is ``0`` (write a credential).
-It's the content of a Privacy Enhanced Mail (PEM) file enclosed in double quotes (X.509 PEM entities).
+It is the content of a Privacy Enhanced Mail (PEM) file enclosed in double quotes (X.509 PEM entities).
 An empty string is not allowed.
 
 Response syntax
