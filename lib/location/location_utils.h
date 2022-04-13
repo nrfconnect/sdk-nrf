@@ -61,4 +61,22 @@ const char *location_utils_nrf_cloud_jwt_generate(void);
  */
 void location_utils_systime_to_location_datetime(struct location_datetime *datetime);
 
+/**
+ * @brief Check whether the currently active LTE link controller system mode supports GNSS
+ *
+ * @return 0		If GNSS is supported
+ * @return -EBUSY	If the LTE link controller system mode could not be determined
+ * @return -EINVAL	If GNSS is not supported
+ */
+int location_utils_check_modem_supports_gnss(void);
+
+/**
+ * @brief Check whether the currently active LTE link controller system mode supports LTE
+ *
+ * @return 0		If LTE is supported
+ * @return -EBUSY	If LTE support could not be determined
+ * @return -EINVAL	If LTE is not supported
+ */
+int location_utils_check_modem_supports_lte(void);
+
 #endif /* LOCATION_UTILS_H */

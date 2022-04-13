@@ -202,8 +202,17 @@ void method_gnss_lte_ind_handler(const struct lte_lc_evt *const evt)
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 static void method_gnss_agps_request_work_fn(struct k_work *item)
 {
-	int err = nrf_cloud_agps_request(&agps_request);
+	int err;
 
+	err = location_utils_check_modem_supports_lte();
+	if (err) {
+		LOG_ERR("nRF Cloud A-GPS request failed: %s",
+			(err == -EINVAL) ? "Current modem system mode does not support LTE"    :
+					   "Current modem system mode could not be determined");
+		return;
+	}
+
+	err = nrf_cloud_agps_request(&agps_request);
 	if (err) {
 		LOG_ERR("nRF Cloud A-GPS request failed, error: %d", err);
 		return;
@@ -225,6 +234,14 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 		.rx_buf_len = sizeof(rest_api_recv_buf),
 		.fragment_size = 0
 	};
+
+	err = location_utils_check_modem_supports_lte();
+	if (err) {
+		LOG_ERR("nRF Cloud A-GPS request failed: %s",
+			(err == -EINVAL) ? "Current modem system mode does not support LTE"    :
+					   "Current modem system mode could not be determined");
+		return;
+	}
 
 	jwt_buf = location_utils_nrf_cloud_jwt_generate();
 	if (jwt_buf == NULL) {
@@ -304,6 +321,14 @@ static void method_gnss_pgps_request_work_fn(struct k_work *item)
 		.rx_buf_len = sizeof(rest_api_recv_buf),
 		.fragment_size = 0
 	};
+
+	err = location_utils_check_modem_supports_lte();
+	if (err) {
+		LOG_ERR("nRF Cloud A-GPS request failed: %s",
+			(err == -EINVAL) ? "Current modem system mode does not support LTE"    :
+					   "Current modem system mode could not be determined");
+		return;
+	}
 
 	jwt_buf = location_utils_nrf_cloud_jwt_generate();
 	if (jwt_buf == NULL) {
@@ -739,6 +764,14 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 int method_gnss_location_get(const struct location_method_config *config)
 {
 	int err;
+
+	err = location_utils_check_modem_supports_gnss();
+	if (err) {
+		LOG_ERR("GNSS location acquisition failed: %s",
+			(err == -EINVAL) ? "Current modem system mode does not support GNSS"   :
+					   "Current modem system mode could not be determined");
+		return err;
+	}
 
 	gnss_config = config->gnss;
 

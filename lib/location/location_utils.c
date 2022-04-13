@@ -17,6 +17,7 @@
 #include <modem/at_params.h>
 #include <net/nrf_cloud.h>
 #include <modem/location.h>
+#include <modem/lte_lc.h>
 
 #include "location_utils.h"
 
@@ -147,4 +148,43 @@ void location_utils_systime_to_location_datetime(struct location_datetime *datet
 	datetime->minute = ltm.tm_min;
 	datetime->second = ltm.tm_sec;
 	datetime->ms = tp.tv_nsec / 1000000;
+}
+
+int location_utils_check_modem_supports_gnss(void)
+{
+	int err;
+	enum lte_lc_system_mode mode;
+
+	err = lte_lc_system_mode_get(&mode, NULL);
+	if (err) {
+		LOG_ERR("Could not read modem system mode. Error: %d", err);
+		return -EBUSY;
+	}
+
+	if (mode != LTE_LC_SYSTEM_MODE_GPS &&
+	    mode != LTE_LC_SYSTEM_MODE_LTEM_GPS &&
+	    mode != LTE_LC_SYSTEM_MODE_NBIOT_GPS &&
+	    mode != LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS) {
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+int location_utils_check_modem_supports_lte(void)
+{
+	int err;
+	enum lte_lc_lte_mode mode;
+
+	err = lte_lc_lte_mode_get(&mode);
+	if (err) {
+		LOG_ERR("Could not read modem LTE mode. Error: %d", err);
+		return -EBUSY;
+	}
+
+	if (mode == LTE_LC_LTE_MODE_NONE) {
+		return -EINVAL;
+	}
+
+	return 0;
 }

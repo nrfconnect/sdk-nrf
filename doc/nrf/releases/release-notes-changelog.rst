@@ -371,6 +371,13 @@ Other libraries
   * This library can use different transport implementation for each nRF RPC group.
   * Memory for remote procedure calls is now allocated on a heap instead of the calling thread stack.
 
+* :ref:`lib_location`:
+
+  * Added sanity check to verify that the currently selected modem system mode supports GNSS when using the GNSS location method for a location request.
+    An error is printed and the location request returns an error code if the sanity check fails.
+  * Added sanity check to verify that the currently selected modem system mode supports LTE when downloading GNSS assistance data.
+    An error is printed and the assistance data download fails if LTE is not supported.
+
 Common Application Framework (CAF)
 ----------------------------------
 
