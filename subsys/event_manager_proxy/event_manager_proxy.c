@@ -276,6 +276,7 @@ static void handle_ipc_endpoint_error(const char *message, void *priv)
 static int send_event_to_remote(struct emp_ipc_data *ipc, const struct app_event_header *eh)
 {
 	const struct event_type *remote_ev = ipc->event_type_map[et2idx(eh->type_id)];
+	int ret;
 
 	if (remote_ev == NULL) {
 		return 0;
@@ -288,7 +289,12 @@ static int send_event_to_remote(struct emp_ipc_data *ipc, const struct app_event
 	memcpy(buffer, eh, sizeof(buffer));
 	remote_eh->type_id = remote_ev;
 
-	int ret = ipc_service_send(&ipc->ept, buffer, sizeof(buffer));
+	for (size_t cnt = CONFIG_EVENT_MANAGER_PROXY_SEND_RETRIES + 1; cnt > 0; --cnt) {
+		ret = ipc_service_send(&ipc->ept, buffer, sizeof(buffer));
+		if (ret >= 0) {
+			break;
+		}
+	}
 
 	if (ret < 0) {
 		LOG_ERR("Cannot send event to remote %p", ipc);
