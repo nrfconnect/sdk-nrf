@@ -327,7 +327,7 @@ Thread
     * Added support for :ref:`Thread Certification Test Harness <ug_thread_cert>`.
     * Added hardware cryptography acceleration support.
     * Enabled UART HWFC by default.
-    * Added the overlay for :ref:`Thread v1.2 support <ot_cli_sample_thread_v12>`.
+    * Added an overlay for Thread v1.2 support.
 
   * :ref:`coap_client_sample` sample:
 

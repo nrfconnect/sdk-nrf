@@ -120,8 +120,8 @@ The OpenThread stack can be configured to operate in compliance with either the 
 You can change the stack version by using the following Kconfig options:
 
 * :kconfig:option:`CONFIG_OPENTHREAD_THREAD_VERSION_1_1` - Selects the Thread stack version that is compliant with the Thread 1.1 Specification.
-  This option is enabled by default if no other option is selected.
 * :kconfig:option:`CONFIG_OPENTHREAD_THREAD_VERSION_1_2` - Selects the Thread stack version that is compliant with the Thread 1.2 Specification.
+  This option is enabled by default if no other option is selected.
 
 By selecting support for Thread 1.2, you enable the following features in addition to the :ref:`Thread 1.1 features <thread_ug_supported_features>`:
 
