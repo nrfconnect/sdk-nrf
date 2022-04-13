@@ -97,6 +97,15 @@ static int handle_mqtt_publish_evt(struct mqtt_client *const c, const struct mqt
 	} while (ret >= 0 && size_read < evt->param.publish.message.payload.len);
 	data_send("\r\n", 2);
 
+	/* Send QoS1 acknowledgment */
+	if (evt->param.publish.message.topic.qos == MQTT_QOS_1_AT_LEAST_ONCE) {
+		const struct mqtt_puback_param ack = {
+			.message_id = evt->param.publish.message_id
+		};
+
+		mqtt_publish_qos1_ack(&client, &ack);
+	}
+
 	return 0;
 }
 
