@@ -11,8 +11,8 @@
   *
   * Wiring:
   * - Slide (SW9) to enable 3V mode.
-  * - ESP8266 RX → DK P0.14 (TX)
-  * - ESP8266 TX → DK P0.15 (RX)
+  * - ESP8266 RX → DK P0.10 (TX)
+  * - ESP8266 TX → DK P0.16 (RX)
   * - ESP8266 VCC → DK VDD
   * - ESP8266 CH_PD → DK VDD
   * - ESP8266 GND → DK GND.
@@ -21,20 +21,13 @@
   * 'west build -p -b nrf9160dk_nrf9160_ns -- -DDTC_OVERLAY_FILE=esp_8266_nrf9160ns.overlay -DOVERLAY_CONFIG=overlay-esp-wifi.conf'
   */
 
-&uart1 {
-	status = "okay";
-	current-speed = <115200>;
-	rts-pin = <0xffffffff>;
-	cts-pin = <0xffffffff>;
-};
-
 &uart3 {
 	status = "okay";
 	current-speed = <115200>;
-	tx-pin = < 0xe >;
-	rx-pin = < 0xf >;
-	rts-pin = <0xffffffff>;
-	cts-pin = <0xffffffff>;
+	tx-pin = <10>;
+	rx-pin = <16>;
+	/delete-property/ rts-pin;
+	/delete-property/ cts-pin;
 
 	esp8266 {
 		compatible = "espressif,esp-at";
