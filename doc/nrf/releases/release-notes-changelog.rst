@@ -158,13 +158,10 @@ Thread samples
 
 * Updated:
 
+  * Thread 1.2 version made the default configuration option.
   * The relevant sample documentation pages with information about support for :ref:`Trusted Firmware-M <ug_tfm>`.
-  * :ref:`ot_cli_sample` sample:
-
-    * Added :file:`prj_thread_1_2.conf` to support Thread v1.2 build for the nRF52 and nRF53 Series devices.
-    * Added child image configuration files for network core builds for Thread v1.2 build.
-
   * All sample documentation with a Configuration section, and organized relevant information under that section.
+  * Thread Beacon payload has been removed after changes in latest Thread Specification.
 
 Matter samples
 --------------
