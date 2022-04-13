@@ -975,7 +975,7 @@ NCSDK-12020: Current consumption for Gaming Mouse increased by 1400mA
 
   **Workaround:** Change ``pwm_pin_set_cycles`` to ``pwm_pin_set_usec`` in function :c:func:`led_pwm_set_brightness` in Zephyr's driver :file:`led_pwm.c` file.
 
-.. rst-class:: v1-9-0
+.. rst-class:: v1-9-1 v1-9-0
 
 NCSDK-14117: Build fails for nRF52840DK in the ``prj_b0_wwcb`` configuration
   The build failure is caused by outdated Kconfig options in the nRF52840 DK's ``prj_b0_wwcb`` configuration.
