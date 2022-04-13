@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+DT_PATH_NORDIC_RADIO := $(dt_nodelabel_path,radio)
+DT_NORDIC_RADIO_DFE_SUPPORTED := $(dt_node_has_bool_prop,$(DT_PATH_NORDIC_RADIO),dfe-supported)
+
 choice BT_LL_CHOICE
 	prompt "Bluetooth Link Layer Selection"
 	default BT_LL_SOFTDEVICE
@@ -27,6 +30,7 @@ config BT_LL_SOFTDEVICE
 	select BT_CTLR_PHY_2M_SUPPORT if HAS_HW_NRF_RADIO_BLE_2M
 	select BT_CTLR_PHY_CODED_SUPPORT if HAS_HW_NRF_RADIO_BLE_CODED
 	select BT_HAS_HCI_VS
+	select BT_CTLR_DF_CTE_TX_SUPPORT if $(DT_NORDIC_RADIO_DFE_SUPPORTED)
 	depends on (SOC_SERIES_NRF52X || SOC_NRF5340_CPUNET)
 	help
 	  Use SoftDevice Link Layer implementation.
@@ -151,6 +155,20 @@ config BT_CTLR_SDC_RX_STACK_SIZE
 	  Size of the receiving thread stack, used to retrieve HCI events and
 	  data from the controller.
 
+# CONFIG_BT_CTLR_DF is declared in Zephyr and also here for a second time,
+# to avoid BT_CTLR_DF_SUPPORT dependency.
+config BT_CTLR_DF
+	bool "LE Direction Finding [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	  Enable support for Bluetooth 5.1 Direction Finding
+
+# As CONFIG_BT_CTLR_ADV_EXT_PDU_EXTRA_DATA_MEMORY is defined for the Zephyr LL
+# only, and BT_CLTR_DF_ADV_CTE_TX expects it existence, we define it as an empty
+# configuration here.
+config BT_CTLR_ADV_EXT_PDU_EXTRA_DATA_MEMORY
+	bool
+
 choice BT_LL_SOFTDEVICE_VARIANT
 	prompt "SoftDevice Controller variant"
 	default BT_LL_SOFTDEVICE_MULTIROLE if ((BT_OBSERVER && BT_BROADCASTER) || \
@@ -158,6 +176,7 @@ choice BT_LL_SOFTDEVICE_VARIANT
 						     BT_CTLR_ADV_EXT || \
 						     BT_CTLR_PHY_CODED || \
 						     BT_CTLR_ADV_PERIODIC || \
+						     BT_CTLR_DF_CTE_TX || \
 						     MPSL_CX_BT_1WIRE || \
 						     MPSL_CX_BT_3WIRE || \
 						     BT_CTLR_SYNC_PERIODIC || \
