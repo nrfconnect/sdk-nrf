@@ -368,6 +368,7 @@ int handle_at_udp_send(enum at_cmd_type cmd_type);
 /* Socket-type TCPIP commands */
 int handle_at_socket(enum at_cmd_type cmd_type);
 int handle_at_secure_socket(enum at_cmd_type cmd_type);
+int handle_at_socket_select(enum at_cmd_type cmd_type);
 int handle_at_socketopt(enum at_cmd_type cmd_type);
 int handle_at_secure_socketopt(enum at_cmd_type cmd_type);
 int handle_at_bind(enum at_cmd_type cmd_type);
@@ -378,6 +379,7 @@ int handle_at_send(enum at_cmd_type cmd_type);
 int handle_at_recv(enum at_cmd_type cmd_type);
 int handle_at_sendto(enum at_cmd_type cmd_type);
 int handle_at_recvfrom(enum at_cmd_type cmd_type);
+int handle_at_poll(enum at_cmd_type cmd_type);
 int handle_at_getaddrinfo(enum at_cmd_type cmd_type);
 
 #if defined(CONFIG_SLM_NATIVE_TLS)
@@ -463,6 +465,7 @@ static struct slm_at_cmd {
 	/* Socket-type TCPIP commands */
 	{"AT#XSOCKET", handle_at_socket},
 	{"AT#XSSOCKET", handle_at_secure_socket},
+	{"AT#XSOCKETSELECT", handle_at_socket_select},
 	{"AT#XSOCKETOPT", handle_at_socketopt},
 	{"AT#XSSOCKETOPT", handle_at_secure_socketopt},
 	{"AT#XBIND", handle_at_bind},
@@ -473,6 +476,7 @@ static struct slm_at_cmd {
 	{"AT#XRECV", handle_at_recv},
 	{"AT#XSENDTO", handle_at_sendto},
 	{"AT#XRECVFROM", handle_at_recvfrom},
+	{"AT#XPOLL", handle_at_poll},
 	{"AT#XGETADDRINFO", handle_at_getaddrinfo},
 
 #if defined(CONFIG_SLM_NATIVE_TLS)

@@ -119,7 +119,7 @@ Response syntax
 
 ::
 
-   #XDFUGET: <list of op value>,<host>,<image_1><image_2><sec_tag>
+   #XDFUGET: <list of op value>,<host>,<image_1>,<image_2>,<sec_tag>
 
 Examples
 ~~~~~~~~
@@ -128,7 +128,7 @@ Examples
 
    AT#XDFUGET=?
 
-   #XDFUGET: (0,1,8),,<host>,<image_1><image_2><sec_tag>
+   #XDFUGET: (0,1,8),<host>,<image_1>,<image_2>,<sec_tag>
 
    OK
 

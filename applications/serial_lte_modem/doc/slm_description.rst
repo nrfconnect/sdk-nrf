@@ -281,6 +281,7 @@ By default, the secure socket (TLS/DTLS) is offloaded onto the modem.
 However, if you need customized TLS/DTLS features that are not supported by the modem firmware, you can use native TLS instead.
 Currently, the SLM application can be built to use native TLS for the following services:
 
+* Secure socket
 * TLS Proxy server
 * HTTPS client
 

@@ -8,13 +8,14 @@ Socket AT commands
    :depth: 2
 
 The following commands list contains socket-related AT commands.
+The application can open up to 8 sockets and select the active one among them.
 
 For more information on the networking services, visit the `BSD Networking Services Spec Reference`_.
 
 Socket #XSOCKET
 ===============
 
-The ``#XSOCKET`` command allows you to open or close a socket, and to check the socket handle.
+The ``#XSOCKET`` command allows you to open or close a socket and to check the socket handle.
 
 Set command
 -----------
@@ -33,6 +34,8 @@ Syntax
   * ``0`` - Close a socket.
   * ``1`` - Open a socket for IP protocol family version 4.
   * ``2`` - Open a socket for IP protocol family version 6.
+
+  When ``0``, the highest-ranked socket is made active after the current one is closed.
 
 * The ``<type>`` parameter can accept one of the following values:
 
@@ -207,6 +210,8 @@ Syntax
   * ``1`` - Open a socket for IP protocol family version 4.
   * ``2`` - Open a socket for IP protocol family version 6.
 
+  When ``0``, the highest-ranked socket is made active after the current one is closed.
+
 * The ``<type>`` parameter can accept one of the following values:
 
   * ``1`` - Set SOCK_STREAM for the stream socket type using the TLS 1.2 protocol.
@@ -355,6 +360,138 @@ Examples
    AT#XSSOCKET=?
    #XSSOCKET: (0,1,2),(1,2),<sec_tag>,<peer_verify>,<hostname_verify>
    OK
+
+Select Socket #XSOCKETSELECT
+============================
+
+The ``#XSOCKETSELECT`` command allows you to select an active socket among multiple opened ones.
+
+Set command
+-----------
+
+The set command allows you to select an active socket.
+
+Syntax
+~~~~~~
+
+::
+
+   #XSOCKETSELECT=<handle>
+
+* The ``<handle>`` parameter is the handle value returned from the #XSOCKET or #XSSOCKET commands.
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XSOCKETSELECT: <handle>,<family>,<role>
+
+* The ``<handle>`` value is an integer.
+  When positive, the socket is valid.
+
+* The ``<family>`` value can be one of the following integers:
+
+  * ``1`` - IP protocol family version 4.
+  * ``2`` - IP protocol family version 6.
+
+* The ``<role>`` value can be one of the following integers:
+
+  * ``0`` - Client
+  * ``1`` - Server
+
+Examples
+~~~~~~~~
+
+::
+
+   AT#XSOCKETSELECT=4
+   #XSOCKETSELECT: 4,1,1
+   OK
+
+Read command
+------------
+
+The read command allows you to list all sockets that have been opened and the active socket.
+
+Syntax
+~~~~~~
+
+::
+
+   #XSOCKETSELECT?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XSOCKETSELECT: <handle>,<family>,<role>,<type>,<sec_tag>,<ranking>
+   #XSOCKETSELECT: <handle_active>
+
+* The ``<handle>`` value is an integer that indicates the handle of the socket.
+
+* The ``<family>`` value can be one of the following integers:
+
+  * ``1`` - IP protocol family version 4.
+  * ``2`` - IP protocol family version 6.
+
+* The ``<role>`` value can be one of the following integers:
+
+  * ``0`` - Client
+  * ``1`` - Server
+
+* The ``<type>`` value can assume one of the following values:
+
+  * ``1`` - Set ``SOCK_STREAM`` for the stream socket type using the TLS 1.2 protocol.
+  * ``2`` - Set ``SOCK_DGRAM`` for the datagram socket type using the DTLS 1.2 protocol.
+
+* The ``<sec_tag>`` value is an integer.
+  It indicates to the modem the credential of the security tag to be used for establishing a secure connection.
+  For a non-secure socket, it assumes the value of -1.
+
+* The ``<ranking>`` value is an integer.
+  It indicates the ranking value of this socket, where the largest value means the highest ranking.
+
+* The ``<handle_active>`` value is an integer that indicates the handle of the active socket.
+
+Examples
+~~~~~~~~
+
+::
+
+  AT#XSOCKETSELECT?
+  #XSOCKETSELECT: 0,1,0,1,-1,2
+  #XSOCKETSELECT: 1,1,0,2,-1,3
+  #XSOCKETSELECT: 2,1,0,1,16842755,4
+  #XSOCKETSELECT: 3,1,0,2,16842755,5
+  #XSOCKETSELECT: 4,1,1,1,-1,6
+  #XSOCKETSELECT: 5,1,1,2,-1,7
+  #XSOCKETSELECT: 6,1,1,1,16842755,8
+  #XSOCKETSELECT: 7,1,0,1,-1,9
+  #XSOCKETSELECT: 7
+  OK
+
+  AT#XSOCKETSELECT=4
+  #XSOCKETSELECT: 4,1,1
+  OK
+
+  AT#XSOCKETSELECT?
+  #XSOCKETSELECT: 0,1,0,1,-1,2
+  #XSOCKETSELECT: 1,1,0,2,-1,3
+  #XSOCKETSELECT: 2,1,0,1,16842755,4
+  #XSOCKETSELECT: 3,1,0,2,16842755,5
+  #XSOCKETSELECT: 4,1,1,1,-1,6
+  #XSOCKETSELECT: 5,1,1,2,-1,7
+  #XSOCKETSELECT: 6,1,1,1,16842755,8
+  #XSOCKETSELECT: 7,1,0,1,-1,9
+  #XSOCKETSELECT: 4
+  OK
+
+Test command
+------------
+
+The test command is not supported.
 
 Socket options #XSOCKETOPT
 ==========================
@@ -941,6 +1078,71 @@ Examples
    AT#XRECVFROM=10
    Test OK
    #XRECVFROM: 7,"192.168.1.100"
+   OK
+
+Read command
+------------
+
+The read command is not supported.
+
+Test command
+------------
+
+The test command is not supported.
+
+Poll sockets #XPOLL
+===================
+
+The ``#XPOLL`` command allows you to poll selected or all sockets that have already been opened.
+
+Set command
+-----------
+
+The set command allows you to poll a set of sockets to check whether they are ready for I/O.
+
+Syntax
+~~~~~~
+
+::
+
+   #XPOLL=<timeout>[,<handle1>[,<handle2> ...<handle8>]
+
+* The ``<timeout>`` value sets the timeout value in milliseconds, and the poll blocks up to this timeout.
+  ``0`` means no timeout, and the poll returns without blocking.
+  ``-1`` means indefinite, and the poll blocks indefinitely until any events are received.
+
+* The ``<handleN>`` value sets the socket handles to poll.
+  The handles values could be obtained by ``AT#XSOCKETSELECT?`` command.
+  If no handle values are specified, all opened sockets will be polled.
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XPOLL: <error>
+   #XPOLL: <handle>,<revents>
+
+* The ``<error>`` value is an error code when the poll fails.
+* The ``<handle>`` value is an integer. It is the handle of a socket that have events returned, so-called ``revents``.
+* The ``<revents>`` value is a hexadecimal string. It represents the returned events, which could be a combination of POLLIN, POLLERR, POLLHUP and POLLNVAL.
+
+Examples
+~~~~~~~~
+
+::
+
+   AT#XPOLL=2000,0
+   #XPOLL: 0,"0x00000001"
+   OK
+
+   AT#XPOLL=2000,1
+   #XPOLL: 1,"0x00000001"
+   OK
+
+   AT#XPOLL=2000
+   #XPOLL: 0,"0x00000001"
+   #XPOLL: 1,"0x00000001"
    OK
 
 Read command

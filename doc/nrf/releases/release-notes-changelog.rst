@@ -106,6 +106,8 @@ nRF9160: Serial LTE Modem
   * Added the #XDFUGET and #XDFURUN AT commands to support the cloud-to-nRF52 DFU service.
   * Added native TLS support to the HTTPS client.
   * Added the #XCMNG command to support the use of native TLS.
+  * Added the #XSOCKETSELECT AT command to support multiple sockets in the Socket service.
+  * Added the #XPOLL AT command to poll selected or all sockets for incoming data.
 
 nRF Desktop
 -----------
