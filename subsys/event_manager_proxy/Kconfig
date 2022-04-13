@@ -33,4 +33,11 @@ config EVENT_MANAGER_PROXY_BIND_TIMEOUT_MS
 	  This timeout depends on the time to initialize all the cores
 	  the event proxy manager is going to communicate.
 
+config EVENT_MANAGER_PROXY_SEND_RETRIES
+	int "Number IPC transmission retries"
+	range 0 100
+	default 5
+	help
+	  Number of retries if an error occurs when transmitting event to the core.
+
 endif # EVENT_MANAGER_PROXY
