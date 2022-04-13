@@ -190,13 +190,10 @@ Select one of the following logging levels to customize the logging output:
 * :kconfig:option:`CONFIG_OPENTHREAD_LOG_LEVEL_INFO` - This option additionally enables informational logging.
 * :kconfig:option:`CONFIG_OPENTHREAD_LOG_LEVEL_DEBG` - This option additionally enables debug logging.
 
-The more detailed logging level you select, the more logging buffers you need to be able to see all messages.
-The buffer size must also be increased.
-Use the following Kconfig options for this purpose:
+The more detailed logging level you select, the bigger logging buffer you need to have to see all messages.
+Use the following Kconfig option for this purpose:
 
-* :kconfig:option:`CONFIG_LOG_STRDUP_BUF_COUNT` - This option specifies the number of logging buffers.
-* :kconfig:option:`CONFIG_LOG_STRDUP_MAX_STRING` - This option specifies the size of logging buffers.
-
+* :kconfig:option:`CONFIG_LOG_BUFFER_SIZE` - This option specifies the number of bytes dedicated to the logger internal buffer.
 
 Zephyr L2 logging options
 =========================
