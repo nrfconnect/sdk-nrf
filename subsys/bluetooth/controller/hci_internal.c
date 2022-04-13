@@ -350,6 +350,17 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_set_privacy_mode = 1;
 #endif
 
+#if defined(CONFIG_BT_CTLR_DF_ADV_CTE_TX)
+	/* NOTE: The DTM commands are *not* supported by the SoftDevice
+	 * controller. See doc/nrf/known_issues.rst.
+	 */
+	cmds->hci_le_transmitter_test_v3 = 1;
+
+	cmds->hci_le_set_connectionless_cte_transmit_parameters = 1;
+	cmds->hci_le_set_connectionless_cte_transmit_enable = 1;
+	cmds->hci_le_read_antenna_information = 1;
+#endif
+
 #if (defined(CONFIG_BT_HCI_RAW) && defined(CONFIG_BT_TINYCRYPT_ECC)) || defined(CONFIG_BT_CTLR_ECDH)
 	cmds->hci_le_read_local_p256_public_key = 1;
 	cmds->hci_le_generate_dhkey_v1 = 1;
@@ -433,6 +444,10 @@ static void le_supported_features(sdc_hci_le_le_features_t *features)
 
 #if defined(CONFIG_BT_CTLR_ADV_PERIODIC) || defined(CONFIG_BT_CTLR_SYNC_PERIODIC)
 	features->le_periodic_advertising = 1;
+#endif
+
+#if defined(CONFIG_BT_CTLR_DF_ADV_CTE_TX)
+	features->connectionless_cte_transmitter = 1;
 #endif
 
 	features->channel_selection_algorithm_2 = 1;
@@ -901,6 +916,18 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 #if defined(CONFIG_BT_PER_ADV_SYNC)
 	case SDC_HCI_OPCODE_CMD_LE_SET_PERIODIC_ADV_RECEIVE_ENABLE:
 		return sdc_hci_cmd_le_set_periodic_adv_receive_enable((void *)cmd_params);
+#endif
+
+#if defined(CONFIG_BT_CTLR_DF_ADV_CTE_TX)
+	case SDC_HCI_OPCODE_CMD_LE_SET_CONNLESS_CTE_TRANSMIT_PARAMS:
+		return sdc_hci_cmd_le_set_connless_cte_transmit_params((void *)cmd_params);
+
+	case SDC_HCI_OPCODE_CMD_LE_SET_CONNLESS_CTE_TRANSMIT_ENABLE:
+		return sdc_hci_cmd_le_set_connless_cte_transmit_enable((void *)cmd_params);
+
+	case SDC_HCI_OPCODE_CMD_LE_READ_ANTENNA_INFORMATION:
+		*param_length_out += sizeof(sdc_hci_cmd_le_read_antenna_information_return_t);
+		return sdc_hci_cmd_le_read_antenna_information((void *)event_out_params);
 #endif
 
 	default:
