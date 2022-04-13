@@ -30,6 +30,10 @@ config MAIN_STACK_SIZE
 	int
 	default 2560
 
+config LOG_BUFFER_SIZE
+	int
+	default 4048 if LOG
+
 config INIT_STACKS
 	bool
 	default y
