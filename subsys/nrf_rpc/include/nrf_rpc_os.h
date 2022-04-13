@@ -8,6 +8,7 @@
 #define NRF_RPC_OS_H_
 
 #include <zephyr/kernel.h>
+#include <nrf_rpc_errno.h>
 
 /**
  * @defgroup nrf_rpc_os_zephyr nRF PRC OS abstraction for Zephyr.
@@ -21,6 +22,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define NRF_RPC_OS_WAIT_FOREVER -1
+#define NRF_RPC_OS_NO_WAIT 0
 
 struct nrf_rpc_os_event {
 	struct k_sem sem;
@@ -48,9 +52,17 @@ static inline void nrf_rpc_os_event_set(struct nrf_rpc_os_event *event)
 	k_sem_give(&event->sem);
 }
 
-static inline void nrf_rpc_os_event_wait(struct nrf_rpc_os_event *event)
+static inline int nrf_rpc_os_event_wait(struct nrf_rpc_os_event *event, int timeout)
 {
-	k_sem_take(&event->sem, K_FOREVER);
+	int err;
+
+	err = k_sem_take(&event->sem, (timeout == NRF_RPC_OS_WAIT_FOREVER) ?
+							K_FOREVER : K_MSEC(timeout));
+	if (err == -EAGAIN) {
+		return -NRF_EAGAIN;
+	}
+
+	return 0;
 }
 
 static inline int nrf_rpc_os_msg_init(struct nrf_rpc_os_msg *msg)
@@ -76,22 +88,6 @@ static inline void nrf_rpc_os_tls_set(void *data)
 
 uint32_t nrf_rpc_os_ctx_pool_reserve(void);
 void nrf_rpc_os_ctx_pool_release(uint32_t number);
-
-void nrf_rpc_os_remote_count(int count);
-
-static inline void nrf_rpc_os_remote_reserve(void)
-{
-	extern struct k_sem _nrf_rpc_os_remote_counter;
-
-	k_sem_take(&_nrf_rpc_os_remote_counter, K_FOREVER);
-}
-
-static inline void nrf_rpc_os_remote_release(void)
-{
-	extern struct k_sem _nrf_rpc_os_remote_counter;
-
-	k_sem_give(&_nrf_rpc_os_remote_counter);
-}
 
 #ifdef __cplusplus
 }

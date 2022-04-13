@@ -15,10 +15,27 @@ config _NRF_RPC_DUMMY_SELECT
 	default y
 	select THREAD_CUSTOM_DATA
 
-config NRF_RPC_TR_RPMSG
-	bool
+menuconfig NRF_RPC_IPC_SERVICE
+	bool "nRF RPC over IPC Service"
+	default y
 	select IPC_SERVICE
 	select MBOX
+	select EVENTS
+	help
+	  If enabled, selects the IPC Service as a transport layer for nRF PRC.
+
+if NRF_RPC_IPC_SERVICE
+
+config NRF_RPC_IPC_SERVICE_BIND_TIMEOUT_MS
+	int "Timeout while waiting for the endpoint to bind in ms"
+	range 1 1000
+	default 100
+	help
+	  Time in miliseconds to wait for endpoint binding.
+	  This timeout depends on the time to initialize all the remote devices
+	  the nRF RPC is going to communicate with.
+
+endif # NRF_RPC_IPC_SERVICE
 
 config NRF_RPC_CBOR
 	bool

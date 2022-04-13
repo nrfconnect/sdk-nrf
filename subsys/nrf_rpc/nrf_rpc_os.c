@@ -32,10 +32,6 @@ static struct k_msgq pool_start_msg;
 static struct k_sem context_reserved;
 static atomic_t context_mask;
 
-static uint32_t remote_thread_total;
-
-struct k_sem _nrf_rpc_os_remote_counter;
-
 static K_THREAD_STACK_ARRAY_DEFINE(pool_stacks,
 	CONFIG_NRF_RPC_THREAD_POOL_SIZE,
 	CONFIG_NRF_RPC_THREAD_STACK_SIZE);
@@ -73,12 +69,6 @@ int nrf_rpc_os_init(nrf_rpc_os_work_t callback)
 	if (err < 0) {
 		return err;
 	}
-
-	err = k_sem_init(&_nrf_rpc_os_remote_counter, 0, MAX_REMOTE_THREADS);
-	if (err < 0) {
-		return err;
-	}
-	remote_thread_total = 0;
 
 	atomic_set(&context_mask, CONTEXT_MASK_INIT_VALUE);
 
@@ -149,22 +139,4 @@ void nrf_rpc_os_ctx_pool_release(uint32_t number)
 
 	atomic_or(&context_mask, 0x80000000u >> number);
 	k_sem_give(&context_reserved);
-}
-
-void nrf_rpc_os_remote_count(int count)
-{
-	__ASSERT_NO_MSG(count > 0);
-	__ASSERT_NO_MSG(count <= MAX_REMOTE_THREADS);
-
-	NRF_RPC_DBG("Remote thread count changed from %d to %d",
-		    remote_thread_total, count);
-
-	while ((int)remote_thread_total < count) {
-		k_sem_give(&_nrf_rpc_os_remote_counter);
-		remote_thread_total++;
-	}
-	while ((int)remote_thread_total > count) {
-		k_sem_take(&_nrf_rpc_os_remote_counter, K_FOREVER);
-		remote_thread_total--;
-	}
 }
