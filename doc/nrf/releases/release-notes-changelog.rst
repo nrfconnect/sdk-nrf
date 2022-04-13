@@ -216,6 +216,10 @@ nrf5340 Samples
   * :ref:`nrf5340_remote_shell` sample.
   * :ref:`nrf5340_multicore` sample.
 
+* Changed the transport layer for inter-core communication on the nRF5340 device from the RPMsg to the IPC service library.
+  The IPC service library can work with different transport backends and uses the RPMsg backend with static VRINGs by default.
+  This transport layer change affects all samples that use Bluetooth HCI driver over RPMsg, 802.15.4 spinel backend over IPC or nRF RPC libraries.
+
 nrf9160 Samples
 ---------------
 
