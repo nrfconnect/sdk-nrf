@@ -363,6 +363,10 @@ int event_manager_proxy_add_remote(const struct device *instance)
 {
 	__ASSERT_NO_MSG(find_ipc_by_instance(instance) == NULL);
 
+	if (find_ipc_by_instance(instance) != NULL) {
+		return -EALREADY;
+	}
+
 	for (size_t i = 0; i < ARRAY_SIZE(emp_ipc_data); ++i) {
 		if (!emp_ipc_data[i].used) {
 			return add_ipc_instace(&emp_ipc_data[i], instance);
