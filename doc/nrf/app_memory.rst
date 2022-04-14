@@ -9,6 +9,8 @@ Memory footprint optimization
 
 When developing an application, ROM and RAM footprint are important factors, especially when the firmware runs on the most resource-constrained devices like nRF52810 or nRF52811.
 
+.. _app_memory_general:
+
 General recommendations
 ***********************
 
@@ -23,6 +25,8 @@ Complete the following actions to optimize your application:
 * Go through each component and subsystem and turn off all peripherals and features that your application does not use.
 
 The following subsections give more information on how to optimize specific subsystems.
+
+.. _app_memory_bt:
 
 Bluetooth
 *********
@@ -64,6 +68,24 @@ Besides applying `General recommendations`_, you can also complete the following
 
 For reference, you can find minimal footprint configurations of the :ref:`peripheral_lbs` sample in :file:`nrf/samples/bluetooth/peripheral_lbs/minimal.conf` and the :ref:`peripheral_uart` sample in :file:`nrf/samples/bluetooth/peripheral_uart/minimal.conf`.
 
+.. _app_memory_matter:
+
+Matter
+******
+
+Besides applying `General recommendations`_, you can also complete the following actions to optimize the :ref:`Matter <ug_matter>` part of your application:
+
+* Make sure Zephyr's :ref:`zephyr:shell_api` is disabled for your application.
+  Related configuration options are listed in a dedicated section in each Matter sample's :file:`prj.conf` file.
+* Use :file:`prj_release.conf` for building the application.
+  The release configuration has a smaller memory footprint than the default, debug-enabled :file:`prj.conf`.
+* If the logs in your application do not use the default log level, you can change the default log level of Zephyr modules from ``info`` to ``warning`` by setting :kconfig:option:`CONFIG_LOG_DEFAULT_LEVEL` to ``2``.
+* Change the log level of the Matter logs from ``debug`` to ``info`` by setting :kconfig:option:`CONFIG_MATTER_LOG_LEVEL_INFO` to ``y``.
+* Reduce the verbosity of assert messages by setting :kconfig:option:`CONFIG_ASSERT_VERBOSE` to ``n``.
+* Check `Thread`_ memory footprint optimization actions, as the Matter application layer uses OpenThread.
+
+.. _app_memory_thread:
+
 Thread
 ******
 
@@ -94,6 +116,8 @@ Besides applying `General recommendations`_, you can also complete the following
   * :kconfig:option:`CONFIG_ISR_STACK_SIZE`
 
 For reference, you can find minimal footprint configurations for the single protocol and multiprotocol variants of the :ref:`ot_cli_sample` sample in :file:`nrf/samples/openthread/cli/overlay-minimal_*protocol.conf`.
+
+.. _app_memory_zigbee:
 
 Zigbee
 ******
