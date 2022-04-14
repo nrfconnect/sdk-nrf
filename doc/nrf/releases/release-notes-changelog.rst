@@ -634,10 +634,11 @@ Documentation
   * Notes to the :ref:`bluetooth_central_dfu_smp` sample document specifying the intended use of the sample.
   * DevAcademy links to the :ref:`index` and :ref:`getting_started` pages.
 
-* Changed:
+* Updated:
 
-  * Updated the outdated protocol architecture diagram on the :ref:`ug_matter_architecture` page.
-  * Updated the :ref:`thread_ug_feature_updating_libs` section to clarify the use, and added |VSC| instructions.
+  * :ref:`ug_matter_architecture` with updated protocol architecture diagram.
+  * :ref:`app_memory` with sections for Matter and Zigbee.
+  * :ref:`thread_ug_feature_updating_libs` to clarify the use, and added |VSC| instructions.
 
 * Removed:
 
