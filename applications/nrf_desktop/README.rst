@@ -362,7 +362,7 @@ Depending on what development kit you use, you need to select the respective con
 
       .. table-from-rows:: /includes/sample_board_rows.txt
          :header: heading
-         :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52833dk_nrf52820
+         :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns
 
       In nRF52840 DK, the application is configured to work as gaming mouse (with motion emulated by using DK buttons) and in nRF52833 DK, the application is configured to work as HID dongle.
 
@@ -952,7 +952,7 @@ nRF52840 Gaming Mouse (nrf52840gmouse_nrf52840)
         * The application is configured to act as a gaming mouse, with both Bluetooth LE and USB transports enabled.
         * Bluetooth is configured to use Nordic's SoftDevice link layer.
 
-      * |preconfigured_build_types|
+      * The configuration with the B0 bootloader is set as default.
 
 nRF52832 Desktop Mouse (nrf52dmouse_nrf52832) and nRF52810 Desktop Mouse (nrf52810dmouse_nrf52810)
       * Both reference designs are meant for the project-specific hardware and are defined in :file:`nrf/boards/arm/nrf52dmouse_nrf52832` and :file:`nrf/boards/arm/nrf52810dmouse_nrf52810`, respectively.
@@ -965,7 +965,7 @@ Sample mouse, keyboard or dongle (nrf52840dk_nrf52840)
       * The configuration uses the nRF52840 Development Kit.
       * The build types allow to build the application as mouse, keyboard or dongle.
       * Inputs are simulated based on the hardware button presses.
-      * The configuration with bootloader is available.
+      * The configuration with the B0 bootloader is set as default.
 
 Sample dongle (nrf52833dk_nrf52833)
       * The configuration uses the nRF52833 Development Kit.
@@ -984,20 +984,27 @@ nRF52832 Desktop Keyboard (nrf52kbd_nrf52832)
       * The reference design used is defined in :file:`nrf/boards/arm/nrf52kbd_nrf52832` for the project-specific hardware.
       * The application is configured to act as a keyboard, with the Bluetooth LE transport enabled.
       * Bluetooth is configured to use Nordic's SoftDevice link layer.
-      * |preconfigured_build_types|
+      * The configuration with the B0 bootloader is set as default.
 
 nRF52840 USB Dongle (nrf52840dongle_nrf52840) and nRF52833 USB Dongle (nrf52833dongle_nrf52833)
       * Since the nRF52840 Dongle is generic and defined in Zephyr, project-specific changes are applied in the DTS overlay file.
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
       * Bluetooth uses Nordic's SoftDevice link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
-      * |preconfigured_build_types|
+      * The configuration with the B0 bootloader is set as default if it fits in the memory.
 
 nRF52820 USB Dongle (nrf52820dongle_nrf52820)
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
       * Bluetooth uses Zephyr's software link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
       * |preconfigured_build_types|
+
+Sample dongle (nrf5340dk_nrf5340)
+      * The configuration uses the nRF5340 emulation on the nRF5340 Development Kit.
+      * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
+      * Bluetooth uses Zephyr's software link layer and is configured to act as a central.
+        Input data comes from Bluetooth and is retransmitted to USB.
+      * The configuration with the B0 bootloader is set as default.
 
 .. _porting_guide_adding_board:
 
