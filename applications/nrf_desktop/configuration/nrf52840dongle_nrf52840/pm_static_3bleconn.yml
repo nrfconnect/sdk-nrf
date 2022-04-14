@@ -15,26 +15,26 @@ s0:
   address: 0x6000
   orig_span: &id002
   - app
-  size: 0x3c000
+  size: 0x7c000
   span: *id002
 s0_image:
   address: 0x6000
   orig_span: &id003
   - app
-  size: 0x3c000
+  size: 0x7c000
   span: *id003
 app:
   address: 0x6000
-  size: 0x3c000
+  size: 0x7c000
 s1:
-  address: 0x42000
+  address: 0x82000
   orig_span: &id004
   - s1_image
-  size: 0x3c000
+  size: 0x7c000
   span: *id004
 s1_image:
-  address: 0x42000
-  size: 0x3c000
+  address: 0x82000
+  size: 0x7c000
 settings_storage:
-  address: 0x7e000
+  address: 0xfe000
   size: 0x2000
