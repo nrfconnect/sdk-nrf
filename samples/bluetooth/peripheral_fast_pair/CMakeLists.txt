@@ -13,6 +13,7 @@ target_sources(app PRIVATE
   src/main.c
   src/bt_adv_helper.c
   src/bt_tx_power_adv.c
+  src/hids_helper.c
 )
 
 target_include_directories(app PRIVATE include)
