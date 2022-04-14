@@ -143,6 +143,11 @@ nRF Desktop
 
 * Added documentation for selective HID report subscription in :ref:`nrf_desktop_usb_state` using :ref:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION <config_desktop_app_options>` option.
 
+* Removed configurations without a bootloader.
+  The B0 bootloader is enabled by default on all boards if the configuration with two image slots fits in memory.
+  Alternatively, MCUboot bootloader with a single image slot and serial recovery is enabled.
+  In case the configuration with the MCUboot does not fit in memory, no bootloader is enabled.
+
 Thingy:53 Zigbee weather station
 --------------------------------
 
