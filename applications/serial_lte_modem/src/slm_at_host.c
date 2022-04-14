@@ -686,6 +686,72 @@ static int cmd_grammar_check(const uint8_t *cmd, uint16_t length)
 	return 0;
 }
 
+static void format_final_result(char *buf)
+{
+	static const char ok_str[] = "OK\r\n";
+	static const char error_str[] = "ERROR\r\n";
+	static const char cme_error_str[] = "+CME ERROR:";
+	static const char cms_error_str[] = "+CMS ERROR:";
+	static const char crlf_str[] = "\r\n";
+	char *result = NULL, *temp;
+
+	/* find the last occurrence of final result string */
+	result = strstr(buf, ok_str);
+	if (result) {
+		temp = result;
+		while (temp != NULL) {
+			temp = strstr(result + strlen(ok_str), ok_str);
+			if (temp) {
+				result = temp;
+			}
+		}
+		goto final_result;
+	}
+	result = strstr(buf, error_str);
+	if (result) {
+		temp = result;
+		while (temp != NULL) {
+			temp = strstr(result + strlen(error_str), error_str);
+			if (temp) {
+				result = temp;
+			}
+		}
+		goto final_result;
+	}
+	result = strstr(buf, cme_error_str);
+	if (result) {
+		temp = result;
+		while (temp != NULL) {
+			temp = strstr(result + strlen(cme_error_str), cme_error_str);
+			if (temp) {
+				result = temp;
+			}
+		}
+		goto final_result;
+	}
+	result = strstr(buf, cms_error_str);
+	if (result) {
+		temp = result;
+		while (temp != NULL) {
+			temp = strstr(result + strlen(cms_error_str), cms_error_str);
+			if (temp) {
+				result = temp;
+			}
+		}
+	}
+	if (result == NULL) {
+		LOG_WRN("Final result not found");
+		return;
+	}
+
+final_result:
+	/* insert CRLF before final result if there is information response before it */
+	if (result != buf) {
+		memmove((void *)(result + strlen(crlf_str)), (void *)result, strlen(result));
+		memcpy((void *)result, (void *)crlf_str, strlen(crlf_str));
+	}
+}
+
 static void cmd_send(struct k_work *work)
 {
 	int err;
@@ -726,8 +792,12 @@ static void cmd_send(struct k_work *work)
 		LOG_ERR("AT command error, type: %d", nrf_modem_at_err_type(err));
 	}
 
+	/** Format as TS 27.007 command V1 with verbose response format,
+	 *  based on current return of API nrf_modem_at_cmd() and MFWv1.3.x
+	 */
 	if (strlen(at_buf) > 0) {
-		rsp_send("\r\n", 2);
+		rsp_send("\r\n", 2);		/* insert <CR><LF> before information response*/
+		format_final_result(at_buf);	/* insert <CR><LF> before final result */
 		rsp_send(at_buf, strlen(at_buf));
 	}
 
