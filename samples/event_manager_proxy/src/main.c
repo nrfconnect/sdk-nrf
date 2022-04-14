@@ -39,7 +39,7 @@ void main(void)
 	LOG_INF("Event manager initialized");
 
 	ret = event_manager_proxy_add_remote(ipc_instance);
-	if (ret) {
+	if (ret && ret != -EALREADY) {
 		LOG_ERR("Cannot add remote: %d", ret);
 		__ASSERT_NO_MSG(false);
 		return;
