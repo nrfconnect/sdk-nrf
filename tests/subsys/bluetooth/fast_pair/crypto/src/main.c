@@ -89,11 +89,11 @@ static void test_ecdh(void)
 
 	zassert_equal(sizeof(bobs_result_buf), sizeof(shared_key),
 		      "Invalid size of expected result.");
-	zassert_ok(fp_ecdh_shared_secret(alices_public_key, bobs_private_key, bobs_result_buf),
+	zassert_ok(fp_ecdh_shared_secret(bobs_result_buf, alices_public_key, bobs_private_key),
 		   "Error during key computing.");
 	zassert_equal(sizeof(alices_result_buf), sizeof(shared_key),
 		      "Invalid size of expected result.");
-	zassert_ok(fp_ecdh_shared_secret(bobs_public_key, alices_private_key, alices_result_buf),
+	zassert_ok(fp_ecdh_shared_secret(alices_result_buf, bobs_public_key, alices_private_key),
 		   "Error during key computing.");
 	zassert_mem_equal(bobs_result_buf, shared_key, sizeof(shared_key),
 			  "Invalid key on Bob's side.");

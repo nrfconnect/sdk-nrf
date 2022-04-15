@@ -63,14 +63,14 @@ int fp_aes128_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k);
  *
  * Keys are assumed to be secp256r1 elliptic curve keys.
  *
+ * @param[out] secret_key 256-bit (32-byte) buffer to receive shared secret key.
  * @param[in] public_key 512-bit (64-byte) someone else's public key.
  * @param[in] private_key 256-bit (32-byte) your private key.
- * @param[out] secret_key 256-bit (32-byte) buffer to receive shared secret key.
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_ecdh_shared_secret(const uint8_t *public_key, const uint8_t *private_key,
-			  uint8_t *secret_key);
+int fp_ecdh_shared_secret(uint8_t *secret_key, const uint8_t *public_key,
+			  const uint8_t *private_key);
 
 /** Compute an Anti-Spoofing AES key from an ECDH shared secret key.
  *

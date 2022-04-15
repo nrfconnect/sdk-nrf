@@ -53,7 +53,8 @@ int fp_aes128_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
 	return 0;
 }
 
-int fp_ecdh_shared_secret(const uint8_t *public_key, const uint8_t *private_key, uint8_t *secret_key)
+int fp_ecdh_shared_secret(uint8_t *secret_key, const uint8_t *public_key,
+			  const uint8_t *private_key)
 {
 	const struct uECC_Curve_t *curve = uECC_secp256r1();
 
