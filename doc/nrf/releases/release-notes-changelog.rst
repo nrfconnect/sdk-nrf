@@ -118,6 +118,11 @@ nRF9160: Serial LTE modem
   * The secondary MCUboot partition information is no longer passed to the P-GPS library if the P-GPS partition is enabled.
   * The combined use of A-GPS and P-GPS so that ephemeris and almanac data is not requested via A-GPS, saving both power and bandwidth.
 
+nRF Machine Learning (Edge Impulse)
+-----------------------------------
+
+* Increased the value of :kconfig:option:`CONFIG_CAF_POWER_MANAGER_TIMEOUT` to 30 seconds for Thingy:53.
+
 nRF Desktop
 -----------
 
