@@ -7,12 +7,6 @@
 menuconfig BT_FAST_PAIR
 	bool "Google Fast Pair Service (GFPS)"
 	select BT_NRF_SERVICES
-	select BT_FAST_PAIR_KEYS
-	select BT_FAST_PAIR_AUTH
-	select BT_FAST_PAIR_ADVERTISING
-	select BT_FAST_PAIR_GATT_SERVICE
-	select BT_FAST_PAIR_CRYPTO
-	select BT_FAST_PAIR_REGISTRATION_DATA
 	help
 	  Enable Google Fast Pair Service (GFPS).
 
@@ -42,11 +36,13 @@ config BT_DIS_FW_REV_STR
 
 config BT_FAST_PAIR_KEYS
 	bool
+	default y
 	help
 	  Add Fast Pair key handling source files.
 
 config BT_FAST_PAIR_AUTH
 	bool
+	default y
 	select BT_SMP
 	select BT_SMP_APP_PAIRING_ACCEPT
 	help
@@ -54,13 +50,15 @@ config BT_FAST_PAIR_AUTH
 
 config BT_FAST_PAIR_ADVERTISING
 	bool
-	depends on BT_PERIPHERAL
+	default y
+	select BT_PERIPHERAL
+	select BT_PRIVACY
 	help
 	  Add Fast Pair advertising source files.
 
 config BT_FAST_PAIR_GATT_SERVICE
 	bool
-	depends on BT
+	default y
 	help
 	  Add Fast Pair GATT Service source files.
 
@@ -90,6 +88,7 @@ endif # BT_FAST_PAIR_GATT_SERVICE
 
 config BT_FAST_PAIR_CRYPTO
 	bool
+	default y
 	help
 	  Add Fast Pair crypto source files.
 
@@ -123,6 +122,7 @@ endif # BT_FAST_PAIR_CRYPTO
 
 config BT_FAST_PAIR_REGISTRATION_DATA
 	bool
+	default y
 	select PM_SINGLE_IMAGE
 	help
 	  Add Fast Pair registration data source files.
