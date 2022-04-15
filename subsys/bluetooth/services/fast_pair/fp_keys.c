@@ -131,8 +131,8 @@ int fp_keys_generate_key(struct bt_conn *conn, struct fp_keys_keygen_params *key
 		err = fp_get_anti_spoofing_priv_key(priv_key, sizeof(priv_key));
 
 		if (!err) {
-			err = fp_ecdh_shared_secret(keygen_params->public_key, priv_key,
-						    ecdh_secret);
+			err = fp_ecdh_shared_secret(ecdh_secret, keygen_params->public_key,
+						    priv_key);
 		}
 
 		if (!err) {
