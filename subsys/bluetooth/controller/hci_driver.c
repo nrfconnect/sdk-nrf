@@ -40,16 +40,16 @@
  */
 BUILD_ASSERT(CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT <= CONFIG_BT_MAX_CONN);
 
-#define SDC_MASTER_COUNT (CONFIG_BT_MAX_CONN - CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT)
+#define SDC_CENTRAL_COUNT (CONFIG_BT_MAX_CONN - CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT)
 
 #else
 
-#define SDC_MASTER_COUNT 0
+#define SDC_CENTRAL_COUNT 0
 
 #endif /* CONFIG_BT_CONN */
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_CENTRAL) ||
-			 (SDC_MASTER_COUNT > 0));
+			 (SDC_CENTRAL_COUNT > 0));
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 			 (CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT > 0));
@@ -112,29 +112,29 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 	#define MAX_RX_PACKET_SIZE SDC_DEFAULT_RX_PACKET_SIZE
 #endif
 
-#define MASTER_MEM_SIZE (SDC_MEM_PER_MASTER_LINK( \
+#define CENTRAL_MEM_SIZE (SDC_MEM_PER_CENTRAL_LINK( \
 	MAX_TX_PACKET_SIZE, \
 	MAX_RX_PACKET_SIZE, \
 	SDC_DEFAULT_TX_PACKET_COUNT, \
 	SDC_DEFAULT_RX_PACKET_COUNT) \
-	+ SDC_MEM_MASTER_LINKS_SHARED)
+	+ SDC_MEM_CENTRAL_LINKS_SHARED)
 
-#define SLAVE_MEM_SIZE (SDC_MEM_PER_SLAVE_LINK( \
+#define PERIPHERAL_MEM_SIZE (SDC_MEM_PER_PERIPHERAL_LINK( \
 	MAX_TX_PACKET_SIZE, \
 	MAX_RX_PACKET_SIZE, \
 	SDC_DEFAULT_TX_PACKET_COUNT, \
 	SDC_DEFAULT_RX_PACKET_COUNT) \
-	+ SDC_MEM_SLAVE_LINKS_SHARED)
+	+ SDC_MEM_PERIPHERAL_LINKS_SHARED)
 
 #define PERIPHERAL_COUNT CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT
 
-#define MEMPOOL_SIZE ((PERIPHERAL_COUNT * SLAVE_MEM_SIZE) + \
-		      (SDC_MASTER_COUNT * MASTER_MEM_SIZE) + \
-		       SDC_ADV_SET_MEM_SIZE + \
-		       SDC_PERIODIC_ADV_MEM_SIZE + \
-		       SDC_PERIODIC_SYNC_MEM_SIZE + \
-		       SDC_PERIODIC_ADV_LIST_MEM_SIZE + \
-		       (SDC_SCAN_BUF_SIZE))
+#define MEMPOOL_SIZE ((PERIPHERAL_COUNT * PERIPHERAL_MEM_SIZE) + \
+		      (SDC_CENTRAL_COUNT * CENTRAL_MEM_SIZE) + \
+		      (SDC_ADV_SET_MEM_SIZE) + \
+		      (SDC_PERIODIC_ADV_MEM_SIZE) + \
+		      (SDC_PERIODIC_SYNC_MEM_SIZE) + \
+		      (SDC_PERIODIC_ADV_LIST_MEM_SIZE) + \
+		      (SDC_SCAN_BUF_SIZE))
 
 static uint8_t sdc_mempool[MEMPOOL_SIZE];
 
@@ -457,7 +457,7 @@ static int configure_supported_features(void)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-		err = sdc_support_slave();
+		err = sdc_support_peripheral();
 		if (err) {
 			return -ENOTSUP;
 		}
@@ -488,12 +488,12 @@ static int configure_supported_features(void)
 
 	if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
 		if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
-			err = sdc_support_ext_master();
+			err = sdc_support_ext_central();
 			if (err) {
 				return -ENOTSUP;
 			}
 		} else {
-			err = sdc_support_master();
+			err = sdc_support_central();
 			if (err) {
 				return -ENOTSUP;
 			}
@@ -529,22 +529,22 @@ static int configure_memory_usage(void)
 	int required_memory;
 	sdc_cfg_t cfg;
 
-	cfg.master_count.count = SDC_MASTER_COUNT;
+	cfg.central_count.count = SDC_CENTRAL_COUNT;
 
 	/* NOTE: sdc_cfg_set() returns a negative errno on error. */
 	required_memory =
 		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
-				       SDC_CFG_TYPE_MASTER_COUNT,
+				       SDC_CFG_TYPE_CENTRAL_COUNT,
 				       &cfg);
 	if (required_memory < 0) {
 		return required_memory;
 	}
 
-	cfg.slave_count.count = CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT;
+	cfg.peripheral_count.count = CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT;
 
 	required_memory =
 		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
-				       SDC_CFG_TYPE_SLAVE_COUNT,
+				       SDC_CFG_TYPE_PERIPHERAL_COUNT,
 				       &cfg);
 	if (required_memory < 0) {
 		return required_memory;
