@@ -52,7 +52,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 240c7b9a691f6bcee824d1b26a40a368a916bb05
+      revision: a73fdfbe4d9293589ed26c356644d2e94c1fc54e
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -68,6 +68,7 @@ manifest:
         name-allowlist:
           - TraceRecorderSource
           - canopennode
+          - chre
           - civetweb
           - cmsis
           - edtt
@@ -75,6 +76,7 @@ manifest:
           - fff
           - hal_nordic
           - hal_st
+          - liblc3codec
           - libmetal
           - littlefs
           - loramac-node
@@ -100,7 +102,7 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 132a537bf94044be93240a43b7622b3040bd017e
+      revision: 283c8063bc06ceb951b1f7ee116d70b9efbd1b0a
       path: bootloader/mcuboot
     - name: mbedtls-nrf
       path: mbedtls
@@ -109,11 +111,11 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 83225e4cc887616ca4cad8f42a9b7bafc9f7f90f
+      revision: c6ee51f2877d88b4c8cd9bd889a029e4ec7a7581
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 7d4a7139009c24ffa6edfb7f24fe32090bca0583
+      revision: 7a9a37abf68e9745f9d5a08185cc13f2b4dc6528
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
@@ -121,7 +123,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 4c061d1cecd87dfaed9d0084ad14588af36b2b49
+      revision: 7233f741f26be2ff20bfb839e3b64af0ba7ac88f
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -146,7 +148,7 @@ manifest:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: 7fdf4606627ececece7f3865107e6cdaa052537d
+      revision: 243a2c259362f3087072ef36232664db838a826b
       groups:
       - find-my
     - name: sdk-lc3
@@ -169,7 +171,7 @@ manifest:
       remote: alexa
     - name: zcbor
       remote: nordicsemi
-      revision: 0.4.0
+      revision: 3d36ae19cb05d28cea23b4c870ae965c44215e9c
       path: modules/lib/zcbor
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
