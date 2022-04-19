@@ -79,5 +79,11 @@ int fota_settings_init(void)
 		return err;
 	}
 
+	err = settings_load_subtree(fota_settings.name);
+	if (err) {
+		LOG_ERR("settings_load_subtree() failed, %d", err);
+		return err;
+	}
+
 	return 0;
 }

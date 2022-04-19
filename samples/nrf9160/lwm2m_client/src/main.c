@@ -322,9 +322,6 @@ void main(void)
 	ret = fota_settings_init();
 	if (ret < 0) {
 		LOG_WRN("Unable to init settings (%d)", ret);
-	} else {
-		/* Load *all* persistent settings */
-		settings_load();
 	}
 	/* Modem FW update needs to be verified before modem is used. */
 	lwm2m_verify_modem_fw_update();
