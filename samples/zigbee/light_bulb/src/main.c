@@ -25,12 +25,13 @@
 #include <zigbee/zigbee_error_handler.h>
 #include <zigbee/zigbee_zcl_scenes.h>
 #include <zb_nrf_platform.h>
+#include "zb_dimmable_light.h"
 
 #define RUN_STATUS_LED                  DK_LED1
 #define RUN_LED_BLINK_INTERVAL          1000
 
 /* Device endpoint, used to receive light controlling commands. */
-#define HA_DIMMABLE_LIGHT_ENDPOINT      10
+#define DIMMABLE_LIGHT_ENDPOINT         10
 
 /* Version of the application software (1 byte). */
 #define BULB_INIT_BASIC_APP_VERSION     01
@@ -169,7 +170,7 @@ ZB_ZCL_DECLARE_LEVEL_CONTROL_ATTRIB_LIST(
 	&dev_ctx.level_control_attr.current_level,
 	&dev_ctx.level_control_attr.remaining_time);
 
-ZB_HA_DECLARE_DIMMABLE_LIGHT_CLUSTER_LIST(
+ZB_DECLARE_DIMMABLE_LIGHT_CLUSTER_LIST(
 	dimmable_light_clusters,
 	basic_attr_list,
 	identify_attr_list,
@@ -179,12 +180,12 @@ ZB_HA_DECLARE_DIMMABLE_LIGHT_CLUSTER_LIST(
 	level_control_attr_list);
 
 
-ZB_HA_DECLARE_DIMMABLE_LIGHT_EP(
+ZB_DECLARE_DIMMABLE_LIGHT_EP(
 	dimmable_light_ep,
-	HA_DIMMABLE_LIGHT_ENDPOINT,
+	DIMMABLE_LIGHT_ENDPOINT,
 	dimmable_light_clusters);
 
-ZB_HA_DECLARE_DIMMABLE_LIGHT_CTX(
+ZBOSS_DECLARE_DEVICE_CTX_1_EP(
 	dimmable_light_ctx,
 	dimmable_light_ep);
 
@@ -206,7 +207,7 @@ static void start_identifying(zb_bufid_t bufid)
 		    ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE) {
 			LOG_INF("Enter identify mode");
 
-			zb_err_code = zb_bdb_finding_binding_target(HA_DIMMABLE_LIGHT_ENDPOINT);
+			zb_err_code = zb_bdb_finding_binding_target(DIMMABLE_LIGHT_ENDPOINT);
 			ZB_ERROR_CHECK(zb_err_code);
 		} else {
 			LOG_INF("Cancel identify mode");
@@ -297,7 +298,7 @@ static void level_control_set_value(zb_uint16_t new_level)
 	LOG_INF("Set level value: %i", new_level);
 
 	ZB_ZCL_SET_ATTRIBUTE(
-		HA_DIMMABLE_LIGHT_ENDPOINT,
+		DIMMABLE_LIGHT_ENDPOINT,
 		ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL,
 		ZB_ZCL_CLUSTER_SERVER_ROLE,
 		ZB_ZCL_ATTR_LEVEL_CONTROL_CURRENT_LEVEL_ID,
@@ -311,7 +312,7 @@ static void level_control_set_value(zb_uint16_t new_level)
 		zb_uint8_t value = ZB_FALSE;
 
 		ZB_ZCL_SET_ATTRIBUTE(
-			HA_DIMMABLE_LIGHT_ENDPOINT,
+			DIMMABLE_LIGHT_ENDPOINT,
 			ZB_ZCL_CLUSTER_ID_ON_OFF,
 			ZB_ZCL_CLUSTER_SERVER_ROLE,
 			ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
@@ -321,7 +322,7 @@ static void level_control_set_value(zb_uint16_t new_level)
 		zb_uint8_t value = ZB_TRUE;
 
 		ZB_ZCL_SET_ATTRIBUTE(
-			HA_DIMMABLE_LIGHT_ENDPOINT,
+			DIMMABLE_LIGHT_ENDPOINT,
 			ZB_ZCL_CLUSTER_ID_ON_OFF,
 			ZB_ZCL_CLUSTER_SERVER_ROLE,
 			ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
@@ -341,7 +342,7 @@ static void on_off_set_value(zb_bool_t on)
 	LOG_INF("Set ON/OFF value: %i", on);
 
 	ZB_ZCL_SET_ATTRIBUTE(
-		HA_DIMMABLE_LIGHT_ENDPOINT,
+		DIMMABLE_LIGHT_ENDPOINT,
 		ZB_ZCL_CLUSTER_ID_ON_OFF,
 		ZB_ZCL_CLUSTER_SERVER_ROLE,
 		ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
@@ -445,7 +446,7 @@ static void bulb_clusters_attr_init(void)
 		ZB_ZCL_LEVEL_CONTROL_REMAINING_TIME_DEFAULT_VALUE;
 
 	ZB_ZCL_SET_ATTRIBUTE(
-		HA_DIMMABLE_LIGHT_ENDPOINT,
+		DIMMABLE_LIGHT_ENDPOINT,
 		ZB_ZCL_CLUSTER_ID_ON_OFF,
 		ZB_ZCL_CLUSTER_SERVER_ROLE,
 		ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
@@ -453,7 +454,7 @@ static void bulb_clusters_attr_init(void)
 		ZB_FALSE);
 
 	ZB_ZCL_SET_ATTRIBUTE(
-		HA_DIMMABLE_LIGHT_ENDPOINT,
+		DIMMABLE_LIGHT_ENDPOINT,
 		ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL,
 		ZB_ZCL_CLUSTER_SERVER_ROLE,
 		ZB_ZCL_ATTR_LEVEL_CONTROL_CURRENT_LEVEL_ID,
@@ -578,7 +579,7 @@ void main(void)
 	level_control_set_value(dev_ctx.level_control_attr.current_level);
 
 	/* Register handler to identify notifications. */
-	ZB_AF_SET_IDENTIFY_NOTIFICATION_HANDLER(HA_DIMMABLE_LIGHT_ENDPOINT, identify_cb);
+	ZB_AF_SET_IDENTIFY_NOTIFICATION_HANDLER(DIMMABLE_LIGHT_ENDPOINT, identify_cb);
 
 	/* Initialize ZCL scene table */
 	zcl_scenes_init();

@@ -18,6 +18,7 @@
 #include <zigbee/zigbee_error_handler.h>
 #include <zigbee/zigbee_app_utils.h>
 #include <zb_nrf_platform.h>
+#include "zb_range_extender.h"
 
 
 #define RUN_STATUS_LED                         DK_LED1
@@ -77,12 +78,12 @@ ZB_ZCL_DECLARE_BASIC_ATTRIB_LIST(
 	&dev_ctx.basic_attr.zcl_version,
 	&dev_ctx.basic_attr.power_source);
 
-ZB_HA_DECLARE_RANGE_EXTENDER_CLUSTER_LIST(
+ZB_DECLARE_RANGE_EXTENDER_CLUSTER_LIST(
 	nwk_coordinator_clusters,
 	basic_attr_list,
 	identify_attr_list);
 
-ZB_HA_DECLARE_RANGE_EXTENDER_EP(
+ZB_DECLARE_RANGE_EXTENDER_EP(
 	nwk_coordinator_ep,
 	ZIGBEE_COORDINATOR_ENDPOINT,
 	nwk_coordinator_clusters);
