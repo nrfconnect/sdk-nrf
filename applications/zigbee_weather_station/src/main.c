@@ -11,6 +11,7 @@
 #include <ram_pwrdn.h>
 #include <zb_nrf_platform.h>
 #include <zboss_api.h>
+#include <zboss_api_addons.h>
 #include <zephyr.h>
 #include <zigbee/zigbee_app_utils.h>
 #include <zigbee/zigbee_error_handler.h>
@@ -64,8 +65,13 @@ ZB_ZCL_DECLARE_BASIC_ATTRIB_LIST(
 	basic_attr_list,
 	&dev_ctx.basic_attr.zcl_version, &dev_ctx.basic_attr.power_source);
 
-ZB_ZCL_DECLARE_IDENTIFY_ATTRIB_LIST(
-	identify_attr_list,
+/* Declare attribute list for Identify cluster (client). */
+ZB_ZCL_DECLARE_IDENTIFY_CLIENT_ATTRIB_LIST(
+	identify_client_attr_list);
+
+/* Declare attribute list for Identify cluster (server). */
+ZB_ZCL_DECLARE_IDENTIFY_SERVER_ATTRIB_LIST(
+	identify_server_attr_list,
 	&dev_ctx.identify_attr.identify_time);
 
 ZB_ZCL_DECLARE_TEMP_MEASUREMENT_ATTRIB_LIST(
@@ -95,7 +101,8 @@ ZB_ZCL_DECLARE_REL_HUMIDITY_MEASUREMENT_ATTRIB_LIST(
 ZB_HA_DECLARE_WEATHER_STATION_CLUSTER_LIST(
 	weather_station_cluster_list,
 	basic_attr_list,
-	identify_attr_list,
+	identify_client_attr_list,
+	identify_server_attr_list,
 	temperature_measurement_attr_list,
 	pressure_measurement_attr_list,
 	humidity_measurement_attr_list);

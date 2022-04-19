@@ -50,6 +50,8 @@
 /* Number chosen for the single endpoint provided by weather station */
 #define WEATHER_STATION_ENDPOINT_NB 42
 
+/* Temperature sensor device version */
+#define ZB_HA_DEVICE_VER_TEMPERATURE_SENSOR     0
 /* Basic, identify, temperature, pressure, humidity */
 #define ZB_HA_WEATHER_STATION_IN_CLUSTER_NUM    5
 /* Identify */
@@ -61,7 +63,8 @@
 #define ZB_HA_DECLARE_WEATHER_STATION_CLUSTER_LIST(						\
 		cluster_list_name,								\
 		basic_attr_list,								\
-		identify_attr_list,								\
+		identify_client_attr_list,							\
+		identify_server_attr_list,							\
 		temperature_measurement_attr_list,						\
 		pressure_measurement_attr_list,							\
 		humidity_measurement_attr_list							\
@@ -77,8 +80,8 @@
 			),									\
 		ZB_ZCL_CLUSTER_DESC(								\
 			ZB_ZCL_CLUSTER_ID_IDENTIFY,						\
-			ZB_ZCL_ARRAY_SIZE(identify_attr_list, zb_zcl_attr_t),			\
-			(identify_attr_list),							\
+			ZB_ZCL_ARRAY_SIZE(identify_server_attr_list, zb_zcl_attr_t),		\
+			(identify_server_attr_list),						\
 			ZB_ZCL_CLUSTER_SERVER_ROLE,						\
 			ZB_ZCL_MANUF_CODE_INVALID						\
 			),									\
@@ -105,8 +108,8 @@
 			),									\
 		ZB_ZCL_CLUSTER_DESC(								\
 			ZB_ZCL_CLUSTER_ID_IDENTIFY,						\
-			0,									\
-			NULL,									\
+			ZB_ZCL_ARRAY_SIZE(identify_client_attr_list, zb_zcl_attr_t),		\
+			(identify_client_attr_list),						\
 			ZB_ZCL_CLUSTER_CLIENT_ROLE,						\
 			ZB_ZCL_MANUF_CODE_INVALID						\
 			),									\

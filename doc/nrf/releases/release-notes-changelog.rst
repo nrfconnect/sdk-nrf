@@ -74,6 +74,7 @@ Zigbee
     It is meant to be used only for debugging purposes.
   * Documentation page about :ref:`ug_zigbee_commissioning`.
   * Experimental support for Zigbee Green Power Combo Basic functionality.
+  * Zigbee device definition for each Zigbee sample and application.
 
 * Updated :ref:`Zigbee shell library <lib_zigbee_shell>`.
   For details, see `Libraries for Zigbee`_.

@@ -20,6 +20,7 @@
 #include <zigbee/zigbee_error_handler.h>
 #include <zb_nrf_platform.h>
 #include "zb_mem_config_custom.h"
+#include "zb_dimmer_switch.h"
 
 #if CONFIG_ZIGBEE_FOTA
 #include <zigbee/zigbee_fota.h>
@@ -111,25 +112,43 @@ static zb_uint8_t attr_zcl_version = ZB_ZCL_VERSION;
 static zb_uint8_t attr_power_source = ZB_ZCL_BASIC_POWER_SOURCE_UNKNOWN;
 static zb_uint16_t attr_identify_time;
 
-/* Declare attribute list for Basic cluster. */
-ZB_ZCL_DECLARE_BASIC_ATTRIB_LIST(basic_attr_list, &attr_zcl_version,
-				 &attr_power_source);
+/* Declare attribute list for Basic cluster (server). */
+ZB_ZCL_DECLARE_BASIC_SERVER_ATTRIB_LIST(basic_server_attr_list, &attr_zcl_version, &attr_power_source);
 
-/* Declare attribute list for Identify cluster. */
-ZB_ZCL_DECLARE_IDENTIFY_ATTRIB_LIST(identify_attr_list, &attr_identify_time);
+/* Declare attribute list for Identify cluster (client). */
+ZB_ZCL_DECLARE_IDENTIFY_CLIENT_ATTRIB_LIST(identify_client_attr_list);
 
-/* Declare cluster list for Dimmer Switch device (Identify, Basic, Scenes,
- * Groups, On Off, Level Control).
- * Only clusters Identify and Basic have attributes.
- */
-ZB_HA_DECLARE_DIMMER_SWITCH_CLUSTER_LIST(dimmer_switch_clusters,
-					 basic_attr_list,
-					 identify_attr_list);
+/* Declare attribute list for Identify cluster (server). */
+ZB_ZCL_DECLARE_IDENTIFY_SERVER_ATTRIB_LIST(identify_server_attr_list, &attr_identify_time);
+
+/* Declare attribute list for Scenes cluster (client). */
+ZB_ZCL_DECLARE_SCENES_CLIENT_ATTRIB_LIST(scenes_client_attr_list);
+
+/* Declare attribute list for Groups cluster (client). */
+ZB_ZCL_DECLARE_GROUPS_CLIENT_ATTRIB_LIST(groups_client_attr_list);
+
+/* Declare attribute list for On/Off cluster (client). */
+ZB_ZCL_DECLARE_ON_OFF_CLIENT_ATTRIB_LIST(on_off_client_attr_list);
+
+/* Declare attribute list for Level control cluster (client). */
+ZB_ZCL_DECLARE_LEVEL_CONTROL_CLIENT_ATTRIB_LIST(level_control_client_attr_list);
+
+/* Declare cluster list for Dimmer Switch device. */
+ZB_DECLARE_DIMMER_SWITCH_CLUSTER_LIST(
+	dimmer_switch_clusters,
+	basic_server_attr_list,
+	identify_client_attr_list,
+	identify_server_attr_list,
+	scenes_client_attr_list,
+	groups_client_attr_list,
+	on_off_client_attr_list,
+	level_control_client_attr_list);
 
 /* Declare endpoint for Dimmer Switch device. */
-ZB_HA_DECLARE_DIMMER_SWITCH_EP(dimmer_switch_ep,
-			       LIGHT_SWITCH_ENDPOINT,
-			       dimmer_switch_clusters);
+ZB_DECLARE_DIMMER_SWITCH_EP(
+	dimmer_switch_ep,
+	LIGHT_SWITCH_ENDPOINT,
+	dimmer_switch_clusters);
 
 /* Declare application's device context (list of registered endpoints)
  * for Dimmer Switch device.
