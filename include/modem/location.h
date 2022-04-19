@@ -188,6 +188,8 @@ struct location_gnss_config {
 	 * timeout.
 	 *
 	 * @details See Kconfig for related configuration options.
+	 *
+	 * @note Only supported with modem firmware v1.3.2 or later.
 	 */
 	bool visibility_detection;
 };
