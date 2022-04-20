@@ -1238,6 +1238,7 @@ int nrf_cloud_rest_jitp(const sec_tag_t nrf_cloud_sec_tag)
 	req.resp_buff		= rx_buf;
 	req.resp_buff_len	= sizeof(rx_buf);
 	req.tls_peer_verify	= TLS_PEER_VERIFY_REQUIRED;
+	req.keep_alive		= false;
 
 	ret = rest_client_request(&req, &resp);
 	if (ret == 0) {
