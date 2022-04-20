@@ -23,6 +23,10 @@ config APP_INCLUDE_REMOTE_IMAGE
 	default y
 	select PARTITION_MANAGER_ENABLED
 
+config APP_REMOTE_BOARD
+	string "The name of the CORE to be used by remote image"
+	depends on APP_INCLUDE_REMOTE_IMAGE
+
 rsource "common_events/Kconfig"
 rsource "modules/Kconfig"
 endmenu

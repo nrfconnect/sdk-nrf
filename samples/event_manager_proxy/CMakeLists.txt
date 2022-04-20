@@ -14,17 +14,6 @@ if(CONF_FILE)
   set(remote_CONF_FILE ${CONF_FILE})
 endif()
 
-if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/boards/${BOARD}_${CONF_FILE_BUILD_TYPE}_remote.cmake")
-  include(${CMAKE_CURRENT_SOURCE_DIR}/boards/${BOARD}_${CONF_FILE_BUILD_TYPE}_remote.cmake)
-elseif (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/boards/${BOARD}_remote.cmake")
-  include(${CMAKE_CURRENT_SOURCE_DIR}/boards/${BOARD}_remote.cmake)
-else()
-  message(FATAL_ERROR
-          "Board ${BOARD} is not supported.\n"
-          "Please make sure board specific configuration files are added to "
-          "${CMAKE_CURRENT_SOURCE_DIR}/boards/")
-endif()
-
 message(STATUS "Overlay set to: ${DTC_OVERLAY_FILE}")
 
 set(ZEPHYR_EXTRA_MODULES ${CMAKE_CURRENT_LIST_DIR})

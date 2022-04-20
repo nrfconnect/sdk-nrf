@@ -11,21 +11,15 @@ if (CONF_FILE)
     set(CONF_FILE_BUILD_TYPE ${CMAKE_MATCH_1})
   endif()
 
-  # Use config file with the same name in cpunet.
-  set(cpunet_CONF_FILE ${CONF_FILE})
+  # Use config file with the same name in remote.
+  set(remote_CONF_FILE ${CONF_FILE})
   set(DTC_OVERLAY_FILE "${CONF_FILE_BUILD_TYPE}.overlay")
-  set(cpunet_DTC_OVERLAY_FILE "${CONF_FILE_BUILD_TYPE}.overlay")
+  set(remote_DTC_OVERLAY_FILE "${CONF_FILE_BUILD_TYPE}.overlay")
 
-  # Use config overlay with the same name in cpunet.
+  # Use config overlay with the same name in remote.
   if(OVERLAY_CONFIG)
-    set(cpunet_OVERLAY_CONFIG ${OVERLAY_CONFIG})
+    set(remote_OVERLAY_CONFIG ${OVERLAY_CONFIG})
   endif()
-endif()
-
-if("${BOARD}" STREQUAL "nrf5340dk_nrf5340_cpuapp")
-  set(CHILD_BOARD "nrf5340dk_nrf5340_cpunet")
-else()
-  message(FATAL_ERROR "${BOARD} is not supported for this sample")
 endif()
 
 set(ZEPHYR_EXTRA_MODULES ${CMAKE_CURRENT_LIST_DIR})

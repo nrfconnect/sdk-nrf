@@ -2,11 +2,11 @@
 # be executed for all images in the build, also for the child image being
 # added below.
 
-if (CONFIG_INCLUDE_NET_IMAGE)
+if (CONFIG_APP_INCLUDE_REMOTE_IMAGE)
   add_child_image(
-    NAME cpunet
-    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/../cpunet
-    DOMAIN cpunet
-    BOARD ${CHILD_BOARD}
+    NAME remote
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/../remote
+    DOMAIN remote
+    BOARD ${CONFIG_APP_REMOTE_BOARD}
     )
 endif()
