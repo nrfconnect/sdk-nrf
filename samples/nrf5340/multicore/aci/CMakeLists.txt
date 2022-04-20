@@ -12,6 +12,6 @@ if (CONFIG_INCLUDE_NET_CORE_IMAGE)
     NAME cpunet
     SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/../cpunet
     DOMAIN cpunet
-    BOARD ${CHILD_BOARD}
+    BOARD ${CONFIG_DOMAIN_CPUNET_BOARD}
     )
 endif()

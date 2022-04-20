@@ -6,8 +6,8 @@
 
 config APP_IPC_SERVICE_SEND_INTERVAL
 	int "Ipc service sending interval [us]"
-	default 70 if BOARD_NRF5340DK_NRF5340_CPUAPP
 	default 30 if BOARD_NRF5340DK_NRF5340_CPUNET
+	default 70
 	help
 	  Time in micro seconds between sending subsequent data packages over
 	  IPC service. Since kernel timeout has 1 ms resolution, the value is
