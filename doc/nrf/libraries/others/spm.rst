@@ -46,9 +46,10 @@ The security attributions of the flash memory regions are taken from the generat
 
 For the SRAM and the peripherals, the following security attribution configuration is applied:
 
-SRAM (256 kB)
 * Lower 64 kB: Secure
 * Upper 192 kB: Non-Secure
+
+In total, this makes 256 kB for the SRAM.
 
 The following peripherals are configured as Non-Secure:
 

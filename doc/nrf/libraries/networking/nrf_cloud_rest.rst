@@ -10,8 +10,8 @@ nRF Cloud REST
 The nRF Cloud REST library enables applications to use `nRF Cloud's REST-based device API <nRF Cloud REST API_>`_.
 This library is an enhancement to the :ref:`lib_nrf_cloud` library.
 
-Usage
-#####
+Overview
+********
 
 This library exposes a number of functions that provide access to nRF Cloud REST API endpoints.
 
@@ -26,7 +26,7 @@ All of these functions operate on a :c:struct:`nrf_cloud_rest_context` structure
 When each function returns, the context contains the status of the API call.
 
 Authentication
-**************
+==============
 
 Each HTTP/REST request must include a valid JSON Web Token (JWT) that serves as a proof of identity.
 Usually, these tokens are generated based on the `device credentials <nRF Cloud Security_>`_, and must be passed to the ``auth`` parameter of the :c:struct:`nrf_cloud_rest_context` structure.
@@ -34,7 +34,7 @@ To generate a token, call the :c:func:`nrf_cloud_jwt_generate` function, or use 
 Alternatively, if you have enabled the :kconfig:option:`NRF_CLOUD_REST_AUTOGEN_JWT` option (along with its dependencies), the nRF Cloud REST library generates a JWT automatically if one is not provided.
 
 Socket management and reuse
-***************************
+===========================
 
 The socket used for each HTTP request is determined by the ``connect_socket`` parameter of the :c:struct:`nrf_cloud_rest_context` structure.
 If a valid socket file descriptor is passed, this socket is used.
@@ -57,7 +57,8 @@ There are two ways a timed out socket can manifest:
 See :ref:`nrf_cloud_rest_failure` for more details.
 
 Request success
-***************
+===============
+
 If the API call is successful, the context also contains the response data and length.
 Some functions also have an optional ``result`` parameter.
 If this parameter is provided, the response data is parsed into ``result``.
@@ -72,7 +73,7 @@ A number of functions automatically handle response data themselves:
 .. _nrf_cloud_rest_failure:
 
 Request failure
-***************
+===============
 
 If an API call is unsuccessful, the called request function may return a variety of outputs:
 
