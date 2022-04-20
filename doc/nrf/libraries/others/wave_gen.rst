@@ -14,7 +14,7 @@ The :c:func:`wave_gen_generate_value` generates the value of the wave signal at 
 Configuration
 *************
 
-Set :kconfig:option:`CONFIG_WAVE_GEN_LIB` to enable the wave genarator library.
+Set :kconfig:option:`CONFIG_WAVE_GEN_LIB` to enable the wave generator library.
 
 API documentation
 *****************
