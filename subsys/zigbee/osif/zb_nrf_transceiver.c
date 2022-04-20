@@ -21,16 +21,16 @@
 #define FRAME_TYPE_MASK           0x07
 #define FRAME_TYPE_ACK            0x02
 
-#if defined(NRF52840_XXAA) || defined(NRF52811_XXAA) || \
-defined(NRF5340_XXAA_NETWORK) || defined(NRF5340_XXAA_APPLICATION)
-/* dBm value corresponding to value 0 in the EDSAMPLE register. */
-#define ZBOSS_ED_MIN_DBM       (-92)
+#if defined(NRF52840_XXAA) || defined(NRF52811_XXAA)
+/* Minimum value in dBm detectable by the radio. */
+#define MIN_RADIO_SENSITIVITY (-92)
 /* Factor needed to calculate the ED result based on the data from the RADIO peripheral. */
 #define ZBOSS_ED_RESULT_FACTOR 4
 
-#elif defined(NRF52833_XXAA) || defined(NRF52820_XXAA)
-/* dBm value corresponding to value 0 in the EDSAMPLE register. */
-#define ZBOSS_ED_MIN_DBM       (-93)
+#elif defined(NRF52833_XXAA) || defined(NRF52820_XXAA) \
+|| defined(NRF5340_XXAA_NETWORK) || defined(NRF5340_XXAA_APPLICATION)
+/* Minimum value in dBm detectable by the radio. */
+#define MIN_RADIO_SENSITIVITY (-93)
 /* Factor needed to calculate the ED result based on the data from the RADIO peripheral. */
 #define ZBOSS_ED_RESULT_FACTOR 5
 
@@ -38,6 +38,10 @@ defined(NRF5340_XXAA_NETWORK) || defined(NRF5340_XXAA_APPLICATION)
 #error "Selected chip is not supported."
 #endif
 
+/* dBm value corresponding to value 0 of the energy scan result. */
+#define ZBOSS_ED_MIN_DBM (-75)
+/* dBm value corresponding to value 255 of the energy scan result. */
+#define ZBOSS_ED_MAX_DBM (MIN_RADIO_SENSITIVITY + (255/ZBOSS_ED_RESULT_FACTOR))
 
 BUILD_ASSERT(IS_ENABLED(CONFIG_NET_PKT_TIMESTAMP), "Timestamp is required");
 BUILD_ASSERT(!IS_ENABLED(CONFIG_IEEE802154_NET_IF_NO_AUTO_START),
@@ -133,7 +137,7 @@ static void energy_scan_done(const struct device *dev, int16_t max_ed)
 		energy_detect.failed = true;
 	} else {
 		energy_detect.rssi_val =
-			(max_ed - ZBOSS_ED_MIN_DBM) * ZBOSS_ED_RESULT_FACTOR;
+			255 * (max_ed - ZBOSS_ED_MIN_DBM) / (ZBOSS_ED_MAX_DBM - ZBOSS_ED_MIN_DBM);
 	}
 	k_sem_give(&energy_detect.sem);
 }
