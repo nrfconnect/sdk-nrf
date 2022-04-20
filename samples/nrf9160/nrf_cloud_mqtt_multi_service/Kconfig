@@ -95,11 +95,25 @@ config SENSOR_SAMPLE_INTERVAL_SECONDS
 	help
 	  Sets the time to wait between each sensor sample.
 
-config LOCATION_SAMPLE_INTERVAL_SECONDS
+config LOCATION_TRACKING_SAMPLE_INTERVAL_SECONDS
 	int "Location sampling interval (seconds)"
 	default 60
 	help
 	  Sets the location sampling interval in seconds.
+
+config LOCATION_TRACKING_GNSS
+	bool "Use GNSS method for location tracking"
+	default y
+	depends on LOCATION_METHOD_GNSS
+	help
+	  Disable both this and LOCATION_TRACKING_CELLULAR to completely disable location tracking.
+
+config LOCATION_TRACKING_CELLULAR
+	bool "Use cellular method for location tracking"
+	default y
+	depends on LOCATION_METHOD_CELLULAR
+	help
+	  Disable both this and LOCATION_TRACKING_GNSS to completely disable location tracking.
 
 config TEMP_DATA_USE_SENSOR
 	bool "Use genuine temperature data"
@@ -110,6 +124,12 @@ config TEMP_DATA_USE_SENSOR
 	help
 	  Sets whether to take genuine temperature measurements from a
 	  connected BME680 sensor, or just simulate sensor data.
+
+config TEMP_TRACKING
+	bool "Track temperature"
+	default y
+	help
+	  Sets whether to take temperature measurements.
 
 choice GNSS_ANTENNA
 	default GNSS_ANTENNA_ONBOARD

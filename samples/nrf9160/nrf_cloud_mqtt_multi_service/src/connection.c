@@ -12,6 +12,7 @@
 #include <logging/log.h>
 #include <cJSON.h>
 #include "fota_support.h"
+
 #include "location_tracking.h"
 
 #include "connection.h"
@@ -273,11 +274,11 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		LOG_DBG("NRF_CLOUD_EVT_RX_DATA");
 		LOG_DBG("%d bytes received from cloud", nrf_cloud_evt->data.len);
 
-		/* The Location library sends AGPS data requests on our behalf, but cannot
-		 * intercept them. We must, therefore, check all received MQTT payloads for
-		 * AGPS data ourselves.
+		/* The Location library sends assistance data requests on our behalf, but cannot
+		 * intercept the responses. We must, therefore, check all received MQTT payloads for
+		 * assistance data ourselves.
 		 */
-		location_agps_data_handler(nrf_cloud_evt->data.ptr, nrf_cloud_evt->data.len);
+		location_assistance_data_handler(nrf_cloud_evt->data.ptr, nrf_cloud_evt->data.len);
 		break;
 	case NRF_CLOUD_EVT_FOTA_START:
 		LOG_DBG("NRF_CLOUD_EVT_FOTA_START");
@@ -422,8 +423,8 @@ static void update_shadow(void)
 		.modem = fota_capable()
 	};
 	struct nrf_cloud_svc_info_ui ui_info = {
-		.gps = true,
-		.temperature = true,
+		.gps = location_tracking_enabled(),
+		.temperature = IS_ENABLED(CONFIG_TEMP_TRACKING),
 	};
 	struct nrf_cloud_svc_info service_info = {
 		.fota = &fota_info,
