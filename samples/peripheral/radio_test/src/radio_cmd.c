@@ -294,8 +294,8 @@ static int cmd_duty_cycle_set(const struct shell *shell, size_t argc,
 
 	duty_cycle = atoi(argv[1]);
 
-	if (duty_cycle > 100) {
-		shell_error(shell, "Duty cycle must be between 1 and 99.");
+	if (duty_cycle > 90) {
+		shell_error(shell, "Duty cycle must be between 1 and 90.");
 		return -EINVAL;
 	}
 
@@ -1308,7 +1308,7 @@ SHELL_CMD_REGISTER(transmit_pattern,
 		   cmd_transmit_pattern_set);
 SHELL_CMD_REGISTER(start_duty_cycle_modulated_tx, NULL,
 		   "Duty cycle in percent (two decimal digits, between 01 and "
-		   "99) <duty_cycle>", cmd_duty_cycle_set);
+		   "90) <duty_cycle>", cmd_duty_cycle_set);
 SHELL_CMD_REGISTER(parameters_print, NULL,
 		   "Print current delay, channel and so on",
 		   cmd_print);
