@@ -225,6 +225,9 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 		 * Next step: perform BDB initialization procedure,
 		 *            (see BDB specification section 7.1).
 		 */
+		ZB_ERROR_CHECK(zb_zcl_set_backward_comp_mode(ZB_ZCL_AUTO_MODE));
+		ZB_ERROR_CHECK(
+			zb_zcl_set_backward_compatible_statuses_mode(ZB_ZCL_STATUSES_ZCL8_MODE));
 		stack_initialised = true;
 		LOG_INF("Zigbee stack initialized");
 		comm_status = bdb_start_top_level_commissioning(
