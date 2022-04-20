@@ -22,14 +22,23 @@ extern "C" {
 
 /** Start Fast Pair sample advertising
  *
- * Include: device name, TX power and Fast Pair advertising data into an advertising packet and
- * start advertising.
+ * Include: TX power and Fast Pair advertising data into an advertising packet and start
+ * advertising. Device name is added to scan response data. The advertising is not resumed after
+ * Bluetooth connection is established.
  *
  * The function handles also periodic RPA rotation and Fast Pair advertising data update.
  *
+ * @param[in] fp_discoverable Indicate if the device should be Fast Pair discoverable.
+ *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int bt_adv_helper_adv_start(void);
+int bt_adv_helper_adv_start(bool fp_discoverable);
+
+/** Stop Fast Pair sample advertising
+ *
+ * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int bt_adv_helper_adv_stop(void);
 
 #ifdef __cplusplus
 }

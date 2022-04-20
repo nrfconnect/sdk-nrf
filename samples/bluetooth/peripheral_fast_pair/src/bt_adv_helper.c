@@ -36,8 +36,7 @@ static const struct bt_data sd[] = {
 	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
 
-
-static int bt_adv_helper_fast_pair_prepare(struct bt_data *adv_data)
+static int bt_adv_helper_fast_pair_prepare(struct bt_data *adv_data, bool fp_discoverable)
 {
 	/* Make sure that Fast Pair data was freed and set to NULL to prevent memory leaks. */
 	if (adv_data->data) {
@@ -45,14 +44,14 @@ static int bt_adv_helper_fast_pair_prepare(struct bt_data *adv_data)
 		adv_data->data = NULL;
 	}
 
-	size_t buf_size = bt_fast_pair_adv_data_size(true);
+	size_t buf_size = bt_fast_pair_adv_data_size(fp_discoverable);
 	uint8_t *buf = k_malloc(buf_size);
 
 	if (!buf) {
 		return -ENOMEM;
 	}
 
-	int err = bt_fast_pair_adv_data_fill(adv_data, buf, buf_size, true);
+	int err = bt_fast_pair_adv_data_fill(adv_data, buf, buf_size, fp_discoverable);
 
 	if (err) {
 		k_free(buf);
@@ -85,10 +84,16 @@ static int bt_adv_helper_tx_power_prepare(struct bt_data *adv_data)
 	return err;
 }
 
-int bt_adv_helper_adv_start(void)
+int bt_adv_helper_adv_start(bool fp_discoverable)
 {
-	int err = bt_adv_helper_fast_pair_prepare(&ad[FAST_PAIR_ADV_DATA_POS]);
+	int err = bt_adv_helper_adv_stop();
 
+	if (err) {
+		printk("Cannot stop advertising (err: %d)\n", err);
+		return err;
+	}
+
+	err = bt_adv_helper_fast_pair_prepare(&ad[FAST_PAIR_ADV_DATA_POS], fp_discoverable);
 	if (err) {
 		printk("Cannot prepare Fast Pair advertising data (err: %d)\n", err);
 		return err;
@@ -105,7 +110,7 @@ int bt_adv_helper_adv_start(void)
 	 */
 	static const struct bt_le_adv_param adv_param = {
 		.id = BT_ID_DEFAULT,
-		.options = BT_LE_ADV_OPT_CONNECTABLE,
+		.options = (BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME),
 		.interval_min = BT_GAP_ADV_FAST_INT_MIN_1,
 		.interval_max = BT_GAP_ADV_FAST_INT_MAX_1,
 		.peer = NULL,
@@ -114,4 +119,9 @@ int bt_adv_helper_adv_start(void)
 	err = bt_le_adv_start(&adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 
 	return err;
+}
+
+int bt_adv_helper_adv_stop(void)
+{
+	return bt_le_adv_stop();
 }
