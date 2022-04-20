@@ -48,6 +48,8 @@ static const nrfx_timer_t timer = NRFX_TIMER_INSTANCE(0);
 
 static bool sweep_proccesing;
 
+/* Total payload size */
+static uint16_t total_payload_size;
 
 #if CONFIG_FEM
 static struct radio_test_fem fem;
@@ -134,8 +136,9 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern)
 {
 	nrf_radio_packet_conf_t packet_conf;
 
-	/* Reset Radio ramp-up time. */
-	nrf_radio_modecnf0_set(NRF_RADIO, false, RADIO_MODECNF0_DTX_Center);
+	/* Set fast ramp-up time. */
+	nrf_radio_modecnf0_set(NRF_RADIO, true, RADIO_MODECNF0_DTX_Center);
+	/* Disable CRC. */
 	nrf_radio_crc_configure(NRF_RADIO, RADIO_CRCCNF_LEN_Disabled,
 				NRF_RADIO_CRC_ADDR_INCLUDE, 0);
 
@@ -196,9 +199,8 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern)
 		packet_conf.big_endian = false;
 		packet_conf.whiteen = false;
 
-		/* Set fast ramp-up time. */
-		nrf_radio_modecnf0_set(NRF_RADIO, true,
-				       RADIO_MODECNF0_DTX_Center);
+		/* preamble, address (BALEN + PREFIX), lflen and payload */
+		total_payload_size = 4 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen;
 		break;
 #endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 
@@ -208,24 +210,23 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern)
 		/* Packet configuration:
 		 * S1 size = 0 bits,
 		 * S0 size = 0 bytes,
-		 * 10-bit preamble.
+		 * 10 bytes preamble.
 		 */
 		packet_conf.plen = NRF_RADIO_PREAMBLE_LENGTH_LONG_RANGE;
-		packet_conf.maxlen = IEEE_MAX_PAYLOAD_LEN;
 		packet_conf.cilen = 2;
 		packet_conf.termlen = 3;
 		packet_conf.big_endian = false;
 		packet_conf.balen = 3;
-
-		/* Set fast ramp-up time. */
-		nrf_radio_modecnf0_set(NRF_RADIO, true,
-				       RADIO_MODECNF0_DTX_Center);
 
 		/* Set CRC length; CRC calculation does not include the address
 		 * field.
 		 */
 		nrf_radio_crc_configure(NRF_RADIO, RADIO_CRCCNF_LEN_Three,
 					NRF_RADIO_CRC_ADDR_SKIP, 0);
+
+		/* preamble, address (BALEN + PREFIX), lflen, code indicator, TERM, payload, CRC */
+		total_payload_size = 10 + (packet_conf.balen + 1) + 1 + packet_conf.cilen +
+				  packet_conf.termlen + packet_conf.maxlen + RADIO_CRCCNF_LEN_Three;
 		break;
 
 #endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
@@ -237,6 +238,9 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern)
 		 * 16-bit preamble.
 		 */
 		packet_conf.plen = NRF_RADIO_PREAMBLE_LENGTH_16BIT;
+
+		/* preamble, address (BALEN + PREFIX), lflen and payload */
+		total_payload_size = 2 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen;
 		break;
 
 	default:
@@ -246,6 +250,9 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern)
 		 * 8-bit preamble.
 		 */
 		packet_conf.plen = NRF_RADIO_PREAMBLE_LENGTH_8BIT;
+
+		/* preamble, address (BALEN + PREFIX), lflen, and payload */
+		total_payload_size = 1 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen;
 		break;
 	}
 
@@ -437,23 +444,6 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, uint8_t txpower,
 		8, 4, 32, 8, 4, 64, 16, 0, 0, 0, 0, 0, 0, 0, 0, 32
 	};
 
-	/* 1 byte preamble, 5 byte address (BALEN + PREFIX),
-	 * and sizeof(payload), no CRC
-	 */
-	const uint32_t total_payload_size     = 1 + 5 + sizeof(tx_packet);
-	const uint32_t total_time_per_payload =
-		time_in_us_per_byte[mode] * total_payload_size;
-
-	/* Duty cycle = 100 * Time_on / (time_on + time_off),
-	 * we need to calculate "time_off" for delay.
-	 * In addition, the timer includes the "total_time_per_payload",
-	 * so we need to add this to the total timer cycle.
-	 */
-	uint32_t delay_time = total_time_per_payload +
-			   ((100 * total_time_per_payload -
-			   (total_time_per_payload * duty_cycle)) /
-			   duty_cycle);
-
 	radio_disable();
 	generate_modulated_rf_packet(mode, pattern);
 
@@ -477,6 +467,17 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, uint8_t txpower,
 	}
 
 #endif /* CONFIG_FEM */
+
+	const uint32_t total_time_per_payload = time_in_us_per_byte[mode] * total_payload_size;
+
+	/* Duty cycle = 100 * Time_on / (time_on + time_off),
+	 * we need to calculate "time_off" for delay.
+	 * In addition, the timer includes the "total_time_per_payload",
+	 * so we need to add this to the total timer cycle.
+	 */
+	uint32_t delay_time = total_time_per_payload +
+			   ((100 * total_time_per_payload - (total_time_per_payload * duty_cycle)) /
+			   duty_cycle);
 
 	/* We let the TIMER start the radio transmission again. */
 	nrfx_timer_disable(&timer);
