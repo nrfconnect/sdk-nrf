@@ -89,7 +89,7 @@ jobs:
             echo "publish2 dev PR-${{ github.event.number }} __FILE__" > monitor.txt
             echo "${{ github.event.number }}" > pr.txt
           else
-            VERSION_REGEX="^v([0-9\.]+)$"
+            VERSION_REGEX="^v([0-9a-z\.\-]+)$"
             if [[ ${GITHUB_REF#refs/tags/} =~ $VERSION_REGEX ]]; then
               VERSION=${BASH_REMATCH[1]}
             elif [[ ${GITHUB_REF#refs/heads/} == "main" ]]; then
