@@ -10,6 +10,9 @@ LwM2M client utils
 The LwM2M client utils library enables an nRF9160-based device to connect to an LwM2M server such as `Leshan Demo Server`_ using the Lightweight Machine to Machine (`LwM2M`_) protocol over LTE.
 Once the device is connected, the library supports the querying the device to retrieve location data or information about the modem.
 
+Overview
+********
+
 The library provides a basic combination of LwM2M objects, which forms a common communication framework for applications that communicate with an LwM2M server.
 Following are the fixed set of readily initialized objects that are available to the users:
 
@@ -27,14 +30,14 @@ Based on the use case, a user application can, and is expected to, define additi
 .. figure:: images/lib_lwm2m_client_utils.svg
       :alt: LwM2M client utils software stack
 
-Configuration and implementation
-********************************
-
 By default, the library uses LTE-M for connecting and it does not utilize a bootstrap server.
-The library does not use LwM2M Queue mode also.
+The library does not use the LwM2M Queue mode either.
 To use NB-IoT, a bootstrap server, or the queue mode, follow the implementation details described in the :ref:`lwm2m_client` sample.
 
-Enable the following parameters when using this library:
+Configuration
+*************
+
+Enable the following parameters to use this library:
 
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS`
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT`
@@ -45,17 +48,17 @@ Enable the following parameters when using this library:
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT`
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT`
 
-Support for the objects are enabled by default but they can be set individually.
+Support for the objects is enabled by default, but they can be set individually.
 Disable the :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT` Kconfig option only if you are implementing a ``Reboot`` resource on your application because of a mandatory requirement.
 
 If you are using the Firmware Update object and require downloading of firmware images from TLS enabled services like HTTPS, configure :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG` to specify the security tag that has root certificate for the target server.
 
-Location Assistance object is a proprietary LwM2M object used to deliver information required by various location services through LwM2M.
+Location Assistance object support (:kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT`) is a proprietary LwM2M object used to deliver information required by various location services through LwM2M.
 It is still under development and considered experimental.
 See the :ref:`location_assistance` section in the LwM2M client sample documentation for more information.
 
 Defining custom objects
-***********************
+=======================
 
 In addition to the basic objects, you can also create custom LwM2M objects.
 For most of the applications, the business logic might be implemented inside custom objects, which are either proprietary to the application or following an external specification like `IPSO objects`_.
@@ -207,7 +210,7 @@ When a read operation is issued by the server, the engine obtains the button val
 This causes the internal engine to allocate memory and store all the resources that are defined for the IPSO object ID.
 
 Extending the library with new object types
-*******************************************
+===========================================
 
 If the library is not supporting the object type that you need, it is possible to extend the support by introducing completely new object types.
 This is currently possible only by using an internal API from the LwM2M engine.
