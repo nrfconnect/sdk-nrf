@@ -83,6 +83,9 @@ The application must also manually reset its connection to nRF Cloud whenever LT
 Otherwise, the :ref:`lib_nrf_cloud` library will deadlock.
 The ``LTE_LC_EVT_NW_REG_STATUS`` case inside the :c:func:`lte_event_handler` function performs this task.
 
+Upon startup, the connection management loop also updates the `Device Shadow <nRF Cloud Device Shadows_>`_.
+This is performed in the :c:func:`update_shadow` function of the :file:`src/connection.c` file.
+
 .. _nrf_cloud_mqtt_multi_service_device_message_queue:
 
 Device message queue
@@ -109,7 +112,7 @@ It performs the following major tasks:
 * Sends sensor sample and location device messages to the :ref:`nrf_cloud_mqtt_multi_service_device_message_queue`.
 
 .. note::
-   periodic location tracking is handled by the :ref:`lib_location` library once it has been requested, whereas temperature samples are individually requested by the Main Application Loop.
+   Periodic location tracking is handled by the :ref:`lib_location` library once it has been requested, whereas temperature samples are individually requested by the Main Application Loop.
 
 .. _nrf_cloud_mqtt_multi_service_fota:
 
@@ -139,6 +142,10 @@ Using the built-in temperature sensor of the `Nordic Thingy:91`_ requires a `dev
 The devicetree overlay file is automatically applied during compilation whenever the ``thingy91_nrf9160_ns`` target is selected.
 The required Kconfig options are implicitly enabled by :ref:`CONFIG_TEMP_DATA_USE_SENSOR <CONFIG_TEMP_DATA_USE_SENSOR>`.
 
+.. note::
+  For temperature readings to be visible in the nRF Cloud portal, they must be marked as enabled in the `Device Shadow <nRF Cloud Device Shadows_>`_.
+  This is performed by the :file:`src/connection.c` file.
+
 .. _nrf_cloud_mqtt_multi_service_location_tracking:
 
 Location tracking
@@ -146,14 +153,18 @@ Location tracking
 
 All matters concerning location tracking are handled in the :file:`src/location_tracking.c` file.
 For the most part, this amounts to setting up a periodic location request, and then passing the results to a callback configured by the :file:`src/application.c` file.
-Additionally, the following two tasks which must be implemented:
+Additionally, the following two tasks are performed:
 
-* The :ref:`lib_location` library requires assisted GPS (A-GPS) data to have the fastest possible `time-to-first-fix <TTFF_>`_.
+* The :ref:`lib_location` library requires GPS assistance data (either A-GPS, P-GPS, or both) to have the fastest possible `time-to-first-fix <TTFF_>`_.
   The library requests this data automatically, but has no way to automatically receive the response.
-  Therefore, all MQTT messages received from `nRF Cloud`_ must be be passed directly through to the :ref:`lib_nrf_cloud_agps` library to be checked for A-GPS data.
-  The :c:func:`location_agps_data_handler` function handles this task, and MQTT messages are sent directly to it from the :file:`src/connection.c` file.
+  Therefore, all MQTT messages received from `nRF Cloud`_ must be be passed directly through to the :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` libraries to be checked for A-GPS and P-GPS data, respectively.
+  The :c:func:`location_assistance_data_handler` function handles this task, and MQTT messages are sent directly to it from the :file:`src/connection.c` file.
 * The GNSS module cannot obtain a fix without the antenna first being properly configured.
   This configuration is performed by the :c:func:`gnss_antenna_configure` function.
+
+.. note::
+  For location readings to be visible in the nRF Cloud portal, they must be marked as enabled in the `Device Shadow <nRF Cloud Device Shadows_>`_.
+  This is performed by the :file:`src/connection.c` file.
 
 .. _nrf_cloud_mqtt_multi_service_test_counter:
 
@@ -185,10 +196,42 @@ Configuration
 *************
 |config|
 
+Disabling key features
+======================
+
+The following key features of this sample may be independently disabled:
+
+* GNSS-based location tracking - by setting the :ref:`CONFIG_LOCATION_TRACKING_GNSS <CONFIG_LOCATION_TRACKING_GNSS>` option to disabled.
+* Cellular-based location tracking - by setting the :ref:`CONFIG_LOCATION_TRACKING_CELLULAR <CONFIG_LOCATION_TRACKING_CELLULAR>` option to disabled.
+* Temperature tracking - by setting the :ref:`CONFIG_TEMP_TRACKING <CONFIG_TEMP_TRACKING>` option to disabled.
+* GNSS assistance (A-GPS) - by setting the :kconfig:option:`CONFIG_NRF_CLOUD_AGPS` option to disabled.
+* Predictive GNSS assistance (P-GPS) - by setting the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` option to disabled.
+
+If you disable both GNSS and cellular-based location tracking, location tracking is completely disabled.
+
+.. note::
+  MQTT should only be used with applications that need to stay connected constantly or transfer data frequently.
+  While this sample does allow its core features to be slowed or completely disabled, in real-world applications, you should carefully consider your data throughput and whether MQTT is an appropriate solution.
+  If you want to disable or excessively slow all of these features for a real-world application, other solutions, such as the `nRF Cloud Rest API`_, may be more appropriate.
+
+Useful debugging options
+========================
+
+To see all debug output for this sample, enable the :ref:`CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL_DBG <CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL_DBG>` option.
+
+To monitor the GNSS module (for instance, to see whether A-GPS or P-GPS assistance data is being consumed), enable the :kconfig:option:`CONFIG_NRF_CLOUD_GPS_LOG_LEVEL_DBG` option.
+
+See also the :ref:`nrf_cloud_mqtt_multi_service_test_counter`.
+
 Configuration options
 =====================
 
 Set the following configuration options for the sample:
+
+.. _CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL_DBG:
+
+CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL_DBG - Sample debug logging
+   Sets the log level for this sample to debug.
 
 .. _CONFIG_POWER_SAVING_MODE_ENABLE:
 
@@ -311,20 +354,40 @@ CONFIG_GNSS_FIX_TIMEOUT_SECONDS - GNSS fix timeout (seconds)
    Sets the GNSS fix timeout in seconds.
    On each location sample, try for this long to achieve a GNSS fix before falling back to cellular positioning.
 
-.. _CONFIG_LOCATION_SAMPLE_INTERVAL_SECONDS:
+.. _CONFIG_LOCATION_TRACKING_SAMPLE_INTERVAL_SECONDS:
 
-CONFIG_LOCATION_SAMPLE_INTERVAL_SECONDS - Location sampling interval (seconds)
+CONFIG_LOCATION_TRACKING_SAMPLE_INTERVAL_SECONDS - Location sampling interval (seconds)
    Sets the location sampling interval in seconds.
+
+.. _CONFIG_LOCATION_TRACKING_GNSS:
+
+CONFIG_LOCATION_TRACKING_GNSS - GNSS location tracking
+   Enables GNSS location tracking.
+   Disable both this and :ref:`CONFIG_LOCATION_TRACKING_CELLULAR <CONFIG_LOCATION_TRACKING_CELLULAR>` to completely disable location tracking.
+   Defaults to enabled.
+
+.. _CONFIG_LOCATION_TRACKING_CELLULAR:
+
+CONFIG_LOCATION_TRACKING_CELLULAR - Cellular location tracking
+   Enables cellular location tracking.
+   Disable both this and :ref:`CONFIG_LOCATION_TRACKING_GNSS <CONFIG_LOCATION_TRACKING_GNSS>` to completely disable location tracking.
+   Defaults to enabled.
 
 .. _CONFIG_TEMP_DATA_USE_SENSOR:
 
 CONFIG_TEMP_DATA_USE_SENSOR - Use genuine temperature data
    Sets whether to take genuine temperature measurements from a connected BME680 sensor, or just simulate sensor data.
 
+.. _CONFIG_TEMP_TRACKING:
+
+CONFIG_TEMP_TRACKING - Track temperature data
+   Enables tracking and reporting of temperature data to `nRF Cloud`_.
+   Defaults to enabled.
+
 .. _CONFIG_TEST_COUNTER:
 
 CONFIG_TEST_COUNTER - Enable test counter
-   Sets whether the test counter is enabled.
+   Enables the test counter.
 
 .. _nrf_cloud_mqtt_multi_service_building_and_running:
 

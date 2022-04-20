@@ -223,13 +223,13 @@ void main_application(void)
 	}
 
 	/* Begin tracking location at the configured interval. */
-	(void)start_location_tracking(on_location_update, CONFIG_LOCATION_SAMPLE_INTERVAL_SECONDS);
+	(void)start_location_tracking(on_location_update,
+					CONFIG_LOCATION_TRACKING_SAMPLE_INTERVAL_SECONDS);
 
 	int counter = 0;
 
 	/* Begin sampling sensors. */
 	while (true) {
-		double temp = -1;
 		/* Start the sensor sample interval timer.
 		 * We use a timer here instead of merely sleeping the thread, because the
 		 * application thread can be preempted by other threads performing long tasks
@@ -239,13 +239,14 @@ void main_application(void)
 		k_timer_start(&sensor_sample_timer,
 			K_SECONDS(CONFIG_SENSOR_SAMPLE_INTERVAL_SECONDS), K_FOREVER);
 
-		if (get_temperature(&temp)) {
-			continue;
+		if (IS_ENABLED(CONFIG_TEMP_TRACKING)) {
+			double temp = -1;
+
+			if (get_temperature(&temp) == 0) {
+				LOG_INF("Temperature is %d degrees C", (int)temp);
+				(void)send_sensor_sample(NRF_CLOUD_JSON_APPID_VAL_TEMP, temp);
+			}
 		}
-
-		LOG_INF("Temperature is %d degrees C", (int)temp);
-		(void)send_sensor_sample(NRF_CLOUD_JSON_APPID_VAL_TEMP, temp);
-
 
 		if (IS_ENABLED(CONFIG_TEST_COUNTER)) {
 			(void)send_sensor_sample("COUNT", counter++);
