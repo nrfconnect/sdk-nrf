@@ -566,6 +566,23 @@ static void ota_evt_handler(const struct zigbee_fota_evt *evt)
 		break;
 	}
 }
+
+/**@brief Callback function for handling ZCL commands.
+ *
+ * @param[in]   bufid   Reference to Zigbee stack buffer
+ *                      used to pass received data.
+ */
+static void zcl_device_cb(zb_bufid_t bufid)
+{
+	zb_zcl_device_callback_param_t *device_cb_param =
+		ZB_BUF_GET_PARAM(bufid, zb_zcl_device_callback_param_t);
+
+	if (device_cb_param->device_cb_id == ZB_ZCL_OTA_UPGRADE_VALUE_CB_ID) {
+		zigbee_fota_zcl_cb(bufid);
+	} else {
+		device_cb_param->status = RET_NOT_IMPLEMENTED;
+	}
+}
 #endif /* CONFIG_ZIGBEE_FOTA */
 
 /**@brief Zigbee stack event handler.
@@ -726,7 +743,7 @@ void main(void)
 	confirm_image();
 
 	/* Register callback for handling ZCL commands. */
-	ZB_ZCL_REGISTER_DEVICE_CB(zigbee_fota_zcl_cb);
+	ZB_ZCL_REGISTER_DEVICE_CB(zcl_device_cb);
 #endif /* CONFIG_ZIGBEE_FOTA */
 
 	/* Register dimmer switch device context (endpoints). */

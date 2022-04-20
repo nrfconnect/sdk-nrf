@@ -518,12 +518,13 @@ static void zcl_device_cb(zb_bufid_t bufid)
 			/* Other clusters can be processed here */
 			LOG_INF("Unhandled cluster attribute id: %d",
 				cluster_id);
+			device_cb_param->status = RET_NOT_IMPLEMENTED;
 		}
 		break;
 
 	default:
 		if (zcl_scenes_cb(bufid) == ZB_FALSE) {
-			device_cb_param->status = RET_ERROR;
+			device_cb_param->status = RET_NOT_IMPLEMENTED;
 		}
 		break;
 	}

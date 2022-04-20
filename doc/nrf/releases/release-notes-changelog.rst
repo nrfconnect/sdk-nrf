@@ -76,8 +76,11 @@ Zigbee
   * Experimental support for Zigbee Green Power Combo Basic functionality.
   * Zigbee device definition for each Zigbee sample and application.
 
-* Updated :ref:`Zigbee shell library <lib_zigbee_shell>`.
-  For details, see `Libraries for Zigbee`_.
+* Updated:
+
+  * :ref:` Zigbee shell library <lib_zigbee_shell>`.
+    For details, see `Libraries for Zigbee`_.
+  * Return code in the ZCL callbacks from :c:macro:`RET_ERROR` to :c:macro:`RET_NOT_IMPLEMENTED` if the device does not handle the ZCL command.
 
 Applications
 ============
