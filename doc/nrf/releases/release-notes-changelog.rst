@@ -81,6 +81,7 @@ Zigbee
   * :ref:` Zigbee shell library <lib_zigbee_shell>`.
     For details, see `Libraries for Zigbee`_.
   * Return code in the ZCL callbacks from :c:macro:`RET_ERROR` to :c:macro:`RET_NOT_IMPLEMENTED` if the device does not handle the ZCL command.
+  * Enabled the ZCL8 compatibility mode :c:macro:`ZB_ZCL_AUTO_MODE` inside the :c:func:`zigbee_default_signal_handler`.
 
 Applications
 ============
