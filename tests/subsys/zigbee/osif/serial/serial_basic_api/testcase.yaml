@@ -2,5 +2,6 @@ tests:
   zigbee.osif.serial.basic:
     platform_allow: nrf52840dk_nrf52840 nrf52833dk_nrf52833
     tags: osif_serial
+    harness: ztest
     harness_config:
       fixture: shorted_uart_1
