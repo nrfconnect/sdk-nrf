@@ -13,7 +13,7 @@ add_compile_definitions(GATEWAY=2)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 # Set the nRF5340 Audio version. x.x.99 indicates master branch/cutting edge
-project(NRF5340_AUDIO VERSION 0.4.99)
+project(NRF5340_AUDIO VERSION 0.5.0)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/verification/verify.cmake)
 
