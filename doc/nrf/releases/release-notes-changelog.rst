@@ -331,6 +331,8 @@ Zigbee samples
   * :ref:`zigbee_shell_sample`
   * :ref:`zigbee_template_sample`
 
+* Added identify handler in the :ref:`Zigbee Light Switch sample <zigbee_light_switch_sample>`.
+
 Other Samples
 -------------
 

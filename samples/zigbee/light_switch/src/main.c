@@ -64,6 +64,8 @@
 #define ERASE_PERSISTENT_CONFIG    ZB_FALSE
 /* LED indicating that light switch successfully joind Zigbee network. */
 #define ZIGBEE_NETWORK_STATE_LED   DK_LED3
+/* LED used for device identification. */
+#define IDENTIFY_LED               ZIGBEE_NETWORK_STATE_LED
 /* LED indicating that light witch found a light bulb to control. */
 #define BULB_FOUND_LED             DK_LED4
 /* Button ID used to switch on the light bulb. */
@@ -77,6 +79,9 @@
 
 /* Button to start Factory Reset */
 #define FACTORY_RESET_BUTTON       DK_BTN4_MSK
+
+/* Button used to enter the Identify mode. */
+#define IDENTIFY_MODE_BUTTON       DK_BTN4_MSK
 
 /* Transition time for a single step operation in 0.1 sec units.
  * 0xFFFF - immediate change.
@@ -106,32 +111,45 @@ struct buttons_context {
 	struct k_timer alarm;
 };
 
+struct zb_device_ctx {
+	zb_zcl_basic_attrs_t basic_attr;
+	zb_zcl_identify_attrs_t identify_attr;
+};
+
 static struct bulb_context bulb_ctx;
 static struct buttons_context buttons_ctx;
-static zb_uint8_t attr_zcl_version = ZB_ZCL_VERSION;
-static zb_uint8_t attr_power_source = ZB_ZCL_BASIC_POWER_SOURCE_UNKNOWN;
-static zb_uint16_t attr_identify_time;
+static struct zb_device_ctx dev_ctx;
 
 /* Declare attribute list for Basic cluster (server). */
-ZB_ZCL_DECLARE_BASIC_SERVER_ATTRIB_LIST(basic_server_attr_list, &attr_zcl_version, &attr_power_source);
+ZB_ZCL_DECLARE_BASIC_SERVER_ATTRIB_LIST(
+	basic_server_attr_list,
+	&dev_ctx.basic_attr.zcl_version,
+	&dev_ctx.basic_attr.power_source);
 
 /* Declare attribute list for Identify cluster (client). */
-ZB_ZCL_DECLARE_IDENTIFY_CLIENT_ATTRIB_LIST(identify_client_attr_list);
+ZB_ZCL_DECLARE_IDENTIFY_CLIENT_ATTRIB_LIST(
+	identify_client_attr_list);
 
 /* Declare attribute list for Identify cluster (server). */
-ZB_ZCL_DECLARE_IDENTIFY_SERVER_ATTRIB_LIST(identify_server_attr_list, &attr_identify_time);
+ZB_ZCL_DECLARE_IDENTIFY_SERVER_ATTRIB_LIST(
+	identify_server_attr_list,
+	&dev_ctx.identify_attr.identify_time);
 
 /* Declare attribute list for Scenes cluster (client). */
-ZB_ZCL_DECLARE_SCENES_CLIENT_ATTRIB_LIST(scenes_client_attr_list);
+ZB_ZCL_DECLARE_SCENES_CLIENT_ATTRIB_LIST(
+	scenes_client_attr_list);
 
 /* Declare attribute list for Groups cluster (client). */
-ZB_ZCL_DECLARE_GROUPS_CLIENT_ATTRIB_LIST(groups_client_attr_list);
+ZB_ZCL_DECLARE_GROUPS_CLIENT_ATTRIB_LIST(
+	groups_client_attr_list);
 
 /* Declare attribute list for On/Off cluster (client). */
-ZB_ZCL_DECLARE_ON_OFF_CLIENT_ATTRIB_LIST(on_off_client_attr_list);
+ZB_ZCL_DECLARE_ON_OFF_CLIENT_ATTRIB_LIST(
+	on_off_client_attr_list);
 
 /* Declare attribute list for Level control cluster (client). */
-ZB_ZCL_DECLARE_LEVEL_CONTROL_CLIENT_ATTRIB_LIST(level_control_client_attr_list);
+ZB_ZCL_DECLARE_LEVEL_CONTROL_CLIENT_ATTRIB_LIST(
+	level_control_client_attr_list);
 
 /* Declare cluster list for Dimmer Switch device. */
 ZB_DECLARE_DIMMER_SWITCH_CLUSTER_LIST(
@@ -174,6 +192,34 @@ static void find_light_bulb(zb_bufid_t bufid);
 static void light_switch_send_on_off(zb_bufid_t bufid, zb_uint16_t on_off);
 
 
+/**@brief Starts identifying the device.
+ *
+ * @param  bufid  Unused parameter, required by ZBOSS scheduler API.
+ */
+static void start_identifying(zb_bufid_t bufid)
+{
+	zb_ret_t zb_err_code;
+
+	ZVUNUSED(bufid);
+
+	if (ZB_JOINED()) {
+		/* Check if endpoint is in identifying mode,
+		 * if not, put desired endpoint in identifying mode.
+		 */
+		if (dev_ctx.identify_attr.identify_time ==
+		    ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE) {
+			LOG_INF("Enter identify mode");
+			zb_err_code = zb_bdb_finding_binding_target(LIGHT_SWITCH_ENDPOINT);
+			ZB_ERROR_CHECK(zb_err_code);
+		} else {
+			LOG_INF("Cancel identify mode");
+			zb_bdb_finding_binding_target_cancel();
+		}
+	} else {
+		LOG_WRN("Device not in a network - cannot enter identify mode");
+	}
+}
+
 /**@brief Callback for button events.
  *
  * @param[in]   button_state  Bitmask containing buttons state.
@@ -204,6 +250,22 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 		LOG_DBG("OFF - button changed");
 		cmd_id = ZB_ZCL_CMD_ON_OFF_OFF_ID;
 		break;
+	case IDENTIFY_MODE_BUTTON:
+		if (IDENTIFY_MODE_BUTTON & button_state) {
+			/* Button changed its state to pressed */
+		} else {
+			/* Button changed its state to released */
+			if (was_factory_reset_done()) {
+				/* The long press was for Factory Reset */
+				LOG_DBG("After Factory Reset - ignore button release");
+			} else   {
+				/* Button released before Factory Reset */
+
+				/* Start identification mode */
+				ZB_SCHEDULE_APP_CALLBACK(start_identifying, 0);
+			}
+		}
+		return;
 	default:
 		LOG_DBG("Unhandled button");
 		return;
@@ -258,6 +320,54 @@ static void alarm_timers_init(void)
 {
 	k_timer_init(&buttons_ctx.alarm, light_switch_button_handler, NULL);
 	k_timer_init(&bulb_ctx.find_alarm, find_light_bulb_alarm, NULL);
+}
+
+/**@brief Function for initializing all clusters attributes. */
+static void app_clusters_attr_init(void)
+{
+	/* Basic cluster attributes data. */
+	dev_ctx.basic_attr.zcl_version = ZB_ZCL_VERSION;
+	dev_ctx.basic_attr.power_source = ZB_ZCL_BASIC_POWER_SOURCE_UNKNOWN;
+
+	/* Identify cluster attributes data. */
+	dev_ctx.identify_attr.identify_time = ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE;
+}
+
+/**@brief Function to toggle the identify LED.
+ *
+ * @param  bufid  Unused parameter, required by ZBOSS scheduler API.
+ */
+static void toggle_identify_led(zb_bufid_t bufid)
+{
+	static int blink_status;
+
+	dk_set_led(IDENTIFY_LED, (++blink_status) % 2);
+	ZB_SCHEDULE_APP_ALARM(toggle_identify_led, bufid, ZB_MILLISECONDS_TO_BEACON_INTERVAL(100));
+}
+
+/**@brief Function to handle identify notification events on the first endpoint.
+ *
+ * @param  bufid  Unused parameter, required by ZBOSS scheduler API.
+ */
+static void identify_cb(zb_bufid_t bufid)
+{
+	zb_ret_t zb_err_code;
+
+	if (bufid) {
+		/* Schedule a self-scheduling function that will toggle the LED. */
+		ZB_SCHEDULE_APP_CALLBACK(toggle_identify_led, bufid);
+	} else {
+		/* Cancel the toggling function alarm and turn off LED. */
+		zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(toggle_identify_led, ZB_ALARM_ANY_PARAM);
+		ZVUNUSED(zb_err_code);
+
+		/* Update network status/idenitfication LED. */
+		if (ZB_JOINED()) {
+			dk_set_led_on(ZIGBEE_NETWORK_STATE_LED);
+		} else {
+			dk_set_led_off(ZIGBEE_NETWORK_STATE_LED);
+		}
+	}
 }
 
 /**@brief Function for sending ON/OFF requests to the light bulb.
@@ -621,6 +731,14 @@ void main(void)
 
 	/* Register dimmer switch device context (endpoints). */
 	ZB_AF_REGISTER_DEVICE_CTX(&dimmer_switch_ctx);
+
+	app_clusters_attr_init();
+
+	/* Register handlers to identify notifications */
+	ZB_AF_SET_IDENTIFY_NOTIFICATION_HANDLER(LIGHT_SWITCH_ENDPOINT, identify_cb);
+#ifdef CONFIG_ZIGBEE_FOTA
+	ZB_AF_SET_IDENTIFY_NOTIFICATION_HANDLER(CONFIG_ZIGBEE_FOTA_ENDPOINT, identify_cb);
+#endif /* CONFIG_ZIGBEE_FOTA */
 
 	/* Start Zigbee default thread. */
 	zigbee_enable();
