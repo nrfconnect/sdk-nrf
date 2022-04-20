@@ -601,6 +601,7 @@ void zigbee_fota_zcl_cb(zb_bufid_t bufid)
 		break;
 
 	default:
+		device_cb_param->status = RET_NOT_IMPLEMENTED;
 		break;
 	}
 
