@@ -7,9 +7,9 @@ Bluetooth: nRF Distance Measurement with Bluetooth LE discovery
    :local:
    :depth: 2
 
-The nRF Distance Measurement sample demonstrates the functionality of the Distance Measurement (DM) subsystem.
+The nRF Distance Measurement sample demonstrates the functionality of the :ref:`mod_dm` subsystem.
 It shows how to use DM to measure the distance between devices.
-The Bluetooth® Direction and Distance Finding Service is running simultaneously.
+The Bluetooth® :ref:`ddfs_readme` is running simultaneously.
 
 Sample is configured to use Nordic's SoftDevice link layer.
 
