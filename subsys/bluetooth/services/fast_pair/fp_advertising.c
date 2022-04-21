@@ -6,16 +6,31 @@
 
 #include <errno.h>
 #include <net/buf.h>
+#include <random/rand32.h>
 #include <bluetooth/bluetooth.h>
 
 #include <bluetooth/services/fast_pair.h>
-#include "fp_registration_data.h"
 #include "fp_common.h"
+#include "fp_crypto.h"
+#include "fp_registration_data.h"
+#include "fp_storage.h"
+
+#define LEN_BITS				4
+#define TYPE_BITS				4
+#define FIELD_LEN_TYPE_SIZE			sizeof(uint8_t)
+#define ENCODE_FIELD_LEN_TYPE(len, type)	(((len) << TYPE_BITS) | (type))
+
+enum fp_field_type {
+	FP_FIELD_TYPE_SHOW_UI_INDICATION = 0b0000,
+	FP_FIELD_TYPE_SALT		 = 0b0001,
+	FP_FIELD_TYPE_HIDE_UI_INDICATION = 0b0010,
+};
 
 static const uint16_t fast_pair_uuid = BT_FAST_PAIR_SERVICE_UUID;
-
 static const uint8_t flags;
 static const uint8_t empty_account_key_list;
+
+static const enum fp_field_type ak_filter_type = FP_FIELD_TYPE_SHOW_UI_INDICATION;
 
 
 static size_t bt_fast_pair_adv_data_size_non_discoverable(size_t account_key_cnt)
@@ -27,8 +42,13 @@ static size_t bt_fast_pair_adv_data_size_non_discoverable(size_t account_key_cnt
 	if (account_key_cnt == 0) {
 		res += sizeof(empty_account_key_list);
 	} else {
-		/* Not supported yet. */
-		__ASSERT_NO_MSG(false);
+		uint8_t salt;
+
+		res += FIELD_LEN_TYPE_SIZE;
+		res += fp_account_key_filter_size(account_key_cnt);
+
+		res += FIELD_LEN_TYPE_SIZE;
+		res += sizeof(salt);
 	}
 
 	return res;
@@ -41,8 +61,12 @@ static size_t bt_fast_pair_adv_data_size_discoverable(void)
 
 size_t bt_fast_pair_adv_data_size(bool fp_discoverable)
 {
-	size_t account_key_cnt = 0;
+	int account_key_cnt = fp_storage_account_key_count();
 	size_t res = 0;
+
+	if (account_key_cnt < 0) {
+		return 0;
+	}
 
 	res += sizeof(fast_pair_uuid);
 
@@ -62,8 +86,39 @@ static int fp_adv_data_fill_non_discoverable(struct net_buf_simple *buf, size_t 
 	if (account_key_cnt == 0) {
 		net_buf_simple_add_u8(buf, empty_account_key_list);
 	} else {
-		/* Not supported yet. */
-		__ASSERT_NO_MSG(false);
+		uint8_t ak[CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX][FP_ACCOUNT_KEY_LEN];
+		size_t ak_filter_size = fp_account_key_filter_size(account_key_cnt);
+		size_t account_key_get_cnt = account_key_cnt;
+		uint8_t salt;
+		int err;
+
+		err = sys_csrand_get(&salt, sizeof(salt));
+		if (err) {
+			return err;
+		}
+
+		err = fp_storage_account_keys_get(ak, &account_key_get_cnt);
+		if (err) {
+			return err;
+		}
+
+		if (account_key_get_cnt != account_key_cnt) {
+			return -ENODATA;
+		}
+
+		BUILD_ASSERT(sizeof(uint8_t) == FIELD_LEN_TYPE_SIZE);
+
+		__ASSERT_NO_MSG(ak_filter_size <= BIT_MASK(LEN_BITS));
+		net_buf_simple_add_u8(buf, ENCODE_FIELD_LEN_TYPE(ak_filter_size, ak_filter_type));
+
+		err = fp_account_key_filter(net_buf_simple_add(buf, ak_filter_size), ak,
+					    account_key_cnt, salt);
+		if (err) {
+			return err;
+		}
+
+		net_buf_simple_add_u8(buf, ENCODE_FIELD_LEN_TYPE(sizeof(salt), FP_FIELD_TYPE_SALT));
+		net_buf_simple_add_u8(buf, salt);
 	}
 
 	return 0;
@@ -78,9 +133,13 @@ int bt_fast_pair_adv_data_fill(struct bt_data *bt_adv_data, uint8_t *buf, size_t
 			       bool fp_discoverable)
 {
 	struct net_buf_simple nb;
-	size_t account_key_cnt = 0;
+	int account_key_cnt = fp_storage_account_key_count();
 	size_t adv_data_len = bt_fast_pair_adv_data_size(fp_discoverable);
 	int err;
+
+	if ((adv_data_len == 0) || (account_key_cnt < 0)) {
+		return -ENODATA;
+	}
 
 	if (adv_data_len > buf_size) {
 		return -EINVAL;
