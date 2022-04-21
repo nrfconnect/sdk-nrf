@@ -29,14 +29,6 @@ static void on_modem_init(int err, void *ctx)
 	}
 #endif
 
-#if defined(CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
-	err = nrf_modem_at_printf("AT%%XMODEMTRACE=1,2");
-	if (err) {
-		LOG_ERR("Failed to enable modem trace, err %d", err);
-		return;
-	}
-#endif
-
 #if defined(CONFIG_LTE_LOCK_BANDS)
 	/* Set LTE band lock (volatile setting).
 	 * Has to be done every time before activating the modem.
