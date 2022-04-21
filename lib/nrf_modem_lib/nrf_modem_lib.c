@@ -4,17 +4,18 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <nrfx_ipc.h>
+#include <nrf_modem.h>
+#include <nrf_modem_at.h>
+#include <nrf_modem_platform.h>
 #include <zephyr/init.h>
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
-#include <nrfx_ipc.h>
-#include <nrf_modem.h>
-#include <nrf_modem_platform.h>
-#include <modem/nrf_modem_lib.h>
-#include <zephyr/toolchain/common.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/toolchain/common.h>
+#include <modem/nrf_modem_lib.h>
+#include <modem/nrf_modem_lib_trace.h>
 #include <pm_config.h>
-#include <nrf_modem_at.h>
 
 #ifndef CONFIG_TRUSTED_EXECUTION_NONSECURE
 #error  nrf_modem_lib must be run as non-secure firmware.\
@@ -110,6 +111,9 @@ static void log_fw_version_uuid(void)
 
 static int _nrf_modem_lib_init(const struct device *unused)
 {
+	int err;
+	(void) err;
+
 	if (!first_time_init) {
 		sys_slist_init(&shutdown_threads);
 		k_mutex_init(&slist_mutex);
@@ -139,6 +143,13 @@ static int _nrf_modem_lib_init(const struct device *unused)
 		}
 	}
 	k_mutex_unlock(&slist_mutex);
+
+#if defined(CONFIG_NRF_MODEM_LIB_TRACE_LEVEL)
+	err = nrf_modem_lib_trace_start(CONFIG_NRF_MODEM_LIB_TRACE_LEVEL);
+	if (err) {
+		LOG_ERR("Failed to start modem trace, err %d", err);
+	}
+#endif
 
 	LOG_DBG("Modem library has initialized, ret %d", init_ret);
 	STRUCT_SECTION_FOREACH(nrf_modem_lib_init_cb, e) {

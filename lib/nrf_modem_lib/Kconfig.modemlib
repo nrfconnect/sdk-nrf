@@ -26,15 +26,39 @@ config NRF_MODEM_LIB_TRACE_ENABLED
 	bool
 	prompt "Enable proprietary traces"
 	help
-	  When this is enabled, the modem lib will allocate space for modem traces in the shared
-	  memory. When this is done, the modem will start sending all proprietary trace data to
-	  the application as soon as it is initialized. To stop these traces or to activate a
-	  smaller subset of traces, the AT command %XMODEMTRACE can be used. The modem_trace API
-	  may also be used for this purpose.
-	  The default size of the Trace region is defined by the
-	  NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.
+	  When enabled, a portion of RAM (called Trace region) will be shared with the modem to receive modem's trace data.
+	  The size of the Trace region is defined by the NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.
+	  Trace data is output on the chosen trace medium.
+	  To stop traces or to change trace level at runtime, use the AT command %XMODEMTRACE or the nrf_modem_lib_trace API.
 
 if NRF_MODEM_LIB_TRACE_ENABLED
+
+choice NRF_MODEM_LIB_TRACE
+	prompt "Default trace level"
+	help
+	   Default trace level set upon boot.
+	   Trace level can be changed at runtime using the %XMODEMTRACE AT command or the nrf_modem_lib_trace API.
+
+config NRF_MODEM_LIB_TRACE_LEVEL_FULL
+	bool "Full output"
+
+config NRF_MODEM_LIB_TRACE_LEVEL_LTE_AND_IP
+	bool "IP and LTE data"
+
+config NRF_MODEM_LIB_TRACE_LEVEL_IP_ONLY
+	bool "IP data only"
+
+config NRF_MODEM_LIB_TRACE_LEVEL_COREDUMP_ONLY
+	bool "Coredump only"
+
+endchoice
+
+config NRF_MODEM_LIB_TRACE_LEVEL
+	int
+	default 2 if NRF_MODEM_LIB_TRACE_LEVEL_FULL
+	default 5 if NRF_MODEM_LIB_TRACE_LEVEL_LTE_AND_IP
+	default 4 if NRF_MODEM_LIB_TRACE_LEVEL_IP_ONLY
+	default 1 if NRF_MODEM_LIB_TRACE_LEVEL_COREDUMP_ONLY
 
 config NRF_MODEM_LIB_TRACE_THREAD_PROCESSING
 	bool "Process modem traces in a thread [EXPERIMENTAL]"
@@ -55,11 +79,11 @@ config NRF_MODEM_LIB_TRACE_THREAD_PRIO
 endif # NRF_MODEM_LIB_TRACE_THREAD_PROCESSING
 
 choice NRF_MODEM_LIB_TRACE_MEDIUM
-	prompt "nRF modem trace medium"
+	prompt "Trace medium"
 	default NRF_MODEM_LIB_TRACE_MEDIUM_UART
 
 config NRF_MODEM_LIB_TRACE_MEDIUM_UART
-	bool "Send modem trace over UARTE1"
+	bool "UARTE1"
 	# Modem tracing over UART use the UARTE1 as a dedicated peripheral.
 	# This enables the UARTE1 peripheral and includes nrfx UARTE driver.
 	select NRFX_UARTE1
@@ -68,7 +92,7 @@ config NRF_MODEM_LIB_TRACE_MEDIUM_UART
 	select TFM_LOG_LEVEL_SILENCE if BUILD_WITH_TFM
 
 config NRF_MODEM_LIB_TRACE_MEDIUM_RTT
-	bool "Send modem trace over SEGGER RTT"
+	bool "SEGGER RTT"
 	select USE_SEGGER_RTT
 
 endchoice # NRF_MODEM_LIB_TRACE_MEDIUM

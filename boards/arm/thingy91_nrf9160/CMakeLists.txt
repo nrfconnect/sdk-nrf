@@ -10,13 +10,11 @@ if(CONFIG_BOARD_THINGY91_NRF9160 AND NOT DEFINED CONFIG_MCUBOOT)
 endif()
 
 if(CONFIG_BOARD_THINGY91_NRF9160_NS)
-	zephyr_library()
-	zephyr_library_sources(board_nonsecure.c)
-
 	# If TF-M is used, the ADP5360 configuration must be done in non-secure
 	# as we can't instruct TF-M to run it.
 	# If SPM is used instead, it will run the ADP5360 configuration in secure.
 	if(CONFIG_BUILD_WITH_TFM)
+		zephyr_library()
 		zephyr_library_sources(adp5360_init.c)
 	endif()
 
