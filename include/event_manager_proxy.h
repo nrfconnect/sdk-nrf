@@ -14,6 +14,7 @@
 #include <zephyr.h>
 #include <zephyr/types.h>
 #include <device.h>
+#include <app_event_manager.h>
 
 /**
  * @defgroup event_manager_proxy Event Manager Proxy
