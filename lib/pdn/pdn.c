@@ -24,6 +24,8 @@ LOG_MODULE_REGISTER(pdn, CONFIG_PDN_LOG_LEVEL);
 #define PDN_ACT_REASON_IPV4_ONLY (0)
 #define PDN_ACT_REASON_IPV6_ONLY (1)
 
+#define APN_STR_MAX_LEN 64
+
 struct pdn {
 	pdn_event_handler_t callback;
 	int8_t context_id;
@@ -247,6 +249,10 @@ int pdn_ctx_configure(uint8_t cid, const char *apn, enum pdn_fam fam,
 
 	if (!apn) {
 		return -EFAULT;
+	}
+
+	if (strlen(apn) >= APN_STR_MAX_LEN) {
+		return -EINVAL;
 	}
 
 	switch (fam) {
