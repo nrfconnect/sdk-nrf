@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
+# Test commit
 
 menuconfig ZIGBEE
 	bool "Enable Zigbee stack"
