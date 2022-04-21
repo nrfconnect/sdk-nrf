@@ -45,6 +45,18 @@ size_t bt_fast_pair_adv_data_size(bool fp_discoverable);
 int bt_fast_pair_adv_data_fill(struct bt_data *adv_data, uint8_t *buf, size_t buf_size,
 			       bool fp_discoverable);
 
+/** Enable or disable Fast Pair pairing mode
+ *
+ * Pairing mode must be enabled if discoverable Fast Pair advertising is used.
+ * Pairing mode must be disabled if not discoverable Fast Pair advertising is used.
+ *
+ * It's user responsibility to make sure that proper pairing mode is used before advertising is
+ * started. Fast Pair pairing mode is enabled by default.
+ *
+ * @param[in] pairing_mode Boolean indicating if device is in pairing mode.
+ */
+void bt_fast_pair_set_pairing_mode(bool pairing_mode);
+
 #ifdef __cplusplus
 }
 #endif
