@@ -80,6 +80,9 @@ static int bt_adv_helper_fast_pair_prepare(struct bt_data *adv_data, bool fp_dis
 		adv_data->data = NULL;
 	}
 
+	/* Fast Pair pairing mode must be manually set by the sample. */
+	bt_fast_pair_set_pairing_mode(fp_discoverable);
+
 	size_t buf_size = bt_fast_pair_adv_data_size(fp_discoverable);
 	uint8_t *buf = k_malloc(buf_size);
 

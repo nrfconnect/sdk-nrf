@@ -34,11 +34,18 @@ struct fp_procedure {
 	struct k_work_delayable timeout;
 	enum fp_state state;
 	uint8_t key_gen_failure_cnt;
+	bool pairing_mode;
 	uint8_t aes_key[FP_ACCOUNT_KEY_LEN];
 };
 
+static bool user_pairing_mode = true;
 static struct fp_procedure fp_procedures[CONFIG_BT_MAX_CONN];
 
+
+void bt_fast_pair_set_pairing_mode(bool pairing_mode)
+{
+	user_pairing_mode = pairing_mode;
+}
 
 static void invalidate_key(struct fp_procedure *proc)
 {
@@ -46,6 +53,15 @@ static void invalidate_key(struct fp_procedure *proc)
 		proc->state = FP_STATE_INITIAL;
 		memset(proc->aes_key, EMPTY_AES_KEY_BYTE, sizeof(proc->aes_key));
 		k_work_cancel_delayable(&proc->timeout);
+	}
+}
+
+static void connected(struct bt_conn *conn, uint8_t err)
+{
+	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
+
+	if (!err) {
+		proc->pairing_mode = user_pairing_mode;
 	}
 }
 
@@ -58,6 +74,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 }
 
 BT_CONN_CB_DEFINE(conn_callbacks) = {
+	.connected = connected,
 	.disconnected = disconnected,
 };
 
@@ -128,7 +145,13 @@ int fp_keys_generate_key(struct bt_conn *conn, struct fp_keys_keygen_params *key
 		uint8_t priv_key[FP_ANTI_SPOOFING_PRIV_KEY_LEN];
 		uint8_t ecdh_secret[FP_ECDH_SHARED_KEY_LEN];
 
-		err = fp_get_anti_spoofing_priv_key(priv_key, sizeof(priv_key));
+		if (!proc->pairing_mode) {
+			err = -EACCES;
+		}
+
+		if (!err) {
+			err = fp_get_anti_spoofing_priv_key(priv_key, sizeof(priv_key));
+		}
 
 		if (!err) {
 			err = fp_ecdh_shared_secret(ecdh_secret, keygen_params->public_key,
@@ -152,8 +175,6 @@ int fp_keys_generate_key(struct bt_conn *conn, struct fp_keys_keygen_params *key
 
 		if (!err) {
 			k_work_reschedule(&proc->timeout, FP_KEY_TIMEOUT);
-		} else {
-			invalidate_key(proc);
 		}
 	} else {
 		/* Generating keys based on Account Keys is not yet supported. */
@@ -161,6 +182,7 @@ int fp_keys_generate_key(struct bt_conn *conn, struct fp_keys_keygen_params *key
 	}
 
 	if (err) {
+		invalidate_key(proc);
 		proc->key_gen_failure_cnt++;
 		if (proc->key_gen_failure_cnt >= FP_KEY_GEN_FAILURE_MAX_CNT) {
 			LOG_WRN("Key generation failure limit exceeded");
