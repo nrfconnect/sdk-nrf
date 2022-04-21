@@ -1138,10 +1138,11 @@ static void bt_le_filter_accept_list_add_rpc_handler(CborValue *value, void *han
 
 	return;
 decoding_error:
-	report_decoding_error(BT_LE_WHITELIST_ADD_RPC_CMD, handler_data);
+	report_decoding_error(BT_LE_FILTER_ACCEPT_LIST_ADD_RPC_CMD, handler_data);
 }
 
-NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_filter_accept_list_add, BT_LE_WHITELIST_ADD_RPC_CMD,
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_filter_accept_list_add,
+			 BT_LE_FILTER_ACCEPT_LIST_ADD_RPC_CMD,
 			 bt_le_filter_accept_list_add_rpc_handler, NULL);
 
 static void bt_le_filter_accept_list_remove_rpc_handler(CborValue *value, void *handler_data)
@@ -1162,10 +1163,11 @@ static void bt_le_filter_accept_list_remove_rpc_handler(CborValue *value, void *
 
 	return;
 decoding_error:
-	report_decoding_error(BT_LE_WHITELIST_REM_RPC_CMD, handler_data);
+	report_decoding_error(BT_LE_FILTER_ACCEPT_LIST_REMOVE_RPC_CMD, handler_data);
 }
 
-NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_filter_accept_list_remove, BT_LE_WHITELIST_REM_RPC_CMD,
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_filter_accept_list_remove,
+			 BT_LE_FILTER_ACCEPT_LIST_REMOVE_RPC_CMD,
 			 bt_le_filter_accept_list_remove_rpc_handler, NULL);
 
 static void bt_le_filter_accept_list_clear_rpc_handler(CborValue *value, void *handler_data)
@@ -1179,7 +1181,8 @@ static void bt_le_filter_accept_list_clear_rpc_handler(CborValue *value, void *h
 	ser_rsp_send_int(result);
 }
 
-NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_filter_accept_list_clear, BT_LE_WHITELIST_CLEAR_RPC_CMD,
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_filter_accept_list_clear,
+			 BT_LE_ACCEPT_LIST_CLEAR_RPC_CMD,
 			 bt_le_filter_accept_list_clear_rpc_handler, NULL);
 #endif /* defined(CONFIG_BT_FILTER_ACCEPT_LIST) */
 
