@@ -24,7 +24,8 @@ extern "C" {
  *
  * @param[in]  fp_discoverable	Boolean indicating if device is Fast Pair discoverable.
  *
- * @return Fast Pair advertising data buffer size in bytes.
+ * @return Fast Pair advertising data buffer size in bytes if the operation was successful.
+ *         Otherwise zero is returned.
  */
 size_t bt_fast_pair_adv_data_size(bool fp_discoverable);
 
