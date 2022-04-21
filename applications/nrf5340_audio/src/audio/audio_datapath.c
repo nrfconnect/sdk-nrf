@@ -331,12 +331,12 @@ static void pres_comp_state_set(enum pres_comp_state new_state)
  *
  * @note The audio sync is based on sdu_ref_us
  *
- * @param cur_time Timestamp of when frame was received
+ * @param recv_frame_ts_us Timestamp of when frame was received
  * @param sdu_ref_us ISO timestamp reference from BLE controller
  * @param sdu_ref_not_consecutive True if sdu_ref_us and previous sdu_ref_us
  *				  origins from non-consecutive frames
  */
-static void audio_datapath_presentation_compensation(uint32_t cur_time, uint32_t sdu_ref_us,
+static void audio_datapath_presentation_compensation(uint32_t recv_frame_ts_us, uint32_t sdu_ref_us,
 						     bool sdu_ref_not_consecutive)
 {
 	if (ctrl_blk.drift_comp.state != DRFT_STATE_LOCKED) {
@@ -352,7 +352,7 @@ static void audio_datapath_presentation_compensation(uint32_t cur_time, uint32_t
 		pres_comp_state_set(PRES_STATE_WAIT);
 	}
 
-	int32_t wanted_pres_dly_us = PRES_DLY_US - (cur_time - sdu_ref_us);
+	int32_t wanted_pres_dly_us = PRES_DLY_US - (recv_frame_ts_us - sdu_ref_us);
 	int32_t pres_adj_us = 0;
 
 	switch (ctrl_blk.pres_comp.state) {
@@ -441,7 +441,7 @@ static void audio_datapath_presentation_compensation(uint32_t cur_time, uint32_t
 
 			/* Record producer block start reference */
 			ctrl_blk.out.prod_blk_ts[ctrl_blk.out.prod_blk_idx] =
-				cur_time - ((pres_adj_blks - i) * BLK_PERIOD_US);
+				recv_frame_ts_us - ((pres_adj_blks - i) * BLK_PERIOD_US);
 
 			ctrl_blk.out.prod_blk_idx = NEXT_IDX(ctrl_blk.out.prod_blk_idx);
 		}
@@ -736,10 +736,9 @@ void audio_datapath_sdu_ref_update(uint32_t sdu_ref_us)
 	}
 }
 
-void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref_us, bool bad_frame)
+void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref_us, bool bad_frame,
+			       uint32_t recv_frame_ts_us)
 {
-	uint32_t cur_time = audio_sync_timer_curr_time_get();
-
 	if (!ctrl_blk.stream_started) {
 		LOG_WRN("Stream not started");
 		return;
@@ -791,7 +790,8 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 
 	/*** Presentation compensation ***/
 
-	audio_datapath_presentation_compensation(cur_time, sdu_ref_us, sdu_ref_not_consecutive);
+	audio_datapath_presentation_compensation(recv_frame_ts_us, sdu_ref_us,
+						 sdu_ref_not_consecutive);
 
 	/*** Decode ***/
 
@@ -827,7 +827,7 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 		       BLK_STEREO_SIZE_OCTETS);
 
 		/* Record producer block start reference */
-		ctrl_blk.out.prod_blk_ts[out_blk_idx] = cur_time + (i * BLK_PERIOD_US);
+		ctrl_blk.out.prod_blk_ts[out_blk_idx] = recv_frame_ts_us + (i * BLK_PERIOD_US);
 
 		out_blk_idx = NEXT_IDX(out_blk_idx);
 	}

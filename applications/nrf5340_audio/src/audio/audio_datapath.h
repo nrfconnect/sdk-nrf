@@ -88,9 +88,10 @@ void audio_datapath_sdu_ref_update(uint32_t sdu_ref_us);
  * @param size Size of audio data frame in bytes
  * @param sdu_ref_us ISO timestamp reference from BLE controller
  * @param bad_frame Indicating if the audio frame is bad or not
+ * @param recv_frame_ts_us Timestamp of when audio frame was received
  */
-void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref_us,
-			       bool bad_frame);
+void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref_us, bool bad_frame,
+			       uint32_t recv_frame_ts_us);
 
 /**
  * @brief Start the audio datapath module
