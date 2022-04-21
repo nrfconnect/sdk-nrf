@@ -4,8 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <random/rand32.h>
+
 #include <bluetooth/bluetooth.h>
+#include <bluetooth/conn.h>
 #include <bluetooth/services/fast_pair.h>
+
 #include "bt_tx_power_adv.h"
 #include "bt_adv_helper.h"
 
@@ -15,12 +19,27 @@
 #define TX_POWER_ADV_DATA_POS	(ARRAY_SIZE(ad) - 2)
 #define FAST_PAIR_ADV_DATA_POS	(ARRAY_SIZE(ad) - 1)
 
+#define SEC_PER_MIN		60U
+
+/* According to Fast Pair specification RPA rotation must be synchronized with generating new salt
+ * for Acount Key Filter advertising data. The RPA rotation must occur at least every 15 minutes
+ * while the device is actively advertising in Fast Pair not discoverable mode. The value of this
+ * timeout must be lower than CONFIG_BT_RPA_TIMEOUT (3600 seconds) to ensure that RPA rotation will
+ * always trigger update of Account Key Filter advertising data.
+ */
+#define RPA_TIMEOUT_NON_DISCOVERABLE	(13 * SEC_PER_MIN)
+#define RPA_TIMEOUT_OFFSET_MAX		(2 * SEC_PER_MIN)
+#define RPA_TIMEOUT_FAST_PAIR_MAX	(15 * SEC_PER_MIN)
+
 /* The Bluetooth Core Specification v5.2 (Vol. 4, Part E, 7.8.45) allows for time range between
  * 1 second and 3600 seconds. In case of Fast Pair we should avoid RPA address rotation when device
  * is Fast Pair discoverable. If not discoverable, the RPA address rotation should be done together
  * with Fast Pair payload update (responsibility of sample/application).
  */
 BUILD_ASSERT(CONFIG_BT_RPA_TIMEOUT == 3600);
+
+/* Make sure that RPA rotation will be done together with Fast Pair payload update. */
+BUILD_ASSERT(RPA_TIMEOUT_NON_DISCOVERABLE < CONFIG_BT_RPA_TIMEOUT);
 
 static struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -34,6 +53,23 @@ static struct bt_data ad[] = {
 
 static const struct bt_data sd[] = {
 	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
+};
+
+static void rpa_rotate_fn(struct k_work *w);
+static K_WORK_DELAYABLE_DEFINE(rpa_rotate, rpa_rotate_fn);
+
+
+static void connected(struct bt_conn *conn, uint8_t err)
+{
+	struct k_work_sync sync;
+
+	if (!err) {
+		k_work_cancel_delayable_sync(&rpa_rotate, &sync);
+	}
+}
+
+BT_CONN_CB_DEFINE(conn_callbacks) = {
+	.connected        = connected,
 };
 
 static int bt_adv_helper_fast_pair_prepare(struct bt_data *adv_data, bool fp_discoverable)
@@ -84,9 +120,10 @@ static int bt_adv_helper_tx_power_prepare(struct bt_data *adv_data)
 	return err;
 }
 
-int bt_adv_helper_adv_start(bool fp_discoverable)
+static int adv_start_internal(bool fp_discoverable)
 {
-	int err = bt_adv_helper_adv_stop();
+	struct bt_le_oob oob;
+	int err = bt_le_adv_stop();
 
 	if (err) {
 		printk("Cannot stop advertising (err: %d)\n", err);
@@ -105,6 +142,13 @@ int bt_adv_helper_adv_start(bool fp_discoverable)
 		return err;
 	}
 
+	/* Generate new Resolvable Private Address (RPA). */
+	err = bt_le_oob_get_local(BT_ID_DEFAULT, &oob);
+	if (err) {
+		printk("Cannot trigger RPA rotation (err: %d)\n", err);
+		return err;
+	}
+
 	/* According to Fast Pair specification, the advertising interval should be no longer than
 	 * 100 ms when discoverable and no longer than 250 ms when not discoverable.
 	 */
@@ -118,10 +162,45 @@ int bt_adv_helper_adv_start(bool fp_discoverable)
 
 	err = bt_le_adv_start(&adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 
+	if (!err && !fp_discoverable) {
+		unsigned int rpa_timeout_ms = RPA_TIMEOUT_NON_DISCOVERABLE * MSEC_PER_SEC;
+		int8_t rand;
+
+		err = sys_csrand_get(&rand, sizeof(rand));
+		if (!err) {
+			rpa_timeout_ms += ((int)(RPA_TIMEOUT_OFFSET_MAX * MSEC_PER_SEC)) *
+					  rand / INT8_MAX;
+		} else {
+			printk("Cannot get random RPA timeout (err: %d). Used fixed value", err);
+		}
+
+		__ASSERT_NO_MSG(rpa_timeout_ms <= RPA_TIMEOUT_FAST_PAIR_MAX * MSEC_PER_SEC);
+		k_work_schedule(&rpa_rotate, K_MSEC(rpa_timeout_ms));
+	}
+
 	return err;
+
+}
+
+static void rpa_rotate_fn(struct k_work *w)
+{
+	(void)adv_start_internal(false);
+}
+
+int bt_adv_helper_adv_start(bool fp_discoverable)
+{
+	struct k_work_sync sync;
+
+	k_work_cancel_delayable_sync(&rpa_rotate, &sync);
+
+	return adv_start_internal(fp_discoverable);
 }
 
 int bt_adv_helper_adv_stop(void)
 {
+	struct k_work_sync sync;
+
+	k_work_cancel_delayable_sync(&rpa_rotate, &sync);
+
 	return bt_le_adv_stop();
 }
