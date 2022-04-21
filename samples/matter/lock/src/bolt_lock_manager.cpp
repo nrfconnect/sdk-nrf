@@ -6,92 +6,65 @@
 
 #include "bolt_lock_manager.h"
 
+#include "app_event.h"
 #include "app_task.h"
-
-#include <logging/log.h>
-#include <zephyr.h>
-
-LOG_MODULE_DECLARE(app, CONFIG_MATTER_LOG_LEVEL);
-
-static k_timer sLockTimer;
 
 BoltLockManager BoltLockManager::sLock;
 
-void BoltLockManager::Init()
+void BoltLockManager::Init(StateChangeCallback callback)
 {
-	k_timer_init(&sLockTimer, &BoltLockManager::ActuatorTimerHandler, nullptr);
-	k_timer_user_data_set(&sLockTimer, this);
+	mStateChangeCallback = callback;
 
-	mState = State::LockingCompleted;
-	mChipInitiatedAction = false;
+	k_timer_init(&mActuatorTimer, &BoltLockManager::ActuatorTimerEventHandler, nullptr);
+	k_timer_user_data_set(&mActuatorTimer, this);
 }
 
-bool BoltLockManager::IsActionInProgress()
+void BoltLockManager::Lock(OperationSource source)
 {
-	return mState == State::LockingInitiated || mState == State::UnlockingInitiated;
+	VerifyOrReturn(mState != State::kLockingCompleted);
+	SetState(State::kLockingInitiated, source);
+
+	mActuatorOperationSource = source;
+	k_timer_start(&mActuatorTimer, K_MSEC(kActuatorMovementTimeMs), K_NO_WAIT);
 }
 
-bool BoltLockManager::IsUnlocked()
+void BoltLockManager::Unlock(OperationSource source)
 {
-	return mState == State::UnlockingCompleted;
+	VerifyOrReturn(mState != State::kUnlockingCompleted);
+	SetState(State::kUnlockingInitiated, source);
+
+	mActuatorOperationSource = source;
+	k_timer_start(&mActuatorTimer, K_MSEC(kActuatorMovementTimeMs), K_NO_WAIT);
 }
 
-bool BoltLockManager::InitiateAction(Action action, bool chipInitiated)
+void BoltLockManager::ActuatorTimerEventHandler(k_timer *timer)
 {
-	/* Initiate Lock/Unlock Action only when the previous one is complete. */
-	switch (action) {
-	case Action::Lock:
-		if (mState != State::UnlockingCompleted) {
-			return false;
-		}
-		LOG_INF("Lock Action has been initiated");
-		mState = State::LockingInitiated;
-		break;
-	case Action::Unlock:
-		if (mState != State::LockingCompleted) {
-			return false;
-		}
-		LOG_INF("Unlock Action has been initiated");
-		mState = State::UnlockingInitiated;
-		break;
-	default:
-		return false;
-	}
+	/* The timer event handler is called in the context of the system clock ISR. */
+	/* Post an event to the application task queue to process the event in the */
+	/* context of the application thread. */
 
-	mChipInitiatedAction = chipInitiated;
-	StartTimer(kActuatorMovementPeriodMs);
-	return true;
+	GetAppTask().PostEvent(AppEvent(AppEvent::CompleteLockAction, BoltLockManager::OperationSource{}));
 }
 
-bool BoltLockManager::CompleteCurrentAction(bool &chipInitiated)
+void BoltLockManager::CompleteLockAction()
 {
 	switch (mState) {
-	case State::LockingInitiated:
-		LOG_INF("Lock Action has been completed");
-		mState = State::LockingCompleted;
-		chipInitiated = mChipInitiatedAction;
-		return true;
-	case State::UnlockingInitiated:
-		LOG_INF("Unlock Action has been completed");
-		mState = State::UnlockingCompleted;
-		chipInitiated = mChipInitiatedAction;
-		return true;
+	case State::kLockingInitiated:
+		SetState(State::kLockingCompleted, mActuatorOperationSource);
+		break;
+	case State::kUnlockingInitiated:
+		SetState(State::kUnlockingCompleted, mActuatorOperationSource);
+		break;
 	default:
-		return false;
+		break;
 	}
 }
 
-void BoltLockManager::StartTimer(uint32_t aTimeoutMs)
+void BoltLockManager::SetState(State state, OperationSource source)
 {
-	k_timer_start(&sLockTimer, K_MSEC(aTimeoutMs), K_NO_WAIT);
-}
+	mState = state;
 
-void BoltLockManager::CancelTimer()
-{
-	k_timer_stop(&sLockTimer);
-}
-
-void BoltLockManager::ActuatorTimerHandler(k_timer *timer)
-{
-	GetAppTask().PostEvent(AppEvent{ AppEvent::CompleteLockAction, false });
+	if (mStateChangeCallback != nullptr) {
+		mStateChangeCallback(state, source);
+	}
 }

@@ -275,6 +275,10 @@ Matter samples
 
     * Updated the Pairing process to Binding process in the sample.
 
+  * :ref:`matter_lock_sample` sample:
+
+    * Added support for the Door Lock cluster, which replaced the previous temporary solution based on the On/Off cluster.
+
 NFC samples
 -----------
 
