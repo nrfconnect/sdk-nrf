@@ -1686,7 +1686,7 @@ int bt_le_filter_accept_list_add(const bt_addr_le_t *addr)
 
 	ser_encode_buffer(&ctx.encoder, addr, sizeof(bt_addr_le_t));
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_WHITELIST_ADD_RPC_CMD,
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_FILTER_ACCEPT_LIST_ADD_RPC_CMD,
 				&ctx, ser_rsp_decode_i32, &result);
 
 	return result;
@@ -1705,7 +1705,7 @@ int bt_le_filter_accept_list_remove(const bt_addr_le_t *addr)
 
 	ser_encode_buffer(&ctx.encoder, addr, sizeof(bt_addr_le_t));
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_WHITELIST_REM_RPC_CMD,
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_FILTER_ACCEPT_LIST_REMOVE_RPC_CMD,
 				&ctx, ser_rsp_decode_i32, &result);
 
 	return result;
@@ -1720,7 +1720,7 @@ int bt_le_filter_accept_list_clear(void)
 
 	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_WHITELIST_CLEAR_RPC_CMD,
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_ACCEPT_LIST_CLEAR_RPC_CMD,
 				&ctx, ser_rsp_decode_i32, &result);
 
 	return result;
