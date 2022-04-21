@@ -5545,7 +5545,7 @@
           "mfgCode": null,
           "define": "ON_OFF_CLUSTER",
           "side": "server",
-          "enabled": 1,
+          "enabled": 0,
           "commands": [],
           "attributes": [
             {
@@ -6324,6 +6324,14 @@
               "source": "client",
               "incoming": 1,
               "outgoing": 0
+            },
+            {
+              "name": "UnlockWithTimeout",
+              "code": 3,
+              "mfgCode": null,
+              "source": "client",
+              "incoming": 1,
+              "outgoing": 0
             }
           ],
           "attributes": [
@@ -6365,7 +6373,7 @@
           "mfgCode": null,
           "define": "DOOR_LOCK_CLUSTER",
           "side": "server",
-          "enabled": 0,
+          "enabled": 1,
           "commands": [],
           "attributes": [
             {
@@ -6392,7 +6400,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "",
+              "defaultValue": "0",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -6898,7 +6906,7 @@
               "code": 51,
               "mfgCode": null,
               "side": "server",
-              "included": 0,
+              "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
@@ -7044,11 +7052,41 @@
               "reportableChange": 0
             },
             {
+              "name": "GeneratedCommandList",
+              "code": 65528,
+              "mfgCode": null,
+              "side": "server",
+              "included": 0,
+              "storageOption": "External",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": "",
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
+            {
+              "name": "AcceptedCommandList",
+              "code": 65529,
+              "mfgCode": null,
+              "side": "server",
+              "included": 0,
+              "storageOption": "External",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": "",
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
+            {
               "name": "AttributeList",
               "code": 65531,
               "mfgCode": null,
               "side": "server",
-              "included": 1,
+              "included": 0,
               "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
@@ -7063,11 +7101,11 @@
               "code": 65532,
               "mfgCode": null,
               "side": "server",
-              "included": 0,
+              "included": 1,
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0x0001",
+              "defaultValue": "0",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,

@@ -21,4 +21,16 @@
 
 #include <app-common/zap-generated/callbacks/PluginCallbacks.h>
 
-#define MATTER_PLUGINS_INIT MatterAdministratorCommissioningPluginServerInitCallback(); MatterBasicPluginServerInitCallback(); MatterDescriptorPluginServerInitCallback(); MatterGeneralCommissioningPluginServerInitCallback(); MatterGeneralDiagnosticsPluginServerInitCallback(); MatterNetworkCommissioningPluginServerInitCallback(); MatterOtaSoftwareUpdateProviderPluginClientInitCallback(); MatterOtaSoftwareUpdateRequestorPluginServerInitCallback(); MatterOnOffPluginServerInitCallback(); MatterOperationalCredentialsPluginServerInitCallback(); MatterSoftwareDiagnosticsPluginServerInitCallback(); MatterThreadNetworkDiagnosticsPluginServerInitCallback(); 
+#define MATTER_PLUGINS_INIT                                                                                            \
+	MatterAdministratorCommissioningPluginServerInitCallback();                                                    \
+	MatterBasicPluginServerInitCallback();                                                                         \
+	MatterDescriptorPluginServerInitCallback();                                                                    \
+	MatterDoorLockPluginServerInitCallback();                                                                      \
+	MatterGeneralCommissioningPluginServerInitCallback();                                                          \
+	MatterGeneralDiagnosticsPluginServerInitCallback();                                                            \
+	MatterNetworkCommissioningPluginServerInitCallback();                                                          \
+	MatterOtaSoftwareUpdateProviderPluginClientInitCallback();                                                     \
+	MatterOtaSoftwareUpdateRequestorPluginServerInitCallback();                                                    \
+	MatterOperationalCredentialsPluginServerInitCallback();                                                        \
+	MatterSoftwareDiagnosticsPluginServerInitCallback();                                                           \
+	MatterThreadNetworkDiagnosticsPluginServerInitCallback();

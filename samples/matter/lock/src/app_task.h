@@ -23,7 +23,7 @@ public:
 	CHIP_ERROR StartApp();
 
 	void PostEvent(const AppEvent &aEvent);
-	void UpdateClusterState();
+	void UpdateClusterState(BoltLockManager::State state, BoltLockManager::OperationSource source);
 
 private:
 	CHIP_ERROR Init();
@@ -32,14 +32,13 @@ private:
 	void StartFunctionTimer(uint32_t timeoutInMs);
 
 	void DispatchEvent(const AppEvent &event);
-	void LockActionHandler(BoltLockManager::Action action, bool chipInitiated);
-	void CompleteLockActionHandler();
 	void FunctionPressHandler();
 	void FunctionReleaseHandler();
 	void FunctionTimerEventHandler();
 	void StartThreadHandler();
 	void StartBLEAdvertisingHandler();
 
+	static void LockStateChanged(BoltLockManager::State state, BoltLockManager::OperationSource source);
 	static void UpdateStatusLED();
 	static void ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged);
 	static void TimerEventHandler(k_timer *timer);

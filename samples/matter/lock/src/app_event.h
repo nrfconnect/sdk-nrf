@@ -8,6 +8,7 @@
 
 #include <cstdint>
 
+#include "bolt_lock_manager.h"
 #include "led_widget.h"
 
 struct AppEvent {
@@ -26,7 +27,7 @@ struct AppEvent {
 	};
 
 	AppEvent() = default;
-	AppEvent(LockEventType type, bool chipInitiated) : Type(type), LockEvent{ chipInitiated } {}
+	AppEvent(LockEventType type, BoltLockManager::OperationSource source) : Type(type), LockEvent{ source } {}
 	explicit AppEvent(FunctionEventType type) : Type(type) {}
 	AppEvent(UpdateLedStateEventType type, LEDWidget *ledWidget) : Type(type), UpdateLedStateEvent{ ledWidget } {}
 	explicit AppEvent(OtherEventType type) : Type(type) {}
@@ -34,8 +35,8 @@ struct AppEvent {
 	uint8_t Type;
 
 	union {
-		struct { /* was the event triggered by CHIP Data Model layer */
-			bool ChipInitiated;
+		struct {
+			BoltLockManager::OperationSource Source;
 		} LockEvent;
 		struct {
 			LEDWidget *LedWidget;
