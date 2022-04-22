@@ -7,7 +7,7 @@
 #include <zephyr.h>
 #include <storage/flash_map.h>
 #include <pm_config.h>
-#include <sys/util.h>
+#include <sys/util_macro.h>
 
 #define FLASH_MAP_OFFSET(i) UTIL_CAT(PM_, UTIL_CAT(PM_##i##_LABEL, _OFFSET))
 #define FLASH_MAP_DEV(i)    UTIL_CAT(PM_, UTIL_CAT(PM_##i##_LABEL, _DEV_NAME))
@@ -20,10 +20,10 @@
 		.fa_off      = FLASH_MAP_OFFSET(i), \
 		.fa_dev_name = FLASH_MAP_DEV(i),    \
 		.fa_size     = FLASH_MAP_SIZE(i)    \
-	},
+	}
 
 const struct flash_area default_flash_map[] = {
-	UTIL_LISTIFY(FLASH_MAP_NUM, FLASH_AREA_FOO, ~)
+	LISTIFY(FLASH_MAP_NUM, FLASH_AREA_FOO, (,))
 };
 
 const int flash_map_entries = ARRAY_SIZE(default_flash_map);

@@ -31,15 +31,15 @@ LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 
 #define IS_ALIGNED_32(POINTER) (((uintptr_t)(const void *)(POINTER)) % 4 == 0)
 
-#define _MB_SEC_PAT(i, x) PM_MCUBOOT_SECONDARY_ ## i ## _ ## x,
+#define _MB_SEC_PAT(i, x) PM_MCUBOOT_SECONDARY_ ## i ## _ ## x
 
 
 #define _H_MB_SEC_LA(i) (PM_MCUBOOT_SECONDARY_## i ##_ADDRESS + \
 			 PM_MCUBOOT_SECONDARY_## i ##_SIZE - 1)
 
-#define _MB_SEC_LA(i, _) _H_MB_SEC_LA(i),
+#define _MB_SEC_LA(i, _) _H_MB_SEC_LA(i)
 
-#define _STR_TARGET_NAME(i, _) STRINGIFY(MCUBOOT##i),
+#define _STR_TARGET_NAME(i, _) STRINGIFY(MCUBOOT##i)
 
 #ifdef PM_MCUBOOT_SECONDARY_1_ID
 	#define TARGET_IMAGE_COUNT 2
@@ -55,23 +55,23 @@ LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 #define PM_MCUBOOT_SECONDARY_0_DEV_NAME PM_MCUBOOT_SECONDARY_DEV_NAME
 
 static const size_t secondary_size[] = {
-	UTIL_LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT, SIZE)
+	LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT, (,), SIZE)
 };
 
 static const off_t secondary_address[] = {
-	UTIL_LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT, ADDRESS)
+	LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT, (,), ADDRESS)
 };
 
 static const char *const secondary_dev_name[] = {
-	UTIL_LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT, DEV_NAME)
+	LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT, (,), DEV_NAME)
 };
 
 static const off_t secondary_last_address[] = {
-	UTIL_LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_LA)
+	LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_LA, (,))
 };
 
 static const char *const target_id_name[] = {
-	UTIL_LISTIFY(TARGET_IMAGE_COUNT, _STR_TARGET_NAME)
+	LISTIFY(TARGET_IMAGE_COUNT, _STR_TARGET_NAME, (,))
 };
 
 static uint8_t *stream_buf;

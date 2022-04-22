@@ -21,7 +21,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_SENSOR_MANAGER_LOG_LEVEL);
 #define DT_DRV_COMPAT caf_aggregator
 
 #define __DEFINE_DATA(i, agg_id, size)							\
-	static uint8_t agg_ ## agg_id ## _buff_ ## i ## _data[size] __aligned(4);
+	static uint8_t agg_ ## agg_id ## _buff_ ## i ## _data[size] __aligned(4)
 
 #if (DT_INST_NODE_HAS_PROP(agg_id, memory_region))
 
@@ -43,14 +43,14 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_SENSOR_MANAGER_LOG_LEVEL);
 
 #else
 #define __INITIALIZE_BUF(i, agg_id)							\
-	{(uint8_t *) &agg_ ## agg_id ## _buff_ ## i ## _data},
+	{(uint8_t *) &agg_ ## agg_id ## _buff_ ## i ## _data}
 
 /* buf_len has to be equal to n*sensor_data_size. */
 #define __DEFINE_BUF_DATA(i)									\
-	UTIL_LISTIFY(DT_INST_PROP(i, buf_count), __DEFINE_DATA, i,				\
-		DT_INST_PROP(i, buf_data_length))						\
+	LISTIFY(DT_INST_PROP(i, buf_count), __DEFINE_DATA, (;), i,				\
+		DT_INST_PROP(i, buf_data_length));						\
 	static struct aggregator_buffer agg_ ## i ## _bufs[] = {				\
-		UTIL_LISTIFY(DT_INST_PROP(i, buf_count), __INITIALIZE_BUF, i)			\
+		LISTIFY(DT_INST_PROP(i, buf_count), __INITIALIZE_BUF, (,), i)			\
 	};											\
 	BUILD_ASSERT((DT_INST_PROP(i, buf_data_length) % DT_INST_PROP(i, sensor_data_size)) == 0,\
 		"Wrong sensor data or buffer size");
