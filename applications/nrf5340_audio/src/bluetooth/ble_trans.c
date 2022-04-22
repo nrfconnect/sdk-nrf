@@ -47,10 +47,11 @@ static enum iso_direction iso_dir;
 				  BT_ISO_SDU_BUF_SIZE(CONFIG_BT_ISO_TX_MTU), 8, NULL);
 #define NET_BUF_POOL_PTR_ITERATE(i, _) IDENTITY(&iso_tx_pool_##i COMMA)
 
-UTIL_LISTIFY(CONFIG_BT_ISO_MAX_CHAN, NET_BUF_POOL_ITERATE)
+LISTIFY(CONFIG_BT_ISO_MAX_CHAN, NET_BUF_POOL_ITERATE, (,))
 
-static struct net_buf_pool *iso_tx_pools[] = { UTIL_LISTIFY(CONFIG_BT_ISO_MAX_CHAN,
-							    NET_BUF_POOL_PTR_ITERATE) };
+static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ISO_MAX_CHAN,
+						       NET_BUF_POOL_PTR_ITERATE,
+						       (,)) };
 static struct bt_iso_chan iso_chan[CONFIG_BT_ISO_MAX_CHAN];
 static struct bt_iso_chan *iso_chan_p[CONFIG_BT_ISO_MAX_CHAN];
 static atomic_t iso_tx_pool_alloc[CONFIG_BT_ISO_MAX_CHAN];

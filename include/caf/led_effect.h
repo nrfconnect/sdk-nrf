@@ -282,7 +282,7 @@ struct led_effect {
 			.color = LED_NOCOLOR(),				\
 			.substep_count = 1,				\
 			.substep_time = LED_CLOCK_BLINK_PERIOD,		\
-		},							\
+		}
 
 /** Create LED clock effect initializer.
  *
@@ -303,7 +303,7 @@ struct led_effect {
 				.substep_count = 1,				\
 				.substep_time = LED_CLOCK_SLEEP_PERIOD,		\
 			},							\
-			UTIL_LISTIFY(_ticks, _LED_CLOCK_TIK, _color)		\
+			LISTIFY(_ticks, _LED_CLOCK_TIK, (,), _color)		\
 		}),								\
 		.step_count = (2 * _ticks + 1),					\
 		.loop_forever = true,						\
