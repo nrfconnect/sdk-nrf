@@ -180,6 +180,54 @@ static void test_params_put_get_int_teardown(void)
 	at_params_list_free(&test_list);
 }
 
+static void test_params_put_get_double_setup(void)
+{
+	at_params_list_init(&test_list, TEST_PARAMS);
+}
+
+static void test_params_put_get_double(void)
+{
+	double double_value;
+
+	/* Test list put. */
+
+	zassert_equal(-EINVAL, at_params_double_put(NULL, 0, 1),
+		      "at_params_double_put should return -EINVAL");
+
+	zassert_equal(-EINVAL, at_params_double_put(NULL, TEST_PARAMS, 1),
+		      "at_params_double_put should return -EINVAL");
+
+	/* Populate AT param list. */
+
+	zassert_equal(0, at_params_double_put(&test_list, 1, 56.2594),
+		      "at_params_double_put should return 0");
+
+	zassert_equal(0, at_params_double_put(&test_list, 2, -56.2594),
+		      "at_params_double_put should return 0");
+
+	/* Test unpopulated list entry. */
+
+	zassert_equal(-EINVAL, at_params_double_get(&test_list, 0, &double_value),
+		      "at_params_double_get should return -EINVAL");
+
+	/* Test first list entry. */
+
+	zassert_equal(0, at_params_double_get(&test_list, 1, &double_value),
+		      "at_params_int_get should return 0");
+	zassert_equal(56.2594, double_value, "at_params_int_get should get 56.2594");
+
+	/* Test second list entry. */
+
+	zassert_equal(0, at_params_double_get(&test_list, 2, &double_value),
+		      "at_params_unsigned_int_get should return 0");
+	zassert_equal(-56.2594, double_value, "at_params_double_get should get -56.2594");
+}
+
+static void test_params_put_get_double_teardown(void)
+{
+	at_params_list_free(&test_list);
+}
+
 static void test_params_put_get_string_setup(void)
 {
 	at_params_list_init(&test_list, TEST_PARAMS);
@@ -513,6 +561,10 @@ void test_main(void)
 					test_params_put_get_int,
 					test_params_put_get_int_setup,
 					test_params_put_get_int_teardown),
+			 ztest_unit_test_setup_teardown(
+					test_params_put_get_double,
+					test_params_put_get_double_setup,
+					test_params_put_get_double_teardown),
 			 ztest_unit_test_setup_teardown(
 					test_params_put_get_string,
 					test_params_put_get_string_setup,
