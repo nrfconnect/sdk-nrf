@@ -11,7 +11,10 @@
 #include <nrf_modem_full_dfu.h>
 #include <mgmt/fmfu_mgmt.h>
 #include "fmfu_mgmt_internal.h"
-#include <cborattr/cborattr.h>
+#include <zcbor_common.h>
+#include <zcbor_decode.h>
+#include <zcbor_encode.h>
+#include "zcbor_bulk/zcbor_bulk_priv.h"
 #include <stats/stats.h>
 
 LOG_MODULE_REGISTER(mgmt_fmfu, CONFIG_MGMT_FMFU_LOG_LEVEL);
@@ -36,6 +39,7 @@ struct firmware_packet {
 static int unpack(struct mgmt_ctxt *ctxt, struct firmware_packet *packet,
 		  bool *whole_file_received)
 {
+	zcbor_state_t *zsd = ctxt->cnbd->zs;
 	static uint32_t file_length;
 	/*
 	 * These data types are long long so that we don't have to typecast
@@ -44,62 +48,34 @@ static int unpack(struct mgmt_ctxt *ctxt, struct firmware_packet *packet,
 	 */
 	uint64_t offset;
 	uint64_t read_file_length;
-	size_t data_len;
-	size_t firmware_sha_len;
-	uint8_t firmware_sha[FIRMWARE_SHA_LENGTH];
-
-	CborError cbor_err = 0;
+	struct zcbor_string firmware_sha;
+	struct zcbor_string data;
 	uint64_t fw_target_address = 0;
-	/* Description/skeleton of CBOR object */
-	const struct cbor_attr_t off_attr[] = {
-		[0] = {
-			.attribute = "data",
-			.type = CborAttrByteStringType,
-			.addr.bytestring.data = packet->data,
-			.addr.bytestring.len = &data_len,
-			.len = SMP_PACKET_MTU
-		},
-		[1] = {
-			.attribute = "len",
-			.type = CborAttrUnsignedIntegerType,
-			.addr.uinteger = &read_file_length,
-			.nodefault = true
-		},
-		[2] = {
-			.attribute = "off",
-			.type = CborAttrUnsignedIntegerType,
-			.addr.uinteger = &offset,
-			.nodefault = true
-		},
-		/* Unused but needed for parsing the CBOR*/
-		[3] = {
-			.attribute = "sha",
-			.type = CborAttrByteStringType,
-			.addr.bytestring.data = firmware_sha,
-			.addr.bytestring.len = &firmware_sha_len,
-			.len = FIRMWARE_SHA_LENGTH,
-		},
-		[4] = {
-			.attribute = "addr",
-			.type = CborAttrUnsignedIntegerType,
-			.addr.uinteger = &fw_target_address,
-			.nodefault = true
-		},
-		/* End of array */
-		[5] = { 0 },
+	bool ok;
+	size_t decoded = 0;
+	struct zcbor_map_decode_key_val fw_upload_decode[] = {
+		ZCBOR_MAP_DECODE_KEY_VAL(data, zcbor_bstr_decode, &data),
+		ZCBOR_MAP_DECODE_KEY_VAL(len, zcbor_uint64_decode, &read_file_length),
+		ZCBOR_MAP_DECODE_KEY_VAL(off, zcbor_uint64_decode, &offset),
+		ZCBOR_MAP_DECODE_KEY_VAL(sha, zcbor_bstr_decode, &firmware_sha),
+		ZCBOR_MAP_DECODE_KEY_VAL(addr, zcbor_uint64_decode, &fw_target_address)
 	};
 
-	cbor_err = cbor_read_object(&ctxt->it, off_attr);
-	if (cbor_err) {
-		return -MGMT_ERR_EINVAL;
+	ok = zcbor_map_decode_bulk(zsd, fw_upload_decode,
+		ARRAY_SIZE(fw_upload_decode), &decoded) == 0;
+
+	if (!ok || data.len > SMP_PACKET_MTU) {
+		return MGMT_ERR_EINVAL;
 	}
+
+	memcpy(packet->data, data.value, data.len);
 
 	if (offset == 0) {
 		file_length = (uint32_t)read_file_length;
 	}
 
 	packet->target_address  = (uint32_t)fw_target_address;
-	packet->data_len = (uint32_t)data_len;
+	packet->data_len = (uint32_t)data.len;
 	uint32_t new_offset = (uint32_t)offset + packet->data_len;
 	*whole_file_received = (((uint32_t)offset + packet->data_len)
 				== file_length);
@@ -110,19 +86,15 @@ static int unpack(struct mgmt_ctxt *ctxt, struct firmware_packet *packet,
 
 static int encode_response(struct mgmt_ctxt *ctx, uint32_t expected_offset)
 {
-	CborError err = 0;
-	int status = 0;
+	zcbor_state_t *zse = ctx->cnbe->zs;
+	bool ok;
 
-	err |= cbor_encode_text_stringz(&ctx->encoder, "rc");
-	err |= cbor_encode_int(&ctx->encoder, status);
-	err |= cbor_encode_text_stringz(&ctx->encoder, "off");
-	err |= cbor_encode_uint(&ctx->encoder, expected_offset);
+	ok = zcbor_tstr_put_lit(zse, "rc")			&&
+	     zcbor_int32_put(zse, MGMT_ERR_EOK)			&&
+	     zcbor_tstr_put_lit(zse, "off")			&&
+	     zcbor_int32_put(zse, expected_offset);
 
-	if (err != 0) {
-		return MGMT_ERR_ENOMEM;
-	}
-
-	return 0;
+	return ok ? MGMT_ERR_EOK : MGMT_ERR_ENOMEM;
 }
 
 static int fmfu_firmware_upload(struct mgmt_ctxt *ctx)
@@ -130,7 +102,7 @@ static int fmfu_firmware_upload(struct mgmt_ctxt *ctx)
 	static bool bootloader = true;
 
 	int rc;
-	bool whole_file_received;
+	bool whole_file_received = false;
 	struct firmware_packet packet;
 	uint32_t next_expected_offset;
 
@@ -182,31 +154,28 @@ static int fmfu_get_memory_hash(struct mgmt_ctxt *ctxt)
 	uint64_t start;
 	uint64_t end;
 	struct nrf_modem_full_dfu_digest digest;
+	struct zcbor_string zdigest;
+	bool ok;
+	size_t decoded = 0;
+	zcbor_state_t *zsd = ctxt->cnbd->zs;
+	zcbor_state_t *zse = ctxt->cnbe->zs;
+	struct zcbor_map_decode_key_val mem_hash_decode[] = {
+		ZCBOR_MAP_DECODE_KEY_VAL(start, zcbor_uint64_decode, &start),
+		ZCBOR_MAP_DECODE_KEY_VAL(end, zcbor_uint64_decode, &end),
+	};
+	int rc;
 
 	/* We expect two variables: the start and end address of a memory region
 	 * that we want to verify (obtain a hash for)
 	 */
-	const struct cbor_attr_t off_attr[] = {
-		[0] = {
-			.attribute = "start",
-			.type = CborAttrUnsignedIntegerType,
-			.addr.uinteger = &start,
-			.nodefault = true
-		},
-		[1] = {
-			.attribute = "end",
-			.type = CborAttrUnsignedIntegerType,
-			.addr.uinteger = &end,
-			.nodefault = true
-		},
-		[2] = { 0 },
-	};
 	start = 0;
 	end = 0;
 
-	int rc = cbor_read_object(&ctxt->it, off_attr);
+	ok = zcbor_map_decode_bulk(zsd, mem_hash_decode,
+		ARRAY_SIZE(mem_hash_decode), &decoded) == 0;
 
-	if (rc || start == 0 || end == 0) {
+
+	if (!ok || start == 0 || end == 0) {
 		return MGMT_ERR_EINVAL;
 	}
 
@@ -219,18 +188,15 @@ static int fmfu_get_memory_hash(struct mgmt_ctxt *ctxt)
 	}
 
 	/* Put the digest response in the response */
-	CborError cbor_err = 0;
+	zdigest.value = digest.data;
+	zdigest.len = NRF_MODEM_FULL_DFU_DIGEST_LEN;
 
-	cbor_err |= cbor_encode_text_stringz(&ctxt->encoder, "digest");
-	cbor_err |= cbor_encode_byte_string(&ctxt->encoder,
-			(uint8_t *)digest.data, NRF_MODEM_FULL_DFU_DIGEST_LEN);
-	cbor_err |= cbor_encode_text_stringz(&ctxt->encoder, "rc");
-	cbor_err |= cbor_encode_int(&ctxt->encoder, rc);
-	if (cbor_err != 0) {
-		return MGMT_ERR_ENOMEM;
-	}
+	ok = zcbor_tstr_put_lit(zse, "digest")			&&
+	     zcbor_bstr_encode(zse, &zdigest)			&&
+	     zcbor_tstr_put_lit(zse, "rc")			&&
+	     zcbor_int32_put(zse, rc);
 
-	return MGMT_ERR_EOK;
+	return ok ? MGMT_ERR_EOK : MGMT_ERR_ENOMEM;
 }
 
 static const struct mgmt_handler mgmt_fmfu_handlers[] = {
