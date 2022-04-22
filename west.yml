@@ -9,6 +9,7 @@
 # See the west documentation for more information:
 #
 # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/west/index.html
+# this is a test change
 
 manifest:
   version: "0.12"
