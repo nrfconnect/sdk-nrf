@@ -86,8 +86,8 @@ static void response_cb(struct http_response *rsp,
 	if (httpc.state >= HTTPC_REQ_DONE && httpc.state < HTTPC_COMPLETE) {
 		if (httpc.state != HTTPC_RSP_HEADER_DONE) {
 			/* Look for end of response headers */
-			if (rsp->body_start) {
-				size_t headers_len = rsp->body_start - rsp->recv_buf;
+			if (rsp->body_frag_start) {
+				size_t headers_len = rsp->body_frag_start - rsp->recv_buf;
 				/* Send last chunk of headers and URC */
 				data_send(rsp->recv_buf, headers_len);
 				httpc.rsp_header_length += headers_len;
