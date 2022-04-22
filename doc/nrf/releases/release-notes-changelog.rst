@@ -430,6 +430,9 @@ Other samples
 
     * Added new configuration that builds the sample with support for remote IPC Service shell on nRF5340 application core through USB.
     * Added possibility to build with the limited nRF21540 front-end module hardware pinout.
+    * Improved the calculation of the total payload size for the radio duty cycle.
+    * Fast ramp-up is enabled for all radio modes.
+    * The duty cycle for modulated transmission is limited to 1-90%.
 
 Drivers
 =======
