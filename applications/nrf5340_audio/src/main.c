@@ -210,7 +210,7 @@ void main(void)
 	ret = streamctrl_start();
 	ERR_CHK(ret);
 
-	ret = audio_datapath_tone_play(1000, 400, 1);
+	ret = audio_datapath_tone_play(440, 500, 0.2);
 	ERR_CHK(ret);
 
 	while (1) {
