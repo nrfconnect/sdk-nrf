@@ -207,7 +207,7 @@ static uint8_t num_iso_cis_connected(void)
 	uint8_t num_cis_connected = 0;
 
 	for (int i = 0; i < CIS_ISO_CHAN_COUNT; i++) {
-		if (iso_chan_p[i]->state == BT_ISO_CONNECTED) {
+		if (iso_chan_p[i]->state == BT_ISO_STATE_CONNECTED) {
 			num_cis_connected++;
 		}
 	}
@@ -799,7 +799,7 @@ static int iso_tx_data_or_pattern(uint8_t const *const data, size_t size, uint8_
 {
 	int ret;
 
-	if (iso_chan_p[iso_chan_idx]->state != BT_ISO_CONNECTED) {
+	if (iso_chan_p[iso_chan_idx]->state != BT_ISO_STATE_CONNECTED) {
 		LOG_DBG("ISO channel %d not connected", iso_chan_idx);
 		return 0;
 	}
@@ -1024,12 +1024,12 @@ int ble_trans_iso_tx_anchor_get(enum ble_trans_chan_type chan_type, uint32_t *ti
 	if (chan_type == BLE_TRANS_CHANNEL_STEREO) {
 		/* Choose the first active connection */
 		for (int i = 0; i < ARRAY_SIZE(iso_chan_p); ++i) {
-			if (iso_chan_p[i]->state == BT_ISO_CONNECTED) {
+			if (iso_chan_p[i]->state == BT_ISO_STATE_CONNECTED) {
 				chan_idx = i;
 				break;
 			}
 		}
-	} else if (iso_chan_p[chan_type]->state == BT_ISO_CONNECTED) {
+	} else if (iso_chan_p[chan_type]->state == BT_ISO_STATE_CONNECTED) {
 		__ASSERT_NO_MSG(chan_type < ARRAY_SIZE(iso_chan_p));
 		chan_idx = chan_type;
 	}
