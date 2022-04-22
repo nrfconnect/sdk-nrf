@@ -46,8 +46,8 @@ static void rest_client_http_response_cb(struct http_response *rsp,
 	 * which will be the start of the body.
 	 */
 	if (resp_ctx) {
-		if (!resp_ctx->response && rsp->body_found && rsp->body_start) {
-			resp_ctx->response = rsp->body_start;
+		if (!resp_ctx->response && rsp->body_found && rsp->body_frag_start) {
+			resp_ctx->response = rsp->body_frag_start;
 		}
 		resp_ctx->total_response_len += rsp->data_len;
 	}
