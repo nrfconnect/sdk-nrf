@@ -622,6 +622,9 @@ static struct bt_conn_auth_cb conn_auth_callbacks = {
 #if CONFIG_NFC_OOB_PAIRING
 	.oob_data_request = auth_oob_data_request,
 #endif
+};
+
+static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 	.pairing_complete = pairing_complete,
 	.pairing_failed = pairing_failed
 };
@@ -937,7 +940,17 @@ void main(void)
 
 	configure_gpio();
 
-	bt_conn_auth_cb_register(&conn_auth_callbacks);
+	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
+	if (err) {
+		printk("Failed to register authorization callbacks.\n");
+		return;
+	}
+
+	err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
+	if (err) {
+		printk("Failed to register authorization info callbacks.\n");
+		return;
+	}
 
 	err = bt_enable(NULL);
 	if (err) {

@@ -352,9 +352,12 @@ static enum bt_security_err pairing_accept(struct bt_conn *conn,
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.cancel = auth_cancel,
 	.oob_data_request = auth_oob_data_request,
-	.pairing_complete = pairing_complete,
-	.pairing_failed = pairing_failed,
 	.pairing_accept = pairing_accept,
+};
+
+static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
+	.pairing_complete = pairing_complete,
+	.pairing_failed = pairing_failed
 };
 
 static void connected(struct bt_conn *conn, uint8_t err)
@@ -723,7 +726,17 @@ void main(void)
 		printk("Cannot init buttons (err %d\n", err);
 	}
 
-	bt_conn_auth_cb_register(&conn_auth_callbacks);
+	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
+	if (err) {
+		printk("Failed to register authorization callbacks.\n");
+		return;
+	}
+
+	err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
+	if (err) {
+		printk("Failed to register authorization info callbacks.\n");
+		return;
+	}
 
 	err = bt_enable(NULL);
 	if (err) {

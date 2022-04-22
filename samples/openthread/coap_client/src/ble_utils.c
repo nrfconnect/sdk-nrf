@@ -31,6 +31,9 @@ security_changed(struct bt_conn *conn, bt_security_t level,
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_display = auth_passkey_display,
 	.cancel = auth_cancel,
+};
+
+static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 	.pairing_complete = pairing_complete,
 	.pairing_failed = pairing_failed
 };
@@ -143,7 +146,17 @@ int ble_utils_init(struct bt_nus_cb *nus_clbs, ble_connection_cb_t on_connect,
 	bt_conn_cb_register(&conn_callbacks);
 
 	if (IS_ENABLED(CONFIG_BT_SMP)) {
-		bt_conn_auth_cb_register(&conn_auth_callbacks);
+		ret = bt_conn_auth_cb_register(&conn_auth_callbacks);
+		if (ret) {
+			LOG_ERR("Failed to register authorization callbacks.");
+			goto end;
+		}
+
+		ret = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
+		if (ret) {
+			LOG_ERR("Failed to register authorization info callbacks.");
+			goto end;
+		}
 	}
 
 	ret = bt_enable(NULL);

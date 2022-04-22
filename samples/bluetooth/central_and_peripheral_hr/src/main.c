@@ -200,9 +200,12 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 }
 
 static const struct bt_conn_auth_cb auth_callbacks = {
-	.pairing_complete = pairing_complete,
-	.pairing_failed = pairing_failed,
 	.cancel = auth_cancel
+};
+
+static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
+	.pairing_complete = pairing_complete,
+	.pairing_failed = pairing_failed
 };
 
 static int scan_start(void)
@@ -381,7 +384,17 @@ void main(void)
 		return;
 	}
 
-	bt_conn_auth_cb_register(&auth_callbacks);
+	err = bt_conn_auth_cb_register(&auth_callbacks);
+	if (err) {
+		printk("Failed to register authorization callbacks.\n");
+		return;
+	}
+
+	err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
+	if (err) {
+		printk("Failed to register authorization info callbacks.\n");
+		return;
+	}
 
 	err = bt_enable(NULL);
 	if (err) {
