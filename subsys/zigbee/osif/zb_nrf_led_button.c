@@ -189,13 +189,20 @@ void zb_osif_button_cb(zb_uint8_t arg)
 
 zb_bool_t zb_setup_buttons_cb(zb_callback_t cb)
 {
-	int err = dk_buttons_init(button_handler);
+	static bool is_init;
+	int err;
+
+	if (is_init) {
+		return ZB_TRUE;
+	}
+	err = dk_buttons_init(button_handler);
 
 	if (err) {
 		LOG_ERR("Cannot init buttons (err: %d)", err);
 
 		return ZB_FALSE;
 	}
+	is_init = true;
 
 	return ZB_TRUE;
 }
