@@ -16,6 +16,8 @@ Overview
 
 The sample application consists of three modules that communicate using events:
 
+.. event_manager_sample_modules_start
+
 Sensor (``sensor_simulated.c``):
   This module waits for a configuration event (which is sent by ``main.c``).
   After receiving this event, it simulates measured data at constant intervals.
@@ -30,6 +32,7 @@ Statistics (``stats.c``):
   This module waits for measurement events from the sensor.
   The module calculates and logs basic statistics about one of the measurement values that are transmitted as part of the event.
 
+.. event_manager_sample_modules_end
 
 Requirements
 ************

@@ -37,6 +37,18 @@ When the connection is established, it starts collecting data from two sensors:
 The sample aggregates the data from both sensors in memory.
 You can then trigger an alarm that sends the aggregated data over LTE to `nRF Cloud`_ by flipping the Thingy:52, which causes a change in the flip state to ``UPSIDE_DOWN``.
 
+Configuration
+*************
+
+|config|
+
+Additional configuration
+========================
+
+Check and configure the following library option that is used by the sample:
+
+* :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` - Selects an external GNSS antenna.
+
 User interface
 **************
 

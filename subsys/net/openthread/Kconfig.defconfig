@@ -10,6 +10,10 @@
 
 if NET_L2_OPENTHREAD
 
+choice OPENTHREAD_STACK_VERSION
+	default OPENTHREAD_THREAD_VERSION_1_2
+endchoice
+
 choice LIBC_IMPLEMENTATION
 	default NEWLIB_LIBC
 endchoice
@@ -25,6 +29,10 @@ config SYSTEM_WORKQUEUE_STACK_SIZE
 config MAIN_STACK_SIZE
 	int
 	default 2560
+
+config LOG_BUFFER_SIZE
+	int
+	default 4048 if LOG
 
 config INIT_STACKS
 	bool

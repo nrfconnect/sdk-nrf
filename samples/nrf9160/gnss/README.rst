@@ -154,6 +154,13 @@ CONFIG_GNSS_SAMPLE_LTE_ON_DEMAND - To disable LTE after assistance download
    When using assistance, LTE may block the GNSS operation and increase the time needed to get a fix.
    This configuration option disables LTE after the assistance data has been downloaded, so that GNSS can run without interruptions.
 
+Additional configuration
+========================
+
+Check and configure the following library option that is used by the sample:
+
+* :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` - Selects an external GNSS antenna.
+
 Building and running
 ********************
 

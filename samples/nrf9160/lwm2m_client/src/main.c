@@ -15,6 +15,7 @@
 #include <net/lwm2m_client_utils.h>
 #include <net/lwm2m_client_utils_fota.h>
 #include <app_event_manager.h>
+#include <net/lwm2m_client_utils_location.h>
 #include <date_time.h>
 
 #include <logging/log.h>
@@ -23,6 +24,7 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
 #include <nrf_modem_at.h>
+#include <modem/pdn.h>
 
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
 #if defined(CONFIG_MODEM_KEY_MGMT)
@@ -132,12 +134,16 @@ static int lwm2m_setup(void)
 #if defined(CONFIG_LWM2M_APP_LIGHT_SENSOR)
 	lwm2m_init_light_sensor();
 #endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT) && \
+	defined(CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER)
 	init_neighbour_cell_info();
 #endif
-
 #if defined(CONFIG_LWM2M_PORTFOLIO_OBJ_SUPPORT)
 	lwm2m_init_portfolio_object();
+#endif
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT) && \
+	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS)
+	location_event_handler_init(&client);
 #endif
 	return 0;
 }
@@ -208,6 +214,12 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 #if defined(CONFIG_APP_GNSS)
 		start_gnss();
 #endif
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
+		LOG_INF("Send cell location request event");
+		struct cell_location_request_event *event = new_cell_location_request_event();
+
+		APP_EVENT_SUBMIT(event);
+#endif
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE_FAILURE:
@@ -270,25 +282,6 @@ static void modem_connect(void)
 	} while (ret < 0);
 }
 
-#if defined(CONFIG_APP_GNSS)
-static void modem_gnss_configure(void)
-{
-	if (strlen(CONFIG_GNSS_AT_MAGPIO) > 0) {
-		if (nrf_modem_at_printf("%s", CONFIG_GNSS_AT_MAGPIO) != 0) {
-			LOG_ERR("Failed to set MAGPIO configuration");
-			return;
-		}
-	}
-
-	if (strlen(CONFIG_GNSS_AT_COEX0) > 0) {
-		if (nrf_modem_at_printf("%s", CONFIG_GNSS_AT_COEX0) != 0) {
-			LOG_ERR("Failed to set COEX0 configuration");
-			return;
-		}
-	}
-}
-#endif
-
 void main(void)
 {
 	int ret;
@@ -298,30 +291,37 @@ void main(void)
 
 	k_sem_init(&lwm2m_restart, 0, 1);
 
+#if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
+	ret = nrf_modem_lib_init(NORMAL_MODE);
+	if (ret < 0) {
+		LOG_ERR("Unable to init modem library (%d)", ret);
+		return;
+	}
+#endif
+
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
+	ret = fota_settings_init();
+	if (ret < 0) {
+		LOG_WRN("Unable to init settings (%d)", ret);
+	}
+	/* Modem FW update needs to be verified before modem is used. */
+	lwm2m_verify_modem_fw_update();
+#endif
+
+#if defined(CONFIG_PDN)
+	ret = pdn_init();
+	if (ret < 0) {
+		LOG_ERR("Unable to init pdn (%d)", ret);
+		return;
+	}
+#endif
+
 	ret = app_event_manager_init();
 	if (ret) {
 		LOG_ERR("Unable to init Application Event Manager (%d)", ret);
 		return;
 	}
 
-#if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
-	ret = nrf_modem_lib_init(NORMAL_MODE);
-	if (ret != 0 && ret != MODEM_DFU_RESULT_OK) {
-		LOG_ERR("Unable to init modem library (%d)", ret);
-		return;
-	}
-#endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
-	ret = fota_settings_init();
-	if (ret < 0) {
-		LOG_ERR("Unable to init settings (%d)", ret);
-		return;
-	}
-#endif
-
-#if defined(CONFIG_APP_GNSS)
-	modem_gnss_configure();
-#endif
 	LOG_INF("Initializing modem.");
 	ret = lte_lc_init();
 	if (ret < 0) {
@@ -353,14 +353,6 @@ void main(void)
 		LOG_ERR("Failed to setup LWM2M fields (%d)", ret);
 		return;
 	}
-
-	/* Load *all* persistent settings */
-	settings_load();
-
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
-	/* Modem FW update needs to be verified before modem is used. */
-	lwm2m_verify_modem_fw_update();
-#endif
 
 	ret = lwm2m_init_image();
 	if (ret < 0) {

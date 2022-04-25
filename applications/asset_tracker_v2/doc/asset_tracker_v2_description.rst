@@ -213,9 +213,6 @@ To set up the application to work with a specific cloud example, see the followi
 
 By default, the application is configured to communicate with `nRF Cloud`_ using the factory-provisioned certificates on Thingy:91 and nRF9160 DK.
 This enables the application to function out-of-the-box with nRF Cloud.
-However, nRF Cloud does not fully support the application firmware and has limitations.
-For more information, see :ref:`nrf_cloud_limitations`.
-To enable all features of the Asset Tracker v2, use any of the other supported cloud service implementations.
 
 .. note::
    Before building and running the firmware, make sure you have set up the cloud side and provisioned the device with the correct TLS certificates.
@@ -242,6 +239,10 @@ You can add the following optional configurations to configure the heap or to pr
 * :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE` - Configures the size of the heap that is used by the application when encoding and sending data to the cloud. More information can be found in :ref:`memory_allocation`.
 * :kconfig:option:`CONFIG_PDN_DEFAULTS_OVERRIDE` - Used for manual configuration of the APN. Set the option to ``y`` to override the default PDP context configuration.
 * :kconfig:option:`CONFIG_PDN_DEFAULT_APN` - Used for manual configuration of the APN. An example is ``apn.example.com``.
+
+If you use an external GNSS antenna, add the following configuration:
+
+* :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` - Selects an external GNSS antenna.
 
 Configuration files
 ===================
@@ -292,7 +293,7 @@ See :ref:`Building with overlays <building_with_overlays>` for information on ho
 
 .. note::
 
-   When you build the application for the nRF9160 DK v0.15.0 and later, set the :ref:`CONFIG_GNSS_MODULE_ANTENNA_EXTERNAL <CONFIG_GNSS_MODULE_ANTENNA_EXTERNAL>` option to ``y`` to achieve the best external antenna performance.
+   When you build the application for the nRF9160 DK v0.15.0 and later, set the :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` option to ``y`` to achieve the best external antenna performance.
 
 .. external_antenna_note_end
 
@@ -360,33 +361,6 @@ After programming the application and all the prerequisites to your development 
     <inf> app_event_manager: DATA_EVT_DATA_SEND
     <wrn> data_module: No batch data to encode, ringbuffers empty
     <inf> app_event_manager: CLOUD_EVT_DATA_ACK
-
-.. _nrf_cloud_limitations:
-
-Support for nRF Cloud
-*********************
-
-Enabling full support for nRF Cloud is currently a work in progress.
-Manipulation of the application's real-time configurations is not supported through the nRF Cloud Web UI.
-However, this is possible by using the REST API calls described in `nRF Cloud Patch Device State`_.
-The following schema sets the various device configuration parameters to their default values:
-
-   .. parsed-literal::
-      :class: highlight
-
-	{
-		"desired":{
-			"config":{
-				"activeMode":true,
-				"activeWaitTime":120,
-				"movementTimeout":3600,
-				"movementResolution":120,
-				"gnssTimeout":60,
-				"movementThreshold":10,
-				"nod":[]
-			}
-		}
-	}
 
 .. _asset_tracker_v2_internal_modules:
 

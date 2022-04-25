@@ -32,7 +32,16 @@ extern "C" {
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT)
 /**
- * @brief Initialize Security object
+ * @brief Initialize Security object support for nrf91
+ *
+ * This wrapper will install hooks that allows device to do a
+ * proper bootstrap and store received server settings to permanent
+ * storage using Zephyr settings API. Credential are stored to
+ * modem and no keys would enter the flash.
+ *
+ * @note This API calls settings_subsys_init() so should
+ *       only be called after the settings backend (Flash or FS)
+ *       is ready.
  */
 int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint);
 
@@ -115,10 +124,16 @@ int lwm2m_update_connmon(void);
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
 #define ECID_SIGNAL_MEASUREMENT_INFO_OBJECT_ID 10256
-
 int lwm2m_signal_meas_info_inst_id_to_index(uint16_t obj_inst_id);
 int lwm2m_signal_meas_info_index_to_inst_id(int index);
 int init_neighbour_cell_info(void);
+#endif
+
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT)
+#define LOCATION_ASSIST_OBJECT_ID 50001
+void location_assist_agps_request_set(uint32_t request_mask);
+void location_assist_cell_request_set(void);
+void location_assist_cell_inform_set(void);
 #endif
 
 #ifdef __cplusplus

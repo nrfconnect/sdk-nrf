@@ -56,6 +56,10 @@ Additional configuration
 
 Refer to the :ref:`lib_location` library document for configuring the location retrieval behavior, including supported location methods and services.
 
+If you use an external GNSS antenna, add the following configuration:
+
+* :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` - Selects an external GNSS antenna.
+
 Configuration files
 ===================
 

@@ -38,10 +38,25 @@ Make sure that the following KConfig options are enabled:
 Configuring 3-wire coexistence
 ******************************
 
-Configuration is set using the devicetree (DTS).
 For more information about devicetree overlays, see :ref:`zephyr:use-dt-overlays`.
 A sample devicetree overlay is available at :file:`samples/bluetooth/radio_coex_3wire/boards/nrf52840dk_nrf52840.overlay`.
 The elements are described in the bindings: :file:`dts/bindings/radio_coex/sdc-radio-coex-three-wire.yaml`.
+
+Priorities and scanner mode can be configured or updated at run time.
+
+Role-based priorities
+*********************
+
+You can use a different priority for a session when requesting it, based on the session's role: advertiser, scanner, or being connected as central or as peripheral.
+To do so, use the HCI VS command :c:enum:`SDC_HCI_OPCODE_CMD_VS_COEX_PRIORITY_CONFIG`.
+Its parameters are described in  :c:type:`sdc_hci_cmd_vs_coex_priority_config_t`.
+
+Scanner request mode
+********************
+
+You can configure how the scanner requests coexistence sessions: either it requests a session as soon as it has received a valid access address, or it only requests a session before transmitting.
+To do so, use the HCI VS command :c:enum:`SDC_HCI_OPCODE_CMD_VS_COEX_SCAN_MODE_CONFIG`.
+Its parameters are described in  :c:type:`sdc_hci_cmd_vs_coex_scan_mode_config_t`.
 
 .. _ug_bt_coex_3w_sample:
 

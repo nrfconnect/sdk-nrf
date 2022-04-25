@@ -184,6 +184,14 @@ static void ppp_ctrl_net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 
 	if (mgmt_event == NET_EVENT_PPP_CARRIER_OFF) {
 		mosh_print("PPP carrier OFF");
+
+		/* To be able to reconnect the dial up from Windows UI,
+		 * we need to bring PPP net_if and sockets down/up:
+		 */
+		if (!ppp_closing && ppp_up) {
+			mosh_print("PPP: restarting...");
+			k_work_submit_to_queue(&mosh_common_work_q, &ppp_ctrl_restart_work);
+		}
 		return;
 	}
 }
@@ -202,14 +210,6 @@ ppp_ctrl_net_mgmt_event_ipv4_levelhandler(struct net_mgmt_event_callback *cb,
 		mosh_print("Dial up (IPv4) connection up");
 	} else if (mgmt_event == NET_EVENT_IPV4_ADDR_DEL) {
 		mosh_print("Dial up (IPv4) connection down");
-
-		/* To be able to reconnect the dial up from Windows UI,
-		 * we need to bring PPP net_if and sockets down/up:
-		 */
-		if (!ppp_closing) {
-			mosh_print("PPP: restarting...");
-			k_work_submit_to_queue(&mosh_common_work_q, &ppp_ctrl_restart_work);
-		}
 	}
 }
 

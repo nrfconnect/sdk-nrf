@@ -126,6 +126,10 @@ typedef int (*download_client_callback_t)(
 struct download_client {
 	/** Socket descriptor. */
 	int fd;
+
+	/** Destination address storage */
+	struct sockaddr remote_addr;
+
 	/** Response buffer. */
 	char buf[CONFIG_DOWNLOAD_CLIENT_BUF_SIZE];
 	/** Buffer offset. */
@@ -158,6 +162,9 @@ struct download_client {
 	struct {
 		/** CoAP block context. */
 		struct coap_block_context block_ctx;
+
+		/** CoAP pending object. */
+		struct coap_pending pending;
 	} coap;
 
 	/** Internal thread ID. */

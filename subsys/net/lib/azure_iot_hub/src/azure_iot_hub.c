@@ -849,6 +849,7 @@ static int client_broker_init(struct mqtt_client *const client, bool dps)
 	tls_cfg->sec_tag_count		= ARRAY_SIZE(sec_tag_list);
 	tls_cfg->sec_tag_list		= sec_tag_list;
 	tls_cfg->session_cache		= TLS_SESSION_CACHE_DISABLED;
+	tls_cfg->set_native_tls		= IS_ENABLED(CONFIG_AZURE_IOT_HUB_NATIVE_TLS);
 
 #if defined(CONFIG_AZURE_IOT_HUB_PROVISION_CERTIFICATES)
 	err = certificates_provision();

@@ -9,17 +9,10 @@
 
 #include <zephyr.h>
 #include <sys/reboot.h>
-#include <modem/modem_key_mgmt.h>
 #include <net/fota_download.h>
 
 #include "fota.h"
 #include "mosh_print.h"
-
-#define MOSH_FOTA_US_TLS_SECURITY_TAG 4242424
-
-static const char us_root_ca_cert[] = {
-#include "cert/Baltimore-CyberTrust-Root"
-};
 
 static void reboot_timer_handler(struct k_timer *dummy)
 {
@@ -65,54 +58,12 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 	}
 }
 
-static bool fota_us_ca_cert_exists(void)
-{
-	int err;
-	bool exists;
-
-	err = modem_key_mgmt_exists(MOSH_FOTA_US_TLS_SECURITY_TAG,
-				    MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-				    &exists);
-
-	if (!err && exists) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-static int fota_write_us_ca_cert(void)
-{
-	return modem_key_mgmt_write(MOSH_FOTA_US_TLS_SECURITY_TAG,
-				    MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-				    us_root_ca_cert, sizeof(us_root_ca_cert));
-}
-
 int fota_init(void)
 {
-	int err;
-
-	if (!fota_us_ca_cert_exists()) {
-		err = fota_write_us_ca_cert();
-		if (err) {
-			printk("Failed to write US server root CA to modem, error %d\n",
-			       err);
-		}
-	}
-
 	return fota_download_init(&fota_download_callback);
 }
 
 int fota_start(const char *host, const char *file)
 {
-	int sec_tag;
-
-	if (strstr(host, "us") != 0) {
-		/* The US server uses a different root CA. */
-		sec_tag = MOSH_FOTA_US_TLS_SECURITY_TAG;
-	} else {
-		sec_tag = CONFIG_NRF_CLOUD_SEC_TAG;
-	}
-
-	return fota_download_start(host, file, sec_tag, 0, 0);
+	return fota_download_start(host, file, CONFIG_NRF_CLOUD_SEC_TAG, 0, 0);
 }

@@ -38,6 +38,4 @@ target_include_directories(app PRIVATE ${ZEPHYR_BASE}/../nrf/modules/cjson/inclu
 # Options that cannot be passed through Kconfig fragments.
 target_compile_options(app PRIVATE
 	-DCONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN=20
-	-DCONFIG_GNSS_MODULE_NMEA
-	-DCONFIG_GNSS_MODULE_AT_MAGPIO="AT%XMAGPIO"
-	-DCONFIG_GNSS_MODULE_AT_COEX0="AT%XCOEX0")
+	-DCONFIG_GNSS_MODULE_NMEA)

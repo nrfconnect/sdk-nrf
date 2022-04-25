@@ -29,6 +29,7 @@ To configure the Zigbee shell library, use the following options:
 * :kconfig:option:`CONFIG_ZIGBEE_SHELL_LOG_LEVEL`
 * :kconfig:option:`CONFIG_ZIGBEE_SHELL_CTX_MGR_ENTRIES_NBR`
 * :kconfig:option:`CONFIG_ZIGBEE_SHELL_MONITOR_CACHE_SIZE`
+* :kconfig:option:`CONFIG_ZIGBEE_SHELL_ZCL_CMD_TIMEOUT`
 
 For detailed steps about configuring the library in a Zigbee sample or application, see :ref:`ug_zigbee_configuring_components_logger_ep`.
 
@@ -43,7 +44,7 @@ Zigbee shell commands are available for the following backends when testing samp
 You can run the Zigbee shell commands after connecting and configuring the backend for testing.
 For more information, see :ref:`gs_testing`.
 
-.. _zigbee_cli_reference:
+.. _zigbee_shell_reference:
 
 Zigbee shell command list
 *************************
@@ -169,7 +170,7 @@ If the optional argument is provided, set the device role to *role*.
 Can be either ``zc`` or ``zr``.
 
 .. note::
-    Zigbee End Device is not currently supported by the CLI sample.
+    Zigbee End Device is not currently supported by the Shell sample.
 
 
 ----
@@ -658,11 +659,11 @@ Example:
 .. note::
     |precondition4|
 
-Issue a ping-style shell command to another CLI node with the given 16-bit destination address (*dst_addr*) by using a payload equal to *payload_size* bytes.
+Issue a ping-style shell command to another Shell node with the given 16-bit destination address (*dst_addr*) by using a payload equal to *payload_size* bytes.
 The command is sent and received on endpoints with the same ID.
 
 This shell command uses a custom ZCL frame, which is constructed as a ZCL frame of a custom ping ZCL cluster with the cluster ID ``0xBEEF``.
-For details, see the implementation of :c:func:`ping_request_send` in :file:`subsys/zigbee/cli/zigbee_cli_cmd_ping.c`.
+For details, see the implementation of :c:func:`ping_request_send` in :file:`subsys/zigbee/lib/zigbee_shell/src/zigbee_shell_cmd_ping.c`.
 
 The command measures the time needed for a Zigbee frame to travel between two nodes in the network (there and back again).
 The shell command sends a ping request ZCL command, which is followed by a ping reply ZCL command.
@@ -1298,7 +1299,7 @@ Example:
 .. code-block::
 
    > version
-   CLI: Sep  3 2020 13:34:28
+   Shell: Sep  3 2020 13:34:28
    ZBOSS: 3.3.0.2
    Zephyr kernel version: 2.3.99
    Done
@@ -1310,14 +1311,14 @@ Example:
 debug
 =====
 
-Enable or disable the debug mode in the CLI.
+Enable or disable the debug mode in the Shell.
 
 .. parsed-literal::
    :class: highlight
 
    debug *on|off*
 
-This command unblocks several additional commands in the CLI.
+This command unblocks several additional commands in the Shell.
 
 .. note::
     When used, the additional commands can render the device unstable.

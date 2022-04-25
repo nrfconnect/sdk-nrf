@@ -358,7 +358,7 @@ void AppTask::FunctionTimerEventHandler()
 	} else if (sAppTask.mFunction == TimerFunction::FactoryReset) {
 		sAppTask.mFunction = TimerFunction::NoneSelected;
 		LOG_INF("Factory Reset triggered");
-		ConfigurationMgr().InitiateFactoryReset();
+		chip::Server::GetInstance().ScheduleFactoryReset();
 	}
 }
 

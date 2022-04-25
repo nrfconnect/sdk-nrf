@@ -56,6 +56,13 @@ nRF5340 development kit support
 
    See :ref:`ug_nrf5340` for more information.
 
+nRF5340 Audio development kit support
+   The nRF5340 Audio development kit (DK) is based on the nRF5340 development kit and also contains two separate processors.
+   When programming an application for the nRF5340 Audio DK, the application core image is built from a combination of different configuration files.
+   The network core image is programmed with an application-specific precompiled Bluetooth Low Energy Controller binary file that contains the LE Audio Controller Subsystem for nRF53.
+
+   See the :ref:`octave` application documentation for more information.
+
 Default configuration
 *********************
 

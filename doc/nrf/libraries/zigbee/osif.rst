@@ -41,6 +41,11 @@ You can also configure the following OSIF-related Kconfig options:
 * :kconfig:option:`CONFIG_ZIGBEE_USE_LEDS` - LEDs abstract for the ZBOSS OSIF layer.
   You can use this option if you want to test ZBOSS examples directly in the |NCS|.
 * :kconfig:option:`CONFIG_ZIGBEE_USE_SOFTWARE_AES` - Configures the ZBOSS OSIF layer to use the software encryption.
+* :kconfig:option:`CONFIG_ZIGBEE_NVRAM_PAGE_COUNT` - Configures the number of ZBOSS NVRAM logical pages.
+* :kconfig:option:`CONFIG_ZIGBEE_NVRAM_PAGE_SIZE` - Configures the size of the RAM-based ZBOSS NVRAM.
+  This option is used only if the device does not have NVRAM storage.
+* :kconfig:option:`CONFIG_ZIGBEE_TIME_COUNTER` - Configures the ZBOSS OSIF layer to use a dedicated timer-based counter as the Zigbee time source.
+* :kconfig:option:`CONFIG_ZIGBEE_TIME_KTIMER` - Configures the ZBOSS OSIF layer to use Zephyr's system time as the Zigbee time source.
 
 Additionally, the following Kconfig option is available when setting :ref:`zigbee_ug_logging_logger_options`:
 

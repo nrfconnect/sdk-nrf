@@ -35,6 +35,7 @@
 /applications/machine_learning/           @pdunaj
 /applications/matter_weather_station/     @Damian-Nordic @kkasperczyk-no
 /applications/nrf_desktop/                @pdunaj
+/applications/nrf5340_audio/              @koffes @alexsven @erikrobstad @rick1082 @nordic-auko
 /applications/serial_lte_modem/           @junqingzou @pirun @rlubos
 /applications/zigbee_weather_station/     @adsz-nordic @tomchy
 # Boards
@@ -54,7 +55,6 @@ Kconfig*                                  @tejlmand
 /doc/**/conf.py                           @carlescufi
 /doc/kconfig/                             @gmarull
 /doc/nrf/                                 @carlescufi
-/doc/nrf/images/                          @Avalei
 /doc/nrfx/                                @gmarull
 /doc/matter/                              @gmarull
 /doc/mcuboot/                             @carlescufi
@@ -68,6 +68,7 @@ Kconfig*                                  @tejlmand
 /ext/                                     @carlescufi
 /include/                                 @anangl @rlubos
 /include/net/azure_*                      @jtguggedal @simensrostad @coderbyheart
+/include/net/nrf_cloud_*                  @plskeggs @jayteemo @glarsennordic
 /include/bluetooth/                       @alwa-nordic @KAGA164
 /include/bluetooth/mesh/                  @trond-snekvik
 /include/caf/                             @pdunaj
@@ -84,13 +85,13 @@ Kconfig*                                  @tejlmand
 /lib/at_monitor/                          @lemrey @rlubos
 /lib/at_shell/                            @jtguggedal @simensrostad
 /lib/at_sms_cert/                         @eivindj-nordic
-/lib/agps/                                @jtguggedal @simensrostad
 /lib/nrf_modem_lib/                       @rlubos @lemrey
 /lib/edge_impulse/                        @pdunaj
 /lib/fprotect/                            @hakonfam
 /lib/flash_patch/                         @hakonfam
 /lib/location/                            @trantanen @hiltunent @jhirsi @tokangas
 /lib/lte_link_control/                    @jtguggedal @tokangas @simensrostad
+/lib/modem_antenna/                       @tokangas
 /lib/modem_info/                          @rlubos
 /lib/modem_key_mgmt/                      @rlubos
 /lib/multicell_location/                  @jhirsi @tokangas
@@ -122,6 +123,7 @@ Kconfig*                                  @tejlmand
 /samples/edge_impulse/                    @pdunaj
 /samples/esb/                             @lemrey
 /samples/app_event_manager/               @pdunaj @MarekPieta
+/samples/event_manager_proxy/             @rakons
 /samples/gazell/                          @leewkb4567
 /samples/keys/random_hw_unique_key/       @oyvindronningstad @Vge0rge
 /samples/mpsl/                            @rugeGerritsen
@@ -132,6 +134,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf9160/azure_*                  @jtguggedal @simensrostad @coderbyheart
 /samples/nrf9160/location/                @trantanen @hiltunent @jhirsi @tokangas
 /samples/nrf9160/lwm2m_client/            @rlubos @VeijoPesonen
+/samples/nrf9160/nrf_cloud_*              @plskeggs @jayteemo @glarsennordic
 /samples/spm/                             @lemrey @hakonfam @SebastianBoe
 /samples/openthread/                      @lmaciejonczyk @rlubos @edmont @canisLupus1313
 /samples/profiler/                        @pdunaj
@@ -161,6 +164,7 @@ Kconfig*                                  @tejlmand
 /subsys/esb/                              @lemrey
 /subsys/app_event_manager/                @pdunaj
 /subsys/app_event_manager_profiler_tracer/    @pdunaj @MarekPieta
+/subsys/event_manager_proxy/              @rakons
 /subsys/fw_info/                          @hakonfam
 /subsys/gazell/                           @leewkb4567
 /subsys/mpsl/                             @rugeGerritsen
@@ -171,6 +175,7 @@ Kconfig*                                  @tejlmand
 /subsys/net/lib/ftp_client/               @junqingzou
 /subsys/net/lib/icalendar_parser/         @lats1980
 /subsys/net/lib/lwm2m_client_utils/       @rlubos @VeijoPesonen
+/subsys/net/lib/nrf_cloud/                @plskeggs @jayteemo @glarsennordic
 /subsys/net/lib/zzhc/                     @junqingzou
 /subsys/nfc/                              @grochu @anangl
 /subsys/nrf_rpc/                          @doki-nordic @KAGA164
@@ -201,9 +206,10 @@ Kconfig*                                  @tejlmand
 /tests/lib/sms/                           @trantanen @tokangas
 /tests/lib/modem_trace/                   @balaji-nordic
 /tests/lib/ram_pwrdn/                     @Damian-Nordic
-/tests/modules/lib/cddl-gen/              @oyvindronningstad
+/tests/modules/lib/zcbor/                 @oyvindronningstad
 /tests/modules/mcuboot/external_flash/    @hakonfam @sigvartmh
 /tests/modules/tfm/                       @SebastianBoe @joerchan @torsteingrindvik @magnev
+/tests/nrf5340_audio/                     @koffes @alexsven @erikrobstad @rick1082 @nordic-auko
 /tests/subsys/bluetooth/gatt_dm/          @doki-nordic
 /tests/subsys/bluetooth/mesh/             @trond-snekvik
 /tests/subsys/bootloader/                 @hakonfam

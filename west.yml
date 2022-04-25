@@ -39,7 +39,7 @@ manifest:
   defaults:
     remote: ncs
 
-  group-filter: [-homekit, -nrf-802154, -find-my]
+  group-filter: [-homekit, -nrf-802154, -find-my, -nrf5340_audio]
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
@@ -52,7 +52,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 186cf4539e5a28fc1653240d5d675b75c4548010
+      revision: 240c7b9a691f6bcee824d1b26a40a368a916bb05
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -109,11 +109,11 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: d071b4c469cd35bb61f2f1bc08cd68d6d545f2d1
+      revision: d3a15c16008961b1ca4e30375247ebeeaa693e6b
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: e6f3c85f618e51b6b8fb0105e2ce9fa6372ba8f0
+      revision: 7d4a7139009c24ffa6edfb7f24fe32090bca0583
     - name: tfm-mcuboot # This is used by the trusted-firmware-m module.
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
@@ -141,14 +141,19 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: e3af62081234a4eee9430a10817c79ea0e788ce9
+      revision: f26ed1da328a897695c70117f52870dfdabb6ed4
       groups:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: 2cbb43aa7ace134a6d437330f0755e262743da81
+      revision: 7fdf4606627ececece7f3865107e6cdaa052537d
       groups:
       - find-my
+    - name: sdk-lc3
+      revision: c47d9ee21c9cd8626a903c2e2f0c80c0920a1eb8
+      path: modules/lib/lc3
+      groups:
+      - nrf5340_audio
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
@@ -162,14 +167,20 @@ manifest:
       path: modules/alexa-embedded
       revision: face92d8c62184832793f518bb1f19379538c5c1
       remote: alexa
-    - name: cddl-gen
+    - name: zcbor
       remote: nordicsemi
-      revision: 1c2656daa87ebf4cd3c45ee8eafa336260d589bc
-      path: modules/lib/cddl-gen
+      revision: 0.4.0
+      path: modules/lib/zcbor
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
       revision: 0.29.1
       remote: memfault
+    - name: cirrus
+      repo-path: sdk-mcu-drivers
+      path: modules/hal/cirrus-logic
+      revision: 9f6b3812237fbb0d4157ba3584c13f1644fcbe3a
+      groups:
+      - nrf5340_audio
 
   # West-related configuration for the nrf repository.
   self:

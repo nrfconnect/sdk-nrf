@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <modem_update_decode.h>
 #include <drivers/flash.h>
 #include <logging/log.h>
 #include <dfu/fmfu_fdev.h>
 #include <nrf_modem_full_dfu.h>
 #include <mbedtls/sha256.h>
 #include <stdio.h>
+#include <modem_update_decode.h>
 
 LOG_MODULE_REGISTER(fmfu_fdev, CONFIG_FMFU_FDEV_LOG_LEVEL);
 
@@ -183,7 +183,7 @@ static int load_segments(const struct device *fdev, uint8_t *meta_buf,
 int fmfu_fdev_load(uint8_t *buf, size_t buf_len, const struct device *fdev,
 		   size_t offset)
 {
-	const cbor_string_type_t *segments_string;
+	const struct zcbor_string *segments_string;
 	struct COSE_Sign1_Manifest wrapper;
 	bool hash_len_valid = false;
 	uint8_t expected_hash[32];
@@ -212,8 +212,8 @@ int fmfu_fdev_load(uint8_t *buf, size_t buf_len, const struct device *fdev,
 		return err;
 	}
 
-	if (!cbor_decode_Wrapper(meta_buf, MAX_META_LEN, &wrapper,
-				 &wrapper_len)) {
+	if (cbor_decode_Wrapper(meta_buf, MAX_META_LEN, &wrapper,
+				&wrapper_len) != ZCBOR_SUCCESS) {
 		LOG_ERR("Unable to decode wrapper");
 		return -EINVAL;
 	}
@@ -228,8 +228,8 @@ int fmfu_fdev_load(uint8_t *buf, size_t buf_len, const struct device *fdev,
 	 */
 	segments_string =
 		&wrapper._COSE_Sign1_Manifest_payload_cbor._Manifest_segments;
-	if (!cbor_decode_Segments(segments_string->value, segments_string->len,
-				  &segments, NULL)) {
+	if (cbor_decode_Segments(segments_string->value, segments_string->len,
+				 &segments, NULL) != ZCBOR_SUCCESS) {
 		LOG_ERR("Unable to decode segments");
 		return -EINVAL;
 	}

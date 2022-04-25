@@ -17,7 +17,7 @@
 #endif
 
 #ifdef CONFIG_ZIGBEE_SHELL
-#include <zigbee_cli.h>
+#include <zigbee/zigbee_shell.h>
 #endif
 #include <zboss_api.h>
 #include "zb_nrf_platform.h"
@@ -338,7 +338,7 @@ static void zboss_thread(void *arg1, void *arg2, void *arg3)
 
 	stack_is_started = true;
 #ifdef CONFIG_ZIGBEE_SHELL
-	zb_cli_configure_endpoint();
+	zb_shell_configure_endpoint();
 #endif /* defined(CONFIG_ZIGBEE_SHELL) */
 
 	while (1) {

@@ -629,6 +629,13 @@ CONFIG_MOSH_REST
    You may not be able to use all features at the same time due to memory restrictions.
    To see which features are enabled simultaneously, check the configuration files and overlays.
 
+Additional configuration
+========================
+
+Check and configure the following library option that is used by the sample:
+
+* :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` - Selects an external GNSS antenna.
+
 Building and running
 ********************
 
@@ -801,6 +808,18 @@ For example:
 .. code-block:: console
 
    west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-cloud_mqtt.conf
+
+Zephyr native TCP/IP stack usage over nRF9160 LTE connection
+============================================================
+
+To build the MoSh sample with the nRF91 device driver that is not offloading the TCP/IP stack to modem, use the ``-DOVERLAY_CONFIG=overlay-non-offloading.conf`` option.
+When running this configuration, the configured MoSh commands, for example iperf3, are using Zephyr native TCP/IP stack over nRF9160 LTE connection in default PDN context.
+
+For example:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-non-offloading.conf
 
 References
 **********

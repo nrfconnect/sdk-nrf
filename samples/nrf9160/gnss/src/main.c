@@ -331,20 +331,6 @@ static void date_time_evt_handler(const struct date_time_evt *evt)
 
 static int modem_init(void)
 {
-	if (strlen(CONFIG_GNSS_SAMPLE_AT_MAGPIO) > 0) {
-		if (nrf_modem_at_printf("%s", CONFIG_GNSS_SAMPLE_AT_MAGPIO) != 0) {
-			LOG_ERR("Failed to set MAGPIO configuration");
-			return -1;
-		}
-	}
-
-	if (strlen(CONFIG_GNSS_SAMPLE_AT_COEX0) > 0) {
-		if (nrf_modem_at_printf("%s", CONFIG_GNSS_SAMPLE_AT_COEX0) != 0) {
-			LOG_ERR("Failed to set COEX0 configuration");
-			return -1;
-		}
-	}
-
 	if (IS_ENABLED(CONFIG_DATE_TIME)) {
 		date_time_register_handler(date_time_evt_handler);
 	}

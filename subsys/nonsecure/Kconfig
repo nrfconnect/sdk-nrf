@@ -1,0 +1,273 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if BUILD_WITH_TFM || IS_SPM
+menu "Trusted Execution Non-Secure"
+
+menu "Peripheral Secure mapping"
+
+config NRF_FPU_SECURE
+	bool "FPU configured as secure peripheral"
+	depends on CPU_HAS_FPU
+	help
+	  FPU is implemented with user-selectable security mapping.
+	  If it has been configured as a secure peripheral then only the secure
+	  processing environment is able to access the peripheral
+
+peripheral=DCNF
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=OSCILLATORS
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=REGULATORS
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=CLOCK
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=POWER
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=RESET
+rsource "Kconfig.template.peripheral_secure"
+
+config NRF_CTRLAP_SECURE
+	bool "CTRLAP configured as secure peripheral"
+	# TODO: Use template when HAS_HW_NRF_CTRLAP is available in zephyr.
+	depends on SOC_NRF9160 || SOC_NRF5340_CPUAPP
+	help
+	  CTRLAP is implemented with user-selectable security mapping.
+	  If it has been configured as a secure peripheral then only the secure
+	  processing environment is able to access the peripheral
+
+peripheral=SPIM0
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIS0
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TWIM0
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TWIS0
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=UARTE0
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM1
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIS1
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TWIM1
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TWIS1
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=UARTE1
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM4
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM2
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIS2
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TWIM2
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TWIS2
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=UARTE2
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM3
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIS3
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TWIM3
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TWIS3
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=UARTE3
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SAADC
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER0
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER1
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER2
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=RTC0
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=RTC1
+rsource "Kconfig.template.peripheral_secure"
+
+config NRF_DPPI_SECURE
+	bool "DPPI configured as secure peripheral"
+	depends on HAS_HW_NRF_DPPIC
+	help
+	  DPPI is implemented with user-selectable security mapping.
+	  If it has been configured as a secure peripheral then only the secure
+	  processing environment is able to access the peripheral
+
+peripheral=WDT
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=WDT0
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=WDT1
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=COMP
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=LPCOMP
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=EGU0
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=EGU1
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=EGU2
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=EGU3
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=EGU4
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=EGU5
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=PWM0
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=PWM1
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=PWM2
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=PWM3
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=PDM
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=I2S
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=IPC
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=QSPI
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=NFCT
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=MUTEX
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=QDEC0
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=QDEC1
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=USBD
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=USBREG
+rsource "Kconfig.template.peripheral_secure"
+
+config NRF_NVMC_SECURE
+	bool "NVMC configured as secure peripheral"
+	help
+	  NVMC is implemented with split security.
+	  If it has been configured a a secure peripheral then only the secure
+	  processing environment is able to access the peripheral.
+	  If it has been configured as non-secure, only a subset of the
+	  registers is available from the non-secure processing environment.
+
+peripheral=GPIO0
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=GPIO1
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=VMC
+rsource "Kconfig.template.peripheral_secure"
+
+config NRF_GPIOTE0_SECURE
+	bool "GPIOTE configured as secure peripheral"
+	depends on HAS_HW_NRF_GPIOTE
+	help
+	  GPIOTE0 is implemented with secure only security.
+	  This option only enables it to be used in the secure image.
+
+config NRF_GPIO0_PIN_MASK_SECURE
+	hex "Set GPIO0 PERM mask for Secure"
+	default 0x00000000
+	depends on HAS_HW_NRF_GPIO0 && !NRF_GPIO0_SECURE
+	help
+	  GPIO is implemented with split security. If it has been configured as
+	  non-secure it can be accessed by both secure and non-secure accesses.
+	  A bitmask can be set to configure a subset of the GPIO pins as secure
+	  to prevent non-secure from accessing these pin. Secure accesses can be
+	  made to GPIO pins configured as non-secure.
+
+config NRF_GPIO1_PIN_MASK_SECURE
+	hex "Set GPIO1 PERM mask for Secure"
+	default 0x00000000
+	depends on HAS_HW_NRF_GPIO1 && !NRF_GPIO1_SECURE
+	help
+	  GPIO is implemented with split security. If it has been configured as
+	  non-secure it can be accessed by both secure and non-secure accesses.
+	  A bitmask can be set to configure a subset of the GPIO pins as secure
+	  to prevent non-secure from accessing these pin. Secure accesses can be
+	  made to GPIO pins configured as non-secure.
+
+config NRF_DPPI_CHANNEL_MASK_SECURE
+	hex "Set DPPI PERM mask for Secure"
+	default 0x00000000
+	depends on HAS_HW_NRF_DPPIC && !NRF_DPPI_SECURE
+	help
+	  DPPI is implemented with split securety. If it has been configured as
+	  non-secure it can be accessed by both secure and non-secure accesses.
+	  A bitmask can be set to configure a subset of the DPPI channels as
+	  secure to prevent non-secure from accessing these channels. Secure
+	  accesses can be made to the DPPI pins configured as non-secure.
+
+endmenu # Peripheral Secure mapping
+
+endmenu # Trusted Execution Non-Secure
+
+endif # BUILD_WITH_TFM || IS_SPM

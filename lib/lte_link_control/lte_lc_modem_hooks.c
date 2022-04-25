@@ -12,26 +12,13 @@
 LOG_MODULE_DECLARE(lte_lc);
 
 NRF_MODEM_LIB_ON_INIT(lte_lc_init_hook, on_modem_init, NULL);
-NRF_MODEM_LIB_ON_SHUTDOWN(lte_lc_shutdown_hook, on_shutdown, NULL);
+NRF_MODEM_LIB_ON_SHUTDOWN(lte_lc_shutdown_hook, on_modem_shutdown, NULL);
 
 static void on_modem_init(int err, void *ctx)
 {
 	if (err) {
 		return;
 	}
-
-#if defined(CONFIG_BOARD_THINGY91_NRF9160_NS)
-	/* Configuring MAGPIO, so that the correct antenna
-	 * matching network is used for each LTE band and GPS.
-	 */
-	err = nrf_modem_at_printf("AT%%XMAGPIO=1,1,1,7,1,746,803,2,698,748,"
-				  "2,1710,2200,3,824,894,4,880,960,5,791,849,"
-				  "7,1565,1586");
-	if (err) {
-		LOG_ERR("Failed to configure MAGPIO, err %d", err);
-		return;
-	}
-#endif
 
 #if defined(CONFIG_LTE_EDRX_REQ)
 	/* Request configured eDRX settings to save power */
@@ -81,7 +68,7 @@ static void on_modem_init(int err, void *ctx)
 #endif
 }
 
-static void on_shutdown(void *ctx)
+static void on_modem_shutdown(void *ctx)
 {
 	(void)lte_lc_deinit();
 }
