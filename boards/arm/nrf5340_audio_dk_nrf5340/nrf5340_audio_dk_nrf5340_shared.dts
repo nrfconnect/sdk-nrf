@@ -66,31 +66,31 @@ leds:	leds {
 
 	nrf5340_audio_dk {
 		compatible = "gpio-keys";
-		dsp_gpio_in: dsp_gpio_in {
+		hw_codec_gpio_in: hw_codec_gpio_in {
 			gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
-			label = "GPIO from DSP/Codec";
+			label = "GPIO from HW codec";
 		};
 
-		dsp_irq_in: dsp_irq_in {
+		hw_codec_irq_in: hw_codec_irq_in {
 			gpios = <&gpio0 19 GPIO_ACTIVE_LOW>;
-			label = "Interrupt from DSP/Codec";
+			label = "Interrupt from HW codec";
 		};
 
-		dsp_reset_out: dsp_reset_out {
+		hw_codec_reset_out: hw_codec_reset_out {
 			gpios = <&gpio0 18 GPIO_ACTIVE_LOW>;
-			label = "Reset DSP/Codec";
+			label = "Reset HW codec";
 		};
 
-		dsp_sel_out: dsp_sel_out {
+		hw_codec_sel_out: hw_codec_sel_out {
 			gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
-			label = "DSP selector. Low selects OB DSP/Codec, high \
-				 selects external DSP/Codec";
+			label = "HW codec selector. Low selects OB HW codec, high \
+				 selects external HW codec";
 		};
 
 		spi_sel_in: spi_sel_in {
 			gpios = <&gpio0 22 GPIO_ACTIVE_LOW>;
-			label = "SPI select in. High = nRF SPI to DSP/Codec. \
-				 Low = FTDI to DSP/Codec";
+			label = "SPI select in. High = nRF SPI to HW codec. \
+				 Low = FTDI to HW codec";
 		};
 
 		pmic_iset_out: pmic_iset_out {

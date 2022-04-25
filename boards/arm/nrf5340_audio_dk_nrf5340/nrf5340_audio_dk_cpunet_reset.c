@@ -60,29 +60,29 @@ static int core_config(void)
 	}
 
 	/* Set on-board DSP/HW codec as default */
-	static const struct gpio_dt_spec dsp_sel =
-		GPIO_DT_SPEC_GET(DT_NODELABEL(dsp_sel_out), gpios);
+	static const struct gpio_dt_spec hw_codec_sel =
+		GPIO_DT_SPEC_GET(DT_NODELABEL(hw_codec_sel_out), gpios);
 
-	if (!device_is_ready(dsp_sel.port)) {
+	if (!device_is_ready(hw_codec_sel.port)) {
 		LOG_ERR("GPIO is not ready!");
 		return -ENXIO;
 	}
 
-	ret = gpio_pin_configure_dt(&dsp_sel, GPIO_OUTPUT_LOW);
+	ret = gpio_pin_configure_dt(&hw_codec_sel, GPIO_OUTPUT_LOW);
 	if (ret) {
 		return ret;
 	}
 
 	/* Pull the CS47L63 reset line to high (this pin is active low) */
-	static const struct gpio_dt_spec dsp_reset =
-		GPIO_DT_SPEC_GET(DT_NODELABEL(dsp_reset_out), gpios);
+	static const struct gpio_dt_spec hw_codec_reset =
+		GPIO_DT_SPEC_GET(DT_NODELABEL(hw_codec_reset_out), gpios);
 
-	if (!device_is_ready(dsp_reset.port)) {
+	if (!device_is_ready(hw_codec_reset.port)) {
 		LOG_ERR("GPIO is not ready!");
 		return -ENXIO;
 	}
 
-	ret = gpio_pin_configure_dt(&dsp_reset, GPIO_OUTPUT_HIGH);
+	ret = gpio_pin_configure_dt(&hw_codec_reset, GPIO_OUTPUT_HIGH);
 	if (ret) {
 		return ret;
 	}
