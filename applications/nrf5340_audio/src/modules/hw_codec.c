@@ -25,7 +25,8 @@ LOG_MODULE_REGISTER(HW_CODEC, CONFIG_LOG_HW_CODEC_LEVEL);
 #define HW_CODEC_SELECT_DELAY_MS 2
 
 static cs47l63_t cs47l63_driver;
-static const struct gpio_dt_spec dsp_sel = GPIO_DT_SPEC_GET(DT_NODELABEL(dsp_sel_out), gpios);
+static const struct gpio_dt_spec hw_codec_sel =
+	GPIO_DT_SPEC_GET(DT_NODELABEL(hw_codec_sel_out), gpios);
 
 /**@brief Write to multiple registers in CS47L63
  */
@@ -60,11 +61,11 @@ static int hw_codec_on_board_set(void)
 {
 	int ret;
 
-	if (!device_is_ready(dsp_sel.port)) {
+	if (!device_is_ready(hw_codec_sel.port)) {
 		return -ENXIO;
 	}
 
-	ret = gpio_pin_configure_dt(&dsp_sel, GPIO_OUTPUT_LOW);
+	ret = gpio_pin_configure_dt(&hw_codec_sel, GPIO_OUTPUT_LOW);
 	if (ret) {
 		return ret;
 	}

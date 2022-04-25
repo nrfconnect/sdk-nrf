@@ -26,9 +26,12 @@ LOG_MODULE_REGISTER(CS47L63, CONFIG_LOG_CS47L63_LEVEL);
 /* Delay the processing thread to allow interrupts to settle after boot */
 #define CS47L63_PROCESS_THREAD_DELAY_MS 10
 
-static const struct gpio_dt_spec dsp_gpio = GPIO_DT_SPEC_GET(DT_NODELABEL(dsp_gpio_in), gpios);
-static const struct gpio_dt_spec dsp_irq = GPIO_DT_SPEC_GET(DT_NODELABEL(dsp_irq_in), gpios);
-static const struct gpio_dt_spec dsp_reset = GPIO_DT_SPEC_GET(DT_NODELABEL(dsp_reset_out), gpios);
+static const struct gpio_dt_spec hw_codec_gpio =
+	GPIO_DT_SPEC_GET(DT_NODELABEL(hw_codec_gpio_in), gpios);
+static const struct gpio_dt_spec hw_codec_irq =
+	GPIO_DT_SPEC_GET(DT_NODELABEL(hw_codec_irq_in), gpios);
+static const struct gpio_dt_spec hw_codec_reset =
+	GPIO_DT_SPEC_GET(DT_NODELABEL(hw_codec_reset_out), gpios);
 
 const static struct device *cirrus_dev = DEVICE_DT_GET(DT_BUS(DT_NODELABEL(cs47l63)));
 const static struct device *gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
@@ -108,7 +111,7 @@ static void cs47l63_comm_pin_int_handler(const struct device *gpio_port, struct 
 		ERR_CHK_MSG(-ENODEV, "No callback registered");
 	}
 
-	if (pins == BIT(dsp_irq.pin)) {
+	if (pins == BIT(hw_codec_irq.pin)) {
 		bsp_callback(BSP_STATUS_OK, bsp_callback_arg);
 		k_sem_give(&sem_cs47l63);
 	}
@@ -320,8 +323,8 @@ static void cs47l63_comm_thread(void *cs47l63_driver, void *dummy2, void *dummy3
 	}
 }
 
-static cs47l63_bsp_config_t bsp_config = { .bsp_reset_gpio_id = dsp_reset.pin,
-					   .bsp_int_gpio_id = dsp_irq.pin,
+static cs47l63_bsp_config_t bsp_config = { .bsp_reset_gpio_id = hw_codec_reset.pin,
+					   .bsp_int_gpio_id = hw_codec_irq.pin,
 					   .cp_config.bus_type = CS47L63_BUS_TYPE_SPI,
 					   .cp_config.spi_pad_len = 4,
 					   .notification_cb = &notification_callback,
@@ -347,32 +350,32 @@ int cs47l63_comm_init(cs47l63_t *cs47l63_driver)
 		return -ENXIO;
 	}
 
-	if (!device_is_ready(dsp_gpio.port)) {
+	if (!device_is_ready(hw_codec_gpio.port)) {
 		LOG_ERR("GPIO is not ready!");
 		return -ENXIO;
 	}
 
-	ret = gpio_pin_configure_dt(&dsp_gpio, GPIO_INPUT);
+	ret = gpio_pin_configure_dt(&hw_codec_gpio, GPIO_INPUT);
 	if (ret) {
 		return ret;
 	}
 
-	if (!device_is_ready(dsp_irq.port)) {
+	if (!device_is_ready(hw_codec_irq.port)) {
 		LOG_ERR("GPIO is not ready!");
 		return -ENXIO;
 	}
 
-	ret = gpio_pin_configure_dt(&dsp_irq, GPIO_INPUT);
+	ret = gpio_pin_configure_dt(&hw_codec_irq, GPIO_INPUT);
 	if (ret) {
 		return ret;
 	}
 
-	if (!device_is_ready(dsp_reset.port)) {
+	if (!device_is_ready(hw_codec_reset.port)) {
 		LOG_ERR("GPIO is not ready!");
 		return -ENXIO;
 	}
 
-	ret = gpio_pin_configure_dt(&dsp_reset, GPIO_OUTPUT);
+	ret = gpio_pin_configure_dt(&hw_codec_reset, GPIO_OUTPUT);
 	if (ret) {
 		return ret;
 	}
