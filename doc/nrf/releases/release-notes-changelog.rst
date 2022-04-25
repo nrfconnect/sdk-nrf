@@ -83,6 +83,11 @@ Zigbee
 
 See `Zigbee samples`_ for the list of changes for the Zigbee samples.
 
+ESB
+---
+
+* Fixed the ``update_radio_crc()`` function in order to correctly configure the CRC's registers (8 bits, 16 bits, or none).
+
 Applications
 ============
 
