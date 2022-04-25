@@ -14,6 +14,14 @@ target_compile_definitions(app PRIVATE
   CONFIG_ZBOSS_OSIF_LOG_LEVEL=LOG_LEVEL_DBG
 )
 
+# CONFIG_ZIGBEE_USE_SOFTWARE_AES is defined in CMakeLists
+# because of unsatisfied dependency to CONFIG_ZIGBEE
+if (${BOARD} STREQUAL "nrf5340dk_nrf5340_cpuapp")
+  target_compile_definitions(app PRIVATE
+  CONFIG_ZIGBEE_USE_SOFTWARE_AES=1
+)
+endif()
+
 target_include_directories(app PRIVATE
   ${NRF_DIR}/subsys/zigbee/osif
   ${NRFXLIB_DIR}/zboss/production/include
