@@ -654,6 +654,9 @@ It gets the antenna used by the DUT device for RX operations.
 
       custom rgetrxantenna
 
+.. caution::
+   Running this command when one device is in DUT mode triggers an error.
+
 rgetbestrxantenna - Get last best DUT RX antenna ID selected by antenna diversity algorithm
 ===========================================================================================
 
@@ -663,6 +666,9 @@ It gets the last best antenna selected for RX operations by the antenna diversit
       :class: highlight
 
       custom rgetbestrxantenna
+
+.. caution::
+   Running this command when one device is in DUT mode triggers an error.
 
 lcarrier - Unmodulated waveform (carrier) transmission
 ======================================================
