@@ -29,7 +29,9 @@ if NRF_CLOUD_MQTT || NRF_CLOUD_REST || NRF_CLOUD_PGPS || MODEM_JWT
 
 config NRF_CLOUD_HOST_NAME
 	string "nRF Cloud server hostname"
-	default "a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com"
+	default "mqtt.nrfcloud.com"
+	help
+	  Used for MQTT and JITP performed with REST
 
 config NRF_CLOUD_SEC_TAG
 	int "Security tag to use for nRF Cloud connection"

@@ -478,6 +478,7 @@ Libraries for networking
         The data is now sent to the application even if no ``"config"`` section is present.
       * The application can now send shadow updates earlier in the connection process.
       * nRF Cloud error message responses to location service MQTT requests are now handled.
+      * The value of the :kconfig:option:`NRF_CLOUD_HOST_NAME` option is now "mqtt.nrfcloud.com".
 
     * Fixed the validation of bootloader FOTA updates.
 
