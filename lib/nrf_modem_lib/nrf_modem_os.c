@@ -271,7 +271,7 @@ int nrf_modem_os_sem_take(void *sem, int timeout)
 		 "Uninitialised semaphore");
 
 	err = k_sem_take((struct k_sem *)sem, timeout == -1 ? K_FOREVER : K_MSEC(timeout));
-	if (err == -EAGAIN) {
+	if (err) {
 		return NRF_ETIMEDOUT;
 	}
 
