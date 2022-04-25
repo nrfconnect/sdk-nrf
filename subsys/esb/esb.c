@@ -408,23 +408,22 @@ static bool update_radio_crc(void)
 	case ESB_CRC_16BIT:
 		NRF_RADIO->CRCINIT = 0xFFFFUL;  /* Initial value */
 		NRF_RADIO->CRCPOLY = 0x11021UL; /* CRC poly: x^16+x^12^x^5+1 */
+		NRF_RADIO->CRCCNF = ESB_CRC_16BIT << RADIO_CRCCNF_LEN_Pos;
 		break;
 
 	case ESB_CRC_8BIT:
 		NRF_RADIO->CRCINIT = 0xFFUL;  /* Initial value */
 		NRF_RADIO->CRCPOLY = 0x107UL; /* CRC poly: x^8+x^2^x^1+1 */
+		NRF_RADIO->CRCCNF = ESB_CRC_8BIT << RADIO_CRCCNF_LEN_Pos;
 		break;
 
 	case ESB_CRC_OFF:
+		NRF_RADIO->CRCCNF = ESB_CRC_OFF << RADIO_CRCCNF_LEN_Pos;
 		break;
 
 	default:
 		return false;
 	}
-
-	NRF_RADIO->CRCINIT = 0xFFFFUL;  /* Initial value */
-	NRF_RADIO->CRCPOLY = 0x11021UL; /* CRC poly: x^16+x^12^x^5+1 */
-	NRF_RADIO->CRCCNF = ESB_CRC_16BIT << RADIO_CRCCNF_LEN_Pos;
 
 	return true;
 }
