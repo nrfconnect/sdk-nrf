@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2019-2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /dts-v1/;
 #include <nordic/nrf52832_qfaa.dtsi>
+#include "nrf52kbd_nrf52832-pinctrl.dtsi"
 
 / {
 	model = "Nordic nRF52 Kbd NRF52832";
@@ -35,18 +36,16 @@
 	status = "okay";
 	compatible = "nordic,nrf-uart";
 	current-speed = <115200>;
-	tx-pin = <35>;
-	rx-pin = <36>;
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-1 = <&uart0_sleep>;
+	pinctrl-names = "default", "sleep";
 };
 
 &pwm0 {
 	status = "okay";
-	ch0-pin = <30>;
-	ch0-inverted;
-	ch1-pin = <29>;
-	ch1-inverted;
-	ch2-pin = <28>;
-	ch2-inverted;
+	pinctrl-0 = <&pwm0_default>;
+	pinctrl-1 = <&pwm0_sleep>;
+	pinctrl-names = "default", "sleep";
 };
 
 &flash0 {
