@@ -27,3 +27,8 @@ properties:
     description: Number of buffers in aggregator, range 1-255.
     type: int
     default: 2
+
+  memory-region:
+    description: phandle to the shared memory region
+    required: false
+    type: phandle

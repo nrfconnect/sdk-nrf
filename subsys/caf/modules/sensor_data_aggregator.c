@@ -23,6 +23,25 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_SENSOR_MANAGER_LOG_LEVEL);
 #define __DEFINE_DATA(i, agg_id, size)							\
 	static uint8_t agg_ ## agg_id ## _buff_ ## i ## _data[size] __aligned(4);
 
+#if (DT_INST_NODE_HAS_PROP(agg_id, memory_region))
+
+#define __INITIALIZE_BUF(i, agg_id)							\
+	{										\
+		(uint8_t *) DT_REG_ADDR(DT_INST_PHANDLE(agg_id, memory_region)) +	\
+		i * DT_INST_PROP(agg_id, buf_data_length)				\
+	},
+
+
+
+/* buf_len has to be equal to n*sensor_data_size. */
+#define __DEFINE_BUF_DATA(i)									\
+	static struct aggregator_buffer agg_ ## i ## _bufs[] = {				\
+		UTIL_LISTIFY(DT_INST_PROP(i, buf_count), __INITIALIZE_BUF, i)			\
+	};											\
+	BUILD_ASSERT((DT_INST_PROP(i, buf_data_length) % DT_INST_PROP(i, sensor_data_size)) == 0,\
+		"Wrong sensor data or buffer size");
+
+#else
 #define __INITIALIZE_BUF(i, agg_id)							\
 	{(uint8_t *) &agg_ ## agg_id ## _buff_ ## i ## _data},
 
@@ -36,6 +55,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_SENSOR_MANAGER_LOG_LEVEL);
 	BUILD_ASSERT((DT_INST_PROP(i, buf_data_length) % DT_INST_PROP(i, sensor_data_size)) == 0,\
 		"Wrong sensor data or buffer size");
 
+#endif
 
 #define __DEFINE_AGGREGATOR(i)								\
 	[i].sensor_descr = DT_INST_PROP(i, sensor_descr),				\
@@ -133,7 +153,6 @@ static int enqueue_sample(struct aggregator *agg, struct sensor_event *event)
 		__ASSERT_NO_MSG(false);
 		return -ENOMEM;
 	}
-
 	memcpy(&ab->data[pos], event->dyndata.data, event->dyndata.size);
 	ab->sample_cnt++;
 	avail -= event->dyndata.size;
