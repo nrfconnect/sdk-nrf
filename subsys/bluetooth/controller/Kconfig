@@ -4,9 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-DT_PATH_NORDIC_RADIO := $(dt_nodelabel_path,radio)
-DT_NORDIC_RADIO_DFE_SUPPORTED := $(dt_node_has_bool_prop,$(DT_PATH_NORDIC_RADIO),dfe-supported)
-
 choice BT_LL_CHOICE
 	prompt "Bluetooth Link Layer Selection"
 	default BT_LL_SOFTDEVICE
@@ -30,7 +27,7 @@ config BT_LL_SOFTDEVICE
 	select BT_CTLR_PHY_2M_SUPPORT if HAS_HW_NRF_RADIO_BLE_2M
 	select BT_CTLR_PHY_CODED_SUPPORT if HAS_HW_NRF_RADIO_BLE_CODED
 	select BT_HAS_HCI_VS
-	select BT_CTLR_DF_CTE_TX_SUPPORT if $(DT_NORDIC_RADIO_DFE_SUPPORTED)
+	select BT_CTLR_DF_CTE_TX_SUPPORT if HAS_HW_NRF_RADIO_DFE
 	depends on (SOC_SERIES_NRF52X || SOC_NRF5340_CPUNET)
 	help
 	  Use SoftDevice Link Layer implementation.
