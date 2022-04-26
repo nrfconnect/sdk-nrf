@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2019-2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /dts-v1/;
 #include <nordic/nrf52832_qfaa.dtsi>
+#include "nrf52dmouse_nrf52832-pinctrl.dtsi"
 
 / {
 	model = "Nordic nRF52 DMouse NRF52832";
@@ -35,30 +36,29 @@
 	status = "okay";
 	compatible = "nordic,nrf-uart";
 	current-speed = <115200>;
-	tx-pin = <19>;
-	rx-pin = <20>;
-	rts-pin = <18>;
-	cts-pin = <17>;
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-1 = <&uart0_sleep>;
+	pinctrl-names = "default", "sleep";
 };
 
 &qdec {
 	status = "okay";
-	a-pin = <29>;
-	b-pin = <30>;
 	enable-pin = <31>;
-	led-pin = <0xFFFFFFFF>;
 	led-pre = <0>;
 	steps = <24>;
+	pinctrl-0 = <&qdec_default>;
+	pinctrl-1 = <&qdec_sleep>;
+	pinctrl-names = "default", "sleep";
 };
 
 &spi0 {
 	compatible = "nordic,nrf-spi";
 	status = "okay";
-	sck-pin = <5>;
-	mosi-pin = <6>;
-	miso-pin = <6>;
 	cs-gpios = <&gpio0 8 0>;
 
+	pinctrl-0 = <&spi0_default>;
+	pinctrl-1 = <&spi0_sleep>;
+	pinctrl-names = "default", "sleep";
 	paw3212@0 {
 		compatible = "pixart,paw3212";
 		reg = <0>;
