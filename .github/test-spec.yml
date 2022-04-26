@@ -15,6 +15,9 @@
   - "lib/modem_key_mgmt/**/*"
   - "lib/nrf_modem_lib/**/*"
   - "lib/sms/**/*"
+  - "lib/at_cmd_parser/**/*"
+  - "lib/modem_info/**/*"
+  - "lib/date_time/**/*"
   - "samples/nrf9160/at_client/**/*"
   - "samples/nrf9160/coap_client/**/*"
   - "samples/nrf9160/download/**/*"
@@ -23,7 +26,13 @@
   - "samples/nrf9160/mqtt_simple/**/*"
   - "samples/nrf9160/secure_services/**/*"
   - "samples/nrf9160/sms/**/*"
+  - "samples/nrf9160/lwm2m_client/**/*"
   - "subsys/net/lib/download_client/**/*"
+  - "subsys/net/lib/fota_download/**/*"
+  - "subsys/net/lib/lwm2m_client_utils/**/*"
+  - "subsys/dfu/dfu_target/**/*"
+  - "subsys/dfu/fmfu_fdev/**/*"
+  - "subsys/fw_info/**/*"
 
 "CI-iot-libraries-test":
   - "include/modem/at_monitor.h"
