@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+cmake_minimum_required(VERSION 3.20.0)
+
+if(CONF_FILE)
+  if(${CONF_FILE} MATCHES "prj_(.*).conf")
+    set(CONF_FILE_BUILD_TYPE ${CMAKE_MATCH_1})
+    set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/boards/${BOARD}_${CONF_FILE_BUILD_TYPE}.overlay")
+  endif()
+endif()
+
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+project(event_manager_proxy_remote)
+message(STATUS "ZEPHYR_BASE: $ENV{ZEPHYR_BASE}")
+
+add_subdirectory("../common_config" "${CMAKE_CURRENT_BINARY_DIR}/common_config")
+add_subdirectory("../common_events" "${CMAKE_CURRENT_BINARY_DIR}/common_events")
+add_subdirectory("../modules"       "${CMAKE_CURRENT_BINARY_DIR}/modules")
+
+target_sources(app PRIVATE main.c)

@@ -1,0 +1,10 @@
+tests:
+  event_manager_proxy.openamp:
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    tags: event_manager_proxy
+  event_manager_proxy.icmsg:
+    extra_args: CONF_FILE=prj_icmsg.conf
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    tags: event_manager_proxy
