@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <dt-bindings/ipc_service/static_vrings.h>
+
 / {
 	chosen {
 		nordic,pm-ext-flash = &mx25r64;
@@ -55,4 +57,8 @@
 		};
 	};
 
+};
+
+&ipc0 {
+    zephyr,priority = <0 PRIO_COOP>;
 };
