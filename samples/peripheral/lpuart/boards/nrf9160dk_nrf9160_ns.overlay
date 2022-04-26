@@ -2,11 +2,10 @@
 
 &uart1 {
 	status = "okay";
-	rx-pin = <10>;
-	tx-pin = <11>;
-	/delete-property/ rts-pin;
-	/delete-property/ cts-pin;
 
+	pinctrl-0 = <&uart1_default_alt>;
+	pinctrl-1 = <&uart1_sleep_alt>;
+	pinctrl-names = "default", "sleep";
 	lpuart: nrf-sw-lpuart {
 		compatible = "nordic,nrf-sw-lpuart";
 		status = "okay";
@@ -17,9 +16,26 @@
 };
 
 &uart0 {
-	/delete-property/ rx-pin;
+	disable-rx;
 };
 
 &gpiote {
 	interrupts = <49 NRF_DEFAULT_IRQ_PRIORITY>;
+};
+
+&pinctrl {
+	uart1_default_alt: uart1_default_alt {
+		group1 {
+			psels = <NRF_PSEL(UART_RX, 0, 10)>,
+				<NRF_PSEL(UART_TX, 0, 11)>;
+		};
+	};
+
+	uart1_sleep_alt: uart1_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(UART_RX, 0, 10)>,
+				<NRF_PSEL(UART_TX, 0, 11)>;
+			low-power-enable;
+		};
+	};
 };
