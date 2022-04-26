@@ -48,6 +48,7 @@ endif # BT_FAST_PAIR_CRYPTO
 
 config BT_FAST_PAIR_REGISTRATION_DATA
 	bool
+	select PM_SINGLE_IMAGE
 	help
 	  Add Fast Pair registration data source files.
 
