@@ -1121,11 +1121,11 @@ The following code excerpt is taken from :file:`boards/arm/nrf52840gmouse_nrf528
    &spi1 {
    	compatible = "nordic,nrf-spim";
    	status = "okay";
-   	sck-pin = <16>;
-   	mosi-pin = <17>;
-   	miso-pin = <15>;
    	cs-gpios = <&gpio0 13 0>;
 
+	pinctrl-0 = <&spi1_default_alt>;
+	pinctrl-1 = <&spi1_sleep_alt>;
+	pinctrl-names = "default", "sleep";
    	pmw3360@0 {
    		compatible = "pixart,pmw3360";
    		reg = <0>;
