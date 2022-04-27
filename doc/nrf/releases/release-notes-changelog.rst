@@ -510,6 +510,10 @@ Libraries for networking
         * The use of the MCUboot secondary partition as storage, enabled with the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_MCUBOOT_SECONDARY` option.
         * An application-specific storage, enabled with the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_CUSTOM` option.
 
+ * :ref:`lib_nrf_cloud_agps` library:
+
+    * Fixed premature assistance suppression when the :kconfig:option:`CONFIG_NRF_CLOUD_AGPS_FILTERED` option is enabled.
+      Added a 10 minute margin of error to ensure A-GPS assistance is downloaded every two hours even if the modem requests assistance a little early.
 
 Libraries for NFC
 -----------------
