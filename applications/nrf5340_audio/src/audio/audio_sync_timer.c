@@ -44,7 +44,9 @@
 
 #include "audio_sync_timer.h"
 
+#include <zephyr.h>
 #include <zephyr/kernel.h>
+#include <init.h>
 #include <nrfx_timer.h>
 #include <nrfx_dppi.h>
 #include <nrfx_i2s.h>
@@ -61,7 +63,6 @@ LOG_MODULE_REGISTER(audio_sync_timer, CONFIG_LOG_AUDIO_SYNC_TIMER_LEVEL);
 #define AUDIO_SYNC_TIMER_I2S_FRAME_START_EVT_CAPTURE NRF_TIMER_TASK_CAPTURE0
 
 #define AUDIO_SYNC_TIMER_NET_APP_IPC_EVT NRF_IPC_EVENT_RECEIVE_4
-#define AUDIO_SYNC_TIMER_NET_APP_IPC_SIGNAL_IDX 4
 
 static const nrfx_timer_t timer_instance = NRFX_TIMER_INSTANCE(AUDIO_SYNC_TIMER_INSTANCE);
 
@@ -78,25 +79,25 @@ static void event_handler(nrf_timer_event_t event_type, void *ctx)
 {
 }
 
-uint32_t audio_sync_timer_i2s_frame_start_ts_get(void)
-{
-	return nrfx_timer_capture_get(&timer_instance,
-				      AUDIO_SYNC_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL);
-}
-
-uint32_t audio_sync_timer_curr_time_get(void)
-{
-	return nrfx_timer_capture(&timer_instance, AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE_CHANNEL);
-}
-
-void audio_sync_timer_sync_evt_send(void)
-{
-	nrfx_ipc_signal(AUDIO_SYNC_TIMER_NET_APP_IPC_SIGNAL_IDX);
-}
-
-int audio_sync_timer_init(void)
+/**
+ * @brief Initialize audio sync timer
+ *
+ * @note Clearing of the nRF5340 APP core sync
+ * timer is initialized here. The sync timers on
+ * APP core and NET core are cleared at exactly
+ * the same time using an IPC signal sent from
+ * the NET core. This makes the two timers
+ * synchronized.
+ *
+ * @param unused Unused
+ *
+ * @return 0 if successful, error otherwise
+ */
+static int audio_sync_timer_init(const struct device *unused)
 {
 	nrfx_err_t ret;
+
+	ARG_UNUSED(unused);
 
 	ret = nrfx_timer_init(&timer_instance, &cfg, event_handler);
 	if (ret - NRFX_ERROR_BASE_NUM) {
@@ -135,5 +136,20 @@ int audio_sync_timer_init(void)
 		return ret;
 	}
 
+	LOG_INF("Audio sync timer initialized");
+
 	return 0;
 }
+
+uint32_t audio_sync_timer_i2s_frame_start_ts_get(void)
+{
+	return nrfx_timer_capture_get(&timer_instance,
+				      AUDIO_SYNC_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL);
+}
+
+uint32_t audio_sync_timer_curr_time_get(void)
+{
+	return nrfx_timer_capture(&timer_instance, AUDIO_SYNC_TIMER_CURR_TIME_CAPTURE_CHANNEL);
+}
+
+SYS_INIT(audio_sync_timer_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
