@@ -45,7 +45,6 @@ private:
 	CHIP_ERROR Init();
 
 	void DispatchEvent(AppEvent *);
-	void InitOTARequestor();
 
 	static void ButtonPushHandler(AppEvent *);
 	static void ButtonReleaseHandler(AppEvent *);

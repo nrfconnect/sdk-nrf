@@ -43,7 +43,7 @@ static CHIP_ERROR SwitchCommandHandler(int argc, char **argv)
 
 static CHIP_ERROR TableCommandHelper(int argc, char **argv)
 {
-	BindingHandler::PrintBindingTable();
+	BindingHandler::GetInstance().PrintBindingTable();
 	return CHIP_NO_ERROR;
 }
 

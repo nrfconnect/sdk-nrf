@@ -27,22 +27,21 @@
 #include <lib/core/CHIPCallback.h>
 #include <lib/support/Span.h>
 
-namespace chip {
-namespace Controller {
-
-class DLL_EXPORT BindingCluster : public ClusterBase
+namespace chip
 {
-public:
-    BindingCluster() : ClusterBase(app::Clusters::Binding::Id) {}
-    ~BindingCluster() {}
-};
-
-class DLL_EXPORT OtaSoftwareUpdateProviderCluster : public ClusterBase
+namespace Controller
 {
-public:
-    OtaSoftwareUpdateProviderCluster() : ClusterBase(app::Clusters::OtaSoftwareUpdateProvider::Id) {}
-    ~OtaSoftwareUpdateProviderCluster() {}
-};
+	class DLL_EXPORT BindingCluster : public ClusterBase {
+	public:
+		BindingCluster() : ClusterBase(app::Clusters::Binding::Id) {}
+		~BindingCluster() {}
+	};
+
+	class DLL_EXPORT OtaSoftwareUpdateProviderCluster : public ClusterBase {
+	public:
+		OtaSoftwareUpdateProviderCluster() : ClusterBase(app::Clusters::OtaSoftwareUpdateProvider::Id) {}
+		~OtaSoftwareUpdateProviderCluster() {}
+	};
 
 } // namespace Controller
 } // namespace chip

@@ -31,7 +31,6 @@ namespace chip
 {
 namespace Controller
 {
-
 	class DLL_EXPORT OtaSoftwareUpdateProviderCluster : public ClusterBase {
 	public:
 		OtaSoftwareUpdateProviderCluster() : ClusterBase(app::Clusters::OtaSoftwareUpdateProvider::Id) {}

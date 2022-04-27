@@ -26,11 +26,7 @@
 #include <system/SystemError.h>
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
-#include <app/clusters/ota-requestor/BDXDownloader.h>
-#include <app/clusters/ota-requestor/DefaultOTARequestorStorage.h>
-#include <app/clusters/ota-requestor/GenericOTARequestorDriver.h>
-#include <app/clusters/ota-requestor/OTARequestor.h>
-#include <platform/nrfconnect/OTAImageProcessorImpl.h>
+#include "ota_util.h"
 #endif
 
 #include <dk_buttons_and_leds.h>
@@ -64,14 +60,6 @@ bool sIsThreadEnabled;
 bool sHaveBLEConnections;
 
 k_timer sFunctionTimer;
-
-#ifdef CONFIG_CHIP_OTA_REQUESTOR
-DefaultOTARequestorStorage sRequestorStorage;
-GenericOTARequestorDriver sOTARequestorDriver;
-OTAImageProcessorImpl sOTAImageProcessor;
-chip::BDXDownloader sBDXDownloader;
-chip::OTARequestor sOTARequestor;
-#endif
 } /* namespace */
 
 AppTask AppTask::sAppTask;
@@ -104,7 +92,7 @@ CHIP_ERROR AppTask::Init()
 #elif CONFIG_OPENTHREAD_MTD
 	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
 #else
-	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_FullEndDevice);
+	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_Router);
 #endif
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed");
@@ -145,17 +133,13 @@ CHIP_ERROR AppTask::Init()
 
 	/* Initialize CHIP server */
 	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
+	static chip::CommonCaseDeviceServerInitParams initParams;
+	(void)initParams.InitializeStaticResourcesBeforeServerInit();
 
-#ifdef CONFIG_CHIP_OTA_REQUESTOR
-	sOTAImageProcessor.SetOTADownloader(&sBDXDownloader);
-	sBDXDownloader.SetImageProcessorDelegate(&sOTAImageProcessor);
-	sRequestorStorage.Init(Server::GetInstance().GetPersistentStorage());
-	sOTARequestor.Init(Server::GetInstance(), sRequestorStorage, sOTARequestorDriver, sBDXDownloader);
-	sOTARequestorDriver.Init(&sOTARequestor, &sOTAImageProcessor);
-	chip::SetRequestorInstance(&sOTARequestor);
+	ReturnErrorOnFailure(chip::Server::GetInstance().Init(initParams));
+#if CONFIG_CHIP_OTA_REQUESTOR
+	InitBasicOTARequestor();
 #endif
-
-	ReturnErrorOnFailure(chip::Server::GetInstance().Init());
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 
@@ -337,15 +321,11 @@ void AppTask::FunctionTimerEventHandler()
 
 void AppTask::StartThreadHandler()
 {
-	if (chip::Server::GetInstance().AddTestCommissioning() != CHIP_NO_ERROR) {
-		LOG_ERR("Failed to add test pairing");
-	}
-
 	if (!ConnectivityMgr().IsThreadProvisioned()) {
 		StartDefaultThreadNetwork();
-		LOG_INF("Device is not commissioned to a Thread network. Starting with the default configuration");
+		LOG_INF("Device is not commissioned to a Thread network. Starting with the default configuration.");
 	} else {
-		LOG_INF("Device is commissioned to a Thread network");
+		LOG_INF("Device is commissioned to a Thread network.");
 	}
 }
 
