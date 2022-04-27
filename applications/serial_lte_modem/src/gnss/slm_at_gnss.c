@@ -433,7 +433,9 @@ static void fix_rep_wk(struct k_work *work)
 static void on_gnss_evt_fix(void)
 {
 	if (ttft_start != 0) {
-		LOG_INF("TTFF %ds", (int)k_uptime_delta(&ttft_start)/1000);
+		uint64_t delta = k_uptime_delta(&ttft_start);
+
+		LOG_INF("TTFF %d.%ds", (int)(delta/1000), (int)(delta%1000));
 		ttft_start = 0;
 	}
 
@@ -578,8 +580,7 @@ static void on_cloud_evt_data_received(const struct cloud_event *const evt)
 			LOG_ERR("Unable to process cell pos data, error: %d", err);
 		}
 	} else {
-		sprintf(rsp_buf, "\r\n#XNRFCLOUD: %s\r\n", evt->data.msg.buf);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		LOG_DBG("Unexpected message received");
 	}
 }
 
@@ -631,6 +632,7 @@ static void cloud_event_handler(const struct cloud_backend *const backend,
 	}
 }
 
+#if defined(CONFIG_SLM_AGPS) || defined(CONFIG_SLM_PGPS)
 static void date_time_event_handler(const struct date_time_evt *evt)
 {
 	switch (evt->type) {
@@ -647,6 +649,7 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 		break;
 	}
 }
+#endif
 
 static int nrf_cloud_datamode_callback(uint8_t op, const uint8_t *data, int len)
 {
@@ -774,6 +777,14 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 			err = cloud_connect(nrf_cloud);
 			if (err) {
 				LOG_ERR("Cloud connection failed, error: %d", err);
+#if defined(CONFIG_SLM_AGPS) || defined(CONFIG_SLM_PGPS)
+			} else {
+				/* A-GPS & P-GPS needs date_time, trigger to update current time */
+				date_time_update_async(date_time_event_handler);
+				if (k_sem_take(&sem_date_time, K_SECONDS(10)) != 0) {
+					LOG_WRN("Failed to get current time");
+				}
+#endif
 			}
 		} else if (op == nRF_CLOUD_SEND && nrf_cloud_ready) {
 			/* enter data mode */
@@ -860,13 +871,6 @@ int handle_at_agps(enum at_cmd_type cmd_type)
 				}
 			}
 
-			/* A-GPS needs date_time, trigger to update current time */
-			date_time_update_async(date_time_event_handler);
-			if (k_sem_take(&sem_date_time, K_SECONDS(10)) != 0) {
-				LOG_ERR("Failed to get current time");
-				return -EAGAIN;
-			}
-
 			/** set the flag before starting GNSS as modem instantly
 			 * send NRF_MODEM_GNSS_EVT_AGPS_REQ event
 			 */
@@ -938,14 +942,6 @@ int handle_at_pgps(enum at_cmd_type cmd_type)
 					return err;
 				}
 			}
-
-			/* P-GPS needs date_time, trigger to update current time */
-			date_time_update_async(date_time_event_handler);
-			if (k_sem_take(&sem_date_time, K_SECONDS(10)) != 0) {
-				LOG_ERR("Failed to get current time");
-				return -EAGAIN;
-			}
-			k_sem_reset(&sem_date_time);
 
 			struct nrf_cloud_pgps_init_param param = {
 				.event_handler = pgps_event_handler,
