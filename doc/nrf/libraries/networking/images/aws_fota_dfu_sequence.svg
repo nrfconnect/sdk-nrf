@@ -1,1 +1,553 @@
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1053" height="1789"><desc>title%20AWS%20Firmware-over-the-air%0Aparticipant%20Device%0Aparticipant%20AWS%20IoT%20MQTT%20Broker%0Aparticipant%20AWS%20IoT%20Jobs%0Aparticipant%20AWS%20S3%20Server%0Anote%20left%20of%20Device%3A%20Device%20Boot%0ADevice-%3EAWS%20IoT%20MQTT%20Broker%3A%20MQTT%3A%20CONNECT%0Aactivate%20AWS%20IoT%20MQTT%20Broker%0Aactivate%20Device%0AAWS%20IoT%20MQTT%20Broker-%3EDevice%3A%20MQTT%3A%20CONNACK%0Adeactivate%20AWS%20IoT%20MQTT%20Broker%0ADevice-%3EAWS%20IoT%20MQTT%20Broker%3A%20MQTT%3A%20SUBSCRIBE%0Aactivate%20AWS%20IoT%20MQTT%20Broker%0Anote%20over%20Device%2CAWS%20IoT%20MQTT%20Broker%3A%20%24aws%2Fthings%2F%3CthingName%3E%2Fjobs%2Fnotify-next%5Cn%24aws%2Fthings%2F%3CthingName%3E%2Fjobs%2F%24next%2Fget%2Faccepted%5Cn%24aws%2Fthings%2F%3CthingName%3E%2Fjobs%2F%24next%2Fget%2Frejected%0AAWS%20IoT%20MQTT%20Broker-%3EDevice%3A%20MQTT%3A%20SUBACK%0Adeactivate%20AWS%20IoT%20MQTT%20Broker%0Adeactivate%20Device%0Anote%20right%20of%20AWS%20IoT%20Jobs%3A%20Job%20created%0AAWS%20IoT%20Jobs-%3EDevice%3A%20MQTT%3A%20PUBLISH%0Aactivate%20Device%0Aactivate%20AWS%20IoT%20MQTT%20Broker%0Anote%20over%20AWS%20IoT%20Jobs%2CDevice%3A%20%24aws%2Fthings%2F%3CthingName%3E%2Fjobs%2Fnotify-next%5Cn%5CnJob%20description%20document%0ADevice-%3EAWS%20IoT%20MQTT%20Broker%3A%20MQTT%3A%20PUBACK%0Adeactivate%20AWS%20IoT%20MQTT%20Broker%0Anote%20left%20of%20Device%3A%20Parse%20job%20document%0ADevice-%3EAWS%20IoT%20MQTT%20Broker%3A%20MQTT%3A%20SUBSCRIBE%0Aactivate%20AWS%20IoT%20MQTT%20Broker%0Anote%20over%20Device%2CAWS%20IoT%20MQTT%20Broker%3A%20%24aws%2Fthings%2F%3CthingName%3E%2Fjobs%2F%3CjobId%3E%2Fupdate%2Faccepted%5Cn%24aws%2Fthings%2F%3CthingName%3E%2Fjobs%2F%3CjobId%3E%2Fupdate%2Frejected%0AAWS%20IoT%20MQTT%20Broker-%3EDevice%3A%20MQTT%3A%20SUBACK%0Adeactivate%20AWS%20IoT%20MQTT%20Broker%0ADevice-%3EAWS%20IoT%20Jobs%3A%20MQTT%3A%20PUBLISH%0Aactivate%20AWS%20IoT%20Jobs%0Aactivate%20AWS%20IoT%20MQTT%20Broker%0Anote%20over%20Device%2CAWS%20IoT%20Jobs%3A%20%24aws%2Fthings%2F%3CthingName%3E%2Fjobs%2F%3CjobId%3E%2Fupdate%5Cn%5Cnstatus%3A%20IN_PROGRESS%0AAWS%20IoT%20MQTT%20Broker-%3EDevice%3A%20MQTT%3A%20PUBACK%0Adeactivate%20Device%0Adeactivate%20AWS%20IoT%20MQTT%20Broker%0AAWS%20IoT%20Jobs-%3EDevice%3A%20MQTT%3A%20PUBLISH%0Adeactivate%20AWS%20IoT%20Jobs%0Aactivate%20Device%0Aactivate%20AWS%20IoT%20MQTT%20Broker%0Anote%20over%20Device%2CAWS%20IoT%20Jobs%3A%20%24aws%2Fthings%2F%3CthingName%3E%2Fjobs%2F%3CjobId%3E%2Fupdate%2Faccepted%0ADevice-%3EAWS%20IoT%20MQTT%20Broker%3A%20MQTT%3A%20PUBACK%0Adeactivate%20AWS%20IoT%20MQTT%20Broker%0Anote%20left%20of%20Device%3A%20Start%20Firmware%20download%0ADevice-%3EAWS%20S3%20Server%3A%20HTTP%20request%3A%20%3Cfile_path%3E%0Aactivate%20AWS%20S3%20Server%0AAWS%20S3%20Server-%3EDevice%3A%20HTTP%20response%3A%20with%20content-range%20header%0Adeactivate%20AWS%20S3%20Server%0Anote%20left%20of%20Device%3A%20Download%20complete%0ADevice-%3EAWS%20IoT%20Jobs%3A%20MQTT%3A%20PUBLISH%0Aactivate%20AWS%20IoT%20Jobs%0Aactivate%20AWS%20IoT%20MQTT%20Broker%0Anote%20over%20Device%2CAWS%20IoT%20Jobs%3A%20%24aws%2Fthings%2F%3CthingName%3E%2Fjobs%2F%3CjobId%3E%2Fupdate%5Cn%5Cnstatus%3A%20SUCCEEDED%0AAWS%20IoT%20MQTT%20Broker-%3EDevice%3A%20MQTT%3A%20PUBACK%0Adeactivate%20Device%0Adeactivate%20AWS%20IoT%20MQTT%20Broker%0AAWS%20IoT%20Jobs-%3EDevice%3A%20MQTT%3A%20PUBLISH%0Adeactivate%20AWS%20IoT%20Jobs%0Aactivate%20Device%0Aactivate%20AWS%20IoT%20MQTT%20Broker%0Anote%20over%20Device%2CAWS%20IoT%20Jobs%3A%20%24aws%2Fthings%2F%3CthingName%3E%2Fjobs%2F%3CjobId%3E%2Fupdate%2Faccepted%0ADevice-%3EAWS%20IoT%20MQTT%20Broker%3A%20MQTT%3A%20PUBACK%0Adeactivate%20AWS%20IoT%20MQTT%20Broker%0Adeactivateafter%20Device%0Anote%20left%20of%20Device%3A%20Device%20reboots</desc><defs/><g><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g><rect fill="white" stroke="none" x="0" y="0" width="1053" height="1789"/></g><g><text fill="black" stroke="none" font-family="sans-serif" font-size="16.5pt" font-style="normal" font-weight="normal" text-decoration="normal" x="393.1591332327382" y="22.6179738" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">AWS Firmware-over-the-air</text></g><g/><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 227.74584536859373 88.511670804 L 227.74584536859373 1789.3833005639997" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray="11.598960923076923,5.0262164"/><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 623.7512882998437 88.511670804 L 623.7512882998437 1789.3833005639997" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray="11.598960923076923,5.0262164"/><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 829.2933343654687 88.511670804 L 829.2933343654687 1789.3833005639997" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray="11.598960923076923,5.0262164"/><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 978.2583444219531 88.511670804 L 978.2583444219531 1789.3833005639997" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray="11.598960923076923,5.0262164"/></g><g><path fill="none" stroke="none"/><g><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 188.98606640651562 47.799317964000004 L 266.5056243306719 47.799317964000004 L 266.5056243306719 88.511670804 L 188.98606640651562 88.511670804 L 188.98606640651562 47.799317964000004 Z" stroke-miterlimit="10" stroke-width="2.4125838720000004" stroke-dasharray=""/></g><g><g/><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="205.3464007885156" y="73.43302160400002" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">Device</text></g><path fill="none" stroke="none"/><g><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 531.934243102414 47.799317964000004 L 715.5683334972734 47.799317964000004 L 715.5683334972734 88.511670804 L 531.934243102414 88.511670804 L 531.934243102414 47.799317964000004 Z" stroke-miterlimit="10" stroke-width="2.4125838720000004" stroke-dasharray=""/></g><g><g/><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="548.294577484414" y="73.43302160400002" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">AWS IoT MQTT Broker</text></g><path fill="none" stroke="none"/><g><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 766.3737195879609 47.799317964000004 L 892.2129491429765 47.799317964000004 L 892.2129491429765 88.511670804 L 766.3737195879609 88.511670804 L 766.3737195879609 47.799317964000004 Z" stroke-miterlimit="10" stroke-width="2.4125838720000004" stroke-dasharray=""/></g><g><g/><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="782.7340539699609" y="73.43302160400002" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">AWS IoT Jobs</text></g><path fill="none" stroke="none"/><g><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 910.8588407284296 47.799317964000004 L 1045.6578481154766 47.799317964000004 L 1045.6578481154766 88.511670804 L 910.8588407284296 88.511670804 L 910.8588407284296 47.799317964000004 Z" stroke-miterlimit="10" stroke-width="2.4125838720000004" stroke-dasharray=""/></g><g><g/><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="927.2191751104297" y="73.43302160400002" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">AWS S3 Server</text></g></g><g><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 616.2119636998437 195.57008012400001 L 631.2906128998437 195.57008012400001 L 631.2906128998437 237.790297884 L 616.2119636998437 237.790297884 L 616.2119636998437 195.57008012400001" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 220.20652076859375 195.57008012400001 L 235.28516996859372 195.57008012400001 L 235.28516996859372 409.68689876400003 L 220.20652076859375 409.68689876400003 L 220.20652076859375 195.57008012400001" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 616.2119636998437 280.010515644 L 631.2906128998437 280.010515644 L 631.2906128998437 409.68689876400003 L 616.2119636998437 409.68689876400003 L 616.2119636998437 280.010515644" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 220.20652076859375 509.20598348400006 L 235.28516996859372 509.20598348400006 L 235.28516996859372 1024.895786124 L 220.20652076859375 1024.895786124 L 220.20652076859375 509.20598348400006" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 616.2119636998437 509.20598348400006 L 631.2906128998437 509.20598348400006 L 631.2906128998437 638.882366604 L 616.2119636998437 638.882366604 L 616.2119636998437 509.20598348400006" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 616.2119636998437 738.401451324 L 631.2906128998437 738.401451324 L 631.2906128998437 852.999185244 L 616.2119636998437 852.999185244 L 616.2119636998437 738.401451324" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 821.7540097654687 895.219403004 L 836.8326589654687 895.219403004 L 836.8326589654687 1067.116003884 L 821.7540097654687 1067.116003884 L 821.7540097654687 895.219403004" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 616.2119636998437 895.219403004 L 631.2906128998437 895.219403004 L 631.2906128998437 1024.895786124 L 616.2119636998437 1024.895786124 L 616.2119636998437 895.219403004" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 220.20652076859375 1067.116003884 L 235.28516996859372 1067.116003884 L 235.28516996859372 1537.5698589239998 L 220.20652076859375 1537.5698589239998 L 220.20652076859375 1067.116003884" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 616.2119636998437 1067.116003884 L 631.2906128998437 1067.116003884 L 631.2906128998437 1166.635088604 L 616.2119636998437 1166.635088604 L 616.2119636998437 1067.116003884" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 970.7190198219531 1266.1541733239999 L 985.7976690219531 1266.1541733239999 L 985.7976690219531 1308.3743910839999 L 970.7190198219531 1308.3743910839999 L 970.7190198219531 1266.1541733239999" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 821.7540097654687 1407.8934758039998 L 836.8326589654687 1407.8934758039998 L 836.8326589654687 1579.7900766839998 L 821.7540097654687 1579.7900766839998 L 821.7540097654687 1407.8934758039998" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 616.2119636998437 1407.8934758039998 L 631.2906128998437 1407.8934758039998 L 631.2906128998437 1537.5698589239998 L 616.2119636998437 1537.5698589239998 L 616.2119636998437 1407.8934758039998" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 220.20652076859375 1579.7900766839998 L 235.28516996859372 1579.7900766839998 L 235.28516996859372 1689.8642158439998 L 220.20652076859375 1689.8642158439998 L 220.20652076859375 1579.7900766839998" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 616.2119636998437 1579.7900766839998 L 631.2906128998437 1579.7900766839998 L 631.2906128998437 1679.3091614039997 L 616.2119636998437 1679.3091614039997 L 616.2119636998437 1579.7900766839998" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 227.74584536859373 136.00941578400003 L 220.20652076859375 136.00941578400003 M 98.96564260820311 118.668969204 L 206.63573648859375 118.668969204 L 220.20652076859375 132.239753484 L 220.20652076859375 153.34986236400002 L 98.96564260820311 153.34986236400002 L 98.96564260820311 118.668969204 M 206.63573648859375 118.668969204 L 206.63573648859375 132.239753484 L 220.20652076859375 132.239753484" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="120.07575148820311" y="139.77907808400002" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">Device Boot</text></g><g><g><rect fill="white" stroke="none" x="363.2374866173047" y="175.967836164" width="125.02216043382812" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="365.4992839973047" y="189.538620444" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">MQTT: CONNECT</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 235.28516996859372 195.57008012400001 L 603.7972091918438 195.57008012400001" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(616.2119636998437,195.57008012400001) translate(-616.2119636998437,-195.57008012400001)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 603.6464226998437 189.28730962400002 L 616.2119636998437 195.57008012400001 L 603.6464226998437 201.852850624 Z"/></g></g><g><g><rect fill="white" stroke="none" x="362.8259952232617" y="218.188053924" width="125.84514322191406" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="365.08779260326173" y="231.758838204" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">MQTT: CONNACK</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 616.2119636998437 237.790297884 L 247.6999244765937 237.790297884" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(235.28516996859372,237.790297884) translate(-235.28516996859372,-237.790297884)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 247.85071096859372 231.507527384 L 235.28516996859372 237.790297884 L 247.85071096859372 244.073068384 Z"/></g></g><g><g><rect fill="white" stroke="none" x="357.1187884971875" y="260.408271684" width="137.2595566740625" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="359.3805858771875" y="273.97905596400005" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">MQTT: SUBSCRIBE</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 235.28516996859372 280.010515644 L 603.7972091918438 280.010515644" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(616.2119636998437,280.010515644) translate(-616.2119636998437,-280.010515644)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 603.6464226998437 273.727745144 L 616.2119636998437 280.010515644 L 603.6464226998437 286.29328614400004 Z"/></g></g><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 214.17506108859374 302.628489444 L 623.7512882998437 302.628489444 L 637.3220725798437 316.199273724 L 637.3220725798437 367.466681004 L 214.17506108859374 367.466681004 L 214.17506108859374 302.628489444 M 623.7512882998437 302.628489444 L 623.7512882998437 316.199273724 L 637.3220725798437 316.199273724" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="261.57421991039064" y="323.738598324" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">$aws/things/&lt;thingName&gt;/jobs/notify-next</text><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="261.57421991039064" y="338.817247524" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">$aws/things/&lt;thingName&gt;/jobs/$next/get/accepted</text><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="261.57421991039064" y="353.89589672399995" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">$aws/things/&lt;thingName&gt;/jobs/$next/get/rejected</text></g><g><g><rect fill="white" stroke="none" x="369.33471562121093" y="390.084654804" width="112.82770242601562" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="371.59651300121095" y="403.655439084" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">MQTT: SUBACK</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 616.2119636998437 409.68689876400003 L 247.6999244765937 409.68689876400003" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(235.28516996859372,409.68689876400003) translate(-235.28516996859372,-409.68689876400003)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 247.85071096859372 403.404128264 L 235.28516996859372 409.68689876400003 L 247.85071096859372 415.96966926400006 Z"/></g></g><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 829.2933343654687 449.64531914400004 L 836.8326589654687 449.64531914400004 M 836.8326589654687 432.30487256400005 L 942.069586341953 432.30487256400005 L 955.640370621953 445.87565684400005 L 955.640370621953 466.98576572400003 L 836.8326589654687 466.98576572400003 L 836.8326589654687 432.30487256400005 M 942.069586341953 432.30487256400005 L 942.069586341953 445.87565684400005 L 955.640370621953 445.87565684400005" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="857.9427678454687" y="453.4149814440001" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">Job created</text></g><g><g><rect fill="white" stroke="none" x="474.65166132999997" y="489.60373952400005" width="115.2751816740625" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="476.91345871" y="503.17452380400005" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">MQTT: PUBLISH</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 829.2933343654687 509.20598348400006 L 247.6999244765937 509.20598348400006" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(235.28516996859372,509.20598348400006) translate(-235.28516996859372,-509.20598348400006)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 247.85071096859372 502.92321298400003 L 235.28516996859372 509.20598348400006 L 247.85071096859372 515.488753984 Z"/></g></g><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 214.17506108859374 531.823957284 L 829.2933343654688 531.823957284 L 842.8641186454688 545.394741564 L 842.8641186454688 596.6621488440001 L 214.17506108859374 596.6621488440001 L 214.17506108859374 531.823957284 M 829.2933343654688 531.823957284 L 829.2933343654688 545.394741564 L 842.8641186454688 545.394741564" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="392.4662146228907" y="552.934066164" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">$aws/things/&lt;thingName&gt;/jobs/notify-next</text><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="392.4662146228907" y="568.012715364" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve"></text><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="392.4662146228907" y="583.091364564" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">Job description document</text></g><g><g><rect fill="white" stroke="none" x="369.33471562121093" y="619.280122644" width="112.82770242601562" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="371.59651300121095" y="632.850906924" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">MQTT: PUBACK</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 235.28516996859372 638.882366604 L 603.7972091918438 638.882366604" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(616.2119636998437,638.882366604) translate(-616.2119636998437,-638.882366604)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 603.6464226998437 632.599596104 L 616.2119636998437 638.882366604 L 603.6464226998437 645.165137104 Z"/></g></g><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 220.20652076859375 678.840786984 L 212.66719616859376 678.840786984 M 40.09366114785156 661.5003404040001 L 199.09641188859376 661.5003404040001 L 212.66719616859376 675.0711246840001 L 212.66719616859376 696.1812335640001 L 40.09366114785156 696.1812335640001 L 40.09366114785156 661.5003404040001 M 199.09641188859376 661.5003404040001 L 199.09641188859376 675.0711246840001 L 212.66719616859376 675.0711246840001" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="61.20377002785156" y="682.6104492840001" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">Parse job document</text></g><g><g><rect fill="white" stroke="none" x="357.1187884971875" y="718.799207364" width="137.2595566740625" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="359.3805858771875" y="732.369991644" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">MQTT: SUBSCRIBE</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 235.28516996859372 738.401451324 L 603.7972091918438 738.401451324" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(616.2119636998437,738.401451324) translate(-616.2119636998437,-738.401451324)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 603.6464226998437 732.1186808240001 L 616.2119636998437 738.401451324 L 603.6464226998437 744.684221824 Z"/></g></g><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 214.17506108859374 761.0194251240001 L 623.7512882998437 761.0194251240001 L 637.3220725798437 774.5902094040001 L 637.3220725798437 810.7789674840001 L 214.17506108859374 810.7789674840001 L 214.17506108859374 761.0194251240001 M 623.7512882998437 761.0194251240001 L 623.7512882998437 774.5902094040001 L 637.3220725798437 774.5902094040001" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="242.82449456859376" y="782.129534004" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">$aws/things/&lt;thingName&gt;/jobs/&lt;jobId&gt;/update/accepted</text><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="242.82449456859376" y="797.208183204" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">$aws/things/&lt;thingName&gt;/jobs/&lt;jobId&gt;/update/rejected</text></g><g><g><rect fill="white" stroke="none" x="369.33471562121093" y="833.396941284" width="112.82770242601562" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="371.59651300121095" y="846.967725564" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">MQTT: SUBACK</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 616.2119636998437 852.999185244 L 247.6999244765937 852.999185244" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(235.28516996859372,852.999185244) translate(-235.28516996859372,-852.999185244)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 247.85071096859372 846.7164147440001 L 235.28516996859372 852.999185244 L 247.85071096859372 859.281955744 Z"/></g></g><g><g><rect fill="white" stroke="none" x="470.88199903000003" y="875.617159044" width="115.2751816740625" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="473.14379641000005" y="889.187943324" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">MQTT: PUBLISH</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 235.28516996859372 895.219403004 L 809.3392552574687 895.219403004" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(821.7540097654687,895.219403004) translate(-821.7540097654687,-895.219403004)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 809.1884687654687 888.936632504 L 821.7540097654687 895.219403004 L 809.1884687654687 901.502173504 Z"/></g></g><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 214.17506108859374 917.837376804 L 829.2933343654688 917.837376804 L 842.8641186454688 931.408161084 L 842.8641186454688 982.675568364 L 214.17506108859374 982.675568364 L 214.17506108859374 917.837376804 M 829.2933343654688 917.837376804 L 829.2933343654688 931.408161084 L 842.8641186454688 931.408161084" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="377.37341066781255" y="938.947485684" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">$aws/things/&lt;thingName&gt;/jobs/&lt;jobId&gt;/update</text><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="377.37341066781255" y="954.0261348839999" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve"></text><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="377.37341066781255" y="969.1047840839999" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">status: IN_PROGRESS</text></g><g><g><rect fill="white" stroke="none" x="369.33471562121093" y="1005.2935421640001" width="112.82770242601562" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="371.59651300121095" y="1018.8643264440001" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">MQTT: PUBACK</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 616.2119636998437 1024.895786124 L 247.6999244765937 1024.895786124" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(235.28516996859372,1024.895786124) translate(-235.28516996859372,-1024.895786124)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 247.85071096859372 1018.6130156240001 L 235.28516996859372 1024.895786124 L 247.85071096859372 1031.178556624 Z"/></g></g><g><g><rect fill="white" stroke="none" x="470.88199903000003" y="1047.5137599240002" width="115.2751816740625" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="473.14379641000005" y="1061.0845442040002" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">MQTT: PUBLISH</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 821.7540097654687 1067.116003884 L 247.6999244765937 1067.116003884" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(235.28516996859372,1067.116003884) translate(-235.28516996859372,-1067.116003884)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 247.85071096859372 1060.833233384 L 235.28516996859372 1067.116003884 L 247.85071096859372 1073.398774384 Z"/></g></g><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 214.17506108859374 1089.733977684 L 829.2933343654688 1089.733977684 L 842.8641186454688 1103.304761964 L 842.8641186454688 1124.414870844 L 214.17506108859374 1124.414870844 L 214.17506108859374 1089.733977684 M 829.2933343654688 1089.733977684 L 829.2933343654688 1103.304761964 L 842.8641186454688 1103.304761964" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="345.5955176014063" y="1110.844086564" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">$aws/things/&lt;thingName&gt;/jobs/&lt;jobId&gt;/update/accepted</text></g><g><g><rect fill="white" stroke="none" x="369.33471562121093" y="1147.032844644" width="112.82770242601562" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="371.59651300121095" y="1160.603628924" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">MQTT: PUBACK</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 235.28516996859372 1166.635088604 L 603.7972091918438 1166.635088604" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(616.2119636998437,1166.635088604) translate(-616.2119636998437,-1166.635088604)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 603.6464226998437 1160.352318104 L 616.2119636998437 1166.635088604 L 603.6464226998437 1172.917859104 Z"/></g></g><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 220.20652076859375 1206.593508984 L 212.66719616859376 1206.593508984 M 7.5393246000000005 1189.2530624039998 L 199.09641188859376 1189.2530624039998 L 212.66719616859376 1202.8238466839998 L 212.66719616859376 1223.933955564 L 7.5393246000000005 1223.933955564 L 7.5393246000000005 1189.2530624039998 M 199.09641188859376 1189.2530624039998 L 199.09641188859376 1202.8238466839998 L 212.66719616859376 1202.8238466839998" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="28.64943348" y="1210.363171284" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">Start Firmware download</text></g><g><g><rect fill="white" stroke="none" x="514.7922689508202" y="1246.551929364" width="176.41965188890626" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="517.0540663308202" y="1260.122713644" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">HTTP request: &lt;file_path&gt;</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 235.28516996859372 1266.1541733239999 L 958.3042653139531 1266.1541733239999" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(970.7190198219531,1266.1541733239999) translate(-970.7190198219531,-1266.1541733239999)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 958.1534788219531 1259.871402824 L 970.7190198219531 1266.1541733239999 L 958.1534788219531 1272.4369438239999 Z"/></g></g><g><g><rect fill="white" stroke="none" x="460.21061917054675" y="1288.772147124" width="285.5829514494531" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="462.47241655054677" y="1302.342931404" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">HTTP response: with content-range header</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 970.7190198219531 1308.3743910839999 L 247.6999244765937 1308.3743910839999" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(235.28516996859372,1308.3743910839999) translate(-235.28516996859372,-1308.3743910839999)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 247.85071096859372 1302.0916205839999 L 235.28516996859372 1308.3743910839999 L 247.85071096859372 1314.6571615839998 Z"/></g></g><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 220.20652076859375 1348.3328114639999 L 212.66719616859376 1348.3328114639999 M 41.72531397988281 1330.9923648839997 L 199.09641188859376 1330.9923648839997 L 212.66719616859376 1344.5631491639997 L 212.66719616859376 1365.6732580439998 L 41.72531397988281 1365.6732580439998 L 41.72531397988281 1330.9923648839997 M 199.09641188859376 1330.9923648839997 L 199.09641188859376 1344.5631491639997 L 212.66719616859376 1344.5631491639997" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="62.83542285988281" y="1352.1024737639998" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">Download complete</text></g><g><g><rect fill="white" stroke="none" x="470.88199903000003" y="1388.2912318439999" width="115.2751816740625" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="473.14379641000005" y="1401.8620161239999" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">MQTT: PUBLISH</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 235.28516996859372 1407.8934758039998 L 809.3392552574687 1407.8934758039998" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(821.7540097654687,1407.8934758039998) translate(-821.7540097654687,-1407.8934758039998)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 809.1884687654687 1401.6107053039998 L 821.7540097654687 1407.8934758039998 L 809.1884687654687 1414.1762463039997 Z"/></g></g><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 214.17506108859374 1430.5114496039998 L 829.2933343654688 1430.5114496039998 L 842.8641186454688 1444.0822338839998 L 842.8641186454688 1495.3496411639999 L 214.17506108859374 1495.3496411639999 L 214.17506108859374 1430.5114496039998 M 829.2933343654688 1430.5114496039998 L 829.2933343654688 1444.0822338839998 L 842.8641186454688 1444.0822338839998" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="377.37341066781255" y="1451.621558484" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">$aws/things/&lt;thingName&gt;/jobs/&lt;jobId&gt;/update</text><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="377.37341066781255" y="1466.700207684" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve"></text><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="377.37341066781255" y="1481.7788568839999" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">status: SUCCEEDED</text></g><g><g><rect fill="white" stroke="none" x="369.33471562121093" y="1517.967614964" width="112.82770242601562" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="371.59651300121095" y="1531.538399244" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">MQTT: PUBACK</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 616.2119636998437 1537.5698589239998 L 247.6999244765937 1537.5698589239998" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(235.28516996859372,1537.5698589239998) translate(-235.28516996859372,-1537.5698589239998)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 247.85071096859372 1531.2870884239999 L 235.28516996859372 1537.5698589239998 L 247.85071096859372 1543.8526294239998 Z"/></g></g><g><g><rect fill="white" stroke="none" x="470.88199903000003" y="1560.187832724" width="115.2751816740625" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="473.14379641000005" y="1573.758617004" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">MQTT: PUBLISH</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 821.7540097654687 1579.7900766839998 L 247.6999244765937 1579.7900766839998" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(235.28516996859372,1579.7900766839998) translate(-235.28516996859372,-1579.7900766839998)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 247.85071096859372 1573.5073061839998 L 235.28516996859372 1579.7900766839998 L 247.85071096859372 1586.0728471839998 Z"/></g></g><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 214.17506108859374 1602.4080504839997 L 829.2933343654688 1602.4080504839997 L 842.8641186454688 1615.9788347639997 L 842.8641186454688 1637.0889436439998 L 214.17506108859374 1637.0889436439998 L 214.17506108859374 1602.4080504839997 M 829.2933343654688 1602.4080504839997 L 829.2933343654688 1615.9788347639997 L 842.8641186454688 1615.9788347639997" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="345.5955176014063" y="1623.5181593639998" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">$aws/things/&lt;thingName&gt;/jobs/&lt;jobId&gt;/update/accepted</text></g><g><g><rect fill="white" stroke="none" x="369.33471562121093" y="1659.7069174439998" width="112.82770242601562" height="19.602243960000003"/></g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="371.59651300121095" y="1673.2777017239998" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">MQTT: PUBACK</text></g><g><path fill="none" stroke="black" paint-order="fill stroke markers" d=" M 235.28516996859372 1679.3091614039997 L 603.7972091918438 1679.3091614039997" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g transform="translate(616.2119636998437,1679.3091614039997) translate(-616.2119636998437,-1679.3091614039997)"><path fill="black" stroke="none" paint-order="stroke fill markers" d=" M 603.6464226998437 1673.0263909039998 L 616.2119636998437 1679.3091614039997 L 603.6464226998437 1685.5919319039997 Z"/></g></g><path fill="white" stroke="black" paint-order="fill stroke markers" d=" M 227.74584536859373 1719.2675817839997 L 220.20652076859375 1719.2675817839997 M 80.23026052812499 1701.9271352039996 L 206.63573648859375 1701.9271352039996 L 220.20652076859375 1715.4979194839996 L 220.20652076859375 1736.6080283639997 L 80.23026052812499 1736.6080283639997 L 80.23026052812499 1701.9271352039996 M 206.63573648859375 1701.9271352039996 L 206.63573648859375 1715.4979194839996 L 220.20652076859375 1715.4979194839996" stroke-miterlimit="10" stroke-width="1.2565541" stroke-dasharray=""/><g><text fill="black" stroke="none" font-family="sans-serif" font-size="11pt" font-style="normal" font-weight="normal" text-decoration="normal" x="101.34036940812499" y="1723.0372440839997" text-anchor="start" dominant-baseline="alphabetic" xml:space="preserve">Device reboots</text></g></g><g/><g/><g/><g/></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by Microsoft Visio, SVG Export aws_fota_dfu_sequence.svg Page-1 -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
+		width="7.69852in" height="8.29079in" viewBox="0 0 554.294 596.937" xml:space="preserve" color-interpolation-filters="sRGB"
+		class="st22">
+	<style type="text/css">
+	<![CDATA[
+		.st1 {stroke:#333f48;stroke-dasharray:8,4;stroke-linecap:butt;stroke-width:1}
+		.st2 {fill:#ffffff;stroke:#333f48;stroke-width:1}
+		.st3 {fill:none;stroke:#333f48;stroke-width:1}
+		.st4 {fill:none;stroke:none;stroke-width:1}
+		.st5 {fill:#333f48;font-family:Arial;font-size:0.75em}
+		.st6 {fill:#ffffff;stroke:#333f48;stroke-width:0.75}
+		.st7 {fill:#e4e4e4;stroke:#333f48;stroke-width:0.75}
+		.st8 {marker-end:url(#mrkr4-52);stroke:#333f48;stroke-linecap:butt;stroke-width:1}
+		.st9 {fill:#333f48;fill-opacity:1;stroke:#333f48;stroke-opacity:1;stroke-width:0.28409090909091}
+		.st10 {fill:#333f48;font-family:Arial;font-size:0.666664em}
+		.st11 {marker-start:url(#mrkr4-61);stroke:#333f48;stroke-linecap:butt;stroke-width:1}
+		.st12 {fill:#ffffff;stroke:none;stroke-width:1}
+		.st13 {font-size:1em}
+		.st14 {fill:none;stroke:#333f48;stroke-width:0.5}
+		.st15 {stroke:#333f48;stroke-linecap:butt;stroke-width:1}
+		.st16 {fill:#ffffff;stroke:#333f48;stroke-width:0.5}
+		.st17 {fill:#e4e4e4;stroke:#333f48;stroke-width:0.5}
+		.st18 {fill:none;marker-start:url(#mrkr4-198);stroke:none;stroke-width:1}
+		.st19 {fill:#feffff;fill-opacity:1;stroke:#feffff;stroke-opacity:1;stroke-width:0.28409090909091}
+		.st20 {fill:#ffffff;stroke:#feffff;stroke-width:1}
+		.st21 {fill:none;marker-end:url(#mrkr4-275);stroke:none;stroke-width:1}
+		.st22 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style>
+
+	<defs id="Markers">
+		<g id="lend4">
+			<path d="M 2 1 L 0 0 L 2 -1 L 2 1 " style="stroke:none"/>
+		</g>
+		<marker id="mrkr4-52" class="st9" refX="-7.04" orient="auto" markerUnits="strokeWidth" overflow="visible">
+			<use xlink:href="#lend4" transform="scale(-3.52,-3.52) "/>
+		</marker>
+		<marker id="mrkr4-61" class="st9" refX="6.68" orient="auto" markerUnits="strokeWidth" overflow="visible">
+			<use xlink:href="#lend4" transform="scale(3.52) "/>
+		</marker>
+		<marker id="mrkr4-198" class="st19" refX="7.04" orient="auto" markerUnits="strokeWidth" overflow="visible">
+			<use xlink:href="#lend4" transform="scale(3.52) "/>
+		</marker>
+		<marker id="mrkr4-275" class="st19" refX="-7.04" orient="auto" markerUnits="strokeWidth" overflow="visible">
+			<use xlink:href="#lend4" transform="scale(-3.52,-3.52) "/>
+		</marker>
+	</defs>
+	<g>
+		<title>Page-1</title>
+		<g id="shape30-1" transform="translate(312.37,-570.31)">
+			<title>Dynamic connector.30</title>
+			<path d="M7.06 596.94 L7.12 1158.08" class="st1"/>
+		</g>
+		<g id="shape84-4" transform="translate(315.6,-247.036)">
+			<title>Rectangle.84</title>
+			<rect x="0" y="538.763" width="7.37008" height="58.1737" class="st2"/>
+		</g>
+		<g id="shape7-6" transform="translate(91.5806,-569.789)">
+			<title>Dynamic connector</title>
+			<path d="M6.8 596.94 L7.37 1161.81" class="st1"/>
+		</g>
+		<g id="shape5-9" transform="translate(72.8719,-569.789)">
+			<title>Nordic Blue</title>
+			<rect x="0" y="571.425" width="51.0236" height="25.5118" class="st3"/>
+		</g>
+		<g id="shape6-11" transform="translate(75.7066,-577.12)">
+			<title>Sheet.6</title>
+			<desc>Device</desc>
+			<rect x="0" y="584.816" width="45.3543" height="12.1206" class="st4"/>
+			<text x="8.92" y="593.58" class="st5">Device</text>		</g>
+		<g id="group21-14" transform="translate(-524.065,47.6368) rotate(-90)">
+			<title>Folded Corner</title>
+			<g id="shape21-15">
+				<path d="M0 596.94 L11.34 596.94 L17.01 591.27 L17.01 541.04 L0 541.04 L0 596.94 Z" class="st6"/>
+			</g>
+			<g id="shape22-17" transform="translate(11.3386,0)">
+				<title>Sheet.22</title>
+				<path d="M0 596.94 L5.67 591.27 L0 591.27 L0 596.94 Z" class="st7"/>
+			</g>
+		</g>
+		<g id="shape23-19" transform="translate(14.6605,-542.213)">
+			<title>Sheet.23</title>
+			<desc>Device boot</desc>
+			<rect x="0" y="565.756" width="55.8955" height="31.1811" class="st4"/>
+			<text x="4.18" y="584.05" class="st5">Device boot</text>		</g>
+		<g id="shape24-22" transform="translate(268.766,-570.31)">
+			<title>Nordic Blue.24</title>
+			<rect x="0" y="571.425" width="101.318" height="25.5118" class="st3"/>
+		</g>
+		<g id="shape25-24" transform="translate(265.628,-575.927)">
+			<title>Sheet.25</title>
+			<desc>AWS IoT MQTT Broker</desc>
+			<rect x="0" y="582.43" width="104.457" height="14.5066" class="st4"/>
+			<text x="5.73" y="592.38" class="st5">AWS IoT MQTT Broker</text>		</g>
+		<g id="shape26-27" transform="translate(373.344,-570.31)">
+			<title>Nordic Blue.26</title>
+			<rect x="0" y="571.425" width="85.0394" height="25.5118" class="st3"/>
+		</g>
+		<g id="shape27-29" transform="translate(373.344,-570.31)">
+			<title>Sheet.27</title>
+			<desc>AWS IoT Jobs</desc>
+			<rect x="0" y="573.717" width="85.0394" height="23.22" class="st4"/>
+			<text x="13.76" y="585.82" class="st5">AWS IoT Jobs</text>		</g>
+		<g id="shape28-32" transform="translate(468.254,-570.425)">
+			<title>Nordic Blue.28</title>
+			<rect x="0" y="571.425" width="85.0394" height="25.5118" class="st3"/>
+		</g>
+		<g id="shape29-34" transform="translate(468.254,-572.084)">
+			<title>Sheet.29</title>
+			<desc>AWS S3 Server</desc>
+			<rect x="0" y="574.743" width="85.0394" height="22.1937" class="st4"/>
+			<text x="11.01" y="588.54" class="st5">AWS S3 Server</text>		</g>
+		<g id="shape31-37" transform="translate(410.903,-570.31)">
+			<title>Dynamic connector.31</title>
+			<path d="M4.96 596.94 L9.21 1158.08" class="st1"/>
+		</g>
+		<g id="shape32-40" transform="translate(503.713,-570.425)">
+			<title>Dynamic connector.32</title>
+			<path d="M7.06 596.94 L7.11 1156.21" class="st1"/>
+		</g>
+		<g id="shape33-43" transform="translate(315.801,-532.157)">
+			<title>Rectangle</title>
+			<rect x="0" y="582.43" width="7.37008" height="14.5066" class="st2"/>
+		</g>
+		<g id="shape34-45" transform="translate(94.6987,-456.533)">
+			<title>Rectangle.34</title>
+			<rect x="0" y="506.005" width="7.37008" height="90.9314" class="st2"/>
+		</g>
+		<g id="shape36-47" transform="translate(102.069,-554.151)">
+			<title>Dynamic connector.36</title>
+			<path d="M0 603.62 L206.69 604.4" class="st8"/>
+		</g>
+		<g id="shape37-53" transform="translate(143.549,-549.3)">
+			<title>Sheet.37</title>
+			<desc>MQTT: CONNECT</desc>
+			<rect x="0" y="589.85" width="124.724" height="7.08662" class="st4"/>
+			<text x="29.03" y="595.79" class="st10">MQTT: CONNECT</text>		</g>
+		<g id="shape39-56" transform="translate(102.069,-524.362)">
+			<title>Dynamic connector.39</title>
+			<path d="M6.68 590.51 L7.04 590.51 L213.73 589.14" class="st11"/>
+		</g>
+		<g id="shape40-62" transform="translate(144.042,-533.574)">
+			<title>Sheet.40</title>
+			<desc>MQTT: CONNACK</desc>
+			<rect x="0" y="586.732" width="124.724" height="10.2047" class="st4"/>
+			<text x="28.81" y="594.23" class="st10">MQTT: CONNACK</text>		</g>
+		<g id="shape41-65" transform="translate(315.742,-456.533)">
+			<title>Rectangle.41</title>
+			<rect x="0" y="537.753" width="7.37008" height="59.1834" class="st2"/>
+		</g>
+		<g id="shape42-67" transform="translate(102.069,-508.346)">
+			<title>Dynamic connector.42</title>
+			<path d="M0 590.13 L206.63 589.59" class="st8"/>
+		</g>
+		<g id="shape43-72" transform="translate(146.906,-516.283)">
+			<title>Sheet.43</title>
+			<desc>MQTT: SUBSCRIBE</desc>
+			<rect x="0" y="586.732" width="124.724" height="10.2047" class="st4"/>
+			<text x="25.69" y="594.23" class="st10">MQTT: SUBSCRIBE</text>		</g>
+		<g id="group44-75" transform="translate(-260.443,127.142) rotate(-90)">
+			<title>Folded Corner.44</title>
+			<g id="shape44-76">
+				<path d="M0 596.94 L32.06 596.94 L40.47 588.43 L40.47 349.47 L0 349.47 L0 596.94 Z" class="st6"/>
+			</g>
+			<g id="shape45-78" transform="translate(31.9631,0)">
+				<title>Sheet.45</title>
+				<path d="M0.1 596.94 L8.5 588.43 L0 588.53 L0.1 596.94 Z" class="st7"/>
+			</g>
+		</g>
+		<g id="shape46-80" transform="translate(98.3838,-475.808)">
+			<title>Sheet.46</title>
+			<desc>$aws/things/&#60;thingName&#62;/jobs/notify-next $aws/things/&#60;thingNa...</desc>
+			<rect x="0" y="567.76" width="224.787" height="29.1766" class="st12"/>
+			<text x="40" y="575.15" class="st10">$aws/things/&#60;thingName&#62;/jobs/notify-next <tspan x="40" dy="1.2em"
+						class="st13">$aws/things/&#60;thingName&#62;/jobs/$next/get/accepted </tspan><tspan x="40" dy="1.2em"
+						class="st13">$aws/things/&#60;thingName&#62;/jobs/$next/get/rejected</tspan></text>		</g>
+		<g id="shape47-85" transform="translate(102.069,-449.446)">
+			<title>Dynamic connector.47</title>
+			<path d="M6.68 589.85 L7.04 589.85 L213.67 589.85" class="st11"/>
+		</g>
+		<g id="shape48-90" transform="translate(140.903,-459.59)">
+			<title>Sheet.48</title>
+			<desc>MQTT: SUBACK</desc>
+			<rect x="0" y="589.85" width="124.724" height="7.08662" class="st4"/>
+			<text x="32.36" y="595.79" class="st10">MQTT: SUBACK</text>		</g>
+		<g id="group49-93" transform="translate(-108.789,152.654) rotate(-90)">
+			<title>Folded Corner.49</title>
+			<g id="shape49-94">
+				<path d="M0 596.94 L7.07 596.94 L10.2 594.09 L10.2 531.74 L0 531.74 L0 596.94 Z" class="st14"/>
+			</g>
+			<g id="shape50-96" transform="translate(7.07242,0)">
+				<title>Sheet.50</title>
+				<path d="M0 596.94 L3.13 594.09 L0.3 593.82 L0 596.94 Z" class="st14"/>
+			</g>
+		</g>
+		<g id="shape51-98" transform="translate(422.951,-440.359)">
+			<title>Sheet.51</title>
+			<desc>Job created</desc>
+			<rect x="0" y="578.884" width="65.1969" height="18.0522" class="st4"/>
+			<text x="11.7" y="590.31" class="st10">Job created</text>		</g>
+		<g id="shape53-101" transform="translate(94.6987,-247.036)">
+			<title>Rectangle.53</title>
+			<rect x="0" y="406.466" width="7.37008" height="190.471" class="st2"/>
+		</g>
+		<g id="shape54-103" transform="translate(98.3979,-548.658)">
+			<title>Dynamic connector.54</title>
+			<path d="M0 589.92 L-25.53 589.78" class="st15"/>
+		</g>
+		<g id="shape55-106" transform="translate(102.069,-430.909)">
+			<title>Dynamic connector.55</title>
+			<path d="M6.68 590.32 L7.04 590.32 L313.8 589.36" class="st11"/>
+		</g>
+		<g id="shape56-111" transform="translate(147.99,-440.031)">
+			<title>Sheet.56</title>
+			<desc>MQTT: PUBLISH</desc>
+			<rect x="0" y="589.85" width="187.044" height="7.08662" class="st4"/>
+			<text x="62.85" y="595.79" class="st10">MQTT: PUBLISH</text>		</g>
+		<g id="shape57-114" transform="translate(315.801,-382.056)">
+			<title>Rectangle.57</title>
+			<rect x="0" y="540.993" width="7.37008" height="55.9434" class="st2"/>
+		</g>
+		<g id="group58-116" transform="translate(-170.868,194.714) rotate(-90)">
+			<title>Folded Corner.58</title>
+			<g id="shape58-117">
+				<path d="M0 596.94 L24.16 596.94 L29.18 591.85 L29.18 259.9 L0 259.9 L0 596.94 Z" class="st6"/>
+			</g>
+			<g id="shape59-119" transform="translate(24.0945,0)">
+				<title>Sheet.59</title>
+				<path d="M0.07 596.94 L5.08 591.85 L0 591.92 L0.07 596.94 Z" class="st7"/>
+			</g>
+		</g>
+		<g id="shape60-121" transform="translate(150.171,-405.907)">
+			<title>Sheet.60</title>
+			<desc>$aws/things/&#60;thingName&#62;/jobs/notify-next Job description docu...</desc>
+			<rect x="0" y="577.03" width="247.921" height="19.9063" class="st12"/>
+			<text x="40" y="579.78" class="st10">$aws/things/&#60;thingName&#62;/jobs/notify-next  <tspan x="40" dy="2.4em"
+						class="st13">Job description document</tspan></text>		</g>
+		<g id="shape61-125" transform="translate(102.069,-374.916)">
+			<title>Dynamic connector.61</title>
+			<path d="M0 589.9 L206.69 589.8" class="st8"/>
+		</g>
+		<g id="shape62-130" transform="translate(140.903,-383.881)">
+			<title>Sheet.62</title>
+			<desc>MQTT: PUBACK</desc>
+			<rect x="0" y="587.582" width="124.724" height="9.35433" class="st4"/>
+			<text x="32.36" y="594.66" class="st10">MQTT: PUBACK</text>		</g>
+		<g id="group63-133" transform="translate(-508.235,236.589) rotate(-90)">
+			<title>Folded Corner.63</title>
+			<g id="shape63-134">
+				<path d="M0 596.94 L13.61 596.94 L19.91 590.7 L19.91 523.24 L0 523.24 L0 596.94 Z" class="st16"/>
+			</g>
+			<g id="shape64-136" transform="translate(13.6082,0)">
+				<title>Sheet.64</title>
+				<path d="M0 596.94 L6.3 590.7 L0.06 590.64 L0 596.94 Z" class="st17"/>
+			</g>
+		</g>
+		<g id="shape65-138" transform="translate(11.0767,-353.95)">
+			<title>Sheet.65</title>
+			<desc>Parse job document</desc>
+			<rect x="0" y="567.006" width="81.6378" height="29.9306" class="st4"/>
+			<text x="5.24" y="584.37" class="st10">Parse job document</text>		</g>
+		<g id="shape66-141" transform="translate(98.809,-376.002)">
+			<title>Dynamic connector.66</title>
+			<path d="M-4.11 604.02 L-10.06 604.02" class="st15"/>
+		</g>
+		<g id="shape67-144" transform="translate(102.069,-353.376)">
+			<title>Dynamic connector.67</title>
+			<path d="M0 589.94 L206.63 589.77" class="st8"/>
+		</g>
+		<g id="shape68-149" transform="translate(146.906,-362.078)">
+			<title>Sheet.68</title>
+			<desc>MQTT: SUBSCRIBE</desc>
+			<rect x="0" y="587.582" width="124.724" height="9.35433" class="st4"/>
+			<text x="25.69" y="594.66" class="st10">MQTT: SUBSCRIBE</text>		</g>
+		<g id="shape69-152" transform="translate(315.742,-318.033)">
+			<title>Rectangle.69</title>
+			<rect x="0" y="554.417" width="7.37008" height="42.5197" class="st2"/>
+		</g>
+		<g id="group70-154" transform="translate(-267.488,267.565) rotate(-90)">
+			<title>Folded Corner.70</title>
+			<g id="shape70-155">
+				<path d="M0 596.94 L20.17 596.94 L25.51 591.26 L25.51 355.71 L0 355.71 L0 596.94 Z" class="st6"/>
+			</g>
+			<g id="shape71-157" transform="translate(19.8474,0)">
+				<title>Sheet.71</title>
+				<path d="M0.32 596.94 L5.66 591.26 L0 591.6 L0.32 596.94 Z" class="st7"/>
+			</g>
+		</g>
+		<g id="shape72-159" transform="translate(89.5964,-329.997)">
+			<title>Sheet.72</title>
+			<desc>$aws/things/&#60;thingName&#62;/jobs/&#60;jobId&#62;/update/accepted $aws/thi...</desc>
+			<rect x="0" y="571.425" width="244.913" height="25.5118" class="st4"/>
+			<text x="4" y="581.48" class="st5">$aws/things/&#60;thingName&#62;/jobs/&#60;jobId&#62;/update/accepted <tspan x="4"
+						dy="1.2em" class="st13">$aws/things/&#60;thingName&#62;/jobs/&#60;jobId&#62;/update/rejected</tspan></text>		</g>
+		<g id="shape73-163" transform="translate(102.069,-310.522)">
+			<title>Dynamic connector.73</title>
+			<path d="M6.68 590.25 L7.04 590.25 L213.67 589.42" class="st11"/>
+		</g>
+		<g id="shape74-168" transform="translate(137.067,-318.033)">
+			<title>Sheet.74</title>
+			<desc>MQTT: SUBACK</desc>
+			<rect x="0" y="589.85" width="128.561" height="7.08662" class="st4"/>
+			<text x="34.28" y="595.79" class="st10">MQTT: SUBACK</text>		</g>
+		<g id="shape75-171" transform="translate(102.069,-297.732)">
+			<title>Dynamic connector.75</title>
+			<path d="M0 590.24 L305.05 589.48" class="st8"/>
+		</g>
+		<g id="shape76-176" transform="translate(146.573,-304.427)">
+			<title>Sheet.76</title>
+			<desc>MQTT: PUBLISH</desc>
+			<rect x="0" y="587.582" width="187.044" height="9.35433" class="st4"/>
+			<text x="62.85" y="594.66" class="st10">MQTT: PUBLISH</text>		</g>
+		<g id="shape81-179" transform="translate(414.163,-231.401)">
+			<title>Rectangle.81</title>
+			<rect x="0" y="523.129" width="7.37008" height="73.8081" class="st2"/>
+		</g>
+		<g id="group78-181" transform="translate(-166.899,333.847) rotate(-90)">
+			<title>Folded Corner.78</title>
+			<g id="shape78-182">
+				<path d="M0 596.94 L27.94 596.94 L35.1 589.85 L35.1 256.28 L0 256.28 L0 596.94 Z" class="st6"/>
+			</g>
+			<g id="shape79-184" transform="translate(27.9433,0)">
+				<title>Sheet.79</title>
+				<path d="M0 596.94 L7.16 589.85 L0.07 589.78 L0 596.94 Z" class="st7"/>
+			</g>
+		</g>
+		<g id="shape80-186" transform="translate(116.83,-268.31)">
+			<title>Sheet.80</title>
+			<desc>$aws/things/&#60;thingName&#62;/jobs/&#60;jobId&#62;/update status: IN_PROGRESS</desc>
+			<rect x="0" y="571.425" width="247.921" height="25.5118" class="st4"/>
+			<text x="40" y="576.98" class="st10">$aws/things/&#60;thingName&#62;/jobs/&#60;jobId&#62;/update  <tspan x="40"
+						dy="2.4em" class="st13">status: IN_PROGRESS</tspan></text>		</g>
+		<g id="shape82-190" transform="translate(102.069,-239.949)">
+			<title>Dynamic connector.82</title>
+			<path d="M6.68 589.85 L7.04 589.85 L213.53 589.85" class="st11"/>
+		</g>
+		<g id="shape83-195" transform="translate(116.947,-248.693)">
+			<title>Sheet.83</title>
+			<desc>MQTT: PUBACK</desc>
+			<rect x="0" y="587.582" width="171.358" height="9.35433" class="st18"/>
+			<text x="55.68" y="594.66" class="st10">MQTT: PUBACK</text>		</g>
+		<g id="shape86-200" transform="translate(412.888,-442.299)">
+			<title>Dynamic connector.86</title>
+			<path d="M4.11 589.85 L10.06 589.85" class="st15"/>
+		</g>
+		<g id="shape87-203" transform="translate(102.069,-238.576)">
+			<title>Dynamic connector.87</title>
+			<path d="M6.68 603.94 L7.04 603.94 L312.09 604.11" class="st11"/>
+		</g>
+		<g id="shape88-208" transform="translate(109.744,-233.444)">
+			<title>Sheet.88</title>
+			<desc>MQTT: PUBLISH</desc>
+			<rect x="0" y="587.582" width="187.044" height="9.35433" class="st4"/>
+			<text x="62.85" y="594.66" class="st10">MQTT: PUBLISH</text>		</g>
+		<g id="shape89-211" transform="translate(94.6987,-82.7578)">
+			<title>Rectangle.89</title>
+			<rect x="0" y="448.118" width="7.37008" height="148.819" class="st2"/>
+		</g>
+		<g id="shape93-213" transform="translate(102.069,-180.182)">
+			<title>Dynamic connector.93</title>
+			<path d="M0 590.22 L206.63 589.5" class="st8"/>
+		</g>
+		<g id="shape94-218" transform="translate(109.999,-188.315)">
+			<title>Sheet.94</title>
+			<desc>MQTT: PUBACK</desc>
+			<rect x="0" y="587.582" width="183.975" height="9.35433" class="st18"/>
+			<text x="61.99" y="594.66" class="st10">MQTT: PUBACK</text>		</g>
+		<g id="shape95-222" transform="translate(315.742,-187.64)">
+			<title>Rectangle.95</title>
+			<rect x="0" y="553.175" width="7.37008" height="43.7615" class="st2"/>
+		</g>
+		<g id="group90-224" transform="translate(-169.846,395.792) rotate(-90)">
+			<title>Folded Corner.90</title>
+			<g id="shape90-225">
+				<path d="M0 596.94 L21.66 596.94 L25.51 593.26 L25.51 260.47 L0 260.47 L0 596.94 Z" class="st6"/>
+			</g>
+			<g id="shape91-227" transform="translate(21.6609,0)">
+				<title>Sheet.91</title>
+				<path d="M0 596.94 L3.85 593.26 L0.18 593.09 L0 596.94 Z" class="st7"/>
+			</g>
+		</g>
+		<g id="shape92-229" transform="translate(94.6987,-204.534)">
+			<title>Sheet.92</title>
+			<desc>$aws/things/&#60;thingName&#62;/jobs/&#60;jobId&#62;/update/accepted</desc>
+			<rect x="0" y="575.733" width="285.643" height="21.2037" class="st20"/>
+			<text x="30.49" y="589.03" class="st5">$aws/things/&#60;thingName&#62;/jobs/&#60;jobId&#62;/update/accepted</text>		</g>
+		<g id="group96-232" transform="translate(-508.191,430.513) rotate(-90)">
+			<title>Folded Corner.96</title>
+			<g id="shape96-233">
+				<path d="M0 596.94 L13.61 596.94 L19.91 590.7 L19.91 523.24 L0 523.24 L0 596.94 Z" class="st16"/>
+			</g>
+			<g id="shape97-235" transform="translate(13.6082,0)">
+				<title>Sheet.97</title>
+				<path d="M0 596.94 L6.3 590.7 L0.06 590.64 L0 596.94 Z" class="st17"/>
+			</g>
+		</g>
+		<g id="shape98-237" transform="translate(98.809,-183.464)">
+			<title>Dynamic connector.98</title>
+			<path d="M-4.11 604.02 L-10.06 604.02" class="st15"/>
+		</g>
+		<g id="shape99-240" transform="translate(20.1475,-172.66)">
+			<title>Sheet.99</title>
+			<desc>Start firmware download</desc>
+			<rect x="0" y="587.582" width="61.2283" height="9.35433" class="st4"/>
+			<text x="5.72" y="589.86" class="st10">Start firmware <tspan x="13.49" dy="1.2em" class="st13">download</tspan></text>		</g>
+		<g id="shape100-244" transform="translate(102.069,-157.615)">
+			<title>Dynamic connector.100</title>
+			<path d="M0 590.19 L398.03 589.52" class="st8"/>
+		</g>
+		<g id="shape101-249" transform="translate(507.14,-146.986)">
+			<title>Rectangle.101</title>
+			<rect x="0" y="578.884" width="7.37008" height="18.0522" class="st2"/>
+		</g>
+		<g id="shape103-251" transform="translate(131.767,-167.023)">
+			<title>Sheet.103</title>
+			<desc>HTTP request: &#60;file_path&#62;</desc>
+			<rect x="0" y="587.582" width="183.975" height="9.35433" class="st18"/>
+			<text x="45.07" y="594.66" class="st10">HTTP request: &#60;file_path&#62;</text>		</g>
+		<g id="shape104-255" transform="translate(102.069,-154.683)">
+			<title>Dynamic connector.104</title>
+			<path d="M6.68 603.43 L7.04 603.43 L405.07 604.63" class="st11"/>
+		</g>
+		<g id="shape105-260" transform="translate(135.452,-150.897)">
+			<title>Sheet.105</title>
+			<desc>HTTP response: with content-range header</desc>
+			<rect x="0" y="587.582" width="183.975" height="9.35433" class="st18"/>
+			<text x="15.28" y="594.66" class="st10">HTTP response: with content-range header</text>		</g>
+		<g id="group106-264" transform="translate(-508.778,469.118) rotate(-90)">
+			<title>Folded Corner.106</title>
+			<g id="shape106-265">
+				<path d="M0 596.94 L13.61 596.94 L19.91 590.7 L19.91 523.24 L0 523.24 L0 596.94 Z" class="st16"/>
+			</g>
+			<g id="shape107-267" transform="translate(13.6082,0)">
+				<title>Sheet.107</title>
+				<path d="M0 596.94 L6.3 590.7 L0.06 590.64 L0 596.94 Z" class="st17"/>
+			</g>
+		</g>
+		<g id="shape109-269" transform="translate(84.3421,-130.8)">
+			<title>Dynamic connector.109</title>
+			<path d="M3.82 589.96 L10.36 589.74" class="st15"/>
+		</g>
+		<g id="shape111-272" transform="translate(109.999,-132.072)">
+			<title>Sheet.111</title>
+			<desc>MQTT: PUBLISH</desc>
+			<rect x="0" y="587.582" width="187.044" height="9.35433" class="st21"/>
+			<text x="62.85" y="594.66" class="st10">MQTT: PUBLISH</text>		</g>
+		<g id="shape133-277" transform="translate(17.3129,-133.094)">
+			<title>Sheet.133</title>
+			<desc>Download complete</desc>
+			<rect x="0" y="587.582" width="61.2283" height="9.35433" class="st4"/>
+			<text x="12.83" y="589.86" class="st10">Download <tspan x="14.38" dy="1.2em" class="st13">complete</tspan></text>		</g>
+		<g id="shape134-281" transform="translate(315.801,-86.3179)">
+			<title>Rectangle.118</title>
+			<rect x="0" y="555.436" width="7.37008" height="41.5006" class="st2"/>
+		</g>
+		<g id="shape135-283" transform="translate(415.864,-69.6447)">
+			<title>Rectangle.112</title>
+			<rect x="0" y="538.763" width="7.37008" height="58.1737" class="st2"/>
+		</g>
+		<g id="group136-285" transform="translate(-166.899,500.758) rotate(-90)">
+			<title>Folded Corner.113</title>
+			<g id="shape136-286">
+				<path d="M0 596.94 L23.54 596.94 L27.39 593 L27.39 260.47 L0 260.47 L0 596.94 Z" class="st6"/>
+			</g>
+			<g id="shape137-288" transform="translate(23.4498,0)">
+				<title>Sheet.137</title>
+				<path d="M0.09 596.94 L3.94 593 L0 593.09 L0.09 596.94 Z" class="st7"/>
+			</g>
+		</g>
+		<g id="shape138-290" transform="translate(128.856,-100.992)">
+			<title>Sheet.138</title>
+			<desc>$aws/things/&#60;thingName&#62;/jobs/&#60;jobId&#62;/update status:SUCCEEDED</desc>
+			<rect x="0" y="579.929" width="200.246" height="17.0079" class="st20"/>
+			<text x="4" y="581.23" class="st10">$aws/things/&#60;thingName&#62;/jobs/&#60;jobId&#62;/update  <tspan x="4"
+						dy="2.4em" class="st13">status:SUCCEEDED</tspan></text>		</g>
+		<g id="shape139-294" transform="translate(102.069,-79.2313)">
+			<title>Dynamic connector.116</title>
+			<path d="M6.68 589.85 L7.04 589.85 L213.73 589.85" class="st11"/>
+		</g>
+		<g id="shape140-299" transform="translate(164.431,-87.1177)">
+			<title>Sheet.140</title>
+			<desc>MQTT: PUBACK</desc>
+			<rect x="0" y="590.711" width="81.3543" height="6.22609" class="st18"/>
+			<text x="10.68" y="596.22" class="st10">MQTT: PUBACK</text>		</g>
+		<g id="shape141-303" transform="translate(102.069,-62.2356)">
+			<title>Dynamic connector.119</title>
+			<path d="M6.68 590.16 L7.04 590.16 L313.8 589.53" class="st11"/>
+		</g>
+		<g id="shape142-308" transform="translate(112.578,-70.1099)">
+			<title>Sheet.142</title>
+			<desc>MQTT: PUBLISH</desc>
+			<rect x="0" y="587.582" width="187.044" height="9.35433" class="st4"/>
+			<text x="62.85" y="594.66" class="st10">MQTT: PUBLISH</text>		</g>
+		<g id="shape143-311" transform="translate(94.6987,-26.4799)">
+			<title>Rectangle.124</title>
+			<rect x="0" y="554.417" width="7.37008" height="42.5197" class="st2"/>
+		</g>
+		<g id="shape144-313" transform="translate(315.801,-26.4799)">
+			<title>Rectangle.125</title>
+			<rect x="0" y="554.417" width="7.37008" height="42.5197" class="st2"/>
+		</g>
+		<g id="group145-315" transform="translate(-168.742,560.535) rotate(-90)">
+			<title>Folded Corner.121</title>
+			<g id="shape145-316">
+				<path d="M0 596.94 L21.66 596.94 L25.51 593.26 L25.51 260.47 L0 260.47 L0 596.94 Z" class="st6"/>
+			</g>
+			<g id="shape146-318" transform="translate(21.6609,0)">
+				<title>Sheet.146</title>
+				<path d="M0 596.94 L3.85 593.26 L0.18 593.09 L0 596.94 Z" class="st7"/>
+			</g>
+		</g>
+		<g id="shape147-320" transform="translate(95.8023,-39.7901)">
+			<title>Sheet.147</title>
+			<desc>$aws/things/&#60;thingName&#62;/jobs/&#60;jobId&#62;/update/accepted</desc>
+			<rect x="0" y="575.733" width="285.643" height="21.2037" class="st20"/>
+			<text x="30.49" y="589.03" class="st5">$aws/things/&#60;thingName&#62;/jobs/&#60;jobId&#62;/update/accepted</text>		</g>
+		<g id="shape148-323" transform="translate(102.069,-19.3933)">
+			<title>Dynamic connector.126</title>
+			<path d="M0 589.85 L206.69 589.85" class="st8"/>
+		</g>
+		<g id="shape149-328" transform="translate(164.431,-28.5553)">
+			<title>Sheet.149</title>
+			<desc>MQTT: PUBACK</desc>
+			<rect x="0" y="591.018" width="81.3543" height="5.91902" class="st21"/>
+			<text x="10.68" y="596.38" class="st10">MQTT: PUBACK</text>		</g>
+		<g id="group150-332" transform="translate(-522.236,588.85) rotate(-90)">
+			<title>Folded Corner.128</title>
+			<g id="shape150-333">
+				<path d="M0 596.94 L9.27 596.94 L17.01 591.05 L17.01 523.24 L0 523.24 L0 596.94 Z" class="st6"/>
+			</g>
+			<g id="shape151-335" transform="translate(9.27442,0)">
+				<title>Sheet.151</title>
+				<path d="M0 596.94 L7.73 591.05 L2.06 589.48 L0 596.94 Z" class="st7"/>
+			</g>
+		</g>
+		<g id="shape152-337" transform="translate(1,-1)">
+			<title>Sheet.152</title>
+			<desc>Device reboots</desc>
+			<rect x="0" y="565.756" width="73.7008" height="31.1811" class="st4"/>
+			<text x="6.84" y="584.05" class="st5">Device reboots</text>		</g>
+		<g id="shape153-340" transform="translate(100.227,-11.7007)">
+			<title>Dynamic connector.131</title>
+			<path d="M0 589.89 L-25.53 589.81" class="st15"/>
+		</g>
+		<g id="shape154-343" transform="translate(102.069,-135.09)">
+			<title>Dynamic connector.154</title>
+			<path d="M0 603.84 L206.69 604.2" class="st8"/>
+		</g>
+	</g>
+</svg>
