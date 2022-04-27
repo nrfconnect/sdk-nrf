@@ -14,6 +14,8 @@ zephyr_library()
 
 zephyr_library_link_libraries(zigbee)
 
+zephyr_link_libraries_ifdef(CONFIG_ZIGBEE_USE_SOFTWARE_AES nrfxlib_crypto)
+
 # Source files
 zephyr_library_sources(osif/zb_nrf_platform.c)
 zephyr_library_sources(osif/zb_nrf_transceiver.c)
