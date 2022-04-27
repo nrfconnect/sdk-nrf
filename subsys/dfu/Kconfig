@@ -6,6 +6,8 @@
 
 menu "DFU"
 
+rsource "dfu_multi_image/Kconfig"
+
 rsource "dfu_target/Kconfig"
 
 rsource "fmfu_fdev/Kconfig"

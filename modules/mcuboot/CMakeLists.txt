@@ -32,6 +32,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
   endif()
 
   include(${ZEPHYR_BASE}/../nrf/cmake/fw_zip.cmake)
+  include(${ZEPHYR_BASE}/../nrf/cmake/dfu_multi_image.cmake)
 
   function(sign)
     # Signs a hex image
@@ -554,6 +555,38 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         )
     endif()
   endif(CONFIG_SIGN_IMAGES)
+endif()
+
+if (CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
+  set(dfu_multi_image_ids)
+  set(dfu_multi_image_paths)
+  set(dfu_multi_image_targets)
+
+  if (CONFIG_DFU_MULTI_IMAGE_PACKAGE_APP)
+    list(APPEND dfu_multi_image_ids 0)
+    list(APPEND dfu_multi_image_paths "${PROJECT_BINARY_DIR}/${app_core_binary_name}")
+    list(APPEND dfu_multi_image_targets mcuboot_sign_target)
+  endif()
+
+  if (CONFIG_DFU_MULTI_IMAGE_PACKAGE_NET)
+    list(APPEND dfu_multi_image_ids 1)
+    list(APPEND dfu_multi_image_paths "${PROJECT_BINARY_DIR}/${net_core_binary_name}")
+    list(APPEND dfu_multi_image_targets net_core_app_sign_target)
+  endif()
+
+  if (CONFIG_DFU_MULTI_IMAGE_PACKAGE_MCUBOOT)
+    list(APPEND dfu_multi_image_ids -2 -1)
+    list(APPEND dfu_multi_image_paths "${s0_bin_path}" "${s1_bin_path}")
+    list(APPEND dfu_multi_image_targets signed_s0_target signed_s1_target)
+  endif()
+
+  dfu_multi_image_package(dfu_multi_image_pkg
+    IMAGE_IDS ${dfu_multi_image_ids}
+    IMAGE_PATHS ${dfu_multi_image_paths}
+    OUTPUT ${PROJECT_BINARY_DIR}/dfu_multi_image.bin
+    )
+
+  add_dependencies(dfu_multi_image_pkg ${dfu_multi_image_targets})
 endif()
 
 # Zephyr has a Kconfig option used for signing an application image

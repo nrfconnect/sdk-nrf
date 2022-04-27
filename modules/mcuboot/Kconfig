@@ -64,4 +64,30 @@ config MCUBOOT_USB_SUPPORT
 	bool
 	default y if "$(dt_nodelabel_enabled,zephyr_udc0)"
 
+config DFU_MULTI_IMAGE_PACKAGE_BUILD
+	bool "Build DFU Multi Image package"
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  Build DFU Multi Image package that contains a manifest file followed by
+	  selected update images.
+
+if DFU_MULTI_IMAGE_PACKAGE_BUILD
+
+config DFU_MULTI_IMAGE_PACKAGE_APP
+	bool "Include Application Core image in DFU Multi Image package"
+	default y
+
+config DFU_MULTI_IMAGE_PACKAGE_NET
+	bool "Include Network Core image in DFU Multi Image package"
+	depends on NRF53_UPGRADE_NETWORK_CORE
+	default y
+
+config DFU_MULTI_IMAGE_PACKAGE_MCUBOOT
+	bool "Include MCUboot image in DFU Multi Image package"
+	depends on BUILD_S1_VARIANT
+	# Currently simultaneous application and MCUboot updates are unsupported
+	depends on !DFU_MULTI_IMAGE_PACKAGE_APP && !DFU_MULTI_IMAGE_PACKAGE_NET
+
+endif # DFU_MULTI_IMAGE_PACKAGE_BUILD
+
 endmenu
