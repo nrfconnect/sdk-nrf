@@ -610,6 +610,7 @@ Other libraries
   * :ref:`event_manager_proxy` library.
   * :ref:`QoS` library.
   * :ref:`emds_readme` library.
+  * :ref:`lib_dfu_multi_image` library.
 
 
 * Updated:

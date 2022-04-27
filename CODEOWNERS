@@ -160,6 +160,7 @@ Kconfig*                                  @tejlmand
 /subsys/caf/                              @pdunaj
 /subsys/debug/                            @nordic-krch @anangl
 /subsys/dfu/                              @hakonfam @sigvartmh
+/subsys/dfu/dfu_multi_image/              @Damian-Nordic
 /subsys/dm/                               @maje-emb
 /subsys/ieee802154/                       @rlubos @czeslawmakarski
 /subsys/mgmt/                             @hakonfam @sigvartmh
@@ -219,6 +220,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/bootloader/                 @hakonfam
 /tests/subsys/debug/cpu_load/             @nordic-krch
 /tests/subsys/dfu/                        @hakonfam @sigvartmh
+/tests/subsys/dfu/dfu_multi_image/        @Damian-Nordic
 /tests/subsys/emds/                       @balaklaka
 /tests/subsys/app_event_manager/          @pdunaj @MarekPieta @rakons
 /tests/subsys/fw_info/                    @oyvindronningstad
