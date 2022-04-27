@@ -27,10 +27,10 @@ When loaded, the application can reference items provided by both Zephyr and the
 Loading Zephyr's `CMake`_ package creates the ``app`` CMake target.
 You can add application source files to this target from the application :file:`CMakeLists.txt` file.
 
+To update the :file:`CMakeLists.txt` file, either edit it directly or use |VSC| to maintain it.
+
 Editing CMakeLists.txt
 ======================
-
-To update the :file:`CMakeLists.txt` file, edit it directly.
 
 You can add source files to the ``app`` CMake target with the :c:func:`target_sources` function provided by CMake.
 
