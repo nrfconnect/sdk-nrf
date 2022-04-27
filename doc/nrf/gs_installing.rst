@@ -189,7 +189,7 @@ Install west
 
 To manage the combination of repositories and versions, the |NCS| uses :ref:`Zephyr's west <zephyr:west>`.
 
-To install west, complete the following step:
+To install west, reopen the command prompt window to ensure that Python is initialized and complete the following step:
 
 .. tabs::
 

@@ -808,6 +808,7 @@ Documentation
 
 * Updated:
 
+  * :ref:`gs_updating` with information about updating |VSC| and the toolchain.
   * :ref:`ug_nrf52` and :ref:`ug_nrf5340` with information about FOTA upgrades for Matter, Thread, and Zigbee.
   * :ref:`ug_matter_architecture` with updated protocol architecture diagram.
   * :ref:`app_memory` with sections for Matter and Zigbee.
