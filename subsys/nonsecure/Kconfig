@@ -9,221 +9,266 @@ menu "Trusted Execution Non-Secure"
 
 menu "Peripheral Secure mapping"
 
-config NRF_FPU_SECURE
-	bool "FPU configured as secure peripheral"
-	depends on CPU_HAS_FPU
-	help
-	  FPU is implemented with user-selectable security mapping.
-	  If it has been configured as a secure peripheral then only the secure
-	  processing environment is able to access the peripheral
+rsource "${ZEPHYR_BASE}/modules/hal_nordic/Kconfig.dt"
+
+peripheral=FPU
+peripheral_depends=CPU_HAS_FPU
+rsource "Kconfig.template.peripheral_secure"
 
 peripheral=DCNF
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_DCNF))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=OSCILLATORS
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_OSCILLATORS))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=REGULATORS
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_REGULATORS))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=CLOCK
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_CLOCK))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=POWER
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_POWER))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=RESET
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_RESET))
 rsource "Kconfig.template.peripheral_secure"
 
-config NRF_CTRLAP_SECURE
-	bool "CTRLAP configured as secure peripheral"
-	# TODO: Use template when HAS_HW_NRF_CTRLAP is available in zephyr.
-	depends on SOC_NRF9160 || SOC_NRF5340_CPUAPP
-	help
-	  CTRLAP is implemented with user-selectable security mapping.
-	  If it has been configured as a secure peripheral then only the secure
-	  processing environment is able to access the peripheral
+peripheral=CTRLAP
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_CTRLAPPERI))
+rsource "Kconfig.template.peripheral_secure"
 
 peripheral=SPIM0
+peripheral_depends=$(dt_nodelabel_has_compat,spi0,$(DT_COMPAT_NORDIC_NRF_SPIM))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=SPIS0
+peripheral_depends=$(dt_nodelabel_has_compat,spi0,$(DT_COMPAT_NORDIC_NRF_SPIS))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=TWIM0
+peripheral_depends=$(dt_nodelabel_has_compat,i2c0,$(DT_COMPAT_NORDIC_NRF_TWIM))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=TWIS0
+peripheral_depends=$(dt_nodelabel_has_compat,i2c0,$(DT_COMPAT_NORDIC_NRF_TWIS))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=UARTE0
+peripheral_depends=$(dt_nodelabel_has_compat,uart0,$(DT_COMPAT_NORDIC_NRF_UARTE))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=SPIM1
+peripheral_depends=$(dt_nodelabel_has_compat,spi1,$(DT_COMPAT_NORDIC_NRF_SPIM))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=SPIS1
+peripheral_depends=$(dt_nodelabel_has_compat,spi1,$(DT_COMPAT_NORDIC_NRF_SPIS))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=TWIM1
+peripheral_depends=$(dt_nodelabel_has_compat,i2c1,$(DT_COMPAT_NORDIC_NRF_TWIM))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=TWIS1
+peripheral_depends=$(dt_nodelabel_has_compat,i2c1,$(DT_COMPAT_NORDIC_NRF_TWIS))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=UARTE1
+peripheral_depends=$(dt_nodelabel_has_compat,uart1,$(DT_COMPAT_NORDIC_NRF_UARTE))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=SPIM4
+peripheral_depends=$(dt_nodelabel_has_compat,spi4,$(DT_COMPAT_NORDIC_NRF_SPIM))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=SPIM2
+peripheral_depends=$(dt_nodelabel_has_compat,spi2,$(DT_COMPAT_NORDIC_NRF_SPIM))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=SPIS2
+peripheral_depends=$(dt_nodelabel_has_compat,spi2,$(DT_COMPAT_NORDIC_NRF_SPIS))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=TWIM2
+peripheral_depends=$(dt_nodelabel_has_compat,i2c2,$(DT_COMPAT_NORDIC_NRF_TWIM))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=TWIS2
+peripheral_depends=$(dt_nodelabel_has_compat,i2c2,$(DT_COMPAT_NORDIC_NRF_TWIS))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=UARTE2
+peripheral_depends=$(dt_nodelabel_has_compat,uart2,$(DT_COMPAT_NORDIC_NRF_UARTE))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=SPIM3
+peripheral_depends=$(dt_nodelabel_has_compat,spi3,$(DT_COMPAT_NORDIC_NRF_SPIM))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=SPIS3
+peripheral_depends=$(dt_nodelabel_has_compat,spi3,$(DT_COMPAT_NORDIC_NRF_SPIS))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=TWIM3
+peripheral_depends=$(dt_nodelabel_has_compat,i2c3,$(DT_COMPAT_NORDIC_NRF_TWIM))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=TWIS3
+peripheral_depends=$(dt_nodelabel_has_compat,i2c3,$(DT_COMPAT_NORDIC_NRF_TWIS))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=UARTE3
+peripheral_depends=$(dt_nodelabel_has_compat,uart3,$(DT_COMPAT_NORDIC_NRF_UARTE))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=SAADC
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_SAADC))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=TIMER0
+peripheral_depends=$(dt_nodelabel_has_compat,timer0,$(DT_COMPAT_NORDIC_NRF_TIMER))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=TIMER1
+peripheral_depends=$(dt_nodelabel_has_compat,timer1,$(DT_COMPAT_NORDIC_NRF_TIMER))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=TIMER2
+peripheral_depends=$(dt_nodelabel_has_compat,timer2,$(DT_COMPAT_NORDIC_NRF_TIMER))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=RTC0
+peripheral_depends=$(dt_nodelabel_has_compat,rtc0,$(DT_COMPAT_NORDIC_NRF_RTC))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=RTC1
+peripheral_depends=$(dt_nodelabel_has_compat,rtc1,$(DT_COMPAT_NORDIC_NRF_RTC))
 rsource "Kconfig.template.peripheral_secure"
 
 config NRF_DPPI_SECURE
 	bool "DPPI configured as secure peripheral"
-	depends on HAS_HW_NRF_DPPIC
+	depends on $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_DPPIC))
 	help
 	  DPPI is implemented with user-selectable security mapping.
 	  If it has been configured as a secure peripheral then only the secure
 	  processing environment is able to access the peripheral
 
-peripheral=WDT
-rsource "Kconfig.template.peripheral_secure"
-
 peripheral=WDT0
+peripheral_depends=$(dt_nodelabel_has_compat,wdt0,$(DT_COMPAT_NORDIC_NRF_WDT))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=WDT1
+peripheral_depends=$(dt_nodelabel_has_compat,wdt1,$(DT_COMPAT_NORDIC_NRF_WDT))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=COMP
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_COMP))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=LPCOMP
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_LPCOMP))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=EGU0
+peripheral_depends=$(dt_nodelabel_has_compat,egu0,$(DT_COMPAT_NORDIC_NRF_EGU))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=EGU1
+peripheral_depends=$(dt_nodelabel_has_compat,egu1,$(DT_COMPAT_NORDIC_NRF_EGU))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=EGU2
+peripheral_depends=$(dt_nodelabel_has_compat,egu2,$(DT_COMPAT_NORDIC_NRF_EGU))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=EGU3
+peripheral_depends=$(dt_nodelabel_has_compat,egu3,$(DT_COMPAT_NORDIC_NRF_EGU))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=EGU4
+peripheral_depends=$(dt_nodelabel_has_compat,egu4,$(DT_COMPAT_NORDIC_NRF_EGU))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=EGU5
+peripheral_depends=$(dt_nodelabel_has_compat,egu5,$(DT_COMPAT_NORDIC_NRF_EGU))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=PWM0
+peripheral_depends=$(dt_nodelabel_has_compat,pwm0,$(DT_COMPAT_NORDIC_NRF_PWM))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=PWM1
+peripheral_depends=$(dt_nodelabel_has_compat,pwm1,$(DT_COMPAT_NORDIC_NRF_PWM))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=PWM2
+peripheral_depends=$(dt_nodelabel_has_compat,pwm2,$(DT_COMPAT_NORDIC_NRF_PWM))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=PWM3
+peripheral_depends=$(dt_nodelabel_has_compat,pwm3,$(DT_COMPAT_NORDIC_NRF_PWM))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=PDM
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_PDM))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=I2S
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_I2S))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=IPC
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_IPC))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=QSPI
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_QSPI))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=NFCT
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_NFCT))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=MUTEX
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_MUTEX))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=QDEC0
+peripheral_depends=$(dt_nodelabel_has_compat,qdec0,$(DT_COMPAT_NORDIC_NRF_QDEC))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=QDEC1
+peripheral_depends=$(dt_nodelabel_has_compat,qdec1,$(DT_COMPAT_NORDIC_NRF_QDEC))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=USBD
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_USBD))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=USBREG
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_USBREG))
 rsource "Kconfig.template.peripheral_secure"
 
-config NRF_NVMC_SECURE
-	bool "NVMC configured as secure peripheral"
-	help
-	  NVMC is implemented with split security.
-	  If it has been configured a a secure peripheral then only the secure
-	  processing environment is able to access the peripheral.
-	  If it has been configured as non-secure, only a subset of the
-	  registers is available from the non-secure processing environment.
+peripheral=NVMC
+peripheral_depends=y
+rsource "Kconfig.template.peripheral_secure"
 
 peripheral=GPIO0
+peripheral_depends=$(dt_nodelabel_has_compat,gpio0,$(DT_COMPAT_NORDIC_NRF_GPIO))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=GPIO1
+peripheral_depends=$(dt_nodelabel_has_compat,gpio1,$(DT_COMPAT_NORDIC_NRF_GPIO))
 rsource "Kconfig.template.peripheral_secure"
 
 peripheral=VMC
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_VMC))
 rsource "Kconfig.template.peripheral_secure"
 
 config NRF_GPIOTE0_SECURE

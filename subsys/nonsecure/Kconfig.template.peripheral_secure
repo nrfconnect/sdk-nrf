@@ -6,7 +6,7 @@
 
 config NRF_$(peripheral)_SECURE
 	bool "$(peripheral) configured as secure peripheral"
-	depends on HAS_HW_NRF_$(peripheral)
+	depends on $(peripheral_depends)
 	help
 	  $(peripheral) is implemented with user-selectable security mapping.
 	  If it has been configured as a secure peripheral then only the secure
