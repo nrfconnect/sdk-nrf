@@ -23,7 +23,6 @@
 #include "board_version.h"
 #include "audio_datapath.h"
 #include "audio_i2s.h"
-#include "audio_sync_timer.h"
 #include "channel_assignment.h"
 #include "hw_codec.h"
 #include "audio_usb.h"
@@ -180,9 +179,6 @@ void main(void)
 	ret = power_module_init();
 	ERR_CHK(ret);
 
-	ret = audio_sync_timer_init();
-	ERR_CHK(ret);
-
 #if ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_USB))
 	ret = audio_usb_init();
 	ERR_CHK(ret);
@@ -192,7 +188,6 @@ void main(void)
 	audio_i2s_init();
 	ret = hw_codec_init();
 	ERR_CHK(ret);
-	audio_sync_timer_sync_evt_send();
 #endif
 
 	/* Initialize BLE, with callback for when BLE is ready */
