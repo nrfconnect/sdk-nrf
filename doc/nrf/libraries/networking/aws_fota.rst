@@ -42,6 +42,7 @@ The following sequence diagram shows how a firmware over-the-air update is imple
 .. figure:: images/aws_fota_dfu_sequence.svg
    :alt: AWS FOTA sequence diagram for doing FOTA through AWS jobs
 
+   AWS Firmware Over-the-Air
 
 .. include:: /includes/aws_s3_bucket.txt
 
