@@ -36,9 +36,11 @@ static atomic_t request_in_progress;
 
 #if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED)
 /** In filtered ephemeris mode, request A-GPS data no more often than
- *  every 2 hours (time in milliseconds).
+ *  every ~2 hours (time in milliseconds).  Give it a 10 minute margin
+ *  of error so slightly early assistance requests are not ignored.
  */
-#define AGPS_UPDATE_PERIOD (2 * 60 * 60 * MSEC_PER_SEC)
+#define MARGIN_MINUTES 10
+#define AGPS_UPDATE_PERIOD ((120 - MARGIN_MINUTES) * 60 * MSEC_PER_SEC)
 
 static int64_t last_request_timestamp;
 #endif
@@ -116,7 +118,7 @@ int nrf_cloud_agps_request(const struct nrf_modem_gnss_agps_data_frame *request)
 	 */
 	if (ephem &&
 	    (last_request_timestamp != 0) &&
-	    (k_uptime_get() - last_request_timestamp) < AGPS_UPDATE_PERIOD) {
+	    ((k_uptime_get() - last_request_timestamp) < AGPS_UPDATE_PERIOD)) {
 		LOG_WRN("A-GPS request was sent less than 2 hours ago");
 		ephem = 0;
 	}
