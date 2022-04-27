@@ -38,6 +38,10 @@ target_sources(app PRIVATE
     ${COMMON_ROOT}/src/thread_util.cpp
 )
 
+if(CONFIG_CHIP_OTA_REQUESTOR)
+    target_sources(app PRIVATE ${COMMON_ROOT}/src/ota_util.cpp)
+endif()
+
 chip_configure_data_model(app
     INCLUDE_SERVER
     ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/template.zap

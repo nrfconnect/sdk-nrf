@@ -17,7 +17,7 @@ using namespace chip::app;
 
 void LightSwitch::Init(chip::EndpointId aLightSwitchEndpoint)
 {
-	BindingHandler::Init();
+	BindingHandler::GetInstance().Init();
 	mLightSwitchEndpoint = aLightSwitchEndpoint;
 }
 
@@ -41,10 +41,9 @@ void LightSwitch::InitiateActionSwitch(Action mAction)
 			Platform::Delete(data);
 			return;
 		}
-		data->IsGroup = BindingHandler::IsGroupBound();
+		data->IsGroup = BindingHandler::GetInstance().IsGroupBound();
 		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::SwitchWorkerHandler,
 							reinterpret_cast<intptr_t>(data));
-		Platform::Delete(data);
 	}
 }
 
@@ -62,9 +61,8 @@ void LightSwitch::DimmerChangeBrightness()
 			sBrightness = 0;
 		}
 		data->Value = (uint8_t)sBrightness;
-		data->IsGroup = BindingHandler::IsGroupBound();
+		data->IsGroup = BindingHandler::GetInstance().IsGroupBound();
 		DeviceLayer::PlatformMgr().ScheduleWork(BindingHandler::SwitchWorkerHandler,
 							reinterpret_cast<intptr_t>(data));
-		Platform::Delete(data);
 	}
 }
