@@ -12,8 +12,8 @@
 #elif CONFIG_BT_CTLR
 #include <bluetooth/crypto.h>
 #elif CONFIG_ZIGBEE_USE_SOFTWARE_AES
-#include <tinycrypt/aes.h>
-#include <tinycrypt/constants.h>
+#include <ocrypto_aes_ecb.h>
+#include <ocrypto_aes_key.h>
 #else
 #error No crypto suite for Zigbee stack has been selected
 #endif
@@ -70,14 +70,7 @@ static void encrypt_aes(zb_uint8_t *key, zb_uint8_t *msg, zb_uint8_t *c)
 #elif CONFIG_ZIGBEE_USE_SOFTWARE_AES
 static void encrypt_aes(zb_uint8_t *key, zb_uint8_t *msg, zb_uint8_t *c)
 {
-	int err;
-	struct tc_aes_key_sched_struct s;
-
-	err = tc_aes128_set_encrypt_key(&s, key);
-	__ASSERT(err == TC_CRYPTO_SUCCESS, "Key set failed");
-
-	err = tc_aes_encrypt(c, msg, &s);
-	__ASSERT(err == TC_CRYPTO_SUCCESS, "Encryption failed");
+	ocrypto_aes_ecb_encrypt(c, msg, ocrypto_aes128_KEY_BYTES, key, ocrypto_aes128_KEY_BYTES);
 }
 #endif
 

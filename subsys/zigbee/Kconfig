@@ -338,7 +338,7 @@ endif #ZIGBEE_HAVE_ASYNC_SERIAL
 
 config ZIGBEE_USE_SOFTWARE_AES
 	bool "Use software based AES"
-	select TINYCRYPT
+	select NRF_OBERON
 	default n
 
 config ZIGBEE_USE_LEDS

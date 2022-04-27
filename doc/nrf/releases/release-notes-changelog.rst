@@ -629,6 +629,13 @@ Libraries for Zigbee
       *  ``zdo`` shell commands extended to allow binding to a group address.
       * Internal context manager structures.
 
+  * ref:`lib_zigbee_osif`:
+
+    * Updated:
+
+      * Crypto library used for performing software AES ecryption.
+        Now, the :ref:`nrfxlib:nrf_oberon_readme` is used instead of the Tinycrypt library.
+
   * Fixed:
 
     * An issue where printing binding table containing group-binding entries results in corrupted output.
