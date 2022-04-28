@@ -115,8 +115,6 @@ Besides applying `General recommendations`_, you can also complete the following
   * :kconfig:option:`CONFIG_MAIN_STACK_SIZE`
   * :kconfig:option:`CONFIG_ISR_STACK_SIZE`
 
-For reference, you can find minimal footprint configurations for the single protocol and multiprotocol variants of the :ref:`ot_cli_sample` sample in :file:`nrf/samples/openthread/cli/overlay-minimal_*protocol.conf`.
-
 .. _app_memory_zigbee:
 
 Zigbee

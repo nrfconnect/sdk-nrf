@@ -83,12 +83,6 @@ For more information about using configuration overlay files, see :ref:`zephyr:i
 
 The following configuration files are available:
 
-* :file:`overlay-minimal_singleprotocol.conf` - Enables the minimal single protocol variant.
-  Optimizes the memory footprint for single protocol use.
-  For more information, see :ref:`app_memory`.
-* :file:`overlay-minimal_multiprotocol.conf` - Enables the minimal multiprotocol variant.
-  Optimizes the memory footprint for multiprotocol use.
-  For more information, see :ref:`app_memory`.
 * :file:`overlay-usb.conf` - Enables USB transport support.
   Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to :file:`usb.overlay`.
 * :file:`overlay-logging.conf` - Turns on logging.
@@ -103,13 +97,10 @@ FEM support
 
 .. _ot_cli_sample_minimal:
 
-Minimal configuration
-=====================
+Memory optimization
+===================
 
-This optional extension demonstrates an optimized configuration for the Thread CLI sample.
-The provided configurations optimize the memory footprint of the sample for single protocol and multiprotocol use.
-
-For more information, see :ref:`app_memory`.
+See :ref:`app_memory` for actions and configuration options you can use to optimize the memory footprint of the sample.
 
 Serial transport
 ================
