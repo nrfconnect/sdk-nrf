@@ -7,34 +7,25 @@
 #ifndef __RTE_DEVICE_H
 #define __RTE_DEVICE_H
 
-/* Undef the TF-M defined array size since devicetree will pull in util.h which
- * has this definition.
- */
-#undef ARRAY_SIZE
-
 #include <autoconf.h>
-#include <devicetree.h>
-
-#define UARTE(idx)			DT_NODELABEL(uart##idx)
-#define UARTE_PROP(idx, prop)		DT_PROP(UARTE(idx), prop)
 
 /* Configuration settings for Driver_USART0. */
 #define   RTE_USART0                    1
 /* Pin Selection (0xFFFFFFFF means Disconnected) */
-#define   RTE_USART0_TXD_PIN            UARTE_PROP(0, tx_pin)
-#define   RTE_USART0_RXD_PIN            UARTE_PROP(0, rx_pin)
-#define   RTE_USART0_RTS_PIN            UARTE_PROP(0, rts_pin)
-#define   RTE_USART0_CTS_PIN            UARTE_PROP(0, cts_pin)
+#define   RTE_USART0_TXD_PIN            CONFIG_TFM_UART0_TXD_PIN
+#define   RTE_USART0_RXD_PIN            CONFIG_TFM_UART0_RXD_PIN
+#define   RTE_USART0_RTS_PIN            CONFIG_TFM_UART0_RTS_PIN
+#define   RTE_USART0_CTS_PIN            CONFIG_TFM_UART0_CTS_PIN
 
 /* Configuration settings for Driver_USART1. */
-#define   RTE_USART1                    1
+#define   RTE_USART1                    CONFIG_TFM_SECURE_UART1
 /* Pin Selection (0xFFFFFFFF means Disconnected) */
-#if defined(CONFIG_BOARD_NRF5340DK_NRF5340_CPUAPP_NS)
-#define   RTE_USART1_TXD_PIN            25 // TODO: Add to devicetree
-#define   RTE_USART1_RXD_PIN            26 // TODO: Add to devicetree
+#if defined(CONFIG_TFM_SECURE_UART1)
+#define   RTE_USART1_TXD_PIN            CONFIG_TFM_UART1_TXD_PIN
+#define   RTE_USART1_RXD_PIN            CONFIG_TFM_UART1_RXD_PIN
 #else
-#define   RTE_USART1_TXD_PIN            UARTE_PROP(1, tx_pin)
-#define   RTE_USART1_RXD_PIN            UARTE_PROP(1, rx_pin)
+#define   RTE_USART1_TXD_PIN            0xFFFFFFFF
+#define   RTE_USART1_RXD_PIN            0xFFFFFFFF
 #endif
 #define   RTE_USART1_RTS_PIN            0xFFFFFFFF
 #define   RTE_USART1_CTS_PIN            0xFFFFFFFF
