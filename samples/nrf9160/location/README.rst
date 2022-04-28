@@ -190,6 +190,7 @@ This sample uses the following |NCS| libraries:
 * :ref:`lib_location`
 * :ref:`lte_lc_readme`
 * :ref:`lib_date_time`
+* :ref:`lib_at_host`
 
 In addition, it uses the following sample:
 
