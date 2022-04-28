@@ -233,10 +233,17 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_create_connection_cancel = 1;
 #endif
 
-	cmds->hci_le_read_white_list_size = 1;
-	cmds->hci_le_clear_white_list = 1;
-	cmds->hci_le_add_device_to_white_list = 1;
-	cmds->hci_le_remove_device_from_white_list = 1;
+	/* Temporarily remove section while transitioning to Core v5.3
+	 * naming convention
+	 * cmds->hci_le_read_white_list_size = 1;
+	 * cmds->hci_le_clear_white_list = 1;
+	 * cmds->hci_le_add_device_to_white_list = 1;
+	 * cmds->hci_le_remove_device_from_white_list = 1;
+	 */
+	uint8_t *ptr = (uint8_t *)cmds;
+
+	ptr[26] |= 0xC0;
+	ptr[27] |= 0x3;
 
 #if defined(CONFIG_BT_CENTRAL)
 	cmds->hci_le_connection_update = 1;
