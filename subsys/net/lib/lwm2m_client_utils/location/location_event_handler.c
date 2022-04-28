@@ -122,7 +122,8 @@ static bool event_handler(const struct app_event_header *eh)
 		handle_agps_request(event);
 		return true;
 	}
-#elif defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
+#endif
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
 	if (is_cell_location_request_event(eh)) {
 		handle_cell_location_event(true);
 		return true;
@@ -138,7 +139,8 @@ static bool event_handler(const struct app_event_header *eh)
 APP_EVENT_LISTENER(MODULE, event_handler);
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
 APP_EVENT_SUBSCRIBE(MODULE, gnss_agps_request_event);
-#elif defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
+#endif
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
 APP_EVENT_SUBSCRIBE(MODULE, cell_location_request_event);
 APP_EVENT_SUBSCRIBE(MODULE, cell_location_inform_event);
 #endif

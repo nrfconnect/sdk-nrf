@@ -55,8 +55,8 @@ static int32_t pgps_pred_interval;
 static int32_t pgps_start_gps_day;
 static int32_t pgps_start_gps_time_of_day;
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
-static char assist_buf[4096];
-static char assist_data[1024];
+static char assist_buf[CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS_BUF_SIZE];
+static char assist_data[CONFIG_LWM2M_COAP_BLOCK_SIZE];
 #endif
 
 static int32_t result;

@@ -17,7 +17,8 @@ static void log_gnss_agps_request_event(const struct app_event_header *eh)
 APP_EVENT_TYPE_DEFINE(gnss_agps_request_event, log_gnss_agps_request_event, NULL,
 		      APP_EVENT_FLAGS_CREATE());
 
-#elif defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
+#endif
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
 static void log_cell_location_request_event(const struct app_event_header *eh)
 {
 	APP_EVENT_MANAGER_LOG(eh, "got cell location request event");

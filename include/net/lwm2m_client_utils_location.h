@@ -40,7 +40,8 @@ struct gnss_agps_request_event {
 
 APP_EVENT_TYPE_DECLARE(gnss_agps_request_event);
 
-#elif defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
+#endif
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
 struct cell_location_request_event {
 	struct app_event_header header;
 };
