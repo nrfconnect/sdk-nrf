@@ -325,6 +325,7 @@ This sample uses the following |NCS| libraries:
 * :ref:`lib_nrf_cloud_pgps`
 * :ref:`lib_nrf_cloud_rest`
 * :ref:`supl_client`
+* :ref:`lib_at_host`
 
 It uses the following `sdk-nrfxlib`_ library:
 
