@@ -46,10 +46,9 @@
 
 #include <zephyr.h>
 #include <device.h>
-#include <drivers/gpio.h>
+#include <drivers/pinctrl.h>
 #include <nrfx_i2s.h>
 #include <nrfx_clock.h>
-#include <hal/nrf_gpio.h>
 
 #include "audio_sync_timer.h"
 
@@ -68,12 +67,12 @@ enum audio_i2s_state {
 
 static enum audio_i2s_state state = AUDIO_I2S_STATE_UNINIT;
 
+PINCTRL_DT_DEFINE(I2S_NL);
+
 static nrfx_i2s_config_t cfg = {
-	.sck_pin = DT_PROP(I2S_NL, sck_pin),
-	.lrck_pin = DT_PROP(I2S_NL, lrck_pin),
-	.mck_pin = DT_PROP(I2S_NL, mck_pin),
-	.sdout_pin = DT_PROP(I2S_NL, sdout_pin),
-	.sdin_pin = DT_PROP(I2S_NL, sdin_pin),
+	/* Pins are configured by pinctrl. */
+	.skip_gpio_cfg = true,
+	.skip_psel_cfg = true,
 	.irq_priority = DT_IRQ(I2S_NL, priority),
 	.mode = NRF_I2S_MODE_MASTER,
 	.format = NRF_I2S_FORMAT_I2S,
@@ -176,18 +175,15 @@ void audio_i2s_init(void)
 		k_sleep(K_MSEC(1));
 	}
 
+	ret = pinctrl_apply_state(PINCTRL_DT_DEV_CONFIG_GET(I2S_NL),
+				  PINCTRL_STATE_DEFAULT);
+	__ASSERT_NO_MSG(ret == 0);
+
 	IRQ_CONNECT(DT_IRQN(I2S_NL), DT_IRQ(I2S_NL, priority), nrfx_isr, nrfx_i2s_irq_handler, 0);
 	irq_enable(DT_IRQN(I2S_NL));
 
 	ret = nrfx_i2s_init(&cfg, i2s_comp_handler);
 	__ASSERT_NO_MSG(ret == NRFX_SUCCESS);
-
-	if (cfg.mck_pin != NRFX_I2S_PIN_NOT_USED) {
-		/* Activate high drive strength for MCK pin */
-		nrf_gpio_pin_drive_t drive = NRF_GPIO_PIN_H0H1;
-
-		nrf_gpio_reconfigure(cfg.mck_pin, NULL, NULL, NULL, &drive, NULL);
-	}
 
 	state = AUDIO_I2S_STATE_IDLE;
 }
