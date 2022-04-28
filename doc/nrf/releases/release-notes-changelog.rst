@@ -222,6 +222,7 @@ nRF9160 samples
 
       * Enabled building of bootloader FOTA update files.
       * Corrected handling of the bootloader FOTA updates.
+      * Enabled the :ref:`lib_at_host` library to make it easier to update certificates.
 
   * :ref:`lwm2m_client` sample:
 
@@ -244,6 +245,11 @@ nRF9160 samples
   * :ref:`gnss_sample` sample:
 
     * Added support for the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION` option.
+    * Enabled the :ref:`lib_at_host` library to make it easier to update certificates.
+
+  * :ref:`location_sample` sample:
+
+    * Enabled the :ref:`lib_at_host` library to make it easier to update certificates.
 
 OpenThread samples
 ------------------
