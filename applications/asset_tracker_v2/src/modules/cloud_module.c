@@ -41,7 +41,8 @@ BUILD_ASSERT(CONFIG_CLOUD_CONNECT_RETRIES < 14,
 
 BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) ||
 	     IS_ENABLED(CONFIG_AWS_IOT)	       ||
-	     IS_ENABLED(CONFIG_AZURE_IOT_HUB),
+	     IS_ENABLED(CONFIG_AZURE_IOT_HUB)  ||
+	     IS_ENABLED(CONFIG_LWM2M_INTEGRATION),
 	     "A cloud transport service must be enabled");
 
 #if defined(CONFIG_BOARD_QEMU_X86)
@@ -131,8 +132,8 @@ static struct module_data self = {
 /* Forward declarations. */
 static void connect_check_work_fn(struct k_work *work);
 static void send_config_received(void);
-static void message_add(uint8_t *ptr, size_t len, uint8_t type,
-			uint32_t flags, bool heap_allocated);
+static void add_qos_message(uint8_t *ptr, size_t len, uint8_t type,
+			    uint32_t flags, bool heap_allocated);
 
 /* Convenience functions used in internal state handling. */
 static char *state2str(enum state_type state)
@@ -389,6 +390,18 @@ static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
 		SEND_EVENT(cloud, CLOUD_EVT_USER_ASSOCIATED);
 	};
 		break;
+	case CLOUD_WRAP_EVT_REBOOT_REQUEST: {
+		SEND_EVENT(cloud, CLOUD_EVT_REBOOT_REQUEST);
+	};
+		break;
+	case CLOUD_WRAP_EVT_LTE_DISCONNECT_REQUEST: {
+		SEND_EVENT(cloud, CLOUD_EVT_LTE_DISCONNECT);
+	};
+		break;
+	case CLOUD_WRAP_EVT_LTE_CONNECT_REQUEST: {
+		SEND_EVENT(cloud, CLOUD_EVT_LTE_CONNECT);
+	};
+		break;
 	case CLOUD_WRAP_EVT_FOTA_DONE: {
 		LOG_DBG("CLOUD_WRAP_EVT_FOTA_DONE");
 		SEND_EVENT(cloud, CLOUD_EVT_FOTA_DONE);
@@ -568,11 +581,11 @@ void pgps_handler(struct nrf_cloud_pgps_event *event)
 		switch (err) {
 		case 0:
 			LOG_DBG("P-GPS request encoded successfully");
-			message_add(output.buf,
-				    output.len,
-				    PGPS_REQUEST,
-				    QOS_FLAG_RELIABILITY_ACK_REQUIRED,
-				    true);
+			add_qos_message(output.buf,
+					output.len,
+					PGPS_REQUEST,
+					QOS_FLAG_RELIABILITY_ACK_REQUIRED,
+					true);
 			break;
 		case -ENOTSUP:
 			/* PGPS request encoding is not supported */
@@ -597,7 +610,8 @@ void pgps_handler(struct nrf_cloud_pgps_event *event)
 #endif
 
 /* Convenience function used to add messages to the QoS library. */
-static void message_add(uint8_t *ptr, size_t len, uint8_t type, uint32_t flags, bool heap_allocated)
+static void add_qos_message(uint8_t *ptr, size_t len, uint8_t type,
+			    uint32_t flags, bool heap_allocated)
 {
 	int err;
 	struct qos_data message = {
@@ -625,7 +639,7 @@ static void qos_event_handler(const struct qos_evt *evt)
 		LOG_DBG("QOS_EVT_MESSAGE_NEW");
 		struct cloud_module_event *cloud_module_event = new_cloud_module_event();
 
-		cloud_module_event->type = CLOUD_EVT_DATA_SEND;
+		cloud_module_event->type = CLOUD_EVT_DATA_SEND_QOS;
 		cloud_module_event->data.message = evt->message;
 
 		APP_EVENT_SUBMIT(cloud_module_event);
@@ -636,7 +650,7 @@ static void qos_event_handler(const struct qos_evt *evt)
 
 		struct cloud_module_event *cloud_module_event = new_cloud_module_event();
 
-		cloud_module_event->type = CLOUD_EVT_DATA_SEND;
+		cloud_module_event->type = CLOUD_EVT_DATA_SEND_QOS;
 		cloud_module_event->data.message = evt->message;
 
 		APP_EVENT_SUBMIT(cloud_module_event);
@@ -790,54 +804,156 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 	}
 
 	if (IS_EVENT(msg, data, DATA_EVT_AGPS_REQUEST_DATA_SEND)) {
-		message_add(msg->module.data.data.buffer.buf,
-			    msg->module.data.data.buffer.len,
-			    AGPS_REQUEST,
-			    QOS_FLAG_RELIABILITY_ACK_REQUIRED,
-			    true);
+
+		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
+
+			char *paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX];
+
+			__ASSERT(ARRAY_SIZE(paths) ==
+				 ARRAY_SIZE(msg->module.data.data.buffer.paths),
+				 "Path object list not the same size");
+
+			for (int i = 0; i < ARRAY_SIZE(paths); i++) {
+				paths[i] = msg->module.data.data.buffer.paths[i];
+			}
+
+			err = cloud_wrap_agps_request_send(
+						   NULL,
+						   msg->module.data.data.buffer.valid_object_paths,
+						   true,
+						   0,
+						   paths);
+			if (err) {
+				LOG_ERR("cloud_wrap_agps_request_send, err: %d", err);
+			}
+
+			return;
+		}
+
+		add_qos_message(msg->module.data.data.buffer.buf,
+				msg->module.data.data.buffer.len,
+				AGPS_REQUEST,
+				QOS_FLAG_RELIABILITY_ACK_REQUIRED,
+				true);
 	}
 
 	if (IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) {
-		message_add(msg->module.data.data.buffer.buf,
-			    msg->module.data.data.buffer.len,
-			    GENERIC,
-			    QOS_FLAG_RELIABILITY_ACK_DISABLED,
-			    true);
+
+		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
+
+			char *paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX];
+
+			__ASSERT(ARRAY_SIZE(paths) ==
+				 ARRAY_SIZE(msg->module.data.data.buffer.paths),
+				 "Path object list not the same size");
+
+			for (int i = 0; i < ARRAY_SIZE(paths); i++) {
+				paths[i] = msg->module.data.data.buffer.paths[i];
+			}
+
+			err = cloud_wrap_data_send(NULL,
+						   msg->module.data.data.buffer.valid_object_paths,
+						   true,
+						   0,
+						   paths);
+			if (err) {
+				LOG_ERR("cloud_wrap_data_send, err: %d", err);
+			}
+
+			return;
+		}
+
+		add_qos_message(msg->module.data.data.buffer.buf,
+				msg->module.data.data.buffer.len,
+				GENERIC,
+				QOS_FLAG_RELIABILITY_ACK_DISABLED,
+				true);
 	}
 
 	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_SEND)) {
-		message_add(msg->module.data.data.buffer.buf,
-			    msg->module.data.data.buffer.len,
-			    CONFIG,
-			    QOS_FLAG_RELIABILITY_ACK_REQUIRED,
-			    true);
+		add_qos_message(msg->module.data.data.buffer.buf,
+				msg->module.data.data.buffer.len,
+				CONFIG,
+				QOS_FLAG_RELIABILITY_ACK_REQUIRED,
+				true);
 	}
 
 	if (IS_EVENT(msg, data, DATA_EVT_DATA_SEND_BATCH)) {
-		message_add(msg->module.data.data.buffer.buf,
-			    msg->module.data.data.buffer.len,
-			    BATCH,
-			    QOS_FLAG_RELIABILITY_ACK_REQUIRED,
-			    true);
+		add_qos_message(msg->module.data.data.buffer.buf,
+				msg->module.data.data.buffer.len,
+				BATCH,
+				QOS_FLAG_RELIABILITY_ACK_REQUIRED,
+				true);
 	}
 
 	if (IS_EVENT(msg, data, DATA_EVT_UI_DATA_SEND)) {
-		message_add(msg->module.data.data.buffer.buf,
-			    msg->module.data.data.buffer.len,
-			    UI,
-			    QOS_FLAG_RELIABILITY_ACK_REQUIRED,
-			    true);
+
+		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
+
+			char *paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX];
+
+			__ASSERT(ARRAY_SIZE(paths) ==
+				 ARRAY_SIZE(msg->module.data.data.buffer.paths),
+				 "Path object list not the same size");
+
+			for (int i = 0; i < ARRAY_SIZE(paths); i++) {
+				paths[i] = msg->module.data.data.buffer.paths[i];
+			}
+
+			err = cloud_wrap_ui_send(NULL,
+						 msg->module.data.data.buffer.valid_object_paths,
+						 true,
+						 0,
+						 paths);
+			if (err) {
+				LOG_ERR("cloud_wrap_ui_send, err: %d", err);
+			}
+
+			return;
+		}
+
+		add_qos_message(msg->module.data.data.buffer.buf,
+				msg->module.data.data.buffer.len,
+				UI,
+				QOS_FLAG_RELIABILITY_ACK_REQUIRED,
+				true);
 	}
 
 	if (IS_EVENT(msg, data, DATA_EVT_NEIGHBOR_CELLS_DATA_SEND)) {
-		message_add(msg->module.data.data.buffer.buf,
-			    msg->module.data.data.buffer.len,
-			    NEIGHBOR_CELLS,
-			    QOS_FLAG_RELIABILITY_ACK_DISABLED,
-			    true);
+
+		if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
+
+			char *paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX];
+
+			__ASSERT(ARRAY_SIZE(paths) ==
+				 ARRAY_SIZE(msg->module.data.data.buffer.paths),
+				 "Path object list not the same size");
+
+			for (int i = 0; i < ARRAY_SIZE(paths); i++) {
+				paths[i] = msg->module.data.data.buffer.paths[i];
+			}
+
+			err = cloud_wrap_neighbor_cells_send(
+						   NULL,
+						   msg->module.data.data.buffer.valid_object_paths,
+						   true,
+						   0,
+						   paths);
+			if (err) {
+				LOG_ERR("cloud_wrap_neighbor_cells_send, err: %d", err);
+			}
+
+			return;
+		}
+
+		add_qos_message(msg->module.data.data.buffer.buf,
+				msg->module.data.data.buffer.len,
+				NEIGHBOR_CELLS,
+				QOS_FLAG_RELIABILITY_ACK_DISABLED,
+				true);
 	}
 
-	if (IS_EVENT(msg, cloud, CLOUD_EVT_DATA_SEND)) {
+	if (IS_EVENT(msg, cloud, CLOUD_EVT_DATA_SEND_QOS)) {
 		bool ack = qos_message_has_flag(&msg->module.cloud.data.message,
 						QOS_FLAG_RELIABILITY_ACK_REQUIRED);
 
@@ -850,7 +966,8 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 			err = cloud_wrap_data_send(message->buf,
 						   message->len,
 						   ack,
-						   msg->module.cloud.data.message.id);
+						   msg->module.cloud.data.message.id,
+						   NULL);
 			if (err) {
 				LOG_WRN("cloud_wrap_data_send, err: %d", err);
 			}
@@ -868,7 +985,8 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 			err = cloud_wrap_ui_send(message->buf,
 						 message->len,
 						 ack,
-						 msg->module.cloud.data.message.id);
+						 msg->module.cloud.data.message.id,
+						 NULL);
 			if (err) {
 				LOG_WRN("cloud_wrap_ui_send, err: %d", err);
 			}
@@ -877,7 +995,8 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 			err = cloud_wrap_neighbor_cells_send(message->buf,
 							     message->len,
 							     ack,
-							     msg->module.cloud.data.message.id);
+							     msg->module.cloud.data.message.id,
+							     NULL);
 			if (err) {
 				LOG_WRN("cloud_wrap_neighbor_cells_send, err: %d", err);
 			}
@@ -886,7 +1005,8 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 			err = cloud_wrap_agps_request_send(message->buf,
 							   message->len,
 							   ack,
-							   msg->module.cloud.data.message.id);
+							   msg->module.cloud.data.message.id,
+							   NULL);
 			if (err) {
 				LOG_WRN("cloud_wrap_agps_request_send, err: %d", err);
 			}
@@ -937,14 +1057,14 @@ static void on_sub_state_cloud_disconnected(struct cloud_msg_data *msg)
 	 */
 	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_SEND) &&
 	    IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
-		message_add(msg->module.data.data.buffer.buf,
-			    msg->module.data.data.buffer.len,
-			    CONFIG,
-			    QOS_FLAG_RELIABILITY_ACK_REQUIRED,
-			    true);
+		add_qos_message(msg->module.data.data.buffer.buf,
+				msg->module.data.data.buffer.len,
+				CONFIG,
+				QOS_FLAG_RELIABILITY_ACK_REQUIRED,
+				true);
 	}
 
-	if (IS_EVENT(msg, cloud, CLOUD_EVT_DATA_SEND) &&
+	if (IS_EVENT(msg, cloud, CLOUD_EVT_DATA_SEND_QOS) &&
 	    IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
 		bool ack = qos_message_has_flag(&msg->module.cloud.data.message,
 						QOS_FLAG_RELIABILITY_ACK_REQUIRED);

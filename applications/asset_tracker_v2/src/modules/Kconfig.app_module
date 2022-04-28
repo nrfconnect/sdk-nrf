@@ -31,7 +31,7 @@ config APP_REQUEST_GNSS_WAIT_FOR_AGPS_THRESHOLD_SEC
 
 config APP_REQUEST_NEIGHBOR_CELLS_DATA
 	bool "Request neighbor cells data"
-	depends on AWS_IOT || NRF_CLOUD_MQTT || AZURE_IOT_HUB
+	depends on AWS_IOT || NRF_CLOUD_MQTT || AZURE_IOT_HUB || LWM2M_INTEGRATION
 	default y
 	help
 	  Include LTE neighbor cell measurement data in regular sampling requests.

@@ -98,6 +98,10 @@ enum data_module_event_type {
 struct data_module_data_buffers {
 	char *buf;
 	size_t len;
+	/** Object paths used in lwM2M. NULL terminated. */
+	char paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX]
+		  [CONFIG_CLOUD_CODEC_LWM2M_PATH_ENTRY_SIZE_MAX];
+	uint8_t valid_object_paths;
 };
 
 /** @brief Data module event. */

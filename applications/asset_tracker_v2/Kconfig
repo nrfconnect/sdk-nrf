@@ -30,6 +30,7 @@ config ASSET_TRACKER_V2_APP_VERSION_MAX_LEN
 rsource "src/modules/Kconfig.modules_common"
 rsource "src/modules/Kconfig.app_module"
 rsource "src/modules/Kconfig.cloud_module"
+rsource "src/cloud/Kconfig.lwm2m_integration"
 rsource "src/modules/Kconfig.data_module"
 rsource "src/modules/Kconfig.gnss_module"
 rsource "src/modules/Kconfig.modem_module"

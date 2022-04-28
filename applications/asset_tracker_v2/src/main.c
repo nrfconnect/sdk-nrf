@@ -301,6 +301,10 @@ static bool request_gnss(void)
 	int agps_wait_threshold_ms = CONFIG_APP_REQUEST_GNSS_WAIT_FOR_AGPS_THRESHOLD_SEC *
 				     MSEC_PER_SEC;
 
+	if (!IS_ENABLED(CONFIG_GNSS_MODULE)) {
+		return false;
+	}
+
 	if (!IS_ENABLED(CONFIG_APP_REQUEST_GNSS_WAIT_FOR_AGPS)) {
 		return true;
 	} else if (agps_wait_threshold_ms < 0) {
@@ -377,9 +381,10 @@ static void data_get(void)
 	size_t count = 0;
 
 	/* Set a low sample timeout. If GNSS is requested, the sample timeout will be increased to
-	 * accommodate the GNSS timeout.
+	 * accommodate the GNSS timeout. Use 2 seconds to accommodate for
+	 * neighbour cell measurements that usually takes a few seconds.
 	 */
-	app_module_event->timeout = 1;
+	app_module_event->timeout = 2;
 
 	/* Specify which data that is to be included in the transmission. */
 	app_module_event->data_list[count++] = APP_DATA_MODEM_DYNAMIC;

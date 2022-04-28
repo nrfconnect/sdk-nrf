@@ -366,6 +366,15 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 	return 0;
 }
 
+int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event_handler)
+{
+	ARG_UNUSED(cfg);
+	ARG_UNUSED(event_handler);
+
+	cJSON_Init();
+	return 0;
+}
+
 int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 				      struct cloud_data_neighbor_cells *neighbor_cells)
 {

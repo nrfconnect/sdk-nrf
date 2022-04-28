@@ -239,6 +239,7 @@ static void lte_evt_handler(const struct lte_lc_evt *const evt)
 			send_neighbor_cell_update((struct lte_lc_cells_info *)&evt->cells_info);
 		} else {
 			LOG_DBG("Neighbor cell measurement was not successful");
+			SEND_EVENT(modem, MODEM_EVT_NEIGHBOR_CELLS_DATA_NOT_READY);
 		}
 		break;
 	case LTE_LC_EVT_LTE_MODE_UPDATE:
@@ -637,6 +638,24 @@ static void populate_event_with_dynamic_modem_data(struct modem_module_event *ev
 		params_added = true;
 	}
 
+	if ((strcmp(prev.apn, param->network.apn.value_string) != 0) || include) {
+		strncpy(event->data.modem_dynamic.apn,
+			modem_param.network.apn.value_string,
+			sizeof(event->data.modem_dynamic.apn) - 1);
+
+		strncpy(prev.apn,
+			param->network.apn.value_string,
+			sizeof(prev.apn) - 1);
+
+		event->data.modem_dynamic.apn
+			[sizeof(event->data.modem_dynamic.apn) - 1] = '\0';
+
+		prev.apn[sizeof(prev.apn) - 1] = '\0';
+
+		event->data.modem_dynamic.apn_fresh = true;
+		params_added = true;
+	}
+
 	if ((strcmp(prev.ip_address, param->network.ip_address.value_string) != 0) || include) {
 		strncpy(event->data.modem_dynamic.ip_address,
 			modem_param.network.ip_address.value_string,
@@ -675,6 +694,10 @@ static void populate_event_with_dynamic_modem_data(struct modem_module_event *ev
 			[sizeof(event->data.modem_dynamic.mccmnc) - 1] = '\0';
 
 		prev.mccmnc[sizeof(prev.mccmnc) - 1] = '\0';
+
+		/* Provide MNC and MCC as separate values. */
+		event->data.modem_dynamic.mcc = modem_param.network.mcc.value;
+		event->data.modem_dynamic.mnc = modem_param.network.mnc.value;
 
 		event->data.modem_dynamic.mccmnc_fresh = true;
 		params_added = true;
@@ -887,12 +910,18 @@ static void on_state_disconnected(struct modem_msg_data *msg)
 	if (IS_EVENT(msg, modem, MODEM_EVT_LTE_CONNECTING)) {
 		state_set(STATE_CONNECTING);
 	}
+
+	if ((IS_EVENT(msg, app, APP_EVT_LTE_DISCONNECT)) ||
+	    (IS_EVENT(msg, cloud, CLOUD_EVT_LTE_DISCONNECT))) {
+		lte_connect();
+	}
 }
 
 /* Message handler for STATE_CONNECTING. */
 static void on_state_connecting(struct modem_msg_data *msg)
 {
-	if (IS_EVENT(msg, app, APP_EVT_LTE_DISCONNECT)) {
+	if ((IS_EVENT(msg, app, APP_EVT_LTE_DISCONNECT)) ||
+	    (IS_EVENT(msg, cloud, CLOUD_EVT_LTE_DISCONNECT))) {
 		int err;
 
 		err = lte_lc_offline();
@@ -914,6 +943,20 @@ static void on_state_connecting(struct modem_msg_data *msg)
 static void on_state_connected(struct modem_msg_data *msg)
 {
 	if (IS_EVENT(msg, modem, MODEM_EVT_LTE_DISCONNECTED)) {
+		state_set(STATE_DISCONNECTED);
+	}
+
+	if ((IS_EVENT(msg, app, APP_EVT_LTE_DISCONNECT)) ||
+	    (IS_EVENT(msg, cloud, CLOUD_EVT_LTE_DISCONNECT))) {
+		int err;
+
+		err = lte_lc_offline();
+		if (err) {
+			LOG_ERR("LTE disconnect failed, error: %d", err);
+			SEND_ERROR(modem, MODEM_EVT_ERROR, err);
+			return;
+		}
+
 		state_set(STATE_DISCONNECTED);
 	}
 }

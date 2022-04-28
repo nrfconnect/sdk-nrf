@@ -161,6 +161,10 @@ struct cloud_data_modem_dynamic {
 	uint8_t band;
 	/** Network mode. */
 	enum lte_lc_lte_mode nw_mode;
+	/* Mobile Country Code. */
+	uint16_t mcc;
+	/* Mobile Network Code. */
+	uint16_t mnc;
 	/** Area code. */
 	uint16_t area;
 	/** Cell id. */
@@ -169,6 +173,8 @@ struct cloud_data_modem_dynamic {
 	int16_t rsrp;
 	/** Internet Protocol Address. */
 	char ip[INET6_ADDRSTRLEN];
+	/** Access Point Name. */
+	char apn[CONFIG_CLOUD_CODEC_APN_LEN_MAX];
 	/* Mobile Country Code*/
 	char mccmnc[7];
 	/** Flag signifying that the data entry is to be encoded. */
@@ -198,6 +204,11 @@ struct cloud_codec_data {
 	char *buf;
 	/** Length of encoded output. */
 	size_t len;
+	/** LwM2M object paths. */
+	char paths[CONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX]
+		  [CONFIG_CLOUD_CODEC_LWM2M_PATH_ENTRY_SIZE_MAX];
+	/* Number of valid paths in the paths variable. */
+	uint8_t valid_object_paths;
 };
 
 struct cloud_data_neighbor_cells {
@@ -239,10 +250,18 @@ struct cloud_data_pgps_request {
 	bool queued : 1;
 };
 
-static inline void cloud_codec_init(void)
-{
-	cJSON_Init();
-}
+enum cloud_codec_event_type {
+	CLOUD_CODEC_EVT_CONFIG_UPDATE = 1,
+};
+
+struct cloud_codec_evt {
+	enum cloud_codec_event_type type;
+	struct cloud_data_cfg config_update;
+};
+
+typedef void (*cloud_codec_evt_handler_t)(const struct cloud_codec_evt *evt);
+
+int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event_handler);
 
 int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 				      struct cloud_data_neighbor_cells *neighbor_cells);

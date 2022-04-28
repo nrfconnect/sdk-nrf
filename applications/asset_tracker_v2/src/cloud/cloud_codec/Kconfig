@@ -15,6 +15,7 @@ choice
 	default CLOUD_CODEC_NRF_CLOUD if NRF_CLOUD_MQTT
 	default CLOUD_CODEC_AWS_IOT if AWS_IOT
 	default CLOUD_CODEC_AZURE_IOT_HUB if AZURE_IOT_HUB
+	default CLOUD_CODEC_LWM2M if LWM2M_INTEGRATION
 
 config CLOUD_CODEC_NRF_CLOUD
 	bool "Enable nRF Cloud codec backend"
@@ -28,7 +29,38 @@ config CLOUD_CODEC_AWS_IOT
 config CLOUD_CODEC_AZURE_IOT_HUB
 	bool "Enable Azure IoT Hub codec backend"
 
+config CLOUD_CODEC_LWM2M
+	bool "Enable lwM2M codec backend"
+
 endchoice
+
+config CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX
+	int "Maximum size of path list"
+	default LWM2M_COMPOSITE_PATH_LIST_SIZE if LWM2M
+	default 1
+	help
+	  Maximum number of entries in the path list constructed when writing to objects.
+
+config CLOUD_CODEC_LWM2M_PATH_ENTRY_SIZE_MAX
+	int "Size of each path list entry"
+	default 20 if LWM2M
+	default 1
+	help
+	  Maximum size of a lwm2m path entry
+
+config CLOUD_CODEC_APN_LEN_MAX
+	int "Maximum length of APN"
+	default 30
+	help
+	  Maximum length of APN (Access Point Name).
+
+if CLOUD_CODEC_LWM2M
+
+config CLOUD_CODEC_MANUFACTURER
+	string "Manufacturer name"
+	default "Nordic Semiconductor ASA"
+
+endif
 
 module = CLOUD_CODEC
 module-str = Cloud codec
