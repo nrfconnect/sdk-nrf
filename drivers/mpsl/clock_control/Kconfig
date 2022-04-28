@@ -7,5 +7,6 @@
 config CLOCK_CONTROL_MPSL
 	bool
 	depends on MPSL
+	depends on CLOCK_CONTROL
 	default y
 	select CLOCK_CONTROL_NRF_FORCE_ALT
