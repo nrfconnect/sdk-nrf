@@ -368,27 +368,17 @@ static void start_fota_download(struct k_work *work)
 	}
 }
 
-static int write_dl_uri(uint16_t obj_inst_id,
-			uint16_t res_id, uint16_t res_inst_id,
-			uint8_t *data, uint16_t data_len,
-			bool last_block, size_t total_size)
+static int init_start_download(char *uri)
 {
 	int ret;
 
-	LOG_INF("write URI: %s", log_strdup((char *) data));
 	ret = fota_download_init(fota_download_callback);
 	if (ret != 0) {
 		LOG_ERR("fota_download_init() returned %d", ret);
 		return -EBUSY;
 	}
 
-	if (fota_host) {
-		LOG_ERR("FOTA download already ongoing");
-		return -EBUSY;
-	}
-
-	bool is_tls = strncmp((char *) data, "https://", 8) == 0 ||
-		      strncmp((char *) data, "coaps://", 8) == 0;
+	bool is_tls = strncmp(uri, "https://", 8) == 0 || strncmp(uri, "coaps://", 8) == 0;
 	if (is_tls) {
 		fota_sec_tag = CONFIG_LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG;
 	} else {
@@ -396,7 +386,7 @@ static int write_dl_uri(uint16_t obj_inst_id,
 	}
 
 	/* Find the end of protocol marker https:// or coap:// */
-	char *s = strstr((char *) data, "://");
+	char *s = strstr(uri, "://");
 
 	if (!s) {
 		LOG_ERR("Host not found");
@@ -405,7 +395,7 @@ static int write_dl_uri(uint16_t obj_inst_id,
 	s += strlen("://");
 
 	/* Find the end of host name, which is start of path */
-	char  *e = strchr(s, '/');
+	char *e = strchr(s, '/');
 
 	if (!e) {
 		LOG_ERR("Path not found");
@@ -414,7 +404,7 @@ static int write_dl_uri(uint16_t obj_inst_id,
 
 	/* Path can point to a string, which is kept in LwM2M engine's memory */
 	fota_path = e + 1; /* Skip the '/' from path */
-	int len = e - (char *) data;
+	int len = e - uri;
 
 	/* For host, I need to allocate space, as I need to copy the substring */
 	fota_host = k_malloc(len + 1);
@@ -422,11 +412,40 @@ static int write_dl_uri(uint16_t obj_inst_id,
 		LOG_ERR("Failed to allocate memory");
 		return -ENOMEM;
 	}
-	strncpy(fota_host, (char *)data, len);
+	strncpy(fota_host, uri, len);
 	fota_host[len] = 0;
 
 	k_work_submit(&download_work);
 	lwm2m_firmware_set_update_state(STATE_DOWNLOADING);
+
+	return 0;
+}
+
+static int write_dl_uri(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, uint8_t *data,
+			uint16_t data_len, bool last_block, size_t total_size)
+{
+	int ret;
+	char *package_uri = (char *)data;
+	uint8_t state;
+
+	LOG_DBG("write URI: %s", log_strdup(package_uri));
+
+	state = lwm2m_firmware_get_update_state();
+
+	if (state == STATE_IDLE) {
+		lwm2m_firmware_set_update_result(RESULT_DEFAULT);
+
+		if (data_len > 0) {
+			ret = init_start_download(package_uri);
+			if (ret) {
+				lwm2m_firmware_set_update_result(RESULT_DEFAULT);
+			}
+		}
+	} else if (state == STATE_DOWNLOADED && data_len == 0U) {
+		/* reset to state idle and result default */
+		lwm2m_firmware_set_update_result(RESULT_DEFAULT);
+	}
+
 	return 0;
 }
 
