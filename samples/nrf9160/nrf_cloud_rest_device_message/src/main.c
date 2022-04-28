@@ -288,7 +288,11 @@ static int init(void)
 	}
 
 	/* Init modem */
-	modem_lib_init_result = nrf_modem_lib_init(NORMAL_MODE);
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_SYS_INIT)) {
+		modem_lib_init_result = nrf_modem_lib_get_init_ret();
+	} else {
+		modem_lib_init_result = nrf_modem_lib_init(NORMAL_MODE);
+	}
 	if (modem_lib_init_result) {
 		LOG_ERR("Failed to initialize modem library: 0x%X", modem_lib_init_result);
 		return -EFAULT;
