@@ -192,7 +192,6 @@ Kconfig*                                  @tejlmand
 /tests/                                   @gopiotr
 /tests/bluetooth/tester/                  @carlescufi @trond-snekvik
 /tests/crypto/                            @torsteingrindvik @magnev
-/tests/drivers/clock_control/clock_control_mpsl/ @ryanjh
 /tests/drivers/flash_nop_device/          @de-nordic
 /tests/drivers/flash_patch/               @oyvindronningstad
 /tests/drivers/fprotect/                  @oyvindronningstad
