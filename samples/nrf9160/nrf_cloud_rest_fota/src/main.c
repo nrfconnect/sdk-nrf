@@ -427,7 +427,11 @@ int init(void)
 		LOG_WRN("Failed to load settings, error: %d", err);
 	}
 
-	modem_lib_init_result = nrf_modem_lib_init(NORMAL_MODE);
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_SYS_INIT)) {
+		modem_lib_init_result = nrf_modem_lib_get_init_ret();
+	} else {
+		modem_lib_init_result = nrf_modem_lib_init(NORMAL_MODE);
+	}
 
 	/* This function may perform a reboot if a FOTA update is in progress */
 	process_pending_job();
