@@ -617,7 +617,7 @@ int slm_at_init(void)
 		LOG_ERR("ICMP could not be initialized: %d", err);
 		return -EFAULT;
 	}
-#if defined(CONFIG_SLM_GPS)
+#if defined(CONFIG_SLM_SMS)
 	err = slm_at_sms_init();
 	if (err) {
 		LOG_ERR("SMS could not be initialized: %d", err);
