@@ -59,6 +59,7 @@ Thread
 
 * Added support for the Link Metrics and CSL Thread v1.2 features for the nRF53 Series devices.
 * Removed support for the :ref:`thread_architectures_designs_cp_ncp` architecture and the related tools.
+* Memory requirements page shows requirements based on the configuration used for certification instead of minimal configuration which has been removed.
 
 Zigbee
 ------
@@ -253,8 +254,8 @@ nRF9160 samples
 
     * Enabled the :ref:`lib_at_host` library to make it easier to update certificates.
 
-OpenThread samples
-------------------
+Thread samples
+--------------
 
 * Updated:
 
@@ -262,6 +263,7 @@ OpenThread samples
   * Thread Beacon payload has been removed after changes in latest Thread Specification.
   * The relevant sample documentation pages with information about support for :ref:`Trusted Firmware-M <ug_tfm>`.
   * All sample documentation with a Configuration section, and organized relevant information under that section.
+  * Mnimal configuration for CLI sample has been removed.
 
 Matter samples
 --------------
