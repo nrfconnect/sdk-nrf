@@ -17,8 +17,10 @@
 #ifndef NRF_BOARD_H__
 #define NRF_BOARD_H__
 
-#include <hal/nrf_gpio.h>
+#include <autoconf.h>
 #include <devicetree.h>
+
+#include <hal/nrf_gpio.h>
 
 #define BUTTON1_PIN          (DT_GPIO_PIN(DT_NODELABEL(button0), gpios))
 #define BUTTON1_ACTIVE_LEVEL (0UL)
