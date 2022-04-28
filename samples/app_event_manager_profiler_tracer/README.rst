@@ -7,7 +7,7 @@ Application Event Manager profiling tracer
    :local:
    :depth: 2
 
-The Application Event Manager profiling tracer sample demonstrates the functionality of profiling :ref:`app_event_manager` events using the :ref:`profiler` and the :ref:`app_event_manager_profiler_tracer` modules.
+The Application Event Manager profiling tracer sample demonstrates the functionality of profiling :ref:`app_event_manager` events using the :ref:`nrf_profiler` and the :ref:`app_event_manager_profiler_tracer` modules.
 
 Requirements
 ************
@@ -71,7 +71,7 @@ Testing
 
 After programming the sample to your development kit, test it by performing the following steps:
 
-1. Run the script :file:`real_time_plot.py` located in the :file:`scripts/profiler` folder, with the name that is to be used to store the data as argument.
+1. Run the script :file:`real_time_plot.py` located in the :file:`scripts/nrf_profiler` folder, with the name that is to be used to store the data as argument.
    For example, run the following command to generate a :file:`test_name.csv` and a :file:`test_name.json` file using the *test_name* argument:
 
    .. parsed-literal::
@@ -81,12 +81,12 @@ After programming the sample to your development kit, test it by performing the 
 
    The script opens a GUI window that displays events as points on timelines, similar to the following:
 
-   .. include:: ../../doc/nrf/libraries/others/profiler.rst
-      :start-after: profiler_GUI_start
-      :end-before: profiler_GUI_end
+   .. include:: ../../doc/nrf/libraries/others/nrf_profiler.rst
+      :start-after: nrf_profiler_GUI_start
+      :end-before: nrf_profiler_GUI_end
 
 #. Use scroll wheel to zoom into interesting parts on a GUI.
-   See the :ref:`profiler_backends_custom_visualization` in the Profiler documentation for more information about how to work with the diagram.
+   See the :ref:`nrf_profiler_backends_custom_visualization` in the Profiler documentation for more information about how to work with the diagram.
 #. Click the middle mouse button to highlight an event submission or processing for tracking, and to display the event data as on a figure:
 
    .. figure:: ../../doc/nrf/images/app_event_manager_profiling_sample_zoom.png

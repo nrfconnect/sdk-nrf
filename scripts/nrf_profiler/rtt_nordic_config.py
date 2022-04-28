@@ -6,11 +6,11 @@
 RttNordicConfig = {
     'device_snr': None,
     'rtt_up_channel_names':  {
-        'Nordic profiler info': 'info',
-        'Nordic profiler data': 'data',
+        'Nordic nrf_profiler info': 'info',
+        'Nordic nrf_profiler data': 'data',
     },
     'rtt_down_channel_names': {
-        'Nordic profiler command': 'command',
+        'Nordic nrf_profiler command': 'command',
     },
     'ms_per_timestamp_tick': 0.03125,
     'byteorder': 'little',

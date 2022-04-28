@@ -6,13 +6,13 @@
 
 #include <zephyr.h>
 #include <drivers/gpio.h>
-#include <profiler.h>
+#include <nrf_profiler.h>
 
-#define MODULE profiler_sync
+#define MODULE nrf_profiler_sync
 #include <caf/events/module_state_event.h>
 
 #include <logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_PROFILER_SYNC_LOG_LEVEL);
+LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_NRF_PROFILER_SYNC_LOG_LEVEL);
 
 #define SYNC_PERIOD_MIN		1000U
 #define SYNC_PERIOD_MAX		2000U
@@ -25,7 +25,7 @@ static const struct device * const gpio_devs[] = {
 	DEVICE_DT_GET_OR_NULL(DT_NODELABEL(gpio1)),
 };
 static const struct device *gpio_dev =
-	gpio_devs[CONFIG_DESKTOP_PROFILER_SYNC_GPIO_PORT];
+	gpio_devs[CONFIG_DESKTOP_NRF_PROFILER_SYNC_GPIO_PORT];
 static struct gpio_callback gpio_cb;
 
 static struct k_work_delayable gen_sync_event;
@@ -37,13 +37,13 @@ static void profile_sync_event(void)
 {
 	struct log_event_buf buf;
 
-	profiler_log_start(&buf);
-	profiler_log_send(&buf, sync_event_id);
+	nrf_profiler_log_start(&buf);
+	nrf_profiler_log_send(&buf, sync_event_id);
 }
 
 static void register_sync_event(void)
 {
-	sync_event_id = profiler_register_event_type(SYNC_EVENT_NAME, NULL,
+	sync_event_id = nrf_profiler_register_event_type(SYNC_EVENT_NAME, NULL,
 						     NULL, 0);
 }
 
@@ -65,7 +65,7 @@ static void gen_sync_event_fn(struct k_work *work)
 
 	pin_value = 1 - pin_value;
 	int err = gpio_pin_set_raw(gpio_dev,
-			(gpio_pin_t)CONFIG_DESKTOP_PROFILER_SYNC_GPIO_PIN,
+			(gpio_pin_t)CONFIG_DESKTOP_NRF_PROFILER_SYNC_GPIO_PIN,
 			pin_value);
 
 	if (err) {
@@ -93,9 +93,9 @@ static int init(void)
 	}
 
 	int err;
-	gpio_pin_t pin = CONFIG_DESKTOP_PROFILER_SYNC_GPIO_PIN;
+	gpio_pin_t pin = CONFIG_DESKTOP_NRF_PROFILER_SYNC_GPIO_PIN;
 
-	if (IS_ENABLED(CONFIG_DESKTOP_PROFILER_SYNC_CENTRAL)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_NRF_PROFILER_SYNC_CENTRAL)) {
 		err = gpio_pin_configure(gpio_dev, pin, GPIO_OUTPUT);
 
 		if (!err) {
@@ -108,7 +108,7 @@ static int init(void)
 					      K_MSEC(SYNC_PERIOD_MIN));
 		}
 	} else {
-		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_PROFILER_SYNC_PERIPHERAL));
+		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_NRF_PROFILER_SYNC_PERIPHERAL));
 		err = gpio_pin_configure(gpio_dev, pin, GPIO_INPUT);
 
 		if (err) {

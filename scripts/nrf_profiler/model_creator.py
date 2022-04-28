@@ -19,7 +19,7 @@ class Command(Enum):
     STOP = 2
     INFO = 3
 
-PROFILER_FATAL_ERROR_EVENT_NAME = "_profiler_fatal_error_event_"
+NRF_PROFILER_FATAL_ERROR_EVENT_NAME = "_nrf_profiler_fatal_error_event_"
 
 class ModelCreator:
 
@@ -253,7 +253,7 @@ class ModelCreator:
                 self.event_types_filename)
         while True:
             event = self._read_single_event()
-            if self.raw_data.registered_events_types[event.type_id].name == PROFILER_FATAL_ERROR_EVENT_NAME:
+            if self.raw_data.registered_events_types[event.type_id].name == NRF_PROFILER_FATAL_ERROR_EVENT_NAME:
                 self.logger.error("Fatal error of Profiler on device! Event has been dropped. "
                                   "Data buffer has overflown. No more events will be received.")
 

@@ -15,7 +15,7 @@
 #include <sys/reboot.h>
 
 #include <app_event_manager.h>
-#include <profiler.h>
+#include <nrf_profiler.h>
 
 #include <caf/events/power_event.h>
 
@@ -131,7 +131,7 @@ static void system_off(void)
 {
 	if (!IS_ENABLED(CONFIG_CAF_POWER_MANAGER_STAY_ON) &&
 	    check_if_power_state_allowed(POWER_MANAGER_LEVEL_OFF)) {
-		profiler_term();
+		nrf_profiler_term();
 		set_power_state(POWER_STATE_OFF);
 		LOG_WRN("System turned off");
 		LOG_PANIC();

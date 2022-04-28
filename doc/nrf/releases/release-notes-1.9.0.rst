@@ -692,7 +692,7 @@ Other libraries
 
     * Updated:
 
-      * Event manager Profiler Tracer to no longer use orphaned sections to store profiler information.
+      * Event manager Profiler Tracer to no longer use orphaned sections to store nRF Profiler information.
         Hence, the :kconfig:option:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
 
 TF-M libraries

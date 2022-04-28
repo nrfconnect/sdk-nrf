@@ -1,5 +1,5 @@
-Nordic profiler is host application used to receive data through Nordic
-profiler protocol and process it.
+Nordic nrf_profiler is host application used to receive data through Nordic
+nrf_profiler protocol and process it.
 
 Usage:
 

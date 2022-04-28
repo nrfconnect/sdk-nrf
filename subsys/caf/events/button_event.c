@@ -21,12 +21,12 @@ static void profile_button_event(struct log_event_buf *buf,
 {
 	const struct button_event *event = cast_button_event(aeh);
 
-	profiler_log_encode_uint16(buf, event->key_id);
-	profiler_log_encode_uint8(buf, (event->pressed)?(1):(0));
+	nrf_profiler_log_encode_uint16(buf, event->key_id);
+	nrf_profiler_log_encode_uint8(buf, (event->pressed)?(1):(0));
 }
 
 APP_EVENT_INFO_DEFINE(button_event,
-		  ENCODE(PROFILER_ARG_U16, PROFILER_ARG_U8),
+		  ENCODE(NRF_PROFILER_ARG_U16, NRF_PROFILER_ARG_U8),
 		  ENCODE("button_id", "status"),
 		  profile_button_event);
 

@@ -20,7 +20,7 @@
  */
 
 #include <app_event_manager_profiler_tracer_priv.h>
-#include <profiler.h>
+#include <nrf_profiler.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,18 +29,18 @@ extern "C" {
 
 /** @brief Event description for profiling.
  */
-struct profiler_info {
+struct nrf_profiler_info {
 	/** Function for profiling data related with this event */
 	void (*profile_fn)(struct log_event_buf *buf, const struct app_event_header *aeh);
 
 	/** Number of profiled data fields. */
-	const uint8_t profiler_arg_cnt;
+	const uint8_t nrf_profiler_arg_cnt;
 
 	/** Labels of profiled data fields. */
-	const char **profiler_arg_labels;
+	const char **nrf_profiler_arg_labels;
 
 	/** Types of profiled data fields. */
-	const enum profiler_arg *profiler_arg_types;
+	const enum nrf_profiler_arg *nrf_profiler_arg_types;
 
 	/** Profiled event name. */
 	const char *name;
@@ -62,7 +62,7 @@ struct profiler_info {
  *       with the @ref ENCODE macro.
  *
  * @param ename Name of the event.
- * @param types Types of values to profile (represented as @ref profiler_arg).
+ * @param types Types of values to profile (represented as @ref nrf_profiler_arg).
  * @param labels Labels of values to profile.
  * @param profile_func Function used to profile event data.
  */

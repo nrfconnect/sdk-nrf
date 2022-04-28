@@ -36,12 +36,12 @@ static void profile_ble_peer_event(struct log_event_buf *buf,
 {
 	const struct ble_peer_event *event = cast_ble_peer_event(aeh);
 
-	profiler_log_encode_uint32(buf, (uint32_t)event->id);
-	profiler_log_encode_uint8(buf, event->state);
+	nrf_profiler_log_encode_uint32(buf, (uint32_t)event->id);
+	nrf_profiler_log_encode_uint8(buf, event->state);
 }
 
 APP_EVENT_INFO_DEFINE(ble_peer_event,
-		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8),
+		  ENCODE(NRF_PROFILER_ARG_U32, NRF_PROFILER_ARG_U8),
 		  ENCODE("conn_id", "state"),
 		  profile_ble_peer_event);
 
@@ -64,11 +64,11 @@ static void profile_ble_peer_search_event(struct log_event_buf *buf,
 {
 	const struct ble_peer_search_event *event = cast_ble_peer_search_event(aeh);
 
-	profiler_log_encode_uint8(buf, (uint8_t)event->active);
+	nrf_profiler_log_encode_uint8(buf, (uint8_t)event->active);
 }
 
 APP_EVENT_INFO_DEFINE(ble_peer_search_event,
-		  ENCODE(PROFILER_ARG_U8),
+		  ENCODE(NRF_PROFILER_ARG_U8),
 		  ENCODE("active"),
 		  profile_ble_peer_search_event);
 
@@ -112,13 +112,13 @@ static void profile_ble_peer_operation_event(struct log_event_buf *buf,
 	const struct ble_peer_operation_event *event =
 		cast_ble_peer_operation_event(aeh);
 
-	profiler_log_encode_uint8(buf, event->op);
-	profiler_log_encode_uint8(buf, event->bt_app_id);
-	profiler_log_encode_uint8(buf, event->bt_stack_id);
+	nrf_profiler_log_encode_uint8(buf, event->op);
+	nrf_profiler_log_encode_uint8(buf, event->bt_app_id);
+	nrf_profiler_log_encode_uint8(buf, event->bt_stack_id);
 }
 
 APP_EVENT_INFO_DEFINE(ble_peer_operation_event,
-		  ENCODE(PROFILER_ARG_U8, PROFILER_ARG_U8, PROFILER_ARG_U8),
+		  ENCODE(NRF_PROFILER_ARG_U8, NRF_PROFILER_ARG_U8, NRF_PROFILER_ARG_U8),
 		  ENCODE("operation", "bt_app_id", "bt_stack_id"),
 		  profile_ble_peer_operation_event);
 

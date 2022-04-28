@@ -26,24 +26,24 @@ static void log_event(const struct app_event_header *aeh)
 	APP_EVENT_MANAGER_LOG(aeh, "%s", get_evt_type_str(event->type));
 }
 
-#if defined(CONFIG_PROFILER)
+#if defined(CONFIG_NRF_PROFILER)
 
 static void profile_event(struct log_event_buf *buf,
 			 const struct app_event_header *aeh)
 {
 	const struct util_module_event *event = cast_util_module_event(aeh);
 
-#if defined(CONFIG_PROFILER_EVENT_TYPE_STRING)
-	profiler_log_encode_string(buf, get_evt_type_str(event->type));
+#if defined(CONFIG_NRF_PROFILER_EVENT_TYPE_STRING)
+	nrf_profiler_log_encode_string(buf, get_evt_type_str(event->type));
 #else
-	profiler_log_encode_uint8(buf, event->type);
+	nrf_profiler_log_encode_uint8(buf, event->type);
 #endif
 }
 
 COMMON_APP_EVENT_INFO_DEFINE(util_module_event,
 			 profile_event);
 
-#endif /* CONFIG_PROFILER */
+#endif /* CONFIG_NRF_PROFILER */
 
 COMMON_APP_EVENT_TYPE_DEFINE(util_module_event,
 			 log_event,

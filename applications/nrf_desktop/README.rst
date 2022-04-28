@@ -1758,7 +1758,7 @@ This application uses the following |NCS| libraries and drivers:
 
 * :ref:`lib_caf`
 * :ref:`app_event_manager`
-* :ref:`profiler`
+* :ref:`nrf_profiler`
 * :ref:`hids_readme`
 * :ref:`hogp_readme`
 * :ref:`nrf_bt_scan_readme`
@@ -1818,7 +1818,7 @@ These are valid for events that have many listeners or sources, and are gathered
    doc/motion.rst
    doc/passkey.rst
    doc/power_manager.rst
-   doc/profiler_sync.rst
+   doc/nrf_profiler_sync.rst
    doc/qos.rst
    doc/selector.rst
    doc/smp.rst

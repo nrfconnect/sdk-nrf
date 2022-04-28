@@ -1,1 +1,1 @@
-ITERABLE_SECTION_ROM(profiler_info, 4)
+ITERABLE_SECTION_ROM(nrf_profiler_info, 4)

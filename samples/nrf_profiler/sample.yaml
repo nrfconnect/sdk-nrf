@@ -2,7 +2,7 @@ sample:
   description: Sample showing Profiler usage
   name: Profiler sample
 tests:
-  samples.profiler:
+  samples.nrf_profiler:
     build_only: true
     platform_exclude: native_posix qemu_x86 qemu_cortex_m3
     integration_platforms:

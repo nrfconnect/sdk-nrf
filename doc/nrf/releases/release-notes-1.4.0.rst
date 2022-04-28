@@ -580,7 +580,7 @@ nRF5340
 nRF Desktop
 -----------
 
-* :ref:`nrf_desktop_profiler_sync` - updated configuration and implementation details
+* :ref:`nrf_desktop_nrf_profiler_sync` - updated configuration and implementation details
 * :ref:`nrf_desktop_cpu_meas` - updated configuration and implementation details
 * :ref:`nrf_desktop_smp` - updated configuration and implementation details
 * :ref:`nrf_desktop_config_channel` - updated transport configuration and listener configuration

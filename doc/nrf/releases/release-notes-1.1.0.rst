@@ -469,7 +469,7 @@ Documentation
     * :ref:`nfc_t2t_parser_readme`
     * :ref:`nfc_t4t_apdu_readme`
     * :ref:`nfc_t4t_isodep_readme`
-    * :ref:`profiler`
+    * :ref:`nrf_profiler`
     * :ref:`lib_secure_services`
 
 

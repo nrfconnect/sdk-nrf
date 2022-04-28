@@ -648,7 +648,7 @@ Other libraries
   * Added a weak function to allow overriding the allocation in Event Manager.
   * Increased the number of supported Event Manager events.
   * Moved the Event Manager features responsible for profiling events into the :ref:`app_event_manager_profiler_tracer` module.
-  * Added a sample showing the use of the profiler for Event Manager events.
+  * Added a sample showing the use of the nRF Profiler for Event Manager events.
 
 * :ref:`ei_wrapper` library:
 
@@ -669,11 +669,11 @@ Other libraries
     The sample can be run with or without TF-M.
   * Fixed ``hw_unique_key_is_written()`` which would previously trigger a fault under certain circumstances.
 
-* :ref:`profiler` library:
+* :ref:`nrf_profiler` library:
 
   * Updated Python scripts to use multiple processes that communicate over pipes.
-  * Increased the number of supported profiler events.
-  * Added a special profiler event for indicating a situation where the profiler's data buffer has overflowed and some events have been dropped, which causes the device to stop sending events.
+  * Increased the number of supported nRF Profiler events.
+  * Added a special nRF Profiler event for indicating a situation where the nRF Profiler's data buffer has overflowed and some events have been dropped, which causes the device to stop sending events.
 
 * :ref:`lib_spm`:
 

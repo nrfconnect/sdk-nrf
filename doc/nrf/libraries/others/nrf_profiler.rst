@@ -1,73 +1,73 @@
-.. _profiler:
+.. _nrf_profiler:
 
-Profiler
-########
+nRF Profiler
+############
 
 .. contents::
    :local:
    :depth: 2
 
-The Profiler provides an interface for logging and visualizing data for performance measurements, while the system is running.
+The nRF Profiler provides an interface for logging and visualizing data for performance measurements, while the system is running.
 You can use the module to profile :ref:`app_event_manager` events or custom events.
 The output is provided using RTT and can be visualized in a custom Python backend.
 
-See the :ref:`profiler_sample` sample for an example of how to use the Profiler.
+See the :ref:`nrf_profiler_sample` sample for an example of how to use the nRF Profiler.
 
-.. _profiler_configuration:
+.. _nrf_profiler_configuration:
 
 Configuration
 *************
 
-Since Application Event Manager events are converted to profiler events, the Profiler can be configured to profile custom events or Application Event Manager events, or both.
+Since Application Event Manager events are converted to nRF Profiler events, the nRF Profiler can be configured to profile custom events or Application Event Manager events, or both.
 
 Configuring for use with custom events
 ======================================
 
-To use the Profiler for custom events, complete the following steps:
+To use the nRF Profiler for custom events, complete the following steps:
 
-1. Enable the :kconfig:option:`CONFIG_PROFILER` Kconfig option.
-   This option adds the Profiler source code to the application.
-#. Call :c:func:`profiler_init` during the application start to initialize the Profiler.
+1. Enable the :kconfig:option:`CONFIG_NRF_PROFILER` Kconfig option.
+   This option adds the nRF Profiler source code to the application.
+#. Call :c:func:`nrf_profiler_init` during the application start to initialize the nRF Profiler.
 #. Profile custom events, as described in the following section.
 
-.. _profiler_profiling_custom_events:
+.. _nrf_profiler_profiling_custom_events:
 
 Profiling custom events
 -----------------------
 
 To profile custom events, complete the following steps:
 
-1. Register the custom events using :c:func:`profiler_register_event_type`.
+1. Register the custom events using :c:func:`nrf_profiler_register_event_type`.
    The following code example shows how to register event types:
 
    .. code-block:: c
 
       static const char * const data_names[] = {"value1", "value2", "value3", "value4", "string"};
-      static const enum profiler_arg data_types[] = {PROFILER_ARG_U32, PROFILER_ARG_S32,
-                  PROFILER_ARG_S16, PROFILER_ARG_U8,
-                  PROFILER_ARG_STRING};
+      static const enum nrf_profiler_arg data_types[] = {NRF_PROFILER_ARG_U32, NRF_PROFILER_ARG_S32,
+                  NRF_PROFILER_ARG_S16, NRF_PROFILER_ARG_U8,
+                  NRF_PROFILER_ARG_STRING};
 
-      no_data_event_id = profiler_register_event_type("no_data_event", NULL,
+      no_data_event_id = nrf_profiler_register_event_type("no_data_event", NULL,
                   NULL, 0);
-      data_event_id = profiler_register_event_type("data_event", data_names,
+      data_event_id = nrf_profiler_register_event_type("data_event", data_names,
                   data_types, 5);
 
 #. Add a structure for sending information about event occurrences:
 
    a. Add the following mandatory functions to the structure:
 
-      * :c:func:`profiler_log_start` - Start logging.
-      * :c:func:`profiler_log_send` - Send profiled data.
+      * :c:func:`nrf_profiler_log_start` - Start logging.
+      * :c:func:`nrf_profiler_log_send` - Send profiled data.
 
    #. Add one or more of the following optional functions in-between the mandatory functions, depending on the data format:
 
-      * :c:func:`profiler_log_encode_uint32` - Add 32-bit unsigned integer connected with the event.
-      * :c:func:`profiler_log_encode_int32` - Add 32-bit integer connected with the event.
-      * :c:func:`profiler_log_encode_uint16` - Add 16-bit unsigned integer connected with the event.
-      * :c:func:`profiler_log_encode_int16` - Add 16-bit integer connected with the event.
-      * :c:func:`profiler_log_encode_uint8` - Add 8-bit unsigned integer connected with the event.
-      * :c:func:`profiler_log_encode_int8` - Add 8-bit integer connected with the event.
-      * :c:func:`profiler_log_encode_string` - Add string connected with the event.
+      * :c:func:`nrf_profiler_log_encode_uint32` - Add 32-bit unsigned integer connected with the event.
+      * :c:func:`nrf_profiler_log_encode_int32` - Add 32-bit integer connected with the event.
+      * :c:func:`nrf_profiler_log_encode_uint16` - Add 16-bit unsigned integer connected with the event.
+      * :c:func:`nrf_profiler_log_encode_int16` - Add 16-bit integer connected with the event.
+      * :c:func:`nrf_profiler_log_encode_uint8` - Add 8-bit unsigned integer connected with the event.
+      * :c:func:`nrf_profiler_log_encode_int8` - Add 8-bit integer connected with the event.
+      * :c:func:`nrf_profiler_log_encode_string` - Add string connected with the event.
 
 #. Wrap the calls in one function that you then call to profile event occurrences.
    The following code example shows a function for profiling an event with data:
@@ -79,14 +79,14 @@ To profile custom events, complete the following steps:
       {
         struct log_event_buf buf;
 
-        profiler_log_start(&buf);
+        nrf_profiler_log_start(&buf);
         /* Profiling data connected with an event */
-        profiler_log_encode_uint32(&buf, val1);
-        profiler_log_encode_int32(&buf, val2);
-        profiler_log_encode_int16(&buf, val3);
-        profiler_log_encode_uint8(&buf, val4);
-        profiler_log_encode_string(&buf, string);
-        profiler_log_send(&buf, data_event_id);
+        nrf_profiler_log_encode_uint32(&buf, val1);
+        nrf_profiler_log_encode_int32(&buf, val2);
+        nrf_profiler_log_encode_int16(&buf, val3);
+        nrf_profiler_log_encode_uint8(&buf, val4);
+        nrf_profiler_log_encode_string(&buf, string);
+        nrf_profiler_log_send(&buf, data_event_id);
       }
 
    .. note::
@@ -97,15 +97,15 @@ To profile custom events, complete the following steps:
 Configuration for use with Application Event Manager
 ====================================================
 
-If you are using the Application Event Manager, in order to use the Profiler follow the steps in
+If you are using the Application Event Manager, in order to use the nRF Profiler follow the steps in
 :ref:`app_event_manager_profiler_tracer_em_implementation` and :ref:`app_event_manager_profiler_tracer_config` on the :ref:`app_event_manager_profiler_tracer` documentation page.
 
-.. _profiler_backends:
+.. _nrf_profiler_backends:
 
 Enabling supported backend
 **************************
 
-The Profiler supports a custom backend that is based around Python scripts to visualize the output data.
+The nRF Profiler supports a custom backend that is based around Python scripts to visualize the output data.
 The backend communicates with the host using RTT.
 
 To save profiling data, the scripts use CSV files for event occurrences and JSON files for event descriptions.
@@ -113,7 +113,7 @@ To save profiling data, the scripts use CSV files for event occurrences and JSON
 Available scripts
 =================
 
-The scripts can be found under :file:`scripts/profiler/` in the |NCS| folder structure.
+The scripts can be found under :file:`scripts/nrf_profiler/` in the |NCS| folder structure.
 The following script files are available:
 
 * :file:`data_collector.py` - This script connects to the device using RTT, receives profiling data, and saves it to files.
@@ -162,11 +162,11 @@ Running the backend
 To enable and run the custom backend, complete the following steps:
 
 1. Connect device to the computer.
-2. Complete the configuration steps for use with either custom events or Application Event Manager, as described in the :ref:`profiler_configuration` section.
+2. Complete the configuration steps for use with either custom events or Application Event Manager, as described in the :ref:`nrf_profiler_configuration` section.
 #. From the list of `Available scripts`_, choose the Python script that you want to use for event visualization, analysis, and calculating statistics.
 #. Run the script from the command line using its related command.
 
-.. _profiler_backends_custom_visualization:
+.. _nrf_profiler_backends_custom_visualization:
 
 Backend visualization
 =====================
@@ -175,15 +175,15 @@ When you run either the :file:`plot_from_files.py` or the :file:`real_time_plot.
 
 The visual output can look like the following diagram:
 
-.. profiler_GUI_start
+.. nrf_profiler_GUI_start
 
 .. figure:: ../../images/app_event_manager_profiling_sample.png
    :scale: 50 %
-   :alt: Example of profiler backend script visualization
+   :alt: Example of nRF Profiler backend script visualization
 
-   Example of profiler backend script visualization
+   Example of nRF Profiler backend script visualization
 
-.. profiler_GUI_end
+.. nrf_profiler_GUI_end
 
 In this diagram:
 
@@ -206,8 +206,8 @@ The GUI also supports the following actions:
 Shell integration
 *****************
 
-The Profiler is integrated with Zephyr's :ref:`zephyr:shell_api` module.
-When the shell is turned on, an additional subcommand set (:command:`profiler`) is added.
+The nRF Profiler is integrated with Zephyr's :ref:`zephyr:shell_api` module.
+When the shell is turned on, an additional subcommand set (:command:`nrf_profiler`) is added.
 
 This subcommand set contains the following commands:
 
@@ -223,9 +223,9 @@ This subcommand set contains the following commands:
 API documentation
 *****************
 
-| Header file: :file:`include/profiler.h`
-| Source files: :file:`subsys/profiler/`
+| Header file: :file:`include/nrf_profiler.h`
+| Source files: :file:`subsys/nrf_profiler/`
 
-.. doxygengroup:: profiler
+.. doxygengroup:: nrf_profiler
    :project: nrf
    :members:

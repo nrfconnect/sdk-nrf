@@ -1,4 +1,4 @@
-.. _profiler_sample:
+.. _nrf_profiler_sample:
 
 Profiler
 ########
@@ -7,7 +7,7 @@ Profiler
    :local:
    :depth: 2
 
-The Profiler sample demonstrates the functionality of the :ref:`profiler` subsystem.
+The Profiler sample demonstrates the functionality of the :ref:`nrf_profiler` subsystem.
 It shows how to use the Profiler to log and visualize data about custom events that are not part of the :ref:`app_event_manager`.
 
 Requirements
@@ -20,7 +20,7 @@ The sample supports the following development kits:
 Overview
 ********
 
-The sample initializes the :ref:`profiler` and registers and periodically profiles the occurrences of the following event types:
+The sample initializes the :ref:`nrf_profiler` and registers and periodically profiles the occurrences of the following event types:
 
 * Event without data (``no data event``) - This event is used to signal the occurrence of an event only.
   It does not contain additional data.
@@ -34,7 +34,7 @@ Configuration
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/profiler`
+.. |sample path| replace:: :file:`samples/nrf_profiler`
 
 .. include:: /includes/build_and_run.txt
 
@@ -43,7 +43,7 @@ Testing
 
 After programming the sample to your development kit, you can test it by performing the following steps:
 
-1. Go to the :file:`scripts/profiler` folder.
+1. Go to the :file:`scripts/nrf_profiler` folder.
 #. Run the script :file:`real_time_plot.py`, with the name that should be used to store the data as the argument.
    For example:
 
@@ -55,11 +55,11 @@ After programming the sample to your development kit, you can test it by perform
    This command generates a :file:`test_name.csv` file and a :file:`test_name.json` file.
    The script opens a GUI window that displays events as dots on timelines, similar to the following diagram.
 
-   .. include:: ../../doc/nrf/libraries/others/profiler.rst
-      :start-after: profiler_GUI_start
-      :end-before: profiler_GUI_end
+   .. include:: ../../doc/nrf/libraries/others/nrf_profiler.rst
+      :start-after: nrf_profiler_GUI_start
+      :end-before: nrf_profiler_GUI_end
 
-   See the :ref:`profiler_backends_custom_visualization` section in the Profiler documentation for more information about the GUI.
+   See the :ref:`nrf_profiler_backends_custom_visualization` section in the Profiler documentation for more information about the GUI.
 
 #. |connect_terminal|
 
@@ -67,11 +67,11 @@ After you connect, the sample will display messages in the terminal.
 
 .. note::
    If you use SEGGER Embedded Studio, make sure to stop debugging before you run Python scripts.
-   Otherwise, you may observe problems with accessing RTT data by the profiler scripts.
+   Otherwise, you may observe problems with accessing RTT data by the nRF Profiler scripts.
 
 Dependencies
 ************
 
 This sample uses the following |NCS| subsystems:
 
-* :ref:`profiler`
+* :ref:`nrf_profiler`

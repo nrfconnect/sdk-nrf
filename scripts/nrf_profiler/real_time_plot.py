@@ -53,7 +53,7 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
 
     parser = argparse.ArgumentParser(
-        description='Collecting data from Nordic profiler for given time, plotting and saving to files.')
+        description='Collecting data from Nordic nrf_profiler for given time, plotting and saving to files.')
     parser.add_argument('dataset_name', help='Name of dataset')
     parser.add_argument('--log', help='Log level')
     args = parser.parse_args()
@@ -104,7 +104,7 @@ def main():
     for p, event_close in processes:
         if p.is_alive():
             event_close.set()
-            # Ensure that we stop processes in order to prevent profiler data drop.
+            # Ensure that we stop processes in order to prevent nrf_profiler data drop.
             p.join()
 
 if __name__ == "__main__":
