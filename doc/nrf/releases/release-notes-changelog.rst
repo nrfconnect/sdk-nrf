@@ -491,6 +491,12 @@ Libraries for networking
 
 * Updated:
 
+  * :ref:`lib_lwm2m_client_utils` library:
+
+    * Fixed:
+
+      * Setting of the FOTA update result.
+
   * :ref:`lib_nrf_cloud` library:
 
     * Fixed:
