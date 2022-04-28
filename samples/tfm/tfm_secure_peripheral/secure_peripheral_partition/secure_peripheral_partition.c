@@ -21,12 +21,18 @@
 
 #include "util.h"
 
+#include <autoconf.h>
 #include <devicetree.h>
 
 #define BUTTON_PIN      DT_GPIO_PIN(DT_NODELABEL(button0), gpios)
-#define SCK_PIN         DT_PROP(DT_NODELABEL(spi3), sck_pin)
-#define MOSI_PIN        DT_PROP(DT_NODELABEL(spi3), mosi_pin)
 
+#if defined(CONFIG_BOARD_NRF5340DK_NRF5340_CPUAPP_NS)
+#define SCK_PIN         47 /* P1.15 */
+#define MOSI_PIN        45 /* P1.13 */
+#elif defined(CONFIG_BOARD_NRF9160DK_NRF9160_NS)
+#define SCK_PIN         13 /* P0.13 */
+#define MOSI_PIN        11 /* P0.11 */
+#endif
 
 #define TIMER_RELOAD_VALUE (1*1000 * 1000)
 static uint32_t m_button_count;
