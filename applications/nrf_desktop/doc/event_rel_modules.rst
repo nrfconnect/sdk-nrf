@@ -127,7 +127,7 @@ Source modules for module_state_event
 * :ref:`nrf_desktop_leds`
 * :ref:`nrf_desktop_motion`
 * :ref:`nrf_desktop_passkey`
-* :ref:`nrf_desktop_profiler_sync`
+* :ref:`nrf_desktop_nrf_profiler_sync`
 * :ref:`nrf_desktop_qos`
 * :ref:`nrf_desktop_selector`
 * :ref:`nrf_desktop_settings_loader`
@@ -143,7 +143,7 @@ Sink modules for module_state_event
 
 * :ref:`nrf_desktop_board`
 * :ref:`nrf_desktop_failsafe`
-* :ref:`nrf_desktop_profiler_sync`
+* :ref:`nrf_desktop_nrf_profiler_sync`
 * :ref:`nrf_desktop_watchdog`
 * :ref:`nrf_desktop_bas`
 * :ref:`nrf_desktop_battery_charger`

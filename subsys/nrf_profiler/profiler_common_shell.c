@@ -8,24 +8,24 @@
 #include <stdlib.h>
 #include <shell/shell.h>
 #include <shell/shell_rtt.h>
-#include <profiler.h>
+#include <nrf_profiler.h>
 
 static int display_registered_events(const struct shell *shell, size_t argc,
 				char **argv)
 {
-	shell_fprintf(shell, SHELL_NORMAL, "EVENTS REGISTERED IN PROFILER:\n");
-	for (size_t i = 0; i < profiler_num_events; i++) {
-		const char *event_name = profiler_get_event_descr(i);
+	shell_fprintf(shell, SHELL_NORMAL, "EVENTS REGISTERED IN NRF_PROFILER:\n");
+	for (size_t i = 0; i < nrf_profiler_num_events; i++) {
+		const char *event_name = nrf_profiler_get_event_descr(i);
 		/* Looking for event name delimiter (',') */
 		char *event_name_end = strchr(event_name, ',');
 
 		shell_fprintf(shell,
-			      SHELL_NORMAL,
-			      "%c %d:\t%.*s\n",
-			      (atomic_test_bit(_profiler_event_enabled_bm.flags, i)) ? 'E' : 'D',
-			      i,
-			      event_name_end - event_name,
-			      event_name);
+			   SHELL_NORMAL,
+			   "%c %d:\t%.*s\n",
+			   (atomic_test_bit(_nrf_profiler_event_enabled_bm.flags, i)) ? 'E' : 'D',
+			   i,
+			   event_name_end - event_name,
+			   event_name);
 	}
 
 	return 0;
@@ -36,8 +36,8 @@ static void set_event_profiling(const struct shell *shell, size_t argc,
 {
 	/* If no IDs specified, all registered events are affected */
 	if (argc == 1) {
-		for (int i = 0; i < profiler_num_events; i++) {
-			atomic_set_bit_to(_profiler_event_enabled_bm.flags, i, enable);
+		for (int i = 0; i < nrf_profiler_num_events; i++) {
+			atomic_set_bit_to(_nrf_profiler_event_enabled_bm.flags, i, enable);
 		}
 
 		shell_fprintf(shell,
@@ -54,7 +54,7 @@ static void set_event_profiling(const struct shell *shell, size_t argc,
 			event_indexes[i] = strtol(argv[i + 1], &end, 10);
 
 			if (event_indexes[i] < 0 ||
-			    event_indexes[i] >= profiler_num_events ||
+			    event_indexes[i] >= nrf_profiler_num_events ||
 			    *end != '\0') {
 				shell_error(shell, "Invalid event ID: %s",
 					    argv[i + 1]);
@@ -63,9 +63,9 @@ static void set_event_profiling(const struct shell *shell, size_t argc,
 		}
 
 		for (size_t i = 0; i < index_cnt; i++) {
-			atomic_set_bit_to(_profiler_event_enabled_bm.flags,
+			atomic_set_bit_to(_nrf_profiler_event_enabled_bm.flags,
 					  event_indexes[i], enable);
-			const char *event_name = profiler_get_event_descr(
+			const char *event_name = nrf_profiler_get_event_descr(
 							event_indexes[i]);
 			/* Looking for event name delimiter (',') */
 			char *event_name_end = strchr(event_name, ',');
@@ -94,15 +94,15 @@ static int disable_event_profiling(const struct shell *shell, size_t argc,
 	return 0;
 }
 
-SHELL_STATIC_SUBCMD_SET_CREATE(sub_profiler,
+SHELL_STATIC_SUBCMD_SET_CREATE(sub_nrf_profiler,
 	SHELL_CMD_ARG(list, NULL, "Display list of events",
 			display_registered_events, 0, 0),
 	SHELL_CMD_ARG(enable, NULL, "Enable profiling of event with given ID",
 			enable_event_profiling, 1,
-			sizeof(_profiler_event_enabled_bm) * 8),
+			sizeof(_nrf_profiler_event_enabled_bm) * 8),
 	SHELL_CMD_ARG(disable, NULL, "Disable profiling of event with given ID",
 			disable_event_profiling, 1,
-			sizeof(_profiler_event_enabled_bm) * 8),
+			sizeof(_nrf_profiler_event_enabled_bm) * 8),
 	SHELL_SUBCMD_SET_END
 );
-SHELL_CMD_REGISTER(profiler, &sub_profiler, "Profiler commands", NULL);
+SHELL_CMD_REGISTER(nrf_profiler, &sub_nrf_profiler, "Profiler commands", NULL);

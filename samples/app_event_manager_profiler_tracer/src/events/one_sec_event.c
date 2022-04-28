@@ -20,11 +20,11 @@ static void profile_one_sec_event(struct log_event_buf *buf,
 {
 	struct one_sec_event *event = cast_one_sec_event(aeh);
 
-	profiler_log_encode_int8(buf, event->five_sec_timer);
+	nrf_profiler_log_encode_int8(buf, event->five_sec_timer);
 }
 
 APP_EVENT_INFO_DEFINE(one_sec_event,
-		  ENCODE(PROFILER_ARG_S8),
+		  ENCODE(NRF_PROFILER_ARG_S8),
 		  ENCODE("five_sec_timer"),
 		  profile_one_sec_event);
 

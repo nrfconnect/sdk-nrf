@@ -19,7 +19,7 @@ extern "C" {
 /* Wrappers used for defining event infos */
 #ifdef CONFIG_APP_EVENT_MANAGER_PROFILER_TRACER_TRACE_EVENT_EXECUTION
 #define EM_MEM_ADDRESS_LABEL "_em_mem_address_",
-#define MEM_ADDRESS_TYPE PROFILER_ARG_U32,
+#define MEM_ADDRESS_TYPE NRF_PROFILER_ARG_U32,
 
 #else
 #define EM_MEM_ADDRESS_LABEL
@@ -45,19 +45,19 @@ extern "C" {
 
 /* Declarations and definitions - for more details refer to public API. */
 #define _APP_EVENT_INFO_DEFINE(ename, types, labels, profile_func)				\
-	const static char *_CONCAT(ename, _profiler_arg_labels[]) __used =			\
+	const static char *_CONCAT(ename, _nrf_profiler_arg_labels[]) __used =			\
 					_ARG_LABELS_DEFINE(labels);				\
-	const static enum profiler_arg _CONCAT(ename, _profiler_arg_types[]) __used =		\
+	const static enum nrf_profiler_arg _CONCAT(ename, _nrf_profiler_arg_types[]) __used =	\
 						_ARG_TYPES_DEFINE(types);			\
-	STRUCT_SECTION_ITERABLE(profiler_info, _CONCAT(ename, _info)) = {			\
+	STRUCT_SECTION_ITERABLE(nrf_profiler_info, _CONCAT(ename, _info)) = {			\
 				.profile_fn		=					\
 					profile_func,						\
-				.profiler_arg_cnt	=					\
-					ARRAY_SIZE(_CONCAT(ename, _profiler_arg_labels)),	\
-				.profiler_arg_labels	=					\
-					_CONCAT(ename, _profiler_arg_labels),			\
-				.profiler_arg_types	=					\
-					_CONCAT(ename, _profiler_arg_types),			\
+				.nrf_profiler_arg_cnt	=					\
+					ARRAY_SIZE(_CONCAT(ename, _nrf_profiler_arg_labels)),	\
+				.nrf_profiler_arg_labels	=				\
+					_CONCAT(ename, _nrf_profiler_arg_labels),		\
+				.nrf_profiler_arg_types	=					\
+					_CONCAT(ename, _nrf_profiler_arg_types),		\
 				.name			=					\
 					STRINGIFY(ename)					\
 			}

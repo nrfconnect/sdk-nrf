@@ -23,13 +23,13 @@ static void profile_measurement_event(struct log_event_buf *buf,
 	struct measurement_event *event = cast_measurement_event(aeh);
 
 	ARG_UNUSED(event);
-	profiler_log_encode_int8(buf, event->value1);
-	profiler_log_encode_int16(buf, event->value2);
-	profiler_log_encode_int32(buf, event->value3);
+	nrf_profiler_log_encode_int8(buf, event->value1);
+	nrf_profiler_log_encode_int16(buf, event->value2);
+	nrf_profiler_log_encode_int32(buf, event->value3);
 }
 
 APP_EVENT_INFO_DEFINE(measurement_event,
-		  ENCODE(PROFILER_ARG_S8, PROFILER_ARG_S16, PROFILER_ARG_S32),
+		  ENCODE(NRF_PROFILER_ARG_S8, NRF_PROFILER_ARG_S16, NRF_PROFILER_ARG_S32),
 		  ENCODE("value1", "value2", "value3"),
 		  profile_measurement_event);
 

@@ -15,7 +15,7 @@ static void profile_config_event(struct log_event_buf *buf,
 	struct config_event *event = cast_config_event(aeh);
 
 	ARG_UNUSED(event);
-	profiler_log_encode_int8(buf, event->init_value1);
+	nrf_profiler_log_encode_int8(buf, event->init_value1);
 }
 
 static void log_config_event(const struct app_event_header *aeh)
@@ -26,7 +26,7 @@ static void log_config_event(const struct app_event_header *aeh)
 }
 
 APP_EVENT_INFO_DEFINE(config_event,
-		  ENCODE(PROFILER_ARG_S8),
+		  ENCODE(NRF_PROFILER_ARG_S8),
 		  ENCODE("init_val_1"),
 		  profile_config_event);
 

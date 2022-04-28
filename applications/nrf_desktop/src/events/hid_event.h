@@ -9,7 +9,7 @@
 
 #include <app_event_manager.h>
 #include <app_event_manager_profiler_tracer.h>
-#include "profiler.h"
+#include "nrf_profiler.h"
 #include "hid_report_desc.h"
 
 

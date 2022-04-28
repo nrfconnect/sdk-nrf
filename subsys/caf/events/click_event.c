@@ -32,12 +32,12 @@ static void profile_click_event(struct log_event_buf *buf,
 {
 	const struct click_event *event = cast_click_event(aeh);
 
-	profiler_log_encode_uint16(buf, event->key_id);
-	profiler_log_encode_uint8(buf, event->click);
+	nrf_profiler_log_encode_uint16(buf, event->key_id);
+	nrf_profiler_log_encode_uint8(buf, event->click);
 }
 
 APP_EVENT_INFO_DEFINE(click_event,
-		  ENCODE(PROFILER_ARG_U16, PROFILER_ARG_U8),
+		  ENCODE(NRF_PROFILER_ARG_U16, NRF_PROFILER_ARG_U8),
 		  ENCODE("key_id", "click"),
 		  profile_click_event);
 

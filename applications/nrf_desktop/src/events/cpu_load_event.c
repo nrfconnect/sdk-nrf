@@ -23,11 +23,11 @@ static void profile_cpu_load_event(struct log_event_buf *buf,
 {
 	const struct cpu_load_event *event = cast_cpu_load_event(aeh);
 
-	profiler_log_encode_uint32(buf, event->load);
+	nrf_profiler_log_encode_uint32(buf, event->load);
 }
 
 APP_EVENT_INFO_DEFINE(cpu_load_event,
-		  ENCODE(PROFILER_ARG_U32),
+		  ENCODE(NRF_PROFILER_ARG_U32),
 		  ENCODE("load"),
 		  profile_cpu_load_event);
 

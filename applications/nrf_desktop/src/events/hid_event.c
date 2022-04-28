@@ -53,13 +53,13 @@ static void profile_hid_report_event(struct log_event_buf *buf,
 
 	__ASSERT_NO_MSG(event->dyndata.size > 0);
 
-	profiler_log_encode_uint8(buf, event->dyndata.data[0]);
-	profiler_log_encode_uint32(buf, (uint32_t)event->source);
-	profiler_log_encode_uint32(buf, (uint32_t)event->subscriber);
+	nrf_profiler_log_encode_uint8(buf, event->dyndata.data[0]);
+	nrf_profiler_log_encode_uint32(buf, (uint32_t)event->source);
+	nrf_profiler_log_encode_uint32(buf, (uint32_t)event->subscriber);
 }
 
 APP_EVENT_INFO_DEFINE(hid_report_event,
-		  ENCODE(PROFILER_ARG_U8, PROFILER_ARG_U32, PROFILER_ARG_U32),
+		  ENCODE(NRF_PROFILER_ARG_U8, NRF_PROFILER_ARG_U32, NRF_PROFILER_ARG_U32),
 		  ENCODE("report_id", "source", "subscriber"),
 		  profile_hid_report_event);
 
@@ -85,12 +85,12 @@ static void profile_hid_report_subscriber_event(struct log_event_buf *buf,
 	const struct hid_report_subscriber_event *event =
 		cast_hid_report_subscriber_event(aeh);
 
-	profiler_log_encode_uint32(buf, (uint32_t)event->subscriber);
-	profiler_log_encode_uint8(buf, event->connected);
+	nrf_profiler_log_encode_uint32(buf, (uint32_t)event->subscriber);
+	nrf_profiler_log_encode_uint8(buf, event->connected);
 }
 
 APP_EVENT_INFO_DEFINE(hid_report_subscriber_event,
-		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8),
+		  ENCODE(NRF_PROFILER_ARG_U32, NRF_PROFILER_ARG_U8),
 		  ENCODE("subscriber", "connected"),
 		  profile_hid_report_subscriber_event);
 
@@ -125,13 +125,13 @@ static void profile_hid_report_sent_event(struct log_event_buf *buf,
 	const struct hid_report_sent_event *event =
 		cast_hid_report_sent_event(aeh);
 
-	profiler_log_encode_uint32(buf, (uint32_t)event->subscriber);
-	profiler_log_encode_uint8(buf, event->report_id);
-	profiler_log_encode_uint8(buf, event->error);
+	nrf_profiler_log_encode_uint32(buf, (uint32_t)event->subscriber);
+	nrf_profiler_log_encode_uint8(buf, event->report_id);
+	nrf_profiler_log_encode_uint8(buf, event->error);
 }
 
 APP_EVENT_INFO_DEFINE(hid_report_sent_event,
-		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8, PROFILER_ARG_U8),
+		  ENCODE(NRF_PROFILER_ARG_U32, NRF_PROFILER_ARG_U8, NRF_PROFILER_ARG_U8),
 		  ENCODE("subscriber", "report_id", "error"),
 		  profile_hid_report_sent_event);
 
@@ -159,13 +159,13 @@ static void profile_hid_report_subscription_event(struct log_event_buf *buf,
 	const struct hid_report_subscription_event *event =
 		cast_hid_report_subscription_event(aeh);
 
-	profiler_log_encode_uint32(buf, (uint32_t)event->subscriber);
-	profiler_log_encode_uint8(buf, event->report_id);
-	profiler_log_encode_uint8(buf, event->enabled);
+	nrf_profiler_log_encode_uint32(buf, (uint32_t)event->subscriber);
+	nrf_profiler_log_encode_uint8(buf, event->report_id);
+	nrf_profiler_log_encode_uint8(buf, event->enabled);
 }
 
 APP_EVENT_INFO_DEFINE(hid_report_subscription_event,
-		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8, PROFILER_ARG_U8),
+		  ENCODE(NRF_PROFILER_ARG_U32, NRF_PROFILER_ARG_U8, NRF_PROFILER_ARG_U8),
 		  ENCODE("subscriber", "report_id", "enabled"),
 		  profile_hid_report_subscription_event);
 

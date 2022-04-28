@@ -29,7 +29,7 @@ rsource "app_event_manager_profiler_tracer/Kconfig"
 
 rsource "event_manager_proxy/Kconfig"
 
-rsource "profiler/Kconfig"
+rsource "nrf_profiler/Kconfig"
 
 rsource "spm/Kconfig"
 

@@ -32,5 +32,5 @@ Implementation details
 **********************
 
 The module periodically submits the measured CPU load as :c:struct:`cpu_load_event` and resets the measurement.
-The event can be displayed in the logs or using the :ref:`profiler`.
+The event can be displayed in the logs or using the :ref:`nrf_profiler`.
 The :c:member:`cpu_load_event.load` presents the CPU load in 0.001% units.

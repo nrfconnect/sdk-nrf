@@ -620,6 +620,10 @@ Other libraries
 
     * Added the :file:`ncs/nrf/subsys/partition_manager/pm.yml.pgps` file.
 
+  * :ref:`nrf_profiler`:
+
+      * Renamed Profiler to nRF Profiler.
+
 Common Application Framework (CAF)
 ----------------------------------
 

@@ -5,7 +5,7 @@
  */
 
 #include <ztest.h>
-#include <profiler.h>
+#include <nrf_profiler.h>
 
 #define PROFILED_EVENTS_NB 100
 #define U_VALUE_START 0
@@ -20,7 +20,7 @@ static void profile_data_event(struct log_event_buf *buf)
 {
 	static uint32_t val1;
 
-	profiler_log_encode_uint32(buf, val1++);
+	nrf_profiler_log_encode_uint32(buf, val1++);
 }
 
 static void profile_big_event(struct log_event_buf *buf)
@@ -32,34 +32,34 @@ static void profile_big_event(struct log_event_buf *buf)
 	static uint8_t val5 = U_VALUE_START;
 	static int8_t val6 = S_VALUE_START;
 
-	profiler_log_encode_uint32(buf, val1++);
-	profiler_log_encode_int32(buf, val2++);
-	profiler_log_encode_uint16(buf, val3++);
-	profiler_log_encode_int16(buf, val4++);
-	profiler_log_encode_uint8(buf, val5++);
-	profiler_log_encode_int8(buf, val6++);
-	profiler_log_encode_string(buf, EXAMPLE_STRING);
+	nrf_profiler_log_encode_uint32(buf, val1++);
+	nrf_profiler_log_encode_int32(buf, val2++);
+	nrf_profiler_log_encode_uint16(buf, val3++);
+	nrf_profiler_log_encode_int16(buf, val4++);
+	nrf_profiler_log_encode_uint8(buf, val5++);
+	nrf_profiler_log_encode_int8(buf, val6++);
+	nrf_profiler_log_encode_string(buf, EXAMPLE_STRING);
 }
 
 static void register_profiler_events(void)
 {
 	static const char * const data_names[] = {"value1"};
-	static const enum profiler_arg data_types[] = {PROFILER_ARG_U32};
+	static const enum nrf_profiler_arg data_types[] = {NRF_PROFILER_ARG_U32};
 	static const char * const big_event_data_names[] = {"value1", "value2", "value3",
 							  "value4", "value5", "value6",
 							  "string"};
-	static const enum profiler_arg big_event_data_types[] = {PROFILER_ARG_U32,
-								 PROFILER_ARG_S32,
-								 PROFILER_ARG_U16,
-								 PROFILER_ARG_S16,
-								 PROFILER_ARG_U8,
-								 PROFILER_ARG_S8,
-								 PROFILER_ARG_STRING};
-	no_data_event_id = profiler_register_event_type("no data event", NULL,
+	static const enum nrf_profiler_arg big_event_data_types[] = {NRF_PROFILER_ARG_U32,
+								 NRF_PROFILER_ARG_S32,
+								 NRF_PROFILER_ARG_U16,
+								 NRF_PROFILER_ARG_S16,
+								 NRF_PROFILER_ARG_U8,
+								 NRF_PROFILER_ARG_S8,
+								 NRF_PROFILER_ARG_STRING};
+	no_data_event_id = nrf_profiler_register_event_type("no data event", NULL,
 							NULL, 0);
-	data_event_id = profiler_register_event_type("data event", data_names,
+	data_event_id = nrf_profiler_register_event_type("data event", data_names,
 						     data_types, 1);
-	big_event_id = profiler_register_event_type("big event", big_event_data_names,
+	big_event_id = nrf_profiler_register_event_type("big event", big_event_data_names,
 						    big_event_data_types, 7);
 }
 
@@ -75,11 +75,11 @@ static uint32_t test_performance_core(void (*profiler_func)(struct log_event_buf
 	for (size_t i = 0; i < PROFILED_EVENTS_NB; i++) {
 		struct log_event_buf buf;
 
-		profiler_log_start(&buf);
+		nrf_profiler_log_start(&buf);
 		if (profiler_func) {
 			(*profiler_func)(&buf);
 		}
-		profiler_log_send(&buf, event_id);
+		nrf_profiler_log_send(&buf, event_id);
 	}
 	elapsed_ticks = k_cycle_get_32() - start_time;
 	elapsed_time_us = k_cyc_to_us_near32(elapsed_ticks);
@@ -88,7 +88,7 @@ static uint32_t test_performance_core(void (*profiler_func)(struct log_event_buf
 
 static void test_init(void)
 {
-	zassert_ok(profiler_init(), "Error when initializing");
+	zassert_ok(nrf_profiler_init(), "Error when initializing");
 	register_profiler_events();
 }
 
@@ -119,12 +119,12 @@ static void test_performance3(void)
 
 void test_main(void)
 {
-	ztest_test_suite(profiler_tests,
+	ztest_test_suite(nrf_profiler_tests,
 			 ztest_unit_test(test_init),
 			 ztest_unit_test(test_performance1),
 			 ztest_unit_test(test_performance2),
 			 ztest_unit_test(test_performance3)
 			 );
 
-	ztest_run_test_suite(profiler_tests);
+	ztest_run_test_suite(nrf_profiler_tests);
 }

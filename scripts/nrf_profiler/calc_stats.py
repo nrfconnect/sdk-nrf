@@ -5,7 +5,6 @@
 
 from stats_nordic import StatsNordic
 
-import sys
 import argparse
 import logging
 

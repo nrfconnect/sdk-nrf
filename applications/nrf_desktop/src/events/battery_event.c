@@ -35,11 +35,11 @@ static void profile_battery_state_event(struct log_event_buf *buf,
 {
 	const struct battery_state_event *event = cast_battery_state_event(aeh);
 
-	profiler_log_encode_uint8(buf, event->state);
+	nrf_profiler_log_encode_uint8(buf, event->state);
 }
 
 APP_EVENT_INFO_DEFINE(battery_state_event,
-		  ENCODE(PROFILER_ARG_U8),
+		  ENCODE(NRF_PROFILER_ARG_U8),
 		  ENCODE("state"),
 		  profile_battery_state_event);
 
@@ -63,11 +63,11 @@ static void profile_battery_level_event(struct log_event_buf *buf,
 {
 	const struct battery_level_event *event = cast_battery_level_event(aeh);
 
-	profiler_log_encode_uint8(buf, event->level);
+	nrf_profiler_log_encode_uint8(buf, event->level);
 }
 
 APP_EVENT_INFO_DEFINE(battery_level_event,
-		  ENCODE(PROFILER_ARG_U8),
+		  ENCODE(NRF_PROFILER_ARG_U8),
 		  ENCODE("level"),
 		  profile_battery_level_event);
 

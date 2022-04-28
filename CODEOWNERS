@@ -139,7 +139,7 @@ Kconfig*                                  @tejlmand
 /samples/nrf9160/nrf_cloud_*              @plskeggs @jayteemo @glarsennordic
 /samples/spm/                             @lemrey @hakonfam @SebastianBoe
 /samples/openthread/                      @lmaciejonczyk @rlubos @edmont @canisLupus1313
-/samples/profiler/                        @pdunaj
+/samples/nrf_profiler/                    @pdunaj
 /samples/peripheral/radio_test/           @kapi-no
 /samples/peripheral/lpuart/               @nordic-krch
 /samples/peripheral/802154_phy_test/      @czeslawmakarski
@@ -183,7 +183,7 @@ Kconfig*                                  @tejlmand
 /subsys/nrf_rpc/                          @doki-nordic @KAGA164
 /subsys/partition_manager/                @hakonfam
 /subsys/pcd/                              @hakonfam
-/subsys/profiler/                         @pdunaj
+/subsys/nrf_profiler/                     @pdunaj
 /subsys/shell/                            @nordic-krch
 /subsys/spm/                              @SebastianBoe
 /subsys/nonsecure/                        @SebastianBoe
@@ -223,7 +223,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/net/lib/azure_iot_hub/      @jtguggedal
 /tests/subsys/net/lib/fota_download/      @hakonfam @sigvartmh
 /tests/subsys/pcd/                        @hakonfam @sigvartmh
-/tests/subsys/profiler/                   @pdunaj @MarekPieta
+/tests/subsys/nrf_profiler/               @pdunaj @MarekPieta
 /tests/subsys/spm/                        @oyvindronningstad @SebastianBoe
 /tests/subsys/zigbee/                     @tomchy @sebastiandraus
 /tests/unity/                             @nordic-krch

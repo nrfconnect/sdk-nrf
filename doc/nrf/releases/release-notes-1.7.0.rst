@@ -574,7 +574,7 @@ In addition to documentation related to the changes listed above, the following 
 
   * :ref:`libraries` section pages:
 
-    * :ref:`profiler` - Several updates.
+    * :ref:`nrf_profiler` - Several updates.
 
   * :ref:`documentation` section pages:
 

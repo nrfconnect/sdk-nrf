@@ -23,12 +23,12 @@ static void profile_selector_event(struct log_event_buf *buf,
 {
 	const struct selector_event *event = cast_selector_event(aeh);
 
-	profiler_log_encode_uint8(buf, event->selector_id);
-	profiler_log_encode_uint8(buf, event->position);
+	nrf_profiler_log_encode_uint8(buf, event->selector_id);
+	nrf_profiler_log_encode_uint8(buf, event->position);
 }
 
 APP_EVENT_INFO_DEFINE(selector_event,
-		  ENCODE(PROFILER_ARG_U8, PROFILER_ARG_U8),
+		  ENCODE(NRF_PROFILER_ARG_U8, NRF_PROFILER_ARG_U8),
 		  ENCODE("selector_id", "position"),
 		  profile_selector_event);
 

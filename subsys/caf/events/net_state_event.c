@@ -35,12 +35,12 @@ static void profile_net_state_event(struct log_event_buf *buf,
 {
 	const struct net_state_event *event = cast_net_state_event(aeh);
 
-	profiler_log_encode_uint32(buf, (uint32_t)event->id);
-	profiler_log_encode_uint8(buf, event->state);
+	nrf_profiler_log_encode_uint32(buf, (uint32_t)event->id);
+	nrf_profiler_log_encode_uint8(buf, event->state);
 }
 
 APP_EVENT_INFO_DEFINE(net_state_event,
-		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8),
+		  ENCODE(NRF_PROFILER_ARG_U32, NRF_PROFILER_ARG_U8),
 		  ENCODE("conn_id", "state"),
 		  profile_net_state_event);
 

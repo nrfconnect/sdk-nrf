@@ -20,12 +20,12 @@ static void profile_motion_event(struct log_event_buf *buf,
 {
 	const struct motion_event *event = cast_motion_event(aeh);
 
-	profiler_log_encode_int16(buf, event->dx);
-	profiler_log_encode_int16(buf, event->dy);
+	nrf_profiler_log_encode_int16(buf, event->dx);
+	nrf_profiler_log_encode_int16(buf, event->dy);
 }
 
 APP_EVENT_INFO_DEFINE(motion_event,
-		  ENCODE(PROFILER_ARG_S16, PROFILER_ARG_S16),
+		  ENCODE(NRF_PROFILER_ARG_S16, NRF_PROFILER_ARG_S16),
 		  ENCODE("dx", "dy"),
 		  profile_motion_event);
 
