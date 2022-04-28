@@ -81,6 +81,7 @@ void uart_toggle_power_state_at_event(const struct lte_lc_evt *const evt)
 		disable_uarts();
 	} else if (evt->type == LTE_LC_EVT_MODEM_SLEEP_EXIT) {
 		enable_uarts();
+		mosh_print("UARTs enabled");
 	}
 }
 
