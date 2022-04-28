@@ -67,10 +67,20 @@ static void reset_signal_meas_object(uint16_t index)
 	lwm2m_engine_set_s32(path, 0);
 }
 
-static void update_signal_meas_objects(const struct lte_lc_cells_info *const cells)
+int lwm2m_update_signal_meas_objects(const struct lte_lc_cells_info *const cells)
 {
 	static int neighbours;
 	int i = 0;
+
+	if (cells == NULL) {
+		LOG_ERR("Invalid pointer");
+		return -EINVAL;
+	}
+
+	if (cells->ncells_count == 0) {
+		LOG_DBG("No neighbouring cells found");
+		return -ENODATA;
+	}
 
 	LOG_INF("Updating information for %d neighbouring cells", cells->ncells_count);
 
@@ -87,20 +97,29 @@ static void update_signal_meas_objects(const struct lte_lc_cells_info *const cel
 		}
 	}
 	neighbours = cells->ncells_count;
+
+	return 0;
 }
 
 void ncell_notification_handler(const struct lte_lc_evt *const evt)
 {
 	switch (evt->type) {
-	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS:
-		update_signal_meas_objects(&evt->cells_info);
+	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS: {
+		int err = lwm2m_update_signal_meas_objects(&evt->cells_info);
+
+		if (err == -ENODATA) {
+			LOG_DBG("No neighboring cells available");
+		} else if (err) {
+			LOG_ERR("lwm2m_update_signal_meas_objects, error: %d", err);
+		}
+	};
 		break;
 	default:
 		break;
 	}
 }
 
-int init_neighbour_cell_info(void)
+int lwm2m_ncell_handler_register(void)
 {
 	LOG_INF("Registering ncell notification handler");
 	lte_lc_register_handler(ncell_notification_handler);
