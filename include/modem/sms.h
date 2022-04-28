@@ -56,7 +56,7 @@ struct sms_time {
 	uint8_t hour;    /**< @brief Hour. */
 	uint8_t minute;  /**< @brief Minute. */
 	uint8_t second;  /**< @brief Second. */
-	int8_t timezone; /**< @brief Timezone. */
+	int8_t timezone; /**< @brief Timezone in quarters of an hour. */
 };
 
 /**
