@@ -275,6 +275,87 @@ static void test_params_string_parsing_teardown(void)
 	at_params_list_free(&test_list2);
 }
 
+static void test_params_gps_parsing_setup(void)
+{
+	at_params_list_init(&test_list2, TEST_PARAMS2);
+}
+
+static void test_params_gps_parsing(void)
+{
+	int ret;
+	double tmpdouble;
+	char tmpbuf[32];
+	const double DOUBLE_CMP_EPSILON = 0.00001;
+	uint32_t tmpbuf_len;
+
+	static const char at_cmd_agps[] = "AT+XGPS: 35.457417,139.625211,162.850952,15.621976,"
+		"1.418092,0.000000,\"2021-06-02 05:21:31\"";
+
+	ret = at_parser_params_from_str(at_cmd_agps, NULL, &test_list2);
+	zassert_true(ret == 0, "at_parser_params_from_str should return 0");
+
+	ret = at_params_valid_count_get(&test_list2);
+	zassert_true(ret == 8,
+		     "at_params_valid_count_get returns wrong valid count");
+
+	zassert_true(at_params_type_get(&test_list2, 0) == AT_PARAM_TYPE_STRING,
+		     "Param type at index 0 should be a string");
+	zassert_true(at_params_type_get(&test_list2, 1) ==
+							AT_PARAM_TYPE_NUM_DOUBLE,
+		     "Param type at index 1 should be a double");
+	zassert_true(at_params_type_get(&test_list2, 2) ==
+							AT_PARAM_TYPE_NUM_DOUBLE,
+		     "Param type at index 2 should be a double");
+	zassert_true(at_params_type_get(&test_list2, 3) ==
+							AT_PARAM_TYPE_NUM_DOUBLE,
+		     "Param type at index 3 should be a double");
+	zassert_true(at_params_type_get(&test_list2, 4) ==
+							AT_PARAM_TYPE_NUM_DOUBLE,
+		     "Param type at index 4 should be a double");
+	zassert_true(at_params_type_get(&test_list2, 5) ==
+							AT_PARAM_TYPE_NUM_DOUBLE,
+		     "Param type at index 4 should be a double");
+	zassert_true(at_params_type_get(&test_list2, 6) ==
+							AT_PARAM_TYPE_NUM_DOUBLE,
+		     "Param type at index 4 should be a double");
+	zassert_true(at_params_type_get(&test_list2, 7) ==
+							AT_PARAM_TYPE_STRING,
+		     "Param type at index 4 should be a string");
+
+	zassert_equal(0, at_params_double_get(&test_list2, 1, &tmpdouble),
+		      "Get double should not fail");
+	zassert_within(35.457417, tmpdouble, DOUBLE_CMP_EPSILON, "Double should be 35.457417");
+	zassert_equal(0, at_params_double_get(&test_list2, 2, &tmpdouble),
+		      "Get double should not fail");
+	zassert_within(139.625211, tmpdouble, DOUBLE_CMP_EPSILON, "Double should be 139.625211");
+	zassert_equal(0, at_params_double_get(&test_list2, 3, &tmpdouble),
+		      "Get double should not fail");
+	zassert_within(162.850952, tmpdouble, DOUBLE_CMP_EPSILON, "Double should be 162.850952");
+	zassert_equal(0, at_params_double_get(&test_list2, 4, &tmpdouble),
+		      "Get double should not fail");
+	zassert_within(15.621976, tmpdouble, DOUBLE_CMP_EPSILON, "Double should be 15.621976");
+	zassert_equal(0, at_params_double_get(&test_list2, 5, &tmpdouble),
+		      "Get double should not fail");
+	zassert_within(1.418092, tmpdouble, DOUBLE_CMP_EPSILON, "Double should be 1.418092");
+	zassert_equal(0, at_params_double_get(&test_list2, 6, &tmpdouble),
+		      "Get double should not fail");
+	zassert_within(0.000000, tmpdouble, DOUBLE_CMP_EPSILON, "Double should be 0.000000");
+	tmpbuf_len = sizeof(tmpbuf);
+	zassert_equal(0, at_params_string_get(&test_list2, 7,
+					      tmpbuf, &tmpbuf_len),
+		      "Get string should not fail");
+	zassert_equal(strlen("2021-06-02 05:21:31"), tmpbuf_len, "String length mismatch");
+	zassert_equal(0, memcmp("2021-06-02 05:21:31", tmpbuf, tmpbuf_len),
+		      "The string in tmpbuf should "
+		      "equal to 2021-06-02 05:21:31");
+
+}
+
+static void test_params_gps_parsing_teardown(void)
+{
+	at_params_list_free(&test_list2);
+}
+
 static void test_params_empty_params_setup(void)
 {
 	at_params_list_init(&test_list2, TEST_PARAMS2);
@@ -791,6 +872,10 @@ void test_main(void)
 				test_params_string_parsing,
 				test_params_string_parsing_setup,
 				test_params_string_parsing_teardown),
+			 ztest_unit_test_setup_teardown(
+				test_params_gps_parsing,
+				test_params_gps_parsing_setup,
+				test_params_gps_parsing_teardown),
 			 ztest_unit_test_setup_teardown(
 				test_params_empty_params,
 				test_params_empty_params_setup,

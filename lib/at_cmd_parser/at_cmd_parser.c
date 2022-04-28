@@ -272,12 +272,17 @@ static int at_parse_process_element(const char **str, int index,
 
 		tmpstr++;
 	} else if (state == NUMBER) {
-		char *next;
-		int64_t value = (int64_t)strtoll(tmpstr, &next, 10);
+		char *nextint, *nextdouble;
+		int64_t valueint = (int64_t)strtoll(tmpstr, &nextint, 10);
+		double valuedouble = strtod(tmpstr, &nextdouble);
 
-		tmpstr = next;
-
-		at_params_int_put(list, index, value);
+		if (nextint == nextdouble) {
+			at_params_int_put(list, index, valueint);
+			tmpstr = nextint;
+		} else {
+			at_params_double_put(list, index, valuedouble);
+			tmpstr = nextdouble;
+		}
 	} else if (state == SMS_PDU) {
 		const char *start_ptr = tmpstr;
 

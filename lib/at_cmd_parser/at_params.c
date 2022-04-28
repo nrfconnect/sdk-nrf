@@ -148,6 +148,26 @@ int at_params_int_put(const struct at_param_list *list, size_t index, int64_t va
 	return 0;
 }
 
+
+int at_params_double_put(const struct at_param_list *list, size_t index, double value)
+{
+	if (list == NULL || list->params == NULL) {
+		return -EINVAL;
+	}
+
+	struct at_param *param = at_params_get(list, index);
+
+	if (param == NULL) {
+		return -EINVAL;
+	}
+
+	at_param_clear(param);
+
+	param->type = AT_PARAM_TYPE_NUM_DOUBLE;
+	param->value.double_val = value;
+	return 0;
+}
+
 int at_params_string_put(const struct at_param_list *list, size_t index,
 			 const char *str, size_t str_len)
 {
@@ -295,6 +315,28 @@ int at_params_int_get(const struct at_param_list *list, size_t index,
 	}
 
 	*value = (int32_t)param->value.int_val;
+	return 0;
+}
+
+
+int at_params_double_get(const struct at_param_list *list, size_t index,
+		      double *value)
+{
+	if (list == NULL || list->params == NULL || value == NULL) {
+		return -EINVAL;
+	}
+
+	struct at_param *param = at_params_get(list, index);
+
+	if (param == NULL) {
+		return -EINVAL;
+	}
+
+	if (param->type != AT_PARAM_TYPE_NUM_DOUBLE) {
+		return -EINVAL;
+	}
+
+	*value = param->value.double_val;
 	return 0;
 }
 

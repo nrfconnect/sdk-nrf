@@ -38,6 +38,8 @@ enum at_param_type {
 	AT_PARAM_TYPE_INVALID,
 	/** Parameter of type integer. */
 	AT_PARAM_TYPE_NUM_INT,
+	/** Parameter of type double. */
+	AT_PARAM_TYPE_NUM_DOUBLE,
 	/** Parameter of type string. */
 	AT_PARAM_TYPE_STRING,
 	/** Parameter of type array. */
@@ -50,6 +52,8 @@ enum at_param_type {
 union at_param_value {
 	/** Integer value. */
 	int64_t int_val;
+	/** Double value. */
+	double double_val;
 	/** String value. */
 	char *str_val;
 	/** Array of uint32_t */
@@ -122,6 +126,22 @@ void at_params_list_free(struct at_param_list *list);
  *           Otherwise, a (negative) error code is returned.
  */
 int at_params_int_put(const struct at_param_list *list, size_t index, int64_t value);
+
+/**
+ * @brief Add a parameter in the list at the specified index and assign it a
+ * double value.
+ *
+ * If a parameter exists at this index, it is replaced.
+ *
+ * @param[in] list      Parameter list.
+ * @param[in] index     Index in the list where to put the parameter.
+ * @param[in] value     Parameter value.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int at_params_double_put(const struct at_param_list *list, size_t index, double value);
+
 
 /**
  * @brief Add a parameter in the list at the specified index and assign it a
@@ -231,6 +251,20 @@ int at_params_unsigned_short_get(const struct at_param_list *list, size_t index,
  */
 int at_params_int_get(const struct at_param_list *list, size_t index,
 		      int32_t *value);
+
+
+/**
+ * @brief Get a parameter value as a double number.
+ *
+ * @param[in] list    Parameter list.
+ * @param[in] index   Parameter index in the list.
+ * @param[out] value  Parameter value.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int at_params_double_get(const struct at_param_list *list, size_t index,
+		      double *value);
 
 /**
  * @brief Get a parameter value as an unsigned integer number.
