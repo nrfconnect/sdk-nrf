@@ -414,6 +414,8 @@ Modem libraries
 
   * :ref:`sms_readme` library:
 
+    * Fixed time zone handling for received SMSs.
+    * The time zone is now returned in quarters of an hour.
     * Added handling for SMS client unregistration notification from the modem.
       When the notification is received, the library re-registers the SMS client automatically.
 
