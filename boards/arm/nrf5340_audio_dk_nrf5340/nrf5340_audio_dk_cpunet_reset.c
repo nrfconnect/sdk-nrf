@@ -37,12 +37,6 @@ static int core_config(void)
 		nrfx_gpiote_latency_set(NRF_GPIOTE_LATENCY_LOWPOWER);
 	}
 
-	/* Workaround for issue with PCA10121 v0.7.0 related to SD-card */
-	nrf_gpio_pin_drive_t high_drive = NRF_GPIO_PIN_H0H1;
-
-	nrf_gpio_reconfigure(DT_PROP(SHARED_SPI, mosi_pin), NULL, NULL, NULL, &high_drive, NULL);
-	nrf_gpio_reconfigure(DT_PROP(SHARED_SPI, sck_pin), NULL, NULL, NULL, &high_drive, NULL);
-
 	/* USB port detection
 	 * See nPM1100 datasheet for more information
 	 */
