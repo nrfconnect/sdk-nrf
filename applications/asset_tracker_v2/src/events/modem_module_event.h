@@ -184,7 +184,10 @@ struct modem_module_dynamic_modem_data {
 	uint16_t area_code;
 	uint32_t cell_id;
 	int16_t rsrp;
+	uint16_t mcc;
+	uint16_t mnc;
 	char ip_address[INET6_ADDRSTRLEN];
+	char apn[CONFIG_MODEM_APN_LEN_MAX];
 	char mccmnc[7];
 	uint8_t band;
 	enum lte_lc_lte_mode nw_mode;
@@ -199,6 +202,7 @@ struct modem_module_dynamic_modem_data {
 	bool mccmnc_fresh	: 1;
 	bool band_fresh		: 1;
 	bool nw_mode_fresh	: 1;
+	bool apn_fresh		: 1;
 };
 
 struct modem_module_battery_data {

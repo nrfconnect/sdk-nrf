@@ -37,11 +37,20 @@ enum cloud_module_event_type {
 	/** Connection has timed out. */
 	CLOUD_EVT_CONNECTION_TIMEOUT,
 
+	/** Connect to LTE. */
+	CLOUD_EVT_LTE_CONNECT,
+
+	/** Disconnect from LTE. */
+	CLOUD_EVT_LTE_DISCONNECT,
+
 	/** User association request received from cloud. */
 	CLOUD_EVT_USER_ASSOCIATION_REQUEST,
 
 	/** User association completed. */
 	CLOUD_EVT_USER_ASSOCIATED,
+
+	/** Reboot requested from cloud. */
+	CLOUD_EVT_REBOOT_REQUEST,
 
 	/** A new device configuration has been received from cloud.
 	 *  The payload associated with this event is of type @ref cloud_data_cfg (config).
@@ -65,10 +74,10 @@ enum cloud_module_event_type {
 	 */
 	CLOUD_EVT_DATA_ACK,
 
-	/** Sending data to cloud.
+	/** Sending data to cloud using QoS library.
 	 *  The payload associated with this event is of type @ref qos_data (message).
 	 */
-	CLOUD_EVT_DATA_SEND,
+	CLOUD_EVT_DATA_SEND_QOS,
 
 	/** The cloud module has performed all procedures to prepare for
 	 *  a shutdown of the system. The event carries the ID (id) of the module.

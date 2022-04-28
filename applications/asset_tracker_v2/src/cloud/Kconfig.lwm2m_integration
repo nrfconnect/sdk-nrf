@@ -1,0 +1,71 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+module = LWM2M_INTEGRATION
+module-prompt = "LwM2M integration [Experimental]"
+orsource "../../../../subsys/net/lib/Kconfig.cloud_$(CLOUD_SERVICE_SELECTOR)"
+
+config $(module)
+	bool
+	select EXPERIMENTAL
+	prompt "LwM2M integration layer" if !CLOUD_SERVICE_MUTUAL_EXCLUSIVE
+
+if LWM2M_INTEGRATION
+
+menu "LwM2M integration library"
+
+config LWM2M_INTEGRATION_ENDPOINT_PREFIX
+	string "LwM2M endpoint prefix"
+	default "urn:imei:"
+
+config LWM2M_INTEGRATION_PROVISION_CREDENTIALS
+	bool "Run-time provisioning of credentials"
+
+config LWM2M_INTEGRATION_FLUSH_SESSION_CACHE
+	bool "Flush DTLS session cache after boot"
+	help
+	  Flush the modems internal session cache prior to connection establishment. This is a
+	  debug option to be able to successfully decode wireshark traffic for every run.
+	  Wireshark needs the initial first handshake in order to do this. This is forced by
+	  flushing the DTLS session cache after boot.
+
+if LWM2M_INTEGRATION_PROVISION_CREDENTIALS
+
+config LWM2M_INTEGRATION_PSK
+	string "LwM2M PSK"
+	default "000102030405060708090a0b0c0d0e0f"
+	help
+	  If this Kconfig is defined to a value larger than 1, the modem is provisioned run-time
+	  with this PSK. If bootstrap mode is enabled the PSK is provisioned to the security tag
+	  given by CONFIG_LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG.
+	  If not CONFIG_LWM2M_CLIENT_UTILS_SERVER_TLS_TAG is used.
+	  It is recommended not to use this default PSK value and rather use a new generated key.
+
+endif # LWM2M_INTEGRATION_PROVISION_CREDENTIALS
+
+config LWM2M_IPSO_PUSH_BUTTON_INSTANCE_COUNT
+	int "Number of push button object instances"
+	default 2 if BOARD_NRF9160DK_NRF9160_NS
+	default 1
+
+# Make AVsystem the default lwM2M server.
+config LWM2M_CLIENT_UTILS_SERVER
+	string "LwM2M server address"
+	default "coaps://eu.iot.avsystem.cloud:5694" if LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP
+	default "coaps://eu.iot.avsystem.cloud:5684"
+	help
+	  Kconfig redefinition, please see the help text of the original definition.
+
+config APP_MCUBOOT_FLASH_BUF_SZ
+	int "Size of buffer used for flash write operations during MCUboot updates"
+	depends on DFU_TARGET_MCUBOOT
+	default 512
+	help
+	  Buffer size must be aligned to the minimal flash write block size.
+
+endmenu
+
+endif # LWM2M_INTEGRATION

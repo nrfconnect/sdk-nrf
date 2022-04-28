@@ -91,6 +91,8 @@ static int head_ui_buf;
 static int head_accel_buf;
 static int head_bat_buf;
 
+static K_SEM_DEFINE(config_load_sem, 0, 1);
+
 /* Default device configuration. */
 static struct cloud_data_cfg current_cfg = {
 	.gnss_timeout			= CONFIG_DATA_GNSS_TIMEOUT_SECONDS,
@@ -151,6 +153,7 @@ static struct module_data self = {
 static void data_send_work_fn(struct k_work *work);
 static int config_settings_handler(const char *key, size_t len,
 				   settings_read_cb read_cb, void *cb_arg);
+static void new_config_handle(struct cloud_data_cfg *new_config);
 
 /* Static handlers */
 SETTINGS_STATIC_HANDLER_DEFINE(MODULE, DEVICE_SETTINGS_KEY, NULL,
@@ -263,19 +266,19 @@ static bool app_event_handler(const struct app_event_header *aeh)
 static int config_settings_handler(const char *key, size_t len,
 				   settings_read_cb read_cb, void *cb_arg)
 {
-	int err;
+	int err = 0;
 
 	if (strcmp(key, DEVICE_SETTINGS_CONFIG_KEY) == 0) {
 		err = read_cb(cb_arg, &current_cfg, sizeof(current_cfg));
 		if (err < 0) {
 			LOG_ERR("Failed to load configuration, error: %d", err);
-			return err;
+		} else {
+			LOG_DBG("Device configuration loaded from flash");
 		}
 	}
 
-	LOG_DBG("Device configuration loaded from flash");
-
-	return 0;
+	k_sem_give(&config_load_sem);
+	return err;
 }
 
 static void date_time_event_handler(const struct date_time_evt *evt)
@@ -318,11 +321,18 @@ static int save_config(const void *buf, size_t buf_len)
 	return 0;
 }
 
+static void cloud_codec_event_handler(const struct cloud_codec_evt *evt)
+{
+	if (evt->type == CLOUD_CODEC_EVT_CONFIG_UPDATE) {
+		new_config_handle((struct cloud_data_cfg *)&evt->config_update);
+	} else {
+		LOG_ERR("Unknown cloud codec event.");
+	}
+}
+
 static int setup(void)
 {
 	int err;
-
-	cloud_codec_init();
 
 	err = settings_subsys_init();
 	if (err) {
@@ -336,8 +346,20 @@ static int setup(void)
 		return err;
 	}
 
-	date_time_register_handler(date_time_event_handler);
+	/* Wait up to 1 seconds for the settings API to load the device configuration stored
+	 * to flash, if any.
+	 */
+	if (k_sem_take(&config_load_sem, K_SECONDS(1)) != 0) {
+		LOG_DBG("Failed retrieveing the device configuration from flash in time");
+	}
 
+	err = cloud_codec_init(&current_cfg, cloud_codec_event_handler);
+	if (err) {
+		LOG_ERR("cloud_codec_init, error: %d", err);
+		return err;
+	}
+
+	date_time_register_handler(date_time_event_handler);
 	return 0;
 }
 
@@ -382,16 +404,25 @@ static void data_send(enum data_module_event_type event,
 		      struct cloud_codec_data *data)
 {
 	struct data_module_event *module_event = new_data_module_event();
-
 	module_event->type = event;
-	module_event->data.buffer.buf = data->buf;
-	module_event->data.buffer.len = data->len;
+
+	BUILD_ASSERT((sizeof(data->paths) == sizeof(module_event->data.buffer.paths)),
+			"Size of the object path list does not match");
+	BUILD_ASSERT((sizeof(data->paths[0]) == sizeof(module_event->data.buffer.paths[0])),
+			"Size of an entry in the object path list does not match");
+
+	if (IS_ENABLED(CONFIG_CLOUD_CODEC_LWM2M)) {
+		memcpy(module_event->data.buffer.paths, data->paths, sizeof(data->paths));
+		module_event->data.buffer.valid_object_paths = data->valid_object_paths;
+	} else {
+		module_event->data.buffer.buf = data->buf;
+		module_event->data.buffer.len = data->len;
+	}
 
 	APP_EVENT_SUBMIT(module_event);
 
 	/* Reset buffer */
-	data->buf = NULL;
-	data->len = 0;
+	memset(data, 0, sizeof(struct cloud_codec_data));
 }
 
 /* This function allocates buffer on the heap, which needs to be freed after use. */
@@ -477,6 +508,9 @@ static void data_encode(void)
 		break;
 	case -ENODATA:
 		LOG_DBG("No batch data to encode, ringbuffers are empty");
+		break;
+	case -ENOTSUP:
+		LOG_DBG("Encoding of batch data not supported");
 		break;
 	default:
 		LOG_ERR("Error batch-enconding data: %d", err);
@@ -592,29 +626,24 @@ static void config_get(void)
 static void config_send(void)
 {
 	int err;
-	struct cloud_codec_data codec;
-	struct data_module_event *evt;
+	struct cloud_codec_data codec = { 0 };
 
 	err = cloud_codec_encode_config(&codec, &current_cfg);
-	if (err) {
+	if (err == -ENOTSUP) {
+		LOG_WRN("Encoding of device configuration is not supported");
+		return;
+	} else if (err) {
 		LOG_ERR("Error encoding configuration, error: %d", err);
 		SEND_ERROR(data, DATA_EVT_ERROR, err);
 		return;
 	}
 
-	evt = new_data_module_event();
-	evt->type = DATA_EVT_CONFIG_SEND;
-	evt->data.buffer.buf = codec.buf;
-	evt->data.buffer.len = codec.len;
-
-	APP_EVENT_SUBMIT(evt);
-
+	data_send(DATA_EVT_CONFIG_SEND, &codec);
 }
 
 static void data_ui_send(void)
 {
 	int err;
-	struct data_module_event *evt;
 	struct cloud_codec_data codec = {0};
 
 	if (!date_time_is_valid()) {
@@ -629,19 +658,16 @@ static void data_ui_send(void)
 	if (err == -ENODATA) {
 		LOG_DBG("No new UI data to encode, error: %d", err);
 		return;
+	} else if (err == -ENOTSUP) {
+		LOG_WRN("Encoding of UI data is not supported, error: %d", err);
+		return;
 	} else if (err) {
 		LOG_ERR("Encoding button press, error: %d", err);
 		SEND_ERROR(data, DATA_EVT_ERROR, err);
 		return;
 	}
 
-	evt = new_data_module_event();
-	evt->type = DATA_EVT_UI_DATA_SEND;
-	evt->data.buffer.buf = codec.buf;
-	evt->data.buffer.len = codec.len;
-
-
-	APP_EVENT_SUBMIT(evt);
+	data_send(DATA_EVT_UI_DATA_SEND, &codec);
 }
 
 static void requested_data_clear(void)
@@ -660,6 +686,14 @@ static void data_send_work_fn(struct k_work *work)
 
 static void requested_data_status_set(enum app_module_data_type data_type)
 {
+	if (!k_work_delayable_is_pending(&data_send_work)) {
+		/* If the data_send_work is not pending it means that the module has already
+		 * triggered an data encode/send.
+		 */
+		LOG_DBG("Data already encoded and sent, abort.");
+		return;
+	}
+
 	for (size_t i = 0; i < recv_req_data_count; i++) {
 		if (req_type_list[i] == data_type) {
 			req_data_count++;
@@ -810,15 +844,23 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		}
 
 		config_distribute(DATA_EVT_CONFIG_READY);
+	} else {
+		LOG_DBG("No new values in incoming device configuration update message");
 	}
-
-	LOG_DBG("No new values in incoming device configuration update message");
-	LOG_DBG("Acknowledge currently applied configuration back to cloud");
 
 	/* Always acknowledge all configurations back to cloud to avoid a potential mismatch
 	 * between reported parameters in the cloud-side state and parameters reported by the
 	 * device.
 	 */
+
+	/* LwM2M doesn't require reporting of the current configuration back to cloud. */
+	if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION)) {
+		LOG_WRN("Don't acknowledge configuration back to cloud. "
+			"This is not nessecary when building for LwM2M");
+		return;
+	}
+
+	LOG_DBG("Acknowledge currently applied configuration back to cloud");
 	config_send();
 }
 
@@ -1064,6 +1106,8 @@ static void on_all_states(struct data_msg_data *msg)
 			.band = msg->module.modem.data.modem_dynamic.band,
 			.cell = msg->module.modem.data.modem_dynamic.cell_id,
 			.rsrp = msg->module.modem.data.modem_dynamic.rsrp,
+			.mcc = msg->module.modem.data.modem_dynamic.mcc,
+			.mnc = msg->module.modem.data.modem_dynamic.mnc,
 			.ts = msg->module.modem.data.modem_dynamic.timestamp,
 
 			.area_code_fresh = msg->module.modem.data.modem_dynamic.area_code_fresh,
@@ -1079,10 +1123,14 @@ static void on_all_states(struct data_msg_data *msg)
 		BUILD_ASSERT(sizeof(new_modem_data.ip) >=
 			     sizeof(msg->module.modem.data.modem_dynamic.ip_address));
 
-		BUILD_ASSERT(sizeof(new_modem_data.mccmnc) >=
-			     sizeof(msg->module.modem.data.modem_dynamic.mccmnc));
+		BUILD_ASSERT(sizeof(new_modem_data.apn) >=
+			     sizeof(msg->module.modem.data.modem_dynamic.apn));
+
+		BUILD_ASSERT(sizeof(new_modem_data.apn) >=
+			     sizeof(msg->module.modem.data.modem_dynamic.apn));
 
 		strcpy(new_modem_data.ip, msg->module.modem.data.modem_dynamic.ip_address);
+		strcpy(new_modem_data.apn, msg->module.modem.data.modem_dynamic.apn);
 		strcpy(new_modem_data.mccmnc, msg->module.modem.data.modem_dynamic.mccmnc);
 
 		cloud_codec_populate_modem_dynamic_buffer(

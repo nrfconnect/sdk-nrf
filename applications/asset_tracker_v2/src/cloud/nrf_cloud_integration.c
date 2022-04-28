@@ -361,8 +361,10 @@ int cloud_wrap_batch_send(char *buf, size_t len, bool ack, uint32_t id)
 	return 0;
 }
 
-int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id)
+int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
 {
+	ARG_UNUSED(path_list);
+
 	int err;
 	struct nrf_cloud_tx_data msg = {
 		.data.ptr = buf,
@@ -381,8 +383,10 @@ int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id)
 	return 0;
 }
 
-int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id)
+int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
 {
+	ARG_UNUSED(path_list);
+
 	int err;
 	struct nrf_cloud_tx_data msg = {
 		.data.ptr = buf,
@@ -409,14 +413,17 @@ int cloud_wrap_state_get(bool ack, uint32_t id)
 	return -ENOTSUP;
 }
 
-int cloud_wrap_data_send(char *buf, size_t len, bool ack, uint32_t id)
+int cloud_wrap_data_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
 {
+	ARG_UNUSED(path_list);
 	/* Not supported, all data is sent to the bulk topic. */
 	return -ENOTSUP;
 }
 
-int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id)
+int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
 {
+	ARG_UNUSED(path_list);
+
 	/* Not supported, A-GPS is requested internally via the nRF Cloud A-GPS library. */
 	return -ENOTSUP;
 }

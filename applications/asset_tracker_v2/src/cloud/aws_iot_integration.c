@@ -410,10 +410,11 @@ int cloud_wrap_state_send(char *buf, size_t len, bool ack, uint32_t id)
 	return 0;
 }
 
-int cloud_wrap_data_send(char *buf, size_t len, bool ack, uint32_t id)
+int cloud_wrap_data_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
 {
-	int err;
+	ARG_UNUSED(path_list);
 
+	int err;
 	struct aws_iot_data msg = {
 		.ptr = buf,
 		.len = len,
@@ -453,10 +454,11 @@ int cloud_wrap_batch_send(char *buf, size_t len, bool ack, uint32_t id)
 	return 0;
 }
 
-int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id)
+int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
 {
-	int err;
+	ARG_UNUSED(path_list);
 
+	int err;
 	struct aws_iot_data msg = {
 		.ptr = buf,
 		.len = len,
@@ -475,8 +477,10 @@ int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id)
 	return 0;
 }
 
-int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id)
+int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
 {
+	ARG_UNUSED(path_list);
+
 	int err;
 	struct aws_iot_data msg = {
 		.ptr = buf,
@@ -496,7 +500,7 @@ int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id)
 	return 0;
 }
 
-int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id)
+int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
 {
 	int err;
 	struct aws_iot_data msg = {
