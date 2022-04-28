@@ -350,22 +350,35 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 
 static void start_fota_download(struct k_work *work)
 {
+	int ret;
+
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM)
 	/* We can't know if the download is full modem firmware
 	 * before the downloader actually starts, so configure
 	 * the dfu_target_full_modem here
 	 */
-	configure_full_modem_update();
-#endif
-	int ret = fota_download_start(fota_host, fota_path, fota_sec_tag, 0, 0);
-
-	if (ret < 0) {
-		LOG_ERR("fota_download_start() failed, return code %d", ret);
-		lwm2m_firmware_set_update_state(STATE_IDLE);
-		k_free(fota_host);
-		fota_host = NULL;
-		fota_path = NULL;
+	ret = configure_full_modem_update();
+	if (ret) {
+		LOG_ERR("configure_full_modem_update() failed, return code %d", ret);
+		goto err;
 	}
+#endif
+
+	ret = fota_download_start(fota_host, fota_path, fota_sec_tag, 0, 0);
+	if (ret) {
+		LOG_ERR("fota_download_start() failed, return code %d", ret);
+		goto err;
+	}
+
+	lwm2m_firmware_set_update_state(STATE_DOWNLOADING);
+	return;
+
+err:
+	k_free(fota_host);
+	fota_host = NULL;
+	fota_path = NULL;
+	lwm2m_firmware_set_update_result(RESULT_DEFAULT);
+	return;
 }
 
 static int init_start_download(char *uri)
@@ -416,7 +429,6 @@ static int init_start_download(char *uri)
 	fota_host[len] = 0;
 
 	k_work_submit(&download_work);
-	lwm2m_firmware_set_update_state(STATE_DOWNLOADING);
 
 	return 0;
 }
