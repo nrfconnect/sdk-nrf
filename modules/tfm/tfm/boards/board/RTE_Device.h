@@ -25,8 +25,8 @@
  */
 #undef ARRAY_SIZE
 
-#include <devicetree.h>
 #include <autoconf.h>
+#include <devicetree.h>
 
 #define UARTE(idx)			DT_NODELABEL(uart##idx)
 #define UARTE_PROP(idx, prop)		DT_PROP(UARTE(idx), prop)
