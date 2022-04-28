@@ -25,6 +25,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/net/lwm2m.h>
+#include <modem/lte_lc.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -126,7 +127,8 @@ int lwm2m_update_connmon(void);
 #define ECID_SIGNAL_MEASUREMENT_INFO_OBJECT_ID 10256
 int lwm2m_signal_meas_info_inst_id_to_index(uint16_t obj_inst_id);
 int lwm2m_signal_meas_info_index_to_inst_id(int index);
-int init_neighbour_cell_info(void);
+int lwm2m_update_signal_meas_objects(const struct lte_lc_cells_info *const cells);
+int lwm2m_ncell_handler_register(void);
 #endif
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT)
