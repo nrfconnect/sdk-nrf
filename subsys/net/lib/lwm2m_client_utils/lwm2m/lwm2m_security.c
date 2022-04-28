@@ -8,6 +8,7 @@
 #include <net/lwm2m.h>
 #include <net/lwm2m_client_utils.h>
 #include <lwm2m_engine.h>
+#include <lwm2m_rd_client.h>
 #include <lwm2m_util.h>
 #include <modem/modem_key_mgmt.h>
 #include <modem/lte_lc.h>
@@ -308,6 +309,9 @@ static void delete_from_storage(int obj, int inst, int res)
 static int write_cb_sec(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, uint8_t *data,
 			uint16_t data_len, bool last_block, size_t total_size)
 {
+	if (loading_in_progress) {
+		return 0;
+	}
 	/* We need to know which instance have new Boostrap keys */
 	if (res_id == SECURITY_BOOTSTRAP_FLAG_ID) {
 		if (*((bool *)data) == true) {
@@ -320,6 +324,12 @@ static int write_cb_sec(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst
 static int write_cb_srv(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, uint8_t *data,
 			uint16_t data_len, bool last_block, size_t total_size)
 {
+	if (loading_in_progress) {
+		return 0;
+	}
+	if (res_id == SERVER_LIFETIME_ID) {
+		engine_trigger_update(false);
+	}
 	return write_to_settings(LWM2M_OBJECT_SERVER_ID, obj_inst_id, res_id, data, data_len);
 }
 
@@ -347,10 +357,8 @@ static int server_deleted(uint16_t id)
 
 static int server_created(uint16_t id)
 {
-	if (!loading_in_progress) {
-		register_write_cb(LWM2M_OBJECT_SERVER_ID, id, SERVER_LIFETIME_ID);
-		register_write_cb(LWM2M_OBJECT_SERVER_ID, id, SERVER_SHORT_SERVER_ID);
-	}
+	register_write_cb(LWM2M_OBJECT_SERVER_ID, id, SERVER_LIFETIME_ID);
+	register_write_cb(LWM2M_OBJECT_SERVER_ID, id, SERVER_SHORT_SERVER_ID);
 	return 0;
 }
 
@@ -370,14 +378,12 @@ static int security_deleted(uint16_t id)
 
 static int security_created(uint16_t id)
 {
-	if (!loading_in_progress) {
-		register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SERVER_URI_ID);
-		register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_BOOTSTRAP_FLAG_ID);
-		register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_MODE_ID);
-		register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_CLIENT_PK_ID);
-		register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SERVER_PK_ID);
-		register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SHORT_SERVER_ID);
-	}
+	register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SERVER_URI_ID);
+	register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_BOOTSTRAP_FLAG_ID);
+	register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_MODE_ID);
+	register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_CLIENT_PK_ID);
+	register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SERVER_PK_ID);
+	register_write_cb(LWM2M_OBJECT_SECURITY_ID, id, SECURITY_SHORT_SERVER_ID);
 
 	/* Empty the PSK key as data length of uninitialized opaque resources is not zero */
 	char path[sizeof("/0/0/10")];
@@ -471,6 +477,12 @@ int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint)
 #endif /* CONFIG_LWM2M_DTLS_SUPPORT */
 
 #if defined(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP)
+	/* If bootstrap is enabled, we should delete the default server instance,
+	 * because it is the bootstrap server that creates it for us.
+	 * Then on a next boot, we load it from flash.
+	 */
+	lwm2m_engine_delete_obj_inst("1/0");
+
 	/* Bootsrap server might delete or create our security&server object,
 	 * so I need to be aware of those.
 	 */
