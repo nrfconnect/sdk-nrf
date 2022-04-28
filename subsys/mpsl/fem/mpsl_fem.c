@@ -310,43 +310,6 @@ static int fem_nrf21540_gpio_configure(void)
 	}
 #endif
 
-#if DT_NODE_HAS_STATUS(MPSL_FEM_SPI_IF, okay)
-	err = inactive_pin_configure(
-		DT_PROP(DT_BUS(DT_NODELABEL(nrf_radio_fem_spi)), sck_pin),
-		NULL,
-		0);
-
-	if (err) {
-		return err;
-	}
-
-	err = inactive_pin_configure(
-		DT_PROP(DT_BUS(DT_NODELABEL(nrf_radio_fem_spi)), miso_pin),
-		NULL,
-		0);
-
-	if (err) {
-		return err;
-	}
-
-	err = inactive_pin_configure(
-		DT_PROP(DT_BUS(DT_NODELABEL(nrf_radio_fem_spi)), mosi_pin),
-		NULL,
-		0);
-
-	if (err) {
-		return err;
-	}
-
-	err = inactive_pin_configure(
-		DT_SPI_DEV_CS_GPIOS_PIN(MPSL_FEM_SPI_IF),
-		DT_SPI_DEV_CS_GPIOS_LABEL(MPSL_FEM_SPI_IF),
-		DT_SPI_DEV_CS_GPIOS_FLAGS(MPSL_FEM_SPI_IF));
-
-	if (err) {
-		return err;
-	}
-#endif
 	(void)err;
 
 	return mpsl_fem_nrf21540_gpio_interface_config_set(&cfg);
