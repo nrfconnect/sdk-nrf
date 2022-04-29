@@ -140,6 +140,12 @@ NCSDK-13895: Build failure for target Thingy:91 with secure_bootloader overlay
 Other issues
 ============
 
+.. rst-class:: v1-9-1 v1-9-0
+
+The time returned by :ref:`lib_date_time` library becomes incorrect after one week of uptime
+  The time returned by :ref:`lib_date_time` library becomes incorrect after one week elapses.
+  This is due to an issue with clock_gettime() API.
+
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-3-1 v1-2-1 v1-2-0
 
 NCSDK-12912: LwM2M carrier library does not recover if initial network connection fails
@@ -2118,6 +2124,12 @@ NCSDK-12306: Enabling debug configuration causes usage fault on nRF9160
 
 Zephyr
 ******
+
+.. rst-class:: v1-9-1 v1-9-0
+
+The time returned by clock_gettime() API becomes incorrect after one week of uptime
+  The time returned by POSIX clock_gettime() API becomes incorrect after one week elapses.
+  This is due to an overflow in the uptime conversion.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
