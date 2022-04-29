@@ -257,6 +257,7 @@ nRF9160 samples
 
     * Added support for the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION` option.
     * Enabled the :ref:`lib_at_host` library to make it easier to update certificates.
+    * Added support to calculate distance from a configured reference position.
 
   * :ref:`location_sample` sample:
 

@@ -137,6 +137,16 @@ endchoice
 
 endif # GNSS_SAMPLE_MODE_CONTINUOUS
 
+config GNSS_SAMPLE_REFERENCE_LATITUDE
+	string "Reference position latitude in degrees"
+	help
+	  When set, the sample calculates the distance from the reference position for each fix.
+
+config GNSS_SAMPLE_REFERENCE_LONGITUDE
+	string "Reference position longitude in degrees"
+	help
+	  When set, the sample calculates the distance from the reference position for each fix.
+
 config GNSS_SAMPLE_LOW_ACCURACY
 	bool "Allow low accuracy fixes"
 	help
