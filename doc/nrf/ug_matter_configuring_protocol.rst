@@ -23,7 +23,14 @@ Because Matter is an application layer protocol on top of the other IPv6-based t
 It uses modules such as Bluetooth® LE, the IPv6 stack (currently, only :ref:`Thread <ug_thread_configuring>` is supported), :ref:`nRF Security <nrfxlib:nrf_security_config>`, or :ref:`MCUboot <mcuboot:mcuboot_ncs>`.
 Make sure to review the configuration options of these modules when configuring Matter.
 
-For an example configuration, see the :ref:`Matter Template sample's <matter_template_sample>` :file:`prj.conf` files in the :file:`configuration` directory for each supported board target.
+The Kconfig options for Matter applications in the nRF Connect SDK are stored in the following files:
+
+* :file:`prj.conf` files, which are specific to the application.
+* :file:`Kconfig.defaults` file, which is available in the :file:`module/lib/matter/config/nrfconnect/chip-module` directory and is used to populate :file:`prj.conf` with Kconfig option settings common to all samples.
+
+The Matter samples use the same structure for other software images, such as MCUboot or Multiprotocol RPMsg, which have default options defined in the corresponding :file:`Kconfig.mcuboot.defaults` and :file:`Kconfig.multiprotocol_rpmsg.defaults` files.
+
+For an example configuration, see the :ref:`Matter Template sample's <matter_template_sample>` :file:`prj.conf` files in the sample root directory.
 For instructions about how to set Kconfig options, see :ref:`configure_application`.
 
 .. _ug_matter_configuring_optional:

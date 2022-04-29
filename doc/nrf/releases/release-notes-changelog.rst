@@ -280,6 +280,7 @@ Matter samples
 
 * Updated:
 
+  * Simplified the :file:`prj.conf` file of each sample by using the default configuration from the :file:`Kconfig.defaults` file in Matter upstream.
   * All ZAP configurations due to changes in Matter upstream.
   * :ref:`matter_template_sample`:
 
@@ -713,6 +714,7 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
 The following list summarizes the most important changes inherited from the upstream Matter:
 
 * Added the Binding cluster and Groupcast communication to the Light Switch sample.
+* Updated the nRF Connect platform by adding :file:`Kconfig.defaults`, :file:`Kconfig.mcuboot.defaults` and :file:`Kconfig.multiprotocol_rpmsg.defaults` files that contain the default configuration for all nRF Connect SDK samples.
 
 cddl-gen/zcbor
 ==============

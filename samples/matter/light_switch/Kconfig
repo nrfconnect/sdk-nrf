@@ -23,4 +23,6 @@ config STATE_LEDS
 	  the device into a network or the factory reset initiation. Note that setting this option to
 	  'n' does not disable the LED indicating the state of the simulated bolt.
 
+source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.features"
+source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.defaults"
 source "Kconfig.zephyr"
