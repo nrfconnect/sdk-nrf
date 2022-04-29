@@ -394,6 +394,7 @@ If a board has other configuration files, for example associated with partition 
 
 The following build types are available for various boards in the nRF Desktop:
 
+TODO change
 * ``release`` -- Release version of the application with no debugging features.
 * ``release_b0`` -- ``release`` build type with the support for the B0 bootloader enabled (for :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
 * ``release_mcuboot`` -- ``release`` build type with the support for the MCUboot bootloader enabled (for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`).
@@ -959,7 +960,7 @@ nRF52832 Desktop Mouse (nrf52dmouse_nrf52832) and nRF52810 Desktop Mouse (nrf528
       * The application is configured to act as a mouse.
       * Only the Bluetooth LE transport is enabled.
         Bluetooth uses Zephyr's software link layer.
-      * There is no configuration with bootloader available.
+      * Due to memory size limits on nrf52810dmouse_nrf52810 the preconfigured build types both on nrf52dmouse_nrf52832 and nrf52810dmouse_nrf52810 are without the bootloader.
 
 Sample mouse, keyboard or dongle (nrf52840dk_nrf52840)
       * The configuration uses the nRF52840 Development Kit.
@@ -972,37 +973,38 @@ Sample dongle (nrf52833dk_nrf52833)
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
       * Bluetooth uses Nordic's SoftDevice link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
+      * The configuration with the mcuboot bootloader is set as default.
 
 Sample dongle (nrf52833dk_nrf52820)
       * The configuration uses the nRF52820 emulation on the nRF52833 Development Kit.
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
       * Bluetooth uses Zephyr's software link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
-      * |preconfigured_build_types|
+      * Due to memory size limits the preconfigured build types configure the device without the bootloader in debug and with mcuboot bootloader in release mode.
 
 nRF52832 Desktop Keyboard (nrf52kbd_nrf52832)
       * The reference design used is defined in :file:`nrf/boards/arm/nrf52kbd_nrf52832` for the project-specific hardware.
       * The application is configured to act as a keyboard, with the Bluetooth LE transport enabled.
       * Bluetooth is configured to use Nordic's SoftDevice link layer.
       * The configuration with the B0 bootloader is set as default.
+      * To display logs use configuration prj_nob0_logs.conf, to add shell use prj_shell.conf. Both configurations due to memory size limits doesn't have bootloader.
 
 nRF52840 USB Dongle (nrf52840dongle_nrf52840) and nRF52833 USB Dongle (nrf52833dongle_nrf52833)
       * Since the nRF52840 Dongle is generic and defined in Zephyr, project-specific changes are applied in the DTS overlay file.
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
       * Bluetooth uses Nordic's SoftDevice link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
-      * The configuration with the B0 bootloader is set as default if it fits in the memory.
+      * On nrf52840dongle_nrf52840 the configuration with the B0 bootloader is set as default and on nrf52833dongle_nrf52833 the configuration with the mcuboot bootloader is set as default.
 
 nRF52820 USB Dongle (nrf52820dongle_nrf52820)
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
       * Bluetooth uses Zephyr's software link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
-      * |preconfigured_build_types|
+      * Due to memory size limits the preconfigured build types configure the device without the bootloader in debug and with mcuboot bootloader in release mode.
 
 Sample dongle (nrf5340dk_nrf5340)
-      * The configuration uses the nRF5340 emulation on the nRF5340 Development Kit.
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
-      * Bluetooth uses Zephyr's software link layer and is configured to act as a central.
+      * Bluetooth uses Nordic's SoftDevice link layer without LLPM and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
       * The configuration with the B0 bootloader is set as default.
 
