@@ -29,6 +29,8 @@
 #define RECV_BUF_SIZE 2048
 #define TLS_SEC_TAG 42
 
+#define TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA 0xC014
+
 static const char send_buf[] = HTTP_HEAD;
 static char recv_buf[RECV_BUF_SIZE];
 
@@ -135,6 +137,21 @@ int tls_setup(int fd)
 		printk("Failed to setup TLS hostname, err %d\n", errno);
 		return err;
 	}
+
+	/* Whitelist the "TLS-ECDHE-RSA-WITH-AES-256-CBC-SHA" TLS cipher,
+	 * which is supported by "example.com".
+	 * A different TLS cipher not supported by the server would cause
+	 * a connection failure instead.
+	 */
+	nrf_sec_cipher_t cipher_list[] = { TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA };
+
+	err = setsockopt(fd, SOL_TLS, TLS_CIPHERSUITE_LIST,
+			 cipher_list, sizeof(cipher_list));
+	if (err) {
+		printk("Failed to setup cipher suite list, err %d\n", errno);
+		return err;
+	}
+
 	return 0;
 }
 

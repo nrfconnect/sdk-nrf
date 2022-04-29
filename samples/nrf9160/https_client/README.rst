@@ -40,6 +40,11 @@ This certificate is provided in the :file:`samples/nrf9160/https_client/cert` fo
 To connect to other servers, you might need to provision a different certificate.
 See :ref:`cert_dwload` for more information.
 
+Whitelisting a TLS cipher suite
+===============================
+
+The sample whitelists the TLS cipher ``TLS-ECDHE-RSA-WITH-AES-256-CBC-SHA``, which is supported by the server, by setting a socket option.
+
 Using Mbed TLS and TF-M
 ***********************
 
