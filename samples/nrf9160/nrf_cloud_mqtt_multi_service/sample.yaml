@@ -1,10 +1,47 @@
 sample:
   name: nRF Cloud MQTT Multi Service Sample
+common:
+  platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
+  build_only: true
+  build_on_all: true
+  tags: ci_build
 tests:
-  samples.nrf9160.nrf_cloud_mqtt_multi_service:
-    build_only: true
-    platform_allow: nrf9160dk_nrf9160_ns thingy91_nrf9160_ns
-    integration_platforms:
-      - nrf9160dk_nrf9160_ns
-      - thingy91_nrf9160_ns
-    tags: ci_build
+  sample.nrf9160.nrf_cloud_mqtt_multi_service.defaults:
+    extra_configs: []
+  sample.nrf9160.nrf_cloud_mqtt_multi_service.test_counter:
+    extra_configs:
+      - CONFIG_TEST_COUNTER=y
+  sample.nrf9160.nrf_cloud_mqtt_multi_service.no_gnss:
+    extra_configs:
+      - CONFIG_LOCATION_TRACKING_GNSS=n
+  sample.nrf9160.nrf_cloud_mqtt_multi_service.no_cell:
+    extra_configs:
+      - CONFIG_LOCATION_TRACKING_CELLULAR=n
+  sample.nrf9160.nrf_cloud_mqtt_multi_service.no_tracking:
+    extra_configs:
+      - CONFIG_LOCATION_TRACKING_CELLULAR=n
+      - CONFIG_LOCATION_TRACKING_GNSS=n
+  sample.nrf9160.nrf_cloud_mqtt_multi_service.no_temp:
+    extra_configs:
+      - CONFIG_TEMP_TRACKING=n
+  sample.nrf9160.nrf_cloud_mqtt_multi_service.no_agps:
+    extra_configs:
+      - CONFIG_NRF_CLOUD_AGPS=n
+  sample.nrf9160.nrf_cloud_mqtt_multi_service.no_pgps:
+    extra_configs:
+      - CONFIG_NRF_CLOUD_PGPS=n
+  sample.nrf9160.nrf_cloud_mqtt_multi_service.nothing:
+    extra_configs:
+      - CONFIG_LOCATION_TRACKING_GNSS=n
+      - CONFIG_LOCATION_TRACKING_CELLULAR=n
+      - CONFIG_TEMP_TRACKING=n
+      - CONFIG_NRF_CLOUD_AGPS=n
+      - CONFIG_NRF_CLOUD_PGPS=n
+  sample.nrf9160.nrf_cloud_mqtt_multi_service.only_counter:
+    extra_configs:
+      - CONFIG_LOCATION_TRACKING_GNSS=n
+      - CONFIG_LOCATION_TRACKING_CELLULAR=n
+      - CONFIG_TEMP_TRACKING=n
+      - CONFIG_NRF_CLOUD_AGPS=n
+      - CONFIG_NRF_CLOUD_PGPS=n
+      - CONFIG_TEST_COUNTER=y

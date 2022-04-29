@@ -35,6 +35,11 @@ static cJSON *create_timestamped_data_message_object(const char *const appid)
 	cJSON *msg_obj = NULL;
 	int64_t timestamp;
 
+	if (!appid) {
+		LOG_ERR("Cannot create data message container object with NULL appid");
+		return NULL;
+	}
+
 	if (date_time_now(&timestamp)) {
 		LOG_ERR("Failed to create timestamp for data message "
 			"with appid %s", log_strdup(appid));
