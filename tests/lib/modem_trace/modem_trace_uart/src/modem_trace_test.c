@@ -11,6 +11,7 @@
 #include "nrf_modem_lib_trace.h"
 #include "mock_nrf_modem.h"
 #include "mock_nrfx_uarte.h"
+#include "mock_pinctrl.h"
 
 extern int unity_main(void);
 
@@ -38,12 +39,14 @@ void setUp(void)
 {
 	mock_nrfx_uarte_Init();
 	mock_nrf_modem_Init();
+	mock_pinctrl_Init();
 }
 
 void tearDown(void)
 {
 	mock_nrfx_uarte_Verify();
 	mock_nrf_modem_Verify();
+	mock_pinctrl_Verify();
 
 	p_uarte_inst_in_use = NULL;
 	uarte_callback = NULL;
@@ -110,8 +113,8 @@ static nrfx_err_t nrfx_uarte_init_callback(nrfx_uarte_t const *p_instance,
 					   int no_of_calls)
 {
 	TEST_ASSERT_NOT_EQUAL(NULL, p_config);
-	TEST_ASSERT_EQUAL(NRF_UARTE_PSEL_DISCONNECTED, p_config->pselcts);
-	TEST_ASSERT_EQUAL(NRF_UARTE_PSEL_DISCONNECTED, p_config->pselrts);
+	TEST_ASSERT_EQUAL(true, p_config->skip_gpio_cfg);
+	TEST_ASSERT_EQUAL(true, p_config->skip_psel_cfg);
 	TEST_ASSERT_EQUAL(NRF_UARTE_HWFC_DISABLED, p_config->hal_cfg.hwfc);
 	TEST_ASSERT_EQUAL(NRF_UARTE_PARITY_EXCLUDED, p_config->hal_cfg.parity);
 	TEST_ASSERT_EQUAL(NRF_UARTE_BAUDRATE_1000000, p_config->baudrate);
@@ -131,6 +134,8 @@ static nrfx_err_t nrfx_uarte_init_callback(nrfx_uarte_t const *p_instance,
 
 static void modem_trace_init_with_uart_transport(void)
 {
+	__wrap_pinctrl_lookup_state_ExpectAnyArgsAndReturn(0);
+	__wrap_pinctrl_configure_pins_ExpectAnyArgsAndReturn(0);
 	__wrap_nrfx_uarte_init_ExpectAnyArgsAndReturn(NRFX_SUCCESS);
 	__wrap_nrfx_uarte_init_AddCallback(&nrfx_uarte_init_callback);
 
@@ -147,9 +152,10 @@ void test_modem_trace_start_when_not_initialized(void)
 
 void test_modem_trace_init_uart_transport_medium(void)
 {
+	__wrap_pinctrl_lookup_state_ExpectAnyArgsAndReturn(0);
+	__wrap_pinctrl_configure_pins_ExpectAnyArgsAndReturn(0);
 	__wrap_nrfx_uarte_init_ExpectAnyArgsAndReturn(NRFX_SUCCESS);
 	__wrap_nrfx_uarte_init_AddCallback(&nrfx_uarte_init_callback);
-
 	TEST_ASSERT_EQUAL(0, nrf_modem_lib_trace_init(&trace_heap));
 }
 
@@ -360,6 +366,8 @@ void test_modem_trace_uart_tx_error(void)
 void test_modem_trace_when_transport_uart_init_fails(void)
 {
 	/* Simulate uart init failure. */
+	__wrap_pinctrl_lookup_state_ExpectAnyArgsAndReturn(0);
+	__wrap_pinctrl_configure_pins_ExpectAnyArgsAndReturn(0);
 	__wrap_nrfx_uarte_init_ExpectAnyArgsAndReturn(NRFX_ERROR_BUSY);
 
 	TEST_ASSERT_EQUAL(-EBUSY, nrf_modem_lib_trace_init(&trace_heap));
