@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <kernel.h>
 #include <zephyr.h>
+#include <drivers/pinctrl.h>
 #include <modem/nrf_modem_lib_trace.h>
 #include <nrf_modem_at.h>
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
@@ -17,6 +18,8 @@
 #endif
 
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
+#define UART1_NL DT_NODELABEL(uart1)
+PINCTRL_DT_DEFINE(UART1_NL);
 static const nrfx_uarte_t uarte_inst = NRFX_UARTE_INSTANCE(1);
 #endif
 
@@ -30,11 +33,10 @@ static bool is_transport_initialized;
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
 static bool uart_init(void)
 {
+	int ret;
 	const nrfx_uarte_config_t config = {
-		.pseltxd = DT_PROP(DT_NODELABEL(uart1), tx_pin),
-		.pselrxd = DT_PROP(DT_NODELABEL(uart1), rx_pin),
-		.pselcts = NRF_UARTE_PSEL_DISCONNECTED,
-		.pselrts = NRF_UARTE_PSEL_DISCONNECTED,
+		.skip_gpio_cfg = true,
+		.skip_psel_cfg = true,
 
 		.hal_cfg.hwfc = NRF_UARTE_HWFC_DISABLED,
 		.hal_cfg.parity = NRF_UARTE_PARITY_EXCLUDED,
@@ -43,6 +45,9 @@ static bool uart_init(void)
 		.interrupt_priority = NRFX_UARTE_DEFAULT_CONFIG_IRQ_PRIORITY,
 		.p_context = NULL,
 	};
+
+	ret = pinctrl_apply_state(PINCTRL_DT_DEV_CONFIG_GET(UART1_NL), PINCTRL_STATE_DEFAULT);
+	__ASSERT_NO_MSG(ret == 0);
 
 	return (nrfx_uarte_init(&uarte_inst, &config, NULL) == NRFX_SUCCESS);
 }

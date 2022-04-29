@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <kernel.h>
 #include <zephyr.h>
+#include <drivers/pinctrl.h>
 #include <modem/nrf_modem_lib_trace.h>
 #include <nrf_errno.h>
 #include <nrf_modem.h>
@@ -28,6 +29,8 @@ static struct k_heap *t_heap;
 #define UART_TX_WAIT_TIME_MS 100
 #define UNUSED_FLAGS 0
 
+#define UART1_NL DT_NODELABEL(uart1)
+PINCTRL_DT_DEFINE(UART1_NL);
 static const nrfx_uarte_t uarte_inst = NRFX_UARTE_INSTANCE(1);
 
 /* Semaphore used to check if the last UART transfer was complete. */
@@ -130,12 +133,12 @@ static void uarte_callback(nrfx_uarte_event_t const *event, void *context)
 
 static bool uart_init(void)
 {
-	const uint8_t irq_priority = DT_IRQ(DT_NODELABEL(uart1), priority);
+	int ret;
+	const uint8_t irq_priority = DT_IRQ(UART1_NL, priority);
+
 	const nrfx_uarte_config_t config = {
-		.pseltxd = DT_PROP(DT_NODELABEL(uart1), tx_pin),
-		.pselrxd = DT_PROP(DT_NODELABEL(uart1), rx_pin),
-		.pselcts = NRF_UARTE_PSEL_DISCONNECTED,
-		.pselrts = NRF_UARTE_PSEL_DISCONNECTED,
+		.skip_gpio_cfg = true,
+		.skip_psel_cfg = true,
 
 		.hal_cfg.hwfc = NRF_UARTE_HWFC_DISABLED,
 		.hal_cfg.parity = NRF_UARTE_PARITY_EXCLUDED,
@@ -145,7 +148,11 @@ static bool uart_init(void)
 		.p_context = NULL,
 	};
 
-	IRQ_CONNECT(DT_IRQN(DT_NODELABEL(uart1)),
+	ret = pinctrl_apply_state(PINCTRL_DT_DEV_CONFIG_GET(UART1_NL),
+		PINCTRL_STATE_DEFAULT);
+	__ASSERT_NO_MSG(ret == 0);
+
+	IRQ_CONNECT(DT_IRQN(UART1_NL),
 		irq_priority,
 		nrfx_isr,
 		&nrfx_uarte_1_irq_handler,
