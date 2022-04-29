@@ -4,18 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @brief USB event header file.
+ */
+
 #ifndef _USB_EVENT_H_
 #define _USB_EVENT_H_
-
-/**
- * @brief USB Event
- * @defgroup usb_event USB Event
- *
- * File defines a set of events used to transmit the information about USB
- * state between the application modules.
- *
- * @{
- */
 
 #include <zephyr/toolchain/common.h>
 
@@ -26,40 +20,59 @@
 extern "C" {
 #endif
 
+/**
+ * @brief USB Event
+ * @defgroup nrf_desktop_usb_event USB Event
+ *
+ * File defines a set of events used to transmit the information about USB
+ * state between the application modules.
+ *
+ * @{
+ */
 
 /** @brief Peer states. */
 enum usb_state {
-	USB_STATE_DISCONNECTED, /**< Cable is not attached. */
-	USB_STATE_POWERED,      /**< Cable attached but no communication. */
-	USB_STATE_ACTIVE,       /**< Cable attached and data is exchanged. */
-	USB_STATE_SUSPENDED,    /**< Cable attached but port is suspended. */
+	/** Cable is not attached. */
+	USB_STATE_DISCONNECTED,
+	/** Cable attached but no communication. */
+	USB_STATE_POWERED,
+	/** Cable attached and data is exchanged. */
+	USB_STATE_ACTIVE,
+	/** Cable attached but port is suspended. */
+	USB_STATE_SUSPENDED,
 
-	USB_STATE_COUNT         /**< Number of states. */
+	/** Number of states. */
+	USB_STATE_COUNT
 };
 
 /** @brief USB state event. */
 struct usb_state_event {
-	struct app_event_header header; /**< Event header. */
+	/** Event header. */
+	struct app_event_header header;
 
-	enum usb_state state; /**< State of the USB module. */
+	/** State of the USB module. */
+	enum usb_state state;
 };
 APP_EVENT_TYPE_DECLARE(usb_state_event);
 
 /** @brief USB HID event. */
 struct usb_hid_event {
-	struct app_event_header header; /**< Event header. */
+	/** Event header. */
+	struct app_event_header header;
 
-	const void *id;       /**< USB HID device id. */
+	/** USB HID device id. */
+	const void *id;
+	/** USB HID device enabled state. */
 	bool enabled;
 };
 APP_EVENT_TYPE_DECLARE(usb_hid_event);
 
-#ifdef __cplusplus
-}
-#endif
-
 /**
  * @}
  */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _USB_EVENT_H_ */
