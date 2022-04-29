@@ -79,7 +79,7 @@ Matter door lock build types
 .. matter_door_lock_sample_configuration_file_types_start
 
 The sample uses different configuration files depending on the supported features.
-Configuration files are provided for different build types and they are located in the :file:`configuration/<board_name>` directory.
+Configuration files are provided for different build types and they are located in the application root directory.
 
 The :file:`prj.conf` file represents a ``debug`` build type.
 Other build types are covered by dedicated files with the build type added as a suffix to the ``prj`` part, as per the following list.
@@ -95,7 +95,7 @@ This sample supports the following build types, depending on the selected board:
 
 * ``debug`` -- Debug version of the application - can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
 * ``release`` -- Release version of the application - can be used to enable only the necessary application functionalities to optimize its performance.
-* ``no_dfu`` -- Debug version of the application without Device Firmware Upgrade feature support - can be used only for the nRF52840 DK and nRF5340 DK, as those platforms have DFU enabled by default.
+* ``no_dfu`` -- Debug version of the application without Device Firmware Upgrade feature support - can be used for the nRF52840 DK, nRF5340 DK and nRF21540 DK.
 
 .. note::
     `Selecting a build type`_ is optional.
@@ -122,7 +122,7 @@ The sample supports over-the-air (OTA) device firmware upgrade (DFU) using one o
 In both cases, MCUboot secure bootloader is used to apply the new firmware image.
 
 The DFU over Matter is enabled by default.
-To configure the sample to support the DFU over Matter and SMP, use the ``-DOVERLAY_CONFIG=../../overlay-smp_dfu.conf`` build flag during the build process.
+To configure the sample to support the DFU over Matter and SMP, use the ``-DCONFIG_CHIP_DFU_OVER_BT_SMP=y`` build flag during the build process.
 To configure the sample to disable the DFU and the secure bootloader, use the ``-DCONF_FILE=prj_no_dfu.conf`` build flag during the build process.
 
 See :ref:`cmake_options` for instructions on how to add these options to your build.
@@ -147,7 +147,7 @@ Low-power build
 To configure the sample to consume less power, use the low-power build.
 It enables Thread's Sleepy End Device mode and disables debug features, such as the UART console or the **LED 1** usage.
 
-To trigger the low-power build, use the ``-DOVERLAY_CONFIG="../../overlay-low_power.conf"`` option when building the sample.
+To trigger the low-power build, use the ``-DOVERLAY_CONFIG="overlay-low_power.conf"`` option when building the sample.
 See :ref:`cmake_options` for instructions on how to add this option to your build.
 
 When building on the command line, run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_):
@@ -155,7 +155,7 @@ When building on the command line, run the following command with *build_target*
 .. parsed-literal::
    :class: highlight
 
-   west build -b *build_target* -- -DOVERLAY_CONFIG="../../overlay-low_power.conf"
+   west build -b *build_target* -- -DOVERLAY_CONFIG="overlay-low_power.conf"
 
 User interface
 **************
