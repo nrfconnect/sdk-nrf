@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <hw_unique_key.h>
 #include <psa/crypto.h>
-#include <autoconf.h>
 #ifdef CONFIG_BUILD_WITH_TFM
 #include <tfm_crypto_defs.h>
 #else /* CONFIG_BUILD_WITH_TFM */
