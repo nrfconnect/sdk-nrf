@@ -694,7 +694,7 @@ The current |NCS| main branch is based on revision ``45ef0d2`` of Zephyr, which 
 Matter (Project CHIP)
 =====================
 
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``4c061d1cecd87dfaed9d0084ad14588af36b2b49``.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``aa566b02070252043015a90946fea0685103d7dd``.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
