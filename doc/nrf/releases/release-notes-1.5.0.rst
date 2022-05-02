@@ -1018,7 +1018,7 @@ Applications and samples
 
   * :ref:`download_sample`
   * :ref:`mqtt_simple_sample`
-  * :ref:`peripheral_alexa_gadgets`
+  * Bluetooth: Peripheral Alexa Gadgets
 * :ref:`bootloader` - Added information on bootloader overlays and building the sample from |SES| and command line.
 * Added information about FEM support to the :ref:`radio_test` and :ref:`direct_test_mode` samples.
 

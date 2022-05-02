@@ -206,8 +206,8 @@ Bluetooth Low Energy
   * :ref:`bms_readme` - This module implements the Bond Management Service with the corresponding set of characteristics.
   * :ref:`peripheral_bms` sample - This sample demonstrates how to use the GATT Bond Management Service (BMS).
   * :ref:`direct_test_mode` sample - This sample demonstrates the Direct Test Mode functions described in Bluetooth Core Specification, Version 5.2, Vol. 6, Part F.
-  * :ref:`gadgets_service_readme`
-  * :ref:`peripheral_alexa_gadgets` sample - This sample demonstrates how a Bluetooth LE device can connect to an Amazon Echo device using the Alexa Gadgets Bluetooth Service and Profile.
+  * Alexa Gadgets Service
+  * Bluetooth: Peripheral Alexa Gadgets sample - This sample demonstrates how a Bluetooth LE device can connect to an Amazon Echo device using the Alexa Gadgets Bluetooth Service and Profile.
   * :ref:`bluetooth_central_hr_coded` sample (external contribution) - This sample demonstrates how to create a connection as a central using LE Coded PHY.
   * :ref:`peripheral_hr_coded` sample (external contribution) - This sample demonstrates how to use the extended advertising API to create a connectable advertiser on LE Coded PHY.
 

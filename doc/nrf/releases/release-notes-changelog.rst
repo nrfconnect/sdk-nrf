@@ -157,6 +157,8 @@ Bluetooth samples
 
 * Added :ref:`peripheral_ams_client` sample.
 
+* Removed Peripheral Alexa Gadgets Bluetooth sample due to Amazon pausing support for the Gadgets ecosystem.
+
 * Updated:
 
   * :ref:`direct_test_mode` sample:
@@ -395,6 +397,8 @@ Bluetooth libraries and services
 --------------------------------
 
 * Added :ref:`ams_client_readme` library.
+
+* Removed Alexa Gadgets Service library due to Amazon pausing support for the Gadgets ecosystem.
 
 * Updated:
 
