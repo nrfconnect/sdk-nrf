@@ -152,8 +152,6 @@ int coap_parse(struct download_client *client, size_t len)
 		return -1;
 	}
 
-	coap_pending_clear(&client->coap.pending);
-
 	err = coap_block_update(client, &response, &blk_off);
 	if (err) {
 		return err;
@@ -163,6 +161,8 @@ int coap_parse(struct download_client *client, size_t len)
 		LOG_ERR("Response is not pending");
 		return -1;
 	}
+
+	coap_pending_clear(&client->coap.pending);
 
 	if (coap_header_get_type(&response) != COAP_TYPE_ACK) {
 		LOG_ERR("Response must be of coap type ACK");
