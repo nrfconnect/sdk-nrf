@@ -62,7 +62,7 @@ CONFIG_SLM_EXTERNAL_XTAL - Use external XTAL for UARTE
 
 CONFIG_SLM_UART_HWFC_RUNTIME - Support of UART HWFC runtime configuration
    This option let the application configure HWFC during runtime rather than while compiling by using ``#XSLMUART``.
-   This option is automatically selected when the **rts-pin** and **cts-pin** are defined in the DTS overlay.
+   This option is automatically selected when the **hw-flow-control** is defined in the DTS overlay.
 
 .. _CONFIG_SLM_CONNECT_UART_0:
 
