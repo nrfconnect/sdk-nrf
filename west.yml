@@ -27,8 +27,6 @@ manifest:
       url-base: https://github.com/ThrowTheSwitch
     - name: armmbed
       url-base: https://github.com/ARMmbed
-    - name: alexa
-      url-base: https://github.com/alexa
     - name: nordicsemi
       url-base: https://github.com/NordicSemiconductor
     - name: memfault
@@ -165,10 +163,6 @@ manifest:
       path: test/cmock/vendor/unity
       revision: 74cde089e65c3435ce9aa87d5c69f4f16b7f6ade
       remote: throwtheswitch
-    - name: Alexa-Gadgets-Embedded-Sample-Code
-      path: modules/alexa-embedded
-      revision: face92d8c62184832793f518bb1f19379538c5c1
-      remote: alexa
     - name: zcbor
       remote: nordicsemi
       revision: 3d36ae19cb05d28cea23b4c870ae965c44215e9c
