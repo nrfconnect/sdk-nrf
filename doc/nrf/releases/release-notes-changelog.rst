@@ -738,7 +738,7 @@ Libraries for networking
 
   * :ref:`lib_download_client` library:
 
-     * Fixed handling of timeout errors when using CoAP.
+    * Fixed handling of duplicated CoAP packets.
     * Fixed handling of timeout errors when using CoAP.
 
 Libraries for NFC
