@@ -63,14 +63,30 @@ See the following configuration example:
 
 .. code-block:: devicetree
 
+	&pinctrl {
+		uart1_default_alt: uart1_default_alt {
+			group1 {
+				psels = <NRF_PSEL(UART_TX, 1, 13)>,
+					<NRF_PSEL(UART_RX, 1, 12)>;
+			};
+		};
+
+		uart1_sleep_alt: uart1_sleep_alt {
+			group1 {
+				psels = <NRF_PSEL(UART_TX, 1, 13)>,
+					<NRF_PSEL(UART_RX, 1, 12)>;
+				low-power-enable;
+			};
+		};
+	};
+
 	&uart1 {
 		compatible = "nordic,nrf-uarte";
 		status = "okay";
-		rx-pin = <44>;
-		tx-pin = <45>;
 		baudrate = <1000000>;
-		/delete-property/ rts-pin;
-		/delete-property/ cts-pin;
+		pinctrl-0 = <&uart1_default_alt>;
+		pinctrl-1 = <&uart1_sleep_alt>;
+		pinctrl-names = "default", "sleep";
 		/delete-property/ hw-flow-control;
 
 		lpuart: nrf-sw-lpuart {
