@@ -736,6 +736,11 @@ Libraries for networking
     * The library has been reworked to use `Azure SDK for Embedded C`_.
     * The APIs for both IoT Hub and DPS interaction have changed and the applications and samples that use the library have been updated.
 
+  * :ref:`lib_download_client` library:
+
+     * Fixed handling of timeout errors when using CoAP.
+    * Fixed handling of timeout errors when using CoAP.
+
 Libraries for NFC
 -----------------
 
