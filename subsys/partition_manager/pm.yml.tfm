@@ -13,28 +13,11 @@ tfm:
   inside: mcuboot_primary_app
 #endif
 
-tfm_primary:
-  span: [tfm]
+tfm_secure:
+  span: [mcuboot_pad, tfm]
 
-app_primary:
+tfm_nonsecure:
   span: [app]
-
-#ifdef CONFIG_TFM_BL2
-bl2:
-  placement: {before: [tfm]}
-  size: CONFIG_PM_PARTITION_SIZE_BL2
-
-signed_tfm_app:
-  span: [app_primary, tfm_primary]
-
-tfm_secondary:
-  placement: {after: [app_primary]}
-  share_size: tfm_primary
-
-app_secondary:
-  placement: {after: [tfm_secondary]}
-  share_size: app_primary
-#endif
 
 tfm_storage:
   span: []

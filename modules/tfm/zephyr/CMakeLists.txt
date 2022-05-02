@@ -12,20 +12,20 @@ if (CONFIG_TFM_BL2)
     )
   if (CONFIG_TFM_REGRESSION_NS)
     set_property(GLOBAL PROPERTY
-      app_primary_PM_HEX_FILE ${CMAKE_BINARY_DIR}/tfm_ns_signed.hex
+      tfm_nonsecure_PM_HEX_FILE ${CMAKE_BINARY_DIR}/tfm_ns_signed.hex
       )
   else()
     set_property(GLOBAL PROPERTY
-      app_primary_PM_HEX_FILE ${CMAKE_BINARY_DIR}/zephyr_ns_signed.hex
+      tfm_nonsecure_PM_HEX_FILE ${CMAKE_BINARY_DIR}/zephyr_ns_signed.hex
       )
   endif()
   set_property(GLOBAL PROPERTY
-    tfm_primary_PM_HEX_FILE ${CMAKE_BINARY_DIR}/tfm_s_signed.hex
+    tfm_secure_PM_HEX_FILE ${CMAKE_BINARY_DIR}/tfm_s_signed.hex
     )
 else()
   if (CONFIG_TFM_REGRESSION_NS)
     set_property(GLOBAL PROPERTY
-      app_primary_PM_HEX_FILE $<TARGET_PROPERTY:tfm,TFM_NS_HEX_FILE>
+      tfm_nonsecure_PM_HEX_FILE $<TARGET_PROPERTY:tfm,TFM_NS_HEX_FILE>
       )
   endif()
 endif()
@@ -85,6 +85,13 @@ if (NOT CONFIG_MBEDTLS_PSA_CRYPTO_STORAGE_C)
   set_property(TARGET zephyr_property_target
     APPEND PROPERTY TFM_CMAKE_OPTIONS
     -DCRYPTO_STORAGE_DISABLED=TRUE
+    )
+endif()
+
+if (CONFIG_BOOTLOADER_MCUBOOT)
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS
+    -DCONFIG_BOOTLOADER_MCUBOOT=TRUE
     )
 endif()
 
