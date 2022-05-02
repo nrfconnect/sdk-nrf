@@ -191,13 +191,32 @@ To use nRF21540 in SPI or mixed mode, complete the following steps:
    Set the state of the remaining control pins according to the `nRF21540 Product Specification`_.
 #. Add a following SPI bus device node on the devicetree file:
 
-   .. code-block::
+   .. code-block:: devicetree
+
+      &pinctrl {
+         spi3_default_alt: spi3_default_alt {
+            group1 {
+               psels = <NRF_PSEL(SPI_SCK, 1, 15)>,
+                       <NRF_PSEL(SPI_MISO, 1, 14)>,
+                       <NRF_PSEL(SPI_MOSI, 1, 13)>;
+            };
+         };
+
+         spi3_sleep_alt: spi3_sleep_alt {
+            group1 {
+               psels = <NRF_PSEL(SPI_SCK, 1, 15)>,
+                       <NRF_PSEL(SPI_MISO, 1, 14)>,
+                       <NRF_PSEL(SPI_MOSI, 1, 13)>;
+               low-power-enable;
+            };
+         };
+      };
 
       fem_spi: &spi3 {
 	      status = "okay";
-	      sck-pin = <47>;
-	      miso-pin = <46>;
-	      mosi-pin = <45>;
+         pinctrl-0 = <&spi3_default_alt>;
+         pinctrl-1 = <&spi3_sleep_alt>;
+         pinctrl-names = "default", "sleep";
 	      cs-gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
 
 	      nrf_radio_fem_spi: nrf21540_fem_spi@0 {
@@ -213,20 +232,7 @@ To use nRF21540 in SPI or mixed mode, complete the following steps:
    Replace the SPI bus according to your hardware design.
    Replace the SPI bus device name ``nrf_radio_fem_spi`` with the name from the previous step.
 
-#. Replace the pin numbers provided for each of the required properties:
-
-   * ``sck-pin`` -  GPIO pin number of the device that controls the ``SCK`` signal of the nRF21540.
-   * ``miso-pin`` - GPIO pin number of the device that controls the ``MISO`` signal of the nRF21540.
-   * ``mosi-pin`` - GPIO pin number of the device that controls the ``MOSI`` signal of the nRF21540.
-   * ``cs-gpio`` - GPIO characteristic of the device that controls the ``CSN`` signal of nRF21540.
-
-   ``sck-pin``, ``miso-pin``, ``mosi-pin`` are absolute pin numbers.
-   Use the following formula to calculate them::
-
-      pin_no = b\*32 + a
-
-   In this formula ``a`` is a pin number and ``b`` is a port number (Pb.a).
-   For example, for P0.1, ``pin_no = 1`` and for P1.0, ``pin_no = 32``.
+#. Create alternative pinctrl entries for SPI3 and replace the ``pinctrl-N`` and ``pinctrl-names`` properties.
 
 Optional properties
 -------------------
