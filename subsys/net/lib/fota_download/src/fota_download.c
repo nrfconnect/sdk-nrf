@@ -311,7 +311,7 @@ int fota_download_s0_active_get(bool *const s0_active)
 	}
 
 #ifdef PM_S1_ADDRESS
-#ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
+#ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE_FOO
 	if (spm_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, s0_active)) {
 		return -ENODEV;
 	}
