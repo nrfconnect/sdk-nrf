@@ -87,37 +87,86 @@ Make sure to configure all PWM ports and channels that are used by the applicati
 Enabling the PWM ports
 ~~~~~~~~~~~~~~~~~~~~~~
 
-To enable the PWM ports, you must set the PWM port status to ``"okay"`` in the devicetree file and specify the PWM channel in relation to the GPIO pin number.
+To enable the PWM ports, you must set the PWM port status to ``"okay"`` in the devicetree file and configure an appropriate pin control configuration.
 
 The following code snippets show examples of the DTS nodes:
 
 * Example 1 (enabling an existing port node):
 
-  .. code-block:: none
+  .. code-block:: devicetree
 
-	&pwm0 {
-		status = "okay";
-		ch0-pin = <8>;
+	&pinctrl {
+		pwm0_default_alt: pwm0_default_alt {
+			group1 {
+				psels = <NRF_PSEL(PWM_OUT0, 0, 8)>;
+			};
+		};
+
+		pwm0_sleep_alt: pwm0_sleep_alt {
+			group1 {
+				psels = <NRF_PSEL(PWM_OUT0, 0, 8)>;
+				low-power-enable;
+			};
+		};
 	};
 
-  In this example, the ``pwm0`` has its ``ch0`` channel bound to the GPIO pin number ``8``.
+	&pwm0 {
+		status = "okay";
+		pinctrl-0 = <&pwm0_default_alt>;
+		pinctrl-1 = <&pwm0_sleep_alt>;
+		pinctrl-names = "default", "sleep";
+	};
+
+  In this example, the ``pwm0`` has its channel 0 bound to the GPIO pin number ``8``.
 * Example 2 (enabling an existing port node):
 
-  .. code-block:: none
+  .. code-block:: devicetree
+
+	&pinctrl {
+		pwm0_default_alt: pwm0_default_alt {
+			group1 {
+				psels = <NRF_PSEL(PWM_OUT0, 0, 11)>,
+					<NRF_PSEL(PWM_OUT1, 0, 26)>,
+					<NRF_PSEL(PWM_OUT2, 0, 27)>;
+				nordic,invert;
+			};
+		};
+
+		pwm0_sleep_alt: pwm0_sleep_alt {
+			group1 {
+				psels = <NRF_PSEL(PWM_OUT0, 0, 11)>,
+					<NRF_PSEL(PWM_OUT1, 0, 26)>,
+					<NRF_PSEL(PWM_OUT2, 0, 27)>;
+				low-power-enable;
+			};
+		};
+
+		pwm1_default_alt: pwm1_default_alt {
+			group1 {
+				psels = <NRF_PSEL(PWM_OUT0, 0, 4)>;
+			};
+		};
+
+		pwm1_sleep_alt: pwm1_sleep_alt {
+			group1 {
+				psels = <NRF_PSEL(PWM_OUT0, 0, 4)>;
+				low-power-enable;
+			};
+		};
+	};
 
 	&pwm0 {
 		status = "okay";
-		ch0-pin = <11>;
-		ch0-inverted;
-		ch1-pin = <26>;
-		ch1-inverted;
-		ch2-pin = <27>;
-		ch2-inverted;
+		pinctrl-0 = <&pwm0_default_alt>;
+		pinctrl-1 = <&pwm0_sleep_alt>;
+		pinctrl-names = "default", "sleep";
 	};
 
 	&pwm1 {
 		status = "okay";
-		ch0-pin = <4>;
+		pinctrl-0 = <&pwm1_default_alt>;
+		pinctrl-1 = <&pwm1_sleep_alt>;
+		pinctrl-names = "default", "sleep";
 	};
 
 Enabling the LED PWM nodes
