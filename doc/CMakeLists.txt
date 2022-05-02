@@ -202,7 +202,7 @@ add_custom_target(
     ${ZEPHYR_BASE}/doc/_scripts/gen_devicetree_rest.py
     --vendor-prefixes ${ZEPHYR_BASE}/dts/bindings/vendor-prefixes.txt
     --dts-root ${ZEPHYR_BASE}
-    ${ZEPHYR_BINARY_DIR}/src/reference/devicetree
+    ${ZEPHYR_BINARY_DIR}/src/build/dts/api
   VERBATIM
   USES_TERMINAL
 )
