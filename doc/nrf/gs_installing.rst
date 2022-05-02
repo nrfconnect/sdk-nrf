@@ -47,7 +47,7 @@ The installation process is different depending on your operating system.
 
       To install the required tools, complete the following steps:
 
-      .. ncs-include:: getting_started/index.rst
+      .. ncs-include:: develop/getting_started/index.rst
          :docset: zephyr
          :dedent: 6
          :start-after: .. _install_dependencies_windows:
@@ -58,7 +58,7 @@ The installation process is different depending on your operating system.
 
       To install the required tools on Ubuntu, complete the following steps:
 
-      .. ncs-include:: getting_started/index.rst
+      .. ncs-include:: develop/getting_started/index.rst
          :docset: zephyr
          :dedent: 6
          :start-after: .. _install_dependencies_ubuntu:
@@ -76,7 +76,7 @@ The installation process is different depending on your operating system.
 
       To install the required tools, complete the following steps:
 
-      .. ncs-include:: getting_started/index.rst
+      .. ncs-include:: develop/getting_started/index.rst
          :docset: zephyr
          :dedent: 6
          :start-after: .. _install_dependencies_macos:

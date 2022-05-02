@@ -141,7 +141,7 @@ To read more about Zephyr's configuration system, see :ref:`zephyr:build_overvie
 Hardware-related configuration
 ------------------------------
 
-.. ncs-include:: guides/build/index.rst
+.. ncs-include:: build/cmake/index.rst
    :docset: zephyr
    :dedent: 3
    :start-after: Devicetree
@@ -159,7 +159,7 @@ For more information, see Zephyr's :ref:`zephyr:dt-guide`.
 Software-related configuration
 ------------------------------
 
-.. ncs-include:: guides/build/index.rst
+.. ncs-include:: build/cmake/index.rst
    :docset: zephyr
    :dedent: 3
    :start-after: Kconfig
