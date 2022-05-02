@@ -9,6 +9,7 @@
 #include <net/download_client.h>
 #include <zephyr/logging/log.h>
 #include <string.h>
+#include <zephyr/sys/__assert.h>
 
 LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 
@@ -53,10 +54,7 @@ int coap_get_recv_timeout(struct download_client *dl)
 {
 	int timeout;
 
-	if (!has_pending(dl)) {
-		LOG_ERR("Must have coap pending");
-		return -1;
-	}
+	__ASSERT(has_pending(dl), "Must have coap pending");
 
 	/* Retransmission is cycled in case recv() times out. In case sending request
 	 * blocks, the time that is used for sending request must be substracted next time
