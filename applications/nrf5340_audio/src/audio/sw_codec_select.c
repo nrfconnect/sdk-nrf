@@ -236,12 +236,18 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 
 		switch (m_config.decoder.channel_mode) {
 		case SW_CODEC_MONO: {
-			ret = sw_codec_lc3_dec_run(encoded_data, encoded_size,
-						   LC3_PCM_NUM_BYTES_MONO, 0, pcm_data_mono,
-						   (uint16_t *)&pcm_size_session, bad_frame);
-			if (ret) {
-				return ret;
+			if (bad_frame && IS_ENABLED(CONFIG_SW_CODEC_OVERRIDE_PLC)) {
+				memset(pcm_data_mono, 0, PCM_NUM_BYTES_MONO);
+				pcm_size_session = PCM_NUM_BYTES_MONO;
+			} else {
+				ret = sw_codec_lc3_dec_run(encoded_data, encoded_size,
+							LC3_PCM_NUM_BYTES_MONO, 0, pcm_data_mono,
+							(uint16_t *)&pcm_size_session, bad_frame);
+				if (ret) {
+					return ret;
+				}
 			}
+
 			/* For now, i2s is only stereo, so in order to send
 			 * just one channel, we need to insert 0 for the
 			 * other channel
@@ -255,22 +261,27 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 			break;
 		}
 		case SW_CODEC_STEREO: {
-			/* Decode left channel */
-			ret = sw_codec_lc3_dec_run(encoded_data, encoded_size / 2,
-						   LC3_PCM_NUM_BYTES_MONO, AUDIO_CH_L,
-						   pcm_data_mono, (uint16_t *)&pcm_size_session,
-						   bad_frame);
-			if (ret) {
-				return ret;
-			}
-
-			/* Decode right channel */
-			ret = sw_codec_lc3_dec_run((encoded_data + (encoded_size / 2)),
-						   encoded_size / 2, LC3_PCM_NUM_BYTES_MONO,
-						   AUDIO_CH_R, pcm_data_mono_right,
-						   (uint16_t *)&pcm_size_session, bad_frame);
-			if (ret) {
-				return ret;
+			if (bad_frame && IS_ENABLED(CONFIG_SW_CODEC_OVERRIDE_PLC)) {
+				memset(pcm_data_mono, 0, PCM_NUM_BYTES_MONO);
+				memset(pcm_data_mono_right, 0, PCM_NUM_BYTES_MONO);
+				pcm_size_session = PCM_NUM_BYTES_MONO;
+			} else {
+				/* Decode left channel */
+				ret = sw_codec_lc3_dec_run(encoded_data, encoded_size / 2,
+						LC3_PCM_NUM_BYTES_MONO, AUDIO_CH_L,
+						pcm_data_mono, (uint16_t *)&pcm_size_session,
+						bad_frame);
+				if (ret) {
+					return ret;
+				}
+				/* Decode right channel */
+				ret = sw_codec_lc3_dec_run((encoded_data + (encoded_size / 2)),
+							encoded_size / 2, LC3_PCM_NUM_BYTES_MONO,
+							AUDIO_CH_R, pcm_data_mono_right,
+							(uint16_t *)&pcm_size_session, bad_frame);
+				if (ret) {
+					return ret;
+				}
 			}
 			ret = pscm_combine(pcm_data_mono, pcm_data_mono_right, pcm_size_session,
 					   CONFIG_AUDIO_BIT_DEPTH_BITS, pcm_data_stereo,

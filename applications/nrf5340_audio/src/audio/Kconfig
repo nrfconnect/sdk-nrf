@@ -145,6 +145,10 @@ config SW_CODEC_SBC
 		Subband Codec
 endchoice
 
+config SW_CODEC_PLC_DISABLED
+	bool "Skip PLC on a bad frame and fill the output buffer(s) with zeros instead"
+	default n
+
 menu "LC3"
 visible if SW_CODEC_LC3
 
