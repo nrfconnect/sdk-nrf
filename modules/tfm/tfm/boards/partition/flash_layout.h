@@ -18,12 +18,13 @@
  */
 
 /* Size of a Secure and of a Non-secure image */
-#define FLASH_S_PARTITION_SIZE                (PM_TFM_SIZE)
-#define FLASH_NS_PARTITION_SIZE               (PM_APP_SIZE)
-#define FLASH_MAX_PARTITION_SIZE        ((FLASH_S_PARTITION_SIZE >   \
-					FLASH_NS_PARTITION_SIZE) ? \
-					FLASH_S_PARTITION_SIZE :    \
-					FLASH_NS_PARTITION_SIZE)
+#define FLASH_S_PARTITION_SIZE          (PM_TFM_SECURE_SIZE)
+#define FLASH_NS_PARTITION_SIZE         (PM_TFM_NONSECURE_SIZE)
+#define FLASH_MAX_PARTITION_SIZE        ((FLASH_S_PARTITION_SIZE > \
+					  FLASH_NS_PARTITION_SIZE) ? \
+					 FLASH_S_PARTITION_SIZE : \
+					 FLASH_NS_PARTITION_SIZE)
+
 
 /* Sector size of the embedded flash hardware (erase/program).
  * Flash memory program/erase operations have a page granularity.
@@ -36,43 +37,30 @@
 /* Flash layout info for BL2 bootloader */
 #define FLASH_BASE_ADDRESS                  (0x00000000)
 
-
-/* Offset and size definitions of the flash partitions that are handled by the
- * bootloader. The image swapping is done between IMAGE_PRIMARY and
- * IMAGE_SECONDARY, SCRATCH is used as a temporary storage during image
- * swapping.
- */
-#ifdef CONFIG_TFM_BL2
-#define FLASH_AREA_BL2_OFFSET      (PM_BL2_ADDRESS)
-#define FLASH_AREA_BL2_SIZE        (PM_BL2_SIZE)
-#endif /* BL2 */
-
+#if !defined(MCUBOOT_IMAGE_NUMBER) || (MCUBOOT_IMAGE_NUMBER == 1)
 /* Secure image primary slot */
 #define FLASH_AREA_0_ID            (1)
-#define FLASH_AREA_0_OFFSET        (PM_TFM_PRIMARY_ADDRESS)
-#define FLASH_AREA_0_SIZE          (PM_TFM_PRIMARY_SIZE)
-/* Non-secure image primary slot */
-#define FLASH_AREA_1_ID            (FLASH_AREA_0_ID + 1)
-#define FLASH_AREA_1_OFFSET        (PM_APP_PRIMARY_ADDRESS)
-#define FLASH_AREA_1_SIZE          (PM_APP_PRIMARY_SIZE)
+#define FLASH_AREA_0_OFFSET        (PM_MCUBOOT_PRIMARY_ADDRESS)
+#define FLASH_AREA_0_SIZE          (PM_MCUBOOT_PRIMARY_SIZE)
 /* Secure image secondary slot */
-#define FLASH_AREA_2_ID            (FLASH_AREA_1_ID + 1)
-#define FLASH_AREA_2_OFFSET        (PM_TFM_SECONDARY_ADDRESS)
-#define FLASH_AREA_2_SIZE          (PM_TFM_SECONDARY_SIZE)
-/* Non-secure image secondary slot */
-#define FLASH_AREA_3_ID            (FLASH_AREA_2_ID + 1)
-#define FLASH_AREA_3_OFFSET        (PM_APP_SECONDARY_ADDRESS)
-#define FLASH_AREA_3_SIZE          (PM_APP_SECONDARY_SIZE)
+#define FLASH_AREA_2_ID            (FLASH_AREA_0_ID + 1)
+#define FLASH_AREA_2_OFFSET        (PM_MCUBOOT_SECONDARY_ADDRESS)
+#define FLASH_AREA_2_SIZE          (PM_MCUBOOT_SECONDARY_SIZE)
 
 /* Not used, only the Non-swapping firmware upgrade operation
  * is supported on NRF5340 Application MCU.
  */
-#define FLASH_AREA_SCRATCH_ID      (FLASH_AREA_3_ID + 1)
-#define FLASH_AREA_SCRATCH_OFFSET  (FLASH_AREA_3_OFFSET + FLASH_AREA_3_SIZE)
+#define FLASH_AREA_SCRATCH_ID      (FLASH_AREA_2_ID + 1)
+#define FLASH_AREA_SCRATCH_OFFSET  (FLASH_AREA_2_OFFSET + FLASH_AREA_2_SIZE)
 #define FLASH_AREA_SCRATCH_SIZE    (0)
+
 /* Maximum number of image sectors supported by the bootloader. */
-#define MCUBOOT_MAX_IMG_SECTORS    (FLASH_MAX_PARTITION_SIZE / \
+#define MCUBOOT_MAX_IMG_SECTORS    ((FLASH_S_PARTITION_SIZE + \
+				     FLASH_NS_PARTITION_SIZE) / \
 				    FLASH_AREA_IMAGE_SECTOR_SIZE)
+#else
+#error "Only MCUBOOT_IMAGE_NUMBER 1 is supported!"
+#endif
 
 /* Not used, only the Non-swapping firmware upgrade operation
  * is supported on nRF5340. The maximum number of status entries
