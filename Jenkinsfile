@@ -1,4 +1,4 @@
-@Library("CI_LIB") _
+@Library("CI_LIB@test_custom_downstream_job") _
 
 def pipeline = new ncs.sdk_nrf.Main()
 
