@@ -45,9 +45,9 @@ static enum iso_direction iso_dir;
 #define NET_BUF_POOL_ITERATE(i, _)                                                                 \
 	NET_BUF_POOL_FIXED_DEFINE(iso_tx_pool_##i, HCI_ISO_BUF_ALLOC_PER_CHAN,                     \
 				  BT_ISO_SDU_BUF_SIZE(CONFIG_BT_ISO_TX_MTU), 8, NULL);
-#define NET_BUF_POOL_PTR_ITERATE(i, _) IDENTITY(&iso_tx_pool_##i COMMA)
+#define NET_BUF_POOL_PTR_ITERATE(i, ...) IDENTITY(&iso_tx_pool_##i)
 
-LISTIFY(CONFIG_BT_ISO_MAX_CHAN, NET_BUF_POOL_ITERATE, (,))
+LISTIFY(CONFIG_BT_ISO_MAX_CHAN, NET_BUF_POOL_ITERATE, (;))
 
 static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ISO_MAX_CHAN,
 						       NET_BUF_POOL_PTR_ITERATE,
@@ -241,7 +241,7 @@ static void iso_rx_cb(struct bt_iso_chan *chan, const struct bt_iso_recv_info *i
 		ERR_CHK_MSG(-EPERM, "The RX callback has not been set");
 	}
 
-	if (info->flags != BT_ISO_FLAGS_VALID) {
+	if (!(info->flags & BT_ISO_FLAGS_VALID)) {
 		bad_frame = true;
 		iso_rx_cb_bad++;
 	}

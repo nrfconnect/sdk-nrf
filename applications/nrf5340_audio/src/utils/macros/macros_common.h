@@ -55,8 +55,6 @@
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #endif /* MIN */
 
-#define COMMA ,
-
 #define COLOR_BLACK "\x1B[0;30m"
 #define COLOR_RED "\x1B[0;31m"
 #define COLOR_GREEN "\x1B[0;32m"
