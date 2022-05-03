@@ -8,6 +8,9 @@
 #include <app_event_manager.h>
 #include <zephyr/settings/settings.h>
 #include <date_time.h>
+#if defined(CONFIG_DATA_GRANT_SEND_ON_CONNECTION_QUALITY)
+#include <modem/lte_lc.h>
+#endif
 #include <modem/modem_info.h>
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 #include <net/nrf_cloud_agps.h>
@@ -125,15 +128,13 @@ static int recv_req_data_count;
  */
 static int req_data_count;
 
-/* List of data types sent out by the data module. */
-enum data_type {
+/* List of data types that are supported to be sent based on LTE connection evaluation. */
+enum coneval_supported_data_type {
 	UNUSED,
 	GENERIC,
 	BATCH,
-	UI,
 	NEIGHBOR_CELLS,
-	AGPS_REQUEST,
-	CONFIG
+	COUNT,
 };
 
 /* Data module message queue. */
@@ -261,6 +262,102 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	}
 
 	return false;
+}
+
+static bool grant_send(enum coneval_supported_data_type type,
+		       struct lte_lc_conn_eval_params *coneval,
+		       bool override)
+{
+#if defined(CONFIG_DATA_GRANT_SEND_ON_CONNECTION_QUALITY)
+	/* List used to keep track of how many times a data type has been denied a send.
+	 * Indexed by coneval_supported_data_type.
+	 */
+	static uint8_t send_denied_count[COUNT];
+
+	if (override) {
+		/* The override flag is set, grant send. */
+		return true;
+	}
+
+	if (send_denied_count[type] >= CONFIG_DATA_SEND_ATTEMPTS_COUNT_MAX) {
+		/* Grant send if a message has been attempted too many times. */
+		LOG_WRN("Too many attempts, granting send");
+		goto grant;
+	}
+
+	LOG_DBG("Current LTE energy estimate: %d", coneval->energy_estimate);
+
+	switch (type) {
+	case GENERIC:
+		if (IS_ENABLED(CONFIG_DATA_GENERIC_UPDATES_ENERGY_THRESHOLD_EXCESSIVE) &&
+		    coneval->energy_estimate >= LTE_LC_ENERGY_CONSUMPTION_EXCESSIVE) {
+			goto grant;
+		} else if (IS_ENABLED(CONFIG_DATA_GENERIC_UPDATES_ENERGY_THRESHOLD_INCREASED) &&
+		    coneval->energy_estimate >= LTE_LC_ENERGY_CONSUMPTION_INCREASED) {
+			goto grant;
+		} else if (IS_ENABLED(CONFIG_DATA_GENERIC_UPDATES_ENERGY_THRESHOLD_NORMAL) &&
+		    coneval->energy_estimate >= LTE_LC_ENERGY_CONSUMPTION_NORMAL) {
+			goto grant;
+		} else if (IS_ENABLED(CONFIG_DATA_GENERIC_UPDATES_ENERGY_THRESHOLD_REDUCED) &&
+		    coneval->energy_estimate >= LTE_LC_ENERGY_CONSUMPTION_REDUCED) {
+			goto grant;
+		} else if (IS_ENABLED(CONFIG_DATA_GENERIC_UPDATES_ENERGY_THRESHOLD_EFFICIENT) &&
+		    coneval->energy_estimate >= LTE_LC_ENERGY_CONSUMPTION_EFFICIENT) {
+			goto grant;
+		}
+		break;
+	case NEIGHBOR_CELLS:
+		if (IS_ENABLED(CONFIG_DATA_NEIGHBOR_CELL_UPDATES_ENERGY_THRESHOLD_EXCESSIVE) &&
+		    coneval->energy_estimate >= LTE_LC_ENERGY_CONSUMPTION_EXCESSIVE) {
+			goto grant;
+		} else if (IS_ENABLED(CONFIG_DATA_NEIGHBOR_CELL_UPDATES_ENERGY_THRESHOLD_INCREASED)
+			   && coneval->energy_estimate >= LTE_LC_ENERGY_CONSUMPTION_INCREASED) {
+			goto grant;
+		} else if (IS_ENABLED(CONFIG_DATA_NEIGHBOR_CELL_UPDATES_ENERGY_THRESHOLD_NORMAL) &&
+		    coneval->energy_estimate >= LTE_LC_ENERGY_CONSUMPTION_NORMAL) {
+			goto grant;
+		} else if (IS_ENABLED(CONFIG_DATA_NEIGHBOR_CELL_UPDATES_ENERGY_THRESHOLD_REDUCED) &&
+		    coneval->energy_estimate >= LTE_LC_ENERGY_CONSUMPTION_REDUCED) {
+			goto grant;
+		} else if (IS_ENABLED(CONFIG_DATA_NEIGHBOR_CELL_UPDATES_ENERGY_THRESHOLD_EFFICIENT)
+			   && coneval->energy_estimate >= LTE_LC_ENERGY_CONSUMPTION_EFFICIENT) {
+			goto grant;
+		}
+		break;
+	case BATCH:
+		if (IS_ENABLED(CONFIG_DATA_BATCH_UPDATES_ENERGY_THRESHOLD_EXCESSIVE) &&
+		    coneval->energy_estimate >= LTE_LC_ENERGY_CONSUMPTION_EXCESSIVE) {
+			goto grant;
+		} else if (IS_ENABLED(CONFIG_DATA_BATCH_UPDATES_ENERGY_THRESHOLD_INCREASED) &&
+		    coneval->energy_estimate >= LTE_LC_ENERGY_CONSUMPTION_INCREASED) {
+			goto grant;
+		} else if (IS_ENABLED(CONFIG_DATA_BATCH_UPDATES_ENERGY_THRESHOLD_NORMAL) &&
+		    coneval->energy_estimate >= LTE_LC_ENERGY_CONSUMPTION_NORMAL) {
+			goto grant;
+		} else if (IS_ENABLED(CONFIG_DATA_BATCH_UPDATES_ENERGY_THRESHOLD_REDUCED) &&
+		    coneval->energy_estimate >= LTE_LC_ENERGY_CONSUMPTION_REDUCED) {
+			goto grant;
+		} else if (IS_ENABLED(CONFIG_DATA_BATCH_UPDATES_ENERGY_THRESHOLD_EFFICIENT) &&
+		    coneval->energy_estimate >= LTE_LC_ENERGY_CONSUMPTION_EFFICIENT) {
+			goto grant;
+		}
+		break;
+	default:
+		LOG_WRN("Invalid/unsupported data type: %d", type);
+		return false;
+	}
+
+	LOG_DBG("Send NOT granted, type: %d, energy estimate: %d, attempt: %d", type,
+		coneval->energy_estimate, send_denied_count[type]);
+	send_denied_count[type]++;
+	return false;
+
+grant:
+	LOG_DBG("Send granted, type: %d, energy estimate: %d, attempt: %d",
+		type, coneval->energy_estimate, send_denied_count[type]);
+	send_denied_count[type] = 0;
+#endif /* CONFIG_DATA_GRANT_SEND_ON_CONNECTION_QUALITY */
+	return true;
 }
 
 static int config_settings_handler(const char *key, size_t len,
@@ -429,7 +526,13 @@ static void data_send(enum data_module_event_type event,
 static void data_encode(void)
 {
 	int err;
-	struct cloud_codec_data codec = {0};
+	struct cloud_codec_data codec = { 0 };
+	struct lte_lc_conn_eval_params coneval = { 0 };
+
+	/* Variable used to override connection evaluation calculations in case connection
+	 * evalution fails for some non-critical reason.
+	 */
+	bool override = false;
 
 	if (!date_time_is_valid()) {
 		/* Date time library does not have valid time to
@@ -439,83 +542,108 @@ static void data_encode(void)
 		return;
 	}
 
-	err = cloud_codec_encode_neighbor_cells(&codec, &neighbor_cells);
-	switch (err) {
-	case 0:
-		LOG_DBG("Neighbor cell data encoded successfully");
-		data_send(DATA_EVT_NEIGHBOR_CELLS_DATA_SEND, &codec);
-		break;
-	case -ENOTSUP:
-		/* Neighbor cell data encoding not supported */
-		break;
-	case -ENODATA:
-		LOG_DBG("No neighbor cells data to encode, error: %d", err);
-		break;
-	default:
-		LOG_ERR("Error encoding neighbor cells data: %d", err);
-		SEND_ERROR(data, DATA_EVT_ERROR, err);
+#if defined(CONFIG_DATA_GRANT_SEND_ON_CONNECTION_QUALITY)
+	/* Perform connection evaluation to determine how expensive it is to send data. */
+	err = lte_lc_conn_eval_params_get(&coneval);
+	if (err < 0) {
+		LOG_ERR("lte_lc_conn_eval_params_get, error: %d", err);
+		SEND_ERROR(cloud, CLOUD_EVT_ERROR, err);
 		return;
-	}
+	} else if (err > 0) {
+		LOG_WRN("Connection evaluation failed, error: %d", err);
 
-	err = cloud_codec_encode_data(
-		&codec,
-		&gnss_buf[head_gnss_buf],
-		&sensors_buf[head_sensor_buf],
-		&modem_stat,
-		&modem_dyn_buf[head_modem_dyn_buf],
-		&ui_buf[head_ui_buf],
-		&accel_buf[head_accel_buf],
-		&bat_buf[head_bat_buf]);
-	switch (err) {
-	case 0:
-		LOG_DBG("Data encoded successfully");
-		data_send(DATA_EVT_DATA_SEND, &codec);
-		break;
-	case -ENODATA:
-		/* This error might occur when data has not been obtained prior
-		 * to data encoding.
+		/* Positive error codes returned from lte_lc_conn_eval_params_get() indicates
+		 * that the connection evaluation failed due to a non-critical reason.
+		 * We don't treat this as an irrecoverable error because it can occur
+		 * occasionally. Since we don't have any connection evaluation parameters we
+		 * grant encoding and sending of data.
 		 */
-		LOG_DBG("No new data to encode");
-		break;
-	case -ENOTSUP:
-		LOG_DBG("Regular data updates are not supported, data will be published in batch");
-		break;
-	default:
-		LOG_ERR("Error encoding message %d", err);
-		SEND_ERROR(data, DATA_EVT_ERROR, err);
-		return;
+		override = true;
+	}
+#endif
+
+	if (grant_send(NEIGHBOR_CELLS, &coneval, override)) {
+		err = cloud_codec_encode_neighbor_cells(&codec, &neighbor_cells);
+		switch (err) {
+		case 0:
+			LOG_DBG("Neighbor cell data encoded successfully");
+			data_send(DATA_EVT_NEIGHBOR_CELLS_DATA_SEND, &codec);
+			break;
+		case -ENOTSUP:
+			/* Neighbor cell data encoding not supported */
+			break;
+		case -ENODATA:
+			LOG_DBG("No neighbor cells data to encode, error: %d", err);
+			break;
+		default:
+			LOG_ERR("Error encoding neighbor cells data: %d", err);
+			SEND_ERROR(data, DATA_EVT_ERROR, err);
+			return;
+		}
 	}
 
-	err = cloud_codec_encode_batch_data(&codec,
-					    gnss_buf,
-					    sensors_buf,
-					    &modem_stat,
-					    modem_dyn_buf,
-					    ui_buf,
-					    accel_buf,
-					    bat_buf,
-					    ARRAY_SIZE(gnss_buf),
-					    ARRAY_SIZE(sensors_buf),
-					    MODEM_STATIC_ARRAY_SIZE,
-					    ARRAY_SIZE(modem_dyn_buf),
-					    ARRAY_SIZE(ui_buf),
-					    ARRAY_SIZE(accel_buf),
-					    ARRAY_SIZE(bat_buf));
-	switch (err) {
-	case 0:
-		LOG_DBG("Batch data encoded successfully");
-		data_send(DATA_EVT_DATA_SEND_BATCH, &codec);
-		break;
-	case -ENODATA:
-		LOG_DBG("No batch data to encode, ringbuffers are empty");
-		break;
-	case -ENOTSUP:
-		LOG_DBG("Encoding of batch data not supported");
-		break;
-	default:
-		LOG_ERR("Error batch-enconding data: %d", err);
-		SEND_ERROR(data, DATA_EVT_ERROR, err);
-		return;
+	if (grant_send(GENERIC, &coneval, override)) {
+		err = cloud_codec_encode_data(&codec,
+					      &gnss_buf[head_gnss_buf],
+					      &sensors_buf[head_sensor_buf],
+					      &modem_stat,
+					      &modem_dyn_buf[head_modem_dyn_buf],
+					      &ui_buf[head_ui_buf],
+					      &accel_buf[head_accel_buf],
+					      &bat_buf[head_bat_buf]);
+		switch (err) {
+		case 0:
+			LOG_DBG("Data encoded successfully");
+			data_send(DATA_EVT_DATA_SEND, &codec);
+			break;
+		case -ENODATA:
+			/* This error might occur when data has not been obtained prior
+			 * to data encoding.
+			 */
+			LOG_DBG("No new data to encode");
+			break;
+		case -ENOTSUP:
+			LOG_DBG("Regular data updates are not supported");
+			break;
+		default:
+			LOG_ERR("Error encoding message %d", err);
+			SEND_ERROR(data, DATA_EVT_ERROR, err);
+			return;
+		}
+	}
+
+	if (grant_send(BATCH, &coneval, override)) {
+		err = cloud_codec_encode_batch_data(&codec,
+						    gnss_buf,
+						    sensors_buf,
+						    &modem_stat,
+						    modem_dyn_buf,
+						    ui_buf,
+						    accel_buf,
+						    bat_buf,
+						    ARRAY_SIZE(gnss_buf),
+						    ARRAY_SIZE(sensors_buf),
+						    MODEM_STATIC_ARRAY_SIZE,
+						    ARRAY_SIZE(modem_dyn_buf),
+						    ARRAY_SIZE(ui_buf),
+						    ARRAY_SIZE(accel_buf),
+						    ARRAY_SIZE(bat_buf));
+		switch (err) {
+		case 0:
+			LOG_DBG("Batch data encoded successfully");
+			data_send(DATA_EVT_DATA_SEND_BATCH, &codec);
+			break;
+		case -ENODATA:
+			LOG_DBG("No batch data to encode, ringbuffers are empty");
+			break;
+		case -ENOTSUP:
+			LOG_DBG("Encoding of batch data not supported");
+			break;
+		default:
+			LOG_ERR("Error batch-enconding data: %d", err);
+			SEND_ERROR(data, DATA_EVT_ERROR, err);
+			return;
+		}
 	}
 }
 
