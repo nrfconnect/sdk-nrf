@@ -31,7 +31,7 @@ static const char location_usage_str[] =
 	"  cancel:   Cancel/stop on going request. No options\n";
 
 static const char location_get_usage_str[] =
-	"Usage: location get [--method <method>] [--interval <secs>]\n"
+	"Usage: location get [--mode <mode>] [--method <method>] [--interval <secs>]\n"
 	"[--gnss_accuracy <acc>] [--gnss_num_fixes <number of fixes>]\n"
 	"[--gnss_timeout <timeout in secs>] [--gnss_visibility]\n"
 	"[--cellular_timeout <timeout in secs>] [--cellular_service <service_string>]\n"
@@ -40,6 +40,7 @@ static const char location_get_usage_str[] =
 	"  --method,           Location method: 'gnss', 'cellular' or 'wifi'. Multiple\n"
 	"                      '--method' parameters may be given to indicate list of\n"
 	"                      methods in priority order.\n"
+	"  --mode,             Location request mode: 'fallback' (default) or 'all'.\n"
 	"  --interval,         Position update interval in seconds\n"
 	"                      (default: 0 = single position)\n"
 	"  --gnss_accuracy,    Used GNSS accuracy: 'low', 'normal' or 'high'\n"
@@ -59,19 +60,21 @@ static const char location_get_usage_str[] =
 /* Following are not having short options */
 enum {
 	LOCATION_SHELL_OPT_INTERVAL         = 1001,
-	LOCATION_SHELL_OPT_GNSS_ACCURACY    = 1002,
-	LOCATION_SHELL_OPT_GNSS_TIMEOUT     = 1003,
-	LOCATION_SHELL_OPT_GNSS_NUM_FIXES   = 1004,
-	LOCATION_SHELL_OPT_GNSS_VISIBILITY  = 1005,
-	LOCATION_SHELL_OPT_CELLULAR_TIMEOUT = 1006,
-	LOCATION_SHELL_OPT_CELLULAR_SERVICE = 1007,
-	LOCATION_SHELL_OPT_WIFI_TIMEOUT     = 1008,
-	LOCATION_SHELL_OPT_WIFI_SERVICE     = 1009,
+	LOCATION_SHELL_OPT_MODE,
+	LOCATION_SHELL_OPT_GNSS_ACCURACY,
+	LOCATION_SHELL_OPT_GNSS_TIMEOUT,
+	LOCATION_SHELL_OPT_GNSS_NUM_FIXES,
+	LOCATION_SHELL_OPT_GNSS_VISIBILITY,
+	LOCATION_SHELL_OPT_CELLULAR_TIMEOUT,
+	LOCATION_SHELL_OPT_CELLULAR_SERVICE,
+	LOCATION_SHELL_OPT_WIFI_TIMEOUT,
+	LOCATION_SHELL_OPT_WIFI_SERVICE,
 };
 
 /* Specifying the expected options */
 static struct option long_options[] = {
 	{ "method", required_argument, 0, 'm' },
+	{ "mode", required_argument, 0, LOCATION_SHELL_OPT_MODE },
 	{ "interval", required_argument, 0, LOCATION_SHELL_OPT_INTERVAL },
 	{ "gnss_accuracy", required_argument, 0, LOCATION_SHELL_OPT_GNSS_ACCURACY },
 	{ "gnss_timeout", required_argument, 0, LOCATION_SHELL_OPT_GNSS_TIMEOUT },
@@ -122,7 +125,6 @@ static enum location_service location_shell_string_to_service(const char *servic
 }
 
 /******************************************************************************/
-
 void location_ctrl_event_handler(const struct location_event_data *event_data)
 {
 	switch (event_data->id) {
@@ -181,6 +183,9 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 			event_data->pgps_request.gps_time_of_day);
 #endif
 		break;
+	default:
+		mosh_warn("Unknown event from location library, id %d", event_data->id);
+		break;
 	}
 }
 
@@ -224,6 +229,8 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 
 	enum location_method method_list[CONFIG_LOCATION_METHODS_LIST_SIZE] = { 0 };
 	int method_count = 0;
+
+	enum location_req_mode req_mode = LOCATION_REQ_MODE_FALLBACK;
 
 	int opt;
 	int ret = 0;
@@ -313,6 +320,19 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			gnss_visibility = true;
 			break;
 
+		case LOCATION_SHELL_OPT_MODE:
+			if (strcmp(optarg, "fallback") == 0) {
+				req_mode = LOCATION_REQ_MODE_FALLBACK;
+			} else if (strcmp(optarg, "all") == 0) {
+				req_mode = LOCATION_REQ_MODE_ALL;
+			} else {
+				mosh_error(
+					"Unknown location request mode (%s) was given. See usage:",
+						optarg);
+				goto show_usage;
+			}
+			break;
+
 		case 'm':
 			if (method_count >= CONFIG_LOCATION_METHODS_LIST_SIZE) {
 				mosh_error(
@@ -395,6 +415,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 		if (interval_set) {
 			config.interval = interval;
 		}
+		config.mode = req_mode;
 
 		ret = location_request(real_config);
 		if (ret) {
