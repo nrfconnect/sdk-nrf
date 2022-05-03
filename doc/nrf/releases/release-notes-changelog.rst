@@ -132,6 +132,7 @@ nRF9160: Asset Tracker v2
   * Support for :ref:`QoS` library to handle multiple in-flight messages for MQTT based cloud backends such as AWS IoT, Azure IoT Hub, and nRF Cloud.
   * Documentation for Asset tracker v2 :ref:`asset_tracker_unit_test`.
   * Support for Lightweight Machine to Machine (LwM2M).
+  * Support for filtering updates to cloud based on LTE connection evaluation (`AT%CONEVAL`_).
 
 * Updated:
 

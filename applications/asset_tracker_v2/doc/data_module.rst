@@ -43,6 +43,24 @@ These value are persisted in flash between reboots using the :ref:`settings_api`
 If a new configuration update is received from the cloud, the data module distributes the new configuration values using the :c:enum:`DATA_EVT_CONFIG_READY` event.
 You can alter the default values of the :ref:`Real-time configurations <real_time_configs>` compile time using the options listed in the :ref:`Default device configuration options <default_config_values>`.
 
+Connection evaluation
+=====================
+
+This is an experimental feature.
+The module can decide to hold off encoding and sending of sampled data based on evaluation of the LTE connection and estimated energy consumed to send the data.
+This feature is enabled by setting the :ref:`CONFIG_DATA_GRANT_SEND_ON_CONNECTION_QUALITY <CONFIG_DATA_GRANT_SEND_ON_CONNECTION_QUALITY>` Kconfig option.
+The module can deny the sending of data a number of times before it is sent regardless.
+This limit is configurable and set by the :ref:`CONFIG_DATA_SEND_ATTEMPTS_COUNT_MAX <CONFIG_DATA_SEND_ATTEMPTS_COUNT_MAX>` Kconfig option.
+This feature is supported for regular updates that include neighbor cell measurements, generic (GNSS, sensor data, and so on), and historical batched data, which are scheduled based on the application's :ref:`Real-time configurations <real_time_configs>`.
+
+To adjust the minimum allowed energy threshold for a specific type, set the following Kconfig options:
+
+* :ref:`CONFIG_DATA_GENERIC_UPDATES_ENERGY_THRESHOLD_MIN <CONFIG_DATA_GENERIC_UPDATES_ENERGY_THRESHOLD_MIN>`
+* :ref:`CONFIG_DATA_NEIGHBOR_CELL_UPDATES_ENERGY_THRESHOLD_MIN <CONFIG_DATA_NEIGHBOR_CELL_UPDATES_ENERGY_THRESHOLD_MIN>`
+* :ref:`CONFIG_DATA_BATCH_UPDATES_ENERGY_THRESHOLD_MIN <CONFIG_DATA_BATCH_UPDATES_ENERGY_THRESHOLD_MIN>`
+
+The energy levels map directly to the :ref:`lte_lc_readme` structure :c:struct:`lte_lc_energy_estimate` and the current energy level that is evaluated before sending of data is retrieved with the :c:func:`lte_lc_conn_eval_params_get` function call.
+
 .. _default_config_values:
 
 Configuration options
@@ -77,6 +95,31 @@ CONFIG_DATA_ACCELEROMETER_THRESHOLD
 
 CONFIG_DATA_GNSS_TIMEOUT_SECONDS
    This configuration sets the GNSS timeout value.
+
+.. _CONFIG_DATA_GRANT_SEND_ON_CONNECTION_QUALITY:
+
+CONFIG_DATA_GRANT_SEND_ON_CONNECTION_QUALITY
+   Grants or denies encoding and sending of data based on LTE connection quality.
+
+.. _CONFIG_DATA_SEND_ATTEMPTS_COUNT_MAX:
+
+CONFIG_DATA_SEND_ATTEMPTS_COUNT_MAX
+   Maximum number of times sending can be denied due to connection quality before the data is sent regardless.
+
+.. _CONFIG_DATA_GENERIC_UPDATES_ENERGY_THRESHOLD_MIN:
+
+CONFIG_DATA_GENERIC_UPDATES_ENERGY_THRESHOLD_MIN
+   Minimum energy threshold for generic updates.
+
+.. _CONFIG_DATA_NEIGHBOR_CELL_UPDATES_ENERGY_THRESHOLD_MIN:
+
+CONFIG_DATA_NEIGHBOR_CELL_UPDATES_ENERGY_THRESHOLD_MIN
+   Minimum energy threshold for neighbor cell updates.
+
+.. _CONFIG_DATA_BATCH_UPDATES_ENERGY_THRESHOLD_MIN:
+
+CONFIG_DATA_BATCH_UPDATES_ENERGY_THRESHOLD_MIN
+   Minimum energy threshold for batch updates.
 
 Module states
 *************
