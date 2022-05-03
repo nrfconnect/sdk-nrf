@@ -24,6 +24,14 @@ Moreover, take into account the following considerations:
 * The single protocol sample was configured by setting :kconfig:option:`CONFIG_BT` to ``n``.
 * Values for the :ref:`Thread CLI sample <ot_cli_sample>`, which works with all OpenThread calls, are the highest possible for the OpenThread stack using the master image library configuration.
 
+The tables provide memory requirements for the following device type variants:
+
+* *FTD* - Full Thread Device.
+* *MTD* - Minimal Thread Device.
+
+Some tables also list a *master* variant, which is an FTD with additional features, such as being able to have the *commissioner* or *border router* commissioning roles.
+See :ref:`thread_ug_feature_sets` for more information.
+
 .. _thread_ot_memory_5340:
 
 nRF5340 DK RAM and flash memory requirements
