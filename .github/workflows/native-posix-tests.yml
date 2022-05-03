@@ -1,0 +1,53 @@
+name: Native Posix tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - 'v*-branch'
+  push:
+    branches:
+      - main
+      - 'v*-branch'
+    tags:
+      - v*
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  native_posix_test:
+    runs-on: ubuntu-latest
+    name: Run native_posix tests and generate coverage report
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+        with:
+          path: ncs/nrf
+          fetch-depth: 0
+
+      - name: West init and update
+        uses: docker://nordicplayground/nrfconnect-sdk:main
+        with:
+          args: bash -c "cd ncs/nrf && west init -l && west update --narrow -o=--depth=1"
+
+      - name: Run native_posix tests with twister
+        uses: docker://nordicplayground/nrfconnect-sdk:main
+        with:
+          args: bash -c "apt install -y lcov gcc-multilib && cd ncs/nrf && source ../zephyr/zephyr-env.sh && ../zephyr/scripts/twister -i -C -T ./ -p native_posix"
+
+      - name: Replace docker paths in coverage file
+        run: |
+          sudo sed -i 's/\/github\/workspace\//\/home\/runner\/work\/sdk-nrf\/sdk-nrf\//g' ncs/nrf/twister-out/coverage.info
+
+      - name: Report code coverage
+        uses: zgosalvez/github-actions-report-lcov@v1.5.0
+        with:
+          coverage-files: ncs/nrf/twister-out/coverage.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          minimum-coverage: 10
+          working-directory: ncs/nrf
+          artifact-name: code-coverage-report
