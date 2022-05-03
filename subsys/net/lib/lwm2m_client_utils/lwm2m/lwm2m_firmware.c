@@ -334,7 +334,7 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 	/* Following cases mark end of FOTA download */
 	case FOTA_DOWNLOAD_EVT_CANCELLED:
 		LOG_ERR("FOTA_DOWNLOAD_EVT_CANCELLED");
-		lwm2m_firmware_set_update_state(STATE_IDLE);
+		lwm2m_firmware_set_update_result(RESULT_DEFAULT);
 		break;
 	case FOTA_DOWNLOAD_EVT_ERROR:
 		LOG_ERR("FOTA_DOWNLOAD_EVT_ERROR");
