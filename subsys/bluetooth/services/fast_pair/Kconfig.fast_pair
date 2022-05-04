@@ -5,8 +5,9 @@
 #
 
 menuconfig BT_FAST_PAIR
-	bool "Google Fast Pair Service (GFPS)"
+	bool "Google Fast Pair Service (GFPS) [EXPERIMENTAL]"
 	select BT_NRF_SERVICES
+	select EXPERIMENTAL
 	help
 	  Enable Google Fast Pair Service (GFPS).
 
