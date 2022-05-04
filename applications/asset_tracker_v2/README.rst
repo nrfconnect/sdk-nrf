@@ -29,3 +29,4 @@ See the subpages for detailed documentation on the application and its internal 
    doc/ui_module
    doc/util_module
    doc/modules_common
+   doc/unit_test
