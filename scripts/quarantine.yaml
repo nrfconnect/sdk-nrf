@@ -8,6 +8,8 @@
 #    - None
 
 - scenarios:
-    - None
+    - lib.modem_trace_rtt
+    - lib.modem_trace_uart
   platforms:
-    - None
+    - qemu_cortex_m3
+  comment: "Not passing on zephyr-sdk 0.14.1"
