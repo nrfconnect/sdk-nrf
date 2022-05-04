@@ -73,6 +73,29 @@ int test_suiteTearDown(int num_failures)
 	return generic_suiteTearDown(num_failures);
 }
 
+static const uint8_t *trace_processed_callback_buf_expect;
+static uint32_t       trace_processed_callback_len_expect;
+static int            trace_processed_callback_retval;
+
+static int trace_processed_callback_stub(const uint8_t *buf, uint32_t len, int cmock_calls)
+{
+	TEST_ASSERT_EQUAL(buf, trace_processed_callback_buf_expect);
+	TEST_ASSERT_EQUAL(len, trace_processed_callback_len_expect);
+	return trace_processed_callback_retval;
+}
+
+/* Custom mock written for nrf_modem_trace_processed_callback since the regular mock
+ * function, __wrap_nrf_modem_trace_processed_callback_ExpectAndReturn, erroneously
+ * calls the fault handler when compiler is optimizing for size.
+ */
+static void trace_processed_callback_ExpectAndReturn(const uint8_t *buf, uint32_t len, int retval)
+{
+	trace_processed_callback_buf_expect = buf;
+	trace_processed_callback_len_expect = len;
+	trace_processed_callback_retval = retval;
+	__wrap_nrf_modem_trace_processed_callback_Stub(trace_processed_callback_stub);
+}
+
 static int rtt_allocupbuffer_callback(const char *sName, void *pBuffer, unsigned int BufferSize,
 				      unsigned int Flags, int no_of_calls)
 {
@@ -134,8 +157,7 @@ void test_modem_trace_forwarding_to_rtt(void)
 
 	nrf_modem_lib_trace_process(sample_trace_data, sizeof(sample_trace_data));
 
-	__wrap_nrf_modem_trace_processed_callback_ExpectAndReturn(sample_trace_data,
-		sizeof(sample_trace_data), 0);
+	trace_processed_callback_ExpectAndReturn(sample_trace_data, sizeof(sample_trace_data), 0);
 
 	/* Make the test thread sleep so that the trace handler thread is allowed to run.
 	 * This should make the trace handler thread pick up the trace from its fifo and send it
@@ -159,8 +181,7 @@ void test_modem_trace_when_rtt_channel_allocation_fails(void)
 	/* Verify that nrf_modem_trace_processed_callback is called even if the channel allocation
 	 * had failed.
 	 */
-	__wrap_nrf_modem_trace_processed_callback_ExpectAndReturn(sample_trace_data,
-		sizeof(sample_trace_data), 0);
+	trace_processed_callback_ExpectAndReturn(sample_trace_data, sizeof(sample_trace_data), 0);
 
 
 	/* Simulate the reception of modem trace and expect no RTT API to be called. */
@@ -177,8 +198,7 @@ void test_modem_trace_process_when_not_initialized(void)
 	/* Verify that nrf_modem_trace_processed_callback is called even if the trace module was
 	 * not initialized.
 	 */
-	__wrap_nrf_modem_trace_processed_callback_ExpectAndReturn(sample_trace_data,
-		sizeof(sample_trace_data), 0);
+	trace_processed_callback_ExpectAndReturn(sample_trace_data, sizeof(sample_trace_data), 0);
 
 	/* Simulate the reception of modem trace and expect no RTT API to be called. */
 	TEST_ASSERT_EQUAL(-ENXIO,
