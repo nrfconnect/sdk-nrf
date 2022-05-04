@@ -48,6 +48,9 @@ int nrf_cloud_agps_request_all(void);
  *
  * @retval 0 A-GPS data successfully processed.
  * @retval -EFAULT An nRF Cloud A-GPS error code was processed.
+ * @retval -ENOMSG No nRF Cloud A-GPS error code found, invalid error code or wrong app_id/msg_type.
+ * @retval -EINVAL buf was NULL or buf_len was zero.
+ * @retval -EBADMSG Non-JSON payload is not in the A-GPS format.
  * @return A negative value indicates an error.
  */
 int nrf_cloud_agps_process(const char *buf, size_t buf_len);

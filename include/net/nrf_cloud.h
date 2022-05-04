@@ -681,6 +681,7 @@ int nrf_cloud_bootloader_fota_slot_set(struct nrf_cloud_settings_fota_job * cons
  * @retval -ENOENT Error code found, but did not match specified app_id and msg_type.
  * @retval -ENOMSG No error code found.
  * @retval -EBADMSG Invalid error code data format.
+ * @retval -ENODATA JSON data was not found.
  * @return A negative value indicates an error.
  */
 int nrf_cloud_handle_error_message(const char *const buf,
