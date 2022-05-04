@@ -420,6 +420,8 @@ Modem libraries
       * Obstructed satellite visibility detection feature for GNSS.
         When this feature is enabled, the library tries to detect occurrences where getting a GNSS fix is unlikely or would consume a lot of energy.
         When such an occurrence is detected, GNSS is stopped without waiting for a fix or a timeout.
+      * In addition to the current default fallback mode for acquiring a location, it can also be acquired using the :c:enumerator:`LOCATION_REQ_MODE_ALL` mode that runs all methods in the list sequentially.
+        Each run method receives a location event, either a success or a failure.
 
     * Updated:
 
