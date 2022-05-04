@@ -154,6 +154,7 @@ void location_config_defaults_set(
 
 	memset(config, 0, sizeof(struct location_config));
 	config->methods_count = methods_count;
+	config->mode = LOCATION_REQ_MODE_FALLBACK;
 	for (int i = 0; i < methods_count; i++) {
 		location_config_method_defaults_set(&config->methods[i], method_types[i]);
 	}

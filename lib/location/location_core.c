@@ -398,7 +398,7 @@ void location_core_event_cb(const struct location_data *location)
 	k_work_cancel_delayable(&location_timeout_work);
 
 	if (location != NULL) {
-		/* Location was acquired properly, finish location request */
+		/* Location was acquired properly */
 		current_event_data.id = LOCATION_EVT_LOCATION;
 		current_event_data.location = *location;
 
@@ -428,8 +428,37 @@ void location_core_event_cb(const struct location_data *location)
 		}
 		LOG_DBG("  Google maps URL: https://maps.google.com/?q=%s,%s",
 			log_strdup(latitude_str), log_strdup(longitude_str));
+		if (current_config.mode == LOCATION_REQ_MODE_ALL) {
+			/* Get possible next method */
+			previous_method = current_event_data.location.method;
+			current_method_index++;
+			if (current_method_index < current_config.methods_count) {
+				requested_method =
+					current_config.methods[current_method_index].method;
+				LOG_INF("LOCATION_REQ_MODE_ALL: acquired location using '%s', "
+					"trying with '%s' next",
+					(char *)location_method_api_get(
+						previous_method)->method_string,
+					(char *)location_method_api_get(
+						requested_method)->method_string);
+
+				event_handler(&current_event_data);
+
+				/* Run next method on the list */
+				location_core_current_event_data_init(requested_method);
+				err = location_method_api_get(requested_method)->location_get(
+					&current_config.methods[current_method_index]);
+				return;
+			}
+			LOG_INF("LOCATION_REQ_MODE_ALL: all methods done");
+
+			/* Start from the beginning if in interval mode
+			 * for possible cancel within restarting interval.
+			 */
+			current_method_index = 0;
+		}
 	} else {
-		/* Do fallback to next preferred method */
+		/* Get possible next method to be run */
 		previous_method = current_event_data.location.method;
 		current_method_index++;
 		if (current_method_index < current_config.methods_count) {
@@ -439,6 +468,13 @@ void location_core_event_cb(const struct location_data *location)
 				"trying with '%s' next",
 				(char *)location_method_api_get(previous_method)->method_string,
 				(char *)location_method_api_get(requested_method)->method_string);
+
+			if (current_config.mode == LOCATION_REQ_MODE_ALL) {
+				/* In ALL mode, events are sent for all methods and thus
+				 * also for failure events
+				 */
+				event_handler(&current_event_data);
+			}
 
 			location_core_current_event_data_init(requested_method);
 			err = location_method_api_get(requested_method)->location_get(

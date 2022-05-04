@@ -38,10 +38,18 @@ enum location_method {
 	LOCATION_METHOD_WIFI,
 };
 
+/** Location acquisition mode. */
+enum location_req_mode {
+	/** Fallback to next preferred method (default). */
+	LOCATION_REQ_MODE_FALLBACK = 0,
+	/** All requested methods are used sequentially. */
+	LOCATION_REQ_MODE_ALL,
+};
+
 /** Event IDs. */
 enum location_event_id {
 	/** Location update. */
-	LOCATION_EVT_LOCATION,
+	LOCATION_EVT_LOCATION = 1,
 	/** Getting location timed out. */
 	LOCATION_EVT_TIMEOUT,
 	/** An error occurred when trying to get the location. */
@@ -250,6 +258,11 @@ struct location_config {
 	 * the valid range is 10...65535 seconds.
 	 */
 	uint16_t interval;
+
+	/**
+	 * @brief Location acquisition mode.
+	 */
+	enum location_req_mode mode;
 };
 
 /**
