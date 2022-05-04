@@ -39,10 +39,11 @@ bool ser_decode_valid(const struct nrf_rpc_cbor_ctx *ctx)
 	return !is_decoder_invalid(ctx);
 }
 
-static void check_final_decode_valid(const struct nrf_rpc_cbor_ctx *ctx)
+static void check_final_decode_valid(const struct nrf_rpc_group *group,
+				     const struct nrf_rpc_cbor_ctx *ctx)
 {
 	if (is_decoder_invalid(ctx)) {
-		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, NULL,
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, group,
 			    NRF_RPC_ID_UNKNOWN, NRF_RPC_PACKET_TYPE_RSP);
 	}
 }
@@ -418,77 +419,82 @@ error_exit:
 	return NULL;
 }
 
-bool ser_decoding_done_and_check(struct nrf_rpc_cbor_ctx *ctx)
+bool ser_decoding_done_and_check(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx)
 {
-	nrf_rpc_cbor_decoding_done(ctx);
+	nrf_rpc_cbor_decoding_done(group, ctx);
 	return !is_decoder_invalid(ctx);
 }
 
-void ser_rsp_decode_i32(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+void ser_rsp_decode_i32(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			void *handler_data)
 {
 	*(int32_t *)handler_data = ser_decode_int(ctx);
-	check_final_decode_valid(ctx);
+	check_final_decode_valid(group, ctx);
 }
 
-void ser_rsp_decode_bool(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+void ser_rsp_decode_bool(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			 void *handler_data)
 {
 	*(bool *)handler_data = ser_decode_bool(ctx);
-	check_final_decode_valid(ctx);
+	check_final_decode_valid(group, ctx);
 }
 
-void ser_rsp_decode_u8(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+void ser_rsp_decode_u8(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+		       void *handler_data)
 {
 	*(uint8_t *)handler_data = ser_decode_int(ctx);
-	check_final_decode_valid(ctx);
+	check_final_decode_valid(group, ctx);
 }
 
-void ser_rsp_decode_u16(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+void ser_rsp_decode_u16(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			void *handler_data)
 {
 	*(uint16_t *)handler_data = ser_decode_int(ctx);
-	check_final_decode_valid(ctx);
+	check_final_decode_valid(group, ctx);
 }
 
-void ser_rsp_decode_void(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+void ser_rsp_decode_void(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			 void *handler_data)
 {
 	ARG_UNUSED(ctx);
 	ARG_UNUSED(handler_data);
 }
 
-void ser_rsp_send_int(int32_t response)
+void ser_rsp_send_int(const struct nrf_rpc_group *group, int32_t response)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	NRF_RPC_CBOR_ALLOC(ctx, 1 + sizeof(int32_t));
+	NRF_RPC_CBOR_ALLOC(group, ctx, 1 + sizeof(int32_t));
 	ser_encode_int(&ctx, response);
 
-	nrf_rpc_cbor_rsp_no_err(&ctx);
+	nrf_rpc_cbor_rsp_no_err(group, &ctx);
 }
 
-void ser_rsp_send_uint(uint32_t response)
+void ser_rsp_send_uint(const struct nrf_rpc_group *group, uint32_t response)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	NRF_RPC_CBOR_ALLOC(ctx, 1 + sizeof(uint32_t));
+	NRF_RPC_CBOR_ALLOC(group, ctx, 1 + sizeof(uint32_t));
 	ser_encode_uint(&ctx, response);
 
-	nrf_rpc_cbor_rsp_no_err(&ctx);
+	nrf_rpc_cbor_rsp_no_err(group, &ctx);
 }
 
-void ser_rsp_send_bool(bool response)
+void ser_rsp_send_bool(const struct nrf_rpc_group *group, bool response)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	NRF_RPC_CBOR_ALLOC(ctx, 1);
+	NRF_RPC_CBOR_ALLOC(group, ctx, 1);
 	ser_encode_bool(&ctx, response);
 
-	nrf_rpc_cbor_rsp_no_err(&ctx);
+	nrf_rpc_cbor_rsp_no_err(group, &ctx);
 }
 
-void ser_rsp_send_void(void)
+void ser_rsp_send_void(const struct nrf_rpc_group *group)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	NRF_RPC_CBOR_ALLOC(ctx, 0);
+	NRF_RPC_CBOR_ALLOC(group, ctx, 0);
 
-	nrf_rpc_cbor_rsp_no_err(&ctx);
+	nrf_rpc_cbor_rsp_no_err(group, &ctx);
 }

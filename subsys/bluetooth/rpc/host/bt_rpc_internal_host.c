@@ -26,7 +26,8 @@ static void report_decoding_error(uint8_t cmd_evt_id, void *data)
 		    NRF_RPC_PACKET_TYPE_CMD);
 }
 
-static void bt_addr_le_is_bonded_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_addr_le_is_bonded_rpc_handler(const struct nrf_rpc_group *group,
+					     struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	bt_addr_le_t addr_data;
 	const bt_addr_le_t *addr;
@@ -36,12 +37,12 @@ static void bt_addr_le_is_bonded_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void 
 	id = ser_decode_uint(ctx);
 	addr = ser_decode_buffer(ctx, &addr_data, sizeof(bt_addr_le_t));
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	result = bt_addr_le_is_bonded(id, addr);
-	ser_rsp_send_bool(result);
+	ser_rsp_send_bool(group, result);
 
 	return;
 

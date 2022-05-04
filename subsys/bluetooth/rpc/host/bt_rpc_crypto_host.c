@@ -19,7 +19,8 @@ static void report_decoding_error(uint8_t cmd_evt_id, void *data)
 		    NRF_RPC_PACKET_TYPE_CMD);
 }
 
-static void bt_encrypt_le_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_encrypt_le_rpc_handler(const struct nrf_rpc_group *group,
+				      struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 
 	const uint8_t *key;
@@ -34,13 +35,13 @@ static void bt_encrypt_le_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handle
 	plaintext = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
 	enc_data = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	result = bt_encrypt_le(key, plaintext, enc_data);
 
-	ser_rsp_send_int(result);
+	ser_rsp_send_int(group, result);
 
 	return;
 decoding_error:
@@ -51,7 +52,8 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_encrypt_le, BT_ENCRYPT_LE_RPC_CMD,
 	bt_encrypt_le_rpc_handler, NULL);
 
-static void bt_encrypt_be_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_encrypt_be_rpc_handler(const struct nrf_rpc_group *group,
+				      struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 
 	const uint8_t *key;
@@ -66,13 +68,13 @@ static void bt_encrypt_be_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handle
 	plaintext = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
 	enc_data = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	result = bt_encrypt_be(key, plaintext, enc_data);
 
-	ser_rsp_send_int(result);
+	ser_rsp_send_int(group, result);
 
 	return;
 decoding_error:
@@ -83,7 +85,8 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_encrypt_be, BT_ENCRYPT_BE_RPC_CMD,
 	bt_encrypt_be_rpc_handler, NULL);
 
-static void bt_rand_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_rand_rpc_handler(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+				void *handler_data)
 {
 
 	int result;
@@ -97,7 +100,7 @@ static void bt_rand_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data
 	len = ser_decode_uint(ctx);
 	buf = ser_scratchpad_add(&scratchpad, sizeof(uint8_t) * len);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -108,12 +111,12 @@ static void bt_rand_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data
 	{
 		struct nrf_rpc_cbor_ctx ectx;
 
-		NRF_RPC_CBOR_ALLOC(ectx, buffer_size_max);
+		NRF_RPC_CBOR_ALLOC(group, ectx, buffer_size_max);
 
 		ser_encode_int(&ectx, result);
 		ser_encode_buffer(&ectx, buf, sizeof(uint8_t) * len);
 
-		nrf_rpc_cbor_rsp_no_err(&ectx);
+		nrf_rpc_cbor_rsp_no_err(group, &ectx);
 	}
 
 	return;
@@ -126,7 +129,8 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rand, BT_RAND_RPC_CMD,
 	bt_rand_rpc_handler, NULL);
 
 #if defined(CONFIG_BT_HOST_CCM)
-static void bt_ccm_encrypt_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_ccm_encrypt_rpc_handler(const struct nrf_rpc_group *group,
+				       struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 
 	int result;
@@ -152,7 +156,7 @@ static void bt_ccm_encrypt_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handl
 	plaintext = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
 	mic_size = ser_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -163,12 +167,12 @@ static void bt_ccm_encrypt_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handl
 	{
 		struct nrf_rpc_cbor_ctx ectx;
 
-		NRF_RPC_CBOR_ALLOC(ectx, buffer_size_max);
+		NRF_RPC_CBOR_ALLOC(group, ectx, buffer_size_max);
 
 		ser_encode_int(&ectx, result);
 		ser_encode_buffer(&ectx, plaintext, sizeof(uint8_t) * (len + mic_size);
 
-		nrf_rpc_cbor_rsp_no_err(&ectx);
+		nrf_rpc_cbor_rsp_no_err(group, &ectx);
 	}
 
 	return;
@@ -180,7 +184,8 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_ccm_encrypt, BT_CCM_ENCRYPT_RPC_CMD,
 	bt_ccm_encrypt_rpc_handler, NULL);
 
-static void bt_ccm_decrypt_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_ccm_decrypt_rpc_handler(const struct nrf_rpc_group *group,
+				       struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 
 	int result;
@@ -206,7 +211,7 @@ static void bt_ccm_decrypt_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handl
 	plaintext = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
 	mic_size = ser_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -217,12 +222,12 @@ static void bt_ccm_decrypt_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handl
 	{
 		struct nrf_rpc_cbor_ctx *ctx;
 
-		NRF_RPC_CBOR_ALLOC(ectx, buffer_size_max);
+		NRF_RPC_CBOR_ALLOC(group, ectx, buffer_size_max);
 
 		ser_encode_int(&ectx, result);
 		ser_encode_buffer(&ectx, plaintext, sizeof(uint8_t) * len);
 
-		nrf_rpc_cbor_rsp_no_err(&ectx);
+		nrf_rpc_cbor_rsp_no_err(group, &ectx);
 	}
 
 	return;
