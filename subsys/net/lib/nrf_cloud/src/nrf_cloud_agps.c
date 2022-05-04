@@ -575,15 +575,17 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len)
 	}
 
 	/* Check for a potential A-GPS JSON error message from nRF Cloud */
-	if (buf[0] == '{') {
-		enum nrf_cloud_error nrf_err;
+	enum nrf_cloud_error nrf_err;
 
-		err = nrf_cloud_handle_error_message(buf, NRF_CLOUD_JSON_APPID_VAL_AGPS,
-			NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA, &nrf_err);
-		if (!err) {
-			LOG_ERR("nRF Cloud returned A-GPS error: %d", nrf_err);
-			return -EFAULT;
-		}
+	err = nrf_cloud_handle_error_message(buf, NRF_CLOUD_JSON_APPID_VAL_AGPS,
+		NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA, &nrf_err);
+	if (!err) {
+		LOG_ERR("nRF Cloud returned A-GPS error: %d", nrf_err);
+		return -EFAULT;
+	} else if (err == -ENODATA) { /* Not a JSON message, try to parse it as A-GPS data */
+
+	} else { /* JSON message received but no valid error code found */
+		return -ENOMSG;
 	}
 
 	version = buf[NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION_INDEX];

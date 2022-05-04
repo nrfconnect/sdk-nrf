@@ -1522,7 +1522,7 @@ int nrf_cloud_handle_error_message(const char *const buf,
 	root_obj = cJSON_Parse(buf);
 	if (!root_obj) {
 		LOG_DBG("No JSON found");
-		return -ENOMSG;
+		return -ENODATA;
 	}
 
 	ret = get_error_code_value(root_obj, err);

@@ -195,13 +195,19 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
 		mosh_print("NRF_CLOUD_EVT_SENSOR_DATA_ACK");
 		break;
+	case NRF_CLOUD_EVT_FOTA_START:
+		mosh_print("NRF_CLOUD_EVT_FOTA_START");
+		break;
 	case NRF_CLOUD_EVT_FOTA_DONE:
 		mosh_print("NRF_CLOUD_EVT_FOTA_DONE");
+		break;
+	case NRF_CLOUD_EVT_FOTA_ERROR:
+		mosh_print("NRF_CLOUD_EVT_FOTA_ERROR");
 		break;
 	case NRF_CLOUD_EVT_RX_DATA:
 		mosh_print("NRF_CLOUD_EVT_RX_DATA");
 		if (((char *)evt->data.ptr)[0] == '{') {
-			/* Not A-GPS data. Check if it's a MoSh command sent from the cloud */
+			/* Check if it's a MoSh command sent from the cloud */
 			bool cmd_found = cloud_shell_parse_mosh_cmd(evt->data.ptr);
 
 			if (cmd_found) {
@@ -220,20 +226,34 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 			/* data was valid; no need to pass to other handlers */
 			break;
 		} else if (err == -EFAULT) {
-			/* data was an A-GPS error; no need to pass to other handlers */
+			/* data were an A-GPS error; no need to pass to other handlers */
 			break;
 		}
 #endif
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-		err = nrf_cloud_pgps_process(evt->data.ptr, evt->data.len);
-		if (err) {
-			mosh_error("Error processing P-GPS packet: %d", err);
-		}
-#else
-		if (err) {
-			mosh_print("Unable to process A-GPS data, error: %d", err);
+		/* Check if we are waiting for P-GPS data in order to avoid parsing other data as
+		 * P-GPS data and showing irrelevant error messages.
+		 */
+		if (nrf_cloud_pgps_loading()) {
+			err = nrf_cloud_pgps_process(evt->data.ptr, evt->data.len);
+			if (err == -EFAULT) {
+				/* P-GPS error code from nRF Cloud was received */
+			} else if (err) {
+				mosh_error("Error processing P-GPS packet: %d", err);
+			}
+			break;
 		}
 #endif
+		/* P-GPS is not compiled in or we are not expecting P-GPS data,
+		 * finish A-GPS error handling
+		 */
+		if (err == -ENOMSG) {
+			/* JSON data received that were not an A-GPS error either.
+			 * This message was likely just not AGPS-related so don't print an error.
+			 */
+		} else if (err) {
+			mosh_print("Unable to process A-GPS data, error: %d", err);
+		}
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
 		mosh_print("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");
@@ -241,6 +261,9 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATED:
 		mosh_print("NRF_CLOUD_EVT_USER_ASSOCIATED");
+		break;
+	case NRF_CLOUD_EVT_PINGRESP:
+		mosh_print("NRF_CLOUD_EVT_PINGRESP");
 		break;
 	default:
 		mosh_error("Unknown nRF Cloud event type: %d", evt->type);
