@@ -7,6 +7,7 @@
 #include <zephyr/init.h>
 #include <string.h>
 
+#include <nrf_rpc/nrf_rpc_ipc.h>
 #include <nrf_rpc_cbor.h>
 
 #include "../../common_ids.h"
@@ -27,11 +28,12 @@ struct entropy_get_result {
 
 static void (*result_callback)(int result, uint8_t *buffer, size_t length);
 
+NRF_RPC_IPC_TRANSPORT(entropy_group_tr, DEVICE_DT_GET(DT_NODELABEL(ipc0)), "nrf_rpc_ept");
+NRF_RPC_GROUP_DEFINE(entropy_group, "nrf_sample_entropy", &entropy_group_tr, NULL, NULL, NULL);
 
-NRF_RPC_GROUP_DEFINE(entropy_group, "nrf_sample_entropy", NULL, NULL, NULL);
 
-
-void rsp_error_code_handle(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+void rsp_error_code_handle(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			   void *handler_data)
 {
 	int32_t val;
 
@@ -49,7 +51,7 @@ int entropy_remote_init(void)
 	int err;
 	struct nrf_rpc_cbor_ctx ctx;
 
-	NRF_RPC_CBOR_ALLOC(ctx, CBOR_BUF_SIZE);
+	NRF_RPC_CBOR_ALLOC(&entropy_group, ctx, CBOR_BUF_SIZE);
 
 	err = nrf_rpc_cbor_cmd(&entropy_group, RPC_COMMAND_ENTROPY_INIT, &ctx,
 			       rsp_error_code_handle, &result);
@@ -61,7 +63,8 @@ int entropy_remote_init(void)
 }
 
 
-static void entropy_get_rsp(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void entropy_get_rsp(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			    void *handler_data)
 {
 	struct zcbor_string zst;
 	struct entropy_get_result *result =
@@ -94,7 +97,7 @@ int entropy_remote_get(uint8_t *buffer, size_t length)
 		return -NRF_EINVAL;
 	}
 
-	NRF_RPC_CBOR_ALLOC(ctx, CBOR_BUF_SIZE);
+	NRF_RPC_CBOR_ALLOC(&entropy_group, ctx, CBOR_BUF_SIZE);
 
 	if (zcbor_uint32_put(ctx.zs, length)) {
 		err = nrf_rpc_cbor_cmd(&entropy_group, RPC_COMMAND_ENTROPY_GET, &ctx,
@@ -119,7 +122,7 @@ int entropy_remote_get_inline(uint8_t *buffer, size_t length)
 		return -NRF_EINVAL;
 	}
 
-	NRF_RPC_CBOR_ALLOC(ctx, CBOR_BUF_SIZE);
+	NRF_RPC_CBOR_ALLOC(&entropy_group, ctx, CBOR_BUF_SIZE);
 
 	if (!zcbor_int32_put(ctx.zs, (int)length)) {
 		return -NRF_EINVAL;
@@ -143,7 +146,7 @@ int entropy_remote_get_inline(uint8_t *buffer, size_t length)
 	result = 0;
 
 cbor_error_exit:
-	nrf_rpc_cbor_decoding_done(&ctx);
+	nrf_rpc_cbor_decoding_done(&entropy_group, &ctx);
 	return result;
 }
 
@@ -161,7 +164,7 @@ int entropy_remote_get_async(uint16_t length, void (*callback)(int result,
 
 	result_callback = callback;
 
-	NRF_RPC_CBOR_ALLOC(ctx, CBOR_BUF_SIZE);
+	NRF_RPC_CBOR_ALLOC(&entropy_group, ctx, CBOR_BUF_SIZE);
 
 	if (!zcbor_int32_put(ctx.zs, (int)length)) {
 		return -NRF_EINVAL;
@@ -191,7 +194,7 @@ int entropy_remote_get_cbk(uint16_t length, void (*callback)(int result,
 
 	result_callback = callback;
 
-	NRF_RPC_CBOR_ALLOC(ctx, CBOR_BUF_SIZE);
+	NRF_RPC_CBOR_ALLOC(&entropy_group, ctx, CBOR_BUF_SIZE);
 
 	if (!zcbor_int32_put(ctx.zs, (int)length)) {
 		return -NRF_EINVAL;
@@ -207,7 +210,9 @@ int entropy_remote_get_cbk(uint16_t length, void (*callback)(int result,
 }
 
 
-static void entropy_get_result_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+
+static void entropy_get_result_handler(const struct nrf_rpc_group *group,
+				       struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	bool is_command = (handler_data != NULL);
 	int err_code;
@@ -216,7 +221,7 @@ static void entropy_get_result_handler(struct nrf_rpc_cbor_ctx *ctx, void *handl
 	struct zcbor_string zst;
 
 	if (result_callback == NULL) {
-		nrf_rpc_cbor_decoding_done(ctx);
+		nrf_rpc_cbor_decoding_done(group, ctx);
 		return;
 	}
 
@@ -232,21 +237,21 @@ static void entropy_get_result_handler(struct nrf_rpc_cbor_ctx *ctx, void *handl
 
 	memcpy(buf, zst.value, zst.len);
 
-	nrf_rpc_cbor_decoding_done(ctx);
+	nrf_rpc_cbor_decoding_done(group, ctx);
 
 	result_callback(err_code, buf, length);
 
 	if (is_command) {
 		struct nrf_rpc_cbor_ctx nctx;
 
-		NRF_RPC_CBOR_ALLOC(nctx, 0);
-		nrf_rpc_cbor_rsp_no_err(&nctx);
+		NRF_RPC_CBOR_ALLOC(group, nctx, 0);
+		nrf_rpc_cbor_rsp_no_err(group, &nctx);
 	}
 
 	return;
 
 cbor_error_exit:
-	nrf_rpc_cbor_decoding_done(ctx);
+	nrf_rpc_cbor_decoding_done(group, ctx);
 	result_callback(-NRF_EINVAL, buf, 0);
 }
 
