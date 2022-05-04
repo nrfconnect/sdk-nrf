@@ -83,7 +83,7 @@ static void bt_conn_remote_update_ref(struct bt_conn *conn, int8_t value)
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t buffer_size_max = 5;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 	ser_encode_int(&ctx, value);
@@ -119,7 +119,8 @@ void bt_conn_unref(struct bt_conn *conn)
 	}
 }
 
-static void bt_conn_foreach_cb_callback_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
+static void bt_conn_foreach_cb_callback_rpc_handler(const struct nrf_rpc_group *group,
+						    struct nrf_rpc_cbor_ctx *ctx,
 						    void *handler_data)
 {
 	struct bt_conn *conn;
@@ -130,13 +131,13 @@ static void bt_conn_foreach_cb_callback_rpc_handler(struct nrf_rpc_cbor_ctx *ctx
 	data = (void *)ser_decode_uint(ctx);
 	callback_slot = (bt_conn_foreach_cb)ser_decode_callback_call(ctx);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	callback_slot(conn, data);
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -153,7 +154,7 @@ void bt_conn_foreach(int type, void (*func)(struct bt_conn *conn, void *data),
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t buffer_size_max = 15;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	ser_encode_int(&ctx, type);
 	ser_encode_callback(&ctx, func);
@@ -167,7 +168,9 @@ struct bt_conn_lookup_addr_le_rpc_res {
 	struct bt_conn *result;
 };
 
-static void bt_conn_lookup_addr_le_rpc_rsp(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_conn_lookup_addr_le_rpc_rsp(const struct nrf_rpc_group *group,
+					   struct nrf_rpc_cbor_ctx *ctx,
+					   void *handler_data)
 {
 	struct bt_conn_lookup_addr_le_rpc_res *res =
 		(struct bt_conn_lookup_addr_le_rpc_res *)handler_data;
@@ -185,7 +188,7 @@ struct bt_conn *bt_conn_lookup_addr_le(uint8_t id, const bt_addr_le_t *peer)
 
 	buffer_size_max += peer ? sizeof(bt_addr_le_t) : 0;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	ser_encode_uint(&ctx, id);
 	ser_encode_buffer(&ctx, peer, sizeof(bt_addr_le_t));
@@ -202,7 +205,9 @@ struct bt_conn_get_dst_out_rpc_res {
 
 };
 
-static void bt_conn_get_dst_out_rpc_rsp(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_conn_get_dst_out_rpc_rsp(const struct nrf_rpc_group *group,
+					struct nrf_rpc_cbor_ctx *ctx,
+					void *handler_data)
 {
 	struct bt_conn_get_dst_out_rpc_res *res =
 		(struct bt_conn_get_dst_out_rpc_res *)handler_data;
@@ -217,7 +222,7 @@ static bool bt_conn_get_dst_out(const struct bt_conn *conn, bt_addr_le_t *dst)
 	struct bt_conn_get_dst_out_rpc_res result;
 	size_t buffer_size_max = 3;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 
@@ -319,7 +324,9 @@ struct bt_conn_get_info_rpc_res {
 
 };
 
-static void bt_conn_get_info_rpc_rsp(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_conn_get_info_rpc_rsp(const struct nrf_rpc_group *group,
+				     struct nrf_rpc_cbor_ctx *ctx,
+				     void *handler_data)
 {
 	struct bt_conn_get_info_rpc_res *res =
 		(struct bt_conn_get_info_rpc_res *)handler_data;
@@ -335,7 +342,7 @@ int bt_conn_get_info(const struct bt_conn *conn, struct bt_conn_info *info)
 	struct bt_conn_get_info_rpc_res result;
 	size_t buffer_size_max = 3;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 
@@ -373,7 +380,9 @@ struct bt_conn_get_remote_info_rpc_res {
 	struct bt_conn_remote_info *remote_info;
 };
 
-static void bt_conn_get_remote_info_rpc_rsp(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_conn_get_remote_info_rpc_rsp(const struct nrf_rpc_group *group,
+					    struct nrf_rpc_cbor_ctx *ctx,
+					    void *handler_data)
 {
 	struct bt_conn_get_remote_info_rpc_res *res =
 		(struct bt_conn_get_remote_info_rpc_res *)handler_data;
@@ -390,7 +399,7 @@ int bt_conn_get_remote_info(struct bt_conn *conn,
 	struct bt_conn_get_remote_info_rpc_res result;
 	size_t buffer_size_max = 3;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 
@@ -426,7 +435,7 @@ int bt_conn_le_param_update(struct bt_conn *conn,
 	int result;
 	size_t buffer_size_max = 15;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 	bt_le_conn_param_enc(&ctx, param);
@@ -452,7 +461,7 @@ int bt_conn_le_data_len_update(struct bt_conn *conn,
 	int result;
 	size_t buffer_size_max = 9;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 	bt_conn_le_data_len_param_enc(&ctx, param);
@@ -480,7 +489,7 @@ int bt_conn_le_phy_update(struct bt_conn *conn,
 	int result;
 	size_t buffer_size_max = 10;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 	bt_conn_le_phy_param_enc(&ctx, param);
@@ -499,7 +508,7 @@ int bt_conn_disconnect(struct bt_conn *conn, uint8_t reason)
 	int result;
 	size_t buffer_size_max = 5;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 	ser_encode_uint(&ctx, reason);
@@ -528,7 +537,9 @@ struct bt_conn_le_create_rpc_res {
 
 };
 
-static void bt_conn_le_create_rpc_rsp(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_conn_le_create_rpc_rsp(const struct nrf_rpc_group *group,
+				      struct nrf_rpc_cbor_ctx *ctx,
+				      void *handler_data)
 {
 	struct bt_conn_le_create_rpc_res *res =
 		(struct bt_conn_le_create_rpc_res *)handler_data;
@@ -550,7 +561,7 @@ int bt_conn_le_create(const bt_addr_le_t *peer,
 
 	buffer_size_max += peer ? sizeof(bt_addr_le_t) : 0;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	ser_encode_buffer(&ctx, peer, sizeof(bt_addr_le_t));
 	bt_conn_le_create_param_enc(&ctx, create_param);
@@ -572,7 +583,7 @@ int bt_conn_le_create_auto(const struct bt_conn_le_create_param *create_param,
 	int result;
 	size_t buffer_size_max = 32;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_conn_le_create_param_enc(&ctx, create_param);
 	bt_le_conn_param_enc(&ctx, conn_param);
@@ -589,7 +600,7 @@ int bt_conn_create_auto_stop(void)
 	int result;
 	size_t buffer_size_max = 0;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_CREATE_AUTO_STOP_RPC_CMD,
 				&ctx, ser_rsp_decode_i32, &result);
@@ -609,7 +620,7 @@ int bt_le_set_auto_conn(const bt_addr_le_t *addr,
 	buffer_size_max += addr ? sizeof(bt_addr_le_t) : 0;
 	buffer_size_max += (param == NULL) ? 1 : 12;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	ser_encode_buffer(&ctx, addr, sizeof(bt_addr_le_t));
 	if (param == NULL) {
@@ -633,7 +644,7 @@ int bt_conn_set_security(struct bt_conn *conn, bt_security_t sec)
 	int result;
 	size_t buffer_size_max = 8;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 	ser_encode_uint(&ctx, (uint32_t)sec);
@@ -649,7 +660,9 @@ struct bt_conn_get_security_rpc_res {
 	bt_security_t result;
 };
 
-static void bt_conn_get_security_rpc_rsp(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_conn_get_security_rpc_rsp(const struct nrf_rpc_group *group,
+					 struct nrf_rpc_cbor_ctx *ctx,
+					 void *handler_data)
 {
 	struct bt_conn_get_security_rpc_res *res =
 		(struct bt_conn_get_security_rpc_res *)handler_data;
@@ -663,7 +676,7 @@ bt_security_t bt_conn_get_security(struct bt_conn *conn)
 	struct bt_conn_get_security_rpc_res result;
 	size_t buffer_size_max = 3;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 
@@ -679,7 +692,7 @@ uint8_t bt_conn_enc_key_size(struct bt_conn *conn)
 	uint8_t result;
 	size_t buffer_size_max = 3;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 
@@ -709,7 +722,9 @@ static void bt_conn_cb_connected_call(struct bt_conn *conn, uint8_t err)
 	}
 }
 
-static void bt_conn_cb_connected_call_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_conn_cb_connected_call_rpc_handler(const struct nrf_rpc_group *group,
+						  struct nrf_rpc_cbor_ctx *ctx,
+						  void *handler_data)
 {
 	struct bt_conn *conn;
 	uint8_t err;
@@ -717,13 +732,13 @@ static void bt_conn_cb_connected_call_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, 
 	conn = bt_rpc_decode_bt_conn(ctx);
 	err = ser_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	bt_conn_cb_connected_call(conn, err);
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -750,8 +765,9 @@ static void bt_conn_cb_disconnected_call(struct bt_conn *conn, uint8_t reason)
 	}
 }
 
-static void bt_conn_cb_disconnected_call_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
-	void *handler_data)
+static void bt_conn_cb_disconnected_call_rpc_handler(const struct nrf_rpc_group *group,
+						     struct nrf_rpc_cbor_ctx *ctx,
+						     void *handler_data)
 {
 	struct bt_conn *conn;
 	uint8_t reason;
@@ -759,13 +775,13 @@ static void bt_conn_cb_disconnected_call_rpc_handler(struct nrf_rpc_cbor_ctx *ct
 	conn = bt_rpc_decode_bt_conn(ctx);
 	reason = ser_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	bt_conn_cb_disconnected_call(conn, reason);
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -799,8 +815,9 @@ static bool bt_conn_cb_le_param_req_call(struct bt_conn *conn, struct bt_le_conn
 	return true;
 }
 
-static void bt_conn_cb_le_param_req_call_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
-	void *handler_data)
+static void bt_conn_cb_le_param_req_call_rpc_handler(const struct nrf_rpc_group *group,
+						     struct nrf_rpc_cbor_ctx *ctx,
+						     void *handler_data)
 {
 	struct bt_conn *conn;
 	struct bt_le_conn_param param;
@@ -809,13 +826,13 @@ static void bt_conn_cb_le_param_req_call_rpc_handler(struct nrf_rpc_cbor_ctx *ct
 	conn = bt_rpc_decode_bt_conn(ctx);
 	bt_le_conn_param_dec(ctx, &param);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	result = bt_conn_cb_le_param_req_call(conn, &param);
 
-	ser_rsp_send_bool(result);
+	ser_rsp_send_bool(group, result);
 
 	return;
 decoding_error:
@@ -844,8 +861,9 @@ static void bt_conn_cb_le_param_updated_call(struct bt_conn *conn, uint16_t inte
 	}
 }
 
-static void bt_conn_cb_le_param_updated_call_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
-	void *handler_data)
+static void bt_conn_cb_le_param_updated_call_rpc_handler(const struct nrf_rpc_group *group,
+							 struct nrf_rpc_cbor_ctx *ctx,
+							 void *handler_data)
 {
 	struct bt_conn *conn;
 	uint16_t interval;
@@ -857,13 +875,13 @@ static void bt_conn_cb_le_param_updated_call_rpc_handler(struct nrf_rpc_cbor_ctx
 	latency = ser_decode_uint(ctx);
 	timeout = ser_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	bt_conn_cb_le_param_updated_call(conn, interval, latency, timeout);
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -893,8 +911,9 @@ static void bt_conn_cb_identity_resolved_call(struct bt_conn *conn, const bt_add
 	}
 }
 
-static void bt_conn_cb_identity_resolved_call_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
-		void *handler_data)
+static void bt_conn_cb_identity_resolved_call_rpc_handler(const struct nrf_rpc_group *group,
+							  struct nrf_rpc_cbor_ctx *ctx,
+							  void *handler_data)
 {
 	struct bt_conn *conn;
 	bt_addr_le_t rpa_data;
@@ -906,13 +925,13 @@ static void bt_conn_cb_identity_resolved_call_rpc_handler(struct nrf_rpc_cbor_ct
 	rpa = ser_decode_buffer(ctx, &rpa_data, sizeof(bt_addr_le_t));
 	identity = ser_decode_buffer(ctx, &identity_data, sizeof(bt_addr_le_t));
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	bt_conn_cb_identity_resolved_call(conn, rpa, identity);
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -943,7 +962,8 @@ static void bt_conn_cb_security_changed_call(struct bt_conn *conn, bt_security_t
 	}
 }
 
-static void bt_conn_cb_security_changed_call_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
+static void bt_conn_cb_security_changed_call_rpc_handler(const struct nrf_rpc_group *group,
+							 struct nrf_rpc_cbor_ctx *ctx,
 							 void *handler_data)
 {
 	struct bt_conn *conn;
@@ -954,13 +974,13 @@ static void bt_conn_cb_security_changed_call_rpc_handler(struct nrf_rpc_cbor_ctx
 	level = (bt_security_t)ser_decode_uint(ctx);
 	err = (enum bt_security_err)ser_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	bt_conn_cb_security_changed_call(conn, level, err);
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -991,7 +1011,8 @@ static void bt_conn_cb_remote_info_available_call(struct bt_conn *conn,
 	}
 }
 
-static void bt_conn_cb_remote_info_available_call_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
+static void bt_conn_cb_remote_info_available_call_rpc_handler(const struct nrf_rpc_group *group,
+							      struct nrf_rpc_cbor_ctx *ctx,
 							      void *handler_data)
 {
 	struct bt_conn *conn;
@@ -1002,13 +1023,13 @@ static void bt_conn_cb_remote_info_available_call_rpc_handler(struct nrf_rpc_cbo
 
 	bt_conn_remote_info_dec(ctx, conn, &remote_info);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	bt_conn_cb_remote_info_available_call(conn, &remote_info);
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -1038,8 +1059,9 @@ static void bt_conn_cb_le_phy_updated_call(struct bt_conn *conn, struct bt_conn_
 	}
 }
 
-static void bt_conn_cb_le_phy_updated_call_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
-	void *handler_data)
+static void bt_conn_cb_le_phy_updated_call_rpc_handler(const struct nrf_rpc_group *group,
+						       struct nrf_rpc_cbor_ctx *ctx,
+						       void *handler_data)
 {
 	struct bt_conn *conn;
 	struct bt_conn_le_phy_info param;
@@ -1047,13 +1069,13 @@ static void bt_conn_cb_le_phy_updated_call_rpc_handler(struct nrf_rpc_cbor_ctx *
 	conn = bt_rpc_decode_bt_conn(ctx);
 	bt_conn_le_phy_info_dec(ctx, &param);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	bt_conn_cb_le_phy_updated_call(conn, &param);
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -1084,8 +1106,9 @@ static void bt_conn_cb_le_data_len_updated_call(struct bt_conn *conn,
 	}
 }
 
-static void bt_conn_cb_le_data_len_updated_call_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
-	void *handler_data)
+static void bt_conn_cb_le_data_len_updated_call_rpc_handler(const struct nrf_rpc_group *group,
+							    struct nrf_rpc_cbor_ctx *ctx,
+							    void *handler_data)
 {
 	struct bt_conn *conn;
 	struct bt_conn_le_data_len_info info;
@@ -1093,13 +1116,13 @@ static void bt_conn_cb_le_data_len_updated_call_rpc_handler(struct nrf_rpc_cbor_
 	conn = bt_rpc_decode_bt_conn(ctx);
 	bt_conn_le_data_len_info_dec(ctx, &info);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	bt_conn_cb_le_data_len_updated_call(conn, &info);
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -1121,7 +1144,7 @@ static void bt_conn_cb_register_on_remote(void)
 	if (!registered) {
 		registered = true;
 
-		NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+		NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 		nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_CB_REGISTER_ON_REMOTE_RPC_CMD,
 					&ctx, ser_rsp_decode_void, NULL);
@@ -1144,7 +1167,7 @@ void bt_set_bondable(bool enable)
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t buffer_size_max = 1;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	ser_encode_bool(&ctx, enable);
 
@@ -1157,7 +1180,7 @@ void bt_set_oob_data_flag(bool enable)
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t buffer_size_max = 1;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	ser_encode_bool(&ctx, enable);
 
@@ -1179,7 +1202,7 @@ int bt_le_oob_set_legacy_tk(struct bt_conn *conn, const uint8_t *tk)
 
 	scratchpad_size += SCRATCHPAD_ALIGN(tk_size);
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 	ser_encode_uint(&ctx, scratchpad_size);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
@@ -1227,7 +1250,7 @@ int bt_le_oob_set_sc_data(struct bt_conn *conn,
 	buffer_size_max += (oobd_local == NULL) ? 1 : 0 + bt_le_oob_sc_data_buf_size(oobd_local);
 	buffer_size_max += (oobd_remote == NULL) ? 1 : 0 + bt_le_oob_sc_data_buf_size(oobd_remote);
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 	if (oobd_local == NULL) {
@@ -1254,7 +1277,8 @@ struct bt_le_oob_get_sc_data_rpc_res {
 	const struct bt_le_oob_sc_data **oobd_remote;
 };
 
-static void bt_le_oob_get_sc_data_rpc_rsp(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_le_oob_get_sc_data_rpc_rsp(const struct nrf_rpc_group *group,
+					  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	struct bt_le_oob_get_sc_data_rpc_res *res =
 		(struct bt_le_oob_get_sc_data_rpc_res *)handler_data;
@@ -1284,7 +1308,7 @@ int bt_le_oob_get_sc_data(struct bt_conn *conn,
 	struct bt_le_oob_get_sc_data_rpc_res result;
 	size_t buffer_size_max = 3;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 
@@ -1306,7 +1330,7 @@ int bt_passkey_set(unsigned int passkey)
 	int result;
 	size_t buffer_size_max = 5;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	ser_encode_uint(&ctx, passkey);
 
@@ -1330,7 +1354,8 @@ void bt_conn_pairing_feat_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_conn_pairi
 	data->resp_key_dist = ser_decode_uint(ctx);
 }
 
-static void bt_rpc_auth_cb_pairing_accept_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
+static void bt_rpc_auth_cb_pairing_accept_rpc_handler(const struct nrf_rpc_group *group,
+						      struct nrf_rpc_cbor_ctx *ctx,
 						      void *handler_data)
 {
 	enum bt_security_err result;
@@ -1341,7 +1366,7 @@ static void bt_rpc_auth_cb_pairing_accept_rpc_handler(struct nrf_rpc_cbor_ctx *c
 	conn = bt_rpc_decode_bt_conn(ctx);
 	bt_conn_pairing_feat_dec(ctx, &feat);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -1354,11 +1379,11 @@ static void bt_rpc_auth_cb_pairing_accept_rpc_handler(struct nrf_rpc_cbor_ctx *c
 	{
 		struct nrf_rpc_cbor_ctx ectx;
 
-		NRF_RPC_CBOR_ALLOC(ectx, buffer_size_max);
+		NRF_RPC_CBOR_ALLOC(group, ectx, buffer_size_max);
 
 		ser_encode_uint(&ectx, (uint32_t)result);
 
-		nrf_rpc_cbor_rsp_no_err(&ectx);
+		nrf_rpc_cbor_rsp_no_err(group, &ectx);
 	}
 
 	return;
@@ -1371,7 +1396,8 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_pairing_accept,
 			 bt_rpc_auth_cb_pairing_accept_rpc_handler, NULL);
 #endif /* defined(CONFIG_BT_SMP_APP_PAIRING_ACCEPT) */
 
-static void bt_rpc_auth_cb_passkey_display_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
+static void bt_rpc_auth_cb_passkey_display_rpc_handler(const struct nrf_rpc_group *group,
+						       struct nrf_rpc_cbor_ctx *ctx,
 						       void *handler_data)
 {
 	struct bt_conn *conn;
@@ -1380,7 +1406,7 @@ static void bt_rpc_auth_cb_passkey_display_rpc_handler(struct nrf_rpc_cbor_ctx *
 	conn = bt_rpc_decode_bt_conn(ctx);
 	passkey = ser_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -1388,7 +1414,7 @@ static void bt_rpc_auth_cb_passkey_display_rpc_handler(struct nrf_rpc_cbor_ctx *
 		auth_cb->passkey_display(conn, passkey);
 	}
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -1399,14 +1425,15 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_passkey_display,
 			 BT_RPC_AUTH_CB_PASSKEY_DISPLAY_RPC_CMD,
 			 bt_rpc_auth_cb_passkey_display_rpc_handler, NULL);
 
-static void bt_rpc_auth_cb_passkey_entry_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
+static void bt_rpc_auth_cb_passkey_entry_rpc_handler(const struct nrf_rpc_group *group,
+						     struct nrf_rpc_cbor_ctx *ctx,
 						     void *handler_data)
 {
 	struct bt_conn *conn;
 
 	conn = bt_rpc_decode_bt_conn(ctx);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -1414,7 +1441,7 @@ static void bt_rpc_auth_cb_passkey_entry_rpc_handler(struct nrf_rpc_cbor_ctx *ct
 		auth_cb->passkey_entry(conn);
 	}
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -1425,7 +1452,8 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_passkey_entry,
 			 BT_RPC_AUTH_CB_PASSKEY_ENTRY_RPC_CMD,
 			 bt_rpc_auth_cb_passkey_entry_rpc_handler, NULL);
 
-static void bt_rpc_auth_cb_passkey_confirm_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
+static void bt_rpc_auth_cb_passkey_confirm_rpc_handler(const struct nrf_rpc_group *group,
+						       struct nrf_rpc_cbor_ctx *ctx,
 						       void *handler_data)
 {
 	struct bt_conn *conn;
@@ -1434,7 +1462,7 @@ static void bt_rpc_auth_cb_passkey_confirm_rpc_handler(struct nrf_rpc_cbor_ctx *
 	conn = bt_rpc_decode_bt_conn(ctx);
 	passkey = ser_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -1442,7 +1470,7 @@ static void bt_rpc_auth_cb_passkey_confirm_rpc_handler(struct nrf_rpc_cbor_ctx *
 		auth_cb->passkey_confirm(conn, passkey);
 	}
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -1453,7 +1481,8 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_passkey_confirm,
 			 BT_RPC_AUTH_CB_PASSKEY_CONFIRM_RPC_CMD,
 			 bt_rpc_auth_cb_passkey_confirm_rpc_handler, NULL);
 
-static void bt_rpc_auth_cb_oob_data_request_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
+static void bt_rpc_auth_cb_oob_data_request_rpc_handler(const struct nrf_rpc_group *group,
+							struct nrf_rpc_cbor_ctx *ctx,
 							void *handler_data)
 {
 	struct bt_conn *conn;
@@ -1463,7 +1492,7 @@ static void bt_rpc_auth_cb_oob_data_request_rpc_handler(struct nrf_rpc_cbor_ctx 
 	conn = bt_rpc_decode_bt_conn(ctx);
 	info = ser_decode_buffer(ctx, &info_data, sizeof(struct bt_conn_oob_info));
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -1471,7 +1500,7 @@ static void bt_rpc_auth_cb_oob_data_request_rpc_handler(struct nrf_rpc_cbor_ctx 
 		auth_cb->oob_data_request(conn, info);
 	}
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -1482,13 +1511,14 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_oob_data_request,
 			 BT_RPC_AUTH_CB_OOB_DATA_REQUEST_RPC_CMD,
 			 bt_rpc_auth_cb_oob_data_request_rpc_handler, NULL);
 
-static void bt_rpc_auth_cb_cancel_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_rpc_auth_cb_cancel_rpc_handler(const struct nrf_rpc_group *group,
+					      struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	struct bt_conn *conn;
 
 	conn = bt_rpc_decode_bt_conn(ctx);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -1496,7 +1526,7 @@ static void bt_rpc_auth_cb_cancel_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void
 		auth_cb->cancel(conn);
 	}
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -1506,14 +1536,15 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_cancel, BT_RPC_AUTH_CB_CANCEL_RPC_CMD,
 			 bt_rpc_auth_cb_cancel_rpc_handler, NULL);
 
-static void bt_rpc_auth_cb_pairing_confirm_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
+static void bt_rpc_auth_cb_pairing_confirm_rpc_handler(const struct nrf_rpc_group *group,
+						       struct nrf_rpc_cbor_ctx *ctx,
 						       void *handler_data)
 {
 	struct bt_conn *conn;
 
 	conn = bt_rpc_decode_bt_conn(ctx);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -1521,7 +1552,7 @@ static void bt_rpc_auth_cb_pairing_confirm_rpc_handler(struct nrf_rpc_cbor_ctx *
 		auth_cb->pairing_confirm(conn);
 	}
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -1538,7 +1569,7 @@ int bt_conn_auth_cb_register_on_remote(uint16_t flags)
 	int result;
 	size_t buffer_size_max = 3;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	ser_encode_uint(&ctx, flags);
 
@@ -1578,7 +1609,8 @@ int bt_conn_auth_cb_register(const struct bt_conn_auth_cb *cb)
 
 sys_slist_t bt_auth_info_cbs = SYS_SLIST_STATIC_INIT(&bt_auth_info_cbs);
 
-void bt_rpc_auth_info_cb_bond_deleted_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+void bt_rpc_auth_info_cb_bond_deleted_rpc_handler(const struct nrf_rpc_group *group,
+						  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	uint8_t id;
 	bt_addr_le_t peer_data;
@@ -1588,7 +1620,7 @@ void bt_rpc_auth_info_cb_bond_deleted_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, 
 	id = ser_decode_uint(ctx);
 	peer = ser_decode_buffer(ctx, &peer_data, sizeof(bt_addr_le_t));
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -1598,7 +1630,7 @@ void bt_rpc_auth_info_cb_bond_deleted_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, 
 		}
 	}
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 decoding_error:
 	report_decoding_error(BT_RPC_AUTH_INFO_CB_BOND_DELETED_RPC_CMD, handler_data);
@@ -1608,7 +1640,8 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_info_cb_bond_deleted,
 			 BT_RPC_AUTH_INFO_CB_BOND_DELETED_RPC_CMD,
 			 bt_rpc_auth_info_cb_bond_deleted_rpc_handler, NULL);
 
-static void bt_rpc_auth_info_cb_pairing_complete_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
+static void bt_rpc_auth_info_cb_pairing_complete_rpc_handler(const struct nrf_rpc_group *group,
+							     struct nrf_rpc_cbor_ctx *ctx,
 							     void *handler_data)
 {
 	struct bt_conn *conn;
@@ -1618,7 +1651,7 @@ static void bt_rpc_auth_info_cb_pairing_complete_rpc_handler(struct nrf_rpc_cbor
 	conn = bt_rpc_decode_bt_conn(ctx);
 	bonded = ser_decode_bool(ctx);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -1628,7 +1661,7 @@ static void bt_rpc_auth_info_cb_pairing_complete_rpc_handler(struct nrf_rpc_cbor
 		}
 	}
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -1639,7 +1672,8 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_info_cb_pairing_complete,
 			 BT_RPC_AUTH_INFO_CB_PAIRING_COMPLETE_RPC_CMD,
 			 bt_rpc_auth_info_cb_pairing_complete_rpc_handler, NULL);
 
-static void bt_rpc_auth_info_cb_pairing_failed_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
+static void bt_rpc_auth_info_cb_pairing_failed_rpc_handler(const struct nrf_rpc_group *group,
+							   struct nrf_rpc_cbor_ctx *ctx,
 							   void *handler_data)
 {
 	struct bt_conn *conn;
@@ -1649,7 +1683,7 @@ static void bt_rpc_auth_info_cb_pairing_failed_rpc_handler(struct nrf_rpc_cbor_c
 	conn = bt_rpc_decode_bt_conn(ctx);
 	reason = (enum bt_security_err)ser_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(ctx)) {
+	if (!ser_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -1659,7 +1693,7 @@ static void bt_rpc_auth_info_cb_pairing_failed_rpc_handler(struct nrf_rpc_cbor_c
 		}
 	}
 
-	ser_rsp_send_void();
+	ser_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -1676,7 +1710,7 @@ int bt_conn_auth_info_cb_register_on_remote(uint16_t flags)
 	int result;
 	size_t buffer_size_max = 3;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	ser_encode_uint(&ctx, flags);
 
@@ -1725,7 +1759,7 @@ int bt_conn_auth_info_cb_unregister_on_remote(void)
 	int result;
 	size_t buffer_size_max = 0;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_AUTH_INFO_CB_UNREGISTER_ON_REMOTE_RPC_CMD,
 				&ctx, ser_rsp_decode_i32, &result);
@@ -1759,7 +1793,7 @@ int bt_conn_auth_passkey_entry(struct bt_conn *conn, unsigned int passkey)
 	int result;
 	size_t buffer_size_max = 8;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 	ser_encode_uint(&ctx, passkey);
@@ -1776,7 +1810,7 @@ int bt_conn_auth_cancel(struct bt_conn *conn)
 	int result;
 	size_t buffer_size_max = 3;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 
@@ -1792,7 +1826,7 @@ int bt_conn_auth_passkey_confirm(struct bt_conn *conn)
 	int result;
 	size_t buffer_size_max = 3;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 
@@ -1808,7 +1842,7 @@ int bt_conn_auth_pairing_confirm(struct bt_conn *conn)
 	int result;
 	size_t buffer_size_max = 3;
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 

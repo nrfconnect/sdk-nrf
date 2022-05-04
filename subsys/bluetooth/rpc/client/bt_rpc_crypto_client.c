@@ -20,7 +20,8 @@ struct bt_rand_rpc_res {
 	uint8_t *buf;
 };
 
-static void bt_rand_rpc_rsp(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_rand_rpc_rsp(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			    void *handler_data)
 {
 	struct bt_rand_rpc_res *res =
 		(struct bt_rand_rpc_res *)handler_data;
@@ -38,7 +39,7 @@ int bt_rand(void *buf, size_t len)
 
 	scratchpad_size += SCRATCHPAD_ALIGN(sizeof(uint8_t) * len);
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 	ser_encode_uint(&ctx, scratchpad_size);
 	ser_encode_uint(&ctx, len);
 
@@ -73,9 +74,9 @@ int bt_encrypt_le(const uint8_t key[16], const uint8_t plaintext[16],
 	scratchpad_size += SCRATCHPAD_ALIGN(plaintext_size);
 	scratchpad_size += SCRATCHPAD_ALIGN(enc_data_size);
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
-	ser_encode_uint(&ctx, scratchpad_size);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
+	ser_encode_uint(&ctx, scratchpad_size);
 	ser_encode_buffer(&ctx, key, key_size);
 	ser_encode_buffer(&ctx, plaintext, plaintext_size);
 	ser_encode_buffer(&ctx, enc_data, enc_data_size);
@@ -108,9 +109,9 @@ int bt_encrypt_be(const uint8_t key[16], const uint8_t plaintext[16],
 	scratchpad_size += SCRATCHPAD_ALIGN(plaintext_size);
 	scratchpad_size += SCRATCHPAD_ALIGN(enc_data_size);
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
-	ser_encode_uint(&ctx, scratchpad_size);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
+	ser_encode_uint(&ctx, scratchpad_size);
 	ser_encode_buffer(&ctx, key, key_size);
 	ser_encode_buffer(&ctx, plaintext, plaintext_size);
 	ser_encode_buffer(&ctx, enc_data, enc_data_size);
@@ -128,7 +129,8 @@ struct bt_ccm_decrypt_rpc_res {
 	uint8_t *plaintext;
 };
 
-static void bt_ccm_decrypt_rpc_rsp(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_ccm_decrypt_rpc_rsp(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+				   void *handler_data)
 {
 
 	struct bt_ccm_decrypt_rpc_res *res =
@@ -169,9 +171,9 @@ int bt_ccm_decrypt(const uint8_t key[16], uint8_t nonce[13], const uint8_t *enc_
 	scratchpad_size += SCRATCHPAD_ALIGN(aad_size);
 	scratchpad_size += SCRATCHPAD_ALIGN(plaintext_size);
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
-	ser_encode_uint(&ctx, scratchpad_size);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
+	ser_encode_uint(&ctx, scratchpad_size);
 	ser_encode_buffer(&ctx, key, key_size);
 	ser_encode_buffer(&ctx, nonce, nonce_size);
 	ser_encode_uint(&ctx, len);
@@ -196,7 +198,8 @@ struct bt_ccm_encrypt_rpc_res {
 	uint8_t *plaintext;
 };
 
-static void bt_ccm_encrypt_rpc_rsp(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+static void bt_ccm_encrypt_rpc_rsp(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+				   void *handler_data)
 {
 	struct bt_ccm_encrypt_rpc_res *res =
 		(struct bt_ccm_encrypt_rpc_res *)handler_data;
@@ -236,9 +239,9 @@ int bt_ccm_encrypt(const uint8_t key[16], uint8_t nonce[13], const uint8_t *enc_
 	scratchpad_size += SCRATCHPAD_ALIGN(aad_size);
 	scratchpad_size += SCRATCHPAD_ALIGN(plaintext_size + mic_size);
 
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
-	ser_encode_uint(&ctx, scratchpad_size);
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
+	ser_encode_uint(&ctx, scratchpad_size);
 	ser_encode_buffer(&ctx, key, key_size);
 	ser_encode_buffer(&ctx, nonce, nonce_size);
 	ser_encode_uint(&ctx, len);

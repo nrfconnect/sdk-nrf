@@ -19,6 +19,7 @@
 #include <zephyr/sys/util.h>
 #include <nrf_rpc_cbor.h>
 
+
 /** @brief Get a scratchpad item size aligned to 4-byte boundary.
  *
  * @param[in] size scratchpad item size
@@ -309,67 +310,84 @@ bool ser_decode_valid(const struct nrf_rpc_cbor_ctx *ctx);
 /** @brief Signalize that decoding is done. Use this function when you finish decoding of the
  *         received serialized packet.
  *
+ * @param[in] group nRF RPC group.
  * @param[in,out] ctx CBOR decoding context.
  *
  * @retval True if decoding finshed with success.
  *         Otherwise, false will be returned.
  */
-bool ser_decoding_done_and_check(struct nrf_rpc_cbor_ctx *ctx);
+bool ser_decoding_done_and_check(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx);
 
 /** @brief Decode a command response as a boolean value.
  *
+ * @param[in] group nRF RPC group.
  * @param[in,out] ctx CBOR decoding context.
  * @param[in] handler_data Pointer to place where value will be decoded.
  */
-void ser_rsp_decode_bool(struct nrf_rpc_cbor_ctx *ctx, void *handler_data);
+void ser_rsp_decode_bool(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			 void *handler_data);
 
 /** @brief Decode a command response as an unsigned 8-bit integer value.
  *
+ * @param[in] group nRF RPC group.
  * @param[in,out] ctx CBOR decoding context.
  * @param[in] handler_data Pointer to place where value will be decoded.
  */
-void ser_rsp_decode_u8(struct nrf_rpc_cbor_ctx *ctx, void *handler_data);
+void ser_rsp_decode_u8(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+		       void *handler_data);
 
 /** @brief Decode a command response as an unsigned 16-bit integer value.
  *
+ * @param[in] group nRF RPC group.
  * @param[in,out] ctx CBOR decoding context.
  * @param[in] handler_data Pointer to place where value will be decoded.
  */
-void ser_rsp_decode_u16(struct nrf_rpc_cbor_ctx *ctx, void *handler_data);
+void ser_rsp_decode_u16(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			void *handler_data);
 
 /** @brief Decode a command response as an integer value.
  *
+ * @param[in] group nRF RPC group.
  * @param[in,out] ctx CBOR decoding context.
  * @param[in] handler_data Pointer to place where value will be decoded.
  */
-void ser_rsp_decode_i32(struct nrf_rpc_cbor_ctx *ctx, void *handler_data);
+void ser_rsp_decode_i32(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			void *handler_data);
 
 /** @brief Decode a command response as a void value.
  *
+ * @param[in] group nRF RPC group.
  * @param[in,out] ctx CBOR decoding context.
  * @param[in] handler_data Pointer to place where value will be decoded.
  */
-void ser_rsp_decode_void(struct nrf_rpc_cbor_ctx *ctx, void *handler_data);
+void ser_rsp_decode_void(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			 void *handler_data);
 
-/** @brief Sent response to a command as an integer value.
+/** @brief Send response to a command as an integer value.
  *
+ * @param[in] group nRF RPC group.
  * @param[in] response Integer value to send.
  */
-void ser_rsp_send_int(int32_t response);
+void ser_rsp_send_int(const struct nrf_rpc_group *group, int32_t response);
 
-/** @brief Sent response to a command as an unsigned integer value.
+/** @brief Send response to a command as an unsigned integer value.
  *
+ * @param[in] group nRF RPC group.
  * @param[in] response Unsigned integer value to send.
  */
-void ser_rsp_send_uint(uint32_t response);
+void ser_rsp_send_uint(const struct nrf_rpc_group *group, uint32_t response);
 
-/** @brief Sent response to a command as a boolean value.
+/** @brief Send response to a command as a boolean value.
  *
+ * @param[in] group nRF RPC group.
  * @param[in] response Boolean value to send.
  */
-void ser_rsp_send_bool(bool response);
+void ser_rsp_send_bool(const struct nrf_rpc_group *group, bool response);
 
-/** @brief Sent response to a command as a void. */
-void ser_rsp_send_void(void);
+/** @brief Send response to a command as a void.
+ *
+ * @param[in] group nRF RPC group.
+ */
+void ser_rsp_send_void(const struct nrf_rpc_group *group);
 
 #endif /* SERIALIZE_H_ */

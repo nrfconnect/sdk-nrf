@@ -8,6 +8,7 @@
 #include <zephyr/types.h>
 #include <zephyr/kernel.h>
 
+#include <nrf_rpc/nrf_rpc_ipc.h>
 #include <nrf_rpc_cbor.h>
 
 #include "bt_rpc_common.h"
@@ -18,7 +19,8 @@ LOG_MODULE_REGISTER(BT_RPC, CONFIG_BT_RPC_LOG_LEVEL);
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_BREDR), "BT_RPC does not support BR/EDR");
 
-NRF_RPC_GROUP_DEFINE(bt_rpc_grp, "bt_rpc", NULL, NULL, NULL);
+NRF_RPC_IPC_TRANSPORT(bt_rpc_tr, DEVICE_DT_GET(DT_NODELABEL(ipc0)), "bt_rpc_ept");
+NRF_RPC_GROUP_DEFINE(bt_rpc_grp, "bt_rpc", &bt_rpc_tr, NULL, NULL, NULL);
 
 #if CONFIG_BT_RPC_INITIALIZE_NRF_RPC
 static void err_handler(const struct nrf_rpc_err_report *report)
