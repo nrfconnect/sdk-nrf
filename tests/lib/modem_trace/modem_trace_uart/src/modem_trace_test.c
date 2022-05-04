@@ -107,6 +107,29 @@ int test_suiteTearDown(int num_failures)
 	return generic_suiteTearDown(num_failures);
 }
 
+static const uint8_t *trace_processed_callback_buf_expect;
+static uint32_t       trace_processed_callback_len_expect;
+static int            trace_processed_callback_retval;
+
+static int trace_processed_callback_stub(const uint8_t *buf, uint32_t len, int cmock_calls)
+{
+	TEST_ASSERT_EQUAL(buf, trace_processed_callback_buf_expect);
+	TEST_ASSERT_EQUAL(len, trace_processed_callback_len_expect);
+	return trace_processed_callback_retval;
+}
+
+/* Custom mock written for nrf_modem_trace_processed_callback since the regular mock
+ * function, __wrap_nrf_modem_trace_processed_callback_ExpectAndReturn, erroneously
+ * calls the fault handler when compiler is optimizing for size.
+ */
+static void trace_processed_callback_ExpectAndReturn(const uint8_t *buf, uint32_t len, int retval)
+{
+	trace_processed_callback_buf_expect = buf;
+	trace_processed_callback_len_expect = len;
+	trace_processed_callback_retval = retval;
+	__wrap_nrf_modem_trace_processed_callback_Stub(trace_processed_callback_stub);
+}
+
 static nrfx_err_t nrfx_uarte_init_callback(nrfx_uarte_t const *p_instance,
 					   nrfx_uarte_config_t const *p_config,
 					   nrfx_uarte_event_handler_t event_handler,
@@ -232,10 +255,7 @@ void test_modem_trace_forwarding_to_uart(void)
 	 * nrf_modem_trace_processed_callback() since all fragments of trace data have been
 	 * sent over UART.
 	 */
-	__wrap_nrf_modem_trace_processed_callback_ExpectAndReturn(
-			sample_trace_data,
-			sizeof(sample_trace_data),
-			0);
+	trace_processed_callback_ExpectAndReturn(sample_trace_data, sizeof(sample_trace_data), 0);
 
 	k_sleep(K_MSEC(1));
 }
@@ -275,10 +295,7 @@ void test_modem_trace_uart_tx_sem_take_failure(void)
 	 * calls to the UART API for this trace buffer. Instead it is expected to call
 	 * nrf_modem_trace_processed_callback().
 	 */
-	__wrap_nrf_modem_trace_processed_callback_ExpectAndReturn(
-			sample_trace_data,
-			sizeof(sample_trace_data),
-			0);
+	trace_processed_callback_ExpectAndReturn(sample_trace_data, sizeof(sample_trace_data), 0);
 
 	k_sleep(K_MSEC(100));
 
@@ -316,10 +333,7 @@ void test_modem_trace_uart_tx_returns_error(void)
 	__wrap_nrfx_uarte_tx_ExpectAndReturn(p_uarte_inst_in_use, sample_trace_data,
 					     max_uart_frag_size, NRFX_ERROR_NO_MEM);
 
-	__wrap_nrf_modem_trace_processed_callback_ExpectAndReturn(
-			sample_trace_data,
-			sizeof(sample_trace_data),
-			0);
+	trace_processed_callback_ExpectAndReturn(sample_trace_data, sizeof(sample_trace_data), 0);
 
 	k_sleep(K_MSEC(1));
 }
@@ -355,10 +369,7 @@ void test_modem_trace_uart_tx_error(void)
 	 * This should make the trace handler thread call the
 	 * nrf_modem_trace_processed_callback().
 	 */
-	__wrap_nrf_modem_trace_processed_callback_ExpectAndReturn(
-			sample_trace_data,
-			sizeof(sample_trace_data),
-			0);
+	trace_processed_callback_ExpectAndReturn(sample_trace_data, sizeof(sample_trace_data), 0);
 	k_sleep(K_MSEC(1));
 }
 
@@ -377,8 +388,7 @@ void test_modem_trace_when_transport_uart_init_fails(void)
 	const uint8_t sample_trace_data[sample_trace_buffer_size];
 
 	/* Verify that nrf_modem_trace_processed_callback is called even if uart init had failed. */
-	__wrap_nrf_modem_trace_processed_callback_ExpectAndReturn(sample_trace_data,
-		sizeof(sample_trace_data), 0);
+	trace_processed_callback_ExpectAndReturn(sample_trace_data, sizeof(sample_trace_data), 0);
 
 	/* Simulate the reception of modem trace and expect no UART API to be called. */
 	TEST_ASSERT_EQUAL(-ENXIO,
@@ -394,8 +404,7 @@ void test_modem_trace_process_when_not_initialized(void)
 	/* Verify that nrf_modem_trace_processed_callback is called even if the trace module was not
 	 * initialized.
 	 */
-	__wrap_nrf_modem_trace_processed_callback_ExpectAndReturn(sample_trace_data,
-		sizeof(sample_trace_data), 0);
+	trace_processed_callback_ExpectAndReturn(sample_trace_data, sizeof(sample_trace_data), 0);
 
 	/* Simulate the reception of modem trace and expect no UART API to be called. */
 	TEST_ASSERT_EQUAL(-ENXIO,
@@ -423,6 +432,12 @@ void test_modem_trace_process_when_modem_trace_start_was_not_called(void)
 	 * This should make the trace handler thread pick up the trace from its fifo and send it
 	 * over UART.
 	 */
+	k_sleep(K_MSEC(1));
+
+	trace_processed_callback_ExpectAndReturn(sample_trace_data, sizeof(sample_trace_data), 0);
+
+	uart_tx_done_simulate(sample_trace_data, sizeof(sample_trace_data));
+
 	k_sleep(K_MSEC(1));
 }
 
