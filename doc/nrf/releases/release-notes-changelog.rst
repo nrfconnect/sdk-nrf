@@ -465,6 +465,10 @@ Modem libraries
 
 * Removed the deprecated A-GPS library.
 
+* Fixed:
+
+  * An issue where the compiler would generate an error when building :file:`ncs/nrf/include/modem/lte_lc.h` with C++ applications.
+
 Libraries for networking
 ------------------------
 
