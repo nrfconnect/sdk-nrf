@@ -245,7 +245,6 @@ To perform a FOTA upgrade, complete the following steps:
         #. Call ``os_mgmt_register_group()`` and ``img_mgmt_register_group()`` in your application.
         #. Call ``smp_bt_register()`` in your application to initialize the mcumgr Bluetooth Low Energy transport.
 
-        See the code of the :ref:`zephyr:smp_svr_sample` for an implementation example.
         After completing these steps, your application should advertise the SMP Service with UUID 8D53DC1D-1DB7-4CD3-868B-8A527460AA84.
 
       * |fota_upgrades_req_mcuboot|
@@ -266,6 +265,30 @@ To perform a FOTA upgrade, complete the following steps:
 
       .. note::
          There is currently no support for the FOTA process in nRF Connect for Desktop.
+
+FOTA upgrade sample
+===================
+
+The :ref:`zephyr:smp_svr_sample` demonstrates how to set up your project to support FOTA upgrades.
+
+The sample documentation is from the Zephyr project and is incompatible with the :ref:`ug_multi_image`.
+When working in the |NCS| environment, you can ignore the part of the sample documentation that describes the building and programming steps.
+In |NCS| you can build and program the :ref:`zephyr:smp_svr_sample` as any other sample using the following commands:
+
+.. parsed-literal::
+   :class: highlight
+
+    west build -b *build_target* -- -DOVERLAY_CONFIG=overlay-bt.conf
+    west flash
+
+Make sure to indicate the :file:`overlay-bt.conf` overlay configuration for the Bluetooth transport like in the command example.
+This configuration was carefully selected to achieve the maximum possible throughput of the FOTA upgrade transport over Bluetooth with the help of the following features:
+
+- Bluetooth MTU: to increase the packet size of a single Bluetooth packet transmitted over the air (:kconfig:option:`CONFIG_BT_BUF_ACL_RX_SIZE` and others).
+- Bluetooth connection parameters: to adaptively change the connection interval and latency on the detection of the SMP service activity (:kconfig:option:`CONFIG_MCUMGR_SMP_BT_CONN_PARAM_CONTROL`).
+- MCUmgr packet reassembly: to allow exchange of large SMP packets (:kconfig:option:`CONFIG_MCUMGR_SMP_REASSEMBLY_BT`, :kconfig:option:`CONFIG_MCUMGR_BUF_SIZE` and others).
+
+Consider using these features in your project to speed up the FOTA upgrade process.
 
 .. fota_upgrades_end
 
