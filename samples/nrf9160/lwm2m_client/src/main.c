@@ -153,7 +153,7 @@ static int lwm2m_setup(void)
 	/* Manufacturer dependent */
 	/* use IMEI as serial number */
 	lwm2m_app_init_device(imei_buf);
-	lwm2m_init_security(&client, endpoint_name);
+	lwm2m_init_security(&client, endpoint_name, NULL);
 
 	if (IS_ENABLED(CONFIG_LWM2M_DTLS_SUPPORT) && sizeof(CONFIG_APP_LWM2M_PSK) > 1) {
 		/* Write hard-coded PSK key to engine */

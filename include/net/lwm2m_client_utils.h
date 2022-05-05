@@ -33,6 +33,28 @@ extern "C" {
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT)
 /**
+ * @typedef modem_mode_cb_t
+ * @brief Callback to request a modem state change, being it powering off, flight mode etc.
+ *
+ * @return 0 if mode was set successfully
+ * @return positive value to indicate seconds before retry
+ * @return negative error code in case of a failure
+ */
+typedef int (*modem_mode_cb_t)(enum lte_lc_func_mode new_mode, void *user_data);
+
+/**
+ * @struct modem_mode_change
+ * @brief Callback used for querying permission from the app to proceed when modem's state changes
+ *
+ * @param cb        The callback function
+ * @param user_data App specific data to be fed to the callback once it's called
+ */
+struct modem_mode_change {
+	modem_mode_cb_t cb;
+	void *user_data;
+};
+
+/**
  * @brief Initialize Security object support for nrf91
  *
  * This wrapper will install hooks that allows device to do a
@@ -44,7 +66,7 @@ extern "C" {
  *       only be called after the settings backend (Flash or FS)
  *       is ready.
  */
-int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint);
+int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint, struct modem_mode_change *mmode);
 
 /**
  * @brief Check if we already have client credentials stored

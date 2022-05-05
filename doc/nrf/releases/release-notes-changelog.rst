@@ -587,6 +587,7 @@ Libraries for networking
 
     * Added support for using location assistance when using Coiote LwM2M server.
     * Updated the library to store credentials and server settings permanently on bootstrap.
+    * Updated the library to let an application control the network connection state.
 
   * :ref:`lib_azure_iot_hub` library:
 
