@@ -29,6 +29,39 @@ LOG_MODULE_REGISTER(lwm2m_security, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 #define SERVER_SHORT_SERVER_ID 0
 #define SERVER_LIFETIME_ID 1
 
+static struct modem_mode_change mm;
+
+int lwm2m_modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
+{
+	enum lte_lc_func_mode fmode;
+	int ret;
+
+	if (lte_lc_func_mode_get(&fmode)) {
+		LOG_ERR("Failed to read modem functional mode");
+		ret = -EFAULT;
+		return ret;
+	}
+
+	if (new_mode == LTE_LC_FUNC_MODE_NORMAL) {
+		/* I need to use the blocking call, because in next step
+		 * LwM2M engine would create socket and call connect()
+		 */
+		ret = lte_lc_connect();
+
+		if (ret) {
+			LOG_ERR("lte_lc_connect() failed %d", ret);
+		}
+		LOG_INF("Modem connection restored");
+	} else {
+		ret = lte_lc_func_mode_set(new_mode);
+		if (ret == 0) {
+			LOG_DBG("Modem set to requested state %d", new_mode);
+		}
+	}
+
+	return ret;
+}
+
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
 #define SETTINGS_PREFIX "lwm2m:sec"
 
@@ -94,7 +127,6 @@ static int load_credentials_to_modem(struct lwm2m_ctx *ctx)
 	int ret;
 	bool exist;
 	bool has_credentials;
-	enum lte_lc_func_mode fmode;
 
 	if (ctx->bootstrap_mode) {
 		ctx->tls_tag = CONFIG_LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG;
@@ -126,14 +158,15 @@ static int load_credentials_to_modem(struct lwm2m_ctx *ctx)
 		return -ENOENT;
 	}
 
-	if (lte_lc_func_mode_get(&fmode)) {
-		LOG_ERR("Failed to read modem functional mode");
-		return -EFAULT;
-	}
+	LOG_INF("Need to write credentials, requesting LTE and GNSS offline...");
 
-	if (fmode != LTE_LC_FUNC_MODE_POWER_OFF || fmode != LTE_LC_FUNC_MODE_OFFLINE) {
-		LOG_INF("Need to write credentials, switch LTE offline");
-		lte_lc_offline();
+	while ((ret = mm.cb(LTE_LC_FUNC_MODE_OFFLINE, mm.user_data)) != 0) {
+		if (ret < 0) {
+			return ret; /* Error */
+		}
+
+		/* Block the LwM2M engine until mode switch is OK */
+		k_sleep(K_SECONDS(ret));
 	}
 
 	ret = write_credential_type(ctx->sec_obj_inst, ctx->tls_tag, SECURITY_CLIENT_PK_ID,
@@ -181,16 +214,16 @@ static int load_credentials_to_modem(struct lwm2m_ctx *ctx)
 	}
 
 out:
-	if (fmode != LTE_LC_FUNC_MODE_POWER_OFF || fmode != LTE_LC_FUNC_MODE_OFFLINE) {
-		LOG_INF("Restoring modem connection");
-		/* I need to use the blocking call, because in next step
-		 * LwM2M engine would create socket and call connect()
-		 */
-		int err = lte_lc_connect();
+	LOG_INF("Requesting LTE and GNSS online");
 
-		if (err) {
-			LOG_ERR("lte_lc_connect() failed %d", err);
+	while ((ret = mm.cb(LTE_LC_FUNC_MODE_NORMAL, mm.user_data)) != 0) {
+		if (ret < 0) {
+			return ret; /* Error */
 		}
+
+		LOG_DBG("Reconnection delayed by %d seconds", ret);
+		/* Block the LwM2M engine until mode switch is OK */
+		k_sleep(K_SECONDS(ret));
 	}
 
 	return ret;
@@ -464,9 +497,18 @@ static int init_default_security_obj(struct lwm2m_ctx *ctx, char *endpoint)
 	return 0;
 }
 
-int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint)
+int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint, struct modem_mode_change *mmode)
 {
 	have_permanently_stored_keys = false;
+
+	/* Restore the default if not a callback function */
+	if (!mmode) {
+		mm.cb = lwm2m_modem_mode_cb;
+		mm.user_data = NULL;
+	} else {
+		mm.cb = mmode->cb;
+		mm.user_data = mmode->user_data;
+	}
 
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
 	ctx->tls_tag = IS_ENABLED(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP) ?
