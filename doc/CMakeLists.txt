@@ -100,6 +100,7 @@ function(add_docset name)
       ${DOCSET_SRC_DIR}
       ${DOCSET_HTML_DIR}
     USES_TERMINAL
+    COMMENT "Building ${name} inventory..."
   )
 
   add_doc_target(
@@ -116,6 +117,7 @@ function(add_docset name)
       ${DOCSET_SRC_DIR}
       ${DOCSET_HTML_DIR}
     USES_TERMINAL
+    COMMENT "Building ${name} docset..."
   )
 
   add_custom_target(
@@ -132,6 +134,7 @@ function(add_docset name)
       ${DOCSET_SRC_DIR}
       ${DOCSET_BUILD_DIR}
     USES_TERMINAL
+    COMMENT "Checking links for ${name} docset..."
   )
 
   set_target_properties(
@@ -198,6 +201,7 @@ add_custom_target(
     ${ZEPHYR_BINARY_DIR}/src/build/dts/api
   VERBATIM
   USES_TERMINAL
+  COMMENT "Generating Devicetree bindings documentation..."
 )
 
 add_docset(zephyr)
