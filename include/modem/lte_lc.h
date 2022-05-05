@@ -627,6 +627,79 @@ enum lte_lc_neighbor_search_type {
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE = 2,
 };
 
+/** Configuration for periodic search of type LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE.
+ */
+struct lte_lc_periodic_search_range_cfg {
+	/** Sleep time in seconds between searches in the beginning of the range.
+	 *  Allowed values: 0 - 65535 seconds.
+	 */
+	uint16_t initial_sleep;
+
+	/** Sleep time in seconds between searches in the end of the range.
+	 *  Allowed values: 0 - 65535 seconds.
+	 */
+	uint16_t final_sleep;
+
+	/** Optional target time in minutes for achieving the @c final_sleep value.
+	 *  This can be used to determine angle factor between the initial and final sleep times.
+	 *  The timeline for the @c time_to_final_sleep starts from the beginning of the search
+	 *  pattern.
+	 *  If given, the value cannot be greater than the value of the @c pattern_end_point value
+	 *  in the same search pattern.
+	 *  If not given, the angle factor is calculated by using the @c pattern_end_point value so
+	 *  that the @c final_sleep value is reached at the point of @c pattern_end_point.
+	 *
+	 *  Allowed values:
+	 *  -1: Not used
+	 *   0 - 1080 minutes
+	 */
+	int16_t time_to_final_sleep;
+
+	/** Time in minutes that must elapse before entering the next search pattern. The timeline
+	 *  for @c pattern_end_point starts from the beginning of the limited service starting
+	 *  point, which is the moment when the first sleep period started.
+	 *
+	 *  Allowed values: 0 - 1080 minutes.
+	 */
+	int16_t pattern_end_point;
+};
+
+/** Configuration for periodic search of type LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE.
+ *  1 to 5 sleep time values for sleep between searches can be configured.
+ *  It's mandatory to provide @c val_1, while the rest are optional.
+ *  Unused values must be set to -1.
+ *  After going through all values, the last value of the last search pattern is repeated, if
+ *  not configured differently by the @c loop or @c return_to_pattern parameters.
+ *
+ *  Allowed values:
+ *  -1: Value unused.
+ *   0 - 65535 seconds.
+ */
+struct lte_lc_periodic_search_table_cfg {
+	/** Mandatory when LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE is used. */
+	int val_1;
+
+	/** Optional sleep time.
+	 *  Must be set to -1 if not used.
+	 */
+	int val_2;
+
+	/** Optional sleep time. @c val_2 must be configured for this parameter to have effect.
+	 *  Must be set to -1 if not used.
+	 */
+	int val_3;
+
+	/** Optional sleep time. @c val_3 must be configured for this parameter to have effect.
+	 *  Must be set to -1 if not used.
+	 */
+	int val_4;
+
+	/** Optional sleep time. @c val_4 must be configured for this parameter to have effect.
+	 *  Must be set to -1 if not used.
+	 */
+	int val_5;
+};
+
 /** @brief Periodic search pattern.
  *	   A search pattern may be of either 'range' or 'table' type.
  */
@@ -637,84 +710,8 @@ struct lte_lc_periodic_search_pattern {
 	} type;
 
 	union {
-		/** Configuration for periodic search of type LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE.
-		 */
-		struct lte_lc_periodic_search_range_cfg {
-			/** Sleep time in seconds between searches in the beginning of the range.
-			 *  Allowed values: 0 - 65535 seconds.
-			 */
-			uint16_t initial_sleep;
-
-			/** Sleep time in seconds between searches in the end of the range.
-			 *  Allowed values: 0 - 65535 seconds.
-			 */
-			uint16_t final_sleep;
-
-			/** Optional target time in minutes for achieving the @c final_sleep value.
-			 *  This can be used to determine angle factor between
-			 *  the initial and final sleep times. The timeline for the
-			 *  @c time_to_final_sleep starts from the beginning of the search pattern.
-			 *  If given, the value cannot be greater than the value of
-			 *  the @c pattern_end_point value in the same search pattern.
-			 *  If not given, the angle factor is calculated by using the
-			 *  @c pattern_end_point value so that the @c final_sleep value is reached
-			 *  at the point of @c pattern_end_point.
-			 *
-			 *  Allowed values:
-			 *  -1: Not used
-			 *   0 - 1080 minutes
-			 */
-			int16_t time_to_final_sleep;
-
-			/** Time in minutes that must elapse before entering
-			 *  the next search pattern. The timeline for @c pattern_end_point
-			 *  starts from the beginning of the limited service starting point,
-			 *  which is the moment when the first sleep period started.
-			 *
-			 *  Allowed values: 0 - 1080 minutes.
-			 */
-			int16_t pattern_end_point;
-		} range;
-
-		/** Configuration for periodic search of type LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE.
-		 *  1 to 5 sleep time values for sleep between searches can be configured.
-		 *  It's mandatory to provide @c val_1, while the rest are optional.
-		 *  Unused values must be set to -1.
-		 *  After going through all values, the last value of the last search pattern
-		 *  is repeated, if not configured differently by the @c loop or
-		 *  @c return_to_pattern parameters.
-		 *
-		 *  Allowed values:
-		 *  -1: Value unused.
-		 *   0 - 65535 seconds.
-		 */
-		struct lte_lc_periodic_search_table_cfg {
-			/** Mandatory when LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE is used. */
-			int val_1;
-
-			/** Optional sleep time.
-			 *  Must be set to -1 if not used.
-			 */
-			int val_2;
-
-			/** Optional sleep time. @c val_2 must be configured for
-			 *  this parameter to have effect.
-			 *  Must be set to -1 if not used.
-			 */
-			int val_3;
-
-			/** Optional sleep time. @c val_3 must be configured for
-			 *  this parameter to have effect.
-			 *  Must be set to -1 if not used.
-			 */
-			int val_4;
-
-			/** Optional sleep time. @c val_4 must be configured for
-			 *  this parameter to have effect.
-			 *  Must be set to -1 if not used.
-			 */
-			int val_5;
-		} table;
+		struct lte_lc_periodic_search_range_cfg range;
+		struct lte_lc_periodic_search_table_cfg table;
 	};
 };
 
