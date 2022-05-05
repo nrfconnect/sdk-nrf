@@ -405,12 +405,12 @@ The information extracted from devicetree is the alignment value for some partit
        after: b0
        align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
 
-   spm_app:
-     span: [spm, app]
+   app_image:
+     span: [tfm, spm, app]
 
    s0_image:
      # S0 spans over the image booted by B0
-     span: {one_of: [mcuboot, spm_app]}
+     span: {one_of: [mcuboot, app_image]}
 
    s0:
      # Phony container to allow hex overriding
@@ -668,7 +668,7 @@ For example, if you generate a partition placement report on the build of :file:
    +---0x23000: mcuboot_primary (0x6e000)-----+
    | 0x23000: mcuboot_pad (0x200)             |
    +---0x23200: mcuboot_primary_app (0x6de00)-+
-   +---0x23200: spm_app (0x6de00)-------------+
+   +---0x23200: app_image (0x6de00)-----------+
    | 0x23200: app (0x6de00)                   |
    | 0x91000: mcuboot_secondary (0x6e000)     |
    | 0xff000: EMPTY_2 (0x1000)                |
