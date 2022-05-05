@@ -58,6 +58,8 @@ static struct lwm2m_ctx client = {0};
 static bool reconnect;
 static int reconnection_counter;
 static struct k_sem lwm2m_restart;
+/* Enable session lifetime check for initial boot */
+static bool update_session_lifetime = true;
 
 static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event client_event);
 
@@ -246,6 +248,24 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 	}
 }
 
+static void rd_client_update_lifetime(int srv_obj_inst)
+{
+	char pathstr[MAX_RESOURCE_LEN];
+	uint32_t current_lifetime = 0;
+
+	uint32_t lifetime = CONFIG_LWM2M_ENGINE_DEFAULT_LIFETIME;
+
+	snprintk(pathstr, sizeof(pathstr), "1/%d/1", srv_obj_inst);
+	lwm2m_engine_get_u32(pathstr, &current_lifetime);
+
+	if (current_lifetime != lifetime) {
+		/* SET Configured value */
+		lwm2m_engine_set_u32(pathstr, lifetime);
+		LOG_DBG("Update session lifetime from %d to %d", current_lifetime, lifetime);
+	}
+	update_session_lifetime = false;
+}
+
 static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event client_event)
 {
 	switch (client_event) {
@@ -260,6 +280,7 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_REG_COMPLETE:
 		LOG_DBG("Bootstrap registration complete");
+		update_session_lifetime = true;
 		reconnection_counter = 0;
 		break;
 
@@ -275,6 +296,10 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_COMPLETE:
 		reconnection_counter = 0;
 		LOG_DBG("Registration complete");
+		if (update_session_lifetime) {
+			/* Read a current server  lifetime value */
+			rd_client_update_lifetime(client->srv_obj_inst);
+		}
 
 #if defined(CONFIG_APP_LWM2M_CONFORMANCE_TESTING)
 		lwm2m_register_server_send_mute_cb();
