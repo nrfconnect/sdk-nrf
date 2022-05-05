@@ -13,7 +13,7 @@ The Asset Tracker v2 application is built on the following principles:
 * Offline first - Highly-mobile cellular IoT products need to handle unreliable connections gracefully by implementing mechanisms to retry the failed sending of data.
 * Timestamping on the device - Sensor data is timestamped on the device using multiple time sources. When the device is offline (planned or unplanned), the timestamping does not rely on the cloud side.
 * Batching of data - Data is batched to reduce the number of messages transmitted, and to be able to retain collected data while the device is offline.
-* Configurable at run-time - The application behavior (for example, accelerometer sensitivity or GNSS timeout) can be configured at run time. This improves the development experience with individual devices or when debugging the device behavior in specific areas and situations. It also reduces the cost for transmitting data to the devices by reducing the frequency of sending firmware updates to the devices.
+* Configurable at run time - The application behavior (for example, accelerometer sensitivity or GNSS timeout) can be configured at run time. This improves the development experience with individual devices or when debugging the device behavior in specific areas and situations. It also reduces the cost for transmitting data to the devices by reducing the frequency of sending firmware updates to the devices.
 
 .. note::
     The code is under active development. It will undergo changes and improvements in the future.
@@ -24,15 +24,17 @@ Overview
 The application samples sensor data and publishes the data to a connected cloud service over `IP`_ through `LTE`_.
 The application supports the following cloud services and corresponding cloud-side instances:
 
-+------------------+--------------------------------+
-| Cloud service    | Cloud-side instance            |
-+==================+================================+
-| `AWS IoT Core`_  | `nRF Asset Tracker for AWS`_   |
-+------------------+--------------------------------+
-| `Azure IoT Hub`_ | `nRF Asset Tracker for Azure`_ |
-+------------------+--------------------------------+
-| `nRF Cloud`_     | `nRF Cloud documentation`_     |
-+------------------+--------------------------------+
++-----------------------------------------------------------------------------------------------------------+--------------------------------+
+| Cloud service                                                                                             | Cloud-side instance            |
++===========================================================================================================+================================+
+| `AWS IoT Core`_                                                                                           | `nRF Asset Tracker for AWS`_   |
++-----------------------------------------------------------------------------------------------------------+--------------------------------+
+| `Azure IoT Hub`_                                                                                          | `nRF Asset Tracker for Azure`_ |
++-----------------------------------------------------------------------------------------------------------+--------------------------------+
+| `nRF Cloud`_                                                                                              | `nRF Cloud documentation`_     |
++-----------------------------------------------------------------------------------------------------------+--------------------------------+
+| `LwM2M`_ v1.1 compliant service (`Coiote Device Management`_, `Leshan LwM2M server <Leshan homepage_>`_)  | Not yet implemented            |
++-----------------------------------------------------------------------------------------------------------+--------------------------------+
 
 For more information on the cloud services, protocols, and technologies supported by the application, see the :ref:`Supported cloud services <supported_cloud_services>` table.
 
@@ -176,9 +178,7 @@ Using the LwM2M carrier library
 The application supports the |NCS| :ref:`liblwm2m_carrier_readme` library that you can use to connect to the operator's device management platform.
 See the library's documentation for more information and configuration options.
 
-To enable the LwM2M carrier library, add the following parameter to your build command:
-
-``-DOVERLAY_CONFIG=overlay-carrier.conf``
+To enable the LwM2M carrier library, add the parameter ``-DOVERLAY_CONFIG=overlay-carrier.conf`` to your build command.
 
 A-GPS and P-GPS
 ***************
@@ -186,9 +186,7 @@ A-GPS and P-GPS
 The application supports processing of incoming A-GPS and P-GPS data to reduce the GNSS Time-To-First-Fix (`TTFF`_).
 Requesting and processing of A-GPS data is a default feature of the application.
 See :ref:`nRF Cloud A-GPS and P-GPS <nrfcloud_agps_pgps>` for further details.
-To enable support for P-GPS, add the following parameter to your build command:
-
-``-DOVERLAY_CONFIG=overlay-pgps.conf``
+To enable support for P-GPS, add the parameter ``-DOVERLAY_CONFIG=overlay-pgps.conf`` to your build command.
 
 .. note::
    |gps_tradeoffs|
@@ -206,8 +204,11 @@ Setting up the Asset Tracker cloud example
 To set up the application to work with a specific cloud example, see the following documentation:
 
 * nRF Cloud - :ref:`Connecting your device to nRF Cloud <nrf9160_gs_connecting_dk_to_cloud>`.
-* AWS IoT Core - `Getting started guide for nRF Asset Tracker for AWS`_
-* Azure IoT Hub - `Getting started guide for nRF Asset Tracker for Azure`_
+* AWS IoT Core - `Getting started guide for nRF Asset Tracker for AWS`_.
+* Azure IoT Hub - `Getting started guide for nRF Asset Tracker for Azure`_.
+
+.. note::
+   The `nRF Asset Tracker project`_ does not currently have an example implementation for LwM2M.
 
 By default, the application is configured to communicate with `nRF Cloud`_ using the factory-provisioned certificates on Thingy:91 and nRF9160 DK.
 This enables the application to function out-of-the-box with nRF Cloud.
@@ -215,7 +216,7 @@ This enables the application to function out-of-the-box with nRF Cloud.
 .. note::
    Before building and running the firmware, make sure you have set up the cloud side and provisioned the device with the correct TLS certificates.
 
-For every cloud service that is supported by this application, you must configure the corresponding *cloud client library* by setting certain mandatory Kconfig options.
+For every cloud service that is supported by this application, you must configure the corresponding cloud client library by setting certain mandatory Kconfig options.
 You can set these options in the designated :file:`overlay-<feature>.conf` file located in the root folder of the application.
 For more information on how to configure the application to communicate with a specific cloud service, see :ref:`Cloud module documentation <asset_tracker_v2_cloud_module>` and :ref:`Cloud-specific mandatory Kconfig options <mandatory_config>`.
 
@@ -253,11 +254,13 @@ The application contains examples of Kconfig overlays.
 
 The following configuration files are available in the application folder:
 
-* :file:`prj.conf` - Configuration file common for all build targets
+* :file:`prj.conf` - Configuration file common for ``thingy91_nrf9160_ns`` and ``nrf9160dk_nrf9160_ns`` build targets.
+* :file:`prj_qemu_x86.conf` - Configuration file common for ``qemu_x86`` build target.
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file specific for Thingy:91. This file is automatically merged with the :file:`prj.conf` file when you build for the ``thingy91_nrf9160_ns`` build target.
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file specific for nRF9160 DK. This file is automatically merged with the :file:`prj.conf` file when you build for the ``nrf9160dk_nrf9160_ns`` build target.
 * :file:`overlay-aws.conf` - Configuration file that enables communication with AWS IoT Core.
 * :file:`overlay-azure.conf` - Configuration file that enables communication with Azure IoT Hub.
+* :file:`overlay-lwm2m.conf` - Configuration file that enables communication with a configured LwM2M server.
 * :file:`overlay-pgps.conf` - Configuration file that enables P-GPS.
 * :file:`overlay-low-power.conf` - Configuration file that achieves the lowest power consumption by disabling features that consume extra power, such as LED control and logging.
 * :file:`overlay-debug.conf` - Configuration file that adds additional verbose logging capabilities and enables the debug module.
@@ -474,6 +477,8 @@ This application uses the following |NCS| libraries and drivers:
 * :ref:`lib_aws_fota`
 * :ref:`lib_azure_iot_hub`
 * :ref:`lib_azure_fota`
+* :ref:`lwm2m_interface`
+* :ref:`lib_lwm2m_client_utils`
 * :ref:`lib_nrf_cloud`
 * :ref:`lib_nrf_cloud_fota`
 * :ref:`lib_nrf_cloud_agps`
