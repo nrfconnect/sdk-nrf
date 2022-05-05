@@ -101,6 +101,10 @@ int ble_hci_vsc_set_radio_high_pwr_mode(bool high_power_mode);
  * @brief Set Bluetooth MAC device address
  * @param bd_addr	Bluetooth MAC device address
  *
+ * @note	This can be used to set a public address for the device
+ *		Note that bt_setup_public_id_addr(void) should be called
+ *		after this function to properly set the address.
+ *
  * @return 0 for success, error otherwise.
  */
 int ble_hci_vsc_set_bd_addr(uint8_t *bd_addr);

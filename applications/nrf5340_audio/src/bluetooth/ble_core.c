@@ -40,6 +40,38 @@ static void net_core_timeout_handler(struct k_timer *timer_id)
 	ERR_CHK_MSG(-EIO, "No response from NET core, check if NET core is programmed");
 }
 
+/* Use unique FICR device ID to set random static address */
+static void ble_core_setup_random_static_addr(void)
+{
+	int ret;
+	static bt_addr_le_t addr;
+
+	if ((NRF_FICR->INFO.DEVICEID[0] != UINT32_MAX) ||
+	    ((NRF_FICR->INFO.DEVICEID[1] & UINT16_MAX) != UINT16_MAX)) {
+		/* Put the device ID from FICR into address */
+		sys_put_le32(NRF_FICR->INFO.DEVICEID[0], &addr.a.val[0]);
+		sys_put_le16(NRF_FICR->INFO.DEVICEID[1], &addr.a.val[4]);
+
+		/* The FICR value is a just a random number, with no knowledge
+		 * of the Bluetooth Specification requirements for random
+		 * static addresses.
+		 */
+		BT_ADDR_SET_STATIC(&addr.a);
+
+		addr.type = BT_ADDR_LE_RANDOM;
+
+		ret = bt_id_create(&addr, NULL);
+		if (ret) {
+			LOG_WRN("Failed to create ID");
+		}
+	} else {
+		LOG_WRN("Unable to read from FICR");
+		/* If no address can be created based on FICR,
+		 * then a random address is created
+		 */
+	}
+}
+
 static void mac_print(void)
 {
 	char dev[BT_ADDR_LE_STR_LEN];
@@ -139,6 +171,7 @@ int ble_core_init(ble_core_ready_t ready_callback)
 	k_timer_start(&net_core_timeout_alarm_timer, K_MSEC(NET_CORE_RESPONSE_TIMEOUT_MS),
 		      K_NO_WAIT);
 
+	ble_core_setup_random_static_addr();
 	/* Enable Bluetooth, with callback function that
 	 * will be called when Bluetooth is ready
 	 */
