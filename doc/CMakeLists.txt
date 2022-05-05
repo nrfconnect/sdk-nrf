@@ -20,8 +20,11 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE} COMPONENTS doc)
 #-------------------------------------------------------------------------------
 # Options
 
-set(SPHINXOPTS_DEFAULT -j auto CACHE INTERNAL "Default Sphinx Options")
+set(SPHINXOPTS_DEFAULT "-j auto" CACHE STRING "Default Sphinx Options")
 set(SPHINXOPTS_EXTRA "" CACHE STRING "Extra Sphinx Options")
+
+separate_arguments(SPHINXOPTS_DEFAULT)
+separate_arguments(SPHINXOPTS_EXTRA)
 
 #-------------------------------------------------------------------------------
 # Dependencies
