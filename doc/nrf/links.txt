@@ -112,6 +112,7 @@
 
 .. _`Timestamping`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.8.x/docs/guides/FourKindsOfData.html#time-stamping
 
+.. _`nRF Asset Tracker project`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.8.x/docs/project/Index.html
 .. _`nRF Asset Tracker for AWS`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.8.x/docs/aws/Index.html
 .. _`nRF Asset Tracker for Azure`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.8.x/docs/azure/Index.html
 .. _`nRF Asset Tracker web application`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.8.x/docs/app/Index.html
@@ -443,6 +444,7 @@
 .. _`SET-Initiated Non-Roaming Successful Case (Proxy mode)`: https://www.openmobilealliance.org/release/SUPL/V2_0_4-20181213-A/OMA-TS-ULP-V2_0_4-20181213-A.pdf#page=129
 .. _`LwM2M Object and Resource Registry`: http://openmobilealliance.org/wp/OMNA/LwM2M/LwM2MRegistry.html
 .. _`LwM2M editor`: http://devtoolkit.openmobilealliance.org/OEditor/LWMOView?url=https%3A%2F%2Fraw.githubusercontent.com%2FOpenMobileAlliance%2Flwm2m-registry%2Fprod%2Fversion_history%2F3300-1_0.xml
+.. _`LwM2M V1.1`: https://www.openmobilealliance.org/release/LightweightM2M/Lightweight_Machine_to_Machine-v1_1-OMASpecworks.pdf
 
 .. ### Source: wikipedia
 
@@ -465,6 +467,10 @@
 .. _`MQTT`: https://en.wikipedia.org/wiki/MQTT
 
 .. _`TCP`: https://en.wikipedia.org/wiki/Transmission_Control_Protocol
+
+.. _`UDP protocol`: https://en.wikipedia.org/wiki/User_Datagram_Protocol
+
+.. _`CoAP`: https://en.wikipedia.org/wiki/Constrained_Application_Protocol
 
 .. _`HSM`: https://en.wikipedia.org/wiki/Hardware_security_module
 
@@ -508,6 +514,7 @@
 .. _`RFC1055 Serial Line Internet Protocol (SLIP)`: https://datatracker.ietf.org/doc/html/rfc1055
 
 .. _`TLS`: https://www.ietf.org/rfc/rfc5246.txt
+.. _`DTLS`: https://datatracker.ietf.org/doc/html/rfc6347
 
 .. _`RFC 5639 - ECC Brainpool Standard Curves and Curve Generation`: https://datatracker.ietf.org/doc/html/rfc5639
 .. _`RFC 5869 - HMAC-based Extract-and-Expand Key Derivation Function (HKDF)`: https://datatracker.ietf.org/doc/html/rfc5869
@@ -771,6 +778,7 @@
 .. _`POSIX Programmer's Manual`: https://man7.org/linux/man-pages/dir_section_3.html
 .. _`LwM2M`: https://omaspecworks.org/what-is-oma-specworks/iot/lightweight-m2m-lwm2m/
 .. _`IPSO objects`: https://omaspecworks.org/develop-with-oma-specworks/ipso-smart-objects/
+.. _`OMA LwM2M Object and Resource Registry`: https://technical.openmobilealliance.org/OMNA/LwM2M/LwM2MRegistry.html
 .. _`raw XML`: https://raw.githubusercontent.com/OpenMobileAlliance/lwm2m-registry/prod/version_history/3300-1_0.xml
 
 .. _`DLPTest.com`: https://dlptest.com/ftp-test/
@@ -817,6 +825,7 @@
 
 .. _`Leshan Demo Server web UI`:
 .. _`public Leshan Demo Server`: https://leshan.eclipseprojects.io
+.. _`Leshan homepage`: https://www.eclipse.org/leshan/
 
 .. _`public Leshan Bootstrap Server Demo`: https://leshan.eclipseprojects.io/bs
 

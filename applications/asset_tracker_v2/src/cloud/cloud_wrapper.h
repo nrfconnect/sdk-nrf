@@ -76,7 +76,7 @@ enum cloud_wrap_event_type {
 	CLOUD_WRAP_EVT_ERROR,
 };
 
-/** @brief Structure used to referance application data that is sent and received
+/** @brief Structure used to reference application data that is sent and received
  *         from the cloud wrapper library.
  */
 struct cloud_wrap_event_data {
