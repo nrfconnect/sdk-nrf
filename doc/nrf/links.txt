@@ -11,6 +11,7 @@
 .. _`Zephyr Initial Configuration`: https://docs.zephyrproject.org/latest/guides/build/kconfig/setting.html#the-initial-configuration
 .. _`Zephyr Network APIs`: https://docs.zephyrproject.org/latest/reference/networking/apis.html
 .. _`Zephyr Events`: https://docs.zephyrproject.org/latest/reference/kernel/synchronization/events.html
+.. _`Pinctrl Migration Utility Script documentation`: https://github.com/zephyrproject-rtos/zephyr/blob/main/scripts/utils/pinctrl_nrf_migrate.py
 
 .. ### Source: github.com
 
