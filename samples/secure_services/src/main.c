@@ -47,7 +47,6 @@ static int read_ficr_word(uint32_t *result, const volatile uint32_t *addr)
 
 void main(void)
 {
-	struct fw_info info_app;
 	const int sleep_time_s = 5;
 	const int random_number_count = 16;
 	const int random_number_len = 144;
@@ -76,12 +75,16 @@ void main(void)
 	printk("CONFIG_SPM_SERVICE_RNG is disabled.\n\n");
 #endif
 
+#if CONFIG_SPM_SERVICE_FIND_FIRMWARE_INFO
+	struct fw_info info_app;
+
 	ret = spm_firmware_info(PM_SPM_ADDRESS, &info_app);
 	if (ret != 0) {
 		printk("Could not find SPM firmware info (err: %d)\n", ret);
 	}
 
 	printk("App FW version: %d\n\n", info_app.version);
+#endif
 
 #ifdef CONFIG_BOOTLOADER_MCUBOOT
 	const int num_bytes_to_read = PM_MCUBOOT_PAD_SIZE;
@@ -131,7 +134,8 @@ void main(void)
 	}
 
 #ifdef PM_S1_ADDRESS
-	bool s0_active;
+#if CONFIG_SPM_SERVICE_S0_ACTIVE
+	bool s0_active = false;
 
 	ret = spm_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, &s0_active);
 	if (ret != 0) {
@@ -139,7 +143,9 @@ void main(void)
 	}
 
 	printk("S0 active? %s\n", s0_active ? "True" : "False");
-
+#else
+	printk("No secure service to check if S0 is active\n\n");
+#endif
 #endif /*  PM_S1_ADDRESS */
 
 	printk("Reboot in %d seconds.\n", sleep_time_s);

@@ -26,8 +26,8 @@
   - "samples/nrf9160/http_update/**/*"
   - "samples/nrf9160/https_client/**/*"
   - "samples/nrf9160/mqtt_simple/**/*"
-  - "samples/nrf9160/secure_services/**/*"
   - "samples/nrf9160/sms/**/*"
+  - "samples/secure_services/**/*"
   - "subsys/net/lib/download_client/**/*"
 
 "CI-iot-lwm2m-client-test":

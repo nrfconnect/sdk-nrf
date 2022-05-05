@@ -6,7 +6,8 @@ tests:
     extra_args: OVERLAY_CONFIG="b0_mcuboot_overlay.conf"
     integration_platforms:
       - nrf9160dk_nrf9160_ns
-    platform_allow: nrf9160dk_nrf9160_ns
+      - nrf5340dk_nrf5340_cpuapp_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf5340dk_nrf5340_cpuapp_ns
     tags: ci_build
   sample.nrf9160.secure_services.bootloaders:
     extra_args: CONFIG_BOOTLOADER_MCUBOOT=y CONFIG_SECURE_BOOT=y CONFIG_SPM_SERVICE_PREVALIDATE=y mcuboot_CONFIG_EXT_API_PROVIDE_EXT_API_ENABLED=y mcuboot_CONFIG_EXT_API_PROVIDE_EXT_API_REQUIRED=y CONFIG_SPM_SERVICE_S0_ACTIVE=y
@@ -42,7 +43,8 @@ tests:
       type: multi_line
     integration_platforms:
       - nrf9160dk_nrf9160_ns
-    platform_allow: nrf9160dk_nrf9160_ns
+      - nrf5340dk_nrf5340_cpuapp_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf5340dk_nrf5340_cpuapp_ns
   sample.nrf9160.secure_services.default:
     harness: console
     harness_config:
@@ -75,5 +77,6 @@ tests:
       type: multi_line
     integration_platforms:
       - nrf9160dk_nrf9160_ns
-    platform_allow: nrf9160dk_nrf9160_ns
+      - nrf5340dk_nrf5340_cpuapp_ns
+    platform_allow: nrf9160dk_nrf9160_ns nrf5340dk_nrf5340_cpuapp_ns
     tags: ci_build

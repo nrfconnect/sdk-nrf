@@ -28,7 +28,7 @@ This is to demonstrate the :c:func:`spm_request_system_reboot` and :c:func:`spm_
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf9160/secure_services`
+.. |sample path| replace:: :file:`samples/secure_services`
 
 .. include:: /includes/build_and_run.txt
 
