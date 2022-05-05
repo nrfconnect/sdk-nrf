@@ -28,7 +28,7 @@ class ATclient:
         for _ in range(3):
             if self.at_cmd('AT', timeout=1) is None:
                 return False
-        logging.info("AT interface ready")
+        logging.debug("AT interface ready")
         return True
 
     def at_cmd(self, at_str, timeout=100):
