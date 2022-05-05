@@ -143,7 +143,7 @@ void main(void)
 #endif /*  PM_S1_ADDRESS */
 
 	printk("Reboot in %d seconds.\n", sleep_time_s);
-	k_sleep(K_SECONDS(5));
+	k_sleep(K_SECONDS(sleep_time_s));
 
 	sys_reboot(0); /* Argument is ignored. */
 }
