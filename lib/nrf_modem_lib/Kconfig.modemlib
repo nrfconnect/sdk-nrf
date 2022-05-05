@@ -18,6 +18,10 @@ config NRF_MODEM_LIB_SYS_INIT
 	  Please note that initialization is synchronous and can take up to one
 	  minute in case the modem firmware is updated.
 
+config NRF_MODEM_LIB_LOG_FW_VERSION_UUID
+	depends on LOG
+	bool "Log FW version and UUID during initialization"
+
 config NRF_MODEM_LIB_TRACE_ENABLED
 	bool
 	prompt "Enable proprietary traces"

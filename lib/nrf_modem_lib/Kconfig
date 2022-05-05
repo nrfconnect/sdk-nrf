@@ -22,8 +22,4 @@ if NRF_MODEM_LIB
 
 rsource "Kconfig.modemlib"
 
-config NRF_MODEM_LIB_LOG_FW_VERSION_UUID
-	depends on LOG
-	bool "Log FW version and UUID during initialization"
-
 endif # NRF_MODEM_LIB
