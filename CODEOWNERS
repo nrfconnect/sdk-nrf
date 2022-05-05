@@ -72,7 +72,7 @@ Kconfig*                                  @tejlmand
 /include/net/nrf_cloud_*                  @plskeggs @jayteemo @glarsennordic
 /include/bluetooth/                       @alwa-nordic @KAGA164
 /include/bluetooth/services/fast_pair.h   @MarekPieta @kapi-no @KAGA164
-/include/bluetooth/mesh/                  @trond-snekvik
+/include/bluetooth/mesh/                  @ludvigsj
 /include/caf/                             @pdunaj
 /include/debug/ppi_trace.h                @nordic-krch @anangl
 /include/drivers/                         @anangl
@@ -116,7 +116,7 @@ Kconfig*                                  @tejlmand
 /samples/                                 @nrfconnect/ncs-test-leads
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @alwa-nordic @carlescufi @KAGA164
-/samples/bluetooth/mesh/                  @trond-snekvik
+/samples/bluetooth/mesh/                  @ludvigsj
 /samples/bluetooth/direction_finding_connectionless_rx/ @ppryga @alwa-nordic
 /samples/bluetooth/direction_finding_connectionless_tx/ @ppryga @alwa-nordic
 /samples/bluetooth/peripheral_fast_pair/  @MarekPieta @kapi-no @KAGA164
@@ -157,7 +157,7 @@ Kconfig*                                  @tejlmand
 /share/zephyrbuild-package/               @tejlmand
 /share/ncs-package/                       @tejlmand
 /subsys/bluetooth/                        @alwa-nordic @carlescufi @KAGA164
-/subsys/bluetooth/mesh/                   @trond-snekvik
+/subsys/bluetooth/mesh/                   @ludvigsj
 /subsys/bluetooth/controller/             @rugeGerritsen
 /subsys/bluetooth/services/fast_pair/     @MarekPieta @kapi-no @KAGA164
 /subsys/bootloader/                       @hakonfam @SebastianBoe
@@ -220,7 +220,7 @@ Kconfig*                                  @tejlmand
 /tests/modules/tfm/                       @SebastianBoe @joerchan @torsteingrindvik @magnev
 /tests/nrf5340_audio/                     @koffes @alexsven @erikrobstad @rick1082 @nordic-auko
 /tests/subsys/bluetooth/gatt_dm/          @doki-nordic
-/tests/subsys/bluetooth/mesh/             @trond-snekvik
+/tests/subsys/bluetooth/mesh/             @ludvigsj
 /tests/subsys/bluetooth/fast_pair/        @MarekPieta @kapi-no @KAGA164
 /tests/subsys/bootloader/                 @hakonfam
 /tests/subsys/debug/cpu_load/             @nordic-krch
