@@ -74,18 +74,12 @@ If you have not built all documentation sets before, it is recommended to run th
 
 .. parsed-literal::
 
-   ninja *docset-name*-html-all
+   ninja *docset-name*-all
 
 Here, *docset-name* is the name of the documentation set, for example, ``nrf``.
 This target will build the :ref:`documentation sets <documentation_sets>` that are needed for *docset-name*.
 
 On subsequent builds, it is recommended to just run the following command:
-
-.. parsed-literal::
-
-   ninja *docset-name*-html
-
-Alternatively, for subsequent builds, you can run the ninja command using the alias target *docset-name* instead of *docset-name*-html:
 
 .. parsed-literal::
 
