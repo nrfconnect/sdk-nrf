@@ -142,17 +142,10 @@ function(add_docset name)
       ADDITIONAL_CLEAN_FILES "${DOCSET_CLEAN_DIRS}"
   )
 
-  if(${CMAKE_VERSION} VERSION_LESS 3.17)
-    add_custom_target(
-      ${name}-clean
-      COMMAND ${CMAKE_COMMAND} -E remove_directory ${DOCSET_CLEAN_DIRS}
-    )
-  else()
-    add_custom_target(
-      ${name}-clean
-      COMMAND ${CMAKE_COMMAND} -E rm -rf ${DOCSET_CLEAN_DIRS}
-    )
-  endif()
+  add_custom_target(
+    ${name}-clean
+    COMMAND ${CMAKE_COMMAND} -E rm -rf ${DOCSET_CLEAN_DIRS}
+  )
 
   add_custom_target(${name})
   add_dependencies(${name} ${name}-html)
