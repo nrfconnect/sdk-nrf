@@ -21,14 +21,7 @@ extern struct k_work_q mosh_common_work_q;
 
 bool at_cmd_mode_dont_print;
 
-/** @brief Termination Modes. */
-enum term_modes {
-	MODE_NULL_TERM, /**< Null Termination */
-	MODE_CR, /**< CR Termination */
-	MODE_LF, /**< LF Termination */
-	MODE_CR_LF /**< CR+LF Termination */
-};
-static enum term_modes term_mode;
+static enum line_termination term_mode = CONFIG_MOSH_AT_CMD_MODE_TERMINATION;
 
 #define AT_CMD_MODE_AT_CMD_MAX_LEN CONFIG_SHELL_CMD_BUFF_SIZE
 #define AT_CMD_MODE_PIPELINED_AT_CMD_MAX_LEN 1023
@@ -160,21 +153,21 @@ static void at_cmd_mode_cmd_rx_handler(uint8_t character)
 	if (!inside_quotes) {
 		switch (character) {
 		case '\0':
-			if (term_mode == MODE_NULL_TERM) {
+			if (term_mode == NULL_TERM) {
 				goto send;
 			}
 			/* Ignored null and will terminate string early. */
 			break;
 		case '\r':
-			if (term_mode == MODE_CR) {
+			if (term_mode == CR_TERM) {
 				goto send;
 			}
 			break;
 		case '\n':
-			if (term_mode == MODE_LF) {
+			if (term_mode == LF_TERM) {
 				goto send;
 			}
-			if (term_mode == MODE_CR_LF && at_cmd_len > 0 &&
+			if (term_mode == CR_LF_TERM && at_cmd_len > 0 &&
 			    at_buf[at_cmd_len - 1] == '\r') {
 				goto send;
 			}
@@ -298,6 +291,11 @@ static void at_cmd_mode_bypass_cb(const struct shell *sh, uint8_t *recv, size_t 
 	}
 }
 
+void at_cmd_mode_line_termination_set(enum line_termination line_term)
+{
+	term_mode = line_term;
+}
+
 int at_cmd_mode_start(const struct shell *sh)
 {
 	if (at_cmd_mode_active) {
@@ -307,8 +305,6 @@ int at_cmd_mode_start(const struct shell *sh)
 
 	k_work_init(&at_cmd_mode_work.work, at_cmd_mode_worker);
 	at_cmd_mode_work.pipe_cnt = 0;
-
-	term_mode = CONFIG_MOSH_AT_CMD_MODE_TERMINATION;
 
 	printk("MoSh AT command mode started, press ctrl-x ctrl-q to escape\n");
 	printk("MoSh specific AT commands:\n");

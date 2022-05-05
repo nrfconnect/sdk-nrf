@@ -56,6 +56,21 @@ static int at_shell_cmd_mode_disable_autostart(const struct shell *shell, size_t
 	at_cmd_mode_sett_autostart_enabled(false);
 	return 0;
 }
+static int at_shell_cmd_mode_term_cr_lf(const struct shell *shell, size_t argc, char **argv)
+{
+	at_cmd_mode_line_termination_set(CR_LF_TERM);
+	return 0;
+}
+static int at_shell_cmd_mode_term_lf(const struct shell *shell, size_t argc, char **argv)
+{
+	at_cmd_mode_line_termination_set(LF_TERM);
+	return 0;
+}
+static int at_shell_cmd_mode_term_cr(const struct shell *shell, size_t argc, char **argv)
+{
+	at_cmd_mode_line_termination_set(CR_TERM);
+	return 0;
+}
 #endif
 
 static void at_cmd_handler(const char *response)
@@ -109,6 +124,15 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD(disable_autostart, NULL,
 		 "Disable AT command mode autostart on bootup.",
 		  at_shell_cmd_mode_disable_autostart),
+	SHELL_CMD(term_cr_lf, NULL,
+		 "Receive CR+LF as command line termination.",
+		  at_shell_cmd_mode_term_cr_lf),
+	SHELL_CMD(term_lf, NULL,
+		 "Receive LF as command line termination.",
+		  at_shell_cmd_mode_term_lf),
+	SHELL_CMD(term_cr, NULL,
+		 "Receive CR as command line termination.",
+		  at_shell_cmd_mode_term_cr),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_at_shell,

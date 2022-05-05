@@ -126,7 +126,7 @@ endif
 if MOSH_AT_CMD_MODE
 choice
 	prompt "Command termination"
-	default MOSH_AT_CMD_MODE_CR_TERMINATION
+	default MOSH_AT_CMD_MODE_CR_LF_TERMINATION
 	help
 		Sets the command termination ending from the serial terminal
 		Levels are:
