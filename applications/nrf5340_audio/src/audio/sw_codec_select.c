@@ -241,8 +241,9 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 				pcm_size_session = PCM_NUM_BYTES_MONO;
 			} else {
 				ret = sw_codec_lc3_dec_run(encoded_data, encoded_size,
-							LC3_PCM_NUM_BYTES_MONO, 0, pcm_data_mono,
-							(uint16_t *)&pcm_size_session, bad_frame);
+							   LC3_PCM_NUM_BYTES_MONO, 0, pcm_data_mono,
+							   (uint16_t *)&pcm_size_session,
+							   bad_frame);
 				if (ret) {
 					return ret;
 				}
@@ -268,17 +269,19 @@ int sw_codec_decode(uint8_t const *const encoded_data, size_t encoded_size, bool
 			} else {
 				/* Decode left channel */
 				ret = sw_codec_lc3_dec_run(encoded_data, encoded_size / 2,
-						LC3_PCM_NUM_BYTES_MONO, AUDIO_CH_L,
-						pcm_data_mono, (uint16_t *)&pcm_size_session,
-						bad_frame);
+							   LC3_PCM_NUM_BYTES_MONO, AUDIO_CH_L,
+							   pcm_data_mono,
+							   (uint16_t *)&pcm_size_session,
+							   bad_frame);
 				if (ret) {
 					return ret;
 				}
 				/* Decode right channel */
 				ret = sw_codec_lc3_dec_run((encoded_data + (encoded_size / 2)),
-							encoded_size / 2, LC3_PCM_NUM_BYTES_MONO,
-							AUDIO_CH_R, pcm_data_mono_right,
-							(uint16_t *)&pcm_size_session, bad_frame);
+							   encoded_size / 2, LC3_PCM_NUM_BYTES_MONO,
+							   AUDIO_CH_R, pcm_data_mono_right,
+							   (uint16_t *)&pcm_size_session,
+							   bad_frame);
 				if (ret) {
 					return ret;
 				}

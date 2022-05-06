@@ -175,8 +175,7 @@ void audio_i2s_init(void)
 		k_sleep(K_MSEC(1));
 	}
 
-	ret = pinctrl_apply_state(PINCTRL_DT_DEV_CONFIG_GET(I2S_NL),
-				  PINCTRL_STATE_DEFAULT);
+	ret = pinctrl_apply_state(PINCTRL_DT_DEV_CONFIG_GET(I2S_NL), PINCTRL_STATE_DEFAULT);
 	__ASSERT_NO_MSG(ret == 0);
 
 	IRQ_CONNECT(DT_IRQN(I2S_NL), DT_IRQ(I2S_NL, priority), nrfx_isr, nrfx_i2s_irq_handler, 0);

@@ -11,58 +11,65 @@
 
 #if (CONFIG_SW_CODEC_SBC)
 /* Frame length in samples */
-#define SBC_FRAME_LEN_SAMPLES \
-	(CONFIG_SBC_NO_OF_BLOCKS * CONFIG_SBC_NO_OF_SUBBANDS)
+#define SBC_FRAME_LEN_SAMPLES (CONFIG_SBC_NO_OF_BLOCKS * CONFIG_SBC_NO_OF_SUBBANDS)
 /* Frame rate in Hz */
 #define SBC_FRAME_RATE_HZ (CONFIG_AUDIO_SAMPLE_RATE_HZ / SBC_FRAME_LEN_SAMPLES)
 /* Frame size in bytes */
-#define SBC_ENC_MONO_FRAME_SIZE (4 + (CONFIG_SBC_NO_OF_BLOCKS * \
-	CONFIG_SBC_BITPOOL + 4 * CONFIG_SBC_NO_OF_SUBBANDS) / 8)
+#define SBC_ENC_MONO_FRAME_SIZE                                                                    \
+	(4 + (CONFIG_SBC_NO_OF_BLOCKS * CONFIG_SBC_BITPOOL + 4 * CONFIG_SBC_NO_OF_SUBBANDS) / 8)
 /* Bitrate in bits/s */
 #define SBC_MONO_BITRATE (SBC_ENC_MONO_FRAME_SIZE * 8 * SBC_FRAME_RATE_HZ)
 /* PCM frame size in bytes */
 #define PCM_NUM_BYTES_SBC_FRAME_MONO ((SBC_FRAME_LEN_SAMPLES * CONFIG_AUDIO_BIT_DEPTH_BITS) / 8)
 /* Size of PCM frames sent per BLE packet, in bytes */
-#define SBC_PCM_NUM_BYTES_MONO \
-	(PCM_NUM_BYTES_SBC_FRAME_MONO * CONFIG_SBC_NUM_FRAMES_PER_BLE_PACKET)
+#define SBC_PCM_NUM_BYTES_MONO (PCM_NUM_BYTES_SBC_FRAME_MONO * CONFIG_SBC_NUM_FRAMES_PER_BLE_PACKET)
 /* Encoded total frame size in bytes */
-#define SBC_ENC_MAX_FRAME_SIZE \
-	(SBC_ENC_MONO_FRAME_SIZE * CONFIG_SBC_NUM_FRAMES_PER_BLE_PACKET)
+#define SBC_ENC_MAX_FRAME_SIZE (SBC_ENC_MONO_FRAME_SIZE * CONFIG_SBC_NUM_FRAMES_PER_BLE_PACKET)
+#define SBC_ENC_TIME_US 3000
+#define SBC_DEC_TIME_US 1500
 
 #else
 #define SBC_ENC_MAX_FRAME_SIZE 0
 #define SBC_PCM_NUM_BYTES_MONO 0
 #define SBC_MONO_BITRATE 0
+#define SBC_ENC_TIME_US 0
+#define SBC_DEC_TIME_US 0
 #endif /* CONFIG_SW_CODEC_SBC */
 
 #if (CONFIG_SW_CODEC_LC3)
 #define LC3_MAX_FRAME_SIZE_MS 10
-#define LC3_ENC_MONO_FRAME_SIZE (CONFIG_LC3_MONO_BITRATE * LC3_MAX_FRAME_SIZE_MS / (8 * 1000))
+#define LC3_ENC_MONO_FRAME_SIZE (CONFIG_LC3_BITRATE * LC3_MAX_FRAME_SIZE_MS / (8 * 1000))
 
 #define LC3_PCM_NUM_BYTES_MONO                                                                     \
 	(CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS * LC3_MAX_FRAME_SIZE_MS / 1000)
+#define LC3_ENC_TIME_US 3000
+#define LC3_DEC_TIME_US 1500
 #else
 #define LC3_ENC_MONO_FRAME_SIZE 0
 #define LC3_PCM_NUM_BYTES_MONO 0
+#define LC3_ENC_TIME_US 0
+#define LC3_DEC_TIME_US 0
 #endif /* CONFIG_SW_CODEC_LC3 */
 
 #define ENC_MAX_FRAME_SIZE MAX(LC3_ENC_MONO_FRAME_SIZE, SBC_ENC_MAX_FRAME_SIZE)
+#define ENC_TIME_US MAX(LC3_ENC_TIME_US, SBC_ENC_TIME_US)
+#define DEC_TIME_US MAX(LC3_DEC_TIME_US, SBC_DEC_TIME_US)
 #define PCM_NUM_BYTES_MONO MAX(LC3_PCM_NUM_BYTES_MONO, SBC_PCM_NUM_BYTES_MONO)
 #define PCM_NUM_BYTES_STEREO (PCM_NUM_BYTES_MONO * 2)
 
 enum sw_codec_select {
 	SW_CODEC_NONE,
-	SW_CODEC_LC3, /**< Low Complexity Communication Codec */
-	SW_CODEC_SBC, /**< Subband codec */
+	SW_CODEC_LC3, /* Low Complexity Communication Codec */
+	SW_CODEC_SBC, /* Subband codec */
 };
 
 enum sw_codec_select_ch {
 	SW_CODEC_ZERO_CHANNELS,
-	SW_CODEC_MONO, /**< Only use one channel */
-	SW_CODEC_STEREO, /**< Use both channels */
+	SW_CODEC_MONO, /* Only use one channel */
+	SW_CODEC_STEREO, /* Use both channels */
 };
 
-enum audio_channel {
+enum audio_channel_select {
 	AUDIO_CH_L,
 	AUDIO_CH_R,
 	AUDIO_CH_NUM,
@@ -72,22 +79,22 @@ struct sw_codec_encoder {
 	bool enabled;
 	int bitrate;
 	enum sw_codec_select_ch channel_mode;
-	enum audio_channel audio_ch; /**< Only used if channel mode is mono */
+	enum audio_channel_select audio_ch; /* Only used if channel mode is mono */
 };
 
 struct sw_codec_decoder {
 	bool enabled;
 	enum sw_codec_select_ch channel_mode;
-	enum audio_channel audio_ch; /**< Only used if channel mode is mono */
+	enum audio_channel_select audio_ch; /* Only used if channel mode is mono */
 };
 
 /** @brief  Sw_codec configuration structure
  */
 struct sw_codec_config {
-	enum sw_codec_select sw_codec; /**< sw_codec to be used, e.g. LC3, SBC etc */
-	struct sw_codec_decoder decoder; /**< Struct containing settings for decoder */
-	struct sw_codec_encoder encoder; /**< Struct containing settings for encoder */
-	bool initialized; /**< Status of codec */
+	enum sw_codec_select sw_codec; /* sw_codec to be used, e.g. LC3, SBC etc */
+	struct sw_codec_decoder decoder; /* Struct containing settings for decoder */
+	struct sw_codec_encoder encoder; /* Struct containing settings for encoder */
+	bool initialized; /* Status of codec */
 };
 
 /**@brief	Encode PCM data and output encoded data

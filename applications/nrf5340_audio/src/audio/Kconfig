@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+rsource "Kconfig.defaults"
+
 menu "Audio"
 
 choice AUDIO_FRAME_DURATION
@@ -152,9 +154,17 @@ config SW_CODEC_PLC_DISABLED
 menu "LC3"
 visible if SW_CODEC_LC3
 
-config LC3_MONO_BITRATE
+config LC3_BITRATE
 	int "Bitrate for LC3"
 	default 96000
+
+config LC3_BITRATE_MAX
+	int "Max bitrate for LC3"
+	default 124000
+
+config LC3_BITRATE_MIN
+	int "Min bitrate for LC3"
+	default 32000
 
 osource "../modules/lib/lc3/Kconfig"
 
@@ -232,8 +242,8 @@ endmenu # Stream
 #----------------------------------------------------------------------------#
 menu "Log levels"
 
-config LOG_AUDIO_CODEC_LEVEL
-	int "Log level for streamctrl"
+config LOG_AUDIO_SYSTEM_LEVEL
+	int "Log level for audio system"
 	default 3
 
 config LOG_STREAMCTRL_LEVEL

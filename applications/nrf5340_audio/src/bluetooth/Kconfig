@@ -4,11 +4,13 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+rsource "Kconfig.defaults"
+
 menu "Bluetooth"
 
 config BLE_ACL_CONN_INTERVAL
 	int "BLE ACL Connection Interval (x*1.25ms)"
-	default 100
+	default 80
 
 config BLE_ACL_SLAVE_LATENCY
 	int "BLE Slave Latency"
