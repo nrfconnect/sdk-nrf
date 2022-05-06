@@ -50,6 +50,13 @@
 #include <stdbool.h>
 
 #include "data_fifo.h"
+#include "sw_codec_select.h"
+
+/* Presentation delay defines in microseconds */
+/* Allow some buffer time to allow for HCI Transport etc */
+#define PRES_DLY_BUFFER_US 2500
+#define MAX_PRES_DLY_US 40000
+#define MIN_PRES_DLY_US ((DEC_TIME_US * CONFIG_BT_ISO_MAX_CHAN) + PRES_DLY_BUFFER_US)
 
 /**
  * @brief Mixes a tone into the I2S TX stream
@@ -66,6 +73,34 @@ int audio_datapath_tone_play(uint16_t freq, uint16_t dur_ms, float amplitude);
  * @brief Stops tone playback
  */
 void audio_datapath_tone_stop(void);
+
+/**
+ * @brief Set the presentation delay
+ *
+ * @param delay_us The presentation delay in µs
+ *
+ * @return 0 if successful, error otherwise
+ */
+int audio_datapath_pres_delay_us_set(uint32_t delay_us);
+
+/**
+ * @brief Get the current presentation delay
+ *
+ * @param delay_us  The presentation delay in µs
+ */
+void audio_datapath_pres_delay_us_get(uint32_t *delay_us);
+
+/**
+ * @brief Adjust timing to make sure audio data is sent just in time for BLE event
+ *
+ * @note  The time from last anchor point is checked and then blocks of 1ms
+ *        can be dropped to allow the sending of encoded data to be sent just
+ *        before the connection interval opens up. This is done to reduce overall
+ *        latency.
+ *
+ * @param[in]  sdu_ref_us  The sdu reference to the previous sent packet in µs
+ */
+void audio_datapath_just_in_time_check_and_adjust(uint32_t sdu_ref_us);
 
 /**
  * @brief Update sdu_ref_us so that drift compensation can work correctly

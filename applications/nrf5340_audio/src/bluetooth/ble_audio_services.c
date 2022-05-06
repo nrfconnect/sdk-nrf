@@ -10,7 +10,6 @@
 #include <zephyr/bluetooth/audio/vcs.h>
 #include <zephyr/bluetooth/audio/mics.h>
 #include "macros_common.h"
-#include "ble_acl_common.h"
 #include "ble_audio_services.h"
 #include "hw_codec.h"
 
@@ -72,7 +71,7 @@ static void vcs_state_cb_handler(struct bt_vcs *vcs, int err, uint8_t volume, ui
 #if (CONFIG_BT_VCS_CLIENT)
 	for (int i = 0; i < CONFIG_BT_MAX_CONN; i++) {
 		if (vcs == vcs_client_peer[i]) {
-			LOG_INF("VCS state from remote device %d:", i);
+			LOG_DBG("VCS state from remote device %d:", i);
 		} else {
 			ret = ble_vcs_client_remote_set(i);
 			/* If remote peer hasn't been connected before,
@@ -91,7 +90,7 @@ static void vcs_state_cb_handler(struct bt_vcs *vcs, int err, uint8_t volume, ui
 		}
 	}
 #endif /* (CONFIG_BT_VCS_CLIENT) */
-	LOG_INF("Volume = %d, mute state = %d", volume, mute);
+	LOG_DBG("Volume = %d, mute state = %d", volume, mute);
 	if (CONFIG_AUDIO_DEV == HEADSET) {
 		ret = hw_codec_volume_set(vcs_vol_conversion(volume));
 		ERR_CHK_MSG(ret, "Error setting HW codec volume");
@@ -114,7 +113,7 @@ static void vcs_flags_cb_handler(struct bt_vcs *vcs, int err, uint8_t flags)
 	if (err) {
 		LOG_ERR("VCS flag callback error: %d", err);
 	} else {
-		LOG_INF("Volume flags = 0x%01X", flags);
+		LOG_DBG("Volume flags = 0x%01X", flags);
 	}
 }
 

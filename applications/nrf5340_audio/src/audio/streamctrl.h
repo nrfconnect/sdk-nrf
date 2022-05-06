@@ -4,18 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/** @file streamctrl.h
- *  @brief Stream control - control transfer and processing of the audio streams
- *
- * This is the module responsible for "running the system" after initial setup.
- * The module assumes that before _start() is called
- * - hw has been initialized
- * - the ble subsystem has been initialized
- *
- * After being started, the module will handling setup and control of
- * user interface inputs, audio processing and audio transport.
- */
-
 #ifndef _STREAMCTRL_H_
 #define _STREAMCTRL_H_
 
@@ -24,24 +12,20 @@
 
 /* State machine states for peer/stream */
 enum stream_state {
-	STATE_CONNECTING,
-	STATE_CONNECTED,
-	STATE_LINK_READY,
 	STATE_STREAMING,
 	STATE_PAUSED,
-	STATE_DISCONNECTED,
 };
 
 /** @brief Get current streaming state
  *
- * @return      stream_state enum value
+ * @return      strm_state enum value
  */
 uint8_t stream_state_get(void);
 
 /** @brief Send encoded data over the stream
  *
- * @param data	Data to send
- * @param len	Length of data to send
+ * @param data  Data to send
+ * @param len   Length of data to send
  */
 void streamctrl_encoded_data_send(void const *const data, size_t len);
 
@@ -56,7 +40,7 @@ void streamctrl_encoded_data_send(void const *const data, size_t len);
  */
 void streamctrl_event_handler(void);
 
-/** @brief Start streamctrl
+/** @brief Init internal functionality and start streamctrl
  *
  *  @return 0 if successful.
  */

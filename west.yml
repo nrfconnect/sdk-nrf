@@ -31,6 +31,8 @@ manifest:
       url-base: https://github.com/NordicSemiconductor
     - name: memfault
       url-base: https://github.com/memfault
+    - name: erikrobstad
+      url-base: https://github.com/erikrobstad
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -51,6 +53,7 @@ manifest:
     - name: zephyr
       repo-path: sdk-zephyr
       revision: 78f2648f85e905e9dc1ebda68367b797ba75cd20
+
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above

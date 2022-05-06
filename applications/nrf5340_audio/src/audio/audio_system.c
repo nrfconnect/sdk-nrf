@@ -4,12 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "audio_codec.h"
+#include "audio_system.h"
 
 #include <zephyr/kernel.h>
 
 #include "macros_common.h"
-#include "streamctrl.h"
 #include "sw_codec_select.h"
 #include "audio_datapath.h"
 #include "audio_i2s.h"
@@ -20,9 +19,10 @@
 #include "contin_array.h"
 #include "pcm_stream_channel_modifier.h"
 #include "audio_usb.h"
+#include "streamctrl.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(audio_codec, CONFIG_LOG_AUDIO_CODEC_LEVEL);
+LOG_MODULE_REGISTER(audio_system, CONFIG_LOG_AUDIO_SYSTEM_LEVEL);
 
 #define FIFO_TX_BLOCK_COUNT (CONFIG_FIFO_FRAME_SPLIT_NUM * CONFIG_FIFO_TX_FRAME_COUNT)
 #define FIFO_RX_BLOCK_COUNT (CONFIG_FIFO_FRAME_SPLIT_NUM * CONFIG_FIFO_RX_FRAME_COUNT)
@@ -41,7 +41,52 @@ static struct sw_codec_config sw_codec_cfg;
 /* Buffer which can hold max 1 period test tone at 1000 Hz */
 static int16_t test_tone_buf[CONFIG_AUDIO_SAMPLE_RATE_HZ / 1000];
 static size_t test_tone_size;
-static bool audio_codec_started;
+
+static void audio_gateway_configure(void)
+{
+	if (IS_ENABLED(CONFIG_SW_CODEC_SBC)) {
+		sw_codec_cfg.sw_codec = SW_CODEC_SBC;
+	} else if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
+		sw_codec_cfg.sw_codec = SW_CODEC_LC3;
+	}
+
+#if (CONFIG_STREAM_BIDIRECTIONAL)
+	sw_codec_cfg.decoder.enabled = true;
+	sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
+#endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
+
+	if (IS_ENABLED(CONFIG_SW_CODEC_SBC)) {
+		sw_codec_cfg.encoder.bitrate = SBC_MONO_BITRATE;
+	} else if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
+		sw_codec_cfg.encoder.bitrate = CONFIG_LC3_BITRATE;
+	}
+
+	sw_codec_cfg.encoder.channel_mode = SW_CODEC_STEREO;
+	sw_codec_cfg.encoder.enabled = true;
+}
+
+static void audio_headset_configure(void)
+{
+	if (IS_ENABLED(CONFIG_SW_CODEC_SBC)) {
+		sw_codec_cfg.sw_codec = SW_CODEC_SBC;
+	} else if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
+		sw_codec_cfg.sw_codec = SW_CODEC_LC3;
+	}
+
+#if (CONFIG_STREAM_BIDIRECTIONAL)
+	sw_codec_cfg.encoder.enabled = true;
+	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
+
+	if (IS_ENABLED(CONFIG_SW_CODEC_SBC)) {
+		sw_codec_cfg.encoder.bitrate = CONFIG_SBC_MONO_BITRATE;
+	} else if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
+		sw_codec_cfg.encoder.bitrate = CONFIG_LC3_BITRATE;
+	}
+#endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
+
+	sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
+	sw_codec_cfg.decoder.enabled = true;
+}
 
 static void encoder_thread(void *arg1, void *arg2, void *arg3)
 {
@@ -117,45 +162,6 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 		}
 		STACK_USAGE_PRINT("encoder_thread", &encoder_thread_data);
 	}
-}
-
-/**@brief Initializes the fifos, the codec, and starts the i2s
- */
-static void audio_codec_start(void)
-{
-	int ret;
-
-	if (audio_codec_started) {
-		LOG_WRN("Audio codec already started");
-		return;
-	}
-
-	if (!fifo_tx.initialized) {
-		ret = data_fifo_init(&fifo_tx);
-		ERR_CHK_MSG(ret, "Failed to set up tx FIFO");
-	}
-
-	if (!fifo_rx.initialized) {
-		ret = data_fifo_init(&fifo_rx);
-		ERR_CHK_MSG(ret, "Failed to set up rx FIFO");
-	}
-
-	ret = sw_codec_init(sw_codec_cfg);
-	ERR_CHK_MSG(ret, "Failed to set up codec");
-
-	sw_codec_cfg.initialized = true;
-
-	if (sw_codec_cfg.encoder.enabled) {
-		encoder_thread_id =
-			k_thread_create(&encoder_thread_data, encoder_thread_stack,
-					CONFIG_ENCODER_STACK_SIZE, (k_thread_entry_t)encoder_thread,
-					NULL, NULL, NULL,
-					K_PRIO_PREEMPT(CONFIG_ENCODER_THREAD_PRIO), 0, K_NO_WAIT);
-		ret = k_thread_name_set(encoder_thread_id, "ENCODER");
-		ERR_CHK(ret);
-	}
-
-	audio_codec_started = true;
 }
 
 int audio_encode_test_tone_set(uint32_t freq)
@@ -263,91 +269,61 @@ int audio_decode(void const *const encoded_data, size_t encoded_data_size, bool 
 	return 0;
 }
 
-void audio_gateway_start(void)
+/**@brief Initializes the FIFOs, the codec, and starts the I2S
+ */
+void audio_system_start(void)
 {
 	int ret;
 
-	if (IS_ENABLED(CONFIG_SW_CODEC_SBC)) {
-		sw_codec_cfg.sw_codec = SW_CODEC_SBC;
-	} else if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
-		sw_codec_cfg.sw_codec = SW_CODEC_LC3;
+	if (CONFIG_AUDIO_DEV == HEADSET) {
+		audio_headset_configure();
+	} else if (CONFIG_AUDIO_DEV == GATEWAY) {
+		audio_gateway_configure();
+	} else {
+		LOG_ERR("Invalid CONFIG_AUDIO_DEV: %d", CONFIG_AUDIO_DEV);
+		ERR_CHK(-EINVAL);
 	}
 
-#if (CONFIG_STREAM_BIDIRECTIONAL)
-	sw_codec_cfg.decoder.enabled = true;
-	sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
-#endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
-
-	if (IS_ENABLED(CONFIG_SW_CODEC_SBC)) {
-		sw_codec_cfg.encoder.bitrate = SBC_MONO_BITRATE;
-	} else if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
-		sw_codec_cfg.encoder.bitrate = CONFIG_LC3_MONO_BITRATE;
+	if (!fifo_tx.initialized) {
+		ret = data_fifo_init(&fifo_tx);
+		ERR_CHK_MSG(ret, "Failed to set up tx FIFO");
 	}
 
-#if (CONFIG_TRANSPORT_CIS)
-	sw_codec_cfg.encoder.channel_mode = SW_CODEC_STEREO;
-#else
-	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
-#endif /* (CONFIG_TRANSPORT_CIS) */
-	sw_codec_cfg.encoder.enabled = true;
+	if (!fifo_rx.initialized) {
+		ret = data_fifo_init(&fifo_rx);
+		ERR_CHK_MSG(ret, "Failed to set up rx FIFO");
+	}
 
-	audio_codec_start();
+	ret = sw_codec_init(sw_codec_cfg);
+	ERR_CHK_MSG(ret, "Failed to set up codec");
 
-#if (CONFIG_AUDIO_SOURCE_USB)
+	sw_codec_cfg.initialized = true;
+
+	if (sw_codec_cfg.encoder.enabled && encoder_thread_id == NULL) {
+		encoder_thread_id =
+			k_thread_create(&encoder_thread_data, encoder_thread_stack,
+					CONFIG_ENCODER_STACK_SIZE, (k_thread_entry_t)encoder_thread,
+					NULL, NULL, NULL,
+					K_PRIO_PREEMPT(CONFIG_ENCODER_THREAD_PRIO), 0, K_NO_WAIT);
+		ret = k_thread_name_set(encoder_thread_id, "ENCODER");
+		ERR_CHK(ret);
+	}
+
+#if ((CONFIG_AUDIO_SOURCE_USB) && (CONFIG_AUDIO_DEV == GATEWAY))
 	ret = audio_usb_start(&fifo_tx, &fifo_rx);
 	ERR_CHK(ret);
-#elif CONFIG_AUDIO_SOURCE_I2S
+#else
 	ret = hw_codec_default_conf_enable();
 	ERR_CHK(ret);
 
 	ret = audio_datapath_start(&fifo_rx);
 	ERR_CHK(ret);
-#endif /* (CONFIG_AUDIO_SOURCE_USB) */
+#endif /* ((CONFIG_AUDIO_SOURCE_USB) && (CONFIG_AUDIO_DEV == GATEWAY))) */
 }
 
-void audio_headset_start(void)
+void audio_system_stop(void)
 {
 	int ret;
-
-	if (IS_ENABLED(CONFIG_SW_CODEC_SBC)) {
-		sw_codec_cfg.sw_codec = SW_CODEC_SBC;
-	} else if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
-		sw_codec_cfg.sw_codec = SW_CODEC_LC3;
-	}
-
-#if (CONFIG_STREAM_BIDIRECTIONAL)
-	sw_codec_cfg.encoder.enabled = true;
-	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
-
-	if (IS_ENABLED(CONFIG_SW_CODEC_SBC)) {
-		sw_codec_cfg.encoder.bitrate = CONFIG_SBC_MONO_BITRATE;
-	} else if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
-		sw_codec_cfg.encoder.bitrate = CONFIG_LC3_MONO_BITRATE;
-	}
-#endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
-
-	sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
-	sw_codec_cfg.decoder.enabled = true;
-
-	audio_codec_start();
-
-	ret = hw_codec_default_conf_enable();
-	ERR_CHK(ret);
-
-	ret = audio_datapath_start(&fifo_rx);
-	ERR_CHK(ret);
-}
-
-void audio_stop(void)
-{
-	int ret;
-
-	if (!audio_codec_started) {
-		LOG_WRN("Audio codec not started");
-		return;
-	}
-
-	audio_codec_started = false;
 
 	if (!sw_codec_cfg.initialized) {
 		LOG_WRN("Codec already unitialized");
@@ -355,10 +331,6 @@ void audio_stop(void)
 	}
 
 	LOG_DBG("Stopping codec");
-	/* Aborting encoder thread before uninitializing */
-	if (sw_codec_cfg.encoder.enabled) {
-		k_thread_abort(encoder_thread_id);
-	}
 
 #if ((CONFIG_AUDIO_DEV == GATEWAY) && CONFIG_AUDIO_SOURCE_USB)
 	audio_usb_stop();
@@ -374,9 +346,41 @@ void audio_stop(void)
 	ERR_CHK_MSG(ret, "Failed to uninit codec");
 	sw_codec_cfg.initialized = false;
 
-	/* This will force a reinit when starting audio again, ensuring that
-	 * previous data is overwritten
-	 */
-	fifo_tx.initialized = false;
-	fifo_rx.initialized = false;
+	data_fifo_empty(&fifo_rx);
+	data_fifo_empty(&fifo_tx);
+}
+
+void audio_system_fifo_rx_block_drop(void)
+{
+	int ret;
+	void *temp;
+	size_t temp_size;
+
+	ret = data_fifo_pointer_last_filled_get(&fifo_rx, &temp, &temp_size, K_NO_WAIT);
+	if (ret) {
+		LOG_WRN("Failed to get last filled block");
+	}
+
+	ret = data_fifo_block_free(&fifo_rx, &temp);
+	if (ret) {
+		LOG_WRN("Failed to free block");
+	}
+
+	LOG_DBG("Block dropped");
+}
+
+void audio_system_init(void)
+{
+	int ret;
+
+#if ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_USB))
+	ret = audio_usb_init();
+	ERR_CHK(ret);
+#else
+	ret = audio_datapath_init();
+	ERR_CHK(ret);
+	audio_i2s_init();
+	ret = hw_codec_init();
+	ERR_CHK(ret);
+#endif
 }
