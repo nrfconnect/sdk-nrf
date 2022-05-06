@@ -227,6 +227,7 @@ nRF9160 samples
       * Support for the GNSS features introduced in modem firmware v1.3.2.
         This includes several new fields in the PVT notification and a command to query the expiry times of assistance data.
       * Support for the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION` option.
+      * Device information is sent to nRF Cloud when connecting with MQTT using the ``cloud connect`` command.
 
     * Updated:
 

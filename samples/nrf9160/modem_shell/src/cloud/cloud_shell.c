@@ -32,6 +32,7 @@ static struct k_work_delayable cloud_reconnect_work;
 static struct k_work notify_pgps_work;
 #endif
 static struct k_work cloud_cmd_work;
+static struct k_work shadow_update_work;
 
 static char shell_cmd[CLOUD_CMD_MAX_LENGTH + 1];
 
@@ -130,6 +131,40 @@ end:
 	return ret;
 }
 
+/**
+ * @brief Updates the nRF Cloud shadow with information about supported capabilities.
+ */
+static void nrf_cloud_update_shadow(struct k_work *work)
+{
+	int err;
+	struct nrf_cloud_svc_info_ui ui_info = {
+#if defined(CONFIG_MOSH_LOCATION)
+		.gps = true, /* Show map on nrf cloud */
+#else
+		.gps = false,
+#endif
+	};
+	struct nrf_cloud_svc_info service_info = {
+		.ui = &ui_info
+	};
+	struct nrf_cloud_modem_info modem_info = {
+		.device = NRF_CLOUD_INFO_SET,
+		.network = NRF_CLOUD_INFO_SET,
+		.sim = NRF_CLOUD_INFO_SET,
+		.mpi = NULL /* Modem data will be fetched */
+	};
+	struct nrf_cloud_device_status device_status = {
+		.modem = &modem_info,
+		.svc = &service_info
+	};
+
+	ARG_UNUSED(work);
+	err = nrf_cloud_shadow_device_status_update(&device_status);
+	if (err) {
+		mosh_error("Failed to update device shadow, error: %d", err);
+	}
+}
+
 static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 {
 	int err = 0;
@@ -144,6 +179,7 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		break;
 	case NRF_CLOUD_EVT_READY:
 		mosh_print("NRF_CLOUD_EVT_READY");
+		k_work_submit_to_queue(&mosh_common_work_q, &shadow_update_work);
 		break;
 	case NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED:
 		mosh_print("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED");
@@ -233,6 +269,7 @@ static void cmd_cloud_connect(const struct shell *shell, size_t argc, char **arg
 		initialized = true;
 
 		k_work_init(&cloud_cmd_work, cloud_cmd_execute);
+		k_work_init(&shadow_update_work, nrf_cloud_update_shadow);
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 		k_work_init(&notify_pgps_work, notify_pgps);
 #endif
