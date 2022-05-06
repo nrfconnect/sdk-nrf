@@ -39,7 +39,7 @@ If TF-M is used in the application, SPM will not be included in it.
 For more information about multi-image builds, see :ref:`ug_multi_image`.
 
 To add TF-M to your build, enable the :kconfig:option:`CONFIG_BUILD_WITH_TFM` configuration option by adding it to your :file:`prj.conf` file.
-To build a :ref:`minimal version <tfm_minimal_build>` of TF-M, you must also enable the :kconfig:option:`CONFIG_TFM_MINIMAL` configuration.
+To build a :ref:`minimal version <tfm_minimal_build>` of TF-M, you must also enable the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` configuration.
 
 .. note::
    If you use menuconfig to enable :kconfig:option:`CONFIG_BUILD_WITH_TFM`, you must also enable its dependencies.
@@ -76,9 +76,9 @@ The secure services supported by this minimal version allow for generating rando
 This corresponds to the feature set provided by the :ref:`secure_partition_manager`.
 
 
-The minimal version of TF-M is enabled by setting the :kconfig:option:`CONFIG_TFM_MINIMAL` option.
+The minimal version of TF-M is enabled by setting the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` option.
 
-When :kconfig:option:`CONFIG_TFM_MINIMAL` is set, the configurability of TF-M is severely limited.
+When :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` is set, the configurability of TF-M is severely limited.
 Hence, it is not possible to modify the TF-M minimal configuration to create your own variant of the minimal configuration.
 Instead, the default configuration must be used as a starting point.
 

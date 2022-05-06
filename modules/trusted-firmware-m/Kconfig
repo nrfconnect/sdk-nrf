@@ -8,13 +8,15 @@
 # This is done to facilitate providing out-of-tree definitions of these
 # symbols. This is typically done to modify what options are exposed, and their
 # values. This repo (sdk-nrf) also includes TF-M as a module, and its
-# module definition takes presedence over that of zephyr. If TFM_MINIMAL
+# module definition takes presedence over that of zephyr. If TFM_PROFILE_TYPE_MINIMAL
 # is not set, we include the top level module Kconfig, which again includes
-# all parts of the TF-M module kconfig. If, however, TFM_MINIMAL is set,
+# all parts of the TF-M module kconfig. If, however, TFM_PROFILE_TYPE_MINIMAL is set,
 # only a subset of these kconfig files will be included.
 
+if BUILD_WITH_TFM
+
 config TFM_IPC
-	default y if TFM_MINIMAL
+	default y if TFM_PROFILE_TYPE_MINIMAL
 
 config TFM_BL2
 	bool
@@ -32,7 +34,10 @@ config TFM_SECURE_UART1
 	  option is selected the device tree node for UART1 needs to be
 	  disabled for the non-secure application.
 
-config TFM_MINIMAL
+choice TFM_PROFILE_TYPE
+	default TFM_PROFILE_TYPE_MINIMAL
+
+config TFM_PROFILE_TYPE_MINIMAL
 	bool "Use minimal TF-M build"
 	select PSA_DEFAULT_OFF
 	select TFM_LOG_LEVEL_SILENCE
@@ -42,10 +47,18 @@ config TFM_MINIMAL
 	  TF-M image can be done when this option is selected. If your application
 	  needs a different TF-M configuration you have to disable this option
 	  and reproduce the desired configuration through kconfig fragments.
+endchoice
+
+config TFM_EXPERIMENTAL
+	bool
+	select EXPERIMENTAL
+	default y if !TFM_PROFILE_TYPE_MINIMAL
+
+endif # BUILD_WITH_TFM
 
 source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm"
 
-if !TFM_MINIMAL
+if !TFM_PROFILE_TYPE_MINIMAL
 rsource "Kconfig.mbedtls.defconfig"
 
 # When enabling full TFM support, then partitions and crypto modules shall be available.
@@ -53,17 +66,17 @@ source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.partitions"
 source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules"
 endif
 
-if TFM_MINIMAL
+if TFM_PROFILE_TYPE_MINIMAL
 rsource "Kconfig.mbedtls_minimal.defconfig"
 rsource "Kconfig.tfm_minimal.defconfig"
-endif # TFM_MINIMAL
+endif # TFM_PROFILE_TYPE_MINIMAL
 
 if BUILD_WITH_TFM
 
 config PM_PARTITION_SIZE_TFM_SRAM
 	hex
-	prompt "Memory reserved for TFM_RAM." if !TFM_MINIMAL
-	default 0x10000 if TFM_MINIMAL
+	prompt "Memory reserved for TFM_RAM." if !TFM_PROFILE_TYPE_MINIMAL
+	default 0x10000 if TFM_PROFILE_TYPE_MINIMAL
 	default 0x16000 if SOC_NRF9160
 	default 0x40000 if SOC_NRF5340_CPUAPP
 	help
@@ -78,17 +91,17 @@ config PM_PARTITION_SIZE_BL2
 
 config PM_PARTITION_SIZE_TFM
 	hex
-	prompt  "Memory reserved for TFM" if !TFM_MINIMAL
-	default 0x10000 if TFM_MINIMAL && TFM_CMAKE_BUILD_TYPE_DEBUG
-	default 0x8000 if TFM_MINIMAL
+	prompt  "Memory reserved for TFM" if !TFM_PROFILE_TYPE_MINIMAL
+	default 0x10000 if TFM_PROFILE_TYPE_MINIMAL && TFM_CMAKE_BUILD_TYPE_DEBUG
+	default 0x8000 if TFM_PROFILE_TYPE_MINIMAL
 	# NCSDK-13503: Temporarily bump size while regressions are being fixed
 	default 0x60000 if TFM_REGRESSION_S
 	default 0x50000 if TFM_CMAKE_BUILD_TYPE_DEBUG
 	default 0x40000
 	help
 	  Memory set aside for the TFM partition. This size is fixed if
-	  TFM_MINIMAL is set. This is because no modification of the features
-	  supported by TF-M can be performed when TFM_MINIMAL is enabled.
+	  TFM_PROFILE_TYPE_MINIMAL is set. This is because no modification of the features
+	  supported by TF-M can be performed when TFM_PROFILE_TYPE_MINIMAL is enabled.
 
 config PM_PARTITION_SIZE_TFM_PROTECTED_STORAGE
 	hex "Memory reserved for TFM Protected Storage"
