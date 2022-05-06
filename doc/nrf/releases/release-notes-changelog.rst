@@ -60,6 +60,7 @@ Thread
 * Added support for the Link Metrics and CSL Thread v1.2 features for the nRF53 Series devices.
 * Removed support for the :ref:`thread_architectures_designs_cp_ncp` architecture and the related tools.
 * Memory requirements page shows requirements based on the configuration used for certification instead of minimal configuration which has been removed.
+* Updated "Configuring a radio co-processor" section on Thread Border Router page with the information about forcing Hardware Flow Control in JLink.
 
 Zigbee
 ------
