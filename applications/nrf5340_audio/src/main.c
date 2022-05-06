@@ -15,7 +15,6 @@
 #include "button_handler.h"
 #include "button_assignments.h"
 #include "nrfx_clock.h"
-#include "streamctrl.h"
 #include "ble_core.h"
 #include "pmic.h"
 #include "power_module.h"
@@ -146,8 +145,9 @@ void main(void)
 	ret = led_init();
 	ERR_CHK(ret);
 
-	ret = button_handler_init();
-	ERR_CHK(ret);
+	// TODO: Re-implement support for buttons
+	// ret = button_handler_init();
+	// ERR_CHK(ret);
 
 	ret = channel_assign_check();
 	ERR_CHK(ret);
@@ -202,14 +202,14 @@ void main(void)
 	ret = leds_set();
 	ERR_CHK(ret);
 
-	ret = streamctrl_start();
-	ERR_CHK(ret);
-
 	ret = audio_datapath_tone_play(440, 500, 0.2);
 	ERR_CHK(ret);
 
+	// TODO: Common function for all 4 device types (CIS/BIS gateway/headset)
+	// le_audio_run();
+
 	while (1) {
-		streamctrl_event_handler();
+		// TODO: Put something here?
 		STACK_USAGE_PRINT("main", &z_main_thread);
 	}
 }

@@ -18,7 +18,6 @@
 
 #include <zephyr/kernel.h>
 
-#include "ble_trans.h"
 #include "button_handler.h"
 
 /** @brief Event sources
@@ -40,8 +39,10 @@ struct event_t {
 	enum event_src event_source;
 
 	union {
+		// TODO: Change functionality since we have only button events now
+		// Maybe merge this file and button file?
+		// In other words remove the 'events' folder?
 		struct button_evt button_activity;
-		enum ble_evt_type link_activity;
 	};
 };
 

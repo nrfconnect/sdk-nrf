@@ -9,7 +9,6 @@
 #include <zephyr/kernel.h>
 
 #include "macros_common.h"
-#include "streamctrl.h"
 #include "sw_codec_select.h"
 #include "audio_datapath.h"
 #include "audio_i2s.h"
@@ -113,7 +112,8 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 
 		if (sw_codec_cfg.encoder.enabled) {
 			/* Send encoded data over IPM */
-			streamctrl_encoded_data_send(encoded_data, encoded_data_size);
+			// TODO: Change this
+			// streamctrl_encoded_data_send(encoded_data, encoded_data_size);
 		}
 		STACK_USAGE_PRINT("encoder_thread", &encoder_thread_data);
 	}

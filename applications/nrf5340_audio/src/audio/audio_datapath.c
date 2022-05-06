@@ -56,7 +56,6 @@
 #include "led.h"
 #include "audio_i2s.h"
 #include "sw_codec_select.h"
-#include "streamctrl.h"
 #include "audio_sync_timer.h"
 #include "tone.h"
 #include "contin_array.h"
@@ -615,7 +614,8 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts, uint32_t *r
 					 .fifo[next_out_blk_idx * BLK_MONO_SIZE_OCTETS];
 
 		} else {
-			if (stream_state_get() == STATE_STREAMING) {
+			// TODO: Change this
+			// if (stream_state_get() == STATE_STREAMING) {
 				underrun_condition = true;
 				ctrl_blk.out.total_blk_underruns++;
 
@@ -624,7 +624,7 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts, uint32_t *r
 					LOG_WRN("In I2S TX underrun condition, total: %d",
 						ctrl_blk.out.total_blk_underruns);
 				}
-			}
+			// }
 
 			/* No data available in out.fifo
 			 * use alternative buffers
