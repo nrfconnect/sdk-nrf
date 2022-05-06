@@ -24,6 +24,7 @@ Building with the VS Code extension
 |vsc_extension_instructions|
 
 For instructions specifically for building, see `Building an application`_.
+If you want to build and program with custom options, read about the advanced `Custom launch and debug configurations`_ and `Application-specific flash options`_.
 
 .. _gs_programming_ses:
 

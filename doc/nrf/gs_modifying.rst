@@ -27,10 +27,10 @@ When loaded, the application can reference items provided by both Zephyr and the
 Loading Zephyr's `CMake`_ package creates the ``app`` CMake target.
 You can add application source files to this target from the application :file:`CMakeLists.txt` file.
 
-To update the :file:`CMakeLists.txt` file, either edit it directly or use |SES| (SES) to maintain it.
+Editing CMakeLists.txt
+======================
 
-Editing CMakeLists.txt directly
-===============================
+To update the :file:`CMakeLists.txt` file, edit it directly.
 
 You can add source files to the ``app`` CMake target with the :c:func:`target_sources` function provided by CMake.
 
@@ -111,6 +111,16 @@ These options can be found under Zephyr's menuconfig :guilabel:`Build and Link F
 For example, to turn off optimizations, select :kconfig:option:`CONFIG_NO_OPTIMIZATIONS`.
 
 Compiler options not controlled by the Zephyr build system can be controlled through the :kconfig:option:`CONFIG_COMPILER_OPT` Kconfig option.
+
+VS Code extension compiler settings
+===================================
+
+.. modify_vsc_compiler_options_start
+
+The |VSC| extension lets you build and program with custom options.
+For more information, read about the advanced `Custom launch and debug configurations`_ and `Application-specific flash options`_ in the extension documentation.
+
+.. modify_vsc_compiler_options_end
 
 .. _configure_application:
 
@@ -210,8 +220,12 @@ This means that this file is available when building the application, but it is 
 To quickly test different configuration options, or to build your application in different variants, you can update the :file:`.config` file in the build directory.
 Changes are picked up immediately, and you do not need to re-open the project in SES.
 
-While it is possible to edit the :file:`.config` file directly, you should use SES or a tool like menuconfig or guiconfig to update it.
+While it is possible to edit the :file:`.config` file directly, you should use the nRF Kconfig GUI in |VSC| or a tool like menuconfig or guiconfig to update it.
 These tools present all available options and allow you to select the ones that you need.
+
+The nRF Kconfig GUI in |VSC| organizes the Kconfig options in a hierarchical list and lets you select the desired options.
+To save the changes made using the nRF Kconfig GUI, click the :guilabel:`Save` button.
+Read the `nRF Kconfig`_ documentation for more information.
 
 To edit the file in SES, select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project`.
 If your application contains more than one image (see :ref:`ug_multi_image`), you must select the correct target.
@@ -220,7 +234,7 @@ The other options allow you to configure the child images.
 
 See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run menuconfig or guiconfig.
 
-To locate a specific configuration option, use the filter (:guilabel:`Jump to` in menuconfig and guiconfig).
+To locate a specific configuration option, use the filter (:guilabel:`Search modules` field in the nRF Kconfig GUI or :guilabel:`Jump to` in menuconfig and guiconfig).
 The documentation for each :ref:`configuration option <configuration_options>` also lists the menu path where the option can be found.
 
 Changing the configuration permanently
@@ -242,13 +256,15 @@ If you work with SES, the :file:`prj.conf` file is read when you open a project.
 The file will be reloaded when CMake re-runs.
 This will happen automatically when the application is rebuilt, but can also be requested manually by using the :guilabel:`Project` > :guilabel:`Run CMake...` option.
 
-.. _configuring_vsc:
+If you work with |VSC|, you can use one of the following options:
 
-Configuring in the VS Code extension
-====================================
+* Select an extra Kconfig fragment file when `Building an application`_.
+* Edit the Kconfig options using the nRF Kconfig GUI and save changes permanently to an existing or new :file:`prj.conf` file.
+  See the extension's documentation for more information.
 
-The |VSC| extension lets you modify your build configuration for custom boards, add additional CMake build arguments, select Kconfig fragments, and more.
-For detailed instructions, see the `nRF Connect for Visual Studio Code`_ documentation site.
+The :file:`prj.conf` file is read when you open a project.
+The file will be reloaded when CMake re-runs.
+This will happen automatically when the application is rebuilt.
 
 .. _cmake_options:
 
@@ -265,6 +281,9 @@ If you work with SES, you can specify global CMake options that are used for all
 * Specify project-specific CMake options when opening the |NCS| project.
   Click :guilabel:`File` > :guilabel:`Open nRF Connect SDK project`, select :guilabel:`Extended Settings`, and specify the options in the :guilabel:`Extra CMake Build Options` field.
   This field is prepopulated with the global CMake options, and you can modify them, remove them, or add to them for the current project.
+
+If you work with the |VSC| extension, you can specify project-specific CMake options when you add the build configuration for a new |NCS| project.
+See `Building an application`_ in the |VSC| documentation.
 
 If you work on the command line, pass the additional options to the ``west build`` command.
 The options must be added after a ``--`` at the end of the command.

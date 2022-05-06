@@ -120,12 +120,16 @@
 .. _`Getting started guide for nRF Asset Tracker for Azure`: https://nordicsemiconductor.github.io/asset-tracker-cloud-docs/v1.8.x/docs/azure/GettingStarted/Index.html
 
 .. _`nRF Connect for Visual Studio Code`: https://nrfconnect.github.io/vscode-nrf-connect
+.. _`nRF Kconfig`: https://nrfconnect.github.io/vscode-nrf-connect/kconfig/nrfkconfig.html
 .. _`Installing on Linux`: https://nrfconnect.github.io/vscode-nrf-connect/connect/install.html#installing-on-linux
 .. _`Creating an application`: https://nrfconnect.github.io/vscode-nrf-connect/connect/create_app.html
 .. _`Building an application`: https://nrfconnect.github.io/vscode-nrf-connect/connect/build_app.html
 .. _`Testing an application`: https://nrfconnect.github.io/vscode-nrf-connect/connect/test_app.html
 .. _`Debugging an application`: https://nrfconnect.github.io/vscode-nrf-connect/connect/debug_app.html
 .. _`West integration`: https://nrfconnect.github.io/vscode-nrf-connect/connect/west.html
+.. _`Custom launch and debug configurations`: https://nrfconnect.github.io/vscode-nrf-connect/connect/advanced_features.html#custom-launch-and-debug-configurations
+.. _`Application-specific flash options`: https://nrfconnect.github.io/vscode-nrf-connect/connect/advanced_features.html#application-specific-flash-options
+.. _`nRF Terminal documentation`: https://nrfconnect.github.io/vscode-nrf-connect/terminal/nrfterminal.html
 
 .. ### Source: developer.nordicsemi.com
 
