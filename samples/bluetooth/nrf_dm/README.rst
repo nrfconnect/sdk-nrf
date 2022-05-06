@@ -34,10 +34,23 @@ The synchronisation step has two goals:
 This sample synchronizes devices using the scan and advertising facilities of the Bluetooth LE.
 Anchoring occurs after the exchange of ``SCAN_REQ`` and ``SCAN_RSP`` packets.
 
-.. figure:: images/sync.svg
-   :alt: Synchronisation process
+.. msc::
+   hscale = "1.3";
+   DevA [label="Device A"],DevB [label="Device B"];
+   |||;
+   DevA rbox DevB [label="Synchronization starts"];
+   |||;
+   DevA=>DevB [label="ADV_IND"];
+   DevA<=DevB [label="SCAN_REQ"];
+   DevA=>DevB [label="SCAN_RSP, Manufacturer-specific data"];
+   |||;
+   DevA rbox DevB [label="Synchronization ends"];
+   |||;
+   DevA box DevA [label="Reflector"],DevB box DevB [label="Initiator"];
+   |||;
+   DevA<=>DevB [label="Ranging"];
 
-   Synchronisation process
+The chart shows the sequence of the synchronization process.
 
 Both devices act as an advertiser and a scanner.
 Device B receives advertising from Device A and scans it.
