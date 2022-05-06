@@ -1257,34 +1257,6 @@ void bt_rpc_auth_cb_pairing_confirm(struct bt_conn *conn)
 				&ctx, ser_rsp_decode_void, NULL);
 }
 
-void bt_rpc_auth_cb_pairing_complete(struct bt_conn *conn, bool bonded)
-{
-	struct nrf_rpc_cbor_ctx ctx;
-	size_t buffer_size_max = 4;
-
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
-
-	bt_rpc_encode_bt_conn(&ctx.encoder, conn);
-	ser_encode_bool(&ctx.encoder, bonded);
-
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_RPC_AUTH_CB_PAIRING_COMPLETE_RPC_CMD,
-				&ctx, ser_rsp_decode_void, NULL);
-}
-
-void bt_rpc_auth_cb_pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
-{
-	struct nrf_rpc_cbor_ctx ctx;
-	size_t buffer_size_max = 8;
-
-	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
-
-	bt_rpc_encode_bt_conn(&ctx.encoder, conn);
-	ser_encode_uint(&ctx.encoder, (uint32_t)reason);
-
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_RPC_AUTH_CB_PAIRING_FAILED_RPC_CMD,
-				&ctx, ser_rsp_decode_void, NULL);
-}
-
 static int bt_conn_auth_cb_register_on_remote(uint16_t flags)
 {
 	if (flags & FLAG_AUTH_CB_IS_NULL) {
@@ -1306,10 +1278,6 @@ static int bt_conn_auth_cb_register_on_remote(uint16_t flags)
 	remote_auth_cb.cancel = (flags & FLAG_CANCEL_PRESENT) ? bt_rpc_auth_cb_cancel : NULL;
 	remote_auth_cb.pairing_confirm = (flags & FLAG_PAIRING_CONFIRM_PRESENT) ?
 					 bt_rpc_auth_cb_pairing_confirm : NULL;
-	remote_auth_cb.pairing_complete = (flags & FLAG_PAIRING_COMPLETE_PRESENT) ?
-					  bt_rpc_auth_cb_pairing_complete : NULL;
-	remote_auth_cb.pairing_failed = (flags & FLAG_PAIRING_FAILED_PRESENT) ?
-					bt_rpc_auth_cb_pairing_failed : NULL;
 
 	return bt_conn_auth_cb_register(&remote_auth_cb);
 }
@@ -1337,6 +1305,116 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_auth_cb_register_on_remote,
 			 BT_CONN_AUTH_CB_REGISTER_ON_REMOTE_RPC_CMD,
 			 bt_conn_auth_cb_register_on_remote_rpc_handler, NULL);
+
+static struct bt_conn_auth_info_cb remote_auth_info_cb;
+
+void bt_rpc_auth_info_cb_pairing_complete(struct bt_conn *conn, bool bonded)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	size_t buffer_size_max = 4;
+
+	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+
+	bt_rpc_encode_bt_conn(&ctx.encoder, conn);
+	ser_encode_bool(&ctx.encoder, bonded);
+
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_RPC_AUTH_INFO_CB_PAIRING_COMPLETE_RPC_CMD,
+				&ctx, ser_rsp_decode_void, NULL);
+}
+
+void bt_rpc_auth_info_cb_pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	size_t buffer_size_max = 8;
+
+	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+
+	bt_rpc_encode_bt_conn(&ctx.encoder, conn);
+	ser_encode_uint(&ctx.encoder, (uint32_t)reason);
+
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_RPC_AUTH_INFO_CB_PAIRING_FAILED_RPC_CMD,
+				&ctx, ser_rsp_decode_void, NULL);
+}
+
+void bt_rpc_auth_info_cb_bond_deleted(uint8_t id, const bt_addr_le_t *peer)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	size_t buffer_size_max = 3;
+
+	buffer_size_max += peer ? sizeof(bt_addr_le_t) : 0;
+
+	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+
+	ser_encode_uint(&ctx.encoder, id);
+	ser_encode_buffer(&ctx.encoder, peer, sizeof(bt_addr_le_t));
+
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_RPC_AUTH_INFO_CB_BOND_DELETED_RPC_CMD,
+				&ctx, ser_rsp_decode_void, NULL);
+}
+
+static int bt_conn_auth_info_cb_register_on_remote(uint16_t flags)
+{
+	if (flags & FLAG_AUTH_CB_IS_NULL) {
+		return bt_conn_auth_info_cb_register(NULL);
+	}
+
+	remote_auth_info_cb.pairing_complete = (flags & FLAG_PAIRING_COMPLETE_PRESENT) ?
+						bt_rpc_auth_info_cb_pairing_complete : NULL;
+	remote_auth_info_cb.pairing_failed = (flags & FLAG_PAIRING_FAILED_PRESENT) ?
+					      bt_rpc_auth_info_cb_pairing_failed : NULL;
+	remote_auth_info_cb.bond_deleted = (flags & FLAG_BOND_DELETED_PRESENT) ?
+					    bt_rpc_auth_info_cb_bond_deleted : NULL;
+
+	return bt_conn_auth_info_cb_register(&remote_auth_info_cb);
+}
+
+static void bt_conn_auth_info_cb_register_on_remote_rpc_handler(CborValue *value,
+								void *handler_data)
+{
+	uint16_t flags;
+	int result;
+
+	flags = ser_decode_uint(value);
+
+	if (!ser_decoding_done_and_check(value)) {
+		goto decoding_error;
+	}
+
+	result = bt_conn_auth_info_cb_register_on_remote(flags);
+
+	ser_rsp_send_int(result);
+
+	return;
+decoding_error:
+	report_decoding_error(BT_CONN_AUTH_INFO_CB_REGISTER_ON_REMOTE_RPC_CMD, handler_data);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_auth_info_cb_register_on_remote,
+			 BT_CONN_AUTH_INFO_CB_REGISTER_ON_REMOTE_RPC_CMD,
+			 bt_conn_auth_info_cb_register_on_remote_rpc_handler, NULL);
+
+static void bt_conn_auth_info_cb_unregister_on_remote_rpc_handler(CborValue *value,
+								  void *handler_data)
+{
+	int result;
+
+	if (!ser_decoding_done_and_check(value)) {
+		goto decoding_error;
+	}
+
+	result = bt_conn_auth_info_cb_unregister(&remote_auth_info_cb);
+
+	ser_rsp_send_int(result);
+
+	return;
+
+decoding_error:
+	report_decoding_error(BT_CONN_AUTH_INFO_CB_UNREGISTER_ON_REMOTE_RPC_CMD, handler_data);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_auth_info_cb_unregister_on_remote,
+			 BT_CONN_AUTH_INFO_CB_UNREGISTER_ON_REMOTE_RPC_CMD,
+			 bt_conn_auth_info_cb_unregister_on_remote_rpc_handler, NULL);
 
 static void bt_conn_auth_passkey_entry_rpc_handler(CborValue *value, void *handler_data)
 {

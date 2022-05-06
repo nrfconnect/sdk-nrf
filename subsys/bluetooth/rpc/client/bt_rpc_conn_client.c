@@ -241,7 +241,7 @@ const bt_addr_le_t *bt_conn_get_dst(const struct bt_conn *conn)
 	}
 }
 
-uint8_t bt_conn_index(struct bt_conn *conn)
+uint8_t bt_conn_index(const struct bt_conn *conn)
 {
 	return get_conn_index(conn);
 }
@@ -1513,60 +1513,6 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_pairing_confirm,
 			 BT_RPC_AUTH_CB_PAIRING_CONFIRM_RPC_CMD,
 			 bt_rpc_auth_cb_pairing_confirm_rpc_handler, NULL);
 
-static void bt_rpc_auth_cb_pairing_complete_rpc_handler(CborValue *value, void *handler_data)
-{
-	struct bt_conn *conn;
-	bool bonded;
-
-	conn = bt_rpc_decode_bt_conn(value);
-	bonded = ser_decode_bool(value);
-
-	if (!ser_decoding_done_and_check(value)) {
-		goto decoding_error;
-	}
-
-	if (auth_cb && auth_cb->pairing_complete) {
-		auth_cb->pairing_complete(conn, bonded);
-	}
-
-	ser_rsp_send_void();
-
-	return;
-decoding_error:
-	report_decoding_error(BT_RPC_AUTH_CB_PAIRING_COMPLETE_RPC_CMD, handler_data);
-}
-
-NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_pairing_complete,
-			 BT_RPC_AUTH_CB_PAIRING_COMPLETE_RPC_CMD,
-			 bt_rpc_auth_cb_pairing_complete_rpc_handler, NULL);
-
-static void bt_rpc_auth_cb_pairing_failed_rpc_handler(CborValue *value, void *handler_data)
-{
-	struct bt_conn *conn;
-	enum bt_security_err reason;
-
-	conn = bt_rpc_decode_bt_conn(value);
-	reason = (enum bt_security_err)ser_decode_uint(value);
-
-	if (!ser_decoding_done_and_check(value)) {
-		goto decoding_error;
-	}
-
-	if (auth_cb && auth_cb->pairing_failed) {
-		auth_cb->pairing_failed(conn, reason);
-	}
-
-	ser_rsp_send_void();
-
-	return;
-decoding_error:
-	report_decoding_error(BT_RPC_AUTH_CB_PAIRING_FAILED_RPC_CMD, handler_data);
-}
-
-NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_cb_pairing_failed,
-			 BT_RPC_AUTH_CB_PAIRING_FAILED_RPC_CMD,
-			 bt_rpc_auth_cb_pairing_failed_rpc_handler, NULL);
-
 int bt_conn_auth_cb_register_on_remote(uint16_t flags)
 {
 	struct nrf_rpc_cbor_ctx ctx;
@@ -1598,8 +1544,6 @@ int bt_conn_auth_cb_register(const struct bt_conn_auth_cb *cb)
 		flags |= cb->oob_data_request ? FLAG_OOB_DATA_REQUEST_PRESENT : 0;
 		flags |= cb->cancel ? FLAG_CANCEL_PRESENT : 0;
 		flags |= cb->pairing_confirm ? FLAG_PAIRING_CONFIRM_PRESENT : 0;
-		flags |= cb->pairing_complete ? FLAG_PAIRING_COMPLETE_PRESENT : 0;
-		flags |= cb->pairing_failed ? FLAG_PAIRING_FAILED_PRESENT : 0;
 	} else {
 		flags = FLAG_AUTH_CB_IS_NULL;
 	}
@@ -1611,6 +1555,181 @@ int bt_conn_auth_cb_register(const struct bt_conn_auth_cb *cb)
 	}
 
 	return res;
+}
+
+sys_slist_t bt_auth_info_cbs = SYS_SLIST_STATIC_INIT(&bt_auth_info_cbs);
+
+void bt_rpc_auth_info_cb_bond_deleted_rpc_handler(CborValue *value, void *handler_data)
+{
+	uint8_t id;
+	bt_addr_le_t peer_data;
+	const bt_addr_le_t *peer;
+	struct bt_conn_auth_info_cb *info_cb;
+
+	id = ser_decode_uint(value);
+	peer = ser_decode_buffer(value, &peer_data, sizeof(bt_addr_le_t));
+
+	if (!ser_decoding_done_and_check(value)) {
+		goto decoding_error;
+	}
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&bt_auth_info_cbs, info_cb, node) {
+		if (info_cb->bond_deleted) {
+			info_cb->bond_deleted(id, peer);
+		}
+	}
+
+	ser_rsp_send_void();
+
+decoding_error:
+	report_decoding_error(BT_RPC_AUTH_INFO_CB_BOND_DELETED_RPC_CMD, handler_data);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_info_cb_bond_deleted,
+			 BT_RPC_AUTH_INFO_CB_BOND_DELETED_RPC_CMD,
+			 bt_rpc_auth_info_cb_bond_deleted_rpc_handler, NULL);
+
+static void bt_rpc_auth_info_cb_pairing_complete_rpc_handler(CborValue *value, void *handler_data)
+{
+	struct bt_conn *conn;
+	struct bt_conn_auth_info_cb *info_cb;
+	bool bonded;
+
+	conn = bt_rpc_decode_bt_conn(value);
+	bonded = ser_decode_bool(value);
+
+	if (!ser_decoding_done_and_check(value)) {
+		goto decoding_error;
+	}
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&bt_auth_info_cbs, info_cb, node) {
+		if (info_cb->pairing_complete) {
+			info_cb->pairing_complete(conn, bonded);
+		}
+	}
+
+	ser_rsp_send_void();
+
+	return;
+decoding_error:
+	report_decoding_error(BT_RPC_AUTH_INFO_CB_PAIRING_COMPLETE_RPC_CMD, handler_data);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_info_cb_pairing_complete,
+			 BT_RPC_AUTH_INFO_CB_PAIRING_COMPLETE_RPC_CMD,
+			 bt_rpc_auth_info_cb_pairing_complete_rpc_handler, NULL);
+
+static void bt_rpc_auth_info_cb_pairing_failed_rpc_handler(CborValue *value, void *handler_data)
+{
+	struct bt_conn *conn;
+	struct bt_conn_auth_info_cb *info_cb;
+	enum bt_security_err reason;
+
+	conn = bt_rpc_decode_bt_conn(value);
+	reason = (enum bt_security_err)ser_decode_uint(value);
+
+	if (!ser_decoding_done_and_check(value)) {
+		goto decoding_error;
+	}
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&bt_auth_info_cbs, info_cb, node) {
+		if (info_cb->pairing_failed) {
+			info_cb->pairing_failed(conn, reason);
+		}
+	}
+
+	ser_rsp_send_void();
+
+	return;
+decoding_error:
+	report_decoding_error(BT_RPC_AUTH_INFO_CB_PAIRING_FAILED_RPC_CMD, handler_data);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_auth_info_cb_pairing_failed,
+			 BT_RPC_AUTH_INFO_CB_PAIRING_FAILED_RPC_CMD,
+			 bt_rpc_auth_info_cb_pairing_failed_rpc_handler, NULL);
+
+int bt_conn_auth_info_cb_register_on_remote(uint16_t flags)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	int result;
+	size_t buffer_size_max = 3;
+
+	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+
+	ser_encode_uint(&ctx.encoder, flags);
+
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_AUTH_INFO_CB_REGISTER_ON_REMOTE_RPC_CMD,
+				&ctx, ser_rsp_decode_i32, &result);
+
+	return result;
+}
+
+int bt_conn_auth_info_cb_register(struct bt_conn_auth_info_cb *cb)
+{
+	int res;
+	uint16_t flags = 0;
+	bool register_on_remote = sys_slist_is_empty(&bt_auth_info_cbs);
+
+	/* We need to register callback on the remote side only once. */
+	if (!register_on_remote) {
+		if (cb == NULL) {
+			return -EINVAL;
+		}
+
+		sys_slist_append(&bt_auth_info_cbs, &cb->node);
+
+		return 0;
+	}
+
+	if (cb != NULL) {
+		flags |= cb->pairing_complete ? FLAG_PAIRING_COMPLETE_PRESENT : 0;
+		flags |= cb->pairing_failed ? FLAG_PAIRING_FAILED_PRESENT : 0;
+		flags |= cb->bond_deleted ? FLAG_BOND_DELETED_PRESENT : 0;
+	} else {
+		flags = FLAG_AUTH_CB_IS_NULL;
+	}
+
+	res = bt_conn_auth_info_cb_register_on_remote(flags);
+	if (res == 0) {
+		sys_slist_append(&bt_auth_info_cbs, &cb->node);
+	}
+
+	return res;
+}
+
+int bt_conn_auth_info_cb_unregister_on_remote(void)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	int result;
+	size_t buffer_size_max = 0;
+
+	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_AUTH_INFO_CB_UNREGISTER_ON_REMOTE_RPC_CMD,
+				&ctx, ser_rsp_decode_i32, &result);
+
+	return result;
+}
+
+int bt_conn_auth_info_cb_unregister(struct bt_conn_auth_info_cb *cb)
+{
+	if (cb == NULL) {
+		return -EINVAL;
+	}
+
+	if (!sys_slist_find_and_remove(&bt_auth_info_cbs, &cb->node)) {
+		return -EALREADY;
+	}
+
+	/* If all callbacks are unregistered,
+	 * we need also unregister callback on the remote side.
+	 */
+	if (sys_slist_is_empty(&bt_auth_info_cbs)) {
+		return bt_conn_auth_info_cb_unregister_on_remote();
+	}
+
+	return 0;
 }
 
 int bt_conn_auth_passkey_entry(struct bt_conn *conn, unsigned int passkey)
