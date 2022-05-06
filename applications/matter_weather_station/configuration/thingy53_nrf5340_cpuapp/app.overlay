@@ -69,8 +69,18 @@
 		nordic,pm-ext-flash = &mx25r64;
 	};
 
+	pwmbuzzer {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		buzzer: buzzer_pwm {
+			pwms = <&pwm1 0x2f>;
+			label = "PWM_1";
+		};
+	};
+
 	aliases {
-		buzzer-pwm = &pwm1;
+		buzzer-pwm = &buzzer;
 	};
 };
 
