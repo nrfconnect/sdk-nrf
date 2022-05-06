@@ -60,7 +60,7 @@ set_property(TARGET zephyr_property_target
   )
 
 
-if (CONFIG_TFM_MINIMAL)
+if (CONFIG_TFM_PROFILE_TYPE_MINIMAL)
   set_property(TARGET zephyr_property_target
     APPEND PROPERTY TFM_CMAKE_OPTIONS
     -DPLATFORM_DEFAULT_ATTEST_HAL=OFF
