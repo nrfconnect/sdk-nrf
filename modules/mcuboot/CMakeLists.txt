@@ -169,10 +169,6 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       ${SIGN_ARG_SIGNED_BIN_FILE_IN}
       ${test_update_hex}
 
-      # Add Zigbee OTA header to signed application
-      COMMAND
-      ${zb_add_ota_header_cmd}
-
       DEPENDS
       ${SIGN_ARG_DEPENDS}
       ${update_bin}
@@ -315,23 +311,6 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       --version     ${CONFIG_MCUBOOT_IMAGE_VERSION}
       --pad-header
       )
-
-    if(CONFIG_ZIGBEE AND CONFIG_ZIGBEE_FOTA)
-      set(zb_add_ota_header_cmd
-        ${PYTHON_EXECUTABLE}
-        ${NRF_DIR}/scripts/bootloader/zb_add_ota_header.py
-        --application ${PROJECT_BINARY_DIR}/${app_core_binary_name}
-        --application-version-string ${CONFIG_MCUBOOT_IMAGE_VERSION}
-        --zigbee-manufacturer-id ${CONFIG_ZIGBEE_FOTA_MANUFACTURER_ID}
-        --zigbee-image-type ${CONFIG_ZIGBEE_FOTA_IMAGE_TYPE}
-        --zigbee-comment ${CONFIG_ZIGBEE_FOTA_COMMENT}
-        --zigbee-ota-min-hw-version ${CONFIG_ZIGBEE_FOTA_MIN_HW_VERSION}
-        --zigbee-ota-max-hw-version ${CONFIG_ZIGBEE_FOTA_MAX_HW_VERSION}
-        --out-directory ${PROJECT_BINARY_DIR}
-        )
-      else()
-        set(zb_add_ota_header_cmd "")
-      endif(CONFIG_ZIGBEE AND CONFIG_ZIGBEE_FOTA)
 
     set(app_offset $<TARGET_PROPERTY:partition_manager,app_TO_SECONDARY>)
 
@@ -588,6 +567,36 @@ if (CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
 
   add_dependencies(dfu_multi_image_pkg ${dfu_multi_image_targets})
 endif()
+
+if(CONFIG_ZIGBEE AND CONFIG_ZIGBEE_FOTA)
+  if (CONFIG_ZIGBEE_FOTA_GENERATE_LEGACY_IMAGE_TYPE)
+    set(firmware_binary "${PROJECT_BINARY_DIR}/${app_core_binary_name}")
+    set(legacy_cmd "--legacy")
+  elseif(CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
+    set(firmware_binary "${PROJECT_BINARY_DIR}/dfu_multi_image.bin")
+    set(legacy_cmd )
+  else()
+    message(FATAL_ERROR "No Zigbee FOTA image format selected. Please enable either legacy or the multi-image format.")
+  endif()
+
+  add_custom_target(zigbee_ota_image ALL
+    COMMAND
+    ${PYTHON_EXECUTABLE}
+      ${NRF_DIR}/scripts/bootloader/zb_add_ota_header.py
+      --application ${firmware_binary}
+      --application-version-string ${CONFIG_MCUBOOT_IMAGE_VERSION}
+      --zigbee-manufacturer-id ${CONFIG_ZIGBEE_FOTA_MANUFACTURER_ID}
+      --zigbee-image-type ${CONFIG_ZIGBEE_FOTA_IMAGE_TYPE}
+      --zigbee-comment ${CONFIG_ZIGBEE_FOTA_COMMENT}
+      --zigbee-ota-min-hw-version ${CONFIG_ZIGBEE_FOTA_MIN_HW_VERSION}
+      --zigbee-ota-max-hw-version ${CONFIG_ZIGBEE_FOTA_MAX_HW_VERSION}
+      --out-directory ${PROJECT_BINARY_DIR}
+      ${legacy_cmd}
+
+    DEPENDS
+    ${firmware_binary}
+  )
+endif(CONFIG_ZIGBEE AND CONFIG_ZIGBEE_FOTA)
 
 # Zephyr has a Kconfig option used for signing an application image
 # with MCUboot using west sign. If partition manager is in use and
