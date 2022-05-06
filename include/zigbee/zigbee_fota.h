@@ -36,10 +36,6 @@ enum zigbee_fota_evt_id {
 	ZIGBEE_FOTA_EVT_PROGRESS,
 	/** Zigbee FOTA download finished. */
 	ZIGBEE_FOTA_EVT_FINISHED,
-	/** Zigbee FOTA download erase pending. */
-	ZIGBEE_FOTA_EVT_ERASE_PENDING,
-	/** Zigbee FOTA download erase done. */
-	ZIGBEE_FOTA_EVT_ERASE_DONE,
 	/** Zigbee FOTA download error. */
 	ZIGBEE_FOTA_EVT_ERROR,
 };

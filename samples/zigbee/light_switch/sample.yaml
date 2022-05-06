@@ -23,18 +23,20 @@ tests:
     tags: ci_build current_measurement
   sample.zigbee.light_switch.fota:
     build_only: true
-    extra_args: DOVERLAY_CONFIG=overlay-fota.conf
+    extra_args: CONF_FILE=prj_fota.conf
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf21540dk_nrf52840
-    platform_allow: nrf52840dk_nrf52840 nrf21540dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf21540dk_nrf52840 nrf5340dk_nrf5340_cpuapp
     tags: ci_build smoke
   sample.zigbee.light_switch.fota_and_multiprotocol:
     build_only: true
-    extra_args: DOVERLAY_CONFIG=overlay-fota.conf DOVERLAY_CONFIG=overlay-multiprotocol_ble.conf
+    extra_args: CONF_FILE=prj_fota.conf DOVERLAY_CONFIG=overlay-multiprotocol_ble.conf
     integration_platforms:
       - nrf52840dk_nrf52840
-    platform_allow: nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
     tags: ci_build
   sample.zigbee.light_switch.multiprotocol:
     build_only: true

@@ -105,18 +105,29 @@ You can find the configuration files in the :file:`samples/zigbee/light_switch` 
 Activating optional extensions
 ------------------------------
 
-To activate the optional extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` as follows:
+To activate the :ref:`lib_zigbee_fota`, use the :file:`prj_fota.conf` configuration file.
+For example, when building from the command line, use the following command:
 
-* For the variant that supports :ref:`lib_zigbee_fota`, set :file:`overlay-fota.conf`.
-  Alternatively, you can :ref:`configure Zigbee FOTA manually <ug_zigbee_configuring_components_ota>`.
+.. code-block:: console
 
-  .. note::
-     You can use the :file:`overlay-fota.conf` file only with a development kit that contains the nRF52840 SoC.
+   west build samples/zigbee/light_switch -b nrf52840dk_nrf52840 -- -DCONF_FILE='prj_fota.conf'
 
-* For the Multiprotocol Bluetooth LE extension, set :file:`overlay-multiprotocol_ble.conf`.
-  For the board name to use instead of the ``nrf52840dk_nrf52840``, see :ref:`gs_programming_board_names`.
+Alternatively, you can :ref:`configure Zigbee FOTA manually <ug_zigbee_configuring_components_ota>`.
 
-See :ref:`cmake_options` for instructions on how to add this option.
+.. note::
+   You can use the :file:`prj_fota.conf` file only with a development kit that contains the nRF52840 or nRF5340 SoC.
+
+To activate the Multiprotocol Bluetooth LE extension, set :makevar:`OVERLAY_CONFIG` to the :file:`overlay-multiprotocol_ble.conf`.
+For example, when building from the command line, use the following command:
+
+.. code-block:: console
+
+   west build samples/zigbee/light_switch -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG='overlay-multiprotocol_ble.conf'
+
+
+For the board name to use instead of the ``nrf52840dk_nrf52840``, see :ref:`gs_programming_board_names`.
+
+See :ref:`cmake_options` for instructions on how to add flags to your build.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
 FEM support

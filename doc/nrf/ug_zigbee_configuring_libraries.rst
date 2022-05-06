@@ -68,7 +68,6 @@ Because the Zigbee OTA DFU performs the upgrade using the :ref:`lib_dfu_target` 
   This allows to avoid long wait times at the beginning of the DFU process.
 
 Configuring these options and updating the default values (at least updating the ``image_version`` to the application version) allows you to use Zigbee FOTA in the :ref:`zigbee_light_switch_sample` sample.
-Alternatively, you can use :file:`overlay-fota.conf` file during the sample building process.
 
 Enabling Zigbee FOTA in an application
 ======================================
