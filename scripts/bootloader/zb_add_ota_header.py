@@ -20,6 +20,9 @@ OTA_HEADER_FIELD_CONTROL_BIT_MASK_HW_VER = (1 << 2)
 OTA_HEADER_MIN_HW_VERSION_LENGTH         = 2
 OTA_HEADER_MAX_HW_VERSION_LENGTH         = 2
 
+OTA_SUBELEMENT_TYPE_IMAGE = 0x0000
+OTA_SUBELEMENT_HEADER_LENGTH = 6
+
 class OTA_file:
 
     def __init__(self,
@@ -30,13 +33,17 @@ class OTA_file:
                  image_type = OTA_HEADER_IMAGE_TYPE_WILDCARD,
                  comment = '',
                  min_hw_version=None,
-                 max_hw_version=None):
+                 max_hw_version=None,
+                 legacy_format=False):
         '''A constructor for the OTA file class, see Zigbee ZCL spec 11.4.2 (Zigbee Document 07-5123-06)
            see: https://zigbeealliance.org/wp-content/uploads/2019/12/07-5123-06-zigbee-cluster-library-specification.pdf
            (access verified as of 2020-07-16)
         '''
 
-        total_len = OTA_HEADER_LENGTH + firmware_len
+        if legacy_format is True:
+            total_len = OTA_HEADER_LENGTH + firmware_len
+        else:
+            total_len = OTA_HEADER_LENGTH + OTA_SUBELEMENT_HEADER_LENGTH + firmware_len
 
         ota_header = OTA_header(OTA_HEADER_FILE_ID,
                                 OTA_HEADER_VERSION,
@@ -51,11 +58,29 @@ class OTA_file:
                                 min_hw_version,
                                 max_hw_version)
 
-        self.binary = ota_header.header + firmware
+        ota_firmware = OTA_subelement(OTA_SUBELEMENT_TYPE_IMAGE,
+                                      firmware_len,
+                                      firmware)
+
+        if legacy_format is True:
+            self.binary = ota_header.header + firmware
+        else:
+            self.binary = ota_header.header + ota_firmware.encode()
         self.filename = '-'.join(['{:04X}'.format(manufacturer_code),
                                   '{:04X}'.format(image_type),
                                   '{:08X}'.format(file_version),
                                   comment]) + '.zigbee'
+
+
+class OTA_subelement:
+    def __init__(self, type_id, length, firmware):
+        self.__pack_format = '<HL'
+        self._type = type_id
+        self._length = length
+        self._fw = firmware
+
+    def encode(self):
+        return struct.pack(self.__pack_format, self._type, self._length) + self._fw
 
 
 class OTA_header:
@@ -146,6 +171,8 @@ def parse_args():
                         help='The zigbee OTA maximum hw version of Zigbee OTA Client.')
     parser.add_argument('--out-directory', required=False, default='', nargs='?',
                         help='The zigbee OTA maximum hw version of Zigbee OTA Client.')
+    parser.add_argument('--legacy', required=False, action='store_true',
+                        help='Generate OTA image using legacy format.')
     return parser.parse_args()
 
 
@@ -194,7 +221,8 @@ def main():
                                 zb_image_type,
                                 zb_comment,
                                 zb_ota_min_hw_version,
-                                zb_ota_max_hw_version)
+                                zb_ota_max_hw_version,
+                                args.legacy)
 
     with open(os.path.join(out_dir, zigbee_ota_file.filename), 'wb') as f:
         f.write(zigbee_ota_file.binary)
