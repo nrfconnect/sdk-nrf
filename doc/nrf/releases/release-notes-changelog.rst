@@ -75,6 +75,7 @@ Zigbee
   * Documentation page about :ref:`ug_zigbee_commissioning`.
   * Experimental support for Zigbee Green Power Combo Basic functionality.
   * Zigbee device definition for each Zigbee sample and application.
+  * Support for Sleepy End Device role in :ref:` Zigbee shell library <lib_zigbee_shell>`.
 
 * Updated:
 

@@ -165,12 +165,13 @@ Returns the following values:
 * ``zc`` if it is a coordinator.
 * ``zr`` it it is a router.
 * ``zed`` if it is an end device.
+* ``sed`` if it is a sleepy end device.
 
 If the optional argument is provided, set the device role to *role*.
-Can be either ``zc`` or ``zr``.
+Can be either ``zc``, ``zr``, ``zed`` or ``sed``.
 
 .. note::
-    Zigbee End Device is not currently supported by the Shell sample.
+    Switching between Zigbee roles requires a factory new state or a factory reset and a reboot.
 
 
 ----

@@ -137,7 +137,11 @@ static int cmd_zb_role(const struct shell *shell, size_t argc, char **argv)
 	} else if (role == ZB_NWK_DEVICE_TYPE_ROUTER) {
 		shell_print(shell, "zr");
 	} else if (role == ZB_NWK_DEVICE_TYPE_ED) {
-		shell_print(shell, "zed");
+		if (zb_get_rx_on_when_idle()) {
+			shell_print(shell, "zed");
+		} else {
+			shell_print(shell, "sed");
+		}
 	}
 
 	zb_shell_print_done(shell, ZB_FALSE);
@@ -180,6 +184,7 @@ static int cmd_zb_role_zc(const struct shell *shell, size_t argc, char **argv)
 			"Remember to set the coordinator role after rebooting the device.");
 	}
 
+	zb_set_rx_on_when_idle(ZB_TRUE);
 	default_role = ZB_NWK_DEVICE_TYPE_COORDINATOR;
 	shell_print(shell, "Coordinator set");
 	zb_shell_print_done(shell, ZB_FALSE);
@@ -195,8 +200,8 @@ static int cmd_zb_role_zc(const struct shell *shell, size_t argc, char **argv)
  *
  * @pre Setting only before @ref start "bdb start".
  *
- * @note Zigbee End Device role is not currently supported to be switched to
- *       from Router or Coordinator role.
+ * @note Switching between Zigbee roles requires a factory new state or
+ *       a factory reset and a reboot.
  *
  */
 static int cmd_zb_role_zed(const struct shell *shell, size_t argc, char **argv)
@@ -206,9 +211,41 @@ static int cmd_zb_role_zed(const struct shell *shell, size_t argc, char **argv)
 		return -ENOEXEC;
 	}
 
-#ifdef ZB_ED_ROLE
+#ifdef ZB_ED_FUNC
+	zb_set_rx_on_when_idle(ZB_TRUE);
 	default_role = ZB_NWK_DEVICE_TYPE_ED;
 	shell_print(shell, "End Device role set");
+	zb_shell_print_done(shell, ZB_FALSE);
+	return 0;
+#else
+	zb_shell_print_error(shell, "Role unsupported", ZB_FALSE);
+	return -ENOEXEC;
+#endif
+}
+
+/**@brief Set Zigbee Sleepy End Device role of the device.
+ *
+ * @code
+ * bdb role sed
+ * @endcode
+ *
+ * @pre Setting only before @ref start "bdb start".
+ *
+ * @note Switching between Zigbee roles requires a factory new state or
+ *       a factory reset and a reboot.
+ *
+ */
+static int cmd_zb_role_sed(const struct shell *shell, size_t argc, char **argv)
+{
+	if (zigbee_is_stack_started()) {
+		zb_shell_print_error(shell, "Stack already started", ZB_FALSE);
+		return -ENOEXEC;
+	}
+
+#if defined(ZB_ED_FUNC) && defined(ZB_USE_SLEEP)
+	zb_set_rx_on_when_idle(ZB_FALSE);
+	default_role = ZB_NWK_DEVICE_TYPE_ED;
+	shell_print(shell, "Sleepy End Device role set");
 	zb_shell_print_done(shell, ZB_FALSE);
 	return 0;
 #else
@@ -248,6 +285,7 @@ static int cmd_zb_role_zr(const struct shell *shell, size_t argc, char **argv)
 			"Please use the same role or disable NVRAM to change the Zigbee role.");
 	}
 
+	zb_set_rx_on_when_idle(ZB_TRUE);
 	default_role = ZB_NWK_DEVICE_TYPE_ROUTER;
 	shell_print(shell, "Router role set");
 	zb_shell_print_done(shell, ZB_FALSE);
@@ -304,10 +342,15 @@ static int cmd_zb_start(const struct shell *shell, size_t argc, char **argv)
 			zb_set_network_coordinator_role(channel);
 			shell_print(shell, "Started coordinator");
 			break;
-#else
+#endif
+#ifdef ZB_ED_FUNC
 		case ZB_NWK_DEVICE_TYPE_ED:
 			zb_set_network_ed_role(channel);
-			shell_print(shell, "Started End Device");
+			if (zb_get_rx_on_when_idle()) {
+				shell_print(shell, "Started End Device");
+			} else {
+				shell_print(shell, "Started Sleepy End Device");
+			}
 			break;
 #endif
 		default:
@@ -1201,6 +1244,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_role,
 		      cmd_zb_role_zc, 1, 0),
 	SHELL_CMD_ARG(zed, NULL, "Set End Device role.",
 		      cmd_zb_role_zed, 1, 0),
+	SHELL_CMD_ARG(sed, NULL, "Set Sleepy End Device role.",
+		      cmd_zb_role_sed, 1, 0),
 	SHELL_CMD_ARG(zr, NULL, "Set Router role.",
 		      cmd_zb_role_zr, 1, 0),
 	SHELL_SUBCMD_SET_END);
