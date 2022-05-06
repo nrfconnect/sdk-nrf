@@ -23,3 +23,7 @@ common:
 tests:
   sample.tfm.helloworld:
     tags: tfm ci_build
+
+  sample.tfm.hello_world.bootloaders:
+    tags: tfm ci_build
+    extra_args: CONFIG_BOOTLOADER_MCUBOOT=y CONFIG_SECURE_BOOT=y

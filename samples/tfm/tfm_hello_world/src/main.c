@@ -118,15 +118,29 @@ void main(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_TFM_PARTITION_PLATFORM)) {
 #if defined(GPIO_PIN_CNF_MCUSEL_Msk)
-	/* Configure properly the XL1 and XL2 pins so that the low-frequency crystal
-	 * oscillator (LFXO) can be used.
-	 * This configuration has already been done by TF-M so this is redundant.
-	 */
-	gpio_pin_mcu_select(PIN_XL1, NRF_GPIO_PIN_MCUSEL_PERIPHERAL);
-	gpio_pin_mcu_select(PIN_XL2, NRF_GPIO_PIN_MCUSEL_PERIPHERAL);
-	printk("MCU selection configured\n");
+		/* Configure properly the XL1 and XL2 pins so that the low-frequency crystal
+		 * oscillator (LFXO) can be used.
+		 * This configuration has already been done by TF-M so this is redundant.
+		 */
+		gpio_pin_mcu_select(PIN_XL1, NRF_GPIO_PIN_MCUSEL_PERIPHERAL);
+		gpio_pin_mcu_select(PIN_XL2, NRF_GPIO_PIN_MCUSEL_PERIPHERAL);
+		printk("MCU selection configured\n");
 #else
-	printk("MCU selection skipped\n");
+		printk("MCU selection skipped\n");
 #endif /* defined(GPIO_PIN_CNF_MCUSEL_Msk) */
+
+#ifdef PM_S1_ADDRESS
+		bool s0_active = false;
+		int ret;
+
+		ret = tfm_platform_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, &s0_active);
+		if (ret != 0) {
+			printk("Unexpected failure from spm_s0_active: %d\n", ret);
+		}
+
+		printk("S0 active? %s\n", s0_active ? "True" : "False");
+#endif /*  PM_S1_ADDRESS */
+	}
 }
