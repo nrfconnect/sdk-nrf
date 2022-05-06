@@ -247,6 +247,10 @@ void link_init(void)
 
 	lte_lc_register_handler(link_ind_handler);
 
+	if (link_sett_is_dnsaddr_enabled()) {
+		(void)link_setdnsaddr(link_sett_dnsaddr_ip_get());
+	}
+
 /* With CONFIG_LWM2M_CARRIER, MoSH auto connect must be disabled
  * because LwM2M carrier lib handles that.
  */
@@ -688,5 +692,45 @@ int link_rai_enable(bool enable)
 		mosh_error("RAI AT command failed, error: %d", err);
 		return -EFAULT;
 	}
+	return 0;
+}
+
+int link_setdnsaddr(const char *ip_address)
+{
+	struct nrf_in_addr in4_addr;
+	struct nrf_in6_addr in6_addr;
+	int family = NRF_AF_INET;
+	void *in_addr = NULL;
+	nrf_socklen_t in_size = 0;
+	int ret = 0;
+
+	if (strlen(ip_address) > 0) {
+		in_addr = &in4_addr;
+		in_size = sizeof(in4_addr);
+		ret = nrf_inet_pton(family, ip_address, in_addr);
+
+		if (ret != 1) {
+			family = NRF_AF_INET6;
+			in_addr = &in6_addr;
+			in_size = sizeof(in6_addr);
+			ret = nrf_inet_pton(family, ip_address, in_addr);
+		}
+
+		if (ret != 1) {
+			mosh_error("Invalid IP address: %s", ip_address);
+			return -EINVAL;
+		}
+	}
+
+	if (link_sett_is_dnsaddr_enabled() && ret == 1) {
+		ret = nrf_setdnsaddr(family, in_addr, in_size);
+		if (ret != 0) {
+			mosh_error("Error setting DNS address: %d", errno);
+			return -errno;
+		}
+	} else {
+		(void)nrf_setdnsaddr(family, NULL, 0);
+	}
+
 	return 0;
 }
