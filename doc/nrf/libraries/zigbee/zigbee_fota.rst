@@ -8,7 +8,7 @@ Zigbee FOTA
    :depth: 2
 
 The Zigbee firmware over-the-air (Zigbee FOTA) library provides Zigbee endpoint definition, which implements clusters responsible for transferring a firmware file through the Zigbee network.
-The received data is passed as an upgrade candidate through the :ref:`lib_dfu_target` library API.
+The received data is passed as an upgrade candidate through the :ref:`lib_dfu_multi_image` library API to the :ref:`lib_dfu_target`.
 
 The library uses the endpoint to:
 
@@ -47,10 +47,7 @@ After the OTA Upgrade Client downloads the Zigbee OTA image header, the stack ve
 
 If all values are accepted, the OTA Upgrade Client downloads the first fragment of the firmware image.
 
-After receiving the first fragment, the :ref:`lib_dfu_target` library automatically identifies the type of the image that is being downloaded.
-For supported upgrade types, see the library documentation page.
-
-Once the download is started, all received data fragments are passed to the :ref:`lib_dfu_target` library.
+Once the download is started, all received data fragments are passed to the :ref:`lib_dfu_multi_image` library.
 The library takes care of where the upgrade candidate is stored, depending on the image type that is being downloaded.
 
 When the download is completed, the download client sends an appropriate event.
@@ -92,9 +89,8 @@ The Zigbee FOTA library has the following limitations:
 
 * The endpoint definition in the library includes the endpoint ID, defined with :kconfig:option:`CONFIG_ZIGBEE_FOTA_ENDPOINT`.
   When using the Zigbee FOTA library, this endpoint ID cannot be used for other endpoints.
-* The Zigbee FOTA upgrades are currently only supported on the nRF52840 DK (PCA10056).
+* The Zigbee FOTA upgrades are currently only supported on the nRF52840 DK (PCA10056) and nRF5340 DK (PCA10095).
 * The Zigbee FOTA library does not currently support bootloader upgrades.
-* In case of an MCU reset between the completion of the OTA image transfer and a postponed firmware upgrade, the upgrade will be applied immediately.
 
 API documentation
 *****************

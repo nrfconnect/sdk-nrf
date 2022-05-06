@@ -77,6 +77,7 @@ Zigbee
   * Documentation page about :ref:`ug_zigbee_commissioning`.
   * Experimental support for Zigbee Green Power Combo Basic functionality.
   * Zigbee device definition for each Zigbee sample and application.
+  * Support for nRF5340 DK (PCA10095) in :ref:`Zigbee light switch sample <zigbee_light_switch_sample>` with :ref:` Zigbee FOTA library <lib_zigbee_fota>` enabled.
 
 * Updated:
 
@@ -88,6 +89,12 @@ Zigbee
   * Development version of :ref:`nrfxlib:zboss` from v3.11.1.177 to v3.12.1.0 and platform v5.2.0 (``v3.12.1.0+v5.2.0``).
   * :ref:`ZBOSS Network Co-processor Host <ug_zigbee_tools_ncp_host>` package to the new version v2.2.0.
   * Unused RAM sections are now enabled before entering bootloader from the Zigbee application.
+  * :ref:` Zigbee FOTA library <lib_zigbee_fota>`.
+    For details, see `Libraries for Zigbee`_.
+
+* Fixed:
+
+  * In case of an MCU reset between the completion of the OTA image transfer and a postponed firmware upgrade, the upgrade will be applied immediately.
 
 Applications
 ============
@@ -732,6 +739,17 @@ Libraries for Zigbee
     * Added:
 
       * New :kconfig:option:`CONFIG_ZIGBEE_FOTA_IMAGE_DISOVERY_INTERVAL_HRS` Kconfig option to configure interval between queries for the available Zigbee FOTA images.
+      * Support for the combined application and network core updates for the nRF5340 SoC.
+
+    * Updated:
+
+      * Download logic to use the :ref:`lib_dfu_multi_image` library API and image structure.
+      * The image generation script by introducing the sub-element structure inside the Zigbee OTA image.
+        Enable :kconfig:option:`CONFIG_ZIGBEE_FOTA_GENERATE_LEGACY_IMAGE_TYPE` to generate images compatible with previous NCS releases.
+
+    * Removed:
+
+      * The :c:enum:`ZIGBEE_FOTA_EVT_ERASE_PENDING` and :c:enum:`ZIGBEE_FOTA_EVT_ERASE_DONE` events.
 
   * Fixed:
 
