@@ -761,6 +761,7 @@ Documentation
   * Notes to the :ref:`bluetooth_central_dfu_smp` sample document specifying the intended use of the sample.
   * DevAcademy links to the :ref:`index` and :ref:`getting_started` pages.
   * Additional user guidance to the :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` pages and the corresponding Developing with pages.
+  * A page on :ref:`software_maturity` listing the different software maturity levels for the available features.
 
 * Updated:
 
