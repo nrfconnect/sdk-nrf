@@ -27,7 +27,7 @@ You also need one or more compatible development kits programmed with the :ref:`
 Multiprotocol extension requirements
 ====================================
 
-If you enable the :ref:`coap_client_sample_multi_ext`, make sure you have a phone or a tablet with the `nRF Toolbox`_ application installed.
+If you enable the :ref:`coap_client_sample_multi_ext`, make sure you have a phone with the `nRF Toolbox`_ application installed or an additional development kit programmed with :ref:`central_uart` sample.
 
 .. note::
   The :ref:`testing instructions <coap_client_sample_testing_ble>` refer to nRF Toolbox, but similar applications can be used as well, for example `nRF Connect for Mobile`_.
@@ -188,7 +188,10 @@ Switching between SED and MED modes does not affect the standard testing procedu
 Testing multiprotocol Bluetooth LE extension
 --------------------------------------------
 
-To test the multiprotocol Bluetooth LE extension, you need to first set up nRF Toolbox as follows:
+To test the multiprotocol Bluetooth LE extension, you can use nRF Toolbox or the :ref:`central_uart` sample.
+The steps below assume nRF Toolbox as the Bluetooth tester.
+
+First, you need to set up nRF Toolbox as follows:
 
 1. Tap :guilabel:`UART` to open the UART application in nRF Toolbox.
 
