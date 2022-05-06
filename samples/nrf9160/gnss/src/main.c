@@ -17,6 +17,7 @@
 LOG_MODULE_REGISTER(gnss_sample, CONFIG_GNSS_SAMPLE_LOG_LEVEL);
 
 #define PI 3.14159265358979323846
+#define EARTH_RADIUS_METERS (6371.0 * 1000.0)
 
 #if !defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE) || defined(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST)
 static struct k_work_q gnss_work_q;
@@ -103,7 +104,23 @@ static double distance_calculate(double lat1, double lon1,
 
 	double c = 2 * asin(sqrt(a));
 
-	return 6371.0 * 1000.0 * c;
+	return EARTH_RADIUS_METERS * c;
+}
+
+static void print_distance_from_reference(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
+{
+	if (!ref_used) {
+		return;
+	}
+
+	double distance = distance_calculate(pvt_data->latitude, pvt_data->longitude,
+					     ref_latitude, ref_longitude);
+
+	if (IS_ENABLED(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST)) {
+		LOG_INF("Distance from reference: %.01f", distance);
+	} else {
+		printk("\nDistance from reference: %.01f\n", distance);
+	}
 }
 
 static void gnss_event_handler(int event)
@@ -278,11 +295,7 @@ static void ttff_test_got_fix_work_fn(struct k_work *item)
 	if (time_blocked > 0) {
 		LOG_INF("Time GNSS was blocked by LTE: %u", time_blocked);
 	}
-	if (ref_used) {
-		LOG_INF("Distance from reference: %.01f",
-			distance_calculate(last_pvt.latitude, last_pvt.longitude,
-					   ref_latitude, ref_longitude));
-	}
+	print_distance_from_reference(&last_pvt);
 	LOG_INF("Sleeping for %u seconds", CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_INTERVAL);
 }
 
@@ -602,17 +615,6 @@ static void print_fix_data(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 	printk("HDOP:           %.01f\n", pvt_data->hdop);
 	printk("VDOP:           %.01f\n", pvt_data->vdop);
 	printk("TDOP:           %.01f\n", pvt_data->tdop);
-}
-
-static void print_distance_from_reference(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
-{
-	if (!ref_used) {
-		return;
-	}
-
-	printk("\nDistance from reference: %.01f\n",
-	       distance_calculate(pvt_data->latitude, pvt_data->longitude,
-				  ref_latitude, ref_longitude));
 }
 
 int main(void)
