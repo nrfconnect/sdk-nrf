@@ -36,6 +36,12 @@ char *link_sett_defcontauth_username_get(void);
 int link_sett_save_defcontauth_password(const char *password_str);
 char *link_sett_defcontauth_password_get(void);
 
+int link_sett_save_dnsaddr_enabled(bool enabled);
+bool link_sett_is_dnsaddr_enabled(void);
+int link_sett_save_dnsaddr_ip(const char *dnsaddr_ip_str);
+const char *link_sett_dnsaddr_ip_get(void);
+void link_sett_dnsaddr_conf_shell_print(void);
+
 int link_sett_sysmode_save(enum lte_lc_system_mode mode,
 			    enum lte_lc_system_mode_preference lte_pref);
 int link_sett_sysmode_get(void);
