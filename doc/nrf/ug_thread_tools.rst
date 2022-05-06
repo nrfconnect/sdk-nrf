@@ -143,7 +143,8 @@ To program the nRF device with the RCP application, complete the following steps
 
                west flash --erase
 
-         #. Disable the Mass Storage feature on the device, so that it does not interfere with the core RCP functionalities:
+         #. Disable the Mass Storage feature on the device, so that it does not interfere with the core RCP functionalities.
+            Also, force Hardware Flow Control to avoid potential race conditions related to the auto-detection:
 
             .. parsed-literal::
                :class: highlight
@@ -151,6 +152,8 @@ To program the nRF device with the RCP application, complete the following steps
                JLinkExe -device NRF52840_XXAA -if SWD -speed 4000 -autoconnect 1 -SelectEmuBySN *SEGGER_ID*
                J-Link>MSDDisable
                Probe configured successfully.
+               J-Link>SetHWFC Force
+               New configuration applies immediately.
                J-Link>exit
 
             Replace *SEGGER_ID* with the SEGGER ID of your nRF52840 Development Kit.
