@@ -13,6 +13,9 @@
 #include <drivers/sensor.h>
 #include <drivers/gpio.h>
 #include <pm/device.h>
+#ifdef CONFIG_PINCTRL
+#include <pinctrl_soc.h>
+#endif
 
 #include <app_event_manager.h>
 #include "wheel_event.h"
@@ -36,10 +39,23 @@ enum state {
 	STATE_SUSPENDED
 };
 
+#ifdef CONFIG_PINCTRL
+#define QDEC_PIN_INIT(node_id, prop, idx) \
+	NRF_GET_PIN(DT_PROP_BY_IDX(node_id, prop, idx)),
+
+/* obtan qdec pins from default state */
+static const uint32_t qdec_pin[] = {
+	DT_FOREACH_CHILD_VARGS(
+		DT_PINCTRL_BY_NAME(DT_NODELABEL(qdec), default, 0),
+		DT_FOREACH_PROP_ELEM, psels, QDEC_PIN_INIT
+	)
+};
+#else
 static const uint32_t qdec_pin[] = {
 	DT_PROP(DT_NODELABEL(qdec), a_pin),
 	DT_PROP(DT_NODELABEL(qdec), b_pin)
 };
+#endif
 
 static const struct sensor_trigger qdec_trig = {
 	.type = SENSOR_TRIG_DATA_READY,
