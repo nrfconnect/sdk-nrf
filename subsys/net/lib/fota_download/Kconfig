@@ -9,6 +9,7 @@ menuconfig FOTA_DOWNLOAD
 	depends on DOWNLOAD_CLIENT
 	depends on DFU_TARGET
 	imply SPM_SERVICE_S0_ACTIVE
+	imply FW_INFO
 
 if (FOTA_DOWNLOAD)
 
