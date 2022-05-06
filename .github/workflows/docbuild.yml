@@ -16,7 +16,7 @@ on:
 env:
   # Doxygen >= 1.8.18 is required. This can be removed once ubuntu-latest ships
   # a compatible version. More details: https://github.com/doxygen/doxygen/issues/7411.
-  DOXYGEN_VERSION: 1.9.2
+  DOXYGEN_VERSION: 1.9.4
 
 jobs:
   build:
