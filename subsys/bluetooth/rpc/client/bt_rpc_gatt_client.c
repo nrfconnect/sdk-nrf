@@ -1415,6 +1415,19 @@ int bt_gatt_write_without_response_cb(struct bt_conn *conn, uint16_t handle,
 	return result;
 }
 
+static const size_t bt_gatt_subscribe_params_buf_size =
+	/* Placeholder for the notify callback. */
+	1 +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, write) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, value_handle) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, ccc_handle) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, value) +
+	/* Placeholder for the flags field */
+	2 +
+#if defined(CONFIG_BT_SMP)
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, min_security);
+#endif /* defined(CONFIG_BT_SMP) */
+
 void bt_gatt_subscribe_params_enc(struct nrf_rpc_cbor_ctx *encoder,
 				  const struct bt_gatt_subscribe_params *data)
 {
@@ -1423,6 +1436,9 @@ void bt_gatt_subscribe_params_enc(struct nrf_rpc_cbor_ctx *encoder,
 	ser_encode_uint(encoder, data->value_handle);
 	ser_encode_uint(encoder, data->ccc_handle);
 	ser_encode_uint(encoder, data->value);
+#if defined(CONFIG_BT_SMP)
+	ser_encode_uint(encoder, data->min_security);
+#endif /* defined(CONFIG_BT_SMP) */
 	ser_encode_uint(encoder, (uint16_t)atomic_get(data->flags));
 }
 
@@ -1431,8 +1447,11 @@ int bt_gatt_subscribe(struct bt_conn *conn,
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	int result;
+	size_t buffer_size_max = 8;
 
-	NRF_RPC_CBOR_ALLOC(ctx, 26);
+	buffer_size_max += bt_gatt_subscribe_params_buf_size;
+
+	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 	ser_encode_uint(&ctx, (uintptr_t)params);
@@ -1449,11 +1468,11 @@ int bt_gatt_resubscribe(uint8_t id, const bt_addr_le_t *peer,
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	int result;
-	size_t buffer_size_max = 5;
+	size_t buffer_size_max = 9;
 
 	buffer_size_max += peer ? sizeof(bt_addr_le_t) : 0;
 
-	buffer_size_max += 12;
+	buffer_size_max += bt_gatt_subscribe_params_buf_size;
 
 	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
 

@@ -106,6 +106,7 @@ int bt_enable(bt_ready_cb_t cb)
 	struct nrf_rpc_cbor_ctx ctx;
 	int result;
 	size_t buffer_size_max = 5;
+	static atomic_t init;
 
 	validate_config();
 
@@ -116,7 +117,10 @@ int bt_enable(bt_ready_cb_t cb)
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_ENABLE_RPC_CMD,
 				&ctx, ser_rsp_decode_i32, &result);
 
-	if (result) {
+	/* In case if the Bluetooth was disabled, we don't need to init again
+	 * dependencies.
+	 */
+	if ((!atomic_cas(&init, 0, 1)) || result) {
 		return result;
 	}
 
@@ -140,6 +144,33 @@ int bt_enable(bt_ready_cb_t cb)
 		result = settings_save_one("bt_rpc/network",
 					   &network_load, sizeof(network_load));
 	}
+
+	return result;
+}
+
+int bt_disable(void)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	size_t buffer_size_max = 0;
+	int result;
+
+	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_DISABLE_RPC_CMD, &ctx, ser_rsp_decode_i32, &result);
+
+	return result;
+}
+
+bool bt_is_ready(void)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	size_t buffer_size_max = 0;
+	bool result;
+
+	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_IS_READY_RPC_CMD, &ctx, ser_rsp_decode_bool,
+				&result);
 
 	return result;
 }
@@ -227,6 +258,47 @@ const char *bt_get_name(void)
 	return CONFIG_BT_DEVICE_NAME;
 
 #endif /* defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) */
+}
+
+#if defined(CONFIG_BT_DEVICE_APPEARANCE_DYNAMIC)
+int bt_set_appearance(uint16_t new_appearance)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	size_t buffer_size_max = 3;
+	int result;
+
+	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+
+	ser_encode_uint(&ctx, new_appearance);
+
+	nrf_rpc_cbor_cmd(&bt_rpc_grp, BT_SET_APPEARANCE_RPC_CMD, &ctx, ser_rsp_decode_u16,
+			 &result);
+
+	return result;
+}
+
+static uint16_t bt_get_appearance_from_remote(void)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	size_t buffer_size_max = 0;
+	uint16_t appearance;
+
+	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+
+	nrf_rpc_cbor_cmd(&bt_rpc_grp, BT_GET_APPEARANCE_RPC_CMD, &ctx, ser_rsp_decode_u16,
+			 &appearance);
+
+	return appearance;
+}
+#endif /* defined(CONFIG_BT_DEVICE_APPEARANCE_DYNAMIC) */
+
+uint16_t bt_get_appearance(void)
+{
+#if defined(CONFIG_BT_DEVICE_APPEARANCE_DYNAMIC)
+	return bt_get_appearance_from_remote();
+#else
+	return CONFIG_BT_DEVICE_APPEARANCE;
+#endif /* CONFIG_BT_DEVICE_APPEARANCE_DYNAMIC */
 }
 
 struct bt_id_get_rpc_res {
