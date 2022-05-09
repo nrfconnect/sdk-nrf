@@ -162,7 +162,6 @@ static void toggle_identify_led(zb_bufid_t bufid)
 						     IDENTIFY_LED_BLINK_TIME_MSEC));
 	if (err) {
 		LOG_ERR("Failed to schedule app alarm: %d", err);
-		zb_buf_free(bufid);
 	}
 }
 
@@ -206,7 +205,6 @@ static void identify_callback(zb_bufid_t bufid)
 		err = ZB_SCHEDULE_APP_CALLBACK(toggle_identify_led, bufid);
 		if (err) {
 			LOG_ERR("Failed to schedule app callback: %d", err);
-			zb_buf_free(bufid);
 		} else {
 			LOG_INF("Enter identify mode");
 		}
