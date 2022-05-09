@@ -86,6 +86,7 @@ To switch to the latest state of development, enter the following commands::
    Run ``west update`` every time you change or modify the current working branch (for example, when you pull, rebase, or check out a different branch).
    This will bring the project repositories to the matching revision defined by the manifest file.
 
+
 .. _gs_updating_vsc:
 
 Updating |VSC|
@@ -148,53 +149,6 @@ To update west to the latest available version in the PyPi repository, run the f
 
          pip3 install -U west
 ..
-
-.. _gs_updating_ses:
-
-Updating SEGGER Embedded Studio Nordic Edition
-**********************************************
-
-Each new release of the |NCS| might require manually updating to a newer version of the |SES| (SES) Nordic Edition.
-Whenever you update to a newer release of the |NCS|, check the :ref:`gs_recommended_versions` page for the given release to see if you are using the minimum required version of the SES Nordic Edition.
-
-.. note::
-  Because of the custom |NCS| options available only in the SES Nordic Edition, notifications about newer versions of SES are disabled in the SES Nordic Edition.
-
-.. tabs::
-
-   .. group-tab:: Windows
-
-      To update to the latest version of the SES Nordic Edition, use one of the following options:
-
-      * Install the latest version of Toolchain Manager as described in :ref:`gs_assistant`.
-      * Install the SES Nordic Edition manually as described in :ref:`installing_ses`.
-
-      Then, :ref:`set up the build environment in SES <setting_up_SES>` again.
-
-   .. group-tab:: Linux
-
-      To update to the latest version of the SES Nordic Edition, install it manually as described in :ref:`installing_ses`.
-      Then, :ref:`set up the build environment in SES <setting_up_SES>` again.
-
-   .. group-tab:: macOS
-
-      To update to the latest version of the SES Nordic Edition, install it manually as described in :ref:`installing_ses`.
-      Then, :ref:`set up the build environment in SES <setting_up_SES>` again.
-..
-
-.. _gs_updating_ses_packages:
-
-Updating SES packages
-=====================
-
-Updating SES Nordic Edition will not update already installed packages.
-You might need to manually update the CPU support package when you cannot select a CPU as :guilabel:`Target Processor` when configuring a new project.
-
-To update the nRF CPU Support Package after a SES update:
-
-1. In SES, select :guilabel:`Tools` > :guilabel:`Package Manager...`.
-#. Search for "nRF CPU Support Package".
-#. Update the package to the latest version.
 
 .. _repo_move:
 

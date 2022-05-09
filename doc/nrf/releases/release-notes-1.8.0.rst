@@ -834,7 +834,7 @@ In addition to documentation related to the changes listed above, the following 
     This was listed earlier as a known issue.
   * Updated the :ref:`gs_programming_ses` section with a warning about a "no input files" error.
 
-* :ref:`gs_updating` - Added a section about :ref:`gs_updating_ses_packages`.
+* :ref:`gs_updating` - Added a section about updating SES packages.
 * :ref:`glossary` - Added new terms related to :ref:`ug_matter` and :ref:`ug_zigbee`.
 * :ref:`ug_nrf52` - Added a section describing Bluetooth mesh under the Supported protocols section.
 * :ref:`ug_nrf5340`:
