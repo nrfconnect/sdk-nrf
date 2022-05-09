@@ -228,6 +228,8 @@ nRF9160 samples
         This includes several new fields in the PVT notification and a command to query the expiry times of assistance data.
       * Support for the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION` option.
       * Device information is sent to nRF Cloud when connecting with MQTT using the ``cloud connect`` command.
+      * New options to send acquired GNSS location to nRF Cloud for ``location`` command, either in NMEA or in PVT format.
+        Both MQTT and REST transports are supported (compile-time configuration).
 
     * Updated:
 
