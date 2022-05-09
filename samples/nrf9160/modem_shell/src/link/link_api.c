@@ -27,6 +27,7 @@
 #include "link_api.h"
 
 #include <nrf_modem_at.h>
+#include <net/nrf_cloud.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 
@@ -676,6 +677,7 @@ void link_api_modem_info_get_for_shell(bool connected)
 	enum lte_lc_system_mode_preference sys_mode_preferred;
 	enum lte_lc_lte_mode currently_active_mode;
 	char info_str[MODEM_INFO_MAX_RESPONSE_SIZE + 1];
+	char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
 	int ret;
 
 	(void)link_shell_get_and_print_current_system_modes(
@@ -687,6 +689,10 @@ void link_api_modem_info_get_for_shell(bool connected)
 	} else {
 		mosh_error("Unable to obtain modem FW version (%d)", ret);
 	}
+
+	/* Get the device id used with nRF Cloud */
+	ret = nrf_cloud_client_id_get(device_id, sizeof(device_id));
+	mosh_print("Device ID:             %s", (ret) ? "Not known" : device_id);
 
 	if (connected) {
 		link_api_modem_operator_info_read_for_shell();
