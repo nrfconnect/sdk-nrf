@@ -8,32 +8,17 @@
 
 from threading import Thread
 from os import system
-from nrf5340_audio_dk_devices import SelectFlags
+from typing import List
+from nrf5340_audio_dk_devices import DeviceConf, SelectFlags, AudioDevice
 
 MEM_ADDR_UICR_SNR = 0x00FF80F0
 MEM_ADDR_UICR_CH = 0x00FF80F4
 
-UICR_CHANNEL_LEFT = 0
-UICR_CHANNEL_RIGHT = 1
-
 
 def __populate_UICR(dev):
-    """ Program UICR in device with information from JSON file """
-    if dev.nrf5340_audio_dk_device == "headset":
-        if dev.channel == "left":
-            cmd = "nrfjprog --memwr " + str(MEM_ADDR_UICR_CH) + " --val " + \
-                   str(UICR_CHANNEL_LEFT) + " --snr " + \
-                   str(dev.nrf5340_audio_dk_snr)
-        elif dev.channel == "right":
-            cmd = "nrfjprog --memwr " + str(MEM_ADDR_UICR_CH) + " --val " + \
-                  str(UICR_CHANNEL_RIGHT) + " --snr " + \
-                  str(dev.nrf5340_audio_dk_snr)
-        else:
-            print("Channel: " + dev.channel +
-                  " does not equal 'left' or 'right'")
-            return False
-
-    if dev.nrf5340_audio_dk_device == "headset":
+    """Program UICR in device with information from JSON file"""
+    if dev.nrf5340_audio_dk_dev == AudioDevice.headset:
+        cmd = f"nrfjprog --memwr {MEM_ADDR_UICR_CH} --val {dev.channel.value} --snr {dev.nrf5340_audio_dk_snr}"
         # Write channel information to UICR
         print("Programming UICR")
         ret_val = system(cmd)
@@ -41,9 +26,7 @@ def __populate_UICR(dev):
         if ret_val:
             return False
 
-    cmd = "nrfjprog --memwr " + str(MEM_ADDR_UICR_SNR) + " --val " + \
-          str(dev.nrf5340_audio_dk_snr) + " --snr " + \
-          str(dev.nrf5340_audio_dk_snr)
+    cmd = f"nrfjprog --memwr {MEM_ADDR_UICR_SNR} --val {dev.nrf5340_audio_dk_snr} --snr {dev.nrf5340_audio_dk_snr}"
 
     # Write segger nr to UICR
     ret_val = system(cmd)
@@ -53,86 +36,74 @@ def __populate_UICR(dev):
         return True
 
 
-def __program_thread(dev, current_core):
-    if dev.only_reboot == SelectFlags.TBD:
-        cmd = "nrfjprog -r --snr " + str(dev.nrf5340_audio_dk_snr)
-    elif current_core == "net":
-        print("Programming " + current_core + " on dev snr: " +
-              str(dev.nrf5340_audio_dk_snr))
-        cmd = "nrfjprog --program " + dev.hex_path_net + \
-              " -f NRF53  -q --snr " + str(dev.nrf5340_audio_dk_snr) + \
-              " --sectorerase" + " --coprocessor CP_NETWORK"
-    elif current_core == "app":
-        print("Programming " + current_core + " on dev snr: " +
-              str(dev.nrf5340_audio_dk_snr))
-        cmd = "nrfjprog --program " + dev.hex_path_app + \
-              " -f NRF53  -q --snr " + str(dev.nrf5340_audio_dk_snr) + \
-              " --chiperase" + " --coprocessor CP_APPLICATION"
-    else:
-        raise Exception("Core definition error")
+def _program_cores(dev: DeviceConf) -> int:
+    if dev.core_net_programmed == SelectFlags.TBD:
+        print(f"Programming net core on: {dev}")
+        cmd = f"nrfjprog --program {dev.hex_path_net}  -f NRF53  -q --snr {dev.nrf5340_audio_dk_snr} --sectorerase --coprocessor CP_NETWORK"
+        ret_val = system(cmd)
+        dev.core_net_programmed = SelectFlags.FAIL if ret_val else SelectFlags.DONE
+        if ret_val != 0:
+            return ret_val
 
-    ret_val = system(cmd)
-    if ret_val and dev.only_reboot == SelectFlags.TBD:
-        dev.only_reboot = SelectFlags.FAIL
-        return
-    elif ret_val and current_core == "net":
-        dev.core_net_programmed = SelectFlags.FAIL
-        return
-    elif ret_val and current_core == "app":
-        dev.core_app_programmed = SelectFlags.FAIL
-        return
-
-    # Populate UICR data matching the JSON file
-    if current_core == "app":
+    if dev.core_app_programmed == SelectFlags.TBD:
+        print(f"Programming app core on: {dev}")
+        cmd = f"nrfjprog --program {dev.hex_path_app} -f NRF53  -q --snr {dev.nrf5340_audio_dk_snr} --chiperase --coprocessor CP_APPLICATION"
+        ret_val = system(cmd)
+        if ret_val != 0:
+            return ret_val
+        dev.core_app_programmed = SelectFlags.FAIL if ret_val else SelectFlags.DONE
+        # Populate UICR data matching the JSON file
         if not __populate_UICR(dev):
             dev.core_app_programmed = SelectFlags.FAIL
-            return
+            return 1
 
+    print(f"Resetting {dev}")
+    cmd = f"nrfjprog -r --snr {dev.nrf5340_audio_dk_snr}"
+    ret_val = system(cmd)
+    if ret_val != 0:
+        return ret_val
+    return 0
+
+
+def _recover(dev: DeviceConf):
+    print(f"Recovering device: {dev}")
+    system(
+        f"nrfjprog --recover --coprocessor CP_NETWORK --snr {dev.nrf5340_audio_dk_snr}"
+    )
+    system(f"nrfjprog --recover --snr {dev.nrf5340_audio_dk_snr}")
+
+
+def __program_thread(dev: DeviceConf):
     if dev.only_reboot == SelectFlags.TBD:
-        dev.only_reboot = SelectFlags.DONE
-    elif current_core == "net":
-        dev.core_net_programmed = SelectFlags.DONE
-    elif current_core == "app":
-        dev.core_app_programmed = SelectFlags.DONE
+        print(f"Resetting {dev}")
+        cmd = f"nrfjprog -r --snr {dev.nrf5340_audio_dk_snr}"
+        ret_val = system(cmd)
+        dev.only_reboot = SelectFlags.FAIL if ret_val else SelectFlags.DONE
+        return
 
-    # Make sure boards are reset
-    cmd = "nrfjprog -r --snr " + str(dev.nrf5340_audio_dk_snr)
-    system(cmd)
+    return_code = _program_cores(dev)
+    if return_code != 0 and dev.recover_on_fail:
+        _recover(dev)
+        _program_cores(dev)
 
 
-def program_threads_run(devices_list, sequential=False):
-    """ Program devices in parallel"""
-    threads = list()
+def program_threads_run(devices_list: List[DeviceConf], sequential: bool = False):
+    """Program devices in parallel"""
+    threads = []
     # First program net cores if applicable
     for dev in devices_list:
-        if not dev.nrf5340_audio_dk_snr_connected:
+        if not dev.snr_connected:
+            dev.only_reboot = SelectFlags.NOT
+            dev.core_app_programmed = SelectFlags.NOT
+            dev.core_net_programmed = SelectFlags.NOT
             continue
-
-        if dev.only_reboot == SelectFlags.TBD:
-            threads.append(Thread(target=__program_thread, args=(dev, None)))
-            threads[-1].start()
-            if sequential:
-                threads[-1].join()
-        elif dev.hex_path_net:
-            threads.append(Thread(target=__program_thread, args=(dev, "net")))
-            threads[-1].start()
-            if sequential:
-                threads[-1].join()
+        thread = Thread(target=__program_thread, args=(dev,))
+        threads.append(thread)
+        thread.start()
+        if sequential:
+            thread.join()
 
     for thread in threads:
         thread.join()
 
     threads.clear()
-
-    for dev in devices_list:
-        if not dev.nrf5340_audio_dk_snr_connected:
-            continue
-
-        if dev.only_reboot == SelectFlags.NOT and dev.hex_path_app:
-            threads.append(Thread(target=__program_thread, args=(dev, "app")))
-            threads[-1].start()
-            if sequential:
-                threads[-1].join()
-
-    for thread in threads:
-        thread.join()
