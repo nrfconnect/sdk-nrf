@@ -667,7 +667,11 @@ Libraries for Zigbee
       *  ``zdo`` shell commands extended to allow binding to a group address.
       * Internal context manager structures.
 
-  * ref:`lib_zigbee_osif`:
+  * :ref:`lib_zigbee_zcl_scenes`:
+
+    * Updated the library, so that it is allowed to store empty scenes.
+
+  * :ref:`lib_zigbee_osif`:
 
     * Updated:
 
