@@ -601,6 +601,14 @@ See the following instructions.
    :start-after: fota_upgrades_start
    :end-before: fota_upgrades_end
 
+.. include:: ug_nrf52.rst
+   :start-after: fota_upgrades_matter_start
+   :end-before: fota_upgrades_matter_end
+
+.. include:: ug_nrf52.rst
+   :start-after: fota_upgrades_thread_start
+   :end-before: fota_upgrades_thread_end
+
 Simultaneous multi-image DFU
 ****************************
 
