@@ -333,9 +333,31 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 
 	/* Following cases mark end of FOTA download */
 	case FOTA_DOWNLOAD_EVT_CANCELLED:
+		LOG_ERR("FOTA_DOWNLOAD_EVT_CANCELLED");
+		lwm2m_firmware_set_update_state(STATE_IDLE);
+		break;
 	case FOTA_DOWNLOAD_EVT_ERROR:
 		LOG_ERR("FOTA_DOWNLOAD_EVT_ERROR");
-		lwm2m_firmware_set_update_state(STATE_IDLE);
+		switch (evt->cause) {
+		/* No error, used when event ID is not FOTA_DOWNLOAD_EVT_ERROR. */
+		case FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR:
+			lwm2m_firmware_set_update_result(RESULT_DEFAULT);
+			break;
+		/* Downloading the update failed. The download may be retried. */
+		case FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED:
+			lwm2m_firmware_set_update_result(RESULT_CONNECTION_LOST);
+			break;
+		/* The update is invalid and was rejected. Retry will not help. */
+		case FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_UPDATE:
+			/* FALLTHROUGH */
+		/* Actual firmware type does not match expected. Retry will not help. */
+		case FOTA_DOWNLOAD_ERROR_CAUSE_TYPE_MISMATCH:
+			lwm2m_firmware_set_update_result(RESULT_UNSUP_FW);
+			break;
+		default:
+			lwm2m_firmware_set_update_result(RESULT_UPDATE_FAILED);
+			break;
+		}
 		break;
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		image_type = fota_download_target();
