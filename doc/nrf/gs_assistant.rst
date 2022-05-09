@@ -21,7 +21,7 @@ Toolchain Manager
 *****************
 
 The Toolchain manager app is available for Windows and macOS.
-It installs the full toolchain that you need to work with the |NCS|, including the |VSC| extension, |SES|, and the |NCS| source code.
+It installs the full toolchain that you need to work with the |NCS|, including the |VSC| extension and the |NCS| source code.
 
 .. _tcm_setup:
 
@@ -52,11 +52,9 @@ Click :guilabel:`Settings` in the navigation bar to specify where you want to in
 Then, in :guilabel:`SDK Environments`, click the :guilabel:`Install` button next to the |NCS| version that you want to install.
 The |NCS| version of your choice is installed on your machine.
 
-There are several ways you can build an application:
+There are two ways you can build an application:
 
 * To build with |VSC|, click on the :guilabel:`Open VS Code` button.
-
-* To build with |SES|, click on the :guilabel:`Open Segger Embedded Studio` button.
 
 * To build on the command line, use the following steps:
 

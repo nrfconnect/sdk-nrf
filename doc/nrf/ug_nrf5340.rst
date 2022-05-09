@@ -422,7 +422,6 @@ Follow these steps to build and program a multi-image build to the nRF5340 appli
    #. Configure the project settings.
 
       * :guilabel:`Target Processor`: Select ``nRF5340_xxAA_Network``.
-        If it is not on the list, see :ref:`gs_updating_ses_packages`.
 
       * :guilabel:`Load File`: Specify the file name of the merged HEX file for the network core that should be programmed.
          For example, specify :file:`$(ProjectDir)/hci_rpmsg/zephyr/merged_CPUNET.hex` for the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample.
