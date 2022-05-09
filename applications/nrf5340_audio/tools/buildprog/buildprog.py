@@ -17,52 +17,73 @@ import subprocess
 import re
 from colorama import Fore, Style
 from prettytable import PrettyTable
-from nrf5340_audio_dk_devices import DeviceConf, BuildConf, SelectFlags
+from nrf5340_audio_dk_devices import (
+    BuildType,
+    Channel,
+    DeviceConf,
+    BuildConf,
+    AudioDevice,
+    SelectFlags,
+    Core,
+)
+from typing import List
 from program import program_threads_run
+from pathlib import Path
 
-TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME = 'nrf5340_audio_dk_nrf5340_cpuapp'
-TARGET_BOARD_NRF5340_AUDIO_DK_NET_NAME = 'nrf5340_audio_dk_nrf5340_cpunet'
 
-TARGET_CORE_APP_FOLDER = '../..'
-TARGET_CORE_NET_FOLDER = '../../bin'
-TARGET_DEV_HEADSET_FOLDER = 'build/dev_headset'
-TARGET_DEV_GATEWAY_FOLDER = 'build/dev_gateway'
-TARGET_DEV_BLE_FOLDER = 'dev_ble'
-TARGET_RELEASE_FOLDER = 'build_release'
-TARGET_DEBUG_FOLDER = 'build_debug'
+BUILDPROG_FOLDER = Path(__file__).resolve().parent
+NRF5340_AUDIO_FOLDER = (BUILDPROG_FOLDER / "../..").resolve()
+USER_CONFIG = BUILDPROG_FOLDER / "nrf5340_audio_dk_devices.json"
 
-COMP_FLAG_DEV_HEADSET = ' -DOVERLAY_CONFIG="overlay-headset.conf '
-COMP_FLAG_DEV_GATEWAY = ' -DOVERLAY_CONFIG="overlay-gateway.conf '
-COMP_FLAG_RELEASE = ' overlay-release.conf"'
-COMP_FLAG_DEBUG = ' overlay-debug.conf"'
+TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME = "nrf5340_audio_dk_nrf5340_cpuapp"
+TARGET_BOARD_NRF5340_AUDIO_DK_NET_NAME = "nrf5340_audio_dk_nrf5340_cpunet"
 
-PRISTINE_FLAG = ' --pristine'
+TARGET_CORE_APP_FOLDER = NRF5340_AUDIO_FOLDER
+TARGET_CORE_NET_FOLDER = NRF5340_AUDIO_FOLDER / "bin"
+TARGET_DEV_HEADSET_FOLDER = NRF5340_AUDIO_FOLDER / "build/dev_headset"
+TARGET_DEV_GATEWAY_FOLDER = NRF5340_AUDIO_FOLDER / "build/dev_gateway"
+
+TARGET_RELEASE_FOLDER = "build_release"
+TARGET_DEBUG_FOLDER = "build_debug"
+
+COMP_FLAG_DEV_HEADSET = NRF5340_AUDIO_FOLDER / "overlay-headset.conf"
+COMP_FLAG_DEV_GATEWAY = NRF5340_AUDIO_FOLDER / "overlay-gateway.conf"
+COMP_FLAG_RELEASE = NRF5340_AUDIO_FOLDER / "overlay-release.conf"
+COMP_FLAG_DEBUG = NRF5340_AUDIO_FOLDER / "overlay-debug.conf"
+
+PRISTINE_FLAG = " --pristine"
+
+
+def generate_overlay_argument(files: List[Path]):
+    flattened_paths = " ".join(str(of) for of in files)
+    return f'-DOVERLAY_CONFIG="{flattened_paths}"'
 
 
 def __print_add_color(status):
     if status == SelectFlags.FAIL:
-        return Fore.RED + status + Style.RESET_ALL
+        return Fore.RED + status.value + Style.RESET_ALL
     elif status == SelectFlags.DONE:
-        return Fore.GREEN + status + Style.RESET_ALL
-    return status
+        return Fore.GREEN + status.value + Style.RESET_ALL
+    return status.value
 
 
 def __print_dev_conf(device_list):
     """Print settings in a formatted manner"""
     table = PrettyTable()
-    table.field_names = ["snr", "snr conn", "device", "only reboot",
-                         "core app programmed", "core net programmed"]
+    table.field_names = [
+        "snr",
+        "snr conn",
+        "device",
+        "only reboot",
+        "core app programmed",
+        "core net programmed",
+    ]
     for device in device_list:
         row = []
         row.append(device.nrf5340_audio_dk_snr)
-        if device.nrf5340_audio_dk_snr_connected:
-            row.append(Fore.GREEN + str(device.nrf5340_audio_dk_snr_connected)
-                       + Style.RESET_ALL)
-        else:
-            row.append(Fore.YELLOW + str(device.nrf5340_audio_dk_snr_connected)
-                       + Style.RESET_ALL)
-
-        row.append(device.nrf5340_audio_dk_device)
+        color = Fore.GREEN if device.snr_connected else Fore.YELLOW
+        row.append(color + str(device.snr_connected) + Style.RESET_ALL)
+        row.append(device.nrf5340_audio_dk_dev.value)
         row.append(__print_add_color(device.only_reboot))
         row.append(__print_add_color(device.core_app_programmed))
         row.append(__print_add_color(device.core_net_programmed))
@@ -71,55 +92,53 @@ def __print_dev_conf(device_list):
     print(table)
 
 
-def __build_cmd_get(core, device, build, pristine):
-    build_cmd = "west build "
-    dest_folder = ""
-    compiler_flags = ""
+def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType, pristine):
+    if core == Core.app:
+        build_cmd = f"west build {TARGET_CORE_APP_FOLDER} -b {TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME}"
+        overlay_files = []
+        if device == AudioDevice.headset:
+            overlay_files.append(COMP_FLAG_DEV_HEADSET)
+            dest_folder = TARGET_DEV_HEADSET_FOLDER
+        elif device == AudioDevice.gateway:
+            overlay_files.append(COMP_FLAG_DEV_GATEWAY)
+            dest_folder = TARGET_DEV_GATEWAY_FOLDER
+        else:
+            raise Exception("Invalid device!")
+        if build == BuildType.debug:
+            overlay_files.append(COMP_FLAG_DEBUG)
+            dest_folder /= TARGET_DEBUG_FOLDER
+        elif build == BuildType.release:
+            overlay_files.append(COMP_FLAG_RELEASE)
+            dest_folder /= TARGET_RELEASE_FOLDER
+        else:
+            raise Exception("Invalid build type!")
+        compiler_flags = generate_overlay_argument(overlay_files)
+        if pristine:
+            build_cmd += " -p "
 
-    if core == "app":
-        build_cmd += (TARGET_CORE_APP_FOLDER + " -b " +
-                      TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME)
-        dest_folder += TARGET_CORE_APP_FOLDER
-        if device == "headset":
-            compiler_flags += COMP_FLAG_DEV_HEADSET
-            dest_folder += "/" + TARGET_DEV_HEADSET_FOLDER
-        elif device == "gateway":
-            compiler_flags += COMP_FLAG_DEV_GATEWAY
-            dest_folder += "/" + TARGET_DEV_GATEWAY_FOLDER
-
-    if core == "net":
+    elif core == Core.net:
         # The net core is precompiled
-        dest_folder += TARGET_CORE_NET_FOLDER
+        dest_folder = TARGET_CORE_NET_FOLDER
         build_cmd = ""
         compiler_flags = ""
-        return build_cmd, dest_folder, compiler_flags
-
-    if build == "debug":
-        compiler_flags += " " + COMP_FLAG_DEBUG
-        dest_folder += "/" + TARGET_DEBUG_FOLDER
-    elif build == "release":
-        compiler_flags += " " + COMP_FLAG_RELEASE
-        dest_folder += "/" + TARGET_RELEASE_FOLDER
-
-    if pristine:
-        build_cmd += " -p "
 
     return build_cmd, dest_folder, compiler_flags
 
 
 def __build_module(build_config):
-    build_cmd, dest_folder, compiler_flags = \
-        __build_cmd_get(build_config.core, build_config.device,
-                        build_config.build, build_config.pristine)
-    west_str = build_cmd + " -d " + dest_folder
-    curr_folder = os.getcwd()
+    build_cmd, dest_folder, compiler_flags = __build_cmd_get(
+        build_config.core,
+        build_config.device,
+        build_config.build,
+        build_config.pristine,
+    )
+    west_str = f"{build_cmd} -d {dest_folder} "
 
-    if build_config.pristine and os.path.exists(curr_folder + "/" +
-                                                dest_folder):
+    if build_config.pristine and dest_folder.exists():
         shutil.rmtree(dest_folder)
 
     # Only add compiler flags if folder doesn't exist already
-    if not os.path.exists(curr_folder + "/" + dest_folder):
+    if not dest_folder.exists():
         west_str += compiler_flags
 
     print("Run: " + west_str)
@@ -134,9 +153,8 @@ def __find_snr():
     """Rebooting or programming requires connected programmer/debugger"""
 
     # Use nrfjprog executable for WSL compatibility
-    stdout = subprocess.check_output('nrfjprog --ids',
-                                     shell=True).decode('utf-8')
-    snrs = re.findall(r'([\d]+)', stdout)
+    stdout = subprocess.check_output("nrfjprog --ids", shell=True).decode("utf-8")
+    snrs = re.findall(r"([\d]+)", stdout)
 
     if not snrs:
         print("No programmer/debugger connected to PC")
@@ -147,28 +165,25 @@ def __find_snr():
 def __populate_hex_paths(dev, options):
     """Poplulate hex paths where relevant"""
     if dev.core_net_programmed == SelectFlags.TBD:
-        _, dest_folder, _ = __build_cmd_get("net", None, options.build,
-                                            options.pristine)
+        dest_folder = TARGET_CORE_NET_FOLDER
 
-        hex_files_found = []
-        for file in os.listdir(dest_folder):
-            if file.endswith(".hex"):
-                hex_files_found.append(file)
+        hex_files_found = [
+            file for file in dest_folder.iterdir() if file.suffix == ".hex"
+        ]
 
         if len(hex_files_found) == 0:
-            raise Exception("Found no net core hex file in folder: " +
-                            dest_folder)
+            raise Exception(f"Found no net core hex file in folder: {dest_folder}")
         elif len(hex_files_found) > 1:
-            raise Exception("Found more than one hex file in folder: " +
-                            dest_folder)
+            raise Exception(f"Found more than one hex file in folder: {dest_folder}")
         else:
-            dev.hex_path_net = dest_folder + "/" + hex_files_found[0]
-            print("Using NET hex: " + dev.hex_path_net)
+            dev.hex_path_net = dest_folder / hex_files_found[0]
+            print(f"Using NET hex: {dev.hex_path_net} for {dev}")
 
     if dev.core_app_programmed == SelectFlags.TBD:
-        _, dest_folder, _ = __build_cmd_get("app", dev.nrf5340_audio_dk_device,
-                                            options.build, options.pristine)
-        dev.hex_path_app = dest_folder + "/zephyr/zephyr.hex"
+        _, dest_folder, _ = __build_cmd_get(
+            Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine
+        )
+        dev.hex_path_app = dest_folder / "zephyr/zephyr.hex"
 
 
 def __finish(device_list):
@@ -178,124 +193,157 @@ def __finish(device_list):
     exit(0)
 
 
-def __option_match_device(option_dev, hw_dev):
-    """Check if the selected option matches the given device """
-    if option_dev == "both":
-        return True
-    elif option_dev == hw_dev:
-        return True
-    return False
-
-
 def __main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description="This script builds and programs the nRF5340 Audio \
-                     project on Windows and Linux")
-    parser.add_argument("-r", "--only_reboot", default=False,
-                        action='store_true',
-                        help="Only reboot, no building or programming")
-    parser.add_argument("-p", "--program", default=False,
-                        action='store_true',
-                        help="Will program and reboot nRF5340 Audio DK.")
-    parser.add_argument("-c", "--core",
-                        choices=["app", "net", "both"],
-                        help="app, net, or both")
-    parser.add_argument("--pristine", default=False,
-                        action='store_true',
-                        help="Will build cleanly")
-    parser.add_argument("-b", "--build", required="-p" in sys.argv or
-                        "--program" in sys.argv,
-                        choices=["release", "debug"], help="Release or debug")
-    parser.add_argument("-d", "--device", required=("-b" in sys.argv or
-                                                    "--build" in sys.argv)
-                        and ("both" in sys.argv or "app" in sys.argv),
-                        choices=["headset", "gateway", "both"],
-                        help="nRF5340 Audio on the application core can be \
-                        built for either ordinary headset \
-                        (earbuds/headphone..) use or gateway (USB dongle)")
-
-    parser.add_argument("-s", "--sequential",
-                        required=False,
-                        dest="sequential_prog",
-                        type=bool,
-                        default=False,
-                        nargs="?",
-                        const=True,
-                        help="Run nrfjprog sequentially instead of in \
-                        parallel.")
+        description=(
+            "This script builds and programs the nRF5340 "
+            "Audio project on Windows and Linux"
+        ),
+    )
+    parser.add_argument(
+        "-r",
+        "--only_reboot",
+        default=False,
+        action="store_true",
+        help="Only reboot, no building or programming",
+    )
+    parser.add_argument(
+        "-p",
+        "--program",
+        default=False,
+        action="store_true",
+        help="Will program and reboot nRF5340 Audio DK",
+    )
+    parser.add_argument(
+        "-c",
+        "--core",
+        type=str,
+        choices=[i.name for i in Core],
+        help="Select which cores to include in build",
+    )
+    parser.add_argument(
+        "--pristine", default=False, action="store_true", help="Will build cleanly"
+    )
+    parser.add_argument(
+        "-b",
+        "--build",
+        required="-p" in sys.argv or "--program" in sys.argv,
+        choices=[i.name for i in BuildType],
+        help="Select the build type",
+    )
+    parser.add_argument(
+        "-d",
+        "--device",
+        required=("-r" in sys.argv or "--only_reboot" in sys.argv)
+        or (
+            ("-b" in sys.argv or "--build" in sys.argv)
+            and ("both" in sys.argv or "app" in sys.argv)
+        ),
+        choices=[i.name for i in AudioDevice],
+        help=(
+            "nRF5340 Audio on the application core can be "
+            "built for either ordinary headset "
+            "(earbuds/headphone..) use or gateway (USB dongle)"
+        ),
+    )
+    parser.add_argument(
+        "-s",
+        "--sequential",
+        action="store_true",
+        dest="sequential_prog",
+        default=False,
+        help="Run nrfjprog sequentially instead of in \
+                        parallel",
+    )
+    parser.add_argument(
+        "-f",
+        "--recover_on_fail",
+        action="store_true",
+        dest="recover_on_fail",
+        default=False,
+        help="Recover device if programming fails",
+    )
     options = parser.parse_args(args=sys.argv[1:])
 
+    # Post processing for Enums
+    if options.core is None:
+        cores = []
+    elif options.core == "both":
+        cores = [Core.app, Core.net]
+    else:
+        cores = [Core[options.core]]
+
+    if options.device is None:
+        devices = []
+    elif options.device == "both":
+        devices = [AudioDevice.gateway, AudioDevice.headset]
+    else:
+        devices = [AudioDevice[options.device]]
+
+    options.build = BuildType[options.build] if options.build else None
+
+    options.only_reboot = SelectFlags.TBD if options.only_reboot else SelectFlags.NOT
+
     boards_snr_connected = __find_snr()
+    if not boards_snr_connected:
+        print("No snrs connected")
 
     # Update device list
     # This JSON file should be altered by the developer.
     # Then run git update-index --skip-worktree FILENAME to avoid changes
     # being pushed
-    dev_file = open('nrf5340_audio_dk_devices.json')
-    dev_arr = json.load(dev_file)
-    device_list = []
-    for dev in dev_arr:
-        device_list.append(DeviceConf(dev["nrf5340_audio_dk_snr"],
-                                      dev["nrf5340_audio_dk_dev"],
-                                      dev["channel"]))
-
-    # Match connected SNRs to list
-    if boards_snr_connected:
-        for dev in device_list:
-            for snr in boards_snr_connected:
-                if dev.nrf5340_audio_dk_snr == snr:
-                    dev.nrf5340_audio_dk_snr_connected = True
-
-            if options.only_reboot:
-                dev.only_reboot = SelectFlags.TBD
-                continue
-
-            if options.core == "app" or options.core == "both":
-                if __option_match_device(options.device,
-                                         dev.nrf5340_audio_dk_device):
-                    dev.core_app_programmed = SelectFlags.TBD
-
-            if options.core == "net" or options.core == "both":
-                if __option_match_device(options.device,
-                                         dev.nrf5340_audio_dk_device):
-                    dev.core_net_programmed = SelectFlags.TBD
-
-    else:
-        print("No snrs connected")
+    with USER_CONFIG.open() as f:
+        dev_arr = json.load(f)
+    device_list = [
+        DeviceConf(
+            nrf5340_audio_dk_snr=dev["nrf5340_audio_dk_snr"],
+            channel=Channel[dev["channel"]],
+            snr_connected=(dev["nrf5340_audio_dk_snr"] in boards_snr_connected),
+            recover_on_fail=options.recover_on_fail,
+            nrf5340_audio_dk_dev=AudioDevice[dev["nrf5340_audio_dk_dev"]],
+            cores=cores,
+            devices=devices,
+            _only_reboot=options.only_reboot,
+        )
+        for dev in dev_arr
+    ]
 
     __print_dev_conf(device_list)
 
     # Initialization step finsihed
     # Reboot step start
 
-    if options.only_reboot:
+    if options.only_reboot == SelectFlags.TBD:
         program_threads_run(device_list, sequential=options.sequential_prog)
         __finish(device_list)
 
     # Reboot step finished
     # Build step start
 
-    if options.build:
+    if options.build is not None:
         print("Invoking build step")
         build_configs = []
-        if options.core == "both" or options.core == "app":
-            if options.device == "both":
-                build_configs.append(BuildConf("app", "headset",
-                                               options.pristine,
-                                               options.build))
-                build_configs.append(BuildConf("app", "gateway",
-                                               options.pristine,
-                                               options.build))
-            elif options.device == "headset":
-                build_configs.append(BuildConf("app", "headset",
-                                               options.pristine,
-                                               options.build))
-            elif options.device == "gateway":
-                build_configs.append(BuildConf("app", "gateway",
-                                               options.pristine,
-                                               options.build))
-        if options.core == "both" or options.core == "net":
+        if Core.app in cores:
+            if AudioDevice.headset in devices:
+                build_configs.append(
+                    BuildConf(
+                        core=Core.app,
+                        device=AudioDevice.headset,
+                        pristine=options.pristine,
+                        build=options.build,
+                    )
+                )
+            if AudioDevice.gateway in devices:
+                build_configs.append(
+                    BuildConf(
+                        core=Core.app,
+                        device=AudioDevice.gateway,
+                        pristine=options.pristine,
+                        build=options.build,
+                    )
+                )
+        if Core.net in cores:
             print("Net core uses precompiled hex")
 
         for build_cfg in build_configs:
@@ -306,9 +354,9 @@ def __main():
 
     if options.program:
         for dev in device_list:
-            __populate_hex_paths(dev, options)
-
-    program_threads_run(device_list, sequential=options.sequential_prog)
+            if dev.snr_connected:
+                __populate_hex_paths(dev, options)
+        program_threads_run(device_list, sequential=options.sequential_prog)
 
     # Program step finished
 

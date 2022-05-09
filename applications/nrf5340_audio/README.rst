@@ -864,7 +864,7 @@ You can now program the development kits with either gateway or headset firmware
 Building and programming using script
 =====================================
 
-The suggested method for building the application and programming it to the development kit is running the :file:`buildprog.py` Python script from the :file:`applications/nrf5340_audio/tools/buildprog` directory.
+The suggested method for building the application and programming it to the development kit is running the :file:`buildprog.py` Python script, which is located in the :file:`applications/nrf5340_audio/tools/buildprog` directory.
 The script automates the process of selecting :ref:`configuration files <nrf53_audio_app_configuration_files>` and building different versions of the application.
 This eases the process of building and programming images for multiple development kits.
 
@@ -885,7 +885,7 @@ Before using the script, make sure to update this file with the following inform
 Running the script
 ------------------
 
-After editing the :file:`nrf5340_audio_dk_devices.json` file, run :file:`buildprog.py` from the :file:`applications/nrf5340_audio/tools/buildprog` directory to build the firmware for the development kits.
+After editing the :file:`nrf5340_audio_dk_devices.json` file, run :file:`buildprog.py` to build the firmware for the development kits.
 The building command for running the script requires providing the following parameters, in line with :ref:`nrf53_audio_app_configuration_files`:
 
 * Core type (``-c`` parameter): ``app``, ``net``, or ``both``
@@ -898,7 +898,9 @@ For example, to build the application using the script for the application core 
 
    python buildprog.py -c app -b debug -d both
 
-The build files are saved in the :file:`build` directory.
+This command can be ran from any location, as long as the correct path to :file:`buildprog.py` is given.
+
+The build files are saved in the :file:`applications/nrf5340_audio/build` directory.
 The script creates a directory for each application version and device type combination.
 For example, when running the command above, the script creates the :file:`dev_gateway/build_debug` and :file:`dev_headset/build_debug` directories.
 
@@ -916,14 +918,12 @@ Programming with the script
    Given the ``-c both`` parameter, it also takes the precompiled Bluetooth Low Energy Controller binary from the :file:`applications/nrf5340_audio/bin` directory and programs it to the network core of both the gateway and the headset.
 
    .. note::
-      If the programming command fails because of :ref:`readback_protection_error`, run the following commands to recover the device:
+      If the programming command fails because of :ref:`readback_protection_error`, run :file:`buildprog.py` with the ``--recover-on-fail`` or ``-f`` parameter to recover and re-program automatically when programming fails.
+      For example, using the programming command example above:
 
       .. code-block:: console
 
-         nrfjprog --recover --coprocessor CP_NETWORK
-         nrfjprog --recover
-
-      Then program the device again using the script command.
+         python buildprog.py -c both -b debug -d both -p --recover-on-fail
 
 Getting help
    Run ``python buildprog.py -h`` for information about all available script parameters.
