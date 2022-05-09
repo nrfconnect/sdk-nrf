@@ -305,31 +305,6 @@ static void level_control_set_value(zb_uint16_t new_level)
 		(zb_uint8_t *)&new_level,
 		ZB_FALSE);
 
-	/* According to the table 7.3 of Home Automation Profile Specification
-	 * v 1.2 rev 29, chapter 7.1.3.
-	 */
-	if (new_level == 0) {
-		zb_uint8_t value = ZB_FALSE;
-
-		ZB_ZCL_SET_ATTRIBUTE(
-			DIMMABLE_LIGHT_ENDPOINT,
-			ZB_ZCL_CLUSTER_ID_ON_OFF,
-			ZB_ZCL_CLUSTER_SERVER_ROLE,
-			ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
-			&value,
-			ZB_FALSE);
-	} else {
-		zb_uint8_t value = ZB_TRUE;
-
-		ZB_ZCL_SET_ATTRIBUTE(
-			DIMMABLE_LIGHT_ENDPOINT,
-			ZB_ZCL_CLUSTER_ID_ON_OFF,
-			ZB_ZCL_CLUSTER_SERVER_ROLE,
-			ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
-			&value,
-			ZB_FALSE);
-	}
-
 	light_bulb_set_brightness(new_level);
 }
 
@@ -350,8 +325,7 @@ static void on_off_set_value(zb_bool_t on)
 		ZB_FALSE);
 
 	if (on) {
-		level_control_set_value(
-			dev_ctx.level_control_attr.current_level);
+		light_bulb_set_brightness(dev_ctx.level_control_attr.current_level);
 	} else {
 		light_bulb_set_brightness(0U);
 	}
