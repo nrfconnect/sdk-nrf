@@ -180,13 +180,6 @@ Complete the following steps after installing the `nRF Connect for Visual Studio
 
 1. Open Visual Studio code.
 #. Click on the :guilabel:`nRF Connect for VS Code` icon in the left navigation bar and then click :guilabel:`Open`.
-
-   .. figure:: images/ug_thingy53_vscode_welcome.png
-      :alt: nRF Connect for VS Code welcome page
-      :width: 80%
-
-      The welcome page for nRF Connect for VS Code.
-
 #. Click on :guilabel:`Add an existing applicaton to workspace...`.
 #. In the prompt, navigate to the folder containing the sample you want to build, such as :file:`nrf/samples/bluetooth/peripheral_lbs`.
    You should now see the selected application in the :guilabel:`Applications` window in the lower left corner.
@@ -195,30 +188,12 @@ Complete the following steps after installing the `nRF Connect for Visual Studio
 
      The sample folder must contain a :file:`prj.conf` file.
 
-   .. figure:: images/ug_thingy53_vscode_appwindow.png
-      :alt: nRF Connect for VS Code, application shown in Application window
-      :width: 80%
-
-      The peripheral_lbs application is now available in the :guilabel:`Application` window.
-
 #. Click on the :guilabel:`Add Build Configuration` button in the :guilabel:`Application` window, or click on the text stating :guilabel:`No build configurations. Click to create one`.
    This opens the :guilabel:`Generate Configuration` window in a new tab.
 #. Select the ``thingy53_nrf5340_cpuapp`` as the target board and click :guilabel:`Generate Config`, which generates the configuration file and triggers the build process.
 
-   .. figure:: images/ug_thingy53_vscode_genconfig1.png
-      :alt: nRF Connect for VS Code, Generate Configuration window
-      :width: 80%
-
-      The :guilabel:`Generate Configuration` window, with ``thingy53_nrf5340_cpuapp`` as the board.
-
 #. When the build configuration and the build are complete, an :guilabel:`Actions` window appears in the lower left corner of Visual Studio Code.
    In this window, you can trigger the build process, program the built sample or start a debug session.
-
-   .. figure:: images/ug_thingy53_vscode_genconfig2.png
-      :alt: nRF Connect for VS Code, Actions window
-      :width: 80%
-
-      The :guilabel:`Actions` window is open in the lower left corner
 
 #. Program the sample or application:
 
