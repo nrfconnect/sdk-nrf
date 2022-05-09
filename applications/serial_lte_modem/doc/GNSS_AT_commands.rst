@@ -123,6 +123,9 @@ Connect to nRF Cloud
 
 The ``#XNRFCLOUD`` command controls the connection to the nRF Cloud service.
 
+.. note::
+   To use ``#XNRFCLOUD``, you must first provision the device to nRF Cloud, using the UUID from the modem firmware as device ID.
+
 Set command
 -----------
 
@@ -269,7 +272,12 @@ Run GNSS with nRF Cloud A-GPS
 =============================
 
 The ``#XAGPS`` command runs the GNSS together with the nRF Cloud A-GPS service.
-This requires access to nRF Cloud through the LTE network for receiving A-GPS data.
+
+.. note::
+   To use ``#XAGPS``, the following preconditions apply:
+
+   * You must define :ref:`CONFIG_SLM_AGPS <CONFIG_SLM_AGPS>`.
+   * You must have access to nRF Cloud through the LTE network for receiving A-GPS data.
 
 Set command
 -----------
@@ -388,7 +396,12 @@ Run GNSS with nRF Cloud P-GPS
 =============================
 
 The ``#XPGPS`` command runs the GNSS together with the nRF Cloud P-GPS service.
-This requires access to nRF Cloud through the LTE network for receiving P-GPS data.
+
+.. note::
+   To use ``#XPGPS``, the following preconditions apply:
+
+   * You must define :ref:`CONFIG_SLM_PGPS <CONFIG_SLM_PGPS>`.
+   * You must have access to nRF Cloud through the LTE network for receiving P-GPS data.
 
 Set command
 -----------
@@ -503,7 +516,12 @@ Run nRF Cloud cellular positioning
 ==================================
 
 The ``#XCELLPOS`` command runs the nRF Cloud cellular positioning service for position information.
-This requires to define ``CONFIG_SLM_CELL_POS`` and to access nRF Cloud through the LTE network.
+
+.. note::
+   To use ``#XCELLPOS``, the following preconditions apply:
+
+   * You must define :ref:`CONFIG_SLM_CELL_POS <CONFIG_SLM_CELL_POS>`.
+   * You must have access to nRF Cloud through the LTE network.
 
 Set command
 -----------
