@@ -496,6 +496,7 @@ Libraries for networking
     * Fixed:
 
       * Setting of the FOTA update result.
+      * Reporting of the FOTA update result back to the LwM2M server.
 
   * :ref:`lib_nrf_cloud` library:
 

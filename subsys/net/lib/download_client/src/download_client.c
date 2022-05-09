@@ -462,7 +462,7 @@ static int request_resend(struct download_client *dl)
 		if (IS_ENABLED(CONFIG_COAP)) {
 			rc = coap_initiate_retransmission(dl);
 			if (rc) {
-				error_evt_send(dl, errno);
+				error_evt_send(dl, ETIMEDOUT);
 				return -1;
 			}
 		}
