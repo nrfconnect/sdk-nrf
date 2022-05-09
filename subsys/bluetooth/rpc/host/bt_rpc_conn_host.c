@@ -19,8 +19,6 @@
 
 LOG_MODULE_DECLARE(BT_RPC, CONFIG_BT_RPC_LOG_LEVEL);
 
-#define SIZE_OF_FIELD(structure, field) (sizeof(((structure *)NULL)->field))
-
 static void report_decoding_error(uint8_t cmd_evt_id, void *data)
 {
 	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &bt_rpc_grp, cmd_evt_id,
@@ -212,8 +210,8 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_get_dst_out, BT_CONN_GET_DST_OUT_RP
 
 #if defined(CONFIG_BT_USER_PHY_UPDATE)
 static const size_t bt_conn_le_phy_info_buf_size =
-	1 + SIZE_OF_FIELD(struct bt_conn_le_phy_info, tx_phy) +
-	1 + SIZE_OF_FIELD(struct bt_conn_le_phy_info, rx_phy);
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_le_phy_info, tx_phy) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_le_phy_info, rx_phy);
 
 void bt_conn_le_phy_info_enc(struct nrf_rpc_cbor_ctx *encoder, const struct bt_conn_le_phy_info *data)
 {
@@ -224,10 +222,10 @@ void bt_conn_le_phy_info_enc(struct nrf_rpc_cbor_ctx *encoder, const struct bt_c
 
 #if defined(CONFIG_BT_USER_DATA_LEN_UPDATE)
 static const size_t bt_conn_le_data_len_info_buf_size =
-	1 + SIZE_OF_FIELD(struct bt_conn_le_data_len_info, tx_max_len) +
-	1 + SIZE_OF_FIELD(struct bt_conn_le_data_len_info, tx_max_time) +
-	1 + SIZE_OF_FIELD(struct bt_conn_le_data_len_info, rx_max_len) +
-	1 + SIZE_OF_FIELD(struct bt_conn_le_data_len_info, rx_max_time);
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_le_data_len_info, tx_max_len) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_le_data_len_info, tx_max_time) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_le_data_len_info, rx_max_len) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_le_data_len_info, rx_max_time);
 
 void bt_conn_le_data_len_info_enc(struct nrf_rpc_cbor_ctx *encoder,
 				  const struct bt_conn_le_data_len_info *data)
@@ -240,12 +238,12 @@ void bt_conn_le_data_len_info_enc(struct nrf_rpc_cbor_ctx *encoder,
 #endif /* defined(CONFIG_BT_USER_DATA_LEN_UPDATE) */
 
 static const size_t bt_conn_info_buf_size =
-	1 + SIZE_OF_FIELD(struct bt_conn_info, type) +
-	1 + SIZE_OF_FIELD(struct bt_conn_info, role) +
-	1 + SIZE_OF_FIELD(struct bt_conn_info, id) +
-	1 + SIZE_OF_FIELD(struct bt_conn_info, le.interval) +
-	1 + SIZE_OF_FIELD(struct bt_conn_info, le.latency) +
-	1 + SIZE_OF_FIELD(struct bt_conn_info, le.timeout) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_info, type) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_info, role) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_info, id) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_info, le.interval) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_info, le.latency) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_info, le.timeout) +
 	4 * (1 + sizeof(bt_addr_le_t)) +
 #if defined(CONFIG_BT_USER_PHY_UPDATE)
 	bt_conn_le_phy_info_buf_size +
@@ -253,10 +251,11 @@ static const size_t bt_conn_info_buf_size =
 	1 +
 #endif
 #if defined(CONFIG_BT_USER_DATA_LEN_UPDATE)
-	bt_conn_le_data_len_info_buf_size;
+	bt_conn_le_data_len_info_buf_size +
 #else
-	1;
+	1 +
 #endif
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_info, state);
 
 void bt_conn_info_enc(struct nrf_rpc_cbor_ctx *encoder, struct bt_conn_info *info)
 {
@@ -282,6 +281,7 @@ void bt_conn_info_enc(struct nrf_rpc_cbor_ctx *encoder, struct bt_conn_info *inf
 #else
 		ser_encode_null(encoder);
 #endif
+		ser_encode_uint(encoder, info->state);
 	} else {
 		/* non-LE connection types are not supported. */
 		ser_encoder_invalid(encoder);
@@ -328,10 +328,10 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_get_info, BT_CONN_GET_INFO_RPC_CMD,
 
 
 static const size_t bt_conn_remote_info_buf_size =
-	1 + SIZE_OF_FIELD(struct bt_conn_remote_info, type) +
-	1 + SIZE_OF_FIELD(struct bt_conn_remote_info, version) +
-	1 + SIZE_OF_FIELD(struct bt_conn_remote_info, manufacturer) +
-	1 + SIZE_OF_FIELD(struct bt_conn_remote_info, subversion) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_remote_info, type) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_remote_info, version) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_remote_info, manufacturer) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_remote_info, subversion) +
 	1 + 8 * sizeof(uint8_t);
 
 void bt_conn_remote_info_enc(struct nrf_rpc_cbor_ctx *encoder,

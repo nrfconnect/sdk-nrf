@@ -1524,6 +1524,10 @@ void bt_gatt_subscribe_params_dec(struct nrf_rpc_cbor_ctx *ctx,
 	data->value_handle = ser_decode_uint(ctx);
 	data->ccc_handle = ser_decode_uint(ctx);
 	data->value = ser_decode_uint(ctx);
+
+#if defined(CONFIG_BT_SMP)
+	data->min_security = ser_decode_uint(ctx);
+#endif
 	atomic_set(data->flags, (atomic_val_t)ser_decode_uint(ctx));
 }
 

@@ -297,11 +297,14 @@ void bt_conn_info_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_conn *conn,
 			info->le.data_len = NULL;
 		} else {
 			info->le.data_len = &conn->data_len;
-			bt_conn_le_data_len_info_dec(value, &conn->data_len);
+			bt_conn_le_data_len_info_dec(ctx, &conn->data_len);
 		}
 #else
 		ser_decode_skip(ctx);
 #endif
+
+		info->state = ser_decode_uint(ctx);
+
 		UNLOCK_CONN_INFO();
 	} else {
 		/* non-LE connection types are not supported. */
