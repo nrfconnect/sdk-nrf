@@ -152,6 +152,7 @@ Thingy:53 Zigbee weather station
 --------------------------------
 
 * Added new :ref:`zigbee_weather_station_app` application.
+* Fixed an issue where the buffer was being freed incorrectly.
 
 Samples
 =======
