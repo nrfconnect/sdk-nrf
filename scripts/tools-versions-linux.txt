@@ -11,5 +11,5 @@ ccache=3.7.7
 dfu_util=0.9-1
 west=0.12.0
 gn=1880
-doxygen=1.9.2
+doxygen=1.9.4
 ruby=2.7.0
