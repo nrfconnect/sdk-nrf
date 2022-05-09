@@ -61,11 +61,15 @@ Set the following options in the same way for the :ref:`ble_rpc_host` and applic
    * :kconfig:option:`CONFIG_BT_SETTINGS_CCC_LAZY_LOADING`
    * :kconfig:option:`CONFIG_BT_BROADCASTER`
    * :kconfig:option:`CONFIG_BT_SETTINGS`
+   * :kconfig:option:`CONFIG_BT_GATT_CLIENT`
+   * :kconfig:option:`CONFIG_BT_INTERNAL_FUNCTIONS`
+   * :kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE_DYNAMIC`
    * :kconfig:option:`CONFIG_BT_MAX_CONN`
    * :kconfig:option:`CONFIG_BT_ID_MAX`
    * :kconfig:option:`CONFIG_BT_EXT_ADV_MAX_ADV_SET`
    * :kconfig:option:`CONFIG_BT_DEVICE_NAME_MAX`
    * :kconfig:option:`CONFIG_BT_PER_ADV_SYNC_MAX`
+   * :kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE`
    * :kconfig:option:`CONFIG_BT_DEVICE_NAME`
    * :kconfig:option:`CONFIG_CBKPROXY_OUT_SLOTS` on one core must be equal to :kconfig:option:`CONFIG_CBKPROXY_IN_SLOTS` on the other.
 

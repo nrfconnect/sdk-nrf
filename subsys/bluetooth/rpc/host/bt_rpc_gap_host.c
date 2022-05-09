@@ -100,6 +100,26 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_enable, BT_ENABLE_RPC_CMD,
 			 bt_enable_rpc_handler, NULL);
 
+static void bt_disable_rpc_handler(CborValue *value, void *handler_data)
+{
+	int result;
+
+	if (!ser_decoding_done_and_check(value)) {
+		goto decoding_error;
+	}
+
+	result = bt_disable();
+
+	ser_rsp_send_int(result);
+
+	return;
+
+decoding_error:
+	report_decoding_error(BT_DISABLE_RPC_CMD, handler_data);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_disable, BT_DISABLE_RPC_CMD,
+			 bt_disable_rpc_handler, NULL);
 
 
 #if defined(CONFIG_BT_DEVICE_NAME_DYNAMIC)
@@ -186,6 +206,52 @@ decoding_error:
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_get_name_out, BT_GET_NAME_OUT_RPC_CMD,
 			 bt_get_name_out_rpc_handler, NULL);
+#endif /* defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) */
+
+#if defined(CONFIG_BT_DEVICE_NAME_DYNAMIC)
+void bt_get_appearance_rpc_handler(CborValue *value, void *handler_data)
+{
+	uint16_t appearance;
+
+	if (!ser_decoding_done_and_check(value)) {
+		goto decoding_error;
+	}
+
+	appearance = bt_get_appearance();
+
+	ser_rsp_send_uint(appearance);
+
+	return;
+
+decoding_error:
+	report_decoding_error(BT_GET_APPEARANCE_RPC_CMD, handler_data);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_get_appearance, BT_GET_APPEARANCE_RPC_CMD,
+			 bt_get_appearance_rpc_handler, NULL);
+
+void bt_set_appearance_rpc_handler(CborValue *value, void *handler_data)
+{
+	int result;
+	uint16_t appearance;
+
+	appearance = ser_decode_uint(value);
+
+	if (!ser_decoding_done_and_check(value)) {
+		goto decoding_error;
+	}
+
+	result = bt_set_appearance(appearance);
+
+	ser_rsp_send_int(result);
+
+	return;
+decoding_error:
+	report_decoding_error(BT_SET_APPEARANCE_RPC_CMD, handler_data);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_set_appearance, BT_SET_APPEARANCE_RPC_CMD,
+			 bt_set_appearance_rpc_handler, NULL);
 #endif /* defined(CONFIG_BT_DEVICE_NAME_DYNAMIC) */
 
 static void bt_id_get_rpc_handler(CborValue *value, void *handler_data)

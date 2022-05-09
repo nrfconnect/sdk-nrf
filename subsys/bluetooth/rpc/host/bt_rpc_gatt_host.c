@@ -1510,6 +1510,10 @@ void bt_gatt_subscribe_params_dec(CborValue *value, struct bt_gatt_subscribe_par
 	data->value_handle = ser_decode_uint(value);
 	data->ccc_handle = ser_decode_uint(value);
 	data->value = ser_decode_uint(value);
+
+#if defined(CONFIG_BT_SMP)
+	data->min_security = ser_decode_uint(value);
+#endif
 	atomic_set(data->flags, (atomic_val_t)ser_decode_uint(value));
 }
 

@@ -301,6 +301,9 @@ void bt_conn_info_dec(CborValue *value, struct bt_conn *conn, struct bt_conn_inf
 #else
 		ser_decode_skip(value);
 #endif
+
+		info->state = ser_decode_uint(value);
+
 		UNLOCK_CONN_INFO();
 	} else {
 		/* non-LE connection types are not supported. */
