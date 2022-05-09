@@ -234,6 +234,9 @@ FOTA upgrades can be used to replace the application.
 .. note::
    |note|
 
+FOTA over Bluetooth LE
+======================
+
 To perform a FOTA upgrade, complete the following steps:
 
 1. Make sure that your application supports FOTA upgrades.
@@ -269,6 +272,12 @@ To perform a FOTA upgrade, complete the following steps:
          There is currently no support for the FOTA process in nRF Connect for Desktop.
 
 .. fota_upgrades_end
+
+FOTA over Zigbee
+================
+
+When working with the nRF52840 DK (PCA10056), you can enable support for FOTA over the Zigbee network using the :ref:`lib_zigbee_fota` library.
+For detailed information about how to configure the Zigbee FOTA library for your application, see :ref:`ug_zigbee_configuring_components_ota`.
 
 Building and programming a sample
 *********************************
