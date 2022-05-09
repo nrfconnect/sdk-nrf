@@ -352,7 +352,14 @@ Zigbee samples
   * :ref:`zigbee_shell_sample`
   * :ref:`zigbee_template_sample`
 
-* Added identify handler in the :ref:`Zigbee Light Switch sample <zigbee_light_switch_sample>`.
+* :ref:`zigbee_light_switch_sample` sample:
+
+  * Added identify handler.
+
+* :ref:`zigbee_light_bulb_sample` sample:
+
+  * Removed implementation of Home Automation Profile Specification logic.
+    This logic added dependency between On/Off and Level clusters, so changes in Level cluster were affecting the On/Off one.
 
 Other Samples
 -------------
