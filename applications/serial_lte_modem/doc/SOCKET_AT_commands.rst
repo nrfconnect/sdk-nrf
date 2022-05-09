@@ -54,10 +54,11 @@ Response syntax
 ::
 
    #XSOCKET: <handle>[,<type>,<protocol>]
+   #XSOCKET: <result>
 
 * The ``<handle>`` value is an integer and can be interpreted as follows:
 
-  * Positive - The socket opened successfully.
+  * Positive or ``0`` - The socket opened successfully.
   * Negative - The socket failed to open.
 
 * The ``<type>`` value can be one of the following integers:
@@ -71,6 +72,9 @@ Response syntax
   * ``0`` - IPPROTO_IP
   * ``6`` - IPPROTO_TCP
   * ``17`` - IPPROTO_UDP
+
+* The ``<result>`` value indicates the result of closing the socket.
+  When ``0``, the socket closed successfully.
 
 Examples
 ~~~~~~~~
@@ -112,10 +116,8 @@ Response syntax
 
    #XSOCKET: <handle>[,<family>,<role>]
 
-* The ``<handle>`` value is an integer and can be interpreted as follows:
-
-  * Positive - The socket is valid.
-  * ``0`` - The socket is closed.
+* The ``<handle>`` value is an integer.
+  When positive or ``0``, the socket is valid.
 
 * The ``<family>`` value is present only in the response to a request to open the socket.
   It can assume one of the following values:
@@ -238,10 +240,11 @@ Response syntax
 ::
 
    #XSSOCKET: <handle>[,<type>,<protocol>]
+   #XSOCKET: <result>
 
 * The ``<handle>`` value is an integer and can be interpreted as follows:
 
-  * Positive - The socket opened successfully.
+  * Positive or ``0`` - The socket opened successfully.
   * Negative - The socket failed to open.
 
 * The ``<type>`` value can be one of the following integers:
@@ -253,6 +256,9 @@ Response syntax
 
   * ``258`` - IPPROTO_TLS_1_2
   * ``273`` - IPPROTO_DTLS_1_2
+
+* The ``<result>`` value indicates the result of closing the socket.
+  When ``0``, the socket closed successfully.
 
 Examples
 ~~~~~~~~
@@ -292,10 +298,8 @@ Response syntax
 
    #XSSOCKET: <handle>[,<family>,<role>]
 
-* The ``<handle>`` value is an integer and can be interpreted as follows:
-
-  * Positive - The socket is valid.
-  * ``0`` - The socket is closed.
+* The ``<handle>`` value is an integer.
+  When positive or ``0``, the socket is valid.
 
 * The ``<family>`` value can be one of the following integers:
 
@@ -388,7 +392,7 @@ Response syntax
    #XSOCKETSELECT: <handle>,<family>,<role>
 
 * The ``<handle>`` value is an integer.
-  When positive, the socket is valid.
+  When positive or ``0``, the socket is valid.
 
 * The ``<family>`` value can be one of the following integers:
 
