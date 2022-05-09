@@ -91,7 +91,6 @@ nRF52 Series devices support a secure bootloader solution based on the chain of 
 
 See :ref:`ug_bootloader` for more information and instructions on how to enable one or more bootloaders in your application.
 
-
 Supported protocols
 *******************
 
@@ -220,9 +219,6 @@ See the :ref:`ug_multiprotocol_support` user guide for instructions on how to en
 
 The :ref:`nrfxlib:mpsl` library provides services for multiprotocol applications.
 
-
-.. |note| replace:: For posibility of introducing upgradable bootloader, please refer to :ref:`ug_bootloader_adding`.
-
 .. fota_upgrades_start
 
 FOTA upgrades
@@ -233,6 +229,9 @@ FOTA upgrades can be used to replace the application.
 
 .. note::
    |note|
+
+FOTA over Bluetooth LE
+======================
 
 To perform a FOTA upgrade, complete the following steps:
 
@@ -270,7 +269,44 @@ To perform a FOTA upgrade, complete the following steps:
 
 .. fota_upgrades_end
 
+.. fota_upgrades_matter_start
+
+FOTA in Matter
+==============
+
+To perform a FOTA upgrade when working with the Matter protocol, use one of the following methods:
+
+* DFU over Bluetooth LE using either smartphone or PC command line tool.
+  Both options are similar to `FOTA over Bluetooth LE`_.
+
+  .. note::
+      This protocol is not part of the Matter specification.
+
+* DFU over Matter using Matter-compliant BDX protocol and Matter OTA Provider device.
+  This option requires an OpenThread Border Router (OTBR) set up either in Docker or on a Raspberry Pi.
+
+For more information about both methods, read the :doc:`matter:nrfconnect_examples_software_update` page in the Matter documentation.
+
+.. fota_upgrades_matter_end
+
+.. fota_upgrades_thread_start
+
+FOTA over Thread
+================
+
+:ref:`ug_thread` does not offer a proprietary FOTA method.
+
+.. fota_upgrades_thread_end
+
+FOTA over Zigbee
+================
+
+When working with the nRF52840 DK (PCA10056), you can enable support for FOTA over the Zigbee network using the :ref:`lib_zigbee_fota` library.
+For detailed information about how to configure the Zigbee FOTA library for your application, see :ref:`ug_zigbee_configuring_components_ota`.
+
 Building and programming a sample
 *********************************
 
 To build your application, follow the instructions in :ref:`gs_programming`.
+
+.. |note| replace:: For posibility of introducing upgradable bootloader, please refer to :ref:`ug_bootloader_adding`.
