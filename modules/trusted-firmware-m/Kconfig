@@ -54,6 +54,12 @@ config TFM_EXPERIMENTAL
 	select EXPERIMENTAL
 	default y if !TFM_PROFILE_TYPE_MINIMAL
 
+config TFM_CRYPTO_ENGINE_BUF_SIZE
+	int
+	prompt "TFM Crypto engine buffer size" if !TFM_PROFILE_TYPE_MINIMAL
+	default 1 if TFM_PROFILE_TYPE_MINIMAL
+	default 8320
+
 endif # BUILD_WITH_TFM
 
 source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm"

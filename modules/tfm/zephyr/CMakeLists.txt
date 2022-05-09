@@ -95,4 +95,11 @@ if (CONFIG_BOOTLOADER_MCUBOOT)
     )
 endif()
 
+# The ENGINE_BUF_SIZE holds the dynamic allocation buffer for
+# TF-M, which is the equivalent of dynamic allocation in MBEDTLS
+set_property(TARGET zephyr_property_target
+  APPEND PROPERTY TFM_CMAKE_OPTIONS
+    -DCRYPTO_ENGINE_BUF_SIZE=${CONFIG_TFM_CRYPTO_ENGINE_BUF_SIZE}
+)
+
 zephyr_include_directories(${NRF_DIR}/include/tfm)
