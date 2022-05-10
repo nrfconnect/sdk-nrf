@@ -154,6 +154,13 @@ int spm_s0_active(uint32_t s0_address, uint32_t s1_address, bool *s0_active)
 	return 0;
 }
 
+int tfm_platform_s0_active(uint32_t s0_address, uint32_t s1_address, bool *s0_active)
+{
+	*s0_active = spm_s0_active_retval;
+
+	return 0;
+}
+
 void set_s0_active(bool s0_active)
 {
 	spm_s0_active_retval = s0_active;
