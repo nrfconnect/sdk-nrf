@@ -30,7 +30,7 @@
 
 #define THREAD_MONITOR_ENTRIES 10
 
-LOG_MODULE_REGISTER(nrf_modem_lib, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
+LOG_MODULE_REGISTER(nrf_modem, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
 
 struct mem_diagnostic_info {
 	uint32_t failed_allocs;

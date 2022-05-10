@@ -29,7 +29,7 @@ K_WORK_DELAYABLE_DEFINE(modem_failure_shutdown_work, on_modem_failure_shutdown);
 K_WORK_DELAYABLE_DEFINE(modem_failure_reinit_work, on_modem_failure_reinit);
 #endif /* CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM */
 
-LOG_MODULE_DECLARE(nrf_modem_lib);
+LOG_MODULE_DECLARE(nrf_modem);
 
 struct shutdown_thread {
 	sys_snode_t node;
