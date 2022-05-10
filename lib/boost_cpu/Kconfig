@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BOOST_CPU_CLOCK
+	bool "Enable API for boosting up CPU clock"
+	depends on SOC_NRF5340_CPUAPP
+	help
+	  This allows application to call API for boosting CPU clock.
+	  This is usually not needed or recomended as it increases power consumption,
+	  but can improve code execution time.
+
+if BOOST_CPU_CLOCK
+
+config BOOST_CPU_CLOCK_AT_STARTUP
+	bool "Automatically increase CPU clock frequency during startup"
+	help
+	  When this option is enabled, CPU clock is boosted after kernel initialization.
+
+module =  BOOST_CPU
+module-str = CPU boost
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+endif # BOOST_CPU_CLOCK
