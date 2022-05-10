@@ -6,7 +6,7 @@
 
 #include <zephyr/logging/log.h>
 #include <stdio.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <errno.h>
 #include <nrf_modem_at.h>
 #include <modem/sms.h>

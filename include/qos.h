@@ -14,7 +14,7 @@
 #ifndef QOS_H__
 #define QOS_H__
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdbool.h>
 #include <stdio.h>
 

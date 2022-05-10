@@ -7,7 +7,7 @@
 #ifndef _PCM_MIX_H_
 #define _PCM_MIX_H_
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 enum pcm_mix_mode {
 	B_STEREO_INTO_A_STEREO,

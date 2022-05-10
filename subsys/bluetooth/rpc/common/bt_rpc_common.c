@@ -6,7 +6,7 @@
 
 #include <zephyr/device.h>
 #include <zephyr/types.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 #include <nrf_rpc_cbor.h>
 

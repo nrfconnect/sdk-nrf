@@ -7,7 +7,7 @@
 #ifndef NRF_CLOUD_H__
 #define NRF_CLOUD_H__
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <zephyr/net/mqtt.h>
 #if defined(CONFIG_MODEM_INFO)

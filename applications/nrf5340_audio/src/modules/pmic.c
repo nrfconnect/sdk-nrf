@@ -6,7 +6,7 @@
 
 #include "pmic.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <zephyr/device.h>
 #include <zephyr/logging/log_ctrl.h>

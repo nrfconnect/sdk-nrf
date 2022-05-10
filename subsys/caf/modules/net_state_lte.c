@@ -5,7 +5,7 @@
  */
 
 #include <stdio.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <modem/lte_lc.h>
 
 #define MODULE net_state

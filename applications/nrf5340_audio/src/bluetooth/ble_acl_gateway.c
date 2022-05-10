@@ -8,7 +8,7 @@
 #include "ble_acl_common.h"
 #include "ble_audio_services.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/gatt.h>
 

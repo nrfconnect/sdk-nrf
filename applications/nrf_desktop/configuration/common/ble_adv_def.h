@@ -5,7 +5,7 @@
  */
 
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/bluetooth/bluetooth.h>
 
 /* This configuration file is included only once from ble_adv module and holds

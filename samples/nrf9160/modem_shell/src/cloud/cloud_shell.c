@@ -5,7 +5,7 @@
  */
 
 #include <stdlib.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <net/nrf_cloud.h>
 #include <nrf_cloud_fsm.h>
 #include <zephyr/shell/shell.h>

@@ -17,7 +17,7 @@
 extern "C" {
 #endif
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdlib.h>
 #include <zephyr/types.h>
 #include <zephyr/bluetooth/addr.h>

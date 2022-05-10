@@ -5,7 +5,7 @@
  */
 
 #include <stdio.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/spinlock.h>
 #include <zephyr/sys/slist.h>
 #include <app_event_manager.h>

@@ -7,7 +7,7 @@
 #ifndef _MAX_14690_
 #define _MAX_14690_
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/device.h>
 
 /* Buck inductor value */

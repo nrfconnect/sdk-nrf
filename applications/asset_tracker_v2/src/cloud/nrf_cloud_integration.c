@@ -1,4 +1,4 @@
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <net/nrf_cloud.h>
 #include <zephyr/net/mqtt.h>
 #include <stdio.h>

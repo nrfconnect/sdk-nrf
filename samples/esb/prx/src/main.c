@@ -12,7 +12,7 @@
 #include <zephyr/logging/log.h>
 #include <nrf.h>
 #include <esb.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 
 LOG_MODULE_REGISTER(esb_prx, CONFIG_ESB_PRX_APP_LOG_LEVEL);

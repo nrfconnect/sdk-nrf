@@ -44,7 +44,7 @@
 
 #include "audio_datapath.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <nrfx_clock.h>
 #include <zephyr/shell/shell.h>
 #include <stdlib.h>

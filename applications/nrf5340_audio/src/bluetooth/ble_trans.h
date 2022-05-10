@@ -7,7 +7,7 @@
 #ifndef _BLE_TRANS_H_
 #define _BLE_TRANS_H_
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/bluetooth/conn.h>
 
 /* Connection interval is calculated as x*1.25 */

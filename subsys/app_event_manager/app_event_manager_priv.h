@@ -12,7 +12,7 @@
 #ifndef _APP_EVENT_MANAGER_PRIV_H_
 #define _APP_EVENT_MANAGER_PRIV_H_
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <zephyr/sys/__assert.h>
 #include <zephyr/logging/log.h>

@@ -6,7 +6,7 @@
 
 #include "max14690.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <errno.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/i2c.h>

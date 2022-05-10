@@ -12,7 +12,7 @@
 #include <esb.h>
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 
 LOG_MODULE_REGISTER(esb_ptx, CONFIG_ESB_PTX_APP_LOG_LEVEL);

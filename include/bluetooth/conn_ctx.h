@@ -14,7 +14,7 @@
 #ifndef BT_CONN_CTX_H_
 #define BT_CONN_CTX_H_
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/sys/__assert.h>
 #include <zephyr/bluetooth/conn.h>
 

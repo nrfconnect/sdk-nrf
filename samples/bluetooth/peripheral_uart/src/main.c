@@ -10,7 +10,7 @@
 #include "uart_async_adapter.h"
 
 #include <zephyr/types.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/drivers/uart.h>
 #include <zephyr/usb/usb_device.h>
 

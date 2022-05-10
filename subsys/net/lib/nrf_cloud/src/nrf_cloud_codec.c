@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <modem/modem_info.h>
 #include "cJSON_os.h"

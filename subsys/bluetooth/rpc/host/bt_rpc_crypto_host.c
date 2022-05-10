@@ -6,7 +6,7 @@
 
 #include <nrf_rpc_cbor.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 #include "bluetooth/crypto.h"
 

@@ -5,7 +5,7 @@
  */
 #include <zephyr/types.h>
 #include <zephyr/sys/util.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <zephyr/logging/log.h>

@@ -6,7 +6,7 @@
 
 #include "ctrl_events.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/kernel.h>
 #include <errno.h>
 

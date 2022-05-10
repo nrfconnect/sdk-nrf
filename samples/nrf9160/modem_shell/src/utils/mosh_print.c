@@ -9,7 +9,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/posix/time.h>
 #include <zephyr/sys/cbprintf.h>
 #include <zephyr/shell/shell.h>

@@ -6,7 +6,7 @@
 
 #include "pcm_stream_channel_modifier.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <errno.h>
 
 #include <zephyr/logging/log.h>

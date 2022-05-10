@@ -8,7 +8,7 @@
  *  @brief Alexa Gadgets sample
  */
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdlib.h>
 #include <stdio.h>
 

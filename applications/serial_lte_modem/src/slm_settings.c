@@ -6,7 +6,7 @@
 
 #include <zephyr/logging/log.h>
 #include <string.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/settings/settings.h>
 #include <zephyr/drivers/uart.h>
 #include <dfu/dfu_target.h>

@@ -8,7 +8,7 @@
 #include <zephyr/kernel_structs.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/byteorder.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <SEGGER_RTT.h>
 #include <nrf_profiler.h>
 #include <string.h>

@@ -9,7 +9,7 @@
  * @brief Zigbee shell sample.
  */
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <dk_buttons_and_leds.h>
 

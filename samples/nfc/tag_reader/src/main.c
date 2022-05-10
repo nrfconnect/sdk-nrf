@@ -10,7 +10,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <string.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 #include <st25r3911b_nfca.h>
 #include <nfc/ndef/msg_parser.h>

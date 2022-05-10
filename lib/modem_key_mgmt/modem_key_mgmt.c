@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <nrf_modem_at.h>
 #include <nrf_modem_limits.h>
 #include <modem/modem_key_mgmt.h>

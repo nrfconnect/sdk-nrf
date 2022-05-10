@@ -45,7 +45,7 @@
 #ifndef _AUDIO_I2S_H_
 #define _AUDIO_I2S_H_
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdint.h>
 
 /*

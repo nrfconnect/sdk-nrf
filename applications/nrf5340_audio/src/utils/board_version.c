@@ -6,7 +6,7 @@
 
 #include "board_version.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/drivers/adc.h>
 #include <zephyr/drivers/gpio.h>
 #include <stdlib.h>

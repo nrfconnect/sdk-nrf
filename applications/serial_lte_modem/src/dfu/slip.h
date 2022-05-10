@@ -9,7 +9,7 @@
 #ifndef SLIP_H__
 #define SLIP_H__
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 #define SLIP_SIZE_MAX 128
 

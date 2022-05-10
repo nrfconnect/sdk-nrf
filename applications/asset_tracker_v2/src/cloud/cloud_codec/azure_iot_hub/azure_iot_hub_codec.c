@@ -7,7 +7,7 @@
 #include <cloud_codec.h>
 #include <stdbool.h>
 #include <string.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <stdio.h>
 #include <stdlib.h>

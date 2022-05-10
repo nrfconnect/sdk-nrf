@@ -6,7 +6,7 @@
 
 #include "led.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/gpio.h>
 #include <hal/nrf_gpio.h>

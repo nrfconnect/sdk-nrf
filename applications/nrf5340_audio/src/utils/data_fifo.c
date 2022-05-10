@@ -6,7 +6,7 @@
 
 #include "data_fifo.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 #include "macros_common.h"
 

@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/lte_lc.h>
 

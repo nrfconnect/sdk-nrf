@@ -11,7 +11,7 @@
 #include "nrf_cloud_fota.h"
 #endif
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <zephyr/net/mqtt.h>

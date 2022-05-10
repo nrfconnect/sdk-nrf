@@ -6,7 +6,7 @@
 #include <zephyr/logging/log.h>
 
 #include <stdint.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <nrf_modem_delta_dfu.h>
 #include <zephyr/dfu/mcuboot.h>

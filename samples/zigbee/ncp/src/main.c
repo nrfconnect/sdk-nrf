@@ -14,7 +14,7 @@
 #include <zephyr/logging/log.h>
 #include <zb_nrf_platform.h>
 #include <zb_osif_ext.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <dk_buttons_and_leds.h>
 #include <ncp/ncp_dev_api.h>

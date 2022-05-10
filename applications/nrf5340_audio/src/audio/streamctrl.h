@@ -20,7 +20,7 @@
 #define _STREAMCTRL_H_
 
 #include <stddef.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 /* State machine states for peer/stream */
 enum stream_state {

@@ -1,4 +1,4 @@
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <net/azure_iot_hub.h>
 #include <nrf_modem_at.h>
 

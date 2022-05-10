@@ -6,7 +6,7 @@
 
 #include "ble_core.h"
 #include "ble_hci_vsc.h"
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/sys/byteorder.h>

@@ -1,5 +1,5 @@
 #include "cloud/cloud_wrapper.h"
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <net/aws_iot.h>
 #include <nrf_modem_at.h>
 

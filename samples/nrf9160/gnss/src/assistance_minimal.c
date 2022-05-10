@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/sys/timeutil.h>
 #include <zephyr/settings/settings.h>
 #include <zephyr/logging/log.h>

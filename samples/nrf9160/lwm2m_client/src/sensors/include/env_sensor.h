@@ -7,7 +7,7 @@
 #ifndef ENV_SENSOR_H__
 #define ENV_SENSOR_H__
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/drivers/sensor.h>
 
 #ifdef __cplusplus

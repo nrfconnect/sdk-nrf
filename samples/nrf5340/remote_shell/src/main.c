@@ -8,7 +8,7 @@
 #include <string.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/uart.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/sys/ring_buffer.h>
 #include <zephyr/sys/atomic.h>
 #include <zephyr/usb/usb_device.h>

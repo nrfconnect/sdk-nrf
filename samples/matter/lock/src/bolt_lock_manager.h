@@ -9,7 +9,7 @@
 #include <app-common/zap-generated/enums.h>
 #include <lib/core/ClusterEnums.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 #include <cstdint>
 

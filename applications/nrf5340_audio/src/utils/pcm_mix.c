@@ -6,7 +6,7 @@
 
 #include "pcm_mix.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(pcm_mix, LOG_LEVEL_WRN);

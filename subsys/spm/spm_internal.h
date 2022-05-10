@@ -7,7 +7,7 @@
 #ifndef SPM_INTERNAL_H__
 #define SPM_INTERNAL_H__
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <nrfx.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/__assert.h>

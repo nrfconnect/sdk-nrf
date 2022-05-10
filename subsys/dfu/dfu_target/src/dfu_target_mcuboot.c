@@ -16,7 +16,7 @@
 #endif
 #include <string.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <pm_config.h>
 #include <zephyr/logging/log.h>
 #include <nrfx.h>

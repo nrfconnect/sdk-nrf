@@ -7,7 +7,7 @@
 #include "ble_acl_common.h"
 #include "ctrl_events.h"
 #include "ble_trans.h"
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <zephyr/shell/shell.h>
