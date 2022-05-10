@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/logging/log.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/drivers/i2c.h>
 #include <stdio.h>
 #include "slm_util.h"

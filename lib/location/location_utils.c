@@ -5,7 +5,7 @@
  */
 
 #include <stdio.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <stdlib.h>
 #include <string.h>

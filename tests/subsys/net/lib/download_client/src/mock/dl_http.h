@@ -6,7 +6,7 @@
 #ifndef _DL_HTTP_H_
 #define _DL_HTTP_H_
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 int http_parse(struct download_client *client, size_t len);
 int http_get_request_send(struct download_client *client);

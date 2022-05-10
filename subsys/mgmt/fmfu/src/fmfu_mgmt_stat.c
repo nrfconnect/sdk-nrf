@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/stats/stats.h>
 #include <mgmt/mgmt.h>
 #include <stat_mgmt/stat_mgmt.h>

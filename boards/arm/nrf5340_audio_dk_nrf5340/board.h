@@ -7,7 +7,7 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 /* Voltage divider PCA10121 board versions.
  * The defines give what value the ADC will read back.

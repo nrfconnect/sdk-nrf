@@ -6,7 +6,7 @@
 
 #include "power_module.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <errno.h>
 #include <zephyr/drivers/gpio.h>
 #include <string.h>

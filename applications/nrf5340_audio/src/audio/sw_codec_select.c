@@ -6,7 +6,7 @@
 
 #include "sw_codec_select.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <errno.h>
 
 #include "pcm_stream_channel_modifier.h"

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <coap_server_client_interface.h>
 #include <net/coap_utils.h>
 #include <zephyr/logging/log.h>

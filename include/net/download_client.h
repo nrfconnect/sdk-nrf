@@ -20,7 +20,7 @@
 #ifndef DOWNLOAD_CLIENT_H__
 #define DOWNLOAD_CLIENT_H__
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <zephyr/net/coap.h>
 

@@ -7,7 +7,7 @@
 #ifndef LWM2M_CLIENT_APP_H__
 #define LWM2M_CLIENT_APP_H__
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/net/lwm2m.h>
 
 #ifdef __cplusplus

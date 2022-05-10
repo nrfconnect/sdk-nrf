@@ -11,7 +11,7 @@
 #ifndef _EVENT_MANAGER_PROXY_H_
 #define _EVENT_MANAGER_PROXY_H_
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <zephyr/device.h>
 #include <app_event_manager.h>

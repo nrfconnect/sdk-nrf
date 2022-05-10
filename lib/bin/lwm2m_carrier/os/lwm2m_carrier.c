@@ -5,7 +5,7 @@
  */
 
 #include <string.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <lwm2m_carrier.h>
 
 #define LWM2M_CARRIER_THREAD_STACK_SIZE 4096

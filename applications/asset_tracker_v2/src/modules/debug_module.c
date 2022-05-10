@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #if defined(CONFIG_MEMFAULT)
 #include <memfault/metrics/metrics.h>
 #include <memfault/ports/zephyr/http.h>

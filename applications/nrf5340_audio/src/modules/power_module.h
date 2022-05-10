@@ -7,7 +7,7 @@
 #ifndef _POWER_MODULE_H_
 #define _POWER_MODULE_H_
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdlib.h>
 
 #include "ina231.h"

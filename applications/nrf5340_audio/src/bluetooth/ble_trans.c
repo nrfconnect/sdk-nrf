@@ -8,7 +8,7 @@
 
 #include <stdlib.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <errno.h>
 #include <zephyr/bluetooth/iso.h>
 #include <zephyr/bluetooth/bluetooth.h>

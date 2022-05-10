@@ -6,7 +6,7 @@
 #ifndef _DL_COAP_H_
 #define _DL_COAP_H_
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 struct override_return_values_s {
 	bool func_coap_block_init;

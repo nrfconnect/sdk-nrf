@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 #include <net/nrf_cloud_cell_pos.h>
 #else

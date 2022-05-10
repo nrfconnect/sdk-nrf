@@ -7,7 +7,7 @@
 #ifndef LIGHT_SENSOR_H__
 #define LIGHT_SENSOR_H__
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/drivers/sensor.h>
 
 #ifdef __cplusplus

@@ -168,7 +168,7 @@ void set_s0_active(bool s0_active)
  * where 'fw_info.h' will look for the S0 and S1 metadata. This allows
  * us to dictate what B1 slot should be considered active
  */
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/drivers/flash.h>
 #include <nrfx_nvmc.h>
 #include <zephyr/device.h>

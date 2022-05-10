@@ -6,7 +6,7 @@
 
 #include <nrf.h>
 #include <errno.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/net/socket.h>
 
 

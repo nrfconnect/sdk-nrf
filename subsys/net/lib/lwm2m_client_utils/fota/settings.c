@@ -5,7 +5,7 @@
  */
 
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/settings/settings.h>
 
 #include <net/lwm2m_client_utils_fota.h>

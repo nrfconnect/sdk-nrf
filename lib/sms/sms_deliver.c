@@ -6,7 +6,7 @@
 
 #include <string.h>
 #include <stdio.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <modem/sms.h>
 #include <zephyr/logging/log.h>
 

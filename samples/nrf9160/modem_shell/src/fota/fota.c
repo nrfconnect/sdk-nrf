@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/sys/reboot.h>
 #include <net/fota_download.h>
 

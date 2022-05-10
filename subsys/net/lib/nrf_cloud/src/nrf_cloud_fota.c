@@ -9,7 +9,7 @@
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_codec.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <errno.h>
 #include <stdio.h>
 #include <fcntl.h>

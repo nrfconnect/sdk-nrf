@@ -21,7 +21,7 @@
 
 #include <zephyr/device.h>
 #include <zephyr/drivers/uart.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 
 /**

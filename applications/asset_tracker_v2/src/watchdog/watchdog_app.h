@@ -12,7 +12,7 @@
 #ifndef WATCHDOG_APP_H__
 #define WATCHDOG_APP_H__
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 #ifdef __cplusplus
 extern "C" {

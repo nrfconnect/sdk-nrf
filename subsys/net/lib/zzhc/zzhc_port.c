@@ -7,7 +7,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zzhc_port, CONFIG_ZZHC_LOG_LEVEL);
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/sys/base64.h>
 #include <zephyr/data/json.h>
 #include <modem/at_cmd_parser.h>

@@ -8,7 +8,7 @@
  * https://raw.githubusercontent.com/OpenMobileAlliance/lwm2m-registry/prod/version_history/3335-1_0.xml
  */
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/init.h>
 
 #include <lwm2m_object.h>

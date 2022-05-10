@@ -10,7 +10,7 @@
 
 #include <zephyr/sys/printk.h>
 #include <zephyr/sys/byteorder.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 
 #include <nfc/t2t/parser.h>

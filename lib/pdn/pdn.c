@@ -9,7 +9,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/init.h>
 #include <nrf_modem_at.h>
 #include <modem/pdn.h>

@@ -6,7 +6,7 @@
 
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdint.h>
 
 #if defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52833)

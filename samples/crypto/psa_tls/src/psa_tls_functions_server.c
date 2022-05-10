@@ -9,7 +9,7 @@ LOG_MODULE_REGISTER(psa_tls_server);
 
 #include <nrf.h>
 #include <errno.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/net/net_core.h>
 #include <zephyr/net/tls_credentials.h>

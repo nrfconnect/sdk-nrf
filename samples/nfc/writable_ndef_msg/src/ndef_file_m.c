@@ -13,7 +13,7 @@
  *
  */
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <soc.h>
 #include <zephyr/device.h>
 #include <string.h>

@@ -44,7 +44,7 @@
 
 #include "audio_i2s.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/pinctrl.h>
 #include <nrfx_i2s.h>

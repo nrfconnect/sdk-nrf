@@ -12,7 +12,7 @@
 #include <zb_nrf_platform.h>
 #include <zboss_api.h>
 #include <zboss_api_addons.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zigbee/zigbee_app_utils.h>
 #include <zigbee/zigbee_error_handler.h>
 

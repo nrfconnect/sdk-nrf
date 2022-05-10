@@ -5,7 +5,7 @@
  */
 
 #include <assert.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/flash/flash_simulator.h>
 #include "bootutil/image.h"

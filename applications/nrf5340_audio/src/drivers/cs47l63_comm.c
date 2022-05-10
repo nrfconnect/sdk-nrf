@@ -6,7 +6,7 @@
 
 #include "cs47l63_comm.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/drivers/spi.h>
 #include <stdint.h>
 #include <stdlib.h>

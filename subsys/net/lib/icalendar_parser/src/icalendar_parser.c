@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <strings.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <zephyr/toolchain/common.h>
 #include <net/icalendar_parser.h>

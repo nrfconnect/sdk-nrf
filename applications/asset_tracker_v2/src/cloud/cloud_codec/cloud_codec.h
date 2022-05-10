@@ -7,7 +7,7 @@
 #ifndef CLOUD_CODEC_H__
 #define CLOUD_CODEC_H__
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>

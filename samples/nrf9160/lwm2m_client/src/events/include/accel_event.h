@@ -7,7 +7,7 @@
 #ifndef ACCEL_EVENT_H__
 #define ACCEL_EVENT_H__
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <app_event_manager.h>
 #include <app_event_manager_profiler_tracer.h>
 

@@ -1,4 +1,4 @@
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
 #if CONFIG_TEMP_DATA_USE_SENSOR

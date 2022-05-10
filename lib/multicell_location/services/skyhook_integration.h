@@ -7,7 +7,7 @@
 #ifndef SKYHOOK_INTEGRATION_H_
 #define SKYHOOK_INTEGRATION_H_
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <modem/lte_lc.h>
 #include <net/multicell_location.h>
 

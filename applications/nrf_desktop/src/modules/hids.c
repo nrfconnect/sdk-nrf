@@ -7,7 +7,7 @@
 #include <assert.h>
 #include <limits.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 
 #include <zephyr/sys/util.h>

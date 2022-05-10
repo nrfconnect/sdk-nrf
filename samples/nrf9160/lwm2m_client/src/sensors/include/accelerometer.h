@@ -7,7 +7,7 @@
 #ifndef ACCELEROMETER_H__
 #define ACCELEROMETER_H__
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/drivers/sensor.h>
 
 #ifdef __cplusplus

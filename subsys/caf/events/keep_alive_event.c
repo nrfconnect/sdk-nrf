@@ -6,7 +6,7 @@
 
 #include <caf/events/keep_alive_event.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 
 static void profile_simple_result_event(struct log_event_buf *buf,

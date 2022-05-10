@@ -16,7 +16,7 @@
 #ifndef _CTRL_EVENTS_H_
 #define _CTRL_EVENTS_H_
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 #include "ble_trans.h"
 #include "button_handler.h"

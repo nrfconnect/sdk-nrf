@@ -6,7 +6,7 @@
 
 #include "contin_array.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <string.h>
 

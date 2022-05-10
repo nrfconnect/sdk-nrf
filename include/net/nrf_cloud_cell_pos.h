@@ -11,7 +11,7 @@
  * @brief Module to provide nRF Cloud cellular positioning support to nRF9160 SiP.
  */
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <modem/lte_lc.h>
 #include <net/nrf_cloud.h>
 

@@ -5,7 +5,7 @@
  */
 
 #include <stdio.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #if !defined(CONFIG_NET_SOCKETS_POSIX_NAMES)
 #include <zephyr/posix/unistd.h>

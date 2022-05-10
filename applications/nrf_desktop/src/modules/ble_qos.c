@@ -6,7 +6,7 @@
 
 #include <assert.h>
 #include <stdio.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/uart.h>

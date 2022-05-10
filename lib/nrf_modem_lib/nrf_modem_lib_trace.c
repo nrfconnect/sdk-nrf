@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <zephyr/kernel.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/drivers/pinctrl.h>
 #include <modem/nrf_modem_lib_trace.h>
 #include <nrf_errno.h>

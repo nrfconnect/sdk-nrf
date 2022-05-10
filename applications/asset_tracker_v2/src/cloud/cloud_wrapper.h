@@ -11,7 +11,7 @@
 #ifndef CLOUD_WRAPPER_H__
 #define CLOUD_WRAPPER_H__
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdbool.h>
 
 /**

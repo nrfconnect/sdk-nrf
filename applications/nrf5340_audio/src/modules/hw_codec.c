@@ -6,7 +6,7 @@
 
 #include "hw_codec.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <zephyr/drivers/gpio.h>

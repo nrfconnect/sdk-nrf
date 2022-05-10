@@ -5,7 +5,7 @@
  */
 
 #include <cloud_codec.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
 #include <math.h>

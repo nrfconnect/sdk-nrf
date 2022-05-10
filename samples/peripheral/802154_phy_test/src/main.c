@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <zephyr/init.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 #include "rf_proc.h"
 #include "timer_proc.h"

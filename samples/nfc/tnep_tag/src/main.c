@@ -5,7 +5,7 @@
  */
 #include <stdbool.h>
 #include <string.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/sys/util.h>
 
 #include <dk_buttons_and_leds.h>

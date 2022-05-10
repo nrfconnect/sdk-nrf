@@ -17,7 +17,7 @@
 #ifndef REST_CLIENT_H__
 #define REST_CLIENT_H__
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/net/http_parser.h>
 
 /** @brief TLS is not used. */

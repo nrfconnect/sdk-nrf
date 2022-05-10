@@ -5,7 +5,7 @@
  */
 #include "aggregator.h"
 #include <zephyr/kernel.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <zephyr/types.h>
 #include <string.h>

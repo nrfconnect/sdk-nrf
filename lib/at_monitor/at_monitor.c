@@ -5,7 +5,7 @@
  */
 #include <stddef.h>
 #include <string.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/init.h>
 #include <zephyr/device.h>
 #include <nrf_modem_at.h>

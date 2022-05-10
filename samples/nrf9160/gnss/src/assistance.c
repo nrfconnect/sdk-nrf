@@ -5,7 +5,7 @@
  */
 
 #include <stdlib.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <modem/modem_info.h>
 #include <modem/modem_jwt.h>

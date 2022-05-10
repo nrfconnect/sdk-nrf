@@ -14,7 +14,7 @@
 #ifndef BT_MESH_SCHEDULER_SRV_H__
 #define BT_MESH_SCHEDULER_SRV_H__
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <bluetooth/mesh/time_srv.h>
 #include <bluetooth/mesh/scene_srv.h>
 #include <bluetooth/mesh/scheduler.h>

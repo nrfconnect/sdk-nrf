@@ -6,7 +6,7 @@
 
 #include <zephyr/init.h>
 #include <zephyr/device.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <nrfx_ipc.h>
 #include <nrf_modem.h>
 #include <nrf_modem_platform.h>

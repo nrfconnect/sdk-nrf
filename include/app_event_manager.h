@@ -19,7 +19,7 @@
  * @{
  */
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <zephyr/sys/__assert.h>
 #include <zephyr/logging/log.h>

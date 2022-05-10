@@ -21,7 +21,7 @@
 #include <nrf_gai_errors.h>
 #include <sockets_internal.h>
 #include <zephyr/sys/fdtable.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 #if defined(CONFIG_POSIX_API)
 #include <zephyr/posix/poll.h>

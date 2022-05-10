@@ -5,7 +5,7 @@
  */
 
 #include <date_time.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/posix/time.h>
 #include <zephyr/sys/timeutil.h>
 #include <zephyr/logging/log.h>

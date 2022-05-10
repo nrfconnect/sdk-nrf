@@ -9,7 +9,7 @@
  * i.e. using Zephyr native TCP/IP stack.
  */
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 #include <zephyr/random/rand32.h>
 #include <zephyr/net/dummy.h>

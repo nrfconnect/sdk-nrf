@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/net/coap.h>
 #include <zephyr/net/socket.h>
 #include <modem/lte_lc.h>

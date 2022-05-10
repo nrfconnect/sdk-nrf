@@ -6,7 +6,7 @@
 
 #include "audio_codec.h"
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 #include "macros_common.h"
 #include "streamctrl.h"

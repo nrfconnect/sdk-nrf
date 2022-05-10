@@ -8,7 +8,7 @@
 #include <stddef.h>
 #include <inttypes.h>
 #include <errno.h>
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 
 #include <mpsl_timeslot.h>

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/net/sntp.h>
 #include <zephyr/net/socketutils.h>
 #if defined(CONFIG_LTE_LINK_CONTROL)

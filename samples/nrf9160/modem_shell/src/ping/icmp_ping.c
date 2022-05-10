@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 #include <sys/types.h>
 #include <zephyr/net/net_ip.h>
