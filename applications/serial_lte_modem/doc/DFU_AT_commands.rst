@@ -74,24 +74,31 @@ Response syntax
   * A value between ``1`` and ``100`` - the percentage of the download
   * Any other value - error code
 
-Example
-~~~~~~~
+Examples
+~~~~~~~~
+
+Get the image files for the legacy DFU from ``http://myserver.com/path/*.*``:
 
 ::
 
-   Get file images for legacy DFU
-   AT#XDFUGET=1,"http://myserver.com","/path/nrf52840_xxaa.dat","/path/nrf52840_xxaa.bin"
+   AT#XDFUGET=1,"http://myserver.com","path/nrf52840_xxaa.dat","path/nrf52840_xxaa.bin"
    AT#XDFUGET: 1, 14
    ...
    AT#XDFUGET: 1, 100
    OK
 
-   Erase previous image after DFU
+Erase the previous image after DFU:
+
+::
+
    AT#XDFUGET=8
    OK
 
-   Get file images for NCS DFU
-   AT#XDFUGET=1,"https://myserver.com","/path/nrf52_app_update.bin","",1234
+Get the image files for the |NCS| DFU from ``http://myserver.com/path/*.*``:
+
+::
+
+   AT#XDFUGET=1,"https://myserver.com","path/nrf52_app_update.bin","",1234
    AT#XDFUGET: 0, 14
    ...
    AT#XDFUGET: 0, 100
@@ -174,16 +181,20 @@ Response syntax
 * The ``<info>`` is an integer.
   It returns an error code when an error happens.
 
-Example
-~~~~~~~
+Examples
+~~~~~~~~
+
+Run the legacy serial DFU protocol:
 
 ::
 
-   Run legacy Serial DFU Protocol
    AT#XDFURUN=2
    OK
 
-   Run MCUBOOT based DFU protocol
+Run the mcuboot-based DFU protocol:
+
+::
+
    AT#XDFURUN=1,1024,200
    OK
 
