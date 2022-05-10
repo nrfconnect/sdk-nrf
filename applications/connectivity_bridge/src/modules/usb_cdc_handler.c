@@ -5,8 +5,8 @@
  */
 #include <stdio.h>
 #include <zephyr/types.h>
-#include <drivers/uart.h>
-#include <usb/usb_device.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/usb/usb_device.h>
 
 #define MODULE usb_cdc
 #include "module_state_event.h"
@@ -14,7 +14,7 @@
 #include "cdc_data_event.h"
 #include "uart_data_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_BRIDGE_CDC_LOG_LEVEL);
 
 #define CDC_DEVICE_COUNT 2

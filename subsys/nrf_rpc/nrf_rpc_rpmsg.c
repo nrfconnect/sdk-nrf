@@ -7,8 +7,8 @@
 #define NRF_RPC_LOG_MODULE NRF_RPC_TR
 #include <nrf_rpc_log.h>
 
-#include <device.h>
-#include <ipc/ipc_service.h>
+#include <zephyr/device.h>
+#include <zephyr/ipc/ipc_service.h>
 #include <openamp/open_amp.h>
 
 #include "nrf_rpc.h"

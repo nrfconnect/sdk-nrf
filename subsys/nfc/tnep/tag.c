@@ -5,12 +5,12 @@
  */
 
 #include <stdbool.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <nfc/tnep/tag.h>
 #include <nfc/ndef/msg.h>
 #include <nfc/t4t/ndef_file.h>
 #include <nfc/ndef/msg_parser.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(nfc_tnep_tag, CONFIG_NFC_TNEP_TAG_LOG_LEVEL);
 

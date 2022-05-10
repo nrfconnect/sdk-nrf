@@ -11,12 +11,12 @@
 #include <assert.h>
 
 #include <sys/types.h>
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 
 #include <modem/modem_info.h>
 
-#include <posix/arpa/inet.h>
-#include <net/net_ip.h>
+#include <zephyr/posix/arpa/inet.h>
+#include <zephyr/net/net_ip.h>
 
 #include "utils/net_utils.h"
 #include "mosh_print.h"

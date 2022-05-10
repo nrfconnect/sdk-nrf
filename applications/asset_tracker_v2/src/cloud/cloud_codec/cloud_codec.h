@@ -7,13 +7,13 @@
 #ifndef CLOUD_CODEC_H__
 #define CLOUD_CODEC_H__
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <cJSON_os.h>
-#include <net/net_ip.h>
+#include <zephyr/net/net_ip.h>
 #include <modem/lte_lc.h>
 #include <nrf_modem_gnss.h>
 

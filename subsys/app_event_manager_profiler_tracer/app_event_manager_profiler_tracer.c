@@ -6,7 +6,7 @@
 
 #include <app_event_manager.h>
 #include <app_event_manager_profiler_tracer.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(app_event_manager_profiler_tracer, CONFIG_APP_EVENT_MANAGER_LOG_LEVEL);
 

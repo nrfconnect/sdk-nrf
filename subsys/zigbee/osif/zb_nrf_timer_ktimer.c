@@ -5,8 +5,8 @@
  */
 
 #include <soc.h>
-#include <sys/atomic.h>
-#include <kernel.h>
+#include <zephyr/sys/atomic.h>
+#include <zephyr/kernel.h>
 
 #include <zboss_api.h>
 #include <zb_types.h>

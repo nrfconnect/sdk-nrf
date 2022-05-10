@@ -9,12 +9,12 @@
 #include <net/azure_iot_hub.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #include "azure_iot_hub_dps.h"
 #include "azure_iot_hub_topic.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(azure_iot_hub_dps, CONFIG_AZURE_IOT_HUB_LOG_LEVEL);
 

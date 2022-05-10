@@ -14,14 +14,14 @@
 #ifndef ZIGBEE_ERROR_HANDLER_H__
 #define ZIGBEE_ERROR_HANDLER_H__
 
-#include <kernel.h>
+#include <zephyr/kernel.h>
 
 #include <zboss_api.h>
 #include <zb_errors.h>
 
 #ifdef CONFIG_ZBOSS_ERROR_PRINT_TO_LOG
 #include "zb_error_to_string.h"
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 
 /**@brief Macro for calling the error handler function if the supplied

@@ -1,4 +1,4 @@
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <net/azure_iot_hub.h>
 #include <nrf_modem_at.h>
 
@@ -6,7 +6,7 @@
 
 #define MODULE azure_iot_hub_integration
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
 
 #if !defined(CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM)

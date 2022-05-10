@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <bluetooth/hci.h>
-#include <bluetooth/hci_err.h>
-#include <bluetooth/buf.h>
-#include <sys/byteorder.h>
+#include <zephyr/bluetooth/hci.h>
+#include <zephyr/bluetooth/hci_err.h>
+#include <zephyr/bluetooth/buf.h>
+#include <zephyr/sys/byteorder.h>
 #include <sdc_hci.h>
 #include <sdc_hci_cmd_controller_baseband.h>
 #include <sdc_hci_cmd_info_params.h>

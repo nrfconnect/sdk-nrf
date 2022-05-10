@@ -6,16 +6,16 @@
 
 #include "ble_acl_headset.h"
 
-#include <zephyr.h>
-#include <bluetooth/hci.h>
-#include <bluetooth/conn.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/bluetooth/hci.h>
+#include <zephyr/bluetooth/conn.h>
 
 #include "macros_common.h"
 #include "board.h"
 #include "ble_acl_common.h"
 #include "channel_assignment.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(ble, CONFIG_LOG_BLE_LEVEL);
 
 #define BT_LE_ADV_FAST_CONN                                                                        \

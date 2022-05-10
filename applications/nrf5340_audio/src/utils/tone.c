@@ -6,7 +6,7 @@
 
 #include "tone.h"
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <math.h>
 #include <stdio.h>
 #include <arm_math.h>

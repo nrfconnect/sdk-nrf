@@ -6,8 +6,8 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <shell/shell.h>
-#include <shell/shell_rtt.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/shell/shell_rtt.h>
 #include <nrf_profiler.h>
 
 static int display_registered_events(const struct shell *shell, size_t argc,

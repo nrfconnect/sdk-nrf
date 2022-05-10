@@ -7,11 +7,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <zephyr.h>
-#include <net/coap.h>
-#include <net/socket.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/net/coap.h>
+#include <zephyr/net/socket.h>
 #include <modem/lte_lc.h>
-#include <random/rand32.h>
+#include <zephyr/random/rand32.h>
 #if defined(CONFIG_LWM2M_CARRIER)
 #include <lwm2m_carrier.h>
 #endif

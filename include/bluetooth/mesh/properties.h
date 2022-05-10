@@ -12,7 +12,7 @@
 #ifndef BT_MESH_PROPERTIES_H__
 #define BT_MESH_PROPERTIES_H__
 
-#include <bluetooth/mesh.h>
+#include <zephyr/bluetooth/mesh.h>
 
 /**
  * @defgroup bt_mesh_property_ids Property IDs

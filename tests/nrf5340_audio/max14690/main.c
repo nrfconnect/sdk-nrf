@@ -5,7 +5,7 @@
  */
 
 #include <ztest.h>
-#include <device.h>
+#include <zephyr/device.h>
 #include "max14690.h"
 
 #define RET_SUCCESS 0

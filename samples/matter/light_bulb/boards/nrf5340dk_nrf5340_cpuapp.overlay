@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <dt-bindings/ipc_service/static_vrings.h>
+#include <zephyr/dt-bindings/ipc_service/static_vrings.h>
 
 / {
 	chosen {

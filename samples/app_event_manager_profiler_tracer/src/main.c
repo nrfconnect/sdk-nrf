@@ -6,7 +6,7 @@
 
 #include <app_event_manager.h>
 #include <config_event.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #define MODULE main
 

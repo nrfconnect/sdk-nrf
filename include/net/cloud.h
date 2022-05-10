@@ -13,7 +13,7 @@
  * @{
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 /**@brief Cloud events that can be notified asynchronously by the backend. */
 enum cloud_event_type {

@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <logging/log.h>
-#include <sys/__assert.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/sys/__assert.h>
 #include <net/download_client.h>
 
 LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);

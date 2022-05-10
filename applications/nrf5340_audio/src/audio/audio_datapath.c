@@ -44,9 +44,9 @@
 
 #include "audio_datapath.h"
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <nrfx_clock.h>
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -62,7 +62,7 @@
 #include "contin_array.h"
 #include "pcm_mix.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_datapath, CONFIG_LOG_AUDIO_DATAPATH_LEVEL);
 
 /*

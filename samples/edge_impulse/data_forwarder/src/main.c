@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
-#include <drivers/sensor.h>
-#include <drivers/uart.h>
+#include <zephyr/drivers/sensor.h>
+#include <zephyr/drivers/uart.h>
 
 #define SAMPLE_PERIOD_MS	100
 

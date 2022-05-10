@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <string.h>
 #include <zboss_api.h>
 #include "zb_nrf_platform.h"

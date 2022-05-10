@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <stdint.h>
 
-#include <random/rand32.h>
+#include <zephyr/random/rand32.h>
 
 #include "periph_proc.h"
 
@@ -17,8 +17,8 @@
 #include <hal/nrf_gpio.h>
 #include <platform/nrf_802154_temperature.h>
 
-#include <devicetree.h>
-#include <drivers/gpio.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/drivers/gpio.h>
 
 #if IS_ENABLED(CONFIG_PTT_CLK_OUT)
 #include <nrfx_gpiote.h>
@@ -41,7 +41,7 @@
 #endif
 #endif /* IS_ENABLED(CONFIG_PTT_CLK_OUT) */
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(periph);
 
 #if IS_ENABLED(CONFIG_PTT_CLK_OUT)

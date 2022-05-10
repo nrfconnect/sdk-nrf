@@ -7,7 +7,7 @@
 #ifndef SENSOR_H
 #define SENSOR_H
 
-#include <drivers/sensor.h>
+#include <zephyr/drivers/sensor.h>
 
 /* Measurements ranges for Bosch BME688 sensor */
 #define SENSOR_TEMP_CELSIUS_MIN (-40)

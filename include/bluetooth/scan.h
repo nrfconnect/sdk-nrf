@@ -26,10 +26,10 @@
 #define BT_SCAN_H_
 
 #include <zephyr/types.h>
-#include <sys/slist.h>
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/uuid.h>
-#include <bluetooth/conn.h>
+#include <zephyr/sys/slist.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/conn.h>
 
 #ifdef __cplusplus
 extern "C" {

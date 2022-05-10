@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <logging/log.h>
-#include <settings/settings.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/settings/settings.h>
 #include <zb_nrf_platform.h>
 #include <zigbee/zigbee_zcl_scenes.h>
 

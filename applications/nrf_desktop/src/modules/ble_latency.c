@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/types.h>
-#include <bluetooth/conn.h>
+#include <zephyr/bluetooth/conn.h>
 
 #include <caf/events/ble_common_event.h>
 #include <caf/events/ble_smp_event.h>
@@ -16,7 +16,7 @@
 #define MODULE ble_latency
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_LATENCY_LOG_LEVEL);
 
 #define SECURITY_FAIL_TIMEOUT_MS \

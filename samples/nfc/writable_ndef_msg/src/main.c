@@ -13,8 +13,8 @@
  *
  */
 
-#include <zephyr.h>
-#include <sys/reboot.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/reboot.h>
 #include <stdbool.h>
 #include <nfc_t4t_lib.h>
 

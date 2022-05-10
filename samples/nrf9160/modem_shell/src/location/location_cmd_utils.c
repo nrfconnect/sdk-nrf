@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include <date_time.h>
 #include <cJSON.h>
 #include <math.h>

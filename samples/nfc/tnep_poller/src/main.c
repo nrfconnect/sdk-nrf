@@ -10,9 +10,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <string.h>
-#include <zephyr.h>
-#include <sys/printk.h>
-#include <sys/byteorder.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/sys/byteorder.h>
 #include <st25r3911b_nfca.h>
 #include <nfc/t4t/ndef_file.h>
 #include <nfc/ndef/msg_parser.h>

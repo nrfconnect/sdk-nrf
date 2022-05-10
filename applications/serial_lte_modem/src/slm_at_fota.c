@@ -3,15 +3,15 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include <stdint.h>
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
 #include <nrf_modem_delta_dfu.h>
-#include <dfu/mcuboot.h>
-#include <net/tls_credentials.h>
-#include <net/http_parser_url.h>
+#include <zephyr/dfu/mcuboot.h>
+#include <zephyr/net/tls_credentials.h>
+#include <zephyr/net/http_parser_url.h>
 #include <net/fota_download.h>
 #include "slm_util.h"
 #include "slm_at_host.h"

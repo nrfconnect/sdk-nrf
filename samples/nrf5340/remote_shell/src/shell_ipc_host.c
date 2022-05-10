@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <kernel.h>
-#include <ipc/ipc_service.h>
-#include <device.h>
+#include <zephyr/kernel.h>
+#include <zephyr/ipc/ipc_service.h>
+#include <zephyr/device.h>
 
 #include "shell_ipc_host.h"
 

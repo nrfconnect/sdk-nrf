@@ -7,7 +7,7 @@
 #include <nrf_modem_at.h>
 #include <modem/lte_lc.h>
 #include <modem/nrf_modem_lib.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(lte_lc);
 

@@ -18,8 +18,8 @@
 extern "C" {
 #endif
 
-#include <bluetooth/gatt.h>
-#include <bluetooth/uuid.h>
+#include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/uuid.h>
 
 
 /** @brief Initialization of the GATT attribute pool variable.

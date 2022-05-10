@@ -7,7 +7,7 @@
 #ifndef _FN_KEY_ID_H_
 #define _FN_KEY_ID_H_
 
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 #include <caf/key_id.h>
 
 #ifdef __cplusplus

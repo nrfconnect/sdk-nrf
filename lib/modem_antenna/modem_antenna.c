@@ -7,7 +7,7 @@
 #include <string.h>
 #include <nrf_modem_at.h>
 #include <modem/nrf_modem_lib.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(modem_antenna, CONFIG_MODEM_ANTENNA_LOG_LEVEL);
 

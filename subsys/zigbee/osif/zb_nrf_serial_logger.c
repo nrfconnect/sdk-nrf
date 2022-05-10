@@ -5,13 +5,13 @@
  */
 
 #include <zboss_api.h>
-#include <sys/ring_buffer.h>
-#include <drivers/uart.h>
-#include <usb/usb_device.h>
+#include <zephyr/sys/ring_buffer.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/usb/usb_device.h>
 
 #if defined ZB_NRF_TRACE
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #define ZIGBEE_RX_BUF_LEN 16
 

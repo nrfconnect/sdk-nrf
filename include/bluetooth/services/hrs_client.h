@@ -14,11 +14,11 @@
  * @brief Heart Rate (HR) Service Client API.
  */
 
-#include <bluetooth/conn.h>
+#include <zephyr/bluetooth/conn.h>
 #include <bluetooth/gatt_dm.h>
-#include <bluetooth/gatt.h>
+#include <zephyr/bluetooth/gatt.h>
 
-#include <sys/atomic.h>
+#include <zephyr/sys/atomic.h>
 
 #ifdef __cplusplus
 extern "C" {

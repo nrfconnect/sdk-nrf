@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <net/lwm2m.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/net/lwm2m.h>
 #include <lwm2m_resource_ids.h>
 
 #include "ui_input.h"
@@ -14,7 +14,7 @@
 
 #define MODULE app_lwm2m_push_button
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 
 #define BUTTON1_OBJ_INST_ID 0

@@ -19,10 +19,10 @@
  * @{
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <zephyr/types.h>
-#include <sys/__assert.h>
-#include <logging/log.h>
+#include <zephyr/sys/__assert.h>
+#include <zephyr/logging/log.h>
 
 #include <app_event_manager_priv.h>
 

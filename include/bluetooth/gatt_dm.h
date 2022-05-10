@@ -14,8 +14,8 @@
  * @brief Module for GATT Discovery Manager.
  */
 
-#include <bluetooth/gatt.h>
-#include <bluetooth/uuid.h>
+#include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/uuid.h>
 
 #ifdef __cplusplus
 extern "C" {

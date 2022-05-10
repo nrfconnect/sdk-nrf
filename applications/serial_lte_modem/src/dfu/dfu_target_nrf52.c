@@ -16,11 +16,11 @@
 #endif
 #include <string.h>
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <pm_config.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #include <nrfx.h>
-#include <dfu/mcuboot.h>
+#include <zephyr/dfu/mcuboot.h>
 #include <dfu/dfu_target.h>
 #include <dfu/dfu_target_stream.h>
 

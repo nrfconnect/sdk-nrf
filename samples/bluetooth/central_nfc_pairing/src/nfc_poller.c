@@ -8,9 +8,9 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include <sys/printk.h>
-#include <sys/byteorder.h>
-#include <zephyr.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/zephyr.h>
 #include <zephyr/types.h>
 
 #include <nfc/t2t/parser.h>

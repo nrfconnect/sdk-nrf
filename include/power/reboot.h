@@ -15,6 +15,6 @@
  */
 #warning "<power/reboot.h> is deprecated, use <sys/reboot.h> instead"
 
-#include <sys/reboot.h>
+#include <zephyr/sys/reboot.h>
 
 #endif

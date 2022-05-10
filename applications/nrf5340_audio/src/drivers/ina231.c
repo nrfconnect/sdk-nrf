@@ -6,17 +6,17 @@
 
 #include "ina231.h"
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <drivers/i2c.h>
-#include <device.h>
+#include <zephyr/drivers/i2c.h>
+#include <zephyr/device.h>
 
 #include "macros_common.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ina231);
 
 #define RESET_TIME_MS 1

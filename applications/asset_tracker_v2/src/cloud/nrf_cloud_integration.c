@@ -1,6 +1,6 @@
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <net/nrf_cloud.h>
-#include <net/mqtt.h>
+#include <zephyr/net/mqtt.h>
 #include <stdio.h>
 #include <nrf_modem_at.h>
 
@@ -11,7 +11,7 @@
 
 #define MODULE nrf_cloud_integration
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
 
 #define REQUEST_DEVICE_STATE_STRING ""

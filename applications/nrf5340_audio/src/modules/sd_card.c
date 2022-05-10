@@ -6,16 +6,16 @@
 
 #include "sd_card.h"
 
-#include <zephyr.h>
-#include <device.h>
-#include <storage/disk_access.h>
-#include <fs/fs.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/device.h>
+#include <zephyr/storage/disk_access.h>
+#include <zephyr/fs/fs.h>
 #include <ff.h>
 #include <string.h>
-#include <drivers/gpio.h>
-#include <devicetree.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/devicetree.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(sd_card, CONFIG_LOG_SD_CARD_LEVEL);
 
 #define SD_ROOT_PATH "/SD:/"

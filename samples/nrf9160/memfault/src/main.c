@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
 #include <modem/lte_lc.h>
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #include <dk_buttons_and_leds.h>
 
 #include <memfault/metrics/metrics.h>
@@ -15,7 +15,7 @@
 #include <memfault/core/data_packetizer.h>
 #include <memfault/core/trace_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(memfault_sample, CONFIG_MEMFAULT_SAMPLE_LOG_LEVEL);
 

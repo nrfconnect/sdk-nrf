@@ -12,7 +12,7 @@
 #ifndef NRF_MODEM_LIB_TRACE_H__
 #define NRF_MODEM_LIB_TRACE_H__
 
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <stdint.h>
 
 /** @brief Initialize the modem trace module.

@@ -19,7 +19,7 @@
 #ifndef ZIGBEE_FOTA_H_
 #define ZIGBEE_FOTA_H_
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <zboss_api.h>
 
 #define ZIGBEE_FOTA_EVT_DL_COMPLETE_VAL 100

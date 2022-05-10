@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <math.h>
-#include <drivers/sensor.h>
-#include <pm/device.h>
+#include <zephyr/drivers/sensor.h>
+#include <zephyr/pm/device.h>
 
 #include <caf/events/sensor_event.h>
 #include <caf/sensor_manager.h>
@@ -19,7 +19,7 @@
 #include <caf/events/power_event.h>
 #include <caf/events/power_manager_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_SENSOR_MANAGER_LOG_LEVEL);
 
 #define SAMPLE_THREAD_STACK_SIZE	CONFIG_CAF_SENSOR_MANAGER_THREAD_STACK_SIZE

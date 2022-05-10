@@ -5,8 +5,8 @@
  */
 
 #include <pm_config.h>
-#include <storage/flash_map.h>
-#include <logging/log.h>
+#include <zephyr/storage/flash_map.h>
+#include <zephyr/logging/log.h>
 
 #include <zboss_api.h>
 

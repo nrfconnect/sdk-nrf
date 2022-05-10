@@ -10,10 +10,10 @@
 
 #include <errno.h>
 
-#include <init.h>
-#include <device.h>
-#include <drivers/gpio.h>
-#include <sys/atomic.h>
+#include <zephyr/init.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/sys/atomic.h>
 
 #include <hal/nrf_gpio.h>
 #include <hal/nrf_gpiote.h>

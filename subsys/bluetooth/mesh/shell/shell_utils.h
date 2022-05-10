@@ -5,7 +5,7 @@
  */
 
 #include <stdint.h>
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 
 bool shell_model_str2bool(const char *str);
 

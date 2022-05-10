@@ -10,17 +10,17 @@
  * time by Apple and may cause this client implementation to stop working.
  */
 
-#include <sys/byteorder.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/uuid.h>
-#include <bluetooth/gatt.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/gatt.h>
 
 #include <bluetooth/services/ancs_client.h>
 #include "ancs_client_internal.h"
 #include "ancs_attr_parser.h"
 #include "ancs_app_attr_get.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ancs_c, CONFIG_BT_ANCS_CLIENT_LOG_LEVEL);
 
 /**< Index of the Event ID field when parsing notifications. */

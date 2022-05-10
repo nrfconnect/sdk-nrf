@@ -6,10 +6,10 @@
 
 #include "lighting_manager.h"
 
-#include <drivers/pwm.h>
-#include <logging/log.h>
-#include <sys/util.h>
-#include <zephyr.h>
+#include <zephyr/drivers/pwm.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/zephyr.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_MATTER_LOG_LEVEL);
 

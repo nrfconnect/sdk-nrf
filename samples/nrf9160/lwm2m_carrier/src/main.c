@@ -8,7 +8,7 @@
 #include <lwm2m_carrier.h>
 #include "carrier_certs.h"
 #endif /* CONFIG_LWM2M_CARRIER */
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 
 #ifdef CONFIG_LWM2M_CARRIER

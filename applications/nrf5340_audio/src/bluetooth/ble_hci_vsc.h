@@ -7,7 +7,7 @@
 #ifndef _BLE_HCI_VSC_H_
 #define _BLE_HCI_VSC_H_
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 #define HCI_OPCODE_VS_SET_OP_FLAGS BT_OP(BT_OGF_VS, 0x3F3)
 #define HCI_OPCODE_VS_SET_BD_ADDR BT_OP(BT_OGF_VS, 0x3F0)

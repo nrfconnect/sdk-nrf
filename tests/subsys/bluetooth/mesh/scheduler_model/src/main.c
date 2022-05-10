@@ -7,8 +7,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <ztest.h>
-#include <kernel.h>
-#include <sys/timeutil.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/timeutil.h>
 #include <bluetooth/mesh/gen_onoff_srv.h>
 #include <bluetooth/mesh/time_srv.h>
 #include <bluetooth/mesh/scheduler_srv.h>

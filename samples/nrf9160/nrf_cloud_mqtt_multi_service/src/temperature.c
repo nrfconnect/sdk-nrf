@@ -1,14 +1,14 @@
-#include <zephyr.h>
-#include <logging/log.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/logging/log.h>
 
 #if CONFIG_TEMP_DATA_USE_SENSOR
 
-#include <devicetree.h>
-#include <drivers/sensor.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/drivers/sensor.h>
 
 #else /* CONFIG_TEMP_DATA_USE_SENSOR */
 
-#include <random/rand32.h>
+#include <zephyr/random/rand32.h>
 
 #endif /* CONFIG_TEMP_DATA_USE_SENSOR */
 

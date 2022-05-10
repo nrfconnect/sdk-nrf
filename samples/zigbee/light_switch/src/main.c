@@ -8,9 +8,9 @@
  * @brief Dimmer switch for HA profile implementation.
  */
 
-#include <zephyr.h>
-#include <device.h>
-#include <logging/log.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/device.h>
+#include <zephyr/logging/log.h>
 #include <dk_buttons_and_leds.h>
 #include <ram_pwrdn.h>
 
@@ -24,8 +24,8 @@
 
 #if CONFIG_ZIGBEE_FOTA
 #include <zigbee/zigbee_fota.h>
-#include <sys/reboot.h>
-#include <dfu/mcuboot.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/dfu/mcuboot.h>
 
 /* LED indicating OTA Client Activity. */
 #define OTA_ACTIVITY_LED          DK_LED2

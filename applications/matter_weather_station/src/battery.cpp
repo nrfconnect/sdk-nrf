@@ -7,10 +7,10 @@
 
 #include <hal/nrf_saadc.h>
 
-#include <drivers/adc.h>
-#include <drivers/gpio.h>
+#include <zephyr/drivers/adc.h>
+#include <zephyr/drivers/gpio.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(app);
 

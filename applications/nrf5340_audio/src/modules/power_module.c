@@ -6,22 +6,22 @@
 
 #include "power_module.h"
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <errno.h>
-#include <drivers/gpio.h>
+#include <zephyr/drivers/gpio.h>
 #include <string.h>
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <math.h>
 #include <soc.h>
-#include <debug/stack.h>
+#include <zephyr/debug/stack.h>
 
 #include "ina231.h"
 #include "macros_common.h"
 #include "board.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(pwr_module, CONFIG_LOG_POWER_MODULE_LEVEL);
 
 #define BASE_10 10

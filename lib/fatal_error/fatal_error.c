@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <arch/cpu.h>
-#include <logging/log_ctrl.h>
-#include <logging/log.h>
-#include <fatal.h>
+#include <zephyr/arch/cpu.h>
+#include <zephyr/logging/log_ctrl.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/fatal.h>
 
 #if defined(CONFIG_IS_SPM) && \
 	defined(CONFIG_SPM_SERVICE_NS_HANDLER_FROM_SPM_FAULT)

@@ -7,7 +7,7 @@
 #ifndef ST25R3911B_NFCA_H_
 #define ST25R3911B_NFCA_H_
 
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 
 /**

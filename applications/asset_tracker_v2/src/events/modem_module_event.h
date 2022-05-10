@@ -12,7 +12,7 @@
  * @defgroup modem_module_event Modem module event
  * @{
  */
-#include <net/net_ip.h>
+#include <zephyr/net/net_ip.h>
 #include <modem/lte_lc.h>
 
 #include <app_event_manager.h>

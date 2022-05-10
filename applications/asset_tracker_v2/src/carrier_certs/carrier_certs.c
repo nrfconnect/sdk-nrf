@@ -6,13 +6,13 @@
 
 #include <stdint.h>
 #include <string.h>
-#include <toolchain.h>
-#include <sys/util.h>
+#include <zephyr/toolchain.h>
+#include <zephyr/sys/util.h>
 #include <modem/modem_key_mgmt.h>
 
 #include "carrier_certs.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(carrier_certs, CONFIG_MODEM_MODULE_LOG_LEVEL);
 
 /* The order of the tags in this array specifies which tag is used first */

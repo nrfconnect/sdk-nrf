@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include <zigbee/zigbee_app_utils.h>
 #include <zigbee/zigbee_logger_eprxzcl.h>

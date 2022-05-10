@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <drivers/sensor.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/drivers/sensor.h>
 #include <app_event_manager.h>
 
 #include <caf/events/sensor_event.h>
@@ -15,7 +15,7 @@
 #define MODULE sensor_data_aggregator
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_SENSOR_MANAGER_LOG_LEVEL);
 
 #define DT_DRV_COMPAT caf_aggregator

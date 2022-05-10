@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 
 #include <nrf_modem_at.h>
 #include <modem/pdn.h>

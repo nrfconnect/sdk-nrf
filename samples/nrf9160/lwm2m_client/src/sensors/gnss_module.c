@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <nrf_modem_gnss.h>
 #include <app_event_manager.h>
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
@@ -14,7 +14,7 @@
 #include "gnss_module.h"
 #include "gnss_pvt_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(gnss_module, CONFIG_APP_LOG_LEVEL);
 
 static struct nrf_modem_gnss_pvt_data_frame pvt_data;

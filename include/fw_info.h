@@ -13,10 +13,10 @@ extern "C" {
 
 #include <zephyr/types.h>
 #include <stddef.h>
-#include <toolchain.h>
-#include <sys/util.h>
-#include <sys/__assert.h>
-#include <linker/sections.h>
+#include <zephyr/toolchain.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/sys/__assert.h>
+#include <zephyr/linker/sections.h>
 #include <string.h>
 #if USE_PARTITION_MANAGER
 #include <pm_config.h>

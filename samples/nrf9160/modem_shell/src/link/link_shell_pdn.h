@@ -7,7 +7,7 @@
 #ifndef MOSH_LINK_SHELL_PDN_H
 #define MOSH_LINK_SHELL_PDN_H
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include <modem/pdn.h>
 
 struct link_shell_pdn_auth {

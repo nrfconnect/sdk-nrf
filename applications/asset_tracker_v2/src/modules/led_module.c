@@ -10,7 +10,7 @@
 
 #define MODULE led_state
 #include <caf/events/module_state_event.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(led, CONFIG_LED_CONTROL_LOG_LEVEL);
 
 

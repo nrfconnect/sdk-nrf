@@ -7,7 +7,7 @@
 #ifndef CONTIN_ARRAY_H
 #define CONTIN_ARRAY_H
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 /** @brief. Creates a continuous array from a finite array
  * @param pcm_cont		Pointer to the destination array

@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
-#include <bluetooth/conn.h>
+#include <zephyr/bluetooth/conn.h>
 #include <hci_core.h>
 
 #include <nrf_rpc_cbor.h>
@@ -15,7 +15,7 @@
 #include "serialize.h"
 #include "cbkproxy.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(BT_RPC, CONFIG_BT_RPC_LOG_LEVEL);
 

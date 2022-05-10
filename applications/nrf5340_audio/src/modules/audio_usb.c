@@ -6,14 +6,14 @@
 
 #include "audio_usb.h"
 
-#include <zephyr.h>
-#include <usb/usb_device.h>
-#include <usb/class/usb_audio.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/usb/usb_device.h>
+#include <zephyr/usb/class/usb_audio.h>
 
 #include "macros_common.h"
 #include "data_fifo.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_usb, CONFIG_LOG_AUDIO_USB_LEVEL);
 
 #define USB_FRAME_SIZE_STEREO                                                                      \

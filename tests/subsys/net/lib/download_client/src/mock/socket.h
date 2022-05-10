@@ -6,7 +6,7 @@
 #ifndef _SOCKET_H_
 #define _SOCKET_H_
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 extern struct mock_socket_iface_data mock_socket_iface_data;
 extern struct net_if_api mock_if_api;

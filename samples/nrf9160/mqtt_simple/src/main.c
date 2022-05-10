@@ -4,18 +4,18 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
-#include <drivers/uart.h>
+#include <zephyr/drivers/uart.h>
 #include <string.h>
-#include <random/rand32.h>
-#include <net/mqtt.h>
-#include <net/socket.h>
+#include <zephyr/random/rand32.h>
+#include <zephyr/net/mqtt.h>
+#include <zephyr/net/socket.h>
 #if defined(CONFIG_NRF_MODEM_LIB)
 #include <nrf_modem_at.h>
 #endif /* CONFIG_NRF_MODEM_LIB */
 #include <modem/lte_lc.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #if defined(CONFIG_MODEM_KEY_MGMT)
 #include <modem/modem_key_mgmt.h>
 #endif

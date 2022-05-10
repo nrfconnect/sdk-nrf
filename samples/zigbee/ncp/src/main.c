@@ -8,20 +8,20 @@
  *  @brief Zigbee Network Co-processor sample
  */
 
-#include <drivers/uart.h>
-#include <drivers/gpio.h>
-#include <usb/usb_device.h>
-#include <logging/log.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/usb/usb_device.h>
+#include <zephyr/logging/log.h>
 #include <zb_nrf_platform.h>
 #include <zb_osif_ext.h>
-#include <zephyr.h>
-#include <device.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/device.h>
 #include <dk_buttons_and_leds.h>
 #include <ncp/ncp_dev_api.h>
 
 
 #if CONFIG_BOOTLOADER_MCUBOOT
-#include <dfu/mcuboot.h>
+#include <zephyr/dfu/mcuboot.h>
 #endif
 
 LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);

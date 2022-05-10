@@ -6,7 +6,7 @@
 
 #include <string.h>
 #include <zephyr/types.h>
-#include <drivers/flash.h>
+#include <zephyr/drivers/flash.h>
 #include <stdbool.h>
 #include <ztest.h>
 #include <dfu/dfu_target_stream.h>

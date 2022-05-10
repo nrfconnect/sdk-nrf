@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <device.h>
-#include <ipc/ipc_service.h>
+#include <zephyr/device.h>
+#include <zephyr/ipc/ipc_service.h>
 #include <shell/shell_ipc.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(shell_ipc, CONFIG_SHELL_IPC_LOG_LEVEL);
 

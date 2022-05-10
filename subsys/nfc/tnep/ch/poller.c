@@ -10,7 +10,7 @@
 #include <nfc/ndef/ch_rec_parser.h>
 #include <nfc/ndef/ch_msg.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include "common.h"
 

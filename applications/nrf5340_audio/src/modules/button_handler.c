@@ -7,10 +7,10 @@
 #include "button_handler.h"
 #include "button_assignments.h"
 
-#include <zephyr.h>
-#include <drivers/gpio.h>
-#include <sys/util.h>
-#include <shell/shell.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/shell/shell.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -18,7 +18,7 @@
 #include "macros_common.h"
 #include "ctrl_events.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(button_handler, CONFIG_LOG_BUTTON_HANDLER_LEVEL);
 
 /* How many buttons does the module support. Increase at memory cost */

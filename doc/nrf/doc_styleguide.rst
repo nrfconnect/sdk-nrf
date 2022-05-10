@@ -162,8 +162,8 @@ File headers and groups
    extern "C" {
    #endif
 
-   #include <bluetooth/gatt.h>
-   #include <bluetooth/uuid.h>
+   #include <zephyr/bluetooth/gatt.h>
+   #include <zephyr/bluetooth/uuid.h>
 
    /**
     *  @brief Register a primary service descriptor.

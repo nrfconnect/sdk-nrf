@@ -8,7 +8,7 @@
 #define NRF_BOARD_H__
 
 #include <autoconf.h>
-#include <devicetree.h>
+#include <zephyr/devicetree.h>
 
 #include <hal/nrf_gpio.h>
 

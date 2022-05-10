@@ -14,7 +14,7 @@
  * @brief CAF Module State Event.
  */
 
-#include <sys/atomic.h>
+#include <zephyr/sys/atomic.h>
 #include <app_event_manager.h>
 #include <app_event_manager_profiler_tracer.h>
 

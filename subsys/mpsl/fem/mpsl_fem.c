@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <devicetree.h>
-#include <drivers/gpio.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/drivers/gpio.h>
 #include <string.h>
-#include <sys/__assert.h>
+#include <zephyr/sys/__assert.h>
 #include <mpsl_fem_config_nrf21540_gpio.h>
 #include <mpsl_fem_config_simple_gpio.h>
 #include <nrfx_gpiote.h>

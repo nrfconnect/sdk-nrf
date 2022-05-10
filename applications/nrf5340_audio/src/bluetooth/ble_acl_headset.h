@@ -6,8 +6,8 @@
 #ifndef _BLE_ACL_HEADSET_H_
 #define _BLE_ACL_HEADSET_H_
 
-#include <kernel.h>
-#include <bluetooth/conn.h>
+#include <zephyr/kernel.h>
+#include <zephyr/bluetooth/conn.h>
 
 /**@brief Work handler for advertising for peer connection
  *

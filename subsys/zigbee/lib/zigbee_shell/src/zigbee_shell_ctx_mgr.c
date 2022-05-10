@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 
 #include "zigbee_shell_ctx_mgr.h"
 

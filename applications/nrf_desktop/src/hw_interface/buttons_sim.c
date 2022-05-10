@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 #include <app_event_manager.h>
 #include <caf/events/button_event.h>
@@ -15,7 +15,7 @@
 
 #include "buttons_sim_def.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BUTTONS_SIM_LOG_LEVEL);
 
 enum state {

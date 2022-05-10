@@ -8,7 +8,7 @@
 
 #include <cstdint>
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 class LEDWidget {
 public:

@@ -18,8 +18,8 @@
 extern "C" {
 #endif
 
-#include <bluetooth/gatt.h>
-#include <bluetooth/conn.h>
+#include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/conn.h>
 #include <bluetooth/gatt_dm.h>
 
 /** @brief Handles on the connected peer device that are needed to interact with

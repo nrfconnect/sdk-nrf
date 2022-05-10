@@ -5,8 +5,8 @@
  */
 
 #include <stdlib.h>
-#include <zephyr.h>
-#include <shell/shell.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/shell/shell.h>
 #include <getopt.h>
 
 #include "mosh_print.h"

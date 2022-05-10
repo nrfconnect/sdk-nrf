@@ -11,7 +11,7 @@
 #include <hal/nrf_power.h>
 #include <hal/nrf_rng.h>
 #include <nrfx_timer.h>
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 #if CONFIG_FEM
 #include "fem.h"

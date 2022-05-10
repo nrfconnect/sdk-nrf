@@ -7,7 +7,7 @@
 #ifndef _PCM_STREAM_CHANNEL_MODIFIER_H_
 #define _PCM_STREAM_CHANNEL_MODIFIER_H_
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 #include "sw_codec_select.h"
 

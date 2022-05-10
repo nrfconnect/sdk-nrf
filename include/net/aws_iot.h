@@ -12,7 +12,7 @@
 #define AWS_IOT_H__
 
 #include <stdio.h>
-#include <net/mqtt.h>
+#include <zephyr/net/mqtt.h>
 
 /**
  * @defgroup aws_iot AWS IoT library

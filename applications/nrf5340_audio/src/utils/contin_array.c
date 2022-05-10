@@ -6,11 +6,11 @@
 
 #include "contin_array.h"
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
 #include <string.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(contin_array, LOG_LEVEL_WRN);
 
 int contin_array_create(void *const pcm_cont, uint32_t pcm_cont_size, void const *const pcm_finite,

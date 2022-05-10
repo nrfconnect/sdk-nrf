@@ -7,7 +7,7 @@
 #ifndef MOSH_LINK_SHELL_H
 #define MOSH_LINK_SHELL_H
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include <modem/lte_lc.h>
 
 int link_shell(const struct shell *shell, size_t argc, char **argv);

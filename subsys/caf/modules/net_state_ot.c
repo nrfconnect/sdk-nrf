@@ -3,10 +3,10 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
 
-#include <net/openthread.h>
+#include <zephyr/net/openthread.h>
 #include <openthread/thread.h>
 #include <openthread/netdata.h>
 
@@ -16,7 +16,7 @@
 #include <caf/events/net_state_event.h>
 #include <caf/events/factory_reset_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_NET_STATE_OT_LOG_LEVEL);
 
 

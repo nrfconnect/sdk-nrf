@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <net/socket_offload.h>
+#include <zephyr/net/socket_offload.h>
 #include <sockets_internal.h>
 #include <ztest.h>
 

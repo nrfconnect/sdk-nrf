@@ -7,8 +7,8 @@
 #ifndef _MAX_14690_
 #define _MAX_14690_
 
-#include <zephyr.h>
-#include <device.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/device.h>
 
 /* Buck inductor value */
 #define PMIC_BUCK_CFG_IND_OFFS (0)

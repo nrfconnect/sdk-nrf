@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <logging/log.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/logging/log.h>
 #include <mgmt/mgmt.h>
 #include <nrfx_ipc.h>
 #include <nrf_modem_full_dfu.h>
@@ -15,7 +15,7 @@
 #include <zcbor_decode.h>
 #include <zcbor_encode.h>
 #include "zcbor_bulk/zcbor_bulk_priv.h"
-#include <stats/stats.h>
+#include <zephyr/stats/stats.h>
 
 LOG_MODULE_REGISTER(mgmt_fmfu, CONFIG_MGMT_FMFU_LOG_LEVEL);
 

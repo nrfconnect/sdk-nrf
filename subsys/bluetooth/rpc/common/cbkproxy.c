@@ -7,7 +7,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 #include "cbkproxy.h"
 

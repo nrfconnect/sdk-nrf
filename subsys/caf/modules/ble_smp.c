@@ -8,13 +8,13 @@
 #include <caf/events/module_state_event.h>
 #include <caf/events/ble_smp_event.h>
 
-#include <mgmt/mcumgr/smp_bt.h>
+#include <zephyr/mgmt/mcumgr/smp_bt.h>
 #include <img_mgmt/img_mgmt.h>
 #ifdef CONFIG_MCUMGR_CMD_OS_MGMT
 #include <os_mgmt/os_mgmt.h>
 #endif
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BLE_SMP_LOG_LEVEL);
 
 

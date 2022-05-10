@@ -8,8 +8,8 @@
 
 #include <fw_info.h>
 #include <pm_config.h>
-#include <drivers/flash.h>
-#include <sys/reboot.h>
+#include <zephyr/drivers/flash.h>
+#include <zephyr/sys/reboot.h>
 
 #define S1_ADDRESS PM_S1_ADDRESS
 #define S1_SIZE 0x8000

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <drivers/hwinfo.h>
+#include <zephyr/drivers/hwinfo.h>
 
 #include "hwid.h"
 

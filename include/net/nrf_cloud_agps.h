@@ -11,7 +11,7 @@
  * @brief Module to provide nRF Cloud A-GPS support to nRF9160 SiP.
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <nrf_modem_gnss.h>
 #include <net/nrf_cloud.h>
 

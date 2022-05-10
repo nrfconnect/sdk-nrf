@@ -6,7 +6,7 @@
 
 /* TEST_MULTICONTEXT */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 #define THREAD1_PRIORITY K_PRIO_COOP(1)
 #define THREAD2_PRIORITY K_PRIO_COOP(2)

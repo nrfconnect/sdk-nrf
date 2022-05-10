@@ -5,11 +5,11 @@
  */
 
 
-#include <zephyr.h>
-#include <device.h>
-#include <drivers/sensor.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/sensor.h>
 #include <stdio.h>
-#include <sys/__assert.h>
+#include <zephyr/sys/__assert.h>
 
 #define THRESHOLD_UPPER                 50
 #define THRESHOLD_LOWER                 0

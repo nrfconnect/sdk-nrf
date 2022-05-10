@@ -7,7 +7,7 @@
 #include "pwm_led.h"
 #include <nrfx.h>
 #include <nrfx_gpiote.h>
-#include <drivers/pwm.h>
+#include <zephyr/drivers/pwm.h>
 
 #define PWM_LED0_NODE	DT_ALIAS(pwm_led0)
 

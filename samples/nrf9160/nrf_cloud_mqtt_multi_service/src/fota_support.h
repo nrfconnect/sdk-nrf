@@ -6,7 +6,7 @@
 #ifndef _FOTA_SUPPORT_H_
 #define _FOTA_SUPPORT_H_
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 /**
  * @brief Check whether we are capable of Firmware Over The Air (FOTA) application or modem update.

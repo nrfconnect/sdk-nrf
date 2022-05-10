@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <dm.h>
 
 /** @brief Distance Measurement update result.

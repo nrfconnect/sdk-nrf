@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <drivers/uart.h>
+#include <zephyr/drivers/uart.h>
 #include "spm_internal.h"
 
 struct spm_uart_config {

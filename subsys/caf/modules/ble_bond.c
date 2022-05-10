@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 
 #define MODULE ble_bond
 #include <caf/events/module_state_event.h>
 #include <caf/events/click_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BLE_BOND_LOG_LEVEL);
 
 #define BOND_ERASE_CLICK	IS_ENABLED(CONFIG_CAF_BLE_BOND_PEER_ERASE_CLICK)

@@ -6,20 +6,20 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <zephyr/types.h>
-#include <toolchain/common.h>
+#include <zephyr/toolchain/common.h>
 #if defined(CONFIG_POSIX_API)
-#include <posix/unistd.h>
-#include <posix/netdb.h>
-#include <posix/sys/time.h>
-#include <posix/sys/socket.h>
+#include <zephyr/posix/unistd.h>
+#include <zephyr/posix/netdb.h>
+#include <zephyr/posix/sys/time.h>
+#include <zephyr/posix/sys/socket.h>
 #else
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #endif
-#include <net/tls_credentials.h>
+#include <zephyr/net/tls_credentials.h>
 #include <net/download_client.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 

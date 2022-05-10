@@ -7,7 +7,7 @@
 #ifndef BT_RPC_GATT_COMMON_H_
 #define BT_RPC_GATT_COMMON_H_
 
-#include <bluetooth/gatt.h>
+#include <zephyr/bluetooth/gatt.h>
 #include <sys/types.h>
 
 #include <nrf_rpc_cbor.h>

@@ -7,8 +7,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <init.h>
-#include <shell/shell.h>
+#include <zephyr/init.h>
+#include <zephyr/shell/shell.h>
 
 #include <zb_nrf_platform.h>
 #include <zigbee/zigbee_shell.h>

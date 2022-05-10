@@ -9,7 +9,7 @@
 #include <ei_run_classifier.h>
 #include <ei_wrapper.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ei_wrapper, CONFIG_EI_WRAPPER_LOG_LEVEL);
 
 #define INPUT_FRAME_SIZE	EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME

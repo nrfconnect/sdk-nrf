@@ -4,20 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #if defined(CONFIG_POSIX_API)
-#include <posix/poll.h>
+#include <zephyr/posix/poll.h>
 #else
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #endif
 #include <net/cloud.h>
 #include <net/nrf_cloud.h>
-#include <net/mqtt.h>
+#include <zephyr/net/mqtt.h>
 #include "nrf_cloud_codec.h"
 #include "nrf_cloud_fsm.h"
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_fota.h"
 #include "nrf_cloud_mem.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(nrf_cloud, CONFIG_NRF_CLOUD_LOG_LEVEL);
 

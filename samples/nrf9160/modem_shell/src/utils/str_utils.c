@@ -10,8 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <zephyr.h>
-#include <sys/util.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/util.h>
 
 #include "str_utils.h"
 

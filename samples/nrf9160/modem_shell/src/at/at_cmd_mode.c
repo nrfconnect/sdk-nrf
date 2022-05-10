@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include <modem/at_monitor.h>
 #include <nrf_modem_at.h>
 

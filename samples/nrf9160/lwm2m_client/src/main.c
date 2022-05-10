@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <ctype.h>
-#include <drivers/gpio.h>
+#include <zephyr/drivers/gpio.h>
 #include <stdio.h>
-#include <net/lwm2m.h>
+#include <zephyr/net/lwm2m.h>
 #include <modem/nrf_modem_lib.h>
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #include <net/lwm2m_client_utils.h>
 #include <net/lwm2m_client_utils_fota.h>
@@ -18,7 +18,7 @@
 #include <net/lwm2m_client_utils_location.h>
 #include <date_time.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 
 #include <modem/lte_lc.h>

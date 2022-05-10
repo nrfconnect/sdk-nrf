@@ -10,7 +10,7 @@
 
 #include <nfc/tnep/tag.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include "common.h"
 

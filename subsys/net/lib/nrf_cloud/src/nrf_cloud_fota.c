@@ -9,24 +9,24 @@
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_codec.h"
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <errno.h>
 #include <stdio.h>
 #include <fcntl.h>
-#include <net/mqtt.h>
-#include <net/socket.h>
+#include <zephyr/net/mqtt.h>
+#include <zephyr/net/socket.h>
 #include <net/nrf_cloud.h>
 #include <net/fota_download.h>
 #include <net/cloud.h>
-#include <logging/log.h>
-#include <sys/util.h>
-#include <settings/settings.h>
-#include <sys/reboot.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/settings/settings.h>
+#include <zephyr/sys/reboot.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
 
 #if defined(CONFIG_BOOTLOADER_MCUBOOT)
-#include <dfu/mcuboot.h>
+#include <zephyr/dfu/mcuboot.h>
 #endif
 
 #if defined(CONFIG_NRF_MODEM_LIB)

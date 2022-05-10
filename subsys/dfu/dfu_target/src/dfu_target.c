@@ -3,9 +3,9 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr.h>
-#include <logging/log.h>
-#include <dfu/mcuboot.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/dfu/mcuboot.h>
 #include <dfu/dfu_target.h>
 
 #define DEF_DFU_TARGET(name) \

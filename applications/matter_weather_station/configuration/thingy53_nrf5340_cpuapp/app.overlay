@@ -16,7 +16,7 @@
  * image data.
  */
 
- #include <dt-bindings/ipc_service/static_vrings.h>
+ #include <zephyr/dt-bindings/ipc_service/static_vrings.h>
 
 / {
 	soc {

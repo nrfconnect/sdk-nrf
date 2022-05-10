@@ -11,22 +11,22 @@
 #include "nrf_cloud_fota.h"
 #endif
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
 #include <fcntl.h>
-#include <net/mqtt.h>
-#include <net/socket.h>
+#include <zephyr/net/mqtt.h>
+#include <zephyr/net/socket.h>
 #include <net/cloud.h>
-#include <logging/log.h>
-#include <sys/util.h>
-#include <settings/settings.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/settings/settings.h>
 #if defined(CONFIG_NRF_MODEM_LIB)
 #if defined(CONFIG_POSIX_API)
-#include <posix/arpa/inet.h>
-#include <posix/netdb.h>
-#include <posix/sys/socket.h>
+#include <zephyr/posix/arpa/inet.h>
+#include <zephyr/posix/netdb.h>
+#include <zephyr/posix/sys/socket.h>
 #else
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #endif
 #endif /* defined(CONFIG_NRF_MODEM_LIB) */
 

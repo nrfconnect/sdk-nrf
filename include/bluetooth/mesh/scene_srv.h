@@ -15,9 +15,9 @@
 #define BT_MESH_SCENE_SRV_H__
 
 #include <bluetooth/mesh/scene.h>
-#include <settings/settings.h>
-#include <toolchain/common.h>
-#include <sys/slist.h>
+#include <zephyr/settings/settings.h>
+#include <zephyr/toolchain/common.h>
+#include <zephyr/sys/slist.h>
 
 #ifdef __cplusplus
 extern "C" {

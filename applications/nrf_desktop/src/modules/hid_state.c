@@ -14,9 +14,9 @@
 #include <sys/types.h>
 
 #include <zephyr/types.h>
-#include <sys/slist.h>
-#include <sys/util.h>
-#include <sys/byteorder.h>
+#include <zephyr/sys/slist.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/sys/byteorder.h>
 
 #include <caf/events/led_event.h>
 #include <caf/events/button_event.h>
@@ -34,7 +34,7 @@
 #define MODULE hid_state
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_HID_STATE_LOG_LEVEL);
 
 

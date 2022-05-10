@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <bluetooth/services/nus.h>
 
 #include "ei_data_forwarder.h"
@@ -17,7 +17,7 @@
 #define MODULE ei_data_forwarder
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_EI_DATA_FORWARDER_LOG_LEVEL);
 
 #define MIN_CONN_INT		CONFIG_BT_PERIPHERAL_PREF_MIN_INT

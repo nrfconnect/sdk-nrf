@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <errno.h>
-#include <init.h>
-#include <drivers/entropy.h>
+#include <zephyr/init.h>
+#include <zephyr/drivers/entropy.h>
 
 #include <tinycbor/cbor.h>
 #include <nrf_rpc_cbor.h>
 
-#include <device.h>
+#include <zephyr/device.h>
 
 #include "../../common_ids.h"
 

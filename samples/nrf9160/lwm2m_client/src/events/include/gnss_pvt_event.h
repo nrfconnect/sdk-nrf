@@ -7,7 +7,7 @@
 #ifndef GNSS_PVT_EVENT_H__
 #define GNSS_PVT_EVENT_H__
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <nrf_modem_gnss.h>
 #include <app_event_manager.h>
 #include <app_event_manager_profiler_tracer.h>

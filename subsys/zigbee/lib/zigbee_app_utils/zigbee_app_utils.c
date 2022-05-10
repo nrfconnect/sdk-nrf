@@ -7,10 +7,10 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stddef.h>
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 
 #include <dk_buttons_and_leds.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include <zigbee/zigbee_app_utils.h>
 #include <zigbee/zigbee_error_handler.h>

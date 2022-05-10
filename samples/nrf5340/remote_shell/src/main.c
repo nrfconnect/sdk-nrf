@@ -6,16 +6,16 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <device.h>
-#include <drivers/uart.h>
-#include <zephyr.h>
-#include <sys/ring_buffer.h>
-#include <sys/atomic.h>
-#include <usb/usb_device.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/ring_buffer.h>
+#include <zephyr/sys/atomic.h>
+#include <zephyr/usb/usb_device.h>
 
 #include "shell_ipc_host.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #define HOST_WAIT_TIME 1000000
 

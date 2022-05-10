@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <device.h>
-#include <net/socket.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/device.h>
+#include <zephyr/net/socket.h>
 #include <nrf_socket.h>
 
 #include <cJSON.h>
@@ -14,7 +14,7 @@
 #include <net/nrf_cloud_cell_pos.h>
 #include "nrf_cloud_fsm.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_cell_pos, CONFIG_NRF_CLOUD_LOG_LEVEL);
 

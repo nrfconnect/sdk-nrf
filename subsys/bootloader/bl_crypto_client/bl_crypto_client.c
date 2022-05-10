@@ -6,7 +6,7 @@
 
 #include <bl_crypto.h>
 #include <fw_info.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 
 #ifdef CONFIG_BL_ROT_VERIFY_EXT_API_REQUIRED
 EXT_API_REQ(BL_ROT_VERIFY, 1, struct bl_rot_verify_ext_api, bl_rot_verify);

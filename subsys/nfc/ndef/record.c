@@ -7,7 +7,7 @@
 #include <string.h>
 #include <errno.h>
 #include <nfc/ndef/record.h>
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 
 /* Sum of sizes of fields: TNF-flags, Type Length, Payload Length in long
  * NDEF record.

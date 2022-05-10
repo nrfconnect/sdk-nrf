@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <drivers/sensor.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/drivers/sensor.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
 #include "ui_sense_led.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(light_sensor, CONFIG_APP_LOG_LEVEL);
 
 #if !DT_NODE_HAS_STATUS(DT_NODELABEL(bh1749), okay)

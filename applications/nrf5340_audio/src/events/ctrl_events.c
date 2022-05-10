@@ -6,13 +6,13 @@
 
 #include "ctrl_events.h"
 
-#include <zephyr.h>
-#include <kernel.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <errno.h>
 
 #include "macros_common.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ctrl_events, CONFIG_LOG_CTRL_EVENTS_LEVEL);
 
 #define CTRL_EVENTS_MSGQ_MAX_ELEMENTS 5

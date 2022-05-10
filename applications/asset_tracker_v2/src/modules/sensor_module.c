@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
-#include <drivers/sensor.h>
+#include <zephyr/drivers/sensor.h>
 #include <app_event_manager.h>
 
 #if defined(CONFIG_EXTERNAL_SENSORS)
@@ -21,7 +21,7 @@
 #include "events/sensor_module_event.h"
 #include "events/util_module_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(sensor_module, CONFIG_SENSOR_MODULE_LOG_LEVEL);
 
 struct sensor_msg_data {

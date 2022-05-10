@@ -8,7 +8,7 @@
 #define _BLE_ACL_COMMON_H_
 
 #include "ble_trans.h"
-#include <bluetooth/conn.h>
+#include <zephyr/bluetooth/conn.h>
 
 #define DEVICE_NAME_PEER_L CONFIG_BLE_DEVICE_NAME_BASE "_H_L"
 #define DEVICE_NAME_PEER_L_LEN (sizeof(DEVICE_NAME_PEER_L) - 1)

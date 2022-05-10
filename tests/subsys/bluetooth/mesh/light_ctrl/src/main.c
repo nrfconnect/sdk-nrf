@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 #include <ztest.h>
-#include <bluetooth/mesh.h>
+#include <zephyr/bluetooth/mesh.h>
 #include <bluetooth/mesh/models.h>
 #include <bluetooth/mesh/light_ctrl_srv.h>
 #include <bluetooth/mesh/light_ctrl_reg_spec.h>

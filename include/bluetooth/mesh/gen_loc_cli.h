@@ -16,7 +16,7 @@
 
 #include <bluetooth/mesh/gen_loc.h>
 #include <bluetooth/mesh/model_types.h>
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 
 #ifdef __cplusplus
 extern "C" {

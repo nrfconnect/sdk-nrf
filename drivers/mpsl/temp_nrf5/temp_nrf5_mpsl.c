@@ -6,9 +6,9 @@
 
 #define DT_DRV_COMPAT nordic_nrf_temp
 
-#include <device.h>
-#include <drivers/sensor.h>
-#include <logging/log.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/sensor.h>
+#include <zephyr/logging/log.h>
 #include <mpsl_temp.h>
 
 LOG_MODULE_REGISTER(temp_nrf5_mpsl, CONFIG_SENSOR_LOG_LEVEL);

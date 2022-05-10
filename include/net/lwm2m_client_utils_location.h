@@ -15,9 +15,9 @@
 #ifndef LWM2M_CLIENT_UTILS_LOCATION_H__
 #define LWM2M_CLIENT_UTILS_LOCATION_H__
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <nrf_modem_gnss.h>
-#include <net/lwm2m.h>
+#include <zephyr/net/lwm2m.h>
 #include <app_event_manager.h>
 #include <app_event_manager_profiler_tracer.h>
 

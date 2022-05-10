@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <sys/reboot.h>
-#include <device.h>
-#include <logging/log.h>
-#include <logging/log_ctrl.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/device.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
 
 #define MODULE util_module
 

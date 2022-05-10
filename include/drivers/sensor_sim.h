@@ -18,7 +18,7 @@ extern "C" {
 #endif
 
 #include <zephyr/types.h>
-#include <drivers/sensor.h>
+#include <zephyr/drivers/sensor.h>
 #include <wave_gen.h>
 
 /**

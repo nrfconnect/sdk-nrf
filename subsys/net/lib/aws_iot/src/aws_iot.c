@@ -5,8 +5,8 @@
  */
 
 #include <net/aws_iot.h>
-#include <net/mqtt.h>
-#include <net/socket.h>
+#include <zephyr/net/mqtt.h>
+#include <zephyr/net/socket.h>
 #include <net/cloud.h>
 #include <stdio.h>
 
@@ -18,7 +18,7 @@
 #include CONFIG_AWS_IOT_CERTIFICATES_FILE
 #endif /* CONFIG_AWS_IOT_PROVISION_CERTIFICATES */
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(aws_iot, CONFIG_AWS_IOT_LOG_LEVEL);
 

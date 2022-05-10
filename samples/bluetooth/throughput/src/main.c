@@ -4,24 +4,24 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <kernel.h>
-#include <console/console.h>
-#include <sys/printk.h>
+#include <zephyr/kernel.h>
+#include <zephyr/console/console.h>
+#include <zephyr/sys/printk.h>
 #include <string.h>
 #include <stdlib.h>
 #include <zephyr/types.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/crypto.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/gatt.h>
-#include <bluetooth/hci.h>
-#include <bluetooth/uuid.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/crypto.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/hci.h>
+#include <zephyr/bluetooth/uuid.h>
 #include <bluetooth/services/throughput.h>
 #include <bluetooth/scan.h>
 #include <bluetooth/gatt_dm.h>
 
-#include <shell/shell_uart.h>
+#include <zephyr/shell/shell_uart.h>
 
 #include <dk_buttons_and_leds.h>
 

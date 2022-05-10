@@ -14,7 +14,7 @@
 #define WIFI_SERVICE_H
 
 #include <zephyr/types.h>
-#include <net/wifi.h>
+#include <zephyr/net/wifi.h>
 #include <modem/location.h>
 
 #define REST_WIFI_MIN_TIMEOUT_MS 1500

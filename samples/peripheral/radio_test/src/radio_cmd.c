@@ -7,8 +7,8 @@
 #include <stdlib.h>
 
 #include <errno.h>
-#include <init.h>
-#include <shell/shell.h>
+#include <zephyr/init.h>
+#include <zephyr/shell/shell.h>
 #include <zephyr/types.h>
 #include <hal/nrf_power.h>
 

@@ -5,8 +5,8 @@
  */
 
 #include <nrf.h>
-#include <sys/reboot.h>
-#include <init.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/init.h>
 
 #ifdef CONFIG_DISABLE_FLASH_PATCH
 static int disable_flash_patch(const struct device *dev)

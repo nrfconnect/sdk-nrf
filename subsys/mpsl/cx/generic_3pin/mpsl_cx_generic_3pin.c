@@ -17,9 +17,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <device.h>
-#include <drivers/gpio.h>
-#include <devicetree.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/devicetree.h>
 
 #include "hal/nrf_gpio.h"
 

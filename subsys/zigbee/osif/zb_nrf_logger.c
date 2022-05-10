@@ -5,11 +5,11 @@
  */
 
 #include <zboss_api.h>
-#include <sys/ring_buffer.h>
+#include <zephyr/sys/ring_buffer.h>
 
 #if defined ZB_NRF_TRACE
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(zboss_osif, CONFIG_ZBOSS_OSIF_LOG_LEVEL);
 

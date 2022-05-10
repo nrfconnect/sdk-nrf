@@ -6,7 +6,7 @@
 
 #include <errno.h>
 #include <nrf_errno.h>
-#include <toolchain.h>
+#include <zephyr/toolchain.h>
 
 BUILD_ASSERT(EPERM           == NRF_EPERM,           "Errno not aligned with nrf_errno.");
 BUILD_ASSERT(ENOENT          == NRF_ENOENT,          "Errno not aligned with nrf_errno.");

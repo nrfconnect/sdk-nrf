@@ -14,7 +14,7 @@
 #ifndef BT_MESH_LIGHT_CTRL_SRV_H__
 #define BT_MESH_LIGHT_CTRL_SRV_H__
 
-#include <bluetooth/mesh.h>
+#include <zephyr/bluetooth/mesh.h>
 #include <bluetooth/mesh/light_ctrl.h>
 #include <bluetooth/mesh/sensor.h>
 #include <bluetooth/mesh/gen_onoff_srv.h>

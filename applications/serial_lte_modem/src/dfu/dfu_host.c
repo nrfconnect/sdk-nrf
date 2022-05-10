@@ -6,11 +6,11 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <zephyr.h>
-#include <sys/crc.h>
-#include <sys/byteorder.h>
-#include <sys/util.h>
-#include <logging/log.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/crc.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/logging/log.h>
 #include "dfu_host.h"
 #include "slm_defines.h"
 

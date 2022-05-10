@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <sys/slist.h>
+#include <zephyr/sys/slist.h>
 
 #include "events/led_state_event.h"
 

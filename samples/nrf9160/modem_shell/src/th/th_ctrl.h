@@ -6,7 +6,7 @@
 
 #ifndef TH_CTRL_H
 #define TH_CTRL_H
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 
 #define TH_BG_THREADS_MAX_AMOUNT 2
 

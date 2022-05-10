@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <logging/log.h>
-#include <zephyr.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
-#include <net/mqtt.h>
-#include <net/socket.h>
-#include <random/rand32.h>
+#include <zephyr/net/mqtt.h>
+#include <zephyr/net/socket.h>
+#include <zephyr/random/rand32.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_native_tls.h"

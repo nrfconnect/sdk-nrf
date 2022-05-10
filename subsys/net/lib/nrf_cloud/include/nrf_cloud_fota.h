@@ -7,9 +7,9 @@
 #ifndef NRF_CLOUD_FOTA_H__
 #define NRF_CLOUD_FOTA_H__
 
-#include <net/mqtt.h>
+#include <zephyr/net/mqtt.h>
 #include <net/nrf_cloud.h>
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 
 #ifdef __cplusplus
 extern "C" {

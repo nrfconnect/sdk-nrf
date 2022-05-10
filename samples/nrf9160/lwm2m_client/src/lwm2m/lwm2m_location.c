@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <nrf_modem_gnss.h>
-#include <net/lwm2m.h>
-#include <net/lwm2m_path.h>
+#include <zephyr/net/lwm2m.h>
+#include <zephyr/net/lwm2m_path.h>
 
 #include "gnss_pvt_event.h"
 #include "lwm2m_app_utils.h"
 
 #define MODULE lwm2m_app_loc
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 
 static bool app_event_handler(const struct app_event_header *aeh)

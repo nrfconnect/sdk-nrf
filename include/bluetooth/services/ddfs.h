@@ -9,9 +9,9 @@
 
 #include <stdlib.h>
 #include <zephyr/types.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/uuid.h>
-#include <bluetooth/gatt.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/gatt.h>
 
 /**@file
  * @defgroup bt_ddfs Direction and Distance Finding Service API

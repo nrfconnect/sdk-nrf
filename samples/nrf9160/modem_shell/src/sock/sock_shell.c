@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include <assert.h>
 #include <stdio.h>
 #if defined(CONFIG_POSIX_API)
@@ -13,7 +13,7 @@
 #include <poll.h>
 #include <sys/socket.h>
 #else
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #endif
 #include <fcntl.h>
 #include <getopt.h>

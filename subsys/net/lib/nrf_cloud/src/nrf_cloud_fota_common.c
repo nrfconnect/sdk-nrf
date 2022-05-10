@@ -7,11 +7,11 @@
 #include <stdbool.h>
 #include <nrf_modem.h>
 #include <modem/nrf_modem_lib.h>
-#include <dfu/mcuboot.h>
+#include <zephyr/dfu/mcuboot.h>
 #if defined(CONFIG_FOTA_DOWNLOAD)
 #include <net/fota_download.h>
 #endif
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #include <net/nrf_cloud.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_fota_common, CONFIG_NRF_CLOUD_LOG_LEVEL);

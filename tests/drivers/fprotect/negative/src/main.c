@@ -12,11 +12,11 @@
  */
 
 #include <ztest.h>
-#include <device.h>
+#include <zephyr/device.h>
 #include <nrfx_nvmc.h>
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 #include <fprotect.h>
-#include <linker/linker-defs.h>
+#include <zephyr/linker/linker-defs.h>
 
 #define BUF_SIZE 256
 

@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <modem/nrf_modem_lib.h>
 #include <nrf_modem_at.h>
 #include <modem/modem_info.h>
-#include <dfu/mcuboot.h>
-#include <settings/settings.h>
+#include <zephyr/dfu/mcuboot.h>
+#include <zephyr/settings/settings.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_rest.h>
-#include <sys/reboot.h>
-#include <logging/log.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/logging/log.h>
 #include <dk_buttons_and_leds.h>
 #include <net/fota_download.h>
 

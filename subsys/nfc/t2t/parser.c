@@ -5,8 +5,8 @@
  */
 #include <stdbool.h>
 #include <errno.h>
-#include <sys/byteorder.h>
-#include <logging/log.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/logging/log.h>
 #include <nfc/t2t/parser.h>
 
 LOG_MODULE_REGISTER(nfc_t2t_parser, CONFIG_NFC_T2T_PARSER_LOG_LEVEL);

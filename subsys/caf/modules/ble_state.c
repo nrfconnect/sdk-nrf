@@ -5,14 +5,14 @@
  */
 
 #include <zephyr/types.h>
-#include <sys/reboot.h>
-#include <sys/byteorder.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/sys/byteorder.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/gatt.h>
-#include <bluetooth/hci.h>
-#include <bluetooth/hci_vs.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/hci.h>
+#include <zephyr/bluetooth/hci_vs.h>
 
 #include <caf/events/ble_common_event.h>
 
@@ -29,7 +29,7 @@
 #define MODULE ble_state
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BLE_STATE_LOG_LEVEL);
 
 

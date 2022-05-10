@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <net/lwm2m.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/net/lwm2m.h>
 #include <net/lwm2m_client_utils.h>
 #include <lwm2m_engine.h>
 #include <lwm2m_rd_client.h>
 #include <lwm2m_util.h>
 #include <modem/modem_key_mgmt.h>
 #include <modem/lte_lc.h>
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_security, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
 /* LWM2M_OBJECT_SECURITY_ID */

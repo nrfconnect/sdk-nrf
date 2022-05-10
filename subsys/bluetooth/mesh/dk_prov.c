@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <bluetooth/mesh.h>
+#include <zephyr/bluetooth/mesh.h>
 #include <dk_buttons_and_leds.h>
-#include <drivers/hwinfo.h>
-#include <logging/log.h>
+#include <zephyr/drivers/hwinfo.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(dk_bt_mesh_prov, CONFIG_BT_MESH_DK_PROV_LOG_LEVEL);
 

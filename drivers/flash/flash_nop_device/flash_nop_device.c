@@ -6,12 +6,12 @@
 
 #define DT_DRV_COMPAT zephyr_sim_flash
 
-#include <device.h>
-#include <drivers/flash.h>
-#include <init.h>
-#include <kernel.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/flash.h>
+#include <zephyr/init.h>
+#include <zephyr/kernel.h>
 #include <string.h>
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 
 /* configuration derived from DT */
 #ifdef CONFIG_ARCH_POSIX

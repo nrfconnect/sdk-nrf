@@ -7,7 +7,7 @@
 #include "app_task.h"
 
 #include <cstdlib>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(app, CONFIG_MATTER_LOG_LEVEL);
 

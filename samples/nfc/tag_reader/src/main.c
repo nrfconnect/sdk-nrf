@@ -10,8 +10,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <string.h>
-#include <zephyr.h>
-#include <sys/printk.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/printk.h>
 #include <st25r3911b_nfca.h>
 #include <nfc/ndef/msg_parser.h>
 #include <nfc/ndef/le_oob_rec_parser.h>
@@ -20,7 +20,7 @@
 #include <nfc/t4t/isodep.h>
 #include <nfc/t4t/hl_procedure.h>
 #include <nfc/ndef/ch_rec_parser.h>
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 
 #define NFCA_BD 128
 #define BITS_IN_BYTE 8

@@ -5,8 +5,8 @@
  */
 #include <stdbool.h>
 #include <string.h>
-#include <zephyr.h>
-#include <sys/util.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/util.h>
 
 #include <dk_buttons_and_leds.h>
 

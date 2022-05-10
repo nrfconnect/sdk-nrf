@@ -6,11 +6,11 @@
 
 #include <zephyr/types.h>
 
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <soc.h>
-#include <device.h>
-#include <drivers/gpio.h>
-#include <sys/util.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/sys/util.h>
 
 #include <caf/key_id.h>
 #include <caf/gpio_pins.h>
@@ -23,7 +23,7 @@
 #define MODULE buttons
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BUTTONS_LOG_LEVEL);
 
 #define SCAN_INTERVAL CONFIG_CAF_BUTTONS_SCAN_INTERVAL

@@ -6,8 +6,8 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include <shell/shell.h>
-#include <settings/settings.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/settings/settings.h>
 
 #include <nrf_modem_at.h>
 

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <settings/settings.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/settings/settings.h>
 
 #include <app_event_manager.h>
 
@@ -14,7 +14,7 @@
 
 #include CONFIG_CAF_SETTINGS_LOADER_DEF_PATH
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_SETTINGS_LOADER_LOG_LEVEL);
 
 #define THREAD_STACK_SIZE	CONFIG_CAF_SETTINGS_LOADER_THREAD_STACK_SIZE

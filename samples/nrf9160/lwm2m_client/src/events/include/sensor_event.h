@@ -7,11 +7,11 @@
 #ifndef SENSOR_EVENT_H__
 #define SENSOR_EVENT_H__
 
-#include <zephyr.h>
-#include <net/lwm2m.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/net/lwm2m.h>
 #include <app_event_manager.h>
 #include <app_event_manager_profiler_tracer.h>
-#include <drivers/sensor.h>
+#include <zephyr/drivers/sensor.h>
 
 #ifdef __cplusplus
 extern "C" {

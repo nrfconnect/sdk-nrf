@@ -8,8 +8,8 @@
 #include <ztest.h>
 #include <stdio.h>
 #include <string.h>
-#include <kernel.h>
-#include <sys/util.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/util.h>
 
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>

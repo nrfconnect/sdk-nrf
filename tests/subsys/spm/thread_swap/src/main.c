@@ -6,7 +6,7 @@
 
 #include <ztest.h>
 #include <secure_services.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 
 static struct k_work_delayable interrupting_work;
 static volatile bool work_done;

@@ -14,7 +14,7 @@
 #ifndef BT_MESH_GEN_BATTERY_H__
 #define BT_MESH_GEN_BATTERY_H__
 
-#include <bluetooth/mesh.h>
+#include <zephyr/bluetooth/mesh.h>
 
 #ifdef __cplusplus
 extern "C" {

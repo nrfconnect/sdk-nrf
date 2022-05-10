@@ -11,7 +11,7 @@
  * Internal, shared header to access the the ST25R3911B devicetree node.
  */
 
-#include <devicetree.h>
+#include <zephyr/devicetree.h>
 
 /*
  * Devicetree API node identifier for the ST25R3911B NFC reader.

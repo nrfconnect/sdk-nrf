@@ -8,7 +8,7 @@
 #include <bluetooth/mesh/gen_lvl_srv.h>
 #include <bluetooth/mesh/gen_dtt_srv.h>
 #include <bluetooth/mesh/scene_srv.h>
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 #include "model_utils.h"
 
 static void encode_status(const struct bt_mesh_lvl_status *status,

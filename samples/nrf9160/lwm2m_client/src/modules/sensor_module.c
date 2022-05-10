@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <drivers/sensor.h>
-#include <net/lwm2m.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/drivers/sensor.h>
+#include <zephyr/net/lwm2m.h>
 #include <lwm2m_resource_ids.h>
 #include <math.h>
 #include <stdlib.h>
@@ -22,7 +22,7 @@
 
 #define MODULE sensor_module
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 
 #define LIGHT_OBJ_INSTANCE_ID 0

@@ -19,7 +19,7 @@
 
 #include "azure_iot_hub_dps.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(azure_fota, CONFIG_AZURE_FOTA_LOG_LEVEL);
 

@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #include <modem/modem_key_mgmt.h>
 #include "slm_native_tls.h"
 

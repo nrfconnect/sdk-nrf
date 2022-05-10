@@ -7,7 +7,7 @@
 #include <ztest.h>
 #include <errno.h>
 #include <tc_util.h>
-#include <kernel_structs.h>
+#include <zephyr/kernel_structs.h>
 
 FUNC_NORETURN void _SysFatalErrorHandler(unsigned int reason, const z_arch_esf_t *pEsf)
 {
@@ -26,7 +26,7 @@ FUNC_NORETURN void _SysFatalErrorHandler(unsigned int reason, const z_arch_esf_t
 #include "macros_common.h"
 
 #define LOG_LEVEL 4
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(macros_main);
 
 /* This test is to check correct functionality of all macros. Since the Zephyr

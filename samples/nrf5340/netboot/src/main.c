@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/types.h>
-#include <sys/printk.h>
+#include <zephyr/sys/printk.h>
 #include <pm_config.h>
 #include <fw_info.h>
 #include <fprotect.h>
@@ -13,8 +13,8 @@
 #include <bl_boot.h>
 #include <bl_validation.h>
 #include <dfu/pcd.h>
-#include <device.h>
-#include <devicetree.h>
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
 
 void main(void)
 {

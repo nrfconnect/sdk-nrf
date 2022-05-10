@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <debug/ppi_trace.h>
-#include <drivers/counter.h>
+#include <zephyr/drivers/counter.h>
 #include <hal/nrf_rtc.h>
 #include <hal/nrf_clock.h>
-#include <device.h>
-#include <devicetree.h>
-#include <logging/log.h>
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(app);
 

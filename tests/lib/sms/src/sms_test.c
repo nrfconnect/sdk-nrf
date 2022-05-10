@@ -7,8 +7,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include <kernel.h>
-#include <device.h>
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
 #include <modem/sms.h>
 #include <modem/at_monitor.h>
 #include <mock_nrf_modem_at.h>

@@ -13,11 +13,11 @@
  * @brief API for the Bluetooth LE GATT Battery Service (BAS) Client.
  */
 
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <sys/types.h>
-#include <bluetooth/gatt.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/uuid.h>
+#include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/uuid.h>
 #include <bluetooth/gatt_dm.h>
 
 /**

@@ -6,10 +6,10 @@
 
 #include "pcm_stream_channel_modifier.h"
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <errno.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(pscm);
 
 /**

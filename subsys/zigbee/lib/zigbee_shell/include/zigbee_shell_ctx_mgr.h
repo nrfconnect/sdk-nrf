@@ -7,7 +7,7 @@
 #ifndef ZIGBEE_SHELL_CTX_MGR_H__
 #define ZIGBEE_SHELL_CTX_MGR_H__
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 
 #include "zigbee_shell_zdo_types.h"
 #include "zigbee_shell_zcl_types.h"

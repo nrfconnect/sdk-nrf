@@ -6,11 +6,11 @@
 
 #define MODULE event_proxy_init
 
-#include <ipc/ipc_service.h>
+#include <zephyr/ipc/ipc_service.h>
 #include <event_manager_proxy.h>
 #include <caf/events/sensor_data_aggregator_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(MODULE);
 

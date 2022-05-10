@@ -8,9 +8,9 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include "common.h"
-#include <toolchain/common.h>
-#include <sys/util.h>
-#include <drivers/entropy.h>
+#include <zephyr/toolchain/common.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/drivers/entropy.h>
 
 #if defined(CONFIG_ZTEST)
 #include <ztest.h>
@@ -76,7 +76,7 @@ extern mbedtls_hmac_drbg_context drbg_ctx;
 #endif
 
 #if defined(CONFIG_ENTROPY_GENERATOR)
-#include <drivers/entropy.h>
+#include <zephyr/drivers/entropy.h>
 #endif
 
 #if defined CONFIG_TV_ASSERT_USER_OVERRIDE

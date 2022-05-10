@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <sys/byteorder.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/byteorder.h>
 
 #include "config_channel_transport.h"
 #include "hid_report_desc.h"
@@ -14,7 +14,7 @@
 #define TRANSPORT_HEADER_SIZE		4
 #define CONFIG_STATUS_POS		2
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_LOG_LEVEL);
 
 static int frame_length_check(size_t length)

@@ -5,11 +5,11 @@
  */
 
 #include <stdlib.h>
-#include <kernel.h>
-#include <sys/reboot.h>
-#include <logging/log.h>
-#include <logging/log_ctrl.h>
-#include <init.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
+#include <zephyr/init.h>
 
 #include <hal/nrf_power.h>
 #if !NRF_POWER_HAS_RESETREAS

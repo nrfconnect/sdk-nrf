@@ -7,10 +7,10 @@
 #include <inttypes.h>
 
 #include <zephyr/types.h>
-#include <sys/byteorder.h>
-#include <storage/flash_map.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/storage/flash_map.h>
 #include <pm_config.h>
-#include <sys/reboot.h>
+#include <zephyr/sys/reboot.h>
 
 #include <app_event_manager.h>
 #include "config_event.h"
@@ -21,8 +21,8 @@
 #define MODULE dfu
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
-#include <logging/log_ctrl.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 
 
@@ -57,7 +57,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
  #define IMAGE1_ADDRESS		PM_S1_IMAGE_ADDRESS
  #define BOOTLOADER_NAME	"B0"
 #elif CONFIG_BOOTLOADER_MCUBOOT
- #include <dfu/mcuboot.h>
+ #include <zephyr/dfu/mcuboot.h>
  #define IMAGE0_ID		PM_MCUBOOT_PRIMARY_ID
  #define IMAGE0_ADDRESS		PM_MCUBOOT_PRIMARY_ADDRESS
  #define IMAGE1_ID		PM_MCUBOOT_SECONDARY_ID

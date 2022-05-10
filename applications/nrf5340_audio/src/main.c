@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <debug/stack.h>
-#include <device.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/debug/stack.h>
+#include <zephyr/device.h>
 #include <string.h>
 
 #include "macros_common.h"
@@ -28,7 +28,7 @@
 #include "hw_codec.h"
 #include "audio_usb.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_LOG_MAIN_LEVEL);
 
 #if defined(CONFIG_INIT_STACKS)

@@ -8,11 +8,11 @@
 
 #include <stdlib.h>
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <errno.h>
-#include <bluetooth/iso.h>
-#include <bluetooth/bluetooth.h>
-#include <sys/byteorder.h>
+#include <zephyr/bluetooth/iso.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/sys/byteorder.h>
 #include "host/conn_internal.h"
 #include "macros_common.h"
 #include "ctrl_events.h"
@@ -22,7 +22,7 @@
 #include "ble_acl_gateway.h"
 #include "audio_sync_timer.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(ble, CONFIG_LOG_BLE_LEVEL);
 
 static enum iso_transport iso_trans_type;

@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
-#include <posix/arpa/inet.h>
-#include <posix/sys/socket.h>
-#include <posix/netdb.h>
-#include <shell/shell.h>
+#include <zephyr/posix/arpa/inet.h>
+#include <zephyr/posix/sys/socket.h>
+#include <zephyr/posix/netdb.h>
+#include <zephyr/shell/shell.h>
 
 #include "net_utils.h"
 #include "mosh_print.h"

@@ -5,9 +5,9 @@
  */
 
 #include <nrf.h>
-#include <zephyr.h>
-#include <logging/log.h>
-#include <net/tls_credentials.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/net/tls_credentials.h>
 #include "psa_tls_functions.h"
 #include "psa_tls_credentials.h"
 #include "certificate.h"

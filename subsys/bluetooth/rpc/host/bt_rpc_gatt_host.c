@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/att.h>
-#include <bluetooth/gatt.h>
-#include <bluetooth/conn.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/att.h>
+#include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/conn.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -18,7 +18,7 @@
 #include "serialize.h"
 #include "cbkproxy.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #if defined(CONFIG_BT_GATT_AUTO_DISCOVER_CCC)
 #error "CONFIG_BT_GATT_AUTO_DISCOVER_CCC is not supported by the RPC GATT"

@@ -11,7 +11,7 @@
  * well as the standard Config and Health Server models. Handles all application
  * behavior related to the models.
  */
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 #include <bluetooth/mesh/models.h>
 #include <dk_buttons_and_leds.h>
 #include "model_handler.h"

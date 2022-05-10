@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <hal/nrf_power.h>
-#include <pm/pm.h>
-#include <sys/reboot.h>
+#include <zephyr/pm/pm.h>
+#include <zephyr/sys/reboot.h>
 
 #define MODULE power_handler
 #include "module_state_event.h"
 #include "power_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_BRIDGE_POWER_MGMT_LOG_LEVEL);
 
 static void power_down_handler(struct k_work *work);

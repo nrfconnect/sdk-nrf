@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <sys/printk.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/printk.h>
 #include <string.h>
 #include <stdio.h>
 #include <hw_unique_key.h>
@@ -16,7 +16,7 @@
 #include <nrf_cc3xx_platform.h>
 #endif /* CONFIG_BUILD_WITH_TFM */
 #if !defined(HUK_HAS_KMU)
-#include <sys/reboot.h>
+#include <zephyr/sys/reboot.h>
 #endif /* !defined(HUK_HAS_KMU) */
 
 #define IV_LEN 12

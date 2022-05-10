@@ -5,10 +5,10 @@
  */
 
 #include <bluetooth/services/hrs_client.h>
-#include <sys/util.h>
-#include <sys/byteorder.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/sys/byteorder.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(hrs_client, CONFIG_BT_HRS_CLIENT_LOG_LEVEL);
 

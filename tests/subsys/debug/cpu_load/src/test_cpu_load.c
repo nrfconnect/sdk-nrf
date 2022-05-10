@@ -6,7 +6,7 @@
 #include <ztest.h>
 #include <stdio.h>
 #include <string.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <debug/cpu_load.h>
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>

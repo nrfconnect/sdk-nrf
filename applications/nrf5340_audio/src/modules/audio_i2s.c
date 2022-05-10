@@ -44,15 +44,15 @@
 
 #include "audio_i2s.h"
 
-#include <zephyr.h>
-#include <device.h>
-#include <drivers/pinctrl.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/pinctrl.h>
 #include <nrfx_i2s.h>
 #include <nrfx_clock.h>
 
 #include "audio_sync_timer.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_i2s, CONFIG_LOG_I2S_LEVEL);
 
 #define I2S_NL DT_NODELABEL(i2s0)

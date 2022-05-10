@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <sys/reboot.h>
-#include <fatal.h>
-#include <logging/log_ctrl.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/fatal.h>
+#include <zephyr/logging/log_ctrl.h>
 
 #include "board.h"
 #include "led.h"
 
 /* Print everything from the error handler */
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(error_handler, LOG_LEVEL_DBG);
 
 static void led_error_indication(void)

@@ -6,19 +6,19 @@
 
 #include "cs47l63_comm.h"
 
-#include <zephyr.h>
-#include <drivers/spi.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/drivers/spi.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <kernel.h>
-#include <drivers/gpio.h>
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/gpio.h>
 
 #include "macros_common.h"
 #include "bsp_driver_if.h"
 #include "cs47l63.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(CS47L63, CONFIG_LOG_CS47L63_LEVEL);
 
 #define CS47L63_DEVID_VAL 0x47A63

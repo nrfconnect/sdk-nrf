@@ -8,7 +8,7 @@
 #define ST25R3911B_INTERRUPT_H_
 
 #include <zephyr/types.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 
 /**
  * @file

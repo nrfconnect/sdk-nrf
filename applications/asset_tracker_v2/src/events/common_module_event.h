@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <sys/util_macro.h>
+#include <zephyr/sys/util_macro.h>
 #include <app_event_manager.h>
 #include <app_event_manager_profiler_tracer.h>
 

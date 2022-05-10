@@ -5,13 +5,13 @@
  */
 
 #include <stddef.h>
-#include <sys/printk.h>
-#include <console/console.h>
-#include <sys/__assert.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/console/console.h>
+#include <zephyr/sys/__assert.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/uuid.h>
-#include <bluetooth/hci.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/hci.h>
 #include <sdc_hci_vs.h>
 #include <mpsl_coex.h>
 

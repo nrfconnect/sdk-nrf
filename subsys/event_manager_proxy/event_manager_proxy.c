@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <spinlock.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/spinlock.h>
 #include <app_event_manager.h>
 #include <event_manager_proxy.h>
-#include <logging/log.h>
-#include <ipc/ipc_service.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/ipc/ipc_service.h>
 
 LOG_MODULE_REGISTER(event_manager_proxy, CONFIG_APP_EVENT_MANAGER_LOG_LEVEL);
 

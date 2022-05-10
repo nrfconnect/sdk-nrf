@@ -48,8 +48,8 @@ To enable the |ble_adv|, complete the following steps:
 
    .. code-block:: c
 
-      #include <zephyr.h>
-      #include <bluetooth/bluetooth.h>
+      #include <zephyr/zephyr.h>
+      #include <zephyr/bluetooth/bluetooth.h>
 
       static const struct bt_data ad_unbonded[] = {
             BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),

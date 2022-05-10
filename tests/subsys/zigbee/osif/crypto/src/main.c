@@ -5,7 +5,7 @@
  */
 
 #include <ztest.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #include <zb_nrf_crypto.h>
 #include <zboss_api.h>
 

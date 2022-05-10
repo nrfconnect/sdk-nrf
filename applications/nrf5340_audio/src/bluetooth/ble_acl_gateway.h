@@ -7,8 +7,8 @@
 #ifndef _BLE_ACL_GATEWAY_H_
 #define _BLE_ACL_GATEWAY_H_
 
-#include <bluetooth/conn.h>
-#include <kernel.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/kernel.h>
 
 /**@brief Get pointer from the peer connection
  *

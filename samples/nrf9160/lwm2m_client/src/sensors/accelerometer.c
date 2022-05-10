@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <drivers/sensor.h>
-#include <device.h>
-#include <devicetree.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/drivers/sensor.h>
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
 
 #include "accelerometer.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(accelerometer, CONFIG_APP_LOG_LEVEL);
 
 #if DT_NODE_HAS_STATUS(DT_NODELABEL(sensor_sim), okay)

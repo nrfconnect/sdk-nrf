@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #include <modem/lte_lc.h>
-#include <net/tls_credentials.h>
+#include <zephyr/net/tls_credentials.h>
 #include <modem/modem_key_mgmt.h>
 #include <net/multicell_location.h>
 
 #include "location_service.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(multicell_location, CONFIG_MULTICELL_LOCATION_LOG_LEVEL);
 

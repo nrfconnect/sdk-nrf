@@ -7,10 +7,10 @@
 #include <zephyr/types.h>
 
 #include <soc.h>
-#include <device.h>
-#include <drivers/gpio.h>
-#include <sys/atomic.h>
-#include <spinlock.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/sys/atomic.h>
+#include <zephyr/spinlock.h>
 
 #include <app_event_manager.h>
 #include <caf/events/power_event.h>
@@ -20,7 +20,7 @@
 #define MODULE battery_charger
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BATTERY_CHARGER_LOG_LEVEL);
 
 

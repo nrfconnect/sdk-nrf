@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <storage/flash_map.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/storage/flash_map.h>
 #include <pm_config.h>
-#include <sys/util_macro.h>
+#include <zephyr/sys/util_macro.h>
 
 #define FLASH_MAP_OFFSET(i) UTIL_CAT(PM_, UTIL_CAT(PM_##i##_LABEL, _OFFSET))
 #define FLASH_MAP_DEV(i)    UTIL_CAT(PM_, UTIL_CAT(PM_##i##_LABEL, _DEV_NAME))
