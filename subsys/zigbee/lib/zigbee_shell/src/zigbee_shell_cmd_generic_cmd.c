@@ -29,7 +29,7 @@ static void zb_zcl_cmd_acked(zb_uint8_t bufid)
 	uint8_t index = 0;
 	zb_ret_t zb_err_code = RET_OK;
 	zb_zcl_command_send_status_t *cmd_status = NULL;
-	struct ctx_entry *entry = ctx_mgr_get_entry_by_index(index);
+	struct ctx_entry *entry = NULL;
 
 	if (bufid == ZB_BUF_INVALID) {
 		return;
@@ -49,6 +49,9 @@ static void zb_zcl_cmd_acked(zb_uint8_t bufid)
 		LOG_ERR("Couldn't find matching entry for ZCL generic cmd");
 		goto exit;
 	}
+
+	/* Get index of the entry to cancel the timeout callback. */
+	index = ctx_mgr_get_index_by_entry(entry);
 
 	zb_shell_print_done(entry->shell, ZB_FALSE);
 
