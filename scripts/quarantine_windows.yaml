@@ -1,0 +1,33 @@
+# The configurations resulting as a product of scenarios and platforms
+# will be skipped if quarantine is used. More details here:
+# https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
+# To have an empty list use:
+# - scenarios:
+#    - None
+#  platforms:
+#    - None
+
+- scenarios:
+    - applications.asset_tracker_v2.cloud.cloud_codec.json_common.aws
+    - applications.asset_tracker_v2.cloud.cloud_codec.json_common.azure
+    - samples.edge_impulse.wrapper
+    - samples.event_manager
+  platforms:
+    - native_posix
+    - qemu_cortex_m3
+    - qemu_x86
+  comment: "Cannot build samples for Native POSIX and QEMU on Windows OS"
+
+- scenarios:
+    - asset_tracker_v2.debug_module_test.tester
+    - asset_tracker_v2.gnss_module_test.tester
+    - asset_tracker_v2.ui_module_test.tester
+  platforms:
+    - all
+  comment: "ruby package not available in Windows toolchain"
+
+- scenarios:
+    - samples.bluetooth.alexa_gadget
+  platforms:
+    - all
+  comment: "nanopb package not available in Windows toolchain"
