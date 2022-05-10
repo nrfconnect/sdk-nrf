@@ -24,12 +24,6 @@ target_include_directories(app
   . # To get 'pm_config.h'
   )
 
-if (NOT CONFIG_TRUSTED_EXECUTION_NONSECURE)
-  # If non secure then fw_info will be pulled in automatically.
-  set(info_magic "-DFIRMWARE_INFO_MAGIC=0xbabababa,0xbabababa,0xbabababa")
-  set(ext_api_magic "-DEXT_API_MAGIC=0xdededede")
-endif()
-
 target_compile_options(app
   PRIVATE
   -DCONFIG_DOWNLOAD_CLIENT_BUF_SIZE=500
