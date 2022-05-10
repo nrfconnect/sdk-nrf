@@ -369,86 +369,94 @@ void read_task_create(void)
 void *nrf_modem_os_alloc(size_t bytes)
 {
 	void *addr = k_heap_alloc(&library_heap, bytes, K_NO_WAIT);
-#ifdef CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC
-	if (addr) {
-		LOG_INF("alloc(%d) -> %p", bytes, addr);
-	} else {
-		heap_diag.failed_allocs++;
-		LOG_WRN("alloc(%d) -> %p", bytes, addr);
+
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC)) {
+		if (addr) {
+			LOG_DBG("alloc(%d) -> %p", bytes, addr);
+		} else {
+			LOG_WRN("alloc(%d) -> NULL", bytes);
+			heap_diag.failed_allocs++;
+		}
 	}
-#endif
+
 	return addr;
 }
 
 void nrf_modem_os_free(void *mem)
 {
 	k_heap_free(&library_heap, mem);
-#ifdef CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC
-	LOG_INF("free(%p)", mem);
-#endif
+
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC)) {
+		LOG_DBG("free(%p)", mem);
+	}
 }
 
 void *nrf_modem_os_trace_alloc(size_t bytes)
 {
 	void *addr = k_heap_alloc(&trace_heap, bytes, K_NO_WAIT);
-#ifdef CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC
-	if (addr) {
-		LOG_INF("trace_alloc(%d) -> %p", bytes, addr);
-	} else {
-		trace_heap_diag.failed_allocs++;
-		LOG_WRN("trace_alloc(%d) -> %p", bytes, addr);
+
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC)) {
+		if (addr) {
+			LOG_DBG("trace_alloc(%d) -> %p", bytes, addr);
+		} else {
+			LOG_WRN("trace_alloc(%d) -> NULL", bytes);
+			trace_heap_diag.failed_allocs++;
+		}
 	}
-#endif
+
 	return addr;
 }
 
 void nrf_modem_os_trace_free(void *mem)
 {
 	k_heap_free(&trace_heap, mem);
-#ifdef CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC
-	LOG_INF("trace_free(%p)", mem);
-#endif
+
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC)) {
+		LOG_DBG("trace_free(%p)", mem);
+	}
 }
 
 void *nrf_modem_os_shm_tx_alloc(size_t bytes)
 {
 	void *addr = k_heap_alloc(&shmem_heap, bytes, K_NO_WAIT);
-#ifdef CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC
-	if (addr) {
-		LOG_INF("shm_tx_alloc(%d) -> %p", bytes, addr);
-	} else {
-		shmem_diag.failed_allocs++;
-		LOG_WRN("shm_tx_alloc(%d) -> %p", bytes, addr);
+
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC)) {
+		if (addr) {
+			LOG_DBG("shm_tx_alloc(%d) -> %p", bytes, addr);
+		} else {
+			LOG_WRN("shm_tx_alloc(%d) -> NULL", bytes);
+			shmem_diag.failed_allocs++;
+		}
 	}
-#endif
 	return addr;
 }
 
 void nrf_modem_os_shm_tx_free(void *mem)
 {
 	k_heap_free(&shmem_heap, mem);
-#ifdef CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC
-	LOG_INF("shm_tx_free(%p)", mem);
-#endif
+
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC)) {
+		LOG_DBG("shm_tx_free(%p)", mem);
+	}
 }
 
 void nrf_modem_lib_heap_diagnose(void)
 {
-	printk("nrf_modem heap dump:\n");
+	printk("\nnrf_modem heap dump:\n");
 	sys_heap_print_info(&library_heap.heap, false);
 	printk("Failed allocations: %u\n", heap_diag.failed_allocs);
 }
 
 void nrf_modem_lib_trace_heap_diagnose(void)
 {
-	printk("nrf_modem trace heap dump:\n");
+	printk("\nnrf_modem trace heap dump:\n");
 	sys_heap_print_info(&trace_heap.heap, false);
 	printk("Failed allocations: %u\n", trace_heap_diag.failed_allocs);
 }
 
 void nrf_modem_lib_shm_tx_diagnose(void)
 {
-	printk("nrf_modem tx dump:\n");
+	printk("\nnrf_modem tx dump:\n");
 	sys_heap_print_info(&shmem_heap.heap, false);
 	printk("Failed allocations: %u\n", shmem_diag.failed_allocs);
 }
@@ -506,7 +514,8 @@ static void diag_task(struct k_work *item)
 }
 #endif
 
-static uint8_t log_level_lu(uint8_t level)
+#if defined(CONFIG_LOG)
+static uint8_t log_level_translate(uint8_t level)
 {
 	switch (level) {
 	case NRF_MODEM_LOG_LEVEL_NONE:
@@ -523,56 +532,52 @@ static uint8_t log_level_lu(uint8_t level)
 		return LOG_LEVEL_NONE;
 	}
 }
+#endif
 
 void nrf_modem_os_log(int level, const char *fmt, ...)
 {
-	if (IS_ENABLED(CONFIG_LOG)) {
-		uint16_t lev = log_level_lu(level);
-
-		va_list ap;
-
-		va_start(ap, fmt);
-
-		if (IS_ENABLED(CONFIG_LOG_MODE_MINIMAL)) {
-			/* Fallback to minimal implementation. */
-			/* Based on Zephyr's. */
-			printk("%c: ", z_log_minimal_level_to_char(lev));
-			vprintk(fmt, ap);
-			printk("\n");
-		} else {
-			struct log_msg_ids src_level = {
-				.level = lev,
-				.domain_id = CONFIG_LOG_DOMAIN_ID,
-				.source_id = LOG_CURRENT_MODULE_ID()
-			};
-
-			log_generic(src_level, fmt, ap, LOG_STRDUP_SKIP);
-		}
-		va_end(ap);
+#if defined(CONFIG_LOG)
+	level = log_level_translate(level);
+	if (level > CONFIG_NRF_MODEM_LIB_LOG_LEVEL) {
+		return;
 	}
+
+	va_list ap;
+	va_start(ap, fmt);
+
+	if (IS_ENABLED(CONFIG_LOG_MODE_MINIMAL)) {
+		/* Fallback to minimal implementation. */
+		printk("%c: ", z_log_minimal_level_to_char(level));
+		z_log_minimal_vprintk(fmt, ap);
+		printk("\n");
+	} else {
+		z_log_msg2_runtime_vcreate(
+			CONFIG_LOG_DOMAIN_ID, __log_current_dynamic_data,
+			level, NULL, 0, 0, fmt, ap);
+	}
+
+	va_end(ap);
+#endif /* CONFIG_LOG */
 }
 
 void nrf_modem_os_logdump(int level, const char *str, const void *data, size_t len)
 {
-	if (IS_ENABLED(CONFIG_LOG)) {
-		uint16_t lev = log_level_lu(level);
+#if defined(CONFIG_LOG)
+	level = log_level_translate(level);
 
-		if (IS_ENABLED(CONFIG_LOG_MODE_MINIMAL)) {
-			/* Fallback to minimal implementation. */
-			/* Based on Zephyr's. */
-			printk("%c: %s\n",
-			       z_log_minimal_level_to_char(lev),
-			       str);
-			z_log_minimal_hexdump_print(lev, data, len);
-		} else {
-			struct log_msg_ids src_level = {
-				.level = lev,
-				.domain_id = CONFIG_LOG_DOMAIN_ID,
-				.source_id = LOG_CURRENT_MODULE_ID()
-			};
-			log_hexdump(str, data, len, src_level);
-		}
+	if (IS_ENABLED(CONFIG_LOG_MODE_MINIMAL)) {
+		/* Fallback to minimal implementation. */
+		printk("%c: %s\n", z_log_minimal_level_to_char(level), str);
+		z_log_minimal_hexdump_print(level, data, len);
+	} else {
+		struct log_msg_ids src_level = {
+			.level = level,
+			.domain_id = CONFIG_LOG_DOMAIN_ID,
+			.source_id = LOG_CURRENT_MODULE_ID()
+		};
+		log_hexdump(str, data, len, src_level);
 	}
+#endif /* CONFIG_LOG */
 }
 
 /* On application initialization */
