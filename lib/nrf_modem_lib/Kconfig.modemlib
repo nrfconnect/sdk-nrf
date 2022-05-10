@@ -100,8 +100,8 @@ config NRF_MODEM_LIB_HEAP_SIZE
 	default 1024
 	range 512 4096
 	help
-	  Size of the heap buffer used by the library.
-	  This heap is allocated in the application's RAM.
+	  Size of the library heap.
+	  This heap is allocated from the application's RAM region.
 
 config NRF_MODEM_LIB_SHMEM_CTRL_SIZE
 	hex
@@ -116,16 +116,16 @@ config NRF_MODEM_LIB_SHMEM_TX_SIZE
 	range 1024 32768
 	default 8192
 	help
-	  Size of the shared memory area owned by the application.
-	  This area holds all outgoing data from the application, e.g. buffers passed to `send()`.
-	  The size of this buffer affects directly the largest payload that can sent be on AT sockets.
+	  Size of the shared memory region owned by the application. This area holds all outgoing data
+	  from the application to the modem, e.g. buffers passed to `send()`. Its size affects directly
+	  the largest payload that can be sent at once, and the largest AT command that can be sent.
 
 config NRF_MODEM_LIB_SHMEM_RX_SIZE
 	int "RX region size"
 	range 1544 32768
 	default 8192
 	help
-	  Size of the shared memory area owned by the modem.
+	  Size of the shared memory region owned by the modem.
 	  This area holds all incoming data from the modem, plus the modem's own control structures.
 
 config NRF_MODEM_LIB_SHMEM_TRACE_SIZE_OVERRIDE
@@ -139,7 +139,7 @@ config NRF_MODEM_LIB_SHMEM_TRACE_SIZE
 	default 16384 if NRF_MODEM_LIB_TRACE_ENABLED
 	default 0
 	help
-	  Size of the shared memory area used to receive modem traces.
+	  Size of the shared memory region used to receive modem traces.
 
 config NRF_MODEM_LIB_TRACE_HEAP_SIZE_OVERRIDE
 	bool "Custom trace heap size"
@@ -184,14 +184,20 @@ menu "Diagnostics"
 
 config NRF_MODEM_LIB_DEBUG_ALLOC
 	depends on LOG
-	bool "Print allocations on the library heap"
+	bool "Debug allocations on the library heap"
+	help
+	   Log all nrf_modem_os_alloc() and nrf_modem_os_free() calls.
 
 config NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC
 	depends on LOG
-	bool "Print allocations on the TX region"
+	bool "Debug allocations on the TX region"
+	help
+	  Log all nrf_modem_os_shm_tx_alloc() and nrf_modem_os_shm_tx_free() calls.
 
 config NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
-	bool "Periodically dump library heap contents"
+	bool "Periodically print library heap info"
+	help
+	  Schedule a periodic system workqueue task to print the library heap info.
 
 config NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS
 	depends on NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
@@ -199,8 +205,10 @@ config NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS
 	default 20000
 
 config NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC
-	bool "Periodically dump trace heap contents"
+	bool "Periodically print trace heap info"
 	depends on NRF_MODEM_LIB_TRACE_ENABLED
+	help
+	  Schedule a periodic system workqueue task to print the library trace heap info.
 
 config NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIOD_MS
 	depends on NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC
@@ -209,7 +217,9 @@ config NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIOD_MS
 	default 20000
 
 config NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC
-	bool "Periodically dump the TX memory region contents"
+	bool "Periodically print the TX region heap info"
+	help
+	  Schedule a periodic system workqueue task to print the library TX region heap info.
 
 config NRF_MODEM_LIB_SHMEM_TX_DUMP_PERIOD_MS
 	depends on NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC
