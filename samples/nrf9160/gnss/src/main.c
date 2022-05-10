@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -119,7 +120,7 @@ static void print_distance_from_reference(struct nrf_modem_gnss_pvt_data_frame *
 	if (IS_ENABLED(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST)) {
 		LOG_INF("Distance from reference: %.01f", distance);
 	} else {
-		printk("\nDistance from reference: %.01f\n", distance);
+		printf("\nDistance from reference: %.01f\n", distance);
 	}
 }
 
@@ -590,31 +591,31 @@ static void print_satellite_stats(struct nrf_modem_gnss_pvt_data_frame *pvt_data
 		}
 	}
 
-	printk("Tracking: %2d Using: %2d Unhealthy: %d\n", tracked, in_fix, unhealthy);
+	printf("Tracking: %2d Using: %2d Unhealthy: %d\n", tracked, in_fix, unhealthy);
 }
 
 static void print_fix_data(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 {
-	printk("Latitude:       %.06f\n", pvt_data->latitude);
-	printk("Longitude:      %.06f\n", pvt_data->longitude);
-	printk("Altitude:       %.01f m\n", pvt_data->altitude);
-	printk("Accuracy:       %.01f m\n", pvt_data->accuracy);
-	printk("Speed:          %.01f m/s\n", pvt_data->speed);
-	printk("Speed accuracy: %.01f m/s\n", pvt_data->speed_accuracy);
-	printk("Heading:        %.01f deg\n", pvt_data->heading);
-	printk("Date:           %04u-%02u-%02u\n",
+	printf("Latitude:       %.06f\n", pvt_data->latitude);
+	printf("Longitude:      %.06f\n", pvt_data->longitude);
+	printf("Altitude:       %.01f m\n", pvt_data->altitude);
+	printf("Accuracy:       %.01f m\n", pvt_data->accuracy);
+	printf("Speed:          %.01f m/s\n", pvt_data->speed);
+	printf("Speed accuracy: %.01f m/s\n", pvt_data->speed_accuracy);
+	printf("Heading:        %.01f deg\n", pvt_data->heading);
+	printf("Date:           %04u-%02u-%02u\n",
 	       pvt_data->datetime.year,
 	       pvt_data->datetime.month,
 	       pvt_data->datetime.day);
-	printk("Time (UTC):     %02u:%02u:%02u.%03u\n",
+	printf("Time (UTC):     %02u:%02u:%02u.%03u\n",
 	       pvt_data->datetime.hour,
 	       pvt_data->datetime.minute,
 	       pvt_data->datetime.seconds,
 	       pvt_data->datetime.ms);
-	printk("PDOP:           %.01f\n", pvt_data->pdop);
-	printk("HDOP:           %.01f\n", pvt_data->hdop);
-	printk("VDOP:           %.01f\n", pvt_data->vdop);
-	printk("TDOP:           %.01f\n", pvt_data->tdop);
+	printf("PDOP:           %.01f\n", pvt_data->pdop);
+	printf("HDOP:           %.01f\n", pvt_data->hdop);
+	printf("VDOP:           %.01f\n", pvt_data->vdop);
+	printf("TDOP:           %.01f\n", pvt_data->tdop);
 }
 
 int main(void)
@@ -680,34 +681,34 @@ int main(void)
 					goto handle_nmea;
 				}
 
-				printk("\033[1;1H");
-				printk("\033[2J");
+				printf("\033[1;1H");
+				printf("\033[2J");
 				print_satellite_stats(&last_pvt);
 
 				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_DEADLINE_MISSED) {
-					printk("GNSS operation blocked by LTE\n");
+					printf("GNSS operation blocked by LTE\n");
 				}
 				if (last_pvt.flags &
 				    NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME) {
-					printk("Insufficient GNSS time windows\n");
+					printf("Insufficient GNSS time windows\n");
 				}
 				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_SLEEP_BETWEEN_PVT) {
-					printk("Sleep period(s) between PVT notifications\n");
+					printf("Sleep period(s) between PVT notifications\n");
 				}
-				printk("-----------------------------------\n");
+				printf("-----------------------------------\n");
 
 				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
 					fix_timestamp = k_uptime_get();
 					print_fix_data(&last_pvt);
 					print_distance_from_reference(&last_pvt);
 				} else {
-					printk("Seconds since last fix: %lld\n",
-					       (k_uptime_get() - fix_timestamp) / 1000);
+					printf("Seconds since last fix: %d\n",
+					       (uint32_t)((k_uptime_get() - fix_timestamp) / 1000));
 					cnt++;
-					printk("Searching [%c]\n", update_indicator[cnt%4]);
+					printf("Searching [%c]\n", update_indicator[cnt%4]);
 				}
 
-				printk("\nNMEA strings:\n\n");
+				printf("\nNMEA strings:\n\n");
 			}
 		}
 
@@ -717,7 +718,7 @@ handle_nmea:
 			/* New NMEA data available */
 
 			if (!output_paused()) {
-				printk("%s", nmea_data->nmea_str);
+				printf("%s", nmea_data->nmea_str);
 			}
 			k_free(nmea_data);
 		}
