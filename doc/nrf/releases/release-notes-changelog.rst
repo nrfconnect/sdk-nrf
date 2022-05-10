@@ -95,6 +95,10 @@ nRF9160: Asset Tracker v2
   * For nRF Cloud builds, the configuration section in the shadow is now initialized during the cloud connection process.
   * Allow the :ref:`lib_nrf_cloud` library to handle modem FOTA updates if :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` is enabled.
 
+* Fixed:
+  
+  * Buffer overflow when adding custom items to the published message.
+
 nRF9160: Serial LTE modem
 -------------------------
 
