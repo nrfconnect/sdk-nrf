@@ -290,7 +290,11 @@ Libraries for NFC
 Other libraries
 ---------------
 
-  * Added the documentation for :ref:`lib_adp536x` library.
+* Added:
+
+  * :ref:`nrf_rpc_ipc_readme` library.
+
+* Updated:
 
   * Flash Patch:
 
@@ -299,6 +303,15 @@ Other libraries
   * :ref:`doc_fw_info` module:
 
     * Fixed a bug where MCUboot would experience a fault when using the :ref:`doc_fw_info_ext_api` feature.
+
+  * :ref:`lib_nrf_rpc`:
+
+    * This library can use different transport implementation for each nRF RPC group.
+    * Memory for remote procedure calls is now allocated on a heap instead of the calling thread stack.
+
+  * :ref:`lib_adp536x`:
+
+    * Added the documentation.
 
 Common Application Framework (CAF)
 ----------------------------------
