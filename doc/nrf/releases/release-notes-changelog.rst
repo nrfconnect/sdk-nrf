@@ -284,6 +284,7 @@ Thread samples
   * The relevant sample documentation pages with information about support for :ref:`Trusted Firmware-M <ug_tfm>`.
   * All sample documentation with a Configuration section, and organized relevant information under that section.
   * Mnimal configuration for CLI sample has been removed.
+  * BLE advertising interval has been increased from 100 ms to 300 ms for CLI sample when multiprotocol is enabled.
 
 Matter samples
 --------------
