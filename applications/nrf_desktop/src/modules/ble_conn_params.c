@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <bluetooth/conn.h>
-#include <bluetooth/hci.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/hci.h>
 #include <bluetooth/gatt_dm.h>
 
 #ifdef CONFIG_BT_LL_SOFTDEVICE
@@ -17,7 +17,7 @@
 #include <caf/events/ble_common_event.h>
 #include "ble_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_CONN_PARAMS_LOG_LEVEL);
 
 #define CONN_INTERVAL_LLPM_US		1000   /* 1 ms */

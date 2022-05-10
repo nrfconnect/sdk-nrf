@@ -7,7 +7,7 @@
 #include <bl_validation.h>
 #include <zephyr/types.h>
 #include <fw_info.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <bl_storage.h>
 
 
@@ -62,8 +62,8 @@ bool bl_validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address)
 
 #else
 #include <errno.h>
-#include <sys/printk.h>
-#include <toolchain.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/toolchain.h>
 #include <bl_crypto.h>
 #include "bl_validation_internal.h"
 

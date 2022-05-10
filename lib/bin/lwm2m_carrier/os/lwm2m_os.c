@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <string.h>
 #include <nrf_modem.h>
 #include <modem/lte_lc.h>
@@ -18,14 +18,14 @@
 #include <modem/modem_key_mgmt.h>
 #include <modem/sms.h>
 #include <net/download_client.h>
-#include <sys/reboot.h>
-#include <sys/__assert.h>
-#include <sys/util.h>
-#include <random/rand32.h>
-#include <toolchain.h>
-#include <fs/nvs.h>
-#include <logging/log.h>
-#include <logging/log_ctrl.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/sys/__assert.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/random/rand32.h>
+#include <zephyr/toolchain.h>
+#include <zephyr/fs/nvs.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
 #include <nrf_errno.h>
 #include <modem/at_monitor.h>
 

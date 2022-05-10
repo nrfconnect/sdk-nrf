@@ -6,7 +6,7 @@
 
 #include "buzzer.h"
 
-#include <drivers/pwm.h>
+#include <zephyr/drivers/pwm.h>
 
 #define BUZZER_PWM_NODE DT_ALIAS(buzzer_pwm)
 #define BUZZER_PWM_NAME DT_LABEL(BUZZER_PWM_NODE)

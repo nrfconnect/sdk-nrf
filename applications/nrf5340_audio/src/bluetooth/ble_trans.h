@@ -7,8 +7,8 @@
 #ifndef _BLE_TRANS_H_
 #define _BLE_TRANS_H_
 
-#include <zephyr.h>
-#include <bluetooth/conn.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/bluetooth/conn.h>
 
 /* Connection interval is calculated as x*1.25 */
 #if ((CONFIG_AUDIO_FRAME_DURATION_US == 7500) && CONFIG_SW_CODEC_LC3)

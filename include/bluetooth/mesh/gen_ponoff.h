@@ -13,7 +13,7 @@
 #ifndef BT_MESH_GEN_PONOFF_H__
 #define BT_MESH_GEN_PONOFF_H__
 
-#include <bluetooth/mesh.h>
+#include <zephyr/bluetooth/mesh.h>
 
 #ifdef __cplusplus
 extern "C" {

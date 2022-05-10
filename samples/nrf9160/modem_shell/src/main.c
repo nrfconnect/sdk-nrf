@@ -7,17 +7,17 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <zephyr.h>
-#include <init.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/init.h>
 #include <nrf_modem.h>
 
 #include <sys/types.h>
-#include <logging/log_ctrl.h>
-#include <sys/reboot.h>
-#include <dfu/mcuboot.h>
+#include <zephyr/logging/log_ctrl.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/dfu/mcuboot.h>
 
-#include <shell/shell.h>
-#include <shell/shell_uart.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/shell/shell_uart.h>
 
 #include <modem/nrf_modem_lib.h>
 #include <modem/at_monitor.h>

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <tfm_veneers.h>
 #include <tfm_ns_interface.h>
 

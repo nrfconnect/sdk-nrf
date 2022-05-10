@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 #define MODULE passkey
 #include <caf/events/module_state_event.h>
@@ -14,7 +14,7 @@
 
 #include "passkey_buttons_def.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_PASSKEY_LOG_LEVEL);
 
 #define CLEAR_INPUT_ON_HOLD_TIMEOUT (2 * MSEC_PER_SEC) /* ms */

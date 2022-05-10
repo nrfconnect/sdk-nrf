@@ -9,10 +9,10 @@
 #include <zephyr/types.h>
 
 #include <soc.h>
-#include <device.h>
-#include <drivers/sensor.h>
-#include <drivers/gpio.h>
-#include <pm/device.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/sensor.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/pm/device.h>
 #ifdef CONFIG_PINCTRL
 #include <pinctrl_soc.h>
 #endif
@@ -24,7 +24,7 @@
 #define MODULE wheel
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_WHEEL_LOG_LEVEL);
 
 

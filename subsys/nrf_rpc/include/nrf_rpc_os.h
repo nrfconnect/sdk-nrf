@@ -7,7 +7,7 @@
 #ifndef NRF_RPC_OS_H_
 #define NRF_RPC_OS_H_
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 /**
  * @defgroup nrf_rpc_os_zephyr nRF PRC OS abstraction for Zephyr.

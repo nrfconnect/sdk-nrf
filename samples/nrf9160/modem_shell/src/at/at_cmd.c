@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 
 #include <modem/at_cmd_parser.h>
 

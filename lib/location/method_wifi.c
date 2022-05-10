@@ -5,12 +5,12 @@
  */
 
 #include <stdio.h>
-#include <zephyr.h>
-#include <device.h>
-#include <logging/log.h>
-#include <net/net_if.h>
-#include <net/net_event.h>
-#include <net/wifi_mgmt.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/device.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/net/net_if.h>
+#include <zephyr/net/net_event.h>
+#include <zephyr/net/wifi_mgmt.h>
 #include <modem/location.h>
 
 #include "location_core.h"

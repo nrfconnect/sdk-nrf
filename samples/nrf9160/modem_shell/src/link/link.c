@@ -10,8 +10,8 @@
 
 #include <sys/types.h>
 
-#include <shell/shell.h>
-#include <shell/shell_uart.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/shell/shell_uart.h>
 
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>

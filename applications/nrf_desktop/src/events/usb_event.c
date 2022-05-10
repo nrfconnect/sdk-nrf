@@ -5,7 +5,7 @@
  */
 
 #include <assert.h>
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 #include <stdio.h>
 
 #include "usb_event.h"

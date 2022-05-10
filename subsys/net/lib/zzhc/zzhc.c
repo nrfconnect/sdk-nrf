@@ -4,19 +4,19 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zzhc, CONFIG_ZZHC_LOG_LEVEL);
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
 #if defined(CONFIG_POSIX_API)
-#include <posix/unistd.h>
-#include <posix/netdb.h>
-#include <posix/sys/socket.h>
+#include <zephyr/posix/unistd.h>
+#include <zephyr/posix/netdb.h>
+#include <zephyr/posix/sys/socket.h>
 #else
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #endif
 
 #include <nrf_modem_at.h>

@@ -6,7 +6,7 @@
 
 #include <string.h>
 #include <errno.h>
-#include <drivers/entropy.h>
+#include <zephyr/drivers/entropy.h>
 #include <nfc/ndef/le_oob_rec.h>
 
 #define AD_TYPE_FIELD_SIZE 1UL

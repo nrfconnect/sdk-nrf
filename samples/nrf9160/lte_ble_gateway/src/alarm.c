@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <net/nrf_cloud.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include "alarm.h"
 

@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <init.h>
+#include <zephyr/init.h>
 
 #include <img_mgmt/img_mgmt.h>
 #include <os_mgmt/os_mgmt.h>
-#include <mgmt/mcumgr/smp_bt.h>
+#include <zephyr/mgmt/mcumgr/smp_bt.h>
 
-#include <usb/usb_device.h>
+#include <zephyr/usb/usb_device.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(thingy53_setup);
 
 

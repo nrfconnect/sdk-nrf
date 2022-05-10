@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <sys/printk.h>
-#include <sys/util.h>
-#include <linker/linker-defs.h>
-#include <device.h>
-#include <drivers/gpio.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/linker/linker-defs.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/gpio.h>
 #include <hal/nrf_spu.h>
-#include <arch/arm/aarch32/irq.h>
+#include <zephyr/arch/arm/aarch32/irq.h>
 #include "spm_internal.h"
 
 #if !defined(CONFIG_ARM_SECURE_FIRMWARE)
@@ -33,7 +33,7 @@
 #define NON_SECURE_RAM_OFFSET 0
 #endif
 #else
-#include <storage/flash_map.h>
+#include <zephyr/storage/flash_map.h>
 #define NON_SECURE_APP_ADDRESS FLASH_AREA_OFFSET(image_0_nonsecure)
 /* This reflects the configuration in DTS. */
 #define NON_SECURE_RAM_OFFSET 0x10000

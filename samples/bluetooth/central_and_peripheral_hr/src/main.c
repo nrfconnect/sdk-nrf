@@ -4,22 +4,22 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/uuid.h>
-#include <bluetooth/gatt.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/gatt.h>
 #include <bluetooth/gatt_dm.h>
 #include <bluetooth/scan.h>
 
-#include <bluetooth/services/bas.h>
-#include <bluetooth/services/hrs.h>
+#include <zephyr/bluetooth/services/bas.h>
+#include <zephyr/bluetooth/services/hrs.h>
 #include <bluetooth/services/hrs_client.h>
 
 #include <dk_buttons_and_leds.h>
 
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 #define STACKSIZE 1024
 #define PRIORITY 7

@@ -14,9 +14,9 @@
 #ifndef BT_RPC_COMMON_H_
 #define BT_RPC_COMMON_H_
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/gatt.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/gatt.h>
 
 #include <nrf_rpc_cbor.h>
 #include <cbkproxy.h>

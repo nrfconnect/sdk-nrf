@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
 #include <date_time.h>
 #include <app_event_manager.h>
@@ -23,7 +23,7 @@
 #include "events/util_module_event.h"
 #include "events/modem_module_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_GNSS_MODULE_LOG_LEVEL);
 
 #define GNSS_TIMEOUT_DEFAULT	     60

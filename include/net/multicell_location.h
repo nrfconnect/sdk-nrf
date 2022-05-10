@@ -7,7 +7,7 @@
 #ifndef MULTICELL_LOCATION_H_
 #define MULTICELL_LOCATION_H_
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <modem/lte_lc.h>
 
 #ifdef __cplusplus

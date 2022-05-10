@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-#include <bluetooth/hci.h>
+#include <zephyr/bluetooth/hci.h>
 
 void hci_ecdh_init(void);
 

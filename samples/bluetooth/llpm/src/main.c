@@ -4,21 +4,21 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <console/console.h>
+#include <zephyr/console/console.h>
 #include <string.h>
-#include <sys/printk.h>
+#include <zephyr/sys/printk.h>
 #include <zephyr/types.h>
 
 #if defined(CONFIG_USB_DEVICE_STACK)
-#include <usb/usb_device.h>
-#include <drivers/uart.h>
+#include <zephyr/usb/usb_device.h>
+#include <zephyr/drivers/uart.h>
 #endif
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/gatt.h>
-#include <bluetooth/hci.h>
-#include <bluetooth/uuid.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/hci.h>
+#include <zephyr/bluetooth/uuid.h>
 #include <bluetooth/services/latency.h>
 #include <bluetooth/services/latency_client.h>
 #include <bluetooth/scan.h>

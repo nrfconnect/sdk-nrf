@@ -8,10 +8,10 @@
 #include <bl_validation.h>
 #include <fw_info.h>
 #include <pm_config.h>
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 #include <nrfx_nvmc.h>
-#include <linker/linker-defs.h>
-#include <devicetree.h>
+#include <zephyr/linker/linker-defs.h>
+#include <zephyr/devicetree.h>
 
 
 void test_key_looping(void)

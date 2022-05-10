@@ -14,7 +14,7 @@
 #include "soc_flash_nrf.h"
 
 #define LOG_LEVEL CONFIG_FLASH_LOG_LEVEL
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(flash_sync_mpsl);
 
 /* The request length specified by the upper layers is only time required to do

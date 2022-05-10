@@ -16,7 +16,7 @@
 #include <zephyr/types.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #include <modem/at_cmd_parser.h>
 
 /**

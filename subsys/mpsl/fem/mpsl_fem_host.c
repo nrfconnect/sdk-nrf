@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <devicetree.h>
-#include <drivers/gpio.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/drivers/gpio.h>
 #include <string.h>
-#include <sys/__assert.h>
+#include <zephyr/sys/__assert.h>
 #include <hal/nrf_gpio.h>
 #include <soc_secure.h>
 #ifdef CONFIG_PINCTRL

@@ -19,7 +19,7 @@
 extern "C" {
 #endif
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <zephyr/types.h>
 
 /** @brief The max JOB_ID_LEN according to AWS docs

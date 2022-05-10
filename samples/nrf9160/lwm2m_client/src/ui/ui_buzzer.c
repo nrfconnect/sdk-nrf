@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <drivers/pwm.h>
-#include <devicetree.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/drivers/pwm.h>
+#include <zephyr/devicetree.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ui_buzzer, CONFIG_UI_LOG_LEVEL);
 
 /* Transform frequency in Hz to period in microseconds */

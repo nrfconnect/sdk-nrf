@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <nrf_modem.h>
 
 /**

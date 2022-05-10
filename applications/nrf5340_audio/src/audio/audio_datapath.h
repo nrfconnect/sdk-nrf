@@ -45,7 +45,7 @@
 #ifndef _AUDIO_DATAPATH_H_
 #define _AUDIO_DATAPATH_H_
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdint.h>
 #include <stdbool.h>
 

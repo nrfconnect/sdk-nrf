@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <net/socket_offload.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/net/socket_offload.h>
 
 #include <ztest.h>
 #include <download_client.h>

@@ -8,8 +8,8 @@
 #include <stddef.h>
 #include <inttypes.h>
 #include <errno.h>
-#include <zephyr.h>
-#include <sys/printk.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/printk.h>
 
 #include <mpsl_timeslot.h>
 #include <mpsl.h>
@@ -30,7 +30,7 @@
 #define gppi_channel_alloc nrfx_ppi_channel_alloc
 #endif
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(nrf_dm, CONFIG_NRF_DM_LOG_LEVEL);
 

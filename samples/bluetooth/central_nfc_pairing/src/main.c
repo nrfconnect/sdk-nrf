@@ -8,12 +8,12 @@
  *  @brief Nordic Central NFC pairing sample
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/hci.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/uuid.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/hci.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/uuid.h>
 #include <bluetooth/scan.h>
 
 #include <nfc/tnep/ch.h>
@@ -21,7 +21,7 @@
 
 #include <st25r3911b_nfca.h>
 
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #include <dk_buttons_and_leds.h>
 

@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 #define MODULE stats
 
 #include "measurement_event.h"
 #include "control_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #define STATS_LOG_LEVEL 4
 LOG_MODULE_REGISTER(MODULE, STATS_LOG_LEVEL);
 

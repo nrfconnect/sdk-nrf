@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
 #include <modem/lte_lc.h>
 #include <dk_buttons_and_leds.h>
 #include <net/multicell_location.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #define DEVICE_ID_MAX_LEN 64
 

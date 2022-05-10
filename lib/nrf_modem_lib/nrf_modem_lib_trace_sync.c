@@ -5,9 +5,9 @@
  */
 
 #include <stdio.h>
-#include <kernel.h>
-#include <zephyr.h>
-#include <drivers/pinctrl.h>
+#include <zephyr/kernel.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/drivers/pinctrl.h>
 #include <modem/nrf_modem_lib_trace.h>
 #include <nrf_modem_at.h>
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART

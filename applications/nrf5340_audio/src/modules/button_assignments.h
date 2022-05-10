@@ -14,7 +14,7 @@
 #ifndef _BUTTON_ASSIGNMENTS_H_
 #define _BUTTON_ASSIGNMENTS_H_
 
-#include <drivers/gpio.h>
+#include <zephyr/drivers/gpio.h>
 
 /**@brief List of buttons and associated metadata
  */

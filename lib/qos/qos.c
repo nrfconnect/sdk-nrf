@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <sys/slist.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/slist.h>
 #include <qos.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(qos, CONFIG_QOS_LOG_LEVEL);
 
 /* Define a custom STATIC macro that exposes internal variables when unit testing. */

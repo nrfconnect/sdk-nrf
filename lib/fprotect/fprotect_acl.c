@@ -8,8 +8,8 @@
 #include <hal/nrf_ficr.h>
 #include <nrfx_nvmc.h>
 #include <errno.h>
-#include <sys/__assert.h>
-#include <kernel.h>
+#include <zephyr/sys/__assert.h>
+#include <zephyr/kernel.h>
 
 /* Find the first unused ACL region. */
 static int find_free_region(uint32_t *region_idx)

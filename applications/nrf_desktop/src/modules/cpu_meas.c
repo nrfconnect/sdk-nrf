@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <debug/cpu_load.h>
 
 #define MODULE cpu_meas
@@ -12,7 +12,7 @@
 
 #include "cpu_load_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CPU_MEAS_LOG_LEVEL);
 
 static struct k_work_delayable cpu_load_read;

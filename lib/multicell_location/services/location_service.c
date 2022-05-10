@@ -5,7 +5,7 @@
  */
 
 #include <stdio.h>
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <assert.h>
 #include <net/multicell_location.h>
 

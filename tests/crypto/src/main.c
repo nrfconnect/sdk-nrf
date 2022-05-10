@@ -5,8 +5,8 @@
  */
 
 #include <common_test.h>
-#include <drivers/gpio.h>
-#include <logging/log.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/logging/log.h>
 #include <dk_buttons_and_leds.h>
 
 LOG_MODULE_REGISTER(test_main);

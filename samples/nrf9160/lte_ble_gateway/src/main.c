@@ -4,20 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
 #include <string.h>
 #include <nrf_modem_at.h>
 #include <nrf_modem_gnss.h>
-#include <drivers/sensor.h>
-#include <console/console.h>
+#include <zephyr/drivers/sensor.h>
+#include <zephyr/console/console.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_agps.h>
 #include <dk_buttons_and_leds.h>
 #include <modem/lte_lc.h>
-#include <sys/reboot.h>
+#include <zephyr/sys/reboot.h>
 #include <modem/nrf_modem_lib.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include "aggregator.h"
 #include "ble.h"

@@ -16,8 +16,8 @@
 #define SERIALIZE_H_
 
 #include <tinycbor/cbor.h>
-#include <net/buf.h>
-#include <sys/util.h>
+#include <zephyr/net/buf.h>
+#include <zephyr/sys/util.h>
 
 /** @brief Get a scratchpad item size aligned to 4-byte boundary.
  *

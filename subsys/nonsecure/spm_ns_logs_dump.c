@@ -3,10 +3,10 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <logging/log_ctrl.h>
-#include <logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
+#include <zephyr/logging/log.h>
 #include <secure_services.h>
-#include <init.h>
+#include <zephyr/init.h>
 
 LOG_MODULE_REGISTER(spm_ns_logs_dump);
 

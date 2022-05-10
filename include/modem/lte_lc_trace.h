@@ -6,7 +6,7 @@
 #ifndef ZEPHYR_INCLUDE_LTE_LINK_CONTROL_TRACE_H_
 #define ZEPHYR_INCLUDE_LTE_LINK_CONTROL_TRACE_H_
 
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 
 #ifdef __cplusplus
 extern "C" {

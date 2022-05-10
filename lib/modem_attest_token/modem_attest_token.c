@@ -5,12 +5,12 @@
  */
 
 #include <string.h>
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <nrf_modem_at.h>
 #include <modem/nrf_modem_lib.h>
-#include <sys/base64.h>
+#include <zephyr/sys/base64.h>
 #include <tinycbor/cbor.h>
 #include <tinycbor/cbor_buf_reader.h>
 #include <modem/modem_attest_token.h>

@@ -8,15 +8,15 @@
  *  @brief Alexa Gadgets sample
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 #include <bluetooth/services/gadgets_profile.h>
-#include <bluetooth/gatt.h>
+#include <zephyr/bluetooth/gatt.h>
 #include <dk_buttons_and_leds.h>
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #ifndef CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM_NAMESPACE
 #define CONFIG_BT_ALEXA_GADGETS_CAPABILITY_CUSTOM_NAMESPACE ""

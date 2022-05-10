@@ -14,7 +14,7 @@
 #define BT_MESH_TIME_H__
 
 #include <zephyr/types.h>
-#include <bluetooth/mesh.h>
+#include <zephyr/bluetooth/mesh.h>
 
 #ifdef __cplusplus
 extern "C" {

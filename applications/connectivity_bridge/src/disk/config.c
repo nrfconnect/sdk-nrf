@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <fs/fs.h>
-#include <settings/settings.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/fs/fs.h>
+#include <zephyr/settings/settings.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -15,7 +15,7 @@
 #include "fs_event.h"
 #include "ble_ctrl_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_BRIDGE_MSC_LOG_LEVEL);
 
 #if CONFIG_FS_FATFS_LFN

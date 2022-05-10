@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <nrf_modem_gnss.h>
 
-#include <net/lwm2m_path.h>
+#include <zephyr/net/lwm2m_path.h>
 #include <net/lwm2m_client_utils_location.h>
 #include <net/lwm2m_client_utils.h>
-#include <net/lwm2m.h>
+#include <zephyr/net/lwm2m.h>
 
 static struct lwm2m_ctx *client_ctx;
 
@@ -22,7 +22,7 @@ static struct lwm2m_ctx *client_ctx;
 
 #define AGPS_LOCATION_PATHS 7
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_location_event_handler, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)

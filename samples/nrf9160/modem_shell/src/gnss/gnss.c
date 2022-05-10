@@ -7,8 +7,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <zephyr.h>
-#include <init.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/init.h>
 #include <assert.h>
 #include <nrf_modem_at.h>
 #include <nrf_modem_gnss.h>

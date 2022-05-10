@@ -8,8 +8,8 @@
 #include "nrf_cloud_codec.h"
 #include "nrf_cloud_mem.h"
 
-#include <zephyr.h>
-#include <logging/log.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_fsm, CONFIG_NRF_CLOUD_LOG_LEVEL);
 

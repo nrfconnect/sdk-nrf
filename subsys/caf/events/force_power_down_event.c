@@ -6,7 +6,7 @@
 
 #include <caf/events/force_power_down_event.h>
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 
 static void profile_simple_event(struct log_event_buf *buf,

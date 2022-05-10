@@ -4,20 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <kernel.h>
-#include <drivers/entropy.h>
-#include <drivers/bluetooth/hci_driver.h>
-#include <bluetooth/controller.h>
-#include <bluetooth/hci_vs.h>
-#include <bluetooth/buf.h>
-#include <init.h>
-#include <irq.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/entropy.h>
+#include <zephyr/drivers/bluetooth/hci_driver.h>
+#include <zephyr/bluetooth/controller.h>
+#include <zephyr/bluetooth/hci_vs.h>
+#include <zephyr/bluetooth/buf.h>
+#include <zephyr/init.h>
+#include <zephyr/irq.h>
+#include <zephyr/kernel.h>
 #include <soc.h>
-#include <sys/byteorder.h>
-#include <sys/util.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/sys/util.h>
 #include <stdbool.h>
-#include <sys/__assert.h>
+#include <zephyr/sys/__assert.h>
 
 #include <sdc.h>
 #include <sdc_soc.h>

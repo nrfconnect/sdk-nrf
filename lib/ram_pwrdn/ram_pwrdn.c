@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <logging/log.h>
-#include <sys/util.h>
-#include <zephyr.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/zephyr.h>
 #include <stdint.h>
 
 #if defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52833)
@@ -18,8 +18,8 @@
 #endif
 
 #if CONFIG_RAM_POWER_ADJUST_ON_HEAP_RESIZE
-#include <init.h>
-#include <sys/heap_listener.h>
+#include <zephyr/init.h>
+#include <zephyr/sys/heap_listener.h>
 #endif
 
 #if defined(CONFIG_PARTITION_MANAGER_ENABLED)

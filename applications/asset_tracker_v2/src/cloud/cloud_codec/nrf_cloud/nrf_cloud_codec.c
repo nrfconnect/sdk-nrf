@@ -6,7 +6,7 @@
 
 #include <stdbool.h>
 #include <string.h>
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <zephyr/types.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,7 +19,7 @@
 #include "json_common.h"
 #include "json_protocol_names.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(cloud_codec, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 
 /* Data types that are supported in batch messages. */

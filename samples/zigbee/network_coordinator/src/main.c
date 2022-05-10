@@ -8,9 +8,9 @@
  *  @brief Simple Zigbee network coordinator implementation
  */
 
-#include <zephyr.h>
-#include <device.h>
-#include <logging/log.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/device.h>
+#include <zephyr/logging/log.h>
 #include <dk_buttons_and_leds.h>
 
 #include <zboss_api.h>

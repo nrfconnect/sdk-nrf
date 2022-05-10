@@ -7,7 +7,7 @@
 #ifndef MOSH_LINK_SHELL_PRINT_H
 #define MOSH_LINK_SHELL_PRINT_H
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include <modem/lte_lc.h>
 
 struct mapping_tbl_item {

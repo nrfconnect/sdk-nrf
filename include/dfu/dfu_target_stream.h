@@ -16,7 +16,7 @@
 #define DFU_TARGET_STREAM_H__
 
 #include <stddef.h>
-#include <storage/stream_flash.h>
+#include <zephyr/storage/stream_flash.h>
 
 #ifdef __cplusplus
 extern "C" {

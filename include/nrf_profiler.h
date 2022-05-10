@@ -16,8 +16,8 @@
 
 
 #include <zephyr/types.h>
-#include <sys/util.h>
-#include <sys/__assert.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/sys/__assert.h>
 
 #ifndef CONFIG_NRF_PROFILER_MAX_NUMBER_OF_APP_EVENTS
 /** Maximum number of events. */

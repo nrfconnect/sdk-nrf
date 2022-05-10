@@ -5,13 +5,13 @@
  */
 
 #include "fw_info.h"
-#include <linker/sections.h>
-#include <sys/util.h>
-#include <init.h>
+#include <zephyr/linker/sections.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/init.h>
 #include <errno.h>
 #include <string.h>
 #include <nrfx_nvmc.h>
-#include <sys/printk.h>
+#include <zephyr/sys/printk.h>
 
 
 /* These symbols are defined in linker scripts. */

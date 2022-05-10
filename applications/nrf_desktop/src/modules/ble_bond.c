@@ -5,9 +5,9 @@
  */
 
 #include <stdlib.h>
-#include <bluetooth/bluetooth.h>
-#include <shell/shell.h>
-#include <settings/settings.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/settings/settings.h>
 
 #define MODULE ble_bond
 #include <caf/events/module_state_event.h>
@@ -17,7 +17,7 @@
 #include "config_event.h"
 #include <caf/events/power_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_BOND_LOG_LEVEL);
 
 #define CONFIRM_TIMEOUT			K_SECONDS(10)

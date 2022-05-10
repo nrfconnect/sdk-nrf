@@ -9,7 +9,7 @@
  */
 #if OPENTHREAD_ENABLE_NCP_VENDOR_HOOK
 #include "nrf_802154_radio_wrapper.h"
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #include <ncp_base.hpp>
 #include <ncp_hdlc.hpp>
 #include <common/new.hpp>

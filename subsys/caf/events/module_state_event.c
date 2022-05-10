@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 
 #include <caf/events/module_state_event.h>
 

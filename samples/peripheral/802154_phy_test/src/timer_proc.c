@@ -5,13 +5,13 @@
  */
 /* Purpose: timer configuring and processing */
 
-#include <kernel.h>
+#include <zephyr/kernel.h>
 
 #include "timer_proc.h"
 
 #include "ptt.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(timer);
 
 static void ptt_process_timer_handler(struct k_timer *timer);

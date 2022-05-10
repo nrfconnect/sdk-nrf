@@ -7,7 +7,7 @@
 #include <caf/events/power_manager_event.h>
 
 #include <assert.h>
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 #include <stdio.h>
 #include <caf/events/module_state_event.h>
 

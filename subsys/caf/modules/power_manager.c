@@ -3,16 +3,16 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <zephyr/types.h>
-#include <pm/pm.h>
-#include <pm/policy.h>
+#include <zephyr/pm/pm.h>
+#include <zephyr/pm/policy.h>
 
-#include <device.h>
-#include <drivers/gpio.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/gpio.h>
 #include <hal/nrf_power.h>
 #include <helpers/nrfx_reset_reason.h>
-#include <sys/reboot.h>
+#include <zephyr/sys/reboot.h>
 
 #include <app_event_manager.h>
 #include <nrf_profiler.h>
@@ -22,8 +22,8 @@
 #define MODULE power_manager
 #include <caf/events/module_state_event.h>
 
-#include <logging/log_ctrl.h>
-#include <logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_POWER_MANAGER_LOG_LEVEL);
 
 #include <caf/events/power_manager_event.h>

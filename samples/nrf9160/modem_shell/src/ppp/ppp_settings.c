@@ -8,8 +8,8 @@
 #include <string.h>
 #include <assert.h>
 
-#include <drivers/uart.h>
-#include <settings/settings.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/settings/settings.h>
 
 #include "mosh_print.h"
 #include "ppp_ctrl.h"

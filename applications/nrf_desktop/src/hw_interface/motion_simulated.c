@@ -3,21 +3,21 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <sys/atomic.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/atomic.h>
 
 #include <app_event_manager.h>
 #include "motion_event.h"
 #include <caf/events/power_event.h>
 #include "hid_event.h"
 
-#include <shell/shell.h>
-#include <shell/shell_rtt.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/shell/shell_rtt.h>
 
 #define MODULE motion
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 
 #define SCALE CONFIG_DESKTOP_MOTION_SIMULATED_SCALE_FACTOR

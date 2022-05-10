@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 #define MODULE click_detector
 #include <caf/events/module_state_event.h>
@@ -15,7 +15,7 @@
 
 #include CONFIG_CAF_CLICK_DETECTOR_DEF_PATH
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_CLICK_DETECTOR_LOG_LEVEL);
 
 #define CLICK_CHECK_PERIOD	100	/* ms */

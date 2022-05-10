@@ -9,7 +9,7 @@
 
 #include <stddef.h>
 #include <zephyr/types.h>
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 
 /**
  * @file

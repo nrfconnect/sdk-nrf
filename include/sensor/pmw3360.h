@@ -12,7 +12,7 @@
  * @brief Header file for the pmw3360 driver.
  */
 
-#include <drivers/sensor.h>
+#include <zephyr/drivers/sensor.h>
 
 #ifdef __cplusplus
 extern "C" {

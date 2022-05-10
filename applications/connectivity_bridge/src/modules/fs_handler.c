@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <zephyr/types.h>
-#include <fs/fs.h>
+#include <zephyr/fs/fs.h>
 #include <ff.h>
 
 #define MODULE fs_handler
@@ -15,7 +15,7 @@
 #include "fs_event.h"
 #include "power_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_BRIDGE_MSC_LOG_LEVEL);
 
 #define FATFS_MNTP	"/" CONFIG_MASS_STORAGE_DISK_NAME ":"

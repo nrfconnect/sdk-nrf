@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <bluetooth/gatt.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/bluetooth/gatt.h>
 
 #include "ble.h"
 

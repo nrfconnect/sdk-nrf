@@ -6,17 +6,17 @@
 
 #include "led.h"
 
-#include <zephyr.h>
-#include <devicetree.h>
-#include <drivers/gpio.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/drivers/gpio.h>
 #include <hal/nrf_gpio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <device.h>
+#include <zephyr/device.h>
 
 #include "macros_common.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(led, CONFIG_LOG_LED_LEVEL);
 
 #define ACTIVE_LOW 1

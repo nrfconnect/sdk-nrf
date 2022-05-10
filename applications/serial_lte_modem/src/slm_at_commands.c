@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <zephyr/types.h>
-#include <sys/util.h>
-#include <zephyr.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
 #include <ctype.h>
-#include <logging/log.h>
-#include <drivers/uart.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/drivers/uart.h>
 #include <string.h>
-#include <init.h>
+#include <zephyr/init.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/modem_jwt.h>
-#include <sys/reboot.h>
+#include <zephyr/sys/reboot.h>
 #include "ncs_version.h"
 
 #include "slm_util.h"

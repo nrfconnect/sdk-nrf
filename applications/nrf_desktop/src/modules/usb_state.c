@@ -6,18 +6,18 @@
 #include <stdio.h>
 
 #include <zephyr/types.h>
-#include <sys/byteorder.h>
-#include <sys/util.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/sys/util.h>
 
-#include <usb/usb_device.h>
-#include <usb/usb_ch9.h>
-#include <usb/class/usb_hid.h>
+#include <zephyr/usb/usb_device.h>
+#include <zephyr/usb/usb_ch9.h>
+#include <zephyr/usb/class/usb_hid.h>
 
 
 #define MODULE usb_state
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 
 #include "hid_report_desc.h"

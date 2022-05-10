@@ -5,7 +5,7 @@
  */
 
 #include "test_oom.h"
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 void *app_event_manager_alloc(size_t size)
 {

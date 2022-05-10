@@ -6,8 +6,8 @@
  */
 
 #include <string.h>
-#include <init.h>
-#include <zephyr.h>
+#include <zephyr/init.h>
+#include <zephyr/zephyr.h>
 #include <nrf_modem.h>
 #include <nrf_modem_os.h>
 #include <nrf_modem_platform.h>
@@ -16,7 +16,7 @@
 #include <nrf_errno.h>
 #include <errno.h>
 #include <pm_config.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
 #include <modem/nrf_modem_lib_trace.h>

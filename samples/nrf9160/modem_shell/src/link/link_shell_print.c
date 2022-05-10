@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 
 #include <modem/lte_lc.h>
 

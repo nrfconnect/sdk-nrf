@@ -20,9 +20,9 @@
 #ifndef DOWNLOAD_CLIENT_H__
 #define DOWNLOAD_CLIENT_H__
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <zephyr/types.h>
-#include <net/coap.h>
+#include <zephyr/net/coap.h>
 
 #ifdef __cplusplus
 extern "C" {

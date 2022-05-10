@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <sys/byteorder.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/byteorder.h>
 
 #define MODULE led_stream
 #include <caf/events/module_state_event.h>
@@ -13,7 +13,7 @@
 #include <caf/events/led_event.h>
 #include "config_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_LED_STREAM_LOG_LEVEL);
 
 #define INCOMING_LED_COLOR_COUNT 3

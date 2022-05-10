@@ -5,11 +5,11 @@
  */
 
 #include <stdlib.h>
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <net/nrf_cloud.h>
 #include <nrf_cloud_fsm.h>
-#include <shell/shell.h>
-#include <shell/shell_uart.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/shell/shell_uart.h>
 #include "mosh_print.h"
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)

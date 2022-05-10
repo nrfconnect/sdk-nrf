@@ -5,12 +5,12 @@
  */
 
 #include <stddef.h>
-#include <sys/printk.h>
-#include <sys/__assert.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/sys/__assert.h>
 
-#include <bluetooth/bluetooth.h>
-#include <console/console.h>
-#include <drivers/gpio.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/console/console.h>
+#include <zephyr/drivers/gpio.h>
 
 #include <hal/nrf_radio.h>
 #include <hal/nrf_timer.h>

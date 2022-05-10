@@ -4,18 +4,18 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <net/lwm2m.h>
+#include <zephyr/net/lwm2m.h>
 #include <net/lwm2m_client_utils.h>
 #include <lwm2m_engine.h>
 
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_neighbour_cell, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 #define MAX_INSTANCE_COUNT CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_INSTANCE_COUNT
 

@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
-#include <device.h>
+#include <zephyr/device.h>
 #include <app_event_manager.h>
 #include <dk_buttons_and_leds.h>
 
@@ -23,7 +23,7 @@
 #include "events/cloud_module_event.h"
 #include "events/led_state_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_UI_MODULE_LOG_LEVEL);
 
 /* Define a custom STATIC macro that exposes internal variables when unit testing. */

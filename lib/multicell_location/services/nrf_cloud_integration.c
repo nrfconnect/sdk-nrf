@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 #include <net/nrf_cloud_cell_pos.h>
 #else
@@ -13,7 +13,7 @@
 #include <net/multicell_location.h>
 #include "location_service.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(multicell_location_nrf_cloud, CONFIG_MULTICELL_LOCATION_LOG_LEVEL);
 

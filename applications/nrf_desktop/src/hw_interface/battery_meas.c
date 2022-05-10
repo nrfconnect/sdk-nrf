@@ -7,10 +7,10 @@
 #include <zephyr/types.h>
 
 #include <soc.h>
-#include <device.h>
-#include <drivers/adc.h>
-#include <drivers/gpio.h>
-#include <sys/atomic.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/adc.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/sys/atomic.h>
 
 #include <hal/nrf_saadc.h>
 
@@ -22,7 +22,7 @@
 #define MODULE battery_meas
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BATTERY_MEAS_LOG_LEVEL);
 
 #define ADC_DEVICE_NAME		DT_LABEL(DT_NODELABEL(adc))

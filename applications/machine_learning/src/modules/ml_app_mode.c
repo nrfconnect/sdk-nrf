@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 #include <caf/events/click_event.h>
 #include "ml_app_mode_event.h"
@@ -12,7 +12,7 @@
 #define MODULE ml_app_mode
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_MODE_LOG_LEVEL);
 
 #ifdef CONFIG_ML_APP_MODE_CONTROL_BUTTON_ID

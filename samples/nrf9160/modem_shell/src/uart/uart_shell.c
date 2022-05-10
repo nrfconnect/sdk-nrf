@@ -6,12 +6,12 @@
 
 #include <stdlib.h>
 
-#include <zephyr.h>
-#include <device.h>
-#include <devicetree.h>
-#include <pm/device.h>
-#include <shell/shell.h>
-#include <shell/shell_uart.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/pm/device.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/shell/shell_uart.h>
 #include <modem/lte_lc.h>
 #include <modem/nrf_modem_lib_trace.h>
 

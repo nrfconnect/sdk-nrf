@@ -14,19 +14,19 @@
 #include <nrf_modem_os.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <init.h>
-#include <net/socket_offload.h>
+#include <zephyr/init.h>
+#include <zephyr/net/socket_offload.h>
 #include <nrf_socket.h>
 #include <nrf_errno.h>
 #include <nrf_gai_errors.h>
 #include <sockets_internal.h>
-#include <sys/fdtable.h>
-#include <zephyr.h>
+#include <zephyr/sys/fdtable.h>
+#include <zephyr/zephyr.h>
 
 #if defined(CONFIG_POSIX_API)
-#include <posix/poll.h>
-#include <posix/sys/time.h>
-#include <posix/sys/socket.h>
+#include <zephyr/posix/poll.h>
+#include <zephyr/posix/sys/time.h>
+#include <zephyr/posix/sys/socket.h>
 #endif
 
 #if defined(CONFIG_NET_SOCKETS_OFFLOAD)

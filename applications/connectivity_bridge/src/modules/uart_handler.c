@@ -5,9 +5,9 @@
  */
 
 #include <zephyr/types.h>
-#include <sys/ring_buffer.h>
-#include <drivers/uart.h>
-#include <pm/device.h>
+#include <zephyr/sys/ring_buffer.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/pm/device.h>
 
 #define MODULE uart_handler
 #include "module_state_event.h"
@@ -16,7 +16,7 @@
 #include "cdc_data_event.h"
 #include "uart_data_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_BRIDGE_UART_LOG_LEVEL);
 
 #define UART_BUF_SIZE CONFIG_BRIDGE_BUF_SIZE

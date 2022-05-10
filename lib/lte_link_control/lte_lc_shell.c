@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include <modem/lte_lc.h>
 
 static int cmd_normal(const struct shell *shell, size_t argc, char **argv)

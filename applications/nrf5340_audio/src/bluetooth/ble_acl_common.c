@@ -7,12 +7,12 @@
 #include "ble_acl_common.h"
 #include "ctrl_events.h"
 #include "ble_trans.h"
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <shell/shell.h>
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/iso.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/iso.h>
 #include "ble_trans.h"
 #include "ble_audio_services.h"
 #include "ble_acl_gateway.h"
@@ -26,7 +26,7 @@
 
 #include "macros_common.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(ble, CONFIG_LOG_BLE_LEVEL);
 
 #define BASE_10 10

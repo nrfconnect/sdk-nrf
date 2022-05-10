@@ -6,7 +6,7 @@
 
 #include "audio_codec.h"
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 #include "macros_common.h"
 #include "streamctrl.h"
@@ -21,7 +21,7 @@
 #include "pcm_stream_channel_modifier.h"
 #include "audio_usb.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_codec, CONFIG_LOG_AUDIO_CODEC_LEVEL);
 
 #define FIFO_TX_BLOCK_COUNT (CONFIG_FIFO_FRAME_SPLIT_NUM * CONFIG_FIFO_TX_FRAME_COUNT)

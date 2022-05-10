@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <drivers/sensor_sim.h>
 
 #include "sensor_sim_ctrl_def.h"
@@ -15,7 +15,7 @@
 #define MODULE sensor_sim_ctrl
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_SENSOR_SIM_CTRL_LOG_LEVEL);
 
 #if CONFIG_ML_APP_SENSOR_SIM_CTRL_TRIG_TIMEOUT

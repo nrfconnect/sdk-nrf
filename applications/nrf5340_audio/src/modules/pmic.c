@@ -6,14 +6,14 @@
 
 #include "pmic.h"
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
-#include <device.h>
-#include <logging/log_ctrl.h>
+#include <zephyr/device.h>
+#include <zephyr/logging/log_ctrl.h>
 
 #include "max14690.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(pmic, CONFIG_LOG_PMIC_LEVEL);
 
 int pmic_defaults_set(void)

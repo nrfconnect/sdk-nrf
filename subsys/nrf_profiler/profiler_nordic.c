@@ -5,10 +5,10 @@
  */
 
 #include <stdio.h>
-#include <kernel_structs.h>
-#include <sys/util.h>
-#include <sys/byteorder.h>
-#include <zephyr.h>
+#include <zephyr/kernel_structs.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/zephyr.h>
 #include <SEGGER_RTT.h>
 #include <nrf_profiler.h>
 #include <string.h>

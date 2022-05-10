@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <logging/log.h>
-#include <net/net_pkt.h>
-#include <net/net_l2.h>
-#include <net/openthread.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/net/net_pkt.h>
+#include <zephyr/net/net_l2.h>
+#include <zephyr/net/openthread.h>
 #include <openthread/coap.h>
 #include <openthread/ip6.h>
 #include <openthread/message.h>

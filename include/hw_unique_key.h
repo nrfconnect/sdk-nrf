@@ -25,7 +25,7 @@ extern "C" {
 #if defined(__NRF_TFM__)
 #include <autoconf.h>
 #endif
-#include <devicetree.h>
+#include <zephyr/devicetree.h>
 
 #if DT_HAS_COMPAT_STATUS_OKAY(nordic_nrf_kmu)
 #define HUK_HAS_KMU

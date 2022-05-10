@@ -6,9 +6,9 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include <bluetooth/mesh/access.h>
+#include <zephyr/bluetooth/mesh/access.h>
 #include <bluetooth/mesh/models.h>
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 #include "model_utils.h"
 #include "mesh/net.h"
 #include "mesh/access.h"

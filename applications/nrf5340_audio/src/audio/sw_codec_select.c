@@ -6,7 +6,7 @@
 
 #include "sw_codec_select.h"
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <errno.h>
 
 #include "pcm_stream_channel_modifier.h"
@@ -18,7 +18,7 @@
 #include "sbc_encoder.h"
 #endif /* (CONFIG_SW_CODEC_SBC) */
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(sw_codec_select);
 
 static struct sw_codec_config m_config;

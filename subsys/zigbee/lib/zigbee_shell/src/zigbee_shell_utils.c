@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <zephyr/types.h>
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 
 #include <zboss_api.h>
 #include <zigbee/zigbee_error_handler.h>

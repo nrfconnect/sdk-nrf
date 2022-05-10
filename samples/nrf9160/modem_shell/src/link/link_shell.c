@@ -6,8 +6,8 @@
 
 #include <stdio.h>
 
-#include <shell/shell.h>
-#include <shell/shell_uart.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/shell/shell_uart.h>
 #include <unistd.h>
 #include <getopt.h>
 

@@ -17,7 +17,7 @@
 extern "C" {
 #endif
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 /** Macro for acquiring a lock */
 #define MULTITHREADING_LOCK_ACQUIRE() \

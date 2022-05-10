@@ -9,7 +9,7 @@
 #include <nrf_cc3xx_platform_ctr_drbg.h>
 #include <hw_unique_key.h>
 #include "hw_unique_key_internal.h"
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 
 
 #ifdef CONFIG_HW_UNIQUE_KEY_RANDOM

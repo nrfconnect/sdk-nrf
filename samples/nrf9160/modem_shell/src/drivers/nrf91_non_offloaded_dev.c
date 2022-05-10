@@ -9,15 +9,15 @@
  * i.e. using Zephyr native TCP/IP stack.
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
-#include <random/rand32.h>
-#include <net/dummy.h>
-#include <net/net_pkt.h>
-#include <net/net_if.h>
-#include <net/net_ip.h>
+#include <zephyr/random/rand32.h>
+#include <zephyr/net/dummy.h>
+#include <zephyr/net/net_pkt.h>
+#include <zephyr/net/net_if.h>
+#include <zephyr/net/net_ip.h>
 
-#include <posix/arpa/inet.h>
+#include <zephyr/posix/arpa/inet.h>
 
 #include <nrf_socket.h>
 

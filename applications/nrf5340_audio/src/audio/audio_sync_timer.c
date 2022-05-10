@@ -44,13 +44,13 @@
 
 #include "audio_sync_timer.h"
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <nrfx_timer.h>
 #include <nrfx_dppi.h>
 #include <nrfx_i2s.h>
 #include <nrfx_ipc.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_sync_timer, CONFIG_LOG_AUDIO_SYNC_TIMER_LEVEL);
 
 #define AUDIO_SYNC_TIMER_INSTANCE 1

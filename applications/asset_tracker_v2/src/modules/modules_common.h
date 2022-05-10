@@ -11,7 +11,7 @@
  *@brief Modules common library header.
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 /**
  * @defgroup modules_common Modules common library

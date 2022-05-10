@@ -4,18 +4,18 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
 #include <ctype.h>
-#include <logging/log.h>
-#include <drivers/uart.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/drivers/uart.h>
 #include <hal/nrf_uarte.h>
 #include <hal/nrf_gpio.h>
-#include <sys/ring_buffer.h>
-#include <sys/util.h>
-#include <pm/device.h>
+#include <zephyr/sys/ring_buffer.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/pm/device.h>
 #include <string.h>
-#include <init.h>
+#include <zephyr/init.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_fota.h"

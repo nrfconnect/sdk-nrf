@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdlib.h>
-#include <net/lwm2m.h>
+#include <zephyr/net/lwm2m.h>
 #include <net/lwm2m_client_utils.h>
 #include <net/lwm2m_client_utils_location.h>
 
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_connmon, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
 static struct modem_param_info modem_param;

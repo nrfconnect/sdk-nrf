@@ -9,7 +9,7 @@
 #ifndef DFU_HOST_H__
 #define DFU_HOST_H__
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 #ifdef __cplusplus
 extern "C" {

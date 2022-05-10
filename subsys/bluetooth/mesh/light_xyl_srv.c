@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 #include <bluetooth/mesh/light_xyl_srv.h>
 #include <bluetooth/mesh/gen_dtt_srv.h>
 #include "lightness_internal.h"

@@ -9,7 +9,7 @@
 #include "app_event.h"
 
 #include <cstdint>
-#include <drivers/gpio.h>
+#include <zephyr/drivers/gpio.h>
 
 class LightingManager {
 public:

@@ -13,7 +13,7 @@
 #ifndef BT_MESH_GEN_PONOFF_SRV_H__
 #define BT_MESH_GEN_PONOFF_SRV_H__
 
-#include <bluetooth/mesh.h>
+#include <zephyr/bluetooth/mesh.h>
 
 #include <bluetooth/mesh/gen_ponoff.h>
 #include <bluetooth/mesh/gen_onoff_srv.h>

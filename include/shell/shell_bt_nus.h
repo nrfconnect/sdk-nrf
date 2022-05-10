@@ -7,10 +7,10 @@
 #ifndef SHELL_BT_NUS_H_
 #define SHELL_BT_NUS_H_
 
-#include <shell/shell.h>
-#include <bluetooth/conn.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/bluetooth/conn.h>
 #include <bluetooth/services/nus.h>
-#include <sys/ring_buffer.h>
+#include <zephyr/sys/ring_buffer.h>
 
 /**
  * @file

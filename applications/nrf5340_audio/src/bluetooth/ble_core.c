@@ -6,14 +6,14 @@
 
 #include "ble_core.h"
 #include "ble_hci_vsc.h"
-#include <zephyr.h>
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/hci.h>
-#include <sys/byteorder.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/hci.h>
+#include <zephyr/sys/byteorder.h>
 #include <errno.h>
 #include "macros_common.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ble, CONFIG_LOG_BLE_LEVEL);
 
 #define NET_CORE_RESPONSE_TIMEOUT_MS 500

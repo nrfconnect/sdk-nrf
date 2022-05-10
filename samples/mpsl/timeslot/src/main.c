@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <kernel.h>
-#include <console/console.h>
+#include <zephyr/kernel.h>
+#include <zephyr/console/console.h>
 #include <string.h>
-#include <sys/printk.h>
-#include <sys/ring_buffer.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/sys/ring_buffer.h>
 #include <zephyr/types.h>
-#include <irq.h>
-#include <logging/log.h>
+#include <zephyr/irq.h>
+#include <zephyr/logging/log.h>
 
 #include <mpsl_timeslot.h>
 #include <mpsl.h>

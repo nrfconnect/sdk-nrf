@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <init.h>
+#include <zephyr/init.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 
-#include <zephyr.h>
-#include <drivers/entropy.h>
-#include <sys/util.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/drivers/entropy.h>
+#include <zephyr/sys/util.h>
 
 #if defined(CONFIG_SPM)
 #include "secure_services.h"

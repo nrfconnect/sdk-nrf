@@ -20,7 +20,7 @@
 #define _BUTTON_HANDLER_H_
 
 #include <stdint.h>
-#include <drivers/gpio.h>
+#include <zephyr/drivers/gpio.h>
 
 /** @brief Button ID
  *

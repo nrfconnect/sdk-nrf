@@ -7,8 +7,8 @@
 #include <string.h>
 #include <nrf_gzll.h>
 #include <gzp.h>
-#include <crypto/crypto.h>
-#include <drivers/entropy.h>
+#include <zephyr/crypto/crypto.h>
+#include <zephyr/drivers/entropy.h>
 #include "gzp_internal.h"
 
 

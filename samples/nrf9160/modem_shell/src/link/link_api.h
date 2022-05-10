@@ -8,8 +8,8 @@
 #define MOSH_LINK_API_H
 
 #include <sys/types.h>
-#include <net/net_ip.h>
-#include <shell/shell.h>
+#include <zephyr/net/net_ip.h>
+#include <zephyr/shell/shell.h>
 
 #include "mosh_defines.h"
 

@@ -5,9 +5,9 @@
  */
 
 #include <sys/types.h>
-#include <kernel.h>
-#include <sys/util.h>
-#include <settings/settings.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/settings/settings.h>
 
 #define MODULE fn_keys
 #include <caf/events/module_state_event.h>
@@ -18,7 +18,7 @@
 #include "fn_key_id.h"
 #include "fn_keys_def.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_FN_KEYS_LOG_LEVEL);
 
 #define FN_LOCK_STORAGE_NAME "fn_lock"

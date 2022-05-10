@@ -5,9 +5,9 @@
  */
 #include <autoconf.h>
 #include <secure_services.h>
-#include <toolchain.h>
+#include <zephyr/toolchain.h>
 #include <fw_info.h>
-#include <arch/arm/aarch32/cortex_m/fpu.h>
+#include <zephyr/arch/arm/aarch32/cortex_m/fpu.h>
 
 static struct fpu_ctx_full context_buffer;
 

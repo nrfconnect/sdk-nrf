@@ -6,17 +6,17 @@
 
 #include <stdlib.h>
 #include <zephyr/types.h>
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/conn.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/conn.h>
 
 #define MODULE ble_adv
 #include <caf/events/module_state_event.h>
 #include <caf/events/ble_common_event.h>
 #include <caf/events/power_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BLE_ADV_LOG_LEVEL);
 
 #define SWIFT_PAIR_SECTION_SIZE 1 /* number of struct bt_data objects */

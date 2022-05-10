@@ -7,9 +7,9 @@
 /* Client side of bluetooth API over nRF RPC.
  */
 
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -19,7 +19,7 @@
 #include "serialize.h"
 #include "cbkproxy.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(BT_RPC, CONFIG_BT_RPC_LOG_LEVEL);
 

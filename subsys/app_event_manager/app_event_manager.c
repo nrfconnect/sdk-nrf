@@ -5,12 +5,12 @@
  */
 
 #include <stdio.h>
-#include <zephyr.h>
-#include <spinlock.h>
-#include <sys/slist.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/spinlock.h>
+#include <zephyr/sys/slist.h>
 #include <app_event_manager.h>
-#include <logging/log.h>
-#include <sys/reboot.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/sys/reboot.h>
 
 LOG_MODULE_REGISTER(app_event_manager, CONFIG_APP_EVENT_MANAGER_LOG_LEVEL);
 

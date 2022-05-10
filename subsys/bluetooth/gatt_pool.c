@@ -6,7 +6,7 @@
 
 #include <errno.h>
 #include <bluetooth/gatt_pool.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(bt_gatt_pool, CONFIG_BT_GATT_POOL_LOG_LEVEL);
 

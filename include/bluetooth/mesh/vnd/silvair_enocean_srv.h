@@ -16,8 +16,8 @@
 #define BT_MESH_SILVAIR_ENOCEAN_SRV_H__
 
 #include <bluetooth/mesh/models.h>
-#include <bluetooth/addr.h>
-#include <sys/slist.h>
+#include <zephyr/bluetooth/addr.h>
+#include <zephyr/sys/slist.h>
 
 #ifdef __cplusplus
 extern "C" {

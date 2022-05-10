@@ -12,8 +12,8 @@
  */
 
 #include <ztest.h>
-#include <device.h>
-#include <drivers/flash.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/flash.h>
 
 static const struct device *flash_dev = DEVICE_DT_GET(DT_NODELABEL(flash_controller));
 

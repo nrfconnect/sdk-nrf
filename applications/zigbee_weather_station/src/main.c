@@ -4,20 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <device.h>
+#include <zephyr/device.h>
 #include <dk_buttons_and_leds.h>
-#include <drivers/uart.h>
-#include <logging/log.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/logging/log.h>
 #include <ram_pwrdn.h>
 #include <zb_nrf_platform.h>
 #include <zboss_api.h>
 #include <zboss_api_addons.h>
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <zigbee/zigbee_app_utils.h>
 #include <zigbee/zigbee_error_handler.h>
 
 #ifdef CONFIG_USB_DEVICE_STACK
-#include <usb/usb_device.h>
+#include <zephyr/usb/usb_device.h>
 #endif /* CONFIG_USB_DEVICE_STACK */
 
 #include "weather_station.h"

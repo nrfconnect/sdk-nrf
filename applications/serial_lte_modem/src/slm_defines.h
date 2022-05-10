@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <net/net_ip.h>
+#include <zephyr/net/net_ip.h>
 
 #ifndef SLM_AT_DEFINES_
 #define SLM_AT_DEFINES_

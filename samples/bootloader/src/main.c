@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/types.h>
-#include <sys/printk.h>
+#include <zephyr/sys/printk.h>
 #include <pm_config.h>
 #include <fw_info.h>
 #include <fprotect.h>
@@ -15,7 +15,7 @@
 #include <nrfx_nvmc.h>
 
 #if defined(CONFIG_HW_UNIQUE_KEY_LOAD)
-#include <init.h>
+#include <zephyr/init.h>
 #include <hw_unique_key.h>
 
 #define HUK_FLAG_OFFSET 0xFFC /* When this word is set, expect HUK to be written. */

@@ -6,13 +6,13 @@
 
 #include "streamctrl.h"
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stddef.h>
 #include <string.h>
 #include <errno.h>
-#include <drivers/gpio.h>
-#include <device.h>
-#include <debug/stack.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/device.h>
+#include <zephyr/debug/stack.h>
 
 #include "ctrl_events.h"
 #include "led.h"
@@ -33,7 +33,7 @@
 #include "ble_hci_vsc.h"
 #include "channel_assignment.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(streamctrl, CONFIG_LOG_STREAMCTRL_LEVEL);
 
 struct ble_iso_data {

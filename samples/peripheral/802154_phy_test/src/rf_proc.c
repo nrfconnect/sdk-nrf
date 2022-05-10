@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <nrfx.h>
 
 #if IS_ENABLED(CONFIG_PTT_ANTENNA_DIVERSITY)
@@ -28,7 +28,7 @@
 
 #include "ptt.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(rf_proc);
 
 /**< Maximum size of RF pool of received packets */

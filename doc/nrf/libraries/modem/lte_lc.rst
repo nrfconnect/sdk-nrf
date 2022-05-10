@@ -25,7 +25,7 @@ The following block of code shows how the link controller API can be used to est
 
 .. code-block:: c
 
-   #include <zephyr.h>
+   #include <zephyr/zephyr.h>
    #include <modem/lte_lc.h>
 
    /* Semaphore used to block the main thread until the link controller has

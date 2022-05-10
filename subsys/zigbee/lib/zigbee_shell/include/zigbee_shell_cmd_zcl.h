@@ -7,7 +7,7 @@
 #ifndef ZIGBEE_SHELL_CMD_ZCL_H__
 #define ZIGBEE_SHELL_CMD_ZCL_H__
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 
 
 int cmd_zb_ping(const struct shell *shell, size_t argc, char **argv);

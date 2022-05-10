@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <errno.h>
 #include <stdlib.h>
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 
 #include <zigbee/zigbee_error_handler.h>
 #include <zigbee/zigbee_shell.h>

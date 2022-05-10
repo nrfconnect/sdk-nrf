@@ -6,10 +6,10 @@
 
 #include <stdlib.h>
 
-#include <zephyr.h>
-#include <device.h>
-#include <devicetree.h>
-#include <pm/device.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/pm/device.h>
 #include "uart.h"
 
 /* Utility function to enable/disable UART1.

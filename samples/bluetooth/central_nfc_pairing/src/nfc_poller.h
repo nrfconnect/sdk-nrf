@@ -7,7 +7,7 @@
 #ifndef NFC_POLLER_H_
 #define NFC_POLLER_H_
 
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <nfc/ndef/msg.h>
 
 #ifdef _cplusplus

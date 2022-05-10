@@ -11,8 +11,8 @@
 
 #include "common_test.h"
 
-#include <sys/byteorder.h>
-#include <logging/log.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/logging/log.h>
 
 #include <mbedtls/ecdh.h>
 

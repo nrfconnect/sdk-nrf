@@ -3,18 +3,18 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr.h>
-#include <drivers/gpio.h>
-#include <drivers/flash.h>
-#include <toolchain.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/drivers/flash.h>
+#include <zephyr/toolchain.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_key_mgmt.h>
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #include <net/fota_download.h>
 #include <nrf_socket.h>
 #include <stdio.h>
-#include <sys/reboot.h>
-#include <shell/shell.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/shell/shell.h>
 #include "update.h"
 
 static const struct gpio_dt_spec led0 = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);

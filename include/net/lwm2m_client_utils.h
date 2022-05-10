@@ -23,8 +23,8 @@
 #ifndef LWM2M_CLIENT_UTILS_H__
 #define LWM2M_CLIENT_UTILS_H__
 
-#include <zephyr.h>
-#include <net/lwm2m.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/net/lwm2m.h>
 
 #ifdef __cplusplus
 extern "C" {

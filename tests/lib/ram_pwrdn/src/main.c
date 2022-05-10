@@ -6,7 +6,7 @@
 
 #include <hal/nrf_power.h>
 #include <ram_pwrdn.h>
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 #include <ztest.h>
 
 #include <inttypes.h>

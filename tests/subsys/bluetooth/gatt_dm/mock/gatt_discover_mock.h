@@ -7,8 +7,8 @@
 #ifndef BT_GATT_DISCOVERY_MOCK_H_
 #define BT_GATT_DISCOVERY_MOCK_H_
 
-#include <bluetooth/uuid.h>
-#include <bluetooth/gatt.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/gatt.h>
 
 
 /**

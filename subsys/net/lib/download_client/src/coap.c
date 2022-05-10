@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <net/coap.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/net/coap.h>
 #include <net/download_client.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #include <string.h>
 
 LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);

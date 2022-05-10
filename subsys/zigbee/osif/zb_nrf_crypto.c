@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <sys/__assert.h>
-#include <random/rand32.h>
+#include <zephyr/sys/__assert.h>
+#include <zephyr/random/rand32.h>
 #include <zboss_api.h>
 #if CONFIG_CRYPTO_NRF_ECB
-#include <crypto/crypto.h>
+#include <zephyr/crypto/crypto.h>
 #elif CONFIG_BT_CTLR
-#include <bluetooth/crypto.h>
+#include <zephyr/bluetooth/crypto.h>
 #elif CONFIG_ZIGBEE_USE_SOFTWARE_AES
 #include <ocrypto_aes_ecb.h>
 #include <ocrypto_aes_key.h>

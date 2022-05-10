@@ -12,8 +12,8 @@
 #ifndef __COAP_UTILS_H__
 #define __COAP_UTILS_H__
 
-#include <net/coap.h>
-#include <net/net_ip.h>
+#include <zephyr/net/coap.h>
+#include <zephyr/net/net_ip.h>
 
 /** @brief Open socket and start the receiving thread.
  *

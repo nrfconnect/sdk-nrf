@@ -6,11 +6,11 @@
 
 #include "data_fifo.h"
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 #include "macros_common.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(data_fifo, CONFIG_LOG_DEFAULT_LEVEL);
 
 static struct k_spinlock lock;

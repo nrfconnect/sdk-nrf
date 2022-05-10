@@ -4,18 +4,18 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <zephyr/types.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/audio/vcs.h>
-#include <bluetooth/audio/mics.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/audio/vcs.h>
+#include <zephyr/bluetooth/audio/mics.h>
 #include "macros_common.h"
 #include "ble_acl_common.h"
 #include "ble_audio_services.h"
 #include "hw_codec.h"
 
 #define LOG_LEVEL CONFIG_LOG_AUDIO_SERVICES_LEVEL
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ble_audio_services);
 
 #define VOLUME_DEFAULT 195

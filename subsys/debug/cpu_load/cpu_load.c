@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <debug/cpu_load.h>
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #ifdef DPPI_PRESENT
 #include <nrfx_dppi.h>
 #else
@@ -15,7 +15,7 @@
 #include <hal/nrf_rtc.h>
 #include <hal/nrf_power.h>
 #include <debug/ppi_trace.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(cpu_load, CONFIG_CPU_LOAD_LOG_LEVEL);
 

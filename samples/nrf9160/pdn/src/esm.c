@@ -5,7 +5,7 @@
  */
 
 #include <stddef.h>
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 /* From the specification:
  * 3GPP TS 24.301 version 8.7.0

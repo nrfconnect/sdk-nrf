@@ -5,8 +5,8 @@
  */
 
 #include <stdio.h>
-#include <zephyr.h>
-#include <logging/log.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/logging/log.h>
 #include <modem/location.h>
 #if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
 #include <net/nrf_cloud_agps.h>

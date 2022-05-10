@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 #include <zephyr/types.h>
 #include <stdio.h>
 
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 #include <bluetooth/gatt_dm.h>
 
 #define MODULE ble_discovery
@@ -19,7 +19,7 @@
 #include "ble_discovery_def.h"
 #include "dev_descr.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_DISCOVERY_LOG_LEVEL);
 
 enum discovery_state {

@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 #include <nrf_rpc_cbor.h>
 
 #include "bt_rpc_common.h"
 #include "serialize.h"
 #include "cbkproxy.h"
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 static void report_decoding_error(uint8_t cmd_evt_id, void *data)
 {

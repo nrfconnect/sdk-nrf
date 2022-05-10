@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
 #include <modem/lte_lc.h>
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #include <net/nrf_cloud.h>
 #include <date_time.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #include <cJSON.h>
 #include "fota_support.h"
 

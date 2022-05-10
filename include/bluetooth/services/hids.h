@@ -19,7 +19,7 @@ extern "C" {
 #endif
 
 #include <bluetooth/gatt_pool.h>
-#include <bluetooth/gatt.h>
+#include <zephyr/bluetooth/gatt.h>
 #include <bluetooth/conn_ctx.h>
 
 #ifndef CONFIG_BT_HIDS_INPUT_REP_MAX

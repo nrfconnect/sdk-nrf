@@ -20,7 +20,7 @@
 #include "serialize.h"
 #include "cbkproxy.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(BT_RPC, CONFIG_BT_RPC_LOG_LEVEL);
 

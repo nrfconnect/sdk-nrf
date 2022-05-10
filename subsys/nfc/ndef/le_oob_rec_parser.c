@@ -6,9 +6,9 @@
 
 #include <string.h>
 #include <errno.h>
-#include <logging/log.h>
-#include <net/buf.h>
-#include <sys/byteorder.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/net/buf.h>
+#include <zephyr/sys/byteorder.h>
 #include <nfc/ndef/le_oob_rec_parser.h>
 #include <nfc/ndef/payload_type_common.h>
 

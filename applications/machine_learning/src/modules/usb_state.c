@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <usb/usb_device.h>
+#include <zephyr/usb/usb_device.h>
 
 #define MODULE usb_state
 #include <caf/events/module_state_event.h>
 #include <caf/events/power_manager_event.h>
 #include <caf/events/force_power_down_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_USB_STATE_LOG_LEVEL);
 
 #define SUSPEND_DELAY K_MSEC(1000)

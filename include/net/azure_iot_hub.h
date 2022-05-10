@@ -12,7 +12,7 @@
 #define AZURE_IOT_HUB__
 
 #include <stdio.h>
-#include <net/mqtt.h>
+#include <zephyr/net/mqtt.h>
 
 /**
  * @defgroup azure_iot_hub Azure IoT Hub library

@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <net/socket.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/net/socket.h>
 #include <stdio.h>
-#include <dfu/mcuboot.h>
+#include <zephyr/dfu/mcuboot.h>
 #include <math.h>
 #include <app_event_manager.h>
 #include <qos.h>
@@ -33,7 +33,7 @@
 #include "events/gnss_module_event.h"
 #include "events/debug_module_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_MODULE_LOG_LEVEL);
 
 BUILD_ASSERT(CONFIG_CLOUD_CONNECT_RETRIES < 14,

@@ -9,7 +9,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 
 /* The queue elements hold a pointer to a memory block in a slab and the
  * number of bytes written to that block.

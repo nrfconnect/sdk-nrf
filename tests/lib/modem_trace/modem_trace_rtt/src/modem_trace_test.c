@@ -5,7 +5,7 @@
  */
 #include <unity.h>
 #include <stdbool.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <string.h>
 #include <nrf_modem_lib_trace.h>
 #include "mock_SEGGER_RTT.h"

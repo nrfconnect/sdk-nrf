@@ -5,8 +5,8 @@
  */
 
 #include <errno.h>
-#include <drivers/uart.h>
-#include <zephyr.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/zephyr.h>
 
 #include "dtm.h"
 

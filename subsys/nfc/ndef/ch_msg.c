@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <drivers/entropy.h>
-#include <sys/byteorder.h>
+#include <zephyr/drivers/entropy.h>
+#include <zephyr/sys/byteorder.h>
 
 #include <nfc/ndef/ch_msg.h>
 #include <nfc/ndef/msg.h>

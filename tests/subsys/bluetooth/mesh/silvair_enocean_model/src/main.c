@@ -6,7 +6,7 @@
 
 #include <ztest.h>
 #include <bluetooth/enocean.h>
-#include <bluetooth/mesh.h>
+#include <zephyr/bluetooth/mesh.h>
 #include <bluetooth/mesh/models.h>
 #include <bluetooth/mesh/vnd/silvair_enocean_srv.h>
 

@@ -5,20 +5,20 @@
  */
 
 #include <string.h>
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdlib.h>
 #include <stdio.h>
 #if defined(CONFIG_POSIX_API)
-#include <posix/unistd.h>
-#include <posix/sys/socket.h>
+#include <zephyr/posix/unistd.h>
+#include <zephyr/posix/sys/socket.h>
 #else
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #endif
 #include <modem/nrf_modem_lib.h>
 #include <modem/modem_key_mgmt.h>
 #include <net/nrf_cloud_rest.h>
 #include <net/rest_client.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #include <cJSON.h>
 
 #include "nrf_cloud_codec.h"

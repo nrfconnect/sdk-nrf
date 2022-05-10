@@ -4,19 +4,19 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
 #include <nrf_modem.h>
 #include <modem/lte_lc.h>
 #include <nrf_modem_at.h>
-#include <net/mqtt.h>
-#include <net/socket.h>
+#include <zephyr/net/mqtt.h>
+#include <zephyr/net/socket.h>
 #include <modem/nrf_modem_lib.h>
 #include <net/aws_jobs.h>
 #include <net/aws_fota.h>
-#include <dfu/mcuboot.h>
-#include <sys/reboot.h>
-#include <random/rand32.h>
+#include <zephyr/dfu/mcuboot.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/random/rand32.h>
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT),
 			"This sample does not support auto init and connect");

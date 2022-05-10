@@ -7,7 +7,7 @@
 #ifndef _BLE_CORE_H_
 #define _BLE_CORE_H_
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 /**@brief	BLE core ready callback type.
  */

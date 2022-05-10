@@ -11,7 +11,7 @@
 #include <platform/CHIPDeviceLayer.h>
 #include <platform/internal/DeviceNetworkInfo.h>
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 void StartDefaultThreadNetwork(uint64_t datasetTimestamp)
 {

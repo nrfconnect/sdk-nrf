@@ -7,7 +7,7 @@
 #ifndef _SW_CODEC_SELECT_H_
 #define _SW_CODEC_SELECT_H_
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 #if (CONFIG_SW_CODEC_SBC)
 /* Frame length in samples */

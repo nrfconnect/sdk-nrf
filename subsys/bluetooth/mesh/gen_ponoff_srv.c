@@ -7,7 +7,7 @@
 #include <bluetooth/mesh/gen_ponoff_srv.h>
 
 #include <string.h>
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 #include <stdlib.h>
 #include "model_utils.h"
 

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #if defined(CONFIG_MEMFAULT)
 #include <memfault/metrics/metrics.h>
 #include <memfault/ports/zephyr/http.h>
@@ -29,7 +29,7 @@
 #include "events/ui_module_event.h"
 #include "events/debug_module_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DEBUG_MODULE_LOG_LEVEL);
 
 struct debug_msg_data {

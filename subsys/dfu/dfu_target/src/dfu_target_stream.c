@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <logging/log.h>
-#include <storage/stream_flash.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/storage/stream_flash.h>
 #include <stdio.h>
 #include <dfu/dfu_target_stream.h>
 
 #ifdef CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS
 #define MODULE "dfu"
 #define DFU_STREAM_OFFSET "stream/offset"
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 #endif /* CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS */
 
 LOG_MODULE_REGISTER(dfu_target_stream, CONFIG_DFU_TARGET_LOG_LEVEL);

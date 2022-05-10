@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <sys/byteorder.h>
-#include <drivers/gpio.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/drivers/gpio.h>
 #include "ble_hci_vsc.h"
 #include "bluetooth/hci.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(ble, CONFIG_LOG_BLE_LEVEL);
 
 enum ble_hci_vs_max_tx_power {

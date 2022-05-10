@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
 #define MODULE led_state
 #include <caf/events/module_state_event.h>
@@ -13,7 +13,7 @@
 #include <caf/events/ble_common_event.h>
 #include "battery_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_LED_STATE_LOG_LEVEL);
 
 #include "led_state.h"

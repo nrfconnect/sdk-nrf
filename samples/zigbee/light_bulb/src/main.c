@@ -10,13 +10,13 @@
  */
 
 #include <zephyr/types.h>
-#include <zephyr.h>
-#include <device.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/device.h>
 #include <soc.h>
-#include <drivers/pwm.h>
-#include <logging/log.h>
+#include <zephyr/drivers/pwm.h>
+#include <zephyr/logging/log.h>
 #include <dk_buttons_and_leds.h>
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #include <zboss_api.h>
 #include <zboss_api_addons.h>

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <drivers/uart.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/drivers/uart.h>
 
 #include "ei_data_forwarder.h"
 #include "ei_data_forwarder_event.h"
@@ -16,7 +16,7 @@
 #define MODULE ei_data_forwarder
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_EI_DATA_FORWARDER_LOG_LEVEL);
 
 #define UART_LABEL		CONFIG_ML_APP_EI_DATA_FORWARDER_UART_DEV

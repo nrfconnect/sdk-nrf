@@ -8,10 +8,10 @@
  *  @brief UART asynchronous API adapter implementation
  */
 #include "uart_async_adapter.h"
-#include <drivers/uart.h>
-#include <sys/__assert.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/sys/__assert.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(uart_async_adapter);
 
 

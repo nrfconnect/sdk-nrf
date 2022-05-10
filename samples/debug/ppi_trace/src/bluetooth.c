@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/hci.h>
-#include <logging/log.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/hci.h>
+#include <zephyr/logging/log.h>
 #include <debug/ppi_trace.h>
 #include <hal/nrf_radio.h>
 #include <hal/nrf_uarte.h>

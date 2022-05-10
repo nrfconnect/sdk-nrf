@@ -11,7 +11,7 @@
  * the standard Config and Health Server models. Handles all application
  * behavior related to the models.
  */
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 #include <bluetooth/mesh/models.h>
 #include <bluetooth/enocean.h>
 #include <bluetooth/mesh/vnd/silvair_enocean_srv.h>

@@ -22,7 +22,7 @@
 extern "C" {
 #endif
 
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 #include <modem/lte_lc.h>
 
 #define AT_RESPONSE_LEN   64        /** Length of AT-command response */

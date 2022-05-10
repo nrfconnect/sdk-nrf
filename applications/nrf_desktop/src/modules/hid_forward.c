@@ -5,11 +5,11 @@
  */
 
 #include <zephyr/types.h>
-#include <sys/slist.h>
-#include <settings/settings.h>
+#include <zephyr/sys/slist.h>
+#include <zephyr/settings/settings.h>
 
 #include <bluetooth/services/hogp.h>
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 
 #define MODULE hid_forward
 #include <caf/events/module_state_event.h>
@@ -24,7 +24,7 @@
 #include "config_event.h"
 #include <caf/events/power_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_HID_FORWARD_LOG_LEVEL);
 
 #define MAX_ENQUEUED_ITEMS CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS

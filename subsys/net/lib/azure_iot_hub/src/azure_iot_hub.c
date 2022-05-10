@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <net/mqtt.h>
-#include <net/socket.h>
+#include <zephyr/net/mqtt.h>
+#include <zephyr/net/socket.h>
 #include <stdio.h>
 #include <net/azure_iot_hub.h>
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #include "azure_iot_hub_dps.h"
 #include "azure_iot_hub_topic.h"
@@ -21,7 +21,7 @@
 #include CONFIG_AZURE_IOT_HUB_CERTIFICATES_FILE
 #endif /* CONFIG_AZURE_IOT_HUB_PROVISION_CERTIFICATES */
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(azure_iot_hub, CONFIG_AZURE_IOT_HUB_LOG_LEVEL);
 

@@ -4,18 +4,18 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 #include <bluetooth/services/gadgets.h>
 #include <bluetooth/services/gadgets_profile.h>
 #include <tinycrypt/constants.h>
 #include <tinycrypt/sha256.h>
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 #if CONFIG_SPM_SERVICE_READ
 #include <secure_services.h>
 #else
-#include <drivers/hwinfo.h>
+#include <zephyr/drivers/hwinfo.h>
 #endif
 
 #include <stdio.h>
@@ -31,7 +31,7 @@
 #include "custom_event.pb.h"
 #endif
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(gadgets_profile, CONFIG_BT_ALEXA_GADGETS_PROFILE_LOG_LEVEL);
 
 #if IS_ENABLED(CONFIG_BT_ALEXA_GADGETS_OTA)

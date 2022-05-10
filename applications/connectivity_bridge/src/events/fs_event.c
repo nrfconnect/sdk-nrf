@@ -8,7 +8,7 @@
 #include <assert.h>
 
 #include <fs_event.h>
-#include <fs/fs.h>
+#include <zephyr/fs/fs.h>
 
 static void log_fs_event(const struct app_event_header *aeh)
 {

@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include <getopt.h>
 #include <net/nrf_cloud.h>
 #if defined(CONFIG_NRF_CLOUD_REST)

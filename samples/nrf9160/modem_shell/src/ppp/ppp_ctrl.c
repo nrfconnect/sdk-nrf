@@ -4,30 +4,30 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
 #include <assert.h>
 
 #include <modem/lte_lc.h>
 
-#include <net/ppp.h>
+#include <zephyr/net/ppp.h>
 
-#include <net/net_ip.h>
-#include <net/net_if.h>
+#include <zephyr/net/net_ip.h>
+#include <zephyr/net/net_if.h>
 
-#include <net/net_event.h>
-#include <net/net_mgmt.h>
+#include <zephyr/net/net_event.h>
+#include <zephyr/net/net_mgmt.h>
 
-#include <posix/unistd.h>
-#include <posix/netdb.h>
+#include <zephyr/posix/unistd.h>
+#include <zephyr/posix/netdb.h>
 
-#include <net/ethernet.h>
+#include <zephyr/net/ethernet.h>
 
-#include <posix/poll.h>
-#include <posix/sys/socket.h>
-#include <shell/shell.h>
+#include <zephyr/posix/poll.h>
+#include <zephyr/posix/sys/socket.h>
+#include <zephyr/shell/shell.h>
 
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #include "link_api.h"
 #include "mosh_print.h"

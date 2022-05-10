@@ -6,7 +6,7 @@
 
 #include <string.h>
 #include <stdbool.h>
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #include <zephyr/types.h>
 #include <errno.h>
 

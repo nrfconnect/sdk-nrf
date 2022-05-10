@@ -5,8 +5,8 @@
  */
 
 #include <date_time.h>
-#include <posix/time.h>
-#include <logging/log.h>
+#include <zephyr/posix/time.h>
+#include <zephyr/logging/log.h>
 #include <modem/at_monitor.h>
 #include <modem/lte_lc.h>
 

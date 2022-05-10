@@ -7,10 +7,10 @@
 #include <assert.h>
 #include <limits.h>
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <zephyr/types.h>
 
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 
 #include <bluetooth/services/hids.h>
 
@@ -25,7 +25,7 @@
 #define MODULE hids
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_HIDS_LOG_LEVEL);
 
 #define BASE_USB_HID_SPEC_VERSION   0x0101

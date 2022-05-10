@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <drivers/flash.h>
-#include <logging/log.h>
+#include <zephyr/drivers/flash.h>
+#include <zephyr/logging/log.h>
 #include <dfu/fmfu_fdev.h>
 #include <nrf_modem_full_dfu.h>
 #include <mbedtls/sha256.h>

@@ -6,10 +6,10 @@
 
 #include <stdio.h>
 #include <bluetooth/mesh/models.h>
-#include <sys/byteorder.h>
-#include <sys/util.h>
-#include <sys/math_extras.h>
-#include <random/rand32.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/sys/math_extras.h>
+#include <zephyr/random/rand32.h>
 #include "model_utils.h"
 #include "time_util.h"
 #include "scheduler_internal.h"

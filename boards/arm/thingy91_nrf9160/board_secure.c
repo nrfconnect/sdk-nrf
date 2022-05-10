@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <init.h>
+#include <zephyr/init.h>
 #include <adp536x.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(board_secure, CONFIG_BOARD_LOG_LEVEL);
 
 #define ADP536X_I2C_DEV_NAME	DT_LABEL(DT_NODELABEL(i2c2))

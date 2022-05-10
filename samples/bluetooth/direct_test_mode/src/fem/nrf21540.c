@@ -5,14 +5,14 @@
  */
 #include <string.h>
 
-#include <init.h>
-#include <device.h>
-#include <drivers/gpio.h>
-#include <drivers/spi.h>
-#include <drivers/pinctrl.h>
-#include <pm/device.h>
+#include <zephyr/init.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/drivers/spi.h>
+#include <zephyr/drivers/pinctrl.h>
+#include <zephyr/pm/device.h>
 #include <soc.h>
-#include <sys/__assert.h>
+#include <zephyr/sys/__assert.h>
 
 #include <hal/nrf_gpio.h>
 #include <hal/nrf_gpiote.h>

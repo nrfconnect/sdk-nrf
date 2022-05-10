@@ -5,9 +5,9 @@
  */
 
 #include <date_time.h>
-#include <device.h>
-#include <sys/timeutil.h>
-#include <logging/log.h>
+#include <zephyr/device.h>
+#include <zephyr/sys/timeutil.h>
+#include <zephyr/logging/log.h>
 
 #include "date_time_core.h"
 

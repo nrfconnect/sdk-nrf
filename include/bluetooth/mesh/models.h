@@ -7,15 +7,15 @@
 #ifndef BT_MESH_MODELS_H__
 #define BT_MESH_MODELS_H__
 
-#include <bluetooth/mesh.h>
+#include <zephyr/bluetooth/mesh.h>
 
 #include <bluetooth/mesh/model_types.h>
 
 /* Foundation models */
-#include <bluetooth/mesh/cfg_cli.h>
-#include <bluetooth/mesh/cfg_srv.h>
-#include <bluetooth/mesh/health_cli.h>
-#include <bluetooth/mesh/health_srv.h>
+#include <zephyr/bluetooth/mesh/cfg_cli.h>
+#include <zephyr/bluetooth/mesh/cfg_srv.h>
+#include <zephyr/bluetooth/mesh/health_cli.h>
+#include <zephyr/bluetooth/mesh/health_srv.h>
 
 /* Generic models */
 #include <bluetooth/mesh/gen_onoff_srv.h>

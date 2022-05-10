@@ -6,9 +6,9 @@
 
 #include <string.h>
 #include <stdio.h>
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <modem/sms.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include "sms_deliver.h"
 #include "sms_internal.h"

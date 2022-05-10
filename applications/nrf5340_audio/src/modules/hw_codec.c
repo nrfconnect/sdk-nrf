@@ -6,11 +6,11 @@
 
 #include "hw_codec.h"
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <drivers/gpio.h>
-#include <device.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/device.h>
 
 #include "macros_common.h"
 #include "cs47l63.h"
@@ -18,7 +18,7 @@
 #include "cs47l63_reg_conf.h"
 #include "cs47l63_comm.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(HW_CODEC, CONFIG_LOG_HW_CODEC_LEVEL);
 
 #define VOLUME_ADJUST_STEP_DB 3

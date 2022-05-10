@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <modem/nrf_modem_lib.h>
 #include <dfu/dfu_target_full_modem.h>
 #include <net/fota_download.h>
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include <nrf_modem_full_dfu.h>
 #include <modem/modem_info.h>
 #include <dfu/fmfu_fdev.h>
-#include <drivers/gpio.h>
-#include <device.h>
-#include <devicetree.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
 #include <stdio.h>
 #include <string.h>
 #include <update.h>

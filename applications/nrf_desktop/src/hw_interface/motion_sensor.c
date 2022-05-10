@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <sys/atomic.h>
-#include <spinlock.h>
-#include <sys/byteorder.h>
-#include <settings/settings.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/atomic.h>
+#include <zephyr/spinlock.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/settings/settings.h>
 
-#include <device.h>
-#include <drivers/sensor.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/sensor.h>
 
 #include "motion_sensor.h"
 
@@ -25,7 +25,7 @@
 #define MODULE motion
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 
 

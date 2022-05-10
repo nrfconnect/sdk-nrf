@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include <net/buf.h>
+#include <zephyr/net/buf.h>
 
 #include <nfc/ndef/ch.h>
 #include <nfc/tnep/ch.h>

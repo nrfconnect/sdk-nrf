@@ -5,7 +5,7 @@
  */
 
 #include <bluetooth/conn_ctx.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(bt_conn_ctx, CONFIG_BT_CONN_CTX_LOG_LEVEL);
 

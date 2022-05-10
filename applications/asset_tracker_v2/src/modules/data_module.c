@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <app_event_manager.h>
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 #include <date_time.h>
 #include <modem/modem_info.h>
 #if defined(CONFIG_NRF_CLOUD_AGPS)
@@ -31,7 +31,7 @@
 #include "events/ui_module_event.h"
 #include "events/util_module_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DATA_MODULE_LOG_LEVEL);
 
 #define DEVICE_SETTINGS_KEY			"data_module"

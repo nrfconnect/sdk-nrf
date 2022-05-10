@@ -8,7 +8,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <stddef.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include "common_test.h"
 #include <mbedtls/md.h>

@@ -6,9 +6,9 @@
 
 #include <stdlib.h>
 
-#include <zephyr.h>
-#include <device.h>
-#include <shell/shell.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/device.h>
+#include <zephyr/shell/shell.h>
 #include <modem/lte_lc.h>
 
 #if defined(CONFIG_LWM2M_CARRIER)
@@ -21,7 +21,7 @@
 #include "sock/sock_shell.h"
 #endif
 #if defined(CONFIG_MOSH_IPERF3)
-#include <posix/sys/select.h>
+#include <zephyr/posix/sys/select.h>
 #include <iperf_api.h>
 #endif
 #if defined(CONFIG_MOSH_LINK)

@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdio.h>
 #include <string.h>
-#include <init.h>
+#include <zephyr/init.h>
 #include <modem/lte_lc_trace.h>
 #include <memfault_ncs.h>
 
@@ -21,7 +21,7 @@
 #include <memfault/http/http_client.h>
 #include <memfault/ports/zephyr/http.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(memfault_ncs, CONFIG_MEMFAULT_NCS_LOG_LEVEL);
 

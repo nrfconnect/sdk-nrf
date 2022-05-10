@@ -5,7 +5,7 @@
  */
 
 #include <stdio.h>
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <modem/lte_lc.h>
 
 #define MODULE net_state
@@ -13,7 +13,7 @@
 #include <caf/events/power_manager_event.h>
 #include <caf/events/net_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_NET_STATE_LTE_LOG_LEVEL);
 
 static struct k_work_delayable connecting_work;

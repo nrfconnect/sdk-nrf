@@ -6,9 +6,9 @@
 
 #include <zephyr/types.h>
 
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 #include <bluetooth/scan.h>
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #include <string.h>
 
@@ -19,7 +19,7 @@
 
 #include "ble_scan_def.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
 
 #define SCAN_TRIG_CHECK_MS    (1 * MSEC_PER_SEC)

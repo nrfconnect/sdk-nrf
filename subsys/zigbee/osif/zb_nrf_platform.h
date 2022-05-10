@@ -12,7 +12,7 @@
 #define ZB_NRF_PLATFORM_H__
 
 #include <zboss_api.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 
 typedef enum {
 	ZIGBEE_EVENT_TX_FAILED,

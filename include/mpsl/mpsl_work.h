@@ -20,7 +20,7 @@
 extern "C" {
 #endif
 
-#include <kernel.h>
+#include <zephyr/kernel.h>
 
 extern struct k_work_q mpsl_work_q;
 

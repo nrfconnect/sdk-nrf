@@ -11,8 +11,8 @@
 extern "C" {
 #endif
 
-#include <device.h>
-#include <drivers/sensor.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/sensor.h>
 
 enum act_type {
 	ACT_TYPE_PERC,

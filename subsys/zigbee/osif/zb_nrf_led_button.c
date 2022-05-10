@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #include <dk_buttons_and_leds.h>
-#include <drivers/pwm.h>
+#include <zephyr/drivers/pwm.h>
 #include <zboss_api.h>
 #include <zb_led_button.h>
 

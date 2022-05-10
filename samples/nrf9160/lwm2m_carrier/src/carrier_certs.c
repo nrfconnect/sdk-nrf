@@ -6,9 +6,9 @@
 
 #include <stdint.h>
 #include <string.h>
-#include <toolchain.h>
-#include <sys/util.h>
-#include <sys/printk.h>
+#include <zephyr/toolchain.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/sys/printk.h>
 #include <modem/modem_key_mgmt.h>
 #include "carrier_certs.h"
 

@@ -7,7 +7,7 @@
 #ifndef SHELL_IPC_H_
 #define SHELL_IPC_H_
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 
 /**
  * @file

@@ -6,10 +6,10 @@
 
 #include "app_task.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #ifdef CONFIG_USB_DEVICE_STACK
-#include <usb/usb_device.h>
+#include <zephyr/usb/usb_device.h>
 #endif
 
 LOG_MODULE_REGISTER(app);

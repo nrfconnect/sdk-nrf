@@ -7,7 +7,7 @@
 #include <ztest.h>
 #include <zboss_api.h>
 
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <zb_nrf_platform.h>
 
 

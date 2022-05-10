@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <ztest.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <stddef.h>
-#include <sys/util.h>
-#include <bluetooth/uuid.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/bluetooth/uuid.h>
 #include <bluetooth/gatt_dm.h>
 #include "../mock/gatt_discover_mock.h"
 

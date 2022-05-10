@@ -6,16 +6,16 @@
 
 #include "board_version.h"
 
-#include <zephyr.h>
-#include <drivers/adc.h>
-#include <drivers/gpio.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/drivers/adc.h>
+#include <zephyr/drivers/gpio.h>
 #include <stdlib.h>
 #include <nrfx_saadc.h>
 
 #include "board.h"
 #include "macros_common.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(board_version, CONFIG_LOG_BOARD_VERSION_LEVEL);
 
 #define ADC_1ST_CHANNEL_ID 0

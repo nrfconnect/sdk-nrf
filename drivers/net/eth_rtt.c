@@ -32,21 +32,21 @@
 #define LOG_MODULE_NAME eth_rtt
 #define LOG_LEVEL CONFIG_ETH_RTT_LOG_LEVEL
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 #include <stdio.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <net/ethernet.h>
-#include <net/buf.h>
-#include <net/net_pkt.h>
-#include <net/net_if.h>
-#include <net/net_core.h>
-#include <net/ethernet.h>
-#include <sys/crc.h>
-#include <random/rand32.h>
+#include <zephyr/net/ethernet.h>
+#include <zephyr/net/buf.h>
+#include <zephyr/net/net_pkt.h>
+#include <zephyr/net/net_if.h>
+#include <zephyr/net/net_core.h>
+#include <zephyr/net/ethernet.h>
+#include <zephyr/sys/crc.h>
+#include <zephyr/random/rand32.h>
 #include <SEGGER_RTT.h>
 
 /** RTT channel name used to identify Ethernet transfer channel. */
