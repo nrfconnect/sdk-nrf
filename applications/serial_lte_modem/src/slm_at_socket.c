@@ -757,9 +757,9 @@ static int do_recv(int timeout)
 	if (ret == 0) {
 		LOG_WRN("recv() return 0");
 	} else {
-		rsp_send(rx_data, ret);
 		sprintf(rsp_buf, "\r\n#XRECV: %d\r\n", ret);
 		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send(rx_data, ret);
 		ret = 0;
 	}
 
@@ -888,9 +888,9 @@ static int do_recvfrom(int timeout)
 			(void)inet_ntop(AF_INET6, &((struct sockaddr_in6 *)&remote)->sin6_addr,
 			    peer_addr, sizeof(peer_addr));
 		}
-		rsp_send(rx_data, ret);
 		sprintf(rsp_buf, "\r\n#XRECVFROM: %d,\"%s\"\r\n", ret, peer_addr);
 		rsp_send(rsp_buf, strlen(rsp_buf));
+		rsp_send(rx_data, ret);
 	}
 
 	return 0;

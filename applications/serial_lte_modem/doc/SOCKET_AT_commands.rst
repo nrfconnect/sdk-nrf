@@ -956,8 +956,8 @@ Response syntax
 
 ::
 
-   <data>
    #XRECV: <size>
+   <data>
 
 * The ``<data>`` value is a string that contains the data being received.
 * The ``<size>`` value is an integer that represents the actual number of bytes received.
@@ -968,8 +968,8 @@ Examples
 ::
 
    AT#XRECV=10
-   Test OK
    #XRECV: 7
+   Test OK
    OK
 
 Read command
@@ -1063,8 +1063,8 @@ Response syntax
 
 ::
 
-   <data>
    #XRECVFROM: <size>,<ip_addr>
+   <data>
 
 * The ``<data>`` value is a string that contains the data being received.
 * The ``<size>`` value is an integer that represents the actual number of bytes received.
@@ -1076,8 +1076,8 @@ Examples
 ::
 
    AT#XRECVFROM=10
-   Test OK
    #XRECVFROM: 7,"192.168.1.100"
+   Test OK
    OK
 
 Read command

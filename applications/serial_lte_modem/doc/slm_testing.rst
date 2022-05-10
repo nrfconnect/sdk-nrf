@@ -136,8 +136,8 @@ TCP client
          OK
 
          **AT#XRECV=0**
-         PONG: 'Test TCP'
          #XRECV: 17
+         PONG: 'Test TCP'
          OK
 
    #. Close the socket and confirm its state.
@@ -200,16 +200,16 @@ TCP client
          :class: highlight
 
          **AT#XRECV=0**
+         #XRECV: 576
          HTTP/1.1 200 OK
          Content-Type: text/html; charset=ISO-8859-1
          *[...]*
-         #XRECV: 576
          OK
 
          **AT#XRECV=0**
+         #XRECV:147
          *[...]*
          Connection: close
-         #XRECV:147
          OK
 
    #. Close the socket.
@@ -337,8 +337,8 @@ UDP client
          #XSENDTO: 8
          OK
          **AT#XRECVFROM=0**
-         PONG: Test UDP
          #XRECVFROM: 14
+         PONG: Test UDP
          OK
 
    #. Close the socket.
@@ -376,8 +376,8 @@ UDP client
          OK
 
          **AT#XRECV=0**
-         PONG: Test UDP
          #XRECV: 14
+         PONG: Test UDP
          OK
 
    #. Close the socket.
@@ -512,8 +512,8 @@ You must register the corresponding credentials on the server side.
          OK
 
          **AT#XRECV=0**
-         PONG: b'Test TLS client'
          #XRECV: 24
+         PONG: b'Test TLS client'
          OK
 
    #. Close the socket.
@@ -622,8 +622,8 @@ You must register the same PSK and PSK identity on the server side.
 		 OK
 
 		 **AT#XRECV=0**
-		 PONG: b'Test DTLS client'
 		 #XRECV: 25
+		 PONG: b'Test DTLS client'
 		 OK
 
    #. Close the socket.
@@ -738,8 +738,8 @@ To act as a TCP server, |global_private_address|
          OK
 
          **AT#XRECV=0**
-         Hello, TCP#1!Hello, TCP#2!
          #XRECV: 26
+         Hello, TCP#1!Hello, TCP#2!
          OK
 
          **AT#XSEND="TCP1/2 received"**
@@ -747,8 +747,8 @@ To act as a TCP server, |global_private_address|
          OK
 
          **AT#XRECV=0**
-         Hello, TCP#3!Hello, TCP#4!Hello, TCP#5!
          #XRECV: 39
+         Hello, TCP#3!Hello, TCP#4!Hello, TCP#5!
          OK
 
          **AT#XSEND="TCP3/4/5 received"**
@@ -1009,13 +1009,13 @@ To act as a UDP server, |global_private_address|
          :class: highlight
 
          **AT#XRECVFROM=0**
-         Hello, UDP#1!
          #XRECVFROM: 13
+         Hello, UDP#1!
          OK
 
          **AT#XRECVFROM=0**
-         Hello, UDP#2!
          #XRECVFROM: 13
+         Hello, UDP#2!
          OK
 
          **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,"UDP1/2 received"**
@@ -1023,18 +1023,18 @@ To act as a UDP server, |global_private_address|
          OK
 
          **AT#XRECVFROM=0**
+         #XRECVFROM: 13
          Hello, UDP#3!
-         #XRECVFROM: 13
          OK
 
          **AT#XRECVFROM=0**
+         #XRECVFROM: 13
          Hello, UDP#4!
-         #XRECVFROM: 13
          OK
 
          **AT#XRECVFROM=0**
-         Hello, UDP#5!
          #XRECVFROM: 13
+         Hello, UDP#5!
          OK
 
          **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,"UDP3/4/5 received"**
