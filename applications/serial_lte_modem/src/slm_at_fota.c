@@ -188,8 +188,9 @@ static int do_fota_start(int op, const char *file_uri, int sec_tag,
 	}
 	memset(path, 0x00, SLM_MAX_URL);
 	if (parser.field_set & (1 << UF_PATH)) {
-		strncpy(path, file_uri + parser.field_data[UF_PATH].off,
-			parser.field_data[UF_PATH].len);
+		/* Remove the leading '/' as some HTTP servers don't like it */
+		strncpy(path, file_uri + parser.field_data[UF_PATH].off + 1,
+			parser.field_data[UF_PATH].len - 1);
 	} else {
 		LOG_ERR("Parse path error");
 		return -EINVAL;
