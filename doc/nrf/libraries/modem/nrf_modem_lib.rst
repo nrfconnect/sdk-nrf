@@ -101,6 +101,29 @@ If the modem trace medium is unable to keep up with the modem traces, the heap s
 Increasing the heap size allows more traces in the FIFO queue, but the trace heap will still be depleted if the modem continues to send traces at a rate faster than the rate at which the medium can handle over time.
 If increasing the trace heap size does not help, either optimize the medium speed or use a faster trace transport medium.
 
+Modem fault handling
+********************
+If a fault occurs in the modem, the application is notified through the fault handler function that is registered with the Modem library during initialization.
+This enables the application to read the fault reason (in some cases the modem's program counter) and take appropriate action.
+
+On initialization, the Modem library integration layer registers the :c:func:`nrf_modem_fault_handler` function through the Modem library initialization parameters.
+The behavior of the :c:func:`nrf_modem_fault_handler` function is controlled with the :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT` Kconfig option.
+The Modem library integration layer provides the following three options for :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT` Kconfig option:
+
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_DO_NOTHING` - This is the default Kconfig option that lets the fault handler log the Modem fault and return.
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM`- This Kconfig option schedules a workqueue task to reinitialize the modem and Modem library.
+* :kconfig:option:`CONFIG_NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC`- This Kconfig option results in a call to the :c:func:`nrf_modem_fault_handler` function that is defined in the application, outside of the Modem library integration layer.
+
+Implementing a custom fault handler
+===================================
+
+If you want to implement a custom fault handler, consider the following points:
+
+* The fault handler is called in an interrupt context and must be as short as possible.
+* Reinitialization of the Modem library must be done outside of the fault handler.
+* If the modem trace is enabled, the modem sends a coredump through the trace medium on modem failure.
+  To ensure correct trace output, the modem must not be reinitialized before all trace data is handled.
+
 .. _partition_mgr_integration:
 
 Partition manager integration

@@ -53,12 +53,6 @@ static void indicate_wk(struct k_work *work);
 
 BUILD_ASSERT(CONFIG_SLM_WAKEUP_PIN >= 0, "Wake up pin not configured");
 
-/**@brief Recoverable modem library error. */
-void nrf_modem_recoverable_error_handler(uint32_t err)
-{
-	LOG_ERR("Modem library recoverable error: %u", err);
-}
-
 static int ext_xtal_control(bool xtal_on)
 {
 	int err = 0;

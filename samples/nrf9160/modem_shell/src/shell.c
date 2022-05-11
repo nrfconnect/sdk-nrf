@@ -10,6 +10,7 @@
 #include <zephyr/device.h>
 #include <zephyr/shell/shell.h>
 #include <modem/lte_lc.h>
+#include <modem/nrf_modem_lib.h>
 
 #if defined(CONFIG_LWM2M_CARRIER)
 #include <lwm2m_carrier.h>
@@ -47,13 +48,6 @@
 
 extern struct k_sem nrf_modem_lib_initialized;
 extern struct k_poll_signal mosh_signal;
-/**
- * @brief Overriding modem library error handler.
- */
-void nrf_modem_recoverable_error_handler(uint32_t error)
-{
-	mosh_error("modem lib recoverable error: %u\n", error);
-}
 
 #if defined(CONFIG_LWM2M_CARRIER)
 void lwm2m_print_err(const lwm2m_carrier_event_t *evt)

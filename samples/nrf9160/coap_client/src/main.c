@@ -27,16 +27,6 @@ static uint16_t next_token;
 
 static uint8_t coap_buf[APP_COAP_MAX_MSG_LEN];
 
-#if defined(CONFIG_NRF_MODEM_LIB)
-
-/**@brief Recoverable modem library error. */
-void nrf_modem_recoverable_error_handler(uint32_t err)
-{
-	printk("Modem library recoverable error: %u\n", (unsigned int)err);
-}
-
-#endif /* defined(CONFIG_NRF_MODEM_LIB) */
-
 /**@brief Resolves the configured hostname. */
 static int server_resolve(void)
 {

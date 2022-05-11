@@ -51,15 +51,6 @@ static bool do_reboot;
 /* Set to true when application should reconnect the LTE link*/
 static bool link_offline;
 
-#if defined(CONFIG_NRF_MODEM_LIB)
-/**@brief Recoverable modem library error. */
-void nrf_modem_recoverable_error_handler(uint32_t err)
-{
-	printk("Modem library recoverable error: %u\n", err);
-}
-
-#endif /* defined(CONFIG_NRF_MODEM_LIB) */
-
 /**@brief Function to print strings without null-termination. */
 static void data_print(uint8_t *prefix, uint8_t *data, size_t len)
 {

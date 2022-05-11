@@ -144,10 +144,10 @@ void nrf_cloud_error_handler(int err)
 	error_handler(ERROR_NRF_CLOUD, err);
 }
 
-/**@brief Recoverable modem library error. */
-void nrf_modem_recoverable_error_handler(uint32_t err)
+/**@brief Modem fault handler. */
+void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info)
 {
-	error_handler(ERROR_MODEM_RECOVERABLE, (int)err);
+	error_handler(ERROR_MODEM_RECOVERABLE, (int)fault_info->reason);
 }
 
 /**@brief Request assisted GPS data from nRF Cloud. */

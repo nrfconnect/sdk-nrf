@@ -25,12 +25,6 @@ static struct k_work fota_work;
 static update_start_cb update_start;
 static char filename[128] = {0};
 
-/**@brief Recoverable modem library error. */
-void nrf_modem_recoverable_error_handler(uint32_t err)
-{
-	printk("Modem library recoverable error: %u\n", err);
-}
-
 int cert_provision(void)
 {
 	static const char cert[] = {

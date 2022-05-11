@@ -125,7 +125,7 @@ config NRF_MODEM_LIB_SHMEM_RX_SIZE
 	  This area holds all incoming data from the modem, plus the modem's own control structures.
 
 config NRF_MODEM_LIB_SHMEM_TRACE_SIZE_OVERRIDE
-	bool "Custom Trace region size"
+	bool "Custom trace region size"
 	depends on NRF_MODEM_LIB_TRACE_ENABLED
 	help
 	  Override the default size of the Trace region (16384 bytes).
@@ -152,6 +152,30 @@ config NRF_MODEM_LIB_TRACE_HEAP_SIZE
 	  Size of the heap buffer used for modem traces.
 	  This heap is allocated in the application's RAM.
 
+choice NRF_MODEM_LIB_ON_FAULT
+	prompt "Action on modem fault"
+	default NRF_MODEM_LIB_ON_FAULT_DO_NOTHING
+
+config NRF_MODEM_LIB_ON_FAULT_DO_NOTHING
+	bool "Do nothing"
+	help
+	  Do nothing but log the fault if the application is notified of a fault in the modem.
+
+config NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
+	bool "Reset modem"
+	help
+	  If the application is notified of a fault in the modem it will shut down and reinitialize
+	  the modem and modem library. The reinitialization will destroy all sockets and state of
+	  the modem, and it is up to the application to recover properly.
+
+config NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC
+	bool "Application defined"
+	help
+	  If the application is notified of a fault in the modem it will call an application
+	  specific handler named nrf_modem_fault_handler.
+
+endchoice # NRF_MODEM_LIB_ON_FAULT
+
 menu "Diagnostics"
 
 config NRF_MODEM_LIB_DEBUG_ALLOC
@@ -167,6 +191,16 @@ config NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
 
 config NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS
 	depends on NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
+	int "Period (millisec)"
+	default 20000
+
+config NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC
+	bool "Periodically dump trace heap contents"
+	depends on NRF_MODEM_LIB_TRACE_ENABLED
+
+config NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIOD_MS
+	depends on NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC
+	depends on NRF_MODEM_LIB_TRACE_ENABLED
 	int "Period (millisec)"
 	default 20000
 

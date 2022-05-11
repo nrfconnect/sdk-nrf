@@ -11,12 +11,6 @@
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 
-/**@brief Recoverable modem library error. */
-void nrf_modem_recoverable_error_handler(uint32_t err)
-{
-	printk("Modem library recoverable error: %u\n", err);
-}
-
 /* To strictly comply with UART timing, enable external XTAL oscillator */
 void enable_xtal(void)
 {
