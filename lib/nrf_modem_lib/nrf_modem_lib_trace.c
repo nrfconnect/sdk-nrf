@@ -57,7 +57,10 @@ K_FIFO_DEFINE(trace_fifo);
 
 static void trace_processed_callback(const uint8_t *data, uint32_t len)
 {
-	int err = nrf_modem_trace_processed_callback(data, len);
+	int err;
+
+	err = nrf_modem_trace_processed_callback(data, len);
+	(void) err;
 
 	__ASSERT(err == 0, "nrf_modem_trace_processed_callback returns error %d for "
 						"data = %p, len = %d", err, data, len);

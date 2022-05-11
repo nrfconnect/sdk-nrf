@@ -41,10 +41,9 @@
    larger buffers can help further, but this is deemed a fair memory/speed
    compromise. */
 #if defined(CONFIG_NRF_CURL_INTEGRATION)
-#include <nrf_modem_limits.h>
 /* In embedded this needs to be a lot of smaller */
 #define UPLOADBUFFER_DEFAULT (708)
-#define UPLOADBUFFER_MAX (NRF_MODEM_IP_MAX_MESSAGE_SIZE)
+#define UPLOADBUFFER_MAX (CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE)
 #define UPLOADBUFFER_MIN (CURL_MAX_WRITE_SIZE)
 #else
 #define UPLOADBUFFER_DEFAULT 65536

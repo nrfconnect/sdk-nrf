@@ -82,11 +82,6 @@ BUILD_ASSERT((sizeof(CONFIG_GNSS_SAMPLE_REFERENCE_LATITUDE) == 1 &&
 	     "CONFIG_GNSS_SAMPLE_REFERENCE_LATITUDE and "
 	     "CONFIG_GNSS_SAMPLE_REFERENCE_LONGITUDE must be both either set or empty");
 
-void nrf_modem_recoverable_error_handler(uint32_t error)
-{
-	LOG_ERR("Modem library recoverable error: %u", error);
-}
-
 /* Returns the distance between two coordinates in meters. The distance is calculated using the
  * haversine formula.
  */

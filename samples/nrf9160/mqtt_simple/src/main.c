@@ -77,16 +77,6 @@ static int certificates_provision(void)
 }
 #endif /* defined(CONFIG_MQTT_LIB_TLS) */
 
-#if defined(CONFIG_NRF_MODEM_LIB)
-
-/**@brief Recoverable modem library error. */
-void nrf_modem_recoverable_error_handler(uint32_t err)
-{
-	LOG_ERR("Modem library recoverable error: %u", (unsigned int)err);
-}
-
-#endif /* defined(CONFIG_NRF_MODEM_LIB) */
-
 #if defined(CONFIG_LWM2M_CARRIER)
 K_SEM_DEFINE(carrier_registered, 0, 1);
 int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)

@@ -10,13 +10,7 @@
 #endif /* CONFIG_LWM2M_CARRIER */
 #include <zephyr/kernel.h>
 
-
 #ifdef CONFIG_LWM2M_CARRIER
-void nrf_modem_recoverable_error_handler(uint32_t err)
-{
-	printk("Modem library recoverable error: %u\n", (unsigned int)err);
-}
-
 void print_err(const lwm2m_carrier_event_t *evt)
 {
 	const lwm2m_carrier_event_error_t *err =

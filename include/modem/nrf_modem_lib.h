@@ -143,6 +143,14 @@ void nrf_modem_lib_shm_tx_diagnose(void);
  */
 void nrf_modem_lib_heap_diagnose(void);
 
+/**
+ * @brief Modem fault handler.
+ *
+ * @param[in] fault_info Modem fault information.
+ *			 Contains the fault reason and, in some cases, the modem program counter.
+ */
+void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info);
+
 /** @} */
 
 #ifdef __cplusplus

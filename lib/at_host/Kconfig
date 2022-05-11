@@ -78,7 +78,6 @@ config AT_HOST_CMD_MAX_LEN
 	help
 		The maximum allowed length of an AT command passed through the
 		AT host. The space is allocated statically.
-		This limit is in turn limited by Modem library's NRF_MODEM_AT_MAX_CMD_SIZE.
 	range 0 4096
 	default 4096
 
