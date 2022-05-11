@@ -50,7 +50,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 8e883581d322f9212f50cfb15f686873a96d6a29
+      revision: 482dcc7865f7d3a458f061a1d8276c5801eed1e4
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -144,7 +144,7 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: e28ed162d1e70d3e7dbe6637db6ac6809d6696d4
+      revision: 3754aed2b8e2425162bf250028f66de22c417dc0
       groups:
       - homekit
     - name: find-my
