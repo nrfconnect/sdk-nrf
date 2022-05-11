@@ -349,6 +349,10 @@ static void zboss_thread(void *arg1, void *arg2, void *arg3)
 
 zb_ret_t zigbee_schedule_callback(zb_callback_t func, zb_uint8_t param)
 {
+	if ((zboss_tid) && (k_current_get() == zboss_tid) && (!zb_osif_is_inside_isr())) {
+		return zb_schedule_app_callback(func, param);
+	}
+
 	zb_app_cb_t new_app_cb = {
 		.type = ZB_CALLBACK_TYPE_SINGLE_PARAM,
 		.func = func,
@@ -367,6 +371,10 @@ zb_ret_t zigbee_schedule_callback2(zb_callback2_t func,
 				   zb_uint8_t param,
 				   zb_uint16_t user_param)
 {
+	if ((zboss_tid) && (k_current_get() == zboss_tid) && (!zb_osif_is_inside_isr())) {
+		return zb_schedule_app_callback2(func, param, user_param);
+	}
+
 	zb_app_cb_t new_app_cb = {
 		.type = ZB_CALLBACK_TYPE_TWO_PARAMS,
 		.func2 = func,
@@ -386,6 +394,10 @@ zb_ret_t zigbee_schedule_alarm(zb_callback_t func,
 			       zb_uint8_t param,
 			       zb_time_t run_after)
 {
+	if ((zboss_tid) && (k_current_get() == zboss_tid) && (!zb_osif_is_inside_isr())) {
+		return zb_schedule_app_alarm(func, param, run_after);
+	}
+
 	zb_app_cb_t new_app_cb = {
 		.type = ZB_CALLBACK_TYPE_ALARM_SET,
 		.func = func,
@@ -404,6 +416,10 @@ zb_ret_t zigbee_schedule_alarm(zb_callback_t func,
 
 zb_ret_t zigbee_schedule_alarm_cancel(zb_callback_t func, zb_uint8_t param)
 {
+	if ((zboss_tid) && (k_current_get() == zboss_tid) && (!zb_osif_is_inside_isr())) {
+		return zb_schedule_alarm_cancel(func, param, NULL);
+	}
+
 	zb_app_cb_t new_app_cb = {
 		.type = ZB_CALLBACK_TYPE_ALARM_CANCEL,
 		.func = func,
@@ -420,6 +436,10 @@ zb_ret_t zigbee_schedule_alarm_cancel(zb_callback_t func, zb_uint8_t param)
 
 zb_ret_t zigbee_get_out_buf_delayed(zb_callback_t func)
 {
+	if ((zboss_tid) && (k_current_get() == zboss_tid) && (!zb_osif_is_inside_isr())) {
+		return zb_buf_get_out_delayed_func(func);
+	}
+
 	zb_app_cb_t new_app_cb = {
 		.type = ZB_GET_OUT_BUF_DELAYED,
 		.func = func,
@@ -435,6 +455,10 @@ zb_ret_t zigbee_get_out_buf_delayed(zb_callback_t func)
 
 zb_ret_t zigbee_get_in_buf_delayed(zb_callback_t func)
 {
+	if ((zboss_tid) && (k_current_get() == zboss_tid) && (!zb_osif_is_inside_isr())) {
+		return zb_buf_get_in_delayed_func(func);
+	}
+
 	zb_app_cb_t new_app_cb = {
 		.type = ZB_GET_IN_BUF_DELAYED,
 		.func = func,
@@ -451,6 +475,10 @@ zb_ret_t zigbee_get_in_buf_delayed(zb_callback_t func)
 zb_ret_t zigbee_get_out_buf_delayed_ext(zb_callback2_t func, zb_uint16_t param,
 					zb_uint16_t max_size)
 {
+	if ((zboss_tid) && (k_current_get() == zboss_tid) && (!zb_osif_is_inside_isr())) {
+		return zb_buf_get_out_delayed_ext_func(func, param, max_size);
+	}
+
 	zb_app_cb_t new_app_cb = {
 		.type = ZB_GET_OUT_BUF_DELAYED_EXT,
 		.func2 = func,
@@ -469,6 +497,10 @@ zb_ret_t zigbee_get_out_buf_delayed_ext(zb_callback2_t func, zb_uint16_t param,
 zb_ret_t zigbee_get_in_buf_delayed_ext(zb_callback2_t func, zb_uint16_t param,
 					zb_uint16_t max_size)
 {
+	if ((zboss_tid) && (k_current_get() == zboss_tid) && (!zb_osif_is_inside_isr())) {
+		return zb_buf_get_in_delayed_ext_func(func, param, max_size);
+	}
+
 	zb_app_cb_t new_app_cb = {
 		.type = ZB_GET_IN_BUF_DELAYED_EXT,
 		.func2 = func,

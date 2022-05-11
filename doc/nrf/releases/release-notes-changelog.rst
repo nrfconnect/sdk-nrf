@@ -711,6 +711,8 @@ Libraries for Zigbee
 
       * Crypto library used for performing software AES ecryption.
         Now, the :ref:`nrfxlib:nrf_oberon_readme` is used instead of the Tinycrypt library.
+      * Optimize calling ZBOSS API in |NCS| platform.
+        If the ZBOSS API is called in the ZBOSS thread context, processing by the workqueue is now skipped.
 
   * :ref:`lib_zigbee_fota`:
 
