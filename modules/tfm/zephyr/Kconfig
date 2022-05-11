@@ -68,23 +68,23 @@ config TFM_UART0_CTS_PIN
 	        TF-M regression tests.
 
 config TFM_UART1_TXD_PIN
-	int "UART0 TXD pin"
+	int "UART1 TXD pin"
 	depends on TFM_SECURE_UART1
 	default 1 if BOARD_NRF9160DK_NRF9160_NS
 	default 25 if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
 	default 4294967295 # 0xffffffff i.e. disconnected
 	help
-	  The GPIO pin the TFM build system will use for UART0 TXD pin.
-	  UART0 is used by TF-M as the log output for the secure image.
+	  The GPIO pin the TFM build system will use for UART1 TXD pin.
+	  UART1 is used by TF-M as the log output for the secure image.
 
 config TFM_UART1_RXD_PIN
-	int "UART0 TXD pin"
+	int "UART1 TXD pin"
 	depends on TFM_SECURE_UART1
 	default 0 if BOARD_NRF9160DK_NRF9160_NS
 	default 26 if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
 	default 4294967295 # 0xffffffff i.e. disconnected
 	help
-	  The GPIO pin the TFM build system will use for UART0 TXD pin.
-	  UART0 is used by TF-M as the log output for the secure image.
+	  The GPIO pin the TFM build system will use for UART1 TXD pin.
+	  UART1 is used by TF-M as the log output for the secure image.
 
 endif # BUILD_WITH_TFM
