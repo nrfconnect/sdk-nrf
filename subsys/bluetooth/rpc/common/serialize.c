@@ -9,36 +9,30 @@
 #include "cbkproxy.h"
 #include "serialize.h"
 
-#define ENCODER_FLAGS_INVALID 0x7FFFFFFF
-
-static inline bool is_decoder_invalid(CborValue *value)
+static inline bool is_decoder_invalid(const struct nrf_rpc_cbor_ctx *ctx)
 {
-	return !value->parser;
+	/* The logic is reversed */
+	return !zcbor_check_error(ctx->zs);
 }
 
-void ser_decoder_invalid(CborValue *value, CborError err)
+void ser_decoder_invalid(struct nrf_rpc_cbor_ctx *ctx, int err)
 {
-	if (is_decoder_invalid(value)) {
-		return;
-	}
-
-	value->parser = NULL;
-	value->offset = err;
+	zcbor_error(ctx->zs, err);
 }
 
-static inline bool is_encoder_invalid(CborEncoder *encoder)
+static inline bool is_encoder_invalid(const struct nrf_rpc_cbor_ctx *ctx)
 {
-	return encoder->flags == ENCODER_FLAGS_INVALID;
+	return !zcbor_check_error(ctx->zs);
 }
 
-static void set_encoder_invalid(CborEncoder *encoder, CborError err)
+static inline bool is_decoder_invalid(const struct nrf_rpc_cbor_ctx *ctx)
 {
-	if (is_encoder_invalid(encoder)) {
-		return;
-	}
+	return !zcbor_check_error(ctx->zs);
+}
 
-	encoder->flags = ENCODER_FLAGS_INVALID;
-	encoder->added = err;
+static void set_encoder_invalid(struct nrf_rpc_cbor_ctx *ctx, int err)
+{
+	zcbor_error(ctx->zs, ZCBOR_ERR_UNKNOWN);
 }
 
 bool ser_decode_valid(CborValue *value)
@@ -46,289 +40,128 @@ bool ser_decode_valid(CborValue *value)
 	return !is_decoder_invalid(value);
 }
 
-static void check_final_decode_valid(CborValue *value)
+bool ser_decode_valid(struct nrf_rpc_cbor_ctx *ctx)
 {
-	if (is_decoder_invalid(value)) {
+	return !is_decoder_invalid(ctx);
+}
+
+static void check_final_decode_valid(const struct nrf_rpc_cbor_ctx *ctx)
+{
+	if (is_decoder_invalid(ctx)) {
 		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, NULL,
 			    NRF_RPC_ID_UNKNOWN, NRF_RPC_PACKET_TYPE_RSP);
 	}
 }
 
-void ser_encode_null(CborEncoder *encoder)
+void ser_encode_null(struct nrf_rpc_cbor_ctx *ctx)
 {
-	CborError err;
-
-	if (is_encoder_invalid(encoder)) {
-		return;
-	}
-
-	err = cbor_encode_null(encoder);
-
-	if (err != CborNoError) {
-		set_encoder_invalid(encoder, err);
-	}
+	zcbor_nll_put(ctx->zs, NULL);
 }
 
-void ser_encode_undefined(CborEncoder *encoder)
+void ser_encode_undefined(struct nrf_rpc_cbor_ctx *ctx)
 {
-	CborError err;
-
-	if (is_encoder_invalid(encoder)) {
-		return;
-	}
-
-	err = cbor_encode_undefined(encoder);
-	if (err != CborNoError) {
-		set_encoder_invalid(encoder, err);
-	}
+	zcbor_undefined_put(ctx->zs, NULL);
 }
 
-void ser_encode_bool(CborEncoder *encoder, bool value)
+void ser_encode_bool(struct nrf_rpc_cbor_ctx *ctx, bool value)
 {
-	CborError err;
-
-	if (is_encoder_invalid(encoder)) {
-		return;
-	}
-
-	err = cbor_encode_boolean(encoder, value);
-	if (err != CborNoError) {
-		set_encoder_invalid(encoder, err);
-	}
+	zcbor_bool_put(ctx->zs, value);
 }
 
-void ser_encode_uint(CborEncoder *encoder, uint32_t value)
+void ser_encode_uint(struct nrf_rpc_cbor_ctx *ctx, uint32_t value)
 {
-	CborError err;
-
-	if (is_encoder_invalid(encoder)) {
-		return;
-	}
-
-	err = cbor_encode_uint(encoder, value);
-	if (err != CborNoError) {
-		set_encoder_invalid(encoder, err);
-	}
+	zcbor_uint32_put(ctx->zs, value);
 }
 
-
-void ser_encode_int(CborEncoder *encoder, int32_t value)
+void ser_encode_int(struct nrf_rpc_cbor_ctx *ctx, int32_t value)
 {
-	CborError err;
-
-	if (is_encoder_invalid(encoder)) {
-		return;
-	}
-
-	err = cbor_encode_int(encoder, value);
-	if (err != CborNoError) {
-		set_encoder_invalid(encoder, err);
-	}
+	zcbor_int32_put(ctx->zs, value);
 }
 
-void ser_encode_str(CborEncoder *encoder, const char *value, int len)
+void ser_encode_str(struct nrf_rpc_cbor_ctx *ctx, const char *value, int len)
 {
-	CborError err;
-
-	if (is_encoder_invalid(encoder)) {
-		return;
-	}
-
-	if (!value) {
-		err = cbor_encode_null(encoder);
-	} else if (len < 0) {
-		err = cbor_encode_text_stringz(encoder, value);
-	} else {
-		err = cbor_encode_text_string(encoder, value, len);
-	}
-
-	if (err != CborNoError) {
-		set_encoder_invalid(encoder, err);
-	}
-
+	zcbor_tstr_encode(ctx->zs, value, len);
 }
 
-void ser_encode_buffer(CborEncoder *encoder, const void *data, size_t size)
+void ser_encode_buffer(struct nrf_rpc_cbor_ctx *ctx, const void *data, size_t size)
 {
-	CborError err;
-
-	if (is_encoder_invalid(encoder)) {
-		return;
-	}
-
-	if (!data) {
-		err = cbor_encode_null(encoder);
-	} else {
-		err = cbor_encode_byte_string(encoder, (const uint8_t *)data, size);
-	}
-
-	if (err != CborNoError) {
-		set_encoder_invalid(encoder, err);
-	}
+	zcbor_bstr_encode(ctx->zs, data, size);
 }
 
-void ser_encode_callback(CborEncoder *encoder, void *callback)
+void ser_encode_callback(struct nrf_rpc_cbor_ctx *ctx, void *callback)
 {
-	CborError err;
 	int slot;
 
-	if (is_encoder_invalid(encoder)) {
+	if (is_encoder_invalid(ctx)) {
 		return;
 	}
 
 	if (!callback) {
-		err = cbor_encode_null(encoder);
+		zcbor_nil_put(ctx->zs);
 	} else {
 		slot = cbkproxy_in_set(callback);
 		if (slot < 0) {
-			err = CborUnknownError;
+			set_encoder_invalid(ctx, ZCBOR_ERR_UNKNOWN);
 		} else {
-			err = cbor_encode_int(encoder, slot);
+			zcbor_int32_encode(ctx->zs, slot);
 		}
 	}
-
-	if (err != CborNoError) {
-		set_encoder_invalid(encoder, err);
-	}
 }
 
-void ser_encoder_invalid(CborEncoder *encoder)
+void ser_decode_skip(struct nrf_rpc_cbor_ctx *ctx)
 {
-	set_encoder_invalid(encoder, CborErrorIO);
+	zcbor_any_skip(ctx->zs);
 }
 
-
-void ser_decode_skip(CborValue *value)
+bool ser_decode_is_null(struct nrf_rpc_cbor_ctx *ctx)
 {
-	CborError err;
-
-	if (is_decoder_invalid(value)) {
-		return;
-	}
-
-	err = cbor_value_advance(value);
-	if (err != CborNoError) {
-		ser_decoder_invalid(value, err);
-	}
+	return zcbor_nil_expect(ctx->zs, NULL);
 }
 
-bool ser_decode_is_null(CborValue *value)
+bool ser_decode_is_undefined(struct nrf_rpc_cbor_ctx *ctx)
 {
-	if (is_decoder_invalid(value)) {
-		return true;
-	}
-
-	return cbor_value_is_null(value);
+	return zcbor_undefined_expect(ctx->zs, NULL);
 }
 
-bool ser_decode_is_undefined(CborValue *value)
+bool ser_decode_bool(struct nrf_rpc_cbor_ctx *ctx)
 {
-	if (is_decoder_invalid(value)) {
-		return true;
-	}
-
-	return cbor_value_is_undefined(value);
-}
-
-bool ser_decode_bool(CborValue *value)
-{
-	CborError err = CborErrorIllegalType;
 	bool result;
 
-	if (is_decoder_invalid(value)) {
-		return 0;
+	if (zcbor_bool_decode(ctx->zs, &result)) {
+		return result;
 	}
 
-	if (cbor_value_is_boolean(value)) {
-		err = cbor_value_get_boolean(value, &result);
-		if (err != CborNoError) {
-			goto error_exit;
-		}
+	return false;
+}
 
-		err = cbor_value_advance_fixed(value);
-		if (err != CborNoError) {
-			goto error_exit;
-		}
-	} else {
-		goto error_exit;
+uint32_t ser_decode_uint(struct nrf_rpc_cbor_ctx *ctx)
+{
+	uint32_t result;
+
+	if (zcbor_uint32_decode(ctx->zs, &result)) {
+		return result;
 	}
 
-	return result;
-
-error_exit:
-	ser_decoder_invalid(value, err);
 	return 0;
 }
 
-uint32_t ser_decode_uint(CborValue *value)
+int32_t ser_decode_int(struct nrf_rpc_cbor_ctx *ctx)
 {
-	CborError err = CborErrorIllegalType;
-	uint64_t result;
-
-	if (is_decoder_invalid(value)) {
-		return 0;
-	}
-
-	if (cbor_value_is_integer(value)) {
-		err = cbor_value_get_uint64(value, &result);
-		if (result > (uint64_t)0xFFFFFFFF) {
-			err = CborErrorDataTooLarge;
-		}
-
-		if (err != CborNoError) {
-			goto error_exit;
-		}
-
-		err = cbor_value_advance_fixed(value);
-		if (err != CborNoError) {
-			goto error_exit;
-		}
-	} else {
-		goto error_exit;
-	}
-
-	return result;
-
-error_exit:
-	ser_decoder_invalid(value, err);
-	return 0;
-}
-
-int32_t ser_decode_int(CborValue *value)
-{
-	CborError err = CborErrorIllegalType;
 	int32_t result;
 
-	if (is_decoder_invalid(value)) {
-		return 0;
+	if (zcbor_int32_decode(ctx->zs, &result)) {
+		return result;
 	}
 
-	if (cbor_value_is_integer(value)) {
-		err = cbor_value_get_int_checked(value, &result);
-		if (err != CborNoError) {
-			goto error_exit;
-		}
-
-		err = cbor_value_advance_fixed(value);
-		if (err != CborNoError) {
-			goto error_exit;
-		}
-	} else {
-		goto error_exit;
-	}
-
-	return result;
-
-error_exit:
-	ser_decoder_invalid(value, err);
 	return 0;
 }
 
-void *ser_decode_buffer(CborValue *value, void *buffer, size_t buffer_size)
+void *ser_decode_buffer(struct nrf_rpc_cbor_ctx *ctx, void *buffer, size_t buffer_size)
 {
 	CborError err = CborErrorIllegalType;
 	void *result;
 	size_t len;
+	struct zcbor_string zst;
 
 	if (is_decoder_invalid(value)) {
 		return NULL;

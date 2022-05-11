@@ -65,55 +65,55 @@ static inline void *ser_scratchpad_add(struct ser_scratchpad *scratchpad, size_t
 
 /** @brief Encode a null value.
  *
- * @param[in, out] encoder Structure used to encode CBOR stream.
+ * @param[in, out] ctx Structure used to encode CBOR stream.
  */
-void ser_encode_null(CborEncoder *encoder);
+void ser_encode_null(struct nrf_rpc_cbor_ctx *ctx);
 
 /** @brief Encode an undefined value.
  *
- * @param[in, out] encoder Structure used to encode CBOR stream.
+ * @param[in, out] ctx Structure used to encode CBOR stream.
  */
-void ser_encode_undefined(CborEncoder *encoder);
+void ser_encode_undefined(struct nrf_rpc_cbor_ctx *ctx);
 
 /** @brief Encode a boolean value.
  *
- * @param[in, out] encoder Structure used to encode CBOR stream.
+ * @param[in, out] ctx Structure used to encode CBOR stream.
  */
-void ser_encode_bool(CborEncoder *encoder, bool value);
+void ser_encode_bool(struct nrf_rpc_cbor_ctx *ctx, bool value);
 
 /** @brief Encode an unsigned integer value.
  *
- * @param[in, out] encoder Structure used to encode CBOR stream.
+ * @param[in, out] ctx Structure used to encode CBOR stream.
  */
-void ser_encode_uint(CborEncoder *encoder, uint32_t value);
+void ser_encode_uint(struct nrf_rpc_cbor_ctx *ctx, uint32_t value);
 
 /** @brief Encode an integer value.
  *
- * @param[in, out] encoder Structure used to encode CBOR stream.
+ * @param[in, out] ctx Structure used to encode CBOR stream.
  */
-void ser_encode_int(CborEncoder *encoder, int32_t value);
+void ser_encode_int(struct nrf_rpc_cbor_ctx *ctx, int32_t value);
 
 /** @brief Encode an unsigned 64-bit integer value.
  *
- * @param[in, out] encoder Structure used to encode CBOR stream.
+ * @param[in, out] ctx Structure used to encode CBOR stream.
  */
-void ser_encode_uint64(CborEncoder *encoder, uint64_t value);
+void ser_encode_uint64(struct nrf_rpc_cbor_ctx *ctx, uint64_t value);
 
 /** @brief Encode a 64-bit integer value.
  *
- * @param[in, out] encoder Structure used to encode CBOR stream.
+ * @param[in, out] ctx Structure used to encode CBOR stream.
  */
-void ser_encode_int64(CborEncoder *encoder, int64_t value);
+void ser_encode_int64(struct nrf_rpc_cbor_ctx *ctx, int64_t value);
 
 /** @brief Encode a string value.
  *
- * @param[in, out] encoder Structure used to encode CBOR stream.
+ * @param[in, out] ctx Structure used to encode CBOR stream.
  * @param[in] value String to encode.
  * @param[in] len String length.
  *
  * @param[in, out] encoder Structure used to encode CBOR stream.
  */
-void ser_encode_str(CborEncoder *encoder, const char *value, int len);
+void ser_encode_str(struct nrf_rpc_cbor_ctx *ctx, const char *value, int len);
 
 /** @brief Encode a buffer.
  *
@@ -123,106 +123,106 @@ void ser_encode_str(CborEncoder *encoder, const char *value, int len);
  *
  * @param[in, out] encoder Structure used to encode CBOR stream.
  */
-void ser_encode_buffer(CborEncoder *encoder, const void *data, size_t size);
+void ser_encode_buffer(struct nrf_rpc_cbor_ctx *ctx, const void *data, size_t size);
 
 /** @brief Encode a callback.
  *
  * This function will use callback proxy module to convert a callback pointer
  * to an integer value (slot number).
  *
- * @param[in, out] encoder Structure used to encode CBOR stream.
+ * @param[in, out] ctx Structure used to encode CBOR stream.
  * @param[in] callback Callback to encode.
  */
-void ser_encode_callback(CborEncoder *encoder, void *callback);
+void ser_encode_callback(struct nrf_rpc_cbor_ctx *ctx, void *callback);
 
 /** @brief Encode a callback slot number.
  *
- * @param[in, out] encoder Structure used to encode CBOR stream.
+ * @param[in, out] ctx Structure used to encode CBOR stream.
  * @param[in] slot Callback slot number to encode.
  */
-static inline void ser_encode_callback_call(CborEncoder *encoder, uint32_t slot)
+static inline void ser_encode_callback_call(struct nrf_rpc_cbor_ctx *ctx, uint32_t slot)
 {
-	ser_encode_uint(encoder, slot);
+	ser_encode_uint(ctx, slot);
 }
 
 /** @brief Put encode into an invalid state. All further encoding on this encoder will be ignored.
  *         Invalid state can be checked with the is_encoder_invalid() function
  *
- * @param[in, out] encoder Structure used to encode CBOR stream.
+ * @param[in, out] ctx Structure used to encode CBOR stream.
  */
-void ser_encoder_invalid(CborEncoder *encoder);
+void ser_encoder_invalid(const struct nrf_rpc_cbor_ctx *ctx);
 
 /** @brief Skip one value to decode.
  *
- * @param[in] value Value parsed from the CBOR stream.
+ * @param[in] CBOR context
  */
-void ser_decode_skip(CborValue *value);
+void ser_decode_skip(struct nrf_rpc_cbor_ctx *ctx);
 
 /** @brief Check if value is a null. This function will not consume the value.
  *
- * @param[in] value Value parsed from the CBOR stream.
+ * @param[in] CBOR context
  *
  * @retval True, if value is a null.
  *         Otherwise, false will be returned.
  */
-bool ser_decode_is_null(CborValue *value);
+bool ser_decode_is_null(struct nrf_rpc_cbor_ctx *ctx);
 
 /** @brief Check if value is an undefined. This function will not consume the value.
  *
- * @param[in] value Value parsed from the CBOR stream.
+ * @param[in] CBOR context.
  *
  * @retval True, if value is an undefined.
  *         Otherwise, false will be returned.
  */
-bool ser_decode_is_undefined(CborValue *value);
+bool ser_decode_is_undefined(struct nrf_rpc_cbor_ctx *ctx);
 
 /** @brief Decode a boolean value.
  *
- * @param[in] value Value parsed from the CBOR stream.
+ * @param[in, out] CBOR context
  *
  * @retval Decoded boolean value.
  */
-bool ser_decode_bool(CborValue *value);
+bool ser_decode_bool(struct nrf_rpc_cbor_ctx *ctx);
 
 /** @brief Decode an unsigned integer value.
  *
- * @param[in] value Value parsed from the CBOR stream.
+ * @param[in, out] value Value parsed from the CBOR stream.
  *
  * @retval Decoded unsigned integer value.
  */
-uint32_t ser_decode_uint(CborValue *value);
+uint32_t ser_decode_uint(struct nrf_rpc_cbor_ctx *ctx);
 
 /** @brief Decode a integer value.
  *
- * @param[in] value Value parsed from the CBOR stream.
+ * @param[in, out] CBOR context
  *
  * @retval Decoded integer value.
  */
-int32_t ser_decode_int(CborValue *value);
+int32_t ser_decode_int(struct nrf_rpc_cbor_ctx *ctx);
 
 /** @brief Decode an unsigned 64-bit integer value.
  *
- * @param[in] value Value parsed from the CBOR stream.
+ * @param[in, out] CBOR context
  *
  * @retval Decoded an unsigned 64-bit integer value.
  */
-uint64_t ser_decode_uint64(CborValue *value);
+uint64_t ser_decode_uint64(struct nrf_rpc_cbor_ctx *ctx);
 
 /** @brief Decode a 64-bit integer value.
  *
- * @param[in] value Value parsed from the CBOR stream.
+ * @param[in, out] CBOR context
  *
  * @retval Decoded a 64-bit integer value.
  */
-int64_t ser_decode_int64(CborValue *value);
+int64_t ser_decode_int64(struct nrf_rpc_cbor_ctx *ctx);
 
 /** @brief Decode a string value.
  *
- * @param[in]  value Value parsed from the CBOR stream.
+ * @param[in, out] CBOR context
  * @param[out] buffer Buffer for decoded string.
  * @param[in]  size Buffer size.
  */
-void ser_decode_str(CborValue *value, char *buffer, size_t size);
+void ser_decode_str(struct nrf_rpc_cbor_ctx *ctx, char *buffer, size_t size);
 
 /** Decode a string value into a scratchpad.
  *
@@ -240,7 +240,7 @@ char *ser_decode_str_into_scratchpad(struct ser_scratchpad *scratchpad);
  *
  * @retval Pointer to a decoded buffer.
  */
-void *ser_decode_buffer(CborValue *value, void *buffer, size_t buffer_size);
+void *ser_decode_buffer(struct nrf_rpc_cbor_ctx *ctx, void *buffer, size_t buffer_size);
 
 /** @brief Decode a buffer size. This function will not consume the buffer.
  *
@@ -270,7 +270,7 @@ void *ser_decode_buffer_into_scratchpad(struct ser_scratchpad *scratchpad);
  *
  * @retval Decoded callback.
  */
-void *ser_decode_callback(CborValue *value, void *handler);
+void *ser_decode_callback(struct nrf_rpc_cbor_ctx *ctx, void *handler);
 
 /** @brief Decode callback slot.
  *
@@ -290,16 +290,16 @@ void *ser_decode_callback_call(CborValue *value);
  * @param[in] value Value parsed from the CBOR stream.
  * @param[in] err Cbor error code to set.
  */
-void ser_decoder_invalid(CborValue *value, CborError err);
+void ser_decoder_invalid(struct nrf_rpc_cbor_ctx *ctx, int err);
 
 /** @brief Returns if decoder is in valid state.
  *
- * @param[in] value Value parsed from the CBOR stream.
+ * @param[in] CBOR context.
  *
  * @retval True if decoder is in valid state which means that no error occurred
  *         so far. Otherwise, false will be returned.
  */
-bool ser_decode_valid(CborValue *value);
+bool ser_decode_valid(const struct nrf_rpc_cbor_ctx *ctx);
 
 /** @brief Signalize that decoding is done. Use this function when you finish decoding of the
  *         received serialized packet.
