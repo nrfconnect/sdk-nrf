@@ -305,6 +305,20 @@ int nrf_cloud_rest_shadow_service_info_update(struct nrf_cloud_rest_context *con
 	const char *const device_id, const struct nrf_cloud_svc_info * const svc_inf);
 
 /**
+ * @brief Update the device status in the shadow.
+ *
+ * @param[in,out] rest_ctx Context for communicating with nRF Cloud's REST API.
+ * @param[in]     device_id Null-terminated, unique device ID registered with nRF Cloud.
+ * @param[in]     dev_status Device status to be encoded.
+ *
+ * @retval 0 If successful.
+ *         Otherwise, a (negative) error code is returned.
+ *         See @verbatim embed:rst:inline :ref:`nrf_cloud_rest_failure` @endverbatim for details.
+ */
+int nrf_cloud_rest_shadow_device_status_update(struct nrf_cloud_rest_context *const rest_ctx,
+	const char *const device_id, const struct nrf_cloud_device_status *const dev_status);
+
+/**
  * @brief Closes the connection to the server.
  *	  The socket pointed to by @p rest_ctx.connect_socket will be closed,
  *	  and @p rest_ctx.connect_socket will be set to -1.

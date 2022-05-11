@@ -345,23 +345,19 @@ clean_up:
 	return ret;
 }
 
-int nrf_cloud_rest_shadow_service_info_update(struct nrf_cloud_rest_context *const rest_ctx,
-	const char *const device_id, const struct nrf_cloud_svc_info * const svc_inf)
+int nrf_cloud_rest_shadow_device_status_update(struct nrf_cloud_rest_context *const rest_ctx,
+	const char *const device_id, const struct nrf_cloud_device_status *const dev_status)
 {
-	if (svc_inf == NULL) {
+	if (dev_status == NULL) {
 		return -EINVAL;
 	}
 
 	int ret;
 	struct nrf_cloud_data data_out;
-	const struct nrf_cloud_device_status dev_status = {
-		.modem = NULL,
-		.svc = (struct nrf_cloud_svc_info *)svc_inf
-	};
 
 	(void)nrf_cloud_codec_init();
 
-	ret = nrf_cloud_device_status_encode(&dev_status, &data_out, false);
+	ret = nrf_cloud_device_status_encode(dev_status, &data_out, false);
 	if (ret) {
 		LOG_ERR("Failed to encode device status, error: %d", ret);
 		return ret;
@@ -375,6 +371,21 @@ int nrf_cloud_rest_shadow_service_info_update(struct nrf_cloud_rest_context *con
 	nrf_cloud_device_status_free(&data_out);
 
 	return ret;
+}
+
+int nrf_cloud_rest_shadow_service_info_update(struct nrf_cloud_rest_context *const rest_ctx,
+	const char *const device_id, const struct nrf_cloud_svc_info * const svc_inf)
+{
+	if (svc_inf == NULL) {
+		return -EINVAL;
+	}
+
+	const struct nrf_cloud_device_status dev_status = {
+		.modem = NULL,
+		.svc = (struct nrf_cloud_svc_info *)svc_inf
+	};
+
+	return nrf_cloud_rest_shadow_device_status_update(rest_ctx, device_id, &dev_status);
 }
 
 int nrf_cloud_rest_fota_job_update(struct nrf_cloud_rest_context *const rest_ctx,
