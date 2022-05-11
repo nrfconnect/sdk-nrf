@@ -34,7 +34,10 @@ size_t bt_fast_pair_adv_data_size(bool fp_discoverable);
  * Provided buffer will be used in bt_data structure. The data must be valid while the structure is
  * in use.
  *
- * The buffer size must be at least @ref bt_fast_pair_adv_data_size.
+ * The buffer size must be at least @ref bt_fast_pair_adv_data_size. Caller shall also make sure
+ * that Account Key write from a connected Fast Pair Seeker would not preempt generating Fast Pair
+ * not discoverable advertising data. To achieve this, this function and
+ * @ref bt_fast_pair_adv_data_size should be called from context with cooperative priority.
  *
  * @param[out] adv_data		Pointer to the Bluetooth advertising data structure to be filled.
  * @param[out] buf		Pointer to the buffer used to store Fast Pair advertising data.

@@ -705,7 +705,13 @@
 
 .. _`Works With ChromeBook (WWCB)`: https://www.google.com/chromebook/workswithchromebook
 
-.. _`Google Fast Pair Service documentation`: https://developers.google.com/nearby/fast-pair/specifications/introduction
+.. _`Fast Pair`: https://developers.google.com/nearby/fast-pair/specifications/introduction
+.. _`Fast Pair roles`: https://developers.google.com/nearby/fast-pair/specifications/configuration#roles
+.. _`Fast Pair Model Registration`: https://developers.google.com/nearby/fast-pair/specifications/service/modelregistration
+.. _`Fast Pair Advertising`: https://developers.google.com/nearby/fast-pair/specifications/service/provider
+.. _`Fast Pair GATT Characteristics`: https://developers.google.com/nearby/fast-pair/specifications/characteristics
+.. _`Fast Pair Procedure`: https://developers.google.com/nearby/fast-pair/specifications/service/gatt
+.. _`Verifying Fast Pair`: https://developers.google.com/nearby/fast-pair/help#verifying_fast_pair
 
 .. ### Source: other
 
@@ -799,6 +805,8 @@
 .. _`Doxygen`: https://www.doxygen.nl/
 
 .. _`Breathe documentation`: https://breathe.readthedocs.io/en/latest/directives.html#directives
+
+.. _`IntelHex`: https://python-intelhex.readthedocs.io/en/latest/
 
 .. _`HID usage tables`: https://www.usb.org/hid
 
