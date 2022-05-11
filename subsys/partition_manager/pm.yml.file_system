@@ -2,6 +2,9 @@
 
 #ifdef CONFIG_FILE_SYSTEM_LITTLEFS
 littlefs_storage:
+#if defined(CONFIG_PM_EXTERNAL_FLASH_LITTLEFS)
+  region: external_flash
+#endif
   placement: {before: [tfm_storage, end]}
   size: CONFIG_PM_PARTITION_SIZE_LITTLEFS
 #endif

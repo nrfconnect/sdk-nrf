@@ -118,6 +118,18 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	  of the internal flash. This option should only be enabled by the user
 	  in the parent image.
 
+config PM_EXTERNAL_FLASH_LITTLEFS
+	bool "Place the LittleFS partition in external flash"
+	depends on FILE_SYSTEM_LITTLEFS
+	# Only depend on the chosen for the parent image. The value of this
+	# option is propagated to the MCUboot child image automatically.
+	depends on $(dt_chosen_enabled,$(DT_CHOSEN_EXT_FLASH))
+	default n
+	help
+	  Place the partition for LittleFS in the external flash instead
+	  of the internal flash. This option should only be enabled by the user
+	  in the parent image.
+
 config PM_IMAGE_NOT_BUILT_FROM_SOURCE
 	bool
 	help
