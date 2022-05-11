@@ -462,6 +462,14 @@ Visual Studio Code extension
 
 |vsc_extension_instructions|
 
+.. vsc_mig_note_start
+
+.. note::
+
+   If you are building the application or sample using SEGGER Embedded Studio IDE or on the command line and want to migrate to |VSC|, follow the instructions in the `migrating from other IDEs to VS Code <Migrating IDE_>`_ documentation.
+
+.. vsc_mig_note_end
+
 .. _installing_ses:
 
 |SES| Nordic Edition
