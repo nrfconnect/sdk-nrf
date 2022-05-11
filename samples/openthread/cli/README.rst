@@ -87,6 +87,8 @@ The following configuration files are available:
 * :file:`overlay-rtt.conf` - Redirects logs to RTT.
   For more information about RTT please refer to :ref:`RTT logging <ug_logging>`.
 * :file:`overlay-debug.conf` - Enables debbuging the Thread sample with GDB thread awareness.
+* :file:`overlay-ci.conf` - Disables boot banner and shell prompt.
+* :file:`overlay-multiprotocol.conf` - Enables Bluetooth LE support in this sample.
 
 FEM support
 ===========
