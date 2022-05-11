@@ -71,6 +71,7 @@ Kconfig*                                  @tejlmand
 /include/net/azure_*                      @jtguggedal @simensrostad @coderbyheart
 /include/net/nrf_cloud_*                  @plskeggs @jayteemo @glarsennordic
 /include/bluetooth/                       @alwa-nordic @KAGA164
+/include/bluetooth/services/fast_pair.h   @MarekPieta @kapi-no @KAGA164
 /include/bluetooth/mesh/                  @trond-snekvik
 /include/caf/                             @pdunaj
 /include/debug/ppi_trace.h                @nordic-krch @anangl
@@ -118,6 +119,7 @@ Kconfig*                                  @tejlmand
 /samples/bluetooth/mesh/                  @trond-snekvik
 /samples/bluetooth/direction_finding_connectionless_rx/ @ppryga @alwa-nordic
 /samples/bluetooth/direction_finding_connectionless_tx/ @ppryga @alwa-nordic
+/samples/bluetooth/peripheral_fast_pair/  @MarekPieta @kapi-no @KAGA164
 /samples/bootloader/                      @hakonfam @SebastianBoe
 /samples/matter/                          @Damian-Nordic @kkasperczyk-no
 /samples/crypto/                          @frkv @Vge0rge
@@ -156,6 +158,7 @@ Kconfig*                                  @tejlmand
 /subsys/bluetooth/                        @alwa-nordic @carlescufi @KAGA164
 /subsys/bluetooth/mesh/                   @trond-snekvik
 /subsys/bluetooth/controller/             @rugeGerritsen
+/subsys/bluetooth/services/fast_pair/     @MarekPieta @kapi-no @KAGA164
 /subsys/bootloader/                       @hakonfam @SebastianBoe
 /subsys/caf/                              @pdunaj
 /subsys/debug/                            @nordic-krch @anangl
@@ -217,6 +220,7 @@ Kconfig*                                  @tejlmand
 /tests/nrf5340_audio/                     @koffes @alexsven @erikrobstad @rick1082 @nordic-auko
 /tests/subsys/bluetooth/gatt_dm/          @doki-nordic
 /tests/subsys/bluetooth/mesh/             @trond-snekvik
+/tests/subsys/bluetooth/fast_pair/        @MarekPieta @kapi-no @KAGA164
 /tests/subsys/bootloader/                 @hakonfam
 /tests/subsys/debug/cpu_load/             @nordic-krch
 /tests/subsys/dfu/                        @hakonfam @sigvartmh
