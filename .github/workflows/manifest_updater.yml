@@ -1,0 +1,21 @@
+name: Manifest_update
+on:
+  - pull_request
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+  repository-projects: write
+
+jobs:
+  manifest_update:
+    runs-on: ubuntu-latest
+    steps:
+     - uses: rugeGerritsen/action-manifest-update@main
+       with:
+         github-token: ${{ secrets.NCS_GITHUB_TOKEN }}
+         module-path: nrfconnect/sdk-nrfxlib
+         manifest-repo-path: nrfconnect/sdk-nrf
+         manifest-file: west.yml
+         module-pull-nr: ${{ github.event.number }}
