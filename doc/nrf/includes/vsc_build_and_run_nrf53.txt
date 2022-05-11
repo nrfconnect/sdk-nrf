@@ -1,0 +1,10 @@
+1. Open Visual Studio Code.
+#. Click on the :guilabel:`nRF Connect for VS Code` icon in the left navigation bar.
+#. Click on :guilabel:`Add an existing application`.
+#. In the prompt, navigate to the folder containing the sample you want to build, such as :file:`nrf/samples/bluetooth/peripheral_lbs`, and open it.
+   The selected application appears in the :guilabel:`Applications` panel.
+
+   An alternate option to open an application is to select the :guilabel:`Explorer` panel, right-click on the sample and select :guilabel:`Add Folder As Application` option.
+
+#. Click on the :guilabel:`Add Build Configuration` button in the :guilabel:`Application` panel, or click on the text stating :guilabel:`No build configurations. Click to create one`.
+   This opens the :guilabel:`Add Build Configuration` panel in a new tab.

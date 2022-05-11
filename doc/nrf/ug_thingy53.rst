@@ -178,54 +178,19 @@ Building and programming using Visual Studio Code
 
 Complete the following steps after installing the `nRF Connect for Visual Studio Code`_ extension in Microsoft Visual Studio Code:
 
-1. Open Visual Studio code.
-#. Click on the :guilabel:`nRF Connect for VS Code` icon in the left navigation bar and then click :guilabel:`Open`.
+.. include:: /includes/vsc_build_and_run_nrf53.txt
 
-   .. figure:: images/ug_thingy53_vscode_welcome.png
-      :alt: nRF Connect for VS Code welcome page
-      :width: 80%
-
-      The welcome page for nRF Connect for VS Code.
-
-#. Click on :guilabel:`Add an existing applicaton to workspace...`.
-#. In the prompt, navigate to the folder containing the sample you want to build, such as :file:`nrf/samples/bluetooth/peripheral_lbs`.
-   You should now see the selected application in the :guilabel:`Applications` window in the lower left corner.
-
-   .. note::
-
-     The sample folder must contain a :file:`prj.conf` file.
-
-   .. figure:: images/ug_thingy53_vscode_appwindow.png
-      :alt: nRF Connect for VS Code, application shown in Application window
-      :width: 80%
-
-      The peripheral_lbs application is now available in the :guilabel:`Application` window.
-
-#. Click on the :guilabel:`Add Build Configuration` button in the :guilabel:`Application` window, or click on the text stating :guilabel:`No build configurations. Click to create one`.
-   This opens the :guilabel:`Generate Configuration` window in a new tab.
-#. Select the ``thingy53_nrf5340_cpuapp`` as the target board and click :guilabel:`Generate Config`, which generates the configuration file and triggers the build process.
-
-   .. figure:: images/ug_thingy53_vscode_genconfig1.png
-      :alt: nRF Connect for VS Code, Generate Configuration window
-      :width: 80%
-
-      The :guilabel:`Generate Configuration` window, with ``thingy53_nrf5340_cpuapp`` as the board.
-
-#. When the build configuration and the build are complete, an :guilabel:`Actions` window appears in the lower left corner of Visual Studio Code.
-   In this window, you can trigger the build process, program the built sample or start a debug session.
-
-   .. figure:: images/ug_thingy53_vscode_genconfig2.png
-      :alt: nRF Connect for VS Code, Actions window
-      :width: 80%
-
-      The :guilabel:`Actions` window is open in the lower left corner
-
+6. Select the ``thingy53_nrf5340_cpuapp`` as the target board.
+#. Select the :guilabel:`Build after generating configuration` checkbox and click on the :guilabel:`Build Configuration` button.
+   This generates the configuration file and triggers the build process.
+#. When the build configuration and the build are complete, an :guilabel:`Actions` panel appears.
+   In this panel, you can trigger the build process, program the built sample or start a debug session.
 #. Program the sample or application:
 
    a. Connect the Thingy:53 to the debug out port on a 10-pin external debug probe, for example nRF5340 DK, using a 10-pin JTAG cable.
    #. Connect the external debug probe to the PC using a USB cable.
    #. Make sure that the Thingy:53 and the external debug probe are powered on.
-   #. Click :guilabel:`Flash` in the :guilabel:`Actions` window.
+   #. Click :guilabel:`Flash` in the :guilabel:`Actions` panel.
 
 Building and programming on the command line
 ============================================

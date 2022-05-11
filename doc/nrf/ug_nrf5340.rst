@@ -349,7 +349,7 @@ Building and programming a sample
 
 Depending on the sample, you must program only the application core (for example, when using NFC samples) or both the network and the application core.
 
-The steps differ depending on whether you work with |SES| or on the command line and whether you are doing a single or multi-image build.
+The steps differ depending on whether you work with |VSC| or on the command line and whether you are doing a single or multi-image build.
 
 Using SEGGER Embedded Studio
 ============================
@@ -369,7 +369,7 @@ To build and program a dedicated network sample, follow the instructions in :ref
 Multi-image build
 -----------------
 
-If you are working with Bluetooth LE, Thread, Zigbee, or Matter samples, the network core sample is built as child image when you build the application core image (see :ref:`ug_nrf5340_multi_image` above).
+If you are working with Bluetooth LE, Thread, Zigbee, or Matter samples, the network core sample is built as a child image when you build the application core image (see :ref:`ug_nrf5340_multi_image` above).
 
 However, |SES| cannot automatically program the network sample to the network core when it is added as a child image.
 You must manually add a network core project to the application core project to make sure that both are programmed.
@@ -496,6 +496,42 @@ Follow these steps to build and program a multi-image build to the nRF5340 appli
 
 #. Program the application sample using :guilabel:`Target` > :guilabel:`Download zephyr/merged.hex`.
 
+Using |VSC|
+===========
+
+|vsc_extension_instructions|
+
+You can build and program separate images or combined images using |VSC|.
+
+Separate images
+---------------
+
+To build and program the application core, follow the instructions in `Building an application`_ and use ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuapp_ns`` as the build target.
+
+To build and program the network core, follow the instructions in `Building an application`_ and use ``nrf5340dk_nrf5340_cpunet`` as the build target.
+
+.. _ug_nrf5340_VSC_multi_image:
+
+Multi-image build
+-----------------
+
+If you are working with Bluetooth LE, Thread, Zigbee, or Matter samples, the network core sample is built as a child image when you build the application core image (see :ref:`ug_nrf5340_multi_image` above).
+
+Complete the following steps to build and program a multi-image build to the nRF5340 application core and network core:
+
+.. include:: /includes/vsc_build_and_run_nrf53.txt
+
+6. Select the ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuapp_ns`` as the target board.
+#. Select the :guilabel:`Build after generating configuration` checkbox and click on the :guilabel:`Build Configuration` button.
+   This generates the configuration file and triggers the build process.
+#. When the build configuration and the build are complete, an :guilabel:`Actions` panel appears.
+   In this panel, you can trigger the build process, program the built sample, or start a debug session.
+#. Program the sample or application:
+
+   a. Connect the nRF5340 development kit to your PC using a USB cable.
+   #. Make sure that the nRF5340 DK and the external debug probe are powered on.
+   #. Click :guilabel:`Build` in the :guilabel:`Actions` panel to start the build process.
+   #. Click :guilabel:`Flash` in the :guilabel:`Actions` panel to program the resulting image to your device.
 
 Using the command line
 ======================
