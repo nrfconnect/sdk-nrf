@@ -1,8 +1,5 @@
-queue_rules:
-  - name: default
-    conditions: []
 pull_request_rules:
-  - name: merge using default queue
+  - name: merge using merge action
     conditions:
       - base=main
       - "#approved-reviews-by>=1"
@@ -18,7 +15,6 @@ pull_request_rules:
         #- check-success=CI/Jenkins/integration
         #- check-neutral=CI/Jenkins/integration
     actions:
-      queue:
-        name: default
+      merge:
         method: rebase
         rebase_fallback: none
