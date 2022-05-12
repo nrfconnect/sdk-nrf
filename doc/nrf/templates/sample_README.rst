@@ -132,12 +132,12 @@ Check and configure the following Kconfig options:
 
 .. _SAMPLE_CONFIG:
 
-SAMPLE_CONFIG - Sample configuration
+SAMPLE_CONFIG
    The sample configuration defines ...
 
 .. _ANOTHER_CONFIG:
 
-ANOTHER_CONFIG - Another configuration
+ANOTHER_CONFIG
    This configuration option specifies ...
 
 .. note::

@@ -30,7 +30,7 @@ Dependencies
 
 This module uses the following |NCS| libraries and drivers:
 
-* `zcbor <https://github.com/NordicSemiconductor/zcbor>`_
+* `zcbor`_
 
 API documentation
 *****************
