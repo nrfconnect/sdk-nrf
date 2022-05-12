@@ -142,6 +142,8 @@ FEM support
 Low-power build
 ===============
 
+.. matter_door_lock_sample_low_power_build_start
+
 To configure the sample to consume less power, use the low-power build.
 It enables Thread's Sleepy End Device mode and disables debug features, such as the UART console or the **LED 1** usage.
 
@@ -154,6 +156,8 @@ When building on the command line, run the following command with *build_target*
    :class: highlight
 
    west build -b *build_target* -- -DOVERLAY_CONFIG="overlay-low_power.conf"
+
+.. matter_door_lock_sample_low_power_build_end
 
 User interface
 **************
@@ -184,7 +188,8 @@ Button 1:
     Depending on how long you press the button:
 
     * If pressed for less than three seconds, it initiates the SMP server (Security Manager Protocol).
-      After that the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started. (see `Upgrading the device firmware`_).
+      After that the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started.
+      (See `Upgrading the device firmware`_.)
     * If pressed for more than three seconds, it initiates the factory reset of the device.
       Releasing the button within the 3-second window cancels the factory reset procedure.
 
