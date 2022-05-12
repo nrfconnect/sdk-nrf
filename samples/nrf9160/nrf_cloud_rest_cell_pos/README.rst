@@ -16,6 +16,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 The sample requires an `nRF Cloud`_ account.
 It requires one of the following:
 
@@ -84,7 +86,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/nrf_cloud_rest_cell_pos`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Dependencies
 ************

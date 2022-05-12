@@ -24,6 +24,8 @@ The sample supports the following development kits:
 You can use one or more of the development kits listed above as the Thread CoAP Client.
 You also need one or more compatible development kits programmed with the :ref:`coap_server_sample` sample.
 
+.. include:: /includes/tfm.txt
+
 Multiprotocol extension requirements
 ====================================
 
@@ -132,11 +134,6 @@ FEM support
 .. include:: /includes/sample_fem_support.txt
 
 
-Trusted Firmware-M support
-==========================
-
-.. include:: /includes/tfm.txt
-
 Building and running
 ********************
 
@@ -144,7 +141,7 @@ Building and running
 
 |enable_thread_before_testing|
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======

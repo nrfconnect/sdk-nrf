@@ -136,6 +136,8 @@ The application supports the following development kits:
 The available configurations use only built-in sensors or the simulated sensor signal.
 There is no need to connect any additional components to the board.
 
+.. include:: /includes/tfm.txt
+
 Programming Thingy:52
 =====================
 
@@ -361,7 +363,7 @@ Building and running
 The nRF machine learning application is built the same way to any other |NCS| application or sample.
 Building the default configurations requires an Internet connection, because the machine learning model source files are downloaded from web during the application build.
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Selecting a build type
 ======================

@@ -927,6 +927,10 @@ Documentation
 
 * Updated:
 
+  * :ref:`ug_nrf5340` and :ref:`ug_nrf91` with information about Trusted Firmware-M replacing Secure Partition Manager as the default solution for creating a Trusted Execution Environment.
+  * All samples and applications built as a non-secure firmware image for the ``_ns`` build target to reflect that the :ref:`Trusted Firmware-M <ug_tfm>` (TF-M) is automatically included instead of Secure Partition Manager (SPM).
+  * :ref:`app_power_opt` with information on how to disable serial logging when using TF-M.
+  * Replaced reference to Secure Partition Manager with reference to Trusted Firmware-M for multi-image project builds (nRF9160 samples) in :ref:`gs_programming`.
   * :ref:`gs_updating` with information about updating |VSC| and the toolchain.
   * :ref:`ug_nrf52` and :ref:`ug_nrf5340` with information about FOTA upgrades for Matter, Thread, and Zigbee.
   * :ref:`ug_matter_architecture` with updated protocol architecture diagram.

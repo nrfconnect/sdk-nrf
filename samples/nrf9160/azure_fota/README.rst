@@ -18,7 +18,7 @@ The sample supports the following development kits:
 
 The sample also requires an Azure IoT Hub instance, and optionally an `Azure IoT Hub Device Provisioning Service (DPS)`_ instance, if the device is not already registered with the IoT hub.
 
-.. include:: /includes/spm.txt
+.. include:: /includes/tfm.txt
 
 Overview
 ********
@@ -74,7 +74,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/azure_fota`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 
 Testing

@@ -61,12 +61,23 @@ In Zephyr, the firmware of the application core is built using one of the follow
 * ``nrf5340dk_nrf5340_cpuapp`` for the secure domain.
 * ``nrf5340dk_nrf5340_cpuapp_ns`` for the non-secure domain.
   On selecting this build target, the build system includes an additional secure firmware component before building the main firmware on the non-secure domain.
-  The additional component can either be :ref:`Secure Partition Manager (SPM) <secure_partition_manager>` or :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`.
+  The additional component can either be :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` or :ref:`Secure Partition Manager (SPM) <secure_partition_manager>`.
 
 .. note::
    In |NCS| releases before v1.6.1, the build target ``nrf5340dk_nrf5340_cpuapp_ns`` was named ``nrf5340dk_nrf5340_cpuappns``.
 
-The |NCS| provides two alternatives for running applications from the non-secure area of the memory: Secure Partition Manager and Trusted Firmware-M.
+The |NCS| provides two alternatives for running applications from the non-secure area of the memory: Trusted Firmware-M and Secure Partition Manager.
+
+Trusted Firmware-M (TF-M)
+-------------------------
+
+Trusted Firmware-M provides a configurable set of software components to create a Trusted Execution Environment.
+It has replaced Secure Partition Manager as the default solution used by most |NCS| applications and samples.
+This means that when you build your application for the non-secure domain, the :ref:`TF-M <ug_tfm>` is automatically included in the build.
+It is a framework for functions and use cases beyond the scope of Secure Partition Manager.
+
+For more information about the TF-M, see :ref:`ug_tfm`.
+See also :ref:`tfm_hello_world` for a sample that demonstrates how to add TF-M to an application.
 
 Secure Partition Manager (SPM)
 ------------------------------
@@ -75,20 +86,11 @@ The :ref:`secure_partition_manager` sample uses the SPU peripheral to configure 
 After the configuration setup is complete, the sample loads the application firmware from the non-secure domain.
 In addition, the SPM sample provides the application firmware with access to secure services.
 
-The SPM sample is currently the default solution used by most |NCS| samples.
-This means that when you build your application for the non-secure domain, the :ref:`secure_partition_manager` sample is automatically included in the build.
+You can use :ref:`secure_partition_manager` as an alternative to Trusted Firmware-M (TF-M) for running an application from the non-secure area of the memory.
 
-Trusted Firmware-M (TF-M)
--------------------------
-
-Trusted Firmware-M provides a configurable set of software components to create a Trusted Execution Environment.
-It is a framework for functions and use cases beyond the scope of SPM.
-
-Support for TF-M in the |NCS| is currently experimental.
-If your application does not depend on the secure services from SPM and does not use them, TF-M can replace SPM as the secure firmware component in your application.
-
-For more information and instructions on how to do this, see :ref:`ug_tfm`.
-See also :ref:`tfm_hello_world` for a sample that demonstrates how to add TF-M to an application.
+To use the Secure Partition Manager instead of TF-M, do the following:
+* Disable the automatic inclusion of TF-M by setting the option :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n`` in the project configuration.
+* Set the option :kconfig:option:`CONFIG_SPM` to ``y``.
 
 .. _ug_nrf5340_intro_inter_core:
 

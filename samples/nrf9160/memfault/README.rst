@@ -20,7 +20,7 @@ The sample supports the following development kits:
 
 Before using the Memfault platform, you must register an account in the `Memfault registration page`_ and `create a new project in Memfault`_.
 
-.. include:: /includes/spm.txt
+.. include:: /includes/tfm.txt
 
 To get access to all the benefits, like up to 100 free devices connected, register at the `Memfault registration page`_.
 
@@ -145,8 +145,8 @@ Building and running
 ********************
 
 .. |sample path| replace:: :file:`samples/nrf9160/memfault`
-.. include:: /includes/build_and_run.txt
-.. include:: /includes/spm.txt
+
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======

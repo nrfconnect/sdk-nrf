@@ -19,7 +19,7 @@ The sample supports the following development kit:
 
 The sample requires an `AWS account`_ with access to Simple Storage Service (S3) and the IoT Core service.
 
-.. include:: /includes/spm.txt
+.. include:: /includes/tfm.txt
 
 Overview
 *********
@@ -150,7 +150,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/aws_fota`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 .. _configuring:
 

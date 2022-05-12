@@ -17,8 +17,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-
-.. include:: /includes/spm.txt
+.. include:: /includes/tfm.txt
 
 
 Overview
@@ -131,7 +130,7 @@ Building and running
 
    Before building the sample, you must configure a location provider and an API key as instructed in :ref:`lib_multicell_location`.
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 
 Testing

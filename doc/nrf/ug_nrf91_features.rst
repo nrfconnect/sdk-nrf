@@ -54,7 +54,7 @@ Application MCU
 
 The M33 TrustZone divides the application MCU into secure and non-secure domains.
 When the MCU boots, it always starts executing from the secure area.
-The secure bootloader chain starts the :ref:`nrf9160_ug_secure_partition_manager` or the :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`, which configures a part of memory and peripherals to be non-secure and then jumps to the main application located in the non-secure area.
+The secure bootloader chain starts the :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` (or the :ref:`nrf9160_ug_secure_partition_manager`) which configures a part of memory and peripherals to be non-secure, and then jumps to the main application located in the non-secure area.
 
 Secure bootloader chain
 -----------------------
@@ -65,30 +65,29 @@ See :ref:`ug_bootloader` for more information.
 A bootloader chain is optional.
 Not all of the nRF9160 samples include a secure bootloader chain, but the ones that do use the :ref:`bootloader` sample and :doc:`mcuboot:index-ncs`.
 
+Trusted Firmware-M (TF-M)
+-------------------------
+
+Trusted Firmware-M provides a configurable set of software components to create a Trusted Execution Environment.
+It has replaced Secure Partition Manager as the default solution used by most |NCS| applications and samples.
+This means that when you build your application for ``_ns`` build targets, the TF-M is automatically included in the build.
+It is a framework for functions and use cases beyond the scope of Secure Partition Manager.
+
+For more information about the TF-M, see :ref:`ug_tfm`.
+See also :ref:`tfm_hello_world` for a sample that demonstrates how to add TF-M to an application.
+
 .. _nrf9160_ug_secure_partition_manager:
 
 Secure Partition Manager
 ------------------------
 
 The :ref:`secure_partition_manager` sample provides a reference implementation of a Secure Partition Manager firmware.
-This firmware is required to set up an nRF9160-based device so that it can run user applications in the non-secure domain.
+You can use :ref:`secure_partition_manager` as an alternative to Trusted Firmware-M (TF-M) for running an application from the non-secure area of the memory.
 
-The Secure Partition Manager sample is automatically included in the build for the ``nrf9160dk_nrf9160_ns`` and ``thingy91_nrf9160_ns`` build targets.
-To disable the automatic inclusion of the Secure Partition Manager sample, set the option :kconfig:option:`CONFIG_SPM` to ``n`` in the project configuration.
+To use the Secure Partition Manager instead of TF-M, do the following:
 
-
-
-Trusted Firmware-M (TF-M) support
----------------------------------
-
-You can use Trusted Firmware-M (TF-M) as an alternative to :ref:`secure_partition_manager` for running an application from the non-secure area of the memory.
-
-Support for TF-M in |NCS| is currently experimental.
-TF-M is a framework which will be extended for new functions and use cases beyond the scope of SPM.
-
-If your application does not depend on the secure services developed in SPM and does not use them, TF-M can replace SPM as the secure firmware component in your application.
-
-For more information and instructions on how to do this, see :ref:`ug_tfm`.
+* Disable the automatic inclusion of TF-M by setting the option :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n`` in the project configuration.
+* Set the option :kconfig:option:`CONFIG_SPM` to ``y``.
 
 Application
 -----------
@@ -169,8 +168,8 @@ FOTA upgrades
 FOTA upgrades can be used to apply delta patches to the :ref:`lte_modem` firmware, full :ref:`lte_modem` firmware upgrades, and to replace the upgradable bootloader or the application.
 
 .. note::
-   Even though the Secure Partition Manager and the application are two individually compiled components, they are treated as a single binary blob in the context of firmware upgrades.
-   Any reference to the application in this section is meant to indicate the application including the Secure Partition Manager.
+   Even though the Trusted Firmware-M and the application are two individually compiled components, they are treated as a single binary blob in the context of firmware upgrades.
+   Any reference to the application in this section is meant to indicate the application including the Trusted Firmware-M.
 
 To perform a FOTA upgrade, complete the following steps:
 

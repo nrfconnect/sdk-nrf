@@ -23,7 +23,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/lwm2m_carrier`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======

@@ -18,7 +18,7 @@ The sample supports the following development kit:
 
 Additionally, the sample supports :ref:`qemu_x86`.
 
-.. include:: /includes/spm.txt
+.. include:: /includes/tfm.txt
 
 Overview
 *********
@@ -117,7 +117,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/mqtt_simple`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======
