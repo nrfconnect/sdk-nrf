@@ -100,8 +100,8 @@
 #error "Choose supported PWM driver"
 #endif
 
-/* Led PWM period, calculated for 50 Hz signal - in microseconds. */
-#define LED_PWM_PERIOD_US               (USEC_PER_SEC / 50U)
+/* Led PWM period, calculated for 100 Hz signal - in microseconds. */
+#define LED_PWM_PERIOD_US               (USEC_PER_SEC / 100U)
 
 #ifndef ZB_ROUTER_ROLE
 #error Define ZB_ROUTER_ROLE to compile router source code.
