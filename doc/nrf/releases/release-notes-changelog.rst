@@ -431,6 +431,10 @@ Bluetooth libraries and services
       * Serialization of the write callback applied to the GATT attribute.
       * Serialization of the :c:func:`bt_gatt_service_unregister` function call.
 
+  * :ref:`lib_ram_pwrdn`
+
+    * Added the :c:func:`power_up_unused_ram` API.
+
 Modem libraries
 ---------------
 

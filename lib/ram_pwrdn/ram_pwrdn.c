@@ -197,6 +197,11 @@ void power_down_unused_ram(void)
 	power_down_ram(RAM_IMAGE_END_ADDR, ram_end_addr());
 }
 
+void power_up_unused_ram(void)
+{
+	power_up_ram(RAM_IMAGE_END_ADDR, ram_end_addr());
+}
+
 #if CONFIG_RAM_POWER_ADJUST_ON_HEAP_RESIZE
 
 static void libc_heap_resize_cb(uintptr_t heap_id, void *old_heap_end, void *new_heap_end)
