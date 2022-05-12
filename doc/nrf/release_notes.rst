@@ -21,6 +21,7 @@ This page is included only in the latest documentation, because it might contain
    :caption: Subpages:
 
    releases/release-notes-changelog
+   migration/migration_guide_1.x_to_2.x
    releases/release-notes-1.9.1
    releases/release-notes-1.9.0
    releases/release-notes-1.8.0
