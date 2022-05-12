@@ -53,6 +53,7 @@ Matter
 * The CHIP Tool controller is now the recommended controller for Matter.
   The documentation about :ref:`ug_matter_configuring_controller` has been updated accordingly.
   For more information about the CHIP Tool controller, read the :doc:`matter:chip_tool_guide` page in the Matter documentation.
+* Added the :ref:`matter_window_covering_sample` sample, based on the Matter upstream sample.
 
 Thread
 ------
@@ -290,7 +291,7 @@ Matter samples
 --------------
 
 * Added release configuration for all samples.
-
+* Added the :ref:`matter_window_covering_sample` sample, based on the Matter upstream sample.
 * Updated:
 
   * Simplified the :file:`prj.conf` file of each sample by using the default configuration from the :file:`Kconfig.defaults` file in Matter upstream.
