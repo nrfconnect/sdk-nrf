@@ -521,6 +521,18 @@ static int configure_supported_features(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_CX_ADV_TRY_CONTINUE_ON_DENIAL)) {
+		err = sdc_coex_adv_mode_configure(true);
+		if (err) {
+			return -ENOTSUP;
+		}
+	} else if (IS_ENABLED(CONFIG_BT_CTLR_SDC_CX_ADV_CLOSE_ADV_EVT_ON_DENIAL)) {
+		err = sdc_coex_adv_mode_configure(false);
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
 	return 0;
 }
 
