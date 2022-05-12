@@ -47,6 +47,8 @@ Bluetooth mesh
 * Added :c:struct:`bt_mesh_sensor_srv` context to relevant callbacks and APIs to help resolve the associated sensor model instance.
   For details, see `Bluetooth mesh samples`_ and `Bluetooth libraries and services`_.
 
+See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh samples.
+
 Matter
 ------
 
@@ -55,6 +57,19 @@ Matter
   For more information about the CHIP Tool controller, read the :doc:`matter:chip_tool_guide` page in the Matter documentation.
 * Added the :ref:`matter_window_covering_sample` sample, based on the Matter upstream sample.
 
+See `Matter samples`_ for the list of changes for the Matter samples.
+
+Matter fork
++++++++++++
+
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``25e241ebcbf11b1f63dbe25546b1f10219866ad0``.
+
+The following list summarizes the most important changes inherited from the upstream Matter:
+
+* Added the Binding cluster and Groupcast communication to the Light Switch sample.
+* Updated the nRF Connect platform by adding :file:`Kconfig.defaults`, :file:`Kconfig.mcuboot.defaults` and :file:`Kconfig.multiprotocol_rpmsg.defaults` files that contain the default configuration for all nRF Connect SDK samples.
+* Added support for Thread Synchronized Sleepy End Devices.
+
 Thread
 ------
 
@@ -62,6 +77,8 @@ Thread
 * Removed support for the :ref:`thread_architectures_designs_cp_ncp` architecture and the related tools.
 * Memory requirements page shows requirements based on the configuration used for certification instead of minimal configuration which has been removed.
 * Updated "Configuring a radio co-processor" section on Thread Border Router page with the information about forcing Hardware Flow Control in JLink.
+
+See `Thread samples`_ for the list of changes for the Thread samples.
 
 Zigbee
 ------
@@ -81,7 +98,7 @@ Zigbee
 
 * Updated:
 
-  * :ref:` Zigbee shell library <lib_zigbee_shell>`.
+  * :ref:`Zigbee shell library <lib_zigbee_shell>`.
     For details, see `Libraries for Zigbee`_.
   * Return code in the ZCL callbacks from :c:macro:`RET_ERROR` to :c:macro:`RET_NOT_IMPLEMENTED` if the device does not handle the ZCL command.
   * Enabled the ZCL8 compatibility mode :c:macro:`ZB_ZCL_AUTO_MODE` inside the :c:func:`zigbee_default_signal_handler`.
@@ -95,6 +112,8 @@ Zigbee
 * Fixed:
 
   * An issue where an MCU reset between the completion of the OTA image transfer and a postponed firmware upgrade would cause the upgrade to be applied immediately.
+
+See `Zigbee samples`_ for the list of changes for the Zigbee samples.
 
 Applications
 ============
@@ -313,7 +332,7 @@ Thread samples
   * Thread Beacon payload has been removed after changes in latest Thread Specification.
   * The relevant sample documentation pages with information about support for :ref:`Trusted Firmware-M <ug_tfm>`.
   * All sample documentation with a Configuration section, and organized relevant information under that section.
-  * Mnimal configuration for CLI sample has been removed.
+  * Minimal configuration for CLI sample has been removed.
   * BLE advertising interval has been increased from 100 ms to 300 ms for CLI sample when multiprotocol is enabled.
   * CoAP Client sample with Multiprotocol Bluetooth LE extension is now compatible with Bluetooth Central UART sample.
 
@@ -814,17 +833,6 @@ For the list of |NCS| specific commits, including commits cherry-picked from ups
    git log --oneline manifest-rev ^53fbf40227
 
 The current |NCS| main branch is based on revision ``53fbf40227`` of Zephyr.
-
-Matter (Project CHIP)
-=====================
-
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``25e241ebcbf11b1f63dbe25546b1f10219866ad0``.
-
-The following list summarizes the most important changes inherited from the upstream Matter:
-
-* Added the Binding cluster and Groupcast communication to the Light Switch sample.
-* Updated the nRF Connect platform by adding :file:`Kconfig.defaults`, :file:`Kconfig.mcuboot.defaults` and :file:`Kconfig.multiprotocol_rpmsg.defaults` files that contain the default configuration for all nRF Connect SDK samples.
-* Added support for Thread Synchronized Sleepy End Devices.
 
 cddl-gen/zcbor
 ==============
