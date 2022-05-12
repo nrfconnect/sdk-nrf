@@ -81,7 +81,7 @@ In addition to the tools mentioned in :ref:`gs_installing`, the following tool v
      - v1.4.6 or later
      - :ref:`gs_installing_tools`
    * - GCC
-     - See :ref:`gs_installing_toolchain`
+     - See Install the GNU Arm Embedded Toolchain
      - `GNU Arm Embedded Toolchain`_
 
 

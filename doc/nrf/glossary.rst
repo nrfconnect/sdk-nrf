@@ -608,7 +608,6 @@ Glossary
 
    Toolchain
       A set of development tools.
-      See `GNU Arm Embedded Toolchain`_.
 
    Transmit Data (TXD)
       A signal line in a serial interface that transmits data to another device.

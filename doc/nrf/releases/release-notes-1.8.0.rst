@@ -826,7 +826,7 @@ In addition to documentation related to the changes listed above, the following 
   * Added a section describing the Git tool.
   * Expanded the existing section about the west tool.
 
-* :ref:`gs_installing` - Added a note in the :ref:`gs_installing_toolchain` section about TF-M sample incompatibility issue related to GNU Arm Embedded Toolchain versions *9-2020-q2-update* and *10-2020-q4-major*.
+* :ref:`gs_installing` - Added a note in the Install the GNU Arm Embedded Toolchain section about TF-M sample incompatibility issue related to GNU Arm Embedded Toolchain versions *9-2020-q2-update* and *10-2020-q4-major*.
   This was listed earlier as a known issue.
 * :ref:`gs_programming`:
 
