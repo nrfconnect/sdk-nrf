@@ -371,6 +371,7 @@ static void dm_thread(void)
 	int err;
 	enum mpsl_timeslot_call mpsl_api_call;
 	enum dm_call dm_api_call;
+	static nrf_dm_report_t report;
 
 	mpsl_api_call = OPEN_SESSION;
 	err = k_msgq_put(&mpsl_api_msgq, &mpsl_api_call, K_FOREVER);
@@ -388,12 +389,11 @@ static void dm_thread(void)
 			case TIMESLOT_NORMAL_END:
 				dm_reschedule();
 				if (dm_context.ranging_status) {
-					nrf_dm_calc();
+					nrf_dm_populate_report(&report);
+					nrf_dm_calc(&report);
+					process_data(&report);
 				}
 
-				const nrf_dm_report_t *dm_proc_data = nrf_dm_report_get();
-
-				process_data(dm_proc_data);
 				if (dm_context.cb->data_ready != NULL) {
 					dm_context.cb->data_ready(&result);
 				}
