@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig ML_APP_CPU_BOOST
+	bool "CPU BOOST"
+	depends on SOC_NRF5340_CPUAPP
+
+if ML_APP_CPU_BOOST
+
+module = ML_APP_CPU_BOOST
+module-str = CPU boost
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # ML_APP_CPU_BOOST

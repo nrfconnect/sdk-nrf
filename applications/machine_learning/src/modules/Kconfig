@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+rsource "Kconfig.cpu_boost"
 rsource "Kconfig.ei_data_forwarder"
 rsource "Kconfig.led_state"
 rsource "Kconfig.ml_app_mode"
