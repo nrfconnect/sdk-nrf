@@ -682,6 +682,10 @@ Other libraries
 
       * Renamed Profiler to nRF Profiler.
 
+  * :ref:`ei_wrapper`:
+
+      * Added :kconfig:option:`CONFIG_EI_WRAPPER_PROFILING` for logging time of classifier execution.
+
 Common Application Framework (CAF)
 ----------------------------------
 
