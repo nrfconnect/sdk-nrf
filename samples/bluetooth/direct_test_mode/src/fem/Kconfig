@@ -15,7 +15,7 @@ if NRF21540_FEM_SUPPORTED
 
 config NRF21540_FEM_SPI_SUPPORTED
 	bool
-	default $(dt_node_has_prop,nrf_radio_fem,spi-if)
+	default $(dt_nodelabel_has_prop,nrf_radio_fem,spi-if)
 
 endif # NRF21540_FEM_SPI_SUPPORTED
 
@@ -67,13 +67,13 @@ config SKYWORKS_LOW_POWER_MODE
 
 config SKYWORKS_HIGH_POWER_MODE
 	bool "High power-mode"
-	depends on $(dt_node_has_prop,nrf_radio_fem,chl-gpios)
+	depends on $(dt_nodelabel_has_prop,nrf_radio_fem,chl-gpios)
 	help
 	  Skyworks front-end module high-power mode.
 
 config SKYWORKS_BYPASS_MODE
 	bool "Bypass mode"
-	depends on $(dt_node_has_prop,nrf_radio_fem,cps-gpios)
+	depends on $(dt_nodelabel_has_prop,nrf_radio_fem,cps-gpios)
 	help
 	  Skyworks front-end module bypass mode. Bypass path for the integrated LNA.
 	  For more details check your device product specification.
