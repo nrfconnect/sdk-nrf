@@ -87,6 +87,7 @@ Zigbee
   * Production version of :ref:`nrfxlib:zboss` from v3.11.1.0 to v3.11.2.0 and platform v5.1.2 (``v3.11.2.0+v5.1.2``).
   * Development version of :ref:`nrfxlib:zboss` from v3.11.1.177 to v3.12.1.0 and platform v5.2.0 (``v3.12.1.0+v5.2.0``).
   * :ref:`ZBOSS Network Co-processor Host <ug_zigbee_tools_ncp_host>` package to the new version v2.2.0.
+  * Unused RAM sections are now enabled before entering bootloader from the Zigbee application.
 
 Applications
 ============

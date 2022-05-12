@@ -93,6 +93,10 @@ If you want to use the Zigbee FOTA functionality in your application, you must a
           switch (evt->id) {
           case ZIGBEE_FOTA_EVT_FINISHED:
               LOG_INF("Reboot application.");
+              /* Power on unused sections of RAM to allow MCUboot to use it. */
+              if (IS_ENABLED(CONFIG_RAM_POWER_DOWN_LIBRARY)) {
+                  power_up_unused_ram();
+              }
               sys_reboot(SYS_REBOOT_COLD);
               break;
           }

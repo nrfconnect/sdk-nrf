@@ -555,6 +555,11 @@ static void ota_evt_handler(const struct zigbee_fota_evt *evt)
 
 	case ZIGBEE_FOTA_EVT_FINISHED:
 		LOG_INF("Reboot application.");
+		/* Power on unused sections of RAM to allow MCUboot to use it. */
+		if (IS_ENABLED(CONFIG_RAM_POWER_DOWN_LIBRARY)) {
+			power_up_unused_ram();
+		}
+
 		sys_reboot(SYS_REBOOT_COLD);
 		break;
 

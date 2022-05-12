@@ -10,6 +10,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
 #include <zephyr/init.h>
+#include <ram_pwrdn.h>
 
 #include <hal/nrf_power.h>
 #if !NRF_POWER_HAS_RESETREAS
@@ -544,6 +545,11 @@ void zb_reset(zb_uint8_t param)
 #ifdef CONFIG_SOC_NRF5340_CPUAPP
 	nrf_power_gpregret_set(NRF_POWER, reas);
 #endif /* CONFIG_SOC_NRF5340_CPUAPP */
+
+	/* Power on unused sections of RAM to allow MCUboot to use it. */
+	if (IS_ENABLED(CONFIG_RAM_POWER_DOWN_LIBRARY)) {
+		power_up_unused_ram();
+	}
 
 	sys_reboot(reas);
 }
