@@ -11,7 +11,7 @@
 #include <zb_led_button.h>
 
 
-#define LED_PWM_PERIOD_US (USEC_PER_SEC / 50U)
+#define LED_PWM_PERIOD_US (USEC_PER_SEC / 100U)
 #define FLAGS_OR_ZERO(node) \
 	COND_CODE_1(DT_PHA_HAS_CELL(node, pwms, flags), \
 		    (DT_PWMS_FLAGS(node)), (0))

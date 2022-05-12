@@ -365,6 +365,7 @@ Zigbee samples
 
   * Removed implementation of Home Automation Profile Specification logic.
     This logic added dependency between On/Off and Level clusters, so changes in Level cluster were affecting the On/Off one.
+  * Updated the frequency of the LED PWM signal to 100Hz to remove unpleasant flickering.
 
 Other samples
 -------------
