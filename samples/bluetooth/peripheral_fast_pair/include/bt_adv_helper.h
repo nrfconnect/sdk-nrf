@@ -28,11 +28,11 @@ extern "C" {
  *
  * The function handles also periodic RPA rotation and Fast Pair advertising data update.
  *
- * @param[in] fp_discoverable Indicate if the device should be Fast Pair discoverable.
+ * @param[in] fp_adv_mode	Fast Pair advertising mode.
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int bt_adv_helper_adv_start(bool fp_discoverable);
+int bt_adv_helper_adv_start(enum bt_fast_pair_adv_mode fp_adv_mode);
 
 /** Stop Fast Pair sample advertising
  *

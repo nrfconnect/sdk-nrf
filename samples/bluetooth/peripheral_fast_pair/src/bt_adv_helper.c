@@ -65,6 +65,8 @@ static const struct bt_data sd[] = {
 		      (CONFIG_BT_DEVICE_APPEARANCE >> __CHAR_BIT__)),
 };
 
+static enum bt_fast_pair_adv_mode adv_helper_fp_adv_mode;
+
 static void rpa_rotate_fn(struct k_work *w);
 static K_WORK_DELAYABLE_DEFINE(rpa_rotate, rpa_rotate_fn);
 
@@ -82,7 +84,8 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected        = connected,
 };
 
-static int bt_adv_helper_fast_pair_prepare(struct bt_data *adv_data, bool fp_discoverable)
+static int bt_adv_helper_fast_pair_prepare(struct bt_data *adv_data,
+					   enum bt_fast_pair_adv_mode fp_adv_mode)
 {
 	/* Make sure that Fast Pair data was freed and set to NULL to prevent memory leaks. */
 	if (adv_data->data) {
@@ -91,16 +94,16 @@ static int bt_adv_helper_fast_pair_prepare(struct bt_data *adv_data, bool fp_dis
 	}
 
 	/* Fast Pair pairing mode must be manually set by the sample. */
-	bt_fast_pair_set_pairing_mode(fp_discoverable);
+	bt_fast_pair_set_pairing_mode(fp_adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE);
 
-	size_t buf_size = bt_fast_pair_adv_data_size(fp_discoverable);
+	size_t buf_size = bt_fast_pair_adv_data_size(fp_adv_mode);
 	uint8_t *buf = k_malloc(buf_size);
 
 	if (!buf) {
 		return -ENOMEM;
 	}
 
-	int err = bt_fast_pair_adv_data_fill(adv_data, buf, buf_size, fp_discoverable);
+	int err = bt_fast_pair_adv_data_fill(adv_data, buf, buf_size, fp_adv_mode);
 
 	if (err) {
 		k_free(buf);
@@ -133,7 +136,7 @@ static int bt_adv_helper_tx_power_prepare(struct bt_data *adv_data)
 	return err;
 }
 
-static int adv_start_internal(bool fp_discoverable)
+static int adv_start_internal(enum bt_fast_pair_adv_mode fp_adv_mode)
 {
 	struct bt_le_oob oob;
 	int err = bt_le_adv_stop();
@@ -143,7 +146,7 @@ static int adv_start_internal(bool fp_discoverable)
 		return err;
 	}
 
-	err = bt_adv_helper_fast_pair_prepare(&ad[FAST_PAIR_ADV_DATA_POS], fp_discoverable);
+	err = bt_adv_helper_fast_pair_prepare(&ad[FAST_PAIR_ADV_DATA_POS], fp_adv_mode);
 	if (err) {
 		LOG_ERR("Cannot prepare Fast Pair advertising data (err: %d)", err);
 		return err;
@@ -175,7 +178,7 @@ static int adv_start_internal(bool fp_discoverable)
 
 	err = bt_le_adv_start(&adv_param, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 
-	if (!err && !fp_discoverable) {
+	if ((!err) && (fp_adv_mode != BT_FAST_PAIR_ADV_MODE_DISCOVERABLE)) {
 		unsigned int rpa_timeout_ms = RPA_TIMEOUT_NON_DISCOVERABLE * MSEC_PER_SEC;
 		int8_t rand;
 
@@ -197,16 +200,18 @@ static int adv_start_internal(bool fp_discoverable)
 
 static void rpa_rotate_fn(struct k_work *w)
 {
-	(void)adv_start_internal(false);
+	(void)adv_start_internal(adv_helper_fp_adv_mode);
 }
 
-int bt_adv_helper_adv_start(bool fp_discoverable)
+int bt_adv_helper_adv_start(enum bt_fast_pair_adv_mode fp_adv_mode)
 {
 	struct k_work_sync sync;
 
 	k_work_cancel_delayable_sync(&rpa_rotate, &sync);
 
-	return adv_start_internal(fp_discoverable);
+	adv_helper_fp_adv_mode = fp_adv_mode;
+
+	return adv_start_internal(fp_adv_mode);
 }
 
 int bt_adv_helper_adv_stop(void)
