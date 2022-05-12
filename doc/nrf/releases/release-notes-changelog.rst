@@ -127,6 +127,9 @@ Bluetooth samples
   * Split the configuration of the Distance Measurement module from the Nordic Distance Measurement library.
     This allows the use of the Nordic Distance Measurement library without the module.
 
+* :ref:`direct_test_mode` sample:
+
+  * Added a workaround for nRF5340 revision 1 Errata 117.
 
 Bluetooth mesh samples
 ----------------------

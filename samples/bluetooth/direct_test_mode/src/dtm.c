@@ -22,6 +22,7 @@
 #include <hal/nrf_radio.h>
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
+#include <nrf_erratas.h>
 
 #if defined(CONFIG_HAS_HW_NRF_PPI)
 #include <nrfx_ppi.h>
@@ -934,6 +935,28 @@ static bool check_pdu(const struct dtm_pdu *pdu)
 	return true;
 }
 
+#if NRF53_ERRATA_117_ENABLE_WORKAROUND
+/* Workaround for Errata 117 "RADIO: Changing MODE requires additional
+ * configuration" found at the Errata document for your device located at
+ * https://infocenter.nordicsemi.com/index.jsp
+ */
+static void errata_117_handle(bool enable)
+{
+	if (enable) {
+		*((volatile uint32_t *)0x41008588) = *((volatile uint32_t *)0x01FF0084);
+	} else {
+		*((volatile uint32_t *)0x41008588) = *((volatile uint32_t *)0x01FF0080);
+	}
+}
+
+#else
+
+static void errata_117_handle(bool enable)
+{
+
+}
+#endif /* NRF53_ERRATA_117_ENABLE_WORKAROUND */
+
 #ifdef NRF52840_XXAA
 /* Radio configuration used as a workaround for nRF52840 anomaly 172 */
 static void anomaly_172_radio_operation(void)
@@ -1338,7 +1361,10 @@ static enum dtm_err_code phy_set(uint8_t phy)
 		anomaly_172_strict_mode_set(false);
 		nrfx_timer_disable(&dtm_inst.anomaly_timer);
 		dtm_inst.anomaly_172_wa_enabled = false;
-#endif
+#endif /* NRF52840_XXAA */
+
+		errata_117_handle(false);
+
 		return radio_init();
 	} else if ((phy >= LE_PHY_2M_MIN_RANGE) &&
 		   (phy <= LE_PHY_2M_MAX_RANGE)) {
@@ -1356,7 +1382,10 @@ static enum dtm_err_code phy_set(uint8_t phy)
 		anomaly_172_strict_mode_set(false);
 		nrfx_timer_disable(&dtm_inst.anomaly_timer);
 		dtm_inst.anomaly_172_wa_enabled = false;
-#endif
+#endif /* NRF52840_XXAA */
+
+		errata_117_handle(true);
+
 		return radio_init();
 	} else if ((phy >= LE_PHY_LE_CODED_S8_MIN_RANGE) &&
 		   (phy <= LE_PHY_LE_CODED_S8_MAX_RANGE)) {
@@ -1377,6 +1406,9 @@ static enum dtm_err_code phy_set(uint8_t phy)
 			dtm_inst.anomaly_172_wa_enabled = true;
 		}
 #endif /* NRF52840_XXAA */
+
+		errata_117_handle(false);
+
 		return radio_init();
 #else
 		dtm_inst.event = LE_TEST_STATUS_EVENT_ERROR;
@@ -1402,6 +1434,8 @@ static enum dtm_err_code phy_set(uint8_t phy)
 			dtm_inst.anomaly_172_wa_enabled = true;
 		}
 #endif /* NRF52840_XXAA */
+
+		errata_117_handle(false);
 
 		return radio_init();
 #else
@@ -1710,6 +1744,9 @@ static enum dtm_err_code on_test_setup_cmd(enum dtm_ctrl_code control,
 		nrfx_timer_disable(&dtm_inst.anomaly_timer);
 		dtm_inst.anomaly_172_wa_enabled = false;
 #endif
+
+		errata_117_handle(false);
+
 		radio_init();
 
 		break;
