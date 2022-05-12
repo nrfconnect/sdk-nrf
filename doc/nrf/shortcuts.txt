@@ -114,6 +114,3 @@
 .. |thingy53_unreleased| replace:: As of the |NCS| |release| release, Thingy:53 is an unreleased product that will be released in the near future.
 
 .. |nrf5340_octave_note| replace:: The |NCS| includes the :ref:`octave` application, a complete project that integrates the LE Audio standard with custom reference hardware based on the nRF5340 SiP.
-
-.. |tfm_gnu_version_incompatibility| replace:: Do not use GNU Arm Embedded Toolchain versions *9-2020-q2-update* and *10-2020-q4-major* due to `TF-M sample incompatibility issue`_.
-   These versions do not work correctly when compiling binaries for Cortex-M Secure Extensions.

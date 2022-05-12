@@ -20,7 +20,6 @@ See the following sections for detailed instructions.
 If you already have your system set up to work with Zephyr OS based on Zephyr's :ref:`zephyr:getting_started`, you already have some of the requirements for the |NCS| installed.
 The only requirement not covered by the installation steps in Zephyr is the :ref:`GN tool <gs_installing_gn>`.
 This tool is needed only for :ref:`ug_matter` applications.
-You can also skip the `Install the GNU Arm Embedded Toolchain`_ section.
 
 Before you start setting up the toolchain, install available updates for your operating system.
 See :ref:`gs_recommended_versions` for information on the supported operating systems and Zephyr features.
@@ -67,10 +66,6 @@ The installation process is different depending on your operating system.
       Ensure that these dependencies are installed with their versions as specified in the :ref:`Required tools table <req_tools_table>`.
       Refer to the :ref:`zephyr:installation_linux` page for additional information on updating the dependencies manually.
       If you are using other Linux-based operating systems, see the :ref:`zephyr:linux_requirements` section in the Zephyr documentation.
-
-      .. note::
-         You do not need to install the Zephyr SDK.
-         We recommend to install the compiler toolchain separately, as detailed in `Install the GNU Arm Embedded Toolchain`_.
 
    .. group-tab:: macOS
 
@@ -365,88 +360,16 @@ Use the following commands to install the requirements for each repository.
 
 .. rst-class:: numbered-step
 
-Install the GNU Arm Embedded Toolchain
-**************************************
+Install a Toolchain
+*******************
 
-To be able to cross-compile your applications for Arm targets, you must install version 9-2019-q4-major of the `GNU Arm Embedded Toolchain`_.
+A toolchain provides a compiler, assembler, linker, and other programs required to build Zephyr applications.
 
-.. important::
-   Make sure to install the toolchain version that is mentioned above.
-   Other toolchain versions might not work with this version of the |NCS|.
-   Similarly, other versions of the |NCS| might require a different toolchain version.
-
-   |tfm_gnu_version_incompatibility|
-
-To set up the toolchain, complete the following steps:
-
-.. _toolchain_setup:
-
-1. Download the `GNU Arm Embedded Toolchain`_ for your operating system.
-#. Extract the contents of the root folder of the toolchain into a directory of your choice.
-   The recommended folder is :file:`c:\\gnuarmemb` on Windows and :file:`~/gnuarmemb` on Linux or macOS.
-   Make sure that the folder name does not contain any spaces or special characters.
-   By default, the contents are extracted to another folder that corresponds to the GNU Arm Embedded Toolchain version (*version-folder* in the following step).
-   For example, :file:`c:\\gccarmemb\\9_2019-q4-major`, where :file:`9_2019-q4-major` is the *version-folder* name edited to contain no empty spaces.
-#. If you want to build and program applications from the command line, define the environment variables for the GNU Arm Embedded Toolchain.
-   Depending on your operating system:
-
-    .. tabs::
-
-       .. group-tab:: Windows
-
-          Open a command-line window and enter the commands below.
-
-          If you did not install the toolchain in the recommended folder, change the value of :envvar:`GNUARMEMB_TOOLCHAIN_PATH` to the folder you used and make sure to provide the name of the *version-folder*.
-
-            .. parsed-literal::
-               :class: highlight
-
-               set ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
-               set GNUARMEMB_TOOLCHAIN_PATH=\ c:\\gnuarmemb\\version-folder
-
-       .. group-tab:: Linux
-
-          Open a terminal window and enter the commands below.
-
-          If you did not install the toolchain in the recommended folder, change the value of :envvar:`GNUARMEMB_TOOLCHAIN_PATH` to the folder you used and make sure to provide the name of the *version-folder*.
-
-            .. parsed-literal::
-               :class: highlight
-
-               export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
-               export GNUARMEMB_TOOLCHAIN_PATH=\ "~/gnuarmemb/*version-folder*"
-
-       .. group-tab:: macOS
-
-          Open a terminal window and enter the commands below.
-
-          If you did not install the toolchain in the recommended folder, change the value of :envvar:`GNUARMEMB_TOOLCHAIN_PATH` to the folder you used and make sure to provide the name of the *version-folder*.
-
-            .. parsed-literal::
-               :class: highlight
-
-               export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
-               export GNUARMEMB_TOOLCHAIN_PATH=\ "~/gnuarmemb/*version-folder*"
-
-#. Set the environment variables persistently.
-   Depending on your operating system:
-
-    .. tabs::
-
-       .. group-tab:: Windows
-
-          Add the environment variables as system environment variables or define them in the :file:`%userprofile%\zephyrrc.cmd` file as described in :ref:`build_environment_cli`.
-          This lets you avoid setting them every time you open a command-line window.
-
-       .. group-tab:: Linux
-
-          Define the environment variables in the :file:`~/.zephyrrc` file as described in :ref:`build_environment_cli`.
-          This lets you avoid setting them every time you open a terminal window.
-
-       .. group-tab:: macOS
-
-          Define the environment variables in the :file:`~/.zephyrrc` file as described in :ref:`build_environment_cli`.
-          This lets you avoid setting them every time you open a terminal window.
+.. ncs-include:: develop/getting_started/index.rst
+   :docset: zephyr
+   :dedent: 0
+   :start-after: to build Zephyr applications.
+   :end-before: .. _getting_started_run_sample:
 
 .. rst-class:: numbered-step
 

@@ -14,7 +14,7 @@ After programming and testing an application, you probably want to make some mod
 Adding files and changing compiler settings
 *******************************************
 
-The |NCS| build system is based on Zephyr, whose build system is based on `CMake`_.
+The |NCS| build system is based on Zephyr, whose build system is based on `CMake <CMake documentation_>`_.
 For more information about how the build system works in Zephyr, see :ref:`zephyr:build_overview` and :ref:`zephyr:application` in the Zephyr documentation.
 
 In the |NCS|, the application is a CMake project.
@@ -24,7 +24,7 @@ The application's :file:`CMakeLists.txt` file is the main CMake project file and
 Zephyr provides a CMake package that must be loaded by the application into its :file:`CMakeLists.txt` file.
 When loaded, the application can reference items provided by both Zephyr and the |NCS|.
 
-Loading Zephyr's `CMake`_ package creates the ``app`` CMake target.
+Loading Zephyr's `CMake <CMake documentation_>`_ package creates the ``app`` CMake target.
 You can add application source files to this target from the application :file:`CMakeLists.txt` file.
 
 To update the :file:`CMakeLists.txt` file, either edit it directly or use |VSC| to maintain it.
