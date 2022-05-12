@@ -16,6 +16,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/spm.txt
+
 Overview
 ********
 
@@ -675,7 +677,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/modem_shell`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 See :ref:`cmake_options` for instructions on how to provide CMake options, for example to use a configuration overlay.
 

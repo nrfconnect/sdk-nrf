@@ -16,6 +16,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 The sample requires an `nRF Cloud`_ account.
 
 Your device must be provisioned with `nRF Cloud`_. If it is not, follow the instructions in `Provisioning <nrf_cloud_rest_device_message_provisioning_>`_.
@@ -92,7 +94,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/nrf_cloud_rest_device_message`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 The configuration file for this sample is located in :file:`samples/nrf9160/nrf_cloud_rest_device_message`.
 See :ref:`configure_application` for information on how to configure the parameters.

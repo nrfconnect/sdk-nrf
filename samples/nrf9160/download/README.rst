@@ -17,8 +17,7 @@ The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
-
-.. include:: /includes/spm.txt
+.. include:: /includes/tfm.txt
 
 Overview
 ********
@@ -96,7 +95,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/download`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 
 Testing

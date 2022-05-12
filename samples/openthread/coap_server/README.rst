@@ -22,6 +22,8 @@ The sample supports the following development kits:
 You can use one or more of these development kits as the Thread CoAP Server.
 You also need one or more compatible development kits programmed with the :ref:`coap_client_sample` sample.
 
+.. include:: /includes/tfm.txt
+
 Overview
 ********
 
@@ -62,18 +64,13 @@ FEM support
 
 .. include:: /includes/sample_fem_support.txt
 
-Trusted Firmware-M support
-==========================
-
-.. include:: /includes/tfm.txt
-
 Building and running
 ********************
 .. |sample path| replace:: :file:`samples/openthread/coap_server`
 
 |enable_thread_before_testing|
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======

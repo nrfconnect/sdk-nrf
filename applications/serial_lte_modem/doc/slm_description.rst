@@ -25,7 +25,7 @@ The application supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/spm.txt
+.. include:: /includes/tfm.txt
 
 Configuration
 *************
@@ -307,7 +307,7 @@ Building and running
 
 .. |sample path| replace:: :file:`applications/serial_lte_modem`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 .. _slm_connecting_9160dk:
 

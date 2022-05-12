@@ -17,7 +17,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/spm.txt
+.. include:: /includes/tfm.txt
 
 See also the requirements in :ref:`lib_location` library document.
 
@@ -78,7 +78,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/location`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 ESP8266 Wi-Fi support
 =====================

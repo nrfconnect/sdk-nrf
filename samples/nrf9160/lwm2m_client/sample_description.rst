@@ -19,6 +19,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/spm.txt
+
 Additionally, the sample requires an activated SIM card, and an LwM2M server such as `Leshan Demo Server`_ or `Coiote Device Management`_ server.
 
 Overview
@@ -483,7 +485,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/lwm2m_client`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 
 After building and running the sample, you can locate your device in the server:

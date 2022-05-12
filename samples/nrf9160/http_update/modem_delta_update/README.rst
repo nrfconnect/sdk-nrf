@@ -19,7 +19,7 @@ The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/spm.txt
+.. include:: /includes/tfm.txt
 
 Overview
 ********
@@ -33,10 +33,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/http_update/modem_delta_update`
 
-.. include:: /includes/build_and_run.txt
-
-The sample is built as a non-secure firmware image for the ``nrf9160dk_nrf9160_ns`` build target.
-Because of this, it automatically includes the :ref:`secure_partition_manager`.
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======

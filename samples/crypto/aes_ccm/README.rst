@@ -44,7 +44,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/crypto/aes_ccm`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======

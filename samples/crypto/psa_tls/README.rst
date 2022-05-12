@@ -20,6 +20,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 The sample requires a `TAP adapter`_ to perform the TLS handshake.
 This functionality is currently only supported in Linux.
 
@@ -117,8 +119,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/crypto/psa_tls`
 
-.. include:: /includes/config_build_and_run.txt
-
+.. include:: /includes/build_and_run_ns.txt
 
 .. _crypto_tls_testing:
 

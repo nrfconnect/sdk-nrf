@@ -17,6 +17,8 @@ The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 The sample also requires two signed firmware images that have to be available for download from an HTTP server.
 The images are generated automatically when building the sample, but you must upload them to a server and configure the location from where they can be downloaded.
 
@@ -58,9 +60,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/http_update/application_update`
 
-.. include:: /includes/build_and_run.txt
-
-.. include:: /includes/spm.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Specifying the image files
 ==========================

@@ -17,6 +17,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. include:: /includes/tfm.txt
+
 Overview
 ********
 
@@ -127,8 +129,8 @@ Building and running
 ********************
 
 .. |sample path| replace:: :file:`samples/nrf9160/cloud_client`
-.. include:: /includes/build_and_run.txt
-.. include:: /includes/spm.txt
+
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======

@@ -170,7 +170,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/gnss`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 If the sample is to be used with the SUPL client library, the library must be downloaded and enabled in the sample configuration.
 You can download it from the `Nordic Semiconductor website`_.

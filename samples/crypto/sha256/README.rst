@@ -35,7 +35,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/crypto/sha256`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======

@@ -18,7 +18,7 @@ The sample supports the following development kit:
 
 The sample also requires a public CoAP server IP address or URL available on the Internet.
 
-.. include:: /includes/spm.txt
+.. include:: /includes/tfm.txt
 
 Overview
 ********
@@ -68,7 +68,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/coap_client`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 
 Testing

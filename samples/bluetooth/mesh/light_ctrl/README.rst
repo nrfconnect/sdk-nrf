@@ -24,6 +24,8 @@ The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobil
 .. note::
    |thingy53_sample_note|
 
+.. include:: /includes/tfm.txt
+
 Overview
 ********
 
@@ -137,7 +139,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/bluetooth/mesh/light_ctrl`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 .. _bluetooth_mesh_light_ctrl_testing:
 
