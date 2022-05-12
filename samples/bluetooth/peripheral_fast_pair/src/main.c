@@ -8,6 +8,7 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/settings/settings.h>
+#include <bluetooth/services/fast_pair.h>
 
 #include <dk_buttons_and_leds.h>
 
@@ -17,28 +18,36 @@ LOG_MODULE_REGISTER(fp_sample, LOG_LEVEL_INF);
 #include "bt_adv_helper.h"
 #include "hids_helper.h"
 
-#define RUN_STATUS_LED			DK_LED1
-#define CON_STATUS_LED			DK_LED2
-#define FP_DISCOVERABLE_STATUS_LED	DK_LED3
+#define RUN_STATUS_LED						DK_LED1
+#define CON_STATUS_LED						DK_LED2
+#define FP_ADV_MODE_STATUS_LED					DK_LED3
 
-#define FP_DISCOVERABLE_BUTTON_MASK	DK_BTN1_MSK
-#define VOLUME_UP_BUTTON_MASK		DK_BTN2_MSK
-#define VOLUME_DOWN_BUTTON_MASK		DK_BTN4_MSK
+#define FP_ADV_MODE_BUTTON_MASK					DK_BTN1_MSK
+#define VOLUME_UP_BUTTON_MASK					DK_BTN2_MSK
+#define VOLUME_DOWN_BUTTON_MASK					DK_BTN4_MSK
 
-#define RUN_LED_BLINK_INTERVAL_MS	1000
+#define RUN_LED_BLINK_INTERVAL_MS				1000
+#define FP_ADV_MODE_SHOW_UI_INDICATION_LED_BLINK_INTERVAL_MS	500
+#define FP_ADV_MODE_HIDE_UI_INDICATION_LED_BLINK_INTERVAL_MS	1500
 
-static bool fp_discoverable = true;
+static enum bt_fast_pair_adv_mode fp_adv_mode = BT_FAST_PAIR_ADV_MODE_DISCOVERABLE;
 static struct bt_conn *peer;
 
 static struct k_work bt_adv_restart;
-
+static struct k_work_delayable fp_adv_mode_status_led_handle;
 
 static void advertising_start(void)
 {
-	int err = bt_adv_helper_adv_start(fp_discoverable);
+	int err = bt_adv_helper_adv_start(fp_adv_mode);
 
 	if (!err) {
-		LOG_INF("%siscoverable advertising started", fp_discoverable ? "D" : "Non-d");
+		if (fp_adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE) {
+			LOG_INF("Discoverable advertising started");
+		} else {
+			LOG_INF("Non-discoverable advertising started, %s UI indication enabled",
+				(fp_adv_mode == BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_SHOW_UI_IND)
+					? "show" : "hide");
+		}
 	} else {
 		LOG_ERR("Advertising failed to start (err %d)", err);
 	}
@@ -47,6 +56,34 @@ static void advertising_start(void)
 static void bt_adv_restart_fn(struct k_work *w)
 {
 	advertising_start();
+}
+
+static void fp_adv_mode_status_led_handle_fn(struct k_work *w)
+{
+	static bool led_on = true;
+
+	switch (fp_adv_mode) {
+	case BT_FAST_PAIR_ADV_MODE_DISCOVERABLE:
+		dk_set_led_on(FP_ADV_MODE_STATUS_LED);
+		break;
+
+	case BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_SHOW_UI_IND:
+		dk_set_led(FP_ADV_MODE_STATUS_LED, led_on);
+		led_on = !led_on;
+		k_work_reschedule(&fp_adv_mode_status_led_handle,
+				  K_MSEC(FP_ADV_MODE_SHOW_UI_INDICATION_LED_BLINK_INTERVAL_MS));
+		break;
+
+	case BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_HIDE_UI_IND:
+		dk_set_led(FP_ADV_MODE_STATUS_LED, led_on);
+		led_on = !led_on;
+		k_work_reschedule(&fp_adv_mode_status_led_handle,
+				  K_MSEC(FP_ADV_MODE_HIDE_UI_INDICATION_LED_BLINK_INTERVAL_MS));
+		break;
+
+	default:
+		__ASSERT_NO_MSG(false);
+	}
 }
 
 static void connected(struct bt_conn *conn, uint8_t err)
@@ -161,12 +198,15 @@ static void volume_control_btn_handle(uint32_t button_state, uint32_t has_change
 	}
 }
 
-static void fp_discoverable_btn_handle(uint32_t button_state, uint32_t has_changed)
+static void fp_adv_mode_btn_handle(uint32_t button_state, uint32_t has_changed)
 {
-	if (has_changed & button_state & FP_DISCOVERABLE_BUTTON_MASK) {
-		fp_discoverable = !fp_discoverable;
-		dk_set_led(FP_DISCOVERABLE_STATUS_LED, fp_discoverable);
+	struct k_work_sync sync;
+	uint32_t button_pressed = button_state & has_changed;
 
+	if (button_pressed & FP_ADV_MODE_BUTTON_MASK) {
+		k_work_cancel_delayable_sync(&fp_adv_mode_status_led_handle, &sync);
+		fp_adv_mode = (fp_adv_mode + 1) % BT_FAST_PAIR_ADV_MODE_COUNT;
+		k_work_schedule(&fp_adv_mode_status_led_handle, K_NO_WAIT);
 		if (!peer) {
 			advertising_start();
 		}
@@ -175,7 +215,7 @@ static void fp_discoverable_btn_handle(uint32_t button_state, uint32_t has_chang
 
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
-	fp_discoverable_btn_handle(button_state, has_changed);
+	fp_adv_mode_btn_handle(button_state, has_changed);
 	volume_control_btn_handle(button_state, has_changed);
 }
 
@@ -215,8 +255,9 @@ void main(void)
 	}
 
 	k_work_init(&bt_adv_restart, bt_adv_restart_fn);
+	k_work_init_delayable(&fp_adv_mode_status_led_handle, fp_adv_mode_status_led_handle_fn);
 
-	dk_set_led(FP_DISCOVERABLE_STATUS_LED, fp_discoverable);
+	k_work_schedule(&fp_adv_mode_status_led_handle, K_NO_WAIT);
 	advertising_start();
 
 	err = dk_buttons_init(button_changed);
