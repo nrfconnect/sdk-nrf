@@ -28,6 +28,7 @@
 .. _`Zephyr pull request #29618`: https://github.com/zephyrproject-rtos/zephyr/pull/29618
 .. _`Zephyr issue #27356`: https://github.com/zephyrproject-rtos/zephyr/issues/27356
 .. _`Zephyr issue #38516`: https://github.com/zephyrproject-rtos/zephyr/issues/38516
+.. _`Zephyr SDK`: https://github.com/zephyrproject-rtos/sdk-ng/releases
 
 .. _`sdk-mcuboot`: https://github.com/nrfconnect/sdk-mcuboot
 .. _`MCUboot repository`: https://github.com/mcu-tools/mcuboot
@@ -99,6 +100,8 @@
 .. _`TF-M sample incompatibility issue`: https://github.com/zephyrproject-rtos/zephyr/issues/34658
 
 .. _`zcbor`: https://github.com/NordicSemiconductor/zcbor
+
+.. _`zcbor documentation`: https://github.com/NordicSemiconductor/zcbor#readme
 
 .. _`nordic-hid.quirk`: https://github.com/fwupd/fwupd/tree/main/plugins/nordic-hid/nordic-hid.quirk
 

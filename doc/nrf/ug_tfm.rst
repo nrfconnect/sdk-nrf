@@ -130,6 +130,8 @@ Nordic platforms support only the GCC toolchain for building TF-M.
 Enabling Floating point support in TF-M is currently not supported.
 Enabling Floating point Hard ABI (:kconfig:option:`CONFIG_FP_HARDABI`) in the application is currently not supported.
 
+.. _ug_tfm_migrate:
+
 Migrating from Secure Partition Manager to Trusted Firmware-M
 *************************************************************
 
