@@ -227,6 +227,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/dfu/                        @hakonfam @sigvartmh
 /tests/subsys/dfu/dfu_multi_image/        @Damian-Nordic
 /tests/subsys/emds/                       @balaklaka
+/tests/subsys/event_manager_proxy/        @rakons
 /tests/subsys/app_event_manager/          @pdunaj @MarekPieta @rakons
 /tests/subsys/fw_info/                    @oyvindronningstad
 /tests/subsys/net/lib/aws_*/              @simensrostad
