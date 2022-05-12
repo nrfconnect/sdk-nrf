@@ -312,6 +312,7 @@ static void processing_finished(int err)
 static void edge_impulse_thread_fn(void)
 {
 	signal_t features_signal;
+	int64_t start_time;
 
 	while (true) {
 		k_sem_take(&ei_sem, K_FOREVER);
@@ -319,9 +320,23 @@ static void edge_impulse_thread_fn(void)
 		features_signal.get_data = &raw_feature_get_data;
 		features_signal.total_length = INPUT_WINDOW_SIZE;
 
+		if (IS_ENABLED(CONFIG_EI_WRAPPER_PROFILING)) {
+			start_time = k_uptime_get();
+		}
+
 		/* Invoke the impulse. */
 		EI_IMPULSE_ERROR err = run_classifier(&features_signal,
 						      &ei_result, DEBUG_MODE);
+		if (IS_ENABLED(CONFIG_EI_WRAPPER_PROFILING)) {
+			int64_t delta = k_uptime_delta(&start_time);
+
+			LOG_INF("run_classifier execution time: %dms", (int32_t)delta);
+			LOG_INF("sampling: %dms dsp: %dms classification: %dms anomaly: %dms",
+				ei_result.timing.sampling,
+				ei_result.timing.dsp,
+				ei_result.timing.classification,
+				ei_result.timing.anomaly);
+		}
 
 		if (err) {
 			LOG_ERR("run_classifier err=%d", err);

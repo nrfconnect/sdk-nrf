@@ -81,6 +81,14 @@ config EI_WRAPPER_THREAD_PRIORITY
 	  that the thread will not block other operations in system for
 	  a long time.
 
+config EI_WRAPPER_PROFILING
+	bool "Run Edge Impulse library with profiling logging"
+	depends on LOG
+	help
+	  EI wrapper provides logs with execution time in ms of the classifier
+	  with detailed information about time spent in the following stages:
+	  sampling, dsp, classification, and anomaly.
+
 config EI_WRAPPER_DEBUG_MODE
 	bool "Run Edge Impulse library in debug mode"
 
