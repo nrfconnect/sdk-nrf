@@ -176,7 +176,7 @@ To enable the LED PWM nodes in the devicetree file, you must set their status to
 You can also decide to create these nodes from scratch.
 There is no limit to the number of node instances you can create.
 
-For the LEDs to be configured correctly, make sure that LED PWM node pin numbers in the :file:`dts` file are matching the PWM nodes set when `Enabling the PWM ports`_.
+For the LEDs to be configured correctly, make sure that LED PWM node channel numbers in the :file:`dts` file are matching the PWM nodes set when `Enabling the PWM ports`_.
 
 The following code snippets show examples of the DTS nodes:
 
@@ -186,11 +186,11 @@ The following code snippets show examples of the DTS nodes:
 
 	&pwm_led0 {
 		status = "okay";
-		pwms = <&pwm0 8>;
+		pwms = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
 		label = "LED0";
 	};
 
-  In this example, the ``pwms`` property is pointing to the ``pwm0`` PWM node set in Example 1 in `Enabling the PWM ports`_, with the respective channel GPIO pin number (``8``).
+  In this example, the ``pwms`` property is pointing to the ``pwm0`` PWM node set in Example 1 in `Enabling the PWM ports`_, with the respective channel number (``0``).
 * Example 2 (creating new LED PWM nodes):
 
   .. code-block:: none
@@ -201,19 +201,19 @@ The following code snippets show examples of the DTS nodes:
 
 		pwm_led0: led_pwm_0 {
 			status = "okay";
-			pwms = <&pwm0 11>;
+			pwms = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
 			label = "LED0 red";
 		};
 
 		pwm_led1: led_pwm_1 {
 			status = "okay";
-			pwms = <&pwm0 26>;
+			pwms = <&pwm0 1 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
 			label = "LED0 green";
 		};
 
 		pwm_led2: led_pwm_2 {
 			status = "okay";
-			pwms = <&pwm0 27>;
+			pwms = <&pwm0 2 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
 			label = "LED0 blue";
 		};
 	};
@@ -224,13 +224,13 @@ The following code snippets show examples of the DTS nodes:
 
 		pwm_led3: led_pwm_3 {
 			status = "okay";
-			pwms = <&pwm1 4>;
+			pwms = <&pwm1 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
 			label = "LED1";
 		};
 	};
 
-     In this example, ``pwmleds0`` is a tri-channel color LED node, while ``pwmleds1`` is a monochromatic LED node.
-     Both ``pwmleds`` nodes are pointing to the ``pwms`` properties corresponding to PWM nodes set in Example 2 in `Enabling the PWM ports`_, with the respective channel GPIO pin numbers.
+  In this example, ``pwmleds0`` is a tri-channel color LED node, while ``pwmleds1`` is a monochromatic LED node.
+  Both ``pwmleds`` nodes are pointing to the ``pwms`` properties corresponding to PWM nodes set in Example 2 in `Enabling the PWM ports`_, with the respective channel numbers.
 
 Configuring GPIO LEDs
 ---------------------
