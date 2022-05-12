@@ -55,13 +55,13 @@
 	pwmleds {
 		compatible = "pwm-leds";
 		pwm_led0: pwm_led_0 {
-			pwms = <&pwm0 29>;
+			pwms = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
 		};
 		pwm_led1: pwm_led_1 {
-			pwms = <&pwm0 30>;
+			pwms = <&pwm0 1 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
 		};
 		pwm_led2: pwm_led_2 {
-			pwms = <&pwm0 31>;
+			pwms = <&pwm0 2 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
 		};
 	};
 
