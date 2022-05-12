@@ -8,21 +8,13 @@
 
 #include <zephyr/drivers/pwm.h>
 
-#define BUZZER_PWM_NODE DT_ALIAS(buzzer_pwm)
-#define BUZZER_PWM_NAME DT_LABEL(BUZZER_PWM_NODE)
-#define BUZZER_PWM_PIN DT_PWMS_CHANNEL(BUZZER_PWM_NODE)
-#define BUZZER_PWM_FLAGS DT_PWMS_FLAGS(BUZZER_PWM_NODE)
+static const struct pwm_dt_spec sBuzzer = PWM_DT_SPEC_GET(DT_ALIAS(buzzer_pwm));
 
-constexpr uint16_t kBuzzerPwmPeriodUs = 10000;
-constexpr uint16_t kBuzzerPwmDutyCycleUs = 5000;
-
-static const device *sBuzzerDevice;
 static bool sBuzzerState;
 
 int BuzzerInit()
 {
-	sBuzzerDevice = device_get_binding(BUZZER_PWM_NAME);
-	if (!sBuzzerDevice) {
+	if (!device_is_ready(sBuzzer.dev)) {
 		return -ENODEV;
 	}
 	return 0;
@@ -31,8 +23,7 @@ int BuzzerInit()
 void BuzzerSetState(bool onOff)
 {
 	sBuzzerState = onOff;
-	pwm_pin_set_usec(sBuzzerDevice, BUZZER_PWM_PIN, kBuzzerPwmPeriodUs, sBuzzerState ? kBuzzerPwmDutyCycleUs : 0,
-			 BUZZER_PWM_FLAGS);
+	pwm_set_pulse_dt(&sBuzzer, sBuzzerState ? (sBuzzer.period / 2) : 0);
 }
 
 void BuzzerToggleState()
