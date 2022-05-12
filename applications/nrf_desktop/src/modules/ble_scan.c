@@ -485,7 +485,7 @@ static void scan_init(void)
 	};
 
 	if (IS_ENABLED(CONFIG_CAF_BLE_USE_LLPM) &&
-	    (CONFIG_BT_MAX_CONN > 2)) {
+	    (CONFIG_BT_MAX_CONN >= 2)) {
 		cp.interval_min = 8;
 		cp.interval_max = 8;
 	} else {
