@@ -14,9 +14,9 @@
 #include <mbedtls/ecp.h>
 #include <mbedtls/sha256.h>
 
-#include <random/rand32.h>
+#include <zephyr/random/rand32.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
 /* Bit length of the AES-128 key. */

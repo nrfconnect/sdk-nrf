@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <device.h>
-#include <sys/byteorder.h>
+#include <zephyr/device.h>
+#include <zephyr/sys/byteorder.h>
 #include <bluetooth/services/hids.h>
 
 #include <logging/log.h>

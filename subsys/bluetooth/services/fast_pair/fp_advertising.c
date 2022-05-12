@@ -5,9 +5,9 @@
  */
 
 #include <errno.h>
-#include <net/buf.h>
-#include <random/rand32.h>
-#include <bluetooth/bluetooth.h>
+#include <zephyr/net/buf.h>
+#include <zephyr/random/rand32.h>
+#include <zephyr/bluetooth/bluetooth.h>
 
 #include <bluetooth/services/fast_pair.h>
 #include "fp_common.h"

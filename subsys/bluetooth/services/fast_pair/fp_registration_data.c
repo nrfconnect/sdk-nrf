@@ -6,8 +6,8 @@
 
 #include <errno.h>
 #include <string.h>
-#include <device.h>
-#include <storage/flash_map.h>
+#include <zephyr/device.h>
+#include <zephyr/storage/flash_map.h>
 #include <pm_config.h>
 
 #include "fp_registration_data.h"

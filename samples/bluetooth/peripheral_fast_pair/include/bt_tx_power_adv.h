@@ -7,7 +7,7 @@
 #ifndef BT_TX_POWER_ADV_H_
 #define BT_TX_POWER_ADV_H_
 
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 
 /**
  * @defgroup fast_pair_sample_bt_tx_power_adv Fast Pair sample TX power advertising API

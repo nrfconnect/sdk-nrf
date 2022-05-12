@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/conn.h>
-#include <settings/settings.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/settings/settings.h>
 
 #include <dk_buttons_and_leds.h>
 
