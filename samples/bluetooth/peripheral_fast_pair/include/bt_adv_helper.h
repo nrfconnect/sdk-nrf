@@ -7,7 +7,7 @@
 #ifndef BT_ADV_HELPER_H_
 #define BT_ADV_HELPER_H_
 
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 
 /**
  * @defgroup fast_pair_sample_adv_helper Fast Pair sample advertising helper API

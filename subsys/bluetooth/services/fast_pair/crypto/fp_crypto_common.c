@@ -6,8 +6,8 @@
 
 #include <errno.h>
 #include <string.h>
-#include <sys/util.h>
-#include <sys/byteorder.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/sys/byteorder.h>
 #include "fp_crypto.h"
 
 int fp_aes_key_compute(uint8_t *out, const uint8_t *in)

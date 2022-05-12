@@ -7,7 +7,7 @@
 #ifndef BT_FAST_PAIR_H_
 #define BT_FAST_PAIR_H_
 
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 
 /**
  * @defgroup bt_fast_pair Fast Pair API
