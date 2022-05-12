@@ -26,12 +26,18 @@ LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
 const uint32_t z_mpsl_used_nrf_ppi_channels = MPSL_RESERVED_PPI_CHANNELS;
 const uint32_t z_mpsl_used_nrf_ppi_groups;
 
-#if IS_ENABLED(CONFIG_SOC_SERIES_NRF52X)
+#if IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF52X)
 	#define MPSL_LOW_PRIO_IRQn SWI5_IRQn
 #elif IS_ENABLED(CONFIG_SOC_SERIES_NRF53X)
 	#define MPSL_LOW_PRIO_IRQn SWI0_IRQn
 #endif
 #define MPSL_LOW_PRIO (4)
+
+#if IS_ENABLED(CONFIG_ZERO_LATENCY_IRQS)
+#define IRQ_CONNECT_FLAGS IRQ_ZERO_LATENCY
+#else
+#define IRQ_CONNECT_FLAGS 0
+#endif
 
 static struct k_work mpsl_low_prio_work;
 struct k_work_q mpsl_work_q;
@@ -50,7 +56,7 @@ BUILD_ASSERT(MPSL_TIMESLOT_SESSION_COUNT <= MPSL_TIMESLOT_CONTEXT_COUNT_MAX,
 static uint8_t __aligned(4) timeslot_context[TIMESLOT_MEM_SIZE];
 #endif
 
-static void mpsl_low_prio_irq_handler(void)
+static void mpsl_low_prio_irq_handler(const void *arg)
 {
 	k_work_submit_to_queue(&mpsl_work_q, &mpsl_low_prio_work);
 }
@@ -176,11 +182,11 @@ static int mpsl_lib_init(const struct device *dev)
 #endif
 
 	IRQ_DIRECT_CONNECT(TIMER0_IRQn, MPSL_HIGH_IRQ_PRIORITY,
-			   mpsl_timer0_isr_wrapper, IRQ_ZERO_LATENCY);
+			   mpsl_timer0_isr_wrapper, IRQ_CONNECT_FLAGS);
 	IRQ_DIRECT_CONNECT(RTC0_IRQn, MPSL_HIGH_IRQ_PRIORITY,
-			   mpsl_rtc0_isr_wrapper, IRQ_ZERO_LATENCY);
+			   mpsl_rtc0_isr_wrapper, IRQ_CONNECT_FLAGS);
 	IRQ_DIRECT_CONNECT(RADIO_IRQn, MPSL_HIGH_IRQ_PRIORITY,
-			   mpsl_radio_isr_wrapper, IRQ_ZERO_LATENCY);
+			   mpsl_radio_isr_wrapper, IRQ_CONNECT_FLAGS);
 
 	return 0;
 }
