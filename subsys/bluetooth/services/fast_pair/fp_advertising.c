@@ -30,9 +30,6 @@ static const uint16_t fast_pair_uuid = FP_SERVICE_UUID;
 static const uint8_t flags;
 static const uint8_t empty_account_key_list;
 
-static const enum fp_field_type ak_filter_type = FP_FIELD_TYPE_SHOW_UI_INDICATION;
-
-
 static size_t bt_fast_pair_adv_data_size_non_discoverable(size_t account_key_cnt)
 {
 	size_t res = 0;
@@ -59,10 +56,14 @@ static size_t bt_fast_pair_adv_data_size_discoverable(void)
 	return FP_REG_DATA_MODEL_ID_LEN;
 }
 
-size_t bt_fast_pair_adv_data_size(bool fp_discoverable)
+size_t bt_fast_pair_adv_data_size(enum bt_fast_pair_adv_mode fp_adv_mode)
 {
 	int account_key_cnt = fp_storage_account_key_count();
 	size_t res = 0;
+
+	if ((fp_adv_mode >= BT_FAST_PAIR_ADV_MODE_COUNT) || (fp_adv_mode < 0)) {
+		return 0;
+	}
 
 	if (account_key_cnt < 0) {
 		return 0;
@@ -70,7 +71,7 @@ size_t bt_fast_pair_adv_data_size(bool fp_discoverable)
 
 	res += sizeof(fast_pair_uuid);
 
-	if (fp_discoverable) {
+	if (fp_adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE) {
 		res += bt_fast_pair_adv_data_size_discoverable();
 	} else {
 		res += bt_fast_pair_adv_data_size_non_discoverable(account_key_cnt);
@@ -79,7 +80,8 @@ size_t bt_fast_pair_adv_data_size(bool fp_discoverable)
 	return res;
 }
 
-static int fp_adv_data_fill_non_discoverable(struct net_buf_simple *buf, size_t account_key_cnt)
+static int fp_adv_data_fill_non_discoverable(struct net_buf_simple *buf, size_t account_key_cnt,
+					     enum fp_field_type ak_filter_type)
 {
 	net_buf_simple_add_u8(buf, flags);
 
@@ -131,11 +133,12 @@ static int fp_adv_data_fill_discoverable(struct net_buf_simple *buf)
 }
 
 int bt_fast_pair_adv_data_fill(struct bt_data *bt_adv_data, uint8_t *buf, size_t buf_size,
-			       bool fp_discoverable)
+			       enum bt_fast_pair_adv_mode fp_adv_mode)
 {
 	struct net_buf_simple nb;
 	int account_key_cnt = fp_storage_account_key_count();
-	size_t adv_data_len = bt_fast_pair_adv_data_size(fp_discoverable);
+	size_t adv_data_len = bt_fast_pair_adv_data_size(fp_adv_mode);
+	enum fp_field_type ak_filter_type;
 	int err;
 
 	if ((adv_data_len == 0) || (account_key_cnt < 0)) {
@@ -146,15 +149,24 @@ int bt_fast_pair_adv_data_fill(struct bt_data *bt_adv_data, uint8_t *buf, size_t
 		return -EINVAL;
 	}
 
+	if ((fp_adv_mode >= BT_FAST_PAIR_ADV_MODE_COUNT) || (fp_adv_mode < 0)) {
+		return -EINVAL;
+	}
+
 	net_buf_simple_init_with_data(&nb, buf, buf_size);
 	net_buf_simple_reset(&nb);
 
 	net_buf_simple_add_le16(&nb, fast_pair_uuid);
 
-	if (fp_discoverable) {
+	if (fp_adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE) {
 		err = fp_adv_data_fill_discoverable(&nb);
 	} else {
-		err = fp_adv_data_fill_non_discoverable(&nb, account_key_cnt);
+		if (fp_adv_mode == BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_SHOW_UI_IND) {
+			ak_filter_type = FP_FIELD_TYPE_SHOW_UI_INDICATION;
+		} else {
+			ak_filter_type = FP_FIELD_TYPE_HIDE_UI_INDICATION;
+		}
+		err = fp_adv_data_fill_non_discoverable(&nb, account_key_cnt, ak_filter_type);
 	}
 
 	if (!err) {
