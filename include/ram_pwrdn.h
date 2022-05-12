@@ -48,6 +48,13 @@ void power_up_ram(uintptr_t start_address, uintptr_t end_address);
  */
 void power_down_unused_ram(void);
 
+/**
+ * @brief Request powering up unused RAM sections.
+ *
+ * Power up RAM sections which were disabled by @ref power_down_unused_ram function.
+ */
+void power_up_unused_ram(void);
+
 #ifdef __cplusplus
 }
 #endif
