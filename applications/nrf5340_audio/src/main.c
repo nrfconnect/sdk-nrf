@@ -25,6 +25,8 @@
 #include "channel_assignment.h"
 #include "hw_codec.h"
 #include "audio_usb.h"
+#include "le_audio.h"
+#include "streamcontrol.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_LOG_MAIN_LEVEL);
@@ -145,9 +147,8 @@ void main(void)
 	ret = led_init();
 	ERR_CHK(ret);
 
-	// TODO: Re-implement support for buttons
-	// ret = button_handler_init();
-	// ERR_CHK(ret);
+	ret = button_handler_init();
+	ERR_CHK(ret);
 
 	ret = channel_assign_check();
 	ERR_CHK(ret);
@@ -179,6 +180,11 @@ void main(void)
 	ret = power_module_init();
 	ERR_CHK(ret);
 
+	ret = audio_sync_timer_init();
+	ERR_CHK(ret);
+
+	audio_sync_timer_sync_evt_send();
+
 #if ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_USB))
 	ret = audio_usb_init();
 	ERR_CHK(ret);
@@ -205,11 +211,12 @@ void main(void)
 	ret = audio_datapath_tone_play(440, 500, 0.2);
 	ERR_CHK(ret);
 
-	// TODO: Common function for all 4 device types (CIS/BIS gateway/headset)
-	// le_audio_run();
+	// TODO: Include the correct .c file in CMake
+	//       based on the BIS/CIS gateway/headset config
+	// le_audio_enable(le_audio_rx_data_handler);
 
 	while (1) {
-		// TODO: Put something here?
+		// TODO: Put streamcontrol event handler here
 		STACK_USAGE_PRINT("main", &z_main_thread);
 	}
 }
