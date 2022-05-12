@@ -20,9 +20,7 @@ LOG_MODULE_REGISTER(ui_buzzer, CONFIG_UI_LOG_LEVEL);
 /* Affects curvature of pulse width graph */
 #define CURVE_CONST 50
 
-static const struct device *buzzer_dev =
-	DEVICE_DT_GET(DT_PWMS_CTLR(DT_NODELABEL(buzzer)));
-static const uint32_t buzzer_pin = DT_PWMS_CHANNEL(DT_NODELABEL(buzzer));
+static const struct pwm_dt_spec buzzer = PWM_DT_SPEC_GET(DT_NODELABEL(buzzer));
 
 static uint32_t frequency;
 static uint8_t intensity;
@@ -59,12 +57,12 @@ int ui_buzzer_on_off(bool new_state)
 
 	if (frequency == 0) {
 		/* Turn off buzzer when frequency = 0 */
-		ret = pwm_pin_set_usec(buzzer_dev, buzzer_pin, USEC_PER_SEC, 0, 0);
+		ret = pwm_set_pulse_dt(&buzzer, 0);
 	} else {
 		uint32_t period = PERIOD(frequency);
 		uint32_t pulse_width = calculate_pulse_width(period, intensity);
 
-		ret = pwm_pin_set_usec(buzzer_dev, buzzer_pin, period, pulse_width * state, 0);
+		ret = pwm_set_dt(&buzzer, PWM_USEC(period), PWM_USEC(pulse_width * state));
 	}
 
 	if (ret) {
@@ -121,7 +119,7 @@ int ui_buzzer_set_intensity(uint8_t new_intensity)
 
 int ui_buzzer_init(void)
 {
-	if (!device_is_ready(buzzer_dev)) {
+	if (!device_is_ready(buzzer.dev)) {
 		LOG_ERR("Buzzer PWM device not ready");
 		return -ENODEV;
 	}

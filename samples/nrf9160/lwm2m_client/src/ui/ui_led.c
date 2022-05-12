@@ -13,25 +13,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ui_led, CONFIG_UI_LOG_LEVEL);
 
-#define PWM_PERIOD_USEC				(USEC_PER_SEC / 100U)
-
-struct pwm_dt_spec {
-	const struct device *dev;
-	uint32_t channel;
-	pwm_flags_t flags;
-};
-
-#define PWM_DT_SPEC_GET(node_id)					\
-	{								\
-		.dev = DEVICE_DT_GET(DT_PWMS_CTLR(node_id)),		\
-		.channel = DT_PWMS_CHANNEL(node_id),			\
-		.flags = DT_PWMS_FLAGS(node_id),			\
-	}
-
-#define PWM_DT_SPEC_GET_OR(node_id, default_value)			\
-	COND_CODE_1(DT_NODE_HAS_PROP(node_id, pwms),			\
-		    (PWM_DT_SPEC_GET(node_id)),				\
-		    (default_value))
+#define PWM_PERIOD_USEC (USEC_PER_SEC / 100U)
 
 static const struct pwm_dt_spec pwm_leds[] = {
 	PWM_DT_SPEC_GET_OR(DT_ALIAS(pwm_led0), {}),
@@ -59,10 +41,9 @@ int ui_led_pwm_on_off(uint8_t led_num, bool new_state)
 
 	state[led_num] = new_state;
 
-	ret = pwm_pin_set_usec(pwm_leds[led_num].dev, pwm_leds[led_num].channel,
-			       PWM_PERIOD_USEC,
-			       pulse_width[led_num] * new_state,
-			       pwm_leds[led_num].flags);
+	ret = pwm_set_dt(&pwm_leds[led_num],
+			 PWM_USEC(PWM_PERIOD_USEC),
+			 PWM_USEC(pulse_width[led_num] * new_state));
 	if (ret) {
 		LOG_ERR("Set LED PWM pin %u failed  (%d)", led_num, ret);
 		return ret;
@@ -86,10 +67,9 @@ int ui_led_pwm_set_intensity(uint8_t led_num, uint8_t led_intensity)
 
 	pulse_width[led_num] = calculate_pulse_width(led_intensity);
 
-	ret = pwm_pin_set_usec(pwm_leds[led_num].dev, pwm_leds[led_num].channel,
-			       PWM_PERIOD_USEC,
-			       pulse_width[led_num] * state[led_num],
-			       pwm_leds[led_num].flags);
+	ret = pwm_set_dt(&pwm_leds[led_num],
+			 PWM_USEC(PWM_PERIOD_USEC),
+			 PWM_USEC(pulse_width[led_num] * state[led_num]));
 	if (ret) {
 		LOG_ERR("Set LED PWM pin %u failed (%d)", led_num, ret);
 		return ret;

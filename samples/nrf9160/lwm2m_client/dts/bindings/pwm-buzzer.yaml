@@ -8,7 +8,7 @@ description: |
 
       buzzer {
         compatible = "pwm-buzzer";
-        pwms = <&pwm0 1>;
+        pwms = <&pwm0 0 PWM_HZ(440) PWM_POLARITY_NORMAL>;
       };
 
 compatible: "pwm-buzzer"
