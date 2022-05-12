@@ -12,6 +12,7 @@
 #include "psa_tls_credentials.h"
 #include "certificate.h"
 #include "dummy_psk.h"
+#include "psa/crypto.h"
 
 LOG_MODULE_REGISTER(psa_tls_sample);
 
@@ -42,6 +43,13 @@ int main(void)
 	int err;
 
 	LOG_INF("PSA TLS app started");
+
+#if defined(MBEDTLS_USE_PSA_CRYPTO)
+	err = psa_crypto_init();
+	if (err < 0) {
+		return APP_ERROR;
+	}
+#endif
 
 	err = tls_set_credentials();
 	if (err < 0) {
