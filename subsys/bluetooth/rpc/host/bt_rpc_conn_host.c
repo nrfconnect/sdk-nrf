@@ -1169,7 +1169,9 @@ enum bt_security_err bt_rpc_auth_cb_pairing_accept(struct bt_conn *conn,
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	struct bt_rpc_auth_cb_pairing_accept_rpc_res result;
-	size_t buffer_size_max = 15;
+	size_t buffer_size_max = 3;
+
+	buffer_size_max += bt_conn_pairing_feat_buf_size;
 
 	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
 
