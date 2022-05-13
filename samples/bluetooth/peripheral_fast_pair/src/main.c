@@ -11,6 +11,9 @@
 
 #include <dk_buttons_and_leds.h>
 
+#include <logging/log.h>
+LOG_MODULE_REGISTER(fp_sample, LOG_LEVEL_INF);
+
 #include "bt_adv_helper.h"
 #include "hids_helper.h"
 
@@ -35,10 +38,9 @@ static void advertising_start(void)
 	int err = bt_adv_helper_adv_start(fp_discoverable);
 
 	if (!err) {
-		printk("%siscoverable advertising started\n",
-		       fp_discoverable ? "D" : "Non-d");
+		LOG_INF("%siscoverable advertising started", fp_discoverable ? "D" : "Non-d");
 	} else {
-		printk("Advertising failed to start (err %d)\n", err);
+		LOG_ERR("Advertising failed to start (err %d)", err);
 	}
 }
 
@@ -53,12 +55,12 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	__ASSERT_NO_MSG(!peer);
 
 	if (err) {
-		printk("Connection failed (err %u)\n", err);
+		LOG_WRN("Connection failed (err %u)", err);
 		k_work_submit(&bt_adv_restart);
 		return;
 	}
 
-	printk("Connected\n");
+	LOG_INF("Connected");
 
 	dk_set_led_on(CON_STATUS_LED);
 	peer = conn;
@@ -66,7 +68,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
-	printk("Disconnected (reason %u)\n", reason);
+	LOG_INF("Disconnected (reason %u)", reason);
 
 	dk_set_led_off(CON_STATUS_LED);
 	peer = NULL;
@@ -81,9 +83,9 @@ static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (!err) {
-		printk("Security changed: %s level %u\n", addr, level);
+		LOG_INF("Security changed: %s level %u", log_strdup(addr), level);
 	} else {
-		printk("Security failed: %s level %u err %d\n", addr, level, err);
+		LOG_WRN("Security failed: %s level %u err %d", log_strdup(addr), level, err);
 	}
 }
 
@@ -125,12 +127,10 @@ static void hid_volume_control_send(enum hids_helper_volume_change volume_change
 
 	if (!err) {
 		if (operation_str) {
-			printk("%s audio volume\n", operation_str);
+			LOG_INF("%s audio volume", operation_str);
 		}
-	} else if (err == -ENOTCONN) {
-		/* HID host not connected. Silently drop HID data. */
 	} else {
-		printk("Failed to control audio volume (err %d)\n", err);
+		/* HID host not connected or not subscribed. Silently drop HID data. */
 	}
 }
 
@@ -184,33 +184,33 @@ void main(void)
 	bool run_led_on = true;
 	int err;
 
-	printk("Starting Bluetooth Fast Pair example\n");
+	LOG_INF("Starting Bluetooth Fast Pair example");
 
 	err = hids_helper_init();
 	if (err) {
-		printk("HIDS init failed (err %d)\n", err);
+		LOG_ERR("HIDS init failed (err %d)", err);
 		return;
 	}
 
 	err = bt_enable(NULL);
 	if (err) {
-		printk("Bluetooth init failed (err %d)\n", err);
+		LOG_ERR("Bluetooth init failed (err %d)", err);
 		return;
 	}
 
-	printk("Bluetooth initialized\n");
+	LOG_INF("Bluetooth initialized");
 
 	err = settings_load();
 	if (err) {
-		printk("Settings load failed (err: %d\n)", err);
+		LOG_ERR("Settings load failed (err: %d)", err);
 		return;
 	}
 
-	printk("Settings loaded\n");
+	LOG_INF("Settings loaded");
 
 	err = dk_leds_init();
 	if (err) {
-		printk("LEDs init failed (err %d)\n", err);
+		LOG_ERR("LEDs init failed (err %d)", err);
 		return;
 	}
 
@@ -221,7 +221,7 @@ void main(void)
 
 	err = dk_buttons_init(button_changed);
 	if (err) {
-		printk("Buttons init failed (err %d)\n", err);
+		LOG_ERR("Buttons init failed (err %d)", err);
 		return;
 	}
 

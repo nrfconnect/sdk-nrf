@@ -10,6 +10,9 @@
 #include <bluetooth/hci.h>
 #include <bluetooth/hci_vs.h>
 
+#include <logging/log.h>
+LOG_MODULE_DECLARE(fp_sample, LOG_LEVEL_INF);
+
 #include "bt_tx_power_adv.h"
 
 
@@ -43,7 +46,7 @@ int bt_tx_power_adv_data_fill(struct bt_data *adv_data, uint8_t *buf, size_t buf
 	if (err) {
 		uint8_t reason = rsp ?
 				((struct bt_hci_rp_vs_read_tx_power_level *) rsp->data)->status : 0;
-		printk("Read Tx power err: %d reason 0x%02x\n", err, reason);
+		LOG_ERR("Read Tx power err: %d reason 0x%02x", err, reason);
 	} else {
 		rp = (void *)rsp->data;
 		buf[0] = rp->tx_power_level;
