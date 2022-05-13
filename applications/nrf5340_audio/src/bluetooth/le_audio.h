@@ -39,7 +39,48 @@ typedef void (*le_audio_receive_cb)(const uint8_t *const data, size_t size, bool
  *
  * @return	0 for success, error otherwise
  */
-int le_audio_config_get(void/* TODO */);
+int le_audio_config_get(void);
+
+/**
+ * @brief	Increase volume by one step
+ *
+ * @return	0 for success,
+ *		-ENXIO if the feature is disabled
+ *		Other errors from underlying drivers.
+ */
+int le_audio_volume_up(void);
+
+/**
+ * @brief	Decrease volume by one step
+ *
+ * @return	0 for success,
+ *		-ENXIO if the feature is disabled
+ *		Other errors from underlying drivers.
+ */
+int le_audio_volume_down(void);
+
+/**
+ * @brief	Mute volume
+ *
+ * @return	0 for success,
+ *		-ENXIO if the feature is disabled
+ *		Other errors from underlying drivers.
+ */
+int le_audio_volume_mute(void);
+
+/**
+ * @brief	Resume playing Bluetooth LE Audio stream
+ *
+ * @return	0 for success, error otherwise
+ */
+int le_audio_play(void);
+
+/**
+ * @brief	Pause Bluetooth LE Audio stream
+ *
+ * @return	0 for success, error otherwise
+ */
+int le_audio_pause(void);
 
 /**
  * @brief Send Bluetooth LE Audio data
