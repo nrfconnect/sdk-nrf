@@ -27,6 +27,8 @@ See the following links for information about the different building blocks ment
 * :ref:`zephyr:set-devicetree-overlays` explains how to use devicetree and its overlays to customize an application's devicetree.
 * :ref:`board_porting_guide` is a complete guide to porting Zephyr to your own board.
 
+.. _app_build_additions:
+
 |NCS| additions
 ***************
 
