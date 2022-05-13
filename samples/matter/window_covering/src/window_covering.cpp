@@ -22,6 +22,9 @@ using namespace ::chip::Credentials;
 using namespace ::chip::DeviceLayer;
 using namespace chip::app::Clusters::WindowCovering;
 
+static const struct pwm_dt_spec sLiftPwmDevice = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led1));
+static const struct pwm_dt_spec sTiltPwmDevice = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led2));
+
 static constexpr uint32_t sMoveTimeoutMs{ 200 };
 
 static constexpr uint32_t FromOneRangeToAnother(uint32_t aInMin, uint32_t aInMax, uint32_t aOutMin, uint32_t aOutMax,
@@ -40,10 +43,10 @@ WindowCovering::WindowCovering()
 	mLiftLED.Init(LIFT_STATE_LED);
 	mTiltLED.Init(TILT_STATE_LED);
 
-	if (mLiftIndicator.Init(LIFT_PWM_DEVICE, LIFT_PWM_CHANNEL, 0, 255) != 0) {
+	if (mLiftIndicator.Init(&sLiftPwmDevice, 0, 255) != 0) {
 		LOG_ERR("Cannot initialize the lift indicator");
 	}
-	if (mTiltIndicator.Init(TILT_PWM_DEVICE, TILT_PWM_CHANNEL, 0, 255) != 0) {
+	if (mTiltIndicator.Init(&sTiltPwmDevice, 0, 255) != 0) {
 		LOG_ERR("Cannot initialize the tilt indicator");
 	}
 }
