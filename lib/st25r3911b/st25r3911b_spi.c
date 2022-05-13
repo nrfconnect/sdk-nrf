@@ -18,7 +18,7 @@
 
 LOG_MODULE_REGISTER(st25r3911b, CONFIG_ST25R3911B_LIB_LOG_LEVEL);
 
-static const struct device *spi_dev;
+static const struct device *spi_dev = DEVICE_DT_GET(DT_BUS(ST25R3911B_NODE));
 
 #define ST25R3911B_READ_REG(_reg) (0x40 | (_reg))
 #define ST25R3911B_WRITE_REG(_reg) (~0xC0 & (_reg))
@@ -36,8 +36,7 @@ static const struct device *spi_dev;
 
 /* SPI CS pin configuration */
 static struct spi_cs_control spi_cs = {
-	.gpio_pin = DT_SPI_DEV_CS_GPIOS_PIN(ST25R3911B_NODE),
-	.gpio_dt_flags = DT_SPI_DEV_CS_GPIOS_FLAGS(ST25R3911B_NODE),
+	.gpio = SPI_CS_GPIOS_DT_SPEC_GET(ST25R3911B_NODE),
 	.delay = T_NCS_SCLK
 };
 
@@ -62,31 +61,19 @@ static bool cmd_is_valid(uint8_t cmd)
 		(!((cmd >= ST25R3911B_CMD_MASK_RECEIVE_DATA) && (cmd <= ST25R3911B_CMD_TEST_ACCESS))));
 }
 
-static int cs_ctrl_gpio_config(void)
+int st25r3911b_spi_init(void)
 {
-	spi_cs.gpio_dev = device_get_binding(CS_GPIO_PORT);
-	if (!spi_cs.gpio_dev) {
-		LOG_ERR("Cannot find CS GPIO device %s!", CS_GPIO_PORT);
+	LOG_DBG("Initializing. SPI device: %s, CS GPIO: %s pin %d",
+		spi_dev->name, spi_cs.gpio.port->name, spi_cs.gpio.pin);
+
+	if (!device_is_ready(spi_cs.gpio.port)) {
+		LOG_ERR("GPIO device %s is not ready!", spi_cs.gpio.port->name);
 
 		return -ENXIO;
 	}
 
-	return 0;
-}
-
-int st25r3911b_spi_init(void)
-{
-	LOG_DBG("Initializing. SPI device: %s, CS GPIO: %s pin %d",
-		SPI_BUS, CS_GPIO_PORT, spi_cs.gpio_pin);
-
-	int err = cs_ctrl_gpio_config();
-
-	if (err) {
-		return err;
-	}
-	spi_dev = device_get_binding(SPI_BUS);
-	if (!spi_dev) {
-		LOG_ERR("Cannot find SPI device %s!", SPI_BUS);
+	if (!device_is_ready(spi_dev)) {
+		LOG_ERR("SPI device %s is not ready!", spi_dev->name);
 		return -ENXIO;
 	}
 
