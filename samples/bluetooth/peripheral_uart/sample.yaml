@@ -35,3 +35,11 @@ tests:
       - nrf52833dk_nrf52820
     platform_allow: nrf52dk_nrf52810 nrf52840dk_nrf52811 nrf52833dk_nrf52820
     tags: bluetooth ci_build
+  sample.bluetooth.peripheral_uart_ble_rpc:
+    build_only: true
+    extra_configs:
+      - CONFIG_BT_RPC_STACK=y
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    tags: bluetooth ci_build
