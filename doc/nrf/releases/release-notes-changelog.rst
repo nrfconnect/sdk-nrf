@@ -270,6 +270,7 @@ nRF9160 samples
 
       * Reworked the retry logic so that the sample can fall back to bootstrap mode and need not always restart the LTE connection.
       * Replaced the deprecated GPS-driver with the new GNSS interface.
+      * LwM2M v1.1 uses SenML CBOR by default as content format.
 
   * :ref:`download_sample` sample:
 
