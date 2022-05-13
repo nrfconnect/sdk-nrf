@@ -84,18 +84,8 @@
  */
 #define PWM_DK_LED4_NODE                DT_NODELABEL(pwm_led3)
 
-/* Nordic PWM nodes don't have flags cells in their specifiers, so
- * this is just future-proofing.
- */
-#define FLAGS_OR_ZERO(node)				\
-	COND_CODE_1(DT_PHA_HAS_CELL(node, pwms, flags),	\
-		    (DT_PWMS_FLAGS(node)), (0))
-
 #if DT_NODE_HAS_STATUS(PWM_DK_LED4_NODE, okay)
-/* Get the defines from overlay file. */
-#define PWM_DK_LED4_CTLR                DT_PWMS_CTLR(PWM_DK_LED4_NODE)
-#define PWM_DK_LED4_CHANNEL             DT_PWMS_CHANNEL(PWM_DK_LED4_NODE)
-#define PWM_DK_LED4_FLAGS               FLAGS_OR_ZERO(PWM_DK_LED4_NODE)
+static const struct pwm_dt_spec led_pwm = PWM_DT_SPEC_GET(PWM_DK_LED4_NODE);
 #else
 #error "Choose supported PWM driver"
 #endif
@@ -126,9 +116,6 @@ typedef struct {
 
 /* Zigbee device application context storage. */
 static bulb_device_ctx_t dev_ctx;
-
-/* Pointer to PWM device controlling leds with pwm signal. */
-static const struct device *led_pwm_dev;
 
 ZB_ZCL_DECLARE_IDENTIFY_ATTRIB_LIST(
 	identify_attr_list,
@@ -253,10 +240,9 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 /**@brief Function for initializing additional PWM leds. */
 static void pwm_led_init(void)
 {
-	led_pwm_dev = DEVICE_DT_GET(PWM_DK_LED4_CTLR);
-	if (!device_is_ready(led_pwm_dev)) {
+	if (!device_is_ready(led_pwm.dev)) {
 		LOG_ERR("Error: PWM device %s is not ready",
-			led_pwm_dev->name);
+			led_pwm.dev->name);
 	}
 }
 
@@ -287,8 +273,7 @@ static void light_bulb_set_brightness(zb_uint8_t brightness_level)
 {
 	uint32_t pulse = brightness_level * LED_PWM_PERIOD_US / 255U;
 
-	if (pwm_pin_set_usec(led_pwm_dev, PWM_DK_LED4_CHANNEL,
-			     LED_PWM_PERIOD_US, pulse, PWM_DK_LED4_FLAGS)) {
+	if (pwm_set_dt(&led_pwm, PWM_USEC(LED_PWM_PERIOD_US), PWM_USEC(pulse))) {
 		LOG_ERR("Pwm led 4 set fails:\n");
 		return;
 	}
