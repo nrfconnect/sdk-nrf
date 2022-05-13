@@ -27,7 +27,6 @@ To use the module, you must enable the following Kconfig options:
 
 * :kconfig:option:`CONFIG_BT`
 * :kconfig:option:`CONFIG_BT_SMP` - This option enables Security Manager Protocol support.
-  The |ble_state| on Bluetooth Peripheral requires at least the connection security level 2 (encryption).
 * :kconfig:option:`CONFIG_CAF_BLE_STATE` - This option enables the |ble_state| and selects the :kconfig:option:`CONFIG_CAF_BLE_COMMON_EVENTS` Kconfig option, which enables Bluetooth LE common events in CAF.
 
 The following Kconfig options are also available for this module:
@@ -36,6 +35,9 @@ The following Kconfig options are also available for this module:
   This option is enabled by default.
 * :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM` - This option enables the Low Latency Packet Mode (LLPM).
   This option is enabled by default and depends on :kconfig:option:`CONFIG_BT_CTLR_SDC_LLPM` and :kconfig:option:`CONFIG_BT_LL_SOFTDEVICE`.
+* :kconfig:option:`CONFIG_CAF_BLE_STATE_SECURITY_REQ` - This option enables setting the security level 2 for a Bluetooth LE connection automatically, right after the connection is established.
+  The security level 2 or higher enables connection encryption.
+  The device disconnects if establishing the connection security level 2 fails.
 
 Implementation details
 **********************
@@ -65,9 +67,6 @@ The connection state can be set to one of the following values:
 
 Other application modules can call :c:func:`bt_conn_disconnect` to disconnect the remote peer.
 The application module can submit a :c:struct:`ble_peer_event` with :c:member:`ble_peer_event.state` set to :c:enum:`PEER_STATE_DISCONNECTING` to let other application modules prepare for the disconnection.
-
-On Bluetooth Peripheral, the |ble_state| requires the connection security level 2.
-If the connection security level 2 is not established, the Peripheral disconnects.
 
 Connection parameter change
 ===========================

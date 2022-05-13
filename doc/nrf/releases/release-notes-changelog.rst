@@ -101,6 +101,11 @@ nRF Machine Learning (Edge Impulse)
 nRF Desktop
 -----------
 
+* nRF Desktop peripherals no longer automatically send security request right after Bluetooth LE connection is established.
+  The feature can be turned on using :kconfig:option:`CONFIG_CAF_BLE_STATE_SECURITY_REQ`.
+* nRF Desktop dongles start peripheral discovery right after Bluetooth LE connection is established.
+  The dongles no longer wait until the connection is secured.
+
 |no_changes_yet_note|
 
 Thingy:53 Zigbee weather station
@@ -219,6 +224,10 @@ Other libraries
 
 Common Application Framework (CAF)
 ----------------------------------
+
+* :ref:`caf_ble_state` running on Bluetooth Peripheral no longer automatically sends security request right after Bluetooth LE connection is established.
+  The :kconfig:option:`CONFIG_CAF_BLE_STATE_SECURITY_REQ` can be used to enable this feature.
+  The option can be used for both Bluetooth Peripheral and Bluetooth Central.
 
 |no_changes_yet_note|
 
