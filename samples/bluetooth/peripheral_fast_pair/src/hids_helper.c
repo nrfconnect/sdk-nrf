@@ -8,6 +8,9 @@
 #include <sys/byteorder.h>
 #include <bluetooth/services/hids.h>
 
+#include <logging/log.h>
+LOG_MODULE_DECLARE(fp_sample, LOG_LEVEL_INF);
+
 #include "hids_helper.h"
 
 #define BASE_USB_HID_SPEC_VERSION	0x0101
@@ -27,7 +30,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 		int error = bt_hids_connected(&hids_obj, conn);
 
 		if (error) {
-			printk("Failed to notify HIDS about connection %d\n", error);
+			LOG_ERR("Failed to notify HIDS about connection %d", error);
 		}
 	}
 }
@@ -37,7 +40,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	int err = bt_hids_disconnected(&hids_obj, conn);
 
 	if (err) {
-		printk("Failed to notify HIDS about disconnection %d\n", err);
+		LOG_ERR("Failed to notify HIDS about disconnection %d", err);
 	}
 }
 

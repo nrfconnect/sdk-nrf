@@ -11,6 +11,9 @@
 #include <bluetooth/uuid.h>
 #include <bluetooth/services/fast_pair.h>
 
+#include <logging/log.h>
+LOG_MODULE_DECLARE(fp_sample, LOG_LEVEL_INF);
+
 #include "bt_tx_power_adv.h"
 #include "bt_adv_helper.h"
 
@@ -136,26 +139,26 @@ static int adv_start_internal(bool fp_discoverable)
 	int err = bt_le_adv_stop();
 
 	if (err) {
-		printk("Cannot stop advertising (err: %d)\n", err);
+		LOG_ERR("Cannot stop advertising (err: %d)", err);
 		return err;
 	}
 
 	err = bt_adv_helper_fast_pair_prepare(&ad[FAST_PAIR_ADV_DATA_POS], fp_discoverable);
 	if (err) {
-		printk("Cannot prepare Fast Pair advertising data (err: %d)\n", err);
+		LOG_ERR("Cannot prepare Fast Pair advertising data (err: %d)", err);
 		return err;
 	}
 
 	err = bt_adv_helper_tx_power_prepare(&ad[TX_POWER_ADV_DATA_POS]);
 	if (err) {
-		printk("Cannot prepare TX power advertising data (err: %d)\n", err);
+		LOG_ERR("Cannot prepare TX power advertising data (err: %d)", err);
 		return err;
 	}
 
 	/* Generate new Resolvable Private Address (RPA). */
 	err = bt_le_oob_get_local(BT_ID_DEFAULT, &oob);
 	if (err) {
-		printk("Cannot trigger RPA rotation (err: %d)\n", err);
+		LOG_ERR("Cannot trigger RPA rotation (err: %d)", err);
 		return err;
 	}
 
@@ -181,7 +184,7 @@ static int adv_start_internal(bool fp_discoverable)
 			rpa_timeout_ms += ((int)(RPA_TIMEOUT_OFFSET_MAX * MSEC_PER_SEC)) *
 					  rand / INT8_MAX;
 		} else {
-			printk("Cannot get random RPA timeout (err: %d). Used fixed value", err);
+			LOG_WRN("Cannot get random RPA timeout (err: %d). Used fixed value", err);
 		}
 
 		__ASSERT_NO_MSG(rpa_timeout_ms <= RPA_TIMEOUT_FAST_PAIR_MAX * MSEC_PER_SEC);
