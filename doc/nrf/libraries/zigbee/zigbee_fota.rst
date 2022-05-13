@@ -35,6 +35,7 @@ OTA upgrade process
 *******************
 
 After querying the OTA Upgrade Server for available images and receiving information about the image, the library begins the OTA upgrade process.
+The interval between queries for the available Zigbee FOTA images is defined by :kconfig:option:`CONFIG_ZIGBEE_FOTA_IMAGE_DISOVERY_INTERVAL_HRS`.
 The library uses :ref:`nrfxlib:zboss`'s ZCL API to download the image.
 
 After the OTA Upgrade Client downloads the Zigbee OTA image header, the stack verifies the following mandatory fields:
@@ -78,6 +79,7 @@ To configure the Zigbee FOTA library, use the following options:
 * :kconfig:option:`CONFIG_ZIGBEE_FOTA_MIN_HW_VERSION`
 * :kconfig:option:`CONFIG_ENABLE_ZIGBEE_FOTA_MAX_HW_VERSION`
 * :kconfig:option:`CONFIG_ZIGBEE_FOTA_MAX_HW_VERSION`
+* :kconfig:option:`CONFIG_ZIGBEE_FOTA_IMAGE_DISOVERY_INTERVAL_HRS`
 
 For detailed steps about configuring the library in a Zigbee sample or application, see :ref:`ug_zigbee_configuring_components_ota`.
 

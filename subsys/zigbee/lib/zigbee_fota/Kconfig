@@ -75,6 +75,10 @@ config ZIGBEE_FOTA_MAX_HW_VERSION
 	range 0x00 0xFF
 	depends on ENABLE_ZIGBEE_FOTA_MAX_HW_VERSION
 
+config ZIGBEE_FOTA_IMAGE_DISOVERY_INTERVAL_HRS
+	int "Time interval between queries for the available Zigbee FOTA images"
+	default 24
+
 module=ZIGBEE_FOTA
 module-dep=LOG
 module-str=Zigbee FOTA
