@@ -2,7 +2,7 @@ sample:
   name: OpenThread CLI sample
   description: Test OpenThread Command Line Interface.
 tests:
-  samples.openthread.cli:
+  sample.openthread.cli:
     build_only: true
     platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
     tags: ci_build
@@ -12,7 +12,7 @@ tests:
       - nrf52840dk_nrf52840
       - nrf52833dk_nrf52833
       - nrf21540dk_nrf52840
-  samples.openthread.cli.thread_1_1:
+  sample.openthread.cli.thread_1_1:
     build_only: true
     platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
     tags: ci_build
@@ -23,7 +23,7 @@ tests:
       - nrf52840dk_nrf52840
       - nrf52833dk_nrf52833
       - nrf21540dk_nrf52840
-  samples.openthread.cli.usb:
+  sample.openthread.cli.usb:
     build_only: true
     platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840 nrf52840dongle_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
     tags: ci_build
