@@ -12,19 +12,24 @@
 
 
 #define LED_PWM_PERIOD_US (USEC_PER_SEC / 100U)
-#define FLAGS_OR_ZERO(node) \
-	COND_CODE_1(DT_PHA_HAS_CELL(node, pwms, flags), \
-		    (DT_PWMS_FLAGS(node)), (0))
 
-#define PWM_DK_LED_LABEL(idx)   DT_PWMS_LABEL(DT_NODELABEL(pwm_led##idx))
-#define PWM_DK_LED_CHANNEL(idx) DT_PWMS_CHANNEL(DT_NODELABEL(pwm_led##idx))
-#define PWM_DK_LED_FLAGS(idx)   FLAGS_OR_ZERO(DT_NODELABEL(pwm_led##idx))
-
+#define LED_PWM_ENABLED(idx) DT_NODE_HAS_STATUS(DT_NODELABEL(pwm_led##idx), okay)
+#define LED_PWM_DT_SPEC(idx) PWM_DT_SPEC_GET(DT_NODELABEL(pwm_led##idx))
 
 #ifdef CONFIG_ZIGBEE_USE_DIMMABLE_LED
-static uint32_t pwm_channel;
-static pwm_flags_t pwm_flags;
-static const struct device *led_pwm_dev;
+static const struct pwm_dt_spec *led_pwm;
+#if LED_PWM_ENABLED(0)
+static const struct pwm_dt_spec led_pwm0 = LED_PWM_DT_SPEC(0);
+#endif
+#if LED_PWM_ENABLED(1)
+static const struct pwm_dt_spec led_pwm1 = LED_PWM_DT_SPEC(1);
+#endif
+#if LED_PWM_ENABLED(2)
+static const struct pwm_dt_spec led_pwm2 = LED_PWM_DT_SPEC(2);
+#endif
+#if LED_PWM_ENABLED(3)
+static const struct pwm_dt_spec led_pwm3 = LED_PWM_DT_SPEC(3);
+#endif
 #endif /* CONFIG_ZIGBEE_USE_DIMMABLE_LED */
 
 LOG_MODULE_DECLARE(zboss_osif, CONFIG_ZBOSS_OSIF_LOG_LEVEL);
@@ -116,49 +121,38 @@ void zb_osif_led_off(zb_uint8_t led_no)
 #ifdef CONFIG_ZIGBEE_USE_DIMMABLE_LED
 zb_bool_t zb_osif_led_level_init(zb_uint8_t led_no)
 {
-	char *driver_name = NULL;
-
-	if (led_pwm_dev != NULL) {
+	if (led_pwm != NULL) {
 		/* Driver is already initialized. */
 		return ZB_FALSE;
 	}
 
 	switch (led_no) {
-#if DT_NODE_HAS_STATUS(DT_NODELABEL(pwm_led0), okay)
+#if LED_PWM_ENABLED(0)
 	case 0:
-		driver_name = PWM_DK_LED_LABEL(0);
-		pwm_channel = PWM_DK_LED_CHANNEL(0);
-		pwm_flags = PWM_DK_LED_FLAGS(0);
+		led_pwm = &led_pwm0;
 		break;
 #endif
-#if DT_NODE_HAS_STATUS(DT_NODELABEL(pwm_led1), okay)
+#if LED_PWM_ENABLED(1)
 	case 1:
-		driver_name = PWM_DK_LED_LABEL(1);
-		pwm_channel = PWM_DK_LED_CHANNEL(1);
-		pwm_flags = PWM_DK_LED_FLAGS(1);
+		led_pwm = &led_pwm1;
 		break;
 #endif
-#if DT_NODE_HAS_STATUS(DT_NODELABEL(pwm_led2), okay)
+#if LED_PWM_ENABLED(2)
 	case 2:
-		driver_name = PWM_DK_LED_LABEL(2);
-		pwm_channel = PWM_DK_LED_CHANNEL(2);
-		pwm_flags = PWM_DK_LED_FLAGS(2);
+		led_pwm = &led_pwm2;
 		break;
 #endif
-#if DT_NODE_HAS_STATUS(DT_NODELABEL(pwm_led3), okay)
+#if LED_PWM_ENABLED(3)
 	case 3:
-		driver_name = PWM_DK_LED_LABEL(3);
-		pwm_channel = PWM_DK_LED_CHANNEL(3);
-		pwm_flags = PWM_DK_LED_FLAGS(3);
+		led_pwm = &led_pwm3;
 		break;
 #endif
 	default:
 		return ZB_FALSE;
 	}
 
-	led_pwm_dev = device_get_binding(driver_name);
-	if (!led_pwm_dev) {
-		LOG_ERR("Cannot find %s!", driver_name);
+	if (!device_is_ready(led_pwm->dev)) {
+		LOG_ERR("Device %s is not ready!", led_pwm->dev->name);
 
 		return ZB_FALSE;
 	}
@@ -170,12 +164,7 @@ void zb_osif_led_on_set_level(zb_uint8_t level)
 {
 	uint32_t pulse = level * LED_PWM_PERIOD_US / 255U;
 
-	if (!led_pwm_dev) {
-		return;
-	}
-
-	if (pwm_pin_set_usec(led_pwm_dev, pwm_channel, LED_PWM_PERIOD_US,
-			     pulse, pwm_flags)) {
+	if (pwm_set_dt(led_pwm, PWM_USEC(LED_PWM_PERIOD_US), PWM_USEC(pulse))) {
 		LOG_ERR("Pwm led 4 set fails:\n");
 	}
 }
