@@ -55,7 +55,7 @@ config ZIGBEE_FOTA_MANUFACTURER_ID
 
 config ZIGBEE_FOTA_IMAGE_TYPE
 	hex "Image type"
-	default 0xFFFF
+	default 0x0141
 	range 0x0000 0xFFFF
 	help
 	  0x0000 - 0xFFBF Manufacturer Specific
