@@ -59,6 +59,9 @@ config NRF_MODEM_LIB_TRACE_MEDIUM_UART
 	# Modem tracing over UART use the UARTE1 as a dedicated peripheral.
 	# This enables the UARTE1 peripheral and includes nrfx UARTE driver.
 	select NRFX_UARTE1
+	# TF-M use UARTE1 as log output, to avoid a conflict disable logging
+	# in TF-M.
+	select TFM_LOG_LEVEL_SILENCE if BUILD_WITH_TFM
 
 config NRF_MODEM_LIB_TRACE_MEDIUM_RTT
 	bool "Send modem trace over SEGGER RTT"
