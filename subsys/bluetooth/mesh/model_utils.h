@@ -16,6 +16,13 @@
 #include <bluetooth/mesh/model_types.h>
 #include <bluetooth/mesh/gen_dtt_srv.h>
 
+#if IS_ENABLED(CONFIG_EMDS)
+/**
+ * @brief Create emds model id to identify the model, where @p mod is the model.
+ */
+#define EMDS_MODEL_ID(mod) (((uint16_t)mod->elem_idx << 8) | mod->mod_idx)
+#endif
+
 /**
  * @brief Returns rounded division of @p A divided by @p B.
  * @note Arguments are evaluated twice.

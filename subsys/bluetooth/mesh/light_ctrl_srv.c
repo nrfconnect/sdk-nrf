@@ -1627,8 +1627,7 @@ static int light_ctrl_srv_start(struct bt_mesh_model *model)
 			} else {
 				light_onoff_pub(srv, srv->state, true);
 			}
-		} else if (atomic_test_bit(&srv->lightness->flags,
-					   LIGHTNESS_SRV_FLAG_IS_ON)) {
+		} else if (srv->lightness->transient.is_on) {
 			lightness_on_power_up(srv->lightness);
 			schedule_resume_timer(srv);
 		} else {

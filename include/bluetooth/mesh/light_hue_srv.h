@@ -17,6 +17,9 @@
 #include <bluetooth/mesh/light_hsl.h>
 #include <bluetooth/mesh/model_types.h>
 #include <bluetooth/mesh/gen_lvl_srv.h>
+#if IS_ENABLED(CONFIG_EMDS) && IS_ENABLED(CONFIG_BT_SETTINGS)
+#include "emds/emds.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -203,10 +206,17 @@ struct bt_mesh_light_hue_srv {
 #endif
 	/** Hue range */
 	struct bt_mesh_light_hsl_range range;
-	/** Last known Hue level */
-	uint16_t last;
 	/** Default Hue level */
 	uint16_t dflt;
+	struct __packed {
+		/** Last known Hue level */
+		uint16_t last;
+	} transient;
+
+#if IS_ENABLED(CONFIG_EMDS) && IS_ENABLED(CONFIG_BT_SETTINGS)
+	/** Dynamic entry to be stored with EMDS */
+	struct emds_dynamic_entry emds_entry;
+#endif
 };
 
 /** @brief Publish the current HSL Hue status.
