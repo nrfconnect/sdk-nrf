@@ -5,47 +5,55 @@ sample:
 tests:
 
     ################################################################################
-    ## TFM, Cryptocell, non-secure.
+    ## PSA APIs with Cryptocell and Oberon
     ################################################################################
 
-    sample.psa_tls.server.rsa.cc3xx:
+    sample.psa_tls.server.rsa.cc3xx_oberon:
         build_only: true
-        extra_args: OVERLAY_CONFIG="overlays/server.conf;overlays/rsa.conf;overlays/cc3xx.conf"
-        platform_allow: nrf5340dk_nrf5340_cpuapp_ns nrf9160dk_nrf9160_ns
+        extra_args: OVERLAY_CONFIG="overlays/server.conf;overlays/rsa.conf;overlays/cc3xx-oberon-psa.conf"
+        platform_allow: nrf5340dk_nrf5340_cpuapp nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp_ns nrf9160dk_nrf9160_ns
         integration_platforms:
+          - nrf5340dk_nrf5340_cpuapp
           - nrf5340dk_nrf5340_cpuapp_ns
+          - nrf9160dk_nrf9160
           - nrf9160dk_nrf9160_ns
-        tags: ci_build cc3xx tfm
+        tags: ci_build cc3xx_oberon
 
-    sample.psa_tls.client.rsa.cc3xx:
+    sample.psa_tls.client.rsa.cc3xx_oberon:
         build_only: true
-        extra_args: OVERLAY_CONFIG="overlays/client.conf;overlays/rsa.conf;overlays/cc3xx.conf"
-        platform_allow: nrf5340dk_nrf5340_cpuapp_ns nrf9160dk_nrf9160_ns
+        extra_args: OVERLAY_CONFIG="overlays/client.conf;overlays/rsa.conf;overlays/cc3xx-oberon-psa.conf"
+        platform_allow: nrf5340dk_nrf5340_cpuapp nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp_ns nrf9160dk_nrf9160_ns
         integration_platforms:
+          - nrf5340dk_nrf5340_cpuapp
           - nrf5340dk_nrf5340_cpuapp_ns
+          - nrf9160dk_nrf9160
           - nrf9160dk_nrf9160_ns
-        tags: ci_build cc3xx tfm
+        tags: ci_build cc3xx_oberon
 
-    sample.psa_tls.server.ecdsa.cc3xx:
+    sample.psa_tls.server.ecdsa.cc3xx_oberon:
         build_only: true
-        extra_args: OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cc3xx.conf"
-        platform_allow: nrf5340dk_nrf5340_cpuapp_ns nrf9160dk_nrf9160_ns
+        extra_args: OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf"
+        platform_allow: nrf5340dk_nrf5340_cpuapp nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp_ns nrf9160dk_nrf9160_ns
         integration_platforms:
+          - nrf5340dk_nrf5340_cpuapp
           - nrf5340dk_nrf5340_cpuapp_ns
+          - nrf9160dk_nrf9160
           - nrf9160dk_nrf9160_ns
-        tags: ci_build cc3xx tfm
+        tags: ci_build cc3xx_oberon
 
-    sample.psa_tls.client.ecdsa.cc3xx:
+    sample.psa_tls.client.ecdsa.cc3xx_oberon:
         build_only: true
-        extra_args: OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cc3xx.conf"
-        platform_allow: nrf5340dk_nrf5340_cpuapp_ns nrf9160dk_nrf9160_ns
+        extra_args: OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf"
+        platform_allow: nrf5340dk_nrf5340_cpuapp nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp_ns nrf9160dk_nrf9160_ns
         integration_platforms:
+          - nrf5340dk_nrf5340_cpuapp
           - nrf5340dk_nrf5340_cpuapp_ns
+          - nrf9160dk_nrf9160
           - nrf9160dk_nrf9160_ns
-        tags: ci_build cc3xx tfm
+        tags: ci_build cc3xx_oberon
 
     ################################################################################
-    ## Cryptocell (legacy) on secure
+    ## Legacy APIs with Cryptocell (secure-only)
     ################################################################################
 
     sample.psa_tls.server.rsa.cc3xx_legacy:
@@ -89,7 +97,7 @@ tests:
         tags: ci_build legacy cc3xx_legacy
 
     ################################################################################
-    ## Oberon (legacy) on secure
+    ## Legacy APIs with Oberon (secure-only)
     ################################################################################
 
     sample.psa_tls.server.rsa.oberon_legacy:
