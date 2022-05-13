@@ -73,12 +73,12 @@ struct msg_seekers_passkey {
 static int fp_gatt_rsp_notify(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 			      struct net_buf_simple *rsp)
 {
-	uint8_t rsp_enc[FP_AES128_BLOCK_LEN];
+	uint8_t rsp_enc[FP_CRYPTO_AES128_BLOCK_LEN];
 	uint8_t *salt;
 	size_t salt_len;
 	int err = 0;
 
-	if (net_buf_simple_max_len(rsp) != FP_AES128_BLOCK_LEN) {
+	if (net_buf_simple_max_len(rsp) != FP_CRYPTO_AES128_BLOCK_LEN) {
 		LOG_ERR("Unsupported response size %zu", net_buf_simple_max_len(rsp));
 		return -ENOTSUP;
 	}
@@ -93,7 +93,8 @@ static int fp_gatt_rsp_notify(struct bt_conn *conn, const struct bt_gatt_attr *a
 		return err;
 	}
 
-	err = fp_keys_encrypt(conn, rsp_enc, net_buf_simple_pull_mem(rsp, FP_AES128_BLOCK_LEN));
+	err = fp_keys_encrypt(conn, rsp_enc,
+			      net_buf_simple_pull_mem(rsp, FP_CRYPTO_AES128_BLOCK_LEN));
 	if (err) {
 		LOG_WRN("GATT response encrypt failed: err=%d", err);
 		return err;
@@ -113,10 +114,10 @@ static ssize_t read_model_id(struct bt_conn *conn,
 			     uint16_t len,
 			     uint16_t offset)
 {
-	uint8_t model_id[FP_MODEL_ID_LEN];
+	uint8_t model_id[FP_REG_DATA_MODEL_ID_LEN];
 	ssize_t res;
 
-	if (!fp_get_model_id(model_id, sizeof(model_id))) {
+	if (!fp_reg_data_get_model_id(model_id, sizeof(model_id))) {
 		res = bt_gatt_attr_read(conn, attr, buf, len, offset, model_id, sizeof(model_id));
 	} else {
 		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
@@ -222,7 +223,7 @@ static int validate_key_based_pairing_req(struct bt_conn *conn, const uint8_t *r
 	struct msg_key_based_pairing_req *parsed_req = context;
 	struct net_buf_simple req_net_buf;
 
-	net_buf_simple_init_with_data(&req_net_buf, (uint8_t *)req, FP_AES128_BLOCK_LEN);
+	net_buf_simple_init_with_data(&req_net_buf, (uint8_t *)req, FP_CRYPTO_AES128_BLOCK_LEN);
 	return parse_key_based_pairing_req(conn, parsed_req, &req_net_buf);
 }
 
@@ -237,7 +238,7 @@ static ssize_t write_key_based_pairing(struct bt_conn *conn,
 	int err = 0;
 	ssize_t res = len;
 
-	NET_BUF_SIMPLE_DEFINE(rsp, FP_AES128_BLOCK_LEN);
+	NET_BUF_SIMPLE_DEFINE(rsp, FP_CRYPTO_AES128_BLOCK_LEN);
 
 	if (offset != 0) {
 		LOG_WRN("Invalid offset: off=%" PRIu16 " (Key-based Pairing)", offset);
@@ -245,8 +246,8 @@ static ssize_t write_key_based_pairing(struct bt_conn *conn,
 		goto finish;
 	}
 
-	if ((len != (FP_AES128_BLOCK_LEN + FP_ECDH_PUBLIC_KEY_LEN)) &&
-	    (len != FP_AES128_BLOCK_LEN)) {
+	if ((len != (FP_CRYPTO_AES128_BLOCK_LEN + FP_CRYPTO_ECDH_PUBLIC_KEY_LEN)) &&
+	    (len != FP_CRYPTO_AES128_BLOCK_LEN)) {
 		LOG_WRN("Invalid length: len=%" PRIu16 " (Key-based Pairing)", len);
 		res = BT_GATT_ERR(BT_ATT_ERR_INVALID_ATTRIBUTE_LEN);
 		goto finish;
@@ -254,10 +255,10 @@ static ssize_t write_key_based_pairing(struct bt_conn *conn,
 
 	net_buf_simple_init_with_data(&gatt_write, (void *)buf, len);
 
-	keygen_params.req_enc = net_buf_simple_pull_mem(&gatt_write, FP_AES128_BLOCK_LEN);
-	if (net_buf_simple_max_len(&gatt_write) == FP_ECDH_PUBLIC_KEY_LEN) {
+	keygen_params.req_enc = net_buf_simple_pull_mem(&gatt_write, FP_CRYPTO_AES128_BLOCK_LEN);
+	if (net_buf_simple_max_len(&gatt_write) == FP_CRYPTO_ECDH_PUBLIC_KEY_LEN) {
 		keygen_params.public_key = net_buf_simple_pull_mem(&gatt_write,
-								   FP_ECDH_PUBLIC_KEY_LEN);
+								   FP_CRYPTO_ECDH_PUBLIC_KEY_LEN);
 	} else {
 		keygen_params.public_key = NULL;
 	}
@@ -335,8 +336,8 @@ static ssize_t write_passkey(struct bt_conn *conn,
 	int err = 0;
 	ssize_t res = len;
 
-	NET_BUF_SIMPLE_DEFINE(req, FP_AES128_BLOCK_LEN);
-	NET_BUF_SIMPLE_DEFINE(rsp, FP_AES128_BLOCK_LEN);
+	NET_BUF_SIMPLE_DEFINE(req, FP_CRYPTO_AES128_BLOCK_LEN);
+	NET_BUF_SIMPLE_DEFINE(rsp, FP_CRYPTO_AES128_BLOCK_LEN);
 
 	if (offset != 0) {
 		LOG_WRN("Invalid offset: off=%" PRIu16 " (Passkey)", offset);
@@ -344,13 +345,13 @@ static ssize_t write_passkey(struct bt_conn *conn,
 		goto finish;
 	}
 
-	if (len != FP_AES128_BLOCK_LEN) {
+	if (len != FP_CRYPTO_AES128_BLOCK_LEN) {
 		LOG_WRN("Invalid length: len=%" PRIu16 " (Key-based Pairing)", len);
 		res = BT_GATT_ERR(BT_ATT_ERR_INVALID_ATTRIBUTE_LEN);
 		goto finish;
 	}
 
-	err = fp_keys_decrypt(conn, net_buf_simple_add(&req, FP_AES128_BLOCK_LEN), buf);
+	err = fp_keys_decrypt(conn, net_buf_simple_add(&req, FP_CRYPTO_AES128_BLOCK_LEN), buf);
 	if (err) {
 		LOG_WRN("Decrypt failed: err=%d (Passkey)", err);
 		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
@@ -391,7 +392,7 @@ static ssize_t write_account_key(struct bt_conn *conn,
 				 const void *buf,
 				 uint16_t len, uint16_t offset, uint8_t flags)
 {
-	uint8_t account_key[FP_ACCOUNT_KEY_LEN];
+	uint8_t account_key[FP_CRYPTO_ACCOUNT_KEY_LEN];
 	int err = 0;
 	ssize_t res = len;
 
@@ -401,7 +402,7 @@ static ssize_t write_account_key(struct bt_conn *conn,
 		goto finish;
 	}
 
-	if (len != FP_ACCOUNT_KEY_LEN) {
+	if (len != FP_CRYPTO_ACCOUNT_KEY_LEN) {
 		LOG_WRN("Invalid length: len=%" PRIu16 " (Account Key)", len);
 		res = BT_GATT_ERR(BT_ATT_ERR_INVALID_ATTRIBUTE_LEN);
 		goto finish;

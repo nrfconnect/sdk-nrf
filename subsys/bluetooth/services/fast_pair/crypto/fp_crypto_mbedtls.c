@@ -48,7 +48,7 @@ static int random_data_generate(void *context, unsigned char *data, size_t datal
 	return 0;
 }
 
-int fp_sha256(uint8_t *out, const uint8_t *in, size_t data_len)
+int fp_crypto_sha256(uint8_t *out, const uint8_t *in, size_t data_len)
 {
 	int ret;
 	const int is_sha224 = 0;
@@ -111,19 +111,19 @@ cleanup:
 	return ret;
 }
 
-int fp_aes128_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
+int fp_crypto_aes128_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
 {
 	return aes128_ecb_crypt(out, in, k, true);
 }
 
-int fp_aes128_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
+int fp_crypto_aes128_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
 {
 	return aes128_ecb_crypt(out, in, k, false);
 }
 
-int fp_ecdh_shared_secret(uint8_t *secret_key,
-			  const uint8_t *public_key,
-			  const uint8_t *private_key)
+int fp_crypto_ecdh_shared_secret(uint8_t *secret_key,
+				 const uint8_t *public_key,
+				 const uint8_t *private_key)
 {
 	int ret;
 	uint8_t public_key_uncompressed[SECP256R1_UNCOMPRESSED_POINT_LEN];
@@ -175,7 +175,8 @@ int fp_ecdh_shared_secret(uint8_t *secret_key,
 		goto cleanup;
 	}
 
-	ret = mbedtls_mpi_write_binary(&shared_secret_mpi, secret_key, FP_ECDH_SHARED_KEY_LEN);
+	ret = mbedtls_mpi_write_binary(&shared_secret_mpi, secret_key,
+				       FP_CRYPTO_ECDH_SHARED_KEY_LEN);
 	if (ret) {
 		LOG_ERR("ecdh: mbedtls_mpi_write_binary failed: %d", ret);
 		goto cleanup;

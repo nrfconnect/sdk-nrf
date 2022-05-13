@@ -48,7 +48,7 @@ int fp_storage_account_key_count(void);
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_storage_account_keys_get(uint8_t buf[][FP_ACCOUNT_KEY_LEN], size_t *key_count);
+int fp_storage_account_keys_get(uint8_t buf[][FP_CRYPTO_ACCOUNT_KEY_LEN], size_t *key_count);
 
 #ifdef __cplusplus
 }

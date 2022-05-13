@@ -45,7 +45,7 @@ static size_t bt_fast_pair_adv_data_size_non_discoverable(size_t account_key_cnt
 		uint8_t salt;
 
 		res += FIELD_LEN_TYPE_SIZE;
-		res += fp_account_key_filter_size(account_key_cnt);
+		res += fp_crypto_account_key_filter_size(account_key_cnt);
 
 		res += FIELD_LEN_TYPE_SIZE;
 		res += sizeof(salt);
@@ -56,7 +56,7 @@ static size_t bt_fast_pair_adv_data_size_non_discoverable(size_t account_key_cnt
 
 static size_t bt_fast_pair_adv_data_size_discoverable(void)
 {
-	return FP_MODEL_ID_LEN;
+	return FP_REG_DATA_MODEL_ID_LEN;
 }
 
 size_t bt_fast_pair_adv_data_size(bool fp_discoverable)
@@ -86,8 +86,8 @@ static int fp_adv_data_fill_non_discoverable(struct net_buf_simple *buf, size_t 
 	if (account_key_cnt == 0) {
 		net_buf_simple_add_u8(buf, empty_account_key_list);
 	} else {
-		uint8_t ak[CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX][FP_ACCOUNT_KEY_LEN];
-		size_t ak_filter_size = fp_account_key_filter_size(account_key_cnt);
+		uint8_t ak[CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX][FP_CRYPTO_ACCOUNT_KEY_LEN];
+		size_t ak_filter_size = fp_crypto_account_key_filter_size(account_key_cnt);
 		size_t account_key_get_cnt = account_key_cnt;
 		uint8_t salt;
 		int err;
@@ -111,8 +111,8 @@ static int fp_adv_data_fill_non_discoverable(struct net_buf_simple *buf, size_t 
 		__ASSERT_NO_MSG(ak_filter_size <= BIT_MASK(LEN_BITS));
 		net_buf_simple_add_u8(buf, ENCODE_FIELD_LEN_TYPE(ak_filter_size, ak_filter_type));
 
-		err = fp_account_key_filter(net_buf_simple_add(buf, ak_filter_size), ak,
-					    account_key_cnt, salt);
+		err = fp_crypto_account_key_filter(net_buf_simple_add(buf, ak_filter_size), ak,
+						   account_key_cnt, salt);
 		if (err) {
 			return err;
 		}
@@ -126,7 +126,8 @@ static int fp_adv_data_fill_non_discoverable(struct net_buf_simple *buf, size_t 
 
 static int fp_adv_data_fill_discoverable(struct net_buf_simple *buf)
 {
-	return fp_get_model_id(net_buf_simple_add(buf, FP_MODEL_ID_LEN), FP_MODEL_ID_LEN);
+	return fp_reg_data_get_model_id(net_buf_simple_add(buf, FP_REG_DATA_MODEL_ID_LEN),
+					FP_REG_DATA_MODEL_ID_LEN);
 }
 
 int bt_fast_pair_adv_data_fill(struct bt_data *bt_adv_data, uint8_t *buf, size_t buf_size,

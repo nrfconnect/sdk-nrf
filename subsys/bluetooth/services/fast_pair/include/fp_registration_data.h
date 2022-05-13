@@ -22,24 +22,25 @@ extern "C" {
 #endif
 
 /** Fast Pair Model ID length (24-bits = 3 bytes). */
-#define FP_MODEL_ID_LEN			3U
+#define FP_REG_DATA_MODEL_ID_LEN		3U
 /** Fast Pair Anti-Spoofing private key length (256 bits = 32 bytes). */
-#define FP_ANTI_SPOOFING_PRIV_KEY_LEN	32U
+#define FP_REG_DATA_ANTI_SPOOFING_PRIV_KEY_LEN	32U
 
 /** Get Fast Pair Model ID.
  *
  * @param[out] buf  Pointer to the buffer to be filled with the Model ID.
- * @param[in]  size Buffer length in bytes. The buffer must be at least FP_MODEL_ID_LEN bytes long.
+ * @param[in]  size Buffer length in bytes. The buffer must be at least FP_REG_DATA_MODEL_ID_LEN
+ *                  bytes long.
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_get_model_id(uint8_t *buf, size_t size);
+int fp_reg_data_get_model_id(uint8_t *buf, size_t size);
 
 /** Get Fast Pair anti-spoofing private key.
  *
  * @param[out] buf  Pointer to the buffer to be filled with the anti-spoofing private key.
  * @param[in]  size Buffer length (in bytes). The buffer must be at least
- *                  FP_ANTI_SPOOFING_PRIV_KEY_LEN bytes long.
+ *                  FP_REG_DATA_ANTI_SPOOFING_PRIV_KEY_LEN bytes long.
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
