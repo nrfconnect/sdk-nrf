@@ -127,8 +127,6 @@ static void identify_cb(zb_bufid_t bufid)
  */
 static void start_identifying(zb_bufid_t bufid)
 {
-	zb_ret_t zb_err_code;
-
 	ZVUNUSED(bufid);
 
 	if (ZB_JOINED()) {
@@ -137,10 +135,17 @@ static void start_identifying(zb_bufid_t bufid)
 		 */
 		if (dev_ctx.identify_attr.identify_time ==
 		ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE) {
-			LOG_INF("Enter identify mode");
-			zb_err_code = zb_bdb_finding_binding_target(
+
+			zb_ret_t zb_err_code = zb_bdb_finding_binding_target(
 				APP_TEMPLATE_ENDPOINT);
-			ZB_ERROR_CHECK(zb_err_code);
+
+			if (zb_err_code == RET_OK) {
+				LOG_INF("Enter identify mode");
+			} else if (zb_err_code == RET_INVALID_STATE) {
+				LOG_WRN("RET_INVALID_STATE - Cannot enter identify mode");
+			} else {
+				ZB_ERROR_CHECK(zb_err_code);
+			}
 		} else {
 			LOG_INF("Cancel identify mode");
 			zb_bdb_finding_binding_target_cancel();

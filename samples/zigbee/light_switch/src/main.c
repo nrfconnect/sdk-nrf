@@ -198,8 +198,6 @@ static void light_switch_send_on_off(zb_bufid_t bufid, zb_uint16_t on_off);
  */
 static void start_identifying(zb_bufid_t bufid)
 {
-	zb_ret_t zb_err_code;
-
 	ZVUNUSED(bufid);
 
 	if (ZB_JOINED()) {
@@ -208,9 +206,16 @@ static void start_identifying(zb_bufid_t bufid)
 		 */
 		if (dev_ctx.identify_attr.identify_time ==
 		    ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE) {
-			LOG_INF("Enter identify mode");
-			zb_err_code = zb_bdb_finding_binding_target(LIGHT_SWITCH_ENDPOINT);
-			ZB_ERROR_CHECK(zb_err_code);
+
+			zb_ret_t zb_err_code = zb_bdb_finding_binding_target(LIGHT_SWITCH_ENDPOINT);
+
+			if (zb_err_code == RET_OK) {
+				LOG_INF("Enter identify mode");
+			} else if (zb_err_code == RET_INVALID_STATE) {
+				LOG_WRN("RET_INVALID_STATE - Cannot enter identify mode");
+			} else {
+				ZB_ERROR_CHECK(zb_err_code);
+			}
 		} else {
 			LOG_INF("Cancel identify mode");
 			zb_bdb_finding_binding_target_cancel();
