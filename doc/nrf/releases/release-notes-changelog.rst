@@ -701,6 +701,12 @@ Libraries for Zigbee
       * Crypto library used for performing software AES ecryption.
         Now, the :ref:`nrfxlib:nrf_oberon_readme` is used instead of the Tinycrypt library.
 
+  * :ref:`lib_zigbee_fota`:
+
+    * Added:
+
+      * New :kconfig:option:`CONFIG_ZIGBEE_FOTA_IMAGE_DISOVERY_INTERVAL_HRS` Kconfig option to configure interval between queries for the available Zigbee FOTA images.
+
   * Fixed:
 
     * An issue where printing binding table containing group-binding entries results in corrupted output.

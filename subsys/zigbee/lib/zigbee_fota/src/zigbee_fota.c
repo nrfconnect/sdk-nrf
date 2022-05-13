@@ -497,7 +497,8 @@ void zigbee_fota_signal_handler(zb_bufid_t bufid)
 	/* fall-through */
 	case ZB_BDB_SIGNAL_STEERING:
 		if (status == RET_OK) {
-			k_timer_start(&dev_ctx.alarm, K_NO_WAIT, K_HOURS(24));
+			k_timer_start(&dev_ctx.alarm, K_NO_WAIT,
+				K_HOURS(CONFIG_ZIGBEE_FOTA_IMAGE_DISOVERY_INTERVAL_HRS));
 		}
 		break;
 	default:
