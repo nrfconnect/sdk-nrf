@@ -20,6 +20,9 @@
 #include <bluetooth/mesh/gen_lvl_srv.h>
 #include <bluetooth/mesh/gen_ponoff_srv.h>
 #include <bluetooth/mesh/model_types.h>
+#if IS_ENABLED(CONFIG_EMDS) && IS_ENABLED(CONFIG_BT_SETTINGS)
+#include "emds/emds.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -168,10 +171,17 @@ struct bt_mesh_plvl_srv {
 	struct bt_mesh_plvl_range range;
 	/** Current Default Power. */
 	uint16_t default_power;
-	/** The last known Power Level. */
-	uint16_t last;
-	/** Whether the Power is on. */
-	bool is_on;
+	struct __packed {
+		/** The last known Power Level. */
+		uint16_t last;
+		/** Whether the Power is on. */
+		bool is_on;
+	} transient;
+
+#if IS_ENABLED(CONFIG_EMDS) && IS_ENABLED(CONFIG_BT_SETTINGS)
+	/** Dynamic entry to be stored with EMDS */
+	struct emds_dynamic_entry emds_entry;
+#endif
 };
 
 /** @brief Publish the current Power state.

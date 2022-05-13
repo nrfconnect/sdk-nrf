@@ -17,6 +17,9 @@
 #include <bluetooth/mesh/light_xyl.h>
 #include <bluetooth/mesh/model_types.h>
 #include <bluetooth/mesh/lightness_srv.h>
+#if IS_ENABLED(CONFIG_EMDS) && IS_ENABLED(CONFIG_BT_SETTINGS)
+#include "emds/emds.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -170,11 +173,17 @@ struct bt_mesh_light_xyl_srv {
 	struct bt_mesh_light_xy_range range;
 	/** Handler function structure. */
 	const struct bt_mesh_light_xyl_srv_handlers *handlers;
-
-	/** The last known xy Level. */
-	struct bt_mesh_light_xy xy_last;
 	/** The default xy Level. */
 	struct bt_mesh_light_xy xy_default;
+	struct __packed {
+		/** The last known xy Level. */
+		struct bt_mesh_light_xy xy_last;
+	} transient;
+
+#if IS_ENABLED(CONFIG_EMDS) && IS_ENABLED(CONFIG_BT_SETTINGS)
+	/** Dynamic entry to be stored with EMDS */
+	struct emds_dynamic_entry emds_entry;
+#endif
 };
 
 /** @brief Publish the current xyL status.

@@ -406,7 +406,8 @@ static ssize_t scene_store(struct bt_mesh_model *model, uint8_t data[])
 	struct bt_mesh_light_hsl_srv *srv = model->user_data;
 	struct bt_mesh_lightness_status status = { 0 };
 
-	if (atomic_test_bit(&srv->lightness->flags, LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
+	if (atomic_test_bit(&srv->lightness->flags,
+			    LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
 		return 0;
 	}
 
@@ -422,7 +423,8 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 {
 	struct bt_mesh_light_hsl_srv *srv = model->user_data;
 
-	if (atomic_test_bit(&srv->lightness->flags, LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
+	if (atomic_test_bit(&srv->lightness->flags,
+			    LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
 		return;
 	}
 
@@ -534,8 +536,8 @@ static int bt_mesh_light_hsl_srv_start(struct bt_mesh_model *model)
 		sat.lvl = srv->sat.dflt;
 		break;
 	case BT_MESH_ON_POWER_UP_RESTORE:
-		hue.lvl = srv->hue.last;
-		sat.lvl = srv->sat.last;
+		hue.lvl = srv->hue.transient.last;
+		sat.lvl = srv->sat.transient.last;
 		break;
 	default:
 		return -EINVAL;

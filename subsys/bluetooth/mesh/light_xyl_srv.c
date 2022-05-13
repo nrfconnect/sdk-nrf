@@ -17,7 +17,9 @@
 struct bt_mesh_light_xyl_srv_settings_data {
 	struct bt_mesh_light_xy default_params;
 	struct bt_mesh_light_xy_range range;
+#if !IS_ENABLED(CONFIG_EMDS)
 	struct bt_mesh_light_xy xy_last;
+#endif
 } __packed;
 
 #if CONFIG_BT_SETTINGS
@@ -30,7 +32,9 @@ static void store_timeout(struct k_work *work)
 	struct bt_mesh_light_xyl_srv_settings_data data = {
 		.default_params = srv->xy_default,
 		.range = srv->range,
-		.xy_last = srv->xy_last,
+#if !IS_ENABLED(CONFIG_EMDS)
+		.xy_last = srv->transient.xy_last,
+#endif
 	};
 
 	(void)bt_mesh_model_data_store(srv->model, false, NULL, &data,
@@ -129,12 +133,14 @@ static int xyl_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	lightness_srv_disable_control(srv->lightness_srv);
 	lightness_srv_change_lvl(srv->lightness_srv, ctx, &light, &light_rsp, true);
 	srv->handlers->xy_set(srv, ctx, &set, &status);
-	srv->xy_last.x = set.params.x;
-	srv->xy_last.y = set.params.y;
+	srv->transient.xy_last.x = set.params.x;
+	srv->transient.xy_last.y = set.params.y;
 	xyl_status.params.xy = status.current;
 	xyl_status.params.lightness = light_rsp.current;
 	xyl_status.remaining_time = status.remaining_time;
-	store_state(srv);
+	if (!IS_ENABLED(CONFIG_EMDS)) {
+		store_state(srv);
+	}
 
 	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
 		bt_mesh_scene_invalidate(srv->model);
@@ -456,9 +462,11 @@ static void scene_recall(struct bt_mesh_model *model, const uint8_t data[],
 	};
 
 	srv->handlers->xy_set(srv, NULL, &xy_set, &xy_status);
-	srv->xy_last.x = xy_set.params.x;
-	srv->xy_last.y = xy_set.params.y;
-	store_state(srv);
+	srv->transient.xy_last.x = xy_set.params.x;
+	srv->transient.xy_last.y = xy_set.params.y;
+	if (!IS_ENABLED(CONFIG_EMDS)) {
+		store_state(srv);
+	}
 
 	if (atomic_test_bit(&srv->lightness_srv->flags,
 			    LIGHTNESS_SRV_FLAG_EXTENDED_BY_LIGHT_CTRL)) {
@@ -530,6 +538,17 @@ static int bt_mesh_light_xyl_srv_init(struct bt_mesh_model *model)
 
 #if CONFIG_BT_SETTINGS
 	k_work_init_delayable(&srv->store_timer, store_timeout);
+
+#if IS_ENABLED(CONFIG_EMDS)
+	srv->emds_entry.entry.id = EMDS_MODEL_ID(model);
+	srv->emds_entry.entry.data = (uint8_t *)&srv->transient;
+	srv->emds_entry.entry.len = sizeof(srv->transient);
+	int err = emds_entry_add(&srv->emds_entry);
+
+	if (err) {
+		return err;
+	}
+#endif
 #endif
 
 	lightness_srv =
@@ -557,7 +576,9 @@ static int bt_mesh_light_xyl_srv_settings_set(struct bt_mesh_model *model,
 
 	srv->xy_default = data.default_params;
 	srv->range = data.range;
-	srv->xy_last = data.xy_last;
+#if !IS_ENABLED(CONFIG_EMDS)
+	srv->transient.xy_last = data.xy_last;
+#endif
 
 	return 0;
 }
@@ -581,7 +602,7 @@ static int bt_mesh_light_xyl_srv_start(struct bt_mesh_model *model)
 		set.params = srv->xy_default;
 		break;
 	case BT_MESH_ON_POWER_UP_RESTORE:
-		set.params = srv->xy_last;
+		set.params = srv->transient.xy_last;
 		break;
 	default:
 		return -EINVAL;

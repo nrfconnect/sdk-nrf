@@ -328,13 +328,23 @@ Bluetooth libraries and services
   * Extended API to allow setting the flag for the hide UI indication in the Fast Pair not discoverable advertising data.
 
 * :ref:`bt_enocean_readme` library
+
   * Added callback :c:member:`decommissioned` to :c:struct:`bt_enocean_callbacks` when EnOcean switch is decommissioned.
 
-* :ref:`bt_mesh` library:
+* :ref:`bt_mesh`:
 
   * Added:
 
-    * :ref:`bt_mesh_silvair_enocean_srv_readme` added use of decommissioned callback when EnOcean switch is decommissioned.
+    * Use of decommissioned callback in :ref:`bt_mesh_silvair_enocean_srv_readme` when EnOcean switch is decommissioned.
+    * Emergency data storage (EMDS) support to:
+
+      *  :ref:`bt_mesh_plvl_srv_readme`
+      *  :ref:`bt_mesh_light_hue_srv_readme`
+      *  :ref:`bt_mesh_light_sat_srv_readme`
+      *  :ref:`bt_mesh_light_temp_srv_readme`
+      *  :ref:`bt_mesh_light_xyl_srv_readme`
+      *  :ref:`bt_mesh_lightness_srv_readme`
+
 
 Bootloader libraries
 --------------------
