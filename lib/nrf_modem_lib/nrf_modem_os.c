@@ -180,6 +180,10 @@ int32_t nrf_modem_os_timedwait(uint32_t context, int32_t *timeout)
 	struct sleeping_thread thread;
 	int64_t start, remaining;
 
+	if (!nrf_modem_is_initialized()) {
+		return -NRF_ESHUTDOWN;
+	}
+
 	start = k_uptime_get();
 
 	if (*timeout == 0) {
