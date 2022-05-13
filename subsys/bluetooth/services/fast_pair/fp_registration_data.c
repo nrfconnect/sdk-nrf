@@ -26,8 +26,9 @@ static const uint8_t fp_magic[] = {0xFA, 0x57, 0xFA, 0x57};
 
 #define FP_MAGIC_HEADER_OFF	 FP_DATA_START
 #define FP_MODEL_ID_OFF		 FP_OFFSET(FP_MAGIC_HEADER_OFF, FP_MAGIC_SIZE)
-#define FP_ANTI_SPOOFING_KEY_OFF FP_OFFSET(FP_MODEL_ID_OFF, FP_MODEL_ID_LEN)
-#define FP_MAGIC_TRAILER_OFF	 FP_OFFSET(FP_ANTI_SPOOFING_KEY_OFF, FP_ANTI_SPOOFING_PRIV_KEY_LEN)
+#define FP_ANTI_SPOOFING_KEY_OFF FP_OFFSET(FP_MODEL_ID_OFF, FP_REG_DATA_MODEL_ID_LEN)
+#define FP_MAGIC_TRAILER_OFF	 FP_OFFSET(FP_ANTI_SPOOFING_KEY_OFF, \
+					   FP_REG_DATA_ANTI_SPOOFING_PRIV_KEY_LEN)
 
 BUILD_ASSERT(FP_OFFSET(FP_MAGIC_TRAILER_OFF, FP_MAGIC_SIZE) <= FP_PARTITION_SIZE,
 	     "Fast Pair registration data partition is too small");
@@ -35,7 +36,7 @@ BUILD_ASSERT(FP_OFFSET(FP_MAGIC_TRAILER_OFF, FP_MAGIC_SIZE) <= FP_PARTITION_SIZE
 static bool data_valid;
 
 
-int fp_get_model_id(uint8_t *buf, size_t size)
+int fp_reg_data_get_model_id(uint8_t *buf, size_t size)
 {
 	int err;
 	const struct flash_area *fa;
@@ -44,13 +45,13 @@ int fp_get_model_id(uint8_t *buf, size_t size)
 		return -ENODATA;
 	}
 
-	if (size < FP_MODEL_ID_LEN) {
+	if (size < FP_REG_DATA_MODEL_ID_LEN) {
 		return -EINVAL;
 	}
 
 	err = flash_area_open(FP_PARTITION_ID, &fa);
 	if (!err) {
-		err = flash_area_read(fa, FP_MODEL_ID_OFF, buf, FP_MODEL_ID_LEN);
+		err = flash_area_read(fa, FP_MODEL_ID_OFF, buf, FP_REG_DATA_MODEL_ID_LEN);
 		flash_area_close(fa);
 	}
 
@@ -66,14 +67,14 @@ int fp_get_anti_spoofing_priv_key(uint8_t *buf, size_t size)
 		return -ENODATA;
 	}
 
-	if (size < FP_ANTI_SPOOFING_PRIV_KEY_LEN) {
+	if (size < FP_REG_DATA_ANTI_SPOOFING_PRIV_KEY_LEN) {
 		return -EINVAL;
 	}
 
 	err = flash_area_open(FP_PARTITION_ID, &fa);
 	if (!err) {
 		err = flash_area_read(fa, FP_ANTI_SPOOFING_KEY_OFF, buf,
-				      FP_ANTI_SPOOFING_PRIV_KEY_LEN);
+				      FP_REG_DATA_ANTI_SPOOFING_PRIV_KEY_LEN);
 		flash_area_close(fa);
 	}
 

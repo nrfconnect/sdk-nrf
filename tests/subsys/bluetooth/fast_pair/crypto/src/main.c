@@ -16,11 +16,11 @@ static void test_sha256(void)
 					 0x32, 0xCC, 0xAF, 0xCC, 0xC8, 0x92, 0xD6, 0x8D, 0x35, 0x0F,
 					 0x80, 0xF8};
 
-	uint8_t result_buf[FP_SHA256_HASH_LEN];
+	uint8_t result_buf[FP_CRYPTO_SHA256_HASH_LEN];
 
 	zassert_equal(sizeof(result_buf), sizeof(hashed_result),
 		      "Invalid size of expected result.");
-	zassert_ok(fp_sha256(result_buf, input_data, sizeof(input_data)),
+	zassert_ok(fp_crypto_sha256(result_buf, input_data, sizeof(input_data)),
 		   "Error during hashing data.");
 	zassert_mem_equal(result_buf, hashed_result, sizeof(hashed_result),
 			  "Invalid hashing result.");
@@ -37,14 +37,15 @@ static void test_aes128(void)
 	const uint8_t ciphertext[] = {0xAC, 0x9A, 0x16, 0xF0, 0x95, 0x3A, 0x3F, 0x22, 0x3D, 0xD1,
 				      0x0C, 0xF5, 0x36, 0xE0, 0x9E, 0x9C};
 
-	uint8_t result_buf[FP_AES128_BLOCK_LEN];
+	uint8_t result_buf[FP_CRYPTO_AES128_BLOCK_LEN];
 
 	zassert_equal(sizeof(result_buf), sizeof(ciphertext), "Invalid size of expected result.");
-	zassert_ok(fp_aes128_encrypt(result_buf, plaintext, key), "Error during value encryption.");
+	zassert_ok(fp_crypto_aes128_encrypt(result_buf, plaintext, key),
+		   "Error during value encryption.");
 	zassert_mem_equal(result_buf, ciphertext, sizeof(ciphertext), "Invalid encryption result.");
 
 	zassert_equal(sizeof(result_buf), sizeof(plaintext), "Invalid size of expected result.");
-	zassert_ok(fp_aes128_decrypt(result_buf, ciphertext, key),
+	zassert_ok(fp_crypto_aes128_decrypt(result_buf, ciphertext, key),
 		   "Error during value decryption.");
 	zassert_mem_equal(result_buf, plaintext, sizeof(plaintext), "Invalid decryption result.");
 }
@@ -84,16 +85,20 @@ static void test_ecdh(void)
 				      0xF5, 0x43, 0xD9, 0x06, 0x1A, 0xD5, 0x78, 0x89, 0x49, 0x8A,
 				      0xE6, 0xBA};
 
-	uint8_t bobs_result_buf[FP_ECDH_SHARED_KEY_LEN];
-	uint8_t alices_result_buf[FP_ECDH_SHARED_KEY_LEN];
+	uint8_t bobs_result_buf[FP_CRYPTO_ECDH_SHARED_KEY_LEN];
+	uint8_t alices_result_buf[FP_CRYPTO_ECDH_SHARED_KEY_LEN];
 
 	zassert_equal(sizeof(bobs_result_buf), sizeof(shared_key),
 		      "Invalid size of expected result.");
-	zassert_ok(fp_ecdh_shared_secret(bobs_result_buf, alices_public_key, bobs_private_key),
+	zassert_ok(fp_crypto_ecdh_shared_secret(bobs_result_buf,
+						alices_public_key,
+						bobs_private_key),
 		   "Error during key computing.");
 	zassert_equal(sizeof(alices_result_buf), sizeof(shared_key),
 		      "Invalid size of expected result.");
-	zassert_ok(fp_ecdh_shared_secret(alices_result_buf, bobs_public_key, alices_private_key),
+	zassert_ok(fp_crypto_ecdh_shared_secret(alices_result_buf,
+						bobs_public_key,
+						alices_private_key),
 		   "Error during key computing.");
 	zassert_mem_equal(bobs_result_buf, shared_key, sizeof(shared_key),
 			  "Invalid key on Bob's side.");
@@ -111,10 +116,10 @@ static void test_aes_key_from_ecdh_shared_secret(void)
 	const uint8_t aes_key[] = {0xB0, 0x7F, 0x1F, 0x17, 0xC2, 0x36, 0xCB, 0xD3, 0x35, 0x23, 0xC5,
 				   0x15, 0xF3, 0x50, 0xAE, 0x57};
 
-	uint8_t result_buf[FP_AES128_BLOCK_LEN];
+	uint8_t result_buf[FP_CRYPTO_AES128_BLOCK_LEN];
 
 	zassert_equal(sizeof(result_buf), sizeof(aes_key), "Invalid size of expected result.");
-	zassert_ok(fp_aes_key_compute(result_buf, ecdh_shared_key),
+	zassert_ok(fp_crypto_aes_key_compute(result_buf, ecdh_shared_key),
 		   "Error during key computing.");
 	zassert_mem_equal(result_buf, aes_key, sizeof(aes_key), "Invalid resulting key.");
 }
@@ -123,7 +128,7 @@ static void test_bloom_filter(void)
 {
 	const uint8_t salt = 0xC7;
 
-	const uint8_t first_account_key_list[][FP_ACCOUNT_KEY_LEN] = {
+	const uint8_t first_account_key_list[][FP_CRYPTO_ACCOUNT_KEY_LEN] = {
 		{0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0xAA, 0xBB, 0xCC, 0xDD,
 		 0xEE, 0xFF}
 		};
@@ -132,17 +137,17 @@ static void test_bloom_filter(void)
 
 	uint8_t first_result_buf[sizeof(first_bloom_filter)];
 
-	size_t s = fp_account_key_filter_size(ARRAY_SIZE(first_account_key_list));
+	size_t s = fp_crypto_account_key_filter_size(ARRAY_SIZE(first_account_key_list));
 
 	zassert_equal(s, sizeof(first_bloom_filter),
 		      "Invalid size of expected result.");
-	zassert_ok(fp_account_key_filter(first_result_buf, first_account_key_list,
-					 ARRAY_SIZE(first_account_key_list), salt),
+	zassert_ok(fp_crypto_account_key_filter(first_result_buf, first_account_key_list,
+						ARRAY_SIZE(first_account_key_list), salt),
 		   "Error during filter computing");
 	zassert_mem_equal(first_result_buf, first_bloom_filter, sizeof(first_bloom_filter),
 			  "Invalid resulting filter.");
 
-	const uint8_t second_account_key_list[][FP_ACCOUNT_KEY_LEN] = {
+	const uint8_t second_account_key_list[][FP_CRYPTO_ACCOUNT_KEY_LEN] = {
 		{0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0xAA, 0xBB, 0xCC, 0xDD,
 		 0xEE, 0xFF},
 		{0x11, 0x11, 0x22, 0x22, 0x33, 0x33, 0x44, 0x44, 0x55, 0x55, 0x66, 0x66, 0x77, 0x77,
@@ -153,11 +158,11 @@ static void test_bloom_filter(void)
 
 	uint8_t second_result_buf[sizeof(second_bloom_filter)];
 
-	s = fp_account_key_filter_size(ARRAY_SIZE(second_account_key_list));
+	s = fp_crypto_account_key_filter_size(ARRAY_SIZE(second_account_key_list));
 	zassert_equal(s, sizeof(second_bloom_filter),
 		      "Invalid size of expected result.");
-	zassert_ok(fp_account_key_filter(second_result_buf, second_account_key_list,
-					 ARRAY_SIZE(second_account_key_list), salt),
+	zassert_ok(fp_crypto_account_key_filter(second_result_buf, second_account_key_list,
+						ARRAY_SIZE(second_account_key_list), salt),
 		   "Error during filter computing");
 	zassert_mem_equal(second_result_buf, second_bloom_filter, sizeof(second_bloom_filter),
 			  "Invalid resulting filter.");

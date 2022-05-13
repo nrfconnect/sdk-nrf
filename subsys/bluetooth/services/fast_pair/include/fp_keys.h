@@ -40,12 +40,12 @@ typedef int (*fp_keys_validate_cb)(struct bt_conn *conn, const uint8_t *req, voi
 /** @brief Fast Pair keys key generation parameters. */
 struct fp_keys_keygen_params {
 	/** Encrypted Fast Pair Key-based Pairing Request. The encrypted request length must be
-	 *  equal to FP_AES128_BLOCK_LEN.
+	 *  equal to FP_CRYPTO_AES128_BLOCK_LEN.
 	 */
 	const uint8_t *req_enc;
 
 	/** Seeker's public key (or NULL if the public key is not provided). The public key length
-	 *  must be equal to FP_ECDH_PUBLIC_KEY_LEN.
+	 *  must be equal to FP_CRYPTO_ECDH_PUBLIC_KEY_LEN.
 	 */
 	const uint8_t *public_key;
 
@@ -58,8 +58,9 @@ struct fp_keys_keygen_params {
 
 /** Encrypt response for the Fast Pair Seeker.
  *
- * Length of buffer used to store encrypted response must at least equal to FP_AES128_BLOCK_LEN.
- * Raw response length must be equal to FP_AES128_BLOCK_LEN (Fast Pair response size).
+ * Length of buffer used to store encrypted response must at least equal to
+ * FP_CRYPTO_AES128_BLOCK_LEN. Raw response length must be equal to FP_CRYPTO_AES128_BLOCK_LEN
+ * (Fast Pair response size).
  *
  * @param[in] conn	Pointer to Bluetooth connection (determines used key).
  * @param[out] out	Pointer to buffer used to store encrypted response.
@@ -71,8 +72,9 @@ int fp_keys_encrypt(struct bt_conn *conn, uint8_t *out, const uint8_t *in);
 
 /** Decrypt request from the Fast Pair Seeker.
  *
- * Length of buffer used to store decrypted request must at least equal to FP_AES128_BLOCK_LEN.
- * Encrypted request length must be equal to FP_AES128_BLOCK_LEN (Fast Pair request size).
+ * Length of buffer used to store decrypted request must at least equal to
+ * FP_CRYPTO_AES128_BLOCK_LEN. Encrypted request length must be equal to FP_CRYPTO_AES128_BLOCK_LEN
+ * (Fast Pair request size).
  *
  * @param[in] conn	Pointer to Bluetooth connection (determines used key).
  * @param[out] out	Pointer to buffer used to store decrypted request.

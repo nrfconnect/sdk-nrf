@@ -25,28 +25,31 @@ LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 #define SETTINGS_AK_FULL_PREFIX (SUBTREE_NAME SETTINGS_NAME_CONNECTOR SETTINGS_AK_NAME_PREFIX)
 #define SETTINGS_AK_NAME_MAX_SUFFIX_LEN 1
 #define SETTINGS_NAME_MAX_SIZE (sizeof(SETTINGS_AK_FULL_PREFIX) + SETTINGS_AK_NAME_MAX_SUFFIX_LEN)
+
+#define ACCOUNT_KEY_CNT    CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX
 #define ACCOUNT_KEY_MIN_ID 1
-#define ACCOUNT_KEY_MAX_ID (2 * CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX)
+#define ACCOUNT_KEY_MAX_ID (2 * ACCOUNT_KEY_CNT)
 
 BUILD_ASSERT(ACCOUNT_KEY_MAX_ID < UINT8_MAX);
-BUILD_ASSERT(CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX <= 10);
+BUILD_ASSERT(ACCOUNT_KEY_CNT <= 10);
 
 struct account_key_data {
 	uint8_t account_key_id;
-	uint8_t account_key[FP_ACCOUNT_KEY_LEN];
+	uint8_t account_key[FP_CRYPTO_ACCOUNT_KEY_LEN];
 };
 
-static uint8_t account_key_list[CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX][FP_ACCOUNT_KEY_LEN];
-static uint8_t account_key_loaded_ids[CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX];
+static uint8_t account_key_list[ACCOUNT_KEY_CNT][FP_CRYPTO_ACCOUNT_KEY_LEN];
+static uint8_t account_key_loaded_ids[ACCOUNT_KEY_CNT];
 static uint8_t account_key_next_id;
 static uint8_t account_key_count;
 static atomic_t settings_loaded = ATOMIC_INIT(false);
+
 
 static uint8_t key_id_to_idx(uint8_t account_key_id)
 {
 	__ASSERT_NO_MSG(account_key_id >= ACCOUNT_KEY_MIN_ID);
 
-	return (account_key_id - ACCOUNT_KEY_MIN_ID) % CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX;
+	return (account_key_id - ACCOUNT_KEY_MIN_ID) % ACCOUNT_KEY_CNT;
 }
 
 static uint8_t next_key_id(uint8_t key_id)
@@ -119,7 +122,7 @@ static int fp_settings_set(const char *name, size_t len, settings_read_cb read_c
 
 static bool zero_id_check(uint8_t start_idx)
 {
-	for (size_t i = start_idx; i < CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX; i++) {
+	for (size_t i = start_idx; i < ACCOUNT_KEY_CNT; i++) {
 		if (account_key_loaded_ids[i] != 0) {
 			return false;
 		}
@@ -131,7 +134,7 @@ static bool zero_id_check(uint8_t start_idx)
 static bool id_sequence_check(uint8_t start_idx)
 {
 	__ASSERT_NO_MSG(start_idx > 0);
-	for (size_t i = start_idx; i < CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX; i++) {
+	for (size_t i = start_idx; i < ACCOUNT_KEY_CNT; i++) {
 		if (account_key_loaded_ids[i] != next_key_id(account_key_loaded_ids[i - 1])) {
 			return false;
 		}
@@ -142,8 +145,8 @@ static bool id_sequence_check(uint8_t start_idx)
 
 static bool rollover_check(uint8_t cur_id, uint8_t prev_id)
 {
-	return ((cur_id == (prev_id - (CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX - 1))) ||
-		(cur_id == (prev_id + (CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX + 1))));
+	return ((cur_id == (prev_id - (ACCOUNT_KEY_CNT - 1))) ||
+		(cur_id == (prev_id + (ACCOUNT_KEY_CNT + 1))));
 }
 
 static int fp_settings_commit(void)
@@ -162,7 +165,7 @@ static int fp_settings_commit(void)
 		first_zero_idx = 0;
 	}
 
-	for (size_t i = 1; (i < CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX) &&
+	for (size_t i = 1; (i < ACCOUNT_KEY_CNT) &&
 			   (first_zero_idx == -1); i++) {
 		prev_id = cur_id;
 		cur_id = account_key_loaded_ids[i];
@@ -196,12 +199,11 @@ static int fp_settings_commit(void)
 			return -EINVAL;
 		}
 
-		account_key_count = CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX;
+		account_key_count = ACCOUNT_KEY_CNT;
 		account_key_next_id = next_key_id(account_key_loaded_ids[rollover_idx - 1]);
 	} else {
-		account_key_count = CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX;
-		account_key_next_id = next_key_id(
-			account_key_loaded_ids[CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX - 1]);
+		account_key_count = ACCOUNT_KEY_CNT;
+		account_key_next_id = next_key_id(account_key_loaded_ids[ACCOUNT_KEY_CNT - 1]);
 	}
 
 	atomic_set(&settings_loaded, true);
@@ -221,7 +223,7 @@ int fp_storage_account_key_count(void)
 	return account_key_count;
 }
 
-int fp_storage_account_keys_get(uint8_t buf[][FP_ACCOUNT_KEY_LEN], size_t *key_count)
+int fp_storage_account_keys_get(uint8_t buf[][FP_CRYPTO_ACCOUNT_KEY_LEN], size_t *key_count)
 {
 	if (!atomic_get(&settings_loaded)) {
 		return -ENODATA;
@@ -231,7 +233,7 @@ int fp_storage_account_keys_get(uint8_t buf[][FP_ACCOUNT_KEY_LEN], size_t *key_c
 		return -EINVAL;
 	}
 
-	memcpy(buf, account_key_list, account_key_count * FP_ACCOUNT_KEY_LEN);
+	memcpy(buf, account_key_list, account_key_count * FP_CRYPTO_ACCOUNT_KEY_LEN);
 	*key_count = account_key_count;
 
 	return 0;
@@ -250,19 +252,19 @@ int fp_storage_account_key_save(const uint8_t *account_key)
 	int err;
 
 	for (size_t i = 0; i < account_key_count; i++) {
-		if (!memcmp(account_key, &account_key_list[i], FP_ACCOUNT_KEY_LEN)) {
+		if (!memcmp(account_key, &account_key_list[i], FP_CRYPTO_ACCOUNT_KEY_LEN)) {
 			LOG_INF("Account Key already saved - skipping.");
 			return 0;
 		}
 	}
-	if (account_key_count == CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX) {
+	if (account_key_count == ACCOUNT_KEY_CNT) {
 		LOG_INF("Account Key List full - erasing the oldest Account Key.");
 	}
 
 	index = key_id_to_idx(account_key_next_id);
 
 	data.account_key_id = account_key_next_id;
-	memcpy(data.account_key, account_key, FP_ACCOUNT_KEY_LEN);
+	memcpy(data.account_key, account_key, FP_CRYPTO_ACCOUNT_KEY_LEN);
 
 	n = snprintf(name, SETTINGS_NAME_MAX_SIZE, "%s%u", SETTINGS_AK_FULL_PREFIX, index);
 	__ASSERT_NO_MSG(n < SETTINGS_NAME_MAX_SIZE);
@@ -275,11 +277,11 @@ int fp_storage_account_key_save(const uint8_t *account_key)
 		return err;
 	}
 
-	memcpy(&account_key_list[index], account_key, FP_ACCOUNT_KEY_LEN);
+	memcpy(&account_key_list[index], account_key, FP_CRYPTO_ACCOUNT_KEY_LEN);
 
 	account_key_next_id = next_key_id(account_key_next_id);
 
-	if (account_key_count < CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX) {
+	if (account_key_count < ACCOUNT_KEY_CNT) {
 		account_key_count++;
 	}
 

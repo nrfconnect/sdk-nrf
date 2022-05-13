@@ -35,7 +35,7 @@ struct fp_procedure {
 	enum fp_state state;
 	uint8_t key_gen_failure_cnt;
 	bool pairing_mode;
-	uint8_t aes_key[FP_ACCOUNT_KEY_LEN];
+	uint8_t aes_key[FP_CRYPTO_ACCOUNT_KEY_LEN];
 };
 
 static bool user_pairing_mode = true;
@@ -95,7 +95,7 @@ int fp_keys_encrypt(struct bt_conn *conn, uint8_t *out, const uint8_t *in)
 	}
 
 	if (!err) {
-		err = fp_aes128_encrypt(out, in, proc->aes_key);
+		err = fp_crypto_aes128_encrypt(out, in, proc->aes_key);
 	}
 
 	return err;
@@ -118,7 +118,7 @@ int fp_keys_decrypt(struct bt_conn *conn, uint8_t *out, const uint8_t *in)
 	}
 
 	if (!err) {
-		err = fp_aes128_decrypt(out, in, proc->aes_key);
+		err = fp_crypto_aes128_decrypt(out, in, proc->aes_key);
 	}
 
 	return err;
@@ -129,18 +129,19 @@ static int key_gen_public_key(struct bt_conn *conn, struct fp_keys_keygen_params
 	int err;
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 
-	uint8_t req[FP_AES128_BLOCK_LEN];
-	uint8_t priv_key[FP_ANTI_SPOOFING_PRIV_KEY_LEN];
-	uint8_t ecdh_secret[FP_ECDH_SHARED_KEY_LEN];
+	uint8_t req[FP_CRYPTO_AES128_BLOCK_LEN];
+	uint8_t priv_key[FP_REG_DATA_ANTI_SPOOFING_PRIV_KEY_LEN];
+	uint8_t ecdh_secret[FP_CRYPTO_ECDH_SHARED_KEY_LEN];
 
 	err = fp_get_anti_spoofing_priv_key(priv_key, sizeof(priv_key));
 
 	if (!err) {
-		err = fp_ecdh_shared_secret(ecdh_secret, keygen_params->public_key, priv_key);
+		err = fp_crypto_ecdh_shared_secret(ecdh_secret, keygen_params->public_key,
+						   priv_key);
 	}
 
 	if (!err) {
-		err = fp_aes_key_compute(proc->aes_key, ecdh_secret);
+		err = fp_crypto_aes_key_compute(proc->aes_key, ecdh_secret);
 	}
 
 	if (!err) {
@@ -159,8 +160,8 @@ static int key_gen_account_key(struct bt_conn *conn, struct fp_keys_keygen_param
 	int err;
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 
-	uint8_t req[FP_AES128_BLOCK_LEN];
-	uint8_t ak[CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX][FP_ACCOUNT_KEY_LEN];
+	uint8_t req[FP_CRYPTO_AES128_BLOCK_LEN];
+	uint8_t ak[CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX][FP_CRYPTO_ACCOUNT_KEY_LEN];
 	size_t ak_cnt = CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX;
 
 	err = fp_storage_account_keys_get(ak, &ak_cnt);
@@ -169,7 +170,7 @@ static int key_gen_account_key(struct bt_conn *conn, struct fp_keys_keygen_param
 	}
 
 	for (size_t i = 0; i < ak_cnt; i++) {
-		memcpy(proc->aes_key, ak[i], FP_ACCOUNT_KEY_LEN);
+		memcpy(proc->aes_key, ak[i], FP_CRYPTO_ACCOUNT_KEY_LEN);
 
 		err = fp_keys_decrypt(conn, req, keygen_params->req_enc);
 		if (!err) {
