@@ -324,6 +324,51 @@ error_exit:
 	return 0;
 }
 
+void ser_decode_str(CborValue *value, char *buffer, size_t buffer_size)
+{
+	CborError err = CborErrorIllegalType;
+	size_t len;
+
+	if (is_decoder_invalid(value)) {
+		return;
+	}
+
+	if (cbor_value_is_text_string(value)) {
+		err = cbor_value_get_string_length(value, &len);
+		if (err == CborErrorUnknownLength) {
+			err = cbor_value_calculate_string_length(value, &len);
+		}
+
+		if (err != CborNoError) {
+			goto error_exit;
+		}
+
+		/* We need to have place for null terminator also. */
+		if ((len + 1) > buffer_size) {
+			err = CborErrorIO;
+			goto error_exit;
+		}
+
+		/* Reserve the place for a string NULL terminator. */
+		len++;
+
+		err = cbor_value_copy_text_string(value, buffer, &len, value);
+		if (err != CborNoError) {
+			goto error_exit;
+		}
+
+
+	} else if (cbor_value_is_null(value)) {
+		err = cbor_value_advance_fixed(value);
+		if (err != CborNoError) {
+			goto error_exit;
+		}
+	}
+
+error_exit:
+	ser_decoder_invalid(value, err);
+}
+
 void *ser_decode_buffer(CborValue *value, void *buffer, size_t buffer_size)
 {
 	CborError err = CborErrorIllegalType;
@@ -427,6 +472,9 @@ char *ser_decode_str_into_scratchpad(struct ser_scratchpad *scratchpad)
 		if (err != CborNoError) {
 			goto error_exit;
 		}
+
+		/* Reserve place for a string NULL terminator. */
+		len++;
 
 		result = (char *)ser_scratchpad_add(scratchpad, len);
 		if (!result) {

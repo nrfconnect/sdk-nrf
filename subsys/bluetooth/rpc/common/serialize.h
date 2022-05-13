@@ -220,9 +220,9 @@ int64_t ser_decode_int64(CborValue *value);
  *
  * @param[in]  value Value parsed from the CBOR stream.
  * @param[out] buffer Buffer for decoded string.
- * @param[in]  size Buffer size.
+ * @param[in]  buffer_size Buffer size.
  */
-void ser_decode_str(CborValue *value, char *buffer, size_t size);
+void ser_decode_str(CborValue *value, char *buffer, size_t buffer_size);
 
 /** Decode a string value into a scratchpad.
  *
@@ -236,7 +236,7 @@ char *ser_decode_str_into_scratchpad(struct ser_scratchpad *scratchpad);
  *
  * @param[in]  value Value parsed from the CBOR stream.
  * @param[out] buffer Buffer for a decoded buffer data.
- * @param[in]  size Buffer size.
+ * @param[in]  buffer_size Buffer size.
  *
  * @retval Pointer to a decoded buffer.
  */
