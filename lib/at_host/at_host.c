@@ -52,6 +52,7 @@ static bool at_buf_busy; /* Guards at_buf while processing a command */
 static char at_buf[AT_BUF_SIZE]; /* AT command and modem response buffer */
 static struct k_work_q at_host_work_q;
 static struct k_work cmd_send_work;
+static at_cmd_custom_handler_t custom_handler;
 
 static inline void write_uart_string(const char *str)
 {
@@ -67,16 +68,41 @@ static void response_handler(const char *response)
 	write_uart_string(response);
 }
 
+#if defined(CONFIG_AT_HOST_CUSTOM_COMMANDS)
+static bool cmd_is_custom(const char *cmd)
+{
+	char *prefix = CONFIG_AT_HOST_CUSTOM_COMMANDS_PREFIX;
+
+	for (int i = 0; i < strlen(prefix); i++) {
+		if (tolower(prefix[i]) != tolower(cmd[i])) {
+			return false;
+		}
+	}
+
+	return true;
+}
+#endif /* CONFIG_AT_HOST_CUSTOM_COMMANDS */
+
 static void cmd_send(struct k_work *work)
 {
 	int               err;
+	bool              custom = false;
 
 	ARG_UNUSED(work);
 
-    /* Sending through string format rather than raw buffer in case
-     * the buffer contains characters that need to be escaped
-     */
-	err = nrf_modem_at_cmd(at_buf, sizeof(at_buf), "%s", at_buf);
+#if defined(CONFIG_AT_HOST_CUSTOM_COMMANDS)
+	custom = cmd_is_custom(at_buf);
+#endif /* CONFIG_AT_HOST_CUSTOM_COMMANDS */
+
+	if (custom) {
+		err = custom_handler(at_buf, at_buf, sizeof(at_buf));
+	} else {
+		/* Sending through string format rather than raw buffer in case
+		 * the buffer contains characters that need to be escaped
+		 */
+		err = nrf_modem_at_cmd(at_buf, sizeof(at_buf), "%s", at_buf);
+	}
+
 	if (err < 0) {
 		LOG_ERR("Error while processing AT command: %d", err);
 	}
@@ -167,6 +193,15 @@ send:
 		uart_irq_rx_disable(uart_dev); /* Stop UART to protect at_buf */
 		at_buf_busy = true;
 		k_work_submit_to_queue(&at_host_work_q, &cmd_send_work);
+	}
+}
+
+void at_cmd_set_custom_handler(at_cmd_custom_handler_t handler)
+{
+	if (IS_ENABLED(CONFIG_AT_HOST_CUSTOM_COMMANDS)) {
+		custom_handler = handler;
+	} else {
+		LOG_WRN("CONFIG_AT_HOST_CUSTOM_COMMANDS is disabled");
 	}
 }
 

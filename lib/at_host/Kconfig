@@ -88,6 +88,16 @@ config AT_HOST_THREAD_PRIO
 	default 0 if !MULTITHREADING
 	default 10
 
+config AT_HOST_CUSTOM_COMMANDS
+	bool "Support custom commands"
+	default n
+
+if (AT_HOST_CUSTOM_COMMANDS)
+config AT_HOST_CUSTOM_COMMANDS_PREFIX
+	string "Custom commands prefix"
+	default "AT#"
+endif # AT_HOST_CUSTOM_COMMANDS
+
 module = AT_HOST
 module-str = AT host
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
