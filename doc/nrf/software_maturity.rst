@@ -7,11 +7,26 @@ Software maturity levels
    :local:
    :depth: 2
 
-Following are the different software maturity levels shown for the different features:
+The |NCS| supports its various features and components at different levels of software maturity.
+The tables at the end of this page summarize the maturity level for each feature and component supported in the |NCS|.
+The following categories are used in the tables to classify the software maturity of each feature and component:
 
-* Supported - Features that are maintained and are suitable for integration in end products.
-* Experimental - Features that are suitable for prototyping or evaluation, but are not recommended to be deployed in end products.
-* Not supported - The feature or component will not work if not supported.
+Supported
+   The feature or component is implemented and maintained, and is suitable for product development.
+
+Not supported
+   The feature or component is neither implemented nor maintained, and it does not work.
+
+Experimental
+   The feature can be used for development, but it is not recommended for production.
+   This means that the feature is incomplete in functionality or verification and can be expected to change in future releases.
+   The feature is made available in its current state, but the design and interfaces can change between release tags.
+   The feature is also labeled as ``EXPERIMENTAL`` in Kconfig files to indicate this status.
+
+   .. note::
+      By default, the build system generates build warnings to indicate when features labeled ``EXPERIMENTAL`` are included in builds.
+      You can disable these warnings by disabling the :kconfig:option:`CONFIG_WARN_EXPERIMENTAL` kconfig option.
+      See :ref:`app_build_additions` for details.
 
 See the following table for more details:
 
@@ -31,47 +46,56 @@ See the following table for more details:
      - Customer issues raised for experimental features on tagged |NCS| releases are handled by technical support on DevZone.
      - Not available.
    * - **Bug fixing**
-     - Reported critical bugs will be resolved in both main and latest tagged version.
+     - Reported critical bugs will be resolved in both ``main`` and the latest tagged versions.
      - Bug fixes and improvements are not guaranteed to be applied.
      - Not available.
    * - **Implementation completeness**
      - Complete implementation of the agreed features set.
      - Significant changes may be applied in upcoming versions.
-     - A feature or component is available as an implementation, but is not compatible with, or tested on a specific device or series of products.
+     - A feature or component is available as an implementation, but is not compatible with (or tested on) a specific device or series of products.
    * - **API definition**
-     - API definition is stable.
-     - API definition is not stable and may change.
+     - The API definition is stable.
+     - The API definition is not stable and may change.
      - Not available.
    * - **Maturity**
      - Suitable for integration in end products.
 
-       A feature or component that is either fully complete on first commit, or has previously been labelled "experimental" and is now ready for use in end products.
+       A feature or component that is either fully complete on first commit, or has previously been labelled *experimental* and is now ready for use in end products.
 
      - Suitable for prototyping or evaluation.
        Not recommended to be deployed in end products.
 
-       A feature or component that is either not fully verified according to existing test plans or currently being developed, meaning it is changing or incomplete.
+       A feature or component that is either not fully verified according to the existing test plans or currently being developed, meaning that it is incomplete or that it may change in the future.
      - Not applicable.
 
    * - **Verification**
-     - Fully verified according to existing test plans.
+     - Fully verified according to the existing test plans.
      - Incomplete verification
      - Not applicable.
 
 Protocol support
 ****************
 
+The following table indicates the software maturity levels of the support for each protocol:
+
 .. sml-table:: top_level
 
-Thread feature support
-**********************
+Thread features support
+***********************
+
+The following table indicates the software maturity levels of the support for each Thread feature:
 
 .. toggle::
 
   .. sml-table:: thread
 
-Matter feature support
-**********************
+Matter features support
+***********************
+
+The following table indicates the software maturity levels of the support for each Matter feature:
+
+.. caution::
+   Matter features are still considered experimental.
 
 .. toggle::
 
@@ -80,12 +104,21 @@ Matter feature support
 Zigbee feature support
 **********************
 
+The following table indicates the software maturity levels of the support for each Zigbee feature:
+
 .. toggle::
 
   .. sml-table:: zigbee
 
 Security Feature Support
 ************************
+
+The following sections contain the tables indicating the software maturity levels of the support for the following security features:
+
+* Trusted Firmware-M
+* PSA Crypto
+* |NSIB|
+* Hardware Unique Key
 
 Trusted Firmware-M support
 --------------------------
@@ -101,8 +134,8 @@ PSA Crypto support
 
   .. sml-table:: psa_crypto
 
-Immutable Bootloader
---------------------
+|NSIB|
+------
 
 .. toggle::
 
