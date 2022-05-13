@@ -10,6 +10,7 @@
 
 #include <cstdint>
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/drivers/pwm.h>
 
 class LightingManager {
 public:
@@ -19,7 +20,7 @@ public:
 
 	using LightingCallback_fn = void (*)(Action);
 
-	int Init(const device *pwmDevice, uint32_t pwmChannel, uint8_t minLevel, uint8_t maxLevel);
+	int Init(const pwm_dt_spec *pwmDevice, uint8_t minLevel, uint8_t maxLevel);
 	bool IsTurnedOn() const { return mState == State::On; }
 	uint8_t GetLevel() const { return mLevel; }
 	bool IsActionChipInitiated() const { return mChipInitiatedAction; }
@@ -32,7 +33,7 @@ private:
 	uint8_t mMinLevel;
 	uint8_t mMaxLevel;
 	uint8_t mLevel;
-	const device *mPwmDevice;
+	const pwm_dt_spec *mPwmDevice;
 	uint32_t mPwmChannel;
 	bool mChipInitiatedAction;
 

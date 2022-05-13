@@ -15,17 +15,16 @@ LOG_MODULE_DECLARE(app, CONFIG_MATTER_LOG_LEVEL);
 
 LightingManager LightingManager::sLight;
 
-int LightingManager::Init(const device *pwmDevice, uint32_t pwmChannel, uint8_t minLevel, uint8_t maxLevel)
+int LightingManager::Init(const pwm_dt_spec *pwmDevice, uint8_t minLevel, uint8_t maxLevel)
 {
 	mState = State::On;
 	mMinLevel = minLevel;
 	mMaxLevel = maxLevel;
 	mLevel = maxLevel;
 	mPwmDevice = pwmDevice;
-	mPwmChannel = pwmChannel;
 
-	if (!device_is_ready(mPwmDevice)) {
-		LOG_ERR("PWM device %s is not ready", mPwmDevice->name);
+	if (!device_is_ready(mPwmDevice->dev)) {
+		LOG_ERR("PWM device %s is not ready", mPwmDevice->dev->name);
 		return -ENODEV;
 	}
 
@@ -92,9 +91,8 @@ void LightingManager::Set(bool aOn)
 
 void LightingManager::UpdateLight()
 {
-	constexpr uint32_t kPwmWidthUs = 20000u;
 	const uint8_t maxEffectiveLevel = mMaxLevel - mMinLevel;
 	const uint8_t effectiveLevel = mState == State::On ? MIN(mLevel - mMinLevel, maxEffectiveLevel) : 0;
 
-	pwm_pin_set_usec(mPwmDevice, mPwmChannel, kPwmWidthUs, kPwmWidthUs * effectiveLevel / maxEffectiveLevel, 0);
+	pwm_set_pulse_dt(mPwmDevice, mPwmDevice->period * effectiveLevel / maxEffectiveLevel);
 }

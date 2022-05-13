@@ -39,8 +39,7 @@ using namespace ::chip::app;
 using namespace ::chip::Credentials;
 using namespace ::chip::DeviceLayer;
 
-#define PWM_DEVICE DEVICE_DT_GET(DT_PWMS_CTLR(DT_ALIAS(pwm_led1)))
-#define PWM_CHANNEL DT_PWMS_CHANNEL(DT_ALIAS(pwm_led1))
+static const struct pwm_dt_spec sPwmDevice = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led1));
 
 LOG_MODULE_DECLARE(app, CONFIG_MATTER_LOG_LEVEL);
 K_MSGQ_DEFINE(sAppEventQueue, sizeof(AppEvent), AppTask::APP_EVENT_QUEUE_SIZE, alignof(AppEvent));
@@ -136,7 +135,7 @@ CHIP_ERROR AppTask::Init()
 	uint8_t maxLightLevel = kDefaultMaxLevel;
 	Clusters::LevelControl::Attributes::MaxLevel::Get(kLightEndpointId, &maxLightLevel);
 
-	ret = LightingMgr().Init(PWM_DEVICE, PWM_CHANNEL, minLightLevel, maxLightLevel);
+	ret = LightingMgr().Init(&sPwmDevice, minLightLevel, maxLightLevel);
 	if (ret) {
 		return chip::System::MapErrorZephyr(ret);
 	}
