@@ -3,4 +3,9 @@
 pgps:
   placement: {before: [tfm_storage, end]}
   size: CONFIG_NRF_CLOUD_PGPS_PARTITION_SIZE
+#ifdef CONFIG_BUILD_WITH_TFM
+  align: {start: CONFIG_NRF_SPU_FLASH_REGION_SIZE}
+#else
   align: {start: CONFIG_NRF_CLOUD_PGPS_PARTITION_ALIGN}
+#endif
+  inside: [nonsecure_storage]

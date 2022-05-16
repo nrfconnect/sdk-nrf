@@ -30,7 +30,7 @@ else()
   endif()
 endif()
 
-if (CONFIG_SETTINGS_FCB OR CONFIG_SETTINGS_NVS)
+if (CONFIG_TFM_NONSECURE_STORAGE)
   # Configure the storage partition to be non-secure
   set_property(TARGET zephyr_property_target
     APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_NS_STORAGE=ON

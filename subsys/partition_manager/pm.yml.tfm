@@ -41,3 +41,6 @@ tfm_otp_nv_counters:
   size: CONFIG_PM_PARTITION_SIZE_TFM_OTP_NV_COUNTERS
   align: {start: CONFIG_NRF_SPU_FLASH_REGION_SIZE}
 #endif
+
+nonsecure_storage:
+  span: []

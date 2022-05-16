@@ -3,4 +3,9 @@
 memfault_storage:
   placement: {before: [tfm_storage, end]}
   size: CONFIG_PM_PARTITION_SIZE_MEMFAULT_STORAGE
+#ifdef CONFIG_BUILD_WITH_TFM
+  align: {start: CONFIG_NRF_SPU_FLASH_REGION_SIZE}
+#else
   align: {start: CONFIG_MEMFAULT_NCS_FLASH_REGION_SIZE}
+#endif
+  inside: [nonsecure_storage]

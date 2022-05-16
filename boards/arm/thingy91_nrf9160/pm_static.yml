@@ -39,6 +39,10 @@ settings_storage:
   placement:
     after: [mcuboot_scratch]
   size: 0x2000
+nonsecure_storage:
+  address: 0xfe000
+  size: 0x2000
+  span: [settings_storage]
 tfm_secure:
   address: 0xc000
   size: 0xc200

@@ -86,9 +86,9 @@
 #endif
 
 /* Non-secure storage region */
-#if defined(PM_SETTINGS_STORAGE_ADDRESS) && defined(PM_SETTINGS_STORAGE_SIZE)
-#define NRF_FLASH_NS_STORAGE_AREA_OFFSET   (PM_SETTINGS_STORAGE_ADDRESS)
-#define NRF_FLASH_NS_STORAGE_AREA_SIZE     (PM_SETTINGS_STORAGE_SIZE)
+#if defined(PM_NONSECURE_STORAGE_ADDRESS)
+#define NRF_FLASH_NS_STORAGE_AREA_OFFSET   (PM_NONSECURE_STORAGE_ADDRESS)
+#define NRF_FLASH_NS_STORAGE_AREA_SIZE     (PM_NONSECURE_STORAGE_SIZE)
 #endif
 
 /* Offset and size definition in flash area used by assemble.py */
