@@ -350,10 +350,7 @@ int main(void)
 
 #if defined(CONFIG_SLM_START_SLEEP)
 	if ((rr & NRF_POWER_RESETREAS_OFF_MASK) ||     /* DETECT signal from GPIO*/
-	    (rr & NRF_POWER_RESETREAS_DIF_MASK) ||     /* Entering debug interface mode */
-	    (rr & NRF_POWER_RESETREAS_LPCOMP_MASK) ||  /* LPCOMP */
-	    (rr & NRF_POWER_RESETREAS_NFC_MASK) ||     /* NFC */
-	    (rr & NRF_POWER_RESETREAS_VBUS_MASK)) {    /* USB VBUS */
+	    (rr & NRF_POWER_RESETREAS_DIF_MASK)) {     /* Entering debug interface mode */
 		return start_execute();
 	}
 	enter_sleep();
