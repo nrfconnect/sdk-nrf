@@ -96,6 +96,10 @@ if (CONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE OR CONFIG_NCS_SAMPLE_EMPTY_NET_CORE_CHI
     set(CHILD_IMAGE_NAME "peripheral_radio_test")
     set(CHILD_IMAGE_PATH "${ZEPHYR_NRF_MODULE_DIR}/samples/peripheral/radio_test")
 
+  elseif (CONFIG_NCS_SAMPLE_BLINKY_CHILD_IMAGE)
+    set(CHILD_IMAGE_NAME "blinky_net")
+    set(CHILD_IMAGE_PATH "${ZEPHYR_BASE}/samples/basic/blinky")
+
   else()
     # If we get here, something is wrong with the Kconfig resolution
     message(WARNING "CONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE is set but "
