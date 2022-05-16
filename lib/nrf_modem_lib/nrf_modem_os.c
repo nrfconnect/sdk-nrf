@@ -643,6 +643,10 @@ void nrf_modem_os_shutdown(void)
 	SYS_SLIST_FOR_EACH_CONTAINER(&sleeping_threads, thread, node) {
 		k_sem_give(&thread->sem);
 	}
+
+#if CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
+	nrf_modem_lib_trace_deinit();
+#endif
 }
 
 int32_t nrf_modem_os_trace_put(const uint8_t *const data, uint32_t len)

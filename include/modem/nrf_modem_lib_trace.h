@@ -69,5 +69,10 @@ int nrf_modem_lib_trace_process(const uint8_t *data, uint32_t len);
  */
 int nrf_modem_lib_trace_stop(void);
 
+/**
+ * @brief Deinitialize trace module.
+ */
+void nrf_modem_lib_trace_deinit(void);
+
 #endif /* NRF_MODEM_LIB_TRACE_H__ */
 /**@} */
