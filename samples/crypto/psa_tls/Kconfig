@@ -18,7 +18,7 @@ config PSA_TLS_CERTIFICATE_TYPE_RSA
 	  Enable RSA certificates when testing ciphers that supports RSA for authentication.
 
 config PSA_TLS_CERTIFICATE_TYPE_ECDSA
-	bool "Use RSA certificate in PSA TLS sample"
+	bool "Use ECDSA certificate in PSA TLS sample"
 	help
 	  Enable ECDSA certificates when testing ciphers that supports ECDSA for authentication.
 
