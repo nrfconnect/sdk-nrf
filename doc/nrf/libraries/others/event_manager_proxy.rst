@@ -148,6 +148,16 @@ From that moment, the event is treated similarly as any other locally generated 
 .. note::
    If any of the shared events between the cores provide any kind of memory pointer, the pointed memory must be available for the target core if the core is to access the shared events.
 
+Limitations
+***********
+
+The event passed through the Event Manager Proxy is treated and processed the same way as any locally generated event.
+The core that sources the event must not subscribe to the same event in another core.
+If it does, once the core receives such an event generated remotely, it would resend the event automatically from that local core to the ones that subscribed to it.
+We would run into a dangerous situation where two cores subscribe to the same event.
+Once generated, such an event would be continuously resent between the cores.
+The currently proposed approach is to create special events for each core even if they look the same, they must have different codes.
+
 .. _event_manager_proxy_api:
 
 API documentation
