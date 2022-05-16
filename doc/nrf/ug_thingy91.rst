@@ -161,49 +161,64 @@ You can choose the method based on the availability or absence of an external de
    In a final product, you must use your own, secret keys.
    See :ref:`ug_fw_update_development_keys` for more information.
 
+.. _build_pgm_vsc:
+
 Building and programming using VS Code extension
 ================================================
 
 |vsc_extension_instructions|
 
-.. _build_pgm_segger:
+Complete the following steps to build |NCS| projects with |VSC|:
 
-Building and programming using SEGGER Embedded Studio
-=====================================================
+1. Start |VSC|.
 
-.. include:: gs_programming.rst
-   :start-after: build_SES_projimport_open_start
-   :end-before: build_SES_projimport_open_end
+   If you installed the |NCS| using the :ref:`gs_app_tcm`, you can click the :guilabel:`Open VS Code` button next to the version you installed.
 
-..
+#. Click :guilabel:`Create new application from sample` from the :guilabel:`Welcome` panel.
 
-   .. figure:: images/ses_thingy_configuration.png
-      :alt: Opening the Asset tracker v2 application
+   The :guilabel:`New Application` screen opens.
 
-      Opening the Asset tracker v2 application for the thingy91_nrf9160_ns build target
+#. Provide the following information to create the application:
 
-   .. note::
+   a. Select the :guilabel:`Freestanding` radio button for the :guilabel:`Application type`.
+      This links the application to the version of |NCS| you have installed.
+   #. Select the |NCS| version from the :guilabel:`nRF Connect SDK` drop-down menu and the corresponding toolchain version from the :guilabel:`nRF Connect Toolchain` drop-down menu.
+      The version you selected when setting up |VSC| is set by default.
+   #. Choose the location where the application is saved.
+      To do this, either type the path in the :guilabel:`Application location` field, or browse to the desired location by clicking the :guilabel:`...` button.
+   #. Select the application template that you want to use.
 
-      The *Board Directory* folder can be found in the following location: ``ncs/nrf/boards/arm``.
+      You can either select one from the :guilabel:`Application template` drop-down menu, or browse the available templates with a preview of their documentation in the :guilabel:`Browse Samples` screen by clicking the :guilabel:`Select...` button.
+      Both the drop-down and the :guilabel:`Browse Samples` screen contain the same applications.
+   #. Enter the :guilabel:`Application name`.
 
-4. Click :guilabel:`OK` to import the project into SES.
-   You can now work with the project in the IDE.
+      When you create the application, this creates a new folder in the :guilabel:`Application folder` directory with the same name.
 
-   .. include:: gs_programming.rst
-      :start-after: build_SES_projimport_note_start
-      :end-before: build_SES_projimport_note_end
+#. Click the :guilabel:`Create Application` button.
 
-#. To build the sample or application:
+   The selected application appears in the :guilabel:`Applications` panel.
 
-   a. Select your project in the Project Explorer.
-   #. From the menu, select :guilabel:`Build` > :guilabel:`Build Solution`.
-      This builds the project.
+#. Click the :guilabel:`No build configurations. *Click to create one*` text under the application.
 
-   You can find the output of the build, which includes the merged HEX file containing both the application and the SPM, in the ``zephyr`` subfolder in the build directory.
+   The :guilabel:`Add Build Configuration` screen opens.
+
+#. Provide the following information to configure the build:
+
+   a. Select the build target from the :guilabel:`Board` drop-down menu.
+
+      You must use the build target ``thingy91_nrf9160`` or ``thingy91_nrf9160_ns`` when building the application code for the nRF9160 SiP and the build target ``thingy91_nrf52840`` when building the application code for the onboard nRF52840 SoC.
+   #. Select ``prj.conf`` from the :guilabel:`Configuration` drop-down menu if it is not already selected.
+   #. Make sure that the checkbox for :guilabel:`Build after generating configuration` is selected.
+
+#. Click the :guilabel:`Build Configuration` button.
+
+   The configuration starts building.
+   It is complete when the build files appear in the :guilabel:`Applications` panel.
+
+#. Program the application:
 
 .. prog_extdebugprobe_start
-
-6. To program the sample or application:
+..
 
    a. Set the Thingy:91 SWD selection switch (**SW2**) to **nRF91** or **nRF52** depending on whether you want to program the nRF9160 SiP or the nRF52840 SoC component.
    #. Connect the Thingy:91 to the debug out port on a 10-pin external debug probe, for example, nRF9160 DK (Development Kit), using a 10-pin JTAG cable.
@@ -218,9 +233,11 @@ Building and programming using SEGGER Embedded Studio
 .. prog_extdebugprobe_end
 ..
 
-   e. In SES, select :guilabel:`Target` > :guilabel:`Connect J-Link`.
-   #. Select :guilabel:`Target` > :guilabel:`Download zephyr/merged.hex` to program the sample or application onto Thingy:91.
-   #. The device will reset and run the programmed sample or application.
+   e. In |VSC|, click the :guilabel:`Flash` option in the :guilabel:`Actions` panel.
+
+      If you have multiple boards connected, you are prompted to pick a device at the top of the screen.
+
+      A small notification banner appears in the bottom-right corner of VS Code to display the progress and confirm when the flash is complete.
 
 .. _build_pgm_cmdline:
 
@@ -256,6 +273,8 @@ To build and program the source code from the command line, complete the followi
 
 	   The parameter *destination_directory_name* can be used to optionally specify the destination directory in the west command.
 	   Unless a *destination_directory_name* is specified, the build files are automatically generated in ``build/zephyr/``.
+
+#. Program the application:
 
 .. include:: ug_thingy91.rst
    :start-after: prog_extdebugprobe_start
