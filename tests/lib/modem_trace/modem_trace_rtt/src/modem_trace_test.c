@@ -67,8 +67,8 @@ int test_suiteTearDown(int num_failures)
 }
 
 static const uint8_t *trace_processed_callback_buf_expect;
-static uint32_t       trace_processed_callback_len_expect;
-static int            trace_processed_callback_retval;
+static uint32_t trace_processed_callback_len_expect;
+static int trace_processed_callback_retval;
 
 static int trace_processed_callback_stub(const uint8_t *buf, uint32_t len, int cmock_calls)
 {
@@ -127,7 +127,7 @@ void test_modem_trace_init_rtt_transport_medium(void)
 static void expect_rtt_write(const uint8_t *buffer, uint16_t size)
 {
 	__wrap_SEGGER_RTT_ASM_WriteSkipNoLock_ExpectAndReturn(trace_rtt_channel, buffer, size,
-							size);
+							      size);
 }
 
 /* Test that when RTT is configured as trace transport, the traces are forwarded to RTT API. */
@@ -146,7 +146,8 @@ void test_modem_trace_forwarding_to_rtt(void)
 	 */
 	expect_rtt_write(sample_trace_data, CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT_BUF_SIZE);
 	expect_rtt_write(&sample_trace_data[CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT_BUF_SIZE],
-		sizeof(sample_trace_data) - CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT_BUF_SIZE);
+			 sizeof(sample_trace_data) -
+				 CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT_BUF_SIZE);
 
 	nrf_modem_lib_trace_process(sample_trace_data, sizeof(sample_trace_data));
 
@@ -176,10 +177,9 @@ void test_modem_trace_when_rtt_channel_allocation_fails(void)
 	 */
 	trace_processed_callback_ExpectAndReturn(sample_trace_data, sizeof(sample_trace_data), 0);
 
-
 	/* Simulate the reception of modem trace and expect no RTT API to be called. */
-	TEST_ASSERT_EQUAL(-ENXIO,
-			nrf_modem_lib_trace_process(sample_trace_data, sizeof(sample_trace_data)));
+	TEST_ASSERT_EQUAL(-ENXIO, nrf_modem_lib_trace_process(sample_trace_data,
+							      sizeof(sample_trace_data)));
 }
 
 /* Test that the module drops traces and returns error when it was not initialized. */
@@ -194,8 +194,8 @@ void test_modem_trace_process_when_not_initialized(void)
 	trace_processed_callback_ExpectAndReturn(sample_trace_data, sizeof(sample_trace_data), 0);
 
 	/* Simulate the reception of modem trace and expect no RTT API to be called. */
-	TEST_ASSERT_EQUAL(-ENXIO,
-			nrf_modem_lib_trace_process(sample_trace_data, sizeof(sample_trace_data)));
+	TEST_ASSERT_EQUAL(-ENXIO, nrf_modem_lib_trace_process(sample_trace_data,
+							      sizeof(sample_trace_data)));
 }
 
 void main(void)

@@ -62,8 +62,10 @@ static void trace_processed_callback(const uint8_t *data, uint32_t len)
 	err = nrf_modem_trace_processed_callback(data, len);
 	(void) err;
 
-	__ASSERT(err == 0, "nrf_modem_trace_processed_callback returns error %d for "
-						"data = %p, len = %d", err, data, len);
+	__ASSERT(err == 0,
+		 "nrf_modem_trace_processed_callback returns error %d for "
+		 "data = %p, len = %d",
+		 err, data, len);
 }
 
 #define TRACE_THREAD_STACK_SIZE 512
@@ -275,6 +277,18 @@ int nrf_modem_lib_trace_stop(void)
 	is_stopped = true;
 
 	return 0;
+}
+
+void nrf_modem_lib_trace_deinit(void)
+{
+	is_transport_initialized = false;
+
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
+	nrfx_uarte_uninit(&uarte_inst);
+#endif
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT
+	/* Flush writes, uninitialize peripheral. */
+#endif
 }
 
 K_THREAD_DEFINE(trace_thread_id, TRACE_THREAD_STACK_SIZE, trace_handler_thread,

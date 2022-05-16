@@ -150,3 +150,15 @@ int nrf_modem_lib_trace_stop(void)
 
 	return 0;
 }
+
+void nrf_modem_lib_trace_deinit(void)
+{
+	is_transport_initialized = false;
+
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
+	nrfx_uarte_uninit(&uarte_inst);
+#endif
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_RTT
+	/* Flush writes, uninitialize peripheral. */
+#endif
+}

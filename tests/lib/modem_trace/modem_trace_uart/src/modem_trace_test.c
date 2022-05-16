@@ -51,7 +51,7 @@ void tearDown(void)
 	uarte_callback = NULL;
 }
 
-static void uart_tx_done_simulate(const uint8_t * const data, size_t len)
+static void uart_tx_done_simulate(const uint8_t *const data, size_t len)
 {
 	nrfx_uarte_event_t uarte_event;
 
@@ -102,8 +102,8 @@ int test_suiteTearDown(int num_failures)
 }
 
 static const uint8_t *trace_processed_callback_buf_expect;
-static uint32_t       trace_processed_callback_len_expect;
-static int            trace_processed_callback_retval;
+static uint32_t trace_processed_callback_len_expect;
+static int trace_processed_callback_retval;
 
 static int trace_processed_callback_stub(const uint8_t *buf, uint32_t len, int cmock_calls)
 {
@@ -242,7 +242,7 @@ void test_modem_trace_forwarding_to_uart(void)
 	k_sleep(K_MSEC(1));
 
 	uart_tx_done_simulate(&sample_trace_data[max_uart_frag_size],
-						sizeof(sample_trace_data) - max_uart_frag_size);
+			      sizeof(sample_trace_data) - max_uart_frag_size);
 
 	/* Make the test thread sleep so that the trace handler thread is allowed to run.
 	 * This should make the trace handler thread call the
@@ -385,8 +385,8 @@ void test_modem_trace_when_transport_uart_init_fails(void)
 	trace_processed_callback_ExpectAndReturn(sample_trace_data, sizeof(sample_trace_data), 0);
 
 	/* Simulate the reception of modem trace and expect no UART API to be called. */
-	TEST_ASSERT_EQUAL(-ENXIO,
-			nrf_modem_lib_trace_process(sample_trace_data, sizeof(sample_trace_data)));
+	TEST_ASSERT_EQUAL(-ENXIO, nrf_modem_lib_trace_process(sample_trace_data,
+							      sizeof(sample_trace_data)));
 }
 
 /* Test that the module drops traces and returns error when it was not initialized. */
@@ -401,8 +401,8 @@ void test_modem_trace_process_when_not_initialized(void)
 	trace_processed_callback_ExpectAndReturn(sample_trace_data, sizeof(sample_trace_data), 0);
 
 	/* Simulate the reception of modem trace and expect no UART API to be called. */
-	TEST_ASSERT_EQUAL(-ENXIO,
-			nrf_modem_lib_trace_process(sample_trace_data, sizeof(sample_trace_data)));
+	TEST_ASSERT_EQUAL(-ENXIO, nrf_modem_lib_trace_process(sample_trace_data,
+							      sizeof(sample_trace_data)));
 }
 
 /* Test that nrf_modem_lib_trace_process() forwards traces to the transport even if
@@ -420,7 +420,7 @@ void test_modem_trace_process_when_modem_trace_start_was_not_called(void)
 					     sample_trace_buffer_size, NRFX_SUCCESS);
 
 	TEST_ASSERT_EQUAL(0, nrf_modem_lib_trace_process(sample_trace_data,
-						sizeof(sample_trace_data)));
+							 sizeof(sample_trace_data)));
 
 	/* Make the test thread sleep so that the trace handler thread is allowed to run.
 	 * This should make the trace handler thread pick up the trace from its fifo and send it
