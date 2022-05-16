@@ -130,58 +130,17 @@ See the following sections for details regarding building and programming the fi
 If your Thingy:53 is already programmed with Thingy:53-compatible sample or application, then you can also use the MCUboot bootloader to update the firmware after you finish building.
 See :ref:`thingy53_app_update` for more detailed information about updating firmware on Thingy:53.
 
-.. _thingy53_build_pgm_segger:
-
-Building and programming using SEGGER Embedded Studio
-=====================================================
-
-.. include:: gs_programming.rst
-   :start-after: build_SES_projimport_open_start
-   :end-before: build_SES_projimport_open_end
-
-..
-
-   .. figure:: images/ses_thingy53_configuration.png
-      :alt: Opening the peripheral_lbs application
-
-      Opening the ``peripheral_lbs`` application for the ``thingy53_nrf5340_cpuapp`` build target
-
-   .. note::
-
-      The ``Board Directory`` folder is at ``ncs/nrf/boards/arm``.
-
-4. Click :guilabel:`OK` to import the project into SES.
-   You can now work with the project in IDE.
-#. Build the sample or application:
-
-   a. Select your project in the Project Explorer.
-   #. From the menu, select :guilabel:`Build` > :guilabel:`Build Solution`.
-      This builds the project.
-
-   The output of the build with the merged Intel Hex file, containing the application, the net core image, and the bootloaders, is located in the :file:`zephyr` subfolder in the build directory.
-
-#. Program the sample or application:
-
-   a. Connect the Thingy:53 to the debug out port on a 10-pin external debug probe, for example nRF5340 DK (Development Kit), using a 10-pin JTAG cable.
-   #. Connect the external debug probe to the PC using a USB cable.
-   #. Make sure that the Thingy:53 and the external debug probe are powered on.
-   #. in SES, select :guilabel:`Target` > :guilabel:`Connect J-Link`.
-   #. Select :guilabel:`Target` > :guilabel:`Download zephyr/merged.hex` to program the sample or application onto Thingy:53.
-   #. The device will reset and run the programmed sample or application.
-
-.. warning::
-   Programming :file:`merged.hex` file updates only the application core.
-   If you also need to update the network core, you must follow additional steps described in :ref:`ug_nrf5340`.
-
 Building and programming using Visual Studio Code
 =================================================
+
+|vsc_extension_instructions|
 
 Complete the following steps after installing the `nRF Connect for Visual Studio Code`_ extension in Microsoft Visual Studio Code:
 
 .. include:: /includes/vsc_build_and_run_nrf53.txt
 
 6. Select the ``thingy53_nrf5340_cpuapp`` as the target board.
-#. Select the :guilabel:`Build after generating configuration` checkbox and click on the :guilabel:`Build Configuration` button.
+#. Select the :guilabel:`Build after generating configuration` checkbox and click the :guilabel:`Build Configuration` button.
    This generates the configuration file and triggers the build process.
 #. When the build configuration and the build are complete, an :guilabel:`Actions` panel appears.
    In this panel, you can trigger the build process, program the built sample or start a debug session.

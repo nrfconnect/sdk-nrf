@@ -450,15 +450,12 @@ To set up the toolchain, complete the following steps:
 
 .. rst-class:: numbered-step
 
-Install a build IDE
-*******************
+Install |VSC|
+*************
 
-You can install either the |VSC| extension or the |SES| (SES) Nordic Edition to open and compile projects in the |NCS|:
+You can install the |VSC| to open and compile projects in the |NCS|.
 
 .. _installing_vsc:
-
-Visual Studio Code extension
-============================
 
 |vsc_extension_instructions|
 
@@ -470,129 +467,14 @@ Visual Studio Code extension
 
 .. vsc_mig_note_end
 
-.. _installing_ses:
-
-|SES| Nordic Edition
-====================
-
-You can install the |SES| (SES) Nordic Edition to open and compile projects in the |NCS|.
-SES is free of charge for use with Nordic Semiconductor devices.
-
-To install the Nordic Edition, download the package for your operating system:
-
-    .. tabs::
-
-       .. group-tab:: Windows
-
-          * `SEGGER Embedded Studio (Nordic Edition) - Windows x86`_
-          * `SEGGER Embedded Studio (Nordic Edition) - Windows x64`_
-
-       .. group-tab:: Linux
-
-          * `SEGGER Embedded Studio (Nordic Edition) - Linux x86`_
-          * `SEGGER Embedded Studio (Nordic Edition) - Linux x64`_
-
-       .. group-tab:: macOS
-
-          * `SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`_
-
-Extract the downloaded package in the directory of your choice.
-
-.. note::
-    Notifications about newer versions of SES are disabled in the SES Nordic Edition.
-    This is because of the custom |NCS| options that are available only in the Nordic Edition.
-    You will not be able to use SES with the |NCS| if you install the latest standard version of SES.
-
-    When you move to a newer release of the |NCS|, check the :ref:`gs_recommended_versions` page for the given release to see if you are using the minimum required version of SES Nordic Edition.
-    If you need to install the latest version of the SES Nordic Edition, follow the steps described above and make sure to set up the build environment in SES once more.
-
-.. _build_environment:
-.. _setting_up_SES:
-
-Set up the build environment in SES
-***********************************
-
-If you chose to use |SES| for :ref:`building and programming a sample application <gs_programming>`, you must first set up your build environment.
-
-1. Set up the SES environment.
-   If you plan to :ref:`build with SEGGER Embedded Studio <gs_programming_ses>`, the first time you import an |NCS| project, SES might prompt you to set the paths to the Zephyr Base directory and the GNU ARM Embedded Toolchain.
-   You only need to do this once.
-   Complete the following steps:
-
-   a. Navigate to the :file:`bin` directory.
-   #. Run the :file:`emStudio` executable file.
-   #. Click :guilabel:`OK` on the pop-up window that opens.
-
-      .. figure:: images/ses_GNU_notset.png
-         :alt: Open GNU ARM Embedded Toolchain directory
-
-         Open GNU ARM Embedded Toolchain directory
-
-   #. Set the GNU ARM Embedded Toolchain directory path to the location where it was downloaded (for example, :file:`c:\\gnuarmemb`).
-   #. Close the :guilabel:`nRF Connect options` window.
-   #. Navigate to :guilabel:`Tools` > :guilabel:`Options` and select the :guilabel:`nRF Connect` tab.
-   #. Set the full path of the Zephyr Base directory to :file:`ncs/zephyr`.
-
-#. Set up executables.
-   The process is different depending on your operating system.
-
-   .. tabs::
-
-      .. group-tab:: Windows
-
-         Make sure the locations of executable tools are added to the :envvar:`PATH` variable, including Python, CMake, Ninja, and DTC.
-         On Windows, SES uses the :envvar:`PATH` variable to find executables if they are not set in SES.
-
-      .. group-tab:: Linux
-
-         Make sure the locations of executable tools are added to the :envvar:`PATH` variable, including Python, CMake, Ninja, and DTC.
-         On Linux, SES uses the :envvar:`PATH` variable to find executables if they are not set in SES.
-
-      .. group-tab:: macOS
-
-         If you start SES on macOS by running the :file:`emStudio` executable file, make sure to complete the following steps:
-
-         1. Specify the path to all executables under :guilabel:`Tools` > :guilabel:`Options` (in the :guilabel:`nRF Connect` tab).
-
-            .. figure:: images/ses_options.png
-               :alt: nRF Connect SDK options in SES on Windows
-
-               nRF Connect SDK options in SES (Windows)
-
-            Use this section to change the SES environment settings later as well.
-
-         #. Specify the path to the west tool as an additional CMake option, replacing *path_to_west* with the path to the west executable (for example, :file:`/usr/local/bin/west`):
-
-            .. parsed-literal::
-               :class: highlight
-
-               -DWEST=\ *path_to_west*
-
-         If you start SES from the command line, it uses the global :envvar:`PATH` variable to find the executables.
-         You do not need to explicitly configure the executables in SES.
-
-         Regardless of how you start SES, if you get an error that a tool or command cannot be found, first make sure that the tool is installed.
-         If it is installed, verify that its path is configured correctly in the SES settings or in the :envvar:`PATH` variable.
-
-   ..
-
-If you want to change the SES environment settings after the initial setup, click :guilabel:`Tools` > :guilabel:`Options` and select the :guilabel:`nRF Connect` tab, as shown on the following screenshot from the Windows installation.
-
-.. _ses_options_figure:
-
-   .. figure:: images/ses_options.png
-      :alt: nRF Connect SDK options in SES on Windows
-
-      nRF Connect SDK options in SES (Windows)
-
-If you want to configure tools that are not listed in the SES options, add them to the :envvar:`PATH` variable.
+For instructions specifically for installing, see `Installing using Visual Studio Code`_.
 
 .. _build_environment_cli:
 
 Set up the command-line build environment
 *****************************************
 
-In addition to |VSC| and |SES|, you can also build and program your application from the command line.
+In addition to |VSC|, you can also build and program your application from the command line.
 You have to set up your build environment by defining the required environment variables every time you open a new command-line or terminal window.
 
 See :ref:`zephyr:important-build-vars` for more information about the various relevant environment variables.

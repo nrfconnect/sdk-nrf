@@ -920,5 +920,14 @@ Documentation
 
   * Documentation on the Getting Started Assistant, as this tool is no longer in use.
     Linux users can install the |NCS| by using the `Installing using Visual Studio Code <Installing on Linux_>`_ instructions or by following the steps on the :ref:`gs_installing` page.
+  * Documentation on the SEGGER Embedded Studio, as this tool will no longer be supported moving forward.
+    The previous |NCS| releases still support SEGGER Embedded Studio (Nordic edition).
+    To migrate from SEGGER Embedded Studio IDE or on the command line to |VSC|, follow the instructions in the `migrating from other IDEs to VS Code <Migrating IDE_>`_ documentation.
+  * Added |VSC| instructions on the following documentation:
+
+    * :ref:`gs_modifying`
+    * :ref:`ug_thingy91`
+    * :ref:`ug_nrf5340`
+    * :ref:`bootloader`
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.

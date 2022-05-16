@@ -193,6 +193,7 @@ Download the latest application and modem firmware from the `nRF9160 DK Download
 
 To program applications using the Programmer app from `nRF Connect for Desktop`_, follow the instructions in :ref:`nrf9160_gs_updating_fw_application`.
 In Step 2, set the switch to **nRF91** or **nRF52** as appropriate for the application or sample you are programming.
+See the `Device programming section in the nRF9160 DK User Guide`_ for more information.
 Likewise, in Step 7, choose the :file:`.hex` file for the application you are programming.
 
 .. note::
@@ -219,13 +220,7 @@ To make use of these features, specify the board revision when building your app
 To specify the board revision, append it to the build target when building.
 For example, when building a non-secure application for nRF9160 DK v1.0.0, use ``nrf9160dk_nrf9106ns@1.0.0`` as build target.
 
-When building with |SES|, specify the board revision as additional CMake option (see :ref:`cmake_options` for instructions).
-For example, for nRF9160 DK v1.0.0, add the following CMake option::
-
-  -DBOARD=nrf9160dk_nrf9160_ns@1.0.0
-
 See :ref:`zephyr:application_board_version` and :ref:`zephyr:nrf9160dk_additional_hardware` for more information.
-
 
 .. _nrf9160_ug_drivs_libs_samples:
 

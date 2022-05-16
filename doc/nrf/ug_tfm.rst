@@ -88,7 +88,7 @@ Programming
 The procedure for programming an application with TF-M is the same as for other multi-image applications in |NCS|.
 
 After building the application, a :file:`merged.hex` file is created that contains MCUboot, TF-M, and the application.
-The :file:`merged.hex` file can be then :ref:`programmed using SES <gs_programming_ses>`.
+The :file:`merged.hex` file can be then :ref:`programmed using nRF Connect for Visual Studio Code <gs_programming_vsc>`.
 When using the command line, the file is programmed automatically when you call ``ninja flash`` or ``west flash``.
 
 Logging

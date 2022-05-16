@@ -351,150 +351,6 @@ Depending on the sample, you must program only the application core (for example
 
 The steps differ depending on whether you work with |VSC| or on the command line and whether you are doing a single or multi-image build.
 
-Using SEGGER Embedded Studio
-============================
-
-To build and program separate images with |SES|, follow the general instructions for :ref:`gs_programming_ses`.
-To program a multi-image HEX file, you must add the project files for the network core after building, as described in :ref:`ug_nrf5340_ses_multi_image`.
-
-Separate images
----------------
-
-To build and program only the application core, follow the instructions in :ref:`gs_programming_ses` and use ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuapp_ns`` as build target.
-
-To build and program a dedicated network sample, follow the instructions in :ref:`gs_programming_ses` and use ``nrf5340dk_nrf5340_cpunet`` as the build target.
-
-.. _ug_nrf5340_ses_multi_image:
-
-Multi-image build
------------------
-
-If you are working with Bluetooth LE, Thread, Zigbee, or Matter samples, the network core sample is built as a child image when you build the application core image (see :ref:`ug_nrf5340_multi_image` above).
-
-However, |SES| cannot automatically program the network sample to the network core when it is added as a child image.
-You must manually add a network core project to the application core project to make sure that both are programmed.
-
-.. note::
-   You must reprogram the network core sample only when changes are made to it.
-   You can modify and program the application core sample without reprogramming the network core.
-
-Follow these steps to build and program a multi-image build to the nRF5340 application core and network core:
-
-1. Follow the initial steps in :ref:`gs_programming_ses` to add the application core sample project in |SES| using ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuapp_ns`` as the build target.
-   For example, select the :ref:`peripheral_lbs` sample.
-#. Build the sample as described in :ref:`gs_programming_ses` in the step about building and programming the project.
-   This creates both the application core image and the network core image.
-   When the build completes, return to this guide.
-#. Add the network core project to the application core project:
-
-   a. Select :guilabel:`File` > :guilabel:`New Project`.
-
-      .. figure:: images/ses_nrf5340_netcore_new_project.png
-         :alt: Create New Project menu
-
-         Create New Project menu
-
-   #. Select :guilabel:`Add the project to the current solution`.
-
-      .. figure:: images/ses_nrf5340_netcore_add_project.png
-         :alt: Adding a project target for programming the network core
-
-         Adding a project target for programming the network core
-
-   #. Select the project template, project name, and project location.
-
-      * :guilabel:`An externally built executable for Nordic Semiconductor nRF`:
-        This template allows you to specify the network core hexadecimal file to be programmed.
-        The hexadecimal file is created by the build system.
-      * :guilabel:`Name`: Specify the name of the project as it will appear in SES.
-        For example, for the :ref:`peripheral_lbs` sample you can use ``hci_rpmsg_nrf5340_netcore``.
-      * :guilabel:`Location`: Specify the location of the project.
-        This must be the same build target's folder as the current project.
-        Click :guilabel:`Browse` to open a dialog where you can navigate to the current project's build target folder and click :guilabel:`Select Folder`.
-
-      .. figure:: images/ses_nrf5340_netcore_project_template.png
-         :alt: Creating a new project for programming the network core
-
-         Creating a new project for programming the network core
-
-   #. Click :guilabel:`Next`.
-
-   #. Configure the project settings.
-
-      * :guilabel:`Target Processor`: Select ``nRF5340_xxAA_Network``.
-
-      * :guilabel:`Load File`: Specify the file name of the merged HEX file for the network core that should be programmed.
-         For example, specify :file:`$(ProjectDir)/hci_rpmsg/zephyr/merged_CPUNET.hex` for the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample.
-
-      .. figure:: images/ses_nrf5340_netcore_project_settings.png
-         :alt: Project settings for programming the network core
-
-         Project settings for programming the network core
-
-   #. Click :guilabel:`Next`.
-
-   #. Add the project files.
-      This project will only be used for programming the network core, so you must only add the default :guilabel:`Script Files`.
-
-      .. figure:: images/ses_nrf5340_netcore_files.png
-         :alt: Adding script files for programming the network core
-
-         Adding script files for programming the network core
-
-   #. Click :guilabel:`Next`.
-
-   #. Add the project configurations.
-      This project will only be used for programming the network core, so no build configurations are needed.
-
-      Deselect :guilabel:`Debug` and :guilabel:`Release`.
-
-      .. figure:: images/ses_nrf5340_netcore_conf.png
-         :alt: Deselecting configurations and finishing the configuration
-
-         Deselecting configurations and finishing the configuration
-
-   #. Click :guilabel:`Finish`.
-
-      This creates a new project for programming the network core with the HEX file of the network sample.
-
-#. Set the new network core project as the active project using :guilabel:`Project` > :guilabel:`Set Active Project`.
-   For example, select :guilabel:`hci_rpmsg_nrf5340_netcore`.
-
-   .. figure:: images/ses_nrf5340_netcore_set_active.png
-      :alt: Set the hci_rpmsg_nrf5340_netcore programming target as active
-
-      Set the hci_rpmsg_nrf5340_netcore programming target as active
-
-#. Program the network sample using :guilabel:`Target` > :guilabel:`Download XXX` (for example, :guilabel:`Download hci_rpmsg_nrf5340_netcore`).
-
-   .. figure:: images/ses_nrf5340_netcore_flash_active.png
-      :alt: Program the network sample hci_rpmsg_nrf5340_netcore
-
-      Program the network sample hci_rpmsg_nrf5340_netcore
-
-   Ignore any project out-of-date warning by clicking :guilabel:`No` when they appear.
-   The network core project is a pure programming target, so it cannot be built.
-
-   .. figure:: images/ses_nrf5340_netcore_download.png
-      :alt: Ignore any "Project out-of-date" warnings
-
-      Ignore any "Project out-of-date" warnings
-
-   .. caution::
-      If you click :guilabel:`Yes` and disable the option to show the dialog again, you will enter a loop because of a "no input files" error.
-      To restore the default settings, select :guilabel:`Tools` > :guilabel:`Options` > :guilabel:`Building` and set :guilabel:`Confirm Automatically Build Before Debug` to ``Yes``.
-
-   Programming the network core erases the application.
-   If you encounter an error with programming the network core, try disabling :ref:`readback_protection_error`.
-#. After the network core is programmed, make the application target active again by selecting :guilabel:`Project` > :guilabel:`Set Active Project` > :guilabel:`zephyr/merged.hex`.
-
-   .. figure:: images/ses_nrf5340_appcore_set_active.png
-     :alt: Set the zephyr/merged.hex target as active
-
-     Set the zephyr/merged.hex target as active
-
-#. Program the application sample using :guilabel:`Target` > :guilabel:`Download zephyr/merged.hex`.
-
 Using |VSC|
 ===========
 
@@ -521,7 +377,7 @@ Complete the following steps to build and program a multi-image build to the nRF
 .. include:: /includes/vsc_build_and_run_nrf53.txt
 
 6. Select the ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuapp_ns`` as the target board.
-#. Select the :guilabel:`Build after generating configuration` checkbox and click on the :guilabel:`Build Configuration` button.
+#. Select the :guilabel:`Build after generating configuration` checkbox and click the :guilabel:`Build Configuration` button.
    This generates the configuration file and triggers the build process.
 #. When the build configuration and the build are complete, an :guilabel:`Actions` panel appears.
    In this panel, you can trigger the build process, program the built sample, or start a debug session.
@@ -692,13 +548,13 @@ Debugging
 *********
 
 To debug the application core firmware, you need a single debug session.
-Set up the debug session as described in `Debugging nRF5340 with SES`_ or `Debugging an application`_ with Visual Studio Code.
+Set up the debug session as described in `Debugging an application`_ with |VSC|.
 
 To debug the firmware running on the network core, you also need to set up a separate debug session for the application core.
 
 Complete the following steps to start debugging the network core:
 
-1. Set up sessions for the application core and network core as mentioned in `Debugging nRF5340 with SES`_ or `Debugging an application`_ with Visual Studio Code.
+1. Set up sessions for the application core and network core as mentioned in `Debugging an application`_ with |VSC|.
 #. Select the appropriate CPU for debugging in each session, the nRF5340 application core and the nRF5340 network core respectively.
 #. Once both sessions are established, execute the code on the application core.
 
@@ -707,10 +563,7 @@ Complete the following steps to start debugging the network core:
 
 If you want to reset the network core while debugging, make sure to first reset the application core and execute the code.
 
-You can also use the following tools for debugging:
-
-* SEGGER Ozone
-* GDB command line tool
+You can also use the GDB command line tool for debugging.
 
 .. note::
   Debugging firmware on the application core in the non-secure domain (when using the ``nrf5340dk_nrf5340_cpuapp_ns`` build target), is currently not supported.

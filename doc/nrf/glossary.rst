@@ -553,10 +553,6 @@ Glossary
    Security Manager Protocol (SMP)
       A protocol used for pairing and key distribution.
 
-   SEGGER Embedded Studio (SES)
-      A cross-platform Integrated Development Environment (IDE) for embedded C/C++ programming with support for Nordic Semiconductor devices, produced by SEGGER Microcontroller.
-      The |NCS| uses a custom :ref:`Nordic Edition of SES <installing_ses>`.
-
    Signal-to-Noise Ratio (SNR)
       The level of signal power compared to the level of noise power, often expressed in decibels (dB).
 

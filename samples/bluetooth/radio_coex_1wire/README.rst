@@ -32,7 +32,7 @@ Connect this pin to the pin defined by the ``grant-gpios`` property in the DTS u
 
 * On ``nrf52840dk_nrf52840``, the default pins are **P0.26** and **P0.02**.
 
-The board's :ref:`/zephyr,user <dt-zephyr-user>` node must have the ``coex-pta-grant-gpios`` property set in the device tree.
+The board's :ref:`/zephyr,user <dt-zephyr-user>` node must have the ``coex-pta-grant-gpios`` property set in the devicetree.
 You can use this sample's board overlay as an example.
 
 Building and running

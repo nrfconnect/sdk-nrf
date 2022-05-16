@@ -188,13 +188,6 @@ Selecting a build type in |VSC|
    :start-after: build_types_selection_vsc_start
    :end-before: build_types_selection_vsc_end
 
-Selecting a build type in SES
------------------------------
-
-.. include:: /gs_modifying.rst
-   :start-after: build_types_selection_ses_start
-   :end-before: build_types_selection_ses_end
-
 Selecting a build type from command line
 ----------------------------------------
 

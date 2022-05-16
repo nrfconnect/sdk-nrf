@@ -86,7 +86,6 @@ To switch to the latest state of development, enter the following commands::
    Run ``west update`` every time you change or modify the current working branch (for example, when you pull, rebase, or check out a different branch).
    This will bring the project repositories to the matching revision defined by the manifest file.
 
-
 .. _gs_updating_vsc:
 
 Updating |VSC|

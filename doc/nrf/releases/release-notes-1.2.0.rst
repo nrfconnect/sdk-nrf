@@ -87,14 +87,14 @@ In addition to the tools mentioned in :ref:`gs_installing`, the following tool v
      - `GNU Arm Embedded Toolchain`_
 
 
-As IDE, we recommend to use |SES| (Nordic Edition) version 4.42a.
-It is available from the following links:
+As IDE, we recommend to use SEGGER Embedded Studio (Nordic Edition) version 4.42a.
+It is available from the following platforms:
 
-* `SEGGER Embedded Studio (Nordic Edition) - Windows x86`_
-* `SEGGER Embedded Studio (Nordic Edition) - Windows x64`_
-* `SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`_
-* `SEGGER Embedded Studio (Nordic Edition) - Linux x86`_
-* `SEGGER Embedded Studio (Nordic Edition) - Linux x64`_
+* Windows x86
+* Windows x64
+* Mac OS x64
+* Linux x86
+* Linux x64
 
 
 Changelog

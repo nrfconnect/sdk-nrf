@@ -59,9 +59,6 @@ It lists the minimum version that is required and the version that is installed 
          * - Python
            - |python_min_ver|
            - |python_recommended_ver_win10|
-         * - SEGGER Embedded Studio (Nordic Edition)
-           - |ses_min_ver|
-           - |ses_recommended_ver_win10|
          * - west
            - |west_min_ver|
            - |west_recommended_ver_win10|
@@ -104,9 +101,6 @@ It lists the minimum version that is required and the version that is installed 
          * - Python
            - |python_min_ver|
            - |python_recommended_ver_linux|
-         * - SEGGER Embedded Studio (Nordic Edition)
-           - |ses_min_ver|
-           - |ses_recommended_ver_linux|
          * - west
            - |west_min_ver|
            - |west_recommended_ver_linux|
@@ -143,9 +137,6 @@ It lists the minimum version that is required and the version that is installed 
          * - Python
            - |python_min_ver|
            - |python_recommended_ver_darwin|
-         * - SEGGER Embedded Studio (Nordic Edition)
-           - |ses_min_ver|
-           - |ses_recommended_ver_darwin|
          * - west
            - |west_min_ver|
            - |west_recommended_ver_darwin|
