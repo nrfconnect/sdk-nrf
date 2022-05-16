@@ -24,9 +24,8 @@
 /* Configure device configuration with exemplary data */
 #define CHIP_DEVICE_CONFIG_DEVICE_VENDOR_NAME "Nordic"
 #define CHIP_DEVICE_CONFIG_DEVICE_PRODUCT_NAME "WeatherStation"
-#define CHIP_DEVICE_CONFIG_DEFAULT_DEVICE_PRODUCT_REVISION_STRING "Prerelease weather station device"
+#define CHIP_DEVICE_CONFIG_DEFAULT_DEVICE_PRODUCT_REVISION_STRING                                  \
+	"Prerelease weather station device"
 #define CHIP_DEVICE_CONFIG_DEFAULT_DEVICE_PRODUCT_REVISION 1
 #define CHIP_DEVICE_CONFIG_DEVICE_FIRMWARE_REVISION_STRING "Prerelease weather station firmware"
 #define CHIP_DEVICE_CONFIG_DEVICE_FIRMWARE_REVISION 1
-
-#define CHIP_DEVICE_CONFIG_ENABLE_EXTENDED_DISCOVERY 1

@@ -21,4 +21,24 @@
 
 #include <app-common/zap-generated/callbacks/PluginCallbacks.h>
 
-#define MATTER_PLUGINS_INIT MatterAccessControlPluginServerInitCallback(); MatterAdministratorCommissioningPluginServerInitCallback(); MatterBasicPluginServerInitCallback(); MatterDescriptorPluginServerInitCallback(); MatterFixedLabelPluginServerInitCallback(); MatterGeneralCommissioningPluginServerInitCallback(); MatterGeneralDiagnosticsPluginServerInitCallback(); MatterGroupKeyManagementPluginServerInitCallback(); MatterIdentifyPluginServerInitCallback(); MatterNetworkCommissioningPluginServerInitCallback(); MatterOtaSoftwareUpdateProviderPluginClientInitCallback(); MatterOtaSoftwareUpdateRequestorPluginServerInitCallback(); MatterOperationalCredentialsPluginServerInitCallback(); MatterPowerSourcePluginServerInitCallback(); MatterSoftwareDiagnosticsPluginServerInitCallback(); MatterThreadNetworkDiagnosticsPluginServerInitCallback(); MatterUserLabelPluginServerInitCallback(); MatterWindowCoveringPluginServerInitCallback(); 
+#define MATTER_PLUGINS_INIT                                                                                            \
+	MatterAccessControlPluginServerInitCallback();                                                                 \
+	MatterAdministratorCommissioningPluginServerInitCallback();                                                    \
+	MatterBasicPluginServerInitCallback();                                                                         \
+	MatterDescriptorPluginServerInitCallback();                                                                    \
+	MatterFixedLabelPluginServerInitCallback();                                                                    \
+	MatterGeneralCommissioningPluginServerInitCallback();                                                          \
+	MatterGeneralDiagnosticsPluginServerInitCallback();                                                            \
+	MatterGroupKeyManagementPluginServerInitCallback();                                                            \
+	MatterIdentifyPluginServerInitCallback();                                                                      \
+	MatterLocalizationConfigurationPluginServerInitCallback();                                                     \
+	MatterNetworkCommissioningPluginServerInitCallback();                                                          \
+	MatterOtaSoftwareUpdateProviderPluginClientInitCallback();                                                     \
+	MatterOtaSoftwareUpdateRequestorPluginServerInitCallback();                                                    \
+	MatterOperationalCredentialsPluginServerInitCallback();                                                        \
+	MatterPowerSourcePluginServerInitCallback();                                                                   \
+	MatterSoftwareDiagnosticsPluginServerInitCallback();                                                           \
+	MatterThreadNetworkDiagnosticsPluginServerInitCallback();                                                      \
+	MatterTimeFormatLocalizationPluginServerInitCallback();                                                        \
+	MatterUserLabelPluginServerInitCallback();                                                                     \
+	MatterWindowCoveringPluginServerInitCallback();

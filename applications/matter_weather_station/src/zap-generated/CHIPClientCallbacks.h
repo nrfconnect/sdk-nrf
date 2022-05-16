@@ -24,7 +24,6 @@
 #include <app-common/zap-generated/cluster-objects.h>
 #include <app/data-model/DecodableList.h>
 #include <app/util/af-enums.h>
-#include <app/util/attribute-filter.h>
 #include <app/util/im-client-callbacks.h>
 #include <inttypes.h>
 #include <lib/support/FunctionTraits.h>
