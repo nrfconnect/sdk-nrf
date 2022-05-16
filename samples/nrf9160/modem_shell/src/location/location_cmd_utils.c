@@ -71,8 +71,8 @@ static int location_cmd_utils_generate_nmea(const struct location_data *location
 #define MSG_APP_ID_GNSS_FORMAT_PVT  "GNSS"
 #define MSG_TYPE_DATA               "DATA"
 
-#define MSG_TYPE_DATA_GNSS_LONGITUDE "lng"
 #define MSG_TYPE_DATA_GNSS_LATITUDE  "lat"
+#define MSG_TYPE_DATA_GNSS_LONGITUDE "lon"
 #define MSG_TYPE_DATA_GNSS_ACCURACY  "acc"
 
 int location_cmd_utils_gnss_loc_to_cloud_payload_json_encode(
@@ -125,11 +125,10 @@ int location_cmd_utils_gnss_loc_to_cloud_payload_json_encode(
 			err = -ENOMEM;
 			goto cleanup;
 		}
-
-		if (!cJSON_AddNumberToObjectCS(gnss_data_obj, MSG_TYPE_DATA_GNSS_LONGITUDE,
-					       location_data->longitude) ||
-		    !cJSON_AddNumberToObjectCS(gnss_data_obj, MSG_TYPE_DATA_GNSS_LATITUDE,
+		if (!cJSON_AddNumberToObjectCS(gnss_data_obj, MSG_TYPE_DATA_GNSS_LATITUDE,
 					       location_data->latitude) ||
+		    !cJSON_AddNumberToObjectCS(gnss_data_obj, MSG_TYPE_DATA_GNSS_LONGITUDE,
+					       location_data->longitude) ||
 		    !cJSON_AddNumberToObjectCS(gnss_data_obj, MSG_TYPE_DATA_GNSS_ACCURACY,
 					       location_data->accuracy) ||
 		    !cJSON_AddItemToObject(root_obj, MSG_DATA, gnss_data_obj)) {
