@@ -129,6 +129,7 @@ CHIP_ERROR AppTask::Init()
 	k_timer_user_data_set(&sFunctionTimer, this);
 
 	/* Initialize CHIP server */
+	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
 	static chip::CommonCaseDeviceServerInitParams initParams;
 	(void)initParams.InitializeStaticResourcesBeforeServerInit();
 	ReturnErrorOnFailure(chip::Server::GetInstance().Init(initParams));
