@@ -318,10 +318,6 @@ To build with multiple overlay files, ``-DOVERLAY_CONFIG`` must be set to a list
 
    west build -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG="overlay-aws.conf;overlay-debug.conf;overlay-memfault.conf"
 
-.. note::
-   To build with overlays enabled in |SES|, select :guilabel:`Tools` > :guilabel:`Options` > :guilabel:`nRF Connect` and add the CMake variable.
-   See :ref:`cmake_options` for more information.
-
 Testing
 =======
 

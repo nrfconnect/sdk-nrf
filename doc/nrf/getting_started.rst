@@ -12,12 +12,11 @@ You can also check the :ref:`gs_installing` documentation for instructions on se
 .. image:: /images/ncs_get_started_banner.png
    :target: `nRF Connect SDK Fundamentals course`_
 
-We recommend using the `nRF Connect for Visual Studio Code`_ extension or |SES| to build applications.
-See the |VSC| README file for more information about the extension.
-See :ref:`gs_programming` for the |SES| instructions.
+We recommend using |VSC| to build applications.
+See the `nRF Connect for Visual Studio Code`_ documentation page for more information about the extension.
 
 .. note::
-   Some samples in the |NCS| are currently not designed to work out-of-tree. You may need to manually configure your sample to work correctly in the |VSC|.
+   Some samples in the |NCS| are currently not designed to work out-of-tree. You may need to manually configure your sample to work correctly in |VSC|.
 
 Once you are set up, check out the :ref:`samples`.
 If this is the first time you are working with embedded devices, it is probably a good idea to program an unchanged sample to your development kit first and test if it works as expected.

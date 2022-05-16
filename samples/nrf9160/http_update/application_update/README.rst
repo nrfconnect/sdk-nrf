@@ -33,6 +33,26 @@ The sample updates between the two images, either from *version 1* to *version 2
 By default, the images are saved to the `MCUboot`_ second-stage bootloader secondary slot.
 To be used by MCUboot, the downloaded images must be signed using imgtool.
 
+Configuration
+*************
+
+|config|
+
+Configuration options
+=====================
+
+Check and configure the following Kconfig options:
+
+.. _CONFIG_DOWNLOAD_FILE_V1:
+
+CONFIG_DOWNLOAD_FILE_V1
+  This configuration option configures the file name of the *version 1* of the update image.
+
+.. _CONFIG_DOWNLOAD_FILE_V2:
+
+CONFIG_DOWNLOAD_FILE_V2
+  This configuration option configures the file name of the *version 2* of the update image.
+
 Building and running
 ********************
 
@@ -47,30 +67,6 @@ Specifying the image files
 
 Before building the sample, you must specify where the image files are located.
 If you do not want to host the files yourself, you can upload them to a public S3 bucket on Amazon Web Services (AWS).
-
-Two options configure the names of the updated image files:
-
-- ``CONFIG_DOWNLOAD_FILE_V1`` - it configures the file name of the *version 1* of the update image.
-- ``CONFIG_DOWNLOAD_FILE_V2`` - it configures the file name of the *version 2* of the update image.
-
-To set these Kconfig options, follow these steps:
-
-.. tabs::
-
-   .. group-tab:: From |SES|
-
-      1. Select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project`.
-      #. Navigate to :guilabel:`HTTP application update sample` and specify both the download hostname (``CONFIG_DOWNLOAD_HOST``) and the names of the files that have to be downloaded (``CONFIG_DOWNLOAD_FILE_V1`` and ``CONFIG_DOWNLOAD_FILE_V2``).
-      #. Click :guilabel:`Configure` to save the configuration.
-
-   .. group-tab:: From the :file:`prj.conf` configuration file
-
-      1. Locate your :file:`prj.conf` project configuration file.
-      #. Change the ``CONFIG_DOWNLOAD_HOST`` option to indicate the hostname of the server where the image file is located (for example ``website.net``).
-      #. Change the ``CONFIG_DOWNLOAD_FILE_V1`` and ``CONFIG_DOWNLOAD_FILE_V2`` options to indicate the names and paths of the image files (for example ``download/app_update.bin``).
-
-      You can then use the :file:`prj.conf` project configuration file in your builds from the command line or using the *nRF Connect for Visual Studio Code* extension.
-      See the `Building and running`_ section for more information.
 
 If you do not want to host the image file, you can also upload it to a public S3 bucket on Amazon Web Services (AWS).
 

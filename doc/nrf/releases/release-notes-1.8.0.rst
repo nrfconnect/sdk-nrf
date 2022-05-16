@@ -832,14 +832,14 @@ In addition to documentation related to the changes listed above, the following 
 
   * Updated the page with a note about Windows path length limitations.
     This was listed earlier as a known issue.
-  * Updated the :ref:`gs_programming_ses` section with a warning about a "no input files" error.
+  * Updated the Building with SEGGER Embedded Studio section with a warning about a "no input files" error.
 
-* :ref:`gs_updating` - Added a section about updating SES packages.
+* :ref:`gs_updating` - Added a section about updating SEGGER Embedded Studio packages.
 * :ref:`glossary` - Added new terms related to :ref:`ug_matter` and :ref:`ug_zigbee`.
 * :ref:`ug_nrf52` - Added a section describing Bluetooth mesh under the Supported protocols section.
 * :ref:`ug_nrf5340`:
 
   * Added a note about varying folder names of the network core child image when programming with nrfjprog.
-  * Updated the :ref:`ug_nrf5340_ses_multi_image` to better match the programming procedure.
+  * Updated the multi-image build section of :ref:`ug_nrf5340` to better match the programming procedure.
   * Updated the :ref:`logging_cpunet` section with information about different virtual COM ports for the nRF5340 DK v1.0.0 and v2.0.0.
   * Added a section for Bluetooth mesh and its samples for application core under the section Protocols and use cases.

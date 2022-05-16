@@ -86,7 +86,7 @@ Complete the following steps to configure the building process:
      If the URI requires providing an additional API key, you can provide it using the :c:macro:`EI_API_KEY_HEADER` CMake definition.
      The API key is provided using a format in which *key_name* is followed by *key_value*.
      For example, ``api-key:aaaabbbbccccdddd``, where ``aaaabbbbccccdddd`` is a sample *key_value*.
-     See :ref:`cmake_options` for more information about defining CMake options for command line builds and SEGGER Embedded studio.
+     See :ref:`cmake_options` for more information about defining CMake options for command line builds and |VSC|.
 
 Downloading model directly from Edge Impulse studio
 ---------------------------------------------------

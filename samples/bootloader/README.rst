@@ -126,7 +126,7 @@ To perform a full erase, do the following:
 
       .. code-block:: console
 
-        west flash -d *build_directory* --erase
+         west flash -d *build_directory* --erase
 
       Using ``nrfjprog``:
 

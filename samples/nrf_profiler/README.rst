@@ -65,10 +65,6 @@ After programming the sample to your development kit, you can test it by perform
 
 After you connect, the sample will display messages in the terminal.
 
-.. note::
-   If you use SEGGER Embedded Studio, make sure to stop debugging before you run Python scripts.
-   Otherwise, you may observe problems with accessing RTT data by the nRF Profiler scripts.
-
 Dependencies
 ************
 

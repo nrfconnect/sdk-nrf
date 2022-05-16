@@ -43,8 +43,8 @@ For information on the included repositories and revisions, see `Repositories an
 IDE support
 ***********
 
-|NCS| v1.9.0 is supported by both `nRF Connect extensions for Visual Studio Code <nRF Connect for Visual Studio Code_>`_ and :ref:`installing_ses`.
-In future releases, documentation on the setup and usage of Segger Embedded Studio Nordic Edition will no longer be available and all references to IDE support will instruct users with nRF Connect extensions for Visual Studio Code.
+|NCS| v1.9.0 is supported by both `nRF Connect for Visual Studio Code <nRF Connect for Visual Studio Code_>`_ and SEGGER Embedded Studio Nordic Edition.
+In future releases, documentation on the setup and usage of Segger Embedded Studio Nordic Edition will no longer be available and all references to IDE support will instruct users with nRF Connect for Visual Studio Code.
 In future releases, Segger Embedded Studio will no longer be tested with the build system and it is not recommended for new projects.
 
 nRF Connect extensions for Visual Studio Code will be under continued active development and supported and tested with future |NCS| releases.

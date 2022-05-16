@@ -176,10 +176,10 @@ Building and running
 
 .. note::
    * Include the standard text for building - either ``.. include:: /includes/build_and_run.txt`` or ``.. include:: /includes/build_and_run_nrf9160.txt``.
-   * The two main supported IDEs for |NCS| are |VSC| and |SES|.
-     Therefore, build instructions for both IDEs are required.
+   * The main supported IDE for |NCS| is |VSC|.
+     Therefore, build instructions for |VSC| are required.
      Build instructions for the command line are optional.
-   * Link to the `nRF Connect for Visual Studio Code`_ documentation site for basic instructions on building with the extension.
+   * See the link to the `nRF Connect for Visual Studio Code`_ documentation site for basic instructions on building with the extension.
    * If the sample uses a non-standard setup, point it out and link to more information, if possible.
 
 .. |sample path| replace:: :file:`samples/XXX`
