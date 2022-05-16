@@ -721,14 +721,6 @@ int handle_at_gps(enum at_cmd_type cmd_type)
 			   (interval < 10 || interval > 65535)) {
 				return -EINVAL;
 			}
-			if (interval == 0) {
-				err = nrf_modem_gnss_use_case_set(
-						NRF_MODEM_GNSS_USE_CASE_LOW_ACCURACY);
-				if (err) {
-					LOG_ERR("Failed to set use case, error: %d", err);
-					return err;
-				}
-			}
 			err = nrf_modem_gnss_fix_interval_set(interval);
 			if (err) {
 				LOG_ERR("Failed to set fix interval, error: %d", err);
@@ -880,9 +872,19 @@ int handle_at_agps(enum at_cmd_type cmd_type)
 			   (interval < 10 || interval > 65535)) {
 				return -EINVAL;
 			}
-			if (interval == 0) {
+#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED)
+			err = nrf_modem_gnss_elevation_threshold_set(
+						CONFIG_NRF_CLOUD_AGPS_ELEVATION_MASK);
+			if (err) {
+				LOG_ERR("Failed to set elevation threshold, error: %d", err);
+				return err;
+			}
+#endif
+			/* no scheduled downloads for peoridical tracking */
+			if (interval >= 10) {
 				err = nrf_modem_gnss_use_case_set(
-						NRF_MODEM_GNSS_USE_CASE_LOW_ACCURACY);
+						NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START |
+						NRF_MODEM_GNSS_USE_CASE_SCHED_DOWNLOAD_DISABLE);
 				if (err) {
 					LOG_ERR("Failed to set use case, error: %d", err);
 					return err;
@@ -966,6 +968,14 @@ int handle_at_pgps(enum at_cmd_type cmd_type)
 			/* GNSS API spec check, P-GPS is used in periodic mode only */
 			if (interval < 10 || interval > 65535) {
 				return -EINVAL;
+			}
+			/* no scheduled downloads for peoridical tracking */
+			err = nrf_modem_gnss_use_case_set(
+					NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START |
+					NRF_MODEM_GNSS_USE_CASE_SCHED_DOWNLOAD_DISABLE);
+			if (err) {
+				LOG_ERR("Failed to set use case, error: %d", err);
+				return err;
 			}
 			err = nrf_modem_gnss_fix_interval_set(interval);
 			if (err) {
