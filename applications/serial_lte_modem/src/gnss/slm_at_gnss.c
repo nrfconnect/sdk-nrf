@@ -88,6 +88,29 @@ extern struct k_work_q slm_work_q;
 extern struct at_param_list at_param_list;
 extern char rsp_buf[CONFIG_SLM_SOCKET_RX_MAX * 2];
 
+static bool is_gnss_activated(void)
+{
+	int gnss_support = 0;
+	int cfun_mode = 0;
+
+	/*parse %XSYSTEMMODE=<LTE_M_support>,<NB_IoT_support>,<GNSS_support>,<LTE_preference> */
+	if (nrf_modem_at_scanf("AT%XSYSTEMMODE?",
+			       "%XSYSTEMMODE: %*d,%*d,%d", &gnss_support) == 1) {
+		if (gnss_support == 0) {
+			return false;
+		}
+	}
+
+	/*parse +CFUN: <fun> */
+	if (nrf_modem_at_scanf("AT+CFUN?", "+CFUN: %d", &cfun_mode) == 1) {
+		if (cfun_mode == 1 || cfun_mode == 31) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 static int read_agps_req(struct nrf_modem_gnss_agps_data_frame *req)
 {
 	int err;
@@ -672,7 +695,7 @@ static int nrf_cloud_datamode_callback(uint8_t op, const uint8_t *data, int len)
 
 /**@brief handle AT#XGPS commands
  *  AT#XGPS=<op>[,<interval>[,<timeout>]]
- *  AT#XGPS? READ command not supported
+ *  AT#XGPS?
  *  AT#XGPS=?
  */
 int handle_at_gps(enum at_cmd_type cmd_type)
@@ -733,6 +756,13 @@ int handle_at_gps(enum at_cmd_type cmd_type)
 		} else {
 			err = -EINVAL;
 		} break;
+
+	case AT_CMD_TYPE_READ_COMMAND:
+		sprintf(rsp_buf, "\r\n#XGPS: %d,%d\r\n", (int)is_gnss_activated(),
+			(run_type == RUN_TYPE_GPS) ? 1 : 0);
+		rsp_send(rsp_buf, strlen(rsp_buf));
+		err = 0;
+		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
 		sprintf(rsp_buf, "\r\n#XGPS: (%d,%d),<interval>,<timeout>\r\n",
@@ -824,7 +854,7 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 
 /**@brief handle AT#XAGPS commands
  *  AT#XAGPS=<op>[,<interval>[,<timeout>]]
- *  AT#XAGPS? READ command not supported
+ *  AT#XAGPS?
  *  AT#XAGPS=?
  */
 int handle_at_agps(enum at_cmd_type cmd_type)
@@ -889,6 +919,13 @@ int handle_at_agps(enum at_cmd_type cmd_type)
 			err = -EINVAL;
 		} break;
 
+	case AT_CMD_TYPE_READ_COMMAND:
+		sprintf(rsp_buf, "\r\n#XAGPS: %d,%d\r\n", (int)is_gnss_activated(),
+			(run_type == RUN_TYPE_AGPS) ? 1 : 0);
+		rsp_send(rsp_buf, strlen(rsp_buf));
+		err = 0;
+		break;
+
 	case AT_CMD_TYPE_TEST_COMMAND:
 		sprintf(rsp_buf, "\r\n#XAGPS: (%d,%d),<interval>,<timeout>\r\n",
 			AGPS_STOP, AGPS_START);
@@ -905,7 +942,7 @@ int handle_at_agps(enum at_cmd_type cmd_type)
 
 /**@brief handle AT#XPGPS commands
  *  AT#XPGPS=<op>[,<interval>[,<timeout>]]
- *  AT#XPGPS? READ command not supported
+ *  AT#XPGPS?
  *  AT#XPGPS=?
  */
 int handle_at_pgps(enum at_cmd_type cmd_type)
@@ -971,6 +1008,13 @@ int handle_at_pgps(enum at_cmd_type cmd_type)
 			err = -EINVAL;
 		} break;
 
+	case AT_CMD_TYPE_READ_COMMAND:
+		sprintf(rsp_buf, "\r\n#XPGPS: %d,%d\r\n", (int)is_gnss_activated(),
+			(run_type == RUN_TYPE_PGPS) ? 1 : 0);
+		rsp_send(rsp_buf, strlen(rsp_buf));
+		err = 0;
+		break;
+
 	case AT_CMD_TYPE_TEST_COMMAND:
 		sprintf(rsp_buf, "\r\n#XPGPS: (%d,%d),<interval>,<timeout>\r\n",
 			PGPS_STOP, PGPS_START);
@@ -1016,6 +1060,13 @@ int handle_at_cellpos(enum at_cmd_type cmd_type)
 		} else {
 			err = -EINVAL;
 		} break;
+
+	case AT_CMD_TYPE_READ_COMMAND:
+		sprintf(rsp_buf, "\r\n#XCELLPOS: %d,%d\r\n", (int)is_gnss_activated(),
+			(run_type == RUN_TYPE_CELL_POS) ? 1 : 0);
+		rsp_send(rsp_buf, strlen(rsp_buf));
+		err = 0;
+		break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
 		sprintf(rsp_buf, "\r\n#XCELLPOS: (%d,%d,%d)\r\n",
