@@ -92,7 +92,38 @@ Example
 Read command
 ------------
 
-The read command is not supported.
+The read command allows you to check GNSS support and service status.
+
+Syntax
+~~~~~~
+
+::
+
+   #XGPS?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XGPS: <gnss_service>,<gnss_status>
+
+* The ``<gnss_service>`` value is an integer.
+  When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and activated in ``+CFUN``.
+
+* The ``<gnss_status>`` value is an integer.
+  When it returns the value of ``1``, it means that GNSS is started.
+
+Example
+~~~~~~~
+
+::
+
+  AT#XGPS?
+
+  #XGPS: 1,1
+
+  OK
 
 Test command
 ------------
@@ -366,7 +397,38 @@ Example
 Read command
 ------------
 
-The read command is not supported.
+The read command allows you to check GNSS support and AGPS service status.
+
+Syntax
+~~~~~~
+
+::
+
+   #XAGPS?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XAGPS: <gnss_service>,<agps_status>
+
+* The ``<gnss_service>`` value is an integer.
+  When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and activated in ``+CFUN``.
+
+* The ``<agps_status>`` value is an integer.
+  When it returns the value of ``1``, it means AGPS is started.
+
+Example
+~~~~~~~
+
+::
+
+  AT#XAGPS?
+
+  #XAGPS: 1,1
+
+  OK
 
 Test command
 ------------
@@ -487,7 +549,27 @@ Example
 Read command
 ------------
 
-The read command is not supported.
+The read command allows you to check GNSS support and PGPS service status.
+
+Syntax
+~~~~~~
+
+::
+
+   #XPGPS?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XPGPS: <gnss_service>,<pgps_status>
+
+* The ``<gnss_service>`` value is an integer.
+  When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and is activated in ``+CFUN``.
+
+* The ``<pgps_status>`` value is an integer.
+  When it returns the value of ``1``, it means that PGPS is started.
 
 Test command
 ------------
@@ -597,7 +679,41 @@ Example
 Read command
 ------------
 
-The read command is not supported.
+The read command allows you to check GNSS support and CELLPOS service status.
+
+Syntax
+~~~~~~
+
+::
+
+   #XCELLPOS?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XCELLPOS: <gnss_service>,<cellpos_status>
+
+* The ``<gnss_service>`` value is an integer.
+   When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and is activated in ``+CFUN``.
+
+.. note::
+   CELLPOS does not require the GNSS service in modem.
+
+* The ``<cellpos_status>`` value is an integer.
+  When it returns the value of ``1``, it means that CELLPOS is started.
+
+Example
+~~~~~~~
+
+::
+
+  AT#XAGPS?
+
+  #XAGPS: 1,1
+
+  OK
 
 Test command
 ------------
