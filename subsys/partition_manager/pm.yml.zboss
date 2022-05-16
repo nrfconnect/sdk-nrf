@@ -3,7 +3,15 @@
 zboss_nvram:
   placement: {after: [app], align: {start: CONFIG_FPROTECT_BLOCK_SIZE}}
   size: CONFIG_PM_PARTITION_SIZE_ZBOSS_NVRAM
+#ifdef CONFIG_BUILD_WITH_TFM
+  align: {start: CONFIG_NRF_SPU_FLASH_REGION_SIZE}
+#endif
+  inside: [nonsecure_storage]
 
 zboss_product_config:
   placement: {after: [zboss_nvram]}
   size: CONFIG_PM_PARTITION_SIZE_ZBOSS_PRODUCT_CONFIG
+#ifdef CONFIG_BUILD_WITH_TFM
+  align: {start: CONFIG_NRF_SPU_FLASH_REGION_SIZE}
+#endif
+  inside: [nonsecure_storage]

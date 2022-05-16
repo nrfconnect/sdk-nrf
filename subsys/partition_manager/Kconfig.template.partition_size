@@ -4,3 +4,8 @@ config PM_PARTITION_SIZE_$(partition)
 	default $(partition-size)
 	help
 	  Memory set aside for the $(partition) partition.
+if BUILD_WITH_TFM
+config TFM_NONSECURE_STORAGE
+	bool
+	default y if PM_PARTITION_SIZE_$(partition) != 0
+endif
