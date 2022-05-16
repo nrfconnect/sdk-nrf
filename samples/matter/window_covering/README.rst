@@ -81,9 +81,18 @@ FEM support
 Low-power build
 ===============
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_low_power_build_start
-    :end-before: matter_door_lock_sample_low_power_build_end
+To configure the sample to consume less power, use the low-power build.
+It enables Thread's Synchronized Sleepy End Device mode and disables debug features, such as the UART console or the **LED 1** usage.
+
+To trigger the low-power build, use the ``-DOVERLAY_CONFIG="overlay-low_power.conf"`` option when building the sample.
+See :ref:`cmake_options` for instructions on how to add this option to your build.
+
+When building on the command line, run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_):
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *build_target* -- -DOVERLAY_CONFIG="overlay-low_power.conf"
 
 User interface
 **************

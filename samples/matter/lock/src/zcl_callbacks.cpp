@@ -17,8 +17,8 @@ using namespace ::chip;
 using namespace ::chip::app::Clusters;
 using namespace ::chip::app::Clusters::DoorLock;
 
-void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &attributePath, uint8_t mask,
-				       uint8_t type, uint16_t size, uint8_t *value)
+void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &attributePath, uint8_t type,
+				       uint16_t size, uint8_t *value)
 {
 	VerifyOrReturn(attributePath.mClusterId == DoorLock::Id &&
 		       attributePath.mAttributeId == DoorLock::Attributes::LockState::Id);

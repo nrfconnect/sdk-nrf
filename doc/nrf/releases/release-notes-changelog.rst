@@ -323,6 +323,7 @@ Matter samples
 
       * A binding cluster to the sample.
       * Groupcast communication.
+      * Overlay enabling low power mode support.
 
     * Updated the Pairing process to Binding process in the sample.
 
@@ -782,12 +783,13 @@ The current |NCS| main branch is based on revision ``53fbf40227`` of Zephyr.
 Matter (Project CHIP)
 =====================
 
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``aa566b02070252043015a90946fea0685103d7dd``.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``25e241ebcbf11b1f63dbe25546b1f10219866ad0``.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
 * Added the Binding cluster and Groupcast communication to the Light Switch sample.
 * Updated the nRF Connect platform by adding :file:`Kconfig.defaults`, :file:`Kconfig.mcuboot.defaults` and :file:`Kconfig.multiprotocol_rpmsg.defaults` files that contain the default configuration for all nRF Connect SDK samples.
+* Added support for Thread Synchronized Sleepy End Devices.
 
 cddl-gen/zcbor
 ==============

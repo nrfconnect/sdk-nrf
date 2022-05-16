@@ -24,15 +24,11 @@
 #include <app/InteractionModelEngine.h>
 #include <app/data-model/DecodableList.h>
 #include <app/util/af-enums.h>
-#include <app/util/attribute-filter.h>
 #include <app/util/im-client-callbacks.h>
 #include <inttypes.h>
 #include <lib/support/FunctionTraits.h>
 #include <lib/support/Span.h>
 
 // List specific responses
-void BindingClusterAttributeListListAttributeFilter(chip::TLV::TLVReader *data,
-						    chip::Callback::Cancelable *onSuccessCallback,
-						    chip::Callback::Cancelable *onFailureCallback);
 typedef void (*BindingAttributeListListAttributeCallback)(
 	void *context, const chip::app::DataModel::DecodableList<chip::AttributeId> &data);
