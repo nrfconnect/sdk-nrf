@@ -177,7 +177,6 @@ After setting these options, you can choose one of several :ref:`logging backend
 
 .. note::
     If you are working with Thread samples, enabling logging and logging backend is optional.
-    By default, all Thread samples have logging enabled in the :file:`overlay-ot-defaults.conf` file and are configured to provide output at the informational level (:kconfig:option:`CONFIG_OPENTHREAD_LOG_LEVEL_INFO`).
 
 Logging levels
 --------------
