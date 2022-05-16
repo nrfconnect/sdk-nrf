@@ -492,6 +492,13 @@ Bluetooth libraries and services
 
     * Added the :c:func:`power_up_unused_ram` API.
 
+Bootloader libraries
+--------------------
+
+* :ref:`doc_bl_validation`:
+
+  *  Fixed an issue in :c:func:`bl_validate_firmware` where the reset vector validation check would not work properly.
+
 Modem libraries
 ---------------
 
