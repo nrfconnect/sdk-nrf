@@ -926,6 +926,15 @@ KRKNWK-11365: HAP tool's ``provision`` command freezes
 nRF Desktop
 ===========
 
+.. rst-class:: v1-9-1 v1-9-0 v1-8-0
+
+NCSDK-13858: Possible crash at the start of Bluetooth LE advertising when using SW Split Link Layer
+  The nRF Desktop peripheral can crash at the start of the advertising when using SW Split Link Layer (:kconfig:option:`CONFIG_BT_LL_SW_SPLIT`).
+  The crash is caused by an issue of the Bluetooth Controller.
+  The size of the resolving list filter is invalid, which causes accessing memory areas that are located out of array.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix to ``sdk-zephyr`` (commit hash: ``15ebdfafe2b2932533aa8d71afd49d4b03d27ce4``).
+
 .. rst-class:: v1-7-1 v1-7-0
 
 NCSDK-12337: Possible assertion failure at boot of an USB-connected host
