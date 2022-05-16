@@ -476,6 +476,7 @@ Bluetooth libraries and services
   * :ref:`ble_rpc` library:
 
     * Added host callback handlers for the ``write`` and ``match`` operations of the CCC descriptor.
+    * Converted from `TinyCBOR` to `zcbor`.
 
     * Fixed:
 

@@ -121,18 +121,18 @@ void bt_rpc_gatt_foreach_attr_type(uint16_t start_handle, uint16_t end_handle,
 
 /**@brief Encode GATT attribute.
  *
- * @param[in, out] encoder Cbor Encoder instance.
+ * @param[in, out] ctx CBOR encoder context.
  * @param[in] attr GATT attribute.
  *
  */
-void bt_rpc_encode_gatt_attr(CborEncoder *encoder, const struct bt_gatt_attr *attr);
+void bt_rpc_encode_gatt_attr(struct nrf_rpc_cbor_ctx *ctx, const struct bt_gatt_attr *attr);
 
 /**@brief Decode GATT attribute.
  *
- * @param value Cbor Value to decode.
+ * @param[in, out] ctx CBOR decoder context.
  *
  * @return GATT attribute.
  */
-const struct bt_gatt_attr *bt_rpc_decode_gatt_attr(CborValue *value);
+const struct bt_gatt_attr *bt_rpc_decode_gatt_attr(struct nrf_rpc_cbor_ctx *ctx);
 
 #endif /* BT_RPC_GATT_COMMON_H_ */

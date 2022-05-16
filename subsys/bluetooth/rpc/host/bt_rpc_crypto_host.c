@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <nrf_rpc_cbor.h>
 
 #include <zephyr/kernel.h>
 
@@ -12,6 +11,7 @@
 
 #include "bt_rpc_common.h"
 #include "serialize.h"
+#include <nrf_rpc_cbor.h>
 
 static void report_decoding_error(uint8_t cmd_evt_id, void *data)
 {
@@ -19,7 +19,7 @@ static void report_decoding_error(uint8_t cmd_evt_id, void *data)
 		    NRF_RPC_PACKET_TYPE_CMD);
 }
 
-static void bt_encrypt_le_rpc_handler(CborValue *value, void *handler_data)
+static void bt_encrypt_le_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 
 	const uint8_t *key;
@@ -28,13 +28,13 @@ static void bt_encrypt_le_rpc_handler(CborValue *value, void *handler_data)
 	int result;
 	struct ser_scratchpad scratchpad;
 
-	SER_SCRATCHPAD_DECLARE(&scratchpad, value);
+	SER_SCRATCHPAD_DECLARE(&scratchpad, ctx);
 
-	key = ser_decode_buffer_into_scratchpad(&scratchpad);
-	plaintext = ser_decode_buffer_into_scratchpad(&scratchpad);
-	enc_data = ser_decode_buffer_into_scratchpad(&scratchpad);
+	key = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
+	plaintext = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
+	enc_data = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
 
-	if (!ser_decoding_done_and_check(value)) {
+	if (!ser_decoding_done_and_check(ctx)) {
 		goto decoding_error;
 	}
 
@@ -51,7 +51,7 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_encrypt_le, BT_ENCRYPT_LE_RPC_CMD,
 	bt_encrypt_le_rpc_handler, NULL);
 
-static void bt_encrypt_be_rpc_handler(CborValue *value, void *handler_data)
+static void bt_encrypt_be_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 
 	const uint8_t *key;
@@ -60,13 +60,13 @@ static void bt_encrypt_be_rpc_handler(CborValue *value, void *handler_data)
 	int result;
 	struct ser_scratchpad scratchpad;
 
-	SER_SCRATCHPAD_DECLARE(&scratchpad, value);
+	SER_SCRATCHPAD_DECLARE(&scratchpad, ctx);
 
-	key = ser_decode_buffer_into_scratchpad(&scratchpad);
-	plaintext = ser_decode_buffer_into_scratchpad(&scratchpad);
-	enc_data = ser_decode_buffer_into_scratchpad(&scratchpad);
+	key = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
+	plaintext = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
+	enc_data = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
 
-	if (!ser_decoding_done_and_check(value)) {
+	if (!ser_decoding_done_and_check(ctx)) {
 		goto decoding_error;
 	}
 
@@ -83,22 +83,21 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_encrypt_be, BT_ENCRYPT_BE_RPC_CMD,
 	bt_encrypt_be_rpc_handler, NULL);
 
-static void bt_rand_rpc_handler(CborValue *value, void *handler_data)
+static void bt_rand_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 
-	struct nrf_rpc_cbor_ctx ctx;
 	int result;
 	size_t len;
 	uint8_t *buf;
 	size_t buffer_size_max = 10;
 	struct ser_scratchpad scratchpad;
 
-	SER_SCRATCHPAD_DECLARE(&scratchpad, value);
+	SER_SCRATCHPAD_DECLARE(&scratchpad, ctx);
 
-	len = ser_decode_uint(value);
+	len = ser_decode_uint(ctx);
 	buf = ser_scratchpad_add(&scratchpad, sizeof(uint8_t) * len);
 
-	if (!ser_decoding_done_and_check(value)) {
+	if (!ser_decoding_done_and_check(ctx)) {
 		goto decoding_error;
 	}
 
@@ -107,12 +106,14 @@ static void bt_rand_rpc_handler(CborValue *value, void *handler_data)
 	buffer_size_max += sizeof(uint8_t) * len;
 
 	{
-		NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+		struct nrf_rpc_cbor_ctx ectx;
 
-		ser_encode_int(&ctx.encoder, result);
-		ser_encode_buffer(&ctx.encoder, buf, sizeof(uint8_t) * len);
+		NRF_RPC_CBOR_ALLOC(ectx, buffer_size_max);
 
-		nrf_rpc_cbor_rsp_no_err(&ctx);
+		ser_encode_int(&ectx, result);
+		ser_encode_buffer(&ectx, buf, sizeof(uint8_t) * len);
+
+		nrf_rpc_cbor_rsp_no_err(&ectx);
 	}
 
 	return;
@@ -125,10 +126,9 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rand, BT_RAND_RPC_CMD,
 	bt_rand_rpc_handler, NULL);
 
 #if defined(CONFIG_BT_HOST_CCM)
-static void bt_ccm_encrypt_rpc_handler(CborValue *value, void *handler_data)
+static void bt_ccm_encrypt_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 
-	struct nrf_rpc_cbor_ctx ctx;
 	int result;
 	const uint8_t *key;
 	uint8_t *nonce;
@@ -141,18 +141,18 @@ static void bt_ccm_encrypt_rpc_handler(CborValue *value, void *handler_data)
 	size_t buffer_size_max = 10;
 	struct ser_scratchpad scratchpad;
 
-	SER_SCRATCHPAD_DECLARE(&scratchpad, value);
+	SER_SCRATCHPAD_DECLARE(&scratchpad, ctx);
 
-	key = ser_decode_buffer_into_scratchpad(&scratchpad);
-	nonce = ser_decode_buffer_into_scratchpad(&scratchpad);
-	len = ser_decode_uint(value);
-	enc_data = ser_decode_buffer_into_scratchpad(&scratchpad);
-	aad_len = ser_decode_uint(value);
-	aad = ser_decode_buffer_into_scratchpad(&scratchpad);
-	plaintext = ser_decode_buffer_into_scratchpad(&scratchpad);
-	mic_size = ser_decode_uint(value);
+	key = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
+	nonce = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
+	len = ser_decode_uint(ctx);
+	enc_data = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
+	aad_len = ser_decode_uint(ctx);
+	aad = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
+	plaintext = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
+	mic_size = ser_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(value)) {
+	if (!ser_decoding_done_and_check(ctx)) {
 		goto decoding_error;
 	}
 
@@ -161,12 +161,14 @@ static void bt_ccm_encrypt_rpc_handler(CborValue *value, void *handler_data)
 	buffer_size_max += sizeof(uint8_t) * (len + mic_size);
 
 	{
-		NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+		struct nrf_rpc_cbor_ctx ectx;
 
-		ser_encode_int(&ctx.encoder, result);
-		ser_encode_buffer(&ctx.encoder, plaintext, sizeof(uint8_t) * (len + mic_size);
+		NRF_RPC_CBOR_ALLOC(ectx, buffer_size_max);
 
-		nrf_rpc_cbor_rsp_no_err(&ctx);
+		ser_encode_int(&ectx, result);
+		ser_encode_buffer(&ectx, plaintext, sizeof(uint8_t) * (len + mic_size);
+
+		nrf_rpc_cbor_rsp_no_err(&ectx);
 	}
 
 	return;
@@ -178,10 +180,9 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_ccm_encrypt, BT_CCM_ENCRYPT_RPC_CMD,
 	bt_ccm_encrypt_rpc_handler, NULL);
 
-static void bt_ccm_decrypt_rpc_handler(CborValue *value, void *handler_data)
+static void bt_ccm_decrypt_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 
-	struct nrf_rpc_cbor_ctx ctx;
 	int result;
 	const uint8_t *key;
 	uint8_t *nonce;
@@ -194,18 +195,18 @@ static void bt_ccm_decrypt_rpc_handler(CborValue *value, void *handler_data)
 	size_t buffer_size_max = 10;
 	struct ser_scratchpad scratchpad;
 
-	SER_SCRATCHPAD_DECLARE(&scratchpad, value);
+	SER_SCRATCHPAD_DECLARE(&scratchpad, ctx);
 
-	key = ser_decode_buffer_into_scratchpad(&scratchpad);
-	nonce = ser_decode_buffer_into_scratchpad(&scratchpad);
-	len = ser_decode_uint(value);
-	enc_data = ser_decode_buffer_into_scratchpad(&scratchpad);
-	aad_len = ser_decode_uint(value);
-	aad = ser_decode_buffer_into_scratchpad(&scratchpad);
-	plaintext = ser_decode_buffer_into_scratchpad(&scratchpad);
-	mic_size = ser_decode_uint(value);
+	key = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
+	nonce = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
+	len = ser_decode_uint(ctx);
+	enc_data = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
+	aad_len = ser_decode_uint(ctx);
+	aad = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
+	plaintext = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
+	mic_size = ser_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(value)) {
+	if (!ser_decoding_done_and_check(ctx)) {
 		goto decoding_error;
 	}
 
@@ -214,12 +215,14 @@ static void bt_ccm_decrypt_rpc_handler(CborValue *value, void *handler_data)
 	buffer_size_max += sizeof(uint8_t) * len;
 
 	{
-		NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
+		struct nrf_rpc_cbor_ctx *ctx;
 
-		ser_encode_int(&ctx.encoder, result);
-		ser_encode_buffer(&ctx.encoder, plaintext, sizeof(uint8_t) * len);
+		NRF_RPC_CBOR_ALLOC(ectx, buffer_size_max);
 
-		nrf_rpc_cbor_rsp_no_err(&ctx);
+		ser_encode_int(&ectx, result);
+		ser_encode_buffer(&ectx, plaintext, sizeof(uint8_t) * len);
+
+		nrf_rpc_cbor_rsp_no_err(&ectx);
 	}
 
 	return;

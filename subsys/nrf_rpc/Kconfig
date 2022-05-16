@@ -22,7 +22,8 @@ config NRF_RPC_TR_RPMSG
 
 config NRF_RPC_CBOR
 	bool
-	select TINYCBOR
+	select ZCBOR
+	select ZCBOR_STOP_ON_ERROR
 
 # End of Zephyr port dependencies selection
 

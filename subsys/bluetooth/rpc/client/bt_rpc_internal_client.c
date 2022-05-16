@@ -25,8 +25,8 @@ bool bt_addr_le_is_bonded(uint8_t id, const bt_addr_le_t *addr)
 
 	NRF_RPC_CBOR_ALLOC(ctx, buffer_size_max);
 
-	ser_encode_uint(&ctx.encoder, id);
-	ser_encode_buffer(&ctx.encoder, addr, sizeof(bt_addr_le_t));
+	ser_encode_uint(&ctx, id);
+	ser_encode_buffer(&ctx, addr, sizeof(bt_addr_le_t));
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_ADDR_LE_IS_BONDED_CMD,
 				&ctx, ser_rsp_decode_bool, &result);
 

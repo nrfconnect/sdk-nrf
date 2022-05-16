@@ -264,18 +264,19 @@ size_t bt_rpc_calc_check_list_size(void);
 
 /** @brief Encode Bluetooth connection object.
  *
- * @param[in, out] encoder Cbor Encoder instance.
+ * @param[in, out] encoder CBOR encoder context.
  * @param[in] conn Connection object to encode.
  */
-void bt_rpc_encode_bt_conn(CborEncoder *encoder, const struct bt_conn *conn);
+void bt_rpc_encode_bt_conn(struct nrf_rpc_cbor_ctx *ctx,
+			   const struct bt_conn *conn);
 
 /** @brief Decode Bluetooth connection object.
  *
- * @param[in] value Cbor Value to decode.
+ * @param[in, out] ctx CBOR decoder context.
  *
  * @retval Connection object.
  */
-struct bt_conn *bt_rpc_decode_bt_conn(CborValue *value);
+struct bt_conn *bt_rpc_decode_bt_conn(struct nrf_rpc_cbor_ctx *ctx);
 
 /** @brief Declaration of callback proxy encoder for bt_gatt_complete_func_t.
  */
