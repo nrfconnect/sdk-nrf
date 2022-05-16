@@ -131,6 +131,9 @@ static int do_socket_open(void)
 	sock.fd = ret;
 	sock.ranking = socket_ranking++;
 	ret = find_avail_socket();
+	if (ret < 0) {
+		return ret;
+	}
 	socks[ret] = sock;
 	sprintf(rsp_buf, "\r\n#XSOCKET: %d,%d,%d\r\n", sock.fd, sock.type, proto);
 	rsp_send(rsp_buf, strlen(rsp_buf));
@@ -194,6 +197,9 @@ static int do_secure_socket_open(int peer_verify)
 
 	sock.ranking = socket_ranking++;
 	ret = find_avail_socket();
+	if (ret < 0) {
+		return ret;
+	}
 	socks[ret] = sock;
 	sprintf(rsp_buf, "\r\n#XSSOCKET: %d,%d,%d\r\n", sock.fd, sock.type, proto);
 	rsp_send(rsp_buf, strlen(rsp_buf));
