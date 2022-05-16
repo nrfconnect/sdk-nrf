@@ -26,11 +26,16 @@ config NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE
 	  Add empty_app_core as a child image (application core).
 	  Used by samples that run on the network core only.
 
+config NCS_INCLUDE_HELLO_WORLD_CHILD_IMAGE
+	bool "Include hello-world sample as net core child image"
+	help
+	  Hello world sample as a child image (network core).
+
 config NCS_INCLUDE_RPMSG_CHILD_IMAGE
 	bool "Include RPMsg sample on netcore"
-	depends on SOC_NRF5340_CPUAPP && (BT_RPMSG || NRF_802154_SER_HOST || BT_RPC)
+	depends on SOC_NRF5340_CPUAPP && (BT_RPMSG || NRF_802154_SER_HOST || BT_RPC || NCS_INCLUDE_HELLO_WORLD_CHILD_IMAGE)
 	select PARTITION_MANAGER_ENABLED
-	default y if BT_RPMSG || NRF_802154_SER_HOST || BT_RPC
+	default y if BT_RPMSG || NRF_802154_SER_HOST || BT_RPC || NCS_INCLUDE_HELLO_WORLD_CHILD_IMAGE
 	help
 	  Enabling this setting will include a network stack to run on the
 	  network core and communicate over RPMsg with the application core.
@@ -84,6 +89,13 @@ config NCS_SAMPLE_RPC_HOST_CHILD_IMAGE
 	default y
 	help
 	  rpc_host sample as a child image (network core).
+
+config NCS_SAMPLE_HELLO_WORLD_CHILD_IMAGE
+	bool
+	depends on NCS_INCLUDE_HELLO_WORLD_CHILD_IMAGE
+	default y
+	help
+	  Hello world sample as a child image (network core).
 
 endif # NCS_INCLUDE_RPMSG_CHILD_IMAGE
 

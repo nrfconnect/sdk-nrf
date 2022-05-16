@@ -120,6 +120,10 @@ if (CONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE)
     set(CHILD_IMAGE_NAME "rpc_host")
     set(CHILD_IMAGE_PATH "${NRF_DIR}/samples/bluetooth/rpc_host")
 
+  elseif (CONFIG_NCS_SAMPLE_HELLO_WORLD_CHILD_IMAGE)
+    set(CHILD_IMAGE_NAME "hello_world_net")
+    set(CHILD_IMAGE_PATH "${ZEPHYR_BASE}/samples/hello_world")
+
   else()
     # If we get here, something is wrong with the Kconfig resolution
     message(WARNING "CONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE is set but "
