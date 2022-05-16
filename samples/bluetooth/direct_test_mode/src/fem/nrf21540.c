@@ -911,9 +911,9 @@ static uint32_t nrf21540_default_active_delay_calculate(bool rx, nrf_radio_mode_
 	bool fast_ramp_up = nrf_radio_modecnf0_ru_get(NRF_RADIO);
 
 	return rx ? (fem_radio_rx_ramp_up_delay_get(fast_ramp_up, mode) -
-		     TX_EN_SETTLE_TIME) :
+		     RX_EN_SETTLE_TIME) :
 		    (fem_radio_tx_ramp_up_delay_get(fast_ramp_up, mode) -
-		     RX_EN_SETTLE_TIME);
+		     TX_EN_SETTLE_TIME);
 }
 
 static const struct fem_interface_api nrf21540_api = {
