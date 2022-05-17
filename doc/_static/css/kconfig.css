@@ -13,5 +13,4 @@ dl.kconfig {
 div#__kconfig-search input {
     border: 2.5px solid rgb(0 0 0 / 60%);
     box-shadow: rgb(149 157 165 / 90%) 0px 8px 24px !important;
-    width: 60%;
 }
