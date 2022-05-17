@@ -22,7 +22,7 @@ Overview
 ********
 
 The entropy data is generated on the network core using the Random Number Generator (RNG) peripheral.
-The :ref:`nrfxlib:nrf_rpc` uses the `TinyCBOR`_ data format and transmits the data using the default `RPMsg Messaging Protocol`_ (part of `OpenAMP`_) in the transport layer.
+The :ref:`nrfxlib:nrf_rpc` uses the `zcbor`_ to encode data, into the CBOR format, and transmits the data using the default `RPMsg Messaging Protocol`_ (part of `OpenAMP`_) in the transport layer.
 
 The application core uses serialized function calls such as :c:func:`entropy_remote_init` and :c:func:`entropy_remote_get` to control the entropy driver on the network core as follows:
 
