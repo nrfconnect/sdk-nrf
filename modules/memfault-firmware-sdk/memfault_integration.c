@@ -56,12 +56,16 @@ BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_FW_VERSION_STATIC) > 1,
 	static char device_serial[CONFIG_MEMFAULT_NCS_DEVICE_ID_MAX_LEN + 1];
 #endif
 
+/* Hardware version check */
+BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_HW_VERSION) > 1, "Hardware version must be configured");
+
 extern void memfault_ncs_metrcics_init(void);
 
 sMfltHttpClientConfig g_mflt_http_client_config = {
 	.api_key = CONFIG_MEMFAULT_NCS_PROJECT_KEY,
 };
 
+#if defined(CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN)
 void memfault_platform_get_device_info(sMemfaultDeviceInfo *info)
 {
 #if defined(CONFIG_MEMFAULT_NCS_FW_VERSION_AUTO)
@@ -90,6 +94,7 @@ void memfault_platform_get_device_info(sMemfaultDeviceInfo *info)
 		.hardware_version = CONFIG_MEMFAULT_NCS_HW_VERSION,
 	};
 }
+#endif /* defined(CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN) */
 
 #ifdef CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI
 static int request_imei(const char *cmd, char *buf, size_t buf_len)
