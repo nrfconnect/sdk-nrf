@@ -84,7 +84,12 @@ config MOSH_REST
 	help
 	  REST client for sending and receiving simple REST requests/responses.
 
-config MOSH_CLOUD
+config MOSH_CLOUD_REST
+	bool "nRFCloud commands over REST"
+	default y
+	select NRF_CLOUD_REST
+
+config MOSH_CLOUD_MQTT
 	bool "MQTT connection to nRFCloud"
 	select NRF_CLOUD_MQTT
 	select NRF_CLOUD_CELL_POS if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
