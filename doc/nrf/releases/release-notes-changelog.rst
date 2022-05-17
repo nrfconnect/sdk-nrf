@@ -200,6 +200,10 @@ Bluetooth samples
       Before this fix, the RX buffer might have been released twice by the main thread.
     * Added debug logs for the UART events.
 
+  * :ref:`bluetooth_central_dfu_smp` sample:
+
+    * Changed the current CBOR library from TinyCBOR to `zcbor`_.
+
 Bluetooth mesh samples
 ----------------------
 
