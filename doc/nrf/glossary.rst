@@ -37,6 +37,9 @@ Glossary
       It improves the :term:`Time to First Fix (TTFF)` by utilizing a connection (for example, over cellular) to the internet to retrieve the :term:`Almanac data` and :term:`Ephemeris data`.
       A connection to an internet server that has the Almanac and Ephemeris data is several times quicker than using the data link to the GPS satellites.
 
+   Association
+      The process of adding a provisioned device to a cloud account using the device ID.
+
    Attribute Protocol (ATT)
       "[It] allows a device referred to as the server to expose a set of attributes and their associated values to a peer device referred to as the client."
       `Bluetooth Core Specification`_, Version 5.3, Vol 3, Part F, Section 1.1.
@@ -257,6 +260,10 @@ Glossary
    Isochronous channels (ISO)
       A feature of the :term:`LE Audio` standard that allows for relaying audio data to multiple devices at the same time (isochronously) without having to split the stereo stream.
 
+   Just In Time Provisioning (JITP)
+     A device is provisioned when it first tries to connect to the IoT broker and presents its device certificate.
+      Before the first communication, the device is not known to the broker and is not stored in the fleet registry.
+
    Kconfig file
       A configuration file for a module or a sample, written in the :term:`Kconfig language` syntax.
       It defines build-time configuration options, also called symbols, namely application-specific values for one or more kernel configuration options.
@@ -461,6 +468,9 @@ Glossary
       A feature introduced in 3GPP Release 12 to improve the battery life of IoT (Internet of Things) devices by minimizing energy consumption.
       The device stays dormant during the PSM window.
 
+   Preconnect provisioning
+      The process of securely generating and storing credentials in a device, then uploading a device ID and device certificate to a cloud account so that the device is ready to connect to the cloud.
+
    Predicted GPS (P-GPS)
       A form of assistance provided to devices trying to obtain a :term:`Global Navigation Satellite System (GNSS)` fix, where the device can download up to two weeks of predicted satellite Ephemerides data.
       It enables devices to determine the exact orbital location of the satellite without connecting to the network every two hours with a trade-off of reduced accuracy of the calculated position over time.
@@ -485,6 +495,7 @@ Glossary
         It is a step in the commissioning process.
       * In a Bluetooth Mesh network, the process of adding devices to the network.
       * In a bootloader, the process of storing public key hashes in a separate region of memory from the bootloader image.
+      * In a device-to-cloud connection, the process of storing a device ID and device certificate to a cloud account.
 
    Pull Request
       A set of :term:`commits <Commit>` that are sent as a :term:`contribution <Contribution>` to a Git :term:`repository <Repository>`.

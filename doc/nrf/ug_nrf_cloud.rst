@@ -56,6 +56,46 @@ MQTT overview
 * Once connected, the device subscribes to the desired MQTT topics.
 * Each MQTT publish event contains the MQTT topic and the payload.
 
+Security
+********
+
+A device can successfully connect to `nRF Cloud`_ using REST if the following requirements are met:
+
+* The device contains a correct x509 CA certificate, and private key.
+* The public key derived from the private key is registered with an nRF Cloud account.
+* The device calls nRF Cloud REST APIs which require a JSON Web Token (JWT) by providing a JWT signed by the private key
+
+A device can successfully connect to `nRF Cloud`_ using MQTT if the following requirements are met:
+
+* The device contains a correct x509 CA certificate, device certificate, and private key.
+* The device ID and device certificate are provisioned with nRF Cloud.
+* The device ID is associated with an nRF Cloud account.
+
+`nRF Cloud`_ supports the following two ways for creating and installing these certificates both in the device and the cloud:
+
+* Just in time provisioning
+
+  1. In your nRF Cloud account, enter the device ID in a web form, then download a JSON file containing the CA certificate, device certificate, and private key.
+
+     Alternatively, use the nRF Cloud REST API to do this.
+
+  #. Program the credentials in the JSON file into the device using LTE Link Monitor.
+
+  The private key is exposed during these steps, and therefore, this is the less secure option.
+  See :ref:`nrf9160_ug_updating_cloud_certificate` for details.
+
+* Preconnect provisioning
+
+  Run the  :file:`device_credentials_installer.py` Python script.
+  You need to specify a number of parameters including the device ID.
+
+  The script instructs the device to securely generate and store a private key, which never leaves the device.
+  It programs  the specified CA certificate into the device.
+  The private key never leaves the device, which makes this a more secure option.
+
+  See `Securely Generating Credentials on the nRF9160`_  and `nRF Cloud Provisioning`_ for more details.
+
+
 |NCS| library support
 *********************
 
@@ -75,13 +115,19 @@ The following application uses the :ref:`lib_nrf_cloud` for services in |NCS|:
 
 * :ref:`asset_tracker_v2`
 
-The following samples demonstrate specific nRF Cloud functionality:
+The following sample demonstrates nRF Cloud-specific functionality using MQTT:
 
-* :ref:`cloud_client`
-* :ref:`gnss_sample`
-* :ref:`lte_sensor_gateway`
-* :ref:`multicell_location`
 * :ref:`nrf_cloud_mqtt_multi_service`
+
+The following samples demonstrate nRF Cloud-specific functionality using REST:
+
+* :ref:`gnss_sample`
 * :ref:`nrf_cloud_rest_fota`
 * :ref:`nrf_cloud_rest_device_message`
 * :ref:`nrf_cloud_rest_cell_pos_sample`
+
+Other related samples:
+
+* :ref:`cloud_client`
+* :ref:`lte_sensor_gateway`
+* :ref:`multicell_location`
