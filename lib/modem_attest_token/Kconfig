@@ -16,7 +16,7 @@ if MODEM_ATTEST_TOKEN
 
 config MODEM_ATTEST_TOKEN_PARSING
 	bool "Enable parsing of the attestation token"
-	select TINYCBOR
+	select ZCBOR
 	select BASE64
 	default y
 
