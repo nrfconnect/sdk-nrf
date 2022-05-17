@@ -32,7 +32,7 @@ add_subdirectory_ifdef(CONFIG_MOSH_LOCATION src/location)
 add_subdirectory_ifdef(CONFIG_MOSH_PPP src/ppp)
 add_subdirectory_ifdef(CONFIG_MOSH_FOTA src/fota)
 add_subdirectory_ifdef(CONFIG_MOSH_REST src/rest)
-add_subdirectory_ifdef(CONFIG_MOSH_CLOUD src/cloud)
+add_subdirectory(src/cloud)
 
 if(NOT ENV{PROJECT_NAME})
   zephyr_compile_definitions(

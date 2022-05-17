@@ -247,6 +247,7 @@ nRF9160 samples
       * Device information is sent to nRF Cloud when connecting with MQTT using the ``cloud connect`` command.
       * New options to send acquired GNSS location to nRF Cloud for ``location`` command, either in NMEA or in PVT format.
         Both MQTT and REST transports are supported (compile-time configuration).
+      * Improved the nRF9160 DK out-of-the box experience and the process of adding the DK to nRF Cloud using MoSh and LTE Link Monitor.
 
     * Updated:
 

@@ -27,7 +27,7 @@ extern bool at_cmd_mode_dont_print;
 /** Configuration on whether timestamps are added to the print. */
 bool mosh_print_timestamp_use;
 
-#if defined(CONFIG_MOSH_CLOUD)
+#if defined(CONFIG_MOSH_CLOUD_MQTT)
 /** Wrap all mosh prints into JSON and send to nRF Cloud over MQTT */
 bool mosh_print_cloud_echo;
 #endif

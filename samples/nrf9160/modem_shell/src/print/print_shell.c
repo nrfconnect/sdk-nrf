@@ -10,7 +10,7 @@
 #include "mosh_print.h"
 
 extern bool mosh_print_timestamp_use;
-#if defined(CONFIG_MOSH_CLOUD)
+#if defined(CONFIG_MOSH_CLOUD_MQTT)
 extern bool mosh_print_cloud_echo;
 #endif
 
@@ -35,7 +35,7 @@ static int cmd_timestamps_disable(const struct shell *shell, size_t argc, char *
 	return 0;
 }
 
-#if defined(CONFIG_MOSH_CLOUD)
+#if defined(CONFIG_MOSH_CLOUD_MQTT)
 static int cmd_cloud_echo_enable(const struct shell *shell, size_t argc, char **argv)
 {
 	mosh_print_cloud_echo = true;
@@ -68,7 +68,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD(
 		timestamps, &sub_timestamps,
 		"Enable/disable timestamps in shell output.", print_help),
-#if defined(CONFIG_MOSH_CLOUD)
+#if defined(CONFIG_MOSH_CLOUD_MQTT)
 	SHELL_CMD(
 		cloud, &sub_cloud_echo,
 		"Enable/disable echoing shell output to cloud over MQTT.", print_help),
