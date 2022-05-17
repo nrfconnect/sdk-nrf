@@ -372,7 +372,7 @@ class PlotNordic():
                 self.draw_state.r_line_coord,
                 self.draw_state.l_line_coord)
             self.draw_state.duration_marker = plt.annotate(
-                s=PlotNordic._stringify_time(
+                text=PlotNordic._stringify_time(
                     bigger_coord - smaller_coord), xy=(
                     smaller_coord, 0.5), xytext=(
                     bigger_coord, 0.5), arrowprops=dict(

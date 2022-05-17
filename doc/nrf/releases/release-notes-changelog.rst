@@ -663,6 +663,7 @@ Other libraries
   * :ref:`nrf_profiler`:
 
       * Renamed Profiler to nRF Profiler.
+      * Updated versions of required python modules (pynrfjprog and matplotlib)
 
 Common Application Framework (CAF)
 ----------------------------------
