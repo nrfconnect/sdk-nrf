@@ -19,6 +19,13 @@ endif()
 # The application uses the configuration/<board> scheme for configuration files.
 set(APPLICATION_CONFIG_DIR "configuration/\${BOARD}")
 
+if(EXECUTE_XIP)
+  if (NOT ${BOARD} STREQUAL "nrf5340dk_nrf5340_cpuapp")
+    message(FATAL_ERROR
+            "Board ${BOARD} is not supported in this configuration.")
+  endif()
+  set(CONF_FILE xip.conf)
+endif()
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project("Machine learning"
