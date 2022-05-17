@@ -1,28 +1,15 @@
-:root {
-  --docset-color: #00a9ce;
-}
-
-/* link text */
-.wy-nav-content a {
-  color: var(--docset-color);
-}
-
-.wy-nav-content a:visited {
-  color: #0077c8;
-}
-
 /* Doc link boxes on the start page */
 
 .rst-content blockquote.doc-link {
   padding: 0 10px;
   display: block;
   width: 450px;
-  overflow:hidden;
+  overflow: hidden;
   transition: all 0.35s ease;
   box-sizing: border-box;
   line-height: 50px;
-  vertical-align:middle;
-  position:relative;
+  vertical-align: middle;
+  position: relative;
   margin-left: 0;
 }
 
@@ -30,9 +17,9 @@
   color: #fff !important;
   text-shadow: 0 1px 1px transparent;
   border-bottom: none;
-  font-size:20px;
-  position:relative;
-  z-index:100;
+  font-size: 20px;
+  position: relative;
+  z-index: 100;
 }
 
 .doc-link p.doc-link-text {
@@ -40,15 +27,20 @@
   line-height: inherit;
 }
 
-.doc-link .doc-link-image, .doc-link p.doc-link-text a {
-  float:left;
+.doc-link .doc-link-image,
+.doc-link p.doc-link-text a {
+  float: left;
   padding: 10px;
 }
 
 .doc-link::after {
-  content: '';
+  content: "";
   position: absolute;
-  background: linear-gradient(29.5deg, transparent 50%, rgba(255, 255, 255, 0.2) 50%);
+  background: linear-gradient(
+    29.5deg,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%
+  );
   width: 150%;
   height: 150%;
   right: 0;
@@ -59,8 +51,12 @@
 }
 
 .doc-link:hover:after {
-  content: '';
-  background: linear-gradient(29.5deg, transparent 50%, rgba(255, 255, 255, 0.2) 50%);
+  content: "";
+  background: linear-gradient(
+    29.5deg,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%
+  );
   width: 200%;
   height: 200%;
   right: 0;
@@ -70,8 +66,12 @@
 }
 
 .doc-link:active:after {
-  content: '';
-  background: linear-gradient(29.5deg, transparent 50%, rgba(255, 255, 255, 0.2) 50%);
+  content: "";
+  background: linear-gradient(
+    29.5deg,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%
+  );
   width: 200%;
   height: 200%;
   right: 0;
@@ -85,7 +85,7 @@
 }
 
 .blue-box {
-  background: var(--docset-color);
+  background: #00a9ce;
 }
 
 /* styling for known issues page */
@@ -107,16 +107,16 @@
   display: inline-block;
   font-weight: 700;
   color: var(--docset-color);
-  box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
+  box-shadow: 0 1px 0 1px rgba(0, 0, 0, 0.04);
   border: 2px solid #999;
   -moz-appearance: none;
   -webkit-appearance: none;
   appearance: none;
   background-color: #fff;
-  background-image: url('../images/dropdown.svg');
+  background-image: url("../images/dropdown.svg");
   background-repeat: no-repeat, repeat;
-  background-position: right .7em top 50%;
-  background-size: .65em auto;
+  background-position: right 0.7em top 50%;
+  background-size: 0.65em auto;
   width: 150px;
   margin-bottom: 30px;
   margin-left: 10px;
@@ -125,5 +125,5 @@
   display: none;
 }
 #versions-select option {
-  font-weight:normal;
+  font-weight: normal;
 }
