@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig ML_APP_EXT_MEM
+	bool "Execute Edge Impulse library from external memory"
+	depends on SOC_NRF5340_CPUAPP && NRFX_QSPI
+    select HAVE_CUSTOM_LINKER_SCRIPT
+
+if ML_APP_EXT_MEM
+
+    config ML_APP_EXT_MEM_FREQ
+    int "QSPI external memory clock frequency"
+    default 96
+    range 32 96
+
+module = ML_APP_EXT_MEM
+module-str = External memory
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # ML_APP_EXT_MEM

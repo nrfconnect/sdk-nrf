@@ -27,3 +27,6 @@ target_sources_ifdef(CONFIG_ML_APP_SENSOR_SIM_CTRL
 
 target_sources_ifdef(CONFIG_ML_APP_CPU_BOOST
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpu_boost.c)
+
+target_sources_ifdef(CONFIG_ML_APP_EXT_MEM
+			 app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ext_mem.c)
