@@ -25,9 +25,13 @@ union dfu_multi_target_ver {
 
 static int dfu_multi_target_open(int image_id, size_t image_size);
 static int dfu_multi_target_write(const uint8_t *chunk, size_t chunk_size);
-static int dfu_multi_target_done(bool success);
+static int dfu_multi_target_done_0(bool success);
+#if CONFIG_UPDATEABLE_IMAGE_NUMBER > 1
+static int dfu_multi_target_done_1(bool success);
+#endif
 
 LOG_MODULE_DECLARE(zigbee_fota);
+static uint32_t images_to_download;
 
 /** Buffer for parsing the multi-image header as well as DFU target buffer. */
 static uint8_t image_buf[DFU_MULTI_TARGET_BUFFER_SIZE] __aligned(4);
@@ -37,7 +41,7 @@ static struct dfu_image_writer dfu_multi_target_writer_0 = {
 	.image_id = 0,
 	.open = dfu_multi_target_open,
 	.write = dfu_multi_target_write,
-	.close = dfu_multi_target_done
+	.close = dfu_multi_target_done_0
 };
 
 #if CONFIG_UPDATEABLE_IMAGE_NUMBER > 1
@@ -46,7 +50,7 @@ static struct dfu_image_writer dfu_multi_target_writer_1 = {
 	.image_id = 1,
 	.open = dfu_multi_target_open,
 	.write = dfu_multi_target_write,
-	.close = dfu_multi_target_done
+	.close = dfu_multi_target_done_1
 };
 #endif
 
@@ -69,12 +73,29 @@ static int dfu_multi_target_write(const uint8_t *chunk, size_t chunk_size)
 	return dfu_target_write(chunk, chunk_size);
 }
 
-static int dfu_multi_target_done(bool success)
+static int dfu_multi_target_done_0(bool success)
 {
-	LOG_INF("Close image for writing success: %d", success);
+	LOG_INF("Close image 0 for writing success: %d", success);
+
+	if (success) {
+		images_to_download &= ~(1 << 0);
+	}
 
 	return dfu_target_done(success);
 }
+
+#if CONFIG_UPDATEABLE_IMAGE_NUMBER > 1
+static int dfu_multi_target_done_1(bool success)
+{
+	LOG_INF("Close image 1 for writing success: %d", success);
+
+	if (success) {
+		images_to_download &= ~(1 << 1);
+	}
+
+	return dfu_target_done(success);
+}
+#endif
 
 uint32_t dfu_multi_target_get_version(void)
 {
@@ -105,11 +126,15 @@ int dfu_multi_target_init_default(void)
 		return err;
 	}
 
+	images_to_download = 0;
+
 	err = dfu_multi_image_register_writer(&dfu_multi_target_writer_0);
 	if (err) {
 		LOG_ERR("Failed to register DFU target writer for image 0 (err %d)", err);
 		return err;
 	}
+
+	images_to_download |= (1 << 0);
 
 #if CONFIG_UPDATEABLE_IMAGE_NUMBER > 1
 	err = dfu_multi_image_register_writer(&dfu_multi_target_writer_1);
@@ -117,6 +142,8 @@ int dfu_multi_target_init_default(void)
 		LOG_ERR("Failed to register DFU target writer for image 1 (err %d)", err);
 		return err;
 	}
+
+	images_to_download |= (1 << 1);
 #endif
 	err = dfu_target_mcuboot_set_buf(image_buf, sizeof(image_buf));
 	if (err) {
@@ -128,5 +155,10 @@ int dfu_multi_target_init_default(void)
 
 int dfu_multi_target_schedule_update(void)
 {
+	if (images_to_download != 0) {
+		LOG_ERR("Failed to set schedule update. Missing images: 0x%x", images_to_download);
+		return -ENOEXEC;
+	}
+
 	return dfu_target_schedule_update(DFU_TARGET_SCHEDULE_ALL_IMAGES);
 }
