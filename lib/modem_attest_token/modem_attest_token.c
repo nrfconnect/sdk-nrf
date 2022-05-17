@@ -11,23 +11,12 @@
 #include <nrf_modem_at.h>
 #include <modem/nrf_modem_lib.h>
 #include <zephyr/sys/base64.h>
-#include <tinycbor/cbor.h>
-#include <tinycbor/cbor_buf_reader.h>
+#include <zcbor_common.h>
+#include <zcbor_decode.h>
 #include <modem/modem_attest_token.h>
 
 #define BASE64_PAD_CHAR '='
 #define AT_ATTEST_CMD "AT%ATTESTTOKEN"
-
-/* Attestation message format:
- * Tag (55799)
- * Array (len 5)
- * - INT: msg type (NRF_ID_SRVC_MSG_TYPE_ID_V1)
- * - BSTR: device UUID
- * - INT: device type
- * - BSTR: FW UUID
- * - BSTR: nonce
- */
-#define ATTEST_MAP_LEN 5
 
 /* UUID v4 hypen locations with respect to the original byte array */
 #define UUID_HYPHEN_POS_1 (8 / 2)
@@ -37,7 +26,6 @@
 
 int modem_attest_token_get(struct nrf_attestation_token *const token)
 {
-
 	int ret = 0;
 	size_t attest_sz;
 	size_t cose_sz;
@@ -214,136 +202,46 @@ cleanup:
 	return err;
 }
 
-static int get_cbor_int(CborValue *value, int *const int_val)
-{
-	__ASSERT_NO_MSG(value != NULL);
-	__ASSERT_NO_MSG(int_val != 0);
-
-	CborError err_cbor;
-
-	if (value->type != CborIntegerType) {
-		return -EBADMSG;
-	}
-
-	err_cbor = cbor_value_get_int(value, int_val);
-	if (err_cbor != CborNoError) {
-		return -EIO;
-	}
-
-	(void)cbor_value_advance(value);
-
-	return 0;
-}
-
-static int get_cbor_byte_string(CborValue *value, char *const buf,
-				size_t buf_sz, size_t *const value_sz)
-{
-	__ASSERT_NO_MSG(value != NULL);
-	__ASSERT_NO_MSG(buf != NULL);
-	__ASSERT_NO_MSG(buf_sz != 0);
-	__ASSERT_NO_MSG(value_sz != NULL);
-
-	CborError err_cbor;
-
-	if (value->type != CborByteStringType) {
-		return -EBADMSG;
-	}
-
-	*value_sz = buf_sz;
-	err_cbor = cbor_value_copy_byte_string(value, buf, value_sz, value);
-	if (err_cbor != CborNoError) {
-		return -EIO;
-	}
-
-	return 0;
-}
-
-static int get_attest_data(CborValue *value,
+static int get_attest_data(zcbor_state_t *state,
 			   struct nrf_attestation_data *const data)
 {
-	int err = 0;
-	CborValue map_value;
-	CborTag tag;
-	CborError err_cbor;
-	size_t bstr_sz = 0;
-	int map_len = 0;
-	int int_val;
+	int dev_type;
+	struct zcbor_string dev_uuid;
+	struct zcbor_string fw_uuid;
+	struct zcbor_string nonce;
 
-	if (value->type != CborTagType) {
+	/* Attestation message format:
+	 * Tag (55799)
+	 * Array (len 5)
+	 * - INT: msg type (NRF_ID_SRVC_MSG_TYPE_ID_V1)
+	 * - BSTR: device UUID
+	 * - INT: device type
+	 * - BSTR: FW UUID
+	 * - BSTR: nonce
+	 */
+	if (!zcbor_tag_expect(state, ZCBOR_TAG_CBOR)) {
 		return -ENOMSG;
 	}
 
-	/* Check for the expected tag */
-	err_cbor = cbor_value_get_tag(value, &tag);
-	if (err_cbor != CborNoError || tag != CborSignatureTag) {
-		return -EBADMSG;
+	if (zcbor_list_start_decode(state) &&
+	    zcbor_int32_expect(state, NRF_ID_SRVC_MSG_TYPE_ID_V1) &&
+	    zcbor_bstr_decode(state, &dev_uuid) && (dev_uuid.len == sizeof(data->device_uuid)) &&
+	    zcbor_int32_decode(state, &dev_type) &&
+	    zcbor_bstr_decode(state, &fw_uuid) && (fw_uuid.len == sizeof(data->fw_uuid)) &&
+	    zcbor_bstr_decode(state, &nonce) && (nonce.len == sizeof(data->nonce)) &&
+	    zcbor_list_end_decode(state)) {
+
+		data->msg_type = NRF_ID_SRVC_MSG_TYPE_ID_V1;
+		data->dev_type = (enum nrf_device_type)dev_type;
+
+		memcpy(data->device_uuid, dev_uuid.value, sizeof(data->device_uuid));
+		memcpy(data->fw_uuid,	  fw_uuid.value,  sizeof(data->fw_uuid));
+		memcpy(data->nonce,	  nonce.value,	  sizeof(data->nonce));
+
+		return 0;
 	}
 
-	err_cbor = cbor_value_advance_fixed(value);
-	if (err_cbor != CborNoError) {
-		return -EBADMSG;
-	}
-
-	/* Check for the expected type and length */
-	if (value->type != CborArrayType) {
-		return -ENOMSG;
-	}
-
-	err_cbor = cbor_value_get_array_length(value, &map_len);
-	if (err_cbor != CborNoError || map_len != ATTEST_MAP_LEN) {
-		return -EBADMSG;
-	}
-
-	/* Enter the array */
-	err_cbor = cbor_value_enter_container(value, &map_value);
-	if (err_cbor != CborNoError) {
-		return -EACCES;
-	}
-
-	/* Get msg type */
-	err = get_cbor_int(&map_value, &int_val);
-	if (err) {
-		return err;
-	} else if (int_val != NRF_ID_SRVC_MSG_TYPE_ID_V1) {
-		return -EBADMSG;
-	}
-	data->msg_type = (enum nrf_id_srvc_msg_type)int_val;
-
-	/* Get device UUID */
-	err = get_cbor_byte_string(&map_value, data->device_uuid,
-				   sizeof(data->device_uuid), &bstr_sz);
-	if (err || bstr_sz != sizeof(data->device_uuid)) {
-		return -EBADMSG;
-	}
-
-	/* Get device type */
-	err = get_cbor_int(&map_value, &int_val);
-	if (err) {
-		return err;
-	}
-	data->msg_type = (enum nrf_device_type)int_val;
-
-	/* Get FW UUID */
-	err = get_cbor_byte_string(&map_value, data->fw_uuid,
-				   sizeof(data->fw_uuid), &bstr_sz);
-	if (err || bstr_sz != sizeof(data->fw_uuid)) {
-		return -EBADMSG;
-	}
-
-	/* Get nonce */
-	err = get_cbor_byte_string(&map_value, data->nonce, sizeof(data->nonce),
-				   &bstr_sz);
-	if (err || bstr_sz != sizeof(data->nonce)) {
-		return -EBADMSG;
-	}
-
-	/* Exit array */
-	err_cbor = cbor_value_leave_container(value, &map_value);
-	if (err_cbor != CborNoError) {
-		return -EACCES;
-	}
-
-	return 0;
+	return -EBADMSG;
 }
 
 int modem_attest_token_parse(struct nrf_attestation_token const *const token_in,
@@ -355,28 +253,19 @@ int modem_attest_token_parse(struct nrf_attestation_token const *const token_in,
 
 	size_t bin_buf_sz = 0;
 	char *bin_buf = NULL;
-	struct cbor_buf_reader reader;
-	CborError err_cbor;
-	CborParser parser;
-	CborValue value;
+	zcbor_state_t states[3];
 	int err = 0;
 
-	/* Convert to binary and send to CBOR reader/parser */
+	/* Convert to binary */
 	err = base64url_to_binary(token_in->attest, &bin_buf, &bin_buf_sz);
 	if (err) {
 		goto cleanup;
 	}
 
-	cbor_buf_reader_init(&reader, (uint8_t *)bin_buf, bin_buf_sz);
-
-	err_cbor = cbor_parser_init(&reader.r, 0, &parser, &value);
-	if (err_cbor != CborNoError) {
-		err = -EIO;
-		goto cleanup;
-	}
+	zcbor_new_state(states, sizeof(states) / sizeof(zcbor_state_t), bin_buf, bin_buf_sz, 1);
 
 	/* Get attestation token data */
-	err = get_attest_data(&value, data_out);
+	err = get_attest_data(states, data_out);
 	if (err) {
 		memset(data_out, 0, sizeof(*data_out));
 		data_out->dev_type = NRF_DEVICE_TYPE_INVALID;

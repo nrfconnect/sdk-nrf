@@ -522,6 +522,10 @@ Modem libraries
       * :c:macro:`LTE_LC_ON_CFUN` macro for compile-time registration of callbacks on modem functional mode changes using :c:func:`lte_lc_func_mode_set`.
       * Support for simple shell commands.
 
+  * :ref:`lib_modem_attest_token` library:
+
+    * CBOR parsing is now performed with the `zcbor`_ module. TinyCBOR is deprecated.
+
 * Removed the deprecated A-GPS library.
 
 * Fixed:
