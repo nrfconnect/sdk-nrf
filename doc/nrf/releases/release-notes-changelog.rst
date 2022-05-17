@@ -231,6 +231,10 @@ Bluetooth samples
 
     * Changed the current CBOR library from TinyCBOR to `zcbor`_.
 
+  * :ref:`nrf_rpc_entropy_nrf53` sample:
+
+    * Converted from `TinyCBOR` to `zcbor`_.
+
 Bluetooth mesh samples
 ----------------------
 

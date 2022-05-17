@@ -7,7 +7,6 @@
 #include <zephyr/init.h>
 #include <zephyr/drivers/entropy.h>
 
-#include <tinycbor/cbor.h>
 #include <nrf_rpc_cbor.h>
 
 #include <zephyr/device.h>
@@ -33,14 +32,14 @@ static void rsp_error_code_send(int err_code)
 
 	NRF_RPC_CBOR_ALLOC(ctx, CBOR_BUF_SIZE);
 
-	cbor_encode_int(&ctx.encoder, err_code);
+	zcbor_int32_put(ctx.zs, err_code);
 
 	nrf_rpc_cbor_rsp_no_err(&ctx);
 }
 
-static void entropy_init_handler(CborValue *packet, void *handler_data)
+static void entropy_init_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	nrf_rpc_cbor_decoding_done(packet);
+	nrf_rpc_cbor_decoding_done(ctx);
 
 	if (!device_is_ready(entropy)) {
 		rsp_error_code_send(-NRF_EINVAL);
@@ -61,13 +60,13 @@ static void entropy_get_rsp(int err_code, const uint8_t *data, size_t length)
 
 	NRF_RPC_CBOR_ALLOC(ctx, CBOR_BUF_SIZE + length);
 
-	cbor_encode_int(&ctx.encoder, err_code);
-	cbor_encode_byte_string(&ctx.encoder, data, length);
+	zcbor_int32_put(ctx.zs, err_code);
+	zcbor_bstr_encode_ptr(ctx.zs, data, length);
 
 	nrf_rpc_cbor_rsp_no_err(&ctx);
 }
 
-static void rsp_empty_handler(CborValue *value, void *handler_data)
+static void rsp_empty_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 }
 
@@ -78,8 +77,8 @@ static void entropy_get_result(int err_code, const uint8_t *data, size_t length,
 
 	NRF_RPC_CBOR_ALLOC(ctx, CBOR_BUF_SIZE + length);
 
-	cbor_encode_int(&ctx.encoder, err_code);
-	cbor_encode_byte_string(&ctx.encoder, data, length);
+	zcbor_int32_put(ctx.zs, err_code);
+	zcbor_bstr_encode_ptr(ctx.zs, data, length);
 
 	if (type == CALL_TYPE_ASYNC) {
 		nrf_rpc_cbor_evt_no_err(&entropy_group,
@@ -92,19 +91,19 @@ static void entropy_get_result(int err_code, const uint8_t *data, size_t length,
 	}
 }
 
-static void entropy_get_handler(CborValue *packet, void *handler_data)
+static void entropy_get_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	CborError cbor_err;
 	int err;
+	bool ok;
 	int length;
 	uint8_t buf[64];
 	enum call_type type = (enum call_type)handler_data;
 
-	cbor_err = cbor_value_get_int(packet, &length);
+	ok = zcbor_int32_decode(ctx->zs, &length);
 
-	nrf_rpc_cbor_decoding_done(packet);
+	nrf_rpc_cbor_decoding_done(ctx);
 
-	if (cbor_err != CborNoError || length < 0 || length > sizeof(buf)) {
+	if (!ok || length < 0 || length > sizeof(buf)) {
 		err = -NRF_EBADMSG;
 		goto error_exit;
 	}
