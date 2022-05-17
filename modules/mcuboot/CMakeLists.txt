@@ -47,11 +47,10 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
     # START_ADDRESS_OFFSET - (optional) Offset
     # SIGNED_BIN_FILE_OUT - (optional) Signed bin output image
     # SIGNED_HEX_TEST_FILE_OUT - (optional) Signed hex output test image including IMAGE_MAGIC
-    # SIGNED_BIN_FILE_OUT - (optional) Signed bin output image
+    # IMAGE_DEPENDENCIES - (optional) Dependencies between signed image and other images
     # DEPENDS - (optional) One or more dependencies for signing the hex image
-
     set(oneValueArgs SIGNED_BIN_FILE_IN SIGNED_HEX_FILE_NAME_PREFIX SLOT_SIZE SIGNED_HEX_FILE_OUT)
-    set(oneValueOptionalArgs SIGNED_BIN_FILE_OUT SIGNED_HEX_TEST_FILE_OUT START_ADDRESS_OFFSET)
+    set(oneValueOptionalArgs SIGNED_BIN_FILE_OUT SIGNED_HEX_TEST_FILE_OUT START_ADDRESS_OFFSET IMAGE_DEPENDENCIES)
     set(multiValueArgs DEPENDS)
     cmake_parse_arguments(SIGN_ARG "" "${oneValueArgs};${oneValueOptionalArgs}" "${multiValueArgs}" ${ARGN})
     check_arguments_required_all(sign SIGN_ARG ${oneValueArgs})
@@ -109,6 +108,10 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         )
     endif()
 
+    if(DEFINED SIGN_ARG_IMAGE_DEPENDENCIES)
+      set(sign_dependencies "-d;\"${SIGN_ARG_IMAGE_DEPENDENCIES}\"")
+    endif()
+
     add_custom_command(
       OUTPUT
       ${signed_hex}            # Signed hex of input hex.
@@ -119,6 +122,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       # to be applied by mcuboot, the application is required to write the
       # IMAGE_MAGIC into the image trailer.
       ${sign_cmd}
+      ${sign_dependencies}
       --slot-size ${SIGN_ARG_SLOT_SIZE}
       ${SIGN_ARG_SIGNED_BIN_FILE_IN}
       ${signed_hex}
@@ -145,6 +149,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       COMMAND
       # Sign the binary version of the input hex file.
       ${sign_cmd}
+      ${sign_dependencies}
       --slot-size ${SIGN_ARG_SLOT_SIZE}
       ${to_sign_bin}
       ${update_bin}
@@ -164,6 +169,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       # as the input hex file, so in order for it to work as a test update,
       # it needs to be moved.
       ${sign_cmd}
+      ${sign_dependencies}
       --slot-size ${SIGN_ARG_SLOT_SIZE}
       --pad # Adds IMAGE_MAGIC to end of slot.
       ${SIGN_ARG_SIGNED_BIN_FILE_IN}
@@ -314,6 +320,15 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
 
     set(app_offset $<TARGET_PROPERTY:partition_manager,app_TO_SECONDARY>)
 
+    if (CONFIG_NRF53_ENFORCE_IMAGE_VERSION_EQUALITY)
+      # Specify image pair IDs to generate dependencies between images.
+      set(APPLICATION_IMAGE_PAIR_IDX 0)
+      set(NETWORK_IMAGE_PAIR_IDX 1)
+
+      # Add dependency inside application core image to require the latest network core image.
+      set(sign_dependencies IMAGE_DEPENDENCIES "(${NETWORK_IMAGE_PAIR_IDX},${CONFIG_MCUBOOT_IMAGE_VERSION})")
+    endif()
+
     sign(
       SIGNED_BIN_FILE_IN ${app_to_sign_hex}
       SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/app
@@ -322,6 +337,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       SIGNED_HEX_FILE_OUT app_signed_hex
       SIGNED_BIN_FILE_OUT app_signed_bin
       SIGNED_HEX_TEST_FILE_OUT app_signed_test_hex
+      ${sign_dependencies}
       DEPENDS ${app_sign_depends}
       )
 
@@ -393,6 +409,11 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
 
       set(net_core_binary_name net_core_app_update.bin)
 
+      if (CONFIG_NRF53_ENFORCE_IMAGE_VERSION_EQUALITY)
+        # Add dependency inside network core image to require the latest application core image.
+        set(sign_dependencies IMAGE_DEPENDENCIES "(${APPLICATION_IMAGE_PAIR_IDX},${CONFIG_MCUBOOT_IMAGE_VERSION})")
+      endif()
+
       sign(
         SIGNED_BIN_FILE_IN ${cpunet_signed_app_hex}
         SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/net_core_app
@@ -401,6 +422,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
         SIGNED_HEX_FILE_OUT net_core_app_signed_hex
         SIGNED_BIN_FILE_OUT net_core_app_signed_bin
         SIGNED_HEX_TEST_FILE_OUT net_core_app_signed_test_hex
+        ${sign_dependencies}
         DEPENDS ${sign_depends}
         )
 

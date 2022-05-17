@@ -231,6 +231,13 @@ config NRF53_UPGRADE_NETWORK_CORE
 	  Enables support for updating the application on the nRF53 Network
 	  core.
 
+config NRF53_ENFORCE_IMAGE_VERSION_EQUALITY
+	bool "Enforce the equality between APP and NET core image versions"
+	depends on NRF53_UPGRADE_NETWORK_CORE
+	help
+	  When enabled, MCUboot proceeds with the image swapping only if both the application core and
+	  the network core updates have been downloaded and they have the same version.
+
 rsource "bl_crypto/Kconfig"
 rsource "bl_validation/Kconfig"
 rsource "bl_storage/Kconfig"

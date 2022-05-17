@@ -834,7 +834,8 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-* |no_changes_yet_note|
+* Added :kconfig:option:`CONFIG_NRF53_ENFORCE_IMAGE_VERSION_EQUALITY` to attach the dependencies between application and network core images.
+  This option links the upgrade images in such a way that either both or none is applied.
 
 Zephyr
 ======
