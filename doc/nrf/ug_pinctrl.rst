@@ -108,7 +108,7 @@ Here is a list of the supported standard pin properties:
 
 The following non-standard, nRF-specific properties are also supported:
 
-* ``drive-mode`` - Pin output drive mode. Available drive modes are pre-defined in :file:`include/dt-bindings/pinctrl/nrf-pinctrl.h`. Note that extra modes might not be available on certain devices. When not specified, pin defaults to standard mode for 0 and 1 (``NRF_DRIVE_S0S1``).
+* ``nordic,drive-mode`` - Pin output drive mode. Available drive modes are pre-defined in :file:`include/dt-bindings/pinctrl/nrf-pinctrl.h`. Note that extra modes might not be available on certain devices. When not specified, pin defaults to standard mode for 0 and 1 (``NRF_DRIVE_S0S1``).
 * ``nordic,invert`` - Invert pin polarity  (set active state to low). This property is valid only for PWM channel output pins.
 
 To link this pin configuration with a device, use a pinctrl-N property where N is the state index starting from zero.
