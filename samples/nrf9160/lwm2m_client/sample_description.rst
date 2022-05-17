@@ -226,6 +226,8 @@ The following instructions describe how to register your device to `Leshan Demo 
             * Security mode - psk (Pre-Shared Key)
             * Key - 000102030405060708090a0b0c0d0e0f
 
+            Also, make sure to select the :guilabel:`Key in hexadecimal` checkbox.
+
    .. _bootstrap_server_reg:
 
    For registering the device to an LwM2M bootstrap server, complete the following steps:
@@ -271,6 +273,8 @@ The following instructions describe how to register your device to `Leshan Demo 
             * Friendly Name - *recognisable name*
             * Security mode - psk (Pre-Shared Key)
             * Key - 000102030405060708090a0b0c0d0e0f
+
+            Also, make sure to select the :guilabel:`Key in hexadecimal` checkbox.
 
             The Coiote bootstrap server automatically creates an account for the LwM2M server using the same device endpoint name and random PSK key.
 
