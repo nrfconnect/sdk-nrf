@@ -63,6 +63,7 @@ In addition to the |NCS| documentation, information is available in the followin
    ug_nrf91
    ug_nrf53
    ug_nrf52
+   ug_nrf_cloud
    protocols
    applications
    samples

@@ -891,6 +891,7 @@ Documentation
   * :ref:`ug_thread_communication` by moving it to a separate page instead of it being under :ref:`ug_thread_architectures`.
   * Added a note to several nRF Cloud samples using the `nRF Cloud REST API`_ indicating the need for valid and registered request signing credentials.
   * :ref:`thread_ot_memory` with definitions of variants listed on the tables.
+  * :ref:`ug_nrf_cloud` with more information about security.
 
 * Removed:
 
