@@ -23,7 +23,7 @@ When configuration is complete, the sample is ready to send SMP commands.
 To send an echo command, press Button 1 on the development kit.
 The string that is sent contains a number that is automatically incremented.
 This way, you can easily verify if the correct response is received.
-The response is decoded and displayed using the `TinyCBOR`_ library (which is part of Zephyr).
+The response is decoded using the `zcbor`_ library and displayed after that.
 
 Requirements
 ************
@@ -109,4 +109,4 @@ It uses the following Zephyr libraries:
 
 In addition, it uses the following external library that is distributed with Zephyr:
 
-* `TinyCBOR`_
+* `zcbor`_

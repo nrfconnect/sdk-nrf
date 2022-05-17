@@ -12,9 +12,10 @@
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 
-#include <tinycbor/cbor.h>
-#include <tinycbor/cbor_buf_reader.h>
-#include <tinycbor/cbor_buf_writer.h>
+#include <zcbor_encode.h>
+#include <zcbor_decode.h>
+#include <zcbor_common.h>
+
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/conn.h>
@@ -27,7 +28,19 @@
 #include <dk_buttons_and_leds.h>
 
 
+/* Mimimal number of ZCBOR encoder states to provide full encoder functionality. */
+#define CBOR_ENCODER_STATE_NUM 2
+
+/* Number of ZCBOR decoder states required to provide full decoder functionality plus one
+ * more level for decoding nested map received in response to SMP echo command.
+ */
+#define CBOR_DECODER_STATE_NUM 3
+
+#define CBOR_MAP_MAX_ELEMENT_CNT 2
 #define CBOR_BUFFER_SIZE 128
+
+#define SMP_ECHO_MAP_KEY_MAX_LEN 2
+#define SMP_ECHO_MAP_VALUE_MAX_LEN 30
 
 #define KEY_ECHO_MASK  DK_BTN1_MSK
 
@@ -287,28 +300,60 @@ static void smp_echo_rsp_proc(struct bt_dfu_smp *dfu_smp)
 		size_t payload_len = ((uint16_t)smp_rsp_buff.header.len_h8) << 8 |
 				      smp_rsp_buff.header.len_l8;
 
-		CborError cbor_error;
-		CborParser parser;
-		CborValue value;
-		struct cbor_buf_reader reader;
+		zcbor_state_t zsd[CBOR_DECODER_STATE_NUM];
+		struct zcbor_string value = {0};
+		char map_key[SMP_ECHO_MAP_KEY_MAX_LEN];
+		char map_value[SMP_ECHO_MAP_VALUE_MAX_LEN];
+		bool ok;
 
-		cbor_buf_reader_init(&reader, smp_rsp_buff.payload, payload_len);
+		zcbor_new_decode_state(zsd, ARRAY_SIZE(zsd), smp_rsp_buff.payload, payload_len, 1);
 
-		cbor_error = cbor_parser_init(&reader.r, 0, &parser, &value);
+		/* Stop decoding on the error. */
+		zsd->constant_state->stop_on_error = true;
 
-		if (cbor_error != CborNoError) {
-			printk("CBOR parser initialization failed (err: %d)\n",
-			       cbor_error);
+		zcbor_map_start_decode(zsd);
+		ok = zcbor_tstr_decode(zsd, &value);
+
+		if (!ok) {
+			printk("Decoding error (err: %d)\n", zcbor_pop_error(zsd));
 			return;
+		} else if ((value.len != 1) || (*value.value != 'r')) {
+			printk("Invalid data received.\n");
+			return;
+		} else {
+			/* Do nothing */
 		}
 
-		cbor_error = cbor_value_to_pretty_advance(stdout, &value);
-		fprintf(stdout, "\n");  /* Add newline and flush the stdout buffer */
+		map_key[0] = value.value[0];
 
-		if (cbor_error != CborNoError) {
-			printk("Cannot print received CBOR stream (err: %d)\n",
-			       cbor_error);
+		/* Add string NULL terminator */
+		map_key[1] = '\0';
+
+		ok = zcbor_tstr_decode(zsd, &value);
+
+		if (!ok) {
+			printk("Decoding error (err: %d)\n", zcbor_pop_error(zsd));
 			return;
+		} else if (value.len > (sizeof(map_value) - 1)) {
+			printk("To small buffer for received data.\n");
+			return;
+		} else {
+			/* Do nothing */
+		}
+
+		memcpy(map_value, value.value, value.len);
+
+		/* Add string NULL terminator */
+		map_value[value.len] = '\0';
+
+		zcbor_map_end_decode(zsd);
+
+		if (zcbor_check_error(zsd)) {
+			/* Print textual representation of the received CBOR map. */
+			printk("{_\"%s\": \"%s\"}\n", map_key, map_value);
+		} else {
+			printk("Cannot print received CBOR stream (err: %d)\n",
+			       zcbor_pop_error(zsd));
 		}
 	}
 
@@ -318,18 +363,26 @@ static int send_smp_echo(struct bt_dfu_smp *dfu_smp,
 			 const char *string)
 {
 	static struct smp_buffer smp_cmd;
-	CborEncoder cbor, cbor_map;
+	zcbor_state_t zse[CBOR_ENCODER_STATE_NUM];
 	size_t payload_len;
-	struct cbor_buf_writer writer;
 
-	cbor_buf_writer_init(&writer, smp_cmd.payload, sizeof(smp_cmd.payload));
-	cbor_encoder_init(&cbor, &writer.enc, 0);
-	cbor_encoder_create_map(&cbor, &cbor_map, 1);
-	cbor_encode_text_stringz(&cbor_map, "d");
-	cbor_encode_text_stringz(&cbor_map, string);
-	cbor_encoder_close_container(&cbor, &cbor_map);
+	zcbor_new_encode_state(zse, ARRAY_SIZE(zse), smp_cmd.payload,
+			       sizeof(smp_cmd.payload), 0);
 
-	payload_len = (size_t)(writer.ptr - smp_cmd.payload);
+	/* Stop encoding on the error. */
+	zse->constant_state->stop_on_error = true;
+
+	zcbor_map_start_encode(zse, CBOR_MAP_MAX_ELEMENT_CNT);
+	zcbor_tstr_put_lit(zse, "d");
+	zcbor_tstr_put_term(zse, string);
+	zcbor_map_end_encode(zse, CBOR_MAP_MAX_ELEMENT_CNT);
+
+	if (!zcbor_check_error(zse)) {
+		printk("Failed to encode SMP echo packet, err: %d\n", zcbor_pop_error(zse));
+		return -EFAULT;
+	}
+
+	payload_len = (size_t)(zse->payload - smp_cmd.payload);
 
 	smp_cmd.header.op = 2; /* Write */
 	smp_cmd.header.flags = 0;
