@@ -298,7 +298,7 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 		LOG_DBG("DTLS session cache flushed.");
 	}
 
-	err = lwm2m_init_security(&client, endpoint_name);
+	err = lwm2m_init_security(&client, endpoint_name, NULL);
 	if (err) {
 		LOG_ERR("lwm2m_init_security, error: %d", err);
 		return err;
