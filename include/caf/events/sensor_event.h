@@ -49,8 +49,8 @@ enum sensor_state {
  * application. The Common Application Framework does not impose any standard way of describing
  * sensors. Format and content of the sensor description is defined by the application.
  *
- * @warning The sensor state event related to the given sensor must use the same description as
- *          #sensor_event related to the sensor.
+ * @note The sensor state event related to the given sensor must use the same description as
+ *       #sensor_event related to the sensor.
  */
 struct sensor_state_event {
 	struct app_event_header header; /**< Event header. */
@@ -74,8 +74,8 @@ APP_EVENT_TYPE_DECLARE(sensor_state_event);
  * in X, Y and Z axis as three floating-point values. @ref sensor_event_get_data_cnt and @ref
  * sensor_event_get_data_ptr can be used to access the sensor data provided by a given sensor event.
  *
- * @warning The sensor event related to the given sensor must use the same description as
- *          #sensor_state_event related to the sensor.
+ * @note The sensor event related to the given sensor must use the same description as
+ *       #sensor_state_event related to the sensor.
  */
 struct sensor_event {
 	struct app_event_header header; /**< Event header. */

@@ -76,7 +76,7 @@ typedef void (*nrf_cloud_fota_callback_t)
  * @brief  BLE FOTA handler registered with the nRF Cloud FOTA module to handle
  *  asynchronous events.
  *
- * @warning The memory pointed to by ble_job will be freed after the handler
+ * @note The memory pointed to by ble_job will be freed after the handler
  * has returned.
  *
  * @param[in]  ble_job The BLE FOTA job.
@@ -87,7 +87,7 @@ typedef void (*nrf_cloud_fota_ble_callback_t)
 /**
  * @brief Initialize the nRF Cloud FOTA module.
  *
- * @warning This API must be called prior to using nRF Cloud FOTA and it must
+ * @note This API must be called prior to using nRF Cloud FOTA and it must
  * return successfully.
  *
  * @param[in] cb FOTA event handler.

@@ -495,11 +495,11 @@ void stop_time_measurement(void);
 
 /**@brief   Macro for retrieving a variable from a section.
  *
- * @warning     The stored symbol can only be resolved using this macro if the
- *              type of the data is word aligned. The operation of acquiring
- *              the stored symbol relies on the size of the stored type. No
- *              padding can exist in the named section in between individual
- *              stored items or this macro will fail.
+ * @note     The stored symbol can only be resolved using this macro if the
+ *           type of the data is word aligned. The operation of acquiring
+ *           the stored symbol relies on the size of the stored type. No
+ *           padding can exist in the named section in between individual
+ *           stored items or this macro will fail.
  *
  * @param[in]   section_name    Name of the section.
  * @param[in]   data_type       Data type of the variable.

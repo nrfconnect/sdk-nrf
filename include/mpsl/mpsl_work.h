@@ -33,7 +33,7 @@ extern struct k_work_q mpsl_work_q;
  * processed, or is currently being processed, its work is considered
  * complete and the work item can be resubmitted.
  *
- * @warning
+ * @note
  * Work items submitted to the MPSL workqueue should avoid using handlers
  * that block or yield since this may prevent the MPSL workqueue from
  * processing other work items in a timely manner.

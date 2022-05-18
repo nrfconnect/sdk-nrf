@@ -534,7 +534,7 @@ int bt_hids_disconnected(struct bt_hids *hids_obj, struct bt_conn *conn);
 
 /** @brief Send Input Report.
  *
- *  @warning The function is not thread safe.
+ *  @note The function is not thread safe.
  *	     It can not be called from multiple threads at the same time.
  *
  *  @param hids_obj Pointer to HIDS instance.
@@ -553,7 +553,7 @@ int bt_hids_inp_rep_send(struct bt_hids *hids_obj, struct bt_conn *conn,
 
 /** @brief Send Boot Mouse Input Report.
  *
- *  @warning The function is not thread safe.
+ *  @note The function is not thread safe.
  *	     It can not be called from multiple threads at the same time.
  *
  *  @param hids_obj Pointer to HIDS instance.
@@ -575,7 +575,7 @@ int bt_hids_boot_mouse_inp_rep_send(struct bt_hids *hids_obj,
 
 /** @brief Send Boot Keyboard Input Report.
  *
- *  @warning The function is not thread safe.
+ *  @note The function is not thread safe.
  *	     It can not be called from multiple threads at the same time.
  *
  *  @param hids_obj Pointer to HIDS instance.
