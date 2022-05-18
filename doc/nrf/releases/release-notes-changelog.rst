@@ -94,7 +94,7 @@ Zigbee
 
 * Fixed:
 
-  * In case of an MCU reset between the completion of the OTA image transfer and a postponed firmware upgrade, the upgrade will be applied immediately.
+  * An issue where an MCU reset between the completion of the OTA image transfer and a postponed firmware upgrade would cause the upgrade to be applied immediately.
 
 Applications
 ============

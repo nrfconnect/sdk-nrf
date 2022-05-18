@@ -321,11 +321,15 @@ FOTA over Thread
 
 .. fota_upgrades_thread_end
 
+.. fota_upgrades_zigbee_start
+
 FOTA over Zigbee
 ================
 
-When working with the nRF52840 DK (PCA10056), you can enable support for FOTA over the Zigbee network using the :ref:`lib_zigbee_fota` library.
+You can enable support for FOTA over the Zigbee network using the :ref:`lib_zigbee_fota` library.
 For detailed information about how to configure the Zigbee FOTA library for your application, see :ref:`ug_zigbee_configuring_components_ota`.
+
+.. fota_upgrades_zigbee_end
 
 Building and programming a sample
 *********************************
