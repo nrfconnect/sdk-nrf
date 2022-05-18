@@ -413,9 +413,6 @@ void nrf_modem_lib_shm_tx_diagnose(void)
 #if defined(CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC) || \
 	defined(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC)
 
-static K_THREAD_STACK_DEFINE(work_q_stack_area, 512);
-static struct k_work_q modem_diag_worqk;
-
 enum heap_type {
 	SHMEM, LIBRARY
 };
@@ -559,13 +556,6 @@ void nrf_modem_os_init(void)
 	k_heap_init(&shmem_heap,
 		    (void *)PM_NRF_MODEM_LIB_TX_ADDRESS,
 		    CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE);
-
-#if defined(CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC) || \
-	defined(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC)
-	k_work_queue_start(&modem_diag_worqk, work_q_stack_area,
-			   K_THREAD_STACK_SIZEOF(work_q_stack_area),
-			   K_LOWEST_APPLICATION_THREAD_PRIO, NULL);
-#endif
 
 #ifdef CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC
 	k_work_init_delayable(&shmem_task.work, diag_task);
