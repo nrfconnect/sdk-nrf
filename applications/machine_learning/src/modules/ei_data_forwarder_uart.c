@@ -113,7 +113,7 @@ static bool handle_sensor_event(const struct sensor_event *event)
 					       sizeof(buf));
 
 	if (pos < 0) {
-		atomic_cas(&uart_busy, true, false);
+		(void)atomic_set(&uart_busy, false);
 		LOG_ERR("EI data forwader parsing error: %d", pos);
 		report_error();
 		return false;
@@ -122,7 +122,7 @@ static bool handle_sensor_event(const struct sensor_event *event)
 	int err = uart_tx(dev, buf, pos, SYS_FOREVER_MS);
 
 	if (err) {
-		atomic_cas(&uart_busy, true, false);
+		(void)atomic_set(&uart_busy, false);
 		LOG_ERR("uart_tx error: %d", err);
 		report_error();
 	}
@@ -150,7 +150,7 @@ static bool handle_ml_app_mode_event(const struct ml_app_mode_event *event)
 static void uart_cb(const struct device *dev, struct uart_event *evt, void *user_data)
 {
 	if (evt->type == UART_TX_DONE) {
-		atomic_cas(&uart_busy, true, false);
+		(void)atomic_set(&uart_busy, false);
 	}
 }
 

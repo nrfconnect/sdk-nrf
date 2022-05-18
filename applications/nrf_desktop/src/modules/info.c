@@ -80,7 +80,7 @@ static bool handle_config_event(const struct config_event *event)
 
 		struct config_event *rsp = generate_response(event, name_len);
 
-		strncpy(rsp->dyndata.data, start_ptr, name_len);
+		strncpy((char *)rsp->dyndata.data, start_ptr, name_len);
 		submit_response(rsp);
 		return true;
 	}

@@ -10,8 +10,6 @@
 #include <test_events.h>
 #include <order_event.h>
 
-#include "test_config.h"
-
 
 static enum test_id cur_test_id;
 

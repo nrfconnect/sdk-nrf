@@ -202,7 +202,7 @@ static void handle_remote_command_start(struct emp_ipc_data *ipc, const void *da
 
 	/* Check if all remote cores started. */
 	for (size_t i = 0; i < ARRAY_SIZE(emp_ipc_data); ++i) {
-		struct emp_ipc_data *ipc = &emp_ipc_data[i];
+		ipc = &emp_ipc_data[i];
 
 		if (ipc->used && !ipc->started) {
 			return;

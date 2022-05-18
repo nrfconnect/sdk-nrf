@@ -174,6 +174,9 @@ static int init_fn(void)
 	}
 
 	err = cso_pin_control(true);
+	if (err) {
+		goto error;
+	}
 
 	gpio_init_callback(&gpio_cb, cs_change,
 			   BIT(CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PIN));

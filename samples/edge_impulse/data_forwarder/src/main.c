@@ -81,7 +81,7 @@ static int provide_sensor_data(void)
 		return -EBUSY;
 	}
 
-	int res = snprintf(buf, sizeof(buf), "%.2f,%.2f,%.2f\r\n",
+	int res = snprintf((char *)buf, sizeof(buf), "%.2f,%.2f,%.2f\r\n",
 			   sensor_value_to_double(&data[0]),
 			   sensor_value_to_double(&data[1]),
 			   sensor_value_to_double(&data[2]));

@@ -501,7 +501,7 @@ static void handle_dfu_bootloader_variant(uint8_t *data, size_t *size)
 
 	*size = strlen(BOOTLOADER_NAME);
 	__ASSERT_NO_MSG((*size != 0) && (*size < CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE));
-	strcpy(data, BOOTLOADER_NAME);
+	strcpy((char *)data, BOOTLOADER_NAME);
 }
 
 static void handle_reboot_request(uint8_t *data, size_t *size)

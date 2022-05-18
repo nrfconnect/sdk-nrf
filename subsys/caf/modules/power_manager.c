@@ -9,7 +9,6 @@
 #include <zephyr/pm/policy.h>
 
 #include <zephyr/device.h>
-#include <zephyr/drivers/gpio.h>
 #include <hal/nrf_power.h>
 #include <helpers/nrfx_reset_reason.h>
 #include <zephyr/sys/reboot.h>

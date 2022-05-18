@@ -100,7 +100,7 @@ static int read_state(struct selector *selector)
 static int enable_interrupts_lock(struct selector *selector)
 {
 	const struct gpio_pin *sel_pins = selector->config->pins;
-	int err;
+	int err = 0;
 
 	int key = irq_lock();
 
@@ -126,7 +126,7 @@ static int enable_interrupts_lock(struct selector *selector)
 static int disable_interrupts_nolock(struct selector *selector)
 {
 	const struct gpio_pin *sel_pins = selector->config->pins;
-	int err;
+	int err = 0;
 
 	for (size_t i = 0; i < selector->config->pins_size; i++) {
 		err = gpio_pin_interrupt_configure(gpio_dev[sel_pins[i].port],
