@@ -161,7 +161,6 @@ static const char *location_core_gnss_accuracy_str(enum location_accuracy accura
 static const char LOCATION_SERVICE_ANY_STR[] = "Any";
 static const char LOCATION_SERVICE_NRF_CLOUD_STR[] = "nRF Cloud";
 static const char LOCATION_SERVICE_HERE_STR[] = "HERE";
-static const char LOCATION_SERVICE_SKYHOOK_STR[] = "Skyhook";
 static const char LOCATION_SERVICE_POLTE_STR[] = "Polte";
 
 static const char *location_core_service_str(enum location_service service)
@@ -177,9 +176,6 @@ static const char *location_core_service_str(enum location_service service)
 		break;
 	case LOCATION_SERVICE_HERE:
 		service_str = LOCATION_SERVICE_HERE_STR;
-		break;
-	case LOCATION_SERVICE_SKYHOOK:
-		service_str = LOCATION_SERVICE_SKYHOOK_STR;
 		break;
 	case LOCATION_SERVICE_POLTE:
 		service_str = LOCATION_SERVICE_POLTE_STR;

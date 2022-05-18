@@ -21,8 +21,7 @@ LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
 BUILD_ASSERT(
 	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD) ||
-	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE) ||
-	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK),
+	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE),
 	"At least one Wi-Fi positioning service must be enabled");
 
 struct method_wifi_start_work_args {
@@ -224,7 +223,7 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 	} else {
 		if (latest_scan_result_count == 1) {
 			/* Following statement seems to be true at least with HERE
-			 * (400: bad request) and also with Skyhook (404: not found).
+			 * (400: bad request).
 			 * Thus, fail faster in this case and save the data transfer costs.
 			 */
 			LOG_WRN("Retrieving a location based on a single Wi-Fi "

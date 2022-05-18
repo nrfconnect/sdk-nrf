@@ -88,8 +88,6 @@ enum location_service {
 	LOCATION_SERVICE_NRF_CLOUD,
 	/** HERE location service. */
 	LOCATION_SERVICE_HERE,
-	/** Skyhook location service. */
-	LOCATION_SERVICE_SKYHOOK,
 	/** Polte location service. */
 	LOCATION_SERVICE_POLTE
 };
