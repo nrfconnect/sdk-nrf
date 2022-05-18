@@ -347,6 +347,25 @@ static void zboss_thread(void *arg1, void *arg2, void *arg3)
 	}
 }
 
+zb_bool_t zb_osif_is_inside_isr(void)
+{
+	return (zb_bool_t)(__get_IPSR() != 0);
+}
+
+void zb_osif_enable_all_inter(void)
+{
+	__ASSERT(zb_osif_is_inside_isr() == 0,
+		 "Unable to unlock mutex from interrupt context");
+	k_mutex_unlock(&zigbee_mutex);
+}
+
+void zb_osif_disable_all_inter(void)
+{
+	__ASSERT(zb_osif_is_inside_isr() == 0,
+		 "Unable to lock mutex from interrupt context");
+	k_mutex_lock(&zigbee_mutex, K_FOREVER);
+}
+
 zb_ret_t zigbee_schedule_callback(zb_callback_t func, zb_uint8_t param)
 {
 	if ((zboss_tid) && (k_current_get() == zboss_tid) && (!zb_osif_is_inside_isr())) {
@@ -584,25 +603,6 @@ void zb_reset(zb_uint8_t param)
 	}
 
 	sys_reboot(reas);
-}
-
-zb_bool_t zb_osif_is_inside_isr(void)
-{
-	return (zb_bool_t)(__get_IPSR() != 0);
-}
-
-void zb_osif_enable_all_inter(void)
-{
-	__ASSERT(zb_osif_is_inside_isr() == 0,
-		 "Unable to unlock mutex from interrupt context");
-	k_mutex_unlock(&zigbee_mutex);
-}
-
-void zb_osif_disable_all_inter(void)
-{
-	__ASSERT(zb_osif_is_inside_isr() == 0,
-		 "Unable to lock mutex from interrupt context");
-	k_mutex_lock(&zigbee_mutex, K_FOREVER);
 }
 
 void zb_osif_busy_loop_delay(zb_uint32_t count)
