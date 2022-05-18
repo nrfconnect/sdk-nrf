@@ -169,7 +169,10 @@ nRF Machine Learning (Edge Impulse)
 nRF Desktop
 -----------
 
-* Added documentation for selective HID report subscription in :ref:`nrf_desktop_usb_state` using :ref:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION <config_desktop_app_options>` option.
+* Added:
+
+  * Documentation about nRF21540EK shield support.
+  * Documentation for selective HID report subscription in :ref:`nrf_desktop_usb_state` using :ref:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION <config_desktop_app_options>` option.
 
 * Removed configurations without a bootloader.
   The B0 bootloader is enabled by default on all boards if the configuration with two image slots fits in memory.
