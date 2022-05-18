@@ -798,6 +798,29 @@ By default, this period is set to 120 seconds.
     If a nRF Desktop device supports remote wakeup, the USB connected device goes to suspended state when USB is suspended.
     The device can then trigger remote wakeup of the connected host on user input.
 
+Configuration
+*************
+
+|config|
+
+Adding nRF21540 EK shield support
+=================================
+
+The nRF Desktop application can be used with the :ref:`ug_radio_fem_nrf21540_ek` shield, an RF front-end module (FEM) for the 2.4 GHz range extension.
+The shield can be used with any nRF Desktop HID application configured for a development kit that is fitted with Arduino-compatible connector (see the :guilabel:`DK` tab in `Requirements`_).
+This means that the shield support is not available for nRF Desktop's dedicated boards, such as ``nrf52840gmouse_nrf52840``, ``nrf52kbd_nrf52832``, or ``nrf52840dongle_nrf52840``.
+To build the application with the shield support, pass the ``SHIELD`` parameter to the build command.
+
+For detailed information about building the nRF Desktop application for the nRF21540 EK, see the :ref:`ug_radio_fem_nrf21540_ek_programming` section on the nRF21540 EK documentation page.
+
+.. note::
+   For the multi-core build, use the ``hci_rpmsg_`` as the *childImageName* parameter, because in the nRF Desktop application, network core runs using ``hci_rpmsg_``.
+   The command would look as follows:
+
+   .. code-block:: console
+
+      west build -b nrf5340dk_nrf5340_cpuapp -- -DSHIELD=nrf21540_ek -Dhci_rpmsg_SHIELD=nrf21540_ek
+
 Building and running
 ********************
 
