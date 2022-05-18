@@ -797,6 +797,7 @@ Libraries for Zigbee
       * The image generation script by introducing the sub-element structure inside the Zigbee OTA image.
         Enable :kconfig:option:`CONFIG_ZIGBEE_FOTA_GENERATE_LEGACY_IMAGE_TYPE` to generate images compatible with previous NCS releases.
       * Default value of the :kconfig:option:`CONFIG_ZIGBEE_FOTA_IMAGE_TYPE` to 0x0141.
+      * Setting of the :kconfig:option:`CONFIG_NRF53_ENFORCE_IMAGE_VERSION_EQUALITY` for nRF5340 SoC to ensure integrity of the upgrade image.
 
     * Removed:
 
