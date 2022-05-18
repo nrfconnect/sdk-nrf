@@ -69,10 +69,10 @@ static const char location_get_usage_str[] =
 	"  --gnss_cloud_pvt,   Send acquired GNSS location to nRF Cloud formatted as PVT\n"
 	"  --cellular_timeout, Cellular timeout in seconds\n"
 	"  --cellular_service, Used cellular positioning service:\n"
-	"                      'any' (default), 'nrf', 'skyhook', 'here' or 'polte'\n"
+	"                      'any' (default), 'nrf', 'here' or 'polte'\n"
 	"  --wifi_timeout,     Wi-Fi timeout in seconds\n"
 	"  --wifi_service,     Used Wi-Fi positioning service:\n"
-	"                      'any' (default), 'nrf', 'skyhook' or 'here'\n";
+	"                      'any' (default), 'nrf' or 'here'\n";
 
 /******************************************************************************/
 
@@ -141,8 +141,6 @@ static enum location_service location_shell_string_to_service(const char *servic
 		service = LOCATION_SERVICE_NRF_CLOUD;
 	} else if (strcmp(service_str, "here") == 0) {
 		service = LOCATION_SERVICE_HERE;
-	} else if (strcmp(service_str, "skyhook") == 0) {
-		service = LOCATION_SERVICE_SKYHOOK;
 	} else if (strcmp(service_str, "polte") == 0) {
 		service = LOCATION_SERVICE_POLTE;
 	}
