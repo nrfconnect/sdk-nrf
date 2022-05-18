@@ -302,6 +302,8 @@ struct bt_mesh_sensor_series {
 	 *  range, and values that don't fit in any of the columns should be
 	 *  ignored. If columns overlap, samples must be present in all columns
 	 *  they fall into. The columns may come in any order.
+	 *
+	 *  This list is not used for sensor types with one or two channels.
 	 */
 	const struct bt_mesh_sensor_column *columns;
 
@@ -313,22 +315,23 @@ struct bt_mesh_sensor_series {
 	 *  Should return the historical data for the latest sensor readings in
 	 *  the given column.
 	 *
-	 *  @param[in]  srv    Sensor server associated with sensor instance.
-	 *  @param[in]  sensor Sensor pointer.
-	 *  @param[in]  ctx    Message context pointer, or NULL if this call
-	 *                     didn't originate from a mesh message.
-	 *  @param[in]  column The requested sensor column. Points to a column
-	 *                     in the @c columns array.
-	 *  @param[out] value  Sensor value response buffer. Holds the number of
-	 *                     channels indicated by the sensor type. All
-	 *                     channels must be filled.
+	 *  @param[in]  srv          Sensor server associated with sensor instance.
+	 *  @param[in]  sensor       Sensor pointer.
+	 *  @param[in]  ctx          Message context pointer, or NULL if this call
+	 *                           didn't originate from a mesh message.
+	 *  @param[in]  column_index The index of the requested sensor column.
+	 *                           Index into the @c columns array for sensors
+	 *                           with more than two channels.
+	 *  @param[out] value        Sensor value response buffer. Holds the number
+	 *                           of channels indicated by the sensor type. All
+	 *                           channels must be filled.
 	 *
 	 *  @return 0 on success, or (negative) error code otherwise.
 	 */
 	int (*get)(struct bt_mesh_sensor_srv *srv,
 		struct bt_mesh_sensor *sensor,
 		struct bt_mesh_msg_ctx *ctx,
-		const struct bt_mesh_sensor_column *column,
+		uint32_t column_index,
 		struct sensor_value *value);
 };
 
@@ -352,9 +355,9 @@ struct bt_mesh_sensor {
 
 	/** Sensor series specification.
 	 *
-	 *  Only sensors whose type have the @ref
-	 *  BT_MESH_SENSOR_TYPE_FLAG_SERIES flag set, a non-empty list of
-	 *  columns and a defined series getter will accept series messages.
+	 *  Only sensors who have a non-zero column-count and a defined
+	 *  series getter will accept series messages. Sensors with more than
+	 *  two channels also require a non-empty list of columns.
 	 */
 	const struct bt_mesh_sensor_series series;
 

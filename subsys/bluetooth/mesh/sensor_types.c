@@ -769,7 +769,6 @@ SENSOR_TYPE(time_since_presence_detected) = {
  ******************************************************************************/
 SENSOR_TYPE(avg_amb_temp_in_day) = {
 	.id = BT_MESH_PROP_ID_AVG_AMB_TEMP_IN_A_PERIOD_OF_DAY,
-	.flags = BT_MESH_SENSOR_TYPE_FLAG_SERIES,
 	CHANNELS(CHANNEL("Temperature", temp_8),
 		 CHANNEL("Start time", time_decihour_8),
 		 CHANNEL("End time", time_decihour_8)),
@@ -931,7 +930,6 @@ SENSOR_TYPE(present_dev_op_temp) = {
 
 SENSOR_TYPE(rel_runtime_in_a_dev_op_temp_range) = {
 	.id = BT_MESH_PROP_ID_REL_RUNTIME_IN_A_DEV_OP_TEMP_RANGE,
-	.flags = BT_MESH_SENSOR_TYPE_FLAG_SERIES,
 	CHANNELS(CHANNEL("Relative value", percentage_8),
 		 CHANNEL("Min", temp),
 		 CHANNEL("Max", temp))
@@ -986,7 +984,6 @@ SENSOR_TYPE(present_input_voltage) = {
 };
 SENSOR_TYPE(rel_runtime_in_an_input_current_range) = {
 	.id = BT_MESH_PROP_ID_REL_RUNTIME_IN_AN_INPUT_CURRENT_RANGE,
-	.flags = BT_MESH_SENSOR_TYPE_FLAG_SERIES,
 	CHANNELS(CHANNEL("Relative runtime value", percentage_8),
 		 CHANNEL("Min", electric_current),
 		 CHANNEL("Max", electric_current)),
@@ -994,7 +991,6 @@ SENSOR_TYPE(rel_runtime_in_an_input_current_range) = {
 
 SENSOR_TYPE(rel_runtime_in_an_input_voltage_range) = {
 	.id = BT_MESH_PROP_ID_REL_RUNTIME_IN_AN_INPUT_VOLTAGE_RANGE,
-	.flags = BT_MESH_SENSOR_TYPE_FLAG_SERIES,
 	CHANNELS(CHANNEL("Relative runtime value", percentage_8),
 		 CHANNEL("Min", voltage),
 		 CHANNEL("Max", voltage)),
@@ -1035,7 +1031,6 @@ SENSOR_TYPE(power_factor) = {
 };
 SENSOR_TYPE(rel_dev_energy_use_in_a_period_of_day) = {
 	.id = BT_MESH_PROP_ID_REL_DEV_ENERGY_USE_IN_A_PERIOD_OF_DAY,
-	.flags = BT_MESH_SENSOR_TYPE_FLAG_SERIES,
 	CHANNELS(CHANNEL("Energy", energy),
 		 CHANNEL("Start time", time_decihour_8),
 		 CHANNEL("End time", time_decihour_8)),
@@ -1106,7 +1101,6 @@ SENSOR_TYPE(present_planckian_distance) = {
 };
 SENSOR_TYPE(rel_exposure_time_in_an_illuminance_range) = {
 	.id = BT_MESH_PROP_ID_REL_EXPOSURE_TIME_IN_AN_ILLUMINANCE_RANGE,
-	.flags = BT_MESH_SENSOR_TYPE_FLAG_SERIES,
 	CHANNELS(CHANNEL("Relative value", percentage_8),
 		 CHANNEL("Min", illuminance),
 		 CHANNEL("Max", illuminance))
@@ -1196,7 +1190,6 @@ SENSOR_TYPE(gain) = {
 };
 SENSOR_TYPE(rel_dev_runtime_in_a_generic_level_range) = {
 	.id = BT_MESH_PROP_ID_REL_DEV_RUNTIME_IN_A_GENERIC_LEVEL_RANGE,
-	.flags = BT_MESH_SENSOR_TYPE_FLAG_SERIES,
 	CHANNELS(CHANNEL("Relative value", percentage_8),
 		 CHANNEL("Min", gen_lvl),
 		 CHANNEL("Max", gen_lvl)),

@@ -119,7 +119,6 @@ extern const struct bt_mesh_sensor_type
 
 /** Average ambient temperature in a period of day
  *
- *  This sensor type supports series access.
  *  The series X-axis is measured in Hours.
  *
  *  Channels:
@@ -613,7 +612,6 @@ extern const struct bt_mesh_sensor_type bt_mesh_sensor_present_dev_op_temp;
 
 /** Relative runtime in a device operating temperature range
  *
- *  This sensor type supports series access.
  *  The series X-axis is measured in Celsius.
  *
  *  Channels:
@@ -799,7 +797,6 @@ extern const struct bt_mesh_sensor_type bt_mesh_sensor_precise_present_amb_temp;
 
 /** Relative runtime in an input current range
  *
- *  This sensor type supports series access.
  *  The series X-axis is measured in Ampere.
  *
  *  Channels:
@@ -821,7 +818,6 @@ extern const struct bt_mesh_sensor_type
 
 /** Relative runtime in an input voltage range
  *
- *  This sensor type supports series access.
  *  The series X-axis is measured in Volt.
  *
  *  Channels:
@@ -933,7 +929,6 @@ extern const struct bt_mesh_sensor_type bt_mesh_sensor_power_factor;
 
 /** Relative device energy use in a period of day
  *
- *  This sensor type supports series access.
  *  The series X-axis is measured in Hours.
  *
  *  Channels:
@@ -1114,7 +1109,6 @@ extern const struct bt_mesh_sensor_type
 
 /** Relative exposure time in an illuminance range
  *
- *  This sensor type supports series access.
  *  The series X-axis is measured in Lux.
  *
  *  Channels:
@@ -1325,7 +1319,6 @@ extern const struct bt_mesh_sensor_type bt_mesh_sensor_gain;
 
 /** Relative device runtime in a generic level range
  *
- *  This sensor type supports series access.
  *  The series X-axis is unitless.
  *
  *  Channels:

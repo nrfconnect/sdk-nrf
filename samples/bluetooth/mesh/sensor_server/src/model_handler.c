@@ -74,13 +74,12 @@ static struct bt_mesh_sensor chip_temp = {
 static int relative_runtime_in_chip_temp_get(struct bt_mesh_sensor_srv *srv,
 	struct bt_mesh_sensor *sensor,
 	struct bt_mesh_msg_ctx *ctx,
-	const struct bt_mesh_sensor_column *column,
+	uint32_t column_index,
 	struct sensor_value *value)
 {
 	if (tot_temp_samps) {
-		int32_t index = column - &columns[0];
 		uint8_t percent_steps =
-			(200 * col_samps[index]) / tot_temp_samps;
+			(200 * col_samps[column_index]) / tot_temp_samps;
 
 		value[0].val1 = percent_steps / 2;
 		value[0].val2 = (percent_steps % 2) * 500000;
@@ -89,8 +88,8 @@ static int relative_runtime_in_chip_temp_get(struct bt_mesh_sensor_srv *srv,
 		value[0].val2 = 0;
 	}
 
-	value[1] = column->start;
-	value[2] = column->end;
+	value[1] = columns[column_index].start;
+	value[2] = columns[column_index].end;
 
 	return 0;
 }
