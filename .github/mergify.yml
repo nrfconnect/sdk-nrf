@@ -18,3 +18,4 @@ pull_request_rules:
       merge:
         method: rebase
         rebase_fallback: none
+        merge_bot_account: NordicBuilder
