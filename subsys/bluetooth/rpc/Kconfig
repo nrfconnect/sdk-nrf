@@ -95,6 +95,10 @@ if BT_RPC_CLIENT
 config HEAP_MEM_POOL_SIZE
 	default 4096
 
+config BT_DRIVERS
+	bool "Bluetooth Drivers"
+	default n
+
 endif # BT_RPC_CLIENT
 
 if BT_RPC_HOST
