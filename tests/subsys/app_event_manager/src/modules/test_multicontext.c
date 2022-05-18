@@ -44,7 +44,6 @@ static K_THREAD_STACK_DEFINE(thread_stack2, THREAD_STACK_SIZE);
 
 static struct k_thread thread1;
 static struct k_thread thread2;
-static enum test_id cur_test_id;
 
 static void thread1_fn(void)
 {
@@ -81,7 +80,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		switch (st->test_id) {
 		case TEST_MULTICONTEXT:
 		{
-			cur_test_id = st->test_id;
 			start_test();
 
 			break;

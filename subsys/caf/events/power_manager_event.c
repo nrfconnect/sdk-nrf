@@ -8,7 +8,6 @@
 
 #include <assert.h>
 #include <zephyr/sys/util.h>
-#include <stdio.h>
 #include <caf/events/module_state_event.h>
 
 

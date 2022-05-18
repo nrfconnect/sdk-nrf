@@ -374,7 +374,7 @@ static void fetch_config(const uint8_t opt_id, uint8_t *data, size_t *size)
 		*size = strlen(CONFIG_DESKTOP_MOTION_SENSOR_TYPE);
 		__ASSERT_NO_MSG((*size != 0) &&
 				(*size < CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE));
-		strcpy(data, CONFIG_DESKTOP_MOTION_SENSOR_TYPE);
+		strcpy((char *)data, CONFIG_DESKTOP_MOTION_SENSOR_TYPE);
 	} else {
 		enum motion_sensor_option option = config_opt_id_2_option(opt_id);
 

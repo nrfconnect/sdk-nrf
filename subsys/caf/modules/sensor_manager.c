@@ -180,8 +180,10 @@ static void sensor_wake_up_post(const struct sm_sensor_config *sc, struct sensor
 
 static void trigger_handler(const struct device *dev, const struct sensor_trigger *trigger)
 {
-	sensor_trigger_set(dev, trigger, NULL);
+	int err = sensor_trigger_set(dev, trigger, NULL);
 
+	ARG_UNUSED(err);
+	__ASSERT_NO_MSG(!err);
 	const struct sm_sensor_config *sc = get_sensor_config(dev);
 	struct sensor_data *sd = get_sensor_data(dev);
 
@@ -490,7 +492,9 @@ static bool handle_wake_up_event(const struct app_event_header *aeh)
 			int ret = 0;
 
 			if (sc->trigger) {
-				sensor_trigger_set(sc->dev, &sc->trigger->cfg, NULL);
+				ret = sensor_trigger_set(sc->dev, &sc->trigger->cfg, NULL);
+				__ASSERT_NO_MSG(!ret);
+				ret = 0;
 			} else if (sc->suspend) {
 				ret = pm_device_action_run(sc->dev, PM_DEVICE_ACTION_RESUME);
 				if (ret) {

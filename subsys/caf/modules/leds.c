@@ -5,7 +5,6 @@
  */
 
 #include <zephyr/kernel.h>
-#include <assert.h>
 #include <zephyr/drivers/led.h>
 #include <zephyr/pm/device.h>
 
