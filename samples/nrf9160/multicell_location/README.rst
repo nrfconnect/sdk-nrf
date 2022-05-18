@@ -34,7 +34,6 @@ Currently, you can use the sample with the following location services supported
 
 * `nRF Cloud Location Services`_
 * `HERE Positioning`_
-* `Skyhook Precision Location`_
 * `Polte Location API`_
 
 Before you use the services, see the :ref:`lib_multicell_location` library documentation and the respective location service documentation for the required setup.
@@ -98,7 +97,7 @@ Setup
 =====
 
 To use one of the supported location services, you must have an account and a configured authorization method.
-Follow the documentation on `nRF Cloud`_, `HERE Positioning`_ or `Skyhook Precision Location`_ for account creation and authorization method details.
+Follow the documentation on `nRF Cloud`_ or `HERE Positioning`_ for account creation and authorization method details.
 
 
 Configuration options
@@ -118,7 +117,6 @@ Check and configure the following library options that are used by the sample:
 
 * :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
 * :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY`
-* :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
 * :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_POLTE` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_CUSTOMER_ID` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_API_TOKEN`
 
 See :ref:`lib_multicell_location` for more information on the various configuration options available for the services.
