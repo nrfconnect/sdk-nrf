@@ -106,7 +106,8 @@ See the documentation or specification for the individual sensor channels for mo
 Sensor series types
 *******************
 
-Some sensor types are made specially for being used in a sensor series.
+The sensor series functionality may be used for all sensor types.
+However, some sensor types are made specifically for being used in a sensor series.
 These sensor types have one primary channel containing the sensor data and two secondary channels that denote some interval in which the primary channel's data is captured.
 Together, the three channels are able to represent historical sensor data as a histogram, and Sensor Client models may request access to specific measurement spans from a Sensor Server model.
 
@@ -253,15 +254,16 @@ Publication may also be forced by calling :c:func:`bt_mesh_sensor_srv_sample`, w
 Sensor series
 *************
 
-Sensor series data is organized into a static set of columns, specified at init.
-The sensor series :c:member:`bt_mesh_sensor_series.get` callback must be implemented to enable the sensor's series data feature.
-Only some sensor types support series access, see the sensor type's documentation.
+Sensor series data can be provided for all sensor types.
+To enable the sensor's series data feature, :c:member:`bt_mesh_sensor_series.column_count` must be specified and the sensor series :c:member:`bt_mesh_sensor_series.get` callback must be implemented.
+
+For sensor types with more than two channels, the series data is organized into a static set of columns, specified at init.
 The format of the column may be queried with :c:func:`bt_mesh_sensor_column_format_get`.
 
-The ``get`` callback gets called with a direct pointer to one of the columns in the column list, and is expected to fill the ``value`` parameter with sensor data for the specified column.
+The ``get`` callback gets called with an index of one of the columns, and is expected to fill the ``value`` parameter with sensor data for the specified column.
 If a Sensor Client requests a series of columns, the callback may be called repeatedly, requesting data from each column.
 
-Example: Average ambient temperature in a period of day as a sensor series:
+Example: A three-channel sensor (average ambient temperature in a period of day) as a sensor series:
 
 .. code-block:: c
 
@@ -286,17 +288,37 @@ Example: Average ambient temperature in a period of day as a sensor series:
    static struct sensor_value avg_temp[ARRAY_SIZE(columns)];
 
    static int getter(struct bt_mesh_sensor *sensor, struct bt_mesh_msg_ctx *ctx,
-		                 const struct bt_mesh_sensor_column *column,
-		                 struct sensor_value *value)
+                     uint32_t column_index, struct sensor_value *value)
    {
-       /* The column pointer is always a direct pointer to one of our columns,
-        *  so determining the column index is easy:
-        */
-       uint32_t index = column - &columns[0];
+       value[0] = avg_temp[column_index];
+       value[1] = columns[column_index].start;
+       value[2] = columns[column_index].end;
 
-       value[0] = avg_temp[index];
-       value[1] = column->start;
-       value[2] = column->end;
+       return 0;
+   }
+
+Example: Single-channel sensor (motion sensed) as a sensor series:
+
+.. code-block:: c
+
+   #define COLUMN_COUNT 10
+
+   static struct bt_mesh_sensor motion_sensor = {
+       .type = &bt_mesh_sensor_motion_sensed,
+       .series = {
+            /* Note: no column array necessary for 1 or 2 channel sensors */
+            .column_count = COLUMN_COUNT,
+            .get = getter,
+        },
+   };
+
+   /** Sensor data is divided into columns and filled elsewhere */
+   static struct sensor_value motion[COLUMN_COUNT];
+
+   static int getter(struct bt_mesh_sensor *sensor, struct bt_mesh_msg_ctx *ctx,
+                     uint32_t column_index, struct sensor_value *value)
+   {
+       value[0] = motion[column_index];
 
        return 0;
    }

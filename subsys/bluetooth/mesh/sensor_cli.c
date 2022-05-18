@@ -189,6 +189,12 @@ static int parse_series_entry(const struct bt_mesh_sensor_type *type,
 {
 	int err;
 
+	if (col_format == NULL) {
+		// Indexed column, decode only value
+		memset(entry, 0, sizeof(struct bt_mesh_sensor_series_entry));
+		return sensor_value_decode(buf, type, entry->value);
+	}
+
 	err = sensor_ch_decode(buf, col_format, &entry->column.start);
 	if (err) {
 		return err;
@@ -233,13 +239,9 @@ static int handle_column_status(struct bt_mesh_model *model, struct bt_mesh_msg_
 		return -ENOENT;
 	}
 
-	col_format = bt_mesh_sensor_column_format_get(type);
-	if (!col_format) {
-		BT_WARN("Received unsupported column format 0x%04x", id);
-		return -ENOENT;
-	}
-
 	struct bt_mesh_sensor_series_entry entry;
+
+	col_format = bt_mesh_sensor_column_format_get(type);
 
 	err = parse_series_entry(type, col_format, buf, &entry);
 	if (err == -ENOENT) {
@@ -295,19 +297,13 @@ static int handle_series_status(struct bt_mesh_model *model, struct bt_mesh_msg_
 		}
 	}
 
+	size_t val_len = sensor_value_len(type);
+
 	col_format = bt_mesh_sensor_column_format_get(type);
-	if (!col_format) {
-		BT_WARN("Received unsupported column format 0x%04x", id);
-
-		if (rsp) {
-			rsp->count = 0;
-			bt_mesh_msg_ack_ctx_rx(&cli->ack_ctx);
-		}
-
-		return -ENOENT;
+	if (col_format != NULL) {
+		val_len += (col_format->size * 2);
 	}
 
-	size_t val_len = (col_format->size * 2) + sensor_value_len(type);
 	uint8_t count = buf->len / val_len;
 
 	for (uint8_t i = 0; i < count; i++) {
@@ -932,16 +928,22 @@ int bt_mesh_sensor_cli_series_entry_get(
 	const struct bt_mesh_sensor_column *column,
 	struct bt_mesh_sensor_series_entry *rsp)
 {
+	const struct bt_mesh_sensor_format *col_format;
 	int err;
 
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_SENSOR_OP_COLUMN_GET,
 				 BT_MESH_SENSOR_MSG_MAXLEN_COLUMN_GET);
 	bt_mesh_model_msg_init(&msg, BT_MESH_SENSOR_OP_COLUMN_GET);
 	net_buf_simple_add_le16(&msg, sensor->id);
-	err = sensor_ch_encode(&msg, bt_mesh_sensor_column_format_get(sensor),
-			       &column->start);
-	if (err) {
-		return err;
+
+	col_format = bt_mesh_sensor_column_format_get(sensor);
+	if (col_format == NULL) {
+		net_buf_simple_add_le16(&msg, column->start.val1);
+	} else {
+		err = sensor_ch_encode(&msg, col_format, &column->start);
+		if (err) {
+			return err;
+		}
 	}
 
 	struct series_data_rsp rsp_data = {
@@ -983,14 +985,19 @@ int bt_mesh_sensor_cli_series_entries_get(
 
 		col_format = bt_mesh_sensor_column_format_get(sensor);
 
-		err = sensor_ch_encode(&msg, col_format, &range->start);
-		if (err) {
-			return err;
-		}
+		if (!col_format) {
+			net_buf_simple_add_le16(&msg, range->start.val1);
+			net_buf_simple_add_le16(&msg, range->end.val1);
+		} else {
+			err = sensor_ch_encode(&msg, col_format, &range->start);
+			if (err) {
+				return err;
+			}
 
-		err = sensor_ch_encode(&msg, col_format, &range->end);
-		if (err) {
-			return err;
+			err = sensor_ch_encode(&msg, col_format, &range->end);
+			if (err) {
+				return err;
+			}
 		}
 	}
 

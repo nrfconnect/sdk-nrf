@@ -155,6 +155,11 @@ int sensor_ch_decode(struct net_buf_simple *buf,
 		     const struct bt_mesh_sensor_format *format,
 		     struct sensor_value *value);
 
+int sensor_column_value_encode(struct net_buf_simple *buf,
+			       struct bt_mesh_sensor_srv *srv,
+			       struct bt_mesh_sensor *sensor,
+			       struct bt_mesh_msg_ctx *ctx,
+			       uint32_t column_index);
 int sensor_column_encode(struct net_buf_simple *buf,
 			 struct bt_mesh_sensor_srv *srv,
 			 struct bt_mesh_sensor *sensor,

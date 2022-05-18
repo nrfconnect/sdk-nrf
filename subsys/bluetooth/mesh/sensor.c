@@ -245,12 +245,27 @@ int sensor_status_encode(struct net_buf_simple *buf,
 const struct bt_mesh_sensor_format *
 bt_mesh_sensor_column_format_get(const struct bt_mesh_sensor_type *type)
 {
-	if (type->flags & BT_MESH_SENSOR_TYPE_FLAG_SERIES &&
-	    type->channel_count >= 2) {
+	if (type->channel_count > 2) {
 		return type->channels[1].format;
 	}
 
-	return &bt_mesh_sensor_format_time_decihour_8;
+	return NULL;
+}
+
+int sensor_column_value_encode(struct net_buf_simple *buf,
+			       struct bt_mesh_sensor_srv *srv,
+			       struct bt_mesh_sensor *sensor,
+			       struct bt_mesh_msg_ctx *ctx,
+			       uint32_t column_index)
+{
+	struct sensor_value values[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
+	int err = sensor->series.get(srv, sensor, ctx, column_index, values);
+
+	if (err) {
+		return err;
+	}
+
+	return sensor_value_encode(buf, sensor->type, values);
 }
 
 int sensor_column_encode(struct net_buf_simple *buf,
@@ -259,7 +274,8 @@ int sensor_column_encode(struct net_buf_simple *buf,
 			 struct bt_mesh_msg_ctx *ctx,
 			 const struct bt_mesh_sensor_column *col)
 {
-	struct sensor_value values[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
+	int col_index = col - sensor->series.columns;
+
 	const struct bt_mesh_sensor_format *col_format;
 	const uint64_t width_million =
 		(col->end.val1 - col->start.val1) * 1000000ULL +
@@ -288,12 +304,7 @@ int sensor_column_encode(struct net_buf_simple *buf,
 		return err;
 	}
 
-	err = sensor->series.get(srv, sensor, ctx, col, values);
-	if (err) {
-		return err;
-	}
-
-	return sensor_value_encode(buf, sensor->type, values);
+	return sensor_column_value_encode(buf, srv, sensor, ctx, col_index);
 }
 
 int sensor_column_decode(
