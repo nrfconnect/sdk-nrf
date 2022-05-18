@@ -37,8 +37,6 @@ enum multicell_service {
 	MULTICELL_SERVICE_NRF_CLOUD,
 	/** Here location service. */
 	MULTICELL_SERVICE_HERE,
-	/** Skyhook location service. */
-	MULTICELL_SERVICE_SKYHOOK,
 	/** Polte location service. */
 	MULTICELL_SERVICE_POLTE
 };

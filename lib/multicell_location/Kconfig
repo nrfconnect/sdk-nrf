@@ -31,13 +31,6 @@ config MULTICELL_LOCATION_SERVICE_HERE
 	help
 	  Use HERE location service
 
-config MULTICELL_LOCATION_SERVICE_SKYHOOK
-	bool "Skyhook location service"
-	select REST_CLIENT
-	depends on MODEM_JWT
-	help
-	  Use Skyhook location service
-
 config MULTICELL_LOCATION_SERVICE_POLTE
 	bool "Polte location service"
 	select REST_CLIENT
@@ -124,36 +117,6 @@ config MULTICELL_LOCATION_HERE_TLS_SEC_TAG
 	  certificates when multicell_location_provision_certificate() is called.
 
 endif # MULTICELL_LOCATION_SERVICE_HERE
-
-if MULTICELL_LOCATION_SERVICE_SKYHOOK
-
-config MULTICELL_LOCATION_SKYHOOK_API_KEY
-	string "Skyhook API key"
-	help
-	  Skyhook API key to use for authentication towards Skyhook location
-	  service
-
-config MULTICELL_LOCATION_SKYHOOK_HTTPS_PORT
-	int "HTTPS port number for Skyhook"
-	default 443
-	help
-	  Port number to use when connecting to Skyhook location service
-
-config MULTICELL_LOCATION_SKYHOOK_HOSTNAME
-	string "Server hostname for Skyhook"
-	default "global.skyhookwireless.com"
-	help
-	  Server hostname to use when connecting to Skyhook location service
-
-config MULTICELL_LOCATION_SKYHOOK_TLS_SEC_TAG
-	int "Security tag for Skyhook TLS certificates"
-	default 176
-	help
-	  Security tag where the required TLS certificates for Skyhook
-	  service will be stored. This sec tag will also be used to provision
-	  certificates when multicell_location_provision_certificate() is called.
-
-endif # MULTICELL_LOCATION_SERVICE_SKYHOOK
 
 if MULTICELL_LOCATION_SERVICE_POLTE
 

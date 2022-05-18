@@ -851,8 +851,6 @@
 
 .. _`HERE Positioning`: https://www.here.com/platform/positioning
 
-.. _`Skyhook Precision Location`: https://www.skyhook.com/precision-location
-
 .. _`Polte Location API`: https://www.polte.com/solutions/polte-location-api
 
 .. _`SPDX tool`: https://spdx.dev/
