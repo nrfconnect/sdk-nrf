@@ -186,7 +186,7 @@ static void bt_get_name_out_rpc_rsp(struct nrf_rpc_cbor_ctx *ctx, void *handler_
 		(struct bt_get_name_out_rpc_res *)handler_data;
 
 	res->result = ser_decode_bool(ctx);
-	ser_decode_str(ctx, res->name, (res->size));
+	(void)ser_decode_str(ctx, res->name, (res->size));
 }
 
 static bool bt_get_name_out(char *name, size_t size)

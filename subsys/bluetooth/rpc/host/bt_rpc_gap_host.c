@@ -113,7 +113,7 @@ static void bt_set_name_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *handler_
 
 	SER_SCRATCHPAD_DECLARE(&scratchpad, ctx);
 
-	name = ser_decode_str_into_scratchpad(&scratchpad);
+	name = ser_decode_str_into_scratchpad(&scratchpad, NULL);
 
 	if (!ser_decoding_done_and_check(ctx)) {
 		goto decoding_error;

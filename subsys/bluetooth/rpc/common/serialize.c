@@ -242,6 +242,42 @@ const void *ser_decode_buffer_ptr_and_size(struct nrf_rpc_cbor_ctx *ctx, size_t 
 	return zst.value;
 }
 
+char *ser_decode_str(struct nrf_rpc_cbor_ctx *ctx, char *buffer, size_t buffer_size)
+{
+	struct zcbor_string zst;
+
+	if (is_decoder_invalid(ctx)) {
+		return NULL;
+	}
+
+	if (zcbor_nil_expect(ctx->zs, NULL)) {
+		return NULL;
+	}
+
+	if (ctx->zs->constant_state->error != ZCBOR_ERR_WRONG_TYPE) {
+		return NULL;
+	}
+
+	zcbor_pop_error(ctx->zs);
+
+	if (!zcbor_tstr_decode(ctx->zs, &zst)) {
+		return NULL;
+	}
+
+	/* We need to have place for null terminator also. */
+	if ((zst.len + 1) > buffer_size) {
+		zcbor_error(ctx->zs, ZCBOR_ERR_UNKNOWN);
+		return NULL;
+	}
+
+	memcpy(buffer, zst.value, zst.len);
+
+	/* Add NULL terminator */
+	buffer[zst.len] = '\0';
+
+	return buffer;
+}
+
 char *ser_decode_str_into_scratchpad(struct ser_scratchpad *scratchpad, size_t *len)
 {
 	struct nrf_rpc_cbor_ctx *ctx = scratchpad->ctx;
@@ -267,13 +303,17 @@ char *ser_decode_str_into_scratchpad(struct ser_scratchpad *scratchpad, size_t *
 		return NULL;
 	}
 
-	result = (char *)ser_scratchpad_add(scratchpad, zst.len);
+	/* Reserve place for string and a string NULL terminator. */
+	result = (char *)ser_scratchpad_add(scratchpad, (zst.len + 1));
 	if (!result) {
 		err = ZCBOR_ERR_UNKNOWN;
 		goto error_exit;
 	}
 
 	memcpy(result, zst.value, zst.len);
+
+	/* Add NULL terminator */
+	result[zst.len] = '\0';
 
 	if (len != NULL) {
 		*len = zst.len;
