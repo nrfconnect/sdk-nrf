@@ -12,7 +12,6 @@
 #include "location_service.h"
 #include "nrf_cloud_integration.h"
 #include "here_integration.h"
-#include "skyhook_integration.h"
 #include "polte_integration.h"
 
 static char recv_buf[CONFIG_MULTICELL_LOCATION_RECV_BUF_SIZE];
@@ -27,11 +26,6 @@ const char *location_service_get_certificate(enum multicell_service service)
 #if defined(CONFIG_MULTICELL_LOCATION_SERVICE_HERE)
 	if (service == MULTICELL_SERVICE_HERE) {
 		return location_service_get_certificate_here();
-	}
-#endif
-#if defined(CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK)
-	if (service == MULTICELL_SERVICE_SKYHOOK) {
-		return location_service_get_certificate_skyhook();
 	}
 #endif
 #if defined(CONFIG_MULTICELL_LOCATION_SERVICE_POLTE)
@@ -56,12 +50,6 @@ int location_service_get_cell_location(
 #if defined(CONFIG_MULTICELL_LOCATION_SERVICE_HERE)
 	if (service == MULTICELL_SERVICE_HERE || service == MULTICELL_SERVICE_ANY) {
 		return location_service_get_cell_location_here(
-			cell_data, recv_buf, sizeof(recv_buf), location);
-	}
-#endif
-#if defined(CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK)
-	if (service == MULTICELL_SERVICE_SKYHOOK || service == MULTICELL_SERVICE_ANY) {
-		return location_service_get_cell_location_skyhook(
 			cell_data, recv_buf, sizeof(recv_buf), location);
 	}
 #endif
