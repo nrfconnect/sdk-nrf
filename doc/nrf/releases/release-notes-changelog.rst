@@ -525,6 +525,10 @@ Modem libraries
       * Removed dependency on the :ref:`lib_modem_jwt` library.
         The :ref:`lib_location` library now selects :kconfig:option:`CONFIG_NRF_CLOUD_REST_AUTOGEN_JWT` when using :kconfig:option:`CONFIG_NRF_CLOUD_REST`.
 
+      * Removed:
+
+        * Support for Skyhook.
+
   * :ref:`nrf_modem_lib_readme` library:
 
     * Added:

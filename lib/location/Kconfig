@@ -91,12 +91,6 @@ config LOCATION_METHOD_WIFI_SERVICE_HERE
 	help
 	  Use HERE location service.
 
-config LOCATION_METHOD_WIFI_SERVICE_SKYHOOK
-	bool "Wi-Fi positioning using Skyhook service"
-	depends on MODEM_JWT
-	help
-	  Use Skyhook location service.
-
 config LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT
 	int "Max number of Wi-Fi scanning results"
 	default 10
@@ -142,28 +136,6 @@ config LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG
 	  service are stored.
 
 endif # LOCATION_METHOD_WIFI_SERVICE_HERE
-
-if LOCATION_METHOD_WIFI_SERVICE_SKYHOOK
-
-config LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_HOSTNAME
-	string "Skyhook server hostname"
-	default "global.skyhookwireless.com"
-	help
-	  Server hostname to use when connecting to the Skyhook location service.
-
-config LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_API_KEY
-	string "SKyhook API key"
-	help
-	  Skyhook API key used for authentication.
-
-config LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_TLS_SEC_TAG
-	int "Security tag for TLS certificates"
-	default 176
-	help
-	  Security tag where the required TLS certificates for the Skyhook location
-	  service are stored.
-
-endif # LOCATION_METHOD_WIFI_SERVICE_SKYHOOK
 
 endif # LOCATION_METHOD_WIFI
 

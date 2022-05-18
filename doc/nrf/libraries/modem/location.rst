@@ -51,7 +51,7 @@ Each location method has its own implementation for the location retrieval:
   * :ref:`lib_multicell_location` for sending cell information to the selected location service and getting the calculated location back to the device.
 
     * The service is selected in the :c:struct:`location_method_config` structure when requesting for location.
-    * The services available are `nRF Cloud Location Services`_, `HERE Positioning`_, `Skyhook Precision Location`_ and `Polte Location API`_
+    * The services available are `nRF Cloud Location Services`_, `HERE Positioning`_ and `Polte Location API`_
     * The data transport method for the service is mainly REST. However, either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`) can be configured for `nRF Cloud Location Services`_.
 
 * Wi-Fi positioning
@@ -61,7 +61,7 @@ Each location method has its own implementation for the location retrieval:
 
     * The location library has an implementation for the Wi-Fi location services.
     * The service is selected in the :c:struct:`location_method_config` structure when requesting for location.
-    * The services available are `nRF Cloud Location Services`_, `HERE Positioning`_ and `Skyhook Precision Location`_.
+    * The services available are `nRF Cloud Location Services`_ and `HERE Positioning`_.
     * The data transport method for the service is REST.
 
 Requirements
@@ -81,7 +81,6 @@ To use the location services that provide A-GPS or P-GPS, cellular or Wi-Fi posi
 
 * `nRF Cloud Location Services`_
 * `HERE Positioning`_
-* `Skyhook Precision Location`_
 * `Polte Location API`_
 
 You can configure the required credentials for the location services using Kconfig options.
@@ -142,21 +141,17 @@ For cellular location services, use at least one of the following sets of option
 
 * :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
 * :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY`
-* :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
 * :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_POLTE` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_CUSTOMER_ID` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_API_TOKEN`
 
 For Wi-Fi location services, use at least one of the following sets of options and configure the corresponding authentication parameters:
 
 * :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD`
 * :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE` and :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_API_KEY`
-* :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK` and :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_API_KEY`
 
 The following options are related to the Wi-Fi service and can usually have the default values:
 
 * :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_HOSTNAME`
 * :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE_TLS_SEC_TAG`
-* :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_HOSTNAME`
-* :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK_TLS_SEC_TAG`
 
 Usage
 *****
