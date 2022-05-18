@@ -221,8 +221,10 @@ int64_t ser_decode_int64(struct nrf_rpc_cbor_ctx *ctx);
  * @param[in,out] ctx CBOR decoding context.
  * @param[out] buffer Buffer for decoded string.
  * @param[in]  size Buffer size.
+ *
+ * @retval Pointer to a decoded string.
  */
-void ser_decode_str(struct nrf_rpc_cbor_ctx *ctx, char *buffer, size_t size);
+char *ser_decode_str(struct nrf_rpc_cbor_ctx *ctx, char *buffer, size_t buffer_size);
 
 /** Decode a string value into a scratchpad.
  *
