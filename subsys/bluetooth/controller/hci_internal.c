@@ -696,17 +696,17 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_le_create_conn_cancel();
 #endif
 
-	case SDC_HCI_OPCODE_CMD_LE_READ_WHITE_LIST_SIZE:
-		*param_length_out += sizeof(sdc_hci_cmd_le_read_white_list_size_return_t);
+	case SDC_HCI_OPCODE_CMD_LE_READ_FILTER_ACCEPT_LIST_SIZE:
+		*param_length_out += sizeof(sdc_hci_cmd_le_read_filter_accept_list_size_return_t);
 		return sdc_hci_cmd_le_read_filter_accept_list_size((void *)event_out_params);
 
-	case SDC_HCI_OPCODE_CMD_LE_CLEAR_WHITE_LIST:
+	case SDC_HCI_OPCODE_CMD_LE_CLEAR_FILTER_ACCEPT_LIST:
 		return sdc_hci_cmd_le_clear_filter_accept_list();
 
-	case SDC_HCI_OPCODE_CMD_LE_ADD_DEVICE_TO_WHITE_LIST:
+	case SDC_HCI_OPCODE_CMD_LE_ADD_DEVICE_TO_FILTER_ACCEPT_LIST:
 		return sdc_hci_cmd_le_add_device_to_filter_accept_list((void *)cmd_params);
 
-	case SDC_HCI_OPCODE_CMD_LE_REMOVE_DEVICE_FROM_WHITE_LIST:
+	case SDC_HCI_OPCODE_CMD_LE_REMOVE_DEVICE_FROM_FILTER_ACCEPT_LIST:
 		return sdc_hci_cmd_le_remove_device_from_filter_accept_list((void *)cmd_params);
 
 #if defined(CONFIG_BT_CENTRAL)
