@@ -59,6 +59,9 @@ set_property(TARGET zephyr_property_target
   APPEND PROPERTY TFM_CMAKE_OPTIONS -DZEPHYR_BASE=${ZEPHYR_BASE}
   )
 
+set_property(TARGET zephyr_property_target
+  APPEND PROPERTY TFM_CMAKE_OPTIONS -DCRYPTO_HW_ACCELERATOR=True
+  )
 
 if (CONFIG_TFM_PROFILE_TYPE_MINIMAL)
   set_property(TARGET zephyr_property_target
