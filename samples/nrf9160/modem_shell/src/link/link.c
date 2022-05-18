@@ -638,14 +638,7 @@ int link_func_mode_set(enum lte_lc_func_mode fun, bool rel14_used)
 			}
 		}
 
-		if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
-			return_value = lte_lc_normal();
-		} else {
-			/* TODO: why not just do lte_lc_normal() as notifications are
-			 * subscribed there also nowadays?
-			 */
-			return_value = lte_lc_init_and_connect_async(link_ind_handler);
-		}
+		return_value = lte_lc_normal();
 		break;
 	case LTE_LC_FUNC_MODE_DEACTIVATE_LTE:
 	case LTE_LC_FUNC_MODE_ACTIVATE_LTE:
