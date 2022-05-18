@@ -114,10 +114,10 @@ typedef int (*bl_sha256_init_t)(bl_sha256_ctx_t *ctx);
 /**
  * @brief Hash a portion of data.
  *
- * @warning @p ctx must be initialized before being used in this function.
- *          An uninitialized @p ctx might not be reported as an error. Also,
- *          @p ctx must not be used if it has been finalized, though this might
- *          also not be reported as an error.
+ * @note @p ctx must be initialized before being used in this function.
+ *       An uninitialized @p ctx might not be reported as an error. Also,
+ *       @p ctx must not be used if it has been finalized, though this might
+ *       also not be reported as an error.
  *
  * @param[in]  ctx       Context variable. Must have been initialized.
  * @param[in]  data      Data to hash.

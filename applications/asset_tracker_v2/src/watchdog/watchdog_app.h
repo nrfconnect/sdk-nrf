@@ -43,7 +43,7 @@ int watchdog_init_and_start(void);
 
 /** @brief Register handler to receive watchdog callback events.
  *
- *  @warning The library only allows for one event handler to be registered
+ *  @note The library only allows for one event handler to be registered
  *           at a time. A passed in event handler in this function will
  *           overwrite the previously set event handler.
  *

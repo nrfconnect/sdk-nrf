@@ -62,7 +62,7 @@ int emds_flash_init(struct emds_fs *fs, const char *dev_name);
  *
  * @param fs Pointer to file system
  *
- * @warning Calling this function will make any subsequent read attempts fail. Be sure to
+ * @note Calling this function will make any subsequent read attempts fail. Be sure to
  * restore all necessary entries before using this function.
  *
  * @retval 0 on success or negative error code
@@ -107,10 +107,10 @@ ssize_t emds_flash_read(struct emds_fs *fs, uint16_t id, void *data, size_t len)
  * entries from flash. It will invalidate all prior entries, and potentially clear the flash
  * area.
  *
- * @warning Calling this function will make any subsequent read attempts fail. Be sure to
+ * @note Calling this function will make any subsequent read attempts fail. Be sure to
  * restore all necessary entries before using this function.
  *
- * @warning Should only be called once.
+ * @note Should only be called once.
  *
  * @param fs Pointer to file system
  * @param byte_size Total number of bytes

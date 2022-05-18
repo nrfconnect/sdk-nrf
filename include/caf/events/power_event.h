@@ -46,8 +46,8 @@ extern "C" {
  * event, it's ensured that all other application modules that handle power down event are already
  * suspended. Then it can continue the power down procedure.
  *
- * @warning An application module that handles power down event must also handle @ref wake_up_event.
- *          Otherwise the module will never be woken up after suspending.
+ * @note An application module that handles power down event must also handle @ref wake_up_event.
+ *       Otherwise the module will never be woken up after suspending.
  */
 struct power_down_event {
 	/** Event header. */

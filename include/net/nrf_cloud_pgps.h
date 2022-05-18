@@ -287,7 +287,7 @@ int nrf_cloud_pgps_preemptive_updates(void);
  * requests any missing predictions, or full set if expired or missing.
  * When successful, it is ready to provide valid ephemeris predictions.
  *
- * @warning It must return successfully before using P-GPS services.
+ * @note It must return successfully before using P-GPS services.
  *
  * @param[in] param Initialization parameters.
  *

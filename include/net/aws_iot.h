@@ -191,8 +191,8 @@ struct aws_iot_config {
 
 /** @brief Initialize the module.
  *
- *  @warning This API must be called exactly once, and it must return
- *           successfully.
+ *  @note This API must be called exactly once, and it must return
+ *        successfully.
  *
  *  @param[in] config Pointer to struct containing connection parameters.
  *  @param[in] event_handler Pointer to event handler to receive AWS IoT module

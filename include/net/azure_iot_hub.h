@@ -228,8 +228,8 @@ struct azure_iot_hub_config {
 
 /** @brief Initialize the module.
  *
- *  @warning This API must be called exactly once, and it must return
- *           successfully for subsequent calls to this library to succeed.
+ *  @note This API must be called exactly once, and it must return
+ *        successfully for subsequent calls to this library to succeed.
  *
  *  @param[in] config Pointer to struct containing connection parameters. Can be
  *		      NULL if @kconfig{CONFIG_AZURE_IOT_HUB_DEVICE_ID} is set.

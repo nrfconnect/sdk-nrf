@@ -79,8 +79,8 @@ struct log_event_buf {
 
 /** @brief Initialize the Profiler.
  *
- * @warning This function is thread-safe, but not safe to use in
- *	    interrupts.
+ * @note This function is thread-safe, but not safe to use in
+ *       interrupts.
  *
  * @retval 0 If the operation was successful.
  */
@@ -132,8 +132,8 @@ static inline bool is_profiling_enabled(size_t nrf_profiler_event_id)
 
 /** @brief Register an event type.
  *
- * @warning This function is thread-safe, but not safe to use in
- * interrupts.
+ * @note This function is thread-safe, but not safe to use in
+ *       interrupts.
  *
  * @param name Name of the event type.
  * @param args Names of data values sent with the event.
@@ -165,8 +165,8 @@ static inline void nrf_profiler_log_start(struct log_event_buf *buf) {}
 
 /** @brief Encode and add uint32_t data type to a buffer.
  *
- * @warning The buffer must be initialized with @ref nrf_profiler_log_start
- *          before calling this function.
+ * @note The buffer must be initialized with @ref nrf_profiler_log_start
+ *       before calling this function.
  *
  * @param buf Pointer to the data buffer.
  * @param data Data to add to the buffer.
@@ -180,8 +180,8 @@ static inline void nrf_profiler_log_encode_uint32(struct log_event_buf *buf,
 
 /** @brief Encode and add int32_t data type to a buffer.
  *
- * @warning The buffer must be initialized with @ref nrf_profiler_log_start
- *          before calling this function.
+ * @note The buffer must be initialized with @ref nrf_profiler_log_start
+ *       before calling this function.
  *
  * @param buf Pointer to the data buffer.
  * @param data Data to add to the buffer.
@@ -195,8 +195,8 @@ static inline void nrf_profiler_log_encode_int32(struct log_event_buf *buf,
 
 /** @brief Encode and add uint16_t data type to a buffer.
  *
- * @warning The buffer must be initialized with @ref nrf_profiler_log_start
- *          before calling this function.
+ * @note The buffer must be initialized with @ref nrf_profiler_log_start
+ *       before calling this function.
  *
  * @param buf Pointer to the data buffer.
  * @param data Data to add to the buffer.
@@ -210,8 +210,8 @@ static inline void nrf_profiler_log_encode_uint16(struct log_event_buf *buf,
 
 /** @brief Encode and add int16_t data type to a buffer.
  *
- * @warning The buffer must be initialized with @ref nrf_profiler_log_start
- *          before calling this function.
+ * @note The buffer must be initialized with @ref nrf_profiler_log_start
+ *       before calling this function.
  *
  * @param buf Pointer to the data buffer.
  * @param data Data to add to the buffer.
@@ -225,8 +225,8 @@ static inline void nrf_profiler_log_encode_int16(struct log_event_buf *buf,
 
 /** @brief Encode and add uint8_t data type to a buffer.
  *
- * @warning The buffer must be initialized with @ref nrf_profiler_log_start
- *          before calling this function.
+ * @note The buffer must be initialized with @ref nrf_profiler_log_start
+ *       before calling this function.
  *
  * @param buf Pointer to the data buffer.
  * @param data Data to add to the buffer.
@@ -240,8 +240,8 @@ static inline void nrf_profiler_log_encode_uint8(struct log_event_buf *buf,
 
 /** @brief Encode and add int8_t data type to a buffer.
  *
- * @warning The buffer must be initialized with @ref nrf_profiler_log_start
- *          before calling this function.
+ * @note The buffer must be initialized with @ref nrf_profiler_log_start
+ *       before calling this function.
  *
  * @param buf Pointer to the data buffer.
  * @param data Data to add to the buffer.
@@ -257,8 +257,8 @@ static inline void nrf_profiler_log_encode_int8(struct log_event_buf *buf,
  *
  * Maximum 255 characters can be sent (the rest is ommited).
  *
- * @warning The buffer must be initialized with @ref nrf_profiler_log_start
- *          before calling this function.
+ * @note The buffer must be initialized with @ref nrf_profiler_log_start
+ *       before calling this function.
  *
  * @param buf Pointer to the data buffer.
  * @param string String to add to the buffer.
@@ -275,8 +275,8 @@ static inline void nrf_profiler_log_encode_string(struct log_event_buf *buf,
  *
  * This information is used for event identification.
  *
- * @warning The buffer must be initialized with @ref nrf_profiler_log_start
- *          before calling this function.
+ * @note The buffer must be initialized with @ref nrf_profiler_log_start
+ *       before calling this function.
  *
  * @param buf Pointer to the data buffer.
  * @param mem_address Memory address to encode.

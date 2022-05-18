@@ -431,8 +431,8 @@ struct nrf_cloud_init_param {
 /**
  * @brief Initialize the module.
  *
- * @warning This API must be called prior to using nRF Cloud
- *  and it must return successfully.
+ * @note This API must be called prior to using nRF Cloud
+ *       and it must return successfully.
  *
  * @param[in] param Initialization parameters.
  *
