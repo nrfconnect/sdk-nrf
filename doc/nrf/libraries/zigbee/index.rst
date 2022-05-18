@@ -9,7 +9,7 @@ See the :ref:`ug_zigbee` user guide for an overview of the technology.
 Zigbee libraries are a set of components that can be directly reused in Zigbee applications.
 They implement the default behavior of a Zigbee device and are used in :ref:`zigbee_samples` in this SDK.
 
-The following table lists libraries enabled by default for each available Zigbee sample (✔) or available through an overlay file (``**``):
+The following table lists libraries enabled by default for each available Zigbee sample (✔) or available through a configuration file (``**``):
 
 .. list-table::
     :widths: auto
@@ -75,7 +75,7 @@ The following table lists libraries enabled by default for each available Zigbee
 Read the table symbols in the following manner:
 
 * ``✔`` - The library is enabled by default for the given Zigbee sample.
-* ``**`` - The library support is available through an overlay file for the given Zigbee sample.
+* ``**`` - The library support is available through the :file:`prj_fota.conf` for the given Zigbee sample.
 * No symbol - The library is not enabled for the given sample, but you can enable support by following the instructions on the :ref:`ug_zigbee_configuring_libraries`.
 
 .. toctree::

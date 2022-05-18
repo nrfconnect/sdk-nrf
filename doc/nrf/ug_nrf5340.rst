@@ -609,6 +609,10 @@ See the following instructions.
    :start-after: fota_upgrades_thread_start
    :end-before: fota_upgrades_thread_end
 
+.. include:: ug_nrf52.rst
+   :start-after: fota_upgrades_zigbee_start
+   :end-before: fota_upgrades_zigbee_end
+
 Simultaneous multi-image DFU
 ****************************
 
