@@ -144,9 +144,9 @@ config NRF_MODEM_LIB_TRACE_HEAP_SIZE_OVERRIDE
 	  Override the default trace heap size.
 
 config NRF_MODEM_LIB_TRACE_HEAP_SIZE
-	int "Modem trace heap size" if NRF_MODEM_LIB_TRACE_HEAP_SIZE_OVERRIDE
-	default 2048 if NRF_MODEM_LIB_TRACE_THREAD_PROCESSING
-	default 64 if NRF_MODEM_LIB_TRACE_ENABLED
+	int "Trace heap size" if NRF_MODEM_LIB_TRACE_HEAP_SIZE_OVERRIDE
+	default 2048 if (NRF_MODEM_LIB_TRACE_ENABLED && NRF_MODEM_LIB_TRACE_THREAD_PROCESSING)
+	default 256 if (NRF_MODEM_LIB_TRACE_ENABLED && !NRF_MODEM_LIB_TRACE_THREAD_PROCESSING)
 	default 0
 	help
 	  Size of the heap buffer used for modem traces.
