@@ -22,6 +22,7 @@ cmock_handle(${MEMFAULT_SDK_DIR}/components/include/memfault/metrics/metrics.h m
 cmock_handle(${MEMFAULT_SDK_DIR}/ports/zephyr/include/memfault/ports/zephyr/http.h memfault/ports/zephyr)
 cmock_handle(${MEMFAULT_SDK_DIR}/components/include/memfault/core/data_packetizer.h memfault/core)
 cmock_handle(${MEMFAULT_SDK_DIR}/components/include/memfault/core/trace_event.h memfault/core)
+cmock_handle(${MEMFAULT_SDK_DIR}/components/include/memfault/panics/coredump.h memfault/panics)
 cmock_handle(${MEMFAULT_SDK_DIR}/ports/include/memfault/ports/watchdog.h memfault/ports)
 
 # Create mock for nRF SDK
@@ -57,6 +58,12 @@ target_include_directories(app PRIVATE ${MEMFAULT_SDK_DIR}/components/include/co
 # Include nRFxlib directories
 target_include_directories(app PRIVATE ${ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/)
 
+# Include platform specific header file that is used to describe the registers of
+# the given platform. Without this file, generation of mocks will
+# fail due to a incomplete type warning.
+set_property(SOURCE mocks/memfault/panics/mock_coredump.c PROPERTY COMPILE_FLAGS
+	     "-include ${MEMFAULT_SDK_DIR}/components/include/memfault/panics/arch/arm/cortex_m.h")
+
 # Options that cannot be passed through Kconfig fragments.
 target_compile_options(app PRIVATE
   	-DCONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN=20
@@ -68,6 +75,7 @@ target_compile_options(app PRIVATE
 	-DCONFIG_DEBUG_MODULE_MEMFAULT_WATCHDOG_DELTA_MS=5000
 	-DCONFIG_DEBUG_MODULE_MEMFAULT_CHUNK_SIZE_MAX=80
 	-DCONFIG_DEBUG_MODULE_MEMFAULT_THREAD_STACK_SIZE=256
+	-DCONFIG_DEBUG_MODULE_MEMFAULT_UPDATES_MIN_INTERVAL_SEC=900
 	-DCONFIG_CLOUD_CODEC_APN_LEN_MAX=1
 	-DCONFIG_MODEM_APN_LEN_MAX=1
 	-DCONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX=1

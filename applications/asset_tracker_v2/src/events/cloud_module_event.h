@@ -69,13 +69,12 @@ enum cloud_module_event_type {
 	/** An error occurred during a FOTA update. */
 	CLOUD_EVT_FOTA_ERROR,
 
-	/** Sending of data to cloud has been attempted.
-	 *  The payload associated with this event is of type @ref cloud_module_data_ack (ack).
-	 */
-	CLOUD_EVT_DATA_ACK,
-
 	/** Sending data to cloud using QoS library.
 	 *  The payload associated with this event is of type @ref qos_data (message).
+	 *
+	 *  This event is only meant for the cloud module and is used to filter QoS data through
+	 *  the module's internal message queue. This event is consumed by the cloud module as soon
+	 *  as it has been processed.
 	 */
 	CLOUD_EVT_DATA_SEND_QOS,
 

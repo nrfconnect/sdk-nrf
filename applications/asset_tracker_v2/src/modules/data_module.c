@@ -1392,10 +1392,6 @@ static void on_all_states(struct data_msg_data *msg)
 	if (IS_EVENT(msg, gnss, GNSS_EVT_TIMEOUT)) {
 		requested_data_status_set(APP_DATA_GNSS);
 	}
-
-	if (IS_EVENT(msg, cloud, CLOUD_EVT_DATA_ACK)) {
-		k_free(msg->module.cloud.data.ack.ptr);
-	}
 }
 
 static void module_thread_fn(void)

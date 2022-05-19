@@ -101,7 +101,8 @@ static struct cloud_data_cfg copy_cfg;
 const k_tid_t cloud_module_thread;
 
 /* Register message IDs that are used with the QoS library. */
-QOS_MESSAGE_TYPES_REGISTER(GENERIC, BATCH, UI, NEIGHBOR_CELLS, AGPS_REQUEST, PGPS_REQUEST, CONFIG);
+QOS_MESSAGE_TYPES_REGISTER(GENERIC, BATCH, UI, NEIGHBOR_CELLS, AGPS_REQUEST,
+			   PGPS_REQUEST, CONFIG, MEMFAULT);
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 /* Local copy of the last A-GPS request from the modem, used to inject correct P-GPS data. */
@@ -196,7 +197,7 @@ static void sub_state_set(enum sub_state_type new_state)
 static bool app_event_handler(const struct app_event_header *aeh)
 {
 	struct cloud_msg_data msg = {0};
-	bool enqueue_msg = false;
+	bool enqueue_msg = false, consume = false;
 
 	if (is_app_module_event(aeh)) {
 		struct app_module_event *evt = cast_app_module_event(aeh);
@@ -224,6 +225,16 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 		msg.module.cloud = *evt;
 		enqueue_msg = true;
+
+		/* If the event is intended to only be used by the cloud module,
+		 * the event is consumed after it has been added to the internal message queue.
+		 * This is to prevent other modules that subscribe to cloud module events from
+		 * processing redundant events. Cloud module events are subscribed to first using
+		 * the APP_EVENT_SUBSCRIBE_FIRST macro.
+		 */
+		if (msg.module.cloud.type == CLOUD_EVT_DATA_SEND_QOS) {
+			consume = true;
+		}
 	}
 
 	if (is_util_module_event(aeh)) {
@@ -256,7 +267,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		}
 	}
 
-	return false;
+	return consume;
 }
 
 static void agps_data_handle(const uint8_t *buf, size_t len)
@@ -462,23 +473,6 @@ static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
 }
 
 /* Static module functions. */
-static void send_data_ack(void *ptr, size_t len)
-{
-	if (len < 0) {
-		LOG_WRN("Data to be ACKen has zero length");
-		return;
-	}
-
-	struct cloud_module_event *cloud_module_event =
-			new_cloud_module_event();
-
-	cloud_module_event->type = CLOUD_EVT_DATA_ACK;
-	cloud_module_event->data.ack.ptr = ptr;
-	cloud_module_event->data.ack.len = len;
-
-	APP_EVENT_SUBMIT(cloud_module_event);
-}
-
 static void send_config_received(void)
 {
 	struct cloud_module_event *cloud_module_event =
@@ -660,8 +654,8 @@ static void qos_event_handler(const struct qos_evt *evt)
 		LOG_DBG("QOS_EVT_MESSAGE_REMOVED_FROM_LIST");
 
 		if (evt->message.heap_allocated) {
-			send_data_ack(evt->message.data.buf,
-				      evt->message.data.len);
+			LOG_DBG("Freeing pointer: %p", evt->message.data.buf);
+			k_free(evt->message.data.buf);
 		}
 		break;
 	default:
@@ -777,18 +771,6 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 		return;
 	}
 
-	if (IS_EVENT(msg, debug, DEBUG_EVT_MEMFAULT_DATA_READY)) {
-		/* Memfault data is sent directly to cloud outside the QoS library. */
-		err = cloud_wrap_memfault_data_send(msg->module.debug.data.memfault.buf,
-						    msg->module.debug.data.memfault.len,
-						    false,
-						    0);
-		if (err) {
-			LOG_ERR("cloud_wrap_memfault_data_send, err: %d", err);
-			return;
-		}
-	}
-
 	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_GET)) {
 		/* The device will get its configuration if it has changed, for every update.
 		 * Due to this we don't use the QoS library.
@@ -801,6 +783,14 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 		} else {
 			LOG_DBG("Device configuration requested");
 		}
+	}
+
+	if (IS_EVENT(msg, debug, DEBUG_EVT_MEMFAULT_DATA_READY)) {
+		add_qos_message(msg->module.debug.data.memfault.buf,
+				msg->module.debug.data.memfault.len,
+				MEMFAULT,
+				QOS_FLAG_RELIABILITY_ACK_REQUIRED,
+				true);
 	}
 
 	if (IS_EVENT(msg, data, DATA_EVT_AGPS_REQUEST_DATA_SEND)) {
@@ -1029,6 +1019,15 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 				LOG_WRN("cloud_wrap_state_send, err: %d", err);
 			}
 			break;
+		case MEMFAULT:
+			err = cloud_wrap_memfault_data_send(message->buf,
+							    message->len,
+							    ack,
+							    msg->module.cloud.data.message.id);
+			if (err) {
+				LOG_WRN("cloud_wrap_memfault_data_send, err: %d", err);
+			}
+			break;
 		default:
 			LOG_WRN("Unknown data type");
 			break;
@@ -1202,7 +1201,7 @@ APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, data_module_event);
 APP_EVENT_SUBSCRIBE(MODULE, app_module_event);
 APP_EVENT_SUBSCRIBE(MODULE, modem_module_event);
-APP_EVENT_SUBSCRIBE(MODULE, cloud_module_event);
+APP_EVENT_SUBSCRIBE_FIRST(MODULE, cloud_module_event);
 APP_EVENT_SUBSCRIBE(MODULE, gnss_module_event);
 APP_EVENT_SUBSCRIBE(MODULE, debug_module_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, util_module_event);
