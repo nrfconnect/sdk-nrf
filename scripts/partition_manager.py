@@ -7,6 +7,7 @@
 import argparse
 import yaml
 from os import path
+from os import system
 import sys
 from pprint import pformat
 
@@ -666,6 +667,9 @@ def load_reqs(input_config):
 
     for ymlpath in input_config:
         if path.exists(ymlpath):
+            ret = system("yamllint " + ymlpath)
+            if ret != 0:
+                sys.exit(1)
             with open(ymlpath, 'r') as f:
                 loaded_reqs = yaml.safe_load(f)
                 if loaded_reqs is None:
