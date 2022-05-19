@@ -64,23 +64,26 @@ Complete the following steps to prepare for the certification tests:
 
 #. Build the certification image.
 
-   The :ref:`ot_cli_sample` sample is used as a base, modified with the :file:`harness/overlay-cert.conf` overlay file.
+   The :ref:`ot_cli_sample` sample is used as a base, modified with the :file:`harness/overlay-cert.conf` and :file:`overlay-multiprotocol.conf` overlay files.
 
    * If building on the command line, use the following command:
 
      .. code-block::
 
         cd ncs/nrf/samples/openthread/cli/
-        west build -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG=harness/overlay-cert.conf -DCONFIG_OPENTHREAD_LIBRARY=y
+        west build -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG="harness/overlay-cert.conf;overlay-multiprotocol.conf" -DCONFIG_OPENTHREAD_LIBRARY=y
 
-   * If building using |VSC|, you must first `create the application <Creating an application_>`_ using the CLI sample, and then `build the application <Building an application_>`_.
-     Select the :file:`harness/overlay-cert.conf` overlay file in the :guilabel:`Kconfig fragment` drop-down menu and add ``CONFIG_OPENTHREAD_LIBRARY=y`` to the :guilabel:`Additional CMake arguments` text field.
+   * If building using Visual Studio Code, you must first `create the application <Creating an application_>`_ using the CLI sample, and then `build the application <Building an application_>`_.
+     Select the :file:`harness/overlay-cert.conf` and :file:`overlay-multiprotocol.conf` overlay files in the :guilabel:`Kconfig fragment` drop-down menu and add ``CONFIG_OPENTHREAD_LIBRARY=y`` to the :guilabel:`Additional CMake arguments` text field.
 
-     If the overlay file is not visible in the drop-down menu, navigate to :file:`ncs/nrf/samples/openthread/cli/harness/` and copy the :file:`overlay-cert.conf` file to :file:`ncs/nrf/samples/openthread/cli/` and try again.
+     If the :file:`harness/overlay-cert.conf` overlay file is not visible in the drop-down menu, navigate to :file:`ncs/nrf/samples/openthread/cli/harness/` and copy the :file:`overlay-cert.conf` file to :file:`ncs/nrf/samples/openthread/cli/` and try again.
 
    .. note::
       The configuration option selects the precompiled OpenThread libraries.
-      The overlay file enables :ref:`multiprotocol support <ug_multiprotocol_support>` with Bluetooth® LE advertising.
+      The :file:`overlay-multiprotocol.conf` overlay file enables :ref:`multiprotocol support <ug_multiprotocol_support>` with Bluetooth® LE advertising.
+
+   .. note::
+      The :file:`overlay-multiprotocol.conf` overlay file is not supported with ``nrf52833dk_nrf52833``.
 
 #. Prepare Thread Test Harness.
 

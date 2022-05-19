@@ -20,7 +20,7 @@ The memory requirement tables list flash memory and RAM requirements for the :re
 The values change depending on device type and hardware platform.
 Moreover, take into account the following considerations:
 
-* The sample was compiled using the default :file:`prj.conf` plus :file:`harness\overlay-cert.conf` plus the corresponding :kconfig:option:`OPENTHREAD_NORDIC_LIBRARY` and :kconfig:option:`OPENTHREAD_THREAD_VERSION` choices.
+* The sample was compiled using the default :file:`prj.conf` plus :file:`harness\overlay-cert.conf`  and :file:`overlay-multiprotocol.conf` overlay files, and the corresponding :kconfig:option:`OPENTHREAD_NORDIC_LIBRARY`, :kconfig:option:`OPENTHREAD_THREAD_VERSION` choices.
 * The single protocol sample was configured by setting :kconfig:option:`CONFIG_BT` to ``n``.
 * Values for the :ref:`Thread CLI sample <ot_cli_sample>`, which works with all OpenThread calls, are the highest possible for the OpenThread stack using the master image library configuration.
 
