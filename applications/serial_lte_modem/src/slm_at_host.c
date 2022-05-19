@@ -747,7 +747,7 @@ static void format_final_result(char *buf)
 final_result:
 	/* insert CRLF before final result if there is information response before it */
 	if (result != buf) {
-		memmove((void *)(result + strlen(crlf_str)), (void *)result, strlen(result));
+		memmove((void *)(result + strlen(crlf_str)), (void *)result, strlen(result) + 1);
 		memcpy((void *)result, (void *)crlf_str, strlen(crlf_str));
 	}
 }
