@@ -88,7 +88,7 @@ ZB_ZCL_DECLARE_OTA_UPGRADE_ATTRIB_LIST(ota_upgrade_attr_list,
 				&dev_ctx.ota_attr.server_ep,
 				(uint16_t)CONFIG_ZIGBEE_FOTA_HW_VERSION,
 				CONFIG_ZIGBEE_FOTA_DATA_BLOCK_SIZE,
-				ZB_ZCL_OTA_UPGRADE_QUERY_TIMER_COUNT_DEF);
+				CONFIG_ZIGBEE_FOTA_IMAGE_QUERY_INTERVAL_MIN);
 
 ZB_HA_DECLARE_OTA_UPGRADE_CLIENT_CLUSTER_LIST(ota_upgrade_client_clusters,
 	ota_basic_attr_list, ota_upgrade_attr_list);
@@ -485,7 +485,7 @@ void zigbee_fota_signal_handler(zb_bufid_t bufid)
 	case ZB_BDB_SIGNAL_STEERING:
 		if (status == RET_OK) {
 			k_timer_start(&dev_ctx.alarm, K_NO_WAIT,
-				K_HOURS(CONFIG_ZIGBEE_FOTA_IMAGE_DISOVERY_INTERVAL_HRS));
+				K_HOURS(CONFIG_ZIGBEE_FOTA_SERVER_DISOVERY_INTERVAL_HRS));
 		}
 		break;
 	default:
