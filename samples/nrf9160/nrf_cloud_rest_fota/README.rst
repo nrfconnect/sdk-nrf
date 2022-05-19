@@ -18,6 +18,9 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
+.. note::
+   Full modem FOTA requires development kit version 1.0.1 or higher.
+
 The sample requires an `nRF Cloud`_ account.
 
 .. note::
@@ -105,6 +108,9 @@ To create a FOTA test version of this sample, add the following parameter to you
 
 ``-DOVERLAY_CONFIG=overlay_fota_test.conf``
 
+To enable full modem FOTA, add the following parameter to your build command:
+
+``-DOVERLAY_CONFIG=overlay_full_modem_fota.conf``
 
 Dependencies
 ************

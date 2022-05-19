@@ -19,6 +19,10 @@
 
 LOG_MODULE_REGISTER(nrf_cloud_rest_fota, CONFIG_NRF_CLOUD_REST_FOTA_SAMPLE_LOG_LEVEL);
 
+#if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
+#define EXT_FLASH_DEVICE DT_LABEL(DT_INST(0, jedec_spi_nor))
+#endif
+
 /* Use the settings library to store FOTA job information to flash so
  * that the job status can be updated after a reboot
  */
@@ -99,6 +103,9 @@ static bool jitp_requested;
 
 /* Flag to indicate if FOTA should be enabled in the device shadow */
 static bool enable_fota_requested;
+
+/* Flag to indicate if full modem FOTA is enabled */
+static bool full_modem_fota_initd;
 
 static int rest_fota_settings_set(const char *key, size_t len_rd,
 			    settings_read_cb read_cb, void *cb_arg);
@@ -184,7 +191,7 @@ static void http_fota_dl_handler(const struct fota_download_evt *evt)
 
 		if (evt->cause == FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_UPDATE) {
 			fota_status = NRF_CLOUD_FOTA_REJECTED;
-			if (job.type == NRF_CLOUD_FOTA_MODEM) {
+			if (nrf_cloud_fota_is_type_modem(job.type)) {
 				fota_status_details = FOTA_STATUS_DETAILS_MDM_REJ;
 			} else {
 				fota_status_details = FOTA_STATUS_DETAILS_MCU_REJ;
@@ -367,8 +374,10 @@ static void do_fota_enable(void)
 	struct nrf_cloud_svc_info_fota fota = {
 		.bootloader = 1,
 		.modem = 1,
-		.application = 1
+		.application = 1,
+		.modem_full = full_modem_fota_initd
 	};
+
 	struct nrf_cloud_svc_info svc_inf = {
 		.fota = &fota,
 		.ui = NULL
@@ -426,6 +435,24 @@ int init(void)
 	if (err) {
 		LOG_WRN("Failed to load settings, error: %d", err);
 	}
+
+#if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
+	struct dfu_target_fmfu_fdev fmfu_dev_inf = {
+		.size = 0,
+		.offset = 0,
+		.dev = device_get_binding(EXT_FLASH_DEVICE)
+	};
+
+	if (fmfu_dev_inf.dev) {
+		err = nrf_cloud_fota_fmfu_dev_set(&fmfu_dev_inf);
+		if (err < 0) {
+			return err;
+		}
+		full_modem_fota_initd = true;
+	} else {
+		LOG_WRN("Full modem FOTA not initialized; flash device not specified");
+	}
+#endif
 
 	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_SYS_INIT)) {
 		modem_lib_init_result = nrf_modem_lib_get_init_ret();
@@ -550,7 +577,7 @@ static bool validate_in_progress_job(void)
 			fota_status_details = FOTA_STATUS_DETAILS_SUCCESS;
 		} else if (pending_job.validate == NRF_CLOUD_FOTA_VALIDATE_FAIL) {
 			fota_status = NRF_CLOUD_FOTA_FAILED;
-			if (pending_job.type == NRF_CLOUD_FOTA_MODEM) {
+			if (nrf_cloud_fota_is_type_modem(pending_job.type)) {
 				fota_status_details = FOTA_STATUS_DETAILS_MDM_ERR;
 			} else {
 				fota_status_details = FOTA_STATUS_DETAILS_MCU_ERR;
@@ -627,8 +654,11 @@ static int start_download(void)
 	case NRF_CLOUD_FOTA_APPLICATION:
 		img_type = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
 		break;
-	case NRF_CLOUD_FOTA_MODEM:
+	case NRF_CLOUD_FOTA_MODEM_DELTA:
 		img_type = DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
+		break;
+	case NRF_CLOUD_FOTA_MODEM_FULL:
+		img_type = DFU_TARGET_IMAGE_TYPE_FULL_MODEM;
 		break;
 	default:
 		LOG_ERR("Unhandled FOTA type: %d", job.type);
@@ -674,8 +704,24 @@ static void handle_download_succeeded_and_reboot(void)
 
 	err = nrf_cloud_bootloader_fota_slot_set(&pending_job);
 	if (err) {
-		LOG_WRN("Failed to set active B1 slot flag, BOOT FOTA validation my be incorrect");
+		LOG_WRN("Failed to set B1 slot flag, BOOT FOTA validation may be incorrect");
 	}
+
+	(void)nrf_cloud_rest_disconnect(&rest_ctx);
+	(void)lte_lc_deinit();
+
+#if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
+	if (job.type == NRF_CLOUD_FOTA_MODEM_FULL) {
+		LOG_INF("Applying full modem FOTA update...");
+		err = nrf_cloud_fota_fmfu_apply();
+		if (err) {
+			LOG_ERR("Failed to apply full modem FOTA update %d", err);
+			pending_job.validate = NRF_CLOUD_FOTA_VALIDATE_FAIL;
+		} else {
+			pending_job.validate = NRF_CLOUD_FOTA_VALIDATE_PASS;
+		}
+	}
+#endif
 
 	err = save_pending_job();
 	if (err) {
@@ -685,8 +731,6 @@ static void handle_download_succeeded_and_reboot(void)
 		(void)update_job_status();
 	}
 
-	(void)nrf_cloud_rest_disconnect(&rest_ctx);
-	(void)lte_lc_deinit();
 	LOG_INF("Rebooting in 10s to complete FOTA update...");
 	k_sleep(K_SECONDS(10));
 	sys_reboot(SYS_REBOOT_COLD);

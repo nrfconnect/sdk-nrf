@@ -237,6 +237,11 @@ nRF9160 samples
 
     * This sample now uses the :ref:`lib_modem_antenna` library to configure the GNSS antenna instead of configuring it directly.
 
+* :ref:`nrf_cloud_rest_fota` sample:
+
+  * Added:
+    * Support for full modem FOTA updates.
+
 Thread samples
 --------------
 
