@@ -38,13 +38,13 @@ You can either run it on the same device as the Thread Border Router or run the 
 
 Depending on your choice, you can set up one of the following development environments:
 
-* Thread Border Router on Raspberry Pi and Matter controller on PC (CHIP Tool)
+* Thread Border Router on Raspberry Pi and Matter controller on PC (CHIP Tool for Linux or macOS)
 
   .. include:: /ug_matter_configuring_env.rst
      :start-after: matter_env_ctrl_pc_start
      :end-before: matter_env_ctrl_pc_end
 
-* Thread Border Router on Raspberry Pi and Matter controller for mobile
+* Thread Border Router on Raspberry Pi and Matter controller for mobile (CHIP Tool for Android)
 
   .. include:: /ug_matter_configuring_env.rst
      :start-after: matter_env_ctrl_mobile_start

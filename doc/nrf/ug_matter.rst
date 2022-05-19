@@ -1,8 +1,8 @@
 .. _ug_matter:
 .. _ug_chip:
 
-Matter (Project CHIP)
-#####################
+Matter
+######
 
 .. contents::
    :local:

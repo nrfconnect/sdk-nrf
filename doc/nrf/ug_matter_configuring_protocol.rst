@@ -125,7 +125,7 @@ Required components for Matter network
 
 The Matter protocol is centered around the Matter network, which requires the following components to operate properly:
 
-* Matter controller - configured either on PC or mobile
+* Matter controller - either CHIP Tool for Linux or macOS, or CHIP Tool for Android
 * Thread Border Router - configured either on PC or Raspberry Pi
 
 For information about how to configure these components, read :ref:`ug_matter_configuring_controller` and :ref:`ug_matter_configuring_env`.

@@ -8,7 +8,7 @@ Matter: Light bulb
    :local:
    :depth: 2
 
-This light bulb sample demonstrates the usage of the :ref:`Matter <ug_matter>` (formerly Project Connected Home over IP, Project CHIP) application layer to build a white dimmable light bulb device.
+This light bulb sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a white dimmable light bulb device.
 This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
 You can use this sample as a reference for creating your own application.
 
@@ -25,7 +25,7 @@ The sample supports the following development kits:
 
 For remote testing scenarios, you also need the following:
 
-* To commission the light bulb device and :ref:`control it remotely <matter_light_bulb_network_mode>` through a Thread network: a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>` (which requires additional hardware depending on which setup you choose).
+* To commission the light bulb device and :ref:`control it remotely <matter_light_bulb_network_mode>` through a Thread network: a Matter controller device :ref:`configured on PC or mobile <ug_matter_configuring>` (which requires additional hardware depending on which setup you choose).
 * To use the :ref:`test mode <matter_light_bulb_sample_test_mode>` and control the light bulb using light switch: the :ref:`Matter light switch <matter_light_switch_sample>` sample programmed to another supported development kit.
 
 .. note::

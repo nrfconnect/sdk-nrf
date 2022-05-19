@@ -84,7 +84,7 @@ The installation process is different depending on your operating system.
 
 .. _gs_installing_gn:
 
-In addition to these required tools, install the `GN`_ meta-build system if you are interested in building `Matter`_ (formerly Project Connected Home over IP, Project CHIP) applications.
+In addition to these required tools, install the `GN`_ meta-build system if you are interested in building `Matter`_ applications.
 This system generates the Ninja files that the |NCS| uses.
 
 .. tabs::

@@ -8,7 +8,7 @@ Matter: Light switch
    :local:
    :depth: 2
 
-This light switch sample demonstrates the usage of the :ref:`Matter <ug_matter>` (formerly Project Connected Home over IP, Project CHIP) application layer to build a switch device that binds with lighting devices and changes the state of their LEDs.
+This light switch sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a switch device that binds with lighting devices and changes the state of their LEDs.
 When configured together with the :ref:`Matter light bulb <matter_light_bulb_sample>` sample (or other lighting sample) and when using a Matter controller, the light switch can control one light bulb directly or a group of light bulbs remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
 You can use this sample as a reference for creating your own application.
 
