@@ -4,15 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <platform/nrfconnect/OTAImageProcessorImpl.h>
+
 #pragma once
 
-namespace chip
-{
-namespace DeviceLayer
-{
-	class OTAImageProcessorImpl;
-} /* namespace DeviceLayer */
-} /* namespace chip */
+chip::DeviceLayer::FlashHandler &GetFlashHandler();
 
 /**
  * Select recommended OTA image processor implementation.
