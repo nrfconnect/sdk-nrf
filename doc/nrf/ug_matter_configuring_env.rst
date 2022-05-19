@@ -123,54 +123,6 @@ To configure and use Thread Border Router and mobile Matter controller on separa
 
 #. Depending on which Matter sample you programmed onto the development kit, go to this sample's documentation page and complete the steps from the Testing section.
 
-.. _ug_matter_configuring_pc_python_ctrl:
-
-Configuring Thread Border Router and Python Matter controller on PC
-===================================================================
-
-In this setup, the Matter controller is installed on PC, and a dedicated Wi-Fi Access Point and the Python Matter controller are used.
-
-.. matter_env_ctrl_pc_start
-
-.. figure:: images/matter_otbr_controller_separate_pc.svg
-   :width: 600
-   :alt: Setup with OpenThread Border Router and Matter controller on PC
-
-.. matter_env_ctrl_pc_end
-
-Requirements
-------------
-
-To use this setup, you need the following hardware:
-
-* 1x PC with Ubuntu (20.04 or newer)
-* 1x Raspberry Pi Model 3B+ or newer (along with an SD card with at least 8 GB of memory)
-* 1x Wi-Fi Access Point supporting IPv6 (without the IPv6 Router Advertisement Guard enabled on the router)
-* 1x nRF52840 DK or nRF52840 Dongle - for the Radio Co-Processor (RCP) device
-* 1x compatible Nordic Semiconductor's DK - for the Matter accessory device (compatible and programmed with one of :ref:`matter_samples`)
-
-Configuring the environment
----------------------------
-
-To configure and use Thread Border Router and PC Matter controller on separate devices, complete the following steps:
-
-1. Program the development kit for the Matter accessory device with one of available :ref:`matter_samples`.
-#. Configure the Thread Border Router on a Raspberry Pi.
-   See :ref:`ug_thread_tools_tbr` in the |NCS| documentation for details.
-#. Configure the Python Matter controller:
-
-   a. Build the controller using one of the options described in :ref:`ug_matter_configuring_controller_pc`.
-   #. Complete the following steps from the :doc:`matter:python_chip_controller_building` user guide in the Matter documentation:
-
-      * Building and installing - which prepares the controller for commissioning.
-      * Running the tool - which gives you access to Bluetooth interface.
-      * Using Python CHIP Controller for Matter accessory testing - which prepares your device programmed with the Matter sample for commissioning and testing.
-
-        .. note::
-            Skip the step about programming the example, as you already have a development kit programmed with a Matter sample.
-
-#. Depending on which Matter sample you programmed onto the development kit, go to this sample's documentation page and complete the steps from the Testing section.
-
 Running Thread Border Router and Matter controller on the same device
 *********************************************************************
 
@@ -189,12 +141,12 @@ To simplify enabling the Thread communication with the Matter accessory device, 
 
 .. matter_env_ctrl_one_end
 
-You can use this setup with both Python Matter controller and the CHIP Tool controller.
+You can use this setup with the CHIP Tool controller.
 
 Requirements
 ============
 
-To use this setup, regardless of whether you use Python Matter controller or CHIP Tool, you need the following hardware:
+To use this setup, you need the following hardware:
 
 * One of the following:
 
@@ -208,34 +160,15 @@ To use this setup, regardless of whether you use Python Matter controller or CHI
 Configuring the environment
 ===========================
 
-.. note::
-    The Python Matter controller is currently not supported for building on Raspbian OS.
-    If you use Raspberry Pi to run the controller and the Thread Border Router, replace Raspbian OS with Ubuntu Server.
-
 To configure and use Thread Border Router and Matter controller on the same device, complete the following steps:
 
 1. Program the Matter accessory device with one of available :ref:`matter_samples`.
 #. Configure the Thread Border Router on a PC or on a Raspberry Pi, depending on what hardware you are using.
    For detailed steps, see the Running OTBR using Docker section on the :ref:`ug_thread_tools_tbr` page in the |NCS| documentation.
-#. Configure the controller, depending on the controller you want to use:
+#. Configure the CHIP Tool controller controller.
+   Complete the following actions by following the steps in the :doc:`matter:chip_tool_guide` user guide in the Matter documentation:
 
-   * CHIP Tool controller:
-
-      a. Complete the following actions by following the steps in the :doc:`matter:chip_tool_guide` user guide in the Matter documentation:
-
-         * Build and run the CHIP Tool by completing the steps listed in "Building and running CHIP Tool".
-         * Prepare the environment for testing by completing the steps listed in "Using CHIP Tool for Matter device testing".
-
-   * Python Matter controller:
-
-      a. Build the controller using one of the options described in :ref:`ug_matter_configuring_controller_pc`.
-      #. Complete the following steps from the :doc:`matter:python_chip_controller_building` user guide in the Matter documentation:
-
-         * Building and installing - which prepares the controller for commissioning.
-         * Running the tool - which opens the command-line interface.
-         * Using Python CHIP Controller for Matter accessory testing - which prepares your device programmed with the Matter sample for commissioning and testing.
-
-         .. note::
-               Skip Step 1, as you have the development kit programmed with a Matter sample.
+   * Build and run the CHIP Tool by completing the steps listed in "Building and running CHIP Tool".
+   * Prepare the environment for testing by completing the steps listed in "Using CHIP Tool for Matter device testing".
 
 #. Depending on which Matter sample you programmed onto the development kit, go to this sample's documentation page and complete the steps from the Testing section.

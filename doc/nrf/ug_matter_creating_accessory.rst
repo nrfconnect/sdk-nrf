@@ -364,7 +364,7 @@ Testing the new sensor application
 **********************************
 
 .. note::
-   Use the Python Controller when :ref:`setting up Matter development environment <ug_matter_configuring_mobile>`.
+   Use the the mobile Matter controller when :ref:`setting up Matter development environment <ug_matter_configuring_mobile>`.
 
 To check if the sensor device is working, complete the following steps:
 
