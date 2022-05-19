@@ -307,6 +307,7 @@
 
 .. _`nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/keyfeatures_html5.html
 .. _`nRF5340 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_dk/UG/dk/intro.html
+.. _`Execute in place page in the nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/qspi.html#execute_in_place
 
 .. _`Getting started with nRF Connect SDK (nRF52 Series)`: https://infocenter.nordicsemi.com/topic/ug_gsg_ncs52/UG/gsg/intro.html
 
