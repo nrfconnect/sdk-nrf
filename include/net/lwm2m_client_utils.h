@@ -114,6 +114,18 @@ typedef int (*lwm2m_firmware_get_update_state_cb_t)(uint8_t update_state);
 void lwm2m_firmware_set_update_state_cb(lwm2m_firmware_get_update_state_cb_t cb);
 
 /**
+ * @brief Apply the firmware update.
+ *
+ * By default lwm2m firmware is applied when the update resource (5/0/2) is executed.
+ * If application needs to control the update, it can set its own callback for the
+ * update resource calling `lwm2m_firmware_set_update_cb`. After that, the application
+ * can apply the firmware update when it is ready.
+ *
+ * @param[in] obj_inst_id Instance id of the firmware update object.
+ */
+int lwm2m_firmware_apply_update(uint16_t obj_inst_id);
+
+/**
  * @brief Firmware read callback
  */
 void *firmware_read_cb(uint16_t obj_inst_id, size_t *data_len);
