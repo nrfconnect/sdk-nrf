@@ -132,6 +132,7 @@ Following are the three supported FOTA types:
 * ``APP``
 * ``MODEM``
 * ``BOOT``
+* ``MDM_FULL``
 
 For example, a device that supports all the FOTA types writes the following data into the device shadow:
 
@@ -145,14 +146,15 @@ For example, a device that supports all the FOTA types writes the following data
                "fota_v2": [
                "APP",
                "MODEM",
+               "MDM_FULL",
                "BOOT"
                ]
    }}}}}
 
 You can initiate FOTA updates through `nRF Cloud`_ or by using the `nRF Cloud Device API`_.
-When the device receives the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` event, the application must perform any necessary cleanup, as a reboot will be initiated to complete the update.
+When the device receives the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` event, the application must perform any necessary cleanup and perform a reboot to complete the update.
 The message payload of the :c:enumerator:`NRF_CLOUD_EVT_FOTA_DONE` event contains the :c:enum:`nrf_cloud_fota_type` value.
-If the value equals :c:enumerator:`NRF_CLOUD_FOTA_MODEM`, the application can optionally avoid a reboot by performing reinitialization of the modem and calling the :c:func:`nrf_cloud_modem_fota_completed` function.
+If the value equals :c:enumerator:`NRF_CLOUD_FOTA_MODEM_DELTA`, the application can optionally avoid a reboot by reinitializing the modem library and then calling the :c:func:`nrf_cloud_modem_fota_completed` function.
 
 Building FOTA images
 ====================
