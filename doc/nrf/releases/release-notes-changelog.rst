@@ -911,6 +911,7 @@ Documentation
   * Added a note to several nRF Cloud samples using the `nRF Cloud REST API`_ indicating the need for valid and registered request signing credentials.
   * :ref:`thread_ot_memory` with definitions of variants listed on the tables.
   * :ref:`ug_nrf_cloud` with more information about security.
+  * :ref:`software_maturity` with a table detailing the differences between supported and experimental features.
 
 * Removed:
 
