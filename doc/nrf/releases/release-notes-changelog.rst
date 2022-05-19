@@ -67,7 +67,7 @@ The following list summarizes the most important changes inherited from the upst
 Thread
 ------
 
-|no_changes_yet_note|
+* Multiprotocol support was removed from :file:`overlay-cert.config` and moved to :file:`overlay-multiprotocol.conf`.
 
 See `Thread samples`_ for the list of changes for the Thread samples.
 
