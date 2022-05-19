@@ -64,7 +64,7 @@ config OPENTHREAD_RADIO_WORKQUEUE_STACK_SIZE
 	default 1024
 
 choice TFM_PROFILE_TYPE
-	default TFM_PROFILE_TYPE_MEDIUM
+	default TFM_PROFILE_TYPE_NOT_SET
 endchoice
 
 endmenu
