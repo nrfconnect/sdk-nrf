@@ -40,6 +40,10 @@ enum nrf_cloud_fota_error {
 	NRF_CLOUD_FOTA_ERROR_APPLY_FAIL,
 	/** Firmware file type differs from expected FOTA type. */
 	NRF_CLOUD_FOTA_ERROR_MISMATCH,
+	/** Received job info was invalid. */
+	NRF_CLOUD_FOTA_ERROR_BAD_JOB_INFO,
+	/** Unhandled FOTA type. */
+	NRF_CLOUD_FOTA_ERROR_BAD_TYPE,
 };
 
 /**@brief FOTA info for a BLE job */

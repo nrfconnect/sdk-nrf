@@ -711,34 +711,32 @@ static int nct_settings_init(void)
 static void nrf_cloud_fota_cb_handler(const struct nrf_cloud_fota_evt
 				      * const evt)
 {
+	if (!evt) {
+		LOG_ERR("Received NULL FOTA event");
+		return;
+	}
+
 	switch (evt->id) {
 	case NRF_CLOUD_FOTA_EVT_START: {
-		LOG_DBG("NRF_CLOUD_FOTA_EVT_START");
 		struct nrf_cloud_evt cloud_evt = {
 			.type = NRF_CLOUD_EVT_FOTA_START
 		};
 
-		nct_apply_update(&cloud_evt);
+		LOG_DBG("NRF_CLOUD_FOTA_EVT_START");
+		cloud_evt.data.ptr = (const void *)&evt->type;
+		cloud_evt.data.len = sizeof(evt->type);
+		nct_send_event(&cloud_evt);
 		break;
 	}
 	case NRF_CLOUD_FOTA_EVT_DONE: {
-		enum nrf_cloud_fota_type fota_type;
 		struct nrf_cloud_evt cloud_evt = {
 			.type = NRF_CLOUD_EVT_FOTA_DONE,
 		};
 
-		LOG_DBG("NRF_CLOUD_FOTA_EVT_DONE: rebooting");
-
-		if (evt) {
-			fota_type = evt->type;
-			cloud_evt.data.ptr = &fota_type;
-			cloud_evt.data.len = sizeof(fota_type);
-		} else {
-			cloud_evt.data.ptr = NULL;
-			cloud_evt.data.len = 0;
-		}
-
-		nct_apply_update(&cloud_evt);
+		LOG_DBG("NRF_CLOUD_FOTA_EVT_DONE");
+		cloud_evt.data.ptr = (const void *)&evt->type;
+		cloud_evt.data.len = sizeof(evt->type);
+		nct_send_event(&cloud_evt);
 		break;
 	}
 	case NRF_CLOUD_FOTA_EVT_ERROR: {
@@ -747,7 +745,7 @@ static void nrf_cloud_fota_cb_handler(const struct nrf_cloud_fota_evt
 			.type = NRF_CLOUD_EVT_FOTA_ERROR
 		};
 
-		nct_apply_update(&cloud_evt);
+		nct_send_event(&cloud_evt);
 		break;
 	}
 	case NRF_CLOUD_FOTA_EVT_ERASE_PENDING: {
@@ -759,6 +757,7 @@ static void nrf_cloud_fota_cb_handler(const struct nrf_cloud_fota_evt
 		break;
 	}
 	case NRF_CLOUD_FOTA_EVT_DL_PROGRESS: {
+		LOG_DBG("NRF_CLOUD_FOTA_EVT_DL_PROGRESS");
 		break;
 	}
 	default: {

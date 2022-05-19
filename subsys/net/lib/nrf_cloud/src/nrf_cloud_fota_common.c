@@ -4,10 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr.h>
 #include <stdbool.h>
 #include <nrf_modem.h>
 #include <modem/nrf_modem_lib.h>
 #include <zephyr/dfu/mcuboot.h>
+#include <dfu/dfu_target_full_modem.h>
+#include <dfu/fmfu_fdev.h>
 #if defined(CONFIG_FOTA_DOWNLOAD)
 #include <net/fota_download.h>
 #endif
@@ -16,7 +19,82 @@
 
 LOG_MODULE_REGISTER(nrf_cloud_fota_common, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
-enum nrf_cloud_fota_validate_status boot_fota_validate_get(
+#if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
+/* Buffer for loading/applying the full modem update */
+static char fmfu_buf[CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE_BUF_SIZE];
+/* Flash device for storing full modem image */
+static struct dfu_target_fmfu_fdev fmfu_dev;
+/* The DFU target library does not allow reconfiguration */
+static bool fmfu_dev_set;
+
+int nrf_cloud_fota_fmfu_dev_set(const struct dfu_target_fmfu_fdev *const fmfu_dev_inf)
+{
+	if (fmfu_dev_set) {
+		LOG_DBG("Full modem FOTA flash device already set");
+		return 1;
+	} else if (!fmfu_dev_inf) {
+		return -EINVAL;
+	} else if (!fmfu_dev_inf->dev) {
+		LOG_ERR("Flash device is NULL");
+		return -ENODEV;
+	}
+
+	int ret;
+	const struct dfu_target_full_modem_params params = {
+		.buf = fmfu_buf,
+		.len = sizeof(fmfu_buf),
+		.dev = (struct dfu_target_fmfu_fdev *)fmfu_dev_inf
+	};
+
+	ret = dfu_target_full_modem_cfg(&params);
+	if (ret) {
+		LOG_ERR("Failed to initialize full modem FOTA: %d", ret);
+	} else {
+		fmfu_dev = *fmfu_dev_inf;
+		fmfu_dev_set = true;
+	}
+
+	return ret;
+}
+
+int nrf_cloud_fota_fmfu_apply(void)
+{
+	if (!fmfu_dev_set) {
+		return -EACCES;
+	}
+
+	int err;
+
+	err = nrf_modem_lib_shutdown();
+	if (err != 0) {
+		LOG_ERR("nrf_modem_lib_shutdown() failed: %d", err);
+		return err;
+	}
+
+	err = nrf_modem_lib_init(FULL_DFU_MODE);
+	if (err != 0) {
+		LOG_ERR("nrf_modem_lib_init(FULL_DFU_MODE) failed: %d", err);
+		(void)nrf_modem_lib_init(NORMAL_MODE);
+		return err;
+	}
+
+	err = fmfu_fdev_load(fmfu_buf, sizeof(fmfu_buf), fmfu_dev.dev, 0);
+	if (err != 0) {
+		LOG_ERR("Failed to apply full modem update, error: %d", err);
+		(void)nrf_modem_lib_init(NORMAL_MODE);
+		return err;
+	}
+
+	err = nrf_modem_lib_shutdown();
+	if (err != 0) {
+		LOG_WRN("nrf_modem_lib_shutdown() failed: %d\n", err);
+	}
+
+	return 0;
+}
+#endif /* CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE */
+
+static enum nrf_cloud_fota_validate_status boot_fota_validate_get(
 	const enum nrf_cloud_fota_bootloader_status_flags bl_flags)
 {
 	enum nrf_cloud_fota_validate_status validate = NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
@@ -48,7 +126,7 @@ enum nrf_cloud_fota_validate_status boot_fota_validate_get(
 	return validate;
 }
 
-enum nrf_cloud_fota_validate_status app_fota_validate_get(void)
+static enum nrf_cloud_fota_validate_status app_fota_validate_get(void)
 {
 	enum nrf_cloud_fota_validate_status validate = NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
 
@@ -73,7 +151,7 @@ enum nrf_cloud_fota_validate_status app_fota_validate_get(void)
 	return validate;
 }
 
-enum nrf_cloud_fota_validate_status modem_fota_validate_get(void)
+static enum nrf_cloud_fota_validate_status modem_delta_fota_validate_get(void)
 {
 #if defined(CONFIG_NRF_MODEM_LIB)
 	int modem_lib_init_result = nrf_modem_lib_get_init_ret();
@@ -95,6 +173,24 @@ enum nrf_cloud_fota_validate_status modem_fota_validate_get(void)
 #endif
 
 	return NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
+}
+
+static enum nrf_cloud_fota_validate_status modem_full_fota_validate_get(void)
+{
+	int err = -1;
+
+#if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
+	err = nrf_cloud_fota_fmfu_apply();
+#endif
+
+	return (err ? NRF_CLOUD_FOTA_VALIDATE_FAIL :
+		      NRF_CLOUD_FOTA_VALIDATE_PASS);
+}
+
+bool nrf_cloud_fota_is_type_modem(const enum nrf_cloud_fota_type type)
+{
+	return ((type == NRF_CLOUD_FOTA_MODEM_DELTA) ||
+		(type == NRF_CLOUD_FOTA_MODEM_FULL));
 }
 
 int nrf_cloud_bootloader_fota_slot_set(struct nrf_cloud_settings_fota_job * const job)
@@ -143,11 +239,23 @@ int nrf_cloud_pending_fota_job_process(struct nrf_cloud_settings_fota_job * cons
 		return -ENODEV;
 	}
 
-	if (job->type == NRF_CLOUD_FOTA_MODEM) {
-		job->validate = modem_fota_validate_get();
+	if (job->type == NRF_CLOUD_FOTA_MODEM_DELTA) {
+		job->validate = modem_delta_fota_validate_get();
 
 		*reboot_required = true;
-		LOG_INF("Modem FOTA update complete on reboot");
+		LOG_INF("Modem (delta) FOTA complete on modem library reinit or reboot");
+
+	} else if (job->type == NRF_CLOUD_FOTA_MODEM_FULL) {
+
+		job->validate = modem_full_fota_validate_get();
+
+		if (IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)) {
+			*reboot_required = true;
+			LOG_INF("Modem (full) FOTA complete on modem library reinit or reboot");
+		} else {
+			LOG_ERR("Not configured for full modem FOTA");
+			return -ESRCH;
+		}
 	} else if (job->type == NRF_CLOUD_FOTA_APPLICATION) {
 		job->validate = app_fota_validate_get();
 

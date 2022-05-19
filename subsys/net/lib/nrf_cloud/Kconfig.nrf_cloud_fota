@@ -11,7 +11,7 @@ menuconfig NRF_CLOUD_FOTA
 	select DOWNLOAD_CLIENT
 	select REBOOT
 	select CJSON_LIB
-	depends on SETTINGS
+	select SETTINGS
 	default y if NRF_CLOUD_MQTT
 
 if NRF_CLOUD_FOTA
@@ -61,3 +61,28 @@ config NRF_CLOUD_FOTA_LOG_LEVEL
 	default 4 if NRF_CLOUD_FOTA_LOG_LEVEL_DBG
 
 endif # NRF_CLOUD_FOTA
+
+menuconfig NRF_CLOUD_FOTA_FULL_MODEM_UPDATE
+	bool "Enable full modem FOTA updates"
+	select NRF_MODEM_LIB
+	select ZCBOR
+	select DFU_TARGET
+	select DFU_TARGET_FULL_MODEM
+	select DFU_TARGET_STREAM
+	select STREAM_FLASH_ERASE
+	select STREAM_FLASH
+	select FLASH
+	select MBEDTLS_SHA256_C
+	select FMFU_FDEV
+	select OBERON_BACKEND
+	select NORDIC_SECURITY_BACKEND
+	default n
+	help
+	  Requires flash device of at least 4MB.
+
+if NRF_CLOUD_FOTA_FULL_MODEM_UPDATE
+config NRF_CLOUD_FOTA_FULL_MODEM_UPDATE_BUF_SIZE
+	int "Size of buffer used for stream flash writing full modem updates"
+	range 512 4096
+	default 4096
+endif # NRF_CLOUD_FOTA_FULL_MODEM_UPDATE

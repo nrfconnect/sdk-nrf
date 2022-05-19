@@ -798,11 +798,17 @@ static int nrf_cloud_encode_service_info_fota(const struct nrf_cloud_svc_info_fo
 			++item_cnt;
 		}
 		if (fota->modem) {
-			cJSON_AddItemToArray(array, cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_MODEM));
+			cJSON_AddItemToArray(array,
+					     cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_MODEM_DELTA));
 			++item_cnt;
 		}
 		if (fota->application) {
 			cJSON_AddItemToArray(array, cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_APP));
+			++item_cnt;
+		}
+		if (fota->modem_full) {
+			cJSON_AddItemToArray(array,
+					     cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_MODEM_FULL));
 			++item_cnt;
 		}
 
@@ -1126,8 +1132,10 @@ int nrf_cloud_rest_fota_execution_parse(const char *const response,
 		goto err_cleanup;
 	}
 
-	if (!strcmp(type, NRF_CLOUD_FOTA_TYPE_MODEM)) {
-		job->type = NRF_CLOUD_FOTA_MODEM;
+	if (!strcmp(type, NRF_CLOUD_FOTA_TYPE_MODEM_DELTA)) {
+		job->type = NRF_CLOUD_FOTA_MODEM_DELTA;
+	} else if (!strcmp(type, NRF_CLOUD_FOTA_TYPE_MODEM_FULL)) {
+		job->type = NRF_CLOUD_FOTA_MODEM_FULL;
 	} else if (!strcmp(type, NRF_CLOUD_FOTA_TYPE_BOOT)) {
 		job->type = NRF_CLOUD_FOTA_BOOTLOADER;
 	} else if (!strcmp(type, NRF_CLOUD_FOTA_TYPE_APP)) {

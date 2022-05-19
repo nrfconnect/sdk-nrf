@@ -114,6 +114,17 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param)
 		return err;
 	}
 
+#if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
+	if (param->fmfu_dev_inf) {
+		err = nrf_cloud_fota_fmfu_dev_set(param->fmfu_dev_inf);
+		if (err < 0) {
+			return err;
+		}
+	} else {
+		LOG_WRN("Full modem FOTA not initialized; flash device info not provided");
+	}
+#endif
+
 	app_event_handler = param->event_handler;
 
 	nfsm_set_current_state_and_notify(STATE_INITIALIZED, NULL);
@@ -426,9 +437,13 @@ int nct_input(const struct nct_evt *evt)
 	return nfsm_handle_incoming_event(evt, current_state);
 }
 
-void nct_apply_update(const struct nrf_cloud_evt * const evt)
+void nct_send_event(const struct nrf_cloud_evt * const evt)
 {
-	app_event_handler(evt);
+	__ASSERT_NO_MSG(evt != NULL);
+
+	if (app_event_handler && evt) {
+		app_event_handler(evt);
+	}
 }
 
 int nrf_cloud_process(void)

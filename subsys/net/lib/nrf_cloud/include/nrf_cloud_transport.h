@@ -147,8 +147,8 @@ int nct_input(const struct nct_evt *evt);
 /**@brief Retrieve the device id. */
 int nct_client_id_get(char *id, size_t id_len);
 
-/**@brief Signal to apply FOTA update. */
-void nct_apply_update(const struct nrf_cloud_evt * const evt);
+/**@brief Send cloud event to the application. */
+void nct_send_event(const struct nrf_cloud_evt * const evt);
 
 /**@brief Troubleshooting function to overrule the persistent session setting. */
 int nct_save_session_state(const int session_valid);

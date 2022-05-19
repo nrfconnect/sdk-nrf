@@ -292,7 +292,7 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 
 		LOG_DBG("NRF_CLOUD_EVT_FOTA_DONE, FOTA type: %s",
 			fota_type == NRF_CLOUD_FOTA_APPLICATION	  ?		"Application"	:
-			fota_type == NRF_CLOUD_FOTA_MODEM	  ?		"Modem"		:
+			fota_type == NRF_CLOUD_FOTA_MODEM_DELTA	  ?		"Modem (delta)"	:
 			fota_type == NRF_CLOUD_FOTA_BOOTLOADER	  ?		"Bootloader"	:
 										"Invalid");
 
