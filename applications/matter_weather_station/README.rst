@@ -178,11 +178,11 @@ Testing
 =======
 
 .. note::
-   The testing procedure assumes you are using the mobile Matter controller application.
-   You can also obtain the measurement values using the PC command-line-based Matter controller and invoking the read commands manually.
+   The testing procedure assumes you are using the CHIP Tool for Android Matter controller application.
+   You can also obtain the measurement values using the PC-based CHIP Tool for Linux and iOS Matter controller and invoking the read commands manually.
    Compared with the PC Matter controller, the mobile Matter controller only gives access to a subset of clusters supported by the Matter weather station application.
    If you want to access all the supported clusters, including Descriptor, Identify, and Power Source clusters, use the PC Matter controller.
-   To see how to send commands from the PC Matter controller, read the :doc:`matter:python_chip_controller_building` guide in the Matter documentation.
+   To see how to send commands from the PC Matter controller, read the :doc:`matter:chip_tool_guide` page in the Matter documentation.
 
 After programming the application, perform the following steps to test the Matter weather station application on the Thingy:53 with the mobile Matter controller application:
 
@@ -199,9 +199,9 @@ After programming the application, perform the following steps to test the Matte
         When using the debug configuration, you can also get this type of information from the USB interface logs.
 
    Once the commissioning is complete and the device has full Thread connectivity, **LED (LD1)** starts blinking purple (short flash on).
-#. Read sensor measurements in Android CHIPTool:
+#. Read sensor measurements in CHIP Tool for Android:
 
-   a. In the Android CHIPTool application main menu, tap the :guilabel:`SENSOR CLUSTERS` button to open the sensor measurements section.
+   a. In the CHIP Tool for Android application main menu, tap the :guilabel:`SENSOR CLUSTERS` button to open the sensor measurements section.
       This section contains text boxes to enter :guilabel:`Device ID` and :guilabel:`Endpoint ID`, a drop-down menu with available measurements and two buttons, :guilabel:`READ` and :guilabel:`WATCH`.
 
       .. figure:: /images/chiptool_sensor_cluster.gif

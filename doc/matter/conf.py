@@ -44,7 +44,6 @@ external_content_contents = [
     (MATTER_BASE / "docs" / "guides", "images"),
     (MATTER_BASE / "docs" / "guides", "nrfconnect_*.md"),
     (MATTER_BASE / "docs" / "guides", "openthread_*.md"),
-    (MATTER_BASE / "docs" / "guides", "python_*.md"),
     (MATTER_BASE / "docs" / "guides", "android_*.md"),
     (MATTER_BASE / "docs" / "guides", "BUILDING.md"),
     (MATTER_BASE / "docs" / "guides", "chip_tool_guide.md"),

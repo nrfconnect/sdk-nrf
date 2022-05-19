@@ -801,22 +801,22 @@ Matter (Project CHIP)
 
 .. rst-class:: v1-9-1 v1-9-0
 
-KRKNWK-12950: Android CHIPTool opens the commissioning window using an incorrect PIN code
-  Android CHIPTool uses a random code instead of a user-provided PIN code to open the commissioning window on a Matter device.
+KRKNWK-12950: CHIP Tool for Android opens the commissioning window using an incorrect PIN code
+  CHIP Tool for Android uses a random code instead of a user-provided PIN code to open the commissioning window on a Matter device.
 
 
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0
 
-KRKNWK-11225: Android CHIPTool cannot communicate with a Matter device after the device reboots
-  Android CHIPTool does not implement any mechanism to recover a secure session to a Matter device after the device has rebooted and lost the session.
-  As a result, the device can no longer decrypt and process messages sent by Android CHIPTool as the controller keeps using stale cryptographic keys.
+KRKNWK-11225: CHIP Tool for Android cannot communicate with a Matter device after the device reboots
+  CHIP Tool for Android does not implement any mechanism to recover a secure session to a Matter device after the device has rebooted and lost the session.
+  As a result, the device can no longer decrypt and process messages sent by CHIP Tool for Android as the controller keeps using stale cryptographic keys.
 
-  **Workaround** Do not reboot the device after commissioning it with Android CHIPTool.
+  **Workaround** Do not reboot the device after commissioning it with CHIP Tool for Android.
 
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
-KRKNWK-10589: Android CHIPTool crashes when commissioning a Matter device
-  In random circumstances, Android CHIPTool crashes when trying to connect to a Matter device over Bluetooth® LE.
+KRKNWK-10589: CHIP Tool for Android crashes when commissioning a Matter device
+  In random circumstances, CHIP Tool for Android crashes when trying to connect to a Matter device over Bluetooth® LE.
 
   **Workaround** Restart the application and try to commission the Matter device again.
   If the problem persists, clear the application data and try again.
