@@ -769,7 +769,8 @@ Libraries for Zigbee
 
     * Added:
 
-      * New :kconfig:option:`CONFIG_ZIGBEE_FOTA_IMAGE_DISOVERY_INTERVAL_HRS` Kconfig option to configure interval between queries for the available Zigbee FOTA images.
+      * New :kconfig:option:`CONFIG_ZIGBEE_FOTA_SERVER_DISOVERY_INTERVAL_HRS` Kconfig option to configure the interval between queries for the Zigbee FOTA server.
+      * New :kconfig:option:`CONFIG_ZIGBEE_FOTA_IMAGE_QUERY_INTERVAL_MIN` Kconfig option to configure the interval between queries for the available Zigbee FOTA images.
       * Support for the combined application and network core updates for the nRF5340 SoC.
 
     * Updated:
