@@ -19,10 +19,10 @@ To read more about nRF Cloud, see the `nRF Cloud`_ website and the `nRF Cloud do
 
 You can use the services offered by nRF Cloud in the following scenarios:
 
-1. Device connected to nRF Cloud over MQTT. The services can be used from nRF Cloud.
-#. Device connected to nRF Cloud over MQTT, with a customer-developed website or application that interacts with the `nRF Cloud REST API`_ to display device data and manage it in a customized way.
-#. Device connected to nRF Cloud over REST, interacting using the `nRF Cloud REST API`_.
-#. Device connected to a customer cloud service in a suitable manner. The services can be used from the customer cloud service that communicates over REST to the nRF Cloud REST API in a proxy configuration.
+* Device connected to nRF Cloud over MQTT. The services can be used from nRF Cloud.
+* Device connected to nRF Cloud over MQTT, with a customer-developed website or application that interacts with the `nRF Cloud REST API`_ to display device data and manage it in a customized way.
+* Device connected to nRF Cloud over REST, interacting using the `nRF Cloud REST API`_.
+* Device connected to a customer cloud service in a suitable manner. The services can be used from the customer cloud service that communicates over REST to the nRF Cloud REST API in a proxy configuration.
 
 Choosing a protocol: MQTT or REST
 *********************************
@@ -121,13 +121,15 @@ The following sample demonstrates nRF Cloud-specific functionality using MQTT:
 
 The following samples demonstrate nRF Cloud-specific functionality using REST:
 
-* :ref:`gnss_sample`
 * :ref:`nrf_cloud_rest_fota`
 * :ref:`nrf_cloud_rest_device_message`
 * :ref:`nrf_cloud_rest_cell_pos_sample`
 
-Other related samples:
+Other related samples and applications that use nRF Cloud services:
 
+* :ref:`gnss_sample`
+* :ref:`modem_shell_application`
 * :ref:`cloud_client`
 * :ref:`lte_sensor_gateway`
 * :ref:`multicell_location`
+* :ref:`serial_lte_modem`
