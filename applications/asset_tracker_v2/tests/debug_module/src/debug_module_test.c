@@ -14,6 +14,7 @@
 #include <memfault/metrics/mock_metrics.h>
 #include <memfault/core/mock_data_packetizer.h>
 #include <memfault/ports/mock_watchdog.h>
+#include <memfault/panics/mock_coredump.h>
 
 #include "app_module_event.h"
 #include "gnss_module_event.h"
@@ -95,6 +96,9 @@ static void validate_debug_data_ready_evt(struct app_event_header *aeh, int no_o
 	struct debug_module_event *event = cast_debug_module_event(aeh);
 
 	TEST_ASSERT_EQUAL(DEBUG_EVT_MEMFAULT_DATA_READY, event->type);
+
+	/* Free payload received in the DEBUG_EVT_MEMFAULT_DATA_READY event. */
+	k_free(event->data.memfault.buf);
 }
 
 /* Stub used to verify parameters passed into module_start(). */
@@ -209,6 +213,11 @@ void test_memfault_trigger_data_send(void)
 	TEST_ASSERT_EQUAL(0, DEBUG_MODULE_EVT_HANDLER(
 		(struct app_event_header *)data_module_event));
 	app_event_manager_free(data_module_event);
+
+	/* Add a minor sleep to allow execution of the internal memfault transport thread in the
+	 * debug module to finish before the rest runner.
+	 */
+	k_sleep(K_SECONDS(1));
 }
 
 /* Test that no Memfault SDK specific APIs are called on GNSS module events

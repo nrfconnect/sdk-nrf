@@ -11,6 +11,7 @@
 #include <memfault/core/data_packetizer.h>
 #include <memfault/core/trace_event.h>
 #include <memfault/ports/watchdog.h>
+#include <memfault/panics/coredump.h>
 #endif
 
 #define MODULE debug_module
@@ -49,18 +50,62 @@ struct debug_msg_data {
 static void message_handler(struct debug_msg_data *msg);
 
 #if defined(CONFIG_MEMFAULT)
+/* Enumerator used to specify what type of Memfault that is sent. */
+static enum memfault_data_type {
+	METRICS,
+	COREDUMP
+} send_type;
+
 static K_SEM_DEFINE(mflt_internal_send_sem, 0, 1);
 
 static void memfault_internal_send(void)
 {
-	while (true) {
-		k_sem_take(&mflt_internal_send_sem, K_FOREVER);
+entry:
+	k_sem_take(&mflt_internal_send_sem, K_FOREVER);
 
-		/* Because memfault_zephyr_port_post_data() can block for a long time we cannot
-		 * call it from the system workqueue.
-		 */
-		memfault_zephyr_port_post_data();
+	if (send_type == COREDUMP) {
+		if (memfault_coredump_has_valid_coredump(NULL)) {
+			LOG_WRN("Sending a coredump to Memfault!");
+		} else {
+			LOG_DBG("No coredump available.");
+			goto entry;
+		}
 	}
+
+	/* If dispatching Memfault data over an external transport is not enabled,
+	 * Memfault SDKs internal HTTP transport is used.
+	 */
+#if !defined(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT)
+		memfault_zephyr_port_post_data();
+#else
+	uint8_t data[CONFIG_DEBUG_MODULE_MEMFAULT_CHUNK_SIZE_MAX];
+	size_t len = sizeof(data);
+	uint8_t *message = NULL;
+
+	/* Retrieve, allocate and send parts of the memfault data.
+	 * After use it is expected that the data is freed.
+	 */
+	while (memfault_packetizer_get_chunk(data, &len)) {
+		message = k_malloc(len);
+		if (message == NULL) {
+			LOG_ERR("Failed to allocate memory for Memfault data");
+			goto entry;
+		}
+
+		memcpy(message, data, len);
+
+		struct debug_module_event *debug_module_event = new_debug_module_event();
+
+		debug_module_event->type = DEBUG_EVT_MEMFAULT_DATA_READY;
+		debug_module_event->data.memfault.len = len;
+		debug_module_event->data.memfault.buf = message;
+
+		APP_EVENT_SUBMIT(debug_module_event);
+
+		len = sizeof(data);
+	}
+#endif
+	goto entry;
 }
 
 K_THREAD_DEFINE(mflt_send_thread, CONFIG_DEBUG_MODULE_MEMFAULT_THREAD_STACK_SIZE,
@@ -198,49 +243,16 @@ static void watchdog_handler(const struct watchdog_evt *evt)
 #endif /* defined(CONFIG_WATCHDOG_APPLICATION) */
 
 /**
- * @brief Send Memfault data. Memfault data should always be sent over the internal HTTP transport
- *	  upon a connection to LTE. This is to not be dependent on a cloud connection for critical
- *	  data such as coredumps. For regular metric updates the transport can be selected by
- *	  setting CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT.
- *
- * @param[in] lte_connected Flag set when the debug module is notified that an LTE connection
- *			    has been established.
+ * @brief Send Memfault data. To transfer Memfault data using an internal transport,
+ *	  CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT must be selected.
+ *	  Dispatching of Memfault data is offloaded to a dedicated thread.
  */
-static void send_memfault_data(bool lte_connected)
+static void send_memfault_data(void)
 {
-	bool data_available = memfault_packetizer_data_available();
-
-	if (lte_connected && data_available) {
-		k_sem_give(&mflt_internal_send_sem);
-		return;
-	}
-
-#if defined(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT)
-	if (data_available) {
-		uint8_t data[CONFIG_DEBUG_MODULE_MEMFAULT_CHUNK_SIZE_MAX];
-		size_t len = sizeof(data);
-
-		while (memfault_packetizer_get_chunk(data, &len)) {
-			struct debug_module_event *debug_module_event = new_debug_module_event();
-
-			debug_module_event->type = DEBUG_EVT_MEMFAULT_DATA_READY;
-			debug_module_event->data.memfault.len = len;
-
-			BUILD_ASSERT(sizeof(debug_module_event->data.memfault.buf) >= sizeof(data));
-			memcpy(debug_module_event->data.memfault.buf, data,
-			       sizeof(debug_module_event->data.memfault.buf));
-
-			APP_EVENT_SUBMIT(debug_module_event);
-		}
-	}
-
-	return;
-#else
-	if (data_available) {
-		/* Offload sending of Memfault data to a dedicated thread. */
+	/* Offload sending of Memfault data to a dedicated thread. */
+	if (memfault_packetizer_data_available()) {
 		k_sem_give(&mflt_internal_send_sem);
 	}
-#endif /* if defined(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT) */
 }
 
 static void add_gnss_metrics(uint8_t satellites, uint32_t search_time,
@@ -295,20 +307,48 @@ static void memfault_handle_event(struct debug_msg_data *msg)
 	 * should preferably be sent within the same LTE RRC connected window.
 	 */
 	if ((IS_EVENT(msg, data, DATA_EVT_DATA_SEND)) ||
-	    (IS_EVENT(msg, data, DATA_EVT_DATA_SEND_BATCH))) {
-		send_memfault_data(false);
+	    (IS_EVENT(msg, data, DATA_EVT_DATA_SEND_BATCH)) ||
+	    (IS_EVENT(msg, data, DATA_EVT_NEIGHBOR_CELLS_DATA_SEND)) ||
+	    (IS_EVENT(msg, data, DATA_EVT_UI_DATA_SEND))) {
+		/* Limit how often non-coredump memfault data (events and metrics) are sent
+		 * to memfault. Updates can never occur more often than the interval set by
+		 * CONFIG_DEBUG_MODULE_MEMFAULT_UPDATES_MIN_INTERVAL_SEC and the first update is
+		 * always sent.
+		 */
+		static int64_t last_update;
+
+		if (((k_uptime_get() - last_update) <
+		     (MSEC_PER_SEC * CONFIG_DEBUG_MODULE_MEMFAULT_UPDATES_MIN_INTERVAL_SEC)) &&
+		    (last_update != 0)) {
+			LOG_DBG("Not enough time has passed since the last Memfault update, abort");
+			return;
+		}
+
+		last_update = k_uptime_get();
+		send_type = METRICS;
+		send_memfault_data();
 		return;
 	}
 
-	/* When the device connects to LTE, the debug module will check if there is available
-	 * Memfault data and send it before the application connects to cloud. If Memfault data
-	 * has been stored prior to receiving an LTE connected event, there is the likelihood
-	 * that the data is a coredump from a previous crash. This data must be prioritized and
-	 * should not depend on a connection to cloud. Due to a limitation of maximum 1 TLS
-	 * handshake occur at the time, this will cause the first cloud connection attempt to fail.
+	/* If the module is configured to use Memfaults internal HTTP transport, coredumps are
+	 * sent on an established connection to LTE.
 	 */
-	if (IS_EVENT(msg, modem, MODEM_EVT_LTE_CONNECTED)) {
-		send_memfault_data(true);
+	if (IS_EVENT(msg, modem, MODEM_EVT_LTE_CONNECTED) &&
+	    !IS_ENABLED(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT)) {
+		/* Send coredump on LTE CONNECTED. */
+		send_type = COREDUMP;
+		send_memfault_data();
+		return;
+	}
+
+	/* If the module is configured to use an external cloud transport, coredumps are
+	 * sent on an established connection to the configured cloud service.
+	 */
+	if (IS_EVENT(msg, cloud, CLOUD_EVT_CONNECTED) &&
+	    IS_ENABLED(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT)) {
+		/* Send coredump on CLOUD CONNECTED. */
+		send_type = COREDUMP;
+		send_memfault_data();
 		return;
 	}
 
