@@ -24,20 +24,20 @@ The following figure shows the available Matter controllers in the |NCS|.
 
 The following Matter controllers can be used for testing Matter applications based on the |NCS|:
 
-* **Recommended:** Matter controller for Linux or macOS
-* Mobile controller for Android
+* **Recommended:** CHIP Tool for Linux or macOS
+* CHIP Tool for Android
 
 These controller types are compatible with the |NCS| implementation of Matter.
-In the Matter upstream repository, you can find information and resources for implementing `other controller setups`_ (for example, for mobile controller for iOS).
+In the Matter upstream repository, you can find information and resources for implementing `other controller setups`_ (for example, mobile Matter controller for iOS).
 
 .. _ug_matter_configuring_controller_chip_tool:
 
-Matter controller for Linux or macOS
-************************************
+CHIP Tool for Linux or macOS
+****************************
 
-The CHIP Tool controller is the default implementation of the Matter controller role, recommended for the nRF Connect platform.
+CHIP Tool for Linux or macOS is the default implementation of the Matter controller role, recommended for the nRF Connect platform.
 You can use it either on a separate device from Thread Border Router or on the same device as Thread Border Router, depending on which :ref:`development environment setup option <ug_matter_configuring>` you choose.
-CHIP Tool is available for Linux and macOS, and for both amd64 and aarch64 architectures.
+CHIP Tool for Linux or macOS is available for both amd64 and aarch64 architectures.
 This implies that the tool can also be run on a Raspberry Pi with a 64-bit OS.
 
 To use this controller type, choose one of the following options:
@@ -50,13 +50,13 @@ For more information about how to test using the CHIP Tool, see the :doc:`matter
 
 .. _ug_matter_configuring_controller_mobile:
 
-Mobile controller for Android
-*****************************
+CHIP Tool for Android
+*********************
 
-CHIP Tool for Android (also known as Android CHIPTool) is the recommended Matter controller for mobile, which allows you to test Matter applications using an Android smartphone.
+CHIP Tool for Android (also known as Android CHIPTool) is the recommended Mobile controller for mobile, which allows you to test Matter applications using an Android smartphone.
 You can use it in the :ref:`development environment setup option <ug_matter_configuring>` where Thread Border Router and Matter controller are running on separate devices.
 
-To use Android CHIPTool, choose one of the following options:
+To use CHIP Tool for Android, choose one of the following options:
 
 * Use the prebuilt tool package from the `Matter nRF Connect releases`_ GitHub page.
   Make sure that the package is compatible with your |NCS| version.

@@ -8,7 +8,7 @@ Matter: Door lock
    :local:
    :depth: 2
 
-This door lock sample demonstrates the usage of the :ref:`Matter <ug_matter>` (formerly Project Connected Home over IP, Project CHIP) application layer to build a door lock device with one basic bolt.
+This door lock sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a door lock device with one basic bolt.
 This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread network.
 You can use this sample as a reference for creating your application.
 
@@ -19,7 +19,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-If you want to commission the lock device and :ref:`control it remotely <matter_lock_sample_network_mode>` through a Thread network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`. This requires additional hardware depending on the setup you choose.
+If you want to commission the lock device and :ref:`control it remotely <matter_lock_sample_network_mode>` through a Thread network, you also need a Matter controller device :ref:`configured on PC or mobile <ug_matter_configuring>`.
+This requires additional hardware depending on the setup you choose.
 
 .. note::
     |matter_gn_required_note|
@@ -33,7 +34,7 @@ You can test it in the following ways:
 * Standalone, using a single DK that runs the door lock application.
 * Remotely over the Thread protocol, which requires more devices.
 
-The remote control testing requires a Matter controller that you can configure either on a PC or mobile device (for remote testing in a network).
+The remote control testing requires a Matter controller that you can configure either on a PC or a mobile device (for remote testing in a network).
 You can enable both methods after :ref:`building and running the sample <matter_lock_sample_remote_control>`.
 
 .. _matter_lock_sample_network_mode:

@@ -7,7 +7,7 @@ Matter: Window covering
    :local:
    :depth: 2
 
-This sample demonstrates the usage of the :ref:`Matter <ug_matter>` (formerly Project Connected Home over IP, Project CHIP) application layer to build a window covering device.
+This sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a window covering device.
 This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread network.
 
 Use this sample as a reference for developing your own application.
