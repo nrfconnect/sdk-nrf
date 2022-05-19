@@ -10,14 +10,16 @@
 #error "DFUOverSMP requires MCUMGR module configs enabled"
 #endif
 
-#include <zephyr/dfu/mcuboot.h>
 #include <img_mgmt/img_mgmt.h>
-#include <zephyr/mgmt/mcumgr/smp_bt.h>
 #include <os_mgmt/os_mgmt.h>
+#include <zephyr/dfu/mcuboot.h>
+#include <zephyr/mgmt/mcumgr/smp_bt.h>
 
 #include <platform/CHIPDeviceLayer.h>
 
 #include <lib/support/logging/CHIPLogging.h>
+
+#include "ota_util.h"
 
 using namespace ::chip::DeviceLayer;
 
@@ -26,8 +28,24 @@ constexpr uint16_t kAdvertisingIntervalMaxMs = 500;
 
 DFUOverSMP DFUOverSMP::sDFUOverSMP;
 
+static void FlashSleep()
+{
+	GetFlashHandler().DoAction(FlashHandler::Action::SLEEP);
+}
+
+static void FlashWakeUp()
+{
+	GetFlashHandler().DoAction(FlashHandler::Action::WAKE_UP);
+}
+
+static const img_mgmt_dfu_callbacks_t cb_struct{ .dfu_started_cb = FlashWakeUp,
+						 .dfu_stopped_cb = FlashWakeUp,
+						 .dfu_pending_cb = nullptr,
+						 .dfu_confirmed_cb = FlashSleep };
+
 void DFUOverSMP::Init(DFUOverSMPRestartAdvertisingHandler startAdvertisingCb)
 {
+	img_mgmt_register_callbacks(&cb_struct);
 	os_mgmt_register_group();
 	img_mgmt_register_group();
 	img_mgmt_set_upload_cb(UploadConfirmHandler, NULL);
