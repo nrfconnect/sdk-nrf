@@ -473,7 +473,6 @@ This application uses the following |NCS| libraries:
 * :ref:`sms_readme`
 * :ref:`lib_fota_download`
 * :ref:`lib_download_client`
-* :ref:`cloud_api_readme`
 * :ref:`lib_nrf_cloud`
 * :ref:`lib_nrf_cloud_agps`
 * :ref:`lib_nrf_cloud_pgps`
