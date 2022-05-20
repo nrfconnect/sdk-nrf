@@ -93,10 +93,6 @@ To enable this feature, set the ``client_id`` entry in the :c:struct:`aws_iot_co
 .. note::
    If you are using a longer device ID that is either set by the option :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` or passed in during initialization, it might be required to increase the value of the option :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN` for proper initialization of the library.
 
-.. note::
-   The AWS IoT library is compatible with the :ref:`cloud_api_readme`, a generic API that enables multiple cloud backends to be interchanged, statically and at run time.
-   To enable the use of the cloud, API set the configurable option :kconfig:option:`CONFIG_CLOUD_API`, in addition to the other selected library options.
-
 Initializing the library
 ************************
 

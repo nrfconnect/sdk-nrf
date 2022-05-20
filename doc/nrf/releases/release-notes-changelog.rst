@@ -652,6 +652,7 @@ Libraries for networking
     * Updated:
 
       * Renamed ``aws_iot_topic_type`` to ``aws_iot_shadow_topic_type`` and removed ``AWS_IOT_SHADOW_TOPIC_UNKNOWN``.
+      * Removed support for the Cloud API.
 
   * :ref:`lib_lwm2m_client_utils` library:
 
