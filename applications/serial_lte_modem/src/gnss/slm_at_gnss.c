@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <zephyr/logging/log.h>
 #include <date_time.h>
-#include <net/cloud.h>
 #include <nrf_modem_gnss.h>
+#include <net/nrf_cloud.h>
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
 #include <net/nrf_cloud_cell_pos.h>
@@ -45,7 +45,7 @@ static struct k_work fix_rep;
 static struct k_work cell_pos_req;
 static enum nrf_cloud_cell_pos_type cell_pos_type;
 
-static struct cloud_backend *nrf_cloud;
+static bool nrf_cloud_initd;
 static bool nrf_cloud_ready;
 static bool location_signify;
 static uint64_t ttft_start;
@@ -520,16 +520,16 @@ static void gnss_event_handler(int event)
 static int do_cloud_send_msg(const char *message, int len)
 {
 	int err;
-	struct cloud_msg msg = {
-		.qos = CLOUD_QOS_AT_MOST_ONCE,
-		.endpoint.type = CLOUD_EP_MSG,
-		.buf = (char *)message,
-		.len = len
+	struct nrf_cloud_tx_data msg = {
+		.data.ptr = message,
+		.data.len = len,
+		.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
+		.qos = MQTT_QOS_0_AT_MOST_ONCE
 	};
 
-	err = cloud_send(nrf_cloud, &msg);
+	err = nrf_cloud_send(&msg);
 	if (err) {
-		LOG_ERR("cloud_send failed, error: %d", err);
+		LOG_ERR("nrf_cloud_send failed, error: %d", err);
 	}
 
 	return err;
@@ -539,15 +539,15 @@ static void on_cloud_evt_ready(void)
 {
 	if (location_signify) {
 		int err;
-		struct cloud_msg msg = {
-			.qos = CLOUD_QOS_AT_MOST_ONCE,
-			.endpoint.type = CLOUD_EP_STATE,
-			.buf = SERVICE_INFO_GPS,
-			.len = strlen(SERVICE_INFO_GPS)
+		struct nrf_cloud_tx_data msg = {
+			.data.ptr = SERVICE_INFO_GPS,
+			.data.len = strlen(SERVICE_INFO_GPS),
+			.topic_type = NRF_CLOUD_TOPIC_STATE,
+			.qos = MQTT_QOS_0_AT_MOST_ONCE
 		};
 
 		/* Update nRF Cloud with GPS service info signifying GPS capabilities. */
-		err = cloud_send(nrf_cloud, &msg);
+		err = nrf_cloud_send(&msg);
 		if (err) {
 			LOG_WRN("Failed to send message to cloud, error: %d", err);
 		}
@@ -567,24 +567,24 @@ static void on_cloud_evt_disconnected(void)
 	at_monitor_pause(ncell_meas);
 }
 
-static void on_cloud_evt_data_received(const struct cloud_event *const evt)
+static void on_cloud_evt_data_received(const struct nrf_cloud_data *const data)
 {
 	int err = 0;
 
 	if (run_type == RUN_TYPE_AGPS) {
-		err = nrf_cloud_agps_process(evt->data.msg.buf, evt->data.msg.len);
+		err = nrf_cloud_agps_process(data->ptr, data->len);
 		if (err) {
 			LOG_INF("Unable to process A-GPS data, error: %d", err);
 		}
 	} else if (run_type == RUN_TYPE_PGPS) {
-		err = nrf_cloud_pgps_process(evt->data.msg.buf, evt->data.msg.len);
+		err = nrf_cloud_pgps_process(data->ptr, data->len);
 		if (err) {
 			LOG_ERR("Unable to process P-GPS data, error: %d", err);
 		}
 	} else if (run_type == RUN_TYPE_CELL_POS) {
 		struct nrf_cloud_cell_pos_result result;
 
-		err = nrf_cloud_cell_pos_process(evt->data.msg.buf, &result);
+		err = nrf_cloud_cell_pos_process(data->ptr, &result);
 		if (err == 0) {
 			if (ttft_start != 0) {
 				LOG_INF("TTFF %ds", (int)k_uptime_delta(&ttft_start)/1000);
@@ -607,48 +607,41 @@ static void on_cloud_evt_data_received(const struct cloud_event *const evt)
 	}
 }
 
-static void cloud_event_handler(const struct cloud_backend *const backend,
-				const struct cloud_event *const evt, void *user_data)
+static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 {
-	ARG_UNUSED(backend);
-	ARG_UNUSED(user_data);
-
 	switch (evt->type) {
-	case CLOUD_EVT_CONNECTING:
-		LOG_DBG("CLOUD_EVT_CONNECTING");
+	case NRF_CLOUD_EVT_TRANSPORT_CONNECTING:
+		LOG_DBG("NRF_CLOUD_EVT_TRANSPORT_CONNECTING");
 		break;
-	case CLOUD_EVT_CONNECTED:
-		LOG_INF("CLOUD_EVT_CONNECTED");
+	case NRF_CLOUD_EVT_TRANSPORT_CONNECTED:
+		LOG_INF("NRF_CLOUD_EVT_TRANSPORT_CONNECTED");
 		break;
-	case CLOUD_EVT_READY:
-		LOG_INF("CLOUD_EVT_READY");
+	case NRF_CLOUD_EVT_READY:
+		LOG_INF("NRF_CLOUD_EVT_READY");
 		on_cloud_evt_ready();
 		break;
-	case CLOUD_EVT_DISCONNECTED:
-		LOG_INF("CLOUD_EVT_DISCONNECTED");
+	case NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED:
+		LOG_INF("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED");
 		on_cloud_evt_disconnected();
 		break;
-	case CLOUD_EVT_ERROR:
-		LOG_ERR("CLOUD_EVT_ERROR");
+	case NRF_CLOUD_EVT_ERROR:
+		LOG_ERR("NRF_CLOUD_EVT_ERROR");
 		break;
-	case CLOUD_EVT_DATA_SENT:
-		LOG_DBG("CLOUD_EVT_DATA_SENT");
+	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
+		LOG_DBG("NRF_CLOUD_EVT_SENSOR_DATA_ACK");
 		break;
-	case CLOUD_EVT_DATA_RECEIVED:
-		LOG_INF("CLOUD_EVT_DATA_RECEIVED");
-		on_cloud_evt_data_received(evt);
+	case NRF_CLOUD_EVT_RX_DATA:
+		LOG_INF("NRF_CLOUD_EVT_RX_DATA");
+		on_cloud_evt_data_received(&evt->data);
 		break;
-	case CLOUD_EVT_PAIR_REQUEST:
-		LOG_DBG("CLOUD_EVT_PAIR_REQUEST");
+	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
+		LOG_DBG("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");
 		break;
-	case CLOUD_EVT_PAIR_DONE:
-		LOG_DBG("CLOUD_EVT_PAIR_DONE");
+	case NRF_CLOUD_EVT_USER_ASSOCIATED:
+		LOG_DBG("NRF_CLOUD_EVT_USER_ASSOCIATED");
 		break;
-	case CLOUD_EVT_FOTA_DONE:
-		LOG_DBG("CLOUD_EVT_FOTA_DONE");
-		break;
-	case CLOUD_EVT_FOTA_ERROR:
-		LOG_ERR("CLOUD_EVT_FOTA_ERROR");
+	case NRF_CLOUD_EVT_FOTA_DONE:
+		LOG_DBG("NRF_CLOUD_EVT_FOTA_DONE");
 		break;
 	default:
 		break;
@@ -796,7 +789,7 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 				}
 				location_signify = (signify > 0);
 			}
-			err = cloud_connect(nrf_cloud);
+			err = nrf_cloud_connect(NULL);
 			if (err) {
 				LOG_ERR("Cloud connection failed, error: %d", err);
 #if defined(CONFIG_SLM_AGPS) || defined(CONFIG_SLM_PGPS)
@@ -812,7 +805,7 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 			/* enter data mode */
 			err = enter_datamode(nrf_cloud_datamode_callback);
 		} else if (op == nRF_CLOUD_DISCONNECT && nrf_cloud_ready) {
-			err = cloud_disconnect(nrf_cloud);
+			err = nrf_cloud_disconnect();
 			if (err) {
 				LOG_ERR("Cloud disconnection failed, error: %d", err);
 			}
@@ -823,7 +816,7 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 	case AT_CMD_TYPE_READ_COMMAND: {
 		char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN] = {0};
 
-		(void)cloud_get_id(nrf_cloud, device_id, sizeof(device_id));
+		(void)nrf_cloud_client_id_get(device_id, sizeof(device_id));
 		sprintf(rsp_buf, "\r\n#XNRFCLOUD: %d,%d,%d,\"%s\"\r\n", nrf_cloud_ready,
 			location_signify, CONFIG_NRF_CLOUD_SEC_TAG, device_id);
 		rsp_send(rsp_buf, strlen(rsp_buf));
@@ -1097,6 +1090,9 @@ int handle_at_cellpos(enum at_cmd_type cmd_type)
 int slm_at_gnss_init(void)
 {
 	int err = 0;
+	struct nrf_cloud_init_param init_param = {
+		.event_handler = cloud_event_handler
+	};
 
 	err = nrf_modem_gnss_event_handler_set(gnss_event_handler);
 	if (err) {
@@ -1104,17 +1100,14 @@ int slm_at_gnss_init(void)
 		return err;
 	}
 
-	if (nrf_cloud == NULL) {
-		nrf_cloud = cloud_get_binding("NRF_CLOUD");
-		if (nrf_cloud == NULL) {
-			LOG_ERR("Could not get binding to backend");
-			return -EINVAL;
-		}
-		err = cloud_init(nrf_cloud, cloud_event_handler);
+	if (!nrf_cloud_initd) {
+		err = nrf_cloud_init(&init_param);
 		if (err) {
-			LOG_ERR("Cloud backend could not be initialized, error: %d", err);
+			LOG_ERR("Cloud could not be initialized, error: %d", err);
 			return err;
 		}
+
+		nrf_cloud_initd = true;
 	}
 
 	k_work_init(&agps_req, agps_req_wk);
@@ -1130,10 +1123,11 @@ int slm_at_gnss_init(void)
 int slm_at_gnss_uninit(void)
 {
 	if (nrf_cloud_ready) {
-		(void)cloud_disconnect(nrf_cloud);
+		(void)nrf_cloud_disconnect();
 	}
-	(void)cloud_uninit(nrf_cloud);
-	nrf_cloud = NULL;
+	(void)nrf_cloud_uninit();
+
+	nrf_cloud_initd = false;
 
 	return 0;
 }
