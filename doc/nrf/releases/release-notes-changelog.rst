@@ -760,6 +760,10 @@ Other libraries
 
       * Fixed a NULL dereference bug, which could happen if :c:func:`settings_load` was called outside of the library.
 
+  * :ref:`lib_hw_unique_key` library:
+
+    * Fixed a bug where the random key would not be deleted from RAM after being generated and written.
+
 Common Application Framework (CAF)
 ----------------------------------
 
