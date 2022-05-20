@@ -114,7 +114,6 @@ int entropy_remote_get_inline(uint8_t *buffer, size_t length)
 	struct nrf_rpc_cbor_ctx ctx;
 	struct zcbor_string zst;
 	int result = -NRF_EINVAL;
-	int32_t val;
 
 	if (!buffer || length < 1) {
 		return -NRF_EINVAL;
@@ -122,8 +121,8 @@ int entropy_remote_get_inline(uint8_t *buffer, size_t length)
 
 	NRF_RPC_CBOR_ALLOC(ctx, CBOR_BUF_SIZE);
 
-	if (!zcbor_int32_decode(ctx.zs, &val)) {
-		goto cbor_error_exit;
+	if (!zcbor_int32_put(ctx.zs, (int)length)) {
+		return -NRF_EINVAL;
 	}
 
 	err = nrf_rpc_cbor_cmd_rsp(&entropy_group, RPC_COMMAND_ENTROPY_GET,
@@ -227,7 +226,7 @@ static void entropy_get_result_handler(struct nrf_rpc_cbor_ctx *ctx, void *handl
 
 	length = ARRAY_SIZE(buf);
 
-	if (!zcbor_bstr_decode(ctx->zs, &zst) || zst.len != length) {
+	if (!zcbor_bstr_decode(ctx->zs, &zst) || zst.len > length) {
 		goto cbor_error_exit;
 	}
 
