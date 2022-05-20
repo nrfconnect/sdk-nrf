@@ -112,6 +112,7 @@ Zigbee
 * Fixed:
 
   * An issue where an MCU reset between the completion of the OTA image transfer and a postponed firmware upgrade would cause the upgrade to be applied immediately.
+  * An issue where NCP SoC fails to initialize when ZBOSS traces over the second UBS CDC ACM class are enabled.
 
 See `Zigbee samples`_ for the list of changes for the Zigbee samples.
 
