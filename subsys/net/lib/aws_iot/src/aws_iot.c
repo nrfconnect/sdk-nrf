@@ -7,7 +7,6 @@
 #include <net/aws_iot.h>
 #include <zephyr/net/mqtt.h>
 #include <zephyr/net/socket.h>
-#include <net/cloud.h>
 #include <stdio.h>
 
 #if defined(CONFIG_AWS_FOTA)
@@ -101,10 +100,6 @@ static char delete_accepted_topic[DELETE_ACCEPTED_TOPIC_LEN + 1];
 static char delete_rejected_topic[DELETE_REJECTED_TOPIC_LEN + 1];
 #endif
 
-#if defined(CONFIG_CLOUD_API)
-static struct cloud_backend *aws_iot_backend;
-#endif
-
 /* Empty string used to request the AWS IoT shadow document. */
 #define AWS_IOT_SHADOW_REQUEST_STRING ""
 
@@ -141,31 +136,6 @@ static K_SEM_DEFINE(connection_poll_sem, 0, 1);
 static int connect_error_translate(const int err)
 {
 	switch (err) {
-#if defined(CONFIG_CLOUD_API)
-	case 0:
-		return CLOUD_CONNECT_RES_SUCCESS;
-	case -ECHILD:
-		return CLOUD_CONNECT_RES_ERR_NETWORK;
-	case -EACCES:
-		return CLOUD_CONNECT_RES_ERR_NOT_INITD;
-	case -ENOEXEC:
-		return CLOUD_CONNECT_RES_ERR_BACKEND;
-	case -EINVAL:
-		return CLOUD_CONNECT_RES_ERR_PRV_KEY;
-	case -EOPNOTSUPP:
-		return CLOUD_CONNECT_RES_ERR_CERT;
-	case -ECONNREFUSED:
-		return CLOUD_CONNECT_RES_ERR_CERT_MISC;
-	case -ETIMEDOUT:
-		return CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA;
-	case -ENOMEM:
-		return CLOUD_CONNECT_RES_ERR_NO_MEM;
-	case -EINPROGRESS:
-		return CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED;
-	default:
-		LOG_ERR("AWS IoT backend connect failed %d", err);
-		return CLOUD_CONNECT_RES_ERR_MISC;
-#else
 	case 0:
 		return AWS_IOT_CONNECT_RES_SUCCESS;
 	case -ECHILD:
@@ -188,121 +158,17 @@ static int connect_error_translate(const int err)
 		return AWS_IOT_CONNECT_RES_ERR_ALREADY_CONNECTED;
 	default:
 		LOG_ERR("AWS broker connect failed %d", err);
-		return CLOUD_CONNECT_RES_ERR_MISC;
-#endif /* !defined(CONFIG_CLOUD_API) */
+		return AWS_IOT_CONNECT_RES_ERR_MISC;
 	}
 }
-
-#if defined(CONFIG_CLOUD_API)
-static int api_connect_error_translate(const int err)
-{
-	switch (err) {
-	case AWS_IOT_DISCONNECT_USER_REQUEST:
-		return CLOUD_DISCONNECT_USER_REQUEST;
-	case AWS_IOT_DISCONNECT_CLOSED_BY_REMOTE:
-		return CLOUD_DISCONNECT_CLOSED_BY_REMOTE;
-	case AWS_IOT_DISCONNECT_INVALID_REQUEST:
-		return CLOUD_DISCONNECT_INVALID_REQUEST;
-	case AWS_IOT_DISCONNECT_MISC:
-		return CLOUD_DISCONNECT_MISC;
-	case AWS_IOT_CONNECT_RES_ERR_NETWORK:
-		return CLOUD_CONNECT_RES_ERR_NETWORK;
-	case AWS_IOT_CONNECT_RES_ERR_NOT_INITD:
-		return CLOUD_CONNECT_RES_ERR_NOT_INITD;
-	case AWS_IOT_CONNECT_RES_ERR_BACKEND:
-		return CLOUD_CONNECT_RES_ERR_BACKEND;
-	case AWS_IOT_CONNECT_RES_ERR_PRV_KEY:
-		return CLOUD_CONNECT_RES_ERR_PRV_KEY;
-	case AWS_IOT_CONNECT_RES_ERR_CERT:
-		return CLOUD_CONNECT_RES_ERR_CERT;
-	case AWS_IOT_CONNECT_RES_ERR_CERT_MISC:
-		return CLOUD_CONNECT_RES_ERR_CERT_MISC;
-	case AWS_IOT_CONNECT_RES_ERR_TIMEOUT_NO_DATA:
-		return CLOUD_CONNECT_RES_ERR_TIMEOUT_NO_DATA;
-	case AWS_IOT_CONNECT_RES_ERR_NO_MEM:
-		return CLOUD_CONNECT_RES_ERR_NO_MEM;
-	case AWS_IOT_CONNECT_RES_ERR_ALREADY_CONNECTED:
-		return CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED;
-	default:
-		LOG_ERR("Unknown error event %d", err);
-		return -ENODATA;
-	}
-}
-#endif /* defined(CONFIG_NRF_MODEM_LIB) */
 
 static void aws_iot_notify_event(const struct aws_iot_evt *aws_iot_evt)
 {
-#if defined(CONFIG_CLOUD_API)
-
-	struct cloud_backend_config *config = aws_iot_backend->config;
-	struct cloud_event cloud_evt = { 0 };
-
-	switch (aws_iot_evt->type) {
-	case AWS_IOT_EVT_CONNECTING:
-		cloud_evt.type = CLOUD_EVT_CONNECTING;
-		break;
-	case AWS_IOT_EVT_CONNECTED:
-		cloud_evt.data.persistent_session =
-				aws_iot_evt->data.persistent_session;
-		cloud_evt.type = CLOUD_EVT_CONNECTED;
-		cloud_evt.data.err =
-		api_connect_error_translate(aws_iot_evt->data.err);
-		break;
-	case AWS_IOT_EVT_READY:
-		cloud_evt.type = CLOUD_EVT_READY;
-		break;
-	case AWS_IOT_EVT_DISCONNECTED:
-		cloud_evt.type = CLOUD_EVT_DISCONNECTED;
-		cloud_evt.data.err =
-		api_connect_error_translate(aws_iot_evt->data.err);
-		break;
-	case AWS_IOT_EVT_DATA_RECEIVED:
-		cloud_evt.type = CLOUD_EVT_DATA_RECEIVED;
-		cloud_evt.data.msg.buf = aws_iot_evt->data.msg.ptr;
-		cloud_evt.data.msg.len = aws_iot_evt->data.msg.len;
-		cloud_evt.data.msg.endpoint.type = CLOUD_EP_MSG;
-		cloud_evt.data.msg.endpoint.str =
-				(char *)aws_iot_evt->data.msg.topic.str;
-		cloud_evt.data.msg.endpoint.len =
-				aws_iot_evt->data.msg.topic.len;
-		break;
-	case AWS_IOT_EVT_FOTA_START:
-		cloud_evt.type = CLOUD_EVT_FOTA_START;
-		break;
-	case AWS_IOT_EVT_FOTA_DONE:
-		cloud_evt.type = CLOUD_EVT_FOTA_DONE;
-		break;
-	case AWS_IOT_EVT_FOTA_ERASE_PENDING:
-		cloud_evt.type = CLOUD_EVT_FOTA_ERASE_PENDING;
-		break;
-	case AWS_IOT_EVT_FOTA_ERASE_DONE:
-		cloud_evt.type = CLOUD_EVT_FOTA_ERASE_DONE;
-		break;
-	case AWS_IOT_EVT_ERROR:
-		cloud_evt.data.err = aws_iot_evt->data.err;
-		cloud_evt.type = CLOUD_EVT_ERROR;
-	case AWS_IOT_EVT_FOTA_ERROR:
-		cloud_evt.type = CLOUD_EVT_FOTA_ERROR;
-		cloud_evt.data.err = aws_iot_evt->data.err;
-		break;
-	case AWS_IOT_EVT_FOTA_DL_PROGRESS:
-		cloud_evt.type = CLOUD_EVT_FOTA_DL_PROGRESS;
-		cloud_evt.data.fota_progress =
-				aws_iot_evt->data.fota_progress;
-		break;
-	default:
-		LOG_ERR("Unknown AWS IoT event");
-		break;
-	}
-
-	cloud_notify_event(aws_iot_backend, &cloud_evt, config->user_data);
-#else
 	if ((module_evt_handler != NULL) && (aws_iot_evt != NULL)) {
 		module_evt_handler(aws_iot_evt);
 	} else {
 		LOG_ERR("Library event handler not registered, or empty event");
 	}
-#endif /* !defined(CONFIG_CLOUD_API) */
 }
 
 #if defined(CONFIG_AWS_FOTA)
@@ -1087,20 +953,6 @@ int aws_iot_send(const struct aws_iot_data *const tx_data)
 	};
 
 	switch (tx_data_pub.topic.type) {
-#if defined(CONFIG_CLOUD_API)
-	case CLOUD_EP_STATE_GET:
-		tx_data_pub.topic.str = get_topic;
-		tx_data_pub.topic.len = strlen(get_topic);
-		break;
-	case CLOUD_EP_STATE:
-		tx_data_pub.topic.str = update_topic;
-		tx_data_pub.topic.len = strlen(update_topic);
-		break;
-	case CLOUD_EP_STATE_DELETE:
-		tx_data_pub.topic.str = delete_topic;
-		tx_data_pub.topic.len = strlen(delete_topic);
-		break;
-#else
 	case AWS_IOT_SHADOW_TOPIC_GET:
 		tx_data_pub.topic.str = get_topic;
 		tx_data_pub.topic.len = strlen(get_topic);
@@ -1113,7 +965,6 @@ int aws_iot_send(const struct aws_iot_data *const tx_data)
 		tx_data_pub.topic.str = delete_topic;
 		tx_data_pub.topic.len = strlen(delete_topic);
 		break;
-#endif
 	default:
 		if (tx_data_pub.topic.str == NULL ||
 		    tx_data_pub.topic.len == 0) {
@@ -1373,90 +1224,3 @@ K_THREAD_DEFINE(aws_connection_poll_thread, POLL_THREAD_STACK_SIZE,
 		aws_iot_cloud_poll, NULL, NULL, NULL,
 		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
 #endif /* defined(CONFIG_AWS_IOT_CONNECTION_POLL_THREAD) */
-
-#if defined(CONFIG_CLOUD_API)
-static int api_init(const struct cloud_backend *const backend,
-		    cloud_evt_handler_t handler)
-{
-	backend->config->handler = handler;
-	aws_iot_backend = (struct cloud_backend *)backend;
-
-	struct aws_iot_config config = {
-		.client_id = backend->config->id,
-		.client_id_len = backend->config->id_len
-	};
-
-	return aws_iot_init(&config, NULL);
-}
-
-static int api_ep_subscriptions_add(const struct cloud_backend *const backend,
-				    const struct cloud_endpoint *const list,
-				    size_t list_count)
-{
-	struct aws_iot_topic_data topic_list[list_count];
-
-	for (size_t i = 0; i < list_count; i++) {
-		topic_list[i].str = list[i].str;
-		topic_list[i].len = list[i].len;
-	}
-
-	return aws_iot_subscription_topics_add(topic_list, list_count);
-}
-
-static int api_connect(const struct cloud_backend *const backend)
-{
-	struct aws_iot_config config = {
-		.socket = backend->config->socket
-	};
-
-	return aws_iot_connect(&config);
-}
-
-static int api_disconnect(const struct cloud_backend *const backend)
-{
-	return aws_iot_disconnect();
-}
-
-static int api_send(const struct cloud_backend *const backend,
-		    const struct cloud_msg *const msg)
-{
-	struct aws_iot_data tx_data = {
-		.ptr = msg->buf,
-		.len = msg->len,
-		.qos = msg->qos,
-		.topic.str = msg->endpoint.str,
-		.topic.len = msg->endpoint.len,
-		.topic.type = msg->endpoint.type
-	};
-
-	return aws_iot_send(&tx_data);
-}
-
-static int api_input(const struct cloud_backend *const backend)
-{
-	return aws_iot_input();
-}
-
-static int api_ping(const struct cloud_backend *const backend)
-{
-	return aws_iot_ping();
-}
-
-static int api_keepalive_time_left(const struct cloud_backend *const backend)
-{
-	return aws_iot_keepalive_time_left();
-}
-
-static const struct cloud_api aws_iot_api = {
-	.init			= api_init,
-	.ep_subscriptions_add	= api_ep_subscriptions_add,
-	.connect		= api_connect,
-	.disconnect		= api_disconnect,
-	.send			= api_send,
-	.input			= api_input,
-	.ping			= api_ping,
-	.keepalive_time_left	= api_keepalive_time_left
-};
-
-CLOUD_BACKEND_DEFINE(AWS_IOT, aws_iot_api);
-#endif /* defined(CONFIG_CLOUD_API) */
