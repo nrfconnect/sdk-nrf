@@ -1,7 +1,5 @@
 #include <autoconf.h>
 
-#ifdef CONFIG_FILE_SYSTEM_LITTLEFS
 littlefs_storage:
   placement: {before: [tfm_storage, end]}
   size: CONFIG_PM_PARTITION_SIZE_LITTLEFS
-#endif

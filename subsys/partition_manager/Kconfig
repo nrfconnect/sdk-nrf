@@ -52,7 +52,7 @@ rsource "Kconfig.template.partition_size"
 endif
 
 
-if SETTINGS
+if SETTINGS_FCB || SETTINGS_NVS
 partition=SETTINGS_STORAGE
 partition-size=0x2000
 rsource "Kconfig.template.partition_size"
