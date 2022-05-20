@@ -145,20 +145,17 @@ To program the samples, complete the following steps:
 #. Add the network coordinator application:
 
    a. In the Welcome panel or on the Welcome page, click :guilabel:`Create a new application from sample`.
-
-      .. figure:: images/zigbee_qsg_vsc_welcome_section.png
-         :alt: nRF Connect for Visual Studio Code - Welcome panel
-
    #. Select the :guilabel:`Freestanding` application type, which uses the preinstalled version of the |NCS|.
-   #. Enter a custom application location and name.
-      For example, ``Zigbee_coordinator``.
    #. Keep the default settings for :guilabel:`nRF Connect SDK` and :guilabel:`nRF Connect Toolchain`.
+   #. Enter a custom application location.
    #. In the :guilabel:`Application template`, click :guilabel:`Browse` and search for the Zigbee network coordinator sample.
       The path for the application template is :file:`nrf/samples/zigbee/network_coordinator`.
-   #. Click :guilabel:`Select` and then click :guilabel:`Create Application`.
+   #. Enter a custom application name.
+      For example, ``Zigbee_coordinator``.
+   #. Click :guilabel:`Create Application`.
 
       .. figure:: images/zigbee_qsg_vsc_create_application_section.png
-         :alt: nRF Connect for Visual Studio Code - Create Application panel
+         :alt: nRF Connect for Visual Studio Code - Create a new application page
 
    #. If needed, click :guilabel:`Yes` when prompted if you trust the authors of the files.
 
@@ -168,16 +165,9 @@ To program the samples, complete the following steps:
    #. In the configuration options on the :guilabel:`Add Build Configuration` screen, select the board onto which you want to program the sample.
       See the `Requirements`_ section for the list of available build target names.
       For the purpose of this quick start guide, leave the default values for other options.
-
-      .. figure:: images/zigbee_qsg_vsc_generate_config_section.png
-         :alt: nRF Connect for Visual Studio Code - Generate Configuration panel
-
    #. Click :guilabel:`Build Configuration`.
       When the process starts, a Zigbee Coordinator panel appears under the Applications panel.
-      The generation process takes some time and you can observe its progress in the :guilabel:`nRF Connect` terminal.
-
-      .. figure:: images/zigbee_qsg_vsc_generating_config_prompt_full.png
-         :alt: nRF Connect for Visual Studio Code - building process in progress
+      The generation process takes some time and you can observe its progress in the :guilabel:`nRF Terminal`.
 
 #. Program the application to the board:
 
