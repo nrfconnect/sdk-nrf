@@ -663,6 +663,7 @@ Libraries for networking
   * :ref:`lib_azure_iot_hub` library:
 
     * Added :kconfig:option:`CONFIG_AZURE_IOT_HUB_NATIVE_TLS` option to configure the socket to be native for TLS instead of offloading TLS operations to the modem.
+    * Removed support for the Cloud API.
 
  * :ref:`lib_nrf_cloud_pgps` library:
 
