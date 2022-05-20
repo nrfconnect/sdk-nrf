@@ -206,6 +206,8 @@ To install west, reopen the command prompt window to ensure that Python is initi
          :class: highlight
 
          pip3 install --user west
+         echo 'export PATH=~/.local/bin:"$PATH"' >> ~/.bashrc
+         source ~/.bashrc
 
    .. group-tab:: macOS
 
