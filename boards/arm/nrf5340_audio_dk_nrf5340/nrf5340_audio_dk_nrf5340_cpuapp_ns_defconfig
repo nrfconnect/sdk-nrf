@@ -16,5 +16,8 @@ CONFIG_ARM_TRUSTZONE_M=y
 # This Board implies building Non-Secure firmware
 CONFIG_TRUSTED_EXECUTION_NONSECURE=y
 
-# enable GPIO
+# Enable PINCTRL
+CONFIG_PINCTRL=y
+
+# Enable GPIO
 CONFIG_GPIO=y
