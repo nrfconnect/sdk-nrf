@@ -58,9 +58,27 @@ struct tfm_fw_info_out_t {
 	uint32_t result;
 };
 
+/** Search for the fw_info structure in firmware image located at address.
+ *
+ * @param[in]   fw_address  Address where firmware image is stored.
+ * @param[out]  info        Pointer to where found info is to be written.
+ *
+ * @retval 0        If successful.
+ * @retval -EINVAL  If info is NULL or if no info is found.
+ * @retval -EPERM   If the TF-M platform service request failed.
+ */
 int tfm_platform_firmware_info(uint32_t fw_address, struct fw_info *info);
 
-
+/** Check if S0 is the active B1 slot.
+ *
+ * @param[in]   s0_address Address of s0 slot.
+ * @param[in]   s1_address Address of s1 slot.
+ * @param[out]  s0_active  Set to 'true' if s0 is active slot, 'false' otherwise
+ *
+ * @retval 0        If successful.
+ * @retval -EINVAL  If info for both slots could not be found.
+ * @retval -EPERM   If the TF-M platform service request failed.
+ */
 int tfm_platform_s0_active(uint32_t s0_address, uint32_t s1_address,
 			   bool *s0_active);
 
