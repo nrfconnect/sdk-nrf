@@ -792,7 +792,9 @@ static ssize_t nrf91_socket_offload_recvfrom(void *obj, void *buf, size_t len,
 	struct nrf_sock_ctx *ctx = OBJ_TO_CTX(obj);
 	ssize_t retval;
 
-	k_mutex_unlock(ctx->lock);
+	if (ctx->lock) {
+		k_mutex_unlock(ctx->lock);
+	}
 
 	if (from == NULL) {
 		retval = nrf_recvfrom(ctx->nrf_fd, buf, len, z_to_nrf_flags(flags),
