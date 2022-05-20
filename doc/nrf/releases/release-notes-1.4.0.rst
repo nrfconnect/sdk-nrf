@@ -638,7 +638,7 @@ Libraries
 * :ref:`lib_eth_rtt` - added
 * :ref:`lib_aws_iot` - updated with additional information about enabling connection polling
 * :ref:`lib_download_client` - moved :ref:`cert_dwload` to :ref:`modem_key_mgmt`
-* :ref:`lib_nrf_cloud` - updated with :ref:`use_nrfcloud_cloudapi`
+* :ref:`lib_nrf_cloud` - updated cloud API usage section
 * :ref:`lib_at_host` - added
 
 User guides
