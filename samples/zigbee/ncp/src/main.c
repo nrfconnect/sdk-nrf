@@ -170,7 +170,8 @@ int main(void)
 	/* Enable USB device. */
 	int ret = usb_enable(NULL);
 
-	if (ret != 0) {
+	if ((ret != 0) && (ret != -EALREADY)) {
+		LOG_ERR("USB initialization failed");
 		return ret;
 	}
 

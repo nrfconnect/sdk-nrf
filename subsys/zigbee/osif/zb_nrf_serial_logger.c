@@ -163,7 +163,7 @@ void zb_osif_serial_logger_init(void)
 	if (IS_ENABLED(CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING)) {
 		int ret = usb_enable(NULL);
 
-		if (ret != 0) {
+		if ((ret != 0) && (ret != -EALREADY)) {
 			LOG_ERR("USB initialization failed - No UART device to log ZBOSS Traces");
 			/* USB initialization failed - mark UART device as unavailable. */
 			uart_dev = NULL;
