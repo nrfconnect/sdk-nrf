@@ -166,7 +166,7 @@ int pdn_init(void)
 	k_sem_init(&pdn_act_notif.sem_cnec, 0, 1);
 
 #if defined(CONFIG_PDN_LEGACY_PCO)
-	err = nrf_modem_at_printf("AT%XEPCO=0");
+	err = nrf_modem_at_printf("AT%%XEPCO=0");
 	if (err) {
 		LOG_WRN("Failed to set legacy PCO mode, err %d", err);
 	}
