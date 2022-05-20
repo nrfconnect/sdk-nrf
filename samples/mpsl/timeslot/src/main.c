@@ -27,6 +27,12 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
 #define STACKSIZE                    CONFIG_MAIN_STACK_SIZE
 #define THREAD_PRIORITY              K_LOWEST_APPLICATION_THREAD_PRIO
 
+#if defined(CONFIG_SOC_SERIES_NRF53X)
+	#define LOG_OFFLOAD_IRQn SWI1_IRQn
+#elif defined(CONFIG_SOC_SERIES_NRF52X)
+	#define LOG_OFFLOAD_IRQn SWI1_EGU1_IRQn
+#endif
+
 static bool request_in_cb = true;
 
 /* MPSL API calls that can be requested for the non-preemptible thread */
@@ -175,11 +181,7 @@ static mpsl_timeslot_signal_return_param_t *mpsl_timeslot_callback(
 		break;
 	}
 
-#if defined(CONFIG_SOC_SERIES_NRF53X)
-	NVIC_SetPendingIRQ(SWI1_IRQn);
-#elif defined(CONFIG_SOC_SERIES_NRF52X)
-	NVIC_SetPendingIRQ(SWI1_EGU1_IRQn);
-#endif
+	NVIC_SetPendingIRQ(LOG_OFFLOAD_IRQn);
 
 	return p_ret_val;
 }
@@ -291,13 +293,8 @@ void main(void)
 	printk("-----------------------------------------------------\n");
 	printk("             Nordic MPSL Timeslot sample\n");
 
-#if defined(CONFIG_SOC_SERIES_NRF53X)
-	IRQ_DIRECT_CONNECT(SWI1_IRQn, 1, swi1_isr, 0);
-	irq_enable(SWI1_IRQn);
-#elif defined(CONFIG_SOC_SERIES_NRF52X)
-	IRQ_DIRECT_CONNECT(SWI1_EGU1_IRQn, 1, swi1_isr, 0);
-	irq_enable(SWI1_EGU1_IRQn);
-#endif
+	IRQ_DIRECT_CONNECT(LOG_OFFLOAD_IRQn, 1, swi1_isr, 0);
+	irq_enable(LOG_OFFLOAD_IRQn);
 
 	while (1) {
 		mpsl_timeslot_demo();
