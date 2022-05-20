@@ -129,7 +129,6 @@ Other related samples and applications that use nRF Cloud services:
 
 * :ref:`gnss_sample`
 * :ref:`modem_shell_application`
-* :ref:`cloud_client`
 * :ref:`lte_sensor_gateway`
 * :ref:`multicell_location`
 * :ref:`serial_lte_modem`

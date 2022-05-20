@@ -17,7 +17,6 @@
 #include <zephyr/net/socket.h>
 #include <net/nrf_cloud.h>
 #include <net/fota_download.h>
-#include <net/cloud.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/settings/settings.h>

@@ -644,6 +644,7 @@ Libraries for networking
       * The application can now send shadow updates earlier in the connection process.
       * nRF Cloud error message responses to location service MQTT requests are now handled.
       * The value of the :kconfig:option:`NRF_CLOUD_HOST_NAME` option is now "mqtt.nrfcloud.com".
+      * Removed support for the Cloud API.
 
     * Fixed the validation of bootloader FOTA updates.
 
