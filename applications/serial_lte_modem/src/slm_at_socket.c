@@ -1706,7 +1706,7 @@ int slm_at_socket_uninit(void)
 	(void)do_socket_close();
 	for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
 		if (socks[i].fd_peer != INVALID_SOCKET) {
-			close(sock.fd_peer);
+			close(socks[i].fd_peer);
 		}
 		if (socks[i].fd != INVALID_SOCKET) {
 			close(socks[i].fd);
