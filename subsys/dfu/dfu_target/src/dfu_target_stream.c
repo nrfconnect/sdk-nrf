@@ -53,7 +53,7 @@ static int store_progress(void)
 static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
-	if (!strcmp(key, current_id)) {
+	if (current_id && !strcmp(key, current_id)) {
 		int err;
 		off_t absolute_offset;
 		struct flash_pages_info page;

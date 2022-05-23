@@ -735,6 +735,10 @@ Other libraries
 
       * Added :kconfig:option:`CONFIG_EI_WRAPPER_PROFILING` for logging time of classifier execution.
 
+  * :ref:`lib_dfu_target`:
+
+      * Fixed a NULL dereference bug, which could happen if :c:func:`settings_load` was called outside of the library.
+
 Common Application Framework (CAF)
 ----------------------------------
 
