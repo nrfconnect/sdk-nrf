@@ -49,7 +49,7 @@ html_context = {
     "is_release": is_release,
 }
 
-html_theme_options = {"docsets": utils.get_docsets("zephyr")}
+html_theme_options = {"docsets": utils.ALL_DOCSETS}
 
 # Options for intersphinx ------------------------------------------------------
 
