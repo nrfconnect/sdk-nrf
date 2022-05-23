@@ -434,7 +434,7 @@ In addition to documentation related to the changes listed above, the following 
 * :ref:`ug_thingy91` - added :ref:`thingy91_serialports`
 * :ref:`ug_nfc` - added
 * :ref:`ug_bootloader` - added :ref:`ug_bootloader_adding`
-* :ref:`cloud_client` - updated
+* Cloud client - updated
 * :ref:`crypto_test` - added
 * :ref:`libraries` - improved the structure of the library documentation
 * :ref:`bt_mesh` (and subpages) - added
