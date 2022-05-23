@@ -13,6 +13,13 @@ LOG_MODULE_REGISTER(board_secure, CONFIG_BOARD_LOG_LEVEL);
 #define ADP536X_I2C_DEV_NAME	DT_LABEL(DT_NODELABEL(i2c2))
 #define LC_MAX_READ_LENGTH	128
 
+/* The BH1749 on must be powered by the ADP5360 before it can be initialized. */
+#if IS_ENABLED(CONFIG_BH1749)
+BUILD_ASSERT(CONFIG_BOARD_INIT_PRIORITY < CONFIG_SENSOR_INIT_PRIORITY,
+	     "The board initialization must happen before the sensor initialization "
+	     "for the sensors to be powered before initializing");
+#endif
+
 static int power_mgmt_init(void)
 {
 	int err;
@@ -94,4 +101,4 @@ static int thingy91_board_init(const struct device *dev)
 	return 0;
 }
 
-SYS_INIT(thingy91_board_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+SYS_INIT(thingy91_board_init, POST_KERNEL, CONFIG_BOARD_INIT_PRIORITY);
