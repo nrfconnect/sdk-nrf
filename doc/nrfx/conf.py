@@ -31,7 +31,7 @@ extensions.extend(["ncs_cache", "zephyr.external_content", "zephyr.doxyrunner"])
 # Options for HTML output ------------------------------------------------------
 
 html_static_path.append(str(NRF_BASE / "doc" / "_static"))
-html_theme_options = {"docsets": utils.get_docsets("nrfx")}
+html_theme_options = {"docsets": utils.ALL_DOCSETS}
 
 # -- Options for doxyrunner ----------------------------------------------------
 
