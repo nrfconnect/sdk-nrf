@@ -62,7 +62,7 @@ Set the following options in the same way for the :ref:`ble_rpc_host` and applic
    * :kconfig:option:`CONFIG_BT_BROADCASTER`
    * :kconfig:option:`CONFIG_BT_SETTINGS`
    * :kconfig:option:`CONFIG_BT_GATT_CLIENT`
-   * :kconfig:option:`CONFIG_BT_INTERNAL_FUNCTIONS`
+   * :kconfig:option:`CONFIG_BT_RPC_INTERNAL_FUNCTIONS`
    * :kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE_DYNAMIC`
    * :kconfig:option:`CONFIG_BT_MAX_CONN`
    * :kconfig:option:`CONFIG_BT_ID_MAX`

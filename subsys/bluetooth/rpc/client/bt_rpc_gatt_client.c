@@ -1540,7 +1540,7 @@ int bt_rpc_gatt_subscribe_flag_get(struct bt_gatt_subscribe_params *params, uint
 	return bt_rpc_gatt_subscribe_flag_update(params, flags_bit, -1);
 }
 
-static void bt_gatt_subscribe_params_notify_rpc_handler(struct nrf_rpc_cbor_Ctx *ctx,
+static void bt_gatt_subscribe_params_notify_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
 							void *_handler_data)
 {
 	struct bt_conn *conn;
@@ -1596,7 +1596,7 @@ static void bt_gatt_subscribe_params_write_rpc_handler(struct nrf_rpc_cbor_ctx *
 		params.handle = ser_decode_uint(ctx);
 		params.offset = ser_decode_uint(ctx);
 		params.data = ser_decode_buffer_into_scratchpad(&scratchpad, &len);
-		params.length = len
+		params.length = len;
 		params_ptr = &params;
 	}
 	func = (bt_gatt_write_func_t)ser_decode_callback_call(ctx);

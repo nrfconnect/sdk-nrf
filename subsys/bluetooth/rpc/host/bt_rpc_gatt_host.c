@@ -1321,13 +1321,13 @@ static void bt_gatt_write_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *_handl
 	struct bt_gatt_write_container *container;
 	int result;
 	size_t buffer_length;
-	void *buffer_ptr;
+	const void *buffer_ptr;
 
 
 	conn = bt_rpc_decode_bt_conn(ctx);
 	buffer_ptr = ser_decode_buffer_ptr_and_size(ctx, &buffer_length);
 	if (buffer_ptr == NULL) {
-		goto decoding_error;
+		goto alloc_error;
 	}
 	container = k_malloc(sizeof(struct bt_gatt_write_container) + buffer_length);
 	if (container == NULL) {
@@ -1336,7 +1336,7 @@ static void bt_gatt_write_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, void *_handl
 	}
 	container->params.data = container->data;
 	container->params.length = buffer_length;
-	memcpy(container->params.data, buffer_ptr, buffer_length);
+	memcpy(container->data, buffer_ptr, buffer_length);
 	container->params.handle = ser_decode_uint(ctx);
 	container->params.offset = ser_decode_uint(ctx);
 	container->remote_pointer = ser_decode_uint(ctx);

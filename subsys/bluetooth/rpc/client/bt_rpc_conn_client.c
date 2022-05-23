@@ -1084,7 +1084,7 @@ static void bt_conn_cb_le_data_len_updated_call(struct bt_conn *conn,
 	}
 }
 
-static void bt_conn_cb_le_data_len_updated_call_rpc_handler(struct nrf_rpc_cbor_ctx *,
+static void bt_conn_cb_le_data_len_updated_call_rpc_handler(struct nrf_rpc_cbor_ctx *ctx,
 	void *handler_data)
 {
 	struct bt_conn *conn;
