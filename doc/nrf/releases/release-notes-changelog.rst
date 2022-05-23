@@ -92,7 +92,6 @@ Zigbee
     This implementation must not be used in production.
     It is meant to be used only for debugging purposes.
   * Documentation page about :ref:`ug_zigbee_commissioning`.
-  * Experimental support for Zigbee Green Power Combo Basic functionality.
   * Zigbee device definition for each Zigbee sample and application.
   * Support for nRF5340 DK (PCA10095) in :ref:`Zigbee light switch sample <zigbee_light_switch_sample>` with :ref:` Zigbee FOTA library <lib_zigbee_fota>` enabled.
 
