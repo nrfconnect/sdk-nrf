@@ -171,49 +171,31 @@ Building and programming using VS Code extension
 Complete the following steps to build |NCS| projects with |VSC|:
 
 1. Start |VSC|.
-
    If you installed the |NCS| using the :ref:`gs_app_tcm`, you can click the :guilabel:`Open VS Code` button next to the version you installed.
+#. In the :guilabel:`Welcome panel` or on the :guilabel:`Welcome` page, click :guilabel:`Add an existing application`.
+#. Navigate to the directory of the nRF9160-compatible sample or application you want to work with.
 
-#. Click :guilabel:`Create new application from sample` from the :guilabel:`Welcome` panel.
+   Samples are located under :file:`nrf/samples/`, and applications are located under :file:`nrf/applications/`.
 
-   The :guilabel:`New Application` screen opens.
+#. Click :guilabel:`Select folder` to select the sample's or the application's folder.
 
-#. Provide the following information to create the application:
+   A new application is automatically added in the :guilabel:`Applications` panel.
 
-   a. Select the :guilabel:`Freestanding` radio button for the :guilabel:`Application type`.
-      This links the application to the version of |NCS| you have installed.
-   #. Select the |NCS| version from the :guilabel:`nRF Connect SDK` drop-down menu and the corresponding toolchain version from the :guilabel:`nRF Connect Toolchain` drop-down menu.
-      The version you selected when setting up |VSC| is set by default.
-   #. Choose the location where the application is saved.
-      To do this, either type the path in the :guilabel:`Application location` field, or browse to the desired location by clicking the :guilabel:`...` button.
-   #. Select the application template that you want to use.
-
-      You can either select one from the :guilabel:`Application template` drop-down menu, or browse the available templates with a preview of their documentation in the :guilabel:`Browse Samples` screen by clicking the :guilabel:`Select...` button.
-      Both the drop-down and the :guilabel:`Browse Samples` screen contain the same applications.
-   #. Enter the :guilabel:`Application name`.
-
-      When you create the application, this creates a new folder in the :guilabel:`Application folder` directory with the same name.
-
-#. Click the :guilabel:`Create Application` button.
-
-   The selected application appears in the :guilabel:`Applications` panel.
-
-#. Click the :guilabel:`No build configurations. *Click to create one*` text under the application.
+#. If needed, click :guilabel:`Yes` when prompted if you trust the authors of the files.
+#. Click the :guilabel:`No build configurations. Click to create one` text under the application.
 
    The :guilabel:`Add Build Configuration` screen opens.
 
 #. Provide the following information to configure the build:
 
    a. Select the build target from the :guilabel:`Board` drop-down menu.
-
       You must use the build target ``thingy91_nrf9160`` or ``thingy91_nrf9160_ns`` when building the application code for the nRF9160 SiP and the build target ``thingy91_nrf52840`` when building the application code for the onboard nRF52840 SoC.
    #. Select ``prj.conf`` from the :guilabel:`Configuration` drop-down menu if it is not already selected.
    #. Make sure that the checkbox for :guilabel:`Build after generating configuration` is selected.
 
-#. Click the :guilabel:`Build Configuration` button.
+#. Click :guilabel:`Build Configuration`.
 
-   The configuration starts building.
-   It is complete when the build files appear in the :guilabel:`Applications` panel.
+   When the process completes, the build configuration appears in the :guilabel:`Applications` panel.
 
 #. Program the application:
 
