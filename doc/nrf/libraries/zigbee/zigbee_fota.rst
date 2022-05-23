@@ -95,6 +95,20 @@ The Zigbee FOTA library has the following limitations:
 * The Zigbee FOTA upgrades are currently only supported on the nRF52840 DK (PCA10056) and nRF5340 DK (PCA10095).
 * The Zigbee FOTA library does not currently support bootloader upgrades.
 
+Additionally, the following limitations apply on the nRF5340 SoCs:
+
+* It is required to use external flash to enable the Zigbee FOTA library.
+* By default, only the full upgrades (to both application and network core) are allowed.
+  Disable the :kconfig:option:`CONFIG_NRF53_ENFORCE_IMAGE_VERSION_EQUALITY` Kconfig option to build update images without inter-dependencies so that they can be applied independently.
+* It is impossible to enable :kconfig:option:`CONFIG_BOOT_SWAP_USING_MOVE` Kconfig option.
+  As a result, the fallback recovery is not available and any valid upgrade will overwrite the previous image.
+  The call to the :c:func:`boot_write_img_confirmed()` will have no effect.
+* The current DFU limitations and dependencies are enforced by the :kconfig:option:`CONFIG_NRF53_MULTI_IMAGE_UPDATE` Kconfig option.
+* The version of the network core image is always set to the same value as the application core image.
+  Its value can be configured using the :kconfig:option:`CONFIG_MCUBOOT_IMAGE_VERSION` Kconfig option.
+* The MCUboot header is not stored inside the network core flash memory.
+  As a result, it is impossible to read the version of the currently running network core image.
+
 API documentation
 *****************
 
