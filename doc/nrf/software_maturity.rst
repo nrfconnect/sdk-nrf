@@ -77,3 +77,26 @@ Zigbee feature support
 **********************
 
 .. sml-table:: zigbee
+
+Security Feature Support
+************************
+
+Trusted Firmware-M support
+--------------------------
+
+.. sml-table:: trusted_firmware_m
+
+PSA Crypto support
+------------------
+
+.. sml-table:: psa_crypto
+
+Immutable Bootloader
+--------------------
+
+.. sml-table:: immutable_bootloader
+
+Hardware Unique Key
+-------------------
+
+.. sml-table:: hw_unique_key

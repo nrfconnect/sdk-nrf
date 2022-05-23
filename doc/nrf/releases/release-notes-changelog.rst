@@ -433,6 +433,7 @@ Documentation
 
   * Added documentation page for the :ref:`lib_flash_map_pm` library.
   * :ref:`ug_thread_prebuilt_libs` as a separate page instead of being part of :ref:`ug_thread_configuring`.
+  * Added software maturity entries for security features: TF-M, PSA crypto, Immutable bootloader, HW unique key.
 
 * Updated:
 
