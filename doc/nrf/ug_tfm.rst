@@ -107,6 +107,29 @@ The logs arrive on different COM ports on the host PC.
    * On the nRF5340 DK v2.0.0, there is one fewer COM port than on v1.0.0, so the secure and non-secure UART peripheral must be wired to the same pins.
      Specifically, wire the pins **P0.25** and **P0.26** to **P0.20** and **P0.22**, respectively.
 
+Limitations
+***********
+
+The following services are not supported:
+
+* Audit Log service in IPC model
+* Firmware Update service
+* Attestation service
+
+The following Crypto modules or ciphers are not supported:
+
+* OFB
+* CFB
+
+Isolation level 3 is not supported.
+
+In Isolation level 2 or higher, the number of peripherals configured as secure in Application Root of Trust (ARoT) is limited by the number of available MPU regions.
+
+Nordic platforms support only the GCC toolchain for building TF-M.
+
+Enabling Floating point support in TF-M is currently not supported.
+Enabling Floating point Hard ABI (:kconfig:option:`CONFIG_FP_HARDABI`) in the application is currently not supported.
+
 Migrating from Secure Partition Manager to Trusted Firmware-M
 *************************************************************
 
