@@ -19,6 +19,10 @@
  */
 static void uart1_set_enable(bool enable)
 {
+	if (!IS_ENABLED(CONFIG_NRFX_UARTE1)) {
+		return;
+	}
+
 	if (enable) {
 		NRF_UARTE1_NS->ENABLE = UARTE_ENABLE_ENABLE_Enabled;
 	} else {
