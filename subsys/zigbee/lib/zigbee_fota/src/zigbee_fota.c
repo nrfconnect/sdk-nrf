@@ -562,27 +562,30 @@ void zigbee_fota_zcl_cb(zb_bufid_t bufid)
 		break;
 
 	case ZB_ZCL_OTA_UPGRADE_STATUS_APPLY:
+		LOG_INF("Mark OTA image as downloaded.");
+		ota_upgrade_value->upgrade_status = ZB_ZCL_OTA_UPGRADE_STATUS_OK;
+		send_progress(ZIGBEE_FOTA_EVT_DL_COMPLETE_VAL);
+		break;
+
+	case ZB_ZCL_OTA_UPGRADE_STATUS_FINISH:
 		LOG_INF("Mark OTA image as ready to be installed.");
 		if (dfu_multi_target_schedule_update()) {
 			LOG_ERR("Unable to schedule the update");
 			ota_upgrade_value->upgrade_status =
 				ZB_ZCL_OTA_UPGRADE_STATUS_ERROR;
+			zigbee_fota_abort();
 		} else {
+			LOG_INF("Zigbee DFU completed. Reboot the application.");
 			ota_upgrade_value->upgrade_status =
 				ZB_ZCL_OTA_UPGRADE_STATUS_OK;
-		}
-		send_progress(ZIGBEE_FOTA_EVT_DL_COMPLETE_VAL);
-		break;
-
-	case ZB_ZCL_OTA_UPGRADE_STATUS_FINISH:
-		LOG_INF("Zigbee DFU completed. Reboot the application.");
-		/* It is time to upgrade FW.
-		 * We use callback so the stack can have time to i.e.
-		 * send response etc.
-		 */
-		ZB_SCHEDULE_APP_CALLBACK(send_evt, ZIGBEE_FOTA_EVT_FINISHED);
-		if (dfu_multi_image_done(false) != 0) {
-			LOG_ERR("Unable to reset DFU multi image transfer");
+			/* It is time to upgrade FW.
+			 * We use callback so the stack can have time to i.e.
+			 * send response etc.
+			 */
+			ZB_SCHEDULE_APP_CALLBACK(send_evt, ZIGBEE_FOTA_EVT_FINISHED);
+			if (dfu_multi_image_done(false) != 0) {
+				LOG_ERR("Unable to reset DFU multi image transfer");
+			}
 		}
 		break;
 
