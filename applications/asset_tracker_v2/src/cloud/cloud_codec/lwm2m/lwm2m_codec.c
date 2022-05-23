@@ -128,7 +128,7 @@ static cloud_codec_evt_handler_t module_evt_handler;
 /* Convenience API used to generate path lists with reference to objects that will be sent. */
 static int object_path_list_add(struct cloud_codec_data *output, const char *path)
 {
-	bool path_added;
+	bool path_added = false;
 
 	for (int i = 0; i < ARRAY_SIZE(output->paths); i++) {
 		if (strcmp(output->paths[i], "\0") == 0) {
