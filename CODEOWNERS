@@ -18,11 +18,8 @@
 /test-manifests/99-default-test-nrf.yml     @thst-nordic
 
 # Github Actions
-/.github/                                 @thst-nordic
-/.github/labeler.yml                      @thst-nordic @carlescufi @datgizmo
-/.github/mergify.yml                      @thst-nordic @carlescufi @datgizmo
+/.github/                                 @nrfconnect/ncs-ci
 /.github/test-spec.yml                    @nrfconnect/ncs-test-leads
-/.github/workflows/manifest.yml           @thst-nordic @carlescufi @datgizmo
 
 # Quarantine for the CI and Twister
 /scripts/quarantine.yaml                  @nrfconnect/ncs-test-leads
