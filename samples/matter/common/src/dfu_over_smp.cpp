@@ -28,32 +28,19 @@ constexpr uint16_t kAdvertisingIntervalMaxMs = 500;
 
 DFUOverSMP DFUOverSMP::sDFUOverSMP;
 
-static void FlashSleep()
-{
-	GetFlashHandler().DoAction(FlashHandler::Action::SLEEP);
-}
-
-static void FlashWakeUp()
-{
-	GetFlashHandler().DoAction(FlashHandler::Action::WAKE_UP);
-}
-
-static const img_mgmt_dfu_callbacks_t cb_struct{ .dfu_started_cb = FlashWakeUp,
-						 .dfu_stopped_cb = FlashWakeUp,
-						 .dfu_pending_cb = nullptr,
-						 .dfu_confirmed_cb = FlashSleep };
-
 void DFUOverSMP::Init(DFUOverSMPRestartAdvertisingHandler startAdvertisingCb)
 {
-	img_mgmt_register_callbacks(&cb_struct);
 	os_mgmt_register_group();
 	img_mgmt_register_group();
 	img_mgmt_set_upload_cb(UploadConfirmHandler, NULL);
 
 	memset(&mBleConnCallbacks, 0, sizeof(mBleConnCallbacks));
+	mBleConnCallbacks.connected = OnBleConnect;
 	mBleConnCallbacks.disconnected = OnBleDisconnect;
-
 	bt_conn_cb_register(&mBleConnCallbacks);
+
+	k_work_init(&mFlashSleepWork, [](k_work *) { GetFlashHandler().DoAction(FlashHandler::Action::SLEEP); });
+	k_work_init(&mFlashWakeUpWork, [](k_work *) { GetFlashHandler().DoAction(FlashHandler::Action::WAKE_UP); });
 
 	restartAdvertisingCallback = startAdvertisingCb;
 
@@ -134,8 +121,19 @@ void DFUOverSMP::StartBLEAdvertising()
 	}
 }
 
-void DFUOverSMP::OnBleDisconnect(struct bt_conn *conId, uint8_t reason)
+void DFUOverSMP::OnBleConnect(bt_conn *conn, uint8_t err)
 {
+	if (GetDFUOverSMP().IsEnabled()) {
+		(void)k_work_submit(&sDFUOverSMP.mFlashWakeUpWork);
+	}
+}
+
+void DFUOverSMP::OnBleDisconnect(bt_conn *conId, uint8_t reason)
+{
+	if (GetDFUOverSMP().IsEnabled()) {
+		(void)k_work_submit(&sDFUOverSMP.mFlashSleepWork);
+	}
+
 	PlatformMgr().LockChipStack();
 
 	/* After BLE disconnect SMP advertising needs to be restarted. Before making it ensure that BLE disconnect was
