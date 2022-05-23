@@ -334,6 +334,10 @@ nRF9160 samples
 
     * Enabled the :ref:`lib_at_host` library to make it easier to update certificates.
 
+* Removed:
+
+  * Cloud client sample.
+
 Thread samples
 --------------
 
