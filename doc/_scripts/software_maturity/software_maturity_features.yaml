@@ -33,3 +33,12 @@ features:
     OTA DFU over Matter: CHIP && CHIP_OTA_REQUESTOR
     Matter - Amazon Frustration Free Setup support: CHIP && BT && CHIP_ROTATING_DEVICE_ID && CHIP_COMMISSIONABLE_DEVICE_TYPE
     Matter Sleepy End Device: CHIP && CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT && NET_L2_OPENTHREAD && OPENTHREAD_MTD_SED
+  trusted_firmware_m:
+    Minimal Build: BUILD_WITH_TFM && TFM_PROFILE_TYPE_MINIMAL
+    Full build: BUILD_WITH_TFM && TFM_PROFILE_TYPE_NOT_SET && NRF_SECURITY
+  psa_crypto:
+    PSA Crypto APIs: NRF_SECURITY
+  immutable_bootloader:
+    Immutable Bootloader as part of build: SECURE_BOOT
+  hw_unique_key:
+    Key Derviation from Hardware Unique Key: HW_UNIQUE_KEY
