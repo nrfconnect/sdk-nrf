@@ -64,6 +64,13 @@ config TFM_CRYPTO_ENGINE_BUF_SIZE
 		PSA_CRYPTO_DRIVER_ALG_RSA_PSS_CC3XX
 	default 8320
 
+config TFM_ITS_ENCRYPTED
+	bool
+	prompt "PSA Internal Trusted Storage with encryption"
+	select PSA_ITS_ENCRYPTED
+	help
+	  Enables authenticated encryption for PSA Internal Trusted Storage files
+
 endif # BUILD_WITH_TFM
 
 source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm"
