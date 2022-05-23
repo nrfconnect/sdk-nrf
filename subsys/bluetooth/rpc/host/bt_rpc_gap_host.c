@@ -904,7 +904,7 @@ static void bt_le_ext_adv_set_data_rpc_handler(struct nrf_rpc_cbor_ctx *ctx, voi
 	}
 
 	for (size_t i = 0; i < ad_len; i++) {
-		bt_data_dec(&scratchpad, &ad[_]);
+		bt_data_dec(&scratchpad, &ad[i]);
 	}
 
 	sd_len = ser_decode_uint(ctx);

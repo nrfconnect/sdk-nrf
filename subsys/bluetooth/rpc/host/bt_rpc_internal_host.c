@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 
 #include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/hci.h>
 #include <hci_core.h>
 
 #include <nrf_rpc_cbor.h>
