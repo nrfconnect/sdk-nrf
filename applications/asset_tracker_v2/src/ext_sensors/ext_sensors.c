@@ -63,7 +63,6 @@ static struct env_sensor accel_sensor = {
 };
 
 static ext_sensor_handler_t evt_handler;
-static bool initial_trigger;
 
 static void accelerometer_trigger_handler(const struct device *dev,
 					  const struct sensor_trigger *trig)
@@ -73,15 +72,7 @@ static void accelerometer_trigger_handler(const struct device *dev,
 	struct ext_sensor_evt evt = {0};
 
 	switch (trig->type) {
-	case SENSOR_TRIG_THRESHOLD:
-
-		/* Ignore the initial trigger after initialization of the
-		 * accelerometer which always carries jibberish xyz values.
-		 */
-		if (!initial_trigger) {
-			initial_trigger = true;
-			break;
-		}
+	case SENSOR_TRIG_INSTANT_MOTION:
 
 		if (sensor_sample_fetch(dev) < 0) {
 			LOG_ERR("Sample fetch error");
@@ -101,16 +92,10 @@ static void accelerometer_trigger_handler(const struct device *dev,
 		evt.value_array[1] = sensor_value_to_double(&data[1]);
 		evt.value_array[2] = sensor_value_to_double(&data[2]);
 
-		/* Do a soft filter here to avoid sending data triggered by
-		 * the inactivity threshold.
-		 */
-		if ((abs(evt.value_array[0]) > threshold ||
-		     (abs(evt.value_array[1]) > threshold) ||
-		     (abs(evt.value_array[2]) > threshold))) {
+		evt.type = EXT_SENSOR_EVT_ACCELEROMETER_TRIGGER;
+		evt_handler(&evt);
 
-			evt.type = EXT_SENSOR_EVT_ACCELEROMETER_TRIGGER;
-			evt_handler(&evt);
-		}
+		LOG_INF("Motion detected");
 
 		break;
 	default:
@@ -165,7 +150,7 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 #if defined(CONFIG_EXTERNAL_SENSORS_ACTIVITY_DETECTION_AUTO)
 		struct sensor_trigger trig = {
 			.chan = SENSOR_CHAN_ACCEL_XYZ,
-			.type = SENSOR_TRIG_THRESHOLD
+			.type = SENSOR_TRIG_INSTANT_MOTION
 		};
 
 		int err = sensor_trigger_set(accel_sensor.dev,
@@ -372,7 +357,7 @@ int ext_sensors_accelerometer_trigger_callback_set(bool enable)
 	int err;
 	struct sensor_trigger trig = {
 		.chan = SENSOR_CHAN_ACCEL_XYZ,
-		.type = SENSOR_TRIG_THRESHOLD
+		.type = SENSOR_TRIG_INSTANT_MOTION
 	};
 	struct ext_sensor_evt evt = {0};
 
@@ -386,8 +371,6 @@ int ext_sensors_accelerometer_trigger_callback_set(bool enable)
 		evt_handler(&evt);
 		return err;
 	}
-
-	initial_trigger = false;
 
 	return 0;
 }
