@@ -12,7 +12,9 @@ static void log_sensor_data_aggregator_event(const struct app_event_header *aeh)
 {
 	const struct sensor_data_aggregator_event *event = cast_sensor_data_aggregator_event(aeh);
 
-	APP_EVENT_MANAGER_LOG(aeh, "Send sensor buffer desc address: %p", event->sensor_descr);
+	APP_EVENT_MANAGER_LOG(aeh,
+			      "Send sensor buffer desc address: %p",
+			      (void *)event->sensor_descr);
 }
 
 static void profile_sensor_data_aggregator_event(struct log_event_buf *buf,
