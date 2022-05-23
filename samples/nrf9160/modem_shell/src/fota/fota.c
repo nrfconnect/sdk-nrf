@@ -14,12 +14,14 @@
 #include "fota.h"
 #include "mosh_print.h"
 
-static void reboot_timer_handler(struct k_timer *dummy)
+static void system_reboot_work(struct k_work *item)
 {
+	ARG_UNUSED(item);
+
 	sys_reboot(SYS_REBOOT_WARM);
 }
 
-K_TIMER_DEFINE(reboot_timer, reboot_timer_handler, NULL);
+K_WORK_DELAYABLE_DEFINE(system_reboot, system_reboot_work);
 
 static const char *get_error_cause(enum fota_download_error_cause cause)
 {
@@ -41,7 +43,7 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 		break;
 	case FOTA_DOWNLOAD_EVT_FINISHED:
 		mosh_print("FOTA: Download finished, rebooting in 5 seconds...");
-		k_timer_start(&reboot_timer, K_SECONDS(5), K_NO_WAIT);
+		k_work_schedule(&system_reboot, K_SECONDS(5));
 		break;
 	case FOTA_DOWNLOAD_EVT_ERASE_PENDING:
 		mosh_print("FOTA: Still erasing...");
