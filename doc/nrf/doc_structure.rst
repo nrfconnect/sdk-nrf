@@ -16,12 +16,7 @@ The entry point is the |NCS| documentation that you are currently reading.
 The local :doc:`Zephyr documentation <zephyr:index>` is a slightly extended version of the official `Zephyr Project documentation`_, containing some additions specific to Nordic Semiconductor.
 The local :doc:`MCUboot documentation <mcuboot:index-ncs>` is a slightly extended version of the official `MCUboot`_ documentation, containing some additions specific to Nordic Semiconductor.
 
-You can switch between these documentation sets by using the selector in the *bottom-left corner of each documentation page*.
-
-.. figure:: images/switcher_docset_snipped.gif
-   :alt: nRF Connect SDK documentation set selector
-
-   |NCS| documentation set selector
+You can switch between these documentation sets by using the navigation bar at the top of the page.
 
 .. doc_structure_end
 
@@ -43,7 +38,7 @@ Since there are links from the |NCS| documentation set into other documentation 
 Documentation search
 ********************
 
-Use the :guilabel:`Search docs` field in the *top-left corner of each documentation page* to search for a given word or phrase in all the documentation sets.
+Use the :guilabel:`Search all docs` field in the top of each documentation page to search for a given word or phrase in all the documentation sets.
 The search engine only looks up the perfect matches for each word or phrase.
 
 .. figure:: images/doc_structure_search.PNG
@@ -66,12 +61,7 @@ Different set versions
 **********************
 
 Some documentation sets are available in different versions.
-Use the version drop-down in the *top-left corner of each documentation page* to change the documentation version.
-
-.. figure:: images/switcher_version_snipped.gif
-   :alt: nRF Connect SDK documentation version drop-down
-
-   |NCS| documentation version drop-down
+Use the version drop-down in the *top-right corner of each documentation page* to change the documentation version.
 
 The version drop-down is displayed only if the documentation files are organized in the required folder structure and the documentation is hosted on a web server.
 You can :ref:`test the different versions locally <testing_versions>` when you build the documentation.
