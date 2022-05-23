@@ -60,6 +60,7 @@ In addition to the |NCS| documentation, information is available in the followin
    getting_started
    ug_dev_model
    ug_app_dev
+   security_chapter
    ug_nrf91
    ug_nrf53
    ug_nrf52
