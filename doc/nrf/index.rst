@@ -53,7 +53,7 @@ In addition to the |NCS| documentation, information is available in the followin
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Contents
 
    introduction
    glossary
