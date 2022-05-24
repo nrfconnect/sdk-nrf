@@ -340,7 +340,7 @@ def parse_rule(rule: str) -> list:
         for i, symbol in enumerate(symbols):
             if symbol.startswith("(") and symbol.endswith(")"):
                 symbols[i] = parse_rule(symbol[1:-1])
-            elif not re.match(r"^[A-Z0-9_]+$", symbol):
+            elif not re.match(r"^[A-Z0-9_=]+$", symbol):
                 logger.error(f"Invalid Kconfig symbol '{symbol}'")
             elif not symbol.startswith("CONFIG_"):
                 symbols[i] = "CONFIG_" + symbol
@@ -365,13 +365,19 @@ def evaluate_rule(vars: Dict[str, kconfiglib.Variable], rule: list) -> bool:
     for and_rule in rule[1:]:
         assert and_rule[0] == "AND", f"invalid and-rule {and_rule}"
         # All of the symbols in the and-rule must be present
-        for symbol in and_rule[1:]:
+        for symbol_and_value in and_rule[1:]:
+            # Extract the required value (default: "y")
+            if "=" in symbol_and_value:
+                symbol, value = symbol_and_value.split("=")
+            else:
+                symbol, value = symbol_and_value, "y"
+
             # A nested list indicates a subrule in parentheses
             if isinstance(symbol, list):
                 if not evaluate_rule(vars, symbol):
                     break
             # The and-rule fails if a symbol is not present
-            elif symbol not in vars or vars[symbol].value != "y":
+            elif symbol not in vars or vars[symbol].value != value:
                 break
         # No breaks in for-loop means all symbols are present
         else:
