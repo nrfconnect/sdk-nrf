@@ -24,9 +24,13 @@
 
 #define UNUSED_FLAGS 0
 
-/* Handle modem traces from IRQ context with lower priority. */
+/* Handle communication with application and modem traces from IRQ contexts
+ * with the lowest available priority.
+ */
+#define APPLICATION_IRQ EGU1_IRQn
+#define APPLICATION_IRQ_PRIORITY IRQ_PRIO_LOWEST
 #define TRACE_IRQ EGU2_IRQn
-#define TRACE_IRQ_PRIORITY 6
+#define TRACE_IRQ_PRIORITY IRQ_PRIO_LOWEST
 
 #define THREAD_MONITOR_ENTRIES 10
 
@@ -293,12 +297,12 @@ unsigned int nrf_modem_os_sem_count_get(void *sem)
 
 void nrf_modem_os_application_irq_set(void)
 {
-	NVIC_SetPendingIRQ(NRF_MODEM_APPLICATION_IRQ);
+	NVIC_SetPendingIRQ(APPLICATION_IRQ);
 }
 
 void nrf_modem_os_application_irq_clear(void)
 {
-	NVIC_ClearPendingIRQ(NRF_MODEM_APPLICATION_IRQ);
+	NVIC_ClearPendingIRQ(APPLICATION_IRQ);
 }
 
 void nrf_modem_os_trace_irq_set(void)
@@ -364,10 +368,9 @@ void trace_irq_init(void)
 
 void read_task_create(void)
 {
-	IRQ_DIRECT_CONNECT(NRF_MODEM_APPLICATION_IRQ,
-			   NRF_MODEM_APPLICATION_IRQ_PRIORITY,
+	IRQ_DIRECT_CONNECT(APPLICATION_IRQ, APPLICATION_IRQ_PRIORITY,
 			   rpc_proxy_irq_handler, UNUSED_FLAGS);
-	irq_enable(NRF_MODEM_APPLICATION_IRQ);
+	irq_enable(APPLICATION_IRQ);
 }
 
 void *nrf_modem_os_alloc(size_t bytes)
