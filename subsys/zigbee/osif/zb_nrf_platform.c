@@ -298,6 +298,10 @@ int zigbee_init(void)
 	 */
 	zb_set_nvram_erase_at_start(ZB_FALSE);
 
+	if (IS_ENABLED(CONFIG_ZIGBEE_TC_REJOIN_ENABLED)) {
+		zb_secur_set_tc_rejoin_enabled((zb_bool_t)CONFIG_ZIGBEE_TC_REJOIN_ENABLED);
+	}
+
 	/* Don't set zigbee role for NCP device */
 #ifndef CONFIG_ZIGBEE_LIBRARY_NCP_DEV
 

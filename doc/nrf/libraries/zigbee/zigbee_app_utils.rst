@@ -476,6 +476,10 @@ Factory reset button
 
     For more information about the factory reset, see the `Resetting to factory defaults`_ section in the ZBOSS stack documentation.
 
+Trust Center Rejoin
+    To enable the Trust Center Rejoin feature, use the :kconfig:option:`CONFIG_ZIGBEE_TC_REJOIN_ENABLED` Kconfig option.
+    This option is enabled by default.
+
 For detailed steps about configuring the library in a Zigbee sample or application, see :ref:`ug_zigbee_configuring_components_application_utilities`.
 
 API documentation
