@@ -1,0 +1,26 @@
+1. Open Visual Studio Code.
+
+   If you installed the |NCS| using the :ref:`gs_app_tcm`, you can click the :guilabel:`Open VS Code` button next to the version you installed.
+
+#. Open the |VSC| extension by clicking its icon or pressing ``Ctrl`` + ``Alt`` + ``N``.
+#. Click the :guilabel:`Add an existing application` from the :guilabel:`Welcome` panel.
+#. In the prompt, navigate to the folder containing the sample or application you want to build, such as |sample_path_vsc|.
+
+   Samples are located under :file:`nrf/samples/`, and applications are located under :file:`nrf/applications/`.
+
+#. Click :guilabel:`Select folder` to select the sample's or the application's folder.
+
+   A new application is automatically added in the :guilabel:`Applications` panel.
+
+#. If needed, click :guilabel:`Yes` when prompted if you trust the authors of the files.
+#. Click the :guilabel:`Add Build Configuration` button in the :guilabel:`Application` panel, or click the text stating :guilabel:`No build configurations. Click to create one`.
+
+   This opens the :guilabel:`Add Build Configuration` panel in a new tab.
+
+#. Select the board onto which you want to program the sample.
+   In this case, |vsc_sample_board_target_line|.
+#. Select the :guilabel:`Build after generating configuration` checkbox and click the :guilabel:`Build Configuration` button.
+
+   This generates the configuration file and triggers the build process.
+   When the process is complete, an :guilabel:`Actions` panel appears.
+   In this panel, you can trigger the build process again, flash the built sample, or start a debug session.
