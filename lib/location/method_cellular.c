@@ -147,10 +147,10 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 		location_result.longitude = location.longitude;
 		location_result.accuracy = location.accuracy;
 		if (running) {
+			running = false;
 			location_core_event_cb(&location_result);
 		}
 	}
-	running = false;
 }
 
 int method_cellular_location_get(const struct location_method_config *config)
