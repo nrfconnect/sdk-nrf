@@ -8,6 +8,7 @@
 #    - None
 
 - scenarios:
-    - None
+    - sample.tfm.hello_world.lvl2
   platforms:
-    - None
+    - all
+  comment: "CONFIG_TFM_ISOLATION_LEVEL=2 currently doesn't work, see NCSDK-15463."
