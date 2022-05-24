@@ -9,8 +9,8 @@ Software maturity levels
 
 Following are the different software maturity levels shown for the different features:
 
-* Supported - Features that are maintained and are suitable for product development.
-* Experimental - Features that can be used for development but not recommended for production.
+* Supported - Features that are maintained and are suitable for integration in end products.
+* Experimental - Features that are suitable for prototyping or evaluation, but are not recommended to be deployed in end products.
 * Not supported - The feature or component will not work if not supported.
 
 See the following table for more details:
@@ -27,12 +27,12 @@ See the following table for more details:
      - Experimental
      - Not supported
    * - **Technical support**
-     - Customer issues raised for features supported for development on tagged |NCS| releases are handled by technical support on DevZone.
+     - Customer issues raised for features supported for developing end products on tagged |NCS| releases are handled by technical support on DevZone.
      - Customer issues raised for experimental features on tagged |NCS| releases are handled by technical support on DevZone.
      - Not available.
    * - **Bug fixing**
      - Reported critical bugs will be resolved in both main and latest tagged version.
-     - Bug fixes and improvements are not guaranteed to be applied to current versions.
+     - Bug fixes and improvements are not guaranteed to be applied.
      - Not available.
    * - **Implementation completeness**
      - Complete implementation of the agreed features set.
@@ -40,24 +40,21 @@ See the following table for more details:
      - A feature or component is available as an implementation, but is not compatible with, or tested on a specific device or series of products.
    * - **API definition**
      - API definition is stable.
-     - API definition is not stable and may change before going to production.
+     - API definition is not stable and may change.
      - Not available.
    * - **Maturity**
-     - Suitable for integration in end-product development.
+     - Suitable for integration in end products.
 
-       A feature or component that is either fully complete on first commit, or has previously been labelled "experimental" is ready for use in end-product projects.
+       A feature or component that is either fully complete on first commit, or has previously been labelled "experimental" and is now ready for use in end-product projects.
 
      - Suitable for prototyping or evaluation.
-       Should not be deployed in end-products.
+       Not recommended be deployed in end-products.
 
-       A feature or component that is in a core supported sub-system but is in development and either:
-
-       * Not fully tested according to existing test plans.
-       * In development and changing; not complete.
+       A feature or component that is either not fully verified according to existing test plans or currently being developed, meaning it is changing or incomplete.
      - Not applicable.
 
    * - **Verification**
-     - Verified for product development.
+     - Fully verified according to existing text plans.
      - Incomplete verification
      - Not applicable.
 
@@ -73,6 +70,5 @@ Thread feature support
 
 Matter feature support
 **********************
-The matter features are still experimental for now:
 
 .. sml-table:: matter
