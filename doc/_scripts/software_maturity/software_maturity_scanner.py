@@ -95,7 +95,7 @@ with the supported ones.
 Copyright (c) 2022 Nordic Semiconductor ASA
 """
 
-from enum import Enum
+from enum import IntEnum
 from pathlib import Path
 from typing import Dict, List, Set
 from azure.storage.blob import ContainerClient
@@ -134,13 +134,19 @@ BOARD_FILTER = lambda b: re.search(r"_nrf[0-9]+", b) and not b.startswith("nrf51
 """Function to filter non-relevant boards."""
 
 
-class MaturityLevels(Enum):
+class MaturityLevels(IntEnum):
     """Software maturity level constants."""
 
-    EXPERIMENTAL = "Experimental"
-    SUPPORTED = "Supported"
-    NOT_SUPPORTED = "Not supported"
+    NOT_SUPPORTED = 1
+    EXPERIMENTAL = 2
+    SUPPORTED = 3
 
+    def get_str(self):
+        return {
+            self.NOT_SUPPORTED: "Not supported",
+            self.EXPERIMENTAL: "Experimental",
+            self.SUPPORTED: "Supported",
+        }[self]
 
 __version__ = "0.1.0"
 
@@ -522,7 +528,8 @@ def generate_tables(
                     exp_soc_sets[soc] if soc in exp_soc_sets else set()
                 )
                 status = find_maturity_level(kconf.variables, experimental_symbols)
-                soc_sets[feature][soc] = status.value
+                soc_sets[feature][soc] = \
+                    max(status, soc_sets[feature][soc]) if soc in soc_sets[feature] else status
 
     # Create the output data structure
     top_table = {}
@@ -544,13 +551,13 @@ def generate_tables(
         for feature_name in sorted(features):
             feature = f"{cat}_{feature_name}"
             table[feature] = {
-                MaturityLevels.SUPPORTED.value: [],
-                MaturityLevels.EXPERIMENTAL.value: [],
+                MaturityLevels.SUPPORTED.get_str(): [],
+                MaturityLevels.EXPERIMENTAL.get_str(): [],
             }
 
             for soc in all_socs:
                 if soc in soc_sets[feature]:
-                    status = soc_sets[feature][soc]
+                    status = soc_sets[feature][soc].get_str()
                     table[feature][status].append(soc)
 
         category_results[cat] = table
