@@ -162,7 +162,7 @@ void DFUOverSMP::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg 
 				sDFUOverSMP.restartAdvertisingCallback();
 		}
 		break;
-	case DeviceEventType::kCommissioningComplete:
+	case DeviceEventType::kCHIPoBLEConnectionClosed:
 		/* Check if after closing CHIPoBLE connection advertising is working, if no start SMP advertising. */
 		if (!ConnectivityMgr().IsBLEAdvertisingEnabled()) {
 			sDFUOverSMP.restartAdvertisingCallback();
