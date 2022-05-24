@@ -115,9 +115,6 @@ CHIP_ERROR AppTask::Init()
 	(void)initParams.InitializeStaticResourcesBeforeServerInit();
 
 	ReturnErrorOnFailure(chip::Server::GetInstance().Init(initParams));
-#if CONFIG_CHIP_OTA_REQUESTOR
-	InitBasicOTARequestor();
-#endif
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 
@@ -250,6 +247,13 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 		sIsThreadProvisioned = ConnectivityMgr().IsThreadProvisioned();
 		sIsThreadEnabled = ConnectivityMgr().IsThreadEnabled();
 		UpdateStatusLED();
+		break;
+	case DeviceEventType::kThreadConnectivityChange:
+#if CONFIG_CHIP_OTA_REQUESTOR
+		if (event->ThreadConnectivityChange.Result == kConnectivity_Established) {
+			InitBasicOTARequestor();
+		}
+#endif
 		break;
 	default:
 		break;

@@ -19,6 +19,11 @@ class WindowCovering {
 public:
 	enum class MoveType : uint8_t { LIFT = 0, TILT, NONE };
 
+	struct AttributeUpdateData {
+		chip::EndpointId mEndpoint;
+		chip::AttributeId mAttributeId;
+	};
+
 	WindowCovering();
 	static WindowCovering &Instance()
 	{
@@ -32,6 +37,7 @@ public:
 	MoveType GetMoveType() { return mCurrentUIMoveType; }
 	void PositionLEDUpdate(MoveType aMoveType);
 
+	static void SchedulePostAttributeChange(chip::EndpointId aEndpoint, chip::AttributeId aAttributeId);
 	static constexpr chip::EndpointId Endpoint() { return 1; };
 
 private:
@@ -47,6 +53,7 @@ private:
 	static void DriveCurrentTiltPosition(intptr_t);
 	static void MoveTimerTimeoutCallbackLift(chip::System::Layer *systemLayer, void *appState);
 	static void MoveTimerTimeoutCallbackTilt(chip::System::Layer *systemLayer, void *appState);
+	static void DoPostAttributeChange(intptr_t aArg);
 
 	MoveType mCurrentUIMoveType;
 	LEDWidget mLiftLED;
