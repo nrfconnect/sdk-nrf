@@ -366,6 +366,10 @@ config ZIGBEE_NVRAM_PAGE_SIZE
 	int "The size of a single ZBOSS NVRAM page"
 	default 512
 
+config ZIGBEE_TC_REJOIN_ENABLED
+	bool "Enables Trust Center Rejoin"
+	default y
+
 choice
 	prompt "ZBOSS time source"
 	default ZIGBEE_TIME_COUNTER if ZIGBEE_LIBRARY_PRODUCTION

@@ -30,6 +30,12 @@
 /* Maximum interval between join/rejoin attempts. */
 #define REJOIN_INTERVAL_MAX_S    (15 * 60)
 
+/* Rejoin interval, after which the device will perform Trust Center Rejoin
+ * instead of a secure rejoin.
+ */
+#define TC_REJOIN_INTERVAL_THRESHOLD_S (2 * 60)
+#define ZB_SECUR_PROVISIONAL_KEY 2
+
 #define IEEE_ADDR_BUF_SIZE       17
 
 #if defined CONFIG_ZIGBEE_FACTORY_RESET
@@ -53,6 +59,24 @@ static volatile bool is_rejoin_start_scheduled;
 static void rejoin_the_network(zb_uint8_t param);
 static void start_network_rejoin(void);
 static void stop_network_rejoin(zb_uint8_t was_scheduled);
+
+/* A ZBOSS internal API needed for workaround for KRKNWK-14112 */
+struct zb_aps_device_key_pair_set_s ZB_PACKED_PRE
+{
+	zb_ieee_addr_t  device_address;
+	zb_uint8_t      link_key[ZB_CCM_KEY_SIZE];
+#ifndef ZB_LITE_NO_GLOBAL_VS_UNIQUE_KEYS
+	zb_bitfield_t   aps_link_key_type:1;
+#endif
+	zb_bitfield_t   key_source:1;
+	zb_bitfield_t   key_attributes:2;
+	zb_bitfield_t   reserved:4;
+	zb_uint8_t      align[3];
+} ZB_PACKED_STRUCT;
+extern void zb_nwk_forget_device(zb_uint8_t addr_ref);
+extern struct zb_aps_device_key_pair_set_s  *zb_secur_get_link_key_by_address(
+							zb_ieee_addr_t address,
+							zb_uint8_t attr);
 
 
 #if defined CONFIG_ZIGBEE_FACTORY_RESET
@@ -228,7 +252,10 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 		ZB_ERROR_CHECK(zb_zcl_set_backward_comp_mode(ZB_ZCL_AUTO_MODE));
 		ZB_ERROR_CHECK(
 			zb_zcl_set_backward_compatible_statuses_mode(ZB_ZCL_STATUSES_ZCL8_MODE));
-		zb_enable_panid_conflict_resolution(CONFIG_ZIGBEE_PANID_CONFLICT_RESOLUTION);
+		if (IS_ENABLED(CONFIG_ZIGBEE_PANID_CONFLICT_RESOLUTION)) {
+			zb_enable_panid_conflict_resolution(
+				CONFIG_ZIGBEE_PANID_CONFLICT_RESOLUTION);
+		}
 		stack_initialised = true;
 		LOG_INF("Zigbee stack initialized");
 		comm_status = bdb_start_top_level_commissioning(
@@ -495,6 +522,18 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 			update_params->short_addr,
 			log_strdup(ieee_addr_buf),
 			update_params->status);
+
+		if (IS_ENABLED(CONFIG_ZIGBEE_TC_REJOIN_ENABLED)) {
+			/* Workaround: KRKNWK-14112 */
+			zb_address_ieee_ref_t addr_ref;
+
+			if ((zb_address_by_ieee(update_params->long_addr, ZB_FALSE, ZB_FALSE,
+									&addr_ref) == RET_OK)
+				&& zb_secur_get_link_key_by_address(update_params->long_addr,
+					ZB_SECUR_PROVISIONAL_KEY)) {
+				ZB_SCHEDULE_APP_ALARM_CANCEL(zb_nwk_forget_device, addr_ref);
+			}
+		}
 		break;
 	}
 
@@ -618,6 +657,56 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 		/* Obsolete signals, used for pre-R21 ZBOSS API. Ignore. */
 		break;
 
+	case ZB_BDB_SIGNAL_TC_REJOIN_DONE:
+		/* This signal informs that Trust Center Rejoin is completed.
+		 * The signal status indicates if the device has successfully
+		 * rejoined the network.
+		 *
+		 * Next step: if the device implement Zigbee router or
+		 *            end device, and the Trust Center Rejoin has failed,
+		 *            perform restart the generic rejoin procedure.
+		 */
+		if (IS_ENABLED(CONFIG_ZIGBEE_TC_REJOIN_ENABLED)) {
+			if (status == RET_OK) {
+				zb_ext_pan_id_t extended_pan_id;
+				char ieee_addr_buf[IEEE_ADDR_BUF_SIZE] = { 0 };
+				int addr_len;
+
+				zb_get_extended_pan_id(extended_pan_id);
+				addr_len = ieee_addr_to_str(ieee_addr_buf,
+								sizeof(ieee_addr_buf),
+								extended_pan_id);
+				if (addr_len < 0) {
+					strcpy(ieee_addr_buf, "unknown");
+				}
+
+				LOG_INF("Joined network successfully after TC rejoin"
+						" (Extended PAN ID: %s, PAN ID: 0x%04hx)",
+					log_strdup(ieee_addr_buf),
+					ZB_PIBCACHE_PAN_ID());
+				/* Device has joined the network so stop the network
+				 * rejoin procedure.
+				 */
+				if (role != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
+					stop_network_rejoin(ZB_FALSE);
+				}
+			} else {
+				if (role != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
+					LOG_INF("TC Rejoin was not successful (status: %d)",
+						status);
+					start_network_rejoin();
+				} else {
+					LOG_INF("TC Rejoin failed on Zigbee coordinator"
+							" (status: %d)", status);
+				}
+			}
+			break;
+		}
+
+		/*
+		 * Fall-through to the default case if Trust Center Rejoin is disabled
+		 */
+
 	default:
 		/* Unimplemented signal. For more information,
 		 * see: zb_zdo_app_signal_type_e and zb_ret_e.
@@ -692,6 +781,9 @@ static void rejoin_the_network(zb_uint8_t param)
 		} else if (!is_rejoin_in_progress) {
 			/* Calculate new timeout */
 			zb_time_t timeout_s;
+			zb_ret_t zb_err_code;
+			zb_callback_t alarm_cb = start_network_steering;
+			zb_uint8_t alarm_cb_param = ZB_FALSE;
 
 			if ((1 << rejoin_attempt_cnt) > REJOIN_INTERVAL_MAX_S) {
 				timeout_s = REJOIN_INTERVAL_MAX_S;
@@ -700,13 +792,20 @@ static void rejoin_the_network(zb_uint8_t param)
 				rejoin_attempt_cnt++;
 			}
 
-			zb_ret_t zb_err_code = ZB_SCHEDULE_APP_ALARM(
-				start_network_steering,
-				ZB_FALSE,
-				ZB_MILLISECONDS_TO_BEACON_INTERVAL(timeout_s *
-								   1000));
-			ZB_ERROR_CHECK(zb_err_code);
+			if (IS_ENABLED(CONFIG_ZIGBEE_TC_REJOIN_ENABLED)) {
+				if ((timeout_s > TC_REJOIN_INTERVAL_THRESHOLD_S)
+					&& !zb_bdb_is_factory_new()) {
+					alarm_cb = zb_bdb_initiate_tc_rejoin;
+					alarm_cb_param = ZB_UNDEFINED_BUFFER;
+				}
+			}
 
+			zb_err_code = ZB_SCHEDULE_APP_ALARM(
+				alarm_cb,
+				alarm_cb_param,
+				ZB_MILLISECONDS_TO_BEACON_INTERVAL(timeout_s * 1000));
+
+			ZB_ERROR_CHECK(zb_err_code);
 			is_rejoin_in_progress = true;
 		}
 	}
