@@ -14,11 +14,22 @@
 
 static char response[64];
 
+void at_notif_print(const char *notif)
+{
+	printk("AT Notif: %s\n", notif);
+}
+
 static void test_at_cmd_filter_setup(void)
 {
 	int err;
 	int retries = 50;
 	int connected = false;
+
+	err = nrf_modem_at_notif_handler_set(at_notif_print);
+	zassert_equal(0, err, "nrf_modem_at_notif_handler_set failed, error: %d", err);
+
+	err = nrf_modem_at_printf("AT%%CESQ=1");
+	zassert_equal(0, err, "nrf_modem_at_printf failed, error: %d", err);
 
 	err = nrf_modem_at_printf("AT+CEREG=1");
 	zassert_equal(0, err, "nrf_modem_at_printf failed, error: %d", err);
@@ -38,6 +49,7 @@ static void test_at_cmd_filter_setup(void)
 		zassert_equal(2, err, "sscanf failed, error: %d", err);
 		retries--;
 		if (retries == 0) {
+			printk("Network connection timed out. Last response: %s\n", response);
 			zassert_unreachable("Network connection timed out");
 		}
 		k_sleep(K_SECONDS(1));
@@ -46,6 +58,18 @@ static void test_at_cmd_filter_setup(void)
 	err = nrf_modem_at_cmd(response, sizeof(response), "AT+CNMI=3,2,0,1");
 	zassert_equal(0, err, "nrf_modem_at_printf failed, error: %d", err);
 	zassert_mem_equal(response, "OK", strlen("OK"), NULL);
+}
+
+
+static void test_at_cmd_filter_teardown(void)
+{
+	int err;
+
+	err = nrf_modem_at_printf("AT%%CESQ=0");
+	zassert_equal(0, err, "nrf_modem_at_printf failed, error: %d", err);
+
+	err = nrf_modem_at_printf("AT+CFUN=0");
+	zassert_equal(0, err, "nrf_modem_at_printf failed, error: %d", err);
 }
 
 static void test_at_cmd_filter_cmd_cpms(void)
@@ -181,7 +205,8 @@ void test_main(void)
 		ztest_unit_test(test_at_cmd_filter_cmd_cmgw),
 		ztest_unit_test(test_at_cmd_filter_cmd_cmss),
 		ztest_unit_test(test_at_cmd_filter_cmd_cmgw_cmgd),
-		ztest_unit_test(test_at_cmd_filter_buffer_size)
+		ztest_unit_test(test_at_cmd_filter_buffer_size),
+		ztest_unit_test(test_at_cmd_filter_teardown)
 	);
 
 	ztest_run_test_suite(at_cmd_filter);
