@@ -471,3 +471,46 @@ Test command
 ------------
 
 The test command is not supported.
+
+Modem fault #XMODEM
+===================
+
+The application monitors the modem status.
+When the application detects a *modem fault*, it sends the ``#XMODEM`` unsolicited notification.
+
+Unsolicited notification
+------------------------
+
+The application sends the following unsolicited notification when it detects a modem fault:
+
+::
+
+   #XMODEM: FAULT,<reason>,<program_count>
+
+The ``<reason>`` value returns a hexadecimal integer indicating the reason of the modem fault.
+The ``<program_count>`` value returns a hexadecimal integer indicating the address of the modem fault.
+
+The application sends the following unsolicited notification when it shuts down libmodem:
+
+::
+
+   #XMODEM: SHUTDOWN,<result>
+
+The ``<result>`` value returns an integer indicating the result of the shutdown of libmodem.
+
+The application sends the following unsolicited notification when it re-initializes libmodem:
+
+::
+
+   #XMODEM: INIT,<result>
+
+The ``<result>`` value returns an integer indicating the result of the re-initialization of libmodem.
+
+.. note::
+   After libmodem is re-initialized, the MCU side must restart the current active service as follows:
+
+   1. Stopping the service.
+      For example, disconnecting the TCP connection and closing the socket.
+   #. Connecting again using LTE.
+   #. Restarting the service.
+      For example, opening the socket and re-establishing the TCP connection.
