@@ -406,19 +406,19 @@ def flatten(items: list) -> Set[str]:
     return out
 
 
-def find_maturity_level(rule: list, experimental_symbols: Set[str]) -> MaturityLevels:
+def find_maturity_level(vars: Dict[str, kconfiglib.Variable], experimental_symbols: Set[str]) -> MaturityLevels:
     """Find if any of the symbols used in a rule are experimental or not.
 
     Args:
-        rule: Parsed Kconfig rule, i.e. list of or-expressions.
+        vars: Dictionary of present Kconfig variables and their values.
+        experimental_symbols: A list of the experimental symbols used in the samples.
 
     Returns:
         'Experimental' | 'Supported'
     """
 
-    symbols = flatten(rule)
-    for symbol in symbols:
-        if symbol in experimental_symbols:
+    for symbol in experimental_symbols:
+        if evaluate_rule(vars, ["OR", ["AND", symbol]]):
             return MaturityLevels.EXPERIMENTAL
     return MaturityLevels.SUPPORTED
 
@@ -521,7 +521,7 @@ def generate_tables(
                 experimental_symbols = (
                     exp_soc_sets[soc] if soc in exp_soc_sets else set()
                 )
-                status = find_maturity_level(rule, experimental_symbols)
+                status = find_maturity_level(kconf.variables, experimental_symbols)
                 soc_sets[feature][soc] = status.value
 
     # Create the output data structure
