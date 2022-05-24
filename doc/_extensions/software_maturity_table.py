@@ -68,7 +68,7 @@ class SoftwareMaturityTable(SphinxDirective):
         table_info = self.env.sml_table
 
         if table_type != "top_level" and table_type not in table_info["features"]:
-            logger.error(f"No information present for requested feature '{table_type}'")
+            logger.info(f"No information present for requested feature '{table_type}'")
             return []
 
         all_socs = table_info["all_socs"]

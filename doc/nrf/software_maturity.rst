@@ -76,3 +76,9 @@ Matter feature support
 The matter features are still experimental for now:
 
 .. sml-table:: matter
+
+Non-existing feature support
+****************************
+The table below should not be displayed:
+
+.. sml-table:: non_existing
