@@ -18,8 +18,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ext_sensors_bsec, CONFIG_EXTERNAL_SENSORS_LOG_LEVEL);
 
-BUILD_ASSERT(CONFIG_FP_HARDABI, "CONFIG_FP_HARDABI must be set when using the BME680 BSEC library");
-
 /* Sample rate for the BSEC library
  *
  * BSEC_SAMPLE_RATE_ULP = 0.0033333 Hz = 300 second interval
