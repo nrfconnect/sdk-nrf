@@ -22,9 +22,9 @@ if(CONFIG_BOARD_THINGY91_NRF9160_NS)
 	# unchanged after DFU. This needs to be made globally available
 	# because it is used in other CMake files.
 	if (CONFIG_SPM)
-		set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_LIST_DIR}/pm_static_spm.yml CACHE INTERNAL "")
+		set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_LIST_DIR}/thingy91_pm_static_spm.yml CACHE INTERNAL "")
 	else()
-		set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_LIST_DIR}/pm_static.yml CACHE INTERNAL "")
+		set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_LIST_DIR}/thingy91_pm_static.yml CACHE INTERNAL "")
 	endif()
 endif()
 
