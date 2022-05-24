@@ -86,7 +86,7 @@ nRF9160
   * :ref:`lib_nrf_cloud` library:
 
     * Added function :c:func:`nrf_cloud_uninit`, which can be used to uninitialize the nRF Cloud library.
-      If :ref:`cloud_api_readme` is used, call :c:func:`cloud_uninit`.
+      If cloud API is used, call :c:func:`cloud_uninit`.
     * Added function :c:func:`nrf_cloud_shadow_device_status_update`, which sets the device status in the device's shadow.
     * Added function :c:func:`nrf_cloud_modem_info_json_encode`, which encodes modem information into a cJSON object formatted for use with nRF Cloud.
     * Added function :c:func:`nrf_cloud_service_info_json_encode`, which encodes service information into a cJSON object formatted for use with nRF Cloud.

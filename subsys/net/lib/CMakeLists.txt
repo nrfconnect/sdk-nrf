@@ -14,7 +14,6 @@ if (DEFINED CONFIG_NRF_CLOUD_MQTT OR
         add_subdirectory(nrf_cloud)
 endif()
 
-add_subdirectory_ifdef(CONFIG_CLOUD_API cloud)
 add_subdirectory_ifdef(CONFIG_REST_CLIENT rest_client)
 add_subdirectory_ifdef(CONFIG_DOWNLOAD_CLIENT download_client)
 add_subdirectory_ifdef(CONFIG_FOTA_DOWNLOAD fota_download)
