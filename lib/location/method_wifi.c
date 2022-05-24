@@ -216,8 +216,8 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 			location_result.longitude = result.longitude;
 			location_result.accuracy = result.accuracy;
 			if (running) {
-				location_core_event_cb(&location_result);
 				running = false;
+				location_core_event_cb(&location_result);
 			}
 		}
 	} else {
