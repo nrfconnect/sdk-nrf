@@ -24,47 +24,23 @@
 
 #define MPSL_FEM_SPI_IF DT_PHANDLE(DT_NODELABEL(nrf_radio_fem), spi_if)
 
+#define MPSL_FEM_GPIO_PORT(pin)     DT_GPIO_CTLR(DT_NODELABEL(nrf_radio_fem), pin)
+#define MPSL_FEM_GPIO_PORT_REG(pin) ((NRF_GPIO_Type *)DT_REG_ADDR(MPSL_FEM_GPIO_PORT(pin)))
+#define MPSL_FEM_GPIO_PORT_NO(pin)  DT_PROP(MPSL_FEM_GPIO_PORT(pin), port)
+#define MPSL_FEM_GPIO_PIN_NO(pin)   DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem), pin)
+
 #define MPSL_FEM_GPIO_INVALID_PIN        0xFFU
 #define MPSL_FEM_GPIOTE_INVALID_CHANNEL  0xFFU
 #define MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT \
-	.enable       = false, \
-	.active_high  = true, \
-	.gpio_pin     = MPSL_FEM_GPIO_INVALID_PIN, \
-	.gpiote_ch_id = MPSL_FEM_GPIOTE_INVALID_CHANNEL
+	.enable        = false, \
+	.active_high   = true, \
+	.gpio_port_pin = MPSL_FEM_GPIO_INVALID_PIN, \
+	.gpiote_ch_id  = MPSL_FEM_GPIOTE_INVALID_CHANNEL
 
 #define MPSL_FEM_DISABLED_GPIO_CONFIG_INIT \
-	.enable       = false, \
-	.active_high  = true, \
-	.gpio_pin     = MPSL_FEM_GPIO_INVALID_PIN
-
-static void fem_pin_num_correction(uint8_t *p_gpio_pin, const char *gpio_lbl)
-{
-	(void)p_gpio_pin;
-
-	/* The pin numbering in the FEM configuration API follows the
-	 * convention:
-	 *   pin numbers 0..31 correspond to the gpio0 port
-	 *   pin numbers 32..63 correspond to the gpio1 port
-	 *
-	 * Values obtained from devicetree are here adjusted to the ranges
-	 * given above.
-	 */
-
-#if DT_NODE_HAS_STATUS(DT_NODELABEL(gpio0), okay)
-	if (strcmp(gpio_lbl, DT_LABEL(DT_NODELABEL(gpio0))) == 0) {
-		return;
-	}
-#endif
-
-#if DT_NODE_HAS_STATUS(DT_NODELABEL(gpio1), okay)
-	if (strcmp(gpio_lbl, DT_LABEL(DT_NODELABEL(gpio1))) == 0) {
-		*p_gpio_pin += 32;
-		return;
-	}
-#endif
-
-	__ASSERT(false, "Unknown GPIO port DT label");
-}
+	.enable        = false, \
+	.active_high   = true, \
+	.gpio_port_pin = MPSL_FEM_GPIO_INVALID_PIN
 
 #if IS_ENABLED(CONFIG_MPSL_FEM_NRF21540_GPIO)
 static inline int inactive_pin_configure(uint8_t pin, const char *gpio_lbl,
@@ -207,39 +183,39 @@ static int fem_nrf21540_gpio_configure(void)
 		},
 		.pa_pin_config = {
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), tx_en_gpios)
-			.enable       = true,
-			.active_high  =
-				MPSL_FEM_GPIO_POLARITY_GET(tx_en_gpios),
-			.gpio_pin     =
-				DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem),
-					    tx_en_gpios),
-			.gpiote_ch_id = txen_gpiote_channel
+			.cfg_type      = MPSL_FEM_PIN_CFG_TYPE_PIN_PORT,
+			.enable        = true,
+			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(tx_en_gpios),
+			.p_port        = MPSL_FEM_GPIO_PORT_REG(tx_en_gpios),
+			.gpio_port_no  = MPSL_FEM_GPIO_PORT_NO(tx_en_gpios),
+			.gpio_port_pin = MPSL_FEM_GPIO_PIN_NO(tx_en_gpios),
+			.gpiote_ch_id  = txen_gpiote_channel
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
 #endif
 		},
 		.lna_pin_config = {
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), rx_en_gpios)
-			.enable       = true,
-			.active_high  =
-				MPSL_FEM_GPIO_POLARITY_GET(rx_en_gpios),
-			.gpio_pin     =
-				DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem),
-					    rx_en_gpios),
-			.gpiote_ch_id = rxen_gpiote_channel
+			.cfg_type      = MPSL_FEM_PIN_CFG_TYPE_PIN_PORT,
+			.enable        = true,
+			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(rx_en_gpios),
+			.p_port        = MPSL_FEM_GPIO_PORT_REG(rx_en_gpios),
+			.gpio_port_no  = MPSL_FEM_GPIO_PORT_NO(rx_en_gpios),
+			.gpio_port_pin = MPSL_FEM_GPIO_PIN_NO(rx_en_gpios),
+			.gpiote_ch_id  = rxen_gpiote_channel
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
 #endif
 		},
 		.pdn_pin_config = {
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), pdn_gpios)
-			.enable       = true,
-			.active_high  =
-				MPSL_FEM_GPIO_POLARITY_GET(pdn_gpios),
-			.gpio_pin     =
-				DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem),
-					    pdn_gpios),
-			.gpiote_ch_id = pdn_gpiote_channel
+			.cfg_type      = MPSL_FEM_PIN_CFG_TYPE_PIN_PORT,
+			.enable        = true,
+			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(pdn_gpios),
+			.p_port        = MPSL_FEM_GPIO_PORT_REG(pdn_gpios),
+			.gpio_port_no  = MPSL_FEM_GPIO_PORT_NO(pdn_gpios),
+			.gpio_port_pin = MPSL_FEM_GPIO_PIN_NO(pdn_gpios),
+			.gpiote_ch_id  = pdn_gpiote_channel
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
 #endif
@@ -247,12 +223,12 @@ static int fem_nrf21540_gpio_configure(void)
 		.mode_pin_config = {
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), mode_gpios) && \
 	IS_ENABLED(CONFIG_MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL)
-			.enable      = true,
-			.active_high =
-				MPSL_FEM_GPIO_POLARITY_GET(mode_gpios),
-			.gpio_pin    =
-				DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem),
-					    mode_gpios)
+			.cfg_type      = MPSL_FEM_PIN_CFG_TYPE_PIN_PORT,
+			.enable        = true,
+			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(mode_gpios),
+			.p_port        = MPSL_FEM_GPIO_PORT_REG(mode_gpios),
+			.gpio_port_no  = MPSL_FEM_GPIO_PORT_NO(mode_gpios),
+			.gpio_port_pin = MPSL_FEM_GPIO_PIN_NO(mode_gpios)
 #else
 			MPSL_FEM_DISABLED_GPIO_CONFIG_INIT
 #endif
@@ -281,34 +257,11 @@ static int fem_nrf21540_gpio_configure(void)
 		return err;
 	}
 
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), tx_en_gpios)
-	fem_pin_num_correction(&cfg.pa_pin_config.gpio_pin,
-			       DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem),
-					     tx_en_gpios));
-#endif
-
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), rx_en_gpios)
-	fem_pin_num_correction(&cfg.lna_pin_config.gpio_pin,
-			       DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem),
-					     rx_en_gpios));
-#endif
-
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), pdn_gpios)
-	fem_pin_num_correction(&cfg.pdn_pin_config.gpio_pin,
-			       DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem),
-					     pdn_gpios));
-#endif
-
 	BUILD_ASSERT(
 	  (CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB == CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA) ||
 	  (CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB == CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTB));
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), mode_gpios)
-	if (IS_ENABLED(CONFIG_MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL)) {
-		fem_pin_num_correction(&cfg.mode_pin_config.gpio_pin,
-						DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem),
-								mode_gpios));
-	}
-	else {
+	if (!IS_ENABLED(CONFIG_MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL)) {
 		gpio_flags_t mode_pin_flags = GPIO_OUTPUT_ACTIVE;
 
 		if (CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB == CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA) {
@@ -318,8 +271,8 @@ static int fem_nrf21540_gpio_configure(void)
 		mode_pin_flags |= DT_GPIO_FLAGS(DT_NODELABEL(nrf_radio_fem), mode_gpios);
 
 		err = gpio_pin_configure(
-			DEVICE_DT_GET(DT_GPIO_CTLR(DT_NODELABEL(nrf_radio_fem), mode_gpios)),
-			DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem), mode_gpios),
+			DEVICE_DT_GET(MPSL_FEM_GPIO_PORT(mode_gpios)),
+			MPSL_FEM_GPIO_PIN_NO(mode_gpios),
 			mode_pin_flags);
 
 		if (err) {
@@ -330,7 +283,7 @@ static int fem_nrf21540_gpio_configure(void)
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios)
 	err = inactive_pin_configure(
-		DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios),
+		MPSL_FEM_GPIO_PIN_NO(ant_sel_gpios),
 		DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios),
 		DT_GPIO_FLAGS(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios));
 
@@ -386,26 +339,26 @@ static int fem_simple_gpio_configure(void)
 		},
 		.pa_pin_config = {
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ctx_gpios)
-			.enable       = true,
-			.active_high  =
-				MPSL_FEM_GPIO_POLARITY_GET(ctx_gpios),
-			.gpio_pin     =
-				DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem),
-					    ctx_gpios),
-			.gpiote_ch_id = ctx_gpiote_channel
+			.cfg_type      = MPSL_FEM_PIN_CFG_TYPE_PIN_PORT,
+			.enable        = true,
+			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(ctx_gpios),
+			.p_port        = MPSL_FEM_GPIO_PORT_REG(ctx_gpios),
+			.gpio_port_no  = MPSL_FEM_GPIO_PORT_NO(ctx_gpios),
+			.gpio_port_pin = MPSL_FEM_GPIO_PIN_NO(ctx_gpios),
+			.gpiote_ch_id  = ctx_gpiote_channel
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
 #endif
 		},
 		.lna_pin_config = {
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), crx_gpios)
-			.enable       = true,
-			.active_high  =
-				MPSL_FEM_GPIO_POLARITY_GET(crx_gpios),
-			.gpio_pin     =
-				DT_GPIO_PIN(DT_NODELABEL(nrf_radio_fem),
-					    crx_gpios),
-			.gpiote_ch_id = crx_gpiote_channel
+			.cfg_type      = MPSL_FEM_PIN_CFG_TYPE_PIN_PORT,
+			.enable        = true,
+			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(crx_gpios),
+			.p_port        = MPSL_FEM_GPIO_PORT_REG(crx_gpios),
+			.gpio_port_no  = MPSL_FEM_GPIO_PORT_NO(crx_gpios),
+			.gpio_port_pin = MPSL_FEM_GPIO_PIN_NO(crx_gpios),
+			.gpiote_ch_id  = crx_gpiote_channel
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
 #endif
@@ -433,18 +386,6 @@ static int fem_simple_gpio_configure(void)
 	if (err) {
 		return err;
 	}
-
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ctx_gpios)
-	fem_pin_num_correction(&cfg.pa_pin_config.gpio_pin,
-			       DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem),
-					     ctx_gpios));
-#endif
-
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), crx_gpios)
-	fem_pin_num_correction(&cfg.lna_pin_config.gpio_pin,
-			       DT_GPIO_LABEL(DT_NODELABEL(nrf_radio_fem),
-					     crx_gpios));
-#endif
 
 	return mpsl_fem_simple_gpio_interface_config_set(&cfg);
 }
