@@ -30,11 +30,7 @@ tests:
     platform_allow: nrf5340dk_nrf5340_cpuapp
     tags: bluetooth ci_build
   # Build integration regression protection.
-  #
-  # Use the nrf_security_build_integration tag to ensure this is built on CI
-  # when crypto library changes are made.
   integration.nrf_security.bluetooth:
-      tags: nrf_security_build_integration
       build_only: True
       extra_args: CONFIG_NRF_SECURITY=y CONFIG_BOOTLOADER_MCUBOOT=y
       platform_allow: nrf5340dk_nrf5340_cpuapp
