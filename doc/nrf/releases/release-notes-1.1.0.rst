@@ -114,7 +114,7 @@ nRF9160
 
 * Added the following libraries:
 
-  * Cloud API (``include/net/cloud.h``) - provides a generic cloud API with an implementation for nRF Connect for Cloud.
+  * Cloud API - provides a generic cloud API with an implementation for nRF Connect for Cloud.
   * :ref:`liblwm2m_carrier_readme` (version 0.8.0) - provides support for the Verizon Wireless network support.
   * ``at_notif`` library - dispatches AT command notifications to registered modules.
 
