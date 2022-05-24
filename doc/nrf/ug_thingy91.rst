@@ -168,34 +168,13 @@ Building and programming using VS Code extension
 
 |vsc_extension_instructions|
 
-Complete the following steps to build |NCS| projects with |VSC|:
+Complete the following steps after installing |VSC|:
 
-1. Start |VSC|.
-   If you installed the |NCS| using the :ref:`gs_app_tcm`, you can click the :guilabel:`Open VS Code` button next to the version you installed.
-#. In the :guilabel:`Welcome panel` or on the :guilabel:`Welcome` page, click :guilabel:`Add an existing application`.
-#. Navigate to the directory of the nRF9160-compatible sample or application you want to work with.
+.. |sample_path_vsc| replace:: :file:`samples/nrf9160/cloud_client`
 
-   Samples are located under :file:`nrf/samples/`, and applications are located under :file:`nrf/applications/`.
+.. |vsc_sample_board_target_line| replace:: you must use the build target ``thingy91_nrf9160`` or ``thingy91_nrf9160_ns`` when building the application code for the nRF9160 SiP and the build target ``thingy91_nrf52840`` when building the application code for the onboard nRF52840 SoC.
 
-#. Click :guilabel:`Select folder` to select the sample's or the application's folder.
-
-   A new application is automatically added in the :guilabel:`Applications` panel.
-
-#. If needed, click :guilabel:`Yes` when prompted if you trust the authors of the files.
-#. Click the :guilabel:`No build configurations. Click to create one` text under the application.
-
-   The :guilabel:`Add Build Configuration` screen opens.
-
-#. Provide the following information to configure the build:
-
-   a. Select the build target from the :guilabel:`Board` drop-down menu.
-      You must use the build target ``thingy91_nrf9160`` or ``thingy91_nrf9160_ns`` when building the application code for the nRF9160 SiP and the build target ``thingy91_nrf52840`` when building the application code for the onboard nRF52840 SoC.
-   #. Select ``prj.conf`` from the :guilabel:`Configuration` drop-down menu if it is not already selected.
-   #. Make sure that the checkbox for :guilabel:`Build after generating configuration` is selected.
-
-#. Click :guilabel:`Build Configuration`.
-
-   When the process completes, the build configuration appears in the :guilabel:`Applications` panel.
+.. include:: /includes/vsc_build_and_run.txt
 
 #. Program the application:
 

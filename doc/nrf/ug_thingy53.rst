@@ -98,15 +98,14 @@ Building and programming using Visual Studio Code
 
 |vsc_extension_instructions|
 
-Complete the following steps after installing the `nRF Connect for Visual Studio Code`_ extension in Microsoft Visual Studio Code:
+Complete the following steps after installing |VSC|:
 
-.. include:: /includes/vsc_build_and_run_nrf53.txt
+.. |sample_path_vsc| replace:: :file:`nrf/samples/bluetooth/peripheral_lbs`
 
-6. Select the ``thingy53_nrf5340_cpuapp`` as the target board.
-#. Select the :guilabel:`Build after generating configuration` checkbox and click the :guilabel:`Build Configuration` button.
-   This generates the configuration file and triggers the build process.
-#. When the build configuration and the build are complete, an :guilabel:`Actions` panel appears.
-   In this panel, you can trigger the build process, program the built sample or start a debug session.
+.. |vsc_sample_board_target_line| replace:: select ``thingy53_nrf5340_cpuapp`` as the target board
+
+.. include:: /includes/vsc_build_and_run.txt
+
 #. Program the sample or application:
 
    a. Connect the Nordic Thingy:53 to the debug out port on a 10-pin external debug probe, for example nRF5340 DK, using a 10-pin JTAG cable.

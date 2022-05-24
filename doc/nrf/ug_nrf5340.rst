@@ -427,13 +427,12 @@ If you are working with Bluetooth LE, Thread, Zigbee, or Matter samples, the net
 
 Complete the following steps to build and program a multi-image build to the nRF5340 application core and network core:
 
-.. include:: /includes/vsc_build_and_run_nrf53.txt
+.. |sample_path_vsc| replace:: :file:`nrf/samples/bluetooth/peripheral_lbs`
 
-6. Select the ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuapp_ns`` as the target board.
-#. Select the :guilabel:`Build after generating configuration` checkbox and click the :guilabel:`Build Configuration` button.
-   This generates the configuration file and triggers the build process.
-#. When the build configuration and the build are complete, an :guilabel:`Actions` panel appears.
-   In this panel, you can trigger the build process, program the built sample, or start a debug session.
+.. |vsc_sample_board_target_line| replace:: select ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuapp_ns`` as the target board
+
+.. include:: /includes/vsc_build_and_run.txt
+
 #. Program the sample or application:
 
    a. Connect the nRF5340 development kit to your PC using a USB cable.
