@@ -105,6 +105,7 @@
   - "include/tfm/**/*"
   - "modules/nrfxlib/**/*"
   - "modules/tfm/**/*"
+  - "modules/trusted-firmware-m/**/*"
   - "samples/tfm/**/*"
   - "subsys/bootloader/**/*"
   - "subsys/partition_manager/**/*"
