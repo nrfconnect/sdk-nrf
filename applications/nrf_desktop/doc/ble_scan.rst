@@ -134,9 +134,8 @@ a. The scanning is stopped and the |NCS|'s :ref:`nrf_bt_scan_readme` automatical
 #. After the :ref:`nrf_desktop_ble_discovery` completes the peer discovery, the :ref:`nrf_desktop_ble_conn_params` receives the ``ble_discovery_complete_event`` and updates the Bluetooth connection interval.
 
 .. important::
-   If a Bluetooth peer is already connected with a 1-ms connection interval, the next peer is connected with a 10-ms connection interval instead of 7.5 ms.
-   The peer is connected with a 10-ms connection interval also in case :kconfig:option:`CONFIG_BT_MAX_CONN` is set to value greater than 2 and :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM` Kconfig option is enabled.
-   This is required to avoid Bluetooth scheduling issues that may lead to HID input report rate drops and disconnections.
+   If the dongle supports Low Latency Packet Mode (:kconfig:option:`CONFIG_CAF_BLE_USE_LLPM`) and more than one Bluetooth connection (:kconfig:option:`CONFIG_BT_MAX_CONN`), a 10-ms connection interval is used instead of 7.5 ms.
+   This is done to avoid Bluetooth scheduling issues that may lead to HID input report rate drops and disconnections.
 
 At this point, the scanning can be restarted.
 
