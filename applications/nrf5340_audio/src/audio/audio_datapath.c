@@ -60,6 +60,7 @@
 #include "tone.h"
 #include "contin_array.h"
 #include "pcm_mix.h"
+#include "streamctrl.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_datapath, CONFIG_LOG_AUDIO_DATAPATH_LEVEL);
@@ -112,7 +113,8 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_LOG_AUDIO_DATAPATH_LEVEL);
 #define DRIFT_ERR_THRESH_LOCK 16
 #define DRIFT_ERR_THRESH_UNLOCK 32
 
-#define PRES_COMP_ENABLE true
+// TODO: Re-enable
+#define PRES_COMP_ENABLE false
 /* Presentation delay in microseconds */
 #define PRES_DLY_US 10000
 

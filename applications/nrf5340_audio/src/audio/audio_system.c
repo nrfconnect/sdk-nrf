@@ -280,6 +280,11 @@ void audio_system_start(void)
 {
 	int ret;
 
+	if (audio_system_started) {
+		LOG_WRN("Audio system already started");
+		return;
+	}
+
 	if (CONFIG_AUDIO_DEV == HEADSET) {
 		audio_headset_configure();
 	} else if (CONFIG_AUDIO_DEV == GATEWAY) {
@@ -287,11 +292,6 @@ void audio_system_start(void)
 	} else {
 		LOG_ERR("Invalid CONFIG_AUDIO_DEV: %d", CONFIG_AUDIO_DEV);
 		ERR_CHK(-EINVAL);
-	}
-
-	if (audio_system_started) {
-		LOG_WRN("Audio codec already started");
-		return;
 	}
 
 	if (!fifo_tx.initialized) {
@@ -338,7 +338,7 @@ void audio_system_stop(void)
 	int ret;
 
 	if (!audio_system_started) {
-		LOG_WRN("Audio codec not started");
+		LOG_WRN("Audio system not started");
 		return;
 	}
 
@@ -378,6 +378,8 @@ void audio_system_stop(void)
 
 void audio_system_init(void)
 {
+	int ret;
+
 #if ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_USB))
 	ret = audio_usb_init();
 	ERR_CHK(ret);

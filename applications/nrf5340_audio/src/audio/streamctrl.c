@@ -45,7 +45,7 @@ static struct k_thread audio_datapath_thread_data;
 static k_tid_t audio_datapath_thread_id;
 K_THREAD_STACK_DEFINE(audio_datapath_thread_stack, CONFIG_AUDIO_DATAPATH_STACK_SIZE);
 
-static enum stream_state strm_state;
+static enum stream_state strm_state = STATE_PAUSED;
 
 #if (CONFIG_BLE_ISO_TEST_PATTERN)
 
@@ -210,6 +210,8 @@ uint8_t stream_state_get(void)
 
 void streamctrl_encoded_data_send(void const *const data, size_t len)
 {
+	// TODO: Re-implement the I2S gateway synchronization functionality
+
 	int ret;
 	static int prev_ret;
 
