@@ -377,6 +377,8 @@ int handle_at_listen(enum at_cmd_type cmd_type);
 int handle_at_accept(enum at_cmd_type cmd_type);
 int handle_at_send(enum at_cmd_type cmd_type);
 int handle_at_recv(enum at_cmd_type cmd_type);
+int handle_at_sendb(enum at_cmd_type cmd_type);
+int handle_at_recvb(enum at_cmd_type cmd_type);
 int handle_at_sendto(enum at_cmd_type cmd_type);
 int handle_at_recvfrom(enum at_cmd_type cmd_type);
 int handle_at_poll(enum at_cmd_type cmd_type);
@@ -474,6 +476,8 @@ static struct slm_at_cmd {
 	{"AT#XACCEPT", handle_at_accept},
 	{"AT#XSEND", handle_at_send},
 	{"AT#XRECV", handle_at_recv},
+	{"AT#XSENDB", handle_at_sendb},
+	{"AT#XRECVB", handle_at_recvb},
 	{"AT#XSENDTO", handle_at_sendto},
 	{"AT#XRECVFROM", handle_at_recvfrom},
 	{"AT#XPOLL", handle_at_poll},

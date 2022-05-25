@@ -772,6 +772,138 @@ static int do_recv(int timeout)
 	return ret;
 }
 
+static int do_recvb(int timeout)
+{
+	int ret;
+	int sockfd = sock.fd;
+	char rx_data[SLM_MAX_PAYLOAD];
+	uint16_t length;
+
+	/* For TCP/TLS Server, receive from incoming socket */
+	if (sock.type == SOCK_STREAM && sock.role == AT_SOCKET_ROLE_SERVER) {
+		if (sock.fd_peer != INVALID_SOCKET) {
+			sockfd = sock.fd_peer;
+		} else {
+			LOG_ERR("No remote connection");
+			return -EINVAL;
+		}
+	}
+
+	if (sock.family == AF_INET) {
+		if (sock.type == SOCK_STREAM) {
+			length = TCP_MAX_PAYLOAD_IPV4;
+		} else {
+			length = UDP_MAX_PAYLOAD_IPV4;
+		}
+	} else if (sock.family == AF_INET6) {
+		if (sock.type == SOCK_STREAM) {
+			length = TCP_MAX_PAYLOAD_IPV6;
+		} else {
+			length = UDP_MAX_PAYLOAD_IPV6;
+		}
+	} else {
+		length = SLM_MAX_PAYLOAD;
+	}
+
+	ret = socket_poll(sockfd, POLLIN, timeout);
+	if (ret) {
+		return ret;
+	}
+	ret = recv(sockfd, (void *)rx_data, length, 0);
+	if (ret < 0) {
+		LOG_WRN("recv() error: %d", -errno);
+		return -errno;
+	}
+	/**
+	 * When a stream socket peer has performed an orderly shutdown,
+	 * the return value will be 0 (the traditional "end-of-file")
+	 * The value 0 may also be returned if the requested number of
+	 * bytes to receive from a stream socket was 0
+	 * In both cases, treat as normal shutdown by remote
+	 */
+	if (ret == 0) {
+		LOG_WRN("recv() return 0");
+	} else {
+		char data_hex[ret * 2];
+		int size = ret * 2;
+
+		ret = slm_util_htoa(rx_data, ret, data_hex, size);
+		if (ret > 0) {
+			rsp_send(data_hex, ret);
+			sprintf(rsp_buf, "\r\n#XRECV: %d\r\n", ret);
+			rsp_send(rsp_buf, strlen(rsp_buf));
+			ret = 0;
+		} else {
+			LOG_ERR("hex convert error: %d", ret);
+		}
+	}
+
+	return ret;
+}
+
+/**@brief handle AT#XSENDB commands
+ *  AT#XSENDB[=<data>]
+ *  AT#XSENDB? READ command not supported
+ *  AT#XSENDB=? TEST command not supported
+ */
+int handle_at_sendb(enum at_cmd_type cmd_type)
+{
+	int err = -EINVAL;
+	char data[SLM_MAX_PAYLOAD + 1] = {0};
+	int size;
+
+	switch (cmd_type) {
+	case AT_CMD_TYPE_SET_COMMAND:
+		if (at_params_valid_count_get(&at_param_list) > 1) {
+			size = sizeof(data);
+			err = util_string_get(&at_param_list, 1, data, &size);
+			if (err) {
+				return err;
+			}
+			uint8_t data_hex[size / 2];
+
+			err = slm_util_atoh(data, size, data_hex, size / 2);
+			if (err > 0) {
+				err = do_send(data_hex, err);
+			}
+		} else {
+			err = enter_datamode(socket_datamode_callback);
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	return err;
+}
+
+/**@brief handle AT#XRECVB commands
+ *  AT#XRECVB=<timeout>
+ *  AT#XRECVB? READ command not supported
+ *  AT#XRECVB=? TEST command not supported
+ */
+int handle_at_recvb(enum at_cmd_type cmd_type)
+{
+	int err = -EINVAL;
+	int timeout;
+
+	switch (cmd_type) {
+	case AT_CMD_TYPE_SET_COMMAND:
+		err = at_params_int_get(&at_param_list, 1, &timeout);
+		if (err) {
+			return err;
+		}
+		err = do_recvb(timeout);
+		break;
+
+	default:
+		break;
+	}
+
+	return err;
+}
+
 static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int datalen)
 {
 	int ret = 0;
