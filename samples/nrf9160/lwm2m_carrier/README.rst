@@ -16,14 +16,15 @@ The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/spm.txt
+The sample is configured to compile and run as a non-secure application on nRF91's Cortex-M33.
+Therefore, it automatically includes the :ref:`secure_partition_manager` that prepares the required peripherals to be available for the application.
 
 Building and running
 ********************
 
 .. |sample path| replace:: :file:`samples/nrf9160/lwm2m_carrier`
 
-.. include:: /includes/build_and_run_ns.txt
+.. include:: /includes/build_and_run.txt
 
 Testing
 =======
