@@ -76,3 +76,8 @@ Matter feature support
 The matter features are still experimental for now:
 
 .. sml-table:: matter
+
+Zigbee feature support
+**********************
+
+.. sml-table:: zigbee
