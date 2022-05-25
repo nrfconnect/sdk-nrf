@@ -4,8 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if((NOT CONFIG_DISABLE_FLASH_PATCH) AND CONFIG_SOC_NRF52840
-    AND (CONFIG_IS_SECURE_BOOTLOADER OR CONFIG_MCUBOOT))
+if(CONFIG_FLASH_PATCH_WARN)
   message(WARNING "
       ----------------------------------------------------------
       --- WARNING: To maintain the integrity of secure boot, ---
