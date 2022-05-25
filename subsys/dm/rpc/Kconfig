@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config DM_MODULE_RPC
+	bool "Distance Measurement over RPC [EXPERIMENTAL]"
+	select NRF_RPC
+	select NRF_RPC_CBOR
+	select EXPERIMENTAL
+	depends on DM_MODULE
+	help
+	  Enables Distance Measurement serialization over RPC.
+
+if DM_MODULE_RPC
+
+choice DM_MODULE_RPC_ROLE_CHOICE
+	prompt "Distance Measurement over RPC role selection"
+	default DM_MODULE_RPC_CLIENT
+	help
+	  Select the device role for Distance Measurement over RPC.
+
+config DM_MODULE_RPC_HOST
+	bool "Distance Measurement over RPC Host"
+
+config DM_MODULE_RPC_CLIENT
+	bool "Distance Measurement over RPC Client"
+
+endchoice
+
+config DM_MODULE_RPC_INITIALIZE_NRF_RPC
+	bool "Automatically initialize nRF RPC library"
+	default y
+	help
+	  Initialize nRF RPC library during the system startup. Disabling this
+	  option allow user to initialize it in a different way.
+
+config DM_MODULE_RPC_IPC_SERVICE_INIT_PRIORITY
+	int "Initialization priority of IPC Service"
+	default 90
+	help
+	  Initialization priority for the IPC Service and endpoint register.
+
+endif #DM_MODULE_RPC
