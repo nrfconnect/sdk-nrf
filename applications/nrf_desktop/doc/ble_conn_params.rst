@@ -11,6 +11,7 @@ Use the |ble_conn_params| to:
 
 * Update the connection parameters after the peripheral discovery.
 * React on connection parameter update requests from the connected peripherals.
+* Increase Bluetooth connection interval for peripherals while USB is suspended to reduce power consumption.
 
 Module Events
 *************
@@ -27,6 +28,12 @@ Configuration
 
 The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
 The module is automatically enabled for every nRF Desktop central device (:kconfig:option:`CONFIG_BT_CENTRAL`).
+
+Enable :kconfig:option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI` to manage Bluetooth connections' parameters reacting on the USB state change.
+The connection intervals for all of the Bluetooth connected peripherals are set to :kconfig:option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI_VALUE` (100 ms by default) while USB is suspended.
+The connections' peripheral latencies are set to 0.
+The connection parameter change is reverted when USB is active.
+The :kconfig:option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI` is enabled by default.
 
 Implementation details
 **********************
@@ -54,7 +61,7 @@ After the :ref:`nrf_desktop_ble_discovery` completes the peripheral discovery, t
 * If the central and the connected peripheral both support the Low Latency Packet Mode (LLPM), the connection interval is set to **1 ms**.
 * If neither the central nor the connected peripheral support LLPM, or if only one of them supports it, the interval is set to the following values:
 
-  * **7.5 ms** if LLPM is not supported by the central or :kconfig:option:`CONFIG_BT_MAX_CONN` is set to value 2 or lower.
+  * **7.5 ms** if LLPM is not supported by the central or :kconfig:option:`CONFIG_BT_MAX_CONN` is set to value of 1.
     This is the shortest interval allowed by the standard Bluetooth.
   * **10 ms** otherwise.
     This is required to avoid Bluetooth Link Layer scheduling conflicts that could lead to HID report rate drop.
