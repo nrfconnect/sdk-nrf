@@ -14,7 +14,7 @@ Configuration
 
 To use the library to request a JWT, complete the following steps:
 
-1. Enable the library by setting the following Kconfig options:
+1. Set the following Kconfig options to enable the library:
 
    * :kconfig:option:`CONFIG_MODEM_JWT`
    * :kconfig:option:`CONFIG_MODEM_JWT_MAX_LEN`
