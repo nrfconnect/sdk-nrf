@@ -93,20 +93,22 @@ static void store_state(struct bt_mesh_ponoff_srv *srv)
 #endif
 }
 
-static void send_rsp(struct bt_mesh_ponoff_srv *srv,
+static void send_rsp(struct bt_mesh_model *model,
 		     struct bt_mesh_msg_ctx *ctx)
 {
+	struct bt_mesh_ponoff_srv *srv = model->user_data;
+
 	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_PONOFF_OP_STATUS,
 				 BT_MESH_PONOFF_MSG_LEN_STATUS);
 	bt_mesh_model_msg_init(&msg, BT_MESH_PONOFF_OP_STATUS);
 	net_buf_simple_add_u8(&msg, srv->on_power_up);
-	bt_mesh_model_send(srv->ponoff_model, ctx, &msg, NULL, NULL);
+	bt_mesh_model_send(model, ctx, &msg, NULL, NULL);
 }
 
 static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		      struct net_buf_simple *buf)
 {
-	send_rsp(model->user_data, ctx);
+	send_rsp(model, ctx);
 
 	return 0;
 }
@@ -147,7 +149,7 @@ static int handle_set_msg(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *c
 	set_on_power_up(srv, ctx, new);
 
 	if (ack) {
-		send_rsp(model->user_data, ctx);
+		send_rsp(model, ctx);
 	}
 
 	(void)bt_mesh_ponoff_srv_pub(srv, NULL);
