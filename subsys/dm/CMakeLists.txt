@@ -4,7 +4,11 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-zephyr_library_sources_ifdef(CONFIG_DM_MODULE dm.c)
-zephyr_library_sources_ifdef(CONFIG_DM_MODULE timeslot_queue.c)
-zephyr_library_sources_ifdef(CONFIG_DM_MODULE time.c)
-zephyr_library_sources_ifdef(CONFIG_DM_MODULE dm_io.c)
+if(CONFIG_DM_MODULE AND (NOT CONFIG_DM_MODULE_RPC_CLIENT))
+	zephyr_library_sources(dm.c)
+	zephyr_library_sources(timeslot_queue.c)
+	zephyr_library_sources(time.c)
+	zephyr_library_sources(dm_io.c)
+endif()
+
+add_subdirectory_ifdef(CONFIG_DM_MODULE_RPC rpc)
