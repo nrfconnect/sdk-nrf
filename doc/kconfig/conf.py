@@ -36,7 +36,7 @@ html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False
 
-html_theme_options = {"docsets": utils.ALL_DOCSETS}
+html_theme_options = {"docset": "kconfig", "docsets": utils.ALL_DOCSETS}
 
 # Options for ncs_cache --------------------------------------------------------
 
