@@ -247,6 +247,10 @@ void link_init(void)
 
 	lte_lc_register_handler(link_ind_handler);
 
+	if (link_sett_is_dnsaddr_enabled()) {
+		(void)link_setdnsaddr(link_sett_dnsaddr_ip_get());
+	}
+
 	if (link_sett_is_normal_mode_autoconn_enabled() == true) {
 		link_func_mode_set(LTE_LC_FUNC_MODE_NORMAL,
 				   link_sett_is_normal_mode_autoconn_rel14_used());
