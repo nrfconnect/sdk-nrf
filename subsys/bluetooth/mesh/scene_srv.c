@@ -136,15 +136,17 @@ static void scene_status_encode(struct bt_mesh_scene_srv *srv, struct net_buf_si
 	}
 }
 
-static int scene_status_send(struct bt_mesh_scene_srv *srv, struct bt_mesh_msg_ctx *ctx,
+static int scene_status_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			     const struct bt_mesh_scene_state *state)
 {
+	struct bt_mesh_scene_srv *srv = model->user_data;
+
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_SCENE_OP_STATUS,
 				 BT_MESH_SCENE_MSG_MAXLEN_STATUS);
 
 	scene_status_encode(srv, &buf, state);
 
-	return model_send(srv->model, ctx, &buf);
+	return model_send(model, ctx, &buf);
 }
 
 static void curr_scene_state_get(struct bt_mesh_scene_srv *srv, struct bt_mesh_scene_state *state)
@@ -162,7 +164,7 @@ static int handle_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 	struct bt_mesh_scene_state state;
 
 	curr_scene_state_get(srv, &state);
-	scene_status_send(srv, ctx, &state);
+	scene_status_send(model, ctx, &state);
 
 	return 0;
 }
@@ -189,7 +191,7 @@ static int scene_recall(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 	if (tid_check_and_update(&srv->tid, tid, ctx)) {
 		BT_DBG("Duplicate TID");
 		curr_scene_state_get(srv, &state);
-		scene_status_send(srv, ctx, &state);
+		scene_status_send(model, ctx, &state);
 		return 0;
 	}
 
@@ -207,12 +209,12 @@ static int scene_recall(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 	}
 
 	if (ack) {
-		scene_status_send(srv, ctx, &state);
+		scene_status_send(model, ctx, &state);
 	}
 
 	if (state.status == BT_MESH_SCENE_SUCCESS) {
 		/* Publish */
-		scene_status_send(srv, NULL, &state);
+		scene_status_send(model, NULL, &state);
 	}
 
 	return 0;
@@ -230,10 +232,12 @@ static int handle_recall_unack(struct bt_mesh_model *model, struct bt_mesh_msg_c
 	return scene_recall(model, ctx, buf, false);
 }
 
-static int scene_register_status_send(struct bt_mesh_scene_srv *srv,
+static int scene_register_status_send(struct bt_mesh_model *model,
 				      struct bt_mesh_msg_ctx *ctx,
 				      enum bt_mesh_scene_status status)
 {
+	struct bt_mesh_scene_srv *srv = model->user_data;
+
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_SCENE_OP_REGISTER_STATUS,
 				 BT_MESH_SCENE_MSG_MINLEN_REGISTER_STATUS +
 					 2 * CONFIG_BT_MESH_SCENES_MAX);
@@ -245,15 +249,13 @@ static int scene_register_status_send(struct bt_mesh_scene_srv *srv,
 		net_buf_simple_add_le16(&buf, srv->all[i]);
 	}
 
-	return model_send(srv->model, ctx, &buf);
+	return model_send(model, ctx, &buf);
 }
 
 static int handle_register_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			       struct net_buf_simple *buf)
 {
-	struct bt_mesh_scene_srv *srv = model->user_data;
-
-	(void)scene_register_status_send(srv, ctx, BT_MESH_SCENE_SUCCESS);
+	(void)scene_register_status_send(model, ctx, BT_MESH_SCENE_SUCCESS);
 
 	return 0;
 }
@@ -598,7 +600,7 @@ static int handle_store(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx
 	}
 
 	status = scene_store(srv, scene_number);
-	scene_register_status_send(srv, ctx, status);
+	scene_register_status_send(model, ctx, status);
 
 	return 0;
 }
@@ -643,7 +645,7 @@ static int handle_delete(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ct
 		return err;
 	}
 
-	scene_register_status_send(srv, ctx, BT_MESH_SCENE_SUCCESS);
+	scene_register_status_send(model, ctx, BT_MESH_SCENE_SUCCESS);
 
 	return 0;
 }
@@ -927,7 +929,7 @@ int bt_mesh_scene_srv_pub(struct bt_mesh_scene_srv *srv,
 	struct bt_mesh_scene_state state;
 
 	curr_scene_state_get(srv, &state);
-	return scene_status_send(srv, ctx, &state);
+	return scene_status_send(srv->model, ctx, &state);
 }
 
 uint16_t
