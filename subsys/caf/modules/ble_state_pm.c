@@ -14,12 +14,12 @@
 #include <caf/events/keep_alive_event.h>
 
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	__ASSERT_NO_MSG(is_ble_peer_event(eh));
+	__ASSERT_NO_MSG(is_ble_peer_event(aeh));
 
 	static unsigned int connection_count;
-	const struct ble_peer_event *event = cast_ble_peer_event(eh);
+	const struct ble_peer_event *event = cast_ble_peer_event(aeh);
 
 	switch (event->state) {
 	case PEER_STATE_CONNECTED:
@@ -47,5 +47,5 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);

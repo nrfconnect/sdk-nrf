@@ -5,7 +5,7 @@
  */
 
 #include <bluetooth/mesh/models.h>
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include <ctype.h>
 #include <string.h>
 #include <errno.h>

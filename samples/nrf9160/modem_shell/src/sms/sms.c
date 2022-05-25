@@ -7,7 +7,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
 #include <modem/sms.h>
 
@@ -34,10 +34,12 @@ static void sms_callback(struct sms_data *const data, void *context)
 		struct sms_deliver_header *header = &data->header.deliver;
 
 		mosh_print(
-			"Time:   %02d-%02d-%02d %02d:%02d:%02d",
+			"Time:   %02d-%02d-%02d %02d:%02d:%02d%c%d",
 			header->time.year, header->time.month,
 			header->time.day, header->time.hour,
-			header->time.minute, header->time.second);
+			header->time.minute, header->time.second,
+			header->time.timezone >= 0 ? '+' : '-',
+			header->time.timezone);
 
 		mosh_print("Text:   '%s'", data->payload);
 		mosh_print("Length: %d", data->payload_len);

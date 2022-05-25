@@ -6,8 +6,8 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include <shell/shell.h>
-#include <settings/settings.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/settings/settings.h>
 
 #include <nrf_modem_at.h>
 
@@ -47,6 +47,13 @@
 
 /* ****************************************************************************/
 
+#define LINK_SETT_DNSADDR_MAX_IP_LEN 46
+
+#define LINK_SETT_DNSADDR_ENABLED "dnsaddr_enabled"
+#define LINK_SETT_DNSADDR_IP_KEY "dnsaddr_ip"
+
+/* ****************************************************************************/
+
 #define LINK_SETT_SYSMODE_KEY "sysmode"
 #define LINK_SETT_SYSMODE_LTE_PREFERENCE_KEY "sysmode_lte_pref"
 
@@ -69,6 +76,9 @@ struct link_sett_t {
 	char defcontauth_uname_str[LINK_SETT_DEFCONTAUTH_MAX_UNAME_STR_LEN + 1];
 	char defcontauth_pword_str[LINK_SETT_DEFCONTAUTH_MAX_PWORD_STR_LEN + 1];
 	bool defcontauth_enabled;
+
+	char dnsaddr_ip_str[LINK_SETT_DNSADDR_MAX_IP_LEN + 1];
+	bool dnsaddr_enabled;
 
 	enum lte_lc_system_mode sysmode;
 	enum lte_lc_system_mode_preference sysmode_lte_preference;
@@ -152,6 +162,22 @@ static int link_sett_handler(const char *key, size_t len,
 			      sizeof(link_settings.defcontauth_prot));
 		if (err < 0) {
 			mosh_error("Failed to read defcontauth password, error: %d", err);
+			return err;
+		}
+		return 0;
+	} else if (strcmp(key, LINK_SETT_DNSADDR_ENABLED) == 0) {
+		err = read_cb(cb_arg, &link_settings.dnsaddr_enabled,
+			      sizeof(link_settings.dnsaddr_enabled));
+		if (err < 0) {
+			mosh_error("Failed to read dnsaddr enabled, error: %d", err);
+			return err;
+		}
+		return 0;
+	} else if (strcmp(key, LINK_SETT_DNSADDR_IP_KEY) == 0) {
+		err = read_cb(cb_arg, &link_settings.dnsaddr_ip_str,
+			      sizeof(link_settings.dnsaddr_ip_str));
+		if (err < 0) {
+			mosh_error("Failed to read dnsaddr IP, error: %d", err);
 			return err;
 		}
 		return 0;
@@ -442,6 +468,62 @@ void link_sett_defcontauth_conf_shell_print(void)
 
 /* ****************************************************************************/
 
+int link_sett_save_dnsaddr_enabled(bool enabled)
+{
+	const char *key = LINK_SETT_KEY "/" LINK_SETT_DNSADDR_ENABLED;
+	int err;
+
+	link_settings.dnsaddr_enabled = enabled;
+	mosh_print("link dnsaddr %s", ((enabled == true) ? "enabled" : "disabled"));
+
+	err = settings_save_one(key, &link_settings.dnsaddr_enabled,
+				sizeof(link_settings.dnsaddr_enabled));
+	if (err) {
+		mosh_error("%s: err %d from settings_save_one()", __func__, err);
+		return err;
+	}
+	return 0;
+}
+
+bool link_sett_is_dnsaddr_enabled(void)
+{
+	return link_settings.dnsaddr_enabled;
+}
+
+int link_sett_save_dnsaddr_ip(const char *dnsaddr_ip_str)
+{
+	int err;
+	const char *key = LINK_SETT_KEY "/" LINK_SETT_DNSADDR_IP_KEY;
+	int len = strlen(dnsaddr_ip_str);
+
+	assert(len <= LINK_SETT_DNSADDR_MAX_IP_LEN);
+
+	err = settings_save_one(key, dnsaddr_ip_str, len + 1);
+	if (err) {
+		mosh_error("%s: err %d from settings_save_one()", (__func__), err);
+		return err;
+	}
+	mosh_print("%s: key %s with value %s saved", (__func__), key, dnsaddr_ip_str);
+
+	strcpy(link_settings.dnsaddr_ip_str, dnsaddr_ip_str);
+
+	return 0;
+}
+
+const char *link_sett_dnsaddr_ip_get(void)
+{
+	return link_settings.dnsaddr_ip_str;
+}
+
+void link_sett_dnsaddr_conf_shell_print(void)
+{
+	mosh_print("link dnsaddr config:");
+	mosh_print("  Enabled: %s", link_settings.dnsaddr_enabled ? "true" : "false");
+	mosh_print("  IP address: %s", link_settings.dnsaddr_ip_str);
+}
+
+/* ****************************************************************************/
+
 int link_sett_sysmode_save(enum lte_lc_system_mode mode,
 			   enum lte_lc_system_mode_preference lte_pref)
 {
@@ -687,6 +769,7 @@ void link_sett_all_print(void)
 	link_sett_sysmode_print();
 	link_sett_defcont_conf_shell_print();
 	link_sett_defcontauth_conf_shell_print();
+	link_sett_dnsaddr_conf_shell_print();
 	link_sett_normal_mode_at_cmds_shell_print();
 	link_sett_normal_mode_autoconn_shell_print();
 }
@@ -703,6 +786,9 @@ void link_sett_defaults_set(void)
 	link_sett_save_defcontauth_username(LINK_SETT_DEFCONTAUTH_DEFAULT_USERNAME);
 	link_sett_save_defcontauth_password(LINK_SETT_DEFCONTAUTH_DEFAULT_PASSWORD);
 	link_sett_save_defcontauth_prot(PDN_AUTH_NONE);
+
+	link_sett_save_dnsaddr_enabled(false);
+	link_sett_save_dnsaddr_ip("");
 
 	link_sett_sysmode_default_set();
 

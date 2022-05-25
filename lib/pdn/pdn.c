@@ -9,12 +9,12 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <zephyr.h>
-#include <init.h>
+#include <zephyr/kernel.h>
+#include <zephyr/init.h>
 #include <nrf_modem_at.h>
 #include <modem/pdn.h>
 #include <modem/at_monitor.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(pdn, CONFIG_PDN_LOG_LEVEL);
 
@@ -23,6 +23,8 @@ LOG_MODULE_REGISTER(pdn, CONFIG_PDN_LOG_LEVEL);
 #define PDN_ACT_REASON_NONE	 (-1)
 #define PDN_ACT_REASON_IPV4_ONLY (0)
 #define PDN_ACT_REASON_IPV6_ONLY (1)
+
+#define APN_STR_MAX_LEN 64
 
 struct pdn {
 	pdn_event_handler_t callback;
@@ -108,6 +110,7 @@ static void on_cgev(const char *notif)
 	} map[] = {
 		{"ME PDN ACT",	 PDN_EVENT_ACTIVATED},	 /* +CGEV: ME PDN ACT <cid>[,<reason>] */
 		{"ME PDN DEACT", PDN_EVENT_DEACTIVATED}, /* +CGEV: ME PDN DEACT <cid> */
+		{"NW PDN DEACT", PDN_EVENT_DEACTIVATED}, /* +CGEV: NW PDN DEACT <cid> */
 		/* Order is important */
 		{"IPV6 FAIL",	 PDN_EVENT_IPV6_DOWN},	 /* +CGEV: IPV6 FAIL <cid> */
 		{"IPV6",	 PDN_EVENT_IPV6_UP},	 /* +CGEV: IPV6 <cid> */
@@ -163,7 +166,7 @@ int pdn_init(void)
 	k_sem_init(&pdn_act_notif.sem_cnec, 0, 1);
 
 #if defined(CONFIG_PDN_LEGACY_PCO)
-	err = nrf_modem_at_printf("AT%XEPCO=0");
+	err = nrf_modem_at_printf("AT%%XEPCO=0");
 	if (err) {
 		LOG_WRN("Failed to set legacy PCO mode, err %d", err);
 	}
@@ -246,6 +249,10 @@ int pdn_ctx_configure(uint8_t cid, const char *apn, enum pdn_fam fam,
 
 	if (!apn) {
 		return -EFAULT;
+	}
+
+	if (strlen(apn) >= APN_STR_MAX_LEN) {
+		return -EINVAL;
 	}
 
 	switch (fam) {

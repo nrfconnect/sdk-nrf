@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#include "thingy91_nrf9160_common-pinctrl.dtsi"
 
 / {
 	model = "Nordic Thingy91 nRF9160";
@@ -51,6 +52,19 @@
 		};
 	};
 
+	pwmleds {
+		compatible = "pwm-leds";
+		pwm_led0: pwm_led_0 {
+			pwms = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+		};
+		pwm_led1: pwm_led_1 {
+			pwms = <&pwm0 1 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+		};
+		pwm_led2: pwm_led_2 {
+			pwms = <&pwm0 2 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+		};
+	};
+
 	nrf52840_reset: gpio-reset {
 		compatible = "nordic,thingy91-nrf52840-reset";
 		status = "okay";
@@ -65,8 +79,10 @@
 		sense-led0 = &sense_red_led;
 		sense-led1 = &sense_green_led;
 		sense-led2 = &sense_blue_led;
+		pwm-led0 = &pwm_led0;
+		pwm-led1 = &pwm_led1;
+		pwm-led2 = &pwm_led2;
 		rgb-pwm = &pwm0;
-		buzzer-pwm = &pwm1;
 		nmos-pwm = &pwm2;
 	};
 };
@@ -86,44 +102,42 @@
 /* PWM0 is intended for RGB LED control */
 &pwm0 {
 	status = "okay";
-	ch0-pin = <29>;
-	ch1-pin = <30>;
-	ch2-pin = <31>;
+	pinctrl-0 = <&pwm0_default>;
+	pinctrl-1 = <&pwm0_sleep>;
+	pinctrl-names = "default", "sleep";
 };
 
 /* PWM1 is intended for buzzer control */
 &pwm1 {
 	status = "okay";
-	ch0-pin = <28>;
+	pinctrl-0 = <&pwm1_default>;
+	pinctrl-1 = <&pwm1_sleep>;
+	pinctrl-names = "default", "sleep";
 };
 
 /* PWM2 is intended for NMOS transistor control */
 &pwm2 {
 	status = "okay";
-	ch0-pin = <13>;
-	ch1-pin = <14>;
-	ch2-pin = <15>;
-	ch3-pin = <16>;
-};
-
-&pwm3 {
-	status = "okay";
+	pinctrl-0 = <&pwm2_default>;
+	pinctrl-1 = <&pwm2_sleep>;
+	pinctrl-names = "default", "sleep";
 };
 
 &i2c2 {
 	compatible = "nordic,nrf-twim";
 	status = "okay";
-	sda-pin = <11>;
-	scl-pin = <12>;
 	clock-frequency = <I2C_BITRATE_FAST>;
 
-	bme680@76 {
+	pinctrl-0 = <&i2c2_default>;
+	pinctrl-1 = <&i2c2_sleep>;
+	pinctrl-names = "default", "sleep";
+	bme680: bme680@76 {
 		compatible = "bosch,bme680";
 		label = "BME680";
 		reg = <0x76>;
 	};
 
-	bh1749@38 {
+	bh1749: bh1749@38 {
 		compatible = "rohm,bh1749";
 		label = "BH1749";
 		reg = <0x38>;
@@ -134,12 +148,12 @@
 &spi3 {
 	compatible = "nordic,nrf-spim";
 	status = "okay";
-	sck-pin = <3>;
-	mosi-pin = <4>;
-	miso-pin = <5>;
 	cs-gpios = <&gpio0 8 GPIO_ACTIVE_LOW>, <&gpio0 7 GPIO_ACTIVE_LOW>;
 
-	adxl362@0 {
+	pinctrl-0 = <&spi3_default>;
+	pinctrl-1 = <&spi3_sleep>;
+	pinctrl-names = "default", "sleep";
+	adxl362: adxl362@0 {
 		compatible = "adi,adxl362";
 		label = "ADXL362";
 		spi-max-frequency = <8000000>;
@@ -147,7 +161,7 @@
 		int1-gpios = <&gpio0 9 0>;
 	};
 
-	adxl372@1 {
+	adxl372: adxl372@1 {
 		compatible = "adi,adxl372";
 		label = "ADXL372";
 		spi-max-frequency = <8000000>;
@@ -172,19 +186,17 @@
 	compatible = "nordic,nrf-uarte";
 	current-speed = <115200>;
 	status = "okay";
-	tx-pin = <18>;
-	rx-pin = <19>;
-	rts-pin = <20>;
-	cts-pin = <21>;
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-1 = <&uart0_sleep>;
+	pinctrl-names = "default", "sleep";
 };
 
 &uart1 {
 	current-speed = <1000000>;
 	status = "okay";
-	tx-pin = <22>;
-	rx-pin = <23>;
-	rts-pin = <24>;
-	cts-pin = <25>;
+	pinctrl-0 = <&uart1_default>;
+	pinctrl-1 = <&uart1_sleep>;
+	pinctrl-names = "default", "sleep";
 };
 
 &flash0 {

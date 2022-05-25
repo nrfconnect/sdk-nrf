@@ -8,8 +8,8 @@
 #include "nrf_cloud_codec.h"
 #include "nrf_cloud_mem.h"
 
-#include <zephyr.h>
-#include <logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_fsm, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
@@ -80,6 +80,7 @@ static const fsm_transition dc_connecting_fsm_transition[NCT_EVT_TOTAL] = {
 static const fsm_transition dc_connected_fsm_transition[NCT_EVT_TOTAL] = {
 	[NCT_EVT_CC_RX_DATA] = cc_rx_data_handler,
 	[NCT_EVT_CC_TX_DATA_ACK] = cc_tx_ack_handler,
+	[NCT_EVT_PINGRESP] = cc_tx_ack_handler,
 	[NCT_EVT_DC_RX_DATA] = dc_rx_data_handler,
 	[NCT_EVT_DC_TX_DATA_ACK] = dc_tx_ack_handler,
 	[NCT_EVT_CC_DISCONNECTED] = cc_disconnection_handler,
@@ -463,6 +464,12 @@ static int cc_tx_ack_handler(const struct nct_evt *nct_evt)
 			LOG_DBG("Previous session valid; skipping nct_dc_connect()");
 			nfsm_handle_incoming_event(&nevt, STATE_DC_CONNECTING);
 		}
+	} else if (nct_evt->type == NCT_EVT_PINGRESP) {
+		struct nrf_cloud_evt evt = {
+			.type = NRF_CLOUD_EVT_PINGRESP,
+		};
+
+		nfsm_set_current_state_and_notify(nfsm_get_current_state(), &evt);
 	} else if (IS_VALID_USER_TAG(nct_evt->param.message_id)) {
 		struct nrf_cloud_evt evt = {
 			.type = NRF_CLOUD_EVT_SENSOR_DATA_ACK,
@@ -511,10 +518,9 @@ static int cell_pos_cb_send(const char *const rx_buf)
 		int ret = nrf_cloud_cell_pos_process(rx_buf, &res);
 
 		if (ret <= 0) {
-			if (ret == 0) {
-				/* Successfully parsed, send to callback */
-				cell_pos_cb(&res);
-			}
+			/* A cell-pos response was received, send to callback */
+			cell_pos_cb(&res);
+
 			/* Clear the callback after use */
 			nfsm_set_cell_pos_response_cb(NULL);
 			return 0;

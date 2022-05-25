@@ -17,10 +17,10 @@
  * @{
  */
 
-#include <toolchain/common.h>
+#include <zephyr/toolchain/common.h>
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,20 +39,20 @@ enum usb_state {
 
 /** @brief USB state event. */
 struct usb_state_event {
-	struct event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	enum usb_state state; /**< State of the USB module. */
 };
-EVENT_TYPE_DECLARE(usb_state_event);
+APP_EVENT_TYPE_DECLARE(usb_state_event);
 
 /** @brief USB HID event. */
 struct usb_hid_event {
-	struct event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	const void *id;       /**< USB HID device id. */
 	bool enabled;
 };
-EVENT_TYPE_DECLARE(usb_hid_event);
+APP_EVENT_TYPE_DECLARE(usb_hid_event);
 
 #ifdef __cplusplus
 }

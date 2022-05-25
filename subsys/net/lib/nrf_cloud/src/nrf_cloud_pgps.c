@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <nrfx_nvmc.h>
-#include <device.h>
-#include <storage/stream_flash.h>
+#include <zephyr/device.h>
+#include <zephyr/storage/stream_flash.h>
 
 #include <cJSON.h>
 #include <cJSON_os.h>
@@ -15,11 +15,12 @@
 #include <date_time.h>
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
-#include <settings/settings.h>
-#include <sys/reboot.h>
-#include <logging/log_ctrl.h>
+#include <zephyr/settings/settings.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/logging/log_ctrl.h>
+#include <pm_config.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_pgps, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 
@@ -1341,6 +1342,7 @@ static int consume_pgps_data(uint8_t pnum, const char *buf, size_t buf_len)
 				if (evt_handler) {
 					struct nrf_cloud_pgps_event evt = {
 						.type = PGPS_EVT_READY,
+						.prediction = NULL
 					};
 
 					evt_handler(&evt);
@@ -1415,6 +1417,11 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 		return -EINVAL;
 	}
 
+	err = nrf_cloud_parse_pgps_response(buf, &pgps_dl);
+	if (err) {
+		return err;
+	}
+
 	state = PGPS_LOADING;
 	prev_pnum = 0xff;
 	if (!index.partial_request) {
@@ -1433,6 +1440,7 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 	index.store_block = npgps_alloc_block();
 	if (index.store_block == NO_BLOCK) {
 		LOG_ERR("No free flash space!");
+		state = PGPS_NONE;
 		return -ENOMEM;
 	}
 	index.storage_extent = npgps_get_block_extent(index.store_block);
@@ -1445,10 +1453,6 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 		return err;
 	}
 
-	err = nrf_cloud_parse_pgps_response(buf, &pgps_dl);
-	if (err) {
-		return err;
-	}
 	index.dl_offset = 0;
 	ignore_packets = true;
 	int sec_tag = SEC_TAG;
@@ -1463,8 +1467,12 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 		sec_tag = -1;
 	}
 
-	return npgps_download_start(pgps_dl.host, pgps_dl.path, sec_tag,
-				    0, FRAGMENT_SIZE);
+	err =  npgps_download_start(pgps_dl.host, pgps_dl.path, sec_tag, 0, FRAGMENT_SIZE);
+	if (err) {
+		state = PGPS_NONE;
+	}
+
+	return err;
 }
 
 int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
@@ -1474,8 +1482,25 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 		.type = PGPS_EVT_INIT,
 	};
 
+#if defined(CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION)
+	BUILD_ASSERT(CONFIG_NRF_CLOUD_PGPS_PARTITION_SIZE >=
+		 (CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS * BLOCK_SIZE),
+		 "P-GPS partition size is too small");
+	if (param->storage_base || param->storage_size) {
+		LOG_WRN("Overriding P-GPS storage with P-GPS partition");
+	}
+	param->storage_base = PM_PGPS_ADDRESS;
+	param->storage_size = PM_PGPS_SIZE;
+#elif defined(CONFIG_NRF_CLOUD_PGPS_STORAGE_MCUBOOT_SECONDARY)
+	if (param->storage_base || param->storage_size) {
+		LOG_WRN("Overriding P-GPS storage with MCUboot secondary partition");
+	}
+	param->storage_base = PM_MCUBOOT_SECONDARY_ADDRESS;
+	param->storage_size = PM_MCUBOOT_SECONDARY_SIZE;
+#endif
+
 	__ASSERT(param != NULL, "param must be provided");
-	__ASSERT(param->storage_base != 0, "storage must be provided");
+	__ASSERT(param->storage_base != 0u, "P-GPS flash storage must be provided");
 	__ASSERT((param->storage_size >= (NUM_BLOCKS * BLOCK_SIZE)),
 		 "insufficient storage provided; need at least %u bytes",
 		 (NUM_BLOCKS * BLOCK_SIZE));
@@ -1552,20 +1577,20 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 		num_valid = validate_stored_predictions(&gps_day, &gps_time_of_day);
 	}
 
-	struct nrf_cloud_pgps_prediction *test_prediction;
+	struct nrf_cloud_pgps_prediction *found_prediction = NULL;
 	int pnum = -1;
 
 	LOG_DBG("num_valid:%u, count:%u", num_valid, count);
 	if (num_valid) {
 		LOG_INF("Checking if P-GPS data is expired...");
-		err = nrf_cloud_pgps_find_prediction(&test_prediction);
+		err = nrf_cloud_pgps_find_prediction(&found_prediction);
 		if (err == -ETIMEDOUT) {
 			LOG_WRN("Predictions expired. Requesting predictions...");
 			num_valid = 0;
 		} else if (err >= 0) {
 			LOG_INF("Found valid prediction, day:%u, time:%u",
-				test_prediction->time.date_day,
-				test_prediction->time.time_full_s);
+				found_prediction->time.date_day,
+				found_prediction->time.time_full_s);
 			pnum = err;
 		}
 	}
@@ -1614,7 +1639,7 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 		LOG_INF("P-GPS data is up to date.");
 		if (evt_handler) {
 			evt.type = PGPS_EVT_READY;
-
+			evt.prediction = found_prediction;
 			evt_handler(&evt);
 		}
 		err = 0;

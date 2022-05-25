@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <net/coap.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/coap.h>
 #include <net/download_client.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #include <string.h>
 
 LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
@@ -22,7 +22,7 @@ LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 extern char *strtok_r(char *str, const char *sep, char **state);
 
 int url_parse_file(const char *url, char *file, size_t len);
-int socket_send(const struct download_client *client, size_t len);
+int socket_send(const struct download_client *client, size_t len, int timeout);
 
 static int coap_get_current_from_response_pkt(const struct coap_packet *cpkt)
 {
@@ -36,6 +36,11 @@ static int coap_get_current_from_response_pkt(const struct coap_packet *cpkt)
 	return GET_BLOCK_NUM(block) << (GET_BLOCK_SIZE(block) + 4);
 }
 
+static bool has_pending(struct download_client *client)
+{
+	return client->coap.pending.timeout > 0;
+}
+
 int coap_block_init(struct download_client *client, size_t from)
 {
 	coap_block_transfer_init(&client->coap.block_ctx,
@@ -44,8 +49,47 @@ int coap_block_init(struct download_client *client, size_t from)
 	return 0;
 }
 
-int coap_block_update(struct download_client *client, struct coap_packet *pkt,
-		      size_t *blk_off)
+int coap_get_recv_timeout(struct download_client *dl)
+{
+	int timeout;
+
+	if (!has_pending(dl)) {
+		LOG_ERR("Must have coap pending");
+		return -1;
+	}
+
+	/* Retransmission is cycled in case recv() times out. In case sending request
+	 * blocks, the time that is used for sending request must be substracted next time
+	 * recv() is called.
+	 */
+	timeout = dl->coap.pending.t0 + dl->coap.pending.timeout - k_uptime_get_32();
+	if (timeout < 0) {
+		/* All time is spent when sending request and time this
+		 * method is called, there is no time left for receiving;
+		 * skip over recv() and initiate retransmission on next
+		 * cycle
+		 */
+		return 0;
+	}
+
+	return timeout;
+}
+
+int coap_initiate_retransmission(struct download_client *dl)
+{
+	if (dl->coap.pending.timeout == 0) {
+		return -EINVAL;
+	}
+
+	if (!coap_pending_cycle(&dl->coap.pending)) {
+		LOG_ERR("CoAP max-retransmissions exceeded");
+		return -1;
+	}
+
+	return 0;
+}
+
+int coap_block_update(struct download_client *client, struct coap_packet *pkt, size_t *blk_off)
 {
 	int err, new_current;
 	bool more;
@@ -100,15 +144,31 @@ int coap_parse(struct download_client *client, size_t len)
 	const uint8_t *payload;
 	struct coap_packet response;
 
+	/* TODO: currently we stop download on every error, but this is mostly not necessary
+	 * and we can just request the same block again using retry mechanism
+	 */
+
 	err = coap_packet_parse(&response, client->buf, len, NULL, 0);
 	if (err) {
 		LOG_ERR("Failed to parse CoAP packet, err %d", err);
 		return -1;
 	}
 
+	coap_pending_clear(&client->coap.pending);
+
 	err = coap_block_update(client, &response, &blk_off);
 	if (err) {
 		return err;
+	}
+
+	if (coap_header_get_id(&response) != client->coap.pending.id) {
+		LOG_ERR("Response is not pending");
+		return -1;
+	}
+
+	if (coap_header_get_type(&response) != COAP_TYPE_ACK) {
+		LOG_ERR("Response must be of coap type ACK");
+		return -1;
 	}
 
 	response_code = coap_header_get_code(&response);
@@ -143,16 +203,20 @@ int coap_parse(struct download_client *client, size_t len)
 int coap_request_send(struct download_client *client)
 {
 	int err;
+	uint16_t id;
 	char file[FILENAME_SIZE];
 	char *path_elem;
 	char *path_elem_saveptr;
 	struct coap_packet request;
 
-	err = coap_packet_init(
-		&request, client->buf, CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
-		COAP_VER, COAP_TYPE_CON, 8, coap_next_token(),
-		COAP_METHOD_GET, coap_next_id()
-	);
+	if (has_pending(client)) {
+		id = client->coap.pending.id;
+	} else {
+		id = coap_next_id();
+	}
+
+	err = coap_packet_init(&request, client->buf, CONFIG_DOWNLOAD_CLIENT_BUF_SIZE, COAP_VER,
+			       COAP_TYPE_CON, 8, coap_next_token(), COAP_METHOD_GET, id);
 	if (err) {
 		LOG_ERR("Failed to init CoAP message, err %d", err);
 		return err;
@@ -160,6 +224,7 @@ int coap_request_send(struct download_client *client)
 
 	err = url_parse_file(client->file, file, sizeof(file));
 	if (err) {
+		LOG_ERR("Unable to parse url");
 		return err;
 	}
 
@@ -185,9 +250,19 @@ int coap_request_send(struct download_client *client)
 		return err;
 	}
 
+	if (!has_pending(client)) {
+		err = coap_pending_init(&client->coap.pending, &request, &client->remote_addr,
+					CONFIG_DOWNLOAD_CLIENT_COAP_MAX_RETRANSMIT_REQUEST_COUNT);
+		if (err < 0) {
+			return -EINVAL;
+		}
+
+		coap_pending_cycle(&client->coap.pending);
+	}
+
 	LOG_DBG("CoAP next block: %d", client->coap.block_ctx.current);
 
-	err = socket_send(client, request.offset);
+	err = socket_send(client, request.offset, client->coap.pending.timeout);
 	if (err) {
 		LOG_ERR("Failed to send CoAP request, errno %d", errno);
 		return err;

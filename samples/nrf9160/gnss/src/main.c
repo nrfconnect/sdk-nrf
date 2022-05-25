@@ -4,15 +4,21 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <zephyr.h>
-#include <logging/log.h>
+#include <math.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <nrf_modem_at.h>
 #include <nrf_modem_gnss.h>
 #include <modem/lte_lc.h>
 #include <date_time.h>
 
 LOG_MODULE_REGISTER(gnss_sample, CONFIG_GNSS_SAMPLE_LOG_LEVEL);
+
+#define PI 3.14159265358979323846
+#define EARTH_RADIUS_METERS (6371.0 * 1000.0)
 
 #if !defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE) || defined(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST)
 static struct k_work_q gnss_work_q;
@@ -36,13 +42,18 @@ static struct k_work_delayable ttff_test_got_fix_work;
 static struct k_work_delayable ttff_test_prepare_work;
 static struct k_work ttff_test_start_work;
 static uint32_t time_to_fix;
-static uint32_t time_blocked;
 #endif
 
 static const char update_indicator[] = {'\\', '|', '/', '-'};
 
 static struct nrf_modem_gnss_pvt_data_frame last_pvt;
 static uint64_t fix_timestamp;
+static uint32_t time_blocked;
+
+/* Reference position. */
+static bool ref_used;
+static double ref_latitude;
+static double ref_longitude;
 
 K_MSGQ_DEFINE(nmea_queue, sizeof(struct nrf_modem_gnss_nmea_data_frame *), 10, 4);
 static K_SEM_DEFINE(pvt_data_sem, 0, 1);
@@ -64,9 +75,48 @@ BUILD_ASSERT(IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_GPS) ||
 	     "CONFIG_LTE_NETWORK_MODE_NBIOT_GPS or "
 	     "CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS must be enabled");
 
-void nrf_modem_recoverable_error_handler(uint32_t error)
+BUILD_ASSERT((sizeof(CONFIG_GNSS_SAMPLE_REFERENCE_LATITUDE) == 1 &&
+	      sizeof(CONFIG_GNSS_SAMPLE_REFERENCE_LONGITUDE) == 1) ||
+	     (sizeof(CONFIG_GNSS_SAMPLE_REFERENCE_LATITUDE) > 1 &&
+	      sizeof(CONFIG_GNSS_SAMPLE_REFERENCE_LONGITUDE) > 1),
+	     "CONFIG_GNSS_SAMPLE_REFERENCE_LATITUDE and "
+	     "CONFIG_GNSS_SAMPLE_REFERENCE_LONGITUDE must be both either set or empty");
+
+/* Returns the distance between two coordinates in meters. The distance is calculated using the
+ * haversine formula.
+ */
+static double distance_calculate(double lat1, double lon1,
+				 double lat2, double lon2)
 {
-	LOG_ERR("Modem library recoverable error: %u", error);
+	double d_lat_rad = (lat2 - lat1) * PI / 180.0;
+	double d_lon_rad = (lon2 - lon1) * PI / 180.0;
+
+	double lat1_rad = lat1 * PI / 180.0;
+	double lat2_rad = lat2 * PI / 180.0;
+
+	double a = pow(sin(d_lat_rad / 2), 2) +
+		   pow(sin(d_lon_rad / 2), 2) *
+		   cos(lat1_rad) * cos(lat2_rad);
+
+	double c = 2 * asin(sqrt(a));
+
+	return EARTH_RADIUS_METERS * c;
+}
+
+static void print_distance_from_reference(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
+{
+	if (!ref_used) {
+		return;
+	}
+
+	double distance = distance_calculate(pvt_data->latitude, pvt_data->longitude,
+					     ref_latitude, ref_longitude);
+
+	if (IS_ENABLED(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST)) {
+		LOG_INF("Distance from reference: %.01f", distance);
+	} else {
+		printf("\nDistance from reference: %.01f\n", distance);
+	}
 }
 
 static void gnss_event_handler(int event)
@@ -241,6 +291,7 @@ static void ttff_test_got_fix_work_fn(struct k_work *item)
 	if (time_blocked > 0) {
 		LOG_INF("Time GNSS was blocked by LTE: %u", time_blocked);
 	}
+	print_distance_from_reference(&last_pvt);
 	LOG_INF("Sleeping for %u seconds", CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_INTERVAL);
 }
 
@@ -331,20 +382,6 @@ static void date_time_evt_handler(const struct date_time_evt *evt)
 
 static int modem_init(void)
 {
-	if (strlen(CONFIG_GNSS_SAMPLE_AT_MAGPIO) > 0) {
-		if (nrf_modem_at_printf("%s", CONFIG_GNSS_SAMPLE_AT_MAGPIO) != 0) {
-			LOG_ERR("Failed to set MAGPIO configuration");
-			return -1;
-		}
-	}
-
-	if (strlen(CONFIG_GNSS_SAMPLE_AT_COEX0) > 0) {
-		if (nrf_modem_at_printf("%s", CONFIG_GNSS_SAMPLE_AT_COEX0) != 0) {
-			LOG_ERR("Failed to set COEX0 configuration");
-			return -1;
-		}
-	}
-
 	if (IS_ENABLED(CONFIG_DATE_TIME)) {
 		date_time_register_handler(date_time_evt_handler);
 	}
@@ -549,31 +586,31 @@ static void print_satellite_stats(struct nrf_modem_gnss_pvt_data_frame *pvt_data
 		}
 	}
 
-	printk("Tracking: %2d Using: %2d Unhealthy: %d\n", tracked, in_fix, unhealthy);
+	printf("Tracking: %2d Using: %2d Unhealthy: %d\n", tracked, in_fix, unhealthy);
 }
 
 static void print_fix_data(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 {
-	printk("Latitude:       %.06f\n", pvt_data->latitude);
-	printk("Longitude:      %.06f\n", pvt_data->longitude);
-	printk("Altitude:       %.01f m\n", pvt_data->altitude);
-	printk("Accuracy:       %.01f m\n", pvt_data->accuracy);
-	printk("Speed:          %.01f m/s\n", pvt_data->speed);
-	printk("Speed accuracy: %.01f m/s\n", pvt_data->speed_accuracy);
-	printk("Heading:        %.01f deg\n", pvt_data->heading);
-	printk("Date:           %04u-%02u-%02u\n",
+	printf("Latitude:       %.06f\n", pvt_data->latitude);
+	printf("Longitude:      %.06f\n", pvt_data->longitude);
+	printf("Altitude:       %.01f m\n", pvt_data->altitude);
+	printf("Accuracy:       %.01f m\n", pvt_data->accuracy);
+	printf("Speed:          %.01f m/s\n", pvt_data->speed);
+	printf("Speed accuracy: %.01f m/s\n", pvt_data->speed_accuracy);
+	printf("Heading:        %.01f deg\n", pvt_data->heading);
+	printf("Date:           %04u-%02u-%02u\n",
 	       pvt_data->datetime.year,
 	       pvt_data->datetime.month,
 	       pvt_data->datetime.day);
-	printk("Time (UTC):     %02u:%02u:%02u.%03u\n",
+	printf("Time (UTC):     %02u:%02u:%02u.%03u\n",
 	       pvt_data->datetime.hour,
 	       pvt_data->datetime.minute,
 	       pvt_data->datetime.seconds,
 	       pvt_data->datetime.ms);
-	printk("PDOP:           %.01f\n", pvt_data->pdop);
-	printk("HDOP:           %.01f\n", pvt_data->hdop);
-	printk("VDOP:           %.01f\n", pvt_data->vdop);
-	printk("TDOP:           %.01f\n", pvt_data->tdop);
+	printf("PDOP:           %.01f\n", pvt_data->pdop);
+	printf("HDOP:           %.01f\n", pvt_data->hdop);
+	printf("VDOP:           %.01f\n", pvt_data->vdop);
+	printf("TDOP:           %.01f\n", pvt_data->tdop);
 }
 
 int main(void)
@@ -582,6 +619,14 @@ int main(void)
 	struct nrf_modem_gnss_nmea_data_frame *nmea_data;
 
 	LOG_INF("Starting GNSS sample");
+
+	/* Initialize reference coordinates (if used). */
+	if (sizeof(CONFIG_GNSS_SAMPLE_REFERENCE_LATITUDE) > 1 &&
+	    sizeof(CONFIG_GNSS_SAMPLE_REFERENCE_LONGITUDE) > 1) {
+		ref_used = true;
+		ref_latitude = atof(CONFIG_GNSS_SAMPLE_REFERENCE_LATITUDE);
+		ref_longitude = atof(CONFIG_GNSS_SAMPLE_REFERENCE_LONGITUDE);
+	}
 
 	if (modem_init() != 0) {
 		LOG_ERR("Failed to initialize modem");
@@ -607,51 +652,68 @@ int main(void)
 		    k_sem_take(events[0].sem, K_NO_WAIT) == 0) {
 			/* New PVT data available */
 
-			if (!IS_ENABLED(CONFIG_GNSS_SAMPLE_NMEA_ONLY) &&
-			    !output_paused()) {
-				printk("\033[1;1H");
-				printk("\033[2J");
-				print_satellite_stats(&last_pvt);
+			if (IS_ENABLED(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST)) {
+				/* TTFF test mode. */
 
-				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_DEADLINE_MISSED) {
-					printk("GNSS operation blocked by LTE\n");
-				}
-				if (last_pvt.flags &
-				    NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME) {
-					printk("Insufficient GNSS time windows\n");
-				}
-				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_SLEEP_BETWEEN_PVT) {
-					printk("Sleep period(s) between PVT notifications\n");
-				}
-				printk("-----------------------------------\n");
-
-				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
-					fix_timestamp = k_uptime_get();
-					print_fix_data(&last_pvt);
-				} else {
-					printk("Seconds since last fix: %lld\n",
-					       (k_uptime_get() - fix_timestamp) / 1000);
-					cnt++;
-					printk("Searching [%c]\n", update_indicator[cnt%4]);
-				}
-
-				printk("\nNMEA strings:\n\n");
-			}
-#if defined(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST)
-			else {
 				/* Calculate the time GNSS has been blocked by LTE. */
 				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_DEADLINE_MISSED) {
 					time_blocked++;
 				}
+			} else if (IS_ENABLED(CONFIG_GNSS_SAMPLE_NMEA_ONLY)) {
+				/* NMEA-only output mode. */
+
+				if (output_paused()) {
+					goto handle_nmea;
+				}
+
+				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
+					print_distance_from_reference(&last_pvt);
+				}
+			} else {
+				/* PVT and NMEA output mode. */
+
+				if (output_paused()) {
+					goto handle_nmea;
+				}
+
+				printf("\033[1;1H");
+				printf("\033[2J");
+				print_satellite_stats(&last_pvt);
+
+				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_DEADLINE_MISSED) {
+					printf("GNSS operation blocked by LTE\n");
+				}
+				if (last_pvt.flags &
+				    NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME) {
+					printf("Insufficient GNSS time windows\n");
+				}
+				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_SLEEP_BETWEEN_PVT) {
+					printf("Sleep period(s) between PVT notifications\n");
+				}
+				printf("-----------------------------------\n");
+
+				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
+					fix_timestamp = k_uptime_get();
+					print_fix_data(&last_pvt);
+					print_distance_from_reference(&last_pvt);
+				} else {
+					printf("Seconds since last fix: %d\n",
+					       (uint32_t)((k_uptime_get() - fix_timestamp) / 1000));
+					cnt++;
+					printf("Searching [%c]\n", update_indicator[cnt%4]);
+				}
+
+				printf("\nNMEA strings:\n\n");
 			}
-#endif /* CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST */
 		}
+
+handle_nmea:
 		if (events[1].state == K_POLL_STATE_MSGQ_DATA_AVAILABLE &&
 		    k_msgq_get(events[1].msgq, &nmea_data, K_NO_WAIT) == 0) {
 			/* New NMEA data available */
 
 			if (!output_paused()) {
-				printk("%s", nmea_data->nmea_str);
+				printf("%s", nmea_data->nmea_str);
 			}
 			k_free(nmea_data);
 		}

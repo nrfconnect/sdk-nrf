@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <mgmt/fmfu_mgmt.h>
 #include <mgmt/fmfu_mgmt_stat.h>
 #include <modem/modem_info.h>
 #include <modem/nrf_modem_lib.h>
 #include "os_mgmt/os_mgmt.h"
 #include "img_mgmt/img_mgmt.h"
-#include <dfu/mcuboot.h>
+#include <zephyr/dfu/mcuboot.h>
 
 void main(void)
 {

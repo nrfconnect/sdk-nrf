@@ -13,8 +13,8 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,12 +22,12 @@ extern "C" {
 
 /** @brief Simulated sensor event. */
 struct sensor_sim_event {
-	struct event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	const char *label; /**< Label of generated signal. */
 };
 
-EVENT_TYPE_DECLARE(sensor_sim_event);
+APP_EVENT_TYPE_DECLARE(sensor_sim_event);
 
 #ifdef __cplusplus
 }

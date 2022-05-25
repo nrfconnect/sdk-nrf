@@ -14,9 +14,9 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf9160dk_nrf9160_ns
+.. table-from-sample-yaml::
+
+.. include:: /includes/spm.txt
 
 Overview
 ********
@@ -539,7 +539,7 @@ Examples
 ----
 
 Cloud
-=========
+=====
 
 MoSh command: ``cloud``
 
@@ -558,6 +558,42 @@ Examples
      cloud connect
      location get --method cellular
      cloud disconnect
+
+----
+
+Remote control using nRF Cloud
+==============================
+
+Once you have established an MQTT connection to nRF Cloud using the ``cloud`` command, you can use the :guilabel:`Terminal` window in the nRF Cloud portal to execute MoSh commands to the device.
+This feature enables full remote control of the MoSh application running on a device that is connected to cloud.
+MoSh output, such as responses to commands and other notifications can be echoed to the ``messages`` endpoint and the :guilabel:`Terminal` window of the nRF Cloud portal.
+Use the ``print cloud`` command to enable this behavior.
+The data format of the input data in the :guilabel:`Terminal` window must be JSON.
+
+Examples
+--------
+
+* Establish the connection to nRF Cloud:
+
+  .. code-block:: console
+
+     cloud connect
+
+* To request the device location, enter the following command in the :guilabel:`Terminal` window of the nRF Cloud portal:
+
+   .. code-block:: console
+
+     {"appId":"MODEM_SHELL", "data":"location get --method cellular"}
+
+  The device location appears in the :guilabel:`Location` window.
+
+* An AT command is sent to the modem:
+
+   .. code-block:: console
+
+     {"appId":"MODEM_SHELL", "data":"at AT+COPS=1,2,\\\"24412\\\""}
+
+  Note the syntax for escaping the quotation marks.
 
 Configuration
 *************
@@ -629,12 +665,19 @@ CONFIG_MOSH_REST
    You may not be able to use all features at the same time due to memory restrictions.
    To see which features are enabled simultaneously, check the configuration files and overlays.
 
+Additional configuration
+========================
+
+Check and configure the following library option that is used by the sample:
+
+* :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` - Selects an external GNSS antenna.
+
 Building and running
 ********************
 
 .. |sample path| replace:: :file:`samples/nrf9160/modem_shell`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 See :ref:`cmake_options` for instructions on how to provide CMake options, for example to use a configuration overlay.
 
@@ -692,6 +735,75 @@ After programming the application and all prerequisites to your development kit,
       mosh:~$
 
 #. Type any of the commands listed in the Overview section to the terminal. When you type only the command, the terminal shows the usage, for example ``sock``.
+
+Getting nRF9160 DK out-of-the-box and to nRF Cloud
+==================================================
+
+To program the certificates and connect to nRF Cloud, complete the following steps:
+
+1. `Download nRF Connect for Desktop`_.
+#. Update the modem firmware on the on-board modem of the nRF9160 DK to the latest version as instructed in :ref:`nrf9160_gs_updating_fw_modem`.
+#. Build and program the MoSh to the nRF9160 DK using the default MoSh configuration (with REST as the transport):
+
+   .. code-block:: console
+
+      $ west build -p -b nrf9160dk_nrf9160_ns -d build
+      $ west flash -d build
+
+#. Get certificates from nRF Cloud as explained in :ref:`downloading_cloud_certificate`.
+#. In the MoSH terminal, power off the modem and start the AT command mode:
+
+   .. code-block:: console
+
+      mosh:~$ link funmode -0
+      mosh:~$ at at_cmd_mode start
+
+#. Disconnect the MoSh terminal.
+#. Connect and use `LTE Link Monitor`_ to store the certificates to the modem (default nRF Cloud security tag).
+
+   See `Managing credentials`_ in the LTE Link Monitor user guide for instructions.
+#. Reconnect the MoSh terminal and press ``ctrl-x`` and ``ctrl-q`` to exit the AT command mode.
+#. Set the modem to normal mode to activate LTE:
+
+   .. code-block:: console
+
+      mosh:~$ link funmode -1
+
+   Observe that LTE is getting connected.
+#. Perform just-in-time provisioning (JITP) with nRF Cloud through REST:
+
+   .. code-block:: console
+
+      mosh:~$ cloud_rest jitp
+
+   You only need to do this once for each device.
+
+#. Follow the instructions for JITP printed in the MoSh terminal.
+#. Complete the user association:
+
+   1. Open the `nRF Cloud`_ portal.
+   #. Click the large plus sign in the upper left corner.
+   #. Enter the device ID from MoSh in the :guilabel:`Device ID` field.
+
+   When the device has been added, the message :guilabel:`Device added to account. Waiting for it to connect...` appears.
+   When the message disappears, click :guilabel:`Devices` on the left side menu.
+   Your MoSh device is now visible in the list.
+#. Send MoSh device information to nRF Cloud:
+
+   .. code-block:: console
+
+      mosh:~$ cloud_rest shadow_update
+
+   It might take a while for the data to appear in the nRF Cloud UI.
+#. Use the ``location`` command to verify that the REST transport to nRF Cloud is working.
+
+   .. code-block:: console
+
+      mosh:~$ location get --method cellular
+
+#. As a success response, the location is printed in the MoSh terminal.
+#. Open the entry for your device in the :guilabel:`Devices` view.
+#. Observe that location and device information are shown in the device page.
 
 ESP8266 Wi-Fi support
 =====================
@@ -792,8 +904,10 @@ For example:
 
    west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-pgps.conf
 
-Cloud
-=====
+.. _cloud_build:
+
+Cloud over MQTT
+===============
 
 To build the MoSh sample with cloud connectivity, use the ``-DOVERLAY_CONFIG=overlay-cloud_mqtt.conf`` option.
 For example:
@@ -801,6 +915,23 @@ For example:
 .. code-block:: console
 
    west build -p -b nrf9160dk_nrf9160_ns -d build -- -DOVERLAY_CONFIG=overlay-cloud_mqtt.conf
+
+Remote control using nRF Cloud over MQTT
+========================================
+
+To enable the remote control feature, you need to build the sample with cloud connectivity, see :ref:`cloud_build`.
+
+Zephyr native TCP/IP stack usage over nRF9160 LTE connection
+============================================================
+
+To build the MoSh sample with the nRF91 device driver that is not offloading the TCP/IP stack to modem, use the ``-DOVERLAY_CONFIG=overlay-non-offloading.conf`` option.
+When running this configuration, the configured MoSh commands, for example iperf3, are using Zephyr native TCP/IP stack over nRF9160 LTE connection in default PDN context.
+
+For example:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-non-offloading.conf
 
 References
 **********

@@ -5,8 +5,8 @@
  */
 
 #include <stdlib.h>
-#include <zephyr.h>
-#include <shell/shell.h>
+#include <zephyr/kernel.h>
+#include <zephyr/shell/shell.h>
 #include <getopt.h>
 
 #include "mosh_print.h"
@@ -94,6 +94,16 @@ static int cmd_gnss_delete_all(const struct shell *shell, size_t argc, char **ar
 	}
 
 	return gnss_delete_data(GNSS_DATA_DELETE_ALL);
+}
+
+static int cmd_gnss_delete_tcxo(const struct shell *shell, size_t argc, char **argv)
+{
+	if (gnss_running) {
+		mosh_error("%s: stop GNSS to execute command", argv[0]);
+		return -ENOEXEC;
+	}
+
+	return gnss_delete_data(GNSS_DATA_DELETE_TCXO);
 }
 
 static int cmd_gnss_mode(const struct shell *shell, size_t argc, char **argv)
@@ -514,6 +524,11 @@ static int cmd_gnss_agps_inject(const struct shell *shell, size_t argc, char **a
 	return gnss_inject_agps_data();
 }
 
+static int cmd_gnss_agps_expiry(const struct shell *shell, size_t argc, char **argv)
+{
+	return gnss_get_agps_expiry();
+}
+
 static int cmd_gnss_pgps(const struct shell *shell, size_t argc, char **argv)
 {
 	return print_help(shell, argc, argv);
@@ -839,8 +854,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_gnss_delete,
 	SHELL_CMD_ARG(ephe, NULL, "Delete ephemerides (forces a warm start).",
 		      cmd_gnss_delete_ephe, 1, 0),
-	SHELL_CMD_ARG(all, NULL, "Delete all data (forces a cold start).",
+	SHELL_CMD_ARG(all, NULL, "Delete all data, except the TCXO offset (forces a cold start).",
 		      cmd_gnss_delete_all, 1, 0),
+	SHELL_CMD_ARG(tcxo, NULL, "Delete the TCXO offset.",
+		      cmd_gnss_delete_tcxo, 1, 0),
 	SHELL_SUBCMD_SET_END
 );
 
@@ -970,6 +987,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		  cmd_gnss_agps_filter),
 	SHELL_CMD(filtephem, &sub_gnss_agps_filtered,
 		  "Enable/disable AGPS filtered ephemerides.", cmd_gnss_agps_filtered),
+	SHELL_CMD_ARG(expiry, NULL, "Query A-GPS data expiry information from GNSS.",
+		      cmd_gnss_agps_expiry, 1, 0),
 	SHELL_SUBCMD_SET_END
 );
 

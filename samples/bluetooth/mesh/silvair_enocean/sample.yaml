@@ -1,15 +1,16 @@
 sample:
-  name: Bluetooth mesh Silvair EnOcean
   description: Bluetooth mesh Silvair EnOcean sample
+  name: Bluetooth mesh Silvair EnOcean
 tests:
-  samples.bluetooth.mesh.silvair_enocean:
+  sample.bluetooth.mesh.silvair_enocean:
     build_only: true
-    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840
-      nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf21540dk_nrf52840
-    tags: bluetooth ci_build
     integration_platforms:
-        - nrf52dk_nrf52832
-        - nrf52840dk_nrf52840
-        - nrf5340dk_nrf5340_cpuapp
-        - nrf5340dk_nrf5340_cpuapp_ns
-        - nrf21540dk_nrf52840
+      - nrf52dk_nrf52832
+      - nrf52840dk_nrf52840
+      - nrf52833dk_nrf52833
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuapp_ns
+      - nrf21540dk_nrf52840
+    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+      nrf5340dk_nrf5340_cpuapp_ns nrf21540dk_nrf52840 nrf52833dk_nrf52833
+    tags: bluetooth ci_build

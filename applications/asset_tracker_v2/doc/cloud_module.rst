@@ -8,7 +8,7 @@ Cloud module
    :depth: 2
 
 The cloud module establishes and maintains the connection to a supported cloud service.
-Use the :ref:`Cloud wrapper API <api_cloud_wrapper>` to integrate and handle the client libraries present in the |NCS|.
+It uses the :ref:`Cloud wrapper API <api_cloud_wrapper>` to integrate and handle the client libraries present in the |NCS|.
 
 Features
 ********
@@ -24,56 +24,70 @@ See :ref:`Cloud wrapper API <api_cloud_wrapper>` for more information on how eac
 
 .. _supported_cloud_services:
 
-+------------------+-------------------------------+
-| Cloud service    | Protocols and technologies    |
-+==================+===============================+
-| `AWS IoT Core`_  |    `MQTT`_                    |
-|                  +-------------------------------+
-|                  |    `TCP`_                     |
-|                  +-------------------------------+
-|                  |    `TLS`_                     |
-|                  +-------------------------------+
-|                  |    :ref:`FOTA <nrf9160_fota>` |
-|                  +-------------------------------+
-|                  |    :ref:`lib_nrf_cloud_agps`  |
-|                  +-------------------------------+
-|                  |    :ref:`lib_nrf_cloud_pgps`  |
-+------------------+-------------------------------+
-| `Azure IoT Hub`_ |    `MQTT`_                    |
-|                  +-------------------------------+
-|                  |    `TCP`_                     |
-|                  +-------------------------------+
-|                  |    `TLS`_                     |
-|                  +-------------------------------+
-|                  |    :ref:`FOTA <nrf9160_fota>` |
-|                  +-------------------------------+
-|                  |    :ref:`lib_nrf_cloud_agps`  |
-|                  +-------------------------------+
-|                  |    :ref:`lib_nrf_cloud_pgps`  |
-+------------------+-------------------------------+
-| `nRF Cloud`_     |    `MQTT`_                    |
-|                  +-------------------------------+
-|                  |    `TCP`_                     |
-|                  +-------------------------------+
-|                  |    `TLS`_                     |
-|                  +-------------------------------+
-|                  |    :ref:`FOTA <nrf9160_fota>` |
-|                  +-------------------------------+
-|                  |    :ref:`lib_nrf_cloud_agps`  |
-|                  +-------------------------------+
-|                  |    :ref:`lib_nrf_cloud_pgps`  |
-+------------------+-------------------------------+
++------------------------------------------------------------------------------------+-------------------------------+
+| Cloud service                                                                      | Protocols and technologies    |
++====================================================================================+===============================+
+| `AWS IoT Core`_                                                                    |    `MQTT`_                    |
+|                                                                                    +-------------------------------+
+|                                                                                    |    `TLS`_                     |
+|                                                                                    +-------------------------------+
+|                                                                                    |    `TCP`_                     |
+|                                                                                    +-------------------------------+
+|                                                                                    |    :ref:`FOTA <nrf9160_fota>` |
+|                                                                                    +-------------------------------+
+|                                                                                    |    :ref:`lib_nrf_cloud_agps`  |
+|                                                                                    +-------------------------------+
+|                                                                                    |    :ref:`lib_nrf_cloud_pgps`  |
++------------------------------------------------------------------------------------+-------------------------------+
+| `Azure IoT Hub`_                                                                   |    `MQTT`_                    |
+|                                                                                    +-------------------------------+
+|                                                                                    |    `TLS`_                     |
+|                                                                                    +-------------------------------+
+|                                                                                    |    `TCP`_                     |
+|                                                                                    +-------------------------------+
+|                                                                                    |    :ref:`FOTA <nrf9160_fota>` |
+|                                                                                    +-------------------------------+
+|                                                                                    |    :ref:`lib_nrf_cloud_agps`  |
+|                                                                                    +-------------------------------+
+|                                                                                    |    :ref:`lib_nrf_cloud_pgps`  |
++------------------------------------------------------------------------------------+-------------------------------+
+| `nRF Cloud`_                                                                       |    `MQTT`_                    |
+|                                                                                    +-------------------------------+
+|                                                                                    |    `TLS`_                     |
+|                                                                                    +-------------------------------+
+|                                                                                    |    `TCP`_                     |
+|                                                                                    +-------------------------------+
+|                                                                                    |    :ref:`FOTA <nrf9160_fota>` |
+|                                                                                    +-------------------------------+
+|                                                                                    |    :ref:`lib_nrf_cloud_agps`  |
+|                                                                                    +-------------------------------+
+|                                                                                    |    :ref:`lib_nrf_cloud_pgps`  |
++------------------------------------------------------------------------------------+-------------------------------+
+| `LwM2M`_ v1.1 compliant service (`Coiote Device Management`_, `Leshan homepage`_)  |    `LwM2M`_                   |
+|                                                                                    +-------------------------------+
+|                                                                                    |    `CoAP`_                    |
+|                                                                                    +-------------------------------+
+|                                                                                    |    `DTLS`_                    |
+|                                                                                    +-------------------------------+
+|                                                                                    |    `UDP protocol`_            |
+|                                                                                    +-------------------------------+
+|                                                                                    |    :ref:`FOTA <nrf9160_fota>` |
+|                                                                                    +-------------------------------+
+|                                                                                    |    :ref:`lib_nrf_cloud_agps`  |
++------------------------------------------------------------------------------------+-------------------------------+
 
 .. _nrfcloud_agps_pgps:
 
 nRF Cloud A-GPS and P-GPS
 =========================
 
-When the cloud module is configured to communicate with `AWS IoT Core`_ or `Azure IoT Hub`_, it supports processing of received A-GPS and P-GPS data using the :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` libraries.
-This enables the cloud to fetch A-GPS and P-GPS data from `nRF Cloud`_ using REST calls and relay the data to the nRF9160 SiP using the pre-established connection to `AWS IoT Core`_ or `Azure IoT Hub`_.
-Maintaining multiple cloud connections at the same time is not feasible because of high data traffic and energy consumption.
-Establishing a secure connection typically consists of multiple kB of exchanged data with the cloud service.
-When configuring the application to communicate with nRF Cloud, A-GPS and P-GPS data are received directly from the service, in contrast to the AWS IoT and Azure IoT Hub implementations.
+When the cloud module is configured to communicate with `AWS IoT Core`_, `Azure IoT Hub`_, or an `LwM2M`_ server, it supports processing of received A-GPS and P-GPS data using the :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` libraries.
+This enables the cloud service to fetch A-GPS and P-GPS data directly from `nRF Cloud`_ using REST calls and relay this data to the nRF9160 SiP using the pre-established cloud connection.
+By reusing the pre-established connection, the application saves overhead related to maintaining multiple connections at the same time.
+When configuring the application to communicate with nRF Cloud, A-GPS and P-GPS data are received directly from the service, and not by proxy.
+
+.. note::
+   AVSystem's `Coiote Device Management`_ supports automatic relaying of A-GPS data from `nRF Cloud`_ to the nRF9160 SiP with minimal steps. Adding support for P-GPS is currently under development.
 
 FOTA
 ====
@@ -161,10 +175,28 @@ To enable communication with Azure IoT Hub, set the following options in the :fi
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_SEC_TAG`
 * :kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG`
 
+Configurations for LwM2M integration layer
+------------------------------------------
+
+When building for LwM2M, the cloud module is configured to communicate with AVSystem's `Coiote Device Management`_ by default, using a bootstrap server with a runtime provisioned `Pre-shared key (PSK)`_.
+This enables the application to work out of the box with `Coiote Device Management`_, if the device has been correctly added to the service.
+To allow the application to communicate with other services, modify the default configuration by changing the following Kconfig options:
+
+* :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_SERVER`
+* :kconfig:option:`CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP`
+* :kconfig:option:`CONFIG_LWM2M_INTEGRATION_ENDPOINT_PREFIX`
+* :kconfig:option:`CONFIG_LWM2M_INTEGRATION_PSK`
+* :kconfig:option:`CONFIG_LWM2M_INTEGRATION_PROVISION_CREDENTIALS`
+
+See :ref:`server setup <server_setup_lwm2m>` for information on how the `Coiote Device Management server`_ can be configured to communicate with the application.
+
+In addition to the steps documented in the aforementioned section, you must also enable manipulation of the application's real-time configurations through the `Coiote Device Management`_ console.
+This is documented in :ref:`object_xml_config`.
+
 Module hierarchy
 ****************
 
-The following diagram illustrates the relationship between the cloud module, integration layers, and client libraries.
+The following diagram illustrates the relationship between the cloud module, integration layers, and the client libraries.
 
 .. figure:: /images/asset_tracker_v2_cloud_module_hierarchy.svg
     :alt: Cloud module hierarchy

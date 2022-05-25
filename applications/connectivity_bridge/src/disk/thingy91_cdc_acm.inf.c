@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
 #define MODULE file_inf
 #include "fs_event.h"
@@ -21,11 +21,11 @@ static const char file_contents[] = {
 #include <thingy91_cdc_acm.inf.inc>
 };
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_fs_event(eh)) {
+	if (is_fs_event(aeh)) {
 		const struct fs_event *event =
-			cast_fs_event(eh);
+			cast_fs_event(aeh);
 
 		if (event->req == FS_REQUEST_CREATE_FILE) {
 			int err;
@@ -48,5 +48,5 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, fs_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, fs_event);

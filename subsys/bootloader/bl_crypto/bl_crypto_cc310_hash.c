@@ -5,11 +5,11 @@
  */
 
 #include <zephyr/types.h>
-#include <linker/sections.h>
-#include <sys/util.h>
+#include <zephyr/linker/sections.h>
+#include <zephyr/sys/util.h>
 #include <errno.h>
 #include <nrf_cc310_bl_hash_sha256.h>
-#include <devicetree.h>
+#include <zephyr/devicetree.h>
 #include <ocrypto_constant_time.h>
 #include <bl_crypto.h>
 #include "bl_crypto_cc310_common.h"

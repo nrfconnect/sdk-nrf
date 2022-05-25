@@ -13,8 +13,8 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,8 +48,8 @@ struct ui_module_data {
 
 /** @brief UI module event. */
 struct ui_module_event {
-	/** UI module event header. */
-	struct event_header header;
+	/** UI module application event header. */
+	struct app_event_header header;
 	/** UI module event type. */
 	enum ui_module_event_type type;
 
@@ -63,7 +63,7 @@ struct ui_module_event {
 	} data;
 };
 
-EVENT_TYPE_DECLARE(ui_module_event);
+APP_EVENT_TYPE_DECLARE(ui_module_event);
 
 #ifdef __cplusplus
 }

@@ -61,13 +61,13 @@ static char *get_evt_type_str(enum app_module_event_type type)
 	}
 }
 
-static void log_event(const struct event_header *eh)
+static void log_event(const struct app_event_header *aeh)
 {
-	const struct app_module_event *event = cast_app_module_event(eh);
+	const struct app_module_event *event = cast_app_module_event(aeh);
 	char data_types[50] = "\0";
 
 	if (event->type == APP_EVT_ERROR) {
-		EVENT_MANAGER_LOG(eh, "%s - Error code %d",
+		APP_EVENT_MANAGER_LOG(aeh, "%s - Error code %d",
 				get_evt_type_str(event->type), event->data.err);
 	} else if (event->type == APP_EVT_DATA_GET) {
 		for (int i = 0; i < event->count; i++) {
@@ -80,33 +80,35 @@ static void log_event(const struct event_header *eh)
 			strcat(data_types, ", ");
 		}
 
-		EVENT_MANAGER_LOG(eh, "%s - Requested data types (%s)",
+		APP_EVENT_MANAGER_LOG(aeh, "%s - Requested data types (%s)",
 				get_evt_type_str(event->type), log_strdup(data_types));
 	} else {
-		EVENT_MANAGER_LOG(eh, "%s", get_evt_type_str(event->type));
+		APP_EVENT_MANAGER_LOG(aeh, "%s", get_evt_type_str(event->type));
 	}
 }
 
-#if defined(CONFIG_PROFILER)
+#if defined(CONFIG_NRF_PROFILER)
 
 static void profile_event(struct log_event_buf *buf,
-			  const struct event_header *eh)
+			  const struct app_event_header *aeh)
 {
-	const struct app_module_event *event = cast_app_module_event(eh);
+	const struct app_module_event *event = cast_app_module_event(aeh);
 
-#if defined(CONFIG_PROFILER_EVENT_TYPE_STRING)
-	profiler_log_encode_string(buf, get_evt_type_str(event->type));
+#if defined(CONFIG_NRF_PROFILER_EVENT_TYPE_STRING)
+	nrf_profiler_log_encode_string(buf, get_evt_type_str(event->type));
 #else
-	profiler_log_encode_uint8(buf, event->type);
+	nrf_profiler_log_encode_uint8(buf, event->type);
 #endif
 }
 
-COMMON_EVENT_INFO_DEFINE(app_module_event,
+COMMON_APP_EVENT_INFO_DEFINE(app_module_event,
 			 profile_event);
 
-#endif /* CONFIG_PROFILER */
+#endif /* CONFIG_NRF_PROFILER */
 
-COMMON_EVENT_TYPE_DEFINE(app_module_event,
-			 CONFIG_APP_EVENTS_LOG,
+COMMON_APP_EVENT_TYPE_DEFINE(app_module_event,
 			 log_event,
-			 &app_module_event_info);
+			 &app_module_event_info,
+			 APP_EVENT_FLAGS_CREATE(
+				IF_ENABLED(CONFIG_APP_EVENTS_LOG,
+					(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

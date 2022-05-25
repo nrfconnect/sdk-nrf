@@ -1,25 +1,26 @@
 sample:
-  name: OpenThreadThread CoAP Client
   description: Test CoAP communication in Thread network
+  name: OpenThreadThread CoAP Client
 tests:
-  samples.openthread.coap_client:
+  sample.openthread.coap_client:
     build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
-    tags: ci_build
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
       - nrf52840dk_nrf52840
       - nrf52833dk_nrf52833
       - nrf21540dk_nrf52840
-  samples.openthread.coap_client.mtd.multiprotocol_ble:
-    build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840 nrf52833dk_nrf52833 nrf21540dk_nrf52840
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840
+      nrf52833dk_nrf52833 nrf21540dk_nrf52840
     tags: ci_build
+  sample.openthread.coap_client.mtd.multiprotocol_ble:
+    build_only: true
     extra_args: OVERLAY_CONFIG=overlay-mtd.conf;overlay-multiprotocol_ble.conf
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
       - nrf52840dk_nrf52840
-      - nrf52833dk_nrf52833
       - nrf21540dk_nrf52840
+    platform_allow: nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840
+      nrf52833dk_nrf52833 nrf21540dk_nrf52840
+    tags: ci_build

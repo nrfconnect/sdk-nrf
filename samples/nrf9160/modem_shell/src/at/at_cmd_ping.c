@@ -7,9 +7,9 @@
 #include <stdlib.h>
 
 #include <sys/types.h>
-#include <net/net_ip.h>
+#include <zephyr/net/net_ip.h>
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include <modem/at_cmd_parser.h>
 #include <nrf_modem_at.h>
 

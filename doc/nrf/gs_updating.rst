@@ -1,77 +1,55 @@
 .. _gs_updating:
 
-Updating tools and repositories
+Updating repositories and tools
 ###############################
 
 .. contents::
    :local:
    :depth: 2
 
-After you install the |NCS|, regularly check for updates to tools and repositories.
+After you install the |NCS|, regularly check for updates to repositories and tools.
 The west tool is updated regularly, like any other :ref:`required Python dependency package <gs_recommended_versions>`.
 
 You might also want to switch to a newer release or check out the latest state of development.
 However, if you work with a specific release of the |NCS|, you do not need to update your repositories, because the release will not change.
 For an overview of changes in the latest releases, see :ref:`release_notes`.
 
-.. _gs_updating_vsc:
-
-Updating |VSC|
-**************
-
-Visual Studio Code checks for extension updates and automatically installs them when they are available.
-After an extension is updated, VS Code prompts you to reload the application.
-
-If you disabled automatic updates:
-
-1. Open the :guilabel:`Extensions` tab and locate the |VSC| extension.
-
-#. The :guilabel:`Update` button appears when an update is available.
-   Click on the button to install the update.
-
-The |VSC| extension lets you update west and the associated |NCS| repositories within its :guilabel:`Source Control` panel.
-For detailed instructions, see the `West integration`_ section of the extension's documentation.
-
-.. _west_update:
-
-Updating west
-*************
-
-To update west, run the following command in the command window:
-
-.. tabs::
-
-   .. group-tab:: Windows
-
-      .. parsed-literal::
-         :class: highlight
-
-         pip3 install -U west
-
-   .. group-tab:: Linux
-
-      .. parsed-literal::
-         :class: highlight
-
-         pip3 install --user -U west
-
-   .. group-tab:: macOS
-
-      .. parsed-literal::
-         :class: highlight
-
-         pip3 install -U west
-
-..
-
-This command updates west to the latest available version in the PyPi repository.
-
 .. _gs_updating_repos:
 
 Updating the repositories
 *************************
 
-To manage the ``nrf`` repository (the manifest repository), use Git.
+|method_note|
+
+Updating in |VSC|
+=================
+
+The |VSC| extension lets you update the associated |NCS| repositories within the :guilabel:`Source Control` panel.
+For detailed instructions, see the `West integration`_ section of the extension's documentation.
+
+Updating in Toolchain Manager
+=============================
+
+.. note::
+   The SDK versions available in Toolchain Manager are for specific releases.
+   Updating the SDK repositories in Toolchain Manager might therefore be required only in exceptional situations.
+
+If you installed the |NCS| automatically using the :ref:`gs_app_tcm`, complete the following steps to update the repositories in Toolchain Manager:
+
+1. Open the Toolchain Manager application in nRF Connect for Desktop.
+#. Click the button with the arrow pointing down next to the installed |NCS| version to expand the drop-down menu with options.
+
+   .. figure:: images/gs-assistant_tm_dropdown.png
+      :alt: The Toolchain Manager dropdown menu for the installed nRF Connect SDK version, cropped
+
+      The Toolchain Manager dropdown menu options
+
+#. In the drop-down menu, click :guilabel:`Update SDK`.
+
+Updating from command line
+==========================
+
+To manage the ``nrf`` repository (the manifest repository) from command line, use Git.
 To make sure that you have the latest changes, run ``git fetch origin`` to :ref:`fetch the latest code <dm-wf-update-ncs>` from the `sdk-nrf`_ repository.
 Checking out a branch or tag in the ``nrf`` repository gives you a different version of the manifest file.
 Running ``west update`` updates the project repositories to the state specified in this manifest file.
@@ -108,52 +86,68 @@ To switch to the latest state of development, enter the following commands::
    Run ``west update`` every time you change or modify the current working branch (for example, when you pull, rebase, or check out a different branch).
    This will bring the project repositories to the matching revision defined by the manifest file.
 
-.. _gs_updating_ses:
+.. _gs_updating_vsc:
 
-Updating SEGGER Embedded Studio Nordic Edition
-**********************************************
+Updating |VSC|
+**************
 
-Each new release of the |NCS| might require manually updating to a newer version of the |SES| (SES) Nordic Edition.
-Whenever you update to a newer release of the |NCS|, check the :ref:`gs_recommended_versions` page for the given release to see if you are using the minimum required version of the SES Nordic Edition.
+Visual Studio Code checks for extension updates and automatically installs them when they are available.
+After an extension is updated, VS Code prompts you to reload the application.
 
-.. note::
-  Because of the custom |NCS| options available only in the SES Nordic Edition, notifications about newer versions of SES are disabled in the SES Nordic Edition.
+If you disabled automatic updates:
+
+1. Open the :guilabel:`Extensions` tab and locate the |VSC| extension.
+
+#. The :guilabel:`Update` button appears when an update is available.
+   Click on the button to install the update.
+
+.. _toolchain_update:
+
+Updating toolchain in Toolchain Manager
+***************************************
+
+If you installed the |NCS| automatically using the :ref:`gs_app_tcm`, complete the following steps to update the toolchain in Toolchain Manager:
+
+1. Open the Toolchain Manager application in nRF Connect for Desktop.
+#. Click the button with the arrow pointing down next to the installed |NCS| version to expand the drop-down menu with options.
+
+   .. figure:: images/gs-assistant_tm_dropdown.png
+      :alt: The Toolchain Manager dropdown menu for the installed nRF Connect SDK version, cropped
+
+      The Toolchain Manager dropdown menu options
+
+#. In the drop-down menu, click :guilabel:`Update toolchain`.
+
+.. _west_update:
+
+Updating west from command line
+*******************************
+
+To update west to the latest available version in the PyPi repository, run the following command in the command window:
 
 .. tabs::
 
    .. group-tab:: Windows
 
-      To update to the latest version of the SES Nordic Edition, use one of the following options:
+      .. parsed-literal::
+         :class: highlight
 
-      * Install the latest version of Toolchain Manager as described in :ref:`gs_assistant`.
-      * Install the SES Nordic Edition manually as described in :ref:`installing_ses`.
-
-      Then, :ref:`set up the build environment in SES <setting_up_SES>` again.
+         pip3 install -U west
 
    .. group-tab:: Linux
 
-      To update to the latest version of the SES Nordic Edition, install it manually as described in :ref:`installing_ses`.
-      Then, :ref:`set up the build environment in SES <setting_up_SES>` again.
+      .. parsed-literal::
+         :class: highlight
+
+         pip3 install --user -U west
 
    .. group-tab:: macOS
 
-      To update to the latest version of the SES Nordic Edition, install it manually as described in :ref:`installing_ses`.
-      Then, :ref:`set up the build environment in SES <setting_up_SES>` again.
+      .. parsed-literal::
+         :class: highlight
+
+         pip3 install -U west
 ..
-
-.. _gs_updating_ses_packages:
-
-Updating SES packages
-=====================
-
-Updating SES Nordic Edition will not update already installed packages.
-You might need to manually update the CPU support package when you cannot select a CPU as :guilabel:`Target Processor` when configuring a new project.
-
-To update the nRF CPU Support Package after a SES update:
-
-1. In SES, select :guilabel:`Tools` > :guilabel:`Package Manager...`.
-#. Search for "nRF CPU Support Package".
-#. Update the package to the latest version.
 
 .. _repo_move:
 
@@ -232,3 +226,5 @@ Similarly, to point your existing fw-nrfconnect-zephyr clone to the new URL, ent
    git remote set-url ncs https://github.com/nrfconnect/sdk-zephyr
 
 For more information about remotes and how to handle them, see :ref:`dm-wf-fork`.
+
+.. |method_note| replace:: Use the method corresponding to the way you installed the |NCS|, as described in the following sections.

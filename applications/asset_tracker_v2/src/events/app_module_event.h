@@ -13,8 +13,8 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -89,7 +89,7 @@ enum app_module_data_type {
 
 /** @brief Application module event. */
 struct app_module_event {
-	struct event_header header;
+	struct app_event_header header;
 	enum app_module_event_type type;
 	enum app_module_data_type data_list[APP_DATA_COUNT];
 
@@ -108,8 +108,8 @@ struct app_module_event {
 	int timeout;
 };
 
-/** Register app module events as an event type with the event manager. */
-EVENT_TYPE_DECLARE(app_module_event);
+/** Register app module events as an event type with the Application Event Manager. */
+APP_EVENT_TYPE_DECLARE(app_module_event);
 
 #ifdef __cplusplus
 }

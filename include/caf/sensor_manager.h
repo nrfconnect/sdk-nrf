@@ -11,8 +11,8 @@
 extern "C" {
 #endif
 
-#include <device.h>
-#include <drivers/sensor.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/sensor.h>
 
 enum act_type {
 	ACT_TYPE_PERC,
@@ -77,7 +77,7 @@ struct sm_sensor_config {
 	 *
 	 * This is a protection against OOM error when event processing is blocked.
 	 * No more events related to this sensor than the number defined would
-	 * be passed to event manager.
+	 * be passed to Application Event Manager.
 	 */
 	uint8_t active_events_limit;
 	/**

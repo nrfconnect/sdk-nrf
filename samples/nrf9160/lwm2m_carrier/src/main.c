@@ -8,28 +8,32 @@
 #include <lwm2m_carrier.h>
 #include "carrier_certs.h"
 #endif /* CONFIG_LWM2M_CARRIER */
-#include <zephyr.h>
-
+#include <zephyr/kernel.h>
+#include <modem/lte_lc.h>
 
 #ifdef CONFIG_LWM2M_CARRIER
 void nrf_modem_recoverable_error_handler(uint32_t err)
 {
 	printk("Modem library recoverable error: %u\n", (unsigned int)err);
 }
+static void lte_event_handler(const struct lte_lc_evt *const evt)
+{
+	/* This event handler is not in use here. */
+	ARG_UNUSED(evt);
+}
 
 void print_err(const lwm2m_carrier_event_t *evt)
 {
-	const lwm2m_carrier_event_error_t *err =
-		(lwm2m_carrier_event_error_t *)evt->data;
+	const lwm2m_carrier_event_error_t *err = evt->data.error;
 
 	static const char *strerr[] = {
 		[LWM2M_CARRIER_ERROR_NO_ERROR] =
 			"No error",
 		[LWM2M_CARRIER_ERROR_BOOTSTRAP] =
 			"Bootstrap error",
-		[LWM2M_CARRIER_ERROR_CONNECT_FAIL] =
+		[LWM2M_CARRIER_ERROR_LTE_LINK_UP_FAIL] =
 			"Failed to connect to the LTE network",
-		[LWM2M_CARRIER_ERROR_DISCONNECT_FAIL] =
+		[LWM2M_CARRIER_ERROR_LTE_LINK_DOWN_FAIL] =
 			"Failed to disconnect from the LTE network",
 		[LWM2M_CARRIER_ERROR_FOTA_PKG] =
 			"Package refused from modem",
@@ -43,18 +47,21 @@ void print_err(const lwm2m_carrier_event_t *evt)
 			"Modem firmware update failed",
 		[LWM2M_CARRIER_ERROR_CONFIGURATION] =
 			"Illegal object configuration detected",
+		[LWM2M_CARRIER_ERROR_INIT] =
+			"Initialization failure",
+		[LWM2M_CARRIER_ERROR_INTERNAL] =
+			"Internal failure",
 	};
 
-	__ASSERT(PART_OF_ARRAY(strerr[err->code]),
+	__ASSERT(PART_OF_ARRAY(strerr[err->type]),
 		 "Unhandled liblwm2m_carrier error");
 
-	printk("%s, reason %d\n", strerr[err->code], err->value);
+	printk("%s, reason %d\n", strerr[err->type], err->value);
 }
 
 void print_deferred(const lwm2m_carrier_event_t *evt)
 {
-	const lwm2m_carrier_event_deferred_t *def =
-		(lwm2m_carrier_event_deferred_t *)evt->data;
+	const lwm2m_carrier_event_deferred_t *def = evt->data.deferred;
 
 	static const char *strdef[] = {
 		[LWM2M_CARRIER_DEFERRED_NO_REASON] =
@@ -91,26 +98,28 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	int err = 0;
 
 	switch (event->type) {
-	case LWM2M_CARRIER_EVENT_MODEM_INIT:
-		printk("LWM2M_CARRIER_EVENT_MODEM_INIT\n");
+	case LWM2M_CARRIER_EVENT_INIT:
+		printk("LWM2M_CARRIER_EVENT_INIT\n");
+		err = carrier_cert_provision();
+		if (err) {
+			printk("failed to provision CA certificates\n");
+		}
+		err = lte_lc_init_and_connect_async(lte_event_handler);
 		break;
-	case LWM2M_CARRIER_EVENT_CONNECTING:
-		printk("LWM2M_CARRIER_EVENT_CONNECTING\n");
+	case LWM2M_CARRIER_EVENT_LTE_LINK_UP:
+		printk("LWM2M_CARRIER_EVENT_LTE_LINK_UP\n");
+		err = lte_lc_connect_async(NULL);
 		break;
-	case LWM2M_CARRIER_EVENT_CONNECTED:
-		printk("LWM2M_CARRIER_EVENT_CONNECTED\n");
+	case LWM2M_CARRIER_EVENT_LTE_LINK_DOWN:
+		printk("LWM2M_CARRIER_EVENT_LTE_LINK_DOWN\n");
+		err = lte_lc_offline();
 		break;
-	case LWM2M_CARRIER_EVENT_DISCONNECTING:
-		printk("LWM2M_CARRIER_EVENT_DISCONNECTING\n");
-		break;
-	case LWM2M_CARRIER_EVENT_DISCONNECTED:
-		printk("LWM2M_CARRIER_EVENT_DISCONNECTED\n");
+	case LWM2M_CARRIER_EVENT_LTE_POWER_OFF:
+		printk("LWM2M_CARRIER_EVENT_LTE_POWER_OFF\n");
+		err = lte_lc_power_off();
 		break;
 	case LWM2M_CARRIER_EVENT_BOOTSTRAPPED:
 		printk("LWM2M_CARRIER_EVENT_BOOTSTRAPPED\n");
-		break;
-	case LWM2M_CARRIER_EVENT_LTE_READY:
-		printk("LWM2M_CARRIER_EVENT_LTE_READY\n");
 		break;
 	case LWM2M_CARRIER_EVENT_REGISTERED:
 		printk("LWM2M_CARRIER_EVENT_REGISTERED\n");
@@ -128,9 +137,6 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	case LWM2M_CARRIER_EVENT_ERROR:
 		printk("LWM2M_CARRIER_EVENT_ERROR\n");
 		print_err(event);
-		break;
-	case LWM2M_CARRIER_EVENT_CERTS_INIT:
-		err = carrier_cert_provision((ca_cert_tags_t *)event->data);
 		break;
 	}
 

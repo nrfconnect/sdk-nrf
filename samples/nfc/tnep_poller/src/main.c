@@ -10,9 +10,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <string.h>
-#include <zephyr.h>
-#include <sys/printk.h>
-#include <sys/byteorder.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/sys/byteorder.h>
 #include <st25r3911b_nfca.h>
 #include <nfc/t4t/ndef_file.h>
 #include <nfc/ndef/msg_parser.h>
@@ -115,7 +115,7 @@ static void nfc_tag_detect(bool all_request)
 static bool tnep_data_search(const uint8_t *ndef_msg_buff, size_t nfc_data_len)
 {
 	int  err;
-	uint8_t desc_buf[NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(MAX_NDEF_RECORDS)];
+	uint8_t desc_buf[NFC_NDEF_PARSER_REQUIRED_MEM(MAX_NDEF_RECORDS)];
 	size_t desc_buf_len = sizeof(desc_buf);
 	uint8_t cnt = ARRAY_SIZE(services);
 

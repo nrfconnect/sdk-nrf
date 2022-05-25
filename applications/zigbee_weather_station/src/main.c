@@ -4,19 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <device.h>
+#include <zephyr/device.h>
 #include <dk_buttons_and_leds.h>
-#include <drivers/uart.h>
-#include <logging/log.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/logging/log.h>
 #include <ram_pwrdn.h>
 #include <zb_nrf_platform.h>
 #include <zboss_api.h>
-#include <zephyr.h>
+#include <zboss_api_addons.h>
+#include <zephyr/kernel.h>
 #include <zigbee/zigbee_app_utils.h>
 #include <zigbee/zigbee_error_handler.h>
 
 #ifdef CONFIG_USB_DEVICE_STACK
-#include <usb/usb_device.h>
+#include <zephyr/usb/usb_device.h>
 #endif /* CONFIG_USB_DEVICE_STACK */
 
 #include "weather_station.h"
@@ -64,8 +65,13 @@ ZB_ZCL_DECLARE_BASIC_ATTRIB_LIST(
 	basic_attr_list,
 	&dev_ctx.basic_attr.zcl_version, &dev_ctx.basic_attr.power_source);
 
-ZB_ZCL_DECLARE_IDENTIFY_ATTRIB_LIST(
-	identify_attr_list,
+/* Declare attribute list for Identify cluster (client). */
+ZB_ZCL_DECLARE_IDENTIFY_CLIENT_ATTRIB_LIST(
+	identify_client_attr_list);
+
+/* Declare attribute list for Identify cluster (server). */
+ZB_ZCL_DECLARE_IDENTIFY_SERVER_ATTRIB_LIST(
+	identify_server_attr_list,
 	&dev_ctx.identify_attr.identify_time);
 
 ZB_ZCL_DECLARE_TEMP_MEASUREMENT_ATTRIB_LIST(
@@ -95,7 +101,8 @@ ZB_ZCL_DECLARE_REL_HUMIDITY_MEASUREMENT_ATTRIB_LIST(
 ZB_HA_DECLARE_WEATHER_STATION_CLUSTER_LIST(
 	weather_station_cluster_list,
 	basic_attr_list,
-	identify_attr_list,
+	identify_client_attr_list,
+	identify_server_attr_list,
 	temperature_measurement_attr_list,
 	pressure_measurement_attr_list,
 	humidity_measurement_attr_list);
@@ -122,6 +129,27 @@ static void mandatory_clusters_attr_init(void)
 	dev_ctx.identify_attr.identify_time = ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE;
 }
 
+static void measurements_clusters_attr_init(void)
+{
+	/* Temperature */
+	dev_ctx.temp_attrs.measure_value = ZB_ZCL_ATTR_TEMP_MEASUREMENT_VALUE_UNKNOWN;
+	dev_ctx.temp_attrs.min_measure_value = WEATHER_STATION_ATTR_TEMP_MIN;
+	dev_ctx.temp_attrs.max_measure_value = WEATHER_STATION_ATTR_TEMP_MAX;
+	dev_ctx.temp_attrs.tolerance = WEATHER_STATION_ATTR_TEMP_TOLERANCE;
+
+	/* Pressure */
+	dev_ctx.pres_attrs.measure_value = ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_VALUE_UNKNOWN;
+	dev_ctx.pres_attrs.min_measure_value = WEATHER_STATION_ATTR_PRESSURE_MIN;
+	dev_ctx.pres_attrs.max_measure_value = WEATHER_STATION_ATTR_PRESSURE_MAX;
+	dev_ctx.pres_attrs.tolerance = WEATHER_STATION_ATTR_PRESSURE_TOLERANCE;
+
+	/* Humidity */
+	dev_ctx.humidity_attrs.measure_value = ZB_ZCL_ATTR_REL_HUMIDITY_MEASUREMENT_VALUE_UNKNOWN;
+	dev_ctx.humidity_attrs.min_measure_value = WEATHER_STATION_ATTR_HUMIDITY_MIN;
+	dev_ctx.humidity_attrs.max_measure_value = WEATHER_STATION_ATTR_HUMIDITY_MAX;
+	/* Humidity measurements tolerance is not supported at the moment */
+}
+
 static void toggle_identify_led(zb_bufid_t bufid)
 {
 	static bool led_on;
@@ -134,7 +162,6 @@ static void toggle_identify_led(zb_bufid_t bufid)
 						     IDENTIFY_LED_BLINK_TIME_MSEC));
 	if (err) {
 		LOG_ERR("Failed to schedule app alarm: %d", err);
-		zb_buf_free(bufid);
 	}
 }
 
@@ -149,11 +176,17 @@ static void start_identifying(zb_bufid_t bufid)
 		 */
 		if (dev_ctx.identify_attr.identify_time ==
 		    ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE) {
-			LOG_INF("Manually enter identify mode");
 
 			zb_ret_t zb_err_code = zb_bdb_finding_binding_target(
 				WEATHER_STATION_ENDPOINT_NB);
-			ZB_ERROR_CHECK(zb_err_code);
+
+			if (zb_err_code == RET_OK) {
+				LOG_INF("Manually enter identify mode");
+			} else if (zb_err_code == RET_INVALID_STATE) {
+				LOG_WRN("RET_INVALID_STATE - Cannot enter identify mode");
+			} else {
+				ZB_ERROR_CHECK(zb_err_code);
+			}
 		} else {
 			LOG_INF("Manually cancel identify mode");
 			zb_bdb_finding_binding_target_cancel();
@@ -172,7 +205,6 @@ static void identify_callback(zb_bufid_t bufid)
 		err = ZB_SCHEDULE_APP_CALLBACK(toggle_identify_led, bufid);
 		if (err) {
 			LOG_ERR("Failed to schedule app callback: %d", err);
-			zb_buf_free(bufid);
 		} else {
 			LOG_INF("Enter identify mode");
 		}
@@ -342,6 +374,9 @@ void main(void)
 
 	/* Init Basic and Identify attributes */
 	mandatory_clusters_attr_init();
+
+	/* Init measurements-related attributes */
+	measurements_clusters_attr_init();
 
 	/* Register callback to identify notifications */
 	ZB_AF_SET_IDENTIFY_NOTIFICATION_HANDLER(WEATHER_STATION_ENDPOINT_NB, identify_callback);

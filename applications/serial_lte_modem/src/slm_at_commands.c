@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <zephyr/types.h>
-#include <sys/util.h>
-#include <zephyr.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <ctype.h>
-#include <logging/log.h>
-#include <drivers/uart.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/drivers/uart.h>
 #include <string.h>
-#include <init.h>
+#include <zephyr/init.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/modem_jwt.h>
-#include <sys/reboot.h>
+#include <zephyr/sys/reboot.h>
 #include "ncs_version.h"
 
 #include "slm_util.h"
@@ -45,6 +45,9 @@
 #endif
 #if defined(CONFIG_SLM_GPIO)
 #include "slm_at_gpio.h"
+#endif
+#if defined(CONFIG_SLM_NRF52_DFU)
+#include "slm_at_dfu.h"
 #endif
 
 LOG_MODULE_REGISTER(slm_at, CONFIG_SLM_LOG_LEVEL);
@@ -365,6 +368,7 @@ int handle_at_udp_send(enum at_cmd_type cmd_type);
 /* Socket-type TCPIP commands */
 int handle_at_socket(enum at_cmd_type cmd_type);
 int handle_at_secure_socket(enum at_cmd_type cmd_type);
+int handle_at_socket_select(enum at_cmd_type cmd_type);
 int handle_at_socketopt(enum at_cmd_type cmd_type);
 int handle_at_secure_socketopt(enum at_cmd_type cmd_type);
 int handle_at_bind(enum at_cmd_type cmd_type);
@@ -375,6 +379,7 @@ int handle_at_send(enum at_cmd_type cmd_type);
 int handle_at_recv(enum at_cmd_type cmd_type);
 int handle_at_sendto(enum at_cmd_type cmd_type);
 int handle_at_recvfrom(enum at_cmd_type cmd_type);
+int handle_at_poll(enum at_cmd_type cmd_type);
 int handle_at_getaddrinfo(enum at_cmd_type cmd_type);
 
 #if defined(CONFIG_SLM_NATIVE_TLS)
@@ -428,6 +433,11 @@ int handle_at_gpio_configure(enum at_cmd_type cmd_type);
 int handle_at_gpio_operate(enum at_cmd_type cmd_type);
 #endif
 
+#if defined(CONFIG_SLM_NRF52_DFU)
+int handle_at_dfu_get(enum at_cmd_type cmd_type);
+int handle_at_dfu_run(enum at_cmd_type cmd_type);
+#endif
+
 static struct slm_at_cmd {
 	char *string;
 	slm_at_handler_t handler;
@@ -455,6 +465,7 @@ static struct slm_at_cmd {
 	/* Socket-type TCPIP commands */
 	{"AT#XSOCKET", handle_at_socket},
 	{"AT#XSSOCKET", handle_at_secure_socket},
+	{"AT#XSOCKETSELECT", handle_at_socket_select},
 	{"AT#XSOCKETOPT", handle_at_socketopt},
 	{"AT#XSSOCKETOPT", handle_at_secure_socketopt},
 	{"AT#XBIND", handle_at_bind},
@@ -465,11 +476,11 @@ static struct slm_at_cmd {
 	{"AT#XRECV", handle_at_recv},
 	{"AT#XSENDTO", handle_at_sendto},
 	{"AT#XRECVFROM", handle_at_recvfrom},
+	{"AT#XPOLL", handle_at_poll},
 	{"AT#XGETADDRINFO", handle_at_getaddrinfo},
 
 #if defined(CONFIG_SLM_NATIVE_TLS)
-	/* Hijacked modem command */
-	{"AT%CMNG", handle_at_xcmng},
+	{"AT#XCMNG", handle_at_xcmng},
 #endif
 	/* ICMP commands */
 	{"AT#XPING", handle_at_icmp_ping},
@@ -526,6 +537,10 @@ static struct slm_at_cmd {
 	{"AT#XGPIO", handle_at_gpio_operate},
 #endif
 
+#if defined(CONFIG_SLM_NRF52_DFU)
+	{"AT#XDFUGET", handle_at_dfu_get},
+	{"AT#XDFURUN", handle_at_dfu_run},
+#endif
 };
 
 int handle_at_clac(enum at_cmd_type cmd_type)
@@ -602,7 +617,7 @@ int slm_at_init(void)
 		LOG_ERR("ICMP could not be initialized: %d", err);
 		return -EFAULT;
 	}
-#if defined(CONFIG_SLM_GPS)
+#if defined(CONFIG_SLM_SMS)
 	err = slm_at_sms_init();
 	if (err) {
 		LOG_ERR("SMS could not be initialized: %d", err);
@@ -653,6 +668,13 @@ int slm_at_init(void)
 	err = slm_at_twi_init();
 	if (err) {
 		LOG_ERR("TWI could not be initialized: %d", err);
+		return -EFAULT;
+	}
+#endif
+#if defined(CONFIG_SLM_NRF52_DFU)
+	err = slm_at_dfu_init();
+	if (err) {
+		LOG_ERR("DFU could not be initialized: %d", err);
 		return -EFAULT;
 	}
 #endif
@@ -730,6 +752,12 @@ void slm_at_uninit(void)
 	err = slm_at_gpio_uninit();
 	if (err) {
 		LOG_ERR("GPIO could not be uninit: %d", err);
+	}
+#endif
+#if defined(CONFIG_SLM_NRF52_DFU)
+	err = slm_at_dfu_uninit();
+	if (err) {
+		LOG_ERR("DFU could not be uninitialized: %d", err);
 	}
 #endif
 }

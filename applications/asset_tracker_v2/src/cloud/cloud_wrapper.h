@@ -11,7 +11,8 @@
 #ifndef CLOUD_WRAPPER_H__
 #define CLOUD_WRAPPER_H__
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
+#include <stdbool.h>
 
 /**
  * @defgroup cloud_wrapper Cloud wrapper library
@@ -39,6 +40,10 @@ enum cloud_wrap_event_type {
 	CLOUD_WRAP_EVT_USER_ASSOCIATION_REQUEST,
 	/** User association completed. */
 	CLOUD_WRAP_EVT_USER_ASSOCIATED,
+	/** Event received when data has been acknowledged by cloud. */
+	CLOUD_WRAP_EVT_DATA_ACK,
+	/** Event received when a ping response has been received. */
+	CLOUD_WRAP_EVT_PING_ACK,
 	/** A-GPS data received from the cloud integration layer.
 	 *  Payload is of type @ref cloud_wrap_event_data.
 	 */
@@ -47,6 +52,12 @@ enum cloud_wrap_event_type {
 	 *  Payload is of type @ref cloud_wrap_event_data.
 	 */
 	CLOUD_WRAP_EVT_PGPS_DATA_RECEIVED,
+	/** Reboot request received from cloud. */
+	CLOUD_WRAP_EVT_REBOOT_REQUEST,
+	/** Request to connect to LTE. */
+	CLOUD_WRAP_EVT_LTE_CONNECT_REQUEST,
+	/** Request to disconnect from LTE. */
+	CLOUD_WRAP_EVT_LTE_DISCONNECT_REQUEST,
 	/** Cloud integration layer has successfully performed a FOTA update.
 	 *  Device should now be rebooted.
 	 */
@@ -65,7 +76,7 @@ enum cloud_wrap_event_type {
 	CLOUD_WRAP_EVT_ERROR,
 };
 
-/** @brief Structure used to referance application data that is sent and received
+/** @brief Structure used to reference application data that is sent and received
  *         from the cloud wrapper library.
  */
 struct cloud_wrap_event_data {
@@ -84,6 +95,7 @@ struct cloud_wrap_event {
 		struct cloud_wrap_event_data data;
 		/** Error code signifying the cause of error. */
 		int err;
+		uint16_t message_id;
 	};
 };
 
@@ -118,89 +130,112 @@ int cloud_wrap_disconnect(void);
 /**
  * @brief Request device state from cloud. The device state contains the device configuration.
  *
+ * @param[in] ack Flag signifying if the message should be acknowledged or not.
+ * @param[in] id Message ID.
+ *
  * @return 0 on success, or a negative error code on failure.
  */
-int cloud_wrap_state_get(void);
+int cloud_wrap_state_get(bool ack, uint32_t id);
 
 /**
  * @brief Send device state data to cloud.
  *
  * @param[in] buf Pointer to buffer containing data to be sent.
  * @param[in] len Length of buffer.
+ * @param[in] ack Flag signifying if the message should be acknowledged or not.
+ * @param[in] id Message ID.
  *
  * @return 0 on success, or a negative error code on failure.
  */
-int cloud_wrap_state_send(char *buf, size_t len);
+int cloud_wrap_state_send(char *buf, size_t len, bool ack, uint32_t id);
 
 /**
  * @brief Send data to cloud.
  *
  * @param[in] buf Pointer to buffer containing data to be sent.
  * @param[in] len Length of buffer.
+ * @param[in] ack Flag signifying if the message should be acknowledged or not.
+ * @param[in] id Message ID.
+ * @param[in] path_list Pointer to list of LwM2M objects to be sent.
  *
  * @return 0 on success, or a negative error code on failure.
  */
-int cloud_wrap_data_send(char *buf, size_t len);
+int cloud_wrap_data_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[]);
 
 /**
  * @brief Send batched data to cloud.
  *
  * @param[in] buf Pointer to buffer containing data to be sent.
  * @param[in] len Length of buffer.
+ * @param[in] ack Flag signifying if the message should be acknowledged or not.
+ * @param[in] id Message ID.
  *
  * @return 0 on success, or a negative error code on failure.
  */
-int cloud_wrap_batch_send(char *buf, size_t len);
+int cloud_wrap_batch_send(char *buf, size_t len, bool ack, uint32_t id);
 
 /**
  * @brief Send UI data to cloud.
  *
  * @param[in] buf Pointer to buffer containing data to be sent.
  * @param[in] len Length of buffer.
+ * @param[in] ack Flag signifying if the message should be acknowledged or not.
+ * @param[in] id Message ID.
+ * @param[in] path_list Pointer to list of LwM2M objects to be sent.
  *
  * @return 0 on success, or a negative error code on failure.
  */
-int cloud_wrap_ui_send(char *buf, size_t len);
+int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[]);
 
 /**
  * @brief Send neighbor cell data to cloud.
  *
  * @param[in] buf Pointer to buffer containing data to be sent.
  * @param[in] len Length of buffer.
+ * @param[in] ack Flag signifying if the message should be acknowledged or not.
+ * @param[in] id Message ID.
+ * @param[in] path_list Pointer to list of LwM2M objects to be sent.
  *
  * @return 0 on success, or a negative error code on failure.
  */
-int cloud_wrap_neighbor_cells_send(char *buf, size_t len);
+int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[]);
 
 /**
  * @brief Send A-GPS request to cloud.
  *
  * @param[in] buf Pointer to buffer containing data to be sent.
  * @param[in] len Length of buffer.
+ * @param[in] ack Flag signifying if the message should be acknowledged or not.
+ * @param[in] id Message ID.
+ * @param[in] path_list Pointer to list of LwM2M objects to be sent.
  *
  * @return 0 on success, or a negative error code on failure.
  */
-int cloud_wrap_agps_request_send(char *buf, size_t len);
+int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[]);
 
 /**
  * @brief Send P-GPS request to cloud.
  *
  * @param[in] buf Pointer to buffer containing data to be sent.
  * @param[in] len Length of buffer.
+ * @param[in] ack Flag signifying if the message should be acknowledged or not.
+ * @param[in] id Message ID.
  *
  * @return 0 on success, or a negative error code on failure.
  */
-int cloud_wrap_pgps_request_send(char *buf, size_t len);
+int cloud_wrap_pgps_request_send(char *buf, size_t len, bool ack, uint32_t id);
 
 /**
  * @brief Send Memfault data to cloud.
  *
  * @param[in] buf Pointer to buffer containing data to be sent.
  * @param[in] len Length of buffer.
+ * @param[in] ack Flag signifying if the message should be acknowledged or not.
+ * @param[in] id Message ID.
  *
  * @return 0 on success, or a negative error code on failure.
  */
-int cloud_wrap_memfault_data_send(char *buf, size_t len);
+int cloud_wrap_memfault_data_send(char *buf, size_t len, bool ack, uint32_t id);
 
 #ifdef __cplusplus
 }

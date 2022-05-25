@@ -3,10 +3,10 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 
-#include <net/openthread.h>
+#include <zephyr/net/openthread.h>
 #include <openthread/thread.h>
 #include <openthread/netdata.h>
 
@@ -16,7 +16,7 @@
 #include <caf/events/net_state_event.h>
 #include <caf/events/factory_reset_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_NET_STATE_OT_LOG_LEVEL);
 
 
@@ -121,7 +121,7 @@ static void send_net_state_event(enum net_state state)
 
 	event->id = MODULE_ID(MODULE);
 	event->state = state;
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void set_net_state(enum net_state state)
@@ -238,13 +238,13 @@ static bool handle_reset_event(void)
 	return false;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
-		return handle_state_event(cast_module_state_event(eh));
+	if (is_module_state_event(aeh)) {
+		return handle_state_event(cast_module_state_event(aeh));
 	}
 
-	if (IS_ENABLED(CONFIG_CAF_LOG_NET_STATE_WAITING) &&  is_net_state_event(eh)) {
+	if (IS_ENABLED(CONFIG_CAF_LOG_NET_STATE_WAITING) &&  is_net_state_event(aeh)) {
 		if (net_state == NET_STATE_DISCONNECTED) {
 			k_work_reschedule(&connecting_work, K_NO_WAIT);
 		} else {
@@ -256,7 +256,7 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_CAF_FACTORY_RESET_EVENTS) &&
-	    is_factory_reset_event(eh)) {
+	    is_factory_reset_event(aeh)) {
 		return handle_reset_event();
 	}
 
@@ -266,11 +266,11 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if IS_ENABLED(CONFIG_CAF_FACTORY_RESET_EVENTS)
-	EVENT_SUBSCRIBE(MODULE, factory_reset_event);
+	APP_EVENT_SUBSCRIBE(MODULE, factory_reset_event);
 #endif
 #if CONFIG_CAF_LOG_NET_STATE_WAITING
-	EVENT_SUBSCRIBE(MODULE, net_state_event);
+	APP_EVENT_SUBSCRIBE(MODULE, net_state_event);
 #endif

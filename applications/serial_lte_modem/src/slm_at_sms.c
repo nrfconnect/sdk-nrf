@@ -3,8 +3,8 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <logging/log.h>
-#include <zephyr.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <string.h>
 #include <modem/sms.h>
@@ -46,9 +46,12 @@ static void sms_callback(struct sms_data *const data, void *context)
 		struct sms_deliver_header *header = &data->header.deliver;
 
 		if (!header->concatenated.present) {
-			sprintf(rsp_buf, "\r\n#XSMS: \"%02d-%02d-%02d %02d:%02d:%02d\",\"",
+			sprintf(rsp_buf,
+				"\r\n#XSMS: \"%02d-%02d-%02d %02d:%02d:%02d UTC%+03d:%02d\",\"",
 				header->time.year, header->time.month, header->time.day,
-				header->time.hour, header->time.minute, header->time.second);
+				header->time.hour, header->time.minute, header->time.second,
+				header->time.timezone * 15 / 60,
+				abs(header->time.timezone) * 15 % 60);
 			strcat(rsp_buf, header->originating_address.address_str);
 			strcat(rsp_buf, "\",\"");
 			strcat(rsp_buf, data->payload);

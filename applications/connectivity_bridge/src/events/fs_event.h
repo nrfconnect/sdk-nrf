@@ -14,10 +14,10 @@
  */
 
 #include <string.h>
-#include <toolchain/common.h>
+#include <zephyr/toolchain/common.h>
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,13 +30,13 @@ enum fs_request {
 
 /** Peer connection event. */
 struct fs_event {
-	struct event_header header;
+	struct app_event_header header;
 
 	enum fs_request req;
 	const char *mnt_point;
 };
 
-EVENT_TYPE_DECLARE(fs_event);
+APP_EVENT_TYPE_DECLARE(fs_event);
 
 int fs_event_helper_file_write(
 	const char *mnt_point,

@@ -8,9 +8,9 @@
  *  @brief Simple Zigbee network coordinator implementation
  */
 
-#include <zephyr.h>
-#include <device.h>
-#include <logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
+#include <zephyr/logging/log.h>
 #include <dk_buttons_and_leds.h>
 
 #include <zboss_api.h>
@@ -18,6 +18,7 @@
 #include <zigbee/zigbee_error_handler.h>
 #include <zigbee/zigbee_app_utils.h>
 #include <zb_nrf_platform.h>
+#include "zb_range_extender.h"
 
 
 #define RUN_STATUS_LED                         DK_LED1
@@ -77,12 +78,12 @@ ZB_ZCL_DECLARE_BASIC_ATTRIB_LIST(
 	&dev_ctx.basic_attr.zcl_version,
 	&dev_ctx.basic_attr.power_source);
 
-ZB_HA_DECLARE_RANGE_EXTENDER_CLUSTER_LIST(
+ZB_DECLARE_RANGE_EXTENDER_CLUSTER_LIST(
 	nwk_coordinator_clusters,
 	basic_attr_list,
 	identify_attr_list);
 
-ZB_HA_DECLARE_RANGE_EXTENDER_EP(
+ZB_DECLARE_RANGE_EXTENDER_EP(
 	nwk_coordinator_ep,
 	ZIGBEE_COORDINATOR_ENDPOINT,
 	nwk_coordinator_clusters);
@@ -141,8 +142,6 @@ static void identify_cb(zb_bufid_t bufid)
  */
 static void start_identifying(zb_bufid_t bufid)
 {
-	zb_ret_t zb_err_code;
-
 	ZVUNUSED(bufid);
 
 	if (ZB_JOINED()) {
@@ -151,9 +150,17 @@ static void start_identifying(zb_bufid_t bufid)
 		 */
 		if (dev_ctx.identify_attr.identify_time ==
 		    ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE) {
-			LOG_INF("Enter identify mode");
-			zb_err_code = zb_bdb_finding_binding_target(ZIGBEE_COORDINATOR_ENDPOINT);
-			ZB_ERROR_CHECK(zb_err_code);
+
+			zb_ret_t zb_err_code = zb_bdb_finding_binding_target(
+				ZIGBEE_COORDINATOR_ENDPOINT);
+
+			if (zb_err_code == RET_OK) {
+				LOG_INF("Enter identify mode");
+			} else if (zb_err_code == RET_INVALID_STATE) {
+				LOG_WRN("RET_INVALID_STATE - Cannot enter identify mode");
+			} else {
+				ZB_ERROR_CHECK(zb_err_code);
+			}
 		} else {
 			LOG_INF("Cancel identify mode");
 			zb_bdb_finding_binding_target_cancel();

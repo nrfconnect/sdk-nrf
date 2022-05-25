@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <kernel.h>
-#include <device.h>
-#include <sys/byteorder.h>
-#include <logging/log.h>
-#include <net/ieee802154_radio.h>
+#include <zephyr/kernel.h>
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/net/ieee802154_radio.h>
 #include <zboss_api.h>
 #include <zb_macll.h>
 #include <zb_transceiver.h>

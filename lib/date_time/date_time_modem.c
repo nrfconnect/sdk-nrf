@@ -5,10 +5,10 @@
  */
 
 #include <date_time.h>
-#include <zephyr.h>
-#include <posix/time.h>
-#include <sys/timeutil.h>
-#include <logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/posix/time.h>
+#include <zephyr/sys/timeutil.h>
+#include <zephyr/logging/log.h>
 #include <nrf_modem_at.h>
 #include <modem/lte_lc.h>
 #if defined(CONFIG_DATE_TIME_AUTO_UPDATE)

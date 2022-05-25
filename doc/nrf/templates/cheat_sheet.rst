@@ -253,11 +253,11 @@ Include 2:
 To reuse text from another doc set:
 
 Include 3:
-  .. ncs-include:: getting_started/installation_win.rst
+  .. ncs-include:: develop/getting_started/index.rst
      :docset: zephyr
      :auto-dedent:
-     :start-line: 10
-     :end-line: 18
+     :start-line: 6
+     :end-line: 16
 
 Include 4:
   .. ncs-include:: nfc/doc/type_2_tag.rst

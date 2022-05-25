@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
-#include <posix/arpa/inet.h>
-#include <posix/sys/socket.h>
-#include <posix/netdb.h>
-#include <shell/shell.h>
+#include <zephyr/posix/arpa/inet.h>
+#include <zephyr/posix/sys/socket.h>
+#include <zephyr/posix/netdb.h>
+#include <zephyr/shell/shell.h>
+#include <nrf_socket.h>
 
 #include "net_utils.h"
 #include "mosh_print.h"
@@ -62,4 +63,13 @@ int net_utils_sa_family_from_ip_string(const char *src)
 		return AF_INET6;
 	}
 	return -1;
+}
+
+bool net_utils_ip_string_is_valid(const char *src)
+{
+	struct nrf_in6_addr in6_addr;
+
+	/* Use nrf_inet_pton() because this has full IP address validation. */
+	return (nrf_inet_pton(NRF_AF_INET, src, &in6_addr) == 1 ||
+		nrf_inet_pton(NRF_AF_INET6, src, &in6_addr) == 1);
 }

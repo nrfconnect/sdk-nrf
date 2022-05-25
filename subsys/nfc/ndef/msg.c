@@ -5,8 +5,8 @@
  */
 
 #include <nfc/ndef/msg.h>
-#include <sys/byteorder.h>
-#include <sys/util.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/sys/util.h>
 #include <errno.h>
 
 /* Resolve the value of record location flags of the NFC NDEF record

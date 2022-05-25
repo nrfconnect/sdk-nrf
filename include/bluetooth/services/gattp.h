@@ -15,8 +15,8 @@
  * @brief API for the Bluetooth LE Generic Attribute (GATT) Profile.
  */
 
-#include <bluetooth/gatt.h>
-#include <bluetooth/conn.h>
+#include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/conn.h>
 #include <bluetooth/gatt_dm.h>
 
 #ifdef __cplusplus

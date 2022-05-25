@@ -12,15 +12,18 @@
 #ifndef NRF_MODEM_LIB_TRACE_H__
 #define NRF_MODEM_LIB_TRACE_H__
 
+#include <zephyr/kernel.h>
 #include <stdint.h>
 
 /** @brief Initialize the modem trace module.
  *
  * Initializes the module and the trace transport medium.
  *
+ * @param trace_heap Heap to use for modem traces
+ *
  * @return Zero on success, non-zero otherwise.
  */
-int nrf_modem_lib_trace_init(void);
+int nrf_modem_lib_trace_init(struct k_heap *trace_heap);
 
 /**@brief Trace mode
  *
@@ -65,6 +68,11 @@ int nrf_modem_lib_trace_process(const uint8_t *data, uint32_t len);
  * @return Zero on success, non-zero otherwise.
  */
 int nrf_modem_lib_trace_stop(void);
+
+/**
+ * @brief Deinitialize trace module.
+ */
+void nrf_modem_lib_trace_deinit(void);
 
 #endif /* NRF_MODEM_LIB_TRACE_H__ */
 /**@} */

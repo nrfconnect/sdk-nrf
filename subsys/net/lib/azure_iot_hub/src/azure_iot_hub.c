@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <net/mqtt.h>
-#include <net/socket.h>
+#include <zephyr/net/mqtt.h>
+#include <zephyr/net/socket.h>
 #include <stdio.h>
 #include <net/azure_iot_hub.h>
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #include "azure_iot_hub_dps.h"
 #include "azure_iot_hub_topic.h"
@@ -21,7 +21,7 @@
 #include CONFIG_AZURE_IOT_HUB_CERTIFICATES_FILE
 #endif /* CONFIG_AZURE_IOT_HUB_PROVISION_CERTIFICATES */
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(azure_iot_hub, CONFIG_AZURE_IOT_HUB_LOG_LEVEL);
 
@@ -643,7 +643,12 @@ static void mqtt_evt_handler(struct mqtt_client *const client,
 
 		evt.type = AZURE_IOT_HUB_EVT_PUBACK;
 		evt.data.message_id = mqtt_evt->param.puback.message_id;
+		azure_iot_hub_notify_event(&evt);
+		break;
+	case MQTT_EVT_PINGRESP:
+		LOG_DBG("MQTT_EVT_PINGRESP");
 
+		evt.type = AZURE_IOT_HUB_EVT_PINGRESP;
 		azure_iot_hub_notify_event(&evt);
 		break;
 	case MQTT_EVT_SUBACK:
@@ -856,6 +861,7 @@ static int client_broker_init(struct mqtt_client *const client, bool dps)
 	tls_cfg->sec_tag_count		= ARRAY_SIZE(sec_tag_list);
 	tls_cfg->sec_tag_list		= sec_tag_list;
 	tls_cfg->session_cache		= TLS_SESSION_CACHE_DISABLED;
+	tls_cfg->set_native_tls		= IS_ENABLED(CONFIG_AZURE_IOT_HUB_NATIVE_TLS);
 
 #if defined(CONFIG_AZURE_IOT_HUB_PROVISION_CERTIFICATES)
 	err = certificates_provision();

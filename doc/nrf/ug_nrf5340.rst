@@ -21,6 +21,10 @@ To get started with the nRF5340 DK, follow the steps in the `Getting started wit
 
    See the `nRF Connect SDK v1.4.0 documentation`_ for the last release supporting the nRF5340 PDK.
 
+|nrf5340_octave_note|
+Given its complexity, the application uses custom building and programming procedures.
+Refer to its documentation for more information.
+
 .. _ug_nrf5340_intro:
 
 Introduction
@@ -52,15 +56,28 @@ Use this core for tasks that require high performance and for application-level 
 The M33 TrustZone divides the application MCU into secure and non-secure domains.
 When the MCU boots, it always starts executing from the secure area.
 
-In Zephyr, the application core is divided into two different build targets:
+In Zephyr, the firmware of the application core is built using one of the following build targets:
 
-* ``nrf5340dk_nrf5340_cpuapp`` for the secure domain
-* ``nrf5340dk_nrf5340_cpuapp_ns`` for the non-secure domain
+* ``nrf5340dk_nrf5340_cpuapp`` for the secure domain.
+* ``nrf5340dk_nrf5340_cpuapp_ns`` for the non-secure domain.
+  On selecting this build target, the build system includes an additional secure firmware component before building the main firmware on the non-secure domain.
+  The additional component can either be :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` or :ref:`Secure Partition Manager (SPM) <secure_partition_manager>`.
 
 .. note::
    In |NCS| releases before v1.6.1, the build target ``nrf5340dk_nrf5340_cpuapp_ns`` was named ``nrf5340dk_nrf5340_cpuappns``.
 
-The |NCS| provides two alternatives for running applications from the non-secure area of the memory: Secure Partition Manager and Trusted Firmware-M.
+The |NCS| provides two alternatives for running applications from the non-secure area of the memory: Trusted Firmware-M and Secure Partition Manager.
+
+Trusted Firmware-M (TF-M)
+-------------------------
+
+Trusted Firmware-M provides a configurable set of software components to create a Trusted Execution Environment.
+It has replaced Secure Partition Manager as the default solution used by most |NCS| applications and samples.
+This means that when you build your application for the non-secure domain, the :ref:`TF-M <ug_tfm>` is automatically included in the build.
+It is a framework for functions and use cases beyond the scope of Secure Partition Manager.
+
+For more information about the TF-M, see :ref:`ug_tfm`.
+See also :ref:`tfm_hello_world` for a sample that demonstrates how to add TF-M to an application.
 
 Secure Partition Manager (SPM)
 ------------------------------
@@ -69,20 +86,13 @@ The :ref:`secure_partition_manager` sample uses the SPU peripheral to configure 
 After the configuration setup is complete, the sample loads the application firmware from the non-secure domain.
 In addition, the SPM sample provides the application firmware with access to secure services.
 
-The SPM sample is currently the default solution used by most |NCS| samples.
-This means that when you build your application for the non-secure domain, the :ref:`secure_partition_manager` sample is automatically included in the build.
+You can use :ref:`secure_partition_manager` as an alternative to Trusted Firmware-M (TF-M) for running an application from the non-secure area of the memory.
 
-Trusted Firmware-M (TF-M)
--------------------------
+To use the Secure Partition Manager instead of TF-M, do the following:
+* Disable the automatic inclusion of TF-M by setting the option :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n`` in the project configuration.
+* Set the option :kconfig:option:`CONFIG_SPM` to ``y``.
 
-Trusted Firmware-M provides a configurable set of software components to create a Trusted Execution Environment.
-It is a framework for functions and use cases beyond the scope of SPM.
-
-Support for TF-M in the |NCS| is currently experimental.
-If your application does not depend on the secure services from SPM and does not use them, TF-M can replace SPM as the secure firmware component in your application.
-
-For more information and instructions on how to do this, see :ref:`ug_tfm`.
-See also :ref:`tfm_hello_world` for a sample that demonstrates how to add TF-M to an application.
+.. _ug_nrf5340_intro_inter_core:
 
 Inter-core communication
 ========================
@@ -102,6 +112,55 @@ The OpenAMP library uses the IPM SHIM layer, which in turn uses the IPC driver i
    To upgrade the firmware on the network core, perform the steps for FOTA upgrade described below, replacing :file:`app_update.bin`, which is the file used when upgrading firmware on the application core, with :file:`net_core_app_update.bin`.
    In addition, ensure that :kconfig:option:`CONFIG_PCD_APP` is enabled for the MCUboot child image.
    For more details, see :ref:`nc_bootloader`.
+
+.. _ug_nrf5340_intro_xip:
+
+Execute in place (XIP) configuration
+====================================
+
+Execute in place (XIP) allows the application core to execute program code directly from the external flash memory device using the Quad Serial Peripheral Interface (QSPI).
+The external flash memory supports on-the-fly encryption and decryption.
+For more information, read the `Execute in place page in the nRF5340 Product Specification`_.
+
+For placing individual source code files into defined memory regions, check the :ref:`zephyr:code_relocation_nocopy` sample in Zephyr.
+
+.. _ug_nrf5340_intro_xip_measurements:
+
+Indication of XIP performance
+-----------------------------
+
+The XIP code execution performance measurement was conducted to evaluate the expected performance in different operating conditions.
+
+The :ref:`nrf_machine_learning_app` application running on the nRF5340 DK was used for the testing.
+This particular application was used because its application design allows to move the Edge Impulse library to external memory.
+There is only one call to the library from the wrapper module, and therefore this call is used to measure the time of execution.
+Additional measurements of the current allowed to compare total energy used.
+
+The following table lists performance numbers that were measured under different operating conditions.
+
+.. note::
+   The numbers in the table refer to current consumed only by the nRF5340 SoC.
+   For complete numbers, you must add the current used by external flash, which varies between manufacturers.
+
+.. _ug_nrf5340_intro_xip_measurements_table:
+
++-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
+| CPU frequency   | Memory          | Cache  | QSPI speed   | Mode   | Time [ms] | Current @3.0V [mA] | Current @1.8V [mA] | Total energy @3.0V [µJ]  | Total energy @1.8V [µJ]  |
++=================+=================+========+==============+========+===========+====================+====================+==========================+==========================+
+| 64 MHz          | Internal flash  | Yes    | n/a          | n/a    | 63        | 3.2                | 5.1                | 605                      | 578                      |
++-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
+| 64 MHz          | External flash  | Yes    | 48 MHz       | Quad   | 68.9      | 5.63               | 8.51               | 1164                     | 1055                     |
++-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
+| 64 MHz          | External flash  | Yes    | 24 MHz       | Quad   | 73.7      | 5.58               | 8.44               | 1234                     | 1120                     |
++-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
+| 128 MHz         | Internal flash  | Yes    | n/a          | n/a    | 31        | 7.65               | 12.24              | 711                      | 683                      |
++-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
+| 128 MHz         | External flash  | Yes    | 96 MHz       | Quad   | 34.1      | 8.99               | 14.1               | 920                      | 865                      |
++-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
+| 128 MHz         | External flash  | No     | 96 MHz       | Quad   | 88.5      | 9.15               | 12.95              | 2429                     | 2063                     |
++-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
+| 128 MHz         | External flash  | Yes    | 48 MHz       | Quad   | 36.4      | 8.85               | 13.9               | 966                      | 911                      |
++-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
 
 Protocols and use cases
 ***********************
@@ -343,153 +402,44 @@ Building and programming a sample
 
 Depending on the sample, you must program only the application core (for example, when using NFC samples) or both the network and the application core.
 
-The steps differ depending on whether you work with |SES| or on the command line and whether you are doing a single or multi-image build.
+The steps differ depending on whether you work with |VSC| or on the command line and whether you are doing a single or multi-image build.
 
-Using SEGGER Embedded Studio
-============================
+Using |VSC|
+===========
 
-To build and program separate images with |SES|, follow the general instructions for :ref:`gs_programming_ses`.
-To program a multi-image HEX file, you must add the project files for the network core after building, as described in :ref:`ug_nrf5340_ses_multi_image`.
+|vsc_extension_instructions|
+
+You can build and program separate images or combined images using |VSC|.
 
 Separate images
 ---------------
 
-To build and program only the application core, follow the instructions in :ref:`gs_programming_ses` and use ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuapp_ns`` as build target.
+To build and program the application core, follow the instructions in `Building an application`_ and use ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuapp_ns`` as the build target.
 
-To build and program a dedicated network sample, follow the instructions in :ref:`gs_programming_ses` and use ``nrf5340dk_nrf5340_cpunet`` as the build target.
+To build and program the network core, follow the instructions in `Building an application`_ and use ``nrf5340dk_nrf5340_cpunet`` as the build target.
 
-.. _ug_nrf5340_ses_multi_image:
+.. _ug_nrf5340_VSC_multi_image:
 
 Multi-image build
 -----------------
 
-If you are working with Bluetooth LE, Thread, Zigbee, or Matter samples, the network core sample is built as child image when you build the application core image (see :ref:`ug_nrf5340_multi_image` above).
+If you are working with Bluetooth LE, Thread, Zigbee, or Matter samples, the network core sample is built as a child image when you build the application core image (see :ref:`ug_nrf5340_multi_image` above).
 
-However, |SES| cannot automatically program the network sample to the network core when it is added as a child image.
-You must manually add a network core project to the application core project to make sure that both are programmed.
+Complete the following steps to build and program a multi-image build to the nRF5340 application core and network core:
 
-.. note::
-   You must reprogram the network core sample only when changes are made to it.
-   You can modify and program the application core sample without reprogramming the network core.
+.. include:: /includes/vsc_build_and_run_nrf53.txt
 
-Follow these steps to build and program a multi-image build to the nRF5340 application core and network core:
+6. Select the ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuapp_ns`` as the target board.
+#. Select the :guilabel:`Build after generating configuration` checkbox and click the :guilabel:`Build Configuration` button.
+   This generates the configuration file and triggers the build process.
+#. When the build configuration and the build are complete, an :guilabel:`Actions` panel appears.
+   In this panel, you can trigger the build process, program the built sample, or start a debug session.
+#. Program the sample or application:
 
-1. Follow the initial steps in :ref:`gs_programming_ses` to add the application core sample project in |SES| using ``nrf5340dk_nrf5340_cpuapp`` or ``nrf5340dk_nrf5340_cpuapp_ns`` as the build target.
-   For example, select the :ref:`peripheral_lbs` sample.
-#. Build the sample as described in :ref:`gs_programming_ses` in the step about building and programming the project.
-   This creates both the application core image and the network core image.
-   When the build completes, return to this guide.
-#. Add the network core project to the application core project:
-
-   a. Select :guilabel:`File` > :guilabel:`New Project`.
-
-      .. figure:: images/ses_nrf5340_netcore_new_project.png
-         :alt: Create New Project menu
-
-         Create New Project menu
-
-   #. Select :guilabel:`Add the project to the current solution`.
-
-      .. figure:: images/ses_nrf5340_netcore_add_project.png
-         :alt: Adding a project target for programming the network core
-
-         Adding a project target for programming the network core
-
-   #. Select the project template, project name, and project location.
-
-      * :guilabel:`An externally built executable for Nordic Semiconductor nRF`:
-        This template allows you to specify the network core hexadecimal file to be programmed.
-        The hexadecimal file is created by the build system.
-      * :guilabel:`Name`: Specify the name of the project as it will appear in SES.
-        For example, for the :ref:`peripheral_lbs` sample you can use ``hci_rpmsg_nrf5340_netcore``.
-      * :guilabel:`Location`: Specify the location of the project.
-        This must be the same build target's folder as the current project.
-        Click :guilabel:`Browse` to open a dialog where you can navigate to the current project's build target folder and click :guilabel:`Select Folder`.
-
-      .. figure:: images/ses_nrf5340_netcore_project_template.png
-         :alt: Creating a new project for programming the network core
-
-         Creating a new project for programming the network core
-
-   #. Click :guilabel:`Next`.
-
-   #. Configure the project settings.
-
-      * :guilabel:`Target Processor`: Select ``nRF5340_xxAA_Network``.
-        If it is not on the list, see :ref:`gs_updating_ses_packages`.
-
-      * :guilabel:`Load File`: Specify the file name of the merged HEX file for the network core that should be programmed.
-         For example, specify :file:`$(ProjectDir)/hci_rpmsg/zephyr/merged_CPUNET.hex` for the :ref:`zephyr:bluetooth-hci-rpmsg-sample` sample.
-
-      .. figure:: images/ses_nrf5340_netcore_project_settings.png
-         :alt: Project settings for programming the network core
-
-         Project settings for programming the network core
-
-   #. Click :guilabel:`Next`.
-
-   #. Add the project files.
-      This project will only be used for programming the network core, so you must only add the default :guilabel:`Script Files`.
-
-      .. figure:: images/ses_nrf5340_netcore_files.png
-         :alt: Adding script files for programming the network core
-
-         Adding script files for programming the network core
-
-   #. Click :guilabel:`Next`.
-
-   #. Add the project configurations.
-      This project will only be used for programming the network core, so no build configurations are needed.
-
-      Deselect :guilabel:`Debug` and :guilabel:`Release`.
-
-      .. figure:: images/ses_nrf5340_netcore_conf.png
-         :alt: Deselecting configurations and finishing the configuration
-
-         Deselecting configurations and finishing the configuration
-
-   #. Click :guilabel:`Finish`.
-
-      This creates a new project for programming the network core with the HEX file of the network sample.
-
-#. Set the new network core project as the active project using :guilabel:`Project` > :guilabel:`Set Active Project`.
-   For example, select :guilabel:`hci_rpmsg_nrf5340_netcore`.
-
-   .. figure:: images/ses_nrf5340_netcore_set_active.png
-      :alt: Set the hci_rpmsg_nrf5340_netcore programming target as active
-
-      Set the hci_rpmsg_nrf5340_netcore programming target as active
-
-#. Program the network sample using :guilabel:`Target` > :guilabel:`Download XXX` (for example, :guilabel:`Download hci_rpmsg_nrf5340_netcore`).
-
-   .. figure:: images/ses_nrf5340_netcore_flash_active.png
-      :alt: Program the network sample hci_rpmsg_nrf5340_netcore
-
-      Program the network sample hci_rpmsg_nrf5340_netcore
-
-   Ignore any project out-of-date warning by clicking :guilabel:`No` when they appear.
-   The network core project is a pure programming target, so it cannot be built.
-
-   .. figure:: images/ses_nrf5340_netcore_download.png
-      :alt: Ignore any "Project out-of-date" warnings
-
-      Ignore any "Project out-of-date" warnings
-
-   .. caution::
-      If you click :guilabel:`Yes` and disable the option to show the dialog again, you will enter a loop because of a "no input files" error.
-      To restore the default settings, select :guilabel:`Tools` > :guilabel:`Options` > :guilabel:`Building` and set :guilabel:`Confirm Automatically Build Before Debug` to ``Yes``.
-
-   Programming the network core erases the application.
-   If you encounter an error with programming the network core, try disabling :ref:`readback_protection_error`.
-#. After the network core is programmed, make the application target active again by selecting :guilabel:`Project` > :guilabel:`Set Active Project` > :guilabel:`zephyr/merged.hex`.
-
-   .. figure:: images/ses_nrf5340_appcore_set_active.png
-     :alt: Set the zephyr/merged.hex target as active
-
-     Set the zephyr/merged.hex target as active
-
-#. Program the application sample using :guilabel:`Target` > :guilabel:`Download zephyr/merged.hex`.
-
+   a. Connect the nRF5340 development kit to your PC using a USB cable.
+   #. Make sure that the nRF5340 DK and the external debug probe are powered on.
+   #. Click :guilabel:`Build` in the :guilabel:`Actions` panel to start the build process.
+   #. Click :guilabel:`Flash` in the :guilabel:`Actions` panel to program the resulting image to your device.
 
 Using the command line
 ======================
@@ -595,6 +545,18 @@ See the following instructions.
    :start-after: fota_upgrades_start
    :end-before: fota_upgrades_end
 
+.. include:: ug_nrf52.rst
+   :start-after: fota_upgrades_matter_start
+   :end-before: fota_upgrades_matter_end
+
+.. include:: ug_nrf52.rst
+   :start-after: fota_upgrades_thread_start
+   :end-before: fota_upgrades_thread_end
+
+.. include:: ug_nrf52.rst
+   :start-after: fota_upgrades_zigbee_start
+   :end-before: fota_upgrades_zigbee_end
+
 Simultaneous multi-image DFU
 ****************************
 
@@ -639,13 +601,13 @@ Debugging
 *********
 
 To debug the application core firmware, you need a single debug session.
-Set up the debug session as described in `Debugging nRF5340 with SES`_ or `Debugging an application`_ with Visual Studio Code.
+Set up the debug session as described in `Debugging an application`_ with |VSC|.
 
 To debug the firmware running on the network core, you also need to set up a separate debug session for the application core.
 
 Complete the following steps to start debugging the network core:
 
-1. Set up sessions for the application core and network core as mentioned in `Debugging nRF5340 with SES`_ or `Debugging an application`_ with Visual Studio Code.
+1. Set up sessions for the application core and network core as mentioned in `Debugging an application`_ with |VSC|.
 #. Select the appropriate CPU for debugging in each session, the nRF5340 application core and the nRF5340 network core respectively.
 #. Once both sessions are established, execute the code on the application core.
 
@@ -654,10 +616,7 @@ Complete the following steps to start debugging the network core:
 
 If you want to reset the network core while debugging, make sure to first reset the application core and execute the code.
 
-You can also use the following tools for debugging:
-
-* SEGGER Ozone
-* GDB command line tool
+You can also use the GDB command line tool for debugging.
 
 .. note::
   Debugging firmware on the application core in the non-secure domain (when using the ``nrf5340dk_nrf5340_cpuapp_ns`` build target), is currently not supported.
@@ -691,19 +650,39 @@ In the default configuration, they are set up as follows:
 
 To use the middle COM port in the nRF5340 DK v1.0.0, complete the following steps:
 
-1. Map **rx-pin**, **tx-pin**, **rts-pin**, and **cts-pin** to four different pins on the development kit, using, for example, using :ref:`devicetree overlays<zephyr:devicetree-intro>`.
+1. Map RX, TX, CTS and RTS pins to four different pins on the development kit, using, for example, :ref:`devicetree overlays<zephyr:devicetree-intro>`.
    See the following example, using the :ref:`zephyr:dtbinding_nordic_nrf_uarte` bindings.
 
-   .. code-block::
+   .. code-block:: devicetree
 
-        &uart0 {
-        status = "okay";
-        compatible = "nordic,nrf-uarte";
-        current-speed = <115200>;
-        tx-pin = <20>;
-        rx-pin = <21>;
-        rts-pin = <18>;
-        cts-pin = <16>;
-        };
+      &pinctrl {
+         uart0_default_alt: uart0_default_alt {
+            group1 {
+               psels = <NRF_PSEL(UART_TX, 0, 20)>,
+                       <NRF_PSEL(UART_RX, 0, 21)>,
+                       <NRF_PSEL(UART_RTS, 0, 18)>,
+                       <NRF_PSEL(UART_CTS, 0, 16)>;
+            };
+         };
 
-#. Wire the previously mapped pins (**rx-pin**, **tx-pin**, **rts-pin**, and **cts-pin**) respectively to **TxD**, **RxD**, **CTS**, and **RTS** on the **P24** connector.
+         uart0_sleep_alt: uart0_sleep_alt {
+            group1 {
+               psels = <NRF_PSEL(UART_TX, 0, 20)>,
+                       <NRF_PSEL(UART_RX, 0, 21)>,
+                       <NRF_PSEL(UART_RTS, 0, 18)>,
+                       <NRF_PSEL(UART_CTS, 0, 16)>;
+               low-power-enable;
+            };
+         };
+      };
+
+      &uart0 {
+         status = "okay";
+         compatible = "nordic,nrf-uarte";
+         current-speed = <115200>;
+         pinctrl-0 = <&uart0_default_alt>;
+         pinctrl-1 = <&uart0_sleep_alt>;
+         pinctrl-names = "default", "sleep";
+      };
+
+#. Wire the previously mapped pins to **TxD**, **RxD**, **CTS**, and **RTS** on the **P24** connector.

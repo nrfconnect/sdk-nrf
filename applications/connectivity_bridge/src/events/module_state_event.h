@@ -14,10 +14,10 @@
  */
 
 #include <string.h>
-#include <toolchain/common.h>
+#include <zephyr/toolchain/common.h>
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,13 +42,13 @@ enum module_state {
 
 /** Module event. */
 struct module_state_event {
-	struct event_header header;
+	struct app_event_header header;
 
 	const void *module_id;
 	enum module_state state;
 };
 
-EVENT_TYPE_DECLARE(module_state_event);
+APP_EVENT_TYPE_DECLARE(module_state_event);
 
 
 #if defined(MODULE)
@@ -65,7 +65,7 @@ static inline void module_set_state(enum module_state state)
 
 	event->module_id = _CONCAT(__module_, MODULE);
 	event->state = state;
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 #endif

@@ -52,7 +52,7 @@ rsource "Kconfig.template.partition_size"
 endif
 
 
-if SETTINGS
+if SETTINGS_FCB || SETTINGS_NVS
 partition=SETTINGS_STORAGE
 partition-size=0x2000
 rsource "Kconfig.template.partition_size"
@@ -78,6 +78,12 @@ endif
 
 if ZIGBEE
 partition=ZBOSS_PRODUCT_CONFIG
+partition-size=0x1000
+rsource "Kconfig.template.partition_size"
+endif
+
+if EMDS
+partition=EMDS_STORAGE
 partition-size=0x1000
 rsource "Kconfig.template.partition_size"
 endif

@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <ctype.h>
-#include <logging/log.h>
-#include <drivers/uart.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/drivers/uart.h>
 #include <string.h>
-#include <init.h>
+#include <zephyr/init.h>
 
 #include <nrf_modem_at.h>
 #include <modem/at_monitor.h>

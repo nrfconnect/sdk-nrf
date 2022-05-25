@@ -10,7 +10,7 @@
 
 #include <nfc/tnep/tag.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include "common.h"
 
@@ -56,7 +56,7 @@ static int handover_rec_parse(const struct nfc_ndef_ch_rec **ch_rec,
 	size_t rec_data_size;
 
 	rec_data_size = sizeof(struct nfc_ndef_ch_rec) +
-		NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(CONFIG_NFC_TNEP_CH_MAX_LOCAL_RECORD_COUNT);
+		NFC_NDEF_PARSER_REQUIRED_MEM(CONFIG_NFC_TNEP_CH_MAX_LOCAL_RECORD_COUNT);
 
 	rec_data = memory_allocate(buf, rec_data_size);
 	if (!rec_data) {

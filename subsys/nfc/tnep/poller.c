@@ -3,11 +3,11 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <errno.h>
-#include <logging/log.h>
-#include <sys/byteorder.h>
-#include <sys/util.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/sys/util.h>
 #include <nfc/t4t/ndef_file.h>
 #include <nfc/ndef/msg_parser.h>
 #include <nfc/ndef/tnep_rec.h>
@@ -601,7 +601,7 @@ int nfc_tnep_poller_svc_write(const struct nfc_ndef_msg_desc *msg,
 int nfc_tnep_poller_on_ndef_read(const uint8_t *data, size_t len)
 {
 	int err;
-	uint8_t desc_buf[NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(CONFIG_NFC_TNEP_POLLER_RX_MAX_RECORD_CNT)];
+	uint8_t desc_buf[NFC_NDEF_PARSER_REQUIRED_MEM(CONFIG_NFC_TNEP_POLLER_RX_MAX_RECORD_CNT)];
 	size_t desc_buf_len = sizeof(desc_buf);
 	struct nfc_tnep_poller_msg poller_msg;
 	struct nfc_ndef_msg_desc *msg;

@@ -13,9 +13,9 @@
 #ifndef BT_MESH_SENSOR_H__
 #define BT_MESH_SENSOR_H__
 
-#include <bluetooth/mesh.h>
+#include <zephyr/bluetooth/mesh.h>
 #include <bluetooth/mesh/model_types.h>
-#include <drivers/sensor.h>
+#include <zephyr/drivers/sensor.h>
 #include <stdlib.h>
 
 #ifdef __cplusplus

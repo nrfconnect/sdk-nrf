@@ -13,8 +13,8 @@
  * @brief CAF Keep Alive Event.
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,10 +29,10 @@ extern "C" {
  */
 struct keep_alive_event {
 	/** Event header. */
-	struct event_header header;
+	struct app_event_header header;
 };
 
-EVENT_TYPE_DECLARE(keep_alive_event);
+APP_EVENT_TYPE_DECLARE(keep_alive_event);
 
 /**
  * @brief Keep the device alive
@@ -44,7 +44,7 @@ static inline void keep_alive(void)
 {
 	struct keep_alive_event *event = new_keep_alive_event();
 
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 #ifdef __cplusplus

@@ -5,9 +5,9 @@
  */
 
 #include <stdio.h>
-#include <zephyr.h>
-#include <logging/log.h>
-#include <net/socket.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/net/socket.h>
 #include <supl_os_client.h>
 #include <supl_session.h>
 

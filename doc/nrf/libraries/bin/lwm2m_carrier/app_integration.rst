@@ -7,9 +7,23 @@ Application integration
    :local:
    :depth: 2
 
+This section describes the needed interaction between the LwM2M carrier library and the user application.
+
+.. figure:: /libraries/bin/lwm2m_carrier/images/lwm2m_carrier_overview.svg
+    :alt: Interaction between the LwM2M carrier library and the user application
+
+    Interaction between the LwM2M carrier library and the user application
+
+
 The LwM2M carrier library has an OS abstraction layer.
-See :file:`lwm2m_os.h`.
 This abstraction layer makes the LwM2M carrier library independent of the |NCS| modules and underlying implementation of primitives such as timers, non-volatile storage, and heap allocation.
+For more information, see :file:`lwm2m_os.h`.
+
+.. figure:: /libraries/bin/lwm2m_carrier/images/lwm2m_carrier_os_abstraction.svg
+    :alt: LwM2M library OS abstraction overview
+
+    LwM2M library OS abstraction overview
+
 It provides an abstraction of the following modules:
 
 * |NCS| modules:
@@ -22,6 +36,7 @@ It provides an abstraction of the following modules:
   * :ref:`modem_key_mgmt`
   * :ref:`sms_readme`
   * :ref:`pdn_readme`
+  * :ref:`lib_dfu_target`
 
   .. lwm2m_osal_mod_list_end
 
@@ -30,7 +45,9 @@ It provides an abstraction of the following modules:
   * :ref:`zephyr:kernel_api` (``include/kernel.h``)
   * :ref:`zephyr:nvs_api`
 
-The OS abstraction layer is fully implemented for the |NCS|, and it would have to be ported if used with other RTOS or on other systems.
+The OS abstraction layer is fully implemented for the |NCS|, and it needs to be ported if used with other RTOS or on other systems.
+
+.. _lwm2m_configuration:
 
 Configuration
 *************
@@ -40,7 +57,7 @@ Enable the library by setting the :kconfig:option:`CONFIG_LWM2M_CARRIER` Kconfig
 
 The :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/nrf9160/lwm2m_carrier/prj.conf`) contains all the configurations that are needed by the LwM2M carrier library.
 
-You can provide the initialization parameter :c:type:`lwm2m_carrier_config_t` to overwrite the carrier default settings with the Kconfig options described below:
+You can provide the initialization parameter :c:type:`lwm2m_carrier_config_t` to overwrite the carrier default settings with the following Kconfig options:
 
 * :kconfig:option:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE`:
 
@@ -64,9 +81,15 @@ You can provide the initialization parameter :c:type:`lwm2m_carrier_config_t` to
   * This configuration specifies the lifetime of the custom LwM2M server.
   * This configuration is ignored if :kconfig:option:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE` or :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_SERVER_BOOTSTRAP` is set.
 
-* :kconfig:option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_PSK`:
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_SESSION_IDLE_TIMEOUT`:
 
-  * This configuration, together with :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_PSK` can be set to use a non-default `Pre-Shared Key (PSK)`_.
+  * This configuration specifies the session idle timeout (inactivity). Upon timeout, the LwM2M carrier library disconnects from one or more device management servers.
+  * The timeout closes the DTLS session. A new DTLS session will be created on the next activity (for example, lifetime trigger).
+  * Leaving this configuration empty (0) sets it to a default of 60 seconds.
+
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_PSK`:
+
+  * This configuration can be set to use a non-default `Pre-Shared Key (PSK)`_. If the string is empty, it is ignored.
   * If connecting to the normal carrier device management servers (normal operation), this configuration must not be set unless your carrier explicitly states to use a custom PSK, for example during self-testing.
   * If the :kconfig:option:`CONFIG_LWM2M_CARRIER_USE_CUSTOM_URI` option is set and the server requires a secure connection, a PSK is required.
 
@@ -83,6 +106,16 @@ You can provide the initialization parameter :c:type:`lwm2m_carrier_config_t` to
     If a production server URI is fetched from the SIM, the :kconfig:option:`CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE` configuration is ignored.
 
 Note that these settings can put the LwM2M carrier library either in the normal mode where it connects to the applicable carriers, or in the generic mode where it can connect to any bootstrap server.
+
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_MANUFACTURER`, :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_MODEL_NUMBER`, :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_TYPE`, :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_HARDWARE_VERSION`, :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_SOFTWARE_VERSION`:
+
+  * These values are reported in the Device Object. They are not expected to change during run time.
+  * If these values are not set by the application, the LwM2M carrier library sets the default values based on the modem and operator network.
+
+* :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS`, :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS_SERVICE_CODE`:
+
+  * This configuration sets the LG U+ service code, which is needed to identify your device in the LG U+ device management.
+  * Note that application DFU is needed to enable LG U+ functionality.
 
 .. note::
    A change of the bootstrap server URI between builds does not trigger a new bootstrap.
@@ -105,33 +138,25 @@ LwM2M carrier library events
 
 Following are the various LwM2M carrier library events:
 
-* :c:macro:`LWM2M_CARRIER_EVENT_MODEM_INIT`:
+* :c:macro:`LWM2M_CARRIER_EVENT_INIT`:
 
-  * This event indicates that the :ref:`nrf_modem` is initialized and can be used.
-    See :ref:`req_appln_limitations`).
-
-* :c:macro:`LWM2M_CARRIER_EVENT_CERTS_INIT`:
-
-  * This event indicates that the CA certificates must be provisioned to the modem by the application.
-    The LwM2M carrier library expects the application to assign the event data :c:member:`lwm2m_carrier_event_t.data` to a structure :c:type:`ca_cert_tags_t`.
-    This structure must contain the security tags that indicate where the CA certificates are stored in the modem.
-    See :ref:`lwm2m_carrier` sample for an example of how these certificates are written to the modem using :ref:`modem_key_mgmt` library.
+  * This event indicates that the carrier library has been successfully initialized.
+    :ref:`nrf_modem` is initialized and can be used. See :ref:`req_appln_limitations`).
+    The application can now attach to the network.
+  * If CA certificates are not already present in the modem, they can be written when receiving this event (and before attaching to the network).
+    The CA certificates needed for your device depends on your network operator.
     The LwM2M carrier library will apply these certificates during certain out-of-band FOTA operations.
+    See :ref:`lwm2m_carrier` sample for an example of how these certificates are written to the modem using :ref:`modem_key_mgmt` library.
 
-* :c:macro:`LWM2M_CARRIER_EVENT_CONNECTING`, :c:macro:`LWM2M_CARRIER_EVENT_CONNECTED`, :c:macro:`LWM2M_CARRIER_EVENT_DISCONNECTING`, :c:macro:`LWM2M_CARRIER_EVENT_DISCONNECTED`:
+* :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_DOWN`, :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_UP`:
 
-  * These events indicate that the device is connecting to or disconnecting from the LTE network.
+  * These events indicate that the device must connect to, or disconnect from the LTE network.
     They occur during the bootstrapping process, startup, and during FOTA.
 
 * :c:macro:`LWM2M_CARRIER_EVENT_BOOTSTRAPPED`:
 
   * This event indicates that the bootstrap sequence is complete, and that the device is ready to be registered.
   * This event is typically seen during the first boot-up.
-
-* :c:macro:`LWM2M_CARRIER_EVENT_LTE_READY`:
-
-  * This event indicates that the device is registered to the LTE network (home or roaming).
-  * The bootstrap sequence is complete, and the application can use the LTE link.
 
 * :c:macro:`LWM2M_CARRIER_EVENT_REGISTERED`:
 
@@ -187,16 +212,16 @@ Following are the various LwM2M carrier library events:
       | Errors                                                 | More information                                                                     | Recovery                                         |
       |                                                        |                                                                                      |                                                  |
       +========================================================+======================================================================================+==================================================+
-      | Retry limit for connecting to the bootstrap            | Common reason for this failure can be incorrect URI or PSK,                          | Library will retry after next device reboot.     |
-      | server has been reached (``-ETIMEDOUT``).              | or the server is unavailable (for example temporary network issues).                 |                                                  |
+      | Retry limit for connecting to the bootstrap            | Common reason for this failure can be incorrect URI or PSK,                          | Library retries after next device reboot.        |
+      | server has been reached (``-ETIMEDOUT``).              | or the server is unavailable (for example, temporary network issues).                |                                                  |
       |                                                        | If this error persists, contact your carrier.                                        |                                                  |
       +--------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------------------------------+
-      | Failure to provision the PSK                           | If the link is forced up by the application during the bootstrap procedure           | Library will retry after 24 hours.               |
-      | needed for the bootstrap procedure.                    | the error will be ``-EACCES``. Verify that the LwM2M library is controlling          |                                                  |
-      |                                                        | the link until the :c:macro:`LWM2M_CARRIER_EVENT_LTE_READY` event is sent.           |                                                  |
+      | Failure to provision the PSK                           | If the LTE link is up while the modem attempts to write keys to the modem,           | Library retries after 24 hours.                  |
+      | needed for the bootstrap procedure.                    | the error will be ``-EACCES``. Verify that the application prioritizes the           |                                                  |
+      |                                                        | ``LWM2M_CARRIER_EVENT_LTE_LINK_UP`` and ``LWM2M_CARRIER_EVENT_LTE_LINK_DOWN`` events.|                                                  |
       +--------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------------------------------+
-      | Failure to read MSISDN or ICCID values (``-EFAULT``).  | ICCID is fetched from SIM, while MSISDN will be received from the network for        | Library will retry upon next network connection. |
-      |                                                        | some carriers. If it has not been issued yet, the bootstrap process can not proceed. |                                                  |
+      | Failure to read MSISDN or ICCID values (``-EFAULT``).  | ICCID is fetched from SIM, while MSISDN is received from the network for             | Library retries upon next network connection.    |
+      |                                                        | some carriers. If it has not been issued yet, the bootstrap process cannot proceed.  |                                                  |
       +--------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------------------------------+
 
     * :c:macro:`LWM2M_CARRIER_ERROR_FOTA_PKG` - This error indicates that the update package has been rejected. The integrity check has failed because of a wrong package sent from the server, or a wrong package received by client. The :c:member:`value` field will have an error of type :c:type:`nrf_dfu_err_t` from the file :file:`nrfxlib/nrf_modem/include/nrf_socket.h`.
@@ -210,6 +235,8 @@ Following are the various LwM2M carrier library events:
     * :c:macro:`LWM2M_CARRIER_ERROR_FOTA_FAIL` - This error indicates a failure in applying a valid update. If this error persists, create a ticket in `DevZone`_ with the modem trace.
 
     * :c:macro:`LWM2M_CARRIER_ERROR_CONFIGURATION` - This error indicates that an illegal object configuration was detected.
+
+    * :c:macro:`LWM2M_CARRIER_ERROR_INTERNAL` - This error indicates an irrecoverable error between the modem and carrier library. The LwM2M carrier library recovers only upon reboot.
 
 Device objects
 **************

@@ -22,7 +22,7 @@
 
 #include <stddef.h>
 #include <zephyr/types.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <fw_info.h>
 #include <../arch/arm/include/aarch32/cortex_m/tz_ns.h>
 

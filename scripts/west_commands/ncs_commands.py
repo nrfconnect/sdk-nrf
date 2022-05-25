@@ -16,7 +16,15 @@ from west import log
 from west.commands import WestCommand
 from west.manifest import Manifest, MalformedManifest, ImportFlag, \
     MANIFEST_PROJECT_INDEX
+from west.version import __version__ as west_version
 import yaml
+
+try:
+    from packaging import version
+except ImportError:
+    sys.exit("Can't import extra dependencies needed for NCS west extensions.\n"
+             "Please install packages in nrf/scripts/requirements-extra.txt "
+             "with pip3.")
 
 import ncs_west_helpers as nwh
 
@@ -24,6 +32,8 @@ import ncs_west_helpers as nwh
 sys.path.append(os.fspath(Path(__file__).parent.parent))
 
 from pygit2_helpers import commit_affects_files, commit_shortlog
+
+WEST_V0_13_0_OR_LATER = version.parse(west_version) >= version.parse('0.13.0')
 
 def add_zephyr_rev_arg(parser):
     parser.add_argument('-z', '--zephyr-rev', metavar='REF',
@@ -121,9 +131,11 @@ class NcsWestCommand(WestCommand):
         self.ncs_pmap = {p.name: p for p in projects}
 
     def zephyr_manifest(self):
-        # load the upstream manifest. the west.manifest APIs guarantee
-        # in this case that its project hierarchy is rooted in the NCS
-        # directory.
+        # Load the upstream manifest. Since west v0.13, the resulting
+        # projects have no absolute paths, so we'll fix those up so
+        # they're relative to our own topdir. (We can't use
+        # Manifest.from_file() in this case because self.zephyr_rev is
+        # not what's checked out on the file system).
 
         z_project = self.manifest.get_projects(['zephyr'],
                                                allow_paths=False,
@@ -132,9 +144,12 @@ class NcsWestCommand(WestCommand):
                            capture_stdout=True, check=True)
         z_west_yml = cp.stdout.decode('utf-8')
         try:
-            return Manifest.from_data(source_data=yaml.safe_load(z_west_yml),
-                                      import_flags=ImportFlag.IGNORE,
-                                      topdir=self.topdir)
+            ret = Manifest.from_data(source_data=yaml.safe_load(z_west_yml),
+                                     import_flags=ImportFlag.IGNORE)
+            if WEST_V0_13_0_OR_LATER:
+                for project in ret.projects:
+                    project.topdir = self.manifest.topdir
+            return ret
         except MalformedManifest:
             log.die(f"can't load zephyr manifest; file {z_west_yml} "
                     "is malformed")

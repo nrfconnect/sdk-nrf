@@ -4,20 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #if defined(CONFIG_POSIX_API)
-#include <posix/poll.h>
+#include <zephyr/posix/poll.h>
 #else
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #endif
 #include <net/cloud.h>
 #include <net/nrf_cloud.h>
-#include <net/mqtt.h>
+#include <zephyr/net/mqtt.h>
 #include "nrf_cloud_codec.h"
 #include "nrf_cloud_fsm.h"
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_fota.h"
 #include "nrf_cloud_mem.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(nrf_cloud, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
@@ -358,7 +358,7 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 			.opcode = NCT_CC_OPCODE_UPDATE_REQ,
 			.data.ptr = msg->data.ptr,
 			.data.len = msg->data.len,
-			.message_id = NCT_MSG_ID_USE_NEXT_INCREMENT
+			.message_id = (msg->id > 0) ? msg->id : NCT_MSG_ID_USE_NEXT_INCREMENT
 		};
 
 		err = nct_cc_send(&shadow_data);
@@ -376,7 +376,7 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 		const struct nct_dc_data buf = {
 			.data.ptr = msg->data.ptr,
 			.data.len = msg->data.len,
-			.message_id = NCT_MSG_ID_USE_NEXT_INCREMENT
+			.message_id = (msg->id > 0) ? msg->id : NCT_MSG_ID_USE_NEXT_INCREMENT
 		};
 
 		if (msg->qos == MQTT_QOS_0_AT_MOST_ONCE) {
@@ -398,7 +398,7 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 		const struct nct_dc_data buf = {
 			.data.ptr = msg->data.ptr,
 			.data.len = msg->data.len,
-			.message_id = NCT_MSG_ID_USE_NEXT_INCREMENT
+			.message_id = (msg->id > 0) ? msg->id : NCT_MSG_ID_USE_NEXT_INCREMENT
 		};
 
 		err = nct_dc_bulk_send(&buf, msg->qos);

@@ -8,19 +8,17 @@ Secure Partition Manager
    :depth: 2
 
 The Secure Partition Manager sample provides a reference use of the System Protection Unit peripheral.
-This firmware is required to set up an nRF device with Trusted Execution (|trusted_execution|) so that it can run user applications in the non-secure domain.
+This firmware sets up an nRF device with Trusted Execution (|trusted_execution|) so that it can run user applications in the non-secure domain.
 
 .. note::
-   An alternative for using the SPM is Trusted Firmware-M (TF-M). See :ref:`ug_tfm`.
+   SPM is an alternative for using the Trusted Firmware-M (TF-M). See :ref:`ug_tfm`.
 
 Requirements
 ************
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp, nrf9160dk_nrf9160
+.. table-from-sample-yaml::
 
 Overview
 ********
@@ -53,8 +51,8 @@ Requirements for the application firmware
 
 * The application firmware must be built as a non-secure firmware for the build target (for example, ``nrf9160dk_nrf9160_ns`` for the nRF9160 DK).
 
-Automatic building of SPM
-=========================
+Automatic building of SPM when SPM is enabled
+=============================================
 
 The sample is automatically built by the non-secure applications when the non-secure build target is used (for example, ``nrf9160dk_nrf9160_ns``).
 However, it is not a part of the non-secure application.
@@ -73,7 +71,7 @@ Building and running
 .. include:: /includes/build_and_run.txt
 
 The sample is built as a secure firmware image for the ``nrf9160dk_nrf9160`` and ``nrf5340dk_nrf5340`` build targets.
-See `Automatic building of SPM`_ if you want to program it independently from the non-secure application firmware.
+See `Automatic building of SPM when SPM is enabled`_ if you want to program it independently from the non-secure application firmware.
 
 Testing
 =======

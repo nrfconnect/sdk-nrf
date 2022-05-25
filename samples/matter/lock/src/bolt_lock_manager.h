@@ -6,38 +6,50 @@
 
 #pragma once
 
+#include <app-common/zap-generated/enums.h>
+#include <lib/core/ClusterEnums.h>
+
+#include <zephyr/kernel.h>
+
 #include <cstdint>
 
-#include "app_event.h"
-
-struct k_timer;
+class AppEvent;
 
 class BoltLockManager {
 public:
-	enum class Action : uint8_t { Lock, Unlock };
+	enum class State : uint8_t {
+		kLockingInitiated = 0,
+		kLockingCompleted,
+		kUnlockingInitiated,
+		kUnlockingCompleted,
+	};
 
-	void Init();
+	using OperationSource = chip::app::Clusters::DoorLock::DlOperationSource;
+	using StateChangeCallback = void (*)(State, OperationSource);
 
-	bool IsUnlocked();
-	bool IsActionInProgress();
+	static constexpr uint32_t kActuatorMovementTimeMs = 2000;
 
-	bool InitiateAction(Action action, bool chipInitiated);
-	bool CompleteCurrentAction(bool &chipInitiated);
+	void Init(StateChangeCallback callback);
+
+	State GetState() const { return mState; }
+	bool IsLocked() const { return mState == State::kLockingCompleted; }
+
+	void Lock(OperationSource source);
+	void Unlock(OperationSource source);
 
 private:
-	enum class State : uint8_t { LockingInitiated = 0, LockingCompleted, UnlockingInitiated, UnlockingCompleted };
+	friend class AppTask;
 
-	static constexpr uint32_t kActuatorMovementPeriodMs = 2000;
+	void SetState(State state, OperationSource source);
+	void CompleteLockAction();
 
-	void StartTimer(uint32_t aTimeoutMs);
-	void CancelTimer();
-
-	static void ActuatorTimerHandler(k_timer *timer);
-
+	static void ActuatorTimerEventHandler(k_timer *timer);
 	friend BoltLockManager &BoltLockMgr();
 
-	State mState;
-	bool mChipInitiatedAction;
+	State mState = State::kLockingCompleted;
+	StateChangeCallback mStateChangeCallback = nullptr;
+	OperationSource mActuatorOperationSource = OperationSource::kButton;
+	k_timer mActuatorTimer = {};
 
 	static BoltLockManager sLock;
 };

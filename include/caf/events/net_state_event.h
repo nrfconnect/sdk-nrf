@@ -13,8 +13,8 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,12 +32,12 @@ enum net_state {
 
 /** @brief NET state event. */
 struct net_state_event {
-	struct event_header header;
+	struct app_event_header header;
 
 	enum net_state state;
 	const void *id;
 };
-EVENT_TYPE_DECLARE(net_state_event);
+APP_EVENT_TYPE_DECLARE(net_state_event);
 
 
 #ifdef __cplusplus

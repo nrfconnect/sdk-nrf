@@ -88,7 +88,7 @@ Module internals
 ****************
 
 The modem module has an internal thread with a message queue for processing.
-When an event is received in the :ref:`event_manager` handler, the event is converted to a message and put into the module's queue for processing in thread context.
+When an event is received in the :ref:`app_event_manager` handler, the event is converted to a message and put into the module's queue for processing in thread context.
 This gives the module the flexibility to call functions that might take some time to complete.
 
 Module states
@@ -104,7 +104,7 @@ The modem module has an internal state machine with the following states:
   * ``STATE_CONNECTED`` - The device is connected to an LTE network.
   * ``STATE_SHUTDOWN`` - The module has been shut down after receiving a request from the utility module.
 
-State transitions take place based on input from other modules through the event manager handler and the LTE link controller handler.
+State transitions take place based on input from other modules through the Application Event Manager handler and the LTE link controller handler.
 
 Configuration options
 *********************
@@ -148,7 +148,7 @@ Dependencies
 
 The module uses the following |NCS| libraries:
 
-* :ref:`event_manager`
+* :ref:`app_event_manager`
 * :ref:`lte_lc_readme`
 * :ref:`modem_info_readme`
 

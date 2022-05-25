@@ -25,7 +25,7 @@ Given the nature of the dynamic multiprotocol solution, take into account the fo
 * Any kind of application or Thread/Zigbee stack logic can be interrupted by the Bluetooth LE activity.
   This is the primary difference between a Thread/Zigbee-only application and a multiprotocol one.
   As a result, it is acceptable that the node can sometimes miss a frame and not respond with a MAC-level acknowledgment.
-* Bluetooth LE scanning requires a lot of time to process Bluetooth LE traffic and thus blocks 802.15.4 traffic.
+* Bluetooth® LE scanning requires a lot of time to process Bluetooth LE traffic and thus blocks 802.15.4 traffic.
   When the scanning is used, it is recommended to use the Sleepy End Device role for Thread or Zigbee applications.
 * Be aware that flash operations require more time to complete.
   A flash operation may be performed only in a free timeslot, so it has to wait until the current timeslot finishes (it may be a 802.15.4 timeslot or a Bluetooth LE one).
@@ -37,12 +37,12 @@ Given the nature of the dynamic multiprotocol solution, take into account the fo
 
   In this formula:
 
-  * ``smallest_timeslot_time`` is the smallest timeslot that the radio requests. In the default configuration, it equals 6.4 ms.
+  * ``smallest_timeslot_time`` is the smallest timeslot that the radio requests. In the default configuration, it is 6.4 ms.
   * ``op_flash_write_time`` is the time required to perform a flash operation.
-  * ``n_of_frames`` is the number of flash operations to be performed in a sequence.
+  * ``n_of_flash_ops`` is the number of flash operations to be performed in a sequence.
 
 * The Zigbee stack has a limited TX queue.
   This queue can get full in case of heavy application traffic and Bluetooth LE activity.
   The application logic must take this into account by providing a callback for all crucial transmissions and handle the ``MAC_TRANSACTION_OVERFLOW (== 241)`` status code.
-* The most time-critical part of the Zigbee stack operation is the BDB commissioning process.
+* The most time-critical part of the Zigbee stack operation is the Base Device Behavior (BDB) commissioning process.
   Postpone time-consuming operations until the ``ZB_BDB_SIGNAL_DEVICE_FIRST_START`` or ``ZB_BDB_SIGNAL_DEVICE_REBOOT`` signal is received.

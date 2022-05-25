@@ -7,7 +7,7 @@
 #ifndef DM_IO_H_
 #define DM_IO_H_
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdlib.h>
 #include <zephyr/types.h>
 

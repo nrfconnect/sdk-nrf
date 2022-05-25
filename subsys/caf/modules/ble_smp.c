@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <mgmt/mcumgr/smp_bt.h>
+#define MODULE smp
+#include <caf/events/module_state_event.h>
+#include <caf/events/ble_smp_event.h>
+
+#include <zephyr/mgmt/mcumgr/smp_bt.h>
 #include <img_mgmt/img_mgmt.h>
 #ifdef CONFIG_MCUMGR_CMD_OS_MGMT
 #include <os_mgmt/os_mgmt.h>
 #endif
 
-#define MODULE smp
-#include <caf/events/module_state_event.h>
-#include <caf/events/ble_smp_event.h>
-
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BLE_SMP_LOG_LEVEL);
 
 
@@ -22,7 +22,7 @@ static void submit_smp_transfer_event(void)
 {
 	struct ble_smp_transfer_event *event = new_ble_smp_transfer_event();
 
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static int upload_confirm(uint32_t offset, uint32_t size, void *arg)
@@ -32,10 +32,10 @@ static int upload_confirm(uint32_t offset, uint32_t size, void *arg)
 	return 0;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			img_mgmt_set_upload_cb(upload_confirm, NULL);
@@ -68,5 +68,5 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);

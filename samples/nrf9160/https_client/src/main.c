@@ -5,11 +5,11 @@
  */
 
 #include <string.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdlib.h>
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #include <modem/nrf_modem_lib.h>
-#include <net/tls_credentials.h>
+#include <zephyr/net/tls_credentials.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_key_mgmt.h>
 

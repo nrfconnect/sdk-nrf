@@ -16,3 +16,12 @@ tests:
             - nrf9160dk_nrf9160_ns
             - nrf9160dk_nrf9160
             - nrf52840dk_nrf52840
+    # Build integration regression protection.
+    integration.nrf_security.sha256:
+        build_only: True
+        extra_args: CONFIG_BOOTLOADER_MCUBOOT=y
+        platform_allow: nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840 nrf52833dk_nrf52833
+        integration_platforms:
+            - nrf5340dk_nrf5340_cpuapp_ns
+            - nrf52840dk_nrf52840
+            - nrf52833dk_nrf52833

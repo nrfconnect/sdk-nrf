@@ -9,7 +9,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 
 #include <modem/at_cmd_parser.h>

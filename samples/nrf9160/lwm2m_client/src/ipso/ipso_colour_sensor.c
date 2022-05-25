@@ -8,14 +8,14 @@
  * https://raw.githubusercontent.com/OpenMobileAlliance/lwm2m-registry/prod/version_history/3335-1_0.xml
  */
 
-#include <zephyr.h>
-#include <init.h>
+#include <zephyr/kernel.h>
+#include <zephyr/init.h>
 
 #include <lwm2m_object.h>
 #include <lwm2m_engine.h>
 #include <lwm2m_resource_ids.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(app_ipso_colour_sensor, CONFIG_LWM2M_LOG_LEVEL);
 
 #define IPSO_OBJECT_COLOUR_ID 3335

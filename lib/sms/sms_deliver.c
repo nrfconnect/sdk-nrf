@@ -6,9 +6,9 @@
 
 #include <string.h>
 #include <stdio.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <modem/sms.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include "sms_deliver.h"
 #include "sms_internal.h"
@@ -354,7 +354,7 @@ static int decode_pdu_scts_field(struct parser *parser, uint8_t *buf)
 	 *   (bit 3 of the seventh octet of the TP Service Centre Time Stamp field) represents
 	 *   the algebraic sign of this difference (0: positive, 1: negative)."
 	 */
-	tmp_tz = ((*buf & 0xf7) * 15) / 60;
+	tmp_tz = semioctet_to_dec(*buf & 0xf7);
 
 	if (*buf & 0x08) {
 		tmp_tz = -(tmp_tz);

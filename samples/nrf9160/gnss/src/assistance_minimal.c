@@ -6,10 +6,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <zephyr.h>
-#include <sys/timeutil.h>
-#include <settings/settings.h>
-#include <logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/timeutil.h>
+#include <zephyr/settings/settings.h>
+#include <zephyr/logging/log.h>
 #include <nrf_modem_at.h>
 #include <nrf_modem_gnss.h>
 

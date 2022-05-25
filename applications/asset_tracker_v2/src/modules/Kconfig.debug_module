@@ -9,14 +9,29 @@ menuconfig DEBUG_MODULE
 
 if DEBUG_MODULE && MEMFAULT
 
+config DEBUG_MODULE_MEMFAULT_CHUNK_SIZE_MAX
+	int "Fragment size of data transmitted to memfault"
+	default 2048
+	help
+	  Decreasing this value, will in case of a core-dump, produce more events carrying
+	  Memfault data to the cloud module. This increases the possibility of an overfilled
+	  cloud module message queue depending on how fast the cloud module thread can handle
+	  incoming queue messages. An overfilled message queue is in general considered a fatal
+	  error that can cause undefined behaviour. To reduce the likelihood of this issue
+	  occurring, this value should be kept reasonably high, within the modem firmware's
+	  documented limitations.
+
 config DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT
 	bool "Use external transport when sending memfault data"
+	default y if AWS_IOT
 	help
 	  If enabled, the debug module will forward captured Memfault data via events of type
 	  DEBUG_EVT_MEMFAULT_DATA_READY. The data will be forwarded via the configured cloud
 	  to Memfault. If this option is disabled, the debug module will use Memfault firwmare SDKs
 	  own internal HTTP transport. Transporting Memfault data over an already pre-established
 	  transport can save data associated with maintaining multiple connections.
+	  The AWS IoT configuration of the application is the only implementation that currently
+	  supports this option.
 
 config DEBUG_MODULE_MEMFAULT_HEARTBEAT_INTERVAL_SEC
 	int "Memfault heartbeat interval in seconds"
@@ -36,20 +51,11 @@ config DEBUG_MODULE_MEMFAULT_WATCHDOG_DELTA_MS
 
 config DEBUG_MODULE_MEMFAULT_THREAD_STACK_SIZE
 	int "Debug module Memfault thread stack size"
-	default 1152
+	default 4096
 
-config DEBUG_MODULE_MEMFAULT_CHUNK_SIZE_MAX
-	int "Fragment size of data transmitted to memfault"
-	default 2048 if DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT
-	default 80
-	help
-	  Decreasing this value, will in case of a core-dump, produce more events carrying
-	  Memfault data to the cloud module. This increases the possibility of an overfilled
-	  cloud module message queue depending on how fast the cloud module thread can handle
-	  incoming queue messages. An overfilled message queue is in general considered a fatal
-	  error that can cause undefined behaviour. To reduce the likelyhood of this issue
-	  occurring, this value should be kept reasonably high, wihin the modem firmware's
-	  documented limitations.
+config DEBUG_MODULE_MEMFAULT_UPDATES_MIN_INTERVAL_SEC
+	int "Minimum time between Memfault metric updates, in seconds"
+	default 900
 
 endif # DEBUG_MODULE && MEMFAULT
 

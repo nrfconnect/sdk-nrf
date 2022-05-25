@@ -16,7 +16,7 @@
 #ifndef FTP_CLIENT_
 #define FTP_CLIENT_
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 
 #ifdef __cplusplus

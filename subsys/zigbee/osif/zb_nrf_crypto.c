@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <sys/__assert.h>
-#include <random/rand32.h>
+#include <zephyr/sys/__assert.h>
+#include <zephyr/random/rand32.h>
 #include <zboss_api.h>
 #if CONFIG_CRYPTO_NRF_ECB
-#include <crypto/crypto.h>
+#include <zephyr/crypto/crypto.h>
 #elif CONFIG_BT_CTLR
-#include <bluetooth/crypto.h>
+#include <zephyr/bluetooth/crypto.h>
 #elif CONFIG_ZIGBEE_USE_SOFTWARE_AES
-#include <tinycrypt/aes.h>
-#include <tinycrypt/constants.h>
+#include <ocrypto_aes_ecb.h>
+#include <ocrypto_aes_key.h>
 #else
 #error No crypto suite for Zigbee stack has been selected
 #endif
@@ -22,10 +22,6 @@
 
 #define ECB_AES_KEY_SIZE   16
 #define ECB_AES_BLOCK_SIZE 16
-
-#if !defined(CONFIG_ENTROPY_HAS_DRIVER)
-#error Entropy driver required for secure random number support
-#endif
 
 #if CONFIG_CRYPTO_NRF_ECB
 static const struct device *dev;
@@ -74,14 +70,7 @@ static void encrypt_aes(zb_uint8_t *key, zb_uint8_t *msg, zb_uint8_t *c)
 #elif CONFIG_ZIGBEE_USE_SOFTWARE_AES
 static void encrypt_aes(zb_uint8_t *key, zb_uint8_t *msg, zb_uint8_t *c)
 {
-	int err;
-	struct tc_aes_key_sched_struct s;
-
-	err = tc_aes128_set_encrypt_key(&s, key);
-	__ASSERT(err == TC_CRYPTO_SUCCESS, "Key set failed");
-
-	err = tc_aes_encrypt(c, msg, &s);
-	__ASSERT(err == TC_CRYPTO_SUCCESS, "Encryption failed");
+	ocrypto_aes_ecb_encrypt(c, msg, ocrypto_aes128_KEY_BYTES, key, ocrypto_aes128_KEY_BYTES);
 }
 #endif
 
@@ -94,7 +83,13 @@ zb_uint32_t zb_random_seed(void)
 	zb_uint32_t rnd_val = 0;
 	int err_code;
 
+#if defined(CONFIG_ENTROPY_HAS_DRIVER)
 	err_code = sys_csrand_get(&rnd_val, sizeof(rnd_val));
+#else
+#warning Entropy driver required to generate cryptographically secure random numbers
+	sys_rand_get(&rnd_val, sizeof(rnd_val));
+	err_code = 0;
+#endif /* CONFIG_ENTROPY_HAS_DRIVER */
 	__ASSERT_NO_MSG(err_code == 0);
 	return rnd_val;
 }

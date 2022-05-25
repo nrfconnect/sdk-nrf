@@ -12,7 +12,6 @@ config UI_LED
 config UI_BUZZER
 	bool
 	select PWM
-	select PWM_1
 	help
 	  If enabled, a buzzer will be controllable with PWM.
 
@@ -25,7 +24,7 @@ config UI_INPUT
 
 
 config UI_SENSE_LED
-	bool
+	bool "UI Sense LED module"
 	help
 	  Enables the sense LEDs available on the Thingy:91.
 

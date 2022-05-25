@@ -3,9 +3,9 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #include <errno.h>
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 #include <nfc/t4t/apdu.h>
 
 LOG_MODULE_REGISTER(nfc_t4t_apdu, CONFIG_NFC_T4T_APDU_LOG_LEVEL);

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <sys/byteorder.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/byteorder.h>
 
 #include "config_channel_transport.h"
 #include "hid_report_desc.h"
@@ -14,7 +14,7 @@
 #define TRANSPORT_HEADER_SIZE		4
 #define CONFIG_STATUS_POS		2
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_LOG_LEVEL);
 
 static int frame_length_check(size_t length)
@@ -221,13 +221,13 @@ int config_channel_transport_set(struct config_channel_transport *transport,
 
 	if (err < 0) {
 		LOG_WRN("Received improper frame");
-		event_manager_free(event);
+		app_event_manager_free(event);
 		return -EINVAL;
 	}
 
 	event->transport_id = transport->transport_id;
 	event->is_request = true;
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 
 	BUILD_ASSERT(CONFIG_DESKTOP_CONFIG_CHANNEL_TIMEOUT > 0, "");
 	k_work_reschedule(&transport->timeout, K_SECONDS(CONFIG_DESKTOP_CONFIG_CHANNEL_TIMEOUT));

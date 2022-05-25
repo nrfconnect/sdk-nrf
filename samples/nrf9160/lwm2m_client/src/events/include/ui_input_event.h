@@ -7,9 +7,9 @@
 #ifndef UI_INPUT_EVENT_H__
 #define UI_INPUT_EVENT_H__
 
-#include <zephyr.h>
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <zephyr/kernel.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,14 +21,14 @@ enum ui_input_type {
 };
 
 struct ui_input_event {
-	struct event_header header;
+	struct app_event_header header;
 
 	enum ui_input_type type;
 	uint8_t device_number;
 	bool state;
 };
 
-EVENT_TYPE_DECLARE(ui_input_event);
+APP_EVENT_TYPE_DECLARE(ui_input_event);
 
 #ifdef __cplusplus
 }

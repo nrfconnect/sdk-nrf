@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <bluetooth/hci.h>
-#include <bluetooth/hci_err.h>
-#include <bluetooth/buf.h>
-#include <sys/byteorder.h>
+#include <zephyr/bluetooth/hci.h>
+#include <zephyr/bluetooth/hci_err.h>
+#include <zephyr/bluetooth/buf.h>
+#include <zephyr/sys/byteorder.h>
 #include <sdc_hci.h>
 #include <sdc_hci_cmd_controller_baseband.h>
 #include <sdc_hci_cmd_info_params.h>
@@ -233,10 +233,10 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_create_connection_cancel = 1;
 #endif
 
-	cmds->hci_le_read_white_list_size = 1;
-	cmds->hci_le_clear_white_list = 1;
-	cmds->hci_le_add_device_to_white_list = 1;
-	cmds->hci_le_remove_device_from_white_list = 1;
+	cmds->hci_le_read_filter_accept_list_size = 1;
+	cmds->hci_le_clear_filter_accept_list = 1;
+	cmds->hci_le_add_device_to_filter_accept_list = 1;
+	cmds->hci_le_remove_device_from_filter_accept_list = 1;
 
 #if defined(CONFIG_BT_CENTRAL)
 	cmds->hci_le_connection_update = 1;
@@ -350,6 +350,17 @@ static void supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_set_privacy_mode = 1;
 #endif
 
+#if defined(CONFIG_BT_CTLR_DF_ADV_CTE_TX)
+	/* NOTE: The DTM commands are *not* supported by the SoftDevice
+	 * controller. See doc/nrf/known_issues.rst.
+	 */
+	cmds->hci_le_transmitter_test_v3 = 1;
+
+	cmds->hci_le_set_connectionless_cte_transmit_parameters = 1;
+	cmds->hci_le_set_connectionless_cte_transmit_enable = 1;
+	cmds->hci_le_read_antenna_information = 1;
+#endif
+
 #if (defined(CONFIG_BT_HCI_RAW) && defined(CONFIG_BT_TINYCRYPT_ECC)) || defined(CONFIG_BT_CTLR_ECDH)
 	cmds->hci_le_read_local_p256_public_key = 1;
 	cmds->hci_le_generate_dhkey_v1 = 1;
@@ -405,6 +416,7 @@ static void le_supported_features(sdc_hci_le_le_features_t *features)
 
 	features->le_encryption = 1;
 	features->extended_reject_indication = 1;
+	features->slave_initiated_features_exchange = 1;
 	features->le_ping = 1;
 
 #ifdef CONFIG_BT_CTLR_DATA_LENGTH
@@ -435,7 +447,15 @@ static void le_supported_features(sdc_hci_le_le_features_t *features)
 	features->le_periodic_advertising = 1;
 #endif
 
+#if defined(CONFIG_BT_CTLR_DF_ADV_CTE_TX)
+	features->connectionless_cte_transmitter = 1;
+#endif
+
 	features->channel_selection_algorithm_2 = 1;
+
+#if defined(CONFIG_BT_CTLR_ADV_PERIODIC_ADI_SUPPORT)
+	features->periodic_advertising_adi_support = 1;
+#endif
 }
 
 static void le_read_supported_states(uint8_t *buf)
@@ -676,18 +696,18 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_le_create_conn_cancel();
 #endif
 
-	case SDC_HCI_OPCODE_CMD_LE_READ_WHITE_LIST_SIZE:
-		*param_length_out += sizeof(sdc_hci_cmd_le_read_white_list_size_return_t);
-		return sdc_hci_cmd_le_read_white_list_size((void *)event_out_params);
+	case SDC_HCI_OPCODE_CMD_LE_READ_FILTER_ACCEPT_LIST_SIZE:
+		*param_length_out += sizeof(sdc_hci_cmd_le_read_filter_accept_list_size_return_t);
+		return sdc_hci_cmd_le_read_filter_accept_list_size((void *)event_out_params);
 
-	case SDC_HCI_OPCODE_CMD_LE_CLEAR_WHITE_LIST:
-		return sdc_hci_cmd_le_clear_white_list();
+	case SDC_HCI_OPCODE_CMD_LE_CLEAR_FILTER_ACCEPT_LIST:
+		return sdc_hci_cmd_le_clear_filter_accept_list();
 
-	case SDC_HCI_OPCODE_CMD_LE_ADD_DEVICE_TO_WHITE_LIST:
-		return sdc_hci_cmd_le_add_device_to_white_list((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_LE_ADD_DEVICE_TO_FILTER_ACCEPT_LIST:
+		return sdc_hci_cmd_le_add_device_to_filter_accept_list((void *)cmd_params);
 
-	case SDC_HCI_OPCODE_CMD_LE_REMOVE_DEVICE_FROM_WHITE_LIST:
-		return sdc_hci_cmd_le_remove_device_from_white_list((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_LE_REMOVE_DEVICE_FROM_FILTER_ACCEPT_LIST:
+		return sdc_hci_cmd_le_remove_device_from_filter_accept_list((void *)cmd_params);
 
 #if defined(CONFIG_BT_CENTRAL)
 	case SDC_HCI_OPCODE_CMD_LE_CONN_UPDATE:
@@ -903,6 +923,18 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_le_set_periodic_adv_receive_enable((void *)cmd_params);
 #endif
 
+#if defined(CONFIG_BT_CTLR_DF_ADV_CTE_TX)
+	case SDC_HCI_OPCODE_CMD_LE_SET_CONNLESS_CTE_TRANSMIT_PARAMS:
+		return sdc_hci_cmd_le_set_connless_cte_transmit_params((void *)cmd_params);
+
+	case SDC_HCI_OPCODE_CMD_LE_SET_CONNLESS_CTE_TRANSMIT_ENABLE:
+		return sdc_hci_cmd_le_set_connless_cte_transmit_enable((void *)cmd_params);
+
+	case SDC_HCI_OPCODE_CMD_LE_READ_ANTENNA_INFORMATION:
+		*param_length_out += sizeof(sdc_hci_cmd_le_read_antenna_information_return_t);
+		return sdc_hci_cmd_le_read_antenna_information((void *)event_out_params);
+#endif
+
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;
 	}
@@ -964,6 +996,12 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_vs_qos_conn_event_report_enable((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_VS_EVENT_LENGTH_SET:
 		return sdc_hci_cmd_vs_event_length_set((void *)cmd_params);
+#ifdef CONFIG_MPSL_CX_BT_3WIRE
+	case SDC_HCI_OPCODE_CMD_VS_COEX_PRIORITY_CONFIG:
+		return sdc_hci_cmd_vs_coex_priority_config((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_VS_COEX_SCAN_MODE_CONFIG:
+		return sdc_hci_cmd_vs_coex_scan_mode_config((void *)cmd_params);
+#endif	/* CONFIG_MPSL_CX_BT_3WIRE */
 
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;

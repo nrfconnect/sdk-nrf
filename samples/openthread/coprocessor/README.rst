@@ -27,9 +27,7 @@ Requirements
 
 The sample supports the following development kits for testing the network status:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52840dongle_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
+.. table-from-sample-yaml::
 
 To test the sample, you need at least one development kit.
 You can use additional development kits programmed with the Co-processor sample for testing network joining.
@@ -59,12 +57,6 @@ Moreover, using the Spinel logging backend (by setting :kconfig:option:`CONFIG_L
 By default, the log levels for all modules are set to critical to not engage the microprocessor in unnecessary activities.
 To make the solution flexible, you can change independently the log levels for your modules, for the whole Zephyr system, and for OpenThread.
 Use the :file:`overlay-logging.conf` overlay file as reference for this purpose.
-
-FEM support
-===========
-
-.. include:: /includes/sample_fem_support.txt
-
 
 User interface
 **************
@@ -109,6 +101,11 @@ The following configuration files are available:
   This file enables the RCP architecture with basic functionality and optimizes stacks and buffer sizes.
   For more information, see :ref:`app_memory`.
 * :file:`overlay-usb.conf` - Enables emulating a serial port over USB for Spinel communication with the host. Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to :file:`usb.overlay`.
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
 
 Building and running
 ********************

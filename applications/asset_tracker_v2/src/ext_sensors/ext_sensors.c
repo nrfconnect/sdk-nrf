@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <string.h>
-#include <drivers/sensor.h>
+#include <zephyr/drivers/sensor.h>
 #include <stdlib.h>
 
 #if defined(CONFIG_EXTERNAL_SENSORS_BME680_BSEC)
@@ -16,7 +16,7 @@
 
 #include "ext_sensors.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ext_sensors, CONFIG_EXTERNAL_SENSORS_LOG_LEVEL);
 
 /* Convert to s/m2 depending on the maximum measured range used for adxl362. */

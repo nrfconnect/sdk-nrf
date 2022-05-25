@@ -7,7 +7,7 @@
 #ifndef MULTICELL_LOCATION_H_
 #define MULTICELL_LOCATION_H_
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <modem/lte_lc.h>
 
 #ifdef __cplusplus
@@ -37,8 +37,6 @@ enum multicell_service {
 	MULTICELL_SERVICE_NRF_CLOUD,
 	/** Here location service. */
 	MULTICELL_SERVICE_HERE,
-	/** Skyhook location service. */
-	MULTICELL_SERVICE_SKYHOOK,
 	/** Polte location service. */
 	MULTICELL_SERVICE_POLTE
 };

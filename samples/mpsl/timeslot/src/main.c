@@ -4,16 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <kernel.h>
-#include <console/console.h>
+#include <zephyr/kernel.h>
+#include <zephyr/console/console.h>
 #include <string.h>
-#include <sys/printk.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/sys/ring_buffer.h>
 #include <zephyr/types.h>
-#include <irq.h>
+#include <zephyr/irq.h>
+#include <zephyr/logging/log.h>
 
 #include <mpsl_timeslot.h>
 #include <mpsl.h>
 #include <hal/nrf_timer.h>
+
+LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
 
 #define TIMESLOT_REQUEST_DISTANCE_US (1000000)
 #define TIMESLOT_LENGTH_US           (200)
@@ -50,19 +54,50 @@ static mpsl_timeslot_request_t timeslot_request_normal = {
 
 static mpsl_timeslot_signal_return_param_t signal_callback_return_param;
 
-/* Message queue for printing the signal type from timeslot callback */
-K_MSGQ_DEFINE(callback_msgq, sizeof(uint32_t), 10, 4);
+/* Two ring buffers for printing the signal type with different priority from timeslot callback */
+RING_BUF_DECLARE(callback_high_priority_ring_buf, 10);
+RING_BUF_DECLARE(callback_low_priority_ring_buf, 10);
 
 /* Message queue for requesting MPSL API calls to non-preemptible thread */
 K_MSGQ_DEFINE(mpsl_api_msgq, sizeof(enum mpsl_timeslot_call), 10, 4);
 
-static void error(void)
+ISR_DIRECT_DECLARE(swi1_isr)
 {
-	printk("ERROR!\n");
-	while (true) {
-		/* Spin for ever */
-		k_sleep(K_MSEC(1000));
+	uint8_t signal_type = 0;
+
+	while (!ring_buf_is_empty(&callback_high_priority_ring_buf)) {
+		if (ring_buf_get(&callback_high_priority_ring_buf, &signal_type, 1) == 1) {
+			switch (signal_type) {
+			case MPSL_TIMESLOT_SIGNAL_START:
+				LOG_INF("Callback: Timeslot start\n");
+				break;
+			case MPSL_TIMESLOT_SIGNAL_TIMER0:
+				LOG_INF("Callback: Timer0 signal\n");
+				break;
+			default:
+				LOG_INF("Callback: Other signal: %d\n", signal_type);
+				break;
+			}
+		}
 	}
+
+	while (!ring_buf_is_empty(&callback_low_priority_ring_buf)) {
+		if (ring_buf_get(&callback_low_priority_ring_buf, &signal_type, 1) == 1) {
+			switch (signal_type) {
+			case MPSL_TIMESLOT_SIGNAL_SESSION_IDLE:
+				LOG_INF("Callback: Session idle\n");
+				break;
+			case MPSL_TIMESLOT_SIGNAL_SESSION_CLOSED:
+				LOG_INF("Callback: Session closed\n");
+				break;
+			default:
+				LOG_INF("Callback: Other signal: %d\n", signal_type);
+				break;
+			}
+		}
+	}
+
+	return 1;
 }
 
 static mpsl_timeslot_signal_return_param_t *mpsl_timeslot_callback(
@@ -70,6 +105,8 @@ static mpsl_timeslot_signal_return_param_t *mpsl_timeslot_callback(
 	uint32_t signal_type)
 {
 	(void) session_id; /* unused parameter */
+	uint8_t input_data = (uint8_t)signal_type;
+	uint32_t input_data_len;
 
 	mpsl_timeslot_signal_return_param_t *p_ret_val = NULL;
 
@@ -87,7 +124,11 @@ static mpsl_timeslot_signal_return_param_t *mpsl_timeslot_callback(
 		nrf_timer_cc_set(NRF_TIMER0, NRF_TIMER_CC_CHANNEL0,
 			TIMER_EXPIRY_US);
 		nrf_timer_int_enable(NRF_TIMER0, NRF_TIMER_INT_COMPARE0_MASK);
-
+		input_data_len = ring_buf_put(&callback_high_priority_ring_buf, &input_data, 1);
+		if (input_data_len != 1) {
+			LOG_ERR("Full ring buffer, enqueue data with length %d", input_data_len);
+			k_oops();
+		}
 		break;
 	case MPSL_TIMESLOT_SIGNAL_TIMER0:
 
@@ -108,24 +149,37 @@ static mpsl_timeslot_signal_return_param_t *mpsl_timeslot_callback(
 		}
 
 		p_ret_val = &signal_callback_return_param;
-
+		input_data_len = ring_buf_put(&callback_high_priority_ring_buf, &input_data, 1);
+		if (input_data_len != 1) {
+			LOG_ERR("Full ring buffer, enqueue data with length %d", input_data_len);
+			k_oops();
+		}
 		break;
 	case MPSL_TIMESLOT_SIGNAL_SESSION_IDLE:
+		input_data_len = ring_buf_put(&callback_low_priority_ring_buf, &input_data, 1);
+		if (input_data_len != 1) {
+			LOG_ERR("Full ring buffer, enqueue data with length %d", input_data_len);
+			k_oops();
+		}
 		break;
 	case MPSL_TIMESLOT_SIGNAL_SESSION_CLOSED:
+		input_data_len = ring_buf_put(&callback_low_priority_ring_buf, &input_data, 1);
+		if (input_data_len != 1) {
+			LOG_ERR("Full ring buffer, enqueue data with length %d", input_data_len);
+			k_oops();
+		}
 		break;
 	default:
-		printk("unexpected signal: %u", signal_type);
-		error();
+		LOG_ERR("unexpected signal: %u", signal_type);
+		k_oops();
 		break;
 	}
 
-	/* Put callback info in the message queue. */
-	int err = k_msgq_put(&callback_msgq, &signal_type, K_NO_WAIT);
-
-	if (err) {
-		error();
-	}
+#if defined(CONFIG_SOC_SERIES_NRF53X)
+	NVIC_SetPendingIRQ(SWI1_IRQn);
+#elif defined(CONFIG_SOC_SERIES_NRF52X)
+	NVIC_SetPendingIRQ(SWI1_EGU1_IRQn);
+#endif
 
 	return p_ret_val;
 }
@@ -154,13 +208,15 @@ static void mpsl_timeslot_demo(void)
 	api_call = OPEN_SESSION;
 	err = k_msgq_put(&mpsl_api_msgq, &api_call, K_FOREVER);
 	if (err) {
-		error();
+		LOG_ERR("Message sent error: %d", err);
+		k_oops();
 	}
 
 	api_call = MAKE_REQUEST;
 	err = k_msgq_put(&mpsl_api_msgq, &api_call, K_FOREVER);
 	if (err) {
-		error();
+		LOG_ERR("Message sent error: %d", err);
+		k_oops();
 	}
 
 	printk("Press any key to close the session.\n");
@@ -169,7 +225,8 @@ static void mpsl_timeslot_demo(void)
 	api_call = CLOSE_SESSION;
 	err = k_msgq_put(&mpsl_api_msgq, &api_call, K_FOREVER);
 	if (err) {
-		error();
+		LOG_ERR("Message sent error: %d", err);
+		k_oops();
 	}
 }
 
@@ -192,7 +249,8 @@ static void mpsl_nonpreemptible_thread(void)
 					mpsl_timeslot_callback,
 					&session_id);
 				if (err) {
-					error();
+					LOG_ERR("Timeslot session open error: %d", err);
+					k_oops();
 				}
 				break;
 			case MAKE_REQUEST:
@@ -200,45 +258,20 @@ static void mpsl_nonpreemptible_thread(void)
 					session_id,
 					&timeslot_request_earliest);
 				if (err) {
-					error();
+					LOG_ERR("Timeslot request error: %d", err);
+					k_oops();
 				}
 				break;
 			case CLOSE_SESSION:
 				err = mpsl_timeslot_session_close(session_id);
 				if (err) {
-					error();
+					LOG_ERR("Timeslot session close error: %d", err);
+					k_oops();
 				}
 				break;
 			default:
-				error();
-				break;
-			}
-		}
-	}
-}
-
-static void console_print_thread(void)
-{
-	uint32_t signal_type = 0;
-
-	while (1) {
-		if (k_msgq_get(&callback_msgq, &signal_type, K_FOREVER) == 0) {
-			switch (signal_type) {
-			case MPSL_TIMESLOT_SIGNAL_START:
-				printk("Callback: Timeslot start\n");
-				break;
-			case MPSL_TIMESLOT_SIGNAL_TIMER0:
-				printk("Callback: Timer0 signal\n");
-				break;
-			case MPSL_TIMESLOT_SIGNAL_SESSION_IDLE:
-				printk("Callback: Session idle\n");
-				break;
-			case MPSL_TIMESLOT_SIGNAL_SESSION_CLOSED:
-				printk("Callback: Session closed\n");
-				break;
-			default:
-				printk("Callback: Other signal: %d\n",
-				       signal_type);
+				LOG_ERR("Wrong timeslot API call");
+				k_oops();
 				break;
 			}
 		}
@@ -251,20 +284,26 @@ void main(void)
 	int err = console_init();
 
 	if (err) {
-		error();
+		LOG_ERR("Initialize console device error");
+		k_oops();
 	}
 
 	printk("-----------------------------------------------------\n");
 	printk("             Nordic MPSL Timeslot sample\n");
+
+#if defined(CONFIG_SOC_SERIES_NRF53X)
+	IRQ_DIRECT_CONNECT(SWI1_IRQn, 1, swi1_isr, 0);
+	irq_enable(SWI1_IRQn);
+#elif defined(CONFIG_SOC_SERIES_NRF52X)
+	IRQ_DIRECT_CONNECT(SWI1_EGU1_IRQn, 1, swi1_isr, 0);
+	irq_enable(SWI1_EGU1_IRQn);
+#endif
 
 	while (1) {
 		mpsl_timeslot_demo();
 		k_sleep(K_MSEC(1000));
 	}
 }
-
-K_THREAD_DEFINE(console_print_thread_id, STACKSIZE, console_print_thread,
-		NULL, NULL, NULL, THREAD_PRIORITY, 0, 0);
 
 K_THREAD_DEFINE(mpsl_nonpreemptible_thread_id, STACKSIZE,
 		mpsl_nonpreemptible_thread, NULL, NULL, NULL,

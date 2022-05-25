@@ -9,11 +9,12 @@
 #include <string.h>
 #include <assert.h>
 
-#include <zephyr.h>
-#include <posix/time.h>
-#include <sys/cbprintf.h>
-#include <shell/shell.h>
-#include <shell/shell_uart.h>
+#include <zephyr/kernel.h>
+#include <zephyr/posix/time.h>
+#include <zephyr/sys/cbprintf.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/shell/shell_uart.h>
+#include <net/nrf_cloud.h>
 
 #include "mosh_print.h"
 
@@ -25,6 +26,11 @@ extern bool at_cmd_mode_dont_print;
 
 /** Configuration on whether timestamps are added to the print. */
 bool mosh_print_timestamp_use;
+
+#if defined(CONFIG_MOSH_CLOUD_MQTT)
+/** Wrap all mosh prints into JSON and send to nRF Cloud over MQTT */
+bool mosh_print_cloud_echo;
+#endif
 
 /** Buffer used for printing the timestamp. */
 static char timestamp_str[30];
@@ -141,6 +147,17 @@ void mosh_fprintf_valist(enum mosh_print_level print_level, const char *fmt, va_
 		break;
 	}
 
+#if defined(CONFIG_MOSH_CLOUD)
+	if (mosh_print_cloud_echo) {
+		struct nrf_cloud_sensor_data mosh_cloud_print = {
+			.type = NRF_CLOUD_DEVICE_INFO,
+			.data.ptr = mosh_print_buf,
+			.data.len = strlen(mosh_print_buf),
+		};
+
+		nrf_cloud_sensor_data_stream(&mosh_cloud_print);
+	}
+#endif
 exit:
 	k_mutex_unlock(&mosh_print_buf_mutex);
 }

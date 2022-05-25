@@ -11,6 +11,8 @@ project(modem_trace_test_uart)
 
 # create mock
 cmock_handle(${ZEPHYR_HAL_NORDIC_MODULE_DIR}/nrfx/drivers/include/nrfx_uarte.h )
+cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem.h )
+cmock_handle(${ZEPHYR_BASE}/include/zephyr/drivers/pinctrl.h )
 
 # generate runner for the test
 test_runner_generate(src/modem_trace_test.c)
@@ -30,6 +32,7 @@ target_include_directories(app PRIVATE ${ZEPHYR_CMSIS_MODULE_DIR}/CMSIS/Core/Inc
 target_include_directories(app PRIVATE ${ZEPHYR_BASE}/modules/hal_nordic/nrfx)
 target_include_directories(app PRIVATE ${NRF_DIR}/include/modem/)
 target_include_directories(app PRIVATE ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/ )
+target_include_directories(app PRIVATE ${ZEPHYR_BASE}/soc/arm/nordic_nrf/common)
 
 # Define the device. Otherwise an "unknown device" warning will be triggered when compiling
 # nrfx_config.h

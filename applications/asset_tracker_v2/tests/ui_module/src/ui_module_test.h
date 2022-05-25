@@ -7,7 +7,7 @@
 #ifndef UI_MODULE_TEST_H_
 #define UI_MODULE_TEST_H_
 
-#include <init.h>
+#include <zephyr/init.h>
 
 /* Redefine SYS_INIT so that setup() is not run before the test runner starts. */
 #undef SYS_INIT

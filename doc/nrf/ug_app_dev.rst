@@ -10,6 +10,7 @@ The following user guides introduce important concepts to consider when developi
    :caption: Subpages:
 
    app_boards
+   ug_pinctrl
    app_build_system
    app_opt
    app_bootloaders
@@ -18,4 +19,5 @@ The following user guides introduce important concepts to consider when developi
    ug_unity_testing
    ug_tfm
    ug_radio_fem
+   ug_radio_coex
    ext_comps

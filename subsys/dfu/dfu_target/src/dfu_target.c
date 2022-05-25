@@ -3,9 +3,9 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr.h>
-#include <logging/log.h>
-#include <dfu/mcuboot.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/dfu/mcuboot.h>
 #include <dfu/dfu_target.h>
 
 #define DEF_DFU_TARGET(name) \
@@ -35,6 +35,7 @@ DEF_DFU_TARGET(full_modem);
 LOG_MODULE_REGISTER(dfu_target, CONFIG_DFU_TARGET_LOG_LEVEL);
 
 static const struct dfu_target *current_target;
+static int current_img_num = -1;
 
 int dfu_target_img_type(const void *const buf, size_t len)
 {
@@ -84,18 +85,21 @@ int dfu_target_init(int img_type, int img_num, size_t file_size, dfu_target_call
 		return -ENOTSUP;
 	}
 
-	/* The user is re-initializing with an previously aborted target.
+	/* The user is re-initializing with an previously aborted target
+	 * or initializes the same target for a different image.
 	 * Avoid re-initializing generally to ensure that the download can
 	 * continue where it left off. Re-initializing is required for
 	 * modem_delta upgrades to re-open the DFU socket that is closed on
-	 * abort.
+	 * abort and to change the image number.
 	 */
 	if (new_target == current_target
-	   && img_type != DFU_TARGET_IMAGE_TYPE_MODEM_DELTA) {
+	   && img_type != DFU_TARGET_IMAGE_TYPE_MODEM_DELTA
+	   && current_img_num == img_num) {
 		return 0;
 	}
 
 	current_target = new_target;
+	current_img_num = img_num;
 
 	return current_target->init(file_size, img_num, cb);
 }

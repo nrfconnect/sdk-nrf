@@ -18,7 +18,7 @@
 #ifndef FOTA_DOWNLOAD_H_
 #define FOTA_DOWNLOAD_H_
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <net/download_client.h>
 #include <dfu/dfu_target.h>

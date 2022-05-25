@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/types.h>
-#include <drivers/gpio.h>
+#include <zephyr/drivers/gpio.h>
 
 #ifndef ZEPHYR_DRIVERS_SENSOR_BH1749_H_
 #define ZEPHYR_DRIVERS_SENSOR_BH1749_H_

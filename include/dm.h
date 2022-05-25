@@ -17,10 +17,10 @@
 extern "C" {
 #endif
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdlib.h>
 #include <zephyr/types.h>
-#include <bluetooth/addr.h>
+#include <zephyr/bluetooth/addr.h>
 
 /** @brief Role definition. */
 enum dm_dev_role {

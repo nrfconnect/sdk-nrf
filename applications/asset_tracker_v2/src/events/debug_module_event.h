@@ -13,24 +13,20 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#if defined(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT)
-#define MEMFAULT_BUFFER_SIZE_MAX CONFIG_DEBUG_MODULE_MEMFAULT_CHUNK_SIZE_MAX
-#else
-#define MEMFAULT_BUFFER_SIZE_MAX 0
-#endif /* if defined(CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT) */
 
 enum debug_module_event_type {
 	/** Event carrying memfault data that should be forwarded via the configured cloud
 	 *  backend to Memfault cloud. Only sent if
 	 *  CONFIG_DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT is enabled.
 	 *  Payload is of type @ref debug_module_memfault_data.
+	 *
+	 *  The payload is heap allocated and must be freed after use.
 	 */
 	DEBUG_EVT_MEMFAULT_DATA_READY,
 
@@ -52,13 +48,13 @@ enum debug_module_event_type {
 };
 
 struct debug_module_memfault_data {
-	uint8_t buf[MEMFAULT_BUFFER_SIZE_MAX];
+	uint8_t *buf;
 	size_t len;
 };
 
 /** @brief Debug event. */
 struct debug_module_event {
-	struct event_header header;
+	struct app_event_header header;
 	enum debug_module_event_type type;
 
 	union {
@@ -68,7 +64,7 @@ struct debug_module_event {
 	} data;
 };
 
-EVENT_TYPE_DECLARE(debug_module_event);
+APP_EVENT_TYPE_DECLARE(debug_module_event);
 
 #ifdef __cplusplus
 }

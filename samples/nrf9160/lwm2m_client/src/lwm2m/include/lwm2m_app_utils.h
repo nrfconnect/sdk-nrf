@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <net/lwm2m.h>
-#include <drivers/sensor.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/lwm2m.h>
+#include <zephyr/drivers/sensor.h>
 
 #ifndef LWM2M_APP_UTILS_H__
 #define LWM2M_APP_UTILS_H__

@@ -13,8 +13,10 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
+#include <qos.h>
+
 #include "cloud/cloud_codec/cloud_codec.h"
 
 #ifdef __cplusplus
@@ -35,11 +37,20 @@ enum cloud_module_event_type {
 	/** Connection has timed out. */
 	CLOUD_EVT_CONNECTION_TIMEOUT,
 
+	/** Connect to LTE. */
+	CLOUD_EVT_LTE_CONNECT,
+
+	/** Disconnect from LTE. */
+	CLOUD_EVT_LTE_DISCONNECT,
+
 	/** User association request received from cloud. */
 	CLOUD_EVT_USER_ASSOCIATION_REQUEST,
 
 	/** User association completed. */
 	CLOUD_EVT_USER_ASSOCIATED,
+
+	/** Reboot requested from cloud. */
+	CLOUD_EVT_REBOOT_REQUEST,
 
 	/** A new device configuration has been received from cloud.
 	 *  The payload associated with this event is of type @ref cloud_data_cfg (config).
@@ -58,10 +69,14 @@ enum cloud_module_event_type {
 	/** An error occurred during a FOTA update. */
 	CLOUD_EVT_FOTA_ERROR,
 
-	/** Sending of data to cloud has been attempted.
-	 *  The payload associated with this event is of type @ref cloud_module_data_ack (ack).
+	/** Sending data to cloud using QoS library.
+	 *  The payload associated with this event is of type @ref qos_data (message).
+	 *
+	 *  This event is only meant for the cloud module and is used to filter QoS data through
+	 *  the module's internal message queue. This event is consumed by the cloud module as soon
+	 *  as it has been processed.
 	 */
-	CLOUD_EVT_DATA_ACK,
+	CLOUD_EVT_DATA_SEND_QOS,
 
 	/** The cloud module has performed all procedures to prepare for
 	 *  a shutdown of the system. The event carries the ID (id) of the module.
@@ -80,14 +95,12 @@ struct cloud_module_data_ack {
 	void *ptr;
 	/** Length of data that was attempted to be sent. */
 	size_t len;
-	/* Flag to signify if the data was sent or not. */
-	bool sent;
 };
 
 /** @brief Cloud module event. */
 struct cloud_module_event {
-	/** Cloud module event header. */
-	struct event_header header;
+	/** Cloud module application event header. */
+	struct app_event_header header;
 	/** Cloud module event type. */
 	enum cloud_module_event_type type;
 
@@ -98,6 +111,8 @@ struct cloud_module_event {
 		 *  to free allocated data post transmission.
 		 */
 		struct cloud_module_data_ack ack;
+		/** Variable that contains the message that should be sent to cloud. */
+		struct qos_data message;
 		/** Module ID, used when acknowledging shutdown requests. */
 		uint32_t id;
 		/** Code signifying the cause of error. */
@@ -105,7 +120,7 @@ struct cloud_module_event {
 	} data;
 };
 
-EVENT_TYPE_DECLARE(cloud_module_event);
+APP_EVENT_TYPE_DECLARE(cloud_module_event);
 
 #ifdef __cplusplus
 }

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <net/socket.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/socket.h>
 #include <nrf_modem_gnss.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
@@ -15,7 +15,7 @@
 #include <net/nrf_cloud_pgps.h>
 #endif
 #include <stdio.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_agps, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 
@@ -36,9 +36,11 @@ static atomic_t request_in_progress;
 
 #if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED)
 /** In filtered ephemeris mode, request A-GPS data no more often than
- *  every 2 hours (time in milliseconds).
+ *  every ~2 hours (time in milliseconds).  Give it a 10 minute margin
+ *  of error so slightly early assistance requests are not ignored.
  */
-#define AGPS_UPDATE_PERIOD (2 * 60 * 60 * MSEC_PER_SEC)
+#define MARGIN_MINUTES 10
+#define AGPS_UPDATE_PERIOD ((120 - MARGIN_MINUTES) * 60 * MSEC_PER_SEC)
 
 static int64_t last_request_timestamp;
 #endif
@@ -116,7 +118,7 @@ int nrf_cloud_agps_request(const struct nrf_modem_gnss_agps_data_frame *request)
 	 */
 	if (ephem &&
 	    (last_request_timestamp != 0) &&
-	    (k_uptime_get() - last_request_timestamp) < AGPS_UPDATE_PERIOD) {
+	    ((k_uptime_get() - last_request_timestamp) < AGPS_UPDATE_PERIOD)) {
 		LOG_WRN("A-GPS request was sent less than 2 hours ago");
 		ephem = 0;
 	}
@@ -219,9 +221,10 @@ cleanup:
 
 int nrf_cloud_agps_request_all(void)
 {
+	const uint32_t mask = IS_ENABLED(CONFIG_NRF_CLOUD_PGPS) ? 0u : 0xFFFFFFFFu;
 	struct nrf_modem_gnss_agps_data_frame request = {
-		.sv_mask_ephe = 0xFFFFFFFF,
-		.sv_mask_alm = 0xFFFFFFFF,
+		.sv_mask_ephe = mask,
+		.sv_mask_alm = mask,
 		.data_flags =
 			NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST |
 			NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST |
@@ -566,6 +569,24 @@ int nrf_cloud_agps_process(const char *buf, size_t buf_len)
 #if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED)
 	bool ephemerides_processed = false;
 #endif
+
+	if (!buf || (buf_len == 0)) {
+		return -EINVAL;
+	}
+
+	/* Check for a potential A-GPS JSON error message from nRF Cloud */
+	enum nrf_cloud_error nrf_err;
+
+	err = nrf_cloud_handle_error_message(buf, NRF_CLOUD_JSON_APPID_VAL_AGPS,
+		NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA, &nrf_err);
+	if (!err) {
+		LOG_ERR("nRF Cloud returned A-GPS error: %d", nrf_err);
+		return -EFAULT;
+	} else if (err == -ENODATA) { /* Not a JSON message, try to parse it as A-GPS data */
+
+	} else { /* JSON message received but no valid error code found */
+		return -ENOMSG;
+	}
 
 	version = buf[NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION_INDEX];
 	parsed_len += NRF_CLOUD_AGPS_BIN_SCHEMA_VERSION_SIZE;

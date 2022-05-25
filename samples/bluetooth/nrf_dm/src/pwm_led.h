@@ -7,7 +7,7 @@
 #ifndef PWM_LED_H_
 #define PWM_LED_H_
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdlib.h>
 #include <zephyr/types.h>
 

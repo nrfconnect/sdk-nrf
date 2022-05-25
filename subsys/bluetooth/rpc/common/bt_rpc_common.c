@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <device.h>
+#include <zephyr/device.h>
 #include <zephyr/types.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
 #include <nrf_rpc_cbor.h>
 
 #include "bt_rpc_common.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(BT_RPC, CONFIG_BT_RPC_LOG_LEVEL);
 
@@ -224,8 +224,8 @@ static const CHECK_LIST_ENTRY_TYPE check_table[] = {
 	CHECK_FLAGS(
 		CONFIG_BT_SETTINGS,
 		CONFIG_BT_GATT_CLIENT,
-		0,
-		0,
+		CONFIG_BT_RPC_INTERNAL_FUNCTIONS,
+		CONFIG_BT_DEVICE_APPEARANCE_DYNAMIC,
 		0,
 		0,
 		0,
@@ -235,6 +235,7 @@ static const CHECK_LIST_ENTRY_TYPE check_table[] = {
 	CHECK_UINT8(CONFIG_BT_EXT_ADV_MAX_ADV_SET),
 	CHECK_UINT8(CONFIG_BT_DEVICE_NAME_MAX),
 	CHECK_UINT8(CONFIG_BT_PER_ADV_SYNC_MAX),
+	CHECK_UINT16(CONFIG_BT_DEVICE_APPEARANCE),
 	CHECK_UINT16_PAIR(CONFIG_CBKPROXY_OUT_SLOTS, CONFIG_CBKPROXY_IN_SLOTS),
 };
 

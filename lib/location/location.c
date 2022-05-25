@@ -5,8 +5,8 @@
  */
 
 #include <stdio.h>
-#include <zephyr.h>
-#include <logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <modem/location.h>
 #if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
 #include <net/nrf_cloud_agps.h>
@@ -132,6 +132,7 @@ static void location_config_method_defaults_set(
 		method->gnss.timeout = 120;
 		method->gnss.accuracy = LOCATION_ACCURACY_NORMAL;
 		method->gnss.num_consecutive_fixes = 3;
+		method->gnss.visibility_detection = false;
 	} else if (method_type == LOCATION_METHOD_CELLULAR) {
 		method->cellular.timeout = 30;
 		method->cellular.service = LOCATION_SERVICE_ANY;
@@ -153,6 +154,7 @@ void location_config_defaults_set(
 
 	memset(config, 0, sizeof(struct location_config));
 	config->methods_count = methods_count;
+	config->mode = LOCATION_REQ_MODE_FALLBACK;
 	for (int i = 0; i < methods_count; i++) {
 		location_config_method_defaults_set(&config->methods[i], method_types[i]);
 	}

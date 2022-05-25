@@ -11,6 +11,7 @@ project(modem_trace_test_rtt)
 
 # create mock
 cmock_handle(${ZEPHYR_SEGGER_MODULE_DIR}/SEGGER/SEGGER_RTT.h )
+cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem.h )
 
 # generate runner for the test
 test_runner_generate(src/modem_trace_test.c)
@@ -27,3 +28,4 @@ target_sources(app PRIVATE ${NRF_DIR}/lib/nrf_modem_lib/nrf_modem_lib_trace.c)
 target_include_directories(app PRIVATE ${ZEPHYR_SEGGER_MODULE_DIR}/Config/)
 target_include_directories(app PRIVATE ${NRF_DIR}/include/modem/)
 target_include_directories(app PRIVATE ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/ )
+target_include_directories(app PRIVATE ${ZEPHYR_BASE}/soc/arm/nordic_nrf/common)

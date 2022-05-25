@@ -140,7 +140,7 @@ nRF9160
   * nRF9160: Asset Tracker has been deprecated in favor of :ref:`asset_tracker_v2`.
   * ``at_notif`` library library has been deprecated in favor of the :ref:`at_monitor_readme` library.
   * ``at_cmd`` library library has been deprecated in favor of Modem library's native AT interface.
-  * :ref:`gps_api` driver has been deprecated in favor of the :ref:`nrfxlib:gnss_interface`.
+  * GPS driver has been deprecated in favor of the :ref:`nrfxlib:gnss_interface`.
 
 nRF5
 ====
@@ -574,7 +574,7 @@ In addition to documentation related to the changes listed above, the following 
 
   * :ref:`libraries` section pages:
 
-    * :ref:`profiler` - Several updates.
+    * :ref:`nrf_profiler` - Several updates.
 
   * :ref:`documentation` section pages:
 

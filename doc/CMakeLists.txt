@@ -20,8 +20,11 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE} COMPONENTS doc)
 #-------------------------------------------------------------------------------
 # Options
 
-set(SPHINXOPTS_DEFAULT -j auto CACHE INTERNAL "Default Sphinx Options")
+set(SPHINXOPTS_DEFAULT "-j auto" CACHE STRING "Default Sphinx Options")
 set(SPHINXOPTS_EXTRA "" CACHE STRING "Extra Sphinx Options")
+
+separate_arguments(SPHINXOPTS_DEFAULT)
+separate_arguments(SPHINXOPTS_EXTRA)
 
 #-------------------------------------------------------------------------------
 # Dependencies
@@ -63,11 +66,10 @@ file(MAKE_DIRECTORY ${KCONFIG_BINARY_DIR})
 # docset sources into that folder.
 #
 # Configured targets:
-# - ${name}: Alias for ${name}-html.
 # - ${name}-inventory: Run Sphinx "inventory" build. It requires to enable
 #   the "inventory" builder on the docset conf.py. This target can be used
 #   to solve circular dependencies between docsets.
-# - ${name}-html: Run Sphinx "html" build.
+# - ${name}: Run Sphinx "html" build.
 # - ${name}-linkcheck: Run Sphinx "linkcheck" target.
 # - ${name}-clean: Clean build artifacts.
 #
@@ -100,10 +102,11 @@ function(add_docset name)
       ${DOCSET_SRC_DIR}
       ${DOCSET_HTML_DIR}
     USES_TERMINAL
+    COMMENT "Building ${name} inventory..."
   )
 
   add_doc_target(
-    ${name}-html
+    ${name}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${DOCSET_MAKE_DIRS}
     COMMAND ${CMAKE_COMMAND} -E env ${DOCSET_ENV}
     ${SPHINXBUILD}
@@ -116,6 +119,7 @@ function(add_docset name)
       ${DOCSET_SRC_DIR}
       ${DOCSET_HTML_DIR}
     USES_TERMINAL
+    COMMENT "Building ${name} docset..."
   )
 
   add_custom_target(
@@ -132,30 +136,21 @@ function(add_docset name)
       ${DOCSET_SRC_DIR}
       ${DOCSET_BUILD_DIR}
     USES_TERMINAL
+    COMMENT "Checking links for ${name} docset..."
   )
 
   set_target_properties(
     ${name}-inventory ${name}-inventory-all
-    ${name}-html ${name}-html-all
+    ${name} ${name}-all
     ${name}-linkcheck
     PROPERTIES
       ADDITIONAL_CLEAN_FILES "${DOCSET_CLEAN_DIRS}"
   )
 
-  if(${CMAKE_VERSION} VERSION_LESS 3.17)
-    add_custom_target(
-      ${name}-clean
-      COMMAND ${CMAKE_COMMAND} -E remove_directory ${DOCSET_CLEAN_DIRS}
-    )
-  else()
-    add_custom_target(
-      ${name}-clean
-      COMMAND ${CMAKE_COMMAND} -E rm -rf ${DOCSET_CLEAN_DIRS}
-    )
-  endif()
-
-  add_custom_target(${name})
-  add_dependencies(${name} ${name}-html)
+  add_custom_target(
+    ${name}-clean
+    COMMAND ${CMAKE_COMMAND} -E rm -rf ${DOCSET_CLEAN_DIRS}
+  )
 endfunction()
 
 # Create a custom doc target.
@@ -202,14 +197,15 @@ add_custom_target(
     ${ZEPHYR_BASE}/doc/_scripts/gen_devicetree_rest.py
     --vendor-prefixes ${ZEPHYR_BASE}/dts/bindings/vendor-prefixes.txt
     --dts-root ${ZEPHYR_BASE}
-    ${ZEPHYR_BINARY_DIR}/src/reference/devicetree
+    ${ZEPHYR_BINARY_DIR}/src/build/dts/api
   VERBATIM
   USES_TERMINAL
+  COMMENT "Generating Devicetree bindings documentation..."
 )
 
 add_docset(zephyr)
-add_dependencies(zephyr-html zephyr-devicetree)
-add_dependencies(zephyr-html-all zephyr-devicetree)
+add_dependencies(zephyr zephyr-devicetree)
+add_dependencies(zephyr-all zephyr-devicetree)
 
 #-------------------------------------------------------------------------------
 # docset: nrf
@@ -256,8 +252,8 @@ add_custom_target(
 )
 
 add_docset(nrf)
-add_dependencies(nrf-html nrf-versions)
-add_dependencies(nrf-html-all nrf-versions)
+add_dependencies(nrf nrf-versions)
+add_dependencies(nrf-all nrf-versions)
 
 #-------------------------------------------------------------------------------
 # docset: mcuboot
@@ -267,7 +263,7 @@ add_docset(mcuboot)
 #-------------------------------------------------------------------------------
 # docset: nrfx
 
-add_docset(nrfx)
+add_docset(nrfx DODGY)
 
 #-------------------------------------------------------------------------------
 # docset: tfm
@@ -308,34 +304,34 @@ add_custom_target(
 )
 
 add_dependencies(merge-search-indexes
-    nrf-html-all
-    nrfx-html-all
-    nrfxlib-html-all
-    zephyr-html-all
-    mcuboot-html-all
-    tfm-html-all
-    kconfig-html-all
+    nrf-all
+    nrfx-all
+    nrfxlib-all
+    zephyr-all
+    mcuboot-all
+    tfm-all
+    kconfig-all
 )
 
-add_dependencies(zephyr-html-all kconfig-html-all)
-add_dependencies(mcuboot-html-all kconfig-html-all)
-add_dependencies(nrfxlib-inventory-all kconfig-html-all)
-add_dependencies(nrf-html-all zephyr-html-all nrfxlib-inventory-all mcuboot-html-all matter-html-all kconfig-html-all)
-add_dependencies(nrf-html-all zephyr-html-all nrfxlib-inventory-all mcuboot-html-all tfm-html-all kconfig-html-all)
-add_dependencies(nrfxlib-html-all nrf-html-all)
+add_dependencies(zephyr-all kconfig-all)
+add_dependencies(mcuboot-all kconfig-all)
+add_dependencies(nrfxlib-inventory-all kconfig-all)
+add_dependencies(nrf-all zephyr-all nrfxlib-inventory-all mcuboot-all matter-all kconfig-all)
+add_dependencies(nrf-all zephyr-all nrfxlib-inventory-all mcuboot-all tfm-all kconfig-all)
+add_dependencies(nrfxlib-all nrf-all)
 
 add_custom_target(build-all ALL)
 add_dependencies(build-all
     copy-extra-content
     merge-search-indexes
-    nrf-html-all
-    nrfx-html-all
-    nrfxlib-html-all
-    zephyr-html-all
-    mcuboot-html-all
-    tfm-html-all
-    matter-html-all
-    kconfig-html-all
+    nrf-all
+    nrfx-all
+    nrfxlib-all
+    zephyr-all
+    mcuboot-all
+    tfm-all
+    matter-all
+    kconfig-all
 )
 
 add_custom_target(linkcheck)

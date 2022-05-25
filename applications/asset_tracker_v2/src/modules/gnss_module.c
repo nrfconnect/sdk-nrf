@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <date_time.h>
-#include <event_manager.h>
+#include <app_event_manager.h>
 #include <nrf_modem_at.h>
 #include <nrf_modem_gnss.h>
 #if defined(CONFIG_NRF_CLOUD_PGPS) && defined(CONFIG_GNSS_MODULE_PGPS_STORE_LOCATION)
@@ -23,7 +23,7 @@
 #include "events/util_module_event.h"
 #include "events/modem_module_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_GNSS_MODULE_LOG_LEVEL);
 
 #define GNSS_TIMEOUT_DEFAULT	     60
@@ -31,7 +31,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_GNSS_MODULE_LOG_LEVEL);
  * with pre-v1.3.0 MFWs, which do not support the sleep events.
  */
 #define GNSS_INACTIVITY_TIMEOUT	     5
-#define GNSS_EVENT_THREAD_STACK_SIZE 896
+#define GNSS_EVENT_THREAD_STACK_SIZE 1024
 #define GNSS_EVENT_THREAD_PRIORITY   5
 
 struct gnss_msg_data {
@@ -145,10 +145,10 @@ static void sub_state_set(enum sub_state_type new_state)
 }
 
 /* Handlers */
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_app_module_event(eh)) {
-		struct app_module_event *event = cast_app_module_event(eh);
+	if (is_app_module_event(aeh)) {
+		struct app_module_event *event = cast_app_module_event(aeh);
 		struct gnss_msg_data msg = {
 			.module.app = *event
 		};
@@ -156,8 +156,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&msg);
 	}
 
-	if (is_data_module_event(eh)) {
-		struct data_module_event *event = cast_data_module_event(eh);
+	if (is_data_module_event(aeh)) {
+		struct data_module_event *event = cast_data_module_event(aeh);
 		struct gnss_msg_data msg = {
 			.module.data = *event
 		};
@@ -165,8 +165,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&msg);
 	}
 
-	if (is_util_module_event(eh)) {
-		struct util_module_event *event = cast_util_module_event(eh);
+	if (is_util_module_event(aeh)) {
+		struct util_module_event *event = cast_util_module_event(aeh);
 		struct gnss_msg_data msg = {
 			.module.util = *event
 		};
@@ -174,8 +174,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&msg);
 	}
 
-	if (is_gnss_module_event(eh)) {
-		struct gnss_module_event *event = cast_gnss_module_event(eh);
+	if (is_gnss_module_event(aeh)) {
+		struct gnss_module_event *event = cast_gnss_module_event(aeh);
 		struct gnss_msg_data msg = {
 			.module.gnss = *event
 		};
@@ -183,8 +183,8 @@ static bool event_handler(const struct event_header *eh)
 		message_handler(&msg);
 	}
 
-	if (is_modem_module_event(eh)) {
-		struct modem_module_event *event = cast_modem_module_event(eh);
+	if (is_modem_module_event(aeh)) {
+		struct modem_module_event *event = cast_modem_module_event(aeh);
 		struct gnss_msg_data msg = {
 			.module.modem = *event
 		};
@@ -240,7 +240,7 @@ static void timeout_send(void)
 				set_satellites_tracked(pvt_data.sv, ARRAY_SIZE(pvt_data.sv));
 	gnss_module_event->type = GNSS_EVT_TIMEOUT;
 
-	EVENT_SUBMIT(gnss_module_event);
+	APP_EVENT_SUBMIT(gnss_module_event);
 }
 
 /* GNSS event handler thread. */
@@ -328,7 +328,7 @@ static void gnss_event_thread_fn(void)
 
 			gnss_module_event->data.agps_request = agps_data;
 			gnss_module_event->type = GNSS_EVT_AGPS_NEEDED;
-			EVENT_SUBMIT(gnss_module_event);
+			APP_EVENT_SUBMIT(gnss_module_event);
 			break;
 		case NRF_MODEM_GNSS_EVT_BLOCKED:
 			LOG_DBG("NRF_MODEM_GNSS_EVT_BLOCKED");
@@ -379,7 +379,7 @@ static void data_send_pvt(void)
 				set_satellites_tracked(pvt_data.sv, ARRAY_SIZE(pvt_data.sv));
 	gnss_module_event->data.gnss.search_time = (uint32_t)(k_uptime_get() - stats.start_uptime);
 
-	EVENT_SUBMIT(gnss_module_event);
+	APP_EVENT_SUBMIT(gnss_module_event);
 }
 
 static void data_send_nmea(void)
@@ -397,7 +397,7 @@ static void data_send_nmea(void)
 				set_satellites_tracked(pvt_data.sv, ARRAY_SIZE(pvt_data.sv));
 	gnss_module_event->data.gnss.search_time = (uint32_t)(k_uptime_get() - stats.start_uptime);
 
-	EVENT_SUBMIT(gnss_module_event);
+	APP_EVENT_SUBMIT(gnss_module_event);
 }
 
 static void print_pvt(void)
@@ -508,42 +508,9 @@ static bool gnss_data_requested(enum app_module_data_type *data_list,
 	return false;
 }
 
-static int lna_configure(void)
-{
-	int err;
-	const char *xmagpio_command = CONFIG_GNSS_MODULE_AT_MAGPIO;
-	const char *xcoex0_command = CONFIG_GNSS_MODULE_AT_COEX0;
-
-	LOG_DBG("MAGPIO command: %s", log_strdup(xmagpio_command));
-	LOG_DBG("COEX0 command: %s", log_strdup(xcoex0_command));
-
-	/* Make sure the AT command is not empty. */
-	if (xmagpio_command[0] != '\0') {
-		err = nrf_modem_at_printf("%s", xmagpio_command);
-		if (err) {
-			return err;
-		}
-	}
-
-	if (xcoex0_command[0] != '\0') {
-		err = nrf_modem_at_printf("%s", xcoex0_command);
-		if (err) {
-			return err;
-		}
-	}
-
-	return 0;
-}
-
 static int setup(void)
 {
 	int err;
-
-	err = lna_configure();
-	if (err) {
-		LOG_ERR("Failed to configure LNA, error %d", err);
-		return err;
-	}
 
 	err = nrf_modem_gnss_event_handler_set(gnss_event_handler);
 	if (err) {
@@ -674,9 +641,9 @@ static void message_handler(struct gnss_msg_data *msg)
 	on_all_states(msg);
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
-EVENT_SUBSCRIBE(MODULE, data_module_event);
-EVENT_SUBSCRIBE(MODULE, util_module_event);
-EVENT_SUBSCRIBE(MODULE, modem_module_event);
-EVENT_SUBSCRIBE(MODULE, gnss_module_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, app_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, data_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, util_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, modem_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, gnss_module_event);

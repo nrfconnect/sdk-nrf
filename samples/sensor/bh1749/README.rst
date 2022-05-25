@@ -15,9 +15,7 @@ Requirements
 
 The sample supports the following nRF9160-based device:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: thingy91_nrf9160_ns
+.. table-from-sample-yaml::
 
 Building and running
 ********************

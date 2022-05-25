@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
 #include <caf/events/click_event.h>
 #include "ml_app_mode_event.h"
@@ -12,7 +12,7 @@
 #define MODULE ml_app_mode
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_MODE_LOG_LEVEL);
 
 #ifdef CONFIG_ML_APP_MODE_CONTROL_BUTTON_ID
@@ -32,7 +32,7 @@ static void broadcast_mode(void)
 	struct ml_app_mode_event *event = new_ml_app_mode_event();
 
 	event->mode = mode;
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static bool handle_click_event(const struct click_event *event)
@@ -60,15 +60,15 @@ static bool handle_click_event(const struct click_event *event)
 	return false;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (MODE_CONTROL &&
-	    is_click_event(eh)) {
-		return handle_click_event(cast_click_event(eh));
+	    is_click_event(aeh)) {
+		return handle_click_event(cast_click_event(aeh));
 	}
 
-	if (is_module_state_event(eh)) {
-		const struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		const struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
@@ -88,8 +88,8 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if MODE_CONTROL
-EVENT_SUBSCRIBE(MODULE, click_event);
+APP_EVENT_SUBSCRIBE(MODULE, click_event);
 #endif /* MODE_CONTROL */

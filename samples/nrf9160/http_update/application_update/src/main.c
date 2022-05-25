@@ -3,8 +3,8 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr.h>
-#include <dfu/mcuboot.h>
+#include <zephyr/kernel.h>
+#include <zephyr/dfu/mcuboot.h>
 #include <dfu/dfu_target_mcuboot.h>
 #include <modem/nrf_modem_lib.h>
 #include <net/fota_download.h>

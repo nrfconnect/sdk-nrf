@@ -10,5 +10,5 @@ The following user guides show how you can use external components in your appli
    :caption: Subpages:
 
    ug_bt_coex
+   ug_bt_fast_pair
    ug_edge_impulse
-   ug_nrf_cloud

@@ -18,9 +18,7 @@ Requirements
 
 The sample supports the following development kit:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf9160dk_nrf9160_ns
+.. table-from-sample-yaml::
 
 .. include:: /includes/spm.txt
 
@@ -75,6 +73,12 @@ When assistance support is enabled, the sample receives an A-GPS data request no
 The sample then displays the information in the terminal about the download process.
 Finally, after the download completes, the sample switches back to the previous display mode.
 
+.. note::
+   To download assistance data, your device must have a valid JWT signing key installed and registered with `nRF Cloud`_.
+
+   .. include:: /includes/nrf_cloud_rest_sample_requirements.txt
+       :start-after: requirement_keysign_moreinfo_start
+
 Minimal assistance
 ==================
 
@@ -94,7 +98,7 @@ Configuration
 Configuration options
 =====================
 
-Check and configure the following configuration options for the sample:
+Check and configure the following Kconfig options for the sample:
 
 .. _CONFIG_GNSS_SAMPLE_NMEA_ONLY:
 
@@ -120,24 +124,53 @@ CONFIG_GNSS_SAMPLE_ASSISTANCE_MINIMAL - To use minimal assistance
 
 CONFIG_GNSS_SAMPLE_MODE_PERIODIC - To enable periodic fixes
    This configuration option enables periodic fixes instead of continuous tracking.
-   Set :kconfig:option:`CONFIG_GNSS_SAMPLE_PERIODIC_INTERVAL` and :kconfig:option:`CONFIG_GNSS_SAMPLE_PERIODIC_TIMEOUT` to configure the desired fix interval and timeout.
+
+.. _CONFIG_GNSS_SAMPLE_PERIODIC_INTERVAL:
+
+CONFIG_GNSS_SAMPLE_PERIODIC_INTERVAL - To set interval (in seconds) for periodic fixes
+   This configuration option sets the desired fix interval.
+
+.. _CONFIG_GNSS_SAMPLE_PERIODIC_TIMEOUT:
+
+CONFIG_GNSS_SAMPLE_PERIODIC_TIMEOUT - To set desired timeout (in seconds) for periodic fixes
+   This configuration option sets the desired timeout for periodic fixes.
 
 .. _CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST:
 
 CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST - To enable time-to-first-fix (TTFF) test mode
   This configuration enables the TTFF test mode instead of continuous tracking.
   When TTFF test mode is enabled, the :ref:`CONFIG_GNSS_SAMPLE_NMEA_ONLY <CONFIG_GNSS_SAMPLE_NMEA_ONLY>` option is automatically selected.
-  Set the :kconfig:option:`CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_INTERVAL` option to configure the time between fixes.
-  If you have enabled the :kconfig:option:`CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_COLD_START` option, the sample will perform GNSS cold starts instead of hot starts.
-  When assistance is used, LTE may block the GNSS operation and increase the time needed to get a fix.
-  You can set the :kconfig:option:`CONFIG_GNSS_SAMPLE_LTE_ON_DEMAND` option to disable LTE after the assistance data has been downloaded, so that GNSS can run without interruptions.
+
+.. _CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_INTERVAL:
+
+CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_INTERVAL - To set the time between fixes in TTFF test mode
+   This configuration option sets the time between fixes in TTFF test mode.
+
+.. _CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_COLD_START:
+
+CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_COLD_START - To perform cold starts in TTFF test mode
+   This configuration option makes the sample perform GNSS cold starts instead of hot starts in TTFF test mode.
+   When assistance is used, LTE may block the GNSS operation and increase the time needed to get a fix.
+
+.. _CONFIG_GNSS_SAMPLE_LTE_ON_DEMAND:
+
+CONFIG_GNSS_SAMPLE_LTE_ON_DEMAND - To disable LTE after assistance download
+   When using assistance, LTE may block the GNSS operation and increase the time needed to get a fix.
+   This configuration option disables LTE after the assistance data has been downloaded, so that GNSS can run without interruptions.
+
+Additional configuration
+========================
+
+Check and configure the following library option that is used by the sample:
+
+* :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` - Selects an external GNSS antenna.
 
 Building and running
 ********************
 
 .. |sample path| replace:: :file:`samples/nrf9160/gnss`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 If the sample is to be used with the SUPL client library, the library must be downloaded and enabled in the sample configuration.
 You can download it from the `Nordic Semiconductor website`_.
@@ -290,6 +323,7 @@ This sample uses the following |NCS| libraries:
 * :ref:`lib_nrf_cloud_pgps`
 * :ref:`lib_nrf_cloud_rest`
 * :ref:`supl_client`
+* :ref:`lib_at_host`
 
 It uses the following `sdk-nrfxlib`_ library:
 

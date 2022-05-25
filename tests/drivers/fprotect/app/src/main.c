@@ -6,9 +6,9 @@
 
 #include <ztest.h>
 #include <pm_config.h>
-#include <device.h>
+#include <zephyr/device.h>
 #include <string.h>
-#include <drivers/flash.h>
+#include <zephyr/drivers/flash.h>
 
 #define STORAGE_LAST_WORD (PM_SETTINGS_STORAGE_END_ADDRESS - 4)
 #define IMAGE_LAST_WORD (PM_APP_END_ADDRESS - 4)

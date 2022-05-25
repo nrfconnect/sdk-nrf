@@ -4,13 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <debug/ppi_trace.h>
-#include <drivers/counter.h>
+#include <zephyr/drivers/counter.h>
 #include <hal/nrf_rtc.h>
 #include <hal/nrf_clock.h>
-#include <device.h>
-#include <logging/log.h>
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(app);
 
@@ -18,10 +19,10 @@ LOG_MODULE_REGISTER(app);
 
 #if IS_ENABLED(CONFIG_USE_RTC2)
 #define RTC       NRF_RTC2
-#define RTC_LABEL DT_LABEL(DT_NODELABEL(rtc2))
+#define RTC_NODE  DT_NODELABEL(rtc2)
 #else
 #define RTC       NRF_RTC0
-#define RTC_LABEL DT_LABEL(DT_NODELABEL(rtc0))
+#define RTC_NODE  DT_NODELABEL(rtc0)
 #endif
 
 static void alarm_callback(const struct device *dev, uint8_t chan_id, uint32_t ticks,
@@ -79,9 +80,9 @@ static void alarm_callback(const struct device *dev, uint8_t chan_id,
 static void counter_setup(void)
 {
 	int err;
-	const struct device *dev = device_get_binding(RTC_LABEL);
+	const struct device *dev = DEVICE_DT_GET(RTC_NODE);
 
-	__ASSERT(dev, "Sample cannot run on this board.");
+	__ASSERT(device_is_ready(dev), "RTC device not ready");
 
 	alarm_cfg.ticks = counter_us_to_ticks(dev, ALARM_PERIOD_US);
 	err = counter_set_channel_alarm(dev, 0, &alarm_cfg);

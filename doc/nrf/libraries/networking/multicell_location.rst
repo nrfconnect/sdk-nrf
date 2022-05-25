@@ -23,7 +23,6 @@ The library supports the following location services:
 
 *  `nRF Cloud Location Services`_
 *  `HERE Positioning`_ (v1 and v2)
-*  `Skyhook Precision Location`_
 *  `Polte Location API`_
 
 The data transport method for the request to the service is mainly REST. However, either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`) can be configured for `nRF Cloud Location Services`_.
@@ -57,14 +56,13 @@ Configuration
 
 To use the multicell location library, enable the :kconfig:option:`CONFIG_MULTICELL_LOCATION` Kconfig option.
 
-Select nRF Cloud, HERE, Skyhook and Polte location services using at least one of the following sets of options and configure corresponding authentication parameters:
+Select nRF Cloud, HERE and Polte location services using at least one of the following sets of options and configure corresponding authentication parameters:
 
 *  :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD`
 *  :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_HERE` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_API_KEY` (see below other authentication options)
-*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_SKYHOOK_API_KEY`
 *  :kconfig:option:`CONFIG_MULTICELL_LOCATION_SERVICE_POLTE` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_CUSTOMER_ID` and :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_API_TOKEN`
 
-API key is used for HERE, Skyhook and Polte (needs also customer ID) as default authentication method.
+API key is used for HERE and Polte (needs also customer ID) as default authentication method.
 A JSON Web Token (JWT) signed by the device's private key is used for nRF Cloud.
 
 The following options offer different version and authentication method for HERE location service:
@@ -86,9 +84,6 @@ Following are the options that can usually have default values:
 *  :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_HTTPS_PORT`
 *  :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_HOSTNAME`
 *  :kconfig:option:`CONFIG_MULTICELL_LOCATION_HERE_TLS_SEC_TAG`
-*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_SKYHOOK_HTTPS_PORT`
-*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_SKYHOOK_HOSTNAME`
-*  :kconfig:option:`CONFIG_MULTICELL_LOCATION_SKYHOOK_TLS_SEC_TAG`
 *  :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_HTTPS_PORT`
 *  :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_HOSTNAME`
 *  :kconfig:option:`CONFIG_MULTICELL_LOCATION_POLTE_TLS_SEC_TAG`

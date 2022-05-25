@@ -6,9 +6,9 @@
 
 #include <string.h>
 #include <nfc/t4t/cc_file.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #include <errno.h>
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 
 LOG_MODULE_REGISTER(nfc_t4t_cc_file, CONFIG_NFC_T4T_CC_FILE_LOG_LEVEL);
 

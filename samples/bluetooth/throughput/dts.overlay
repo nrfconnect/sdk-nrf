@@ -1,4 +1,3 @@
 &uart0 {
-     /delete-property/ rts-pin;
-     /delete-property/ cts-pin;
+     /delete-property/ hw-flow-control;
 };

@@ -13,7 +13,7 @@
 #ifndef BT_ENOCEAN_H__
 #define BT_ENOCEAN_H__
 
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 
 #ifdef __cplusplus
 extern "C" {

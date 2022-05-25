@@ -20,7 +20,7 @@
 #include <zephyr/types.h>
 #include <nfc/ndef/record.h>
 #include <nfc/ndef/payload_type_common.h>
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 
 #ifdef __cplusplus
 extern "C" {

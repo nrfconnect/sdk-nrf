@@ -12,9 +12,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <device.h>
-#include <drivers/gpio.h>
-#include <devicetree.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/devicetree.h>
 #include <nrfx.h>
 #include <nrfx_ppi.h>
 #include <nrfx_gpiote.h>

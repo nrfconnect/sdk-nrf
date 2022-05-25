@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
-#include <sys/ring_buffer.h>
+#include <zephyr/sys/ring_buffer.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/uuid.h>
-#include <bluetooth/gatt.h>
-#include <bluetooth/hci.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/hci.h>
 #include <bluetooth/services/nus.h>
 
 #define MODULE ble_handler
@@ -21,7 +21,7 @@
 #include "ble_data_event.h"
 #include "uart_data_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_BRIDGE_BLE_LOG_LEVEL);
 
 #define BLE_RX_BLOCK_SIZE (CONFIG_BT_L2CAP_TX_MTU - 3)
@@ -97,7 +97,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	event->dev_idx = 0;
 	event->baudrate = 0; /* Don't care */
 	event->conn_state = PEER_STATE_CONNECTED;
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
@@ -118,7 +118,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	event->dev_idx = 0;
 	event->baudrate = 0; /* Don't care */
 	event->conn_state = PEER_STATE_DISCONNECTED;
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static struct bt_conn_cb conn_callbacks = {
@@ -184,7 +184,7 @@ static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data,
 
 		event->buf = buf;
 		event->len = copy_len;
-		EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 	} while (remainder);
 }
 
@@ -282,11 +282,11 @@ static void bt_ready(int err)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_uart_data_event(eh)) {
+	if (is_uart_data_event(aeh)) {
 		const struct uart_data_event *event =
-			cast_uart_data_event(eh);
+			cast_uart_data_event(aeh);
 
 		/* Only one BLE Service instance, mapped to UART_0 */
 		if (event->dev_idx != 0) {
@@ -318,9 +318,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_data_event(eh)) {
+	if (is_ble_data_event(aeh)) {
 		const struct ble_data_event *event =
-			cast_ble_data_event(eh);
+			cast_ble_data_event(aeh);
 
 		/* All subscribers have gotten a chance to copy data at this point */
 		k_mem_slab_free(&ble_rx_slab, (void **) &event->buf);
@@ -328,9 +328,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_ctrl_event(eh)) {
+	if (is_ble_ctrl_event(aeh)) {
 		const struct ble_ctrl_event *event =
-			cast_ble_ctrl_event(eh);
+			cast_ble_ctrl_event(aeh);
 
 		switch (event->cmd) {
 		case BLE_CTRL_ENABLE:
@@ -355,9 +355,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			int err;
@@ -384,8 +384,8 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, ble_ctrl_event);
-EVENT_SUBSCRIBE(MODULE, uart_data_event);
-EVENT_SUBSCRIBE_FINAL(MODULE, ble_data_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_ctrl_event);
+APP_EVENT_SUBSCRIBE(MODULE, uart_data_event);
+APP_EVENT_SUBSCRIBE_FINAL(MODULE, ble_data_event);

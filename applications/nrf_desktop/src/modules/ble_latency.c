@@ -5,18 +5,17 @@
  */
 
 #include <zephyr/types.h>
-#include <bluetooth/conn.h>
+#include <zephyr/bluetooth/conn.h>
 
 #include <caf/events/ble_common_event.h>
 #include <caf/events/ble_smp_event.h>
-#include "ble_event.h"
 #include "config_event.h"
 #include <caf/events/power_event.h>
 
 #define MODULE ble_latency
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_LATENCY_LOG_LEVEL);
 
 #define SECURITY_FAIL_TIMEOUT_MS \
@@ -218,11 +217,11 @@ static void use_low_latency(void)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
@@ -235,8 +234,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_peer_event(eh)) {
-		const struct ble_peer_event *event = cast_ble_peer_event(eh);
+	if (is_ble_peer_event(aeh)) {
+		const struct ble_peer_event *event = cast_ble_peer_event(aeh);
 
 		switch (event->state) {
 		case PEER_STATE_CONNECTED:
@@ -275,29 +274,29 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
-	    is_config_event(eh)) {
+	    is_config_event(aeh)) {
 		use_low_latency();
 
 		return false;
 	}
 
 	if (IS_ENABLED(CONFIG_CAF_BLE_SMP) &&
-	    is_ble_smp_transfer_event(eh)) {
+	    is_ble_smp_transfer_event(aeh)) {
 		use_low_latency();
 
 		return false;
 	}
 
-	if (is_ble_peer_conn_params_event(eh)) {
-		conn_params_updated(cast_ble_peer_conn_params_event(eh));
+	if (is_ble_peer_conn_params_event(aeh)) {
+		conn_params_updated(cast_ble_peer_conn_params_event(aeh));
 
 		return false;
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK) &&
-	    is_power_down_event(eh)) {
+	    is_power_down_event(aeh)) {
 		const struct power_down_event *event =
-			cast_power_down_event(eh);
+			cast_power_down_event(aeh);
 
 		if (!event->error) {
 			latency_state &= ~CONN_LOW_LATENCY_LOCKED;
@@ -308,7 +307,7 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK) &&
-	    is_wake_up_event(eh)) {
+	    is_wake_up_event(aeh)) {
 		latency_state |= CONN_LOW_LATENCY_LOCKED;
 		update_llpm_conn_latency_lock();
 
@@ -321,17 +320,17 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, ble_peer_event);
-EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
 #if CONFIG_CAF_BLE_SMP
-EVENT_SUBSCRIBE(MODULE, ble_smp_transfer_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_smp_transfer_event);
 #endif
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif
 #if CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK
-EVENT_SUBSCRIBE(MODULE, power_down_event);
-EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
+APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #endif

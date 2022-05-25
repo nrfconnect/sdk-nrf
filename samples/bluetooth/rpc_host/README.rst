@@ -15,9 +15,7 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpunet
+.. table-from-sample-yaml::
 
 Overview
 ********

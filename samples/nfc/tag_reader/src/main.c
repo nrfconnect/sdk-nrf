@@ -10,8 +10,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <string.h>
-#include <zephyr.h>
-#include <sys/printk.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/printk.h>
 #include <st25r3911b_nfca.h>
 #include <nfc/ndef/msg_parser.h>
 #include <nfc/ndef/le_oob_rec_parser.h>
@@ -20,7 +20,7 @@
 #include <nfc/t4t/isodep.h>
 #include <nfc/t4t/hl_procedure.h>
 #include <nfc/ndef/ch_rec_parser.h>
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 
 #define NFCA_BD 128
 #define BITS_IN_BYTE 8
@@ -241,7 +241,7 @@ static void ndef_data_analyze(const uint8_t *ndef_msg_buff, size_t nfc_data_len)
 {
 	int  err;
 	struct nfc_ndef_msg_desc *ndef_msg_desc;
-	uint8_t desc_buf[NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(MAX_NDEF_RECORDS)];
+	uint8_t desc_buf[NFC_NDEF_PARSER_REQUIRED_MEM(MAX_NDEF_RECORDS)];
 	size_t desc_buf_len = sizeof(desc_buf);
 
 	err = nfc_ndef_msg_parse(desc_buf,
@@ -250,6 +250,7 @@ static void ndef_data_analyze(const uint8_t *ndef_msg_buff, size_t nfc_data_len)
 				 &nfc_data_len);
 	if (err) {
 		printk("Error during parsing a NDEF message, err: %d.\n", err);
+		return;
 	}
 
 	ndef_msg_desc = (struct nfc_ndef_msg_desc *) desc_buf;

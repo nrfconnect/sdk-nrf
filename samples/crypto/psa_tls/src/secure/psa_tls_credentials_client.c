@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(psa_tls_credentials_client_secure);
 
 #include <nrf.h>
-#include <zephyr.h>
-#include <linker/sections.h>
-#include <net/tls_credentials.h>
+#include <zephyr/kernel.h>
+#include <zephyr/linker/sections.h>
+#include <zephyr/net/tls_credentials.h>
 #include "psa_tls_credentials.h"
 #include "certificate.h"
 

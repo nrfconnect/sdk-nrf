@@ -29,23 +29,42 @@ Devicetree Specification configuration
 
 The following code snippet shows an example DTS configuration:
 
-.. code-block:: none
+.. code-block:: devicetree
 
-  &spi0 {
-          compatible = "nordic,nrf-spim";
-          status = "okay";
-          sck-pin = <10>;
-          mosi-pin = <12>;
-          miso-pin = <12>;
-          cs-gpios = <&gpio0 15 0>;
+    &pinctrl {
+        spi0_default_alt: spi0_default_alt {
+            group1 {
+                psels = <NRF_PSEL(SPI_SCK, 0, 10)>,
+                        <NRF_PSEL(SPI_MISO, 0, 12)>,
+                        <NRF_PSEL(SPI_MOSI, 0, 13)>;
+            };
+        };
 
-          paw3212@0 {
-                  compatible = "pixart,paw3212";
-                  reg = <0>;
-                  irq-gpios = <&gpio0 14 0>;
-                  spi-max-frequency = <2000000>;
-                  label = "PAW3212";
+        spi0_sleep_alt: spi0_sleep_alt {
+            group1 {
+                psels = <NRF_PSEL(SPI_SCK, 0, 16)>,
+                        <NRF_PSEL(SPI_MISO, 0, 15)>,
+                        <NRF_PSEL(SPI_MOSI, 0, 17)>;
+                low-power-enable;
           };
+        };
+    };
+
+    &spi0 {
+        compatible = "nordic,nrf-spim";
+        status = "okay";
+        pinctrl-0 = <&spi0_default_alt>;
+        pinctrl-1 = <&spi0_sleep_alt>;
+        pinctrl-names = "default", "sleep";
+        cs-gpios = <&gpio0 15 0>;
+
+        paw3212@0 {
+            compatible = "pixart,paw3212";
+            reg = <0>;
+            irq-gpios = <&gpio0 14 0>;
+            spi-max-frequency = <2000000>;
+            label = "PAW3212";
+        };
   };
 
 The PAW3212 sensor node must meet the following requirements:
@@ -55,11 +74,7 @@ The PAW3212 sensor node must meet the following requirements:
 
 Moreover, you must configure the following parameters:
 
-* Pins used by the SPI that are common for all devices connected to the bus:
-
-  * ``mosi-pin`` - MOSI
-  * ``miso-pin`` - MISO
-  * ``sck-pin`` - SCK
+* Pins used by the SPI that are common for all devices connected to the bus (SCK, MISO and MOSI).
 
 * Chip select (CS) pin for the PAW3212 motion sensor.
   GPIOs used as chip select for the devices connected to the SPI are defined as ``cs-gpios``.

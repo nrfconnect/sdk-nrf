@@ -2,7 +2,7 @@ sample:
   description: Sample showing Edge Impulse data forwarder usage
   name: Edge Impulse data forwarder sample
 tests:
-  samples.ei_data_forwarder:
+  sample.ei_data_forwarder:
     build_only: true
     integration_platforms:
       - nrf52dk_nrf52832

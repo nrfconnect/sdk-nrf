@@ -5,9 +5,9 @@
  */
 
 #include <assert.h>
-#include <zephyr.h>
-#include <device.h>
-#include <drivers/flash/flash_simulator.h>
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/flash/flash_simulator.h>
 #include "bootutil/image.h"
 #include "bootutil/bootutil.h"
 #include "bootutil/fault_injection_hardening.h"

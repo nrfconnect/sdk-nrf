@@ -1,18 +1,18 @@
 sample:
-  name: Bluetooth LE Direct Test Mode
   description: Bluetooth Low Energy Direct Test Mode sample
+  name: Bluetooth LE Direct Test Mode
 tests:
-  samples.bluetooth.direct_test_mode:
+  sample.bluetooth.direct_test_mode:
     build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpunet nrf21540dk_nrf52840
     integration_platforms:
       - nrf5340dk_nrf5340_cpunet
       - nrf21540dk_nrf52840
+    platform_allow: nrf5340dk_nrf5340_cpunet nrf21540dk_nrf52840
     tags: bluetooth ci_build
-  samples.bluetooth.direct_test_mode.nrf5340_nrf21540:
+  sample.bluetooth.direct_test_mode.nrf5340_nrf21540:
     build_only: true
-    platform_allow: nrf5340dk_nrf5340_cpunet
+    extra_args: SHIELD=nrf21540_ek
     integration_platforms:
       - nrf5340dk_nrf5340_cpunet
-    extra_args: SHIELD=nrf21540_ek
+    platform_allow: nrf5340dk_nrf5340_cpunet
     tags: bluetooth ci_build

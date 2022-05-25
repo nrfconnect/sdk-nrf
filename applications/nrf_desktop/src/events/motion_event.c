@@ -8,29 +8,30 @@
 
 #include "motion_event.h"
 
-static void log_motion_event(const struct event_header *eh)
+static void log_motion_event(const struct app_event_header *aeh)
 {
-	const struct motion_event *event = cast_motion_event(eh);
+	const struct motion_event *event = cast_motion_event(aeh);
 
-	EVENT_MANAGER_LOG(eh, "dx=%d, dy=%d", event->dx, event->dy);
+	APP_EVENT_MANAGER_LOG(aeh, "dx=%d, dy=%d", event->dx, event->dy);
 }
 
 static void profile_motion_event(struct log_event_buf *buf,
-				    const struct event_header *eh)
+				    const struct app_event_header *aeh)
 {
-	const struct motion_event *event = cast_motion_event(eh);
+	const struct motion_event *event = cast_motion_event(aeh);
 
-	profiler_log_encode_int16(buf, event->dx);
-	profiler_log_encode_int16(buf, event->dy);
+	nrf_profiler_log_encode_int16(buf, event->dx);
+	nrf_profiler_log_encode_int16(buf, event->dy);
 }
 
-
-EVENT_INFO_DEFINE(motion_event,
-		  ENCODE(PROFILER_ARG_S16, PROFILER_ARG_S16),
+APP_EVENT_INFO_DEFINE(motion_event,
+		  ENCODE(NRF_PROFILER_ARG_S16, NRF_PROFILER_ARG_S16),
 		  ENCODE("dx", "dy"),
 		  profile_motion_event);
 
-EVENT_TYPE_DEFINE(motion_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_MOTION_EVENT),
+APP_EVENT_TYPE_DEFINE(motion_event,
 		  log_motion_event,
-		  &motion_event_info);
+		  &motion_event_info,
+		  APP_EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_MOTION_EVENT,
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

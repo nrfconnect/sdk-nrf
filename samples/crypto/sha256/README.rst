@@ -14,9 +14,7 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_ns, nrf5340dk_nrf5340_cpuapp, nrf9160dk_nrf9160_ns, nrf9160dk_nrf9160, nrf52840dk_nrf52840
+.. table-from-sample-yaml::
 
 .. include:: /includes/tfm.txt
 
@@ -37,7 +35,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/crypto/sha256`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======

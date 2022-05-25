@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+rsource "Kconfig.app"
+
+config APP_INCLUDE_REMOTE_IMAGE
+	bool "Include remote image as sub image"
+	default y
+	select PARTITION_MANAGER_ENABLED
+
+config APP_REMOTE_BOARD
+	string "The name of the CORE to be used by remote image"
+	depends on APP_INCLUDE_REMOTE_IMAGE

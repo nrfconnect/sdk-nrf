@@ -19,9 +19,9 @@
  *       It means it is not guaranteed to work in any corner situation.
  */
 
-#include <device.h>
-#include <drivers/uart.h>
-#include <zephyr.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/kernel.h>
 
 
 /**

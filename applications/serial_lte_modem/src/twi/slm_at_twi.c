@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <logging/log.h>
-#include <zephyr.h>
-#include <drivers/i2c.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/i2c.h>
 #include <stdio.h>
 #include "slm_util.h"
 #include "slm_at_host.h"

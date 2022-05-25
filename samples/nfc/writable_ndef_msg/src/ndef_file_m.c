@@ -13,14 +13,14 @@
  *
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <soc.h>
-#include <device.h>
+#include <zephyr/device.h>
 #include <string.h>
-#include <fs/nvs.h>
+#include <zephyr/fs/nvs.h>
 #include <nfc/t4t/ndef_file.h>
 #include <nfc/ndef/uri_msg.h>
-#include <storage/flash_map.h>
+#include <zephyr/storage/flash_map.h>
 
 #include "ndef_file_m.h"
 

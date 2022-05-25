@@ -3,15 +3,15 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include <stdint.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <nrf_modem_delta_dfu.h>
-#include <dfu/mcuboot.h>
-#include <net/tls_credentials.h>
-#include <net/http_parser_url.h>
+#include <zephyr/dfu/mcuboot.h>
+#include <zephyr/net/tls_credentials.h>
+#include <zephyr/net/http_parser_url.h>
 #include <net/fota_download.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
@@ -25,8 +25,6 @@ LOG_MODULE_REGISTER(slm_fota, CONFIG_SLM_LOG_LEVEL);
 #define SCHEMA_HTTP	"http"
 #define SCHEMA_HTTPS	"https"
 #define URI_HOST_MAX	64
-
-#define APN_MAX		32
 
 /* Some features need fota_download update */
 #define FOTA_FUTURE_FEATURE	0
@@ -190,8 +188,9 @@ static int do_fota_start(int op, const char *file_uri, int sec_tag,
 	}
 	memset(path, 0x00, SLM_MAX_URL);
 	if (parser.field_set & (1 << UF_PATH)) {
-		strncpy(path, file_uri + parser.field_data[UF_PATH].off,
-			parser.field_data[UF_PATH].len);
+		/* Remove the leading '/' as some HTTP servers don't like it */
+		strncpy(path, file_uri + parser.field_data[UF_PATH].off + 1,
+			parser.field_data[UF_PATH].len - 1);
 	} else {
 		LOG_ERR("Parse path error");
 		return -EINVAL;

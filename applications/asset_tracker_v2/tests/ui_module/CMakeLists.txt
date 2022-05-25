@@ -17,8 +17,8 @@ set(ASSET_TRACKER_V2_DIR ../..)
 
 # Create mocks
 cmock_handle(${ASSET_TRACKER_V2_DIR}/src/modules/modules_common.h)
-cmock_handle(${NRF_DIR}/include/event_manager.h)
-cmock_handle(${NRF_DIR}/subsys/event_manager/event_manager_priv.h)
+cmock_handle(${NRF_DIR}/include/app_event_manager.h)
+cmock_handle(${NRF_DIR}/subsys/app_event_manager/app_event_manager_priv.h)
 cmock_handle(${NRF_DIR}/include/dk_buttons_and_leds.h)
 
 # Include target sources
@@ -29,12 +29,18 @@ target_include_directories(app PRIVATE .)
 target_include_directories(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/)
 target_include_directories(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/modules/)
 target_include_directories(app PRIVATE ${ASSET_TRACKER_V2_DIR}/src/events/)
-target_include_directories(app PRIVATE ${NRF_DIR}/subsys/event_manager)
+target_include_directories(app PRIVATE ${NRF_DIR}/subsys/app_event_manager)
 target_include_directories(app PRIVATE ${NRF_DIR}/modules/cjson/include)
 target_include_directories(app PRIVATE ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/)
 
 # Options that cannot be passed through Kconfig fragments
-target_compile_definitions(app PRIVATE CONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN=20)
+target_compile_definitions(app PRIVATE
+	-DCONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN=20
+	-DCONFIG_CLOUD_CODEC_APN_LEN_MAX=1
+	-DCONFIG_MODEM_APN_LEN_MAX=1
+	-DCONFIG_CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX=1
+	-DCONFIG_CLOUD_CODEC_LWM2M_PATH_ENTRY_SIZE_MAX=1
+)
 
 # Include ui_module_test.h that re-defines SYS_INIT() for unit testing purposes.
 set_property(SOURCE ${ASSET_TRACKER_V2_DIR}/src/modules/ui_module.c PROPERTY COMPILE_FLAGS

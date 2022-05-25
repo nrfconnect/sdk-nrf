@@ -69,6 +69,7 @@
 
 	chosen {
 		zephyr,console = &cdc_acm_uart0;
+		nordic,nus-uart = &cdc_acm_uart1;
 	};
 };
 

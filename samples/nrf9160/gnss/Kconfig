@@ -60,34 +60,6 @@ config GNSS_SAMPLE_NMEA_ONLY
 	help
 	  Outputs only NMEA strings from the GNSS.
 
-choice
-	default GNSS_SAMPLE_ANTENNA_ONBOARD
-	prompt "Select which antenna to use for GNSS"
-
-config GNSS_SAMPLE_ANTENNA_ONBOARD
-	bool "Use onboard antenna"
-
-config GNSS_SAMPLE_ANTENNA_EXTERNAL
-	bool "Use external antenna"
-
-endchoice
-
-config GNSS_SAMPLE_AT_MAGPIO
-	string "AT%XMAGPIO command"
-	default "AT\%XMAGPIO=1,0,0,1,1,1574,1577" if BOARD_NRF9160DK_NRF9160_NS
-	default "AT\%XMAGPIO=1,1,1,7,1,746,803,2,698,748,2,1710,2200,3,824,894,4,880,960,5,791,849,7,1565,1586" if BOARD_THINGY91_NRF9160_NS
-	help
-	  Defines the AT%XMAGPIO command to be sent to GNSS module. Leave
-	  empty if this command should not be sent.
-
-config GNSS_SAMPLE_AT_COEX0
-	string "AT%XCOEX0 command"
-	default "AT\%XCOEX0=1,1,1565,1586" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && GNSS_SAMPLE_ANTENNA_ONBOARD
-	default "AT\%XCOEX0" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && GNSS_SAMPLE_ANTENNA_EXTERNAL
-	help
-	  Defines the AT%XCOEX0 command to be sent to GNSS module. Leave
-	  empty if this command should not be sent.
-
 endmenu
 
 choice
@@ -164,6 +136,18 @@ config GNSS_SAMPLE_POWER_SAVING_HIGH
 endchoice
 
 endif # GNSS_SAMPLE_MODE_CONTINUOUS
+
+config GNSS_SAMPLE_REFERENCE_LATITUDE
+	string "Reference position latitude in decimal degrees"
+	help
+	  When set, the sample calculates the distance from the reference position for each fix.
+	  Given in decimal degrees (DD), for example "61.500000".
+
+config GNSS_SAMPLE_REFERENCE_LONGITUDE
+	string "Reference position longitude in decimal degrees"
+	help
+	  When set, the sample calculates the distance from the reference position for each fix.
+	  Given in decimal degrees (DD), for example "23.800000".
 
 config GNSS_SAMPLE_LOW_ACCURACY
 	bool "Allow low accuracy fixes"

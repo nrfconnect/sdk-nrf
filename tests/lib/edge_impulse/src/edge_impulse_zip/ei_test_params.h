@@ -7,7 +7,7 @@
 #ifndef _EI_TEST_PARAMS_H_
 #define _EI_TEST_PARAMS_H_
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
 
 /* Float comparison tolerance. */

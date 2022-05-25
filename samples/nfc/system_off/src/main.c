@@ -5,8 +5,9 @@
  */
 
 #include <stdio.h>
-#include <zephyr.h>
-#include <pm/pm.h>
+#include <zephyr/kernel.h>
+#include <zephyr/pm/pm.h>
+#include <zephyr/pm/policy.h>
 
 #include <nrfx.h>
 #include <hal/nrf_power.h>
@@ -224,7 +225,7 @@ void main(void)
 	}
 
 	/* Prevent deep sleep (system off) from being entered */
-	pm_constraint_set(PM_STATE_SOFT_OFF);
+	pm_policy_state_lock_get(PM_STATE_SOFT_OFF);
 
 	/* Exit main function - the rest will be done by the callbacks */
 }

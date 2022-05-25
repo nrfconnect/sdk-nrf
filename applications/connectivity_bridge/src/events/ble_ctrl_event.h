@@ -14,10 +14,10 @@
  */
 
 #include <string.h>
-#include <toolchain/common.h>
+#include <zephyr/toolchain/common.h>
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,7 +31,7 @@ enum ble_ctrl_cmd {
 
 /** BLE control event. */
 struct ble_ctrl_event {
-	struct event_header header;
+	struct app_event_header header;
 
 	enum ble_ctrl_cmd cmd;
 	union {
@@ -39,7 +39,7 @@ struct ble_ctrl_event {
 	} param;
 };
 
-EVENT_TYPE_DECLARE(ble_ctrl_event);
+APP_EVENT_TYPE_DECLARE(ble_ctrl_event);
 
 #ifdef __cplusplus
 }

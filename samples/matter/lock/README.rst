@@ -8,7 +8,7 @@ Matter: Door lock
    :local:
    :depth: 2
 
-This door lock sample demonstrates the usage of the :ref:`Matter <ug_matter>` (formerly Project Connected Home over IP, Project CHIP) application layer to build a door lock device with one basic bolt.
+This door lock sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a door lock device with one basic bolt.
 This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread network.
 You can use this sample as a reference for creating your application.
 
@@ -17,11 +17,10 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp, nrf21540dk_nrf52840
+.. table-from-sample-yaml::
 
-If you want to commission the lock device and :ref:`control it remotely <matter_lock_sample_network_mode>` through a Thread network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`. This requires additional hardware depending on the setup you choose.
+If you want to commission the lock device and :ref:`control it remotely <matter_lock_sample_network_mode>` through a Thread network, you also need a Matter controller device :ref:`configured on PC or mobile <ug_matter_configuring>`.
+This requires additional hardware depending on the setup you choose.
 
 .. note::
     |matter_gn_required_note|
@@ -35,7 +34,7 @@ You can test it in the following ways:
 * Standalone, using a single DK that runs the door lock application.
 * Remotely over the Thread protocol, which requires more devices.
 
-The remote control testing requires a Matter controller that you can configure either on a PC or mobile device (for remote testing in a network).
+The remote control testing requires a Matter controller that you can configure either on a PC or a mobile device (for remote testing in a network).
 You can enable both methods after :ref:`building and running the sample <matter_lock_sample_remote_control>`.
 
 .. _matter_lock_sample_network_mode:
@@ -79,7 +78,7 @@ Matter door lock build types
 .. matter_door_lock_sample_configuration_file_types_start
 
 The sample uses different configuration files depending on the supported features.
-Configuration files are provided for different build types and they are located in the :file:`configuration/<board_name>` directory.
+Configuration files are provided for different build types and they are located in the application root directory.
 
 The :file:`prj.conf` file represents a ``debug`` build type.
 Other build types are covered by dedicated files with the build type added as a suffix to the ``prj`` part, as per the following list.
@@ -95,7 +94,7 @@ This sample supports the following build types, depending on the selected board:
 
 * ``debug`` -- Debug version of the application - can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
 * ``release`` -- Release version of the application - can be used to enable only the necessary application functionalities to optimize its performance.
-* ``no_dfu`` -- Debug version of the application without Device Firmware Upgrade feature support - can be used only for the nRF52840 DK and nRF5340 DK, as those platforms have DFU enabled by default.
+* ``no_dfu`` -- Debug version of the application without Device Firmware Upgrade feature support - can be used for the nRF52840 DK, nRF5340 DK and nRF21540 DK.
 
 .. note::
     `Selecting a build type`_ is optional.
@@ -122,7 +121,7 @@ The sample supports over-the-air (OTA) device firmware upgrade (DFU) using one o
 In both cases, MCUboot secure bootloader is used to apply the new firmware image.
 
 The DFU over Matter is enabled by default.
-To configure the sample to support the DFU over Matter and SMP, use the ``-DOVERLAY_CONFIG=../../overlay-smp_dfu.conf`` build flag during the build process.
+To configure the sample to support the DFU over Matter and SMP, use the ``-DCONFIG_CHIP_DFU_OVER_BT_SMP=y`` build flag during the build process.
 To configure the sample to disable the DFU and the secure bootloader, use the ``-DCONF_FILE=prj_no_dfu.conf`` build flag during the build process.
 
 See :ref:`cmake_options` for instructions on how to add these options to your build.
@@ -144,10 +143,12 @@ FEM support
 Low-power build
 ===============
 
+.. matter_door_lock_sample_low_power_build_start
+
 To configure the sample to consume less power, use the low-power build.
 It enables Thread's Sleepy End Device mode and disables debug features, such as the UART console or the **LED 1** usage.
 
-To trigger the low-power build, use the ``-DOVERLAY_CONFIG="../../overlay-low_power.conf"`` option when building the sample.
+To trigger the low-power build, use the ``-DOVERLAY_CONFIG="overlay-low_power.conf"`` option when building the sample.
 See :ref:`cmake_options` for instructions on how to add this option to your build.
 
 When building on the command line, run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_):
@@ -155,7 +156,9 @@ When building on the command line, run the following command with *build_target*
 .. parsed-literal::
    :class: highlight
 
-   west build -b *build_target* -- -DOVERLAY_CONFIG="../../overlay-low_power.conf"
+   west build -b *build_target* -- -DOVERLAY_CONFIG="overlay-low_power.conf"
+
+.. matter_door_lock_sample_low_power_build_end
 
 User interface
 **************
@@ -185,10 +188,11 @@ LED 2:
 Button 1:
     Depending on how long you press the button:
 
-    * If pressed for six seconds, it initiates the factory reset of the device.
-      Releasing the button within the six-second window cancels the factory reset procedure.
-    * If pressed for less than three seconds, it initiates the OTA software update process.
-      The OTA process is disabled by default, but you can enable it when you build the sample with the DFU support (see `Configuration`_).
+    * If pressed for less than three seconds, it initiates the SMP server (Security Manager Protocol).
+      After that the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started.
+      (See `Upgrading the device firmware`_.)
+    * If pressed for more than three seconds, it initiates the factory reset of the device.
+      Releasing the button within the 3-second window cancels the factory reset procedure.
 
 .. matter_door_lock_sample_button1_end
 
@@ -198,9 +202,13 @@ Button 2:
 Button 3:
     Starts the Thread networking in the :ref:`test mode <matter_lock_sample_test_mode>` using the default configuration.
 
+.. matter_door_lock_sample_button4_start
+
 Button 4:
     Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
     This button is used during the :ref:`commissioning procedure <matter_lock_sample_remote_control_commissioning>`.
+
+.. matter_door_lock_sample_button4_end
 
 .. matter_door_lock_sample_jlink_start
 
@@ -320,7 +328,7 @@ The guide walks you through the following steps:
 * Commission the device.
 * Send Matter commands that cover scenarios described in the `Testing`_ section.
 
-If you are new to Matter, the recommended approach is :ref:`ug_matter_configuring_mobile` using an Android smartphone.
+If you are new to Matter, the recommended approach is to use :ref:`ug_matter_configuring_controller_chip_tool`.
 
 .. matter_door_lock_sample_commissioning_end
 

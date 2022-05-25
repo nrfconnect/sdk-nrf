@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <version.h>
-#include <logging/log_ctrl.h>
-#include <sys/reboot.h>
-#include <net/lwm2m.h>
+#include <zephyr/logging/log_ctrl.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/net/lwm2m.h>
 #include "pm_config.h"
 #include <net/lwm2m_client_utils.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_device, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
 #define REBOOT_DELAY K_SECONDS(1)

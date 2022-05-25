@@ -6,18 +6,18 @@
 #include <stdio.h>
 
 #include <zephyr/types.h>
-#include <sys/byteorder.h>
-#include <sys/util.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/sys/util.h>
 
-#include <usb/usb_device.h>
-#include <usb/usb_ch9.h>
-#include <usb/class/usb_hid.h>
+#include <zephyr/usb/usb_device.h>
+#include <zephyr/usb/usb_ch9.h>
+#include <zephyr/usb/class/usb_hid.h>
 
 
 #define MODULE usb_state
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 
 #include "hid_report_desc.h"
@@ -211,7 +211,7 @@ static int set_report(const struct device *dev,
 
 			memcpy(buf, *data, setup->wLength);
 
-			EVENT_SUBMIT(event);
+			APP_EVENT_SUBMIT(event);
 			return 0;
 		}
 		break;
@@ -241,7 +241,7 @@ static void report_sent(const struct device *dev, bool error)
 	event->report_id = usb_hid->sent_report_id;
 	event->subscriber = usb_hid;
 	event->error = error;
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 
 	/* Used to assert if previous report was sent before sending new one. */
 	usb_hid->sent_report_id = REPORT_ID_COUNT;
@@ -327,7 +327,7 @@ static void broadcast_usb_state(void)
 
 	event->state = state;
 
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void broadcast_usb_hid(struct usb_hid_device *usb_hid, bool enabled)
@@ -340,7 +340,7 @@ static void broadcast_usb_hid(struct usb_hid_device *usb_hid, bool enabled)
 		event->id = usb_hid;
 		event->enabled = enabled;
 
-		EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 	}
 }
 
@@ -369,7 +369,7 @@ static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
 		event->enabled    = new_rep_enabled;
 		event->subscriber = usb_hid;
 
-		EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 
 		usb_hid->report_enabled[REPORT_ID_MOUSE] = new_rep_enabled;
 	}
@@ -383,7 +383,7 @@ static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
 		event->enabled    = new_rep_enabled;
 		event->subscriber = usb_hid;
 
-		EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 
 		usb_hid->report_enabled[REPORT_ID_KEYBOARD_KEYS] = new_rep_enabled;
 	}
@@ -397,7 +397,7 @@ static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
 		event->enabled    = new_rep_enabled;
 		event->subscriber = usb_hid;
 
-		EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 		usb_hid->report_enabled[REPORT_ID_SYSTEM_CTRL] = new_rep_enabled;
 	}
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT) &&
@@ -410,7 +410,7 @@ static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
 		event->enabled    = new_rep_enabled;
 		event->subscriber = usb_hid;
 
-		EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 		usb_hid->report_enabled[REPORT_ID_CONSUMER_CTRL] = new_rep_enabled;
 	}
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE) &&
@@ -423,7 +423,7 @@ static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
 		event->enabled    = new_boot_enabled;
 		event->subscriber = usb_hid;
 
-		EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 		usb_hid->report_enabled[REPORT_ID_BOOT_MOUSE] = new_boot_enabled;
 	}
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD) &&
@@ -436,7 +436,7 @@ static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
 		event->enabled    = new_boot_enabled;
 		event->subscriber = usb_hid;
 
-		EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 		usb_hid->report_enabled[REPORT_ID_BOOT_KEYBOARD] = new_boot_enabled;
 	}
 
@@ -639,7 +639,12 @@ static int usb_init(void)
 
 	for (size_t i = 0; i < CONFIG_USB_HID_DEVICE_COUNT; i++) {
 		char name[32];
-		snprintf(name, sizeof(name), CONFIG_USB_HID_DEVICE_NAME "_%d", i);
+		int err = snprintf(name, sizeof(name), CONFIG_USB_HID_DEVICE_NAME "_%d", i);
+
+		if ((err < 0) || (err >= sizeof(name))) {
+			LOG_ERR("Cannot initialize HID device name");
+			return err;
+		}
 		usb_hid_device[i].dev = device_get_binding(name);
 		if (usb_hid_device[i].dev == NULL) {
 			return -ENXIO;
@@ -652,7 +657,7 @@ static int usb_init(void)
 		usb_hid_register_device(usb_hid_device[i].dev, hid_report_desc,
 					hid_report_desc_size, &hid_ops);
 
-		int err = usb_hid_init(usb_hid_device[i].dev);
+		err = usb_hid_init(usb_hid_device[i].dev);
 		if (err) {
 			LOG_ERR("Cannot initialize HID class");
 			return err;
@@ -672,16 +677,16 @@ static int usb_init(void)
 	return err;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_hid_report_event(eh)) {
-		send_hid_report(cast_hid_report_event(eh));
+	if (is_hid_report_event(aeh)) {
+		send_hid_report(cast_hid_report_event(aeh));
 
 		return false;
 	}
 
-	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
@@ -701,15 +706,15 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
-	    is_config_event(eh)) {
+	    is_config_event(aeh)) {
 		config_channel_transport_rsp_receive(&cfg_chan_transport,
-						     cast_config_event(eh));
+						     cast_config_event(aeh));
 
 		return false;
 	}
 
 	if (IS_ENABLED(CONFIG_USB_DEVICE_REMOTE_WAKEUP) &&
-	    is_wake_up_event(eh)) {
+	    is_wake_up_event(aeh)) {
 		usb_wakeup();
 		return false;
 	}
@@ -719,12 +724,12 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, hid_report_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-EVENT_SUBSCRIBE(MODULE, config_event);
+APP_EVENT_SUBSCRIBE(MODULE, config_event);
 #endif
 #if CONFIG_USB_DEVICE_REMOTE_WAKEUP
-EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #endif

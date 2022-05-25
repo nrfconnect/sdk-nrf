@@ -91,7 +91,6 @@ nRF52 Series devices support a secure bootloader solution based on the chain of 
 
 See :ref:`ug_bootloader` for more information and instructions on how to enable one or more bootloaders in your application.
 
-
 Supported protocols
 *******************
 
@@ -220,9 +219,6 @@ See the :ref:`ug_multiprotocol_support` user guide for instructions on how to en
 
 The :ref:`nrfxlib:mpsl` library provides services for multiprotocol applications.
 
-
-.. |note| replace:: For posibility of introducing upgradable bootloader, please refer to :ref:`ug_bootloader_adding`.
-
 .. fota_upgrades_start
 
 FOTA upgrades
@@ -233,6 +229,9 @@ FOTA upgrades can be used to replace the application.
 
 .. note::
    |note|
+
+FOTA over Bluetooth LE
+======================
 
 To perform a FOTA upgrade, complete the following steps:
 
@@ -246,7 +245,6 @@ To perform a FOTA upgrade, complete the following steps:
         #. Call ``os_mgmt_register_group()`` and ``img_mgmt_register_group()`` in your application.
         #. Call ``smp_bt_register()`` in your application to initialize the mcumgr Bluetooth Low Energy transport.
 
-        See the code of the :ref:`zephyr:smp_svr_sample` for an implementation example.
         After completing these steps, your application should advertise the SMP Service with UUID 8D53DC1D-1DB7-4CD3-868B-8A527460AA84.
 
       * |fota_upgrades_req_mcuboot|
@@ -268,9 +266,74 @@ To perform a FOTA upgrade, complete the following steps:
       .. note::
          There is currently no support for the FOTA process in nRF Connect for Desktop.
 
+FOTA upgrade sample
+===================
+
+The :ref:`zephyr:smp_svr_sample` demonstrates how to set up your project to support FOTA upgrades.
+
+The sample documentation is from the Zephyr project and is incompatible with the :ref:`ug_multi_image`.
+When working in the |NCS| environment, you can ignore the part of the sample documentation that describes the building and programming steps.
+In |NCS| you can build and program the :ref:`zephyr:smp_svr_sample` as any other sample using the following commands:
+
+.. parsed-literal::
+   :class: highlight
+
+    west build -b *build_target* -- -DOVERLAY_CONFIG=overlay-bt.conf
+    west flash
+
+Make sure to indicate the :file:`overlay-bt.conf` overlay configuration for the Bluetooth transport like in the command example.
+This configuration was carefully selected to achieve the maximum possible throughput of the FOTA upgrade transport over Bluetooth with the help of the following features:
+
+- Bluetooth MTU: to increase the packet size of a single Bluetooth packet transmitted over the air (:kconfig:option:`CONFIG_BT_BUF_ACL_RX_SIZE` and others).
+- Bluetooth connection parameters: to adaptively change the connection interval and latency on the detection of the SMP service activity (:kconfig:option:`CONFIG_MCUMGR_SMP_BT_CONN_PARAM_CONTROL`).
+- MCUmgr packet reassembly: to allow exchange of large SMP packets (:kconfig:option:`CONFIG_MCUMGR_SMP_REASSEMBLY_BT`, :kconfig:option:`CONFIG_MCUMGR_BUF_SIZE` and others).
+
+Consider using these features in your project to speed up the FOTA upgrade process.
+
 .. fota_upgrades_end
+
+.. fota_upgrades_matter_start
+
+FOTA in Matter
+==============
+
+To perform a FOTA upgrade when working with the Matter protocol, use one of the following methods:
+
+* DFU over Bluetooth LE using either smartphone or PC command line tool.
+  Both options are similar to `FOTA over Bluetooth LE`_.
+
+  .. note::
+      This protocol is not part of the Matter specification.
+
+* DFU over Matter using Matter-compliant BDX protocol and Matter OTA Provider device.
+  This option requires an OpenThread Border Router (OTBR) set up either in Docker or on a Raspberry Pi.
+
+For more information about both methods, read the :doc:`matter:nrfconnect_examples_software_update` page in the Matter documentation.
+
+.. fota_upgrades_matter_end
+
+.. fota_upgrades_thread_start
+
+FOTA over Thread
+================
+
+:ref:`ug_thread` does not offer a proprietary FOTA method.
+
+.. fota_upgrades_thread_end
+
+.. fota_upgrades_zigbee_start
+
+FOTA over Zigbee
+================
+
+You can enable support for FOTA over the Zigbee network using the :ref:`lib_zigbee_fota` library.
+For detailed information about how to configure the Zigbee FOTA library for your application, see :ref:`ug_zigbee_configuring_components_ota`.
+
+.. fota_upgrades_zigbee_end
 
 Building and programming a sample
 *********************************
 
 To build your application, follow the instructions in :ref:`gs_programming`.
+
+.. |note| replace:: For posibility of introducing upgradable bootloader, please refer to :ref:`ug_bootloader_adding`.

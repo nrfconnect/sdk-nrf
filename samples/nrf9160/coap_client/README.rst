@@ -14,21 +14,19 @@ Requirements
 
 The sample supports the following development kit:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf9160dk_nrf9160_ns
+.. table-from-sample-yaml::
 
 The sample also requires a public CoAP server IP address or URL available on the Internet.
 
-.. include:: /includes/spm.txt
+.. include:: /includes/tfm.txt
 
 Overview
 ********
 
 The nRF CoAP Client sample performs the following actions:
 
-#. Connect to the configured public CoAP test server (specified by the Kconfig parameter ``CONFIG_COAP_SERVER_HOSTNAME``).
-#. Send periodic GET request for a test resource (specified by the Kconfig parameter ``CONFIG_COAP_RESOURCE``) that is available on the server.
+#. Connect to the configured public CoAP test server (specified by the Kconfig option :ref:`CONFIG_COAP_SERVER_HOSTNAME <CONFIG_COAP_SERVER_HOSTNAME>`).
+#. Send periodic GET request for a test resource (specified by the Kconfig option :ref:`CONFIG_COAP_RESOURCE <CONFIG_COAP_RESOURCE>`) that is available on the server.
 #. Display the received data about the resource on a terminal emulator.
 
 The public CoAP server used in this sample is Californium CoAP server (``coap://californium.eclipseprojects.io:5683``).
@@ -38,23 +36,50 @@ An nRF9160 DK is used as the CoAP client.
 This sample uses the resource **obs** (Californium observable resource) in the communication between the CoAP client and the public CoAP server.
 The communication follows the standard request/response pattern and is based on the change in the state of the value of the resource.
 The sample queries one resource at a time.
-Other resources can be configured using the Kconfig option ``CONFIG_COAP_RESOURCE``.
+To configure other resources, use the Kconfig option :ref:`CONFIG_COAP_RESOURCE <CONFIG_COAP_RESOURCE>`.
+
+Configuration
+*************
+
+|config|
+
+Configuration options
+=====================
+
+Check and configure the following Kconfig options in the :file:`coap_client/prj.conf` file:
+
+.. _CONFIG_COAP_RESOURCE:
+
+CONFIG_COAP_RESOURCE - CoAP resource configuration
+   This option sets the CoAP resource. Default is Californium observable resource.
+
+.. _CONFIG_COAP_SERVER_HOSTNAME:
+
+CONFIG_COAP_SERVER_HOSTNAME - CoAP server hostname
+   This option sets the CoAP server hostname. Default is ``californium.eclipseprojects.io``.
+
+.. _CONFIG_COAP_SERVER_PORT:
+
+CONFIG_COAP_SERVER_PORT - CoAP server port
+   This option sets the port for the CoAP server. Default is ``5683``.
 
 Building and running
 ********************
 
 .. |sample path| replace:: :file:`samples/nrf9160/coap_client`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 
 Testing
 =======
 
-After programming the sample and all prerequisites to the development kit, test it by performing the following steps:
+|test_sample|
 
-1. Connect your nRF9160 DK to the PC using a USB cable and power on or reset your nRF9160 DK.
-#. Open a terminal emulator and observe that the following information is displayed::
+1. |connect_kit|
+#. |connect_terminal|
+#. Power on or reset the kit.
+#. Observe that the following output is displayed in the terminal::
 
        The nRF CoAP client sample started
 #. Observe that the discovered IP address of the public CoAP server is displayed on the terminal emulator.

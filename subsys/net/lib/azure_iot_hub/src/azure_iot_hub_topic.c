@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
 #include "azure_iot_hub_topic.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(azure_iot_hub_topic, CONFIG_AZURE_IOT_HUB_LOG_LEVEL);
 
 #define PROP_BAG_STR		"%s=%s"

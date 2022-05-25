@@ -3,24 +3,24 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <logging/log.h>
-#include <logging/log_ctrl.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
-#include <drivers/uart.h>
-#include <drivers/gpio.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/drivers/gpio.h>
 #include <string.h>
 #include <nrf_modem.h>
 #include <hal/nrf_gpio.h>
 #include <hal/nrf_power.h>
 #include <hal/nrf_regulators.h>
 #include <modem/nrf_modem_lib.h>
-#include <dfu/mcuboot.h>
+#include <zephyr/dfu/mcuboot.h>
 #include <dfu/dfu_target.h>
-#include <sys/reboot.h>
-#include <drivers/clock_control.h>
-#include <drivers/clock_control/nrf_clock_control.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/drivers/clock_control.h>
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
 
@@ -52,12 +52,6 @@ int slm_setting_fota_save(void);
 static void indicate_wk(struct k_work *work);
 
 BUILD_ASSERT(CONFIG_SLM_WAKEUP_PIN >= 0, "Wake up pin not configured");
-
-/**@brief Recoverable modem library error. */
-void nrf_modem_recoverable_error_handler(uint32_t err)
-{
-	LOG_ERR("Modem library recoverable error: %u", err);
-}
 
 static int ext_xtal_control(bool xtal_on)
 {
@@ -227,7 +221,7 @@ static void handle_nrf_modem_lib_init_ret(void)
 		break;
 	case MODEM_DFU_RESULT_HARDWARE_ERROR:
 	case MODEM_DFU_RESULT_INTERNAL_ERROR:
-		LOG_ERR("MODEM UPDATE FATAL ERROR %d. Modem failiure", ret);
+		LOG_ERR("MODEM UPDATE FATAL ERROR %d. Modem failure", ret);
 		fota_status = FOTA_STATUS_ERROR;
 		fota_info = ret;
 		break;
@@ -332,8 +326,7 @@ int main(void)
 
 	/* Init and load settings */
 	if (slm_settings_init() != 0) {
-		LOG_ERR("Failed to init slm settings");
-		return -EAGAIN;
+		LOG_WRN("Failed to init slm settings");
 	}
 	/* Post-FOTA handling */
 	if (fota_stage != FOTA_STAGE_INIT) {
@@ -351,10 +344,7 @@ int main(void)
 
 #if defined(CONFIG_SLM_START_SLEEP)
 	if ((rr & NRF_POWER_RESETREAS_OFF_MASK) ||     /* DETECT signal from GPIO*/
-	    (rr & NRF_POWER_RESETREAS_DIF_MASK) ||     /* Entering debug interface mode */
-	    (rr & NRF_POWER_RESETREAS_LPCOMP_MASK) ||  /* LPCOMP */
-	    (rr & NRF_POWER_RESETREAS_NFC_MASK) ||     /* NFC */
-	    (rr & NRF_POWER_RESETREAS_VBUS_MASK)) {    /* USB VBUS */
+	    (rr & NRF_POWER_RESETREAS_DIF_MASK)) {     /* Entering debug interface mode */
 		return start_execute();
 	}
 	enter_sleep();

@@ -8,19 +8,35 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <shell/shell.h>
-
+#include <zephyr/shell/shell.h>
 #include <getopt.h>
-
+#include <net/nrf_cloud.h>
+#if defined(CONFIG_NRF_CLOUD_REST)
+#include <net/nrf_cloud_rest.h>
+#endif
 #include <modem/location.h>
 
 #include "mosh_print.h"
+#include "location_cmd_utils.h"
+
 
 enum location_shell_command {
 	LOCATION_CMD_NONE = 0,
 	LOCATION_CMD_GET,
 	LOCATION_CMD_CANCEL
 };
+extern struct k_work_q mosh_common_work_q;
+
+/* Work for sending acquired location to nRF Cloud */
+struct gnss_location_work_data {
+	struct k_work work;
+
+	enum location_cmd_cloud_data_gnss_format format;
+
+	/* Data from LOCATION_EVT_LOCATION: */
+	struct location_data location;
+};
+static struct gnss_location_work_data gnss_location_work_data;
 
 /******************************************************************************/
 static const char location_usage_str[] =
@@ -31,54 +47,71 @@ static const char location_usage_str[] =
 	"  cancel:   Cancel/stop on going request. No options\n";
 
 static const char location_get_usage_str[] =
-	"Usage: location get [--method <method>] [--interval <secs>]\n"
-	"[--gnss_accuracy <acc>] [--gnss_num_fixes <number of fixes>] [--gnss_timeout <timeout in secs>]\n"
+	"Usage: location get [--mode <mode>] [--method <method>] [--interval <secs>]\n"
+	"[--gnss_accuracy <acc>] [--gnss_num_fixes <number of fixes>]\n"
+	"[--gnss_timeout <timeout in secs>] [--gnss_visibility]\n"
+	"[--gnss_cloud_nmea] [--gnss_cloud_pvt]\n"
 	"[--cellular_timeout <timeout in secs>] [--cellular_service <service_string>]\n"
 	"[--wifi_timeout <timeout in secs>] [--wifi_service <service_string>]\n"
 	"Options:\n"
 	"  --method,           Location method: 'gnss', 'cellular' or 'wifi'. Multiple\n"
 	"                      '--method' parameters may be given to indicate list of\n"
 	"                      methods in priority order.\n"
+	"  --mode,             Location request mode: 'fallback' (default) or 'all'.\n"
 	"  --interval,         Position update interval in seconds\n"
 	"                      (default: 0 = single position)\n"
 	"  --gnss_accuracy,    Used GNSS accuracy: 'low', 'normal' or 'high'\n"
 	"  --gnss_num_fixes,   Number of consecutive fix attempts (if gnss_accuracy\n"
 	"                      set to 'high', default: 3)\n"
 	"  --gnss_timeout,     GNSS timeout in seconds\n"
+	"  --gnss_visibility,  Enables GNSS obstructed visibility detection\n"
+	"  --gnss_cloud_nmea,  Send acquired GNSS location to nRF Cloud formatted as NMEA\n"
+	"  --gnss_cloud_pvt,   Send acquired GNSS location to nRF Cloud formatted as PVT\n"
 	"  --cellular_timeout, Cellular timeout in seconds\n"
 	"  --cellular_service, Used cellular positioning service:\n"
-	"                      'any' (default), 'nrf', 'skyhook', 'here' or 'polte'\n"
+	"                      'any' (default), 'nrf', 'here' or 'polte'\n"
 	"  --wifi_timeout,     Wi-Fi timeout in seconds\n"
 	"  --wifi_service,     Used Wi-Fi positioning service:\n"
-	"                      'any' (default), 'nrf', 'skyhook' or 'here'\n";
+	"                      'any' (default), 'nrf' or 'here'\n";
 
 /******************************************************************************/
 
 /* Following are not having short options */
 enum {
 	LOCATION_SHELL_OPT_INTERVAL         = 1001,
-	LOCATION_SHELL_OPT_GNSS_ACCURACY    = 1002,
-	LOCATION_SHELL_OPT_GNSS_TIMEOUT     = 1003,
-	LOCATION_SHELL_OPT_GNSS_NUM_FIXES   = 1004,
-	LOCATION_SHELL_OPT_CELLULAR_TIMEOUT = 1005,
-	LOCATION_SHELL_OPT_CELLULAR_SERVICE = 1006,
-	LOCATION_SHELL_OPT_WIFI_TIMEOUT     = 1007,
-	LOCATION_SHELL_OPT_WIFI_SERVICE     = 1008,
+	LOCATION_SHELL_OPT_MODE,
+	LOCATION_SHELL_OPT_GNSS_ACCURACY,
+	LOCATION_SHELL_OPT_GNSS_TIMEOUT,
+	LOCATION_SHELL_OPT_GNSS_NUM_FIXES,
+	LOCATION_SHELL_OPT_GNSS_VISIBILITY,
+	LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_NMEA,
+	LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT,
+	LOCATION_SHELL_OPT_CELLULAR_TIMEOUT,
+	LOCATION_SHELL_OPT_CELLULAR_SERVICE,
+	LOCATION_SHELL_OPT_WIFI_TIMEOUT,
+	LOCATION_SHELL_OPT_WIFI_SERVICE,
 };
 
 /* Specifying the expected options */
 static struct option long_options[] = {
 	{ "method", required_argument, 0, 'm' },
+	{ "mode", required_argument, 0, LOCATION_SHELL_OPT_MODE },
 	{ "interval", required_argument, 0, LOCATION_SHELL_OPT_INTERVAL },
 	{ "gnss_accuracy", required_argument, 0, LOCATION_SHELL_OPT_GNSS_ACCURACY },
 	{ "gnss_timeout", required_argument, 0, LOCATION_SHELL_OPT_GNSS_TIMEOUT },
 	{ "gnss_num_fixes", required_argument, 0, LOCATION_SHELL_OPT_GNSS_NUM_FIXES },
+	{ "gnss_visibility", no_argument, 0, LOCATION_SHELL_OPT_GNSS_VISIBILITY },
+	{ "gnss_cloud_nmea", no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_NMEA },
+	{ "gnss_cloud_pvt", no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT },
 	{ "cellular_timeout", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_TIMEOUT },
 	{ "cellular_service", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_SERVICE },
 	{ "wifi_timeout", required_argument, 0, LOCATION_SHELL_OPT_WIFI_TIMEOUT },
 	{ "wifi_service", required_argument, 0, LOCATION_SHELL_OPT_WIFI_SERVICE },
 	{ 0, 0, 0, 0 }
 };
+
+static bool gnss_location_to_cloud;
+static enum location_cmd_cloud_data_gnss_format gnss_location_to_cloud_format;
 
 /******************************************************************************/
 
@@ -108,13 +141,75 @@ static enum location_service location_shell_string_to_service(const char *servic
 		service = LOCATION_SERVICE_NRF_CLOUD;
 	} else if (strcmp(service_str, "here") == 0) {
 		service = LOCATION_SERVICE_HERE;
-	} else if (strcmp(service_str, "skyhook") == 0) {
-		service = LOCATION_SERVICE_SKYHOOK;
 	} else if (strcmp(service_str, "polte") == 0) {
 		service = LOCATION_SERVICE_POLTE;
 	}
 
 	return service;
+}
+
+/******************************************************************************/
+
+static void location_to_cloud_worker(struct k_work *work_item)
+{
+	struct gnss_location_work_data *data =
+		CONTAINER_OF(work_item, struct gnss_location_work_data, work);
+	int ret;
+	char *body = NULL;
+
+	/* If the position update was acquired by using GNSS, send it to nRF Cloud. */
+	if (data->location.method == LOCATION_METHOD_GNSS) {
+		/* Encode json payload in requested format, either NMEA or in PVT*/
+		ret = location_cmd_utils_gnss_loc_to_cloud_payload_json_encode(
+			data->format, &data->location, &body);
+		if (ret) {
+			mosh_error("Failed to generate nrf cloud NMEA or PVT, err: %d", ret);
+			goto clean_up;
+		}
+
+		/* Send the encoded message to the nRF Cloud using either MQTT or REST transport */
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+		struct nrf_cloud_tx_data mqtt_msg = {
+			.data.ptr = body,
+			.data.len = strlen(body),
+			.qos = MQTT_QOS_1_AT_LEAST_ONCE,
+			.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
+		};
+		mosh_print("Sending acquired GNSS location to nRF Cloud via MQTT, body: %s", body);
+
+		ret = nrf_cloud_send(&mqtt_msg);
+		if (ret) {
+			mosh_error("MQTT: location sending failed");
+		}
+#elif defined(CONFIG_NRF_CLOUD_REST)
+#define REST_RX_BUF_SZ 300 /* No payload in a response, "just" headers */
+		static char rx_buf[REST_RX_BUF_SZ];
+		static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
+		static struct nrf_cloud_rest_context rest_ctx = { .connect_socket = -1,
+								  .keep_alive = false,
+								  .rx_buf = rx_buf,
+								  .rx_buf_len = sizeof(rx_buf),
+								  .fragment_size = 0 };
+
+		mosh_print("Sending acquired GNSS location to nRF Cloud via REST, body: %s", body);
+
+		ret = nrf_cloud_client_id_get(device_id, sizeof(device_id));
+		if (ret) {
+			mosh_error("Failed to get device ID, error: %d", ret);
+			goto clean_up;
+		}
+
+		ret = nrf_cloud_rest_send_device_message(&rest_ctx, device_id, body, false, NULL);
+		if (ret) {
+			mosh_error("REST: location sending failed: %d", ret);
+		}
+#endif
+	}
+
+clean_up:
+	if (body) {
+		cJSON_free(body);
+	}
 }
 
 /******************************************************************************/
@@ -147,6 +242,14 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 		mosh_print(
 			"  Google maps URL: https://maps.google.com/?q=%f,%f",
 			event_data->location.latitude, event_data->location.longitude);
+
+		if (gnss_location_to_cloud) {
+			k_work_init(&gnss_location_work_data.work, location_to_cloud_worker);
+
+			gnss_location_work_data.location = event_data->location;
+			gnss_location_work_data.format = gnss_location_to_cloud_format;
+			k_work_submit_to_queue(&mosh_common_work_q, &gnss_location_work_data.work);
+		}
 		break;
 
 	case LOCATION_EVT_TIMEOUT:
@@ -176,6 +279,9 @@ void location_ctrl_event_handler(const struct location_event_data *event_data)
 			event_data->pgps_request.gps_day,
 			event_data->pgps_request.gps_time_of_day);
 #endif
+		break;
+	default:
+		mosh_warn("Unknown event from location library, id %d", event_data->id);
 		break;
 	}
 }
@@ -208,6 +314,8 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	int gnss_num_fixes = 0;
 	bool gnss_num_fixes_set = false;
 
+	bool gnss_visibility = false;
+
 	int cellular_timeout = 0;
 	bool cellular_timeout_set = false;
 	enum location_service cellular_service = LOCATION_SERVICE_ANY;
@@ -219,9 +327,13 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	enum location_method method_list[CONFIG_LOCATION_METHODS_LIST_SIZE] = { 0 };
 	int method_count = 0;
 
+	enum location_req_mode req_mode = LOCATION_REQ_MODE_FALLBACK;
+
 	int opt;
 	int ret = 0;
 	int long_index = 0;
+
+	gnss_location_to_cloud_format = CLOUD_GNSS_FORMAT_PVT;
 
 	if (argc < 2) {
 		goto show_usage;
@@ -245,6 +357,8 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	/* We start from subcmd arguments */
 	optind = 2;
 
+	gnss_location_to_cloud = false;
+
 	while ((opt = getopt_long(argc, argv, "m:", long_options, &long_index)) != -1) {
 		switch (opt) {
 		case LOCATION_SHELL_OPT_GNSS_TIMEOUT:
@@ -256,7 +370,12 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			gnss_num_fixes = atoi(optarg);
 			gnss_num_fixes_set = true;
 			break;
-
+		case LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_NMEA:
+			gnss_location_to_cloud_format = CLOUD_GNSS_FORMAT_NMEA;
+		/* flow-through */
+		case LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT:
+			gnss_location_to_cloud = true;
+			break;
 		case LOCATION_SHELL_OPT_CELLULAR_TIMEOUT:
 			cellular_timeout = atoi(optarg);
 			cellular_timeout_set = true;
@@ -301,6 +420,23 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 				goto show_usage;
 			}
 			gnss_accuracy_set = true;
+			break;
+
+		case LOCATION_SHELL_OPT_GNSS_VISIBILITY:
+			gnss_visibility = true;
+			break;
+
+		case LOCATION_SHELL_OPT_MODE:
+			if (strcmp(optarg, "fallback") == 0) {
+				req_mode = LOCATION_REQ_MODE_FALLBACK;
+			} else if (strcmp(optarg, "all") == 0) {
+				req_mode = LOCATION_REQ_MODE_ALL;
+			} else {
+				mosh_error(
+					"Unknown location request mode (%s) was given. See usage:",
+						optarg);
+				goto show_usage;
+			}
 			break;
 
 		case 'm':
@@ -368,6 +504,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 					config.methods[i].gnss.num_consecutive_fixes =
 						gnss_num_fixes;
 				}
+				config.methods[i].gnss.visibility_detection = gnss_visibility;
 			} else if (config.methods[i].method == LOCATION_METHOD_CELLULAR) {
 				config.methods[i].cellular.service = cellular_service;
 				if (cellular_timeout_set) {
@@ -384,6 +521,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 		if (interval_set) {
 			config.interval = interval;
 		}
+		config.mode = req_mode;
 
 		ret = location_request(real_config);
 		if (ret) {

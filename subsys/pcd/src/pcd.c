@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <device.h>
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
 #include <dfu/pcd.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #ifdef CONFIG_PCD_NET
-#include <storage/stream_flash.h>
+#include <zephyr/storage/stream_flash.h>
 #endif
 
 LOG_MODULE_REGISTER(pcd, CONFIG_PCD_LOG_LEVEL);

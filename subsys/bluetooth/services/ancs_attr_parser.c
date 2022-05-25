@@ -10,11 +10,11 @@
  * time by Apple and may cause this client implementation to stop working.
  */
 
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 #include <bluetooth/services/ancs_client.h>
 #include "ancs_client_internal.h"
 #include "ancs_attr_parser.h"
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(ancs_c, CONFIG_BT_ANCS_CLIENT_LOG_LEVEL);
 

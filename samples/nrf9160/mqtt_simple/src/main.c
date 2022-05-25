@@ -4,18 +4,18 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
-#include <drivers/uart.h>
+#include <zephyr/drivers/uart.h>
 #include <string.h>
-#include <random/rand32.h>
-#include <net/mqtt.h>
-#include <net/socket.h>
+#include <zephyr/random/rand32.h>
+#include <zephyr/net/mqtt.h>
+#include <zephyr/net/socket.h>
 #if defined(CONFIG_NRF_MODEM_LIB)
 #include <nrf_modem_at.h>
 #endif /* CONFIG_NRF_MODEM_LIB */
 #include <modem/lte_lc.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #if defined(CONFIG_MODEM_KEY_MGMT)
 #include <modem/modem_key_mgmt.h>
 #endif
@@ -77,16 +77,6 @@ static int certificates_provision(void)
 }
 #endif /* defined(CONFIG_MQTT_LIB_TLS) */
 
-#if defined(CONFIG_NRF_MODEM_LIB)
-
-/**@brief Recoverable modem library error. */
-void nrf_modem_recoverable_error_handler(uint32_t err)
-{
-	LOG_ERR("Modem library recoverable error: %u", (unsigned int)err);
-}
-
-#endif /* defined(CONFIG_NRF_MODEM_LIB) */
-
 #if defined(CONFIG_LWM2M_CARRIER)
 K_SEM_DEFINE(carrier_registered, 0, 1);
 int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
@@ -122,9 +112,6 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 		break;
 	case LWM2M_CARRIER_EVENT_REBOOT:
 		LOG_INF("LWM2M_CARRIER_EVENT_REBOOT");
-		break;
-	case LWM2M_CARRIER_EVENT_LTE_READY:
-		LOG_INF("LWM2M_CARRIER_EVENT_LTE_READY");
 		break;
 	case LWM2M_CARRIER_EVENT_ERROR:
 		LOG_ERR("LWM2M_CARRIER_EVENT_ERROR: code %d, value %d",

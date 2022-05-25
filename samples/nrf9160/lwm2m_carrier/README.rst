@@ -14,9 +14,7 @@ Requirements
 
 The sample supports the following development kit:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-     :header: heading
-     :rows: nrf9160dk_nrf9160_ns
+.. table-from-sample-yaml::
 
 .. include:: /includes/spm.txt
 
@@ -25,7 +23,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/lwm2m_carrier`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======
@@ -44,7 +42,7 @@ Troubleshooting
 
 Bootstrapping can take several minutes.
 This is expected and dependent on the availability of the LTE link.
-During bootstrap, several :c:macro:`LWM2M_CARRIER_EVENT_CONNECTED` and :c:macro:`LWM2M_CARRIER_EVENT_DISCONNECTED` events are printed.
+During bootstrap, the application will receive the :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_UP` and :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_DOWN` events.
 This is expected and is part of the bootstrapping procedure.
 For more information, see the :ref:`lwm2m_events` and :ref:`lwm2m_msc` sections in the LwM2M carrier library documentation.
 

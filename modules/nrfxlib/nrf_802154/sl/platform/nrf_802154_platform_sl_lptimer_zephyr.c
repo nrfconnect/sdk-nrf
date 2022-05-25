@@ -7,7 +7,7 @@
 #include "platform/nrf_802154_platform_sl_lptimer.h"
 
 #include <assert.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 
 #include "drivers/timer/nrf_rtc_timer.h"
 

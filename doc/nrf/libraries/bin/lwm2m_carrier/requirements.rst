@@ -7,7 +7,7 @@ Requirements and application limitations
    :local:
    :depth: 2
 
-Below are some of the requirements and limitations of the application while running this module.
+Following are some of the requirements and limitations of the application while running this module:
 
 * The application must not call the :c:func:`nrf_modem_lib_init` function.
 
@@ -19,6 +19,8 @@ Below are some of the requirements and limitations of the application while runn
    * SMS events (AT+CNMI).
    * Packet Domain events (AT+CGEREP).
    * Extended signal quality events (AT+CESQ).
+   * ODIS events (AT+ODISNTF).
+   * Universal Integrated Circuit Card events (AT%XSIM).
    * Network Time events (AT%XTIME).
    * Modem Domain events (AT%MDMEV).
    * Report Network Error Codes events (AT+CNEC) - EPS Session Management events are used by the LwM2M carrier library. The application may enable or disable EPS Mobility Management events.
@@ -26,15 +28,15 @@ Below are some of the requirements and limitations of the application while runn
 
 * If the application wants to use eDRX, it must enable mode 2, since the LwM2M carrier library requires the unsolicited result code.
 
-* The LwM2M carrier library controls the LTE link.
+* The application must prioritize the LwM2M carrier library requests to connect and disconnect from the network.
 
    * The LwM2M carrier library stores keys into the modem, which requires disconnecting from the LTE link and connecting to it.
-   * The application must wait for the :c:macro:`LWM2M_CARRIER_EVENT_LTE_READY` event before using the LTE link.
+   * The events to indicate connection and disconnection are :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_UP` and :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_DOWN`.
 
 * The LwM2M carrier library uses the TLS socket for FOTA.
 
   * If the application is using the TLS socket, it must immediately close it when the :c:macro:`LWM2M_CARRIER_EVENT_FOTA_START` event is received.
-  * If the application needs a TLS socket at all times, it can use `Mbed TLS`_.
+  * If the application always needs a TLS socket, it can use `Mbed TLS`_.
 
 * The LwM2M carrier library uses both the DTLS sessions made available through the modem. Therefore, the application cannot run any DTLS sessions.
 

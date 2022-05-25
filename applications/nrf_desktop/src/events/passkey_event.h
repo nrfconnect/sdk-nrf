@@ -13,8 +13,8 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,21 +22,21 @@ extern "C" {
 
 /** @brief Passkey input event. */
 struct passkey_input_event {
-	struct event_header header;
+	struct app_event_header header;
 
 	uint32_t passkey;
 };
 
-EVENT_TYPE_DECLARE(passkey_input_event);
+APP_EVENT_TYPE_DECLARE(passkey_input_event);
 
 /** @brief Passkey request event. */
 struct passkey_req_event {
-	struct event_header header;
+	struct app_event_header header;
 
 	bool active;
 };
 
-EVENT_TYPE_DECLARE(passkey_req_event);
+APP_EVENT_TYPE_DECLARE(passkey_req_event);
 
 #ifdef __cplusplus
 }

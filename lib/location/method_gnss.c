@@ -5,8 +5,8 @@
  */
 
 #include <stdio.h>
-#include <zephyr.h>
-#include <logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <modem/location.h>
 #include <modem/lte_lc.h>
 #include <nrf_modem_at.h>
@@ -22,7 +22,6 @@
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_rest.h>
 #include <net/nrf_cloud_pgps.h>
-#include <pm_config.h>
 #endif
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
@@ -62,12 +61,10 @@ BUILD_ASSERT(
 #define AGPS_REQUEST_HTTPS_RESP_HEADER_SIZE 400
 #endif
 
-struct method_gnss_start_work_args {
-	struct k_work work_item;
-	struct location_gnss_config gnss_config;
-};
+#define VISIBILITY_DETECTION_EXEC_TIME CONFIG_LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_EXEC_TIME
+#define VISIBILITY_DETECTION_SAT_LIMIT CONFIG_LOCATION_METHOD_GNSS_VISIBILITY_DETECTION_SAT_LIMIT
 
-static struct method_gnss_start_work_args method_gnss_start_work;
+static struct k_work method_gnss_start_work;
 static struct k_work method_gnss_pvt_work;
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
@@ -86,11 +83,13 @@ static struct gps_pgps_request pgps_request;
 #endif
 
 static bool running;
+static struct location_gnss_config gnss_config;
 static K_SEM_DEFINE(entered_psm_mode, 0, 1);
 static K_SEM_DEFINE(entered_rrc_idle, 0, 1);
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 static struct nrf_modem_gnss_agps_data_frame agps_request;
+static struct nrf_modem_gnss_agps_data_frame pgps_agps_request;
 #if defined(CONFIG_NRF_CLOUD_REST) && !defined(CONFIG_NRF_CLOUD_MQTT)
 #if defined(CONFIG_NRF_CLOUD_PGPS) || !defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
 static char rest_api_recv_buf[CONFIG_NRF_CLOUD_REST_FRAGMENT_SIZE +
@@ -118,7 +117,7 @@ static void method_gnss_manage_pgps(struct k_work *work)
 
 	LOG_DBG("Sending prediction to modem...");
 
-	err = nrf_cloud_pgps_inject(prediction, &agps_request);
+	err = nrf_cloud_pgps_inject(prediction, &pgps_agps_request);
 	if (err) {
 		LOG_ERR("Unable to send prediction to modem: %d", err);
 	}
@@ -133,7 +132,8 @@ void method_gnss_pgps_handler(struct nrf_cloud_pgps_event *event)
 {
 	LOG_DBG("P-GPS event type: %d", event->type);
 
-	if (event->type == PGPS_EVT_AVAILABLE) {
+	if ((event->type == PGPS_EVT_AVAILABLE) ||
+	    ((event->type == PGPS_EVT_READY) && (event->prediction != NULL))) {
 		prediction = event->prediction;
 		k_work_submit_to_queue(location_core_work_queue_get(),
 				       &method_gnss_manage_pgps_work);
@@ -281,6 +281,12 @@ static void method_gnss_agps_request_work_fn(struct k_work *item)
 	}
 
 	LOG_DBG("A-GPS data processed");
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+	k_work_submit_to_queue(
+		location_core_work_queue_get(),
+		&method_gnss_notify_pgps_work);
+#endif
 }
 #endif /* #elif defined(CONFIG_NRF_CLOUD_REST) */
 #endif /* defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL) */
@@ -326,6 +332,13 @@ static void method_gnss_pgps_request_work_fn(struct k_work *item)
 	}
 
 	LOG_DBG("P-GPS data processed");
+
+	err = nrf_cloud_pgps_notify_prediction();
+	if (err) {
+		LOG_ERR("GNSS: Failed to request current prediction, error: %d", err);
+	} else {
+		LOG_DBG("P-GPS prediction requested");
+	}
 }
 #endif
 
@@ -385,6 +398,13 @@ static void method_gnss_request_assistance(void)
 		return;
 	}
 
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS)) {
+		/* ephemerides come from P-GPS; almanacs not desired in this configuration */
+		pgps_agps_request.sv_mask_ephe = agps_request.sv_mask_ephe;
+		agps_request.sv_mask_ephe = 0;
+		agps_request.sv_mask_alm = 0;
+	}
+
 	LOG_DBG("A-GPS request from modem (ephe: 0x%08x alm: 0x%08x flags: 0x%02x)",
 		agps_request.sv_mask_ephe,
 		agps_request.sv_mask_alm,
@@ -441,7 +461,7 @@ int method_gnss_cancel(void)
 	running = false;
 
 	/* Cancel any work that has not been started yet */
-	(void)k_work_cancel(&method_gnss_start_work.work_item);
+	(void)k_work_cancel(&method_gnss_start_work);
 
 	/* If we are currently not in PSM, i.e., LTE is running, reset the semaphore to unblock
 	 * method_gnss_positioning_work_fn() and allow the ongoing location request to terminate.
@@ -558,11 +578,10 @@ static bool method_gnss_allowed_to_start(void)
 	return true;
 }
 
-static void method_gnss_print_pvt(const struct nrf_modem_gnss_pvt_data_frame *pvt_data)
+static uint8_t method_gnss_tracked_satellites(const struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 {
 	uint8_t tracked = 0;
 
-	/* Print number of tracked satellites */
 	for (uint32_t i = 0; i < NRF_MODEM_GNSS_MAX_SATELLITES; i++) {
 		if (pvt_data->sv[i].sv == 0) {
 			break;
@@ -571,8 +590,13 @@ static void method_gnss_print_pvt(const struct nrf_modem_gnss_pvt_data_frame *pv
 		tracked++;
 	}
 
+	return tracked;
+}
+
+static void method_gnss_print_pvt(const struct nrf_modem_gnss_pvt_data_frame *pvt_data)
+{
 	LOG_DBG("Tracked satellites: %d, fix valid: %s",
-		tracked,
+		method_gnss_tracked_satellites(pvt_data),
 		pvt_data->flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID ? "true" : "false");
 
 	/* Print details for each satellite */
@@ -632,6 +656,14 @@ static void method_gnss_pvt_work_fn(struct k_work *item)
 			method_gnss_cancel();
 			location_core_event_cb(&location_result);
 		}
+	} else if (gnss_config.visibility_detection) {
+		if (pvt_data.execution_time >= VISIBILITY_DETECTION_EXEC_TIME &&
+		    pvt_data.execution_time < (VISIBILITY_DETECTION_EXEC_TIME + MSEC_PER_SEC) &&
+		    method_gnss_tracked_satellites(&pvt_data) < VISIBILITY_DETECTION_SAT_LIMIT) {
+			LOG_DBG("GNSS visibility obstructed, canceling");
+			method_gnss_cancel();
+			location_core_event_cb_error();
+		}
 	}
 }
 
@@ -652,9 +684,6 @@ static void method_gnss_pgps_ext_work_fn(struct k_work *item)
 static void method_gnss_positioning_work_fn(struct k_work *work)
 {
 	int err = 0;
-	struct method_gnss_start_work_args *work_data =
-		CONTAINER_OF(work, struct method_gnss_start_work_args, work_item);
-	const struct location_gnss_config gnss_config = work_data->gnss_config;
 
 	if (!method_gnss_allowed_to_start()) {
 		/* Location request was cancelled while waiting for RRC idle or PSM. Do nothing. */
@@ -708,8 +737,9 @@ static void method_gnss_positioning_work_fn(struct k_work *work)
 
 int method_gnss_location_get(const struct location_method_config *config)
 {
-	const struct location_gnss_config gnss_config = config->gnss;
 	int err;
+
+	gnss_config = config->gnss;
 
 	/* GNSS event handler is already set once in method_gnss_init(). If no other thread is
 	 * using GNSS, setting it again is not needed.
@@ -729,8 +759,10 @@ int method_gnss_location_get(const struct location_method_config *config)
 	if (!initialized) {
 		struct nrf_cloud_pgps_init_param param = {
 			.event_handler = method_gnss_pgps_handler,
-			.storage_base = PM_MCUBOOT_SECONDARY_ADDRESS,
-			.storage_size = PM_MCUBOOT_SECONDARY_SIZE};
+			/* storage is defined by CONFIG_NRF_CLOUD_PGPS_STORAGE */
+			.storage_base = 0u,
+			.storage_size = 0u
+		};
 
 		err = nrf_cloud_pgps_init(&param);
 		if (err) {
@@ -747,8 +779,8 @@ int method_gnss_location_get(const struct location_method_config *config)
 	nrf_modem_gnss_start();
 	nrf_modem_gnss_stop();
 #endif
-	method_gnss_start_work.gnss_config = gnss_config;
-	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_start_work.work_item);
+
+	k_work_submit_to_queue(location_core_work_queue_get(), &method_gnss_start_work);
 
 	running = true;
 
@@ -767,7 +799,7 @@ int method_gnss_init(void)
 	}
 
 	k_work_init(&method_gnss_pvt_work, method_gnss_pvt_work_fn);
-	k_work_init(&method_gnss_start_work.work_item, method_gnss_positioning_work_fn);
+	k_work_init(&method_gnss_start_work, method_gnss_positioning_work_fn);
 
 #if defined(CONFIG_LOCATION_METHOD_GNSS_AGPS_EXTERNAL)
 	k_work_init(&method_gnss_agps_ext_work, method_gnss_agps_ext_work_fn);

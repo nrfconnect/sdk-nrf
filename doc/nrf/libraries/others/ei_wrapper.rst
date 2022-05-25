@@ -32,6 +32,7 @@ The Edge Impulse NCS library can be configured with the following Kconfig option
 * :kconfig:option:`CONFIG_EI_WRAPPER_DATA_BUF_SIZE`
 * :kconfig:option:`CONFIG_EI_WRAPPER_THREAD_STACK_SIZE`
 * :kconfig:option:`CONFIG_EI_WRAPPER_THREAD_PRIORITY`
+* :kconfig:option:`CONFIG_EI_WRAPPER_PROFILING`
 
 For more detailed description of these options, refer to the Kconfig help.
 

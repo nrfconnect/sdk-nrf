@@ -8,18 +8,18 @@
 #include <stddef.h>
 #include <string.h>
 #include <errno.h>
-#include <sys/printk.h>
-#include <random/rand32.h>
-#include <zephyr.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/random/rand32.h>
+#include <zephyr/kernel.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/uuid.h>
-#include <bluetooth/gatt.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/gatt.h>
 
 #include <bluetooth/services/rscs.h>
 
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #include <dk_buttons_and_leds.h>
 
@@ -183,6 +183,9 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_display = auth_passkey_display,
 	.cancel = auth_cancel,
+};
+
+static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 	.pairing_complete = pairing_complete,
 	.pairing_failed = pairing_failed
 };
@@ -210,7 +213,17 @@ void main(void)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_RSCS_SECURITY_ENABLED)) {
-		bt_conn_auth_cb_register(&conn_auth_callbacks);
+		err = bt_conn_auth_cb_register(&conn_auth_callbacks);
+		if (err) {
+			printk("Failed to register authorization callbacks.\n");
+			return;
+		}
+
+		err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
+		if (err) {
+			printk("Failed to register authorization info callbacks.\n");
+			return;
+		}
 	}
 
 	err = bt_enable(NULL);

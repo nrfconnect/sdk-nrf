@@ -5,13 +5,13 @@
  */
 #include <stddef.h>
 #include <string.h>
-#include <zephyr.h>
-#include <init.h>
-#include <device.h>
+#include <zephyr/kernel.h>
+#include <zephyr/init.h>
+#include <zephyr/device.h>
 #include <nrf_modem_at.h>
 #include <modem/at_monitor.h>
-#include <toolchain/common.h>
-#include <logging/log.h>
+#include <zephyr/toolchain/common.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(at_monitor, CONFIG_AT_MONITOR_LOG_LEVEL);
 

@@ -4,18 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
-#include <drivers/uart.h>
+#include <zephyr/drivers/uart.h>
 #include <string.h>
-#include <drivers/clock_control.h>
-#include <drivers/clock_control/nrf_clock_control.h>
-
-/**@brief Recoverable modem library error. */
-void nrf_modem_recoverable_error_handler(uint32_t err)
-{
-	printk("Modem library recoverable error: %u\n", err);
-}
+#include <zephyr/drivers/clock_control.h>
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
 
 /* To strictly comply with UART timing, enable external XTAL oscillator */
 void enable_xtal(void)

@@ -121,7 +121,7 @@ Set used by Thread and Zigbee samples and application (nRF Desktop - DK)
 
 .. set8_end
 
-Set used by samples (Event Manager, Profiler, PPI Trace)
+Set used by samples (Application Event Manager, Profiler, PPI Trace)
 
 .. set9_start
 

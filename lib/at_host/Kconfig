@@ -4,9 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menu "AT Host Library for nrf91"
-
-config AT_HOST_LIBRARY
+menuconfig AT_HOST_LIBRARY
 	bool "AT Host Library for nrf91"
 	depends on NRF_MODEM_LIB_SYS_INIT
 	select AT_MONITOR
@@ -80,7 +78,6 @@ config AT_HOST_CMD_MAX_LEN
 	help
 		The maximum allowed length of an AT command passed through the
 		AT host. The space is allocated statically.
-		This limit is in turn limited by Modem library's NRF_MODEM_AT_MAX_CMD_SIZE.
 	range 0 4096
 	default 4096
 
@@ -95,5 +92,3 @@ module-str = AT host
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endif # AT_HOST_LIBRARY
-
-endmenu

@@ -17,7 +17,8 @@ enum gnss_duty_cycling_policy {
 
 enum gnss_data_delete {
 	GNSS_DATA_DELETE_EPHEMERIDES,
-	GNSS_DATA_DELETE_ALL
+	GNSS_DATA_DELETE_ALL,
+	GNSS_DATA_DELETE_TCXO
 };
 
 enum gnss_dynamics_mode {
@@ -61,12 +62,6 @@ struct gnss_1pps_mode {
 	/** Second of the minute. */
 	uint8_t second;
 };
-
-/* Common functions */
-
-int gnss_configure_lna(void);
-
-/* Functions implemented by different API implementations */
 
 /**
  * @brief Starts GNSS.
@@ -339,6 +334,14 @@ int gnss_inject_agps_data(void);
  *         Otherwise, a (negative) error code is returned.
  */
 int gnss_enable_pgps(void);
+
+/**
+ * @brief Queries A-GPS data expiry information from GNSS.
+ *
+ * @return 0 if the operation was successful.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int gnss_get_agps_expiry(void);
 
 /**
  * @brief Configures how much PVT information is printed out.

@@ -4,21 +4,21 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <event_manager.h>
+#include <app_event_manager.h>
 #if defined(CONFIG_NRF_MODEM_LIB)
 #include <modem/nrf_modem_lib.h>
 #endif /* CONFIG_NRF_MODEM_LIB */
-#include <sys/reboot.h>
+#include <zephyr/sys/reboot.h>
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_agps.h>
 #endif
 
-/* Module name is used by the event manager macros in this file */
+/* Module name is used by the Application Event Manager macros in this file */
 #define MODULE main
 #include <caf/events/module_state_event.h>
 
@@ -32,13 +32,13 @@
 #include "events/modem_module_event.h"
 #include "events/led_state_event.h"
 
-#include <logging/log.h>
-#include <logging/log_ctrl.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
 
 LOG_MODULE_REGISTER(MODULE, CONFIG_APPLICATION_MODULE_LOG_LEVEL);
 
 /* Message structure. Events from other modules are converted to messages
- * in the event manager handler, and then queued up in the message queue
+ * in the Application Event Manager handler, and then queued up in the message queue
  * for processing in the main thread.
  */
 struct app_msg_data {
@@ -210,58 +210,58 @@ static void handle_nrf_modem_lib_init_ret(void)
 #endif /* CONFIG_NRF_MODEM_LIB */
 }
 
-/* Event manager handler. Puts event data into messages and adds them to the
+/* Application Event Manager handler. Puts event data into messages and adds them to the
  * application message queue.
  */
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	struct app_msg_data msg = {0};
 	bool enqueue_msg = false;
 
-	if (is_cloud_module_event(eh)) {
-		struct cloud_module_event *evt = cast_cloud_module_event(eh);
+	if (is_cloud_module_event(aeh)) {
+		struct cloud_module_event *evt = cast_cloud_module_event(aeh);
 
 		msg.module.cloud = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_app_module_event(eh)) {
-		struct app_module_event *evt = cast_app_module_event(eh);
+	if (is_app_module_event(aeh)) {
+		struct app_module_event *evt = cast_app_module_event(aeh);
 
 		msg.module.app = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_data_module_event(eh)) {
-		struct data_module_event *evt = cast_data_module_event(eh);
+	if (is_data_module_event(aeh)) {
+		struct data_module_event *evt = cast_data_module_event(aeh);
 
 		msg.module.data = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_sensor_module_event(eh)) {
-		struct sensor_module_event *evt = cast_sensor_module_event(eh);
+	if (is_sensor_module_event(aeh)) {
+		struct sensor_module_event *evt = cast_sensor_module_event(aeh);
 
 		msg.module.sensor = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_util_module_event(eh)) {
-		struct util_module_event *evt = cast_util_module_event(eh);
+	if (is_util_module_event(aeh)) {
+		struct util_module_event *evt = cast_util_module_event(aeh);
 
 		msg.module.util = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_modem_module_event(eh)) {
-		struct modem_module_event *evt = cast_modem_module_event(eh);
+	if (is_modem_module_event(aeh)) {
+		struct modem_module_event *evt = cast_modem_module_event(aeh);
 
 		msg.module.modem = *evt;
 		enqueue_msg = true;
 	}
 
-	if (is_ui_module_event(eh)) {
-		struct ui_module_event *evt = cast_ui_module_event(eh);
+	if (is_ui_module_event(aeh)) {
+		struct ui_module_event *evt = cast_ui_module_event(aeh);
 
 		msg.module.ui = *evt;
 		enqueue_msg = true;
@@ -300,6 +300,10 @@ static bool request_gnss(void)
 	uint32_t uptime_current_ms = k_uptime_get();
 	int agps_wait_threshold_ms = CONFIG_APP_REQUEST_GNSS_WAIT_FOR_AGPS_THRESHOLD_SEC *
 				     MSEC_PER_SEC;
+
+	if (!IS_ENABLED(CONFIG_GNSS_MODULE)) {
+		return false;
+	}
 
 	if (!IS_ENABLED(CONFIG_APP_REQUEST_GNSS_WAIT_FOR_AGPS)) {
 		return true;
@@ -377,9 +381,10 @@ static void data_get(void)
 	size_t count = 0;
 
 	/* Set a low sample timeout. If GNSS is requested, the sample timeout will be increased to
-	 * accommodate the GNSS timeout.
+	 * accommodate the GNSS timeout. Use 2 seconds to accommodate for
+	 * neighbour cell measurements that usually takes a few seconds.
 	 */
-	app_module_event->timeout = 1;
+	app_module_event->timeout = 2;
 
 	/* Specify which data that is to be included in the transmission. */
 	app_module_event->data_list[count++] = APP_DATA_MODEM_DYNAMIC;
@@ -433,7 +438,7 @@ static void data_get(void)
 	app_module_event->count = count;
 	app_module_event->type = APP_EVT_DATA_GET;
 
-	EVENT_SUBMIT(app_module_event);
+	APP_EVENT_SUBMIT(app_module_event);
 }
 
 /* Message handler for STATE_INIT. */
@@ -542,11 +547,11 @@ void main(void)
 		handle_nrf_modem_lib_init_ret();
 	}
 
-	if (event_manager_init()) {
-		/* Without the event manager, the application will not work
+	if (app_event_manager_init()) {
+		/* Without the Application Event Manager, the application will not work
 		 * as intended. A reboot is required in an attempt to recover.
 		 */
-		LOG_ERR("Event manager could not be initialized, rebooting...");
+		LOG_ERR("Application Event Manager could not be initialized, rebooting...");
 		k_sleep(K_SECONDS(5));
 		sys_reboot(SYS_REBOOT_COLD);
 	} else {
@@ -596,11 +601,11 @@ void main(void)
 	}
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
-EVENT_SUBSCRIBE(MODULE, app_module_event);
-EVENT_SUBSCRIBE(MODULE, data_module_event);
-EVENT_SUBSCRIBE(MODULE, util_module_event);
-EVENT_SUBSCRIBE_FINAL(MODULE, ui_module_event);
-EVENT_SUBSCRIBE_FINAL(MODULE, sensor_module_event);
-EVENT_SUBSCRIBE_FINAL(MODULE, modem_module_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, cloud_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, app_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, data_module_event);
+APP_EVENT_SUBSCRIBE(MODULE, util_module_event);
+APP_EVENT_SUBSCRIBE_FINAL(MODULE, ui_module_event);
+APP_EVENT_SUBSCRIBE_FINAL(MODULE, sensor_module_event);
+APP_EVENT_SUBSCRIBE_FINAL(MODULE, modem_module_event);

@@ -15,14 +15,6 @@ config DATA_AGPS_REQUEST_ALL_UPON_CONNECTION
 	bool "Request all A-GPS data upon a connection"
 	depends on NRF_CLOUD_AGPS || NRF_CLOUD_PGPS
 
-config PENDING_DATA_COUNT
-	int "Number of entries in pending data list"
-	default 10
-
-config FAILED_DATA_COUNT
-	int "Number of entries in failed data list"
-	default 10
-
 config DATA_SEND_ALL_DEVICE_CONFIGURATIONS
 	bool "Encode and send all device configurations regardless if they have changed or not"
 	help
@@ -33,8 +25,8 @@ config DATA_SEND_ALL_DEVICE_CONFIGURATIONS
 
 config DATA_THREAD_STACK_SIZE
 	int "Data module thread stack size"
-	default 5120 if NRF_CLOUD_AGPS
-	default 3072
+	default 5248 if NRF_CLOUD_AGPS
+	default 3200
 
 config DATA_GNSS_BUFFER_COUNT
 	int "Number of GNSS data ringbuffer entries"
@@ -155,6 +147,107 @@ config DATA_SAMPLE_NEIGHBOR_CELLS_DEFAULT
 	  If this configuration is enabled the application will by default include neighbor cell
 	  data in sample requests sent to other modules. This configuration can be overwritten by
 	  changing the application's real-time configuration using the cloud-side state.
+
+config DATA_GRANT_SEND_ON_CONNECTION_QUALITY
+	bool "Grant or deny encoding and sending of data based on LTE connection quality"
+	select EXPERIMENTAL
+	help
+	  If this option is enabled the module will hold off encoding and sending of data based
+	  on an evaluation of the current LTE connection and estimated energy
+	  consumed to send the data. This feature is individually supported for
+	  neighbor cell measurements, regular updates, and batch updates to cloud.
+	  The maximum number of times that a update can be held back is determined
+	  by the CONFIG_DATA_SEND_ATTEMPTS_COUNT_MAX option.
+
+if DATA_GRANT_SEND_ON_CONNECTION_QUALITY
+
+choice DATA_NEIGHBOR_CELL_UPDATES_ENERGY_THRESHOLD_MIN
+	prompt "Neighbor cell updates minimum energy threshold"
+	default DATA_NEIGHBOR_CELL_UPDATES_ENERGY_THRESHOLD_NORMAL
+	help
+	  Minimum energy threshold that neighbor cell measurement updates will be encoded and sent.
+	  These choices maps directly to the lte_lc_energy_estimate structure defined in
+	  lte_lc.h.
+
+config DATA_NEIGHBOR_CELL_UPDATES_ENERGY_THRESHOLD_EXCESSIVE
+	bool "Neighbor cell updates threshold exessive"
+
+config DATA_NEIGHBOR_CELL_UPDATES_ENERGY_THRESHOLD_INCREASED
+	bool "Neighbor cell updates threshold increased"
+
+config DATA_NEIGHBOR_CELL_UPDATES_ENERGY_THRESHOLD_NORMAL
+	bool "Neighbor cell updates threshold normal"
+
+config DATA_NEIGHBOR_CELL_UPDATES_ENERGY_THRESHOLD_REDUCED
+	bool "Neighbor cell updates threshold reduced"
+
+config DATA_NEIGHBOR_CELL_UPDATES_ENERGY_THRESHOLD_EFFICIENT
+	bool "Neighbor cell updates threshold efficient"
+
+endchoice # DATA_NEIGHBOR_CELL_UPDATES_ENERGY_THRESHOLD_MIN
+
+choice DATA_GENERIC_UPDATES_ENERGY_THRESHOLD_MIN
+	prompt "Generic updates minimum energy threshold"
+	default DATA_GENERIC_UPDATES_ENERGY_THRESHOLD_NORMAL
+	help
+	  Minimum energy threshold that generic updates will be encoded and sent.
+	  These choices maps directly to the lte_lc_energy_estimate structure defined in
+	  lte_lc.h.
+
+config DATA_GENERIC_UPDATES_ENERGY_THRESHOLD_EXCESSIVE
+	bool "Generic updates threshold exessive"
+
+config DATA_GENERIC_UPDATES_ENERGY_THRESHOLD_INCREASED
+	bool "Generic updates threshold increased"
+
+config DATA_GENERIC_UPDATES_ENERGY_THRESHOLD_NORMAL
+	bool "Generic updates threshold normal"
+
+config DATA_GENERIC_UPDATES_ENERGY_THRESHOLD_REDUCED
+	bool "Generic updates threshold reduced"
+
+config DATA_GENERIC_UPDATES_ENERGY_THRESHOLD_EFFICIENT
+	bool "Generic updates threshold efficient"
+
+endchoice # DATA_GENERIC_UPDATES_ENERGY_THRESHOLD_MIN
+
+choice DATA_BATCH_UPDATES_ENERGY_THRESHOLD_MIN
+	prompt "Batch updates minimum energy threshold"
+	default DATA_BATCH_UPDATES_ENERGY_THRESHOLD_NORMAL if NRF_CLOUD_MQTT
+	default DATA_BATCH_UPDATES_ENERGY_THRESHOLD_REDUCED
+	help
+	  Minimum energy threshold that batch updates will be encoded and sent.
+	  These choices maps directly to the lte_lc_energy_estimate structure defined in
+	  lte_lc.h.
+	  The nRF Cloud integration uses batch data exclusively for regular data updates.
+	  Due to this we lower the energy estimate requirement for batch data if configured for
+	  nRF Cloud.
+
+config DATA_BATCH_UPDATES_ENERGY_THRESHOLD_EXCESSIVE
+	bool "Batch updates threshold exessive"
+
+config DATA_BATCH_UPDATES_ENERGY_THRESHOLD_INCREASED
+	bool "Batch updates threshold increased"
+
+config DATA_BATCH_UPDATES_ENERGY_THRESHOLD_NORMAL
+	bool "Batch updates threshold normal"
+
+config DATA_BATCH_UPDATES_ENERGY_THRESHOLD_REDUCED
+	bool "Batch updates threshold reduced"
+
+config DATA_BATCH_UPDATES_ENERGY_THRESHOLD_EFFICIENT
+	bool "Batch updates threshold efficient"
+
+endchoice # DATA_BATCH_UPDATES_ENERGY_THRESHOLD_MIN
+
+config DATA_SEND_ATTEMPTS_COUNT_MAX
+	int "Maximum number of denied send attempts"
+	default 3
+	help
+	  Maximum number of times sending can be denied due to connection
+	  quality before the data is sent regardless.
+
+endif # DATA_GRANT_SEND_ON_CONNECTION_QUALITY
 
 endif # DATA_MODULE
 

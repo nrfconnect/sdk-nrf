@@ -7,7 +7,7 @@
 #include <net/cloud.h>
 #include <net/azure_iot_hub.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(azure_iot_hub_cloud, CONFIG_AZURE_IOT_HUB_LOG_LEVEL);
 

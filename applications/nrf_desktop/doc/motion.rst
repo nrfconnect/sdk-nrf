@@ -27,11 +27,11 @@ Configuration
 
 The motion module selects the source of movement based on the following configuration options:
 
-* :kconfig:option:`CONFIG_DESKTOP_MOTION_NONE` - Module is disabled.
-* :kconfig:option:`CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE` - Movement data is obtained from the gaming-grade ``PMW3360`` motion sensor.
-* :kconfig:option:`CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE` - Movement data is obtained from ``PAW3212`` motion sensor.
-* :kconfig:option:`CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE` - Movement data is generated using buttons.
-* :kconfig:option:`CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE` - Movement data is simulated (controlled from Zephyr's :ref:`zephyr:shell_api`).
+* :ref:`CONFIG_DESKTOP_MOTION_NONE <config_desktop_app_options>` - Module is disabled.
+* :ref:`CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE <config_desktop_app_options>` - Movement data is obtained from the gaming-grade ``PMW3360`` motion sensor.
+* :ref:`CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE <config_desktop_app_options>` - Movement data is obtained from ``PAW3212`` motion sensor.
+* :ref:`CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE <config_desktop_app_options>` - Movement data is generated using buttons.
+* :ref:`CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE <config_desktop_app_options>` - Movement data is simulated (controlled from Zephyr's :ref:`zephyr:shell_api`).
 
 See the following sections for more information.
 
@@ -40,24 +40,24 @@ Depending on the selected configuration option, a different implementation file 
 Movement data from motion sensors
 =================================
 
-Selecting either of the motion sensors (:kconfig:option:`CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE` or :kconfig:option:`CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE`) adds the :file:`src/hw_interface/motion_sensor.c` file to the compilation.
+Selecting either of the motion sensors (:ref:`CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE <config_desktop_app_options>` or :ref:`CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE <config_desktop_app_options>`) adds the :file:`src/hw_interface/motion_sensor.c` file to the compilation.
 
 The motion sensor is sampled from the context of a dedicated thread.
-The option :kconfig:option:`CONFIG_DESKTOP_MOTION_SENSOR_THREAD_STACK_SIZE` is used to set the thread's stack size.
+The option :ref:`CONFIG_DESKTOP_MOTION_SENSOR_THREAD_STACK_SIZE <config_desktop_app_options>` is used to set the thread's stack size.
 
 The motion sensor default sensitivity and power saving switching times can be set with the following options:
 
-* :kconfig:option:`CONFIG_DESKTOP_MOTION_SENSOR_CPI` - Default CPI.
-* :kconfig:option:`CONFIG_DESKTOP_MOTION_SENSOR_SLEEP1_TIMEOUT_MS` - ``Sleep 1`` mode default switch time.
-* :kconfig:option:`CONFIG_DESKTOP_MOTION_SENSOR_SLEEP2_TIMEOUT_MS` - ``Sleep 2`` mode default switch time.
-* :kconfig:option:`CONFIG_DESKTOP_MOTION_SENSOR_SLEEP3_TIMEOUT_MS` - ``Sleep 3`` mode default switch time.
+* :ref:`CONFIG_DESKTOP_MOTION_SENSOR_CPI <config_desktop_app_options>` - Default CPI.
+* :ref:`CONFIG_DESKTOP_MOTION_SENSOR_SLEEP1_TIMEOUT_MS <config_desktop_app_options>` - ``Sleep 1`` mode default switch time.
+* :ref:`CONFIG_DESKTOP_MOTION_SENSOR_SLEEP2_TIMEOUT_MS <config_desktop_app_options>` - ``Sleep 2`` mode default switch time.
+* :ref:`CONFIG_DESKTOP_MOTION_SENSOR_SLEEP3_TIMEOUT_MS <config_desktop_app_options>` - ``Sleep 3`` mode default switch time.
 
 For more information, see the sensor documentation and the Kconfig help.
 
 Movement data from buttons
 ==========================
 
-Selecting the :kconfig:option:`CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE` option adds the :file:`src/hw_interface/motion_buttons.c` file to the compilation.
+Selecting the :ref:`CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE <config_desktop_app_options>` option adds the :file:`src/hw_interface/motion_buttons.c` file to the compilation.
 
 Simulated movement data
 =======================
@@ -72,15 +72,15 @@ The movement data in each event will be tracing the predefined path, an eight-si
 
 You can configure the path with the following options:
 
-* :kconfig:option:`CONFIG_DESKTOP_MOTION_SIMULATED_EDGE_TIME` - Sets how long each edge is traced.
-* :kconfig:option:`CONFIG_DESKTOP_MOTION_SIMULATED_SCALE_FACTOR` - Scales the size of the polygon.
+* :ref:`CONFIG_DESKTOP_MOTION_SIMULATED_EDGE_TIME <config_desktop_app_options>` - Sets how long each edge is traced.
+* :ref:`CONFIG_DESKTOP_MOTION_SIMULATED_SCALE_FACTOR <config_desktop_app_options>` - Scales the size of the polygon.
 
 The ``stop`` command will cause the module to stop generating new events.
 
 Configuration channel
 *********************
 
-In a :ref:`configuration <nrf_desktop_motion_configuration>` where either :kconfig:option:`CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE` or :kconfig:option:`CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE` is used, you can configure the module through the :ref:`nrf_desktop_config_channel`.
+In a :ref:`configuration <nrf_desktop_motion_configuration>` where either :ref:`CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE <config_desktop_app_options>` or :ref:`CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE <config_desktop_app_options>` is used, you can configure the module through the :ref:`nrf_desktop_config_channel`.
 In these configurations, the module is a configuration channel listener and it provides the following configuration options:
 
 * :c:macro:`OPT_DESCR_MODULE_VARIANT`
@@ -145,5 +145,5 @@ Upon connection, the following happens:
 #. At that point, a next motion sampling is performed and the next ``motion_event`` sent.
 
 The module continues to sample data until disconnection or when there is no motion detected.
-The ``motion`` module assumes no motion when a number of consecutive samples equal to :kconfig:option:`CONFIG_DESKTOP_MOTION_SENSOR_EMPTY_SAMPLES_COUNT` returns zero on both axis.
+The ``motion`` module assumes no motion when a number of consecutive samples equal to :ref:`CONFIG_DESKTOP_MOTION_SENSOR_EMPTY_SAMPLES_COUNT <config_desktop_app_options>` returns zero on both axis.
 In such case, the module will switch back to ``STATE_IDLE`` and wait for the motion sensor trigger.

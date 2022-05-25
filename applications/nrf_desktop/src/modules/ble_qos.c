@@ -6,16 +6,16 @@
 
 #include <assert.h>
 #include <stdio.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
-#include <device.h>
-#include <drivers/uart.h>
-#include <sys/byteorder.h>
-#include <settings/settings.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/settings/settings.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/hci.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/hci.h>
 
 #include "sdc_hci_vs.h"
 
@@ -27,7 +27,7 @@
 #include "config_event.h"
 #include "hid_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_QOS_LOG_LEVEL);
 
 #define INVALID_BLACKLIST 0xFFFF
@@ -310,7 +310,7 @@ static void ble_chn_stats_print(bool update_channel_map)
 			LOG_ERR("Encoding error");
 			return;
 		}
-		send_uart_data(cdc_dev, str, str_len);
+		send_uart_data(cdc_dev, (uint8_t *)str, str_len);
 	}
 
 	/* Channel state information print format: */
@@ -321,7 +321,7 @@ static void ble_chn_stats_print(bool update_channel_map)
 		LOG_ERR("Encoding error");
 		return;
 	}
-	send_uart_data(cdc_dev, str, str_len);
+	send_uart_data(cdc_dev, (uint8_t *)str, str_len);
 
 	str_len = 0;
 	for (uint8_t i = 0; i < CHMAP_BLE_CHANNEL_COUNT; i++) {
@@ -345,7 +345,7 @@ static void ble_chn_stats_print(bool update_channel_map)
 		}
 
 		if (str_len >= ((sizeof(str) * 2) / 3)) {
-			send_uart_data(cdc_dev, str, str_len);
+			send_uart_data(cdc_dev, (uint8_t *)str, str_len);
 			str_len = 0;
 		}
 	}
@@ -355,7 +355,7 @@ static void ble_chn_stats_print(bool update_channel_map)
 		LOG_ERR("Encoding error");
 		return;
 	}
-	send_uart_data(cdc_dev, str, str_len);
+	send_uart_data(cdc_dev, (uint8_t *)str, str_len);
 }
 
 static void hid_pkt_stats_print(uint32_t ble_recv)
@@ -402,7 +402,7 @@ static void hid_pkt_stats_print(uint32_t ble_recv)
 		LOG_ERR("Encoding error");
 		return;
 	}
-	send_uart_data(cdc_dev, str, str_len);
+	send_uart_data(cdc_dev, (uint8_t *)str, str_len);
 }
 
 static bool on_vs_evt(struct net_buf_simple *buf)
@@ -628,7 +628,7 @@ static void fetch_config(const uint8_t opt_id, uint8_t *data, size_t *size)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE) &&
 	    IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT)) {
@@ -638,8 +638,8 @@ static bool event_handler(const struct event_header *eh)
 		/* Count number of HID packets received via BLE. */
 		/* Send stats printout via CDC every 100 packets. */
 
-		if (is_hid_report_event(eh)) {
-			const struct hid_report_event *event = cast_hid_report_event(eh);
+		if (is_hid_report_event(aeh)) {
+			const struct hid_report_event *event = cast_hid_report_event(aeh);
 
 			/* Ignore HID output reports. */
 			if (!event->subscriber) {
@@ -658,9 +658,9 @@ static bool event_handler(const struct event_header *eh)
 		}
 	}
 
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(
 			    event,
@@ -791,7 +791,7 @@ static void ble_qos_thread_fn(void)
 		struct ble_qos_event *event = new_ble_qos_event();
 		BUILD_ASSERT(sizeof(event->chmap) == CHMAP_BLE_BITMASK_SIZE, "");
 		memcpy(event->chmap, chmap, CHMAP_BLE_BITMASK_SIZE);
-		EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 
 		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
 			err = bt_le_set_chan_map(chmap);
@@ -809,11 +809,11 @@ static void ble_qos_thread_fn(void)
 	}
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE
-EVENT_SUBSCRIBE(MODULE, hid_report_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
 #endif
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif

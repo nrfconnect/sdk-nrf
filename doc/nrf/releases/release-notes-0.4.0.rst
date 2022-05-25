@@ -68,14 +68,14 @@ In addition to the tools mentioned in :ref:`gs_installing`, the following tool v
      - :ref:`gs_installing_tools`
 
 
-As IDE, we recommend to use |SES| (Nordic Edition), version 4.16 or later.
-It is available from the following links:
+As IDE, we recommend to use SEGGER Embedded Studio (Nordic Edition), version 4.16 or later.
+It is available from the following platforms:
 
-* `SEGGER Embedded Studio (Nordic Edition) - Windows x86`_
-* `SEGGER Embedded Studio (Nordic Edition) - Windows x64`_
-* `SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`_
-* `SEGGER Embedded Studio (Nordic Edition) - Linux x86`_
-* `SEGGER Embedded Studio (Nordic Edition) - Linux x64`_
+* Windows x86
+* Windows x64
+* Mac OS x64
+* Linux x86
+* Linux x64
 
 
 Changelog
@@ -156,13 +156,13 @@ Event Manager
 * Optimized and cleaned up the code
 * Added events logging dynamic control over shell
 * Updated to use logger instead of printk
-* Added a sample (:ref:`event_manager_sample`)
+* Added a sample (:ref:`app_event_manager_sample`)
 
 Profiler
 --------
 
 * Added dynamic selection of profiled events over shell
-* Added a sample (:ref:`profiler_sample`)
+* Added a sample (:ref:`nrf_profiler_sample`)
 
 Build and configuration system
 ==============================
@@ -178,14 +178,14 @@ Documentation
   * nRF9160: Asset Tracker, :ref:`nrf_coap_client_sample`,  :ref:`mqtt_simple_sample`, and :ref:`http_application_update_sample`
   * :ref:`peripheral_hids_mouse`, :ref:`peripheral_hids_keyboard`,  :ref:`bluetooth_central_hids`, and :ref:`bluetooth_central_dfu_smp`
   * :ref:`record_text`, :ref:`writable_ndef_msg`, and :ref:`nfc_tag_reader`
-  * :ref:`event_manager_sample` and :ref:`profiler_sample`
+  * :ref:`app_event_manager_sample` and :ref:`nrf_profiler_sample`
 
 * Added or updated documentation for the following libraries:
 
   * :ref:`bt_conn_ctx_readme`
   * :ref:`dk_buttons_and_leds_readme`
   * :ref:`lib_nfc_ndef`
-  * :ref:`event_manager` and :ref:`profiler`
+  * :ref:`app_event_manager` and :ref:`nrf_profiler`
   * :ref:`at_cmd_parser_readme`, :ref:`at_params_readme`, and :ref:`modem_info_readme`
   * :ref:`lib_download_client`
   * :ref:`lib_spm`

@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 
 #define MODULE ble_bond
 #include <caf/events/module_state_event.h>
 #include <caf/events/click_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BLE_BOND_LOG_LEVEL);
 
 #define BOND_ERASE_CLICK	IS_ENABLED(CONFIG_CAF_BLE_BOND_PEER_ERASE_CLICK)
@@ -48,10 +48,10 @@ static void bond_erase(void)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
-		const struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		const struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(settings_loader), MODULE_STATE_READY)) {
 			initialized = true;
@@ -66,8 +66,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (BOND_ERASE_CLICK && is_click_event(eh)) {
-		const struct click_event *event = cast_click_event(eh);
+	if (BOND_ERASE_CLICK && is_click_event(aeh)) {
+		const struct click_event *event = cast_click_event(aeh);
 
 		if ((event->key_id == BOND_ERASE_KEY_ID) &&
 		    (event->click == BOND_ERASE_CLICK_TYPE)) {
@@ -91,8 +91,8 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if BOND_ERASE_CLICK
-	EVENT_SUBSCRIBE(MODULE, click_event);
+	APP_EVENT_SUBSCRIBE(MODULE, click_event);
 #endif /* BOND_ERASE_CLICK */

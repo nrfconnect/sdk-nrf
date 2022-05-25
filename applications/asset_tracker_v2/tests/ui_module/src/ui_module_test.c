@@ -8,8 +8,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <mock_modules_common.h>
-#include <mock_event_manager_priv.h>
-#include <mock_event_manager.h>
+#include <mock_app_event_manager_priv.h>
+#include <mock_app_event_manager.h>
 #include <mock_dk_buttons_and_leds.h>
 
 #include "events/app_module_event.h"
@@ -24,7 +24,7 @@
 
 extern struct event_listener __event_listener_ui_module;
 
-/* The addresses of the following structures will be returned when the event_manager_alloc()
+/* The addresses of the following structures will be returned when the app_event_manager_alloc()
  * function is called.
  */
 static struct app_module_event app_module_event_memory;
@@ -35,18 +35,19 @@ static struct ui_module_event ui_module_event_memory;
 static struct data_module_event data_module_event_memory;
 static struct gnss_module_event gnss_module_event_memory;
 
-#define UI_MODULE_EVT_HANDLER(eh) __event_listener_ui_module.notification(eh)
+#define UI_MODULE_EVT_HANDLER(aeh) __event_listener_ui_module.notification(aeh)
 
 /* Macro used to submit module events of a specific type to the UI module. */
-#define TEST_SEND_EVENT(_mod, _type, _event)                                                       \
-	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&_mod##_module_event_memory);		   \
-	__wrap_event_manager_free_ExpectAnyArgs();						   \
-	_event = new_##_mod##_module_event();							   \
-	_event->type = _type;                                                                      \
-	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER((struct event_header *)_event));		   \
-	event_manager_free(_event)
+#define TEST_SEND_EVENT(_mod, _type, _event)							\
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&_mod##_module_event_memory);	\
+	__wrap_app_event_manager_free_ExpectAnyArgs();						\
+	_event = new_##_mod##_module_event();							\
+	_event->type = _type;									\
+	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER(						\
+		(struct app_event_header *)_event));					\
+	app_event_manager_free(_event)
 
-/* Dummy structs to please linker. The EVENT_SUBSCRIBE macros in ui_module.c
+/* Dummy structs to please linker. The APP_EVENT_SUBSCRIBE macros in ui_module.c
  * depend on these to exist. But since we are unit testing, we dont need
  * these subscriptions and hence these structs can remain uninitialized.
  */
@@ -76,7 +77,7 @@ int test_suiteTearDown(int num_failures)
 void setUp(void)
 {
 	mock_modules_common_Init();
-	mock_event_manager_Init();
+	mock_app_event_manager_Init();
 
 	/* Reset internal module states. */
 	state = 0;
@@ -90,7 +91,7 @@ void setUp(void)
 void tearDown(void)
 {
 	mock_modules_common_Verify();
-	mock_event_manager_Verify();
+	mock_app_event_manager_Verify();
 }
 
 /* Stub used to verify parameters passed into module_start(). */
@@ -104,9 +105,9 @@ static int module_start_stub(struct module_data *module, int num_calls)
 }
 
 /* Handler that validates events sent from the UI module. */
-static void validate_ui_evt(struct event_header *eh, int no_of_calls)
+static void validate_ui_evt(struct app_event_header *aeh, int no_of_calls)
 {
-	struct ui_module_event *event = cast_ui_module_event(eh);
+	struct ui_module_event *event = cast_ui_module_event(aeh);
 
 	TEST_ASSERT_EQUAL(UI_EVT_SHUTDOWN_READY, event->type);
 }
@@ -301,13 +302,13 @@ void test_state_shutdown_fota(void)
 	setup_ui_module_in_init_state();
 
 	/* Verify state transition to STATE_SHUTDOWN. */
-	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&util_module_event_memory);
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&util_module_event_memory);
 
 	/* When a shutdown request is notified by the utility module it is expected that
 	 * the UI module acknowledges the shutdown request.
 	 */
-	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&ui_module_event_memory);
-	__wrap_event_manager_free_ExpectAnyArgs();
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&ui_module_event_memory);
+	__wrap_app_event_manager_free_ExpectAnyArgs();
 	__wrap__event_submit_Stub(&validate_ui_evt);
 
 	struct util_module_event *util_module_event = new_util_module_event();
@@ -315,8 +316,9 @@ void test_state_shutdown_fota(void)
 	util_module_event->type = UTIL_EVT_SHUTDOWN_REQUEST;
 	util_module_event->reason = REASON_FOTA_UPDATE;
 
-	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER((struct event_header *)util_module_event));
-	event_manager_free(util_module_event);
+	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER(
+		(struct app_event_header *)util_module_event));
+	app_event_manager_free(util_module_event);
 
 	state_verify(STATE_SHUTDOWN, SUB_STATE_ACTIVE, SUB_SUB_STATE_GNSS_INACTIVE);
 
@@ -330,13 +332,13 @@ void test_state_shutdown_error(void)
 	setup_ui_module_in_init_state();
 
 	/* Verify state transition to STATE_SHUTDOWN. */
-	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&util_module_event_memory);
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&util_module_event_memory);
 
 	/* When a shutdown request is notified by the utility module it is expected that
 	 * the UI module acknowledges the shutdown request.
 	 */
-	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&ui_module_event_memory);
-	__wrap_event_manager_free_ExpectAnyArgs();
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&ui_module_event_memory);
+	__wrap_app_event_manager_free_ExpectAnyArgs();
 	__wrap__event_submit_Stub(&validate_ui_evt);
 
 	struct util_module_event *util_module_event = new_util_module_event();
@@ -344,8 +346,9 @@ void test_state_shutdown_error(void)
 	util_module_event->type = UTIL_EVT_SHUTDOWN_REQUEST;
 	util_module_event->reason = REASON_GENERIC;
 
-	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER((struct event_header *)util_module_event));
-	event_manager_free(util_module_event);
+	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER(
+		(struct app_event_header *)util_module_event));
+	app_event_manager_free(util_module_event);
 
 	state_verify(STATE_SHUTDOWN, SUB_STATE_ACTIVE, SUB_SUB_STATE_GNSS_INACTIVE);
 
@@ -384,18 +387,19 @@ void test_mode_transition(void)
 
 	verify_publication(true);
 
-	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&data_module_event_memory);
-	__wrap_event_manager_alloc_ExpectAnyArgsAndReturn(&data_module_event_memory);
-	__wrap_event_manager_free_ExpectAnyArgs();
-	__wrap_event_manager_free_ExpectAnyArgs();
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&data_module_event_memory);
+	__wrap_app_event_manager_alloc_ExpectAnyArgsAndReturn(&data_module_event_memory);
+	__wrap_app_event_manager_free_ExpectAnyArgs();
+	__wrap_app_event_manager_free_ExpectAnyArgs();
 
 	/* Set module in SUB_STATE_PASSIVE */
 	data_module_event = new_data_module_event();
 	data_module_event->type = DATA_EVT_CONFIG_READY;
 	data_module_event->data.cfg.active_mode = false;
 
-	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER((struct event_header *)data_module_event));
-	event_manager_free(data_module_event);
+	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER(
+		(struct app_event_header *)data_module_event));
+	app_event_manager_free(data_module_event);
 
 	state_verify(STATE_RUNNING, SUB_STATE_PASSIVE, SUB_SUB_STATE_GNSS_INACTIVE);
 
@@ -406,8 +410,9 @@ void test_mode_transition(void)
 	data_module_event->type = DATA_EVT_CONFIG_READY;
 	data_module_event->data.cfg.active_mode = true;
 
-	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER((struct event_header *)data_module_event));
-	event_manager_free(data_module_event);
+	TEST_ASSERT_FALSE(UI_MODULE_EVT_HANDLER(
+		(struct app_event_header *)data_module_event));
+	app_event_manager_free(data_module_event);
 
 	state_verify(STATE_RUNNING, SUB_STATE_ACTIVE, SUB_SUB_STATE_GNSS_INACTIVE);
 

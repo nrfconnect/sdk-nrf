@@ -14,12 +14,14 @@
 #ifndef BT_RPC_COMMON_H_
 #define BT_RPC_COMMON_H_
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/gatt.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/gatt.h>
 
 #include <nrf_rpc_cbor.h>
 #include <cbkproxy.h>
+
+#define BT_RPC_SIZE_OF_FIELD(structure, field) (sizeof(((structure *)NULL)->field))
 
 /** @brief Client commands IDs used in bluetooth API serialization.
  *         Those commands are sent from the client to the host.
@@ -28,11 +30,15 @@ enum bt_rpc_cmd_from_cli_to_host {
 	/* bluetooth.h API */
 	BT_RPC_GET_CHECK_LIST_RPC_CMD,
 	BT_ENABLE_RPC_CMD,
+	BT_DISABLE_RPC_CMD,
+	BT_IS_READY_RPC_CMD,
 	BT_LE_ADV_START_RPC_CMD,
 	BT_LE_ADV_STOP_RPC_CMD,
 	BT_LE_SCAN_START_RPC_CMD,
 	BT_SET_NAME_RPC_CMD,
 	BT_GET_NAME_OUT_RPC_CMD,
+	BT_GET_APPEARANCE_RPC_CMD,
+	BT_SET_APPEARANCE_RPC_CMD,
 	BT_SET_ID_ADDR_RPC_CMD,
 	BT_ID_GET_RPC_CMD,
 	BT_ID_CREATE_RPC_CMD,
@@ -66,9 +72,9 @@ enum bt_rpc_cmd_from_cli_to_host {
 	BT_LE_PER_ADV_LIST_CLEAR_RPC_CMD,
 	BT_LE_SCAN_STOP_RPC_CMD,
 	BT_LE_SCAN_CB_REGISTER_ON_REMOTE_RPC_CMD,
-	BT_LE_WHITELIST_ADD_RPC_CMD,
-	BT_LE_WHITELIST_REM_RPC_CMD,
-	BT_LE_WHITELIST_CLEAR_RPC_CMD,
+	BT_LE_FILTER_ACCEPT_LIST_ADD_RPC_CMD,
+	BT_LE_FILTER_ACCEPT_LIST_REMOVE_RPC_CMD,
+	BT_LE_ACCEPT_LIST_CLEAR_RPC_CMD,
 	BT_LE_SET_CHAN_MAP_RPC_CMD,
 	BT_LE_OOB_GET_LOCAL_RPC_CMD,
 	BT_LE_EXT_ADV_OOB_GET_LOCAL_RPC_CMD,
@@ -98,6 +104,8 @@ enum bt_rpc_cmd_from_cli_to_host {
 	BT_LE_OOB_GET_SC_DATA_RPC_CMD,
 	BT_PASSKEY_SET_RPC_CMD,
 	BT_CONN_AUTH_CB_REGISTER_ON_REMOTE_RPC_CMD,
+	BT_CONN_AUTH_INFO_CB_REGISTER_ON_REMOTE_RPC_CMD,
+	BT_CONN_AUTH_INFO_CB_UNREGISTER_ON_REMOTE_RPC_CMD,
 	BT_CONN_AUTH_PASSKEY_ENTRY_RPC_CMD,
 	BT_CONN_AUTH_CANCEL_RPC_CMD,
 	BT_CONN_AUTH_PASSKEY_CONFIRM_RPC_CMD,
@@ -132,6 +140,8 @@ enum bt_rpc_cmd_from_cli_to_host {
 	BT_ENCRYPT_BE_RPC_CMD,
 	BT_CCM_DECRYPT_RPC_CMD,
 	BT_CCM_ENCRYPT_RPC_CMD,
+	/* internal.h API */
+	BT_ADDR_LE_IS_BONDED_CMD,
 };
 
 /** @brief Host commands IDs used in bluetooth API serialization.
@@ -168,8 +178,9 @@ enum bt_rpc_cmd_from_host_to_cli {
 	BT_RPC_AUTH_CB_CANCEL_RPC_CMD,
 	BT_RPC_AUTH_CB_PAIRING_CONFIRM_RPC_CMD,
 	BT_RPC_AUTH_CB_PINCODE_ENTRY_RPC_CMD,
-	BT_RPC_AUTH_CB_PAIRING_COMPLETE_RPC_CMD,
-	BT_RPC_AUTH_CB_PAIRING_FAILED_RPC_CMD,
+	BT_RPC_AUTH_INFO_CB_PAIRING_COMPLETE_RPC_CMD,
+	BT_RPC_AUTH_INFO_CB_PAIRING_FAILED_RPC_CMD,
+	BT_RPC_AUTH_INFO_CB_BOND_DELETED_RPC_CMD,
 	BT_CONN_FOREACH_CB_CALLBACK_RPC_CMD,
 	/* gatt.h API */
 	BT_RPC_GATT_CB_ATTR_READ_RPC_CMD,
@@ -210,8 +221,10 @@ enum {
 	FLAG_PAIRING_CONFIRM_PRESENT  = BIT(6),
 	FLAG_PAIRING_COMPLETE_PRESENT = BIT(7),
 	FLAG_PAIRING_FAILED_PRESENT   = BIT(8),
+	FLAG_BOND_DELETED_PRESENT     = BIT(9),
 	FLAG_AUTH_CB_IS_NULL          = BIT(15),
 };
+
 
 /* Helper callback definitions for connection API and Extended Advertising.
  * Below callbacks have no theirs own typedefs in Bluetooth API, but instead
@@ -257,18 +270,19 @@ size_t bt_rpc_calc_check_list_size(void);
 
 /** @brief Encode Bluetooth connection object.
  *
- * @param[in, out] encoder Cbor Encoder instance.
+ * @param[in, out] encoder CBOR encoder context.
  * @param[in] conn Connection object to encode.
  */
-void bt_rpc_encode_bt_conn(CborEncoder *encoder, const struct bt_conn *conn);
+void bt_rpc_encode_bt_conn(struct nrf_rpc_cbor_ctx *ctx,
+			   const struct bt_conn *conn);
 
 /** @brief Decode Bluetooth connection object.
  *
- * @param[in] value Cbor Value to decode.
+ * @param[in, out] ctx CBOR decoder context.
  *
  * @retval Connection object.
  */
-struct bt_conn *bt_rpc_decode_bt_conn(CborValue *value);
+struct bt_conn *bt_rpc_decode_bt_conn(struct nrf_rpc_cbor_ctx *ctx);
 
 /** @brief Declaration of callback proxy encoder for bt_gatt_complete_func_t.
  */

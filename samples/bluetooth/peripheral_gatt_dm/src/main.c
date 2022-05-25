@@ -8,17 +8,17 @@
 #include <stddef.h>
 #include <string.h>
 #include <errno.h>
-#include <sys/printk.h>
-#include <sys/byteorder.h>
-#include <zephyr.h>
-#include <drivers/gpio.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/gpio.h>
 #include <soc.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/hci.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/uuid.h>
-#include <bluetooth/gatt.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/hci.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/gatt.h>
 
 #include <bluetooth/gatt_dm.h>
 
@@ -168,6 +168,9 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.cancel = auth_cancel,
 	.pairing_confirm = pairing_confirm,
+};
+
+static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 	.pairing_complete = pairing_complete,
 	.pairing_failed = pairing_failed
 };
@@ -232,6 +235,12 @@ void main(void)
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {
 		printk("Failed to register authorization callbacks.\n");
+		return;
+	}
+
+	err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
+	if (err) {
+		printk("Failed to register authorization info callbacks.\n");
 		return;
 	}
 

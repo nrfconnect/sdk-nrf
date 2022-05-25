@@ -5,7 +5,7 @@
  */
 
 #include <soc.h>
-#include <sys/printk.h>
+#include <zephyr/sys/printk.h>
 #include <pm_config.h>
 #include <fw_info.h>
 #include <fprotect.h>

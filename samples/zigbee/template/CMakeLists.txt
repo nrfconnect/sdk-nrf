@@ -14,4 +14,6 @@ project("Zigbee application template")
 target_sources(app PRIVATE
   src/main.c
 )
+
+target_include_directories(app PRIVATE include)
 # NORDIC SDK APP END

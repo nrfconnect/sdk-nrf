@@ -14,7 +14,7 @@ After programming and testing an application, you probably want to make some mod
 Adding files and changing compiler settings
 *******************************************
 
-The |NCS| build system is based on Zephyr, whose build system is based on `CMake`_.
+The |NCS| build system is based on Zephyr, whose build system is based on `CMake <CMake documentation_>`_.
 For more information about how the build system works in Zephyr, see :ref:`zephyr:build_overview` and :ref:`zephyr:application` in the Zephyr documentation.
 
 In the |NCS|, the application is a CMake project.
@@ -24,13 +24,13 @@ The application's :file:`CMakeLists.txt` file is the main CMake project file and
 Zephyr provides a CMake package that must be loaded by the application into its :file:`CMakeLists.txt` file.
 When loaded, the application can reference items provided by both Zephyr and the |NCS|.
 
-Loading Zephyr's `CMake`_ package creates the ``app`` CMake target.
+Loading Zephyr's `CMake <CMake documentation_>`_ package creates the ``app`` CMake target.
 You can add application source files to this target from the application :file:`CMakeLists.txt` file.
 
-To update the :file:`CMakeLists.txt` file, either edit it directly or use |SES| (SES) to maintain it.
+To update the :file:`CMakeLists.txt` file, either edit it directly or use |VSC| to maintain it.
 
-Editing CMakeLists.txt directly
-===============================
+Editing CMakeLists.txt
+======================
 
 You can add source files to the ``app`` CMake target with the :c:func:`target_sources` function provided by CMake.
 
@@ -48,59 +48,6 @@ Pay attention to the following configuration options:
 
 See the `CMake documentation`_ and :ref:`zephyr:cmake-details` in the Zephyr documentation for more information about how to edit :file:`CMakeLists.txt`.
 
-Maintaining CMakeLists.txt in SES
-=================================
-
-You must tag the :file:`CMakeLists.txt` files properly before adding them to a project in SES.
-Projects in the :file:`sdk-nrf` repository already have these tags, but projects from Zephyr and other repositories do not.
-Follow the steps in :ref:`ses_tags_in_CMakeLists` to manually add tags when using :file:`CMakeLists.txt` files that are not located in the :file:`sdk-nrf` repository.
-
-To add a file in SES, right-click :guilabel:`Project 'app/libapp.a'` in the Project Explorer.
-Select either :guilabel:`Add new file to CMakeLists.txt` to create a file and add it or :guilabel:`Add existing file to CMakeLists.txt` to add a file that already exists.
-
-.. figure:: images/ses_add_files.png
-   :alt: Adding files in SES
-
-   Adding files in SES
-
-To edit compilation options in SES, right-click :guilabel:`Project 'app/libapp.a'` in the Project Explorer and select :guilabel:`Edit Compile Options in CMakeLists.txt`.
-
-In the window that is displayed, you can define compilation options for the project.
-
-.. figure:: images/ses_compile_options.png
-   :alt:
-
-   Setting compiler defines, includes, and options in SES
-
-.. note::
-   These compilation options apply to the application project only.
-   To manage Zephyr and other subsystems, go to :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project`.
-
-.. _ses_tags_in_CMakeLists:
-
-SES tags in :file:`CMakeLists.txt`
-----------------------------------
-
-To be able to manage :file:`CMakeLists.txt` with SES, the CMake commands that are specific to the |NCS| application must be marked so SES can identify them.
-Therefore, they must be surrounded by ``# NORDIC SDK APP START`` and ``# NORDIC SDK APP END`` tags.
-
-The following CMake commands can be managed by SES, if they target the ``app`` in CMake:
-
-* ``target_sources``
-* ``target_compile_definitions``
-* ``target_include_directories``
-* ``target_compile_options``
-
-The :file:`CMakeLists.txt` files for the sample applications in the :file:`sdk-nrf` repository already have the required tags.
-Therefore, if you always use SES to maintain them, you do not need to worry about tagging.
-Typically, the :file:`CMakeLists.txt` files include at least the :file:`main.c` file as source:
-
-.. code-block:: c
-
-   # NORDIC SDK APP START
-   target_sources(app PRIVATE src/main.c)
-   # NORDIC SDK APP END
-
 Advanced compiler settings
 ==========================
 
@@ -111,6 +58,16 @@ These options can be found under Zephyr's menuconfig :guilabel:`Build and Link F
 For example, to turn off optimizations, select :kconfig:option:`CONFIG_NO_OPTIMIZATIONS`.
 
 Compiler options not controlled by the Zephyr build system can be controlled through the :kconfig:option:`CONFIG_COMPILER_OPT` Kconfig option.
+
+VS Code extension compiler settings
+===================================
+
+.. modify_vsc_compiler_options_start
+
+The |VSC| extension lets you build and program with custom options.
+For more information, read about the advanced `Custom launch and debug configurations`_ and `Application-specific flash options`_ in the extension documentation.
+
+.. modify_vsc_compiler_options_end
 
 .. _configure_application:
 
@@ -141,7 +98,7 @@ To read more about Zephyr's configuration system, see :ref:`zephyr:build_overvie
 Hardware-related configuration
 ------------------------------
 
-.. ncs-include:: guides/build/index.rst
+.. ncs-include:: build/cmake/index.rst
    :docset: zephyr
    :dedent: 3
    :start-after: Devicetree
@@ -159,7 +116,7 @@ For more information, see Zephyr's :ref:`zephyr:dt-guide`.
 Software-related configuration
 ------------------------------
 
-.. ncs-include:: guides/build/index.rst
+.. ncs-include:: build/cmake/index.rst
    :docset: zephyr
    :dedent: 3
    :start-after: Kconfig
@@ -208,19 +165,18 @@ The resulting configuration is written to the :file:`zephyr/.config` file in you
 This means that this file is available when building the application, but it is deleted when you clean the build directory with the ``pristine`` target (see Zephyr's :ref:`zephyr:application_rebuild` for more information).
 
 To quickly test different configuration options, or to build your application in different variants, you can update the :file:`.config` file in the build directory.
-Changes are picked up immediately, and you do not need to re-open the project in SES.
+Changes are picked up immediately.
 
-While it is possible to edit the :file:`.config` file directly, you should use SES or a tool like menuconfig or guiconfig to update it.
+While it is possible to edit the :file:`.config` file directly, you should use the nRF Kconfig GUI in |VSC| or a tool like menuconfig or guiconfig to update it.
 These tools present all available options and allow you to select the ones that you need.
 
-To edit the file in SES, select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project`.
-If your application contains more than one image (see :ref:`ug_multi_image`), you must select the correct target.
-To configure the parent image (the main application), select :guilabel:`menuconfig`.
-The other options allow you to configure the child images.
+The nRF Kconfig GUI in |VSC| organizes the Kconfig options in a hierarchical list and lets you select the desired options.
+To save the changes made using the nRF Kconfig GUI, click the :guilabel:`Save` button.
+Read the `nRF Kconfig`_ documentation for more information.
 
 See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run menuconfig or guiconfig.
 
-To locate a specific configuration option, use the filter (:guilabel:`Jump to` in menuconfig and guiconfig).
+To locate a specific configuration option, use the filter (:guilabel:`Search modules` field in the nRF Kconfig GUI or :guilabel:`Jump to` in menuconfig and guiconfig).
 The documentation for each :ref:`configuration option <configuration_options>` also lists the menu path where the option can be found.
 
 Changing the configuration permanently
@@ -238,17 +194,15 @@ See :ref:`zephyr:setting_configuration_values` in the Zephyr documentation for i
    This may result in a bloated configuration compared to changing the setting directly in :file:`prj.conf`.
    See the section Stuck symbols in menuconfig and guiconfig on the :ref:`kconfig_tips_and_tricks` in the Zephyr documentation for more information.
 
-If you work with SES, the :file:`prj.conf` file is read when you open a project.
+If you work with |VSC|, you can use one of the following options:
+
+* Select an extra Kconfig fragment file when `Building an application`_.
+* Edit the Kconfig options using the nRF Kconfig GUI and save changes permanently to an existing or new :file:`prj.conf` file.
+  See the extension's documentation for more information.
+
+The :file:`prj.conf` file is read when you open a project.
 The file will be reloaded when CMake re-runs.
-This will happen automatically when the application is rebuilt, but can also be requested manually by using the :guilabel:`Project` > :guilabel:`Run CMake...` option.
-
-.. _configuring_vsc:
-
-Configuring in the VS Code extension
-====================================
-
-The |VSC| extension lets you modify your build configuration for custom boards, add additional CMake build arguments, select Kconfig fragments, and more.
-For detailed instructions, see the `nRF Connect for Visual Studio Code`_ documentation site.
+This will happen automatically when the application is rebuilt.
 
 .. _cmake_options:
 
@@ -258,13 +212,8 @@ Providing CMake options
 You can provide additional options for building your application to the CMake process, which can be useful, for example, to switch between different build scenarios.
 These options are specified when CMake is run, thus not during the actual build, but when configuring the build.
 
-If you work with SES, you can specify global CMake options that are used for all projects, and you can modify these options when you open a project:
-
-* Specify global CMake options in the SES options before opening a project.
-  Click :guilabel:`Tools` > :guilabel:`Options`, select the :guilabel:`nRF Connect` tab, and specify a value for :guilabel:`Additional CMake options`.
-* Specify project-specific CMake options when opening the |NCS| project.
-  Click :guilabel:`File` > :guilabel:`Open nRF Connect SDK project`, select :guilabel:`Extended Settings`, and specify the options in the :guilabel:`Extra CMake Build Options` field.
-  This field is prepopulated with the global CMake options, and you can modify them, remove them, or add to them for the current project.
+If you work with the |VSC| extension, you can specify project-specific CMake options when you add the build configuration for a new |NCS| project.
+See `Building an application`_ in the |VSC| documentation.
 
 If you work on the command line, pass the additional options to the ``west build`` command.
 The options must be added after a ``--`` at the end of the command.
@@ -308,28 +257,6 @@ To select the build type in the |VSC| extension:
 #. Fill in other configuration options, if applicable, and click :guilabel:`Build Configuration`.
 
 .. build_types_selection_vsc_end
-
-Selecting a build type in SES
-=============================
-
-.. build_types_selection_ses_start
-
-To select the build type in SEGGER Embedded Studio:
-
-1. Go to :guilabel:`File` > :guilabel:`Open nRF Connect SDK project`, select the current project, and specify the board name and build directory.
-#. Select :guilabel:`Extended Settings`.
-#. In the :guilabel:`Extra CMake Build Options` field, specify ``-DCONF_FILE=prj_<buildtype>.conf``, where *<buildtype>* in the file name corresponds to the desired build type.
-   For example, for a build type named ``release``, set the following value: ``-DCONF_FILE=prj_release.conf``.
-#. Do not select :guilabel:`Clean Build Directory`.
-#. Click :guilabel:`OK` to re-open the project.
-
-
-.. note::
-   You can also specify the build type in the :guilabel:`Additional CMake Options` field in :guilabel:`Tools` > :guilabel:`Options` > :guilabel:`nRF Connect`.
-   However, the changes will only be applied after re-opening the project.
-   Reloading the project is not sufficient.
-
-.. build_types_selection_ses_end
 
 Selecting a build type from command line
 ========================================

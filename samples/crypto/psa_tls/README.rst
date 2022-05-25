@@ -18,9 +18,9 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_ns, nrf9160dk_nrf9160_ns
+.. table-from-sample-yaml::
+
+.. include:: /includes/tfm.txt
 
 The sample requires a `TAP adapter`_ to perform the TLS handshake.
 This functionality is currently only supported in Linux.
@@ -119,8 +119,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/crypto/psa_tls`
 
-.. include:: /includes/config_build_and_run.txt
-
+.. include:: /includes/build_and_run_ns.txt
 
 .. _crypto_tls_testing:
 

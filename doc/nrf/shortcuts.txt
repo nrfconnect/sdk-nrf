@@ -7,11 +7,9 @@
 .. |plusminus| unicode:: U+000B1 .. PLUS-MINUS SIGN
    :rtrim:
 
-.. |SES| replace:: SEGGER Embedded Studio
-
 .. |config| replace:: See :ref:`configure_application` for information about how to permanently or temporarily change the configuration.
 
-.. |test_sample| replace:: After programming the sample to your development kit, test it by performing the following steps:
+.. |test_sample| replace:: After programming the sample to your development kit, complete the following steps to test it:
 
 .. |connect_generic| replace:: Connect the device to the computer using a USB cable.
    The device is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
@@ -70,8 +68,8 @@
    When enabled, it allows devices to manage transmission by informing each other about their current state, and ensures more reliable connection in high-speed communication scenarios.
 
 .. |zigbee_version| replace:: Zigbee 3.0
-.. |zboss_version| replace:: 3.11.1.0
-.. |zigbee_ncp_package_version| replace:: 2.1.1
+.. |zboss_version| replace:: 3.11.2.0
+.. |zigbee_ncp_package_version| replace:: 2.2.0
 .. |zigbee_description| replace:: Zigbee is a portable, low-power software networking protocol that provides connectivity over an 802.15.4-based mesh network.
 .. |enable_zigbee_before_testing| replace:: Make sure to configure the Zigbee stack before building and testing this sample.
    See :ref:`ug_zigbee_configuring` for more information.
@@ -113,7 +111,4 @@
 
 .. |thingy53_sample_note| replace:: If you build this application for Thingy:53, it enables additional features. See :ref:`thingy53_app_guide` for details.
 
-.. |thingy53_unreleased| replace:: As of the |NCS| |release| release, Thingy:53 is an unreleased product that will be released in the near future.
-
-.. |tfm_gnu_version_incompatibility| replace:: Do not use GNU Arm Embedded Toolchain versions *9-2020-q2-update* and *10-2020-q4-major* due to `TF-M sample incompatibility issue`_.
-   These versions do not work correctly when compiling binaries for Cortex-M Secure Extensions.
+.. |nrf5340_octave_note| replace:: The |NCS| includes the :ref:`octave` application, a complete project that integrates the LE Audio standard with custom reference hardware based on the nRF5340 SiP.

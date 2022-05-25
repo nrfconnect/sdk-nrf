@@ -6,8 +6,8 @@
  */
 
 #include <string.h>
-#include <init.h>
-#include <zephyr.h>
+#include <zephyr/init.h>
+#include <zephyr/kernel.h>
 #include <nrf_modem.h>
 #include <nrf_modem_os.h>
 #include <nrf_modem_platform.h>
@@ -16,7 +16,7 @@
 #include <nrf_errno.h>
 #include <errno.h>
 #include <pm_config.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
 #include <modem/nrf_modem_lib_trace.h>
@@ -30,7 +30,7 @@
 
 #define THREAD_MONITOR_ENTRIES 10
 
-LOG_MODULE_REGISTER(nrf_modem_lib, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
+LOG_MODULE_REGISTER(nrf_modem, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
 
 struct mem_diagnostic_info {
 	uint32_t failed_allocs;
@@ -51,9 +51,13 @@ static struct k_heap shmem_heap;
 /* Library heap, defined here in application RAM */
 static K_HEAP_DEFINE(library_heap, CONFIG_NRF_MODEM_LIB_HEAP_SIZE);
 
+/* Dedicated heap for modem traces  */
+static K_HEAP_DEFINE(trace_heap, CONFIG_NRF_MODEM_LIB_TRACE_HEAP_SIZE);
+
 /* Store information about failed allocations */
 static struct mem_diagnostic_info shmem_diag;
 static struct mem_diagnostic_info heap_diag;
+static struct mem_diagnostic_info trace_heap_diag;
 
 /* An array of thread ID and RPC counter pairs, used to avoid race conditions.
  * It allows to identify whether it is safe to put the thread to sleep or not.
@@ -176,11 +180,15 @@ int32_t nrf_modem_os_timedwait(uint32_t context, int32_t *timeout)
 	struct sleeping_thread thread;
 	int64_t start, remaining;
 
+	if (!nrf_modem_is_initialized()) {
+		return -NRF_ESHUTDOWN;
+	}
+
 	start = k_uptime_get();
 
 	if (*timeout == 0) {
 		k_yield();
-		return NRF_ETIMEDOUT;
+		return -NRF_EAGAIN;
 	}
 
 	if (*timeout < 0) {
@@ -197,6 +205,10 @@ int32_t nrf_modem_os_timedwait(uint32_t context, int32_t *timeout)
 
 	sleeping_thread_remove(&thread);
 
+	if (!nrf_modem_is_initialized()) {
+		return -NRF_ESHUTDOWN;
+	}
+
 	if (*timeout == SYS_FOREVER_MS) {
 		return 0;
 	}
@@ -206,7 +218,7 @@ int32_t nrf_modem_os_timedwait(uint32_t context, int32_t *timeout)
 	*timeout = remaining > 0 ? remaining : 0;
 
 	if (*timeout == 0) {
-		return NRF_ETIMEDOUT;
+		return -NRF_EAGAIN;
 	}
 
 	return 0;
@@ -222,6 +234,7 @@ int32_t nrf_modem_os_timedwait(uint32_t context, int32_t *timeout)
  */
 void nrf_modem_os_errno_set(int err_code)
 {
+	__ASSERT(err_code > 0, "Tried to set negative error code, %d", err_code);
 	errno = err_code;
 }
 
@@ -266,11 +279,16 @@ int nrf_modem_os_sem_take(void *sem, int timeout)
 		 "Uninitialised semaphore");
 
 	err = k_sem_take((struct k_sem *)sem, timeout == -1 ? K_FOREVER : K_MSEC(timeout));
-	if (err == -EAGAIN) {
-		return NRF_ETIMEDOUT;
+	if (err) {
+		return -NRF_EAGAIN;
 	}
 
 	return 0;
+}
+
+unsigned int nrf_modem_os_sem_count_get(void *sem)
+{
+	return k_sem_count_get(sem);
 }
 
 void nrf_modem_os_application_irq_set(void)
@@ -303,11 +321,9 @@ void nrf_modem_os_trace_irq_enable(void)
 	irq_enable(TRACE_IRQ);
 }
 
-ISR_DIRECT_DECLARE(rpc_proxy_irq_handler)
+void nrf_modem_os_event_notify(void)
 {
 	atomic_inc(&rpc_event_cnt);
-
-	nrf_modem_application_irq_handler();
 
 	struct sleeping_thread *thread;
 
@@ -315,6 +331,13 @@ ISR_DIRECT_DECLARE(rpc_proxy_irq_handler)
 	SYS_SLIST_FOR_EACH_CONTAINER(&sleeping_threads, thread, node) {
 		k_sem_give(&thread->sem);
 	}
+}
+
+ISR_DIRECT_DECLARE(rpc_proxy_irq_handler)
+{
+	nrf_modem_application_irq_handler();
+
+	nrf_modem_os_event_notify();
 
 	ISR_DIRECT_PM(); /* PM done after servicing interrupt for best latency
 			  */
@@ -350,69 +373,104 @@ void read_task_create(void)
 void *nrf_modem_os_alloc(size_t bytes)
 {
 	void *addr = k_heap_alloc(&library_heap, bytes, K_NO_WAIT);
-#ifdef CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC
-	if (addr) {
-		LOG_INF("alloc(%d) -> %p", bytes, addr);
-	} else {
-		heap_diag.failed_allocs++;
-		LOG_WRN("alloc(%d) -> %p", bytes, addr);
+
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC)) {
+		if (addr) {
+			LOG_DBG("alloc(%d) -> %p", bytes, addr);
+		} else {
+			LOG_WRN("alloc(%d) -> NULL", bytes);
+			heap_diag.failed_allocs++;
+		}
 	}
-#endif
+
 	return addr;
 }
 
 void nrf_modem_os_free(void *mem)
 {
 	k_heap_free(&library_heap, mem);
-#ifdef CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC
-	LOG_INF("free(%p)", mem);
-#endif
+
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC)) {
+		LOG_DBG("free(%p)", mem);
+	}
+}
+
+void *nrf_modem_os_trace_alloc(size_t bytes)
+{
+	void *addr = k_heap_alloc(&trace_heap, bytes, K_NO_WAIT);
+
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC)) {
+		if (addr) {
+			LOG_DBG("trace_alloc(%d) -> %p", bytes, addr);
+		} else {
+			LOG_WRN("trace_alloc(%d) -> NULL", bytes);
+			trace_heap_diag.failed_allocs++;
+		}
+	}
+
+	return addr;
+}
+
+void nrf_modem_os_trace_free(void *mem)
+{
+	k_heap_free(&trace_heap, mem);
+
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC)) {
+		LOG_DBG("trace_free(%p)", mem);
+	}
 }
 
 void *nrf_modem_os_shm_tx_alloc(size_t bytes)
 {
 	void *addr = k_heap_alloc(&shmem_heap, bytes, K_NO_WAIT);
-#ifdef CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC
-	if (addr) {
-		LOG_INF("shm_tx_alloc(%d) -> %p", bytes, addr);
-	} else {
-		shmem_diag.failed_allocs++;
-		LOG_WRN("shm_tx_alloc(%d) -> %p", bytes, addr);
+
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC)) {
+		if (addr) {
+			LOG_DBG("shm_tx_alloc(%d) -> %p", bytes, addr);
+		} else {
+			LOG_WRN("shm_tx_alloc(%d) -> NULL", bytes);
+			shmem_diag.failed_allocs++;
+		}
 	}
-#endif
 	return addr;
 }
 
 void nrf_modem_os_shm_tx_free(void *mem)
 {
 	k_heap_free(&shmem_heap, mem);
-#ifdef CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC
-	LOG_INF("shm_tx_free(%p)", mem);
-#endif
+
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC)) {
+		LOG_DBG("shm_tx_free(%p)", mem);
+	}
 }
 
 void nrf_modem_lib_heap_diagnose(void)
 {
-	printk("nrf_modem heap dump:\n");
+	printk("\nnrf_modem heap dump:\n");
 	sys_heap_print_info(&library_heap.heap, false);
 	printk("Failed allocations: %u\n", heap_diag.failed_allocs);
 }
 
+void nrf_modem_lib_trace_heap_diagnose(void)
+{
+	printk("\nnrf_modem trace heap dump:\n");
+	sys_heap_print_info(&trace_heap.heap, false);
+	printk("Failed allocations: %u\n", trace_heap_diag.failed_allocs);
+}
+
 void nrf_modem_lib_shm_tx_diagnose(void)
 {
-	printk("nrf_modem tx dump:\n");
+	printk("\nnrf_modem tx dump:\n");
 	sys_heap_print_info(&shmem_heap.heap, false);
 	printk("Failed allocations: %u\n", shmem_diag.failed_allocs);
 }
 
 #if defined(CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC) || \
-	defined(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC)
-
-static K_THREAD_STACK_DEFINE(work_q_stack_area, 512);
-static struct k_work_q modem_diag_worqk;
+	defined(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC) || \
+	defined(CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC)
 
 enum heap_type {
-	SHMEM, LIBRARY
+	SHMEM, LIBRARY, TRACE
 };
 
 struct task {
@@ -425,6 +483,9 @@ static struct task shmem_task = { .type = SHMEM };
 #endif
 #ifdef CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
 static struct task heap_task  = { .type = LIBRARY };
+#endif
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC
+static struct task trace_heap_task = { .type = TRACE };
 #endif
 
 static void diag_task(struct k_work *item)
@@ -446,11 +507,19 @@ static void diag_task(struct k_work *item)
 			K_MSEC(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS));
 #endif
 		break;
+	case TRACE:
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC
+		nrf_modem_lib_trace_heap_diagnose();
+		k_work_reschedule(&trace_heap_task.work,
+			K_MSEC(CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIOD_MS));
+#endif
+		break;
 	}
 }
 #endif
 
-static uint8_t log_level_lu(uint8_t level)
+#if defined(CONFIG_LOG)
+static uint8_t log_level_translate(uint8_t level)
 {
 	switch (level) {
 	case NRF_MODEM_LOG_LEVEL_NONE:
@@ -467,82 +536,83 @@ static uint8_t log_level_lu(uint8_t level)
 		return LOG_LEVEL_NONE;
 	}
 }
-
-const char *nrf_modem_os_log_strdup(const char *str)
-{
-	if (IS_ENABLED(CONFIG_LOG)) {
-		return log_strdup(str);
-	}
-
-	return str;
-}
+#endif
 
 void nrf_modem_os_log(int level, const char *fmt, ...)
 {
-	if (IS_ENABLED(CONFIG_LOG)) {
-		uint16_t lev = log_level_lu(level);
-
-		va_list ap;
-
-		va_start(ap, fmt);
-
-		if (IS_ENABLED(CONFIG_LOG_MODE_MINIMAL)) {
-			/* Fallback to minimal implementation. */
-			/* Based on Zephyr's. */
-			printk("%c: ", z_log_minimal_level_to_char(lev));
-			vprintk(fmt, ap);
-			printk("\n");
-		} else {
-			struct log_msg_ids src_level = {
-				.level = lev,
-				.domain_id = CONFIG_LOG_DOMAIN_ID,
-				.source_id = LOG_CURRENT_MODULE_ID()
-			};
-
-			log_generic(src_level, fmt, ap, LOG_STRDUP_SKIP);
-		}
-		va_end(ap);
+#if defined(CONFIG_LOG)
+	level = log_level_translate(level);
+	if (level > CONFIG_NRF_MODEM_LIB_LOG_LEVEL) {
+		return;
 	}
+
+	va_list ap;
+	va_start(ap, fmt);
+
+	if (IS_ENABLED(CONFIG_LOG_MODE_MINIMAL)) {
+		/* Fallback to minimal implementation. */
+		printk("%c: ", z_log_minimal_level_to_char(level));
+		z_log_minimal_vprintk(fmt, ap);
+		printk("\n");
+	} else {
+		z_log_msg2_runtime_vcreate(
+			CONFIG_LOG_DOMAIN_ID, __log_current_dynamic_data,
+			level, NULL, 0, 0, fmt, ap);
+	}
+
+	va_end(ap);
+#endif /* CONFIG_LOG */
 }
 
 void nrf_modem_os_logdump(int level, const char *str, const void *data, size_t len)
 {
-	if (IS_ENABLED(CONFIG_LOG)) {
-		uint16_t lev = log_level_lu(level);
+#if defined(CONFIG_LOG)
+	level = log_level_translate(level);
 
-		if (IS_ENABLED(CONFIG_LOG_MODE_MINIMAL)) {
-			/* Fallback to minimal implementation. */
-			/* Based on Zephyr's. */
-			printk("%c: %s\n",
-			       z_log_minimal_level_to_char(lev),
-			       str);
-			z_log_minimal_hexdump_print(lev, data, len);
-		} else {
-			struct log_msg_ids src_level = {
-				.level = lev,
-				.domain_id = CONFIG_LOG_DOMAIN_ID,
-				.source_id = LOG_CURRENT_MODULE_ID()
-			};
-			log_hexdump(str, data, len, src_level);
-		}
+	if (IS_ENABLED(CONFIG_LOG_MODE_MINIMAL)) {
+		/* Fallback to minimal implementation. */
+		printk("%c: %s\n", z_log_minimal_level_to_char(level), str);
+		z_log_minimal_hexdump_print(level, data, len);
+	} else {
+		struct log_msg_ids src_level = {
+			.level = level,
+			.domain_id = CONFIG_LOG_DOMAIN_ID,
+			.source_id = LOG_CURRENT_MODULE_ID()
+		};
+		log_hexdump(str, data, len, src_level);
 	}
+#endif /* CONFIG_LOG */
 }
 
-/* This function is called by nrf_modem_init() */
-void nrf_modem_os_init(void)
+/* On application initialization */
+static int on_init(const struct device *dev)
 {
+	(void) dev;
+
+	/* The list of sleeping threads should only be initialized once at the application
+	 * initialization. This is because we want to keep the list intact regardless of modem
+	 * reinitialization to wake sleeping threads on modem initialization.
+	 */
 	sys_slist_init(&sleeping_threads);
 	atomic_clear(&rpc_event_cnt);
 
+	return 0;
+}
+
+/* On modem initialization.
+ * This function is called by nrf_modem_init()
+ */
+void nrf_modem_os_init(void)
+{
 	read_task_create();
 
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
-	int err = nrf_modem_lib_trace_init();
+	int err = nrf_modem_lib_trace_init(&trace_heap);
 
-	if (err != 0) {
-		LOG_ERR("nrf_modem_lib_trace_init failed with error %d.", err);
-	} else {
+	if (!err) {
 		trace_irq_init();
+	} else {
+		LOG_ERR("nrf_modem_lib_trace_init failed with error %d.", err);
 	}
 
 #endif
@@ -555,13 +625,6 @@ void nrf_modem_os_init(void)
 		    (void *)PM_NRF_MODEM_LIB_TX_ADDRESS,
 		    CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE);
 
-#if defined(CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC) || \
-	defined(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC)
-	k_work_queue_start(&modem_diag_worqk, work_q_stack_area,
-			   K_THREAD_STACK_SIZEOF(work_q_stack_area),
-			   K_LOWEST_APPLICATION_THREAD_PRIO, NULL);
-#endif
-
 #ifdef CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC
 	k_work_init_delayable(&shmem_task.work, diag_task);
 	k_work_reschedule(&shmem_task.work,
@@ -572,6 +635,26 @@ void nrf_modem_os_init(void)
 	k_work_init_delayable(&heap_task.work, diag_task);
 	k_work_reschedule(&heap_task.work,
 		K_MSEC(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS));
+#endif
+
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC
+	k_work_init_delayable(&trace_heap_task.work, diag_task);
+	k_work_reschedule(&trace_heap_task.work,
+		K_MSEC(CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIOD_MS));
+#endif
+}
+
+void nrf_modem_os_shutdown(void)
+{
+	struct sleeping_thread *thread;
+
+	/* Wake up all sleeping threads. */
+	SYS_SLIST_FOR_EACH_CONTAINER(&sleeping_threads, thread, node) {
+		k_sem_give(&thread->sem);
+	}
+
+#if CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
+	nrf_modem_lib_trace_deinit();
 #endif
 }
 
@@ -585,10 +668,15 @@ int32_t nrf_modem_os_trace_put(const uint8_t *const data, uint32_t len)
 		LOG_ERR("nrf_modem_lib_trace_process failed, err %d", err);
 	}
 
+#ifndef CONFIG_NRF_MODEM_LIB_TRACE_THREAD_PROCESSING
 	err = nrf_modem_trace_processed_callback(data, len);
 	if (err) {
 		LOG_ERR("nrf_modem_trace_processed_callback failed, err %d", err);
 	}
-#endif
+#endif /* CONFIG_NRF_MODEM_LIB_TRACE_THREAD_PROCESSING */
+
+#endif /* CONFIG_NRF_MODEM_LIB_TRACE_ENABLED */
 	return 0;
 }
+
+SYS_INIT(on_init, POST_KERNEL, 0);

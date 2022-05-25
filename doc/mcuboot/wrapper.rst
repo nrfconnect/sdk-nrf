@@ -13,7 +13,7 @@ Topics that are not relevant for the integration of MCUboot in the nRF Connect S
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
+   :caption: Contents
 
    index-ncs.rst
    release-notes.md

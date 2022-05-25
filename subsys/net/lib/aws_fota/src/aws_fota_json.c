@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <string.h>
 #include <cJSON.h>
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 #include <net/aws_jobs.h>
 
 #include "aws_fota_json.h"

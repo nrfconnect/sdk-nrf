@@ -13,6 +13,10 @@ Glossary
    Access Port Protection (APPROTECT)
       A register used to prevent read and write access to all CPU registers and memory-mapped addresses.
 
+   Almanac data
+      In the :term:`Global Navigation Satellite System (GNSS)`, the data providing coarse orbit and status information for each satellite in the constellation.
+      Each satellite broadcasts Almanac data for all the satellites in the constellation.
+
    Anycast addressing
       An addressing type that routes datagrams to a single member of a group of potential receivers that are all identified by the same destination address.
       This is a one-to-nearest association.
@@ -27,6 +31,14 @@ Glossary
 
    Application Programming Interface (API)
       A language and message format used by an application program to communicate with an operating system, application, or other services.
+
+   Assisted GPS (A-GPS)
+      A form of assistance provided to devices trying to obtain a :term:`Global Navigation Satellite System (GNSS)` fix.
+      It improves the :term:`Time to First Fix (TTFF)` by utilizing a connection (for example, over cellular) to the internet to retrieve the :term:`Almanac data` and :term:`Ephemeris data`.
+      A connection to an internet server that has the Almanac and Ephemeris data is several times quicker than using the data link to the GPS satellites.
+
+   Association
+      The process of adding a provisioned device to a cloud account using the device ID.
 
    Attribute Protocol (ATT)
       "[It] allows a device referred to as the server to expose a set of attributes and their associated values to a peer device referred to as the client."
@@ -51,6 +63,10 @@ Glossary
 
    Branch
       A line of development composed of a sequence of Git :term:`commits <Commit>`.
+
+   Broadcast Isochronous Stream (BIS)
+      A configuration of the :term:`Isochronous channels (ISO)` feature of the :term:`LE Audio` standard.
+      In this configuration, one audio source can broadcast audio to multiple audio receivers.
 
    Carrier Wave (CW)
       A single-frequency electromagnetic wave that can be modulated in amplitude, frequency, or phase to convey information.
@@ -89,6 +105,10 @@ Glossary
 
    Commit tag
       A tag prepended to the first line of the commit message to ease filtering and identification of particular :term:`commit <Commit>` types.
+
+   Connected Isochronous Stream (CIS)
+      A configuration of the :term:`Isochronous channels (ISO)` feature of the :term:`LE Audio` standard.
+      In this configuration, one audio source sends the audio data using both the left and the right ISO channels at the same time, allowing for stereophonic sound reproduction with synchronized playback.
 
    Contribution
       A change to the codebase sent to a remote :term:`repository <Repository>` for inclusion.
@@ -139,6 +159,10 @@ Glossary
 
    Endpoint
       In the context of a :ref:`Matter <ug_matter>` or :ref:`Zigbee <ug_zigbee>` network, an addressable container that contains *clusters* appropriate for a single device type such as a sensor or a light bulb.
+
+   Ephemeris data
+      In the :term:`Global Navigation Satellite System (GNSS)`, the data providing information about the orbit of the satellite transmitting it.
+      This data is valid for four hours and becomes inaccurate after that.
 
    Evaluation Kit (EK)
       A platform used to evaluate different development platforms.
@@ -208,6 +232,9 @@ Glossary
    Integrated Development Environment (IDE)
       A software application that provides facilities for software development.
 
+   Inter-IC sound (I2S)
+      A serial bus interface standard used for connecting digital audio devices for tranmission of the pulse-code modulation (PCM) data.
+
    International Mobile (Station) Equipment Identity (IMEI)
       A unique code consisting of 14 digits and one check digit for identifying 3GPP-based mobile devices.
 
@@ -229,6 +256,13 @@ Glossary
 
    IPv6 address
       An alphanumerical label that is used to identify a network interface of a computer or other network node participating in an IPv6 computer network.
+
+   Isochronous channels (ISO)
+      A feature of the :term:`LE Audio` standard that allows for relaying audio data to multiple devices at the same time (isochronously) without having to split the stereo stream.
+
+   Just In Time Provisioning (JITP)
+     A device is provisioned when it first tries to connect to the IoT broker and presents its device certificate.
+      Before the first communication, the device is not known to the broker and is not stored in the fleet registry.
 
    Kconfig file
       A configuration file for a module or a sample, written in the :term:`Kconfig language` syntax.
@@ -253,6 +287,17 @@ Glossary
       A :term:`Kconfig fragment`, usually called :file:`prj.conf`, used to define default :term:`Kconfig options <Kconfig option>` for an application.
       These are foundational options for the application that will always be applied to its built image.
       However, they can be overridden by applying an additional :term:`Kconfig fragment` at build time.
+
+   LC3 codec
+      The Low Complexity Communication Codec, or LC3 codec, is the new codec for the :term:`LE Audio` standard.
+      It replaces the dated :term:`SBC codec` that is used in the Bluetooth Classic Audio streaming.
+      The LC3 codec uses half the data rate and delivers higher audio quality than the SBC codec.
+
+   LE Audio
+      Audio transmission standard based on Bluetooth® LE.
+      It is independent from Bluetooth® 5.0 and Bluetooth® 5.1.
+      Audio LE reduces power consumption for audio transmission, allows for isochronous audio streams between a source and multiple sink devices, and enables broadcasting to an unlimited number of audio devices.
+      The standard uses the new :term:`LC3 codec`.
 
    Link Layer (LL)
       "A control protocol for the link and physical layers that is carried over logical links in addition to user data."
@@ -423,6 +468,14 @@ Glossary
       A feature introduced in 3GPP Release 12 to improve the battery life of IoT (Internet of Things) devices by minimizing energy consumption.
       The device stays dormant during the PSM window.
 
+   Preconnect provisioning
+      The process of securely generating and storing credentials in a device, then uploading a device ID and device certificate to a cloud account so that the device is ready to connect to the cloud.
+
+   Predicted GPS (P-GPS)
+      A form of assistance provided to devices trying to obtain a :term:`Global Navigation Satellite System (GNSS)` fix, where the device can download up to two weeks of predicted satellite Ephemerides data.
+      It enables devices to determine the exact orbital location of the satellite without connecting to the network every two hours with a trade-off of reduced accuracy of the calculated position over time.
+      It is available through :term:`nRF Cloud`.
+
    Preview Development Kit (PDK)
       A development platform used for application development.
       A Preview Development Kit uses an engineering sample of the chip and it is not production-ready in comparison to the Development Kit that uses a production-ready version of the chip.
@@ -442,6 +495,7 @@ Glossary
         It is a step in the commissioning process.
       * In a Bluetooth Mesh network, the process of adding devices to the network.
       * In a bootloader, the process of storing public key hashes in a separate region of memory from the bootloader image.
+      * In a device-to-cloud connection, the process of storing a device ID and device certificate to a cloud account.
 
    Pull Request
       A set of :term:`commits <Commit>` that are sent as a :term:`contribution <Contribution>` to a Git :term:`repository <Repository>`.
@@ -487,6 +541,11 @@ Glossary
       An implementation example that showcases a single feature or library.
       It is possible to create a programmable image from it, as it includes a ``main()`` entry point.
 
+   SBC codec
+      The Low Complexity Subband Codec (SBC) is the default software codec for the Bluetooth Classic Audio.
+      It comes with digital encoder and decoder for transferring audio data.
+      It is being gradually supplanted by the :term:`LC3 codec` developed for :term:`LE Audio`.
+
    Secure Access Port Protection (SECUREAPPROTECT)
       A register used to prevent read and write access to all secure CPU registers and secure memory-mapped addresses.
       See :term:`Access Port Protection (APPROTECT)`.
@@ -494,9 +553,8 @@ Glossary
    Security Manager Protocol (SMP)
       A protocol used for pairing and key distribution.
 
-   SEGGER Embedded Studio (SES)
-      A cross-platform Integrated Development Environment (IDE) for embedded C/C++ programming with support for Nordic Semiconductor devices, produced by SEGGER Microcontroller.
-      The |NCS| uses a custom :ref:`Nordic Edition of SES <installing_ses>`.
+   Serial Wire Debug (SWD)
+      A standard two-wire interface for programming and debugging Arm CPUs.
 
    Signal-to-Noise Ratio (SNR)
       The level of signal power compared to the level of noise power, often expressed in decibels (dB).
@@ -540,13 +598,15 @@ Glossary
    Target
       The goal of an operation, for example, programming a specific image on a device, compiling a specific set of files, or removing previously generated files.
 
+   Time to First Fix (TTFF)
+      The time needed by a :term:`Global Navigation Satellite System (GNSS)` module to estimate its position.
+
    Transmission Control Protocol (TCP)
       A connection-oriented protocol that provides reliable transport.
       This reliability comes at the cost of control packets overhead of the protocol itself, making it unsuitable for bandwidth-constrained applications.
 
    Toolchain
       A set of development tools.
-      See `GNU Arm Embedded Toolchain`_.
 
    Transmit Data (TXD)
       A signal line in a serial interface that transmits data to another device.

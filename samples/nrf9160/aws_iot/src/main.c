@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <stdlib.h>
 #if defined(CONFIG_NRF_MODEM_LIB)
@@ -14,9 +14,9 @@
 #include <nrf_modem.h>
 #endif
 #include <net/aws_iot.h>
-#include <sys/reboot.h>
+#include <zephyr/sys/reboot.h>
 #include <date_time.h>
-#include <dfu/mcuboot.h>
+#include <zephyr/dfu/mcuboot.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
 

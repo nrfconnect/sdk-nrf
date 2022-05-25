@@ -5,7 +5,7 @@
  */
 #include <uut.h>
 #include <foo/foo.h>
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 #include <stddef.h>
 
 int uut_init(void *handle)

@@ -61,19 +61,8 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
       :class: highlight
 
       **AT#XSLEEP=?**
-      #XSLEEP: (0,1,2)
+      #XSLEEP: (1,2)
       OK
-
-   ``AT#XSLEEP=0`` puts the kit in idle mode.
-   You can exit idle by GPIO.
-
-   Alternatively, you can use different modes for #XSLEEP:
-
-   * ``AT#XSLEEP=1`` puts the kit in sleep mode.
-     You can wake it up by GPIO.
-
-   * ``AT#XSLEEP=2`` powers off UART.
-     You can power on UART again by GPIO.
 
 TCP/IP AT commands
 ******************
@@ -91,7 +80,7 @@ TCP client
          :class: highlight
 
          **AT#XSOCKET=?**
-         #XSOCKET: (0,1),(1,2),(0,1),<sec-tag>
+         #XSOCKET: (0,1,2),(1,2,3),(0,1)
          OK
 
    #. Open a TCP socket, read the information (handle, protocol, and role) about the open socket, and set the receive timeout of the open socket to 30 seconds.
@@ -136,8 +125,8 @@ TCP client
          OK
 
          **AT#XRECV=0**
-         PONG: 'Test TCP'
          #XRECV: 17
+         PONG: 'Test TCP'
          OK
 
    #. Close the socket and confirm its state.
@@ -153,7 +142,7 @@ TCP client
          #XSOCKET: 0
          OK
 
-#. If you do not have a TCP server to test with, you can use TCP commands to request and receive a response from an HTTP server, for example, www.google.com:
+#. If you do not have a TCP server to test with, you can use TCP commands to request and receive a response from an HTTP server, for example, *www.google.com*:
 
    a. Open a TCP socket and connect to the HTTP server on port 80.
 
@@ -200,16 +189,16 @@ TCP client
          :class: highlight
 
          **AT#XRECV=0**
+         #XRECV: 576
          HTTP/1.1 200 OK
          Content-Type: text/html; charset=ISO-8859-1
          *[...]*
-         #XRECV: 576
          OK
 
          **AT#XRECV=0**
+         #XRECV:147
          *[...]*
          Connection: close
-         #XRECV:147
          OK
 
    #. Close the socket.
@@ -274,41 +263,6 @@ TCP client
          #XTCPCLI: -1
          OK
 
-
-#. Test a TCP client with TCP proxy service in data mode:
-
-   a. Create a TCP/TLS client and connect to a server with data mode support.
-      Replace ``*example.com*`` with the hostname or IPv4 address of a TCP server and ``*1234*`` with the corresponding port.
-      Then read the information about the connection.
-
-      .. parsed-literal::
-         :class: highlight
-
-         **AT#XTCPCLI=2,"**\ *example.com*\ **",**\ *1234*
-         #XTCPCLI: 1,"connected"
-         OK
-
-         **AT#XTCPCLI?**
-         #XTCPCLI: 1,1
-         OK
-
-   #. Send plain text data to the TCP server and retrieve the returned data.
-
-      .. parsed-literal::
-         :class: highlight
-
-         **Test data mode**
-         PONG: b'Test data mode\\r\\n'
-
-   #. Disconnect from the server.
-
-      .. parsed-literal::
-         :class: highlight
-
-         **AT#XTCPCLI=0**
-         #XTCPCLI: "disconnected"
-         OK
-
 UDP client
 ==========
 
@@ -337,8 +291,8 @@ UDP client
          #XSENDTO: 8
          OK
          **AT#XRECVFROM=0**
-         PONG: Test UDP
          #XRECVFROM: 14
+         PONG: Test UDP
          OK
 
    #. Close the socket.
@@ -376,8 +330,8 @@ UDP client
          OK
 
          **AT#XRECV=0**
-         PONG: Test UDP
          #XRECV: 14
+         PONG: Test UDP
          OK
 
    #. Close the socket.
@@ -429,41 +383,6 @@ UDP client
          **AT#XUDPCLI=0**
          OK
 
-#. Test a connection-based UDP client with UDP proxy service in data mode:
-
-   a. Create a UDP client and connect to a server with data mode support.
-      Replace *example.com* with the hostname or IPv4 address of a UDP server and *1234* with the corresponding port.
-      Then read the information about the connection.
-
-      .. parsed-literal::
-         :class: highlight
-
-         **AT#XUDPCLI=2,"**\ *example.com*\ **",**\ *1234*
-         #XUDPCLI: 1,"connected"
-         OK
-
-         **AT#XUDPCLI?**
-         #XUDPCLI: 1,1
-         OK
-
-   #. Send plain text data to the UDP server and retrieve the returned data.
-
-      .. parsed-literal::
-         :class: highlight
-
-         **Test UDP by hostname**
-         PONG: Test UDP by hostname
-
-   #. Disconnect from the server.
-
-      .. parsed-literal::
-         :class: highlight
-
-         **AT#XUDPCLI=0**
-         #XUDPCLI: "disconnected"
-         OK
-
-
 TLS client
 ==========
 
@@ -512,8 +431,8 @@ You must register the corresponding credentials on the server side.
          OK
 
          **AT#XRECV=0**
-         PONG: b'Test TLS client'
          #XRECV: 24
+         PONG: b'Test TLS client'
          OK
 
    #. Close the socket.
@@ -622,8 +541,8 @@ You must register the same PSK and PSK identity on the server side.
 		 OK
 
 		 **AT#XRECV=0**
-		 PONG: b'Test DTLS client'
 		 #XRECV: 25
+		 PONG: b'Test DTLS client'
 		 OK
 
    #. Close the socket.
@@ -738,8 +657,8 @@ To act as a TCP server, |global_private_address|
          OK
 
          **AT#XRECV=0**
-         Hello, TCP#1!Hello, TCP#2!
          #XRECV: 26
+         Hello, TCP#1!Hello, TCP#2!
          OK
 
          **AT#XSEND="TCP1/2 received"**
@@ -747,8 +666,8 @@ To act as a TCP server, |global_private_address|
          OK
 
          **AT#XRECV=0**
-         Hello, TCP#3!Hello, TCP#4!Hello, TCP#5!
          #XRECV: 39
+         Hello, TCP#3!Hello, TCP#4!Hello, TCP#5!
          OK
 
          **AT#XSEND="TCP3/4/5 received"**
@@ -888,56 +807,6 @@ To act as a TCP server, |global_private_address|
          #XTCPSVR: -1,-1
          OK
 
-#. Test the TCP server with TCP proxy service in data mode:
-
-   a. Create a TCP server and read the information about the current state.
-      Replace *1234* with the correct port number.
-
-      .. parsed-literal::
-         :class: highlight
-
-         **AT#XTCPSVR=2,**\ *1234*
-         #XTCPSVR: 1,"started"
-         OK
-
-         **AT#XTCPSVR?**
-         #XTCPSVR: 1,-1,1
-         OK
-
-   #. Run the :file:`client_tcp.py` script to start sending data to the server.
-
-   #. Observe that the server accepts the connection from the client and starts receiving data.
-      Acknowledge the received data.
-
-      .. parsed-literal::
-         :class: highlight
-
-         #XTCPSVR: *IP address* connected
-         Hello, TCP#1!Hello, TCP#2!\ **TCP1/2 received**
-         Hello, TCP#3!Hello, TCP#4!Hello, TCP#5!\ **TCP3/4/5 received**
-
-   #. Observe the output of the Python script::
-
-         $ python client_tcp.py
-
-         Sending: 'Hello, TCP#1!
-         Sending: 'Hello, TCP#2!
-         TCP1/2 received
-         Sending: 'Hello, TCP#3!
-         Sending: 'Hello, TCP#4!
-         Sending: 'Hello, TCP#5!
-         TCP3/4/5 received
-         Closing connection
-
-   #. Stop the server.
-
-      .. parsed-literal::
-         :class: highlight
-
-         **AT#XTCPSVR=0**
-         #XTCPSVR: -1,"stopped"
-         OK
-
 UDP server
 ==========
 
@@ -1009,13 +878,13 @@ To act as a UDP server, |global_private_address|
          :class: highlight
 
          **AT#XRECVFROM=0**
-         Hello, UDP#1!
          #XRECVFROM: 13
+         Hello, UDP#1!
          OK
 
          **AT#XRECVFROM=0**
-         Hello, UDP#2!
          #XRECVFROM: 13
+         Hello, UDP#2!
          OK
 
          **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,"UDP1/2 received"**
@@ -1023,18 +892,18 @@ To act as a UDP server, |global_private_address|
          OK
 
          **AT#XRECVFROM=0**
+         #XRECVFROM: 13
          Hello, UDP#3!
-         #XRECVFROM: 13
          OK
 
          **AT#XRECVFROM=0**
+         #XRECVFROM: 13
          Hello, UDP#4!
-         #XRECVFROM: 13
          OK
 
          **AT#XRECVFROM=0**
-         Hello, UDP#5!
          #XRECVFROM: 13
+         Hello, UDP#5!
          OK
 
          **AT#XSENDTO="**\ *example.com*\ **",**\ *1234*\ **,"UDP3/4/5 received"**
@@ -1142,57 +1011,6 @@ To act as a UDP server, |global_private_address|
          #XUDPSVR: "stopped"
          OK
 
-#. Test the UDP server with UDP proxy service in data mode:
-
-   a. Create a UDP server and read the information about the current state.
-      Replace *1234* with the correct port number.
-
-      .. parsed-literal::
-         :class: highlight
-
-         **AT#XUDPSVR=2,**\ *1234*
-         #XUDPSVR: 1,"started"
-         OK
-
-         **AT#XUDPSVR?**
-         #XUDPSVR: 1,1
-         OK
-
-   #. Run the :file:`client_udp.py` script to start sending data to the server.
-
-   #. Observe that the server starts receiving data.
-      Acknowledge the received data.
-
-      .. parsed-literal::
-         :class: highlight
-
-         Hello, UDP#1!Hello, UDP#2!\ **UDP1/2 received**
-         Hello, UDP#3!Hello, UDP#4!Hello, UDP#5!\ **UDP3/4/5 received**
-
-   #. Observe the output of the Python script::
-
-         $ python client_udp.py
-
-         Sending: 'Hello, UDP#1!
-         Sending: 'Hello, UDP#2!
-         UDP1/2 received
-         ('000.000.000.00', 1234)
-         Sending: 'Hello, UDP#3!
-         Sending: 'Hello, UDP#4!
-         Sending: 'Hello, UDP#5!
-         UDP3/4/5 received
-         ('000.000.000.00', 1234)
-         Closing connection
-
-   #. Stop the server.
-
-      .. parsed-literal::
-         :class: highlight
-
-         **AT#XUDPSVR=0**
-         #XUDPSVR: "stopped"
-         OK
-
 TLS server
 ==========
 
@@ -1277,31 +1095,12 @@ After opening a client-role socket, you can configure various options.
       **AT#XSOCKETOPT=1,20,30**
       OK
 
-      **AT#XSOCKETOPT=0,20**
-      ERROR  // to be investigated
-
-      **AT#XSOCKETOPT=0,2**
-      #XSOCKETOPT: "ignored"
-      OK
-
-      **AT#XSOCKETOPT=1,2,1**
-      #XSOCKETOPT: "ignored"
-      OK
-
-      **AT#XSOCKETOPT=0,61**
-      #XSOCKETOPT: "not supported"
-      OK
-
-      **AT#XSOCKETOPT=1,61,30**
-      #XSOCKETOPT: "not supported"
-      OK
-
 ICMP AT commands
 ****************
 
 Complete the following steps to test the functionality provided by the :ref:`SLM_AT_ICMP`:
 
-1. Ping a remote host, for example, www.google.com.
+1. Ping a remote host, for example, *www.google.com*.
 
    .. parsed-literal::
       :class: highlight
@@ -1348,7 +1147,7 @@ By default, the :ref:`lib_ftp_client` library keeps the connection to the FTP se
 The FTP client behavior depends on the FTP server that is used for testing.
 Complete the following steps to test the functionality provided by the :ref:`SLM_AT_FTP` with two example servers:
 
-1. Test an FTP connection to "speedtest.tele2.net".
+1. Test an FTP connection to *speedtest.tele2.net*.
 
    This server supports only anonymous login.
    Files must be uploaded to a given folder and will be deleted immediately.

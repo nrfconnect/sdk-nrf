@@ -7,12 +7,12 @@
 #include <zephyr/types.h>
 
 #include <soc.h>
-#include <device.h>
-#include <drivers/gpio.h>
-#include <sys/atomic.h>
-#include <spinlock.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/sys/atomic.h>
+#include <zephyr/spinlock.h>
 
-#include <event_manager.h>
+#include <app_event_manager.h>
 #include <caf/events/power_event.h>
 #include "battery_event.h"
 #include "usb_event.h"
@@ -20,7 +20,7 @@
 #define MODULE battery_charger
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BATTERY_CHARGER_LOG_LEVEL);
 
 
@@ -77,7 +77,7 @@ static void error_check_handler(struct k_work *work)
 		struct battery_state_event *event = new_battery_state_event();
 		event->state = battery_state;
 
-		EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 	}
 }
 
@@ -174,6 +174,9 @@ static int init_fn(void)
 	}
 
 	err = cso_pin_control(true);
+	if (err) {
+		goto error;
+	}
 
 	gpio_init_callback(&gpio_cb, cs_change,
 			   BIT(CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PIN));
@@ -192,10 +195,10 @@ error:
 	return err;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
@@ -216,7 +219,7 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_wake_up_event(eh)) {
+	if (is_wake_up_event(aeh)) {
 		if (!atomic_get(&active)) {
 			atomic_set(&active, true);
 
@@ -235,7 +238,7 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_power_down_event(eh)) {
+	if (is_power_down_event(aeh)) {
 		if (atomic_get(&active)) {
 			atomic_set(&active, false);
 
@@ -257,8 +260,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_usb_state_event(eh)) {
-		struct usb_state_event *event = cast_usb_state_event(eh);
+	if (is_usb_state_event(aeh)) {
+		struct usb_state_event *event = cast_usb_state_event(aeh);
 		int err;
 
 		switch (event->state) {
@@ -292,8 +295,8 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
-EVENT_SUBSCRIBE(MODULE, wake_up_event);
-EVENT_SUBSCRIBE(MODULE, usb_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
+APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, usb_state_event);

@@ -6,7 +6,6 @@
 
 menu "Libraries"
 
-rsource "agps/Kconfig"
 rsource "bin/Kconfig"
 rsource "nrf_modem_lib/Kconfig"
 rsource "adp536x/Kconfig"
@@ -36,5 +35,7 @@ rsource "modem_attest_token/Kconfig"
 rsource "multicell_location/Kconfig"
 rsource "location/Kconfig"
 rsource "at_shell/Kconfig"
+rsource "modem_antenna/Kconfig"
+rsource "qos/Kconfig"
 
 endmenu

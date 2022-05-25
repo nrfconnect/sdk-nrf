@@ -20,7 +20,6 @@ See the following sections for detailed instructions.
 If you already have your system set up to work with Zephyr OS based on Zephyr's :ref:`zephyr:getting_started`, you already have some of the requirements for the |NCS| installed.
 The only requirement not covered by the installation steps in Zephyr is the :ref:`GN tool <gs_installing_gn>`.
 This tool is needed only for :ref:`ug_matter` applications.
-You can also skip the `Install the GNU Arm Embedded Toolchain`_ section.
 
 Before you start setting up the toolchain, install available updates for your operating system.
 See :ref:`gs_recommended_versions` for information on the supported operating systems and Zephyr features.
@@ -47,7 +46,7 @@ The installation process is different depending on your operating system.
 
       To install the required tools, complete the following steps:
 
-      .. ncs-include:: getting_started/index.rst
+      .. ncs-include:: develop/getting_started/index.rst
          :docset: zephyr
          :dedent: 6
          :start-after: .. _install_dependencies_windows:
@@ -58,7 +57,7 @@ The installation process is different depending on your operating system.
 
       To install the required tools on Ubuntu, complete the following steps:
 
-      .. ncs-include:: getting_started/index.rst
+      .. ncs-include:: develop/getting_started/index.rst
          :docset: zephyr
          :dedent: 6
          :start-after: .. _install_dependencies_ubuntu:
@@ -68,15 +67,11 @@ The installation process is different depending on your operating system.
       Refer to the :ref:`zephyr:installation_linux` page for additional information on updating the dependencies manually.
       If you are using other Linux-based operating systems, see the :ref:`zephyr:linux_requirements` section in the Zephyr documentation.
 
-      .. note::
-         You do not need to install the Zephyr SDK.
-         We recommend to install the compiler toolchain separately, as detailed in `Install the GNU Arm Embedded Toolchain`_.
-
    .. group-tab:: macOS
 
       To install the required tools, complete the following steps:
 
-      .. ncs-include:: getting_started/index.rst
+      .. ncs-include:: develop/getting_started/index.rst
          :docset: zephyr
          :dedent: 6
          :start-after: .. _install_dependencies_macos:
@@ -89,7 +84,7 @@ The installation process is different depending on your operating system.
 
 .. _gs_installing_gn:
 
-In addition to these required tools, install the `GN`_ meta-build system if you are interested in building `Matter`_ (formerly Project Connected Home over IP, Project CHIP) applications.
+In addition to these required tools, install the `GN`_ meta-build system if you are interested in building `Matter`_ applications.
 This system generates the Ninja files that the |NCS| uses.
 
 .. tabs::
@@ -189,7 +184,7 @@ Install west
 
 To manage the combination of repositories and versions, the |NCS| uses :ref:`Zephyr's west <zephyr:west>`.
 
-To install west, complete the following step:
+To install west, reopen the command prompt window to ensure that Python is initialized and complete the following step:
 
 .. tabs::
 
@@ -365,226 +360,44 @@ Use the following commands to install the requirements for each repository.
 
 .. rst-class:: numbered-step
 
-Install the GNU Arm Embedded Toolchain
-**************************************
+Install a Toolchain
+*******************
 
-To be able to cross-compile your applications for Arm targets, you must install version 9-2019-q4-major of the `GNU Arm Embedded Toolchain`_.
+A toolchain provides a compiler, assembler, linker, and other programs required to build Zephyr applications.
 
-.. important::
-   Make sure to install the toolchain version that is mentioned above.
-   Other toolchain versions might not work with this version of the |NCS|.
-   Similarly, other versions of the |NCS| might require a different toolchain version.
-
-   |tfm_gnu_version_incompatibility|
-
-To set up the toolchain, complete the following steps:
-
-.. _toolchain_setup:
-
-1. Download the `GNU Arm Embedded Toolchain`_ for your operating system.
-#. Extract the contents of the root folder of the toolchain into a directory of your choice.
-   The recommended folder is :file:`c:\\gnuarmemb` on Windows and :file:`~/gnuarmemb` on Linux or macOS.
-   Make sure that the folder name does not contain any spaces or special characters.
-   By default, the contents are extracted to another folder that corresponds to the GNU Arm Embedded Toolchain version (*version-folder* in the following step).
-   For example, :file:`c:\\gccarmemb\\9_2019-q4-major`, where :file:`9_2019-q4-major` is the *version-folder* name edited to contain no empty spaces.
-#. If you want to build and program applications from the command line, define the environment variables for the GNU Arm Embedded Toolchain.
-   Depending on your operating system:
-
-    .. tabs::
-
-       .. group-tab:: Windows
-
-          Open a command-line window and enter the commands below.
-
-          If you did not install the toolchain in the recommended folder, change the value of :envvar:`GNUARMEMB_TOOLCHAIN_PATH` to the folder you used and make sure to provide the name of the *version-folder*.
-
-            .. parsed-literal::
-               :class: highlight
-
-               set ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
-               set GNUARMEMB_TOOLCHAIN_PATH=\ c:\\gnuarmemb\\version-folder
-
-       .. group-tab:: Linux
-
-          Open a terminal window and enter the commands below.
-
-          If you did not install the toolchain in the recommended folder, change the value of :envvar:`GNUARMEMB_TOOLCHAIN_PATH` to the folder you used and make sure to provide the name of the *version-folder*.
-
-            .. parsed-literal::
-               :class: highlight
-
-               export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
-               export GNUARMEMB_TOOLCHAIN_PATH=\ "~/gnuarmemb/*version-folder*"
-
-       .. group-tab:: macOS
-
-          Open a terminal window and enter the commands below.
-
-          If you did not install the toolchain in the recommended folder, change the value of :envvar:`GNUARMEMB_TOOLCHAIN_PATH` to the folder you used and make sure to provide the name of the *version-folder*.
-
-            .. parsed-literal::
-               :class: highlight
-
-               export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
-               export GNUARMEMB_TOOLCHAIN_PATH=\ "~/gnuarmemb/*version-folder*"
-
-#. Set the environment variables persistently.
-   Depending on your operating system:
-
-    .. tabs::
-
-       .. group-tab:: Windows
-
-          Add the environment variables as system environment variables or define them in the :file:`%userprofile%\zephyrrc.cmd` file as described in :ref:`build_environment_cli`.
-          This lets you avoid setting them every time you open a command-line window.
-
-       .. group-tab:: Linux
-
-          Define the environment variables in the :file:`~/.zephyrrc` file as described in :ref:`build_environment_cli`.
-          This lets you avoid setting them every time you open a terminal window.
-
-       .. group-tab:: macOS
-
-          Define the environment variables in the :file:`~/.zephyrrc` file as described in :ref:`build_environment_cli`.
-          This lets you avoid setting them every time you open a terminal window.
+.. ncs-include:: develop/getting_started/index.rst
+   :docset: zephyr
+   :dedent: 0
+   :start-after: to build Zephyr applications.
+   :end-before: .. _getting_started_run_sample:
 
 .. rst-class:: numbered-step
 
-Install a build IDE
-*******************
+Install |VSC|
+*************
 
-You can install either the |VSC| extension or the |SES| (SES) Nordic Edition to open and compile projects in the |NCS|:
+You can install the |VSC| to open and compile projects in the |NCS|.
 
 .. _installing_vsc:
 
-Visual Studio Code extension
-============================
-
 |vsc_extension_instructions|
 
-.. _installing_ses:
-
-|SES| Nordic Edition
-====================
-
-You can install the |SES| (SES) Nordic Edition to open and compile projects in the |NCS|.
-SES is free of charge for use with Nordic Semiconductor devices.
-
-To install the Nordic Edition, download the package for your operating system:
-
-    .. tabs::
-
-       .. group-tab:: Windows
-
-          * `SEGGER Embedded Studio (Nordic Edition) - Windows x86`_
-          * `SEGGER Embedded Studio (Nordic Edition) - Windows x64`_
-
-       .. group-tab:: Linux
-
-          * `SEGGER Embedded Studio (Nordic Edition) - Linux x86`_
-          * `SEGGER Embedded Studio (Nordic Edition) - Linux x64`_
-
-       .. group-tab:: macOS
-
-          * `SEGGER Embedded Studio (Nordic Edition) - Mac OS x64`_
-
-Extract the downloaded package in the directory of your choice.
+.. vsc_mig_note_start
 
 .. note::
-    Notifications about newer versions of SES are disabled in the SES Nordic Edition.
-    This is because of the custom |NCS| options that are available only in the Nordic Edition.
-    You will not be able to use SES with the |NCS| if you install the latest standard version of SES.
 
-    When you move to a newer release of the |NCS|, check the :ref:`gs_recommended_versions` page for the given release to see if you are using the minimum required version of SES Nordic Edition.
-    If you need to install the latest version of the SES Nordic Edition, follow the steps described above and make sure to set up the build environment in SES once more.
+   If you are building the application or sample using SEGGER Embedded Studio IDE or on the command line and want to migrate to |VSC|, follow the instructions in the `migrating from other IDEs to VS Code <Migrating IDE_>`_ documentation.
 
-.. _build_environment:
-.. _setting_up_SES:
+.. vsc_mig_note_end
 
-Set up the build environment in SES
-***********************************
-
-If you chose to use |SES| for :ref:`building and programming a sample application <gs_programming>`, you must first set up your build environment.
-
-1. Set up the SES environment.
-   If you plan to :ref:`build with SEGGER Embedded Studio <gs_programming_ses>`, the first time you import an |NCS| project, SES might prompt you to set the paths to the Zephyr Base directory and the GNU ARM Embedded Toolchain.
-   You only need to do this once.
-   Complete the following steps:
-
-   a. Navigate to the :file:`bin` directory.
-   #. Run the :file:`emStudio` executable file.
-   #. Click :guilabel:`OK` on the pop-up window that opens.
-
-      .. figure:: images/ses_GNU_notset.png
-         :alt: Open GNU ARM Embedded Toolchain directory
-
-         Open GNU ARM Embedded Toolchain directory
-
-   #. Set the GNU ARM Embedded Toolchain directory path to the location where it was downloaded (for example, :file:`c:\\gnuarmemb`).
-   #. Close the :guilabel:`nRF Connect options` window.
-   #. Navigate to :guilabel:`Tools` > :guilabel:`Options` and select the :guilabel:`nRF Connect` tab.
-   #. Set the full path of the Zephyr Base directory to :file:`ncs/zephyr`.
-
-#. Set up executables.
-   The process is different depending on your operating system.
-
-   .. tabs::
-
-      .. group-tab:: Windows
-
-         Make sure the locations of executable tools are added to the :envvar:`PATH` variable, including Python, CMake, Ninja, and DTC.
-         On Windows, SES uses the :envvar:`PATH` variable to find executables if they are not set in SES.
-
-      .. group-tab:: Linux
-
-         Make sure the locations of executable tools are added to the :envvar:`PATH` variable, including Python, CMake, Ninja, and DTC.
-         On Linux, SES uses the :envvar:`PATH` variable to find executables if they are not set in SES.
-
-      .. group-tab:: macOS
-
-         If you start SES on macOS by running the :file:`emStudio` executable file, make sure to complete the following steps:
-
-         1. Specify the path to all executables under :guilabel:`Tools` > :guilabel:`Options` (in the :guilabel:`nRF Connect` tab).
-
-            .. figure:: images/ses_options.png
-               :alt: nRF Connect SDK options in SES on Windows
-
-               nRF Connect SDK options in SES (Windows)
-
-            Use this section to change the SES environment settings later as well.
-
-         #. Specify the path to the west tool as an additional CMake option, replacing *path_to_west* with the path to the west executable (for example, :file:`/usr/local/bin/west`):
-
-            .. parsed-literal::
-               :class: highlight
-
-               -DWEST=\ *path_to_west*
-
-         If you start SES from the command line, it uses the global :envvar:`PATH` variable to find the executables.
-         You do not need to explicitly configure the executables in SES.
-
-         Regardless of how you start SES, if you get an error that a tool or command cannot be found, first make sure that the tool is installed.
-         If it is installed, verify that its path is configured correctly in the SES settings or in the :envvar:`PATH` variable.
-
-   ..
-
-If you want to change the SES environment settings after the initial setup, click :guilabel:`Tools` > :guilabel:`Options` and select the :guilabel:`nRF Connect` tab, as shown on the following screenshot from the Windows installation.
-
-.. _ses_options_figure:
-
-   .. figure:: images/ses_options.png
-      :alt: nRF Connect SDK options in SES on Windows
-
-      nRF Connect SDK options in SES (Windows)
-
-If you want to configure tools that are not listed in the SES options, add them to the :envvar:`PATH` variable.
+For instructions specifically for installing, see `Installing using Visual Studio Code`_.
 
 .. _build_environment_cli:
 
 Set up the command-line build environment
 *****************************************
 
-In addition to |VSC| and |SES|, you can also build and program your application from the command line.
+In addition to |VSC|, you can also build and program your application from the command line.
 You have to set up your build environment by defining the required environment variables every time you open a new command-line or terminal window.
 
 See :ref:`zephyr:important-build-vars` for more information about the various relevant environment variables.

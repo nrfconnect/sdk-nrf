@@ -5,9 +5,9 @@
  */
 
 #include <stdlib.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include <getopt.h>
 
 #include "link_api.h"

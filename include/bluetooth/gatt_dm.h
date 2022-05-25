@@ -14,8 +14,8 @@
  * @brief Module for GATT Discovery Manager.
  */
 
-#include <bluetooth/gatt.h>
-#include <bluetooth/uuid.h>
+#include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/uuid.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,7 +38,7 @@ struct bt_gatt_dm_attr {
 	/** Attribute UUID */
 	struct bt_uuid	*uuid;
 	/** Attribute handle */
-	uint16_t		handle;
+	uint16_t	handle;
 	/** Attribute permissions */
 	uint8_t		perm;
 };
@@ -272,12 +272,16 @@ const struct bt_gatt_dm_attr *bt_gatt_dm_desc_next(
  * @param[in]     svc_uuid UUID of target service
  *                or NULL if any service should be discovered.
  * @param[in]     cb Callback structure.
-  * @param[in,out] context Context argument to be passed to
-  *                callback functions.
+ * @param[in,out] context Context argument to be passed to
+ *                callback functions.
  *
  * @note
  * If @p svc_uuid is set to NULL, all services may be discovered.
  * To process the next service, call @ref bt_gatt_dm_continue.
+ *
+ * If @p svc_uuid is set to the service UUID, all
+ * service instances may be discovered.
+ * Call @ref bt_gatt_dm_continue to discover the next service instance.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.

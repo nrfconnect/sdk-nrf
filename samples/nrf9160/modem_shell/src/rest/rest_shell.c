@@ -5,13 +5,13 @@
  */
 
 #include <stdlib.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <assert.h>
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include <getopt.h>
 
-#include <net/http_parser.h>
+#include <zephyr/net/http_parser.h>
 #include <net/rest_client.h>
 
 #include "rest_shell.h"

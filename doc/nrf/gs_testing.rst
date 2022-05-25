@@ -1,7 +1,7 @@
 .. _gs_testing:
 
 Testing an application
-############################
+######################
 
 .. contents::
    :local:
@@ -20,8 +20,14 @@ How to connect with the VS Code extension
 *****************************************
 
 The |VSC| extension is a complete IDE for developing applications for nRF91, nRF53 and nRF52 Series devices.
-It includes nRF Terminal, which is an integrated serial port and RTT terminal to connect to your board.
-For detailed instructions, see the `nRF Connect for Visual Studio Code`_ documentation site.
+The extension pack includes nRF Terminal, which is an integrated serial port and RTT terminal to connect to your board.
+For detailed instructions, see the `nRF Terminal documentation`_ on the `nRF Connect for Visual Studio Code`_ documentation site.
+
+.. note::
+
+   .. include:: /gs_modifying.rst
+      :start-after: modify_vsc_compiler_options_start
+      :end-before: modify_vsc_compiler_options_end
 
 .. _putty:
 

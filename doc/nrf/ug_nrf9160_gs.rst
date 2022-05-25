@@ -10,6 +10,11 @@ Getting started with nRF9160 DK
 This section will get you started with your nRF9160 DK.
 You will update the firmware (both the application firmware and the modem firmware) and the nRF Cloud certificates of the DK, and conduct some initial tests.
 
+If you have already set up your nRF9160 DK and want to learn more, see the following documentation:
+
+* :ref:`ug_nrf9160` for more advanced topics related to the nRF9160 DK if you are already familiar with the |NCS|.
+* The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.
+
 .. _nrf9160_gs_requirements:
 
 Minimum requirements
@@ -372,3 +377,12 @@ Complete the following steps to test the GNSS functionality:
 
 #. From the :guilabel:`Devices` view, open the entry for your device.
 #. Observe that after a while, the GNSS data is displayed on the map in the :guilabel:`GPS Data` card on nRF Cloud.
+
+Next steps
+**********
+
+You have now completed getting started with the nRF9160 DK.
+See the following links for where to go next:
+
+* :ref:`ug_nrf9160` for more advanced topics related to the nRF9160 DK.
+* The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.

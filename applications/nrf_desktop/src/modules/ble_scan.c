@@ -6,9 +6,9 @@
 
 #include <zephyr/types.h>
 
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 #include <bluetooth/scan.h>
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #include <string.h>
 
@@ -19,7 +19,7 @@
 
 #include "ble_scan_def.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_SCANNING_LOG_LEVEL);
 
 #define SCAN_TRIG_CHECK_MS    (1 * MSEC_PER_SEC)
@@ -134,7 +134,7 @@ static void broadcast_scan_state(bool active)
 {
 	struct ble_peer_search_event *event = new_ble_peer_search_event();
 	event->active = active;
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void scan_stop(void)
@@ -485,7 +485,7 @@ static void scan_init(void)
 	};
 
 	if (IS_ENABLED(CONFIG_CAF_BLE_USE_LLPM) &&
-	    (CONFIG_BT_MAX_CONN > 2)) {
+	    (CONFIG_BT_MAX_CONN >= 2)) {
 		cp.interval_min = 8;
 		cp.interval_max = 8;
 	} else {
@@ -506,9 +506,9 @@ static void scan_init(void)
 	k_work_init_delayable(&scan_stop_trigger, scan_stop_trigger_fn);
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_hid_report_event(eh)) {
+	if (is_hid_report_event(aeh)) {
 		/* Do not scan when devices are in use. */
 		scan_counter = 0;
 
@@ -519,9 +519,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(ble_state),
 				MODULE_STATE_READY)) {
@@ -541,9 +541,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_peer_event(eh)) {
+	if (is_ble_peer_event(aeh)) {
 		const struct ble_peer_event *event =
-			cast_ble_peer_event(eh);
+			cast_ble_peer_event(aeh);
 
 		switch (event->state) {
 		case PEER_STATE_CONNECTED:
@@ -570,9 +570,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_peer_operation_event(eh)) {
+	if (is_ble_peer_operation_event(aeh)) {
 		const struct ble_peer_operation_event *event =
-			cast_ble_peer_operation_event(eh);
+			cast_ble_peer_operation_event(aeh);
 
 		switch (event->op) {
 		case PEER_OPERATION_ERASED:
@@ -611,9 +611,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_ble_discovery_complete_event(eh)) {
+	if (is_ble_discovery_complete_event(aeh)) {
 		const struct ble_discovery_complete_event *event =
-			cast_ble_discovery_complete_event(eh);
+			cast_ble_discovery_complete_event(aeh);
 		size_t i;
 
 		for (i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
@@ -659,9 +659,9 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, ble_peer_event);
-EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
-EVENT_SUBSCRIBE(MODULE, ble_discovery_complete_event);
-EVENT_SUBSCRIBE(MODULE, hid_report_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_discovery_complete_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);

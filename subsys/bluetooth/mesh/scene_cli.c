@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 #include <bluetooth/mesh/models.h>
 #include "model_utils.h"
 

@@ -18,31 +18,13 @@ tests:
       - nrf52840gmouse_nrf52840
       - nrf5340dk_nrf5340_cpuapp
     tags: bluetooth ci_build
-  applications.nrf_desktop.zdebug_b0:
-    build_only: true
-    platform_allow: nrf52kbd_nrf52832 nrf52840dk_nrf52840 nrf52840dongle_nrf52840 nrf52840gmouse_nrf52840 nrf5340dk_nrf5340_cpuapp
-    integration_platforms:
-      - nrf52kbd_nrf52832
-      - nrf52840dk_nrf52840
-      - nrf52840dongle_nrf52840
-      - nrf52840gmouse_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-    tags: bluetooth ci_build
-    extra_args: CONF_FILE=prj_b0.conf
-  applications.nrf_desktop.zdebug_b0_wwcb:
+  applications.nrf_desktop.zdebug_wwcb:
     build_only: true
     platform_allow: nrf52840dk_nrf52840
     integration_platforms:
       - nrf52840dk_nrf52840
     tags: bluetooth ci_build
-    extra_args: CONF_FILE=prj_b0_wwcb.conf
-  applications.nrf_desktop.zdebug_mcuboot:
-    build_only: true
-    platform_allow: nrf52833dongle_nrf52833
-    integration_platforms:
-      - nrf52833dongle_nrf52833
-    tags: bluetooth ci_build
-    extra_args: CONF_FILE=prj_mcuboot.conf
+    extra_args: CONF_FILE=prj_wwcb.conf
   applications.nrf_desktop.zdebug_mcuboot_qspi:
     build_only: true
     platform_allow: nrf52840dk_nrf52840
@@ -115,26 +97,6 @@ tests:
       - nrf5340dk_nrf5340_cpuapp
     tags: bluetooth ci_build
     extra_args: CONF_FILE=prj_release.conf
-  applications.nrf_desktop.zrelease_b0:
-    build_only: true
-    platform_allow: nrf52kbd_nrf52832 nrf52840dk_nrf52840 nrf52840dongle_nrf52840 nrf52840gmouse_nrf52840 nrf5340dk_nrf5340_cpuapp
-    integration_platforms:
-      - nrf52kbd_nrf52832
-      - nrf52840dk_nrf52840
-      - nrf52840dongle_nrf52840
-      - nrf52840gmouse_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-    tags: bluetooth ci_build
-    extra_args: CONF_FILE=prj_release_b0.conf
-  applications.nrf_desktop.zrelease_mcuboot:
-    build_only: true
-    platform_allow: nrf52820dongle_nrf52820 nrf52833dk_nrf52820 nrf52833dongle_nrf52833
-    integration_platforms:
-      - nrf52820dongle_nrf52820
-      - nrf52833dk_nrf52820
-      - nrf52833dongle_nrf52833
-    tags: bluetooth ci_build
-    extra_args: CONF_FILE=prj_release_mcuboot.conf
   applications.nrf_desktop.zrelease_4llpmconn:
     build_only: true
     platform_allow: nrf52840dongle_nrf52840

@@ -1,72 +1,36 @@
 /*
- * Copyright (c) 2019 Arm Limited. All rights reserved.
- * Copyright (c) 2021 Nordic Semiconductor ASA. All rights reserved.
+ * Copyright (c) 2021 - 2022 Nordic Semiconductor ASA
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-
-//-------- <<< Use Configuration Wizard in Context Menu >>> --------------------
 
 #ifndef __RTE_DEVICE_H
 #define __RTE_DEVICE_H
 
-/* Undef the TF-M defined array size since devicetree will pull in util.h which
- * has this definition.
- */
-#undef ARRAY_SIZE
-
-#include <devicetree.h>
 #include <autoconf.h>
 
-#define UARTE(idx)			DT_NODELABEL(uart##idx)
-#define UARTE_PROP(idx, prop)		DT_PROP(UARTE(idx), prop)
-
-// <i> Configuration settings for Driver_USART0 in component ::Drivers:USART
+/* Configuration settings for Driver_USART0. */
 #define   RTE_USART0                    1
-//   <h> Pin Selection (0xFFFFFFFF means Disconnected)
-//     <o> TXD
-#define   RTE_USART0_TXD_PIN            UARTE_PROP(0, tx_pin)
-//     <o> RXD
-#define   RTE_USART0_RXD_PIN            UARTE_PROP(0, rx_pin)
-//     <o> RTS
-#define   RTE_USART0_RTS_PIN            UARTE_PROP(0, rts_pin)
-//     <o> CTS
-#define   RTE_USART0_CTS_PIN            UARTE_PROP(0, cts_pin)
-//   </h> Pin Configuration
+/* Pin Selection (0xFFFFFFFF means Disconnected) */
+#define   RTE_USART0_TXD_PIN            CONFIG_TFM_UART0_TXD_PIN
+#define   RTE_USART0_RXD_PIN            CONFIG_TFM_UART0_RXD_PIN
+#define   RTE_USART0_RTS_PIN            CONFIG_TFM_UART0_RTS_PIN
+#define   RTE_USART0_CTS_PIN            CONFIG_TFM_UART0_CTS_PIN
 
-// <i> Configuration settings for Driver_USART1 in component ::Drivers:USART
-#define   RTE_USART1                    1
-//   <h> Pin Selection (0xFFFFFFFF means Disconnected)
-#if defined(CONFIG_BOARD_NRF5340DK_NRF5340_CPUAPP_NS)
-//     <o> TXD
-#define   RTE_USART1_TXD_PIN            25 // TODO: Add to devicetree
-//     <o> RXD
-#define   RTE_USART1_RXD_PIN            26 // TODO: Add to devicetree
+/* Configuration settings for Driver_USART1. */
+#define   RTE_USART1                    CONFIG_TFM_SECURE_UART1
+/* Pin Selection (0xFFFFFFFF means Disconnected) */
+#if defined(CONFIG_TFM_SECURE_UART1)
+#define   RTE_USART1_TXD_PIN            CONFIG_TFM_UART1_TXD_PIN
+#define   RTE_USART1_RXD_PIN            CONFIG_TFM_UART1_RXD_PIN
 #else
-//     <o> TXD
-#define   RTE_USART1_TXD_PIN            UARTE_PROP(1, tx_pin)
-//     <o> RXD
-#define   RTE_USART1_RXD_PIN            UARTE_PROP(1, rx_pin)
+#define   RTE_USART1_TXD_PIN            0xFFFFFFFF
+#define   RTE_USART1_RXD_PIN            0xFFFFFFFF
 #endif
-//     <o> RTS
 #define   RTE_USART1_RTS_PIN            0xFFFFFFFF
-//     <o> CTS
 #define   RTE_USART1_CTS_PIN            0xFFFFFFFF
-//   </h> Pin Configuration
 
-// <e> FLASH (Flash Memory) [Driver_FLASH0]
-// <i> Configuration settings for Driver_FLASH0 in component ::Drivers:FLASH
+/* Configuration settings for Driver_FLASH0. */
 #define   RTE_FLASH0                    1
-// </e> FLASH (Flash Memory) [Driver_FLASH0]
 
 #endif  /* __RTE_DEVICE_H */

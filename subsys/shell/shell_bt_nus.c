@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <shell/shell_bt_nus.h>
-#include <bluetooth/gatt.h>
-#include <logging/log.h>
+#include <zephyr/bluetooth/gatt.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(shell_bt_nus, CONFIG_SHELL_BT_NUS_LOG_LEVEL);
 

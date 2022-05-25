@@ -3,39 +3,27 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr.h>
-#include <drivers/gpio.h>
-#include <drivers/flash.h>
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/drivers/flash.h>
+#include <zephyr/toolchain.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_key_mgmt.h>
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #include <net/fota_download.h>
 #include <nrf_socket.h>
 #include <stdio.h>
-#include <sys/reboot.h>
-#include <shell/shell.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/shell/shell.h>
 #include "update.h"
 
-#define LED_PORT DT_GPIO_LABEL(DT_ALIAS(led0), gpios)
-
-static const struct device *gpiob;
-static struct gpio_callback gpio_cb;
+static const struct gpio_dt_spec led0 = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
+static const struct gpio_dt_spec led1 = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
+static const struct gpio_dt_spec sw0 = GPIO_DT_SPEC_GET(DT_ALIAS(sw0), gpios);
+static struct gpio_callback sw0_cb;
 static struct k_work fota_work;
 static update_start_cb update_start;
 static char filename[128] = {0};
-
-#define SW0_PIN (DT_GPIO_PIN(DT_ALIAS(sw0), gpios))
-#define SW0_FLAGS (DT_GPIO_FLAGS(DT_ALIAS(sw0), gpios))
-#define LED0_PIN (DT_GPIO_PIN(DT_ALIAS(led0), gpios))
-#define LED0_FLAGS (GPIO_OUTPUT_ACTIVE | DT_GPIO_FLAGS(DT_ALIAS(led0), gpios))
-#define LED1_PIN (DT_GPIO_PIN(DT_ALIAS(led1), gpios))
-#define LED1_FLAGS (GPIO_OUTPUT_ACTIVE | DT_GPIO_FLAGS(DT_ALIAS(led1), gpios))
-
-/**@brief Recoverable modem library error. */
-void nrf_modem_recoverable_error_handler(uint32_t err)
-{
-	printk("Modem library recoverable error: %u\n", err);
-}
 
 int cert_provision(void)
 {
@@ -82,22 +70,22 @@ int cert_provision(void)
 
 static int led_init(int num_leds)
 {
-	const struct device *dev;
-
-	dev = device_get_binding(LED_PORT);
-	if (dev == 0) {
-		printk("Nordic nRF GPIO driver was not found!\n");
-		return 1;
-	}
-
 	switch (num_leds) {
 	case 0:
 		return 0;
 	case 2:
-		gpio_pin_configure(dev, LED1_PIN, LED1_FLAGS);
-		/* Fallthrough */
+		if (!device_is_ready(led1.port)) {
+			return -ENODEV;
+		}
+
+		gpio_pin_configure_dt(&led1, GPIO_OUTPUT_ACTIVE);
+		__fallthrough;
 	case 1:
-		gpio_pin_configure(dev, LED0_PIN, LED0_FLAGS);
+		if (!device_is_ready(led0.port)) {
+			return -ENODEV;
+		}
+
+		gpio_pin_configure_dt(&led0, GPIO_OUTPUT_ACTIVE);
 		return 0;
 	default:
 		return -EINVAL;
@@ -106,12 +94,12 @@ static int led_init(int num_leds)
 
 static void button_irq_disable(void)
 {
-	gpio_pin_interrupt_configure(gpiob, SW0_PIN, GPIO_INT_DISABLE);
+	gpio_pin_interrupt_configure_dt(&sw0, GPIO_INT_DISABLE);
 }
 
 static void button_irq_enable(void)
 {
-	gpio_pin_interrupt_configure(gpiob, SW0_PIN, GPIO_INT_EDGE_TO_ACTIVE);
+	gpio_pin_interrupt_configure_dt(&sw0, GPIO_INT_EDGE_TO_ACTIVE);
 }
 
 void dfu_button_pressed(const struct device *gpiob, struct gpio_callback *cb,
@@ -125,23 +113,26 @@ static int button_init(void)
 {
 	int err;
 
-	gpiob = device_get_binding(DT_GPIO_LABEL(DT_ALIAS(sw0), gpios));
-	if (gpiob == 0) {
-		printk("Nordic nRF GPIO driver was not found!\n");
-		return 1;
+	if (!device_is_ready(sw0.port)) {
+		printk("SW0 GPIO port device not ready\n");
+		return -ENODEV;
 	}
-	err = gpio_pin_configure(gpiob, SW0_PIN, GPIO_INPUT | SW0_FLAGS);
-	if (err == 0) {
-		gpio_init_callback(&gpio_cb, dfu_button_pressed, BIT(SW0_PIN));
-		err = gpio_add_callback(gpiob, &gpio_cb);
+
+	err = gpio_pin_configure_dt(&sw0, GPIO_INPUT);
+	if (err < 0) {
+		return err;
 	}
-	if (err == 0) {
-		button_irq_enable();
-	}
-	if (err != 0) {
+
+	gpio_init_callback(&sw0_cb, dfu_button_pressed, BIT(sw0.pin));
+
+	err = gpio_add_callback(sw0.port, &sw0_cb);
+	if (err < 0) {
 		printk("Unable to configure SW0 GPIO pin!\n");
-		return 1;
+		return err;
 	}
+
+	button_irq_enable();
+
 	return 0;
 }
 

@@ -5,8 +5,8 @@
  */
 
 #include <stdlib.h>
-#include <zephyr.h>
-#include <logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <modem/modem_info.h>
 #include <modem/modem_jwt.h>
 #include <net/nrf_cloud_rest.h>
@@ -14,7 +14,6 @@
 #include <net/nrf_cloud_agps.h>
 #endif /* CONFIG_NRF_CLOUD_AGPS */
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-#include <pm_config.h>
 #include <net/nrf_cloud_pgps.h>
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 
@@ -214,8 +213,9 @@ int assistance_init(struct k_work_q *assistance_work_q)
 
 	struct nrf_cloud_pgps_init_param pgps_param = {
 		.event_handler = pgps_event_handler,
-		.storage_base = PM_MCUBOOT_SECONDARY_ADDRESS,
-		.storage_size = PM_MCUBOOT_SECONDARY_SIZE
+		/* storage is defined by CONFIG_NRF_CLOUD_PGPS_STORAGE */
+		.storage_base = 0u,
+		.storage_size = 0u
 	};
 
 	if (nrf_cloud_pgps_init(&pgps_param) != 0) {

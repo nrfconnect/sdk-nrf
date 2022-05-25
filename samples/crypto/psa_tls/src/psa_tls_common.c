@@ -6,8 +6,8 @@
 
 #include <nrf.h>
 #include <errno.h>
-#include <zephyr.h>
-#include <net/socket.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/socket.h>
 
 
 /** @brief Function for sending all data in a given buffer to a connected

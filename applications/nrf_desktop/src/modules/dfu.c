@@ -7,12 +7,12 @@
 #include <inttypes.h>
 
 #include <zephyr/types.h>
-#include <sys/byteorder.h>
-#include <storage/flash_map.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/storage/flash_map.h>
 #include <pm_config.h>
-#include <sys/reboot.h>
+#include <zephyr/sys/reboot.h>
 
-#include <event_manager.h>
+#include <app_event_manager.h>
 #include "config_event.h"
 #include "hid_event.h"
 #include <caf/events/ble_common_event.h>
@@ -21,8 +21,8 @@
 #define MODULE dfu
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
-#include <logging/log_ctrl.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 
 
@@ -57,7 +57,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
  #define IMAGE1_ADDRESS		PM_S1_IMAGE_ADDRESS
  #define BOOTLOADER_NAME	"B0"
 #elif CONFIG_BOOTLOADER_MCUBOOT
- #include <dfu/mcuboot.h>
+ #include <zephyr/dfu/mcuboot.h>
  #define IMAGE0_ID		PM_MCUBOOT_PRIMARY_ID
  #define IMAGE0_ADDRESS		PM_MCUBOOT_PRIMARY_ADDRESS
  #define IMAGE1_ID		PM_MCUBOOT_SECONDARY_ID
@@ -501,7 +501,7 @@ static void handle_dfu_bootloader_variant(uint8_t *data, size_t *size)
 
 	*size = strlen(BOOTLOADER_NAME);
 	__ASSERT_NO_MSG((*size != 0) && (*size < CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE));
-	strcpy(data, BOOTLOADER_NAME);
+	strcpy((char *)data, BOOTLOADER_NAME);
 }
 
 static void handle_reboot_request(uint8_t *data, size_t *size)
@@ -678,9 +678,9 @@ static void fetch_config(const uint8_t opt_id, uint8_t *data, size_t *size)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_hid_report_event(eh)) {
+	if (is_hid_report_event(aeh)) {
 		device_in_use = true;
 
 		return false;
@@ -689,15 +689,15 @@ static bool event_handler(const struct event_header *eh)
 	GEN_CONFIG_EVENT_HANDLERS(STRINGIFY(MODULE), opt_descr, update_config,
 				  fetch_config);
 
-	if (is_ble_peer_event(eh)) {
+	if (is_ble_peer_event(aeh)) {
 		device_in_use = true;
 
 		return false;
 	}
 
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 #if CONFIG_BOOTLOADER_MCUBOOT
@@ -723,8 +723,8 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, hid_report_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);

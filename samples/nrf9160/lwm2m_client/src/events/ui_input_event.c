@@ -22,12 +22,15 @@ static const char *ui_input_type_to_string(enum ui_input_type type)
 	}
 }
 
-static void log_ui_input_event(const struct event_header *eh)
+static void log_ui_input_event(const struct app_event_header *aeh)
 {
-	struct ui_input_event *event = cast_ui_input_event(eh);
+	struct ui_input_event *event = cast_ui_input_event(aeh);
 
-	EVENT_MANAGER_LOG(eh, "%s event: device number = %d, state = %d",
+	APP_EVENT_MANAGER_LOG(aeh, "%s event: device number = %d, state = %d",
 			ui_input_type_to_string(event->type), event->device_number, event->type);
 }
 
-EVENT_TYPE_DEFINE(ui_input_event, false, log_ui_input_event, NULL);
+APP_EVENT_TYPE_DEFINE(ui_input_event,
+			      log_ui_input_event,
+			      NULL,
+			      APP_EVENT_FLAGS_CREATE());

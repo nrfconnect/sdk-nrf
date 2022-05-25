@@ -4,30 +4,30 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <assert.h>
 
 #include <modem/lte_lc.h>
 
-#include <net/ppp.h>
+#include <zephyr/net/ppp.h>
 
-#include <net/net_ip.h>
-#include <net/net_if.h>
+#include <zephyr/net/net_ip.h>
+#include <zephyr/net/net_if.h>
 
-#include <net/net_event.h>
-#include <net/net_mgmt.h>
+#include <zephyr/net/net_event.h>
+#include <zephyr/net/net_mgmt.h>
 
-#include <posix/unistd.h>
-#include <posix/netdb.h>
+#include <zephyr/posix/unistd.h>
+#include <zephyr/posix/netdb.h>
 
-#include <net/ethernet.h>
+#include <zephyr/net/ethernet.h>
 
-#include <posix/poll.h>
-#include <posix/sys/socket.h>
-#include <shell/shell.h>
+#include <zephyr/posix/poll.h>
+#include <zephyr/posix/sys/socket.h>
+#include <zephyr/shell/shell.h>
 
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #include "link_api.h"
 #include "mosh_print.h"
@@ -184,6 +184,14 @@ static void ppp_ctrl_net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 
 	if (mgmt_event == NET_EVENT_PPP_CARRIER_OFF) {
 		mosh_print("PPP carrier OFF");
+
+		/* To be able to reconnect the dial up from Windows UI,
+		 * we need to bring PPP net_if and sockets down/up:
+		 */
+		if (!ppp_closing && ppp_up) {
+			mosh_print("PPP: restarting...");
+			k_work_submit_to_queue(&mosh_common_work_q, &ppp_ctrl_restart_work);
+		}
 		return;
 	}
 }
@@ -202,14 +210,6 @@ ppp_ctrl_net_mgmt_event_ipv4_levelhandler(struct net_mgmt_event_callback *cb,
 		mosh_print("Dial up (IPv4) connection up");
 	} else if (mgmt_event == NET_EVENT_IPV4_ADDR_DEL) {
 		mosh_print("Dial up (IPv4) connection down");
-
-		/* To be able to reconnect the dial up from Windows UI,
-		 * we need to bring PPP net_if and sockets down/up:
-		 */
-		if (!ppp_closing) {
-			mosh_print("PPP: restarting...");
-			k_work_submit_to_queue(&mosh_common_work_q, &ppp_ctrl_restart_work);
-		}
 	}
 }
 

@@ -14,7 +14,7 @@
 #ifndef BT_MESH_LIGHTNESS_H__
 #define BT_MESH_LIGHTNESS_H__
 
-#include <bluetooth/mesh.h>
+#include <zephyr/bluetooth/mesh.h>
 #include <bluetooth/mesh/model_types.h>
 
 #ifdef __cplusplus

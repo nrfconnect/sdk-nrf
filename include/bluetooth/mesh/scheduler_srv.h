@@ -14,7 +14,7 @@
 #ifndef BT_MESH_SCHEDULER_SRV_H__
 #define BT_MESH_SCHEDULER_SRV_H__
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <bluetooth/mesh/time_srv.h>
 #include <bluetooth/mesh/scene_srv.h>
 #include <bluetooth/mesh/scheduler.h>
@@ -41,9 +41,9 @@ struct bt_mesh_scheduler_srv;
  *
  *  @brief Scheduler Server model composition data entry.
  *
- *  @warning If the Scheduler model is registered on the element then
- *           the Scene model shouldn't. The Scheduler model includes already
- *           the Scene model.
+ *  @note If the Scheduler model is registered on the element then
+ *        the Scene model shouldn't. The Scheduler model includes already
+ *        the Scene model.
  *
  *  @param[in] _srv Pointer to a @ref bt_mesh_scheduler_srv instance.
  */

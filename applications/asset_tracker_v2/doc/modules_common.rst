@@ -13,7 +13,7 @@ The API supports the following functionalities:
 * Registering and starting a module using :c:func:`module_start`.
 * Deregistering a module using :c:func:`modules_shutdown_register`.
 * Enqueueing and dequeueing message queue items using :c:func:`module_get_next_msg` and :c:func:`module_enqueue_msg`.
-* Macros used to handle :ref:`Event manager <event_manager>` events sent between modules.
+* Macros used to handle :ref:`Application Event Manager <app_event_manager>` events sent between modules.
 
 API documentation
 *****************

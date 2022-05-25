@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <string.h>
 #include <stdio.h>
 #include <modem/lte_lc.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #define LC_MAX_READ_LENGTH			128
 

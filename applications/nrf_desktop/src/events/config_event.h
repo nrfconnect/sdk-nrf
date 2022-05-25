@@ -13,8 +13,8 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 #include "hid_report_desc.h"
 
 #ifdef __cplusplus
@@ -81,7 +81,7 @@ enum config_status {
  * Used to forward configuration channel request/response.
  */
 struct config_event {
-	struct event_header header;
+	struct app_event_header header;
 
 	uint16_t transport_id;
 	bool is_request;
@@ -93,21 +93,21 @@ struct config_event {
 	struct event_dyndata dyndata;
 };
 
-EVENT_TYPE_DYNDATA_DECLARE(config_event);
+APP_EVENT_TYPE_DYNDATA_DECLARE(config_event);
 
 extern const uint8_t __start_config_channel_modules[];
 
 #define GEN_CONFIG_EVENT_HANDLERS(mod_name, opt_descr, config_set_fn, config_fetch_fn)		\
 	BUILD_ASSERT(ARRAY_SIZE(opt_descr) > 0);						\
 	BUILD_ASSERT(ARRAY_SIZE(opt_descr) <= OPT_FIELD_MASK);					\
-	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) && is_config_event(eh)) {		\
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) && is_config_event(aeh)) {		\
 		static const uint8_t module_id_in_section					\
 			__attribute__((__section__("config_channel_modules"))) = 0;		\
 		uint8_t config_module_id =							\
 			&module_id_in_section - (uint8_t *)__start_config_channel_modules;	\
 		static uint8_t cur_opt_descr;							\
 												\
-		struct config_event *event = cast_config_event(eh);				\
+		struct config_event *event = cast_config_event(aeh);				\
 												\
 		uint8_t rsp_data_buf[CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE];			\
 		size_t rsp_data_size = 0;							\
@@ -140,7 +140,8 @@ extern const uint8_t __start_config_channel_modules[];
 						rsp_data_size = strlen(data_ptr);		\
 						__ASSERT_NO_MSG(rsp_data_size <=		\
 								sizeof(rsp_data_buf));		\
-						strncpy(rsp_data_buf, data_ptr, rsp_data_size);	\
+						strncpy((char *) rsp_data_buf, data_ptr,	\
+								rsp_data_size);			\
 						cur_opt_descr++;				\
 					} else {						\
 						rsp_data_size = sizeof(uint8_t);		\
@@ -171,7 +172,7 @@ extern const uint8_t __start_config_channel_modules[];
 				memcpy(rsp->dyndata.data, rsp_data_buf, rsp_data_size);		\
 			}									\
 												\
-			EVENT_SUBMIT(rsp);							\
+			APP_EVENT_SUBMIT(rsp);						\
 		}										\
 												\
 		return consume;									\

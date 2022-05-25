@@ -9,10 +9,10 @@
 #include <string.h>
 #include <stdint.h>
 #include <stddef.h>
-#include <sys/printk.h>
+#include <zephyr/sys/printk.h>
 
-#include <sys/util.h>
-#include <sys_clock.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/sys_clock.h>
 
 #include "common_test.h"
 

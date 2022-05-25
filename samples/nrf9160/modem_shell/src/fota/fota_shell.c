@@ -7,8 +7,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <zephyr.h>
-#include <shell/shell.h>
+#include <zephyr/kernel.h>
+#include <zephyr/shell/shell.h>
 
 #include "fota.h"
 #include "mosh_print.h"

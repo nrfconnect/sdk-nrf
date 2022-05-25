@@ -6,14 +6,14 @@
 
 #include <zephyr/types.h>
 #include <errno.h>
-#include <zephyr.h>
-#include <sys/printk.h>
-#include <sys/byteorder.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/sys/byteorder.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/hci.h>
-#include <bluetooth/direction.h>
-#include <bluetooth/conn.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/hci.h>
+#include <zephyr/bluetooth/direction.h>
+#include <zephyr/bluetooth/conn.h>
 
 /* Latency set to zero, to enforce PDU exchange every connection event */
 #define CONN_LATENCY 0U

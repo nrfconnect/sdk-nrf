@@ -68,7 +68,6 @@ Because the Zigbee OTA DFU performs the upgrade using the :ref:`lib_dfu_target` 
   This allows to avoid long wait times at the beginning of the DFU process.
 
 Configuring these options and updating the default values (at least updating the ``image_version`` to the application version) allows you to use Zigbee FOTA in the :ref:`zigbee_light_switch_sample` sample.
-Alternatively, you can use :file:`overlay-fota.conf` file during the sample building process.
 
 Enabling Zigbee FOTA in an application
 ======================================
@@ -93,6 +92,10 @@ If you want to use the Zigbee FOTA functionality in your application, you must a
           switch (evt->id) {
           case ZIGBEE_FOTA_EVT_FINISHED:
               LOG_INF("Reboot application.");
+              /* Power on unused sections of RAM to allow MCUboot to use it. */
+              if (IS_ENABLED(CONFIG_RAM_POWER_DOWN_LIBRARY)) {
+                  power_up_unused_ram();
+              }
               sys_reboot(SYS_REBOOT_COLD);
               break;
           }
@@ -195,7 +198,7 @@ For more information about the library, see :ref:`lib_zigbee_zcl_scenes`.
 Configuring Zigbee shell
 ************************
 
-The Zigbee shell library implements a set of :ref:`Zigbee shell commands <zigbee_cli_reference>` that can be used with all Zigbee samples for testing and debugging.
+The Zigbee shell library implements a set of :ref:`Zigbee shell commands <zigbee_shell_reference>` that can be used with all Zigbee samples for testing and debugging.
 
 |zigbee_shell_config|
 

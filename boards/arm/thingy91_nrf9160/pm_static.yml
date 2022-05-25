@@ -13,11 +13,11 @@ mcuboot_pad:
 mcuboot_primary:
   address: 0xc000
   size: 0x69000
-  span: [spm, mcuboot_pad, app]
+  span: [tfm, mcuboot_pad, app]
 mcuboot_primary_app:
   address: 0xc200
   size: 0x68e00
-  span: [app, spm]
+  span: [app, tfm]
 mcuboot_scratch:
   address: 0xde000
   placement:
@@ -39,9 +39,18 @@ settings_storage:
   placement:
     after: [mcuboot_scratch]
   size: 0x2000
-spm:
+nonsecure_storage:
+  address: 0xfe000
+  size: 0x2000
+  span: [settings_storage]
+tfm_secure:
+  address: 0xc000
+  size: 0xc200
+  span: [mcuboot_pad, tfm]
+tfm_nonsecure:
+  address: 0x18200
+  size: 0x5ae00
+  span: [app]
+tfm:
   address: 0xc200
-  inside: [mcuboot_primary_app]
-  placement:
-    before: [app]
   size: 0xc000

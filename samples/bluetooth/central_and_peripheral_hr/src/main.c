@@ -4,22 +4,22 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/uuid.h>
-#include <bluetooth/gatt.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/gatt.h>
 #include <bluetooth/gatt_dm.h>
 #include <bluetooth/scan.h>
 
-#include <bluetooth/services/bas.h>
-#include <bluetooth/services/hrs.h>
+#include <zephyr/bluetooth/services/bas.h>
+#include <zephyr/bluetooth/services/hrs.h>
 #include <bluetooth/services/hrs_client.h>
 
 #include <dk_buttons_and_leds.h>
 
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
 #define STACKSIZE 1024
 #define PRIORITY 7
@@ -200,9 +200,12 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 }
 
 static const struct bt_conn_auth_cb auth_callbacks = {
-	.pairing_complete = pairing_complete,
-	.pairing_failed = pairing_failed,
 	.cancel = auth_cancel
+};
+
+static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
+	.pairing_complete = pairing_complete,
+	.pairing_failed = pairing_failed
 };
 
 static int scan_start(void)
@@ -381,7 +384,17 @@ void main(void)
 		return;
 	}
 
-	bt_conn_auth_cb_register(&auth_callbacks);
+	err = bt_conn_auth_cb_register(&auth_callbacks);
+	if (err) {
+		printk("Failed to register authorization callbacks.\n");
+		return;
+	}
+
+	err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
+	if (err) {
+		printk("Failed to register authorization info callbacks.\n");
+		return;
+	}
 
 	err = bt_enable(NULL);
 	if (err) {

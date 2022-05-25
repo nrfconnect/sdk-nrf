@@ -16,6 +16,8 @@
  * image data.
  */
 
+ #include <zephyr/dt-bindings/ipc_service/static_vrings.h>
+
 / {
 	soc {
 		/* Add a flash controller which has the compatible
@@ -67,9 +69,23 @@
 		nordic,pm-ext-flash = &mx25r64;
 	};
 
-	aliases {
-		buzzer-pwm = &pwm1;
+	pwmbuzzer {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		buzzer: buzzer_pwm {
+			pwms = <&pwm1 0 PWM_HZ(100) PWM_POLARITY_NORMAL>;
+			label = "PWM_1";
+		};
 	};
+
+	aliases {
+		buzzer-pwm = &buzzer;
+	};
+};
+
+&ipc0 {
+    zephyr,priority = <0 PRIO_COOP>;
 };
 
 &zephyr_udc0 {

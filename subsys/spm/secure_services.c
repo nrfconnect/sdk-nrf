@@ -3,11 +3,11 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <errno.h>
 #include <aarch32/cortex_m/tz.h>
-#include <sys/reboot.h>
-#include <sys/util.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/sys/util.h>
 #include <autoconf.h>
 #include <string.h>
 #include <bl_validation.h>

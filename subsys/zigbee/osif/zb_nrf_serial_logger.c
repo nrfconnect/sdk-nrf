@@ -5,13 +5,13 @@
  */
 
 #include <zboss_api.h>
-#include <sys/ring_buffer.h>
-#include <drivers/uart.h>
-#include <usb/usb_device.h>
+#include <zephyr/sys/ring_buffer.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/usb/usb_device.h>
 
 #if defined ZB_NRF_TRACE
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #define ZIGBEE_RX_BUF_LEN 16
 
@@ -163,7 +163,7 @@ void zb_osif_serial_logger_init(void)
 	if (IS_ENABLED(CONFIG_ZBOSS_TRACE_USB_CDC_LOGGING)) {
 		int ret = usb_enable(NULL);
 
-		if (ret != 0) {
+		if ((ret != 0) && (ret != -EALREADY)) {
 			LOG_ERR("USB initialization failed - No UART device to log ZBOSS Traces");
 			/* USB initialization failed - mark UART device as unavailable. */
 			uart_dev = NULL;

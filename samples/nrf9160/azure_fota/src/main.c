@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <nrf_modem.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/lte_lc.h>
 #include <net/azure_iot_hub.h>
 #include <net/azure_fota.h>
-#include <dfu/mcuboot.h>
-#include <sys/reboot.h>
-#include <random/rand32.h>
+#include <zephyr/dfu/mcuboot.h>
+#include <zephyr/sys/reboot.h>
+#include <zephyr/random/rand32.h>
 
 static K_SEM_DEFINE(network_connected_sem, 0, 1);
 static K_SEM_DEFINE(cloud_connected_sem, 0, 1);

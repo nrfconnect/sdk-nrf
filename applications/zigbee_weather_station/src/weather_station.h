@@ -9,9 +9,49 @@
 
 #include <zcl/zb_zcl_temp_measurement_addons.h>
 
+#include "sensor.h"
+
+/* Zigbee Cluster Library 4.4.2.2.1.1: MeasuredValue = 100x temperature in degrees Celsius */
+#define ZCL_TEMPERATURE_MEASUREMENT_MEASURED_VALUE_MULTIPLIER 100
+/* Zigbee Cluster Library 4.5.2.2.1.1: MeasuredValue = 10x pressure in kPa */
+#define ZCL_PRESSURE_MEASUREMENT_MEASURED_VALUE_MULTIPLIER 10
+/* Zigbee Cluster Library 4.7.2.1.1: MeasuredValue = 100x water content in % */
+#define ZCL_HUMIDITY_MEASUREMENT_MEASURED_VALUE_MULTIPLIER 100
+
+/* Measurements ranges scaled for attribute values */
+#define WEATHER_STATION_ATTR_TEMP_MIN (	  \
+		SENSOR_TEMP_CELSIUS_MIN * \
+		ZCL_TEMPERATURE_MEASUREMENT_MEASURED_VALUE_MULTIPLIER)
+#define WEATHER_STATION_ATTR_TEMP_MAX (	  \
+		SENSOR_TEMP_CELSIUS_MAX * \
+		ZCL_TEMPERATURE_MEASUREMENT_MEASURED_VALUE_MULTIPLIER)
+#define WEATHER_STATION_ATTR_TEMP_TOLERANCE (	\
+		SENSOR_TEMP_CELSIUS_TOLERANCE *	\
+		ZCL_TEMPERATURE_MEASUREMENT_MEASURED_VALUE_MULTIPLIER)
+#define WEATHER_STATION_ATTR_PRESSURE_MIN ( \
+		SENSOR_PRESSURE_KPA_MIN *   \
+		ZCL_PRESSURE_MEASUREMENT_MEASURED_VALUE_MULTIPLIER)
+#define WEATHER_STATION_ATTR_PRESSURE_MAX ( \
+		SENSOR_PRESSURE_KPA_MAX *   \
+		ZCL_PRESSURE_MEASUREMENT_MEASURED_VALUE_MULTIPLIER)
+#define WEATHER_STATION_ATTR_PRESSURE_TOLERANCE ( \
+		SENSOR_PRESSURE_KPA_TOLERANCE *	  \
+		ZCL_PRESSURE_MEASUREMENT_MEASURED_VALUE_MULTIPLIER)
+#define WEATHER_STATION_ATTR_HUMIDITY_MIN (   \
+		SENSOR_HUMIDITY_PERCENT_MIN * \
+		ZCL_HUMIDITY_MEASUREMENT_MEASURED_VALUE_MULTIPLIER)
+#define WEATHER_STATION_ATTR_HUMIDITY_MAX (   \
+		SENSOR_HUMIDITY_PERCENT_MAX * \
+		ZCL_HUMIDITY_MEASUREMENT_MEASURED_VALUE_MULTIPLIER)
+#define WEATHER_STATION_ATTR_HUMIDITY_TOLERANCE (   \
+		SENSOR_HUMIDITY_PERCENT_TOLERANCE * \
+		ZCL_HUMIDITY_MEASUREMENT_MEASURED_VALUE_MULTIPLIER)
+
 /* Number chosen for the single endpoint provided by weather station */
 #define WEATHER_STATION_ENDPOINT_NB 42
 
+/* Temperature sensor device version */
+#define ZB_HA_DEVICE_VER_TEMPERATURE_SENSOR     0
 /* Basic, identify, temperature, pressure, humidity */
 #define ZB_HA_WEATHER_STATION_IN_CLUSTER_NUM    5
 /* Identify */
@@ -23,7 +63,8 @@
 #define ZB_HA_DECLARE_WEATHER_STATION_CLUSTER_LIST(						\
 		cluster_list_name,								\
 		basic_attr_list,								\
-		identify_attr_list,								\
+		identify_client_attr_list,							\
+		identify_server_attr_list,							\
 		temperature_measurement_attr_list,						\
 		pressure_measurement_attr_list,							\
 		humidity_measurement_attr_list							\
@@ -39,8 +80,8 @@
 			),									\
 		ZB_ZCL_CLUSTER_DESC(								\
 			ZB_ZCL_CLUSTER_ID_IDENTIFY,						\
-			ZB_ZCL_ARRAY_SIZE(identify_attr_list, zb_zcl_attr_t),			\
-			(identify_attr_list),							\
+			ZB_ZCL_ARRAY_SIZE(identify_server_attr_list, zb_zcl_attr_t),		\
+			(identify_server_attr_list),						\
 			ZB_ZCL_CLUSTER_SERVER_ROLE,						\
 			ZB_ZCL_MANUF_CODE_INVALID						\
 			),									\
@@ -67,8 +108,8 @@
 			),									\
 		ZB_ZCL_CLUSTER_DESC(								\
 			ZB_ZCL_CLUSTER_ID_IDENTIFY,						\
-			0,									\
-			NULL,									\
+			ZB_ZCL_ARRAY_SIZE(identify_client_attr_list, zb_zcl_attr_t),		\
+			(identify_client_attr_list),						\
 			ZB_ZCL_CLUSTER_CLIENT_ROLE,						\
 			ZB_ZCL_MANUF_CODE_INVALID						\
 			),									\

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <errno.h>
-#include <irq.h>
-#include <sys/byteorder.h>
+#include <zephyr/irq.h>
+#include <zephyr/sys/byteorder.h>
 #include <nrf.h>
 #include <esb.h>
 #ifdef DPPI_PRESENT

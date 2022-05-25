@@ -43,8 +43,8 @@ For information on the included repositories and revisions, see `Repositories an
 IDE support
 ***********
 
-|NCS| v1.9.0 is supported by both `nRF Connect extensions for Visual Studio Code <nRF Connect for Visual Studio Code_>`_ and :ref:`installing_ses`.
-In future releases, documentation on the setup and usage of Segger Embedded Studio Nordic Edition will no longer be available and all references to IDE support will instruct users with nRF Connect extensions for Visual Studio Code.
+|NCS| v1.9.0 is supported by both `nRF Connect for Visual Studio Code <nRF Connect for Visual Studio Code_>`_ and SEGGER Embedded Studio Nordic Edition.
+In future releases, documentation on the setup and usage of Segger Embedded Studio Nordic Edition will no longer be available and all references to IDE support will instruct users with nRF Connect for Visual Studio Code.
 In future releases, Segger Embedded Studio will no longer be tested with the build system and it is not recommended for new projects.
 
 nRF Connect extensions for Visual Studio Code will be under continued active development and supported and tested with future |NCS| releases.
@@ -669,11 +669,11 @@ Other libraries
       * Experimental functionality to automatically power up and down RAM sections based on the libc heap usage.
       * Support for nRF5340 application core to power up and power down RAM sections.
 
-  * :ref:`event_manager`:
+  * :ref:`app_event_manager`:
 
     * Added:
 
-      * ``EVENT_SUBSCRIBE_FIRST`` subscriber priority and updated the documentation about this functionality.
+      * ``APP_EVENT_SUBSCRIBE_FIRST`` subscriber priority and updated the documentation about this functionality.
 
     * Updated:
 
@@ -688,11 +688,11 @@ Other libraries
 
       *  Forced alignment for x86.
 
-  * :ref:`event_manager_profiler_tracer`:
+  * :ref:`app_event_manager_profiler_tracer`:
 
     * Updated:
 
-      * Event manager Profiler Tracer to no longer use orphaned sections to store profiler information.
+      * Event manager Profiler Tracer to no longer use orphaned sections to store nRF Profiler information.
         Hence, the :kconfig:option:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
 
 TF-M libraries

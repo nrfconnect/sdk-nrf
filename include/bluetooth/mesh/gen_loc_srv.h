@@ -16,7 +16,7 @@
 #define BT_MESH_GEN_LOC_SRV_H__
 
 #include <bluetooth/mesh/gen_loc.h>
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 
 #ifdef __cplusplus
 extern "C" {

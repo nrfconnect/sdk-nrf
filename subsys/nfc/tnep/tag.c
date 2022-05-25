@@ -5,12 +5,12 @@
  */
 
 #include <stdbool.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <nfc/tnep/tag.h>
 #include <nfc/ndef/msg.h>
 #include <nfc/t4t/ndef_file.h>
 #include <nfc/ndef/msg_parser.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(nfc_tnep_tag, CONFIG_NFC_TNEP_TAG_LOG_LEVEL);
 
@@ -246,7 +246,7 @@ static int tnep_svc_select_from_msg(void)
 	int err;
 	enum tnep_svc_record_status svc_status = TNEP_SVC_NOT_FOUND;
 	const struct nfc_ndef_msg_desc *msg_p;
-	uint8_t desc_buf[NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(
+	uint8_t desc_buf[NFC_NDEF_PARSER_REQUIRED_MEM(
 				CONFIG_NFC_TNEP_RX_MAX_RECORD_CNT)];
 	size_t desc_buf_len = sizeof(desc_buf);
 

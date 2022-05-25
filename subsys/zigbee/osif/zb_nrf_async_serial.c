@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <kernel.h>
-#include <drivers/uart.h>
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/uart.h>
 #include <zboss_api.h>
 #include "zb_nrf_platform.h"
-#include <sys/ring_buffer.h>
+#include <zephyr/sys/ring_buffer.h>
 
 static K_SEM_DEFINE(tx_done_sem, 1, 1);
 static K_SEM_DEFINE(rx_done_sem, 1, 1);

@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <dk_buttons_and_leds.h>
-#include <logging/log.h>
-#include <net/openthread.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/net/openthread.h>
 #include <openthread/thread.h>
 
 #include "ot_coap_utils.h"

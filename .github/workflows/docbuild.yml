@@ -13,11 +13,6 @@ on:
     tags:
       - v*
 
-env:
-  # Doxygen >= 1.8.18 is required. This can be removed once ubuntu-latest ships
-  # a compatible version. More details: https://github.com/doxygen/doxygen/issues/7411.
-  DOXYGEN_VERSION: 1.9.2
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,18 +23,19 @@ jobs:
         with:
           path: ncs/nrf
           fetch-depth: 0
-
       - name: cache-pip
         uses: actions/cache@v1
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-doc-pip
-
+  # Doxygen >= 1.8.18 is required. This can be removed once ubuntu-latest ships
+  # a compatible version. More details: https://github.com/doxygen/doxygen/issues/7411.
       - name: Install packages
         run: |
           sudo apt update
           sudo apt-get install -y ninja-build mscgen plantuml libclang1-9 libclang-cpp9
-          wget -q https://www.doxygen.nl/files/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
+          DOXYGEN_VERSION=$(cat ./ncs/nrf/scripts/tools-versions-linux.txt |grep 'doxygen' | sed 's/^.*=//')
+          wget --no-verbose https://downloads.sourceforge.net/project/doxygen/rel-${DOXYGEN_VERSION}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
           tar xf doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
           echo "${PWD}/doxygen-${DOXYGEN_VERSION}/bin" >> $GITHUB_PATH
 
@@ -89,7 +85,7 @@ jobs:
             echo "publish2 dev PR-${{ github.event.number }} __FILE__" > monitor.txt
             echo "${{ github.event.number }}" > pr.txt
           else
-            VERSION_REGEX="^v([0-9\.]+)$"
+            VERSION_REGEX="^v([0-9a-z\.\-]+)$"
             if [[ ${GITHUB_REF#refs/tags/} =~ $VERSION_REGEX ]]; then
               VERSION=${BASH_REMATCH[1]}
             elif [[ ${GITHUB_REF#refs/heads/} == "main" ]]; then

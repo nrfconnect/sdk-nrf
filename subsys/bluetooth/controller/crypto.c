@@ -5,12 +5,12 @@
  */
 
 #include <zephyr/types.h>
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <soc.h>
 #include <sdc_soc.h>
-#include <drivers/entropy.h>
+#include <zephyr/drivers/entropy.h>
 
 #include "nrf_errno.h"
 #include "multithreading_lock.h"

@@ -9,11 +9,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <zephyr.h>
-#include <init.h>
+#include <zephyr/kernel.h>
+#include <zephyr/init.h>
 #include <nrf_errno.h>
 #include <nrf_modem_at.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(at_sms_cert, CONFIG_AT_SMS_CERT_LOG_LEVEL);
 

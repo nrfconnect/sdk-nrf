@@ -5,11 +5,11 @@
  */
 
 #include <errno.h>
-#include <kernel.h>
-#include <logging/log.h>
-#include <sys/byteorder.h>
-#include <sys/util.h>
-#include <sys/__assert.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/sys/__assert.h>
 #include <nfc/t4t/apdu.h>
 #include <nfc/t4t/hl_procedure.h>
 #include <nfc/t4t/isodep.h>

@@ -5,9 +5,9 @@
  */
 
 #include <sys/types.h>
-#include <kernel.h>
-#include <sys/util.h>
-#include <settings/settings.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/settings/settings.h>
 
 #define MODULE fn_keys
 #include <caf/events/module_state_event.h>
@@ -18,7 +18,7 @@
 #include "fn_key_id.h"
 #include "fn_keys_def.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_FN_KEYS_LOG_LEVEL);
 
 #define FN_LOCK_STORAGE_NAME "fn_lock"
@@ -178,7 +178,7 @@ static bool button_event_handler(const struct button_event *event)
 		new_event->pressed = true;
 		new_event->key_id = FN_KEY_ID(KEY_COL(event->key_id),
 					      KEY_ROW(event->key_id));
-		EVENT_SUBMIT(new_event);
+		APP_EVENT_SUBMIT(new_event);
 
 		return true;
 	}
@@ -203,7 +203,7 @@ static bool button_event_handler(const struct button_event *event)
 			new_event->pressed = false;
 			new_event->key_id = FN_KEY_ID(KEY_COL(event->key_id),
 						      KEY_ROW(event->key_id));
-			EVENT_SUBMIT(new_event);
+			APP_EVENT_SUBMIT(new_event);
 
 			return true;
 		}
@@ -220,15 +220,15 @@ static void silence_unused(void)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_button_event(eh)) {
-		return button_event_handler(cast_button_event(eh));
+	if (is_button_event(aeh)) {
+		return button_event_handler(cast_button_event(aeh));
 	}
 
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			silence_unused();
@@ -244,6 +244,6 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE_EARLY(MODULE, button_event);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, button_event);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);

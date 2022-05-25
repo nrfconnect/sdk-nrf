@@ -156,6 +156,7 @@ Configure the following parameters when using this library:
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID_APP` - Used to provide the device ID at run time.
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS` - Enables Azure IoT Hub DPS.
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE` - Sets the Azure IoT Hub DPS ID scope that is used while provisioning the device.
+* :kconfig:option:`CONFIG_AZURE_IOT_HUB_NATIVE_TLS` - Configures the socket to be native for TLS instead of offloading TLS operations to the modem.
 
 API documentation
 *****************

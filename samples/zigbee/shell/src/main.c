@@ -9,14 +9,15 @@
  * @brief Zigbee shell sample.
  */
 
-#include <zephyr.h>
-#include <logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <dk_buttons_and_leds.h>
 
 #include <zboss_api.h>
 #include <zigbee/zigbee_error_handler.h>
 #include <zigbee/zigbee_app_utils.h>
 #include <zb_nrf_platform.h>
+#include "zb_range_extender.h"
 
 
 /* Device endpoint, used to receive ZCL commands. */
@@ -35,9 +36,6 @@
 
 /* Button used to enter the Identify mode. */
 #define IDENTIFY_MODE_BUTTON             DK_BTN4_MSK
-
-/* Button to start Factory Reset */
-#define FACTORY_RESET_BUTTON             IDENTIFY_MODE_BUTTON
 
 LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
@@ -61,12 +59,12 @@ ZB_ZCL_DECLARE_BASIC_ATTRIB_LIST(
 	&dev_ctx.basic_attr.zcl_version,
 	&dev_ctx.basic_attr.power_source);
 
-ZB_HA_DECLARE_RANGE_EXTENDER_CLUSTER_LIST(
+ZB_DECLARE_RANGE_EXTENDER_CLUSTER_LIST(
 	app_template_clusters,
 	basic_attr_list,
 	identify_attr_list);
 
-ZB_HA_DECLARE_RANGE_EXTENDER_EP(
+ZB_DECLARE_RANGE_EXTENDER_EP(
 	app_zigbee_ep,
 	APP_ZIGBEE_ENDPOINT,
 	app_template_clusters);
@@ -126,8 +124,6 @@ static void identify_cb(zb_bufid_t bufid)
  */
 static void start_identifying(zb_bufid_t bufid)
 {
-	zb_ret_t zb_err_code;
-
 	ZVUNUSED(bufid);
 
 	if (ZB_JOINED()) {
@@ -135,11 +131,18 @@ static void start_identifying(zb_bufid_t bufid)
 		 * if not put desired endpoint in identifying mode.
 		 */
 		if (dev_ctx.identify_attr.identify_time ==
-		ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE) {
-			LOG_INF("Enter identify mode");
-			zb_err_code = zb_bdb_finding_binding_target(
+		    ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE) {
+
+			zb_ret_t zb_err_code = zb_bdb_finding_binding_target(
 				APP_ZIGBEE_ENDPOINT);
-			ZB_ERROR_CHECK(zb_err_code);
+
+			if (zb_err_code == RET_OK) {
+				LOG_INF("Enter identify mode");
+			} else if (zb_err_code == RET_INVALID_STATE) {
+				LOG_WRN("RET_INVALID_STATE - Cannot enter identify mode");
+			} else {
+				ZB_ERROR_CHECK(zb_err_code);
+			}
 		} else {
 			LOG_INF("Cancel identify mode");
 			zb_bdb_finding_binding_target_cancel();
@@ -161,19 +164,9 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 			/* Button changed its state to pressed */
 		} else {
 			/* Button changed its state to released */
-			if (was_factory_reset_done()) {
-				/* The long press was for Factory Reset */
-				LOG_DBG("After Factory Reset - ignore button release");
-			} else   {
-				/* Button released before Factory Reset */
-
-				/* Start identification mode */
-				ZB_SCHEDULE_APP_CALLBACK(start_identifying, 0);
-			}
+			ZB_SCHEDULE_APP_CALLBACK(start_identifying, 0);
 		}
 	}
-
-	check_factory_reset_button(button_state, has_changed);
 }
 
 /**@brief Function for initializing LEDs and Buttons. */
@@ -241,7 +234,6 @@ void main(void)
 
 	/* Initialize */
 	configure_gpio();
-	register_factory_reset_button(FACTORY_RESET_BUTTON);
 
 	/* Register device context (endpoints). */
 	ZB_AF_REGISTER_DEVICE_CTX(&app_zigbee_ctx);

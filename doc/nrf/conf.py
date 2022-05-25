@@ -40,6 +40,7 @@ extensions = [
     "zephyr.external_content",
     "zephyr.doxyrunner",
     "sphinx_tabs.tabs",
+    "software_maturity_table",
 ]
 
 linkcheck_ignore = [
@@ -75,7 +76,7 @@ html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False
 
-html_theme_options = {"docsets": utils.get_docsets("nrf")}
+html_theme_options = {"docsets": utils.ALL_DOCSETS}
 
 # Options for intersphinx ------------------------------------------------------
 
@@ -163,6 +164,7 @@ external_content_keep = ["versions.txt"]
 # Options for table_from_rows --------------------------------------------------
 
 table_from_rows_base_dir = NRF_BASE
+table_from_sample_yaml_board_reference = "/includes/sample_board_rows.txt"
 
 # Options for options_from_kconfig ---------------------------------------------
 
@@ -182,7 +184,6 @@ ncs_cache_manifest = NRF_BASE / "west.yml"
 
 
 def setup(app):
-    app.add_css_file("css/common.css")
     app.add_css_file("css/nrf.css")
 
     utils.add_google_analytics(app)

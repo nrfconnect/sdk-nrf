@@ -26,7 +26,7 @@ Configuration
 The module implemented in :file:`selector_hw.c` uses the Zephyr :ref:`zephyr:gpio_api` driver to check the state of hardware selectors.
 For this reason, you should set :kconfig:option:`CONFIG_GPIO` option.
 
-Set :kconfig:option:`CONFIG_DESKTOP_SELECTOR_HW_ENABLE` option to enable the module.
+Set :ref:`CONFIG_DESKTOP_SELECTOR_HW_ENABLE <config_desktop_app_options>` option to enable the module.
 The configuration for this module is an array of :c:struct:`selector_config` pointers.
 The array is written in the :file:`selector_hw_def.h` file located in the board-specific directory in the application configuration directory.
 

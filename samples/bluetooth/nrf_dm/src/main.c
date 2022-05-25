@@ -8,11 +8,11 @@
  *  @brief Nordic Distance Measurement sample
  */
 
-#include <zephyr.h>
-#include <sys/printk.h>
-#include <sys/byteorder.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/sys/byteorder.h>
 
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 #include <bluetooth/scan.h>
 #include <bluetooth/services/ddfs.h>
 

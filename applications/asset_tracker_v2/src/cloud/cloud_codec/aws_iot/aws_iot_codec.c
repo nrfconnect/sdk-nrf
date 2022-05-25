@@ -7,7 +7,7 @@
 #include <cloud_codec.h>
 #include <stdbool.h>
 #include <string.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,7 +17,7 @@
 #include "json_common.h"
 #include "json_protocol_names.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(cloud_codec, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 
 /* Function that checks the version number of the incoming message and determines if it has already
@@ -47,6 +47,15 @@ static bool has_shadow_update_been_handled(cJSON *root_obj)
 	version_prev = version_obj->valueint;
 
 	return retval;
+}
+
+int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event_handler)
+{
+	ARG_UNUSED(cfg);
+	ARG_UNUSED(event_handler);
+
+	cJSON_Init();
+	return 0;
 }
 
 int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,

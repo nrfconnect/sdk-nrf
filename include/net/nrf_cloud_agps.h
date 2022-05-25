@@ -11,7 +11,7 @@
  * @brief Module to provide nRF Cloud A-GPS support to nRF9160 SiP.
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <nrf_modem_gnss.h>
 #include <net/nrf_cloud.h>
 
@@ -46,7 +46,12 @@ int nrf_cloud_agps_request_all(void);
  * @param buf Pointer to data received from nRF Cloud.
  * @param buf_len Buffer size of data to be processed.
  *
- * @return 0 if successful, otherwise a (negative) error code.
+ * @retval 0 A-GPS data successfully processed.
+ * @retval -EFAULT An nRF Cloud A-GPS error code was processed.
+ * @retval -ENOMSG No nRF Cloud A-GPS error code found, invalid error code or wrong app_id/msg_type.
+ * @retval -EINVAL buf was NULL or buf_len was zero.
+ * @retval -EBADMSG Non-JSON payload is not in the A-GPS format.
+ * @return A negative value indicates an error.
  */
 int nrf_cloud_agps_process(const char *buf, size_t buf_len);
 

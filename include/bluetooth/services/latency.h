@@ -14,8 +14,8 @@
 #ifndef BT_LATENCY_H_
 #define BT_LATENCY_H_
 
-#include <bluetooth/uuid.h>
-#include <bluetooth/conn.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/conn.h>
 #include <bluetooth/gatt_dm.h>
 
 #ifdef __cplusplus

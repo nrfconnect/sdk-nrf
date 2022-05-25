@@ -5,8 +5,8 @@
  */
 #include "nrf_802154_radio_wrapper.h"
 #include <nrf_802154.h>
-#include <device.h>
-#include <net/ieee802154_radio.h>
+#include <zephyr/device.h>
+#include <zephyr/net/ieee802154_radio.h>
 
 static const struct device *radio_dev;
 static struct ieee802154_radio_api *radio_api;

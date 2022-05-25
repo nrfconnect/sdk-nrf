@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include "utils/str_utils.h"
 #include "mosh_print.h"
 

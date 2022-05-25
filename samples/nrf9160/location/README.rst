@@ -15,13 +15,14 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: thingy91_nrf9160_ns, nrf9160dk_nrf9160_ns
+.. table-from-sample-yaml::
 
-.. include:: /includes/spm.txt
+.. include:: /includes/tfm.txt
 
 See also the requirements in :ref:`lib_location` library document.
+
+.. note::
+   .. include:: /includes/nrf_cloud_rest_sample_requirements.txt
 
 Overview
 ********
@@ -56,6 +57,10 @@ Additional configuration
 
 Refer to the :ref:`lib_location` library document for configuring the location retrieval behavior, including supported location methods and services.
 
+If you use an external GNSS antenna, add the following configuration:
+
+* :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` - Selects an external GNSS antenna.
+
 Configuration files
 ===================
 
@@ -73,7 +78,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/location`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 ESP8266 Wi-Fi support
 =====================
@@ -183,6 +188,7 @@ This sample uses the following |NCS| libraries:
 * :ref:`lib_location`
 * :ref:`lte_lc_readme`
 * :ref:`lib_date_time`
+* :ref:`lib_at_host`
 
 In addition, it uses the following sample:
 

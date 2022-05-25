@@ -4,19 +4,19 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/gatt.h>
-#include <bluetooth/uuid.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/uuid.h>
 #include <bluetooth/gatt_dm.h>
 #include <bluetooth/scan.h>
 
 #include <dk_buttons_and_leds.h>
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 
 #include <net/nrf_cloud.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #include "aggregator.h"
 
 LOG_MODULE_DECLARE(lte_ble_gw);

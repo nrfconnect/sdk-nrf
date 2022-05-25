@@ -9,53 +9,57 @@
 #include "ml_result_event.h"
 
 
-static void log_ml_result_event(const struct event_header *eh)
+static void log_ml_result_event(const struct app_event_header *aeh)
 {
-	const struct ml_result_event *event = cast_ml_result_event(eh);
+	const struct ml_result_event *event = cast_ml_result_event(aeh);
 
-	EVENT_MANAGER_LOG(eh, "%s val: %0.2f anomaly: %0.2f",
+	APP_EVENT_MANAGER_LOG(aeh, "%s val: %0.2f anomaly: %0.2f",
 			event->label, event->value, event->anomaly);
 }
 
-static void log_ml_result_signin_event(const struct event_header *eh)
+static void log_ml_result_signin_event(const struct app_event_header *aeh)
 {
-	const struct ml_result_signin_event *event = cast_ml_result_signin_event(eh);
+	const struct ml_result_signin_event *event = cast_ml_result_signin_event(aeh);
 
-	EVENT_MANAGER_LOG(eh, "module: \"%s\" %s ml_result_event",
+	APP_EVENT_MANAGER_LOG(aeh, "module: \"%s\" %s ml_result_event",
 			module_name_get(module_id_get(event->module_idx)),
 			event->state ? "signs in to" : "signs off from");
 }
 
-static void profile_ml_result_event(struct log_event_buf *buf, const struct event_header *eh)
+static void profile_ml_result_event(struct log_event_buf *buf,
+				    const struct app_event_header *aeh)
 {
 }
 
 static void profile_ml_result_signin_event(struct log_event_buf *buf,
-					   const struct event_header *eh)
+					   const struct app_event_header *aeh)
 {
-	const struct ml_result_signin_event *event = cast_ml_result_signin_event(eh);
+	const struct ml_result_signin_event *event = cast_ml_result_signin_event(aeh);
 
-	profiler_log_encode_uint32(buf, event->module_idx);
-	profiler_log_encode_uint8(buf, event->state);
+	nrf_profiler_log_encode_uint32(buf, event->module_idx);
+	nrf_profiler_log_encode_uint8(buf, event->state);
 }
 
-EVENT_INFO_DEFINE(ml_result_event,
+APP_EVENT_INFO_DEFINE(ml_result_event,
 		  ENCODE(),
 		  ENCODE(),
 		  profile_ml_result_event);
 
-EVENT_TYPE_DEFINE(ml_result_event,
-		  IS_ENABLED(CONFIG_ML_APP_INIT_LOG_ML_RESULT_EVENTS),
+APP_EVENT_TYPE_DEFINE(ml_result_event,
 		  log_ml_result_event,
-		  &ml_result_event_info);
+		  &ml_result_event_info,
+		  APP_EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_ML_APP_INIT_LOG_ML_RESULT_EVENTS,
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
-
-EVENT_INFO_DEFINE(ml_result_signin_event,
-		  ENCODE(PROFILER_ARG_U32, PROFILER_ARG_U8),
+APP_EVENT_INFO_DEFINE(ml_result_signin_event,
+		  ENCODE(NRF_PROFILER_ARG_U32, NRF_PROFILER_ARG_U8),
 		  ENCODE("module", "state"),
 		  profile_ml_result_signin_event);
 
-EVENT_TYPE_DEFINE(ml_result_signin_event,
-		  IS_ENABLED(CONFIG_ML_APP_INIT_LOG_ML_RESULT_SIGNIN_EVENTS),
+APP_EVENT_TYPE_DEFINE(ml_result_signin_event,
 		  log_ml_result_signin_event,
-		  &ml_result_signin_event_info);
+		  &ml_result_signin_event_info,
+		  APP_EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_ML_APP_INIT_LOG_ML_RESULT_SIGNIN_EVENTS,
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

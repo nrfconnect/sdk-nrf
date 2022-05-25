@@ -17,14 +17,19 @@
 #include <lib/support/CodeUtils.h>
 #include <system/SystemError.h>
 
-#include <dk_buttons_and_leds.h>
-#include <logging/log.h>
-#include <zephyr.h>
+#ifdef CONFIG_CHIP_OTA_REQUESTOR
+#include "ota_util.h"
+#endif
 
+#include <dk_buttons_and_leds.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/zephyr.h>
+
+using namespace ::chip;
 using namespace ::chip::Credentials;
 using namespace ::chip::DeviceLayer;
 
-LOG_MODULE_DECLARE(app);
+LOG_MODULE_DECLARE(app, CONFIG_MATTER_LOG_LEVEL);
 
 namespace
 {
@@ -74,7 +79,7 @@ CHIP_ERROR AppTask::Init()
 #elif CONFIG_OPENTHREAD_MTD
 	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
 #else
-	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_FullEndDevice);
+	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_Router);
 #endif
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed");
@@ -105,7 +110,14 @@ CHIP_ERROR AppTask::Init()
 
 	/* Initialize CHIP server */
 	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
-	ReturnErrorOnFailure(chip::Server::GetInstance().Init());
+
+	static chip::CommonCaseDeviceServerInitParams initParams;
+	(void)initParams.InitializeStaticResourcesBeforeServerInit();
+
+	ReturnErrorOnFailure(chip::Server::GetInstance().Init(initParams));
+#if CONFIG_CHIP_OTA_REQUESTOR
+	InitBasicOTARequestor();
+#endif
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 
@@ -199,7 +211,7 @@ void AppTask::FunctionTimerEventHandler()
 		sUnusedLED_1.Set(true);
 		sUnusedLED_2.Set(true);
 
-		ConfigurationMgr().InitiateFactoryReset();
+		chip::Server::GetInstance().ScheduleFactoryReset();
 	}
 }
 

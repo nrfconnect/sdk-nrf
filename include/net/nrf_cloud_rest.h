@@ -33,7 +33,8 @@ enum nrf_cloud_http_status {
 	NRF_CLOUD_HTTP_STATUS_OK = 200,
 	NRF_CLOUD_HTTP_STATUS_ACCEPTED = 202,
 	NRF_CLOUD_HTTP_STATUS_PARTIAL = 206,
-	NRF_CLOUD_HTTP_STATUS_BAD_REQ = 400,
+	NRF_CLOUD_HTTP_STATUS__ERROR_BEGIN = 400,
+	NRF_CLOUD_HTTP_STATUS_BAD_REQ = NRF_CLOUD_HTTP_STATUS__ERROR_BEGIN,
 	NRF_CLOUD_HTTP_STATUS_UNAUTH = 401,
 	NRF_CLOUD_HTTP_STATUS_FORBIDDEN = 403,
 	NRF_CLOUD_HTTP_STATUS_NOT_FOUND = 404,
@@ -107,6 +108,9 @@ struct nrf_cloud_rest_context {
 	size_t response_len;
 	/** Length of HTTPS headers + response content data */
 	size_t total_response_len;
+
+	/** Error code from nRF Cloud */
+	enum nrf_cloud_error nrf_err;
 };
 
 /** @brief Data required for nRF Cloud cellular positioning request */
@@ -299,6 +303,20 @@ int nrf_cloud_rest_shadow_state_update(struct nrf_cloud_rest_context *const rest
  */
 int nrf_cloud_rest_shadow_service_info_update(struct nrf_cloud_rest_context *const rest_ctx,
 	const char *const device_id, const struct nrf_cloud_svc_info * const svc_inf);
+
+/**
+ * @brief Update the device status in the shadow.
+ *
+ * @param[in,out] rest_ctx Context for communicating with nRF Cloud's REST API.
+ * @param[in]     device_id Null-terminated, unique device ID registered with nRF Cloud.
+ * @param[in]     dev_status Device status to be encoded.
+ *
+ * @retval 0 If successful.
+ *         Otherwise, a (negative) error code is returned.
+ *         See @verbatim embed:rst:inline :ref:`nrf_cloud_rest_failure` @endverbatim for details.
+ */
+int nrf_cloud_rest_shadow_device_status_update(struct nrf_cloud_rest_context *const rest_ctx,
+	const char *const device_id, const struct nrf_cloud_device_status *const dev_status);
 
 /**
  * @brief Closes the connection to the server.

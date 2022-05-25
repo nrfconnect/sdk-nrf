@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <sys/printk.h>
-#include <sys/reboot.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/sys/reboot.h>
 #include <secure_services.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <pm_config.h>
 #include <fw_info.h>
 
@@ -143,7 +143,7 @@ void main(void)
 #endif /*  PM_S1_ADDRESS */
 
 	printk("Reboot in %d seconds.\n", sleep_time_s);
-	k_sleep(K_SECONDS(5));
+	k_sleep(K_SECONDS(sleep_time_s));
 
 	sys_reboot(0); /* Argument is ignored. */
 }

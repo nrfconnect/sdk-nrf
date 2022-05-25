@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <bluetooth/mesh/gen_prop_srv.h>
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 #include <string.h>
 #include "gen_prop_internal.h"
 #include "model_utils.h"

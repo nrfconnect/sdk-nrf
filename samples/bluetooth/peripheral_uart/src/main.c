@@ -10,27 +10,28 @@
 #include "uart_async_adapter.h"
 
 #include <zephyr/types.h>
-#include <zephyr.h>
-#include <drivers/uart.h>
-#include <usb/usb_device.h>
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/usb/usb_device.h>
 
-#include <device.h>
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
 #include <soc.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/uuid.h>
-#include <bluetooth/gatt.h>
-#include <bluetooth/hci.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/hci.h>
 
 #include <bluetooth/services/nus.h>
 
 #include <dk_buttons_and_leds.h>
 
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #include <stdio.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #define LOG_MODULE_NAME peripheral_uart
 LOG_MODULE_REGISTER(LOG_MODULE_NAME);
@@ -58,7 +59,7 @@ static K_SEM_DEFINE(ble_init_ok, 0, 1);
 static struct bt_conn *current_conn;
 static struct bt_conn *auth_conn;
 
-static const struct device *uart;
+static const struct device *uart = DEVICE_DT_GET(DT_CHOSEN(nordic_nus_uart));
 static struct k_work_delayable uart_work;
 
 struct uart_data_t {
@@ -89,15 +90,14 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 {
 	ARG_UNUSED(dev);
 
-	static uint8_t *current_buf;
 	static size_t aborted_len;
-	static bool buf_release;
 	struct uart_data_t *buf;
 	static uint8_t *aborted_buf;
+	static bool disable_req;
 
 	switch (evt->type) {
 	case UART_TX_DONE:
-		LOG_DBG("tx_done");
+		LOG_DBG("UART_TX_DONE");
 		if ((evt->data.tx.len == 0) ||
 		    (!evt->data.tx.buf)) {
 			return;
@@ -127,25 +127,26 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 		break;
 
 	case UART_RX_RDY:
-		LOG_DBG("rx_rdy");
+		LOG_DBG("UART_RX_RDY");
 		buf = CONTAINER_OF(evt->data.rx.buf, struct uart_data_t, data);
 		buf->len += evt->data.rx.len;
-		buf_release = false;
 
-		if (buf->len == UART_BUF_SIZE) {
-			k_fifo_put(&fifo_uart_rx_data, buf);
-		} else if ((evt->data.rx.buf[buf->len - 1] == '\n') ||
-			  (evt->data.rx.buf[buf->len - 1] == '\r')) {
-			k_fifo_put(&fifo_uart_rx_data, buf);
-			current_buf = evt->data.rx.buf;
-			buf_release = true;
+		if (disable_req) {
+			return;
+		}
+
+		if ((evt->data.rx.buf[buf->len - 1] == '\n') ||
+		    (evt->data.rx.buf[buf->len - 1] == '\r')) {
+			disable_req = true;
 			uart_rx_disable(uart);
 		}
 
 		break;
 
 	case UART_RX_DISABLED:
-		LOG_DBG("rx_disabled");
+		LOG_DBG("UART_RX_DISABLED");
+		disable_req = false;
+
 		buf = k_malloc(sizeof(*buf));
 		if (buf) {
 			buf->len = 0;
@@ -161,7 +162,7 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 		break;
 
 	case UART_RX_BUF_REQUEST:
-		LOG_DBG("rx_buf_request");
+		LOG_DBG("UART_RX_BUF_REQUEST");
 		buf = k_malloc(sizeof(*buf));
 		if (buf) {
 			buf->len = 0;
@@ -173,29 +174,30 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 		break;
 
 	case UART_RX_BUF_RELEASED:
-		LOG_DBG("rx_buf_released");
+		LOG_DBG("UART_RX_BUF_RELEASED");
 		buf = CONTAINER_OF(evt->data.rx_buf.buf, struct uart_data_t,
 				   data);
-		if (buf_release && (current_buf != evt->data.rx_buf.buf)) {
+
+		if (buf->len > 0) {
+			k_fifo_put(&fifo_uart_rx_data, buf);
+		} else {
 			k_free(buf);
-			buf_release = false;
-			current_buf = NULL;
 		}
 
 		break;
 
 	case UART_TX_ABORTED:
-			LOG_DBG("tx_aborted");
-			if (!aborted_buf) {
-				aborted_buf = (uint8_t *)evt->data.tx.buf;
-			}
+		LOG_DBG("UART_TX_ABORTED");
+		if (!aborted_buf) {
+			aborted_buf = (uint8_t *)evt->data.tx.buf;
+		}
 
-			aborted_len += evt->data.tx.len;
-			buf = CONTAINER_OF(aborted_buf, struct uart_data_t,
-					   data);
+		aborted_len += evt->data.tx.len;
+		buf = CONTAINER_OF(aborted_buf, struct uart_data_t,
+				   data);
 
-			uart_tx(uart, &buf->data[aborted_len],
-				buf->len - aborted_len, SYS_FOREVER_MS);
+		uart_tx(uart, &buf->data[aborted_len],
+			buf->len - aborted_len, SYS_FOREVER_MS);
 
 		break;
 
@@ -235,9 +237,8 @@ static int uart_init(void)
 	struct uart_data_t *rx;
 	struct uart_data_t *tx;
 
-	uart = device_get_binding(CONFIG_BT_NUS_UART_DEV);
-	if (!uart) {
-		return -ENXIO;
+	if (!device_is_ready(uart)) {
+		return -ENODEV;
 	}
 
 	if (IS_ENABLED(CONFIG_USB_DEVICE_STACK)) {
@@ -441,6 +442,9 @@ static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_display = auth_passkey_display,
 	.passkey_confirm = auth_passkey_confirm,
 	.cancel = auth_cancel,
+};
+
+static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 	.pairing_complete = pairing_complete,
 	.pairing_failed = pairing_failed
 };
@@ -569,7 +573,17 @@ void main(void)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_NUS_SECURITY_ENABLED)) {
-		bt_conn_auth_cb_register(&conn_auth_callbacks);
+		err = bt_conn_auth_cb_register(&conn_auth_callbacks);
+		if (err) {
+			printk("Failed to register authorization callbacks.\n");
+			return;
+		}
+
+		err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
+		if (err) {
+			printk("Failed to register authorization info callbacks.\n");
+			return;
+		}
 	}
 
 	err = bt_enable(NULL);

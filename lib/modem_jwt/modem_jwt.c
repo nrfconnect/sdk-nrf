@@ -5,12 +5,12 @@
  */
 
 #include <string.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <nrf_modem_at.h>
 #include <modem/modem_jwt.h>
-#include <sys/base64.h>
+#include <zephyr/sys/base64.h>
 
 #define JWT_CMD_TEMPLATE "AT%%JWT=%d,%u,\"%s\",\"%s\""
 #define JWT_CMD_TEMPLATE_SEC_TAG "AT%%JWT=%d,%u,\"%s\",\"%s\",%d,%d"

@@ -7,7 +7,7 @@ Matter: Template
    :local:
    :depth: 2
 
-This sample demonstrates a minimal implementation of the :ref:`Matter <ug_matter>` (formerly Project Connected Home over IP, Project CHIP) application layer.
+This sample demonstrates a minimal implementation of the :ref:`Matter <ug_matter>` application layer.
 This basic implementation enables the commissioning on the device, which allows it to join a Matter network.
 
 Use this sample as a reference for developing your own application.
@@ -18,9 +18,7 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp, nrf21540dk_nrf52840
+.. table-from-sample-yaml::
 
 For testing purposes, that is to commission the device and :ref:`control it remotely <matter_template_network_mode>` through a Thread network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`. This requires additional hardware depending on the setup you choose.
 
@@ -68,7 +66,7 @@ Matter template build types
 ===========================
 
 The sample uses different configuration files depending on the supported features.
-Configuration files are provided for different build types and they are located in the :file:`configuration/<board_name>` directory.
+Configuration files are provided for different build types and they are located in the application root directory.
 
 The :file:`prj.conf` file represents a ``debug`` build type.
 Other build types are covered by dedicated files with the build type added as a suffix to the ``prj`` part, as per the following list.
@@ -80,10 +78,18 @@ This sample supports the following build types, depending on the selected board:
 
 * ``debug`` -- Debug version of the application - can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
 * ``release`` -- Release version of the application - can be used to enable only the necessary application functionalities to optimize its performance.
+* ``no_dfu`` -- Debug version of the application without Device Firmware Upgrade feature support - can be used for the nRF52840 DK, nRF5340 DK and nRF21540 DK.
 
 .. note::
     `Selecting a build type`_ is optional.
     The ``debug`` build type is used by default if no build type is explicitly selected.
+
+Device Firmware Upgrade support
+===============================
+
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_build_with_dfu_start
+    :end-before: matter_door_lock_sample_build_with_dfu_end
 
 FEM support
 ===========
@@ -155,7 +161,7 @@ When you have built the sample and programmed it to your development kit, it aut
 At this point, you can press **Button 1** for six seconds to initiate the factory reset of the device.
 
 .. note::
-    If you are new to Matter, commission the Matter device using the Android Mobile Controller when :ref:`setting up the Matter development environment <ug_matter_configuring_mobile>`.
+    If you are new to Matter, commission the Matter device using the Mobile Controller for Android (CHIP Tool for Android) when :ref:`setting up the Matter development environment <ug_matter_configuring_mobile>`.
 
 .. _matter_template_network_testing:
 
@@ -181,6 +187,11 @@ To test the sample in a Matter-enabled Thread network, complete the following st
 #. Press **Button 1** for six seconds to initiate the factory reset of the device.
 
 The device reboots after all its settings are erased.
+
+Upgrading the device firmware
+=============================
+
+To upgrade the device firmware, complete the steps listed for the selected method in the :doc:`matter:nrfconnect_examples_software_update` tutorial of the Matter documentation.
 
 Dependencies
 ************

@@ -4,18 +4,18 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/gatt.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/gatt.h>
 
 #include "battery_event.h"
 
 #define MODULE bas
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BAS_LOG_LEVEL);
 
 
@@ -48,10 +48,10 @@ BT_GATT_SERVICE_DEFINE(bas_svc,
 		    BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
 );
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_battery_level_event(eh)) {
-		struct battery_level_event *event = cast_battery_level_event(eh);
+	if (is_battery_level_event(aeh)) {
+		struct battery_level_event *event = cast_battery_level_event(aeh);
 
 		battery = event->level;
 
@@ -69,8 +69,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(ble_state), MODULE_STATE_READY)) {
 			static bool initialized;
@@ -88,6 +88,6 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, battery_level_event);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, battery_level_event);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);

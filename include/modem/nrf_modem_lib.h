@@ -18,6 +18,7 @@
 extern "C" {
 #endif
 
+#include <zephyr/kernel.h>
 #include <nrf_modem.h>
 
 /**
@@ -48,12 +49,71 @@ extern "C" {
 int nrf_modem_lib_init(enum nrf_modem_mode_t mode);
 
 /**
+ * @brief Modem library initialization callback struct.
+ */
+struct nrf_modem_lib_init_cb {
+	/**
+	 * @brief Callback function.
+	 * @param ret The return value of nrf_modem_init()
+	 * @param ctx User-defined context
+	 */
+	void (*callback)(int ret, void *ctx);
+	/** User defined context */
+	void *context;
+};
+
+/**
+ * @brief Modem library shutdown callback struct.
+ */
+struct nrf_modem_lib_shutdown_cb {
+	/**
+	 * @brief Callback function.
+	 * @param ctx User-defined context
+	 */
+	void (*callback)(void *ctx);
+	/** User defined context */
+	void *context;
+};
+
+/**
+ * @brief Define a callback for @ref nrf_modem_lib_init calls.
+ *
+ * The callback function @p _callback is invoked after the library has been initialized.
+ *
+ * @param name Callback name
+ * @param _callback Callback function name
+ * @param _context User-defined context for the callback
+ */
+#define NRF_MODEM_LIB_ON_INIT(name, _callback, _context)                                           \
+	static void _callback(int ret, void *ctx);                                                 \
+	STRUCT_SECTION_ITERABLE(nrf_modem_lib_init_cb, nrf_modem_hook_##name) = {                  \
+		.callback = _callback,                                                             \
+		.context = _context,                                                               \
+	};
+
+/**
+ * @brief Define a callback for @ref nrf_modem_lib_shutdown calls.
+ *
+ * The callback function @p _callback is invoked before the library is shutdown.
+ *
+ * @param name Callback name
+ * @param _callback Callback function name
+ * @param _context User-defined context for the callback
+ */
+#define NRF_MODEM_LIB_ON_SHUTDOWN(name, _callback, _context)                                       \
+	static void _callback(void *ctx);                                                          \
+	STRUCT_SECTION_ITERABLE(nrf_modem_lib_shutdown_cb, nrf_modem_hook_##name) = {              \
+		.callback = _callback,                                                             \
+		.context = _context,                                                               \
+	};
+
+/**
  * @brief Makes a thread sleep until next time nrf_modem_lib_init() is called.
  *
  * When nrf_modem_lib_shutdown() is called a thread can call this function to be
  * woken up next time nrf_modem_lib_init() is called.
  */
-void nrf_modem_lib_shutdown_wait(void);
+__deprecated void nrf_modem_lib_shutdown_wait(void);
 
 /**
  * @brief Get the last return value of nrf_modem_lib_init.
@@ -82,6 +142,14 @@ void nrf_modem_lib_shm_tx_diagnose(void);
  * @brief Print diagnostic information for the library heap.
  */
 void nrf_modem_lib_heap_diagnose(void);
+
+/**
+ * @brief Modem fault handler.
+ *
+ * @param[in] fault_info Modem fault information.
+ *			 Contains the fault reason and, in some cases, the modem program counter.
+ */
+void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info);
 
 /** @} */
 

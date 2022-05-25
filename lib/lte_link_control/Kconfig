@@ -19,6 +19,11 @@ config LTE_AUTO_INIT_AND_CONNECT
 		automatically initialize and connect the modem
 		before the application starts
 
+config LTE_SHELL
+	bool "Enable LTE shell commands"
+	default y
+	depends on SHELL
+
 config LTE_LOCK_BANDS
 	bool "Enable LTE bands lock"
 	help

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdlib.h>
 
 #include <math.h>
@@ -12,7 +12,7 @@
   #define M_PI 3.14159265358979323846
 #endif
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(wave_gen, CONFIG_WAVE_GEN_LIB_LOG_LEVEL);
 
 #include <wave_gen.h>

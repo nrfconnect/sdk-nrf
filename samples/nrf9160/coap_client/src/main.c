@@ -7,11 +7,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <zephyr.h>
-#include <net/coap.h>
-#include <net/socket.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/coap.h>
+#include <zephyr/net/socket.h>
 #include <modem/lte_lc.h>
-#include <random/rand32.h>
+#include <zephyr/random/rand32.h>
 #if defined(CONFIG_LWM2M_CARRIER)
 #include <lwm2m_carrier.h>
 #endif
@@ -26,16 +26,6 @@ static struct sockaddr_storage server;
 static uint16_t next_token;
 
 static uint8_t coap_buf[APP_COAP_MAX_MSG_LEN];
-
-#if defined(CONFIG_NRF_MODEM_LIB)
-
-/**@brief Recoverable modem library error. */
-void nrf_modem_recoverable_error_handler(uint32_t err)
-{
-	printk("Modem library recoverable error: %u\n", (unsigned int)err);
-}
-
-#endif /* defined(CONFIG_NRF_MODEM_LIB) */
 
 /**@brief Resolves the configured hostname. */
 static int server_resolve(void)

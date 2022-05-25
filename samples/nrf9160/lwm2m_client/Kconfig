@@ -154,6 +154,12 @@ config APP_NEIGHBOUR_CELL_SCAN_INTERVAL
 	help
 	  Low value on interval may reduce the performance of the system.
 
+config APP_LWM2M_CONFORMANCE_TESTING
+	bool "Send test payload periodically"
+	help
+	  Enable functionality that uses LwM2M SEND operation to deliver test payload.
+	  This allows testing of SEND operation itself as well as "mute-send" resource.
+
 module = APP
 module-dep = LOG
 module-str = Log level for sample

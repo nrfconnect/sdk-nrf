@@ -7,7 +7,7 @@
 #ifndef POLTE_INTEGRATION_H_
 #define POLTE_INTEGRATION_H_
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <modem/lte_lc.h>
 #include <net/multicell_location.h>
 

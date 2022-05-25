@@ -6,8 +6,8 @@
 
 #include <stdio.h>
 
-#include <shell/shell.h>
-#include <shell/shell_uart.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/shell/shell_uart.h>
 #include <unistd.h>
 #include <getopt.h>
 
@@ -20,6 +20,7 @@
 #include "link_shell_print.h"
 #include "link_shell_pdn.h"
 #include "link_settings.h"
+#include "net_utils.h"
 
 #define LINK_SHELL_EDRX_VALUE_STR_LENGTH 4
 #define LINK_SHELL_EDRX_PTW_STR_LENGTH 4
@@ -43,7 +44,8 @@ enum link_shell_command {
 	LINK_CMD_NORMAL_MODE_AUTO,
 	LINK_CMD_EDRX,
 	LINK_CMD_PSM,
-	LINK_CMD_RAI
+	LINK_CMD_RAI,
+	LINK_CMD_DNSADDR
 };
 
 enum link_shell_common_options {
@@ -106,7 +108,13 @@ static const char link_usage_str[] =
 	"  psm:          Enable/disable Power Saving Mode (PSM) with\n"
 	"                default or with custom parameters\n"
 	"  rai:          Enable/disable RAI feature. Actual use must be set for commands\n"
-	"                supporting RAI. Effective when going to normal mode.\n";
+	"                supporting RAI. Effective when going to normal mode.\n"
+	"  dnsaddr:      Set a manual DNS server address.\n"
+	"                The manual DNS server address will be used if the mobile network\n"
+	"                operator does not provide any DNS addresses, or if the name\n"
+	"                resolution using DNS server(s) provided by mobile network operator\n"
+	"                fails for given domain name. The manual DNS address does not\n"
+	"                override the mobile network operator provided DNS addresses.\n";
 
 static const char link_settings_usage_str[] =
 	"Usage: link settings --read | --reset | --mreset_all | --mreset_user\n"
@@ -299,6 +307,14 @@ static const char link_rai_usage_str[] =
 	"  -d, --disable,      Disable RAI\n"
 	"  -e, --enable,       Enable RAI\n";
 
+static const char link_dnsaddr_usage_str[] =
+	"Usage: link dnsaddr [options] | --read | --enable | --disable\n"
+	"Options:\n"
+	"  -r, --read,         Read and print current config\n"
+	"  -d, --disable,      Disable manual DNS server address\n"
+	"  -e, --enable,       Enable manual DNS server address\n"
+	"  -i, --ipaddr, [str] DNS server IP address\n";
+
 /******************************************************************************/
 
 /* Following are not having short options: */
@@ -338,6 +354,7 @@ static struct option long_options[] = {
 	{ "apn", required_argument, 0, 'a' },
 	{ "cid", required_argument, 0, 'I' },
 	{ "family", required_argument, 0, 'f' },
+	{ "ipaddr", required_argument, 0, 'i' },
 	{ "subscribe", no_argument, 0, 's' },
 	{ "unsubscribe", no_argument, 0, 'u' },
 	{ "read", no_argument, 0, 'r' },
@@ -441,6 +458,9 @@ static void link_shell_print_usage(struct link_shell_cmd_args_t *link_cmd_args)
 		break;
 	case LINK_CMD_RAI:
 		mosh_print_no_format(link_rai_usage_str);
+		break;
+	case LINK_CMD_DNSADDR:
+		mosh_print_no_format(link_dnsaddr_usage_str);
 		break;
 	default:
 		mosh_print_no_format(link_usage_str);
@@ -567,6 +587,7 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 	bool nmode_use_rel14 = true;
 	char *apn = NULL;
 	char *family = NULL;
+	char *ip_address = NULL;
 	int protocol = 0;
 	bool protocol_given = false;
 	char *username = NULL;
@@ -630,6 +651,8 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 	} else if (strcmp(argv[1], "rai") == 0) {
 		require_option = true;
 		link_cmd_args.command = LINK_CMD_RAI;
+	} else if (strcmp(argv[1], "dnsaddr") == 0) {
+		link_cmd_args.command = LINK_CMD_DNSADDR;
 	} else {
 		mosh_error("Unsupported command=%s\n", argv[1]);
 		ret = -EINVAL;
@@ -660,7 +683,7 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 	uint8_t normal_mode_at_mem_slot = 0;
 
 	while ((opt = getopt_long(argc, argv,
-				  "a:I:f:x:w:p:t:A:P:U:su014rmngMNed",
+				  "a:I:f:i:x:w:p:t:A:P:U:su014rmngMNed",
 				  long_options, &long_index)) != -1) {
 		switch (opt) {
 		/* RSRP: */
@@ -817,6 +840,9 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 			break;
 		case 'f': /* Address family */
 			family = optarg;
+			break;
+		case 'i': /* IP address */
+			ip_address = optarg;
 			break;
 		case 'A': /* auth protocol */
 			protocol = atoi(optarg);
@@ -1387,6 +1413,33 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 			link_rai_enable(false);
 		} else {
 			goto show_usage;
+		}
+		break;
+	case LINK_CMD_DNSADDR:
+		if (link_cmd_args.common_option == LINK_COMMON_READ) {
+			link_sett_dnsaddr_conf_shell_print();
+			break;
+		}
+
+		if (ip_address && strlen(ip_address) > 0 &&
+		    net_utils_ip_string_is_valid(ip_address) == false) {
+			mosh_error("Invalid IP address: %s", ip_address);
+			ret = -EINVAL;
+			break;
+		}
+
+		if (link_cmd_args.common_option == LINK_COMMON_ENABLE) {
+			link_sett_save_dnsaddr_enabled(true);
+		} else if (link_cmd_args.common_option == LINK_COMMON_DISABLE) {
+			link_sett_save_dnsaddr_enabled(false);
+		} else if (link_cmd_args.common_option == LINK_COMMON_NONE && ip_address == NULL) {
+			goto show_usage;
+		}
+
+		ret = link_setdnsaddr(ip_address ? ip_address : link_sett_dnsaddr_ip_get());
+
+		if (ip_address) {
+			link_sett_save_dnsaddr_ip(ip_address);
 		}
 		break;
 	case LINK_CMD_DISCONNECT:

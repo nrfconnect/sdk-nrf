@@ -8,9 +8,9 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include <sys/printk.h>
-#include <sys/byteorder.h>
-#include <zephyr.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 
 #include <nfc/t2t/parser.h>
@@ -194,7 +194,7 @@ static void ndef_data_analyze(const uint8_t *ndef_msg_buff, size_t nfc_data_len)
 {
 	int  err;
 	struct nfc_ndef_msg_desc *ndef_msg_desc;
-	uint8_t desc_buf[NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(MAX_NDEF_RECORDS)];
+	uint8_t desc_buf[NFC_NDEF_PARSER_REQUIRED_MEM(MAX_NDEF_RECORDS)];
 	size_t desc_buf_len = sizeof(desc_buf);
 
 	err = nfc_ndef_msg_parse(desc_buf,
@@ -313,7 +313,7 @@ static int on_t2t_transfer_complete(const uint8_t *data, size_t len)
 static bool tnep_data_search(const uint8_t *ndef_msg_buff, size_t nfc_data_len)
 {
 	int  err;
-	uint8_t desc_buf[NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(MAX_NDEF_RECORDS)];
+	uint8_t desc_buf[NFC_NDEF_PARSER_REQUIRED_MEM(MAX_NDEF_RECORDS)];
 	size_t desc_buf_len = sizeof(desc_buf);
 	uint8_t cnt = ARRAY_SIZE(services);
 

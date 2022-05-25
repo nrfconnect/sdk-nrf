@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <init.h>
+#include <zephyr/init.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <zephyr.h>
-#include <irq.h>
-#include <device.h>
+#include <zephyr/kernel.h>
+#include <zephyr/irq.h>
+#include <zephyr/device.h>
 
 #include <nrf_cc3xx_platform.h>
 

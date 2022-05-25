@@ -7,17 +7,18 @@
 #include <zephyr/types.h>
 #include <stddef.h>
 #include <errno.h>
-#include <zephyr.h>
-#include <sys/printk.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/printk.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/hci.h>
-#include <bluetooth/direction.h>
-#include <sys/byteorder.h>
-#include <sys/util.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/direction.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/sys/util.h>
 
 /* Length of CTE in unit of 8[us] */
 #define CTE_LEN (0x14U)
+/* Number of CTE send in single periodic advertising train */
+#define PER_ADV_EVENT_CTE_COUNT 5
 
 static void adv_sent_cb(struct bt_le_ext_adv *adv,
 			struct bt_le_ext_adv_sent_info *info);
@@ -54,19 +55,18 @@ static uint8_t ant_patterns[] = {0x2, 0x0, 0x5, 0x6, 0x1, 0x4, 0xC, 0x9, 0xE,
 				 0xD, 0x8, 0xA};
 #endif /* CONFIG_BT_DF_CTE_TX_AOD */
 
-const struct bt_df_adv_cte_tx_param cte_params = {
-	.cte_len = CTE_LEN,
-	.cte_count = 1,
+struct bt_df_adv_cte_tx_param cte_params = { .cte_len = CTE_LEN,
+					     .cte_count = PER_ADV_EVENT_CTE_COUNT,
 #if defined(CONFIG_BT_DF_CTE_TX_AOD)
-	.cte_type = BT_DF_CTE_TYPE_AOD_2US,
-	.num_ant_ids = ARRAY_SIZE(ant_patterns),
-	.ant_ids = ant_patterns
+					     .cte_type = BT_DF_CTE_TYPE_AOD_2US,
+					     .num_ant_ids = ARRAY_SIZE(ant_patterns),
+					     .ant_ids = ant_patterns
 #else
-	.cte_type = BT_DF_CTE_TYPE_AOA,
-	.num_ant_ids = 0,
-	.ant_ids = NULL
+					     .cte_type = BT_DF_CTE_TYPE_AOA,
+					     .num_ant_ids = 0,
+					     .ant_ids = NULL
 #endif /* CONFIG_BT_DF_CTE_TX_AOD */
-	};
+};
 
 static void adv_sent_cb(struct bt_le_ext_adv *adv,
 			struct bt_le_ext_adv_sent_info *info)

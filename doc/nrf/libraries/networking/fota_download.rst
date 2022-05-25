@@ -30,6 +30,8 @@ When the download client sends the event indicating that the download has been c
 The library then sends a :c:enumerator:`FOTA_DOWNLOAD_EVT_FINISHED` callback event.
 When the application using the library receives this event, it must issue a reboot command to apply the upgrade.
 
+You can set :kconfig:option:`CONFIG_FOTA_DOWNLOAD_NATIVE_TLS` to configure the socket to be native for TLS instead of offloading TLS operations to the modem.
+
 HTTPS downloads
 ***************
 

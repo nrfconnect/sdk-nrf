@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <errno.h>
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #include <string.h>
 #include <stdio.h>
-#include <device.h>
+#include <zephyr/device.h>
 #include <nrf_errno.h>
 #include <nrf_modem_at.h>
 #include <modem/lte_lc.h>
@@ -18,7 +18,7 @@
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 #include <modem/at_monitor.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include "lte_lc_helpers.h"
 
@@ -43,24 +43,6 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
 static bool is_initialized;
 
-#if defined(CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
-/* Enable modem trace */
-static const char mdm_trace[] = "AT%%XMODEMTRACE=1,2";
-#endif
-
-#if defined(CONFIG_LTE_LOCK_BANDS)
-/* Lock LTE bands 3, 4, 13 and 20 (volatile setting) */
-static const char lock_bands[] = "AT%%XBANDLOCK=2,\""CONFIG_LTE_LOCK_BAND_MASK
-				 "\"";
-#endif
-#if defined(CONFIG_LTE_LOCK_PLMN)
-/* Lock PLMN */
-static const char lock_plmn[] = "AT+COPS=1,2,\""
-				 CONFIG_LTE_LOCK_PLMN_STRING"\"";
-#elif defined(CONFIG_LTE_UNLOCK_PLMN)
-/* Unlock PLMN */
-static const char unlock_plmn[] = "AT+COPS=0";
-#endif
 /* Request eDRX to be disabled */
 static const char edrx_disable[] = "AT+CEDRXS=3";
 /* Default eDRX setting */
@@ -136,15 +118,6 @@ static const char system_mode_preference[] = {
 	/* Equal priority, but prefer NB-IoT. */
 	[LTE_LC_SYSTEM_MODE_PREFER_NBIOT_PLMN_PRIO]	= '4',
 };
-
-#if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT) && \
-	defined(CONFIG_BOARD_THINGY91_NRF9160_NS)
-static const char thingy91_magpio[] = {
-	"AT%%XMAGPIO=1,1,1,7,1,746,803,2,698,748,"
-	"2,1710,2200,3,824,894,4,880,960,5,791,849,"
-	"7,1565,1586"
-};
-#endif /* !CONFIG_NRF_MODEM_LIB_SYS_INIT && CONFIG_BOARD_THINGY91_NRF9160_NS */
 
 static struct k_sem link;
 
@@ -570,50 +543,6 @@ static int init_and_config(void)
 		LOG_DBG("System mode (%d) and preference (%d) are already configured",
 			sys_mode_current, mode_pref_current);
 	}
-
-#if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT) && \
-	defined(CONFIG_BOARD_THINGY91_NRF9160_NS)
-	/* Configuring MAGPIO, so that the correct antenna
-	 * matching network is used for each LTE band and GPS.
-	 */
-	if (nrf_modem_at_printf(thingy91_magpio)) {
-		return -EIO;
-	}
-#endif
-
-#if defined(CONFIG_LTE_EDRX_REQ)
-	/* Request configured eDRX settings to save power */
-	if (lte_lc_edrx_req(true) != 0) {
-		return -EIO;
-	}
-#endif
-#if defined(CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
-	if (nrf_modem_at_printf(mdm_trace)) {
-		return -EIO;
-	}
-#endif
-#if defined(CONFIG_LTE_LOCK_BANDS)
-	/* Set LTE band lock (volatile setting).
-	 * Has to be done every time before activating the modem.
-	 */
-	if (nrf_modem_at_printf(lock_bands)) {
-		return -EIO;
-	}
-#endif
-#if defined(CONFIG_LTE_LOCK_PLMN)
-	/* Manually select Operator (volatile setting).
-	 * Has to be done every time before activating the modem.
-	 */
-	if (nrf_modem_at_printf(lock_plmn)) {
-		return -EIO;
-	}
-#elif defined(CONFIG_LTE_UNLOCK_PLMN)
-	/* Automatically select Operator (volatile setting).
-	 */
-	if (nrf_modem_at_printf(unlock_plmn)) {
-		return -EIO;
-	}
-#endif
 
 	/* Listen for RRC connection mode notifications */
 	err = enable_notifications();
@@ -1384,7 +1313,17 @@ int lte_lc_func_mode_set(enum lte_lc_func_mode mode)
 		return -EINVAL;
 	}
 
-	return nrf_modem_at_printf("AT+CFUN=%d", mode) ? -EFAULT : 0;
+	err = nrf_modem_at_printf("AT+CFUN=%d", mode);
+	if (err) {
+		return -EFAULT;
+	}
+
+	STRUCT_SECTION_FOREACH(lte_lc_cfun_cb, e) {
+		LOG_DBG("CFUN monitor callback: %p", e->callback);
+		e->callback(mode, e->context);
+	}
+
+	return 0;
 }
 
 int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode)

@@ -13,7 +13,7 @@ This allows for routing messages regardless of the underlying physical and link 
 .. figure:: images/matter_architecture.svg
    :alt: Matter architecture overview
 
-   Matter (formerly Project CHIP) architecture overview
+   Matter architecture overview
 
 The Matter application layer can be broken down into several main components, from IP framing and transport management up to Data Model structure and Application itself.
 

@@ -7,7 +7,7 @@
 #include "cJSON_os.h"
 #include "cJSON.h"
 #include <stdint.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
 static cJSON_Hooks _cjson_hooks;
 

@@ -14,9 +14,9 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf9160dk_nrf9160_ns
+.. table-from-sample-yaml::
+
+.. include:: /includes/tfm.txt
 
 The sample requires an `nRF Cloud`_ account.
 
@@ -96,7 +96,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/nrf_cloud_rest_fota`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 The configuration file for this sample is located in :file:`samples/nrf9160/nrf_cloud_rest_fota`.
 See :ref:`configure_application` for information on how to configure the parameters.
@@ -117,3 +117,4 @@ This sample uses the following |NCS| libraries:
 * :ref:`lte_lc_readme`
 * :ref:`dk_buttons_and_leds_readme`
 * :ref:`modem_info_readme`
+* :ref:`lib_at_host`

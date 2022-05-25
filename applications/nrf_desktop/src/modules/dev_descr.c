@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
-#include <drivers/hwinfo.h>
+#include <zephyr/drivers/hwinfo.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/gatt.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/gatt.h>
 
 #include "hwid.h"
 #include "dev_descr.h"

@@ -9,7 +9,7 @@
 #define COMM_PROC_H__
 
 #include <stdint.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 
 /**< Maximum expected size of received packet */
 #define COMM_MAX_TEXT_DATA_SIZE (320u)

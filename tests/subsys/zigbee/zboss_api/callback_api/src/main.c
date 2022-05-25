@@ -6,7 +6,7 @@
 
 #include <ztest.h>
 #include <zephyr/types.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
 #include <zboss_api.h>
 #include <zigbee/zigbee_app_utils.h>

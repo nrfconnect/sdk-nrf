@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <logging/log.h>
-#include <settings/settings.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/settings/settings.h>
 #include <zb_nrf_platform.h>
 #include <zigbee/zigbee_zcl_scenes.h>
 
@@ -726,15 +726,16 @@ zb_bool_t zcl_scenes_cb(zb_bufid_t bufid)
 					fieldset,
 					fs_content_length);
 			}
-			if (empty_entry == ZB_FALSE) {
-				/* Store this scene */
-				scenes_table[idx].common.group_id = add_scene_req->group_id;
-				scenes_table[idx].common.scene_id = add_scene_req->scene_id;
-				scenes_table[idx].common.transition_time =
-						add_scene_req->transition_time;
-				*add_scene_status = ZB_ZCL_STATUS_SUCCESS;
-				scenes_table_save();
+
+			if (empty_entry) {
+				LOG_WRN("Saving empty scene.");
 			}
+			/* Store this scene */
+			scenes_table[idx].common.group_id = add_scene_req->group_id;
+			scenes_table[idx].common.scene_id = add_scene_req->scene_id;
+			scenes_table[idx].common.transition_time = add_scene_req->transition_time;
+			*add_scene_status = ZB_ZCL_STATUS_SUCCESS;
+			scenes_table_save();
 		} else {
 			LOG_ERR("Unable to add scene: ZB_ZCL_STATUS_INSUFF_SPACE");
 			*add_scene_status = ZB_ZCL_STATUS_INSUFF_SPACE;

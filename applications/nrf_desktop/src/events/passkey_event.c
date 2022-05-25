@@ -9,54 +9,58 @@
 #include "passkey_event.h"
 
 
-static void log_passkey_input_event(const struct event_header *eh)
+static void log_passkey_input_event(const struct app_event_header *aeh)
 {
-	const struct passkey_input_event *event = cast_passkey_input_event(eh);
+	const struct passkey_input_event *event = cast_passkey_input_event(aeh);
 
-	EVENT_MANAGER_LOG(eh, "passkey: %" PRIu32, event->passkey);
+	APP_EVENT_MANAGER_LOG(aeh, "passkey: %" PRIu32, event->passkey);
 }
 
 static void profile_passkey_input_event(struct log_event_buf *buf,
-					const struct event_header *eh)
+					const struct app_event_header *aeh)
 {
-	const struct passkey_input_event *event = cast_passkey_input_event(eh);
+	const struct passkey_input_event *event = cast_passkey_input_event(aeh);
 
-	profiler_log_encode_uint32(buf, event->passkey);
+	nrf_profiler_log_encode_uint32(buf, event->passkey);
 }
 
-EVENT_INFO_DEFINE(passkey_input_event,
-		  ENCODE(PROFILER_ARG_U32),
+APP_EVENT_INFO_DEFINE(passkey_input_event,
+		  ENCODE(NRF_PROFILER_ARG_U32),
 		  ENCODE("passkey"),
 		  profile_passkey_input_event);
 
-EVENT_TYPE_DEFINE(passkey_input_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_PASSKEY_EVENT),
+APP_EVENT_TYPE_DEFINE(passkey_input_event,
 		  log_passkey_input_event,
-		  &passkey_input_event_info);
+		  &passkey_input_event_info,
+		  APP_EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_PASSKEY_EVENT,
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 
-static void log_passkey_req_event(const struct event_header *eh)
+static void log_passkey_req_event(const struct app_event_header *aeh)
 {
-	const struct passkey_req_event *event = cast_passkey_req_event(eh);
+	const struct passkey_req_event *event = cast_passkey_req_event(aeh);
 
-	EVENT_MANAGER_LOG(eh, "input %s", (event->active) ?
+	APP_EVENT_MANAGER_LOG(aeh, "input %s", (event->active) ?
 						  ("started") : ("stopped"));
 }
 
 static void profile_passkey_req_event(struct log_event_buf *buf,
-				      const struct event_header *eh)
+				      const struct app_event_header *aeh)
 {
-	const struct passkey_req_event *event = cast_passkey_req_event(eh);
+	const struct passkey_req_event *event = cast_passkey_req_event(aeh);
 
-	profiler_log_encode_uint8(buf, event->active);
+	nrf_profiler_log_encode_uint8(buf, event->active);
 }
 
-EVENT_INFO_DEFINE(passkey_req_event,
-		  ENCODE(PROFILER_ARG_U8),
+APP_EVENT_INFO_DEFINE(passkey_req_event,
+		  ENCODE(NRF_PROFILER_ARG_U8),
 		  ENCODE("active"),
 		  profile_passkey_req_event);
 
-EVENT_TYPE_DEFINE(passkey_req_event,
-		  IS_ENABLED(CONFIG_DESKTOP_INIT_LOG_PASSKEY_EVENT),
+APP_EVENT_TYPE_DEFINE(passkey_req_event,
 		  log_passkey_req_event,
-		  &passkey_req_event_info);
+		  &passkey_req_event_info,
+		  APP_EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_DESKTOP_INIT_LOG_PASSKEY_EVENT,
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

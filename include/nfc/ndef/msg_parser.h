@@ -53,13 +53,15 @@ struct nfc_ndef_msg_parser_msg_2 {
  *
  *  @param[in] max_count_of_records Maximum number of records to hold.
  */
-#define NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(max_count_of_records)          \
+#define NFC_NDEF_PARSER_REQUIRED_MEM(max_count_of_records)          \
 	(sizeof(struct nfc_ndef_msg_parser_msg_1) +                           \
 	 ((NFC_NDEF_MSG_PARSER_DELTA) * ((uint32_t)(max_count_of_records) - 1)))
 
 /** @brief Parse NFC NDEF messages.
  *
  *  This function parses NDEF messages using NDEF binary record descriptors.
+ *
+ *  @note The @p result_buf parameter must point to a word-aligned address.
  *
  *  @param[out] result_buf Pointer to the buffer that will be used to hold
  *                         the NDEF message descriptor. After parsing is
@@ -79,7 +81,7 @@ struct nfc_ndef_msg_parser_msg_2 {
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.
  */
-int nfc_ndef_msg_parse(const uint8_t  *result_buf,
+int nfc_ndef_msg_parse(uint8_t  *result_buf,
 		       uint32_t *result_buf_len,
 		       const uint8_t *raw_data,
 		       uint32_t *raw_data_len);

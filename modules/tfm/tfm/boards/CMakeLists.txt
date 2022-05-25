@@ -18,6 +18,7 @@ set(partition_includes
 set(board_includes
   board
   ${CMAKE_BINARY_DIR}/../zephyr/misc/generated/syscalls_links/include
+  ${ZEPHYR_BASE}/include/zephyr
   ${ZEPHYR_BASE}/include
   )
 
@@ -26,7 +27,14 @@ target_include_directories(platform_region_defs INTERFACE ${partition_includes})
 target_compile_definitions(platform_s
   PRIVATE
   $<$<BOOL:${PLATFORM_DEFAULT_CRYPTO_KEYS}>:PLATFORM_DEFAULT_CRYPTO_KEYS>
+  FIRMWARE_INFO_MAGIC=${FIRMWARE_INFO_MAGIC}
+  EXT_API_MAGIC=${EXT_API_MAGIC}
   )
+
+if (CONFIG_BOOTLOADER_MCUBOOT)
+  # Needed to compile in the MCUBoot secondary region in flash layout.
+  target_compile_definitions(platform_region_defs INTERFACE BL2)
+endif()
 
 target_include_directories(platform_s
   PUBLIC ${partition_includes} ${board_includes}
@@ -35,7 +43,16 @@ target_include_directories(platform_s
 
 target_sources(platform_s
   PRIVATE
-  ${CMAKE_CURRENT_LIST_DIR}/common/tfm_hal_platform.c
+  common/tfm_hal_platform.c
+  $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_OTP}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_otp.c>
+  $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_PROVISIONING}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_provisioning.c>
+  )
+
+# Disabling UART stdout not supported in NS Image, which is always built even when not needed.
+# TODO: Remove when not building NS image.
+target_sources(platform_ns
+  PRIVATE
+  $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_UART_STDOUT}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_uart_stdout.c>
   )
 
 if (${TFM_PARTITION_CRYPTO}
@@ -54,6 +71,16 @@ if (${TFM_PARTITION_CRYPTO})
 endif()
 
 target_compile_definitions(platform_s PUBLIC CONFIG_HW_UNIQUE_KEY CONFIG_HW_UNIQUE_KEY_RANDOM)
+
+if (CRYPTO_STORAGE_DISABLED AND TFM_PARTITION_CRYPTO AND NOT TFM_PARTITION_INTERNAL_TRUSTED_STORAGE)
+  # Added here to satisfy the following requirement from tfm_crypto.yaml:
+  #
+  # "dependencies": [
+  #   "TFM_INTERNAL_TRUSTED_STORAGE_SERVICE"
+  # ]
+  target_compile_definitions(platform_s PUBLIC
+    TFM_INTERNAL_TRUSTED_STORAGE_SERVICE_SID=0x00000070)
+endif()
 
 target_include_directories(platform_ns PUBLIC ${board_includes})
 
@@ -81,6 +108,13 @@ if(TFM_PARTITION_PLATFORM)
     PUBLIC
     include
     ${NRF_DIR}/include/tfm
+    ${NRF_DIR}/include
+    )
+
+  target_compile_definitions(platform_ns
+    PUBLIC
+    FIRMWARE_INFO_MAGIC=${FIRMWARE_INFO_MAGIC}
+    EXT_API_MAGIC=${EXT_API_MAGIC}
     )
 
   target_sources(platform_ns

@@ -23,8 +23,9 @@
 #ifndef LWM2M_CLIENT_UTILS_H__
 #define LWM2M_CLIENT_UTILS_H__
 
-#include <zephyr.h>
-#include <net/lwm2m.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/lwm2m.h>
+#include <modem/lte_lc.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,9 +33,40 @@ extern "C" {
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT)
 /**
- * @brief Initialize Security object
+ * @typedef modem_mode_cb_t
+ * @brief Callback to request a modem state change, being it powering off, flight mode etc.
+ *
+ * @return 0 if mode was set successfully
+ * @return positive value to indicate seconds before retry
+ * @return negative error code in case of a failure
  */
-int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint);
+typedef int (*modem_mode_cb_t)(enum lte_lc_func_mode new_mode, void *user_data);
+
+/**
+ * @struct modem_mode_change
+ * @brief Callback used for querying permission from the app to proceed when modem's state changes
+ *
+ * @param cb        The callback function
+ * @param user_data App specific data to be fed to the callback once it's called
+ */
+struct modem_mode_change {
+	modem_mode_cb_t cb;
+	void *user_data;
+};
+
+/**
+ * @brief Initialize Security object support for nrf91
+ *
+ * This wrapper will install hooks that allows device to do a
+ * proper bootstrap and store received server settings to permanent
+ * storage using Zephyr settings API. Credential are stored to
+ * modem and no keys would enter the flash.
+ *
+ * @note This API calls settings_subsys_init() so should
+ *       only be called after the settings backend (Flash or FS)
+ *       is ready.
+ */
+int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint, struct modem_mode_change *mmode);
 
 /**
  * @brief Check if we already have client credentials stored
@@ -115,10 +147,17 @@ int lwm2m_update_connmon(void);
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
 #define ECID_SIGNAL_MEASUREMENT_INFO_OBJECT_ID 10256
-
 int lwm2m_signal_meas_info_inst_id_to_index(uint16_t obj_inst_id);
 int lwm2m_signal_meas_info_index_to_inst_id(int index);
-int init_neighbour_cell_info(void);
+int lwm2m_update_signal_meas_objects(const struct lte_lc_cells_info *const cells);
+int lwm2m_ncell_handler_register(void);
+#endif
+
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT)
+#define LOCATION_ASSIST_OBJECT_ID 50001
+void location_assist_agps_request_set(uint32_t request_mask);
+void location_assist_cell_request_set(void);
+void location_assist_cell_inform_set(void);
 #endif
 
 #ifdef __cplusplus

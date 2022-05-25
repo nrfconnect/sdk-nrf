@@ -31,5 +31,6 @@ int link_func_mode_set(enum lte_lc_func_mode fun, bool rel14_used);
 int link_func_mode_get(void);
 void link_rai_read(void);
 int link_rai_enable(bool enable);
+int link_setdnsaddr(const char *ip_address);
 
 #endif /* MOSH_LINK_H */

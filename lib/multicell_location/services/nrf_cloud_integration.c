@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <modem/modem_jwt.h>
+#include <zephyr/kernel.h>
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 #include <net/nrf_cloud_cell_pos.h>
 #else
@@ -14,7 +13,7 @@
 #include <net/multicell_location.h>
 #include "location_service.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(multicell_location_nrf_cloud, CONFIG_MULTICELL_LOCATION_LOG_LEVEL);
 
@@ -32,10 +31,6 @@ BUILD_ASSERT(
 
 static struct multicell_location nrf_cloud_location;
 static K_SEM_DEFINE(location_ready, 0, 1);
-#else
-#define NRF_CLOUD_INTEGRATION_JWT_VALID_TIME (5 * 60)
-
-static char jwt_buf[600];
 #endif
 
 /* TLS certificate:
@@ -83,13 +78,17 @@ const char *location_service_get_certificate_nrf_cloud(void)
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 static void location_service_location_ready_cb(const struct nrf_cloud_cell_pos_result *const result)
 {
-	if (result != NULL) {
+	if ((result != NULL) && (result->err == NRF_CLOUD_ERROR_NONE)) {
 		nrf_cloud_location.latitude = result->lat;
 		nrf_cloud_location.longitude = result->lon;
 		nrf_cloud_location.accuracy = (double)result->unc;
 
 		k_sem_give(&location_ready);
 	} else {
+		if (result) {
+			LOG_ERR("Unable to determine location from cellular data, error: %d",
+				result->err);
+		}
 		/* Reset the semaphore to unblock location_service_get_cell_location_nrf_cloud()
 		 * and make it return an error.
 		 */
@@ -110,6 +109,7 @@ int location_service_get_cell_location_nrf_cloud(
 
 	k_sem_reset(&location_ready);
 
+	LOG_DBG("Sending cellular positioning request (MQTT)");
 	err = nrf_cloud_cell_pos_request(cell_data, true, location_service_location_ready_cb);
 	if (err == -EACCES) {
 		LOG_ERR("Cloud connection is not established");
@@ -141,7 +141,6 @@ int location_service_get_cell_location_nrf_cloud(
 	int err;
 	struct nrf_cloud_cell_pos_result result;
 	struct nrf_cloud_rest_context rest_ctx = {
-		.auth = jwt_buf,
 		.connect_socket = -1,
 		.keep_alive = false,
 		.timeout_ms = NRF_CLOUD_REST_TIMEOUT_NONE,
@@ -153,15 +152,7 @@ int location_service_get_cell_location_nrf_cloud(
 		.net_info = (struct lte_lc_cells_info *)cell_data
 	};
 
-	err = nrf_cloud_jwt_generate(
-		NRF_CLOUD_INTEGRATION_JWT_VALID_TIME,
-		jwt_buf,
-		sizeof(jwt_buf));
-	if (err) {
-		LOG_ERR("Failed to generate JWT, error: %d", err);
-		return err;
-	}
-
+	LOG_DBG("Sending cellular positioning request (REST)");
 	err = nrf_cloud_rest_cell_pos_get(&rest_ctx, &loc_req, &result);
 	if (!err) {
 		location->accuracy = (double)result.unc;

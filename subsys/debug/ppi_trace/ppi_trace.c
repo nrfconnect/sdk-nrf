@@ -12,7 +12,7 @@
 #include <nrfx_ppi.h>
 #endif
 #include <debug/ppi_trace.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(ppi_trace, CONFIG_PPI_TRACE_LOG_LEVEL);
 

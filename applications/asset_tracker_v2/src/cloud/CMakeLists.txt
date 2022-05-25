@@ -14,3 +14,9 @@ target_sources_ifdef(CONFIG_AZURE_IOT_HUB app
 
 target_sources_ifdef(CONFIG_NRF_CLOUD_MQTT app
                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/nrf_cloud_integration.c)
+
+target_sources_ifdef(CONFIG_LWM2M_INTEGRATION app
+                     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lwm2m_integration/lwm2m_integration.c)
+
+target_sources_ifdef(CONFIG_LWM2M_INTEGRATION app
+                     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lwm2m_integration/configuration_object.c)

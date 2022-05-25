@@ -53,7 +53,7 @@ html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False
 
-html_theme_options = {"docsets": utils.get_docsets("nrfxlib")}
+html_theme_options = {"docsets": utils.ALL_DOCSETS}
 
 # Options for intersphinx ------------------------------------------------------
 
@@ -117,7 +117,6 @@ ncs_cache_manifest = NRF_BASE / "west.yml"
 
 
 def setup(app):
-    app.add_css_file("css/common.css")
     app.add_css_file("css/nrfxlib.css")
 
     utils.add_google_analytics(app)

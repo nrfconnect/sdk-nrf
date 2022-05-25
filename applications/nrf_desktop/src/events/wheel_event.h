@@ -13,20 +13,20 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 struct wheel_event {
-	struct event_header header;
+	struct app_event_header header;
 
 	int16_t wheel;
 };
 
-EVENT_TYPE_DECLARE(wheel_event);
+APP_EVENT_TYPE_DECLARE(wheel_event);
 
 #ifdef __cplusplus
 }

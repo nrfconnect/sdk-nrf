@@ -13,8 +13,8 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,15 +40,15 @@ enum shutdown_reason {
 
 /** @brief Utility module event. */
 struct util_module_event {
-	/** Utility module event header. */
-	struct event_header header;
+	/** Utility module application event header. */
+	struct app_event_header header;
 	/** Utility module event type. */
 	enum util_module_event_type type;
 	/** Variable that contains the reason for the shutdown request. */
 	enum shutdown_reason reason;
 };
 
-EVENT_TYPE_DECLARE(util_module_event);
+APP_EVENT_TYPE_DECLARE(util_module_event);
 
 #ifdef __cplusplus
 }

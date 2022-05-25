@@ -106,19 +106,54 @@ To configure trace logs using the UART, complete the following steps:
 
    .. code-block:: devicetree
 
+      &pinctrl {
+         uart0_default_alt: uart0_default_alt {
+            group1 {
+               psels = <NRF_PSEL(UART_TX, 1, 2)>,
+                       <NRF_PSEL(UART_RX, 1, 1)>;
+            };
+         };
+
+         uart0_sleep_alt: uart0_sleep_alt {
+            group1 {
+               psels = <NRF_PSEL(UART_TX, 1, 2)>,
+                       <NRF_PSEL(UART_RX, 1, 1)>;
+               low-power-enable;
+            };
+         };
+
+         uart1_default_alt: uart1_default_alt {
+            group1 {
+               psels = <NRF_PSEL(UART_TX, 0, 6)>,
+                       <NRF_PSEL(UART_RX, 0, 8)>,
+                       <NRF_PSEL(UART_RTS, 0, 5)>,
+                       <NRF_PSEL(UART_CTS, 0, 7)>;
+            };
+         };
+
+         uart1_sleep_alt: uart1_sleep_alt {
+            group1 {
+               psels = <NRF_PSEL(UART_TX, 0, 6)>,
+                       <NRF_PSEL(UART_RX, 0, 8)>,
+                       <NRF_PSEL(UART_RTS, 0, 5)>,
+                       <NRF_PSEL(UART_CTS, 0, 7)>;
+               low-power-enable;
+            };
+         };
+      };
+
       &uart1 {
-         tx-pin = <6>;
-         rx-pin = <8>;
-         rts-pin = <5>;
-         cts-pin = <7>;
+         pinctrl-0 = <&uart1_default_alt>;
+         pinctrl-1 = <&uart1_sleep_alt>;
+         pinctrl-names = "default", "sleep";
       };
 
       &uart0 {
-         rx-pin = <33>;
-         tx-pin = <34>;
-         /delete-property/ rts-pin;
-         /delete-property/ cts-pin;
+         pinctrl-0 = <&uart0_default_alt>;
+         pinctrl-1 = <&uart0_sleep_alt>;
+         pinctrl-names = "default", "sleep";
       };
+
    .. note::
       By connecting the UART device to the on-board JLink, trace logs can be read directly from the JLink COM port.
       As a consequence, the UART device used by the logger is disconnected and application logs cannot be accessed from the JLink COM port.
@@ -133,14 +168,33 @@ Optional: Increasing the UART throughput
 
    .. code-block:: devicetree
 
-      &uart1 {
-         current-speed = <1000000>;
-         tx-pin = <6>;
-         rx-pin = <8>;
-         rts-pin = <5>;
-         cts-pin = <7>;
+      &pinctrl {
+         uart1_default_alt: uart1_default_alt {
+            group1 {
+               psels = <NRF_PSEL(UART_TX, 0, 6)>,
+                       <NRF_PSEL(UART_RX, 0, 8)>,
+                       <NRF_PSEL(UART_RTS, 0, 5)>,
+                       <NRF_PSEL(UART_CTS, 0, 7)>;
+            };
+         };
+
+         uart1_sleep_alt: uart1_sleep_alt {
+            group1 {
+               psels = <NRF_PSEL(UART_TX, 0, 6)>,
+                       <NRF_PSEL(UART_RX, 0, 8)>,
+                       <NRF_PSEL(UART_RTS, 0, 5)>,
+                       <NRF_PSEL(UART_CTS, 0, 7)>;
+               low-power-enable;
+            };
+         };
       };
 
+      &uart1 {
+         current-speed = <1000000>;
+         pinctrl-0 = <&uart1_default_alt>;
+         pinctrl-1 = <&uart1_sleep_alt>;
+         pinctrl-names = "default", "sleep";
+      };
 
 .. _ug_zigbee_configuring_zboss_traces_using_usb:
 

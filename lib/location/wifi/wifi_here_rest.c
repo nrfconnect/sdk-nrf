@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <modem/lte_lc.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include <cJSON.h>
 

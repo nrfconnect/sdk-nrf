@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
 #define MODULE click_detector
 #include <caf/events/module_state_event.h>
@@ -15,7 +15,7 @@
 
 #include CONFIG_CAF_CLICK_DETECTOR_DEF_PATH
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_CLICK_DETECTOR_LOG_LEVEL);
 
 #define CLICK_CHECK_PERIOD	100	/* ms */
@@ -50,7 +50,7 @@ static void submit_click_event(uint16_t key_id, enum click click)
 	event->key_id = key_id;
 	event->click = click;
 
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static enum click get_click(int32_t time_diff)
@@ -191,15 +191,15 @@ static void wake_up(void)
 	module_set_state(MODULE_STATE_READY);
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_button_event(eh)) {
-		return button_event_handler(cast_button_event(eh));
+	if (is_button_event(aeh)) {
+		return button_event_handler(cast_button_event(aeh));
 	}
 
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			__ASSERT_NO_MSG(state == STATE_DISABLED);
@@ -212,7 +212,7 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS) &&
-	    is_power_down_event(eh)) {
+	    is_power_down_event(aeh)) {
 		if (state != STATE_OFF) {
 			power_down();
 		}
@@ -220,7 +220,7 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS) &&
-	    is_wake_up_event(eh)) {
+	    is_wake_up_event(aeh)) {
 		if (state != STATE_ACTIVE) {
 			wake_up();
 		}
@@ -232,10 +232,10 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, button_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, button_event);
 #if CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS
-EVENT_SUBSCRIBE(MODULE, power_down_event);
-EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
+APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #endif /* CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS */

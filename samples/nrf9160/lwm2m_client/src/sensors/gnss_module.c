@@ -4,17 +4,23 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <nrf_modem_gnss.h>
-#include <event_manager.h>
+#include <app_event_manager.h>
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+#include <net/lwm2m_client_utils_location.h>
+#endif
 
 #include "gnss_module.h"
 #include "gnss_pvt_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(gnss_module, CONFIG_APP_LOG_LEVEL);
 
 static struct nrf_modem_gnss_pvt_data_frame pvt_data;
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+static struct nrf_modem_gnss_agps_data_frame agps_req;
+#endif
 static bool running;
 
 /**@brief Callback for GNSS events */
@@ -23,7 +29,8 @@ static void gnss_event_handler(int event_id)
 	int err = 0;
 
 	switch (event_id) {
-	case NRF_MODEM_GNSS_EVT_FIX:
+	case NRF_MODEM_GNSS_EVT_FIX: {
+		LOG_INF("GNSS fix available");
 		err = nrf_modem_gnss_read(&pvt_data, sizeof(pvt_data), NRF_MODEM_GNSS_DATA_PVT);
 		if (err) {
 			LOG_ERR("Error reading PVT data (%d)", err);
@@ -33,11 +40,27 @@ static void gnss_event_handler(int event_id)
 		struct gnss_pvt_event *event = new_gnss_pvt_event();
 
 		event->pvt = pvt_data;
-		EVENT_SUBMIT(event);
+		APP_EVENT_SUBMIT(event);
 		break;
-	case NRF_MODEM_GNSS_EVT_AGPS_REQ:
-		LOG_DBG("GNSS requests AGPS Data. AGPS is not implemented.");
+		}
+	case NRF_MODEM_GNSS_EVT_AGPS_REQ: {
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS)
+		LOG_INF("GPS requests AGPS Data. Sending request to LwM2M server");
+		err = nrf_modem_gnss_read(&agps_req, sizeof(agps_req),
+					  NRF_MODEM_GNSS_DATA_AGPS_REQ);
+		if (err) {
+			LOG_ERR("Error reading AGPS request (%d)", err);
+		}
+
+		struct gnss_agps_request_event *event = new_gnss_agps_request_event();
+
+		event->agps_req = agps_req;
+		APP_EVENT_SUBMIT(event);
+#else
+		LOG_DBG("A-GPS data request not supported.");
+#endif
 		break;
+		}
 	case NRF_MODEM_GNSS_EVT_PERIODIC_WAKEUP:
 		LOG_DBG("GNSS search started");
 		break;
@@ -45,7 +68,6 @@ static void gnss_event_handler(int event_id)
 		LOG_DBG("GNSS timed out waiting for fix");
 		break;
 	default:
-		LOG_DBG("GNSS event (%d) omitted.", event_id);
 		break;
 	}
 }

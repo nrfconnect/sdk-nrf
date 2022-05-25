@@ -8,7 +8,7 @@
 #define FLASH_MAP_PM_H_
 
 #include <pm_config.h>
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 
 /* Aliases for zephyr - mcuboot/ncs style naming */
 #define image_0 mcuboot_primary

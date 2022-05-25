@@ -10,7 +10,7 @@
 
 #define MODULE led_state
 #include <caf/events/module_state_event.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(led, CONFIG_LED_CONTROL_LOG_LEVEL);
 
 
@@ -23,7 +23,7 @@ static void send_led_event(size_t led_id, const struct led_effect *led_effect)
 
 	event->led_id = led_id;
 	event->led_effect = led_effect;
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void update_led(enum led_state state)
@@ -115,10 +115,10 @@ static bool handle_led_state_event(const struct led_state_event *event)
 	return false;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_led_state_event(eh)) {
-		return handle_led_state_event(cast_led_state_event(eh));
+	if (is_led_state_event(aeh)) {
+		return handle_led_state_event(cast_led_state_event(aeh));
 	}
 
 	/* If event is unhandled, unsubscribe. */
@@ -127,5 +127,5 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, led_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, led_state_event);

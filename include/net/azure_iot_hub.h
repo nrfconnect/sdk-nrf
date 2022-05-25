@@ -12,7 +12,7 @@
 #define AZURE_IOT_HUB__
 
 #include <stdio.h>
-#include <net/mqtt.h>
+#include <zephyr/net/mqtt.h>
 
 /**
  * @defgroup azure_iot_hub Azure IoT Hub library
@@ -44,6 +44,8 @@ enum azure_iot_hub_evt_type {
 	AZURE_IOT_HUB_EVT_DATA_RECEIVED,
 	/** Acknowledgment for data sent to Azure IoT Hub. */
 	AZURE_IOT_HUB_EVT_PUBACK,
+	/** Acknowledgment for pings sent to Azure IoT Hub. */
+	AZURE_IOT_HUB_EVT_PINGRESP,
 	/** Device twin has been received. */
 	AZURE_IOT_HUB_EVT_TWIN_RECEIVED,
 	/** Device twin has received a desired property update. */
@@ -226,8 +228,8 @@ struct azure_iot_hub_config {
 
 /** @brief Initialize the module.
  *
- *  @warning This API must be called exactly once, and it must return
- *           successfully for subsequent calls to this library to succeed.
+ *  @note This API must be called exactly once, and it must return
+ *        successfully for subsequent calls to this library to succeed.
  *
  *  @param[in] config Pointer to struct containing connection parameters. Can be
  *		      NULL if @kconfig{CONFIG_AZURE_IOT_HUB_DEVICE_ID} is set.

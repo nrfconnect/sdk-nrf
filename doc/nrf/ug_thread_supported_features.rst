@@ -7,7 +7,7 @@ Supported Thread features
    :local:
    :depth: 2
 
-The OpenThread implementation of the Thread protocol supports all features defined in the Thread 1.1.1 Specification:
+The OpenThread implementation of the Thread protocol supports all features defined in the Thread 1.2.1 Specification:
 
 * All Thread networking layers:
 
@@ -19,24 +19,29 @@ The OpenThread implementation of the Thread protocol supports all features defin
 
 * All device roles
 * Border Router support
+* Features introduced with Thread 1.2:
+
+  * Coordinated Sampled Listening (CSL)
+  * Link Metrics Probing
+  * Thread Domain unicast addressing
+  * Multicast across Thread networks
 
 .. _thread_ug_supported_features_v12:
 
-Support for Thread 1.2 Specification
-************************************
+Thread 1.2 features
+*******************
 
-The |NCS| is gradually implementing features from the Thread 1.2 Specification.
+The |NCS| implements all mandatory features from the Thread 1.2 Specification.
 
 The features introduced with the Thread 1.2 Specification are fully backward-compatible with Thread 1.1 (more specifically, the Thread 1.1.1 Specification).
 Thread 1.2 improves network scalability, responsiveness, density, and power consumption.
 For more information about this Thread version, see the official `Thread 1.2 in Commercial White Paper`_ and the `Thread 1.2 Base Features`_ document.
 
 In |NCS|, you can choose which version of the Thread protocol to use in your application.
-By default, |NCS| supports Thread 1.1, but you can enable and configure Thread 1.2 by using :ref:`dedicated options <thread_ug_thread_specification_options>`.
+By default, |NCS| supports Thread 1.2, but you can enable and configure Thread 1.1 by using :ref:`dedicated options <thread_ug_thread_specification_options>`.
 
 .. note::
-    See :ref:`thread_ug_thread_specification_options` for the list of 1.2 features that are currently available in |NCS|, with information about how to enable them.
-    Currently, the :ref:`ot_cli_sample` sample is the only sample that provides an :ref:`ot_cli_sample_thread_v12`.
+    See :ref:`thread_ug_thread_specification_options` for the list of 1.2 features that are currently available in |NCS|.
 
 Coordinated Sampled Listening (CSL)
 ===================================

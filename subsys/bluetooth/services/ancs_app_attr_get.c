@@ -11,8 +11,8 @@
  */
 
 #include <bluetooth/services/ancs_client.h>
-#include <logging/log.h>
-#include <net/buf.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/net/buf.h>
 #include "ancs_client_internal.h"
 #include "ancs_app_attr_get.h"
 

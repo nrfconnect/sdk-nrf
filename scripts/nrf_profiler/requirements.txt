@@ -1,0 +1,3 @@
+pynrfjprog
+matplotlib>=3.5.2
+numpy

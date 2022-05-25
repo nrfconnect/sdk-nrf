@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <fs/fs.h>
-#include <settings/settings.h>
+#include <zephyr/kernel.h>
+#include <zephyr/fs/fs.h>
+#include <zephyr/settings/settings.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -15,7 +15,7 @@
 #include "fs_event.h"
 #include "ble_ctrl_event.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_BRIDGE_MSC_LOG_LEVEL);
 
 #if CONFIG_FS_FATFS_LFN
@@ -135,7 +135,7 @@ static bool ble_enable_opt_cb(char *opt)
 	struct ble_ctrl_event *event = new_ble_ctrl_event();
 
 	event->cmd = cmd;
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 
 	return true;
 }
@@ -152,7 +152,7 @@ static bool ble_name_opt_cb(char *opt)
 
 	event->cmd = BLE_CTRL_NAME_UPDATE;
 	event->param.name_update = ble_name_buffer;
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 
 	return true;
 }
@@ -395,11 +395,11 @@ static void parse_file(const char *mnt_point)
 	}
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_fs_event(eh)) {
+	if (is_fs_event(aeh)) {
 		const struct fs_event *event =
-			cast_fs_event(eh);
+			cast_fs_event(aeh);
 
 		if (event->req == FS_REQUEST_CREATE_FILE) {
 			int err;
@@ -446,9 +446,9 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			settings_init();
@@ -461,6 +461,6 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, fs_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, fs_event);

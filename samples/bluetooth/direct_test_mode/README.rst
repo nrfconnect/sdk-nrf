@@ -115,9 +115,73 @@ The following antenna switching patterns are possible:
 The application supports a maximum of 19 antennas in the direction finding mode.
 The RADIO can control up to 8 GPIO pins for the purpose of controlling the external antenna switches used in direction finding.
 
-The antenna is chosen by writing consecutive numbers to the SWITCHPATTERN register.
-This means that the antenna GPIO pins act like 8-bit registers.
-In other words, for the first antenna, antenna pin 1 is active, for the second antenna, pin 2 is active, for the third antenna, pins 1 and 2 are active, and so on.
+Antenna matrix configuration
+----------------------------
+
+To use this sample to test the Bluetooth Direction Finding feature, additional configuration of GPIOs is required to control the antenna array.
+An example of such configuration is provided in a devicetree overlay file :file:`nrf5340dk_nrf5340_cpunet.overlay`.
+
+The overlay file provides the information about of the GPIOs to be used by the Radio peripheral to switch between antenna patches during the Constant Tone Extension (CTE) reception or transmission.
+At least one GPIO must be provided to enable antenna switching.
+
+The GPIOs are used by the radio peripheral in order given by the ``dfegpio#-gpios`` properties.
+The order is important because it affects the mapping of the antenna switching patterns to GPIOs (see `Antenna patterns`_).
+
+To test Direction Finding, provide the following data related to antenna matrix design:
+
+* GPIO pins to ``dfegpio#-gpios`` properties in the :file:`nrf5340dk_nrf5340_cpunet.overlay` file.
+* The default antenna to be used to receive the PDU ``dfe-pdu-antenna`` property in the :file:`nrf5340dk_nrf5340_cpunet.overlay` file.
+
+.. note::
+   The PDU antenna is also used for the reference period transmission and reception.
+
+Antenna patterns
+----------------
+
+The antenna switching pattern is a binary number where each bit is applied to a particular antenna GPIO pin.
+For example, the pattern ``0x3`` means that antenna GPIOs at index 0,1 is set, while the next ones are left unset.
+
+This also means that, for example, when using four GPIOs, the pattern count cannot be greater than 16 and the maximum allowed value is 15.
+
+If the number of switch-sample periods is greater than the number of stored switching patterns, the radio loops back to the first pattern.
+
+The following table presents the patterns that you can use to switch antennas on the Nordic-designed antenna matrix:
+
++--------+--------------+
+|Antenna | PATTERN[3:0] |
++========+==============+
+| ANT_12 |  0 (0b0000)  |
++--------+--------------+
+| ANT_10 |  1 (0b0001)  |
++--------+--------------+
+| ANT_11 |  2 (0b0010)  |
++--------+--------------+
+| RFU    |  3 (0b0011)  |
++--------+--------------+
+| ANT_3  |  4 (0b0100)  |
++--------+--------------+
+| ANT_1  |  5 (0b0101)  |
++--------+--------------+
+| ANT_2  |  6 (0b0110)  |
++--------+--------------+
+| RFU    |  7 (0b0111)  |
++--------+--------------+
+| ANT_6  |  8 (0b1000)  |
++--------+--------------+
+| ANT_4  |  9 (0b1001)  |
++--------+--------------+
+| ANT_5  | 10 (0b1010)  |
++--------+--------------+
+| RFU    | 11 (0b1011)  |
++--------+--------------+
+| ANT_9  | 12 (0b1100)  |
++--------+--------------+
+| ANT_7  | 13 (0b1101)  |
++--------+--------------+
+| ANT_8  | 14 (0b1110)  |
++--------+--------------+
+| RFU    | 15 (0b1111)  |
++--------+--------------+
 
 nRF21540 front-end module
 =========================
@@ -199,9 +263,7 @@ Requirements
 
 The sample supports the following development kit:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpunet, nrf21540dk_nrf52840
+.. table-from-sample-yaml::
 
 Additionally, the sample requires one of the following testing devices:
 

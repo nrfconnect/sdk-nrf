@@ -5,13 +5,13 @@
  */
 
 #include <errno.h>
-#include <sys/printk.h>
+#include <zephyr/sys/printk.h>
 
 #include "json_helpers.h"
 #include "cJSON.h"
 #include "cJSON_os.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(json_helpers, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 
 void json_add_obj(cJSON *parent, const char *str, cJSON *item)

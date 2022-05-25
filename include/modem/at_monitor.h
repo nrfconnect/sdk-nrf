@@ -22,9 +22,9 @@ extern "C" {
 #endif
 
 #include <stddef.h>
-#include <kernel.h>
-#include <sys/util_macro.h>
-#include <toolchain/common.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/util_macro.h>
+#include <zephyr/toolchain/common.h>
 
 /**
  * @brief AT monitor callback.

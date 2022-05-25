@@ -10,7 +10,12 @@ target_sources_ifdef(CONFIG_EXTERNAL_SENSORS app PRIVATE ${CMAKE_CURRENT_SOURCE_
 if (CONFIG_EXTERNAL_SENSORS_BME680_BSEC)
         target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ext_sensors_bsec.c)
         set(bsec_dir ${CONFIG_EXTERNAL_SENSORS_BME680_BSEC_PATH})
-        set(BSEC_LIB_DIR ${bsec_dir}/algo/normal_version/bin/gcc/Cortex_M33F)
+        if (CONFIG_FP_SOFTABI)
+                set(BSEC_LIB_DIR ${bsec_dir}/algo/normal_version/bin/gcc/Cortex_M33)
+        endif()
+        if (CONFIG_FP_HARDABI)
+                set(BSEC_LIB_DIR ${bsec_dir}/algo/normal_version/bin/gcc/Cortex_M33F)
+        endif()
 
         if(NOT EXISTS "${BSEC_LIB_DIR}/libalgobsec.a")
                 assert(0 "Could not find BSEC library. Minimum version is 1.4.8.0_Generic_Release")

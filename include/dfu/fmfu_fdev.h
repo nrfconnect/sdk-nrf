@@ -7,7 +7,7 @@
 #ifndef FMFU_FDEV_H__
 #define FMFU_FDEV_H__
 
-#include <device.h>
+#include <zephyr/device.h>
 
 /**
  * @defgroup fmfu_fdev Full Modem Firmware Update from flash device

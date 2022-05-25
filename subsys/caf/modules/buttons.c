@@ -6,24 +6,24 @@
 
 #include <zephyr/types.h>
 
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <soc.h>
-#include <device.h>
-#include <drivers/gpio.h>
-#include <sys/util.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/sys/util.h>
 
 #include <caf/key_id.h>
 #include <caf/gpio_pins.h>
 #include CONFIG_CAF_BUTTONS_DEF_PATH
 
-#include <event_manager.h>
+#include <app_event_manager.h>
 #include <caf/events/button_event.h>
 #include <caf/events/power_event.h>
 
 #define MODULE buttons
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_BUTTONS_LOG_LEVEL);
 
 #define SCAN_INTERVAL CONFIG_CAF_BUTTONS_SCAN_INTERVAL
@@ -293,7 +293,7 @@ static void scan_fn(struct k_work *work)
 
 				event->key_id = KEY_ID(i, j);
 				event->pressed = is_pressed;
-				EVENT_SUBMIT(event);
+				APP_EVENT_SUBMIT(event);
 
 				evt_limit++;
 
@@ -408,7 +408,7 @@ static void button_pressed_fn(struct k_work *work)
 	switch (state) {
 	case STATE_IDLE:
 		if (IS_ENABLED(CONFIG_CAF_BUTTONS_PM_EVENTS)) {
-			EVENT_SUBMIT(new_wake_up_event());
+			APP_EVENT_SUBMIT(new_wake_up_event());
 		}
 		break;
 
@@ -501,10 +501,10 @@ error:
 	module_set_state(MODULE_STATE_ERROR);
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
@@ -524,14 +524,14 @@ static bool event_handler(const struct event_header *eh)
 	}
 
 	if (IS_ENABLED(CONFIG_CAF_BUTTONS_PM_EVENTS) &&
-	    is_wake_up_event(eh)) {
+	    is_wake_up_event(aeh)) {
 		resume();
 
 		return false;
 	}
 
 	if (IS_ENABLED(CONFIG_CAF_BUTTONS_PM_EVENTS) &&
-	    is_power_down_event(eh)) {
+	    is_power_down_event(aeh)) {
 		int err = suspend();
 
 		if (!err) {
@@ -555,9 +555,9 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if CONFIG_CAF_BUTTONS_PM_EVENTS
-EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
-EVENT_SUBSCRIBE(MODULE, wake_up_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
+APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #endif

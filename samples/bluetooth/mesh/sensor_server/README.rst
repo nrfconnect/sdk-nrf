@@ -20,9 +20,7 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf52dk_nrf52832, nrf52840dk_nrf52840, thingy53_nrf5340_cpuapp_and_cpuapp_ns, nrf21540dk_nrf52840
+.. table-from-sample-yaml::
 
 For provisioning and configuring of the mesh model instances, the sample requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
 
@@ -34,6 +32,8 @@ For provisioning and configuring of the mesh model instances, the sample require
 
 Additionally, the sample requires the :ref:`bluetooth_mesh_sensor_client` sample application.
 The application needs to be programmed on a separate device, and configured according to the sensor observer sample's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>`.
+
+.. include:: /includes/tfm.txt
 
 Overview
 ********
@@ -119,7 +119,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/bluetooth/mesh/sensor_server`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 .. _bluetooth_mesh_sensor_server_testing:
 

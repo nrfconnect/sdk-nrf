@@ -4,9 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <logging/log.h>
-#include <drivers/uart.h>
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/drivers/uart.h>
 
 LOG_MODULE_REGISTER(app);
 
@@ -119,12 +121,9 @@ static void async(const struct device *lpuart)
 
 void main(void)
 {
-	const struct device *lpuart;
+	const struct device *lpuart = DEVICE_DT_GET(DT_NODELABEL(lpuart));
 
-	k_msleep(1000);
-
-	lpuart = device_get_binding("LPUART");
-	__ASSERT(lpuart, "Failed to get the device");
+	__ASSERT(device_is_ready(lpuart), "LPUART device not ready");
 
 	if (IS_ENABLED(CONFIG_NRF_SW_LPUART_INT_DRIVEN)) {
 		interrupt_driven(lpuart);

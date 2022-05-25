@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <net/lwm2m.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/lwm2m.h>
 #include <lwm2m_resource_ids.h>
 
 #include "env_sensor.h"
@@ -14,16 +14,16 @@
 
 #define MODULE app_lwm2m_gas_res_sensor
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 
 #define MIN_RANGE_VALUE 0.0
 #define MAX_RANGE_VALUE 1000000.0
 
-#if defined(CONFIG_ENV_SENSOR_USE_EXTERNAL)
-#define GENERIC_SENSOR_APP_TYPE "BME680 Gas Resistance Sensor"
-#elif defined(CONFIG_ENV_SENSOR_USE_SIM)
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(sensor_sim), okay)
 #define GENERIC_SENSOR_APP_TYPE "Simulated Gas Resistance Sensor"
+#else
+#define GENERIC_SENSOR_APP_TYPE "BME680 Gas Resistance Sensor"
 #endif
 
 #define GENERIC_SENSOR_TYPE "Gas resistance sensor"
@@ -113,10 +113,10 @@ int lwm2m_init_gas_res_sensor(void)
 	return 0;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_sensor_event(eh)) {
-		struct sensor_event *event = cast_sensor_event(eh);
+	if (is_sensor_event(aeh)) {
+		struct sensor_event *event = cast_sensor_event(aeh);
 
 		if (event->type == GAS_RESISTANCE_SENSOR) {
 			double received_value;
@@ -144,5 +144,5 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, sensor_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, sensor_event);

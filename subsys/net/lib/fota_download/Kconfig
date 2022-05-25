@@ -9,6 +9,7 @@ menuconfig FOTA_DOWNLOAD
 	depends on DOWNLOAD_CLIENT
 	depends on DFU_TARGET
 	imply SPM_SERVICE_S0_ACTIVE
+	imply FW_INFO
 
 if (FOTA_DOWNLOAD)
 
@@ -25,6 +26,12 @@ config FOTA_DOWNLOAD_MCUBOOT_FLASH_BUF_SZ
 	default 512
 	help
 	  Buffer size must be aligned to the minimal flash write block size
+
+config FOTA_DOWNLOAD_NATIVE_TLS
+	bool "Enable native TLS socket"
+	help
+	  Enabling this option will configure the socket to be native for TLS
+	  instead of offloading TLS operations to the modem.
 
 module=FOTA_DOWNLOAD
 module-dep=LOG

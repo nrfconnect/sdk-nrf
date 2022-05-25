@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <init.h>
-#include <logging/log.h>
-#include <sys/__assert.h>
-#include <devicetree.h>
+#include <zephyr/init.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/sys/__assert.h>
+#include <zephyr/devicetree.h>
 #include <nrf_802154.h>
 #include <nrf_802154_config.h>
 

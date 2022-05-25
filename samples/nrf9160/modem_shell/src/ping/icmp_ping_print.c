@@ -9,11 +9,11 @@
 #include <string.h>
 #include <assert.h>
 
-#include <zephyr.h>
-#include <posix/time.h>
-#include <sys/cbprintf.h>
-#include <shell/shell.h>
-#include <shell/shell_uart.h>
+#include <zephyr/kernel.h>
+#include <zephyr/posix/time.h>
+#include <zephyr/sys/cbprintf.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/shell/shell_uart.h>
 #include <net/nrf_cloud.h>
 
 #include "mosh_print.h"

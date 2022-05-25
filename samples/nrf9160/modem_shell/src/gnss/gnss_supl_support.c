@@ -5,16 +5,16 @@
  */
 
 #include <stdio.h>
-#include <zephyr.h>
-#include <logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #if !defined(CONFIG_NET_SOCKETS_POSIX_NAMES)
-#include <posix/unistd.h>
-#include <posix/netdb.h>
-#include <posix/sys/time.h>
-#include <posix/sys/socket.h>
-#include <posix/arpa/inet.h>
+#include <zephyr/posix/unistd.h>
+#include <zephyr/posix/netdb.h>
+#include <zephyr/posix/sys/time.h>
+#include <zephyr/posix/sys/socket.h>
+#include <zephyr/posix/arpa/inet.h>
 #else
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #endif
 #include <supl_session.h>
 

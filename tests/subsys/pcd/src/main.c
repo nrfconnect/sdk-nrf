@@ -8,8 +8,8 @@
 #include <string.h>
 #include <stdbool.h>
 #include <zephyr/types.h>
-#include <devicetree.h>
-#include <drivers/flash.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/drivers/flash.h>
 #include <dfu/pcd.h>
 
 #define BUF_LEN ((32*1024) + 10) /* Some pages, and then some */

@@ -14,7 +14,7 @@ if SENSOR_MODULE
 config SENSOR_THREAD_STACK_SIZE
 	int "Sensor module thread stack size"
 	default 4096 if EXTERNAL_SENSORS_BME680_BSEC
-	default 1152
+	default 1280
 
 rsource "../ext_sensors/Kconfig"
 

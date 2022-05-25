@@ -8,16 +8,16 @@
 #include <modem/at_monitor.h>
 #include <modem/at_cmd_parser.h>
 #include <ctype.h>
-#include <device.h>
+#include <zephyr/device.h>
 #include <errno.h>
 #include <modem/modem_info.h>
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(modem_info);
 

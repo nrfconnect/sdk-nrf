@@ -10,8 +10,8 @@
 
 #include <sys/types.h>
 
-#include <shell/shell.h>
-#include <shell/shell_uart.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/shell/shell_uart.h>
 
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>
@@ -247,15 +247,10 @@ void link_init(void)
 
 	lte_lc_register_handler(link_ind_handler);
 
-/* With CONFIG_LWM2M_CARRIER, MoSH auto connect must be disabled
- * because LwM2M carrier lib handles that.
- */
-#if !defined(CONFIG_LWM2M_CARRIER)
 	if (link_sett_is_normal_mode_autoconn_enabled() == true) {
 		link_func_mode_set(LTE_LC_FUNC_MODE_NORMAL,
 				   link_sett_is_normal_mode_autoconn_rel14_used());
 	}
-#endif
 }
 
 void link_ind_handler(const struct lte_lc_evt *const evt)
@@ -634,14 +629,7 @@ int link_func_mode_set(enum lte_lc_func_mode fun, bool rel14_used)
 			}
 		}
 
-		if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
-			return_value = lte_lc_normal();
-		} else {
-			/* TODO: why not just do lte_lc_normal() as notifications are
-			 * subscribed there also nowadays?
-			 */
-			return_value = lte_lc_init_and_connect_async(link_ind_handler);
-		}
+		return_value = lte_lc_normal();
 		break;
 	case LTE_LC_FUNC_MODE_DEACTIVATE_LTE:
 	case LTE_LC_FUNC_MODE_ACTIVATE_LTE:
@@ -688,5 +676,45 @@ int link_rai_enable(bool enable)
 		mosh_error("RAI AT command failed, error: %d", err);
 		return -EFAULT;
 	}
+	return 0;
+}
+
+int link_setdnsaddr(const char *ip_address)
+{
+	struct nrf_in_addr in4_addr;
+	struct nrf_in6_addr in6_addr;
+	int family = NRF_AF_INET;
+	void *in_addr = NULL;
+	nrf_socklen_t in_size = 0;
+	int ret = 0;
+
+	if (strlen(ip_address) > 0) {
+		in_addr = &in4_addr;
+		in_size = sizeof(in4_addr);
+		ret = nrf_inet_pton(family, ip_address, in_addr);
+
+		if (ret != 1) {
+			family = NRF_AF_INET6;
+			in_addr = &in6_addr;
+			in_size = sizeof(in6_addr);
+			ret = nrf_inet_pton(family, ip_address, in_addr);
+		}
+
+		if (ret != 1) {
+			mosh_error("Invalid IP address: %s", ip_address);
+			return -EINVAL;
+		}
+	}
+
+	if (link_sett_is_dnsaddr_enabled() && ret == 1) {
+		ret = nrf_setdnsaddr(family, in_addr, in_size);
+		if (ret != 0) {
+			mosh_error("Error setting DNS address: %d", errno);
+			return -errno;
+		}
+	} else {
+		(void)nrf_setdnsaddr(family, NULL, 0);
+	}
+
 	return 0;
 }

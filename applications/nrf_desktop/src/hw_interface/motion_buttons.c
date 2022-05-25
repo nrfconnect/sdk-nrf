@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
-#include <event_manager.h>
+#include <app_event_manager.h>
 #include <caf/events/button_event.h>
 #include "motion_event.h"
 #include "hid_event.h"
@@ -14,7 +14,7 @@
 #define MODULE motion
 #include <caf/events/module_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 
 
@@ -45,7 +45,7 @@ static void motion_event_send(int16_t dx, int16_t dy)
 	event->dx = dx;
 	event->dy = dy;
 
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static enum dir key_to_dir(uint16_t key_id)
@@ -200,24 +200,24 @@ static bool handle_hid_report_subscription_event(const struct hid_report_subscri
 	return false;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_hid_report_sent_event(eh)) {
+	if (is_hid_report_sent_event(aeh)) {
 		return handle_hid_report_sent_event(
-				cast_hid_report_sent_event(eh));
+				cast_hid_report_sent_event(aeh));
 	}
 
-	if (is_button_event(eh)) {
-		return handle_button_event(cast_button_event(eh));
+	if (is_button_event(aeh)) {
+		return handle_button_event(cast_button_event(aeh));
 	}
 
-	if (is_module_state_event(eh)) {
-		return handle_module_state_event(cast_module_state_event(eh));
+	if (is_module_state_event(aeh)) {
+		return handle_module_state_event(cast_module_state_event(aeh));
 	}
 
-	if (is_hid_report_subscription_event(eh)) {
+	if (is_hid_report_subscription_event(aeh)) {
 		return handle_hid_report_subscription_event(
-				cast_hid_report_subscription_event(eh));
+				cast_hid_report_subscription_event(aeh));
 	}
 
 	/* If event is unhandled, unsubscribe. */
@@ -225,8 +225,8 @@ static bool event_handler(const struct event_header *eh)
 
 	return false;
 }
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE_EARLY(MODULE, button_event);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
-EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, button_event);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);

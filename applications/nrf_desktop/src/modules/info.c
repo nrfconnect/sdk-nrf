@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <sys/byteorder.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/byteorder.h>
 
 #include "hwid.h"
 #include "config_event.h"
@@ -15,7 +15,7 @@
 
 #define BOARD_NAME_SEPARATOR	'_'
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_INFO_LOG_LEVEL);
 
 
@@ -37,7 +37,7 @@ static struct config_event *generate_response(const struct config_event *event,
 static void submit_response(struct config_event *rsp)
 {
 	rsp->status = CONFIG_STATUS_SUCCESS;
-	EVENT_SUBMIT(rsp);
+	APP_EVENT_SUBMIT(rsp);
 }
 
 static bool handle_config_event(const struct config_event *event)
@@ -80,7 +80,7 @@ static bool handle_config_event(const struct config_event *event)
 
 		struct config_event *rsp = generate_response(event, name_len);
 
-		strncpy(rsp->dyndata.data, start_ptr, name_len);
+		strncpy((char *)rsp->dyndata.data, start_ptr, name_len);
 		submit_response(rsp);
 		return true;
 	}
@@ -102,11 +102,11 @@ static bool handle_config_event(const struct config_event *event)
 	return false;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
+	if (is_module_state_event(aeh)) {
 		const struct module_state_event *event =
-			cast_module_state_event(eh);
+			cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			module_set_state(MODULE_STATE_READY);
@@ -115,8 +115,8 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (is_config_event(eh)) {
-		return handle_config_event(cast_config_event(eh));
+	if (is_config_event(aeh)) {
+		return handle_config_event(cast_config_event(aeh));
 	}
 
 	/* If event is unhandled, unsubscribe. */
@@ -125,6 +125,6 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
-EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);

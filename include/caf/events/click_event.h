@@ -14,8 +14,8 @@
  * @brief CAF Click Event.
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,7 +50,7 @@ enum click {
  */
 struct click_event {
 	/** Event header. */
-	struct event_header header;
+	struct app_event_header header;
 
 	/** ID of the button - matching the key_id used by the @ref button_event. */
 	uint16_t key_id;
@@ -71,7 +71,7 @@ struct click_event {
 extern "C" {
 #endif
 
-EVENT_TYPE_DECLARE(click_event);
+APP_EVENT_TYPE_DECLARE(click_event);
 
 #ifdef __cplusplus
 }

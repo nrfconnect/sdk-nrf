@@ -19,17 +19,17 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp, nrf5340dk_nrf5340_cpuapp_ns, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
+.. table-from-sample-yaml::
 
 You can use one or more of the development kits listed above as the Thread CoAP Client.
 You also need one or more compatible development kits programmed with the :ref:`coap_server_sample` sample.
 
+.. include:: /includes/tfm.txt
+
 Multiprotocol extension requirements
 ====================================
 
-If you enable the :ref:`coap_client_sample_multi_ext`, make sure you have a phone or a tablet with the `nRF Toolbox`_ application installed.
+If you enable the :ref:`coap_client_sample_multi_ext`, make sure you have a phone with the `nRF Toolbox`_ application installed or an additional development kit programmed with :ref:`central_uart` sample.
 
 .. note::
   The :ref:`testing instructions <coap_client_sample_testing_ble>` refer to nRF Toolbox, but similar applications can be used as well, for example `nRF Connect for Mobile`_.
@@ -49,11 +49,6 @@ The following CoAP resources are accessed on the server side:
 This sample uses :ref:`Zephyr CoAP API<zephyr:coap_sock_interface>` for communication, which is the preferred API to use for new CoAP applications.
 For example usage of the native Thread CoAP API, see the :ref:`coap_server_sample` sample.
 
-FEM support
-===========
-
-.. include:: /includes/sample_fem_support.txt
-
 .. _coap_client_sample_multi_ext:
 
 Multiprotocol Bluetooth LE extension
@@ -62,11 +57,6 @@ Multiprotocol Bluetooth LE extension
 This optional extension demonstrates the OpenThread stack and :ref:`nrfxlib:softdevice_controller` working concurrently.
 It uses the :ref:`nus_service_readme` library to control the LED states over Bluetooth® LE in a Thread network.
 For more information about the multiprotocol feature, see :ref:`ug_multiprotocol_support`.
-
-Trusted Firmware-M support
-==========================
-
-.. include:: /includes/tfm.txt
 
 User interface
 **************
@@ -116,6 +106,34 @@ UART command assignments:
    * ``m`` - Send a multicast CoAP message over Thread (the same operation as **Button 2**).
    * ``p`` - Send a pairing request as CoAP message over Thread (the same operation as **Button 4**).
 
+Configuration
+*************
+
+|config|
+
+.. _coap_client_sample_activating_variants:
+
+Configuration files
+===================
+
+The sample provides predefined configuration files for typical use cases, and to activate sample extensions.
+You can find the configuration files in the root directory of the sample.
+
+Specify the corresponding file names in the :makevar:`OVERLAY_CONFIG` option when building.
+See :ref:`cmake_options` for instructions on how to add this option.
+For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+
+The following configuration files are available:
+
+* :file:`overlay-mtd.conf` - Enables the Minimal Thread Device variant.
+* :file:`overlay-multiprotocol_ble.conf` - Enables the Multiprotocol Bluetooth LE extension.
+
+FEM support
+===========
+
+.. include:: /includes/sample_fem_support.txt
+
+
 Building and running
 ********************
 
@@ -123,20 +141,7 @@ Building and running
 
 |enable_thread_before_testing|
 
-.. include:: /includes/build_and_run.txt
-
-.. _coap_client_sample_activating_variants:
-
-Activating sample extensions
-============================
-
-To activate the optional extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` in the following manner:
-
-* For the Minimal Thread Device variant, set :file:`overlay-mtd.conf`.
-* For the Multiprotocol Bluetooth LE extension, set :file:`overlay-multiprotocol_ble.conf`.
-
-See :ref:`cmake_options` for instructions on how to add this option.
-For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+.. include:: /includes/build_and_run_ns.txt
 
 Testing
 =======
@@ -180,7 +185,10 @@ Switching between SED and MED modes does not affect the standard testing procedu
 Testing multiprotocol Bluetooth LE extension
 --------------------------------------------
 
-To test the multiprotocol Bluetooth LE extension, you need to first set up nRF Toolbox as follows:
+To test the multiprotocol Bluetooth LE extension, you can use nRF Toolbox or the :ref:`central_uart` sample.
+The steps below assume nRF Toolbox as the Bluetooth tester.
+
+First, you need to set up nRF Toolbox as follows:
 
 1. Tap :guilabel:`UART` to open the UART application in nRF Toolbox.
 

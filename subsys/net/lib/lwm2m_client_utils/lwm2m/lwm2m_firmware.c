@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <nrf_modem.h>
-#include <drivers/flash.h>
+#include <zephyr/drivers/flash.h>
 #include <dfu/dfu_target.h>
 #include <dfu/dfu_target_mcuboot.h>
-#include <dfu/mcuboot.h>
-#include <logging/log_ctrl.h>
-#include <net/lwm2m.h>
+#include <zephyr/dfu/mcuboot.h>
+#include <zephyr/logging/log_ctrl.h>
+#include <zephyr/net/lwm2m.h>
 #include <modem/nrf_modem_lib.h>
-#include <sys/reboot.h>
+#include <zephyr/sys/reboot.h>
 #include <net/fota_download.h>
 #include <net/lwm2m_client_utils.h>
 #include <net/lwm2m_client_utils_fota.h>
@@ -28,7 +28,7 @@
 #include <string.h>
 #endif
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_firmware, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
 #define BYTE_PROGRESS_STEP (1024 * 10)

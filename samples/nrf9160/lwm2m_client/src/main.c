@@ -4,25 +4,27 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <ctype.h>
-#include <drivers/gpio.h>
+#include <zephyr/drivers/gpio.h>
 #include <stdio.h>
-#include <net/lwm2m.h>
+#include <zephyr/net/lwm2m.h>
 #include <modem/nrf_modem_lib.h>
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #include <net/lwm2m_client_utils.h>
 #include <net/lwm2m_client_utils_fota.h>
-#include <event_manager.h>
+#include <app_event_manager.h>
+#include <net/lwm2m_client_utils_location.h>
 #include <date_time.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
 #include <nrf_modem_at.h>
+#include <modem/pdn.h>
 
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
 #if defined(CONFIG_MODEM_KEY_MGMT)
@@ -56,6 +58,8 @@ static struct lwm2m_ctx client = {0};
 static bool reconnect;
 static int reconnection_counter;
 static struct k_sem lwm2m_restart;
+/* Enable session lifetime check for initial boot */
+static bool update_session_lifetime = true;
 
 static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event client_event);
 
@@ -73,6 +77,72 @@ void ncell_meas_work_handler(struct k_work *work)
 }
 #endif
 
+
+#if defined(CONFIG_APP_LWM2M_CONFORMANCE_TESTING)
+static struct k_work_delayable send_periodical_work;
+static uint8_t send_count = 0;
+
+static int server_send_mute_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id, uint8_t *data,
+			uint16_t data_len, bool last_block, size_t total_size)
+{
+	if (*data) {
+		LOG_INF("Server Muted Send");
+	} else {
+
+		if (send_count == 0) {
+			LOG_INF("Server Activate Send");
+			send_count = 5;
+			k_work_schedule(&send_periodical_work, K_SECONDS(1));
+		}
+	}
+
+	return 0;
+}
+
+static void lwm2m_register_server_send_mute_cb(void)
+{
+	int ret;
+	char path[sizeof("/0/0/10")];
+	lwm2m_engine_set_data_cb_t cb;
+
+	cb = server_send_mute_cb;
+	snprintk(path, sizeof(path), "1/%d/23", client.srv_obj_inst);
+	ret = lwm2m_engine_register_post_write_callback(path, cb);
+	if (ret) {
+		LOG_ERR("Send enable CB fail %d", ret);
+	}
+}
+
+void send_periodically_work_handler(struct k_work *work)
+{
+	int ret;
+	char const *send_path[4] = {
+		LWM2M_PATH(3, 0, 0),
+		LWM2M_PATH(3, 0, 3),
+		LWM2M_PATH(3, 0, 13),
+		LWM2M_PATH(3, 0, 19),
+	};
+
+	/* lwm2m send post to server */
+	ret = lwm2m_engine_send(&client, send_path, 4, true);
+	if (ret) {
+		if (ret == EPERM) {
+			LOG_INF("Server Mute send block send operation");
+		} else {
+			LOG_INF("Periodically SEND test data fail %d", ret);
+		}
+	}
+
+	if (send_count) {
+		if (ret == 0) {
+			send_count--;
+		}
+
+		k_work_schedule(&send_periodical_work, K_SECONDS(15));
+	}
+}
+#endif
+
 static int lwm2m_setup(void)
 {
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT)
@@ -83,7 +153,7 @@ static int lwm2m_setup(void)
 	/* Manufacturer dependent */
 	/* use IMEI as serial number */
 	lwm2m_app_init_device(imei_buf);
-	lwm2m_init_security(&client, endpoint_name);
+	lwm2m_init_security(&client, endpoint_name, NULL);
 
 	if (IS_ENABLED(CONFIG_LWM2M_DTLS_SUPPORT) && sizeof(CONFIG_APP_LWM2M_PSK) > 1) {
 		/* Write hard-coded PSK key to engine */
@@ -132,8 +202,16 @@ static int lwm2m_setup(void)
 #if defined(CONFIG_LWM2M_APP_LIGHT_SENSOR)
 	lwm2m_init_light_sensor();
 #endif
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT)
-	init_neighbour_cell_info();
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT) && \
+	defined(CONFIG_LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER)
+	lwm2m_ncell_handler_register();
+#endif
+#if defined(CONFIG_LWM2M_PORTFOLIO_OBJ_SUPPORT)
+	lwm2m_init_portfolio_object();
+#endif
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT) && \
+	defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS)
+	location_event_handler_init(&client);
 #endif
 	return 0;
 }
@@ -170,6 +248,24 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 	}
 }
 
+static void rd_client_update_lifetime(int srv_obj_inst)
+{
+	char pathstr[MAX_RESOURCE_LEN];
+	uint32_t current_lifetime = 0;
+
+	uint32_t lifetime = CONFIG_LWM2M_ENGINE_DEFAULT_LIFETIME;
+
+	snprintk(pathstr, sizeof(pathstr), "1/%d/1", srv_obj_inst);
+	lwm2m_engine_get_u32(pathstr, &current_lifetime);
+
+	if (current_lifetime != lifetime) {
+		/* SET Configured value */
+		lwm2m_engine_set_u32(pathstr, lifetime);
+		LOG_DBG("Update session lifetime from %d to %d", current_lifetime, lifetime);
+	}
+	update_session_lifetime = false;
+}
+
 static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event client_event)
 {
 	switch (client_event) {
@@ -184,6 +280,7 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_REG_COMPLETE:
 		LOG_DBG("Bootstrap registration complete");
+		update_session_lifetime = true;
 		reconnection_counter = 0;
 		break;
 
@@ -199,10 +296,25 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_COMPLETE:
 		reconnection_counter = 0;
 		LOG_DBG("Registration complete");
+		if (update_session_lifetime) {
+			/* Read a current server  lifetime value */
+			rd_client_update_lifetime(client->srv_obj_inst);
+		}
+
+#if defined(CONFIG_APP_LWM2M_CONFORMANCE_TESTING)
+		lwm2m_register_server_send_mute_cb();
+#endif
+
 		/* Get current time and date */
 		date_time_update_async(date_time_event_handler);
 #if defined(CONFIG_APP_GNSS)
 		start_gnss();
+#endif
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL)
+		LOG_INF("Send cell location request event");
+		struct cell_location_request_event *event = new_cell_location_request_event();
+
+		APP_EVENT_SUBMIT(event);
 #endif
 		break;
 
@@ -266,25 +378,6 @@ static void modem_connect(void)
 	} while (ret < 0);
 }
 
-#if defined(CONFIG_APP_GNSS)
-static void modem_gnss_configure(void)
-{
-	if (strlen(CONFIG_GNSS_AT_MAGPIO) > 0) {
-		if (nrf_modem_at_printf("%s", CONFIG_GNSS_AT_MAGPIO) != 0) {
-			LOG_ERR("Failed to set MAGPIO configuration");
-			return;
-		}
-	}
-
-	if (strlen(CONFIG_GNSS_AT_COEX0) > 0) {
-		if (nrf_modem_at_printf("%s", CONFIG_GNSS_AT_COEX0) != 0) {
-			LOG_ERR("Failed to set COEX0 configuration");
-			return;
-		}
-	}
-}
-#endif
-
 void main(void)
 {
 	int ret;
@@ -294,30 +387,37 @@ void main(void)
 
 	k_sem_init(&lwm2m_restart, 0, 1);
 
-	ret = event_manager_init();
-	if (ret) {
-		LOG_ERR("Unable to init event manager (%d)", ret);
-		return;
-	}
-
 #if !defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
 	ret = nrf_modem_lib_init(NORMAL_MODE);
-	if (ret != 0 && ret != MODEM_DFU_RESULT_OK) {
+	if (ret < 0) {
 		LOG_ERR("Unable to init modem library (%d)", ret);
 		return;
 	}
 #endif
+
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	ret = fota_settings_init();
 	if (ret < 0) {
-		LOG_ERR("Unable to init settings (%d)", ret);
+		LOG_WRN("Unable to init settings (%d)", ret);
+	}
+	/* Modem FW update needs to be verified before modem is used. */
+	lwm2m_verify_modem_fw_update();
+#endif
+
+#if defined(CONFIG_PDN)
+	ret = pdn_init();
+	if (ret < 0) {
+		LOG_ERR("Unable to init pdn (%d)", ret);
 		return;
 	}
 #endif
 
-#if defined(CONFIG_APP_GNSS)
-	modem_gnss_configure();
-#endif
+	ret = app_event_manager_init();
+	if (ret) {
+		LOG_ERR("Unable to init Application Event Manager (%d)", ret);
+		return;
+	}
+
 	LOG_INF("Initializing modem.");
 	ret = lte_lc_init();
 	if (ret < 0) {
@@ -350,14 +450,6 @@ void main(void)
 		return;
 	}
 
-	/* Load *all* persistent settings */
-	settings_load();
-
-#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
-	/* Modem FW update needs to be verified before modem is used. */
-	lwm2m_verify_modem_fw_update();
-#endif
-
 	ret = lwm2m_init_image();
 	if (ret < 0) {
 		LOG_ERR("Failed to setup image properties (%d)", ret);
@@ -389,6 +481,9 @@ void main(void)
 	k_work_init_delayable(&ncell_meas_work, ncell_meas_work_handler);
 	k_work_schedule(&ncell_meas_work, K_SECONDS(1));
 #endif
+#if defined(CONFIG_APP_LWM2M_CONFORMANCE_TESTING)
+	k_work_init_delayable(&send_periodical_work, send_periodically_work_handler);
+#endif
 
 	while (true) {
 		if (lwm2m_security_needs_bootstrap()) {
@@ -405,6 +500,10 @@ void main(void)
 
 		/* Stop the LwM2M engine. */
 		lwm2m_rd_client_stop(&client, rd_client_event, false);
+#if defined(CONFIG_APP_LWM2M_CONFORMANCE_TESTING)
+		k_work_cancel_delayable(&send_periodical_work);
+		send_count = 0;
+#endif
 
 		if (reconnect) {
 			reconnect = false;

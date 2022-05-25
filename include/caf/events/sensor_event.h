@@ -14,8 +14,8 @@
  * @brief CAF Sensor Event.
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,17 +49,17 @@ enum sensor_state {
  * application. The Common Application Framework does not impose any standard way of describing
  * sensors. Format and content of the sensor description is defined by the application.
  *
- * @warning The sensor state event related to the given sensor must use the same description as
- *          #sensor_event related to the sensor.
+ * @note The sensor state event related to the given sensor must use the same description as
+ *       #sensor_event related to the sensor.
  */
 struct sensor_state_event {
-	struct event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	const char *descr; /**< Description of the sensor. */
 	enum sensor_state state; /**< New state of the sensor. */
 };
 
-EVENT_TYPE_DECLARE(sensor_state_event);
+APP_EVENT_TYPE_DECLARE(sensor_state_event);
 
 /** @brief Sensor event.
  *
@@ -74,11 +74,11 @@ EVENT_TYPE_DECLARE(sensor_state_event);
  * in X, Y and Z axis as three floating-point values. @ref sensor_event_get_data_cnt and @ref
  * sensor_event_get_data_ptr can be used to access the sensor data provided by a given sensor event.
  *
- * @warning The sensor event related to the given sensor must use the same description as
- *          #sensor_state_event related to the sensor.
+ * @note The sensor event related to the given sensor must use the same description as
+ *       #sensor_state_event related to the sensor.
  */
 struct sensor_event {
-	struct event_header header; /**< Event header. */
+	struct app_event_header header; /**< Event header. */
 
 	const char *descr; /**< Description of the sensor. */
 	struct event_dyndata dyndata; /**< Sensor data. Provided as floating-point values. */
@@ -120,7 +120,7 @@ static inline float *sensor_event_get_data_ptr(const struct sensor_event *event)
 extern "C" {
 #endif
 
-EVENT_TYPE_DYNDATA_DECLARE(sensor_event);
+APP_EVENT_TYPE_DYNDATA_DECLARE(sensor_event);
 
 #ifdef __cplusplus
 }

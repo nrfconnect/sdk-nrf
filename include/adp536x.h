@@ -14,7 +14,7 @@
  * @{
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
 /* Definition of VBUS current limit values. */
 #define ADP536X_VBUS_ILIM_50mA		0x00

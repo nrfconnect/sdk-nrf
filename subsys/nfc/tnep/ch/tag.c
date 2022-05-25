@@ -9,7 +9,7 @@
 #include <nfc/ndef/ch_rec_parser.h>
 #include <nfc/ndef/msg_parser.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include "common.h"
 
@@ -175,8 +175,7 @@ static void ch_svc_msg_received(const uint8_t *data, size_t len)
 {
 	int err;
 	struct nfc_ndef_msg_desc *ch_msg;
-	uint8_t desc_buf[
-		NFC_NDEF_PARSER_REQIRED_MEMO_SIZE_CALC(CONFIG_NFC_TNEP_CH_MAX_RECORD_COUNT)];
+	uint8_t desc_buf[NFC_NDEF_PARSER_REQUIRED_MEM(CONFIG_NFC_TNEP_CH_MAX_RECORD_COUNT)];
 	size_t desc_buf_len = sizeof(desc_buf);
 
 	NET_BUF_SIMPLE_DEFINE(ch_buf,

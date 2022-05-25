@@ -1,12 +1,12 @@
-#include <zephyr.h>
-#include <sys/atomic.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/atomic.h>
 
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 
-#include <bluetooth/hci.h>
-#include <bluetooth/buf.h>
-#include <bluetooth/hci_err.h>
-#include <drivers/bluetooth/hci_driver.h>
+#include <zephyr/bluetooth/hci.h>
+#include <zephyr/bluetooth/buf.h>
+#include <zephyr/bluetooth/hci_err.h>
+#include <zephyr/drivers/bluetooth/hci_driver.h>
 
 #include <mpsl/mpsl_work.h>
 

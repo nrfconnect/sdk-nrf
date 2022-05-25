@@ -11,9 +11,9 @@
 #if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI)
 #include <nrf_modem_at.h>
 #endif
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #include "nrf_cloud_client_id.h"
 #include "nrf_cloud_transport.h"
 

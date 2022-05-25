@@ -3,16 +3,20 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include "msg_parser_local.h"
 
 LOG_MODULE_REGISTER(nfc_ndef_parser, CONFIG_NFC_NDEF_PARSER_LOG_LEVEL);
 
-int nfc_ndef_msg_parse(const uint8_t *result_buf,
+int nfc_ndef_msg_parse(uint8_t *result_buf,
 		       uint32_t *result_buf_len,
 		       const uint8_t *raw_data,
 		       uint32_t *raw_data_len)
 {
+	__ASSERT((POINTER_TO_UINT(result_buf) % 4) == 0,
+			"Buffer address for the msg parser must be word-aligned");
+
 	int err;
 	struct nfc_ndef_parser_memo_desc parser_memory_helper;
 

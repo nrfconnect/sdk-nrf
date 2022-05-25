@@ -13,16 +13,17 @@ common:
       type: multi_line
       regex:
         - "Hello World! .*"
-        - "Generating random number"
-        - "0x[0-9a-f]{64}"
         - "Reading some secure memory that NS is allowed to read"
         - ".*"
         - "FICR->INFO.PART: 0x[0-9a-f]{8}"
         - "FICR->INFO.VARIANT: 0x[0-9a-f]{8}"
-        - "Hashing 'Hello World! .*'"
-        - "SHA256 digest:"
+        - "Generating random number"
         - "0x[0-9a-f]{64}"
         - "MCU selection .*"
 tests:
   sample.tfm.helloworld:
     tags: tfm ci_build
+
+  sample.tfm.hello_world.bootloaders:
+    tags: tfm ci_build
+    extra_args: CONFIG_BOOTLOADER_MCUBOOT=y CONFIG_SECURE_BOOT=y

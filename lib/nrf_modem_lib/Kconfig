@@ -9,6 +9,7 @@ menuconfig NRF_MODEM_LIB
 	imply NRFX_IPC
 	imply NET_SOCKETS_OFFLOAD
 	imply NET_SOCKETS_POSIX_NAMES if !POSIX_API
+	select REQUIRES_FULL_LIBC
 	select NRF_MODEM
 	# The modem must be turned on to achieve low power consumption.
 	# But disable it for ZTEST's as some tests have HW

@@ -8,12 +8,12 @@
  *  @brief Nordic Central NFC pairing sample
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/hci.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/uuid.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/hci.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/uuid.h>
 #include <bluetooth/scan.h>
 
 #include <nfc/tnep/ch.h>
@@ -21,7 +21,7 @@
 
 #include <st25r3911b_nfca.h>
 
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #include <dk_buttons_and_leds.h>
 
@@ -332,6 +332,9 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.cancel = auth_cancel,
 	.oob_data_request = auth_oob_data_request,
+};
+
+static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 	.pairing_complete = pairing_complete,
 	.pairing_failed = pairing_failed
 };
@@ -608,6 +611,12 @@ void main(void)
 	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 	if (err) {
 		printk("Failed to register authorization callbacks.\n");
+		return;
+	}
+
+	err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
+	if (err) {
+		printk("Failed to register authorization info callbacks.\n");
 		return;
 	}
 

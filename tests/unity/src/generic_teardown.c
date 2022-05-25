@@ -8,7 +8,7 @@
  * @file
  * @brief Additional Unity support code for the native_posix board.
  */
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #ifdef CONFIG_BOARD_NATIVE_POSIX
 #include "posix_board_if.h"
 #endif

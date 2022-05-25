@@ -6,11 +6,11 @@
 
 #include <stdio.h>
 #include <strings.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
-#include <toolchain/common.h>
+#include <zephyr/toolchain/common.h>
 #include <net/icalendar_parser.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(icalendar_parser, CONFIG_ICAL_PARSER_LOG_LEVEL);
 

@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <kernel.h>
-#include <drivers/sensor.h>
-#include <device.h>
-#include <drivers/spi.h>
-#include <drivers/gpio.h>
-#include <sys/byteorder.h>
+#include <zephyr/kernel.h>
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/sensor.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/spi.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/sys/byteorder.h>
 #include <sensor/paw3212.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(paw3212, CONFIG_PAW3212_LOG_LEVEL);
 
 #define DT_DRV_COMPAT pixart_paw3212

@@ -7,13 +7,13 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
-#include <zephyr.h>
-#include <settings/settings.h>
+#include <zephyr/kernel.h>
+#include <zephyr/settings/settings.h>
 #include <nrf_gzll.h>
 #include <gzp.h>
 #include "gzp_internal.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(gzp_device, CONFIG_GAZELL_LOG_LEVEL);
 
 #define GZP_DEVICE_DB_NAME      "gzp_device"

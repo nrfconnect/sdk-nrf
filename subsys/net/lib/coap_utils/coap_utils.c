@@ -3,11 +3,11 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr.h>
-#include <logging/log.h>
-#include <net/coap.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/net/coap.h>
 #include <net/coap_utils.h>
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 
 LOG_MODULE_REGISTER(coap_utils, CONFIG_COAP_UTILS_LOG_LEVEL);
 

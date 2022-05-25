@@ -364,7 +364,7 @@ Testing the new sensor application
 **********************************
 
 .. note::
-   Use the Python Controller when :ref:`setting up Matter development environment <ug_matter_configuring_mobile>`.
+   Use CHIP Tool for Android when :ref:`setting up Matter development environment <ug_matter_configuring_mobile>`.
 
 To check if the sensor device is working, complete the following steps:
 
@@ -377,21 +377,21 @@ To check if the sensor device is working, complete the following steps:
    .. parsed-literal::
       :class: highlight
 
-      zcl OnOff On *node_ID* 1 0
+      ./chip-tool onoff on *node_ID* 1
 
 #. Read the measurement several times by checking value of ``MeasuredValue`` in the Temperature Measurement cluster:
 
    .. parsed-literal::
       :class: highlight
 
-      zclread TemperatureMeasurement MeasuredValue *node_ID* 1 0
+      ./chip-tool temperaturemeasurement read measured-value *node_ID* 1
 
 #. Deactivate the sensor by running the following command on the On/off cluster with the correct *node_ID* assigned during commissioning:
 
    .. parsed-literal::
       :class: highlight
 
-      zcl OnOff Off *node_ID* 1 0
+      ./chip-tool onoff off *node_ID* 1
 
 #. Read the measurement again.
    The measurement should not change.

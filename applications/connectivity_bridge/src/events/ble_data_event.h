@@ -14,10 +14,10 @@
  */
 
 #include <string.h>
-#include <toolchain/common.h>
+#include <zephyr/toolchain/common.h>
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,13 +25,13 @@ extern "C" {
 
 /** Peer connection event. */
 struct ble_data_event {
-	struct event_header header;
+	struct app_event_header header;
 
 	uint8_t *buf;
 	size_t len;
 };
 
-EVENT_TYPE_DECLARE(ble_data_event);
+APP_EVENT_TYPE_DECLARE(ble_data_event);
 
 #ifdef __cplusplus
 }

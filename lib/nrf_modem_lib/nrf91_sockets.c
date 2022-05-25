@@ -14,19 +14,19 @@
 #include <nrf_modem_os.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <init.h>
-#include <net/socket_offload.h>
+#include <zephyr/init.h>
+#include <zephyr/net/socket_offload.h>
 #include <nrf_socket.h>
 #include <nrf_errno.h>
 #include <nrf_gai_errors.h>
 #include <sockets_internal.h>
-#include <sys/fdtable.h>
-#include <zephyr.h>
+#include <zephyr/sys/fdtable.h>
+#include <zephyr/kernel.h>
 
 #if defined(CONFIG_POSIX_API)
-#include <posix/poll.h>
-#include <posix/sys/time.h>
-#include <posix/sys/socket.h>
+#include <zephyr/posix/poll.h>
+#include <zephyr/posix/sys/time.h>
+#include <zephyr/posix/sys/socket.h>
 #endif
 
 #if defined(CONFIG_NET_SOCKETS_OFFLOAD)
@@ -163,13 +163,13 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 			*nrf_out_optname = NRF_SO_SEC_TAG_LIST;
 			break;
 		case TLS_HOSTNAME:
-			*nrf_out_optname = NRF_SO_HOSTNAME;
+			*nrf_out_optname = NRF_SO_SEC_HOSTNAME;
 			break;
 		case TLS_CIPHERSUITE_LIST:
-			*nrf_out_optname = NRF_SO_CIPHERSUITE_LIST;
+			*nrf_out_optname = NRF_SO_SEC_CIPHERSUITE_LIST;
 			break;
 		case TLS_CIPHERSUITE_USED:
-			*nrf_out_optname = NRF_SO_CIPHER_IN_USE;
+			*nrf_out_optname = NRF_SO_SEC_CIPHER_IN_USE;
 			break;
 		case TLS_PEER_VERIFY:
 			*nrf_out_optname = NRF_SO_SEC_PEER_VERIFY;
@@ -262,34 +262,10 @@ static int z_to_nrf_flags(int z_flags)
 		nrf_flags |= NRF_MSG_PEEK;
 	}
 
-	if (z_flags & MSG_TRUNC) {
-		nrf_flags |= NRF_MSG_TRUNC;
-	}
-
 	if (z_flags & MSG_WAITALL) {
 		nrf_flags |= NRF_MSG_WAITALL;
 	}
 
-	/* TODO: Handle missing flags, missing from zephyr,
-	 * may also be missing from nrf_modem_lib.
-	 * Missing flags from "man recv" or "man recvfrom":
-	 *	MSG_CMSG_CLOEXEC
-	 *	MSG_ERRQUEUE
-	 *	MSG_OOB
-	 * Missing flags from "man send" or "man sendto":
-	 *	MSG_CONFIRM
-	 *	MSG_DONTROUTE
-	 *	MSG_EOR
-	 *	MSG_MORE
-	 *	MSG_NOSIGNAL
-	 * Flags defined in nrf_socket.h:
-	 *	NRF_MSG_DONTROUTE
-	 *	NRF_MSG_DONTWAIT (covered)
-	 *	NRF_MSG_OOB
-	 *	NRF_MSG_PEEK (covered)
-	 *	NRF_MSG_WAITALL (covered)
-	 *	NRF_MSG_TRUNC (covered)
-	 */
 	return nrf_flags;
 }
 
@@ -665,13 +641,13 @@ static int nrf91_socket_offload_connect(void *obj, const struct sockaddr *addr,
 		struct nrf_sockaddr_in ipv4;
 
 		z_to_nrf_ipv4(addr, &ipv4);
-		retval = nrf_connect(sd, (const struct nrf_sockaddr_in *)&ipv4,
+		retval = nrf_connect(sd, (struct nrf_sockaddr *)&ipv4,
 				     sizeof(struct nrf_sockaddr_in));
 	} else if (addr->sa_family == AF_INET6) {
 		struct nrf_sockaddr_in6 ipv6;
 
 		z_to_nrf_ipv6(addr, &ipv6);
-		retval = nrf_connect(sd, (const struct nrf_sockaddr *)&ipv6,
+		retval = nrf_connect(sd, (struct nrf_sockaddr *)&ipv6,
 				  sizeof(struct nrf_sockaddr_in6));
 	} else {
 		/* Pass in raw to library as it is non-IP address. */
@@ -752,7 +728,6 @@ static int nrf91_socket_offload_getsockopt(void *obj, int level, int optname,
 	retval = nrf_getsockopt(sd, nrf_level, nrf_optname, nrf_optval,
 				&nrf_optlen);
 
-
 	if ((retval == 0) && (optval != NULL)) {
 		*optlen = nrf_optlen;
 
@@ -792,7 +767,9 @@ static ssize_t nrf91_socket_offload_recvfrom(void *obj, void *buf, size_t len,
 	struct nrf_sock_ctx *ctx = OBJ_TO_CTX(obj);
 	ssize_t retval;
 
-	k_mutex_unlock(ctx->lock);
+	if (ctx->lock) {
+		k_mutex_unlock(ctx->lock);
+	}
 
 	if (from == NULL) {
 		retval = nrf_recvfrom(ctx->nrf_fd, buf, len, z_to_nrf_flags(flags),
@@ -838,10 +815,6 @@ static ssize_t nrf91_socket_offload_sendto(void *obj, const void *buf,
 	int sd = OBJ_TO_SD(obj);
 	ssize_t retval;
 
-	if (IS_ENABLED(CONFIG_NRF91_SOCKET_SEND_SPLIT_LARGE_BLOCKS)) {
-		len = MIN(len, CONFIG_NRF91_SOCKET_BLOCK_LIMIT);
-	}
-
 	if (to == NULL) {
 		retval = nrf_sendto(sd, buf, len, z_to_nrf_flags(flags), NULL,
 				    0);
@@ -850,15 +823,15 @@ static ssize_t nrf91_socket_offload_sendto(void *obj, const void *buf,
 		nrf_socklen_t sock_len = sizeof(struct nrf_sockaddr_in);
 
 		z_to_nrf_ipv4(to, &ipv4);
-		retval = nrf_sendto(sd, buf, len, z_to_nrf_flags(flags), &ipv4,
-				    sock_len);
+		retval = nrf_sendto(sd, buf, len, z_to_nrf_flags(flags),
+				    (struct nrf_sockaddr*)&ipv4, sock_len);
 	} else if (to->sa_family == AF_INET6) {
 		struct nrf_sockaddr_in6 ipv6;
 		nrf_socklen_t sock_len = sizeof(struct nrf_sockaddr_in6);
 
 		z_to_nrf_ipv6(to, &ipv6);
-		retval = nrf_sendto(sd, buf, len, z_to_nrf_flags(flags), &ipv6,
-				    sock_len);
+		retval = nrf_sendto(sd, buf, len, z_to_nrf_flags(flags),
+				    (struct nrf_sockaddr*)&ipv6, sock_len);
 	} else {
 		goto error;
 	}
@@ -1314,9 +1287,6 @@ static int nrf91_socket_create(int family, int type, int proto)
 }
 
 #define NRF91_SOCKET_PRIORITY 40
-
-BUILD_ASSERT(NRF91_SOCKET_PRIORITY < CONFIG_NET_SOCKETS_TLS_PRIORITY,
-	     "NRF91_SOCKET_PRIORITY have to be smaller than NET_SOCKETS_TLS_PRIORITY");
 
 NET_SOCKET_REGISTER(nrf91_socket, NRF91_SOCKET_PRIORITY, AF_UNSPEC,
 		    nrf91_socket_is_supported, nrf91_socket_create);

@@ -22,7 +22,7 @@
 extern "C" {
 #endif
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <cJSON.h>
 
 #include "cloud_codec.h"

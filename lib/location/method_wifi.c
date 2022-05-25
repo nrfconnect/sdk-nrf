@@ -5,12 +5,12 @@
  */
 
 #include <stdio.h>
-#include <zephyr.h>
-#include <device.h>
-#include <logging/log.h>
-#include <net/net_if.h>
-#include <net/net_event.h>
-#include <net/wifi_mgmt.h>
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/net/net_if.h>
+#include <zephyr/net/net_event.h>
+#include <zephyr/net/wifi_mgmt.h>
 #include <modem/location.h>
 
 #include "location_core.h"
@@ -21,8 +21,7 @@ LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
 BUILD_ASSERT(
 	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD) ||
-	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE) ||
-	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_SERVICE_SKYHOOK),
+	IS_ENABLED(CONFIG_LOCATION_METHOD_WIFI_SERVICE_HERE),
 	"At least one Wi-Fi positioning service must be enabled");
 
 struct method_wifi_start_work_args {
@@ -217,14 +216,14 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 			location_result.longitude = result.longitude;
 			location_result.accuracy = result.accuracy;
 			if (running) {
-				location_core_event_cb(&location_result);
 				running = false;
+				location_core_event_cb(&location_result);
 			}
 		}
 	} else {
 		if (latest_scan_result_count == 1) {
 			/* Following statement seems to be true at least with HERE
-			 * (400: bad request) and also with Skyhook (404: not found).
+			 * (400: bad request).
 			 * Thus, fail faster in this case and save the data transfer costs.
 			 */
 			LOG_WRN("Retrieving a location based on a single Wi-Fi "

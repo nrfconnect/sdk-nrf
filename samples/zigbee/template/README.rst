@@ -16,9 +16,7 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf5340dk_nrf5340_cpuapp, nrf21540dk_nrf52840
+.. table-from-sample-yaml::
 
 You can use one or more of the development kits listed above and mix different development kits.
 
@@ -56,7 +54,7 @@ Button 4:
     Depending on how long the button is pressed:
 
     * If pressed for less than five seconds, it starts or cancels the Identify mode.
-    * If pressed for five seconds, it initiates the factory reset of the device.
+    * If pressed for five seconds, it initiates the `factory reset of the device <Resetting to factory defaults_>`_.
       The length of the button press can be edited using the :kconfig:option:`CONFIG_FACTORY_RESET_PRESS_TIME_SECONDS` Kconfig option from :ref:`lib_zigbee_application_utilities`.
       Releasing the button within this time does not trigger the factory reset procedure.
 

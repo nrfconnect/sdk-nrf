@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <sys/printk.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/printk.h>
 #include <string.h>
 #include <stdio.h>
 #include <tfm_ns_interface.h>
@@ -62,63 +62,85 @@ static void print_hex_number(uint8_t *num, size_t len)
 void main(void)
 {
 	char hello_string[sizeof(HELLO_PATTERN) + sizeof(CONFIG_BOARD)];
-	char hello_digest[32];
-	uint8_t random_bytes[32];
 	size_t len;
-	psa_status_t status;
 
 	len = snprintf(hello_string, sizeof(hello_string),
 		HELLO_PATTERN, CONFIG_BOARD);
 
 	printk("%s\n", hello_string);
 
-	printk("Generating random number\n");
-	status = psa_generate_random(random_bytes, sizeof(random_bytes));
-	if (status != PSA_SUCCESS) {
-		printk("psa_generate_random failed with status %d\n", status);
-	} else {
-		print_hex_number(random_bytes, sizeof(random_bytes));
+	if (IS_ENABLED(CONFIG_TFM_PARTITION_PLATFORM)) {
+		uint32_t part;
+
+		printk("Reading some secure memory that NS is allowed to read\n");
+
+		NRF_TIMER1_NS->TASKS_START = 1;
+		part = secure_read_word((intptr_t)&NRF_FICR_S->INFO.PART);
+		NRF_TIMER1_NS->TASKS_CAPTURE[0] = 1;
+		printk("Approximate IPC overhead us: %d\n", NRF_TIMER1_NS->CC[0]);
+
+		printk("FICR->INFO.PART: 0x%08x\n", part);
+		printk("FICR->INFO.VARIANT: 0x%08x\n",
+			secure_read_word((intptr_t)&NRF_FICR_S->INFO.VARIANT));
 	}
 
-	printk("Reading some secure memory that NS is allowed to read\n");
+	if (IS_ENABLED(CONFIG_TFM_CRYPTO_RNG_MODULE_ENABLED)) {
+		psa_status_t status;
+		uint8_t random_bytes[32];
 
-	NRF_TIMER1_NS->TASKS_START = 1;
-
-	uint32_t part = secure_read_word((intptr_t)&NRF_FICR_S->INFO.PART);
-
-	NRF_TIMER1_NS->TASKS_CAPTURE[0] = 1;
-
-	printk("Approximate IPC overhead us: %d\n", NRF_TIMER1_NS->CC[0]);
-
-	printk("FICR->INFO.PART: 0x%08x\n", part);
-	printk("FICR->INFO.VARIANT: 0x%08x\n",
-		secure_read_word((intptr_t)&NRF_FICR_S->INFO.VARIANT));
-
-	printk("Hashing '%s'\n", hello_string);
-	status = psa_crypto_init();
-	if (status != PSA_SUCCESS) {
-		printk("psa_crypto_init failed with status %d\n", status);
-	}
-	status = psa_hash_compute(PSA_ALG_SHA_256, hello_string,
-					strlen(hello_string), hello_digest,
-					sizeof(hello_digest), &len);
-
-	if (status != PSA_SUCCESS) {
-		printk("psa_hash_compute failed with status %d\n", status);
-	} else {
-		printk("SHA256 digest:\n");
-		print_hex_number(hello_digest, 32);
+		printk("Generating random number\n");
+		status = psa_generate_random(random_bytes, sizeof(random_bytes));
+		if (status != PSA_SUCCESS) {
+			printk("psa_generate_random failed with status %d\n", status);
+		} else {
+			print_hex_number(random_bytes, sizeof(random_bytes));
+		}
 	}
 
+	if (IS_ENABLED(CONFIG_TFM_CRYPTO_HASH_MODULE_ENABLED)) {
+		psa_status_t status;
+		char hello_digest[32];
+
+		printk("Hashing '%s'\n", hello_string);
+		status = psa_crypto_init();
+		if (status != PSA_SUCCESS) {
+			printk("psa_crypto_init failed with status %d\n", status);
+		}
+		status = psa_hash_compute(PSA_ALG_SHA_256, hello_string,
+						strlen(hello_string), hello_digest,
+						sizeof(hello_digest), &len);
+
+		if (status != PSA_SUCCESS) {
+			printk("psa_hash_compute failed with status %d\n", status);
+		} else {
+			printk("SHA256 digest:\n");
+			print_hex_number(hello_digest, 32);
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_TFM_PARTITION_PLATFORM)) {
 #if defined(GPIO_PIN_CNF_MCUSEL_Msk)
-	/* Configure properly the XL1 and XL2 pins so that the low-frequency crystal
-	 * oscillator (LFXO) can be used.
-	 * This configuration has already been done by TF-M so this is redundant.
-	 */
-	gpio_pin_mcu_select(PIN_XL1, NRF_GPIO_PIN_MCUSEL_PERIPHERAL);
-	gpio_pin_mcu_select(PIN_XL2, NRF_GPIO_PIN_MCUSEL_PERIPHERAL);
-	printk("MCU selection configured\n");
+		/* Configure properly the XL1 and XL2 pins so that the low-frequency crystal
+		 * oscillator (LFXO) can be used.
+		 * This configuration has already been done by TF-M so this is redundant.
+		 */
+		gpio_pin_mcu_select(PIN_XL1, NRF_GPIO_PIN_MCUSEL_PERIPHERAL);
+		gpio_pin_mcu_select(PIN_XL2, NRF_GPIO_PIN_MCUSEL_PERIPHERAL);
+		printk("MCU selection configured\n");
 #else
-	printk("MCU selection skipped\n");
+		printk("MCU selection skipped\n");
 #endif /* defined(GPIO_PIN_CNF_MCUSEL_Msk) */
+
+#ifdef PM_S1_ADDRESS
+		bool s0_active = false;
+		int ret;
+
+		ret = tfm_platform_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, &s0_active);
+		if (ret != 0) {
+			printk("Unexpected failure from spm_s0_active: %d\n", ret);
+		}
+
+		printk("S0 active? %s\n", s0_active ? "True" : "False");
+#endif /*  PM_S1_ADDRESS */
+	}
 }

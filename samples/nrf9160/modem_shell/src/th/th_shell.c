@@ -6,7 +6,7 @@
 
 #include <stdlib.h>
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 
 #include "th/th_ctrl.h"
 #include "mosh_print.h"

@@ -3,11 +3,11 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <logging/log.h>
-#include <zephyr.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <string.h>
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #include <modem/modem_info.h>
 #include <modem/modem_key_mgmt.h>
 #include "slm_util.h"

@@ -5,7 +5,7 @@
  */
 
 #include <string.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <nrf_modem_at.h>
 #include <modem/lte_lc.h>
 #include <modem/location.h>
@@ -13,30 +13,28 @@
 
 static K_SEM_DEFINE(location_event, 0, 1);
 
-static void antenna_configure(void)
-{
-	int err;
-
-	if (strlen(CONFIG_LOCATION_SAMPLE_GNSS_AT_MAGPIO) > 0) {
-		err = nrf_modem_at_printf("%s", CONFIG_LOCATION_SAMPLE_GNSS_AT_MAGPIO);
-		if (err) {
-			printk("Failed to set MAGPIO configuration\n");
-		}
-	}
-
-	if (strlen(CONFIG_LOCATION_SAMPLE_GNSS_AT_COEX0) > 0) {
-		err = nrf_modem_at_printf("%s", CONFIG_LOCATION_SAMPLE_GNSS_AT_COEX0);
-		if (err) {
-			printk("Failed to set COEX0 configuration\n");
-		}
-	}
-}
+static K_SEM_DEFINE(lte_connected, 0, 1);
 
 static K_SEM_DEFINE(time_update_finished, 0, 1);
 
 static void date_time_evt_handler(const struct date_time_evt *evt)
 {
 	k_sem_give(&time_update_finished);
+}
+
+static void lte_event_handler(const struct lte_lc_evt *const evt)
+{
+	switch (evt->type) {
+	case LTE_LC_EVT_NW_REG_STATUS:
+		if ((evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
+		     (evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+			printk("Connected to LTE\n");
+			k_sem_give(&lte_connected);
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 static void location_event_handler(const struct location_event_data *event_data)
@@ -242,8 +240,6 @@ int main(void)
 
 	printk("Location sample started\n\n");
 
-	antenna_configure();
-
 	if (IS_ENABLED(CONFIG_DATE_TIME)) {
 		/* Registering early for date_time event handler to avoid missing
 		 * the first event after LTE is connected.
@@ -254,11 +250,13 @@ int main(void)
 	printk("Connecting to LTE...\n");
 
 	lte_lc_init();
+	lte_lc_register_handler(lte_event_handler);
+
 	/* Enable PSM. */
 	lte_lc_psm_req(true);
 	lte_lc_connect();
 
-	printk("Connected to LTE\n");
+	k_sem_take(&lte_connected, K_FOREVER);
 
 	/* A-GPS/P-GPS needs to know the current time. */
 	if (IS_ENABLED(CONFIG_DATE_TIME)) {

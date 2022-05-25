@@ -19,9 +19,7 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpunet, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf21540dk_nrf52840
+.. table-from-sample-yaml::
 
 You can use any one of the development kits listed above.
 
@@ -106,7 +104,7 @@ User interface
      - Start channel for the sweep or the channel for the constant carrier (in MHz, as difference from 2400 MHz).
    * - start_duty_cycle_modulated_tx
      - <duty_cycle>
-     - Duty cycle in percent (two decimal digits, between 01 and 99).
+     - Duty cycle in percent (two decimal digits, between 01 and 90).
    * - start_rx
      -
      - Start RX.
@@ -145,12 +143,29 @@ Building and running
    The :ref:`nrf5340_empty_app_core` is built and programmed automatically by default.
    If you want to program another sample for the application core, unset the :kconfig:option:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE` option.
 
+Remote IPC Service Shell variant
+================================
+
+This sample has a possibility to run the remote IPC Service Shell through nRF5340 DK application core USB or UART peripheral.
+For example, when building on the command line, you can do so as follows:
+
+.. code-block:: console
+
+  west build samples/peripheral/radio_test -b nrf5340dk_nrf5340_cpunet -- -DCONF_FILE='prj_ipc_shell.conf'
+
+You can also build this sample with the remote IPC Service Shell and support for the front-end module.
+You can use the following command:
+
+.. code-block:: console
+
+  west build -b nrf5340dk_nrf5340_cpunet -- -DCONF_FILE=prj_ipc_shell.conf -DSHIELD=nrf21540_ek -Dremote_shell_SHIELD=nrf21540_ek
+
 .. _radio_test_testing:
 
 Testing
 =======
 
-After programming the sample to your development kit, complete the folowing steps to test it in one of the following two ways:
+After programming the sample to your development kit, complete the following steps to test it in one of the following two ways:
 
 .. note::
    For the |nRF5340DKnoref|, see :ref:`logging_cpunet` for information about the COM terminals on which the logging output is available.

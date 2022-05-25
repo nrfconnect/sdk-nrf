@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <soc.h>
-#include <device.h>
-#include <drivers/gpio.h>
-#include <sys/util.h>
-#include <logging/log.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/logging/log.h>
 #include <nrfx.h>
 #include <dk_buttons_and_leds.h>
 

@@ -5,24 +5,24 @@
  */
 
 #include <string.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 
 #if defined(CONFIG_POSIX_API)
-#include <posix/arpa/inet.h>
-#include <posix/unistd.h>
-#include <posix/netdb.h>
-#include <posix/sys/socket.h>
+#include <zephyr/posix/arpa/inet.h>
+#include <zephyr/posix/unistd.h>
+#include <zephyr/posix/netdb.h>
+#include <zephyr/posix/sys/socket.h>
 #else
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #endif
-#include <net/tls_credentials.h>
-#include <net/http_client.h>
-#include <net/http_parser.h>
+#include <zephyr/net/tls_credentials.h>
+#include <zephyr/net/http_client.h>
+#include <zephyr/net/http_parser.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include <net/rest_client.h>
 
@@ -46,8 +46,8 @@ static void rest_client_http_response_cb(struct http_response *rsp,
 	 * which will be the start of the body.
 	 */
 	if (resp_ctx) {
-		if (!resp_ctx->response && rsp->body_found && rsp->body_start) {
-			resp_ctx->response = rsp->body_start;
+		if (!resp_ctx->response && rsp->body_found && rsp->body_frag_start) {
+			resp_ctx->response = rsp->body_frag_start;
 		}
 		resp_ctx->total_response_len += rsp->data_len;
 	}

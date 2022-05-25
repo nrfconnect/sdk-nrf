@@ -4,26 +4,27 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <drivers/sensor.h>
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/sensor.h>
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
 
 #include "accelerometer.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(accelerometer, CONFIG_APP_LOG_LEVEL);
 
-#if defined(CONFIG_ACCEL_USE_EXTERNAL)
-#define ACCEL_NODE			DT_PATH(soc, peripheral_40000000, spi_b000, adxl362_0)
-#define ACCEL_DEV_LABEL		DT_LABEL(ACCEL_NODE)
-#elif defined(CONFIG_ACCEL_USE_SIM)
-#define ACCEL_DEV_LABEL		"SENSOR_SIM"
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(sensor_sim), okay)
+#define ACCEL_NODE DT_NODELABEL(sensor_sim)
+#else
+#define ACCEL_NODE DT_NODELABEL(adxl362)
 #endif
 
 #if defined(CONFIG_ACCEL_CALIBRATE_ON_STARTUP)
 #define CALIBRATION_ITERATIONS CONFIG_ACCEL_CALIBRATION_ITERATIONS
 #endif
 
-static const struct device *accel_dev;
+static const struct device *accel_dev = DEVICE_DT_GET(ACCEL_NODE);
 
 static double accel_offset[3];
 
@@ -100,9 +101,8 @@ static int accelerometer_calibrate(void)
 
 int accelerometer_init(void)
 {
-	accel_dev = device_get_binding(ACCEL_DEV_LABEL);
-	if (!accel_dev) {
-		LOG_ERR("Could not get accelerometer device (%d)", -ENODEV);
+	if (!device_is_ready(accel_dev)) {
+		LOG_ERR("Accelerometer device not ready");
 		return -ENODEV;
 	}
 

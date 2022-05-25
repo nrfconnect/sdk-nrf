@@ -1,37 +1,44 @@
 sample:
-  name: Matter Light Bulb
   description: Matter Light Bulb example
+  name: Matter Light Bulb
 tests:
-  matter.light_bulb.debug:
+  sample.matter.light_bulb.debug:
     build_only: true
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
-      - nrf21540dk_nrf52840
-    tags: ci_build
-  matter.light_bulb.release:
-    build_only: true
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
-    integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf21540dk_nrf52840
-    tags: ci_build
-    extra_args: CONF_FILE=prj_release.conf
-  matter.light_bulb.no_dfu:
-    build_only: true
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
-    integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
     tags: ci_build
+  sample.matter.light_bulb.no_dfu:
+    build_only: true
     extra_args: CONF_FILE=prj_no_dfu.conf
-  matter.light_bulb.smp_dfu:
-    build_only: true
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
+      - nrf21540dk_nrf52840
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
     tags: ci_build
-    extra_args: "OVERLAY_CONFIG=../../overlay-smp_dfu.conf"
+  sample.matter.light_bulb.release:
+    build_only: true
+    extra_args: CONF_FILE=prj_release.conf
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
+  sample.matter.light_bulb.smp_dfu:
+    build_only: true
+    extra_args: CONFIG_CHIP_DFU_OVER_BT_SMP=y
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    tags: ci_build
+  sample.matter.light_bulb.ffs:
+    build_only: true
+    extra_args: CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE=y CONFIG_CHIP_ROTATING_DEVICE_ID=y CONFIG_CHIP_DEVICE_TYPE=257
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    tags: ci_build

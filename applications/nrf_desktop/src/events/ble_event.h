@@ -13,11 +13,11 @@
  * @{
  */
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/conn.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/conn.h>
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 #include "hwid.h"
 
 #if CONFIG_DESKTOP_BLE_QOS_ENABLE
@@ -38,7 +38,7 @@ enum peer_type {
 
 /** @brief BLE discovery complete event. */
 struct ble_discovery_complete_event {
-	struct event_header header;
+	struct app_event_header header;
 
 	struct bt_gatt_dm *dm;
 	uint16_t pid;
@@ -46,16 +46,16 @@ struct ble_discovery_complete_event {
 	bool peer_llpm_support;
 	enum peer_type peer_type;
 };
-EVENT_TYPE_DECLARE(ble_discovery_complete_event);
+APP_EVENT_TYPE_DECLARE(ble_discovery_complete_event);
 
 #if CONFIG_DESKTOP_BLE_QOS_ENABLE
 /** @brief BLE QoS event. */
 struct ble_qos_event {
-	struct event_header header;
+	struct app_event_header header;
 
 	uint8_t chmap[CHMAP_BLE_BITMASK_SIZE];
 };
-EVENT_TYPE_DECLARE(ble_qos_event);
+APP_EVENT_TYPE_DECLARE(ble_qos_event);
 #endif
 
 #ifdef __cplusplus

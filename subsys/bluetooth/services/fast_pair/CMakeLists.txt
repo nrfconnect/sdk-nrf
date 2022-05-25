@@ -1,0 +1,64 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+zephyr_library_named(fast_pair)
+
+zephyr_library_include_directories(include)
+
+zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_ADVERTISING	   fp_advertising.c)
+zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_AUTH		   fp_auth.c)
+zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_CRYPTO 	   crypto/fp_crypto_common.c)
+zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_CRYPTO_MBEDTLS	   crypto/fp_crypto_mbedtls.c)
+zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_CRYPTO_TINYCRYPT  crypto/fp_crypto_tinycrypt.c)
+zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_GATT_SERVICE	   fp_gatt_service.c)
+zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_KEYS		   fp_keys.c)
+zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_REGISTRATION_DATA fp_registration_data.c)
+zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_STORAGE	   fp_storage.c)
+
+set(FP_PARTITION_NAME bt_fast_pair)
+
+set(
+  FP_PROVISIONING_DATA_HEX
+  ${CMAKE_BINARY_DIR}/modules/nrf/subsys/bluetooth/services/fast_pair/fp_provisioning_data.hex
+  )
+
+set(FP_PROVISIONING_DATA_ADDRESS $<TARGET_PROPERTY:partition_manager,PM_BT_FAST_PAIR_ADDRESS>)
+
+if(NOT DEFINED FP_MODEL_ID OR NOT DEFINED FP_ANTI_SPOOFING_KEY)
+  message(FATAL_ERROR "FP_MODEL_ID and FP_ANTI_SPOOFING_KEY build variables must be specified.")
+endif()
+
+add_custom_command(
+  OUTPUT
+  ${FP_PROVISIONING_DATA_HEX}
+  DEPENDS
+  "${CMAKE_BINARY_DIR}/pm.config"
+  COMMAND
+  ${PYTHON_EXECUTABLE} ${NRF_DIR}/scripts/nrf_provision/fast_pair/fp_provision_cli.py
+                       -o ${FP_PROVISIONING_DATA_HEX} -a ${FP_PROVISIONING_DATA_ADDRESS}
+                       -m ${FP_MODEL_ID} -k ${FP_ANTI_SPOOFING_KEY}
+  COMMENT
+  "Generating Fast Pair provisioning data hex file"
+  USES_TERMINAL
+  )
+
+add_custom_target(
+  ${FP_PARTITION_NAME}_target
+  DEPENDS
+  "${FP_PROVISIONING_DATA_HEX}"
+  )
+
+set_property(
+  GLOBAL PROPERTY
+  ${FP_PARTITION_NAME}_PM_HEX_FILE
+  "${FP_PROVISIONING_DATA_HEX}"
+  )
+
+set_property(
+  GLOBAL PROPERTY
+  ${FP_PARTITION_NAME}_PM_TARGET
+  ${FP_PARTITION_NAME}_target
+  )

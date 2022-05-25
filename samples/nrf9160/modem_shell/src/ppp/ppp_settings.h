@@ -9,7 +9,7 @@
 
 int ppp_settings_init(void);
 
-#include <drivers/uart.h>
+#include <zephyr/drivers/uart.h>
 
 int ppp_uart_settings_read(struct uart_config *uart_conf);
 int ppp_uart_settings_write(struct uart_config *uart_conf);

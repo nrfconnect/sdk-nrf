@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/types.h>
-#include <sys/printk.h>
+#include <zephyr/sys/printk.h>
 #include <pm_config.h>
 #include <fw_info.h>
 #include <fprotect.h>
@@ -13,16 +13,20 @@
 #include <bl_boot.h>
 #include <bl_validation.h>
 #include <dfu/pcd.h>
-#include <device.h>
-
-#define FLASH_NAME DT_CHOSEN_ZEPHYR_FLASH_CONTROLLER_LABEL
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
 
 void main(void)
 {
-	int err = fprotect_area(PM_B0N_CONTAINER_ADDRESS,
-				PM_B0N_CONTAINER_SIZE);
-	const struct device *fdev = device_get_binding(FLASH_NAME);
+	int err;
+	const struct device *fdev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
 
+	if (!device_is_ready(fdev)) {
+		printk("Flash device not ready\n");
+		return;
+	}
+
+	err = fprotect_area(PM_B0N_CONTAINER_ADDRESS, PM_B0N_CONTAINER_SIZE);
 	if (err) {
 		printk("Failed to protect b0n flash, cancel startup\n\r");
 		goto failure;

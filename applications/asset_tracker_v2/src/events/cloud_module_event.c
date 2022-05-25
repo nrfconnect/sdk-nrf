@@ -20,16 +20,22 @@ static char *get_evt_type_str(enum cloud_module_event_type type)
 		return "CLOUD_EVT_CONNECTING";
 	case CLOUD_EVT_CONNECTION_TIMEOUT:
 		return "CLOUD_EVT_CONNECTION_TIMEOUT";
+	case CLOUD_EVT_LTE_CONNECT:
+		return "CLOUD_EVT_LTE_CONNECT";
+	case CLOUD_EVT_LTE_DISCONNECT:
+		return "CLOUD_EVT_LTE_DISCONNECT";
 	case CLOUD_EVT_USER_ASSOCIATION_REQUEST:
 		return "CLOUD_EVT_USER_ASSOCIATION_REQUEST";
 	case CLOUD_EVT_USER_ASSOCIATED:
 		return "CLOUD_EVT_USER_ASSOCIATED";
+	case CLOUD_EVT_REBOOT_REQUEST:
+		return "CLOUD_EVT_REBOOT_REQUEST";
 	case CLOUD_EVT_CONFIG_RECEIVED:
 		return "CLOUD_EVT_CONFIG_RECEIVED";
 	case CLOUD_EVT_CONFIG_EMPTY:
 		return "CLOUD_EVT_CONFIG_EMPTY";
-	case CLOUD_EVT_DATA_ACK:
-		return "CLOUD_EVT_DATA_ACK";
+	case CLOUD_EVT_DATA_SEND_QOS:
+		return "CLOUD_EVT_DATA_SEND_QOS";
 	case CLOUD_EVT_SHUTDOWN_READY:
 		return "CLOUD_EVT_SHUTDOWN_READY";
 	case CLOUD_EVT_FOTA_START:
@@ -45,33 +51,35 @@ static char *get_evt_type_str(enum cloud_module_event_type type)
 	}
 }
 
-static void log_event(const struct event_header *eh)
+static void log_event(const struct app_event_header *aeh)
 {
-	const struct cloud_module_event *event = cast_cloud_module_event(eh);
+	const struct cloud_module_event *event = cast_cloud_module_event(aeh);
 
-	EVENT_MANAGER_LOG(eh, "%s", get_evt_type_str(event->type));
+	APP_EVENT_MANAGER_LOG(aeh, "%s", get_evt_type_str(event->type));
 }
 
-#if defined(CONFIG_PROFILER)
+#if defined(CONFIG_NRF_PROFILER)
 
 static void profile_event(struct log_event_buf *buf,
-			 const struct event_header *eh)
+			 const struct app_event_header *aeh)
 {
-	const struct cloud_module_event *event = cast_cloud_module_event(eh);
+	const struct cloud_module_event *event = cast_cloud_module_event(aeh);
 
-#if defined(CONFIG_PROFILER_EVENT_TYPE_STRING)
-	profiler_log_encode_string(buf, get_evt_type_str(event->type));
+#if defined(CONFIG_NRF_PROFILER_EVENT_TYPE_STRING)
+	nrf_profiler_log_encode_string(buf, get_evt_type_str(event->type));
 #else
-	profiler_log_encode_uint8(buf, event->type);
+	nrf_profiler_log_encode_uint8(buf, event->type);
 #endif
 }
 
-COMMON_EVENT_INFO_DEFINE(cloud_module_event,
+COMMON_APP_EVENT_INFO_DEFINE(cloud_module_event,
 			 profile_event);
 
-#endif /* CONFIG_PROFILER */
+#endif /* CONFIG_NRF_PROFILER */
 
-COMMON_EVENT_TYPE_DEFINE(cloud_module_event,
-			 CONFIG_CLOUD_EVENTS_LOG,
+COMMON_APP_EVENT_TYPE_DEFINE(cloud_module_event,
 			 log_event,
-			 &cloud_module_event_info);
+			 &cloud_module_event_info,
+			 APP_EVENT_FLAGS_CREATE(
+				IF_ENABLED(CONFIG_CLOUD_EVENTS_LOG,
+					(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

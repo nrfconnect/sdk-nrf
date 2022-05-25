@@ -97,4 +97,4 @@ ZB_AF_SIMPLE_DESC_TYPE(in_clust_num, out_clust_num) simple_desc_##ep_name = {  \
 			0, NULL, /* No reporting ctx */                        \
 			0, NULL)
 
-#endif /* ZIGBEE_OTA__H */
+#endif /* ZIGBEE_OTA_H__ */

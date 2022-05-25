@@ -5,7 +5,7 @@
  */
 
 #include <stdio.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <string.h>
 #include <modem/sms.h>
 

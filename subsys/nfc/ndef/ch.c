@@ -5,7 +5,7 @@
  */
 #include <stddef.h>
 #include <errno.h>
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 #include <nfc/ndef/ch.h>
 
 #define HS_REC_VERSION_SIZE 1

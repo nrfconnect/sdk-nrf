@@ -7,7 +7,7 @@
 #ifndef UI_SENSE_LED_H__
 #define UI_SENSE_LED_H__
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -16,11 +16,9 @@ Requirements
 
 This sample supports the following development kit:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf9160dk_nrf9160_ns
+.. table-from-sample-yaml::
 
-.. include:: /includes/spm.txt
+.. include:: /includes/tfm.txt
 
 Overview
 ********
@@ -40,7 +38,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/fmfu_smp_svr`
 
-.. include:: /includes/build_and_run_nrf9160.txt
+.. include:: /includes/build_and_run_ns.txt
 
 To use the UART overlay for increasing the transfer speed, add the ``-DDTC_OVERLAY_FILE=uart.overlay`` flag to your build.
 See :ref:`cmake_options` for instructions on how to add this flag.

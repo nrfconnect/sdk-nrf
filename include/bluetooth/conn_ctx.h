@@ -14,9 +14,9 @@
 #ifndef BT_CONN_CTX_H_
 #define BT_CONN_CTX_H_
 
-#include <zephyr.h>
-#include <sys/__assert.h>
-#include <bluetooth/conn.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/__assert.h>
+#include <zephyr/bluetooth/conn.h>
 
 #ifdef __cplusplus
 extern "C" {

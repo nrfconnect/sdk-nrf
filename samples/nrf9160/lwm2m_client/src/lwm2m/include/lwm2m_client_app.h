@@ -7,8 +7,8 @@
 #ifndef LWM2M_CLIENT_APP_H__
 #define LWM2M_CLIENT_APP_H__
 
-#include <zephyr.h>
-#include <net/lwm2m.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/lwm2m.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,6 +54,10 @@ int lwm2m_init_onoff_switch(void);
 
 #if defined(CONFIG_LWM2M_APP_ACCELEROMETER)
 int lwm2m_init_accel(void);
+#endif
+
+#if defined(CONFIG_LWM2M_PORTFOLIO_OBJ_SUPPORT)
+int lwm2m_init_portfolio_object(void);
 #endif
 
 #ifdef __cplusplus

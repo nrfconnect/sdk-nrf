@@ -97,6 +97,17 @@ config MPSL_FEM_NRF21540_RX_GAIN_DB
 	  The default value of 13 dB is based on nRF21540 Product Specification
 	  (v1.0)
 
+config MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL
+	bool "Support for a run-time PA gain control of the nRF21540 FEM"
+	help
+	  If this option is enabled the PA gain will be controlled during run-time by setting
+	  appropriate level of MODE pin of the nRF21540 device. Initial default gain is determined by
+	  MPSL_FEM_NRF21540_TX_GAIN_DB. The MODE is switched during run-time based on required transmit
+	  power and selects between gain MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA and
+	  MPSL_FEM_NRF21540_TX_GAIN_DB_POUTB.
+	  If this option is disabled the PA gain will be constant during run-time and is
+	  determined by MPSL_FEM_NRF21540_TX_GAIN_DB.
+
 endif
 
 endif	# MPSL_FEM

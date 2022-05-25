@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <nrfx_nvmc.h>
-#include <storage/flash_map.h>
+#include <zephyr/storage/flash_map.h>
 
 #include <memfault/components.h>
 #include <memfault/ports/buffered_coredump_storage.h>

@@ -1,0 +1,51 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ / {
+
+	reserved-memory {
+
+		/delete-node/ memory@20070000;
+
+		sram0_shared: memory@20070000 {
+			/* SRAM allocated to shared memory */
+			reg = <0x20070000 0xe000>;
+		};
+
+		sram0_aggregator_area0: memory@2007e000 {
+			reg = <0x2007e000 0x1000>;
+		};
+
+		sram0_aggregator_area1: memory@2007f000 {
+			reg = <0x2007f000 0x1000>;
+		};
+	};
+
+	sensor_sim: sensor_sim {
+		compatible = "nordic,sensor-sim";
+		label = "SENSOR_SIM";
+		acc-signal = "wave";
+	};
+
+	agg0: agg0 {
+		compatible = "caf,aggregator";
+		sensor_descr = "accel_sim_xyz";
+		buf_data_length = <120>;
+		sensor_data_size = <12>;
+		memory-region = <&sram0_aggregator_area0>;
+		status = "okay";
+	};
+
+	agg1: agg1 {
+		compatible = "caf,aggregator";
+		sensor_descr = "void_test_sensor";
+		buf_data_length = <80>;
+		sensor_data_size = <8>;
+		memory-region = <&sram0_aggregator_area1>;
+		status = "okay";
+	};
+
+};

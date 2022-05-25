@@ -52,9 +52,7 @@ Requirements
 
 The sample supports the following nRF52840-based device:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: thingy91_nrf52840
+.. table-from-sample-yaml::
 
 The sample also requires a USB host which can communicate with CDC ACM devices, such as a Windows or Linux PC.
 
@@ -81,7 +79,7 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
-* :ref:`event_manager`
+* :ref:`app_event_manager`
 * :ref:`nus_service_readme`
 
 In addition, it uses the following Zephyr libraries:

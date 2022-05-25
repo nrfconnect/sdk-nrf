@@ -48,7 +48,7 @@ html_show_sourcelink = True
 html_show_sphinx = False
 html_show_copyright = False
 
-html_theme_options = {"docsets": utils.get_docsets("tfm")}
+html_theme_options = {"docsets": utils.ALL_DOCSETS}
 
 # Options for autosectionlabel -------------------------------------------------
 

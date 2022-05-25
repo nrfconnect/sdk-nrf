@@ -4,4 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config ZTEST_MULTICORE_DEFAULT_SETTINGS
+	bool "Implement default image for multicore boards"
+	default y
+
 rsource "unity/Kconfig"

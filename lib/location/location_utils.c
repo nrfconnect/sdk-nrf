@@ -5,12 +5,12 @@
  */
 
 #include <stdio.h>
-#include <zephyr.h>
-#include <logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <posix/time.h>
+#include <zephyr/posix/time.h>
 
 #include <nrf_modem_at.h>
 #include <modem/at_cmd_parser.h>

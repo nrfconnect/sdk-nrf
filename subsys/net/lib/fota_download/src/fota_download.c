@@ -4,18 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <net/fota_download.h>
 #include <net/download_client.h>
 #include <pm_config.h>
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 
 #if defined(PM_S1_ADDRESS) || defined(CONFIG_DFU_TARGET_MCUBOOT)
 /* MCUBoot support is required */
 #include <fw_info.h>
-#ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
+#ifdef CONFIG_SPM
 #include <secure_services.h>
+#elif CONFIG_BUILD_WITH_TFM
+#include <tfm_ioctl_api.h>
 #endif
 #include <dfu/dfu_target_mcuboot.h>
 #endif
@@ -225,7 +227,8 @@ static int download_client_callback(const struct download_client_evt *event)
 		 * or non-zero to stop
 		 */
 		if ((socket_retries_left) && ((event->error == -ENOTCONN) ||
-					      (event->error == -ECONNRESET))) {
+					      (event->error == -ECONNRESET) ||
+					      (event->error == -ETIMEDOUT))) {
 			LOG_WRN("Download socket error. %d retries left...",
 				socket_retries_left);
 			socket_retries_left--;
@@ -304,28 +307,23 @@ static bool is_ip_address(const char *host)
 	return false;
 }
 
-int fota_download_s0_active_get(bool *const s0_active)
+#if !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE)
+static int read_s0_active(uint32_t s0_address, uint32_t s1_address,
+			  bool *const s0_active)
 {
+	const struct fw_info *s0;
+	const struct fw_info *s1;
+
 	if (!s0_active) {
 		return -EINVAL;
 	}
 
-#ifdef PM_S1_ADDRESS
-#ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
-	if (spm_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, s0_active)) {
-		return -ENODEV;
-	}
-
-#else /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
-	const struct fw_info *s0;
-	const struct fw_info *s1;
-
-	s0 = fw_info_find(PM_S0_ADDRESS);
+	s0 = fw_info_find(s0_address);
 	if (s0 == NULL) {
 		return -EFAULT;
 	}
 
-	s1 = fw_info_find(PM_S1_ADDRESS);
+	s1 = fw_info_find(s1_address);
 	if (s1 == NULL) {
 		/* No s1 found, s0 is active */
 		*s0_active = true;
@@ -333,8 +331,28 @@ int fota_download_s0_active_get(bool *const s0_active)
 		/* Both s0 and s1 found, check who is active */
 		*s0_active = s0->version >= s1->version;
 	}
-#endif /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
+
 	return 0;
+}
+#endif /* !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE) */
+
+int fota_download_s0_active_get(bool *const s0_active)
+{
+#ifdef PM_S1_ADDRESS
+	int err;
+
+#ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
+#if CONFIG_SPM_SERVICE_S0_ACTIVE
+	err = spm_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, s0_active);
+#elif CONFIG_BUILD_WITH_TFM
+	err = tfm_platform_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, s0_active);
+#else
+#error "Not possible to read s0 active status"
+#endif
+#else /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
+	err = read_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, s0_active);
+#endif /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
+	return err;
 #else /* PM_S1_ADDRESS */
 	return -ENOENT;
 #endif /* PM_S1_ADDRESS */
@@ -427,6 +445,13 @@ int fota_download_init(fota_download_callback_t client_callback)
 	int err;
 
 	callback = client_callback;
+
+#ifdef CONFIG_FOTA_DOWNLOAD_NATIVE_TLS
+	/* Enable native TLS for the download client socket
+	 * if configured.
+	 */
+	dlc.set_native_tls = CONFIG_FOTA_DOWNLOAD_NATIVE_TLS;
+#endif
 
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
 	/* Set the required buffer for MCUboot targets */

@@ -4,29 +4,28 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <modem/nrf_modem_lib.h>
 #include <dfu/dfu_target_full_modem.h>
 #include <net/fota_download.h>
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include <nrf_modem_full_dfu.h>
 #include <modem/modem_info.h>
 #include <dfu/fmfu_fdev.h>
-#include <drivers/gpio.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
 #include <stdio.h>
 #include <string.h>
 #include <update.h>
 
 /* We assume that modem version strings (not UUID) will not be more than this */
 #define MAX_MODEM_VERSION_LEN 256
-#define EXT_FLASH_DEVICE DT_LABEL(DT_INST(0, jedec_spi_nor))
-#define SW1_PIN (DT_GPIO_PIN(DT_ALIAS(sw1), gpios))
-#define SW1_FLAGS (DT_GPIO_FLAGS(DT_ALIAS(sw1), gpios))
 
 static struct k_work fmfu_work;
-static const struct device *gpiob;
-static struct gpio_callback gpio_cb;
-static const struct device *flash_dev;
+static const struct gpio_dt_spec sw1 = GPIO_DT_SPEC_GET(DT_ALIAS(sw1), gpios);
+static struct gpio_callback sw1_cb;
+static const struct device *flash_dev = DEVICE_DT_GET_ONE(jedec_spi_nor);
 static char modem_version[MAX_MODEM_VERSION_LEN];
 
 /* Buffer used as temporary storage when downloading the modem firmware, and
@@ -37,12 +36,12 @@ static uint8_t fmfu_buf[FMFU_BUF_SIZE];
 
 static void fmfu_button_irq_disable(void)
 {
-	gpio_pin_interrupt_configure(gpiob, SW1_PIN, GPIO_INT_DISABLE);
+	gpio_pin_interrupt_configure_dt(&sw1, GPIO_INT_DISABLE);
 }
 
 static void fmfu_button_irq_enable(void)
 {
-	gpio_pin_interrupt_configure(gpiob, SW1_PIN, GPIO_INT_EDGE_TO_ACTIVE);
+	gpio_pin_interrupt_configure_dt(&sw1, GPIO_INT_EDGE_TO_ACTIVE);
 }
 
 void fmfu_button_pressed(const struct device *gpiob, struct gpio_callback *cb,
@@ -109,23 +108,25 @@ static int button_init(void)
 {
 	int err;
 
-	gpiob = device_get_binding(DT_GPIO_LABEL(DT_ALIAS(sw1), gpios));
-	if (gpiob == 0) {
-		printk("Nordic nRF GPIO driver was not found!\n");
-		return 1;
+	if (!device_is_ready(sw1.port)) {
+		printk("SW1 GPIO port not ready\n");
+		return -ENODEV;
 	}
-	err = gpio_pin_configure(gpiob, SW1_PIN, GPIO_INPUT | SW1_FLAGS);
-	if (err == 0) {
-		gpio_init_callback(&gpio_cb, fmfu_button_pressed, BIT(SW1_PIN));
-		err = gpio_add_callback(gpiob, &gpio_cb);
+
+	err = gpio_pin_configure_dt(&sw1, GPIO_INPUT);
+	if (err < 0) {
+		return err;
 	}
-	if (err == 0) {
-		fmfu_button_irq_enable();
-	}
-	if (err != 0) {
+
+	gpio_init_callback(&sw1_cb, fmfu_button_pressed, BIT(sw1.pin));
+	err = gpio_add_callback(sw1.port, &sw1_cb);
+	if (err < 0) {
 		printk("Unable to configure SW1 GPIO pin!\n");
-		return 1;
+		return err;
 	}
+
+	fmfu_button_irq_enable();
+
 	return 0;
 }
 
@@ -198,9 +199,8 @@ void main(void)
 
 	printk("HTTP full modem update sample started\n");
 
-	flash_dev = device_get_binding(EXT_FLASH_DEVICE);
-	if (flash_dev == NULL) {
-		printk("Failed to get flash device: %s\n", EXT_FLASH_DEVICE);
+	if (!device_is_ready(flash_dev)) {
+		printk("Flash device %s not ready\n", flash_dev->name);
 		return;
 	}
 

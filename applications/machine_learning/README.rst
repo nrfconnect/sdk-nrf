@@ -110,10 +110,10 @@ Firmware architecture
 =====================
 
 The nRF Machine Learning application has a modular structure, where each module has a defined scope of responsibility.
-The application uses the :ref:`event_manager` to distribute events between modules in the system.
+The application uses the :ref:`app_event_manager` to distribute events between modules in the system.
 
 The following figure shows the application architecture.
-The figure visualizes relations between Event Manager, modules, drivers, and libraries.
+The figure visualizes relations between Application Event Manager, modules, drivers, and libraries.
 
 .. figure:: /images/ml_app_architecture.svg
    :alt: nRF Machine Learning application architecture
@@ -131,12 +131,12 @@ Requirements
 
 The application supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: thingy52_nrf52832, thingy53_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp
+.. table-from-sample-yaml::
 
 The available configurations use only built-in sensors or the simulated sensor signal.
 There is no need to connect any additional components to the board.
+
+.. include:: /includes/tfm.txt
 
 Programming Thingy:52
 =====================
@@ -363,7 +363,7 @@ Building and running
 The nRF machine learning application is built the same way to any other |NCS| application or sample.
 Building the default configurations requires an Internet connection, because the machine learning model source files are downloaded from web during the application build.
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 Selecting a build type
 ======================
@@ -376,13 +376,6 @@ Selecting a build type in |VSC|
 .. include:: /gs_modifying.rst
    :start-after: build_types_selection_vsc_start
    :end-before: build_types_selection_vsc_end
-
-Selecting a build type in SES
------------------------------
-
-.. include:: /gs_modifying.rst
-   :start-after: build_types_selection_ses_start
-   :end-before: build_types_selection_ses_end
 
 Selecting a build type from command line
 ----------------------------------------
@@ -533,7 +526,7 @@ See the :ref:`nrf_machine_learning_app_configuration` for detailed information a
 Application internal modules
 ****************************
 
-The nRF Machine Learning application uses modules available in :ref:`lib_caf` (CAF), a set of generic modules based on Event Manager and available to all applications and a set of dedicated internal modules.
+The nRF Machine Learning application uses modules available in :ref:`lib_caf` (CAF), a set of generic modules based on Application Event Manager and available to all applications and a set of dedicated internal modules.
 See `Firmware architecture`_ for more information.
 
 The nRF Machine Learning application uses the following modules available in CAF:
@@ -599,7 +592,7 @@ The application uses the following Zephyr drivers and libraries:
 
 The application uses the following |NCS| libraries and drivers:
 
-* :ref:`event_manager`
+* :ref:`app_event_manager`
 * :ref:`lib_caf`
 * :ref:`ei_wrapper`
 * :ref:`nus_service_readme`

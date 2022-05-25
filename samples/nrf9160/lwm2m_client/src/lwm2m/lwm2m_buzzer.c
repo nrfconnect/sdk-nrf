@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <net/lwm2m.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/lwm2m.h>
 #include <lwm2m_resource_ids.h>
 
 #include "ui_buzzer.h"
 #include "lwm2m_app_utils.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(app_lwm2m_buzzer, CONFIG_APP_LOG_LEVEL);
 
 #define FREQUENCY_START_VAL 440U

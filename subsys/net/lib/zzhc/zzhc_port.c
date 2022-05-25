@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zzhc_port, CONFIG_ZZHC_LOG_LEVEL);
 
-#include <zephyr.h>
-#include <sys/base64.h>
-#include <data/json.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/base64.h>
+#include <zephyr/data/json.h>
 #include <modem/at_cmd_parser.h>
 #include "zzhc_internal.h"
 

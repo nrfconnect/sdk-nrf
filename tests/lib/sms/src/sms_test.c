@@ -7,8 +7,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include <kernel.h>
-#include <device.h>
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
 #include <modem/sms.h>
 #include <modem/at_monitor.h>
 #include <mock_nrf_modem_at.h>
@@ -515,6 +515,7 @@ static void sms_callback(struct sms_data *const data, void *context)
 	TEST_ASSERT_EQUAL(test_sms_header.time.hour, sms_header->time.hour);
 	TEST_ASSERT_EQUAL(test_sms_header.time.minute, sms_header->time.minute);
 	TEST_ASSERT_EQUAL(test_sms_header.time.second, sms_header->time.second);
+	TEST_ASSERT_EQUAL(test_sms_header.time.timezone, sms_header->time.timezone);
 
 	TEST_ASSERT_EQUAL(test_sms_header.app_port.present, sms_header->app_port.present);
 	TEST_ASSERT_EQUAL(test_sms_header.app_port.dest_port, sms_header->app_port.dest_port);
@@ -549,6 +550,7 @@ void test_recv_len3_number13(void)
 	test_sms_header.time.hour = 20;
 	test_sms_header.time.minute = 58;
 	test_sms_header.time.second = 34;
+	test_sms_header.time.timezone = 8;
 
 	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
@@ -580,6 +582,7 @@ void test_recv_len1_number9(void)
 	test_sms_header.time.hour = 20;
 	test_sms_header.time.minute = 58;
 	test_sms_header.time.second = 34;
+	test_sms_header.time.timezone = 8;
 
 	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
@@ -609,6 +612,7 @@ void test_recv_len8_number20(void)
 	test_sms_header.time.hour = 20;
 	test_sms_header.time.minute = 58;
 	test_sms_header.time.second = 34;
+	test_sms_header.time.timezone = 8;
 
 	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
@@ -632,6 +636,7 @@ void test_recv_concat_len291_msgs2(void)
 	test_sms_header.time.hour = 23;
 	test_sms_header.time.minute = 50;
 	test_sms_header.time.second = 44;
+	test_sms_header.time.timezone = 8;
 
 	test_sms_header.concatenated.present = true;
 	test_sms_header.concatenated.total_msgs = 2;
@@ -682,6 +687,7 @@ void test_recv_concat_len755_msgs5(void)
 	test_sms_header.time.hour = 8;
 	test_sms_header.time.minute = 56;
 	test_sms_header.time.second = 5;
+	test_sms_header.time.timezone = 8;
 
 	test_sms_header.concatenated.present = true;
 	test_sms_header.concatenated.total_msgs = 5;
@@ -791,6 +797,7 @@ void test_recv_special_characters(void)
 	test_sms_header.time.hour = 20;
 	test_sms_header.time.minute = 58;
 	test_sms_header.time.second = 34;
+	test_sms_header.time.timezone = 8;
 
 	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
@@ -818,6 +825,7 @@ void test_recv_concat_escape_character_last(void)
 	test_sms_header.time.hour = 8;
 	test_sms_header.time.minute = 56;
 	test_sms_header.time.second = 5;
+	test_sms_header.time.timezone = 8;
 
 	test_sms_header.concatenated.present = true;
 	test_sms_header.concatenated.total_msgs = 2;
@@ -871,6 +879,7 @@ void test_recv_dcs1111_gsm7bit(void)
 	test_sms_header.time.hour = 20;
 	test_sms_header.time.minute = 58;
 	test_sms_header.time.second = 34;
+	test_sms_header.time.timezone = 8;
 
 	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
@@ -901,6 +910,7 @@ void test_recv_dcs1111_8bit(void)
 	test_sms_header.time.hour = 20;
 	test_sms_header.time.minute = 58;
 	test_sms_header.time.second = 34;
+	test_sms_header.time.timezone = 8;
 
 	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
@@ -927,6 +937,7 @@ void test_recv_port_addr(void)
 	test_sms_header.time.hour = 12;
 	test_sms_header.time.minute = 34;
 	test_sms_header.time.second = 56;
+	test_sms_header.time.timezone = -32;
 
 	test_sms_header.app_port.present = true;
 	test_sms_header.app_port.dest_port = 2948;
@@ -978,6 +989,7 @@ void test_recv_empty_sms_text(void)
 	test_sms_header.time.hour = 20;
 	test_sms_header.time.minute = 58;
 	test_sms_header.time.second = 34;
+	test_sms_header.time.timezone = 8;
 
 	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
@@ -1145,6 +1157,7 @@ void test_recv_invalid_udl_shorter_than_ud_7bit(void)
 	test_sms_header.time.hour = 23;
 	test_sms_header.time.minute = 50;
 	test_sms_header.time.second = 44;
+	test_sms_header.time.timezone = 8;
 
 	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
@@ -1174,6 +1187,7 @@ void test_recv_invalid_udl_longer_than_ud_7bit_len41(void)
 	test_sms_header.time.hour = 23;
 	test_sms_header.time.minute = 50;
 	test_sms_header.time.second = 44;
+	test_sms_header.time.timezone = 8;
 
 	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
@@ -1203,6 +1217,7 @@ void test_recv_invalid_udl_longer_than_ud_7bit_len40(void)
 	test_sms_header.time.hour = 23;
 	test_sms_header.time.minute = 50;
 	test_sms_header.time.second = 44;
+	test_sms_header.time.timezone = 8;
 
 	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
@@ -1228,6 +1243,7 @@ void test_recv_invalid_udl_longer_than_ud_8bit(void)
 	test_sms_header.time.hour = 23;
 	test_sms_header.time.minute = 50;
 	test_sms_header.time.second = 44;
+	test_sms_header.time.timezone = 8;
 
 	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
@@ -1253,6 +1269,7 @@ void test_recv_invalid_udl_shorter_than_ud_8bit(void)
 	test_sms_header.time.hour = 23;
 	test_sms_header.time.minute = 50;
 	test_sms_header.time.second = 44;
+	test_sms_header.time.timezone = 8;
 
 	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
 	sms_callback_called_expected = true;
@@ -1304,6 +1321,7 @@ void test_recv_udh_with_datalen0(void)
 	test_sms_header.time.hour = 23;
 	test_sms_header.time.minute = 50;
 	test_sms_header.time.second = 44;
+	test_sms_header.time.timezone = 8;
 
 	test_sms_header.concatenated.present = true;
 	test_sms_header.concatenated.total_msgs = 1;
@@ -1337,6 +1355,7 @@ void test_recv_udh_with_datalen0_fill_byte(void)
 	test_sms_header.time.hour = 23;
 	test_sms_header.time.minute = 50;
 	test_sms_header.time.second = 44;
+	test_sms_header.time.timezone = 8;
 
 	test_sms_header.concatenated.present = true;
 	test_sms_header.concatenated.total_msgs = 1;
@@ -1367,6 +1386,7 @@ void test_recv_udh_with_datalen1(void)
 	test_sms_header.time.hour = 23;
 	test_sms_header.time.minute = 50;
 	test_sms_header.time.second = 44;
+	test_sms_header.time.timezone = 8;
 
 	test_sms_header.concatenated.present = true;
 	test_sms_header.concatenated.total_msgs = 1;
@@ -1403,6 +1423,7 @@ void test_recv_invalid_udh_too_long_ie(void)
 	test_sms_header.time.hour = 12;
 	test_sms_header.time.minute = 34;
 	test_sms_header.time.second = 56;
+	test_sms_header.time.timezone = -32;
 
 	test_sms_header.app_port.present = false;
 	test_sms_header.concatenated.present = false;
@@ -1444,6 +1465,7 @@ void test_recv_invalid_udh_concat_ignored_portaddr_valid(void)
 	test_sms_header.time.hour = 12;
 	test_sms_header.time.minute = 34;
 	test_sms_header.time.second = 56;
+	test_sms_header.time.timezone = -32;
 
 	test_sms_header.app_port.present = true;
 	test_sms_header.app_port.dest_port = 17;
@@ -1485,6 +1507,7 @@ void test_recv_invalid_udh_portaddr_ignored_concat_valid(void)
 	test_sms_header.time.hour = 12;
 	test_sms_header.time.minute = 34;
 	test_sms_header.time.second = 56;
+	test_sms_header.time.timezone = -32;
 
 	test_sms_header.app_port.present = false;
 
@@ -1497,6 +1520,62 @@ void test_recv_invalid_udh_portaddr_ignored_concat_valid(void)
 	sms_callback_called_expected = true;
 	at_monitor_dispatch("+CMT: \"12345678\",22\r\n"
 		"004408812143658700041210032143652B2C1B01000804111101010400050712345678901234A1061234567890120102030405060708090A0B0C0D0E0F\r\n");
+
+	sms_unreg_helper();
+}
+
+/**
+ * Tests a large positive time zone offset.
+ */
+void test_recv_large_positive_time_zone_offset(void)
+{
+	sms_reg_helper();
+
+	strcpy(test_sms_header.originating_address.address_str, "1234567890123");
+	test_sms_header.originating_address.length = 13;
+	test_sms_header.originating_address.type = 0x91;
+	test_sms_data.payload_len = 3;
+	strcpy(test_sms_data.payload, "Moi");
+	test_sms_header.time.year = 21;
+	test_sms_header.time.month = 2;
+	test_sms_header.time.day = 9;
+	test_sms_header.time.hour = 20;
+	test_sms_header.time.minute = 58;
+	test_sms_header.time.second = 34;
+	test_sms_header.time.timezone = 55; /* +13:45 */
+
+	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	sms_callback_called_expected = true;
+	at_monitor_dispatch("+CMT: \"+1234567890123\",22\r\n"
+		"0791534874894320040D91214365870921F300001220900285435503CD771A\r\n");
+
+	sms_unreg_helper();
+}
+
+/**
+ * Tests a large negative time zone offset.
+ */
+void test_recv_large_negative_time_zone_offset(void)
+{
+	sms_reg_helper();
+
+	strcpy(test_sms_header.originating_address.address_str, "1234567890123");
+	test_sms_header.originating_address.length = 13;
+	test_sms_header.originating_address.type = 0x91;
+	test_sms_data.payload_len = 3;
+	strcpy(test_sms_data.payload, "Moi");
+	test_sms_header.time.year = 21;
+	test_sms_header.time.month = 2;
+	test_sms_header.time.day = 9;
+	test_sms_header.time.hour = 20;
+	test_sms_header.time.minute = 58;
+	test_sms_header.time.second = 34;
+	test_sms_header.time.timezone = -55; /* -13:45 */
+
+	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
+	sms_callback_called_expected = true;
+	at_monitor_dispatch("+CMT: \"+1234567890123\",22\r\n"
+		"0791534874894320040D91214365870921F300001220900285435D03CD771A\r\n");
 
 	sms_unreg_helper();
 }
@@ -1546,6 +1625,7 @@ void recv_basic(void)
 	test_sms_header.time.hour = 20;
 	test_sms_header.time.minute = 58;
 	test_sms_header.time.second = 34;
+	test_sms_header.time.timezone = 8;
 
 	__wrap_nrf_modem_at_printf_ExpectAndReturn("AT+CNMA=1", 0);
 	sms_callback_called_expected = true;

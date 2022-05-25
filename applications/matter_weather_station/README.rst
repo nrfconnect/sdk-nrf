@@ -80,9 +80,7 @@ Requirements
 
 The application supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: thingy53_nrf5340_cpuapp
+.. table-from-sample-yaml::
 
 To commission the weather station device and control it remotely through a Thread network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>` (which requires additional hardware depending on which setup you choose).
 The recommended way of getting measurement values is using the mobile Matter controller application that comes with a neat graphical interface, performs measurements automatically and visualizes the data.
@@ -152,13 +150,6 @@ Selecting a build type in |VSC|
    :start-after: build_types_selection_vsc_start
    :end-before: build_types_selection_vsc_end
 
-Selecting a build type in SES
------------------------------
-
-.. include:: /gs_modifying.rst
-   :start-after: build_types_selection_ses_start
-   :end-before: build_types_selection_ses_end
-
 Selecting a build type from command line
 ----------------------------------------
 
@@ -187,11 +178,11 @@ Testing
 =======
 
 .. note::
-   The testing procedure assumes you are using the mobile Matter controller application.
-   You can also obtain the measurement values using the PC command-line-based Matter controller and invoking the read commands manually.
+   The testing procedure assumes you are using the CHIP Tool for Android Matter controller application.
+   You can also obtain the measurement values using the PC-based CHIP Tool for Linux and iOS Matter controller and invoking the read commands manually.
    Compared with the PC Matter controller, the mobile Matter controller only gives access to a subset of clusters supported by the Matter weather station application.
    If you want to access all the supported clusters, including Descriptor, Identify, and Power Source clusters, use the PC Matter controller.
-   To see how to send commands from the PC Matter controller, read the :doc:`matter:python_chip_controller_building` guide in the Matter documentation.
+   To see how to send commands from the PC Matter controller, read the :doc:`matter:chip_tool_guide` page in the Matter documentation.
 
 After programming the application, perform the following steps to test the Matter weather station application on the Thingy:53 with the mobile Matter controller application:
 
@@ -208,9 +199,9 @@ After programming the application, perform the following steps to test the Matte
         When using the debug configuration, you can also get this type of information from the USB interface logs.
 
    Once the commissioning is complete and the device has full Thread connectivity, **LED (LD1)** starts blinking purple (short flash on).
-#. Read sensor measurements in Android CHIPTool:
+#. Read sensor measurements in CHIP Tool for Android:
 
-   a. In the Android CHIPTool application main menu, tap the :guilabel:`SENSOR CLUSTERS` button to open the sensor measurements section.
+   a. In the CHIP Tool for Android application main menu, tap the :guilabel:`SENSOR CLUSTERS` button to open the sensor measurements section.
       This section contains text boxes to enter :guilabel:`Device ID` and :guilabel:`Endpoint ID`, a drop-down menu with available measurements and two buttons, :guilabel:`READ` and :guilabel:`WATCH`.
 
       .. figure:: /images/chiptool_sensor_cluster.gif

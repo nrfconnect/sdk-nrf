@@ -41,8 +41,9 @@ LNA configuration
 =================
 
 Different devices have different antenna and LNA setups depending on the antenna type (onboard or external).
-The module has Kconfig options to control the LNA using either the COEX0 or MAGPIO interface of the nRF9160.
-See :ref:`configuration_options` for more details on how to configure the antenna and LNA.
+The application uses the :ref:`lib_modem_antenna` library for configuring the LNA.
+The library has Kconfig options to control the LNA using either the COEX0 or MAGPIO interface of the nRF9160.
+See the library documentation for more details on how to configure the antenna and LNA.
 
 GPS assistance data
 ===================
@@ -62,7 +63,7 @@ In this sense, it differs from the other modules.
 It has a thread for processing GNSS events from the modem library, whereas other modules use a thread for processing messages.
 The thread is used to offload data processing from the GNSS callbacks coming from the modem library, as these are called from interrupt context and no time consuming tasks should be performed there.
 
-All incoming events from other modules are handled in the context of the event manager callback, as they all complete fast enough to not require a separate thread.
+All incoming events from other modules are handled in the context of the Application Event Manager callback, as they all complete fast enough to not require a separate thread.
 
 .. _configuration_options:
 
@@ -83,16 +84,6 @@ CONFIG_GNSS_MODULE_PVT
 
 CONFIG_GNSS_MODULE_NMEA
    Selects the NMEA format. Includes an NMEA string of the GGA type in the ``GNSS_EVT_DATA_READY`` events that are sent when the GNSS acquires a position fix.
-
-.. _CONFIG_GNSS_MODULE_ANTENNA_ONBOARD:
-
-CONFIG_GNSS_MODULE_ANTENNA_ONBOARD
-   This configures the target to use an onboard GNSS antenna. Sends antenna configurations to the modem when you compile for Thingy:91 or nRF9160 DK.
-
-.. _CONFIG_GNSS_MODULE_ANTENNA_EXTERNAL:
-
-CONFIG_GNSS_MODULE_ANTENNA_EXTERNAL
-   This configures the target to use an external GNSS antenna.
 
 If P-GPS is used, the last known position from a GNSS fix can be stored and injected to the modem together with the relevant ephemeris.
 This may, depending on the use case and the device's movements, reduce the time to fix.
@@ -129,7 +120,7 @@ Dependencies
 
 The module uses the following |NCS| libraries:
 
-* :ref:`event_manager`
+* :ref:`app_event_manager`
 * :ref:`nrfxlib:gnss_interface`
 
 API documentation

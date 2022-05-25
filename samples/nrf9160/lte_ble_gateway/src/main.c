@@ -4,20 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <string.h>
 #include <nrf_modem_at.h>
 #include <nrf_modem_gnss.h>
-#include <drivers/sensor.h>
-#include <console/console.h>
+#include <zephyr/drivers/sensor.h>
+#include <zephyr/console/console.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_agps.h>
 #include <dk_buttons_and_leds.h>
 #include <modem/lte_lc.h>
-#include <sys/reboot.h>
+#include <zephyr/sys/reboot.h>
 #include <modem/nrf_modem_lib.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include "aggregator.h"
 #include "ble.h"
@@ -144,10 +144,10 @@ void nrf_cloud_error_handler(int err)
 	error_handler(ERROR_NRF_CLOUD, err);
 }
 
-/**@brief Recoverable modem library error. */
-void nrf_modem_recoverable_error_handler(uint32_t err)
+/**@brief Modem fault handler. */
+void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info)
 {
-	error_handler(ERROR_MODEM_RECOVERABLE, (int)err);
+	error_handler(ERROR_MODEM_RECOVERABLE, (int)fault_info->reason);
 }
 
 /**@brief Request assisted GPS data from nRF Cloud. */
@@ -484,24 +484,6 @@ static void modem_configure(void)
 	int err;
 
 	display_state = LEDS_LTE_CONNECTING;
-
-	if (strlen(CONFIG_GNSS_AT_MAGPIO) > 0) {
-		err = nrf_modem_at_printf("%s", CONFIG_GNSS_AT_MAGPIO);
-		if (err) {
-			LOG_ERR("Failed to set MAGPIO configuration");
-
-			return;
-		}
-	}
-
-	if (strlen(CONFIG_GNSS_AT_COEX0) > 0) {
-		err = nrf_modem_at_printf("%s", CONFIG_GNSS_AT_COEX0);
-		if (err) {
-			LOG_ERR("Failed to set COEX0 configuration");
-
-			return;
-		}
-	}
 
 	if (IS_ENABLED(CONFIG_LTE_AUTO_INIT_AND_CONNECT)) {
 		/* Do nothing, modem is already turned on and connected. */

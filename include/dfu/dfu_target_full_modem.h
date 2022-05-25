@@ -16,7 +16,7 @@
 
 #include <stddef.h>
 #include <sys/types.h>
-#include <device.h>
+#include <zephyr/device.h>
 #include <dfu/dfu_target.h>
 
 #ifdef __cplusplus

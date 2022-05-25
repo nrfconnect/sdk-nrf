@@ -17,9 +17,7 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52dk_nrf52832, nrf52833dk_nrf52833, thingy53_nrf5340_cpuapp_and_cpuapp_ns, nrf21540dk_nrf52840
+.. table-from-sample-yaml::
 
 You need at least two development kits:
 
@@ -33,6 +31,8 @@ For provisioning and configuring of the mesh model instances, the sample require
 
 .. note::
    |thingy53_sample_note|
+
+.. include:: /includes/tfm.txt
 
 Overview
 ********
@@ -138,7 +138,7 @@ See :ref:`Bluetooth mesh user guide <ug_bt_mesh>` for more information.
 
 .. |sample path| replace:: :file:`samples/bluetooth/mesh/light_switch`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
 
 .. _bluetooth_mesh_light_switch_testing:
 

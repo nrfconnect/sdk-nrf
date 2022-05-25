@@ -7,10 +7,10 @@
 #ifndef SPM_INTERNAL_H__
 #define SPM_INTERNAL_H__
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <nrfx.h>
-#include <sys/util.h>
-#include <sys/__assert.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/sys/__assert.h>
 #include <nrf_erratas.h>
 
 #ifdef __cplusplus

@@ -5,8 +5,8 @@
  */
 
 #include <string.h>
-#include <logging/log.h>
-#include <sys/byteorder.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/sys/byteorder.h>
 #include <nfc/t4t/tlv_block.h>
 #include <errno.h>
 

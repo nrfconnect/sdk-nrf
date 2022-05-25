@@ -9,7 +9,7 @@
 #ifndef MODEL_HANDLER_H__
 #define MODEL_HANDLER_H__
 
-#include <bluetooth/mesh.h>
+#include <zephyr/bluetooth/mesh.h>
 
 #ifdef __cplusplus
 extern "C" {

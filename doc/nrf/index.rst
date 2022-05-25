@@ -31,6 +31,18 @@ In addition to the |NCS| documentation, information is available in the followin
 
     .. rst-class:: doc-link-image
 
+    .. image:: /images/DevAcademy.svg
+       :target: `DevAcademy`_
+
+    .. rst-class:: doc-link-text
+
+    `Accelerated learning <DevAcademy_>`_
+
+.. rst-class:: doc-link gray-box
+..
+
+    .. rst-class:: doc-link-image
+
     .. image:: /images/DevZone.svg
        :target: `DevZone`_
 
@@ -41,7 +53,7 @@ In addition to the |NCS| documentation, information is available in the followin
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Contents
 
    introduction
    glossary
@@ -51,6 +63,7 @@ In addition to the |NCS| documentation, information is available in the followin
    ug_nrf91
    ug_nrf53
    ug_nrf52
+   ug_nrf_cloud
    protocols
    applications
    samples
@@ -59,6 +72,7 @@ In addition to the |NCS| documentation, information is available in the followin
    scripts
    release_notes
    known_issues
+   software_maturity
    documentation
 
 ..   cheat_sheet

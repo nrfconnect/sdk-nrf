@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <bluetooth/services/ddfs.h>
-#include <random/rand32.h>
+#include <zephyr/random/rand32.h>
 #include <dm.h>
 
 #include "service.h"

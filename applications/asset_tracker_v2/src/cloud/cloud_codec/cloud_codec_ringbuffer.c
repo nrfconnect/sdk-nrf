@@ -5,12 +5,12 @@
  */
 
 #include <cloud_codec.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
 #include <math.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(cloud_codec_ringbuffer, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 
 void cloud_codec_populate_sensor_buffer(

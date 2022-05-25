@@ -62,33 +62,86 @@ const uint32_t nrf_power_value[] = {
 };
 
 #if DIRECTION_FINDING_SUPPORTED
-/**@brief Antenna pin array.
+
+#define DTM_MAX_ANTENNA_NUMBER 19
+
+#define DFE_GPIO_PIN_DISCONNECT (RADIO_PSEL_DFEGPIO_CONNECT_Disconnected << \
+				 RADIO_PSEL_DFEGPIO_CONNECT_Pos)
+
+#define HAS_DFE_GPIO(idx) DT_NODE_HAS_PROP(RADIO_NODE, dfegpio##idx##_gpios)
+
+/* Run a macro 'fn' on each available DFE GPIO index, from 0 to
+ * MAX_DFE_GPIO-1, with the given parenthesized separator.
  */
-static const uint32_t antenna_pin[] = {
-#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), dtm_antenna_1_pin)
-	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_1_pin),
+#define FOR_EACH_DFE_GPIO(fn, sep) \
+	FOR_EACH(fn, sep, 0, 1, 2, 3, 4, 5, 6, 7)
+
+/* The number of dfegpio[n]-gpios properties which are set. */
+#define DFE_GPIO_NUM (FOR_EACH_DFE_GPIO(HAS_DFE_GPIO, (+)))
+
+#define PDU_ANTENNA DT_PROP(RADIO_NODE, dfe_pdu_antenna)
+
+/* The minimum number of antennas required to enable antenna switching. */
+#define MIN_ANTENNA_NUM 1
+
+/* The maximum number of antennas supported by the number of
+ * dfegpio[n]-gpios properties which are set.
+ */
+#if (DFE_GPIO_NUM > 0)
+#define MAX_ANTENNA_NUM BIT(DFE_GPIO_NUM)
+#else
+#define MAX_ANTENNA_NUM 0
 #endif
-#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), dtm_antenna_2_pin)
-	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_2_pin),
-#endif
-#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), dtm_antenna_3_pin)
-	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_3_pin),
-#endif
-#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), dtm_antenna_4_pin)
-	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_4_pin),
-#endif
-#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), dtm_antenna_5_pin)
-	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_6_pin),
-#endif
-#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), dtm_antenna_6_pin)
-	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_6_pin),
-#endif
-#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), dtm_antenna_7_pin)
-	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_7_pin),
-#endif
-#if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), dtm_antenna_8_pin)
-	DT_PROP(DT_PATH(zephyr_user), dtm_antenna_8_pin),
-#endif
+
+/*
+ * Check that the number of antennas has been set, and that enough
+ * pins are configured to represent each pattern for the given number
+ * of antennas.
+ */
+#define HAS_ANTENNA_NUM DT_NODE_HAS_PROP(RADIO_NODE, dfe_antenna_num)
+
+BUILD_ASSERT(HAS_ANTENNA_NUM,
+	     "You must set the dfe-antenna-num property in the radio node "
+	     "to enable antenna switching.");
+
+#define ANTENNA_NUM DT_PROP_OR(RADIO_NODE, dfe_antenna_num, 0)
+
+
+BUILD_ASSERT(!HAS_ANTENNA_NUM || (ANTENNA_NUM <= MAX_ANTENNA_NUM),
+	     "Insufficient number of GPIO pins configured. "
+	     "Set more dfegpio[n]-gpios properties.");
+BUILD_ASSERT(!HAS_ANTENNA_NUM || (ANTENNA_NUM >= MIN_ANTENNA_NUM),
+	     "Insufficient number of antennas provided. "
+	     "Increase the dfe-antenna-num property.");
+
+#define HAS_PDU_ANTENNA DT_NODE_HAS_PROP(RADIO_NODE, dfe_pdu_antenna)
+
+BUILD_ASSERT(HAS_PDU_ANTENNA,
+	     "Missing antenna pattern used to select antenna for PDU Tx "
+	     "during the CTE Idle state. "
+	     "Set the dfe-pdu-antenna devicetree property.");
+
+/*
+ * Check that each dfegpio[n]-gpios property has a zero flags cell.
+ */
+#define ASSERT_DFE_GPIO_FLAGS_ARE_ZERO(idx)				   \
+	BUILD_ASSERT(DT_GPIO_FLAGS(RADIO_NODE, dfegpio##idx##_gpios) == 0, \
+		     "The flags cell in each dfegpio[n]-gpios "		   \
+		     "property must be zero.")
+
+FOR_EACH_DFE_GPIO(ASSERT_DFE_GPIO_FLAGS_ARE_ZERO, (;));
+
+#define DFE_GPIO_PSEL(idx)					  \
+	NRF_DT_GPIOS_TO_PSEL_OR(RADIO_NODE, dfegpio##idx##_gpios, \
+				DTM_HW_DFE_PSEL_NOT_SET)
+
+static const struct dtm_ant_cfg {
+	uint8_t ant_num;
+	/* Selection of GPIOs to be used to switch antennas by Radio */
+	uint8_t dfe_gpio[DTM_HW_MAX_DFE_GPIO];
+} ant_cfg = {
+	.ant_num = (ANTENNA_NUM > DTM_MAX_ANTENNA_NUMBER) ? DTM_MAX_ANTENNA_NUMBER : ANTENNA_NUM,
+	.dfe_gpio = { FOR_EACH_DFE_GPIO(DFE_GPIO_PSEL, (,)) }
 };
 #endif /* DIRECTION_FINDING_SUPPORTED */
 
@@ -157,13 +210,18 @@ const uint32_t *dtm_hw_radio_power_array_get(void)
 }
 
 #if DIRECTION_FINDING_SUPPORTED
-size_t dtm_radio_antenna_pin_array_size_get(void)
+size_t dtm_hw_radio_antenna_number_get(void)
 {
-	return ARRAY_SIZE(antenna_pin);
+	return ant_cfg.ant_num;
 }
 
-const uint32_t *dtm_hw_radion_antenna_pin_array_get(void)
+const uint8_t *dtm_hw_radio_antenna_pin_array_get(void)
 {
-	return antenna_pin;
+	return ant_cfg.dfe_gpio;
+}
+
+uint8_t dtm_hw_radio_pdu_antenna_get(void)
+{
+	return PDU_ANTENNA;
 }
 #endif /* DIRECTION_FINDING_SUPPORTED */

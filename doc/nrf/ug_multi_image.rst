@@ -56,6 +56,13 @@ nRF5340 development kit support
 
    See :ref:`ug_nrf5340` for more information.
 
+nRF5340 Audio development kit support
+   The nRF5340 Audio development kit (DK) is based on the nRF5340 development kit and also contains two separate processors.
+   When programming an application for the nRF5340 Audio DK, the application core image is built from a combination of different configuration files.
+   The network core image is programmed with an application-specific precompiled Bluetooth Low Energy Controller binary file that contains the LE Audio Controller Subsystem for nRF53.
+
+   See the :ref:`octave` application documentation for more information.
+
 Default configuration
 *********************
 
@@ -189,7 +196,7 @@ With ``west``, you can pass these configuration variables into CMake by using th
    -Dmcuboot_CONF_FILE=prj_a.conf \
    -DCONF_FILE=app_prj.conf
 
-You can make a project pass Kconfig configuration files, fragments, and device tree overlays to child images by placing them in the :file:`child_image` folder in the application source directory.
+You can make a project pass Kconfig configuration files, fragments, and devicetree overlays to child images by placing them in the :file:`child_image` folder in the application source directory.
 The listing below describes how to leverage this functionality, where ``ACI_NAME`` is the name of the child image to which the configuration will be applied.
 
 .. literalinclude:: ../../cmake/multi_image.cmake
@@ -328,16 +335,14 @@ Unlike CMake options, CMake environment variables allow you to control the build
 
 You can use the CMake environment variables `VERBOSE`_ and `CMAKE_BUILD_PARALLEL_LEVEL`_ to control the verbosity and the number of parallel jobs for a build:
 
-* When using |SES|, you must set these environment variables before starting SES.
-  They apply only to the build of the child images.
-* When using the command line, you must set them before invoking ``west``.
-  They apply to both the parent and child images.
-  For example, to build with verbose output and one parallel job, use the following commands, where *build_target* is the target for the development kit for which you are building:
+When using the command line or |VSC| terminal window, you must set them before invoking ``west``.
+They apply to both the parent and child images.
+For example, to build with verbose output and one parallel job, use the following command, where *build_target* is the target for the development kit for which you are building:
 
-  .. parsed-literal::
-     :class: highlight
+.. parsed-literal::
+   :class: highlight
 
-     west build -b *build_target* -- -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_PARALLEL_LEVEL=1
+   west build -b *build_target* -- -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_PARALLEL_LEVEL=1
 
 Memory placement
 ****************

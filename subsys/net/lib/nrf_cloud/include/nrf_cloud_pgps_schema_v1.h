@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include "nrf_cloud_agps_schema_v1.h"
 
 #ifndef NRF_CLOUD_PGPS_SCHEMA_V1_H_

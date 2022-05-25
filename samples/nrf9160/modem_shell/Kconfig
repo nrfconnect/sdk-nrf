@@ -84,7 +84,12 @@ config MOSH_REST
 	help
 	  REST client for sending and receiving simple REST requests/responses.
 
-config MOSH_CLOUD
+config MOSH_CLOUD_REST
+	bool "nRFCloud commands over REST"
+	default y
+	select NRF_CLOUD_REST
+
+config MOSH_CLOUD_MQTT
 	bool "MQTT connection to nRFCloud"
 	select NRF_CLOUD_MQTT
 	select NRF_CLOUD_CELL_POS if MULTICELL_LOCATION_SERVICE_NRF_CLOUD
@@ -117,13 +122,16 @@ config MOSH_WORKER_THREADS
 	bool "Possibility to run iperf3 or ping instances in separate threads"
 	default y
 
+config MOSH_NRF91_NON_OFFLOADING_DEV
+	bool "Possibility to run iperf3 with Zephyr TCP/IP stack"
+
 endmenu
 endif
 
 if MOSH_AT_CMD_MODE
 choice
 	prompt "Command termination"
-	default MOSH_AT_CMD_MODE_CR_TERMINATION
+	default MOSH_AT_CMD_MODE_CR_LF_TERMINATION
 	help
 		Sets the command termination ending from the serial terminal
 		Levels are:
@@ -160,32 +168,5 @@ config MOSH_LINK_SETT_NORMAL_MODE_AT_CMD_STR_LEN
 
 endmenu
 endif #MOSH_LINK
-
-choice MOSH_GNSS_ANTENNA
-	depends on MOSH_GNSS
-	default MOSH_GNSS_ANTENNA_ONBOARD
-	prompt "Select which antenna to use for GNSS"
-config MOSH_GNSS_ANTENNA_ONBOARD
-	bool "Use onboard antenna"
-config MOSH_GNSS_ANTENNA_EXTERNAL
-	bool "Use external antenna"
-
-endchoice
-
-config MOSH_AT_MAGPIO
-	string "AT%XMAGPIO command"
-	default "AT\%XMAGPIO=1,0,0,1,1,1574,1577" if BOARD_NRF9160DK_NRF9160_NS
-	default "AT\%XMAGPIO=1,1,1,7,1,746,803,2,698,748,2,1710,2200,3,824,894,4,880,960,5,791,849,7,1565,1586" if BOARD_THINGY91_NRF9160_NS
-	help
-	  Defines what is the AT%XMAGPIO command to be sent to GNSS module. Leave
-	  empty if this command should not be sent.
-
-config MOSH_AT_COEX0
-	string "AT%XCOEX0 command"
-	default "AT\%XCOEX0=1,1,1565,1586" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && MOSH_GNSS_ANTENNA_ONBOARD
-	default "AT\%XCOEX0" if (BOARD_NRF9160DK_NRF9160_NS || BOARD_THINGY91_NRF9160_NS) && MOSH_GNSS_ANTENNA_EXTERNAL
-	help
-	  Defines what is the AT%XCOEX0 command to be sent to GNSS module. Leave
-	  empty if this command should not be sent.
 
 endmenu # Modem Shell

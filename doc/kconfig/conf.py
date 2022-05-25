@@ -36,7 +36,7 @@ html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False
 
-html_theme_options = {"docsets": utils.get_docsets("kconfig")}
+html_theme_options = {"docsets": utils.ALL_DOCSETS}
 
 # Options for ncs_cache --------------------------------------------------------
 
@@ -71,7 +71,6 @@ os.environ["NCS_MEMFAULT_FIRMWARE_SDK_KCONFIG"] = str(
 
 
 def setup(app):
-    app.add_css_file("css/common.css")
     app.add_css_file("css/kconfig.css")
 
     utils.add_google_analytics(app)

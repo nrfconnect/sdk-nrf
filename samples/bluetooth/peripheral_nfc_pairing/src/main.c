@@ -3,13 +3,13 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/hci.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/uuid.h>
-#include <bluetooth/gatt.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/hci.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/gatt.h>
 
 #include <dk_buttons_and_leds.h>
 
@@ -25,7 +25,7 @@
 #include <nfc/tnep/tag.h>
 #include <nfc/tnep/ch.h>
 
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #define DEVICE_NAME CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
@@ -352,9 +352,12 @@ static enum bt_security_err pairing_accept(struct bt_conn *conn,
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.cancel = auth_cancel,
 	.oob_data_request = auth_oob_data_request,
-	.pairing_complete = pairing_complete,
-	.pairing_failed = pairing_failed,
 	.pairing_accept = pairing_accept,
+};
+
+static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
+	.pairing_complete = pairing_complete,
+	.pairing_failed = pairing_failed
 };
 
 static void connected(struct bt_conn *conn, uint8_t err)
@@ -723,7 +726,17 @@ void main(void)
 		printk("Cannot init buttons (err %d\n", err);
 	}
 
-	bt_conn_auth_cb_register(&conn_auth_callbacks);
+	err = bt_conn_auth_cb_register(&conn_auth_callbacks);
+	if (err) {
+		printk("Failed to register authorization callbacks.\n");
+		return;
+	}
+
+	err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
+	if (err) {
+		printk("Failed to register authorization info callbacks.\n");
+		return;
+	}
 
 	err = bt_enable(NULL);
 	if (err) {

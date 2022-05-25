@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <net/sntp.h>
-#include <net/socketutils.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/sntp.h>
+#include <zephyr/net/socketutils.h>
 #if defined(CONFIG_LTE_LINK_CONTROL)
 #include <modem/lte_lc.h>
 #endif
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(date_time, CONFIG_DATE_TIME_LOG_LEVEL);
 

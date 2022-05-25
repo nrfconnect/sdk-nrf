@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <drivers/uart.h>
-#include <drivers/gpio.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/drivers/gpio.h>
 #include <hal/nrf_gpio.h>
 #include <hal/nrf_gpiote.h>
-#include <logging/log.h>
-#include <sys/onoff.h>
-#include <drivers/clock_control/nrf_clock_control.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/sys/onoff.h>
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
 
 LOG_MODULE_REGISTER(lpuart, CONFIG_NRF_SW_LPUART_LOG_LEVEL);
 

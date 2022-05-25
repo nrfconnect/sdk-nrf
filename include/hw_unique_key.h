@@ -22,34 +22,27 @@ extern "C" {
 
 #include <stdbool.h>
 
-#ifdef __ZEPHYR__
+#if defined(__NRF_TFM__)
 #include <autoconf.h>
-#ifdef CONFIG_HAS_HW_NRF_KMU
-	#define HUK_HAS_KMU
 #endif
-#ifdef CONFIG_HAS_HW_NRF_CC310
-	#define HUK_HAS_CC310
-#endif
-#ifdef CONFIG_HAS_HW_NRF_CC312
-	#define HUK_HAS_CC312
-#endif
+#include <zephyr/devicetree.h>
 
-#else /* __ZEPHYR__ */
+#if DT_HAS_COMPAT_STATUS_OKAY(nordic_nrf_kmu)
 #define HUK_HAS_KMU
-#ifdef NRF9160_XXAA
-	#define HUK_HAS_CC310
 #endif
-#ifdef NRF5340_XXAA_APPLICATION
-	#define HUK_HAS_CC312
+#if defined(CONFIG_HAS_HW_NRF_CC310)
+#define HUK_HAS_CC310
 #endif
-#endif /* __ZEPHYR__ */
+#if defined(CONFIG_HAS_HW_NRF_CC312)
+#define HUK_HAS_CC312
+#endif
 
-#ifdef HUK_HAS_CC310
+#if defined(HUK_HAS_CC310)
 #define HUK_SIZE_WORDS 4
 #elif defined(HUK_HAS_CC312)
 #define HUK_SIZE_WORDS 8
 #else
-#error This library requires CryptoCell to be available.
+#error "This library requires CryptoCell to be available."
 #endif
 
 #define HUK_SIZE_BYTES (HUK_SIZE_WORDS * 4)

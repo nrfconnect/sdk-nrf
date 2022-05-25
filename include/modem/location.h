@@ -38,10 +38,18 @@ enum location_method {
 	LOCATION_METHOD_WIFI,
 };
 
+/** Location acquisition mode. */
+enum location_req_mode {
+	/** Fallback to next preferred method (default). */
+	LOCATION_REQ_MODE_FALLBACK = 0,
+	/** All requested methods are used sequentially. */
+	LOCATION_REQ_MODE_ALL,
+};
+
 /** Event IDs. */
 enum location_event_id {
 	/** Location update. */
-	LOCATION_EVT_LOCATION,
+	LOCATION_EVT_LOCATION = 1,
 	/** Getting location timed out. */
 	LOCATION_EVT_TIMEOUT,
 	/** An error occurred when trying to get the location. */
@@ -80,8 +88,6 @@ enum location_service {
 	LOCATION_SERVICE_NRF_CLOUD,
 	/** HERE location service. */
 	LOCATION_SERVICE_HERE,
-	/** Skyhook location service. */
-	LOCATION_SERVICE_SKYHOOK,
 	/** Polte location service. */
 	LOCATION_SERVICE_POLTE
 };
@@ -180,6 +186,18 @@ struct location_gnss_config {
 	 * parameter has no effect.
 	 */
 	uint8_t num_consecutive_fixes;
+
+	/**
+	 * @brief Obstructed visibility detection. If set to true, the library tries to detect
+	 * situations where getting a GNSS fix is unlikely or would consume a lot of energy.
+	 * When such a situation is detected, GNSS is stopped without waiting for a fix or a
+	 * timeout.
+	 *
+	 * @details See Kconfig for related configuration options.
+	 *
+	 * @note Only supported with modem firmware v1.3.2 or later.
+	 */
+	bool visibility_detection;
 };
 
 /** LTE cellular positioning configuration. */
@@ -238,6 +256,11 @@ struct location_config {
 	 * the valid range is 10...65535 seconds.
 	 */
 	uint16_t interval;
+
+	/**
+	 * @brief Location acquisition mode.
+	 */
+	enum location_req_mode mode;
 };
 
 /**

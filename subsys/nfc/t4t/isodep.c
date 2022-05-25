@@ -6,11 +6,11 @@
 
 #include <errno.h>
 #include <string.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
-#include <sys/atomic.h>
+#include <zephyr/sys/atomic.h>
 #include <nfc/t4t/isodep.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(nfc_t4t_isodep, CONFIG_NFC_T4T_ISODEP_LOG_LEVEL);
 

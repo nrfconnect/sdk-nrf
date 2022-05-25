@@ -15,9 +15,7 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf52dk_nrf52832, nrf52840dk_nrf52840, nrf9160dk_nrf9160, nrf21540dk_nrf52840
+.. table-from-sample-yaml::
 
 The sample also requires a logic analyzer.
 
@@ -62,9 +60,7 @@ Testing
 After programming the sample to your development kit, complete the following steps to test it:
 
 1. Connect a logic analyzer to the pins that are used for tracing.
-
    Check the sample configuration for information about which pins are used.
-   In |SES|, select :guilabel:`Project` > :guilabel:`Configure nRF Connect SDK Project` and navigate to :guilabel:`PPI trace pins configuration`.
 
 #. Observe that:
 

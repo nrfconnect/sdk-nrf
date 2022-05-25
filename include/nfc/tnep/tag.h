@@ -15,7 +15,7 @@
  */
 
 #include <nfc/tnep/base.h>
-#include <kernel.h>
+#include <zephyr/kernel.h>
 
 /** NFC TNEP library event count. */
 #define NFC_TNEP_EVENTS_NUMBER 2

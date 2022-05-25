@@ -13,5 +13,7 @@ Here you can find documentation for these scripts.
    :caption: Subpages:
 
    ../../scripts/shell/*/*
+   ../../scripts/nrf_provision/*/*
    ../../scripts/hid_configurator/*
    ../../scripts/partition_manager/*
+   ../../scripts/west_commands/sbom/*

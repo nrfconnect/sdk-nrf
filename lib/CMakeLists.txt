@@ -6,7 +6,6 @@
 
 add_subdirectory(bin)
 
-add_subdirectory_ifdef(CONFIG_AGPS agps)
 add_subdirectory_ifdef(CONFIG_NRF_MODEM_LIB nrf_modem_lib)
 add_subdirectory_ifdef(CONFIG_DK_LIBRARY dk_buttons_and_leds)
 add_subdirectory_ifdef(CONFIG_AT_SMS_CERT at_sms_cert)
@@ -35,3 +34,5 @@ add_subdirectory_ifdef(CONFIG_MODEM_ATTEST_TOKEN modem_attest_token)
 add_subdirectory_ifdef(CONFIG_MULTICELL_LOCATION multicell_location)
 add_subdirectory_ifdef(CONFIG_LOCATION location)
 add_subdirectory_ifdef(CONFIG_AT_SHELL at_shell)
+add_subdirectory_ifdef(CONFIG_MODEM_ANTENNA modem_antenna)
+add_subdirectory_ifdef(CONFIG_QOS qos)

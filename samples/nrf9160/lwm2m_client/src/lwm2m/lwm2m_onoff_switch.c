@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <net/lwm2m.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/lwm2m.h>
 #include <lwm2m_resource_ids.h>
 
 #include "ui_input.h"
@@ -14,7 +14,7 @@
 
 #define MODULE app_lwm2m_onoff_switch
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 
 #define SWICTH1_OBJ_INST_ID 0
@@ -58,10 +58,10 @@ int lwm2m_init_onoff_switch(void)
 	return 0;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_ui_input_event(eh)) {
-		struct ui_input_event *event = cast_ui_input_event(eh);
+	if (is_ui_input_event(aeh)) {
+		struct ui_input_event *event = cast_ui_input_event(aeh);
 
 		if (event->type != ON_OFF_SWITCH) {
 			return false;
@@ -101,5 +101,5 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, ui_input_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, ui_input_event);

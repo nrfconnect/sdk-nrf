@@ -191,13 +191,32 @@ To use nRF21540 in SPI or mixed mode, complete the following steps:
    Set the state of the remaining control pins according to the `nRF21540 Product Specification`_.
 #. Add a following SPI bus device node on the devicetree file:
 
-   .. code-block::
+   .. code-block:: devicetree
+
+      &pinctrl {
+         spi3_default_alt: spi3_default_alt {
+            group1 {
+               psels = <NRF_PSEL(SPI_SCK, 1, 15)>,
+                       <NRF_PSEL(SPI_MISO, 1, 14)>,
+                       <NRF_PSEL(SPI_MOSI, 1, 13)>;
+            };
+         };
+
+         spi3_sleep_alt: spi3_sleep_alt {
+            group1 {
+               psels = <NRF_PSEL(SPI_SCK, 1, 15)>,
+                       <NRF_PSEL(SPI_MISO, 1, 14)>,
+                       <NRF_PSEL(SPI_MOSI, 1, 13)>;
+               low-power-enable;
+            };
+         };
+      };
 
       fem_spi: &spi3 {
 	      status = "okay";
-	      sck-pin = <47>;
-	      miso-pin = <46>;
-	      mosi-pin = <45>;
+         pinctrl-0 = <&spi3_default_alt>;
+         pinctrl-1 = <&spi3_sleep_alt>;
+         pinctrl-names = "default", "sleep";
 	      cs-gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
 
 	      nrf_radio_fem_spi: nrf21540_fem_spi@0 {
@@ -213,20 +232,7 @@ To use nRF21540 in SPI or mixed mode, complete the following steps:
    Replace the SPI bus according to your hardware design.
    Replace the SPI bus device name ``nrf_radio_fem_spi`` with the name from the previous step.
 
-#. Replace the pin numbers provided for each of the required properties:
-
-   * ``sck-pin`` -  GPIO pin number of the device that controls the ``SCK`` signal of the nRF21540.
-   * ``miso-pin`` - GPIO pin number of the device that controls the ``MISO`` signal of the nRF21540.
-   * ``mosi-pin`` - GPIO pin number of the device that controls the ``MOSI`` signal of the nRF21540.
-   * ``cs-gpio`` - GPIO characteristic of the device that controls the ``CSN`` signal of nRF21540.
-
-   ``sck-pin``, ``miso-pin``, ``mosi-pin`` are absolute pin numbers.
-   Use the following formula to calculate them::
-
-      pin_no = b\*32 + a
-
-   In this formula ``a`` is a pin number and ``b`` is a port number (Pb.a).
-   For example, for P0.1, ``pin_no = 1`` and for P1.0, ``pin_no = 32``.
+#. Create alternative pinctrl entries for SPI3 and replace the ``pinctrl-N`` and ``pinctrl-names`` properties.
 
 Optional properties
 -------------------
@@ -235,15 +241,28 @@ The following properties are optional and you can add them to the devicetree nod
 
 * Properties that control the other pins:
 
-   * ``ant-sel-gpios`` - GPIO characteristic of the device that controls the ``ANT_SEL`` signal of nRF21540.
-   * ``mode-gpios`` - GPIO characteristic of the device that controls the ``MODE`` signal of nRF21540.
+  * ``ant-sel-gpios`` - GPIO characteristic of the device that controls the ``ANT_SEL`` signal of the nRF21540.
+  * ``mode-gpios`` - GPIO characteristic of the device that controls the ``MODE`` signal of the nRF21540.
+
+    The ``MODE`` signal of the nRF21540 switches between two values of PA gain.
+    The pin can either be set to a fixed state on initialization, which results in a constant PA gain, or it can be switched in run-time by the protocol drivers to match the transmission power requested by the application.
+
+    To enable run-time ``MODE`` pin switching, you must enable :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL`.
+
+    .. note::
+       The state of the ``MODE`` pin is selected based on the available PA gains and the required transmission power.
+       To achieve reliable performance, :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA` and :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTB` must reflect the content of the nRF21540 registers.
+       Their default values match chip production defaults.
+       For details, see the `nRF21540 Product Specification`_.
+
+    If the run-time ``MODE`` pin switching is disabled, the PA gain is constant and equal to :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB`.
 
 * Properties that control the timing of interface signals:
 
   * ``tx-en-settle-time-us`` - Minimal time interval between asserting the ``TX_EN`` signal and starting the radio transmission, in microseconds.
   * ``rx-en-settle-time-us`` - Minimal time interval between asserting the ``RX_EN`` signal and starting the radio transmission, in microseconds.
 
-    .. important::
+    .. note::
         Values for these two properties cannot be higher than the Radio Ramp-Up time defined by :c:macro:`TX_RAMP_UP_TIME` and :c:macro:`RX_RAMP_UP_TIME`.
         If the value is too high, the radio driver will not work properly and will not control FEM.
         Moreover, setting a value that is lower than the default value can cause disturbances in the radio transmission, because FEM may be triggered too late.
@@ -306,7 +325,7 @@ To use the Simple GPIO implementation of FEM with SKY66112-11, complete the foll
 Optional properties
 -------------------
 
-The following properties are optional and you can add them to the devicetree node if needed.
+The following properties are optional and   you can add them to the devicetree node if needed.
 
 * Properties that control the other pins:
 
@@ -441,7 +460,7 @@ Alternatively, add the shield in the project's :file:`CMakeLists.txt` file:
 
 	set(SHIELD nrf21540_ek)
 
-To build with SES, in the :guilabel:`Extended Settings` specify ``-DSHIELD=nrf21540_ek``.
+To build with |VSC|, in the :guilabel:`Extra Cmake arguments`, specify ``-DSHIELD=nrf21540_ek``.
 See :ref:`cmake_options`.
 
 When building for a board with an additional network core, for example nRF5340, add an additional ``-DSHIELD`` variable with the *childImageName_* parameter between ``-D`` and ``SHIELD`` to build for the network core as well.

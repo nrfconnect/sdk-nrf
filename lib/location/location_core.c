@@ -5,8 +5,8 @@
  */
 
 #include <stdio.h>
-#include <zephyr.h>
-#include <logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <modem/location.h>
 
 #include "location_core.h"
@@ -161,7 +161,6 @@ static const char *location_core_gnss_accuracy_str(enum location_accuracy accura
 static const char LOCATION_SERVICE_ANY_STR[] = "Any";
 static const char LOCATION_SERVICE_NRF_CLOUD_STR[] = "nRF Cloud";
 static const char LOCATION_SERVICE_HERE_STR[] = "HERE";
-static const char LOCATION_SERVICE_SKYHOOK_STR[] = "Skyhook";
 static const char LOCATION_SERVICE_POLTE_STR[] = "Polte";
 
 static const char *location_core_service_str(enum location_service service)
@@ -177,9 +176,6 @@ static const char *location_core_service_str(enum location_service service)
 		break;
 	case LOCATION_SERVICE_HERE:
 		service_str = LOCATION_SERVICE_HERE_STR;
-		break;
-	case LOCATION_SERVICE_SKYHOOK:
-		service_str = LOCATION_SERVICE_SKYHOOK_STR;
 		break;
 	case LOCATION_SERVICE_POLTE:
 		service_str = LOCATION_SERVICE_POLTE_STR;
@@ -398,7 +394,7 @@ void location_core_event_cb(const struct location_data *location)
 	k_work_cancel_delayable(&location_timeout_work);
 
 	if (location != NULL) {
-		/* Location was acquired properly, finish location request */
+		/* Location was acquired properly */
 		current_event_data.id = LOCATION_EVT_LOCATION;
 		current_event_data.location = *location;
 
@@ -428,8 +424,37 @@ void location_core_event_cb(const struct location_data *location)
 		}
 		LOG_DBG("  Google maps URL: https://maps.google.com/?q=%s,%s",
 			log_strdup(latitude_str), log_strdup(longitude_str));
+		if (current_config.mode == LOCATION_REQ_MODE_ALL) {
+			/* Get possible next method */
+			previous_method = current_event_data.location.method;
+			current_method_index++;
+			if (current_method_index < current_config.methods_count) {
+				requested_method =
+					current_config.methods[current_method_index].method;
+				LOG_INF("LOCATION_REQ_MODE_ALL: acquired location using '%s', "
+					"trying with '%s' next",
+					(char *)location_method_api_get(
+						previous_method)->method_string,
+					(char *)location_method_api_get(
+						requested_method)->method_string);
+
+				event_handler(&current_event_data);
+
+				/* Run next method on the list */
+				location_core_current_event_data_init(requested_method);
+				err = location_method_api_get(requested_method)->location_get(
+					&current_config.methods[current_method_index]);
+				return;
+			}
+			LOG_INF("LOCATION_REQ_MODE_ALL: all methods done");
+
+			/* Start from the beginning if in interval mode
+			 * for possible cancel within restarting interval.
+			 */
+			current_method_index = 0;
+		}
 	} else {
-		/* Do fallback to next preferred method */
+		/* Get possible next method to be run */
 		previous_method = current_event_data.location.method;
 		current_method_index++;
 		if (current_method_index < current_config.methods_count) {
@@ -439,6 +464,13 @@ void location_core_event_cb(const struct location_data *location)
 				"trying with '%s' next",
 				(char *)location_method_api_get(previous_method)->method_string,
 				(char *)location_method_api_get(requested_method)->method_string);
+
+			if (current_config.mode == LOCATION_REQ_MODE_ALL) {
+				/* In ALL mode, events are sent for all methods and thus
+				 * also for failure events
+				 */
+				event_handler(&current_event_data);
+			}
 
 			location_core_current_event_data_init(requested_method);
 			err = location_method_api_get(requested_method)->location_get(

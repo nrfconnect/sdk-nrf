@@ -5,8 +5,8 @@
  */
 
 #include <ztest.h>
-#include <drivers/flash.h>
-#include <device.h>
+#include <zephyr/drivers/flash.h>
+#include <zephyr/device.h>
 
 /* configuration derived from native_posix DT */
 #define SOC_NV_FLASH_NODE DT_CHILD(DT_INST(0, zephyr_sim_flash), flash_0)

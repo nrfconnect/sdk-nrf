@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <pm_config.h>
 #include <stdlib.h>
 
 #include <net/nrf_cloud_pgps.h>
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 #include <net/download_client.h>
 #include <date_time.h>
 
@@ -17,7 +17,7 @@
 #include "nrf_cloud_pgps_schema_v1.h"
 #include "nrf_cloud_pgps_utils.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(nrf_cloud_pgps, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 

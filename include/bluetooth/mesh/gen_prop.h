@@ -14,7 +14,7 @@
 #ifndef BT_MESH_GEN_PROP_H__
 #define BT_MESH_GEN_PROP_H__
 
-#include <bluetooth/mesh.h>
+#include <zephyr/bluetooth/mesh.h>
 #include <bluetooth/mesh/properties.h>
 
 #ifdef __cplusplus

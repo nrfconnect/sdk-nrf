@@ -92,7 +92,38 @@ Example
 Read command
 ------------
 
-The read command is not supported.
+The read command allows you to check GNSS support and service status.
+
+Syntax
+~~~~~~
+
+::
+
+   #XGPS?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XGPS: <gnss_service>,<gnss_status>
+
+* The ``<gnss_service>`` value is an integer.
+  When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and activated in ``+CFUN``.
+
+* The ``<gnss_status>`` value is an integer.
+  When it returns the value of ``1``, it means that GNSS is started.
+
+Example
+~~~~~~~
+
+::
+
+  AT#XGPS?
+
+  #XGPS: 1,1
+
+  OK
 
 Test command
 ------------
@@ -122,6 +153,9 @@ Connect to nRF Cloud
 ====================
 
 The ``#XNRFCLOUD`` command controls the connection to the nRF Cloud service.
+
+.. note::
+   To use ``#XNRFCLOUD``, you must first provision the device to nRF Cloud, using the UUID from the modem firmware as device ID.
 
 Set command
 -----------
@@ -269,7 +303,12 @@ Run GNSS with nRF Cloud A-GPS
 =============================
 
 The ``#XAGPS`` command runs the GNSS together with the nRF Cloud A-GPS service.
-This requires access to nRF Cloud through the LTE network for receiving A-GPS data.
+
+.. note::
+   To use ``#XAGPS``, the following preconditions apply:
+
+   * You must define :ref:`CONFIG_SLM_AGPS <CONFIG_SLM_AGPS>`.
+   * You must have access to nRF Cloud through the LTE network for receiving A-GPS data.
 
 Set command
 -----------
@@ -358,7 +397,38 @@ Example
 Read command
 ------------
 
-The read command is not supported.
+The read command allows you to check GNSS support and AGPS service status.
+
+Syntax
+~~~~~~
+
+::
+
+   #XAGPS?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XAGPS: <gnss_service>,<agps_status>
+
+* The ``<gnss_service>`` value is an integer.
+  When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and activated in ``+CFUN``.
+
+* The ``<agps_status>`` value is an integer.
+  When it returns the value of ``1``, it means AGPS is started.
+
+Example
+~~~~~~~
+
+::
+
+  AT#XAGPS?
+
+  #XAGPS: 1,1
+
+  OK
 
 Test command
 ------------
@@ -388,7 +458,12 @@ Run GNSS with nRF Cloud P-GPS
 =============================
 
 The ``#XPGPS`` command runs the GNSS together with the nRF Cloud P-GPS service.
-This requires access to nRF Cloud through the LTE network for receiving P-GPS data.
+
+.. note::
+   To use ``#XPGPS``, the following preconditions apply:
+
+   * You must define :ref:`CONFIG_SLM_PGPS <CONFIG_SLM_PGPS>`.
+   * You must have access to nRF Cloud through the LTE network for receiving P-GPS data.
 
 Set command
 -----------
@@ -474,7 +549,27 @@ Example
 Read command
 ------------
 
-The read command is not supported.
+The read command allows you to check GNSS support and PGPS service status.
+
+Syntax
+~~~~~~
+
+::
+
+   #XPGPS?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XPGPS: <gnss_service>,<pgps_status>
+
+* The ``<gnss_service>`` value is an integer.
+  When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and is activated in ``+CFUN``.
+
+* The ``<pgps_status>`` value is an integer.
+  When it returns the value of ``1``, it means that PGPS is started.
 
 Test command
 ------------
@@ -503,7 +598,12 @@ Run nRF Cloud cellular positioning
 ==================================
 
 The ``#XCELLPOS`` command runs the nRF Cloud cellular positioning service for position information.
-This requires to define ``CONFIG_SLM_CELL_POS`` and to access nRF Cloud through the LTE network.
+
+.. note::
+   To use ``#XCELLPOS``, the following preconditions apply:
+
+   * You must define :ref:`CONFIG_SLM_CELL_POS <CONFIG_SLM_CELL_POS>`.
+   * You must have access to nRF Cloud through the LTE network.
 
 Set command
 -----------
@@ -579,7 +679,41 @@ Example
 Read command
 ------------
 
-The read command is not supported.
+The read command allows you to check GNSS support and CELLPOS service status.
+
+Syntax
+~~~~~~
+
+::
+
+   #XCELLPOS?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XCELLPOS: <gnss_service>,<cellpos_status>
+
+* The ``<gnss_service>`` value is an integer.
+   When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and is activated in ``+CFUN``.
+
+.. note::
+   CELLPOS does not require the GNSS service in modem.
+
+* The ``<cellpos_status>`` value is an integer.
+  When it returns the value of ``1``, it means that CELLPOS is started.
+
+Example
+~~~~~~~
+
+::
+
+  AT#XAGPS?
+
+  #XAGPS: 1,1
+
+  OK
 
 Test command
 ------------

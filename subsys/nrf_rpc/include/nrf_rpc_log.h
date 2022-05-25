@@ -7,7 +7,7 @@
 #ifndef NRF_RPC_LOG_H_
 #define NRF_RPC_LOG_H_
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #define _NRF_RPC_LOG_REGISTER2(module) \
 	LOG_MODULE_REGISTER(module, CONFIG_ ## module ## _LOG_LEVEL)

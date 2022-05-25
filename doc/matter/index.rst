@@ -8,12 +8,12 @@ This documentation is based on the documentation in the `Matter <https://github.
 .. toctree::
    :maxdepth: 1
    :glob:
-   :caption: Contents:
+   :caption: Contents
 
    nrfconnect_platform_overview
    BUILDING
    nrfconnect_*
-   python_chip_controller_building
-   python_chip_controller_advanced_usage
    android_*
    openthread_*
+   chip_tool_guide
+   access-control-guide

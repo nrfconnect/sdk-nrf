@@ -4,21 +4,24 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <ctype.h>
-#include <logging/log.h>
-#include <drivers/uart.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/drivers/uart.h>
 #include <hal/nrf_uarte.h>
 #include <hal/nrf_gpio.h>
-#include <sys/ring_buffer.h>
-#include <sys/util.h>
-#include <pm/device.h>
+#include <zephyr/sys/ring_buffer.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/pm/device.h>
 #include <string.h>
-#include <init.h>
+#include <zephyr/init.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_fota.h"
+#if defined(CONFIG_SLM_NRF52_DFU_LEGACY)
+#include "slip.h"
+#endif
 
 LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 
@@ -27,9 +30,8 @@ LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 #define FATAL_STR	"FATAL ERROR\r\n"
 #define SLM_SYNC_STR	"Ready\r\n"
 
-/** The maximum allowed length of an AT command passed through the SLM
- *  The space is allocated statically. This limit is in turn limited by
- *  Modem library's NRF_MODEM_AT_MAX_CMD_SIZE */
+/** The maximum allowed length of an AT command passed through the SLM.
+ *  The space is allocated statically. */
 #define AT_MAX_CMD_LEN          4096
 
 #define UART_RX_BUF_NUM         2
@@ -44,6 +46,7 @@ LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 static enum slm_operation_modes {
 	SLM_AT_COMMAND_MODE,  /* AT command host or bridge */
 	SLM_DATA_MODE,        /* Raw data sending */
+	SLM_DFU_MODE          /* nRF52 DFU controller */
 } slm_operation_mode;
 
 static const struct device *uart_dev;
@@ -117,7 +120,7 @@ static int uart_send(const uint8_t *buffer, size_t len)
 
 void rsp_send(const char *str, size_t len)
 {
-	if (len == 0) {
+	if (len == 0 || slm_operation_mode == SLM_DFU_MODE) {
 		return;
 	}
 
@@ -129,6 +132,9 @@ void rsp_send(const char *str, size_t len)
 
 void data_send(const uint8_t *data, size_t len)
 {
+	if (slm_operation_mode == SLM_DFU_MODE) {
+		return;
+	}
 	LOG_HEXDUMP_DBG(data, MIN(len, HEXDUMP_DATAMODE_MAX), "TX-DATA");
 	if (uart_send(data, len) < 0) {
 		ring_buf_put(&delayed_rb, data, len);
@@ -326,7 +332,7 @@ bool verify_datamode_control(uint16_t time_limit, uint16_t *min_time_limit)
 	min_time = UART_RX_LEN * (8 + 1 + 1) * 1000 / slm_uart.baudrate;
 	min_time += UART_RX_MARGIN_MS;
 
-	if (time_limit == 0 || min_time > time_limit) {
+	if (time_limit > 0 && min_time > time_limit) {
 		LOG_ERR("Invalid time_limit: %d, min: %d", time_limit, min_time);
 		return false;
 	}
@@ -348,6 +354,126 @@ static void notification_handler(const char *response)
 		rsp_send(response, strlen(response));
 	}
 }
+
+#if defined(CONFIG_SLM_NRF52_DFU)
+/* Overall, nRF52 DFU is supported or not */
+#if defined(CONFIG_SLM_NRF52_DFU_LEGACY)
+/* Functions for legacy Serial DFU Protocol, UART is in TX and RX */
+#define DFU_RX_MAX_DELAY 1000 /* in milliseconds */
+static K_SEM_DEFINE(dfu_response, 0, 1);
+
+void enter_dfumode(void)
+{
+	if (slm_operation_mode != SLM_DFU_MODE) {
+		slm_operation_mode = SLM_DFU_MODE;
+		LOG_INF("Enter dfumode");
+	}
+}
+
+void exit_dfumode(void)
+{
+	if (slm_operation_mode == SLM_DFU_MODE) {
+		/* reset UART to restore command mode */
+		uart_rx_disable(uart_dev);
+		k_sleep(K_MSEC(10));
+		slm_operation_mode = SLM_AT_COMMAND_MODE;
+		(void) uart_receive();
+		LOG_INF("Exit dfumode");
+	}
+}
+
+int dfu_drv_tx(const uint8_t *data, uint16_t length)
+{
+	int ret = 0;
+
+	if (length == 0 || slm_operation_mode != SLM_DFU_MODE) {
+		return -EINVAL;
+	}
+
+	if (length > SLIP_SIZE_MAX) {
+		ret = -ENOMEM;
+	} else {
+		uint32_t slip_pkt_len;
+
+		encode_slip(rsp_buf, &slip_pkt_len, data, length);
+		LOG_HEXDUMP_DBG(rsp_buf, slip_pkt_len, "DFU-TX");
+		ret = uart_send(rsp_buf, slip_pkt_len);
+	}
+
+	return ret;
+}
+
+int dfu_drv_rx(uint8_t *data, uint32_t max_len, uint32_t *real_len)
+{
+	int ret;
+
+	if (data == NULL) {
+		return -EINVAL;
+	}
+
+	at_buf_len = 0;
+	ret = k_sem_take(&dfu_response, K_MSEC(DFU_RX_MAX_DELAY));
+	if (ret) {
+		LOG_ERR("DFU response error: %d", ret);
+		return -EAGAIN;
+	}
+
+	ret = decode_slip(data, real_len, at_buf, at_buf_len);
+	if (ret) {
+		return ret;
+	}
+	if (*real_len > max_len) {
+		return -ENOMEM;
+	}
+
+	LOG_HEXDUMP_DBG(data, *real_len, "DFU-RX");
+
+	return 0;
+}
+
+static int dfu_rx_handler(const uint8_t *data, int datalen)
+{
+	memcpy(at_buf + at_buf_len, data, datalen);
+	at_buf_len += datalen;
+
+	if (at_buf[at_buf_len - 1] == SLIP_END) {
+		k_sem_give(&dfu_response);
+	}
+
+	return 0;
+}
+#else
+/* Functions for MCUBOOT-based DFU protocol, UART is in TX only */
+void enter_dfumode(void)
+{
+	if (slm_operation_mode != SLM_DFU_MODE) {
+		slm_operation_mode = SLM_DFU_MODE;
+		/* only UART Send */
+		uart_rx_disable(uart_dev);
+		k_sleep(K_MSEC(10));
+		LOG_INF("Enter dfumode");
+	}
+}
+
+void exit_dfumode(void)
+{
+	if (slm_operation_mode == SLM_DFU_MODE) {
+		slm_operation_mode = SLM_AT_COMMAND_MODE;
+		(void) uart_receive();
+		LOG_INF("Exit dfumode");
+	}
+}
+
+int dfu_drv_tx(const uint8_t *data, uint16_t length)
+{
+	if (length == 0 || slm_operation_mode != SLM_DFU_MODE) {
+		return -EINVAL;
+	}
+
+	return uart_send(data, length);
+}
+#endif /* CONFIG_SLM_NRF52_DFU_LEGACY */
+#endif /* CONFIG_SLM_NRF52_DFU */
 
 static void raw_send(struct k_work *work)
 {
@@ -559,6 +685,72 @@ static int cmd_grammar_check(const uint8_t *cmd, uint16_t length)
 	return 0;
 }
 
+static void format_final_result(char *buf)
+{
+	static const char ok_str[] = "OK\r\n";
+	static const char error_str[] = "ERROR\r\n";
+	static const char cme_error_str[] = "+CME ERROR:";
+	static const char cms_error_str[] = "+CMS ERROR:";
+	static const char crlf_str[] = "\r\n";
+	char *result = NULL, *temp;
+
+	/* find the last occurrence of final result string */
+	result = strstr(buf, ok_str);
+	if (result) {
+		temp = result;
+		while (temp != NULL) {
+			temp = strstr(result + strlen(ok_str), ok_str);
+			if (temp) {
+				result = temp;
+			}
+		}
+		goto final_result;
+	}
+	result = strstr(buf, error_str);
+	if (result) {
+		temp = result;
+		while (temp != NULL) {
+			temp = strstr(result + strlen(error_str), error_str);
+			if (temp) {
+				result = temp;
+			}
+		}
+		goto final_result;
+	}
+	result = strstr(buf, cme_error_str);
+	if (result) {
+		temp = result;
+		while (temp != NULL) {
+			temp = strstr(result + strlen(cme_error_str), cme_error_str);
+			if (temp) {
+				result = temp;
+			}
+		}
+		goto final_result;
+	}
+	result = strstr(buf, cms_error_str);
+	if (result) {
+		temp = result;
+		while (temp != NULL) {
+			temp = strstr(result + strlen(cms_error_str), cms_error_str);
+			if (temp) {
+				result = temp;
+			}
+		}
+	}
+	if (result == NULL) {
+		LOG_WRN("Final result not found");
+		return;
+	}
+
+final_result:
+	/* insert CRLF before final result if there is information response before it */
+	if (result != buf) {
+		memmove((void *)(result + strlen(crlf_str)), (void *)result, strlen(result) + 1);
+		memcpy((void *)result, (void *)crlf_str, strlen(crlf_str));
+	}
+}
+
 static void cmd_send(struct k_work *work)
 {
 	int err;
@@ -599,8 +791,12 @@ static void cmd_send(struct k_work *work)
 		LOG_ERR("AT command error, type: %d", nrf_modem_at_err_type(err));
 	}
 
+	/** Format as TS 27.007 command V1 with verbose response format,
+	 *  based on current return of API nrf_modem_at_cmd() and MFWv1.3.x
+	 */
 	if (strlen(at_buf) > 0) {
-		rsp_send("\r\n", 2);
+		rsp_send("\r\n", 2);		/* insert <CR><LF> before information response*/
+		format_final_result(at_buf);	/* insert <CR><LF> before final result */
 		rsp_send(at_buf, strlen(at_buf));
 	}
 
@@ -713,6 +909,10 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 			if (err) {
 				return;
 			}
+#if defined(CONFIG_SLM_NRF52_DFU_LEGACY)
+		} else if (slm_operation_mode == SLM_DFU_MODE) {
+			(void)dfu_rx_handler(&(evt->data.rx.buf[pos]), evt->data.rx.len);
+#endif /* CONFIG_SLM_NRF52_DFU_LEGACY */
 		} else {
 			LOG_WRN("No handler");
 		}

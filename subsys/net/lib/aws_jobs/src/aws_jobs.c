@@ -3,11 +3,11 @@
  *
  *SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr.h>
-#include <random/rand32.h>
+#include <zephyr/kernel.h>
+#include <zephyr/random/rand32.h>
 #include <stdio.h>
-#include <net/mqtt.h>
-#include <logging/log.h>
+#include <zephyr/net/mqtt.h>
+#include <zephyr/logging/log.h>
 #include <net/aws_jobs.h>
 
 LOG_MODULE_REGISTER(aws_jobs, CONFIG_AWS_JOBS_LOG_LEVEL);

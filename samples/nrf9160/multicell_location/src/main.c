@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <modem/lte_lc.h>
 #include <dk_buttons_and_leds.h>
 #include <net/multicell_location.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #define DEVICE_ID_MAX_LEN 64
 
@@ -331,9 +331,6 @@ void main(void)
 #endif
 #if defined(CONFIG_MULTICELL_LOCATION_SERVICE_HERE)
 		request_location(MULTICELL_SERVICE_HERE, "HERE");
-#endif
-#if defined(CONFIG_MULTICELL_LOCATION_SERVICE_SKYHOOK)
-		request_location(MULTICELL_SERVICE_SKYHOOK, "Skyhook");
 #endif
 #if defined(CONFIG_MULTICELL_LOCATION_SERVICE_POLTE)
 		request_location(MULTICELL_SERVICE_POLTE, "Polte");

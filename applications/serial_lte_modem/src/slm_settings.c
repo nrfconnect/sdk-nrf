@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #include <string.h>
-#include <zephyr.h>
-#include <settings/settings.h>
-#include <drivers/uart.h>
+#include <zephyr/kernel.h>
+#include <zephyr/settings/settings.h>
+#include <zephyr/drivers/uart.h>
 #include <dfu/dfu_target.h>
 #include "slm_at_fota.h"
 

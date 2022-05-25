@@ -48,6 +48,10 @@ static char *get_evt_type_str(enum modem_module_event_type type)
 		return "MODEM_EVT_ERROR";
 	case MODEM_EVT_CARRIER_INITIALIZED:
 		return "MODEM_EVT_CARRIER_INITIALIZED";
+	case MODEM_EVT_CARRIER_EVENT_LTE_LINK_UP_REQUEST:
+		return "MODEM_EVT_CARRIER_EVENT_LTE_LINK_UP_REQUEST";
+	case MODEM_EVT_CARRIER_EVENT_LTE_LINK_DOWN_REQUEST:
+		return "MODEM_EVT_CARRIER_EVENT_LTE_LINK_DOWN_REQUEST";
 	case MODEM_EVT_CARRIER_FOTA_PENDING:
 		return "MODEM_EVT_CARRIER_FOTA_PENDING";
 	case MODEM_EVT_CARRIER_FOTA_STOPPED:
@@ -59,38 +63,40 @@ static char *get_evt_type_str(enum modem_module_event_type type)
 	}
 }
 
-static void log_event(const struct event_header *eh)
+static void log_event(const struct app_event_header *aeh)
 {
-	const struct modem_module_event *event = cast_modem_module_event(eh);
+	const struct modem_module_event *event = cast_modem_module_event(aeh);
 
 	if (event->type == MODEM_EVT_ERROR) {
-		EVENT_MANAGER_LOG(eh, "%s - Error code %d",
+		APP_EVENT_MANAGER_LOG(aeh, "%s - Error code %d",
 				get_evt_type_str(event->type), event->data.err);
 	} else {
-		EVENT_MANAGER_LOG(eh, "%s", get_evt_type_str(event->type));
+		APP_EVENT_MANAGER_LOG(aeh, "%s", get_evt_type_str(event->type));
 	}
 }
 
-#if defined(CONFIG_PROFILER)
+#if defined(CONFIG_NRF_PROFILER)
 
 static void profile_event(struct log_event_buf *buf,
-			 const struct event_header *eh)
+			 const struct app_event_header *aeh)
 {
-	const struct modem_module_event *event = cast_modem_module_event(eh);
+	const struct modem_module_event *event = cast_modem_module_event(aeh);
 
-#if defined(CONFIG_PROFILER_EVENT_TYPE_STRING)
-	profiler_log_encode_string(buf, get_evt_type_str(event->type));
+#if defined(CONFIG_NRF_PROFILER_EVENT_TYPE_STRING)
+	nrf_profiler_log_encode_string(buf, get_evt_type_str(event->type));
 #else
-	profiler_log_encode_uint8(buf, event->type);
+	nrf_profiler_log_encode_uint8(buf, event->type);
 #endif
 }
 
-COMMON_EVENT_INFO_DEFINE(modem_module_event,
+COMMON_APP_EVENT_INFO_DEFINE(modem_module_event,
 			 profile_event);
 
-#endif /* CONFIG_PROFILER */
+#endif /* CONFIG_NRF_PROFILER */
 
-COMMON_EVENT_TYPE_DEFINE(modem_module_event,
-			 CONFIG_MODEM_EVENTS_LOG,
+COMMON_APP_EVENT_TYPE_DEFINE(modem_module_event,
 			 log_event,
-			 &modem_module_event_info);
+			 &modem_module_event_info,
+			 APP_EVENT_FLAGS_CREATE(
+				IF_ENABLED(CONFIG_MODEM_EVENTS_LOG,
+					(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));

@@ -11,8 +11,8 @@
 
 /* Define print and panic macros. This library can be compiled for different OSes. */
 #ifdef __ZEPHYR__
-#include <sys/printk.h>
-#include <kernel.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/kernel.h>
 #define HUK_PRINT(msg) printk(msg)
 #define HUK_PRINT_VAL(msg, val) printk(msg " %d", val)
 #define HUK_PANIC k_panic

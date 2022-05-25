@@ -14,7 +14,7 @@
 #ifndef BT_MESH_LIGHTNESS_SRV_H__
 #define BT_MESH_LIGHTNESS_SRV_H__
 
-#include <bluetooth/mesh.h>
+#include <zephyr/bluetooth/mesh.h>
 
 #include <bluetooth/mesh/lightness.h>
 #include <bluetooth/mesh/gen_lvl_srv.h>

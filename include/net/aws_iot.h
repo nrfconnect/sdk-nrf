@@ -12,7 +12,7 @@
 #define AWS_IOT_H__
 
 #include <stdio.h>
-#include <net/mqtt.h>
+#include <zephyr/net/mqtt.h>
 
 /**
  * @defgroup aws_iot AWS IoT library
@@ -88,6 +88,10 @@ enum aws_iot_evt_type {
 	AWS_IOT_EVT_DISCONNECTED,
 	/** Data received from AWS message broker. */
 	AWS_IOT_EVT_DATA_RECEIVED,
+	/** Acknowledgment for data sent to AWS IoT. */
+	AWS_IOT_EVT_PUBACK,
+	/** Acknowledgment for pings sent to AWS IoT. */
+	AWS_IOT_EVT_PINGRESP,
 	/** FOTA update start. */
 	AWS_IOT_EVT_FOTA_START,
 	/** FOTA update done, request to reboot. */
@@ -140,6 +144,16 @@ struct aws_iot_data {
 	size_t len;
 	/** Quality of Service of the message. */
 	enum mqtt_qos qos;
+	/** Message id, used to match acknowledgments. */
+	uint16_t message_id;
+	/** Duplicate flag. 1 indicates the message is a retransmission,
+	 *  Usually triggered by missing publication acknowledgment.
+	 */
+	uint8_t dup_flag;
+	/** Retain flag. 1 indicates to AWS IoT that the message should be
+	 *  stored persistently.
+	 */
+	uint8_t retain_flag;
 };
 
 /** @brief Struct with data received from AWS IoT broker. */
@@ -152,6 +166,7 @@ struct aws_iot_evt {
 		/** FOTA progress in percentage. */
 		int fota_progress;
 		bool persistent_session;
+		uint16_t message_id;
 	} data;
 };
 
@@ -176,8 +191,8 @@ struct aws_iot_config {
 
 /** @brief Initialize the module.
  *
- *  @warning This API must be called exactly once, and it must return
- *           successfully.
+ *  @note This API must be called exactly once, and it must return
+ *        successfully.
  *
  *  @param[in] config Pointer to struct containing connection parameters.
  *  @param[in] event_handler Pointer to event handler to receive AWS IoT module

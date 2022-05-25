@@ -12,11 +12,11 @@
  * @defgroup modem_module_event Modem module event
  * @{
  */
-#include <net/net_ip.h>
+#include <zephyr/net/net_ip.h>
 #include <modem/lte_lc.h>
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -144,6 +144,8 @@ enum modem_module_event_type {
 	 *  The event has no associated payload.
 	 */
 	MODEM_EVT_CARRIER_REBOOT_REQUEST,
+	MODEM_EVT_CARRIER_EVENT_LTE_LINK_UP_REQUEST,
+	MODEM_EVT_CARRIER_EVENT_LTE_LINK_DOWN_REQUEST,
 };
 
 /** @brief LTE cell information. */
@@ -184,7 +186,10 @@ struct modem_module_dynamic_modem_data {
 	uint16_t area_code;
 	uint32_t cell_id;
 	int16_t rsrp;
+	uint16_t mcc;
+	uint16_t mnc;
 	char ip_address[INET6_ADDRSTRLEN];
+	char apn[CONFIG_MODEM_APN_LEN_MAX];
 	char mccmnc[7];
 	uint8_t band;
 	enum lte_lc_lte_mode nw_mode;
@@ -199,6 +204,7 @@ struct modem_module_dynamic_modem_data {
 	bool mccmnc_fresh	: 1;
 	bool band_fresh		: 1;
 	bool nw_mode_fresh	: 1;
+	bool apn_fresh		: 1;
 };
 
 struct modem_module_battery_data {
@@ -214,7 +220,7 @@ struct modem_module_neighbor_cells {
 
 /** @brief Modem event. */
 struct modem_module_event {
-	struct event_header header;
+	struct app_event_header header;
 	enum modem_module_event_type type;
 	union {
 		struct modem_module_static_modem_data modem_static;
@@ -230,7 +236,7 @@ struct modem_module_event {
 	} data;
 };
 
-EVENT_TYPE_DECLARE(modem_module_event);
+APP_EVENT_TYPE_DECLARE(modem_module_event);
 
 #ifdef __cplusplus
 }

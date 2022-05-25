@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <errno.h>
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #include <string.h>
 #include <stdio.h>
-#include <device.h>
+#include <zephyr/device.h>
 #include <modem/lte_lc.h>
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 #include "lte_lc_helpers.h"
 

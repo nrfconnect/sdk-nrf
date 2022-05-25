@@ -100,6 +100,41 @@ config LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_INSTANCE_COUNT
 	default 3
 	depends on LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
 
+config LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER
+	bool "Use a listener to populate signal measurement objects."
+	depends on LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
+	default y
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
+	bool "Support for location assist object (ID 50001) EXPERIMENTAL"
+	select EXPERIMENTAL
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_EVENTS
+	bool "Use events to send lwm2m-messages to lwm2m-server to request assistance."
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
+
+if LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL
+	bool "Use location based on current cell and possibly neighboring cells"
+	help
+	  Information of current cell and neighboring cells are sent to lwm2m server to
+	  obtain coarse location.
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS
+	bool "Use location based on A-GPS"
+	help
+	  A-GPS assistance data is requested from lwm2m server and fed to the GNSS module
+	  after the data has been received.
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS_BUF_SIZE
+	int "Size of the buffer for storing the assistance data coming from server"
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGPS
+	default 4096
+
+endif # LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
+
+
 module = LWM2M_CLIENT_UTILS
 module-dep = LOG
 module-str = LwM2M client utilities library

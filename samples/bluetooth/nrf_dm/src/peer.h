@@ -11,8 +11,8 @@
 extern "C" {
 #endif
 
-#include <zephyr.h>
-#include <bluetooth/addr.h>
+#include <zephyr/kernel.h>
+#include <zephyr/bluetooth/addr.h>
 #include <dm.h>
 
 /** @brief Testing if the peer is supported.

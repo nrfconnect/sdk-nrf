@@ -33,7 +33,7 @@ Requirements
 
 .. note::
    * Supported kits are listed in a table, which is composed of rows from the :file:`doc/nrf/includes/sample_board_rows.txt` file.
-     Select the required rows in the ``:rows:`` configuration, or specify ``:sample-yaml-rows:`` to include all build targets specified in the :file:`sample.yaml` file.
+     Select the required rows in the ``:rows:`` configuration, or use the ``.. table-from-sample-yaml::`` directive to include all build targets specified in the :file:`sample.yaml` file.
    * If only one kit is supported, replace the introduction text with "The sample supports the following development kit:".
    * If several kits are required to test the sample, state it after the table (for example, "You can use one or more of the development kits listed above and mix different development kits.").
    * Mention additional requirements after the table.
@@ -128,16 +128,16 @@ Configuration options*
    * For each configuration option, list the symbol name and the string describing it.
    * For |VSC| instructions, list the configuration options as they are stated on the Generate Configuration screen.
 
-Check and configure the following configuration options for the sample:
+Check and configure the following Kconfig options:
 
 .. _SAMPLE_CONFIG:
 
-SAMPLE_CONFIG - Sample configuration
+SAMPLE_CONFIG
    The sample configuration defines ...
 
 .. _ANOTHER_CONFIG:
 
-ANOTHER_CONFIG - Another configuration
+ANOTHER_CONFIG
    This configuration option specifies ...
 
 .. note::
@@ -176,10 +176,10 @@ Building and running
 
 .. note::
    * Include the standard text for building - either ``.. include:: /includes/build_and_run.txt`` or ``.. include:: /includes/build_and_run_nrf9160.txt``.
-   * The two main supported IDEs for |NCS| are |VSC| and |SES|.
-     Therefore, build instructions for both IDEs are required.
+   * The main supported IDE for |NCS| is |VSC|.
+     Therefore, build instructions for |VSC| are required.
      Build instructions for the command line are optional.
-   * Link to the `nRF Connect for Visual Studio Code`_ documentation site for basic instructions on building with the extension.
+   * See the link to the `nRF Connect for Visual Studio Code`_ documentation site for basic instructions on building with the extension.
    * If the sample uses a non-standard setup, point it out and link to more information, if possible.
 
 .. |sample path| replace:: :file:`samples/XXX`

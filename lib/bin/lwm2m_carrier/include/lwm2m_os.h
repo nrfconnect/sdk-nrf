@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Nordic Semiconductor ASA
+ * Copyright (c) 2019-2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -30,15 +30,22 @@ extern "C" {
 /**
  * @brief Maximum number of timers that the system must support.
  */
-#define LWM2M_OS_MAX_TIMER_COUNT (6 + (LWM2M_OS_MAX_WORK_QS * 3))
+#define LWM2M_OS_MAX_TIMER_COUNT (5 + (LWM2M_OS_MAX_WORK_QS * 3))
 
 typedef void lwm2m_os_work_q_t;
 typedef void lwm2m_os_timer_t;
 
 /**
+ * @brief Maximum number of threads that the system must support.
+ */
+#define LWM2M_OS_MAX_THREAD_COUNT 1
+
+typedef void (*lwm2m_os_thread_entry_t)(void *p1, void *p2, void *p3);
+
+/**
  * @brief Maximum number of semaphores that the system must support.
  */
-#define LWM2M_OS_MAX_SEM_COUNT (3 + (LWM2M_OS_MAX_WORK_QS * 2))
+#define LWM2M_OS_MAX_SEM_COUNT (4 + (LWM2M_OS_MAX_WORK_QS * 2))
 
 /* pointer to semaphore object */
 typedef void lwm2m_os_sem_t;
@@ -49,10 +56,6 @@ typedef void lwm2m_os_sem_t;
 
 /**
  * @brief Range of the non-volatile storage identifiers used by the library.
- *
- * @note  The application MUST NOT use the values within this range for its
- *        own non-volatile storage management as it could potentially delete
- *        or overwrite entries used by the library.
  */
 #define LWM2M_OS_STORAGE_BASE 0xCA00
 #define LWM2M_OS_STORAGE_END  0xCAFF
@@ -128,12 +131,16 @@ struct lwm2m_os_download_evt {
 	};
 };
 
+/** @brief Download client configuration values. */
+#define LWM2M_OS_DOWNLOAD_SEC_TAG_NONE -1
+
 /**
  * @brief Download client configuration options.
  */
 struct lwm2m_os_download_cfg {
+	/** Security tag to be used for TLS. Set to LWM2M_OS_DOWNLOAD_SEC_TAG_NONE if non-secure. */
 	int sec_tag;
-	int port;
+	/** PDN ID to be used for the download. */
 	int pdn_id;
 };
 
@@ -429,6 +436,18 @@ int64_t lwm2m_os_timer_remaining(lwm2m_os_timer_t *timer);
 bool lwm2m_os_timer_is_pending(lwm2m_os_timer_t *timer);
 
 /**
+ * @brief Create and start a new thread.
+ *
+ * @param index Number of the thread.
+ * @param entry Thread entry function.
+ * @param name  Name of the thread.
+ *
+ * @retval  0      Thread created and started.
+ * @retval -EINVAL Thread index not valid.
+ */
+int lwm2m_os_thread_start(int index, lwm2m_os_thread_entry_t entry, const char *name);
+
+/**
  * @brief Initialize modem library.
  *
  * @retval  0      If success.
@@ -512,23 +531,6 @@ int lwm2m_os_download_start(const char *file, size_t from);
  * @retval  0      If success.
  */
 int lwm2m_os_download_file_size_get(size_t *size);
-
-/**
- * @brief Initialize and make a connection with the modem.
- *
- * @retval  0      If success.
- */
-int lwm2m_os_lte_link_up(void);
-
-/**
- * @brief Set the modem to offline mode.
- */
-int lwm2m_os_lte_link_down(void);
-
-/**
- * @brief Set the modem to power off mode.
- */
-int lwm2m_os_lte_power_down(void);
 
 /**
  * @brief get system mode from modem.
@@ -643,6 +645,57 @@ int lwm2m_os_sec_identity_write(uint32_t sec_tag, const void *buf, uint16_t len)
  * @retval -EPERM   Insufficient permissions.
  */
 int lwm2m_os_sec_identity_delete(uint32_t sec_tag);
+
+/**
+ * @brief Start an application firmware upgrade.
+ *
+ * @param[in] max_file_size Estimate of the new firmware image to be received. May be greater than
+ *                          or equal to the actual image size received by the end.
+ *
+ * @retval  0       Ready to start a new firmware upgrade.
+ * @return  A positive number of bytes written so far, if the previous upgrade was not completed.
+ *          In this case, the upgrade will resume from this offset.
+ * @retval -EBUSY   Another application firmware upgrade is already ongoing.
+ * @retval -ENOMEM  Not enough memory to store the file of the given size.
+ * @retval -EIO     Internal error.
+ * @retval -ENOTSUP This function is not implemented.
+ */
+int lwm2m_os_app_fota_start(size_t max_file_size);
+
+/**
+ * @brief Receive an application firmware image fragment and validate its CRC.
+ *
+ * @param[in] buf    Buffer containing the fragment.
+ * @param[in] len    Length of the fragment in bytes.
+ * @param[in] offset Offset into the buffer, from which to start copying the fragment to flash.
+ * @param[in] crc32  Expected IEEE CRC32 value. Must be checked for the whole fragment.
+ *
+ * @retval  0       Success.
+ * @retval -EACCES  lwm2m_os_app_fota_start() was not called beforehand.
+ * @retval -ENOMEM  Not enough memory to store the file.
+ * @retval -EINVAL  CRC error.
+ * @retval -EIO     Internal error.
+ * @retval -ENOTSUP Firmware image not recognized, or this function is not implemented.
+ */
+int lwm2m_os_app_fota_fragment(const char *buf, uint16_t len, uint16_t offset, uint32_t crc32);
+
+/**
+ * @brief Finalize the current application firmware upgrade and CRC-validate the image.
+ *
+ * @param[in] crc32  Expected IEEE CRC32 value. Should be checked for the whole file in flash.
+ *
+ * @retval  0       Success.
+ * @retval -EACCES  lwm2m_os_app_fota_start() was not called beforehand.
+ * @retval -EINVAL  CRC error.
+ * @retval -EIO     Internal error.
+ * @retval -ENOTSUP This function is not implemented.
+ */
+int lwm2m_os_app_fota_finish(uint32_t crc32);
+
+/**
+ * @brief Abort the current application firmware upgrade.
+ */
+void lwm2m_os_app_fota_abort(void);
 
 #ifdef __cplusplus
 }

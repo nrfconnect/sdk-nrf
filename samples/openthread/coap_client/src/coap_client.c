@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <dk_buttons_and_leds.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #include <ram_pwrdn.h>
-#include <device.h>
-#include <pm/device.h>
+#include <zephyr/device.h>
+#include <zephyr/pm/device.h>
 
 #include "coap_client_utils.h"
 
@@ -18,8 +18,6 @@
 #endif
 
 LOG_MODULE_REGISTER(coap_client, CONFIG_COAP_CLIENT_LOG_LEVEL);
-
-#define CONSOLE_LABEL DT_LABEL(DT_CHOSEN(zephyr_console))
 
 #define OT_CONNECTION_LED DK_LED1
 #define BLE_CONNECTION_LED DK_LED2
@@ -34,11 +32,6 @@ LOG_MODULE_REGISTER(coap_client, CONFIG_COAP_CLIENT_LOG_LEVEL);
 static void on_nus_received(struct bt_conn *conn, const uint8_t *const data,
 			    uint16_t len)
 {
-	if (len != 1) {
-		LOG_WRN("Received invalid data length (%hd) from NUS", len);
-		return;
-	}
-
 	LOG_INF("Received data: %c", data[0]);
 
 	switch (*data) {
@@ -92,7 +85,11 @@ static void on_ot_disconnect(struct k_work *item)
 static void on_mtd_mode_toggle(uint32_t med)
 {
 #if IS_ENABLED(CONFIG_PM_DEVICE)
-	const struct device *cons = device_get_binding(CONSOLE_LABEL);
+	const struct device *cons = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
+
+	if (!device_is_ready(cons)) {
+		return;
+	}
 
 	if (med) {
 		pm_device_action_run(cons, PM_DEVICE_ACTION_RESUME);

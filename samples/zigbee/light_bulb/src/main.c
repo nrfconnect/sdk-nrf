@@ -10,13 +10,13 @@
  */
 
 #include <zephyr/types.h>
-#include <zephyr.h>
-#include <device.h>
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
 #include <soc.h>
-#include <drivers/pwm.h>
-#include <logging/log.h>
+#include <zephyr/drivers/pwm.h>
+#include <zephyr/logging/log.h>
 #include <dk_buttons_and_leds.h>
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
 #include <zboss_api.h>
 #include <zboss_api_addons.h>
@@ -25,12 +25,13 @@
 #include <zigbee/zigbee_error_handler.h>
 #include <zigbee/zigbee_zcl_scenes.h>
 #include <zb_nrf_platform.h>
+#include "zb_dimmable_light.h"
 
 #define RUN_STATUS_LED                  DK_LED1
 #define RUN_LED_BLINK_INTERVAL          1000
 
 /* Device endpoint, used to receive light controlling commands. */
-#define HA_DIMMABLE_LIGHT_ENDPOINT      10
+#define DIMMABLE_LIGHT_ENDPOINT         10
 
 /* Version of the application software (1 byte). */
 #define BULB_INIT_BASIC_APP_VERSION     01
@@ -83,24 +84,14 @@
  */
 #define PWM_DK_LED4_NODE                DT_NODELABEL(pwm_led3)
 
-/* Nordic PWM nodes don't have flags cells in their specifiers, so
- * this is just future-proofing.
- */
-#define FLAGS_OR_ZERO(node)				\
-	COND_CODE_1(DT_PHA_HAS_CELL(node, pwms, flags),	\
-		    (DT_PWMS_FLAGS(node)), (0))
-
 #if DT_NODE_HAS_STATUS(PWM_DK_LED4_NODE, okay)
-/* Get the defines from overlay file. */
-#define PWM_DK_LED4_CTLR                DT_PWMS_CTLR(PWM_DK_LED4_NODE)
-#define PWM_DK_LED4_CHANNEL             DT_PWMS_CHANNEL(PWM_DK_LED4_NODE)
-#define PWM_DK_LED4_FLAGS               FLAGS_OR_ZERO(PWM_DK_LED4_NODE)
+static const struct pwm_dt_spec led_pwm = PWM_DT_SPEC_GET(PWM_DK_LED4_NODE);
 #else
 #error "Choose supported PWM driver"
 #endif
 
-/* Led PWM period, calculated for 50 Hz signal - in microseconds. */
-#define LED_PWM_PERIOD_US               (USEC_PER_SEC / 50U)
+/* Led PWM period, calculated for 100 Hz signal - in microseconds. */
+#define LED_PWM_PERIOD_US               (USEC_PER_SEC / 100U)
 
 #ifndef ZB_ROUTER_ROLE
 #error Define ZB_ROUTER_ROLE to compile router source code.
@@ -125,9 +116,6 @@ typedef struct {
 
 /* Zigbee device application context storage. */
 static bulb_device_ctx_t dev_ctx;
-
-/* Pointer to PWM device controlling leds with pwm signal. */
-static const struct device *led_pwm_dev;
 
 ZB_ZCL_DECLARE_IDENTIFY_ATTRIB_LIST(
 	identify_attr_list,
@@ -169,7 +157,7 @@ ZB_ZCL_DECLARE_LEVEL_CONTROL_ATTRIB_LIST(
 	&dev_ctx.level_control_attr.current_level,
 	&dev_ctx.level_control_attr.remaining_time);
 
-ZB_HA_DECLARE_DIMMABLE_LIGHT_CLUSTER_LIST(
+ZB_DECLARE_DIMMABLE_LIGHT_CLUSTER_LIST(
 	dimmable_light_clusters,
 	basic_attr_list,
 	identify_attr_list,
@@ -179,12 +167,12 @@ ZB_HA_DECLARE_DIMMABLE_LIGHT_CLUSTER_LIST(
 	level_control_attr_list);
 
 
-ZB_HA_DECLARE_DIMMABLE_LIGHT_EP(
+ZB_DECLARE_DIMMABLE_LIGHT_EP(
 	dimmable_light_ep,
-	HA_DIMMABLE_LIGHT_ENDPOINT,
+	DIMMABLE_LIGHT_ENDPOINT,
 	dimmable_light_clusters);
 
-ZB_HA_DECLARE_DIMMABLE_LIGHT_CTX(
+ZBOSS_DECLARE_DEVICE_CTX_1_EP(
 	dimmable_light_ctx,
 	dimmable_light_ep);
 
@@ -194,8 +182,6 @@ ZB_HA_DECLARE_DIMMABLE_LIGHT_CTX(
  */
 static void start_identifying(zb_bufid_t bufid)
 {
-	zb_ret_t zb_err_code;
-
 	ZVUNUSED(bufid);
 
 	if (ZB_JOINED()) {
@@ -204,10 +190,17 @@ static void start_identifying(zb_bufid_t bufid)
 		 */
 		if (dev_ctx.identify_attr.identify_time ==
 		    ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE) {
-			LOG_INF("Enter identify mode");
 
-			zb_err_code = zb_bdb_finding_binding_target(HA_DIMMABLE_LIGHT_ENDPOINT);
-			ZB_ERROR_CHECK(zb_err_code);
+			zb_ret_t zb_err_code = zb_bdb_finding_binding_target(
+				DIMMABLE_LIGHT_ENDPOINT);
+
+			if (zb_err_code == RET_OK) {
+				LOG_INF("Enter identify mode");
+			} else if (zb_err_code == RET_INVALID_STATE) {
+				LOG_WRN("RET_INVALID_STATE - Cannot enter identify mode");
+			} else {
+				ZB_ERROR_CHECK(zb_err_code);
+			}
 		} else {
 			LOG_INF("Cancel identify mode");
 			zb_bdb_finding_binding_target_cancel();
@@ -247,10 +240,9 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 /**@brief Function for initializing additional PWM leds. */
 static void pwm_led_init(void)
 {
-	led_pwm_dev = DEVICE_DT_GET(PWM_DK_LED4_CTLR);
-	if (!device_is_ready(led_pwm_dev)) {
+	if (!device_is_ready(led_pwm.dev)) {
 		LOG_ERR("Error: PWM device %s is not ready",
-			led_pwm_dev->name);
+			led_pwm.dev->name);
 	}
 }
 
@@ -281,8 +273,7 @@ static void light_bulb_set_brightness(zb_uint8_t brightness_level)
 {
 	uint32_t pulse = brightness_level * LED_PWM_PERIOD_US / 255U;
 
-	if (pwm_pin_set_usec(led_pwm_dev, PWM_DK_LED4_CHANNEL,
-			     LED_PWM_PERIOD_US, pulse, PWM_DK_LED4_FLAGS)) {
+	if (pwm_set_dt(&led_pwm, PWM_USEC(LED_PWM_PERIOD_US), PWM_USEC(pulse))) {
 		LOG_ERR("Pwm led 4 set fails:\n");
 		return;
 	}
@@ -297,37 +288,12 @@ static void level_control_set_value(zb_uint16_t new_level)
 	LOG_INF("Set level value: %i", new_level);
 
 	ZB_ZCL_SET_ATTRIBUTE(
-		HA_DIMMABLE_LIGHT_ENDPOINT,
+		DIMMABLE_LIGHT_ENDPOINT,
 		ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL,
 		ZB_ZCL_CLUSTER_SERVER_ROLE,
 		ZB_ZCL_ATTR_LEVEL_CONTROL_CURRENT_LEVEL_ID,
 		(zb_uint8_t *)&new_level,
 		ZB_FALSE);
-
-	/* According to the table 7.3 of Home Automation Profile Specification
-	 * v 1.2 rev 29, chapter 7.1.3.
-	 */
-	if (new_level == 0) {
-		zb_uint8_t value = ZB_FALSE;
-
-		ZB_ZCL_SET_ATTRIBUTE(
-			HA_DIMMABLE_LIGHT_ENDPOINT,
-			ZB_ZCL_CLUSTER_ID_ON_OFF,
-			ZB_ZCL_CLUSTER_SERVER_ROLE,
-			ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
-			&value,
-			ZB_FALSE);
-	} else {
-		zb_uint8_t value = ZB_TRUE;
-
-		ZB_ZCL_SET_ATTRIBUTE(
-			HA_DIMMABLE_LIGHT_ENDPOINT,
-			ZB_ZCL_CLUSTER_ID_ON_OFF,
-			ZB_ZCL_CLUSTER_SERVER_ROLE,
-			ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
-			&value,
-			ZB_FALSE);
-	}
 
 	light_bulb_set_brightness(new_level);
 }
@@ -341,7 +307,7 @@ static void on_off_set_value(zb_bool_t on)
 	LOG_INF("Set ON/OFF value: %i", on);
 
 	ZB_ZCL_SET_ATTRIBUTE(
-		HA_DIMMABLE_LIGHT_ENDPOINT,
+		DIMMABLE_LIGHT_ENDPOINT,
 		ZB_ZCL_CLUSTER_ID_ON_OFF,
 		ZB_ZCL_CLUSTER_SERVER_ROLE,
 		ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
@@ -349,8 +315,7 @@ static void on_off_set_value(zb_bool_t on)
 		ZB_FALSE);
 
 	if (on) {
-		level_control_set_value(
-			dev_ctx.level_control_attr.current_level);
+		light_bulb_set_brightness(dev_ctx.level_control_attr.current_level);
 	} else {
 		light_bulb_set_brightness(0U);
 	}
@@ -445,7 +410,7 @@ static void bulb_clusters_attr_init(void)
 		ZB_ZCL_LEVEL_CONTROL_REMAINING_TIME_DEFAULT_VALUE;
 
 	ZB_ZCL_SET_ATTRIBUTE(
-		HA_DIMMABLE_LIGHT_ENDPOINT,
+		DIMMABLE_LIGHT_ENDPOINT,
 		ZB_ZCL_CLUSTER_ID_ON_OFF,
 		ZB_ZCL_CLUSTER_SERVER_ROLE,
 		ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
@@ -453,7 +418,7 @@ static void bulb_clusters_attr_init(void)
 		ZB_FALSE);
 
 	ZB_ZCL_SET_ATTRIBUTE(
-		HA_DIMMABLE_LIGHT_ENDPOINT,
+		DIMMABLE_LIGHT_ENDPOINT,
 		ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL,
 		ZB_ZCL_CLUSTER_SERVER_ROLE,
 		ZB_ZCL_ATTR_LEVEL_CONTROL_CURRENT_LEVEL_ID,
@@ -517,12 +482,13 @@ static void zcl_device_cb(zb_bufid_t bufid)
 			/* Other clusters can be processed here */
 			LOG_INF("Unhandled cluster attribute id: %d",
 				cluster_id);
+			device_cb_param->status = RET_NOT_IMPLEMENTED;
 		}
 		break;
 
 	default:
 		if (zcl_scenes_cb(bufid) == ZB_FALSE) {
-			device_cb_param->status = RET_ERROR;
+			device_cb_param->status = RET_NOT_IMPLEMENTED;
 		}
 		break;
 	}
@@ -578,7 +544,7 @@ void main(void)
 	level_control_set_value(dev_ctx.level_control_attr.current_level);
 
 	/* Register handler to identify notifications. */
-	ZB_AF_SET_IDENTIFY_NOTIFICATION_HANDLER(HA_DIMMABLE_LIGHT_ENDPOINT, identify_cb);
+	ZB_AF_SET_IDENTIFY_NOTIFICATION_HANDLER(DIMMABLE_LIGHT_ENDPOINT, identify_cb);
 
 	/* Initialize ZCL scene table */
 	zcl_scenes_init();

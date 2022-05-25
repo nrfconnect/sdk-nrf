@@ -14,9 +14,7 @@ Requirements
 
 The sample supports the following development kit:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpunet
+.. table-from-sample-yaml::
 
 Overview
 ********
@@ -91,11 +89,42 @@ After programming the sample to your development kit, complete the following ste
       See :ref:`logging_cpunet` for additional details.
 
 #. Reset the kit.
-#. Observe that the output includes the following line:
+#. Observe the following lines in the console output:
 
    .. code-block:: console
 
-      Done updating network core
+      I: Starting bootloader
+      I: Primary image: magic=unset, swap_type=0x1, copy_done=0x3, image_ok=0x3
+      I: Secondary image: magic=unset, swap_type=0x1, copy_done=0x3, image_ok=0x3
+      I: Boot source: none
+      I: Swap type: none
+      I: Bootloader chainload address offset: 0xc000
+      I: Jumping to the first image slot
+      *** Booting Zephyr OS build v2.7.99-ncs1-2195-g186cf4539e5a  ***
+
+#. Program the network core update image using ``nrfjprog``:
+
+   .. code-block:: console
+
+      nrfjprog --program zephyr/net_core_app_moved_test_update.hex --sectorerase
+
+   .. note::
+      Typically, the update image is received through serial interface or Bluetooth.
+      For testing purposes, use ``nrfjprog`` to program the update image directly into the update slot.
+
+
+#. Reset the kit.
+#. Observe that the output includes the following lines indicating that the MCUBoot in the application core has read the update image and performed a firmware update of the network core:
+
+   .. code-block:: console
+
+      I: Starting network core update
+      I: Turned on network core
+      I: Turned off network core
+      I: Done updating network core
+      I: Bootloader chainload address offset: 0xc000
+      I: Jumping to the first image slot
+      *** Booting Zephyr OS build v2.7.99-ncs1-2195-g186cf4539e5a  ***
 
 Dependencies
 ************

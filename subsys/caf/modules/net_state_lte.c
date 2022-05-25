@@ -5,7 +5,7 @@
  */
 
 #include <stdio.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <modem/lte_lc.h>
 
 #define MODULE net_state
@@ -13,7 +13,7 @@
 #include <caf/events/power_manager_event.h>
 #include <caf/events/net_state_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_NET_STATE_LTE_LOG_LEVEL);
 
 static struct k_work_delayable connecting_work;
@@ -40,7 +40,7 @@ static void send_net_state_event(enum net_state state)
 
 	event->id = MODULE_ID(MODULE);
 	event->state = state;
-	EVENT_SUBMIT(event);
+	APP_EVENT_SUBMIT(event);
 }
 
 static void set_net_state(enum net_state state)
@@ -163,10 +163,10 @@ static int connect_lte(void)
 	return 0;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
-		struct module_state_event *event = cast_module_state_event(eh);
+	if (is_module_state_event(aeh)) {
+		struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			static bool initialized;
@@ -191,7 +191,7 @@ static bool event_handler(const struct event_header *eh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_CAF_LOG_NET_STATE_WAITING) && is_net_state_event(eh)) {
+	if (IS_ENABLED(CONFIG_CAF_LOG_NET_STATE_WAITING) && is_net_state_event(aeh)) {
 		if (net_state == NET_STATE_DISCONNECTED) {
 			k_work_reschedule(&connecting_work, K_NO_WAIT);
 		} else {
@@ -208,8 +208,8 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if CONFIG_CAF_LOG_NET_STATE_WAITING
-	EVENT_SUBSCRIBE(MODULE, net_state_event);
+	APP_EVENT_SUBSCRIBE(MODULE, net_state_event);
 #endif

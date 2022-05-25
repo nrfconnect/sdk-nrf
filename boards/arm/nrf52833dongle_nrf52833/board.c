@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <init.h>
+#include <zephyr/init.h>
 #include <hal/nrf_power.h>
 #include <hal/nrf_nvmc.h>
 

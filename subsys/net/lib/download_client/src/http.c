@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <logging/log.h>
-#include <sys/__assert.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/sys/__assert.h>
 #include <net/download_client.h>
 
 LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
@@ -42,7 +42,7 @@ LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 
 int url_parse_host(const char *url, char *host, size_t len);
 int url_parse_file(const char *url, char *file, size_t len);
-int socket_send(const struct download_client *client, size_t len);
+int socket_send(const struct download_client *client, size_t len, int timeout);
 
 int http_get_request_send(struct download_client *client)
 {
@@ -102,7 +102,7 @@ int http_get_request_send(struct download_client *client)
 		LOG_HEXDUMP_DBG(client->buf, len, "HTTP request");
 	}
 
-	err = socket_send(client, len);
+	err = socket_send(client, len, 0);
 	if (err) {
 		LOG_ERR("Failed to send HTTP request, errno %d", errno);
 		return err;

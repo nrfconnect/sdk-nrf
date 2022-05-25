@@ -1,0 +1,6 @@
+This sample can be found under |sample path| in the |NCS| folder structure.
+
+When built as a non-secure firmware image for the ``_ns`` build target, the sample automatically includes the :ref:`Trusted Firmware-M <ug_tfm>` (TF-M).
+You can configure it to use the :ref:`secure_partition_manager` instead of TF-M.
+
+See :ref:`gs_programming` for information about how to build and program the application.

@@ -8,24 +8,24 @@
 #include <stddef.h>
 #include <string.h>
 #include <errno.h>
-#include <sys/printk.h>
-#include <sys/byteorder.h>
-#include <zephyr.h>
-#include <drivers/gpio.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/gpio.h>
 #include <soc.h>
 #include <assert.h>
 
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/hci.h>
-#include <bluetooth/conn.h>
-#include <bluetooth/uuid.h>
-#include <bluetooth/gatt.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/hci.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/gatt.h>
 
-#include <bluetooth/services/bas.h>
+#include <zephyr/bluetooth/services/bas.h>
 #include <bluetooth/services/hids.h>
-#include <bluetooth/services/dis.h>
+#include <zephyr/bluetooth/services/dis.h>
 #include <dk_buttons_and_leds.h>
 
 #define DEVICE_NAME     CONFIG_BT_DEVICE_NAME
@@ -631,6 +631,9 @@ static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_display = auth_passkey_display,
 	.passkey_confirm = auth_passkey_confirm,
 	.cancel = auth_cancel,
+};
+
+static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 	.pairing_complete = pairing_complete,
 	.pairing_failed = pairing_failed
 };
@@ -756,7 +759,17 @@ void main(void)
 	printk("Starting Bluetooth Peripheral HIDS mouse example\n");
 
 	if (IS_ENABLED(CONFIG_BT_HIDS_SECURITY_ENABLED)) {
-		bt_conn_auth_cb_register(&conn_auth_callbacks);
+		err = bt_conn_auth_cb_register(&conn_auth_callbacks);
+		if (err) {
+			printk("Failed to register authorization callbacks.\n");
+			return;
+		}
+
+		err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
+		if (err) {
+			printk("Failed to register authorization info callbacks.\n");
+			return;
+		}
 	}
 
 	err = bt_enable(NULL);

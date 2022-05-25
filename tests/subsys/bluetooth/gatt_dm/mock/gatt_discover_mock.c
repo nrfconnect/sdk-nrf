@@ -5,11 +5,11 @@
  */
 #include <stdbool.h>
 #include <inttypes.h>
-#include <bluetooth/gatt.h>
-#include <bluetooth/uuid.h>
-#include <kernel.h>
+#include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/kernel.h>
 #include <ztest.h>
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 
 
 /* Settings of the discover mock */

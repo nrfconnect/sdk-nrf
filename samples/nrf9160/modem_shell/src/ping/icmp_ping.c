@@ -7,21 +7,21 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
 #include <sys/types.h>
-#include <net/net_ip.h>
+#include <zephyr/net/net_ip.h>
 
 #include <modem/modem_info.h>
 
 #include <fcntl.h>
-#include <posix/unistd.h>
-#include <posix/netdb.h>
+#include <zephyr/posix/unistd.h>
+#include <zephyr/posix/netdb.h>
 
-#include <posix/poll.h>
-#include <posix/sys/socket.h>
+#include <zephyr/posix/poll.h>
+#include <zephyr/posix/sys/socket.h>
 
-#include <posix/arpa/inet.h>
+#include <zephyr/posix/arpa/inet.h>
 
 #include "utils/net_utils.h"
 #include "link_api.h"

@@ -14,8 +14,8 @@
  * @brief CAF Power Event.
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,12 +46,12 @@ extern "C" {
  * event, it's ensured that all other application modules that handle power down event are already
  * suspended. Then it can continue the power down procedure.
  *
- * @warning An application module that handles power down event must also handle @ref wake_up_event.
- *          Otherwise the module will never be woken up after suspending.
+ * @note An application module that handles power down event must also handle @ref wake_up_event.
+ *       Otherwise the module will never be woken up after suspending.
  */
 struct power_down_event {
 	/** Event header. */
-	struct event_header header;
+	struct app_event_header header;
 
 	/** Information if the power down was triggered by a fatal error. */
 	bool error;
@@ -78,7 +78,7 @@ struct power_down_event {
  */
 struct wake_up_event {
 	/** Event header. */
-	struct event_header header;
+	struct app_event_header header;
 };
 
 #ifdef __cplusplus
@@ -93,8 +93,8 @@ struct wake_up_event {
 extern "C" {
 #endif
 
-EVENT_TYPE_DECLARE(power_down_event);
-EVENT_TYPE_DECLARE(wake_up_event);
+APP_EVENT_TYPE_DECLARE(power_down_event);
+APP_EVENT_TYPE_DECLARE(wake_up_event);
 
 #ifdef __cplusplus
 }

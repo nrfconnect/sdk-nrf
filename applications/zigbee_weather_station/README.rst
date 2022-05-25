@@ -88,9 +88,7 @@ Requirements
 
 The application supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: thingy53_nrf5340_cpuapp
+.. table-from-sample-yaml::
 
 To commission the Zigbee weather station device and control it remotely through a Zigbee network, you also need to progam a Zigbee network coordinator on a separate compatible development kit.
 The Zigbee network coordinator forms the network that the weather station node will join and onto which it will share its measurement data.
@@ -189,13 +187,6 @@ Selecting a build type in |VSC|
 .. include:: /gs_modifying.rst
    :start-after: build_types_selection_vsc_start
    :end-before: build_types_selection_vsc_end
-
-Selecting a build type in SES
------------------------------
-
-.. include:: /gs_modifying.rst
-   :start-after: build_types_selection_ses_start
-   :end-before: build_types_selection_ses_end
 
 Selecting a build type from command line
 ----------------------------------------

@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <logging/log.h>
-#include <storage/stream_flash.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/storage/stream_flash.h>
 #include <stdio.h>
 #include <dfu/dfu_target_stream.h>
 
 #ifdef CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS
 #define MODULE "dfu"
 #define DFU_STREAM_OFFSET "stream/offset"
-#include <settings/settings.h>
+#include <zephyr/settings/settings.h>
 #endif /* CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS */
 
 LOG_MODULE_REGISTER(dfu_target_stream, CONFIG_DFU_TARGET_LOG_LEVEL);
@@ -53,7 +53,7 @@ static int store_progress(void)
 static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
-	if (!strcmp(key, current_id)) {
+	if (current_id && !strcmp(key, current_id)) {
 		int err;
 		off_t absolute_offset;
 		struct flash_pages_info page;

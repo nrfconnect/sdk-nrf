@@ -6,9 +6,10 @@
 
 #include <stdlib.h>
 
-#include <zephyr.h>
-#include <device.h>
-#include <pm/device.h>
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/pm/device.h>
 #include "uart.h"
 
 /* Utility function to enable/disable UART1.
@@ -18,19 +19,14 @@
  */
 static void uart1_set_enable(bool enable)
 {
+	if (!IS_ENABLED(CONFIG_NRFX_UARTE1)) {
+		return;
+	}
+
 	if (enable) {
 		NRF_UARTE1_NS->ENABLE = UARTE_ENABLE_ENABLE_Enabled;
-		NRF_UARTE1_NS->TASKS_STARTRX = 1;
-		NRF_UARTE1_NS->TASKS_STARTTX = 1;
 	} else {
-		/* Stop TX and RX operation and wait for the corresponding events to be generated
-		 * before disabling the peripheral.
-		 * Ref: https://infocenter.nordicsemi.com/topic/ps_nrf9160/uarte.html
-		 */
-		NRF_UARTE1_NS->TASKS_STOPRX = 1;
-		while (NRF_UARTE1_NS->EVENTS_RXTO == 0) {
-			/* Wait until RX Timeout event is raised. */
-		}
+		/* Stop any ongoing transmission.*/
 		NRF_UARTE1_NS->TASKS_STOPTX = 1;
 		while (NRF_UARTE1_NS->EVENTS_TXSTOPPED == 0) {
 			/* Wait until TX Stopped event is raised. */
@@ -48,11 +44,9 @@ static void uart1_set_enable(bool enable)
  */
 static void uart0_set_enable(bool enable)
 {
-	const struct device *uart_dev;
+	const struct device *uart_dev = DEVICE_DT_GET(DT_NODELABEL(uart0));
 
-	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
-
-	if (!uart_dev) {
+	if (!device_is_ready(uart_dev)) {
 		return;
 	}
 

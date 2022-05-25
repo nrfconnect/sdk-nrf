@@ -1,4 +1,4 @@
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <net/azure_iot_hub.h>
 #include <nrf_modem_at.h>
 
@@ -6,7 +6,7 @@
 
 #define MODULE azure_iot_hub_integration
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CLOUD_INTEGRATION_LOG_LEVEL);
 
 #if !defined(CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM)
@@ -228,6 +228,14 @@ static void azure_iot_hub_event_handler(struct azure_iot_hub_evt *const evt)
 		break;
 	case AZURE_IOT_HUB_EVT_PUBACK:
 		LOG_DBG("AZURE_IOT_HUB_EVT_PUBACK");
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_DATA_ACK;
+		cloud_wrap_evt.message_id = evt->data.message_id;
+		notify = true;
+		break;
+	case AZURE_IOT_HUB_EVT_PINGRESP:
+		LOG_DBG("AZURE_IOT_HUB_EVT_PINGRESP");
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_PING_ACK;
+		notify = true;
 		break;
 	case AZURE_IOT_HUB_EVT_ERROR:
 		LOG_DBG("AZURE_IOT_HUB_EVT_ERROR");
@@ -345,13 +353,13 @@ int cloud_wrap_disconnect(void)
 	return 0;
 }
 
-int cloud_wrap_state_get(void)
+int cloud_wrap_state_get(bool ack, uint32_t id)
 {
 	int err;
 	struct azure_iot_hub_data msg = {
 		.ptr = REQUEST_DEVICE_TWIN_STRING,
 		.len = sizeof(REQUEST_DEVICE_TWIN_STRING) - 1,
-		.qos = MQTT_QOS_0_AT_MOST_ONCE,
+		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		.topic.type = AZURE_IOT_HUB_TOPIC_TWIN_REPORTED
 	};
 
@@ -364,13 +372,14 @@ int cloud_wrap_state_get(void)
 	return 0;
 }
 
-int cloud_wrap_state_send(char *buf, size_t len)
+int cloud_wrap_state_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	int err;
 	struct azure_iot_hub_data msg = {
 		.ptr = buf,
 		.len = len,
-		.qos = MQTT_QOS_0_AT_MOST_ONCE,
+		.message_id = id,
+		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		.topic.type = AZURE_IOT_HUB_TOPIC_TWIN_REPORTED,
 	};
 
@@ -383,13 +392,16 @@ int cloud_wrap_state_send(char *buf, size_t len)
 	return 0;
 }
 
-int cloud_wrap_data_send(char *buf, size_t len)
+int cloud_wrap_data_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
 {
+	ARG_UNUSED(path_list);
+
 	int err;
 	struct azure_iot_hub_data msg = {
 		.ptr = buf,
 		.len = len,
-		.qos = MQTT_QOS_0_AT_MOST_ONCE,
+		.message_id = id,
+		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		.topic.type = AZURE_IOT_HUB_TOPIC_TWIN_REPORTED,
 	};
 
@@ -402,13 +414,14 @@ int cloud_wrap_data_send(char *buf, size_t len)
 	return 0;
 }
 
-int cloud_wrap_batch_send(char *buf, size_t len)
+int cloud_wrap_batch_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	int err;
 	struct azure_iot_hub_data msg = {
 		.ptr = buf,
 		.len = len,
-		.qos = MQTT_QOS_0_AT_MOST_ONCE,
+		.message_id = id,
+		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		.topic.type = AZURE_IOT_HUB_TOPIC_EVENT,
 		.topic.prop_bag = prop_bag_batch,
 		.topic.prop_bag_count = ARRAY_SIZE(prop_bag_batch)
@@ -423,13 +436,16 @@ int cloud_wrap_batch_send(char *buf, size_t len)
 	return 0;
 }
 
-int cloud_wrap_ui_send(char *buf, size_t len)
+int cloud_wrap_ui_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
 {
+	ARG_UNUSED(path_list);
+
 	int err;
 	struct azure_iot_hub_data msg = {
 		.ptr = buf,
 		.len = len,
-		.qos = MQTT_QOS_0_AT_MOST_ONCE,
+		.message_id = id,
+		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		.topic.type = AZURE_IOT_HUB_TOPIC_EVENT,
 		.topic.prop_bag = prop_bag_message,
 		.topic.prop_bag_count = ARRAY_SIZE(prop_bag_message)
@@ -444,13 +460,16 @@ int cloud_wrap_ui_send(char *buf, size_t len)
 	return 0;
 }
 
-int cloud_wrap_neighbor_cells_send(char *buf, size_t len)
+int cloud_wrap_neighbor_cells_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
 {
+	ARG_UNUSED(path_list);
+
 	int err;
 	struct azure_iot_hub_data msg = {
 		.ptr = buf,
 		.len = len,
-		.qos = MQTT_QOS_0_AT_MOST_ONCE,
+		.message_id = id,
+		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		.topic.type = AZURE_IOT_HUB_TOPIC_EVENT,
 		.topic.prop_bag = prop_bag_ncellmeas,
 		.topic.prop_bag_count = ARRAY_SIZE(prop_bag_ncellmeas)
@@ -465,13 +484,16 @@ int cloud_wrap_neighbor_cells_send(char *buf, size_t len)
 	return 0;
 }
 
-int cloud_wrap_agps_request_send(char *buf, size_t len)
+int cloud_wrap_agps_request_send(char *buf, size_t len, bool ack, uint32_t id, char *path_list[])
 {
+	ARG_UNUSED(path_list);
+
 	int err;
 	struct azure_iot_hub_data msg = {
 		.ptr = buf,
 		.len = len,
-		.qos = MQTT_QOS_0_AT_MOST_ONCE,
+		.message_id = id,
+		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		.topic.type = AZURE_IOT_HUB_TOPIC_EVENT,
 		.topic.prop_bag = prop_bag_agps,
 		.topic.prop_bag_count = ARRAY_SIZE(prop_bag_agps)
@@ -486,13 +508,14 @@ int cloud_wrap_agps_request_send(char *buf, size_t len)
 	return 0;
 }
 
-int cloud_wrap_pgps_request_send(char *buf, size_t len)
+int cloud_wrap_pgps_request_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	int err;
 	struct azure_iot_hub_data msg = {
 		.ptr = buf,
 		.len = len,
-		.qos = MQTT_QOS_0_AT_MOST_ONCE,
+		.message_id = id,
+		.qos = ack ? MQTT_QOS_1_AT_LEAST_ONCE : MQTT_QOS_0_AT_MOST_ONCE,
 		.topic.type = AZURE_IOT_HUB_TOPIC_EVENT,
 		.topic.prop_bag = prop_bag_pgps,
 		.topic.prop_bag_count = ARRAY_SIZE(prop_bag_pgps)
@@ -507,7 +530,7 @@ int cloud_wrap_pgps_request_send(char *buf, size_t len)
 	return 0;
 }
 
-int cloud_wrap_memfault_data_send(char *buf, size_t len)
+int cloud_wrap_memfault_data_send(char *buf, size_t len, bool ack, uint32_t id)
 {
 	/* Not supported */
 	return -ENOTSUP;

@@ -190,7 +190,7 @@ nRF9160
     * Fixed an issue where SPM and the application could have incompatible FPU configurations, resulting in a HardFault.
       Now, the application is free to use FPU regardless of SPM configuration.
 
-  * :ref:`gps_api` interface:
+  * GPS driver:
 
     * Renamed ``gps_agps_request()`` to ``gps_agps_request_send()``.
 

@@ -47,9 +47,6 @@ It lists the minimum version that is required and the version that is installed 
          * - git
            -
            - |git_recommended_ver_win10|
-         * - GNU Arm Embedded Toolchain
-           - |gnuarmemb_min_ver|
-           - |gnuarmemb_recommended_ver_win10|
          * - gperf
            - |gperf_min_ver|
            - |gperf_recommended_ver_win10|
@@ -59,9 +56,6 @@ It lists the minimum version that is required and the version that is installed 
          * - Python
            - |python_min_ver|
            - |python_recommended_ver_win10|
-         * - SEGGER Embedded Studio (Nordic Edition)
-           - |ses_min_ver|
-           - |ses_recommended_ver_win10|
          * - west
            - |west_min_ver|
            - |west_recommended_ver_win10|
@@ -92,9 +86,6 @@ It lists the minimum version that is required and the version that is installed 
          * - git
            -
            - |git_recommended_ver_linux|
-         * - GNU Arm Embedded Toolchain
-           - |gnuarmemb_min_ver|
-           - |gnuarmemb_recommended_ver_linux|
          * - gperf
            - |gperf_min_ver|
            - |gperf_recommended_ver_linux|
@@ -104,9 +95,6 @@ It lists the minimum version that is required and the version that is installed 
          * - Python
            - |python_min_ver|
            - |python_recommended_ver_linux|
-         * - SEGGER Embedded Studio (Nordic Edition)
-           - |ses_min_ver|
-           - |ses_recommended_ver_linux|
          * - west
            - |west_min_ver|
            - |west_recommended_ver_linux|
@@ -131,9 +119,6 @@ It lists the minimum version that is required and the version that is installed 
          * - git
            -
            - |git_recommended_ver_darwin|
-         * - GNU Arm Embedded Toolchain
-           - |gnuarmemb_min_ver|
-           - |gnuarmemb_recommended_ver_darwin|
          * - gperf
            - |gperf_min_ver|
            - |gperf_recommended_ver_darwin|
@@ -143,9 +128,6 @@ It lists the minimum version that is required and the version that is installed 
          * - Python
            - |python_min_ver|
            - |python_recommended_ver_darwin|
-         * - SEGGER Embedded Studio (Nordic Edition)
-           - |ses_min_ver|
-           - |ses_recommended_ver_darwin|
          * - west
            - |west_min_ver|
            - |west_recommended_ver_darwin|

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <cJSON.h>
 #include <date_time.h>
 
@@ -13,7 +13,7 @@
 #include "json_helpers.h"
 #include "json_protocol_names.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(json_common, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 
 static int op_code_handle(cJSON *parent, enum json_common_op_code op,

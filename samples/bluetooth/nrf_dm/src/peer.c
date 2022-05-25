@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <bluetooth/conn.h>
+#include <zephyr/kernel.h>
+#include <zephyr/bluetooth/conn.h>
 
 #include "peer.h"
 #include "pwm_led.h"

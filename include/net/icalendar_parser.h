@@ -7,7 +7,7 @@
 #ifndef ICAL_PARSER_H__
 #define ICAL_PARSER_H__
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
 
 #ifdef __cplusplus

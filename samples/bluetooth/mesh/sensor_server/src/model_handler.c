@@ -4,22 +4,22 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <bluetooth/bluetooth.h>
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/bluetooth/bluetooth.h>
 #include <bluetooth/mesh/models.h>
 #include <dk_buttons_and_leds.h>
 #include "model_handler.h"
 
-#if DT_NODE_EXISTS(DT_ALIAS(bme680))
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(bme680), okay)
 /** Thingy53 */
-#define SENSOR_INST DT_PROP(DT_ALIAS(bme680), label)
+#define SENSOR_NODE DT_NODELABEL(bme680)
 #define SENSOR_DATA_TYPE SENSOR_CHAN_AMBIENT_TEMP
-#elif DT_NODE_EXISTS(DT_NODELABEL(temp))
+#elif DT_NODE_HAS_STATUS(DT_NODELABEL(temp), okay)
 /** nRF52 DK */
-#define SENSOR_INST DT_PROP(DT_NODELABEL(temp), label)
+#define SENSOR_NODE DT_NODELABEL(temp)
 #define SENSOR_DATA_TYPE SENSOR_CHAN_DIE_TEMP
 #else
-#define SENSOR_INST NULL
-#define SENSOR_DATA_TYPE NULL
 #error "Unsupported board!"
 #endif
 
@@ -33,7 +33,7 @@ static const struct bt_mesh_sensor_column columns[] = {
 	{ { 30 }, { 100 } },
 };
 
-static const struct device *dev;
+static const struct device *dev = DEVICE_DT_GET(SENSOR_NODE);
 static uint32_t tot_temp_samps;
 static uint32_t col_samps[ARRAY_SIZE(columns)];
 
@@ -261,10 +261,8 @@ const struct bt_mesh_comp *model_handler_init(void)
 	k_work_init_delayable(&attention_blink_work, attention_blink);
 	k_work_init_delayable(&end_of_presence_work, end_of_presence);
 
-	dev = device_get_binding(SENSOR_INST);
-
-	if (dev == NULL) {
-		printk("Could not initiate temperature sensor\n");
+	if (!device_is_ready(dev)) {
+		printk("Temperature sensor not ready\n");
 	} else {
 		printk("Temperature sensor (%s) initiated\n", dev->name);
 	}

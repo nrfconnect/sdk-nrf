@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <net/lwm2m.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/lwm2m.h>
 #include <lwm2m_resource_ids.h>
 #include <stdio.h>
 
@@ -15,7 +15,7 @@
 
 #define MODULE app_lwm2m_light_sensor
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 
 #define LIGHT_OBJ_INSTANCE_ID 0
@@ -23,12 +23,12 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 
 #define SENSOR_FETCH_DELAY_MS 200
 
-#if defined(CONFIG_LIGHT_SENSOR_USE_EXTERNAL)
-#define LIGHT_APP_TYPE "BH1749 Light Sensor"
-#define COLOUR_APP_TYPE "BH1749 Colour Sensor"
-#elif defined(CONFIG_LIGHT_SENSOR_USE_SIM)
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(sensor_sim), okay)
 #define LIGHT_APP_TYPE "Simulated Light Sensor"
 #define COLOUR_APP_TYPE "Simulated Colour Sensor"
+#else
+#define LIGHT_APP_TYPE "BH1749 Light Sensor"
+#define COLOUR_APP_TYPE "BH1749 Colour Sensor"
 #endif
 
 #define LIGHT_SENSOR_APP_NAME "Light sensor"
@@ -183,10 +183,10 @@ int lwm2m_init_light_sensor(void)
 	return 0;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_sensor_event(eh)) {
-		struct sensor_event *event = cast_sensor_event(eh);
+	if (is_sensor_event(aeh)) {
+		struct sensor_event *event = cast_sensor_event(aeh);
 		char temp_value_str[RGBIR_STR_LENGTH];
 
 		switch (event->type) {
@@ -230,5 +230,5 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, sensor_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, sensor_event);

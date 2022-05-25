@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/bluetooth.h>
 #include <bluetooth/mesh/models.h>
 
 /* Private Mesh Model headers */

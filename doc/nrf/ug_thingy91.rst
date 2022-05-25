@@ -15,6 +15,7 @@ Thingy:91 integrates an nRF9160 SiP that supports LTE-M, NB-IoT, and Global Navi
 
 You can find more information on the product in the `Thingy:91 product page`_ and in the `Nordic Thingy:91 User Guide`_.
 The |NCS| provides support for developing applications on the Thingy:91.
+If you are not familiar with the |NCS| and the development environment, see the :ref:`introductory documentation <getting_started>`.
 
 This guide gives you more information on the various aspects of Thingy:91.
 
@@ -160,49 +161,46 @@ You can choose the method based on the availability or absence of an external de
    In a final product, you must use your own, secret keys.
    See :ref:`ug_fw_update_development_keys` for more information.
 
+.. _build_pgm_vsc:
+
 Building and programming using VS Code extension
 ================================================
 
 |vsc_extension_instructions|
 
-.. _build_pgm_segger:
+Complete the following steps to build |NCS| projects with |VSC|:
 
-Building and programming using SEGGER Embedded Studio
-=====================================================
+1. Start |VSC|.
+   If you installed the |NCS| using the :ref:`gs_app_tcm`, you can click the :guilabel:`Open VS Code` button next to the version you installed.
+#. In the :guilabel:`Welcome panel` or on the :guilabel:`Welcome` page, click :guilabel:`Add an existing application`.
+#. Navigate to the directory of the nRF9160-compatible sample or application you want to work with.
 
-.. include:: gs_programming.rst
-   :start-after: build_SES_projimport_open_start
-   :end-before: build_SES_projimport_open_end
+   Samples are located under :file:`nrf/samples/`, and applications are located under :file:`nrf/applications/`.
 
-..
+#. Click :guilabel:`Select folder` to select the sample's or the application's folder.
 
-   .. figure:: images/ses_thingy_configuration.png
-      :alt: Opening the Asset tracker v2 application
+   A new application is automatically added in the :guilabel:`Applications` panel.
 
-      Opening the Asset tracker v2 application for the thingy91_nrf9160_ns build target
+#. If needed, click :guilabel:`Yes` when prompted if you trust the authors of the files.
+#. Click the :guilabel:`No build configurations. Click to create one` text under the application.
 
-   .. note::
+   The :guilabel:`Add Build Configuration` screen opens.
 
-      The *Board Directory* folder can be found in the following location: ``ncs/nrf/boards/arm``.
+#. Provide the following information to configure the build:
 
-4. Click :guilabel:`OK` to import the project into SES.
-   You can now work with the project in the IDE.
+   a. Select the build target from the :guilabel:`Board` drop-down menu.
+      You must use the build target ``thingy91_nrf9160`` or ``thingy91_nrf9160_ns`` when building the application code for the nRF9160 SiP and the build target ``thingy91_nrf52840`` when building the application code for the onboard nRF52840 SoC.
+   #. Select ``prj.conf`` from the :guilabel:`Configuration` drop-down menu if it is not already selected.
+   #. Make sure that the checkbox for :guilabel:`Build after generating configuration` is selected.
 
-   .. include:: gs_programming.rst
-      :start-after: build_SES_projimport_note_start
-      :end-before: build_SES_projimport_note_end
+#. Click :guilabel:`Build Configuration`.
 
-#. To build the sample or application:
+   When the process completes, the build configuration appears in the :guilabel:`Applications` panel.
 
-   a. Select your project in the Project Explorer.
-   #. From the menu, select :guilabel:`Build` > :guilabel:`Build Solution`.
-      This builds the project.
-
-   You can find the output of the build, which includes the merged HEX file containing both the application and the SPM, in the ``zephyr`` subfolder in the build directory.
+#. Program the application:
 
 .. prog_extdebugprobe_start
-
-6. To program the sample or application:
+..
 
    a. Set the Thingy:91 SWD selection switch (**SW2**) to **nRF91** or **nRF52** depending on whether you want to program the nRF9160 SiP or the nRF52840 SoC component.
    #. Connect the Thingy:91 to the debug out port on a 10-pin external debug probe, for example, nRF9160 DK (Development Kit), using a 10-pin JTAG cable.
@@ -217,9 +215,11 @@ Building and programming using SEGGER Embedded Studio
 .. prog_extdebugprobe_end
 ..
 
-   e. In SES, select :guilabel:`Target` > :guilabel:`Connect J-Link`.
-   #. Select :guilabel:`Target` > :guilabel:`Download zephyr/merged.hex` to program the sample or application onto Thingy:91.
-   #. The device will reset and run the programmed sample or application.
+   e. In |VSC|, click the :guilabel:`Flash` option in the :guilabel:`Actions` panel.
+
+      If you have multiple boards connected, you are prompted to pick a device at the top of the screen.
+
+      A small notification banner appears in the bottom-right corner of VS Code to display the progress and confirm when the flash is complete.
 
 .. _build_pgm_cmdline:
 
@@ -255,6 +255,8 @@ To build and program the source code from the command line, complete the followi
 
 	   The parameter *destination_directory_name* can be used to optionally specify the destination directory in the west command.
 	   Unless a *destination_directory_name* is specified, the build files are automatically generated in ``build/zephyr/``.
+
+#. Program the application:
 
 .. include:: ug_thingy91.rst
    :start-after: prog_extdebugprobe_start

@@ -4,12 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <devicetree.h>
-#include <drivers/gpio.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/drivers/gpio.h>
 #include <string.h>
-#include <sys/__assert.h>
+#include <zephyr/sys/__assert.h>
 #include <hal/nrf_gpio.h>
 #include <soc_secure.h>
+#ifdef CONFIG_PINCTRL
+#include <pinctrl_soc.h>
+#endif
 
 #define MPSL_FEM_SPI_IF DT_PHANDLE(DT_NODELABEL(nrf_radio_fem), spi_if)
 
@@ -85,7 +88,24 @@ static int fem_nrf21540_gpio_pins_forward(void)
 #endif
 
 #if DT_NODE_HAS_STATUS(MPSL_FEM_SPI_IF, okay)
-	uint8_t cs_pin = DT_SPI_DEV_CS_GPIOS_PIN(MPSL_FEM_SPI_IF);
+#ifdef CONFIG_PINCTRL
+#define FEM_SPI_PIN_INIT(node_id, prop, idx) \
+	NRF_GET_PIN(DT_PROP_BY_IDX(node_id, prop, idx)),
+
+	/* obtain SPI pins from default state (sck, miso, mosi) */
+	uint8_t fem_spi_pins[] = {
+		DT_FOREACH_CHILD_VARGS(
+			DT_PINCTRL_BY_NAME(DT_BUS(MPSL_FEM_SPI_IF), default, 0),
+			DT_FOREACH_PROP_ELEM, psels, FEM_SPI_PIN_INIT
+		)
+	};
+
+	/* configure spi pins (sck, miso, mosi) */
+	for (size_t i = 0U; i < ARRAY_SIZE(fem_spi_pins); i++) {
+		soc_secure_gpio_pin_mcu_select(fem_spi_pins[i],
+					       NRF_GPIO_PIN_MCUSEL_NETWORK);
+	}
+#else
 	uint8_t sck_pin = DT_PROP(DT_BUS(DT_NODELABEL(nrf_radio_fem_spi)), sck_pin);
 	uint8_t miso_pin = DT_PROP(DT_BUS(DT_NODELABEL(nrf_radio_fem_spi)), miso_pin);
 	uint8_t mosi_pin = DT_PROP(DT_BUS(DT_NODELABEL(nrf_radio_fem_spi)), mosi_pin);
@@ -95,7 +115,13 @@ static int fem_nrf21540_gpio_pins_forward(void)
 	soc_secure_gpio_pin_mcu_select(sck_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
 	soc_secure_gpio_pin_mcu_select(miso_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
 	soc_secure_gpio_pin_mcu_select(mosi_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-#endif
+#endif /* CONFIG_PINCTRL */
+
+	/* configure cs pin */
+	uint8_t cs_pin = DT_SPI_DEV_CS_GPIOS_PIN(MPSL_FEM_SPI_IF);
+	fem_pin_num_correction(&cs_pin, DT_SPI_DEV_CS_GPIOS_LABEL(MPSL_FEM_SPI_IF));
+	soc_secure_gpio_pin_mcu_select(cs_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+#endif /* DT_NODE_HAS_STATUS(MPSL_FEM_SPI_IF, okay) */
 
 	return 0;
 }

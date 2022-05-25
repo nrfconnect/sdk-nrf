@@ -5,12 +5,12 @@
  */
 
 
-#include <zephyr.h>
-#include <settings/settings.h>
+#include <zephyr/kernel.h>
+#include <zephyr/settings/settings.h>
 
 #include <net/lwm2m_client_utils_fota.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_fota_settings, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
 static struct update_counter uc;
@@ -76,6 +76,12 @@ int fota_settings_init(void)
 	err = settings_register(&fota_settings);
 	if (err) {
 		LOG_ERR("settings_register failed (err %d)", err);
+		return err;
+	}
+
+	err = settings_load_subtree(fota_settings.name);
+	if (err) {
+		LOG_ERR("settings_load_subtree() failed, %d", err);
 		return err;
 	}
 

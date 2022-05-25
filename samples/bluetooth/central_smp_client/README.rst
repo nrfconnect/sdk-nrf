@@ -23,16 +23,14 @@ When configuration is complete, the sample is ready to send SMP commands.
 To send an echo command, press Button 1 on the development kit.
 The string that is sent contains a number that is automatically incremented.
 This way, you can easily verify if the correct response is received.
-The response is decoded and displayed using the `TinyCBOR`_ library (which is part of Zephyr).
+The response is decoded using the `zcbor`_ library and displayed after that.
 
 Requirements
 ************
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf52dk_nrf52832
+.. table-from-sample-yaml::
 
 The sample also requires a device running `mcumgr`_ with transport protocol over Bluetooth® Low Energy, for example, another development kit running the :ref:`smp_svr_sample`.
 
@@ -111,4 +109,4 @@ It uses the following Zephyr libraries:
 
 In addition, it uses the following external library that is distributed with Zephyr:
 
-* `TinyCBOR`_
+* `zcbor`_

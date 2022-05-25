@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <drivers/flash.h>
-#include <logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/flash.h>
+#include <zephyr/logging/log.h>
 #include <dfu/dfu_target.h>
 #include <dfu/dfu_target_stream.h>
 #include <dfu/dfu_target_full_modem.h>

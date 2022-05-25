@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <usb/usb_device.h>
+#include <zephyr/usb/usb_device.h>
 
 #define MODULE usb_state
 #include <caf/events/module_state_event.h>
 #include <caf/events/power_manager_event.h>
 #include <caf/events/force_power_down_event.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_USB_STATE_LOG_LEVEL);
 
 #define SUSPEND_DELAY K_MSEC(1000)
@@ -129,10 +129,10 @@ static bool handle_module_state_event(const struct module_state_event *event)
 	return false;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
-		return handle_module_state_event(cast_module_state_event(eh));
+	if (is_module_state_event(aeh)) {
+		return handle_module_state_event(cast_module_state_event(aeh));
 	}
 
 	/* If event is unhandled, unsubscribe. */
@@ -141,5 +141,5 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);

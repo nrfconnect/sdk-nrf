@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include "aggregator.h"
-#include <kernel.h>
-#include <zephyr.h>
+#include <zephyr/kernel.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <zephyr/types.h>
 #include <string.h>
-#include <irq.h>
+#include <zephyr/irq.h>
 
 K_FIFO_DEFINE(aggregator_fifo);
 

@@ -1,0 +1,75 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA.
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+{
+  "psa_framework_version": 1.1,
+  "name": "TFM_SP_SPP",
+  "type": "APPLICATION-ROT",
+  "priority": "NORMAL",
+  "model": "IPC",
+  "entry_point": "tfm_spp_main",
+  "stack_size": "0x800",
+
+  # Service definitions for IPC mode.
+  "services" : [
+  {
+    "name": "TFM_SPP_PROCESS",
+    "sid": "0xFFFFF001", # Bits [31:12] denote the vendor (change this),
+                         # bits [11:0] are arbitrary at the discretion of the
+                         # vendor.
+    "connection_based": false,
+    "non_secure_clients": true,
+    "stateless_handle": "auto",
+    "version": 1,
+    "version_policy": "STRICT"
+   },
+   {
+    "name": "TFM_SPP_SEND",
+    "sid": "0xFFFFF002", # Bits [31:12] denote the vendor (change this),
+                         # bits [11:0] are arbitrary at the discretion of the
+                         # vendor.
+    "connection_based": false,
+    "non_secure_clients": true,
+    "stateless_handle": "auto",
+    "version": 1,
+    "version_policy": "STRICT"
+   },
+  ],
+
+  "mmio_regions": [
+    {
+      "name": "TFM_PERIPHERAL_TIMER1",
+      "permission": "READ-WRITE"
+    },
+    {
+      "name": "TFM_PERIPHERAL_SPIM3",
+      "permission": "READ-WRITE"
+    },
+    # MMIO region for GPIOTE0 not required.
+    # GPIOTE0 is always configured as secure peripheral
+  ],
+  "irqs": [
+    {
+      "source": "TFM_TIMER1_IRQ",
+      "name": "TFM_TIMER1_IRQ",
+      "handling": "FLIH"
+    },
+    {
+      "source": "TFM_SPIM3_IRQ",
+      "name": "TFM_SPIM3_IRQ",
+      "handling": "SLIH"
+    },
+    {
+      "source": "TFM_GPIOTE0_IRQ",
+      "name": "TFM_GPIOTE0_IRQ",
+      "handling": "FLIH"
+    },
+  ],
+
+  "dependencies": [
+    "TFM_CRYPTO"
+  ],
+}

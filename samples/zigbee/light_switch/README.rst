@@ -20,9 +20,7 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf5340dk_nrf5340_cpuapp, nrf21540dk_nrf52840
+.. table-from-sample-yaml::
 
 You can use one or more of the development kits listed above and mix different development kits.
 
@@ -107,18 +105,29 @@ You can find the configuration files in the :file:`samples/zigbee/light_switch` 
 Activating optional extensions
 ------------------------------
 
-To activate the optional extensions supported by this sample, modify :makevar:`OVERLAY_CONFIG` as follows:
+To activate the :ref:`lib_zigbee_fota`, use the :file:`prj_fota.conf` configuration file.
+For example, when building from the command line, use the following command:
 
-* For the variant that supports :ref:`lib_zigbee_fota`, set :file:`overlay-fota.conf`.
-  Alternatively, you can :ref:`configure Zigbee FOTA manually <ug_zigbee_configuring_components_ota>`.
+.. code-block:: console
 
-  .. note::
-     You can use the :file:`overlay-fota.conf` file only with a development kit that contains the nRF52840 SoC.
+   west build samples/zigbee/light_switch -b nrf52840dk_nrf52840 -- -DCONF_FILE='prj_fota.conf'
 
-* For the Multiprotocol Bluetooth LE extension, set :file:`overlay-multiprotocol_ble.conf`.
-  For the board name to use instead of the ``nrf52840dk_nrf52840``, see :ref:`gs_programming_board_names`.
+Alternatively, you can :ref:`configure Zigbee FOTA manually <ug_zigbee_configuring_components_ota>`.
 
-See :ref:`cmake_options` for instructions on how to add this option.
+.. note::
+   You can use the :file:`prj_fota.conf` file only with a development kit that contains the nRF52840 or nRF5340 SoC.
+
+To activate the Multiprotocol Bluetooth LE extension, set :makevar:`OVERLAY_CONFIG` to the :file:`overlay-multiprotocol_ble.conf`.
+For example, when building from the command line, use the following command:
+
+.. code-block:: console
+
+   west build samples/zigbee/light_switch -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG='overlay-multiprotocol_ble.conf'
+
+
+For the board name to use instead of the ``nrf52840dk_nrf52840``, see :ref:`gs_programming_board_names`.
+
+See :ref:`cmake_options` for instructions on how to add flags to your build.
 For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
 
 FEM support
@@ -149,7 +158,7 @@ Button 2:
     Pressing this button for a longer period of time decreases the brightness of the **LED 4** of the connected light bulb.
 
 Button 4:
-    When pressed for five seconds, it initiates the factory reset of the device.
+    When pressed for five seconds, it initiates the `factory reset of the device <Resetting to factory defaults_>`_.
     The length of the button press can be edited using the :kconfig:option:`CONFIG_FACTORY_RESET_PRESS_TIME_SECONDS` Kconfig option from :ref:`lib_zigbee_application_utilities`.
     Releasing the button within this time does not trigger the factory reset procedure.
 

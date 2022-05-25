@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <settings/settings.h>
+#include <zephyr/kernel.h>
+#include <zephyr/settings/settings.h>
 
-#include <event_manager.h>
+#include <app_event_manager.h>
 
 #define MODULE settings_loader
 #include <caf/events/module_state_event.h>
 
 #include CONFIG_CAF_SETTINGS_LOADER_DEF_PATH
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_SETTINGS_LOADER_LOG_LEVEL);
 
 #define THREAD_STACK_SIZE	CONFIG_CAF_SETTINGS_LOADER_THREAD_STACK_SIZE
@@ -100,10 +100,10 @@ static bool module_event_handler(const struct module_state_event *event)
 	return false;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_module_state_event(eh)) {
-		return module_event_handler(cast_module_state_event(eh));
+	if (is_module_state_event(aeh)) {
+		return module_event_handler(cast_module_state_event(aeh));
 	}
 
 	/* If event is unhandled, unsubscribe. */
@@ -112,5 +112,5 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, module_state_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, module_state_event);

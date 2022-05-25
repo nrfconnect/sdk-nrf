@@ -1,14 +1,14 @@
 /*
  * Copyright (c) 2021 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <stdio.h>
 #include <string.h>
 
-#include <zephyr.h>
-#include <init.h>
+#include <zephyr/kernel.h>
+#include <zephyr/init.h>
 #include <assert.h>
 #include <nrf_modem_at.h>
 #include <nrf_modem_gnss.h>
@@ -21,7 +21,6 @@
 #include <net/nrf_cloud_agps.h>
 #endif /* CONFIG_NRF_CLOUD_AGPS */
 #if defined(CONFIG_NRF_CLOUD_PGPS)
-#include <pm_config.h>
 #include <net/nrf_cloud_pgps.h>
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 #endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_NRF_CLOUD_PGPS */
@@ -119,35 +118,6 @@ static uint8_t pvt_output_level = 2;
 static uint8_t nmea_output_level;
 static uint8_t event_output_level;
 
-int gnss_configure_lna(void)
-{
-	int err;
-	const char *xmagpio_command;
-	const char *xcoex0_command;
-
-	xmagpio_command = CONFIG_MOSH_AT_MAGPIO;
-	xcoex0_command = CONFIG_MOSH_AT_COEX0;
-
-	/* Make sure the AT command is not empty */
-	if (xmagpio_command[0] != '\0') {
-		err = nrf_modem_at_printf("%s", xmagpio_command);
-		if (err) {
-			mosh_error("Failed to send XMAGPIO command");
-			return err;
-		}
-	}
-
-	if (xcoex0_command[0] != '\0') {
-		err = nrf_modem_at_printf("%s", xcoex0_command);
-		if (err) {
-			mosh_error("Failed to send XCOEX0 command");
-			return err;
-		}
-	}
-
-	return 0;
-}
-
 static int get_event_data(void **dest, uint8_t type, size_t len)
 {
 	void *data;
@@ -228,34 +198,22 @@ static void print_pvt_flags(struct nrf_modem_gnss_pvt_data_frame *pvt)
 	mosh_print("");
 	mosh_print(
 		"Fix valid:          %s",
-		(pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) ==
-		NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID ?
-		"true" :
-		"false");
+		pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID ? "true" : "false");
 	mosh_print(
 		"Leap second valid:  %s",
-		(pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_LEAP_SECOND_VALID) ==
-		NRF_MODEM_GNSS_PVT_FLAG_LEAP_SECOND_VALID ?
-		"true" :
-		"false");
+		pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_LEAP_SECOND_VALID ? "true" : "false");
 	mosh_print(
 		"Sleep between PVT:  %s",
-		(pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_SLEEP_BETWEEN_PVT) ==
-		NRF_MODEM_GNSS_PVT_FLAG_SLEEP_BETWEEN_PVT ?
-		"true" :
-		"false");
+		pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_SLEEP_BETWEEN_PVT ? "true" : "false");
 	mosh_print(
 		"Deadline missed:    %s",
-		(pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_DEADLINE_MISSED) ==
-		NRF_MODEM_GNSS_PVT_FLAG_DEADLINE_MISSED ?
-		"true" :
-		"false");
+		pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_DEADLINE_MISSED ? "true" : "false");
 	mosh_print(
 		"Insuf. time window: %s",
-		(pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME) ==
-		NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME ?
-		"true" :
-		"false");
+		pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME ? "true" : "false");
+	mosh_print(
+		"Velocity valid:     %s",
+		pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_VELOCITY_VALID ? "true" : "false");
 }
 
 static void print_pvt(struct nrf_modem_gnss_pvt_data_frame *pvt)
@@ -266,9 +224,11 @@ static void print_pvt(struct nrf_modem_gnss_pvt_data_frame *pvt)
 
 	print_pvt_flags(pvt);
 
-	if ((pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) == NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
+	mosh_print("Execution time:     %u ms", pvt->execution_time);
+
+	if (pvt->flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
 		mosh_print(
-			"Time:            %02d.%02d.%04d %02d:%02d:%02d.%03d",
+			"Time:              %02d.%02d.%04d %02d:%02d:%02d.%03d",
 			pvt->datetime.day,
 			pvt->datetime.month,
 			pvt->datetime.year,
@@ -277,20 +237,24 @@ static void print_pvt(struct nrf_modem_gnss_pvt_data_frame *pvt)
 			pvt->datetime.seconds,
 			pvt->datetime.ms);
 
-		mosh_print("Latitude:        %f", pvt->latitude);
-		mosh_print("Longitude:       %f", pvt->longitude);
-		mosh_print("Altitude:        %.1f m", pvt->altitude);
-		mosh_print("Accuracy:        %.1f m", pvt->accuracy);
-		mosh_print("Speed:           %.1f m/s", pvt->speed);
-		mosh_print("Speed accuracy:  %.1f m/s", pvt->speed_accuracy);
-		mosh_print("Heading:         %.1f deg", pvt->heading);
-		mosh_print("PDOP:            %.1f", pvt->pdop);
-		mosh_print("HDOP:            %.1f", pvt->hdop);
-		mosh_print("VDOP:            %.1f", pvt->vdop);
-		mosh_print("TDOP:            %.1f", pvt->tdop);
+		mosh_print("Latitude:          %f", pvt->latitude);
+		mosh_print("Longitude:         %f", pvt->longitude);
+		mosh_print("Accuracy:          %.1f m", pvt->accuracy);
+		mosh_print("Altitude:          %.1f m", pvt->altitude);
+		mosh_print("Altitude accuracy: %.1f m", pvt->altitude_accuracy);
+		mosh_print("Speed:             %.1f m/s", pvt->speed);
+		mosh_print("Speed accuracy:    %.1f m/s", pvt->speed_accuracy);
+		mosh_print("V. speed:          %.1f m/s", pvt->vertical_speed);
+		mosh_print("V. speed accuracy: %.1f m/s", pvt->vertical_speed_accuracy);
+		mosh_print("Heading:           %.1f deg", pvt->heading);
+		mosh_print("Heading accuracy:  %.1f deg", pvt->heading_accuracy);
+		mosh_print("PDOP:              %.1f", pvt->pdop);
+		mosh_print("HDOP:              %.1f", pvt->hdop);
+		mosh_print("VDOP:              %.1f", pvt->vdop);
+		mosh_print("TDOP:              %.1f", pvt->tdop);
 
 		mosh_print(
-			"Google maps URL: https://maps.google.com/?q=%f,%f",
+			"Google maps URL:   https://maps.google.com/?q=%f,%f",
 			pvt->latitude, pvt->longitude);
 	}
 
@@ -312,10 +276,8 @@ static void print_pvt(struct nrf_modem_gnss_pvt_data_frame *pvt)
 			pvt->sv[i].elevation,
 			pvt->sv[i].azimuth,
 			pvt->sv[i].signal,
-			(pvt->sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX) ==
-			NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX ? 1 : 0,
-			(pvt->sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_UNHEALTHY) ==
-			NRF_MODEM_GNSS_SV_FLAG_UNHEALTHY ? 1 : 0);
+			pvt->sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX ? 1 : 0,
+			pvt->sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_UNHEALTHY ? 1 : 0);
 	}
 }
 
@@ -340,28 +302,22 @@ static void get_agps_data_flags_string(char *flags_string, uint32_t data_flags)
 
 	*flags_string = '\0';
 
-	if ((data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST) ==
-	    NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST) {
+	if (data_flags & NRF_MODEM_GNSS_AGPS_GPS_UTC_REQUEST) {
 		(void)strcat(flags_string, "utc | ");
 	}
-	if ((data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST) ==
-	    NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST) {
+	if (data_flags & NRF_MODEM_GNSS_AGPS_KLOBUCHAR_REQUEST) {
 		(void)strcat(flags_string, "klob | ");
 	}
-	if ((data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST) ==
-	    NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST) {
+	if (data_flags & NRF_MODEM_GNSS_AGPS_NEQUICK_REQUEST) {
 		(void)strcat(flags_string, "neq | ");
 	}
-	if ((data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) ==
-	    NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
+	if (data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST) {
 		(void)strcat(flags_string, "time | ");
 	}
-	if ((data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) ==
-	    NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
+	if (data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
 		(void)strcat(flags_string, "pos | ");
 	}
-	if ((data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) ==
-	    NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) {
+	if (data_flags & NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST) {
 		(void)strcat(flags_string, "int | ");
 	}
 
@@ -829,6 +785,15 @@ static void get_pgps_data_work_fn(struct k_work *work)
 	}
 
 	mosh_print("GNSS: P-GPS response processed");
+
+	err = nrf_cloud_pgps_notify_prediction();
+	if (err) {
+		mosh_error("GNSS: Failed to request current prediction, error: %d", err);
+
+		return;
+	}
+
+	mosh_print("GNSS: P-GPS prediction requested");
 }
 
 static void inject_pgps_data_work_fn(struct k_work *work)
@@ -853,10 +818,13 @@ static void inject_pgps_data_work_fn(struct k_work *work)
 static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 {
 	switch (event->type) {
+	case PGPS_EVT_READY:
 	case PGPS_EVT_AVAILABLE:
-		prediction = event->prediction;
+		if (event->prediction != NULL) {
+			prediction = event->prediction;
 
-		k_work_submit_to_queue(&gnss_work_q, &inject_pgps_data_work);
+			k_work_submit_to_queue(&gnss_work_q, &inject_pgps_data_work);
+		}
 		break;
 
 	case PGPS_EVT_REQUEST:
@@ -876,14 +844,12 @@ static void gnss_api_init(void)
 {
 	static bool gnss_api_initialized;
 
+	/* Reset event handler in case some other handler was set in the meantime. */
+	(void)nrf_modem_gnss_event_handler_set(gnss_event_handler);
+
 	if (gnss_api_initialized) {
-		/* Reset event handler in case some other handler was set in the meantime */
-		(void)nrf_modem_gnss_event_handler_set(gnss_event_handler);
 		return;
 	}
-
-	/* Activate GNSS API v2 */
-	(void)nrf_modem_gnss_event_handler_set(gnss_event_handler);
 
 	gnss_api_initialized = true;
 
@@ -989,6 +955,10 @@ int gnss_delete_data(enum gnss_data_delete data)
 			      NRF_MODEM_GNSS_DELETE_GPS_TOW |
 			      NRF_MODEM_GNSS_DELETE_GPS_WEEK |
 			      NRF_MODEM_GNSS_DELETE_UTC_DATA;
+		break;
+
+	case GNSS_DATA_DELETE_TCXO:
+		delete_mask = NRF_MODEM_GNSS_DELETE_TCXO_OFFSET;
 		break;
 
 	default:
@@ -1437,8 +1407,9 @@ int gnss_enable_pgps(void)
 
 	struct nrf_cloud_pgps_init_param pgps_param = {
 		.event_handler = pgps_event_handler,
-		.storage_base = PM_MCUBOOT_SECONDARY_ADDRESS,
-		.storage_size = PM_MCUBOOT_SECONDARY_SIZE
+		/* storage is defined by CONFIG_NRF_CLOUD_PGPS_STORAGE */
+		.storage_base = 0u,
+		.storage_size = 0u
 	};
 
 	err = nrf_cloud_pgps_init(&pgps_param);
@@ -1454,6 +1425,55 @@ int gnss_enable_pgps(void)
 	mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_PGPS for P-GPS support");
 	return -EOPNOTSUPP;
 #endif
+}
+
+static void get_expiry_string(char *string, uint32_t string_len, uint32_t expiry)
+{
+	if (expiry == UINT32_MAX) {
+		strncpy(string, "not used", string_len);
+	} else if (expiry == 0) {
+		strncpy(string, "expired", string_len);
+	} else {
+		snprintf(string, string_len, "%u", expiry);
+	}
+}
+
+int gnss_get_agps_expiry(void)
+{
+	int err;
+	struct nrf_modem_gnss_agps_expiry agps_expiry;
+	char expiry_string[16];
+	char expiry_string2[16];
+
+	err = nrf_modem_gnss_agps_expiry_get(&agps_expiry);
+	if (err) {
+		mosh_error("GNSS: Failed to query A-GPS data expiry, error: %d", err);
+		return err;
+	}
+
+	mosh_print("Time valid: %s",
+		   agps_expiry.data_flags & NRF_MODEM_GNSS_AGPS_SYS_TIME_AND_SV_TOW_REQUEST ?
+			"false" : "true");
+	get_expiry_string(expiry_string, sizeof(expiry_string), agps_expiry.utc_expiry);
+	mosh_print("UTC:        %s", expiry_string);
+	get_expiry_string(expiry_string, sizeof(expiry_string), agps_expiry.klob_expiry);
+	mosh_print("Klobuchar:  %s", expiry_string);
+	get_expiry_string(expiry_string, sizeof(expiry_string), agps_expiry.neq_expiry);
+	mosh_print("NeQuick:    %s", expiry_string);
+	get_expiry_string(expiry_string, sizeof(expiry_string), agps_expiry.integrity_expiry);
+	mosh_print("Integrity:  %s", expiry_string);
+
+	for (int i = 0; i < NRF_MODEM_GNSS_NUM_GPS_SATELLITES; i++) {
+		get_expiry_string(expiry_string, sizeof(expiry_string),
+				  agps_expiry.ephe_expiry[i]);
+		get_expiry_string(expiry_string2, sizeof(expiry_string2),
+				  agps_expiry.alm_expiry[i]);
+
+		mosh_print("PRN %02u:     ephe: %-10s alm: %-10s",
+			   i + 1, expiry_string, expiry_string2);
+	}
+
+	return 0;
 }
 
 int gnss_set_pvt_output_level(uint8_t level)

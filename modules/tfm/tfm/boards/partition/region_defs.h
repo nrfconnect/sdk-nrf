@@ -1,18 +1,7 @@
 /*
- * Copyright (c) 2017-2020 Arm Limited. All rights reserved.
- * Copyright (c) 2021 Nordic Semiconductor ASA. All rights reserved.
+ * Copyright (c) 2021 - 2022 Nordic Semiconductor ASA
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #ifndef __REGION_DEFS_H__
@@ -41,31 +30,22 @@
  */
 #define PSA_INITIAL_ATTEST_TOKEN_MAX_SIZE   (0x250)
 
-#ifndef LINK_TO_SECONDARY_PARTITION
-#define S_IMAGE_PRIMARY_PARTITION_OFFSET   (PM_TFM_PRIMARY_ADDRESS)
-#define S_IMAGE_SECONDARY_PARTITION_OFFSET (PM_TFM_SECONDARY_ADDRESS)
-#define NS_IMAGE_PRIMARY_PARTITION_OFFSET  (PM_APP_PRIMARY_ADDRESS)
-#else
-#define S_IMAGE_PRIMARY_PARTITION_OFFSET   (PM_TFM_SECONDARY_ADDRESS)
-#define S_IMAGE_SECONDARY_PARTITION_OFFSET (PM_TFM_PRIMARY_ADDRESS)
-#define NS_IMAGE_PRIMARY_PARTITION_OFFSET  (PM_APP_SECONDARY_ADDRESS)
-#endif /* !LINK_TO_SECONDARY_PARTITION */
 
-/* IMAGE_CODE_SIZE is the space available for the software binary image.
- * It is less than the FLASH_S_PARTITION_SIZE + FLASH_NS_PARTITION_SIZE
- * because we reserve space for the image header and trailer introduced
- * by the bootloader.
- */
-#define IMAGE_S_CODE_SIZE \
-		(FLASH_S_PARTITION_SIZE - BL2_HEADER_SIZE - BL2_TRAILER_SIZE)
-#define IMAGE_NS_CODE_SIZE \
-		(FLASH_NS_PARTITION_SIZE - BL2_HEADER_SIZE - BL2_TRAILER_SIZE)
+#if !defined(LINK_TO_SECONDARY_PARTITION)
+#ifdef BL2
+#define S_IMAGE_PRIMARY_PARTITION_OFFSET   (PM_MCUBOOT_PRIMARY_ADDRESS)
+#define S_IMAGE_SECONDARY_PARTITION_OFFSET (PM_MCUBOOT_SECONDARY_ADDRESS)
+#else
+#define S_IMAGE_PRIMARY_PARTITION_OFFSET   (PM_TFM_SECURE_ADDRESS)
+#endif /* BL2 */
+#define NS_IMAGE_PRIMARY_PARTITION_OFFSET  (PM_TFM_NONSECURE_ADDRESS)
+#else
+#error "Execute from secondary partition is not supported!"
+#endif /* !defined(LINK_TO_SECONDARY_PARTITION) */
 
 /* Secure regions */
-#define S_IMAGE_PRIMARY_AREA_OFFSET \
-			(S_IMAGE_PRIMARY_PARTITION_OFFSET + BL2_HEADER_SIZE)
-#define S_CODE_START    (S_IMAGE_PRIMARY_AREA_OFFSET)
-#define S_CODE_SIZE     (IMAGE_S_CODE_SIZE)
+#define S_CODE_START    (PM_TFM_OFFSET)
+#define S_CODE_SIZE     (PM_TFM_SIZE)
 #define S_CODE_LIMIT    (S_CODE_START + S_CODE_SIZE - 1)
 
 #define S_DATA_START    (PM_TFM_SRAM_ADDRESS)
@@ -90,10 +70,8 @@
 #define CMSE_VENEER_REGION_IN_CODE
 
 /* Non-secure regions */
-#define NS_IMAGE_PRIMARY_AREA_OFFSET \
-			(NS_IMAGE_PRIMARY_PARTITION_OFFSET + BL2_HEADER_SIZE)
-#define NS_CODE_START   (NS_IMAGE_PRIMARY_AREA_OFFSET)
-#define NS_CODE_SIZE    (IMAGE_NS_CODE_SIZE)
+#define NS_CODE_START   (PM_APP_OFFSET)
+#define NS_CODE_SIZE    (PM_APP_SIZE)
 #define NS_CODE_LIMIT   (NS_CODE_START + NS_CODE_SIZE - 1)
 
 #define NS_DATA_START   (PM_SRAM_NONSECURE_ADDRESS)
@@ -101,20 +79,18 @@
 #define NS_DATA_LIMIT   (NS_DATA_START + NS_DATA_SIZE - 1)
 
 /* NS partition information is used for SPU configuration */
-#define NS_PARTITION_START \
-		(NS_IMAGE_PRIMARY_PARTITION_OFFSET)
+#define NS_PARTITION_START (NS_IMAGE_PRIMARY_PARTITION_OFFSET)
 #define NS_PARTITION_SIZE (FLASH_NS_PARTITION_SIZE)
 
 /* Secondary partition for new images in case of firmware upgrade */
-#define SECONDARY_PARTITION_START \
-		(S_IMAGE_SECONDARY_PARTITION_OFFSET)
+#define SECONDARY_PARTITION_START (S_IMAGE_SECONDARY_PARTITION_OFFSET)
 #define SECONDARY_PARTITION_SIZE (FLASH_S_PARTITION_SIZE + \
 				  FLASH_NS_PARTITION_SIZE)
 
 /* Non-secure storage region */
-#if defined(PM_SETTINGS_STORAGE_ADDRESS) && defined(PM_SETTINGS_STORAGE_SIZE)
-#define NRF_NS_STORAGE_PARTITION_START  (PM_SETTINGS_STORAGE_ADDRESS)
-#define NRF_NS_STORAGE_PARTITION_SIZE   (PM_SETTINGS_STORAGE_SIZE)
+#if defined(PM_NONSECURE_STORAGE_ADDRESS)
+#define NRF_NS_STORAGE_PARTITION_START  (PM_NONSECURE_STORAGE_ADDRESS)
+#define NRF_NS_STORAGE_PARTITION_SIZE   (PM_NONSECURE_STORAGE_SIZE)
 #endif
 
 #ifdef BL2

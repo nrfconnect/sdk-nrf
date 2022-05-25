@@ -11,6 +11,7 @@ The RAM power-down library is a basic module for disabling unused sections of RA
 
 To disable unused RAM sections, call :c:func:`power_down_unused_ram`.
 This function will automatically disable all memory regions that are not used by the application.
+To enable back unused RAM sections, call :c:func:`power_up_unused_ram`.
 
 .. note::
     :c:func:`power_down_unused_ram` powers down memory regions that are outside of the ``_image_ram_end`` boundary.

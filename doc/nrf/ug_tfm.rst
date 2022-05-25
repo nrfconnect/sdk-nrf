@@ -7,7 +7,7 @@ Running applications with Trusted Firmware-M
    :local:
    :depth: 2
 
-On nRF5340 and nRF9160, you can use Trusted Firmware-M (TF-M) as an alternative to :ref:`secure_partition_manager` for running an application from the non-secure area of the memory.
+On nRF5340 and nRF9160, Trusted Firmware-M (TF-M) is used to configure and boot an application as non-secure.
 
 Overview
 ********
@@ -16,16 +16,16 @@ TF-M is the reference implementation of `Platform Security Architecture (PSA)`_.
 
 It provides a highly configurable set of software components to create a Trusted Execution Environment.
 This is achieved by a set of secure run time services such as Secure Storage, Cryptography, Audit Logs, and Attestation.
-Additionally, secure boot through MCUboot in TF-M ensures integrity of run time software and supports firmware upgrade.
+Additionally, secure boot through MCUboot in TF-M ensures integrity of runtime software and supports firmware upgrade.
 
-Support for TF-M in |NCS| is currently experimental.
-TF-M is a framework which will be extended for new functions and use cases beyond the scope of SPM.
+Support for TF-M with :ref:`minimal version <tfm_minimal_build>` disabled in |NCS| is currently experimental.
 
 For official documentation, see the `TF-M documentation`_.
 
 The TF-M implementation in |NCS| is currently demonstrated in the following samples:
 
 - The :ref:`tfm_hello_world` sample
+- The :ref:`tfm_secure_peripheral_partition` sample
 - All :ref:`cryptography samples <crypto_samples>` in this SDK
 - A series of :ref:`TF-M integration samples <zephyr:tfm_integration-samples>` available in Zephyr
 - The :ref:`https_client` sample for nRF9160 in this SDK
@@ -35,23 +35,25 @@ Building
 ********
 
 TF-M is one of the images that are built as part of a multi-image application.
-If TF-M is used in the application, SPM will not be included in it.
 For more information about multi-image builds, see :ref:`ug_multi_image`.
 
 To add TF-M to your build, enable the :kconfig:option:`CONFIG_BUILD_WITH_TFM` configuration option by adding it to your :file:`prj.conf` file.
-To build a :ref:`minimal version <tfm_minimal_build>` of TF-M, you must also enable the :kconfig:option:`CONFIG_TFM_MINIMAL` configuration.
 
 .. note::
    If you use menuconfig to enable :kconfig:option:`CONFIG_BUILD_WITH_TFM`, you must also enable its dependencies.
 
+By default, TF-M is configured to build the :ref:`minimal version <tfm_minimal_build>`.
+To use the full TF-M, you must disable the :kconfig:option:`CONFIG_TFM_MINIMAL` option.
+
 You must build TF-M using a non-secure build target.
-The following targets are currently supported:
+The following platforms are currently supported:
 
-* ``nrf5340dk_nrf5340_cpuapp_ns``
-* ``nrf9160dk_nrf9160_ns``
+* nRF5340
+* nRF9160
 
-When building for ``nrf9160dk_nrf9160_ns``, UART1 must be disabled in the non-secure application, because it is used by the TF-M secure application.
-Otherwise, the non-secure application will fail to run.
+TF-M uses UART1 for logging from the secure application.
+To disable logging, enable the :kconfig:option:`TFM_LOG_LEVEL_SILENCE` option.
+When building TF-M with logging enabled, UART1 must be disabled in the non-secure application, otherwise the non-secure application will fail to run.
 The recommended way to do this is to copy the .overlay file from the :ref:`tfm_hello_world` sample.
 
 Enabling secure services
@@ -63,6 +65,7 @@ In such case, the Kconfig configurations in the Nordic Security Backend control 
 You can configure what crypto modules to include in TF-M by using the ``TFM_CRYPTO_`` Kconfig options found in file :file:`zephyr/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules`.
 
 TF-M utilizes :ref:`hardware unique keys <lib_hw_unique_key>` when the PSA Crypto key derivation APIs are used, and ``psa_key_derivation_setup`` is called with the algorithm ``TFM_CRYPTO_ALG_HUK_DERIVATION``.
+For more information about the PSA cryptography and the API, see `PSA Cryptography API 1.1`_.
 
 .. _tfm_minimal_build:
 
@@ -72,13 +75,13 @@ Minimal build
 The default configuration of TF-M has all supported features enabled, which results in a significant memory footprint.
 A minimal version of the TF-M secure application is provided in |NCS| to show how to configure a reduced version of TF-M.
 
-The secure services supported by this minimal version allow for generating random numbers, hashing with SHA-256, and using ``tfm_platform_mem_read``.
-This corresponds to the feature set provided by the :ref:`secure_partition_manager`.
+The secure services supported by this minimal version allow for generating random numbers, and the platform services.
 
+This corresponds to the feature set provided by the :ref:`secure_partition_manager` (SPM).
 
-The minimal version of TF-M is enabled by setting the :kconfig:option:`CONFIG_TFM_MINIMAL` option.
+The minimal version of TF-M is disabled by setting the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` option or one of the other build profiles.
 
-When :kconfig:option:`CONFIG_TFM_MINIMAL` is set, the configurability of TF-M is severely limited.
+When :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` is set, the configurability of TF-M is severely limited.
 Hence, it is not possible to modify the TF-M minimal configuration to create your own variant of the minimal configuration.
 Instead, the default configuration must be used as a starting point.
 
@@ -88,7 +91,7 @@ Programming
 The procedure for programming an application with TF-M is the same as for other multi-image applications in |NCS|.
 
 After building the application, a :file:`merged.hex` file is created that contains MCUboot, TF-M, and the application.
-The :file:`merged.hex` file can be then :ref:`programmed using SES <gs_programming_ses>`.
+The :file:`merged.hex` file can be then :ref:`programmed using nRF Connect for Visual Studio Code <gs_programming_vsc>`.
 When using the command line, the file is programmed automatically when you call ``ninja flash`` or ``west flash``.
 
 Logging
@@ -107,4 +110,54 @@ The logs arrive on different COM ports on the host PC.
 Limitations
 ***********
 
-Application code that uses SPM :ref:`lib_secure_services` cannot use TF-M because the interface to TF-M is different and, at this time, not all SPM functions are available in TF-M.
+The following services are not supported:
+
+* Audit Log service in IPC model
+* Firmware Update service
+* Attestation service
+
+The following Crypto modules or ciphers are not supported:
+
+* OFB
+* CFB
+
+Isolation level 3 is not supported.
+
+In Isolation level 2 or higher, the number of peripherals configured as secure in Application Root of Trust (ARoT) is limited by the number of available MPU regions.
+
+Nordic platforms support only the GCC toolchain for building TF-M.
+
+Enabling Floating point support in TF-M is currently not supported.
+Enabling Floating point Hard ABI (:kconfig:option:`CONFIG_FP_HARDABI`) in the application is currently not supported.
+
+Migrating from Secure Partition Manager to Trusted Firmware-M
+*************************************************************
+
+The interface to TF-M is different from the interface to SPM.
+Due to that, the application code that uses the SPM :ref:`lib_secure_services` needs to be ported to use TF-M instead.
+
+TF-M can replace the following SPM services:
+
+* ``spm_request_system_reboot`` with ``tfm_platform_system_reset``.
+* ``spm_request_random_number`` with ``psa_generate_random`` or ``entropy_get_entropy``.
+* ``spm_request_read`` with ``tfm_platform_mem_read`` or ``soc_secure_mem_read``.
+* ``spm_s0_active`` with ``tfm_platform_s0_active``.
+* ``spm_firmware_info`` with ``tfm_firmware_info``.
+
+The following SPM services have no replacement in TF-M:
+
+* ``spm_prevalidate_b1_upgrade``
+* ``spm_busy_wait``
+* ``spm_set_ns_fatal_error_handler``
+
+.. note::
+   By default, TF-M configures memory regions as secure memory, while SPM configures memory regions as non-secure.
+   The partitions ``tfm_nonsecure``, ``mcuboot_secondary``, and ``nonsecure_storage`` are configured as non-secure flash memory regions.
+   The partition ``sram_nonsecure`` is configured as a non-secure RAM region.
+
+If a static partition file is used for the application, make the following changes:
+
+* Rename the ``spm`` partition to ``tfm``.
+* Add a partition called ``tfm_secure`` that spans ``mcuboot_pad`` (if MCUboot is enabled) and ``tfm`` partitions.
+* Add a partition called ``tfm_nonsecure`` that spans the application, and other possible application partitions that must be non-secure.
+* For non-secure storage partitions, place the partitions inside the ``nonsecure_storage`` partition, and enable the configuration :kconfig:option:`CONFIG_TFM_NONSECURE_STORAGE`.

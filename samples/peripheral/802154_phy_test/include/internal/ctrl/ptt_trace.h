@@ -14,7 +14,7 @@
 #define PTT_TRACE printf
 
 #else
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(phy_tt);
 
 #define PTT_TRACE(...) LOG_DBG(__VA_ARGS__)

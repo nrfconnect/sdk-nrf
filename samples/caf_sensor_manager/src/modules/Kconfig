@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SAMPLE_SENSOR_MANAGER_REMOTE_CORE_INITIALIZATION_TIMEOUT
+	int "Waiting period for the remote core to finish the initialization"
+	range 10 5000
+	default 1000
+	help
+	  The time to wait for second core to report its readines to transport the events.
+	  The time is given in miliseconds.
+
+config WORKLOAD_TIME_PER_SAMPLE
+	int "CPU load time per sample [us]"
+	default 10
+	help
+	  Simulated CPU busy time when processing sensor aggregator event.
+	  Sensor aggregator event comes with number of aggregated events.
+	  Simulated busy time is multiplied by this value.
+
+menuconfig SENSOR_MANAGER_SENSOR_SIM_CTRL
+	bool "Simulated sensor controller"
+
+if SENSOR_MANAGER_SENSOR_SIM_CTRL
+
+module = SENSOR_MANAGER_SENSOR_SIM_CTRL
+module-str = sensor sim controller
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # SENSOR_MANAGER_SENSOR_SIM_CTRL

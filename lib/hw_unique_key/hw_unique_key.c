@@ -9,13 +9,14 @@
 #include <nrf_cc3xx_platform_ctr_drbg.h>
 #include <hw_unique_key.h>
 #include "hw_unique_key_internal.h"
-#include <sys/util.h>
+#include <zephyr/sys/util.h>
 
 
 #ifdef CONFIG_HW_UNIQUE_KEY_RANDOM
 void hw_unique_key_write_random(void)
 {
 	uint8_t rand_bytes[HUK_SIZE_BYTES * ARRAY_SIZE(huk_slots)];
+	uint8_t zeros[sizeof(rand_bytes)] = {0};
 	size_t olen;
 	uint8_t pers_str[] = "HW Unique Key";
 	int err, err2;
@@ -50,7 +51,12 @@ void hw_unique_key_write_random(void)
 		hw_unique_key_write(huk_slots[i], rand_bytes + (HUK_SIZE_BYTES * i));
 	}
 
-	memset(rand_bytes, sizeof(rand_bytes), 0);
+	memset(rand_bytes, 0, sizeof(rand_bytes));
+
+	if (memcmp(rand_bytes, zeros, sizeof(rand_bytes)) != 0) {
+		HUK_PRINT("The key bytes weren't correctly deleted from RAM.\n\r");
+		HUK_PANIC();
+	}
 
 	for (int i = 0; i < ARRAY_SIZE(huk_slots); i++) {
 		if (!hw_unique_key_is_written(huk_slots[i])) {

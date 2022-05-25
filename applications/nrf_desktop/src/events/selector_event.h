@@ -13,8 +13,8 @@
  * @{
  */
 
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,13 +22,13 @@ extern "C" {
 
 
 struct selector_event {
-	struct event_header header;
+	struct app_event_header header;
 
 	uint8_t selector_id;
 	uint8_t position;
 };
 
-EVENT_TYPE_DECLARE(selector_event);
+APP_EVENT_TYPE_DECLARE(selector_event);
 
 #ifdef __cplusplus
 }

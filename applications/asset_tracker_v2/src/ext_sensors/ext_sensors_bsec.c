@@ -4,21 +4,19 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <string.h>
-#include <sys/atomic.h>
-#include <spinlock.h>
-#include <settings/settings.h>
-#include <sys/byteorder.h>
-#include <drivers/i2c.h>
+#include <zephyr/sys/atomic.h>
+#include <zephyr/spinlock.h>
+#include <zephyr/settings/settings.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/drivers/i2c.h>
 
 #include "bsec_integration.h"
 #include "ext_sensors_bsec.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ext_sensors_bsec, CONFIG_EXTERNAL_SENSORS_LOG_LEVEL);
-
-BUILD_ASSERT(CONFIG_FP_HARDABI, "CONFIG_FP_HARDABI must be set when using the BME680 BSEC library");
 
 /* Sample rate for the BSEC library
  *

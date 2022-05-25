@@ -6,16 +6,19 @@
 
 #include <stdlib.h>
 
-#include <zephyr.h>
-#include <device.h>
-#include <pm/device.h>
-#include <shell/shell.h>
-#include <shell/shell_uart.h>
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/pm/device.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/shell/shell_uart.h>
 #include <modem/lte_lc.h>
+#include <modem/nrf_modem_lib_trace.h>
 
 #include "uart_shell.h"
 #include "uart.h"
 #include "mosh_print.h"
+
 
 bool uart_disable_during_sleep_requested;
 
@@ -33,18 +36,35 @@ static int print_help(const struct shell *shell, size_t argc, char **argv)
 	return ret;
 }
 
-void uart_reenable_timer_handler(struct k_timer *timer)
+static void uart_disable_handler(struct k_work *work)
 {
-	ARG_UNUSED(timer);
-	enable_uarts();
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
+	int err = nrf_modem_lib_trace_stop();
 
-	/* Use printk instead of mosh_print() as mosh_print() uses mutexes and hence cant be used
-	 * within an ISR.
-	 */
-	printk("UARTs enabled\n");
+	if (err) {
+		mosh_print("nrf_modem_lib_trace_stop failed with err = %d.", err);
+		return;
+	}
+#endif
+	disable_uarts();
 }
 
-static K_TIMER_DEFINE(uart_reenable_timer, uart_reenable_timer_handler, NULL);
+static void uart_enable_handler(struct k_work *work)
+{
+	enable_uarts();
+	mosh_print("UARTs enabled\n");
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
+	int err = nrf_modem_lib_trace_start(NRF_MODEM_LIB_TRACE_ALL);
+
+	if (err) {
+		mosh_print("nrf_modem_lib_trace_start failed with err = %d.", err);
+	}
+#endif
+}
+
+static K_WORK_DEFINE(uart_disable_work, &uart_disable_handler);
+
+static K_WORK_DELAYABLE_DEFINE(uart_enable_work, &uart_enable_handler);
 
 static int cmd_uart_disable(const struct shell *shell, size_t argc, char **argv)
 {
@@ -61,12 +81,11 @@ static int cmd_uart_disable(const struct shell *shell, size_t argc, char **argv)
 	} else {
 		mosh_print("disable: disabling UARTs indefinitely");
 	}
-
 	k_sleep(K_MSEC(500)); /* allow little time for printing the notification */
-	disable_uarts();
+	k_work_submit(&uart_disable_work);
 
 	if (sleep_time > 0) {
-		k_timer_start(&uart_reenable_timer, K_SECONDS(sleep_time), K_NO_WAIT);
+		k_work_schedule(&uart_enable_work, K_SECONDS(sleep_time));
 	}
 
 	return 0;
@@ -76,22 +95,20 @@ void uart_toggle_power_state_at_event(const struct lte_lc_evt *const evt)
 {
 	if (evt->type == LTE_LC_EVT_MODEM_SLEEP_ENTER) {
 		mosh_print("Modem sleep enter: disabling UARTs requested");
-		k_sleep(K_MSEC(500)); /* allow little time for printing the notification */
-		disable_uarts();
+		k_work_submit(&uart_disable_work);
 	} else if (evt->type == LTE_LC_EVT_MODEM_SLEEP_EXIT) {
-		enable_uarts();
+		k_work_schedule(&uart_enable_work, K_NO_WAIT);
 	}
 }
 
 void uart_toggle_power_state(void)
 {
-	const struct device *uart_dev;
+	const struct device *uart_dev = DEVICE_DT_GET(DT_NODELABEL(uart0));
 	enum pm_device_state uart0_power_state;
 	int err;
 
-	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
-	if (uart_dev == NULL) {
-		mosh_print("Could not get UART device");
+	if (!device_is_ready(uart_dev)) {
+		mosh_print("UART device not ready");
 		return;
 	}
 
@@ -103,22 +120,9 @@ void uart_toggle_power_state(void)
 	}
 
 	if (uart0_power_state == PM_DEVICE_STATE_ACTIVE) {
-		mosh_print("Disabling UARTs");
-
-		/* allow little time for printing the notification */
-		k_sleep(K_MSEC(500));
-
-		disable_uarts();
+		k_work_submit(&uart_disable_work);
 	} else {
-		enable_uarts();
-
-		mosh_print("UARTs enabled");
-
-		/* stop timer if uarts were disabled with command 'uart disable' */
-		k_timer_stop(&uart_reenable_timer);
-	}
-	if (err) {
-		mosh_print("Failed to change UART power state");
+		k_work_schedule(&uart_enable_work, K_NO_WAIT);
 	}
 }
 

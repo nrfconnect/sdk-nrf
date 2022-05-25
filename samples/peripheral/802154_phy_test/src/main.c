@@ -3,15 +3,15 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <init.h>
-#include <zephyr.h>
+#include <zephyr/init.h>
+#include <zephyr/kernel.h>
 
 #include "rf_proc.h"
 #include "timer_proc.h"
 #include "comm_proc.h"
 #include "periph_proc.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 	LOG_MODULE_REGISTER(phy_tt);
 
 /* size of stack area used by each thread */

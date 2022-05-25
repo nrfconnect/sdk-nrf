@@ -23,7 +23,7 @@
 #ifndef PCD_H__
 #define PCD_H__
 
-#include <device.h>
+#include <zephyr/device.h>
 #include <sys/types.h>
 
 #ifdef __cplusplus

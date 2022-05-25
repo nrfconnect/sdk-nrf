@@ -7,9 +7,9 @@ Bluetooth: nRF Distance Measurement with Bluetooth LE discovery
    :local:
    :depth: 2
 
-The nRF Distance Measurement sample demonstrates the functionality of the Distance Measurement (DM) subsystem.
+The nRF Distance Measurement sample demonstrates the functionality of the :ref:`mod_dm` subsystem.
 It shows how to use DM to measure the distance between devices.
-The Bluetooth® Direction and Distance Finding Service is running simultaneously.
+The Bluetooth® :ref:`ddfs_readme` is running simultaneously.
 
 Sample is configured to use Nordic's SoftDevice link layer.
 
@@ -18,9 +18,7 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833
+.. table-from-sample-yaml::
 
 Overview
 ********
@@ -36,10 +34,23 @@ The synchronisation step has two goals:
 This sample synchronizes devices using the scan and advertising facilities of the Bluetooth LE.
 Anchoring occurs after the exchange of ``SCAN_REQ`` and ``SCAN_RSP`` packets.
 
-.. figure:: images/sync.svg
-   :alt: Synchronisation process
+.. msc::
+   hscale = "1.3";
+   DevA [label="Device A"],DevB [label="Device B"];
+   |||;
+   DevA rbox DevB [label="Synchronization starts"];
+   |||;
+   DevA=>DevB [label="ADV_IND"];
+   DevA<=DevB [label="SCAN_REQ"];
+   DevA=>DevB [label="SCAN_RSP, Manufacturer-specific data"];
+   |||;
+   DevA rbox DevB [label="Synchronization ends"];
+   |||;
+   DevA box DevA [label="Reflector"],DevB box DevB [label="Initiator"];
+   |||;
+   DevA<=>DevB [label="Ranging"];
 
-   Synchronisation process
+The chart shows the sequence of the synchronization process.
 
 Both devices act as an advertiser and a scanner.
 Device B receives advertising from Device A and scans it.

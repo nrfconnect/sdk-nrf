@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <string.h>
 #include <stdlib.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
 #include <modem/modem_info.h>
 #include <modem/at_params.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(modem_info_json);
 

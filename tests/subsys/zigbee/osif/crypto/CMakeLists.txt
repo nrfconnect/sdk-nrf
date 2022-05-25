@@ -14,6 +14,18 @@ target_compile_definitions(app PRIVATE
   CONFIG_ZBOSS_OSIF_LOG_LEVEL=LOG_LEVEL_DBG
 )
 
+# CONFIG_ZIGBEE_USE_SOFTWARE_AES is defined in CMakeLists
+# because of unsatisfied dependency to CONFIG_ZIGBEE.
+# nrfxlib_crypto is linked in here because it can't be linked
+# in Zigbee subsys CMakeLists.txt.
+
+if (${BOARD} STREQUAL "nrf5340dk_nrf5340_cpuapp")
+  target_compile_definitions(app PRIVATE
+  CONFIG_ZIGBEE_USE_SOFTWARE_AES=1
+)
+  zephyr_link_libraries(nrfxlib_crypto)
+endif()
+
 target_include_directories(app PRIVATE
   ${NRF_DIR}/subsys/zigbee/osif
   ${NRFXLIB_DIR}/zboss/production/include

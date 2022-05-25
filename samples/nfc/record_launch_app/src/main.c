@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <sys/reboot.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/reboot.h>
 
 #include <nfc_t2t_lib.h>
 #include <nfc/ndef/launchapp_msg.h>

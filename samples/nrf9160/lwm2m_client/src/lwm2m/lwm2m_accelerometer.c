@@ -4,10 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <net/lwm2m.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/lwm2m.h>
 #include <lwm2m_resource_ids.h>
 #include <math.h>
+#include <zephyr/devicetree.h>
 
 #include "accelerometer.h"
 #include "accel_event.h"
@@ -15,13 +16,13 @@
 
 #define MODULE app_lwm2m_accel
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
 
-#if defined(CONFIG_ACCEL_USE_EXTERNAL)
-#define ACCEL_APP_TYPE "ADXL362 Accelerometer"
-#elif defined(CONFIG_ACCEL_USE_SIM)
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(sensor_sim), okay)
 #define ACCEL_APP_TYPE "Simulated Accelerometer"
+#else
+#define ACCEL_APP_TYPE "ADXL362 Accelerometer"
 #endif
 
 #define SENSOR_UNIT_NAME "m/s^2"
@@ -225,10 +226,10 @@ int lwm2m_init_accel(void)
 	return 0;
 }
 
-static bool event_handler(const struct event_header *eh)
+static bool app_event_handler(const struct app_event_header *aeh)
 {
-	if (is_accel_event(eh)) {
-		struct accel_event *event = cast_accel_event(eh);
+	if (is_accel_event(aeh)) {
+		struct accel_event *event = cast_accel_event(aeh);
 		double received_value;
 
 		accel_read_timestamp[0] = k_uptime_get();
@@ -262,5 +263,5 @@ static bool event_handler(const struct event_header *eh)
 	return false;
 }
 
-EVENT_LISTENER(MODULE, event_handler);
-EVENT_SUBSCRIBE(MODULE, accel_event);
+APP_EVENT_LISTENER(MODULE, app_event_handler);
+APP_EVENT_SUBSCRIBE(MODULE, accel_event);

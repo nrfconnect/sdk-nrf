@@ -3,14 +3,14 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <logging/log.h>
-#include <zephyr.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <string.h>
-#include <net/tls_credentials.h>
-#include <net/net_ip.h>
+#include <zephyr/net/tls_credentials.h>
+#include <zephyr/net/net_ip.h>
 #include <net/ftp_client.h>
-#include <sys/ring_buffer.h>
+#include <zephyr/sys/ring_buffer.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_ftp.h"

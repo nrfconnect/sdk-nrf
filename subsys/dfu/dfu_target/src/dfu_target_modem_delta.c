@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
-#include <drivers/flash.h>
+#include <zephyr/drivers/flash.h>
 #include <nrf_modem_delta_dfu.h>
 #include <nrf_errno.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 #include <dfu/dfu_target.h>
 
 LOG_MODULE_REGISTER(dfu_target_modem_delta, CONFIG_DFU_TARGET_LOG_LEVEL);

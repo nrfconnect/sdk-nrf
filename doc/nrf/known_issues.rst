@@ -119,6 +119,16 @@ CIA-463: Wrong network mode parameter reported to cloud
   The network mode string present in ``deviceInfo`` (nRF Cloud) and ``dev`` (Azure IoT Hub and AWS IoT) JSON objects that is reported to cloud might contain wrong network modes.
   The network mode string contains the network modes that the modem is configured to use, not what the modem actually connects to the LTE network with.
 
+.. rst-class:: v1-9-1 v1-9-0
+
+NCSDK-14235: Timestamps that are sent in cloud messages drift over time
+  Due to a bug in the :ref:`lib_date_time` library, timestamps that are sent to cloud drift because they are calculated incorrectly.
+
+.. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-0
+
+CIA-604: ATv2 cannot be built for the ``thingy91_nrf9160_ns`` build target with ``SECURE_BOOT`` enabled
+  Due to the use of static partitions with the Thingy:91, there is insufficient room in the flash memory to enable both the primary and secondary bootloaders.
+
 Serial LTE Modem
 ================
 
@@ -129,6 +139,12 @@ NCSDK-13895: Build failure for target Thingy:91 with secure_bootloader overlay
 
 Other issues
 ============
+
+.. rst-class:: v1-9-1 v1-9-0
+
+The time returned by :ref:`lib_date_time` library becomes incorrect after one week of uptime
+  The time returned by :ref:`lib_date_time` library becomes incorrect after one week elapses.
+  This is due to an issue with clock_gettime() API.
 
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-3-1 v1-2-1 v1-2-0
 
@@ -561,13 +577,18 @@ KRKNWK-11826: Zigbee Router does not accept new child devices if the maximum num
 
 **Workaround**: If the maximum number of child devices has been reached, call ``bdb_start_top_level_commissioning(ZB_BDB_NETWORK_STEERING)`` on the parent router from the ``ZB_ZDO_SIGNAL_LEAVE_INDICATION`` signal handler.
 
-.. rst-class:: v1-9-1 v1-9-0 v1-8-0
+.. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 KRKNWK-11602: Zigbee device becomes not operable after receiving malformed packet
-  When any Zigbee device receives a malformed packet that does not match the Zigbee packet structure, it causes ZBOSS to assert.
-  The device is not automatically restarted.
+  When any Zigbee device receives a malformed packet that does not match the Zigbee packet structure, the ZBOSS stack asserts.
+  In the |NCS| versions before the v1.9.0 release, the device is not automatically restarted.
 
-**Workaround**: Power-cycle the Zigbee device.
+**Workaround**: Depends on your version of the |NCS|:
+
+* Before the |NCS| v1.9.0: Power-cycle the Zigbee device.
+* After and including the |NCS| v1.9.0: Wait for the device to restart automatically.
+
+Given these two options, we recommend to upgrade your |NCS| version to the latest available one.
 
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0
 
@@ -780,22 +801,22 @@ Matter (Project CHIP)
 
 .. rst-class:: v1-9-1 v1-9-0
 
-KRKNWK-12950: Android CHIPTool opens the commissioning window using an incorrect PIN code
-  Android CHIPTool uses a random code instead of a user-provided PIN code to open the commissioning window on a Matter device.
+KRKNWK-12950: CHIP Tool for Android opens the commissioning window using an incorrect PIN code
+  CHIP Tool for Android uses a random code instead of a user-provided PIN code to open the commissioning window on a Matter device.
 
 
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0
 
-KRKNWK-11225: Android CHIPTool cannot communicate with a Matter device after the device reboots
-  Android CHIPTool does not implement any mechanism to recover a secure session to a Matter device after the device has rebooted and lost the session.
-  As a result, the device can no longer decrypt and process messages sent by Android CHIPTool as the controller keeps using stale cryptographic keys.
+KRKNWK-11225: CHIP Tool for Android cannot communicate with a Matter device after the device reboots
+  CHIP Tool for Android does not implement any mechanism to recover a secure session to a Matter device after the device has rebooted and lost the session.
+  As a result, the device can no longer decrypt and process messages sent by CHIP Tool for Android as the controller keeps using stale cryptographic keys.
 
-  **Workaround** Do not reboot the device after commissioning it with Android CHIPTool.
+  **Workaround** Do not reboot the device after commissioning it with CHIP Tool for Android.
 
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
-KRKNWK-10589: Android CHIPTool crashes when commissioning a Matter device
-  In random circumstances, Android CHIPTool crashes when trying to connect to a Matter device over Bluetooth® LE.
+KRKNWK-10589: CHIP Tool for Android crashes when commissioning a Matter device
+  In random circumstances, CHIP Tool for Android crashes when trying to connect to a Matter device over Bluetooth® LE.
 
   **Workaround** Restart the application and try to commission the Matter device again.
   If the problem persists, clear the application data and try again.
@@ -905,6 +926,15 @@ KRKNWK-11365: HAP tool's ``provision`` command freezes
 nRF Desktop
 ===========
 
+.. rst-class:: v1-9-1 v1-9-0 v1-8-0
+
+NCSDK-13858: Possible crash at the start of Bluetooth LE advertising when using SW Split Link Layer
+  The nRF Desktop peripheral can crash at the start of the advertising when using SW Split Link Layer (:kconfig:option:`CONFIG_BT_LL_SW_SPLIT`).
+  The crash is caused by an issue of the Bluetooth Controller.
+  The size of the resolving list filter is invalid, which causes accessing memory areas that are located out of array.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix to ``sdk-zephyr`` (commit hash: ``15ebdfafe2b2932533aa8d71afd49d4b03d27ce4``).
+
 .. rst-class:: v1-7-1 v1-7-0
 
 NCSDK-12337: Possible assertion failure at boot of an USB-connected host
@@ -960,7 +990,7 @@ NCSDK-12020: Current consumption for Gaming Mouse increased by 1400mA
 
   **Workaround:** Change ``pwm_pin_set_cycles`` to ``pwm_pin_set_usec`` in function :c:func:`led_pwm_set_brightness` in Zephyr's driver :file:`led_pwm.c` file.
 
-.. rst-class:: v1-9-0
+.. rst-class:: v1-9-1 v1-9-0
 
 NCSDK-14117: Build fails for nRF52840DK in the ``prj_b0_wwcb`` configuration
   The build failure is caused by outdated Kconfig options in the nRF52840 DK's ``prj_b0_wwcb`` configuration.
@@ -1540,6 +1570,17 @@ Closing sockets
 Multiprotocol Service Layer (MPSL)
 ==================================
 
+.. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+
+NCSIDB-731: :ref:`timeslot_sample` crashes when calling kernel APIs from zero latency interrupts
+  Calling kernel APIs is not allowed from zero latency interrupts.
+
+.. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
+
+DRGN-17014: High Frequency Clock staying active
+  The High Frequency Clock will stay active if it is turned on between timing events.
+  This could occur during Low Frequency Clock calibration when using the RC oscillator as the Low Frequency Clock source.
+
 .. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 DRGN-16642: If radio notifications on ACTIVE are used, MPSL may assert
@@ -2090,8 +2131,21 @@ NCSDK-13949: TF-M Secure Image copies FICR to RAM on nRF9160
 NCSDK-12306: Enabling debug configuration causes usage fault on nRF9160
   When the debug configuration :kconfig:option:`CONFIG_TFM_CMAKE_BUILD_TYPE_DEBUG` is enabled, a usage fault is triggered during boot on nRF9160.
 
+.. rst-class:: v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
+
+NCSDK-14590: Usage fault in interrupt handlers when using FPU extensions
+  When the :kconfig:option:`ARM_NONSECURE_PREEMPTIBLE_SECURE_CALLS` Kconfig option is disabled, a usage fault can be triggered when an interrupt handler uses FPU extensions while interrupting the secure processing environment.
+
+  **Workaround:** Do not disable the :kconfig:option:`ARM_NONSECURE_PREEMPTIBLE_SECURE_CALLS` option when the :kconfig:option:`FPU` option is enabled.
+
 Zephyr
 ******
+
+.. rst-class:: v1-9-1 v1-9-0
+
+The time returned by clock_gettime() API becomes incorrect after one week of uptime
+  The time returned by POSIX clock_gettime() API becomes incorrect after one week elapses.
+  This is due to an overflow in the uptime conversion.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 

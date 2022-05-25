@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
 /**@brief Method to allocate zero-initialized memory of size COUNT*SIZE, for
  * internal use in the module.

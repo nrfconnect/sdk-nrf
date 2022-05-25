@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #if defined(CONFIG_POSIX_API)
-#include <posix/arpa/inet.h>
+#include <zephyr/posix/arpa/inet.h>
 #else
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #endif
 
 #include "lte_params.h"

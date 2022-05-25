@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <stdio.h>
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 #include <unistd.h>
 #include <getopt.h>
 
-#include <net/promiscuous.h>
-#include <drivers/uart.h>
+#include <zephyr/net/promiscuous.h>
+#include <zephyr/drivers/uart.h>
 
 #include "ppp_ctrl.h"
 #include "ppp_settings.h"

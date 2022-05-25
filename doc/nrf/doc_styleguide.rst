@@ -162,8 +162,8 @@ File headers and groups
    extern "C" {
    #endif
 
-   #include <bluetooth/gatt.h>
-   #include <bluetooth/uuid.h>
+   #include <zephyr/bluetooth/gatt.h>
+   #include <zephyr/bluetooth/uuid.h>
 
    /**
     *  @brief Register a primary service descriptor.
@@ -304,10 +304,10 @@ Make sure to add ``:members:`` when you include the API documentation in RST; ot
 
    /** @brief Event header structure.
     *
-    * @warning When event structure is defined event header must be placed
+    * @warning When event structure is defined application event header must be placed
     *          as the first field.
     */
-   struct event_header {
+   struct app_event_header {
 
            /** Linked list node used to chain events. */
       sys_dlist_t node;

@@ -7,11 +7,11 @@
 #ifndef SENSOR_EVENT_H__
 #define SENSOR_EVENT_H__
 
-#include <zephyr.h>
-#include <net/lwm2m.h>
-#include <event_manager.h>
-#include <event_manager_profiler_tracer.h>
-#include <drivers/sensor.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/lwm2m.h>
+#include <app_event_manager.h>
+#include <app_event_manager_profiler_tracer.h>
+#include <zephyr/drivers/sensor.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,14 +27,14 @@ enum sensor_type {
 };
 
 struct sensor_event {
-	struct event_header header;
+	struct app_event_header header;
 
 	enum sensor_type type;
 	struct sensor_value sensor_value;
 	uint32_t unsigned_value;
 };
 
-EVENT_TYPE_DECLARE(sensor_event);
+APP_EVENT_TYPE_DECLARE(sensor_event);
 
 #ifdef __cplusplus
 }

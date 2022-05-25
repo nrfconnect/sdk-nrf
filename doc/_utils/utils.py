@@ -1,6 +1,6 @@
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Tuple, Optional
+from typing import Tuple, Optional
 
 from sphinx.application import Sphinx
 from sphinx.cmd.build import get_parser
@@ -24,20 +24,6 @@ ALL_DOCSETS = {
     "kconfig": ("Kconfig Reference", "index", None),
 }
 """All supported docsets (name: title, home page, manifest project name)."""
-
-
-def get_docsets(docset: str) -> Dict[str, str]:
-    """Obtain all docsets that should be displayed.
-
-    Args:
-        docset: Target docset.
-
-    Returns:
-        Dictionary of docsets.
-    """
-    docsets = ALL_DOCSETS.copy()
-    del docsets[docset]
-    return docsets
 
 
 def get_projdir(docset: str) -> Path:

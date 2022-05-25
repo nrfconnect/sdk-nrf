@@ -25,7 +25,7 @@ Configuration
 The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
 The module can be used only for Bluetooth Peripheral devices (:kconfig:option:`CONFIG_BT_PERIPHERAL`).
 
-Use the option :kconfig:option:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY` to enable the module.
+Use the option :ref:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY <config_desktop_app_options>` to enable the module.
 Make sure to enable and configure the :ref:`nrf_desktop_passkey` if you decide to use this option.
 
 Implementation details

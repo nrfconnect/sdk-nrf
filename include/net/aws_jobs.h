@@ -20,9 +20,9 @@
 extern "C" {
 #endif
 
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/types.h>
-#include <net/mqtt.h>
+#include <zephyr/net/mqtt.h>
 
 /** @brief Job Execution Status. */
 enum execution_status {

@@ -35,7 +35,7 @@ html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False
 
-html_theme_options = {"docsets": utils.get_docsets("matter")}
+html_theme_options = {"docsets": utils.ALL_DOCSETS}
 
 # Options for external_content -------------------------------------------------
 
@@ -44,9 +44,10 @@ external_content_contents = [
     (MATTER_BASE / "docs" / "guides", "images"),
     (MATTER_BASE / "docs" / "guides", "nrfconnect_*.md"),
     (MATTER_BASE / "docs" / "guides", "openthread_*.md"),
-    (MATTER_BASE / "docs" / "guides", "python_*.md"),
     (MATTER_BASE / "docs" / "guides", "android_*.md"),
     (MATTER_BASE / "docs" / "guides", "BUILDING.md"),
+    (MATTER_BASE / "docs" / "guides", "chip_tool_guide.md"),
+    (MATTER_BASE / "docs" / "guides", "access-control-guide.md"),
 ]
 
 # Options for ncs_cache --------------------------------------------------------
@@ -58,7 +59,4 @@ ncs_cache_manifest = NRF_BASE / "west.yml"
 
 
 def setup(app):
-    app.add_css_file("css/common.css")
-    app.add_css_file("css/matter.css")
-
     utils.add_google_analytics(app)

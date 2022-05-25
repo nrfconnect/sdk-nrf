@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <bluetooth/bluetooth.h>
+#include <zephyr/kernel.h>
+#include <zephyr/bluetooth/bluetooth.h>
 #include <bluetooth/services/nus.h>
 
 /* This configuration file is included only once from ble_adv module and holds

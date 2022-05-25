@@ -5,7 +5,7 @@
  */
 
 #include <stdlib.h>
-#include <sys/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 #include <bluetooth/mesh/light_temp_srv.h>
 #include <bluetooth/mesh/gen_dtt_srv.h>
 #include "light_ctl_internal.h"
