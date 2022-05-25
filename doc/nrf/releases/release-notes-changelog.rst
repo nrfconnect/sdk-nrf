@@ -77,6 +77,7 @@ Thread
 * Removed support for the :ref:`thread_architectures_designs_cp_ncp` architecture and the related tools.
 * Memory requirements page shows requirements based on the configuration used for certification instead of minimal configuration which has been removed.
 * Updated "Configuring a radio co-processor" section on Thread Border Router page with the information about forcing Hardware Flow Control in JLink.
+* Updated nrfconnect/otbr docker.
 
 See `Thread samples`_ for the list of changes for the Thread samples.
 
