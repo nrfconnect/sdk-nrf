@@ -27,10 +27,10 @@ See :ref:`lwm2m_lib_size` for an explanation of the library size in different sc
 +-------------------------+---------------+------------+
 |                         | Flash (Bytes) | RAM (Bytes)|
 +-------------------------+---------------+------------+
-| Library size            | 71566         | 15739      |
+| Library size            | 71582         | 15844      |
 | (binary)                |               |            |
 +-------------------------+---------------+------------+
-| Library size            | 93860         | 38720      |
+| Library size            | 93876         | 38824      |
 | (reference application) |               |            |
 +-------------------------+---------------+------------+
 
