@@ -17,7 +17,9 @@ The following table lists variants and extensions available out of the box for e
       - Light switch
       - Door lock
       - Template
+      - Window covering
     * - FEM support
+      - ✔
       - ✔
       - ✔
       - ✔
@@ -26,12 +28,14 @@ The following table lists variants and extensions available out of the box for e
       - ✔
       - ✔
       - ✔
-      -
+      - ✔
+      - ✔
     * - Low power build
       -
       - ✔
       - ✔
       -
+      - ✔
 
 See the sample documentation pages for instructions about how to enable these variants and extenstions.
 
