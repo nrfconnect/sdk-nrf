@@ -35,6 +35,10 @@ When the connection is established, it starts collecting data from two sensors:
 The sample aggregates the data from both sensors in memory.
 You can then trigger an alarm that sends the aggregated data over LTE to `nRF Cloud`_ by flipping the Thingy:52, which causes a change in the flip state to ``UPSIDE_DOWN``.
 
+This sample is also supported on the Thingy:91.
+However, it must be programmed using a debugger and a 10-pin SWD cable.
+Serial communication and firmware updates over serial using MCUboot are not supported in this configuration.
+
 Configuration
 *************
 
