@@ -21,19 +21,19 @@ For more information regarding AWS FOTA, see the documentation for the :ref:`lib
 Requirements
 ************
 
-To use this library, you must build and program the :ref:`AWS FOTA <aws_fota_sample>` sample, available for the nRF9160 DK.
-As part of this process, you will :ref:`create a thing in AWS IoT <creating_a_thing_in_AWS_IoT>` and generate certificates for the TLS connection.
+The :ref:`aws_iot` sample available for the nRF9160 DK showcases the use of this library.
+As part of building the sample, you :ref:`create a thing in AWS IoT <creating_a_thing_in_AWS_IoT>` and generate certificates for the TLS connection.
 
 .. _set_up_conn_to_iot:
 
 Configuration
 *************
 
-After meeting the `Requirements`_, set up a secure MQTT connection to the AWS IoT message broker by completing the following configuration procedures:
+After meeting the `Requirements`_, complete the following configuration procedures to set up a secure MQTT connection to the AWS IoT message broker:
 
-* Programming the certificates to the on-board modem of the nRF9160-based kit.
-* Configuring the required library options.
-* Configuring the optional library options.
+* Program the certificates to the on-board modem of the nRF9160-based kit
+* Configure the required library options
+* Configure the optional library options
 
 See the following sections for detailed information.
 
@@ -42,8 +42,8 @@ See the following sections for detailed information.
 
 .. _flash_certi_device:
 
-Programming the certificates to the on-board modem of the nRF9160-based kit
-===========================================================================
+Program the certificates to the on-board modem of the nRF9160-based kit
+=======================================================================
 
 To program the certificates, complete the following steps:
 
@@ -58,26 +58,26 @@ To program the certificates, complete the following steps:
 .. note::
    The default security tag set by the :guilabel:`Certificate manager` *16842753* is reserved for communications with :ref:`lib_nrf_cloud`.
 
-Configuring the required library options
-========================================
+Configure the required library options
+======================================
 
 Complete the following steps:
 
-1. Establish a connection to the AWS IoT message broker by setting the following options:
+1. Set the following options to establish a connection to the AWS IoT message broker:
 
    * :kconfig:option:`CONFIG_AWS_IOT_SEC_TAG`
    * :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
    * :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC`
 
-#. Configure the required library options by completing the following steps:
+#. Complete the following steps to set the required library options:
 
    a. In the `AWS IoT console`_, navigate to :guilabel:`IoT core` > :guilabel:`Settings`.
-   #. Find the ``Endpoint`` address and set the configurable option :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME` to this address string.
-   #. Set the option :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` to the name of the *thing* created during the aforementioned steps.
-   #. Set the security tag configuration :kconfig:option:`CONFIG_AWS_IOT_SEC_TAG` to the security tag, chosen while `Programming the certificates to the on-board modem of the nRF9160-based kit`_.
+   #. Find the ``Endpoint`` address and set :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME` to this address string.
+   #. Set the option :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` to the name of the *thing* created earlier in the process.
+   #. Set the security tag configuration :kconfig:option:`CONFIG_AWS_IOT_SEC_TAG` to the security tag, chosen while you `Program the certificates to the on-board modem of the nRF9160-based kit`_.
 
-Configuring the optional library options
-========================================
+Configure the optional library options
+======================================
 
 To subscribe to the various `AWS IoT Device Shadow Topics`_, set the following options:
 
@@ -95,9 +95,7 @@ To subscribe to non-AWS specific topics, complete the following steps:
 * Pass a list containing application specific topics in the :c:func:`aws_iot_subscription_topics_add` function, after the :c:func:`aws_iot_init` function call and before the :c:func:`aws_iot_connect` function call
 
 The AWS IoT library also supports passing in the client ID at run time.
-To enable this feature, set the ``client_id`` entry in the :c:struct:`aws_iot_config` structure that is passed in the :c:func:`aws_iot_init` function when initializing the library, and set the following option:
-
-* :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_APP`
+To enable this feature, set the ``client_id`` entry in the :c:struct:`aws_iot_config` structure that is passed in the :c:func:`aws_iot_init` function when initializing the library, and set the :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_APP` Kconfig option.
 
 .. note::
    If you are using a longer device ID that is either set by the option :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC` or passed in during initialization, it might be required to increase the value of the option :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN` for proper initialization of the library.
@@ -115,7 +113,7 @@ After the initialization, the :c:func:`aws_iot_connect` function must be called 
 If this API call fails, the application must retry the connection by calling :c:func:`aws_iot_connect` again.
 
 .. note::
-   The connection attempt can fail due to any number of reasons related to external network.
+   The connection attempt can fail due to a number of reasons related to external network.
    Implement a reconnection routine that tries to reconnect the device upon a disconnect.
 
 During an attempt to connect to the AWS IoT broker, the library tries to establish a connection using a TLS handshake, which usually spans a few seconds.

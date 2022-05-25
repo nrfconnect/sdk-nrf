@@ -22,7 +22,7 @@ The sample requires an `AWS account`_ with access to Simple Storage Service (S3)
 .. include:: /includes/tfm.txt
 
 Overview
-*********
+********
 
 The sample connects to the configured `AWS IoT MQTT`_ broker and subscribes to several topics related to AWS IoT jobs.
 When an update job is created on the AWS IoT service, the sample receives a notification through MQTT.
@@ -43,10 +43,15 @@ Configuration
 
 |config|
 
+Setup
+=====
+
+Complete the steps in this section to configure the sample for use.
+
 .. _creating_a_thing_in_AWS_IoT:
 
-Creating a thing in AWS IoT
-===========================
+Create a thing in AWS IoT
+-------------------------
 
 Before you can run this sample, you must create a *thing* for your development kit in AWS IoT so that AWS knows about your kit.
 This thing must be connected to a security policy.
@@ -87,8 +92,8 @@ To create a thing for your kit:
 #. Click :guilabel:`Attach a policy` to continue to the next step.
 #. Select the policy that you created in step 3 and click :guilabel:`Register Thing`.
 
-Updating the certificates
-=========================
+Update the certificates
+-----------------------
 
 The certificates that you created or added for your thing in AWS IoT must be stored on your kit so that it can connect to AWS IoT.
 
@@ -153,8 +158,6 @@ Building and running
 .. include:: /includes/build_and_run_ns.txt
 
 .. _configuring:
-
-
 
 Testing
 =======
