@@ -25,10 +25,15 @@ For more information, see :ref:`partition_mgr_integration`.
 
 The library wrapper also provides callbacks for the initialization and shutdown operations.
 The application can set up a callback for :c:func:`nrf_modem_lib_init` function using the :c:macro:`NRF_MODEM_LIB_ON_INIT` macro, and a callback for :c:func:`nrf_modem_lib_shutdown` function using the :c:macro:`NRF_MODEM_LIB_ON_SHUTDOWN` macro.
-These compile-time callbacks allow any part of the application to perform any set up steps that require the modem to be in a certain state.
-Further, the callbacks ensure that said steps are repeated any time another part of the application turns the modem on or off.
-The callbacks defined using :c:macro:`NRF_MODEM_LIB_ON_INIT` are executed after the library is initialized, and report the result of the initialization.
-The callbacks defined using :c:macro:`NRF_MODEM_LIB_ON_SHUTDOWN` are executed before the library is shut down.
+These compile-time callbacks allow any part of the application to perform any setup steps that require the modem to be in a certain state.
+Furthermore, the callbacks ensure that said steps are repeated any time another part of the application turns the modem on or off.
+The callbacks registered using :c:macro:`NRF_MODEM_LIB_ON_INIT` are executed after the library is initialized.
+These callbacks are provided the result of the initialization and the callback context.
+Callbacks for the macro :c:macro:`NRF_MODEM_LIB_ON_INIT` need to satisfy the signature ``void callback_name(int ret, void *ctx)``, where ``ret`` is the result of the initialization and ``ctx`` is the context passed to the macro.
+The callbacks registered using :c:macro:`NRF_MODEM_LIB_ON_SHUTDOWN` are executed before the library is shut down.
+These callbacks are provided the callback context.
+Callbacks for the macro :c:macro:`NRF_MODEM_LIB_ON_SHUTDOWN` need to satisfy the signature ``void callback_name(void *ctx)``, where ``ctx`` is the context passed to the macro.
+See :ref:`modem_callbacks_sample` for more information.
 
 The library wrapper can also initialize the Modem library during system initialization using :c:macro:`SYS_INIT`.
 The :kconfig:option:`CONFIG_NRF_MODEM_LIB_SYS_INIT` Kconfig option can be used to control the initialization.
