@@ -155,10 +155,10 @@ config BT_CTLR_SDC_RX_STACK_SIZE
 # CONFIG_BT_CTLR_DF is declared in Zephyr and also here for a second time,
 # to avoid BT_CTLR_DF_SUPPORT dependency.
 config BT_CTLR_DF
-	bool "LE Direction Finding [EXPERIMENTAL]"
-	select EXPERIMENTAL
+	bool "Connectionless CTE Transmitter feature"
 	help
-	  Enable support for Bluetooth 5.1 Direction Finding
+	  Enable support for Bluetooth v5.1 Connectionless CTE Transmitter
+	  feature in controller.
 
 # As CONFIG_BT_CTLR_ADV_EXT_PDU_EXTRA_DATA_MEMORY is defined for the Zephyr LL
 # only, and BT_CLTR_DF_ADV_CTE_TX expects it existence, we define it as an empty
