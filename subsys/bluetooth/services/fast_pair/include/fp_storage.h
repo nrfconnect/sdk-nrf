@@ -21,6 +21,19 @@ extern "C" {
 #include <sys/types.h>
 #include "fp_crypto.h"
 
+/**
+ * @typedef fp_storage_account_key_check_cb
+ * @brief Callback used to check if a given Account Key satisfies user-defined
+ *        conditions.
+ *
+ * @param[in] account_key 128-bit (16-byte) Account Key to be checked.
+ * @param[in] context     Pointer used to pass operation context.
+ *
+ * @return True if Account Key satisfies user-defined conditions.
+ *         False otherwise.
+ */
+typedef bool (*fp_storage_account_key_check_cb)(const uint8_t *account_key, void *context);
+
 /** Save Account Key.
  *
  * @param[in] account_key 128-bit (16-byte) Account Key to be saved.
@@ -49,6 +62,21 @@ int fp_storage_account_key_count(void);
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
 int fp_storage_account_keys_get(uint8_t buf[][FP_CRYPTO_ACCOUNT_KEY_LEN], size_t *key_count);
+
+/** Iterate over stored Account Keys to find a key that matches user-defined conditions.
+ *  If such a key is found, the iteration process stops and this function returns.
+ *
+ * @param[out] account_key Found Account Key. It is possible to pass NULL pointer if the found
+ *                         key value is irrelevant.
+ * @param[in] account_key_check_cb Callback for determining if a given Account Key satisfies
+ *                                 user-defined conditions.
+ * @param[in] context Pointer used to pass operation context.
+ *
+ * @return 0 If the Account Key was found. Otherwise, a (negative) error code is returned.
+ */
+int fp_storage_account_key_find(uint8_t account_key[FP_CRYPTO_ACCOUNT_KEY_LEN],
+				fp_storage_account_key_check_cb account_key_check_cb,
+				void *context);
 
 #ifdef __cplusplus
 }
