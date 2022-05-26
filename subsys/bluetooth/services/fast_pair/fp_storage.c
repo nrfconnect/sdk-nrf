@@ -239,6 +239,33 @@ int fp_storage_account_keys_get(uint8_t buf[][FP_CRYPTO_ACCOUNT_KEY_LEN], size_t
 	return 0;
 }
 
+int fp_storage_account_key_find(uint8_t account_key[FP_CRYPTO_ACCOUNT_KEY_LEN],
+				fp_storage_account_key_check_cb account_key_check_cb,
+				void *context)
+{
+	if (!atomic_get(&settings_loaded)) {
+		return -ENODATA;
+	}
+
+	if (!account_key_check_cb) {
+		return -EINVAL;
+	}
+
+	for (size_t i = 0; i < account_key_count; i++) {
+		if (account_key_check_cb(account_key_list[i], context)) {
+			if (account_key) {
+				memcpy(account_key,
+				       account_key_list[i],
+				       FP_CRYPTO_ACCOUNT_KEY_LEN);
+			}
+
+			return 0;
+		}
+	}
+
+	return -ESRCH;
+}
+
 int fp_storage_account_key_save(const uint8_t *account_key)
 {
 	if (!atomic_get(&settings_loaded)) {
