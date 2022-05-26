@@ -78,6 +78,8 @@ Thread
 * Memory requirements page shows requirements based on the configuration used for certification instead of minimal configuration which has been removed.
 * Updated "Configuring a radio co-processor" section on Thread Border Router page with the information about forcing Hardware Flow Control in JLink.
 * Updated nrfconnect/otbr docker.
+* Updated OpenThread pre-built libraries for Thread v1.2.
+* Removed OpenThread pre-built libraries for Thread v1.1.
 
 See `Thread samples`_ for the list of changes for the Thread samples.
 
