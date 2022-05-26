@@ -529,11 +529,12 @@ start:
 			LOG_DBG("Socket error: POLLNVAL");
 			if (nfsm_get_disconnect_requested()) {
 				LOG_DBG("The cloud socket was disconnected by request");
+				evt.status = NRF_CLOUD_DISCONNECT_USER_REQUEST;
 			} else {
 				LOG_DBG("The cloud socket was unexpectedly closed");
+				evt.status = NRF_CLOUD_DISCONNECT_INVALID_REQUEST;
 			}
 
-			evt.status = NRF_CLOUD_DISCONNECT_INVALID_REQUEST;
 			break;
 		}
 
@@ -555,7 +556,10 @@ start:
 	/* Send the event if the transport has not already been disconnected */
 	if (atomic_get(&transport_disconnected) == 0) {
 		nfsm_set_current_state_and_notify(STATE_INITIALIZED, &evt);
-		nrf_cloud_disconnect();
+		if (evt.status != NRF_CLOUD_DISCONNECT_USER_REQUEST) {
+			/* Not requested, do proper disconnect */
+			(void)nct_disconnect();
+		}
 	}
 
 reset:

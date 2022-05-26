@@ -37,7 +37,6 @@ static const fsm_transition idle_fsm_transition[NCT_EVT_TOTAL] = {
 
 static const fsm_transition initialized_fsm_transition[NCT_EVT_TOTAL] = {
 	[NCT_EVT_CONNECTED] = connection_handler,
-	[NCT_EVT_DISCONNECTED] = disconnection_handler,
 };
 
 static const fsm_transition connected_fsm_transition[NCT_EVT_TOTAL] = {
