@@ -200,7 +200,12 @@ Modem libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * :ref:`lib_nrf_cloud` library:
+
+    * Fixed:
+      * An issue that caused the application to receive multiple disconnect events.
 
 Libraries for NFC
 -----------------
