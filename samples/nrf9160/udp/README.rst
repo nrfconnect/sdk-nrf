@@ -17,7 +17,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/tfm.txt
+.. include:: /includes/tfm_spm_thingy91.txt
 
 Additionally, it supports :ref:`qemu_x86`.
 
@@ -126,7 +126,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/udp`
 
-.. include:: /includes/build_and_run_ns.txt
+.. include:: /includes/thingy91_build_and_run.txt
 
 Testing
 =======
@@ -172,6 +172,7 @@ It uses the following `sdk-nrfxlib`_ library:
 
 * :ref:`nrfxlib:nrf_modem`
 
-In addition, it uses the following sample:
+In addition, it uses the following secure firmware components:
 
 * :ref:`secure_partition_manager`
+* :ref:`Trusted Firmware-M <ug_tfm>`

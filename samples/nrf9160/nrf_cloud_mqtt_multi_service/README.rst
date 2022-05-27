@@ -20,7 +20,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/tfm.txt
+.. include:: /includes/tfm_spm_thingy91.txt
 
 .. _nrf_cloud_mqtt_multi_service_features:
 
@@ -396,7 +396,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/nrf_cloud_mqtt_multi_service`
 
-.. include:: /includes/build_and_run_ns.txt
+.. include:: /includes/thingy91_build_and_run.txt
 
 .. _nrf_cloud_mqtt_multi_service_dependencies:
 
@@ -413,3 +413,8 @@ This sample uses the following |NCS| libraries and drivers:
 It uses the following `sdk-nrfxlib`_ library:
 
 * :ref:`nrfxlib:nrf_modem`
+
+In addition, it uses the following secure firmware components:
+
+* :ref:`secure_partition_manager`
+* :ref:`Trusted Firmware-M <ug_tfm>`
