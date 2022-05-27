@@ -20,7 +20,7 @@ The sample supports the following development kits:
 
 Before using the Memfault platform, you must register an account in the `Memfault registration page`_ and `create a new project in Memfault`_.
 
-.. include:: /includes/tfm.txt
+.. include:: /includes/tfm_spm_thingy91.txt
 
 To get access to all the benefits, like up to 100 free devices connected, register at the `Memfault registration page`_.
 
@@ -146,7 +146,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/memfault`
 
-.. include:: /includes/build_and_run_ns.txt
+.. include:: /includes/thingy91_build_and_run.txt
 
 Testing
 =======
@@ -230,6 +230,7 @@ It uses the following `sdk-nrfxlib`_ library:
 
 * :ref:`nrfxlib:nrf_modem`
 
-In addition, it uses the following sample:
+In addition, it uses the following secure firmware components:
 
 * :ref:`secure_partition_manager`
+* :ref:`Trusted Firmware-M <ug_tfm>`

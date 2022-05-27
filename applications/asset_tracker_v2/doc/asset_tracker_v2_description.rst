@@ -161,7 +161,7 @@ The application supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/tfm.txt
+.. include:: /includes/tfm_spm_thingy91.txt
 
 User interface
 **************
@@ -302,7 +302,7 @@ See :ref:`Building with overlays <building_with_overlays>` for information on ho
 
 
 .. |sample path| replace:: :file:`applications/asset_tracker_v2`
-.. include:: /includes/build_and_run_ns.txt
+.. include:: /includes/thingy91_build_and_run.txt
 
 .. external_antenna_note_start
 
@@ -504,6 +504,7 @@ It uses the following `sdk-nrfxlib`_ library:
 
 * :ref:`nrfxlib:nrf_modem`
 
-In addition, it uses the following sample:
+In addition, it uses the following secure firmware components:
 
 * :ref:`secure_partition_manager`
+* :ref:`Trusted Firmware-M <ug_tfm>`
