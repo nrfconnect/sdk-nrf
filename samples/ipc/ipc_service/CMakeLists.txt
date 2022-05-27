@@ -15,11 +15,11 @@ if (CONF_FILE)
   set(remote_CONF_FILE ${CONF_FILE})
   set(DTC_OVERLAY_FILE "${CONF_FILE_BUILD_TYPE}.overlay")
   set(remote_DTC_OVERLAY_FILE "${CONF_FILE_BUILD_TYPE}.overlay")
+endif()
 
-  # Use config overlay with the same name in remote.
-  if(OVERLAY_CONFIG)
-    set(remote_OVERLAY_CONFIG ${OVERLAY_CONFIG})
-  endif()
+# Use config overlay with the same name in remote.
+if(OVERLAY_CONFIG)
+  set(remote_OVERLAY_CONFIG ${OVERLAY_CONFIG})
 endif()
 
 set(ZEPHYR_EXTRA_MODULES ${CMAKE_CURRENT_LIST_DIR})

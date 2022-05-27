@@ -104,23 +104,25 @@ After programming the sample to your development kit, test it by performing the 
 
     .. code-block:: console
 
-       *** Booting Zephyr OS build v2.7.99-ncs1-2188-g1cd6e614e35d  ***
-       650794
-       649064
-       648818
-       647836
-       647445
+       *** Booting Zephyr OS build v3.0.99-ncs1  ***
+       IPC-service nrf5340dk_nrf5340_cpuapp demo started
+       Δpkt: 9391 (100 B/pkt) | throughput: 7512800 bit/s
+       Δpkt: 9389 (100 B/pkt) | throughput: 7511200 bit/s
+       Δpkt: 9388 (100 B/pkt) | throughput: 7510400 bit/s
+       Δpkt: 9390 (100 B/pkt) | throughput: 7512000 bit/s
+       Δpkt: 9396 (100 B/pkt) | throughput: 7516800 bit/s
 
   * For the network core, the output is similar to the following one:
 
     .. code-block:: console
 
-       *** Booting Zephyr OS build v2.7.99-ncs1-2188-g1cd6e614e35d  ***
-       519213
-       522461
-       522857
-       523972
-       523648
+       *** Booting Zephyr OS build v3.0.99-ncs1  ***
+       IPC-service nrf5340dk_nrf5340_cpunet demo started
+       Δpkt: 6665 (100 B/pkt) | throughput: 5332000 bit/s
+       Δpkt: 6664 (100 B/pkt) | throughput: 5331200 bit/s
+       Δpkt: 6658 (100 B/pkt) | throughput: 5326400 bit/s
+       Δpkt: 6665 (100 B/pkt) | throughput: 5332000 bit/s
+       Δpkt: 6671 (100 B/pkt) | throughput: 5336800 bit/s
 
 Dependencies
 ************

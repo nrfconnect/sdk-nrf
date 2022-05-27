@@ -6,20 +6,25 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
+#include <string.h>
+
+#include <zephyr/logging/log.h>
 
 #include <zephyr/ipc/ipc_service.h>
 
-#include <zephyr/logging/log.h>
+#define STACKSIZE	(1024 + CONFIG_TEST_EXTRA_STACK_SIZE)
+
+K_THREAD_STACK_DEFINE(ipc0_stack, STACKSIZE);
+
 LOG_MODULE_REGISTER(host, LOG_LEVEL_INF);
 
-#define BASE_MESSAGE_LEN 40
-#define MESSAGE_LEN 100
-
-struct data_packet {
-	uint8_t message;
-	uint8_t data[MESSAGE_LEN];
+struct payload {
+	unsigned long cnt;
+	unsigned long size;
+	uint8_t data[];
 };
 
+struct payload *p_payload;
 
 static K_SEM_DEFINE(bound_sem, 0, 1);
 
@@ -32,38 +37,15 @@ static void ep_recv(const void *data, size_t len, void *priv)
 {
 	uint8_t received_val = *((uint8_t *)data);
 	static uint8_t expected_val;
-	static uint16_t expected_len = BASE_MESSAGE_LEN;
 
-	static unsigned long long cnt;
-	static unsigned int stats_every;
-	static uint32_t start;
 
-	if (start == 0) {
-		start = k_uptime_get_32();
-	}
-
-	if ((received_val != expected_val) || (len != expected_len)) {
-		printk("Unexpected message\n");
+	if ((received_val != expected_val) || (len != CONFIG_APP_IPC_SERVICE_MESSAGE_LEN)) {
+		printk("Unexpected message received_val: %d , expected_val: %d\n",
+			received_val,
+			expected_val);
 	}
 
 	expected_val++;
-	expected_len++;
-
-	cnt += len;
-
-	if (stats_every++ > 5000) {
-		/* Print throuhput [Bytes/s]. Use printk not to overload CPU with logger.
-		 * Sample never reaches lower priority thread because of high throughput
-		 * (100% cpu load) so logging would not be able to handle messages in
-		 * deferred mode (immediate mode would be heavier than printk).
-		 */
-		printk("%llu\n", (1000*cnt)/(k_uptime_get_32() - start));
-		stats_every = 0;
-	}
-
-	if (expected_len > sizeof(struct data_packet)) {
-		expected_len = BASE_MESSAGE_LEN;
-	}
 }
 
 static struct ipc_ept_cfg ep_cfg = {
@@ -77,9 +59,21 @@ static struct ipc_ept_cfg ep_cfg = {
 int main(void)
 {
 	const struct device *ipc0_instance;
-	struct data_packet msg = {.message = 0};
 	struct ipc_ept ep;
 	int ret;
+
+	p_payload = (struct payload *) k_malloc(CONFIG_APP_IPC_SERVICE_MESSAGE_LEN);
+	if (!p_payload) {
+		printk("k_malloc() failure\n");
+		return -ENOMEM;
+	}
+
+	memset(p_payload->data, 0xA5, CONFIG_APP_IPC_SERVICE_MESSAGE_LEN - sizeof(struct payload));
+
+	p_payload->size = CONFIG_APP_IPC_SERVICE_MESSAGE_LEN;
+	p_payload->cnt = 0;
+
+	printk("IPC-service %s demo started\n", CONFIG_BOARD);
 
 	ipc0_instance = DEVICE_DT_GET(DT_NODELABEL(ipc0));
 
@@ -97,24 +91,18 @@ int main(void)
 
 	k_sem_take(&bound_sem, K_FOREVER);
 
-	uint16_t mlen = BASE_MESSAGE_LEN;
-
 	while (true) {
-		ret = ipc_service_send(&ep, &msg, mlen);
+		ret = ipc_service_send(&ep, p_payload, CONFIG_APP_IPC_SERVICE_MESSAGE_LEN);
 		if (ret == -ENOMEM) {
 			/* No space in the buffer. Retry. */
 			continue;
 		} else if (ret < 0) {
-			LOG_ERR("send_message(%d) failed with ret %d", msg.message, ret);
+			printk("send_message(%ld) failed with ret %d\n", p_payload->cnt, ret);
 			break;
 		}
 
-		msg.message++;
+		p_payload->cnt++;
 
-		mlen++;
-		if (mlen > sizeof(struct data_packet)) {
-			mlen = BASE_MESSAGE_LEN;
-		}
 
 		/* Quasi minimal busy wait time which allows to continuosly send
 		 * data without -ENOMEM error code. The purpose is to test max
@@ -129,3 +117,26 @@ int main(void)
 
 	return 0;
 }
+
+static void check_task(void *arg1, void *arg2, void *arg3)
+{
+	ARG_UNUSED(arg1);
+	ARG_UNUSED(arg2);
+	ARG_UNUSED(arg3);
+
+	unsigned long last_cnt = p_payload->cnt;
+	unsigned long delta;
+
+	while (1) {
+		k_sleep(K_MSEC(1000));
+
+		delta = p_payload->cnt - last_cnt;
+
+		printk("Δpkt: %ld (%ld B/pkt) | throughput: %ld bit/s\n",
+			delta, p_payload->size, delta * CONFIG_APP_IPC_SERVICE_MESSAGE_LEN * 8);
+
+		last_cnt = p_payload->cnt;
+	}
+}
+K_THREAD_DEFINE(thread_check_id, STACKSIZE, check_task, NULL, NULL, NULL,
+		K_PRIO_COOP(1), 0, 100);
