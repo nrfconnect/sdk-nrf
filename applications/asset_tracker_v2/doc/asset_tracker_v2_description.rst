@@ -296,8 +296,9 @@ See :ref:`Building with overlays <building_with_overlays>` for information on ho
 
 .. note::
 
-   This application supports :ref:`ug_bootloader`, which is disabled by default.
-   To enable the immutable bootloader, set ``CONFIG_SECURE_BOOT=y``.
+   This application supports the :ref:`ug_bootloader` (also called immutable bootloader), which has been enabled by default since the |NCS| v2.0.0 release.
+   Devices that do not already have the immutable bootloader can not be firmware upgraded over the air to use the immutable bootloader.
+   To disable the :ref:`ug_bootloader`, set both :kconfig:option:`CONFIG_SECURE_BOOT` and :kconfig:option:`CONFIG_BUILD_S1_VARIANT` Kconfig options to ``n``.
 
 
 .. |sample path| replace:: :file:`applications/asset_tracker_v2`
