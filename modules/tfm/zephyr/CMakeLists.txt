@@ -37,6 +37,12 @@ if (CONFIG_TFM_NONSECURE_STORAGE)
   )
 endif()
 
+if (CONFIG_TFM_HW_INIT_RESET_ON_BOOT)
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_HW_INIT_RESET_ON_BOOT=ON
+  )
+endif()
+
 if (CONFIG_TFM_SECURE_UART1)
   set_property(TARGET zephyr_property_target
     APPEND PROPERTY TFM_CMAKE_OPTIONS -DSECURE_UART1=ON

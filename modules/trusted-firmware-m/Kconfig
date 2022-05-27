@@ -71,6 +71,24 @@ config TFM_ITS_ENCRYPTED
 	help
 	  Enables authenticated encryption for PSA Internal Trusted Storage files
 
+config TFM_HW_INIT_RESET_ON_BOOT
+	bool "Initialize internal architecture state at boot"
+	depends on ARCH_SUPPORTS_ARCH_HW_INIT
+	help
+	  This option instructs TF-M to force the initialization
+	  of the internal architectural state (for example ARCH-level
+	  HW registers and system control blocks) during boot to
+	  the reset values as specified by the corresponding
+	  architecture manual. The option is useful when the TF-M
+	  image is chain-loaded, for example, by a debugger
+	  or a bootloader, and we need to guarantee that the internal
+	  states of the architecture core blocks are restored to the
+	  reset values (as specified by the architecture).
+
+config BOOTLOADER_MCUBOOT
+	bool
+	imply TFM_HW_INIT_RESET_ON_BOOT
+
 endif # BUILD_WITH_TFM
 
 source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm"
