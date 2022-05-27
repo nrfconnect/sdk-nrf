@@ -70,7 +70,7 @@ The following boards are defined in the :file:`nrf/boards/arm/` folder.
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
 | Hardware platform | PCA number | Board name                                               | Build target                          |
 +===================+============+==========================================================+=======================================+
-| nRF5340 Audio     | PCA10121   | :ref:`nrf5340_audio_dk_nrf5340 <octave>`                 |  ``nrf5340_audio_dk_nrf5340_cpuapp``  |
+| nRF5340 Audio     | PCA10121   | :ref:`nrf5340_audio_dk_nrf5340 <nrf53_audio_app>`        |  ``nrf5340_audio_dk_nrf5340_cpuapp``  |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
 | nRF Desktop       | PCA20041   | :ref:`nrf52840gmouse_nrf52840 <nrf_desktop>`             | ``nrf52840gmouse_nrf52840``           |
 | Gaming Mouse      |            |                                                          |                                       |

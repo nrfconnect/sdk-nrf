@@ -1,4 +1,4 @@
-.. _octave:
+.. _nrf53_audio_app:
 
 nRF5340 Audio
 #############
@@ -8,12 +8,12 @@ nRF5340 Audio
    :depth: 2
 
 The nRF5340 Audio application demonstrates audio playback over isochronous channels (ISO) using LC3 or SBC codec compression and decompression, as per `Bluetooth LE Audio specifications`_.
-It is developed for use with the :ref:`octave_dk`.
+It is developed for use with the :ref:`nrf53_audio_app_dk`.
 
 In its default configuration, the application requires access to the non-public external repository containing the LC3 software codec.
 The application also comes with various tools, including the :file:`buildprog.py` Python script that simplifies building and programming the firmware.
 
-.. _octave_overview:
+.. _nrf53_audio_app_overview:
 
 Overview
 ********
@@ -57,7 +57,7 @@ In the `I2S-based firmware for gateway and headsets`_, sending the audio data th
 This proprietary module ensures that the audio is played at the same time with the correct speed.
 For more information, see `Synchronization module overview`_.
 
-.. _octave_overview_modes:
+.. _nrf53_audio_app_overview_modes:
 
 Application modes
 =================
@@ -91,7 +91,7 @@ Broadcast Isochronous Stream (BIS)
 
 The audio quality for both modes does not change, although the processing time for stereo quality can be longer.
 
-.. _octave_overview_architecture:
+.. _nrf53_audio_app_overview_architecture:
 
 Firmware architecture
 =====================
@@ -133,14 +133,14 @@ These modules include the following major ones:
   * LC3 encoder/decoder (default)
   * SBC encoder/decoder
 
-  :ref:`Selecting and configuring the right software codec <octave_requirements_codec>` is required to run the application.
+  :ref:`Selecting and configuring the right software codec <nrf53_audio_app_requirements_codec>` is required to run the application.
 
 Since the application architecture is uniform and the firmware code is shared, the set of audio modules in use depends on the chosen stream mode (BIS or CIS), the chosen audio inputs and outputs (USB or analog jack), and if the gateway or the headset configuration is selected.
 
 .. note::
    In the current version of the application, no bootloader is used, and device firmware update (DFU) is not supported.
 
-.. _octave_overview_architecture_usb:
+.. _nrf53_audio_app_overview_architecture_usb:
 
 USB-based firmware for gateway
 ------------------------------
@@ -155,7 +155,7 @@ The following figure shows an overview of the modules currently included in the 
 In this firmware design, no synchronization module is used after decoding the incoming frames or before encoding the outgoing ones.
 The Bluetooth LE RX FIFO is mainly used to make decoding run in a separate thread.
 
-.. _octave_overview_architecture_i2s:
+.. _nrf53_audio_app_overview_architecture_i2s:
 
 I2S-based firmware for gateway and headsets
 -------------------------------------------
@@ -170,7 +170,7 @@ The following figure shows an overview of the modules currently included in the 
 The Bluetooth LE RX FIFO is mainly used to make :file:`audio_datapath.c` (synchronization module) run in a separate thread.
 After the encoding, the frames are sent by the encoder thread using a function located in :file:`streamctrl.c`.
 
-.. _octave_overview_architecture_sync_module:
+.. _nrf53_audio_app_overview_architecture_sync_module:
 
 Synchronization module overview
 -------------------------------
@@ -201,7 +201,7 @@ See the following figure for an overview of the synchronization module.
    nRF5340 Audio synchronization module overview
 
 Both synchronization methods use the SDU reference timestamps (:c:type:`sdu_ref`) as the reference variable.
-If the device is a gateway that is :ref:`using I2S as audio source <octave_overview_architecture_i2s>` and the stream is unidirectional (gateway to headsets), :c:type:`sdu_ref` is continuously being extracted from the LE Audio Controller Subsystem for nRF53 on the gateway.
+If the device is a gateway that is :ref:`using I2S as audio source <nrf53_audio_app_overview_architecture_i2s>` and the stream is unidirectional (gateway to headsets), :c:type:`sdu_ref` is continuously being extracted from the LE Audio Controller Subsystem for nRF53 on the gateway.
 These :c:type:`sdu_ref` values are then sent to the gateway's synchronization module, and used to do drift compensation.
 This extraction of :c:type:`sdu_ref` happens inside the function in :file:`streamctrl.c` that sends encoded data.
 
@@ -259,13 +259,13 @@ The received audio data in the I2S-based firmware devices follows the following 
    .. note::
       Only the SBC audio codec is open-source.
       To use the proprietary LC3 audio codec, you need to obtain a license.
-      For more information, see `requirements <octave_requirements>`_.
+      For more information, see `requirements <nrf53_audio_app_requirements>`_.
 
 #. The audio decoder decodes the data and sends the uncompressed audio data (PCM) back to the :file:`audio_datapath.c` module.
 #. The :file:`audio_datapath.c` module continuously feeds the uncompressed audio data to the hardware codec.
 #. The hardware codec receives the uncompressed audio data over the inter-IC sound (I2S) interface and performs the digital-to-analog (DAC) conversion to an analog audio signal.
 
-.. _octave_requirements:
+.. _nrf53_audio_app_requirements:
 
 Requirements
 ************
@@ -288,25 +288,25 @@ The nRF5340 Audio application is designed to be used only with the following har
 You need at least two nRF5340 Audio development kits (one with the gateway firmware and one with headset firmware) to test the application.
 For CIS with TWS in mind, three kits are required.
 
-.. _octave_requirements_codec:
+.. _nrf53_audio_app_requirements_codec:
 
 Software codec requirements
 ===========================
 
 The nRF5340 Audio application must use either the LC3 software (developed specifically for use with LE Audio) or the open-source SBC software codec (developed for use with Classic Bluetooth Audio).
-Each codec requires :ref:`adding its own repository before building and running <octave_configuration_repos>`.
+Each codec requires :ref:`adding its own repository before building and running <nrf53_audio_app_configuration_repos>`.
 
 |lc3_codec_access_note|
-See :ref:`octave_configuration_select_codec` for more information.
+See :ref:`nrf53_audio_app_configuration_select_codec` for more information.
 
-.. _octave_dk:
+.. _nrf53_audio_app_dk:
 
 nRF5340 Audio development kit
 =============================
 
 The nRF5340 Audio development kit is a hardware development platform that demonstrates the nRF5340 Audio application.
 
-.. _octave_dk_features:
+.. _nrf53_audio_app_dk_features:
 
 Key features of the nRF5340 Audio DK
 ------------------------------------
@@ -326,7 +326,7 @@ Key features of the nRF5340 Audio DK
 * Embedded battery charge system
 * Rechargeable Li-Po battery with 1500 mAh capacity
 
-.. _octave_dk_drawings:
+.. _nrf53_audio_app_dk_drawings:
 
 Hardware drawings
 -----------------
@@ -352,7 +352,7 @@ The following figure shows the back of the development kit without the case:
 
 For the description of the relevant PCB elements, see the `User interface`_ section.
 
-.. _solder_bridge_overview:
+.. _nrf53_audio_app_dk_solder_bridge_overview:
 
 Solder bridge overview
 ----------------------
@@ -414,7 +414,7 @@ The following table is a complete overview of the solder bridges on the nRF5340 
 +------------+-------------------------------------------------------------------------------------+--------------+--------+
 
 
-.. _testpoint_overview:
+.. _nrf53_audio_app_dk_testpoint_overview:
 
 Testpoint overview
 ------------------
@@ -563,7 +563,7 @@ The following table is a complete overview of the test points on the nRF5340 Aud
 |TP69         | LINE_IN.RIGHT              | Line-in jack ring                                | 1.5mm | Top    |
 +-------------+----------------------------+--------------------------------------------------+-------+--------+
 
-.. _octave_configuration_files:
+.. _nrf53_audio_app_configuration_files:
 
 nRF5340 Audio configuration files
 =================================
@@ -617,9 +617,9 @@ You can combine the configuration files as follows to obtain one of four differe
 This means that when you build the application using the ``headset`` device type and the ``release`` application version (third column), the build process includes :file:`prj.conf`,  :file:`overlay-headset.conf`, and :file:`overlay-release.conf` at the time of building the firmware.
 If you are building using the script, the build files are then placed in the :file:`build/headset_release` directory.
 
-See :ref:`octave_building` for detailed information about selecting the desired combination of configuration files for your build.
+See :ref:`nrf53_audio_app_building` for detailed information about selecting the desired combination of configuration files for your build.
 
-.. _octave_ui:
+.. _nrf53_audio_app_ui:
 
 User interface
 **************
@@ -627,7 +627,7 @@ User interface
 The application implements a simple user interface based on the available PCB elements.
 You can control the application using predefined switches and buttons while the LEDs display information.
 
-.. _octave_ui_switches:
+.. _nrf53_audio_app_ui_switches:
 
 Switches
 ========
@@ -643,7 +643,7 @@ The application uses the following switches on the supported development kit:
 |                   | This switch is used for accurate power and current measurements.                    |
 +-------------------+-------------------------------------------------------------------------------------+
 
-.. _octave_ui_buttons:
+.. _nrf53_audio_app_ui_buttons:
 
 Buttons
 =======
@@ -670,7 +670,7 @@ The application uses the following buttons on the supported development kit:
 | **RESET**     | Resets the device.                                             |
 +---------------+----------------------------------------------------------------+
 
-.. _octave_ui_leds:
+.. _nrf53_audio_app_ui_leds:
 
 LEDs
 ====
@@ -750,14 +750,14 @@ To indicate the tasks performed, the application uses the LED behavior described
 |                          | Green - Standard USB hub operation.                                                                 |
 +--------------------------+-----------------------------------------------------------------------------------------------------+
 
-.. _octave_configuration:
+.. _nrf53_audio_app_configuration:
 
 Configuration
 *************
 
 |config|
 
-.. _octave_configuration_repos:
+.. _nrf53_audio_app_configuration_repos:
 
 Setting up the nRF5340 Audio repositories
 =========================================
@@ -786,19 +786,19 @@ If west can fetch the repositories correctly, you can now build the application.
 
 For more information about west, see :ref:`Zephyr's documentation page <zephyr:west>`.
 
-.. _octave_configuration_select_codec:
+.. _nrf53_audio_app_configuration_select_codec:
 
 Selecting the audio software codec
 ==================================
 
 The nRF5340 Audio application must use either the LC3 software (developed specifically for use with LE Audio) or the open-source SBC software codec (developed for use with Classic Bluetooth Audio).
-Each codec requires :ref:`adding its own repository before building and running <octave_configuration_repos>`.
+Each codec requires :ref:`adding its own repository before building and running <nrf53_audio_app_configuration_repos>`.
 
 |lc3_codec_access_note|
 
 If you decide to use the open-source SBC codec, you also need to change the application's Kconfig configuration by adding the ``CONFIG_SW_CODEC_SBC`` Kconfig option set to ``y``  to the main :file:`prj.conf` file.
 
-.. _octave_configuration_select_bis:
+.. _nrf53_audio_app_configuration_select_bis:
 
 Selecting the BIS mode
 ======================
@@ -806,20 +806,20 @@ Selecting the BIS mode
 The CIS mode is the default operating mode for the application.
 You can switch to the BIS mode by adding the ``CONFIG_TRANSPORT_BIS`` Kconfig option set to ``y`` to the main :file:`prj.conf` file.
 
-.. _octave_configuration_select_i2s:
+.. _nrf53_audio_app_configuration_select_i2s:
 
 Selecting the I2S serial
 ========================
 
 In the default configuration, the gateway application uses the USB serial port as the audio source.
-The :ref:`octave_building` and :ref:`octave_testing` steps also refer to using the USB serial connection.
+The :ref:`nrf53_audio_app_building` and :ref:`nrf53_audio_app_testing` steps also refer to using the USB serial connection.
 
 You can switch to using the I2S serial connection by adding the ``CONFIG_AUDIO_SOURCE_I2S`` Kconfig option set to ``y`` to the main :file:`prj.conf` file.
 
 When testing the application, an additional audio jack cable is required to use I2S.
 Use this cable to connect the audio source (PC) to the analog **LINE IN** on the development kit.
 
-.. _octave_building:
+.. _nrf53_audio_app_building:
 
 Building and running
 ********************
@@ -833,19 +833,19 @@ This sample can be found under :file:`applications/nrf5340_audio` in the nRF Con
 
 You can build and program the application in one of the following ways:
 
-* :ref:`octave_building_script`.
+* :ref:`nrf53_audio_app_building_script`.
   This is the suggested method.
   Using this method allows you to build and program multiple development kits at the same time.
-* :ref:`octave_building_standard`.
+* :ref:`nrf53_audio_app_building_standard`.
   Using this method requires building and programming each development kit separately.
 
 Prerequisites
 =============
 
-Before building the application, make sure to meet the following prerequisites described in the :ref:`octave_configuration` section:
+Before building the application, make sure to meet the following prerequisites described in the :ref:`nrf53_audio_app_configuration` section:
 
-* :ref:`octave_configuration_repos`
-* :ref:`octave_configuration_select_codec`
+* :ref:`nrf53_audio_app_configuration_repos`
+* :ref:`nrf53_audio_app_configuration_select_codec`
 
 Testing out of the box
 ======================
@@ -859,13 +859,13 @@ Before building the application, you can verify if the kit is working by complet
 
 You can now program the development kits with either gateway or headset firmware before they can be used.
 
-.. _octave_building_script:
+.. _nrf53_audio_app_building_script:
 
 Building and programming using script
 =====================================
 
 The suggested method for building the application and programming it to the development kit is running the :file:`buildprog.py` Python script from the :file:`applications/nrf5340_audio/tools/buildprog` directory.
-The script automates the process of selecting :ref:`configuration files <octave_configuration_files>` and building different versions of the application.
+The script automates the process of selecting :ref:`configuration files <nrf53_audio_app_configuration_files>` and building different versions of the application.
 This eases the process of building and programming images for multiple development kits.
 
 Preparing the JSON file
@@ -886,7 +886,7 @@ Running the script
 ------------------
 
 After editing the :file:`nrf5340_audio_dk_devices.json` file, run :file:`buildprog.py` from the :file:`applications/nrf5340_audio/tools/buildprog` directory to build the firmware for the development kits.
-The building command for running the script requires providing the following parameters, in line with :ref:`octave_configuration_files`:
+The building command for running the script requires providing the following parameters, in line with :ref:`nrf53_audio_app_configuration_files`:
 
 * Core type (``-c`` parameter): ``app``, ``net``, or ``both``
 * Application version (``-b`` parameter): either ``release`` or ``debug``
@@ -965,7 +965,7 @@ Configuration table overview
    |                       |                                                                                                     | ``Selected done`` - Programming done.         |
    +-----------------------+-----------------------------------------------------------------------------------------------------+-----------------------------------------------+
 
-.. _octave_building_standard:
+.. _nrf53_audio_app_building_standard:
 
 Building and programming using command line
 ===========================================
@@ -974,14 +974,14 @@ You can also build the nRF5340 Audio application using the standard |NCS| :ref:`
 
 .. note::
    Using this method requires you to build and progam each development kit one at a time before moving to the next configuration, which can be time-consuming.
-   :ref:`octave_building_script` is recommended.
+   :ref:`nrf53_audio_app_building_script` is recommended.
 
 Building the application
 ------------------------
 
 Complete the following steps to build the application:
 
-1. Choose the combination of the build flags, in line with :ref:`octave_configuration_files`:
+1. Choose the combination of the build flags, in line with :ref:`nrf53_audio_app_configuration_files`:
 
    a. Choose the application version by using one of the following options:
 
@@ -1001,7 +1001,7 @@ Complete the following steps to build the application:
 
       west build -b nrf5340_audio_dk_nrf5340_cpuapp --pristine -- -DOVERLAY_CONFIG="overlay-headset.conf overlay-debug.conf"
 
-   Unlike when :ref:`octave_building_script`, this command creates the build files directly in the :file:`build` directory.
+   Unlike when :ref:`nrf53_audio_app_building_script`, this command creates the build files directly in the :file:`build` directory.
    This means that you first need to program the development kit for the headset before you build and program other development kits.
 
 Programming the application
@@ -1063,7 +1063,7 @@ After building the files for the development kit you want to program, complete t
 
    Select the correct board when prompted with the popup or add the ``--snr`` parameter followed by the SEGGER serial number of the correct board at the end of the ``nrfjprog`` command.
 
-.. _octave_testing:
+.. _nrf53_audio_app_testing:
 
 Testing
 =======
@@ -1072,7 +1072,7 @@ After building and programming the application, you can test it for both the CIS
 The following testing scenarios assume you are using USB as the audio source on the gateway.
 This is the default setting.
 
-.. _octave_testing_steps_cis:
+.. _nrf53_audio_app_testing_steps_cis:
 
 Testing the default CIS mode
 ----------------------------
@@ -1115,18 +1115,18 @@ Complete the following steps to test the CIS mode for one gateway and two headse
 
 When you finish testing, power off the nRF5340 Audio development kits by switching the power switch from On to Off.
 
-.. _octave_testing_steps_bis:
+.. _nrf53_audio_app_testing_steps_bis:
 
 Testing the BIS mode
 --------------------
 
 Testing the BIS mode is identical to `Testing the default CIS mode`_, except for the following differences:
 
-* You must :ref:`select the BIS mode manually <octave_configuration_select_bis>` before building the application.
+* You must :ref:`select the BIS mode manually <nrf53_audio_app_configuration_select_bis>` before building the application.
 * You can play the audio stream with different audio settings on the receivers.
   For example, you can decrease or increase the volume separately for each receiver during playback.
 
-.. _octave_porting_guide:
+.. _nrf53_audio_app_porting_guide:
 
 Adapting application for end products
 *************************************
@@ -1149,7 +1149,7 @@ You can see the :file:`nrf/boards/arm/nrf5340_audio_dk_nrf5340` directory as an 
 For information about differences between DTS and Kconfig, see :ref:`zephyr:dt_vs_kconfig`.
 For detailed instructions for adding Zephyr support to a custom board, see Zephyr's :ref:`zephyr:board_porting_guide`.
 
-.. _octave_porting_guide_app_configuration:
+.. _nrf53_audio_app_porting_guide_app_configuration:
 
 Application configuration sources
 =================================
@@ -1165,7 +1165,7 @@ The following :file:`.conf` files are the default ones in the application:
 
 You need to edit these files if you want to add new functionalities to your application, but editing these files when adding a new board is not required.
 
-.. _octave_porting_guide_adding_board:
+.. _nrf53_audio_app_porting_guide_adding_board:
 
 Adding a new board
 ==================
@@ -1225,7 +1225,7 @@ Application configuration options
 .. options-from-kconfig::
    :show-type:
 
-.. _octave_dk_legal:
+.. _nrf53_audio_app_dk_legal:
 
 Legal notices and disclaimers
 *****************************
