@@ -148,6 +148,8 @@ nRF9160 samples
 
     * nRF9160 DK overlays for enabling BT support.
       When running this configuration, you can perform BT scanning and advertising using the ``bt`` command.
+    * Support for injecting GNSS reference altitude for low accuracy mode.
+      For a position fix using only three satellites, GNSS module must have a reference altitude that can now be injected using the ``gnss agps ref_altitude`` command.
 
 Thread samples
 --------------
