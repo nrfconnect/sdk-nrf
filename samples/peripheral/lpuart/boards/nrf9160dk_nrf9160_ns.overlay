@@ -16,7 +16,7 @@
 };
 
 &uart0 {
-	disable-rx;
+	status = "disabled";
 };
 
 &gpiote {
