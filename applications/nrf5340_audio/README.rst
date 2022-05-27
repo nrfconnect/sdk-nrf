@@ -1248,6 +1248,8 @@ Important - Battery warnings and mandatory requirements for the nRF5340 Audio DK
      * Leaving a battery in an extremely high temperature surrounding environment can result in an explosion or the leakage of flammable liquid or gas.
      * A battery subjected to extremely low air pressure may result in an explosion or the leakage of flammable liquid or gas.
 
+   * The nRF5340 Audio development kit shall not be operated outside the internal battery's discharge temperature range between +10°C and +45°C or stored or transported outside the internal battery's storage temperature.
+
    .. figure:: /images/nRF5340_audio_dk_battery_warning.png
 
 Legal notices for the nRF5340 Audio DK
@@ -1267,6 +1269,10 @@ Legal notices for the nRF5340 Audio DK
       Nordic Semiconductor products are not designed for use in life support appliances, devices, or systems where malfunction of these products can reasonably be expected to result in personal injury.
 
       Nordic Semiconductor ASA customers using or selling these products for use in such applications do so at their own risk and agree to fully indemnify Nordic Semiconductor ASA for any damages resulting from such improper use or sale.
+
+   Radio frequency notice
+      The nRF5340 Audio development kit operates in the 2.4 GHz ISM radio frequency band.
+      The maximum radio frequency power transmitted in the frequency band in which the development kit operates equals +3dBm (2 mW).
 
    RoHS and REACH statement
       Complete hazardous substance reports, material composition reports and latest version of Nordic's REACH statement can be found on our website www.nordicsemi.com.
