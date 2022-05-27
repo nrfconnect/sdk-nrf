@@ -45,16 +45,16 @@ See the following table for more details:
    * - **Maturity**
      - Suitable for integration in end products.
 
-       A feature or component that is either fully complete on first commit, or has previously been labelled "experimental" and is now ready for use in end-product projects.
+       A feature or component that is either fully complete on first commit, or has previously been labelled "experimental" and is now ready for use in end products.
 
      - Suitable for prototyping or evaluation.
-       Not recommended be deployed in end-products.
+       Not recommended to be deployed in end products.
 
        A feature or component that is either not fully verified according to existing test plans or currently being developed, meaning it is changing or incomplete.
      - Not applicable.
 
    * - **Verification**
-     - Fully verified according to existing text plans.
+     - Fully verified according to existing test plans.
      - Incomplete verification
      - Not applicable.
 
