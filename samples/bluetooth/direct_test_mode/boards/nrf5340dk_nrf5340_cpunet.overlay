@@ -3,10 +3,6 @@
 	current-speed = <19200>;
 };
 
-&spi0 {
-	status = "disabled";
-};
-
 &radio {
 	status = "okay";
 	/* This is a number of antennas that are available on antenna matrix
