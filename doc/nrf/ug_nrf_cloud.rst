@@ -28,6 +28,7 @@ Choosing a protocol: MQTT or REST
 *********************************
 
 When choosing a protocol, consider the following:
+
 * How often does the device transmit data?
 * Which cloud APIs does the device need to access?
 * What are the power consumption requirements for the device?
