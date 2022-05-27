@@ -256,8 +256,6 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 	const uint32_t fwinfo_end = (fwinfo_address + fwinfo->total_size);
 	const uint32_t fw_dst_end = (fw_dst_address + fwinfo->size);
 	const uint32_t fw_src_end = (fw_src_address + fwinfo->size);
-	const uint32_t stack_ptr_offset = (fwinfo->boot_address - fw_dst_address);
-	const uint32_t reset_vector = ((const uint32_t *)(fw_src_address + stack_ptr_offset))[1];
 
 	if (!fwinfo) {
 		PRINT("NULL parameter.\n\r");
@@ -316,6 +314,12 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 		PRINT("Boot address is not within signed region.\n\r");
 		return false;
 	}
+
+	/* Wait until this point to set these values as we must know that we
+	 * have a valid fw_info before proceeding.
+	 */
+	const uint32_t stack_ptr_offset = (fwinfo->boot_address - fw_dst_address);
+	const uint32_t reset_vector = ((const uint32_t *)(fw_src_address + stack_ptr_offset))[1];
 
 	if (!within(reset_vector, fw_dst_address, fw_dst_end)) {
 		PRINT("Reset handler is not within signed region.\n\r");
