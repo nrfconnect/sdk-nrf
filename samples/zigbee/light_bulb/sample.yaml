@@ -14,7 +14,7 @@ tests:
     tags: ci_build smoke
   sample.zigbee.light_bulb.with_shell:
     build_only: true
-    extra_args: CONFIG_ZIGBEE_SHELL=y CONFIG_ZIGBEE_DEBUG_FUNCTIONS=y CONFIG_ZIGBEE_SHELL_ENDPOINT=10
+    extra_args: CONFIG_ZIGBEE_SHELL=y CONFIG_ZIGBEE_DEBUG_FUNCTIONS=y CONFIG_ZIGBEE_SHELL_ENDPOINT=10 CONFIG_LOG_MODE_DEFERRED=y
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf52833dk_nrf52833
