@@ -158,6 +158,15 @@ source "subsys/logging/Kconfig.template.log_config"
 
 endif
 
+comment "BLE Advertising"
+
+config DESKTOP_BLE_ADV_SWIFT_PAIR
+	bool "Enable Swift Pair feature"
+	select CAF_BLE_ADV_GRACE_PERIOD
+	help
+	  Enable quick pairing with Microsoft Swift Pair. Swift Pair data is added by nRF Desktop's
+	  CAF ble_adv configuration def files.
+
 comment "BLE Scanning"
 
 config DESKTOP_BLE_SCANNING_ENABLE

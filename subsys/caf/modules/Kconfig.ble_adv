@@ -102,28 +102,31 @@ config CAF_BLE_ADV_FAST_ADV_TIMEOUT
 
 endif
 
-config CAF_BLE_ADV_SWIFT_PAIR
-	bool "Enable Swift Pair feature"
+config CAF_BLE_ADV_GRACE_PERIOD
+	bool "Enable grace period feature"
 	depends on CAF_BLE_ADV_FAST_ADV
 	help
-	  Enable quick pairing with Microsoft Swift Pair. Make sure to add Swift Pair data to
-	  advertising packets used by your device when it's not bonded. The Swift Pair data
-	  must be added as the last member of advertising data.
+	  When device is suspended by power_down_event, advertising is not instantly stopped.
+	  Instead, the module enters grace period state which allows to advertise with modified
+	  payload for predefined amount of time before device is suspended.
 
-if CAF_BLE_ADV_PM_EVENTS && CAF_BLE_ADV_SWIFT_PAIR
+	  The feature is useful for example for Swift Pair advertising data. During grace period
+	  Swift Pair advertising data is removed, but the device is still advertising for predefined
+	  period of time.
 
-config CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD
-	int "No Swift Pair time gap before suspend [s]"
+if CAF_BLE_ADV_PM_EVENTS && CAF_BLE_ADV_GRACE_PERIOD
+
+config CAF_BLE_ADV_GRACE_PERIOD_TIMEOUT
+	int "Grace period time before suspend [s]"
 	default 30
 	help
-	  To ensure users will not try to connect to a device which is no longer available,
-	  Swift Pair vendor section will be removed before exiting from advertising mode.
+	  Time interval of grace period advertising before advertising is suspended.
 
 endif
 
-if !(CAF_BLE_ADV_PM_EVENTS && CAF_BLE_ADV_SWIFT_PAIR)
+if !(CAF_BLE_ADV_PM_EVENTS && CAF_BLE_ADV_GRACE_PERIOD)
 
-config CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD
+config CAF_BLE_ADV_GRACE_PERIOD_TIMEOUT
 	int
 	default 0
 
