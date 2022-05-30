@@ -61,6 +61,18 @@ int bt_fast_pair_adv_data_fill(struct bt_data *adv_data, uint8_t *buf, size_t bu
  */
 void bt_fast_pair_set_pairing_mode(bool pairing_mode);
 
+/** Get number of stored Fast Pair Account Keys.
+ *
+ * Caller shall make sure that Account Key write from a connected Fast Pair Seeker would not preempt
+ * this function call. Otherwise invalid value may be returned.
+ *
+ * The function returns error code if called before Zephyr settings are loaded.
+ *
+ * @return Number of stored Fast Pair Account Keys if the operation was successful. Otherwise,
+ *         a (negative) error code is returned.
+ */
+int bt_fast_pair_get_account_key_count(void);
+
 #ifdef __cplusplus
 }
 #endif

@@ -13,6 +13,7 @@
 #include <zephyr/sys/atomic.h>
 #include <zephyr/settings/settings.h>
 
+#include <bluetooth/services/fast_pair.h>
 #include "fp_storage.h"
 #include "fp_crypto.h"
 
@@ -313,4 +314,9 @@ int fp_storage_account_key_save(const uint8_t *account_key)
 	}
 
 	return 0;
+}
+
+int bt_fast_pair_get_account_key_count(void)
+{
+	return fp_storage_account_key_count();
 }
