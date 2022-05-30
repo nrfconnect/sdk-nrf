@@ -57,7 +57,7 @@ enum led_peer_state {
 };
 
 /** @brief LED identification. */
-enum led_id {
+enum led_id_nrf_desktop {
 	/** LED representing system state. */
 	LED_ID_SYSTEM_STATE,
 	/** LED representing peer state. */
