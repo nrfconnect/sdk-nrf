@@ -7,11 +7,9 @@
 #include <zephyr.h>
 #include <net/lwm2m.h>
 #include <net/lwm2m_client_utils.h>
-#include <net/lwm2m_client_utils_fota.h>
 #include <lwm2m_resource_ids.h>
 #include <lwm2m_rd_client.h>
 #include <nrf_modem_at.h>
-#include <modem/nrf_modem_lib.h>
 #include <net/socket.h>
 
 #include "cloud/cloud_wrapper.h"
@@ -58,38 +56,6 @@ static char endpoint_name[sizeof(CONFIG_LWM2M_INTEGRATION_ENDPOINT_PREFIX) +
  * it differs.
  */
 static bool update_session_lifetime = true;
-
-/* Register callbacks for nrf_modem_lib_init. */
-NRF_MODEM_LIB_ON_INIT(lwm2m_integration_init_hook, on_modem_init, NULL);
-
-/* Function that is called on nrf_modem_lib_init. Used during verification of new firwmare images
- * after FOTA (reboot).
- */
-static void on_modem_init(int err, void *ctx)
-{
-	int ret = nrf_modem_lib_get_init_ret();
-	struct update_counter counter = { 0 };
-
-	/* Modem DFU requires that the application is rebooted.
-	 * This is handled in the application module.
-	 */
-	if (ret == MODEM_DFU_RESULT_OK) {
-		ret = fota_update_counter_read(&counter);
-		if (ret) {
-			LOG_ERR("Failed read the update counter, err: %d", ret);
-			return;
-		}
-
-		if (counter.update != -1) {
-			ret = fota_update_counter_update(COUNTER_CURRENT,
-							 counter.update);
-			if (ret) {
-				LOG_ERR("Failed to update the update counter, err: %d",
-					ret);
-			}
-		}
-	}
-}
 
 void client_acknowledge(void)
 {
