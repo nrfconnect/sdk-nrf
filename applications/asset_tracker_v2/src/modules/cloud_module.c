@@ -523,6 +523,7 @@ static void disconnect_cloud(void)
 	cloud_wrap_disconnect();
 
 	connect_retries = 0;
+	qos_timer_reset();
 
 	k_work_cancel_delayable(&connect_check_work);
 }
