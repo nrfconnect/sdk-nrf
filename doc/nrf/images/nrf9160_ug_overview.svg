@@ -4,7 +4,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
 		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="3.63638in" height="4.65989in"
 		viewBox="0 0 261.819 335.512" xml:space="preserve" color-interpolation-filters="sRGB" class="st15">
-	<v:documentProperties v:langID="1035" v:metric="true" v:viewMarkup="false"/>
+	<v:documentProperties v:langID="1035" v:viewMarkup="false"/>
 
 	<style type="text/css">
 	<![CDATA[
@@ -20,7 +20,7 @@
 		.st10 {fill:#6ad1e3;stroke:none;stroke-width:1}
 		.st11 {fill:#0077c8;stroke:none;stroke-width:1}
 		.st12 {fill:#feffff;font-family:Calibri;font-size:1.00001em}
-		.st13 {marker-end:url(#mrkr13-48);marker-start:url(#mrkr13-46);stroke:#333f48;stroke-linecap:butt;stroke-width:1}
+		.st13 {marker-end:url(#mrkr13-41);marker-start:url(#mrkr13-39);stroke:#333f48;stroke-linecap:butt;stroke-width:1}
 		.st14 {fill:#333f48;fill-opacity:1;stroke:#333f48;stroke-opacity:1;stroke-width:0.28409090909091}
 		.st15 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
 	]]>
@@ -30,11 +30,11 @@
 		<g id="lend13">
 			<path d="M 3 1 L 0 0 L 3 -1 L 3 1 " style="stroke:none"/>
 		</g>
-		<marker id="mrkr13-46" class="st14" v:arrowType="13" v:arrowSize="2" v:setback="10.2" refX="10.2" orient="auto"
+		<marker id="mrkr13-39" class="st14" v:arrowType="13" v:arrowSize="2" v:setback="10.2" refX="10.2" orient="auto"
 				markerUnits="strokeWidth" overflow="visible">
 			<use xlink:href="#lend13" transform="scale(3.52) "/>
 		</marker>
-		<marker id="mrkr13-48" class="st14" v:arrowType="13" v:arrowSize="2" v:setback="10.56" refX="-10.56" orient="auto"
+		<marker id="mrkr13-41" class="st14" v:arrowType="13" v:arrowSize="2" v:setback="10.56" refX="-10.56" orient="auto"
 				markerUnits="strokeWidth" overflow="visible">
 			<use xlink:href="#lend13" transform="scale(-3.52,-3.52) "/>
 		</marker>
@@ -122,26 +122,27 @@
 			<v:textRect cx="79.7955" cy="314.536" width="159.6" height="41.9528"/>
 			<rect x="0" y="293.559" width="159.591" height="41.9528" class="st11"/>
 			<text x="43.53" y="318.14" class="st12" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Modem library</text>		</g>
-		<g id="group1781-33" transform="translate(20.417,-209.141)" v:mID="1781" v:groupContext="group">
-			<title>Sheet.1781</title>
-			<g id="shape1767-34" v:mID="1767" v:groupContext="shape">
+		<g id="shape1783-33" v:mID="1783" v:groupContext="shape" v:layerMember="0" transform="translate(93.1259,-84.3146)">
+			<title>Dynamic connector</title>
+			<path d="M7.09 345.71 L7.09 346.07 L7.09 367.8" class="st13"/>
+		</g>
+		<g id="group1784-42" transform="translate(20.417,-209.141)" v:mID="1784" v:groupContext="group">
+			<title>Sheet.1784</title>
+			<g id="shape1767-43" v:mID="1767" v:groupContext="shape">
 				<title>Sheet.1767</title>
-				<desc>Trusted Firmware-M</desc>
+				<desc>Trusted Firmware-M/Secure Partition Manager</desc>
 				<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
 				<v:textRect cx="79.7955" cy="314.536" width="159.6" height="41.9528"/>
 				<rect x="0" y="293.559" width="159.591" height="41.9528" class="st9"/>
-				<text x="29.55" y="318.14" class="st12" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>Trusted Firmware-M</text>			</g>
-			<g id="shape1769-37" v:mID="1769" v:groupContext="shape" transform="translate(0,-51.721)">
+				<text x="10.72" y="310.94" class="st12" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>Trusted Firmware-M/Secure <tspan
+							x="35.35" dy="1.2em" class="st5">Partition Manager</tspan></text>			</g>
+			<g id="shape1769-47" v:mID="1769" v:groupContext="shape" transform="translate(0,-51.721)">
 				<title>Sheet.1769</title>
 				<desc>Bootloader chain</desc>
 				<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
 				<v:textRect cx="79.7955" cy="314.536" width="159.6" height="41.9528"/>
 				<rect x="0" y="293.559" width="159.591" height="41.9528" class="st9"/>
 				<text x="38.1" y="318.14" class="st12" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>Bootloader chain</text>			</g>
-		</g>
-		<g id="shape1783-40" v:mID="1783" v:groupContext="shape" v:layerMember="0" transform="translate(93.1259,-84.3146)">
-			<title>Dynamic connector</title>
-			<path d="M7.09 345.71 L7.09 346.07 L7.09 367.8" class="st13"/>
 		</g>
 	</g>
 </svg>

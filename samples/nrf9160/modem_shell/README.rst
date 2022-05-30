@@ -677,7 +677,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/modem_shell`
 
-.. include:: /includes/build_and_run_ns.txt
+.. include:: /includes/build_and_run.txt
 
 See :ref:`cmake_options` for instructions on how to provide CMake options, for example to use a configuration overlay.
 

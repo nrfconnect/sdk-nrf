@@ -126,6 +126,6 @@ It uses the following Zephyr library:
 
 * :ref:`CoAP <zephyr:networking_api>`
 
-In addition, it uses the following sample:
+In addition, it uses the following secure firmware component:
 
-* :ref:`secure_partition_manager`
+* :ref:`Trusted Firmware-M <ug_tfm>`
