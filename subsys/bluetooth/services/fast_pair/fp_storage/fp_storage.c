@@ -12,6 +12,7 @@
 #include <zephyr/sys/__assert.h>
 #include <zephyr/sys/atomic.h>
 #include <zephyr/settings/settings.h>
+#include <bluetooth/services/fast_pair.h>
 
 #include "fp_common.h"
 #include "fp_storage.h"
@@ -312,4 +313,9 @@ void fp_storage_ram_clear(void)
 
 	settings_set_err = 0;
 	atomic_set(&settings_loaded, false);
+}
+
+bool bt_fast_pair_has_account_key(void)
+{
+	return (fp_storage_account_key_count() > 0);
 }

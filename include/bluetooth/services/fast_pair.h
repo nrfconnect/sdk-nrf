@@ -77,6 +77,17 @@ int bt_fast_pair_adv_data_fill(struct bt_data *adv_data, uint8_t *buf, size_t bu
  */
 void bt_fast_pair_set_pairing_mode(bool pairing_mode);
 
+/** Check Account Key presence.
+ *
+ * Caller shall make sure that Account Key write from a connected Fast Pair Seeker would not preempt
+ * this function call. Otherwise invalid value may be returned.
+ *
+ * The function always returns false if called before Zephyr settings are loaded.
+ *
+ * @return True if device already has an Account Key, false otherwise.
+ */
+bool bt_fast_pair_has_account_key(void);
+
 #ifdef __cplusplus
 }
 #endif
