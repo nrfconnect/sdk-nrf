@@ -6,10 +6,7 @@
 
 #include <zephyr/kernel.h>
 #include "timeslot_queue.h"
-#include <zephyr/logging/log.h>
 #include "time.h"
-
-LOG_MODULE_DECLARE(nrf_dm, CONFIG_NRF_DM_LOG_LEVEL);
 
 #define TIMESLOT_QUEUE_LENGTH            CONFIG_DM_TIMESLOT_QUEUE_LENGTH
 #define TIMESLOT_QUEUE_COUNT_SAME_PEER   CONFIG_DM_TIMESLOT_QUEUE_COUNT_SAME_PEER
