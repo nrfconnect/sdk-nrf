@@ -218,15 +218,22 @@ static void discover_gattp_completed_cb(struct bt_gatt_dm *dm, void *ctx)
 	struct bt_gattp *gattp = (struct bt_gattp *)ctx;
 	struct bt_conn *conn = bt_gatt_dm_conn_get(dm);
 
-	printk("The discovery procedure for GATT Service succeeded\n");
+	/* Checks if the service is empty.
+	 * Discovery Manager handles empty services.
+	 */
+	if (bt_gatt_dm_attr_cnt(dm) > 1) {
+		printk("The discovery procedure for GATT Service succeeded\n");
 
-	bt_gatt_dm_data_print(dm);
+		bt_gatt_dm_data_print(dm);
 
-	err = bt_gattp_handles_assign(dm, gattp);
-	if (err) {
-		printk("Could not init GATT Service client object, error: %d\n", err);
+		err = bt_gattp_handles_assign(dm, gattp);
+		if (err) {
+			printk("Could not init GATT Service client object, error: %d\n", err);
+		} else {
+			enable_gattp_indications(gattp);
+		}
 	} else {
-		enable_gattp_indications(gattp);
+		printk("GATT Service could not be found during the discovery\n");
 	}
 
 	err = bt_gatt_dm_data_release(dm);
