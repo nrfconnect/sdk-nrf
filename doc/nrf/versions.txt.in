@@ -16,11 +16,6 @@
 .. |git_recommended_ver_darwin| replace:: @GIT_VERSION_DARWIN@
 .. |git_recommended_ver_linux| replace:: @GIT_VERSION_LINUX@
 
-.. |gnuarmemb_min_ver| replace:: @GNUARMEMB_VERSION_MINIMUM@
-.. |gnuarmemb_recommended_ver_win10| replace:: @GNUARMEMB_VERSION_WIN10@
-.. |gnuarmemb_recommended_ver_darwin| replace:: @GNUARMEMB_VERSION_DARWIN@
-.. |gnuarmemb_recommended_ver_linux| replace:: @GNUARMEMB_VERSION_LINUX@
-
 .. |gperf_min_ver| replace:: @GPERF_VERSION_MINIMUM@
 .. |gperf_recommended_ver_win10| replace:: @GPERF_VERSION_WIN10@
 .. |gperf_recommended_ver_darwin| replace:: @GPERF_VERSION_DARWIN@
@@ -29,27 +24,19 @@
 .. |ninja_min_ver| replace:: @NINJA_VERSION_MINIMUM@
 .. |ninja_recommended_ver_win10| replace:: @NINJA_VERSION_WIN10@
 .. |ninja_recommended_ver_darwin| replace:: @NINJA_VERSION_DARWIN@
-.. |ninja_recommended_ver_linux| replace:: @NINJA-BUILD_VERSION_LINUX@
+.. |ninja_recommended_ver_linux| replace:: @NINJA_VERSION_LINUX@
 
 .. |python_min_ver| replace:: @PYTHON_VERSION_MINIMUM@
 .. |python_recommended_ver_win10| replace:: @PYTHON_VERSION_WIN10@
 .. |python_recommended_ver_darwin| replace:: @PYTHON_VERSION_DARWIN@
-.. |python_recommended_ver_linux| replace:: @PYTHON3_VERSION_LINUX@
+.. |python_recommended_ver_linux| replace:: @PYTHON_VERSION_LINUX@
 
 .. |ses_min_ver| replace:: @SES_VERSION_MINIMUM@
-.. |ses_recommended_ver_win10| replace:: @SES_VERSION_WIN10@
-.. |ses_recommended_ver_darwin| replace:: @SES_VERSION_DARWIN@
-.. |ses_recommended_ver_linux| replace:: @SES_VERSION_LINUX@
 
 .. |west_min_ver| replace:: @WEST_VERSION_MINIMUM@
 .. |west_recommended_ver_win10| replace:: @WEST_VERSION_WIN10@
 .. |west_recommended_ver_darwin| replace:: @WEST_VERSION_DARWIN@
 .. |west_recommended_ver_linux| replace:: @WEST_VERSION_LINUX@
-
-.. |gn_min_ver| replace:: @GN_VERSION_MINIMUM@
-.. |gn_recommended_ver_win10| replace:: @GN_VERSION_WIN10@
-.. |gn_recommended_ver_darwin| replace:: @GN_VERSION_DARWIN@
-.. |gn_recommended_ver_linux| replace:: @GN_VERSION_LINUX@
 
 .. |anytree_ver| replace:: @ANYTREE_VERSION@
 .. |canopen_ver| replace:: @CANOPEN_VERSION@
