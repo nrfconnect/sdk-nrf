@@ -162,7 +162,7 @@ manifest:
     - name: cmock
       path: test/cmock
       submodules: true
-      revision: 9d092898ef26ece140d9225e037274b64d4f851e
+      revision: f65066f15d8248e6dcb778efb8739904a4512087
       remote: throwtheswitch
     - name: zcbor
       remote: nordicsemi
