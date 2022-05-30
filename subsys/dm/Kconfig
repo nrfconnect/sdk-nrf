@@ -4,7 +4,14 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if NRF_DM
+config DM_MODULE
+	bool "DM (Distance Measurement) module [EXPERIMENTAL]"
+	select NRF_DM
+	select EXPERIMENTAL
+	help
+		Enable DM (Distance Measurement) module.
+
+if DM_MODULE
 
 menu "nRF DM (Distance Measurement)"
 
@@ -115,8 +122,8 @@ endif #DM_GPIO_DEBUG
 
 endmenu
 
-module = NRF_DM
-module-str = NRF_DM
+module = DM_MODULE
+module-str = DM_MODULE
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
-endif #NRF_DM
+endif #DM_MODULE
