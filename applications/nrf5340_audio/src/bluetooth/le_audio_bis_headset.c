@@ -64,19 +64,22 @@ static void stream_stopped_cb(struct bt_audio_stream *stream)
 	LOG_INF("Stream stopped");
 }
 
-static void stream_recv_cb(struct bt_audio_stream *stream, struct net_buf *buf)
+static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_recv_info *info,
+			   struct net_buf *buf)
 {
 	static uint32_t recv_cnt;
-	static uint32_t artificial_ts = 100;
+	bool bad_frame = false;
 
 	if (receive_cb == NULL) {
 		LOG_ERR("The RX callback has not been set");
 		return;
 	}
 
-	receive_cb(buf->data, buf->len, false, artificial_ts);
+	if (!(info->flags & BT_ISO_FLAGS_VALID)) {
+		bad_frame = true;
+	}
 
-	artificial_ts += 10000;
+	receive_cb(buf->data, buf->len, bad_frame, info->ts);
 
 	recv_cnt++;
 	if ((recv_cnt % 1000U) == 0U) {
