@@ -167,6 +167,14 @@ config DESKTOP_BLE_ADV_SWIFT_PAIR
 	  Enable quick pairing with Microsoft Swift Pair. Swift Pair data is added by nRF Desktop's
 	  CAF ble_adv configuration def files.
 
+config DESKTOP_BLE_ADV_FAST_PAIR
+	bool "Enable Fast Pair feature"
+	select CAF_BLE_ADV_GRACE_PERIOD
+	select BT_FAST_PAIR
+	help
+	  Enable Fast Pair support in nRF Desktop. Fast Pair advertising data is added to
+	  advertising packets by nRF Desktop's CAF ble_adv configuration def files.
+
 comment "BLE Scanning"
 
 config DESKTOP_BLE_SCANNING_ENABLE
