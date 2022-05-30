@@ -1249,6 +1249,7 @@ Important - Battery warnings and mandatory requirements for the nRF5340 Audio DK
      * A battery subjected to extremely low air pressure may result in an explosion or the leakage of flammable liquid or gas.
 
    * The nRF5340 Audio development kit shall not be operated outside the internal battery's discharge temperature range between +10°C and +45°C or stored or transported outside the internal battery's storage temperature.
+   * Power supply adapter must meet PS1 requirements.
 
    .. figure:: /images/nRF5340_audio_dk_battery_warning.png
 
