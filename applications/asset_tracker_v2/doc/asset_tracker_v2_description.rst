@@ -340,7 +340,7 @@ After programming the application and all the prerequisites to your development 
 1. |connect_kit|
 #. Connect to the kit with a terminal emulator (for example, LTE Link Monitor). See :ref:`lte_connect` for more information.
 #. Reset the development kit.
-#. Observe in the terminal window that the development kit starts up in the Trusted Firmware-M secure firmware and that the application starts.
+#. Observe in the terminal window that the development kit starts up in the Trusted Firmware-M secure firmware when building with nRF9160 DK or in the Secure Partition Manager when building with Thingy:91 and that the application starts.
    This is indicated by the following output::
 
       *** Booting Zephyr OS build v2.4.0-ncs1-2616-g3420cde0e37b  ***

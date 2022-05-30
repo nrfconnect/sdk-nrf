@@ -154,7 +154,10 @@ It uses the following Zephyr library:
 
 * :ref:`zephyr:bluetooth_api`
 
-It also uses the following samples:
+It also uses the following sample:
 
-* :ref:`secure_partition_manager`
 * :ref:`bluetooth-hci-lpuart-sample`
+
+In addition, it uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

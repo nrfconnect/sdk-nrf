@@ -52,7 +52,6 @@ Dependencies
 This sample uses the following |NCS| libraries:
 
 * :ref:`lib_fota_download`
-* :ref:`secure_partition_manager`
 
 It uses the following `sdk-nrfxlib`_ library:
 
@@ -64,3 +63,7 @@ It uses the following Zephyr libraries:
 * :ref:`zephyr:logging_api`
 * :ref:`zephyr:gpio_api`
 * :ref:`zephyr:shell_api`
+
+In addition, it uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`

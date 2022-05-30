@@ -190,6 +190,6 @@ This sample uses the following |NCS| libraries:
 * :ref:`lib_date_time`
 * :ref:`lib_at_host`
 
-In addition, it uses the following sample:
+In addition, it uses the following secure firmware component:
 
-* :ref:`secure_partition_manager`
+* :ref:`Trusted Firmware-M <ug_tfm>`

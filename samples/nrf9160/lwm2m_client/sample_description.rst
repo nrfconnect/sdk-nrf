@@ -489,14 +489,12 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/nrf9160/lwm2m_client`
 
-.. include:: /includes/build_and_run_ns.txt
-
+.. include:: /includes/build_and_run.txt
 
 After building and running the sample, you can locate your device in the server:
 
    * Leshan - Devices are listed under :guilabel:`Clients`.
    * Coiote - Devices are listed under :guilabel:`Device inventory`.
-
 
 Queue Mode support
 ==================

@@ -183,6 +183,6 @@ It uses the following Zephyr library:
 
 * :ref:`MQTT <zephyr:networking_api>`
 
-In addition, it uses the following |NCS| sample:
+In addition, it uses the following secure firmware component:
 
-* :ref:`secure_partition_manager`
+* :ref:`Trusted Firmware-M <ug_tfm>`

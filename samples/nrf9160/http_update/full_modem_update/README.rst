@@ -103,7 +103,6 @@ This sample uses the following |NCS| libraries:
 * :ref:`lib_dfu_target`
 * :ref:`lib_dfu_target_full_modem_update`
 * :ref:`lib_fmfu_fdev`
-* :ref:`secure_partition_manager`
 
 It uses the following `sdk-nrfxlib`_ library:
 
@@ -115,3 +114,7 @@ It also uses the following Zephyr libraries:
   * :ref:`zephyr:logging_api`
   * :ref:`zephyr:gpio_api`
   * :ref:`zephyr:shell_api`
+
+In addition, it uses the following secure firmware component:
+
+* :ref:`Trusted Firmware-M <ug_tfm>`
