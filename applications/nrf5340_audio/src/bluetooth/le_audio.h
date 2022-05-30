@@ -34,12 +34,12 @@ typedef void (*le_audio_receive_cb)(const uint8_t *const data, size_t size, bool
 /**
  * @brief Get configuration for audio stream
  *
- * @param data	Data to send
- * @param size	Size of data to send
+ * @param bitrate	Pointer to bitrate used
+ * @param sampling_rate	Pointer to sampling rate used
  *
  * @return	0 for success, error otherwise
  */
-int le_audio_config_get(void);
+int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate);
 
 /**
  * @brief	Increase volume by one step

@@ -350,6 +350,14 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 
 	case LE_AUDIO_EVT_CONFIG_RECEIVED:
 		LOG_INF("Config received");
+
+		int bitrate;
+		int sampling_rate;
+
+		le_audio_config_get(&bitrate, &sampling_rate);
+
+		LOG_DBG("Sampling rate: %d", sampling_rate);
+		LOG_DBG("Bitrate: %d", bitrate);
 		break;
 
 	default:
