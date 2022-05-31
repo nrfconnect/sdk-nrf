@@ -9,9 +9,11 @@ import re
 import sys
 import base64
 import math
+from hashlib import sha256
 
 _FAST_PAIR_MAGIC = (0xFA, 0x57, 0xFA, 0x57)
 _ANTI_SPOOFING_KEY_LEN = 32
+_SHA256_LEN = 32
 
 
 def align4(address):
@@ -37,6 +39,8 @@ def anti_spoofing_key_to_bytes(anti_spoofing_key):
 def prepare_fast_pair_provisioning(out_file, address, model_id, anti_spoofing_key):
     model_id_bytes = model_id_to_bytes(model_id)
     anti_spoofing_key_bytes = anti_spoofing_key_to_bytes(anti_spoofing_key)
+    start_address = address
+    message = sha256()
 
     out_hex = IntelHex()
 
@@ -49,8 +53,11 @@ def prepare_fast_pair_provisioning(out_file, address, model_id, anti_spoofing_ke
     out_hex[address:] = tuple(anti_spoofing_key_bytes)
     address += align4(len(anti_spoofing_key_bytes))
 
-    out_hex[address:] = _FAST_PAIR_MAGIC
-    address += align4(len(_FAST_PAIR_MAGIC))
+    message.update(out_hex.tobinarray(start=start_address, end=address - 1))
+    assert message.digest_size == _SHA256_LEN
+
+    out_hex[address:] = tuple(message.digest())
+    address += align4(message.digest_size)
 
     out_hex.write_hex_file(out_file)
 
