@@ -88,17 +88,33 @@ CONFIG_SLM_START_SLEEP - Enter sleep on startup
 
 CONFIG_SLM_WAKEUP_PIN - Interface GPIO to exit from sleep or idle
    This option specifies which interface GPIO to use for exiting sleep or idle mode.
-   By default, **P0.6** (Button 1 on the nRF9160 DK) is used when :ref:`CONFIG_SLM_CONNECT_UART_0 <CONFIG_SLM_CONNECT_UART_0>` is selected, and **P0.31** is used when :ref:`CONFIG_SLM_CONNECT_UART_2 <CONFIG_SLM_CONNECT_UART_2>` is selected.
+   It is set by default as follows:
 
-   **P0.26** (Multi-function button on Thingy:91) is used when the target is Thingy:91.
+   * On the nRF9160 DK:
+
+     * **P0.6** (Button 1 on the nRF9160 DK) is used when :ref:`CONFIG_SLM_CONNECT_UART_0 <CONFIG_SLM_CONNECT_UART_0>` is selected.
+     * **P0.31** is used when :ref:`CONFIG_SLM_CONNECT_UART_2 <CONFIG_SLM_CONNECT_UART_2>` is selected.
+
+   * On Thingy:91, **P0.26** (Multi-function button on Thingy:91) is used.
+
+   .. note::
+      This pin is used as input GPIO and configured as *Active Low*.
+      By default, the application pulls up this GPIO.
 
 .. _CONFIG_SLM_INDICATE_PIN:
 
-CONFIG_SLM_INDICATE_PIN - Interface GPIO to indicate data available or unexpected reset
-   This option specifies which interface GPIO to use for indicating data available or unexpected reset.
-   By default, **P0.2** (LED 1 on the nRF9160 DK) is used when :ref:`CONFIG_SLM_CONNECT_UART_0 <CONFIG_SLM_CONNECT_UART_0>` is selected, and **P0.30** is used when :ref:`CONFIG_SLM_CONNECT_UART_2 <CONFIG_SLM_CONNECT_UART_2>` is selected.
+CONFIG_SLM_INDICATE_PIN - Interface GPIO to indicate data available or unsolicited event notifications
+   This option specifies which interface GPIO to use for indicating data available or unsolicited event notifications from the modem.
+   On the nRF9160 DK, it is set by default as follows:
+
+   * **P0.2** (LED 1 on the nRF9160 DK) is used when :ref:`CONFIG_SLM_CONNECT_UART_0 <CONFIG_SLM_CONNECT_UART_0>` is selected.
+   * **P0.30** is used when :ref:`CONFIG_SLM_CONNECT_UART_2 <CONFIG_SLM_CONNECT_UART_2>` is selected.
 
    It is not defined when the target is Thingy:91.
+
+   .. note::
+      This pin is used as output GPIO and configured as *Active Low*.
+      By default, the application sets this GPIO as *Inactive High*.
 
 .. _CONFIG_SLM_INDICATE_TIME:
 

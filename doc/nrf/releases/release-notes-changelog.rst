@@ -118,15 +118,20 @@ nRF9160: Asset Tracker v2
 nRF9160: Serial LTE modem
 -------------------------
 
-  * Updated:
-
-    * AT response and the URC sent when the application enters and exits data mode.
-
   * Added:
 
     * URC for GNSS sleep and wakeup events.
     * Selected flags support in #XRECV and #XRECVFROM commands.
     * Multi-PDN support in the Socket service.
+
+  * Updated:
+
+    * The AT response and the URC sent when the application enters and exits data mode.
+    * ``WAKEUP_PIN`` and ``INTERFACE_PIN`` are now defined as *Active Low*. Both are *High* when the SLM application starts.
+
+  * Removed:
+
+    * The software toggle of ``INDICATE_PIN`` in case of reset.
 
 nRF5340 Audio
 -------------
