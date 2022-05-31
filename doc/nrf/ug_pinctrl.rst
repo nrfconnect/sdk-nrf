@@ -67,7 +67,7 @@ All device pin configurations must be placed in child nodes of the ``pinctrl`` n
         };
       };
       /* configuration for uart0 device, sleep state */
-      uart0_default: uart0_default {
+      uart0_sleep: uart0_sleep {
         /* group 1 ('group1' name is arbitrary) */
         group1 {
           /* configure P0.1 as UART_TX, P0.2 as UART_RTS P0.3 as UART_RX and
