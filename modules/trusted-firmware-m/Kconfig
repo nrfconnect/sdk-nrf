@@ -85,6 +85,12 @@ config TFM_HW_INIT_RESET_ON_BOOT
 	  states of the architecture core blocks are restored to the
 	  reset values (as specified by the architecture).
 
+config TFM_HALT_ON_CORE_PANIC
+	bool "Halt TF-M on core panic"
+	default y if !RESET_ON_FATAL_ERROR
+	help
+	  On fatal errors in the TF-m secure image, halt instead of rebooting.
+
 config BOOTLOADER_MCUBOOT
 	bool
 	imply TFM_HW_INIT_RESET_ON_BOOT
