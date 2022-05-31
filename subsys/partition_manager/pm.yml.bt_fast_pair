@@ -1,4 +1,4 @@
 bt_fast_pair:
   placement: {before: end}
-  size: 0x2c
+  size: 0x48
   align: {start: 0x04}
