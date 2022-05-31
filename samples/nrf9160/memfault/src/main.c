@@ -120,12 +120,14 @@ static void button_handler(uint32_t button_states, uint32_t has_changed)
 		LOG_WRN("Stack overflow will now be triggered");
 		fib(10000);
 	} else if (buttons_pressed & DK_BTN2_MSK) {
-		uint32_t *ptr = NULL;
-		volatile uint32_t i = *ptr;
+		volatile uint32_t i;
 
-		LOG_WRN("NULL pointer de-reference will now be triggered");
-
-		(void)i;
+		LOG_WRN("Division by zero will now be triggered");
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdiv-by-zero"
+		i = 1 / 0;
+#pragma GCC diagnostic pop
+		ARG_UNUSED(i);
 	} else if (has_changed & DK_BTN3_MSK) {
 		/* DK_BTN3_MSK is Switch 1 on nRF9160 DK. */
 		int err = memfault_metrics_heartbeat_add(
