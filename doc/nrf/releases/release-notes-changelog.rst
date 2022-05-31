@@ -242,6 +242,10 @@ Bluetooth samples
 
     * Converted from `TinyCBOR` to `zcbor`_.
 
+  * :ref:`peripheral_ancs_client` sample:
+
+    * Fixed handling of the empty Generic Attribute Service.
+
 Bluetooth mesh samples
 ----------------------
 
