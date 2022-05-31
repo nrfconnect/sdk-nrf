@@ -89,6 +89,7 @@ In addition, the SPM sample provides the application firmware with access to sec
 You can use :ref:`secure_partition_manager` as an alternative to Trusted Firmware-M (TF-M) for running an application from the non-secure area of the memory.
 
 To use the Secure Partition Manager instead of TF-M, do the following:
+
 * Disable the automatic inclusion of TF-M by setting the option :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n`` in the project configuration.
 * Set the option :kconfig:option:`CONFIG_SPM` to ``y``.
 
