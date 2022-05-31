@@ -33,7 +33,7 @@ The following sections provide detailed lists of changes by component.
 Application development
 =======================
 
-|no_changes_yet_note|
+* Added information about :ref:`app_build_output_files` on the :ref:`app_build_system` page.
 
 Protocols
 =========
