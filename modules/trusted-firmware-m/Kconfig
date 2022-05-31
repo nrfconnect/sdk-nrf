@@ -91,6 +91,16 @@ config TFM_HALT_ON_CORE_PANIC
 	help
 	  On fatal errors in the TF-m secure image, halt instead of rebooting.
 
+config TFM_ALLOW_NON_SECURE_RESET
+	bool "Allow system reset calls from Non-Secure"
+	select TFM_PARTITION_PLATFORM_CUSTOM_REBOOT if TFM_PARTITION_PLATFORM
+	default y
+	help
+	  This will allow the application running in Non-Secure from being able
+	  to issue a system reset of the chip without going through a secure
+	  service.
+
+
 config BOOTLOADER_MCUBOOT
 	bool
 	imply TFM_HW_INIT_RESET_ON_BOOT
