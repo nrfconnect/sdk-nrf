@@ -66,17 +66,23 @@ Protocol support
 Thread feature support
 **********************
 
-.. sml-table:: thread
+.. toggle::
+
+  .. sml-table:: thread
 
 Matter feature support
 **********************
 
-.. sml-table:: matter
+.. toggle::
+
+  .. sml-table:: matter
 
 Zigbee feature support
 **********************
 
-.. sml-table:: zigbee
+.. toggle::
+
+  .. sml-table:: zigbee
 
 Security Feature Support
 ************************
@@ -84,19 +90,27 @@ Security Feature Support
 Trusted Firmware-M support
 --------------------------
 
-.. sml-table:: trusted_firmware_m
+.. toggle::
+
+  .. sml-table:: trusted_firmware_m
 
 PSA Crypto support
 ------------------
 
-.. sml-table:: psa_crypto
+.. toggle::
+
+  .. sml-table:: psa_crypto
 
 Immutable Bootloader
 --------------------
 
-.. sml-table:: immutable_bootloader
+.. toggle::
+
+  .. sml-table:: immutable_bootloader
 
 Hardware Unique Key
 -------------------
 
-.. sml-table:: hw_unique_key
+.. toggle::
+
+  .. sml-table:: hw_unique_key
