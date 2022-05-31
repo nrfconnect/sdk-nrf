@@ -70,6 +70,10 @@ if (${TFM_PARTITION_CRYPTO})
   target_link_libraries(platform_s PRIVATE platform_cc3xx)
 endif()
 
+if (NRF_ALLOW_NON_SECURE_RESET)
+  target_compile_definitions(platform_s PUBLIC NRF_ALLOW_NON_SECURE_RESET)
+endif()
+
 target_compile_definitions(platform_s PUBLIC CONFIG_HW_UNIQUE_KEY CONFIG_HW_UNIQUE_KEY_RANDOM)
 
 if (CRYPTO_STORAGE_DISABLED AND TFM_PARTITION_CRYPTO AND NOT TFM_PARTITION_INTERNAL_TRUSTED_STORAGE)
