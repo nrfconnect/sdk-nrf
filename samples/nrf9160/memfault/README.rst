@@ -72,7 +72,7 @@ Coredumps
 Coredumps can be triggered either by using the Memfault shell command ``mflt crash``, or by pressing a button:
 
 *  **Button 1** triggers a stack overflow
-*  **Button 2** triggers a NULL pointer dereference
+*  **Button 2** triggers a division by zero
 
 These faults cause crashes that are captured by Memfault.
 After rebooting, the crash data can be sent to the Memfault cloud for further inspection and analysis.
@@ -212,7 +212,7 @@ Before testing, ensure that your device is configured with the project key of yo
           shell
 
 #. Learn about the available Memfault shell commands by issuing the command ``mflt help``.
-#. Press **Button 1** or **Button 2** to trigger a stack overflow or a NULL pointer dereference, respectively.
+#. Press **Button 1** or **Button 2** to trigger a stack overflow or a division by zero, respectively.
 #. Explore the Memfault user interface to look at the errors and metrics that has been sent from your device.
 
 
