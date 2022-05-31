@@ -36,7 +36,7 @@ tests:
         - "Read 512 bytes from address 0x28000 .MCUboot header for current image.."
         - "S0 .0x8200. valid. True"
         - "FICR.INFO.PART = 0x00009120"
-        - "FICR.INFO.VARIANT ..0x210. = 0x41414142"
+        - "FICR.INFO.VARIANT ..0x210. = 0x4141[0-9A-F]{4}"
         - "Reboot in 5 seconds."
         - "Secure Services example."
       type: multi_line
@@ -69,7 +69,7 @@ tests:
         - "App FW version: 1"
         - "CONFIG_SPM_SERVICE_PREVALIDATE is disabled or bootloader is not present."
         - "FICR.INFO.PART = 0x00009120"
-        - "FICR.INFO.VARIANT ..0x210. = 0x41414142"
+        - "FICR.INFO.VARIANT ..0x210. = 0x4141[0-9A-F]{4}"
         - "Reboot in 5 seconds."
         - "Secure Services example."
       type: multi_line
