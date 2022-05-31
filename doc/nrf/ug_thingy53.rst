@@ -40,10 +40,10 @@ To set up your system to be able to build a compatible firmware image, follow th
 
 .. _thingy53_build_pgm_targets:
 
-Build Targets
+Build targets
 =============
 
-The build targets of interest for Thingy:53 in the |NCS| are listed on the table below.
+The build targets of interest for Thingy:53 in the |NCS| are listed in the following table.
 
 +--------------------------------+----------------------------------------------------------+
 |Component                       |  Build target                                            |
@@ -73,19 +73,7 @@ The build process generates firmware in two formats:
   For convenience, the binary files are bundled in :file:`dfu_application.zip`, together with a manifest that describes them.
   You can use the binary files or the combined zip archive to update application firmware for both cores, with either MCUboot serial recovery or OTA DFU using Bluetooth LE.
 
-The following table shows the relevant types of build files that are generated and the different scenarios in which they are used.
-
-+---------------------------------+-------------------------------------------------+---------------------------------------------------------------------+
-| File                            | File format                                     | Programming scenario                                                |
-+=================================+=================================================+=====================================================================+
-| :file:`merged_domain.hex`       | Full image for both cores                       | Using an external debug probe and nRF Connect Programmer            |
-+---------------------------------+-------------------------------------------------+---------------------------------------------------------------------+
-| :file:`app_update.bin`          | MCUboot compatible application core update      | Using the built-in bootloader and nRF Connect Programmer            |
-+---------------------------------+-------------------------------------------------+---------------------------------------------------------------------+
-| :file:`net_core_app_update.bin` | MCUboot compatible network core update          | Using the built-in bootloader and nRF Connect Programmer            |
-+---------------------------------+-------------------------------------------------+---------------------------------------------------------------------+
-| :file:`dfu_application.zip`     | MCUboot compatible update images for both cores | Using nRF Programmer for Android and iOS, or nRF Connect Programmer |
-+---------------------------------+-------------------------------------------------+---------------------------------------------------------------------+
+For more information about files generated as output of the build process, see :ref:`app_build_output_files`.
 
 See the following sections for details regarding building and programming the firmware for Thingy:53 in various environments.
 If your Thingy:53 is already programmed with a Thingy:53-compatible sample or application, you can also use the MCUboot bootloader to update the firmware after you finish building.

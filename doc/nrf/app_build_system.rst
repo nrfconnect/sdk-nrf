@@ -71,3 +71,94 @@ The signature matches to what MCUboot expects and allows this file to be used as
 The build system creates a :file:`manifest.json` file using information in the :file:`zephyr.meta` output file.
 This includes the Zephyr and |NCS| git hashes for the commits used to build the application.
 If your working tree contains uncommitted changes, the build system adds the suffix ``-dirty`` to the relevant version field.
+
+.. _app_build_output_files:
+
+Output build files
+******************
+
+The building process produces each time an *image file*.
+
+.. output_build_files_info_start
+
+The image file can refer to an *executable*, a *program*, or an *ELF file*.
+As one of the last build steps, the linker processes all object files by locating code, data, and symbols in sections in the final ELF file.
+The linker replaces all symbol references to code and data with addresses.
+A symbol table is created which maps addresses to symbol names, which is used by debuggers.
+When an ELF file is converted into another format, such as HEX or binary, the symbol table is lost.
+
+Depending on the application and the SoC, you can use one or several images.
+
+.. output_build_files_info_end
+
+.. output_build_files_table_start
+
+The following table lists build files that can be generated as output when building firmware for supported :ref:`build targets <app_boards>`.
+The table includes files for single-core and multi-core programming scenarios for both |VSC| and command line building methods.
+Which files you are going to use depends on the application configuration and not directly on the type of SoC you are using.
+The following scenarios are possible:
+
+* Single-image - Only one firmware image file is generated for a single core.
+* Multi-image - Two or more firmware image files are generated for a single core.
+  You can read more about this scenario in :ref:`ug_multi_image`.
+* Multi-core - Two or more firmware image files are generated for two or more cores.
+
++---------------------------------+-------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| File                            | File format                                                                                     | Programming scenario                                                     |
++=================================+=================================================================================================+==========================================================================+
+| :file:`zephyr.hex`              | Default full image.                                                                             | * Programming non-secure domain (``_ns``) or single-image build targets. |
+|                                 | In a multi-image build, several :file:`zephyr.hex` are generated, one for each image.           | * Testing DFU procedure with nrfjprog.                                   |
++---------------------------------+-------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :file:`merged.hex`              | The result of merging all :file:`zephyr.hex` files for all images for a core                    | * Programming multi-core application.                                    |
+|                                 | in a multi-image build. Used by Nordic Semiconductor's build targets in single-core             | * Testing DFU procedure with nrfjprog.                                   |
+|                                 | multi-image builds. In multi-core builds, several :file:`merged_<domain_name>.hex` fields       |                                                                          |
+|                                 | are generated, where *<domain-name>* indicates the core.                                        |                                                                          |
++---------------------------------+-------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :file:`merged_domain.hex`       | The result of merging all :file:`merged.hex` files for all cores or domains                     | * Programming secure domain (``_s``) and multi-core build targets.       |
+|                                 | (:file:`merged.hex` for the application core and :file:`merged.hex` or :file:`zephyr.hex`       | * Testing DFU procedure with nrfjprog.                                   |
+|                                 | for the network core).                                                                          |                                                                          |
++---------------------------------+-------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :file:`app_update.bin`          | Application core update file used to create :file:`dfu_application.zip`.                        | DFU process for single-image build targets and the application core      |
+|                                 | Contains the signed version of the application.                                                 | of the multi-core build targets.                                         |
+|                                 | This file is transferred in the real-life update procedure, as opposed to HEX files             |                                                                          |
+|                                 | that are transferred with nrfjprog when emulating an update procedure.                          |                                                                          |
++---------------------------------+-------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :file:`net_core_app_update.bin` | Network core update file used to create :file:`dfu_application.zip`.                            | DFU process for the network core of multi-core build targets.            |
+|                                 | This file is transferred in the real-life update procedure, as opposed to HEX files             |                                                                          |
+|                                 | that are transferred with nrfjprog when emulating an update procedure.                          |                                                                          |
++---------------------------------+-------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :file:`dfu_application.zip`     | Zip file containing both the MCUboot-compatible update image for one or more cores              | DFU process for both single-core and multi-core applications.            |
+|                                 | and a manifest describing its contents.                                                         |                                                                          |
++---------------------------------+-------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :file:`matter.ota`              | :ref:`ug_matter`-specific OTA image that contains a Matter-compliant header                     | DFU over Matter for both single-core and multi-core applications.        |
+|                                 | and a DFU multi-image package that bundles user-selected firmware images.                       |                                                                          |
++---------------------------------+-------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :file:`<file_name>.zigbee`      | :ref:`ug_zigbee`-specific OTA image that contains the Zigbee application                        | DFU over Zigbee for both single-core and multi-core applications         |
+|                                 | with the Zigbee OTA header used for providing information about the image to the OTA server.    | in the |NCS| v2.0.0 and later.                                           |
+|                                 | The *<file_name>* includes manufacturer's code, image type, file version, and comment           |                                                                          |
+|                                 | (customizable by user, sample name by default).                                                 |                                                                          |
+|                                 | For example: :file:`127F-0141-01020003-light_switch.zigbee`.                                    |                                                                          |
++---------------------------------+-------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------+
+
+.. output_build_files_table_end
+
+.. _app_build_output_files_other:
+
+Other output build files
+========================
+
+The following table lists secondary build files that can be generated when building firmware, but are only used to create the final output build files listed in the table above.
+
++---------------------------------+----------------------------------------------------------------------------------------------------------+
+| File                            | File format                                                                                              |
++=================================+==========================================================================================================+
+| :file:`zephyr.elf`              | An ELF file for the image that is being built. Can be used for debugging purposes.                       |
++---------------------------------+----------------------------------------------------------------------------------------------------------+
+| :file:`zephyr.meta`             | A file with the Zephyr and nRF Connect SDK git hashes for the commits used to build the application.     |
++---------------------------------+----------------------------------------------------------------------------------------------------------+
+| :file:`manifest.json`           | Output artifact that uses information from the :file:`zephyr.meta` output file.                          |
++---------------------------------+----------------------------------------------------------------------------------------------------------+
+| :file:`dfu_multi_image.bin`     | Multi-image package that contains a CBOR manifest and a set of user-selected update images,              |
+|                                 | such as firmware images for different cores.                                                             |
+|                                 | Used for DFU purposes by :ref:`ug_matter` and :ref:`ug_zigbee` protocols.                                |
++---------------------------------+----------------------------------------------------------------------------------------------------------+

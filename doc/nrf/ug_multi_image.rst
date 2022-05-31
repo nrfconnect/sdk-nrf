@@ -8,21 +8,19 @@ Multi-image builds
    :depth: 2
 
 The firmware programmed to a device can be composed of either one application or several separate images.
-In the latter, one of the images, the *parent image*, requires one or more other images, the *child images*, to be present.
+In the latter case, one of the images (the *parent image*) requires one or more other images (the *child images*) to be present.
 The child image then *chain-loads*, or *boots*, the parent image, which could also be a child image to another parent image, and boots that one.
 
 The most common use cases for builds composed of multiple images are applications that require a bootloader to be present or applications for multi-core CPUs.
 
-When to use multiple images
-***************************
+.. _ug_multi_image_what_are_images:
 
-An *image*, also referred to as *executable*, *program*, or *elf file*, consists of pieces of code and data that are identified by image-unique names recorded in a single symbol table.
-The symbol table exists as metadata in a :file:`.elf` or :file:`.exe` file and is not included when the image is converted to a HEX file for programming.
-Instead, a linker places the code and data at their addresses.
+What are image files
+********************
 
-Only images require this linking process.
-Object files do not require linking.
-To determine if you have zero, one, or more images, count the number of times the linker runs.
+.. include:: app_build_system.rst
+   :start-after: output_build_files_info_start
+   :end-before: output_build_files_info_end
 
 Using multiple images has the following advantages:
 
@@ -31,6 +29,15 @@ Using multiple images has the following advantages:
 * Since there is a symbol table for each image, the same symbol names can exist multiple times in the final firmware.
   This is useful for bootloader images, which can require their own copy of a library that the application uses, but in a different version or configuration.
 * In multi-core builds, the build configuration of a child image in a separate core can be made known to the parent image.
+
+.. include:: app_build_system.rst
+   :start-after: output_build_files_table_start
+   :end-before: output_build_files_table_end
+
+.. _ug_multi_image_when_to_use_images:
+
+When to use multiple images
+***************************
 
 In the |NCS|, multiple images are required in the following scenarios:
 
@@ -62,6 +69,8 @@ nRF5340 Audio development kit support
    The network core image is programmed with an application-specific precompiled Bluetooth Low Energy Controller binary file that contains the LE Audio Controller Subsystem for nRF53.
 
    See the :ref:`nrf53_audio_app` application documentation for more information.
+
+.. _ug_multi_image_default_config:
 
 Default configuration
 *********************
