@@ -16,8 +16,6 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(bis_headset, CONFIG_LOG_BLE_LEVEL);
 
-// TODO: Implement timeouts for the events (can use same timeout functionality for every step)
-
 static le_audio_receive_cb receive_cb;
 static bool synced_to_broadcast;
 
@@ -35,6 +33,8 @@ static struct bt_audio_lc3_preset lc3_preset = BT_AUDIO_LC3_BROADCAST_PRESET_48_
  */
 static const uint32_t bis_index_mask = BIT_MASK(ARRAY_SIZE(streams) + 1U);
 static uint32_t bis_index_bitfield;
+
+static void broadcast_sink_cleanup(void);
 
 static void print_codec(const struct bt_codec *codec)
 {
@@ -143,25 +143,24 @@ static void pa_synced_cb(struct bt_audio_broadcast_sink *sink, struct bt_le_per_
 static void pa_sync_lost_cb(struct bt_audio_broadcast_sink *sink)
 {
 	int ret;
-	struct event_t event;
 
 	if (broadcast_sink == NULL) {
 		LOG_ERR("Unexpected PA sync lost");
 		return;
 	}
 
-	LOG_WRN("Sink disconnected");
+	LOG_INF("Sink disconnected");
 
+	/* At this point the broadcast sink is stopped and deleted */
+	synced_to_broadcast = false;
 	broadcast_sink = NULL;
 
-	// TODO: Create static function for sending events
-	event.event_source = EVT_SRC_LE_AUDIO;
-	event.le_audio_activity.le_audio_evt_type = LE_AUDIO_EVT_NOT_STREAMING;
+	broadcast_sink_cleanup();
 
-	ret = ctrl_events_put(&event);
-	ERR_CHK(ret);
+	LOG_INF("Restarting scanning for broadcast sources");
 
-	// TODO: Must reset connection, this is not implemented yet
+	ret = bt_audio_broadcast_sink_scan_start(BT_LE_SCAN_ACTIVE);
+	ERR_CHK_MSG(ret, "Unable to start scanning for broadcast sources");
 }
 
 static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_audio_base *base)
@@ -225,6 +224,42 @@ static struct bt_audio_broadcast_sink_cb broadcast_sink_cbs = { .scan_recv = sca
 								.base_recv = base_recv_cb,
 								.syncable = syncable_cb };
 
+static void initialize(le_audio_receive_cb recv_cb)
+{
+	static bool initialized;
+
+	if (!initialized) {
+		receive_cb = recv_cb;
+
+		bt_audio_broadcast_sink_register_cb(&broadcast_sink_cbs);
+
+		for (size_t i = 0U; i < ARRAY_SIZE(streams); i++) {
+			streams[i].ops = &stream_ops;
+		}
+
+		initialized = true;
+	}
+}
+
+static void broadcast_sink_cleanup(void)
+{
+	int ret;
+
+	if (synced_to_broadcast) {
+		ret = bt_audio_broadcast_sink_stop(broadcast_sink);
+		ERR_CHK_MSG(ret, "Unable to stop broadcast sink");
+		synced_to_broadcast = false;
+	}
+
+	if (broadcast_sink != NULL) {
+		ret = bt_audio_broadcast_sink_delete(broadcast_sink);
+		ERR_CHK_MSG(ret, "Unable to delete broadcast sink");
+		broadcast_sink = NULL;
+	}
+
+	bis_index_bitfield = 0U;
+}
+
 int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
 {
 	int frames_per_sec = 1000000 / bt_codec_cfg_get_frame_duration_us(streams[0].codec);
@@ -266,28 +301,13 @@ int le_audio_send(uint8_t const *const data, size_t size)
 	return 0;
 }
 
-// TODO: Implement return code
 void le_audio_enable(le_audio_receive_cb recv_cb)
 {
 	int ret;
 
-	receive_cb = recv_cb;
+	initialize(recv_cb);
 
-	// TODO: Create le_audio_initialize()
-	bt_audio_broadcast_sink_register_cb(&broadcast_sink_cbs);
-
-	for (size_t i = 0U; i < ARRAY_SIZE(streams); i++) {
-		streams[i].ops = &stream_ops;
-	}
-
-	bis_index_bitfield = 0U;
-
-	// TODO: In stead of this, throw error if broadcast_sink != NULL?
-	if (broadcast_sink != NULL) {
-		ret = bt_audio_broadcast_sink_delete(broadcast_sink);
-		ERR_CHK_MSG(ret, "Unable to delete broadcast sink");
-		broadcast_sink = NULL;
-	}
+	broadcast_sink_cleanup();
 
 	LOG_INF("Scanning for broadcast sources");
 
@@ -295,10 +315,9 @@ void le_audio_enable(le_audio_receive_cb recv_cb)
 	ERR_CHK_MSG(ret, "Unable to start scanning for broadcast sources");
 }
 
-// TODO: Implement return code
 void le_audio_disable(void)
 {
-	// TODO: bt_audio_broadcast_sink_delete()
+	broadcast_sink_cleanup();
 }
 
 #endif /* (CONFIG_AUDIO_DEV == HEADSET) */

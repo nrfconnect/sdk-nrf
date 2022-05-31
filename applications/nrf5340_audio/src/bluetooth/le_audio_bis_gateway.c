@@ -84,7 +84,7 @@ static struct bt_audio_stream_ops stream_ops = { .sent = stream_sent_cb,
 						 .started = stream_started_cb,
 						 .stopped = stream_stopped_cb };
 
-int le_audio_config_get(void)
+int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
 {
 	return 0;
 }
