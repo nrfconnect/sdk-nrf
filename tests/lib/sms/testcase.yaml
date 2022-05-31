@@ -1,5 +1,6 @@
 tests:
   unity.sms_test:
     tags: sms
+    platform_allow: native_posix
     integration_platforms:
       - native_posix
