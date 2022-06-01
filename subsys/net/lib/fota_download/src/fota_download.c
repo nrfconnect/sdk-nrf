@@ -30,6 +30,8 @@
 #define FILE_BUF_LEN (CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE)
 #endif
 
+#define HOST_BUF_LEN (CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE)
+
 LOG_MODULE_REGISTER(fota_download, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
 
 static fota_download_callback_t callback;
@@ -362,12 +364,13 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 	int sec_tag, uint8_t pdn_id, size_t fragment_size,
 	const enum dfu_target_image_type expected_type)
 {
-	/* We need a static file buffer since the download client structure
-	 * only keeps a pointer to the file buffer. This is problematic when
-	 * a download needs to be restarted for some reason (e.g. if
-	 * continuing a download operation from an offset).
+	/* We need static file and host buffers since the download client structure
+	 * only keeps a pointer to the buffers. This is problematic when a download
+	 * needs to be restarted for some reason (e.g. if continuing a download
+	 * operation from an offset).
 	 */
 	static char file_buf[FILE_BUF_LEN];
+	static char host_buf[HOST_BUF_LEN];
 	const char *file_buf_ptr = file_buf;
 	int err = -1;
 
@@ -394,6 +397,9 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 	strncpy(file_buf, file, sizeof(file_buf) - 1);
 	file_buf[sizeof(file_buf) - 1] = '\0';
 
+	strncpy(host_buf, host, sizeof(host_buf) - 1);
+	host_buf[sizeof(host_buf) - 1] = '\0';
+
 #ifdef PM_S1_ADDRESS
 	/* B1 upgrade is supported, check what B1 slot is active,
 	 * (s0 or s1), and update file to point to correct candidate if
@@ -418,7 +424,7 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 	}
 #endif /* PM_S1_ADDRESS */
 
-	err = download_client_connect(&dlc, host, &config);
+	err = download_client_connect(&dlc, host_buf, &config);
 	if (err != 0) {
 		return err;
 	}
