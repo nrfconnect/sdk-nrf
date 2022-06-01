@@ -126,12 +126,12 @@ static void tolerance_decode(uint16_t encoded, struct sensor_value *tolerance)
 }
 static uint16_t tolerance_encode(const struct sensor_value *tol)
 {
-	uint64_t tol_mill = 1000000L * tol->val1 + tol->val2;
+	uint64_t tol_mill = 1000000ULL * tol->val1 + tol->val2;
 
-	if (tol_mill > (1000000L * 100L)) {
+	if (tol_mill > (1000000ULL * 100ULL)) {
 		return 0;
 	}
-	return (tol_mill * 4095L + (1000000L * 50L)) / (1000000L * 100L);
+	return (tol_mill * 4095ULL + (1000000ULL * 50ULL)) / (1000000ULL * 100ULL);
 }
 
 void sensor_descriptor_decode(struct net_buf_simple *buf,
@@ -262,11 +262,11 @@ int sensor_column_encode(struct net_buf_simple *buf,
 	struct sensor_value values[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
 	const struct bt_mesh_sensor_format *col_format;
 	const uint64_t width_million =
-		(col->end.val1 - col->start.val1) * 1000000L +
+		(col->end.val1 - col->start.val1) * 1000000ULL +
 		(col->end.val2 - col->start.val2);
 	const struct sensor_value width = {
-		.val1 = width_million / 1000000L,
-		.val2 = width_million % 1000000L,
+		.val1 = width_million / 1000000ULL,
+		.val2 = width_million % 1000000ULL,
 	};
 	int err;
 

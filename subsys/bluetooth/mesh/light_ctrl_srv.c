@@ -212,7 +212,7 @@ static uint32_t curr_fade_time(struct bt_mesh_light_ctrl_srv *srv)
 
 	uint32_t remaining = remaining_fade_time(srv);
 
-	return MAX(0, srv->fade.duration - remaining);
+	return srv->fade.duration > remaining ? srv->fade.duration - remaining : 0;
 }
 
 static bool state_is_on(const struct bt_mesh_light_ctrl_srv *srv,

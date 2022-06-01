@@ -5,8 +5,6 @@
  */
 
 #include <bluetooth/mesh/models.h>
-#include <dk_buttons_and_leds.h>
-#include "model_handler.h"
 #include <zephyr/drivers/pwm.h>
 
 #define PWM_LED0_NODE	DT_ALIAS(pwm_led0)

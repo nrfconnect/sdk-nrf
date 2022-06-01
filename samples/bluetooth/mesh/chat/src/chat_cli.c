@@ -7,7 +7,6 @@
 #include <zephyr/bluetooth/mesh.h>
 #include "chat_cli.h"
 #include "mesh/net.h"
-#include "mesh/transport.h"
 #include <string.h>
 
 #include <zephyr/logging/log.h>

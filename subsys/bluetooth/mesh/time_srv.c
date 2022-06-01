@@ -6,7 +6,6 @@
 
 #include <bluetooth/mesh/time_srv.h>
 #include "time_internal.h"
-#include <stdlib.h>
 #include "model_utils.h"
 #include "time_util.h"
 

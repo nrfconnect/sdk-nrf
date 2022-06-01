@@ -59,7 +59,7 @@ static void store_timeout(struct k_work *work)
 
 	uint8_t user_access[CONFIG_BT_MESH_PROP_MAXCOUNT];
 
-	for (uint8_t i = 0; i < srv->property_count; ++i) {
+	for (uint32_t i = 0; i < srv->property_count; ++i) {
 		user_access[i] = srv->properties[i].user_access;
 	}
 
@@ -685,7 +685,7 @@ static int bt_mesh_prop_srv_settings_set(struct bt_mesh_model *model,
 		return -EINVAL;
 	}
 
-	for (uint8_t i = 0; i < srv->property_count; ++i) {
+	for (uint32_t i = 0; i < srv->property_count; ++i) {
 		srv->properties[i].user_access = entries[i];
 	}
 
