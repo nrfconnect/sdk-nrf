@@ -71,6 +71,7 @@ In addition to the |NCS| documentation, information is available in the followin
    libraries/index
    scripts
    release_notes
+   known_issues
    software_maturity
    documentation
 
