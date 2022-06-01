@@ -1152,6 +1152,20 @@ Bluetooth® LE
 
 .. rst-class:: v2-0-1 v2-0-0
 
+NCSDK-15527: Advertising in the :ref:`peripheral_hr_coded` sample and scanning in the :ref:`bluetooth_central_hr_coded` sample cannot be started when using the SW Split Link Layer.
+  The :kconfig:option:`CONFIG_BT_CTLR_ADV_EXT` option required by these samples is disabled by default in the SW Split Link Layer.
+
+  **Workaround:** Enable the :kconfig:option:`CONFIG_BT_CTLR_ADV_EXT` option in the project configuration file (:file:`prj.conf`).
+
+.. rst-class:: v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0
+
+NCSDK-15229: Incorrect peer's throughput calculation in the :ref:`ble_throughput` sample.
+  The peer's measured throughput is understated because it includes a delay, during which there is no data transfer.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix from main (commit hash: ``05871f9b9c2aebf0a3c188a61b3788baea783180``).
+
+.. rst-class:: v2-0-1 v2-0-0
+
 NCSDK-16060: :ref:`peripheral_lbs` sample build fails when the :kconfig:option:`CONFIG_BT_LBS_SECURITY_ENABLED` option is disabled
   Build failure is caused by the undefined ``conn_auth_info_callbacks`` structure.
 
