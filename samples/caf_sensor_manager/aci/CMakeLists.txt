@@ -5,11 +5,11 @@
 #
 
 # Add child image only while construction main image
-if (CONFIG_INCLUDE_REMOTE_IMAGE)
+if (CONFIG_APP_INCLUDE_REMOTE_IMAGE)
   add_child_image(
     NAME remote
     SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/../remote
     DOMAIN remote
-    BOARD ${CONFIG_REMOTE_CORE_BOARD}
+    BOARD ${CONFIG_APP_REMOTE_BOARD}
     )
 endif()
