@@ -111,7 +111,7 @@ static int fp_settings_set(const char *name, size_t len, settings_read_cb read_c
 			return -EINVAL;
 		}
 
-		memcpy(&account_key_list[index], data.account_key, sizeof(data.account_key));
+		memcpy(account_key_list[index], data.account_key, sizeof(data.account_key));
 		account_key_loaded_ids[index] = data.account_key_id;
 
 		return 0;
@@ -252,7 +252,7 @@ int fp_storage_account_key_save(const uint8_t *account_key)
 	int err;
 
 	for (size_t i = 0; i < account_key_count; i++) {
-		if (!memcmp(account_key, &account_key_list[i], FP_CRYPTO_ACCOUNT_KEY_LEN)) {
+		if (!memcmp(account_key, account_key_list[i], FP_CRYPTO_ACCOUNT_KEY_LEN)) {
 			LOG_INF("Account Key already saved - skipping.");
 			return 0;
 		}
@@ -277,7 +277,7 @@ int fp_storage_account_key_save(const uint8_t *account_key)
 		return err;
 	}
 
-	memcpy(&account_key_list[index], account_key, FP_CRYPTO_ACCOUNT_KEY_LEN);
+	memcpy(account_key_list[index], account_key, FP_CRYPTO_ACCOUNT_KEY_LEN);
 
 	account_key_next_id = next_key_id(account_key_next_id);
 
