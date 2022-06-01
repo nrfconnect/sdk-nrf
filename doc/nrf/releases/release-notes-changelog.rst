@@ -240,6 +240,9 @@ Other libraries
 
     * Allow the :kconfig:option:`CONFIG_DISABLE_FLASH_PATCH` Kconfig option to be used on the nRF52833 SoC.
 
+  * :ref:`doc_fw_info` module:
+
+    * Fixed a bug where MCUboot would experience a fault when using the :ref:`doc_fw_info_ext_api` feature.
 
 Common Application Framework (CAF)
 ----------------------------------
