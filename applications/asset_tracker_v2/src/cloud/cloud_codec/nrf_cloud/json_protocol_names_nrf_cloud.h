@@ -80,6 +80,7 @@
 #define CONFIG_MOVE_RES			  "movementResolution"
 #define CONFIG_GNSS_TIMEOUT		  "gnssTimeout"
 #define CONFIG_ACC_THRESHOLD		  "movementThreshold"
+#define CONFIG_INACT_FIX_TIMEOUT       "tinact"
 #define CONFIG_NO_DATA_LIST		  "nod"
 #define CONFIG_NO_DATA_LIST_GNSS	  "gnss"
 #define CONFIG_NO_DATA_LIST_NEIGHBOR_CELL "ncell"

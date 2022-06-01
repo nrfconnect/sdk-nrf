@@ -131,6 +131,13 @@ config DATA_ACCELEROMETER_THRESHOLD
 	help
 	  Minimum absolute value in m/s² that is considered movement in passive mode.
 
+config DATA_INACTIVITY_FIX_TIMEOUT
+	int "Default inactivity time in seconds"
+	default 300
+	help
+	  Number of seconds to wait after movement has stopped to trigger another GNSS sample
+	  for the parking location.
+
 config DATA_GNSS_TIMEOUT_SECONDS
 	int "Default GNSS timeout"
 	default 30

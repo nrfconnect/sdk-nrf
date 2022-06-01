@@ -995,6 +995,12 @@ int json_common_config_add(cJSON *parent, struct cloud_data_cfg *data, const cha
 		goto exit;
 	}
 
+	err = json_add_number(config_obj, CONFIG_INACT_FIX_TIMEOUT, data->inactivity_fix_timeout);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
 	cJSON *nod_list = cJSON_CreateArray();
 
 	if (nod_list == NULL) {
@@ -1048,6 +1054,7 @@ void json_common_config_get(cJSON *parent, struct cloud_data_cfg *data)
 	cJSON *move_res = cJSON_GetObjectItem(parent, CONFIG_MOVE_RES);
 	cJSON *move_timeout = cJSON_GetObjectItem(parent, CONFIG_MOVE_TIMEOUT);
 	cJSON *acc_thres = cJSON_GetObjectItem(parent, CONFIG_ACC_THRESHOLD);
+	cJSON *inact_time = cJSON_GetObjectItem(parent, CONFIG_INACT_FIX_TIMEOUT);
 	cJSON *nod_list = cJSON_GetObjectItem(parent, CONFIG_NO_DATA_LIST);
 
 	if (gnss_timeout != NULL) {
@@ -1072,6 +1079,10 @@ void json_common_config_get(cJSON *parent, struct cloud_data_cfg *data)
 
 	if (acc_thres != NULL) {
 		data->accelerometer_threshold = acc_thres->valuedouble;
+	}
+
+	if (inact_time != NULL) {
+		data->inactivity_fix_timeout = inact_time->valueint;
 	}
 
 	if (nod_list != NULL && cJSON_IsArray(nod_list)) {

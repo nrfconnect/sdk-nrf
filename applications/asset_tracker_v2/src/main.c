@@ -107,6 +107,8 @@ K_TIMER_DEFINE(data_sample_timer, data_sample_timer_handler, NULL);
 /* Movement timer used to detect movement timeouts in passive mode. */
 K_TIMER_DEFINE(movement_timeout_timer, data_sample_timer_handler, NULL);
 
+K_TIMER_DEFINE(inactivity_timeout_timer, data_sample_timer_handler, NULL);
+
 /* Movement resolution timer decides the period after movement that consecutive
  * movements are ignored and do not cause data collection. This is used to
  * lower power consumption by limiting how often GNSS search is performed and
@@ -516,6 +518,16 @@ void on_sub_state_passive(struct app_msg_data *msg)
 		}
 
 		passive_mode_timers_start_all();
+	}
+
+	if (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED)) {
+		k_timer_start(&inactivity_timeout_timer,
+				K_SECONDS(app_cfg.inactivity_fix_timeout),
+				K_NO_WAIT);
+	}
+
+	if (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED)) {
+		k_timer_stop(&inactivity_timeout_timer);
 	}
 
 	if ((IS_EVENT(msg, ui, UI_EVT_BUTTON_DATA_READY)) ||

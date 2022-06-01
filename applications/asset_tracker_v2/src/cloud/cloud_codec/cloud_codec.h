@@ -101,6 +101,8 @@ struct cloud_data_cfg {
 	int active_wait_timeout;
 	/** Time between cloud publications in Passive mode. */
 	int movement_resolution;
+	/** Time between inactivity detection and additional GNSS fix */
+	int inactivity_fix_timeout;
 	/** Time between cloud publications regardless of movement
 	 *  in Passive mode.
 	 */

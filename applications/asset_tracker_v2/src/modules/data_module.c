@@ -106,6 +106,7 @@ static struct cloud_data_cfg current_cfg = {
 	.movement_resolution		= CONFIG_DATA_MOVEMENT_RESOLUTION_SECONDS,
 	.movement_timeout		= CONFIG_DATA_MOVEMENT_TIMEOUT_SECONDS,
 	.accelerometer_threshold	= CONFIG_DATA_ACCELEROMETER_THRESHOLD,
+	.inactivity_fix_timeout	= CONFIG_DATA_INACTIVITY_FIX_TIMEOUT,
 	.no_data.gnss			= (IS_ENABLED(CONFIG_DATA_SAMPLE_GNSS_DEFAULT)
 					   ? false : true),
 	.no_data.neighbor_cell		= (IS_ENABLED(CONFIG_DATA_SAMPLE_NEIGHBOR_CELLS_DEFAULT)
@@ -475,6 +476,7 @@ static void config_print_all(void)
 	LOG_DBG("Movement timeout: %d", current_cfg.movement_timeout);
 	LOG_DBG("GPS timeout: %d", current_cfg.gnss_timeout);
 	LOG_DBG("Accelerometer threshold: %.2f", current_cfg.accelerometer_threshold);
+	LOG_DBG("Inactivity fix timeout: %d", current_cfg.inactivity_fix_timeout);
 
 	if (!current_cfg.no_data.neighbor_cell) {
 		LOG_DBG("Requesting of neighbor cell data is enabled");
@@ -937,6 +939,20 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		return;
 	}
 
+	if (new_config->inactivity_fix_timeout > -1) {
+		if (current_cfg.inactivity_fix_timeout != new_config->inactivity_fix_timeout) {
+			current_cfg.inactivity_fix_timeout = new_config->inactivity_fix_timeout;
+
+			LOG_WRN("New Inactivity fix timeout: %d", current_cfg.inactivity_fix_timeout);
+
+			config_change = true;
+		}
+	} else {
+		LOG_ERR("New Inactivity fix timeout out of range: %d",
+			new_config->inactivity_fix_timeout);
+		return;
+	}
+
 	if (new_config->movement_timeout > 0) {
 		if (current_cfg.movement_timeout != new_config->movement_timeout) {
 			current_cfg.movement_timeout = new_config->movement_timeout;
@@ -1137,6 +1153,8 @@ static void on_all_states(struct data_msg_data *msg)
 				msg->module.cloud.data.config.gnss_timeout,
 			.accelerometer_threshold =
 				msg->module.cloud.data.config.accelerometer_threshold,
+			.inactivity_fix_timeout =
+				msg->module.cloud.data.config.inactivity_fix_timeout,
 			.no_data.gnss =
 				msg->module.cloud.data.config.no_data.gnss,
 			.no_data.neighbor_cell =
