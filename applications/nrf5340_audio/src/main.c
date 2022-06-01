@@ -26,6 +26,19 @@
 #include "channel_assignment.h"
 #include "hw_codec.h"
 #include "audio_usb.h"
+#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
+#include <os_mgmt/os_mgmt.h>
+#endif
+#ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
+#include <img_mgmt/img_mgmt.h>
+#endif
+#ifdef CONFIG_MCUMGR_CMD_STAT_MGMT
+#include <stat_mgmt/stat_mgmt.h>
+#endif
+#ifdef CONFIG_MCUMGR_SMP_BT
+#include <zephyr/mgmt/mcumgr/smp_bt.h>
+#endif
+
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_LOG_MAIN_LEVEL);
@@ -207,6 +220,19 @@ void main(void)
 
 	ret = audio_datapath_tone_play(440, 500, 0.2);
 	ERR_CHK(ret);
+	/* Enable MCUMGR */
+	#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
+		os_mgmt_register_group();
+	#endif
+	#ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
+		img_mgmt_register_group();
+	#endif
+	#ifdef CONFIG_MCUMGR_CMD_STAT_MGMT
+		stat_mgmt_register_group();
+	#endif
+	#ifdef CONFIG_MCUMGR_SMP_BT
+		smp_bt_register();
+	#endif
 
 	while (1) {
 		streamctrl_event_handler();

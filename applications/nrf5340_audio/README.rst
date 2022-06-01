@@ -138,7 +138,9 @@ These modules include the following major ones:
 Since the application architecture is uniform and the firmware code is shared, the set of audio modules in use depends on the chosen stream mode (BIS or CIS), the chosen audio inputs and outputs (USB or analog jack), and if the gateway or the headset configuration is selected.
 
 .. note::
-   In the current version of the application, no bootloader is used, and device firmware update (DFU) is not supported.
+   In the current version of the application, bootloader is disabled by default.
+   Device Firmware Update (DFU) can only be enabled when :ref:`nrf53_audio_app_building_script`.
+   See :ref:`nrf53_audio_app_configuration_configure_fota` for details.
 
 .. _nrf53_audio_app_overview_architecture_usb:
 
@@ -850,6 +852,46 @@ You can switch to using the I2S serial connection by adding the ``CONFIG_AUDIO_S
 When testing the application, an additional audio jack cable is required to use I2S.
 Use this cable to connect the audio source (PC) to the analog **LINE IN** on the development kit.
 
+.. _nrf53_audio_app_configuration_configure_fota:
+
+Configuring FOTA upgrades
+=========================
+
+You can configure FOTA upgrades to replace the applications on both the application core and the network core.
+The nRF5340 Audio application supports the following types of the DFU flash layouts:
+
+* Internal flash layout - which supports only single-image DFU.
+* External flash layout - which supports :ref:`multi-image DFU <ug_nrf5340_multi_image_dfu>`.
+
+LE Audio Controller Subsystem for nRF53 supports both the normal size and the minimal size of bootloader.
+The minimal size is specified using the :kconfig:option:`CONFIG_NETBOOT_MIN_PARTITION_SIZE`.
+
+Hardware requirements for external flash DFU
+--------------------------------------------
+
+To enable the external flash DFU, you need an additional flash shield.
+The nRF5340 Audio application uses MX25R6435F as the SPI NOR Flash.
+See the following table for the pin definitions.
+
++-------------+-------------------+-------------+
+| DK Pin      | SPI NOR Flash pin | Arduino pin |
++=============+===================+=============+
+| P0.08       | SCK               | D13         |
++-------------+-------------------+-------------+
+| P0.09       | MOSI              | D11         |
++-------------+-------------------+-------------+
+| P0.10       | MISO              | D12         |
++-------------+-------------------+-------------+
+| P1.10       | CS                | D8          |
++-------------+-------------------+-------------+
+
+Enabling FOTA upgrades
+----------------------
+
+The FOTA upgrades are only available when :ref:`nrf53_audio_app_building_script`.
+With the appropriate parameter provided, the :file:`buildprog.py` Python script will add overlay files for the given DFU type.
+For the full list of parameters and examples, see the :ref:`nrf53_audio_app_building_script_running` section.
+
 .. _nrf53_audio_app_building:
 
 Building and running
@@ -915,6 +957,8 @@ Before using the script, make sure to update this file with the following inform
   It sets the channels on which the headset is meant to work.
   When no channel is set, the headset is programmed as a left channel one.
 
+.. _nrf53_audio_app_building_script_running:
+
 Running the script
 ------------------
 
@@ -924,14 +968,26 @@ The building command for running the script requires providing the following par
 * Core type (``-c`` parameter): ``app``, ``net``, or ``both``
 * Application version (``-b`` parameter): either ``release`` or ``debug``
 * Device type (``-d`` parameter): ``headset``, ``gateway``, or ``both``
+* DFU type (``-m`` parameter): ``internal``, ``external``
+* Network core bootloader minimal size (``-M``)
 
-For example, to build the application using the script for the application core with the ``debug`` application version for both the headset and the gateway, run the following command from the :file:`buildprog` directory:
+See the following examples of the parameter usage with the command run from the :file:`buildprog` directory:
 
-.. code-block:: console
+* Example 1: The following command builds the application using the script for the application core with the ``debug`` application version for both the headset and the gateway:
 
-   python buildprog.py -c app -b debug -d both
+  .. code-block:: console
 
-This command can be ran from any location, as long as the correct path to :file:`buildprog.py` is given.
+     python buildprog.py -c app -b debug -d both
+
+* Example 2: The following command builds the application as in the example 1, but with the DFU internal flash layout enabled and the minimal size of the network core bootloader:
+
+  .. code-block:: console
+
+     python buildprog.py -c app -b debug -d both -m internal -M
+
+  If you run this command with the ``external`` DFU type parameter instead, the external flash layout will be enabled with the minimal size of the network core bootloader.
+
+The command can be run from any location, as long as the correct path to :file:`buildprog.py` is given.
 
 The build files are saved in the :file:`applications/nrf5340_audio/build` directory.
 The script creates a directory for each application version and device type combination.
@@ -1335,3 +1391,4 @@ Legal notices for the nRF5340 Audio DK
 
 .. |net_core_hex_note| replace:: The network core for both gateway and headsets is programmed with the precompiled Bluetooth Low Energy Controller binary file :file:`ble5-ctr-rpmsg_<XYZ>.hex`, where ``<XYZ>`` corresponds to the controller version, for example :file:`ble5-ctr-rpmsg_3216.hex`.
    This file includes the LE Audio Controller Subsystem for nRF53 and is provided in the :file:`applications/nrf5340_audio/bin` directory.
+   If :ref:`DFU <nrf53_audio_app_configuration_configure_fota>` is enabled, the subsystem's binary file will be :file:`pcft_CPUNET.hex`.
