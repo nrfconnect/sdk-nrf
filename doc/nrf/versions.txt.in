@@ -1,17 +1,19 @@
-.. |ccache_recommended_ver_linux| replace:: @CCACHE_VERSION_LINUX@
-
 .. |cmake_min_ver| replace:: @CMAKE_VERSION_MINIMUM@
 .. |cmake_recommended_ver_win10| replace:: @CMAKE_VERSION_WIN10@
 .. |cmake_recommended_ver_darwin| replace:: @CMAKE_VERSION_DARWIN@
 .. |cmake_recommended_ver_linux| replace:: @CMAKE_VERSION_LINUX@
 
-.. |dfu_util_recommended_ver_linux| replace:: @DFU_UTIL_VERSION_LINUX@
+.. |zephyr_sdk_min_ver| replace:: @ZEPHYR_SDK_VERSION_MINIMUM@
+.. |zephyr_sdk_recommended_ver_win10| replace:: @ZEPHYR_SDK_VERSION_WIN10@
+.. |zephyr_sdk_recommended_ver_darwin| replace:: @ZEPHYR_SDK_VERSION_DARWIN@
+.. |zephyr_sdk_recommended_ver_linux| replace:: @ZEPHYR_SDK_VERSION_LINUX@
 
 .. |dtc_min_ver| replace:: @DTC_VERSION_MINIMUM@
 .. |dtc_recommended_ver_win10| replace:: @DTC_VERSION_WIN10@
 .. |dtc_recommended_ver_darwin| replace:: @DTC_VERSION_DARWIN@
 .. |dtc_recommended_ver_linux| replace:: @DTC_VERSION_LINUX@
 
+.. |git_min_ver| replace:: @GIT_VERSION_MINIMUM@
 .. |git_recommended_ver_win10| replace:: @GIT_VERSION_WIN10@
 .. |git_recommended_ver_darwin| replace:: @GIT_VERSION_DARWIN@
 .. |git_recommended_ver_linux| replace:: @GIT_VERSION_LINUX@
@@ -30,8 +32,6 @@
 .. |python_recommended_ver_win10| replace:: @PYTHON_VERSION_WIN10@
 .. |python_recommended_ver_darwin| replace:: @PYTHON_VERSION_DARWIN@
 .. |python_recommended_ver_linux| replace:: @PYTHON_VERSION_LINUX@
-
-.. |ses_min_ver| replace:: @SES_VERSION_MINIMUM@
 
 .. |west_min_ver| replace:: @WEST_VERSION_MINIMUM@
 .. |west_recommended_ver_win10| replace:: @WEST_VERSION_WIN10@
