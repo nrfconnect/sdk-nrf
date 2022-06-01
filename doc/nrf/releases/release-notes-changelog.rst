@@ -146,6 +146,18 @@ Bluetooth samples
 
   * Added a workaround for nRF5340 revision 1 Errata 117.
 
+* :ref:`peripheral_hr_coded` sample:
+
+  * Added configuration for the nRF5340 target.
+  * Fixed advertising start on the nRF5340 target with the Zephyr LL controller.
+    Previously, it was not possible to start advertising, because the :kconfig:option:`CONFIG_BT_EXT_ADV` option was disabled for the Zephyr LL controller.
+
+* :ref:`bluetooth_central_hr_coded` sample:
+
+  * Added configuration for the nRF5340 target.
+  * Fixed scanning start on the nRF5340 target with the Zephyr LL controller.
+    Previously, it was not possible to start scanning, because the :kconfig:option:`CONFIG_BT_EXT_ADV` option was disabled for the Zephyr LL controller.
+
 Bluetooth mesh samples
 ----------------------
 
