@@ -157,7 +157,6 @@ static void movement_data_send(const struct ext_sensor_evt *const acc_data)
 	sensor_module_event->data.accel.timestamp = k_uptime_get();
 	sensor_module_event->type = SENSOR_EVT_MOVEMENT_DATA_READY;
 
-	accelerometer_callback_set(false);
 	APP_EVENT_SUBMIT(sensor_module_event);
 }
 
