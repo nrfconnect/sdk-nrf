@@ -4,6 +4,18 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * Ensure 'strnlen' is available even with -std=c99. If
+ * _POSIX_C_SOURCE was defined we will get a warning when referencing
+ * 'strnlen'. If this proves to cause trouble we could easily
+ * re-implement strnlen instead, perhaps with a different name, as it
+ * is such a simple function.
+ */
+#if !defined(_POSIX_C_SOURCE)
+#define _POSIX_C_SOURCE 200809L
+#endif
+#include <string.h>
+
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <net/fota_download.h>
@@ -22,15 +34,8 @@
 #include <dfu/dfu_target_mcuboot.h>
 #endif
 
-/* If bootloader upgrades are supported we need room for two file strings. */
-#ifdef PM_S1_ADDRESS
-/* One file string for each of s0 and s1, and a space separator */
-#define FILE_BUF_LEN ((CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE*2)+1)
-#else
-#define FILE_BUF_LEN (CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE)
-#endif
-
 #define HOST_BUF_LEN (CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE)
+#define FILE_BUF_LEN (CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE)
 
 LOG_MODULE_REGISTER(fota_download, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
 
@@ -371,8 +376,9 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 	 */
 	static char file_buf[FILE_BUF_LEN];
 	static char host_buf[HOST_BUF_LEN];
-	const char *file_buf_ptr = file_buf;
 	int err = -1;
+	size_t file_length;
+	size_t host_length;
 
 	struct download_client_cfg config = {
 		.sec_tag = sec_tag,
@@ -394,35 +400,56 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 
 	socket_retries_left = CONFIG_FOTA_SOCKET_RETRIES;
 
-	strncpy(file_buf, file, sizeof(file_buf) - 1);
-	file_buf[sizeof(file_buf) - 1] = '\0';
+	host_length = strnlen(host, sizeof(host_buf));
 
-	strncpy(host_buf, host, sizeof(host_buf) - 1);
-	host_buf[sizeof(host_buf) - 1] = '\0';
+	if (host_length >= sizeof(host_buf)) {
+		LOG_ERR("hostname is too long");
+		return -ENOTSUP;
+	}
+
+	memcpy(host_buf, host, host_length);
+	host_buf[host_length] = '\0';
 
 #ifdef PM_S1_ADDRESS
 	/* B1 upgrade is supported, check what B1 slot is active,
 	 * (s0 or s1), and update file to point to correct candidate if
 	 * space separated file is given.
 	 */
-	const char *update;
 	bool s0_active;
+	const char *delimiter;
 
 	err = fota_download_s0_active_get(&s0_active);
 	if (err != 0) {
 		return err;
 	}
 
-	err = dfu_ctx_mcuboot_set_b1_file(file_buf, s0_active, &update);
-	if (err != 0) {
-		return err;
+	file_length = strnlen(file, 2 * sizeof(file_buf));
+	if (file_length >= 2 * sizeof(file_buf)) {
+		/* Return before strchr in case there is no delimiter. */
+		LOG_ERR("filename is too long");
+		return -ENOTSUP;
 	}
 
-	if (update != NULL) {
-		LOG_INF("B1 update, selected file:\n%s", log_strdup(update));
-		file_buf_ptr = update;
+	delimiter = strchr(file, ' ');
+	if (delimiter != NULL) {
+		if (s0_active) {
+			file_length = file + file_length - (delimiter + 1);
+			file = delimiter + 1;
+		} else {
+			file_length = delimiter - file;
+		}
 	}
+#else
+	file_length = strnlen(file, sizeof(file_buf));
 #endif /* PM_S1_ADDRESS */
+
+	if (file_length >= sizeof(file_buf)) {
+		LOG_ERR("filename is too long");
+		return -ENOTSUP;
+	}
+
+	memcpy(file_buf, file, file_length);
+	file_buf[file_length] = '\0';
 
 	err = download_client_connect(&dlc, host_buf, &config);
 	if (err != 0) {
@@ -431,7 +458,7 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 
 	img_type_expected = expected_type;
 
-	err = download_client_start(&dlc, file_buf_ptr, 0);
+	err = download_client_start(&dlc, file_buf, 0);
 	if (err != 0) {
 		download_client_disconnect(&dlc);
 		return err;
