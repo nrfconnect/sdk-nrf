@@ -90,6 +90,28 @@ void cloud_codec_populate_accel_buffer(
 		buffer_count - 1);
 }
 
+void cloud_codec_populate_accel_act_buffer(
+				struct cloud_data_accelerometer_activity *mov_buf,
+				struct cloud_data_accelerometer_activity *new_act_data,
+				int *head_act_buf,
+				size_t buffer_count)
+{
+	if (!new_act_data->queued) {
+		return;
+	}
+
+	/* Go to start of buffer if end is reached. */
+	*head_act_buf += 1;
+	if (*head_act_buf == buffer_count) {
+		*head_act_buf = 0;
+	}
+
+	mov_buf[*head_act_buf] = *new_act_data;
+
+	LOG_DBG("Entry: %d of %d in activity buffer filled", *head_act_buf,
+		buffer_count - 1);
+}
+
 void cloud_codec_populate_bat_buffer(struct cloud_data_battery *bat_buffer,
 				     struct cloud_data_battery *new_bat_data,
 				     int *head_bat_buf,

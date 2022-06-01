@@ -120,6 +120,15 @@ struct cloud_data_accelerometer {
 	bool queued : 1;
 };
 
+struct cloud_data_accelerometer_activity {
+	/** Accelerometer readings timestamp. UNIX milliseconds. */
+	int64_t ts;
+	/** Duration of the inactivity period. */
+	uint64_t inactivity_duration;
+	/** Flag signifying that the data entry is to be published. */
+	bool queued : 1;
+};
+
 struct cloud_data_sensors {
 	/** Environmental sensors timestamp. UNIX milliseconds. */
 	int64_t env_ts;
@@ -321,6 +330,12 @@ void cloud_codec_populate_accel_buffer(
 				struct cloud_data_accelerometer *accel_buf,
 				struct cloud_data_accelerometer *new_accel_data,
 				int *head_accel_buf,
+				size_t buffer_count);
+
+void cloud_codec_populate_accel_act_buffer(
+				struct cloud_data_accelerometer_activity *mov_buf,
+				struct cloud_data_accelerometer_activity *new_act_data,
+				int *head_act_buf,
 				size_t buffer_count);
 
 void cloud_codec_populate_bat_buffer(struct cloud_data_battery *bat_buffer,

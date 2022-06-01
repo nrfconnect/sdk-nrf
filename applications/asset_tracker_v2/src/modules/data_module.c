@@ -73,6 +73,7 @@ static struct cloud_data_gnss gnss_buf[CONFIG_DATA_GNSS_BUFFER_COUNT];
 static struct cloud_data_sensors sensors_buf[CONFIG_DATA_SENSOR_BUFFER_COUNT];
 static struct cloud_data_ui ui_buf[CONFIG_DATA_UI_BUFFER_COUNT];
 static struct cloud_data_accelerometer accel_buf[CONFIG_DATA_ACCELEROMETER_BUFFER_COUNT];
+static struct cloud_data_accelerometer_activity accel_act_buf[CONFIG_DATA_ACCELEROMETER_ACTIVITY_BUFFER_COUNT];
 static struct cloud_data_battery bat_buf[CONFIG_DATA_BATTERY_BUFFER_COUNT];
 static struct cloud_data_modem_dynamic modem_dyn_buf[CONFIG_DATA_MODEM_DYNAMIC_BUFFER_COUNT];
 static struct cloud_data_neighbor_cells neighbor_cells;
@@ -92,6 +93,7 @@ static int head_sensor_buf;
 static int head_modem_dyn_buf;
 static int head_ui_buf;
 static int head_accel_buf;
+static int head_accel_act_buf;
 static int head_bat_buf;
 
 static K_SEM_DEFINE(config_load_sem, 0, 1);
@@ -1308,6 +1310,19 @@ static void on_all_states(struct data_msg_data *msg)
 
 	if (IS_EVENT(msg, sensor, SENSOR_EVT_ENVIRONMENTAL_NOT_SUPPORTED)) {
 		requested_data_status_set(APP_DATA_ENVIRONMENTAL);
+	}
+
+	if (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED)) {
+		struct cloud_data_accelerometer_activity new_act_data =
+		{
+			.ts = msg->module.sensor.data.accel_act.timestamp,
+			.inactivity_duration = msg->module.sensor.data.accel_act.inactivity_duration,
+			.queued = true
+		};
+
+		cloud_codec_populate_accel_act_buffer(accel_act_buf, &new_act_data,
+						  &head_accel_act_buf,
+						  ARRAY_SIZE(accel_act_buf));
 	}
 
 	if (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_DATA_READY)) {
