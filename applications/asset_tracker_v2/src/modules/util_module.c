@@ -160,14 +160,6 @@ void bsd_recoverable_error_handler(uint32_t err)
 	send_reboot_request(REASON_GENERIC);
 }
 
-void k_sys_fatal_error_handler(unsigned int reason, const z_arch_esf_t *esf)
-{
-	ARG_UNUSED(esf);
-
-	LOG_PANIC();
-	send_reboot_request(REASON_GENERIC);
-}
-
 /* Static module functions. */
 static void reboot(void)
 {
