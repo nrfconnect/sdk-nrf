@@ -60,6 +60,11 @@ int spm_secure_services_init(void)
 #define FICR_INFO_ADDR          (FICR_BASE + offsetof(NRF_FICR_Type, INFO))
 #define FICR_INFO_SIZE          (sizeof(FICR_INFO_Type))
 
+#ifdef CONFIG_SPM_SERVICE_READ_ALLOW_UICR
+#define UICR_ADDR               (NRF_UICR_S_BASE)
+#define UICR_SIZE               (sizeof(NRF_UICR_Type))
+#endif
+
 #if defined(FICR_NFC_TAGHEADER0_MFGID_Msk)
 #define FICR_NFC_ADDR           (FICR_BASE + offsetof(NRF_FICR_Type, NFC))
 #define FICR_NFC_SIZE           (sizeof(FICR_NFC_Type))
@@ -93,6 +98,10 @@ int spm_request_read_nse(void *destination, uint32_t addr, size_t len)
 #endif
 		{.start = FICR_RESTRICTED_ADDR,
 		 .size = FICR_RESTRICTED_SIZE},
+#ifdef CONFIG_SPM_SERVICE_READ_ALLOW_UICR
+		{.start = UICR_ADDR,
+		 .size = UICR_SIZE},
+#endif
 	};
 
 	if (destination == NULL || len <= 0) {
@@ -102,6 +111,20 @@ int spm_request_read_nse(void *destination, uint32_t addr, size_t len)
 	if (ptr_in_secure_area((intptr_t)destination)) {
 		return -EINVAL;
 	}
+
+#if defined(CONFIG_SPM_SERVICE_READ_ALLOW_UICR) && defined(CONFIG_SOC_NRF9160)
+	/* UICR needs special handling due to nRF9160 erratum #7 */
+	if (addr >= UICR_ADDR && addr <= (UICR_ADDR + offsetof(NRF_UICR_Type, OTP[20]))) {
+		uint32_t *tmp_dest = (uint32_t *)destination;
+		volatile uint32_t *tmp_addr = (volatile uint32_t *)addr;
+		for (int i = 0; i < (len / sizeof(uint32_t)); i++) {
+			volatile uint32_t tmp_uicr = tmp_addr[i];
+			__DSB();
+			tmp_dest[i] = tmp_uicr;
+		}
+		return 0;
+	}
+#endif
 
 	for (size_t i = 0; i < ARRAY_SIZE(ranges); i++) {
 		uint32_t start = ranges[i].start;

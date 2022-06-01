@@ -106,6 +106,13 @@ config SPM_SERVICE_READ
 	  read operations within the ranges configured in
 	  secure_services.c.
 
+config SPM_SERVICE_READ_ALLOW_UICR
+	bool "Allow non-secure firmware to read from UICR register"
+	default n
+	select SPM_SERVICE_READ
+	help
+	  Allow a Non-Secure Firmware to read the UICR registers.
+
 config SPM_SERVICE_REBOOT
 	bool "Enable system reset as a secure service"
 	default n
