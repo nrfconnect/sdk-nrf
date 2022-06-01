@@ -72,3 +72,8 @@ Matter feature support
 **********************
 
 .. sml-table:: matter
+
+Zigbee feature support
+**********************
+
+.. sml-table:: zigbee
