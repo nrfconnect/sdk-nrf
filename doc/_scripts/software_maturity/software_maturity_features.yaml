@@ -23,7 +23,6 @@ features:
     Thread FTD + Bluetooth LE multiprotocol: OPENTHREAD_FTD && BT
     Thread MTD + Bluetooth LE multiprotocol: OPENTHREAD_MTD && BT
     Thread Radio Co-Processor (RCP): OPENTHREAD_COPROCESSOR && OPENTHREAD_COPROCESSOR_RCP
-    Thread + WiFi coex: NET_L2_OPENTHREAD && MPSL_CX && MPSL_CX_GENERIC_3PIN
     Thread + nRF21540 (GPIO): NET_L2_OPENTHREAD && (MPSL_FEM_NRF21540_GPIO_SUPPORT || MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT)
   matter:
     Matter over Thread: CHIP && NET_L2_OPENTHREAD
@@ -32,5 +31,5 @@ features:
     Matter commissioning over Bluetooth LE with NFC onboarding: CHIP && BT && CHIP_NFC_COMMISSIONING
     Matter - OTA DFU over Bluetooth LE: CHIP && BT && MCUMGR_SMP_BT
     OTA DFU over Matter: CHIP && CHIP_OTA_REQUESTOR
-    Matter - Amazon Frustration Free Setup support: CHIP && BT && CHIP_ROTATING_DEVICE_ID && COMMISSIONABLE_DEVICE_TYPE
+    Matter - Amazon Frustration Free Setup support: CHIP && BT && CHIP_ROTATING_DEVICE_ID && CHIP_COMMISSIONABLE_DEVICE_TYPE
     Matter Sleepy End Device: CHIP && CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT && NET_L2_OPENTHREAD && OPENTHREAD_MTD_SED
