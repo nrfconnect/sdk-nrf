@@ -410,7 +410,7 @@ Using |VSC|
 
 |vsc_extension_instructions|
 
-You can build and program separate images or combined images using |VSC|.
+You can build and program separate images or combined images using the |nRFVSC|.
 
 Separate images
 ---------------
@@ -601,13 +601,13 @@ Debugging
 *********
 
 To debug the application core firmware, you need a single debug session.
-Set up the debug session as described in `Debugging an application`_ with |VSC|.
+Set up the debug session as described in `Debugging an application`_ in the |nRFVSC| documentation.
 
 To debug the firmware running on the network core, you also need to set up a separate debug session for the application core.
 
 Complete the following steps to start debugging the network core:
 
-1. Set up sessions for the application core and network core as mentioned in `Debugging an application`_ with |VSC|.
+1. Set up sessions for the application core and network core as mentioned in `Debugging an application`_.
 #. Select the appropriate CPU for debugging in each session, the nRF5340 application core and the nRF5340 network core respectively.
 #. Once both sessions are established, execute the code on the application core.
 

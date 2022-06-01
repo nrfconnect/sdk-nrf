@@ -486,7 +486,7 @@ Updating the libraries without debug symbols
 
 There is a single command to update the libraries without debug symbols.
 When using the command line, run the command in the project folder.
-When using |VSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the command there.
+When using the |nRFVSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the command there.
 
 Use the following command:
 
@@ -504,7 +504,7 @@ Updating the libraries with debug symbols
 
 There is a single command to update the libraries with debug symbols.
 When using the command line, run the command in the project folder.
-When using |VSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the command there.
+When using the |nRFVSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the command there.
 
 Use the following command:
 

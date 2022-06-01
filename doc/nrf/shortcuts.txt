@@ -4,8 +4,9 @@
 .. |release_tt| replace:: ``v2.0.0``
 .. |release_number_tt| replace:: ``2.0.0``
 
-.. |plusminus| unicode:: U+000B1 .. PLUS-MINUS SIGN
-   :rtrim:
+.. ### Config shortcuts
+
+.. |how_to_configure| replace:: See :ref:`configure_application` for information on how to set the required configuration options temporarily or permanently.
 
 .. |config| replace:: See :ref:`configure_application` for information about how to permanently or temporarily change the configuration.
 
@@ -40,6 +41,8 @@
 
 .. |ANSI| replace:: that supports VT100/ANSI escape characters
 
+.. ### Board shortcuts
+
 .. |nRF5340DKnoref| replace:: nRF5340 DK board (PCA10095)
 
 .. |nRF9160DK| replace:: nRF9160 DK board (PCA10090) - see :ref:`ug_nrf9160`
@@ -52,6 +55,8 @@
 .. |Thingy91| replace:: Thingy:91 (PCA20035) - see :ref:`ug_thingy91`
 .. |nRF21540DK| replace:: nRF21540 DK board (PCA10112)
 
+.. ### FOTA shortcuts
+
 .. |fota_upgrades_def| replace:: You can upgrade the firmware of the device over the air, thus without a wired connection.
    Such an upgrade is called a FOTA (firmware over-the-air) upgrade.
 
@@ -60,12 +65,20 @@
 .. |fota_upgrades_building| replace:: To create a binary file for an application upgrade, make sure that :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` is enabled and build the application as usual.
    The build will create several binary files (see :ref:`mcuboot:mcuboot_ncs`).
 
-.. |Google_CCLicense| replace:: Portions of this page are reproduced from work created and `shared by Google`_, and used according to terms described in the `Creative Commons 4.0 Attribution License`_.
+.. ### VSC shortcuts
+
+.. |vsc_extension_instructions| replace:: The |nRFVSC| is a complete IDE for developing applications for nRF91, nRF53 and nRF52 Series devices. This includes an interface to the compiler and linker, an RTOS-aware debugger, a seamless interface to the nRF Connect SDK, and a serial terminal. For detailed instructions, see the `nRF Connect for Visual Studio Code`_ documentation site.
+.. |VSC| replace:: Visual Studio Code
+.. |nRFVSC| replace:: nRF Connect for VS Code extension
+
+.. ### Thread usage shortcuts
 
 .. |enable_thread_before_testing| replace:: Make sure to enable the OpenThread stack before building and testing this sample.
    See :ref:`ug_thread` for more information.
 .. |thread_hwfc_enabled| replace:: This sample has Hardware Flow Control mechanism enabled by default in serial communication.
    When enabled, it allows devices to manage transmission by informing each other about their current state, and ensures more reliable connection in high-speed communication scenarios.
+
+.. ### Zigbee & ZBOSS shortcuts
 
 .. |zigbee_version| replace:: Zigbee 3.0
 .. |zboss_version| replace:: 3.11.2.0
@@ -82,33 +95,38 @@
 .. |zigbee_shell_config| replace:: You can add support for Zigbee shell commands to any of the available :ref:`Zigbee samples <zigbee_samples>`, except for the :ref:`NCP sample <zigbee_ncp_sample>`.
    Some of the commands use an endpoint for sending packets, so no endpoint handler is allowed to be registered for this endpoint.
 
+.. ### nRF Desktop shortcuts
+
 .. |nrf_desktop_module_event_note| replace:: See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
 .. |nrf_desktop_build_type_conf| replace:: In addition to these build types, some boards can have additional build type configurations that you can use to generate an application in a specific variant.
    Such board-specific configurations use dedicated :file:`app_*build_type*.conf` files, where the name of the configuration replaces the ``*build_type*`` part in the file name.
    Given the potential number of such configurations, they are not listed above and you can read the description of each of them in the respective configuration file.
 
-.. |how_to_configure| replace:: See :ref:`configure_application` for information on how to set the required configuration options temporarily or permanently.
-
-.. |trusted_execution| replace:: nRF5340 and nRF9160
+.. ### Matter shortcuts
 
 .. |matter_sample_button3_note| replace:: Use **Button 3** to enable this mode after building and running the sample.
 .. |matter_gn_required_note| replace:: Matter requires the GN tool.
    If you are updating from the |NCS| version earlier than v1.5.0, see the :ref:`GN installation instructions <gs_installing_gn>`.
 
-.. |NSIB| replace:: nRF Secure Immutable Bootloader
-
-.. |external_flash_size| replace:: external flash memory with minimum 4MB
+.. ### Other shortcuts
 
 .. |application_sample_definition| replace:: For simplicity, this guide will refer to both :ref:`samples<samples>` and :ref:`applications<applications>` as "applications".
 .. |application_sample_long_path_windows| replace:: On Windows, because of the `Windows path length limitations`_, the build can fail with errors related to permissions or missing files if some paths in the build are too long.
    To avoid this issue, shorten the build folder name, for example, from ``build_nrf5340dk_nrf5340_cpuapp_ns`` to ``build``, or shorten the path to the build folder in some other way.
 
+.. |NSIB| replace:: nRF Secure Immutable Bootloader
+
+.. |external_flash_size| replace:: external flash memory with minimum 4 MB
+
 .. |gps_tradeoffs| replace:: For more information on the various trade-offs of using A-GPS compared to using P-GPS, see the `nRF Cloud Location Services documentation`_.
-
-.. |vsc_extension_instructions| replace:: The |VSC| extension is a complete IDE for developing applications for nRF91, nRF53 and nRF52 Series devices. This includes an interface to the compiler and linker, an RTOS-aware debugger, a seamless interface to the nRF Connect SDK, and a serial terminal. For detailed instructions, see the `nRF Connect for Visual Studio Code`_ documentation site.
-
-.. |VSC| replace:: nRF Connect for Visual Studio Code
 
 .. |thingy53_sample_note| replace:: If you build this application for Thingy:53, it enables additional features. See :ref:`thingy53_app_guide` for details.
 
 .. |nrf5340_audio_note| replace:: The |NCS| includes the :ref:`nrf53_audio_app` application, a complete project that integrates the LE Audio standard with custom reference hardware based on the nRF5340 SiP.
+
+.. |trusted_execution| replace:: nRF5340 and nRF9160
+
+.. |plusminus| unicode:: U+000B1 .. PLUS-MINUS SIGN
+   :rtrim:
+
+.. |Google_CCLicense| replace:: Portions of this page are reproduced from work created and `shared by Google`_, and used according to terms described in the `Creative Commons 4.0 Attribution License`_.

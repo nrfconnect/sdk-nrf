@@ -16,10 +16,10 @@ See the user interface section of the application's documentation for descriptio
 
 .. _testing_vscode:
 
-How to connect with the VS Code extension
-*****************************************
+How to connect with |nRFVSC|
+****************************
 
-The |VSC| extension is a complete IDE for developing applications for nRF91, nRF53 and nRF52 Series devices.
+The |nRFVSC| is a complete IDE for developing applications for nRF91, nRF53 and nRF52 Series devices.
 The extension pack includes nRF Terminal, which is an integrated serial port and RTT terminal to connect to your board.
 For detailed instructions, see the `nRF Terminal documentation`_ on the `nRF Connect for Visual Studio Code`_ documentation site.
 

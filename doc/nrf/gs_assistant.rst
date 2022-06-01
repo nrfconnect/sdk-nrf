@@ -18,8 +18,8 @@ See :ref:`gs_recommended_versions` for information on the supported operating sy
 Toolchain Manager
 *****************
 
-The Toolchain manager application is available for Windows, Linux, and macOS.
-It installs the full toolchain that you need to work with the |NCS|, including the |VSC| extension and the |NCS| source code.
+The Toolchain Manager application is available for Windows, Linux, and macOS.
+It installs the full toolchain that you need to work with the |NCS|, including the |nRFVSC| and the |NCS| source code.
 
 .. _tcm_setup:
 

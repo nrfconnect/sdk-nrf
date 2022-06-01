@@ -126,7 +126,7 @@ Configuration options*
    * You do not need to list all configuration options of the sample, but only the ones that are important for the sample and make sense for the user to know about.
    * The syntax below allows sample configuration options to link to the option descriptions in the same way as the library configuration options link to the corresponding Kconfig descriptions (``:kconfig:option:`SAMPLE_CONFIG```, which results in :kconfig:option:`SAMPLE_CONFIG`).
    * For each configuration option, list the symbol name and the string describing it.
-   * For |VSC| instructions, list the configuration options as they are stated on the Generate Configuration screen.
+   * For the |nRFVSC| instructions, list the configuration options as they are stated on the Generate Configuration screen.
 
 Check and configure the following Kconfig options:
 
@@ -176,8 +176,8 @@ Building and running
 
 .. note::
    * Include the standard text for building - either ``.. include:: /includes/build_and_run.txt`` or ``.. include:: /includes/build_and_run_nrf9160.txt``.
-   * The main supported IDE for |NCS| is |VSC|.
-     Therefore, build instructions for |VSC| are required.
+   * The main supported IDE for |NCS| is |VSC|, with the |nRFVSC| installed.
+     Therefore, build instructions for the |nRFVSC| are required.
      Build instructions for the command line are optional.
    * See the link to the `nRF Connect for Visual Studio Code`_ documentation site for basic instructions on building with the extension.
    * If the sample uses a non-standard setup, point it out and link to more information, if possible.

@@ -73,7 +73,7 @@ Complete the following steps to prepare for the certification tests:
         cd ncs/nrf/samples/openthread/cli/
         west build -b nrf52840dk_nrf52840 -- -DOVERLAY_CONFIG=harness/overlay-cert.conf -DCONFIG_OPENTHREAD_LIBRARY=y
 
-   * If building using Visual Studio Code, you must first `create the application <Creating an application_>`_ using the CLI sample, and then `build the application <Building an application_>`_.
+   * If building using |VSC|, you must first `create the application <Creating an application_>`_ using the CLI sample, and then `build the application <Building an application_>`_.
      Select the :file:`harness/overlay-cert.conf` overlay file in the :guilabel:`Kconfig fragment` drop-down menu and add ``CONFIG_OPENTHREAD_LIBRARY=y`` to the :guilabel:`Additional CMake arguments` text field.
 
      If the overlay file is not visible in the drop-down menu, navigate to :file:`ncs/nrf/samples/openthread/cli/harness/` and copy the :file:`overlay-cert.conf` file to :file:`ncs/nrf/samples/openthread/cli/` and try again.

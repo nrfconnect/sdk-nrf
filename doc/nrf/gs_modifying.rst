@@ -27,7 +27,7 @@ When loaded, the application can reference items provided by both Zephyr and the
 Loading Zephyr's `CMake <CMake documentation_>`_ package creates the ``app`` CMake target.
 You can add application source files to this target from the application :file:`CMakeLists.txt` file.
 
-To update the :file:`CMakeLists.txt` file, either edit it directly or use |VSC| to maintain it.
+To update the :file:`CMakeLists.txt` file, either edit it directly or use the |nRFVSC| to maintain it.
 
 Editing CMakeLists.txt
 ======================
@@ -59,12 +59,12 @@ For example, to turn off optimizations, select :kconfig:option:`CONFIG_NO_OPTIMI
 
 Compiler options not controlled by the Zephyr build system can be controlled through the :kconfig:option:`CONFIG_COMPILER_OPT` Kconfig option.
 
-VS Code extension compiler settings
-===================================
+|VSC| compiler settings
+=======================
 
 .. modify_vsc_compiler_options_start
 
-The |VSC| extension lets you build and program with custom options.
+The |nRFVSC| lets you build and program with custom options.
 For more information, read about the advanced `Custom launch and debug configurations`_ and `Application-specific flash options`_ in the extension documentation.
 
 .. modify_vsc_compiler_options_end
@@ -167,10 +167,10 @@ This means that this file is available when building the application, but it is 
 To quickly test different configuration options, or to build your application in different variants, you can update the :file:`.config` file in the build directory.
 Changes are picked up immediately.
 
-While it is possible to edit the :file:`.config` file directly, you should use the nRF Kconfig GUI in |VSC| or a tool like menuconfig or guiconfig to update it.
+While it is possible to edit the :file:`.config` file directly, you should use the nRF Kconfig GUI in the |nRFVSC| or a tool like menuconfig or guiconfig to update it.
 These tools present all available options and allow you to select the ones that you need.
 
-The nRF Kconfig GUI in |VSC| organizes the Kconfig options in a hierarchical list and lets you select the desired options.
+The nRF Kconfig GUI in the |nRFVSC| organizes the Kconfig options in a hierarchical list and lets you select the desired options.
 To save the changes made using the nRF Kconfig GUI, click the :guilabel:`Save` button.
 Read the `nRF Kconfig`_ documentation for more information.
 
@@ -212,8 +212,8 @@ Providing CMake options
 You can provide additional options for building your application to the CMake process, which can be useful, for example, to switch between different build scenarios.
 These options are specified when CMake is run, thus not during the actual build, but when configuring the build.
 
-If you work with the |VSC| extension, you can specify project-specific CMake options when you add the build configuration for a new |NCS| project.
-See `Building an application`_ in the |VSC| documentation.
+If you work with the |nRFVSC|, you can specify project-specific CMake options when you add the build configuration for a new |NCS| project.
+See `Building an application`_ in the |nRFVSC| documentation.
 
 If you work on the command line, pass the additional options to the ``west build`` command.
 The options must be added after a ``--`` at the end of the command.
@@ -245,14 +245,14 @@ The Devicetree configuration is not affected by the build type.
 .. note::
     For an example of an application that is using build types, see the :ref:`nrf_desktop` application (:ref:`nrf_desktop_requirements_build_types`) or the :ref:`nrf_machine_learning_app` application (:ref:`nrf_machine_learning_app_requirements_build_types`).
 
-Selecting a build type in the VS Code extension
-===============================================
+Selecting a build type in |VSC|
+===============================
 
 .. build_types_selection_vsc_start
 
-To select the build type in the |VSC| extension:
+To select the build type in the |nRFVSC|:
 
-1. When `Building an application`_ as described in the |VSC| extension documentation, follow the steps for setting up the build configuration.
+1. When `Building an application`_ as described in the |nRFVSC| documentation, follow the steps for setting up the build configuration.
 #. In the :guilabel:`Add Build Configuration` screen, select the desired :file:`.conf` file from the :guilabel:`Configuration` drop-down menu.
 #. Fill in other configuration options, if applicable, and click :guilabel:`Build Configuration`.
 
