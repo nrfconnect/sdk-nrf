@@ -207,11 +207,11 @@ static int parse_series_entry(const struct bt_mesh_sensor_type *type,
 		return err;
 	}
 
-	uint64_t end_mill = (entry->column.start.val1 + width.val1) * 1000000L +
+	uint64_t end_mill = (entry->column.start.val1 + width.val1) * 1000000ULL +
 			 (entry->column.start.val2 + width.val2);
 
-	entry->column.end.val1 = end_mill / 1000000L;
-	entry->column.end.val2 = end_mill % 1000000L;
+	entry->column.end.val1 = end_mill / 1000000ULL;
+	entry->column.end.val2 = end_mill % 1000000ULL;
 
 	return sensor_value_decode(buf, type, entry->value);
 }

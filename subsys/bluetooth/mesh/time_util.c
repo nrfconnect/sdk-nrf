@@ -6,7 +6,6 @@
 
 #include <bluetooth/mesh/time_srv.h>
 #include <time.h>
-#include "model_utils.h"
 #include <zephyr/types.h>
 #include <zephyr/sys/util.h>
 #include "time_util.h"

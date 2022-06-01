@@ -276,7 +276,7 @@ static int handle_column_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx
 	col = column_get(&sensor->series, &col_x);
 	if (!col) {
 		BT_WARN("Unknown column");
-		sensor_ch_encode(&rsp, col_format, &col_x);
+		(void) sensor_ch_encode(&rsp, col_format, &col_x);
 		goto respond;
 	}
 
@@ -610,7 +610,7 @@ static int handle_setting_get(struct bt_mesh_model *model, struct bt_mesh_msg_ct
 
 	net_buf_simple_add_u8(&rsp, setting->set ? 0x03 : 0x01);
 
-	struct sensor_value values[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
+	struct sensor_value values[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = { 0 };
 
 	setting->get(srv, sensor, setting, ctx, values);
 

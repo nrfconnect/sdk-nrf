@@ -57,7 +57,7 @@ static int store(struct bt_mesh_scheduler_srv *srv, uint8_t idx, bool store_ndel
 	const void *data = store_ndel ? &srv->sch_reg[idx] : NULL;
 	size_t len = store_ndel ? sizeof(srv->sch_reg[idx]) : 0;
 
-	snprintf(name, sizeof(name), "%x", idx);
+	(void) snprintf(name, sizeof(name), "%x", idx);
 
 	return bt_mesh_model_data_store(srv->model, false, name, data, len);
 }
