@@ -68,7 +68,7 @@ static bool ext_api_satisfies_req(const struct fw_info_ext_api * const ext_api,
 }
 
 
-static const struct fw_info_ext_api_request *skip_ext_apis(
+const struct fw_info_ext_api_request *skip_ext_apis(
 					const struct fw_info * const fw_info)
 {
 	const struct fw_info_ext_api *ext_api = &fw_info->ext_apis[0];
