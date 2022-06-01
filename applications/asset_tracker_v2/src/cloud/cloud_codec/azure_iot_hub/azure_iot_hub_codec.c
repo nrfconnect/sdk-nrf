@@ -250,6 +250,7 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 			    struct cloud_data_modem_dynamic *modem_dyn_buf,
 			    struct cloud_data_ui *ui_buf,
 			    struct cloud_data_accelerometer *accel_buf,
+				struct cloud_data_accelerometer_activity accel_act_buf,
 			    struct cloud_data_battery *bat_buf)
 {
 	int err;

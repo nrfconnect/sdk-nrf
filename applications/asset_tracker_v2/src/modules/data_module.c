@@ -592,6 +592,7 @@ static void data_encode(void)
 					      &modem_dyn_buf[head_modem_dyn_buf],
 					      &ui_buf[head_ui_buf],
 					      &accel_buf[head_accel_buf],
+						  &accel_act_buf[head_accel_act_buf],
 					      &bat_buf[head_bat_buf]);
 		switch (err) {
 		case 0:
@@ -622,6 +623,7 @@ static void data_encode(void)
 						    modem_dyn_buf,
 						    ui_buf,
 						    accel_buf,
+							accel_act_buf,
 						    bat_buf,
 						    ARRAY_SIZE(gnss_buf),
 						    ARRAY_SIZE(sensors_buf),
@@ -629,6 +631,7 @@ static void data_encode(void)
 						    ARRAY_SIZE(modem_dyn_buf),
 						    ARRAY_SIZE(ui_buf),
 						    ARRAY_SIZE(accel_buf),
+							ARRAY_SIZE(accel_act_buf),
 						    ARRAY_SIZE(bat_buf));
 		switch (err) {
 		case 0:

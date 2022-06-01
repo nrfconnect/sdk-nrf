@@ -47,6 +47,7 @@
 #define APP_ID_TEMPERATURE "TEMP"
 #define APP_ID_RSRP	   "RSRP"
 #define APP_ID_CELL_POS    "CELL_POS"
+#define APP_ID_ACCEL_ACT    "INACT"
 
 #define MODEM_CURRENT_BAND     "currentBand"
 #define MODEM_NETWORK_MODE     "networkMode"

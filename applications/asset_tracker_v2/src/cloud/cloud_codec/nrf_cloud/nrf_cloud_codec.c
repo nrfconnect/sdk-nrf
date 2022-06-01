@@ -30,6 +30,7 @@ enum batch_data_type {
 	MODEM_STATIC,
 	MODEM_DYNAMIC,
 	VOLTAGE,
+	ACCEL_ACT,
 };
 
 /* Function that checks the version number of the incoming message and determines if it has already
@@ -232,6 +233,35 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 				return err;
 			}
 
+			data[i].queued = false;
+			break;
+		}
+		case ACCEL_ACT: {
+			int err;
+			char duration[21];
+			struct cloud_data_accelerometer_activity *data = (struct cloud_data_accelerometer_activity *)buf;
+
+			if (data[i].queued == false) {
+				break;
+			}
+
+			err = date_time_uptime_to_unix_time_ms(&data[i].ts);
+			if (err) {
+				LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
+				return -EOVERFLOW;
+			}
+
+			int len = snprintk(duration, sizeof(duration), "%llu",
+				       data[i].inactivity_duration);
+			if ((len < 0) || (len >= sizeof(duration))) {
+				LOG_ERR("Cannot convert duration to string, buffer too small");
+			}
+
+			err =  add_data(array, NULL, APP_ID_ACCEL_ACT, duration,
+					&data[i].ts, data[i].queued, NULL, false);
+			if (err && err != -ENODATA) {
+				return err;
+			}
 			data[i].queued = false;
 			break;
 		}
@@ -568,6 +598,7 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 			    struct cloud_data_modem_dynamic *modem_dyn_buf,
 			    struct cloud_data_ui *ui_buf,
 			    struct cloud_data_accelerometer *accel_buf,
+				struct cloud_data_accelerometer_activity *accel_act_buf,
 			    struct cloud_data_battery *bat_buf)
 {
 	/* Encoding of the latest buffer entries is not supported.
@@ -644,6 +675,7 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 				  struct cloud_data_modem_dynamic *modem_dyn_buf,
 				  struct cloud_data_ui *ui_buf,
 				  struct cloud_data_accelerometer *accel_buf,
+				  struct cloud_data_accelerometer_activity *accel_act_buf,
 				  struct cloud_data_battery *bat_buf,
 				  size_t gnss_buf_count,
 				  size_t sensor_buf_count,
@@ -651,6 +683,7 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 				  size_t modem_dyn_buf_count,
 				  size_t ui_buf_count,
 				  size_t accel_buf_count,
+				  size_t accel_act_buf_count,
 				  size_t bat_buf_count)
 {
 	int err;
@@ -695,6 +728,12 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 	err = add_batch_data(root_array, MODEM_DYNAMIC, modem_dyn_buf, modem_dyn_buf_count);
 	if (err) {
 		LOG_ERR("Failed adding dynamic modem data to array, error: %d", err);
+		goto exit;
+	}
+
+	err = add_batch_data(root_array, ACCEL_ACT, accel_act_buf, accel_act_buf_count);
+	if (err) {
+		LOG_ERR("Failed adding activity data to array, error: %d", err);
 		goto exit;
 	}
 

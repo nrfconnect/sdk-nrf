@@ -294,6 +294,7 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 			    struct cloud_data_modem_dynamic *modem_dyn_buf,
 			    struct cloud_data_ui *ui_buf,
 			    struct cloud_data_accelerometer *accel_buf,
+				struct cloud_data_accelerometer_activity *accel_act_buf,
 			    struct cloud_data_battery *bat_buf);
 
 int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
@@ -306,6 +307,7 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 				  struct cloud_data_modem_dynamic *modem_dyn_buf,
 				  struct cloud_data_ui *ui_buf,
 				  struct cloud_data_accelerometer *accel_buf,
+				  struct cloud_data_accelerometer_activity *accel_act_buf,
 				  struct cloud_data_battery *bat_buf,
 				  size_t gnss_buf_count,
 				  size_t sensor_buf_count,
@@ -313,6 +315,7 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 				  size_t modem_dyn_buf_count,
 				  size_t ui_buf_count,
 				  size_t accel_buf_count,
+				  size_t accel_act_buf_count,
 				  size_t bat_buf_count);
 
 void cloud_codec_populate_sensor_buffer(
