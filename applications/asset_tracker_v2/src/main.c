@@ -19,6 +19,10 @@
 #include <net/nrf_cloud_agps.h>
 #endif
 
+#if defined(CONFIG_NRF_CLOUD_FOTA)
+#include <net/nrf_cloud.h>
+#endif
+
 /* Module name is used by the Application Event Manager macros in this file */
 #define MODULE main
 #include <caf/events/module_state_event.h>
@@ -235,6 +239,11 @@ static void handle_nrf_modem_lib_init_ret(void)
 		LOG_ERR("nRF modem lib initialization failed, error: %d", ret);
 		break;
 	}
+
+#if defined(CONFIG_NRF_CLOUD_FOTA)
+	/* Ignore return value, rebooting below */
+	(void)nrf_cloud_modem_fota_pending_job_process(ret);
+#endif
 
 	LOG_WRN("Rebooting...");
 	LOG_PANIC();
