@@ -1,8 +1,8 @@
-1. Open Visual Studio Code.
+1. Open |VSC|.
 
    If you installed the |NCS| using the :ref:`gs_app_tcm`, you can click the :guilabel:`Open VS Code` button next to the version you installed.
 
-#. Open the |VSC| extension by clicking its icon or pressing ``Ctrl`` + ``Alt`` + ``N``.
+#. Open the |nRFVSC| by clicking its icon or pressing ``Ctrl`` + ``Alt`` + ``N``.
 #. Click the :guilabel:`Add an existing application` from the :guilabel:`Welcome` panel.
 #. In the prompt, navigate to the folder containing the sample or application you want to build, such as |sample_path_vsc|.
 

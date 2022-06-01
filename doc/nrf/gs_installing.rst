@@ -373,10 +373,10 @@ A toolchain provides a compiler, assembler, linker, and other programs required 
 
 .. rst-class:: numbered-step
 
-Install |VSC|
-*************
+Install |nRFVSC|
+****************
 
-You can install the |VSC| to open and compile projects in the |NCS|.
+You can install the |nRFVSC| to open and compile projects in the |NCS|.
 
 .. _installing_vsc:
 

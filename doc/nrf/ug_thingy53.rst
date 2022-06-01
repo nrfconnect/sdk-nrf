@@ -93,12 +93,12 @@ See :ref:`thingy53_app_update` for more detailed information about updating firm
 
 .. _thingy53_build_pgm_vscode:
 
-Building and programming using Visual Studio Code
-=================================================
+Building and programming using |VSC|
+====================================
 
 |vsc_extension_instructions|
 
-Complete the following steps after installing |VSC|:
+Complete the following steps after installing the |nRFVSC|:
 
 .. |sample_path_vsc| replace:: :file:`nrf/samples/bluetooth/peripheral_lbs`
 

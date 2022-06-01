@@ -18,8 +18,8 @@ For example, see :ref:`ug_nrf5340_building` in the :ref:`ug_nrf5340` user guide 
 
 .. _gs_programming_vsc:
 
-Building with the VS Code extension
-***********************************
+Building with |VSC|
+*******************
 
 |vsc_extension_instructions|
 

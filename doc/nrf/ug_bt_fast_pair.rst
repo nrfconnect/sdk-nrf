@@ -61,7 +61,7 @@ You must provide the following CMake options:
 
 The ``bt_fast_pair`` partition address is provided automatically by the build system.
 
-For example, when building an application with |VSC|, you need to add the following parameters in the :guilabel:`Extra CMake arguments` field on :guilabel:`Add Build Configuration`: ``-DFP_MODEL_ID=0xFFFFFF -DFP_ANTI_SPOOFING_KEY=AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=``.
+For example, when building an application with the |nRFVSC|, you need to add the following parameters in the :guilabel:`Extra CMake arguments` field on :guilabel:`Add Build Configuration`: ``-DFP_MODEL_ID=0xFFFFFF -DFP_ANTI_SPOOFING_KEY=AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=``.
 Make sure to replace ``0xFFFFFF`` and ``AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=`` with values obtained for your device.
 See :ref:`cmake_options` for more information about defining CMake options.
 

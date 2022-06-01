@@ -163,12 +163,12 @@ You can choose the method based on the availability or absence of an external de
 
 .. _build_pgm_vsc:
 
-Building and programming using VS Code extension
-================================================
+Building and programming using |VSC|
+====================================
 
 |vsc_extension_instructions|
 
-Complete the following steps after installing |VSC|:
+Complete the following steps after installing the |nRFVSC|:
 
 .. |sample_path_vsc| replace:: :file:`samples/nrf9160/cloud_client`
 
@@ -198,7 +198,7 @@ Complete the following steps after installing |VSC|:
 
       If you have multiple boards connected, you are prompted to pick a device at the top of the screen.
 
-      A small notification banner appears in the bottom-right corner of VS Code to display the progress and confirm when the flash is complete.
+      A small notification banner appears in the bottom-right corner of |VSC| to display the progress and confirm when the flash is complete.
 
 .. _build_pgm_cmdline:
 

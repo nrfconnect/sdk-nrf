@@ -24,7 +24,7 @@ Updating the repositories
 Updating in |VSC|
 =================
 
-The |VSC| extension lets you update the associated |NCS| repositories within the :guilabel:`Source Control` panel.
+The |nRFVSC| lets you update the associated |NCS| repositories within the :guilabel:`Source Control` panel.
 For detailed instructions, see the `West integration`_ section of the extension's documentation.
 
 Updating in Toolchain Manager
@@ -88,15 +88,15 @@ To switch to the latest state of development, enter the following commands::
 
 .. _gs_updating_vsc:
 
-Updating |VSC|
-**************
+Updating |nRFVSC|
+*****************
 
-Visual Studio Code checks for extension updates and automatically installs them when they are available.
-After an extension is updated, VS Code prompts you to reload the application.
+|VSC| checks for extension updates and automatically installs them when they are available.
+After an extension is updated, |VSC| prompts you to reload the application.
 
 If you disabled automatic updates:
 
-1. Open the :guilabel:`Extensions` tab and locate the |VSC| extension.
+1. Open the :guilabel:`Extensions` tab and locate the |nRFVSC|.
 
 #. The :guilabel:`Update` button appears when an update is available.
    Click on the button to install the update.
