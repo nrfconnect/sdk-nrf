@@ -82,6 +82,8 @@ enum subscription_topic_index {
 	SUB_TOPIC_IDX__COUNT,
 };
 
+int modem_fota_validate_get(const int modem_lib_init_result);
+
 static void http_fota_handler(const struct fota_download_evt *evt);
 static void send_event(const enum nrf_cloud_fota_evt_id id,
 		       const struct nrf_cloud_fota_job *const job);
@@ -171,6 +173,49 @@ static int fota_settings_set(const char *key, size_t len_rd,
 	return 0;
 }
 
+static int load_fota_settings(void)
+{
+	int ret = settings_subsys_init();
+
+	if (ret) {
+		LOG_ERR("Settings init failed: %d", ret);
+	}
+
+	ret = settings_load_subtree(settings_handler_fota.name);
+	if (ret) {
+		LOG_ERR("Cannot load settings: %d", ret);
+	}
+
+	return ret;
+}
+
+int nrf_cloud_modem_fota_pending_job_process(const int modem_lib_init_result)
+{
+	/* Nothing to do if modem lib did not indicate a @ref nrf_modem_dfu result */
+	if (modem_lib_init_result == 0) {
+		return 0;
+	}
+
+	if (load_fota_settings()) {
+		return -EIO;
+	}
+
+	/* Saved job must be a pending modem job to continue */
+	if (saved_job.type != NRF_CLOUD_FOTA_MODEM ||
+	    saved_job.validate != NRF_CLOUD_FOTA_VALIDATE_PENDING){
+		return 0;
+	}
+
+	/* Get the validate value and save it */
+	saved_job.validate = modem_fota_validate_get(modem_lib_init_result);
+	if (save_validate_status(saved_job.id, saved_job.type, saved_job.validate)) {
+		LOG_WRN("Failed to save FOTA job status, job will be marked as not validated");
+	}
+
+	/* A reboot/re-init is required */
+	return 1;
+}
+
 int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb)
 {
 	int ret;
@@ -196,9 +241,8 @@ int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb)
 		fota_dl_initialized = true;
 	}
 
-	ret = settings_load_subtree(settings_handler_fota.name);
+	ret = load_fota_settings();
 	if (ret) {
-		LOG_ERR("Cannot load settings: %d", ret);
 		return ret;
 	}
 

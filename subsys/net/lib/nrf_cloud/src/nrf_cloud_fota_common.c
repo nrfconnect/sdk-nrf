@@ -16,6 +16,28 @@
 
 LOG_MODULE_REGISTER(nrf_cloud_fota_common, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
+int modem_fota_validate_get(const int modem_lib_init_result)
+{
+	switch (modem_lib_init_result) {
+	case MODEM_DFU_RESULT_OK:
+		LOG_INF("Modem FOTA update confirmed");
+		return NRF_CLOUD_FOTA_VALIDATE_PASS;
+		break;
+	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+	case MODEM_DFU_RESULT_UUID_ERROR:
+	case MODEM_DFU_RESULT_AUTH_ERROR:
+	case MODEM_DFU_RESULT_HARDWARE_ERROR:
+		LOG_ERR("Modem FOTA error: %d", modem_lib_init_result);
+		return NRF_CLOUD_FOTA_VALIDATE_FAIL;
+		break;
+	default:
+		LOG_INF("Modem FOTA result unknown: %d", modem_lib_init_result);
+		break;
+	}
+
+	return NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
+}
+
 int nrf_cloud_bootloader_fota_slot_set(struct nrf_cloud_settings_fota_job * const job)
 {
 	int err = -ENOTSUP;
@@ -65,25 +87,7 @@ int nrf_cloud_pending_fota_job_process(struct nrf_cloud_settings_fota_job * cons
 
 	if (job->type == NRF_CLOUD_FOTA_MODEM) {
 #if defined(CONFIG_NRF_MODEM_LIB)
-		int modem_lib_init_result = nrf_modem_lib_get_init_ret();
-
-		switch (modem_lib_init_result) {
-		case MODEM_DFU_RESULT_OK:
-			LOG_INF("Modem FOTA update confirmed");
-			job->validate = NRF_CLOUD_FOTA_VALIDATE_PASS;
-			break;
-		case MODEM_DFU_RESULT_UUID_ERROR:
-		case MODEM_DFU_RESULT_AUTH_ERROR:
-		case MODEM_DFU_RESULT_HARDWARE_ERROR:
-		case MODEM_DFU_RESULT_INTERNAL_ERROR:
-			LOG_ERR("Modem FOTA error: %d", modem_lib_init_result);
-			job->validate = NRF_CLOUD_FOTA_VALIDATE_FAIL;
-			break;
-		default:
-			LOG_INF("Modem FOTA result unknown: %d", modem_lib_init_result);
-			job->validate = NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
-			break;
-		}
+		job->validate = modem_fota_validate_get(nrf_modem_lib_get_init_ret());
 #else
 		job->validate = NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
 #endif

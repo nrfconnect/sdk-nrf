@@ -646,6 +646,7 @@ Libraries for networking
       * :c:func:`nrf_cloud_bootloader_fota_slot_set` function that sets the active bootloader slot flag during bootloader FOTA updates.
       * :c:func:`nrf_cloud_pending_fota_job_process` function that processes the state of pending FOTA jobs.
       * :c:func:`nrf_cloud_handle_error_message` function that handles error message responses (MQTT) from nRF Cloud.
+      * :c:func:`nrf_cloud_modem_fota_pending_job_process` function that validates modem FOTA job status without initializing the :ref:`lib_nrf_cloud` library.
 
     * Updated:
 

@@ -689,6 +689,25 @@ int nrf_cloud_handle_error_message(const char *const buf,
 				   const char *const msg_type,
 				   enum nrf_cloud_error *const err);
 
+/**
+ * @brief Function to validate a modem FOTA installation before initializing this library.
+ *        After a modem update is installed, the first call to @ref nrf_modem_init will
+ *        return the installation status. This function processes that return
+ *        value and saves the validation status so the FOTA job state can be correctly reported
+ *        to nRF Cloud.
+ *        If indicated by the return value of this function, the application must reboot
+ *        or reinit the modem library before calling @ref nrf_cloud_init.
+ *        Depends on CONFIG_NRF_CLOUD_FOTA.
+ *
+ * @param[in] modem_lib_init_result Modem library initialization result.
+ *
+ * @retval 0 No applicable FOTA job in progress.
+ * @retval 1 Modem FOTA job's validation status was updated; reboot or reinit the modem library.
+ * @retval -EIO Failed to initialize or load FOTA settings.
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_modem_fota_pending_job_process(const int modem_lib_init_result);
+
 /** @} */
 
 #ifdef __cplusplus
