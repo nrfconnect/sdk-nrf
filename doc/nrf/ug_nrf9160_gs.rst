@@ -151,7 +151,7 @@ If you experience any problems during the process, restart the Programmer app by
 
    If the three COM ports are not visible, press ``Ctrl+R`` in Windows or ``command+R`` in macOS to restart the Programmer application.
 
-   The drop-down text changes to the type of the selected device, with the SEGGER ID below the name.
+   The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
    The :guilabel:`Device Memory Layout` section also changes its name to the device name, and indicates that the device is connected.
    If the :guilabel:`Auto read memory` option is selected in the :guilabel:`Device` section of the side panel, the memory layout will update.
    If it is not selected and you wish to see the memory layout, click :guilabel:`Read` in the :guilabel:`Device` section of the side panel.
@@ -207,17 +207,17 @@ Creating an nRF Cloud account
 
 To create an nRF Cloud account, complete the following steps:
 
-1. Go to `nRF Cloud`_ and click :guilabel:`Register`.
+1. Open the `nRF Cloud`_ landing page and click :guilabel:`Register`.
 #. Enter your email address and choose a password, then click :guilabel:`Create Account`.
    nRF Cloud will send you a verification email.
 #. Copy the 6-digit verification code and paste it into the registration dialog box.
-   If you do not see the verification email, check your junk mail for an email from no-reply@verificationemail.com.
+   If you do not see the verification email, check your junk mail for an email from ``no-reply@verificationemail.com``.
 
    If you closed the registration dialog box, you can repeat Step 1 and then click :guilabel:`Already have a code?`.
    Then enter your email and the verification code.
 
-You can now sign in on `nRF Cloud`_ with your email and the password you chose.
-After signing in, you are taken to the dashboard view that displays your device count and service usage.
+You can now log in with your email and the password you chose.
+After logging in, you are taken to the dashboard view that displays your device count and service usage.
 
 .. _nrf9160_gs_connect_to_cloud:
 
@@ -234,7 +234,7 @@ To transmit data from your nRF9160 DK to nRF Cloud, you must activate your SIM c
 
 Complete the following steps:
 
-1. Go to `nRF Cloud`_ and sign in.
+1. Log in to the `nRF Cloud`_ portal.
 #. Click the :guilabel:`+` icon in the top left corner.
    The :guilabel:`Add New` window appears.
 
@@ -314,7 +314,7 @@ The application programmed in the DK is :ref:`asset_tracker_v2`, and it is used 
 For a basic test, complete the following steps:
 
 1. Turn on or reset your nRF9160 DK.
-#. Go to `nRF Cloud`_ and sign in.
+#. Log in to the `nRF Cloud`_ portal.
 #. Click :guilabel:`Devices` under :guilabel:`Device Management` in the navigation pane on the left.
 
    .. figure:: /images/nrfcloud_devices.png
@@ -352,7 +352,7 @@ Testing the GNSS functionality
 To achieve the fastest Time To First Fix of GNSS position, the following conditions need to be met:
 
 * The device must be able to connect to nRF Cloud.
-  You can confirm this by checking whether the status of your DK is displayed correctly on nRF Cloud.
+  You can confirm this by checking whether the status of your DK is displayed correctly on the nRF Cloud portal.
   The cloud connection is used to download GPS assistance data.
 * Your network operator should support Power Saving Mode (PSM) or Extended Discontinuous Reception (eDRX) with the SIM card that you are using.
   If you are using an iBasis SIM card, check the `iBasis network coverage spreadsheet`_ to see the supported features and network coverage for different countries.
@@ -367,7 +367,7 @@ Complete the following steps to test the GNSS functionality:
 1. If you have an external antenna for your nRF9160 DK, attach it to connector **J2** to the left of the LTE antenna.
    See `nRF9160 DK GPS`_ for more information.
 #. Turn on or reset your DK.
-#. Go to `nRF Cloud`_ and sign in.
+#. Log in to the `nRF Cloud`_ portal.
 #. Click :guilabel:`Devices` under :guilabel:`Device Management` in the navigation pane on the left.
 
    .. figure:: /images/nrfcloud_devices.png

@@ -51,6 +51,7 @@ The installation process is different depending on your operating system.
          :dedent: 6
          :start-after: .. _install_dependencies_windows:
          :end-before: #. Close the window and open a new
+
       Ensure that these dependencies are installed with their versions as specified in the :ref:`Required tools table <req_tools_table>`.
 
    .. group-tab:: Linux
