@@ -14,6 +14,7 @@
 #endif /* CONFIG_NRF_MODEM_LIB */
 #include <zephyr/sys/reboot.h>
 #include <net/lwm2m_client_utils_fota.h>
+#include <net/nrf_cloud.h>
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
 #include <net/nrf_cloud_agps.h>
@@ -241,6 +242,11 @@ static void handle_nrf_modem_lib_init_ret(void)
 		LOG_ERR("nRF modem lib initialization failed, error: %d", ret);
 		break;
 	}
+
+#if defined(CONFIG_NRF_CLOUD_FOTA)
+	/* Ignore return value, rebooting below */
+	(void)nrf_cloud_fota_pending_job_validate(NULL);
+#endif
 
 	LOG_WRN("Rebooting...");
 	LOG_PANIC();

@@ -102,6 +102,7 @@ nRF9160: Asset Tracker v2
   * Fixed:
 
     * An issue that reports GNSS altitude, accuracy, and speed incorrectly when using LwM2M engine.
+    * An issue that caused modem FOTA jobs to be reported as not validated to nRF Cloud.
 
 nRF9160: Serial LTE modem
 -------------------------
@@ -177,7 +178,7 @@ nRF9160 samples
 
     * Default configuration conforms to the LwM2M specification v1.0 instead of v1.1.
       For enabling v1.1 there is already an overlay file.
-    * Bootstrap is not TLV only anymore. 
+    * Bootstrap is not TLV only anymore.
       With v1.1, preferred content format is sent in the bootstrap request.
       SenML CBOR takes precedence over SenML JSON and OMA TLV, when enabled.
 
