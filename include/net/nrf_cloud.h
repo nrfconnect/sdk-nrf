@@ -650,7 +650,7 @@ int nrf_cloud_jwt_generate(uint32_t time_valid_s, char * const jwt_buf, size_t j
  *
  * @retval 0       A Pending FOTA job has been processed.
  * @retval -ENODEV No pending/unvalidated FOTA job exists.
- * @return A negative value indicates an error.
+ * @retval -ENOENT Error; unknown FOTA job type.
  */
 int nrf_cloud_pending_fota_job_process(struct nrf_cloud_settings_fota_job * const job,
 				       bool * const reboot_required);
@@ -688,6 +688,25 @@ int nrf_cloud_handle_error_message(const char *const buf,
 				   const char *const app_id,
 				   const char *const msg_type,
 				   enum nrf_cloud_error *const err);
+
+/**
+ * @brief Function to validate a pending FOTA installation before initializing this library.
+ *        This function enables the application to control the reboot/reinit process during FOTA
+ *        updates. If this function is not called directly by the application, it will
+ *        be called internally when @ref nrf_cloud_init is executed.
+ *        Depends on CONFIG_NRF_CLOUD_FOTA.
+ *
+ * @param[out] fota_type_out FOTA type of pending job.
+ *                           NRF_CLOUD_FOTA_TYPE__INVALID if no pending job.
+ *                           Can be NULL.
+ *
+ * @retval 0 Pending FOTA job processed.
+ * @retval 1 Pending FOTA job processed and requires the application to perform a reboot or,
+ *           for NRF_CLOUD_FOTA_MODEM types, reinitialization of the modem library.
+ * @retval -ENODEV No pending/unvalidated FOTA job exists.
+ * @retval -ENOENT Error; unknown FOTA job type.
+ */
+int nrf_cloud_fota_pending_job_validate(enum nrf_cloud_fota_type * const fota_type_out);
 
 /** @} */
 

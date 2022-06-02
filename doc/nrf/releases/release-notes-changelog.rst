@@ -314,7 +314,12 @@ Libraries for networking
   * :ref:`lib_nrf_cloud` library:
 
     * Fixed:
+
       * An issue that caused the application to receive multiple disconnect events.
+
+    * Added:
+
+      * :c:func:`nrf_cloud_fota_pending_job_validate` function that enables an application to validate a pending FOTA job before initializing the :ref:`lib_nrf_cloud` library.
 
 Libraries for NFC
 -----------------
