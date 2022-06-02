@@ -87,11 +87,13 @@ Implementation details
 
 The script converts the Model ID and Anti-Spoofing Private Key to bytes and places them under the predefined offsets in the generated hexadecimal file.
 The ID and the key are required by the Google Fast Pair Service and are provided as command line arguments (see `Using the script`_).
-The magic data with predefined value is placed right before and right after the mentioned provisioning data.
+The magic data with predefined value is placed right before the mentioned provisioning data.
+The SHA-256 hash is calculated using the magic data and the provisioning data, and then placed right after the provisioning data to ensure data integrity.
 
 The generated data must be placed on a dedicated ``bt_fast_pair`` partition defined by the :ref:`partition_manager`.
 The :ref:`bt_fast_pair_readme` knows both the offset sizes and lengths of the individual data fields in the provisioning data.
 The service accesses the data by reading flash content.
+The service calculates the hash on its own and checks whether it matches the hash stored on the partition.
 
 Dependencies
 ************

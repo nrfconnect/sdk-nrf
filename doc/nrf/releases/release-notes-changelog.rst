@@ -240,7 +240,9 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-|no_changes_yet_note|
+* :ref:`bt_fast_pair_readme` service:
+
+  * Added a SHA-256 hash check to ensure the Fast Pair provisioning data integrity.
 
 Bootloader libraries
 --------------------
@@ -322,7 +324,9 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-|no_changes_yet_note|
+* :ref:`bt_fast_pair_provision_script`:
+
+  * Added a SHA-256 hash of the Fast Pair provisioning data to ensure its integrity.
 
 Unity
 -----
