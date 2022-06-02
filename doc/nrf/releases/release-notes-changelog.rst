@@ -122,7 +122,10 @@ For lists of protocol-specific changes, see `Protocols`_.
 Bluetooth samples
 -----------------
 
-|no_changes_yet_note|
+* :ref:`ble_nrf_dm` sample:
+
+  * Split the configuration of the Distance Measurement module from the Nordic Distance Measurement library.
+    This allows the use of the Nordic Distance Measurement library without the module.
 
 
 Bluetooth mesh samples
