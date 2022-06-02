@@ -56,10 +56,15 @@ static void cmee_disable(void)
 
 static int translate_error(int err)
 {
-	/* In case of CME error translate the error value to
-	 * an errno value.
-	 */
-	switch (err) {
+	if (err < 0) {
+		/* Command did not reach modem,
+		 * return error from nrf_modem_at_cmd() directly
+		 */
+		return err;
+	}
+
+	/* In case of CME error translate to an errno value */
+	switch (nrf_modem_at_err(err)) {
 	case 513:
 		return -ENOENT;
 	case 514:
@@ -73,11 +78,9 @@ static int translate_error(int err)
 		 * Return a magic value to make sure this
 		 * situation is clearly distinguishable.
 		 */
-		__ASSERT(false, "Untranslated CME error %d!", err);
+		__ASSERT(false, "Untranslated CME error %d!", nrf_modem_at_err(err));
 		return 0xBAADBAAD;
 	}
-
-	return err;
 }
 
 /* Read the given credential into the static buffer */
@@ -97,7 +100,7 @@ static int key_fetch(nrf_sec_tag_t tag,
 	}
 
 	if (err) {
-		return translate_error(nrf_modem_at_err(err));
+		return translate_error(err);
 	}
 
 	return 0;
@@ -124,7 +127,7 @@ int modem_key_mgmt_write(nrf_sec_tag_t sec_tag,
 	}
 
 	if (err) {
-		return translate_error(nrf_modem_at_err(err));
+		return translate_error(err);
 	}
 
 	return 0;
@@ -218,7 +221,7 @@ int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
 	}
 
 	if (err) {
-		return translate_error(nrf_modem_at_err(err));
+		return translate_error(err);
 	}
 
 	return 0;
@@ -246,7 +249,7 @@ int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 	}
 
 	if (err) {
-		return translate_error(nrf_modem_at_err(err));
+		return translate_error(err);
 	}
 
 	if (strlen(scratch_buf) > strlen("OK\r\n")) {

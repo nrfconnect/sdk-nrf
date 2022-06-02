@@ -208,7 +208,12 @@ Bootloader libraries
 Modem libraries
 ---------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * :ref:`modem_key_mgmt` library:
+
+    * Fixed:
+      * An issue that would cause the library to assert on a unhandled CME error when the AT command failed to be sent.
 
 Libraries for networking
 ------------------------
