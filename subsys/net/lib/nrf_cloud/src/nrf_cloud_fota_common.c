@@ -16,6 +16,87 @@
 
 LOG_MODULE_REGISTER(nrf_cloud_fota_common, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
+enum nrf_cloud_fota_validate_status boot_fota_validate_get(
+	const enum nrf_cloud_fota_bootloader_status_flags bl_flags)
+{
+	enum nrf_cloud_fota_validate_status validate = NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
+
+	/* Rebooted, compare active slot with previous, if set */
+	if (bl_flags & NRF_CLOUD_FOTA_BL_STATUS_S0_FLAG_SET) {
+#if defined(CONFIG_FOTA_DOWNLOAD)
+		/* If the slot has changed, so has the (b1) bootloader */
+		bool s0_active;
+		bool s0_prev = bl_flags & NRF_CLOUD_FOTA_BL_STATUS_S0_WAS_ACTIVE;
+		int err = fota_download_s0_active_get(&s0_active);
+
+		if (err) {
+			LOG_WRN("Active slot unknown, error: %d", err);
+		} else if (s0_active != s0_prev) {
+			LOG_INF("Bootloader slot changed, FOTA update validated");
+			validate = NRF_CLOUD_FOTA_VALIDATE_PASS;
+		} else {
+			LOG_WRN("Bootloader slot unchanged, FOTA update invalidated");
+			validate = NRF_CLOUD_FOTA_VALIDATE_FAIL;
+		}
+#endif
+	}
+
+	if (validate == NRF_CLOUD_FOTA_VALIDATE_UNKNOWN) {
+		LOG_WRN("Bootloader FOTA update complete but not validated");
+	}
+
+	return validate;
+}
+
+enum nrf_cloud_fota_validate_status app_fota_validate_get(void)
+{
+	enum nrf_cloud_fota_validate_status validate = NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
+
+#if defined(CONFIG_MCUBOOT_IMG_MANAGER)
+	if (!boot_is_img_confirmed()) {
+		int err = boot_write_img_confirmed();
+
+		if (err) {
+			LOG_ERR("Application FOTA update confirmation failed: %d", err);
+			/* If this fails then MCUBOOT will revert
+			* to the previous image on reboot
+			*/
+			validate = NRF_CLOUD_FOTA_VALIDATE_FAIL;
+			LOG_INF("Previous version will be restored on next boot");
+		} else {
+			LOG_INF("App FOTA update confirmed");
+			validate = NRF_CLOUD_FOTA_VALIDATE_PASS;
+		}
+	}
+#endif
+
+	return validate;
+}
+
+enum nrf_cloud_fota_validate_status modem_fota_validate_get(void)
+{
+#if defined(CONFIG_NRF_MODEM_LIB)
+	int modem_lib_init_result = nrf_modem_lib_get_init_ret();
+
+	switch (modem_lib_init_result) {
+	case MODEM_DFU_RESULT_OK:
+		LOG_INF("Modem FOTA update confirmed");
+		return NRF_CLOUD_FOTA_VALIDATE_PASS;
+	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+	case MODEM_DFU_RESULT_UUID_ERROR:
+	case MODEM_DFU_RESULT_AUTH_ERROR:
+	case MODEM_DFU_RESULT_HARDWARE_ERROR:
+		LOG_ERR("Modem FOTA error: %d", modem_lib_init_result);
+		return NRF_CLOUD_FOTA_VALIDATE_FAIL;
+	default:
+		LOG_INF("Modem FOTA result unknown: %d", modem_lib_init_result);
+		break;
+	}
+#endif
+
+	return NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
+}
+
 int nrf_cloud_bootloader_fota_slot_set(struct nrf_cloud_settings_fota_job * const job)
 {
 	int err = -ENOTSUP;
@@ -57,62 +138,22 @@ int nrf_cloud_pending_fota_job_process(struct nrf_cloud_settings_fota_job * cons
 		return -EINVAL;
 	}
 
-	if (job->validate != NRF_CLOUD_FOTA_VALIDATE_PENDING) {
+	if ((job->validate != NRF_CLOUD_FOTA_VALIDATE_PENDING) ||
+	    (job->type == NRF_CLOUD_FOTA_TYPE__INVALID)) {
 		return -ENODEV;
 	}
 
-	int err;
-
 	if (job->type == NRF_CLOUD_FOTA_MODEM) {
-#if defined(CONFIG_NRF_MODEM_LIB)
-		int modem_lib_init_result = nrf_modem_lib_get_init_ret();
+		job->validate = modem_fota_validate_get();
 
-		switch (modem_lib_init_result) {
-		case MODEM_DFU_RESULT_OK:
-			LOG_INF("Modem FOTA update confirmed");
-			job->validate = NRF_CLOUD_FOTA_VALIDATE_PASS;
-			break;
-		case MODEM_DFU_RESULT_UUID_ERROR:
-		case MODEM_DFU_RESULT_AUTH_ERROR:
-		case MODEM_DFU_RESULT_HARDWARE_ERROR:
-		case MODEM_DFU_RESULT_INTERNAL_ERROR:
-			LOG_ERR("Modem FOTA error: %d", modem_lib_init_result);
-			job->validate = NRF_CLOUD_FOTA_VALIDATE_FAIL;
-			break;
-		default:
-			LOG_INF("Modem FOTA result unknown: %d", modem_lib_init_result);
-			job->validate = NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
-			break;
-		}
-#else
-		job->validate = NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
-#endif
 		*reboot_required = true;
-
 		LOG_INF("Modem FOTA update complete on reboot");
-
 	} else if (job->type == NRF_CLOUD_FOTA_APPLICATION) {
+		job->validate = app_fota_validate_get();
 
-		job->validate = NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
-
-#if defined(CONFIG_MCUBOOT_IMG_MANAGER)
-		if (!boot_is_img_confirmed()) {
-			err = boot_write_img_confirmed();
-			if (err) {
-				LOG_ERR("Application FOTA update confirmation failed: %d",
-					err);
-				/* If this fails then MCUBOOT will revert
-				 * to the previous image on reboot
-				 */
-				job->validate = NRF_CLOUD_FOTA_VALIDATE_FAIL;
-				*reboot_required = true;
-				LOG_INF("Rebooting to revert to previous version...");
-			} else {
-				LOG_INF("App FOTA update confirmed");
-				job->validate = NRF_CLOUD_FOTA_VALIDATE_PASS;
-			}
+		if (job->validate == NRF_CLOUD_FOTA_VALIDATE_FAIL) {
+			*reboot_required = true;
 		}
-#endif
 	} else if (job->type == NRF_CLOUD_FOTA_BOOTLOADER) {
 		/* The first boot after the completed download will execute
 		 * the old MCUBOOT image. One more reboot is required.
@@ -125,32 +166,10 @@ int nrf_cloud_pending_fota_job_process(struct nrf_cloud_settings_fota_job * cons
 			return 0;
 		}
 
-		err = -1;
-
-		/* Rebooted, compare active slot with previous, if set */
-		if (job->bl_flags & NRF_CLOUD_FOTA_BL_STATUS_S0_FLAG_SET) {
-#if defined(CONFIG_FOTA_DOWNLOAD)
-			/* If the slot has changed, so has the (b1) bootloader */
-			bool s0_active;
-			bool s0_prev = job->bl_flags & NRF_CLOUD_FOTA_BL_STATUS_S0_WAS_ACTIVE;
-
-			err = fota_download_s0_active_get(&s0_active);
-			if (err) {
-				LOG_WRN("Active slot unknown, error: %d", err);
-			} else if (s0_active != s0_prev) {
-				LOG_INF("Bootloader slot changed, FOTA update validated");
-				job->validate = NRF_CLOUD_FOTA_VALIDATE_PASS;
-			} else {
-				LOG_WRN("Bootloader slot unchanged, FOTA update invalidated");
-				job->validate = NRF_CLOUD_FOTA_VALIDATE_FAIL;
-			}
-#endif
-		}
-
-		if (err) {
-			job->validate = NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
-			LOG_WRN("Bootloader FOTA update complete but not validated");
-		}
+		job->validate = boot_fota_validate_get(job->bl_flags);
+	} else {
+		LOG_ERR("Unknown FOTA job type: %d", job->type);
+		return -ENOENT;
 	}
 
 	return 0;

@@ -127,6 +127,8 @@ static struct nrf_cloud_settings_fota_job saved_job = {
 };
 static bool initialized;
 static bool fota_dl_initialized;
+/** Flag to indicate that a pending FOTA job was validated and a reboot is required */
+static bool reboot_on_init;
 
 SETTINGS_STATIC_HANDLER_DEFINE(fota, NRF_CLOUD_SETTINGS_FULL_FOTA, NULL,
 			       fota_settings_set, NULL, NULL);
@@ -171,10 +173,68 @@ static int fota_settings_set(const char *key, size_t len_rd,
 	return 0;
 }
 
+static int load_fota_settings(void)
+{
+	int ret = settings_subsys_init();
+
+	if (ret) {
+		LOG_ERR("Settings init failed: %d", ret);
+		return ret;
+	}
+
+	ret = settings_load_subtree(settings_handler_fota.name);
+	if (ret) {
+		LOG_ERR("Cannot load settings: %d", ret);
+	}
+
+	return ret;
+}
+
+int nrf_cloud_fota_pending_job_validate(enum nrf_cloud_fota_type * const fota_type_out)
+{
+	bool reboot = false;
+	int err = load_fota_settings();
+
+	if (fota_type_out) {
+		*fota_type_out = (err ? NRF_CLOUD_FOTA_TYPE__INVALID : saved_job.type);
+	}
+
+	if (err) {
+		return -EIO;
+	}
+
+	err = nrf_cloud_pending_fota_job_process(&saved_job, &reboot);
+	if (err) {
+		return err;
+	}
+
+	/* Do not enforce a reboot for modem updates since they can also be handled by
+	 * reinitializing the modem lib
+	 */
+	if (saved_job.type != NRF_CLOUD_FOTA_MODEM) {
+		reboot_on_init = reboot;
+	}
+
+	if (save_validate_status(saved_job.id, saved_job.type, saved_job.validate)) {
+		LOG_WRN("Failed to save status, job will be completed without validation");
+	}
+
+	return (int)reboot;
+}
+
+static void fota_reboot(void)
+{
+	LOG_INF("Rebooting to complete FOTA update...");
+	sys_reboot(SYS_REBOOT_COLD);
+}
+
 int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb)
 {
 	int ret;
-	bool reboot_required = false;
+
+	if (reboot_on_init) {
+		fota_reboot();
+	}
 
 	if (cb == NULL) {
 		LOG_ERR("Invalid parameter");
@@ -196,31 +256,19 @@ int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb)
 		fota_dl_initialized = true;
 	}
 
-	ret = settings_load_subtree(settings_handler_fota.name);
-	if (ret) {
-		LOG_ERR("Cannot load settings: %d", ret);
-		return ret;
-	}
+	ret = nrf_cloud_fota_pending_job_validate(NULL);
 
-	ret = nrf_cloud_pending_fota_job_process(&saved_job, &reboot_required);
-
-	if (ret == 0) {
-
-		/* save status and update when cloud connection is ready */
-		save_validate_status(saved_job.id, saved_job.type, saved_job.validate);
-
-		if (reboot_required) {
-			LOG_INF("Rebooting to complete FOTA update...");
-			sys_reboot(SYS_REBOOT_COLD);
-		}
-
+	/* This function returns 0 on success.
+	 * If successful AND a FOTA job has completed, this function returns 1.
+	 * Update ret variable appropriately.
+	 */
+	if (ret == 1) {
+		fota_reboot();
+	} else if (ret == 0) {
 		/* Indicate that a FOTA update has occurred */
 		ret = 1;
-
 	} else if (ret == -ENODEV) {
-		/* No job is pending validation */
-		ret = 0;
-
+		/* No job was pending validation, check for already validated modem job */
 		if (saved_job.type == NRF_CLOUD_FOTA_MODEM &&
 		    (saved_job.validate == NRF_CLOUD_FOTA_VALIDATE_PASS ||
 		     saved_job.validate == NRF_CLOUD_FOTA_VALIDATE_FAIL ||
@@ -228,6 +276,8 @@ int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb)
 			/* Device has just rebooted from a modem FOTA */
 			LOG_INF("FOTA updated modem");
 			ret = 1;
+		} else {
+			ret = 0;
 		}
 	} else {
 		LOG_ERR("Failed to process pending FOTA job, error: %d", ret);
