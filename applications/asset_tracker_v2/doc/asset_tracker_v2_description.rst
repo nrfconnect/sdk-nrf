@@ -363,18 +363,17 @@ After programming the application and all the prerequisites to your development 
 
 #. Observe that data is sampled periodically and sent to the cloud::
 
-    <inf> app_event_manager: APP_EVT_DATA_GET_ALL
-    <inf> app_event_manager: APP_EVT_DATA_GET - Requested data types (MOD_DYN, BAT, ENV, GNSS)
-    <inf> app_event_manager: GNSS_EVT_ACTIVE
-    <inf> app_event_manager: SENSOR_EVT_ENVIRONMENTAL_NOT_SUPPORTED
-    <inf> app_event_manager: MODEM_EVT_MODEM_DYNAMIC_DATA_READY
-    <inf> app_event_manager: MODEM_EVT_BATTERY_DATA_READY
-    <inf> app_event_manager: GNSS_EVT_DATA_READY
-    <inf> app_event_manager: DATA_EVT_DATA_READY
-    <inf> app_event_manager: GNSS_EVT_INACTIVE
-    <inf> app_event_manager: DATA_EVT_DATA_SEND
-    <wrn> data_module: No batch data to encode, ringbuffers empty
-    <inf> app_event_manager: CLOUD_EVT_DATA_ACK
+   <inf> app_event_manager: APP_EVT_DATA_GET_ALL
+   <inf> app_event_manager: APP_EVT_DATA_GET - Requested data types (MOD_DYN, BAT, ENV, GNSS)
+   <inf> app_event_manager: GNSS_EVT_ACTIVE
+   <inf> app_event_manager: SENSOR_EVT_ENVIRONMENTAL_NOT_SUPPORTED
+   <inf> app_event_manager: MODEM_EVT_MODEM_DYNAMIC_DATA_NOT_READY
+   <inf> app_event_manager: MODEM_EVT_BATTERY_DATA_READY
+   <inf> app_event_manager: GNSS_EVT_INACTIVE
+   <inf> app_event_manager: GNSS_EVT_DATA_READY
+   <inf> app_event_manager: DATA_EVT_DATA_READY
+   <inf> app_event_manager: DATA_EVT_DATA_SEND_BATCH
+   <inf> app_event_manager: CLOUD_EVT_DATA_SEND_QOS
 
 .. _asset_tracker_v2_internal_modules:
 
