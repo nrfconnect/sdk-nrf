@@ -442,7 +442,7 @@ You must sign up with `nRF Cloud`_ before you can start using the service.
 
 To create an nRF Cloud account, complete the following steps:
 
-1. Go to `nRF Cloud`_ and click :guilabel:`Register`.
+1. Open the `nRF Cloud`_ landing page and click :guilabel:`Register`.
 #. Enter your email address and choose a password, then click :guilabel:`Create Account`.
    nRF Cloud will send you a verification email.
 #. Copy the 6-digit verification code and paste it into the registration dialog box.
@@ -451,8 +451,8 @@ To create an nRF Cloud account, complete the following steps:
    If you closed the registration dialog box, you can repeat Step 1 and then click :guilabel:`Already have a code?`.
    Then enter your email and the verification code.
 
-You can now sign in on `nRF Cloud`_ with your email and the password your chose.
-After signing in, you are directed to the dashboard view that displays your device count and service usage.
+You can now log in to `nRF Cloud`_ with your email and the password your chose.
+After logging in, you are directed to the dashboard view that displays your device count and service usage.
 Next, you need to activate the SIM card for the Thingy:91.
 
 Activating the iBasis SIM card
@@ -485,7 +485,7 @@ To activate the SIM card, complete the following steps:
 
          Inserting SIM
 
-#. Sign in to nRF Cloud.
+#. Log in to the nRF Cloud portal.
 #. Click the large plus sign in the upper-left corner.
    The :guilabel:`Add New` window appears.
 
@@ -530,7 +530,7 @@ complete the following steps:
    After a few moments, the nRF Cloud user association process starts.
    This is indicated by white double pulse blinking of the Thingy:91's RGB LED as indicated in :ref:`Operating states <led_indication>`.
 
-#. To complete the user association, navigate to `nRF Cloud`_.
+#. To complete the user association, open the `nRF Cloud`_ portal.
 #. Click the large plus sign in the upper-left corner.
    The :guilabel:`Add New` window appears.
 
@@ -574,7 +574,7 @@ complete the following steps:
 
    .. note::
 
-      If you see an error message, check the error code and see `nRF Cloud REST API (v1)`_ in nRF Cloud to find out what is causing the error.
+      If you see an error message, check the error code and see `nRF Cloud REST API (v1)`_ to find out what is causing the error.
 
 #. When the message has disappeared, go to the menu on the left and click :guilabel:`Devices`.
 
@@ -583,7 +583,7 @@ complete the following steps:
 
    .. note::
 
-      It might take a while for the sensor data to appear in the nRF Cloud UI, depending on the duration of time GNSS uses to search for a fix.
+      It might take a while for the sensor data to appear in the nRF Cloud portal, depending on the duration of time GNSS uses to search for a fix.
 
 Next steps
 **********
