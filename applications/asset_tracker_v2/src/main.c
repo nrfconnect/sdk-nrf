@@ -90,11 +90,6 @@ static bool modem_static_sampled;
  */
 static void data_sample_timer_handler(struct k_timer *timer);
 
-/* Timer callback used to signal when the application is expecting movement to trigger the next
- * sample request.
- */
-static void waiting_for_movement_handler(struct k_timer *timer);
-
 /* Application module message queue. */
 #define APP_QUEUE_ENTRY_COUNT		10
 #define APP_QUEUE_BYTE_ALIGNMENT	4
@@ -113,7 +108,7 @@ K_TIMER_DEFINE(movement_timeout_timer, data_sample_timer_handler, NULL);
  * lower power consumption by limiting how often GNSS search is performed and
  * data is sent on air.
  */
-K_TIMER_DEFINE(movement_resolution_timer, waiting_for_movement_handler, NULL);
+K_TIMER_DEFINE(movement_resolution_timer, NULL, NULL);
 
 /* Module data structure to hold information of the application module, which
  * opens up for using convenience functions available for modules.
@@ -377,12 +372,6 @@ static void data_sample_timer_handler(struct k_timer *timer)
 	SEND_EVENT(app, APP_EVT_DATA_GET_ALL);
 }
 
-static void waiting_for_movement_handler(struct k_timer *timer)
-{
-	ARG_UNUSED(timer);
-	SEND_EVENT(app, APP_EVT_ACTIVITY_DETECTION_ENABLE);
-}
-
 /* Static module functions. */
 static void passive_mode_timers_start_all(void)
 {
@@ -414,8 +403,6 @@ static void active_mode_timers_start_all(void)
 
 	k_timer_stop(&movement_resolution_timer);
 	k_timer_stop(&movement_timeout_timer);
-
-	SEND_EVENT(app, APP_EVT_ACTIVITY_DETECTION_DISABLE);
 }
 
 static void data_get(void)
@@ -525,7 +512,7 @@ void on_sub_state_passive(struct app_msg_data *msg)
 	}
 
 	if ((IS_EVENT(msg, ui, UI_EVT_BUTTON_DATA_READY)) ||
-	    (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_DATA_READY))) {
+	    (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED))) {
 
 		if (IS_EVENT(msg, ui, UI_EVT_BUTTON_DATA_READY) &&
 		    msg->module.ui.data.ui.button_number != 2) {

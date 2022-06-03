@@ -121,6 +121,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 }
 
 /* Static module functions. */
+
 #if defined(CONFIG_EXTERNAL_SENSORS)
 /* Function that enables or disables trigger callbacks from the accelerometer. */
 static void accelerometer_callback_set(bool enable)
@@ -131,6 +132,19 @@ static void accelerometer_callback_set(bool enable)
 	if (err) {
 		LOG_ERR("ext_sensors_accelerometer_trigger_callback_set, error: %d", err);
 	}
+}
+
+static void activity_data_send(const struct ext_sensor_evt *const acc_data)
+{
+	struct sensor_module_event *sensor_module_event = new_sensor_module_event();
+
+	if (acc_data->type == EXT_SENSOR_EVT_ACCELEROMETER_ACT_TRIGGER)	{
+		sensor_module_event->type = SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED;
+	} else {
+		__ASSERT_NO_MSG(acc_data->type == EXT_SENSOR_EVT_ACCELEROMETER_INACT_TRIGGER);
+		sensor_module_event->type = SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED;
+	}
+	APP_EVENT_SUBMIT(sensor_module_event);
 }
 
 static void movement_data_send(const struct ext_sensor_evt *const acc_data)
@@ -144,15 +158,18 @@ static void movement_data_send(const struct ext_sensor_evt *const acc_data)
 	sensor_module_event->data.accel.timestamp = k_uptime_get();
 	sensor_module_event->type = SENSOR_EVT_MOVEMENT_DATA_READY;
 
-	accelerometer_callback_set(false);
 	APP_EVENT_SUBMIT(sensor_module_event);
 }
 
 static void ext_sensor_handler(const struct ext_sensor_evt *const evt)
 {
 	switch (evt->type) {
-	case EXT_SENSOR_EVT_ACCELEROMETER_TRIGGER:
+	case EXT_SENSOR_EVT_ACCELEROMETER_ACT_TRIGGER:
 		movement_data_send(evt);
+		activity_data_send(evt);
+		break;
+	case EXT_SENSOR_EVT_ACCELEROMETER_INACT_TRIGGER:
+		activity_data_send(evt);
 		break;
 	case EXT_SENSOR_EVT_ACCELEROMETER_ERROR:
 		LOG_ERR("EXT_SENSOR_EVT_ACCELEROMETER_ERROR");
@@ -173,7 +190,29 @@ static void ext_sensor_handler(const struct ext_sensor_evt *const evt)
 		break;
 	}
 }
-#endif
+#endif /* CONFIG_EXTERNAL_SENSORS */
+
+static void apply_config(struct sensor_msg_data *msg)
+{
+#if defined(CONFIG_EXTERNAL_SENSORS)
+	int err;
+	double accelerometer_threshold =
+		msg->module.data.data.cfg.accelerometer_threshold;
+
+	err = ext_sensors_mov_thres_set(accelerometer_threshold);
+	if (err == -ENOTSUP) {
+		LOG_WRN("Passed in threshold value not valid");
+	} else if (err) {
+		LOG_ERR("Failed to set threshold, error: %d", err);
+	}
+
+	if (msg->module.data.data.cfg.active_mode) {
+		accelerometer_callback_set(false);
+	} else {
+		accelerometer_callback_set(true);
+	}
+#endif /* CONFIG_EXTERNAL_SENSORS */
+}
 
 static void environmental_data_get(void)
 {
@@ -264,18 +303,7 @@ static bool environmental_data_requested(enum app_module_data_type *data_list,
 static void on_state_init(struct sensor_msg_data *msg)
 {
 	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_INIT)) {
-#if defined(CONFIG_EXTERNAL_SENSORS)
-		int err;
-		double accelerometer_threshold =
-			msg->module.data.data.cfg.accelerometer_threshold;
-
-		err = ext_sensors_mov_thres_set(accelerometer_threshold);
-		if (err == -ENOTSUP) {
-			LOG_WRN("Passed in threshold value not valid");
-		} else if (err) {
-			LOG_ERR("Failed to set threshold, error: %d", err);
-		}
-#endif
+		apply_config(msg);
 		state_set(STATE_RUNNING);
 	}
 }
@@ -284,19 +312,7 @@ static void on_state_init(struct sensor_msg_data *msg)
 static void on_state_running(struct sensor_msg_data *msg)
 {
 	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_READY)) {
-
-#if defined(CONFIG_EXTERNAL_SENSORS)
-		int err;
-		double accelerometer_threshold =
-			msg->module.data.data.cfg.accelerometer_threshold;
-
-		err = ext_sensors_mov_thres_set(accelerometer_threshold);
-		if (err == -ENOTSUP) {
-			LOG_WRN("Passed in threshold value not valid");
-		} else if (err) {
-			LOG_ERR("Failed to set threshold, error: %d", err);
-		}
-#endif
+		apply_config(msg);
 	}
 
 	if (IS_EVENT(msg, app, APP_EVT_DATA_GET)) {
@@ -320,16 +336,6 @@ static void on_all_states(struct sensor_msg_data *msg)
 		SEND_SHUTDOWN_ACK(sensor, SENSOR_EVT_SHUTDOWN_READY, self.id);
 		state_set(STATE_SHUTDOWN);
 	}
-
-#if defined(CONFIG_EXTERNAL_SENSORS)
-	if (IS_EVENT(msg, app, APP_EVT_ACTIVITY_DETECTION_ENABLE)) {
-		accelerometer_callback_set(true);
-	}
-
-	if (IS_EVENT(msg, app, APP_EVT_ACTIVITY_DETECTION_DISABLE)) {
-		accelerometer_callback_set(false);
-	}
-#endif
 }
 
 static void module_thread_fn(void)

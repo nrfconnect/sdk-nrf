@@ -30,6 +30,16 @@ enum sensor_module_event_type {
 	 */
 	SENSOR_EVT_MOVEMENT_DATA_READY,
 
+	/** Accelerometer reported activity.
+	 *  Acceleration exceeded the configured activity threshold.
+	 */
+	SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED,
+
+	/** Accelerometer reported inactivity.
+	 *  Acceleration stayed below the threshold for a given time.
+	 */
+	SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED,
+
 	/** Environmental sensors have been sampled.
 	 *  Payload is of type @ref sensor_module_data (sensors).
 	 */
