@@ -275,6 +275,8 @@ Libraries for NFC
 Other libraries
 ---------------
 
+  * Added the documentation for :ref:`lib_adp536x` library.
+
   * Flash Patch:
 
     * Allow the :kconfig:option:`CONFIG_DISABLE_FLASH_PATCH` Kconfig option to be used on the nRF52833 SoC.

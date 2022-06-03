@@ -7,46 +7,46 @@ adp536x
    :local:
    :depth: 2
 
-The adp536x library provides an API to the ADP5360 power management IC.
+The adp536x library provides an API to the ADP5360 :term:`power management integrated circuit (PMIC)`.
 
 Implementation
 ==============
 
-The library accesses the features of the ADP5360 by conducting I2C transactions to its registers. Generic read, write and masked write functions are private to the library, and feature-specific functions are exposed to the user.
+The library accesses the features of the ADP5360 PMIC by conducting Inter-Integrated Circuit (I2C) transactions with its registers.
+Generic read, write, and masked write functions are private to the library.
+The feature-specific functions are available to the user.
 
 Supported features
 ==================
 
-The library exposes a number of functions to set operating parameters of the ADP5360, as well as reading out status values.
+The library provides several functions to set operating parameters for the ADP5360 PMIC and for reading status values.
 
 Requirements
 ************
 
-An I2C interface is required to communicate with the ADP5360.
+An I2C interface is required to communicate with the ADP5360 PMIC.
 
 Configuration
 *************
 
-The library is enabled by the :kconfig:option:`CONFIG_ADP536X` configuration option. The I2C bus to use can be set with :kconfig:option:`CONFIG_ADP536X_BUS_NAME`.
+To enable the library, set the :kconfig:option:`CONFIG_ADP536X` Kconfig option to ``y`` in the project configuration file :file:`prj.conf`.
+You can use the I2C bus by setting the :kconfig:option:`CONFIG_ADP536X_BUS_NAME` Kconfig option.
 
-Usage
-*****
-
-Initialize the library with :c:func:`adp536x_init`, and use the API to configure and read from the ADP5360 as desired.
+Initialize the library using the :c:func:`adp536x_init` function and use the API to configure and read from the ADP5360 PMIC.
 
 Dependencies
 ************
 
-I2C-capable hardware
+This library uses the I2C-capable hardware.
 
 API documentation
 *****************
 
-.. code-block::
+| Header file: :file:`include/adp536x`
+| Source files: :file:`lib/adp536x/src`
 
-   | Header file: :file:`include/adp536x`
-   | Source files: :file:`lib/adp536x/src`
+Following define VBUS current limit values, charging current values, and overcharge protection threshold values respectively:
 
-   .. doxygengroup:: adp536x
+.. doxygengroup:: adp536x
       :project: nrf
       :members:
