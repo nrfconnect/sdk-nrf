@@ -6,6 +6,3 @@ You can also configure it to use the :ref:`secure_partition_manager` instead of 
 
 For Thingy:91, when the sample is built using the ``thingy91_nrf9160_ns`` build target, it automatically includes the :ref:`secure_partition_manager`.
 You can also configure it to use :ref:`TF-M <ug_tfm>` instead of Secure Partition Manager.
-
-.. note::
-   TF-M is not completely supported for Thingy:91 v1.5.0 and lower versions. See :ref:`TF-M Known Issues<known_issue_tfm>` for more information.

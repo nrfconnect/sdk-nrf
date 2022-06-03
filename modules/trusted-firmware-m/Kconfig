@@ -89,6 +89,29 @@ config TFM_HW_INIT_RESET_ON_BOOT
 	  states of the architecture core blocks are restored to the
 	  reset values (as specified by the architecture).
 
+	  Note: This option is not needed when using an MCUBoot with the
+	  CONFIG_MCUBOOT_CLEANUP_ARM_CORE configuration enabled.
+
+config TFM_HW_INIT_NRF_PERIPHERALS
+	bool "Initialize peripherals state at boot"
+	depends on TFM_HW_INIT_RESET_ON_BOOT
+	help
+	  This options instructs TF-M to force the initializion of a select set
+	  of nRF peripherals to the reset values as specified by the product
+	  specification. The option is useful when the TF-M image is
+	  chain-loaded, for example, by a debugger or a bootloader, and we need
+	  to guarantee that the internal states of the peripheral blocks are
+	  restored to the reset values.
+
+	  The set of peripherals that are reset are:
+	  - RTC instances 0..2
+	  - UARTE instances 0..1
+	  - PPI or DPPI
+	  - CLOCK
+
+	  Note: This option is not needed when using an MCUBoot with the
+	  CONFIG_MCUBOOT_NRF_CLEANUP_PERIPHERAL configuration enabled.
+
 config TFM_HALT_ON_CORE_PANIC
 	bool "Halt TF-M on core panic"
 	default y if !RESET_ON_FATAL_ERROR
@@ -108,6 +131,7 @@ config TFM_ALLOW_NON_SECURE_RESET
 config BOOTLOADER_MCUBOOT
 	bool
 	imply TFM_HW_INIT_RESET_ON_BOOT
+	imply TFM_HW_INIT_NRF_PERIPHERALS
 
 endif # BUILD_WITH_TFM
 
