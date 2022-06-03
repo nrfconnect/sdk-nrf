@@ -82,6 +82,10 @@ struct dm_result {
 			/* MCPD: Distance estimate based on average phase slope estimation */
 			float phase_slope;
 
+#ifdef CONFIG_NRF_DM_USE_HIGH_PRECISION_CALC
+			/* MCPD: Distance estimate based on advanced algorithms */
+			float high_precision;
+#endif
 			/* RSSI: Distance estimate based on Friis path loss formula */
 			float rssi_openspace;
 

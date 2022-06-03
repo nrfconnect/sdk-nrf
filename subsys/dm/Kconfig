@@ -8,6 +8,12 @@ if NRF_DM
 
 menu "nRF DM (Distance Measurement)"
 
+config NRF_DM_USE_HIGH_PRECISION_CALC
+	default y
+	bool "Use high-precision distance estimation"
+	help
+		"Use a more compute-intensive algorithm for the distance estimation."
+
 choice NRF_DM_TIMER
 	default NRF_DM_TIMER2
 	prompt "Timer to use for the nrf_dm library."

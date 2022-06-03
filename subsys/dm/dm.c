@@ -244,7 +244,7 @@ static void mpsl_nonpreemptible_thread(void)
 	}
 }
 
-static void process_data(const nrf_dm_report_t *data)
+static void process_data(const nrf_dm_report_t *data, float high_precision_estimate)
 {
 	if (!data) {
 		result.status = false;
@@ -270,9 +270,12 @@ static void process_data(const nrf_dm_report_t *data)
 	} else {
 		result.dist_estimates.mcpd.ifft = data->distance_estimates.mcpd.ifft;
 		result.dist_estimates.mcpd.phase_slope = data->distance_estimates.mcpd.phase_slope;
+#ifdef CONFIG_NRF_DM_USE_HIGH_PRECISION_CALC
+		result.dist_estimates.mcpd.high_precision = high_precision_estimate;
+#endif
 		result.dist_estimates.mcpd.best = data->distance_estimates.mcpd.best;
 		result.dist_estimates.mcpd.rssi_openspace =
-						      data->distance_estimates.mcpd.rssi_openspace;
+			data->distance_estimates.mcpd.rssi_openspace;
 	}
 }
 
@@ -372,6 +375,7 @@ static void dm_thread(void)
 	enum mpsl_timeslot_call mpsl_api_call;
 	enum dm_call dm_api_call;
 	static nrf_dm_report_t report;
+	float high_precision_estimate;
 
 	mpsl_api_call = OPEN_SESSION;
 	err = k_msgq_put(&mpsl_api_msgq, &mpsl_api_call, K_FOREVER);
@@ -391,7 +395,12 @@ static void dm_thread(void)
 				if (dm_context.ranging_status) {
 					nrf_dm_populate_report(&report);
 					nrf_dm_calc(&report);
-					process_data(&report);
+#ifdef CONFIG_NRF_DM_USE_HIGH_PRECISION_CALC
+					high_precision_estimate = nrf_dm_high_precision_calc(&report);
+#else
+					high_precision_estimate = 0;
+#endif
+					process_data(&report, high_precision_estimate);
 				}
 
 				if (dm_context.cb->data_ready != NULL) {

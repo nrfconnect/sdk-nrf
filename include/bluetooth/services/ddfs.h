@@ -151,6 +151,10 @@ struct bt_ddfs_distance_measurement {
 			/** MCPD: Distance estimate based on IFFT of spectrum */
 			uint16_t ifft;
 
+#ifdef CONFIG_NRF_DM_USE_HIGH_PRECISION_CALC
+			/** MCPD: Distance estimate based on advanced algorithms */
+			uint16_t high_precision;
+#endif
 			/** MCPD: Distance estimate based on average phase slope estimation */
 			uint16_t phase_slope;
 
