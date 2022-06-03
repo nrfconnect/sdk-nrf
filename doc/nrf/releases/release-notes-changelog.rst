@@ -74,7 +74,10 @@ See `Thread samples`_ for the list of changes for the Thread samples.
 Zigbee
 ------
 
-|no_changes_yet_note|
+* Updated:
+
+  * Enabled the PAN ID conflict resolution in applications that uses :ref:`lib_zigbee_application_utilities` library.
+    For details, see `Libraries for Zigbee`_.
 
 See `Zigbee samples`_ for the list of changes for the Zigbee samples.
 
@@ -261,7 +264,10 @@ Shell libraries
 Libraries for Zigbee
 --------------------
 
-|no_changes_yet_note|
+* :ref:`lib_zigbee_application_utilities` library:
+
+  * Added :kconfig:option:`CONFIG_ZIGBEE_PANID_CONFLICT_RESOLUTION` for enabling automatic PAN ID conflict resolution.
+    This option is enabled by default.
 
 Shell libraries
 ---------------
