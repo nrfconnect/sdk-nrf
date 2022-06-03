@@ -163,13 +163,7 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 		evt_handler(&evt);
 	} else {
 #if defined(CONFIG_EXTERNAL_SENSORS_ACTIVITY_DETECTION_AUTO)
-		struct sensor_trigger trig = {
-			.chan = SENSOR_CHAN_ACCEL_XYZ,
-			.type = SENSOR_TRIG_THRESHOLD
-		};
-
-		int err = sensor_trigger_set(accel_sensor.dev,
-					     &trig, accelerometer_trigger_handler);
+		int err = ext_sensors_accelerometer_trigger_callback_set(true);
 
 		if (err) {
 			LOG_ERR("Could not set trigger for device %s, error: %d",
