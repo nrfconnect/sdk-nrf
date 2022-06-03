@@ -20,6 +20,10 @@ module = ZIGBEE_APP_UTILS
 module-str = Zigbee application utilities
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
+config ZIGBEE_PANID_CONFLICT_RESOLUTION
+	bool "Enable automatic PAN ID conflict resolution"
+	default y
+
 menuconfig ZIGBEE_FACTORY_RESET
 	bool "Enable API for Zigbee factory reset"
 	default y
