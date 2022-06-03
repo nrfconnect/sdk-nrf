@@ -423,16 +423,17 @@ Documentation
 
 * Added:
 
-* Added documentation page for the :ref:`lib_flash_map_pm` library.
-* :ref:`ug_thread_prebuilt_libs` as a separate page instead of being part of :ref:`ug_thread_configuring`.
+  * Added documentation page for the :ref:`lib_flash_map_pm` library.
+  * :ref:`ug_thread_prebuilt_libs` as a separate page instead of being part of :ref:`ug_thread_configuring`.
 
 * Updated:
 
-* :ref:`ug_thread_configuring` to better indicate what is required and what is optional.
-  Also added further clarifications to the page to make everything more clear.
+  * :ref:`ug_thread_configuring` to better indicate what is required and what is optional.
+    Also added further clarifications to the page to make everything more clear.
+  * :ref:`ug_nrf9160_gs` by moving :ref:`nrf9160_gs_updating_fw_modem` before :ref:`nrf9160_gs_updating_fw_application` because updating modem firmware erases application firmware.
 
 * Removed:
 
-* |no_changes_yet_note|
+  * |no_changes_yet_note|
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.

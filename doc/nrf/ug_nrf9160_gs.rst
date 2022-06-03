@@ -8,7 +8,7 @@ Getting started with nRF9160 DK
    :depth: 2
 
 This section will get you started with your nRF9160 DK.
-You will update the firmware (both the application firmware and the modem firmware) and the nRF Cloud certificates of the DK, and conduct some initial tests.
+You will update the firmware (both the modem firmware and the application firmware) and the nRF Cloud certificates of the DK, and conduct some initial tests.
 
 If you have already set up your nRF9160 DK and want to learn more, see the following documentation:
 
@@ -76,59 +76,6 @@ Modem firmware
   The zip is named :file:`mfwnrf9160_` followed by the firmware version number.
   Do not unzip this file.
 
-.. _nrf9160_gs_updating_fw_application:
-
-Updating the application firmware
-=================================
-
-To update the application firmware, complete the following steps.
-If you experience any problems during the process, restart the Programmer app by pressing ``Ctrl+R`` (``command+R`` in macOS), and try again.
-
-1. Open the Programmer app.
-#. Make sure the **PROG/DEBUG SW10** switch on the nRF9160 DK is set to **nRF91**.
-   On DK v0.9.0 and earlier, this is the **SW5** switch.
-#. Connect the nRF9160 DK to the computer with a micro-USB cable, and then turn the DK on.
-#. Click :guilabel:`Select device` and select the DK from the drop-down list.
-   You can identify the nRF9160 DK by the fact that it has three COM ports when you expand its entry.
-
-   .. figure:: /images/programmer_com_ports.png
-      :alt: Programmer - COM ports
-
-      Programmer - COM ports
-
-   If the three COM ports are not visible, press ``Ctrl+R`` in Windows or ``command+R`` in macOS to restart the Programmer application.
-
-   The button text changes to the type of the selected device, with the SEGGER ID below the name.
-   The :guilabel:`Device Memory Layout` section also changes its name to the device name, and indicates that the device is connected.
-   If the :guilabel:`Auto read memory` option is selected in the :guilabel:`Device` section, the memory layout will update.
-   If it is not selected and you wish to see the memory layout, click :guilabel:`Read` in the :guilabel:`Device` section.
-
-#. Click :guilabel:`Add file` in the :guilabel:`File` section, and select :guilabel:`Browse`.
-
-   .. figure:: /images/programmer_addfile_nrf9160dk.png
-      :alt: Programmer - Add file
-
-      Programmer - Add file
-
-#. Navigate to where you extracted the firmware, and then to the :file:`img_app_bl` folder there.
-#. Select either :file:`nrf9160dk_asset_tracker_v2_ltem_<version-number>.hex` (LTE-M mode) or :file:`nrf9160dk_asset_tracker_v2_nbiot_<version-number>.hex` (NB-IoT mode), depending on where you are located.
-   Check with your SIM card provider for the mode supported at your location.
-   If you are using the iBasis SIM card provided with the DK, you can see `iBasis IoT network coverage`_ .
-   You can use either mode if your location has support for both.
-
-   For NB-IoT, there is a second variant of the firmware in the :file:`nrf9160dk_asset_tracker_v2_nbiot_legacy_pco_<version-number>.hex` file.
-   Only use this legacy variant if your network does not support ePCO.
-
-#. Click the :guilabel:`Erase & write` button in the :guilabel:`Device` section to program the DK.
-   Do not unplug or turn off the DK during this process.
-
-   .. figure:: /images/programmer_erasewrite_nrf9160dk.png
-      :alt: Programmer - Erase & write
-
-      Programmer - Erase & write
-
-If you continue to updating the modem firmware, you can go directly to Step 5.
-
 .. _nrf9160_gs_updating_fw_modem:
 
 Updating the modem firmware
@@ -136,6 +83,10 @@ Updating the modem firmware
 
 To update the modem firmware, complete the following steps.
 If you experience any problems during the process, restart the Programmer app by pressing ``Ctrl+R`` (``command+R`` on macOS), and try again.
+
+.. note::
+
+   Updating the modem firmware erases the contents of the flash memory, so the application must be programmed again to the nRF9160 DK.
 
 1. Open the Programmer app.
 #. Make sure the **PROG/DEBUG SW10** switch on the nRF9160 DK is set to **nRF91**.
@@ -182,12 +133,62 @@ If you experience any problems during the process, restart the Programmer app by
    Do not unplug or turn off the device during this process.
 
 When the update is complete, you see a success message.
+If you update the application firmware now, you can go directly to Step 5 of :ref:`nrf9160_gs_updating_fw_application`.
 
 .. note::
 
    If you experience problems updating the modem firmware, click :guilabel:`Erase all` in the :guilabel:`Device` section of the side panel and try updating again.
 
-   Doing this erases the contents of the flash memory, so the application must be programmed again to the DK.
+.. _nrf9160_gs_updating_fw_application:
+
+Updating the application firmware
+=================================
+
+To update the application firmware, complete the following steps.
+If you experience any problems during the process, restart the Programmer app by pressing ``Ctrl+R`` (``command+R`` in macOS), and try again.
+
+1. Open the Programmer app.
+#. Make sure the **PROG/DEBUG SW10** switch on the nRF9160 DK is set to **nRF91**.
+   On DK v0.9.0 and earlier, this is the **SW5** switch.
+#. Connect the nRF9160 DK to the computer with a micro-USB cable, and then turn the DK on.
+#. Click :guilabel:`Select device` and select the DK from the drop-down list.
+   You can identify the nRF9160 DK by the fact that it has three COM ports when you expand its entry.
+
+   .. figure:: /images/programmer_com_ports.png
+      :alt: Programmer - COM ports
+
+      Programmer - COM ports
+
+   If the three COM ports are not visible, press ``Ctrl+R`` in Windows or ``command+R`` in macOS to restart the Programmer application.
+
+   The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
+   The :guilabel:`Device Memory Layout` section also changes its name to the device name, and indicates that the device is connected.
+   If the :guilabel:`Auto read memory` option is selected in the :guilabel:`Device` section, the memory layout will update.
+   If it is not selected and you wish to see the memory layout, click :guilabel:`Read` in the :guilabel:`Device` section.
+
+#. Click :guilabel:`Add file` in the :guilabel:`File` section, and select :guilabel:`Browse`.
+
+   .. figure:: /images/programmer_addfile_nrf9160dk.png
+      :alt: Programmer - Add file
+
+      Programmer - Add file
+
+#. Navigate to where you extracted the firmware, and then to the :file:`img_app_bl` folder there.
+#. Select either :file:`nrf9160dk_asset_tracker_v2_ltem_<version-number>.hex` (LTE-M mode) or :file:`nrf9160dk_asset_tracker_v2_nbiot_<version-number>.hex` (NB-IoT mode), depending on where you are located.
+   Check with your SIM card provider for the mode supported at your location.
+   If you are using the iBasis SIM card provided with the DK, you can see `iBasis IoT network coverage`_ .
+   You can use either mode if your location has support for both.
+
+   For NB-IoT, there is a second variant of the firmware in the :file:`nrf9160dk_asset_tracker_v2_nbiot_legacy_pco_<version-number>.hex` file.
+   Only use this legacy variant if your network does not support ePCO.
+
+#. Click the :guilabel:`Erase & write` button in the :guilabel:`Device` section to program the DK.
+   Do not unplug or turn off the DK during this process.
+
+   .. figure:: /images/programmer_erasewrite_nrf9160dk.png
+      :alt: Programmer - Erase & write
+
+      Programmer - Erase & write
 
 .. _nrf9160_gs_connecting_dk_to_cloud:
 
