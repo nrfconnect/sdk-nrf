@@ -536,15 +536,15 @@ int test_run(const struct shell *shell,
 		return err;
 	}
 
+	/* Make sure that all BLE procedures are finished. */
+	k_sleep(K_MSEC(500));
+
 	/* reset peer metrics */
 	err = bt_throughput_write(&throughput, dummy, 1);
 	if (err) {
 		shell_error(shell, "Reset peer metrics failed.");
 		return err;
 	}
-
-	/* Make sure that all BLE procedures are finished. */
-	k_sleep(K_MSEC(500));
 
 	/* get cycle stamp */
 	stamp = k_uptime_get_32();
