@@ -28,5 +28,6 @@ You can find more information about Thread on the `Thread Group`_ pages.
 
    ug_thread_overview.rst
    ug_thread_configuring.rst
+   ug_thread_prebuilt_libs.rst
    ug_thread_tools.rst
    ug_thread_certification.rst

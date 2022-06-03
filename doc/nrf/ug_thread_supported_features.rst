@@ -23,8 +23,8 @@ The OpenThread implementation of the Thread protocol supports all features defin
 
   * Coordinated Sampled Listening (CSL)
   * Link Metrics Probing
-  * Thread Domain unicast addressing
   * Multicast across Thread networks
+  * Thread Domain unicast addressing
 
 .. _thread_ug_supported_features_v12:
 
@@ -33,15 +33,12 @@ Thread 1.2 features
 
 The |NCS| implements all mandatory features from the Thread 1.2 Specification.
 
-The features introduced with the Thread 1.2 Specification are fully backward-compatible with Thread 1.1 (more specifically, the Thread 1.1.1 Specification).
+The features introduced with the Thread 1.2 Specification are fully backward-compatible with implementations using Thread 1.1 (more specifically, the Thread 1.1.1 Specification).
 Thread 1.2 improves network scalability, responsiveness, density, and power consumption.
 For more information about this Thread version, see the official `Thread 1.2 in Commercial White Paper`_ and the `Thread 1.2 Base Features`_ document.
 
 In |NCS|, you can choose which version of the Thread protocol to use in your application.
-By default, |NCS| supports Thread 1.2, but you can enable and configure Thread 1.1 by using :ref:`dedicated options <thread_ug_thread_specification_options>`.
-
-.. note::
-    See :ref:`thread_ug_thread_specification_options` for the list of 1.2 features that are currently available in |NCS|.
+By default, |NCS| enables Thread 1.2, but you can enable and configure Thread 1.1 by using the :ref:`dedicated specification option <thread_ug_thread_specification_options>`.
 
 Coordinated Sampled Listening (CSL)
 ===================================
@@ -80,16 +77,6 @@ Enhanced-ACK probing is the most power efficient method to retrieve link metrics
 |NCS| provides full Link Metrics support even for the RCP architecture, which is the most technically challenging one since the radio driver must handle the injection of Information Elements on time to match the acknowledgment timing requirements.
 The decision on how to interpret the link metrics information to adjust the transmission power is left to the application itself.
 
-Thread Domain unicast addressing
-================================
-
-Thread 1.2 Specification introduces the concept of Thread Domains.
-
-A Thread Domain is a set of Thread Devices that receive and apply a common Thread Domain operational configuration.
-The Thread Domain operational configuration enables Thread Devices to join and participate in larger interconnected systems extending beyond the limits of a single Thread network.
-A user or network administrator may use functions of either Thread Commissioning or Thread Border Routers to set up a common Thread Domain operational configuration for Thread Devices.
-The Thread Devices can belong to different Thread networks or Partitions that have potentially different per-network credentials.
-
 Multicast across Thread networks
 ================================
 
@@ -104,6 +91,17 @@ For the second case, a Thread Commissioner can be used as well to register allow
 
 The OpenThread stack will automatically handle the registration of multicast groups with proper PBBR whenever they are configured in the device.
 
+Thread Domain unicast addressing
+================================
+
+Thread 1.2 Specification introduces the concept of Thread Domains.
+
+A Thread Domain is a set of Thread Devices that receive and apply a common Thread Domain operational configuration.
+The Thread Domain operational configuration enables Thread Devices to join and participate in larger interconnected systems extending beyond the limits of a single Thread network.
+A user or network administrator may use functions of either Thread Commissioning or Thread Border Routers to set up a common Thread Domain operational configuration for Thread Devices.
+The Thread Devices can belong to different Thread networks or Partitions that have potentially different per-network credentials.
+
+.. _ug_thread_12_support_limitations:
 
 Limitations for Thread 1.2 support
 ==================================
