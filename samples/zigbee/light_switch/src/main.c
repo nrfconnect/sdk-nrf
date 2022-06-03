@@ -481,6 +481,7 @@ static void find_light_bulb_alarm(struct k_timer *timer)
 static void find_light_bulb(zb_bufid_t bufid)
 {
 	zb_zdo_match_desc_param_t *req;
+	zb_uint8_t tsn = ZB_ZDO_INVALID_TSN;
 
 	/* Initialize pointers inside buffer and reserve space for
 	 * zb_zdo_match_desc_param_t request.
@@ -502,7 +503,14 @@ static void find_light_bulb(zb_bufid_t bufid)
 	 * only one response.
 	 */
 	bulb_ctx.short_addr = 0xFFFF;
-	(void)zb_zdo_match_desc_req(bufid, find_light_bulb_cb);
+	tsn = zb_zdo_match_desc_req(bufid, find_light_bulb_cb);
+
+	/* Free buffer if failed to send a request. */
+	if (tsn == ZB_ZDO_INVALID_TSN) {
+		zb_buf_free(bufid);
+
+		LOG_ERR("Failed to send Match Descriptor request");
+	}
 }
 
 /**@brief Callback for detecting button press duration.
