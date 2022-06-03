@@ -327,11 +327,12 @@ Documentation
 
 * Added:
 
-* |no_changes_yet_note|
+* :ref:`ug_thread_prebuilt_libs` as a separate page instead of being part of :ref:`ug_thread_configuring`.
 
 * Updated:
 
-* |no_changes_yet_note|
+* :ref:`ug_thread_configuring` to better indicate what is required and what is optional.
+  Also added further clarifications to the page to make everything more clear.
 
 * Removed:
 

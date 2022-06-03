@@ -1,59 +1,72 @@
 .. _ug_thread_configuring:
 
-Configuring Thread in |NCS|
-###########################
+Configuring Thread in the |NCS|
+###############################
 
 .. contents::
    :local:
    :depth: 2
 
-This page describes what is needed to start working with Thread in |NCS|.
+This page describes the configuration you need to start working with Thread in the |NCS|.
 
+The page also lists additional options you can use to configure your Thread application.
 See :ref:`configure_application` for instructions on how to update the configuration for your application, permanently or temporarily.
 
-Required modules
-****************
+.. _ug_thread_required_configuration:
 
-Thread requires the following Zephyr modules to properly operate in |NCS|:
+Required configuration
+**********************
+
+Thread requires the following configuration when working in the |NCS|.
+All :ref:`openthread_samples` in the |NCS| have these set by default.
+
+.. _ug_thread_configuring_modules:
+
+Enable Zephyr modules
+=====================
+
+Thread requires the following Zephyr modules to properly operate in the |NCS|:
 
 * :ref:`zephyr:ieee802154_interface` radio driver - This library is automatically enabled when working with OpenThread on Nordic Semiconductor's development kits.
 * :ref:`zephyr:settings_api` subsystem - This subsystem is required to allow Thread to store settings in the non-volatile memory.
 
+.. _ug_thread_enable:
 .. _ug_thread_configuring_basic:
 
-Enabling OpenThread in |NCS|
-****************************
+Enable OpenThread in the |NCS|
+==============================
 
-To use the Thread protocol in |NCS|, set the following Kconfig options:
+To use the Thread protocol in the |NCS|, set the following Kconfig options:
 
 * :kconfig:option:`CONFIG_NETWORKING` - This option enables the generic link layer and the IP networking support.
 * :kconfig:option:`CONFIG_NET_L2_OPENTHREAD` - This option enables the OpenThread stack required for the correct operation of the Thread protocol and allows you to use it.
 * :kconfig:option:`CONFIG_MPSL` - This option enables the :ref:`nrfxlib:mpsl` (MPSL) implementation, which provides services for both :ref:`single-protocol and multi-protocol implementations <ug_thread_architectures>`.
+  This is automatically set for all samples in the |NCS| that use the :ref:`zephyr:ieee802154_interface` radio driver.
 
+.. _ug_thread_select_libraries:
 .. _ug_thread_configuring_basic_building:
 
-Selecting OpenThread libraries
-******************************
+Select OpenThread libraries
+===========================
 
-After enabling OpenThread in |NCS|, you must choose which OpenThread libraries to use.
-You can choose to either build the libraries from source or use pre-built variants of the libraries.
+After enabling OpenThread in the |NCS|, you must choose which OpenThread libraries to use.
+You can choose to either build the libraries from source or use :ref:`pre-built variants <ug_thread_prebuilt_libs>` of the libraries.
 
 Building the OpenThread libraries from source gives you full flexibility in configuration.
 Using pre-built variants can be useful for certification purposes.
 
-Configure OpenThread to build from source
-  Set :kconfig:option:`CONFIG_OPENTHREAD_SOURCES` to build the libraries from source.
+* :kconfig:option:`CONFIG_OPENTHREAD_SOURCES` - This option enables building the OpenThread libraries from source.
   This option is selected by default.
 
-  This allows you to define :ref:`ug_thread_configuring_additional` one by one.
+  Building from source allows you to define :ref:`ug_thread_configuring_additional` one by one.
   By default, the :ref:`thread_ug_feature_sets` option is set to custom (:kconfig:option:`CONFIG_OPENTHREAD_USER_CUSTOM_LIBRARY`), which allows you to create your own OpenThread stack configuration.
   However, you can select other feature sets as a basis.
 
   When building the OpenThread libraries from source, you can also :ref:`update the pre-built OpenThread libraries <thread_ug_feature_updating_libs>`.
 
-Configure OpenThread to use pre-built libraries
-  Set :kconfig:option:`CONFIG_OPENTHREAD_LIBRARY` to use pre-built libraries.
-  Select one of the :ref:`thread_ug_feature_sets` by enabling :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`, :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_FTD`, or :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD`.
+* :kconfig:option:`CONFIG_OPENTHREAD_LIBRARY` - This option enables OpenThread to use pre-built libraries.
+
+  You must select one of the :ref:`thread_ug_feature_sets` by enabling :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`, :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_FTD`, or :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD`.
 
   This disables building OpenThread from source files and links pre-built libraries instead.
 
@@ -61,6 +74,8 @@ Configure OpenThread to use pre-built libraries
 
 Additional configuration options
 ********************************
+
+In addition to the required configuration, you can configure other features such as which Thread Specification to use and whether to enable hardware-accelerated cryptography.
 
 Depending on your configuration needs, you can also set the following options:
 
@@ -81,12 +96,36 @@ See the following files for more options that you might want to change:
 * :file:`zephyr/subsys/net/l2/openthread/Kconfig.thread` - Thread network configuration options.
 
 .. note::
-    You can find the default configuration for all :ref:`openthread_samples` in the :file:`nrf/subsys/net/openthread/Kconfig.defconfig` file.
+   You can find the default configuration for all :ref:`openthread_samples` in the :file:`nrf/subsys/net/openthread/Kconfig.defconfig` file.
+
+.. _thread_ug_thread_specification_options:
+
+Thread Specification options
+============================
+
+The OpenThread stack can be configured to operate in compliance with either the Thread 1.1 Specification  or the Thread 1.2 Specification.
+You can change the stack version by using the following Kconfig options:
+
+* :kconfig:option:`CONFIG_OPENTHREAD_THREAD_VERSION_1_1` - Selects the Thread stack version that is compliant with the Thread 1.1 Specification.
+* :kconfig:option:`CONFIG_OPENTHREAD_THREAD_VERSION_1_2` - Selects the Thread stack version that is compliant with the Thread 1.2 Specification.
+  This option is enabled by default if no other option is selected.
+
+By enabling support for Thread 1.2, you enable the following :ref:`thread_ug_supported_features_v12` in addition to the Thread 1.1 features:
+
+* Coordinated Sampled Listening (CSL)
+* Link Metrics Probing
+* Multicast across Thread networks
+* Thread Domain unicast addressing
+* Enhanced Frame Pending
+* Enhanced Keep Alive
+
+For a list of all supported features in the |NCS|, see the :ref:`thread_ug_feature_sets`.
+For more information about Thread 1.2 features, see the `Thread 1.2 Base Features`_ document.
 
 .. _ug_thread_configuring_eui64:
 
-IEEE 802.15.4 EUI-64 configuration
-==================================
+IEEE 802.15.4 EUI-64 configuration options
+==========================================
 
 .. include:: /includes/ieee802154_eui64_conf.txt
 
@@ -100,10 +139,10 @@ At the end of the configuration process, you can check the EUI-64 value using Op
 
 .. _ug_thread_configuring_crypto:
 
-Hardware-accelerated cryptography
-=================================
+Hardware-accelerated cryptography options
+=========================================
 
-You can enable hardware-accelerated cryptography by using the :ref:`nrfxlib:nrf_security`.
+You can enable hardware-accelerated cryptography by using the :ref:`nrfxlib:nrf_security` (nrf_security).
 To do this, modify the setting of the following Kconfig option:
 
 * :kconfig:option:`CONFIG_OPENTHREAD_MBEDTLS` - Disable this option to disable the default mbedTLS configuration for OpenThread.
@@ -111,26 +150,7 @@ To do this, modify the setting of the following Kconfig option:
 
 For more configuration options, read the module documentation.
 
-.. _thread_ug_thread_specification_options:
-
-Thread Specification options
-============================
-
-The OpenThread stack can be configured to operate in compliance with either the Thread 1.1 Specification  or the :ref:`Thread 1.2 Specification <thread_ug_supported_features_v12>`.
-You can change the stack version by using the following Kconfig options:
-
-* :kconfig:option:`CONFIG_OPENTHREAD_THREAD_VERSION_1_1` - Selects the Thread stack version that is compliant with the Thread 1.1 Specification.
-* :kconfig:option:`CONFIG_OPENTHREAD_THREAD_VERSION_1_2` - Selects the Thread stack version that is compliant with the Thread 1.2 Specification.
-  This option is enabled by default if no other option is selected.
-
-By selecting support for Thread 1.2, you enable the following features in addition to the :ref:`Thread 1.1 features <thread_ug_supported_features>`:
-
-* Enhanced Frame Pending
-* Enhanced Keep Alive
-* Thread Domain Name
-* Coordinated Sampled Listening (CSL) Transmitter (for Full Thread Devices only)
-
-For a list of all supported features, see the :ref:`thread_ug_feature_sets`.
+.. _ug_thread_configure_commission:
 
 Thread commissioning options
 ============================
@@ -138,7 +158,7 @@ Thread commissioning options
 Thread commissioning is the process of adding new Thread devices to the network.
 See :ref:`thread_ot_commissioning` for more information.
 
-Configuring this process is optional, because the :ref:`openthread_samples` in |NCS| use hardcoded network information.
+Configuring this process is optional, because the :ref:`openthread_samples` in the the |NCS| use hardcoded network information.
 
 If you want to manually enable the Thread network Commissioner role on a device, set the following Kconfig option to the provided value:
 
@@ -173,7 +193,7 @@ You can enable the OpenThread stack logging for your project with the following 
 
 Both options must be enabled to allow logging.
 
-After setting these options, you can choose one of several :ref:`logging backends <ug_logging_backends>` available in Zephyr and supported in |NCS|.
+After setting these options, you can choose one of several :ref:`logging backends <ug_logging_backends>` available in Zephyr and supported in the |NCS|.
 
 .. note::
     If you are working with Thread samples, enabling logging and logging backend is optional.
@@ -243,277 +263,3 @@ To configure your Thread application on the nRF5340 DK to run with Trusted Firmw
 In the |NCS|, these options are enabled by default for the :ref:`application core <ug_nrf5340_intro_app_core>` of the :ref:`openthread_samples` that can be programmed with the ``nrf5340dk_nrf5340_cpuapp_ns`` build target.
 
 For more Trusted Firmware-M documentation, see :ref:`ug_tfm` and the official `TF-M documentation`_.
-
-.. _thread_ug_prebuilt:
-
-Pre-built libraries
-*******************
-
-The |NCS| provides a set of :ref:`nrfxlib:ot_libs`.
-These pre-built libraries are available in nrfxlib and provide features and optional functionalities from the OpenThread stack.
-You can use these libraries for building applications with support for the complete Thread Specification.
-
-To use a pre-built library, configure OpenThread to use pre-built libraries by setting the :kconfig:option:`CONFIG_OPENTHREAD_LIBRARY` Kconfig option and select one of the provided :ref:`thread_ug_feature_sets`.
-
-.. _thread_ug_feature_sets:
-
-Feature sets
-============
-
-A feature set defines a combination of OpenThread features for a specific use case.
-These feature sets are mainly used for pre-built libraries, but you can also use them for selecting several configuration options at once when you :ref:`build your application using OpenThread sources <ug_thread_configuring_basic_building>`.
-
-The |NCS| provides the following feature sets:
-
-* :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` - Enable the complete set of OpenThread features for the Thread Specification.
-* :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_FTD` - Enable optimized OpenThread features for FTD.
-* :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD` - Enable optimized OpenThread features for MTD.
-* :kconfig:option:`CONFIG_OPENTHREAD_USER_CUSTOM_LIBRARY` - Create a custom feature set for compilation when :ref:`building using OpenThread sources <ug_thread_configuring_basic_building>`.
-  This option is the default.
-  If you select :kconfig:option:`CONFIG_OPENTHREAD_LIBRARY`, choose a different feature set.
-
-  .. note::
-    When :ref:`building OpenThread from source <ug_thread_configuring_basic>`, you can select another feature set as base.
-    You can then manually enable additional features, but you cannot disable features that are selected by the feature set.
-
-The following table lists the supported features for each of these sets.
-No tick indicates that there is no support for the given feature in the related configuration, while the tick signifies that the feature is selected (``=1`` value).
-
-.. list-table::
-    :widths: auto
-    :header-rows: 1
-
-    * - OpenThread feature
-      - Master
-      - Optimized_FTD
-      - Optimized_MTD
-      - Custom
-    * - BORDER_AGENT
-      - ✔
-      -
-      -
-      -
-    * - BORDER_ROUTER
-      - ✔
-      -
-      -
-      -
-    * - CHILD_SUPERVISION
-      - ✔
-      - ✔
-      - ✔
-      -
-    * - COAP
-      - ✔
-      - ✔
-      - ✔
-      -
-    * - COAPS
-      - ✔
-      -
-      -
-      -
-    * - COMMISSIONER
-      - ✔
-      -
-      -
-      -
-    * - DIAGNOSTIC
-      - ✔
-      -
-      -
-      -
-    * - DNS_CLIENT
-      - ✔
-      - ✔
-      - ✔
-      -
-    * - DHCP6_SERVER
-      - ✔
-      -
-      -
-      -
-    * - DHCP6_CLIENT
-      - ✔
-      - ✔
-      - ✔
-      -
-    * - ECDSA
-      - ✔
-      - ✔
-      - ✔
-      -
-    * - IP6_FRAGM
-      - ✔
-      - ✔
-      - ✔
-      -
-    * - JAM_DETECTION
-      - ✔
-      -
-      -
-      -
-    * - JOINER
-      - ✔
-      - ✔
-      - ✔
-      -
-    * - LINK_RAW
-      - ✔
-      -
-      -
-      -
-    * - MAC_FILTER
-      - ✔
-      -
-      -
-      -
-    * - MTD_NETDIAG
-      - ✔
-      -
-      -
-      -
-    * - SERVICE
-      - ✔
-      -
-      -
-      -
-    * - SLAAC
-      - ✔
-      - ✔
-      - ✔
-      -
-    * - SNTP_CLIENT
-      - ✔
-      - ✔
-      - ✔
-      -
-    * - SRP_CLIENT
-      - ✔
-      - ✔
-      - ✔
-      -
-    * - UDP_FORWARD
-      - ✔
-      -
-      -
-      -
-    * - DUA (Thread 1.2)
-      - ✔
-      - ✔
-      - ✔
-      -
-    * - MLR (Thread 1.2)
-      - ✔
-      - ✔
-      - ✔
-      -
-    * - BACKBONE_ROUTER (Thread 1.2)
-      - ✔
-      -
-      -
-      -
-    * - LINK_METRICS_INITIATOR (Thread 1.2)
-      - ✔
-      - ✔
-      - ✔
-      -
-    * - LINK_METRICS_SUBJECT (Thread 1.2)
-      - ✔
-      - ✔
-      -
-      -
-    * - CSL_RECEIVER (Thread 1.2)
-      - ✔
-      -
-      - ✔
-      -
-
-For the full list of configuration options that were used during compilation, including their default values, see the :file:`openthread_lib_configuration.txt` file within each library folder in the nrfxlib repository.
-
-.. note::
-   The Backbone Router feature enables the functionality for the Thread Network side, but not for the Backbone side.
-
-.. _thread_ug_customizing_prebuilt:
-
-Customizing pre-built libraries
-===============================
-
-Selecting a feature set allows you to use the respective OpenThread features in your application.
-You might need to customize some configuration options to fit your use case though.
-
-Be aware of the following limitations when customizing the configuration of a pre-built library:
-
-* You can only update configuration options that are configurable at run time.
-  If you change any options that are compiled into the library, your changes will be ignored.
-* Changes to the configuration might impact the certification status of the pre-built libraries.
-  See :ref:`ug_thread_cert_options` for more information.
-
-The following list shows some of the configuration options that you might want to customize:
-
-* :kconfig:option:`CONFIG_OPENTHREAD_FTD` or :kconfig:option:`CONFIG_OPENTHREAD_MTD` - Select the :ref:`device type <thread_ug_device_type>`.
-  The :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD` feature set supports only the MTD device type.
-  The other feature sets support both device types.
-* :kconfig:option:`CONFIG_OPENTHREAD_COPROCESSOR` and :kconfig:option:`CONFIG_OPENTHREAD_COPROCESSOR_RCP` - Select the OpenThread architecture to use.
-  See :ref:`thread_architectures_designs_cp`.
-* :kconfig:option:`CONFIG_OPENTHREAD_MANUAL_START` - Choose whether to configure and join the Thread network automatically.
-  If you set this option to ``n``, also check and configure the network parameters that are used, for example:
-
-  * :kconfig:option:`CONFIG_OPENTHREAD_CHANNEL`
-  * :kconfig:option:`CONFIG_OPENTHREAD_NETWORKKEY`
-  * :kconfig:option:`CONFIG_OPENTHREAD_NETWORK_NAME`
-  * :kconfig:option:`CONFIG_OPENTHREAD_PANID`
-  * :kconfig:option:`CONFIG_OPENTHREAD_XPANID`
-
-.. _thread_ug_feature_updating_libs:
-
-Updating pre-built OpenThread libraries
-=======================================
-
-You can update the :ref:`nrfxlib:ot_libs` in nrfxlib when using any Thread sample if you configure the sample to build the OpenThread stack from source with :kconfig:option:`CONFIG_OPENTHREAD_SOURCES`.
-Use this functionality for :ref:`certification <ug_thread_cert>` of your configuration of the OpenThread libraries, for example.
-
-You can install the libraries either with or without debug symbols.
-Installing the libraries with debug symbols can be useful when debugging, but will take a significant amount of storage memory.
-You can remove the symbols when updating with the :kconfig:option:`CONFIG_OPENTHREAD_BUILD_OUTPUT_STRIPPED` Kconfig option enabled.
-The option is disabled by default.
-
-.. note::
-    When you select :kconfig:option:`CONFIG_OPENTHREAD_USER_CUSTOM_LIBRARY`, the location of the destination directory for the libraries depends on the chosen :ref:`nrf_security backend <nrfxlib:nrf_security_readme>`, either :kconfig:option:`CONFIG_CC3XX_BACKEND` or :kconfig:option:`CONFIG_OBERON_BACKEND`.
-
-Updating the libraries without debug symbols
---------------------------------------------
-
-There is a single command to update the libraries without debug symbols.
-When using the command line, run the command in the project folder.
-When using the |nRFVSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the command there.
-
-Use the following command:
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -b nrf52840dk_nrf52840 -t install_openthread_libraries -- -DOPENTHREAD_BUILD_OUTPUT_STRIPPED=y
-
-This command builds two versions of the libraries, with and without debug symbols, and installs only the version without debug symbols.
-|board_note_for_updating_libs|
-The :kconfig:option:`CONFIG_OPENTHREAD_BUILD_OUTPUT_STRIPPED` Kconfig option will be disabled again after this command completes.
-
-Updating the libraries with debug symbols
------------------------------------------
-
-There is a single command to update the libraries with debug symbols.
-When using the command line, run the command in the project folder.
-When using the |nRFVSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the command there.
-
-Use the following command:
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -b nrf52840dk_nrf52840 -t install_openthread_libraries
-
-|board_note_for_updating_libs|
-
-.. |board_note_for_updating_libs| replace:: This command also builds the sample on the specified board.
-   Make sure that the board you mention is compatible with the chosen sample.
