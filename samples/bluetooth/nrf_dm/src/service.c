@@ -82,8 +82,12 @@ void service_distance_measurement_update(const bt_addr_le_t *addr, const struct 
 				meter_to_decimeter(result->dist_estimates.rtt.rtt);
 	} else {
 		measurement.ranging_mode = BT_DDFS_DM_RANGING_MODE_MCPD;
+#ifdef CONFIG_NRF_DM_USE_HIGH_PRECISION_CALC
+		measurement.dist_estimates.mcpd.high_precision =
+			meter_to_decimeter(result->dist_estimates.mcpd.high_precision);
+#endif
 		measurement.dist_estimates.mcpd.ifft =
-				meter_to_decimeter(result->dist_estimates.mcpd.ifft);
+			meter_to_decimeter(result->dist_estimates.mcpd.ifft);
 		measurement.dist_estimates.mcpd.phase_slope =
 				meter_to_decimeter(result->dist_estimates.mcpd.phase_slope);
 		measurement.dist_estimates.mcpd.rssi_openspace =

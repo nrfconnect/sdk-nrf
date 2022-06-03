@@ -74,9 +74,15 @@ static struct peer_entry *mcpd_min_peer_result(struct peer_entry *a, struct peer
 		return a;
 	}
 
+#ifdef CONFIG_NRF_DM_USE_HIGH_PRECISION_CALC
+	if (a->result.dist_estimates.mcpd.high_precision > b->result.dist_estimates.mcpd.high_precision) {
+		return a;
+	}
+#else
 	if (a->result.dist_estimates.mcpd.best > b->result.dist_estimates.mcpd.best) {
 		return a;
 	}
+#endif
 	return b;
 }
 
@@ -134,6 +140,9 @@ static void led_notification(const struct peer_entry *peer)
 	if (peer->result.ranging_mode == DM_RANGING_MODE_RTT) {
 		res = peer->result.dist_estimates.rtt.rtt;
 	} else {
+#ifdef CONFIG_NRF_DM_USE_HIGH_PRECISION_CALC
+		res = peer->result.dist_estimates.mcpd.high_precision;
+#endif
 		res = peer->result.dist_estimates.mcpd.best;
 	}
 
@@ -164,11 +173,20 @@ static void print_result(struct dm_result *result)
 	if (result->ranging_mode == DM_RANGING_MODE_RTT) {
 		printk("rtt: rtt=%.2f\n", result->dist_estimates.rtt.rtt);
 	} else {
+#ifdef CONFIG_NRF_DM_USE_HIGH_PRECISION_CALC
+		printk("mcpd: high_precision=%.2f ifft=%.2f phase_slope=%.2f rssi_openspace=%.2f best=%.2f\n",
+			result->dist_estimates.mcpd.high_precision,
+			result->dist_estimates.mcpd.ifft,
+			result->dist_estimates.mcpd.phase_slope,
+			result->dist_estimates.mcpd.rssi_openspace,
+			result->dist_estimates.mcpd.best);
+#else
 		printk("mcpd: ifft=%.2f phase_slope=%.2f rssi_openspace=%.2f best=%.2f\n",
 			result->dist_estimates.mcpd.ifft,
 			result->dist_estimates.mcpd.phase_slope,
 			result->dist_estimates.mcpd.rssi_openspace,
 			result->dist_estimates.mcpd.best);
+#endif
 	}
 }
 
