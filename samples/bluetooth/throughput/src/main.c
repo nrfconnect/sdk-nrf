@@ -25,6 +25,8 @@
 
 #include <dk_buttons_and_leds.h>
 
+#include "main.h"
+
 #define DEVICE_NAME	CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 #define INTERVAL_MIN	0x140	/* 320 units, 400 ms */
@@ -54,9 +56,9 @@ static const struct bt_data sd[] = {
 	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
 
-static const char img[][81] = {
+static const char img[] =
 #include "img.file"
-};
+;
 
 static void button_handler_cb(uint32_t button_state, uint32_t has_changed);
 
@@ -394,25 +396,39 @@ static struct button_handler button = {
 	.cb = button_handler_cb,
 };
 
-static void button_handler_cb(uint32_t button_state, uint32_t has_changed)
+void select_role(bool is_central)
 {
 	int err;
-	uint32_t buttons = button_state & has_changed;
+	static bool role_selected;
 
-	if (buttons & DK_BTN1_MSK) {
+	if (role_selected) {
+		printk("\nCannot change role after it was selected once.\n");
+		return;
+	} else if (is_central) {
 		printk("\nCentral. Starting scanning\n");
 		scan_start();
-	} else if (buttons & DK_BTN2_MSK) {
+	} else {
 		printk("\nPeripheral. Starting advertising\n");
 		adv_start();
-	} else {
-		return;
 	}
+
+	role_selected = true;
 
 	/* The role has been selected, button are not needed any more. */
 	err = dk_button_handler_remove(&button);
 	if (err) {
 		printk("Button disable error: %d\n", err);
+	}
+}
+
+static void button_handler_cb(uint32_t button_state, uint32_t has_changed)
+{
+	ARG_UNUSED(has_changed);
+
+	if (button_state & DK_BTN1_MSK) {
+		select_role(true);
+	} else if (button_state & DK_BTN2_MSK) {
+		select_role(false);
 	}
 }
 
@@ -512,7 +528,9 @@ int test_run(const struct shell *shell,
 	uint64_t stamp;
 	int64_t delta;
 	uint32_t data = 0;
-	uint32_t prog = 0;
+	const char *img_ptr = img;
+	char str_buf[7];
+	int str_len;
 
 	/* a dummy data buffer */
 	static char dummy[495];
@@ -549,7 +567,7 @@ int test_run(const struct shell *shell,
 	/* get cycle stamp */
 	stamp = k_uptime_get_32();
 
-	while (prog < IMG_SIZE) {
+	while (*img_ptr) {
 		err = bt_throughput_write(&throughput, dummy, 495);
 		if (err) {
 			shell_error(shell, "GATT write failed (err %d)", err);
@@ -557,9 +575,13 @@ int test_run(const struct shell *shell,
 		}
 
 		/* print graphics */
-		printk("%c", img[prog / IMG_X][prog % IMG_X]);
+		str_len = (*img_ptr == '\x1b') ? 6 : 1;
+		memcpy(str_buf, img_ptr, str_len);
+		str_buf[str_len] = '\0';
+		img_ptr += str_len;
+		printk("%s", str_buf);
+
 		data += 495;
-		prog++;
 	}
 
 	delta = k_uptime_delta(&stamp);
@@ -614,8 +636,8 @@ void main(void)
 	}
 
 	printk("\n");
-	printk("Press button 1 on the central board.\n");
-	printk("Press button 2 on the peripheral board.\n");
+	printk("Press button 1 or type \"central\" on the central board.\n");
+	printk("Press button 2 or type \"peripheral\" on the peripheral board.\n");
 
 	buttons_init();
 }

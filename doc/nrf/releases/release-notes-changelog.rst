@@ -166,7 +166,10 @@ For lists of protocol-specific changes, see `Protocols`_.
 Bluetooth samples
 -----------------
 
-|no_changes_yet_note|
+* :ref:`ble_throughput` sample:
+
+  * Added terminal commands for selecting the role.
+  * Updated the ASCII art used for showing progress to feature the current Nordic Semiconductor logo.
 
 Bluetooth mesh samples
 ----------------------
