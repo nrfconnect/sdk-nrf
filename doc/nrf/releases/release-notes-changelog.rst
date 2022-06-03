@@ -213,6 +213,11 @@ Bluetooth samples
   * Fixed a build error related to the missing :kconfig:option:`CONFIG_BT_DF_CONNECTIONLESS_CTE_TX` Kconfig option.
     The option has been added and set to ``y`` in the sample's :file:`prj.conf` file.
 
+* :ref:`ble_throughput` sample:
+
+  * Fixed peer throughput calculations.
+    These were too low because the total transfer time incorrectly included 500ms delay without including the actual transfer.
+
 Bluetooth mesh samples
 ----------------------
 
