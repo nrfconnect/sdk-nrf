@@ -466,6 +466,10 @@ To enable the Zigbee application utilities library, set the :kconfig:option:`CON
 Logging
     To configure the logging level of the library, use the :kconfig:option:`CONFIG_ZIGBEE_APP_UTILS_LOG_LEVEL` Kconfig option.
 
+Automatic PAN ID conflict resolution
+    To enable automatic PAN ID conflict resolution, use the :kconfig:option:`CONFIG_ZIGBEE_PANID_CONFLICT_RESOLUTION` Kconfig option.
+    This option is enabled by default.
+
 Factory reset button
     To configure the time of the button press that initiates the device factory reset, use the :kconfig:option:`CONFIG_FACTORY_RESET_PRESS_TIME_SECONDS` Kconfig option.
     This option is set to 5 seconds by default.
