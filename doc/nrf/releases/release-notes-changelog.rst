@@ -122,8 +122,9 @@ For lists of protocol-specific changes, see `Protocols`_.
 Bluetooth samples
 -----------------
 
-|no_changes_yet_note|
+* :ref:`ble_nrf_dm` sample:
 
+    * Added support for the high accuracy distance estimate, which uses more compute-intensive algorithms to generate a distance estimate.
 
 Bluetooth mesh samples
 ----------------------
