@@ -37,7 +37,9 @@ typedef void (*le_audio_receive_cb)(const uint8_t *const data, size_t size, bool
  * @param bitrate	Pointer to bitrate used
  * @param sampling_rate	Pointer to sampling rate used
  *
- * @return	0 for success, error otherwise
+ * @return	0 for success,
+ *		-ENXIO if the feature is disabled,
+ *		Error otherwise
  */
 int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate);
 
@@ -45,8 +47,8 @@ int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate);
  * @brief	Increase volume by one step
  *
  * @return	0 for success,
- *		-ENXIO if the feature is disabled
- *		Other errors from underlying drivers.
+ *		-ENXIO if the feature is disabled,
+ *		Error otherwise
  */
 int le_audio_volume_up(void);
 
@@ -54,8 +56,8 @@ int le_audio_volume_up(void);
  * @brief	Decrease volume by one step
  *
  * @return	0 for success,
- *		-ENXIO if the feature is disabled
- *		Other errors from underlying drivers.
+ *		-ENXIO if the feature is disabled,
+ *		Error otherwise
  */
 int le_audio_volume_down(void);
 
@@ -63,8 +65,8 @@ int le_audio_volume_down(void);
  * @brief	Mute volume
  *
  * @return	0 for success,
- *		-ENXIO if the feature is disabled
- *		Other errors from underlying drivers.
+ *		-ENXIO if the feature is disabled,
+ *		Error otherwise
  */
 int le_audio_volume_mute(void);
 
@@ -88,18 +90,26 @@ int le_audio_pause(void);
  * @param data	Data to send
  * @param size	Size of data to send
  *
- * @return	0 for success, error otherwise
+ * @return	0 for success,
+ *		-ENXIO if the feature is disabled,
+ *		Error otherwise
  */
 int le_audio_send(uint8_t const *const data, size_t size);
 
 /**
  * @brief Enable Bluetooth LE Audio
+ *
+ * @param recv_cb	Callback for receiving Bluetooth LE Audio data
+ *
+ * @return		0 for success, error otherwise
  */
-void le_audio_enable(le_audio_receive_cb recv_cb);
+int le_audio_enable(le_audio_receive_cb recv_cb);
 
 /**
  * @brief Disable Bluetooth LE Audio
+ *
+ * @return	0 for success, error otherwise
  */
-void le_audio_disable(void);
+int le_audio_disable(void);
 
 #endif /* _LE_AUDIO_H_ */
