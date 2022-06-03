@@ -78,6 +78,12 @@ int fp_storage_account_key_find(uint8_t account_key[FP_CRYPTO_ACCOUNT_KEY_LEN],
 				fp_storage_account_key_check_cb account_key_check_cb,
 				void *context);
 
+/** Clear storage data loaded to RAM.
+ *
+ * The function is used only by fp_storage unit test.
+ */
+void fp_storage_ram_clear(void);
+
 #ifdef __cplusplus
 }
 #endif

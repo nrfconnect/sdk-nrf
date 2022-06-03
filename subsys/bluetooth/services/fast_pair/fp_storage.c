@@ -314,3 +314,12 @@ int fp_storage_account_key_save(const uint8_t *account_key)
 
 	return 0;
 }
+
+void fp_storage_ram_clear(void)
+{
+	memset(account_key_list, 0, sizeof(account_key_list));
+	memset(account_key_loaded_ids, 0, sizeof(account_key_loaded_ids));
+	account_key_next_id = 0;
+	account_key_count = 0;
+	atomic_set(&settings_loaded, false);
+}
