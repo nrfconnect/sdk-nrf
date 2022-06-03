@@ -186,7 +186,9 @@ Gazell samples
 Zigbee samples
 --------------
 
-|no_changes_yet_note|
+* :ref:`zigbee_light_switch_sample` sample:
+
+  * Fixed an issue where a buffer would not be freed after a fail occurred when sending a Match Descriptor request.
 
 Other samples
 -------------
