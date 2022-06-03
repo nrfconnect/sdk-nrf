@@ -113,8 +113,10 @@ After programming the sample to both kits, complete following steps to test it:
 
 1. |connect_terminal_both_ANSI|
 #. Reset both kits.
-#. Press **Button 1** on the kit to set the kit into central (tester) role.
-#. Press **Button 2** on the other kit to set the kit into peripheral (peer) mode.
+#. Press **Button 1** on the first development kit or type ``central`` in the terminal
+   connected to the first kit to set it into the central (tester) role.
+#. Press **Button 2** on the second development kit or type ``peripheral`` in the terminal
+   connected to the second kit to set it into the peripheral (peer) role.
 #. Observe that the kits establish a connection.
    The tester outputs the following information::
 
@@ -138,27 +140,27 @@ The result should look similar to the following output.
 
 For the tester::
 
-   *** Booting Zephyr OS build v2.4.0-ncs1-1715-g3366927a5498  ***
+   *** Booting Zephyr OS build v3.0.99-ncs1  ***
    Starting Bluetooth Throughput example
    I: SoftDevice Controller build revision:
-   I: 7a 01 b4 17 68 14 99 b6 |z...h...
-   I: 6a d1 f2 fd fe 59 63 e3 |j....Yc.
-   I: 43 ca fb 5c             |C..\
-   I: HW Platform: Nordic Semiconductor (0x0002)
+   I: 33 78 2a 18 20 f5 61 61 |3x*. .aa
+   I: a6 8b 77 60 62 83 39 2a |..w`b.9*
+   I: 7c f1 14 e4             ||...
+
+
+   : HW Platform: Nordic Semiconductor (0x0002)
    I: HW Variant: nRF52x (0x0002)
-   I: Firmware: Standard Bluetooth controller (0x00) Version 122.46081 Build 256825
-   I: Identity: D9:85:73:DC:7D:D4 (random)
-   I: HCI: version 5.2 (0x0b) revision 0x1154, manufacturer 0x0059
-   I: LMP: version 5.2 (0x0b) subver 0x1154
+   I: Firmware: Standard Bluetooth controller (0x00) Version 51.10872 Build 1643454488
+   I: Identity: D7:D6:AD:A2:50:62 (random)
+   I: HCI: version 5.3 (0x0c) revision 0x1136, manufacturer 0x0059
+   I: LMP: version 5.3 (0x0c) subver 0x1136
    Bluetooth initialized
 
-   Press button 1 on the central board.
-   Press button 2 on the peripheral board.
-
-
+   Press button 1 or type "central" on the central board.
+   Press button 2 or type "peripheral" on the peripheral board.
    uart:~$
    Central. Starting scanning
-   Filters matched. Address: D2:71:97:84:DE:B2 (random) connectable: 1
+   Filters matched. Address: DC:D6:E5:EE:75:9A (random) connectable: 1
    Connected as central
    Conn. interval is 320 units
    Service discovery completed
@@ -175,37 +177,43 @@ For the tester::
    LE PHY updated: TX PHY LE 2M, RX PHY LE 2M
    LE Data length update pending
    LE data len updated: TX (len: 251 time: 2120) RX (len: 251 time: 2120)
-
-                       ^.-.^                               ^..^
-                    ^-/ooooo+:.^                       ^.--:+syo/.
-                 ^-/oooooooooooo+:.                 ^.-:::::+yyyyyy+:^
-              ^-/+oooooooooooooooooo/-^          ^.-::::::::/yyyyyyyhhs/-
-           ^-:/++++oooooooooooooooooooo+:.   ^.-::::::::::::/yyyyyyyhhhhhho:^
-         ^::///++++oooooooooooooooooooooooo//:::::::::::::::/yyyyyyyhhhhhddds
-         -::://+++ooooooooooooooooooooooooooooo+/:::::::::::/yyyyyyyhhhhhdddd^
-         -::::::/++ooooooooooooooooooooooooooooooo+/::::::::/yyyyyyyhhhhhdddd^
-         -:::::::::/+ooooooooooooooooooooooooooooossso+/::::/yyyyyyyhhhhhdddd^
-         -::::::::::::/+oooooooooooooooooooooooooossssssso+//yyyyyyyhhhhhdddd^
-         -::::::::::::::::/+ooooooooooooooooooooooossssssssssyyyyyyyhhhhhdddd.
-         -:::::::::::::::::::/+oooooooooooooooooooossssssssssyyyyyyyhhhhhdddd.
-         -:::::::::::::::::::::::/+ooooooooooooooosssssssssssyyyyyyyhhhhhdddd.
-         -::::::::::::::::::::::::::/+ooooooooooooossssssssssyyyyyyyhhhhhdddd.
-         -::::::::::::::::::::::::::::::/+ooooooooossssssssssyyyyyyyhhhhhdddd-
-         -:::::::::::::::::::::::::::::::::/+ooooosssssssssssyyyyyyyhhhhhdddd-
-         -:::::::::::::::::::::::::::::::::::::/+oossssssssssyyyyyyyhhhhhdddd:
-         -::::::::::::::::::::::::::::::::::::::::/+ossssssssyyyyyyyhhhhhdddd:
-         -::::::::::::::::::::::::::::::::::::::::::::/osssssyyyyyyyhhhhhdddd:
-         -:::::::::::::::::::::::::::::::::::::::::::::::/+ossyyyyyyhhhhhdddd:
-         -:::::::::::::::::o+/:::::::::::::::::::::::::::::::+oyyyyyhhhhhdddd:
-         -:::::::::::::::::ossyso/::::::::::::::::::::::::::::::/osyhhhhhdddd/
-         -:::::::::::::::::ossyyyyys+:::::::::::::::::::::::::::::::+shhhdddd/
-         -:::::::::::::::::ossyyyyhhhhyo/::::::::::::::::::::::::::::::/oyddd/
-         .-::::::::::::::::ossyyyyhhhhddddy/-::::::::::::::::::::::::::::::+y:
-           ^.-:::::::::::::ossyyyyhhhhdhs/.  ^.--:::::::::::::::::::::::::-.^
-              ^.--:::::::::ossyyyyhhy+-^         ^.-::::::::::::::::::--.^
-                  ^.-::::::ossyyyo/.                ^^.-:::::::::::-.^
-                     ^..-::oss+:^                       ^.-:::::-.^
-                         ^.:.^                             ^^.^^
+   +---------------------------------------------------------------------------+
+   |                                                                           |
+   |                   ####                            :::###                  |
+   |               ############                    :::::::######               |
+   |           ####################            :::::::::::##########           |
+   |       ############################    :::::::::::::::##############       |
+   |    ###################################:::::::::::::::#################    |
+   |    ::::###################################:::::::::::#################    |
+   |    ::::::::###################################:::::::#################    |
+   |    ::::::::::::###################################:::#################    |
+   |    ::::::::::::::::###################################################    |
+   |    ::::::::::::::::::::###############################################    |
+   |    ::::::::::::::::::::::::###########################################    |
+   |    ::::::::::::::::::::::::::::#######################################    |
+   |    ::::::::::::::::::::::::::::::::###################################    |
+   |    ::::::::::::::::::::::::::::::::::::###############################    |
+   |    ::::::::::::::::::::::::::::::::::::::::###########################    |
+   |    ::::::::::::::::::::::::::::::::::::::::::::#######################    |
+   |    ::::::::::::::::::::::::::::::::::::::::::::::::###################    |
+   |    :::::::::::::::::##::::::::::::::::::::::::::::::::################    |
+   |    :::::::::::::::::#####:::::::::::::::::::::::::::::::::############    |
+   |    :::::::::::::::::#########:::::::::::::::::::::::::::::::::########    |
+   |    :::::::::::::::::##############:::::::::::::::::::::::::::::::::###    |
+   |       ::::::::::::::##############    :::::::::::::::::::::::::::::       |
+   |           ::::::::::##########           ::::::::::::::::::::::           |
+   |               ::::::######                   ::::::::::::::               |
+   |                   ::##                           :::::::                  |
+   |                                                                           |
+   |     @@      @@      @@@@@      @@@@@@     @@@@@@@     @@      @@@@@       |
+   |     @@@@    @@    @@     @@    @@    @@   @@    @@    @@    @@     @@     |
+   |     @@  @@  @@   @@       @@   @@@@@@     @@     @@   @@   @@             |
+   |     @@    @@@@    @@     @@    @@  @@     @@    @@    @@    @@     @@     |
+   |     @@      @@      @@@@@      @@    @@   @@@@@@@     @@      @@@@@       |
+   |                                                                           |
+   |       S    E    M    I    C    O    N    D    U    C    T    O    R       |
+   |                                                                           |
+   +---------------------------------------------------------------------------+
 
    Done
    [local] sent 1242945 bytes (1213 KB) in 7292 ms at 1363 kbps
@@ -218,30 +226,29 @@ For the tester::
 
 For the peer::
 
-   *** Booting Zephyr OS build v2.4.0-ncs1-1715-g3366927a5498  ***
+   *** Booting Zephyr OS build v3.0.99-ncs1  ***
    Starting Bluetooth Throughput example
    I: SoftDevice Controller build revision:
-   I: 7a 01 b4 17 68 14 99 b6 |z...h...
-   I: 6a d1 f2 fd fe 59 63 e3 |j....Yc.
-   I: 43 ca fb 5c             |C..\
-   I: HW Platform: Nordic Semiconductor (0x0002)
+   I: 33 78 2a 18 20 f5 61 61 |3x*. .aa
+   I: a6 8b 77 60 62 83 39 2a |..w`b.9*
+   I: 7c f1 14 e4             ||...
+
+
+   : HW Platform: Nordic Semiconductor (0x0002)
    I: HW Variant: nRF52x (0x0002)
-   I: Firmware: Standard Bluetooth controller (0x00) Version 122.46081 Build 256825
-   I: Identity: D2:71:97:84:DE:B2 (random)
-   I: HCI: version 5.2 (0x0b) revision 0x1154, manufacturer 0x0059
-   I: LMP: version 5.2 (0x0b) subver 0x1154
+   I: Firmware: Standard Bluetooth controller (0x00) Version 51.10872 Build 1643454488
+   I: Identity: DC:D6:E5:EE:75:9A (random)
+   I: HCI: version 5.3 (0x0c) revision 0x1136, manufacturer 0x0059
+   I: LMP: version 5.3 (0x0c) subver 0x1136
    Bluetooth initialized
 
-   Press button 1 on the central board.
-   Press button 2 on the peripheral board.
-
-
+   Press button 1 or type "central" on the central board.
+   Press button 2 or type "peripheral" on the peripheral board.
    uart:~$
    Peripheral. Starting advertising
    Connected as peripheral
    Conn. interval is 320 units
    LE PHY updated: TX PHY LE 2M, RX PHY LE 2M
-
 
    =============================================================================
    =============================================================================

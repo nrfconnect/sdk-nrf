@@ -12,6 +12,8 @@
 #include <zephyr/shell/shell.h>
 #include <zephyr/types.h>
 
+#include "main.h"
+
 #define INTERVAL_MIN 0x140 /* 320 units, 400 ms */
 #define INTERVAL_MAX 0x140 /* 320 units, 400 ms */
 #define CONN_LATENCY 0
@@ -30,11 +32,6 @@ static struct test_params {
 	.phy = BT_CONN_LE_PHY_PARAM_2M,
 	.data_len = BT_LE_DATA_LEN_PARAM_MAX
 };
-
-extern int test_run(const struct shell *shell,
-		    const struct bt_le_conn_param *conn_param,
-		    const struct bt_conn_le_phy_param *phy,
-		    const struct bt_conn_le_data_len_param *data_len);
 
 static const char *phy_str(const struct bt_conn_le_phy_param *phy)
 {
@@ -261,5 +258,21 @@ static int test_run_cmd(const struct shell *shell, size_t argc,
 			test_params.data_len);
 }
 
+static int test_central_cmd(const struct shell *shell, size_t argc,
+			    char **argv)
+{
+	select_role(true);
+	return 0;
+}
+
+static int test_peripheral_cmd(const struct shell *shell, size_t argc,
+			       char **argv)
+{
+	select_role(false);
+	return 0;
+}
+
 SHELL_CMD_REGISTER(config, &sub_config, "Configure the example", default_cmd);
 SHELL_CMD_REGISTER(run, NULL, "Run the test", test_run_cmd);
+SHELL_CMD_REGISTER(central, NULL, "Select central role", test_central_cmd);
+SHELL_CMD_REGISTER(peripheral, NULL, "Select peripheral role", test_peripheral_cmd);
