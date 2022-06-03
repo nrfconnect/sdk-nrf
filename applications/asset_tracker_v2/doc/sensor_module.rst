@@ -60,12 +60,11 @@ The threshold is set in one of the following two ways:
 
 Both events contain an accelerometer threshold value ``accelerometer_threshold`` in m/s2, present in the event structure.
 
-Motion detection in the module is enabled and disabled in turn to control the number of :c:enum:`SENSOR_EVT_MOVEMENT_DATA_READY` events that are sent out by the sensor module.
-This functionality acts as flow control.
-It prevents the sensor module from sending events to the rest of the application if the device is accelerating over the threshold for extended periods of time.
+Motion detection is enabled and disabled according to the device mode parameter, received in the configuration events.
+It is enabled in the passive mode and disabled in the active mode.
 
-The application module controls this behavior through the :c:enum:`APP_EVT_ACTIVITY_DETECTION_ENABLE` and :c:enum:`APP_EVT_ACTIVITY_DETECTION_DISABLE` events.
-The sensor module will only send out a :c:enum:`SENSOR_EVT_MOVEMENT_DATA_READY` event if it detects movement and activity detection is enabled.
+The sensor module sends out a :c:enum:`SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED` event if it detects movement.
+Similarly, :c:enum:`SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED` is sent out if there is no movement in a while.
 
 .. note::
    The DK does not have an external accelerometer.

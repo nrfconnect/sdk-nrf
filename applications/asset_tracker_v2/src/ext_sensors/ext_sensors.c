@@ -63,7 +63,6 @@ static struct env_sensor accel_sensor = {
 };
 
 static ext_sensor_handler_t evt_handler;
-static bool initial_trigger;
 
 static void accelerometer_trigger_handler(const struct device *dev,
 					  const struct sensor_trigger *trig)
@@ -73,25 +72,15 @@ static void accelerometer_trigger_handler(const struct device *dev,
 	struct ext_sensor_evt evt = {0};
 
 	switch (trig->type) {
-	case SENSOR_TRIG_THRESHOLD:
-
-		/* Ignore the initial trigger after initialization of the
-		 * accelerometer which always carries jibberish xyz values.
-		 */
-		if (!initial_trigger) {
-			initial_trigger = true;
-			break;
-		}
+	case SENSOR_TRIG_MOTION:
+	case SENSOR_TRIG_STATIONARY:
 
 		if (sensor_sample_fetch(dev) < 0) {
 			LOG_ERR("Sample fetch error");
 			return;
 		}
 
-		err = sensor_channel_get(dev, SENSOR_CHAN_ACCEL_X, &data[0]);
-		err += sensor_channel_get(dev, SENSOR_CHAN_ACCEL_Y, &data[1]);
-		err += sensor_channel_get(dev, SENSOR_CHAN_ACCEL_Z, &data[2]);
-
+		err = sensor_channel_get(dev, SENSOR_CHAN_ACCEL_XYZ, &data[0]);
 		if (err) {
 			LOG_ERR("sensor_channel_get, error: %d", err);
 			return;
@@ -101,16 +90,14 @@ static void accelerometer_trigger_handler(const struct device *dev,
 		evt.value_array[1] = sensor_value_to_double(&data[1]);
 		evt.value_array[2] = sensor_value_to_double(&data[2]);
 
-		/* Do a soft filter here to avoid sending data triggered by
-		 * the inactivity threshold.
-		 */
-		if ((abs(evt.value_array[0]) > threshold ||
-		     (abs(evt.value_array[1]) > threshold) ||
-		     (abs(evt.value_array[2]) > threshold))) {
-
-			evt.type = EXT_SENSOR_EVT_ACCELEROMETER_TRIGGER;
-			evt_handler(&evt);
+		if (trig->type == SENSOR_TRIG_MOTION) {
+			evt.type = EXT_SENSOR_EVT_ACCELEROMETER_ACT_TRIGGER;
+			LOG_DBG("Activity detected");
+		} else {
+			evt.type = EXT_SENSOR_EVT_ACCELEROMETER_INACT_TRIGGER;
+			LOG_DBG("Inactivity detected");
 		}
+		evt_handler(&evt);
 
 		break;
 	default:
@@ -161,22 +148,6 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 		LOG_ERR("Accelerometer device is not ready");
 		evt.type = EXT_SENSOR_EVT_ACCELEROMETER_ERROR;
 		evt_handler(&evt);
-	} else {
-#if defined(CONFIG_EXTERNAL_SENSORS_ACTIVITY_DETECTION_AUTO)
-		struct sensor_trigger trig = {
-			.chan = SENSOR_CHAN_ACCEL_XYZ,
-			.type = SENSOR_TRIG_THRESHOLD
-		};
-
-		int err = sensor_trigger_set(accel_sensor.dev,
-					     &trig, accelerometer_trigger_handler);
-
-		if (err) {
-			LOG_ERR("Could not set trigger for device %s, error: %d",
-				accel_sensor.dev->name, err);
-			return err;
-		}
-#endif
 	}
 
 	return 0;
@@ -372,7 +343,7 @@ int ext_sensors_accelerometer_trigger_callback_set(bool enable)
 	int err;
 	struct sensor_trigger trig = {
 		.chan = SENSOR_CHAN_ACCEL_XYZ,
-		.type = SENSOR_TRIG_THRESHOLD
+		.type = SENSOR_TRIG_MOTION
 	};
 	struct ext_sensor_evt evt = {0};
 
@@ -380,14 +351,18 @@ int ext_sensors_accelerometer_trigger_callback_set(bool enable)
 
 	err = sensor_trigger_set(accel_sensor.dev, &trig, handler);
 	if (err) {
-		LOG_ERR("Could not set trigger for device %s, error: %d",
-			accel_sensor.dev->name, err);
-		evt.type = EXT_SENSOR_EVT_ACCELEROMETER_ERROR;
-		evt_handler(&evt);
-		return err;
+		goto error;
 	}
-
-	initial_trigger = false;
-
-	return 0;
+	trig.type = SENSOR_TRIG_STATIONARY;
+	err = sensor_trigger_set(accel_sensor.dev, &trig, handler);
+	if (err) {
+		goto error;
+	}
+		return 0;
+error:
+	LOG_ERR("Could not set trigger for device %s, error: %d",
+		accel_sensor.dev->name, err);
+	evt.type = EXT_SENSOR_EVT_ACCELEROMETER_ERROR;
+	evt_handler(&evt);
+	return err;
 }

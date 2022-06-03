@@ -9,13 +9,6 @@ menuconfig EXTERNAL_SENSORS
 
 if EXTERNAL_SENSORS
 
-config EXTERNAL_SENSORS_ACTIVITY_DETECTION_AUTO
-	bool "Start activity detection automatically"
-	help
-	  Enable this option to start activity detection when the library is initialized.
-	  If the option is disabled, the accelerometer trigger handler must manually be enabled to
-	  detect activity.
-
 config EXTERNAL_SENSORS_BME680_BSEC
 	bool "Use Bosch BME680 library"
 	depends on !BME680
