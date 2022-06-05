@@ -119,7 +119,10 @@ For lists of protocol-specific changes, see `Protocols`_.
 Bluetooth samples
 -----------------
 
-|no_changes_yet_note|
+* Added:
+  * :ref:`ias_readme` - This module implements the Immediate Alert Service (IAS) with the corresponding set of characteristics.
+  * :ref:`lls_readme` - This module implements the Link Loss Service (LLS) with the corresponding set of characteristics.
+  * :ref:`peripheral_proximity` sample - This sample demonstrates how to use the Immediate Alert Service and Link Loss Service.
 
 
 Bluetooth mesh samples

@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_NRF_IAS
+	bool "Immediate Alert Service"
+	select BT_NRF_SERVICES
+	help
+	  Enable Immediate Alert Service
+
+if BT_NRF_IAS
+
+module = BT_NRF_IAS
+module-str = NRF_IAS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_NRF_IAS

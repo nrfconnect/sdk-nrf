@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_NRF_LLS
+	bool "link lost Service"
+	select BT_NRF_SERVICES
+	help
+	  Enable link lost Service
+
+if BT_NRF_LLS
+
+module = BT_NRF_LLS
+module-str = NRF_LLS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_NRF_LLS
