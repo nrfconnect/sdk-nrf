@@ -48,7 +48,7 @@ struct pdn_activation_status_info {
 	uint8_t cid;
 };
 
-#define REGISTERED_STATUS_LED          DK_LED1
+#define REGISTERED_STATUS_LED          DK_LED3
 
 static bool link_subscribe_for_rsrp;
 

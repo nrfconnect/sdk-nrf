@@ -697,7 +697,7 @@ LED indications
 
 The LEDs have the following functions:
 
-LED 1:
+LED 3 (nRF9160 DK)/Blue LED (Thingy:91):
    Indicates the LTE registration status.
 
 Testing
