@@ -915,6 +915,12 @@ int sock_send_data(
 		} else if (interval > 0) {
 			/* Send data with given interval */
 
+			/* Check that periodic sending is not ongoing already */
+			if (k_work_delayable_busy_get(&socket_info->send_info.work) > 0) {
+				mosh_error("Periodic sending is already ongoing");
+				return -EBUSY;
+			}
+
 			/* Data to be sent must also be specified */
 			if (data_out_length < 1) {
 				mosh_error(
