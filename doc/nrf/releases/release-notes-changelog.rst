@@ -142,6 +142,13 @@ Bluetooth mesh samples
 nRF9160 samples
 ---------------
 
+* :ref:`lwm2m_client` sample:
+
+  * Fixed:
+
+    * Default configuration conforms to the LwM2M specification v1.0 instead of v1.1.
+      For enabling v1.1 there is already an overlay file.
+
 * :ref:`modem_shell_application` sample:
 
   * Added:
