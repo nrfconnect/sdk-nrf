@@ -950,10 +950,17 @@ Syntax
 
 ::
 
-   #XRECV=<timeout>
+   #XRECV=<timeout>[,<flags>]
 
-* The ``<timeout>`` value sets the timeout value in seconds.
-  ``0`` means no timeout, and it makes this request become blocking.
+The ``<timeout>`` value sets the timeout value in seconds.
+When ``0``, it means no timeout, and it makes this request become blocking.
+
+The ``<flags>`` value sets the receiving behavior based on the BSD socket definition.
+It can be set to one of the following values:
+
+* ``2`` means reading data without removing it from the socket input queue.
+* ``64`` means overriding the operation to non-blocking.
+* ``256`` (TCP only) means blocking until the full amount of data can be returned.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -1057,10 +1064,16 @@ Syntax
 
 ::
 
-   #XRECVFROM=<timeout>
+   #XRECVFROM=<timeout>[,<flags>]
 
-* The ``<timeout>`` value sets the timeout value in seconds.
-  ``0`` means no timeout, and it makes this request become blocking.
+The ``<timeout>`` value sets the timeout value in seconds.
+When ``0``, it means no timeout, and it makes this request become blocking.
+
+The ``<flags>`` value sets the receiving behavior based on the BSD socket definition.
+It can be set to one of the following values:
+
+* ``2`` means reading data without removing it from the socket input queue.
+* ``64`` means overriding the operation to non-blocking.
 
 Response syntax
 ~~~~~~~~~~~~~~~

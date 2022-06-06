@@ -711,7 +711,7 @@ static int do_send_datamode(const uint8_t *data, int datalen)
 	return (offset > 0) ? offset : -1;
 }
 
-static int do_recv(int timeout)
+static int do_recv(int timeout, int flags)
 {
 	int ret;
 	int sockfd = sock.fd;
@@ -748,7 +748,7 @@ static int do_recv(int timeout)
 	if (ret) {
 		return ret;
 	}
-	ret = recv(sockfd, (void *)rx_data, length, 0);
+	ret = recv(sockfd, (void *)rx_data, length, flags);
 	if (ret < 0) {
 		LOG_WRN("recv() error: %d", -errno);
 		return -errno;
@@ -855,7 +855,7 @@ static int do_sendto_datamode(const uint8_t *data, int datalen)
 	return (offset > 0) ? offset : -1;
 }
 
-static int do_recvfrom(int timeout)
+static int do_recvfrom(int timeout, int flags)
 {
 	int ret;
 	struct sockaddr remote;
@@ -872,7 +872,7 @@ static int do_recvfrom(int timeout)
 	if (ret) {
 		return ret;
 	}
-	ret = recvfrom(sock.fd, (void *)rx_data, length, 0, &remote, &addrlen);
+	ret = recvfrom(sock.fd, (void *)rx_data, length, flags, &remote, &addrlen);
 	if (ret < 0) {
 		LOG_ERR("recvfrom() error: %d", -errno);
 		return -errno;
@@ -1486,6 +1486,7 @@ int handle_at_recv(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	int timeout;
+	int flags = 0;
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
@@ -1493,7 +1494,13 @@ int handle_at_recv(enum at_cmd_type cmd_type)
 		if (err) {
 			return err;
 		}
-		err = do_recv(timeout);
+		if (at_params_valid_count_get(&at_param_list) > 2) {
+			err = at_params_int_get(&at_param_list, 2, &flags);
+			if (err) {
+				return err;
+			}
+		}
+		err = do_recv(timeout, flags);
 		break;
 
 	default:
@@ -1546,7 +1553,7 @@ int handle_at_sendto(enum at_cmd_type cmd_type)
 }
 
 /**@brief handle AT#XRECVFROM commands
- *  AT#XRECVFROM=<timeout>
+ *  AT#XRECVFROM=<timeout>[,<flags>]
  *  AT#XRECVFROM? READ command not supported
  *  AT#XRECVFROM=? TEST command not supported
  */
@@ -1554,6 +1561,7 @@ int handle_at_recvfrom(enum at_cmd_type cmd_type)
 {
 	int err = -EINVAL;
 	int timeout;
+	int flags = 0;
 
 	switch (cmd_type) {
 	case AT_CMD_TYPE_SET_COMMAND:
@@ -1561,7 +1569,13 @@ int handle_at_recvfrom(enum at_cmd_type cmd_type)
 		if (err) {
 			return err;
 		}
-		err = do_recvfrom(timeout);
+		if (at_params_valid_count_get(&at_param_list) > 2) {
+			err = at_params_int_get(&at_param_list, 2, &flags);
+			if (err) {
+				return err;
+			}
+		}
+		err = do_recvfrom(timeout, flags);
 		break;
 
 	default:
