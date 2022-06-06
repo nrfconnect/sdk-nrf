@@ -133,7 +133,12 @@ Bluetooth mesh samples
 nRF9160 samples
 ---------------
 
-|no_changes_yet_note|
+* :ref:`modem_shell_application` sample:
+
+  * Added:
+
+    * nRF9160 DK overlays for enabling BT support.
+      When running this configuration, you can perform BT scanning and advertising using the ``bt`` command.
 
 Thread samples
 --------------

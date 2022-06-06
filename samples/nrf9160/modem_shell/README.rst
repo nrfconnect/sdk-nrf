@@ -933,6 +933,67 @@ For example:
 
    west build -p -b nrf9160dk_nrf9160_ns -- -DOVERLAY_CONFIG=overlay-non-offloading.conf
 
+BT shell support
+================
+
+To build the MoSh sample with Zephyr BT shell command support, use the :file:`-DDTC_OVERLAY_FILE=bt.overlay` and :file:`-DOVERLAY_CONFIG=overlay-bt.conf` options.
+When running this configuration, you can perform BT scanning and advertising using the ``bt`` command.
+
+Compile as follows:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf9160_ns -- -DDTC_OVERLAY_FILE="bt.overlay" -DOVERLAY_CONFIG="overlay-bt.conf"
+
+Additionally, you need to program the nRF52840 side of the nRF9160 DK as instructed in :ref:`lte_sensor_gateway`.
+
+Compile the :ref:`bluetooth-hci-lpuart-sample` as follows:
+
+.. code-block:: console
+
+   west build -p -b nrf9160dk_nrf52840
+
+The following example demonstrates how to use MoSh with two development kits, where one acts as a broadcaster and the other one as an observer.
+
+DK #1, where MoSh is used in broadcaster (advertising) role:
+
+   .. code-block:: console
+
+      mosh:~$ bt init
+      Bluetooth initialized
+      Settings Loaded
+      mosh:~$ bt name mosh-adv
+      mosh:~$ bt name
+      Bluetooth Local Name: mosh-adv
+      mosh:~$ bt advertise scan
+      Advertising started
+
+      /* And when done: */
+      mosh:~$ bt advertise off
+      Advertising stopped
+      mosh:~$
+
+DK #2, where MoSh is used in observer (scanning) role:
+
+   .. code-block:: console
+
+      mosh:~$ bt init
+      Bluetooth initialized
+      Settings Loaded
+      mosh:~$ bt name mosh-scanner
+      mosh:~$ bt name
+      Bluetooth Local Name: mosh-scanner
+      mosh:~$ bt scan-filter-set name mosh-adv
+      mosh:~$ bt scan on
+      Bluetooth active scan enabled
+      [DEVICE]: 11:22:33:44:55:66(random), AD evt type 4, RSSI -42 mosh-adv C:0 S:1 D:0 SR:1 E:0 Prim: LE 1M, Secn: No packets, Interval: 0x0000 (0 ms), SID: 0xff
+      ...
+
+      /* And when done: */
+      mosh:~$ bt scan off
+      Scan successfully stopped
+      mosh:~$
+
 References
 **********
 
