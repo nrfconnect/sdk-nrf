@@ -120,6 +120,7 @@ nRF9160: Serial LTE modem
   * Added:
 
     * URC for GNSS sleep and wakeup events.
+    * Selected flags support in #XRECV and #XRECVFROM commands
 
 nRF5340 Audio
 -------------
