@@ -274,6 +274,7 @@ Bluetooth libraries and services
 * :ref:`bt_fast_pair_readme` service:
 
   * Added a SHA-256 hash check to ensure the Fast Pair provisioning data integrity.
+  * Added unit test for the storage module.
 
 Bootloader libraries
 --------------------
