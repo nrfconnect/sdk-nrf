@@ -39,7 +39,7 @@ struct fp_procedure {
 };
 
 struct fp_key_gen_account_key_check_context {
-	struct bt_conn *conn;
+	const struct bt_conn *conn;
 	struct fp_keys_keygen_params *keygen_params;
 };
 
@@ -83,7 +83,7 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.disconnected = disconnected,
 };
 
-int fp_keys_encrypt(struct bt_conn *conn, uint8_t *out, const uint8_t *in)
+int fp_keys_encrypt(const struct bt_conn *conn, uint8_t *out, const uint8_t *in)
 {
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 	int err = 0;
@@ -106,7 +106,7 @@ int fp_keys_encrypt(struct bt_conn *conn, uint8_t *out, const uint8_t *in)
 	return err;
 }
 
-int fp_keys_decrypt(struct bt_conn *conn, uint8_t *out, const uint8_t *in)
+int fp_keys_decrypt(const struct bt_conn *conn, uint8_t *out, const uint8_t *in)
 {
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 	int err = 0;
@@ -129,7 +129,8 @@ int fp_keys_decrypt(struct bt_conn *conn, uint8_t *out, const uint8_t *in)
 	return err;
 }
 
-static int key_gen_public_key(struct bt_conn *conn, struct fp_keys_keygen_params *keygen_params)
+static int key_gen_public_key(const struct bt_conn *conn,
+			      struct fp_keys_keygen_params *keygen_params)
 {
 	int err;
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
@@ -165,7 +166,7 @@ static bool key_gen_account_key_check(const uint8_t *account_key, void *context)
 	int err;
 	uint8_t req[FP_CRYPTO_AES128_BLOCK_LEN];
 	struct fp_key_gen_account_key_check_context *ak_check_context = context;
-	struct bt_conn *conn = ak_check_context->conn;
+	const struct bt_conn *conn = ak_check_context->conn;
 	struct fp_keys_keygen_params *keygen_params = ak_check_context->keygen_params;
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 
@@ -184,7 +185,8 @@ static bool key_gen_account_key_check(const uint8_t *account_key, void *context)
 	return true;
 }
 
-static int key_gen_account_key(struct bt_conn *conn, struct fp_keys_keygen_params *keygen_params)
+static int key_gen_account_key(const struct bt_conn *conn,
+			       struct fp_keys_keygen_params *keygen_params)
 {
 	struct fp_key_gen_account_key_check_context context = {
 		.conn = conn,
@@ -197,7 +199,7 @@ static int key_gen_account_key(struct bt_conn *conn, struct fp_keys_keygen_param
 	return fp_storage_account_key_find(NULL, key_gen_account_key_check, &context);
 }
 
-int fp_keys_generate_key(struct bt_conn *conn, struct fp_keys_keygen_params *keygen_params)
+int fp_keys_generate_key(const struct bt_conn *conn, struct fp_keys_keygen_params *keygen_params)
 {
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 	int err = 0;
@@ -241,7 +243,7 @@ int fp_keys_generate_key(struct bt_conn *conn, struct fp_keys_keygen_params *key
 	return err;
 }
 
-int fp_keys_store_account_key(struct bt_conn *conn, const uint8_t *account_key)
+int fp_keys_store_account_key(const struct bt_conn *conn, const uint8_t *account_key)
 {
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 	int err = 0;
@@ -268,7 +270,7 @@ int fp_keys_store_account_key(struct bt_conn *conn, const uint8_t *account_key)
 	return err;
 }
 
-void fp_keys_bt_auth_progress(struct bt_conn *conn, bool authenticated)
+void fp_keys_bt_auth_progress(const struct bt_conn *conn, bool authenticated)
 {
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 
@@ -280,7 +282,7 @@ void fp_keys_bt_auth_progress(struct bt_conn *conn, bool authenticated)
 	}
 }
 
-void fp_keys_drop_key(struct bt_conn *conn)
+void fp_keys_drop_key(const struct bt_conn *conn)
 {
 	invalidate_key(&fp_procedures[bt_conn_index(conn)]);
 }
