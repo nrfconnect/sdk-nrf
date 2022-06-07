@@ -366,10 +366,20 @@ Install a Toolchain
 
 A toolchain provides a compiler, assembler, linker, and other programs required to build Zephyr applications.
 
+The Zephyr Software Development Kit (SDK) contains toolchains for each of Zephyr's supported architectures.
+It also includes additional host tools, such as custom QEMU and OpenOCD builds.
+
+.. note::
+
+   Set the following environment variables to ensure the Zephyr SDK is detected correctly:
+
+   * :envvar:`ZEPHYR_TOOLCHAIN_VARIANT` to ``zephyr``
+   * :envvar:`ZEPHYR_SDK_INSTALL_DIR` to the path of the Zephyr SDK
+
 .. ncs-include:: develop/getting_started/index.rst
    :docset: zephyr
    :dedent: 0
-   :start-after: to build Zephyr applications.
+   :start-after: and OpenOCD builds.
    :end-before: .. _getting_started_run_sample:
 
 .. rst-class:: numbered-step
