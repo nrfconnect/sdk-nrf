@@ -183,6 +183,10 @@ Bluetooth samples
   * Fixed scanning start on the nRF5340 target with the Zephyr LL controller.
     Previously, it was not possible to start scanning, because the :kconfig:option:`CONFIG_BT_EXT_ADV` option was disabled for the Zephyr LL controller.
 
+* :ref:`peripheral_fast_pair` sample:
+
+  * Added possibility of toggling between show and hide UI indication in the Fast Pair not discoverable advertising.
+
 Bluetooth mesh samples
 ----------------------
 
@@ -290,6 +294,7 @@ Bluetooth libraries and services
 
   * Added a SHA-256 hash check to ensure the Fast Pair provisioning data integrity.
   * Added unit test for the storage module.
+  * Extended API to allow setting the flag for the hide UI indication in the Fast Pair not discoverable advertising data.
 
 * :ref:`bt_enocean_readme` library
   * Added callback :c:member:`decommissioned` to :c:struct:`bt_enocean_callbacks` when EnOcean switch is decommissioned.
