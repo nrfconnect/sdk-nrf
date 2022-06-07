@@ -51,8 +51,7 @@ private:
 	static chip::Percent100ths CalculateSingleStep(MoveType aMoveType);
 	static void DriveCurrentLiftPosition(intptr_t);
 	static void DriveCurrentTiltPosition(intptr_t);
-	static void MoveTimerTimeoutCallbackLift(chip::System::Layer *systemLayer, void *appState);
-	static void MoveTimerTimeoutCallbackTilt(chip::System::Layer *systemLayer, void *appState);
+	static void MoveTimerTimeoutCallback(chip::System::Layer *systemLayer, void *appState);
 	static void DoPostAttributeChange(intptr_t aArg);
 
 	MoveType mCurrentUIMoveType;
