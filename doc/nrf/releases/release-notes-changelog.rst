@@ -280,11 +280,13 @@ Modem libraries
   * :ref:`modem_key_mgmt` library:
 
     * Fixed:
+
       * An issue that would cause the library to assert on a unhandled CME error when the AT command failed to be sent.
 
   * :ref:`at_cmd_parser_readme` library:
 
     * Fixed:
+
       * An issue that would cause AT command responses like ``+CNCEC_EMM`` with underscore to be filtered out.
 
   * :ref:`pdn_readme` library:
@@ -319,7 +321,7 @@ Other libraries
 
 * Updated:
 
-  * Flash Patch:
+  * :ref:`lib_flash_patch` library:
 
     * Allow the :kconfig:option:`CONFIG_DISABLE_FLASH_PATCH` Kconfig option to be used on the nRF52833 SoC.
 
@@ -441,7 +443,9 @@ Documentation
 
 * Added:
 
-  * Added documentation page for the :ref:`lib_flash_map_pm` library.
+  * Documentation for the :ref:`lib_flash_map_pm` library.
+  * Documentation for the :ref:`lib_adp536x` library.
+  * Documentation for the :ref:`lib_flash_patch` library.
   * :ref:`ug_thread_prebuilt_libs` as a separate page instead of being part of :ref:`ug_thread_configuring`.
 
 * Updated:
