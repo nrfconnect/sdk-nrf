@@ -26,6 +26,7 @@ if __name__ == "__main__":
         description='nRF91 device provisioning example')
     parser.add_argument('serial', help='nRF91 Serial port')
     parser.add_argument('-d', help='Enable debug logs', action='store_true')
+    parser.add_argument('-p', '--purge', dest='purge', help='Wipe the security tags and remove the device from the server', action='store_true')
     args = parser.parse_args()
 
     if args.d:
@@ -43,10 +44,6 @@ if __name__ == "__main__":
     dev.delete_sec_tag(35724861)
     dev.delete_sec_tag(35724862)
 
-    # Generate and store Bootstrap keys
-    psk = token_hex(16)
-    dev.store_psk(35724862, identity, psk)
-
     coiote = Coiote()
     coiote.get_device(identity)
     coiote.get_device(identity + '-bs')
@@ -56,4 +53,10 @@ if __name__ == "__main__":
     if coiote.get_device(identity + '-bs'):
         coiote.delete_device(identity + '-bs')
 
-    coiote.create_device(identity, psk)
+    if not args.purge:
+        # Generate and store Bootstrap keys
+        psk = token_hex(16)
+        dev.store_psk(35724862, identity, psk)
+
+        # Provision the device
+        coiote.create_device(identity, psk)
