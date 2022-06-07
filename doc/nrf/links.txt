@@ -148,7 +148,7 @@
 .. _`West integration`: https://nrfconnect.github.io/vscode-nrf-connect/connect/west.html
 .. _`Custom launch and debug configurations`: https://nrfconnect.github.io/vscode-nrf-connect/connect/advanced_features.html#custom-launch-and-debug-configurations
 .. _`Application-specific flash options`: https://nrfconnect.github.io/vscode-nrf-connect/connect/advanced_features.html#application-specific-flash-options
-.. _`nRF Terminal documentation`: https://nrfconnect.github.io/vscode-nrf-connect/terminal/nrfterminal.html
+.. _`nRF Terminal documentation`: https://nrfconnect.github.io/vscode-nrf-connect/terminal/install.html
 .. _`Migrating IDE` : https://nrfconnect.github.io/vscode-nrf-connect/connect/migrating_ide.html
 
 .. ### Source: developer.nordicsemi.com
@@ -302,6 +302,12 @@
 .. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
 .. _`Energy efficiency`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/What-is-cellular-IoT#energy_efficiency
 
+.. _`nRF52840 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/Download#infotabs
+
+.. _`nRF52833 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52833-DK/Download#infotabs
+
+.. _`nRF52 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52-DK/Download#infotabs
+
 .. _`Nordic Thingy:53`:
 .. _`Thingy:53 product page`: https://www.nordicsemi.com/thingy53
 .. _`Nordic Thingy:53 Downloads`: https://www.nordicsemi.com/Products/Development-hardware/Nordic-Thingy-53/Downloads#infotabs
@@ -367,8 +373,6 @@
 .. _`nRF5340 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_dk/UG/dk/intro.html
 .. _`Execute in place page in the nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/qspi.html#execute_in_place
 .. _`nRF5340 DK Compatibility Matrix`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf5340/COMP/nrf5340/nrf5340_comp_matrix.html
-
-.. _`Getting started with nRF Connect SDK (nRF52 Series)`: https://infocenter.nordicsemi.com/topic/ug_gsg_ncs52/UG/gsg/intro.html
 
 .. _`nRF52840 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/keyfeatures_html5.html
 .. _`System OFF mode`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/power.html#unique_1384365742

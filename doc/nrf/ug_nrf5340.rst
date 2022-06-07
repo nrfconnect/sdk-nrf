@@ -528,19 +528,19 @@ See the following instructions.
          Therefore, you must recover the network core first.
          Otherwise, if you recover the application core first and the network core last, the binary written to the application core is deleted and readback protection is enabled again after a reset.
 
-.. include:: ug_nrf52.rst
+.. include:: ug_nrf52_developing.rst
    :start-after: fota_upgrades_start
    :end-before: fota_upgrades_end
 
-.. include:: ug_nrf52.rst
+.. include:: ug_nrf52_developing.rst
    :start-after: fota_upgrades_matter_start
    :end-before: fota_upgrades_matter_end
 
-.. include:: ug_nrf52.rst
+.. include:: ug_nrf52_developing.rst
    :start-after: fota_upgrades_thread_start
    :end-before: fota_upgrades_thread_end
 
-.. include:: ug_nrf52.rst
+.. include:: ug_nrf52_developing.rst
    :start-after: fota_upgrades_zigbee_start
    :end-before: fota_upgrades_zigbee_end
 
