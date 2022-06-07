@@ -35,7 +35,7 @@ extern "C" {
  *
  * @return 0 If the decrypted request is valid. Otherwise, a (negative) error code is returned.
  */
-typedef int (*fp_keys_validate_cb)(struct bt_conn *conn, const uint8_t *req, void *context);
+typedef int (*fp_keys_validate_cb)(const struct bt_conn *conn, const uint8_t *req, void *context);
 
 /** @brief Fast Pair keys key generation parameters. */
 struct fp_keys_keygen_params {
@@ -68,7 +68,7 @@ struct fp_keys_keygen_params {
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_keys_encrypt(struct bt_conn *conn, uint8_t *out, const uint8_t *in);
+int fp_keys_encrypt(const struct bt_conn *conn, uint8_t *out, const uint8_t *in);
 
 /** Decrypt request from the Fast Pair Seeker.
  *
@@ -82,7 +82,7 @@ int fp_keys_encrypt(struct bt_conn *conn, uint8_t *out, const uint8_t *in);
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_keys_decrypt(struct bt_conn *conn, uint8_t *out, const uint8_t *in);
+int fp_keys_decrypt(const struct bt_conn *conn, uint8_t *out, const uint8_t *in);
 
 /** Generate Fast Pair key for a given Fast Pair Seeker.
  *
@@ -94,7 +94,7 @@ int fp_keys_decrypt(struct bt_conn *conn, uint8_t *out, const uint8_t *in);
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_keys_generate_key(struct bt_conn *conn, struct fp_keys_keygen_params *keygen_params);
+int fp_keys_generate_key(const struct bt_conn *conn, struct fp_keys_keygen_params *keygen_params);
 
 /** Store Account Key of a given Fast Pair Seeker in non-volatile memory.
  *
@@ -103,7 +103,7 @@ int fp_keys_generate_key(struct bt_conn *conn, struct fp_keys_keygen_params *key
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_keys_store_account_key(struct bt_conn *conn, const uint8_t *account_key);
+int fp_keys_store_account_key(const struct bt_conn *conn, const uint8_t *account_key);
 
 /** Inform Fast Pair Keys about the progress of the Bluetooth authentication procedure.
  *
@@ -113,7 +113,7 @@ int fp_keys_store_account_key(struct bt_conn *conn, const uint8_t *account_key);
  * @param[in] conn		Pointer to Bluetooth connection (determines Fast Pair Seeker).
  * @param[in] authenticated	Boolean informing if connection was already authenticated.
  */
-void fp_keys_bt_auth_progress(struct bt_conn *conn, bool authenticated);
+void fp_keys_bt_auth_progress(const struct bt_conn *conn, bool authenticated);
 
 /** Drop key of a given Fast Pair Seeker.
  *
@@ -124,7 +124,7 @@ void fp_keys_bt_auth_progress(struct bt_conn *conn, bool authenticated);
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
-void fp_keys_drop_key(struct bt_conn *conn);
+void fp_keys_drop_key(const struct bt_conn *conn);
 
 #ifdef __cplusplus
 }

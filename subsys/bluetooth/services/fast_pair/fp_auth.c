@@ -34,12 +34,12 @@ static uint32_t handled_conn_bm;
 
 static void update_bt_auth_callbacks(void);
 
-static bool is_conn_handled(struct bt_conn *conn)
+static bool is_conn_handled(const struct bt_conn *conn)
 {
 	return ((handled_conn_bm & BIT(bt_conn_index(conn))) != 0);
 }
 
-static void update_conn_handling(struct bt_conn *conn, bool handled)
+static void update_conn_handling(const struct bt_conn *conn, bool handled)
 {
 	size_t conn_idx = bt_conn_index(conn);
 

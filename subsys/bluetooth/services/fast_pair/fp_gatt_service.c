@@ -128,7 +128,7 @@ static ssize_t read_model_id(struct bt_conn *conn,
 	return res;
 }
 
-static int parse_key_based_pairing_req(struct bt_conn *conn,
+static int parse_key_based_pairing_req(const struct bt_conn *conn,
 				       struct msg_key_based_pairing_req *parsed_req,
 				       struct net_buf_simple *req)
 {
@@ -218,7 +218,8 @@ static int handle_key_based_pairing_req(struct bt_conn *conn,
 	return 0;
 }
 
-static int validate_key_based_pairing_req(struct bt_conn *conn, const uint8_t *req, void *context)
+static int validate_key_based_pairing_req(const struct bt_conn *conn, const uint8_t *req,
+					  void *context)
 {
 	struct msg_key_based_pairing_req *parsed_req = context;
 	struct net_buf_simple req_net_buf;
