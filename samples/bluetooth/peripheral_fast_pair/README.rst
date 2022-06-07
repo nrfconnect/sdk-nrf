@@ -86,7 +86,11 @@ Buttons
 =======
 
 Button 1:
-   Toggles between Fast Pair discoverable and not discoverable advertising.
+   Toggles between three Fast Pair advertising modes:
+
+   * Fast Pair discoverable advertising.
+   * Fast Pair not discoverable advertising (with the show UI indication).
+   * Fast Pair not discoverable advertising (with the hide UI indication).
 
    .. note::
        The advertising is disabled while the Fast Pair Provider is connected to a Bluetooth Central.
@@ -110,10 +114,11 @@ LED 2:
    * Off if there is no Central connected.
 
 LED 3:
-   Depending on the discoverability setting:
+   Depending on the Fast Pair advertising mode setting:
 
    * On if the device is Fast Pair discoverable.
-   * Off if the device is Fast Pair not discoverable.
+   * Blinks with 0.5 secs interval if the selected mode is the Fast Pair not discoverable advertising with the show UI indication.
+   * Blinks with 1.5 secs interval if the selected mode is the Fast Pair not discoverable advertising with the hide UI indication.
 
 Configuration
 *************
@@ -186,8 +191,11 @@ Test not discoverable advertising by completing `Testing`_ and the following add
    a. Go to :guilabel:`Settings` > :guilabel:`Google` > :guilabel:`Devices & sharing` (or :guilabel:`Device connections`) > :guilabel:`Devices` > :guilabel:`Saved devices`.
    #. Verify that the paired device is appearing on the list.
 
-#. Press **Button 1** to switch to the Fast Pair not discoverable advertising.
-   **LED 3** turns off.
+#. Press **Button 1** to switch to the Fast Pair not discoverable advertising show UI indication mode.
+   **LED 3** starts blinking rapidly.
+   If you want to test the Fast Pair not discoverable advertising hide UI indication mode, press **Button 1** again.
+   **LED 3** starts blinking slowly.
+
 #. Wait until the Fast Pair Provider is added to :guilabel:`Saved devices` on the second Android device:
 
    a. Go to :guilabel:`Settings` > :guilabel:`Google` > :guilabel:`Devices & sharing` (or :guilabel:`Device connections`) > :guilabel:`Devices` > :guilabel:`Saved devices`.
@@ -195,13 +203,17 @@ Test not discoverable advertising by completing `Testing`_ and the following add
    #. If the device does not appear on the list, wait until the data is synced between phones.
 
 #. Move the second Android device close to the Fast Pair Provider.
-   A notification similar to the following one appears:
+   If the device is in the show UI indication advertising mode, a notification similar to the following one appears:
 
    .. figure:: /images/bt_fast_pair_not_discoverable_notification.png
       :scale: 50 %
       :alt: Fast Pair not discoverable advertising Android notification
 
-#. Tap on the notification to trigger the Fast Pair procedure.
+   If the device is in the hide UI indication advertising mode, no notification appears.
+   This is because the device advertises, but does not want to be paired with.
+   You can verify that the device is advertising using the `nRF Connect for Mobile`_ application.
+
+#. In the show UI indication mode, when the notification appears, tap on it to trigger the Fast Pair procedure.
 #. Wait for the notification about successful Fast Pair procedure.
    **LED 2** is turned on to inform that the device is connected with the Bluetooth Central.
 
