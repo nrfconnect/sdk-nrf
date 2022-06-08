@@ -380,6 +380,10 @@ Common Application Framework (CAF)
     The :kconfig:option:`CONFIG_CAF_BLE_STATE_SECURITY_REQ` can be used to enable this feature.
     The option can be used for both Bluetooth Peripheral and Bluetooth Central.
 
+* :ref:`caf_sensor_data_aggregator`:
+
+  * Added unit tests for the library.
+
 Shell libraries
 ---------------
 
