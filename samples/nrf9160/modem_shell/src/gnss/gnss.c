@@ -878,7 +878,7 @@ static void gnss_api_init(void)
 		.read = supl_read,
 		.write = supl_write,
 		.handler = inject_agps_data,
-		.logger = NULL, /* set to "supl_logger" to enable logging */
+		.logger = supl_logger,
 		.counter_ms = k_uptime_get
 	};
 
