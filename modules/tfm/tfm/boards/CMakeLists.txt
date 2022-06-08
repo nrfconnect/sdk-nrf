@@ -68,6 +68,9 @@ endif()
 
 if (${TFM_PARTITION_CRYPTO})
   target_link_libraries(platform_s PRIVATE platform_cc3xx)
+
+  # Needed in order to get crypto partition modules flags
+  target_link_libraries(platform_s PRIVATE tfm_psa_rot_partition_crypto)
 endif()
 
 if (NRF_ALLOW_NON_SECURE_RESET)
