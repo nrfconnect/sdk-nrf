@@ -37,7 +37,9 @@ Requirements
    * If only one kit is supported, replace the introduction text with "The sample supports the following development kit:".
    * If several kits are required to test the sample, state it after the table (for example, "You can use one or more of the development kits listed above and mix different development kits.").
    * Mention additional requirements after the table.
-   * If SPM is included in the sample, add ``.. include:: /includes/spm.txt`` to include the standard text that states this.
+   * If TFM is included in the sample, add ``.. include:: /includes/tfm.txt`` to include the standard text that states this.
+     Else, if SPM is included in the sample, add ``.. include:: /includes/spm.txt`` to include the standard text that states this.
+     For samples that support both nRF9160 DK and Thingy:91, use ``.. include:: /includes/tfm_spm_thingy91.txt`` standard text.
 
 The sample supports the following development kits:
 
@@ -175,7 +177,8 @@ Building and running
 ********************
 
 .. note::
-   * Include the standard text for building - either ``.. include:: /includes/build_and_run.txt`` or ``.. include:: /includes/build_and_run_nrf9160.txt``.
+   * Include the standard text for building - either ``.. include:: /includes/build_and_run.txt`` or ``.. include:: /includes/build_and_run_ns.txt``.
+     For samples that support both nRF9160 DK and Thingy:91, use ``.. include:: /includes/thingy91_build_and_run.txt`` standard text.
    * The main supported IDE for |NCS| is |VSC|, with the |nRFVSC| installed.
      Therefore, build instructions for the |nRFVSC| are required.
      Build instructions for the command line are optional.
@@ -252,6 +255,7 @@ Dependencies*
    * Drivers can be listed under libraries, no need for a separate part.
    * If possible, link to the respective library.
      If there is no documentation for the library, include the path.
+   * Add the appropriate secure firmware component that the sample supports.
 
 This sample uses the following |NCS| libraries:
 
@@ -268,9 +272,10 @@ It uses the following Zephyr libraries:
 
   * ``include/kernel.h``
 
-In addition, it uses the following samples:
+In addition, it uses the following secure firmware components:
 
 * :ref:`secure_partition_manager`
+* :ref:`Trusted Firmware-M <ug_tfm>`
 
 The sample also uses drivers from `nrfx`_.
 

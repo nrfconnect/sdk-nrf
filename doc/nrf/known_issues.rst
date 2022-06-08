@@ -2186,8 +2186,17 @@ nrfx_uart driver
 tx_buffer_length set incorrectly
   The nrfx_uart driver might incorrectly set the internal tx_buffer_length variable when high optimization level is set during compilation.
 
+.. _known_issue_tfm:
+
 Trusted Firmware-M (TF-M)
 *************************
+
+.. rst-class:: v2-0-0
+
+TF-M is not supported for Thingy:91 v1.5.0 and lower versions
+  TF-M does not support Thingy:91 v1.5.0 and lower versions when using the factory-programmed bootloader to upgrade the firmware.
+  TF-M is compatible with all versions of the Thingy:91 if you first upgrade the bootloader using an external debug probe.
+  Additionally, TF-M functions while using the bootloader to upgrade the firmware if you upgrade the bootloader to |NCS| v2.0.0.
 
 .. rst-class:: v2-0-0
 
