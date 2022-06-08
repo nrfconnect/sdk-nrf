@@ -153,7 +153,7 @@ ssize_t supl_read(void *buf, size_t nbytes, void *user_data)
 
 	ssize_t rc = recv(supl_fd, buf, nbytes, 0);
 
-	if (rc < 0 && (errno == ETIMEDOUT)) {
+	if (rc < 0 && (errno == EAGAIN)) {
 		return 0;
 	}
 
