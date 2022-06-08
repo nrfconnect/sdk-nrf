@@ -535,12 +535,12 @@ def generate_tables(
     top_table = {}
     for tech in sorted(top_table_info):
         top_table[tech] = {
-            MaturityLevels.SUPPORTED.value: [],
-            MaturityLevels.EXPERIMENTAL.value: [],
+            MaturityLevels.SUPPORTED.get_str(): [],
+            MaturityLevels.EXPERIMENTAL.get_str(): [],
         }
         for soc in all_socs:
             if soc in soc_sets[tech]:
-                top_table[tech][MaturityLevels.SUPPORTED.value].append(soc)
+                top_table[tech][MaturityLevels.SUPPORTED.get_str()].append(soc)
 
     # Feature tables
     category_results = {}
