@@ -1388,6 +1388,13 @@ endpoint 0 {
 
 endpoint 1 {
 
+  server cluster Identify {
+    ram      attribute identifyTime;
+    ram      attribute identifyType;
+    ram      attribute featureMap;
+    ram      attribute clusterRevision default = 2;
+  }
+
   server cluster Descriptor {
     callback attribute deviceList;
     callback attribute serverList;
@@ -1408,6 +1415,13 @@ endpoint 1 {
 
 endpoint 2 {
 
+  server cluster Identify {
+    ram      attribute identifyTime;
+    ram      attribute identifyType;
+    ram      attribute featureMap;
+    ram      attribute clusterRevision default = 2;
+  }
+
   server cluster Descriptor {
     callback attribute deviceList;
     callback attribute serverList;
@@ -1427,6 +1441,13 @@ endpoint 2 {
 }
 
 endpoint 3 {
+
+  server cluster Identify {
+    ram      attribute identifyTime;
+    ram      attribute identifyType;
+    ram      attribute featureMap;
+    ram      attribute clusterRevision default = 2;
+  }
 
   server cluster Descriptor {
     callback attribute deviceList;

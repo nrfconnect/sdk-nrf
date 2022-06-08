@@ -78,7 +78,6 @@ constexpr uint32_t kDeviceAverageCurrentConsumptionUa = CONFIG_AVERAGE_CURRENT_C
 /* Fully charged battery operation time in seconds */
 constexpr uint32_t kFullBatteryOperationTime =
 	kBatteryCapacityUaH / kDeviceAverageCurrentConsumptionUa * 3600;
-constexpr uint8_t kIdentifyEndpointId = 0;
 /* It is recommended to toggle the signalled state with 0.5 s interval. */
 constexpr size_t kIdentifyTimerIntervalMs = 500;
 
@@ -99,8 +98,13 @@ bool sHaveBLEConnections;
 
 LedState sLedState = LedState::kAlive;
 
-Identify sIdentify = { chip::EndpointId{ kIdentifyEndpointId }, AppTask::OnIdentifyStart,
-		       AppTask::OnIdentifyStop, EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_AUDIBLE_BEEP };
+/* Add identify for all endpoints */
+Identify sIdentifyTemperature = { chip::EndpointId{ kTemperatureMeasurementEndpointId }, AppTask::OnIdentifyStart, AppTask::OnIdentifyStop,
+			EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_AUDIBLE_BEEP };
+Identify sIdentifyHumidity = { chip::EndpointId{ kHumidityMeasurementEndpointId }, AppTask::OnIdentifyStart, AppTask::OnIdentifyStop,
+			EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_AUDIBLE_BEEP };
+Identify sIdentifyPressure = { chip::EndpointId{ kPressureMeasurementEndpointId }, AppTask::OnIdentifyStart, AppTask::OnIdentifyStop,
+			EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_AUDIBLE_BEEP };
 
 const device *sBme688SensorDev = device_get_binding(DT_LABEL(DT_INST(0, bosch_bme680)));
 } /* namespace */
