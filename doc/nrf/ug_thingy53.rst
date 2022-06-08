@@ -212,10 +212,8 @@ The memory layout must stay consistent, so that MCUboot can perform proper image
 The PCD SRAM partition is locked by the MCUboot bootloader to prevent the application from modifying the network core firmware.
 Trying to access data on this partition results in an ARM fault.
 
-Both the MCUboot bootloader and the application need a flash controller overlay.
-For the MCUboot bootloader this is needed for the network core image update, and the overlay is automatically applied.
-For the application this is needed to prevent bus faults when MCUmanager tries to access the simulated partition that contains the network core image data.
-See :file:`thingy53_nrf5340_cpuapp.overlay` in a compatible sample for how this is done for the application.
+The MCUboot bootloader needs a flash controller overlay for the network core image update.
+The overlay is applied automatically.
 
 .. _thingy53_app_mcuboot_bootloader:
 
@@ -327,9 +325,6 @@ External flash
 During a FOTA update, there might not be enough space available in internal flash storage to store the existing application and network core images as well as the incoming images, so the incoming images must be stored in external flash storage.
 This means that a sample compatible with the Nordic Thingy:53 must enable the external flash using the QSPI driver.
 Enable the option :kconfig:option:`CONFIG_NORDIC_QSPI_NOR`, and set :kconfig:option:`CONFIG_NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE` to ``4096`` and :kconfig:option:`CONFIG_NORDIC_QSPI_NOR_STACK_WRITE_BUFFER_SIZE` to ``16``.
-To ensure correct operation of the flash simulator, you must also enable :kconfig:option:`CONFIG_FLASH_NOP_DEVICE`.
-This prevents bus faults that would happen from the MCUmanager trying to access the simulated partition with network core image data.
-
 See :file:`thingy53_nrf5340_cpuapp.conf` in a compatible sample for how this is done.
 
 .. _thingy53_compatible_applications:
