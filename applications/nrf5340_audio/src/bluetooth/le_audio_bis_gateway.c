@@ -183,7 +183,7 @@ int le_audio_send(uint8_t const *const data, size_t size)
 #if (CONFIG_AUDIO_SOURCE_I2S)
 	struct bt_iso_tx_info tx_info = { 0 };
 
-	ret = bt_iso_chan_get_tx_sync(streams[0]->iso, &tx_info);
+	ret = bt_iso_chan_get_tx_sync(streams[0].iso, &tx_info);
 
 	if (ret) {
 		LOG_WRN("Error getting ISO TX anchor point: %d", ret);
