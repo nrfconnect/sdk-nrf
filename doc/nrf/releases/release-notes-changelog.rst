@@ -91,6 +91,10 @@ nRF9160: Asset Tracker v2
 
 |no_changes_yet_note|
 
+* Fixed:
+  
+  * Buffer overflow when adding custom items to the published message.
+
 nRF9160: Serial LTE modem
 -------------------------
 
