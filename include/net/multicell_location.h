@@ -19,8 +19,8 @@ extern "C" {
  */
 
 struct multicell_location {
-	float latitude;
-	float longitude;
+	double latitude;
+	double longitude;
 	float accuracy;
 };
 
