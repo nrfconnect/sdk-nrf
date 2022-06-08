@@ -9,6 +9,7 @@ Matter: Window covering
 
 This sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a window covering device.
 This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread network.
+Additionally, this device works as a Thread Synchronized Sleepy End Device.
 
 Use this sample as a reference for developing your own application.
 See the :ref:`ug_matter_creating_accessory` page for an overview of the process you need to follow.
@@ -77,22 +78,6 @@ FEM support
 ===========
 
 .. include:: /includes/sample_fem_support.txt
-
-Low-power build
-===============
-
-To configure the sample to consume less power, use the low-power build.
-It enables Thread's Synchronized Sleepy End Device mode and disables debug features, such as the UART console or the **LED 1** usage.
-
-To trigger the low-power build, use the ``-DOVERLAY_CONFIG="overlay-low_power.conf"`` option when building the sample.
-See :ref:`cmake_options` for instructions on how to add this option to your build.
-
-When building on the command line, run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_):
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -b *build_target* -- -DOVERLAY_CONFIG="overlay-low_power.conf"
 
 User interface
 **************

@@ -10,6 +10,7 @@ Matter: Light switch
 
 This light switch sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a switch device that binds with lighting devices and changes the state of their LEDs.
 When configured together with the :ref:`Matter light bulb <matter_light_bulb_sample>` sample (or other lighting sample) and when using a Matter controller, the light switch can control one light bulb directly or a group of light bulbs remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
+This device works as a Thread :ref:`Sleepy End Device <thread_ot_device_types>`.
 You can use this sample as a reference for creating your own application.
 
 Requirements
@@ -99,13 +100,6 @@ FEM support
 ===========
 
 .. include:: /includes/sample_fem_support.txt
-
-Low-power build
-===============
-
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_low_power_build_start
-    :end-before: matter_door_lock_sample_low_power_build_end
 
 .. _matter_light_switch_sample_remote_control_cli:
 

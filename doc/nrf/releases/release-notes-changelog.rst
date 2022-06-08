@@ -51,7 +51,7 @@ See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh sam
 Matter
 ------
 
-|no_changes_yet_note|
+* Removed the low-power configuration build type from all Matter samples.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
@@ -178,7 +178,20 @@ Thread samples
 Matter samples
 --------------
 
-|no_changes_yet_note|
+* Removed the low-power configuration build type from all Matter samples.
+
+* :ref:`matter_light_switch_sample`:
+
+  * Set :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` to be enabled by default.
+
+* :ref:`matter_lock_sample`:
+
+  * Set :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` to be enabled by default.
+
+* :ref:`matter_window_covering_sample`:
+
+  * Set :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` and :kconfig:option:`CONFIG_CHIP_THREAD_SSED` to be enabled by default.
+
 
 NFC samples
 -----------
