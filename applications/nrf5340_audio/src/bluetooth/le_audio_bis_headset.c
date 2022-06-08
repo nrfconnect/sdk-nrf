@@ -6,18 +6,22 @@
 
 #if (CONFIG_AUDIO_DEV == HEADSET)
 
+#include "le_audio.h"
+
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/audio/audio.h>
+/* TODO: Remove when a get_info function is implemented in host */
+#include <../subsys/bluetooth/audio/endpoint.h>
 
-#include "le_audio.h"
 #include "macros_common.h"
 #include "ctrl_events.h"
+#include "hw_codec.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(bis_headset, CONFIG_LOG_BLE_LEVEL);
 
 static le_audio_receive_cb receive_cb;
-static bool synced_to_broadcast;
+static bool init_routine_completed;
 
 static struct bt_audio_broadcast_sink *broadcast_sink;
 
@@ -34,7 +38,7 @@ static struct bt_audio_lc3_preset lc3_preset = BT_AUDIO_LC3_BROADCAST_PRESET_48_
 static const uint32_t bis_index_mask = BIT_MASK(ARRAY_SIZE(streams) + 1U);
 static uint32_t bis_index_bitfield;
 
-static void broadcast_sink_cleanup(void);
+static int bis_headset_cleanup(bool from_sync_lost_cb);
 
 static void print_codec(const struct bt_codec *codec)
 {
@@ -151,15 +155,12 @@ static void pa_sync_lost_cb(struct bt_audio_broadcast_sink *sink)
 
 	LOG_INF("Sink disconnected");
 
-	/* At this point the broadcast sink is stopped and deleted */
-	synced_to_broadcast = false;
-	broadcast_sink = NULL;
-
-	broadcast_sink_cleanup();
+	ret = bis_headset_cleanup(true);
+	ERR_CHK_MSG(ret, "Error cleaning up");
 
 	LOG_INF("Restarting scanning for broadcast sources");
 
-	ret = bt_audio_broadcast_sink_scan_start(BT_LE_SCAN_ACTIVE);
+	ret = bt_audio_broadcast_sink_scan_start(BT_LE_SCAN_PASSIVE);
 	ERR_CHK_MSG(ret, "Unable to start scanning for broadcast sources");
 }
 
@@ -169,13 +170,13 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 	struct event_t event;
 	uint32_t base_bis_index_bitfield = 0U;
 
-	if (synced_to_broadcast) {
+	if (init_routine_completed) {
 		return;
 	}
 
 	LOG_INF("Received BASE with %u subgroups from broadcast sink", base->subgroup_count);
 
-	for (size_t i = 0U; i < base->subgroup_count; i++) {
+	for (size_t i = 0U; i < CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT; i++) {
 		for (size_t j = 0U; j < base->subgroups[i].bis_count; j++) {
 			const uint8_t index = base->subgroups[i].bis_data[j].index;
 
@@ -192,14 +193,14 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 
 	bis_index_bitfield = base_bis_index_bitfield & bis_index_mask;
 
-	LOG_INF("BASE received, waiting for syncable");
+	LOG_INF("Waiting for syncable");
 }
 
 static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 {
 	int ret;
 
-	if (synced_to_broadcast) {
+	if (init_routine_completed) {
 		return;
 	}
 
@@ -214,7 +215,7 @@ static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 					   &lc3_preset.codec, NULL);
 	ERR_CHK_MSG(ret, "Unable to sync to broadcast source");
 
-	synced_to_broadcast = true;
+	init_routine_completed = true;
 }
 
 static struct bt_audio_broadcast_sink_cb broadcast_sink_cbs = { .scan_recv = scan_recv_cb,
@@ -241,23 +242,35 @@ static void initialize(le_audio_receive_cb recv_cb)
 	}
 }
 
-static void broadcast_sink_cleanup(void)
+static int bis_headset_cleanup(bool from_sync_lost_cb)
 {
 	int ret;
 
-	if (synced_to_broadcast) {
-		ret = bt_audio_broadcast_sink_stop(broadcast_sink);
-		ERR_CHK_MSG(ret, "Unable to stop broadcast sink");
-		synced_to_broadcast = false;
+	ret = bt_audio_broadcast_sink_scan_stop();
+	if (ret && ret != -EALREADY) {
+		return ret;
 	}
 
 	if (broadcast_sink != NULL) {
+		if (!from_sync_lost_cb) {
+			ret = bt_audio_broadcast_sink_stop(broadcast_sink);
+			if (ret && ret != -EALREADY) {
+				return ret;
+			}
+		}
+
 		ret = bt_audio_broadcast_sink_delete(broadcast_sink);
-		ERR_CHK_MSG(ret, "Unable to delete broadcast sink");
+		if (ret && ret != -EALREADY) {
+			return ret;
+		}
+
 		broadcast_sink = NULL;
 	}
 
 	bis_index_bitfield = 0U;
+	init_routine_completed = false;
+
+	return 0;
 }
 
 int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
@@ -273,51 +286,85 @@ int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
 
 int le_audio_volume_up(void)
 {
-	return 0;
+	if (streams[0].ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
+		return -ECANCELED;
+	}
+
+	return hw_codec_volume_increase();
 }
 
 int le_audio_volume_down(void)
 {
-	return 0;
+	if (streams[0].ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
+		return -ECANCELED;
+	}
+
+	return hw_codec_volume_decrease();
 }
 
 int le_audio_volume_mute(void)
 {
-	return 0;
+	if (streams[0].ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
+		return -ECANCELED;
+	}
+
+	return hw_codec_volume_mute();
 }
 
 int le_audio_play(void)
 {
-	return 0;
+	return bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfield, streams,
+					    &lc3_preset.codec, NULL);
 }
 
 int le_audio_pause(void)
 {
-	return 0;
+	return bt_audio_broadcast_sink_stop(broadcast_sink);
 }
 
 int le_audio_send(uint8_t const *const data, size_t size)
 {
-	return 0;
+	LOG_WRN("Not possible to send audio data from broadcast sink");
+	return -ENXIO;
 }
 
-void le_audio_enable(le_audio_receive_cb recv_cb)
+int le_audio_enable(le_audio_receive_cb recv_cb)
 {
 	int ret;
 
 	initialize(recv_cb);
 
-	broadcast_sink_cleanup();
+	ret = bis_headset_cleanup(false);
+	if (ret) {
+		LOG_ERR("Error cleaning up");
+		return ret;
+	}
 
 	LOG_INF("Scanning for broadcast sources");
 
-	ret = bt_audio_broadcast_sink_scan_start(BT_LE_SCAN_ACTIVE);
-	ERR_CHK_MSG(ret, "Unable to start scanning for broadcast sources");
+	ret = bt_audio_broadcast_sink_scan_start(BT_LE_SCAN_PASSIVE);
+	if (ret) {
+		return ret;
+	}
+
+	LOG_INF("LE Audio enabled");
+
+	return 0;
 }
 
-void le_audio_disable(void)
+int le_audio_disable(void)
 {
-	broadcast_sink_cleanup();
+	int ret;
+
+	ret = bis_headset_cleanup(false);
+	if (ret) {
+		LOG_ERR("Error cleaning up");
+		return ret;
+	}
+
+	LOG_INF("LE Audio disabled");
+
+	return 0;
 }
 
 #endif /* (CONFIG_AUDIO_DEV == HEADSET) */

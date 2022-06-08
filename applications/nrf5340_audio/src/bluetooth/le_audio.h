@@ -39,7 +39,7 @@ typedef void (*le_audio_receive_cb)(const uint8_t *const data, size_t size, bool
  *
  * @return	0 for success,
  *		-ENXIO if the feature is disabled,
- *		Error otherwise
+ *		error otherwise
  */
 int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate);
 
@@ -48,7 +48,7 @@ int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate);
  *
  * @return	0 for success,
  *		-ENXIO if the feature is disabled,
- *		Error otherwise
+ *		error otherwise
  */
 int le_audio_volume_up(void);
 
@@ -57,7 +57,7 @@ int le_audio_volume_up(void);
  *
  * @return	0 for success,
  *		-ENXIO if the feature is disabled,
- *		Error otherwise
+ *		error otherwise
  */
 int le_audio_volume_down(void);
 
@@ -66,7 +66,7 @@ int le_audio_volume_down(void);
  *
  * @return	0 for success,
  *		-ENXIO if the feature is disabled,
- *		Error otherwise
+ *		error otherwise
  */
 int le_audio_volume_mute(void);
 
@@ -92,7 +92,7 @@ int le_audio_pause(void);
  *
  * @return	0 for success,
  *		-ENXIO if the feature is disabled,
- *		Error otherwise
+ *		error otherwise
  */
 int le_audio_send(uint8_t const *const data, size_t size);
 

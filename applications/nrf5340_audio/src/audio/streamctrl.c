@@ -215,12 +215,14 @@ void streamctrl_encoded_data_send(void const *const data, size_t len)
 	int ret;
 	static int prev_ret;
 
-	ret = le_audio_send(data, len);
+	if (strm_state == STATE_STREAMING) {
+		ret = le_audio_send(data, len);
 
-	if (ret != 0 && ret != prev_ret) {
-		LOG_WRN("Problem with sending LE audio data, ret: %d", ret);
+		if (ret != 0 && ret != prev_ret) {
+			LOG_WRN("Problem with sending LE audio data, ret: %d", ret);
+		}
+		prev_ret = ret;
 	}
-	prev_ret = ret;
 }
 
 /* Handle button activity events */
@@ -243,32 +245,22 @@ static void button_evt_handler(struct button_evt event)
 		switch (strm_state) {
 		case STATE_PAUSED:
 			LOG_INF("Playing stream");
-			audio_system_start();
 
 			ret = le_audio_play();
 			if (ret) {
 				LOG_WRN("Failed to start playing");
-				break;
 			}
 
-			stream_state_set(STATE_STREAMING);
-			ret = led_blink(LED_APP_1_BLUE);
-			ERR_CHK(ret);
 			break;
 
 		case STATE_STREAMING:
 			LOG_INF("Pausing stream");
-			stream_state_set(STATE_PAUSED);
-			audio_system_stop();
 
 			ret = le_audio_pause();
 			if (ret) {
 				LOG_WRN("Failed to pause stream");
-				break;
 			}
 
-			ret = led_on(LED_APP_1_BLUE);
-			ERR_CHK(ret);
 			break;
 
 		default:
@@ -281,15 +273,30 @@ static void button_evt_handler(struct button_evt event)
 		break;
 
 	case BUTTON_VOLUME_UP:
-		le_audio_volume_up();
+		ret = le_audio_volume_up();
+		if (ret) {
+			LOG_WRN("Failed to increase volume");
+			break;
+		}
+
 		break;
 
 	case BUTTON_VOLUME_DOWN:
-		le_audio_volume_down();
+		ret = le_audio_volume_down();
+		if (ret) {
+			LOG_WRN("Failed to decrease volume");
+			break;
+		}
+
 		break;
 
 	case BUTTON_MUTE:
-		le_audio_volume_mute();
+		ret = le_audio_volume_mute();
+		if (ret) {
+			LOG_WRN("Failed to mute volume");
+			break;
+		}
+
 		break;
 
 	case BUTTON_TEST_TONE:
@@ -334,18 +341,32 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 	switch (event) {
 	case LE_AUDIO_EVT_STREAMING:
 		LOG_INF("LE audio evt streaming");
+
+		if (strm_state == STATE_STREAMING) {
+			LOG_WRN("Got streaming event in streaming state");
+			break;
+		}
+
 		audio_system_start();
 		stream_state_set(STATE_STREAMING);
 		ret = led_blink(LED_APP_1_BLUE);
 		ERR_CHK(ret);
+
 		break;
 
 	case LE_AUDIO_EVT_NOT_STREAMING:
 		LOG_INF("LE audio evt not_streaming");
+
+		if (strm_state == STATE_PAUSED) {
+			LOG_WRN("Got not_streaming event in paused state");
+			break;
+		}
+
 		stream_state_set(STATE_PAUSED);
 		audio_system_stop();
 		ret = led_on(LED_APP_1_BLUE);
 		ERR_CHK(ret);
+
 		break;
 
 	case LE_AUDIO_EVT_CONFIG_RECEIVED:
@@ -354,7 +375,11 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 		int bitrate;
 		int sampling_rate;
 
-		le_audio_config_get(&bitrate, &sampling_rate);
+		ret = le_audio_config_get(&bitrate, &sampling_rate);
+		if (ret) {
+			LOG_WRN("Failed to get config");
+			break;
+		}
 
 		LOG_DBG("Sampling rate: %d", sampling_rate);
 		LOG_DBG("Bitrate: %d", bitrate);
@@ -408,7 +433,8 @@ int streamctrl_start(void)
 	ret = k_thread_name_set(audio_datapath_thread_id, "AUDIO DATAPATH");
 	ERR_CHK(ret);
 
-	le_audio_enable(le_audio_rx_data_handler);
+	ret = le_audio_enable(le_audio_rx_data_handler);
+	ERR_CHK_MSG(ret, "Failed to enable LE Audio");
 
 	return 0;
 }

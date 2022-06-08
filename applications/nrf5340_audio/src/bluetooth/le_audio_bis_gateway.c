@@ -6,10 +6,13 @@
 
 #if (CONFIG_AUDIO_DEV == GATEWAY)
 
+#include "le_audio.h"
+
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/audio/audio.h>
+/* TODO: Remove when a get_info function is implemented in host */
+#include <../subsys/bluetooth/audio/endpoint.h>
 
-#include "le_audio.h"
 #include "macros_common.h"
 #include "ctrl_events.h"
 
@@ -29,7 +32,7 @@ NET_BUF_POOL_FIXED_DEFINE(tx_pool, CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT,
 
 static uint32_t send_req_cnt;
 static uint32_t sent_cnt;
-static bool stopping;
+static bool delete_broadcast_src;
 
 static void stream_sent_cb(struct bt_audio_stream *stream)
 {
@@ -78,51 +81,92 @@ static void stream_stopped_cb(struct bt_audio_stream *stream)
 	ERR_CHK(ret);
 
 	LOG_INF("Broadcast source stopped");
+
+	if (delete_broadcast_src && broadcast_source != NULL) {
+		ret = bt_audio_broadcast_source_delete(broadcast_source);
+		ERR_CHK_MSG(ret, "Unable to delete broadcast source");
+
+		broadcast_source = NULL;
+
+		LOG_INF("Broadcast source deleted");
+
+		delete_broadcast_src = false;
+	}
 }
 
 static struct bt_audio_stream_ops stream_ops = { .sent = stream_sent_cb,
 						 .started = stream_started_cb,
 						 .stopped = stream_stopped_cb };
 
+static void initialize(void)
+{
+	static bool initialized;
+
+	if (!initialized) {
+		for (size_t i = 0U; i < ARRAY_SIZE(streams); i++) {
+			streams[i].ops = &stream_ops;
+		}
+
+		initialized = true;
+	}
+}
+
 int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
 {
-	return 0;
+	LOG_WRN("Not possible to get config on broadcast source");
+	return -ENXIO;
 }
 
 int le_audio_volume_up(void)
 {
-	return 0;
+	LOG_WRN("Not possible to increase volume on/from broadcast source");
+	return -ENXIO;
 }
 
 int le_audio_volume_down(void)
 {
-	return 0;
+	LOG_WRN("Not possible to decrease volume on/from broadcast source");
+	return -ENXIO;
 }
 
 int le_audio_volume_mute(void)
 {
-	return 0;
+	LOG_WRN("Not possible to mute volume on/from broadcast source");
+	return -ENXIO;
 }
 
 int le_audio_play(void)
 {
-	return 0;
+	int ret;
+	struct event_t event;
+
+	event.event_source = EVT_SRC_LE_AUDIO;
+	event.le_audio_activity.le_audio_evt_type = LE_AUDIO_EVT_STREAMING;
+
+	ret = ctrl_events_put(&event);
+
+	return ret;
 }
 
 int le_audio_pause(void)
 {
-	return 0;
+	int ret;
+	struct event_t event;
+
+	event.event_source = EVT_SRC_LE_AUDIO;
+	event.le_audio_activity.le_audio_evt_type = LE_AUDIO_EVT_NOT_STREAMING;
+
+	ret = ctrl_events_put(&event);
+
+	return ret;
 }
 
 int le_audio_send(uint8_t const *const data, size_t size)
 {
-	// TODO: Implement the synchronization workaround created by Audun here? (OR ONLY FOR CIS?)
-	// It this upstreamed now?
-
 	int ret;
 	struct net_buf *buf;
 
-	if (stopping) {
+	if (streams[0].ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
 		return -ECANCELED;
 	}
 
@@ -137,7 +181,6 @@ int le_audio_send(uint8_t const *const data, size_t size)
 
 	ret = bt_audio_stream_send(streams, buf);
 	if (ret < 0) {
-		LOG_WRN("Unable to broadcast data: %d", ret);
 		net_buf_unref(buf);
 		return ret;
 	}
@@ -147,34 +190,56 @@ int le_audio_send(uint8_t const *const data, size_t size)
 	return 0;
 }
 
-// TODO: Implement return code
-void le_audio_enable(le_audio_receive_cb recv_cb)
+int le_audio_enable(le_audio_receive_cb recv_cb)
 {
 	int ret;
 
-	// TODO: Create le_audio_initialize()
-	for (size_t i = 0U; i < ARRAY_SIZE(streams); i++) {
-		streams[i].ops = &stream_ops;
-	}
+	initialize();
 
 	LOG_INF("Creating broadcast source");
 
 	ret = bt_audio_broadcast_source_create(streams, ARRAY_SIZE(streams), &lc3_preset.codec,
 					       &lc3_preset.qos, &broadcast_source);
-	ERR_CHK_MSG(ret, "Unable to create broadcast source");
+	if (ret) {
+		return ret;
+	}
 
 	LOG_INF("Starting broadcast source");
 
-	stopping = false;
-
 	ret = bt_audio_broadcast_source_start(broadcast_source);
-	ERR_CHK_MSG(ret, "Unable to start broadcast source");
+	if (ret) {
+		return ret;
+	}
+
+	LOG_INF("LE Audio enabled");
+
+	return 0;
 }
 
-// TODO: Implement return code
-void le_audio_disable(void)
+int le_audio_disable(void)
 {
-	// TODO: Stopping functionality is in broadcast_audio_source sample
+	int ret;
+
+	if (streams[0].ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
+		/* Deleting broadcast source in stream_stopped_cb() */
+		delete_broadcast_src = true;
+
+		ret = bt_audio_broadcast_source_stop(broadcast_source);
+		if (ret) {
+			return ret;
+		}
+	} else if (broadcast_source != NULL) {
+		ret = bt_audio_broadcast_source_delete(broadcast_source);
+		if (ret) {
+			return ret;
+		}
+
+		broadcast_source = NULL;
+	}
+
+	LOG_INF("LE Audio disabled");
+
+	return 0;
 }
 
 #endif /* (CONFIG_AUDIO_DEV == GATEWAY) */
