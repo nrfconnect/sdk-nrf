@@ -51,21 +51,51 @@ static struct bt_audio_capability caps = {
 	.ops = &lc3_cap_codec_ops,
 };
 static struct bt_conn *default_conn;
-static struct bt_audio_stream streams;
+static struct bt_audio_stream audio_stream;
+
+static void print_codec(const struct bt_codec *codec)
+{
+	if (codec->id == BT_CODEC_LC3_ID) {
+		/* LC3 uses the generic LTV format - other codecs might do as well */
+		uint32_t chan_allocation;
+
+		LOG_INF("Codec config for LC3:");
+		LOG_INF("\tFrequency: %d Hz", bt_codec_cfg_get_freq(codec));
+		LOG_INF("\tFrame Duration: %d us", bt_codec_cfg_get_frame_duration_us(codec));
+		if (bt_codec_cfg_get_chan_allocation_val(codec, &chan_allocation) == 0) {
+			LOG_INF("\tChannel allocation: 0x%x", chan_allocation);
+		}
+
+		LOG_INF("\tOctets per frame: %d", bt_codec_cfg_get_octets_per_frame(codec));
+		LOG_INF("\tFrames per SDU: %d", bt_codec_cfg_get_frame_blocks_per_sdu(codec, true));
+	} else {
+		LOG_INF("Codec is not LC3, codec_id: 0x%2x", codec->id);
+	}
+}
 
 static struct bt_audio_stream *lc3_cap_config_cb(struct bt_conn *conn, struct bt_audio_ep *ep,
 						 enum bt_audio_pac_type type,
 						 struct bt_audio_capability *cap,
 						 struct bt_codec *codec)
 {
-	struct bt_audio_stream *stream = &streams;
+	int ret;
+	struct event_t event;
+	struct bt_audio_stream *stream = &audio_stream;
 
 	if (!stream->conn) {
 		LOG_INF("ASE Codec Config stream %p", (void *)stream);
+
+		print_codec(stream->codec);
+		event.event_source = EVT_SRC_LE_AUDIO;
+		event.le_audio_activity.le_audio_evt_type = LE_AUDIO_EVT_CONFIG_RECEIVED;
+
+		ret = ctrl_events_put(&event);
+		ERR_CHK(ret);
+
 		return stream;
 	}
 
-	LOG_WRN("No streams available");
+	LOG_WRN("No audio_stream available");
 	return NULL;
 }
 
@@ -246,7 +276,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 			LOG_ERR("Location set failed");
 			return ret;
 		}
-		bt_audio_stream_cb_register(&streams, &stream_ops);
+		bt_audio_stream_cb_register(&audio_stream, &stream_ops);
 		initialized = true;
 	}
 	return 0;
@@ -254,6 +284,11 @@ static int initialize(le_audio_receive_cb recv_cb)
 
 int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
 {
+	int frames_per_sec = 1000000 / bt_codec_cfg_get_frame_duration_us(audio_stream.codec);
+	int bits_per_frame = bt_codec_cfg_get_octets_per_frame(audio_stream.codec) * 8;
+
+	*sampling_rate = bt_codec_cfg_get_freq(audio_stream.codec);
+	*bitrate = frames_per_sec * bits_per_frame;
 	return 0;
 }
 
