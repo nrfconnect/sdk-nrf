@@ -15,6 +15,7 @@
 
 #include "macros_common.h"
 #include "ctrl_events.h"
+#include "audio_datapath.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(bis_gateway, CONFIG_LOG_BLE_LEVEL);
@@ -178,6 +179,18 @@ int le_audio_send(uint8_t const *const data, size_t size)
 
 	net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
 	net_buf_add_mem(buf, data, size);
+
+#if (CONFIG_AUDIO_SOURCE_I2S)
+	struct bt_iso_tx_info tx_info = { 0 };
+
+	ret = bt_iso_chan_get_tx_sync(streams[0]->iso, &tx_info);
+
+	if (ret) {
+		LOG_WRN("Error getting ISO TX anchor point: %d", ret);
+	} else {
+		audio_datapath_sdu_ref_update(tx_info.ts);
+	}
+#endif
 
 	ret = bt_audio_stream_send(streams, buf);
 	if (ret < 0) {
