@@ -9,7 +9,7 @@ Matter: Window covering
 
 This sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a window covering device.
 This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread network.
-Additionally, this device works as a Thread Synchronized Sleepy End Device.
+Additionally, this device works as a Thread :ref:`Synchronized Sleepy End Device <thread_ot_device_types>`.
 
 Use this sample as a reference for developing your own application.
 See the :ref:`ug_matter_creating_accessory` page for an overview of the process you need to follow.
