@@ -128,7 +128,7 @@ config DATA_ACCELEROMETER_THRESHOLD
 
 config DATA_GNSS_TIMEOUT_SECONDS
 	int "Default GNSS timeout"
-	default 60
+	default 30
 	help
 	  Timeout for acquiring a GNSS fix during sampling of data.
 

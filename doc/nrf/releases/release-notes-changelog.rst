@@ -89,7 +89,14 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 nRF9160: Asset Tracker v2
 -------------------------
 
-|no_changes_yet_note|
+  * Removed:
+
+    * ``CONFIG_APP_REQUEST_GNSS_ON_INITIAL_SAMPLING`` option.
+    * ``CONFIG_APP_REQUEST_NEIGHBOR_CELLS_DATA`` option.
+
+  * Updated:
+
+    * The default value of the GNSS timeout in the application's :ref:`Real-time configurations <real_time_configs>` is now 30 seconds.
 
 nRF9160: Serial LTE modem
 -------------------------

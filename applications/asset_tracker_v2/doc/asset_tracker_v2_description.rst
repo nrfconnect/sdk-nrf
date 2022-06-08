@@ -106,7 +106,7 @@ The real-time configurations supported by the application are listed in the foll
 |          +---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 |          | Movement timeout    | Number of seconds between each sampling/publication in passive mode, whether the device is moving or not.                            | 3600 seconds   |
 +----------+---------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
-| GNSS timeout                   | Timeout for acquiring a GNSS fix during data sampling.                                                                               | 60 seconds     |
+| GNSS timeout                   | Timeout for acquiring a GNSS fix during data sampling.                                                                               | 30 seconds     |
 +--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
 | Accelerometer threshold        | Accelerometer threshold in m/s². Minimal absolute value in m/s² for accelerometer readings to be considered valid movement.          | 10 m/s²        |
 +--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+----------------+
