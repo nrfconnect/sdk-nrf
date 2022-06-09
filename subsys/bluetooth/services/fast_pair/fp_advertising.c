@@ -26,7 +26,7 @@ enum fp_field_type {
 	FP_FIELD_TYPE_HIDE_UI_INDICATION = 0b0010,
 };
 
-static const uint16_t fast_pair_uuid = BT_FAST_PAIR_SERVICE_UUID;
+static const uint16_t fast_pair_uuid = FP_SERVICE_UUID;
 static const uint8_t flags;
 static const uint8_t empty_account_key_list;
 
@@ -86,7 +86,7 @@ static int fp_adv_data_fill_non_discoverable(struct net_buf_simple *buf, size_t 
 	if (account_key_cnt == 0) {
 		net_buf_simple_add_u8(buf, empty_account_key_list);
 	} else {
-		uint8_t ak[CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX][FP_CRYPTO_ACCOUNT_KEY_LEN];
+		struct fp_account_key ak[CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX];
 		size_t ak_filter_size = fp_crypto_account_key_filter_size(account_key_cnt);
 		size_t account_key_get_cnt = account_key_cnt;
 		uint8_t salt;

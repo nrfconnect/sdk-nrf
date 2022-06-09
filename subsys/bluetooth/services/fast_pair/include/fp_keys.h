@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include "fp_common.h"
 
 /**
  * @defgroup fp_keys Fast Pair keys
@@ -99,11 +100,11 @@ int fp_keys_generate_key(const struct bt_conn *conn, struct fp_keys_keygen_param
 /** Store Account Key of a given Fast Pair Seeker in non-volatile memory.
  *
  * @param[in] conn		Pointer to Bluetooth connection (determines Fast Pair Seeker).
- * @param[in] account_key	Pointer to buffer containing the Account Key.
+ * @param[in] account_key	Pointer to structure containing the Account Key.
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_keys_store_account_key(const struct bt_conn *conn, const uint8_t *account_key);
+int fp_keys_store_account_key(const struct bt_conn *conn, const struct fp_account_key *account_key);
 
 /** Inform Fast Pair Keys about the progress of the Bluetooth authentication procedure.
  *

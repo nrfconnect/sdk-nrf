@@ -14,7 +14,7 @@
 #include <zephyr/settings/settings.h>
 
 #include "fp_storage.h"
-#include "fp_crypto.h"
+#include "fp_common.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
@@ -35,10 +35,10 @@ BUILD_ASSERT(ACCOUNT_KEY_CNT <= 10);
 
 struct account_key_data {
 	uint8_t account_key_id;
-	uint8_t account_key[FP_CRYPTO_ACCOUNT_KEY_LEN];
+	struct fp_account_key account_key;
 };
 
-static uint8_t account_key_list[ACCOUNT_KEY_CNT][FP_CRYPTO_ACCOUNT_KEY_LEN];
+static struct fp_account_key account_key_list[ACCOUNT_KEY_CNT];
 static uint8_t account_key_loaded_ids[ACCOUNT_KEY_CNT];
 static uint8_t account_key_next_id;
 static uint8_t account_key_count;
@@ -111,7 +111,7 @@ static int fp_settings_load_ak(const char *name, size_t len, settings_read_cb re
 		return -EINVAL;
 	}
 
-	memcpy(account_key_list[index], data.account_key, sizeof(data.account_key));
+	account_key_list[index] = data.account_key;
 	account_key_loaded_ids[index] = data.account_key_id;
 
 	return 0;
@@ -246,7 +246,7 @@ int fp_storage_account_key_count(void)
 	return account_key_count;
 }
 
-int fp_storage_account_keys_get(uint8_t buf[][FP_CRYPTO_ACCOUNT_KEY_LEN], size_t *key_count)
+int fp_storage_account_keys_get(struct fp_account_key *buf, size_t *key_count)
 {
 	if (!atomic_get(&settings_loaded)) {
 		return -ENODATA;
@@ -256,13 +256,13 @@ int fp_storage_account_keys_get(uint8_t buf[][FP_CRYPTO_ACCOUNT_KEY_LEN], size_t
 		return -EINVAL;
 	}
 
-	memcpy(buf, account_key_list, account_key_count * FP_CRYPTO_ACCOUNT_KEY_LEN);
+	memcpy(buf, account_key_list, account_key_count * sizeof(account_key_list[0]));
 	*key_count = account_key_count;
 
 	return 0;
 }
 
-int fp_storage_account_key_find(uint8_t account_key[FP_CRYPTO_ACCOUNT_KEY_LEN],
+int fp_storage_account_key_find(struct fp_account_key *account_key,
 				fp_storage_account_key_check_cb account_key_check_cb,
 				void *context)
 {
@@ -275,11 +275,9 @@ int fp_storage_account_key_find(uint8_t account_key[FP_CRYPTO_ACCOUNT_KEY_LEN],
 	}
 
 	for (size_t i = 0; i < account_key_count; i++) {
-		if (account_key_check_cb(account_key_list[i], context)) {
+		if (account_key_check_cb(&account_key_list[i], context)) {
 			if (account_key) {
-				memcpy(account_key,
-				       account_key_list[i],
-				       FP_CRYPTO_ACCOUNT_KEY_LEN);
+				*account_key = account_key_list[i];
 			}
 
 			return 0;
@@ -289,7 +287,7 @@ int fp_storage_account_key_find(uint8_t account_key[FP_CRYPTO_ACCOUNT_KEY_LEN],
 	return -ESRCH;
 }
 
-int fp_storage_account_key_save(const uint8_t *account_key)
+int fp_storage_account_key_save(const struct fp_account_key *account_key)
 {
 	if (!atomic_get(&settings_loaded)) {
 		return -ENODATA;
@@ -302,7 +300,7 @@ int fp_storage_account_key_save(const uint8_t *account_key)
 	int err;
 
 	for (size_t i = 0; i < account_key_count; i++) {
-		if (!memcmp(account_key, account_key_list[i], FP_CRYPTO_ACCOUNT_KEY_LEN)) {
+		if (!memcmp(account_key->key, account_key_list[i].key, FP_ACCOUNT_KEY_LEN)) {
 			LOG_INF("Account Key already saved - skipping.");
 			return 0;
 		}
@@ -314,7 +312,7 @@ int fp_storage_account_key_save(const uint8_t *account_key)
 	index = key_id_to_idx(account_key_next_id);
 
 	data.account_key_id = account_key_next_id;
-	memcpy(data.account_key, account_key, FP_CRYPTO_ACCOUNT_KEY_LEN);
+	data.account_key = *account_key;
 
 	n = snprintf(name, SETTINGS_NAME_MAX_SIZE, "%s%u", SETTINGS_AK_FULL_PREFIX, index);
 	__ASSERT_NO_MSG(n < SETTINGS_NAME_MAX_SIZE);
@@ -327,7 +325,7 @@ int fp_storage_account_key_save(const uint8_t *account_key)
 		return err;
 	}
 
-	memcpy(account_key_list[index], account_key, FP_CRYPTO_ACCOUNT_KEY_LEN);
+	account_key_list[index] = *account_key;
 
 	account_key_next_id = next_key_id(account_key_next_id);
 

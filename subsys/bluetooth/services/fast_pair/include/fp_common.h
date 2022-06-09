@@ -19,7 +19,15 @@ extern "C" {
 #endif
 
 /** UUID of the Fast Pair GATT Service. */
-#define BT_FAST_PAIR_SERVICE_UUID  0xFE2C
+#define FP_SERVICE_UUID		0xFE2C
+/** Length of Account Key (128 bits = 16 bytes). */
+#define FP_ACCOUNT_KEY_LEN	16U
+
+/** @brief Fast Pair Account Key. */
+struct fp_account_key {
+	/** Account Key. */
+	uint8_t key[FP_ACCOUNT_KEY_LEN];
+};
 
 
 #ifdef __cplusplus

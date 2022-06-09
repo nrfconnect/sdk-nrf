@@ -10,6 +10,7 @@
 #include <zephyr/sys/byteorder.h>
 
 #include "fp_crypto.h"
+#include "fp_common.h"
 
 
 int fp_crypto_aes_key_compute(uint8_t *out, const uint8_t *in)
@@ -33,20 +34,19 @@ size_t fp_crypto_account_key_filter_size(size_t n)
 	}
 }
 
-int fp_crypto_account_key_filter(uint8_t *out,
-				 const uint8_t account_key_list[][FP_CRYPTO_ACCOUNT_KEY_LEN],
+int fp_crypto_account_key_filter(uint8_t *out, const struct fp_account_key *account_key_list,
 				 size_t n, uint8_t salt)
 {
 	size_t s = fp_crypto_account_key_filter_size(n);
-	uint8_t v[FP_CRYPTO_ACCOUNT_KEY_LEN + sizeof(salt)];
+	uint8_t v[FP_ACCOUNT_KEY_LEN + sizeof(salt)];
 	uint8_t h[FP_CRYPTO_SHA256_HASH_LEN];
 	uint32_t x;
 	uint32_t m;
 
 	memset(out, 0, s);
 	for (size_t i = 0; i < n; i++) {
-		memcpy(v, account_key_list[i], FP_CRYPTO_ACCOUNT_KEY_LEN);
-		v[FP_CRYPTO_ACCOUNT_KEY_LEN] = salt;
+		memcpy(v, account_key_list[i].key, FP_ACCOUNT_KEY_LEN);
+		v[FP_ACCOUNT_KEY_LEN] = salt;
 		int err = fp_crypto_sha256(h, v, sizeof(v));
 
 		if (err) {
