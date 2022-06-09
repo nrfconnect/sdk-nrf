@@ -85,7 +85,11 @@ static void stream_stopped_cb(struct bt_audio_stream *stream)
 
 	if (delete_broadcast_src && broadcast_source != NULL) {
 		ret = bt_audio_broadcast_source_delete(broadcast_source);
-		ERR_CHK_MSG(ret, "Unable to delete broadcast source");
+		if (ret) {
+			LOG_ERR("Unable to delete broadcast source");
+			delete_broadcast_src = false;
+			return;
+		}
 
 		broadcast_source = NULL;
 

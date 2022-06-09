@@ -156,12 +156,17 @@ static void pa_sync_lost_cb(struct bt_audio_broadcast_sink *sink)
 	LOG_INF("Sink disconnected");
 
 	ret = bis_headset_cleanup(true);
-	ERR_CHK_MSG(ret, "Error cleaning up");
+	if (ret) {
+		LOG_ERR("Error cleaning up");
+		return;
+	}
 
 	LOG_INF("Restarting scanning for broadcast sources");
 
 	ret = bt_audio_broadcast_sink_scan_start(BT_LE_SCAN_PASSIVE);
-	ERR_CHK_MSG(ret, "Unable to start scanning for broadcast sources");
+	if (ret) {
+		LOG_ERR("Unable to start scanning for broadcast sources");
+	}
 }
 
 static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_audio_base *base)
@@ -213,7 +218,10 @@ static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 
 	ret = bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfield, streams,
 					   &lc3_preset.codec, NULL);
-	ERR_CHK_MSG(ret, "Unable to sync to broadcast source");
+	if (ret) {
+		LOG_ERR("Unable to sync to broadcast source");
+		return;
+	}
 
 	init_routine_completed = true;
 }
