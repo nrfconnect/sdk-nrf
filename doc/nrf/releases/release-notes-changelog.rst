@@ -134,9 +134,9 @@ nRF Machine Learning (Edge Impulse)
 nRF Desktop
 -----------
 
-* nRF Desktop peripherals no longer automatically send security request right after Bluetooth LE connection is established.
+* nRF Desktop peripherals no longer automatically send security request immediately after Bluetooth LE connection is established.
   The feature can be turned on using :kconfig:option:`CONFIG_CAF_BLE_STATE_SECURITY_REQ`.
-* nRF Desktop dongles start peripheral discovery right after Bluetooth LE connection is established.
+* nRF Desktop dongles start peripheral discovery immediately after Bluetooth LE connection is established.
   The dongles no longer wait until the connection is secured.
 
 |no_changes_yet_note|
@@ -157,7 +157,7 @@ Bluetooth samples
 
 * :ref:`ble_nrf_dm` sample:
 
-  * Split the configuration of the Distance Measurement module from the Nordic Distance Measurement library.
+  * Split the configuration of the :ref:`mod_dm` module from the :ref:`nrf_dm`.
     This allows the use of the Nordic Distance Measurement library without the module.
 
 * :ref:`direct_test_mode` sample:
@@ -184,6 +184,7 @@ Bluetooth mesh samples
 nRF9160 samples
 ---------------
 
+* Added :ref:`modem_trace_backend_sample` sample, demonstrating how to add a custom modem trace backend. The custom backend prints the amount of trace data received in bytes, trace data throughput, and CPU load.
 * :ref:`lwm2m_client` sample:
 
   * Fixed:
@@ -207,12 +208,6 @@ nRF9160 samples
       When running this configuration, you can perform BT scanning and advertising using the ``bt`` command.
     * Support for injecting GNSS reference altitude for low accuracy mode.
       For a position fix using only three satellites, GNSS module must have a reference altitude that can now be injected using the ``gnss agps ref_altitude`` command.
-
-* :ref:`modem_trace_backend_sample` sample:
-
-  * Added:
-
-    * Sample demonstrating how to add a custom modem trace backend. The custom backend prints the amount of bytes of trace data received, trace data throughput, and CPU load.
 
 Thread samples
 --------------
@@ -257,7 +252,7 @@ Zigbee samples
 
 * :ref:`zigbee_light_switch_sample` sample:
 
-  * Fixed an issue where a buffer would not be freed after a fail occurred when sending a Match Descriptor request.
+  * Fixed an issue where a buffer would not be freed after a failure occurred when sending a Match Descriptor request.
 
 Other samples
 -------------
@@ -307,7 +302,7 @@ Modem libraries
 
     * Fixed:
 
-      * An issue that would cause the library to assert on a unhandled CME error when the AT command failed to be sent.
+      * An issue that would cause the library to assert on an unhandled CME error when the AT command failed to be sent.
 
   * :ref:`at_cmd_parser_readme` library:
 
@@ -317,13 +312,20 @@ Modem libraries
 
   * :ref:`pdn_readme` library:
 
-    * Automatically subscribe to ``+CNEC=16`` and ``+CGEREP=1`` if the :ref:`lte_lc_readme` library is used to change the functional mode of the modem.
-    * Added the :c:func:`pdn_esm_strerror` function to retrieve a textual description of an ESM error reason.
-      The function is compiled when :kconfig:option:`CONFIG_PDN_ESM_STRERROR` Kconfig option is enabled.
+    * Added:
+
+      * The :c:func:`pdn_esm_strerror` function to retrieve a textual description of an ESM error reason.
+        The function is compiled when :kconfig:option:`CONFIG_PDN_ESM_STRERROR` Kconfig option is enabled.
+
+    * Updated:
+
+      * Automatically subscribe to ``+CNEC=16`` and ``+CGEREP=1`` if the :ref:`lte_lc_readme` library is used to change the modem's functional mode.
 
   * :ref:`nrf_modem_lib_readme` library:
 
-    * Ability to add :ref:`custom trace backends <adding_custom_modem_trace_backends>`.
+    * Updated:
+
+      * Ability to add :ref:`custom trace backends <adding_custom_modem_trace_backends>`.
 
 Libraries for networking
 ------------------------
@@ -354,33 +356,27 @@ Other libraries
 
   * :ref:`nrf_rpc_ipc_readme` library.
 
-* Updated:
+* :ref:`lib_flash_patch` library:
 
-  * :ref:`lib_flash_patch` library:
+  * Allow the :kconfig:option:`CONFIG_DISABLE_FLASH_PATCH` Kconfig option to be used on the nRF52833 SoC.
 
-    * Allow the :kconfig:option:`CONFIG_DISABLE_FLASH_PATCH` Kconfig option to be used on the nRF52833 SoC.
+* :ref:`doc_fw_info` module:
 
-  * :ref:`doc_fw_info` module:
+  * Fixed a bug where MCUboot would experience a fault when using the :ref:`doc_fw_info_ext_api` feature.
 
-    * Fixed a bug where MCUboot would experience a fault when using the :ref:`doc_fw_info_ext_api` feature.
+* :ref:`nrf_rpc_ipc_readme`:
 
-  * :ref:`lib_nrf_rpc`:
-
-    * This library can use different transport implementation for each nRF RPC group.
-    * Memory for remote procedure calls is now allocated on a heap instead of the calling thread stack.
-
-  * :ref:`lib_adp536x`:
-
-    * Added the documentation.
+  * This library can use different transport implementation for each nRF RPC group.
+  * Memory for remote procedure calls is now allocated on a heap instead of the calling thread stack.
 
 Common Application Framework (CAF)
 ----------------------------------
 
-* :ref:`caf_ble_state` running on Bluetooth Peripheral no longer automatically sends security request right after Bluetooth LE connection is established.
-  The :kconfig:option:`CONFIG_CAF_BLE_STATE_SECURITY_REQ` can be used to enable this feature.
-  The option can be used for both Bluetooth Peripheral and Bluetooth Central.
+* :ref:`caf_ble_state`:
 
-|no_changes_yet_note|
+  * Running on Bluetooth Peripheral no longer automatically send security request immediately after Bluetooth LE connection is established.
+    The :kconfig:option:`CONFIG_CAF_BLE_STATE_SECURITY_REQ` can be used to enable this feature.
+    The option can be used for both Bluetooth Peripheral and Bluetooth Central.
 
 Shell libraries
 ---------------
@@ -394,11 +390,6 @@ Libraries for Zigbee
 
   * Added :kconfig:option:`CONFIG_ZIGBEE_PANID_CONFLICT_RESOLUTION` for enabling automatic PAN ID conflict resolution.
     This option is enabled by default.
-
-Shell libraries
----------------
-
-|no_changes_yet_note|
 
 sdk-nrfxlib
 -----------
@@ -486,10 +477,10 @@ Documentation
 
 * Updated:
 
-  * :ref:`ug_thread_configuring` to better indicate what is required and what is optional.
-    Also added further clarifications to the page to make everything more clear.
-  * :ref:`ug_nrf9160_gs` by moving :ref:`nrf9160_gs_updating_fw_modem` before :ref:`nrf9160_gs_updating_fw_application` because updating modem firmware erases application firmware.
-  * :ref:`ug_matter_tools` with a new section about the ZAP tool.
+  * :ref:`ug_thread_configuring` page to better indicate what is required and what is optional.
+    Also added further clarifications to the page to make everything clearer.
+  * :ref:`ug_nrf9160_gs` guide by moving :ref:`nrf9160_gs_updating_fw_modem` section before :ref:`nrf9160_gs_updating_fw_application` because updating modem firmware erases application firmware.
+  * :ref:`ug_matter_tools` page with a new section about the ZAP tool.
 
 * Removed:
 
