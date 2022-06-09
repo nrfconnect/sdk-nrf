@@ -206,9 +206,58 @@ static int device_reboot_cb(uint16_t obj_inst_id, uint8_t *args, uint16_t args_l
 	return 0;
 }
 
+/* Callback handler triggered when the modem should be put in a certain functional mode.
+ * Handler is called pre provisioning of DTLS credentials when the modem should be put in
+ * offline mode, and when the modem should return to normal mode after
+ * provisioning has been carried out.
+ */
+static int modem_mode_request_cb(enum lte_lc_func_mode new_mode, void *user_data)
+{
+	ARG_UNUSED(user_data);
+
+	int err;
+	enum lte_lc_func_mode mode_current;
+	struct cloud_wrap_event cloud_wrap_evt = { 0 };
+
+	err = lte_lc_func_mode_get(&mode_current);
+	if (err) {
+		LOG_ERR("lte_lc_func_mode_get failed, error: %d", err);
+		return err;
+	}
+
+	/* Return success if the modem is in the required functional mode. */
+	if (mode_current == new_mode) {
+		return 0;
+	}
+
+	switch (new_mode) {
+	case LTE_LC_FUNC_MODE_OFFLINE:
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_LTE_DISCONNECT_REQUEST;
+		break;
+	case LTE_LC_FUNC_MODE_NORMAL:
+		cloud_wrap_evt.type = CLOUD_WRAP_EVT_LTE_CONNECT_REQUEST;
+		break;
+	default:
+		LOG_ERR("Non supported modem functional mode request.");
+		return -ENOTSUP;
+	}
+
+	cloud_wrapper_notify_event(&cloud_wrap_evt);
+
+	/* If the modem is not in the required functional mode,
+	 * return the time that the security object should wait before the handler is called again.
+	 * Set by CONFIG_LWM2M_INTEGRATION_MODEM_MODE_REQUEST_RETRY_SECONDS.
+	 */
+	return CONFIG_LWM2M_INTEGRATION_MODEM_MODE_REQUEST_RETRY_SECONDS;
+}
+
 int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 {
 	int err, len;
+	struct modem_mode_change mode_change = {
+		.cb = modem_mode_request_cb,
+		.user_data = NULL
+	};
 
 #if !defined(CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM)
 	char imei_buf[20 + sizeof("OK\r\n")];
@@ -264,7 +313,7 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 		LOG_DBG("DTLS session cache flushed.");
 	}
 
-	err = lwm2m_init_security(&client, endpoint_name, NULL);
+	err = lwm2m_init_security(&client, endpoint_name, &mode_change);
 	if (err) {
 		LOG_ERR("lwm2m_init_security, error: %d", err);
 		return err;

@@ -376,7 +376,7 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 		return err;
 	}
 
-	/* Humidity object. */
+	/* Pressure object. */
 	err = lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, MIN_RANGE_VALUE_RID),
 				     &pressure_min_range_val);
 	if (err) {
