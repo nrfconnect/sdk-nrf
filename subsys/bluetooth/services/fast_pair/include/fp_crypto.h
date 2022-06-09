@@ -7,6 +7,8 @@
 #ifndef _FP_CRYPTO_H_
 #define _FP_CRYPTO_H_
 
+#include "fp_common.h"
+
 /**
  * @defgroup fp_crypto Fast Pair crypto
  * @brief Internal API for Fast Pair crypto
@@ -26,8 +28,6 @@ extern "C" {
 #define FP_CRYPTO_ECDH_PUBLIC_KEY_LEN	64U
 /** Length of ECDH shared key (256 bits = 32 bytes). */
 #define FP_CRYPTO_ECDH_SHARED_KEY_LEN	32U
-/** Length of Account Key (128 bits = 16 bytes). */
-#define FP_CRYPTO_ACCOUNT_KEY_LEN	16U
 
 /** Hash value using SHA-256.
  *
@@ -83,7 +83,7 @@ int fp_crypto_aes_key_compute(uint8_t *out, const uint8_t *in);
 
 /** Get Account Key Filter size.
  *
- * @param[in] n Number of account keys.
+ * @param[in] n Number of Account Keys.
  *
  * @return Account Key Filter size.
  */
@@ -91,18 +91,16 @@ size_t fp_crypto_account_key_filter_size(size_t n);
 
 /** Compute an Account Key Filter (variable-length Bloom filter).
  *
- * @param[out] out Buffer to receive account key filter. Buffer size must be at least
+ * @param[out] out Buffer to receive Account Key Filter. Buffer size must be at least
  *                 @ref fp_crypto_account_key_filter_size.
- * @param[in] account_key_list Pointer to 2-dimensional array containing Account Keys. Array shape
- *                             has to be n x 16 bytes (number of Account Keys x length of Account
- *                             Key in bytes).
+ * @param[in] account_key_list Pointer to array of Account Keys. Array length has to be at least
+ *			       equal to number of Account Keys.
  * @param[in] n Number of account keys (n >= 1).
  * @param[in] salt Random byte - Salt.
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
-int fp_crypto_account_key_filter(uint8_t *out,
-				 const uint8_t account_key_list[][FP_CRYPTO_ACCOUNT_KEY_LEN],
+int fp_crypto_account_key_filter(uint8_t *out, const struct fp_account_key *account_key_list,
 				 size_t n, uint8_t salt);
 
 #ifdef __cplusplus
