@@ -3,8 +3,12 @@
 settings_storage:
   placement:
     before: [tfm_storage, end]
+#ifdef CONFIG_PM_PARTITION_REGION_SETTINGS_STORAGE_EXTERNAL
+  region: external_flash
+#else
 #ifdef CONFIG_BUILD_WITH_TFM
     align: {start: CONFIG_NRF_SPU_FLASH_REGION_SIZE}
 #endif
   inside: [nonsecure_storage]
   size: CONFIG_PM_PARTITION_SIZE_SETTINGS_STORAGE
+#endif

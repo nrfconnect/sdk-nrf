@@ -49,6 +49,7 @@ if FILE_SYSTEM_LITTLEFS
 partition=LITTLEFS
 partition-size=0x6000
 rsource "Kconfig.template.partition_config"
+rsource "Kconfig.template.partition_region"
 endif
 
 
@@ -56,12 +57,14 @@ if SETTINGS_FCB || SETTINGS_NVS
 partition=SETTINGS_STORAGE
 partition-size=0x2000
 rsource "Kconfig.template.partition_config"
+rsource "Kconfig.template.partition_region"
 endif
 
 if NVS && !SETTINGS_NVS
 partition=NVS_STORAGE
 partition-size=0x6000
 rsource "Kconfig.template.partition_config"
+rsource "Kconfig.template.partition_region"
 endif
 
 if ZIGBEE && !SOC_NRF52833

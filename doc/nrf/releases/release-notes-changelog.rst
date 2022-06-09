@@ -35,6 +35,13 @@ Application development
 
 * Added information about :ref:`app_build_output_files` on the :ref:`app_build_system` page.
 
+Partition Manager
+-----------------
+
+* Added :kconfig:option:`CONFIG_PM_PARTITION_REGION_LITTLEFS_EXTERNAL`, :kconfig:option:`CONFIG_PM_PARTITION_REGION_SETTINGS_STORAGE_EXTERNAL`, and :kconfig:option:`CONFIG_PM_PARTITION_REGION_NVS_STORAGE_EXTERNAL` to specify that the relevant partition must be located in external flash memory.
+  You must add a ``chosen`` entry for ``nordic,pm-ext-flash`` in your devicetree to make this option available.
+  See :file:`tests/subsys/partition_manager/region` for example configurations.
+
 Protocols
 =========
 
