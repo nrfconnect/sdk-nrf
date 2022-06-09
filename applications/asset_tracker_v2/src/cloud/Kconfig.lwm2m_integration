@@ -32,6 +32,15 @@ config LWM2M_INTEGRATION_FLUSH_SESSION_CACHE
 	  Wireshark needs the initial first handshake in order to do this. This is forced by
 	  flushing the DTLS session cache after boot.
 
+config LWM2M_INTEGRATION_MODEM_MODE_REQUEST_RETRY_SECONDS
+	int "Modem functional mode request retry, in seconds"
+	default 2
+	help
+	  Time in between each time the security object will request a modem
+	  functional mode change.
+	  The security object requests functional mode change before and
+	  after provisioning the credentials to the modem.
+
 if LWM2M_INTEGRATION_PROVISION_CREDENTIALS
 
 config LWM2M_INTEGRATION_PSK

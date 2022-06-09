@@ -909,7 +909,7 @@ static void on_state_disconnected(struct modem_msg_data *msg)
 
 	if ((IS_EVENT(msg, app, APP_EVT_LTE_DISCONNECT)) ||
 	    (IS_EVENT(msg, modem, MODEM_EVT_CARRIER_EVENT_LTE_LINK_UP_REQUEST)) ||
-	    (IS_EVENT(msg, cloud, CLOUD_EVT_LTE_DISCONNECT))) {
+	    (IS_EVENT(msg, cloud, CLOUD_EVT_LTE_CONNECT))) {
 		int err;
 
 		err = lte_connect();
