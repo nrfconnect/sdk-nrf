@@ -48,44 +48,44 @@ config RPMSG_NRF53_SRAM_SIZE
 if FILE_SYSTEM_LITTLEFS
 partition=LITTLEFS
 partition-size=0x6000
-rsource "Kconfig.template.partition_size"
+rsource "Kconfig.template.partition_config"
 endif
 
 
 if SETTINGS_FCB || SETTINGS_NVS
 partition=SETTINGS_STORAGE
 partition-size=0x2000
-rsource "Kconfig.template.partition_size"
+rsource "Kconfig.template.partition_config"
 endif
 
 if NVS && !SETTINGS_NVS
 partition=NVS_STORAGE
 partition-size=0x6000
-rsource "Kconfig.template.partition_size"
+rsource "Kconfig.template.partition_config"
 endif
 
 if ZIGBEE && !SOC_NRF52833
 partition=ZBOSS_NVRAM
 partition-size=0x8000
-rsource "Kconfig.template.partition_size"
+rsource "Kconfig.template.partition_config"
 endif
 
 if ZIGBEE && SOC_NRF52833
 partition=ZBOSS_NVRAM
 partition-size=0x4000
-rsource "Kconfig.template.partition_size"
+rsource "Kconfig.template.partition_config"
 endif
 
 if ZIGBEE
 partition=ZBOSS_PRODUCT_CONFIG
 partition-size=0x1000
-rsource "Kconfig.template.partition_size"
+rsource "Kconfig.template.partition_config"
 endif
 
 if EMDS
 partition=EMDS_STORAGE
 partition-size=0x1000
-rsource "Kconfig.template.partition_size"
+rsource "Kconfig.template.partition_config"
 endif
 
 endmenu # Zephyr subsystem configurations
