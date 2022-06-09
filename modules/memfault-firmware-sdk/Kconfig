@@ -169,7 +169,7 @@ config MEMFAULT_NCS_FLASH_REGION_SIZE
 
 partition=MEMFAULT_STORAGE
 partition-size=0x10000
-source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_size"
+source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_config"
 endif # MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
 
 # We want to encourage the use of a dedicated workqueue to upload data periodically,
