@@ -73,7 +73,7 @@ static inline bool is_valid_command_char(char chr)
 /**
  * @brief Verify that the character is a valid character
  *
- * Notification ID strings can only contain upper case letters 'A' through 'Z'
+ * Notification ID strings can only contain upper case letters 'A' through 'Z' and '_'
  *
  * @param[in] chr Character that should be examined
  *
@@ -84,7 +84,7 @@ static inline bool is_valid_notification_char(char chr)
 {
 	chr = toupper((int)chr);
 
-	if ((chr >= 'A') && (chr <= 'Z')) {
+	if (((chr >= 'A') && (chr <= 'Z')) || (chr == '_')) {
 		return true;
 	}
 
