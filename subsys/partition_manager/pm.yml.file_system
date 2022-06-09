@@ -3,7 +3,11 @@
 littlefs_storage:
   placement: {before: [tfm_storage, end]}
   size: CONFIG_PM_PARTITION_SIZE_LITTLEFS
+#ifdef CONFIG_PM_PARTITION_REGION_LITTLEFS_EXTERNAL
+  region: external_flash
+#else
 #ifdef CONFIG_BUILD_WITH_TFM
   align: {start: CONFIG_NRF_SPU_FLASH_REGION_SIZE}
 #endif
   inside: [nonsecure_storage]
+#endif
