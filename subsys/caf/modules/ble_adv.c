@@ -124,22 +124,15 @@ static int ble_adv_stop(void)
 	return err;
 }
 
-static void conn_find(struct bt_conn *conn, void *data)
+static void conn_find_cb(struct bt_conn *conn, void *data)
 {
 	struct bt_conn **temp_conn = data;
-	struct bt_conn_info bt_info;
-	int err = bt_conn_get_info(conn, &bt_info);
 
-	if (err) {
-		LOG_ERR("Cannot get conn info");
-		module_set_state(MODULE_STATE_ERROR);
-	} else if (bt_info.id == cur_identity) {
-		/* Peripheral can have only one Bluetooth connection per
-		 * Bluetooth local identity.
-		 */
-		__ASSERT_NO_MSG((*temp_conn) == NULL);
-		(*temp_conn) = conn;
-	}
+	/* Peripheral can have only one Bluetooth connection per
+	 * Bluetooth local identity.
+	 */
+	__ASSERT_NO_MSG((*temp_conn) == NULL);
+	(*temp_conn) = conn;
 }
 
 static void bond_find(const struct bt_bond_info *info, void *user_data)
@@ -256,7 +249,7 @@ static int ble_adv_start(bool can_fast_adv)
 
 	struct bt_conn *conn = NULL;
 
-	bt_conn_foreach(BT_CONN_TYPE_LE, conn_find, &conn);
+	bt_conn_foreach(BT_CONN_TYPE_LE, conn_find_cb, &conn);
 	if (conn) {
 		LOG_INF("Already connected, do not advertise");
 		return 0;
@@ -561,7 +554,7 @@ static bool handle_ble_peer_operation_event(const struct ble_peer_operation_even
 
 		struct bt_conn *conn = NULL;
 
-		bt_conn_foreach(BT_CONN_TYPE_LE, conn_find, &conn);
+		bt_conn_foreach(BT_CONN_TYPE_LE, conn_find_cb, &conn);
 
 		if (conn) {
 			disconnect_peer(conn);
