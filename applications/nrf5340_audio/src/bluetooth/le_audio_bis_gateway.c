@@ -59,12 +59,8 @@ static void stream_sent_cb(struct bt_audio_stream *stream)
 static void stream_started_cb(struct bt_audio_stream *stream)
 {
 	int ret;
-	struct event_t event;
 
-	event.event_source = EVT_SRC_LE_AUDIO;
-	event.le_audio_activity.le_audio_evt_type = LE_AUDIO_EVT_STREAMING;
-
-	ret = ctrl_events_put(&event);
+	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
 	ERR_CHK(ret);
 
 	LOG_INF("Broadcast source started");
@@ -73,12 +69,8 @@ static void stream_started_cb(struct bt_audio_stream *stream)
 static void stream_stopped_cb(struct bt_audio_stream *stream)
 {
 	int ret;
-	struct event_t event;
 
-	event.event_source = EVT_SRC_LE_AUDIO;
-	event.le_audio_activity.le_audio_evt_type = LE_AUDIO_EVT_NOT_STREAMING;
-
-	ret = ctrl_events_put(&event);
+	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 	ERR_CHK(ret);
 
 	LOG_INF("Broadcast source stopped");
@@ -142,28 +134,12 @@ int le_audio_volume_mute(void)
 
 int le_audio_play(void)
 {
-	int ret;
-	struct event_t event;
-
-	event.event_source = EVT_SRC_LE_AUDIO;
-	event.le_audio_activity.le_audio_evt_type = LE_AUDIO_EVT_STREAMING;
-
-	ret = ctrl_events_put(&event);
-
-	return ret;
+	return ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
 }
 
 int le_audio_pause(void)
 {
-	int ret;
-	struct event_t event;
-
-	event.event_source = EVT_SRC_LE_AUDIO;
-	event.le_audio_activity.le_audio_evt_type = LE_AUDIO_EVT_NOT_STREAMING;
-
-	ret = ctrl_events_put(&event);
-
-	return ret;
+	return ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 }
 
 int le_audio_send(uint8_t const *const data, size_t size)

@@ -79,17 +79,14 @@ static struct bt_audio_stream *lc3_cap_config_cb(struct bt_conn *conn, struct bt
 						 struct bt_codec *codec)
 {
 	int ret;
-	struct event_t event;
 	struct bt_audio_stream *stream = &audio_stream;
 
 	if (!stream->conn) {
 		LOG_INF("ASE Codec Config stream %p", (void *)stream);
 
 		print_codec(stream->codec);
-		event.event_source = EVT_SRC_LE_AUDIO;
-		event.le_audio_activity.le_audio_evt_type = LE_AUDIO_EVT_CONFIG_RECEIVED;
 
-		ret = ctrl_events_put(&event);
+		ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_CONFIG_RECEIVED);
 		ERR_CHK(ret);
 
 		return stream;
@@ -119,14 +116,12 @@ static int lc3_cap_enable_cb(struct bt_audio_stream *stream, struct bt_codec_dat
 			     size_t meta_count)
 {
 	int ret;
-	struct event_t event;
 
 	LOG_INF("Enable: stream %p meta_count %u", (void *)stream, meta_count);
-	event.event_source = EVT_SRC_LE_AUDIO;
-	event.le_audio_activity.le_audio_evt_type = LE_AUDIO_EVT_STREAMING;
 
-	ret = ctrl_events_put(&event);
+	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
 	ERR_CHK(ret);
+
 	return 0;
 }
 
@@ -152,14 +147,10 @@ static int lc3_cap_disable_cb(struct bt_audio_stream *stream)
 static int lc3_cap_stop_cb(struct bt_audio_stream *stream)
 {
 	int ret;
-	struct event_t event;
 
 	LOG_INF("Stop: stream %p", (void *)stream);
 
-	event.event_source = EVT_SRC_LE_AUDIO;
-	event.le_audio_activity.le_audio_evt_type = LE_AUDIO_EVT_NOT_STREAMING;
-
-	ret = ctrl_events_put(&event);
+	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 	ERR_CHK(ret);
 
 	return 0;
@@ -209,14 +200,10 @@ static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_r
 static void stream_stop_cb(struct bt_audio_stream *stream)
 {
 	int ret;
-	struct event_t event;
 
 	LOG_INF("Stop: stream %p", (void *)stream);
 
-	event.event_source = EVT_SRC_LE_AUDIO;
-	event.le_audio_activity.le_audio_evt_type = LE_AUDIO_EVT_NOT_STREAMING;
-
-	ret = ctrl_events_put(&event);
+	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 	ERR_CHK(ret);
 }
 

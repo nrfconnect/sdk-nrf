@@ -36,6 +36,17 @@ struct event_t {
 	};
 };
 
+/** @brief  Send LE Audio event
+ *
+ * @param  evt_type	Event type
+ *
+ * @retval 0 Event sent
+ * @retval -EFAULT Try to send event with address NULL
+ * @retval -ENOMSG Returned without waiting or queue purged
+ * @retval -EAGAIN Waiting period timed out
+ */
+int ctrl_events_le_audio_event_send(enum le_audio_evt_type evt_type);
+
 /** @brief  Check if event queue is empty
  *
  * @retval True if queue is empty, false if not
@@ -46,10 +57,10 @@ bool ctrl_events_queue_empty(void);
  *
  * @param  event	Pointer to event
  *
- * @retval 0 Event sent.
+ * @retval 0 Event sent
  * @retval -EFAULT Try to send event with address NULL
- * @retval -ENOMSG Returned without waiting or queue purged.
- * @retval -EAGAIN Waiting period timed out.
+ * @retval -ENOMSG Returned without waiting or queue purged
+ * @retval -EAGAIN Waiting period timed out
  */
 int ctrl_events_put(struct event_t *event);
 
@@ -57,11 +68,11 @@ int ctrl_events_put(struct event_t *event);
  *
  * @param  my_event	Event to get from the queue
  * @param  timeout	Time to wait for event. Can be K_FOREVER
- *			K_NO_WAIT or a specific time using K_MSEC.
+ *			K_NO_WAIT or a specific time using K_MSEC
  *
- * @retval 0 Event received.
- * @retval -ENOMSG Returned without waiting.
- * @retval -EAGAIN Waiting period timed out.
+ * @retval 0 Event received
+ * @retval -ENOMSG Returned without waiting
+ * @retval -EAGAIN Waiting period timed out
  */
 int ctrl_events_get(struct event_t *my_event, k_timeout_t timeout);
 

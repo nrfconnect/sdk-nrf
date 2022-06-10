@@ -40,7 +40,7 @@ static struct bt_audio_unicast_group *unicast_group;
 static struct bt_codec *remote_codecs[CONFIG_BT_AUDIO_UNICAST_CLIENT_PAC_COUNT];
 static struct bt_audio_ep *sinks[CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SNK_COUNT];
 static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ISO_MAX_CHAN,
-								 NET_BUF_POOL_PTR_ITERATE, (,)) };
+						       NET_BUF_POOL_PTR_ITERATE, (, )) };
 static struct bt_audio_lc3_preset lc3_preset_unicast_nrf5340 =
 	BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO;
 
@@ -81,13 +81,10 @@ static void stream_enabled_cb(struct bt_audio_stream *stream)
 static void stream_started_cb(struct bt_audio_stream *stream)
 {
 	int ret;
-	struct event_t event;
 
 	LOG_INF("Audio stream %p started", (void *)stream);
-	event.event_source = EVT_SRC_LE_AUDIO;
-	event.le_audio_activity.le_audio_evt_type = LE_AUDIO_EVT_STREAMING;
 
-	ret = ctrl_events_put(&event);
+	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
 	ERR_CHK(ret);
 }
 
@@ -104,13 +101,10 @@ static void stream_disabled_cb(struct bt_audio_stream *stream)
 static void stream_stopped_cb(struct bt_audio_stream *stream)
 {
 	int ret;
-	struct event_t event;
 
 	LOG_INF("Audio Stream %p stopped", (void *)stream);
-	event.event_source = EVT_SRC_LE_AUDIO;
-	event.le_audio_activity.le_audio_evt_type = LE_AUDIO_EVT_NOT_STREAMING;
 
-	ret = ctrl_events_put(&event);
+	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 	ERR_CHK(ret);
 }
 
@@ -404,7 +398,7 @@ int le_audio_send(uint8_t const *const data, size_t size)
 	return 0;
 }
 
-int  le_audio_enable(le_audio_receive_cb recv_cb)
+int le_audio_enable(le_audio_receive_cb recv_cb)
 {
 	int ret;
 

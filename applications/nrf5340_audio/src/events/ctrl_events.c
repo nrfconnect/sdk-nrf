@@ -21,6 +21,16 @@ LOG_MODULE_REGISTER(ctrl_events, CONFIG_LOG_CTRL_EVENTS_LEVEL);
 K_MSGQ_DEFINE(msg_queue, sizeof(struct event_t), CTRL_EVENTS_MSGQ_MAX_ELEMENTS,
 	      CTRL_EVENTS_MSGQ_ALIGNMENT_WORDS);
 
+int ctrl_events_le_audio_event_send(enum le_audio_evt_type evt_type)
+{
+	struct event_t event;
+
+	event.event_source = EVT_SRC_LE_AUDIO;
+	event.le_audio_activity.le_audio_evt_type = evt_type;
+
+	return ctrl_events_put(&event);
+}
+
 bool ctrl_events_queue_empty(void)
 {
 	uint32_t num_free;

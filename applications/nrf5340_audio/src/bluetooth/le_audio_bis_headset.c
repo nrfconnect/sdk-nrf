@@ -63,12 +63,8 @@ static void print_codec(const struct bt_codec *codec)
 static void stream_started_cb(struct bt_audio_stream *stream)
 {
 	int ret;
-	struct event_t event;
 
-	event.event_source = EVT_SRC_LE_AUDIO;
-	event.le_audio_activity.le_audio_evt_type = LE_AUDIO_EVT_STREAMING;
-
-	ret = ctrl_events_put(&event);
+	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
 	ERR_CHK(ret);
 
 	LOG_INF("Stream started");
@@ -77,12 +73,8 @@ static void stream_started_cb(struct bt_audio_stream *stream)
 static void stream_stopped_cb(struct bt_audio_stream *stream)
 {
 	int ret;
-	struct event_t event;
 
-	event.event_source = EVT_SRC_LE_AUDIO;
-	event.le_audio_activity.le_audio_evt_type = LE_AUDIO_EVT_NOT_STREAMING;
-
-	ret = ctrl_events_put(&event);
+	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 	ERR_CHK(ret);
 
 	LOG_INF("Stream stopped");
@@ -172,7 +164,6 @@ static void pa_sync_lost_cb(struct bt_audio_broadcast_sink *sink)
 static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_audio_base *base)
 {
 	int ret;
-	struct event_t event;
 	uint32_t base_bis_index_bitfield = 0U;
 
 	if (init_routine_completed) {
@@ -188,10 +179,8 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 			base_bis_index_bitfield |= BIT(index);
 			streams[i].codec = (struct bt_codec *)&base->subgroups[i].codec;
 			print_codec(streams[i].codec);
-			event.event_source = EVT_SRC_LE_AUDIO;
-			event.le_audio_activity.le_audio_evt_type = LE_AUDIO_EVT_CONFIG_RECEIVED;
 
-			ret = ctrl_events_put(&event);
+			ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_CONFIG_RECEIVED);
 			ERR_CHK(ret);
 		}
 	}
