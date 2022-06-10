@@ -6,6 +6,17 @@
 
 menu "Nordic MPSL"
 
+config MPSL
+	bool "Nordic Multi Protocol Service Layer (MPSL)"
+	select ZERO_LATENCY_IRQS
+	select IEEE802154_NRF5_EXT_IRQ_MGMT if IEEE802154_NRF5
+	select NRF_802154_MULTIPROTOCOL_SUPPORT if NRF_802154_RADIO_DRIVER
+	select MULTITHREADING_LOCK
+	depends on (SOC_SERIES_NRF52X || SOC_NRF5340_CPUNET)
+	help
+	  Use Nordic Multi Protocol Service Layer (MPSL) implementation,
+	  providing services for single and multi-protocol implementations.
+
 config MPSL_FEM_ONLY
 	bool "Support only radio front-end module (FEM)"
 	depends on MPSL_FEM
@@ -13,7 +24,20 @@ config MPSL_FEM_ONLY
 	  Support only radio front-end module (FEM) feature. The MPSL library is linked
 	  into a build without the initialization. Using other MPSL features is not possible.
 
+if MPSL
+
+choice MPSL_BUILD_TYPE
+	prompt "MPSL build type"
+	default MPSL_BUILD_TYPE_LIB
+
+config MPSL_BUILD_TYPE_LIB
+	bool "Use library"
+
+endchoice
+
 rsource "fem/Kconfig"
+
+endif
 
 if !MPSL_FEM_ONLY
 
