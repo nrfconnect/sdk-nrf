@@ -4,18 +4,18 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menu "Nordic MPSL"
+menu "Multiprocol Service Layer (MPSL)"
 
 config MPSL
-	bool "Nordic Multi Protocol Service Layer (MPSL)"
+	bool "Multiprotocol Service Layer (MPSL)"
 	select ZERO_LATENCY_IRQS
 	select IEEE802154_NRF5_EXT_IRQ_MGMT if IEEE802154_NRF5
 	select NRF_802154_MULTIPROTOCOL_SUPPORT if NRF_802154_RADIO_DRIVER
 	select MULTITHREADING_LOCK
 	depends on (SOC_SERIES_NRF52X || SOC_NRF5340_CPUNET)
 	help
-	  Use Nordic Multi Protocol Service Layer (MPSL) implementation,
-	  providing services for single and multi-protocol implementations.
+	  The Multiprotocol Service Layer (MPSL) is a library of common services
+	  for single and multiprotocol implementations.
 
 config MPSL_FEM_ONLY
 	bool "Support only radio front-end module (FEM)"
@@ -31,7 +31,7 @@ choice MPSL_BUILD_TYPE
 	default MPSL_BUILD_TYPE_LIB
 
 config MPSL_BUILD_TYPE_LIB
-	bool "Use library"
+	bool "Library"
 
 endchoice
 
