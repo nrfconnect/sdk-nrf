@@ -1658,7 +1658,6 @@ int nrf_cloud_parse_rest_error(const char *const buf, enum nrf_cloud_error *cons
 	if (cJSON_IsNumber(err_obj)) {
 		ret = 0;
 		*err = (enum nrf_cloud_error)cJSON_GetNumberValue(err_obj);
-		LOG_ERR("nRF Cloud REST error code: %d", *err);
 	}
 
 cleanup:

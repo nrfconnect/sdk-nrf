@@ -259,6 +259,11 @@ static int do_rest_client_request(struct nrf_cloud_rest_context *const rest_ctx,
 	if ((ret == 0) && (rest_ctx->status >= NRF_CLOUD_HTTP_STATUS__ERROR_BEGIN) &&
 	    rest_ctx->response && rest_ctx->response_len) {
 		(void)nrf_cloud_parse_rest_error(rest_ctx->response, &rest_ctx->nrf_err);
+
+		if ((rest_ctx->nrf_err != NRF_CLOUD_ERROR_NONE) &&
+		    (rest_ctx->nrf_err != NRF_CLOUD_ERROR_NOT_FOUND_NO_ERROR)) {
+			LOG_ERR("nRF Cloud REST error code: %d", rest_ctx->nrf_err);
+		}
 	}
 
 	if (ret) {
