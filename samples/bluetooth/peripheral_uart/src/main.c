@@ -243,7 +243,7 @@ static int uart_init(void)
 
 	if (IS_ENABLED(CONFIG_USB_DEVICE_STACK)) {
 		err = usb_enable(NULL);
-		if (err) {
+		if (err && (err != -EALREADY)) {
 			LOG_ERR("Failed to enable USB");
 			return err;
 		}
