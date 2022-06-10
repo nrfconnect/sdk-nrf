@@ -31,7 +31,8 @@ static struct k_work shadow_update_version_work;
 
 static bool cloud_connected;
 
-K_SEM_DEFINE(lte_connected, 0, 1);
+static K_SEM_DEFINE(lte_connected, 0, 1);
+static K_SEM_DEFINE(date_time_obtained, 0, 1);
 
 static int json_add_obj(cJSON *parent, const char *str, cJSON *item)
 {
@@ -286,6 +287,9 @@ void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 		print_received_data(evt->data.msg.ptr, evt->data.msg.topic.str,
 				    evt->data.msg.topic.len);
 		break;
+	case AWS_IOT_EVT_PUBACK:
+		printk("AWS_IOT_EVT_PUBACK, message ID: %d\n", evt->data.message_id);
+		break;
 	case AWS_IOT_EVT_FOTA_START:
 		printk("AWS_IOT_EVT_FOTA_START\n");
 		break;
@@ -453,18 +457,23 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 {
 	switch (evt->type) {
 	case DATE_TIME_OBTAINED_MODEM:
-		printk("DATE_TIME_OBTAINED_MODEM\n");
-		break;
+		/* Fall through */
 	case DATE_TIME_OBTAINED_NTP:
-		printk("DATE_TIME_OBTAINED_NTP\n");
-		break;
+		/* Fall through */
 	case DATE_TIME_OBTAINED_EXT:
-		printk("DATE_TIME_OBTAINED_EXT\n");
+		printk("Date time obtained\n");
+		k_sem_give(&date_time_obtained);
+
+		/* De-register handler. At this point the sample will have
+		 * date time to depend on indefinitely until a reboot occurs.
+		 */
+		date_time_register_handler(NULL);
 		break;
 	case DATE_TIME_NOT_OBTAINED:
 		printk("DATE_TIME_NOT_OBTAINED\n");
 		break;
 	default:
+		printk("Unknown event: %d", evt->type);
 		break;
 	}
 }
@@ -509,7 +518,12 @@ void main(void)
 	k_sem_take(&lte_connected, K_FOREVER);
 #endif
 
-
+	/* Trigger a date time update. The date_time API is used to timestamp data that is sent
+	 * to AWS IoT.
+	 */
 	date_time_update_async(date_time_event_handler);
+
+	/* Postpone connecting to AWS IoT until date time has been obtained. */
+	k_sem_take(&date_time_obtained, K_FOREVER);
 	k_work_schedule(&connect_work, K_NO_WAIT);
 }
