@@ -21,10 +21,11 @@ jobs:
         run: |
           west init -l ncs/nrf
           cd ncs
-          west update zephyr mcuboot trusted-firmware-m
+          west update zephyr mcuboot
           git -C zephyr remote add upstream https://github.com/zephyrproject-rtos/zephyr
 
       - name: Check OSS history
         uses: nrfconnect/action-oss-history@main
         with:
           workspace: 'ncs'
+          args: -p zephyr -p mcuboot
