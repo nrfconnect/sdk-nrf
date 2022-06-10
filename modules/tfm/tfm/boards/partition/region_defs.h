@@ -13,7 +13,13 @@
 #define BL2_MSP_STACK_SIZE      (0x00001800)
 
 #define S_HEAP_SIZE             (0x00001000)
+#if !defined(TFM_CRYPTO_KEY_DERIVATION_MODULE_DISABLED) && \
+    !defined(PLATFORM_DEFAULT_CRYPTO_KEYS)
+/* Need a larger stack in init to write random Hardware Unique Keys to the KMU */
+#define S_MSP_STACK_SIZE_INIT   (0x00000800)
+#else
 #define S_MSP_STACK_SIZE_INIT   (0x00000400)
+#endif
 #define S_MSP_STACK_SIZE        (0x00000800)
 #define S_PSP_STACK_SIZE        (0x00000800)
 
