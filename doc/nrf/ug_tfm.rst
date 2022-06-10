@@ -162,4 +162,4 @@ If a static partition file is used for the application, make the following chang
 * Rename the ``spm`` partition to ``tfm``.
 * Add a partition called ``tfm_secure`` that spans ``mcuboot_pad`` (if MCUboot is enabled) and ``tfm`` partitions.
 * Add a partition called ``tfm_nonsecure`` that spans the application, and other possible application partitions that must be non-secure.
-* For non-secure storage partitions, place the partitions inside the ``nonsecure_storage`` partition, and enable the configuration :kconfig:option:`CONFIG_TFM_NONSECURE_STORAGE`.
+* For non-secure storage partitions, place the partitions inside the ``nonsecure_storage`` partition.
