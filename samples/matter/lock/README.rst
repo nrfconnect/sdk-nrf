@@ -10,6 +10,7 @@ Matter: Door lock
 
 This door lock sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a door lock device with one basic bolt.
 This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread network.
+Additionally, this device works as a Thread :ref:`Router <thread_ot_device_types>`.
 You can use this sample as a reference for creating your application.
 
 Requirements
@@ -139,26 +140,6 @@ FEM support
 ===========
 
 .. include:: /includes/sample_fem_support.txt
-
-Low-power build
-===============
-
-.. matter_door_lock_sample_low_power_build_start
-
-To configure the sample to consume less power, use the low-power build.
-It enables Thread's Sleepy End Device mode and disables debug features, such as the UART console or the **LED 1** usage.
-
-To trigger the low-power build, use the ``-DOVERLAY_CONFIG="overlay-low_power.conf"`` option when building the sample.
-See :ref:`cmake_options` for instructions on how to add this option to your build.
-
-When building on the command line, run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_):
-
-.. parsed-literal::
-   :class: highlight
-
-   west build -b *build_target* -- -DOVERLAY_CONFIG="overlay-low_power.conf"
-
-.. matter_door_lock_sample_low_power_build_end
 
 User interface
 **************

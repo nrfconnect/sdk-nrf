@@ -95,7 +95,7 @@ with the supported ones.
 Copyright (c) 2022 Nordic Semiconductor ASA
 """
 
-from enum import Enum
+from enum import IntEnum
 from pathlib import Path
 from typing import Dict, List, Set
 from azure.storage.blob import ContainerClient
@@ -134,13 +134,19 @@ BOARD_FILTER = lambda b: re.search(r"_nrf[0-9]+", b) and not b.startswith("nrf51
 """Function to filter non-relevant boards."""
 
 
-class MaturityLevels(Enum):
+class MaturityLevels(IntEnum):
     """Software maturity level constants."""
 
-    EXPERIMENTAL = "Experimental"
-    SUPPORTED = "Supported"
-    NOT_SUPPORTED = "Not supported"
+    NOT_SUPPORTED = 1
+    EXPERIMENTAL = 2
+    SUPPORTED = 3
 
+    def get_str(self):
+        return {
+            self.NOT_SUPPORTED: "Not supported",
+            self.EXPERIMENTAL: "Experimental",
+            self.SUPPORTED: "Supported",
+        }[self]
 
 __version__ = "0.1.0"
 
@@ -340,7 +346,7 @@ def parse_rule(rule: str) -> list:
         for i, symbol in enumerate(symbols):
             if symbol.startswith("(") and symbol.endswith(")"):
                 symbols[i] = parse_rule(symbol[1:-1])
-            elif not re.match(r"^[A-Z0-9_]+$", symbol):
+            elif not re.match(r"^[A-Z0-9_=]+$", symbol):
                 logger.error(f"Invalid Kconfig symbol '{symbol}'")
             elif not symbol.startswith("CONFIG_"):
                 symbols[i] = "CONFIG_" + symbol
@@ -365,13 +371,19 @@ def evaluate_rule(vars: Dict[str, kconfiglib.Variable], rule: list) -> bool:
     for and_rule in rule[1:]:
         assert and_rule[0] == "AND", f"invalid and-rule {and_rule}"
         # All of the symbols in the and-rule must be present
-        for symbol in and_rule[1:]:
+        for symbol_and_value in and_rule[1:]:
+            # Extract the required value (default: "y")
+            if "=" in symbol_and_value:
+                symbol, value = symbol_and_value.split("=")
+            else:
+                symbol, value = symbol_and_value, "y"
+
             # A nested list indicates a subrule in parentheses
             if isinstance(symbol, list):
                 if not evaluate_rule(vars, symbol):
                     break
             # The and-rule fails if a symbol is not present
-            elif symbol not in vars or vars[symbol].value != "y":
+            elif symbol not in vars or vars[symbol].value != value:
                 break
         # No breaks in for-loop means all symbols are present
         else:
@@ -400,19 +412,19 @@ def flatten(items: list) -> Set[str]:
     return out
 
 
-def find_maturity_level(rule: list, experimental_symbols: Set[str]) -> MaturityLevels:
+def find_maturity_level(vars: Dict[str, kconfiglib.Variable], experimental_symbols: Set[str]) -> MaturityLevels:
     """Find if any of the symbols used in a rule are experimental or not.
 
     Args:
-        rule: Parsed Kconfig rule, i.e. list of or-expressions.
+        vars: Dictionary of present Kconfig variables and their values.
+        experimental_symbols: A list of the experimental symbols used in the samples.
 
     Returns:
         'Experimental' | 'Supported'
     """
 
-    symbols = flatten(rule)
-    for symbol in symbols:
-        if symbol in experimental_symbols:
+    for symbol in experimental_symbols:
+        if evaluate_rule(vars, ["OR", ["AND", symbol]]):
             return MaturityLevels.EXPERIMENTAL
     return MaturityLevels.SUPPORTED
 
@@ -515,19 +527,20 @@ def generate_tables(
                 experimental_symbols = (
                     exp_soc_sets[soc] if soc in exp_soc_sets else set()
                 )
-                status = find_maturity_level(rule, experimental_symbols)
-                soc_sets[feature][soc] = status.value
+                status = find_maturity_level(kconf.variables, experimental_symbols)
+                soc_sets[feature][soc] = \
+                    max(status, soc_sets[feature][soc]) if soc in soc_sets[feature] else status
 
     # Create the output data structure
     top_table = {}
     for tech in sorted(top_table_info):
         top_table[tech] = {
-            MaturityLevels.SUPPORTED.value: [],
-            MaturityLevels.EXPERIMENTAL.value: [],
+            MaturityLevels.SUPPORTED.get_str(): [],
+            MaturityLevels.EXPERIMENTAL.get_str(): [],
         }
         for soc in all_socs:
             if soc in soc_sets[tech]:
-                top_table[tech][MaturityLevels.SUPPORTED.value].append(soc)
+                top_table[tech][MaturityLevels.SUPPORTED.get_str()].append(soc)
 
     # Feature tables
     category_results = {}
@@ -538,13 +551,13 @@ def generate_tables(
         for feature_name in sorted(features):
             feature = f"{cat}_{feature_name}"
             table[feature] = {
-                MaturityLevels.SUPPORTED.value: [],
-                MaturityLevels.EXPERIMENTAL.value: [],
+                MaturityLevels.SUPPORTED.get_str(): [],
+                MaturityLevels.EXPERIMENTAL.get_str(): [],
             }
 
             for soc in all_socs:
                 if soc in soc_sets[feature]:
-                    status = soc_sets[feature][soc]
+                    status = soc_sets[feature][soc].get_str()
                     table[feature][status].append(soc)
 
         category_results[cat] = table

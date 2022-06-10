@@ -27,3 +27,11 @@ tests:
   sample.tfm.hello_world.bootloaders:
     tags: tfm ci_build
     extra_args: CONFIG_BOOTLOADER_MCUBOOT=y CONFIG_SECURE_BOOT=y
+
+  sample.tfm.hello_world.full:
+    tags: tfm ci_build
+    extra_args: CONFIG_TFM_PROFILE_TYPE_NOT_SET=y CONFIG_NRF_SECURITY=y
+
+  sample.tfm.hello_world.lvl2:
+    tags: tfm ci_build
+    extra_args: CONFIG_TFM_IPC=y CONFIG_TFM_ISOLATION_LEVEL=2 CONFIG_TFM_PROFILE_TYPE_NOT_SET=y

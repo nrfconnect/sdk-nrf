@@ -30,12 +30,12 @@ The following table lists variants and extensions available out of the box for e
       - ✔
       - ✔
       - ✔
-    * - Low power build
-      -
-      - ✔
-      - ✔
-      -
-      - ✔
+    * - :ref:`Thread role <thread_ot_device_types>`
+      - Router
+      - SED
+      - SED
+      - MED
+      - SSED
 
 See the sample documentation pages for instructions about how to enable these variants and extenstions.
 

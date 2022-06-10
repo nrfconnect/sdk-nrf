@@ -915,6 +915,16 @@ Programming with the script
    This command builds the application with the ``debug`` application version for both the headset and the gateway and programs the application core.
    Given the ``-c both`` parameter, it also takes the precompiled Bluetooth Low Energy Controller binary from the :file:`applications/nrf5340_audio/bin` directory and programs it to the network core of both the gateway and the headset.
 
+   .. note::
+      If the programming command fails because of :ref:`readback_protection_error`, run the following commands to recover the device:
+
+      .. code-block:: console
+
+         nrfjprog --recover --coprocessor CP_NETWORK
+         nrfjprog --recover
+
+      Then program the device again using the script command.
+
 Getting help
    Run ``python buildprog.py -h`` for information about all available script parameters.
 

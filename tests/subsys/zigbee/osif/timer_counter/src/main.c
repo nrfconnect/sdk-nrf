@@ -10,6 +10,7 @@
 #include <zb_osif_platform.h>
 
 #define ZB_BEACON_INTERVAL_USEC 15360
+#define ZB_BEACON_INTERVAL_MSEC ((ZB_BEACON_INTERVAL_USEC + 1000 - 1) / 1000)
 
 static zb_uint32_t alarm_counter;
 
@@ -44,7 +45,7 @@ static void test_zb_osif_timer(void)
 	ZB_START_HW_TIMER();
 	uint32_t alarm_count = GetAlarmCount();
 
-	k_usleep(ZB_BEACON_INTERVAL_USEC);
+	k_usleep(ZB_BEACON_INTERVAL_MSEC * 1000);
 	uint32_t new_alarm_count = GetAlarmCount();
 
 	zassert_true((alarm_count != new_alarm_count),

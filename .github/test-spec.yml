@@ -207,6 +207,10 @@
   - "samples/crypto/**/*"
   - "subsys/partition_manager/**/*"
   - "tests/crypto/**/*"
+  - "modules/cjson/**/*"
+  - "include/tfm/**/*"
+  - "modules/tfm/**/*"
+  - "modules/trusted-firmware-m/**/*"
 
 "CI-rs-test":
   - "subsys/mpsl/**/*"

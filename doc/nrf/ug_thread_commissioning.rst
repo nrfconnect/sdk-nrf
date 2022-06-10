@@ -31,7 +31,8 @@ During the commissioning process, the devices involved are assigned one of the f
 * *Joiner Router* - Role for a router device that is one hop away from the Joiner device in the Thread network and is the sole device connected with the Joiner.
   Responds to the Discovery Request of the Joiner.
   Moreover, when chosen by the Joiner, it passes subsequent communication in a secure manner.
-* *Border Router* - Role for a device that forwards data between a Thread network and a non-Thread network. For this purpose, it is equipped with at least two interfaces, for example Wi-Fi, Ethernet, LTE, or other interface in addition to Thread.
+* *Border Router* - Role for a device that forwards data between a Thread network and a non-Thread network.
+  For this purpose, it is equipped with at least two interfaces, for example Wi-Fi, Ethernet, LTE, or other interface in addition to Thread.
   The Border Router can also be an interface for the Commissioner.
 
 
@@ -68,10 +69,14 @@ Minimal Thread Device (MTD)
   There are two important subtypes:
 
   Minimal End Device (MED)
-    A MED keeps its transceiver always on.
+   A MED keeps its transceiver always on.
 
   Sleepy End Device (SED)
    A SED is usually off and wakes occasionally to receive messages from its parent.
+
+  Synchronized Sleepy End Device (SSED)
+   A SSED is an enhanced SED.
+   It trasmits less data than SED and relies on receiving messages from its parent only in specified time intervals.
 
 For more information, see `Device Types on OpenThread portal`_.
 

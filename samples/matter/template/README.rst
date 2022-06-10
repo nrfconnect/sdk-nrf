@@ -9,6 +9,7 @@ Matter: Template
 
 This sample demonstrates a minimal implementation of the :ref:`Matter <ug_matter>` application layer.
 This basic implementation enables the commissioning on the device, which allows it to join a Matter network.
+This sample works as a Thread :ref:`Minimal End Device <thread_ot_device_types>`.
 
 Use this sample as a reference for developing your own application.
 See the :ref:`ug_matter_creating_accessory` page for an overview of the process you need to follow.

@@ -51,7 +51,7 @@ See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh sam
 Matter
 ------
 
-|no_changes_yet_note|
+* Removed the low-power configuration build type from all Matter samples.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
@@ -67,14 +67,17 @@ The following list summarizes the most important changes inherited from the upst
 Thread
 ------
 
-|no_changes_yet_note|
+* Multiprotocol support was removed from :file:`overlay-cert.config` and moved to :file:`overlay-multiprotocol.conf`.
 
 See `Thread samples`_ for the list of changes for the Thread samples.
 
 Zigbee
 ------
 
-|no_changes_yet_note|
+* Updated:
+
+  * Enabled the PAN ID conflict resolution in applications that uses :ref:`lib_zigbee_application_utilities` library.
+    For details, see `Libraries for Zigbee`_.
 
 See `Zigbee samples`_ for the list of changes for the Zigbee samples.
 
@@ -86,12 +89,24 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 nRF9160: Asset Tracker v2
 -------------------------
 
-|no_changes_yet_note|
+  * Removed:
+
+    * ``CONFIG_APP_REQUEST_GNSS_ON_INITIAL_SAMPLING`` option.
+    * ``CONFIG_APP_REQUEST_NEIGHBOR_CELLS_DATA`` option.
+
+  * Updated:
+
+    * The default value of the GNSS timeout in the application's :ref:`Real-time configurations <real_time_configs>` is now 30 seconds.
 
 nRF9160: Serial LTE modem
 -------------------------
 
 |no_changes_yet_note|
+
+nRF5340 Audio
+-------------
+
+* Documentation in the :ref:`nrf53_audio_app_building_script` section now mentions how to recover the device if programming using script fails.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
@@ -122,8 +137,14 @@ For lists of protocol-specific changes, see `Protocols`_.
 Bluetooth samples
 -----------------
 
-|no_changes_yet_note|
+* :ref:`ble_nrf_dm` sample:
 
+  * Split the configuration of the Distance Measurement module from the Nordic Distance Measurement library.
+    This allows the use of the Nordic Distance Measurement library without the module.
+
+* :ref:`direct_test_mode` sample:
+
+  * Added a workaround for nRF5340 revision 1 Errata 117.
 
 Bluetooth mesh samples
 ----------------------
@@ -133,12 +154,21 @@ Bluetooth mesh samples
 nRF9160 samples
 ---------------
 
+* :ref:`lwm2m_client` sample:
+
+  * Fixed:
+
+    * Default configuration conforms to the LwM2M specification v1.0 instead of v1.1.
+      For enabling v1.1 there is already an overlay file.
+
 * :ref:`modem_shell_application` sample:
 
   * Added:
 
     * nRF9160 DK overlays for enabling BT support.
       When running this configuration, you can perform BT scanning and advertising using the ``bt`` command.
+    * Support for injecting GNSS reference altitude for low accuracy mode.
+      For a position fix using only three satellites, GNSS module must have a reference altitude that can now be injected using the ``gnss agps ref_altitude`` command.
 
 Thread samples
 --------------
@@ -148,7 +178,20 @@ Thread samples
 Matter samples
 --------------
 
-|no_changes_yet_note|
+* Removed the low-power configuration build type from all Matter samples.
+
+* :ref:`matter_light_switch_sample`:
+
+  * Set :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` to be enabled by default.
+
+* :ref:`matter_lock_sample`:
+
+  * Set :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` to be enabled by default.
+
+* :ref:`matter_window_covering_sample`:
+
+  * Set :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` and :kconfig:option:`CONFIG_CHIP_THREAD_SSED` to be enabled by default.
+
 
 NFC samples
 -----------
@@ -168,7 +211,9 @@ Gazell samples
 Zigbee samples
 --------------
 
-|no_changes_yet_note|
+* :ref:`zigbee_light_switch_sample` sample:
+
+  * Fixed an issue where a buffer would not be freed after a fail occurred when sending a Match Descriptor request.
 
 Other samples
 -------------
@@ -205,7 +250,12 @@ Bootloader libraries
 Modem libraries
 ---------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * :ref:`modem_key_mgmt` library:
+
+    * Fixed:
+      * An issue that would cause the library to assert on a unhandled CME error when the AT command failed to be sent.
 
 Libraries for networking
 ------------------------
@@ -225,7 +275,13 @@ Libraries for NFC
 Other libraries
 ---------------
 
-|no_changes_yet_note|
+  * Flash Patch:
+
+    * Allow the :kconfig:option:`CONFIG_DISABLE_FLASH_PATCH` Kconfig option to be used on the nRF52833 SoC.
+
+  * :ref:`doc_fw_info` module:
+
+    * Fixed a bug where MCUboot would experience a fault when using the :ref:`doc_fw_info_ext_api` feature.
 
 Common Application Framework (CAF)
 ----------------------------------
@@ -244,7 +300,10 @@ Shell libraries
 Libraries for Zigbee
 --------------------
 
-|no_changes_yet_note|
+* :ref:`lib_zigbee_application_utilities` library:
+
+  * Added :kconfig:option:`CONFIG_ZIGBEE_PANID_CONFLICT_RESOLUTION` for enabling automatic PAN ID conflict resolution.
+    This option is enabled by default.
 
 Shell libraries
 ---------------
@@ -327,6 +386,7 @@ Documentation
 
 * Added:
 
+* Added documentation page for the :ref:`lib_flash_map_pm` library.
 * :ref:`ug_thread_prebuilt_libs` as a separate page instead of being part of :ref:`ug_thread_configuring`.
 
 * Updated:

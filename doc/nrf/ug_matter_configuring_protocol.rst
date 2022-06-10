@@ -52,6 +52,7 @@ Enabling :kconfig:option:`CONFIG_CHIP` automatically enables the following optio
 
 Additionally, you can enable the support for Thread :ref:`Sleepy End Device <thread_ot_device_types>` in Matter by using the :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` Kconfig option.
 This option sets the :kconfig:option:`CONFIG_OPENTHREAD_MTD_SED` Kconfig option.
+It is enabled by default for some :ref:`matter_samples`: :ref:`light switch <matter_light_switch_sample>`, :ref:`door lock <matter_lock_sample>`, and :ref:`window covering <matter_window_covering_sample>`.
 
 For more information about configuring OpenThread in the |NCS|, see :ref:`ug_thread_configuring`.
 

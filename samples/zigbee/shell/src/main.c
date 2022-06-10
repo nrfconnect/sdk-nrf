@@ -213,9 +213,6 @@ void zboss_signal_handler(zb_bufid_t bufid)
 		} else {
 			LOG_ERR("Unable to leave network (status: %d)", status);
 		}
-		if (!IS_ENABLED(CONFIG_ZIGBEE_ROLE_END_DEVICE)) {
-			zb_enable_auto_pan_id_conflict_resolution(ZB_FALSE);
-		}
 		break;
 	default:
 		/* Call default signal handler. */

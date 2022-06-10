@@ -10,6 +10,7 @@
 #include <zb_osif_platform.h>
 
 #define ZB_BEACON_INTERVAL_USEC 15360
+#define ZB_BEACON_INTERVAL_MSEC ((ZB_BEACON_INTERVAL_USEC + 1000 - 1) / 1000)
 
 static void test_zb_osif_timer(void)
 {
@@ -33,11 +34,13 @@ static void test_zb_osif_timer(void)
 	ZB_START_HW_TIMER();
 	uint32_t time_start_bi = zb_timer_get();
 
-	k_usleep(ZB_BEACON_INTERVAL_USEC);
+	k_usleep(ZB_BEACON_INTERVAL_MSEC * 1000);
 	uint32_t time_stop_bi = zb_timer_get();
 
-	zassert_true((time_stop_bi == time_start_bi + 1),
+	zassert_true((time_stop_bi > time_start_bi),
 		     "ZBOSS time value was not increased");
+	zassert_true((time_stop_bi <= time_start_bi + 2),
+		     "ZBOSS time value was increased by more than 2 BI");
 }
 
 void test_main(void)

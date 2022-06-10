@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-zephyr_library_sources_ifdef(CONFIG_NRF_DM dm.c)
-zephyr_library_sources_ifdef(CONFIG_NRF_DM timeslot_queue.c)
-zephyr_library_sources_ifdef(CONFIG_NRF_DM time.c)
-zephyr_library_sources_ifdef(CONFIG_NRF_DM dm_io.c)
+zephyr_library_sources_ifdef(CONFIG_DM_MODULE dm.c)
+zephyr_library_sources_ifdef(CONFIG_DM_MODULE timeslot_queue.c)
+zephyr_library_sources_ifdef(CONFIG_DM_MODULE time.c)
+zephyr_library_sources_ifdef(CONFIG_DM_MODULE dm_io.c)
