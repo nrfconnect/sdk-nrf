@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include "ei_data_forwarder.h"
+#include <zephyr/drivers/sensor.h>
 
 
 static int snprintf_error_check(int res, size_t buf_size)
@@ -20,7 +21,7 @@ static int snprintf_error_check(int res, size_t buf_size)
 	return 0;
 }
 
-int ei_data_forwarder_parse_data(const float *data_ptr, size_t data_cnt,
+int ei_data_forwarder_parse_data(const struct sensor_value *data_ptr, size_t data_cnt,
 				 char *buf, size_t buf_size)
 {
 	int pos = 0;
@@ -29,7 +30,7 @@ int ei_data_forwarder_parse_data(const float *data_ptr, size_t data_cnt,
 		int tmp;
 
 		if ((i % 2) == 0) {
-			tmp = snprintf(&buf[pos], buf_size - pos, "%.2f", data_ptr[i / 2]);
+			tmp = snprintf(&buf[pos], buf_size - pos, "%.2f", sensor_value_to_double(&data_ptr[i / 2]));
 		} else if (i == (2 * data_cnt - 1)) {
 			tmp = snprintf(&buf[pos], buf_size - pos, "\r\n");
 		} else {

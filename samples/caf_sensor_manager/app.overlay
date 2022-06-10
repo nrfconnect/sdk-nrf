@@ -14,8 +14,8 @@
 	agg0: agg0 {
 		compatible = "caf,aggregator";
 		sensor_descr = "accel_sim_xyz";
-		buf_data_length = <120>;
-		sensor_data_size = <12>;
+		buf_data_length = <240>;
+		sensor_data_size = <24>;
 		status = "okay";
 	};
 

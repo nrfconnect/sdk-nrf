@@ -13,15 +13,21 @@ extern "C" {
 
 #include <zephyr/device.h>
 #include <zephyr/drivers/sensor.h>
+#include <caf/events/sensor_event.h>
+
+#define FLOAT_TO_SENSOR_VALUE(float_val)							\
+	{											\
+		.val1 = (int32_t)float_val,							\
+		.val2 = (int32_t)((float_val - (int32_t)float_val) * FLOAT_TO_SENSOR_VAL_CONST),\
+	}
 
 enum act_type {
-	ACT_TYPE_PERC,
 	ACT_TYPE_ABS,
 };
 
 struct sm_trigger_activation {
 	enum act_type type;
-	float thresh;
+	struct sensor_value thresh;
 	unsigned int timeout_ms;
 };
 

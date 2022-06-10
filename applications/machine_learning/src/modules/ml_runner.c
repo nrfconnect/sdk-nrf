@@ -202,12 +202,20 @@ static bool handle_sensor_event(const struct sensor_event *event)
 		return false;
 	}
 
-	int err = ei_wrapper_add_data(sensor_event_get_data_ptr(event),
-				      sensor_event_get_data_cnt(event));
+	size_t data_cnt = sensor_event_get_data_cnt(event);
+	float float_data[data_cnt];
+	const struct sensor_value *data_ptr = sensor_event_get_data_ptr(event);
+
+	for (size_t i = 0; i < data_cnt; i++) {
+		float_data[i] = sensor_value_to_double(&data_ptr[i]);
+	}
+
+	int err = ei_wrapper_add_data(float_data, data_cnt);
 
 	if (err) {
 		LOG_ERR("Cannot add data for EI wrapper (err %d)", err);
 		report_error();
+		return false;
 	}
 
 	return false;

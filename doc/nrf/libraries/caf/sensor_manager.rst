@@ -273,10 +273,7 @@ Sensor trigger activation
 The sensor trigger is activated and the sensor is put to sleep if the values measured by the sensor do not deviate from the last sensor value by more than :c:member:`sm_trigger.activation.threshold` for the period of time specified in :c:member:`sm_trigger.activation.timeout_ms`.
 If the value measured by the sensor does not fit within the threshold, the last sensor value is updated and the sensor continues the sampling process.
 
-The sensor trigger activation type can be of the following type:
-
-* :c:enumerator:`ACT_TYPE_ABS` - Absolute deviation.
-* :c:enumerator:`ACT_TYPE_PERC` - Percentage deviation.
+The sensor trigger activation type is of the :c:enumerator:`ACT_TYPE_ABS` (Absolute deviation) type.
 
 Passive power management
 ========================
