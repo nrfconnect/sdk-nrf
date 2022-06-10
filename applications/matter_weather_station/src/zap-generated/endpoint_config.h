@@ -28,252 +28,242 @@
 #if BIGENDIAN_CPU
 #define GENERATED_DEFAULTS                                                                             \
 	{                                                                                              \
-		/* Endpoint: 0, Cluster: Identify (server), big-endian */                              \
+		/* Endpoint: 0, Cluster: Descriptor (server), big-endian */                            \
                                                                                                        \
 		/* 0 - FeatureMap, */                                                                  \
 		0x00, 0x00, 0x00, 0x00,                                                                \
                                                                                                        \
-			/* Endpoint: 0, Cluster: Descriptor (server), big-endian */                    \
+			/* Endpoint: 0, Cluster: Basic (server), big-endian */                         \
                                                                                                        \
 			/* 4 - FeatureMap, */                                                          \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
-			/* Endpoint: 0, Cluster: Basic (server), big-endian */                         \
+			/* Endpoint: 0, Cluster: OTA Software Update Requestor (server), big-endian */ \
                                                                                                        \
 			/* 8 - FeatureMap, */                                                          \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
-			/* Endpoint: 0, Cluster: OTA Software Update Requestor (server), big-endian */ \
-                                                                                                       \
-			/* 12 - FeatureMap, */                                                         \
-			0x00, 0x00, 0x00, 0x00,                                                        \
-                                                                                                       \
 			/* Endpoint: 0, Cluster: Power Source (server), big-endian */                  \
                                                                                                        \
-			/* 16 - Description, */                                                        \
+			/* 12 - Description, */                                                        \
 			15, 'P', 'r', 'i', 'm', 'a', 'r', 'y', ' ', 'B', 'a', 't', 't', 'e', 'r',      \
 			'y',                                                                           \
                                                                                                        \
-			/* 32 - BatteryVoltage, */                                                     \
+			/* 28 - BatteryVoltage, */                                                     \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
-			/* 36 - BatteryTimeRemaining, */                                               \
+			/* 32 - BatteryTimeRemaining, */                                               \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
-			/* 40 - BatteryApprovedChemistry, */                                           \
+			/* 36 - BatteryApprovedChemistry, */                                           \
 			0x00, 0x00, 0x00, 0x19,                                                        \
                                                                                                        \
-			/* 44 - FeatureMap, */                                                         \
+			/* 40 - FeatureMap, */                                                         \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
 			/* Endpoint: 0, Cluster: General Commissioning (server), big-endian */         \
                                                                                                        \
-			/* 48 - Breadcrumb, */                                                         \
+			/* 44 - Breadcrumb, */                                                         \
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,                                \
                                                                                                        \
-			/* 56 - FeatureMap, */                                                         \
+			/* 52 - FeatureMap, */                                                         \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
 			/* Endpoint: 0, Cluster: Network Commissioning (server), big-endian */         \
                                                                                                        \
-			/* 60 - LastConnectErrorValue, */                                              \
+			/* 56 - LastConnectErrorValue, */                                              \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
-			/* 64 - FeatureMap, */                                                         \
+			/* 60 - FeatureMap, */                                                         \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
 			/* Endpoint: 0, Cluster: General Diagnostics (server), big-endian */           \
                                                                                                        \
-			/* 68 - FeatureMap, */                                                         \
+			/* 64 - FeatureMap, */                                                         \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
 			/* Endpoint: 0, Cluster: Software Diagnostics (server), big-endian */          \
                                                                                                        \
-			/* 72 - FeatureMap, */                                                         \
+			/* 68 - FeatureMap, */                                                         \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
 			/* Endpoint: 0, Cluster: Thread Network Diagnostics (server), big-endian */    \
                                                                                                        \
-			/* 76 - FeatureMap, */                                                         \
+			/* 72 - FeatureMap, */                                                         \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
 			/* Endpoint: 0, Cluster: AdministratorCommissioning (server), big-endian */    \
                                                                                                        \
-			/* 80 - FeatureMap, */                                                         \
+			/* 76 - FeatureMap, */                                                         \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
 			/* Endpoint: 0, Cluster: Operational Credentials (server), big-endian */       \
                                                                                                        \
-			/* 84 - FeatureMap, */                                                         \
+			/* 80 - FeatureMap, */                                                         \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
 			/* Endpoint: 1, Cluster: Identify (server), big-endian */                      \
                                                                                                        \
-			/* 88 - FeatureMap, */                                                         \
+			/* 84 - FeatureMap, */                                                         \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
 			/* Endpoint: 1, Cluster: Descriptor (server), big-endian */                    \
                                                                                                        \
-			/* 92 - FeatureMap, */                                                         \
+			/* 88 - FeatureMap, */                                                         \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
 			/* Endpoint: 1, Cluster: Temperature Measurement (server), big-endian */       \
                                                                                                        \
-			/* 96 - FeatureMap, */                                                         \
+			/* 92 - FeatureMap, */                                                         \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
 			/* Endpoint: 2, Cluster: Identify (server), big-endian */                      \
                                                                                                        \
-			/* 100 - FeatureMap, */                                                        \
+			/* 96 - FeatureMap, */                                                         \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
 			/* Endpoint: 2, Cluster: Relative Humidity Measurement (server), big-endian */ \
                                                                                                        \
-			/* 104 - FeatureMap, */                                                        \
+			/* 100 - FeatureMap, */                                                        \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
 			/* Endpoint: 3, Cluster: Identify (server), big-endian */                      \
                                                                                                        \
-			/* 108 - FeatureMap, */                                                        \
+			/* 104 - FeatureMap, */                                                        \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
 			/* Endpoint: 3, Cluster: Descriptor (server), big-endian */                    \
                                                                                                        \
-			/* 112 - FeatureMap, */                                                        \
+			/* 108 - FeatureMap, */                                                        \
 			0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                        \
 			/* Endpoint: 3, Cluster: Pressure Measurement (server), big-endian */          \
                                                                                                        \
-			/* 116 - FeatureMap, */                                                        \
+			/* 112 - FeatureMap, */                                                        \
 			0x00, 0x00, 0x00, 0x00,                                                        \
 	}
 
 #else // !BIGENDIAN_CPU
 #define GENERATED_DEFAULTS                                                                                \
 	{                                                                                                 \
-		/* Endpoint: 0, Cluster: Identify (server), little-endian */                              \
+		/* Endpoint: 0, Cluster: Descriptor (server), little-endian */                            \
                                                                                                           \
 		/* 0 - FeatureMap, */                                                                     \
 		0x00, 0x00, 0x00, 0x00,                                                                   \
                                                                                                           \
-			/* Endpoint: 0, Cluster: Descriptor (server), little-endian */                    \
+			/* Endpoint: 0, Cluster: Basic (server), little-endian */                         \
                                                                                                           \
 			/* 4 - FeatureMap, */                                                             \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
-			/* Endpoint: 0, Cluster: Basic (server), little-endian */                         \
+			/* Endpoint: 0, Cluster: OTA Software Update Requestor (server), little-endian */ \
                                                                                                           \
 			/* 8 - FeatureMap, */                                                             \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
-			/* Endpoint: 0, Cluster: OTA Software Update Requestor (server), little-endian */ \
-                                                                                                          \
-			/* 12 - FeatureMap, */                                                            \
-			0x00, 0x00, 0x00, 0x00,                                                           \
-                                                                                                          \
 			/* Endpoint: 0, Cluster: Power Source (server), little-endian */                  \
                                                                                                           \
-			/* 16 - Description, */                                                           \
+			/* 12 - Description, */                                                           \
 			15, 'P', 'r', 'i', 'm', 'a', 'r', 'y', ' ', 'B', 'a', 't', 't', 'e', 'r',         \
 			'y',                                                                              \
                                                                                                           \
-			/* 32 - BatteryVoltage, */                                                        \
+			/* 28 - BatteryVoltage, */                                                        \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
-			/* 36 - BatteryTimeRemaining, */                                                  \
+			/* 32 - BatteryTimeRemaining, */                                                  \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
-			/* 40 - BatteryApprovedChemistry, */                                              \
+			/* 36 - BatteryApprovedChemistry, */                                              \
 			0x19, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
-			/* 44 - FeatureMap, */                                                            \
+			/* 40 - FeatureMap, */                                                            \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
 			/* Endpoint: 0, Cluster: General Commissioning (server), little-endian */         \
                                                                                                           \
-			/* 48 - Breadcrumb, */                                                            \
+			/* 44 - Breadcrumb, */                                                            \
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,                                   \
                                                                                                           \
-			/* 56 - FeatureMap, */                                                            \
+			/* 52 - FeatureMap, */                                                            \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
 			/* Endpoint: 0, Cluster: Network Commissioning (server), little-endian */         \
                                                                                                           \
-			/* 60 - LastConnectErrorValue, */                                                 \
+			/* 56 - LastConnectErrorValue, */                                                 \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
-			/* 64 - FeatureMap, */                                                            \
+			/* 60 - FeatureMap, */                                                            \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
 			/* Endpoint: 0, Cluster: General Diagnostics (server), little-endian */           \
                                                                                                           \
-			/* 68 - FeatureMap, */                                                            \
+			/* 64 - FeatureMap, */                                                            \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
 			/* Endpoint: 0, Cluster: Software Diagnostics (server), little-endian */          \
                                                                                                           \
-			/* 72 - FeatureMap, */                                                            \
+			/* 68 - FeatureMap, */                                                            \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
 			/* Endpoint: 0, Cluster: Thread Network Diagnostics (server), little-endian */    \
                                                                                                           \
-			/* 76 - FeatureMap, */                                                            \
+			/* 72 - FeatureMap, */                                                            \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
 			/* Endpoint: 0, Cluster: AdministratorCommissioning (server), little-endian */    \
                                                                                                           \
-			/* 80 - FeatureMap, */                                                            \
+			/* 76 - FeatureMap, */                                                            \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
 			/* Endpoint: 0, Cluster: Operational Credentials (server), little-endian */       \
                                                                                                           \
-			/* 84 - FeatureMap, */                                                            \
+			/* 80 - FeatureMap, */                                                            \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
 			/* Endpoint: 1, Cluster: Identify (server), little-endian */                      \
                                                                                                           \
-			/* 88 - FeatureMap, */                                                            \
+			/* 84 - FeatureMap, */                                                            \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
 			/* Endpoint: 1, Cluster: Descriptor (server), little-endian */                    \
                                                                                                           \
-			/* 92 - FeatureMap, */                                                            \
+			/* 88 - FeatureMap, */                                                            \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
 			/* Endpoint: 1, Cluster: Temperature Measurement (server), little-endian */       \
                                                                                                           \
-			/* 96 - FeatureMap, */                                                            \
+			/* 92 - FeatureMap, */                                                            \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
 			/* Endpoint: 2, Cluster: Identify (server), little-endian */                      \
                                                                                                           \
-			/* 100 - FeatureMap, */                                                           \
+			/* 96 - FeatureMap, */                                                            \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
 			/* Endpoint: 2, Cluster: Relative Humidity Measurement (server), little-endian */ \
                                                                                                           \
-			/* 104 - FeatureMap, */                                                           \
+			/* 100 - FeatureMap, */                                                           \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
 			/* Endpoint: 3, Cluster: Identify (server), little-endian */                      \
                                                                                                           \
-			/* 108 - FeatureMap, */                                                           \
+			/* 104 - FeatureMap, */                                                           \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
 			/* Endpoint: 3, Cluster: Descriptor (server), little-endian */                    \
                                                                                                           \
-			/* 112 - FeatureMap, */                                                           \
+			/* 108 - FeatureMap, */                                                           \
 			0x00, 0x00, 0x00, 0x00,                                                           \
                                                                                                           \
 			/* Endpoint: 3, Cluster: Pressure Measurement (server), little-endian */          \
                                                                                                           \
-			/* 116 - FeatureMap, */                                                           \
+			/* 112 - FeatureMap, */                                                           \
 			0x00, 0x00, 0x00, 0x00,                                                           \
 	}
 
 #endif // BIGENDIAN_CPU
 
-#define GENERATED_DEFAULTS_COUNT (26)
+#define GENERATED_DEFAULTS_COUNT (25)
 
 #define ZAP_TYPE(type) ZCL_##type##_ATTRIBUTE_TYPE
 #define ZAP_LONG_DEFAULTS_INDEX(index)                                                             \
@@ -305,22 +295,12 @@
 
 #define ZAP_ATTRIBUTE_MASK(mask) ATTRIBUTE_MASK_##mask
 // This is an array of EmberAfAttributeMetadata structures.
-#define GENERATED_ATTRIBUTE_COUNT 226
+#define GENERATED_ATTRIBUTE_COUNT 222
 #define GENERATED_ATTRIBUTES                                                                       \
 	{                                                                                          \
-		/* Endpoint: 0, Cluster: Identify (server) */                                      \
-		{ 0x00000000, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(WRITABLE),                   \
-		  ZAP_SIMPLE_DEFAULT(0x0000) }, /* identify time */                                \
-			{ 0x00000001, ZAP_TYPE(ENUM8), 1, 0,                                       \
-			  ZAP_SIMPLE_DEFAULT(3) }, /* identify type */                             \
-			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(0) }, /* FeatureMap */                           \
-			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
-			  ZAP_SIMPLE_DEFAULT(2) }, /* ClusterRevision */                           \
-                                                                                                   \
-			/* Endpoint: 0, Cluster: Descriptor (server) */                            \
-			{ 0x00000000, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
-			  ZAP_EMPTY_DEFAULT() }, /* device list */                                 \
+		/* Endpoint: 0, Cluster: Descriptor (server) */                                    \
+		{ 0x00000000, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),            \
+		  ZAP_EMPTY_DEFAULT() }, /* device list */                                         \
 			{ 0x00000001, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
 			  ZAP_EMPTY_DEFAULT() }, /* server list */                                 \
 			{ 0x00000002, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
@@ -328,7 +308,7 @@
 			{ 0x00000003, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
 			  ZAP_EMPTY_DEFAULT() }, /* parts list */                                  \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(4) }, /* FeatureMap */                           \
+			  ZAP_LONG_DEFAULTS_INDEX(0) }, /* FeatureMap */                           \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(1) }, /* ClusterRevision */                           \
                                                                                                    \
@@ -410,7 +390,7 @@
 			  ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) | ZAP_ATTRIBUTE_MASK(SINGLETON),    \
 			  ZAP_EMPTY_DEFAULT() }, /* CapabilityMinima */                            \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, ZAP_ATTRIBUTE_MASK(SINGLETON),        \
-			  ZAP_LONG_DEFAULTS_INDEX(8) }, /* FeatureMap */                           \
+			  ZAP_LONG_DEFAULTS_INDEX(4) }, /* FeatureMap */                           \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(SINGLETON),          \
 			  ZAP_SIMPLE_DEFAULT(3) }, /* ClusterRevision */                           \
                                                                                                    \
@@ -425,7 +405,7 @@
 			{ 0x00000003, ZAP_TYPE(INT8U), 1, ZAP_ATTRIBUTE_MASK(NULLABLE),            \
 			  ZAP_EMPTY_DEFAULT() }, /* UpdateStateProgress */                         \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(12) }, /* FeatureMap */                          \
+			  ZAP_LONG_DEFAULTS_INDEX(8) }, /* FeatureMap */                           \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(1) }, /* ClusterRevision */                           \
                                                                                                    \
@@ -452,13 +432,13 @@
 			{ 0x00000000, ZAP_TYPE(ENUM8), 1, 0, ZAP_EMPTY_DEFAULT() }, /* Status */   \
 			{ 0x00000001, ZAP_TYPE(INT8U), 1, 0, ZAP_SIMPLE_DEFAULT(0) }, /* Order */  \
 			{ 0x00000002, ZAP_TYPE(CHAR_STRING), 61, 0,                                \
-			  ZAP_LONG_DEFAULTS_INDEX(16) }, /* Description */                         \
+			  ZAP_LONG_DEFAULTS_INDEX(12) }, /* Description */                         \
 			{ 0x0000000B, ZAP_TYPE(INT32U), 4, 0,                                      \
-			  ZAP_LONG_DEFAULTS_INDEX(32) }, /* BatteryVoltage */                      \
+			  ZAP_LONG_DEFAULTS_INDEX(28) }, /* BatteryVoltage */                      \
 			{ 0x0000000C, ZAP_TYPE(INT8U), 1, 0,                                       \
 			  ZAP_EMPTY_DEFAULT() }, /* BatteryPercentRemaining */                     \
 			{ 0x0000000D, ZAP_TYPE(INT32U), 4, 0,                                      \
-			  ZAP_LONG_DEFAULTS_INDEX(36) }, /* BatteryTimeRemaining */                \
+			  ZAP_LONG_DEFAULTS_INDEX(32) }, /* BatteryTimeRemaining */                \
 			{ 0x0000000E, ZAP_TYPE(ENUM8), 1, 0,                                       \
 			  ZAP_EMPTY_DEFAULT() }, /* BatteryChargeLevel */                          \
 			{ 0x00000011, ZAP_TYPE(BOOLEAN), 1, 0,                                     \
@@ -466,7 +446,7 @@
 			{ 0x00000012, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
 			  ZAP_EMPTY_DEFAULT() }, /* ActiveBatteryFaults */                         \
 			{ 0x00000017, ZAP_TYPE(INT32U), 4, 0,                                      \
-			  ZAP_LONG_DEFAULTS_INDEX(40) }, /* BatteryApprovedChemistry */            \
+			  ZAP_LONG_DEFAULTS_INDEX(36) }, /* BatteryApprovedChemistry */            \
 			{ 0x00000019, ZAP_TYPE(INT8U), 1, 0,                                       \
 			  ZAP_SIMPLE_DEFAULT(1) }, /* BatteryQuantity */                           \
 			{ 0x0000001A, ZAP_TYPE(ENUM8), 1, 0,                                       \
@@ -474,13 +454,13 @@
 			{ 0x0000001C, ZAP_TYPE(BOOLEAN), 1, 0,                                     \
 			  ZAP_SIMPLE_DEFAULT(1) }, /* BatteryFunctionalWhileCharging */            \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(44) }, /* FeatureMap */                          \
+			  ZAP_LONG_DEFAULTS_INDEX(40) }, /* FeatureMap */                          \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(1) }, /* ClusterRevision */                           \
                                                                                                    \
 			/* Endpoint: 0, Cluster: General Commissioning (server) */                 \
 			{ 0x00000000, ZAP_TYPE(INT64U), 8, ZAP_ATTRIBUTE_MASK(WRITABLE),           \
-			  ZAP_LONG_DEFAULTS_INDEX(48) }, /* Breadcrumb */                          \
+			  ZAP_LONG_DEFAULTS_INDEX(44) }, /* Breadcrumb */                          \
 			{ 0x00000001, ZAP_TYPE(STRUCT), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),   \
 			  ZAP_EMPTY_DEFAULT() }, /* BasicCommissioningInfo */                      \
 			{ 0x00000002, ZAP_TYPE(ENUM8), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
@@ -490,7 +470,7 @@
 			{ 0x00000004, ZAP_TYPE(BOOLEAN), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),  \
 			  ZAP_EMPTY_DEFAULT() }, /* SupportsConcurrentConnection */                \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(56) }, /* FeatureMap */                          \
+			  ZAP_LONG_DEFAULTS_INDEX(52) }, /* FeatureMap */                          \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(0x0001) }, /* ClusterRevision */                      \
                                                                                                    \
@@ -510,9 +490,9 @@
 			{ 0x00000006, ZAP_TYPE(OCTET_STRING), 33, ZAP_ATTRIBUTE_MASK(NULLABLE),    \
 			  ZAP_EMPTY_DEFAULT() }, /* LastNetworkID */                               \
 			{ 0x00000007, ZAP_TYPE(INT32S), 4, ZAP_ATTRIBUTE_MASK(NULLABLE),           \
-			  ZAP_LONG_DEFAULTS_INDEX(60) }, /* LastConnectErrorValue */               \
+			  ZAP_LONG_DEFAULTS_INDEX(56) }, /* LastConnectErrorValue */               \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(64) }, /* FeatureMap */                          \
+			  ZAP_LONG_DEFAULTS_INDEX(60) }, /* FeatureMap */                          \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(0x0001) }, /* ClusterRevision */                      \
                                                                                                    \
@@ -534,7 +514,7 @@
 			{ 0x00000007, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
 			  ZAP_EMPTY_DEFAULT() }, /* ActiveNetworkFaults */                         \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(68) }, /* FeatureMap */                          \
+			  ZAP_LONG_DEFAULTS_INDEX(64) }, /* FeatureMap */                          \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(0x0001) }, /* ClusterRevision */                      \
                                                                                                    \
@@ -548,7 +528,7 @@
 			{ 0x00000003, ZAP_TYPE(INT64U), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),   \
 			  ZAP_EMPTY_DEFAULT() }, /* CurrentHeapHighWatermark */                    \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(72) }, /* FeatureMap */                          \
+			  ZAP_LONG_DEFAULTS_INDEX(68) }, /* FeatureMap */                          \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(0x0001) }, /* ClusterRevision */                      \
                                                                                                    \
@@ -683,7 +663,7 @@
 			{ 0x0000003E, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
 			  ZAP_EMPTY_DEFAULT() }, /* ActiveNetworkFaultsList */                     \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(76) }, /* FeatureMap */                          \
+			  ZAP_LONG_DEFAULTS_INDEX(72) }, /* FeatureMap */                          \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(0x0001) }, /* ClusterRevision */                      \
                                                                                                    \
@@ -696,7 +676,7 @@
 			{ 0x00000002, ZAP_TYPE(INT16U), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),   \
 			  ZAP_EMPTY_DEFAULT() }, /* AdminVendorId */                               \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(80) }, /* FeatureMap */                          \
+			  ZAP_LONG_DEFAULTS_INDEX(76) }, /* FeatureMap */                          \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(1) }, /* ClusterRevision */                           \
                                                                                                    \
@@ -715,7 +695,7 @@
 			  ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),                                    \
 			  ZAP_EMPTY_DEFAULT() }, /* CurrentFabricIndex */                          \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(84) }, /* FeatureMap */                          \
+			  ZAP_LONG_DEFAULTS_INDEX(80) }, /* FeatureMap */                          \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(0x0001) }, /* ClusterRevision */                      \
                                                                                                    \
@@ -738,7 +718,7 @@
 			{ 0x00000001, ZAP_TYPE(ENUM8), 1, 0,                                       \
 			  ZAP_SIMPLE_DEFAULT(0x0) }, /* identify type */                           \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(88) }, /* FeatureMap */                          \
+			  ZAP_LONG_DEFAULTS_INDEX(84) }, /* FeatureMap */                          \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(2) }, /* ClusterRevision */                           \
                                                                                                    \
@@ -752,7 +732,7 @@
 			{ 0x00000003, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
 			  ZAP_EMPTY_DEFAULT() }, /* parts list */                                  \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(92) }, /* FeatureMap */                          \
+			  ZAP_LONG_DEFAULTS_INDEX(88) }, /* FeatureMap */                          \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(1) }, /* ClusterRevision */                           \
                                                                                                    \
@@ -764,7 +744,7 @@
 			{ 0x00000002, ZAP_TYPE(INT16S), 2, ZAP_ATTRIBUTE_MASK(NULLABLE),           \
 			  ZAP_SIMPLE_DEFAULT(8500) }, /* MaxMeasuredValue */                       \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(96) }, /* FeatureMap */                          \
+			  ZAP_LONG_DEFAULTS_INDEX(92) }, /* FeatureMap */                          \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(0x0004) }, /* ClusterRevision */                      \
                                                                                                    \
@@ -774,7 +754,7 @@
 			{ 0x00000001, ZAP_TYPE(ENUM8), 1, 0,                                       \
 			  ZAP_SIMPLE_DEFAULT(0x0) }, /* identify type */                           \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(100) }, /* FeatureMap */                         \
+			  ZAP_LONG_DEFAULTS_INDEX(96) }, /* FeatureMap */                          \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(2) }, /* ClusterRevision */                           \
                                                                                                    \
@@ -798,7 +778,7 @@
 			{ 0x00000002, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(NULLABLE),           \
 			  ZAP_SIMPLE_DEFAULT(10000) }, /* max measured value */                    \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(104) }, /* FeatureMap */                         \
+			  ZAP_LONG_DEFAULTS_INDEX(100) }, /* FeatureMap */                         \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(2) }, /* ClusterRevision */                           \
                                                                                                    \
@@ -808,7 +788,7 @@
 			{ 0x00000001, ZAP_TYPE(ENUM8), 1, 0,                                       \
 			  ZAP_SIMPLE_DEFAULT(0x0) }, /* identify type */                           \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(108) }, /* FeatureMap */                         \
+			  ZAP_LONG_DEFAULTS_INDEX(104) }, /* FeatureMap */                         \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(2) }, /* ClusterRevision */                           \
                                                                                                    \
@@ -822,7 +802,7 @@
 			{ 0x00000003, ZAP_TYPE(ARRAY), 0, ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE),    \
 			  ZAP_EMPTY_DEFAULT() }, /* parts list */                                  \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(112) }, /* FeatureMap */                         \
+			  ZAP_LONG_DEFAULTS_INDEX(108) }, /* FeatureMap */                         \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(1) }, /* ClusterRevision */                           \
                                                                                                    \
@@ -834,7 +814,7 @@
 			{ 0x00000002, ZAP_TYPE(INT16S), 2, ZAP_ATTRIBUTE_MASK(NULLABLE),           \
 			  ZAP_SIMPLE_DEFAULT(1100) }, /* MaxMeasuredValue */                       \
 			{ 0x0000FFFC, ZAP_TYPE(BITMAP32), 4, 0,                                    \
-			  ZAP_LONG_DEFAULTS_INDEX(116) }, /* FeatureMap */                         \
+			  ZAP_LONG_DEFAULTS_INDEX(112) }, /* FeatureMap */                         \
 			{ 0x0000FFFD, ZAP_TYPE(INT16U), 2, 0,                                      \
 			  ZAP_SIMPLE_DEFAULT(2) }, /* ClusterRevision */                           \
 	}
@@ -846,10 +826,6 @@
 
 // Cluster function static arrays
 #define GENERATED_FUNCTION_ARRAYS                                                                   \
-	const EmberAfGenericClusterFunction chipFuncArrayIdentifyServer[] = {                       \
-		(EmberAfGenericClusterFunction)emberAfIdentifyClusterServerInitCallback,            \
-		(EmberAfGenericClusterFunction)MatterIdentifyClusterServerAttributeChangedCallback, \
-	};                                                                                          \
 	const EmberAfGenericClusterFunction chipFuncArrayBasicServer[] = {                          \
 		(EmberAfGenericClusterFunction)emberAfBasicClusterServerInitCallback,               \
 	};                                                                                          \
@@ -864,35 +840,31 @@
 			emberAfTimeFormatLocalizationClusterServerInitCallback,                     \
 		(EmberAfGenericClusterFunction)                                                     \
 			MatterTimeFormatLocalizationClusterServerPreAttributeChangedCallback,       \
+	};                                                                                          \
+	const EmberAfGenericClusterFunction chipFuncArrayIdentifyServer[] = {                       \
+		(EmberAfGenericClusterFunction)emberAfIdentifyClusterServerInitCallback,            \
+		(EmberAfGenericClusterFunction)MatterIdentifyClusterServerAttributeChangedCallback, \
 	};
 
 // clang-format off
 #define GENERATED_COMMANDS { \
-  /* Endpoint: 0, Cluster: Identify (server) */\
-  /*   AcceptedCommandList (index=0) */ \
-  0x00000000 /* Identify */, \
-  0x00000001 /* IdentifyQuery */, \
-  chip::kInvalidCommandId /* end of list */, \
-  /*   GeneratedCommandList (index=3)*/ \
-  0x00000000 /* IdentifyQueryResponse */, \
-  chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 0, Cluster: OTA Software Update Requestor (server) */\
-  /*   AcceptedCommandList (index=5) */ \
+  /*   AcceptedCommandList (index=0) */ \
   0x00000000 /* AnnounceOtaProvider */, \
   chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 0, Cluster: General Commissioning (server) */\
-  /*   AcceptedCommandList (index=7) */ \
+  /*   AcceptedCommandList (index=2) */ \
   0x00000000 /* ArmFailSafe */, \
   0x00000002 /* SetRegulatoryConfig */, \
   0x00000004 /* CommissioningComplete */, \
   chip::kInvalidCommandId /* end of list */, \
-  /*   GeneratedCommandList (index=11)*/ \
+  /*   GeneratedCommandList (index=6)*/ \
   0x00000001 /* ArmFailSafeResponse */, \
   0x00000003 /* SetRegulatoryConfigResponse */, \
   0x00000005 /* CommissioningCompleteResponse */, \
   chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 0, Cluster: Network Commissioning (server) */\
-  /*   AcceptedCommandList (index=15) */ \
+  /*   AcceptedCommandList (index=10) */ \
   0x00000000 /* ScanNetworks */, \
   0x00000002 /* AddOrUpdateWiFiNetwork */, \
   0x00000003 /* AddOrUpdateThreadNetwork */, \
@@ -900,34 +872,34 @@
   0x00000006 /* ConnectNetwork */, \
   0x00000008 /* ReorderNetwork */, \
   chip::kInvalidCommandId /* end of list */, \
-  /*   GeneratedCommandList (index=22)*/ \
+  /*   GeneratedCommandList (index=17)*/ \
   0x00000001 /* ScanNetworksResponse */, \
   0x00000005 /* NetworkConfigResponse */, \
   0x00000007 /* ConnectNetworkResponse */, \
   chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 0, Cluster: Diagnostic Logs (server) */\
-  /*   AcceptedCommandList (index=26) */ \
+  /*   AcceptedCommandList (index=21) */ \
   0x00000000 /* RetrieveLogsRequest */, \
   chip::kInvalidCommandId /* end of list */, \
-  /*   GeneratedCommandList (index=28)*/ \
+  /*   GeneratedCommandList (index=23)*/ \
   0x00000001 /* RetrieveLogsResponse */, \
   chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 0, Cluster: Software Diagnostics (server) */\
-  /*   AcceptedCommandList (index=30) */ \
+  /*   AcceptedCommandList (index=25) */ \
   0x00000000 /* ResetWatermarks */, \
   chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 0, Cluster: Thread Network Diagnostics (server) */\
-  /*   AcceptedCommandList (index=32) */ \
+  /*   AcceptedCommandList (index=27) */ \
   0x00000000 /* ResetCounts */, \
   chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 0, Cluster: AdministratorCommissioning (server) */\
-  /*   AcceptedCommandList (index=34) */ \
+  /*   AcceptedCommandList (index=29) */ \
   0x00000000 /* OpenCommissioningWindow */, \
   0x00000001 /* OpenBasicCommissioningWindow */, \
   0x00000002 /* RevokeCommissioning */, \
   chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 0, Cluster: Operational Credentials (server) */\
-  /*   AcceptedCommandList (index=38) */ \
+  /*   AcceptedCommandList (index=33) */ \
   0x00000000 /* AttestationRequest */, \
   0x00000002 /* CertificateChainRequest */, \
   0x00000004 /* CSRRequest */, \
@@ -938,24 +910,32 @@
   0x0000000B /* AddTrustedRootCertificate */, \
   0x0000000C /* RemoveTrustedRootCertificate */, \
   chip::kInvalidCommandId /* end of list */, \
-  /*   GeneratedCommandList (index=48)*/ \
+  /*   GeneratedCommandList (index=43)*/ \
   0x00000001 /* AttestationResponse */, \
   0x00000003 /* CertificateChainResponse */, \
   0x00000005 /* CSRResponse */, \
   0x00000008 /* NOCResponse */, \
   chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 0, Cluster: Group Key Management (server) */\
-  /*   AcceptedCommandList (index=53) */ \
+  /*   AcceptedCommandList (index=48) */ \
   0x00000000 /* KeySetWrite */, \
   0x00000001 /* KeySetRead */, \
   0x00000003 /* KeySetRemove */, \
   0x00000004 /* KeySetReadAllIndices */, \
   chip::kInvalidCommandId /* end of list */, \
-  /*   GeneratedCommandList (index=58)*/ \
+  /*   GeneratedCommandList (index=53)*/ \
   0x00000002 /* KeySetReadResponse */, \
   0x00000005 /* KeySetReadAllIndicesResponse */, \
   chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 1, Cluster: Identify (server) */\
+  /*   AcceptedCommandList (index=56) */ \
+  0x00000000 /* Identify */, \
+  0x00000001 /* IdentifyQuery */, \
+  chip::kInvalidCommandId /* end of list */, \
+  /*   GeneratedCommandList (index=59)*/ \
+  0x00000000 /* IdentifyQueryResponse */, \
+  chip::kInvalidCommandId /* end of list */, \
+  /* Endpoint: 2, Cluster: Identify (server) */\
   /*   AcceptedCommandList (index=61) */ \
   0x00000000 /* Identify */, \
   0x00000001 /* IdentifyQuery */, \
@@ -963,7 +943,7 @@
   /*   GeneratedCommandList (index=64)*/ \
   0x00000000 /* IdentifyQueryResponse */, \
   chip::kInvalidCommandId /* end of list */, \
-  /* Endpoint: 2, Cluster: Identify (server) */\
+  /* Endpoint: 3, Cluster: Identify (server) */\
   /*   AcceptedCommandList (index=66) */ \
   0x00000000 /* Identify */, \
   0x00000001 /* IdentifyQuery */, \
@@ -971,38 +951,19 @@
   /*   GeneratedCommandList (index=69)*/ \
   0x00000000 /* IdentifyQueryResponse */, \
   chip::kInvalidCommandId /* end of list */, \
-  /* Endpoint: 3, Cluster: Identify (server) */\
-  /*   AcceptedCommandList (index=71) */ \
-  0x00000000 /* Identify */, \
-  0x00000001 /* IdentifyQuery */, \
-  chip::kInvalidCommandId /* end of list */, \
-  /*   GeneratedCommandList (index=74)*/ \
-  0x00000000 /* IdentifyQueryResponse */, \
-  chip::kInvalidCommandId /* end of list */, \
 }
 
 // clang-format on
 
 #define ZAP_CLUSTER_MASK(mask) CLUSTER_MASK_##mask
-#define GENERATED_CLUSTER_COUNT 27
+#define GENERATED_CLUSTER_COUNT 26
 
 // clang-format off
 #define GENERATED_CLUSTERS { \
   { \
-      /* Endpoint: 0, Cluster: Identify (server) */ \
-      .clusterId = 0x00000003,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(0), \
-      .attributeCount = 4, \
-      .clusterSize = 9, \
-      .mask = ZAP_CLUSTER_MASK(SERVER) | ZAP_CLUSTER_MASK(INIT_FUNCTION) | ZAP_CLUSTER_MASK(ATTRIBUTE_CHANGED_FUNCTION), \
-      .functions = chipFuncArrayIdentifyServer, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 0 ) ,\
-      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 3 ) ,\
-    },\
-  { \
       /* Endpoint: 0, Cluster: Descriptor (server) */ \
       .clusterId = 0x0000001D,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(4), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(0), \
       .attributeCount = 6, \
       .clusterSize = 6, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
@@ -1013,7 +974,7 @@
   { \
       /* Endpoint: 0, Cluster: Access Control (server) */ \
       .clusterId = 0x0000001F,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(10), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(6), \
       .attributeCount = 6, \
       .clusterSize = 2, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
@@ -1024,7 +985,7 @@
   { \
       /* Endpoint: 0, Cluster: Basic (server) */ \
       .clusterId = 0x00000028,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(16), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(12), \
       .attributeCount = 22, \
       .clusterSize = 41, \
       .mask = ZAP_CLUSTER_MASK(SERVER) | ZAP_CLUSTER_MASK(INIT_FUNCTION), \
@@ -1035,7 +996,7 @@
   { \
       /* Endpoint: 0, Cluster: OTA Software Update Provider (client) */ \
       .clusterId = 0x00000029,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(38), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(34), \
       .attributeCount = 0, \
       .clusterSize = 0, \
       .mask = ZAP_CLUSTER_MASK(CLIENT), \
@@ -1046,18 +1007,18 @@
   { \
       /* Endpoint: 0, Cluster: OTA Software Update Requestor (server) */ \
       .clusterId = 0x0000002A,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(38), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(34), \
       .attributeCount = 6, \
       .clusterSize = 9, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 5 ) ,\
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 0 ) ,\
       .generatedCommandList = nullptr ,\
     },\
   { \
       /* Endpoint: 0, Cluster: Localization Configuration (server) */ \
       .clusterId = 0x0000002B,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(44), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(40), \
       .attributeCount = 3, \
       .clusterSize = 38, \
       .mask = ZAP_CLUSTER_MASK(SERVER) | ZAP_CLUSTER_MASK(INIT_FUNCTION) | ZAP_CLUSTER_MASK(PRE_ATTRIBUTE_CHANGED_FUNCTION), \
@@ -1068,7 +1029,7 @@
   { \
       /* Endpoint: 0, Cluster: Time Format Localization (server) */ \
       .clusterId = 0x0000002C,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(47), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(43), \
       .attributeCount = 4, \
       .clusterSize = 4, \
       .mask = ZAP_CLUSTER_MASK(SERVER) | ZAP_CLUSTER_MASK(INIT_FUNCTION) | ZAP_CLUSTER_MASK(PRE_ATTRIBUTE_CHANGED_FUNCTION), \
@@ -1079,7 +1040,7 @@
   { \
       /* Endpoint: 0, Cluster: Power Source (server) */ \
       .clusterId = 0x0000002F,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(51), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(47), \
       .attributeCount = 15, \
       .clusterSize = 87, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
@@ -1090,40 +1051,40 @@
   { \
       /* Endpoint: 0, Cluster: General Commissioning (server) */ \
       .clusterId = 0x00000030,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(66), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(62), \
       .attributeCount = 7, \
       .clusterSize = 14, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 7 ) ,\
-      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 11 ) ,\
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 2 ) ,\
+      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 6 ) ,\
     },\
   { \
       /* Endpoint: 0, Cluster: Network Commissioning (server) */ \
       .clusterId = 0x00000031,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(73), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(69), \
       .attributeCount = 10, \
       .clusterSize = 48, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 15 ) ,\
-      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 22 ) ,\
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 10 ) ,\
+      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 17 ) ,\
     },\
   { \
       /* Endpoint: 0, Cluster: Diagnostic Logs (server) */ \
       .clusterId = 0x00000032,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(83), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(79), \
       .attributeCount = 0, \
       .clusterSize = 0, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 26 ) ,\
-      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 28 ) ,\
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 21 ) ,\
+      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 23 ) ,\
     },\
   { \
       /* Endpoint: 0, Cluster: General Diagnostics (server) */ \
       .clusterId = 0x00000033,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(83), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(79), \
       .attributeCount = 10, \
       .clusterSize = 6, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
@@ -1134,73 +1095,73 @@
   { \
       /* Endpoint: 0, Cluster: Software Diagnostics (server) */ \
       .clusterId = 0x00000034,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(93), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(89), \
       .attributeCount = 6, \
       .clusterSize = 6, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 30 ) ,\
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 25 ) ,\
       .generatedCommandList = nullptr ,\
     },\
   { \
       /* Endpoint: 0, Cluster: Thread Network Diagnostics (server) */ \
       .clusterId = 0x00000035,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(99), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(95), \
       .attributeCount = 65, \
       .clusterSize = 6, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 32 ) ,\
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 27 ) ,\
       .generatedCommandList = nullptr ,\
     },\
   { \
       /* Endpoint: 0, Cluster: AdministratorCommissioning (server) */ \
       .clusterId = 0x0000003C,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(164), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(160), \
       .attributeCount = 5, \
       .clusterSize = 6, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 34 ) ,\
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 29 ) ,\
       .generatedCommandList = nullptr ,\
     },\
   { \
       /* Endpoint: 0, Cluster: Operational Credentials (server) */ \
       .clusterId = 0x0000003E,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(169), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(165), \
       .attributeCount = 8, \
       .clusterSize = 6, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 38 ) ,\
-      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 48 ) ,\
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 33 ) ,\
+      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 43 ) ,\
     },\
   { \
       /* Endpoint: 0, Cluster: Group Key Management (server) */ \
       .clusterId = 0x0000003F,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(177), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(173), \
       .attributeCount = 5, \
       .clusterSize = 2, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 53 ) ,\
-      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 58 ) ,\
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 48 ) ,\
+      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 53 ) ,\
     },\
   { \
       /* Endpoint: 1, Cluster: Identify (server) */ \
       .clusterId = 0x00000003,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(182), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(178), \
       .attributeCount = 4, \
       .clusterSize = 9, \
       .mask = ZAP_CLUSTER_MASK(SERVER) | ZAP_CLUSTER_MASK(INIT_FUNCTION) | ZAP_CLUSTER_MASK(ATTRIBUTE_CHANGED_FUNCTION), \
       .functions = chipFuncArrayIdentifyServer, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 61 ) ,\
-      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 64 ) ,\
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 56 ) ,\
+      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 59 ) ,\
     },\
   { \
       /* Endpoint: 1, Cluster: Descriptor (server) */ \
       .clusterId = 0x0000001D,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(186), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(182), \
       .attributeCount = 6, \
       .clusterSize = 6, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
@@ -1211,7 +1172,7 @@
   { \
       /* Endpoint: 1, Cluster: Temperature Measurement (server) */ \
       .clusterId = 0x00000402,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(192), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(188), \
       .attributeCount = 5, \
       .clusterSize = 12, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
@@ -1222,18 +1183,18 @@
   { \
       /* Endpoint: 2, Cluster: Identify (server) */ \
       .clusterId = 0x00000003,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(197), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(193), \
       .attributeCount = 4, \
       .clusterSize = 9, \
       .mask = ZAP_CLUSTER_MASK(SERVER) | ZAP_CLUSTER_MASK(INIT_FUNCTION) | ZAP_CLUSTER_MASK(ATTRIBUTE_CHANGED_FUNCTION), \
       .functions = chipFuncArrayIdentifyServer, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 66 ) ,\
-      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 69 ) ,\
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 61 ) ,\
+      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 64 ) ,\
     },\
   { \
       /* Endpoint: 2, Cluster: Descriptor (server) */ \
       .clusterId = 0x0000001D,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(201), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(197), \
       .attributeCount = 5, \
       .clusterSize = 2, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
@@ -1244,7 +1205,7 @@
   { \
       /* Endpoint: 2, Cluster: Relative Humidity Measurement (server) */ \
       .clusterId = 0x00000405,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(206), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(202), \
       .attributeCount = 5, \
       .clusterSize = 12, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
@@ -1255,18 +1216,18 @@
   { \
       /* Endpoint: 3, Cluster: Identify (server) */ \
       .clusterId = 0x00000003,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(211), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(207), \
       .attributeCount = 4, \
       .clusterSize = 9, \
       .mask = ZAP_CLUSTER_MASK(SERVER) | ZAP_CLUSTER_MASK(INIT_FUNCTION) | ZAP_CLUSTER_MASK(ATTRIBUTE_CHANGED_FUNCTION), \
       .functions = chipFuncArrayIdentifyServer, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 71 ) ,\
-      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 74 ) ,\
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 66 ) ,\
+      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 69 ) ,\
     },\
   { \
       /* Endpoint: 3, Cluster: Descriptor (server) */ \
       .clusterId = 0x0000001D,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(215), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(211), \
       .attributeCount = 6, \
       .clusterSize = 6, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
@@ -1277,7 +1238,7 @@
   { \
       /* Endpoint: 3, Cluster: Pressure Measurement (server) */ \
       .clusterId = 0x00000403,  \
-      .attributes = ZAP_ATTRIBUTE_INDEX(221), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(217), \
       .attributeCount = 5, \
       .clusterSize = 12, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
@@ -1291,13 +1252,13 @@
 
 #define ZAP_CLUSTER_INDEX(index) (&generatedClusters[index])
 
-#define ZAP_FIXED_ENDPOINT_DATA_VERSION_COUNT 26
+#define ZAP_FIXED_ENDPOINT_DATA_VERSION_COUNT 25
 
 // This is an array of EmberAfEndpointType structures.
 #define GENERATED_ENDPOINT_TYPES                                                                   \
 	{                                                                                          \
-		{ ZAP_CLUSTER_INDEX(0), 18, 290 }, { ZAP_CLUSTER_INDEX(18), 3, 27 },               \
-			{ ZAP_CLUSTER_INDEX(21), 3, 23 }, { ZAP_CLUSTER_INDEX(24), 3, 27 },        \
+		{ ZAP_CLUSTER_INDEX(0), 17, 281 }, { ZAP_CLUSTER_INDEX(17), 3, 27 },               \
+			{ ZAP_CLUSTER_INDEX(20), 3, 23 }, { ZAP_CLUSTER_INDEX(23), 3, 27 },        \
 	}
 
 // Largest attribute size is needed for various buffers
@@ -1310,7 +1271,7 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 #define ATTRIBUTE_SINGLETONS_SIZE (41)
 
 // Total size of attribute storage
-#define ATTRIBUTE_MAX_SIZE (367)
+#define ATTRIBUTE_MAX_SIZE (358)
 
 // Number of fixed endpoints
 #define FIXED_ENDPOINT_COUNT (4)

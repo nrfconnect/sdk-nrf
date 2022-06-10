@@ -1150,13 +1150,6 @@ server cluster TimeFormatLocalization = 44 {
 endpoint 0 {
   binding cluster OtaSoftwareUpdateProvider;
 
-  server cluster Identify {
-    ram      attribute identifyTime;
-    ram      attribute identifyType default = 3;
-    ram      attribute featureMap;
-    ram      attribute clusterRevision default = 2;
-  }
-
   server cluster Descriptor {
     callback attribute deviceList;
     callback attribute serverList;
