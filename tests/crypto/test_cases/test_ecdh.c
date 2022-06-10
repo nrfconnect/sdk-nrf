@@ -45,7 +45,7 @@ static size_t expected_ss_len;
 void ecdh_clear_buffers(void);
 void unhexify_ecdh(void);
 
-static int curve25519_ctx_fixup(mbedtls_ecdh_context *ctx)
+static int curve25519_ctx_fixup(mbedtls_ecdh_context_mbed *ctx)
 {
 	/* Set certain bits to predefined values */
 	int err_code = mbedtls_mpi_set_bit(&ctx->d, 0, 0);
@@ -130,34 +130,37 @@ void exec_test_case_ecdh_random(void)
 	mbedtls_ecdh_init(&initiator_ctx);
 	mbedtls_ecdh_init(&responder_ctx);
 
-	err_code_initiator = mbedtls_ecp_group_load(&initiator_ctx.grp,
+	mbedtls_ecdh_context_mbed *initiator_mbed_ctx = &initiator_ctx.ctx.mbed_ecdh;
+	mbedtls_ecdh_context_mbed *responder_mbed_ctx = &responder_ctx.ctx.mbed_ecdh;
+
+	err_code_initiator = mbedtls_ecp_group_load(&initiator_mbed_ctx->grp,
 						    p_test_vector->curve_type);
 	TEST_VECTOR_ASSERT_EQUAL(err_code_initiator, 0);
 
-	err_code_responder = mbedtls_ecp_group_load(&responder_ctx.grp,
+	err_code_responder = mbedtls_ecp_group_load(&responder_mbed_ctx->grp,
 						    p_test_vector->curve_type);
 	TEST_VECTOR_ASSERT_EQUAL(err_code_responder, 0);
 
 	err_code_initiator =
-		mbedtls_ecdh_gen_public(&initiator_ctx.grp, &initiator_ctx.d,
-					&initiator_ctx.Q,
+		mbedtls_ecdh_gen_public(&initiator_mbed_ctx->grp, &initiator_mbed_ctx->d,
+					&initiator_mbed_ctx->Q,
 					drbg_random, &drbg_ctx);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code_initiator);
 
 	err_code_responder =
-		mbedtls_ecdh_gen_public(&responder_ctx.grp, &responder_ctx.d,
-					&responder_ctx.Q,
+		mbedtls_ecdh_gen_public(&responder_mbed_ctx->grp, &responder_mbed_ctx->d,
+					&responder_mbed_ctx->Q,
 					drbg_random, &drbg_ctx);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code_responder);
 
 	start_time_measurement();
 
 	err_code_initiator = mbedtls_ecdh_compute_shared(
-		&initiator_ctx.grp, &initiator_ctx.z, &responder_ctx.Q,
-		&initiator_ctx.d, drbg_random, &drbg_ctx);
+		&initiator_mbed_ctx->grp, &initiator_mbed_ctx->z, &responder_mbed_ctx->Q,
+		&initiator_mbed_ctx->d, drbg_random, &drbg_ctx);
 	err_code_responder = mbedtls_ecdh_compute_shared(
-		&responder_ctx.grp, &responder_ctx.z, &initiator_ctx.Q,
-		&responder_ctx.d, drbg_random, &drbg_ctx);
+		&responder_mbed_ctx->grp, &responder_mbed_ctx->z, &initiator_mbed_ctx->Q,
+		&responder_mbed_ctx->d, drbg_random, &drbg_ctx);
 
 	stop_time_measurement();
 
@@ -165,11 +168,11 @@ void exec_test_case_ecdh_random(void)
 
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code_responder);
 
-	size_t len_ss_initiator = mbedtls_mpi_size(&initiator_ctx.z);
-	size_t len_ss_responder = mbedtls_mpi_size(&responder_ctx.z);
+	size_t len_ss_initiator = mbedtls_mpi_size(&initiator_mbed_ctx->z);
+	size_t len_ss_responder = mbedtls_mpi_size(&responder_mbed_ctx->z);
 	TEST_VECTOR_ASSERT_EQUAL(len_ss_initiator, len_ss_responder);
 
-	TEST_VECTOR_MEMCMP_ASSERT(initiator_ctx.z.p, responder_ctx.z.p,
+	TEST_VECTOR_MEMCMP_ASSERT(initiator_mbed_ctx->z.p, responder_mbed_ctx->z.p,
 				  len_ss_initiator,
 				  p_test_vector->expected_result,
 				  "Shared secret comparison unexpected result");
@@ -195,11 +198,14 @@ void exec_test_case_ecdh_deterministic_full(void)
 	mbedtls_ecdh_init(&initiator_ctx);
 	mbedtls_ecdh_init(&responder_ctx);
 
-	err_code = mbedtls_ecp_group_load(&initiator_ctx.grp,
+	mbedtls_ecdh_context_mbed *initiator_mbed_ctx = &initiator_ctx.ctx.mbed_ecdh;
+	mbedtls_ecdh_context_mbed *responder_mbed_ctx = &responder_ctx.ctx.mbed_ecdh;
+
+	err_code = mbedtls_ecp_group_load(&initiator_mbed_ctx->grp,
 					  p_test_vector->curve_type);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
-	err_code = mbedtls_ecp_group_load(&responder_ctx.grp,
+	err_code = mbedtls_ecp_group_load(&responder_mbed_ctx->grp,
 					  p_test_vector->curve_type);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
@@ -218,52 +224,52 @@ void exec_test_case_ecdh_deterministic_full(void)
 
 	/* Prepare initator public and private datatypes. */
 	err_code =
-		mbedtls_ecp_point_read_string(&initiator_ctx.Q, 16,
+		mbedtls_ecp_point_read_string(&initiator_mbed_ctx->Q, 16,
 					      p_test_vector->p_initiator_publ_x,
 					      initiator_publ_y);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
-	err_code = mbedtls_mpi_read_string(&initiator_ctx.d, 16,
+	err_code = mbedtls_mpi_read_string(&initiator_mbed_ctx->d, 16,
 					   p_test_vector->p_initiator_priv);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	/* Prepare responder public and private datatypes. */
 	err_code =
-		mbedtls_ecp_point_read_string(&responder_ctx.Q, 16,
+		mbedtls_ecp_point_read_string(&responder_mbed_ctx->Q, 16,
 					      p_test_vector->p_responder_publ_x,
 					      responder_publ_y);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
-	err_code = mbedtls_mpi_read_string(&responder_ctx.d, 16,
+	err_code = mbedtls_mpi_read_string(&responder_mbed_ctx->d, 16,
 					   p_test_vector->p_responder_priv);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	if (p_test_vector->curve_type == MBEDTLS_ECP_DP_CURVE25519) {
-		err_code = curve25519_ctx_fixup(&initiator_ctx);
+		err_code = curve25519_ctx_fixup(&initiator_ctx.ctx.mbed_ecdh);
 		TEST_VECTOR_ASSERT_EQUAL(0, err_code);
-		err_code = curve25519_ctx_fixup(&responder_ctx);
+		err_code = curve25519_ctx_fixup(&responder_ctx.ctx.mbed_ecdh);
 		TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 	}
 
 	/* Validate keys if applicable. */
 	if (p_test_vector->expected_result == EXPECTED_TO_PASS) {
-		err_code = mbedtls_ecp_check_pubkey(&initiator_ctx.grp,
-						    &initiator_ctx.Q);
+		err_code = mbedtls_ecp_check_pubkey(&initiator_mbed_ctx->grp,
+						    &initiator_mbed_ctx->Q);
 		LOG_DBG("Error code pubkey check: -0x%04X", -err_code);
 		TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
-		err_code = mbedtls_ecp_check_privkey(&initiator_ctx.grp,
-						     &initiator_ctx.d);
+		err_code = mbedtls_ecp_check_privkey(&initiator_mbed_ctx->grp,
+						     &initiator_mbed_ctx->d);
 		LOG_DBG("Error code privkey check: -0x%04X", -err_code);
 		TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
-		err_code = mbedtls_ecp_check_pubkey(&responder_ctx.grp,
-						    &responder_ctx.Q);
+		err_code = mbedtls_ecp_check_pubkey(&responder_mbed_ctx->grp,
+						    &responder_mbed_ctx->Q);
 		LOG_DBG("Error code pubkey check: -0x%04X", -err_code);
 		TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
-		err_code = mbedtls_ecp_check_privkey(&responder_ctx.grp,
-						     &responder_ctx.d);
+		err_code = mbedtls_ecp_check_privkey(&responder_mbed_ctx->grp,
+						     &responder_mbed_ctx->d);
 		LOG_DBG("Error code privkey check: -0x%04X", -err_code);
 		TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 	}
@@ -276,10 +282,10 @@ void exec_test_case_ecdh_deterministic_full(void)
 	/* Execute ECDH on initiator side. */
 	start_time_measurement();
 	err_code = mbedtls_ecdh_compute_shared(
-			&initiator_ctx.grp,
-			&initiator_ctx.z,
-			&responder_ctx.Q,
-			&initiator_ctx.d,
+			&initiator_mbed_ctx->grp,
+			&initiator_mbed_ctx->z,
+			&responder_mbed_ctx->Q,
+			&initiator_mbed_ctx->d,
 #if defined(CONFIG_MBEDTLS_VANILLA_BACKEND)
 			NULL,
 #else
@@ -291,18 +297,18 @@ void exec_test_case_ecdh_deterministic_full(void)
 	LOG_DBG("Error code compute shared: -0x%04X", -err_code);
 	TEST_VECTOR_ASSERT_EQUAL(p_test_vector->expected_err_code, err_code);
 
-	initiator_ss_len = mbedtls_mpi_size(&initiator_ctx.z);
+	initiator_ss_len = mbedtls_mpi_size(&initiator_mbed_ctx->z);
 
 	err_code = mbedtls_mpi_write_binary(
-		&initiator_ctx.z, m_ecdh_initiator_ss_buf, expected_ss_len);
+		&initiator_mbed_ctx->z, m_ecdh_initiator_ss_buf, expected_ss_len);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	/* Execute ECDH on responder side. */
 	err_code = mbedtls_ecdh_compute_shared(
-			&responder_ctx.grp,
-			&responder_ctx.z,
-			&initiator_ctx.Q,
-			&responder_ctx.d,
+			&responder_mbed_ctx->grp,
+			&responder_mbed_ctx->z,
+			&initiator_mbed_ctx->Q,
+			&responder_mbed_ctx->d,
 #if defined(CONFIG_MBEDTLS_VANILLA_BACKEND)
 			NULL,
 #else
@@ -312,9 +318,9 @@ void exec_test_case_ecdh_deterministic_full(void)
 
 	TEST_VECTOR_ASSERT_EQUAL(p_test_vector->expected_err_code, err_code);
 
-	responder_ss_len = mbedtls_mpi_size(&responder_ctx.z);
+	responder_ss_len = mbedtls_mpi_size(&responder_mbed_ctx->z);
 	err_code = mbedtls_mpi_write_binary(
-		&responder_ctx.z, m_ecdh_responder_ss_buf, expected_ss_len);
+		&responder_mbed_ctx->z, m_ecdh_responder_ss_buf, expected_ss_len);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	/* Verify length of generated shared secrets. */
@@ -350,44 +356,47 @@ void exec_test_case_ecdh_deterministic(void)
 	mbedtls_ecdh_init(&initiator_ctx);
 	mbedtls_ecdh_init(&responder_ctx);
 
-	err_code = mbedtls_ecp_group_load(&initiator_ctx.grp,
+	mbedtls_ecdh_context_mbed *initiator_mbed_ctx = &initiator_ctx.ctx.mbed_ecdh;
+	mbedtls_ecdh_context_mbed *responder_mbed_ctx = &responder_ctx.ctx.mbed_ecdh;
+
+	err_code = mbedtls_ecp_group_load(&initiator_mbed_ctx->grp,
 					  p_test_vector->curve_type);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
-	err_code = mbedtls_ecp_group_load(&responder_ctx.grp,
+	err_code = mbedtls_ecp_group_load(&responder_mbed_ctx->grp,
 					  p_test_vector->curve_type);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	/* Prepare initiator public key. */
 	err_code = mbedtls_ecp_point_read_string(
-		&initiator_ctx.Q, 16, p_test_vector->p_initiator_publ_x,
+		&initiator_mbed_ctx->Q, 16, p_test_vector->p_initiator_publ_x,
 		p_test_vector->p_initiator_publ_y);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	/* Prepare responder private key. */
-	err_code = mbedtls_mpi_read_string(&responder_ctx.d, 16,
+	err_code = mbedtls_mpi_read_string(&responder_mbed_ctx->d, 16,
 					   p_test_vector->p_responder_priv);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	/* Validate keys if applicable. */
 	if (p_test_vector->expected_result == EXPECTED_TO_PASS) {
-		err_code = mbedtls_ecp_check_pubkey(&initiator_ctx.grp,
-						    &initiator_ctx.Q);
+		err_code = mbedtls_ecp_check_pubkey(&initiator_mbed_ctx->grp,
+						    &initiator_mbed_ctx->Q);
 		LOG_DBG("Error code pubkey check: -0x%04X", -err_code);
 		TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
-		err_code = mbedtls_ecp_check_privkey(&responder_ctx.grp,
-						     &responder_ctx.d);
+		err_code = mbedtls_ecp_check_privkey(&responder_mbed_ctx->grp,
+						     &responder_mbed_ctx->d);
 		LOG_DBG("Error code privkey check: -0x%04X", -err_code);
 		TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 	}
 
 	start_time_measurement();
 	err_code = mbedtls_ecdh_compute_shared(
-			&responder_ctx.grp,
-			&responder_ctx.z,
-			&initiator_ctx.Q,
-			&responder_ctx.d,
+			&responder_mbed_ctx->grp,
+			&responder_mbed_ctx->z,
+			&initiator_mbed_ctx->Q,
+			&responder_mbed_ctx->d,
 #if defined(CONFIG_MBEDTLS_VANILLA_BACKEND)
 			NULL,
 #else
@@ -398,12 +407,12 @@ void exec_test_case_ecdh_deterministic(void)
 
 	LOG_DBG("Error code ss computation: -0x%04X", -err_code);
 	LOG_DBG("Ss size expected: %d, actual: %d", expected_ss_len,
-		mbedtls_mpi_size(&responder_ctx.z));
+		mbedtls_mpi_size(&responder_mbed_ctx->z));
 
 	TEST_VECTOR_ASSERT_EQUAL(p_test_vector->expected_err_code, err_code);
 
 	err_code = mbedtls_mpi_write_binary(
-		&responder_ctx.z, m_ecdh_responder_ss_buf, expected_ss_len);
+		&responder_mbed_ctx->z, m_ecdh_responder_ss_buf, expected_ss_len);
 	TEST_VECTOR_ASSERT_EQUAL(0, err_code);
 
 	TEST_VECTOR_MEMCMP_ASSERT(m_ecdh_responder_ss_buf,
