@@ -15,7 +15,14 @@
 #include "json_common.h"
 #include "cloud_codec.h"
 #include "json_protocol_names.h"
+
+#if defined(CONFIG_CLOUD_CODEC_NRF_CLOUD)
+#include "json_validate_nrfcloud.h"
+#elif defined(CONFIG_CLOUD_CODEC_AWS_IOT)
 #include "json_validate.h"
+#elif defined(CONFIG_CLOUD_CODEC_AZURE_IOT_HUB)
+#include "json_validate.h"
+#endif
 
 /* Structure used to generate cJSON objects and encoded output string buffers. */
 static struct test_dummy {
@@ -37,6 +44,7 @@ static int encoded_output_check(cJSON *object, char *validation_string, int8_t q
 
 	if (strcmp(validation_string, dummy.buffer) != 0) {
 		/* Dummy buffer should equal the validation string. */
+		printk("should be %s\nbut is %s", validation_string, dummy.buffer);
 		return -2;
 	}
 
