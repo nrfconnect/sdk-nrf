@@ -321,6 +321,8 @@ Libraries for networking
     * Added:
 
       * :c:func:`nrf_cloud_fota_pending_job_validate` function that enables an application to validate a pending FOTA job before initializing the :ref:`lib_nrf_cloud` library.
+      * Handling for new nRF Cloud REST error code 40499.
+        Moved the error log from the :c:func:`nrf_cloud_parse_rest_error` function into the calling function.
 
 Libraries for NFC
 -----------------

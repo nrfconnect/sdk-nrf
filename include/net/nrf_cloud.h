@@ -144,7 +144,7 @@ enum nrf_cloud_connect_result {
 enum nrf_cloud_error {
 	NRF_CLOUD_ERROR_UNKNOWN			= -1,
 	NRF_CLOUD_ERROR_NONE			= 0,
-	/* nRF Cloud API error codes */
+	/** nRF Cloud API error codes */
 	NRF_CLOUD_ERROR_BAD_REQUEST		= 40000,
 	NRF_CLOUD_ERROR_INVALID_CERT		= 40001,
 	NRF_CLOUD_ERROR_DISSOCIATE		= 40002,
@@ -157,6 +157,8 @@ enum nrf_cloud_error {
 	NRF_CLOUD_ERROR_NO_DEV_NOT_PROV		= 40412,
 	NRF_CLOUD_ERROR_NO_DEV_DISSOCIATE	= 40413,
 	NRF_CLOUD_ERROR_NO_DEV_DELETE		= 40414,
+	/** Item was not found. No error occured, the requested item simply does not exist */
+	NRF_CLOUD_ERROR_NOT_FOUND_NO_ERROR	= 40499,
 	NRF_CLOUD_ERROR_BAD_RANGE		= 41600,
 	NRF_CLOUD_ERROR_VALIDATION		= 42200,
 	NRF_CLOUD_ERROR_INTERNAL_SERVER		= 50010,
