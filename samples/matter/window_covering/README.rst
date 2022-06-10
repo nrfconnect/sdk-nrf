@@ -9,7 +9,7 @@ Matter: Window covering
 
 This sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a window covering device.
 This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread network.
-Additionally, this device works as a Thread :ref:`Synchronized Sleepy End Device <thread_ot_device_types>`.
+Additionally, this device works as a Thread :ref:`Synchronized Sleepy End Device (SSED) <thread_ot_device_types>`.
 
 Use this sample as a reference for developing your own application.
 See the :ref:`ug_matter_creating_accessory` page for an overview of the process you need to follow.
@@ -38,6 +38,20 @@ The following movement modes are available:
 
 See `User interface`_ for information about how to switch the movement modes.
 
+.. _matter_window_covering_sample_ssed:
+
+SSED device type
+================
+
+The SSED device type was created for the window covering devices to optimize the power usage of the device and communication pattern with the parent.
+
+.. include:: ../../../doc/nrf/ug_thread_commissioning.rst
+   :start-after: thread_ssed_description_start
+   :end-before: thread_ssed_description_end
+
+Sample testing
+==============
+
 You can test the sample in the following ways:
 
 * Standalone, using a single DK that runs the window covering application.
@@ -49,7 +63,7 @@ You can enable both methods after :ref:`building and running the sample <matter_
 .. _matter_window_cover_network_mode:
 
 Remote testing in a network
-===========================
+---------------------------
 
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_remote_testing_start

@@ -67,6 +67,7 @@ The following list summarizes the most important changes inherited from the upst
 Thread
 ------
 
+* Added information about Synchronized Sleepy End Device (SSED) and SED vs SSED activity in the :ref:`thread_ot_device_types` documentation.
 * Multiprotocol support was removed from :file:`overlay-cert.config` and moved to :file:`overlay-multiprotocol.conf`.
 
 See `Thread samples`_ for the list of changes for the Thread samples.
@@ -203,7 +204,7 @@ Matter samples
 * :ref:`matter_window_covering_sample`:
 
   * Set :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` and :kconfig:option:`CONFIG_CHIP_THREAD_SSED` to be enabled by default.
-
+  * Added information about the :ref:`matter_window_covering_sample_ssed` in the sample documentation.
 
 NFC samples
 -----------
