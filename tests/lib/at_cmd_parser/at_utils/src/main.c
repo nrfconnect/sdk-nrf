@@ -53,11 +53,11 @@ static void test_command_detection(void)
 static void test_valid_notification_char_detection(void)
 {
 	for (char c = 0; c < 127; ++c) {
-		if ((c >= 'A') && (c <= 'Z')) {
+		if ((c >= 'A') && (c <= 'Z')) || (c == '_')) {
 			continue;
 		}
 
-		if ((c >= 'a') && (c <= 'z')) {
+		if ((c >= 'A') && (c <= 'Z')) || (c == '_')) {
 			continue;
 		}
 
