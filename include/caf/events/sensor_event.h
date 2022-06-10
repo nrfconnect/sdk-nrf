@@ -16,10 +16,15 @@
 
 #include <app_event_manager.h>
 #include <app_event_manager_profiler_tracer.h>
+#include <zephyr/drivers/sensor.h>
+#include <stdlib.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/* This value has to be equal to fractional part of the sensor_value. */
+#define FLOAT_TO_SENSOR_VAL_CONST 1000000
 
 /** @brief Sensor states. */
 enum sensor_state {
@@ -88,13 +93,13 @@ struct sensor_event {
  *
  * @param[in] event       Pointer to the sensor_event.
  *
- * @return Size of the sensor data, expressed as a number of floating-point values.
+ * @return Size of the sensor data, expressed as a number of struct sensor_value.
  */
 static inline size_t sensor_event_get_data_cnt(const struct sensor_event *event)
 {
-	__ASSERT_NO_MSG((event->dyndata.size % sizeof(float)) == 0);
+	__ASSERT_NO_MSG((event->dyndata.size % sizeof(struct sensor_value)) == 0);
 
-	return (event->dyndata.size / sizeof(float));
+	return (event->dyndata.size / sizeof(struct sensor_value));
 }
 
 /** @brief Get pointer to the sensor data.
@@ -103,9 +108,44 @@ static inline size_t sensor_event_get_data_cnt(const struct sensor_event *event)
  *
  * @return Pointer to the sensor data.
  */
-static inline float *sensor_event_get_data_ptr(const struct sensor_event *event)
+static inline struct sensor_value *sensor_event_get_data_ptr(const struct sensor_event *event)
 {
-	return (float *)event->dyndata.data;
+	return (struct sensor_value *)event->dyndata.data;
+}
+
+/**
+ * @brief Helper function for checking if one sensor_value is greater then other.
+ *
+ * @param sensor_val1 First compered sensor value.
+ * @param sensor_val2 Second compered sensor value.
+ * @return True if sensor_val1 is greater then sensor_val2, false otherwise.
+ */
+static inline bool sensor_value_greater_then(struct sensor_value sensor_val1,
+					     struct sensor_value sensor_val2)
+{
+	return ((sensor_val1.val1 > sensor_val2.val1) ||
+		((sensor_val1.val1 == sensor_val2.val1) && (sensor_val1.val2 > sensor_val2.val2)));
+}
+
+/**
+ * @brief Helper function for calculating absolute value of difference of two sensor_values.
+ *
+ * @param sensor_val1 First sensor value.
+ * @param sensor_val2 Second sensor value.
+ * @return Absolute value of difference between sensor_val1 and sensor_val2.
+ */
+static inline struct sensor_value sensor_value_abs_difference(struct sensor_value sensor_val1,
+							      struct sensor_value sensor_val2)
+{
+	struct sensor_value result;
+
+	result.val1 = abs(sensor_val1.val1 - sensor_val2.val1);
+	result.val2 = abs(sensor_val1.val2 - sensor_val2.val2);
+	if (result.val2 > FLOAT_TO_SENSOR_VAL_CONST) {
+		result.val2 = result.val2 - FLOAT_TO_SENSOR_VAL_CONST;
+		result.val1++;
+	}
+	return result;
 }
 
 #ifdef __cplusplus

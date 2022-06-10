@@ -5,7 +5,6 @@
  */
 
 #include <zephyr/kernel.h>
-#include <math.h>
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/pm/device.h>
 
@@ -28,7 +27,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_SENSOR_MANAGER_LOG_LEVEL);
 struct sensor_data {
 	int sampling_period;
 	int64_t sample_timeout;
-	float *prev;
+	struct sensor_value *prev;
 	atomic_t state;
 	unsigned int sleep_cntd;
 	atomic_t event_cnt;
@@ -53,16 +52,16 @@ static void update_sensor_state(const struct sm_sensor_config *sc, struct sensor
 	APP_EVENT_SUBMIT(event);
 }
 
-static void send_sensor_event(const char *descr, const float *data, const size_t data_cnt,
+static void send_sensor_event(const char *descr, const struct sensor_value *data, const size_t data_cnt,
 			      atomic_t *event_cnt)
 {
-	struct sensor_event *event = new_sensor_event(sizeof(float) * data_cnt);
-	float *data_ptr = sensor_event_get_data_ptr(event);
+	struct sensor_event *event = new_sensor_event(sizeof(struct sensor_value) * data_cnt);
+	struct sensor_value *data_ptr = sensor_event_get_data_ptr(event);
 
 	event->descr = descr;
 
 	__ASSERT_NO_MSG(sensor_event_get_data_cnt(event) == data_cnt);
-	memcpy(data_ptr, data, sizeof(float) * data_cnt);
+	memcpy(data_ptr, data, sizeof(struct sensor_value) * data_cnt);
 
 	atomic_inc(event_cnt);
 	APP_EVENT_SUBMIT(event);
@@ -116,19 +115,16 @@ static void reset_sensor_sleep_cnt(const struct sm_sensor_config *sc,
 }
 
 static bool process_sensor_trigger_values(const struct sm_sensor_config *sc, struct sensor_data *sd,
-					  const float curr, const float prev)
+					  const struct sensor_value curr, const struct sensor_value prev)
 {
 	enum act_type type = sc->trigger->activation.type;
-	float thresh = sc->trigger->activation.thresh;
+	struct sensor_value thresh = sc->trigger->activation.thresh;
 
 	bool is_active = false;
 
 	switch (type) {
-	case ACT_TYPE_PERC:
-		is_active = fabs(curr - prev) > fabs(prev * thresh/100.0);
-		break;
 	case ACT_TYPE_ABS:
-		is_active = fabs(curr - prev) > fabs(thresh);
+		is_active = sensor_value_greater_then(sensor_value_abs_difference(curr, prev), thresh);
 		break;
 	default:
 		__ASSERT(false, "Invalid configuration");
@@ -141,7 +137,7 @@ static bool process_sensor_trigger_values(const struct sm_sensor_config *sc, str
 
 static void process_sensor_activity(const struct sm_sensor_config *sc,
 				    struct sensor_data *sd,
-				    const float *curr)
+				    const struct sensor_value *curr)
 {
 	size_t data_cnt = get_sensor_data_cnt(sc);
 	bool sleep = true;
@@ -159,7 +155,7 @@ static void process_sensor_activity(const struct sm_sensor_config *sc,
 			LOG_DBG("Sleep_cntd: %d", sd->sleep_cntd);
 		}
 	} else {
-		memcpy(sd->prev, curr, data_cnt * sizeof(float));
+		memcpy(sd->prev, curr, data_cnt * sizeof(struct sensor_value));
 		reset_sensor_sleep_cnt(sc, sd);
 	}
 }
@@ -224,7 +220,6 @@ static void sample_sensor(struct sensor_data *sd, const struct sm_sensor_config 
 	size_t data_idx = 0;
 	size_t data_cnt = get_sensor_data_cnt(sc);
 	struct sensor_value data[data_cnt];
-	float curr[data_cnt];
 
 	int err = sensor_sample_fetch(sc->dev);
 
@@ -235,16 +230,12 @@ static void sample_sensor(struct sensor_data *sd, const struct sm_sensor_config 
 		data_idx += sampled_chan->data_cnt;
 	}
 
-	for (size_t i = 0; i < ARRAY_SIZE(curr); i++) {
-		curr[i] = sensor_value_to_double(&data[i]);
-	}
-
 	if (err) {
 		LOG_ERR("Sensor sampling error (err %d)", err);
 		update_sensor_state(sc, sd, SENSOR_STATE_ERROR);
 	} else {
 		if (atomic_get(&sd->event_cnt) < sc->active_events_limit) {
-			send_sensor_event(sc->event_descr, curr, ARRAY_SIZE(curr),
+			send_sensor_event(sc->event_descr, data, ARRAY_SIZE(data),
 					  &sd->event_cnt);
 		} else {
 			LOG_WRN("Did not send event due to too many active events on sensor: %s",
@@ -252,7 +243,7 @@ static void sample_sensor(struct sensor_data *sd, const struct sm_sensor_config 
 		}
 
 		if (sc->trigger) {
-			process_sensor_activity(sc, sd, curr);
+			process_sensor_activity(sc, sd, data);
 			if (!is_sensor_active(sd)) {
 				enter_sleep(sc, sd);
 			}
@@ -316,7 +307,7 @@ static int sensor_trigger_init(const struct sm_sensor_config *sc, struct sensor_
 
 	size_t data_cnt = get_sensor_data_cnt(sc);
 
-	sd->prev = k_malloc(data_cnt * sizeof(float));
+	sd->prev = k_malloc(data_cnt * sizeof(struct sensor_value));
 
 	if (!sd->prev) {
 		LOG_ERR("Failed to allocate memory");
@@ -326,8 +317,9 @@ static int sensor_trigger_init(const struct sm_sensor_config *sc, struct sensor_
 
 	reset_sensor_sleep_cnt(sc, sd);
 
-	LOG_INF("Trigger configured (threshold: %d, time: %d ms)",
-		(int)(1000 * sc->trigger->activation.thresh),
+	LOG_INF("Trigger configured (threshold: %d,%d time: %d ms)",
+		sc->trigger->activation.thresh.val1,
+		sc->trigger->activation.thresh.val2,
 		sc->trigger->activation.timeout_ms);
 	return 0;
 }
