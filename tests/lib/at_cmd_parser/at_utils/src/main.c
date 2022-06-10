@@ -53,7 +53,7 @@ static void test_command_detection(void)
 static void test_valid_notification_char_detection(void)
 {
 	for (char c = 0; c < 127; ++c) {
-		if ((c >= 'A') && (c <= 'Z')) {
+		if (((c >= 'A') && (c <= 'Z')) || (c == '_')) {
 			continue;
 		}
 
@@ -64,6 +64,9 @@ static void test_valid_notification_char_detection(void)
 		zassert_false(is_valid_notification_char(c),
 			      "Valid notificaion char was detected");
 	}
+
+	zassert_true(is_valid_notification_char('_'),
+		     "Underscore should be a valid notification char");
 
 	for (char c = 'A'; c <= 'Z'; ++c) {
 		zassert_true(is_valid_notification_char(c),

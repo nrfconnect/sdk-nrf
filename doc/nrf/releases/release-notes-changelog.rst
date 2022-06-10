@@ -272,6 +272,11 @@ Modem libraries
     * Fixed:
       * An issue that would cause the library to assert on a unhandled CME error when the AT command failed to be sent.
 
+  * :ref:`at_cmd_parser_readme` library:
+
+    * Fixed:
+      * An issue that would cause AT command responses like ``+CNCEC_EMM`` with underscore to be filtered out.
+
 Libraries for networking
 ------------------------
 
