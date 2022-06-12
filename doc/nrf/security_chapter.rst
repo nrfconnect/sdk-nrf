@@ -50,14 +50,14 @@ Device firmware upgrade (DFU)
 The |NCS| supports firmware upgrade using over-the-air (OTA) and serial firmware upgrades, depending on the capabilities of the device.
 For more information about the firmware upgrades, see the available :ref:`DFU libraries <lib_dfu>`.
 
-|NCS| can be configured to enforce secure DFU mechanisms, including validating the digital signature of an image and checking for the version to prevent downgrade attacks.
+The |NCS| can be configured to enforce secure DFU mechanisms, including validating the digital signature of an image and checking for the version to prevent downgrade attacks.
 The secure DFU mechanisms are handled by the MCUboot bootloader.
 For more information, see the :doc:`MCUboot documentation <mcuboot:design>`.
 
 Cryptographic operations in |NCS|
 *********************************
 
-Cryptographic operations in |NCS| are handled by the :ref:`nrfxlib:nrf_security` module, which is configurable through Kconfig options.
+Cryptographic operations in |NCS| are handled by the :ref:`nrfxlib:nrf_security`, which is configurable through Kconfig options.
 The module can be enabled through the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option, and it allows the usage of `Mbed TLS`_ and `PSA Cryptography API 1.1`_ for cryptographic operations and random number generation in the application.
 
 The :ref:`nrfxlib:nrf_security` acts as an orchestrator for the different cryptographic libraries available in the system.

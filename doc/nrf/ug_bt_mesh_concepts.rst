@@ -121,9 +121,9 @@ Addressing
 The Bluetooth mesh addressing scheme is different from the Bluetooth LE addressing scheme.
 It features three types of addresses:
 
-* *Unicast addresses*: Unique for every device
-* *Group addresses*: For forming a group of devices and addressing them all at once
-* *Virtual addresses*: Untracked UUID-based addresses with a large address space
+* *Unicast addresses* - Unique for every device
+* *Group addresses* - For forming a group of devices and addressing them all at once
+* *Virtual addresses* - Untracked UUID-based addresses with a large address space
 
 When a device is added to a network, it is assigned a range of unicast addresses that represents it.
 A device's unicast addresses cannot be changed and are always sequential.
@@ -178,7 +178,7 @@ Device life cycle
 
 Every new device that is to be added to the mesh network must go through the following stages to become a mesh network node:
 
-* :ref:`Provisioning <mesh_concepts_lifecycle_provisioning>`: After this stage, an unprovisioned device becomes a network node.
+* :ref:`Provisioning <mesh_concepts_lifecycle_provisioning>` - After this stage, an unprovisioned device becomes a network node.
   This stage includes the following steps:
 
   1. Discovery
@@ -187,7 +187,7 @@ Every new device that is to be added to the mesh network must go through the fol
 
   After the last step, the device becomes a node.
 
-* :ref:`Configuration <mesh_concepts_lifecycle_network_config>`: After this stage, a node is able to perform its tasks that require exchanging mesh messages with neighboring nodes.
+* :ref:`Configuration <mesh_concepts_lifecycle_network_config>` - After this stage, a node is able to perform its tasks that require exchanging mesh messages with neighboring nodes.
   This stage includes the following steps:
 
   1. Configuration of the node using the mandatory Configuration Server model

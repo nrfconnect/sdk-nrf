@@ -360,7 +360,7 @@ Use case of incomplete physical connections to the FEM module
 =============================================================
 
 The method of configuring FEM using the devicetree file allows you to opt out of using some pins.
-For example if power consumption is not critical, the nRF21540 module PDN pin can be connected to a fixed logic level.
+For example, if power consumption is not critical, the nRF21540 module PDN pin can be connected to a fixed logic level.
 Then there is no need to define a GPIO to control the PDN signal. The line ``pdn-gpios = < .. >;`` can then be removed from the devicetree file.
 
 Generally, if pin ``X`` is not used, the ``X-gpios = < .. >;`` property can be removed.
@@ -376,7 +376,7 @@ Two nRF21540 boards are available, showcasing the possibilities of the nRF21540 
 * :ref:`nRF21540 DK <nrf21540dk_nrf52840>`
 * :ref:`ug_radio_fem_nrf21540_ek`
 
-Also various Skyworks front-end modules are supported.
+Also, various Skyworks front-end modules are supported.
 For example, SKY66112-11EK has a 2-pin PA/LNA interface.
 
 The front-end module feature is supported on the nRF52 and nRF53 Series devices.
@@ -460,7 +460,7 @@ Alternatively, add the shield in the project's :file:`CMakeLists.txt` file:
 
 	set(SHIELD nrf21540_ek)
 
-To build with the |nRFVSC|, specify ``-DSHIELD=nrf21540_ek`` in the :guilabel:`Extra Cmake arguments`.
+To build with the |nRFVSC|, specify ``-DSHIELD=nrf21540_ek`` in the :guilabel:`Extra Cmake arguments` field.
 See :ref:`cmake_options`.
 
 When building for a board with an additional network core, for example nRF5340, add an additional ``-DSHIELD`` variable with the *childImageName_* parameter between ``-D`` and ``SHIELD`` to build for the network core as well.

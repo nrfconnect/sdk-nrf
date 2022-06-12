@@ -284,9 +284,9 @@ In |NCS| you can build and program the :ref:`zephyr:smp_svr_sample` as any other
 Make sure to indicate the :file:`overlay-bt.conf` overlay configuration for the Bluetooth transport like in the command example.
 This configuration was carefully selected to achieve the maximum possible throughput of the FOTA upgrade transport over Bluetooth with the help of the following features:
 
-- Bluetooth MTU: to increase the packet size of a single Bluetooth packet transmitted over the air (:kconfig:option:`CONFIG_BT_BUF_ACL_RX_SIZE` and others).
-- Bluetooth connection parameters: to adaptively change the connection interval and latency on the detection of the SMP service activity (:kconfig:option:`CONFIG_MCUMGR_SMP_BT_CONN_PARAM_CONTROL`).
-- MCUmgr packet reassembly: to allow exchange of large SMP packets (:kconfig:option:`CONFIG_MCUMGR_SMP_REASSEMBLY_BT`, :kconfig:option:`CONFIG_MCUMGR_BUF_SIZE` and others).
+* Bluetooth MTU - To increase the packet size of a single Bluetooth packet transmitted over the air (:kconfig:option:`CONFIG_BT_BUF_ACL_RX_SIZE` and others).
+* Bluetooth connection parameters - To adaptively change the connection interval and latency on the detection of the SMP service activity (:kconfig:option:`CONFIG_MCUMGR_SMP_BT_CONN_PARAM_CONTROL`).
+* MCUmgr packet reassembly - To allow exchange of large SMP packets (:kconfig:option:`CONFIG_MCUMGR_SMP_REASSEMBLY_BT`, :kconfig:option:`CONFIG_MCUMGR_BUF_SIZE` and others).
 
 Consider using these features in your project to speed up the FOTA upgrade process.
 
@@ -336,4 +336,4 @@ Building and programming a sample
 
 To build your application, follow the instructions in :ref:`gs_programming`.
 
-.. |note| replace:: For posibility of introducing upgradable bootloader, please refer to :ref:`ug_bootloader_adding`.
+.. |note| replace:: For the possibility of introducing upgradable bootloader, please refer to :ref:`ug_bootloader_adding`.

@@ -43,7 +43,7 @@ To set up your system to be able to build a compatible firmware image, follow th
 Build targets
 =============
 
-The build targets of interest for Thingy:53 in the |NCS| are listed in the following table.
+The build targets of interest for Thingy:53 in the |NCS| are listed in the following table:
 
 +--------------------------------+----------------------------------------------------------+
 |Component                       |  Build target                                            |

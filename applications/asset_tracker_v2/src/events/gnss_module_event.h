@@ -61,7 +61,7 @@ enum gnss_module_event_type {
 
 	/** The module has been shut down gracefully.
 	 *  The event has associated payload of the type ``uint32`` in the struct member
-	 *  ``data.id``, which contains the module ID used shen acknowledging a shutdown
+	 *  ``data.id``, which contains the module ID used when acknowledging a shutdown
 	 *  request from the util module.
 	 */
 	GNSS_EVT_SHUTDOWN_READY,

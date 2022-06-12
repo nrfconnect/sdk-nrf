@@ -19,7 +19,7 @@ Thread certification options
 
 The :ref:`nrfxlib:ot_libs`, which are available in the :ref:`nrfxlib:nrfxlib` repository, are certified by Thread Group for various Nordic Semiconductor devices.
 
-You can find the certification information for the chip that your are using in the `Nordic Semiconductor Infocenter`_.
+You can find the certification information for the chip that you are using in the `Nordic Semiconductor Infocenter`_.
 Navigate to the compatibility matrix for your chip and select *Thread CIDs*.
 
 Depending on your development approach, you have several certification options when using Nordic Semiconductor devices.

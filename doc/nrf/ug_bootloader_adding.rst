@@ -201,7 +201,7 @@ The command string can include its own arguments like a typical terminal command
 
    my_command *[options]* *<args ...>* *<build_system_args ..>*
 
-See the description of :kconfig:option:`CONFIG_SB_SIGNING_COMMAND` for which arguments can be be sent to the build system in this way.
+See the description of :kconfig:option:`CONFIG_SB_SIGNING_COMMAND` for which arguments can be sent to the build system in this way.
 
 .. note::
 
@@ -341,6 +341,6 @@ This is a necessary step for creating application update images for use with :re
 
 The S1 variant is built as a separate child image called ``s1_image``.
 For this reason, any modifications to the configuration of the S1 variant must be done to the ``s1_image`` child image.
-By default this child image is an exact duplicate of the original image, with the exception of its placement in memory.
+By default, this child image is an exact duplicate of the original image, with the exception of its placement in memory.
 The only configuration option that must be modified is the version set in ``CONFIG_FW_INFO_FIRMWARE_VERSION``.
 To make ``s1_image`` bootable with |NSIB|, the value of ``CONFIG_FW_INFO_FIRMWARE_VERSION`` for ``s1_image`` must be bigger than the one for original image.

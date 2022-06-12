@@ -172,7 +172,7 @@ To simulate the use case with Online Power Profiler, complete the following step
    Complete the following sub-steps to export the settings from Online Power Profiler:
 
    a. Click :guilabel:`Export settings` to store current Online Power Profiler settings to a :file:`.json` file.
-   #. Click :guilabel:`Export project config` to export the configuration parameters in a :file:`opp.conf` file that you can use when building the firmware.
+   #. Click :guilabel:`Export project config` to export the configuration parameters in an :file:`opp.conf` file that you can use when building the firmware.
 
 Real-time power measurement using Power Profiler Kit II
 -------------------------------------------------------
@@ -251,7 +251,7 @@ Important network parameters that contribute to the current consumption:
 * cDRX on duration
 
 .. note::
-   The PSM active timer is set to zero in both simulation and the measurements and it does not contribute in the use case.
+   The PSM active timer is set to zero in both simulation and the measurements and it does not contribute to the use case.
 
 
 To tune the network parameters for the example use case, complete the following steps:
@@ -305,16 +305,15 @@ To tune the network parameters for the example use case, complete the following 
       :alt: Long cDRX
 
 .. note::
-   To match the cDRX behaviour in real networks, a rule of thumb is to multiply the cDRX charge in Online Power Profiler with a factor of 1.5 after you have tuned it for the baseline network parameters.
+   To match the cDRX behavior in real networks, a rule of thumb is to multiply the cDRX charge in Online Power Profiler with a factor of 1.5 after you have tuned it for the baseline network parameters.
    It helps in obtaining an estimate that is within the range of the actual measurement.
    The recommended factor may not be suitable for some networks and you must confirm it with the Power Profiler Kit II measurements in the actual network.
 
 For the example use case, an estimate (based on the values from Online Power Profiler) calculated with the recommended factor is:
 
-   .. parsed-literal::
-      :class: highlight
+   .. code-block:: none
 
-      (Total charge - cDRX charge) + cDRX charge * 1.5 = (108.91 mC - 68.73 mC) + 68.73 mC * 1.5 = 143.28 mC (which is close to the 142 mC from the Power Profiler Kit II measurements).
+     (Total charge - cDRX charge) + cDRX charge * 1.5 = (108.91 mC - 68.73 mC) + 68.73 mC * 1.5 = 143.28 mC (which is close to the 142 mC from the Power Profiler Kit II measurements).
 
 PSM active timer
 ++++++++++++++++

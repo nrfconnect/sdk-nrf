@@ -26,11 +26,11 @@ extern "C" {
 enum sensor_module_event_type {
 	/** Motion detected. Acceleration of the device has exceeded the configured threshold.
 	 *  Payload is of type @ref sensor_module_accel_data (accel). The associated acceleration
-	 *  values contains the motion that caused the device to exceed the configured threshold.
+	 *  values contain the motion that caused the device to exceed the configured threshold.
 	 */
 	SENSOR_EVT_MOVEMENT_DATA_READY,
 
-	/** Environmental sensors has been sampled.
+	/** Environmental sensors have been sampled.
 	 *  Payload is of type @ref sensor_module_data (sensors).
 	 */
 	SENSOR_EVT_ENVIRONMENTAL_DATA_READY,

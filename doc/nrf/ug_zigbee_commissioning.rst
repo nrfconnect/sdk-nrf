@@ -50,7 +50,7 @@ These modes are triggered by the top-level commissioning procedure.
 The procedure goes through one or more modes, depending on the bits specified in the ``bdbCommissioningMode`` mask (``0`` through ``3``).
 A node can have one or more of these bits set.
 
-The following figure shows a generic scenario where where all modes are used, together with their corresponding ``bdbCommissioningMode`` mask bits.
+The following figure shows a generic scenario where all modes are used, together with their corresponding ``bdbCommissioningMode`` mask bits.
 
 .. figure:: /images/zigbee_commissioning_overview.svg
    :alt: Simplified top-level Zigbee commissioning procedure
@@ -72,7 +72,7 @@ Touchlink
       The Touchlink mode is optional in Zigbee and is not supported in the |NCS|.
 
 The Touchlink mode allows commissioning of devices in close proximity to each other, which means that the key criterium for this mode is the signal strength.
-It involes an initiator device and a target device, where the initiator is a member of an existing Zigbee network or it can form a new network.
+It involves an initiator device and a target device, where the initiator is a member of an existing Zigbee network or it can form a new network.
 Once the network is created, the initiator looks for the target on four channels by sending InterPAN frames.
 When the target is found, the initiator can create a local binding with a remote endpoint or request adding the remote endpoint to a group.
 The target first identifies itself with the initiator and then receives requests from it and responds to them.
@@ -184,7 +184,7 @@ As a result, new binding table entries are created and the nodes do not have to 
    Zigbee Finding and Binding procedure
 
 Finding and Binding can be started automatically (using the ``bdbCommissioningMode`` mask) or manually.
-The process involves two device types: target and initiatior.
+The process involves two device types: target and initiator.
 The device type is defined by the endpoint cluster class implemented on the device.
 Depending on the device type:
 

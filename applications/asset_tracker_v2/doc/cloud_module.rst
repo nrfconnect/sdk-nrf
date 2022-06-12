@@ -99,7 +99,7 @@ For additional documentation on the various FOTA implementations, refer to the r
 Connection awareness
 ====================
 
-The cloud module implements connection awareness by maintaing an internal state that is based on
+The cloud module implements connection awareness by maintaining an internal state that is based on
 events from the modem module and callbacks from the :ref:`Cloud wrapper API <api_cloud_wrapper>`.
 
 If the module is disconnected, it will try to reconnect while the LTE connection is still valid.

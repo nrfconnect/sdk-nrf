@@ -14,8 +14,8 @@ By default, to set Kconfig options, the |NSIB| and MCUboot bootloaders use Kconf
 
 However, there are other ways to customize your application using Kconfig options:
 
-* Using custom project configurations - for permanent options.
-* Using Kconfig fragments - for temporary options.
+* Using custom project configurations - For permanent options.
+* Using Kconfig fragments - For temporary options.
 
 Using custom project configurations
 ***********************************

@@ -311,7 +311,7 @@ A table of 3-7 channels is proven to give a satisfactory coexistence performance
 
 Too large channel table may increase the transmission latency and power consumption, while using a too small channel table may decrease the coexistence performance.
 
-The core parameters deciding the channel hopping behavior are:
+Following are the core parameters deciding the channel hopping behavior:
 
 * ``timeslots_per_channel`` (applies to Host and "in sync" Device, set by :c:func:`nrf_gzll_set_timeslots_per_channel()`).
 * ``timeslots_per_channel_when_device_out_of_sync`` (applies to "out of sync" Device only, set by :c:func:`nrf_gzll_set_timeslots_per_channel_when_device_out_of_sync()`).

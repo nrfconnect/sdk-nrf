@@ -137,7 +137,7 @@ To migrate the devicetree files of any Nordic-based board, you must complete the
 1. Create a :file:`board-pinctrl.dtsi` file, defining each peripheral state pin configuration.
 2. Include this file in the :file:`board.dts` file.
 3. Replace all ``-pin`` related properties with pin control states.
-4. Enable pin control by adding :kconfig:option:`CONFIG_PINCTRL` to ``y`` to the :file:`board.conf` file.
+4. Enable pin control by setting :kconfig:option:`CONFIG_PINCTRL` to ``y`` in the :file:`board.conf` file.
 
 .. note::
 
