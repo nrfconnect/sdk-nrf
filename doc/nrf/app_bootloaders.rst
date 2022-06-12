@@ -10,17 +10,17 @@ Bootloaders and Device Firmware Updates
 There are two types of bootloaders used by the |NCS|:
 
 * :ref:`Immutable first-stage bootloaders <immutable_bootloader>`.
-* :ref:`Upgradable second-stage bootloaders <upgradable_bootloader>` - that can perform device firmware updates to both themselves and the application.
+* :ref:`Upgradable second-stage bootloaders <upgradable_bootloader>` that can perform device firmware updates to both themselves and the application.
 
 The bootloaders support two types of updates:
 
-* Direct updates - where an in-place substitution of the image takes place.
-* Background updates - where the updated image is obtained and stored, but the update is completed later on.
+* Direct updates, where an in-place substitution of the image takes place.
+* Background updates, where the updated image is obtained and stored, but the update is completed later on.
 
 You can deliver the updated images to the device in two ways:
 
-* Wired - where updates are sent through a wired connection, like UART, or delivered by connecting a flash device.
-* Over-the-air (OTA) - where updates are sent through a wireless connection, like Bluetooth® Low Energy.
+* Wired, where updates are sent through a wired connection, like UART, or delivered by connecting a flash device.
+* Over-the-air (OTA), where updates are sent through a wireless connection, like Bluetooth® Low Energy.
 
 You can use a second-stage bootloader only in combination with a first-stage one.
 Also, not all bootloaders supported by the |NCS| can be used as either first-stage or second-stage ones.

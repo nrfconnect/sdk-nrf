@@ -112,7 +112,7 @@ Until then, your changes are reflected only in the copy you forked.
 A fork can be hosted on any server, including a public Git hosting site like `GitHub`_.
 It is, however, important to differentiate between the generic concept of a fork and GitHub's concept of a `GitHub fork`_.
 When you create a GitHub fork, GitHub copies the original repository and tags the downstream repository (the fork) with a flag that allows users to send pull requests from the fork to its upstream repository.
-GitHub also supports creating forks without linking them to the upstream respository.
+GitHub also supports creating forks without linking them to the upstream repository.
 See the `GitHub documentation <GitHub duplicate_>`_ for information about how to do this.
 
 Everything in Git is checksummed before it is stored and is then referred to by that checksum.

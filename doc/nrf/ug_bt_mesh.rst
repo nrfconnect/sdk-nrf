@@ -8,7 +8,7 @@ The support is based on Zephyr's :ref:`bluetooth_mesh` implementation.
 
 The `Bluetooth mesh profile specification`_ is developed and published by the Bluetooth® Special Interest Group (SIG).
 It allows one-to-one, one-to-many, and many-to-many communication, using the Bluetooth LE protocol to exchange messages between the nodes on the network.
-All nodes in a Bluetooth mesh network can communicate with each other, as long as there's a chain of nodes between them to relay the messages.
+All nodes in a Bluetooth mesh network can communicate with each other, as long as there is a chain of nodes between them to relay the messages.
 The messages are encrypted with two layers of 128-bit AES-CCM encryption, allowing secure communication between thousands of devices.
 
 The end-user applications are implemented as a set of mesh models.

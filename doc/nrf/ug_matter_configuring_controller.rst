@@ -42,9 +42,9 @@ This implies that the tool can also be run on a Raspberry Pi with a 64-bit OS.
 
 To use this controller type, choose one of the following options:
 
-* For Linux only: use the prebuilt tool package from the `Matter nRF Connect releases`_ GitHub page.
+* For Linux only - Use the prebuilt tool package from the `Matter nRF Connect releases`_ GitHub page.
   Make sure that the package is compatible with your |NCS| version.
-* For both Linux and macOS: Build it manually from the source files available in the :file:`modules/lib/matter/examples/chip-tool` directory and using the building instructions from the :doc:`matter:chip_tool_guide` page in the Matter documentation.
+* For both Linux and macOS - Build it manually from the source files available in the :file:`modules/lib/matter/examples/chip-tool` directory and using the building instructions from the :doc:`matter:chip_tool_guide` page in the Matter documentation.
 
 For more information about how to test using the CHIP Tool, see the :doc:`matter:chip_tool_guide` page in the Matter documentation.
 

@@ -23,15 +23,15 @@ The implementation is based on :ref:`nrfxlib:bluetooth_coex` which is integrated
 Resources
 *********
 
-The bluetooth 3-wire coexistence implementation requires exclusive access to NRF_TIMER1, in addition to the GPIO, GPIOTE and PPI resources listed in :ref:`nrfxlib:bluetooth_coex`.
+The Bluetooth 3-wire coexistence implementation requires exclusive access to NRF_TIMER1, in addition to the GPIO, GPIOTE and PPI resources listed in :ref:`nrfxlib:bluetooth_coex`.
 
 Enabling 3-wire coexistence and MPSL
 ************************************
 
-Make sure that the following KConfig options are enabled:
+Make sure that the following Kconfig options are enabled:
 
-   * :kconfig:option:`CONFIG_MPSL_CX`
-   * :kconfig:option:`CONFIG_MPSL_CX_BT_3WIRE`
+* :kconfig:option:`CONFIG_MPSL_CX`
+* :kconfig:option:`CONFIG_MPSL_CX_BT_3WIRE`
 
 .. _ug_bt_coex_3w_config:
 
@@ -73,15 +73,15 @@ A sample application for 3-wire coexistence can be found at :file:`samples/bluet
 Resources
 *********
 
-The bluetooth 1-wire coexistence implementation requires access to the GPIO, GPIOTE and PPI resources listed in :ref:`nrfxlib:bluetooth_coex`.
+The Bluetooth 1-wire coexistence implementation requires access to the GPIO, GPIOTE and PPI resources listed in :ref:`nrfxlib:bluetooth_coex`.
 
 Enabling 1-wire coexistence and MPSL
 ************************************
 
-Make sure that the following KConfig options are enabled:
+Make sure that the following Kconfig options are enabled:
 
-   * :kconfig:option:`CONFIG_MPSL_CX`
-   * :kconfig:option:`CONFIG_MPSL_CX_BT_1WIRE`
+* :kconfig:option:`CONFIG_MPSL_CX`
+* :kconfig:option:`CONFIG_MPSL_CX_BT_1WIRE`
 
 .. _ug_bt_coex_1w_config:
 

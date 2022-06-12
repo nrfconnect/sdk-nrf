@@ -11,7 +11,7 @@ Once you are familiar with Zigbee in the |NCS| and you have tested some of the a
 For example, you can create a sensor application that uses a temperature sensor with an on/off switch, with the sensor periodically updating its measured value when it is active.
 
 Adding ZCL clusters to an application consists of expanding the Zigbee template sample with new application clusters.
-By default, the template sample includes only mandatory Zigbee clusters, that is the Basic and Identify clusters, required to identify a device within a Zigbee network.
+By default, the template sample includes only mandatory Zigbee clusters, which is the Basic and Identify clusters, required to identify a device within a Zigbee network.
 
 Cluster is a representation of a single functionality within a Zigbee node.
 Each cluster contains attributes that are stored in the device's memory and commands that can be used to modify or read the state of the device, including the cluster attributes.
@@ -129,7 +129,7 @@ Complete the following steps:
 
         ZB_HA_DECLARE_ON_OFF_SWITCH_EP(on_off_switch_ep, ON_OFF_SWITCH_ENDPOINT, on_off_switch_clusters);
 
-   Every cluster in the On/Off cluster list that you've declared in the previous step is going to use the same endpoint.
+   Every cluster in the On/Off cluster list that you have declared in the previous step is going to use the same endpoint.
 
    .. note::
         Every endpoint has an associated Simple Descriptor, which contains a variety of information, such as the application profile identifier, the number of input and output clusters, or the device version.
@@ -260,7 +260,7 @@ We are now going to add the extended application node device to the Zigbee netwo
 Complete the following steps:
 
 1. Make sure that the network coordinator node device is running.
-#. Build the extended application and program it to a compatible development kit, that is one of the development kits compatible with the template sample.
+#. Build the extended application and program it to a compatible development kit, which is one of the development kits compatible with the template sample.
 #. |connect_kit|
 #. |connect_terminal|
 #. Observe the output.

@@ -65,10 +65,10 @@ Complete the following steps:
 #. Select the level of logs you want to receive.
    Configure ZBOSS trace level by selecting one of the following levels:
 
-   * Error trace logs level - set :kconfig:option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL_ERR`
-   * Warning trace logs level - set :kconfig:option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL_WRN`
-   * Info trace logs level - set :kconfig:option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL_INF`
-   * Debug trace logs level - set :kconfig:option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL_DBG`
+   * Error trace logs level - Set :kconfig:option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL_ERR`
+   * Warning trace logs level - Set :kconfig:option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL_WRN`
+   * Info trace logs level - Set :kconfig:option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL_INF`
+   * Debug trace logs level - Set :kconfig:option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL_DBG`
 
 If you do not want to receive trace logs, turn them off by setting the Kconfig option :kconfig:option:`CONFIG_ZBOSS_TRACE_LOG_LEVEL_OFF`.
 

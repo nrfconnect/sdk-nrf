@@ -76,7 +76,7 @@ Minimal Thread Device (MTD)
 
   Synchronized Sleepy End Device (SSED)
    A SSED is an enhanced SED.
-   It trasmits less data than SED and relies on receiving messages from its parent only in specified time intervals.
+   It transmits less data than SED and relies on receiving messages from its parent only in specified time intervals.
 
 For more information, see `Device Types on OpenThread portal`_.
 

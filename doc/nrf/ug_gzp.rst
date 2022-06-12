@@ -243,18 +243,18 @@ Terminology
 | Name                       | Description                                                                                                                                                |
 +============================+============================================================================================================================================================+
 | Frequency analysis attacks | Frequency analysis is the study of the frequency of letters, or groups of letters, in the ciphertext.                                                      |
-|                            | Even the most advanced ciphers such as AES, do not provide security against this type of attack unless precautions for such an attack have being taken.    |
+|                            | Even the most advanced ciphers such as AES, do not provide security against this type of attack unless precautions for such an attack have been taken.     |
 |                            | Frequency analysis is based on the fact that certain letters and combinations of letters occur with varying frequencies.                                   |
 |                            | Knowing these properties of a given language, it can be possible to decipher the packets sent from the keyboard without having to break the cipher itself. |
 |                            |                                                                                                                                                            |
 |                            | The encrypted user data in Gazell pairing is protected against frequency analysis attacks by using a session token, which is incremented for every packet. |
 |                            | This is equivalent to AES "counter" mode.                                                                                                                  |
-|                            | As the keys can take on any value they can not be compromised by a frequency analysis attack.                                                              |
+|                            | As the keys can take on any value they cannot be compromised by a frequency analysis attack.                                                               |
 +----------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Hostile device attack      | Here, a hostile Device attack is used as a scenario, where a hostile third party Device has been able to pair with the Host and starts sending data that   |
 |                            | is interpreted as trusted user data by the Host.                                                                                                           |
 |                            | The hostile device may also obtain any keys shared with other devices in order to eavesdrop communications.                                                |
-|                            | For example, having such an capability with a wireless keyboard, an attacker can easily perform a range of operations on the host PC, like damaging        |
+|                            | For example, having such a capability with a wireless keyboard, an attacker can easily perform a range of operations on the host PC, like damaging         |
 |                            | contents on the PC or install spyware or key logging software.                                                                                             |
 +----------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Man-in-the-middle attack   | The man-in-the-middle attack is a form of active eavesdropping in which the attacker makes independent connections with the victims during key exchanges   |

@@ -128,7 +128,7 @@ Perform the following steps to set up an application to send and receive packets
 
 1. Initialize ESB using :c:func:`esb_init`.
    You can use the default parameters in :c:macro:`ESB_DEFAULT_CONFIG` as starting point for the ``p_config`` parameter and reconfigure them if needed.
-#. If necessary, use any of the folowing functions to update the addresses, the address prefix, the channel, and the bitrate:
+#. If necessary, use any of the following functions to update the addresses, the address prefix, the channel, and the bitrate:
 
    * :c:func:`esb_set_base_address_0`
    * :c:func:`esb_set_base_address_1`
@@ -155,11 +155,11 @@ Perform the following steps to set up an application to send and receive packets
    * If the node is a PRX:
 
      a. Handle :c:macro:`ESB_EVENT_RX_RECEIVED` events as packets are coming in.
-	    Multiple packets might arrive in the RX FIFO between each event.
+        Multiple packets might arrive in the RX FIFO between each event.
      #. To attach payloads to acknowledgment packets, add them to the TX FIFO using :c:func:`esb_write_payload`.
-	    The payload must be queued before a packet is received.
-		After a queued payload is sent with an acknowledgment, it is assumed that it reaches the other device.
-		Therefore, an :c:macro:`ESB_EVENT_TX_SUCCESS` event is queued.
+	The payload must be queued before a packet is received.
+	After a queued payload is sent with an acknowledgment, it is assumed that it reaches the other device.
+	Therefore, an :c:macro:`ESB_EVENT_TX_SUCCESS` event is queued.
 
 To stop the ESB module, call :c:func:`esb_disable`.
 Note, however, that if a transaction is ongoing when you disable the module, it is not completed.
@@ -274,9 +274,9 @@ Errata workarounds and nRF52832 chip revisions
 ==============================================
 
 The module implementation on nRF52832 devices include a set of workarounds for hardware erratas.
-These erratas require a few houndred bytes of code space to determine runtime which workarounds are applicable to the device running the firmware.
+These erratas require a few hundred bytes of code space to determine runtime which workarounds are applicable to the device running the firmware.
 This is to ensure that firmware based on newer SDKs function as intended on both older and newer revision chips.
-If you know that your firmware will only on certain devices, you may save a few houndred bytes of code space by removing the workaround.
+If you know that your firmware will only on certain devices, you may save a few hundred bytes of code space by removing the workaround.
 If you are sure that you do not require support for revision 1 chips, you may remove all code blocks within if statements on the format ``if((NRF_FICR->INFO.VARIANT & 0x0000FF00) == 0x00004200)``.
 If you are sure that you do not require support for revision 2 chips, you may remove all code blocks within if statements on the format ``if((NRF_FICR->INFO.VARIANT & 0x0000FF00) == 0x00004500)``.
 

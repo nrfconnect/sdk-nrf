@@ -15,7 +15,7 @@ Overview
 ********
 
 The Connectivity bridge acts as a USB composite device, exposing two UART interfaces to a USB host as two CDC ACM devices.
-The mapping of the UART interfaces are done in the following way:
+The mapping of the UART interfaces is done in the following way:
 
 .. list-table::
    :header-rows: 1

@@ -24,7 +24,7 @@ A secure system depends on building and maintaining a chain of trust through all
 Each step in this chain guarantees that the next step can be trusted to have certain properties because any unauthorized modification of a subsequent step will be detected and the process halted.
 Each layer guarantees the trustworthiness of the following layer, all the way back to a property in the system referred to as *root of trust* (RoT).
 
-An RoT consists of hardware, software, and data components that must always behave as expected because any misbehavior cannot be detected.
+A RoT consists of hardware, software, and data components that must always behave as expected because any misbehavior cannot be detected.
 
 You can compare a chain of trust to the concept of a door with its root of trust being a key:
 
@@ -51,7 +51,7 @@ There are two implementations currently supported:
 * The first implementation provides the first stage in the chain, the immutable :ref:`bootloader`, which could be either |NSIB| or :doc:`MCUboot <mcuboot:index-ncs>`.
   It does not support bootloader upgradability, but it is useful if you need just the capability to update your application.
 
-  See below for an abstract representation of the memory layout for an application that uses only an immutable bootloader in its boot chain:
+  See the following image for an abstract representation of the memory layout for an application that uses only an immutable bootloader in its boot chain:
 
   .. figure:: images/bootloader_memory_layout_onestage.svg
      :alt: Memory layout
@@ -60,7 +60,7 @@ There are two implementations currently supported:
   This implementation provides the capability to update both your bootloader and your application.
   This is useful when a bootloader performs additional complex operations, like using a software stack.
 
-  See below for an abstract representation of the memory layout for an application that uses both an immutable and an upgradable bootloader in its boot chain:
+  See the following image for an abstract representation of the memory layout for an application that uses both an immutable and an upgradable bootloader in its boot chain:
 
   .. figure:: images/bootloader_memory_layout.svg
      :alt: Memory layout

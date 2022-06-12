@@ -158,7 +158,7 @@ Thread commissioning options
 Thread commissioning is the process of adding new Thread devices to the network.
 See :ref:`thread_ot_commissioning` for more information.
 
-Configuring this process is optional, because the :ref:`openthread_samples` in the the |NCS| use hardcoded network information.
+Configuring this process is optional, because the :ref:`openthread_samples` in the |NCS| use hardcoded network information.
 
 If you want to manually enable the Thread network Commissioner role on a device, set the following Kconfig option to the provided value:
 

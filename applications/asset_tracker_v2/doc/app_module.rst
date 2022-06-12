@@ -69,7 +69,7 @@ Module states
 The application module has an internal state machine with the following states:
 
 * ``STATE_INIT`` - The initial state of the module.
-* ``STATE_RUNNING`` - The module has receieved its initial configuration from the data module and has started the appropriate timers.
+* ``STATE_RUNNING`` - The module has received its initial configuration from the data module and has started the appropriate timers.
 
    * ``SUB_STATE_ACTIVE_MODE`` - The application is in the active mode. In this state, the module sends out sample requests periodically.
    * ``SUB_STATE_PASSIVE_MODE`` - The application is in the passive mode. In this state, the module sends out a sample request upon movement.

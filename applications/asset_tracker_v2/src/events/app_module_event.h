@@ -41,7 +41,7 @@ enum app_module_event_type {
 	APP_EVT_DATA_GET,
 
 	/** Create a list with all available sensor types in the system and
-	 *  distribute it as a APP_EVT_DATA_GET event.
+	 *  distribute it as an APP_EVT_DATA_GET event.
 	 */
 	APP_EVT_DATA_GET_ALL,
 

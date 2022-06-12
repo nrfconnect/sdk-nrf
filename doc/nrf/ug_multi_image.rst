@@ -260,7 +260,7 @@ See :ref:`ug_bootloader` for more details.
    The build system grabs the Kconfig fragment or configuration file specified in a CMake argument relative to that image's application directory.
    For example, the build system uses ``nrf/samples/bootloader/my-fragment.conf`` when building with the ``-Db0_OVERLAY_CONFIG=my-fragment.conf`` option, whereas ``-DOVERLAY_CONFIG=my-fragment.conf`` grabs the fragment from the main application's directory, such as ``zephyr/samples/hello_world/my-fragment.conf``.
 
-You can also merge multiple fragments into the overall configuration for an image by giving a list of kconfig fragments as a string, separated using ``;``.
+You can also merge multiple fragments into the overall configuration for an image by giving a list of Kconfig fragments as a string, separated using ``;``.
 The following example shows how to combine ``abc.conf``, Kconfig fragment of the ``childimageone`` child image, with the ``extrafragment.conf`` fragment:
 
   .. parsed-literal::

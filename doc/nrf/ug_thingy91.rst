@@ -125,23 +125,16 @@ You must use the build target ``thingy91_nrf9160_ns`` when building the applicat
 
 The table below shows the different types of build files that are generated and the different scenarios in which they are used:
 
-+--------------+----------------------------------------+--------------------------------------------------------------+
-| File         | File format                            | Programming scenario                                         |
-+==============+========================================+==============================================================+
-|merged.hex    | Full image, HEX format                 | Using an external debug probe                                |
-|              |                                        |                                                              |
-|              |                                        | and nRF Connect Programmer                                   |
-+--------------+----------------------------------------+--------------------------------------------------------------+
-|app_signed.hex| MCUboot compatible image, HEX format   | Using the built-in bootloader                                |
-|              |                                        |                                                              |
-|              |                                        | and nRF Connect Programmer                                   |
-+--------------+----------------------------------------+--------------------------------------------------------------+
-|app_update.bin| MCUboot compatible image, binary format|* Using the built-in bootloader                               |
-|              |                                        |                                                              |
-|              |                                        |  and ``mcumgr`` command line tool                            |
-|              |                                        |                                                              |
-|              |                                        |* For FOTA updates                                            |
-+--------------+----------------------------------------+--------------------------------------------------------------+
++--------------+----------------------------------------+----------------------------------------------------------------+
+| File         | File format                            | Programming scenario                                           |
++==============+========================================+================================================================+
+|merged.hex    | Full image, HEX format                 | Using an external debug probe and nRF Connect Programmer       |
++--------------+----------------------------------------+----------------------------------------------------------------+
+|app_signed.hex| MCUboot compatible image, HEX format   | Using the built-in bootloader and nRF Connect Programmer       |
++--------------+----------------------------------------+----------------------------------------------------------------+
+|app_update.bin| MCUboot compatible image, binary format|* Using the built-in bootloader and ``mcumgr`` command line tool|
+|              |                                        |* For FOTA updates                                              |
++--------------+----------------------------------------+----------------------------------------------------------------+
 
 There are multiple methods of programming a sample or application onto a Thingy:91.
 You can choose the method based on the availability or absence of an external debug probe to program.

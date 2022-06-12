@@ -47,7 +47,7 @@ If you are using a mobile device, one of the following operating systems:
 Installing the required software
 ********************************
 
-When using a computer to work with with the Nordic Thingy:53 firmware, install `nRF Connect for Desktop`_.
+When using a computer to work with the Nordic Thingy:53 firmware, install `nRF Connect for Desktop`_.
 After installing and starting the application, install the Programmer app.
 
 When using a mobile device to work with the Nordic Thingy:53, install the `nRF Programmer`_ mobile application from the corresponding application store.
@@ -209,7 +209,7 @@ Do no unplug or power off the devices during this process.
 #. Open nRF Connect for Desktop and launch the Programmer app.
 #. Prepare the hardware:
 
-   #. Open the connector cover on the side of the Nordic Thingy:53.
+   a. Open the connector cover on the side of the Nordic Thingy:53.
    #. Use a JTAG cable to connect the Nordic Thingy:53 to the debug out port on a 10-pin external debug probe.
 
       .. figure:: images/thingy53_nrf5340_dk.svg

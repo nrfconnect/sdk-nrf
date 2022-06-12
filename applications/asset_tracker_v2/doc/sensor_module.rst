@@ -64,7 +64,7 @@ Motion detection in the module is enabled and disabled in turn to control the nu
 This functionality acts as flow control.
 It prevents the sensor module from sending events to the rest of the application if the device is accelerating over the threshold for extended periods of time.
 
-The applicaton module controls this behavior through the :c:enum:`APP_EVT_ACTIVITY_DETECTION_ENABLE` and :c:enum:`APP_EVT_ACTIVITY_DETECTION_DISABLE` events.
+The application module controls this behavior through the :c:enum:`APP_EVT_ACTIVITY_DETECTION_ENABLE` and :c:enum:`APP_EVT_ACTIVITY_DETECTION_DISABLE` events.
 The sensor module will only send out a :c:enum:`SENSOR_EVT_MOVEMENT_DATA_READY` event if it detects movement and activity detection is enabled.
 
 .. note::
@@ -83,7 +83,7 @@ Bosch Software Environmental Cluster (BSEC) library
 
 The sensor module supports integration with the BSEC signal processing library using the external sensors, internal convenience API.
 If enabled, the BSEC library is used instead of the BME680 Zephyr driver to provide sensor readings from the BME680 for temperature, humidity, and atmospheric pressure.
-In addition, the BSEC driver provides an additional sensor reading, indoor air quality (IAQ), which is a metric given in between 0-500 range, that estimates the air quality of the environment.
+In addition, the BSEC driver provides an additional sensor reading, indoor air quality (IAQ), which is a metric given in between 0-500 range, which estimates the air quality of the environment.
 
 As the BSEC library requires a separate license, it is not a default part of |NCS|, but can be downloaded externally and imported into the |NCS| source tree.
 
@@ -144,14 +144,14 @@ CONFIG_EXTERNAL_SENSORS_BSEC_SAMPLE_MODE_CONTINUOUS
 .. _CONFIG_EXTERNAL_SENSORS_BSEC_TEMPERATURE_OFFSET:
 
 CONFIG_EXTERNAL_SENSORS_BSEC_TEMPERATURE_OFFSET
-   This option configures BSEC temperature offset in degree celsius multiplied by 100.
+   This option configures BSEC temperature offset in degree Celsius multiplied by 100.
 
 Module states
 *************
 
 The sensor module has an internal state machine with the following states:
 
-* ``STATE_INIT`` - The initial state of the module in which it awaits its initial configuation from the data module.
+* ``STATE_INIT`` - The initial state of the module in which it awaits its initial configuration from the data module.
 * ``STATE_RUNNING`` - The module is initialized and can be queried for sensor data. It will also send :c:enum:`SENSOR_EVT_MOVEMENT_DATA_READY` on movement.
 * ``STATE_SHUTDOWN`` - The module has been shut down after receiving a request from the utility module.
 

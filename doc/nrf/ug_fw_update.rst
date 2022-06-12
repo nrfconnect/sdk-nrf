@@ -19,7 +19,7 @@ You can find information on the key types supported in the |NCS| in the :ref:`nR
 Generating private keys
 =======================
 
-|NCS| supports the following most common ways to generate private/public key pairs:
+The |NCS| supports the following most common ways to generate private/public key pairs:
 
 * :ref:`ug_fw_update_keys_openssl`
 * :ref:`ug_fw_update_keys_imgtool`

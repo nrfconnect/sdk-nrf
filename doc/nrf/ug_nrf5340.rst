@@ -388,7 +388,7 @@ Configuration of the child image
 ================================
 
 When a network sample is built automatically as a child image in a multi-image build, you can define the relevant Kconfig options (if required) in a :file:`.conf` file.
-Name the file *network_sample*\ .conf, where *network_sample* is the name of the child image (for example, :file:`hci_rpmsg.conf`).
+Name the file :file:`network_sample*\ .conf`, where *network_sample* is the name of the child image (for example, :file:`hci_rpmsg.conf`).
 Place the file in a :file:`child_image` subfolder of the application sample directory.
 See :ref:`ug_multi_image_variables` for more information.
 

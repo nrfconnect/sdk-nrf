@@ -115,7 +115,7 @@ enum modem_module_event_type {
 	 */
 	MODEM_EVT_SHUTDOWN_READY,
 
-	/** A crtical error has occurred, and the application should reboot to recover as
+	/** A critical error has occurred, and the application should reboot to recover as
 	 *  the module may enter an undefined state.
 	 *  The event has associated payload of the type `int` in the `data.err` member.
 	 */

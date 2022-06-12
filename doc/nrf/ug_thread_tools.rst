@@ -324,7 +324,7 @@ Use the following radio URL parameter to connect to an RCP node.
 
 Replace the following parameters:
 
-   * *ncp_uart_device* - Specifies the location of the device, for example: :file:`/dev/ttyACM0`
+   * *ncp_uart_device* - Specifies the location of the device, for example: :file:`/dev/ttyACM0`.
    * *baud_rate* - Specifies the baud rate to use.
      The Thread Co-Processor sample supports baud rate ``1000000``.
 

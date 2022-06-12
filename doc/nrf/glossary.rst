@@ -233,7 +233,7 @@ Glossary
       A software application that provides facilities for software development.
 
    Inter-IC sound (I2S)
-      A serial bus interface standard used for connecting digital audio devices for tranmission of the pulse-code modulation (PCM) data.
+      A serial bus interface standard used for connecting digital audio devices for transmission of the pulse-code modulation (PCM) data.
 
    International Mobile (Station) Equipment Identity (IMEI)
       A unique code consisting of 14 digits and one check digit for identifying 3GPP-based mobile devices.
@@ -346,7 +346,7 @@ Glossary
 
    Mcumgr
       A management library for 32-bit MCUs.
-      It uses the :term:`Simple Management Procotol (SMP)`.
+      It uses the :term:`Simple Management Protocol (SMP)`.
 
    Memory Watch Unit (MWU)
       A peripheral that can be used to generate events when a memory region is accessed by the CPU.
@@ -456,7 +456,7 @@ Glossary
       Sometimes it is improperly used as a synonym of :term:`commit <Commit>`.
 
    Personal Unblocking Key (PUK)
-      A key used to to reset a PIN that has been lost or forgotten for a SIM card.
+      A key used to reset a PIN that has been lost or forgotten for a SIM card.
 
    Power Amplifier (PA)
       A device used to increase the transmit power level of a radio signal.
@@ -559,7 +559,7 @@ Glossary
    Signal-to-Noise Ratio (SNR)
       The level of signal power compared to the level of noise power, often expressed in decibels (dB).
 
-   Simple Management Procotol (SMP)
+   Simple Management Protocol (SMP)
       A transport protocol used by :term:`Mcumgr`.
 
    Simple Network Time Protocol (SNTP)

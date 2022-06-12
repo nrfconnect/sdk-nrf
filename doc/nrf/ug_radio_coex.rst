@@ -144,13 +144,13 @@ Generic 3-pin interface implementation
 
 This implementation uses the following pins to communicate with the PTA:
 
-* REQUEST pin - it is the output controlled by the protocol driver.
+* REQUEST pin - It is the output controlled by the protocol driver.
   It is asserted to request RF access from the PTA.
   It can be configured by setting the ``req-gpios`` property of the ``nrf_radio_coex`` devicetree node.
-* PRIORITY pin - it is the output controlled by the protocol driver.
+* PRIORITY pin - It is the output controlled by the protocol driver.
   It contains information about the type of operation (either RX or TX) to perform.
   It can be configured by setting the ``pri-dir-gpios`` property of the ``nrf_radio_coex`` devicetree node.
-* GRANT pin - it is the input of the SoC controlled by the PTA.
+* GRANT pin - It is the input of the SoC controlled by the PTA.
   It asserts when PTA grants access to the RF to the 802.15.4 and deasserts when it denies the access.
   It can be configured by setting the ``grant-gpios`` property of the ``nrf_radio_coex`` devicetree node.
 

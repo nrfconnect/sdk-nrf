@@ -57,7 +57,7 @@ extern "C" {
 	event->data.err = _error_code;							\
 	APP_EVENT_SUBMIT(event)
 
-/** @brief Macro used to submit an shutdown event.
+/** @brief Macro used to submit a shutdown event.
  *
  * @param _mod Name of module that the event corresponds to.
  * @param _type Name of the type of shutdown event.
@@ -93,7 +93,7 @@ struct module_data {
  */
 void module_purge_queue(struct module_data *module);
 
-/** @brief Get the next message in a modules's queue.
+/** @brief Get the next message in a module's queue.
  *
  *  @param[in] module Pointer to a structure containing module metadata.
  *  @param[out] msg Pointer to a message buffer that the output will be written to.
