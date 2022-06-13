@@ -269,10 +269,12 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 		return err;
 	}
 
-	/* Set null character at the end of the device IMEI. */
-	imei_buf[LWM2M_INTEGRATION_CLIENT_ID_LEN] = 0;
-
 	strncpy(client_id_buf, imei_buf, sizeof(client_id_buf) - 1);
+
+	/* Explicitly null terminate client_id_buf to be sure that we carry a
+	 * null terminated buffer after strncpy().
+	 */
+	client_id_buf[sizeof(client_id_buf) - 1] = '\0';
 #else
 	len = snprintk(client_id_buf, sizeof(client_id_buf), "%s", CONFIG_CLOUD_CLIENT_ID);
 	if ((len < 0) || (len >= sizeof(endpoint_name))) {
