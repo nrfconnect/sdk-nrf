@@ -8,6 +8,6 @@
 Timestamp = bstr .size 8
 Test = [
     name: [ +tstr ],
-    time: Timestamp,
+    timestamp: Timestamp,
     types: ((unit: 1) / (something: 2) / (other: 3)),
 ]

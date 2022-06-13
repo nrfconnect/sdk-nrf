@@ -16,6 +16,7 @@ static void test_decode(void)
 	ZCBOR_STATE_D(states, 4, payload, sizeof(payload), 1);
 	struct Test test;
 	bool res;
+	int int_res;
 
 	/* Initialize struct to ensure test isn't checking uninitialized pointers */
 	test._Test_name_tstr[0] = (struct zcbor_string){NULL, 0};
@@ -33,9 +34,9 @@ static void test_decode(void)
 
 	uint32_t len = states->payload - payload;
 
-	res = cbor_decode_Test(payload, len, &test, &payload_len);
+	int_res = cbor_decode_Test(payload, len, &test, &payload_len);
 
-	zassert_true(res, "Decoding should have been successful\n");
+	zassert_equal(ZCBOR_SUCCESS, int_res, "Decoding should have been successful\n");
 
 	zassert_mem_equal(test._Test_name_tstr[0].value, "Foo", test._Test_name_tstr[0].len, NULL);
 	zassert_mem_equal(test._Test_name_tstr[1].value, "Bar", test._Test_name_tstr[1].len, NULL);

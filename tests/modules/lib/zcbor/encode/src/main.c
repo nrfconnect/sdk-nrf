@@ -20,7 +20,7 @@ static void test_encode(void)
 			{.value = last_name, .len = sizeof(last_name) - 1},
 		},
 		._Test_name_tstr_count = 2,
-		._Test_time = {.value = time, .len = sizeof(time)},
+		._Test_timestamp = {.value = time, .len = sizeof(time)},
 		._Test_types_choice = _Test_types_something,
 	};
 

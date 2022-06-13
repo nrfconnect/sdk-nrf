@@ -5,7 +5,7 @@
  */
 
 /*
- * Generated using zcbor version 0.4.0
+ * Generated using zcbor version 0.5.1
  * https://github.com/NordicSemiconductor/zcbor
  * Generated with a --default-max-qty of 128
  */
@@ -20,6 +20,14 @@
 #if DEFAULT_MAX_QTY != 128
 #error "The type file was generated with a different default_max_qty than this file"
 #endif
+
+static bool decode_Segment(zcbor_state_t *state, struct Segment *result);
+static bool decode_header_map(zcbor_state_t *state, void *result);
+static bool decode_Manifest(zcbor_state_t *state, struct Manifest *result);
+static bool decode_COSE_Sign1_Manifest(zcbor_state_t *state, struct COSE_Sign1_Manifest *result);
+static bool decode_Segments(zcbor_state_t *state, struct Segments *result);
+static bool decode_Sig_structure1(zcbor_state_t *state, struct Sig_structure1 *result);
+static bool decode_Wrapper(zcbor_state_t *state, struct COSE_Sign1_Manifest *result);
 
 static bool decode_Segment(zcbor_state_t *state, struct Segment *result)
 {
@@ -170,9 +178,10 @@ int cbor_decode_Wrapper(const uint8_t *payload, size_t payload_len,
 	}
 
 	if (!ret) {
-		int ret = zcbor_pop_error(states);
+		int err = zcbor_pop_error(states);
 
-		return (ret == ZCBOR_SUCCESS) ? ZCBOR_ERR_UNKNOWN : ret;
+		zcbor_print("Return error: %d\r\n", err);
+		return (err == ZCBOR_SUCCESS) ? ZCBOR_ERR_UNKNOWN : err;
 	}
 	return ZCBOR_SUCCESS;
 }
@@ -191,9 +200,10 @@ int cbor_decode_Sig_structure1(const uint8_t *payload, size_t payload_len,
 	}
 
 	if (!ret) {
-		int ret = zcbor_pop_error(states);
+		int err = zcbor_pop_error(states);
 
-		return (ret == ZCBOR_SUCCESS) ? ZCBOR_ERR_UNKNOWN : ret;
+		zcbor_print("Return error: %d\r\n", err);
+		return (err == ZCBOR_SUCCESS) ? ZCBOR_ERR_UNKNOWN : err;
 	}
 	return ZCBOR_SUCCESS;
 }
@@ -212,9 +222,10 @@ int cbor_decode_Segments(const uint8_t *payload, size_t payload_len, struct Segm
 	}
 
 	if (!ret) {
-		int ret = zcbor_pop_error(states);
+		int err = zcbor_pop_error(states);
 
-		return (ret == ZCBOR_SUCCESS) ? ZCBOR_ERR_UNKNOWN : ret;
+		zcbor_print("Return error: %d\r\n", err);
+		return (err == ZCBOR_SUCCESS) ? ZCBOR_ERR_UNKNOWN : err;
 	}
 	return ZCBOR_SUCCESS;
 }
