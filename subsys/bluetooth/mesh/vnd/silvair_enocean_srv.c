@@ -234,13 +234,29 @@ static void commissioned_cb(struct bt_enocean_device *device)
 #endif
 	status_pub(srv->mod, NULL, BT_MESH_SILVAIR_ENOCEAN_STATUS_SET, srv->addr.a.val);
 }
+
+static void decommissioned_cb(struct bt_enocean_device *device)
+{
+	struct bt_mesh_silvair_enocean_srv *srv;
+
+	srv = model_resolve(&device->addr);
+	if (!srv) {
+		return;
+	}
+	bt_addr_le_copy(&srv->addr, BT_ADDR_LE_NONE);
+#if CONFIG_BT_ENOCEAN_STORE
+	(void)bt_mesh_model_data_store(srv->mod, true, NULL, NULL, 0);
+#endif
+	status_pub(srv->mod, NULL, BT_MESH_SILVAIR_ENOCEAN_STATUS_SET, BT_ADDR_LE_NONE->a.val);
+}
 #endif
 
 static const struct bt_enocean_callbacks enocean_cbs = {
 	.button = button_cb,
 	.loaded = enocean_loaded_cb,
 #if CONFIG_BT_MESH_SILVAIR_ENOCEAN_AUTO_COMMISSION
-	.commissioned = commissioned_cb
+	.commissioned = commissioned_cb,
+	.decommissioned = decommissioned_cb
 #endif
 };
 
@@ -255,11 +271,13 @@ static void find_and_decommission(struct bt_enocean_device *dev, void *user_data
 
 static void decommission_device(struct bt_mesh_silvair_enocean_srv *srv)
 {
-	bt_enocean_foreach(find_and_decommission, &srv->addr);
+	bt_addr_le_t addr = srv->addr;
+
 	bt_addr_le_copy(&srv->addr, BT_ADDR_LE_NONE);
 #if CONFIG_BT_ENOCEAN_STORE
 	(void)bt_mesh_model_data_store(srv->mod, true, NULL, NULL, 0);
 #endif
+	bt_enocean_foreach(find_and_decommission, &addr);
 }
 
 static int handle_get(struct bt_mesh_model *model,

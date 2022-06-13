@@ -27,7 +27,7 @@ if BT_MESH_SILVAIR_ENOCEAN_SRV
 config BT_MESH_SILVAIR_ENOCEAN_AUTO_COMMISSION
 	bool "Automatically commission"
 	help
-	  Automatically commission EnOcean switches.
+	  Automatically commission/decommission EnOcean switches.
 
 config BT_MESH_SILVAIR_ENOCEAN_TICK_TIME
 	int "Tick time"

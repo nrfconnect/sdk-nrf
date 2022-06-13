@@ -609,6 +609,10 @@ void bt_enocean_decommission(struct bt_enocean_device *dev)
 	}
 
 	dev->flags = 0;
+
+	if (cb->decommissioned) {
+		cb->decommissioned(dev);
+	}
 }
 
 uint32_t bt_enocean_foreach(bt_enocean_foreach_cb_t cb, void *user_data)
