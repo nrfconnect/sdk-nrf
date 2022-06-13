@@ -64,7 +64,11 @@ static inline void write_uart_string(const char *str)
 static void response_handler(const char *response)
 {
 	/* Forward the data over UART */
+#if defined(CONFIG_LOG)
+	LOG_PRINTK("%s", response);
+#else
 	write_uart_string(response);
+#endif /* CONFIG_LOG */
 }
 
 static void cmd_send(struct k_work *work)
@@ -81,7 +85,11 @@ static void cmd_send(struct k_work *work)
 		LOG_ERR("Error while processing AT command: %d", err);
 	}
 
+#if defined(CONFIG_LOG)
+	LOG_PRINTK("%s", at_buf);
+#else
 	write_uart_string(at_buf);
+#endif /* CONFIG_LOG */
 
 	at_buf_busy = false;
 	uart_irq_rx_enable(uart_dev);
