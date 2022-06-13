@@ -389,6 +389,14 @@ Common Application Framework (CAF)
 
   * Added unit tests for the library.
 
+* :ref:`caf_sensor_manager`:
+
+  * No longer uses floats to calculate and determine if the sensor trigger is activated.
+    This is because the float uses more space.
+    Also, data sent to :c:struct:`sensor_event` uses :c:struct:`sensor_value` instead of float.
+
+|no_changes_yet_note|
+
 Shell libraries
 ---------------
 
