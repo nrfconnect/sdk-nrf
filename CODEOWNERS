@@ -149,7 +149,8 @@ Kconfig*                                  @tejlmand
 /samples/nrf5340/multiprotocol_rpmsg/     @hubertmis
 /scripts/                                 @mbolivar-nordic @tejlmand @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @pdunaj
-/scripts/tools-versions-*.txt             @tejlmand @grho @shantha-14
+/scripts/tools-versions-*.txt             @tejlmand @grho @shantha-14 @ihansse
+/scripts/requirements-*.txt               @tejlmand @grho @shantha-14 @ihansse
 /scripts/west_commands/sbom/              @doki-nordic @maje-emb
 /share/zephyrbuild-package/               @tejlmand
 /share/ncs-package/                       @tejlmand
