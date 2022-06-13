@@ -165,7 +165,7 @@ manifest:
       remote: throwtheswitch
     - name: zcbor
       remote: nordicsemi
-      revision: 3d36ae19cb05d28cea23b4c870ae965c44215e9c
+      revision: a0d6981f14d4001d6f0d608d1a427f9bc6bb6d02
       path: modules/lib/zcbor
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk

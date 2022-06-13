@@ -13,7 +13,6 @@ Babel==2.9.1
 breathe==4.26.1
 canopen==1.2.0
 cbor==1.0.0
-zcbor==0.4.0
 certifi==2020.12.5
 cffi==1.14.4
 chardet==4.0.0
@@ -76,7 +75,7 @@ pytz==2020.5
 pyusb==1.1.1
 PyYAML==5.4.1
 recommonmark==0.6.0
-regex==2020.11.13
+regex==2022.3.15
 requests==2.25.1
 ruamel.yaml==0.16.12
 ruamel.yaml.clib==0.2.2
@@ -103,4 +102,5 @@ urllib3==1.26.4
 wcwidth==0.2.5
 west==0.13.1
 wrapt==1.12.1
+zcbor==0.5.1
 zipp==3.4.0
