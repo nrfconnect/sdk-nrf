@@ -1397,7 +1397,7 @@ static void on_all_states(struct data_msg_data *msg)
 static void module_thread_fn(void)
 {
 	int err;
-	struct data_msg_data msg;
+	struct data_msg_data msg = { 0 };
 
 	self.thread_id = k_current_get();
 

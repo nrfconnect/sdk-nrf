@@ -1078,7 +1078,7 @@ static void on_all_states(struct modem_msg_data *msg)
 static void module_thread_fn(void)
 {
 	int err;
-	struct modem_msg_data msg;
+	struct modem_msg_data msg = { 0 };
 
 	self.thread_id = k_current_get();
 

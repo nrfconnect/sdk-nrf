@@ -594,7 +594,7 @@ int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
 	}
 
 	/* Convert to string format. */
-	char button[2];
+	char button[2] = "";
 
 	len = snprintk(button, sizeof(button), "%d", ui_buf->btn);
 	if ((len < 0) || (len >= sizeof(button))) {

@@ -1142,7 +1142,7 @@ static void on_all_states(struct cloud_msg_data *msg)
 static void module_thread_fn(void)
 {
 	int err;
-	struct cloud_msg_data msg;
+	struct cloud_msg_data msg = { 0 };
 
 	self.thread_id = k_current_get();
 

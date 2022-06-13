@@ -581,7 +581,7 @@ static void on_all_events(struct app_msg_data *msg)
 void main(void)
 {
 	int err;
-	struct app_msg_data msg;
+	struct app_msg_data msg = { 0 };
 
 	if (!IS_ENABLED(CONFIG_LWM2M_CARRIER)) {
 		handle_nrf_modem_lib_init_ret();
