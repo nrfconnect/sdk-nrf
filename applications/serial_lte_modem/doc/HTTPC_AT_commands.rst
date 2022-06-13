@@ -204,7 +204,7 @@ The following example sends a POST request, with headers delimited by "\\r\\n", 
    {"hello":"world"}+++
    #XHTTPCREQ: 0
 
-   OK
+   #XDATAMODE: 0
 
    HTTP/1.1 200 OK
    Date: Tue, 01 Mar 2022 05:22:28 GMT

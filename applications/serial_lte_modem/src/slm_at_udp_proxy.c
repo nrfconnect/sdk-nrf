@@ -413,7 +413,7 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 	} while (true);
 
 	if (in_datamode()) {
-		(void)exit_datamode(false);
+		(void)exit_datamode(ret);
 	}
 	if (proxy.sock != INVALID_SOCKET) {
 		(void)close(proxy.sock);

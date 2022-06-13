@@ -107,7 +107,9 @@ nRF9160: Asset Tracker v2
 nRF9160: Serial LTE modem
 -------------------------
 
-|no_changes_yet_note|
+  * Updated:
+
+    * Updated the AT response and the URC sent when the application enters and exits data mode.
 
 nRF5340 Audio
 -------------

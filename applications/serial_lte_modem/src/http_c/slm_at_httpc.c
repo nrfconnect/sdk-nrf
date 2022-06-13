@@ -508,14 +508,16 @@ static void httpc_thread_fn(void *arg1, void *arg2, void *arg3)
 	int err;
 
 	err = do_http_request();
-	(void)exit_datamode(DATAMODE_EXIT_URC);
 	if (err < 0) {
+		(void)exit_datamode(err);
 		LOG_ERR("do_http_request fail:%d", err);
 		/* Disconnect from server */
 		err = do_http_disconnect();
 		if (err) {
 			LOG_ERR("Fail to disconnect. Error: %d", err);
 		}
+	} else {
+		(void)exit_datamode(0);
 	}
 
 	LOG_INF("HTTP thread terminated");
