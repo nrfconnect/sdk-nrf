@@ -5,10 +5,6 @@
  */
 
 / {
-	chosen {
-		zephyr,entropy = &rng;
-	};
-
 	pwmleds {
 		pwm_led3: pwm_led_3 {
 			pwms = <&pwm0 1 PWM_MSEC(20) PWM_POLARITY_INVERTED>;

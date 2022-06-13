@@ -79,6 +79,7 @@ Zigbee
 
   * Enabled the PAN ID conflict resolution in applications that uses :ref:`lib_zigbee_application_utilities` library.
     For details, see `Libraries for Zigbee`_.
+  * Changed the default entropy source of Zigbee samples and unit tests to Cryptocell for SoCs that have Cryptocell.
 
 See `Zigbee samples`_ for the list of changes for the Zigbee samples.
 

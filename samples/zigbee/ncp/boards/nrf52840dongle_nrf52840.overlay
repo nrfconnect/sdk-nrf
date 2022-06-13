@@ -12,10 +12,6 @@
 };
 
 / {
-	chosen {
-		zephyr,entropy = &rng;
-	};
-
 	buttons {
 		compatible = "gpio-keys";
 		rst_button0: rst_button_0 {
