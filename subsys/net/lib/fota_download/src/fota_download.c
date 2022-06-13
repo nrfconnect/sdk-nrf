@@ -22,6 +22,9 @@
 #include <dfu/dfu_target_mcuboot.h>
 #endif
 
+/* Size of the download host buffer. */
+#define HOST_BUF_LEN CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE
+
 /* If bootloader upgrades are supported we need room for two file strings. */
 #ifdef PM_S1_ADDRESS
 /* One file string for each of s0 and s1, and a space separator */
@@ -362,11 +365,13 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 	int sec_tag, uint8_t pdn_id, size_t fragment_size,
 	const enum dfu_target_image_type expected_type)
 {
-	/* We need a static file buffer since the download client structure
-	 * only keeps a pointer to the file buffer. This is problematic when
+	/* We need static host and file buffers since the download client structure
+	 * only keeps pointers to the host and file buffers. This is problematic when
 	 * a download needs to be restarted for some reason (e.g. if
 	 * continuing a download operation from an offset).
 	 */
+	static char host_buf[HOST_BUF_LEN];
+	const char *host_buf_ptr = host_buf;
 	static char file_buf[FILE_BUF_LEN];
 	const char *file_buf_ptr = file_buf;
 	int err = -1;
@@ -390,6 +395,9 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 	}
 
 	socket_retries_left = CONFIG_FOTA_SOCKET_RETRIES;
+
+	strncpy(host_buf, host, sizeof(host_buf) - 1);
+	host_buf[sizeof(host_buf) - 1] = '\0';
 
 	strncpy(file_buf, file, sizeof(file_buf) - 1);
 	file_buf[sizeof(file_buf) - 1] = '\0';
@@ -418,7 +426,7 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 	}
 #endif /* PM_S1_ADDRESS */
 
-	err = download_client_connect(&dlc, host, &config);
+	err = download_client_connect(&dlc, host_buf_ptr, &config);
 	if (err != 0) {
 		return err;
 	}
