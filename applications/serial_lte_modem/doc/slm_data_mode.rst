@@ -47,7 +47,7 @@ Other examples:
 * ``AT#XMQTTPUB=<topic>,"",<qos>,<retain>``
 * ``AT#XNRFCLOUD=2``
 
-The SLM application does not send an *OK* response when it enters data mode.
+The SLM application sends an *OK* response when it successfully enters data mode.
 
 Exiting data mode
 =================
@@ -56,9 +56,7 @@ To exit data mode, the MCU sends the termination command set by the :ref:`CONFIG
 
 The pattern string could be sent alone or as an affix to the data.
 
-When instructed to exit data mode, the SLM application returns the AT command response ``OK``.
-
-If the current sending function fails, the SLM application exits data mode and returns the AT command response ``ERROR``.
+If the current sending function fails, the SLM application exits data mode and returns the result as ``#XDATAMODE: <result>``.
 
 The SLM application also exits data mode automatically in the following scenarios:
 
@@ -173,3 +171,30 @@ Response syntax
 ::
 
    #XDATACTRL=<time_limit>
+
+Exit data mode #XDATAMODE
+=========================
+
+When the application exits data mode, it sends the ``#XDATAMODE`` unsolicited notification.
+
+Unsolicited notification
+------------------------
+
+The application sends the following unsolicited notification when it exits data mode:
+
+::
+
+   #XDATAMODE: <result>
+
+The ``<result>`` value returns an integer indicating the result of the sending operation in data mode.
+
+Example
+~~~~~~~
+
+::
+
+   AT#XSEND
+   OK
+   Test TCP datamode
+   +++
+   #XDATAMODE: 0

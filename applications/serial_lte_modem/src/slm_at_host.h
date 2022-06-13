@@ -26,13 +26,6 @@ enum slm_datamode_operation {
 	DATAMODE_EXIT   /* Exit data mode */
 };
 
-/**@brief Exit modes in datamode. */
-enum slm_datamode_exit_mode {
-	DATAMODE_EXIT_OK,      /* Exit datamode, send OK response */
-	DATAMODE_EXIT_ERROR,   /* Exit datamode, send ERROR response */
-	DATAMODE_EXIT_URC      /* Exit datamode, send URC notification */
-};
-
 /**@brief Data mode sending handler type.
  *
  * @retval 0 means all data is sent successfully.
@@ -95,12 +88,12 @@ bool in_datamode(void);
 /**
  * @brief Request SLM AT host to exit data mode
  *
- * @param exit_mode Response type. Refer to enum slm_datamode_exit_mode.
+ * @param result Result of sending in data mode.
  *
  * @retval true If normal exit from data mode.
  *         false If not in data mode.
  */
-bool exit_datamode(int exit_mode);
+bool exit_datamode(int result);
 /** @} */
 
 #endif /* SLM_AT_HOST_ */
