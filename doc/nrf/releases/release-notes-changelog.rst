@@ -291,6 +291,15 @@ Bluetooth libraries and services
   * Added a SHA-256 hash check to ensure the Fast Pair provisioning data integrity.
   * Added unit test for the storage module.
 
+* :ref:`bt_enocean_readme` library
+  * Added callback :c:member:`decommissioned` to :c:struct:`bt_enocean_callbacks` when EnOcean switch is decommissioned.
+
+* :ref:`bt_mesh` library:
+
+  * Added:
+
+    * :ref:`bt_mesh_silvair_enocean_srv_readme` added use of decommissioned callback when EnOcean switch is decommissioned.
+
 Bootloader libraries
 --------------------
 

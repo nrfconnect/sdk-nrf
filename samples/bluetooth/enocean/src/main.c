@@ -77,10 +77,27 @@ static void enocean_commissioned(struct bt_enocean_device *device)
 	bt_addr_le_to_str(&device->addr, addr, sizeof(addr));
 	printk("EnOcean Device commissioned: %s\n", addr);
 
+	/* Blink leds number of times to show commissioned */
 	for (int i = 0; i < 4; ++i) {
 		dk_set_leds_state(DK_LED1_MSK | DK_LED2_MSK, 0);
 		k_sleep(K_MSEC(100));
 		dk_set_leds_state(0, DK_LED1_MSK | DK_LED2_MSK);
+		k_sleep(K_MSEC(100));
+	}
+}
+
+static void enocean_decommissioned(struct bt_enocean_device *device)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(&device->addr, addr, sizeof(addr));
+	printk("EnOcean Device decommissioned: %s\n", addr);
+
+	/* Blink leds number of times to show decommissioned */
+	for (int i = 0; i < 4; ++i) {
+		dk_set_leds_state(DK_LED3_MSK | DK_LED4_MSK, 0);
+		k_sleep(K_MSEC(100));
+		dk_set_leds_state(0, DK_LED3_MSK | DK_LED4_MSK);
 		k_sleep(K_MSEC(100));
 	}
 }
@@ -113,6 +130,7 @@ void main(void)
 		.button = enocean_button,
 		.sensor = enocean_sensor,
 		.commissioned = enocean_commissioned,
+		.decommissioned = enocean_decommissioned,
 		.loaded = enocean_loaded,
 	};
 

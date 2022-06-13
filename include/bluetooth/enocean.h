@@ -112,6 +112,15 @@ struct bt_enocean_callbacks {
 	 */
 	void (*commissioned)(struct bt_enocean_device *device);
 
+	/** @brief Callback for EnOcean decommissioning.
+	 *
+	 *  This callback is called for every new EnOcean device being
+	 *  decommissioned.
+	 *
+	 *  @param device Device that got decommissioned.
+	 */
+	void (*decommissioned)(struct bt_enocean_device *device);
+
 	/** @brief Callback for EnOcean devices being loaded from
 	 *         persistent storage.
 	 *

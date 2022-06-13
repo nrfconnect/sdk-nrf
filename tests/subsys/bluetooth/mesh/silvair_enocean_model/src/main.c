@@ -427,10 +427,31 @@ static void test_auto_commission(void)
 {
 	zassert_true(commisioning_enabled, "Commissioning not enabled");
 	zassert_not_null(enocean_cbs->commissioned, "Commisioned cb is null");
+	zassert_not_null(enocean_cbs->decommissioned, "Decommisioned cb is null");
 	zassert_equal(bt_addr_le_cmp(&srv.addr, BT_ADDR_LE_NONE), 0,
 		      "Enocean address is not empty");
 
 	/* New device */
+	expect_status(NULL, BT_MESH_SILVAIR_ENOCEAN_STATUS_SET,
+		      mock_enocean_device.addr.a.val);
+	ztest_expect_data(bt_mesh_model_data_store, data, &mock_enocean_device.addr);
+	ztest_expect_value(bt_mesh_model_data_store, data_len, sizeof(srv.addr));
+	enocean_cbs->commissioned(&mock_enocean_device);
+	zassert_equal(bt_addr_le_cmp(&srv.addr, &mock_enocean_device.addr), 0,
+		      "Addr not stored with model");
+	zassert_true(commisioning_enabled, "Commissioning not enabled");
+
+	/* Remove device */
+	expect_status(NULL, BT_MESH_SILVAIR_ENOCEAN_STATUS_SET,
+		      BT_ADDR_LE_NONE->a.val);
+	ztest_expect_data(bt_mesh_model_data_store, data, NULL);
+	ztest_expect_value(bt_mesh_model_data_store, data_len, 0);
+	enocean_cbs->decommissioned(&mock_enocean_device);
+	zassert_equal(bt_addr_le_cmp(&srv.addr, BT_ADDR_LE_NONE), 0,
+		      "Addr not removed with model");
+	zassert_true(commisioning_enabled, "Commissioning not enabled");
+
+	/* Same device */
 	expect_status(NULL, BT_MESH_SILVAIR_ENOCEAN_STATUS_SET,
 		      mock_enocean_device.addr.a.val);
 	ztest_expect_data(bt_mesh_model_data_store, data, &mock_enocean_device.addr);
