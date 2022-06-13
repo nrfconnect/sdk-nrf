@@ -242,7 +242,7 @@ static void sample_sensor(struct sensor_data *sd, const struct sm_sensor_config 
 				sc->dev->name);
 		}
 
-		if (sc->trigger) {
+		if (sc->trigger && IS_ENABLED(CONFIG_CAF_SENSOR_MANAGER_PM)) {
 			process_sensor_activity(sc, sd, data);
 			if (!is_sensor_active(sd)) {
 				enter_sleep(sc, sd);
@@ -390,7 +390,7 @@ static size_t sensor_init(void)
 		sd->sampling_period = sc->sampling_period_ms;
 		sd->sample_timeout = cur_uptime + sc->sampling_period_ms;
 
-		if (sc->trigger) {
+		if (sc->trigger && IS_ENABLED(CONFIG_CAF_SENSOR_MANAGER_PM)) {
 			int err = sensor_trigger_init(sc, sd);
 
 			if (err) {
@@ -559,4 +559,4 @@ APP_EVENT_SUBSCRIBE_FINAL(MODULE, sensor_event);
 #if CONFIG_CAF_SENSOR_MANAGER_PM
 APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
 APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
-#endif /* CONFIG_AF_SENSOR_MANAGER_PM */
+#endif /* CONFIG_CAF_SENSOR_MANAGER_PM */
