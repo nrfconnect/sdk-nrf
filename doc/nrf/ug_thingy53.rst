@@ -113,6 +113,8 @@ Complete the following steps after installing the |nRFVSC|:
    #. Make sure that the Thingy:53 and the external debug probe are powered on.
    #. Click :guilabel:`Flash` in the :guilabel:`Actions` panel.
 
+.. _thingy53_build_pgm_command_line:
+
 Building and programming on the command line
 ============================================
 
@@ -155,7 +157,7 @@ To build and program the source code from the command line, complete the followi
 Updating firmware image
 =======================
 
-You can program the firmware on the Nordic Thingy:53 using an external debug probe and 10-pin JTAG cable, as described in :ref:`thingy53_building_pgming`, using either :ref:`Visual Studio Code <thingy53_build_pgm_vscode>` or :ref:` command line <thingy53_build_pgm_command_line>`.
+You can program the firmware on the Nordic Thingy:53 using an external debug probe and 10-pin JTAG cable, as described in :ref:`thingy53_building_pgming`, using either :ref:`Visual Studio Code <thingy53_build_pgm_vscode>` or :ref:`command line <thingy53_build_pgm_command_line>`.
 You can also update applications running on both the network and application core using the built-in MCUboot bootloader and `nRF Connect Programmer`_ or the `nRF Programmer`_ app for Android and iOS.
 You can also update the prebuilt application images that way.
 
