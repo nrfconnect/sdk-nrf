@@ -17,7 +17,6 @@
 #include <zephyr/net/wifi.h>
 #include <modem/location.h>
 
-#define REST_WIFI_MIN_TIMEOUT_MS 1500
 #define WIFI_MAC_ADDR_STR_LEN 17
 
 /** @brief Item for passing a Wi-Fi scanning result */

@@ -103,14 +103,19 @@ static int method_cellular_ncellmeas_start(void)
 
 static void method_cellular_positioning_work_fn(struct k_work *work)
 {
+	struct multicell_location_params params = { 0 };
 	struct multicell_location location;
 	struct location_data location_result = { 0 };
+	int64_t ncellmeas_start_time;
+	int64_t ncellmeas_time;
 	int ret;
 	struct method_cellular_positioning_work_args *work_data =
 		CONTAINER_OF(work, struct method_cellular_positioning_work_args, work_item);
 	const struct location_cellular_config cellular_config = work_data->cellular_config;
 
 	location_core_timer_start(cellular_config.timeout);
+
+	ncellmeas_start_time = k_uptime_get();
 
 	LOG_DBG("Triggering neighbor cell measurements");
 	ret = method_cellular_ncellmeas_start();
@@ -126,6 +131,9 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 		return;
 	}
 
+	/* Stop the timer and let rest_client timer handle the request */
+	location_core_timer_stop();
+
 	if (cell_data.current_cell.id == LTE_LC_CELL_EUTRAN_ID_INVALID) {
 		LOG_WRN("Current cell ID not valid");
 		location_core_event_cb_error();
@@ -136,11 +144,34 @@ static void method_cellular_positioning_work_fn(struct k_work *work)
 	/* NCELLMEAS done at this point of time. Store current time to response. */
 	location_utils_systime_to_location_datetime(&location_result.datetime);
 
+	/* Check if timeout is given */
+	params.timeout = cellular_config.timeout;
+	if (cellular_config.timeout != SYS_FOREVER_MS) {
+		/* +1 to round the time up */
+		ncellmeas_time = (k_uptime_get() - ncellmeas_start_time) + 1;
+
+		/* Check if timeout has already elapsed */
+		if (ncellmeas_time >= cellular_config.timeout) {
+			LOG_WRN("Timeout occurred during neighbour cell measurement");
+			location_core_event_cb_timeout();
+			running = false;
+			return;
+		}
+		/* Take time used for neighbour cell measurements into account */
+		params.timeout = cellular_config.timeout - ncellmeas_time;
+	}
+
 	/* enum multicell_service can be used directly because of BUILD_ASSERT */
-	ret = multicell_location_get(cellular_config.service, &cell_data, &location);
+	params.service = cellular_config.service;
+	params.cell_data = &cell_data;
+	ret = multicell_location_get(&params, &location);
 	if (ret) {
 		LOG_ERR("Failed to acquire location from multicell_location lib, error: %d", ret);
-		location_core_event_cb_error();
+		if (ret == -ETIMEDOUT) {
+			location_core_event_cb_timeout();
+		} else {
+			location_core_event_cb_error();
+		}
 	} else {
 		location_result.method = LOCATION_METHOD_CELLULAR;
 		location_result.latitude = location.latitude;
