@@ -28,8 +28,7 @@ const char *location_service_get_certificate(enum multicell_service service);
 /**
  * @brief Generate location request, send, and parse response.
  *
- * @param[in] service Cellular positioning service to be used.
- * @param[in] cell_data Pointer to neighbor cell data.
+ * @param[in] params Cellular positioning parameters to be used.
  * @param[out] location Storage for the result from response parsing.
  *
  * @return 0 on success, or negative error code on failure.
@@ -39,9 +38,8 @@ const char *location_service_get_certificate(enum multicell_service service);
  * @retval -ENOMSG Parsing response from the location service failed.
  */
 int location_service_get_cell_location(
-	enum multicell_service service,
-	const struct lte_lc_cells_info *cell_data,
-	struct multicell_location *const location);
+	const struct multicell_location_params *params,
+	struct multicell_location *location);
 
 #ifdef __cplusplus
 }

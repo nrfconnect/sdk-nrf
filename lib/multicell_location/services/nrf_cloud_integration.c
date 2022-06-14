@@ -133,7 +133,7 @@ int location_service_get_cell_location_nrf_cloud(
 }
 #else /* defined(CONFIG_NRF_CLOUD_MQTT) */
 int location_service_get_cell_location_nrf_cloud(
-	const struct lte_lc_cells_info *cell_data,
+	const struct multicell_location_params *params,
 	char * const rcv_buf,
 	const size_t rcv_buf_len,
 	struct multicell_location *const location)
@@ -143,13 +143,13 @@ int location_service_get_cell_location_nrf_cloud(
 	struct nrf_cloud_rest_context rest_ctx = {
 		.connect_socket = -1,
 		.keep_alive = false,
-		.timeout_ms = NRF_CLOUD_REST_TIMEOUT_NONE,
+		.timeout_ms = params->timeout,
 		.rx_buf = rcv_buf,
 		.rx_buf_len = rcv_buf_len,
 		.fragment_size = 0
 	};
 	const struct nrf_cloud_rest_cell_pos_request loc_req = {
-		.net_info = (struct lte_lc_cells_info *)cell_data
+		.net_info = (struct lte_lc_cells_info *)params->cell_data
 	};
 
 	LOG_DBG("Sending cellular positioning request (REST)");

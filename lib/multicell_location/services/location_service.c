@@ -37,26 +37,28 @@ const char *location_service_get_certificate(enum multicell_service service)
 }
 
 int location_service_get_cell_location(
-	enum multicell_service service,
-	const struct lte_lc_cells_info *cell_data,
-	struct multicell_location *const location)
+	const struct multicell_location_params *params,
+	struct multicell_location *location)
 {
 #if defined(CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD)
-	if (service == MULTICELL_SERVICE_NRF_CLOUD || service == MULTICELL_SERVICE_ANY) {
+	if (params->service == MULTICELL_SERVICE_NRF_CLOUD ||
+	    params->service == MULTICELL_SERVICE_ANY) {
 		return location_service_get_cell_location_nrf_cloud(
-			cell_data, recv_buf, sizeof(recv_buf), location);
+			params, recv_buf, sizeof(recv_buf), location);
 	}
 #endif
 #if defined(CONFIG_MULTICELL_LOCATION_SERVICE_HERE)
-	if (service == MULTICELL_SERVICE_HERE || service == MULTICELL_SERVICE_ANY) {
+	if (params->service == MULTICELL_SERVICE_HERE ||
+	    params->service == MULTICELL_SERVICE_ANY) {
 		return location_service_get_cell_location_here(
-			cell_data, recv_buf, sizeof(recv_buf), location);
+			params, recv_buf, sizeof(recv_buf), location);
 	}
 #endif
 #if defined(CONFIG_MULTICELL_LOCATION_SERVICE_POLTE)
-	if (service == MULTICELL_SERVICE_POLTE || service == MULTICELL_SERVICE_ANY) {
+	if (params->service == MULTICELL_SERVICE_POLTE ||
+	    params->service == MULTICELL_SERVICE_ANY) {
 		return location_service_get_cell_location_polte(
-			cell_data, recv_buf, sizeof(recv_buf), location);
+			params, recv_buf, sizeof(recv_buf), location);
 	}
 #endif
 	/* We should never get here as at least one service must be enabled */
