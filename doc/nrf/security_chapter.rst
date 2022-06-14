@@ -3,6 +3,10 @@
 Security
 ########
 
+.. contents::
+   :local:
+   :depth: 2
+
 The following sections give a brief introduction to core security features available in Nordic Semiconductor products.
 The features are made available either as built-ins in modules, drivers, and subsystems, or are shown in samples or applications in |NCS|.
 
