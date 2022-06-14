@@ -59,6 +59,8 @@ If you want to view the debug messages, follow the procedure in :ref:`testing_rt
 .. note::
    On the Thingy:53, debug logs are provided over the USB CDC ACM class serial port, instead of using RTT.
 
+For more information about debugging in the |NCS|, see :ref:`gs_debugging`.
+
 FEM support
 ***********
 

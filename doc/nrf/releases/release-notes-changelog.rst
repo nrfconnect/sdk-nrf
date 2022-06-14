@@ -472,6 +472,8 @@ Documentation
   * Documentation for the :ref:`lib_flash_map_pm` library.
   * Documentation for the :ref:`lib_adp536x` library.
   * Documentation for the :ref:`lib_flash_patch` library.
+  * :ref:`gs_debugging` section on the :ref:`gs_testing`.
+    Also added links to this section in different areas of documentation.
   * :ref:`ug_thread_prebuilt_libs` as a separate page instead of being part of :ref:`ug_thread_configuring`.
   * Added software maturity entries for security features: TF-M, PSA crypto, Immutable bootloader, HW unique key.
 

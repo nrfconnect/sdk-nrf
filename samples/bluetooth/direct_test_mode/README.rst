@@ -257,6 +257,7 @@ Debug messages are not displayed in this UART console.
 Instead, they are printed by the RTT logger.
 
 If you want to view the debug messages, follow the procedure in :ref:`testing_rtt_connect`.
+For more information about debugging in the |NCS|, see :ref:`gs_debugging`.
 
 Requirements
 ************
