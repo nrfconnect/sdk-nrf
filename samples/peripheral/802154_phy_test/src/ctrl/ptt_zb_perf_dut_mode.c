@@ -188,12 +188,10 @@ static void dut_idle_packet_proc(void)
 
 	case PTT_CMD_GET_TX_ANTENNA:
 		ret = dut_get_tx_antenna();
-		dut_reset_cur_evt();
 		break;
 
 	case PTT_CMD_GET_LAST_BEST_RX_ANTENNA:
 		ret = dut_get_last_best_rx_antenna();
-		dut_reset_cur_evt();
 		break;
 
 	default:
