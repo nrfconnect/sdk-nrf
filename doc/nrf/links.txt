@@ -888,3 +888,5 @@
 .. _`Termite`: https://www.compuphase.com/software_termite.htm
 
 .. _`Teraterm`: https://ttssh2.osdn.jp/index.html.en
+
+.. _`GNU Project Debugger`: https://www.sourceware.org/gdb/
