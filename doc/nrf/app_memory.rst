@@ -84,6 +84,46 @@ Besides applying `General recommendations`_, you can also complete the following
 * Reduce the verbosity of assert messages by setting :kconfig:option:`CONFIG_ASSERT_VERBOSE` to ``n``.
 * Check `Thread`_ memory footprint optimization actions, as the Matter application layer uses OpenThread.
 
+.. _app_memory_nfc:
+
+NFC
+***
+
+The :ref:`ug_nfc` protocol implementation in the |NCS| provides some options for optimizing memory footprint for both the tag and the poller roles.
+
+Tag
+---
+
+To optimize your application that supports the NFC tag functionality, follow the `General recommendations`_.
+The NFC :ref:`type_2_tag` and :ref:`type_4_tag` libraries do not provide configuration options that have an effect on memory usage in an application.
+However, there are a few Kconfig configuration options you can use to optimize memory usage related to NFC.
+
+* :kconfig:option:`CONFIG_NFC_PLATFORM_LOG_LEVEL_CHOICE` to reduce logging level in the NFC integration module.
+
+For an application that uses the :ref:`type_4_tag` library, you can set the following options:
+
+* :kconfig:option:`CONFIG_NDEF_FILE_SIZE` for the maximum NDEF file size, if the read-write mode is supported,
+* :kconfig:option:`CONFIG_NFC_TNEP_RX_MAX_RECORD_CNT` and :kconfig:option:`CONFIG_NFC_TNEP_RX_MAX_RECORD_SIZE` for the maximum buffer size of NDEF message exchange, if the :ref:`lib_nfc_tnep` is supported.
+
+Poller
+------
+
+To optimize an application that supports the NFC poller functionality using the :ref:`st25r3911b_nfc_readme` library, you can set the following options:
+
+* :kconfig:option:`CONFIG_ST25R3911B_LIB_LOG_LEVEL_CHOICE` and similar options to reduce the logging level of the NFC components used in the application.
+* :kconfig:option:`CONFIG_NFC_T4T_HL_PROCEDURE_CC_BUFFER_SIZE` and :kconfig:option:`CONFIG_NFC_T4T_HL_PROCEDURE_APDU_BUF_SIZE` to adjust the buffer sizes in the NFC T4T protocol implementation of the poller side.
+
+If the application supports the :ref:`lib_nfc_tnep`, you can set the following options:
+
+* :kconfig:option:`CONFIG_NFC_TNEP_POLLER_RX_MAX_RECORD_CNT` for the maximum number of NDEF records in the received message.
+* :kconfig:option:`CONFIG_NFC_TNEP_CH_POLLER_RX_BUF_SIZE` for the Connection Handover receive buffer size of the poller mode, if the application uses the :ref:`nfc_tnep_ch_readme` library.
+
+If the application uses the NFC TNEP protocol for the Bluetooth LE out-of-band pairing procedure (:ref:`nfc_tnep_ch_readme`), regardless of the role (tag or poller), you can set the following options:
+
+* :kconfig:option:`CONFIG_NFC_TNEP_CH_MAX_RECORD_COUNT`
+* :kconfig:option:`CONFIG_NFC_TNEP_CH_MAX_LOCAL_RECORD_COUNT`
+* :kconfig:option:`CONFIG_NFC_TNEP_CH_PARSER_BUFFER_SIZE`
+
 .. _app_memory_thread:
 
 Thread

@@ -476,6 +476,7 @@ Documentation
     Also added links to this section in different areas of documentation.
   * :ref:`ug_thread_prebuilt_libs` as a separate page instead of being part of :ref:`ug_thread_configuring`.
   * Added software maturity entries for security features: TF-M, PSA crypto, Immutable bootloader, HW unique key.
+  * A section about NFC in the :ref:`app_memory` page.
 
 * Updated:
 
