@@ -4,7 +4,7 @@ sample:
     name: AES GCM example
 tests:
     sample.aes_gcm.cc312:
-        tags: introduction psa cc3xx
+        tags: introduction psa cc3xx cc3xx_oberon
         platform_allow: nrf5340dk_nrf5340_cpuapp_ns nrf5340dk_nrf5340_cpuapp
         harness: console
         harness_config:
@@ -15,7 +15,7 @@ tests:
             - nrf5340dk_nrf5340_cpuapp_ns
             - nrf5340dk_nrf5340_cpuapp
     sample.aes_gcm.cc310:
-        tags: introduction psa oberon
+        tags: introduction psa oberon cc3xx_oberon
         platform_allow: nrf52840dk_nrf52840 nrf9160dk_nrf9160_ns nrf9160dk_nrf9160
         harness: console
         harness_config:
