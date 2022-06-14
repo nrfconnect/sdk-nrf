@@ -141,7 +141,7 @@ You can choose the method based on the availability or absence of an external de
 
 .. note::
 
-   If you do not have an external debug probe available to program the Thingy:91, you can directly program by :ref:`using the USB (MCUboot) method and nRF Connect Programmer <programming_usb>`.
+   If you do not have an external debug probe available to program the Thingy:91, you can directly program by :ref:`using the USB (MCUboot) method and nRF Connect Programmer <programming_thingy>`.
    In this scenario, use the :file:`app_signed.hex` firmware image file.
 
 .. note::
