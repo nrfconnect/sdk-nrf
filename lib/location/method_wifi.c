@@ -167,6 +167,8 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 	if (!running) {
 		goto end;
 	}
+	/* Stop the timer and let rest_client timer handle the request */
+	location_core_timer_stop();
 
 	/* Scanning done at this point of time. Store current time to response. */
 	location_utils_systime_to_location_datetime(&location_result.datetime);
@@ -180,19 +182,22 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 		goto end;
 	}
 	if (latest_scan_result_count > 1) {
-		/* Fill scanning results: */
-		request.wifi_scanning_result_count = latest_scan_result_count;
-		/* Calculate remaining time as a REST timeout (in mseconds): */
-		request.timeout_ms = ((wifi_config.timeout * 1000) -
-				   (k_uptime_get() - starting_uptime_ms));
-		if (request.timeout_ms < REST_WIFI_MIN_TIMEOUT_MS) {
+
+		request.timeout_ms = wifi_config.timeout;
+		if (wifi_config.timeout != SYS_FOREVER_MS) {
+			/* Calculate remaining time as a REST timeout (in milliseconds) */
+			request.timeout_ms = (wifi_config.timeout -
+				(k_uptime_get() - starting_uptime_ms));
 			if (request.timeout_ms < 0) {
 				/* No remaining time at all */
 				LOG_WRN("No remaining time left for requesting a position");
+				err = -ETIMEDOUT;
 				goto end;
 			}
-			request.timeout_ms = REST_WIFI_MIN_TIMEOUT_MS;
 		}
+
+		/* Fill scanning results: */
+		request.wifi_scanning_result_count = latest_scan_result_count;
 		for (int i = 0; i < latest_scan_result_count; i++) {
 			strcpy(request.scanning_results[i].mac_addr_str,
 			       latest_scan_results[i].mac_addr_str);
@@ -203,12 +208,11 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 			request.scanning_results[i].rssi =
 				latest_scan_results[i].rssi;
 		}
-		err = rest_services_wifi_location_get(wifi_config.service, &request,
-						      &result);
+		err = rest_services_wifi_location_get(wifi_config.service, &request, &result);
 		if (err) {
 			LOG_ERR("Failed to acquire a location by using "
 				"Wi-Fi positioning, err: %d",
-					err);
+				err);
 			err = -ENODATA;
 		} else {
 			location_result.method = LOCATION_METHOD_WIFI;
@@ -234,7 +238,10 @@ static void method_wifi_positioning_work_fn(struct k_work *work)
 		err = -EFAULT;
 	}
 end:
-	if (err) {
+	if (err == -ETIMEDOUT) {
+		location_core_event_cb_timeout();
+		running = false;
+	} else if (err) {
 		location_core_event_cb_error();
 		running = false;
 	}

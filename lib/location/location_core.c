@@ -279,19 +279,19 @@ void location_core_config_log(const struct location_config *config)
 		}
 
 		if (type == LOCATION_METHOD_GNSS) {
-			LOG_DBG("      Timeout: %d", config->methods[i].gnss.timeout);
+			LOG_DBG("      Timeout: %dms", config->methods[i].gnss.timeout);
 			LOG_DBG("      Accuracy: %s (%d)",
 				log_strdup(location_core_gnss_accuracy_str(
 					config->methods[i].gnss.accuracy)),
 				config->methods[i].gnss.accuracy);
 		} else if (type == LOCATION_METHOD_CELLULAR) {
-			LOG_DBG("      Timeout: %d", config->methods[i].cellular.timeout);
+			LOG_DBG("      Timeout: %dms", config->methods[i].cellular.timeout);
 			LOG_DBG("      Service: %s (%d)",
 				log_strdup(location_core_service_str(
 					config->methods[i].cellular.service)),
 				config->methods[i].cellular.service);
 		} else if (type == LOCATION_METHOD_WIFI) {
-			LOG_DBG("      Timeout: %d", config->methods[i].wifi.timeout);
+			LOG_DBG("      Timeout: %dms", config->methods[i].wifi.timeout);
 			LOG_DBG("      Service: %s (%d)",
 				log_strdup(location_core_service_str(
 					config->methods[i].wifi.service)),
@@ -518,9 +518,9 @@ static void location_core_timeout_work_fn(struct k_work *work)
 	location_core_event_cb_timeout();
 }
 
-void location_core_timer_start(uint16_t timeout)
+void location_core_timer_start(int32_t timeout)
 {
-	if (timeout > 0) {
+	if (timeout != SYS_FOREVER_MS && timeout > 0) {
 		LOG_DBG("Starting timer with timeout=%d", timeout);
 
 		/* Using different work queue that the actual methods are using.
@@ -529,10 +529,13 @@ void location_core_timer_start(uint16_t timeout)
 		 * their operation, blocking waiting of semaphores will block the timeout from
 		 * expiring and canceling methods.
 		 */
-		k_work_schedule(
-			&location_timeout_work,
-			K_SECONDS(timeout));
+		k_work_schedule(&location_timeout_work, K_MSEC(timeout));
 	}
+}
+
+void location_core_timer_stop(void)
+{
+	k_work_cancel_delayable(&location_timeout_work);
 }
 
 int location_core_cancel(void)

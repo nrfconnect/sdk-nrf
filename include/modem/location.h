@@ -154,8 +154,8 @@ struct location_event_data {
 /** GNSS configuration. */
 struct location_gnss_config {
 	/**
-	 * @brief Timeout (in seconds), meaning how long GNSS is allowed to run when trying to
-	 * acquire a fix. Zero means that the timer is disabled, meaning that GNSS will
+	 * @brief Timeout (in milliseconds), meaning how long GNSS is allowed to run when trying to
+	 * acquire a fix. SYS_FOREVER_MS means that the timer is disabled, meaning that GNSS will
 	 * continue to search until it gets a fix or the application calls cancel.
 	 *
 	 * @details Note that this is not real time as experienced by the user.
@@ -165,7 +165,7 @@ struct location_gnss_config {
 	 * and A-GPS is disabled, library waits until modem enters PSM before starting GNSS,
 	 * thus maximizing uninterrupted operating window and minimizing power consumption.
 	 */
-	uint16_t timeout;
+	int32_t timeout;
 
 	/** @brief Desired accuracy level.
 	 *
@@ -202,10 +202,10 @@ struct location_gnss_config {
 /** LTE cellular positioning configuration. */
 struct location_cellular_config {
 	/**
-	 * @brief Timeout (in seconds) of how long the cellular positioning procedure can take.
-	 * Zero means that the timer is disabled.
+	 * @brief Timeout (in milliseconds) of how long the cellular positioning procedure can take.
+	 * SYS_FOREVER_MS means that the timer is disabled.
 	 */
-	uint16_t timeout;
+	int32_t timeout;
 
 	/** Used cellular positioning service. */
 	enum location_service service;
@@ -214,10 +214,10 @@ struct location_cellular_config {
 /** Wi-Fi positioning configuration. */
 struct location_wifi_config {
 	/**
-	 * @brief Timeout (in seconds) of how long the Wi-Fi positioning procedure can take.
-	 * Zero means that the timer is disabled.
+	 * @brief Timeout (in milliseconds) of how long the Wi-Fi positioning procedure can take.
+	 * SYS_FOREVER_MS means that the timer is disabled.
 	 */
-	uint16_t timeout;
+	int32_t timeout;
 
 	/** Used Wi-Fi positioning service. */
 	enum location_service service;

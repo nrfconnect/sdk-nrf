@@ -129,15 +129,15 @@ static void location_config_method_defaults_set(
 
 	method->method = method_type;
 	if (method_type == LOCATION_METHOD_GNSS) {
-		method->gnss.timeout = 120;
+		method->gnss.timeout = 120 * MSEC_PER_SEC;
 		method->gnss.accuracy = LOCATION_ACCURACY_NORMAL;
 		method->gnss.num_consecutive_fixes = 3;
 		method->gnss.visibility_detection = false;
 	} else if (method_type == LOCATION_METHOD_CELLULAR) {
-		method->cellular.timeout = 30;
+		method->cellular.timeout = 30 * MSEC_PER_SEC;
 		method->cellular.service = LOCATION_SERVICE_ANY;
 	} else if (method_type == LOCATION_METHOD_WIFI) {
-		method->wifi.timeout = 30;
+		method->wifi.timeout = 30 * MSEC_PER_SEC;
 		method->wifi.service = LOCATION_SERVICE_ANY;
 	}
 }
