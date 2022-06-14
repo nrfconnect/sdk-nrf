@@ -439,6 +439,7 @@ Documentation
   * :ref:`ug_thread_configuring` to better indicate what is required and what is optional.
     Also added further clarifications to the page to make everything more clear.
   * :ref:`ug_nrf9160_gs` by moving :ref:`nrf9160_gs_updating_fw_modem` before :ref:`nrf9160_gs_updating_fw_application` because updating modem firmware erases application firmware.
+  * :ref:`ug_matter_tools` with a new section about the ZAP tool.
 
 * Removed:
 

@@ -15,7 +15,8 @@ GN tool
 To build and develop Matter applications, you need the `GN`_ meta-build system.
 This system generates the Ninja files that the |NCS| uses.
 
-If you are updating from the |NCS| version earlier than v1.5.0, see the :ref:`GN installation instructions <gs_installing_gn>`.
+The GN is automatically installed with the |NCS|'s Toolchain Manager when you :ref:`install the SDK automatically <gs_assistant>`.
+If you are updating from the |NCS| version earlier than v1.5.0 or you are installing the |NCS| manually, see the :ref:`GN installation instructions <gs_installing_gn>`.
 
 Matter controller tools
 ***********************
@@ -25,6 +26,26 @@ Matter controller tools
    :end-before: matter_controller_end
 
 See the :ref:`ug_matter_configuring_controller` page for information about how to build and configure the Matter controller.
+
+ZAP tool
+********
+
+ZCL Advanced Platform, in short ZAP tool, is a third-party tool that is a generic node.js-based templating engine for applications and libraries based on Zigbee Cluster Library.
+This tool is provided with the Matter submodule in the |NCS| and uses ZAP files specific to each Matter application.
+
+You can use the ZAP tool for the following Matter use cases:
+
+* Enabling and disabling clusters, cluster commands, attributes, and events
+* Configuring attributes' default values
+* Configuring attributes' properties, such as storage type (RAM storage, non-volatile storage, application-managed)
+
+All the relevant data for these use cases is stored in the ZAP file of your Matter application, which you can edit using the ZAP tool GUI.
+A ZAP file is a JSON file that contains the data model configuration of clusters, commands, and attributes that are enabled for a given application.
+It is not used directly by the application, but it is used to generate global and customized source files for handling requests enabled by the user.
+In the |NCS|, the ZAP file is provided in the :file:`src` directory for each :ref:`Matter sample <matter_samples>`.
+
+For an example of how to use the ZAP tool to edit a ZAP file, see the :ref:`ug_matter_creating_accessory_edit_zap` in the :ref:`ug_matter_creating_accessory` user guide.
+For more information about the ZAP tool, see the official `ZCL Advanced Platform`_ documentation.
 
 Thread tools
 ************

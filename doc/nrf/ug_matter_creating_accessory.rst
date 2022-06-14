@@ -14,6 +14,8 @@ This application will form a Matter device within a Matter network.
 .. note::
    Make sure you are familiar with Matter in the |NCS| and you have tested some of the available :ref:`matter_samples` before you work with this user guide.
 
+.. _ug_matter_creating_accessory_overview:
+
 Overview
 ********
 
@@ -52,10 +54,14 @@ Application clusters are usually assigned to endpoints with IDs ``1`` and higher
 An application can implement appropriate callback functions to be informed about specific cluster state changes.
 These functions can be used to alter the device's behavior when the state of a cluster is changing as a result of some external event.
 
+.. _ug_matter_creating_accessory_requirements:
+
 Requirements
 ************
 
 To take advantage of this guide, you need to be familiar with :ref:`ug_matter_architecture` and :ref:`ug_matter_configuring`, and have built and tested at least one of the available :ref:`matter_samples`.
+
+.. _ug_matter_creating_accessory_copy:
 
 .. rst-class:: numbered-step
 
@@ -68,6 +74,8 @@ Use the :ref:`Matter Template <matter_template_sample>` sample as the base for b
 #. Build and test the sample as described on its documentation page.
 #. Copy the contents of the :file:`samples/matter/template` directory to a new directory meant for your custom application.
    For example, :file:`samples/matter/sensor`.
+
+.. _ug_matter_creating_accessory_edit_zap:
 
 .. rst-class:: numbered-step
 
@@ -150,6 +158,8 @@ To edit clusters using the ZAP tool, complete the following steps:
       ./scripts/tools/zap/generate.py ../../../nrf/samples/matter/sensor/src/template.zap
 
 At this point, new clusters have been added to the Matter device.
+
+.. _ug_matter_creating_accessory_edit_loop:
 
 .. rst-class:: numbered-step
 
@@ -310,6 +320,8 @@ To import helper functions for accessing cluster attributes, make sure to includ
 
    #include <app-common/zap-generated/attributes/Accessors.h>
 
+.. _ug_matter_creating_accessory_callback:
+
 .. rst-class:: numbered-step
 
 Create a callback for sensor activation and deactivation
@@ -353,12 +365,16 @@ For example, the implementation can look as follows:
 In this implementation, the ``if`` part filters out events other than those that belong to the On/Off cluster.
 Then, the callback posts the event for the sensor, namely ``SensorActivate`` if the current value of the attribute is not zero.
 
+.. _ug_matter_creating_accessory_add_source:
+
 .. rst-class:: numbered-step
 
 Add new source file to CMakeLists
 *********************************
 
 To ensure that everything builds without errors, update the :file:`CMakeLists.txt` file by adding :file:`src/zcl_callbacks.cpp` source file to the ``app`` target.
+
+.. _ug_matter_creating_accessory_test:
 
 Testing the new sensor application
 **********************************
