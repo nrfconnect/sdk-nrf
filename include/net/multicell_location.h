@@ -41,19 +41,31 @@ enum multicell_service {
 	MULTICELL_SERVICE_POLTE
 };
 
+/** Cellular positioning input parameters. */
+struct multicell_location_params {
+	/** Cellular positioning service to be used. */
+	enum multicell_service service;
+	/** Neighbor cell data. */
+	const struct lte_lc_cells_info *cell_data;
+	/**
+	 * @brief Timeout (in milliseconds) of how long the cellular positioning procedure can take.
+	 * SYS_FOREVER_MS means that the timer is disabled.
+	 */
+	int32_t timeout;
+};
+
 /**
  * @brief Send a request for location based on cell measurements to the
  *        selected location service.
  *
  * @note This function will block the calling thread until a response
- *       is received from the location service.
+ *       is received from the location service, or timeout has elapsed.
  *
  * @note Certificate must be provisioned before a request can be sent,
  *       @ref multicell_location_provision_certificate.
  *
- * @param[in] service Cellular positioning service to be used.
- * @param[in] cell_data Pointer to neighbor cell data.
- * @param[out] location Pointer to location.
+ * @param[in] params Cellular positioning parameters to be used.
+ * @param[out] location Location.
  *
  * @return 0 on success, or negative error code on failure.
  * @retval -ENOENT No cellular cells found from cell_data. I.e., even current cell
@@ -61,8 +73,7 @@ enum multicell_service {
  * @retval -ENOMEM Out of memory.
  * @retval -ENOMSG Parsing response from the location service failed.
  */
-int multicell_location_get(enum multicell_service service,
-			   const struct lte_lc_cells_info *cell_data,
+int multicell_location_get(const struct multicell_location_params *params,
 			   struct multicell_location *location);
 
 /**

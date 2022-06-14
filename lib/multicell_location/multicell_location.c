@@ -24,26 +24,30 @@ BUILD_ASSERT(IS_ENABLED(CONFIG_MULTICELL_LOCATION_SERVICE_NRF_CLOUD) ||
 	     "At least one location service must be enabled");
 
 
-int multicell_location_get(enum multicell_service service,
-			   const struct lte_lc_cells_info *cell_data,
-			   struct multicell_location *location)
+int multicell_location_get(
+	const struct multicell_location_params *params,
+	struct multicell_location *location)
 {
-	if ((cell_data == NULL) || (location == NULL)) {
+	if (params == NULL || (params->cell_data == NULL) || (location == NULL)) {
 		return -EINVAL;
 	}
 
-	if (cell_data->current_cell.id == LTE_LC_CELL_EUTRAN_ID_INVALID) {
+	LOG_DBG("Multicell location parameters:");
+	LOG_DBG("  Service: %d", params->service);
+	LOG_DBG("  Timeout: %dms", params->timeout);
+
+	if (params->cell_data->current_cell.id == LTE_LC_CELL_EUTRAN_ID_INVALID) {
 		LOG_WRN("Invalid cell ID, device may not be connected to a network");
 		return -ENOENT;
 	}
 
-	if (cell_data->ncells_count > CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS) {
+	if (params->cell_data->ncells_count > CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS) {
 		LOG_WRN("Found %d neighbor cells, but %d cells will be used in location request",
-			cell_data->ncells_count, CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS);
+			params->cell_data->ncells_count, CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS);
 		LOG_WRN("Increase CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS to use more cells");
 	}
 
-	return location_service_get_cell_location(service, cell_data, location);
+	return location_service_get_cell_location(params, location);
 }
 
 static int multicell_location_provision_service_certificate(

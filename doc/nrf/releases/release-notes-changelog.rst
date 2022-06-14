@@ -225,6 +225,10 @@ nRF9160 samples
     * Support for injecting GNSS reference altitude for low accuracy mode.
       For a position fix using only three satellites, GNSS module must have a reference altitude that can now be injected using the ``gnss agps ref_altitude`` command.
 
+  * Updated:
+
+    * Changed timeout parameters from seconds to milliseconds in ``location`` and ``rest`` commands.
+
 * :ref:`nrf_cloud_mqtt_multi_service` sample:
 
   * Changed:
@@ -359,6 +363,11 @@ Modem libraries
 
       * Ability to add :ref:`custom trace backends <adding_custom_modem_trace_backends>`.
 
+  * :ref:`lib_location` library:
+
+    * Changed timeout parameters' type from uint16_t to int32_t, unit from seconds to milliseconds, and value to disable them from 0 to SYS_FOREVER_MS.
+      This change is done to align with Zephyr's style for timeouts.
+
 Libraries for networking
 ------------------------
 
@@ -375,6 +384,16 @@ Libraries for networking
       * :c:func:`nrf_cloud_fota_pending_job_validate` function that enables an application to validate a pending FOTA job before initializing the :ref:`lib_nrf_cloud` library.
       * Handling for new nRF Cloud REST error code 40499.
         Moved the error log from the :c:func:`nrf_cloud_parse_rest_error` function into the calling function.
+
+  * :ref:`lib_multicell_location` library:
+
+    * Added timeout parameter.
+    * Made a structure for input parameters for multicell_location_get() to make updates easier in the future.
+
+  * :ref:`lib_rest_client` library:
+
+    * Updated timeout handling. Now using http_client library timeout also.
+    * Removed CONFIG_REST_CLIENT_SCKT_SEND_TIMEOUT and CONFIG_REST_CLIENT_SCKT_RECV_TIMEOUT.
 
 Libraries for NFC
 -----------------
