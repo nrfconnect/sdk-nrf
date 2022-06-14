@@ -1122,6 +1122,14 @@ NCSDK-13058: Directed advertising does not work
 
   **Workaround:** Manually cherry-pick and apply commit with fix from main (commit hash: ``c61c677872943bcf7905ddeec8b24b07ae50752e``).
 
+.. rst-class:: v2-0-0
+
+NCSDK-15675: Possible advertising start failure and module state error in :ref:`caf_ble_adv`
+  If a new peer is selected twice in a quick succession, the second peer selection may cause an advertising start failure and a module state error reported by the :ref:`caf_ble_adv`.
+  See the commit with fix mentioned in the workaround for details.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix from main (commit hash: ``934a25ac23125758e350b64bca23885486682109``).
+
 Subsystems
 **********
 
