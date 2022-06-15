@@ -7,6 +7,7 @@
 menuconfig ZIGBEE_LOGGER_EP
 	bool "Enable Zigbee endpoint handler for logging incoming ZCL frames"
 	select ZIGBEE_APP_UTILS
+	depends on LOG
 
 if ZIGBEE_LOGGER_EP
 
