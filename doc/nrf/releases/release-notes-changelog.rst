@@ -225,6 +225,12 @@ nRF9160 samples
     * Support for injecting GNSS reference altitude for low accuracy mode.
       For a position fix using only three satellites, GNSS module must have a reference altitude that can now be injected using the ``gnss agps ref_altitude`` command.
 
+* :ref:`nrf_cloud_mqtt_multi_service` sample:
+
+  * Changed:
+
+    * This sample now uses the :ref:`lib_modem_antenna` library to configure the GNSS antenna instead of configuring it directly.
+
 Thread samples
 --------------
 

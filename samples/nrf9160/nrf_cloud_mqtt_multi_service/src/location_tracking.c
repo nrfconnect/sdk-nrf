@@ -18,36 +18,6 @@ LOG_MODULE_REGISTER(location_tracking, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
 
 static location_update_cb_t location_update_handler;
 
-/**
- * @brief Configure the antenna for GNSS!
- *
- * This must be done before the modem becomes active, which is
- * ensured by the NRF_MODEM_LIB_ON_INIT call below.
- */
-static void gnss_antenna_configure(int ret, void *ctx)
-{
-	if (ret != 0) {
-		return;
-	}
-
-	int err;
-
-	if (strlen(CONFIG_GNSS_AT_MAGPIO) > 0) {
-		err = nrf_modem_at_printf("%s", CONFIG_GNSS_AT_MAGPIO);
-		if (err) {
-			printk("Failed to set MAGPIO configuration\n");
-		}
-	}
-
-	if (strlen(CONFIG_GNSS_AT_COEX0) > 0) {
-		err = nrf_modem_at_printf("%s", CONFIG_GNSS_AT_COEX0);
-		if (err) {
-			printk("Failed to set COEX0 configuration\n");
-		}
-	}
-}
-NRF_MODEM_LIB_ON_INIT(location_tracking_init_hook, gnss_antenna_configure, NULL);
-
 void location_assistance_data_handler(const char *buf, size_t len)
 {
 	/* We don't actually check whether the passed-in payload contains assistance data!
