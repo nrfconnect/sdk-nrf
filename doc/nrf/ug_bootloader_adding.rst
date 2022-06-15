@@ -255,7 +255,7 @@ We recommend you also set the associated configuration for a key type to ensure 
 
 .. code-block:: console
 
-   west build -b nrf52dk_nrf52840 zephyr/samples/hello_world -- \
+   west build -b nrf52840dk_nrf52840 zephyr/samples/hello_world -- \
    -DCONFIG_BOOTLOADER_MCUBOOT=y \
    -Dmcuboot_CONFIG_BOOT_SIGNATURE_KEY_FILE=\"../../priv-ecdsa256.pem\" \
    -Dmcuboot_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
