@@ -35,10 +35,10 @@
 /* BH1749_SYSTEM_CONTROL */
 #define BH1749_SYSTEM_CONTROL_PART_ID_Msk               GENMASK(5, 0)
 #define BH1749_SYSTEM_CONTROL_PART_ID                   0x0D
-#define BH1749_SYSTEM_CONTROL_SW_RESET_Msk              BIT(6)
-#define BH1749_SYSTEM_CONTROL_SW_RESET                  BIT(6)
-#define BH1749_SYSTEM_CONTROL_INT_RESET_Msk             BIT(7)
-#define BH1749_SYSTEM_CONTROL_INT_RESET                 BIT(7)
+#define BH1749_SYSTEM_CONTROL_INT_RESET_Msk             BIT(6)
+#define BH1749_SYSTEM_CONTROL_INT_RESET                 BIT(6)
+#define BH1749_SYSTEM_CONTROL_SW_RESET_Msk              BIT(7)
+#define BH1749_SYSTEM_CONTROL_SW_RESET                  BIT(7)
 
 /* BH1749_MODE_CONTROL1 */
 /* IR Gain: 1x, RGB Gain: 1x, Measurement mode: 120ms mode */
