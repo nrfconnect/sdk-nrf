@@ -234,16 +234,16 @@ static int sms_init(void)
 	}
 
 	/* Register for AT commands notifications before creating the client. */
-	at_monitor_resume(sms_at_handler_cmt);
-	at_monitor_resume(sms_at_handler_cds);
-	at_monitor_resume(sms_at_handler_cms);
+	at_monitor_resume(&sms_at_handler_cmt);
+	at_monitor_resume(&sms_at_handler_cds);
+	at_monitor_resume(&sms_at_handler_cms);
 
 	/* Register this module as an SMS client. */
 	ret = nrf_modem_at_printf(AT_SMS_SUBSCRIBER_REGISTER);
 	if (ret) {
-		at_monitor_pause(sms_at_handler_cmt);
-		at_monitor_pause(sms_at_handler_cds);
-		at_monitor_pause(sms_at_handler_cms);
+		at_monitor_pause(&sms_at_handler_cmt);
+		at_monitor_pause(&sms_at_handler_cds);
+		at_monitor_pause(&sms_at_handler_cms);
 		LOG_ERR("Unable to register a new SMS client, err: %d", ret);
 		return ret;
 	}
@@ -335,9 +335,9 @@ static void sms_uninit(void)
 	LOG_DBG("SMS client unregistered");
 
 	/* Pause AT commands notifications. */
-	at_monitor_pause(sms_at_handler_cmt);
-	at_monitor_pause(sms_at_handler_cds);
-	at_monitor_pause(sms_at_handler_cms);
+	at_monitor_pause(&sms_at_handler_cmt);
+	at_monitor_pause(&sms_at_handler_cds);
+	at_monitor_pause(&sms_at_handler_cms);
 
 	/* Clear all observers. */
 	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {

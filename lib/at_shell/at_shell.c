@@ -48,10 +48,10 @@ int at_shell(const struct shell *shell, size_t argc, char **argv)
 	char *command = argv[1];
 
 	if (!strcmp(command, "events_enable")) {
-		at_monitor_resume(at_shell_monitor);
+		at_monitor_resume(&at_shell_monitor);
 		shell_print(shell, "AT command event handler enabled");
 	} else if (!strcmp(command, "events_disable")) {
-		at_monitor_pause(at_shell_monitor);
+		at_monitor_pause(&at_shell_monitor);
 		shell_print(shell, "AT command event handler disabled");
 	} else {
 		err = nrf_modem_at_cmd(response, sizeof(response), command);

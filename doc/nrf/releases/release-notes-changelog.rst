@@ -289,6 +289,10 @@ Modem libraries
 
 * Updated:
 
+  * :ref:`at_monitor_readme` library:
+
+    * The :c:func:`at_monitor_pause` and :c:func:`at_monitor_resume` macros are now functions, and take a pointer to the AT monitor entry.
+
   * :ref:`modem_key_mgmt` library:
 
     * Fixed:
