@@ -177,6 +177,14 @@ nRF9160 samples
 
     * Default configuration conforms to the LwM2M specification v1.0 instead of v1.1.
       For enabling v1.1 there is already an overlay file.
+    * Bootstrap is not TLV only anymore. 
+      With v1.1, preferred content format is sent in the bootstrap request.
+      SenML CBOR takes precedence over SenML JSON and OMA TLV, when enabled.
+
+  * Added:
+
+    * CoAP max message size is set to 1280 by default.
+    * Number of SenML CBOR records is set to a higher value to cope with data exchange after registration with Coiote server.
 
 * :ref:`modem_shell_application` sample:
 
