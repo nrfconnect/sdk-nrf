@@ -65,6 +65,12 @@ Unsolicited notification
 * The ``<heading>`` value represents the heading of the movement of the user in degrees.
 * The ``<datetime>`` value represents the UTC date-time.
 
+::
+
+   #XGPS: <gnss_service>,<gnss_status>
+
+Refer to the READ command.
+
 Example
 ~~~~~~~
 
@@ -80,6 +86,8 @@ Example
 
   OK
   at#xgps=1,1
+
+  #XGPS: 1,1
 
   OK
 
@@ -112,7 +120,12 @@ Response syntax
   When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and activated in ``+CFUN``.
 
 * The ``<gnss_status>`` value is an integer.
-  When it returns the value of ``1``, it means that GNSS is started.
+
+* ``0`` - GNSS is stopped.
+* ``1`` - GNSS is started.
+* ``2`` - GNSS wakes up in periodic mode.
+* ``3`` - GNSS enters sleep because of timeout.
+* ``4`` - GNSS enters sleep because a fix is achieved.
 
 Example
 ~~~~~~~
@@ -361,6 +374,12 @@ Unsolicited notification
 * The ``<heading>`` value represents the heading of the movement of the user in degrees.
 * The ``<datetime>`` value represents the UTC date-time.
 
+::
+
+   #XAGPS: <gnss_service>,<agps_status>
+
+Refer to the READ command.
+
 Example
 ~~~~~~~
 
@@ -383,6 +402,8 @@ Example
   OK
   #XNRFCLOUD: 1,0
   AT#XAGPS=1,1
+
+  #XAGPS: 1,1
 
   OK
 
@@ -417,7 +438,12 @@ Response syntax
   When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and activated in ``+CFUN``.
 
 * The ``<agps_status>`` value is an integer.
-  When it returns the value of ``1``, it means AGPS is started.
+
+* ``0`` - AGPS is stopped.
+* ``1`` - AGPS is started.
+* ``2`` - GNSS wakes up in periodic mode.
+* ``3`` - GNSS enters sleep because of timeout.
+* ``4`` - GNSS enters sleep because a fix is achieved.
 
 Example
 ~~~~~~~
@@ -513,6 +539,12 @@ Unsolicited notification
 * The ``<heading>`` value represents the heading of the movement of the user in degrees.
 * The ``<datetime>`` value represents the UTC date-time.
 
+::
+
+   #XPGPS: <gnss_service>,<pgps_status>
+
+Refer to the READ command.
+
 Example
 ~~~~~~~
 
@@ -535,6 +567,8 @@ Example
   OK
   #XNRFCLOUD: 1,0
   AT#XPGPS=1,30
+
+  #XPGPS: 1,1
 
   OK
 
@@ -569,7 +603,12 @@ Response syntax
   When it returns the value of ``1``, it means that GNSS is supported in ``%XSYSTEMMODE`` and is activated in ``+CFUN``.
 
 * The ``<pgps_status>`` value is an integer.
-  When it returns the value of ``1``, it means that PGPS is started.
+
+* ``0`` - PGPS is stopped.
+* ``1`` - PGPS is started.
+* ``2`` - GNSS wakes up in periodic mode.
+* ``3`` - GNSS enters sleep because of timeout.
+* ``4`` - GNSS enters sleep because a fix is achieved.
 
 Test command
 ------------

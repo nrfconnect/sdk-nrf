@@ -56,6 +56,14 @@ static enum {
 	RUN_TYPE_PGPS,
 	RUN_TYPE_CELL_POS
 } run_type;
+static enum {
+	RUN_STATUS_STOPPED,
+	RUN_STATUS_STARTED,
+	RUN_STATUS_PERIODIC_WAKEUP,
+	RUN_STATUS_SLEEP_AFTER_TIMEOUT,
+	RUN_STATUS_SLEEP_AFTER_FIX,
+	RUN_STATUS_MAX
+} run_status;
 
 static K_SEM_DEFINE(sem_date_time, 0, 1);
 
@@ -109,6 +117,50 @@ static bool is_gnss_activated(void)
 	}
 
 	return false;
+}
+
+static void gnss_status_notify(void)
+{
+	if (run_type == RUN_TYPE_AGPS) {
+		sprintf(rsp_buf, "\r\n#XAGPS: 1,%d\r\n", run_status);
+	} else if (run_type == RUN_TYPE_PGPS) {
+		sprintf(rsp_buf, "\r\n#XPGPS: 1,%d\r\n", run_status);
+	} else {
+		sprintf(rsp_buf, "\r\n#XGPS: 1,%d\r\n", run_status);
+	}
+	rsp_send(rsp_buf, strlen(rsp_buf));
+}
+
+static int gnss_startup(int type)
+{
+	int ret;
+
+	/* Set run_type first as modem send NRF_MODEM_GNSS_EVT_AGPS_REQ instantly */
+	run_type = type;
+
+	ret = nrf_modem_gnss_start();
+	if (ret) {
+		LOG_ERR("Failed to start GPS, error: %d", ret);
+		run_type = RUN_TYPE_NONE;
+	} else {
+		ttft_start = k_uptime_get();
+		run_status = RUN_STATUS_STARTED;
+		gnss_status_notify();
+	}
+
+	return ret;
+}
+
+static int gnss_shutdown(void)
+{
+	int ret = nrf_modem_gnss_stop();
+
+	LOG_INF("GNSS stop %d", ret);
+	run_status = RUN_STATUS_STOPPED;
+	gnss_status_notify();
+	run_type = RUN_TYPE_NONE;
+
+	return ret;
 }
 
 static int read_agps_req(struct nrf_modem_gnss_agps_data_frame *req)
@@ -501,16 +553,22 @@ static void gnss_event_handler(int event)
 		LOG_INF("GNSS_EVT_UNBLOCKED");
 		break;
 	case NRF_MODEM_GNSS_EVT_PERIODIC_WAKEUP:
-		LOG_DBG("GNSS_EVT_PERIODIC_WAKEUP");
+		LOG_INF("GNSS_EVT_PERIODIC_WAKEUP");
+		run_status = RUN_STATUS_PERIODIC_WAKEUP;
+		gnss_status_notify();
 		break;
 	case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT:
-		LOG_DBG("GNSS_EVT_SLEEP_AFTER_TIMEOUT");
+		LOG_INF("GNSS_EVT_SLEEP_AFTER_TIMEOUT");
+		run_status = RUN_STATUS_SLEEP_AFTER_TIMEOUT;
+		gnss_status_notify();
 		break;
 	case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_FIX:
-		LOG_DBG("GNSS_EVT_SLEEP_AFTER_FIX");
+		LOG_INF("GNSS_EVT_SLEEP_AFTER_FIX");
+		run_status = RUN_STATUS_SLEEP_AFTER_FIX;
+		gnss_status_notify();
 		break;
 	case NRF_MODEM_GNSS_EVT_REF_ALT_EXPIRED:
-		LOG_DBG("GNSS_EVT_REF_ALT_EXPIRED");
+		LOG_INF("GNSS_EVT_REF_ALT_EXPIRED");
 		break;
 	default:
 		break;
@@ -730,26 +788,17 @@ int handle_at_gps(enum at_cmd_type cmd_type)
 					LOG_ERR("Failed to set fix retry, error: %d", err);
 					return err;
 				}
-			}
+			} /* else leave it to default or previously configured timeout */
 
-			run_type = RUN_TYPE_GPS;
-			err = nrf_modem_gnss_start();
-			if (err) {
-				LOG_ERR("Failed to start GPS, error: %d", err);
-				run_type = RUN_TYPE_NONE;
-			} else {
-				ttft_start = k_uptime_get();
-			}
+			err = gnss_startup(RUN_TYPE_GPS);
 		} else if (op == GPS_STOP && run_type == RUN_TYPE_GPS) {
-			err = nrf_modem_gnss_stop();
-			run_type = RUN_TYPE_NONE;
+			err = gnss_shutdown();
 		} else {
 			err = -EINVAL;
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		sprintf(rsp_buf, "\r\n#XGPS: %d,%d\r\n", (int)is_gnss_activated(),
-			(run_type == RUN_TYPE_GPS) ? 1 : 0);
+		sprintf(rsp_buf, "\r\n#XGPS: %d,%d\r\n", (int)is_gnss_activated(), run_status);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
@@ -899,29 +948,17 @@ int handle_at_agps(enum at_cmd_type cmd_type)
 					LOG_ERR("Failed to set fix retry, error: %d", err);
 					return err;
 				}
-			}
+			} /* else leave it to default or previously configured timeout */
 
-			/** set the flag before starting GNSS as modem instantly
-			 * send NRF_MODEM_GNSS_EVT_AGPS_REQ event
-			 */
-			run_type = RUN_TYPE_AGPS;
-			err = nrf_modem_gnss_start();
-			if (err) {
-				LOG_ERR("Failed to start GNSS, error: %d", err);
-				run_type = RUN_TYPE_NONE;
-			} else {
-				ttft_start = k_uptime_get();
-			}
+			err = gnss_startup(RUN_TYPE_AGPS);
 		} else if (op == AGPS_STOP && run_type == RUN_TYPE_AGPS) {
-			err = nrf_modem_gnss_stop();
-			run_type = RUN_TYPE_NONE;
+			err = gnss_shutdown();
 		} else {
 			err = -EINVAL;
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		sprintf(rsp_buf, "\r\n#XAGPS: %d,%d\r\n", (int)is_gnss_activated(),
-			(run_type == RUN_TYPE_AGPS) ? 1 : 0);
+		sprintf(rsp_buf, "\r\n#XAGPS: %d,%d\r\n", (int)is_gnss_activated(), run_status);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
@@ -986,7 +1023,7 @@ int handle_at_pgps(enum at_cmd_type cmd_type)
 					LOG_ERR("Failed to set fix retry, error: %d", err);
 					return err;
 				}
-			}
+			} /* else leave it to default or previously configured timeout */
 
 			struct nrf_cloud_pgps_init_param param = {
 				.event_handler = pgps_event_handler,
@@ -1001,24 +1038,15 @@ int handle_at_pgps(enum at_cmd_type cmd_type)
 				return err;
 			}
 
-			run_type = RUN_TYPE_PGPS;
-			err = nrf_modem_gnss_start();
-			if (err) {
-				LOG_ERR("Failed to start GNSS, error: %d", err);
-				run_type = RUN_TYPE_NONE;
-			} else {
-				ttft_start = k_uptime_get();
-			}
+			err = gnss_startup(RUN_TYPE_PGPS);
 		} else if (op == PGPS_STOP && run_type == RUN_TYPE_PGPS) {
-			err = nrf_modem_gnss_stop();
-			run_type = RUN_TYPE_NONE;
+			err = gnss_shutdown();
 		} else {
 			err = -EINVAL;
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND:
-		sprintf(rsp_buf, "\r\n#XPGPS: %d,%d\r\n", (int)is_gnss_activated(),
-			(run_type == RUN_TYPE_PGPS) ? 1 : 0);
+		sprintf(rsp_buf, "\r\n#XPGPS: %d,%d\r\n", (int)is_gnss_activated(), run_status);
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;
