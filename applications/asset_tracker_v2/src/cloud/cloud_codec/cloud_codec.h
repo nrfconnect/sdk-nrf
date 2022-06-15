@@ -306,38 +306,22 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 				  size_t accel_buf_count,
 				  size_t bat_buf_count);
 
-void cloud_codec_populate_sensor_buffer(
-				struct cloud_data_sensors *sensor_buffer,
-				struct cloud_data_sensors *new_sensor_data,
-				int *head_sensor_buf,
-				size_t buffer_count);
+/**
+ * @brief Declare cloud codec ringbuffer populate functions.
+ *
+ * These functions have following signature:
+ * cloud_codec_populate_something_buffer(buffer, new_data, buffer_head, buffer_len)
+ * They are used to add "new_data" to the buffer.
+ */
+#define CLOUD_CODEC_RINGBUFFER_POPULATE_DECLARE(name, NAME, type) \
+	void cloud_codec_populate_##name##_buffer(type, type, int *, size_t)
 
-void cloud_codec_populate_ui_buffer(struct cloud_data_ui *ui_buffer,
-				    struct cloud_data_ui *new_ui_data,
-				    int *head_ui_buf,
-				    size_t buffer_count);
-
-void cloud_codec_populate_accel_buffer(
-				struct cloud_data_accelerometer *accel_buf,
-				struct cloud_data_accelerometer *new_accel_data,
-				int *head_accel_buf,
-				size_t buffer_count);
-
-void cloud_codec_populate_bat_buffer(struct cloud_data_battery *bat_buffer,
-				     struct cloud_data_battery *new_bat_data,
-				     int *head_bat_buf,
-				     size_t buffer_count);
-
-void cloud_codec_populate_gnss_buffer(struct cloud_data_gnss *gnss_buffer,
-				     struct cloud_data_gnss *new_gnss_data,
-				     int *head_gnss_buf,
-				     size_t buffer_count);
-
-void cloud_codec_populate_modem_dynamic_buffer(
-				struct cloud_data_modem_dynamic *modem_buffer,
-				struct cloud_data_modem_dynamic *new_modem_data,
-				int *head_modem_buf,
-				size_t buffer_count);
+CLOUD_CODEC_RINGBUFFER_POPULATE_DECLARE(sensor, SENSOR, struct cloud_data_sensors *);
+CLOUD_CODEC_RINGBUFFER_POPULATE_DECLARE(ui, UI, struct cloud_data_ui *);
+CLOUD_CODEC_RINGBUFFER_POPULATE_DECLARE(accel, ACCELEROMETER, struct cloud_data_accelerometer *);
+CLOUD_CODEC_RINGBUFFER_POPULATE_DECLARE(bat, BATTERY, struct cloud_data_battery *);
+CLOUD_CODEC_RINGBUFFER_POPULATE_DECLARE(gnss, GNSS, struct cloud_data_gnss *);
+CLOUD_CODEC_RINGBUFFER_POPULATE_DECLARE(modem_dynamic, MODEM, struct cloud_data_modem_dynamic *);
 
 static inline void cloud_codec_release_data(struct cloud_codec_data *output)
 {

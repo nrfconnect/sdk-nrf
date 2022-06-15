@@ -13,155 +13,42 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(cloud_codec_ringbuffer, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 
-void cloud_codec_populate_sensor_buffer(
-				struct cloud_data_sensors *sensor_buffer,
-				struct cloud_data_sensors *new_sensor_data,
-				int *head_sensor_buf,
-				size_t buffer_count)
-{
-	if (!IS_ENABLED(CONFIG_DATA_SENSOR_BUFFER_STORE)) {
-		return;
+/**
+ * @brief Define cloud codec ringbuffer populate functions.
+ *
+ * Each cloud codec buffer needs to have one of those.
+ * The function will check CONFIG_DATA_SOMETHING_BUFFER_STORE
+ * whether that type of data should be stored at all
+ * and if the supplied data is marked as valid using the "queued" flag.
+ * The head of the buffer is moved to the next element
+ * and the data is copied into the buffer.
+ */
+#define CLOUD_CODEC_RINGBUFFER_POPULATE_DEFINE(name, NAME, type) \
+	void cloud_codec_populate_##name##_buffer( \
+		type buffer, \
+		type new_data, \
+		int *head_buf, \
+		size_t buffer_count) \
+	{ \
+	if (!IS_ENABLED(CONFIG_DATA_##NAME##_BUFFER_STORE)) { \
+		return; \
+	} \
+	if (!new_data->queued) { \
+		return; \
+	} \
+	*head_buf += 1; \
+	/* Go to start of buffer if end is reached. */ \
+	if (*head_buf == buffer_count) { \
+		*head_buf = 0; \
+	} \
+	buffer[*head_buf] = *new_data; \
+	LOG_DBG("Entry: %d of %d in %s buffer filled", \
+		*head_buf, buffer_count - 1, #name); \
 	}
 
-	if (!new_sensor_data->queued) {
-		return;
-	}
-
-	/* Go to start of buffer if end is reached. */
-	*head_sensor_buf += 1;
-	if (*head_sensor_buf == buffer_count) {
-		*head_sensor_buf = 0;
-	}
-
-	sensor_buffer[*head_sensor_buf] = *new_sensor_data;
-
-	LOG_DBG("Entry: %d of %d in sensor buffer filled", *head_sensor_buf,
-		buffer_count - 1);
-}
-
-void cloud_codec_populate_ui_buffer(struct cloud_data_ui *ui_buffer,
-				   struct cloud_data_ui *new_ui_data,
-				   int *head_ui_buf,
-				   size_t buffer_count)
-{
-	if (!IS_ENABLED(CONFIG_DATA_UI_BUFFER_STORE)) {
-		return;
-	}
-
-	if (!new_ui_data->queued) {
-		return;
-	}
-
-	/* Go to start of buffer if end is reached. */
-	*head_ui_buf += 1;
-	if (*head_ui_buf == buffer_count) {
-		*head_ui_buf = 0;
-	}
-
-	ui_buffer[*head_ui_buf] = *new_ui_data;
-
-	LOG_DBG("Entry: %d of %d in UI buffer filled", *head_ui_buf,
-		buffer_count - 1);
-}
-
-void cloud_codec_populate_accel_buffer(
-				struct cloud_data_accelerometer *mov_buf,
-				struct cloud_data_accelerometer *new_accel_data,
-				int *head_mov_buf,
-				size_t buffer_count)
-{
-	if (!IS_ENABLED(CONFIG_DATA_ACCELEROMETER_BUFFER_STORE)) {
-		return;
-	}
-
-	if (!new_accel_data->queued) {
-		return;
-	}
-
-	/* Go to start of buffer if end is reached. */
-	*head_mov_buf += 1;
-	if (*head_mov_buf == buffer_count) {
-		*head_mov_buf = 0;
-	}
-
-	mov_buf[*head_mov_buf] = *new_accel_data;
-
-	LOG_DBG("Entry: %d of %d in movement buffer filled", *head_mov_buf,
-		buffer_count - 1);
-}
-
-void cloud_codec_populate_bat_buffer(struct cloud_data_battery *bat_buffer,
-				     struct cloud_data_battery *new_bat_data,
-				     int *head_bat_buf,
-				     size_t buffer_count)
-{
-	if (!IS_ENABLED(CONFIG_DATA_BATTERY_BUFFER_STORE)) {
-		return;
-	}
-
-	if (!new_bat_data->queued) {
-		return;
-	}
-
-	/* Go to start of buffer if end is reached. */
-	*head_bat_buf += 1;
-	if (*head_bat_buf == buffer_count) {
-		*head_bat_buf = 0;
-	}
-
-	bat_buffer[*head_bat_buf] = *new_bat_data;
-
-	LOG_DBG("Entry: %d of %d in battery buffer filled", *head_bat_buf,
-		buffer_count - 1);
-}
-
-void cloud_codec_populate_gnss_buffer(struct cloud_data_gnss *gnss_buffer,
-				    struct cloud_data_gnss *new_gnss_data,
-				    int *head_gnss_buf,
-				    size_t buffer_count)
-{
-	if (!IS_ENABLED(CONFIG_DATA_GNSS_BUFFER_STORE)) {
-		return;
-	}
-
-	if (!new_gnss_data->queued) {
-		return;
-	}
-
-	/* Go to start of buffer if end is reached. */
-	*head_gnss_buf += 1;
-	if (*head_gnss_buf == buffer_count) {
-		*head_gnss_buf = 0;
-	}
-
-	gnss_buffer[*head_gnss_buf] = *new_gnss_data;
-
-	LOG_DBG("Entry: %d of %d in GNSS buffer filled", *head_gnss_buf,
-		buffer_count - 1);
-}
-
-void cloud_codec_populate_modem_dynamic_buffer(
-				struct cloud_data_modem_dynamic *modem_buffer,
-				struct cloud_data_modem_dynamic *new_modem_data,
-				int *head_modem_buf,
-				size_t buffer_count)
-{
-	if (!IS_ENABLED(CONFIG_DATA_DYNAMIC_MODEM_BUFFER_STORE)) {
-		return;
-	}
-
-	if (!new_modem_data->queued) {
-		return;
-	}
-
-	/* Go to start of buffer if end is reached. */
-	*head_modem_buf += 1;
-	if (*head_modem_buf == buffer_count) {
-		*head_modem_buf = 0;
-	}
-
-	modem_buffer[*head_modem_buf] = *new_modem_data;
-
-	LOG_DBG("Entry: %d of %d in dynamic modem buffer filled",
-		*head_modem_buf, buffer_count - 1);
-}
+CLOUD_CODEC_RINGBUFFER_POPULATE_DEFINE(sensor, SENSOR, struct cloud_data_sensors *)
+CLOUD_CODEC_RINGBUFFER_POPULATE_DEFINE(ui, UI, struct cloud_data_ui *)
+CLOUD_CODEC_RINGBUFFER_POPULATE_DEFINE(accel, ACCELEROMETER, struct cloud_data_accelerometer *)
+CLOUD_CODEC_RINGBUFFER_POPULATE_DEFINE(bat, BATTERY, struct cloud_data_battery *)
+CLOUD_CODEC_RINGBUFFER_POPULATE_DEFINE(gnss, GNSS, struct cloud_data_gnss *)
+CLOUD_CODEC_RINGBUFFER_POPULATE_DEFINE(modem_dynamic, MODEM, struct cloud_data_modem_dynamic *)
