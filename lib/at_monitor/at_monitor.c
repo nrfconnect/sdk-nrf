@@ -17,7 +17,7 @@ LOG_MODULE_REGISTER(at_monitor, CONFIG_AT_MONITOR_LOG_LEVEL);
 
 struct at_notif_fifo {
 	void *fifo_reserved;
-	char data[];
+	char data[]; /* Null-terminated AT notification string */
 };
 
 static void at_monitor_task(struct k_work *work);
@@ -26,7 +26,25 @@ static K_FIFO_DEFINE(at_monitor_fifo);
 static K_HEAP_DEFINE(at_monitor_heap, CONFIG_AT_MONITOR_HEAP_SIZE);
 static K_WORK_DEFINE(at_monitor_work, at_monitor_task);
 
-/* This is not static so that tests can call this function */
+static bool is_paused(const struct at_monitor_entry *mon)
+{
+	return mon->flags.paused;
+}
+
+static bool is_direct(const struct at_monitor_entry *mon)
+{
+	return mon->flags.direct;
+}
+
+static bool has_match(const struct at_monitor_entry *mon, const char *notif)
+{
+	return (mon->filter == ANY || strstr(notif, mon->filter));
+}
+
+/* Dispatch AT notifications immediately, or schedules a workqueue task to do that.
+ * Keep this function public so that it can be called by tests.
+ * This function is called from an ISR.
+ */
 void at_monitor_dispatch(const char *notif)
 {
 	bool monitored;
@@ -35,26 +53,21 @@ void at_monitor_dispatch(const char *notif)
 
 	__ASSERT_NO_MSG(notif != NULL);
 
-	/* Dispatch to monitors in ISR, if any.
-	 * There might be non-ISR monitors that are interested
-	 * in the same notification, so copy it to the heap afterwards regardless.
-	 */
-	STRUCT_SECTION_FOREACH(at_monitor_isr_entry, e) {
-		if (!e->paused && (e->filter == ANY || strstr(notif, e->filter))) {
-			LOG_DBG("Dispatching to %p (ISR)", e->handler);
-			e->handler(notif);
-		}
-	}
-
 	monitored = false;
 	STRUCT_SECTION_FOREACH(at_monitor_entry, e) {
-		if (!e->paused && (e->filter == ANY || strstr(notif, e->filter))) {
-			monitored = true;
-			break;
+		if (!is_paused(e) && has_match(e, notif)) {
+			if (is_direct(e)) {
+				LOG_DBG("Dispatching to %p (ISR)", e->handler);
+				e->handler(notif);
+			} else {
+				/* Copy and schedule work-queue task */
+				monitored = true;
+			}
 		}
 	}
 
 	if (!monitored) {
+		/* Only copy monitored notifications to save heap */
 		return;
 	}
 
@@ -81,8 +94,7 @@ static void at_monitor_task(struct k_work *work)
 		/* Match notification with all monitors */
 		LOG_DBG("AT notif: %.*s", strlen(at_notif->data) - strlen("\r\n"), at_notif->data);
 		STRUCT_SECTION_FOREACH(at_monitor_entry, e) {
-			if (!e->paused &&
-			   (e->filter == ANY || strstr(at_notif->data, e->filter))) {
+			if (!is_paused(e) && !is_direct(e) && has_match(e, at_notif->data)) {
 				LOG_DBG("Dispatching to %p", e->handler);
 				e->handler(at_notif->data);
 			}
