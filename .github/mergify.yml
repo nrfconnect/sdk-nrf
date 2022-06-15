@@ -4,6 +4,8 @@ pull_request_rules:
       - base=main
       - "#approved-reviews-by>=1"
       - approved-reviews-by=@ncs-code-owners
+      - -draft
+      - -label=DNM
       - or:
         - label=manifest-homekit
         - label=manifest-find-my
