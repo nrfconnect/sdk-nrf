@@ -833,9 +833,18 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 {
 	int err;
 	bool objects_written = false;
+	double alt, acc, spd;
 
 	/* GPS PVT */
 	if (gnss_buf->queued) {
+		/*
+		 * The LwM2M engine expect double pointers, so floats have to be casted to double
+		 * first. Then we can pass pointers to the double values.
+		 */
+		alt = (double) gnss_buf->pvt.alt;
+		acc = (double) gnss_buf->pvt.acc;
+		spd = (double) gnss_buf->pvt.spd;
+
 		err = date_time_uptime_to_unix_time_ms(&gnss_buf->gnss_ts);
 		if (err) {
 			LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
@@ -843,33 +852,31 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 		}
 
 		err = lwm2m_engine_set_float(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LATITUDE_RID),
-					     (double *)&gnss_buf->pvt.lat);
+					     &gnss_buf->pvt.lat);
 		if (err) {
 			return err;
 		}
 
 		err = lwm2m_engine_set_float(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LONGITUDE_RID),
-					     (double *)&gnss_buf->pvt.longi);
+					     &gnss_buf->pvt.longi);
 		if (err) {
 			return err;
 		}
 
 		err = lwm2m_engine_set_float(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, ALTITUDE_RID),
-					     (double *)&gnss_buf->pvt.alt);
+						 &alt);
 		if (err) {
 			return err;
 		}
 
-		err = lwm2m_engine_set_float(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0,
-							RADIUS_RID),
-					     (double *)&gnss_buf->pvt.acc);
+		err = lwm2m_engine_set_float(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, RADIUS_RID),
+						 &acc);
 		if (err) {
 			return err;
 		}
 
-		err = lwm2m_engine_set_float(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0,
-							SPEED_RID),
-					     (double *)&gnss_buf->pvt.spd);
+		err = lwm2m_engine_set_float(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, SPEED_RID),
+						 &spd);
 		if (err) {
 			return err;
 		}
