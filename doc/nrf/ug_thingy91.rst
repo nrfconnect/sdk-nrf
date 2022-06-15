@@ -85,7 +85,7 @@ LTE Band Lock
 The modem within Thingy:91 can be configured to use specific LTE bands by using the band lock AT command.
 See :ref:`nrf9160_ug_band_lock` and the `band lock section in the AT Commands reference document`_ for additional information.
 The preprogrammed firmware configures the modem to use the bands currently certified on the Thingy:91 hardware.
-When building the firmware, you can configure which bands should be enabled.
+When building the firmware, you can configure which bands must be enabled.
 
 LTE-M / NB-IoT switching
 ************************
@@ -107,14 +107,12 @@ The build targets of interest for Thingy:91 in |NCS| are as follows:
 +---------------+---------------------------------------------------+
 |Component      |  Build target                                     |
 +===============+===================================================+
-|nRF9160 SiP    |``thingy91_nrf9160`` for the secure version        |
-|               |                                                   |
-|               |``thingy91_nrf9160_ns`` for the non-secure version |
+|nRF9160 SiP    |``thingy91_nrf9160_ns``                            |
 +---------------+---------------------------------------------------+
 |nRF52840 SoC   |``thingy91_nrf52840``                              |
 +---------------+---------------------------------------------------+
 
-You must use the build target ``thingy91_nrf9160`` or ``thingy91_nrf9160_ns`` when building the application code for the nRF9160 SiP and the build target ``thingy91_nrf52840`` when building the application code for the onboard nRF52840 SoC.
+You must use the build target ``thingy91_nrf9160_ns`` when building the application code for the nRF9160 SiP and the build target ``thingy91_nrf52840`` when building the application code for the onboard nRF52840 SoC.
 
 .. note::
 
@@ -170,9 +168,9 @@ Building and programming using |VSC|
 
 Complete the following steps after installing the |nRFVSC|:
 
-.. |sample_path_vsc| replace:: :file:`samples/nrf9160/cloud_client`
+.. |sample_path_vsc| replace:: :file:`ncs/nrf/applications/asset_tracker_v2`
 
-.. |vsc_sample_board_target_line| replace:: you must use the build target ``thingy91_nrf9160`` or ``thingy91_nrf9160_ns`` when building the application code for the nRF9160 SiP and the build target ``thingy91_nrf52840`` when building the application code for the onboard nRF52840 SoC.
+.. |vsc_sample_board_target_line| replace:: you must use the build target ``thingy91_nrf9160_ns`` when building the application code for the nRF9160 SiP and the build target ``thingy91_nrf52840`` when building the application code for the onboard nRF52840 SoC
 
 .. include:: /includes/vsc_build_and_run.txt
 
@@ -205,35 +203,11 @@ Complete the following steps after installing the |nRFVSC|:
 Building and programming on the command line
 ============================================
 
-Complete the :ref:`command-line build setup <build_environment_cli>` before you start building |NCS| projects on the command line.
+.. |cmd_folder_path| replace:: on the nRF9160 SiP component and ``ncs/nrf/applications/connectivity_bridge`` when building the source code for the :ref:`connectivity_bridge` application on the nRF52840 SoC component
 
-To build and program the source code from the command line, complete the following steps:
+.. |cmd_build_target| replace:: ``thingy91_nrf9160_ns`` if building for the nRF9160 SiP component and ``thingy91_nrf52840`` if building for the nRF52840 SoC component
 
-1. Open a terminal window.
-#. Go to the specific sample or application directory.
-   For example, the folder path is ``ncs/nrf/applications/asset_tracker_v2`` when building the source code for the :ref:`asset_tracker_v2` application on the nRF9160 SiP component and ``ncs/nrf/applications/connectivity_bridge`` when building the source code for the :ref:`connectivity_bridge` application on the nRF52840 SoC component.
-
-#. Make sure that you have the required version of the |NCS| repository by pulling the |NCS| repository, `sdk-nrf`_ on GitHub using the procedures described in :ref:`dm-wf-get-ncs` and :ref:`dm-wf-update-ncs`.
-
-#. To get the rest of the dependencies, run the ``west update`` command as follows:
-
-   .. code-block:: console
-
-      west update
-
-#. To build the sample or application code, run the ``west build`` command as follows:
-
-   .. parsed-literal::
-      :class: highlight
-
-      west build -b *build_target* -d *destination_directory_name*
-
-   The parameter *build_target* should be ``thingy91_nrf9160`` or ``thingy91_nrf9160_ns`` if building for the nRF9160 SiP component and ``thingy91_nrf52840`` if building for the nRF52840 SoC component.
-
-   .. note::
-
-	   The parameter *destination_directory_name* can be used to optionally specify the destination directory in the west command.
-	   Unless a *destination_directory_name* is specified, the build files are automatically generated in ``build/zephyr/``.
+.. include:: /includes/cmd_build_and_run.txt
 
 #. Program the application:
 
@@ -246,6 +220,6 @@ To build and program the source code from the command line, complete the followi
 
       .. code-block:: console
 
-       west flash
+          west flash
 
-      The device will reset and run the programmed sample or application.
+      The device resets and runs the programmed sample or application.
