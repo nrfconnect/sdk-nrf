@@ -31,7 +31,8 @@ However, P-GPS should not be used for general use cases that already work with :
    When using two-week ephemeris prediction sets, the TTFF towards the end of the second week will increase due to the accumulated errors in the predictions and the decrease in the number of satellite ephemerides in the later prediction periods.
 
 P-GPS requires a cloud connection approximately once a week, depending on the configuration settings.
-A-GPS requires a cloud connection each time.
+A-GPS assistance data expires after two hours.
+A-GPS downloads new assistance data from the cloud to replace expired data when your application requests a position fix.
 
 A device can use P-GPS together with A-GPS.
 This provides the following advantages:
@@ -48,10 +49,19 @@ This is possible as long as the stored P-GPS data is still valid, and the curren
 Configuration
 *************
 
-Configure the following options to enable or disable the use of this library:
+Configure the following option to enable or disable the use of this library:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS`
-* :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` or :kconfig:option:`CONFIG_NRF_CLOUD_REST`
+
+Configure one of the following to control the network transport for P-GPS requests and responses:
+
+* :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT`
+* :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE`
+
+Configure one of the following to control the network transport for downloading P-GPS predictions:
+
+* :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP`
+* :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_CUSTOM`
 
 Configure these additional options to refine the behavior of P-GPS:
 
@@ -80,18 +90,16 @@ There are three ways to define this storage location:
 
 * To use a dedicated partition, enable the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION` option.
 * To use the MCUboot secondary partition as storage, enable the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_MCUBOOT_SECONDARY` option.
-
-  Use this option if the flash memory for your application is too full to use a dedicated partition, but the application uses MCUboot for FOTA updates but not for MCUboot itself.
-  Do not use this option if you are using MCUboot as a second-stage upgradable bootloader and also have FOTA updates enabled for MCUboot itself, and not just the application (using :kconfig:option:`CONFIG_SECURE_BOOT` and :kconfig:option:`CONFIG_BUILD_S1_VARIANT`).
-  The P-GPS library will otherwise prevent the MCUboot update from fully completing, and the first-stage immutable bootloader will revert MCUboot to its previous image.
-
+   Use this option if the flash memory for your application is too full to use a dedicated partition, and the application uses MCUboot for FOTA updates but not for MCUboot itself.
+   Do not use this option if you are using MCUboot as a second-stage upgradable bootloader and also have FOTA updates enabled for MCUboot itself, not just the application (using :kconfig:option:`CONFIG_SECURE_BOOT` and :kconfig:option:`CONFIG_BUILD_S1_VARIANT`).
+   The P-GPS library will otherwise prevent the MCUboot update from fully completing, and the first-stage immutable bootloader will revert MCUboot to its previous image.
 * To use an application-specific storage, enable the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_CUSTOM` option.
-  You must also pass the address and the size of your custom location in the flash memory to the :c:func:`nrf_cloud_pgps_init` function.
+   You must also pass the address and the size of your custom location in the flash memory to the :c:func:`nrf_cloud_pgps_init` function.
 
-  .. note::
-     The address must be aligned to a flash page boundary, and the size must be equal to or greater than 2048 bytes times the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` option.
+   .. note::
+      The address must be aligned to a flash page boundary, and the size must be equal to or greater than 2048 bytes times the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS` option.
 
-  Use this third option if you do not use MCUboot and if you want complete control over where to store P-GPS data in the flash memory.
+   Use the third option if you do not use MCUboot and you want complete control over where to store P-GPS data in the flash memory.
 
 See :ref:`configure_application` for information on how to change configuration options.
 
@@ -118,36 +126,60 @@ Time
 
 The proper operation of the P-GPS subsystem depends on an accurate sense of time.
 For use cases where a cloud connection can be established easily, use the :ref:`lib_date_time` library with NTP enabled.
-Otherwise, a battery-backed real-time clock calendar chip must be used so that accurate time is available regardless of cloud availability after reset.
+Otherwise, use a battery-backed real-time clock calendar chip so that accurate time is available regardless of cloud availability after reset.
+
+Transport mechanisms
+********************
+
+Complete these three steps to request and store P-GPS data in the device:
+
+1. Send the request to `nRF Cloud`_.
+#. Receive a URL from nRF Cloud pointing to the prediction set.
+#. Download the predictions from the URL.
+
+The first two steps use the network transport defined by the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT` option.
+
+The default configuration selects the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT` option if the :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` option is active.
+MQTT use is built into the P-GPS library.
+
+The library uses REST or other transports by means of the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE` option.
+REST support is not built into the P-GPS library and must be provided by the application.
+The :ref:`gnss_sample` sample is one example of using REST.
+
+The third step uses the network transport defined by the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT` option.
+
+The P-GPS library uses the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP` option when using MQTT for the main transport.
+Applications that use REST for the main transport usually use the HTTP option for the download transport.
+This download transport is built into the P-GPS library.
+
+Alternatively, use the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_CUSTOM` with :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE` to manage the full flow of data outside of the P-GPS library.
+Call the following functions when using this configuration:
+
+1. :c:func:`nrf_cloud_pgps_begin_update`
+#. :c:func:`nrf_cloud_pgps_process_update`
+#. :c:func:`nrf_cloud_pgps_finish_update`
 
 Requesting and processing P-GPS data
 ************************************
 
-P-GPS data can be requested from the cloud using one of the following methods:
+The library offers two different ways to control the timing of P-GPS cloud requests:
 
-* Directly:
+* Direct:
 
-  * If :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` is enabled:
+  * If :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_MQTT` is enabled:
 
    * Call the function :c:func:`nrf_cloud_pgps_request_all` to request a full set of predictions.
-   * Pass a properly initialized :c:struct:`gps_pgps_request` structure to the :c:func:`nrf_cloud_pgps_request` function.
+   * Alternatively, pass a properly initialized :c:struct:`gps_pgps_request` structure to the :c:func:`nrf_cloud_pgps_request` function.
 
-  * If :kconfig:option:`CONFIG_NRF_CLOUD_REST` is enabled:
+  * If :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE` and :kconfig:option:`CONFIG_NRF_CLOUD_REST` are enabled:
 
    * Pass a properly initialized :c:struct:`nrf_cloud_rest_pgps_request` structure to the :c:func:`nrf_cloud_rest_pgps_data_get` function.
    * Pass the response to the :c:func:`nrf_cloud_pgps_process` function.
    * If either call fails, call the :c:func:`nrf_cloud_pgps_request_reset` function.
 
-* Indirectly:
+* Indirect:
 
-  * If :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` is enabled:
-
-   * Call :c:func:`nrf_cloud_pgps_init`, with no valid predictions present in flash, or with some or all of the predictions expired.
-   * Call :c:func:`nrf_cloud_pgps_preemptive_updates`.
-   * Call :c:func:`nrf_cloud_pgps_notify_prediction`.
-
-  * If :kconfig:option:`CONFIG_NRF_CLOUD_REST` is enabled:
-
+   * Call :c:func:`nrf_cloud_pgps_init`.
    * Call :c:func:`nrf_cloud_pgps_preemptive_updates`.
    * Call :c:func:`nrf_cloud_pgps_notify_prediction`.
 
@@ -155,8 +187,9 @@ The indirect methods are used in the :ref:`asset_tracker_v2` application.
 They are simpler to use than the direct methods.
 The direct method is used in the :ref:`gnss_sample` sample.
 
-When nRF Cloud responds with the requested P-GPS data, the application's :c:func:`cloud_evt_handler_t` function must call the :c:func:`nrf_cloud_pgps_process` function when it receives the :c:enum:`CLOUD_EVT_DATA_RECEIVED` event.
-The function parses the data and stores it.
+When nRF Cloud responds with the requested P-GPS data, the library sends the :c:enum:`CLOUD_EVT_DATA_RECEIVED` event.
+The application's :c:func:`cloud_evt_handler_t` function receives this event.
+The handler calls the :c:func:`nrf_cloud_pgps_process` function that parses the data and stores it.
 
 Finding a prediction and injecting to modem
 *******************************************

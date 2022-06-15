@@ -49,7 +49,7 @@ static K_SEM_DEFINE(pgps_active, 1, 1);
 static struct download_client dlc;
 static int socket_retries_left;
 static npgps_buffer_handler_t buffer_handler;
-
+static npgps_eot_handler_t eot_handler;
 
 static int download_client_callback(const struct download_client_evt *event);
 static int settings_set(const char *key, size_t len_rd,
@@ -97,6 +97,26 @@ static int settings_set(const char *key, size_t len_rd,
 		}
 	}
 	return -ENOTSUP;
+}
+
+/* Only allow one download; fail if one is already underway */
+int npgps_lock(void)
+{
+	int err = k_sem_take(&pgps_active, K_NO_WAIT);
+
+	if (!err) {
+		LOG_DBG("pgps_active LOCKED");
+	} else {
+		LOG_ERR("Unable to lock pgps_active: %d", err);
+	}
+	return err;
+}
+
+/* Download is over; allow another download */
+void npgps_unlock(void)
+{
+	k_sem_give(&pgps_active);
+	LOG_DBG("pgps_active UNLOCKED");
 }
 
 int npgps_save_header(struct nrf_cloud_pgps_header *header)
@@ -346,13 +366,13 @@ void npgps_print_blocks(void)
 	char map[num_blocks + 1];
 	int i;
 
-	LOG_INF("num blocks:%u, size:%u, first_free:%d", num_blocks,
+	LOG_DBG("num_blocks:%u, size:%u, first_free:%d", num_blocks,
 		BLOCK_SIZE, pool.first_free);
 	for (i = 0; i < num_blocks; i++) {
 		map[i] = pool.block_used[i] ? '1' : '0';
 	}
 	map[i] = '\0';
-	LOG_INF("map:%s", log_strdup(map));
+	LOG_DBG("map:%s", log_strdup(map));
 }
 
 
@@ -430,10 +450,12 @@ void *npgps_block_to_pointer(int block)
 	return ret;
 }
 
-int npgps_download_init(npgps_buffer_handler_t handler)
+int npgps_download_init(npgps_buffer_handler_t buf_handler, npgps_eot_handler_t end_handler)
 {
-	__ASSERT(handler != NULL, "must specify handler");
-	buffer_handler = handler;
+	__ASSERT(buf_handler != NULL, "Must specify buffer handler");
+	__ASSERT(end_handler != NULL, "Must specify end of transfer handler");
+	buffer_handler = buf_handler;
+	eot_handler = end_handler;
 
 	return download_client_init(&dlc, download_client_callback);
 }
@@ -447,13 +469,6 @@ int npgps_download_start(const char *host, const char *file, int sec_tag,
 
 	int err;
 
-	err = k_sem_take(&pgps_active, K_NO_WAIT);
-	if (err) {
-		LOG_ERR("PGPS download already active.");
-		return err;
-	}
-	LOG_DBG("pgps_active LOCKED");
-
 	socket_retries_left = SOCKET_RETRIES;
 
 	struct download_client_cfg config = {
@@ -465,21 +480,16 @@ int npgps_download_start(const char *host, const char *file, int sec_tag,
 
 	err = download_client_connect(&dlc, host, &config);
 	if (err != 0) {
-		goto cleanup;
+		return err;
 	}
 
 	err = download_client_start(&dlc, file, 0);
 	if (err != 0) {
 		download_client_disconnect(&dlc);
-		goto cleanup;
+		return err;
 	}
 
 	return 0;
-
-cleanup:
-	k_sem_give(&pgps_active);
-	LOG_DBG("pgps_active UNLOCKED");
-	return err;
 }
 
 static int download_client_callback(const struct download_client_evt *event)
@@ -526,7 +536,7 @@ static int download_client_callback(const struct download_client_evt *event)
 			"download client:%d", ret);
 		err = ret;
 	}
-	k_sem_give(&pgps_active);
-	LOG_DBG("pgps_active UNLOCKED");
+
+	eot_handler(err);
 	return err;
 }

@@ -67,7 +67,7 @@ config NRF_CLOUD_PGPS_DOWNLOAD_FRAGMENT_SIZE
 	  headers.
 
 choice NRF_CLOUD_PGPS_TRANSPORT
-	prompt "nRF Cloud P-GPS transport"
+	prompt "nRF Cloud P-GPS transport for requests and responses"
 	default NRF_CLOUD_PGPS_TRANSPORT_MQTT if NRF_CLOUD_MQTT
 	default NRF_CLOUD_PGPS_TRANSPORT_NONE
 
@@ -75,17 +75,39 @@ config NRF_CLOUD_PGPS_TRANSPORT_NONE
 	bool "Application-provided transport"
 	help
 	  Enabling this option will make the nRF Cloud P-GPS library not request
-	  data from nRF Cloud when its APIs are called. This will instead let
-	  it be up to the user to request, receive and process P-GPS data.
+	  or receive data from nRF Cloud when its APIs are called. This will
+	  instead let it be up to the user to request, receive and process P-GPS
+	  data.
 
 config NRF_CLOUD_PGPS_TRANSPORT_MQTT
 	bool "MQTT transport"
 	depends on NRF_CLOUD_MQTT
+	depends on NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP
 	help
 	  Use nRF Cloud library's MQTT implementation to send requests for P-GPS
-	  data and receive responses.
+	  data and receive responses. Responses indicate where the device can
+	  download predictions from, using the NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT.
 
 endchoice # NRF_CLOUD_PGPS_TRANSPORT
+
+choice NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT
+	prompt "nRF Cloud P-GPS download transport"
+	default NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP
+
+config NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP
+	bool "Transport P-GPS prediction data over HTTP(S)"
+	help
+	  Enabling this option will make the nRF Cloud P-GPS library use the
+	  download_client library to download prediction data.
+
+config NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_CUSTOM
+	bool "Transport P-GPS data using application-supplied transport"
+	help
+	  Enabling this option bypasses the built-in HTTP(S) transport and
+	  replaces it with an application-specific transport for downloading
+	  prediction data.
+
+endchoice # NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT
 
 config NRF_CLOUD_PGPS_SOCKET_RETRIES
 	int "Number of times to retry a P-GPS download"
