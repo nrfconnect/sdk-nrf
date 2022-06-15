@@ -38,9 +38,9 @@ zb_uint8_t zb_shell_ep_handler(zb_bufid_t bufid)
 	uint8_t ep_handler_cnt = (sizeof(zb_ep_handlers) /
 				  sizeof(zb_device_handler_t));
 
-#if defined(CONFIG_ZIGBEE_SHELL_DEBUG_CMD) && defined(CONFIG_LOG)
-	(void)(zigbee_logger_eprxzcl_ep_handler(bufid));
-#endif
+	if (IS_ENABLED(CONFIG_ZIGBEE_LOGGER_EP)) {
+		(void)(zigbee_logger_eprxzcl_ep_handler(bufid));
+	}
 
 	for (idx = 0; idx < ep_handler_cnt; idx++) {
 		if ((zb_ep_handlers[idx])(bufid) == ZB_TRUE) {
