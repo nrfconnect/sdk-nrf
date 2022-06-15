@@ -556,7 +556,7 @@ static void on_cloud_evt_ready(void)
 	nrf_cloud_ready = true;
 	sprintf(rsp_buf, "\r\n#XNRFCLOUD: %d,%d\r\n", nrf_cloud_ready, location_signify);
 	rsp_send(rsp_buf, strlen(rsp_buf));
-	at_monitor_resume(ncell_meas);
+	at_monitor_resume(&ncell_meas);
 }
 
 static void on_cloud_evt_disconnected(void)
@@ -564,7 +564,7 @@ static void on_cloud_evt_disconnected(void)
 	nrf_cloud_ready = false;
 	sprintf(rsp_buf, "\r\n#XNRFCLOUD: %d,%d\r\n", nrf_cloud_ready, location_signify);
 	rsp_send(rsp_buf, strlen(rsp_buf));
-	at_monitor_pause(ncell_meas);
+	at_monitor_pause(&ncell_meas);
 }
 
 static void on_cloud_evt_data_received(const struct nrf_cloud_data *const data)

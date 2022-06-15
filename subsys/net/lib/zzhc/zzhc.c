@@ -540,7 +540,7 @@ static int fsm(struct zzhc *ctx)
 		LOG_DBG("STATE_INIT");
 
 		zzhc_sem_init(ctx->sem, 0, 0);
-		at_monitor_resume(zzhc_monitor);
+		at_monitor_resume(&zzhc_monitor);
 		ctx->state = STATE_WAIT_FOR_REG;
 		break;
 
@@ -653,7 +653,7 @@ static int fsm(struct zzhc *ctx)
 
 		/* Clean-up */
 		disconnect(ctx);
-		at_monitor_pause(zzhc_monitor);
+		at_monitor_pause(&zzhc_monitor);
 		return -ECANCELED;
 
 	default:

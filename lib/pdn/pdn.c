@@ -478,8 +478,8 @@ static int pdn_sys_init(const struct device *unused)
 	 * and the semaphores are initialized.
 	 */
 
-	at_monitor_resume(pdn_cgev);
-	at_monitor_resume(pdn_cnec_esm);
+	at_monitor_resume(&pdn_cgev);
+	at_monitor_resume(&pdn_cnec_esm);
 
 	return 0;
 }

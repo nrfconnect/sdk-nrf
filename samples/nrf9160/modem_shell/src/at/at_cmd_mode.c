@@ -274,7 +274,7 @@ static void at_cmd_mode_bypass_cb(const struct shell *sh, uint8_t *recv, size_t 
 
 		shell_set_bypass(sh, NULL);
 		at_cmd_mode_dont_print = false;
-		at_monitor_pause(mosh_at_cmd_mode_handler);
+		at_monitor_pause(&mosh_at_cmd_mode_handler);
 		at_cmd_mode_active = false;
 		inside_quotes = false;
 		tail = 0;
@@ -320,7 +320,7 @@ int at_cmd_mode_start(const struct shell *sh)
 	at_cmd_mode_dont_print = true;
 	at_cmd_mode_active = true;
 
-	at_monitor_resume(mosh_at_cmd_mode_handler);
+	at_monitor_resume(&mosh_at_cmd_mode_handler);
 	shell_set_bypass(sh, at_cmd_mode_bypass_cb);
 
 	return 0;

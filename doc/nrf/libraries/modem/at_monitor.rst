@@ -99,7 +99,7 @@ The following code snippet shows how to define an AT monitor for ``+CEREG`` noti
 	void foo(void)
 	{
 		/* let's resume the monitor */
-		at_monitor_resume(network_registration);
+		at_monitor_resume(&network_registration);
 	}
 
 Wildcard filter

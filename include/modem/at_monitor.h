@@ -100,8 +100,10 @@ struct at_monitor_entry {
  *
  * @param mon The monitor to pause.
  */
-#define at_monitor_pause(mon) \
-	mon.flags.paused = 1
+static inline void at_monitor_pause(struct at_monitor_entry *mon)
+{
+	mon->flags.paused = true;
+}
 
 /**
  * @brief Resume monitor.
@@ -110,8 +112,10 @@ struct at_monitor_entry {
  *
  * @param mon The monitor to resume.
  */
-#define at_monitor_resume(mon) \
-	mon.flags.paused = 0
+static inline void at_monitor_resume(struct at_monitor_entry *mon)
+{
+	mon->flags.paused = false;
+}
 
 /** @} */
 

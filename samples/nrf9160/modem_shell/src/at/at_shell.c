@@ -91,10 +91,10 @@ int at_shell(const struct shell *shell, size_t argc, char **argv)
 	char *command = argv[1];
 
 	if (!strcmp(command, "events_enable")) {
-		at_monitor_resume(mosh_at_handler);
+		at_monitor_resume(&mosh_at_handler);
 		mosh_print("AT command events enabled");
 	} else if (!strcmp(command, "events_disable")) {
-		at_monitor_pause(mosh_at_handler);
+		at_monitor_pause(&mosh_at_handler);
 		mosh_print("AT command events disabled");
 	} else {
 		err = nrf_modem_at_cmd(response, sizeof(response), "%s", command);
