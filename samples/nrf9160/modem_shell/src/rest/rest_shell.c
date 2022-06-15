@@ -41,7 +41,7 @@ static const char rest_shell_cmd_usage_str[] =
 	"  -l, --resp_len,      Length of the buffer reserved for the REST response\n"
 	"                       (default: 1024 bytes)\n"
 	"  -k, --keepalive,     Keep socket connection alive for upcoming requests\n"
-	"                       towards the ame server (default: false)\n"
+	"                       towards the same server (default: false)\n"
 	"      --print_headers, Print HTTP headers of the response\n"
 	"  -i, --sckt_id,       Use existing socket id (default: create a new connection)\n";
 
@@ -287,13 +287,15 @@ int rest_shell(const struct shell *shell, size_t argc, char **argv)
 		mosh_print(
 			"Response:\n"
 			"  Socket ID: %d (sckt closed: %s)\n"
-			"  HTTP status: %d\n"
+			"  HTTP status: %d (%s)\n"
 			"  Headers/Body/Total length: %d/%d/%d\n\n"
 			"%.*s"
 			"%s",
 			resp_ctx.used_socket_id,
 			(resp_ctx.used_socket_is_alive) ? "no" : "yes",
 			resp_ctx.http_status_code,
+			(resp_ctx.http_status_code) ? resp_ctx.http_status_code_str :
+				"No response / timeout",
 			headers_len,
 			resp_ctx.response_len,
 			resp_ctx.total_response_len,
