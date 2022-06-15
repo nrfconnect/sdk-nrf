@@ -354,10 +354,12 @@ int rest_client_request(struct rest_client_req_context *req_ctx,
 	}
 
 	if (!resp_ctx->response || !resp_ctx->response_len) {
+		char *end_ptr = &req_ctx->resp_buff[resp_ctx->total_response_len];
+
 		LOG_WRN("No data in a response body");
 		/* Make it as zero length string */
-		*req_ctx->resp_buff = '\0';
-		resp_ctx->response = req_ctx->resp_buff;
+		*end_ptr = '\0';
+		resp_ctx->response = end_ptr;
 		resp_ctx->response_len = 0;
 	}
 	LOG_DBG("API call response len: http status: %d, %u bytes", resp_ctx->http_status_code,
