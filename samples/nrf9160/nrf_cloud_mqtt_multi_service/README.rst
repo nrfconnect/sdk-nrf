@@ -7,7 +7,7 @@ nRF9160: nRF Cloud MQTT multi-service
    :local:
    :depth: 2
 
-This sample is a minimal, error tolerant, integrated demonstration of the :ref:`nrf_cloud <lib_nrf_cloud>`, :ref:`location <lib_location>`, and :ref:`AT Host <lib_at_host>` libraries.
+This sample is a minimal, error tolerant, integrated demonstration of the :ref:`lib_nrf_cloud`, :ref:`lib_location`, and :ref:`lib_at_host` libraries.
 It demonstrates how you can use these libraries together to support Firmware-Over-The-Air (FOTA), location services, modem AT commands over UART, and periodic sensor samples in your `nRF Cloud`_-enabled application.
 It also demonstrates how to implement error tolerance in your cellular applications without relying on reboot loops.
 
@@ -153,14 +153,11 @@ Location tracking
 
 All matters concerning location tracking are handled in the :file:`src/location_tracking.c` file.
 For the most part, this amounts to setting up a periodic location request, and then passing the results to a callback configured by the :file:`src/application.c` file.
-Additionally, the following two tasks are performed:
 
-* The :ref:`lib_location` library requires GPS assistance data (either A-GPS, P-GPS, or both) to have the fastest possible `time-to-first-fix <TTFF_>`_.
-  The library requests this data automatically, but has no way to automatically receive the response.
-  Therefore, all MQTT messages received from `nRF Cloud`_ must be be passed directly through to the :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` libraries to be checked for A-GPS and P-GPS data, respectively.
-  The :c:func:`location_assistance_data_handler` function handles this task, and MQTT messages are sent directly to it from the :file:`src/connection.c` file.
-* The GNSS module cannot obtain a fix without the antenna first being properly configured.
-  This configuration is performed by the :c:func:`gnss_antenna_configure` function.
+Additionally, the :ref:`lib_location` library requires GPS assistance data (either A-GPS, P-GPS, or both) to have the fastest possible `time-to-first-fix <TTFF_>`_.
+The library requests this data automatically, but has no way to automatically receive the response.
+Therefore, all MQTT messages received from `nRF Cloud`_ must be be passed directly through to the :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` libraries to be checked for A-GPS and P-GPS data, respectively.
+The :c:func:`location_assistance_data_handler` function handles this task, and MQTT messages are sent directly to it from the :file:`src/connection.c` file.
 
 .. note::
   For location readings to be visible in the nRF Cloud portal, they must be marked as enabled in the `Device Shadow <nRF Cloud Device Shadows_>`_.
@@ -213,6 +210,15 @@ If you disable both GNSS and cellular-based location tracking, location tracking
   MQTT should only be used with applications that need to stay connected constantly or transfer data frequently.
   While this sample does allow its core features to be slowed or completely disabled, in real-world applications, you should carefully consider your data throughput and whether MQTT is an appropriate solution.
   If you want to disable or excessively slow all of these features for a real-world application, other solutions, such as the `nRF Cloud Rest API`_, may be more appropriate.
+
+Customizing GNSS antenna configuration
+======================================
+
+This sample uses the :ref:`lib_modem_antenna` library, which is enabled by default for builds targeting either the ``nrf9160dk_nrf9160_ns`` or ``thingy91_nrf9160_ns`` board names.
+
+If you are using a different board or build target, or would like to use a custom or external GNSS antenna, see the :ref:`lib_modem_antenna` library documentation for configuration instructions.
+
+Enable :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` to use an external antenna.
 
 Useful debugging options
 ========================
@@ -317,36 +323,6 @@ CONFIG_SENSOR_SAMPLE_INTERVAL_SECONDS - Sensor sampling interval (seconds)
    If you significantly increase the sampling interval, you must keep the :kconfig:option:`CONFIG_MQTT_KEEPALIVE` short to avoid the carrier silently closing the MQTT connection due to inactivity, which could result in dropped device messages.
    The exact maximum value depends on your carrier.
    In general, a few minutes or less should work well.
-
-.. _CONFIG_GNSS_ANTENNA_ONBOARD:
-
-CONFIG_GNSS_ANTENNA_ONBOARD - Select the onboard GNSS antenna (default)
-   This option enables the onboard GNSS antenna.
-
-.. _CONFIG_GNSS_ANTENNA_EXTERNAL:
-
-CONFIG_GNSS_ANTENNA_EXTERNAL - Select an external GNSS antenna
-   This option enables the external GNSS antenna.
-
-.. _CONFIG_GNSS_AT_MAGPIO:
-
-CONFIG_GNSS_AT_MAGPIO - ``AT%XMAGPIO`` command
-   Sets the ``AT%XMAGPIO`` command to be sent to the GNSS module.
-   This command must be sent for GNSS to function properly.
-
-   A reasonable value is automatically selected for this option based on the build target.
-   You should never have to mess with it yourself unless you are using a non-standard board or custom GNSS antenna.
-   See `nRF9160 SiP pin configuration`_ for more details.
-
-.. _CONFIG_GNSS_AT_COEX0:
-
-CONFIG_GNSS_AT_COEX0 - ``AT%XCOEX0`` command
-   Sets the ``AT%XCOEX0`` command to be sent to the GNSS module.
-   This command must be sent for GNSS to function properly.
-
-   A reasonable value is automatically selected for this option based on the build target and selected antenna configuration.
-   You should never have to mess with it yourself unless you are using a non-standard board or custom GNSS antenna.
-   See `nRF9160 SiP pin configuration`_ for more details.
 
 .. _CONFIG_GNSS_FIX_TIMEOUT_SECONDS:
 
