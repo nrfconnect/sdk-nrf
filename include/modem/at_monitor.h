@@ -22,6 +22,7 @@ extern "C" {
 #endif
 
 #include <stddef.h>
+#include <stdbool.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/util_macro.h>
 #include <zephyr/toolchain/common.h>
@@ -41,20 +42,10 @@ struct at_monitor_entry {
 	const char *filter;
 	/** Monitor callback. */
 	const at_monitor_handler_t handler;
-	/** Whether monitor is paused. */
-	bool paused;
-};
-
-/**
- * @brief AT monitor entry (ISR).
- */
-struct at_monitor_isr_entry {
-	/** The filter for this monitor. */
-	const char *filter;
-	/** Monitor callback. */
-	const at_monitor_handler_t handler;
-	/** Whether monitor is paused. */
-	bool paused;
+	struct {
+		uint8_t paused : 1; /* Monitor is paused. */
+		uint8_t direct : 1; /* Dispatch in ISR. */
+	} flags;
 };
 
 /** Wildcard. Match any notifications. */
@@ -76,10 +67,11 @@ struct at_monitor_isr_entry {
  */
 #define AT_MONITOR(name, _filter, _handler, ...)                                                   \
 	static void _handler(const char *);                                                        \
-	STRUCT_SECTION_ITERABLE(at_monitor_entry, at_monitor_##name) = {                           \
+	STRUCT_SECTION_ITERABLE(at_monitor_entry, name) = {                                        \
 		.filter = _filter,                                                                 \
 		.handler = _handler,                                                               \
-		COND_CODE_1(__VA_ARGS__, (.paused = __VA_ARGS__,), ())                             \
+		.flags.direct = false,                                                             \
+		COND_CODE_1(__VA_ARGS__, (.flags.paused = __VA_ARGS__,), ())                       \
 	}
 
 /**
@@ -94,10 +86,11 @@ struct at_monitor_isr_entry {
  */
 #define AT_MONITOR_ISR(name, _filter, _handler, ...)                                               \
 	static void _handler(const char *);                                                        \
-	STRUCT_SECTION_ITERABLE(at_monitor_isr_entry, at_monitor_##name) = {                       \
+	STRUCT_SECTION_ITERABLE(at_monitor_entry, name) = {                                        \
 		.filter = _filter,                                                                 \
 		.handler = _handler,                                                               \
-		COND_CODE_1(__VA_ARGS__, (.paused = __VA_ARGS__,), ())                             \
+		.flags.direct = true,                                                              \
+		COND_CODE_1(__VA_ARGS__, (.flags.paused = __VA_ARGS__,), ())                       \
 	}
 
 /**
@@ -108,7 +101,7 @@ struct at_monitor_isr_entry {
  * @param mon The monitor to pause.
  */
 #define at_monitor_pause(mon) \
-	at_monitor_##mon.paused = 1
+	mon.flags.paused = 1
 
 /**
  * @brief Resume monitor.
@@ -118,7 +111,7 @@ struct at_monitor_isr_entry {
  * @param mon The monitor to resume.
  */
 #define at_monitor_resume(mon) \
-	at_monitor_##mon.paused = 0
+	mon.flags.paused = 0
 
 /** @} */
 
