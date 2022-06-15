@@ -116,7 +116,10 @@ enum nrf_cloud_pgps_event_type {
 	PGPS_EVT_UNAVAILABLE,
 	/** P-GPS predictions are being loaded from the cloud. */
 	PGPS_EVT_LOADING,
-	/** A P-GPS prediction is available now for the current date and time. */
+	/** A P-GPS prediction is available now for the current date and time.
+	 *  The prediction pointer in the associated nrf_cloud_pgps_event
+	 *  structure points to the prediction.
+	 */
 	PGPS_EVT_AVAILABLE,
 	/** All P-GPS predictions are available. */
 	PGPS_EVT_READY,
@@ -216,8 +219,8 @@ int nrf_cloud_pgps_notify_prediction(void);
  */
 int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction);
 
-#if defined(CONFIG_NRF_CLOUD_MQTT)
 /**@brief Requests specified P-GPS data from nRF Cloud via MQTT.
+ * Not used for other transports.
  *
  * @param request Pointer to structure specifying what P-GPS data is desired.
  * The request may fail if there no cloud connection; if the specified GPS
@@ -232,21 +235,63 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
 int nrf_cloud_pgps_request(const struct gps_pgps_request *request);
 
 /**@brief Requests all available P-GPS data from nRF Cloud via MQTT.
+ * Not used for other transports.
  *
  * @return 0 if successful, otherwise a (negative) error code.
  */
 int nrf_cloud_pgps_request_all(void);
-#endif /* CONFIG_NRF_CLOUD_MQTT */
 
-#if defined(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE)
+/**@brief Use this function when you use a custom transport mechanism for downloading prediction
+ * data. When your pgps_event_handler_t receives a PGPS_EVT_REQUEST event, send
+ * the P-GPS request to the cloud over your transport, then call this function.
+ * This function resets the internal state of the library and prepares the flash storage to receive
+ * incoming data.
+ *
+ * The library calls this automatically for HTTP(S) transports.
+ *
+ * @retval 0 Ready for updating.
+ * @retval -ENOMEM No free space in P-GPS flash storage area.
+ * @retval -EBUSY P-GPS download already in progress.
+ * @retval -ENODEV Flash device is not ready.
+ * @retval -EFAULT Error accessing flash stream.
+ * @return a negative value indicates an error.
+ */
+int nrf_cloud_pgps_begin_update(void);
+
+/**@brief Call this function when your transport receives a block of prediction
+ * data. Prediction data must be received in file order.
+ *
+ * The library calls this automatically for HTTP(S) transports.
+ *
+ * @param buf Pointer to P-GPS data received from transport.
+ * @param len Size of P-GPS data chunk received from transport.
+ * @retval 0 Buffer processed.
+ * @retval -EINVAL Invalid parameter to function or invalid header in P-GPS data received.
+ * @retval -ENODATA Unable to determine current date and time.
+ * @retval -ENOMEM No free flash in P-GPS storage area.
+ * @retval -EFAULT Error writing to flash stream.
+ * @return a negative value indicates an error.
+ */
+int nrf_cloud_pgps_process_update(uint8_t *buf, size_t len);
+
+/**@brief Call this function regardless of whether the download succeeded or failed.
+ *
+ * Not needed for custom download transports.
+ *
+ * @retval 0 No failure.
+ * @return a negative value indicates an error.
+ */
+int nrf_cloud_pgps_finish_update(void);
+
 /**@brief If previous request for P-GPS data failed, re-enable future retries.
  * This is should be called by the application after it attempts to
  * handle PGPS_EVT_REQUEST, but is unable to complete it successfully. For
  * example, it should be called if the cloud connection being used to transmit
  * the request is temporarily unavailable.
+ *
+ * No need to call when using the MQTT transport.
  */
 void nrf_cloud_pgps_request_reset(void);
-#endif
 
 /**@brief Processes binary P-GPS data received from nRF Cloud over MQTT or REST.
  *

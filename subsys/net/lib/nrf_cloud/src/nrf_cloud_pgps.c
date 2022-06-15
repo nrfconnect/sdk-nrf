@@ -92,7 +92,7 @@ static uint8_t *write_buf;
 static uint32_t flash_page_size;
 
 static uint8_t prediction_buf[PGPS_PREDICTION_STORAGE_SIZE];
-static bool ignore_packets;
+static atomic_t accept_packets;
 static atomic_t pgps_need_assistance;
 
 static int validate_stored_predictions(uint16_t *bad_day, uint32_t *bad_time);
@@ -347,7 +347,7 @@ static void discard_oldest_predictions(int num)
 	 * have some free, if a previous attempt to replace expired
 	 * predictions failed (e.g., due to lack of LTE connection)
 	 */
-	LOG_INF("discarding %d", last);
+	LOG_DBG("Discarding %d", last);
 
 	for (pnum = 0; pnum < last; pnum++) {
 		block = npgps_pointer_to_block((uint8_t *)index.predictions[pnum]);
@@ -428,7 +428,7 @@ int nrf_cloud_pgps_notify_prediction(void)
 	} else if ((err >= 0) && (err < NUM_PREDICTIONS)) {
 		pnum = err;
 		err = 0;
-		LOG_INF("Found P-GPS prediction %d", pnum);
+		LOG_DBG("Found P-GPS prediction %d", pnum);
 		pgps_need_assistance = false;
 		/* the application should now send data to modem with
 		 * nrf_cloud_pgps_inject()
@@ -446,7 +446,7 @@ static void prediction_work_handler(struct k_work *work)
 	struct nrf_cloud_pgps_prediction *p;
 	int ret;
 
-	LOG_INF("prediction is expiring; finding next");
+	LOG_DBG("Prediction is expiring; finding next");
 	ret = nrf_cloud_pgps_find_prediction(&p);
 	if (ret >= 0) {
 		LOG_DBG("found prediction %d; injecting to modem", ret);
@@ -454,7 +454,7 @@ static void prediction_work_handler(struct k_work *work)
 		if (ret) {
 			LOG_ERR("Error injecting prediction:%d", ret);
 		} else {
-			LOG_INF("Next prediction injected successfully.");
+			LOG_DBG("Next prediction injected successfully.");
 		}
 	}
 }
@@ -481,7 +481,7 @@ static void start_expiration_timer(int pnum, int64_t cur_gps_sec)
 	 */
 	if (delta > 0) {
 		k_timer_start(&prediction_timer, K_SECONDS(delta), K_NO_WAIT);
-		LOG_INF("injecting next prediction in %d seconds", (int32_t)delta);
+		LOG_DBG("Injecting next prediction in %d seconds", (int32_t)delta);
 	} else {
 		LOG_ERR("cannot start prediction expiration timer; delta = %d", (int32_t)delta);
 	}
@@ -492,7 +492,7 @@ static void print_time_details(const char *info,
 {
 	uint32_t tow = (day % DAYS_PER_WEEK) * SEC_PER_DAY + time_of_day;
 
-	LOG_INF("%s GPS sec:%u, day:%u, time of day:%u, week:%u, "
+	LOG_DBG("%s GPS sec:%u, day:%u, time of day:%u, week:%u, "
 		"day of week:%u, time of week:%u, toe:%u",
 		info ? info : "", (uint32_t)sec, day, time_of_day,
 		(uint32_t)(day / DAYS_PER_WEEK), (uint32_t)(day % DAYS_PER_WEEK),
@@ -557,7 +557,7 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
 	offset_sec = cur_gps_sec - start_sec;
 
 	print_time_details("First stored prediction:", start_sec, start_day, start_time);
-	LOG_INF("current offset into prediction set, sec:%d", (int32_t)offset_sec);
+	LOG_DBG("Current offset into prediction set, sec:%d", (int32_t)offset_sec);
 
 	if (offset_sec < 0) {
 		/* current time must be unknown or very inaccurate; it
@@ -582,7 +582,7 @@ int nrf_cloud_pgps_find_prediction(struct nrf_cloud_pgps_prediction **prediction
 		}
 	}
 
-	LOG_INF("Selected prediction num:%d", pnum);
+	LOG_DBG("Selected prediction num:%d", pnum);
 	index.cur_pnum = pnum;
 	*prediction = index.predictions[pnum];
 	if (*prediction) {
@@ -611,31 +611,37 @@ bool nrf_cloud_pgps_loading(void)
 		(state == PGPS_LOADING));
 }
 
-#if defined(CONFIG_NRF_CLOUD_MQTT)
 int nrf_cloud_pgps_request(const struct gps_pgps_request *request)
 {
-	if (nfsm_get_current_state() != STATE_DC_CONNECTED) {
-		return -EACCES;
-	}
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
+		if (nfsm_get_current_state() != STATE_DC_CONNECTED) {
+			return -EACCES;
+		}
 
-	return pgps_request(request);
+		return pgps_request(request);
+	} else {
+		return -ENOTSUP;
+	}
 }
 
 int nrf_cloud_pgps_request_all(void)
 {
-	return pgps_request_all();
-}
-#endif /* CONFIG_NRF_CLOUD_MQTT */
-
-#if defined(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE)
-void nrf_cloud_pgps_request_reset(void)
-{
-	if (state == PGPS_REQUESTING) {
-		LOG_INF("Allowing another request");
-		state = PGPS_REQUEST_NEEDED;
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
+		return pgps_request_all();
+	} else {
+		return -ENOTSUP;
 	}
 }
-#endif
+
+void nrf_cloud_pgps_request_reset(void)
+{
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE)) {
+		if (state == PGPS_REQUESTING) {
+			LOG_DBG("Allowing another request");
+			state = PGPS_REQUEST_NEEDED;
+		}
+	}
+}
 
 static int pgps_request(const struct gps_pgps_request *request)
 {
@@ -659,7 +665,7 @@ static int pgps_request(const struct gps_pgps_request *request)
 	}
 
 	index.expected_count = request->prediction_count;
-	ignore_packets = false;
+	accept_packets = true;
 
 #if defined(CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE)
 	struct nrf_cloud_pgps_event evt = {
@@ -783,6 +789,65 @@ static int pgps_request_all(void)
 	return pgps_request(&request);
 }
 
+#if defined(CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP)
+/* handle incoming P-GPS response packets */
+int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
+{
+	static char host[CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE];
+	static char path[CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE];
+	int err;
+	struct nrf_cloud_pgps_result pgps_dl = {
+		.host = host,
+		.host_sz = sizeof(host),
+		.path = path,
+		.path_sz = sizeof(path)
+	};
+
+	if (state == PGPS_NONE) {
+		LOG_ERR("P-GPS subsystem is not initialized.");
+		return -EINVAL;
+	}
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+	LOG_HEXDUMP_DBG(buf, buf_len, "MQTT packet");
+#endif
+	if (!buf_len) {
+		LOG_ERR("Zero length packet received");
+		state = PGPS_NONE;
+		return -EINVAL;
+	}
+
+	if (!accept_packets) {
+		LOG_ERR("Ignoring packet; P-GPS response already received.");
+		LOG_HEXDUMP_INF(buf, buf_len, "Unexpected packet");
+		return -EINVAL;
+	}
+
+	err = nrf_cloud_parse_pgps_response(buf, &pgps_dl);
+	if (err) {
+		return err;
+	}
+
+	err = nrf_cloud_pgps_begin_update();
+	if (err) {
+		return err;
+	}
+
+	int sec_tag = SEC_TAG;
+
+	if (FORCE_HTTP_DL && (strncmp(pgps_dl.host, "https", 5) == 0)) {
+		memmove(&pgps_dl.host[4], &pgps_dl.host[5], strlen(&pgps_dl.host[4]));
+		sec_tag = -1;
+	}
+
+	err =  npgps_download_start(pgps_dl.host, pgps_dl.path, sec_tag, 0, FRAGMENT_SIZE);
+	if (err) {
+		state = PGPS_NONE;
+	}
+
+	return err;
+}
+#endif /* CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP */
+
 int nrf_cloud_pgps_preemptive_updates(void)
 {
 	/* keep unexpired, read newer subsequent to last */
@@ -819,7 +884,7 @@ int nrf_cloud_pgps_preemptive_updates(void)
 		evt_handler(&evt);
 	}
 
-	LOG_INF("Replacing %d oldest predictions; %d already free",
+	LOG_DBG("Replacing %d oldest predictions; %d already free",
 		current, npgps_num_free());
 
 	if (current >= n) {
@@ -913,7 +978,7 @@ int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
 		}
 		/* it is ok to ignore this err in the function return below */
 	} else {
-		LOG_INF("GPS unit does not need time assistance.");
+		LOG_DBG("GPS unit does not need time assistance.");
 	}
 
 	const struct gps_location *saved_location = npgps_get_saved_location();
@@ -949,7 +1014,7 @@ int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
 	} else if (remainder.data_flags & NRF_MODEM_GNSS_AGPS_POSITION_REQUEST) {
 		LOG_WRN("GPS unit needs location, but it is unknown!");
 	} else {
-		LOG_INF("GPS unit does not need location assistance.");
+		LOG_DBG("GPS unit does not need location assistance.");
 	}
 
 	if (remainder.sv_mask_ephe) {
@@ -966,7 +1031,7 @@ int nrf_cloud_pgps_inject(struct nrf_cloud_pgps_prediction *p,
 			ret = err;
 		}
 	} else {
-		LOG_INF("GPS unit does not need ephemerides.");
+		LOG_DBG("GPS unit does not need ephemerides.");
 	}
 	return ret; /* just return last non-zero error, if any */
 }
@@ -989,7 +1054,7 @@ static int flash_callback(uint8_t *buf, size_t len, size_t offset)
 		LOG_HEXDUMP_ERR(buf, len, "block dump");
 		err = -ENODATA;
 	} else {
-		LOG_INF("Block at offset:0x%zX len %zu: written", offset, len);
+		LOG_DBG("Block at offset:0x%zX len %zu: written", offset, len);
 		err = 0;
 	}
 	return err;
@@ -1090,11 +1155,15 @@ static int flush_storage(void)
 	return stream_flash_buffered_write(&stream, NULL, 0, true);
 }
 
-static int process_buffer(uint8_t *buf, size_t len)
+int nrf_cloud_pgps_process_update(uint8_t *buf, size_t len)
 {
 	int err;
 	size_t need;
 	int64_t gps_sec;
+
+	if (buf == NULL) {
+		return -EINVAL;
+	}
 
 	if (index.dl_offset == 0) {
 		struct nrf_cloud_pgps_header *header;
@@ -1107,7 +1176,7 @@ static int process_buffer(uint8_t *buf, size_t len)
 		if (err) {
 			return err;
 		}
-		LOG_INF("Storing P-GPS header");
+		LOG_DBG("Storing P-GPS header");
 		header = (struct nrf_cloud_pgps_header *)buf;
 		cache_pgps_header(header);
 
@@ -1116,7 +1185,7 @@ static int process_buffer(uint8_t *buf, size_t len)
 		if (!err) {
 			if ((index.start_sec <= gps_sec) &&
 			    (gps_sec <= index.end_sec)) {
-				LOG_INF("Received data covers good timeframe");
+				LOG_DBG("Received data covers good timeframe");
 			} else {
 				if (index.start_sec > gps_sec) {
 					LOG_ERR("Received data is not within required "
@@ -1184,7 +1253,7 @@ static int consume_pgps_header(const char *buf, size_t buf_len)
 	}
 
 	if (index.partial_request) {
-		LOG_INF("Partial request; starting at prediction num:%u", index.pnum_offset);
+		LOG_DBG("Partial request; starting at prediction num:%u", index.pnum_offset);
 
 		/* fix up header with full set info */
 		header->prediction_count = index.header.prediction_count;
@@ -1272,7 +1341,7 @@ static int consume_pgps_data(uint8_t pnum, const char *buf, size_t buf_len)
 		size_t element_size = get_next_pgps_element(&element, element_ptr);
 
 		if (element_size == 0) {
-			LOG_INF("  End of element");
+			LOG_DBG("  End of element");
 			break;
 		}
 		switch (element.type) {
@@ -1290,7 +1359,7 @@ static int consume_pgps_data(uint8_t pnum, const char *buf, size_t buf_len)
 				}
 			}
 			if (empty) {
-				LOG_INF("Marking ephemeris:%u as empty",
+				LOG_DBG("Marking ephemeris:%u as empty",
 					element.ephemeris->sv_id);
 				element.ephemeris->health = NRF_CLOUD_PGPS_EMPTY_EPHEM_HEALTH;
 			}
@@ -1359,7 +1428,7 @@ static int consume_pgps_data(uint8_t pnum, const char *buf, size_t buf_len)
 			index.storage_extent--;
 			if (index.storage_extent == 0) {
 				index.storage_extent = npgps_get_block_extent(index.store_block);
-				LOG_INF("Moving to new flash region:%d, len:%d",
+				LOG_DBG("Moving to new flash region:%d, len:%d",
 					index.store_block, index.storage_extent);
 				err = flush_storage();
 				if (err) {
@@ -1383,47 +1452,24 @@ static int consume_pgps_data(uint8_t pnum, const char *buf, size_t buf_len)
 	return 0;
 }
 
-/* handle incoming P-GPS packets */
-int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
+int nrf_cloud_pgps_begin_update(void)
 {
-	static char host[CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE];
-	static char path[CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE];
-	static uint8_t prev_pnum;
-	uint8_t pnum;
 	int err;
-	struct nrf_cloud_pgps_result pgps_dl = {
-		.host = host,
-		.host_sz = sizeof(host),
-		.path = path,
-		.path_sz = sizeof(path)
-	};
 
-	if (state == PGPS_NONE) {
-		LOG_ERR("P-GPS subsystem is not initialized.");
-		return -EINVAL;
-	}
-#if defined(CONFIG_NRF_CLOUD_MQTT)
-	LOG_HEXDUMP_DBG(buf, buf_len, "MQTT packet");
-#endif
-	if (!buf_len) {
-		LOG_ERR("Zero length packet received");
-		state = PGPS_NONE;
-		return -EINVAL;
-	}
-
-	if (ignore_packets) {
-		LOG_ERR("IGNORING PACKETS");
-		LOG_HEXDUMP_INF(buf, buf_len, "Unexpected packet");
-		return -EINVAL;
-	}
-
-	err = nrf_cloud_parse_pgps_response(buf, &pgps_dl);
+	/* If CONFIG_NRF_CLOUD_DOWNLOAD_TRANSPORT_CUSTOM is enabled,
+	 * the application must call the function
+	 * nrf_cloud_pgps_finish_update() regardless of whether the
+	 * download was successful or not.
+	 * The HTTP transport calls this function directly; no external call
+	 * necessary.
+	 */
+	err = npgps_lock();
 	if (err) {
+		LOG_ERR("PGPS download already active.");
 		return err;
 	}
 
 	state = PGPS_LOADING;
-	prev_pnum = 0xff;
 	if (!index.partial_request) {
 		index.header.prediction_count = NUM_PREDICTIONS;
 		index.header.prediction_period_min = PREDICTION_PERIOD;
@@ -1431,7 +1477,7 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 			index.header.prediction_period_min * SEC_PER_MIN;
 		memset(index.predictions, 0, sizeof(index.predictions));
 	} else {
-		for (pnum = index.pnum_offset;
+		for (uint8_t pnum = index.pnum_offset;
 		     pnum < index.expected_count + index.pnum_offset; pnum++) {
 			index.predictions[pnum] = NULL;
 		}
@@ -1441,38 +1487,47 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 	if (index.store_block == NO_BLOCK) {
 		LOG_ERR("No free flash space!");
 		state = PGPS_NONE;
+		npgps_unlock();
 		return -ENOMEM;
 	}
 	index.storage_extent = npgps_get_block_extent(index.store_block);
-	LOG_INF("opening storage at block:%d, len:%d", index.store_block,
+	LOG_DBG("Opening storage at block:%d, len:%d", index.store_block,
 		index.storage_extent);
 	err = open_storage(npgps_block_to_offset(index.store_block),
 			   index.partial_request);
 	if (err) {
 		state = PGPS_NONE;
+		npgps_unlock();
 		return err;
 	}
 
 	index.dl_offset = 0;
-	ignore_packets = true;
-	int sec_tag = SEC_TAG;
+	accept_packets = false;
+	LOG_DBG("Ready for updated P-GPS data");
 
-	if (FORCE_HTTP_DL && (strncmp(pgps_dl.host, "https", 5) == 0)) {
-		int i;
-		int len = strlen(pgps_dl.host);
+	return 0;
+}
 
-		for (i = 4; i < len; i++) {
-			pgps_dl.host[i] = pgps_dl.host[i + 1];
+int nrf_cloud_pgps_finish_update(void)
+{
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_CUSTOM)) {
+		npgps_unlock();
+		return 0;
+	}
+	/* HTTP transport calls this internally; no need for external call */
+	return -ENOTSUP;
+}
+
+static void end_transfer_handler(int transfer_result)
+{
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP)) {
+		if (transfer_result == 0) {
+			LOG_DBG("Download completed without error.");
+		} else {
+			LOG_ERR("Download failed: %d", transfer_result);
 		}
-		sec_tag = -1;
+		nrf_cloud_pgps_finish_update();
 	}
-
-	err =  npgps_download_start(pgps_dl.host, pgps_dl.path, sec_tag, 0, FRAGMENT_SIZE);
-	if (err) {
-		state = PGPS_NONE;
-	}
-
-	return err;
 }
 
 int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
@@ -1545,11 +1600,13 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 	memset(&index, 0, sizeof(index));
 	(void)npgps_settings_init();
 
-	err = npgps_download_init(process_buffer);
+#if defined(CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP)
+	err = npgps_download_init(nrf_cloud_pgps_process_update, end_transfer_handler);
 	if (err) {
 		LOG_ERR("Error initializing download client:%d", err);
 		return err;
 	}
+#endif
 
 	state = PGPS_INITIALIZING;
 
@@ -1638,7 +1695,7 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 		state = PGPS_READY;
 		LOG_INF("P-GPS data is up to date.");
 		if (evt_handler) {
-			evt.type = PGPS_EVT_READY;
+			evt.type = PGPS_EVT_AVAILABLE;
 			evt.prediction = found_prediction;
 			evt_handler(&evt);
 		}

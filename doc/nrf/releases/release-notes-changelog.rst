@@ -538,6 +538,7 @@ Modem libraries
 
     * Changed timeout parameters' type from uint16_t to int32_t, unit from seconds to milliseconds, and value to disable them from 0 to SYS_FOREVER_MS.
       This change is done to align with Zephyr's style for timeouts.
+    * Fixed an issue with P-GPS predictions not being used to speed up GNSS when first downloaded.
 
   * :ref:`modem_info_readme` library:
 
@@ -594,6 +595,14 @@ Libraries for networking
   * :ref:`lib_nrf_cloud_rest` library:
 
     * Updated the :c:func:`nrf_cloud_rest_send_location` function to accept a :c:struct `nrf_cloud_gnss_data` pointer instead of an NMEA sentence.
+
+  * :ref:`lib_nrf_cloud_pgps` library:
+
+    * Reduced logging level for many messages to DBG.
+    * Added the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP`, and :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_CUSTOM` Kconfig options.
+    * Added the :c:func:`nrf_cloud_pgps_begin_update` function that prepares the P-GPS subsystem to receive downloads from a custom transport.
+    * Added the :c:func:`nrf_cloud_pgps_process_update` function that stores a portion of a P-GPS download to flash.
+    * Added the :c:func:`nrf_cloud_pgps_finish_update` function that a user of the P-GPS library calls when the custom download completes.
 
 Libraries for NFC
 -----------------

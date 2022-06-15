@@ -17,6 +17,7 @@
 LOG_MODULE_REGISTER(location_tracking, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
 
 static location_update_cb_t location_update_handler;
+static bool location_initialized;
 
 void location_assistance_data_handler(const char *buf, size_t len)
 {
@@ -33,6 +34,11 @@ void location_assistance_data_handler(const char *buf, size_t len)
 	 * to the modem by nrf_cloud_agps_process.
 	 */
 	int err;
+
+	if (!location_initialized) {
+		LOG_DBG("Received data but not ready for it.");
+		return;
+	}
 
 	/* First, try to process the payload as A-GPS data, if AGPS is enabled */
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_AGPS)) {
@@ -117,6 +123,7 @@ int start_location_tracking(location_update_cb_t handler_cb, int interval)
 		LOG_ERR("Initializing the Location library failed, error: %d", err);
 		return err;
 	}
+	location_initialized = true;
 
 	/* Construct a request for a periodic location report. */
 	struct location_config config;
