@@ -61,6 +61,7 @@ static void rest_client_http_response_cb(struct http_response *rsp,
 		}
 		resp_ctx->http_status_code = rsp->http_status_code;
 		resp_ctx->response_len = rsp->processed;
+		strcpy(resp_ctx->http_status_code_str, rsp->http_status);
 
 		LOG_DBG("HTTP: All data received (content/total: %d/%d), status: %u %s",
 			resp_ctx->response_len,
@@ -292,6 +293,7 @@ static int rest_client_do_api_call(struct http_request *http_req,
 	resp_ctx->response_len = 0;
 	resp_ctx->total_response_len = 0;
 	resp_ctx->used_socket_id = req_ctx->connect_socket;
+	resp_ctx->http_status_code_str[0] = '\0';
 
 	err = http_client_req(req_ctx->connect_socket, http_req, req_ctx->timeout_ms, resp_ctx);
 	if (err < 0) {

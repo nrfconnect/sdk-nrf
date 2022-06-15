@@ -18,6 +18,7 @@
 #define REST_CLIENT_H__
 
 #include <zephyr/kernel.h>
+#include <zephyr/net/http_client.h>
 #include <zephyr/net/http_parser.h>
 
 /** @brief TLS is not used. */
@@ -112,6 +113,12 @@ struct rest_client_resp_context {
 
 	/** Numeric HTTP status code. */
 	uint16_t http_status_code;
+
+	/** HTTP status code as a textual description, i.e. the reason-phrase element.
+	 * https://tools.ietf.org/html/rfc7230#section-3.1.2
+	 * Copied here from http_status[] of http_response.
+	 */
+	char http_status_code_str[HTTP_STATUS_STR_SIZE];
 
 	/** Used socket identifier. Use this for keepalive connections as
 	 *  connect_socket for upcoming requests.
