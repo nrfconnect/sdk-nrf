@@ -99,6 +99,10 @@ nRF9160: Asset Tracker v2
 
     * The default value of the GNSS timeout in the application's :ref:`Real-time configurations <real_time_configs>` is now 30 seconds.
 
+  * Fixed:
+
+    * An issue that reports GNSS altitude, accuracy, and speed incorrectly when using LwM2M engine.
+
 nRF9160: Serial LTE modem
 -------------------------
 
