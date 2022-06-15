@@ -50,7 +50,6 @@ enum nrf_cloud_rest_agps_req_type {
 	NRF_CLOUD_REST_AGPS_REQ_UNSPECIFIED,
 };
 
-#define NRF_CLOUD_REST_TIMEOUT_MINIMUM		(5000)
 #define NRF_CLOUD_REST_TIMEOUT_NONE		(SYS_FOREVER_MS)
 
 /** @brief Parameters and data for using the nRF Cloud REST API */
@@ -65,11 +64,10 @@ struct nrf_cloud_rest_context {
 	 * being closed.
 	 */
 	bool keep_alive;
-	/** Timeout value, in milliseconds, for receiving response data.
-	 * Minimum timeout value specified by NRF_CLOUD_REST_TIMEOUT_MINIMUM.
+	/** Timeout value, in milliseconds, for REST request. The timeout is set individually
+	 * for socket connection creation and data transfer meaning REST request can take
+	 * longer than this given timeout.
 	 * For no timeout, set to NRF_CLOUD_REST_TIMEOUT_NONE.
-	 * @note This parameter is currently not used; set
-	 * CONFIG_REST_CLIENT_SCKT_RECV_TIMEOUT instead.
 	 */
 	int32_t timeout_ms;
 	/** Authentication string: JWT @ref modem_jwt.
