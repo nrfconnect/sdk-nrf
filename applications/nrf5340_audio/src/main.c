@@ -176,11 +176,6 @@ void main(void)
 	ret = power_module_init();
 	ERR_CHK(ret);
 
-	ret = audio_sync_timer_init();
-	ERR_CHK(ret);
-
-	audio_sync_timer_sync_evt_send();
-
 	/* Initialize BLE, with callback for when BLE is ready */
 	ret = ble_core_init(on_ble_core_ready);
 	ERR_CHK(ret);

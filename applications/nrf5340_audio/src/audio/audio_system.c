@@ -21,7 +21,7 @@
 #include "audio_usb.h"
 #include "streamctrl.h"
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_system, CONFIG_LOG_AUDIO_SYSTEM_LEVEL);
 
 #define FIFO_TX_BLOCK_COUNT (CONFIG_FIFO_FRAME_SPLIT_NUM * CONFIG_FIFO_TX_FRAME_COUNT)
