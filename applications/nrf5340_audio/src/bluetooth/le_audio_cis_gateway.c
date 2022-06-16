@@ -167,7 +167,7 @@ static void add_remote_sink(struct bt_audio_ep *ep, uint8_t index)
 
 static void add_remote_codec(struct bt_codec *codec, int index, uint8_t type)
 {
-	if (type != BT_AUDIO_SINK && type != BT_AUDIO_SOURCE) {
+	if (type != BT_AUDIO_DIR_SINK && type != BT_AUDIO_DIR_SOURCE) {
 		return;
 	}
 
@@ -187,15 +187,15 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 	}
 
 	if (codec != NULL) {
-		add_remote_codec(codec, params->num_caps, params->type);
+		add_remote_codec(codec, params->num_caps, params->dir);
 		return;
 	}
 
 	if (ep != NULL) {
-		if (params->type == BT_AUDIO_SINK) {
+		if (params->dir == BT_AUDIO_DIR_SINK) {
 			add_remote_sink(ep, params->num_eps);
 		} else {
-			LOG_ERR("Invalid param type: %u", params->type);
+			LOG_ERR("Invalid param type: %u", params->dir);
 		}
 
 		return;
@@ -345,7 +345,7 @@ static void security_changed_cb(struct bt_conn *conn, bt_security_t level, enum 
 		static struct bt_audio_discover_params dis_params;
 
 		dis_params.func = discover_sink_cb;
-		dis_params.type = BT_AUDIO_SINK;
+		dis_params.dir = BT_AUDIO_DIR_SINK;
 
 		ret = bt_audio_discover(default_conn, &dis_params);
 		if (ret) {

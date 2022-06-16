@@ -38,10 +38,9 @@ static const struct bt_data ad[] = {
 static struct bt_audio_capability_ops lc3_cap_codec_ops;
 static struct bt_codec lc3_codec =
 	BT_CODEC_LC3(BT_CODEC_LC3_FREQ_ANY, BT_CODEC_LC3_DURATION_10, CHANNEL_COUNT_1, 40u, 120u,
-		     1u, (BT_AUDIO_CONTEXT_TYPE_CONVERSATIONAL | BT_AUDIO_CONTEXT_TYPE_MEDIA),
-		     BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
+		     1u, BT_AUDIO_CONTEXT_TYPE_MEDIA, BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
 static struct bt_audio_capability caps = {
-	.type = BT_AUDIO_SINK,
+	.dir = BT_AUDIO_DIR_SINK,
 	.pref = BT_AUDIO_CAPABILITY_PREF(
 		BT_AUDIO_CAPABILITY_UNFRAMED_SUPPORTED, BT_GAP_LE_PHY_2M, BLE_ISO_RETRANSMITS,
 		BLE_ISO_LATENCY_MS, BLE_ISO_PRSENTATION_DELAY_MIN_US,
@@ -74,7 +73,7 @@ static void print_codec(const struct bt_codec *codec)
 }
 
 static struct bt_audio_stream *lc3_cap_config_cb(struct bt_conn *conn, struct bt_audio_ep *ep,
-						 enum bt_audio_pac_type type,
+						 enum bt_audio_dir dir,
 						 struct bt_audio_capability *cap,
 						 struct bt_codec *codec)
 {
@@ -258,11 +257,21 @@ static int initialize(le_audio_receive_cb recv_cb)
 			LOG_ERR("Capability register failed");
 			return ret;
 		}
-		ret = bt_audio_capability_set_location(BT_AUDIO_SINK, BT_AUDIO_LOCATION_SIDE_LEFT);
+		ret = bt_audio_capability_set_location(BT_AUDIO_DIR_SINK,
+						       BT_AUDIO_LOCATION_SIDE_LEFT);
 		if (ret) {
 			LOG_ERR("Location set failed");
 			return ret;
 		}
+
+		ret = bt_audio_capability_set_available_contexts(
+			BT_AUDIO_DIR_SINK,
+			BT_AUDIO_CONTEXT_TYPE_MEDIA | BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
+		if (ret) {
+			LOG_ERR("Available contexte set failed");
+			return ret;
+		}
+
 		bt_audio_stream_cb_register(&audio_stream, &stream_ops);
 		initialized = true;
 	}
