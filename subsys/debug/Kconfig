@@ -4,5 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+menu "Debug"
+
 rsource "ppi_trace/Kconfig"
 rsource "cpu_load/Kconfig"
+
+endmenu
