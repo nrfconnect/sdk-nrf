@@ -262,7 +262,7 @@ Complete the following steps to get started with Edge Impulse:
 
 1. Go to the `Edge Impulse`_ website.
 #. Create a free Edge Impulse account.
-#. Follow the instructions in the `Nordic Semi nRF5340 DK page`_.
+#. Follow the instructions in the `Nordic Semi Thingy:53 page`_.
 
 Next steps
 **********
