@@ -20,13 +20,11 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(bis_headset, CONFIG_LOG_BLE_LEVEL);
 
-static le_audio_receive_cb receive_cb;
-static bool init_routine_completed;
+BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT <= 1,
+	     "Only one stream is currently supported");
 
 static struct bt_audio_broadcast_sink *broadcast_sink;
 
-BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT <= 1,
-	     "Only one stream is currently supported");
 static struct bt_audio_stream streams[CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT];
 
 static struct bt_audio_lc3_preset lc3_preset = BT_AUDIO_LC3_BROADCAST_PRESET_48_4_1;
@@ -37,6 +35,9 @@ static struct bt_audio_lc3_preset lc3_preset = BT_AUDIO_LC3_BROADCAST_PRESET_48_
  */
 static const uint32_t bis_index_mask = BIT_MASK(ARRAY_SIZE(streams) + 1U);
 static uint32_t bis_index_bitfield;
+
+static le_audio_receive_cb receive_cb;
+static bool init_routine_completed;
 
 static int bis_headset_cleanup(bool from_sync_lost_cb);
 

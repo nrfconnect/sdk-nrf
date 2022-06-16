@@ -20,7 +20,9 @@ LOG_MODULE_REGISTER(cis_gateway, CONFIG_LOG_BLE_LEVEL);
 #define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO                                                  \
 	BT_AUDIO_LC3_PRESET(BT_CODEC_LC3_CONFIG_48_4,                                              \
 			    BT_CODEC_LC3_QOS_10_UNFRAMED(120u, 2u, 20u, 10000u))
+
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
+/* For being able to dynamically define iso_tx_pools */
 #define NET_BUF_POOL_ITERATE(i, _)                                                                 \
 	NET_BUF_POOL_FIXED_DEFINE(iso_tx_pool_##i, HCI_ISO_BUF_ALLOC_PER_CHAN,                     \
 				  BT_ISO_SDU_BUF_SIZE(CONFIG_BT_ISO_TX_MTU), 8, NULL);
@@ -39,12 +41,39 @@ static struct bt_audio_stream audio_stream;
 static struct bt_audio_unicast_group *unicast_group;
 static struct bt_codec *remote_codecs[CONFIG_BT_AUDIO_UNICAST_CLIENT_PAC_COUNT];
 static struct bt_audio_ep *sinks[CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SNK_COUNT];
+/* clang-format off */
 static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ISO_MAX_CHAN,
-						       NET_BUF_POOL_PTR_ITERATE, (, )) };
+						       NET_BUF_POOL_PTR_ITERATE, (,)) };
+/* clang-format on */
 static struct bt_audio_lc3_preset lc3_preset_unicast_nrf5340 =
 	BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO;
 
+static atomic_t iso_tx_pool_alloc[CONFIG_BT_ISO_MAX_CHAN];
+
 static void ble_acl_start_scan(void);
+
+static bool is_iso_buffer_full(uint8_t idx)
+{
+	/* net_buf_alloc allocates buffers for APP->NET transfer over HCI RPMsg,
+	 * but when these buffers are released it is not guaranteed that the
+	 * data has actually been sent. The data might be qued on the NET core,
+	 * and this can cause delays in the audio.
+	 * When stream_sent_cb() is called the data has been sent.
+	 * Data will be discarded if allocation becomes too high, to avoid audio delays.
+	 * If the NET and APP core operates in clock sync, discarding should not occur.
+	 */
+
+	if (atomic_get(&iso_tx_pool_alloc[idx]) >= HCI_ISO_BUF_ALLOC_PER_CHAN) {
+		return true;
+	}
+
+	return false;
+}
+
+static void stream_sent_cb(struct bt_audio_stream *stream)
+{
+	atomic_dec(&iso_tx_pool_alloc[0]);
+}
 
 static void stream_configured_cb(struct bt_audio_stream *stream,
 				 const struct bt_codec_qos_pref *pref)
@@ -106,6 +135,8 @@ static void stream_stopped_cb(struct bt_audio_stream *stream)
 
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 	ERR_CHK(ret);
+
+	atomic_clear(&iso_tx_pool_alloc[0]);
 }
 
 static void stream_released_cb(struct bt_audio_stream *stream)
@@ -114,6 +145,7 @@ static void stream_released_cb(struct bt_audio_stream *stream)
 }
 
 static struct bt_audio_stream_ops stream_ops = {
+	.sent = stream_sent_cb,
 	.configured = stream_configured_cb,
 	.qos_set = stream_qos_set_cb,
 	.enabled = stream_enabled_cb,
@@ -381,18 +413,39 @@ int le_audio_pause(void)
 int le_audio_send(uint8_t const *const data, size_t size)
 {
 	int ret;
+	static bool wrn_printed[CONFIG_BT_ISO_MAX_CHAN];
 	struct net_buf *buf;
 
+	if (is_iso_buffer_full(0)) {
+		if (!wrn_printed[0]) {
+			LOG_WRN("HCI ISO TX overrun on ch %d - Single print", 0);
+			wrn_printed[0] = true;
+		}
+
+		return -ENOMEM;
+	}
+
+	wrn_printed[0] = false;
+
 	buf = net_buf_alloc(iso_tx_pools[0], K_NO_WAIT);
+	if (buf == NULL) {
+		/* This should never occur because of the is_iso_buffer_full() check */
+		LOG_WRN("Out of TX buffers");
+		return -ENOMEM;
+	}
+
 	net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
 
 	//TODO: Handling dual channel sending properly
 	net_buf_add_mem(buf, data, 120);
 
+	atomic_inc(&iso_tx_pool_alloc[0]);
+
 	ret = bt_audio_stream_send(&audio_stream, buf);
 	if (ret < 0) {
 		LOG_WRN("Failed to send audio data: %d", ret);
 		net_buf_unref(buf);
+		atomic_dec(&iso_tx_pool_alloc[0]);
 	}
 
 	return 0;
