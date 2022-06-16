@@ -76,7 +76,7 @@ config LTE_PSM_REQ_RAT
 		And 3GPP 24.008 Ch. 10.5.7.3 for data format.
 
 config LTE_EDRX_REQ
-	bool "Enable requesting use of eDRX."
+	bool "Enable requesting use of eDRX"
 	help
 		Enable request for use of eDRX using AT+CEDRXS.
 		For reference, see 3GPP 27.007 Ch. 7.40.

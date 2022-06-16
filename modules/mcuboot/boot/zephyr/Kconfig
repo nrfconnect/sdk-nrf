@@ -30,7 +30,7 @@ config PM_PARTITION_SIZE_MCUBOOT
 	depends on BOOT_USE_MIN_PARTITION_SIZE && !BOOT_NRF_EXTERNAL_CRYPTO
 
 config PM_PARTITION_SIZE_MCUBOOT
-	hex "Flash space allocated for the MCUboot partition." if !BOOT_USE_MIN_PARTITION_SIZE
+	hex "Flash space allocated for the MCUboot partition" if !BOOT_USE_MIN_PARTITION_SIZE
 	default 0xc000
 	help
 	  Flash space set aside for the MCUboot partition.

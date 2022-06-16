@@ -12,14 +12,14 @@ config SECURE_BOOT_VALIDATION
 	depends on SECURE_BOOT_CRYPTO
 
 config SB_VALIDATION_INFO_MAGIC
-	hex "Magic word used for validation info structs (32 bits)."
+	hex "Magic word used for validation info structs (32 bits)"
 	default 0x86518483
 	help
 	  Magic word value specific to validation info structs (after firmware).
 	  For more info, see FW_INFO_MAGIC_COMMON.
 
 config SB_VALIDATION_POINTER_MAGIC
-	hex "Magic word used for validation info pointer structs (32 bits)."
+	hex "Magic word used for validation info pointer structs (32 bits)"
 	default 0x6919b47e
 	help
 	  Magic word value specific to validation info pointer structs.
@@ -35,7 +35,7 @@ config SB_VALIDATION_INFO_CRYPTO_ID
 	  For more info, see FW_INFO_MAGIC_COMMON.
 
 config SB_VALIDATION_INFO_VERSION
-	int "Version number of the fw_validation_info* structs (8 bits)."
+	int "Version number of the fw_validation_info* structs (8 bits)"
 	range 0 255
 	default 2
 	help
@@ -43,7 +43,7 @@ config SB_VALIDATION_INFO_VERSION
 	  For more info, see FW_INFO_MAGIC_COMMON.
 
 config SB_VALIDATION_METADATA_OFFSET
-	int "Offset at which to store validation metadata."
+	int "Offset at which to store validation metadata"
 	default 0
 	help
 	  Must be either 0 or larger than the size of the application. If 0,

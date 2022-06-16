@@ -127,7 +127,7 @@ config AZURE_IOT_HUB_MQTT_RX_TX_BUFFER_LEN
 	  MQTT (exluding MQTT PUBLISH payload).
 
 config AZURE_IOT_HUB_MQTT_PAYLOAD_BUFFER_LEN
-	int "Size of the MQTT PUBLISH payload buffer (receiving MQTT messages)."
+	int "Size of the MQTT PUBLISH payload buffer (receiving MQTT messages)"
 	default 2048 if NRF_MODEM_LIB
 	default 4096
 

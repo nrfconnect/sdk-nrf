@@ -26,7 +26,7 @@ config DOWNLOAD_FILE_FOTA_TEST_TO_BASE
 	   modem firmware version.
 
 config DOWNLOAD_HOST
-	string "Host part of URL to download files."
+	string "Host part of URL to download files"
 
 config SUPPORTED_BASE_VERSION
 	string "Supported base version"

@@ -46,11 +46,11 @@ config BUTTON_EVENT_BTN_NUM
 	default 1
 
 config MQTT_RECONNECT_DELAY_S
-	int "Seconds to delay before attempting to reconnect to the broker."
+	int "Seconds to delay before attempting to reconnect to the broker"
 	default 60
 
 config LTE_CONNECT_RETRY_DELAY_S
-	int "Seconds to delay before attempting to retry LTE connection."
+	int "Seconds to delay before attempting to retry LTE connection"
 	default 120
 
 config MQTT_TLS_SEC_TAG
