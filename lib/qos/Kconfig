@@ -26,8 +26,8 @@ config QOS_MESSAGE_NOTIFY_TIMEOUT_SECONDS
 	  How often the library will notify unACKed messages flagged with
 	  QOS_FLAG_RELIABILITY_ACK_REQUIRED
 
-endif # QOS
-
 module = QOS
 module-str = QoS
 source "subsys/logging/Kconfig.template.log_config"
+
+endif # QOS
