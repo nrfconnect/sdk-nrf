@@ -105,11 +105,6 @@ Check and configure the following Kconfig options for the sample:
 CONFIG_GNSS_SAMPLE_NMEA_ONLY - To enable NMEA-only output mode
    The NMEA-only output mode can be used for example with 3rd party tools to visualize the GNSS output.
 
-.. _CONFIG_GNSS_SAMPLE_ANTENNA_EXTERNAL:
-
-CONFIG_GNSS_SAMPLE_ANTENNA_EXTERNAL - To use an external GNSS antenna
-   This configuration option should be enabled if an external GNSS antenna is used, so that the Low Noise Amplifier (LNA) can be configured accordingly.
-
 .. _CONFIG_GNSS_SAMPLE_ASSISTANCE_NRF_CLOUD:
 
 CONFIG_GNSS_SAMPLE_ASSISTANCE_NRF_CLOUD - To use nRF Cloud A-GPS
