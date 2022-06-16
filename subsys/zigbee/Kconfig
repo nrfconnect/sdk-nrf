@@ -120,7 +120,7 @@ choice
 		depends on REBOOT
 
 	config ZBOSS_HALT_ON_ASSERT
-		bool "Halt device when a ZBOSS assert occurs. Use only for testing and debugging."
+		bool "Halt device when a ZBOSS assert occurs. Use only for testing and debugging"
 
 endchoice
 

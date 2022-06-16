@@ -17,7 +17,7 @@ menu "nRF DM (Distance Measurement)"
 
 choice NRF_DM_TIMER
 	default NRF_DM_TIMER2
-	prompt "Timer to use for the nrf_dm library."
+	prompt "Timer to use for the nrf_dm library"
 
 config NRF_DM_TIMER0
 	depends on HAS_HW_NRF_TIMER0
@@ -99,7 +99,7 @@ config DM_TIMESLOT_QUEUE_LENGTH
 	  "The maximum number of timeslots that can be scheduled."
 
 config DM_TIMESLOT_QUEUE_COUNT_SAME_PEER
-	int "The number of the same peer in the queue."
+	int "The number of the same peer in the queue"
 	default 10
 	help
 	  "The maximum number of timeslots that can be scheduled for a single peer."

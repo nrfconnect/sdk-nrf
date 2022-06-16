@@ -14,25 +14,25 @@ menuconfig BT_SCAN
 if BT_SCAN
 
 config BT_SCAN_NAME_MAX_LEN
-	int "Maximum size for the name to search in the advertisement report."
+	int "Maximum size for the name to search in the advertisement report"
 	default 32
 	help
 	  "Maximum size for the name to search in the advertisement report."
 
 config BT_SCAN_SHORT_NAME_MAX_LEN
-	int "Maximum size of the short name to search for in the advertisement report."
+	int "Maximum size of the short name to search for in the advertisement report"
 	default 32
 	help
 	  Maximum size of the short name to search for in the advertisement report.
 
 config BT_SCAN_FILTER_ENABLE
-	bool "Enabling filters for the Scan library."
+	bool "Enabling filters for the Scan library"
 	default n
 	help
 	  Enabling filters for the Scan library.
 
 config BT_SCAN_MANUFACTURER_DATA_MAX_LEN
-	int "Maximum size for the manufacturer data to search in the advertisement report."
+	int "Maximum size for the manufacturer data to search in the advertisement report"
 	default 32
 	help
 	  "Maximum size for the manufacturer data to search in the advertisement report."
@@ -40,7 +40,7 @@ config BT_SCAN_MANUFACTURER_DATA_MAX_LEN
 if BT_SCAN_FILTER_ENABLE
 
 config BT_SCAN_UUID_CNT
-	int "Number of filters for UUIDs."
+	int "Number of filters for UUIDs"
 	default 0
 	help
 	  Number of filters for UUIDs

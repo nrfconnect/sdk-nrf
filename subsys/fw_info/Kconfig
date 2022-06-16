@@ -11,7 +11,7 @@ menuconfig FW_INFO
 
 if (FW_INFO)
 config FW_INFO_OFFSET
-	hex "The location of firmware info inside this firmware."
+	hex "The location of firmware info inside this firmware"
 	default 0x200
 	help
 	  The location of firmware information inside the current firmware
@@ -21,7 +21,7 @@ config FW_INFO_OFFSET
 	  is unused.
 
 config FW_INFO_FIRMWARE_VERSION
-	int "Version number of the firmware."
+	int "Version number of the firmware"
 	range 0 32766 if SB_MONOTONIC_COUNTER
 	default 1
 	help
@@ -64,7 +64,7 @@ config FW_INFO_MAGIC_EXT_API
 	  For more information, see FW_INFO_MAGIC_COMMON.
 
 config FW_INFO_HARDWARE_ID
-	int "The SoC a firmware is built to run on (8 bits)."
+	int "The SoC a firmware is built to run on (8 bits)"
 	range 0 255
 	default 51 if SOC_SERIES_NRF51X
 	default 52 if SOC_SERIES_NRF52X
@@ -89,7 +89,7 @@ config FW_INFO_CRYPTO_ID
 	default 0
 
 config FW_INFO_MAGIC_COMPATIBILITY_ID
-	int "Compatibility ID for user-defined purposes (8 bits)."
+	int "Compatibility ID for user-defined purposes (8 bits)"
 	range 0 255
 	default 0
 	help

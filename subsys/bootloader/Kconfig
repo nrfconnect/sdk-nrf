@@ -47,15 +47,15 @@ choice SB_SIGNING
 	prompt "Firmware signing method"
 	default SB_SIGNING_PYTHON
 	config SB_SIGNING_PYTHON
-		bool "Sign with Python ecdsa library."
+		bool "Sign with Python ecdsa library"
 		select SB_PRIVATE_KEY_PROVIDED
 
 	config SB_SIGNING_OPENSSL
-		bool "Sign with openssl command line tool."
+		bool "Sign with openssl command line tool"
 		select SB_PRIVATE_KEY_PROVIDED
 
 	config SB_SIGNING_CUSTOM
-		bool "Sign with custom command."
+		bool "Sign with custom command"
 endchoice
 
 config SB_SIGNING_KEY_FILE
@@ -135,7 +135,7 @@ config SB_MONOTONIC_COUNTER
 	  counter before being booted.
 
 config SB_NUM_VER_COUNTER_SLOTS
-	int "Number of monotonic counter slots used for the firmware version."
+	int "Number of monotonic counter slots used for the firmware version"
 	default 240
 	range 1 300 if SOC_NRF5340_CPUAPP || SOC_NRF9160
 	range 1 1800 if SOC_SERIES_NRF52X
@@ -204,7 +204,7 @@ choice SECURE_BOOT_DEBUG_BACKEND
 	default SECURE_BOOT_DEBUG_UART
 
 config SECURE_BOOT_DEBUG_UART
-	bool "Print to UART."
+	bool "Print to UART"
 	select UART_NRFX
 	select UART_CONSOLE
 

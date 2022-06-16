@@ -148,7 +148,7 @@ config MPSL_FEM_POWER_VOLTAGE
 	default 3000
 
 config MPSL_FEM_POWER_MODEL
-	bool "Use a model to split the requested TX power into values used to control the internal state of the FEM."
+	bool "Use a model to split the requested TX power into values used to control the internal state of the FEM"
 	default n
 	help
 	  Use a model to split the requested TX power into values used to control
@@ -164,7 +164,7 @@ config MPSL_FEM_POWER_MODEL
 if MPSL_FEM_POWER_MODEL
 
 choice MPSL_FEM_POWER_MODEL_CHOICE
-	prompt "Model used to split the requested TX power into values used to control the internal state of the FEM."
+	prompt "Model used to split the requested TX power into values used to control the internal state of the FEM"
 	optional
 	help
 	  The model which is used to split the requested TX power into values used to control

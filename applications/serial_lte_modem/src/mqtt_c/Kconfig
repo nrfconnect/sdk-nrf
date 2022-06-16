@@ -12,7 +12,7 @@ config SLM_MQTTC
 if SLM_MQTTC
 
 config SLM_MQTTC_MESSAGE_BUFFER_LEN
-	int "Size of the buffer for MQTT library."
+	int "Size of the buffer for MQTT library"
 	default 512
 	help
 	  Specifies maximum message size can be transmitted/received through

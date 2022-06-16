@@ -24,7 +24,7 @@ config GAZELL_PAIRING
 if GAZELL_PAIRING
 
 choice GAZELL_PAIRING_ROLE
-	prompt "Gazell Pairing role."
+	prompt "Gazell Pairing role"
 
 config GAZELL_PAIRING_DEVICE
 	bool "Device"
@@ -104,7 +104,7 @@ config GAZELL_LOW_IRQ_PRIO
 
 choice GAZELL_TIMER
 	default GAZELL_TIMER2
-	prompt "Timer to use for the Gazell timer."
+	prompt "Timer to use for the Gazell timer"
 
 config GAZELL_TIMER0
 	bool "TIMER0"
@@ -130,7 +130,7 @@ endchoice
 
 choice GAZELL_SWI
 	default GAZELL_SWI0
-	prompt "Software interrupt to use for Gazell event report."
+	prompt "Software interrupt to use for Gazell event report"
 
 config GAZELL_SWI0
 	bool "SWI0"

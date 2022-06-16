@@ -43,7 +43,7 @@ config APP_EVENT_MANAGER_EVENT_LOG_BUF_LEN
 	  This option is only needed for deprecated event logging approach.
 
 config APP_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN
-	bool "Allow using both logging functions current and deprecated one."
+	bool "Allow using both logging functions current and deprecated one"
 	help
 	  This option is only needed for deprecated event logging approach.
 
