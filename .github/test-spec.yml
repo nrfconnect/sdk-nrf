@@ -215,6 +215,7 @@
 "CI-rs-test":
   - "subsys/mpsl/**/*"
   - "subsys/ieee802154/**/*"
+  - "subsys/nrf_rpc/**/*"
   - "drivers/mpsl/**/*"
   - "dts/bindings/radio_fem/**/*"
   - "samples/nrf5340/multiprotocol_rpmsg/**/*"
