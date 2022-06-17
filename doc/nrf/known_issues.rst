@@ -132,13 +132,17 @@ CIA-604: ATv2 cannot be built for the ``thingy91_nrf9160_ns`` build target with 
 
 .. rst-class:: v2-0-0
 
-CIA-661: Asset Tracker v2 application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` build target with modem traces enabled
-  The :ref:`asset_tracker_v2` application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` build target with :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` enabled due to memory constraints.
+CIA-661: Asset Tracker v2 application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` build target with modem traces or memfault enabled
+  The :ref:`asset_tracker_v2` application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` build target with :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` for modem traces or ``overlay-memfault.conf`` for memfault due to memory constraints.
 
-  **Workaround:** Use one of the following workarounds:
+  **Workaround**
+
+  Use one of the following workarounds for modem traces:
 
   * Use :ref:`secure_partition_manager` instead of TF-M by setting :kconfig:option:`CONFIG_SPM` to ``y`` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n``.
   * Reduce the value of :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_TRACE_SIZE` to 8 Kb, however, this might lead to loss of modem traces.
+
+  For memfault, use :ref:`secure_partition_manager` instead of TF-M by setting :kconfig:option:`CONFIG_SPM` to ``y`` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n``.
 
 Serial LTE Modem
 ================
