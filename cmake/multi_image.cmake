@@ -75,10 +75,11 @@ else()
   endforeach()
 
   foreach(app_var_name ${application_vars})
+    string(REPLACE "\"" "\\\"" app_var_value "${${app_var_name}}")
     file(
       APPEND
       ${base_image_preload_file}
-      "set(${app_var_name} \"${${app_var_name}}\" CACHE INTERNAL \"NCS child image controlled\")\n"
+      "set(${app_var_name} \"${app_var_value}\" CACHE INTERNAL \"NCS child image controlled\")\n"
       )
   endforeach()
 
@@ -374,10 +375,11 @@ function(add_child_image_from_source)
       # '_'. We run the regex twice because it is believed that
       # list(FILTER is faster than doing a string(REGEX on each item.
       string(REGEX MATCH "^${ACI_NAME}_(.+)" unused_out_var ${var_name})
+      string(REPLACE "\"" "\\\"" var_value "${${var_name}}")
       file(
         APPEND
         ${preload_file}
-        "set(${CMAKE_MATCH_1} \"${${var_name}}\" CACHE INTERNAL \"NCS child image controlled\")\n"
+        "set(${CMAKE_MATCH_1} \"${var_value}\" CACHE INTERNAL \"NCS child image controlled\")\n"
         )
     endforeach()
   endif()
