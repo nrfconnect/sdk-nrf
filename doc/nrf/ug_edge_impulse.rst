@@ -81,12 +81,13 @@ Complete the following steps to configure the building process:
    * Any downloadable URI supported by CMake's ``file(DOWNLOAD)`` command.
      For this variant, the |NCS| build system will download the :file:`zip` file automatically during build.
      The :file:`zip` file is downloaded into your application's :file:`build` directory.
-     See `Downloading model directly from Edge Impulse studio`_ for en example.
 
-     If the URI requires providing an additional API key, you can provide it using the :c:macro:`EI_API_KEY_HEADER` CMake definition.
+     If the URI requires providing an additional API key in the HTTP header, you can provide it using the :c:macro:`EI_API_KEY_HEADER` CMake definition.
      The API key is provided using a format in which *key_name* is followed by *key_value*.
-     For example, ``api-key:aaaabbbbccccdddd``, where ``aaaabbbbccccdddd`` is a sample *key_value*.
+     For example, if the URI uses ``x-api_key`` for authentication, the :c:macro:`EI_API_KEY_HEADER` can be defined as follows: ``x-api-key:aaaabbbbccccdddd``.
+     The ``aaaabbbbccccdddd`` is a sample *key_value*.
      See :ref:`cmake_options` for more information about defining CMake options for command line builds and the |nRFVSC|.
+     See `Downloading model directly from Edge Impulse studio`_ for details about downloading model directly from the Edge Impulse studio.
 
 Downloading model directly from Edge Impulse studio
 ---------------------------------------------------
