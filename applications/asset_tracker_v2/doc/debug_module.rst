@@ -64,10 +64,16 @@ To enable Memfault, you must set the following mandatory options:
  * :kconfig:option:`CONFIG_MEMFAULT`
  * :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`
 
-To get detailed stack traces in coredumps sent to Memfault, you can increase the values for the following options:
+To get more detailed stack traces in coredumps sent to Memfault, you can increase the values of the following options:
 
- * :kconfig:option:`CONFIG_PM_PARTITION_SIZE_MEMFAULT_STORAGE` - For example, you can increase the value to ``0x30000``.
- * :kconfig:option:`CONFIG_MEMFAULT_COREDUMP_STACK_SIZE_TO_COLLECT` - For example, you can increase the value to ``8192``.
+ * :kconfig:option:`CONFIG_MEMFAULT_RAM_BACKED_COREDUMP_SIZE`
+ * :kconfig:option:`CONFIG_MEMFAULT_COREDUMP_STACK_SIZE_TO_COLLECT`
+
+Coredumps are by default stored to non-initialized RAM.
+To enable storing to flash, configure the following options:
+
+ * :kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP` - To enable storing to flash.
+ * :kconfig:option:`CONFIG_PM_PARTITION_SIZE_MEMFAULT_STORAGE` - To set the size of the coredumps storage flash partition.
 
 For extended documentation regarding |NCS| Memfault integration, see :ref:`mod_memfault` module.
 
