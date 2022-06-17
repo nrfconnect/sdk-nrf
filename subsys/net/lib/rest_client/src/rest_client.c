@@ -121,23 +121,21 @@ static int rest_client_sckt_tls_setup(int fd, const char *const tls_hostname,
 	return 0;
 }
 
-static int rest_client_sckt_timeouts_set(int fd)
+static int rest_client_sckt_timeouts_set(int fd, int32_t timeout_ms)
 {
 	int err;
 	struct timeval timeout = { 0 };
 
-	if (CONFIG_REST_CLIENT_SCKT_SEND_TIMEOUT > 0) {
+	if (timeout_ms != SYS_FOREVER_MS && timeout_ms > 0) {
 		/* Send TO also affects TCP connect */
-		timeout.tv_sec = CONFIG_REST_CLIENT_SCKT_SEND_TIMEOUT;
+		timeout.tv_sec = timeout_ms / MSEC_PER_SEC;
+		timeout.tv_usec = (timeout_ms % MSEC_PER_SEC) * USEC_PER_MSEC;
 		err = setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
 		if (err) {
 			LOG_ERR("Failed to set socket send timeout, error: %d", errno);
 			return err;
 		}
-	}
 
-	if (CONFIG_REST_CLIENT_SCKT_RECV_TIMEOUT > 0) {
-		timeout.tv_sec = CONFIG_REST_CLIENT_SCKT_RECV_TIMEOUT;
 		err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
 		if (err) {
 			LOG_ERR("Failed to set socket recv timeout, error: %d", errno);
@@ -147,10 +145,12 @@ static int rest_client_sckt_timeouts_set(int fd)
 	return 0;
 }
 
-static int rest_client_sckt_connect(int *const fd, const char *const hostname,
-				     const uint16_t port_num,
-				     const sec_tag_t sec_tag,
-				     int tls_peer_verify)
+static int rest_client_sckt_connect(int *const fd,
+				    const char *const hostname,
+				    const uint16_t port_num,
+				    const sec_tag_t sec_tag,
+				    int tls_peer_verify,
+				    int32_t timeout_ms)
 {
 	int ret;
 	struct addrinfo *addr_info;
@@ -203,7 +203,7 @@ static int rest_client_sckt_connect(int *const fd, const char *const hostname,
 		}
 	}
 
-	ret = rest_client_sckt_timeouts_set(*fd);
+	ret = rest_client_sckt_timeouts_set(*fd, timeout_ms);
 	if (ret) {
 		LOG_ERR("Failed to set socket timeouts, error: %d", errno);
 		ret = -EINVAL;
@@ -217,7 +217,11 @@ static int rest_client_sckt_connect(int *const fd, const char *const hostname,
 	ret = connect(*fd, addr_info->ai_addr, addr_info->ai_addrlen);
 	if (ret) {
 		LOG_ERR("Failed to connect socket, error: %d", errno);
-		ret = -ECONNREFUSED;
+		if (errno == ETIMEDOUT) {
+			ret = -ETIMEDOUT;
+		} else {
+			ret = -ECONNREFUSED;
+		}
 		goto clean_up;
 	}
 
@@ -269,12 +273,18 @@ static int rest_client_do_api_call(struct http_request *http_req,
 				   struct rest_client_resp_context *const resp_ctx)
 {
 	int err = 0;
+	int64_t sckt_connect_start_time;
+	int64_t sckt_connect_time;
+
+	sckt_connect_start_time = k_uptime_get();
 
 	if (req_ctx->connect_socket < 0) {
 		err = rest_client_sckt_connect(&req_ctx->connect_socket,
 						http_req->host,
 						req_ctx->port,
-						req_ctx->sec_tag, req_ctx->tls_peer_verify);
+						req_ctx->sec_tag,
+						req_ctx->tls_peer_verify,
+						req_ctx->timeout_ms);
 		if (err) {
 			return err;
 		}
@@ -294,6 +304,18 @@ static int rest_client_do_api_call(struct http_request *http_req,
 	resp_ctx->total_response_len = 0;
 	resp_ctx->used_socket_id = req_ctx->connect_socket;
 	resp_ctx->http_status_code_str[0] = '\0';
+
+	if (req_ctx->timeout_ms != SYS_FOREVER_MS) {
+		/* Take time used for socket connect into account */
+		sckt_connect_time = k_uptime_get() - sckt_connect_start_time;
+
+		/* Check if timeout has already elapsed */
+		if (sckt_connect_time >= req_ctx->timeout_ms) {
+			LOG_WRN("Timeout occurred during socket connect");
+			return -ETIMEDOUT;
+		}
+		req_ctx->timeout_ms -= sckt_connect_time;
+	}
 
 	err = http_client_req(req_ctx->connect_socket, http_req, req_ctx->timeout_ms, resp_ctx);
 	if (err < 0) {
@@ -319,7 +341,10 @@ void rest_client_request_defaults_set(struct rest_client_req_context *req_ctx)
 	req_ctx->sec_tag = REST_CLIENT_SEC_TAG_NO_SEC;
 	req_ctx->tls_peer_verify = REST_CLIENT_TLS_DEFAULT_PEER_VERIFY;
 	req_ctx->http_method = HTTP_GET;
-	req_ctx->timeout_ms = CONFIG_REST_CLIENT_REQUEST_TIMEOUT * 1000;
+	req_ctx->timeout_ms = CONFIG_REST_CLIENT_REQUEST_TIMEOUT * MSEC_PER_SEC;
+	if (req_ctx->timeout_ms == 0) {
+		req_ctx->timeout_ms = SYS_FOREVER_MS;
+	}
 }
 
 int rest_client_request(struct rest_client_req_context *req_ctx,
