@@ -10,23 +10,12 @@ menuconfig REST_CLIENT
 if REST_CLIENT
 
 config REST_CLIENT_REQUEST_TIMEOUT
-	int "Rest request timeout, in seconds"
-	default 65
-	help
-	  Sets the timeout duration in seconds to wait for the response data.
-
-config REST_CLIENT_SCKT_SEND_TIMEOUT
-	int "Socket send timeout, in seconds"
+	int "REST request timeout, in seconds"
 	default 60
 	help
-	  Sets the timeout duration in seconds to use when sending data.
-	  To disable, set the timeout duration to 0.
-
-config REST_CLIENT_SCKT_RECV_TIMEOUT
-	int "Socket receive timeout, in seconds"
-	default 60
-	help
-	  Sets the timeout duration in seconds to use when receiving data.
+	  Sets the default timeout duration in seconds to wait for socket connection
+	  creation and data transfer. The timeout is set individually for these phases
+	  meaning REST request can take longer than this given timeout.
 	  To disable, set the timeout duration to 0.
 
 config REST_CLIENT_SCKT_TLS_SESSION_CACHE_IN_USE
