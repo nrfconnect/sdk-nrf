@@ -1124,6 +1124,13 @@ Subsystems
 Bluetooth® LE
 =============
 
+.. rst-class:: v2-0-0
+
+NCSDK-15724: Bluetooth's Peripheral UART sample fails to start on Thingy:53
+  Enabling USB by the :ref:`Peripheral UART's <peripheral_uart>` main function ends with error because the USB was already enabled by the Thingy:53-specific code.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix from ``main`` (commit hash: ``b834ff8860f3a30fe19c99dbf4c0c99b0b017245``).
+
 .. rst-class:: v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 NCSDK-13459: Uninitialized size in hids_boot_kb_outp_report_read
