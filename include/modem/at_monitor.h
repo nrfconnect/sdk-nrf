@@ -67,7 +67,7 @@ struct at_monitor_entry {
  */
 #define AT_MONITOR(name, _filter, _handler, ...)                                                   \
 	static void _handler(const char *);                                                        \
-	STRUCT_SECTION_ITERABLE(at_monitor_entry, name) = {                                        \
+	static STRUCT_SECTION_ITERABLE(at_monitor_entry, name) = {                                 \
 		.filter = _filter,                                                                 \
 		.handler = _handler,                                                               \
 		.flags.direct = false,                                                             \
@@ -86,7 +86,7 @@ struct at_monitor_entry {
  */
 #define AT_MONITOR_ISR(name, _filter, _handler, ...)                                               \
 	static void _handler(const char *);                                                        \
-	STRUCT_SECTION_ITERABLE(at_monitor_entry, name) = {                                        \
+	static STRUCT_SECTION_ITERABLE(at_monitor_entry, name) = {                                 \
 		.filter = _filter,                                                                 \
 		.handler = _handler,                                                               \
 		.flags.direct = true,                                                              \
