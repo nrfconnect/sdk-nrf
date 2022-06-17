@@ -90,4 +90,13 @@ config DFU_MULTI_IMAGE_PACKAGE_MCUBOOT
 
 endif # DFU_MULTI_IMAGE_PACKAGE_BUILD
 
+config ADD_MCUBOOT_MEDIATE_SIM_FLASH_DTS
+	bool "DTS overlay of the sim-flash intermediary for upgrading NET core"
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  Add DTS overlay which defines the flash simulator device which is emulating
+	  the network core primary slot. This slot is required either to allow
+	  multi image update of the network core or to allow serial recovery of
+	  the network core.
+
 endmenu
