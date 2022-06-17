@@ -379,11 +379,18 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 		break;
 	case NRF_CLOUD_EVT_RX_DATA:
 		LOG_DBG("NRF_CLOUD_EVT_RX_DATA");
-
-		LOG_INF("Processing AGPS data");
+		/* nRF Cloud publishes A-GPS data on a generic c2d topic meaning that the
+		 * integration layer cannot filter based on topic. We therefore try to process the
+		 * data as A-GPS data and allow the message to have the wrong format.
+		 */
 		err = nrf_cloud_agps_process(evt->data.ptr, evt->data.len);
-		if (err) {
+		if (!err){
+			LOG_INF("AGPS data processed");
+			break;
+		}
+		if (err && err != -ENOMSG) {
 			LOG_ERR("Processing AGPS data failed");
+			break;
 		}
 
 		break;
