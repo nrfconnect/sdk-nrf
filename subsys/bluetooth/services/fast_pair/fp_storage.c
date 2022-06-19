@@ -42,6 +42,8 @@ static uint8_t account_key_list[ACCOUNT_KEY_CNT][FP_CRYPTO_ACCOUNT_KEY_LEN];
 static uint8_t account_key_loaded_ids[ACCOUNT_KEY_CNT];
 static uint8_t account_key_next_id;
 static uint8_t account_key_count;
+
+static int settings_set_err;
 static atomic_t settings_loaded = ATOMIC_INIT(false);
 
 
@@ -61,63 +63,80 @@ static uint8_t next_key_id(uint8_t key_id)
 	return key_id + 1;
 }
 
-static int fp_settings_set(const char *name, size_t len, settings_read_cb read_cb, void *cb_arg)
+static int fp_settings_load_ak(const char *name, size_t len, settings_read_cb read_cb, void *cb_arg)
 {
 	int rc;
 	uint8_t index;
 	struct account_key_data data;
-	const char *key = SETTINGS_AK_NAME_PREFIX;
 	const char *name_suffix;
 	size_t name_suffix_len;
 
-	if (!strncmp(name, key, sizeof(SETTINGS_AK_NAME_PREFIX) - 1)) {
-		if (len != sizeof(data)) {
-			return -EINVAL;
-		}
-
-		rc = read_cb(cb_arg, &data, sizeof(data));
-		if (rc < 0) {
-			return rc;
-		}
-
-		if (rc != sizeof(data)) {
-			return -EINVAL;
-		}
-
-		if ((data.account_key_id < ACCOUNT_KEY_MIN_ID) ||
-		    (data.account_key_id > ACCOUNT_KEY_MAX_ID)) {
-			return -EINVAL;
-		}
-
-		index = key_id_to_idx(data.account_key_id);
-		name_suffix = &name[sizeof(SETTINGS_AK_NAME_PREFIX) - 1];
-		name_suffix_len = strlen(name_suffix);
-
-		if ((name_suffix_len < 1) || (name_suffix_len > SETTINGS_AK_NAME_MAX_SUFFIX_LEN)) {
-			return -EINVAL;
-		}
-
-		for (size_t i = 0; i < strlen(name_suffix); i++) {
-			if (!isdigit(name_suffix[i])) {
-				return -EINVAL;
-			}
-		}
-
-		if (index != atoi(name_suffix)) {
-			return -EINVAL;
-		}
-
-		if (account_key_loaded_ids[index] != 0) {
-			return -EINVAL;
-		}
-
-		memcpy(account_key_list[index], data.account_key, sizeof(data.account_key));
-		account_key_loaded_ids[index] = data.account_key_id;
-
-		return 0;
+	if (len != sizeof(data)) {
+		return -EINVAL;
 	}
 
-	return -ENOENT;
+	rc = read_cb(cb_arg, &data, sizeof(data));
+	if (rc < 0) {
+		return rc;
+	}
+
+	if (rc != sizeof(data)) {
+		return -EINVAL;
+	}
+
+	if ((data.account_key_id < ACCOUNT_KEY_MIN_ID) ||
+	    (data.account_key_id > ACCOUNT_KEY_MAX_ID)) {
+		return -EINVAL;
+	}
+
+	index = key_id_to_idx(data.account_key_id);
+	name_suffix = &name[sizeof(SETTINGS_AK_NAME_PREFIX) - 1];
+	name_suffix_len = strlen(name_suffix);
+
+	if ((name_suffix_len < 1) || (name_suffix_len > SETTINGS_AK_NAME_MAX_SUFFIX_LEN)) {
+		return -EINVAL;
+	}
+
+	for (size_t i = 0; i < strlen(name_suffix); i++) {
+		if (!isdigit(name_suffix[i])) {
+			return -EINVAL;
+		}
+	}
+
+	if (index != atoi(name_suffix)) {
+		return -EINVAL;
+	}
+
+	if (account_key_loaded_ids[index] != 0) {
+		return -EINVAL;
+	}
+
+	memcpy(account_key_list[index], data.account_key, sizeof(data.account_key));
+	account_key_loaded_ids[index] = data.account_key_id;
+
+	return 0;
+}
+
+static int fp_settings_set(const char *name, size_t len, settings_read_cb read_cb, void *cb_arg)
+{
+	int err = 0;
+	const char *key = SETTINGS_AK_NAME_PREFIX;
+
+	if (!strncmp(name, key, sizeof(SETTINGS_AK_NAME_PREFIX) - 1)) {
+		err = fp_settings_load_ak(name, len, read_cb, cb_arg);
+	} else {
+		err = -ENOENT;
+	}
+
+	/* The first reported settings set error will be remembered by the module.
+	 * The error will then be propagated by the commit callback.
+	 * Errors returned in the settings set callback are not propagated further.
+	 */
+	if (err && !settings_set_err) {
+		settings_set_err = err;
+	}
+
+	return err;
 }
 
 static bool zero_id_check(uint8_t start_idx)
@@ -155,6 +174,10 @@ static int fp_settings_commit(void)
 	uint8_t cur_id;
 	int first_zero_idx = -1;
 	int rollover_idx = -1;
+
+	if (settings_set_err) {
+		return settings_set_err;
+	}
 
 	cur_id = account_key_loaded_ids[0];
 	if ((cur_id != 0) && (key_id_to_idx(cur_id) != 0)) {
@@ -321,5 +344,7 @@ void fp_storage_ram_clear(void)
 	memset(account_key_loaded_ids, 0, sizeof(account_key_loaded_ids));
 	account_key_next_id = 0;
 	account_key_count = 0;
+
+	settings_set_err = 0;
 	atomic_set(&settings_loaded, false);
 }
