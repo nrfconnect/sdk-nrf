@@ -11,8 +11,6 @@
 #include <modem/lte_lc.h>
 #include <nrf_modem_at.h>
 
-extern const char *esm_strerr(int reason);
-
 static const char * const fam_str[] = {
 	[PDN_FAM_IPV4V6] = "IPV4V6",
 	[PDN_FAM_IPV6] = "IPV6",
@@ -31,7 +29,7 @@ void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 {
 	switch (event) {
 	case PDN_EVENT_CNEC_ESM:
-		printk("Event: PDP context %d, %s\n", cid, esm_strerr(reason));
+		printk("Event: PDP context %d, %s\n", cid, pdn_esm_strerror(reason));
 		break;
 	default:
 		printk("Event: PDP context %d %s\n", cid, event_str[event]);
@@ -94,7 +92,7 @@ void main(void)
 	err = pdn_activate(cid, &esm, NULL);
 	if (err) {
 		printk("pdn_activate() failed, err %d esm %d %s\n",
-			err, esm, esm_strerr(esm));
+			err, esm, pdn_esm_strerror(err));
 		return;
 	}
 

@@ -93,6 +93,13 @@ config PDN_DEFAULT_PASSWORD
 
 endif # PDN_DEFAULTS_OVERRIDE
 
+config PDN_ESM_STRERROR
+	bool "Compile ESM error table"
+	help
+	  Compile a table with a textual description of ESM error reasons.
+	  The description can be retrieved with pdn_esm_strerror().
+	  The table and function take about 2 KB of FLASH.
+
 module=PDN
 module-dep=LOG
 module-str=PDN library

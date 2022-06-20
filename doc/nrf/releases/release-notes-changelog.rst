@@ -312,7 +312,9 @@ Modem libraries
 
   * :ref:`pdn_readme` library:
 
-    * Automatically subscribe to ``+CNEC=16`` and ``+CGEREP=1`` if the :ref:`lte_lc_readme` library is used to change the modem's functional mode.
+    * Automatically subscribe to ``+CNEC=16`` and ``+CGEREP=1`` if the :ref:`lte_lc_readme` library is used to change the functional mode of the modem.
+    * Added the :c:func:`pdn_esm_strerror` function to retrieve a textual description of an ESM error reason.
+      The function is compiled when :kconfig:option:`CONFIG_PDN_ESM_STRERROR` Kconfig option is enabled.
 
   * :ref:`nrf_modem_lib_readme` library:
 
