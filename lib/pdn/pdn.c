@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <inttypes.h>
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
 #include <zephyr/logging/log.h>
@@ -218,7 +219,7 @@ int pdn_ctx_create(uint8_t *cid, pdn_event_handler_t cb)
 		return -ENOMEM;
 	}
 
-	err = nrf_modem_at_scanf("AT%XNEWCID?", "%%XNEWCID: %d", &pdn->context_id);
+	err = nrf_modem_at_scanf("AT%XNEWCID?", "%%XNEWCID: %" SCNd8, &pdn->context_id);
 	if (err < 0) {
 		return err;
 	}
