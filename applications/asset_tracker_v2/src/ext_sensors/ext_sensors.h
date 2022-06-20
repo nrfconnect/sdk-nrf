@@ -27,7 +27,8 @@ extern "C" {
 
 /** @brief Enum containing callback events from library. */
 enum ext_sensor_evt_type {
-	EXT_SENSOR_EVT_ACCELEROMETER_TRIGGER,
+	EXT_SENSOR_EVT_ACCELEROMETER_ACT_TRIGGER,
+	EXT_SENSOR_EVT_ACCELEROMETER_INACT_TRIGGER,
 
 	/** Events propagated when an error associated with a sensor device occurs. */
 	EXT_SENSOR_EVT_ACCELEROMETER_ERROR,

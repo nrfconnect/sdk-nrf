@@ -73,6 +73,7 @@ static void accelerometer_trigger_handler(const struct device *dev,
 
 	switch (trig->type) {
 	case SENSOR_TRIG_INSTANT_MOTION:
+	case SENSOR_TRIG_STATIONARY:
 
 		if (sensor_sample_fetch(dev) < 0) {
 			LOG_ERR("Sample fetch error");
@@ -92,7 +93,13 @@ static void accelerometer_trigger_handler(const struct device *dev,
 		evt.value_array[1] = sensor_value_to_double(&data[1]);
 		evt.value_array[2] = sensor_value_to_double(&data[2]);
 
-		evt.type = EXT_SENSOR_EVT_ACCELEROMETER_TRIGGER;
+		if (trig->type == SENSOR_TRIG_INSTANT_MOTION) {
+			evt.type = EXT_SENSOR_EVT_ACCELEROMETER_ACT_TRIGGER;
+			LOG_INF("motion detected");
+		} else {
+			evt.type = EXT_SENSOR_EVT_ACCELEROMETER_INACT_TRIGGER;
+			LOG_INF("inactivity detected");
+		}
 		evt_handler(&evt);
 
 		break;
@@ -356,6 +363,8 @@ int ext_sensors_accelerometer_trigger_callback_set(bool enable)
 	sensor_trigger_handler_t handler = enable ? accelerometer_trigger_handler : NULL;
 
 	err = sensor_trigger_set(accel_sensor.dev, &trig, handler);
+	trig.type = SENSOR_TRIG_STATIONARY;
+	err += sensor_trigger_set(accel_sensor.dev, &trig, handler);
 	if (err) {
 		LOG_ERR("Could not set trigger for device %s, error: %d",
 			accel_sensor.dev->name, err);

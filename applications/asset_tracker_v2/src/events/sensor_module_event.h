@@ -30,6 +30,16 @@ enum sensor_module_event_type {
 	 */
 	SENSOR_EVT_MOVEMENT_DATA_READY,
 
+	/** Accelerometer reported activity.
+	 *  Acceleration beyond the reference exceeded the configured activity threshold.
+	 */
+	SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED,
+
+	/** Accelerometer reported inactivity.
+	 * Acceleration beyond the reference stayed below the threshold for a given time.
+	 */
+	SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED,
+
 	/** Environmental sensors has been sampled.
 	 *  Payload is of type @ref sensor_module_data (sensors).
 	 */
@@ -73,6 +83,14 @@ struct sensor_module_accel_data {
 	double values[ACCELEROMETER_AXIS_COUNT];
 };
 
+/** @brief Structure used to provide accelerometer activity data. */
+struct sensor_module_accel_activity_data {
+	/** Uptime when the data was sampled. */
+	int64_t timestamp;
+	/** Duration of the inactivity period. */
+	uint64_t inactivity_duration;
+};
+
 /** @brief Sensor module event. */
 struct sensor_module_event {
 	/** Sensor module application event header. */
@@ -84,6 +102,8 @@ struct sensor_module_event {
 		struct sensor_module_data sensors;
 		/** Variable that contains acceleration data. */
 		struct sensor_module_accel_data accel;
+		/** Variable that contains accelerometer activity data. */
+		struct sensor_module_accel_activity_data accel_act;
 		/** Module ID, used when acknowledging shutdown requests. */
 		uint32_t id;
 		/** Code signifying the cause of error. */

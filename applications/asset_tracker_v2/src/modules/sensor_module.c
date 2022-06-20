@@ -133,6 +133,19 @@ static void accelerometer_callback_set(bool enable)
 	}
 }
 
+static void activity_data_send(const struct ext_sensor_evt *const acc_data)
+{
+	struct sensor_module_event *sensor_module_event = new_sensor_module_event();
+
+	if (acc_data->type == EXT_SENSOR_EVT_ACCELEROMETER_ACT_TRIGGER)	{
+		sensor_module_event->type = SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED;
+	} else {
+		__ASSERT_NO_MSG(acc_data->type == EXT_SENSOR_EVT_ACCELEROMETER_INACT_TRIGGER);
+		sensor_module_event->type = SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED;
+	}
+	APP_EVENT_SUBMIT(sensor_module_event);
+}
+
 static void movement_data_send(const struct ext_sensor_evt *const acc_data)
 {
 	struct sensor_module_event *sensor_module_event =
@@ -151,8 +164,12 @@ static void movement_data_send(const struct ext_sensor_evt *const acc_data)
 static void ext_sensor_handler(const struct ext_sensor_evt *const evt)
 {
 	switch (evt->type) {
-	case EXT_SENSOR_EVT_ACCELEROMETER_TRIGGER:
+	case EXT_SENSOR_EVT_ACCELEROMETER_ACT_TRIGGER:
 		movement_data_send(evt);
+		activity_data_send(evt);
+		break;
+	case EXT_SENSOR_EVT_ACCELEROMETER_INACT_TRIGGER:
+		activity_data_send(evt);
 		break;
 	case EXT_SENSOR_EVT_ACCELEROMETER_ERROR:
 		LOG_ERR("EXT_SENSOR_EVT_ACCELEROMETER_ERROR");
