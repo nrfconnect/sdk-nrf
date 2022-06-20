@@ -183,6 +183,20 @@ int pdn_default_apn_get(char *buf, size_t len);
  */
 int pdn_default_callback_set(pdn_event_handler_t cb);
 
+#if CONFIG_PDN_ESM_STRERROR
+
+/**
+ * @brief Retrieve a statically allocated textual description for a given ESM error reason.
+ *
+ * @param reason ESM error reason.
+ * @return const char* ESM error reason description.
+ *		       If no textual description for the given error is found,
+ *		       a placeholder string is returned instead.
+ */
+const char *pdn_esm_strerror(int reason);
+
+#endif
+
 /** @} */
 
 #ifdef __cplusplus

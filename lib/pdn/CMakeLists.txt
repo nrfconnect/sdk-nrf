@@ -6,3 +6,4 @@
 
 zephyr_library()
 zephyr_library_sources(pdn.c)
+zephyr_library_sources_ifdef(CONFIG_PDN_ESM_STRERROR esm.c)

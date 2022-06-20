@@ -1,10 +1,9 @@
 /*
- * Copyright (c) 2021 Nordic Semiconductor ASA
+ * Copyright (c) 2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <stddef.h>
 #include <zephyr/kernel.h>
 
 /* From the specification:
@@ -13,7 +12,7 @@
  */
 
 static const struct {
-	int reason;
+	const int reason;
 	const char *str;
 } esm_table[] = {
 	{ 0x08, "Operator Determined Barring" },
@@ -66,11 +65,10 @@ static const struct {
 	{ 0x71, "Multiple accesses to a PDN connection not allowed" },
 };
 
-const char *esm_strerr(int reason)
+const char *pdn_esm_strerror(int reason)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(esm_table); i++) {
-		if ((esm_table[i].reason == reason) &&
-		    (esm_table[i].str != NULL)) {
+		if (esm_table[i].reason == reason) {
 			return esm_table[i].str;
 		}
 	}

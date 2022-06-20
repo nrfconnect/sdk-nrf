@@ -11,5 +11,4 @@ project(pdn)
 
 # NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c)
-target_sources(app PRIVATE src/esm.c)
 # NORDIC SDK APP END
