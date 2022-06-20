@@ -119,6 +119,7 @@ nRF9160: Asset Tracker v2
   * Updated:
 
     * The default value of the GNSS timeout in the application's :ref:`Real-time configurations <real_time_configs>` is now 30 seconds.
+    * GNSS fixes are now published in PVT format instead of NMEA for nRF Cloud builds. To revert to NMEA, set the :ref:`CONFIG_GNSS_MODULE_NMEA <CONFIG_GNSS_MODULE_NMEA>` option.
 
   * Fixed:
 

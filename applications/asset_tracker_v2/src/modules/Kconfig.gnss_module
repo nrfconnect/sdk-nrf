@@ -13,7 +13,6 @@ if GNSS_MODULE
 
 choice GNSS_MODULE_DATA_FORMAT
 	prompt "Select GNSS data format"
-	default GNSS_MODULE_NMEA if NRF_CLOUD_MQTT
 	default GNSS_MODULE_PVT
 
 config GNSS_MODULE_PVT

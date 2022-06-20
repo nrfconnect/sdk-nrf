@@ -146,6 +146,80 @@ exit:
 	return err;
 }
 
+static int add_pvt_data(cJSON *parent, struct cloud_data_gnss *gnss)
+{
+	int err;
+
+	cJSON *data_obj = cJSON_CreateObject();
+
+	if (data_obj == NULL) {
+		return -ENOMEM;
+	}
+
+	err = add_meta_data(data_obj, APP_ID_GNSS, &gnss->gnss_ts, true);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	cJSON *gnss_val_obj = cJSON_CreateObject();
+
+	if (gnss_val_obj == NULL) {
+		err = -ENOMEM;
+		goto exit;
+	}
+
+	err = json_add_number(gnss_val_obj, DATA_GNSS_LONGITUDE, gnss->pvt.longi);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		cJSON_Delete(gnss_val_obj);
+		goto exit;
+	}
+
+	err = json_add_number(gnss_val_obj, DATA_GNSS_LATITUDE, gnss->pvt.lat);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		cJSON_Delete(gnss_val_obj);
+		goto exit;
+	}
+
+	err = json_add_number(gnss_val_obj, DATA_GNSS_ACCURACY, gnss->pvt.acc);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		cJSON_Delete(gnss_val_obj);
+		goto exit;
+	}
+
+	err = json_add_number(gnss_val_obj, DATA_GNSS_ALTITUDE, gnss->pvt.alt);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		cJSON_Delete(gnss_val_obj);
+		goto exit;
+	}
+
+	err = json_add_number(gnss_val_obj, DATA_GNSS_SPEED, gnss->pvt.spd);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		cJSON_Delete(gnss_val_obj);
+		goto exit;
+	}
+
+	err = json_add_number(gnss_val_obj, DATA_GNSS_HEADING, gnss->pvt.hdg);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		cJSON_Delete(gnss_val_obj);
+		goto exit;
+	}
+
+	json_add_obj(data_obj, DATA_TYPE, gnss_val_obj);
+	json_add_obj_array(parent, data_obj);
+	return 0;
+
+exit:
+	cJSON_Delete(data_obj);
+	return err;
+}
+
 static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, size_t buf_count)
 {
 	for (int i = 0; i < buf_count; i++) {
@@ -154,10 +228,24 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 			int err;
 			struct cloud_data_gnss *data = (struct cloud_data_gnss *)buf;
 
-			err =  add_data(array, NULL, APP_ID_GPS, data[i].nmea,
-					&data[i].gnss_ts, data[i].queued, NULL, true);
-			if (err && err != -ENODATA) {
-				return err;
+			if (data[i].queued == false) {
+				break;
+			}
+
+			if (data[i].format == CLOUD_CODEC_GNSS_FORMAT_PVT) {
+				err =  add_pvt_data(array, &data[i]);
+				if (err && err != -ENODATA) {
+					return err;
+				}
+			} else if (data[i].format == CLOUD_CODEC_GNSS_FORMAT_NMEA) {
+				err =  add_data(array, NULL, APP_ID_GNSS, data[i].nmea,
+						&data[i].gnss_ts, data[i].queued, NULL, true);
+				if (err && err != -ENODATA) {
+					return err;
+				}
+			} else {
+				LOG_ERR("Unsupported GNSS format: %d", data[i].format);
+				return -EINVAL;
 			}
 
 			data[i].queued = false;
