@@ -133,14 +133,26 @@ static void accelerometer_callback_set(bool enable)
 	}
 }
 
+static int64_t last_inactivity_timestamp;
+static bool no_inactivity_yet = true;
 static void activity_data_send(const struct ext_sensor_evt *const acc_data)
 {
 	struct sensor_module_event *sensor_module_event = new_sensor_module_event();
 
 	if (acc_data->type == EXT_SENSOR_EVT_ACCELEROMETER_ACT_TRIGGER)	{
+		sensor_module_event->data.accel_act.timestamp = k_uptime_get();
+		if (no_inactivity_yet) {
+			sensor_module_event->data.accel_act.inactivity_duration = 0;
+		} else {
+			sensor_module_event->data.accel_act.inactivity_duration =
+				sensor_module_event->data.accel_act.timestamp
+				- last_inactivity_timestamp;
+		}
 		sensor_module_event->type = SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED;
 	} else {
 		__ASSERT_NO_MSG(acc_data->type == EXT_SENSOR_EVT_ACCELEROMETER_INACT_TRIGGER);
+		last_inactivity_timestamp = k_uptime_get();
+		no_inactivity_yet = false;
 		sensor_module_event->type = SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED;
 	}
 	APP_EVENT_SUBMIT(sensor_module_event);
