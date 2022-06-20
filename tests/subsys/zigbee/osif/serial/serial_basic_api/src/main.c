@@ -73,7 +73,7 @@ static void setup_test_case(void)
 {
 	zassert_not_null(uart_dev, "UART device was not initialized");
 
-	/* Ensure that the driver usees user's buffer. */
+	/* Ensure that the driver uses user's buffer. */
 	zassert_equal_ptr(char_handler, uart_char_handler,
 			  "The UART RX callback in not properly set");
 

@@ -170,13 +170,13 @@ static void zb_zcl_send_ping_frame(zb_uint8_t index)
 	}
 }
 
-/**@brief Get time difference, in miliseconds between ping request time
+/**@brief Get time difference, in milliseconds between ping request time
  *        and current time.
  *
  * @param[in] req_data  Pointer to the ping request structure,
  *                      from which the time difference should be calculated.
  *
- * @return  Time difference in miliseconds.
+ * @return  Time difference in milliseconds.
  */
 static zb_uint32_t get_request_duration(struct ctx_entry *req_data)
 {
@@ -273,7 +273,7 @@ static void dispatch_user_callback(zb_bufid_t bufid)
 /**@brief  Default ping event handler. Prints out measured time on the shell and exits.
  *
  * @param[in] evt           Type of received ping acknowledgment
- * @param[in] delay_ms      Time, in miliseconds, between ping request
+ * @param[in] delay_ms      Time, in milliseconds, between ping request
  *                          and the event.
  * @param[in] req_data      Pointer to the context manager entry with ongoing
  *                          ping request data.

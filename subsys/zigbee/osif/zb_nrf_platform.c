@@ -151,7 +151,7 @@ static void zb_app_cb_process(zb_bufid_t bufid)
 	zb_ret_t ret_code = RET_OK;
 	zb_app_cb_t new_app_cb;
 
-	/* Mark te processing callback as non-scheduled. */
+	/* Mark the processing callback as non-scheduled. */
 	(void)atomic_set((atomic_t *)&zb_app_cb_process_scheduled, 0);
 
 	/**
@@ -248,7 +248,7 @@ static void zb_app_cb_process_schedule(struct k_work *item)
 		return;
 	}
 
-	/* Check if processing callback is altready scheduled. */
+	/* Check if processing callback is already scheduled. */
 	if (atomic_set((atomic_t *)&zb_app_cb_process_scheduled, 1) == 1) {
 		return;
 	}

@@ -86,7 +86,7 @@ config ZIGBEE_ROLE_COORDINATOR
 endchoice
 
 config ZBOSS_DEFAULT_THREAD_PRIORITY
-	int "Set default ZBOSS thread prority"
+	int "Set default ZBOSS thread priority"
 	default 3
 
 config ZBOSS_DEFAULT_THREAD_STACK_SIZE

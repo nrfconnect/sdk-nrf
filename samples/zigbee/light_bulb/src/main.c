@@ -59,7 +59,7 @@
 #define BULB_INIT_BASIC_POWER_SOURCE    ZB_ZCL_BASIC_POWER_SOURCE_DC_SOURCE
 
 /* Describes the physical location of the device (16 bytes).
- * May be modified during commisioning process.
+ * May be modified during commissioning process.
  */
 #define BULB_INIT_BASIC_LOCATION_DESC   "Office desk"
 
@@ -370,7 +370,7 @@ static void bulb_clusters_attr_init(void)
 	/* Use ZB_ZCL_SET_STRING_VAL to set strings, because the first byte
 	 * should contain string length without trailing zero.
 	 *
-	 * For example "test" string wil be encoded as:
+	 * For example "test" string will be encoded as:
 	 *   [(0x4), 't', 'e', 's', 't']
 	 */
 	ZB_ZCL_SET_STRING_VAL(

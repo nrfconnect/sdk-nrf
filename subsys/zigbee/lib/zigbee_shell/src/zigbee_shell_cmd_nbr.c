@@ -193,7 +193,7 @@ static void refresh_active_nbt_table(zb_bufid_t bufid)
 	}
 }
 
-/**@brief Enable, disable or refresh neighbor table mintor.
+/**@brief Enable, disable or refresh neighbor table monitor.
  *
  * @code
  * nbr monitor {on,off,trigger}
@@ -202,7 +202,7 @@ static void refresh_active_nbt_table(zb_bufid_t bufid)
  * Register a neighbor table monitoring routine and log all entries once
  * a new entry is created or an existing one is removed.
  * The trigger command can be used to trigger logging the current state
- * of the nighbor table.
+ * of the neighbor table.
  *
  * Example:
  * @code

@@ -779,7 +779,7 @@ void main(void)
 	zigbee_enable();
 
 #if CONFIG_BT_NUS
-	/* Initalize NUS command service. */
+	/* Initialize NUS command service. */
 	nus_cmd_init(on_nus_connect, on_nus_disconnect, commands);
 #endif /* CONFIG_BT_NUS */
 

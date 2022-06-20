@@ -493,7 +493,7 @@ static int cmd_zb_channel(const struct shell *shell, size_t argc, char **argv)
 		chan[0] = zb_get_bdb_primary_channel_set();
 		chan[1] = zb_get_bdb_secondary_channel_set();
 
-		/* Chech for case in which channel mask can not be read. */
+		/* Check for case in which channel mask can not be read. */
 		if (zigbee_is_nvram_initialised() && !zigbee_is_stack_started()
 #ifdef CONFIG_ZIGBEE_SHELL_DEBUG_CMD
 		    && zb_shell_nvram_enabled()

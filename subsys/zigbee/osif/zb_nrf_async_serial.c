@@ -340,7 +340,7 @@ void zb_osif_serial_send_data(zb_uint8_t *buf, zb_ushort_t len)
 	uart_tx_buf_len = len;
 	uart_tx_buf_offset = 0;
 
-	/* Pass the TX callback for a single (ongoing) tranmission. */
+	/* Pass the TX callback for a single (ongoing) transmission. */
 	tx_trx_data_cb = tx_data_cb;
 
 	/* Enable TX ready event. */
