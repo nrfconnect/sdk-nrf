@@ -94,7 +94,6 @@ void memfault_platform_get_device_info(sMemfaultDeviceInfo *info)
 		.hardware_version = CONFIG_MEMFAULT_NCS_HW_VERSION,
 	};
 }
-#endif /* defined(CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN) */
 
 #ifdef CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI
 static int request_imei(const char *cmd, char *buf, size_t buf_len)
@@ -130,6 +129,7 @@ static int device_info_init(void)
 	return err;
 }
 #endif /* CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI */
+#endif /* defined(CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN) */
 
 static int init(const struct device *unused)
 {
@@ -148,13 +148,14 @@ static int init(const struct device *unused)
 		}
 	}
 
-#ifdef CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI
-	err = device_info_init();
-	if (err) {
-		LOG_ERR("Device info initialization failed, error: %d", err);
+#ifdef CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN
+	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI)) {
+		err = device_info_init();
+		if (err) {
+			LOG_ERR("Device info initialization failed, error: %d", err);
+		}
 	}
-#endif /* CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI */
-
+#endif
 	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_USE_DEFAULT_METRICS)) {
 		memfault_ncs_metrcics_init();
 	}
