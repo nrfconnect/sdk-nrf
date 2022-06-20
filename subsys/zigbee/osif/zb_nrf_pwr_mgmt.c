@@ -87,7 +87,7 @@ __weak zb_uint32_t zb_osif_sleep(zb_uint32_t sleep_tmo)
 }
 
 /**@brief Function which is called after zb_osif_sleep
- *        finished and ZBOSS timer is reenabled.
+ *        finished and ZBOSS timer is re-enabled.
  *
  * Function is defined as weak; to be redefined if someone
  * wants to implement their own going-to-deep-sleep policy/share resources

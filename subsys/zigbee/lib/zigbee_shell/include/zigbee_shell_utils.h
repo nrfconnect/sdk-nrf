@@ -120,7 +120,7 @@ int zb_shell_sscan_uint8(const char *bp, uint8_t *value);
  * up to (UINT32_MAX).
  *
  * @param[in]  bp     Pointer to input string.
- * @param[out] value  Pointer to variable to store reuslt of the function.
+ * @param[out] value  Pointer to variable to store result of the function.
  * @param[in]  size   Size, in bytes, that determines expected maximum value
  *                    of converted number.
  * @param[in]  base   Numerical base (radix) that determines the valid

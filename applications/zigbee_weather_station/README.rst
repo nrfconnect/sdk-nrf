@@ -90,7 +90,7 @@ The application supports the following development kits:
 
 .. table-from-sample-yaml::
 
-To commission the Zigbee weather station device and control it remotely through a Zigbee network, you also need to progam a Zigbee network coordinator on a separate compatible development kit.
+To commission the Zigbee weather station device and control it remotely through a Zigbee network, you also need to program a Zigbee network coordinator on a separate compatible development kit.
 The Zigbee network coordinator forms the network that the weather station node will join and onto which it will share its measurement data.
 You can use one of the following options for setting up the Zigbee network coordinator:
 
@@ -115,12 +115,12 @@ LED (LD1):
 
     * ``release`` build type
 
-      * Even flashing (red color, 500ms on/500ms off) - The device is in the Identify mode (after network comissioning).
+      * Even flashing (red color, 500ms on/500ms off) - The device is in the Identify mode (after network commissioning).
 
     * ``debug`` build type
 
       * Constant light (blue) - The device is connected to a Zigbee network.
-      * Even flashing (red color, 500ms on/500ms off) - The device is in the Identify mode (after network comissioning).
+      * Even flashing (red color, 500ms on/500ms off) - The device is in the Identify mode (after network commissioning).
 
     .. note::
        Thingy:53 allows you to control RGB components of its single LED independently.

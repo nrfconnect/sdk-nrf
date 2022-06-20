@@ -1,5 +1,5 @@
 sample:
-  description: Zigbee application thast includes all Zigbee shell commands
+  description: Zigbee application that includes all Zigbee shell commands
   name: Zigbee application with Zigbee shell
 tests:
   sample.zigbee.shell:

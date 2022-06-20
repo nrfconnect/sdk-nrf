@@ -71,9 +71,9 @@
 #define ZIGBEE_SHELL_MATCH_DESC_RESP_TIMEOUT 5
 /* Defines how long to wait, in seconds, for Bind Response. */
 #define ZIGBEE_SHELL_BIND_RESP_TIMEOUT       5
-/* Defines how long to wait, in seconds, for Network Addrees Response. */
+/* Defines how long to wait, in seconds, for Network Address Response. */
 #define ZIGBEE_SHELL_NWK_ADDR_RESP_TIMEOUT   5
-/* Defines how long to wait, in seconds, for IEEE (EUI64) Addrees Response. */
+/* Defines how long to wait, in seconds, for IEEE (EUI64) Address Response. */
 #define ZIGBEE_SHELL_IEEE_ADDR_RESP_TIMEOUT  5
 /* Defines how long to wait, in seconds, for mgmt_leave response. */
 #define ZIGBEE_SHELL_MGMT_LEAVE_RESP_TIMEOUT 5
@@ -2183,7 +2183,7 @@ static bool zdo_mgmt_lqi_cb(struct ctx_entry *ctx_entry, zb_bufid_t bufid)
 							    zdo_request_cb);
 			if (ctx_entry->id != ZB_ZDO_INVALID_TSN) {
 				/* The request requires further communication,
-				 * hence the outer callback shoudn't free
+				 * hence the outer callback shouldn't free
 				 * resources.
 				 */
 				result = false;

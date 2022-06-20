@@ -198,9 +198,9 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 
 		comm_status = bdb_start_top_level_commissioning(ZB_BDB_NETWORK_STEERING);
 		if (comm_status) {
-			LOG_INF("Top level comissioning restated");
+			LOG_INF("Top level commissioning restated");
 		} else {
-			LOG_INF("Top level comissioning hasn't finished yet!");
+			LOG_INF("Top level commissioning hasn't finished yet!");
 		}
 	}
 

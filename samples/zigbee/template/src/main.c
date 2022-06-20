@@ -121,7 +121,7 @@ static void identify_cb(zb_bufid_t bufid)
 	}
 }
 
-/**@breif Starts identifying the device.
+/**@brief Starts identifying the device.
  *
  * @param  bufid  Unused parameter, required by ZBOSS scheduler API.
  */

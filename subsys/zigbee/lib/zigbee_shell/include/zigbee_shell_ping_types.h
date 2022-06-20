@@ -33,7 +33,7 @@ enum ping_time_evt {
 	PING_EVT_FRAME_TIMEOUT,
 	/* PING request was successfully scheduled for sending by the stack. */
 	PING_EVT_FRAME_SCHEDULED,
-	/* PING request was successfully sent. This event occurrs only
+	/* PING request was successfully sent. This event occurs only
 	 * if both APS ACK was not requested.
 	 */
 	PING_EVT_FRAME_SENT,
@@ -48,7 +48,7 @@ enum ping_time_evt {
 /**@brief  Ping event callback definition.
  *
  * @param[in] evt           Type of received  ping acknowledgment
- * @param[in] delay_ms      Time, in miliseconds, between ping request
+ * @param[in] delay_ms      Time, in milliseconds, between ping request
  *                          and the event.
  * @param[in] entry         Pointer to context manager entry in which the ping
  *                          request data is stored.
@@ -77,7 +77,7 @@ struct ping_reply {
 /**@brief Set ping request indication callback.
  *
  * @note The @p cb argument delay_ms will reflect current time
- *       in miliseconds.
+ *       in milliseconds.
  */
 void zb_ping_set_ping_indication_cb(ping_time_cb_t cb);
 

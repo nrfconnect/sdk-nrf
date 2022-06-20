@@ -28,7 +28,7 @@ struct zcl_packet_info {
 	zb_bool_t disable_aps_ack;
 };
 
-/* Enum used to determine which command Write or Read Attribue to send. */
+/* Enum used to determine which command Write or Read Attribute to send. */
 enum attr_req_type {
 	ATTR_READ_REQUEST,
 	ATTR_WRITE_REQUEST
