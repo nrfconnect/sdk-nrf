@@ -206,6 +206,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/date_time/                     @trantanen @tokangas
 /tests/lib/edge_impulse/                  @pdunaj @MarekPieta
 /tests/lib/hw_unique_key*/                @oyvindronningstad @Vge0rge
+/tests/lib/location/                      @trantanen @hiltunent @jhirsi @tokangas
 /tests/lib/lte_lc/                        @jtguggedal @tokangas @simensrostad
 /tests/lib/modem_jwt/                     @SeppoTakalo
 /tests/lib/qos/                           @simensrostad
