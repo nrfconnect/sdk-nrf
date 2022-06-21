@@ -32,10 +32,18 @@
 #define ZIGBEE_NETWORK_STATE_LED         DK_LED3
 
 /* LED used for device identification. */
+#ifdef CONFIG_BOARD_NRF52840DONGLE_NRF52840
+#define IDENTIFY_LED                     DK_LED1
+#else
 #define IDENTIFY_LED                     DK_LED4
+#endif /* defined CONFIG_BOARD_NRF52840DONGLE_NRF52840 */
 
 /* Button used to enter the Identify mode. */
+#ifdef CONFIG_BOARD_NRF52840DONGLE_NRF52840
+#define IDENTIFY_MODE_BUTTON             DK_BTN1_MSK
+#else
 #define IDENTIFY_MODE_BUTTON             DK_BTN4_MSK
+#endif /* defined CONFIG_BOARD_NRF52840DONGLE_NRF52840 */
 
 LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 

@@ -290,6 +290,12 @@ Zigbee samples
 
   * Fixed an issue where a buffer would not be freed after a failure occurred when sending a Match Descriptor request.
 
+* :ref:`zigbee_shell_sample` sample:
+
+  * Added support for :ref:`zephyr:nrf52840dongle_nrf52840`.
+  * Added an option to build :ref:`zigbee_shell_sample` sample with the nRF USB CDC ACM as shell backend.
+
+
 Other samples
 -------------
 
