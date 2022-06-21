@@ -16,7 +16,9 @@ LOG_MODULE_REGISTER(modem_trace_backend, CONFIG_MODEM_TRACE_BACKEND_LOG_LEVEL);
 PINCTRL_DT_DEFINE(UART1_NL);
 static const nrfx_uarte_t uarte_inst = NRFX_UARTE_INSTANCE(1);
 
-int trace_backend_init(void)
+static trace_backend_processed_cb trace_processed_callback;
+
+int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 {
 	int err;
 	const nrfx_uarte_config_t config = {
@@ -28,6 +30,12 @@ int trace_backend_init(void)
 		.interrupt_priority = NRFX_UARTE_DEFAULT_CONFIG_IRQ_PRIORITY,
 		.p_context = NULL,
 	};
+
+	if (trace_processed_cb == NULL) {
+		return -EFAULT;
+	}
+
+	trace_processed_callback = trace_processed_cb;
 
 	err = pinctrl_apply_state(PINCTRL_DT_DEV_CONFIG_GET(UART1_NL), PINCTRL_STATE_DEFAULT);
 	__ASSERT_NO_MSG(err == 0);
@@ -56,6 +64,7 @@ int trace_backend_deinit(void)
 
 int trace_backend_write(const void *data, size_t len)
 {
+	int err;
 	/* Split RAM buffer into smaller chunks to be transferred using DMA. */
 	uint8_t *buf = (uint8_t *)data;
 	size_t remaining_bytes = len;
@@ -66,7 +75,13 @@ int trace_backend_write(const void *data, size_t len)
 		size_t idx = len - remaining_bytes;
 
 		nrfx_uarte_tx(&uarte_inst, &buf[idx], transfer_len);
+
 		remaining_bytes -= transfer_len;
+
+		err = trace_processed_callback(transfer_len);
+		if (err) {
+			return err;
+		}
 	}
 
 	return len;

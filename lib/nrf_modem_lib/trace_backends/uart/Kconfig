@@ -15,4 +15,13 @@ config NRF_MODEM_LIB_TRACE_BACKEND_UART
 	# TF-M use UARTE1 as log output, disable TF-M logging to avoid conflict.
 	select TFM_LOG_LEVEL_SILENCE if BUILD_WITH_TFM
 
+if NRF_MODEM_LIB_TRACE_BACKEND_UART
+
+config NRF_MODEM_LIB_TRACE_BACKEND_UART_SYNC
+	bool "UARTE1 SYNC"
+	help
+	  Enable synchronous processing for UARTE1 trace backend.
+
+endif # NRF_MODEM_LIB_TRACE_BACKEND_UART
+
 endchoice # NRF_MODEM_LIB_TRACE_BACKEND

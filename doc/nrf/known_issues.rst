@@ -136,7 +136,7 @@ CIA-604: ATv2 cannot be built for the ``thingy91_nrf9160_ns`` build target with 
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0
 
 CIA-661: Asset Tracker v2 application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` build target with modem traces or memfault enabled
-  The :ref:`asset_tracker_v2` application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` build target with :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` for modem traces or ``overlay-memfault.conf`` for memfault due to memory constraints.
+  The :ref:`asset_tracker_v2` application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` build target with :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` for modem traces or ``overlay-memfault.conf`` for memfault due to memory constraints.
 
   **Workaround**
 

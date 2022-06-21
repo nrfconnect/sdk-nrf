@@ -589,11 +589,6 @@ BUILD_ASSERT(
 	"Incompatible enums"
 );
 
-int lwm2m_os_pdn_init(void)
-{
-	return 0;
-}
-
 int lwm2m_os_pdn_ctx_create(uint8_t *cid, lwm2m_os_pdn_event_handler_t cb)
 {
 	return pdn_ctx_create(cid, (pdn_event_handler_t)cb);

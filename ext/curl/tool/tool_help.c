@@ -200,7 +200,7 @@ static const struct helptxt helptext[] = {
   {"    --upload-buff-size #<size of the upload buffer>",
    "NRF curl tool hook for the CURLOPT_UPLOAD_BUFFERSIZE curl lib option impacting upload sending",
    CURLHELP_IMPORTANT | CURLHELP_HTTP | CURLHELP_POST | CURLHELP_UPLOAD},
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE)
   {"    --curr-mdm-traces",
    "Use currently configured modem traces",
    CURLHELP_IMPORTANT | CURLHELP_HTTP},

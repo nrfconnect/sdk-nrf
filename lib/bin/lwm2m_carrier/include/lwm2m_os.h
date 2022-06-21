@@ -30,7 +30,7 @@ extern "C" {
 /**
  * @brief Maximum number of timers that the system must support.
  */
-#define LWM2M_OS_MAX_TIMER_COUNT (5 + (LWM2M_OS_MAX_WORK_QS * 3))
+#define LWM2M_OS_MAX_TIMER_COUNT (5 + (LWM2M_OS_MAX_WORK_QS * 4))
 
 typedef void lwm2m_os_work_q_t;
 typedef void lwm2m_os_timer_t;

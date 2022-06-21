@@ -23,6 +23,11 @@ static const nrfx_uarte_t *p_uarte_inst_in_use;
 /* Variable to store the event_handler registered by the modem_trace module.*/
 static nrfx_uarte_event_handler_t uarte_callback;
 
+static int empty_callback(size_t len)
+{
+	return 0;
+}
+
 void nrfx_isr(const void *irq_handler)
 {
 	/* Declared only for pleasing linker. Never expected to be called. */
@@ -102,7 +107,7 @@ static void send_traces_for_processing(const uint8_t *data, uint32_t len)
 }
 
 #define TRACE_TEST_THREAD_STACK_SIZE 512
-#define TRACE_THREAD_PRIORITY CONFIG_NRF_MODEM_LIB_TRACE_THREAD_PRIO
+#define TRACE_THREAD_PRIORITY K_LOWEST_APPLICATION_THREAD_PRIO
 
 static void trace_test_thread(void)
 {
@@ -133,7 +138,7 @@ void test_trace_backend_init_uart(void)
 	__wrap_nrfx_uarte_init_ExpectAnyArgsAndReturn(NRFX_SUCCESS);
 	__wrap_nrfx_uarte_init_AddCallback(&nrfx_uarte_init_callback);
 
-	ret = trace_backend_init();
+	ret = trace_backend_init(empty_callback);
 
 	TEST_ASSERT_EQUAL(0, ret);
 }
@@ -148,7 +153,7 @@ void test_trace_backend_init_uart_ebusy(void)
 	__wrap_pinctrl_configure_pins_ExpectAnyArgsAndReturn(0);
 	__wrap_nrfx_uarte_init_ExpectAnyArgsAndReturn(NRFX_ERROR_BUSY);
 
-	ret = trace_backend_init();
+	ret = trace_backend_init(empty_callback);
 
 	TEST_ASSERT_EQUAL(-EBUSY, ret);
 }

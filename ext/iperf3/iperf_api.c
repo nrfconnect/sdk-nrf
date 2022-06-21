@@ -60,7 +60,7 @@
 #include <sys/time.h>
 
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE)
 #include <nrf_modem_at.h>
 #endif
 #endif
@@ -999,7 +999,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 		{ "debug", no_argument, NULL, 'd' },
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
 		{ "manual", no_argument, NULL, 'm' }, /* -m or --manual instead of help, because shell is stoling -h and --help */
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE)
 		/* added */
 		{ "curr-mdm-traces", no_argument, NULL, NRF_OPT_CURRENT_MDM_TRACES },
 #endif
@@ -1464,7 +1464,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			client_flag = 1;
 			break;
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE)
 		case NRF_OPT_CURRENT_MDM_TRACES:
 			test->curr_mdm_traces = true;
 			break;
@@ -1634,7 +1634,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 #endif
 	}
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE)
     if (!test->curr_mdm_traces) {
 
     	/* Let's set more lightweight traces for getting better perf: */
@@ -3408,7 +3408,7 @@ void iperf_free_test(struct iperf_test *test)
 	struct iperf_stream *sp;
 
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE)
   if (!test->curr_mdm_traces) {
     static const char default_mdm_trace[] = "AT%%XMODEMTRACE=1,2";
 

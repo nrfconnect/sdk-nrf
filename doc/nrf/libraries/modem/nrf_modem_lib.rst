@@ -43,7 +43,7 @@ If your application performs an update of the nRF9160 modem firmware, you must d
 The library wrapper also coordinates the shutdown operation among different parts of the application that use the Modem library.
 This is done by the :c:func:`nrf_modem_lib_shutdown` function call, by waking the sleeping threads when the modem is being shut down.
 
-When :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` Kconfig option is enabled, the modem traces are enabled in the modem and are forwarded to the `Modem trace module`_.
+When :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig option is enabled, the modem traces are enabled in the modem and are forwarded to the `Modem trace module`_.
 
 When using the Modem library in |NCS|, the library must be initialized and shutdown using the :c:func:`nrf_modem_lib_init` and :c:func:`nrf_modem_lib_shutdown` function calls, respectively.
 
@@ -80,32 +80,18 @@ In this case, the characteristics of the allocations made by these functions dep
 
 Modem trace module
 ******************
-The modem trace module is implemented in :file:`nrf/lib/nrf_modem_lib/nrf_modem_lib_trace_sync.c`.
-If the experimental :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_THREAD_PROCESSING` Kconfig option is enabled, the :file:`nrf/lib/nrf_modem_lib/nrf_modem_lib_trace.c` file is used.
-
-The module provides the functionality for starting, stopping, and forwarding of modem traces to a backend that can be set by enabling any one of the following Kconfig options:
+The modem trace module is implemented in :file:`nrf/lib/nrf_modem_lib/nrf_modem_lib_trace.c`.
+To enable the module and start tracing, set the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig option to ``y`` in your project configuration.
+The module implements a thread that initializes, deinitializes, and forwards modem traces to a backend that can be selected by enabling any one of the following Kconfig options:
 
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART` to send modem traces over UARTE1
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RTT` to send modem traces over SEGGER RTT
 
-If the application wants the trace data, :c:func:`nrf_modem_lib_trace_init` must be called before :c:func:`nrf_modem_lib_init`.
-This is done automatically when using the OS abstraction layer.
+The application can use the :c:func:`nrf_modem_lib_trace_level_set` function to set the desired trace level.
+Passing ``NRF_MODEM_LIB_TRACE_LEVEL_OFF`` to the :c:func:`nrf_modem_lib_trace_level_set` function disables trace output.
 
-If the application wants to stop an ongoing trace session, it can use the :c:func:`nrf_modem_lib_trace_stop` function.
-The :c:func:`nrf_modem_lib_trace_start` function supports activating a subset of traces or all traces.
-
-Thread-based processing
-=======================
-
-For better load distribution on the application, enable the experimental thread-based trace processing through the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_THREAD_PROCESSING` Kconfig option.
-Trace processing is done in ``trace_handler_thread``.
-When the modem trace module receives trace data, it places it in a FIFO queue.
-The thread reads from the FIFO queue and forwards the trace data to the configured trace backend.
-The FIFO queue used by the modem trace module uses dedicated heap memory.
-If the modem trace backend is unable to keep up with the modem traces, the heap size can be increased by enabling :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_HEAP_SIZE_OVERRIDE` and configuring :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_HEAP_SIZE`.
-Increasing the heap size allows more traces in the FIFO queue.
-However, if the modem continues to send traces at a faster rate than the backend can handle, the trace heap will be exhausted over time.
-If increasing the trace heap size does not help, either optimize the backend throughput or use a faster trace backend.
+During tracing, the integration layer ensures that modem traces are always flushed before the Modem library is re-initialized (including when the modem has crashed).
+The application can synchronize with the flushing of modem traces by calling the :c:func:`nrf_modem_lib_trace_processing_done_wait` function.
 
 .. _adding_custom_modem_trace_backends:
 
@@ -153,7 +139,7 @@ Complete the following steps to add a custom trace backend:
 
    .. code-block:: Kconfig
 
-      if NRF_MODEM_LIB_TRACE_ENABLED
+      if NRF_MODEM_LIB_TRACE
 
       # Extends the choice with another backend
       choice NRF_MODEM_LIB_TRACE_BACKEND
@@ -172,7 +158,7 @@ Complete the following steps to add a custom trace backend:
 
    .. code-block:: cmake
 
-      if(CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
+      if(CONFIG_NRF_MODEM_LIB_TRACE)
 
       zephyr_library()
 
@@ -189,7 +175,7 @@ Complete the following steps to add a custom trace backend:
 
    .. code-block:: none
 
-      CONFIG_NRF_MODEM_LIB_TRACE_ENABLED=y
+      CONFIG_NRF_MODEM_LIB_TRACE=y
       CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_MY_TRACE_BACKEND=y
 
 Modem fault handling

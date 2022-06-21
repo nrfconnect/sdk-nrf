@@ -4,163 +4,195 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <stdio.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <modem/nrf_modem_lib.h>
 #include <modem/nrf_modem_lib_trace.h>
 #include <modem/trace_backend.h>
 #include <nrf_modem.h>
 #include <nrf_modem_at.h>
+#include <nrf_modem_os.h>
+#include <nrf_modem_trace.h>
+#include <nrf_errno.h>
 
 LOG_MODULE_REGISTER(nrf_modem_lib_trace, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
 
-static struct k_heap *t_heap;
-static bool backend_initialized;
-static bool trace_running;
+NRF_MODEM_LIB_ON_INIT(trace_init, trace_init_callback, NULL);
 
-struct trace_data_t {
-	void *fifo_reserved; /* 1st word reserved for use by fifo */
-	const uint8_t *data;
-	uint32_t len;
-};
+K_SEM_DEFINE(trace_sem, 0, 1);
+K_SEM_DEFINE(trace_done_sem, 1, 1);
 
-K_FIFO_DEFINE(trace_fifo);
+#if CONFIG_SIZE_OPTIMIZATIONS
+#define TRACE_THREAD_STACK_SIZE 768
+#else
+/* Need more stack when optimizations are disabled */
+#define TRACE_THREAD_STACK_SIZE 1024
+#endif
 
-static void trace_processed_callback(const uint8_t *data, uint32_t len)
+#define TRACE_THREAD_PRIORITY                                                                      \
+	COND_CODE_1(CONFIG_NRF_MODEM_LIB_TRACE_THREAD_PRIO_OVERRIDE,                               \
+		    (CONFIG_NRF_MODEM_LIB_TRACE_THREAD_PRIO), (K_LOWEST_APPLICATION_THREAD_PRIO))
+
+static int trace_init(void);
+static int trace_deinit(void);
+
+int nrf_modem_lib_trace_processing_done_wait(k_timeout_t timeout)
 {
 	int err;
 
-	err = nrf_modem_trace_processed_callback(data, len);
-	(void) err;
+	err = k_sem_take(&trace_done_sem, timeout);
+	if (err) {
+		return err;
+	}
 
-	__ASSERT(err == 0,
-		 "nrf_modem_trace_processed_callback returns error %d for "
-		 "data = %p, len = %d",
-		 err, data, len);
+	k_sem_give(&trace_done_sem);
+
+	return 0;
 }
 
-#define TRACE_THREAD_STACK_SIZE 512
-#define TRACE_THREAD_PRIORITY CONFIG_NRF_MODEM_LIB_TRACE_THREAD_PRIO
-
-void trace_handler_thread(void)
+static int trace_fragment_write(struct nrf_modem_trace_data *frag)
 {
 	int ret;
+	size_t remaining = frag->len;
+
+	while (remaining) {
+		ret = trace_backend_write((void *)((uint8_t *)frag->data + frag->len - remaining),
+					  remaining);
+		if (ret < 0) {
+			LOG_ERR("trace_backend_write failed with err: %d", ret);
+
+			return ret;
+		}
+
+		if (ret == 0) {
+			LOG_WRN("trace_backend_write wrote 0 bytes.");
+		}
+
+		remaining -= ret;
+	}
+
+	return 0;
+}
+
+void trace_thread_handler(void)
+{
+	int err;
+	struct nrf_modem_trace_data *frags;
+	size_t n_frags;
+
+trace_reset:
+	k_sem_take(&trace_sem, K_FOREVER);
 
 	while (true) {
-		struct trace_data_t *trace_data = k_fifo_get(&trace_fifo, K_FOREVER);
-		const uint8_t * const data = trace_data->data;
-		const uint32_t len = trace_data->len;
+		err = nrf_modem_trace_get(&frags, &n_frags);
+		switch (err) {
+		case -NRF_ESHUTDOWN:
+			LOG_INF("Modem was turned off, no more traces");
+			goto out;
+		case -NRF_ENODATA:
+			LOG_INF("Modem has faulted, coredump output sent trace");
+			goto out;
+		case -NRF_EINPROGRESS:
+			__ASSERT(0, "Error in transport backend");
+			goto out;
+		}
 
-		if (trace_running && backend_initialized) {
-			ret = trace_backend_write(data, len);
-			if (ret < 0) {
-				LOG_ERR("trace_backend_write failed, err %d", ret);
+		for (size_t i = 0; i < n_frags; i++) {
+			err = trace_fragment_write(&frags[i]);
+			if (err) {
+				goto out;
 			}
 		}
-
-		trace_processed_callback(data, len);
-
-		k_heap_free(t_heap, trace_data);
 	}
-}
 
-int nrf_modem_lib_trace_init(struct k_heap *trace_heap)
-{
-	int err;
-	t_heap = trace_heap;
-	trace_running = true;
-
-	err = trace_backend_init();
+out:
+	err = trace_deinit();
 	if (err) {
-		backend_initialized = false;
-		return -EBUSY;
+		LOG_ERR("trace_deinit failed with err: %d", err);
 	}
 
-	backend_initialized = true;
-
-	return 0;
+	goto trace_reset;
 }
 
-int nrf_modem_lib_trace_start(enum nrf_modem_lib_trace_mode trace_mode)
-{
-	if (!backend_initialized) {
-		return -EPERM;
-	}
-
-	if (nrf_modem_at_printf("AT%%XMODEMTRACE=1,%hu", trace_mode) != 0) {
-		return -EOPNOTSUPP;
-	}
-
-	trace_running = true;
-
-	return 0;
-}
-
-int nrf_modem_lib_trace_process(const uint8_t *data, uint32_t len)
-{
-	int err = 0;
-
-	if (backend_initialized) {
-		struct trace_data_t *trace_data;
-		size_t bytes = sizeof(struct trace_data_t);
-
-		trace_data = k_heap_alloc(t_heap, bytes, K_NO_WAIT);
-
-		if (trace_data != NULL) {
-			trace_data->data = data;
-			trace_data->len = len;
-
-			k_fifo_put(&trace_fifo, trace_data);
-		} else {
-			LOG_ERR("trace_alloc failed");
-
-			err = -ENOMEM;
-		}
-	} else {
-		LOG_ERR("Modem trace received without initializing transport");
-
-		err = -EPERM;
-	}
-
-	if (err) {
-		/* Unable to handle the trace, but the
-		 * nrf_modem_trace_processed_callback should always be called as
-		 * required by the modem library.
-		 */
-		trace_processed_callback(data, len);
-	}
-
-	return err;
-}
-
-int nrf_modem_lib_trace_stop(void)
-{
-	__ASSERT(!k_is_in_isr(),
-		"nrf_modem_lib_trace_stop cannot be called from interrupt context");
-
-	/* Don't use the AT%%XMODEMTRACE=0 command to disable traces because the
-	 * modem won't respond if the modem has crashed and is outputting the modem
-	 * core dump.
-	 */
-
-	trace_running = false;
-
-	return 0;
-}
-
-void nrf_modem_lib_trace_deinit(void)
+static int trace_init(void)
 {
 	int err;
 
-	backend_initialized = false;
+	k_sem_take(&trace_done_sem, K_FOREVER);
+
+	err = trace_backend_init(nrf_modem_trace_processed);
+	if (err) {
+		LOG_ERR("trace_backend_init failed with err: %d", err);
+
+		return err;
+	}
+
+	LOG_INF("Trace tread ready");
+	k_sem_give(&trace_sem);
+
+	return 0;
+}
+
+static void trace_init_callback(int err, void *ctx)
+{
+	if (err) {
+		return;
+	}
+
+	err = trace_init();
+	if (err) {
+		LOG_ERR("Failed to initialize trace backend, err: %d", err);
+		return;
+	}
+
+#if CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE
+	err = nrf_modem_lib_trace_level_set(CONFIG_NRF_MODEM_LIB_TRACE_LEVEL);
+	LOG_INF("Trace level override: %d", CONFIG_NRF_MODEM_LIB_TRACE_LEVEL);
+	if (err) {
+		LOG_ERR("Failed to start tracing, err %d", err);
+	}
+#else
+	LOG_INF("Trace level untouched");
+#endif
+}
+
+static int trace_deinit(void)
+{
+	int err;
 
 	err = trace_backend_deinit();
-
 	if (err) {
-		/* Cannot change function signature, so we just log the error instead */
-		LOG_ERR("Modem trace backend deinit failed, err %d", err);
+		LOG_ERR("trace_backend_deinit failed with err: %d", err);
+
+		return err;
 	}
+
+	k_sem_give(&trace_done_sem);
+
+	return 0;
 }
 
-K_THREAD_DEFINE(trace_thread_id, TRACE_THREAD_STACK_SIZE, trace_handler_thread,
-	NULL, NULL, NULL, TRACE_THREAD_PRIORITY, 0, 0);
+int nrf_modem_lib_trace_level_set(enum nrf_modem_lib_trace_level trace_level)
+{
+	int err;
+	/* Casting to integer to remove any assumptions on the type of the enum
+	 * (could be `char` or `int`) when `printf` expects exactly `int`.
+	 */
+	int tl = trace_level;
+
+	if (tl) {
+		err = nrf_modem_at_printf("AT%%XMODEMTRACE=1,%d", tl);
+	} else {
+		err = nrf_modem_at_printf("AT%%XMODEMTRACE=0");
+	}
+
+	if (err) {
+		LOG_ERR("Failed to set trace level, err: %d", err);
+		return -ENOEXEC;
+	}
+
+	return 0;
+}
+
+K_THREAD_DEFINE(trace_thread, TRACE_THREAD_STACK_SIZE, trace_thread_handler,
+	       NULL, NULL, NULL, TRACE_THREAD_PRIORITY, 0, 0);
