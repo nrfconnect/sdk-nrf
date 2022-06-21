@@ -18,3 +18,10 @@ common:
 tests:
   sample.keys.random_hw_unique_key:
     tags: huk ci_build
+  sample.newlib_libc.random_hw_unique_key:
+        build_only: True
+        extra_args: CONFIG_NEWLIB_LIBC=y
+        platform_allow: nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
+        integration_platforms:
+            - nrf5340dk_nrf5340_cpuapp
+            - nrf52840dk_nrf52840
