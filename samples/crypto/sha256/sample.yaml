@@ -25,3 +25,10 @@ tests:
             - nrf5340dk_nrf5340_cpuapp_ns
             - nrf52840dk_nrf52840
             - nrf52833dk_nrf52833
+    sample.newlib_libc.sha256:
+        build_only: True
+        extra_args: CONFIG_NEWLIB_LIBC=y
+        platform_allow: nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840
+        integration_platforms:
+            - nrf5340dk_nrf5340_cpuapp_ns
+            - nrf52840dk_nrf52840
