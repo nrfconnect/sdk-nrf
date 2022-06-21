@@ -407,7 +407,12 @@ This section provides detailed lists of changes by :ref:`library <libraries>`.
 Binary libraries
 ----------------
 
-|no_changes_yet_note|
+* :ref:`liblwm2m_carrier_readme` library:
+
+  * Updated to v0.30.1.
+    See the :ref:`liblwm2m_carrier_changelog` for detailed information.
+  * Projects that use the LwM2M carrier library cannot use TF-M for this release, since the LwM2M carrier library requires hard floating point.
+    For more information, see the :ref:`TF-M <ug_tfm>` documentation.
 
 Bluetooth libraries and services
 --------------------------------
@@ -487,6 +492,25 @@ Modem libraries
     * Updated:
 
       * Ability to add :ref:`custom trace backends <adding_custom_modem_trace_backends>`.
+      * The trace module has been updated to use the new APIs in Modem library.
+        The modem trace output is now handled by a dedicated thread that starts automatically.
+        The trace thread is synchronized with the initialization and shutdown operations of the Modem library.
+      * The Kconfig option ``CONFIG_NRF_MODEM_LIB_TRACE_ENABLED`` has been renamed to :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE`.
+
+    * Removed:
+
+      * The following Kconfig options:
+
+        * ``CONFIG_NRF_MODEM_LIB_TRACE_THREAD_PROCESSING``
+        * ``CONFIG_NRF_MODEM_LIB_TRACE_HEAP_SIZE``
+        * ``CONFIG_NRF_MODEM_LIB_TRACE_HEAP_SIZE_OVERRIDE``
+        * ``CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC``
+        * ``CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIOD_MS``
+
+      * The following functions:
+
+        * ``nrf_modem_lib_trace_start``
+        * ``nrf_modem_lib_trace_stop``
 
   * :ref:`lib_location` library:
 
@@ -564,6 +588,7 @@ Other libraries
 
   * Updated :c:func:`emds_entry_add` to no longer use heap, but instead require a pointer to the dynamic entry structure :c:struct `emds_dynamic_entry`.
     The dynamic entry structure should be allocated in advance.
+
 
 Common Application Framework (CAF)
 ----------------------------------

@@ -22,14 +22,6 @@
 	Are you building for the correct board ?
 #endif /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
 
-#if defined CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
-static void on_modem_failure_shutdown(struct k_work *item);
-static void on_modem_failure_reinit(struct k_work *item);
-
-K_WORK_DELAYABLE_DEFINE(modem_failure_shutdown_work, on_modem_failure_shutdown);
-K_WORK_DELAYABLE_DEFINE(modem_failure_reinit_work, on_modem_failure_reinit);
-#endif /* CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM */
-
 LOG_MODULE_DECLARE(nrf_modem, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
 
 struct shutdown_thread {
@@ -42,9 +34,9 @@ static bool first_time_init;
 static struct k_mutex slist_mutex;
 
 static int init_ret;
-static enum nrf_modem_mode_t init_mode;
+static enum nrf_modem_mode init_mode;
 
-static const nrf_modem_init_params_t init_params = {
+static const struct nrf_modem_init_params init_params = {
 	.ipc_irq_prio = NRF_MODEM_NETWORK_IRQ_PRIORITY,
 	.shmem.ctrl = {
 		.base = PM_NRF_MODEM_LIB_CTRL_ADDRESS,
@@ -58,7 +50,7 @@ static const nrf_modem_init_params_t init_params = {
 		.base = PM_NRF_MODEM_LIB_RX_ADDRESS,
 		.size = CONFIG_NRF_MODEM_LIB_SHMEM_RX_SIZE,
 	},
-#if CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
+#if CONFIG_NRF_MODEM_LIB_TRACE
 	.shmem.trace = {
 		.base = PM_NRF_MODEM_LIB_TRACE_ADDRESS,
 		.size = CONFIG_NRF_MODEM_LIB_SHMEM_TRACE_SIZE,
@@ -144,13 +136,6 @@ static int _nrf_modem_lib_init(const struct device *unused)
 	}
 	k_mutex_unlock(&slist_mutex);
 
-#if defined(CONFIG_NRF_MODEM_LIB_TRACE_LEVEL)
-	err = nrf_modem_lib_trace_start(CONFIG_NRF_MODEM_LIB_TRACE_LEVEL);
-	if (err) {
-		LOG_ERR("Failed to start modem trace, err %d", err);
-	}
-#endif
-
 	LOG_DBG("Modem library has initialized, ret %d", init_ret);
 	STRUCT_SECTION_FOREACH(nrf_modem_lib_init_cb, e) {
 		LOG_DBG("Modem init callback: %p", e->callback);
@@ -186,7 +171,7 @@ void nrf_modem_lib_shutdown_wait(void)
 	k_mutex_unlock(&slist_mutex);
 }
 
-int nrf_modem_lib_init(enum nrf_modem_mode_t mode)
+int nrf_modem_lib_init(enum nrf_modem_mode mode)
 {
 	init_mode = mode;
 	if (mode == NORMAL_MODE) {
@@ -211,54 +196,16 @@ int nrf_modem_lib_shutdown(void)
 
 	nrf_modem_shutdown();
 
+#if CONFIG_NRF_MODEM_LIB_TRACE
+	/* Before returning, make sure that there isn't any
+	 * pending trace data when the library is
+	 * re-initialized.
+	 */
+	nrf_modem_lib_trace_processing_done_wait(K_FOREVER);
+#endif
+
 	return 0;
 }
-
-/**
- * Modem library fault handler.
- *
- * If a different error handling is required, the handler can be defined in the application
- * by setting the NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC Kconfig option.
- *
- * @param[in] fault_info Modem fault information. Contain the fault reason, and,
- *                       in some cases, the modem program counter.
- */
-
-#if defined CONFIG_NRF_MODEM_LIB_ON_FAULT_DO_NOTHING
-void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info)
-{
-	LOG_ERR("Modem error: 0x%x, PC: 0x%x", fault_info->reason, fault_info->program_counter);
-}
-#endif /* CONFIG_NRF_MODEM_LIB_ON_FAULT_DO_NOTHING */
-
-#if defined CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
-void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info)
-{
-	LOG_ERR("Modem error: 0x%x, PC: 0x%x", fault_info->reason, fault_info->program_counter);
-	/* For now we wait 10 ms to give the trace handler time to process trace data. */
-	k_work_reschedule(&modem_failure_shutdown_work, K_MSEC(10));
-}
-
-static void on_modem_failure_shutdown(struct k_work *item)
-{
-	(void)item;
-
-	nrf_modem_lib_shutdown();
-	k_work_reschedule(&modem_failure_reinit_work, K_MSEC(10));
-}
-
-static void on_modem_failure_reinit(struct k_work *item)
-{
-	(void)item;
-
-	int err;
-
-	err = nrf_modem_lib_init(init_mode);
-	if (err) {
-		LOG_ERR("Modem reinit error: %d", err);
-	}
-}
-#endif /* CONFIG_NRF_MODEM_LIB_ON_FAULT_RESET_MODEM */
 
 #if defined(CONFIG_NRF_MODEM_LIB_SYS_INIT)
 /* Initialize during SYS_INIT */

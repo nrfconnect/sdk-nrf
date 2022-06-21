@@ -18,13 +18,21 @@ extern "C" {
  * @{
  */
 
+/** @brief callback to signal the trace module that
+ * some amount of trace data has been processed.
+ */
+typedef int (*trace_backend_processed_cb)(size_t len);
+
 /**
  * @brief Initialize the compile-time selected trace backend.
+ *
+ * @param trace_processed_cb Function callback for signaling how much of the trace data has been
+ *			     processed by the backend.
  *
  * @return 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int trace_backend_init(void);
+int trace_backend_init(trace_backend_processed_cb trace_processed_cb);
 
 /**
  * @brief Deinitialize the compile-time selected trace backend.
@@ -40,7 +48,7 @@ int trace_backend_deinit(void);
  * @param data Memory buffer containing modem trace data.
  * @param len  Memory buffer length.
  *
- * @return Number of bytes written if the operation was successful.
+ * @returns Number of bytes written if the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
 int trace_backend_write(const void *data, size_t len);

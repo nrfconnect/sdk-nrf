@@ -22,32 +22,30 @@ config NRF_MODEM_LIB_LOG_FW_VERSION_UUID
 	depends on LOG
 	bool "Log FW version and UUID during initialization"
 
-config NRF_MODEM_LIB_TRACE_ENABLED
-	bool
-	prompt "Enable proprietary traces"
+config NRF_MODEM_LIB_TRACE
+	bool "Enable proprietary traces"
 	help
 	  When enabled, a portion of RAM (called Trace region) will be shared with the modem to receive modem's trace data.
 	  The size of the Trace region is defined by the NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.
 	  Trace data is output on the chosen trace backend.
-	  To stop traces or to change trace level at runtime, use the AT command %XMODEMTRACE or the nrf_modem_lib_trace API.
 
-if NRF_MODEM_LIB_TRACE_ENABLED
+if NRF_MODEM_LIB_TRACE
 
-choice NRF_MODEM_LIB_TRACE
-	prompt "Default trace level"
-	help
-	   Default trace level set upon boot.
-	   Trace level can be changed at runtime using the %XMODEMTRACE AT command or the nrf_modem_lib_trace API.
+config NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE
+	bool "Override trace level"
+	default y
+
+if NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE
+
+choice NRF_MODEM_LIB_TRACE_LEVEL_CHOICE
+	prompt "Trace level"
 
 config NRF_MODEM_LIB_TRACE_LEVEL_FULL
-	bool "Full output"
-
+	bool "Full"
 config NRF_MODEM_LIB_TRACE_LEVEL_LTE_AND_IP
-	bool "IP and LTE data"
-
+	bool "IP and LTE"
 config NRF_MODEM_LIB_TRACE_LEVEL_IP_ONLY
-	bool "IP data only"
-
+	bool "IP only"
 config NRF_MODEM_LIB_TRACE_LEVEL_COREDUMP_ONLY
 	bool "Coredump only"
 
@@ -55,32 +53,25 @@ endchoice
 
 config NRF_MODEM_LIB_TRACE_LEVEL
 	int
-	default 2 if NRF_MODEM_LIB_TRACE_LEVEL_FULL
-	default 5 if NRF_MODEM_LIB_TRACE_LEVEL_LTE_AND_IP
-	default 4 if NRF_MODEM_LIB_TRACE_LEVEL_IP_ONLY
 	default 1 if NRF_MODEM_LIB_TRACE_LEVEL_COREDUMP_ONLY
+	default 2 if NRF_MODEM_LIB_TRACE_LEVEL_FULL
+	default 4 if NRF_MODEM_LIB_TRACE_LEVEL_IP_ONLY
+	default 5 if NRF_MODEM_LIB_TRACE_LEVEL_LTE_AND_IP
 
-config NRF_MODEM_LIB_TRACE_THREAD_PROCESSING
-	bool "Process modem traces in a thread [EXPERIMENTAL]"
-	select EXPERIMENTAL
-	help
-	  Use a thread to forward modem traces to the trace backend instead of doing so in interrupt
-	  context. This allows for asynchronous operations, like async UART. A small amount of memory
-	  needs to be allocated on the heap for each trace buffer. The trace heap size and trace thread
-	  priority might need to be adjusted depending on the application needs.
+endif # NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE
 
-if NRF_MODEM_LIB_TRACE_THREAD_PROCESSING
+config NRF_MODEM_LIB_TRACE_THREAD_PRIO_OVERRIDE
+	bool "Override trace thread priority"
 
 config NRF_MODEM_LIB_TRACE_THREAD_PRIO
 	int "Priority of the trace processing thread"
-	range 0 NUM_PREEMPT_PRIORITIES
-	default 10
+	depends on NRF_MODEM_LIB_TRACE_THREAD_PRIO_OVERRIDE
+	default 0
 
-endif # NRF_MODEM_LIB_TRACE_THREAD_PROCESSING
-
+# Add trace backends
 rsource "trace_backends/Kconfig"
 
-endif # NRF_MODEM_LIB_TRACE_ENABLED
+endif # NRF_MODEM_LIB_TRACE
 
 config NRF_MODEM_LIB_SENDMSG_BUF_SIZE
 	int "Size of the sendmsg intermediate buffer"
@@ -96,7 +87,6 @@ comment "Heap and buffers"
 
 config NRF_MODEM_LIB_HEAP_SIZE
 	int "Library heap size"
-	default 2048 if NRF_MODEM_LIB_TRACE_ENABLED
 	default 1024
 	range 512 4096
 	help
@@ -130,31 +120,16 @@ config NRF_MODEM_LIB_SHMEM_RX_SIZE
 
 config NRF_MODEM_LIB_SHMEM_TRACE_SIZE_OVERRIDE
 	bool "Custom trace region size"
-	depends on NRF_MODEM_LIB_TRACE_ENABLED
+	depends on NRF_MODEM_LIB_TRACE
 	help
 	  Override the default size of the Trace region (16384 bytes).
 
 config NRF_MODEM_LIB_SHMEM_TRACE_SIZE
 	int "Trace region size" if NRF_MODEM_LIB_SHMEM_TRACE_SIZE_OVERRIDE
-	default 16384 if NRF_MODEM_LIB_TRACE_ENABLED
+	default 16384 if NRF_MODEM_LIB_TRACE
 	default 0
 	help
 	  Size of the shared memory region used to receive modem traces.
-
-config NRF_MODEM_LIB_TRACE_HEAP_SIZE_OVERRIDE
-	bool "Custom trace heap size"
-	depends on NRF_MODEM_LIB_TRACE_ENABLED
-	help
-	  Override the default trace heap size.
-
-config NRF_MODEM_LIB_TRACE_HEAP_SIZE
-	int "Trace heap size" if NRF_MODEM_LIB_TRACE_HEAP_SIZE_OVERRIDE
-	default 2048 if (NRF_MODEM_LIB_TRACE_ENABLED && NRF_MODEM_LIB_TRACE_THREAD_PROCESSING)
-	default 256 if (NRF_MODEM_LIB_TRACE_ENABLED && !NRF_MODEM_LIB_TRACE_THREAD_PROCESSING)
-	default 0
-	help
-	  Size of the heap buffer used for modem traces.
-	  This heap is allocated in the application's RAM.
 
 choice NRF_MODEM_LIB_ON_FAULT
 	prompt "Action on modem fault"
@@ -201,18 +176,6 @@ config NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
 
 config NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS
 	depends on NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
-	int "Period (millisec)"
-	default 20000
-
-config NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC
-	bool "Periodically print trace heap info"
-	depends on NRF_MODEM_LIB_TRACE_ENABLED
-	help
-	  Schedule a periodic system workqueue task to print the library trace heap info.
-
-config NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIOD_MS
-	depends on NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC
-	depends on NRF_MODEM_LIB_TRACE_ENABLED
 	int "Period (millisec)"
 	default 20000
 

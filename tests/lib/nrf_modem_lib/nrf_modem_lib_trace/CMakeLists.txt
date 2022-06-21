@@ -11,6 +11,8 @@ project(nrf_modem_lib_trace)
 
 # create mock
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem.h)
+cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_os.h)
+cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_trace.h)
 cmock_handle(${NRF_DIR}/include/modem/trace_backend.h)
 
 # generate runner for the test
@@ -27,3 +29,6 @@ target_sources(app PRIVATE ${NRF_DIR}/lib/nrf_modem_lib/nrf_modem_lib_trace.c)
 # include paths
 target_include_directories(app PRIVATE ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/)
 target_include_directories(app PRIVATE ${NRF_DIR}/include/modem/)
+
+# Required for calling libmodem hooks
+zephyr_linker_sources(RODATA ${NRF_DIR}/lib/nrf_modem_lib/nrf_modem_lib.ld)

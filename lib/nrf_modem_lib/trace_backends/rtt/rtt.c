@@ -14,13 +14,17 @@ LOG_MODULE_REGISTER(modem_trace_backend, CONFIG_MODEM_TRACE_BACKEND_LOG_LEVEL);
 static int trace_rtt_channel;
 static char rtt_buffer[CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RTT_BUF_SIZE];
 
-int trace_backend_init(void)
+static trace_backend_processed_cb trace_processed_callback;
+
+int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 {
-#if defined(CONFIG_NRF_MODEM_LIB_TRACE_THREAD_PROCESSING)
 	const int segger_rtt_mode = SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL;
-#else
-	const int segger_rtt_mode = SEGGER_RTT_MODE_NO_BLOCK_SKIP;
-#endif
+
+	if (trace_processed_cb == NULL) {
+		return -EFAULT;
+	}
+
+	trace_processed_callback = trace_processed_cb;
 
 	trace_rtt_channel = SEGGER_RTT_AllocUpBuffer("modem_trace", rtt_buffer, sizeof(rtt_buffer),
 						     segger_rtt_mode);
@@ -39,6 +43,9 @@ int trace_backend_deinit(void)
 
 int trace_backend_write(const void *data, size_t len)
 {
+	int err;
+	int ret;
+
 	uint8_t *buf = (uint8_t *)data;
 	size_t remaining_bytes = len;
 
@@ -47,12 +54,14 @@ int trace_backend_write(const void *data, size_t len)
 			CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RTT_BUF_SIZE);
 		size_t idx = len - remaining_bytes;
 
-#if defined(CONFIG_NRF_MODEM_LIB_TRACE_THREAD_PROCESSING)
-		SEGGER_RTT_Write(trace_rtt_channel, &buf[idx], transfer_len);
-#else
-		SEGGER_RTT_WriteNoLock(trace_rtt_channel, &buf[idx], transfer_len);
-#endif
-		remaining_bytes -= transfer_len;
+		ret = SEGGER_RTT_WriteNoLock(trace_rtt_channel, &buf[idx], transfer_len);
+
+		remaining_bytes -= ret;
+
+		err = trace_processed_callback(ret);
+		if (err) {
+			return err;
+		}
 	}
 
 	return (int)len;

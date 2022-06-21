@@ -86,7 +86,7 @@
 #include "memdebug.h" /* keep this as LAST include */
 
 #if defined(CONFIG_NRF_CURL_INTEGRATION)
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE)
 /* NRF_IPERF3_INTEGRATION_CHANGE: added */
 #include <nrf_modem_at.h>
 #endif
@@ -1813,7 +1813,7 @@ static CURLcode single_transfer(struct GlobalConfig *global,
         if (config->upload_buffsize) {
           my_setopt(curl, CURLOPT_UPLOAD_BUFFERSIZE, config->upload_buffsize);
         }
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE)
         if (!global->curr_mdm_traces) {
           /* Let's set more lightweight traces for getting better perf: */
           static const char lightweight_mdm_trace[] = "AT%%XMODEMTRACE=1,5";

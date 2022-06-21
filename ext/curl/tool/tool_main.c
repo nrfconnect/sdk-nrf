@@ -33,7 +33,7 @@
 #endif
 
 #if defined(CONFIG_NRF_CURL_INTEGRATION)
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE)
 /* NRF_IPERF3_INTEGRATION_CHANGE: added */
 #include <nrf_modem_at.h>
 #endif
@@ -213,7 +213,7 @@ static void free_globalconfig(struct GlobalConfig *config)
 static void main_free(struct GlobalConfig *config)
 {
 #if defined(CONFIG_NRF_CURL_INTEGRATION)
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE_ENABLED)
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE)
   if (!config->curr_mdm_traces) {
     static const char default_mdm_trace[] = "AT%%XMODEMTRACE=1,2";
 

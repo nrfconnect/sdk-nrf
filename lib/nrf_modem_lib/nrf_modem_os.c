@@ -17,19 +17,13 @@
 #include <pm_config.h>
 #include <zephyr/logging/log.h>
 
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
-#include <modem/nrf_modem_lib_trace.h>
-#endif
-
 #define UNUSED_FLAGS 0
 
-/* Handle communication with application and modem traces from IRQ contexts
+/* Handle communication with application from IRQ contexts
  * with the lowest available priority.
  */
 #define APPLICATION_IRQ EGU1_IRQn
 #define APPLICATION_IRQ_PRIORITY IRQ_PRIO_LOWEST
-#define TRACE_IRQ EGU2_IRQn
-#define TRACE_IRQ_PRIORITY IRQ_PRIO_LOWEST
 
 #define THREAD_MONITOR_ENTRIES 10
 
@@ -54,13 +48,9 @@ static struct k_heap shmem_heap;
 /* Library heap, defined here in application RAM */
 static K_HEAP_DEFINE(library_heap, CONFIG_NRF_MODEM_LIB_HEAP_SIZE);
 
-/* Dedicated heap for modem traces  */
-static K_HEAP_DEFINE(trace_heap, CONFIG_NRF_MODEM_LIB_TRACE_HEAP_SIZE);
-
 /* Store information about failed allocations */
 static struct mem_diagnostic_info shmem_diag;
 static struct mem_diagnostic_info heap_diag;
-static struct mem_diagnostic_info trace_heap_diag;
 
 /* An array of thread ID and RPC counter pairs, used to avoid race conditions.
  * It allows to identify whether it is safe to put the thread to sleep or not.
@@ -304,26 +294,6 @@ void nrf_modem_os_application_irq_clear(void)
 	NVIC_ClearPendingIRQ(APPLICATION_IRQ);
 }
 
-void nrf_modem_os_trace_irq_set(void)
-{
-	NVIC_SetPendingIRQ(TRACE_IRQ);
-}
-
-void nrf_modem_os_trace_irq_clear(void)
-{
-	NVIC_ClearPendingIRQ(TRACE_IRQ);
-}
-
-void nrf_modem_os_trace_irq_disable(void)
-{
-	irq_disable(TRACE_IRQ);
-}
-
-void nrf_modem_os_trace_irq_enable(void)
-{
-	irq_enable(TRACE_IRQ);
-}
-
 void nrf_modem_os_event_notify(void)
 {
 	atomic_inc(&rpc_event_cnt);
@@ -346,24 +316,6 @@ ISR_DIRECT_DECLARE(rpc_proxy_irq_handler)
 			  */
 	return 1; /* We should check if scheduling decision should be made */
 }
-
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
-ISR_DIRECT_DECLARE(trace_proxy_irq_handler)
-{
-	/* Process modem traces. */
-	nrf_modem_trace_irq_handler();
-	ISR_DIRECT_PM(); /* PM done after servicing interrupt for best latency
-			  */
-	return 1; /* We should check if scheduling decision should be made */
-}
-
-void trace_irq_init(void)
-{
-	IRQ_DIRECT_CONNECT(TRACE_IRQ, TRACE_IRQ_PRIORITY,
-			   trace_proxy_irq_handler, UNUSED_FLAGS);
-	irq_enable(TRACE_IRQ);
-}
-#endif
 
 void read_task_create(void)
 {
@@ -394,31 +346,6 @@ void nrf_modem_os_free(void *mem)
 
 	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC)) {
 		LOG_DBG("free(%p)", mem);
-	}
-}
-
-void *nrf_modem_os_trace_alloc(size_t bytes)
-{
-	void *addr = k_heap_alloc(&trace_heap, bytes, K_NO_WAIT);
-
-	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC)) {
-		if (addr) {
-			LOG_DBG("trace_alloc(%d) -> %p", bytes, addr);
-		} else {
-			LOG_WRN("trace_alloc(%d) -> NULL", bytes);
-			trace_heap_diag.failed_allocs++;
-		}
-	}
-
-	return addr;
-}
-
-void nrf_modem_os_trace_free(void *mem)
-{
-	k_heap_free(&trace_heap, mem);
-
-	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC)) {
-		LOG_DBG("trace_free(%p)", mem);
 	}
 }
 
@@ -453,13 +380,6 @@ void nrf_modem_lib_heap_diagnose(void)
 	printk("Failed allocations: %u\n", heap_diag.failed_allocs);
 }
 
-void nrf_modem_lib_trace_heap_diagnose(void)
-{
-	printk("\nnrf_modem trace heap dump:\n");
-	sys_heap_print_info(&trace_heap.heap, false);
-	printk("Failed allocations: %u\n", trace_heap_diag.failed_allocs);
-}
-
 void nrf_modem_lib_shm_tx_diagnose(void)
 {
 	printk("\nnrf_modem tx dump:\n");
@@ -468,11 +388,10 @@ void nrf_modem_lib_shm_tx_diagnose(void)
 }
 
 #if defined(CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC) || \
-	defined(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC) || \
-	defined(CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC)
+	defined(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC)
 
 enum heap_type {
-	SHMEM, LIBRARY, TRACE
+	SHMEM, LIBRARY
 };
 
 struct task {
@@ -485,9 +404,6 @@ static struct task shmem_task = { .type = SHMEM };
 #endif
 #ifdef CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
 static struct task heap_task  = { .type = LIBRARY };
-#endif
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC
-static struct task trace_heap_task = { .type = TRACE };
 #endif
 
 static void diag_task(struct k_work *item)
@@ -507,13 +423,6 @@ static void diag_task(struct k_work *item)
 		nrf_modem_lib_heap_diagnose();
 		k_work_reschedule(&heap_task.work,
 			K_MSEC(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS));
-#endif
-		break;
-	case TRACE:
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC
-		nrf_modem_lib_trace_heap_diagnose();
-		k_work_reschedule(&trace_heap_task.work,
-			K_MSEC(CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIOD_MS));
 #endif
 		break;
 	}
@@ -619,17 +528,6 @@ void nrf_modem_os_init(void)
 {
 	read_task_create();
 
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
-	int err = nrf_modem_lib_trace_init(&trace_heap);
-
-	if (!err) {
-		trace_irq_init();
-	} else {
-		LOG_ERR("nrf_modem_lib_trace_init failed with error %d.", err);
-	}
-
-#endif
-
 	memset(&heap_diag, 0x00, sizeof(heap_diag));
 	memset(&shmem_diag, 0x00, sizeof(shmem_diag));
 
@@ -649,12 +547,6 @@ void nrf_modem_os_init(void)
 	k_work_reschedule(&heap_task.work,
 		K_MSEC(CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS));
 #endif
-
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC
-	k_work_init_delayable(&trace_heap_task.work, diag_task);
-	k_work_reschedule(&trace_heap_task.work,
-		K_MSEC(CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIOD_MS));
-#endif
 }
 
 void nrf_modem_os_shutdown(void)
@@ -665,24 +557,6 @@ void nrf_modem_os_shutdown(void)
 	SYS_SLIST_FOR_EACH_CONTAINER(&sleeping_threads, thread, node) {
 		k_sem_give(&thread->sem);
 	}
-
-#if CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
-	nrf_modem_lib_trace_deinit();
-#endif
-}
-
-int32_t nrf_modem_os_trace_put(const uint8_t *const data, uint32_t len)
-{
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_ENABLED
-	int err;
-
-	err = nrf_modem_lib_trace_process(data, len);
-	if (err) {
-		LOG_ERR("nrf_modem_lib_trace_process failed, err %d", err);
-	}
-
-#endif /* CONFIG_NRF_MODEM_LIB_TRACE_ENABLED */
-	return 0;
 }
 
 SYS_INIT(on_init, POST_KERNEL, 0);

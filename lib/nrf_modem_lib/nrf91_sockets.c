@@ -168,9 +168,6 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		case TLS_CIPHERSUITE_LIST:
 			*nrf_out_optname = NRF_SO_SEC_CIPHERSUITE_LIST;
 			break;
-		case TLS_CIPHERSUITE_USED:
-			*nrf_out_optname = NRF_SO_SEC_CIPHER_IN_USE;
-			break;
 		case TLS_PEER_VERIFY:
 			*nrf_out_optname = NRF_SO_SEC_PEER_VERIFY;
 			break;
@@ -307,7 +304,7 @@ static int z_to_nrf_family(sa_family_t z_family)
 	}
 }
 
-static int nrf_to_z_family(nrf_socket_family_t nrf_family)
+static int nrf_to_z_family(nrf_sa_family_t nrf_family)
 {
 	switch (nrf_family) {
 	case NRF_AF_INET:

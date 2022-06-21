@@ -15,6 +15,7 @@ static uint32_t uptime_prev;
 static uint32_t num_bytes_prev;
 static uint32_t tot_bytes_rcvd;
 static bool show_cpu_load;
+static trace_backend_processed_cb trace_processed_callback;
 
 static void print_stats(struct k_work *item);
 
@@ -49,9 +50,15 @@ static void print_stats(struct k_work *item)
 	k_work_schedule(&print_stats_work, PRINT_PERIOD_MSEC);
 }
 
-int trace_backend_init(void)
+int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 {
 	int err;
+
+	if (trace_processed_cb == NULL) {
+		return -EFAULT;
+	}
+
+	trace_processed_callback = trace_processed_cb;
 
 	err = cpu_load_init();
 	if (err) {
@@ -93,6 +100,8 @@ int trace_backend_write(const void *data, size_t len)
 	ARG_UNUSED(data);
 
 	tot_bytes_rcvd += len;
+
+	trace_processed_callback(len);
 
 	return (int)len;
 }
