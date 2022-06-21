@@ -1,0 +1,61 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_MDS
+	bool "Memfault Diagnostic service"
+	depends on !MEMFAULT_HTTP_ENABLE
+	select BT_NRF_SERVICES
+	help
+	 Enable GATT Memfault Diagnostic BLE service.
+
+if BT_MDS
+
+config BT_MDS_MAX_URI_LENGTH
+	int "Maiximum URI length"
+	default 64
+	help
+	  Maximum URI length where diagnostic data should be forwarded to.
+
+choice BT_MDS_PERM
+	prompt "Characteristic attributes permition"
+	default BT_MDS_PERM_RW_ENCRYPT if BT_SMP
+	default BT_MDS_PERM_RW
+	help
+	  Default permissions for Memfault Diagnostic characteristic attributes.
+
+config BT_MDS_PERM_RW
+	bool "Read and write allowed"
+
+config BT_MDS_PERM_RW_ENCRYPT
+	bool "Require encryption for access"
+	depends on BT_SMP
+
+config BT_MDS_PERM_RW_AUTHEN
+	bool "Require encryption using authenticated link-key for access"
+	depends on BT_SMP
+
+endchoice
+
+config BT_MDS_PIPELINE_COUNT
+	int "Number of chunks pipelined in the Bluetooth stack"
+	default 2
+	range 1 BT_CONN_TX_MAX
+	help
+	  Number of the Memfault chunks pipelined in the Bluetooth stack. Pipelining chunks in the
+	  Bluetooth stack reduces latency related to delivering subsequent data to the stack.
+
+config BT_MDS_DATA_POLL_INTERVAL
+	int "Data poll interval"
+	default 60000
+	help
+	  Memfault data poll interval in milliseconds. If there is any memfault data it will
+	  be send after each interval expiration.
+
+module = BT_MDS
+module-str = MDS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_MDS
