@@ -46,7 +46,7 @@ extern "C" {
  *
  * @return int Zero on success, non-zero otherwise.
  */
-int nrf_modem_lib_init(enum nrf_modem_mode_t mode);
+int nrf_modem_lib_init(enum nrf_modem_mode mode);
 
 /**
  * @brief Modem library initialization callback struct.
