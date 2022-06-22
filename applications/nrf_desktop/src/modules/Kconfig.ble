@@ -195,6 +195,15 @@ config DESKTOP_BLE_SCAN_KEYBOARD_LIMIT
 	range 0 255
 	depends on DESKTOP_BLE_SCANNING_ENABLE
 
+config DESKTOP_BLE_SCAN_PM_EVENTS
+	bool "Stop and block scanning in the power down mode"
+	default y
+	depends on DESKTOP_BLE_SCANNING_ENABLE
+	depends on CAF_PM_EVENTS
+	help
+	  Stop and block scanning for peers if the central switched to the power down mode
+	  to reduce power consumption.
+
 if DESKTOP_BLE_SCANNING_ENABLE
 
 module = DESKTOP_BLE_SCANNING
