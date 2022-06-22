@@ -16,7 +16,7 @@
 #include <caf/events/module_state_event.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_SENSOR_MANAGER_LOG_LEVEL);
+LOG_MODULE_REGISTER(MODULE, CONFIG_CAF_SENSOR_DATA_AGGREGATOR_LOG_LEVEL);
 
 #define DT_DRV_COMPAT caf_aggregator
 
