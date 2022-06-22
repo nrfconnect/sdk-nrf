@@ -126,8 +126,8 @@ Source modules for module_state_event
 * :ref:`nrf_desktop_led_stream`
 * :ref:`nrf_desktop_leds`
 * :ref:`nrf_desktop_motion`
-* :ref:`nrf_desktop_passkey`
 * :ref:`nrf_desktop_nrf_profiler_sync`
+* :ref:`nrf_desktop_passkey`
 * :ref:`nrf_desktop_qos`
 * :ref:`nrf_desktop_selector`
 * :ref:`nrf_desktop_settings_loader`
@@ -206,6 +206,7 @@ Sink modules for power_down_event
 * :ref:`nrf_desktop_ble_adv`
 * :ref:`nrf_desktop_ble_bond`
 * :ref:`nrf_desktop_ble_latency`
+* :ref:`nrf_desktop_ble_scan`
 * :ref:`nrf_desktop_board`
 * :ref:`nrf_desktop_buttons_sim`
 * :ref:`nrf_desktop_click_detector`
@@ -237,6 +238,7 @@ Sink modules for wake_up_event
 * :ref:`nrf_desktop_ble_adv`
 * :ref:`nrf_desktop_ble_bond`
 * :ref:`nrf_desktop_ble_latency`
+* :ref:`nrf_desktop_ble_scan`
 * :ref:`nrf_desktop_board`
 * :ref:`nrf_desktop_buttons`
 * :ref:`nrf_desktop_buttons_sim`
