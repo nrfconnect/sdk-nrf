@@ -529,6 +529,13 @@ void on_sub_state_passive(struct app_msg_data *msg)
 			passive_mode_timers_start_all();
 		}
 	}
+	if (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED)
+	    && k_timer_remaining_get(&movement_resolution_timer) != 0) {
+		/* Trigger a sample request if there has been inactivity after
+		 * activity was triggered.
+		 */
+		data_sample_timer_handler(NULL);
+	}
 }
 
 /* Message handler for SUB_STATE_ACTIVE_MODE. */
