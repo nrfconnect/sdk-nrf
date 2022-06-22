@@ -87,6 +87,15 @@ extern int slm_setting_uart_save(void);
 
 static void modem_power_off(void)
 {
+	int rc;
+	int cfun;
+
+	/*
+	 * First check if the modem has already been put in Flight
+	 * or OFF mode by the MCU
+	 */
+	rc = nrf_modem_at_scanf("AT+CFUN?", "+CFUN: %d", &cfun);
+	if (rc != 1 || (cfun != 0 && cfun != 4)) {
 	/*
 	 * The LTE modem also needs to be stopped by issuing AT command
 	 * through the modem API, before entering System OFF mode.
@@ -96,8 +105,9 @@ static void modem_power_off(void)
 	 * Refer to https://infocenter.nordicsemi.com/topic/ps_nrf9160/
 	 * pmu.html?cp=2_0_0_4_0_0_1#system_off_mode
 	 */
-	(void)nrf_modem_at_printf("AT+CFUN=0");
-	k_sleep(K_SECONDS(1));
+		(void)nrf_modem_at_printf("AT+CFUN=0");
+		k_sleep(K_SECONDS(1));
+	}
 }
 
 /**@brief handle AT#XSLMVER commands
