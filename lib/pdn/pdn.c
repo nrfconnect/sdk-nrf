@@ -10,8 +10,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <inttypes.h>
-#include <zephyr/kernel.h>
 #include <zephyr/init.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/slist.h>
 #include <zephyr/logging/log.h>
 #include <nrf_modem_at.h>
 #include <modem/pdn.h>
@@ -31,7 +32,11 @@ LOG_MODULE_REGISTER(pdn, CONFIG_PDN_LOG_LEVEL);
 
 #define APN_STR_MAX_LEN 64
 
+static K_MUTEX_DEFINE(list_mutex);
+
+static sys_slist_t pdn_contexts;
 struct pdn {
+	sys_snode_t node; /* list handling */
 	pdn_event_handler_t callback;
 	int8_t context_id;
 };
@@ -44,10 +49,7 @@ static struct {
 	struct k_sem sem_cgev;
 	struct k_sem sem_cnec;
 } pdn_act_notif;
-
 static K_MUTEX_DEFINE(pdn_act_mutex);
-static struct pdn pdn_contexts[CONFIG_PDN_CONTEXTS_MAX];
-static pdn_event_handler_t default_callback;
 
 /* Use one monitor for all CGEV events and distinguish
  * between the different type of events later (ME, IPV6, etc).
@@ -57,9 +59,9 @@ AT_MONITOR(pdn_cnec_esm, "+CNEC_ESM", on_cnec_esm, PAUSED);
 
 static struct pdn *pdn_find(int cid)
 {
-	for (size_t i = 0; i < ARRAY_SIZE(pdn_contexts); i++) {
-		struct pdn *pdn = &pdn_contexts[i];
+	struct pdn *pdn;
 
+	SYS_SLIST_FOR_EACH_CONTAINER(&pdn_contexts, pdn, node) {
 		if (pdn->context_id == cid) {
 			return pdn;
 		}
@@ -68,9 +70,20 @@ static struct pdn *pdn_find(int cid)
 	return NULL;
 }
 
-static struct pdn *pdn_avail_get(void)
+static struct pdn *pdn_ctx_new(void)
 {
-	return pdn_find(CID_UNASSIGNED);
+	struct pdn *pdn;
+
+	pdn = k_malloc(sizeof(struct pdn));
+	if (!pdn) {
+		return NULL;
+	}
+
+	k_mutex_lock(&list_mutex, K_FOREVER);
+	sys_slist_append(&pdn_contexts, &pdn->node);
+	k_mutex_unlock(&list_mutex);
+
+	return pdn;
 }
 
 static void on_cnec_esm(const char *notif)
@@ -138,18 +151,10 @@ static void on_cgev(const char *notif)
 			k_sem_give(&pdn_act_notif.sem_cgev);
 		}
 
-		if (default_callback && cid == 0) {
-			default_callback(0, map[i].event, 0);
-			return;
-		}
-
-		pdn = pdn_find(cid);
-		if (!pdn) {
-			return;
-		}
-
-		if (pdn->callback) {
-			pdn->callback((intptr_t)cid, map[i].event, 0);
+		SYS_SLIST_FOR_EACH_CONTAINER(&pdn_contexts, pdn, node) {
+			if (pdn->context_id == cid && pdn->callback) {
+				pdn->callback(cid, map[i].event, 0);
+			}
 		}
 
 		return;
@@ -196,11 +201,47 @@ static void on_modem_init(int ret, void *ctx)
 
 int pdn_default_callback_set(pdn_event_handler_t cb)
 {
+	struct pdn *pdn;
+
 	if (!cb) {
+		return -EFAULT;
+	}
+
+	pdn = pdn_ctx_new();
+	if (!pdn) {
+		return -ENOMEM;
+	}
+
+	pdn->callback = cb;
+	pdn->context_id = 0;
+
+	LOG_DBG("Default PDP ctx callback %p registered", cb);
+
+	return 0;
+}
+
+int pdn_default_ctx_cb_dereg(pdn_event_handler_t cb)
+{
+	bool remvd;
+	struct pdn *pdn;
+	struct pdn *tmp;
+
+	remvd = false;
+	k_mutex_lock(&list_mutex, K_FOREVER);
+	SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&pdn_contexts, pdn, tmp, node) {
+		if (pdn->callback == cb) {
+			remvd = sys_slist_find_and_remove(&pdn_contexts, &pdn->node);
+			break;
+		}
+	}
+	k_mutex_unlock(&list_mutex);
+
+	if (!remvd) {
 		return -EINVAL;
 	}
 
-	default_callback = cb;
+	LOG_DBG("Default PDP ctx callback %p unregistered", pdn->callback);
+	k_free(pdn);
 
 	return 0;
 }
@@ -214,7 +255,7 @@ int pdn_ctx_create(uint8_t *cid, pdn_event_handler_t cb)
 		return -EFAULT;
 	}
 
-	pdn = pdn_avail_get();
+	pdn = pdn_ctx_new();
 	if (!pdn) {
 		return -ENOMEM;
 	}
@@ -315,6 +356,11 @@ int pdn_ctx_destroy(uint8_t cid)
 	int err;
 	struct pdn *pdn;
 
+	/* Default PDP context cannot be destroyed */
+	if (cid == 0) {
+		return -EINVAL;
+	}
+
 	pdn = pdn_find(cid);
 	if (!pdn) {
 		return -EINVAL;
@@ -326,14 +372,16 @@ int pdn_ctx_destroy(uint8_t cid)
 		if (err > 0) {
 			err = -ENOEXEC;
 		}
-
-		return err;
+		/* cleanup regardless */
 	}
 
-	pdn->context_id = CID_UNASSIGNED;
-	pdn->callback = NULL;
+	k_mutex_lock(&list_mutex, K_FOREVER);
+	sys_slist_find_and_remove(&pdn_contexts, &pdn->node);
+	k_mutex_unlock(&list_mutex);
 
-	return 0;
+	k_free(pdn);
+
+	return err;
 }
 
 static int cgact(uint8_t cid, bool activate)
@@ -471,9 +519,7 @@ static int pdn_sys_init(const struct device *unused)
 	k_sem_init(&pdn_act_notif.sem_cgev, 0, 1);
 	k_sem_init(&pdn_act_notif.sem_cnec, 0, 1);
 
-	for (size_t i = 0; i < ARRAY_SIZE(pdn_contexts); i++) {
-		pdn_contexts[i].context_id = CID_UNASSIGNED;
-	}
+	sys_slist_init(&pdn_contexts);
 
 	/* Do not process notifications until the PDN contexts
 	 * and the semaphores are initialized.

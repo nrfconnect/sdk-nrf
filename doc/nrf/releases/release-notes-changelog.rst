@@ -360,12 +360,19 @@ Modem libraries
 
     * Added:
 
+      * Support for setting multiple event callbacks for the default PDP context.
+      * The :c:func:`pdn_default_ctx_cb_dereg` function to deregister a callback for the default PDP context.
       * The :c:func:`pdn_esm_strerror` function to retrieve a textual description of an ESM error reason.
         The function is compiled when :kconfig:option:`CONFIG_PDN_ESM_STRERROR` Kconfig option is enabled.
 
     * Updated:
 
       * Automatically subscribe to ``+CNEC=16`` and ``+CGEREP=1`` if the :ref:`lte_lc_readme` library is used to change the modem's functional mode.
+
+    * Removed:
+
+      * The :kconfig:option:`CONFIG_PDN_CONTEXTS_MAX` Kconfig option.
+        The maximum number of PDP contexts is now dynamic.
 
   * :ref:`nrf_modem_lib_readme` library:
 
