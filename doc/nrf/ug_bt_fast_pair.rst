@@ -85,7 +85,10 @@ The Fast Pair service implementation provides API to generate the advertising da
   This function is to be used to set pairing mode before the advertising is started.
 
 Since you control the advertising, make sure to use advertising parameters consistent with the specification.
-The Bluetooth privacy is selected by the Fast Pair service, but you must make sure that the private address rotation is synchronized with the advertising payload update during the not discoverable advertising.
+The Bluetooth privacy is selected by the Fast Pair service, but you must make sure that the following requirements are met:
+
+* The Resolvable Private Address (RPA) rotation is synchronized with the advertising payload update during the not discoverable advertising.
+* The Resolvable Private Address (RPA) address is not rotated during discoverable advertising session.
 
 See the official `Fast Pair Advertising`_ documentation for detailed information about the requirements related to discoverable and not discoverable advertising.
 See :file:`samples/bluetooth/peripheral_fast_pair/src/bt_adv_helper.c` for an example of the implementation.

@@ -47,8 +47,15 @@ Bluetooth privacy
 -----------------
 
 The service selects Bluetooth privacy (:kconfig:option:`CONFIG_BT_PRIVACY`) and sets the default value of :kconfig:option:`CONFIG_BT_RPA_TIMEOUT` to 3600 seconds.
-During not discoverable advertising, the RPA address rotation must be done together with the Fast Pair payload update.
-Because of this, the RPA address cannot be rotated by Zephyr in the background.
+
+During not discoverable advertising, the Resolvable Private Address (RPA) rotation must be done together with the Fast Pair payload update.
+Because of this, the RPA cannot be rotated by Zephyr in the background.
+
+During discoverable advertising session, the Resolvable Private Address (RPA) rotation must not happen.
+Therefore, consider the following points:
+
+* Make sure that your advertising session is shorter than the value in the :kconfig:option:`CONFIG_BT_RPA_TIMEOUT` option.
+* Call :c:func:`bt_le_oob_get_local` to trigger RPA rotation and reset the RPA timeout right before the start of advertising.
 
 Bluetooth Security Manager Protocol (SMP)
 -----------------------------------------
