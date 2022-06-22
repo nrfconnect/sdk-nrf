@@ -210,8 +210,6 @@ uint8_t stream_state_get(void)
 
 void streamctrl_encoded_data_send(void const *const data, size_t len)
 {
-	// TODO: Re-implement the I2S gateway synchronization functionality
-
 	int ret;
 	static int prev_ret;
 

@@ -242,8 +242,10 @@ static void audio_datapath_drift_compensation(uint32_t frame_start_ts)
 			return;
 		}
 
-		int32_t err_us = DRIFT_MEAS_PERIOD_US - (ctrl_blk.previous_sdu_ref_us -
-							 ctrl_blk.drift_comp.meas_start_time_us);
+		int32_t err_us = (DRIFT_MEAS_PERIOD_US - (ctrl_blk.previous_sdu_ref_us -
+							  ctrl_blk.drift_comp.meas_start_time_us)) %
+				 CONFIG_AUDIO_FRAME_DURATION_US;
+
 		int32_t freq_adj = APLL_FREQ_ADJ(err_us);
 
 		ctrl_blk.drift_comp.center_freq = APLL_FREQ_CENTER + freq_adj;

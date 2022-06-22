@@ -13,6 +13,7 @@
 
 #include "macros_common.h"
 #include "ctrl_events.h"
+#include "audio_datapath.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(cis_gateway, CONFIG_LOG_BLE_LEVEL);
@@ -438,6 +439,18 @@ int le_audio_send(uint8_t const *const data, size_t size)
 
 	//TODO: Handling dual channel sending properly
 	net_buf_add_mem(buf, data, 120);
+
+#if (CONFIG_AUDIO_SOURCE_I2S)
+	struct bt_iso_tx_info tx_info = { 0 };
+
+	ret = bt_iso_chan_get_tx_sync(audio_stream.iso, &tx_info);
+
+	if (ret) {
+		LOG_WRN("Error getting ISO TX anchor point: %d", ret);
+	} else {
+		audio_datapath_sdu_ref_update(tx_info.ts);
+	}
+#endif
 
 	atomic_inc(&iso_tx_pool_alloc[0]);
 
