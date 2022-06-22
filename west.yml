@@ -50,7 +50,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 85a0034809612b332fbdf478357e8a4109c493fd
+      revision: 35357799b464e03a9fe78e9dbba9fcd539597f3c
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -87,6 +87,7 @@ manifest:
           - nrf_hw_models
           - open-amp
           - openthread
+          - picolibc
           - psa-arch-tests
           - segger
           - tinycbor
@@ -100,7 +101,7 @@ manifest:
     # changes.
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: v1.9.99-ncs1
+      revision: 6097de22bd1f1b499e599bfef618a235de7073b2
       path: bootloader/mcuboot
     - name: mbedtls-nrf
       path: mbedtls
@@ -141,7 +142,7 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: c17beca7538a7425a143df88123ba8e57e15d73d
+      revision: 3d3f06f8a39cdf54f719e88aaa869dc9a936b82f
       groups:
       - homekit
     - name: find-my
@@ -169,7 +170,7 @@ manifest:
       path: modules/lib/zcbor
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 0.29.1
+      revision: 0.31.3
       remote: memfault
     - name: cirrus
       repo-path: sdk-mcu-drivers
