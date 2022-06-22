@@ -147,7 +147,10 @@ The ``<shutdown_mode>`` parameter accepts only the following integer values:
   The data is buffered during the idle status and is sent to MCU after exiting the ilde status.
 
 .. note::
-   This parameter does not accept ``0`` anymore.
+
+   * This parameter does not accept ``0`` anymore.
+   * If the modem is on, entering Sleep mode sends a ``+CFUN=0`` command to the modem, which causes a non-volatile memory (NVM) write.
+     Take the NVM wear into account, or put the modem in flight mode by issuing a ``AT+CFUN=4`` before Sleep mode.
 
 Examples
 ~~~~~~~~
@@ -158,6 +161,16 @@ Examples
    ERROR
 
 ::
+
+   AT#XSLEEP=1
+   OK
+
+See the following for an example of when the modem is on:
+
+::
+
+   AT+CFUN=4
+   OK
 
    AT#XSLEEP=1
    OK
