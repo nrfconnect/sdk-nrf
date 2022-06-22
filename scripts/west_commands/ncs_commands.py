@@ -511,5 +511,6 @@ _BLOCKED_PROJECTS = set(
      'modules/hal/telink',
      'modules/hal/ti',
      'modules/hal/xtensa',
+     'modules/lib/picolibc',
      'modules/lib/tflite-micro',
      ])
