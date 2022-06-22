@@ -74,6 +74,7 @@ Complete the following steps to enable the |ble_scan|:
       For more detailed information about the Bluetooth advertising configuration in the nRF Desktop application, see the :ref:`nrf_desktop_ble_adv` documentation.
 
 #. Set the :ref:`CONFIG_DESKTOP_BLE_SCANNING_ENABLE <config_desktop_app_options>` option to enable the |ble_scan|.
+#. Set the :ref:`CONFIG_DESKTOP_BLE_SCAN_PM_EVENTS <config_desktop_app_options>` to block scanning in the power down mode to decrease the power consumption.
 
 By default, the nRF Desktop central always looks for both bonded and unbonded peripherals.
 You can set the :ref:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST <config_desktop_app_options>` option to make the device look for unbonded peripherals only on user request.
@@ -96,6 +97,7 @@ The scanning will not start if one of the following conditions occurs:
 * There are no more free Bluetooth connections.
 * The :ref:`nrf_desktop_ble_discovery` is in the process of discovering a peer.
 * The central is going to scan only for bonded peers and all the bonded peers are already connected.
+* The central is in the power down mode and :kconfig:option:`CONFIG_DESKTOP_BLE_SCAN_PM_EVENTS` is enabled.
 
 The number of Bluetooth connections is defined as the :kconfig:option:`CONFIG_BT_MAX_CONN` Kconfig option.
 
@@ -109,6 +111,7 @@ The scanning is interrupted if one of the following conditions occurs:
 * The maximum scan duration specified by :ref:`CONFIG_DESKTOP_BLE_SCAN_DURATION_S <config_desktop_app_options>` times out.
 
 The scanning is never interrupted if there is no connected Bluetooth peer.
+If :kconfig:option:`CONFIG_DESKTOP_BLE_SCAN_PM_EVENTS` is enabled, the power down event will also interrupt scanning.
 
 Implementation details
 **********************
