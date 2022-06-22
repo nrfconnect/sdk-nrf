@@ -7,16 +7,10 @@
 menuconfig PDN
 	bool "Packet Domain Network library"
 	depends on NRF_MODEM_LIB && AT_MONITOR
+	# library uses heap
+	depends on HEAP_MEM_POOL_SIZE > 0
 
 if PDN
-
-config PDN_CONTEXTS_MAX
-	int "Number of PDP contexts"
-	range 0 11
-	default 1
-	help
-	  Maximum number of PDP context handled by the library.
-	  This number does not include the default PDP context 0.
 
 config PDN_LEGACY_PCO
 	bool "Use legacy PCO mode"

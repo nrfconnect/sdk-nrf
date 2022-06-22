@@ -83,8 +83,7 @@ enum pdn_auth {
  * @param event The event.
  * @param reason The ESM error reason, if available.
  */
-typedef void (*pdn_event_handler_t)(uint8_t cid, enum pdn_event event,
-				    int reason);
+typedef void (*pdn_event_handler_t)(uint8_t cid, enum pdn_event event, int reason);
 
 /**
  * @brief Create a Packet Data Protocol (PDP) context.
@@ -182,6 +181,13 @@ int pdn_default_apn_get(char *buf, size_t len);
  * @param cb The PDN event handler.
  */
 int pdn_default_callback_set(pdn_event_handler_t cb);
+
+/**
+ * @brief Deregister a callback for events pertaining to the default PDP context (zero).
+ *
+ * @param cb The PDN event handler.
+ */
+int pdn_default_ctx_cb_dereg(pdn_event_handler_t cb);
 
 #if CONFIG_PDN_ESM_STRERROR
 
