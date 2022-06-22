@@ -154,6 +154,7 @@ nRF9160: Asset Tracker v2
       * :ref:`CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD <CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD>`
       * :ref:`CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD <CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD>`
       * :ref:`CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS <CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS>`
+    * Data sampling is now performed when the device detects both activity and inactivity in passive mode, notified by the :c:enum:`SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED` event of the :ref:`sensor module <asset_tracker_v2_sensor_module>`.
 
   * Removed:
 

@@ -66,6 +66,7 @@ Further, they contain a timeout value ``accelerometer_inactivity_timeout`` in se
 
 Motion detection is enabled and disabled according to the device mode parameter, received in the configuration events.
 It is enabled in the passive mode and disabled in the active mode.
+Data sampling requests are sent out both on activity events and inactivity events.
 
 The sensor module sends out a :c:enum:`SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED` event if it detects movement.
 Similarly, :c:enum:`SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED` is sent out if there is no movement within the configured timeout.
