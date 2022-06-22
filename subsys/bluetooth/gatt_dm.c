@@ -464,6 +464,8 @@ static uint8_t discovery_callback(struct bt_conn *conn,
 	default:
 		/* This should not be possible */
 		__ASSERT(false, "Unknown param type.");
+		discovery_complete_error(&bt_gatt_dm_inst, -EINVAL);
+
 		break;
 	}
 
