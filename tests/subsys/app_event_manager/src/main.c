@@ -40,7 +40,6 @@ static void test_start(enum test_id test_id)
 	cur_test_id = test_id;
 	struct test_start_event *ts = new_test_start_event();
 
-	zassert_not_null(ts, "Failed to allocate event");
 	ts->test_id = test_id;
 	APP_EVENT_SUBMIT(ts);
 
@@ -66,6 +65,11 @@ static void test_event_order(void)
 static void test_subs_order(void)
 {
 	test_start(TEST_SUBSCRIBER_ORDER);
+}
+
+static void test_oom(void)
+{
+	test_start(TEST_OOM);
 }
 
 static void test_multicontext(void)
@@ -174,8 +178,6 @@ static void test_event_size_disabled(void)
 	app_event_manager_free(ev_s1);
 }
 
-void test_oom_reset(void);
-
 void test_main(void)
 {
 	ztest_test_suite(app_event_manager_tests,
@@ -184,7 +186,7 @@ void test_main(void)
 			 ztest_unit_test(test_data),
 			 ztest_unit_test(test_event_order),
 			 ztest_unit_test(test_subs_order),
-			 ztest_unit_test(test_oom_reset),
+			 ztest_unit_test(test_oom),
 			 ztest_unit_test(test_multicontext),
 			 ztest_unit_test(test_event_size_static),
 			 ztest_unit_test(test_event_size_dynamic),

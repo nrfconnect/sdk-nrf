@@ -12,6 +12,7 @@ project("Application Event Manager unit tests")
 # Include application event headers
 zephyr_library_include_directories(src/events)
 zephyr_library_include_directories(src/modules)
+zephyr_library_include_directories(src/utils)
 
 # Add test sources
 target_sources(app PRIVATE src/main.c)

@@ -8,9 +8,9 @@
 #include <ztest.h>
 #include <string.h>
 
-#include <test_events.h>
-#include <data_event.h>
-#include <order_event.h>
+#include "test_events.h"
+#include "data_event.h"
+#include "order_event.h"
 
 #include "test_config.h"
 
@@ -44,7 +44,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 			struct test_end_event *te = new_test_end_event();
 
-			zassert_not_null(te, "Failed to allocate event");
 			te->test_id = TEST_DATA;
 			APP_EVENT_SUBMIT(te);
 		}
@@ -63,7 +62,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			if (i == TEST_EVENT_ORDER_CNT) {
 				struct test_end_event *te = new_test_end_event();
 
-				zassert_not_null(te, "Failed to allocate event");
 				te->test_id = TEST_EVENT_ORDER;
 				APP_EVENT_SUBMIT(te);
 			}

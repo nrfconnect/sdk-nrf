@@ -7,8 +7,8 @@
 #include <zephyr/kernel.h>
 #include <ztest.h>
 
-#include <test_events.h>
-#include <order_event.h>
+#include "test_events.h"
+#include "order_event.h"
 
 
 static enum test_id cur_test_id;
@@ -115,7 +115,6 @@ static bool app_event_handler_final(const struct app_event_header *aeh)
 
 			struct test_end_event *te = new_test_end_event();
 
-			zassert_not_null(te, "Failed to allocate event");
 			te->test_id = cur_test_id;
 			APP_EVENT_SUBMIT(te);
 		}

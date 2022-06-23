@@ -7,21 +7,20 @@
 #include <zephyr/kernel.h>
 #include <ztest.h>
 
-#include <test_events.h>
-#include <multicontext_event.h>
+#include "test_events.h"
+#include "multicontext_event.h"
 
 #include "test_multicontext_config.h"
 
 #define MODULE test_multictx_handler
-#define THREAD_STACK_SIZE 400
 
 static enum test_id cur_test_id;
+
 
 static void end_test(void)
 {
 	struct test_end_event *event = new_test_end_event();
 
-	zassert_not_null(event, "Failed to allocate event");
 	event->test_id = cur_test_id;
 
 	APP_EVENT_SUBMIT(event);
