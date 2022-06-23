@@ -91,15 +91,15 @@ config BT_CTLR_SDC_LLPM
 	  which lets the application use connection intervals down to 1 ms.
 
 config BT_CTLR_SDC_PERIPHERAL_COUNT
-	int "Number of concurrent slave roles"
+	int "Number of concurrent peripheral roles"
 	default BT_MAX_CONN if (BT_PERIPHERAL && !BT_CENTRAL)
 	default 1 if BT_PERIPHERAL
 	default 0
 	range 0 BT_MAX_CONN
 	help
-	  Number of concurrent slave roles defines how many simultaneous
-	  connections can be created with the device working as a slave.
-	  NOTE: the number of master roles is defined as
+	  Number of concurrent peripheral roles defines how many simultaneous
+	  connections can be created with the device working as a peripheral.
+	  NOTE: the number of central roles is defined as
 	  BT_MAX_CONN - BT_CTLR_SDC_PERIPHERAL_COUNT
 
 config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
