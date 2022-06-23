@@ -4,7 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* TEST_MULTICONTEXT */
+#ifndef _TEST_MULTICONTEXT_CONFIG_H_
+#define _TEST_MULTICONTEXT_CONFIG_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <zephyr/kernel.h>
 
@@ -18,3 +23,9 @@ enum source_id {
 
 	SOURCE_CNT
 };
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _TEST_MULTICONTEXT_CONFIG_H_ */

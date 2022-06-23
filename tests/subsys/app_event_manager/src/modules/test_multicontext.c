@@ -7,8 +7,8 @@
 #include <zephyr/kernel.h>
 #include <ztest.h>
 
-#include <test_events.h>
-#include <multicontext_event.h>
+#include "test_events.h"
+#include "multicontext_event.h"
 
 #include "test_multicontext_config.h"
 
@@ -20,7 +20,6 @@ static void send_event(int a, bool sleep)
 {
 	struct multicontext_event *ev = new_multicontext_event();
 
-	zassert_not_null(ev, "Failed to allocate event");
 	/* For every event both values should be the same -
 	 * used to check if Application Event Manager sends proper values.
 	 */

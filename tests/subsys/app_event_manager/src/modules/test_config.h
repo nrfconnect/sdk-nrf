@@ -4,7 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* TEST_DATA */
+#ifndef _TEST_CONFIG_H_
+#define _TEST_CONFIG_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define TEST_VAL1 -10
 #define TEST_VAL2 20
@@ -16,6 +21,10 @@
 
 #define TEST_STRING "description123"
 
-
-/* TEST_EVENT_ORDER */
 #define TEST_EVENT_ORDER_CNT 20
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _TEST_CONFIG_H_ */

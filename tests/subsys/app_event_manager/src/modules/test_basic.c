@@ -7,9 +7,9 @@
 #include <zephyr/kernel.h>
 #include <ztest.h>
 
-#include <test_events.h>
-#include <data_event.h>
-#include <order_event.h>
+#include "test_events.h"
+#include "data_event.h"
+#include "order_event.h"
 
 #include "test_config.h"
 
@@ -25,7 +25,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		{
 			struct test_end_event *et = new_test_end_event();
 
-			zassert_not_null(et, "Failed to allocate event");
 			et->test_id = st->test_id;
 			APP_EVENT_SUBMIT(et);
 			break;
@@ -36,7 +35,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			struct data_event *event = new_data_event();
 			static char descr[] = TEST_STRING;
 
-			zassert_not_null(event, "Failed to allocate event");
 			event->val1 = TEST_VAL1;
 			event->val2 = TEST_VAL2;
 			event->val3 = TEST_VAL3;
@@ -55,7 +53,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			for (size_t i = 0; i < TEST_EVENT_ORDER_CNT; i++) {
 				struct order_event *event = new_order_event();
 
-				zassert_not_null(event, "Failed to allocate event");
 				event->val = i;
 				APP_EVENT_SUBMIT(event);
 			}
@@ -66,7 +63,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		{
 			struct order_event *event = new_order_event();
 
-			zassert_not_null(event, "Failed to allocate event");
 			APP_EVENT_SUBMIT(event);
 			break;
 		}
