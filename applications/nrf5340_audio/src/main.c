@@ -212,4 +212,5 @@ void main(void)
 		streamctrl_event_handler();
 		STACK_USAGE_PRINT("main", &z_main_thread);
 	}
+	//heihallo
 }
