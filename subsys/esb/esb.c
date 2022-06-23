@@ -418,6 +418,8 @@ static bool update_radio_crc(void)
 		break;
 
 	case ESB_CRC_OFF:
+		NRF_RADIO->CRCINIT = 0x00UL;
+		NRF_RADIO->CRCPOLY = 0x00UL;
 		NRF_RADIO->CRCCNF = ESB_CRC_OFF << RADIO_CRCCNF_LEN_Pos;
 		break;
 
