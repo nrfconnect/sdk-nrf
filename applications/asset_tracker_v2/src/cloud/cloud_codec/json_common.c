@@ -454,75 +454,6 @@ exit:
 	return err;
 }
 
-int json_common_accel_data_add(cJSON *parent,
-			       struct cloud_data_accelerometer *data,
-			       enum json_common_op_code op,
-			       const char *object_label,
-			       cJSON **parent_ref)
-{
-	int err;
-
-	if (!data->queued) {
-		return -ENODATA;
-	}
-
-	err = date_time_uptime_to_unix_time_ms(&data->ts);
-	if (err) {
-		LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
-		return err;
-	}
-
-	cJSON *accel_obj = cJSON_CreateObject();
-	cJSON *accel_val_obj = cJSON_CreateObject();
-
-	if (accel_obj == NULL || accel_val_obj == NULL) {
-		err = -ENOMEM;
-		goto exit;
-	}
-
-	err = json_add_number(accel_val_obj, DATA_MOVEMENT_X, data->values[0]);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
-	}
-
-	err = json_add_number(accel_val_obj, DATA_MOVEMENT_Y, data->values[1]);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
-	}
-
-	err = json_add_number(accel_val_obj, DATA_MOVEMENT_Z, data->values[2]);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
-	}
-
-	json_add_obj(accel_obj, DATA_VALUE, accel_val_obj);
-
-	err = json_add_number(accel_obj, DATA_TIMESTAMP, data->ts);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		cJSON_Delete(accel_obj);
-		return err;
-	}
-
-	err = op_code_handle(parent, op, object_label, accel_obj, parent_ref);
-	if (err) {
-		cJSON_Delete(accel_obj);
-		return err;
-	}
-
-	data->queued = false;
-
-	return 0;
-
-exit:
-	cJSON_Delete(accel_obj);
-	cJSON_Delete(accel_val_obj);
-	return err;
-}
-
 int json_common_ui_data_add(cJSON *parent,
 			    struct cloud_data_ui *data,
 			    enum json_common_op_code op,
@@ -1252,16 +1183,6 @@ int json_common_batch_data_add(cJSON *parent, enum json_common_buffer_type type,
 							  JSON_COMMON_ADD_DATA_TO_ARRAY,
 							  NULL,
 							  NULL);
-		}
-			break;
-		case JSON_COMMON_ACCELEROMETER: {
-			struct cloud_data_accelerometer *data =
-					(struct cloud_data_accelerometer *)buf;
-			err = json_common_accel_data_add(array_obj,
-							 &data[i],
-							 JSON_COMMON_ADD_DATA_TO_ARRAY,
-							 NULL,
-							 NULL);
 		}
 			break;
 		case JSON_COMMON_BATTERY: {
