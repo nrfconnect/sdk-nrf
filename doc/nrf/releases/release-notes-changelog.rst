@@ -115,12 +115,13 @@ nRF9160: Serial LTE modem
 
   * Updated:
 
-    * Updated the AT response and the URC sent when the application enters and exits data mode.
+    * AT response and the URC sent when the application enters and exits data mode.
 
   * Added:
 
     * URC for GNSS sleep and wakeup events.
-    * Selected flags support in #XRECV and #XRECVFROM commands
+    * Selected flags support in #XRECV and #XRECVFROM commands.
+    * Multi-PDN support in the Socket service.
 
 nRF5340 Audio
 -------------
