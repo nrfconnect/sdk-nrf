@@ -27,7 +27,7 @@ Syntax
 
 ::
 
-   #XSOCKET=<op>[,<type>,<role>]]
+   #XSOCKET=<op>[,<type>,<role>[,<cid>]]
 
 * The ``<op>`` parameter can accept one of the following values:
 
@@ -39,22 +39,26 @@ Syntax
 
 * The ``<type>`` parameter can accept one of the following values:
 
-  * ``1`` - Set SOCK_STREAM for the stream socket type using the TCP protocol.
-  * ``2`` - Set SOCK_DGRAM for the datagram socket type using the UDP protocol.
-  * ``3`` - Set SOCK_RAW for the raw socket type using a generic IP protocol.
+  * ``1`` - Set ``SOCK_STREAM`` for the stream socket type using the TCP protocol.
+  * ``2`` - Set ``SOCK_DGRAM`` for the datagram socket type using the UDP protocol.
+  * ``3`` - Set ``SOCK_RAW`` for the raw socket type using a generic IP protocol.
 
 * The ``<role>`` parameter can accept one of the following values:
 
   * ``0`` - Client
   * ``1`` - Server
 
+* The ``<cid>`` parameter is an integer.
+  It represents ``cid`` in the ``+CGDCONT`` command.
+  Its default value is ``0``.
+
 Response syntax
 ~~~~~~~~~~~~~~~
 
 ::
 
-   #XSOCKET: <handle>[,<type>,<protocol>]
-   #XSOCKET: <result>
+   #XSOCKET: <handle>,<type>,<protocol>
+   #XSOCKET: <result>,"closed"
 
 * The ``<handle>`` value is an integer and can be interpreted as follows:
 
@@ -63,9 +67,9 @@ Response syntax
 
 * The ``<type>`` value can be one of the following integers:
 
-  * ``1`` - Set SOCK_STREAM for the stream socket type using the TCP protocol.
-  * ``2`` - Set SOCK_DGRAM for the datagram socket type using the UDP protocol.
-  * ``3`` - Set SOCK_RAW for the raw socket type using a generic IP protocol.
+  * ``1`` - Set ``SOCK_STREAM`` for the stream socket type using the TCP protocol.
+  * ``2`` - Set ``SOCK_DGRAM`` for the datagram socket type using the UDP protocol.
+  * ``3`` - Set ``SOCK_RAW`` for the raw socket type using a generic IP protocol.
 
 * The ``<protocol>`` value can be one of the following integers:
 
@@ -114,7 +118,7 @@ Response syntax
 
 ::
 
-   #XSOCKET: <handle>[,<family>,<role>]
+   #XSOCKET: <handle>,<family>,<role>,<type>,<cid>
 
 * The ``<handle>`` value is an integer.
   When positive or ``0``, the socket is valid.
@@ -131,13 +135,22 @@ Response syntax
   * ``0`` - Client
   * ``1`` - Server
 
+* The ``<type>`` value can be one of the following integers:
+
+  * ``1`` - Set ``SOCK_STREAM`` for the stream socket type using the TCP protocol.
+  * ``2`` - Set ``SOCK_DGRAM`` for the datagram socket type using the UDP protocol.
+  * ``3`` - Set ``SOCK_RAW`` for the raw socket type using a generic IP protocol.
+
+* The ``<cid>`` parameter is an integer.
+  It represents ``cid`` in the ``+CGDCONT`` command.
+
 Examples
 ~~~~~~~~
 
 ::
 
    AT#XSOCKET?
-   #XSOCKET: 3,1,0
+   #XSOCKET: 3,1,0,1,0
    OK
 
 Test command
@@ -157,7 +170,7 @@ Response syntax
 
 ::
 
-   #XSOCKET: <list of op>,<list of types>,<list of roles>
+   #XSOCKET: <list of op>,<list of types>,<list of roles>,<cid>
 
 
 * The ``<list of op>`` value can be one of the following integers:
@@ -168,9 +181,9 @@ Response syntax
 
 * The ``<list of types>`` value can be one of the following integers:
 
-  * ``1`` - Set SOCK_STREAM for the stream socket type using the TCP protocol.
-  * ``2`` - Set SOCK_DGRAM for the datagram socket type using the UDP protocol.
-  * ``3`` - Set SOCK_RAW for the raw socket type using a generic IP protocol.
+  * ``1`` - Set ``SOCK_STREAM`` for the stream socket type using the TCP protocol.
+  * ``2`` - Set ``SOCK_DGRAM`` for the datagram socket type using the UDP protocol.
+  * ``3`` - Set ``SOCK_RAW`` for the raw socket type using a generic IP protocol.
 
 * The ``<list of roles>`` value can be one of the following integers:
 
@@ -183,7 +196,7 @@ Examples
 ::
 
    AT#XSOCKET=?
-   #XSOCKET: (0,1,2),(1,2,3),(0,1)
+   #XSOCKET: (0,1,2),(1,2,3),(0,1),<cid>
    OK
 
 Secure Socket #XSSOCKET
@@ -204,7 +217,7 @@ Syntax
 
 ::
 
-   #XSSOCKET=<op>[,<type>,<role>,<sec_tag>[,<peer_verify>]]
+   #XSSOCKET=<op>[,<type>,<role>,<sec_tag>[,<peer_verify>[,<cid>]]
 
 * The ``<op>`` parameter can accept one of the following values:
 
@@ -216,8 +229,8 @@ Syntax
 
 * The ``<type>`` parameter can accept one of the following values:
 
-  * ``1`` - Set SOCK_STREAM for the stream socket type using the TLS 1.2 protocol.
-  * ``2`` - Set SOCK_DGRAM for the datagram socket type using the DTLS 1.2 protocol.
+  * ``1`` - Set ``SOCK_STREAM`` for the stream socket type using the TLS 1.2 protocol.
+  * ``2`` - Set ``SOCK_DGRAM`` for the datagram socket type using the DTLS 1.2 protocol.
 
 * The ``<role>`` parameter can accept one of the following values:
 
@@ -234,13 +247,17 @@ Syntax
   * ``1`` - Optional
   * ``2`` - Required (default for client role)
 
+* The ``<cid>`` parameter is an integer.
+  It represents ``cid`` in the ``+CGDCONT`` command.
+  Its default value is ``0``.
+
 Response syntax
 ~~~~~~~~~~~~~~~
 
 ::
 
-   #XSSOCKET: <handle>[,<type>,<protocol>]
-   #XSOCKET: <result>
+   #XSSOCKET: <handle>,<type>,<protocol>
+   #XSOCKET: <result>,"closed"
 
 * The ``<handle>`` value is an integer and can be interpreted as follows:
 
@@ -249,8 +266,8 @@ Response syntax
 
 * The ``<type>`` value can be one of the following integers:
 
-  * ``1`` - SOCK_STREAM for the stream socket type using the TLS 1.2 protocol.
-  * ``2`` - SOCK_DGRAM for the datagram socket type using the DTLS 1.2 protocol.
+  * ``1`` - ``SOCK_STREAM`` for the stream socket type using the TLS 1.2 protocol.
+  * ``2`` - ``SOCK_DGRAM`` for the datagram socket type using the DTLS 1.2 protocol.
 
 * The ``<protocol>`` value can be one of the following integers:
 
@@ -296,7 +313,7 @@ Response syntax
 
 ::
 
-   #XSSOCKET: <handle>[,<family>,<role>]
+   #XSSOCKET: <handle>,<family>,<role>,<type>,<sec_tag>,<cid>
 
 * The ``<handle>`` value is an integer.
   When positive or ``0``, the socket is valid.
@@ -311,13 +328,24 @@ Response syntax
   * ``0`` - Client
   * ``1`` - Server
 
+* The ``<type>`` value can be one of the following integers:
+
+  * ``1`` - ``SOCK_STREAM`` for the stream socket type using the TLS 1.2 protocol.
+  * ``2`` - ``SOCK_DGRAM`` for the datagram socket type using the DTLS 1.2 protocol.
+
+* The ``<sec_tag>`` value is an integer.
+  It indicates to the modem the credential of the security tag to be used for establishing a secure connection.
+
+* The ``<cid>`` value is an integer.
+  It represents ``cid`` in the ``+CGDCONT`` command.
+
 Examples
 ~~~~~~~~
 
 ::
 
    AT#XSSOCKET?
-   #XSSOCKET: 2,1,0
+   #XSSOCKET: 2,1,0,1,16842753,0
    OK
 
 Test command
@@ -337,7 +365,7 @@ Response syntax
 
 ::
 
-   #XSSOCKET: <list of op>,<list of types>,<list of roles>,<sec-tag>,<peer_verify>
+   #XSSOCKET: <list of op>,<list of types>,<list of roles>,<sec_tag>,<peer_verify>,<cid>
 
 
 * The ``<list of op>`` value can be one of the following integers:
@@ -348,8 +376,8 @@ Response syntax
 
 * The ``<list of types>>`` value can be one of the following integers.
 
-  * ``1`` - SOCK_STREAM for the stream socket type using the TLS 1.2 protocol.
-  * ``2`` - SOCK_DGRAM for the datagram socket type using the DTLS 1.2 protocol.
+  * ``1`` - ``SOCK_STREAM`` for the stream socket type using the TLS 1.2 protocol.
+  * ``2`` - ``SOCK_DGRAM`` for the datagram socket type using the DTLS 1.2 protocol.
 
 * The ``<list of roles>`` value can be one of the following integers:
 
@@ -362,7 +390,7 @@ Examples
 ::
 
    AT#XSSOCKET=?
-   #XSSOCKET: (0,1,2),(1,2),<sec_tag>,<peer_verify>,<hostname_verify>
+   #XSSOCKET: (0,1,2),(1,2),<sec_tag>,<peer_verify>,<cid>
    OK
 
 Select Socket #XSOCKETSELECT
@@ -389,20 +417,10 @@ Response syntax
 
 ::
 
-   #XSOCKETSELECT: <handle>,<family>,<role>
+   #XSOCKETSELECT: <handle>
 
 * The ``<handle>`` value is an integer.
   When positive or ``0``, the socket is valid.
-
-* The ``<family>`` value can be one of the following integers:
-
-  * ``1`` - IP protocol family version 4.
-  * ``2`` - IP protocol family version 6.
-
-* The ``<role>`` value can be one of the following integers:
-
-  * ``0`` - Client
-  * ``1`` - Server
 
 Examples
 ~~~~~~~~
@@ -410,7 +428,7 @@ Examples
 ::
 
    AT#XSOCKETSELECT=4
-   #XSOCKETSELECT: 4,1,1
+   #XSOCKETSELECT: 4
    OK
 
 Read command
@@ -430,7 +448,7 @@ Response syntax
 
 ::
 
-   #XSOCKETSELECT: <handle>,<family>,<role>,<type>,<sec_tag>,<ranking>
+   #XSOCKETSELECT: <handle>,<family>,<role>,<type>,<sec_tag>,<ranking>,<cid>
    #XSOCKETSELECT: <handle_active>
 
 * The ``<handle>`` value is an integer that indicates the handle of the socket.
@@ -457,6 +475,9 @@ Response syntax
 * The ``<ranking>`` value is an integer.
   It indicates the ranking value of this socket, where the largest value means the highest ranking.
 
+* The ``<cid>`` value is an integer.
+  It represents ``cid`` in the ``+CGDCONT`` command.
+
 * The ``<handle_active>`` value is an integer that indicates the handle of the active socket.
 
 Examples
@@ -465,14 +486,14 @@ Examples
 ::
 
   AT#XSOCKETSELECT?
-  #XSOCKETSELECT: 0,1,0,1,-1,2
-  #XSOCKETSELECT: 1,1,0,2,-1,3
-  #XSOCKETSELECT: 2,1,0,1,16842755,4
-  #XSOCKETSELECT: 3,1,0,2,16842755,5
-  #XSOCKETSELECT: 4,1,1,1,-1,6
-  #XSOCKETSELECT: 5,1,1,2,-1,7
-  #XSOCKETSELECT: 6,1,1,1,16842755,8
-  #XSOCKETSELECT: 7,1,0,1,-1,9
+  #XSOCKETSELECT: 0,1,0,1,-1,2,0
+  #XSOCKETSELECT: 1,1,0,2,-1,3,0
+  #XSOCKETSELECT: 2,1,0,1,16842755,4,0
+  #XSOCKETSELECT: 3,1,0,2,16842755,5,0
+  #XSOCKETSELECT: 4,1,1,1,-1,6,0
+  #XSOCKETSELECT: 5,1,1,2,-1,7,0
+  #XSOCKETSELECT: 6,1,1,1,16842755,8,0
+  #XSOCKETSELECT: 7,1,0,1,-1,9,0
   #XSOCKETSELECT: 7
   OK
 
@@ -481,14 +502,14 @@ Examples
   OK
 
   AT#XSOCKETSELECT?
-  #XSOCKETSELECT: 0,1,0,1,-1,2
-  #XSOCKETSELECT: 1,1,0,2,-1,3
-  #XSOCKETSELECT: 2,1,0,1,16842755,4
-  #XSOCKETSELECT: 3,1,0,2,16842755,5
-  #XSOCKETSELECT: 4,1,1,1,-1,6
-  #XSOCKETSELECT: 5,1,1,2,-1,7
-  #XSOCKETSELECT: 6,1,1,1,16842755,8
-  #XSOCKETSELECT: 7,1,0,1,-1,9
+  #XSOCKETSELECT: 0,1,0,1,-1,2,0
+  #XSOCKETSELECT: 1,1,0,2,-1,3,0
+  #XSOCKETSELECT: 2,1,0,1,16842755,4,0
+  #XSOCKETSELECT: 3,1,0,2,16842755,5,0
+  #XSOCKETSELECT: 4,1,1,1,-1,6,0
+  #XSOCKETSELECT: 5,1,1,2,-1,7,0
+  #XSOCKETSELECT: 6,1,1,1,16842755,8,0
+  #XSOCKETSELECT: 7,1,0,1,-1,9,0
   #XSOCKETSELECT: 4
   OK
 
