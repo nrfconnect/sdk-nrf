@@ -9,7 +9,7 @@
 #include <modem/trace_backend.h>
 #include <SEGGER_RTT.h>
 
-LOG_MODULE_DECLARE(modem_trace_backend, CONFIG_MODEM_TRACE_BACKEND_LOG_LEVEL);
+LOG_MODULE_REGISTER(modem_trace_backend, CONFIG_MODEM_TRACE_BACKEND_LOG_LEVEL);
 
 static int trace_rtt_channel;
 static char rtt_buffer[CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RTT_BUF_SIZE];

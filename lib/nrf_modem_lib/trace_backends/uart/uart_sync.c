@@ -10,7 +10,7 @@
 #include <modem/trace_backend.h>
 #include <nrfx_uarte.h>
 
-LOG_MODULE_DECLARE(modem_trace_backend, CONFIG_MODEM_TRACE_BACKEND_LOG_LEVEL);
+LOG_MODULE_REGISTER(modem_trace_backend, CONFIG_MODEM_TRACE_BACKEND_LOG_LEVEL);
 
 #define UART1_NL DT_NODELABEL(uart1)
 PINCTRL_DT_DEFINE(UART1_NL);
