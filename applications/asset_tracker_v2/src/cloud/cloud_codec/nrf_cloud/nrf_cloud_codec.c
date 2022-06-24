@@ -994,7 +994,6 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 			    struct cloud_data_modem_static *modem_stat_buf,
 			    struct cloud_data_modem_dynamic *modem_dyn_buf,
 			    struct cloud_data_ui *ui_buf,
-			    struct cloud_data_accelerometer *accel_buf,
 			    struct cloud_data_impact *impact_buf,
 			    struct cloud_data_battery *bat_buf)
 {
@@ -1131,7 +1130,6 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 				  struct cloud_data_modem_dynamic *modem_dyn_buf,
 				  struct cloud_data_ui *ui_buf,
 				  struct cloud_data_impact *impact_buf,
-				  struct cloud_data_accelerometer *accel_buf,
 				  struct cloud_data_battery *bat_buf,
 				  size_t gnss_buf_count,
 				  size_t sensor_buf_count,
@@ -1139,7 +1137,6 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 				  size_t modem_dyn_buf_count,
 				  size_t ui_buf_count,
 				  size_t impact_buf_count,
-				  size_t accel_buf_count,
 				  size_t bat_buf_count)
 {
 	int err;
@@ -1220,8 +1217,6 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 	output->len = strlen(buffer);
 
 exit:
-	/* Clear buffers that are not handled by this function. */
-	memset(accel_buf, 0, accel_buf_count * sizeof(struct cloud_data_accelerometer));
 	cJSON_Delete(root_array);
 	return err;
 }

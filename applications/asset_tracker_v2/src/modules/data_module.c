@@ -67,7 +67,6 @@ static enum state_type {
 static struct cloud_data_gnss gnss_buf[CONFIG_DATA_GNSS_BUFFER_COUNT];
 static struct cloud_data_sensors sensors_buf[CONFIG_DATA_SENSOR_BUFFER_COUNT];
 static struct cloud_data_ui ui_buf[CONFIG_DATA_UI_BUFFER_COUNT];
-static struct cloud_data_accelerometer accel_buf[CONFIG_DATA_ACCELEROMETER_BUFFER_COUNT];
 static struct cloud_data_impact impact_buf[CONFIG_DATA_IMPACT_BUFFER_COUNT];
 static struct cloud_data_battery bat_buf[CONFIG_DATA_BATTERY_BUFFER_COUNT];
 static struct cloud_data_modem_dynamic modem_dyn_buf[CONFIG_DATA_MODEM_DYNAMIC_BUFFER_COUNT];
@@ -87,7 +86,6 @@ static int head_gnss_buf;
 static int head_sensor_buf;
 static int head_modem_dyn_buf;
 static int head_ui_buf;
-static int head_accel_buf;
 static int head_impact_buf;
 static int head_bat_buf;
 
@@ -592,7 +590,6 @@ static void data_encode(void)
 					      &modem_stat,
 					      &modem_dyn_buf[head_modem_dyn_buf],
 					      &ui_buf[head_ui_buf],
-					      &accel_buf[head_accel_buf],
 					      &impact_buf[head_impact_buf],
 					      &bat_buf[head_bat_buf]);
 		switch (err) {
@@ -624,7 +621,6 @@ static void data_encode(void)
 						    modem_dyn_buf,
 						    ui_buf,
 						    impact_buf,
-						    accel_buf,
 						    bat_buf,
 						    ARRAY_SIZE(gnss_buf),
 						    ARRAY_SIZE(sensors_buf),
@@ -632,7 +628,6 @@ static void data_encode(void)
 						    ARRAY_SIZE(modem_dyn_buf),
 						    ARRAY_SIZE(ui_buf),
 						    ARRAY_SIZE(impact_buf),
-						    ARRAY_SIZE(accel_buf),
 						    ARRAY_SIZE(bat_buf));
 		switch (err) {
 		case 0:
@@ -1353,20 +1348,6 @@ static void on_all_states(struct data_msg_data *msg)
 
 	if (IS_EVENT(msg, sensor, SENSOR_EVT_ENVIRONMENTAL_NOT_SUPPORTED)) {
 		requested_data_status_set(APP_DATA_ENVIRONMENTAL);
-	}
-
-	if (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_DATA_READY)) {
-		struct cloud_data_accelerometer new_movement_data = {
-			.values[0] = msg->module.sensor.data.accel.values[0],
-			.values[1] = msg->module.sensor.data.accel.values[1],
-			.values[2] = msg->module.sensor.data.accel.values[2],
-			.ts = msg->module.sensor.data.accel.timestamp,
-			.queued = true
-		};
-
-		cloud_codec_populate_accel_buffer(accel_buf, &new_movement_data,
-						  &head_accel_buf,
-						  ARRAY_SIZE(accel_buf));
 	}
 
 	if (IS_EVENT(msg, sensor, SENSOR_EVT_MOVEMENT_IMPACT_DETECTED)) {

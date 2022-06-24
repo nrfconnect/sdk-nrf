@@ -147,20 +147,6 @@ static void activity_data_send(const struct ext_sensor_evt *const acc_data)
 	APP_EVENT_SUBMIT(sensor_module_event);
 }
 
-static void movement_data_send(const struct ext_sensor_evt *const acc_data)
-{
-	struct sensor_module_event *sensor_module_event =
-			new_sensor_module_event();
-
-	sensor_module_event->data.accel.values[0] = acc_data->value_array[0];
-	sensor_module_event->data.accel.values[1] = acc_data->value_array[1];
-	sensor_module_event->data.accel.values[2] = acc_data->value_array[2];
-	sensor_module_event->data.accel.timestamp = k_uptime_get();
-	sensor_module_event->type = SENSOR_EVT_MOVEMENT_DATA_READY;
-
-	APP_EVENT_SUBMIT(sensor_module_event);
-}
-
 static void impact_data_send(const struct ext_sensor_evt *const evt)
 {
 	struct sensor_module_event *sensor_module_event = new_sensor_module_event();
@@ -176,7 +162,6 @@ static void ext_sensor_handler(const struct ext_sensor_evt *const evt)
 {
 	switch (evt->type) {
 	case EXT_SENSOR_EVT_ACCELEROMETER_ACT_TRIGGER:
-		movement_data_send(evt);
 		activity_data_send(evt);
 		break;
 	case EXT_SENSOR_EVT_ACCELEROMETER_INACT_TRIGGER:
