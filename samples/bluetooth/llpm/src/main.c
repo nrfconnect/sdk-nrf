@@ -466,19 +466,19 @@ void main(void)
 	}
 
 	while (true) {
-		printk("Choose device role - type m (master role) or s (slave role): ");
+		printk("Choose device role - type c (central) or p (peripheral): ");
 
 		char input_char = console_getchar();
 
 		printk("\n");
 
-		if (input_char == 'm') {
-			printk("Master role. Starting scanning\n");
+		if (input_char == 'c') {
+			printk("Central. Starting scanning\n");
 			scan_init();
 			scan_start();
 			break;
-		} else if (input_char == 's') {
-			printk("Slave role. Starting advertising\n");
+		} else if (input_char == 'p') {
+			printk("Peripheral. Starting advertising\n");
 			adv_start();
 			break;
 		}

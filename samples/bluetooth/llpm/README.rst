@@ -57,7 +57,7 @@ GATT Latency Service
      - BT_GATT_CHRC_WRITE, BT_GATT_PERM_WRITE
 
 This sample transmits data between two development kits to measure the transmission latency in between.
-One of the devices is connected as a *master* and another is connected as a *slave*.
+One of the devices is connected as a *central* and another is connected as a *peripheral*.
 The performance is evaluated with the transmission latency dividing the estimated round-trip time in half (RTT / 2).
 
 By default, the following values are used to demonstrates the interaction of the connection parameters:
@@ -101,59 +101,59 @@ After programming the sample to both development kits, test it by performing the
 1. Connect to both kits with a terminal emulator (for example, PuTTY).
    See :ref:`putty` for the required settings.
 #. Reset both kits.
-#. In one of the terminal emulators, type "m" to start the application on the connected board in the master (tester) role.
-#. In the other terminal emulator, type "s" to start the application in the slave (peer) role.
+#. In one of the terminal emulators, type "c" to start the application on the connected board in the central (tester) role.
+#. In the other terminal emulator, type "p" to start the application in the peripheral (peer) role.
 #. Observe that the kits establish a connection.
 
-   - The master outputs the following information::
+   - The central outputs the following information::
 
        Press any key to set LLPM short connection connection interval (1 ms)
 
-   - The slave outputs the following information::
+   - The peripheral outputs the following information::
 
        Press any key to start measuring transmission latency
 
-#. Press a key in the terminal that is connected to the slave.
-#. Observe the terminal connected to the slave. The latency measurements are printed in the terminal.
+#. Press a key in the terminal that is connected to the peripheral.
+#. Observe the terminal connected to the peripheral. The latency measurements are printed in the terminal.
    The latency is expected to be shorter than the default connection interval::
 
        Transmission Latency: 80917 (us), CRC mismatches: 0
 
-#. Press a key in the terminal that is connected to the master.
+#. Press a key in the terminal that is connected to the central.
 #. Observe the connection gets updated to LLPM connection interval (1 ms) on both sides::
 
        Connection interval updated: LLPM (1 ms)
 
-#. Observe the terminal connected to the slave.
-   The measured latency on the slave becomes approximate 1 ms::
+#. Observe the terminal connected to the peripheral.
+   The measured latency on the peripheral becomes approximate 1 ms::
 
        Transmission Latency: 1098 (us), CRC mismatches: 0
 
-#. Press a key in the terminal that is connected to the master.
-#. Observe the terminal connected to the master.
-   The measured latency on the master remains approximate 1 ms::
+#. Press a key in the terminal that is connected to the central.
+#. Observe the terminal connected to the central.
+   The measured latency on the central remains approximate 1 ms::
 
        Transmission Latency: 1235 (us), CRC mismatches: 0
 
 .. msc::
    hscale = "1.3";
-   Master,Slave;
-   Master<<=>>Slave         [label="Connected"];
-   Master<<=>>Slave         [label="Discovered GATT Latency Service"];
-   Slave note Slave         [label="Press any key to start measuring transmission latency"];
-   Slave note Slave         [label="Read current timestamp: s1"];
-   Slave=>Master            [label="Write Request (timestamp: s1)"];
-   Master>>Slave            [label="Write Response"];
-   Slave note Slave         [label="Read current timestamp: s2"];
-   Slave note Slave         [label="Latency = (s2 - s1) / 2"];
-   Master note Master       [label="Press any key to set LLPM short connection connection interval (1 ms)"];
-   Master<<=>>Slave         [label="Switched to LLPM connection interval"];
-   Master note Master       [label="Press any key to start measuring transmission latency"];
-   Master note Master       [label="Read current timestamp: m1"];
-   Master=>Slave            [label="Write Request (timestamp: m1)"];
-   Slave>>Master            [label="Write Response"];
-   Master note Master       [label="Read current timestamp: m2"];
-   Master note Master       [label="Latency = (m2 - m1) / 2"];
+   Central,Peripheral;
+   Central<<=>>Peripheral      [label="Connected"];
+   Central<<=>>Peripheral      [label="Discovered GATT Latency Service"];
+   Peripheral note Peripheral  [label="Press any key to start measuring transmission latency"];
+   Peripheral note Peripheral  [label="Read current timestamp: s1"];
+   Peripheral=>Central         [label="Write Request (timestamp: s1)"];
+   Central>>Peripheral         [label="Write Response"];
+   Peripheral note Peripheral  [label="Read current timestamp: s2"];
+   Peripheral note Peripheral  [label="Latency = (s2 - s1) / 2"];
+   Central note Central        [label="Press any key to set LLPM short connection connection interval (1 ms)"];
+   Central<<=>>Peripheral      [label="Switched to LLPM connection interval"];
+   Central note Central        [label="Press any key to start measuring transmission latency"];
+   Central note Central        [label="Read current timestamp: m1"];
+   Central=>Peripheral         [label="Write Request (timestamp: m1)"];
+   Peripheral>>Central         [label="Write Response"];
+   Central note Central        [label="Read current timestamp: m2"];
+   Central note Central        [label="Latency = (m2 - m1) / 2"];
 
 
 Sample output
@@ -161,13 +161,13 @@ Sample output
 
 The result should look similar to the following output.
 
-- For the master::
+- For the central::
 
    ***** Booting Zephyr OS build v1.14.99-ncs3-snapshot2-2647-gd6e67554cfeb *****
    Bluetooth initialized
    LLPM mode enabled
-   Choose device role - type m (master role) or s (slave role): m
-   Master role. Starting scanning
+   Choose device role - type c (central) or p (peripheral): c
+   Central. Starting scanning
    Scanning successfully started
    Connection event reports enabled
    Filter not match. Address: 08:c6:a4:e0:72:e9 (random) connectable: 0
@@ -180,7 +180,7 @@ The result should look similar to the following output.
    Filter not match. Address: 37:63:6a:ed:38:e2 (random) connectable: 0
    Filter not match. Address: 56:c6:75:17:80:d8 (random) connectable: 1
    Filters matched. Address: f9:3c:9c:d1:f6:07 (random) connectable: 1
-   Connected as master
+   Connected as central
    Conn. interval is 80 units (1.25 ms/unit)
    Service discovery completed
    Press any key to set LLPM short connection interval (1 ms)
@@ -211,12 +211,12 @@ The result should look similar to the following output.
    Transmission Latency: 1358 (us), CRC mismatches: 0
    Transmission Latency: 1281 (us), CRC mismatches: 0
 
-- For the slave::
+- For the peripheral::
 
    ***** Booting Zephyr OS build v1.14.99-ncs3-snapshot2-2647-gd6e67554cfeb *****
    Bluetooth initialized
    LLPM mode enabled
-   Choose device role - type m (master role) or s (slave role): s
+   Choose device role - type c (central) or p (peripheral): p
    Slave role. Starting advertising
    Advertising successfully started
    Connection event reports enabled
@@ -228,7 +228,7 @@ The result should look similar to the following output.
    Filter not match. Address: 13:04:eb:f1:0b:46 (random) connectable: 0
    Filter not match. Address: cb:01:1a:2d:6e:ae (random) connectable: 1
    Filter not match. Address: 5c:f2:70:c2:3f:9f (random) connectable: 1
-   Connected as slave
+   Connected as peripheral
    Conn. interval is 80 units (1.25 ms/unit)
    Service discovery completed
    Press any key to start measuring transmission latency
