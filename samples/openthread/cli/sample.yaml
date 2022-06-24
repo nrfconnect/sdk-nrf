@@ -43,7 +43,7 @@ tests:
       - nrf52840dongle_nrf52840
       - nrf21540dk_nrf52840
   # Build integration regression protection.
-  integration.nrf_security.openthread:
+  sample.nrf_security.openthread.integration:
       build_only: True
       extra_args: CONFIG_NRF_SECURITY=y
       platform_allow: nrf5340dk_nrf5340_cpuapp_ns nrf52840dk_nrf52840
