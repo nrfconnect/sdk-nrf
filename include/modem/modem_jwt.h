@@ -3,15 +3,6 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-
-/**
- * @file modem_jwt.h
- *
- * @brief Request a JWT from the modem.
- * @defgroup modem_jwt JWT generation
- * @{
- *
- */
 #ifndef MODEM_JWT_H__
 #define MODEM_JWT_H__
 
@@ -21,6 +12,15 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * @file modem_jwt.h
+ *
+ * @brief Request a JWT from the modem.
+ * @defgroup modem_jwt JWT generation
+ * @{
+ *
+ */
 
 /**@brief The type of key to be used for signing the JWT. */
 enum jwt_key_type {

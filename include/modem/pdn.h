@@ -4,13 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/**
- * @file pdn.h
- * @brief Public APIs for the PDN library.
- * @defgroup pdn PDN library
- * @{
- */
-
 #ifndef PDN_H_
 #define PDN_H_
 
@@ -21,6 +14,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * @file pdn.h
+ * @brief Public APIs for the PDN library.
+ * @defgroup pdn PDN library
+ * @{
+ */
 
 /** @brief PDN family */
 enum pdn_fam {

@@ -3,6 +3,14 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#ifndef AT_PARAMS_H__
+#define AT_PARAMS_H__
+
+#include <zephyr/types.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * @file at_params.h
@@ -23,14 +31,6 @@
  * cleared to free that memory. Getter and setter methods are available
  * to read and write parameter values.
  */
-#ifndef AT_PARAMS_H__
-#define AT_PARAMS_H__
-
-#include <zephyr/types.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /** @brief Parameter types that can be stored. */
 enum at_param_type {

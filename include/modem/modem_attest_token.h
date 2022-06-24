@@ -3,6 +3,14 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#ifndef MODEM_ATTEST_TOKEN_H__
+#define MODEM_ATTEST_TOKEN_H__
+
+#include <zephyr/types.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * @file modem_attest_token.h
@@ -12,14 +20,6 @@
  * @{
  *
  */
-#ifndef MODEM_ATTEST_TOKEN_H__
-#define MODEM_ATTEST_TOKEN_H__
-
-#include <zephyr/types.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /** @brief Base64url attestation and COSE strings */
 struct nrf_attestation_token {

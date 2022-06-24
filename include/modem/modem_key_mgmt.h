@@ -4,11 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/**@file modem_key_mgmt.h
- *
- * @defgroup modem_key_mgmt nRF91 Modem Key Management
- * @{
- */
 #ifndef MODEM_KEY_MGMT_H__
 #define MODEM_KEY_MGMT_H__
 
@@ -16,6 +11,17 @@
 #include <stdint.h>
 
 #include <nrf_socket.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @file modem_key_mgmt.h
+ *
+ * @defgroup modem_key_mgmt nRF91 Modem Key Management
+ * @{
+ */
 
 /**@brief Credential types. */
 enum modem_key_mgmt_cred_type {
@@ -126,5 +132,10 @@ int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 			  enum modem_key_mgmt_cred_type cred_type,
 			  bool *exists);
 
-#endif /* MODEM_KEY_MGMT_H__ */
 /**@} */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* MODEM_KEY_MGMT_H__ */

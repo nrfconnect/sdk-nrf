@@ -7,6 +7,13 @@
 #ifndef SMS_H_
 #define SMS_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <zephyr/types.h>
+#include <sys/types.h>
+
 /**
  * @file sms.h
  *
@@ -16,13 +23,6 @@
  *
  * @brief Public APIs of the SMS subscriber manager module.
  */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include <zephyr/types.h>
-#include <sys/types.h>
 
 /**
  * @brief SMS message type.
