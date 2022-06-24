@@ -3,14 +3,6 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-
-/**
- * @file at_cmd_parser.h
- *
- * @defgroup at_cmd_parser AT command parser
- * @{
- * @brief Basic parser for AT commands.
- */
 #ifndef AT_CMD_PARSER_H__
 #define AT_CMD_PARSER_H__
 
@@ -22,6 +14,14 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * @file at_cmd_parser.h
+ *
+ * @defgroup at_cmd_parser AT command parser
+ * @{
+ * @brief Basic parser for AT commands.
+ */
 
 /**
  * @brief Parse a maximum number of AT command or response parameters

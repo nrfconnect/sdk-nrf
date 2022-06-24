@@ -7,6 +7,16 @@
 #ifndef AT_MONITOR_H_
 #define AT_MONITOR_H_
 
+#include <stddef.h>
+#include <stdbool.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/util_macro.h>
+#include <zephyr/toolchain/common.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @file at_monitor.h
  *
@@ -16,16 +26,6 @@
  *
  * @brief Public APIs for the AT monitor library.
  */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include <stddef.h>
-#include <stdbool.h>
-#include <zephyr/kernel.h>
-#include <zephyr/sys/util_macro.h>
-#include <zephyr/toolchain/common.h>
 
 /**
  * @brief AT monitor callback.

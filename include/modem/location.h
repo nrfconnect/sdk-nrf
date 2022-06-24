@@ -3,14 +3,6 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-
-/**
- * @file location.h
- * @brief Public APIs for the Location library.
- * @defgroup location Location library
- * @{
- */
-
 #ifndef LOCATION_H_
 #define LOCATION_H_
 
@@ -27,6 +19,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * @file location.h
+ * @brief Public APIs for the Location library.
+ * @defgroup location Location library
+ * @{
+ */
 
 /** Location method. */
 enum location_method {

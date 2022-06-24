@@ -1,9 +1,3 @@
-/**
- * @file lte_lc.h
- *
- * @brief Public APIs for the LTE Link Control driver.
- */
-
 /*
  * Copyright (c) 2018 Nordic Semiconductor ASA
  *
@@ -11,6 +5,14 @@
  */
 #ifndef ZEPHYR_INCLUDE_LTE_LINK_CONTROL_H_
 #define ZEPHYR_INCLUDE_LTE_LINK_CONTROL_H_
+
+#include <stdbool.h>
+#include <stdint.h>
+#include <zephyr/kernel.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * @file lte_lc.h
@@ -21,14 +23,6 @@
  *
  * @brief Public APIs for the LTE Link Controller.
  */
-
-#include <stdbool.h>
-#include <stdint.h>
-#include <zephyr/kernel.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /* NOTE: enum lte_lc_nw_reg_status maps directly to the registration status
  *	 as returned by the AT command "AT+CEREG?".

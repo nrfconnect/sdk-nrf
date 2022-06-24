@@ -4,16 +4,22 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/**@file nrf_modem_lib_trace.h
- *
- * @defgroup nrf_modem_lib_trace nRF91 Modem trace module
- * @{
- */
 #ifndef NRF_MODEM_LIB_TRACE_H__
 #define NRF_MODEM_LIB_TRACE_H__
 
 #include <zephyr/kernel.h>
 #include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @file nrf_modem_lib_trace.h
+ *
+ * @defgroup nrf_modem_lib_trace nRF91 Modem trace module
+ * @{
+ */
 
 /** @brief Initialize the modem trace module.
  *
@@ -72,5 +78,10 @@ int nrf_modem_lib_trace_stop(void);
  */
 void nrf_modem_lib_trace_deinit(void);
 
-#endif /* NRF_MODEM_LIB_TRACE_H__ */
 /**@} */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* NRF_MODEM_LIB_TRACE_H__ */
