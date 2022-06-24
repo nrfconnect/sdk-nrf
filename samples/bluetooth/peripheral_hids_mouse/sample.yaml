@@ -30,7 +30,7 @@ tests:
     platform_allow: nrf5340dk_nrf5340_cpuapp
     tags: bluetooth ci_build
   # Build integration regression protection.
-  integration.nrf_security.bluetooth:
+  sample.nrf_security.bluetooth.integration:
       build_only: True
       extra_args: CONFIG_NRF_SECURITY=y CONFIG_BOOTLOADER_MCUBOOT=y
       platform_allow: nrf5340dk_nrf5340_cpuapp
