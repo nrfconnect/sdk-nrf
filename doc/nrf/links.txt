@@ -678,7 +678,7 @@
 .. _`Memfault: Error Tracking with Trace Events`: https://docs.memfault.com/docs/embedded/trace-events/
 .. _`Memfault registration page`: https://app.memfault.com/register-nordic
 .. _`Memfault Demo CLI`: https://docs.memfault.com/docs/mcu/demo-cli/
-.. _`Memfaul Diagnostic GATT Service`: https://memfault.notion.site/Memfault-Diagnostic-GATT-Service-MDS-ffd5a430062649cd9bf6edbf64e2563b
+.. _`Memfault Diagnostic GATT Service`: https://memfault.notion.site/Memfault-Diagnostic-GATT-Service-MDS-ffd5a430062649cd9bf6edbf64e2563b
 .. _`Memfault WebBluetooth Client`: https://memfault.github.io/web-ble-example/
 .. _`Memfault WebBluetooth Client source code`: https://github.com/memfault/web-ble-example/blob/main/mds.js
 .. _`Memfault Dashboards`: https://app.memfault.com
