@@ -400,10 +400,10 @@ static void button_handler_cb(uint32_t button_state, uint32_t has_changed)
 	uint32_t buttons = button_state & has_changed;
 
 	if (buttons & DK_BTN1_MSK) {
-		printk("\nMaster role. Starting scanning\n");
+		printk("\nCentral. Starting scanning\n");
 		scan_start();
 	} else if (buttons & DK_BTN2_MSK) {
-		printk("\nSlave role. Starting advertising\n");
+		printk("\nPeripheral. Starting advertising\n");
 		adv_start();
 	} else {
 		return;
@@ -448,7 +448,7 @@ static int connection_configuration_set(const struct shell *shell,
 
 	if (info.role != BT_CONN_ROLE_CENTRAL) {
 		shell_error(shell,
-		"'run' command shall be executed only on the master board");
+		"'run' command shall be executed only on the central board");
 	}
 
 	err = bt_conn_le_phy_update(default_conn, phy);
@@ -614,8 +614,8 @@ void main(void)
 	}
 
 	printk("\n");
-	printk("Press button 1 on the master board.\n");
-	printk("Press button 2 on the slave board.\n");
+	printk("Press button 1 on the central board.\n");
+	printk("Press button 2 on the peripheral board.\n");
 
 	buttons_init();
 }
