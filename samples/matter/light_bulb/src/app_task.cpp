@@ -352,9 +352,8 @@ void AppTask::StartThreadHandler()
 
 void AppTask::StartBLEAdvertisingHandler()
 {
-	/* Don't allow on starting Matter service BLE advertising after Thread provisioning. */
-	if (ConnectivityMgr().IsThreadProvisioned()) {
-		LOG_INF("NFC Tag emulation and Matter service BLE advertising not started - device is commissioned to a Thread network.");
+	if (Server::GetInstance().GetFabricTable().FabricCount() != 0) {
+		LOG_INF("Matter service BLE advertising not started - device is already commissioned");
 		return;
 	}
 
