@@ -22,27 +22,33 @@ static const char rest_shell_cmd_usage_str[] =
 	"Usage:\n"
 	"rest -d host [-m method] [-p port] [-s sec_tag] [-v verify_level] [-u url] [-t timeout_in_ms]\n"
 	"              [-H header1] [-H header2]...[-H header10] [-b body] [-l response_buffer_length]\n"
-	"              [-k] [-i sckt_id]\n"
+	"              [-k] [-i sckt_id] [--print_headers]\n"
 	"\n"
-	"  -d, --host,         Destination host/domain of the URL\n"
+	"  -d, --host,          Destination host/domain of the URL\n"
 	"Optionals:\n"
-	"  -m, --method,       HTTP method (one of the: \"get\" (default),\"head\",\n"
-	"                      \"post\",\"put\",\"delete\" or \"patch\")\n"
-	"  -p, --port,         Destination port (default: 80)\n"
-	"  -s, --sec_tag,      Used security tag for TLS connection\n"
-	"  -v, --peer_verify,  TLS peer verification level. None (0),\n"
-	"                      optional (1) or required (2). Default value is 2.\n"
-	"  -u, --url,          URL beyond host/domain (default: \"/index.html\")\n"
-	"  -t, --timeout,      Request timeout in seconds\n"
-	"                      (default: CONFIG_REST_CLIENT_REST_REQUEST_TIMEOUT)\n"
-	"  -H, --header,       Header including CRLF, for example:\n"
-	"                      -H \"Content-Type: application/json\\x0D\\x0A\"\n"
-	"  -b, --body,         Payload body, example: -b '{\"foo\":bar}'\n"
-	"  -l, --resp_len,     Length of the buffer reserved for the REST response\n"
-	"                      (default: 1024 bytes)\n"
-	"  -k, --keepalive,    Keep socket connection alive for upcoming requests\n"
-	"                      towards the ame server (default: false)\n"
-	"  -i, --sckt_id,      Use existing socket id (default: create a new connection)\n";
+	"  -m, --method,        HTTP method (one of the: \"get\" (default),\"head\",\n"
+	"                       \"post\",\"put\",\"delete\" or \"patch\")\n"
+	"  -p, --port,          Destination port (default: 80)\n"
+	"  -s, --sec_tag,       Used security tag for TLS connection\n"
+	"  -v, --peer_verify,   TLS peer verification level. None (0),\n"
+	"                       optional (1) or required (2). Default value is 2.\n"
+	"  -u, --url,           URL beyond host/domain (default: \"/index.html\")\n"
+	"  -t, --timeout,       Request timeout in seconds\n"
+	"                       (default: CONFIG_REST_CLIENT_REST_REQUEST_TIMEOUT)\n"
+	"  -H, --header,        Header including CRLF, for example:\n"
+	"                       -H \"Content-Type: application/json\\x0D\\x0A\"\n"
+	"  -b, --body,          Payload body, example: -b '{\"foo\":bar}'\n"
+	"  -l, --resp_len,      Length of the buffer reserved for the REST response\n"
+	"                       (default: 1024 bytes)\n"
+	"  -k, --keepalive,     Keep socket connection alive for upcoming requests\n"
+	"                       towards the ame server (default: false)\n"
+	"      --print_headers, Print HTTP headers of the response\n"
+	"  -i, --sckt_id,       Use existing socket id (default: create a new connection)\n";
+
+/* Following are not having short options: */
+enum {
+	REST_SHELL_OPT_PRINT_RESP_HEADERS = 1001,
+};
 
 /* Specifying the expected options (both long and short): */
 static struct option long_options[] = {
@@ -58,6 +64,7 @@ static struct option long_options[] = {
 	{ "timeout", required_argument, 0, 't' },
 	{ "keepalive", no_argument, 0, 'k' },
 	{ "sckt_id", required_argument, 0, 'i' },
+	{ "print_headers", no_argument, 0, REST_SHELL_OPT_PRINT_RESP_HEADERS },
 	{ 0, 0, 0, 0 }
 };
 
@@ -85,6 +92,7 @@ int rest_shell(const struct shell *shell, size_t argc, char **argv)
 	bool headers_set = false;
 	bool method_set = false;
 	bool host_set = false;
+	bool print_headers_from_resp = false;
 	int response_buf_len = REST_RESPONSE_BUFF_SIZE;
 
 	/* Set the defaults: */
@@ -229,6 +237,9 @@ int rest_shell(const struct shell *shell, size_t argc, char **argv)
 				goto end;
 			}
 			break;
+		case REST_SHELL_OPT_PRINT_RESP_HEADERS:
+			print_headers_from_resp = true;
+			break;
 		case '?':
 			show_usage = true;
 			goto end;
@@ -265,17 +276,28 @@ int rest_shell(const struct shell *shell, size_t argc, char **argv)
 	if (ret) {
 		mosh_error("Error %d from rest_lib", ret);
 	} else {
+		int headers_len = resp_ctx.response - req_ctx.resp_buff;
+		char *headers_start = req_ctx.resp_buff;
+		int printed_headers_len = 0;
+
+		if (print_headers_from_resp) {
+			printed_headers_len = headers_len;
+		}
+
 		mosh_print(
 			"Response:\n"
 			"  Socket ID: %d (sckt closed: %s)\n"
 			"  HTTP status: %d\n"
-			"  Body/Total length: %d/%d\n\n"
-			"  %s\n",
+			"  Headers/Body/Total length: %d/%d/%d\n\n"
+			"%.*s"
+			"%s",
 			resp_ctx.used_socket_id,
 			(resp_ctx.used_socket_is_alive) ? "no" : "yes",
 			resp_ctx.http_status_code,
+			headers_len,
 			resp_ctx.response_len,
 			resp_ctx.total_response_len,
+			printed_headers_len, headers_start,
 			resp_ctx.response);
 	}
 
