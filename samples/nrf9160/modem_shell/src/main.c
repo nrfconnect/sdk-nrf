@@ -67,6 +67,9 @@ struct k_work_q mosh_common_work_q;
 struct modem_param_info modem_param;
 struct k_poll_signal mosh_signal;
 
+char at_resp_buf[MOSH_AT_CMD_RESPONSE_MAX_LEN];
+K_MUTEX_DEFINE(at_resp_buf_mutex);
+
 K_SEM_DEFINE(nrf_carrier_lib_initialized, 0, 1);
 
 static void mosh_print_version_info(void)
