@@ -169,4 +169,16 @@ config MOSH_LINK_SETT_NORMAL_MODE_AT_CMD_STR_LEN
 endmenu
 endif #MOSH_LINK
 
+if MOSH_WORKER_THREADS
+
+config MOSH_WORKER_THREADS_OUTPUT_BUFFER_SIZE
+	int "Buffer size for storing output of the background thread commands"
+	default 4096
+
+config MOSH_WORKER_THREADS_STACK_SIZE
+	int "Worker thread stack size"
+	default 4096
+
+endif #MOSH_WORKER_THREADS
+
 endmenu # Modem Shell
