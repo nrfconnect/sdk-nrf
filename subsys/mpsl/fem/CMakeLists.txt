@@ -4,7 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-zephyr_library()
+if (CONFIG_MPSL_FEM_NRF21540_GPIO OR CONFIG_MPSL_FEM_SIMPLE_GPIO)
+    zephyr_library()
 
-zephyr_library_sources_ifdef(CONFIG_MPSL_FEM_PIN_FORWARDER mpsl_fem_host.c)
-zephyr_library_sources_ifdef(CONFIG_MPSL_FEM mpsl_fem.c)
+    zephyr_library_include_directories(common/include)
+    zephyr_library_sources(common/mpsl_fem_utils.c)
+
+    zephyr_library_sources_ifdef(CONFIG_MPSL_FEM_NRF21540_GPIO nrf21540_gpio/mpsl_fem_nrf21540_gpio.c)
+    zephyr_library_sources_ifdef(CONFIG_MPSL_FEM_SIMPLE_GPIO simple_gpio/mpsl_fem_simple_gpio.c)
+endif()

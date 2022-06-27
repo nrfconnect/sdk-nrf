@@ -7,6 +7,10 @@
 DT_COMPAT_NORDIC_NRF21540_GPIO := nordic,nrf21540-fem
 DT_COMPAT_GENERIC_FEM_2_CTRL_PIN := generic-fem-two-ctrl-pins
 
+config MPSL_FEM_ANY_SUPPORT
+	bool
+	default $(dt_nodelabel_enabled,nrf_radio_fem)
+
 config MPSL_FEM_NRF21540_GPIO_SUPPORT
 	bool
 	default $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_NORDIC_NRF21540_GPIO))
@@ -19,7 +23,7 @@ config MPSL_FEM
 	bool "Radio front-end module (FEM) support"
 	# MPSL_FEM_GENERIC_TWO_CTRL_PINS is not supported on nRF53 yet
 	depends on MPSL
-	depends on MPSL_FEM_NRF21540_GPIO_SUPPORT || MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT
+	depends on MPSL_FEM_ANY_SUPPORT
 	default y
 	help
 	  Controls if front-end module (FEM) is to be configured and enabled
@@ -29,7 +33,7 @@ config MPSL_FEM
 config MPSL_FEM_PIN_FORWARDER
 	bool "Forward pin control for front-end module (FEM) to the radio core"
 	depends on SOC_NRF5340_CPUAPP
-	depends on MPSL_FEM_NRF21540_GPIO_SUPPORT || MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT
+	depends on MPSL_FEM_ANY_SUPPORT
 	depends on !TRUSTED_EXECUTION_NONSECURE || BUILD_WITH_TFM
 	default y
 
@@ -108,9 +112,9 @@ config MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL
 	  If this option is disabled the PA gain will be constant during run-time and is
 	  determined by MPSL_FEM_NRF21540_TX_GAIN_DB.
 
-endif
+endif   # MPSL_FEM_NRF21540_GPIO && MPSL_FEM
 
-endif	# MPSL_FEM
+endif	# MPSL_FEM || MPSL_FEM_PIN_FORWARDER
 
 config MPSL_FEM_DEVICE_CONFIG_254
 	bool "Apply device configuration 254"
