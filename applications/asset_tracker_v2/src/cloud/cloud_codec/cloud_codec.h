@@ -69,9 +69,13 @@ struct cloud_codec_data {
 };
 
 struct cloud_data_neighbor_cells {
+	/** Contains current cell and number of neighbor cells */
 	struct lte_lc_cells_info cell_data;
+	/** Contains neighborhood cells */
 	struct lte_lc_ncell neighbor_cells[17];
+	/** Cell neighborhood data timestamp. UNIX milliseconds. */
 	int64_t ts;
+	/** Flag signifying that the data entry is to be encoded. */
 	bool queued : 1;
 };
 
@@ -112,42 +116,110 @@ enum cloud_codec_event_type {
 };
 
 struct cloud_codec_evt {
+	/** Cloud codec event type */
 	enum cloud_codec_event_type type;
+	/** New config data if type==CLOUD_CODEC_EVT_CONFIG_UPDATE */
 	struct cloud_data_cfg config_update;
 };
 
+/** @brief Event handler prototype.
+ *
+ * @param[in] evt event type
+ */
 typedef void (*cloud_codec_evt_handler_t)(const struct cloud_codec_evt *evt);
 
+/**
+ * @brief Initialize cloud codec.
+ * @details Is called once in the data module to initialize the cloud codec used.
+ * @param[in] cfg initial config data
+ * @param[in] event_handler handler for events coming from the codec
+ * 
+ * @note currently only used for config updates in lwm2m
+ * 
+ * @return 0 on success or error code according to errno.h. 
+ */
 int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event_handler);
 
+/**
+ * @brief Encode cloud codec neighbor cells data.
+ * @details Is called as part of the data_encode() function to encode LTE neighbor cells info.
+ * @param[out] output string buffer for encoding result
+ * @param[in] neighbor_cells neighbor cells data
+ * @return 0 on success or error code according to errno.h. 
+ */
 int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 				      struct cloud_data_neighbor_cells *neighbor_cells);
 
+/**
+ * @brief Encode cloud codec A-GPS request.
+ * 
+ * @param[out] output string buffer for encoding result
+ * @param[in] agps_request A-GPS request data
+ * @return 0 on success or error code according to errno.h. 
+ */
 int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
 				    struct cloud_data_agps_request *agps_request);
 
+/**
+ * @brief Encode cloud codec P-GPS request.
+ * 
+ * @param[out] output string buffer for encoding result
+ * @param[in] pgps_request P-GPS request data
+ * @return 0 on success or error code according to errno.h. 
+ */
 int cloud_codec_encode_pgps_request(struct cloud_codec_data *output,
 				    struct cloud_data_pgps_request *pgps_request);
 
+/**
+ * @brief Decode received configuration.
+ * 
+ * @param[in] input string buffer with encoded config
+ * @param[in] input_len length of input
+ * @param[out] cfg decoded config
+ * @return 0 on success or error code according to errno.h. 
+ */
 int cloud_codec_decode_config(char *input, size_t input_len,
 			      struct cloud_data_cfg *cfg);
 
+/**
+ * @brief Encode current configuration.
+ * 
+ * @param[out] output string buffer for encoding result
+ * @param[in] cfg current configuration
+ * @return 0 on success or error code according to errno.h. 
+ */
 int cloud_codec_encode_config(struct cloud_codec_data *output,
 			      struct cloud_data_cfg *cfg);
 
+/**
+ * @brief Encode cloud buffer data.
+ * 
+ * @param[out] output string buffer for encoding result
+ * @param[in] data struct with most recent cloud buffer entries
+ * @return 0 on success or error code according to errno.h. 
+ */
 int cloud_codec_encode_data(struct cloud_codec_data *output,
 			    struct cloud_codec_data_to_encode data);
 
+/**
+ * @brief Encode UI data.
+ * 
+ * @param[out] output string buffer for encoding result
+ * @param[in] ui_buf UI data to encode
+ * @return 0 on success or error code according to errno.h. 
+ */
 int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
 			       struct cloud_data_ui *ui_buf);
 
+/**
+ * @brief Encode a batch of cloud buffer data.
+ * 
+ * @param[out] output string buffer for encoding result
+ * @param[in] data struct with all cloud buffers
+ * @return 0 on success or error code according to errno.h. 
+ */
 int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 				  struct cloud_codec_buffers data);
-
-static inline void cloud_codec_release_data(struct cloud_codec_data *output)
-{
-	cJSON_FreeString(output->buf);
-}
 
 /**
  * @}
