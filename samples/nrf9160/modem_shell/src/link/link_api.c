@@ -31,6 +31,9 @@
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 
+extern char at_resp_buf[MOSH_AT_CMD_RESPONSE_MAX_LEN];
+extern struct k_mutex at_resp_buf_mutex;
+
 #define AT_CMD_PDP_CONTEXTS_READ "AT+CGDCONT?"
 #define AT_CMD_PDP_CONTEXTS_READ_PARAM_COUNT 12
 #define AT_CMD_PDP_CONTEXTS_READ_CID_INDEX 1
@@ -55,6 +58,9 @@ static void link_api_context_info_fill_activation_status(
 {
 	char buf[16] = { 0 };
 	const char *p;
+	/* Cannot use global at_resp_buf because this used from link_api_pdp_contexts_read()
+	 * where global at_resp_buf is already used
+	 */
 	char at_response_str[256];
 	int ret;
 	int ctx_cnt = pdp_info->size;
@@ -107,158 +113,6 @@ exit:
 		free(pdp_context_info_tbl.array);
 	}
 	return pdp_context_info;
-}
-
-int link_api_pdp_context_dynamic_params_get(struct pdp_context_info *populated_info)
-{
-	int ret = 0;
-	struct at_param_list param_list = { 0 };
-	size_t param_str_len;
-	char *next_param_str;
-	bool resp_continues = false;
-
-	char at_response_str[MOSH_AT_CMD_RESPONSE_MAX_LEN + 1];
-	char *at_ptr = at_response_str;
-	char *tmp_ptr = at_response_str;
-	int lines = 0;
-	int iterator = 0;
-	char dns_addr_str[AT_CMD_PDP_CONTEXT_READ_IP_ADDR_STR_MAX_LEN];
-
-	char at_cmd_pdp_context_read_info_cmd_str[15];
-
-	int family;
-	struct in_addr *addr;
-	struct in6_addr *addr6;
-
-	sprintf(at_cmd_pdp_context_read_info_cmd_str,
-		AT_CMD_PDP_CONTEXT_READ_INFO, populated_info->cid);
-	ret = nrf_modem_at_cmd(at_response_str, sizeof(at_response_str), "%s",
-			       at_cmd_pdp_context_read_info_cmd_str);
-	if (ret) {
-		mosh_error(
-			"nrf_modem_at_cmd returned err: %d for %s",
-			ret,
-			at_cmd_pdp_context_read_info_cmd_str);
-		return ret;
-	}
-
-	/* Check how many rows of info do we have: */
-	while (strncmp(tmp_ptr, "OK", 2) &&
-	       (tmp_ptr = strstr(tmp_ptr, AT_CMD_PDP_CONTEXT_READ_RSP_DELIM)) != NULL) {
-		tmp_ptr += 2;
-		lines++;
-	}
-
-	/* Parse the response */
-	ret = at_params_list_init(&param_list, AT_CMD_PDP_CONTEXT_READ_INFO_PARAM_COUNT);
-	if (ret) {
-		mosh_error("Could not init AT params list, error: %d\n", ret);
-		return ret;
-	}
-
-parse:
-	resp_continues = false;
-	ret = at_parser_max_params_from_str(at_ptr, &next_param_str, &param_list,
-					    AT_CMD_PDP_CONTEXT_READ_INFO_PARAM_COUNT);
-	if (ret == -EAGAIN) {
-		resp_continues = true;
-	} else if (ret == -E2BIG) {
-		mosh_error("E2BIG, error: %d\n", ret);
-	} else if (ret != 0) {
-		mosh_error(
-			"Could not parse AT response for %s, error: %d\n",
-			at_cmd_pdp_context_read_info_cmd_str,
-			ret);
-		goto clean_exit;
-	}
-
-	/* Read primary DNS address */
-	param_str_len = sizeof(dns_addr_str);
-	ret = at_params_string_get(
-		&param_list,
-		AT_CMD_PDP_CONTEXT_READ_INFO_DNS_ADDR_PRIMARY_INDEX,
-		dns_addr_str, &param_str_len);
-	if (ret) {
-		mosh_error(
-			"Could not parse dns str for cid %d, err: %d",
-			populated_info->cid, ret);
-		goto clean_exit;
-	}
-	dns_addr_str[param_str_len] = '\0';
-
-	if (dns_addr_str != NULL) {
-		family = net_utils_sa_family_from_ip_string(dns_addr_str);
-
-		if (family == AF_INET) {
-			addr = &(populated_info->dns_addr4_primary);
-			(void)inet_pton(AF_INET, dns_addr_str, addr);
-		} else if (family == AF_INET6) {
-			addr6 = &(populated_info->dns_addr6_primary);
-			(void)inet_pton(AF_INET6, dns_addr_str, addr6);
-		}
-	}
-
-	/* Read secondary DNS address */
-	param_str_len = sizeof(dns_addr_str);
-
-	ret = at_params_string_get(
-		&param_list,
-		AT_CMD_PDP_CONTEXT_READ_INFO_DNS_ADDR_SECONDARY_INDEX,
-		dns_addr_str, &param_str_len);
-	if (ret) {
-		mosh_error("Could not parse dns str, err: %d", ret);
-		goto clean_exit;
-	}
-	dns_addr_str[param_str_len] = '\0';
-
-	if (dns_addr_str != NULL) {
-		family = net_utils_sa_family_from_ip_string(dns_addr_str);
-
-		if (family == AF_INET) {
-			addr = &(populated_info->dns_addr4_secondary);
-			(void)inet_pton(AF_INET, dns_addr_str, addr);
-		} else if (family == AF_INET6) {
-			addr6 = &(populated_info->dns_addr6_secondary);
-			(void)inet_pton(AF_INET6, dns_addr_str, addr6);
-		}
-	}
-
-	/* Read link MTU if exists:
-	 * AT command spec:
-	 * Note: If the PDN connection has dual stack capabilities, at least one pair of
-	 * lines with information is returned per <cid>: First one line with the IPv4
-	 * parameters followed by one line with the IPv6 parameters.
-	 */
-	if (iterator == 1) {
-		ret = at_params_int_get(&param_list, AT_CMD_PDP_CONTEXT_READ_INFO_MTU_INDEX,
-					&(populated_info->ipv6_mtu));
-		if (ret) {
-			/* Don't care if it fails: */
-			ret = 0;
-			populated_info->ipv6_mtu = 0;
-		}
-	} else {
-		ret = at_params_int_get(&param_list, AT_CMD_PDP_CONTEXT_READ_INFO_MTU_INDEX,
-					&(populated_info->ipv4_mtu));
-		if (ret) {
-			/* Don't care if it fails: */
-			ret = 0;
-			populated_info->ipv4_mtu = 0;
-		}
-	}
-
-	if (resp_continues) {
-		at_ptr = next_param_str;
-		iterator++;
-		if (iterator < lines && strncmp(next_param_str, "OK", 2)) {
-			goto parse;
-		}
-	}
-
-clean_exit:
-	at_params_list_free(&param_list);
-
-	return ret;
 }
 
 /* ****************************************************************************/
@@ -492,6 +346,167 @@ static void link_api_modem_operator_info_read_for_shell(void)
 
 /* ****************************************************************************/
 
+static int link_api_pdp_context_dynamic_params_get(struct pdp_context_info *populated_info)
+{
+	int ret = 0;
+	struct at_param_list param_list = { 0 };
+	size_t param_str_len;
+
+	/* Cannot use global at_resp_buf because this used from link_api_pdp_contexts_read()
+	 * where global at_resp_buf is already used
+	 */
+	char cgcontrdp_at_rsp_buf[512];
+	char *next_param_str;
+	bool resp_continues = false;
+
+	char *at_ptr;
+	char *tmp_ptr;
+	int lines = 0;
+	int iterator = 0;
+	char dns_addr_str[AT_CMD_PDP_CONTEXT_READ_IP_ADDR_STR_MAX_LEN];
+
+	char at_cmd_pdp_context_read_info_cmd_str[15];
+
+	int family;
+	struct in_addr *addr;
+	struct in6_addr *addr6;
+
+	at_ptr = cgcontrdp_at_rsp_buf;
+	tmp_ptr = cgcontrdp_at_rsp_buf;
+
+	sprintf(at_cmd_pdp_context_read_info_cmd_str,
+		AT_CMD_PDP_CONTEXT_READ_INFO, populated_info->cid);
+	ret = nrf_modem_at_cmd(cgcontrdp_at_rsp_buf, sizeof(cgcontrdp_at_rsp_buf), "%s",
+			       at_cmd_pdp_context_read_info_cmd_str);
+	if (ret) {
+		mosh_error(
+			"nrf_modem_at_cmd returned err: %d for %s",
+			ret,
+			at_cmd_pdp_context_read_info_cmd_str);
+		return ret;
+	}
+
+	/* Check how many rows of info do we have: */
+	while (strncmp(tmp_ptr, "OK", 2) &&
+	       (tmp_ptr = strstr(tmp_ptr, AT_CMD_PDP_CONTEXT_READ_RSP_DELIM)) != NULL) {
+		tmp_ptr += 2;
+		lines++;
+	}
+
+	/* Parse the response */
+	ret = at_params_list_init(&param_list, AT_CMD_PDP_CONTEXT_READ_INFO_PARAM_COUNT);
+	if (ret) {
+		mosh_error("Could not init AT params list, error: %d\n", ret);
+		return ret;
+	}
+
+parse:
+	resp_continues = false;
+	ret = at_parser_max_params_from_str(at_ptr, &next_param_str, &param_list,
+					    AT_CMD_PDP_CONTEXT_READ_INFO_PARAM_COUNT);
+	if (ret == -EAGAIN) {
+		resp_continues = true;
+	} else if (ret == -E2BIG) {
+		mosh_error("E2BIG, error: %d\n", ret);
+	} else if (ret != 0) {
+		mosh_error(
+			"Could not parse AT response for %s, error: %d\n",
+			at_cmd_pdp_context_read_info_cmd_str,
+			ret);
+		goto clean_exit;
+	}
+
+	/* Read primary DNS address */
+	param_str_len = sizeof(dns_addr_str);
+	ret = at_params_string_get(
+		&param_list,
+		AT_CMD_PDP_CONTEXT_READ_INFO_DNS_ADDR_PRIMARY_INDEX,
+		dns_addr_str, &param_str_len);
+	if (ret) {
+		mosh_error(
+			"Could not parse dns str for cid %d, err: %d",
+			populated_info->cid, ret);
+		goto clean_exit;
+	}
+	dns_addr_str[param_str_len] = '\0';
+
+	if (dns_addr_str != NULL) {
+		family = net_utils_sa_family_from_ip_string(dns_addr_str);
+
+		if (family == AF_INET) {
+			addr = &(populated_info->dns_addr4_primary);
+			(void)inet_pton(AF_INET, dns_addr_str, addr);
+		} else if (family == AF_INET6) {
+			addr6 = &(populated_info->dns_addr6_primary);
+			(void)inet_pton(AF_INET6, dns_addr_str, addr6);
+		}
+	}
+
+	/* Read secondary DNS address */
+	param_str_len = sizeof(dns_addr_str);
+
+	ret = at_params_string_get(
+		&param_list,
+		AT_CMD_PDP_CONTEXT_READ_INFO_DNS_ADDR_SECONDARY_INDEX,
+		dns_addr_str, &param_str_len);
+	if (ret) {
+		mosh_error("Could not parse dns str, err: %d", ret);
+		goto clean_exit;
+	}
+	dns_addr_str[param_str_len] = '\0';
+
+	if (dns_addr_str != NULL) {
+		family = net_utils_sa_family_from_ip_string(dns_addr_str);
+
+		if (family == AF_INET) {
+			addr = &(populated_info->dns_addr4_secondary);
+			(void)inet_pton(AF_INET, dns_addr_str, addr);
+		} else if (family == AF_INET6) {
+			addr6 = &(populated_info->dns_addr6_secondary);
+			(void)inet_pton(AF_INET6, dns_addr_str, addr6);
+		}
+	}
+
+	/* Read link MTU if exists:
+	 * AT command spec:
+	 * Note: If the PDN connection has dual stack capabilities, at least one pair of
+	 * lines with information is returned per <cid>: First one line with the IPv4
+	 * parameters followed by one line with the IPv6 parameters.
+	 */
+	if (iterator == 1) {
+		ret = at_params_int_get(&param_list, AT_CMD_PDP_CONTEXT_READ_INFO_MTU_INDEX,
+					&(populated_info->ipv6_mtu));
+		if (ret) {
+			/* Don't care if it fails: */
+			ret = 0;
+			populated_info->ipv6_mtu = 0;
+		}
+	} else {
+		ret = at_params_int_get(&param_list, AT_CMD_PDP_CONTEXT_READ_INFO_MTU_INDEX,
+					&(populated_info->ipv4_mtu));
+		if (ret) {
+			/* Don't care if it fails: */
+			ret = 0;
+			populated_info->ipv4_mtu = 0;
+		}
+	}
+
+	if (resp_continues) {
+		at_ptr = next_param_str;
+		iterator++;
+		if (iterator < lines && strncmp(next_param_str, "OK", 2)) {
+			goto parse;
+		}
+	}
+
+clean_exit:
+	at_params_list_free(&param_list);
+
+	return ret;
+}
+
+/* ****************************************************************************/
+
 int link_api_pdp_contexts_read(struct pdp_context_info_array *pdp_info)
 {
 	int ret = 0;
@@ -500,9 +515,8 @@ int link_api_pdp_contexts_read(struct pdp_context_info_array *pdp_info)
 	char *next_param_str;
 	bool resp_continues = false;
 
-	char at_response_str[MOSH_AT_CMD_RESPONSE_MAX_LEN + 1];
-	char *at_ptr = at_response_str;
-	char *tmp_ptr = at_response_str;
+	char *at_ptr;
+	char *tmp_ptr;
 	int pdp_cnt = 0;
 	int iterator = 0;
 	struct pdp_context_info *populated_info;
@@ -515,10 +529,15 @@ int link_api_pdp_contexts_read(struct pdp_context_info_array *pdp_info)
 
 	memset(pdp_info, 0, sizeof(struct pdp_context_info_array));
 
-	ret = nrf_modem_at_cmd(at_response_str, sizeof(at_response_str), AT_CMD_PDP_CONTEXTS_READ);
+	k_mutex_lock(&at_resp_buf_mutex, K_FOREVER);
+	at_ptr = at_resp_buf;
+	tmp_ptr = at_resp_buf;
+
+	ret = nrf_modem_at_cmd(at_resp_buf, sizeof(at_resp_buf),
+			       AT_CMD_PDP_CONTEXTS_READ);
 	if (ret) {
 		mosh_error("nrf_modem_at_cmd returned err: %d", ret);
-		return ret;
+		goto clean_exit;
 	}
 
 	/* Check how many rows/context do we have: */
@@ -536,7 +555,7 @@ int link_api_pdp_contexts_read(struct pdp_context_info_array *pdp_info)
 	ret = at_params_list_init(&param_list, AT_CMD_PDP_CONTEXTS_READ_PARAM_COUNT);
 	if (ret) {
 		mosh_error("Could not init AT params list, error: %d\n", ret);
-		return ret;
+		goto clean_exit;
 	}
 	populated_info = pdp_info->array;
 
@@ -664,6 +683,8 @@ parse:
 clean_exit:
 	at_params_list_free(&param_list);
 	/* user need do free pdp_info->array also in case of error */
+
+	k_mutex_unlock(&at_resp_buf_mutex);
 
 	return ret;
 }

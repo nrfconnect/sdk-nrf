@@ -15,7 +15,7 @@
 #define MOSH_STRING_NULL_CHECK(string) \
 	((string != NULL) ? string : MOSH_EMPTY_STRING)
 
-#define MOSH_AT_CMD_RESPONSE_MAX_LEN 2700
+#define MOSH_AT_CMD_RESPONSE_MAX_LEN 2701
 
 enum mosh_signals {
 	MOSH_SIGNAL_KILL,

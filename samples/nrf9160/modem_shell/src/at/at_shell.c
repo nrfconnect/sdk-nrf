@@ -18,6 +18,9 @@
 #include "at_cmd_mode_sett.h"
 #endif
 
+extern char at_resp_buf[MOSH_AT_CMD_RESPONSE_MAX_LEN];
+extern struct k_mutex at_resp_buf_mutex;
+
 static const char at_usage_str[] =
 	"Usage: at <subcommand>\n"
 	"\n"
@@ -81,7 +84,6 @@ static void at_cmd_handler(const char *response)
 int at_shell(const struct shell *shell, size_t argc, char **argv)
 {
 	int err;
-	char response[MOSH_AT_CMD_RESPONSE_MAX_LEN + 1];
 
 	if (argc < 2) {
 		mosh_print_no_format(at_usage_str);
@@ -97,16 +99,18 @@ int at_shell(const struct shell *shell, size_t argc, char **argv)
 		at_monitor_pause(&mosh_at_handler);
 		mosh_print("AT command events disabled");
 	} else {
-		err = nrf_modem_at_cmd(response, sizeof(response), "%s", command);
+		k_mutex_lock(&at_resp_buf_mutex, K_FOREVER);
+		err = nrf_modem_at_cmd(at_resp_buf, sizeof(at_resp_buf), "%s", command);
 		if (err == 0) {
-			mosh_print("%s", response);
+			mosh_print("%s", at_resp_buf);
 		} else if (err > 0) {
-			mosh_error("%s", response);
+			mosh_error("%s", at_resp_buf);
 			err = -EINVAL;
 		} else {
 			/* Negative values are error codes */
 			mosh_error("Failed to send AT command, err %d", err);
 		}
+		k_mutex_unlock(&at_resp_buf_mutex);
 	}
 
 	return 0;
