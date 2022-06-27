@@ -161,7 +161,9 @@ Complete the following steps to update the firmware:
 
    A file explorer window appears.
 #. Navigate to the folder where you extracted the application firmware.
-#. Select the :file:`dfu_application.zip` and click :guilabel:`Open`.
+#. Open the :file:`Peripheral_LBS` folder, select the update file and click :guilabel:`Open`.
+
+   The update file is titled :file:`peripheral_lbs_<version-number>_thingy53_nrf5340.zip`.
 #. Click the :guilabel:`Write` button in the :guilabel:`Device` section.
 
    The :guilabel:`MCUboot DFU` window appears.
@@ -237,9 +239,9 @@ Do no unplug or power off the devices during this process.
 #. Click :guilabel:`Add file` in the :guilabel:`File` section, and select :guilabel:`Browse`.
 
    A file explorer window appears.
-#. Navigate to the folder where you extracted application firmware.
-#. Open the :file:`img_app_bl` folder that contains the HEX files used with the debug probe.
-#. Select the HEX file for the application that you want to transfer to the Nordic Thingy:53 and click :guilabel:`Open`.
+#. Navigate to the folder where you extracted the application firmware.
+#. Open the folder for the application that you want to transfer to the Nordic Thingy:53.
+#. Select the corresponding HEX file to be used with the debug probe and click :guilabel:`Open`.
 
    The HEX file appears in the :guilabel:`File memory layout` section.
 #. Click :guilabel:`Erase & write` in the :guilabel:`Device` section of the side panel.
