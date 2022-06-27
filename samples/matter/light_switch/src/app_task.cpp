@@ -296,7 +296,6 @@ void AppTask::IdentifyStopHandler(Identify *)
 
 void AppTask::StartBLEAdvertisingHandler(AppEvent *aEvent)
 {
-	/* Don't allow on starting Matter service BLE advertising after Thread provisioning. */
 	if (Server::GetInstance().GetFabricTable().FabricCount() != 0) {
 		LOG_INF("Matter service BLE advertising not started - device is already commissioned");
 		return;
