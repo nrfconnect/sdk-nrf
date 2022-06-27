@@ -22,6 +22,10 @@ config TFM_BL2
 	bool
 	default n
 
+config TFM_REGRESSION_NS
+	bool
+	select NRF_TIMER0_SECURE
+
 config TFM_SECURE_UART1
 	bool "TF-M configure UART1 as secure peripheral"
 	default y if !TFM_LOG_LEVEL_SILENCE
