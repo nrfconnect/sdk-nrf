@@ -628,7 +628,7 @@ int icmp_ping_start(struct icmp_ping_shell_cmd_argv *ping_args)
 	ret = link_api_pdp_contexts_read(&pdp_context_info_tbl);
 	if (ret) {
 		ping_error(ping_args, "cannot read current connection info: %d", ret);
-		return -1;
+		goto exit;
 	}
 	if (pdp_context_info_tbl.size > 0) {
 		/* Default context: */
@@ -657,6 +657,7 @@ int icmp_ping_start(struct icmp_ping_shell_cmd_argv *ping_args)
 
 	if (pdp_context_info_tbl.array != NULL) {
 		free(pdp_context_info_tbl.array);
+		pdp_context_info_tbl.array = NULL;
 	}
 
 	/* Now we can check the max payload len vs link MTU (IPv6 check later): */
@@ -709,7 +710,7 @@ int icmp_ping_start(struct icmp_ping_shell_cmd_argv *ping_args)
 	st = getaddrinfo(src_ipv_addr, service, &hints, &res);
 	if (st != 0) {
 		ping_error(&ping_argv, "getaddrinfo(src) error: %d", st);
-		return -st;
+		goto exit;
 	}
 	ping_argv.src = res;
 
@@ -722,7 +723,7 @@ int icmp_ping_start(struct icmp_ping_shell_cmd_argv *ping_args)
 		ping_error(&ping_argv, "getaddrinfo(dest) error: %d", st);
 		ping_error(&ping_argv, "Cannot resolve remote host\r\n");
 		freeaddrinfo(ping_argv.src);
-		return -st;
+		goto exit;
 	}
 	ping_argv.dest = res;
 
@@ -730,7 +731,7 @@ int icmp_ping_start(struct icmp_ping_shell_cmd_argv *ping_args)
 		ping_error(&ping_argv, "Source/Destination address family error");
 		freeaddrinfo(ping_argv.dest);
 		freeaddrinfo(ping_argv.src);
-		return -1;
+		goto exit;
 	}
 
 	struct sockaddr *sa;
