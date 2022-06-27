@@ -88,6 +88,11 @@ ESB
 
 * Fixed the ``update_radio_crc()`` function in order to correctly configure the CRC's registers (8 bits, 16 bits, or none).
 
+RF Front-End Modules
+====================
+
+* Fixed a build error that occurred when building an application for nRF53 SoCs with Simple GPIO Front-End Module support enabled.
+
 Applications
 ============
 
