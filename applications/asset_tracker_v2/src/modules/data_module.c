@@ -1315,20 +1315,22 @@ static void on_all_states(struct data_msg_data *msg)
 	}
 
 	if (IS_EVENT(msg, modem, MODEM_EVT_NEIGHBOR_CELLS_DATA_READY)) {
+		struct modem_module_neighbor_cells *msg_neighbor_cells = &msg->module.modem.data.neighbor_cells;
 		BUILD_ASSERT(sizeof(neighbor_cells.cell_data) ==
-			     sizeof(msg->module.modem.data.neighbor_cells.cell_data));
+			     sizeof(msg_neighbor_cells->cell_data));
 
 		BUILD_ASSERT(sizeof(neighbor_cells.neighbor_cells) ==
-			     sizeof(msg->module.modem.data.neighbor_cells.neighbor_cells));
+			     sizeof(msg_neighbor_cells->neighbor_cells));
 
-		memcpy(&neighbor_cells.cell_data, &msg->module.modem.data.neighbor_cells.cell_data,
+		memcpy(&neighbor_cells.cell_data, &msg_neighbor_cells->cell_data,
 		       sizeof(neighbor_cells.cell_data));
 
 		memcpy(&neighbor_cells.neighbor_cells,
-		       &msg->module.modem.data.neighbor_cells.neighbor_cells,
-		       sizeof(neighbor_cells.neighbor_cells));
+		       &msg_neighbor_cells->neighbor_cells,
+		       sizeof(struct lte_lc_ncell) * msg_neighbor_cells->cell_data.ncells_count);
+		neighbor_cells.cell_data.neighbor_cells = neighbor_cells.neighbor_cells;
 
-		neighbor_cells.ts = msg->module.modem.data.neighbor_cells.timestamp;
+		neighbor_cells.ts = msg_neighbor_cells->timestamp;
 		neighbor_cells.queued = true;
 
 		requested_data_status_set(APP_DATA_NEIGHBOR_CELLS);
