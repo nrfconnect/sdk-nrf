@@ -823,42 +823,36 @@ int cloud_codec_encode_config(struct cloud_codec_data *output,
 }
 
 int cloud_codec_encode_data(struct cloud_codec_data *output,
-			    struct cloud_data_gnss *gnss_buf,
-			    struct cloud_data_sensors *sensor_buf,
-			    struct cloud_data_modem_static *modem_stat_buf,
-			    struct cloud_data_modem_dynamic *modem_dyn_buf,
-			    struct cloud_data_ui *ui_buf,
-			    struct cloud_data_accelerometer *accel_buf,
-			    struct cloud_data_battery *bat_buf)
+			    struct cloud_codec_data_to_encode data)
 {
 	int err;
 	bool objects_written = false;
 	double alt, acc, spd;
 
 	/* GPS PVT */
-	if (gnss_buf->queued) {
+	if (data.gnss->queued) {
 		/*
 		 * The LwM2M engine expect double pointers, so floats have to be casted to double
 		 * first. Then we can pass pointers to the double values.
 		 */
-		alt = (double) gnss_buf->pvt.alt;
-		acc = (double) gnss_buf->pvt.acc;
-		spd = (double) gnss_buf->pvt.spd;
+		alt = (double) data.gnss->pvt.alt;
+		acc = (double) data.gnss->pvt.acc;
+		spd = (double) data.gnss->pvt.spd;
 
-		err = date_time_uptime_to_unix_time_ms(&gnss_buf->gnss_ts);
+		err = date_time_uptime_to_unix_time_ms(&data.gnss->gnss_ts);
 		if (err) {
 			LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
 			return err;
 		}
 
 		err = lwm2m_engine_set_float(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LATITUDE_RID),
-					     &gnss_buf->pvt.lat);
+					     &data.gnss->pvt.lat);
 		if (err) {
 			return err;
 		}
 
 		err = lwm2m_engine_set_float(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LONGITUDE_RID),
-					     &gnss_buf->pvt.longi);
+					     &data.gnss->pvt.longi);
 		if (err) {
 			return err;
 		}
@@ -883,7 +877,7 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 
 		err = lwm2m_engine_set_s32(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0,
 						LOCATION_TIMESTAMP_RID),
-					   (int32_t)(gnss_buf->gnss_ts / MSEC_PER_SEC));
+					   (int32_t)(data.gnss->gnss_ts / MSEC_PER_SEC));
 		if (err) {
 			return err;
 		}
@@ -894,13 +888,13 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 			return err;
 		}
 
-		gnss_buf->queued = false;
+		data.gnss->queued = false;
 		objects_written = true;
 	}
 
 	/* Modem dynamic */
-	if (modem_dyn_buf->queued) {
-		if (modem_dyn_buf->nw_mode == LTE_LC_LTE_MODE_LTEM) {
+	if (data.modem_dyn->queued) {
+		if (data.modem_dyn->nw_mode == LTE_LC_LTE_MODE_LTEM) {
 			err = lwm2m_engine_set_u8(LWM2M_PATH(
 							LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
 							NETWORK_BEARER_ID),
@@ -908,7 +902,7 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 			if (err) {
 				return err;
 			}
-		} else if (modem_dyn_buf->nw_mode == LTE_LC_LTE_MODE_NBIOT) {
+		} else if (data.modem_dyn->nw_mode == LTE_LC_LTE_MODE_NBIOT) {
 			err = lwm2m_engine_set_u8(LWM2M_PATH(
 							LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
 							NETWORK_BEARER_ID),
@@ -938,7 +932,7 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 
 		err = lwm2m_engine_set_res_data(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID,
 							   0, IP_ADDRESSES, 0),
-						modem_dyn_buf->ip, sizeof(modem_dyn_buf->ip),
+						data.modem_dyn->ip, sizeof(data.modem_dyn->ip),
 						LWM2M_RES_DATA_FLAG_RO);
 		if (err) {
 			return err;
@@ -946,7 +940,7 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 
 		err = lwm2m_engine_set_res_data(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID,
 							   0, APN, 0),
-						modem_dyn_buf->apn, sizeof(modem_dyn_buf->apn),
+						data.modem_dyn->apn, sizeof(data.modem_dyn->apn),
 						LWM2M_RES_DATA_FLAG_RO);
 		if (err) {
 			return err;
@@ -954,35 +948,35 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 
 		err = lwm2m_engine_set_s8(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
 						      RADIO_SIGNAL_STRENGTH),
-					  modem_dyn_buf->rsrp);
+					  data.modem_dyn->rsrp);
 		if (err) {
 			return err;
 		}
 
 		err = lwm2m_engine_set_u32(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
 						      CELLID),
-					   modem_dyn_buf->cell);
+					   data.modem_dyn->cell);
 		if (err) {
 			return err;
 		}
 
 		err = lwm2m_engine_set_u16(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
 						      SMNC),
-					   modem_dyn_buf->mnc);
+					   data.modem_dyn->mnc);
 		if (err) {
 			return err;
 		}
 
 		err = lwm2m_engine_set_u16(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
 						      SMCC),
-					   modem_dyn_buf->mcc);
+					   data.modem_dyn->mcc);
 		if (err) {
 			return err;
 		}
 
 		err = lwm2m_engine_set_u16(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID, 0,
 						      LAC),
-					   modem_dyn_buf->area);
+					   data.modem_dyn->area);
 		if (err) {
 			return err;
 		}
@@ -1015,12 +1009,12 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 			return err;
 		}
 
-		modem_dyn_buf->queued = false;
+		data.modem_dyn->queued = false;
 		objects_written = true;
 	}
 
 	/* Modem static */
-	if (modem_stat_buf->queued) {
+	if (data.modem_stat->queued) {
 
 		err = lwm2m_engine_set_res_data(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0,
 							   MODEL_NUMBER_RID),
@@ -1051,24 +1045,24 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 
 		err = lwm2m_engine_set_res_data(
 			LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, FIRMWARE_VERSION_RID),
-			modem_stat_buf->appv,
-			sizeof(modem_stat_buf->appv), LWM2M_RES_DATA_FLAG_RO);
+			data.modem_stat->appv,
+			sizeof(data.modem_stat->appv), LWM2M_RES_DATA_FLAG_RO);
 		if (err) {
 			return err;
 		}
 
 		err = lwm2m_engine_set_res_data(
 			LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, SOFTWARE_VERSION_RID),
-			modem_stat_buf->fw,
-			sizeof(modem_stat_buf->fw), LWM2M_RES_DATA_FLAG_RO);
+			data.modem_stat->fw,
+			sizeof(data.modem_stat->fw), LWM2M_RES_DATA_FLAG_RO);
 		if (err) {
 			return err;
 		}
 
 		err = lwm2m_engine_set_res_data(
 			LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, DEVICE_SERIAL_NUMBER_ID),
-			modem_stat_buf->imei,
-			sizeof(modem_stat_buf->imei), LWM2M_RES_DATA_FLAG_RO);
+			data.modem_stat->imei,
+			sizeof(data.modem_stat->imei), LWM2M_RES_DATA_FLAG_RO);
 		if (err) {
 			return err;
 		}
@@ -1108,15 +1102,15 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 			return err;
 		}
 
-		modem_stat_buf->queued = false;
+		data.modem_stat->queued = false;
 		objects_written = true;
 	}
 
-	if (bat_buf->queued) {
+	if (data.bat->queued) {
 
 		err = lwm2m_engine_set_s32(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0,
 						      POWER_SOURCE_VOLTAGE_RID),
-					   bat_buf->bat);
+					   data.bat->bat);
 		if (err) {
 			return err;
 		}
@@ -1128,14 +1122,14 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 			return err;
 		}
 
-		bat_buf->queued = false;
+		data.bat->queued = false;
 		objects_written = true;
 	}
 
 	/* Environmental sensor data */
-	if (sensor_buf->queued) {
+	if (data.sensor->queued) {
 
-		err = date_time_uptime_to_unix_time_ms(&sensor_buf->env_ts);
+		err = date_time_uptime_to_unix_time_ms(&data.sensor->env_ts);
 		if (err) {
 			LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
 			return err;
@@ -1143,42 +1137,42 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 
 		err = lwm2m_engine_set_s32(LWM2M_PATH(IPSO_OBJECT_TEMP_SENSOR_ID, 0,
 						      TIMESTAMP_RID),
-					   (int32_t)(sensor_buf->env_ts / MSEC_PER_SEC));
+					   (int32_t)(data.sensor->env_ts / MSEC_PER_SEC));
 		if (err) {
 			return err;
 		}
 
 		err = lwm2m_engine_set_s32(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0,
 						      TIMESTAMP_RID),
-					   (int32_t)(sensor_buf->env_ts / MSEC_PER_SEC));
+					   (int32_t)(data.sensor->env_ts / MSEC_PER_SEC));
 		if (err) {
 			return err;
 		}
 
 		err = lwm2m_engine_set_s32(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0,
 						      TIMESTAMP_RID),
-					   (int32_t)(sensor_buf->env_ts / MSEC_PER_SEC));
+					   (int32_t)(data.sensor->env_ts / MSEC_PER_SEC));
 		if (err) {
 			return err;
 		}
 
 		err = lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_TEMP_SENSOR_ID, 0,
 							SENSOR_VALUE_RID),
-					     &sensor_buf->temperature);
+					     &data.sensor->temperature);
 		if (err) {
 			return err;
 		}
 
 		err = lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0,
 							SENSOR_VALUE_RID),
-					     &sensor_buf->humidity);
+					     &data.sensor->humidity);
 		if (err) {
 			return err;
 		}
 
 		err = lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0,
 							SENSOR_VALUE_RID),
-					     &sensor_buf->pressure);
+					     &data.sensor->pressure);
 		if (err) {
 			return err;
 		}
@@ -1227,7 +1221,7 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 			return err;
 		}
 
-		sensor_buf->queued = false;
+		data.sensor->queued = false;
 		objects_written = true;
 	}
 
@@ -1323,20 +1317,7 @@ int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
 }
 
 int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
-				  struct cloud_data_gnss *gnss_buf,
-				  struct cloud_data_sensors *sensor_buf,
-				  struct cloud_data_modem_static *modem_stat_buf,
-				  struct cloud_data_modem_dynamic *modem_dyn_buf,
-				  struct cloud_data_ui *ui_buf,
-				  struct cloud_data_accelerometer *accel_buf,
-				  struct cloud_data_battery *bat_buf,
-				  size_t gnss_buf_count,
-				  size_t sensor_buf_count,
-				  size_t modem_stat_buf_count,
-				  size_t modem_dyn_buf_count,
-				  size_t ui_buf_count,
-				  size_t accel_buf_count,
-				  size_t bat_buf_count)
+				  struct cloud_codec_buffers data)
 {
 	return -ENOTSUP;
 }

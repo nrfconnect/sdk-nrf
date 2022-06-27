@@ -45,6 +45,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DATA_MODULE_LOG_LEVEL);
  */
 #define ACCELEROMETER_S_M2_MAX 100
 
+static struct cloud_data_neighbor_cells neighbor_cells;
 struct data_msg_data {
 	union {
 		struct modem_module_event modem;
@@ -64,35 +65,6 @@ static enum state_type {
 	STATE_CLOUD_CONNECTED,
 	STATE_SHUTDOWN
 } state;
-
-/* Ringbuffers. All data received by the Data module are stored in ringbuffers.
- * Upon a LTE connection loss the device will keep sampling/storing data in
- * the buffers, and empty the buffers in batches upon a reconnect.
- */
-static struct cloud_data_gnss gnss_buf[CONFIG_DATA_GNSS_BUFFER_COUNT];
-static struct cloud_data_sensors sensors_buf[CONFIG_DATA_SENSOR_BUFFER_COUNT];
-static struct cloud_data_ui ui_buf[CONFIG_DATA_UI_BUFFER_COUNT];
-static struct cloud_data_accelerometer accel_buf[CONFIG_DATA_ACCELEROMETER_BUFFER_COUNT];
-static struct cloud_data_battery bat_buf[CONFIG_DATA_BATTERY_BUFFER_COUNT];
-static struct cloud_data_modem_dynamic modem_dyn_buf[CONFIG_DATA_MODEM_DYNAMIC_BUFFER_COUNT];
-static struct cloud_data_neighbor_cells neighbor_cells;
-
-/* Static modem data does not change between firmware versions and does not
- * have to be buffered.
- */
-static struct cloud_data_modem_static modem_stat;
-/* Size of the static modem (modem_stat) data structure.
- * Used to provide an array size when encoding batch data.
- */
-#define MODEM_STATIC_ARRAY_SIZE 1
-
-/* Head of ringbuffers. */
-static int head_gnss_buf;
-static int head_sensor_buf;
-static int head_modem_dyn_buf;
-static int head_ui_buf;
-static int head_accel_buf;
-static int head_bat_buf;
 
 static K_SEM_DEFINE(config_load_sem, 0, 1);
 
@@ -583,14 +555,12 @@ static void data_encode(void)
 	}
 
 	if (grant_send(GENERIC, &coneval, override)) {
-		err = cloud_codec_encode_data(&codec,
-					      &gnss_buf[head_gnss_buf],
-					      &sensors_buf[head_sensor_buf],
-					      &modem_stat,
-					      &modem_dyn_buf[head_modem_dyn_buf],
-					      &ui_buf[head_ui_buf],
-					      &accel_buf[head_accel_buf],
-					      &bat_buf[head_bat_buf]);
+		/** This automagically fills a struct with the head elements of
+		 *  the cloud codec buffers.
+		 */
+		struct cloud_codec_data_to_encode data = cloud_codec_list_buffer_heads();
+
+		err = cloud_codec_encode_data(&codec, data);
 		switch (err) {
 		case 0:
 			LOG_DBG("Data encoded successfully");
@@ -613,21 +583,12 @@ static void data_encode(void)
 	}
 
 	if (grant_send(BATCH, &coneval, override)) {
-		err = cloud_codec_encode_batch_data(&codec,
-						    gnss_buf,
-						    sensors_buf,
-						    &modem_stat,
-						    modem_dyn_buf,
-						    ui_buf,
-						    accel_buf,
-						    bat_buf,
-						    ARRAY_SIZE(gnss_buf),
-						    ARRAY_SIZE(sensors_buf),
-						    MODEM_STATIC_ARRAY_SIZE,
-						    ARRAY_SIZE(modem_dyn_buf),
-						    ARRAY_SIZE(ui_buf),
-						    ARRAY_SIZE(accel_buf),
-						    ARRAY_SIZE(bat_buf));
+		/** This automagically fills a struct with all
+		 *  cloud buffer pointers and lengths.
+		 */
+		struct cloud_codec_buffers data = cloud_codec_list_buffers();
+
+		err = cloud_codec_encode_batch_data(&codec, data);
 		switch (err) {
 		case 0:
 			LOG_DBG("Batch data encoded successfully");
@@ -782,7 +743,7 @@ static void data_ui_send(void)
 		return;
 	}
 
-	err = cloud_codec_encode_ui_data(&codec, &ui_buf[head_ui_buf]);
+	err = cloud_codec_encode_ui_data(&codec, cloud_codec_peek_ui_buffer());
 	if (err == -ENODATA) {
 		LOG_DBG("No new UI data to encode, error: %d", err);
 		return;
@@ -1183,9 +1144,7 @@ static void on_all_states(struct data_msg_data *msg)
 			.queued = true
 		};
 
-		cloud_codec_populate_ui_buffer(ui_buf, &new_ui_data,
-					       &head_ui_buf,
-					       ARRAY_SIZE(ui_buf));
+		cloud_codec_populate_ui_buffer(&new_ui_data);
 
 		SEND_EVENT(data, DATA_EVT_UI_DATA_READY);
 		return;
@@ -1196,29 +1155,32 @@ static void on_all_states(struct data_msg_data *msg)
 	}
 
 	if (IS_EVENT(msg, modem, MODEM_EVT_MODEM_STATIC_DATA_READY)) {
-		modem_stat.ts = msg->module.modem.data.modem_static.timestamp;
-		modem_stat.queued = true;
+		struct cloud_data_modem_static *modem_stat_buf =
+			cloud_codec_peek_modem_stat_buffer();
 
-		BUILD_ASSERT(sizeof(modem_stat.appv) >=
+		modem_stat_buf->ts = msg->module.modem.data.modem_static.timestamp;
+		modem_stat_buf->queued = true;
+
+		BUILD_ASSERT(sizeof(modem_stat_buf->appv) >=
 			     sizeof(msg->module.modem.data.modem_static.app_version));
 
-		BUILD_ASSERT(sizeof(modem_stat.brdv) >=
+		BUILD_ASSERT(sizeof(modem_stat_buf->brdv) >=
 			     sizeof(msg->module.modem.data.modem_static.board_version));
 
-		BUILD_ASSERT(sizeof(modem_stat.fw) >=
+		BUILD_ASSERT(sizeof(modem_stat_buf->fw) >=
 			     sizeof(msg->module.modem.data.modem_static.modem_fw));
 
-		BUILD_ASSERT(sizeof(modem_stat.iccid) >=
+		BUILD_ASSERT(sizeof(modem_stat_buf->iccid) >=
 			     sizeof(msg->module.modem.data.modem_static.iccid));
 
-		BUILD_ASSERT(sizeof(modem_stat.imei) >=
+		BUILD_ASSERT(sizeof(modem_stat_buf->imei) >=
 			     sizeof(msg->module.modem.data.modem_static.imei));
 
-		strcpy(modem_stat.appv, msg->module.modem.data.modem_static.app_version);
-		strcpy(modem_stat.brdv, msg->module.modem.data.modem_static.board_version);
-		strcpy(modem_stat.fw, msg->module.modem.data.modem_static.modem_fw);
-		strcpy(modem_stat.iccid, msg->module.modem.data.modem_static.iccid);
-		strcpy(modem_stat.imei, msg->module.modem.data.modem_static.imei);
+		strcpy(modem_stat_buf->appv, msg->module.modem.data.modem_static.app_version);
+		strcpy(modem_stat_buf->brdv, msg->module.modem.data.modem_static.board_version);
+		strcpy(modem_stat_buf->fw, msg->module.modem.data.modem_static.modem_fw);
+		strcpy(modem_stat_buf->iccid, msg->module.modem.data.modem_static.iccid);
+		strcpy(modem_stat_buf->imei, msg->module.modem.data.modem_static.imei);
 
 		requested_data_status_set(APP_DATA_MODEM_STATIC);
 	}
@@ -1261,11 +1223,7 @@ static void on_all_states(struct data_msg_data *msg)
 		strcpy(new_modem_data.apn, msg->module.modem.data.modem_dynamic.apn);
 		strcpy(new_modem_data.mccmnc, msg->module.modem.data.modem_dynamic.mccmnc);
 
-		cloud_codec_populate_modem_dynamic_buffer(
-						modem_dyn_buf,
-						&new_modem_data,
-						&head_modem_dyn_buf,
-						ARRAY_SIZE(modem_dyn_buf));
+		cloud_codec_populate_modem_dyn_buffer(&new_modem_data);
 
 		requested_data_status_set(APP_DATA_MODEM_DYNAMIC);
 	}
@@ -1281,9 +1239,7 @@ static void on_all_states(struct data_msg_data *msg)
 			.queued = true
 		};
 
-		cloud_codec_populate_bat_buffer(bat_buf, &new_battery_data,
-						&head_bat_buf,
-						ARRAY_SIZE(bat_buf));
+		cloud_codec_populate_bat_buffer(&new_battery_data);
 
 		requested_data_status_set(APP_DATA_BATTERY);
 	}
@@ -1298,10 +1254,7 @@ static void on_all_states(struct data_msg_data *msg)
 			.queued = true
 		};
 
-		cloud_codec_populate_sensor_buffer(sensors_buf,
-						   &new_sensor_data,
-						   &head_sensor_buf,
-						   ARRAY_SIZE(sensors_buf));
+		cloud_codec_populate_sensor_buffer(&new_sensor_data);
 
 		requested_data_status_set(APP_DATA_ENVIRONMENTAL);
 	}
@@ -1319,9 +1272,7 @@ static void on_all_states(struct data_msg_data *msg)
 			.queued = true
 		};
 
-		cloud_codec_populate_accel_buffer(accel_buf, &new_movement_data,
-						  &head_accel_buf,
-						  ARRAY_SIZE(accel_buf));
+		cloud_codec_populate_accel_buffer(&new_movement_data);
 	}
 
 	if (IS_EVENT(msg, gnss, GNSS_EVT_DATA_READY)) {
@@ -1358,9 +1309,7 @@ static void on_all_states(struct data_msg_data *msg)
 			return;
 		}
 
-		cloud_codec_populate_gnss_buffer(gnss_buf, &new_gnss_data,
-						&head_gnss_buf,
-						ARRAY_SIZE(gnss_buf));
+		cloud_codec_populate_gnss_buffer(&new_gnss_data);
 
 		requested_data_status_set(APP_DATA_GNSS);
 	}

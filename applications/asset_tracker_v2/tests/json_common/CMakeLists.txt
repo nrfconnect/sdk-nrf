@@ -16,6 +16,19 @@ target_include_directories(app PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR} ../../src/cloud/cloud_codec/
 	${CMAKE_CURRENT_SOURCE_DIR} ../../../../../nrfxlib/nrf_modem/include/)
 
+# Create generated cloud buffer files
+add_custom_command(
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../../src/cloud/cloud_codec/generator.py
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../../src/cloud/cloud_codec/generator.py
+    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/generated_cloud_buffers.h
+    COMMENT "Generating code for generated_cloud_buffers.h"
+)
+add_custom_target(
+  generated_cloud_buffers
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/generated_cloud_buffers.h
+)
+add_dependencies(app generated_cloud_buffers)
+
 target_sources(app PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR} mock/date_time_mock.c
 	${CMAKE_CURRENT_SOURCE_DIR} ../../src/cloud/cloud_codec/json_common.c

@@ -17,10 +17,23 @@ target_sources_ifdef(CONFIG_CLOUD_CODEC_NRF_CLOUD app
 target_sources_ifdef(CONFIG_CLOUD_CODEC_LWM2M app
                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lwm2m/lwm2m_codec.c)
 
-target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cloud_codec_ringbuffer.c)
-
 # Include JSON convenience APIs if used by the respective cloud codec backend.
 if (CONFIG_CLOUD_CODEC_AWS_IOT OR CONFIG_CLOUD_CODEC_AZURE_IOT_HUB OR CONFIG_CLOUD_CODEC_NRF_CLOUD)
         target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/json_helpers.c)
         target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/json_common.c)
 endif()
+
+# https://stackoverflow.com/a/51881170
+add_custom_command(
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/generator.py
+    DEPENDS generator.py
+    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/generated_cloud_buffers.c ${CMAKE_CURRENT_SOURCE_DIR}/generated_cloud_buffers.h
+    COMMENT "Generating code for generated_cloud_buffers.c"
+)
+add_custom_target(
+  generated_cloud_buffers
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/generated_cloud_buffers.c
+)
+add_dependencies(app generated_cloud_buffers)
+
+target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/generated_cloud_buffers.c)

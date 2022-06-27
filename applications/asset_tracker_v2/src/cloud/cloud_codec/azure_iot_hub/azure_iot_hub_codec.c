@@ -244,13 +244,7 @@ exit:
 }
 
 int cloud_codec_encode_data(struct cloud_codec_data *output,
-			    struct cloud_data_gnss *gnss_buf,
-			    struct cloud_data_sensors *sensor_buf,
-			    struct cloud_data_modem_static *modem_stat_buf,
-			    struct cloud_data_modem_dynamic *modem_dyn_buf,
-			    struct cloud_data_ui *ui_buf,
-			    struct cloud_data_accelerometer *accel_buf,
-			    struct cloud_data_battery *bat_buf)
+			    struct cloud_codec_data_to_encode data)
 {
 	int err;
 	char *buffer;
@@ -263,7 +257,7 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 		return -ENOMEM;
 	}
 
-	err = json_common_ui_data_add(root_obj, ui_buf,
+	err = json_common_ui_data_add(root_obj, data.ui,
 				      JSON_COMMON_ADD_DATA_TO_OBJECT,
 				      DATA_BUTTON,
 				      NULL);
@@ -273,7 +267,7 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 		goto exit;
 	}
 
-	err = json_common_modem_static_data_add(root_obj, modem_stat_buf,
+	err = json_common_modem_static_data_add(root_obj, data.modem_stat,
 						JSON_COMMON_ADD_DATA_TO_OBJECT,
 						DATA_MODEM_STATIC,
 						NULL);
@@ -283,7 +277,7 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 		goto exit;
 	}
 
-	err = json_common_modem_dynamic_data_add(root_obj, modem_dyn_buf,
+	err = json_common_modem_dynamic_data_add(root_obj, data.modem_dyn,
 						 JSON_COMMON_ADD_DATA_TO_OBJECT,
 						 DATA_MODEM_DYNAMIC,
 						 NULL);
@@ -293,7 +287,7 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 		goto exit;
 	}
 
-	err = json_common_gnss_data_add(root_obj, gnss_buf,
+	err = json_common_gnss_data_add(root_obj, data.gnss,
 				       JSON_COMMON_ADD_DATA_TO_OBJECT,
 				       DATA_GNSS,
 				       NULL);
@@ -303,7 +297,7 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 		goto exit;
 	}
 
-	err = json_common_sensor_data_add(root_obj, sensor_buf,
+	err = json_common_sensor_data_add(root_obj, data.sensor,
 					  JSON_COMMON_ADD_DATA_TO_OBJECT,
 					  DATA_ENVIRONMENTALS,
 					  NULL);
@@ -313,7 +307,7 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 		goto exit;
 	}
 
-	err = json_common_accel_data_add(root_obj, accel_buf,
+	err = json_common_accel_data_add(root_obj, data.accel,
 					 JSON_COMMON_ADD_DATA_TO_OBJECT,
 					 DATA_MOVEMENT,
 					 NULL);
@@ -323,7 +317,7 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 		goto exit;
 	}
 
-	err = json_common_battery_data_add(root_obj, bat_buf,
+	err = json_common_battery_data_add(root_obj, data.bat,
 					   JSON_COMMON_ADD_DATA_TO_OBJECT,
 					   DATA_BATTERY,
 					   NULL);
@@ -406,20 +400,7 @@ exit:
 }
 
 int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
-				  struct cloud_data_gnss *gnss_buf,
-				  struct cloud_data_sensors *sensor_buf,
-				  struct cloud_data_modem_static *modem_stat_buf,
-				  struct cloud_data_modem_dynamic *modem_dyn_buf,
-				  struct cloud_data_ui *ui_buf,
-				  struct cloud_data_accelerometer *accel_buf,
-				  struct cloud_data_battery *bat_buf,
-				  size_t gnss_buf_count,
-				  size_t sensor_buf_count,
-				  size_t modem_stat_buf_count,
-				  size_t modem_dyn_buf_count,
-				  size_t ui_buf_count,
-				  size_t accel_buf_count,
-				  size_t bat_buf_count)
+				  struct cloud_codec_buffers data)
 {
 	int err;
 	char *buffer;
@@ -433,7 +414,7 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 	}
 
 	err = json_common_batch_data_add(root_obj, JSON_COMMON_MODEM_STATIC,
-					 modem_stat_buf, modem_stat_buf_count,
+					 data.modem_stat_buf, data.modem_stat_buf_count,
 					 DATA_MODEM_STATIC);
 	if (err == 0) {
 		object_added = true;
@@ -442,7 +423,7 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 	}
 
 	err = json_common_batch_data_add(root_obj, JSON_COMMON_MODEM_DYNAMIC,
-					 modem_dyn_buf, modem_dyn_buf_count,
+					 data.modem_dyn_buf, data.modem_dyn_buf_count,
 					 DATA_MODEM_DYNAMIC);
 	if (err == 0) {
 		object_added = true;
@@ -451,7 +432,7 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 	}
 
 	err = json_common_batch_data_add(root_obj, JSON_COMMON_GNSS,
-					 gnss_buf, gnss_buf_count,
+					 data.gnss_buf, data.gnss_buf_count,
 					 DATA_GNSS);
 	if (err == 0) {
 		object_added = true;
@@ -460,7 +441,7 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 	}
 
 	err = json_common_batch_data_add(root_obj, JSON_COMMON_SENSOR,
-					 sensor_buf, sensor_buf_count,
+					 data.sensor_buf, data.sensor_buf_count,
 					 DATA_ENVIRONMENTALS);
 	if (err == 0) {
 		object_added = true;
@@ -469,7 +450,7 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 	}
 
 	err = json_common_batch_data_add(root_obj, JSON_COMMON_UI,
-					 ui_buf, ui_buf_count,
+					 data.ui_buf, data.ui_buf_count,
 					 DATA_BUTTON);
 	if (err == 0) {
 		object_added = true;
@@ -478,7 +459,7 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 	}
 
 	err = json_common_batch_data_add(root_obj, JSON_COMMON_BATTERY,
-					 bat_buf, bat_buf_count,
+					 data.bat_buf, data.bat_buf_count,
 					 DATA_BATTERY);
 	if (err == 0) {
 		object_added = true;
@@ -487,7 +468,7 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 	}
 
 	err = json_common_batch_data_add(root_obj, JSON_COMMON_ACCELEROMETER,
-					 accel_buf, accel_buf_count,
+					 data.accel_buf, data.accel_buf_count,
 					 DATA_MOVEMENT);
 	if (err == 0) {
 		object_added = true;

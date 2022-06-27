@@ -33,6 +33,19 @@ target_include_directories(app PRIVATE ${NRF_DIR}/subsys/app_event_manager)
 target_include_directories(app PRIVATE ${NRF_DIR}/modules/cjson/include)
 target_include_directories(app PRIVATE ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/)
 
+# Create generated cloud buffer files
+add_custom_command(
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../../src/cloud/cloud_codec/generator.py
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../../src/cloud/cloud_codec/generator.py
+    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/generated_cloud_buffers.h
+    COMMENT "Generating code for generated_cloud_buffers.h"
+)
+add_custom_target(
+  generated_cloud_buffers
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/generated_cloud_buffers.h
+)
+add_dependencies(app generated_cloud_buffers)
+
 # Options that cannot be passed through Kconfig fragments
 target_compile_definitions(app PRIVATE
 	-DCONFIG_ASSET_TRACKER_V2_APP_VERSION_MAX_LEN=20

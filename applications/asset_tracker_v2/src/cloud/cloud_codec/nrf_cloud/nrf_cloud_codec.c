@@ -562,13 +562,7 @@ exit:
 }
 
 int cloud_codec_encode_data(struct cloud_codec_data *output,
-			    struct cloud_data_gnss *gnss_buf,
-			    struct cloud_data_sensors *sensor_buf,
-			    struct cloud_data_modem_static *modem_stat_buf,
-			    struct cloud_data_modem_dynamic *modem_dyn_buf,
-			    struct cloud_data_ui *ui_buf,
-			    struct cloud_data_accelerometer *accel_buf,
-			    struct cloud_data_battery *bat_buf)
+			    struct cloud_codec_data_to_encode data)
 {
 	/* Encoding of the latest buffer entries is not supported.
 	 * Only batch encoding is supported.
@@ -638,20 +632,7 @@ exit:
 }
 
 int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
-				  struct cloud_data_gnss *gnss_buf,
-				  struct cloud_data_sensors *sensor_buf,
-				  struct cloud_data_modem_static *modem_stat_buf,
-				  struct cloud_data_modem_dynamic *modem_dyn_buf,
-				  struct cloud_data_ui *ui_buf,
-				  struct cloud_data_accelerometer *accel_buf,
-				  struct cloud_data_battery *bat_buf,
-				  size_t gnss_buf_count,
-				  size_t sensor_buf_count,
-				  size_t modem_stat_buf_count,
-				  size_t modem_dyn_buf_count,
-				  size_t ui_buf_count,
-				  size_t accel_buf_count,
-				  size_t bat_buf_count)
+				  struct cloud_codec_buffers data)
 {
 	int err;
 	char *buffer;
@@ -662,37 +643,39 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 		return -ENOMEM;
 	}
 
-	err = add_batch_data(root_array, GNSS, gnss_buf, gnss_buf_count);
+	err = add_batch_data(root_array, GNSS, data.gnss_buf, data.gnss_buf_count);
 	if (err) {
 		LOG_ERR("Failed adding GNSS data to array, error: %d", err);
 		goto exit;
 	}
 
-	err = add_batch_data(root_array, ENVIRONMENTALS, sensor_buf, sensor_buf_count);
+	err = add_batch_data(root_array, ENVIRONMENTALS, data.sensor_buf, data.sensor_buf_count);
 	if (err) {
 		LOG_ERR("Failed adding environmental data to array, error: %d", err);
 		goto exit;
 	}
 
-	err = add_batch_data(root_array, BUTTON, ui_buf, ui_buf_count);
+	err = add_batch_data(root_array, BUTTON, data.ui_buf, data.ui_buf_count);
 	if (err) {
 		LOG_ERR("Failed adding button data to array, error: %d", err);
 		goto exit;
 	}
 
-	err = add_batch_data(root_array, VOLTAGE, bat_buf, bat_buf_count);
+	err = add_batch_data(root_array, VOLTAGE, data.bat_buf, data.bat_buf_count);
 	if (err) {
 		LOG_ERR("Failed adding battery data to array, error: %d", err);
 		goto exit;
 	}
 
-	err = add_batch_data(root_array, MODEM_STATIC, modem_stat_buf, modem_stat_buf_count);
+	err = add_batch_data(root_array, MODEM_STATIC,
+		data.modem_stat_buf, data.modem_stat_buf_count);
 	if (err) {
 		LOG_ERR("Failed adding static modem data to array, error: %d", err);
 		goto exit;
 	}
 
-	err = add_batch_data(root_array, MODEM_DYNAMIC, modem_dyn_buf, modem_dyn_buf_count);
+	err = add_batch_data(root_array, MODEM_DYNAMIC,
+		data.modem_dyn_buf, data.modem_dyn_buf_count);
 	if (err) {
 		LOG_ERR("Failed adding dynamic modem data to array, error: %d", err);
 		goto exit;
@@ -726,7 +709,7 @@ int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 
 exit:
 	/* Clear buffers that are not handled by this function. */
-	memset(accel_buf, 0, accel_buf_count * sizeof(struct cloud_data_accelerometer));
+	memset(data.accel_buf, 0, data.accel_buf_count * sizeof(struct cloud_data_accelerometer));
 	cJSON_Delete(root_array);
 	return err;
 }
