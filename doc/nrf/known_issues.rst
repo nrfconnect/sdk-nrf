@@ -2193,6 +2193,16 @@ Trusted Firmware-M (TF-M)
 
 .. rst-class:: v2-0-0
 
+NCSDK-15909: TF-M may fail to build due to flash overflow with Zephyr SDK 0.14.2
+  when TFM_PROFILE_TYPE_NOT_SET=y.
+
+  **Workaround:** Use one of the following workarounds:
+
+  * Increase the TF-M partition :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM`.
+  * Use Zephyr SDK version 0.14.1.
+
+.. rst-class:: v2-0-0
+
 TF-M is not supported for Thingy:91 v1.5.0 and lower versions
   TF-M does not support Thingy:91 v1.5.0 and lower versions when using the factory-programmed bootloader to upgrade the firmware.
   TF-M is compatible with all versions of the Thingy:91 if you first upgrade the bootloader using an external debug probe.
