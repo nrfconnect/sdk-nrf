@@ -212,9 +212,13 @@ struct cloud_codec_data {
 };
 
 struct cloud_data_neighbor_cells {
+	/** Contains current cell and number of neighbor cells. */
 	struct lte_lc_cells_info cell_data;
+	/** Contains neighborhood cells. */
 	struct lte_lc_ncell neighbor_cells[17];
+	/** Neighbor cells data timestamp. UNIX milliseconds. */
 	int64_t ts;
+	/** Flag signifying that the data entry is to be encoded. */
 	bool queued : 1;
 };
 
@@ -251,33 +255,126 @@ struct cloud_data_pgps_request {
 };
 
 enum cloud_codec_event_type {
+	/** Only used in LwM2M codec. This event carries a config update. */
 	CLOUD_CODEC_EVT_CONFIG_UPDATE = 1,
 };
 
 struct cloud_codec_evt {
+	/** Cloud codec event type */
 	enum cloud_codec_event_type type;
+	/** New config data */
 	struct cloud_data_cfg config_update;
 };
 
+/**
+ * @brief Event handler prototype.
+ *
+ * @param[in] evt event type
+ */
 typedef void (*cloud_codec_evt_handler_t)(const struct cloud_codec_evt *evt);
 
+/**
+ * @brief Initialize cloud codec.
+ * @note currently only used for config updates in LwM2M
+ *
+ * @param[in] cfg initial config data
+ * @param[in] event_handler handler for events coming from the codec
+ *
+ * @retval 0 on success
+ * @retval -ENOMEM if LwM2M engine couldn't allocate its objects
+ */
 int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event_handler);
 
+/**
+ * @brief Encode cloud codec neighbor cells data.
+ *
+ * @param[out] output string buffer for encoding result
+ * @param[in] neighbor_cells pointer to neighbor cells data
+ *
+ * @retval 0 on success
+ * @retval -ENODATA if data object is not marked valid
+ * @retval -ENOMEM if codec couldn't allocate memory
+ * @retval -EINVAL if the data is invalid
+ * @retval -ENOTSUP if compiled without support for neighbor cell encoding
+ */
 int cloud_codec_encode_neighbor_cells(struct cloud_codec_data *output,
 				      struct cloud_data_neighbor_cells *neighbor_cells);
 
+/**
+ * @brief Encode cloud codec A-GPS request.
+ *
+ * @param[out] output string buffer for encoding result
+ * @param[in] agps_request pointer to A-GPS request data
+ *
+ * @retval 0 on success
+ * @retval -ENODATA if data object is not marked valid
+ * @retval -ENOMEM if codec couldn't allocate memory
+ * @retval -ENOTSUP if nrf cloud codec is used
+ */
 int cloud_codec_encode_agps_request(struct cloud_codec_data *output,
 				    struct cloud_data_agps_request *agps_request);
 
+/**
+ * @brief Encode cloud codec P-GPS request.
+ *
+ * @param[out] output string buffer for encoding result
+ * @param[in] pgps_request pointer to P-GPS request data
+ *
+ * @retval 0 on success
+ * @retval -ENODATA if data object is not marked valid
+ * @retval -ENOMEM if codec couldn't allocate memory
+ * @retval -ENOTSUP if nRF or LwM2M cloud codec is used
+ */
 int cloud_codec_encode_pgps_request(struct cloud_codec_data *output,
 				    struct cloud_data_pgps_request *pgps_request);
 
+/**
+ * @brief Decode received configuration.
+ *
+ * @param[in] input string buffer with encoded config
+ * @param[in] input_len length of input
+ * @param[out] cfg where to store the decoded config
+ *
+ * @retval 0 on success
+ * @retval -ENODATA if string doesn't contain required JSON objects
+ * @retval -ENOMEM if codec couldn't allocate memory
+ * @retval -ECANCELED if data was already processed
+ * @retval -ENOTSUP if LwM2M cloud codec is used
+ */
 int cloud_codec_decode_config(char *input, size_t input_len,
 			      struct cloud_data_cfg *cfg);
 
+/**
+ * @brief Encode current configuration.
+ *
+ * @param[out] output string buffer for encoding result
+ * @param[in] cfg pointer to current configuration
+ *
+ * @retval 0 on success
+ * @retval -ENOMEM if codec couldn't allocate memory
+ * @retval -ENOTSUP if LwM2M cloud codec is used
+ */
 int cloud_codec_encode_config(struct cloud_codec_data *output,
 			      struct cloud_data_cfg *cfg);
 
+/**
+ * @brief Encode cloud buffer data.
+ *
+ * @param[out] output string buffer for encoding result
+ * @param[in] gnss_buf pointer to GNSS data
+ * @param[in] sensor_buf pointer to Sensor data
+ * @param[in] modem_stat_buf pointer to static modem data
+ * @param[in] modem_dyn_buf pointer to dynamic modem data
+ * @param[in] ui_buf pointer to button data
+ * @param[in] accel_buf pointer to accelerometer data
+ * @param[in] bat_buf pointer to battery data
+ *
+ * @retval 0 on success
+ * @retval -ENODATA if none of the data elements are marked valid
+ * @retval -EINVAL if the data is invalid
+ * @retval -ENOMEM if codec couldn't allocate memory
+ * @retval -ENOTSUP if nRF cloud codec is used
+ */
 int cloud_codec_encode_data(struct cloud_codec_data *output,
 			    struct cloud_data_gnss *gnss_buf,
 			    struct cloud_data_sensors *sensor_buf,
@@ -287,9 +384,45 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 			    struct cloud_data_accelerometer *accel_buf,
 			    struct cloud_data_battery *bat_buf);
 
+/**
+ * @brief Encode UI data.
+ *
+ * @param[out] output string buffer for encoding result
+ * @param[in] ui_buf UI data to encode
+ *
+ * @retval 0 on success
+ * @retval -ENODATA if the data elements is not marked valid
+ * @retval -EINVAL if the data is invalid
+ * @retval -ENOMEM if codec couldn't allocate memory
+ */
 int cloud_codec_encode_ui_data(struct cloud_codec_data *output,
 			       struct cloud_data_ui *ui_buf);
 
+/**
+ * @brief Encode a batch of cloud buffer data.
+ *
+ * @param[out] output string buffer for encoding result
+ * @param[in] gnss_buf GNSS data buffer
+ * @param[in] sensor_buf Sensor data buffer
+ * @param[in] modem_stat_buf static modem data buffer
+ * @param[in] modem_dyn_buf dynamic modem data buffer
+ * @param[in] ui_buf button data buffer
+ * @param[in] accel_buf accelerometer data buffer
+ * @param[in] bat_buf battery data buffer
+ * @param[in] gnss_buf_count length of GNSS data buffer
+ * @param[in] sensor_buf_count length of Sensor data buffer
+ * @param[in] modem_stat_buf_count length of static modem data buffer
+ * @param[in] modem_dyn_buf_count length of dynamic modem data buffer
+ * @param[in] ui_buf_count length of button data buffer
+ * @param[in] accel_buf_count length of accelerometer data buffer
+ * @param[in] bat_buf_count length of battery data buffer
+ *
+ * @retval 0 on success
+ * @retval -ENODATA if none of the data elements are marked valid
+ * @retval -EINVAL if the data is invalid
+ * @retval -ENOMEM if codec couldn't allocate memory
+ * @retval -ENOTSUP if LwM2M cloud codec is used
+ */
 int cloud_codec_encode_batch_data(struct cloud_codec_data *output,
 				  struct cloud_data_gnss *gnss_buf,
 				  struct cloud_data_sensors *sensor_buf,
@@ -338,11 +471,6 @@ void cloud_codec_populate_modem_dynamic_buffer(
 				struct cloud_data_modem_dynamic *new_modem_data,
 				int *head_modem_buf,
 				size_t buffer_count);
-
-static inline void cloud_codec_release_data(struct cloud_codec_data *output)
-{
-	cJSON_FreeString(output->buf);
-}
 
 /**
  * @}
