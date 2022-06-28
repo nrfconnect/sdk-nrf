@@ -56,6 +56,23 @@ User interface
 
 When the connection is established, set switch 2 to **N.C.** to send GNSS data to nRF Cloud, if available.
 
+On the nRF9160 DK, the LEDs display the following information regarding the application state:
+
+LED 3 and LED 4:
+    * LED 3 blinking: The device is connecting to the LTE network.
+    * LED 3 ON: The device is connected to the LTE network.
+    * LED 4 blinking: The device is connecting to nRF Cloud.
+    * LED 3 and LED 4 blinking: The MQTT connection has been established and the user association procedure with nRF Cloud has been initiated.
+    * LED 4 ON: The device is connected and ready for sensor data transfer.
+
+    .. figure:: /images/nrf_cloud_led_states.svg
+       :alt: Application state indicated by LEDs
+
+All LEDs (1-4):
+    * Blinking in groups of two (LED 1 and 3, LED 2 and 4): Modem fault.
+    * Blinking in a cross pattern (LED 1 and 4, LED 2 and 3): Communication error with nRF Cloud.
+    * Blinking in groups of two (LED 1 and 2, LED 3 and 4): Other error.
+
 
 Building and running
 ********************
