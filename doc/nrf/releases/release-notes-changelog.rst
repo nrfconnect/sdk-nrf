@@ -211,6 +211,10 @@ For lists of protocol-specific changes, see `Protocols`_.
 Bluetooth samples
 -----------------
 
+* Added:
+
+  * :ref:`peripheral_mds` sample, that demonstrates how to send Memfault diagnostic data through Bluetooth.
+
 * :ref:`ble_nrf_dm` sample:
 
   * Split the configuration of the :ref:`mod_dm` module from the :ref:`nrf_dm`.
@@ -416,6 +420,10 @@ Binary libraries
 
 Bluetooth libraries and services
 --------------------------------
+
+* Added:
+
+  * :ref:`mds_readme`
 
 * :ref:`bt_fast_pair_readme` service:
 
