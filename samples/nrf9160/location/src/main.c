@@ -104,9 +104,9 @@ static void location_with_fallback_get(void)
 
 	location_config_defaults_set(&config, ARRAY_SIZE(methods), methods);
 	/* GNSS timeout is set to 1 second to force a failure. */
-	config.methods[0].gnss.timeout = 1;
+	config.methods[0].gnss.timeout = 1 * MSEC_PER_SEC;
 	/* Default cellular configuration may be overridden here. */
-	config.methods[1].cellular.timeout = 30;
+	config.methods[1].cellular.timeout = 40 * MSEC_PER_SEC;
 
 	printk("Requesting location with short GNSS timeout to trigger fallback to cellular...\n");
 
