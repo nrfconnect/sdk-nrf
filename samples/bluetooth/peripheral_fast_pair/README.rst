@@ -94,6 +94,7 @@ Button 1:
 
    .. note::
        The advertising is disabled while the Fast Pair Provider is connected to a Bluetooth Central.
+       The discoverable advertising is automatically switched to the not discoverable advertising with the show UI indication mode after a 10-minute timeout.
 
 Button 2:
    Increases audio volume of the connected Bluetooth Central.
