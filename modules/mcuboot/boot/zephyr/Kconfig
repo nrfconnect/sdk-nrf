@@ -110,10 +110,31 @@ config NRF53_MULTI_IMAGE_UPDATE
 	depends on PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	depends on BOOT_UPGRADE_ONLY
 	depends on $(dt_compat_enabled,$(DT_COMPAT_SIM_FLASH))
+	select NRF53_MCUBOOT_PRIMARY_1_RAM_FLASH
+
+config NRF53_RECOVERY_NETWORK_CORE
+	bool "Serial recovery for the NET-core in the one image pair mode"
+	depends on !NRF53_MULTI_IMAGE_UPDATE
+	depends on SOC_NRF5340_CPUAPP
+	depends on BOOT_IMAGE_ACCESS_HOOKS
+	depends on FLASH_SIMULATOR
+	depends on FLASH_SIMULATOR_DOUBLE_WRITES
+	depends on !FLASH_SIMULATOR_STATS
+	depends on MCUBOOT_SERIAL_DIRECT_IMAGE_UPLOAD
+	depends on $(dt_compat_enabled,$(DT_COMPAT_SIM_FLASH))
+	select NRF53_MCUBOOT_PRIMARY_1_RAM_FLASH
+	help
+	  If enabled, allows to upload the firmware to the network core
+	  using serial recovery despite the fact that NRF53_MULTI_IMAGE_UPDATE
+	  is not selected.
+
+# hidden property for enabling the network core ram flash partition in PM
+config NRF53_MCUBOOT_PRIMARY_1_RAM_FLASH
+	bool
 
 config NRF53_RAM_FLASH_SIZE
 	hex
-	depends on NRF53_MULTI_IMAGE_UPDATE
+	depends on NRF53_MCUBOOT_PRIMARY_1_RAM_FLASH
 	default $(dt_node_reg_size_hex,$(DT_SIM_FLASH_PATH))
 	help
 	  When performing a multi image update on the nRF53 the net core data
