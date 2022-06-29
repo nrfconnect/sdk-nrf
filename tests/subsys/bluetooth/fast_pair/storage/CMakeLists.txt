@@ -12,6 +12,7 @@ project("Fast Pair storage unit test")
 # Add test sources
 target_sources(app PRIVATE
 	       src/main.c
+	       src/common_utils.c
 	       src/settings_mock.c
 )
 target_include_directories(app PRIVATE include)
