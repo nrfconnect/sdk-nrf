@@ -12,6 +12,7 @@
 
 #include "storage_mock.h"
 #include "common_utils.h"
+#include "test_corrupted_data.h"
 
 #define ACCOUNT_KEY_MAX_CNT	CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX
 
@@ -250,4 +251,8 @@ void test_main(void)
 			 );
 
 	ztest_run_test_suite(fast_pair_storage_tests);
+	/* Test cases verifying that module properly handles settings data corruption.
+	 * Corrupted data test suite relies on internal data representation.
+	 */
+	test_corrupted_data_run();
 }
