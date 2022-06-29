@@ -192,7 +192,10 @@ Bluetooth samples
 
 * :ref:`peripheral_fast_pair` sample:
 
-  * Added possibility of toggling between show and hide UI indication in the Fast Pair not discoverable advertising.
+  * Added:
+
+    * Possibility of toggling between show and hide UI indication in the Fast Pair not discoverable advertising.
+    * Automatic switching to the not discoverable advertising with the show UI indication mode after 10 minutes of discoverable advertising.
 
 Bluetooth mesh samples
 ----------------------
