@@ -307,6 +307,12 @@ iperf_handle_message_client(struct iperf_test *test)
         case TEST_RUNNING:
             break;
         case EXCHANGE_RESULTS:
+            if (test->debug) {
+                iperf_printf(
+                    test,
+                    "Starting to EXCHANGE_RESULTS, ctrl sckt %d\n",
+                    test->ctrl_sck);
+            }
             if (iperf_exchange_results(test) < 0)
                 return -1;
             break;
