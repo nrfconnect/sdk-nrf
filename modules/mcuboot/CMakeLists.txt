@@ -8,6 +8,11 @@ if (CONFIG_MCUBOOT)
       ${CONFIG_NRF53_MULTI_IMAGE_UPDATE})
   endif()
 
+  if (CONFIG_NRF53_RECOVERY_NETWORK_CORE)
+    set_shared(IMAGE ${IMAGE_NAME} PROPERTY NRF53_RECOVERY_NETWORK_CORE
+      ${CONFIG_NRF53_RECOVERY_NETWORK_CORE})
+  endif()
+
   dt_nodelabel(ram_flash_ctrl_dev NODELABEL nordic_ram_flash_controller)
   if (DEFINED ram_flash_ctrl_dev)
     # Share the information about the ram_flash node with the parent image.
