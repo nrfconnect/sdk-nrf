@@ -18,8 +18,11 @@ LOG_MODULE_REGISTER(watchdog, CONFIG_WATCHDOG_LOG_LEVEL);
 #define WATCHDOG_TIMEOUT_MSEC						\
 	(CONFIG_WATCHDOG_APPLICATION_TIMEOUT_SEC * 1000)
 
+struct wdt_config_storage {
+	const struct device *wdt;
+};
+
 struct wdt_data_storage {
-	const struct device *wdt_drv;
 	int wdt_channel_id;
 	struct k_work_delayable system_workqueue_work;
 };
@@ -38,6 +41,10 @@ static void watchdog_notify_event(const struct watchdog_evt *evt)
 	}
 }
 
+static const struct wdt_config_storage wdt_config = {
+	.wdt = DEVICE_DT_GET(DT_NODELABEL(wdt)),
+};
+
 static struct wdt_data_storage wdt_data;
 
 static void primary_feed_worker(struct k_work *work_desc)
@@ -46,7 +53,7 @@ static void primary_feed_worker(struct k_work *work_desc)
 		.type = WATCHDOG_EVT_FEED,
 	};
 
-	int err = wdt_feed(wdt_data.wdt_drv, wdt_data.wdt_channel_id);
+	int err = wdt_feed(wdt_config.wdt, wdt_data.wdt_channel_id);
 
 	LOG_DBG("Feeding watchdog");
 
@@ -60,7 +67,8 @@ static void primary_feed_worker(struct k_work *work_desc)
 	watchdog_notify_event(&evt);
 }
 
-static int watchdog_timeout_install(struct wdt_data_storage *data)
+static int watchdog_timeout_install(const struct wdt_config_storage *config,
+				    struct wdt_data_storage *data)
 {
 	static const struct wdt_timeout_cfg wdt_settings = {
 		.window = {
@@ -75,10 +83,11 @@ static int watchdog_timeout_install(struct wdt_data_storage *data)
 		.timeout = WATCHDOG_TIMEOUT_MSEC
 	};
 
+	__ASSERT_NO_MSG(config != NULL);
 	__ASSERT_NO_MSG(data != NULL);
 
 	data->wdt_channel_id =
-		wdt_install_timeout(data->wdt_drv, &wdt_settings);
+		wdt_install_timeout(config->wdt, &wdt_settings);
 	if (data->wdt_channel_id < 0) {
 		LOG_ERR("Cannot install watchdog timer! Error code: %d",
 			data->wdt_channel_id);
@@ -92,11 +101,11 @@ static int watchdog_timeout_install(struct wdt_data_storage *data)
 	return 0;
 }
 
-static int watchdog_start(struct wdt_data_storage *data)
+static int watchdog_start(const struct wdt_config_storage *config)
 {
-	__ASSERT_NO_MSG(data != NULL);
+	__ASSERT_NO_MSG(config != NULL);
 
-	int err = wdt_setup(data->wdt_drv, WDT_OPT_PAUSE_HALTED_BY_DBG);
+	int err = wdt_setup(config->wdt, WDT_OPT_PAUSE_HALTED_BY_DBG);
 
 	if (err) {
 		LOG_ERR("Cannot start watchdog! Error code: %d", err);
@@ -106,8 +115,10 @@ static int watchdog_start(struct wdt_data_storage *data)
 	return err;
 }
 
-static int watchdog_feed_enable(struct wdt_data_storage *data)
+static int watchdog_feed_enable(const struct wdt_config_storage *config,
+				struct wdt_data_storage *data)
 {
+	__ASSERT_NO_MSG(config != NULL);
 	__ASSERT_NO_MSG(data != NULL);
 
 	struct watchdog_evt evt = {
@@ -116,7 +127,7 @@ static int watchdog_feed_enable(struct wdt_data_storage *data)
 
 	k_work_init_delayable(&data->system_workqueue_work, primary_feed_worker);
 
-	int err = wdt_feed(data->wdt_drv, data->wdt_channel_id);
+	int err = wdt_feed(config->wdt, data->wdt_channel_id);
 
 	if (err) {
 		LOG_ERR("Cannot feed watchdog. Error code: %d", err);
@@ -132,29 +143,29 @@ static int watchdog_feed_enable(struct wdt_data_storage *data)
 	return err;
 }
 
-static int watchdog_enable(struct wdt_data_storage *data)
+static int watchdog_enable(const struct wdt_config_storage *config,
+			   struct wdt_data_storage *data)
 {
+	int err;
+
 	__ASSERT_NO_MSG(data != NULL);
 
-	int err = -ENXIO;
-
-	data->wdt_drv = device_get_binding(DT_LABEL(DT_NODELABEL(wdt)));
-	if (data->wdt_drv == NULL) {
-		LOG_ERR("Cannot bind watchdog driver");
-		return err;
+	if (!device_is_ready(config->wdt)) {
+		LOG_ERR("Watchdog device not ready");
+		return -ENODEV;
 	}
 
-	err = watchdog_timeout_install(data);
+	err = watchdog_timeout_install(config, data);
 	if (err) {
 		return err;
 	}
 
-	err = watchdog_start(data);
+	err = watchdog_start(config);
 	if (err) {
 		return err;
 	}
 
-	err = watchdog_feed_enable(data);
+	err = watchdog_feed_enable(config, data);
 	if (err) {
 		return err;
 	}
@@ -169,7 +180,7 @@ int watchdog_init_and_start(void)
 		.type = WATCHDOG_EVT_START
 	};
 
-	err = watchdog_enable(&wdt_data);
+	err = watchdog_enable(&wdt_config, &wdt_data);
 	if (err) {
 		LOG_ERR("Failed to enable watchdog, error: %d", err);
 		return err;
