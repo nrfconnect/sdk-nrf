@@ -236,6 +236,8 @@ nRF9160 samples
   * Changed:
 
     * This sample now uses the :ref:`lib_modem_antenna` library to configure the GNSS antenna instead of configuring it directly.
+    * Minor logging and function structure improvements
+    * :ref:`lib_nrf_cloud` library is no longer de-initialized and re-initialized on disconnect and reconnect.
 
 * :ref:`nrf_cloud_rest_fota` sample:
 
