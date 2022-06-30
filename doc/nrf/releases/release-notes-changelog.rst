@@ -224,6 +224,8 @@ nRF9160 samples
       When running this configuration, you can perform BT scanning and advertising using the ``bt`` command.
     * Support for injecting GNSS reference altitude for low accuracy mode.
       For a position fix using only three satellites, GNSS module must have a reference altitude that can now be injected using the ``gnss agps ref_altitude`` command.
+    * New command ``startup_cmd``, which can be used to store up to three MoSh commands to be run on start/bootup.
+      By default, commands are run after the default PDN context is activated, but can be set to run N seconds after bootup.
 
   * Updated:
 

@@ -109,6 +109,7 @@ config MOSH_PRINT_BUFFER_SIZE
 
 config MOSH_COMMON_WORKQUEUE_STACK_SIZE
 	int "Common workqueue stack size"
+	default 6144 if MOSH_STARTUP_CMDS && MOSH_CURL#
 	default 4096
 
 config MOSH_COMMON_WORKQUEUE_PRIORITY
@@ -120,6 +121,10 @@ menu "MoSH iperf3 and ping command selections"
 
 config MOSH_WORKER_THREADS
 	bool "Possibility to run iperf3 or ping instances in separate threads"
+	default y
+
+config MOSH_STARTUP_CMDS
+	bool "Possibility to run stored MoSh commands from settings after bootup"
 	default y
 
 config MOSH_NRF91_NON_OFFLOADING_DEV

@@ -538,6 +538,26 @@ Examples
 
 ----
 
+Running stored commands after startup
+=====================================
+
+MoSh command: ``startup_cmd``
+
+You can store up to three MoSh commands to run on start/bootup.
+By default, commands are run after the default PDN context is activated,
+but can be set to run N seconds after bootup.
+
+Examples
+--------
+
+* Starting periodic location acquiring after LTE has been connected with both cellular and GNSS, including sending the location to nRF Cloud:
+
+  .. code-block:: console
+
+     startup_cmd --mem1 "location get --mode all --method cellular --method gnss --gnss_cloud_pvt --interval 15"
+
+----
+
 Cloud
 =====
 
