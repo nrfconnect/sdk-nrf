@@ -428,6 +428,11 @@ Other libraries
   * This library can use different transport implementation for each nRF RPC group.
   * Memory for remote procedure calls is now allocated on a heap instead of the calling thread stack.
 
+* :ref:`emds_readme`
+
+  * Updated :c:func:`emds_entry_add` to no longer use heap, but instead require a pointer to the dynamic entry structure :c:struct `emds_dynamic_entry`.
+    The dynamic entry structure should be allocated in advance.
+
 Common Application Framework (CAF)
 ----------------------------------
 

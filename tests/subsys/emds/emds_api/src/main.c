@@ -46,10 +46,10 @@ static const uint8_t expect_d_data[3][10] = {
 };
 
 static uint8_t d_data[3][10];
-static const struct emds_entry d_entries[3] = {
-	{0x1001, &d_data[0][0], 10},
-	{0x1002, &d_data[1][0], 10},
-	{0x1003, &d_data[2][0], 10},
+static struct emds_dynamic_entry d_entries[3] = {
+	{{0x1001, &d_data[0][0], 10}},
+	{{0x1002, &d_data[1][0], 10}},
+	{{0x1003, &d_data[2][0], 10}},
 };
 
 static const uint8_t expect_s_data[1024] = { 0xCC };
@@ -111,7 +111,7 @@ static void test_add_d_entries(void)
 
 	for (int i = 0; i < ARRAY_SIZE(d_entries); i++) {
 		err = emds_entry_add(&d_entries[i]);
-		store_expected += NRFX_CEIL_DIV(d_entries[i].len, 4) * 4;
+		store_expected += NRFX_CEIL_DIV(d_entries[i].entry.len, 4) * 4;
 		store_expected += 8;
 		zassert_equal(err, 0, "Add entry failed");
 
