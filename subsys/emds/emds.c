@@ -170,28 +170,21 @@ int emds_init(emds_store_cb_t cb)
 	return 0;
 }
 
-int emds_entry_add(const struct emds_entry *entry)
+int emds_entry_add(struct emds_dynamic_entry *entry)
 {
 	struct emds_dynamic_entry *ch;
-	struct emds_dynamic_entry *item;
 
 	if (!emds_initialized) {
 		return -ECANCELED;
 	}
 
 	SYS_SLIST_FOR_EACH_CONTAINER(&emds_dynamic_entries, ch, node) {
-		if (ch->entry.id == entry->id) {
+		if (ch->entry.id == entry->entry.id) {
 			return -EINVAL;
 		}
 	}
 
-	item = k_malloc(sizeof(struct emds_dynamic_entry));
-	if (!item) {
-		return -ENOSPC;
-	}
-
-	item->entry = *entry;
-	sys_slist_append(&emds_dynamic_entries, &item->node);
+	sys_slist_append(&emds_dynamic_entries, &entry->node);
 
 	emds_ready = false;
 

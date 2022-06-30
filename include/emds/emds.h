@@ -98,12 +98,14 @@ int emds_init(emds_store_cb_t cb);
  * is called, takes the given data pointer and stores the data to the emergency
  * data storage.
  *
+ * @note EMDS does not make a local copy of the dynamic entry structure.
+ *
  * @param entry Entry to add to list and load data into.
  *
  * @retval 0 Success
  * @retval -ERRNO errno code if error
  */
-int emds_entry_add(const struct emds_entry *entry);
+int emds_entry_add(struct emds_dynamic_entry *entry);
 
 /**
  * @brief Start the emergency data storage process.
