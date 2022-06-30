@@ -24,8 +24,7 @@ LOG_MODULE_REGISTER(connection, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
 /* LTE either is connected or isn't */
 #define LTE_CONNECTED			(1 << 1)
 
-/* Do not confuse these with the similarly-named features of the generic cloud API.
- * CLOUD_CONNECTED is fired when we first connect to the nRF Cloud.
+/* CLOUD_CONNECTED is fired when we first connect to the nRF Cloud.
  * CLOUD_READY is fired when the connection is fully associated and ready to send device messages.
  * CLOUD_ASSOCIATION_REQUEST is a special state only used when first associating a device with
  *				an nRF Cloud user account.
