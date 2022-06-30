@@ -39,9 +39,15 @@ static int cmd_lvl_get(const struct shell *shell, size_t argc, char *argv[])
 
 static int lvl_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	int16_t lvl = (int16_t)strtol(argv[1], NULL, 0);
-	uint32_t time = (argc >= 3) ? (uint32_t)strtol(argv[2], NULL, 0) : 0;
-	uint32_t delay = (argc == 4) ? (uint32_t)strtol(argv[3], NULL, 0) : 0;
+	int err = 0;
+	int16_t lvl = shell_strtol(argv[1], 0, &err);
+	uint32_t time = (argc >= 3) ? shell_strtoul(argv[2], 0, &err) : 0;
+	uint32_t delay = (argc == 4) ? shell_strtoul(argv[3], 0, &err) : 0;
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_GEN_LEVEL_CLI, &mod)) {
 		return -ENODEV;
@@ -56,8 +62,8 @@ static int lvl_set(const struct shell *shell, size_t argc, char *argv[], bool ac
 
 	if (acked) {
 		struct bt_mesh_lvl_status rsp;
-		int err = bt_mesh_lvl_cli_set(cli, NULL, &set, &rsp);
 
+		err = bt_mesh_lvl_cli_set(cli, NULL, &set, &rsp);
 		status_print(shell, err, &rsp);
 		return err;
 	} else {
@@ -77,9 +83,15 @@ static int cmd_lvl_set_unack(const struct shell *shell, size_t argc, char *argv[
 
 static int delta_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	int32_t delta = (int32_t)strtol(argv[1], NULL, 0);
-	uint32_t time = (argc >= 3) ? (uint32_t)strtol(argv[2], NULL, 0) : 0;
-	uint32_t delay = (argc == 4) ? (uint32_t)strtol(argv[3], NULL, 0) : 0;
+	int err = 0;
+	int32_t delta = shell_strtol(argv[1], 0, &err);
+	uint32_t time = (argc >= 3) ? shell_strtoul(argv[2], 0, &err) : 0;
+	uint32_t delay = (argc == 4) ? shell_strtoul(argv[3], 0, &err) : 0;
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_GEN_LEVEL_CLI, &mod)) {
 		return -ENODEV;
@@ -94,8 +106,8 @@ static int delta_set(const struct shell *shell, size_t argc, char *argv[], bool 
 
 	if (acked) {
 		struct bt_mesh_lvl_status rsp;
-		int err = bt_mesh_lvl_cli_delta_set(cli, NULL, &set, &rsp);
 
+		err = bt_mesh_lvl_cli_delta_set(cli, NULL, &set, &rsp);
 		status_print(shell, err, &rsp);
 		return err;
 	} else {
@@ -115,9 +127,15 @@ static int cmd_delta_set_unack(const struct shell *shell, size_t argc, char *arg
 
 static int move_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	int16_t delta = (int16_t)strtol(argv[1], NULL, 0);
-	uint32_t time = (argc >= 3) ? (uint32_t)strtol(argv[2], NULL, 0) : 0;
-	uint32_t delay = (argc == 4) ? (uint32_t)strtol(argv[3], NULL, 0) : 0;
+	int err = 0;
+	int16_t delta = shell_strtol(argv[1], 0, &err);
+	uint32_t time = (argc >= 3) ? shell_strtoul(argv[2], 0, &err) : 0;
+	uint32_t delay = (argc == 4) ? shell_strtoul(argv[3], 0, &err) : 0;
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_GEN_LEVEL_CLI, &mod)) {
 		return -ENODEV;
@@ -132,8 +150,8 @@ static int move_set(const struct shell *shell, size_t argc, char *argv[], bool a
 
 	if (acked) {
 		struct bt_mesh_lvl_status rsp;
-		int err = bt_mesh_lvl_cli_move_set(cli, NULL, &set, &rsp);
 
+		err = bt_mesh_lvl_cli_move_set(cli, NULL, &set, &rsp);
 		status_print(shell, err, &rsp);
 		return err;
 	} else {
@@ -158,7 +176,13 @@ static int cmd_instance_get_all(const struct shell *shell, size_t argc, char *ar
 
 static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[])
 {
-	uint8_t elem_idx = (uint8_t)strtol(argv[1], NULL, 0);
+	int err = 0;
+	uint8_t elem_idx = shell_strtoul(argv[1], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	return shell_model_instance_set(shell, &mod, BT_MESH_MODEL_ID_GEN_LEVEL_CLI, elem_idx);
 }

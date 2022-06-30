@@ -37,70 +37,22 @@ static void model_instances_get(uint16_t id, struct shell_model_instance *arr, u
 	}
 }
 
-static uint8_t str2u8(const char *str)
+struct sensor_value shell_model_strtosensorval(const char *str, int *err)
 {
-	if (isdigit((unsigned char)str[0])) {
-		return strtoul(str, NULL, 0);
+	int temp_err = 0;
+	struct sensor_value out;
+
+	double val = shell_model_strtodbl(str, &temp_err);
+
+	if (temp_err) {
+		*err = temp_err;
+		return out;
 	}
 
-	return (!strcmp(str, "on") || !strcmp(str, "enable"));
-}
+	out.val1 = (int)val;
+	out.val2 = (val - out.val1) * 1000000;
 
-bool shell_model_str2bool(const char *str)
-{
-	return str2u8(str);
-}
-
-
-int shell_model_str2sensorval(const char *str, struct sensor_value *out)
-{
-	int32_t sign = 1;
-	char buf[18]; /* 10 digits + decimal point + 6 digits + terminator */
-
-	if (*str == '-') {
-		sign = -1;
-		str++;
-	}
-
-	if (strlen(str) > 17 || strlen(str) == 0) {
-		return -EINVAL;
-	}
-
-	strcpy(buf, str);
-
-	char *dp = strchr(buf, '.');
-
-	if (dp != NULL) {
-		*dp = 0;
-		dp++;
-	}
-
-	errno = 0;
-	uint32_t val = strtoul(buf, NULL, 10);
-
-	if (errno || (sign == 1 && val > INT32_MAX) || (sign == -1 && val > INT32_MAX + 1ul)) {
-		return -EINVAL;
-	}
-	out->val1 = sign * val;
-	if (dp == NULL || *dp == 0) {
-		out->val2 = 0;
-		return 0;
-	}
-
-	int32_t factor = 100000;
-
-	val = 0;
-
-	do {
-		if (isdigit(*dp) && factor > 0) {
-			val += (*dp - '0') * factor;
-			factor /= 10;
-		} else {
-			return -EINVAL;
-		}
-	} while (*(++dp));
-	out->val2 = val * sign;
-	return 0;
+	return out;
 }
 
 void shell_model_print_sensorval(const struct shell *shell, struct sensor_value *value)
@@ -119,70 +71,91 @@ void shell_model_print_sensorval(const struct shell *shell, struct sensor_value 
 	}
 }
 
-static bool hex_str_check(char *str, uint8_t str_len)
+static size_t whitespace_trim(char *out, size_t len, const char *str)
 {
-	if (str_len % 2) {
-		return false;
+	if (len == 0) {
+		return 0;
+	}
+	const char *end;
+	size_t out_size;
+
+	while (str[0] == ' ') {
+		str++;
+	}
+	if (*str == 0) {
+		*out = 0;
+		return 1;
+	}
+	end = str + strlen(str) - 1;
+	while (end > str && (end[0] == ' ')) {
+		end--;
+	}
+	end++;
+	out_size = (end - str) + 1;
+	if (out_size > len) {
+		return 0;
+	}
+	memcpy(out, str, out_size - 1);
+	out[out_size - 1] = 0;
+	return out_size;
+}
+
+double shell_model_strtodbl(const char *str, int *err)
+{
+	char trimmed_buf[22] = { 0 };
+	long intgr;
+	unsigned long frac;
+	double frac_dbl;
+	int temp_err = 0;
+	size_t len = whitespace_trim(trimmed_buf, sizeof(trimmed_buf), str);
+
+	if (len < 2) {
+		*err = -EINVAL;
+		return 0;
 	}
 
-	for (int i = 0; i < str_len; i++) {
-		if (!isxdigit((int)str[i])) {
-			return false;
+	int comma_idx = strcspn(trimmed_buf, ".");
+	int frac_len = strlen(trimmed_buf + comma_idx + 1);
+	/* Covers corner case "." input */
+	if (strlen(trimmed_buf) < 2 && trimmed_buf[comma_idx] != 0) {
+		*err = -EINVAL;
+		return 0;
+	}
+	trimmed_buf[comma_idx] = 0;
+	/* Avoid fractional overflow by losing one precision point */
+	if (frac_len > 9) {
+		trimmed_buf[comma_idx + 10] = 0;
+		frac_len = 9;
+	}
+
+	/* Avoid doing str2long if intgr part is empty or only single sign char*/
+	if (trimmed_buf[0] == '\0' ||
+	    (trimmed_buf[1] == '\0' && (trimmed_buf[0] == '+' || trimmed_buf[0] == '-'))) {
+		intgr = 0;
+	} else {
+		intgr = shell_strtol(trimmed_buf, 10, &temp_err);
+		if (temp_err) {
+			*err = temp_err;
+			return 0;
 		}
 	}
-	return true;
-}
+	/* Avoid doing str2ulong if fractional part is empty */
+	if ((trimmed_buf + comma_idx + 1)[0] == '\0') {
+		frac = 0;
+	} else {
+		frac = shell_strtoul(trimmed_buf + comma_idx + 1, 10, &temp_err);
 
-uint8_t shell_model_hexstr2num(const struct shell *shell, char *str, uint8_t *buf, uint8_t buf_len)
-{
-	char str_num[3] = { 0 };
-	int str_len = strlen(str);
-
-	if (!hex_str_check(str, str_len)) {
-		shell_error(shell, "Invalid hex string format");
-		return 0;
+		if (temp_err) {
+			*err = temp_err;
+			return 0;
+		}
+	}
+	frac_dbl = (double)frac;
+	for (int i = 0; i < frac_len; i++) {
+		frac_dbl /= 10;
 	}
 
-	if ((str_len / 2) > buf_len) {
-		shell_error(shell, "Hex value is too large");
-		return 0;
-	}
-
-	for (int i = 0; i < str_len / 2; i++) {
-		strncpy(str_num, str + (i * 2), 2);
-		buf[i] = strtol(str_num, NULL, 16);
-	}
-
-	return str_len / 2;
-}
-
-double shell_model_str2dbl(const struct shell *shell, const char *str)
-{
-	char *point;
-	char frac_buf[10] = {0};
-	double decimal, frac;
-	int len;
-
-	decimal = (double)strtol(str, &point, 0);
-
-	if ((decimal <= LONG_MIN) || (decimal >= LONG_MAX)) {
-		shell_warn(shell, "Passed input value is too small/large. Returning zero");
-		return 0;
-	}
-
-	if (!strlen(point)) {
-		return decimal;
-	}
-
-	len = MIN((strlen(point) - 1), sizeof(frac_buf) - 1);
-	strncpy(frac_buf, point + 1, len);
-	frac = (double)strtol(frac_buf, NULL, 0);
-
-	for (int i = 0; i < len; i++) {
-		frac /= 10;
-	}
-
-	return (decimal < 0) ? (decimal - frac) : (decimal + frac);
+	return (trimmed_buf[0] == '-') ? ((double)intgr - frac_dbl) : ((double)intgr + frac_dbl);
 }
 
 bool shell_model_first_get(uint16_t id, struct bt_mesh_model **mod)
@@ -199,8 +172,8 @@ bool shell_model_first_get(uint16_t id, struct bt_mesh_model **mod)
 	return false;
 }
 
-int shell_model_instance_set(const struct shell *shell, struct bt_mesh_model **mod,
-			      uint16_t mod_id, uint8_t elem_idx)
+int shell_model_instance_set(const struct shell *shell, struct bt_mesh_model **mod, uint16_t mod_id,
+			     uint8_t elem_idx)
 {
 	struct bt_mesh_model *mod_temp;
 	const struct bt_mesh_comp *comp = bt_mesh_comp_get();

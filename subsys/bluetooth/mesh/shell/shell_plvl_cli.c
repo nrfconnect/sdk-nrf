@@ -39,9 +39,15 @@ static int cmd_power_get(const struct shell *shell, size_t argc, char *argv[])
 
 static int power_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	uint16_t lvl = (uint16_t)strtol(argv[1], NULL, 0);
-	uint32_t time = (argc >= 3) ? (uint32_t)strtol(argv[2], NULL, 0) : 0;
-	uint32_t delay = (argc == 4) ? (uint32_t)strtol(argv[3], NULL, 0) : 0;
+	int err = 0;
+	uint16_t lvl = shell_strtoul(argv[1], 0, &err);
+	uint32_t time = (argc >= 3) ? shell_strtoul(argv[2], 0, &err) : 0;
+	uint32_t delay = (argc == 4) ? shell_strtoul(argv[3], 0, &err) : 0;
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_GEN_POWER_LEVEL_CLI, &mod)) {
 		return -ENODEV;
@@ -54,8 +60,8 @@ static int power_set(const struct shell *shell, size_t argc, char *argv[], bool 
 
 	if (acked) {
 		struct bt_mesh_plvl_status rsp;
-		int err = bt_mesh_plvl_cli_power_set(cli, NULL, &set, &rsp);
 
+		err = bt_mesh_plvl_cli_power_set(cli, NULL, &set, &rsp);
 		status_print(shell, err, &rsp);
 		return err;
 	} else {
@@ -98,8 +104,14 @@ static int cmd_range_get(const struct shell *shell, size_t argc, char *argv[])
 
 static int range_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	uint16_t min = (uint16_t)strtol(argv[1], NULL, 0);
-	uint16_t max = (uint16_t)strtol(argv[2], NULL, 0);
+	int err = 0;
+	uint16_t min = shell_strtoul(argv[1], 0, &err);
+	uint16_t max = shell_strtoul(argv[2], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_GEN_POWER_LEVEL_CLI, &mod)) {
 		return -ENODEV;
@@ -110,8 +122,8 @@ static int range_set(const struct shell *shell, size_t argc, char *argv[], bool 
 
 	if (acked) {
 		struct bt_mesh_plvl_range_status rsp;
-		int err = bt_mesh_plvl_cli_range_set(cli, NULL, &set, &rsp);
 
+		err = bt_mesh_plvl_cli_range_set(cli, NULL, &set, &rsp);
 		range_print(shell, err, &rsp);
 		return err;
 	} else {
@@ -153,7 +165,13 @@ static int cmd_default_get(const struct shell *shell, size_t argc, char *argv[])
 
 static int default_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	uint16_t lvl = (uint16_t)strtol(argv[1], NULL, 0);
+	int err = 0;
+	uint16_t lvl = shell_strtoul(argv[1], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_GEN_POWER_LEVEL_CLI, &mod)) {
 		return -ENODEV;
@@ -163,8 +181,8 @@ static int default_set(const struct shell *shell, size_t argc, char *argv[], boo
 
 	if (acked) {
 		uint16_t rsp;
-		int err = bt_mesh_plvl_cli_default_set(cli, NULL, lvl, &rsp);
 
+		err = bt_mesh_plvl_cli_default_set(cli, NULL, lvl, &rsp);
 		default_print(shell, err, rsp);
 		return err;
 	} else {
@@ -207,7 +225,13 @@ static int cmd_instance_get_all(const struct shell *shell, size_t argc, char *ar
 
 static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[])
 {
-	uint8_t elem_idx = (uint8_t)strtol(argv[1], NULL, 0);
+	int err = 0;
+	uint8_t elem_idx = shell_strtoul(argv[1], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	return shell_model_instance_set(shell, &mod, BT_MESH_MODEL_ID_GEN_POWER_LEVEL_CLI,
 					elem_idx);

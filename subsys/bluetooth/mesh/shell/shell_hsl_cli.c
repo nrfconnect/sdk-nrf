@@ -42,11 +42,17 @@ static int cmd_hsl_get(const struct shell *shell, size_t argc, char *argv[])
 
 static int hsl_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	uint16_t light = (uint16_t)strtol(argv[1], NULL, 0);
-	uint16_t hue = (uint16_t)strtol(argv[2], NULL, 0);
-	uint16_t saturation = (uint16_t)strtol(argv[3], NULL, 0);
-	uint32_t time = (argc >= 5) ? (uint32_t)strtol(argv[4], NULL, 0) : 0;
-	uint32_t delay = (argc == 6) ? (uint32_t)strtol(argv[5], NULL, 0) : 0;
+	int err = 0;
+	uint16_t light = shell_strtoul(argv[1], 0, &err);
+	uint16_t hue = shell_strtoul(argv[2], 0, &err);
+	uint16_t saturation = shell_strtoul(argv[3], 0, &err);
+	uint32_t time = (argc >= 5) ? shell_strtoul(argv[4], 0, &err) : 0;
+	uint32_t delay = (argc == 6) ? shell_strtoul(argv[5], 0, &err) : 0;
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_LIGHT_HSL_CLI, &mod)) {
 		return -ENODEV;
@@ -65,8 +71,8 @@ static int hsl_set(const struct shell *shell, size_t argc, char *argv[], bool ac
 
 	if (acked) {
 		struct bt_mesh_light_hsl_status rsp;
-		int err = bt_mesh_light_hsl_set(cli, NULL, &set, &rsp);
 
+		err = bt_mesh_light_hsl_set(cli, NULL, &set, &rsp);
 		hsl_print(shell, err, &rsp);
 		return err;
 	} else {
@@ -133,9 +139,15 @@ static int cmd_hsl_default_get(const struct shell *shell, size_t argc, char *arg
 
 static int hsl_default_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	uint16_t light = (uint16_t)strtol(argv[1], NULL, 0);
-	uint16_t hue = (uint16_t)strtol(argv[2], NULL, 0);
-	uint16_t saturation = (uint16_t)strtol(argv[3], NULL, 0);
+	int err = 0;
+	uint16_t light = shell_strtoul(argv[1], 0, &err);
+	uint16_t hue = shell_strtoul(argv[2], 0, &err);
+	uint16_t saturation = shell_strtoul(argv[3], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_LIGHT_HSL_CLI, &mod)) {
 		return -ENODEV;
@@ -150,8 +162,8 @@ static int hsl_default_set(const struct shell *shell, size_t argc, char *argv[],
 
 	if (acked) {
 		struct bt_mesh_light_hsl rsp;
-		int err = bt_mesh_light_hsl_default_set(cli, NULL, &set, &rsp);
 
+		err = bt_mesh_light_hsl_default_set(cli, NULL, &set, &rsp);
 		default_print(shell, err, &rsp);
 		return err;
 	} else {
@@ -198,10 +210,16 @@ static int cmd_hsl_range_get(const struct shell *shell, size_t argc, char *argv[
 
 static int hsl_range_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	uint16_t hue_min = (uint16_t)strtol(argv[1], NULL, 0);
-	uint16_t hue_max = (uint16_t)strtol(argv[2], NULL, 0);
-	uint16_t sat_min = (uint16_t)strtol(argv[3], NULL, 0);
-	uint16_t sat_max = (uint16_t)strtol(argv[4], NULL, 0);
+	int err = 0;
+	uint16_t hue_min = shell_strtoul(argv[1], 0, &err);
+	uint16_t hue_max = shell_strtoul(argv[2], 0, &err);
+	uint16_t sat_min = shell_strtoul(argv[3], 0, &err);
+	uint16_t sat_max = shell_strtoul(argv[4], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_LIGHT_HSL_CLI, &mod)) {
 		return -ENODEV;
@@ -217,8 +235,8 @@ static int hsl_range_set(const struct shell *shell, size_t argc, char *argv[], b
 
 	if (acked) {
 		struct bt_mesh_light_hsl_range_status rsp;
-		int err = bt_mesh_light_hsl_range_set(cli, NULL, &set, &rsp);
 
+		err = bt_mesh_light_hsl_range_set(cli, NULL, &set, &rsp);
 		range_print(shell, err, &rsp);
 		return err;
 	} else {
@@ -261,9 +279,15 @@ static int cmd_hue_get(const struct shell *shell, size_t argc, char *argv[])
 
 static int hue_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	uint16_t lvl = (uint16_t)strtol(argv[1], NULL, 0);
-	uint32_t time = (argc >= 3) ? (uint32_t)strtol(argv[2], NULL, 0) : 0;
-	uint32_t delay = (argc == 4) ? (uint32_t)strtol(argv[3], NULL, 0) : 0;
+	int err = 0;
+	uint16_t lvl = shell_strtoul(argv[1], 0, &err);
+	uint32_t time = (argc >= 3) ? shell_strtoul(argv[2], 0, &err) : 0;
+	uint32_t delay = (argc == 4) ? shell_strtoul(argv[3], 0, &err) : 0;
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_LIGHT_HSL_CLI, &mod)) {
 		return -ENODEV;
@@ -275,8 +299,8 @@ static int hue_set(const struct shell *shell, size_t argc, char *argv[], bool ac
 
 	if (acked) {
 		struct bt_mesh_light_hue_status rsp;
-		int err = bt_mesh_light_hue_set(cli, NULL, &set, &rsp);
 
+		err = bt_mesh_light_hue_set(cli, NULL, &set, &rsp);
 		hue_print(shell, err, &rsp);
 		return err;
 	} else {
@@ -320,9 +344,15 @@ static int cmd_saturation_get(const struct shell *shell, size_t argc, char *argv
 
 static int saturation_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	uint16_t lvl = (uint16_t)strtol(argv[1], NULL, 0);
-	uint32_t time = (argc >= 3) ? (uint32_t)strtol(argv[2], NULL, 0) : 0;
-	uint32_t delay = (argc == 4) ? (uint32_t)strtol(argv[3], NULL, 0) : 0;
+	int err = 0;
+	uint16_t lvl = shell_strtoul(argv[1], 0, &err);
+	uint32_t time = (argc >= 3) ? shell_strtoul(argv[2], 0, &err) : 0;
+	uint32_t delay = (argc == 4) ? shell_strtoul(argv[3], 0, &err) : 0;
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_LIGHT_HSL_CLI, &mod)) {
 		return -ENODEV;
@@ -334,8 +364,8 @@ static int saturation_set(const struct shell *shell, size_t argc, char *argv[], 
 
 	if (acked) {
 		struct bt_mesh_light_sat_status rsp;
-		int err = bt_mesh_light_saturation_set(cli, NULL, &set, &rsp);
 
+		err = bt_mesh_light_saturation_set(cli, NULL, &set, &rsp);
 		saturation_print(shell, err, &rsp);
 		return err;
 	} else {
@@ -360,7 +390,13 @@ static int cmd_instance_get_all(const struct shell *shell, size_t argc, char *ar
 
 static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[])
 {
-	uint8_t elem_idx = (uint8_t)strtol(argv[1], NULL, 0);
+	int err = 0;
+	uint8_t elem_idx = shell_strtoul(argv[1], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	return shell_model_instance_set(shell, &mod, BT_MESH_MODEL_ID_LIGHT_HSL_CLI, elem_idx);
 }
