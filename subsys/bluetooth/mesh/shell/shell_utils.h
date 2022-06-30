@@ -7,15 +7,11 @@
 #include <stdint.h>
 #include <zephyr/shell/shell.h>
 
-bool shell_model_str2bool(const char *str);
-
-int shell_model_str2sensorval(const char *str, struct sensor_value *out);
+struct sensor_value shell_model_strtosensorval(const char *str, int *err);
 
 void shell_model_print_sensorval(const struct shell *shell, struct sensor_value *value);
 
-uint8_t shell_model_hexstr2num(const struct shell *shell, char *str, uint8_t *buf, uint8_t buf_len);
-
-double shell_model_str2dbl(const struct shell *shell, const char *str);
+double shell_model_strtodbl(const char *str, int *err);
 
 bool shell_model_first_get(uint16_t id, struct bt_mesh_model **mod);
 

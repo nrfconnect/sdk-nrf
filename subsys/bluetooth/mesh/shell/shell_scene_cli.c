@@ -74,7 +74,13 @@ static int cmd_register_get(const struct shell *shell, size_t argc, char *argv[]
 
 static int store(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	uint16_t scene = (uint16_t)strtol(argv[1], NULL, 0);
+	int err = 0;
+	uint16_t scene = shell_strtoul(argv[1], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_SCENE_CLI, &mod)) {
 		return -ENODEV;
@@ -88,8 +94,8 @@ static int store(const struct shell *shell, size_t argc, char *argv[], bool acke
 			.count = CONFIG_BT_MESH_SCENES_MAX,
 			.scenes = &scenes[0],
 		};
-		int err = bt_mesh_scene_cli_store(cli, NULL, scene, &rsp);
 
+		err = bt_mesh_scene_cli_store(cli, NULL, scene, &rsp);
 		scene_print(shell, err, &rsp);
 		return err;
 	} else {
@@ -109,7 +115,13 @@ static int cmd_store_unack(const struct shell *shell, size_t argc, char *argv[])
 
 static int scene_del(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	uint16_t scene = (uint16_t)strtol(argv[1], NULL, 0);
+	int err = 0;
+	uint16_t scene = shell_strtoul(argv[1], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_SCENE_CLI, &mod)) {
 		return -ENODEV;
@@ -123,8 +135,8 @@ static int scene_del(const struct shell *shell, size_t argc, char *argv[], bool 
 			.count = CONFIG_BT_MESH_SCENES_MAX,
 			.scenes = &scenes[0],
 		};
-		int err = bt_mesh_scene_cli_delete(cli, NULL, scene, &rsp);
 
+		err = bt_mesh_scene_cli_delete(cli, NULL, scene, &rsp);
 		scene_print(shell, err, &rsp);
 		return err;
 	} else {
@@ -144,9 +156,15 @@ static int cmd_delete_unack(const struct shell *shell, size_t argc, char *argv[]
 
 static int recall(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	uint16_t scene = (uint16_t)strtol(argv[1], NULL, 0);
-	uint32_t time = (argc >= 3) ? (uint32_t)strtol(argv[2], NULL, 0) : 0;
-	uint32_t delay = (argc == 4) ? (uint32_t)strtol(argv[3], NULL, 0) : 0;
+	int err = 0;
+	uint16_t scene = shell_strtoul(argv[1], 0, &err);
+	uint32_t time = (argc >= 3) ? shell_strtoul(argv[2], 0, &err) : 0;
+	uint32_t delay = (argc == 4) ? shell_strtoul(argv[3], 0, &err) : 0;
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_SCENE_CLI, &mod)) {
 		return -ENODEV;
@@ -157,9 +175,8 @@ static int recall(const struct shell *shell, size_t argc, char *argv[], bool ack
 
 	if (acked) {
 		struct bt_mesh_scene_state rsp;
-		int err = bt_mesh_scene_cli_recall(cli, NULL, scene, (argc > 2) ? &trans : NULL,
-						   &rsp);
 
+		err = bt_mesh_scene_cli_recall(cli, NULL, scene, (argc > 2) ? &trans : NULL, &rsp);
 		scene_get_print(shell, err, &rsp);
 		return err;
 	} else {
@@ -184,7 +201,13 @@ static int cmd_instance_get_all(const struct shell *shell, size_t argc, char *ar
 
 static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[])
 {
-	uint8_t elem_idx = (uint8_t)strtol(argv[1], NULL, 0);
+	int err = 0;
+	uint8_t elem_idx = shell_strtoul(argv[1], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	return shell_model_instance_set(shell, &mod, BT_MESH_MODEL_ID_SCENE_CLI, elem_idx);
 }

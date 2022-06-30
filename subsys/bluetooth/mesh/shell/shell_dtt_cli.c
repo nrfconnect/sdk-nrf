@@ -38,7 +38,13 @@ static int cmd_dtt_get(const struct shell *shell, size_t argc, char *argv[])
 
 static int dtt_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	int32_t trans_time = (int32_t)strtol(argv[1], NULL, 0);
+	int err = 0;
+	int32_t trans_time = shell_strtol(argv[1], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_GEN_DEF_TRANS_TIME_CLI, &mod)) {
 		return -ENODEV;
@@ -48,8 +54,8 @@ static int dtt_set(const struct shell *shell, size_t argc, char *argv[], bool ac
 
 	if (acked) {
 		int32_t rsp;
-		int err = bt_mesh_dtt_set(cli, NULL, trans_time, &rsp);
 
+		err = bt_mesh_dtt_set(cli, NULL, trans_time, &rsp);
 		dtt_print(shell, err, rsp);
 		return err;
 	} else {
@@ -74,7 +80,13 @@ static int cmd_instance_get_all(const struct shell *shell, size_t argc, char *ar
 
 static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[])
 {
-	uint8_t elem_idx = (uint8_t)strtol(argv[1], NULL, 0);
+	int err = 0;
+	uint8_t elem_idx = shell_strtoul(argv[1], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	return shell_model_instance_set(shell, &mod, BT_MESH_MODEL_ID_GEN_DEF_TRANS_TIME_CLI,
 					elem_idx);

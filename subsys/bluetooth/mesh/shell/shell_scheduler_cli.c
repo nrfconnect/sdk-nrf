@@ -51,7 +51,13 @@ static void schedule_print(const struct shell *shell, int err, struct bt_mesh_sc
 
 static int cmd_action_get(const struct shell *shell, size_t argc, char *argv[])
 {
-	uint8_t idx = (uint8_t)strtol(argv[1], NULL, 0);
+	int err = 0;
+	uint8_t idx = shell_strtoul(argv[1], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_SCHEDULER_CLI, &mod)) {
 		return -ENODEV;
@@ -60,25 +66,31 @@ static int cmd_action_get(const struct shell *shell, size_t argc, char *argv[])
 	struct bt_mesh_scheduler_cli *cli = mod->user_data;
 	struct bt_mesh_schedule_entry rsp;
 
-	int err = bt_mesh_scheduler_cli_action_get(cli, NULL, idx, &rsp);
-
+	err = bt_mesh_scheduler_cli_action_get(cli, NULL, idx, &rsp);
 	schedule_print(shell, err, &rsp);
 	return err;
 }
 
 static int cmd_action_ctx_set(const struct shell *shell, size_t argc, char *argv[])
 {
-	set_entry.year = (uint8_t)strtol(argv[1], NULL, 0);
-	set_entry.month = (uint8_t)strtol(argv[2], NULL, 0);
-	set_entry.day = (uint8_t)strtol(argv[3], NULL, 0);
-	set_entry.hour = (uint8_t)strtol(argv[4], NULL, 0);
-	set_entry.minute = (uint8_t)strtol(argv[5], NULL, 0);
-	set_entry.second = (uint8_t)strtol(argv[6], NULL, 0);
-	set_entry.day_of_week = (uint8_t)strtol(argv[7], NULL, 0);
-	set_entry.action = (enum bt_mesh_scheduler_action)strtol(argv[8], NULL, 0);
-	set_entry.scene_number = (uint16_t)strtol(argv[10], NULL, 0);
+	int err = 0;
+	uint32_t transition_time;
 
-	uint32_t transition_time = (uint32_t)strtol(argv[9], NULL, 0);
+	set_entry.year = shell_strtoul(argv[1], 0, &err);
+	set_entry.month = shell_strtoul(argv[2], 0, &err);
+	set_entry.day = shell_strtoul(argv[3], 0, &err);
+	set_entry.hour = shell_strtoul(argv[4], 0, &err);
+	set_entry.minute = shell_strtoul(argv[5], 0, &err);
+	set_entry.second = shell_strtoul(argv[6], 0, &err);
+	set_entry.day_of_week = shell_strtoul(argv[7], 0, &err);
+	set_entry.action = (enum bt_mesh_scheduler_action)shell_strtol(argv[8], 0, &err);
+	transition_time = shell_strtoul(argv[9], 0, &err);
+	set_entry.scene_number = shell_strtoul(argv[10], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	set_entry.transition_time = model_transition_encode(transition_time);
 
@@ -89,7 +101,13 @@ static int cmd_action_ctx_set(const struct shell *shell, size_t argc, char *argv
 
 static int action_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	uint8_t idx = (uint8_t)strtol(argv[1], NULL, 0);
+	int err = 0;
+	uint8_t idx = shell_strtoul(argv[1], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_SCHEDULER_CLI, &mod)) {
 		return -ENODEV;
@@ -99,8 +117,8 @@ static int action_set(const struct shell *shell, size_t argc, char *argv[], bool
 
 	if (acked) {
 		struct bt_mesh_schedule_entry rsp;
-		int err = bt_mesh_scheduler_cli_action_set(cli, NULL, idx, &set_entry, &rsp);
 
+		err = bt_mesh_scheduler_cli_action_set(cli, NULL, idx, &set_entry, &rsp);
 		schedule_print(shell, 0, &set_entry);
 		return err;
 	} else {
@@ -125,7 +143,13 @@ static int cmd_instance_get_all(const struct shell *shell, size_t argc, char *ar
 
 static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[])
 {
-	uint8_t elem_idx = (uint8_t)strtol(argv[1], NULL, 0);
+	int err = 0;
+	uint8_t elem_idx = shell_strtoul(argv[1], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	return shell_model_instance_set(shell, &mod, BT_MESH_MODEL_ID_SCHEDULER_CLI, elem_idx);
 }

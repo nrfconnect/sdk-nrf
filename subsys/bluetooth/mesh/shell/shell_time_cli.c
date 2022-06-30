@@ -42,12 +42,18 @@ static int cmd_time_get(const struct shell *shell, size_t argc, char *argv[])
 
 static int cmd_time_set(const struct shell *shell, size_t argc, char *argv[])
 {
-	uint64_t sec = (uint64_t)strtoul(argv[1], NULL, 0);
-	uint8_t subsec = (uint8_t)strtol(argv[2], NULL, 0);
-	uint64_t uncertainty = (uint64_t)strtoul(argv[3], NULL, 0);
-	int16_t tai_utc_delta = (int16_t)strtol(argv[4], NULL, 0);
-	int16_t time_zone_offset = (int16_t)strtol(argv[5], NULL, 0);
-	bool is_authority = (bool)strtol(argv[6], NULL, 0);
+	int err = 0;
+	uint64_t sec = shell_strtoul(argv[1], 0, &err);
+	uint8_t subsec = shell_strtoul(argv[2], 0, &err);
+	uint64_t uncertainty = shell_strtoul(argv[3], 0, &err);
+	int16_t tai_utc_delta = shell_strtol(argv[4], 0, &err);
+	int16_t time_zone_offset = shell_strtol(argv[5], 0, &err);
+	bool is_authority = shell_strtobool(argv[6], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_TIME_CLI, &mod)) {
 		return -ENODEV;
@@ -60,10 +66,9 @@ static int cmd_time_set(const struct shell *shell, size_t argc, char *argv[])
 					   .tai_utc_delta = tai_utc_delta,
 					   .time_zone_offset = time_zone_offset,
 					   .is_authority = is_authority };
-
 	struct bt_mesh_time_status rsp;
-	int err = bt_mesh_time_cli_time_set(cli, NULL, &set, &rsp);
 
+	err = bt_mesh_time_cli_time_set(cli, NULL, &set, &rsp);
 	time_print(shell, err, &rsp);
 	return err;
 }
@@ -94,8 +99,14 @@ static int cmd_zone_get(const struct shell *shell, size_t argc, char *argv[])
 
 static int cmd_zone_set(const struct shell *shell, size_t argc, char *argv[])
 {
-	int16_t new_offset = (int16_t)strtol(argv[1], NULL, 0);
-	uint64_t ts = (uint64_t)strtoul(argv[2], NULL, 0);
+	int err = 0;
+	int16_t new_offset = shell_strtol(argv[1], 0, &err);
+	uint64_t ts = shell_strtoul(argv[2], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_TIME_CLI, &mod)) {
 		return -ENODEV;
@@ -103,10 +114,9 @@ static int cmd_zone_set(const struct shell *shell, size_t argc, char *argv[])
 
 	struct bt_mesh_time_cli *cli = mod->user_data;
 	struct bt_mesh_time_zone_change set = { .new_offset = new_offset, .timestamp = ts };
-
 	struct bt_mesh_time_zone_status rsp;
-	int err = bt_mesh_time_cli_zone_set(cli, NULL, &set, &rsp);
 
+	err = bt_mesh_time_cli_zone_set(cli, NULL, &set, &rsp);
 	zone_print(shell, err, &rsp);
 	return err;
 }
@@ -138,8 +148,14 @@ static int cmd_tai_utc_delta_get(const struct shell *shell, size_t argc, char *a
 
 static int cmd_tai_utc_delta_set(const struct shell *shell, size_t argc, char *argv[])
 {
-	int16_t delta_new = (int16_t)strtol(argv[1], NULL, 0);
-	uint64_t ts = (uint64_t)strtoul(argv[2], NULL, 0);
+	int err = 0;
+	int16_t delta_new = shell_strtol(argv[1], 0, &err);
+	uint64_t ts = shell_strtoul(argv[2], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_TIME_CLI, &mod)) {
 		return -ENODEV;
@@ -147,10 +163,9 @@ static int cmd_tai_utc_delta_set(const struct shell *shell, size_t argc, char *a
 
 	struct bt_mesh_time_cli *cli = mod->user_data;
 	struct bt_mesh_time_tai_utc_change set = { .delta_new = delta_new, .timestamp = ts };
-
 	struct bt_mesh_time_tai_utc_delta_status rsp;
-	int err = bt_mesh_time_cli_tai_utc_delta_set(cli, NULL, &set, &rsp);
 
+	err = bt_mesh_time_cli_tai_utc_delta_set(cli, NULL, &set, &rsp);
 	tai_utc_print(shell, err, &rsp);
 	return err;
 }
@@ -179,7 +194,13 @@ static int cmd_role_get(const struct shell *shell, size_t argc, char *argv[])
 
 static int cmd_role_set(const struct shell *shell, size_t argc, char *argv[])
 {
-	enum bt_mesh_time_role role = (enum bt_mesh_time_role)strtol(argv[1], NULL, 0);
+	int err = 0;
+	enum bt_mesh_time_role role = (enum bt_mesh_time_role)shell_strtol(argv[1], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_TIME_CLI, &mod)) {
 		return -ENODEV;
@@ -188,8 +209,7 @@ static int cmd_role_set(const struct shell *shell, size_t argc, char *argv[])
 	struct bt_mesh_time_cli *cli = mod->user_data;
 	uint8_t rsp;
 
-	int err = bt_mesh_time_cli_role_set(cli, NULL, &role, &rsp);
-
+	err = bt_mesh_time_cli_role_set(cli, NULL, &role, &rsp);
 	role_print(shell, err, rsp);
 	return err;
 }
@@ -201,7 +221,13 @@ static int cmd_instance_get_all(const struct shell *shell, size_t argc, char *ar
 
 static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[])
 {
-	uint8_t elem_idx = (uint8_t)strtol(argv[1], NULL, 0);
+	int err = 0;
+	uint8_t elem_idx = shell_strtoul(argv[1], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	return shell_model_instance_set(shell, &mod, BT_MESH_MODEL_ID_SCHEDULER_CLI, elem_idx);
 }

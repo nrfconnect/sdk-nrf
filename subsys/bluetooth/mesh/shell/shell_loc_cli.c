@@ -39,9 +39,15 @@ static int cmd_loc_global_get(const struct shell *shell, size_t argc, char *argv
 
 static int global_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	double latitude = shell_model_str2dbl(shell, argv[1]);
-	double longitude = shell_model_str2dbl(shell, argv[2]);
-	int16_t altitude = (int16_t)strtol(argv[3], NULL, 0);
+	int err = 0;
+	double latitude = shell_model_strtodbl(argv[1], &err);
+	double longitude = shell_model_strtodbl(argv[2], &err);
+	int16_t altitude = shell_strtol(argv[3], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_GEN_LOCATION_CLI, &mod)) {
 		return -ENODEV;
@@ -56,8 +62,8 @@ static int global_set(const struct shell *shell, size_t argc, char *argv[], bool
 
 	if (acked) {
 		struct bt_mesh_loc_global rsp;
-		int err = bt_mesh_loc_cli_global_set(cli, NULL, &set, &rsp);
 
+		err = bt_mesh_loc_cli_global_set(cli, NULL, &set, &rsp);
 		global_loc_print(shell, err, &rsp);
 		return err;
 	} else {
@@ -104,13 +110,19 @@ static int cmd_loc_local_get(const struct shell *shell, size_t argc, char *argv[
 
 static int local_set(const struct shell *shell, size_t argc, char *argv[], bool acked)
 {
-	int16_t north = (int16_t)strtol(argv[1], NULL, 0);
-	int16_t east = (int16_t)strtol(argv[2], NULL, 0);
-	int16_t altitude = (int16_t)strtol(argv[3], NULL, 0);
-	int16_t floor = (int16_t)strtol(argv[4], NULL, 0);
-	int32_t time_delta = (argc >= 6) ? (int32_t)strtol(argv[5], NULL, 0) : 0;
-	uint32_t precision_mm = (argc >= 7) ? (uint32_t)strtol(argv[6], NULL, 0) : 0;
-	bool is_mobile = (argc == 8) ? (bool)strtol(argv[7], NULL, 0) : false;
+	int err = 0;
+	int16_t north = shell_strtol(argv[1], 0, &err);
+	int16_t east = shell_strtol(argv[2], 0, &err);
+	int16_t altitude = shell_strtol(argv[3], 0, &err);
+	int16_t floor = shell_strtol(argv[4], 0, &err);
+	int32_t time_delta = (argc >= 6) ? shell_strtol(argv[5], 0, &err) : 0;
+	uint32_t precision_mm = (argc >= 7) ? shell_strtoul(argv[6], 0, &err) : 0;
+	bool is_mobile = (argc == 8) ? shell_strtobool(argv[7], 0, &err) : false;
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	if (!mod && !shell_model_first_get(BT_MESH_MODEL_ID_GEN_LOCATION_CLI, &mod)) {
 		return -ENODEV;
@@ -129,8 +141,8 @@ static int local_set(const struct shell *shell, size_t argc, char *argv[], bool 
 
 	if (acked) {
 		struct bt_mesh_loc_local rsp;
-		int err = bt_mesh_loc_cli_local_set(cli, NULL, &set, &rsp);
 
+		err = bt_mesh_loc_cli_local_set(cli, NULL, &set, &rsp);
 		local_loc_print(shell, err, &rsp);
 		return err;
 	} else {
@@ -155,7 +167,13 @@ static int cmd_instance_get_all(const struct shell *shell, size_t argc, char *ar
 
 static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[])
 {
-	uint8_t elem_idx = (uint8_t)strtol(argv[1], NULL, 0);
+	int err = 0;
+	uint8_t elem_idx = shell_strtoul(argv[1], 0, &err);
+
+	if (err) {
+		shell_warn(shell, "Unable to parse input string arg");
+		return err;
+	}
 
 	return shell_model_instance_set(shell, &mod, BT_MESH_MODEL_ID_GEN_LOCATION_CLI, elem_idx);
 }
