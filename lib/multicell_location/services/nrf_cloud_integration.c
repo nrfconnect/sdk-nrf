@@ -97,7 +97,7 @@ static void location_service_location_ready_cb(const struct nrf_cloud_cell_pos_r
 }
 
 int location_service_get_cell_location_nrf_cloud(
-	const struct lte_lc_cells_info *cell_data,
+	const struct multicell_location_params *params,
 	char * const rcv_buf,
 	const size_t rcv_buf_len,
 	struct multicell_location *const location)
@@ -110,7 +110,8 @@ int location_service_get_cell_location_nrf_cloud(
 	k_sem_reset(&location_ready);
 
 	LOG_DBG("Sending cellular positioning request (MQTT)");
-	err = nrf_cloud_cell_pos_request(cell_data, true, location_service_location_ready_cb);
+	err = nrf_cloud_cell_pos_request(
+		params->cell_data, true, location_service_location_ready_cb);
 	if (err == -EACCES) {
 		LOG_ERR("Cloud connection is not established");
 		return err;
@@ -121,7 +122,7 @@ int location_service_get_cell_location_nrf_cloud(
 
 	LOG_INF("Cellular positioning request sent");
 
-	if (k_sem_take(&location_ready, K_SECONDS(20)) == -EAGAIN) {
+	if (k_sem_take(&location_ready, K_MSEC(params->timeout)) == -EAGAIN) {
 		LOG_ERR("Cellular positioning data request timed out or "
 			"cloud did not return a location");
 		return -ETIMEDOUT;
