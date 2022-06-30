@@ -470,6 +470,11 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param);
  * @note If nRF Cloud FOTA is enabled and a FOTA job is active
  *  uninit will not be performed.
  *
+ * @note This function is solely intended to allow the this library to be deactivated when
+ *  no longer needed. You can recover from any error state you may encounter without calling this
+ *  function. See @ref nrf_cloud_disconnect for a way to reset the nRF Cloud connection state
+ *  without uninitializing the whole library.
+ *
  * @retval 0      If successful.
  * @retval -EBUSY If a FOTA job is in progress.
  *                Otherwise, a (negative) error code is returned.
