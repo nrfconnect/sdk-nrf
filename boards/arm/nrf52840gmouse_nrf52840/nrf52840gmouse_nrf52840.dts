@@ -62,7 +62,7 @@
 &spi1 {
 	compatible = "nordic,nrf-spim";
 	status = "okay";
-	cs-gpios = <&gpio0 13 0>;
+	cs-gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
 
 	pinctrl-0 = <&spi1_default>;
 	pinctrl-1 = <&spi1_sleep>;
@@ -70,7 +70,7 @@
 	pmw3360@0 {
 		compatible = "pixart,pmw3360";
 		reg = <0>;
-		irq-gpios = <&gpio0 21 0>;
+		irq-gpios = <&gpio0 21 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 		spi-max-frequency = <2000000>;
 		label = "PMW3360";
 	};
