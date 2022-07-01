@@ -196,11 +196,14 @@ void sms_unregister_listener(int handle);
  * in 3GPP TS 23.038 Section 4 and Section 6.2.
  * This function doesn't support sending of 8bit binary data messages or UCS2 encoded text.
  *
- * @param[in] number Recipient number.
+ * @param[in] number Recipient number in international format.
  * @param[in] text Text to be sent.
  *
  * @retval -EINVAL Invalid parameter.
  * @return 0 on success, otherwise error code.
+ *         A positive value on AT error with "ERROR", "+CME ERROR", and "+CMS ERROR" responses.
+ *         The type can be resolved with @c nrf_modem_at_err_type and
+ *         the error value with @c nrf_modem_at_err.
  */
 int sms_send_text(const char *number, const char *text);
 

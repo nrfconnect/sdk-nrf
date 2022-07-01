@@ -120,6 +120,18 @@ static void sms_reregister(struct k_work *work)
 	err = nrf_modem_at_printf(AT_SMS_SUBSCRIBER_REGISTER);
 	if (err) {
 		LOG_ERR("Unable to re-register SMS client, err: %d", err);
+		/* Pause AT commands notifications. */
+		at_monitor_pause(&sms_at_handler_cmt);
+		at_monitor_pause(&sms_at_handler_cds);
+		at_monitor_pause(&sms_at_handler_cms);
+
+		/* Clear all observers. */
+		for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
+			subscribers[i].ctx = NULL;
+			subscribers[i].listener = NULL;
+		}
+
+		sms_client_registered = false;
 	}
 }
 
@@ -338,12 +350,6 @@ static void sms_uninit(void)
 	at_monitor_pause(&sms_at_handler_cmt);
 	at_monitor_pause(&sms_at_handler_cds);
 	at_monitor_pause(&sms_at_handler_cms);
-
-	/* Clear all observers. */
-	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
-		subscribers[i].ctx = NULL;
-		subscribers[i].listener = NULL;
-	}
 
 	sms_client_registered = false;
 }
