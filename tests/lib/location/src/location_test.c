@@ -194,7 +194,7 @@ void test_location_gnss(void)
 	enum location_method methods[] = {LOCATION_METHOD_GNSS};
 
 	location_config_defaults_set(&config, 1, methods);
-	config.methods[0].gnss.timeout = 120;
+	config.methods[0].gnss.timeout = 120 * MSEC_PER_SEC;
 	config.methods[0].gnss.accuracy = LOCATION_ACCURACY_NORMAL;
 
 	test_location_event_data.id = LOCATION_EVT_LOCATION;

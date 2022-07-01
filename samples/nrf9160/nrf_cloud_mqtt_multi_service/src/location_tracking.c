@@ -164,7 +164,7 @@ int start_location_tracking(location_update_cb_t handler_cb, int interval)
 	 */
 	if (IS_ENABLED(CONFIG_LOCATION_TRACKING_GNSS)) {
 		/* Set the GNSS timeout and desired accuracy. */
-		config.methods[0].gnss.timeout = CONFIG_GNSS_FIX_TIMEOUT_SECONDS;
+		config.methods[0].gnss.timeout = CONFIG_GNSS_FIX_TIMEOUT_SECONDS * MSEC_PER_SEC;
 		config.methods[0].gnss.accuracy = LOCATION_ACCURACY_NORMAL;
 	}
 
