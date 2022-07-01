@@ -1317,7 +1317,7 @@ static void nrf91_socket_iface_init(struct net_if *iface)
 {
 	nrf91_socket_iface_data.iface = iface;
 
-	iface->if_dev->offloaded = true;
+	iface->if_dev->socket_offload = nrf91_socket_create;
 
 	socket_offload_dns_register(&nrf91_socket_dns_offload_ops);
 }
