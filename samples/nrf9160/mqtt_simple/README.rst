@@ -95,7 +95,6 @@ In addition, the sample provides overlay configuration files, which are used to 
 
 * :file:`overlay-tls.conf` - TLS overlay configuration file for nRF9160 DK
 * :file:`overlay-qemu-x86-tls.conf` - TLS overlay configuration file for x86 Emulation (QEMU)
-* :file:`overlay-carrier.conf` - LWM2M carrier support for nRF9160 DK
 
 They are located in :file:`samples/nrf9160/mqtt_simple` folder.
 

@@ -21,9 +21,6 @@
 #if defined(CONFIG_MODEM_KEY_MGMT)
 #include <modem/modem_key_mgmt.h>
 #endif
-#if defined(CONFIG_LWM2M_CARRIER)
-#include <lwm2m_carrier.h>
-#endif
 #include <dk_buttons_and_leds.h>
 
 #include "certificates.h"
@@ -78,56 +75,6 @@ static int certificates_provision(void)
 	return err;
 }
 #endif /* defined(CONFIG_MQTT_LIB_TLS) */
-
-#if defined(CONFIG_LWM2M_CARRIER)
-K_SEM_DEFINE(carrier_registered, 0, 1);
-int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
-{
-	switch (event->type) {
-	case LWM2M_CARRIER_EVENT_BSDLIB_INIT:
-		LOG_INF("LWM2M_CARRIER_EVENT_BSDLIB_INIT");
-		break;
-	case LWM2M_CARRIER_EVENT_CONNECTING:
-		LOG_INF("LWM2M_CARRIER_EVENT_CONNECTING");
-		break;
-	case LWM2M_CARRIER_EVENT_CONNECTED:
-		LOG_INF("LWM2M_CARRIER_EVENT_CONNECTED");
-		break;
-	case LWM2M_CARRIER_EVENT_DISCONNECTING:
-		LOG_INF("LWM2M_CARRIER_EVENT_DISCONNECTING");
-		break;
-	case LWM2M_CARRIER_EVENT_DISCONNECTED:
-		LOG_INF("LWM2M_CARRIER_EVENT_DISCONNECTED");
-		break;
-	case LWM2M_CARRIER_EVENT_BOOTSTRAPPED:
-		LOG_INF("LWM2M_CARRIER_EVENT_BOOTSTRAPPED");
-		break;
-	case LWM2M_CARRIER_EVENT_REGISTERED:
-		LOG_INF("LWM2M_CARRIER_EVENT_REGISTERED");
-		k_sem_give(&carrier_registered);
-		break;
-	case LWM2M_CARRIER_EVENT_DEFERRED:
-		LOG_INF("LWM2M_CARRIER_EVENT_DEFERRED");
-		break;
-	case LWM2M_CARRIER_EVENT_FOTA_START:
-		LOG_INF("LWM2M_CARRIER_EVENT_FOTA_START");
-		break;
-	case LWM2M_CARRIER_EVENT_REBOOT:
-		LOG_INF("LWM2M_CARRIER_EVENT_REBOOT");
-		break;
-	case LWM2M_CARRIER_EVENT_ERROR:
-		LOG_ERR("LWM2M_CARRIER_EVENT_ERROR: code %d, value %d",
-			((lwm2m_carrier_event_error_t *)event->data)->code,
-			((lwm2m_carrier_event_error_t *)event->data)->value);
-		break;
-	default:
-		LOG_WRN("Unhandled LWM2M_CARRIER_EVENT: %d", event->type);
-		break;
-	}
-
-	return 0;
-}
-#endif /* defined(CONFIG_LWM2M_CARRIER) */
 
 /**@brief Function to print strings without null-termination
  */
@@ -547,14 +494,6 @@ static int modem_configure(void)
 		 * and connected.
 		 */
 	} else {
-#if defined(CONFIG_LWM2M_CARRIER)
-		/* Wait for the LWM2M_CARRIER to configure the modem and
-		 * start the connection.
-		 */
-		LOG_INF("Waitng for carrier registration...");
-		k_sem_take(&carrier_registered, K_FOREVER);
-		LOG_INF("Registered!");
-#else /* defined(CONFIG_LWM2M_CARRIER) */
 		int err;
 
 		LOG_INF("LTE Link Connecting...");
@@ -564,7 +503,6 @@ static int modem_configure(void)
 			return err;
 		}
 		LOG_INF("LTE Link Connected!");
-#endif /* defined(CONFIG_LWM2M_CARRIER) */
 	}
 #endif /* defined(CONFIG_LTE_LINK_CONTROL) */
 
