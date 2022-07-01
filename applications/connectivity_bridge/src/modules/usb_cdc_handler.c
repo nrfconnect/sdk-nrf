@@ -17,8 +17,12 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_BRIDGE_CDC_LOG_LEVEL);
 
-#define CDC_DEVICE_COUNT 2
-#define CDC_DEVICE_NAME_TEMPLATE "CDC_ACM_%d"
+static const struct device *devices[] = {
+	DEVICE_DT_GET(DT_NODELABEL(cdc_acm_uart0)),
+	DEVICE_DT_GET(DT_NODELABEL(cdc_acm_uart1)),
+};
+
+#define CDC_DEVICE_COUNT ARRAY_SIZE(devices)
 
 #define USB_CDC_DTR_POLL_MS 500
 #define USB_CDC_RX_BLOCK_SIZE CONFIG_BRIDGE_BUF_SIZE
@@ -33,7 +37,6 @@ static K_WORK_DEFINE(cdc_dtr_work, cdc_dtr_work_handler);
 /* Incoming data from any CDC instance is copied into a block from this slab */
 K_MEM_SLAB_DEFINE(cdc_rx_slab, USB_CDC_RX_BLOCK_SIZE, USB_CDC_RX_BLOCK_COUNT, USB_CDC_SLAB_ALIGNMENT);
 
-static const struct device *devices[CDC_DEVICE_COUNT];
 static uint32_t cdc_ready[CDC_DEVICE_COUNT];
 
 static uint8_t overflow_buf[64];
@@ -228,25 +231,12 @@ static bool app_event_handler(const struct app_event_header *aeh)
 				return false;
 			}
 			for (int i = 0; i < CDC_DEVICE_COUNT; ++i) {
-				char dev_name[sizeof(CDC_DEVICE_NAME_TEMPLATE) + 1];
-
-				err = snprintf(
-						dev_name,
-						sizeof(dev_name),
-						CDC_DEVICE_NAME_TEMPLATE,
-						i);
-				if (err <= 0 || err > sizeof(dev_name)) {
-					LOG_ERR("Device name format error");
-					continue;
-				}
-
 				cdc_ready[i] = 0;
-				devices[i] = device_get_binding(dev_name);
-				if (devices[i]) {
+				if (device_is_ready(devices[i])) {
 					enable_rx_irq(i);
-					LOG_DBG("%s available", log_strdup(dev_name));
+					LOG_DBG("%s available", devices[i]->name);
 				} else {
-					LOG_ERR("%s not available", log_strdup(dev_name));
+					LOG_ERR("%s not available", devices[i]->name);
 				}
 			}
 
