@@ -74,7 +74,7 @@ void main(void)
 			CONFIG_SMS_SEND_PHONE_NUMBER);
 		ret = sms_send_text(CONFIG_SMS_SEND_PHONE_NUMBER, "SMS sample: testing");
 		if (ret) {
-			printk("sms_send returned err: %d\n", ret);
+			printk("Sending SMS failed with error: %d\n", ret);
 		}
 	} else {
 		printk("\nSMS sending is skipped but receiving will still work.\n"
