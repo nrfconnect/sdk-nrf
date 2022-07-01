@@ -557,9 +557,16 @@ void nrf_modem_os_log(int level, const char *fmt, ...)
 		z_log_minimal_vprintk(fmt, ap);
 		printk("\n");
 	} else {
-		z_log_msg2_runtime_vcreate(
-			CONFIG_LOG_DOMAIN_ID, __log_current_dynamic_data,
-			level, NULL, 0, 0, fmt, ap);
+		void *source;
+
+		if (IS_ENABLED(CONFIG_LOG_RUNTIME_FILTERING)) {
+			source = (void *)__log_current_dynamic_data;
+		} else {
+			source = (void *)__log_current_const_data;
+		}
+
+		z_log_msg2_runtime_vcreate(CONFIG_LOG_DOMAIN_ID, source, level,
+					   NULL, 0, 0, fmt, ap);
 	}
 
 	va_end(ap);
@@ -576,12 +583,16 @@ void nrf_modem_os_logdump(int level, const char *str, const void *data, size_t l
 		printk("%c: %s\n", z_log_minimal_level_to_char(level), str);
 		z_log_minimal_hexdump_print(level, data, len);
 	} else {
-		struct log_msg_ids src_level = {
-			.level = level,
-			.domain_id = CONFIG_LOG_DOMAIN_ID,
-			.source_id = LOG_CURRENT_MODULE_ID()
-		};
-		log_hexdump(str, data, len, src_level);
+		void *source;
+
+		if (IS_ENABLED(CONFIG_LOG_RUNTIME_FILTERING)) {
+			source = (void *)__log_current_dynamic_data;
+		} else {
+			source = (void *)__log_current_const_data;
+		}
+
+		z_log_msg2_runtime_vcreate(CONFIG_LOG_DOMAIN_ID, source, level,
+					   data, len, 0, str, (va_list) { 0 });
 	}
 #endif /* CONFIG_LOG */
 }
