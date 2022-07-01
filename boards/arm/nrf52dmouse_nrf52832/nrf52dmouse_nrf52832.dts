@@ -54,7 +54,7 @@
 &spi0 {
 	compatible = "nordic,nrf-spi";
 	status = "okay";
-	cs-gpios = <&gpio0 8 0>;
+	cs-gpios = <&gpio0 8 GPIO_ACTIVE_LOW>;
 
 	pinctrl-0 = <&spi0_default>;
 	pinctrl-1 = <&spi0_sleep>;
@@ -62,7 +62,7 @@
 	paw3212@0 {
 		compatible = "pixart,paw3212";
 		reg = <0>;
-		irq-gpios = <&gpio0 7 0>;
+		irq-gpios = <&gpio0 7 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 		spi-max-frequency = <2000000>;
 		label = "PAW3212";
 	};
