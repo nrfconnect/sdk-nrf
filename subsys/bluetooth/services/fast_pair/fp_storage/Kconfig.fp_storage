@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_FAST_PAIR_STORAGE
+	bool
+	default y
+	select SETTINGS
+	help
+	  Add Fast Pair storage source files.
+
+if BT_FAST_PAIR_STORAGE
+
+config BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX
+	int "Maximum number of stored Account Keys"
+	range 5 10
+	default 5
+	help
+	  Maximum number of stored account keys. According to Fast Pair specification, it should be
+	  at least equal to 5. It can not be larger than 10, because then Account Key Filter length
+	  would not fit in the "field length and type" data field specified in the non-discoverable
+	  advertising packet.
+
+config BT_FAST_PAIR_STORAGE_EXPOSE_PRIV_API
+	bool "Expose private API"
+	depends on !BT_FAST_PAIR
+	help
+	  Expose Fast Pair storage's private data structures, definitions and functionalities.
+	  The option could be used by unit tests to prepopulate settings with mocked data.
+
+module = FP_STORAGE
+module-str = Fast Pair storage library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_FAST_PAIR_STORAGE
