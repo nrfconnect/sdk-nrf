@@ -9,6 +9,9 @@
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/byteorder.h>
 
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(fp_crypto, CONFIG_FP_CRYPTO_LOG_LEVEL);
+
 #include "fp_crypto.h"
 #include "fp_common.h"
 

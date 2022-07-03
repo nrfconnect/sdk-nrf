@@ -111,4 +111,4 @@ int fp_crypto_account_key_filter(uint8_t *out, const struct fp_account_key *acco
  * @}
  */
 
-#endif /* _FAST_PAIR_CRYPTO_H_ */
+#endif /* _FP_CRYPTO_H_ */
