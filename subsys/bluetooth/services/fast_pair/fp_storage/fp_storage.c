@@ -18,7 +18,7 @@
 #include "fp_storage_priv.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
+LOG_MODULE_REGISTER(fp_storage, CONFIG_FP_STORAGE_LOG_LEVEL);
 
 static struct fp_account_key account_key_list[ACCOUNT_KEY_CNT];
 static uint8_t account_key_loaded_ids[ACCOUNT_KEY_CNT];

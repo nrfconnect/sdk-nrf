@@ -14,6 +14,7 @@ menuconfig BT_FAST_PAIR
 if BT_FAST_PAIR
 
 rsource "fp_crypto/Kconfig.fp_crypto"
+rsource "fp_storage/Kconfig.fp_storage"
 
 config BT_RPA_TIMEOUT
 	default 3600
@@ -95,27 +96,6 @@ config BT_FAST_PAIR_REGISTRATION_DATA
 	select PM_SINGLE_IMAGE
 	help
 	  Add Fast Pair registration data source files.
-
-config BT_FAST_PAIR_STORAGE
-	bool
-	default y
-	select SETTINGS
-	help
-	  Add Fast Pair storage source files.
-
-if BT_FAST_PAIR_STORAGE
-
-config BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX
-	int "Maximum number of stored Account Keys"
-	range 5 10
-	default 5
-	help
-	  Maximum number of stored account keys. According to Fast Pair specification, it should be
-	  at least equal to 5. It can not be larger than 10, because then Account Key Filter length
-	  would not fit in the "field length and type" data field specified in the non-discoverable
-	  advertising packet.
-
-endif # BT_FAST_PAIR_STORAGE
 
 module = BT_FAST_PAIR
 module-str = Fast Pair Service

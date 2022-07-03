@@ -4,18 +4,10 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+menu "Test configuration"
+source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/bluetooth/services/fast_pair/fp_storage/Kconfig.fp_storage"
+endmenu
+
+menu "Zephyr"
 source "Kconfig.zephyr"
-
-config BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX
-	int "Maximum number of stored Account Keys"
-	range 5 10
-	default 5
-	help
-	  Maximum number of stored account keys. According to Fast Pair specification, it should be
-	  at least equal to 5. It can not be larger than 10, because then Account Key Filter length
-	  would not fit in the "field length and type" data field specified in the non-discoverable
-	  advertising packet.
-
-module = BT_FAST_PAIR
-module-str = Fast Pair Service
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+endmenu
