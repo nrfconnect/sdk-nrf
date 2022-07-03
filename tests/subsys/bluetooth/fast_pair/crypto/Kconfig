@@ -4,27 +4,10 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+menu "Test configuration"
+source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/bluetooth/services/fast_pair/fp_crypto/Kconfig.fp_crypto"
+endmenu
+
+menu "Zephyr"
 source "Kconfig.zephyr"
-
-
-choice BT_FAST_PAIR_CRYPTO_BACKEND
-	prompt "Fast Pair cryptographic backend selection"
-	default BT_FAST_PAIR_CRYPTO_MBEDTLS
-
-config BT_FAST_PAIR_CRYPTO_TINYCRYPT
-	bool "Fast Pair with Tinycrypt cryptographic backend"
-	select TINYCRYPT
-	select TINYCRYPT_SHA256
-	select TINYCRYPT_AES
-	select TINYCRYPT_ECC_DH
-
-config BT_FAST_PAIR_CRYPTO_MBEDTLS
-	bool "Fast Pair with MbedTLS cryptographic backend"
-	select NORDIC_SECURITY_BACKEND
-	select MBEDTLS_ENABLE_HEAP
-
-endchoice
-
-module = BT_FAST_PAIR
-module-str = Fast Pair Service
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+endmenu

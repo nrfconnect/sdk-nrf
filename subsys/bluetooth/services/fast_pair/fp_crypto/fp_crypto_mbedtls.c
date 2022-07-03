@@ -17,7 +17,7 @@
 #include <zephyr/random/rand32.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
+LOG_MODULE_DECLARE(fp_crypto, CONFIG_FP_CRYPTO_LOG_LEVEL);
 
 /* Bit length of the AES-128 key. */
 #define AES128_ECB_KEY_BIT_LEN (128)
