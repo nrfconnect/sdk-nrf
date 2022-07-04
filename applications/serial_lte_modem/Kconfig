@@ -47,11 +47,11 @@ choice
 		-  UART 2
 	config SLM_CONNECT_UART_0
 		bool "UART 0"
-		select SLM_UART_HWFC_RUNTIME if $(dt_node_has_prop,uart0,hw-flow-control)
+		select SLM_UART_HWFC_RUNTIME if $(dt_nodelabel_bool_prop,uart0,hw-flow-control)
 
 	config SLM_CONNECT_UART_2
 		bool "UART 2"
-		select SLM_UART_HWFC_RUNTIME if $(dt_node_has_prop,uart2,hw-flow-control)
+		select SLM_UART_HWFC_RUNTIME if $(dt_nodelabel_bool_prop,uart2,hw-flow-control)
 endchoice
 
 choice
