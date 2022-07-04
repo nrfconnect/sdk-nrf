@@ -381,7 +381,7 @@ It also includes additional host tools, such as custom QEMU and OpenOCD builds.
 .. ncs-include:: develop/getting_started/index.rst
    :docset: zephyr
    :dedent: 0
-   :start-after: and OpenOCD builds.
+   :start-after: debug Zephyr applications.
    :end-before: .. _getting_started_run_sample:
 
 .. rst-class:: numbered-step
