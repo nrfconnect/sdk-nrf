@@ -41,6 +41,7 @@
 #define DATA_BUTTON	    "btn"
 #define DATA_CONFIG	    "cfg"
 #define DATA_VERSION	    "version"
+#define DATA_IMPACT	    "impact"
 
 #define DATA_MOVEMENT   "acc"
 #define DATA_MOVEMENT_X "x"

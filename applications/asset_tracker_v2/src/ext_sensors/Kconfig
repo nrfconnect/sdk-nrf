@@ -9,6 +9,29 @@ menuconfig EXTERNAL_SENSORS
 
 if EXTERNAL_SENSORS
 
+config EXTERNAL_SENSORS_IMPACT_DETECTION
+	bool "Impact detection"
+	depends on ADXL372
+	help
+	  Enable this option to use the impact detection feature.
+	  Please note that this increases power consumption.
+
+if EXTERNAL_SENSORS_IMPACT_DETECTION
+
+choice ADXL372_OP_MODE
+	default ADXL372_PEAK_DETECT_MODE
+endchoice
+
+choice ADXL372_BUS_TYPE
+	default ADXL372_SPI
+endchoice
+
+choice ADXL372_TRIGGER_MODE
+	default ADXL372_TRIGGER_GLOBAL_THREAD
+endchoice
+
+endif # EXTERNAL_SENSORS_IMPACT_DETECTION
+
 config EXTERNAL_SENSORS_BME680_BSEC
 	bool "Use Bosch BME680 library"
 	depends on !BME680
