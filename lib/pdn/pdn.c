@@ -9,7 +9,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <inttypes.h>
+#include <limits.h>
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
 #include <zephyr/logging/log.h>
@@ -209,6 +209,7 @@ int pdn_ctx_create(uint8_t *cid, pdn_event_handler_t cb)
 {
 	int err;
 	struct pdn *pdn;
+	int ctx_id_tmp;
 
 	if (!cid) {
 		return -EFAULT;
@@ -219,10 +220,17 @@ int pdn_ctx_create(uint8_t *cid, pdn_event_handler_t cb)
 		return -ENOMEM;
 	}
 
-	err = nrf_modem_at_scanf("AT%XNEWCID?", "%%XNEWCID: %" SCNd8, &pdn->context_id);
+	err = nrf_modem_at_scanf("AT%XNEWCID?", "%%XNEWCID: %d", &ctx_id_tmp);
 	if (err < 0) {
 		return err;
 	}
+
+	if (ctx_id_tmp > SCHAR_MAX || ctx_id_tmp < SCHAR_MIN) {
+		LOG_ERR("Context ID (%d) out of bounds", ctx_id_tmp);
+		return -EFAULT;
+	}
+
+	pdn->context_id = (int8_t)ctx_id_tmp;
 
 	*cid = pdn->context_id;
 
