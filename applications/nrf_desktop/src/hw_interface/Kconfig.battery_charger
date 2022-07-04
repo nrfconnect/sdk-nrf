@@ -23,57 +23,9 @@ config DESKTOP_BATTERY_CHARGER_DISCRETE
 endchoice
 
 if DESKTOP_BATTERY_CHARGER_DISCRETE
-
-config DESKTOP_BATTERY_CHARGER_CSO_PIN
-	int "Charging status pin"
-	help
-	  A pin number to which CSO output is connected.
-
-choice
-	prompt "Select CSO pin pull"
-	default DESKTOP_BATTERY_CHARGER_CSO_PULL_NONE
-
-config DESKTOP_BATTERY_CHARGER_CSO_PULL_NONE
-	bool "Disable CSO pin pull"
-	help
-	  If selected, CSO pin pull is disabled.
-
-config DESKTOP_BATTERY_CHARGER_CSO_PULL_UP
-	bool "Enable CPO pin pull up"
-	help
-	  If selected, CSO pin is pulled up.
-
-config DESKTOP_BATTERY_CHARGER_CSO_PULL_DOWN
-	bool "Enable CSO pin pull down"
-	help
-	  If selected, CSO pin is pulled down.
-
-endchoice
-
-config DESKTOP_BATTERY_CHARGER_ENABLE_PIN
-	int "Battery charging enable pin"
-	help
-	  A pin which enables battery charging.
-
-config DESKTOP_BATTERY_CHARGER_ENABLE_INVERSED
-	bool "Inverse charging enable signal"
-	help
-	  Set this option if battery is charged when enable signal
-	  is set to zero.
-
-config DESKTOP_BATTERY_CHARGER_CSO_FREQ
-	int "CSO switching frequency (in Hz) on error state"
-	default 1000
-	help
-	  A frequency with which CSO pin switches state when charging
-	  error occurs.
-
-if !DESKTOP_BATTERY_NONE
 module = DESKTOP_BATTERY_CHARGER
 module-str = battery charger module
 source "subsys/logging/Kconfig.template.log_config"
-endif
-
 endif
 
 endmenu

@@ -49,6 +49,13 @@
 			label = "LED1 Blue";
 		};
 	};
+
+	battery_charger: battery_charger {
+		compatible = "battery-charger";
+		cso-gpios = <&gpio0 8 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+		cso-switching-freq = <1>;
+		enable-gpios = <&gpio0 14 GPIO_ACTIVE_LOW>;
+	};
 };
 
 &usbd {
