@@ -169,6 +169,60 @@ Testing with Memfault WebBluetooth Client
    See :ref:`peripheral_mds_user_interface` for details about button functions.
 #. Explore the Memfault user interface to see the errors and metrics sent from your device.
 
+Testing with MDS BLE gateway script
+-----------------------------------
+
+1. |connect_terminal_ANSI|
+#. Reset your development kit.
+#. Observe that the sample starts.
+#. Run the following command in the |NCS| root directory to install the MDS BLE gateway script dependencies:
+
+   .. code-block:: console
+
+      pip install --user -r scripts/memfault/requirements.txt
+
+#. Connect the nRF52 development kit to your PC that uses the :ref:`mds_ble_gateway_script` script.
+#. Start the :file:`mds_ble_gateway.py` script with the correct parameters, for example:
+
+   .. code-block:: console
+
+      python3 mds_ble_gateway.py --snr 682900407 --com COM0
+
+#. Wait for the script to establish a connection with your development kit.
+#. Use the buttons on the development kit to confirm or reject a pairing request.
+
+   .. code-block:: console
+
+      Pairing confirmation required for 6D:99:66:6E:19:72 (random)
+      Press Button 1 to confirm, Button 2 to reject.
+
+#. Upon connection, data already collected by the `Memfault SDK`_ is forwarded to the cloud for further the analysis.
+   When connected, the new data is periodically transferred to the cloud with the interval configured in the :kconfig:option:`CONFIG_BT_MDS_DATA_POLL_INTERVAL` option.
+#. On the terminal running the script, you can observe the Memfault chunk counter:
+
+  .. code-block:: console
+
+      Sending..
+      Forwarded 2 Memfault Chunks
+
+#. Upload the symbol file generated from your build to your Memfault account so that the information from your application can be parsed.
+   The symbol file is located in the build folder: :file:`peripheral_memfault/build/zephyr/zephyr.elf`:
+
+   a. In a web browser, navigate to `Memfault`_.
+   #. Log in to your account and select the project you created earlier.
+   #. Navigate to :guilabel:`Fleet` > :guilabel:`Devices` in the left side menu.
+      You can see your newly connected device and the software version in the list.
+   #. Select the software version number for your device and click :guilabel:`Upload` to upload the symbol file.
+      You can see your newly connected device and the software version in the list.
+
+#. Return to the terminal and press the **Tab** button on your keyboard to confirm that the Memfault shell is working.
+   The shell commands available are displayed.
+
+   To learn about the Memfault shell commands, issue command ``mflt help``
+#. Use the buttons to trigger Memfault crashes, traces and metrics collection.
+   See :ref:`peripheral_mds_user_interface` for details about button functions.
+#. Explore the Memfault user interface to see the errors and metrics sent from your device.
+
 Dependencies
 ************
 
