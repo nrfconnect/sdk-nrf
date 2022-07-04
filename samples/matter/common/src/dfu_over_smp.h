@@ -23,7 +23,8 @@ public:
 private:
 	friend DFUOverSMP &GetDFUOverSMP(void);
 
-	static int UploadConfirmHandler(uint32_t offset, uint32_t size, void *arg);
+	static int UploadConfirmHandler(const struct img_mgmt_upload_req req,
+				  const struct img_mgmt_upload_action action);
 	static void OnBleConnect(bt_conn *conn, uint8_t err);
 	static void OnBleDisconnect(bt_conn *conn, uint8_t reason);
 	static void ChipEventHandler(const chip::DeviceLayer::ChipDeviceEvent *event, intptr_t arg);

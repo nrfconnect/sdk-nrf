@@ -32,7 +32,7 @@ void DFUOverSMP::Init(DFUOverSMPRestartAdvertisingHandler startAdvertisingCb)
 {
 	os_mgmt_register_group();
 	img_mgmt_register_group();
-	img_mgmt_set_upload_cb(UploadConfirmHandler, NULL);
+	img_mgmt_set_upload_cb(UploadConfirmHandler);
 
 	memset(&mBleConnCallbacks, 0, sizeof(mBleConnCallbacks));
 	mBleConnCallbacks.connected = OnBleConnect;
@@ -61,10 +61,11 @@ void DFUOverSMP::ConfirmNewImage()
 	}
 }
 
-int DFUOverSMP::UploadConfirmHandler(uint32_t offset, uint32_t size, void *arg)
+int DFUOverSMP::UploadConfirmHandler(const struct img_mgmt_upload_req req,
+				  const struct img_mgmt_upload_action action)
 {
 	/* For now just print update progress and confirm data chunk without any additional checks. */
-	ChipLogProgress(DeviceLayer, "Software update progress %d B / %d B", offset, size);
+	ChipLogProgress(DeviceLayer, "Software update progress of image %d: %d B / %d B", req.image, req.off, action.size);
 
 	return 0;
 }
