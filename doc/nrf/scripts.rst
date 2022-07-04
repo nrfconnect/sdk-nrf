@@ -17,3 +17,4 @@ Here you can find documentation for these scripts.
    ../../scripts/hid_configurator/*
    ../../scripts/partition_manager/*
    ../../scripts/west_commands/sbom/*
+   ../../scripts/memfault/*
