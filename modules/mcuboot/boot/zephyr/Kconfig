@@ -81,15 +81,6 @@ config BOOT_NRF_EXTERNAL_CRYPTO
 
 endchoice
 
-config BOOT_ERASE_PROGRESSIVELY
-	bool "Erase flash progressively when receiving new firmware"
-	default y if SOC_FAMILY_NRF
-	help
-	 If enabled, flash is erased as necessary when receiving new firmware,
-	 instead of erasing the whole image slot at once. This is necessary
-	 on some hardware that has long erase times, to prevent long wait
-	 times at the beginning of the DFU process.
-
 config BOOT_IMAGE_ACCESS_HOOKS_FILE
 	string
 	default "${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/hooks/nrf53_hooks.c"
