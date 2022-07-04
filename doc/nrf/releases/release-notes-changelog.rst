@@ -245,7 +245,7 @@ nRF9160 samples
 Thread samples
 --------------
 
-|no_changes_yet_note|
+* Enables logging of errors and hard faults in CLI sample by default.
 
 Matter samples
 --------------
