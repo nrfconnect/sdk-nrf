@@ -28,17 +28,18 @@ For this reason, you should set :kconfig:option:`CONFIG_GPIO` option.
 By default, the module is disabled and the :ref:`CONFIG_DESKTOP_BATTERY_CHARGER_NONE <config_desktop_app_options>` option is selected.
 Set the option :ref:`CONFIG_DESKTOP_BATTERY_CHARGER_DISCRETE <config_desktop_app_options>` to enable the module.
 
-The following module configuration options are available:
+The module requires a node labeled ``battery_charger`` with ``battery-charger`` compatible set in Devicetree.
+Three properties are required: the CSO (Charge Status Output) GPIO spec, the Enable GPIO spec and the CSO switching frequency.
+Below you can find an example:
 
-* :ref:`CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PIN <config_desktop_app_options>` - Configures the pin to which the charge status output (CSO) from the charger is connected.
+.. code-block:: devicetree
 
-  * :ref:`CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PULL_NONE <config_desktop_app_options>` - CSO pin pull disabled (default setting).
-  * :ref:`CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PULL_UP <config_desktop_app_options>` - CSO pin pull up.
-  * :ref:`CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PULL_DOWN <config_desktop_app_options>` - CSO pin pull down.
-
-* :ref:`CONFIG_DESKTOP_BATTERY_CHARGER_ENABLE_PIN <config_desktop_app_options>` - Configures the pin that enables the battery charging.
-* :ref:`CONFIG_DESKTOP_BATTERY_CHARGER_ENABLE_INVERSED <config_desktop_app_options>` - Option for inversing the charging enable signal.
-* :ref:`CONFIG_DESKTOP_BATTERY_CHARGER_CSO_FREQ <config_desktop_app_options>` - Set this Kconfig option to the CSO pin state switching frequency (in Hz) for when a charging error occurs.
+    battery_charger: battery-charger {
+        compatible = "battery-charger";
+        cso-gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
+        enable-gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>;
+        cso-switching-freq = <1000>;
+    };
 
 Implementation details
 **********************

@@ -24,12 +24,17 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BATTERY_CHARGER_LOG_LEVEL);
 
 
-#define CSO_PERIOD_HZ		CONFIG_DESKTOP_BATTERY_CHARGER_CSO_FREQ
+#define BATTERY_CHARGER		DT_NODELABEL(battery_charger)
+
+#define CSO_PERIOD_HZ		DT_PROP(BATTERY_CHARGER, cso_switching_freq)
 #define CSO_CHANGE_MAX		3
 
 #define ERROR_CHECK_TIMEOUT_MS	(1 + CSO_CHANGE_MAX * (1000 / CSO_PERIOD_HZ))
 
-static const struct device *gpio_dev;
+static const struct gpio_dt_spec enable_gpio =
+	GPIO_DT_SPEC_GET(BATTERY_CHARGER, enable_gpios);
+static const struct gpio_dt_spec cso_gpio =
+	GPIO_DT_SPEC_GET(BATTERY_CHARGER, cso_gpios);
 static struct gpio_callback gpio_cb;
 
 static struct k_work_delayable error_check;
@@ -51,8 +56,7 @@ static void error_check_handler(struct k_work *work)
 	enum battery_state state;
 
 	if (cnt <= CSO_CHANGE_MAX) {
-		int val = gpio_pin_get_raw(gpio_dev,
-					CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PIN);
+		int val = gpio_pin_get_dt(&cso_gpio);
 		if (val < 0) {
 			LOG_ERR("Cannot get CSO pin value");
 			state = BATTERY_STATE_ERROR;
@@ -61,9 +65,8 @@ static void error_check_handler(struct k_work *work)
 					     (BATTERY_STATE_IDLE);
 		}
 	} else {
-		int err = gpio_pin_interrupt_configure(gpio_dev,
-				      CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PIN,
-				      GPIO_INT_DISABLE);
+		int err = gpio_pin_interrupt_configure_dt(&cso_gpio,
+							  GPIO_INT_DISABLE);
 		if (err) {
 			LOG_ERR("Cannot disable CSO pin interrupt");
 		}
@@ -100,19 +103,14 @@ static void cs_change(const struct device *gpio_dev, struct gpio_callback *cb,
 
 static int cso_pin_control(bool enable)
 {
-	gpio_flags_t flags = GPIO_INPUT;
+	gpio_flags_t flags = cso_gpio.dt_flags | GPIO_INPUT;
 
-	if (enable) {
-		if (IS_ENABLED(CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PULL_UP)) {
-			flags |= GPIO_PULL_UP;
-		} else if (IS_ENABLED(CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PULL_DOWN)) {
-			flags |= GPIO_PULL_DOWN;
-		}
+	/* clear pull-up/down flags if not enabling */
+	if (!enable) {
+		flags &= ~(GPIO_PULL_DOWN | GPIO_PULL_UP);
 	}
 
-	int err = gpio_pin_configure(gpio_dev,
-				     CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PIN,
-				     flags);
+	int err = gpio_pin_configure(cso_gpio.port, cso_gpio.pin, flags);
 
 	if (err) {
 		LOG_ERR("Cannot configure CSO pin");
@@ -123,19 +121,12 @@ static int cso_pin_control(bool enable)
 
 static int charging_switch(bool enable)
 {
-	int charging = (IS_ENABLED(CONFIG_DESKTOP_BATTERY_CHARGER_ENABLE_INVERSED))
-			? (!enable) : (enable);
-
-	return gpio_pin_set_raw(gpio_dev,
-				CONFIG_DESKTOP_BATTERY_CHARGER_ENABLE_PIN,
-				charging);
+	return gpio_pin_set_dt(&enable_gpio, (int)enable);
 }
 
 static int start_battery_state_check(void)
 {
-	int err = gpio_pin_interrupt_configure(gpio_dev,
-					CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PIN,
-					GPIO_INT_DISABLE);
+	int err = gpio_pin_interrupt_configure_dt(&cso_gpio, GPIO_INT_DISABLE);
 
 	if (!err) {
 		/* Lock is not needed as interrupt is disabled */
@@ -143,9 +134,8 @@ static int start_battery_state_check(void)
 		k_work_reschedule(&error_check,
 				      K_MSEC(ERROR_CHECK_TIMEOUT_MS));
 
-		err = gpio_pin_interrupt_configure(gpio_dev,
-					CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PIN,
-					GPIO_INT_EDGE_BOTH);
+		err = gpio_pin_interrupt_configure_dt(&cso_gpio,
+						      GPIO_INT_EDGE_BOTH);
 	}
 
 	if (err) {
@@ -159,17 +149,20 @@ static int init_fn(void)
 {
 	int err;
 
-	gpio_dev = device_get_binding(DT_LABEL(DT_NODELABEL(gpio0)));
-	if (!gpio_dev) {
-		LOG_ERR("Cannot get GPIO device");
-		err = -ENXIO;
+	if (!device_is_ready(enable_gpio.port)) {
+		LOG_ERR("Enable GPIO controller not ready");
+		err = -ENODEV;
 		goto error;
 	}
 
-	err = gpio_pin_configure(gpio_dev,
-				 CONFIG_DESKTOP_BATTERY_CHARGER_ENABLE_PIN,
-				 GPIO_OUTPUT);
+	err = gpio_pin_configure_dt(&enable_gpio, GPIO_OUTPUT);
 	if (err) {
+		goto error;
+	}
+
+	if (!device_is_ready(cso_gpio.port)) {
+		LOG_ERR("CSO GPIO controller not ready");
+		err = -ENODEV;
 		goto error;
 	}
 
@@ -178,9 +171,8 @@ static int init_fn(void)
 		goto error;
 	}
 
-	gpio_init_callback(&gpio_cb, cs_change,
-			   BIT(CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PIN));
-	err = gpio_add_callback(gpio_dev, &gpio_cb);
+	gpio_init_callback(&gpio_cb, cs_change, BIT(cso_gpio.pin));
+	err = gpio_add_callback(cso_gpio.port, &gpio_cb);
 	if (err) {
 		goto error;
 	}
@@ -242,9 +234,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		if (atomic_get(&active)) {
 			atomic_set(&active, false);
 
-			int err = gpio_pin_interrupt_configure(gpio_dev,
-					CONFIG_DESKTOP_BATTERY_CHARGER_CSO_PIN,
-					GPIO_INT_DISABLE);
+			int err = gpio_pin_interrupt_configure_dt(
+					&cso_gpio, GPIO_INT_DISABLE);
 
 			/* Cancel cannot fail if executed from another work's context. */
 			(void)k_work_cancel_delayable(&error_check);
