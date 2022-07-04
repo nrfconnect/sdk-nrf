@@ -855,6 +855,10 @@
 
 .. _`IntelHex`: https://python-intelhex.readthedocs.io/en/latest/
 
+.. _`pc-ble-driver-py`: https://github.com/NordicSemiconductor/pc-ble-driver-py
+
+.. _`Requests`: https://requests.readthedocs.io/en/latest/
+
 .. _`HID usage tables`: https://www.usb.org/hid
 
 .. _`BH1749NUC-E`: https://fscdn.rohm.com/en/products/databook/datasheet/ic/sensor/light/bh1749nuc-e.pdf
