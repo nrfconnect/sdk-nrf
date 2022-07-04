@@ -63,6 +63,11 @@ config DATA_ACCELEROMETER_BUFFER_COUNT
 	range 1 100
 	default 3
 
+config DATA_IMPACT_BUFFER_COUNT
+	int "Number of impact data ringbuffer entries"
+	range 1 100
+	default 1
+
 config DATA_BATTERY_BUFFER_COUNT
 	int "Number of battery data ringbuffer entries"
 	range 1 100

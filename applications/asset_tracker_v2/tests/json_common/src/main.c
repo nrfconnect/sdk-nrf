@@ -543,6 +543,55 @@ static void test_encode_ui_data_object(void)
 	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
 }
 
+/* Impact */
+
+static void test_encode_impact_data_object(void)
+{
+	int ret;
+	struct cloud_data_impact data = {
+		.magnitude = 300.0,
+		.ts = 1000,
+		.queued = true
+	};
+
+	ret = json_common_impact_data_add(dummy.root_obj,
+				      &data,
+				      JSON_COMMON_ADD_DATA_TO_OBJECT,
+				      DATA_IMPACT,
+				      NULL);
+	zassert_equal(0, ret, "Return value %d is wrong", ret);
+
+	ret = encoded_output_check(dummy.root_obj, TEST_VALIDATE_IMPACT_JSON_SCHEMA, data.queued);
+	zassert_equal(0, ret, "Return value %d is wrong", ret);
+
+	/* Check for invalid inputs. */
+
+	data.queued = false;
+
+	ret = json_common_impact_data_add(dummy.root_obj,
+				      &data,
+				      JSON_COMMON_ADD_DATA_TO_OBJECT,
+				      "",
+				      NULL);
+	zassert_equal(-ENODATA, ret, "Return value %d is wrong.", ret);
+
+	data.queued = true;
+
+	ret = json_common_impact_data_add(NULL,
+				      &data,
+				      JSON_COMMON_ADD_DATA_TO_OBJECT,
+				      "",
+				      NULL);
+	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+
+	ret = json_common_impact_data_add(dummy.root_obj,
+				      &data,
+				      JSON_COMMON_ADD_DATA_TO_OBJECT,
+				      NULL,
+				      NULL);
+	zassert_equal(-EINVAL, ret, "Return value %d is wrong.", ret);
+}
+
 /* Neighbor cell */
 
 static void test_encode_neighbor_cells_data_object(void)
@@ -670,6 +719,27 @@ static void test_encode_ui_data_array(void)
 	zassert_equal(0, ret, "Return value %d is wrong", ret);
 
 	ret = encoded_output_check(dummy.array_obj, TEST_VALIDATE_ARRAY_UI_JSON_SCHEMA,
+				   data.queued);
+	zassert_equal(0, ret, "Return value %d is wrong", ret);
+}
+
+static void test_encode_impact_data_array(void)
+{
+	int ret;
+	struct cloud_data_impact data = {
+		.magnitude = 300.0,
+		.ts = 1000,
+		.queued = true
+	};
+
+	ret = json_common_impact_data_add(dummy.array_obj,
+				      &data,
+				      JSON_COMMON_ADD_DATA_TO_ARRAY,
+				      NULL,
+				      NULL);
+	zassert_equal(0, ret, "Return value %d is wrong", ret);
+
+	ret = encoded_output_check(dummy.array_obj, TEST_VALIDATE_ARRAY_IMPACT_JSON_SCHEMA,
 				   data.queued);
 	zassert_equal(0, ret, "Return value %d is wrong", ret);
 }
@@ -901,6 +971,15 @@ static void test_encode_batch_data_object(void)
 		[1].btn_ts = 1000,
 		[1].queued = true
 	};
+	struct cloud_data_impact impact[2] = {
+		[0].magnitude = 300.0,
+		[0].ts = 1000,
+		[0].queued = true,
+		/* Second entry */
+		[1].magnitude = 300.0,
+		[1].ts = 1000,
+		[1].queued = true
+	};
 	struct cloud_data_accelerometer accelerometer[2] = {
 		[0].values[0] = 1,
 		[0].values[1] = 2,
@@ -942,6 +1021,13 @@ static void test_encode_batch_data_object(void)
 					 &ui,
 					 ARRAY_SIZE(ui),
 					 DATA_BUTTON);
+	zassert_equal(0, ret, "Return value %d is wrong", ret);
+
+	ret = json_common_batch_data_add(dummy.root_obj,
+					 JSON_COMMON_IMPACT,
+					 &impact,
+					 ARRAY_SIZE(impact),
+					 DATA_IMPACT);
 	zassert_equal(0, ret, "Return value %d is wrong", ret);
 
 	ret = json_common_batch_data_add(dummy.root_obj,
@@ -1302,6 +1388,14 @@ void test_main(void)
 					       test_setup_object,
 					       test_teardown_object),
 		ztest_unit_test_setup_teardown(test_encode_ui_data_array,
+					       test_setup_array,
+					       test_teardown_array),
+
+		/* Impact */
+		ztest_unit_test_setup_teardown(test_encode_impact_data_object,
+					       test_setup_object,
+					       test_teardown_object),
+		ztest_unit_test_setup_teardown(test_encode_impact_data_array,
 					       test_setup_array,
 					       test_teardown_array),
 

@@ -10,6 +10,7 @@
 		humidity-sensor = &bme680;
 		pressure-sensor = &bme680;
 		accelerometer = &adxl362;
+		impact-sensor = &adxl372;
 	};
 };
 

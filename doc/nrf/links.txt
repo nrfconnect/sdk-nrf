@@ -791,6 +791,7 @@
 .. _`Bosch BSEC`: https://www.bosch-sensortec.com/software-tools/software/bsec/
 
 .. _`ADXL362`: https://www.analog.com/en/products/adxl362.html#product-overview
+.. _`ADXL372`: https://www.analog.com/en/products/adxl372.html#product-overview
 
 .. _`ARM TrustZone`: https://developer.arm.com/documentation/100690/0200/ARM-TrustZone-technology?lang=en
 .. _`ARM Flash Patch and Breakpoint Unit`: https://developer.arm.com/documentation/100166/0001/Debug/Flash-Patch-and-Breakpoint-Unit--FPB-

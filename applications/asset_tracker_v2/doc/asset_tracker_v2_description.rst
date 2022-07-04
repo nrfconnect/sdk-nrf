@@ -81,6 +81,16 @@ The application supports the following data types:
 | Neighbor cells | Neighbor cell measurements | APP_DATA_NEIGHBOR_CELLS                       | ``ncell``                      |
 +----------------+----------------------------+-----------------------------------------------+--------------------------------+
 
+Additionally, the following data types are supported that provide some asynchronous data:
+
++----------------+-----------------------------------------------------+
+| Data type      | Description                                         |
++================+=====================================================+
+| Button         | ID of pressed Button                                |
++----------------+-----------------------------------------------------+
+| Impact         | Magnitude of impact in gravitational constant (G)   |
++----------------+-----------------------------------------------------+
+
 Sensor data published to the cloud service contain relative `timestamps <Timestamping_>`_ that originate from the time of sampling.
 
 .. _real_time_configs:

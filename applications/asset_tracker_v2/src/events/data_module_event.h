@@ -56,6 +56,12 @@ enum data_module_event_type {
 	/** UI button data is ready to be sent. */
 	DATA_EVT_UI_DATA_READY,
 
+	/** Impact data is ready to be sent. */
+	DATA_EVT_IMPACT_DATA_READY,
+
+	/** Send impact data, similar to DATA_EVT_UI_DATA_SEND */
+	DATA_EVT_IMPACT_DATA_SEND,
+
 	/** Send neighbor cell measurements.
 	 *  The event has an associated payload of type @ref data_module_data_buffers in
 	 *  the `data.buffer` member.

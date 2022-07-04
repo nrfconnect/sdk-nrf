@@ -138,6 +138,10 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 nRF9160: Asset Tracker v2
 -------------------------
 
+  * Added:
+
+    * :ref:`motion_impact_detection` using the ADXL372 accelerometer.
+
   * Removed:
 
     * ``CONFIG_APP_REQUEST_GNSS_ON_INITIAL_SAMPLING`` option.
