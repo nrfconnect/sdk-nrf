@@ -19,9 +19,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(led, CONFIG_LOG_LED_LEVEL);
 
-#define ACTIVE_LOW 1
-#define ACTIVE_HIGH 0
-
 #define BLINK_FREQ_MS 1000
 /* Maximum number of LED_UNITS. 1 RGB LED = 1 UNIT of 3 LEDS */
 #define LED_UNIT_MAX 10
@@ -31,19 +28,17 @@ LOG_MODULE_REGISTER(led, CONFIG_LOG_LED_LEVEL);
 #define CORE_APP_STR "CORE_APP"
 #define CORE_NET_STR "CORE_NET"
 
-#define LABEL_AND_COMMA(node_id) DT_LABEL(node_id),
-#define GPIO_AND_COMMA(node_id) DT_GPIO_PIN(node_id, gpios),
-#define GPIO_LABEL_AND_COMMMA(node_id) DT_GPIO_LABEL(node_id, gpios),
-#define GPIO_FLAGS_AND_COMMMA(node_id) DT_GPIO_FLAGS(node_id, gpios),
+#define DT_LABEL_AND_COMMA(node_id) DT_LABEL(node_id),
+#define GPIO_DT_SPEC_GET_AND_COMMA(node_id) GPIO_DT_SPEC_GET(node_id, gpios),
 
 /* The following arrays are populated compile time from the .dts*/
-const char *led_labels[] = { DT_FOREACH_CHILD(DT_PATH(leds), LABEL_AND_COMMA) };
+static const char * const led_labels[] = {
+	DT_FOREACH_CHILD(DT_PATH(leds), DT_LABEL_AND_COMMA)
+};
 
-const int led_pins[] = { DT_FOREACH_CHILD(DT_PATH(leds), GPIO_AND_COMMA) };
-
-const char *led_gpio_labels[] = { DT_FOREACH_CHILD(DT_PATH(leds), GPIO_LABEL_AND_COMMMA) };
-
-const int led_gpio_flags[] = { DT_FOREACH_CHILD(DT_PATH(leds), GPIO_FLAGS_AND_COMMMA) };
+static const struct gpio_dt_spec leds[] = {
+	DT_FOREACH_CHILD(DT_PATH(leds), GPIO_DT_SPEC_GET_AND_COMMA)
+};
 
 enum led_core_assigned {
 	LED_CORE_APP,
@@ -53,12 +48,6 @@ enum led_core_assigned {
 enum led_type {
 	LED_MONOCHROME,
 	LED_COLOR,
-};
-
-struct pin_dev {
-	int pin;
-	const struct device *dev;
-	bool pol;
 };
 
 struct user_config {
@@ -71,8 +60,8 @@ struct led_unit_cfg {
 	enum led_core_assigned core;
 	enum led_type unit_type;
 	union {
-		struct pin_dev mono;
-		struct pin_dev color[NUM_COLORS_RGB];
+		const struct gpio_dt_spec *mono;
+		const struct gpio_dt_spec *color[NUM_COLORS_RGB];
 	} type;
 	struct user_config user_cfg;
 };
@@ -82,39 +71,20 @@ static bool initialized;
 static struct led_unit_cfg led_units[LED_UNIT_MAX];
 
 /**
- * @brief pin_configure wrapper. Initializes all LEDs to off.
- */
-static int gpio_pin_cfg(const struct device **dev, uint8_t pin, bool pol)
-{
-	if (pol == ACTIVE_LOW) {
-		return gpio_pin_configure(*dev, pin, GPIO_OUTPUT_HIGH);
-	} else {
-		return gpio_pin_configure(*dev, pin, GPIO_OUTPUT_LOW);
-	}
-}
-
-/**
  * @brief Configures fields for a RGB LED
  */
 static int configure_led_color(uint8_t led_unit, uint8_t led_color, uint8_t led)
 {
-	int ret;
-
-	led_units[led_unit].type.color[led_color].pin = led_pins[led];
-	led_units[led_unit].type.color[led_color].pol = (bool)led_gpio_flags[led];
-	led_units[led_unit].type.color[led_color].dev = device_get_binding(led_gpio_labels[led]);
-
-	if (led_units[led_unit].type.color[led_color].dev == NULL) {
-		LOG_ERR("Could not get binding for %s", led_gpio_labels[led]);
+	if (!device_is_ready(leds[led].port)) {
+		LOG_ERR("LED GPIO controller not ready");
 		return -ENODEV;
 	}
 
+	led_units[led_unit].type.color[led_color] = &leds[led];
 	led_units[led_unit].unit_type = LED_COLOR;
-	ret = gpio_pin_cfg(&led_units[led_unit].type.color[led_color].dev,
-			   led_units[led_unit].type.color[led_color].pin,
-			   led_units[led_unit].type.color[led_color].pol);
 
-	return ret;
+	return gpio_pin_configure_dt(led_units[led_unit].type.color[led_color],
+				     GPIO_OUTPUT_INACTIVE);
 }
 
 /**
@@ -122,23 +92,16 @@ static int configure_led_color(uint8_t led_unit, uint8_t led_color, uint8_t led)
  */
 static int config_led_monochrome(uint8_t led_unit, uint8_t led)
 {
-	int ret;
-
-	led_units[led_unit].type.mono.pin = led_pins[led];
-	led_units[led_unit].type.mono.dev = device_get_binding(led_gpio_labels[led]);
-	led_units[led_unit].type.mono.pol = (bool)led_gpio_flags[led];
-
-	if (led_units[led_unit].type.mono.dev == NULL) {
-		LOG_ERR("Could not get binding for %s", led_gpio_labels[led]);
+	if (!device_is_ready(leds[led].port)) {
+		LOG_ERR("LED GPIO controller not ready");
 		return -ENODEV;
 	}
 
+	led_units[led_unit].type.mono = &leds[led];
 	led_units[led_unit].unit_type = LED_MONOCHROME;
 
-	ret = gpio_pin_cfg(&led_units[led_unit].type.mono.dev, led_units[led_unit].type.mono.pin,
-			   led_units[led_unit].type.mono.pol);
-
-	return ret;
+	return gpio_pin_configure_dt(led_units[led_unit].type.mono,
+				     GPIO_OUTPUT_INACTIVE);
 }
 
 /**
@@ -148,17 +111,18 @@ static int transfer_pin_to_net(uint8_t led)
 {
 	uint8_t pin_to_transfer;
 
-	if (strcmp(led_gpio_labels[led], "GPIO_0") == 0) {
-		pin_to_transfer = led_pins[led];
-	} else if (strcmp(led_gpio_labels[led], "GPIO_1") == 0) {
-		pin_to_transfer = led_pins[led] + P0_PIN_NUM;
+	if (strcmp(leds[led].port->name, "GPIO_0") == 0) {
+		pin_to_transfer = leds[led].pin;
+	} else if (strcmp(leds[led].port->name, "GPIO_1") == 0) {
+		pin_to_transfer = leds[led].pin + P0_PIN_NUM;
 	} else {
 		LOG_ERR("Invalid GPIO device");
 		return -ENODEV;
 	}
 
 	nrf_gpio_pin_mcu_select(pin_to_transfer, NRF_GPIO_PIN_MCUSEL_NETWORK);
-	LOG_DBG("Pin %d transferred on device %s", led_pins[led], led_gpio_labels[led]);
+	LOG_DBG("Pin %d transferred on device %s", leds[led].pin,
+		leds[led].port->name);
 	return 0;
 }
 
@@ -234,22 +198,6 @@ static int led_device_tree_parse(void)
 }
 
 /**
- * @brief Internal handling to turn a given LED on
- */
-static int led_on_int(struct pin_dev const *const pin_dev)
-{
-	return gpio_pin_set(pin_dev->dev, pin_dev->pin, !pin_dev->pol);
-}
-
-/**
- * @brief Internal handling to turn a given LED off
- */
-static int led_off_int(struct pin_dev const *const pin_dev)
-{
-	return gpio_pin_set(pin_dev->dev, pin_dev->pin, pin_dev->pol);
-}
-
-/**
  * @brief Internal handling to set the status of a led unit
  */
 static int led_set_int(uint8_t led_unit, enum led_color color)
@@ -276,12 +224,12 @@ static int led_set_int(uint8_t led_unit, enum led_color color)
 
 	if (led_units[led_unit].unit_type == LED_MONOCHROME) {
 		if (color) {
-			ret = led_on_int(&led_units[led_unit].type.mono);
+			ret = gpio_pin_set_dt(led_units[led_unit].type.mono, 1);
 			if (ret) {
 				return ret;
 			}
 		} else {
-			ret = led_off_int(&led_units[led_unit].type.mono);
+			ret = gpio_pin_set_dt(led_units[led_unit].type.mono, 0);
 			if (ret) {
 				return ret;
 			}
@@ -289,12 +237,12 @@ static int led_set_int(uint8_t led_unit, enum led_color color)
 	} else {
 		for (uint8_t i = 0; i < NUM_COLORS_RGB; i++) {
 			if (color & BIT(i)) {
-				ret = led_on_int(&led_units[led_unit].type.color[i]);
+				ret = gpio_pin_set_dt(led_units[led_unit].type.color[i], 1);
 				if (ret) {
 					return ret;
 				}
 			} else {
-				ret = led_off_int(&led_units[led_unit].type.color[i]);
+				ret = gpio_pin_set_dt(led_units[led_unit].type.color[i], 0);
 				if (ret) {
 					return ret;
 				}
@@ -416,12 +364,9 @@ int led_init(void)
 		return -EPERM;
 	}
 
-	__ASSERT(ARRAY_SIZE(led_labels) != 0, "No LED labels found in dts");
-	__ASSERT(ARRAY_SIZE(led_pins) != 0, "No LED pins found in dts");
-	__ASSERT(ARRAY_SIZE(led_gpio_labels) != 0, "No LED GPIO labels found in dts");
-	__ASSERT(ARRAY_SIZE(led_gpio_flags) != 0, "No LED GPIO flags found in dts");
+	__ASSERT(ARRAY_SIZE(leds) != 0, "No LEDs found in dts");
 
-	leds_num = ARRAY_SIZE(led_labels);
+	leds_num = ARRAY_SIZE(leds);
 
 	ret = led_device_tree_parse();
 	if (ret) {
