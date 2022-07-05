@@ -22,8 +22,6 @@ void at_notif_print(const char *notif)
 static void test_at_cmd_filter_setup(void)
 {
 	int err;
-	int retries = 50;
-	int connected = false;
 
 	err = nrf_modem_at_notif_handler_set(at_notif_print);
 	zassert_equal(0, err, "nrf_modem_at_notif_handler_set failed, error: %d", err);
@@ -39,21 +37,6 @@ static void test_at_cmd_filter_setup(void)
 
 	err = nrf_modem_at_printf("AT+CFUN=1");
 	zassert_equal(0, err, "nrf_modem_at_printf failed, error: %d", err);
-
-	/* Wait for network connection. */
-	do {
-		err = nrf_modem_at_cmd(response, sizeof(response), "AT+CEREG?");
-		zassert_equal(0, err, "nrf_modem_at_printf failed, error: %d", err);
-
-		err = sscanf(response, "\r\n+CEREG: %d,%d", &err, &connected);
-		zassert_equal(2, err, "sscanf failed, error: %d", err);
-		retries--;
-		if (retries == 0) {
-			printk("Network connection timed out. Last response: %s\n", response);
-			zassert_unreachable("Network connection timed out");
-		}
-		k_sleep(K_SECONDS(1));
-	} while (connected != 1 && retries != 0);
 
 	err = nrf_modem_at_cmd(response, sizeof(response), "AT+CNMI=3,2,0,1");
 	zassert_equal(0, err, "nrf_modem_at_printf failed, error: %d", err);
