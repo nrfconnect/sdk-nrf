@@ -33,15 +33,18 @@ int lwm2m_init_push_button(void)
 	/* create button1 object */
 	lwm2m_engine_create_obj_inst(LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID));
 
-	lwm2m_engine_set_res_data(
+	lwm2m_engine_set_res_buf(
 		LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID, APPLICATION_TYPE_RID),
-		BUTTON1_APP_NAME, sizeof(BUTTON1_APP_NAME), LWM2M_RES_DATA_FLAG_RO);
+		BUTTON1_APP_NAME, sizeof(BUTTON1_APP_NAME), sizeof(BUTTON1_APP_NAME),
+		LWM2M_RES_DATA_FLAG_RO);
 
 	if (IS_ENABLED(CONFIG_LWM2M_IPSO_PUSH_BUTTON_VERSION_1_1)) {
-		lwm2m_engine_set_res_data(
+		lwm2m_engine_set_res_buf(
 			LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID, TIMESTAMP_RID),
 			&lwm2m_timestamp[BUTTON1_OBJ_INST_ID],
-			sizeof(lwm2m_timestamp[BUTTON1_OBJ_INST_ID]), LWM2M_RES_DATA_FLAG_RW);
+			sizeof(lwm2m_timestamp[BUTTON1_OBJ_INST_ID]),
+			sizeof(lwm2m_timestamp[BUTTON1_OBJ_INST_ID]),
+			LWM2M_RES_DATA_FLAG_RW);
 	}
 
 	if (CONFIG_LWM2M_IPSO_PUSH_BUTTON_INSTANCE_COUNT == 2) {
@@ -49,15 +52,16 @@ int lwm2m_init_push_button(void)
 		lwm2m_engine_create_obj_inst(
 			LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON2_OBJ_INST_ID));
 
-		lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID,
+		lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID,
 						     BUTTON2_OBJ_INST_ID, APPLICATION_TYPE_RID),
 					  BUTTON2_APP_NAME, sizeof(BUTTON2_APP_NAME),
-					  LWM2M_RES_DATA_FLAG_RO);
+					  sizeof(BUTTON2_APP_NAME), LWM2M_RES_DATA_FLAG_RO);
 
 		if (IS_ENABLED(CONFIG_LWM2M_IPSO_PUSH_BUTTON_VERSION_1_1)) {
-			lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID,
+			lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID,
 							     BUTTON2_OBJ_INST_ID, TIMESTAMP_RID),
 						  &lwm2m_timestamp[BUTTON2_OBJ_INST_ID],
+						  sizeof(lwm2m_timestamp[BUTTON2_OBJ_INST_ID]),
 						  sizeof(lwm2m_timestamp[BUTTON2_OBJ_INST_ID]),
 						  LWM2M_RES_DATA_FLAG_RW);
 		}

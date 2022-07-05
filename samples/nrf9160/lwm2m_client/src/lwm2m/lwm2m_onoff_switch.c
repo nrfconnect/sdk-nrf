@@ -31,28 +31,34 @@ int lwm2m_init_onoff_switch(void)
 
 	/* create switch1 object */
 	lwm2m_engine_create_obj_inst(LWM2M_PATH(IPSO_OBJECT_ONOFF_SWITCH_ID, SWICTH1_OBJ_INST_ID));
-	lwm2m_engine_set_res_data(
+	lwm2m_engine_set_res_buf(
 		LWM2M_PATH(IPSO_OBJECT_ONOFF_SWITCH_ID, SWICTH1_OBJ_INST_ID, APPLICATION_TYPE_RID),
-		SWITCH1_APP_NAME, sizeof(SWITCH1_APP_NAME), LWM2M_RES_DATA_FLAG_RO);
+		SWITCH1_APP_NAME, sizeof(SWITCH1_APP_NAME), sizeof(SWITCH1_APP_NAME),
+		LWM2M_RES_DATA_FLAG_RO);
 
 	if (IS_ENABLED(CONFIG_LWM2M_IPSO_ONOFF_SWITCH_VERSION_1_1)) {
-		lwm2m_engine_set_res_data(
+		lwm2m_engine_set_res_buf(
 			LWM2M_PATH(IPSO_OBJECT_ONOFF_SWITCH_ID, SWICTH1_OBJ_INST_ID, TIMESTAMP_RID),
 			&lwm2m_timestamp[SWICTH1_OBJ_INST_ID],
-			sizeof(lwm2m_timestamp[SWICTH1_OBJ_INST_ID]), LWM2M_RES_DATA_FLAG_RW);
+			sizeof(lwm2m_timestamp[SWICTH1_OBJ_INST_ID]),
+			sizeof(lwm2m_timestamp[SWICTH1_OBJ_INST_ID]),
+			LWM2M_RES_DATA_FLAG_RW);
 	}
 
 	/* create switch2 object */
 	lwm2m_engine_create_obj_inst(LWM2M_PATH(IPSO_OBJECT_ONOFF_SWITCH_ID, SWITCH2_OBJ_INST_ID));
-	lwm2m_engine_set_res_data(
+	lwm2m_engine_set_res_buf(
 		LWM2M_PATH(IPSO_OBJECT_ONOFF_SWITCH_ID, SWITCH2_OBJ_INST_ID, APPLICATION_TYPE_RID),
-		SWITCH2_APP_NAME, sizeof(SWITCH2_APP_NAME), LWM2M_RES_DATA_FLAG_RO);
+		SWITCH2_APP_NAME, sizeof(SWITCH2_APP_NAME), sizeof(SWITCH2_APP_NAME),
+		LWM2M_RES_DATA_FLAG_RO);
 
 	if (IS_ENABLED(CONFIG_LWM2M_IPSO_ONOFF_SWITCH_VERSION_1_1)) {
-		lwm2m_engine_set_res_data(
+		lwm2m_engine_set_res_buf(
 			LWM2M_PATH(IPSO_OBJECT_ONOFF_SWITCH_ID, SWITCH2_OBJ_INST_ID, TIMESTAMP_RID),
 			&lwm2m_timestamp[SWITCH2_OBJ_INST_ID],
-			sizeof(lwm2m_timestamp[SWITCH2_OBJ_INST_ID]), LWM2M_RES_DATA_FLAG_RW);
+			sizeof(lwm2m_timestamp[SWITCH2_OBJ_INST_ID]),
+			sizeof(lwm2m_timestamp[SWITCH2_OBJ_INST_ID]),
+			LWM2M_RES_DATA_FLAG_RW);
 	}
 
 	return 0;

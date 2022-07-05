@@ -225,9 +225,9 @@ int lwm2m_init_light_control(void)
 			LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, COLOUR_RID), rgb_lc_colour_cb);
 		lwm2m_engine_register_post_write_callback(
 			LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, DIMMER_RID), rgb_lc_dimmer_cb);
-		lwm2m_engine_set_res_data(
+		lwm2m_engine_set_res_buf(
 			LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, APPLICATION_TYPE_RID),
-			APP_TYPE, sizeof(APP_TYPE), LWM2M_RES_DATA_FLAG_RO);
+			APP_TYPE, sizeof(APP_TYPE), sizeof(APP_TYPE), LWM2M_RES_DATA_FLAG_RO);
 		lwm2m_engine_set_string(LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, COLOUR_RID),
 			colour_str);
 		lwm2m_engine_set_u8(LWM2M_PATH(IPSO_OBJECT_LIGHT_CONTROL_ID, 0, DIMMER_RID),
@@ -251,8 +251,8 @@ int lwm2m_init_light_control(void)
 
 			snprintk(lwm2m_path, MAX_LWM2M_PATH_LEN, "%d/%u/%d",
 				IPSO_OBJECT_LIGHT_CONTROL_ID, i, APPLICATION_TYPE_RID);
-			lwm2m_engine_set_res_data(lwm2m_path, APP_TYPE, sizeof(APP_TYPE),
-				LWM2M_RES_DATA_FLAG_RO);
+			lwm2m_engine_set_res_buf(lwm2m_path, APP_TYPE, sizeof(APP_TYPE),
+						 sizeof(APP_TYPE), LWM2M_RES_DATA_FLAG_RO);
 
 			snprintk(lwm2m_path, MAX_LWM2M_PATH_LEN, "%d/%u/%d",
 				IPSO_OBJECT_LIGHT_CONTROL_ID, i, DIMMER_RID);

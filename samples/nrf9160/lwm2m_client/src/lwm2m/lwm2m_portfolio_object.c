@@ -25,13 +25,13 @@ int lwm2m_init_portfolio_object(void)
 	/* create switch1 object */
 	lwm2m_engine_create_obj_inst(LWM2M_PATH(16, 0));
 	lwm2m_engine_create_res_inst("16/0/0/0");
-	lwm2m_engine_set_res_data("16/0/0/0", host_device_id, 40, 0);
+	lwm2m_engine_set_res_buf("16/0/0/0", host_device_id, 40, 40, 0);
 	lwm2m_engine_create_res_inst("16/0/0/1");
-	lwm2m_engine_set_res_data("16/0/0/1", manufacturer_id, 40, 0);
+	lwm2m_engine_set_res_buf("16/0/0/1", manufacturer_id, 40, 40, 0);
 	lwm2m_engine_create_res_inst("16/0/0/2");
-	lwm2m_engine_set_res_data("16/0/0/2", device_model, 40, 0);
+	lwm2m_engine_set_res_buf("16/0/0/2", device_model, 40, 40, 0);
 	lwm2m_engine_create_res_inst("16/0/0/3");
-	lwm2m_engine_set_res_data("16/0/0/3", software_version_id, 40, 0);
+	lwm2m_engine_set_res_buf("16/0/0/3", software_version_id, 40, 40, 0);
 
 	return 0;
 }

@@ -293,42 +293,42 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 	}
 
 	/* Device current time. */
-	err = lwm2m_engine_set_res_data(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0,
-						   CURRENT_TIME_RID),
-					&current_time, sizeof(current_time),
-					LWM2M_RES_DATA_FLAG_RW);
+	err = lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0,
+						  CURRENT_TIME_RID),
+				       &current_time, sizeof(current_time), sizeof(current_time),
+				       LWM2M_RES_DATA_FLAG_RW);
 	if (err) {
 		return err;
 	}
 
 	/* Battery voltage buffer. */
-	err = lwm2m_engine_set_res_data(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0,
-						   POWER_SOURCE_VOLTAGE_RID),
-					&battery_voltage, sizeof(battery_voltage),
-					LWM2M_RES_DATA_FLAG_RW);
+	err = lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0,
+						  POWER_SOURCE_VOLTAGE_RID),
+				       &battery_voltage, sizeof(battery_voltage),
+				       sizeof(battery_voltage), LWM2M_RES_DATA_FLAG_RW);
 	if (err) {
 		return err;
 	}
 
 	/* Sensor timestamps. */
-	err = lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, TIMESTAMP_RID),
-					&pressure_timestamp, sizeof(pressure_timestamp),
-					LWM2M_RES_DATA_FLAG_RW);
+	err = lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, TIMESTAMP_RID),
+				       &pressure_timestamp, sizeof(pressure_timestamp),
+				       sizeof(pressure_timestamp), LWM2M_RES_DATA_FLAG_RW);
 	if (err) {
 		return err;
 	}
 
-	err = lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_TEMP_SENSOR_ID, 0, TIMESTAMP_RID),
-					&temperature_timestamp, sizeof(temperature_timestamp),
-					LWM2M_RES_DATA_FLAG_RW);
+	err = lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_TEMP_SENSOR_ID, 0, TIMESTAMP_RID),
+				       &temperature_timestamp, sizeof(temperature_timestamp),
+				       sizeof(temperature_timestamp), LWM2M_RES_DATA_FLAG_RW);
 	if (err) {
 		return err;
 	}
 
-	err = lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0,
-						   TIMESTAMP_RID),
-					&humidity_timestamp, sizeof(humidity_timestamp),
-					LWM2M_RES_DATA_FLAG_RW);
+	err = lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0,
+						  TIMESTAMP_RID),
+				       &humidity_timestamp, sizeof(humidity_timestamp),
+				       sizeof(humidity_timestamp), LWM2M_RES_DATA_FLAG_RW);
 	if (err) {
 		return err;
 	}
@@ -346,9 +346,9 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 		return err;
 	}
 
-	err = lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_TEMP_SENSOR_ID, 0, SENSOR_UNITS_RID),
-					BME680_TEMP_UNIT, sizeof(BME680_TEMP_UNIT),
-					LWM2M_RES_DATA_FLAG_RO);
+	err = lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_TEMP_SENSOR_ID, 0, SENSOR_UNITS_RID),
+				       BME680_TEMP_UNIT, sizeof(BME680_TEMP_UNIT),
+				       sizeof(BME680_TEMP_UNIT), LWM2M_RES_DATA_FLAG_RO);
 	if (err) {
 		return err;
 	}
@@ -368,10 +368,10 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 		return err;
 	}
 
-	err = lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0,
-						   SENSOR_UNITS_RID),
-					BME680_HUMID_UNIT, sizeof(BME680_HUMID_UNIT),
-					LWM2M_RES_DATA_FLAG_RO);
+	err = lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0,
+						  SENSOR_UNITS_RID),
+				       BME680_HUMID_UNIT, sizeof(BME680_HUMID_UNIT),
+				       sizeof(BME680_HUMID_UNIT), LWM2M_RES_DATA_FLAG_RO);
 	if (err) {
 		return err;
 	}
@@ -389,9 +389,9 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 		return err;
 	}
 
-	err = lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, SENSOR_UNITS_RID),
-					BME680_PRESSURE_UNIT, sizeof(BME680_PRESSURE_UNIT),
-					LWM2M_RES_DATA_FLAG_RO);
+	err = lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, SENSOR_UNITS_RID),
+				       BME680_PRESSURE_UNIT, sizeof(BME680_PRESSURE_UNIT),
+				       sizeof(BME680_PRESSURE_UNIT), LWM2M_RES_DATA_FLAG_RO);
 	if (err) {
 		return err;
 	}
@@ -516,17 +516,18 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 		return err;
 	}
 
-	err = lwm2m_engine_set_res_data(
+	err = lwm2m_engine_set_res_buf(
 		LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID, APPLICATION_TYPE_RID),
-		BUTTON1_APP_NAME, sizeof(BUTTON1_APP_NAME), LWM2M_RES_DATA_FLAG_RO);
+		BUTTON1_APP_NAME, sizeof(BUTTON1_APP_NAME), sizeof(BUTTON1_APP_NAME),
+		LWM2M_RES_DATA_FLAG_RO);
 	if (err) {
 		return err;
 	}
 
-	err = lwm2m_engine_set_res_data(
+	err = lwm2m_engine_set_res_buf(
 		LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID, TIMESTAMP_RID),
 		&button_timestamp,
-		sizeof(button_timestamp), LWM2M_RES_DATA_FLAG_RW);
+		sizeof(button_timestamp), sizeof(button_timestamp), LWM2M_RES_DATA_FLAG_RW);
 	if (err) {
 		return err;
 	}
@@ -539,20 +540,21 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 			return err;
 		}
 
-		err = lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID,
-							   BUTTON2_OBJ_INST_ID,
-							   APPLICATION_TYPE_RID),
-						BUTTON2_APP_NAME, sizeof(BUTTON2_APP_NAME),
-						LWM2M_RES_DATA_FLAG_RO);
+		err = lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID,
+							  BUTTON2_OBJ_INST_ID,
+							  APPLICATION_TYPE_RID),
+					       BUTTON2_APP_NAME, sizeof(BUTTON2_APP_NAME),
+					       sizeof(BUTTON2_APP_NAME), LWM2M_RES_DATA_FLAG_RO);
 		if (err) {
 			return err;
 		}
 
-		err = lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID,
-							   BUTTON2_OBJ_INST_ID, TIMESTAMP_RID),
-						&button_timestamp,
-						sizeof(button_timestamp),
-						LWM2M_RES_DATA_FLAG_RW);
+		err = lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID,
+							  BUTTON2_OBJ_INST_ID, TIMESTAMP_RID),
+					       &button_timestamp,
+					       sizeof(button_timestamp),
+					       sizeof(button_timestamp),
+					       LWM2M_RES_DATA_FLAG_RW);
 		if (err) {
 			return err;
 		}
@@ -920,34 +922,34 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 			LOG_WRN("No network bearer set");
 		}
 
-		err = lwm2m_engine_set_res_data(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID,
-							   0, AVAIL_NETWORK_BEARER_ID, 0),
-						&bearers[0], sizeof(bearers[0]),
-						LWM2M_RES_DATA_FLAG_RO);
+		err = lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID,
+							  0, AVAIL_NETWORK_BEARER_ID, 0),
+					       &bearers[0], sizeof(bearers[0]), sizeof(bearers[0]),
+					       LWM2M_RES_DATA_FLAG_RO);
 		if (err) {
 			return err;
 		}
 
-		err = lwm2m_engine_set_res_data(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID,
+		err = lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID,
 							   0, AVAIL_NETWORK_BEARER_ID, 1),
-						&bearers[1], sizeof(bearers[1]),
-						LWM2M_RES_DATA_FLAG_RO);
+					       &bearers[1], sizeof(bearers[1]), sizeof(bearers[1]),
+					       LWM2M_RES_DATA_FLAG_RO);
 		if (err) {
 			return err;
 		}
 
-		err = lwm2m_engine_set_res_data(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID,
+		err = lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID,
 							   0, IP_ADDRESSES, 0),
-						modem_dyn_buf->ip, sizeof(modem_dyn_buf->ip),
-						LWM2M_RES_DATA_FLAG_RO);
+					       modem_dyn_buf->ip, sizeof(modem_dyn_buf->ip),
+					       sizeof(modem_dyn_buf->ip), LWM2M_RES_DATA_FLAG_RO);
 		if (err) {
 			return err;
 		}
 
-		err = lwm2m_engine_set_res_data(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID,
+		err = lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_CONNECTIVITY_MONITORING_ID,
 							   0, APN, 0),
-						modem_dyn_buf->apn, sizeof(modem_dyn_buf->apn),
-						LWM2M_RES_DATA_FLAG_RO);
+					       modem_dyn_buf->apn, sizeof(modem_dyn_buf->apn),
+					       sizeof(modem_dyn_buf->apn), LWM2M_RES_DATA_FLAG_RO);
 		if (err) {
 			return err;
 		}
@@ -1022,52 +1024,55 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 	/* Modem static */
 	if (modem_stat_buf->queued) {
 
-		err = lwm2m_engine_set_res_data(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0,
-							   MODEL_NUMBER_RID),
-						CONFIG_BOARD,
-						sizeof(CONFIG_BOARD),
-						LWM2M_RES_DATA_FLAG_RO);
+		err = lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0,
+							  MODEL_NUMBER_RID),
+					       CONFIG_BOARD,
+					       sizeof(CONFIG_BOARD),
+					       sizeof(CONFIG_BOARD),
+					       LWM2M_RES_DATA_FLAG_RO);
 		if (err) {
 			return err;
 		}
 
-		err = lwm2m_engine_set_res_data(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0,
-							   HARDWARE_VERSION_RID),
-						CONFIG_SOC,
-						sizeof(CONFIG_SOC),
-						LWM2M_RES_DATA_FLAG_RO);
+		err = lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0,
+							  HARDWARE_VERSION_RID),
+					       CONFIG_SOC,
+					       sizeof(CONFIG_SOC),
+					       sizeof(CONFIG_SOC),
+					       LWM2M_RES_DATA_FLAG_RO);
 		if (err) {
 			return err;
 		}
 
-		err = lwm2m_engine_set_res_data(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0,
-							   MANUFACTURER_RID),
-						CONFIG_CLOUD_CODEC_MANUFACTURER,
-						sizeof(CONFIG_CLOUD_CODEC_MANUFACTURER),
-						LWM2M_RES_DATA_FLAG_RO);
+		err = lwm2m_engine_set_res_buf(LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0,
+							  MANUFACTURER_RID),
+					       CONFIG_CLOUD_CODEC_MANUFACTURER,
+					       sizeof(CONFIG_CLOUD_CODEC_MANUFACTURER),
+					       sizeof(CONFIG_CLOUD_CODEC_MANUFACTURER),
+					       LWM2M_RES_DATA_FLAG_RO);
 		if (err) {
 			return err;
 		}
 
-		err = lwm2m_engine_set_res_data(
+		err = lwm2m_engine_set_res_buf(
 			LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, FIRMWARE_VERSION_RID),
-			modem_stat_buf->appv,
+			modem_stat_buf->appv, sizeof(modem_stat_buf->appv),
 			sizeof(modem_stat_buf->appv), LWM2M_RES_DATA_FLAG_RO);
 		if (err) {
 			return err;
 		}
 
-		err = lwm2m_engine_set_res_data(
+		err = lwm2m_engine_set_res_buf(
 			LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, SOFTWARE_VERSION_RID),
-			modem_stat_buf->fw,
+			modem_stat_buf->fw, sizeof(modem_stat_buf->fw),
 			sizeof(modem_stat_buf->fw), LWM2M_RES_DATA_FLAG_RO);
 		if (err) {
 			return err;
 		}
 
-		err = lwm2m_engine_set_res_data(
+		err = lwm2m_engine_set_res_buf(
 			LWM2M_PATH(LWM2M_OBJECT_DEVICE_ID, 0, DEVICE_SERIAL_NUMBER_ID),
-			modem_stat_buf->imei,
+			modem_stat_buf->imei, sizeof(modem_stat_buf->imei),
 			sizeof(modem_stat_buf->imei), LWM2M_RES_DATA_FLAG_RO);
 		if (err) {
 			return err;
