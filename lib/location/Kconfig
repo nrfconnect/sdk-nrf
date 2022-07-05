@@ -75,10 +75,6 @@ endif # LOCATION_METHOD_GNSS
 
 if LOCATION_METHOD_WIFI
 
-config LOCATION_METHOD_WIFI_DEV_NAME
-	string "Used Wi-Fi device name"
-	default "esp8266"
-
 config LOCATION_METHOD_WIFI_SERVICE_NRF_CLOUD
 	bool "nRF Cloud location service"
 	default y
