@@ -27,7 +27,7 @@ A sensor reporting the device operating temperature could combine the Bluetooth 
 
 .. code-block:: c
 
-   static struct device *dev;
+   static const struct device *dev = DEVICE_DT_GET_ONE(nordic_nrf_temp);
 
    static int temp_get(struct bt_mesh_sensor *sensor,
                        struct bt_mesh_msg_ctx *ctx,
@@ -44,7 +44,7 @@ A sensor reporting the device operating temperature could combine the Bluetooth 
 
    void init(void)
    {
-       dev = device_get_binding(DT_INST_0_NORDIC_NRF_TEMP_LABEL);
+        __ASSERT(device_is_ready(dev), "Sensor device not ready");
    }
 
 Additionally, a pointer to the ``temp_sensor`` structure should be passed to a Sensor Server to be exposed to the mesh.
