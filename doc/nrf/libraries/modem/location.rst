@@ -110,7 +110,14 @@ Configure the following Kconfig options to enable this library:
 Configure the following Kconfig options to enable Wi-Fi interface:
 
 * :kconfig:option:`CONFIG_WIFI` - Enable Wi-Fi for Zephyr.
-* :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_DEV_NAME` - Name of the Wi-Fi device.
+
+The chosen Wi-Fi device needs to be set in Devicetree:
+
+.. code-block:: devicetree
+
+    chosen {
+      ncs,location-wifi = &mywifi;
+    };
 
 Configure the following options to enable location methods of your choice:
 

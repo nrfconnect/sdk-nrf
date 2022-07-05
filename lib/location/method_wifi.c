@@ -275,13 +275,12 @@ int method_wifi_init(void)
 	running = false;
 	current_scan_result_count = 0;
 	latest_scan_result_count = 0;
-	const struct device *wifi_dev;
+	const struct device *wifi_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_location_wifi));
 
 	wifi_iface = NULL;
-	wifi_dev = device_get_binding(CONFIG_LOCATION_METHOD_WIFI_DEV_NAME);
-	if (!wifi_dev) {
-		LOG_ERR("Could not get Wi-Fi dev by name %s", CONFIG_LOCATION_METHOD_WIFI_DEV_NAME);
-		return -EFAULT;
+	if (!device_is_ready(wifi_dev)) {
+		LOG_ERR("Wi-Fi device %s not ready", wifi_dev->name);
+		return -ENODEV;
 	}
 
 	wifi_iface = net_if_lookup_by_dev(wifi_dev);
