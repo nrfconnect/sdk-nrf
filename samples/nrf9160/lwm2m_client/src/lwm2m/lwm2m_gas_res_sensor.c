@@ -83,8 +83,8 @@ int lwm2m_init_gas_res_sensor(void)
 	lwm2m_engine_register_read_callback(LWM2M_PATH(IPSO_OBJECT_GENERIC_SENSOR_ID, 0,
 						       SENSOR_VALUE_RID),
 					    gas_resistance_read_cb);
-	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_GENERIC_SENSOR_ID, 0, SENSOR_VALUE_RID),
-				  (void **)&gas_res_float, &dummy_data_len, &dummy_data_flags);
+	lwm2m_engine_get_res_buf(LWM2M_PATH(IPSO_OBJECT_GENERIC_SENSOR_ID, 0, SENSOR_VALUE_RID),
+				  (void **)&gas_res_float, NULL, &dummy_data_len, &dummy_data_flags);
 	lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_GENERIC_SENSOR_ID, 0, SENSOR_UNITS_RID),
 				  GAS_RES_UNIT, sizeof(GAS_RES_UNIT), LWM2M_RES_DATA_FLAG_RO);
 	lwm2m_engine_set_res_data(

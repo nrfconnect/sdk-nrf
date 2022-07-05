@@ -197,12 +197,12 @@ int lwm2m_init_accel(void)
 		LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID), accel_y_read_cb);
 	lwm2m_engine_register_read_callback(
 		LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID), accel_z_read_cb);
-	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID),
-				  (void **)&x_val, &dummy_data_len, &dummy_data_flags);
-	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID),
-				  (void **)&y_val, &dummy_data_len, &dummy_data_flags);
-	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID),
-				  (void **)&z_val, &dummy_data_len, &dummy_data_flags);
+	lwm2m_engine_get_res_buf(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID),
+				  (void **)&x_val, NULL, &dummy_data_len, &dummy_data_flags);
+	lwm2m_engine_get_res_buf(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID),
+				  (void **)&y_val, NULL, &dummy_data_len, &dummy_data_flags);
+	lwm2m_engine_get_res_buf(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID),
+				  (void **)&z_val, NULL, &dummy_data_len, &dummy_data_flags);
 	lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, MIN_RANGE_VALUE_RID),
 			       &min_range_val);
 	lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, MAX_RANGE_VALUE_RID),
