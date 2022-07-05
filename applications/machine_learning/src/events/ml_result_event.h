@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @brief Machine Learning Result event header file.
+ */
+
 #ifndef _ML_RESULT_EVENT_H_
 #define _ML_RESULT_EVENT_H_
 
@@ -24,11 +28,15 @@ extern "C" {
 
 /** @brief Machine learning classification result event. */
 struct ml_result_event {
-	struct app_event_header header; /**< Event header. */
+	/** Event header. */
+	struct app_event_header header;
 
-	const char *label; /**< Classification label. */
-	float value; /**< Classification value. */
-	float anomaly; /**< Anomaly value. */
+	/** Classification label. */
+	const char *label;
+	/** Classification value. */
+	float value;
+	/** Anomaly value. */
+	float anomaly;
 };
 
 /** @brief Sign in event
@@ -37,10 +45,13 @@ struct ml_result_event {
  * to mark that the module actively listens for the result event.
  */
 struct ml_result_signin_event {
-	struct app_event_header header; /**< Event header. */
+	/** Event header. */
+	struct app_event_header header;
 
-	size_t module_idx; /**< @brief The index of the module */
-	bool state;        /**< @brief  Requested state: true to sign in, false to sign off */
+	/** The index of the module. */
+	size_t module_idx;
+	/** Requested state: true to sign in, false to sign off. */
+	bool state;
 };
 
 APP_EVENT_TYPE_DECLARE(ml_result_event);
