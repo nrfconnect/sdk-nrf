@@ -14,6 +14,7 @@
 
 #include "macros_common.h"
 #include "ctrl_events.h"
+#include "ble_audio_services.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(cis_headset, CONFIG_LOG_BLE_LEVEL);
@@ -249,6 +250,14 @@ static int initialize(le_audio_receive_cb recv_cb)
 	static bool initialized;
 
 	if (!initialized) {
+#if (CONFIG_BT_VCS)
+		ret = ble_vcs_server_init();
+		if (ret) {
+			LOG_ERR("VCS server init failed");
+			return ret;
+		}
+#endif /* (CONFIG_BT_VCS) */
+
 		receive_cb = recv_cb;
 		ret = bt_audio_capability_register(&caps);
 		if (ret) {
@@ -288,16 +297,40 @@ int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
 
 int le_audio_volume_up(void)
 {
+	int ret;
+
+	ret = ble_vcs_volume_up();
+	if (ret) {
+		LOG_WRN("Failed to increase volume");
+		return ret;
+	}
+
 	return 0;
 }
 
 int le_audio_volume_down(void)
 {
+	int ret;
+
+	ret = ble_vcs_volume_down();
+	if (ret) {
+		LOG_WRN("Failed to decrease volume");
+		return ret;
+	}
+
 	return 0;
 }
 
 int le_audio_volume_mute(void)
 {
+	int ret;
+
+	ret = ble_vcs_volume_mute();
+	if (ret) {
+		LOG_WRN("Failed to mute volume");
+		return ret;
+	}
+
 	return 0;
 }
 

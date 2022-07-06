@@ -12,6 +12,7 @@
 #include "macros_common.h"
 #include "ctrl_events.h"
 #include "audio_datapath.h"
+#include "ble_audio_services.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(cis_gateway, CONFIG_LOG_BLE_LEVEL);
@@ -309,6 +310,9 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	if (ret) {
 		LOG_ERR("Failed to set security to L2: %d", ret);
 	}
+
+	/* TODO: Channel nr is 0 for now, to be changed with dual CIS */
+	ble_vcs_discover(conn, 0);
 }
 
 static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
@@ -364,6 +368,14 @@ static int initialize(le_audio_receive_cb recv_cb)
 	int ret;
 	static bool initialized;
 
+#if (CONFIG_BT_VCS_CLIENT)
+	ret = ble_vcs_client_init();
+	if (ret) {
+		LOG_ERR("VCS client init failed");
+		return ret;
+	}
+#endif /* (CONFIG_BT_VCS_CLIENT) */
+
 	ARG_UNUSED(recv_cb);
 	if (!initialized) {
 		audio_stream.ops = &stream_ops;
@@ -386,16 +398,40 @@ int le_audio_config_get(uint32_t *bitrate, uint32_t *sampling_rate)
 
 int le_audio_volume_up(void)
 {
+	int ret;
+
+	ret = ble_vcs_volume_up();
+	if (ret) {
+		LOG_WRN("Failed to increase volume");
+		return ret;
+	}
+
 	return 0;
 }
 
 int le_audio_volume_down(void)
 {
+	int ret;
+
+	ret = ble_vcs_volume_down();
+	if (ret) {
+		LOG_WRN("Failed to decrease volume");
+		return ret;
+	}
+
 	return 0;
 }
 
 int le_audio_volume_mute(void)
 {
+	int ret;
+
+	ret = ble_vcs_volume_mute();
+	if (ret) {
+		LOG_WRN("Failed to mute volume");
+		return ret;
+	}
+
 	return 0;
 }
 

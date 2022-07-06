@@ -108,6 +108,10 @@ config BT_GAP_PERIPHERAL_PREF_PARAMS
 	bool
 	default n
 
+config BT_VCS
+	bool
+	default y
+
 endif # AUDIO_DEV = 1 (HEADSET)
 
 # GATEWAY
@@ -128,6 +132,10 @@ config BT_ISO_MAX_CHAN
 config BT_MAX_PAIRED
 	int
 	default 1
+
+config BT_VCS_CLIENT
+	bool
+	default y
 
 endif # AUDIO_DEV = 2 (GATEWAY)
 
