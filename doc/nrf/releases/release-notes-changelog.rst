@@ -192,6 +192,11 @@ Bluetooth samples
 
   * Added possibility of toggling between show and hide UI indication in the Fast Pair not discoverable advertising.
 
+* :ref:`bluetooth_direction_finding_connectionless_tx` sample:
+
+  * Fixed a build error related to the missing :kconfig:option:`CONFIG_BT_DF_CONNECTIONLESS_CTE_TX` Kconfig option.
+    The option has been added and set to ``y`` in the sample's :file:`prj.conf` file.
+
 Bluetooth mesh samples
 ----------------------
 
