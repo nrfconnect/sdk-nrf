@@ -281,7 +281,7 @@ int link_shell_pdn_activate(int pdn_cid)
 
 void link_shell_pdn_events_subscribe(void)
 {
-	pdn_default_callback_set(link_pdn_event_handler);
+	pdn_default_ctx_cb_reg(link_pdn_event_handler);
 }
 
 int link_shell_pdn_event_forward_cb_set(pdn_event_handler_t cb)

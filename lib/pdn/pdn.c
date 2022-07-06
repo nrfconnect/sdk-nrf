@@ -199,7 +199,7 @@ static void on_modem_init(int ret, void *ctx)
 #endif /* CONFIG_PDN_DEFAULTS_OVERRIDE */
 }
 
-int pdn_default_callback_set(pdn_event_handler_t cb)
+int pdn_default_ctx_cb_reg(pdn_event_handler_t cb)
 {
 	struct pdn *pdn;
 
