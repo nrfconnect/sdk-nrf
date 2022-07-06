@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#if (CONFIG_AUDIO_DEV == GATEWAY)
-
 #include "le_audio.h"
 
 #include <bluetooth/bluetooth.h>
@@ -480,5 +478,3 @@ int le_audio_disable(void)
 {
 	return 0;
 }
-
-#endif /* (CONFIG_AUDIO_DEV == GATEWAY) */

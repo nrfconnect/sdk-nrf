@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+rsource "Kconfig.defaults"
+
 menu "Modules"
 
 config BUTTON_DEBOUNCE_MS

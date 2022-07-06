@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#if (CONFIG_AUDIO_DEV == HEADSET)
-
 #include "le_audio.h"
 
 #include <bluetooth/audio/audio.h>
@@ -342,5 +340,3 @@ int le_audio_disable(void)
 {
 	return 0;
 }
-
-#endif /* (CONFIG_AUDIO_DEV == HEADSET) */
