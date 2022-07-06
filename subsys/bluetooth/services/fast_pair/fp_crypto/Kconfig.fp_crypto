@@ -13,7 +13,7 @@ config BT_FAST_PAIR_CRYPTO
 if BT_FAST_PAIR_CRYPTO
 
 choice BT_FAST_PAIR_CRYPTO_BACKEND
-	prompt "Fast Pair cryptographic backend selection"
+	prompt "Cryptographic backend selection"
 	default BT_FAST_PAIR_CRYPTO_TINYCRYPT if BUILD_WITH_TFM
 	default BT_FAST_PAIR_CRYPTO_MBEDTLS
 	help
