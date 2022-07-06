@@ -1130,6 +1130,18 @@ NCSDK-15675: Possible advertising start failure and module state error in :ref:`
 
   **Workaround:** Manually cherry-pick and apply commit with fix from main (commit hash: ``934a25ac23125758e350b64bca23885486682109``).
 
+.. rst-class:: v2-0-0
+
+NCSDK-15707: Visual glitches when updating an RGB LED's color in :ref:`caf_leds`
+  Due to changes in the default DTS of the boards, the default PWM period has been increased.
+  The first LED channel is updated one PWM period before other channels.
+  This causes visual glitches for LEDs with more than one color channel when the LED color is being updated.
+  A shorter LED PWM period mitigates the observed issue.
+  See :ref:`caf_leds` for more information.
+
+  **Workaround:** Make sure your application includes the devicetree overlay file in which PWM period is decreased.
+  For example, include the following commit to solve the issue for the :ref:`nrf_machine_learning_app` application for Nordic Thingy:53: ``fa2b57cddbaacf393c77def5d0302e1a45138d21``.
+
 Subsystems
 **********
 
