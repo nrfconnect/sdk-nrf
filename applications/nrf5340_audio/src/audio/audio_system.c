@@ -41,7 +41,6 @@ static struct sw_codec_config sw_codec_cfg;
 /* Buffer which can hold max 1 period test tone at 1000 Hz */
 static int16_t test_tone_buf[CONFIG_AUDIO_SAMPLE_RATE_HZ / 1000];
 static size_t test_tone_size;
-static bool audio_system_started;
 
 static void audio_gateway_configure(void)
 {
@@ -280,11 +279,6 @@ void audio_system_start(void)
 {
 	int ret;
 
-	if (audio_system_started) {
-		LOG_WRN("Audio system already started");
-		return;
-	}
-
 	if (CONFIG_AUDIO_DEV == HEADSET) {
 		audio_headset_configure();
 	} else if (CONFIG_AUDIO_DEV == GATEWAY) {
@@ -309,7 +303,7 @@ void audio_system_start(void)
 
 	sw_codec_cfg.initialized = true;
 
-	if (sw_codec_cfg.encoder.enabled) {
+	if (sw_codec_cfg.encoder.enabled && encoder_thread_id == NULL) {
 		encoder_thread_id =
 			k_thread_create(&encoder_thread_data, encoder_thread_stack,
 					CONFIG_ENCODER_STACK_SIZE, (k_thread_entry_t)encoder_thread,
@@ -318,8 +312,6 @@ void audio_system_start(void)
 		ret = k_thread_name_set(encoder_thread_id, "ENCODER");
 		ERR_CHK(ret);
 	}
-
-	audio_system_started = true;
 
 #if ((CONFIG_AUDIO_SOURCE_USB) && (CONFIG_AUDIO_DEV == GATEWAY))
 	ret = audio_usb_start(&fifo_tx, &fifo_rx);
@@ -337,23 +329,12 @@ void audio_system_stop(void)
 {
 	int ret;
 
-	if (!audio_system_started) {
-		LOG_WRN("Audio system not started");
-		return;
-	}
-
-	audio_system_started = false;
-
 	if (!sw_codec_cfg.initialized) {
 		LOG_WRN("Codec already unitialized");
 		return;
 	}
 
 	LOG_DBG("Stopping codec");
-	/* Aborting encoder thread before uninitializing */
-	if (sw_codec_cfg.encoder.enabled) {
-		k_thread_abort(encoder_thread_id);
-	}
 
 #if ((CONFIG_AUDIO_DEV == GATEWAY) && CONFIG_AUDIO_SOURCE_USB)
 	audio_usb_stop();
@@ -369,11 +350,8 @@ void audio_system_stop(void)
 	ERR_CHK_MSG(ret, "Failed to uninit codec");
 	sw_codec_cfg.initialized = false;
 
-	/* This will force a reinit when starting audio again, ensuring that
-	 * previous data is overwritten
-	 */
-	fifo_tx.initialized = false;
-	fifo_rx.initialized = false;
+	data_fifo_empty(&fifo_rx);
+	data_fifo_empty(&fifo_tx);
 }
 
 void audio_system_init(void)

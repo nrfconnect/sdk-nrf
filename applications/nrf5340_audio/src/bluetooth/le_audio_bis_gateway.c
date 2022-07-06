@@ -66,7 +66,11 @@ static void stream_sent_cb(struct bt_audio_stream *stream)
 {
 	static uint32_t sent_cnt;
 
-	atomic_dec(&iso_tx_pool_alloc[0]);
+	if (atomic_get(&iso_tx_pool_alloc[0])) {
+		atomic_dec(&iso_tx_pool_alloc[0]);
+	} else {
+		LOG_WRN("Decreasing atomic variable failed");
+	}
 
 	sent_cnt++;
 
@@ -91,8 +95,6 @@ static void stream_stopped_cb(struct bt_audio_stream *stream)
 
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 	ERR_CHK(ret);
-
-	atomic_clear(&iso_tx_pool_alloc[0]);
 
 	LOG_INF("Broadcast source stopped");
 
@@ -155,14 +157,26 @@ int le_audio_volume_mute(void)
 
 int le_audio_play(void)
 {
-	stream_started_cb(&streams[0]);
-	return 0;
+	int ret;
+
+	ret = bt_audio_broadcast_source_start(broadcast_source);
+	if (ret) {
+		LOG_WRN("Failed to start broadcast, ret: %d", ret);
+	}
+
+	return ret;
 }
 
 int le_audio_pause(void)
 {
-	stream_stopped_cb(&streams[0]);
-	return 0;
+	int ret;
+
+	ret = bt_audio_broadcast_source_stop(broadcast_source);
+	if (ret) {
+		LOG_WRN("Failed to stop broadcast, ret: %d", ret);
+	}
+
+	return ret;
 }
 
 int le_audio_send(uint8_t const *const data, size_t size)

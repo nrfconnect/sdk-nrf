@@ -135,6 +135,46 @@ int data_fifo_num_used_get(struct data_fifo *data_fifo, uint32_t *alloced_num, u
 	return ret;
 }
 
+int data_fifo_empty(struct data_fifo *data_fifo)
+{
+	uint32_t fifo_alloced_num, fifo_locked_num;
+	int ret;
+	void *old_data;
+	size_t size;
+
+	ret = data_fifo_num_used_get(data_fifo, &fifo_alloced_num, &fifo_locked_num);
+	if (ret) {
+		LOG_ERR("Failed to get num used in FIFO");
+		return ret;
+	}
+
+	for (int i = 0; i < fifo_locked_num; i++) {
+		ret = data_fifo_pointer_last_filled_get(data_fifo, &old_data, &size, K_NO_WAIT);
+		if (ret == -ENOMSG) {
+			/* If there are no more blocks in FIFO, break */
+			break;
+		} else if (ret) {
+			return ret;
+		}
+
+		ret = data_fifo_block_free(data_fifo, &old_data);
+		if (ret) {
+			LOG_ERR("Failed to free FIFO block");
+			return ret;
+		}
+	}
+
+	/* Re-init k_mem_slab to reset the number of alloced slabs */
+	ret = k_mem_slab_init(&data_fifo->mem_slab, data_fifo->slab_buffer,
+			      data_fifo->block_size_max, data_fifo->elements_max);
+	if (ret) {
+		LOG_ERR("Slab init failed with %d", ret);
+		return ret;
+	}
+
+	return 0;
+}
+
 int data_fifo_init(struct data_fifo *data_fifo)
 {
 	__ASSERT_NO_MSG(data_fifo != NULL);
@@ -150,7 +190,7 @@ int data_fifo_init(struct data_fifo *data_fifo)
 	ret = k_mem_slab_init(&data_fifo->mem_slab, data_fifo->slab_buffer,
 			      data_fifo->block_size_max, data_fifo->elements_max);
 	if (ret) {
-		LOG_ERR("Slab init failed with %d\n", ret);
+		LOG_ERR("Slab init failed with %d", ret);
 		return ret;
 	}
 
