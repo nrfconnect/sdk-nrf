@@ -44,10 +44,12 @@
 
 #define MPSL_FEM_GPIO_INVALID_PIN        0xFFU
 #define MPSL_FEM_GPIOTE_INVALID_CHANNEL  0xFFU
-#define MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT \
-	.enable        = false, \
-	.active_high   = true, \
-	.gpio_port_pin = MPSL_FEM_GPIO_INVALID_PIN, \
+#define MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT	\
+	.gpio_pin      = {				\
+		.port_pin = MPSL_FEM_GPIO_INVALID_PIN,	\
+	},						\
+	.enable        = false,				\
+	.active_high   = true,				\
 	.gpiote_ch_id  = MPSL_FEM_GPIOTE_INVALID_CHANNEL
 
 static int ppi_channel_alloc(uint8_t *ppi_channels, size_t size)
@@ -135,12 +137,13 @@ static int fem_simple_gpio_configure(void)
 		},
 		.pa_pin_config = {
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ctx_gpios)
-			.cfg_type      = MPSL_FEM_PIN_CFG_TYPE_PIN_PORT,
+			.gpio_pin      = {
+				.p_port   = MPSL_FEM_GPIO_PORT_REG(ctx_gpios),
+				.port_no  = MPSL_FEM_GPIO_PORT_NO(ctx_gpios),
+				.port_pin = MPSL_FEM_GPIO_PIN_NO(ctx_gpios),
+			},
 			.enable        = true,
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(ctx_gpios),
-			.p_port        = MPSL_FEM_GPIO_PORT_REG(ctx_gpios),
-			.gpio_port_no  = MPSL_FEM_GPIO_PORT_NO(ctx_gpios),
-			.gpio_port_pin = MPSL_FEM_GPIO_PIN_NO(ctx_gpios),
 			.gpiote_ch_id  = ctx_gpiote_channel
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
@@ -148,12 +151,13 @@ static int fem_simple_gpio_configure(void)
 		},
 		.lna_pin_config = {
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), crx_gpios)
-			.cfg_type      = MPSL_FEM_PIN_CFG_TYPE_PIN_PORT,
+			.gpio_pin      = {
+				.p_port   = MPSL_FEM_GPIO_PORT_REG(crx_gpios),
+				.port_no  = MPSL_FEM_GPIO_PORT_NO(crx_gpios),
+				.port_pin = MPSL_FEM_GPIO_PIN_NO(crx_gpios),
+			},
 			.enable        = true,
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(crx_gpios),
-			.p_port        = MPSL_FEM_GPIO_PORT_REG(crx_gpios),
-			.gpio_port_no  = MPSL_FEM_GPIO_PORT_NO(crx_gpios),
-			.gpio_port_pin = MPSL_FEM_GPIO_PIN_NO(crx_gpios),
 			.gpiote_ch_id  = crx_gpiote_channel
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT

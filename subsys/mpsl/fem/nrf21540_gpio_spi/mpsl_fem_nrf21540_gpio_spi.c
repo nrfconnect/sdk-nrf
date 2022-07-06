@@ -268,12 +268,13 @@ static int fem_nrf21540_gpio_spi_configure(void)
 		},
 		.pa_pin_config = {
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), tx_en_gpios)
-			.cfg_type      = MPSL_FEM_PIN_CFG_TYPE_PIN_PORT,
+			.gpio_pin      = {
+				.p_port   = MPSL_FEM_GPIO_PORT_REG(tx_en_gpios),
+				.port_no  = MPSL_FEM_GPIO_PORT_NO(tx_en_gpios),
+				.port_pin = MPSL_FEM_GPIO_PIN_NO(tx_en_gpios),
+			},
 			.enable        = true,
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(tx_en_gpios),
-			.p_port        = MPSL_FEM_GPIO_PORT_REG(tx_en_gpios),
-			.gpio_port_no  = MPSL_FEM_GPIO_PORT_NO(tx_en_gpios),
-			.gpio_port_pin = MPSL_FEM_GPIO_PIN_NO(tx_en_gpios),
 			.gpiote_ch_id  = txen_gpiote_channel
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
@@ -281,12 +282,13 @@ static int fem_nrf21540_gpio_spi_configure(void)
 		},
 		.lna_pin_config = {
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), rx_en_gpios)
-			.cfg_type      = MPSL_FEM_PIN_CFG_TYPE_PIN_PORT,
+			.gpio_pin      = {
+				.p_port   = MPSL_FEM_GPIO_PORT_REG(rx_en_gpios),
+				.port_no  = MPSL_FEM_GPIO_PORT_NO(rx_en_gpios),
+				.port_pin = MPSL_FEM_GPIO_PIN_NO(rx_en_gpios),
+			},
 			.enable        = true,
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(rx_en_gpios),
-			.p_port        = MPSL_FEM_GPIO_PORT_REG(rx_en_gpios),
-			.gpio_port_no  = MPSL_FEM_GPIO_PORT_NO(rx_en_gpios),
-			.gpio_port_pin = MPSL_FEM_GPIO_PIN_NO(rx_en_gpios),
 			.gpiote_ch_id  = rxen_gpiote_channel
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
@@ -294,12 +296,13 @@ static int fem_nrf21540_gpio_spi_configure(void)
 		},
 		.pdn_pin_config = {
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), pdn_gpios)
-			.cfg_type      = MPSL_FEM_PIN_CFG_TYPE_PIN_PORT,
+			.gpio_pin      = {
+				.p_port   = MPSL_FEM_GPIO_PORT_REG(pdn_gpios),
+				.port_no  = MPSL_FEM_GPIO_PORT_NO(pdn_gpios),
+				.port_pin = MPSL_FEM_GPIO_PIN_NO(pdn_gpios),
+			},
 			.enable        = true,
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(pdn_gpios),
-			.p_port        = MPSL_FEM_GPIO_PORT_REG(pdn_gpios),
-			.gpio_port_no  = MPSL_FEM_GPIO_PORT_NO(pdn_gpios),
-			.gpio_port_pin = MPSL_FEM_GPIO_PIN_NO(pdn_gpios),
 			.gpiote_ch_id  = pdn_gpiote_channel
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
