@@ -67,6 +67,12 @@ Unsolicited notification
 
 ::
 
+   #XGPS: <NMEA message>
+
+The ``<NMEA message>`` is the ``$GPGGA`` (Global Positioning System Fix Data) NMEA sentence.
+
+::
+
    #XGPS: <gnss_service>,<gnss_status>
 
 Refer to the READ command.
@@ -198,6 +204,10 @@ It accepts the following integer values:
 
 When the ``<signify>`` parameter is not specified, it does not signify the location info to nRF Cloud.
 
+.. note::
+   The application signifies the location info to nRF Cloud in a best-effort way.
+   The minimal report interval is 5 seconds.
+
 Unsolicited notification
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -288,7 +298,6 @@ Example
 
   OK
 
-
 Test command
 ------------
 
@@ -373,6 +382,12 @@ Unsolicited notification
 * The ``<speed>`` value represents the horizontal speed in meters.
 * The ``<heading>`` value represents the heading of the movement of the user in degrees.
 * The ``<datetime>`` value represents the UTC date-time.
+
+::
+
+   #XGPS: <NMEA message>
+
+The ``<NMEA message>`` is the ``$GPGGA`` (Global Positioning System Fix Data) NMEA sentence.
 
 ::
 
@@ -538,6 +553,12 @@ Unsolicited notification
 * The ``<speed>`` value represents the horizontal speed in meters.
 * The ``<heading>`` value represents the heading of the movement of the user in degrees.
 * The ``<datetime>`` value represents the UTC date-time.
+
+::
+
+   #XGPS: <NMEA message>
+
+The ``<NMEA message>`` is the ``$GPGGA`` (Global Positioning System Fix Data) NMEA sentence.
 
 ::
 
