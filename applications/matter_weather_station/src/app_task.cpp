@@ -106,7 +106,7 @@ Identify sIdentifyHumidity = { chip::EndpointId{ kHumidityMeasurementEndpointId 
 Identify sIdentifyPressure = { chip::EndpointId{ kPressureMeasurementEndpointId }, AppTask::OnIdentifyStart, AppTask::OnIdentifyStop,
 			EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_AUDIBLE_BEEP };
 
-const device *sBme688SensorDev = device_get_binding(DT_LABEL(DT_INST(0, bosch_bme680)));
+const device *sBme688SensorDev = DEVICE_DT_GET_ONE(bosch_bme680);
 } /* namespace */
 
 AppTask AppTask::sAppTask;
@@ -163,8 +163,8 @@ CHIP_ERROR AppTask::Init()
 		return chip::System::MapErrorZephyr(ret);
 	}
 
-	if (!sBme688SensorDev) {
-		LOG_ERR("BME688 sensor init failed");
+	if (!device_is_ready(sBme688SensorDev)) {
+		LOG_ERR("BME688 sensor device not ready");
 		return chip::System::MapErrorZephyr(-ENODEV);
 	}
 
