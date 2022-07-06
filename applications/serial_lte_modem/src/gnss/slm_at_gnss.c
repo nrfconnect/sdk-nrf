@@ -13,7 +13,7 @@
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
 #include <net/nrf_cloud_cell_pos.h>
-#include <modem/lte_lc.h>
+#include <net/nrf_cloud_rest.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_gnss.h"
@@ -90,6 +90,23 @@ static struct lte_lc_cells_info cell_data = {
 	.neighbor_cells = neighbor_cells
 };
 static int ncell_meas_status;
+static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN];
+
+#define REST_RX_BUF_SZ			1024
+#define REST_LOCATION_REPORT_MS		5000
+
+/* Buffer used for REST calls */
+static char rx_buf[REST_RX_BUF_SZ];
+/* nRF Cloud REST context */
+struct nrf_cloud_rest_context rest_ctx = {
+	.connect_socket = -1,
+	.keep_alive = false,
+	.timeout_ms = NRF_CLOUD_REST_TIMEOUT_NONE,
+	.rx_buf = rx_buf,
+	.rx_buf_len = sizeof(rx_buf),
+	.fragment_size = 0,
+	.auth = NULL
+};
 
 /* global variable defined in different files */
 extern struct k_work_q slm_work_q;
@@ -159,6 +176,10 @@ static int gnss_shutdown(void)
 	run_status = RUN_STATUS_STOPPED;
 	gnss_status_notify();
 	run_type = RUN_TYPE_NONE;
+
+	if (nrf_cloud_ready) {
+		(void)nrf_cloud_rest_disconnect(&rest_ctx);
+	}
 
 	return ret;
 }
@@ -460,6 +481,9 @@ static void fix_rep_wk(struct k_work *work)
 {
 	int err;
 	struct nrf_modem_gnss_pvt_data_frame pvt;
+	struct nrf_modem_gnss_nmea_data_frame nmea;
+	int64_t ts_ms;
+	static int64_t last_ts_ms;
 
 	ARG_UNUSED(work);
 
@@ -486,6 +510,31 @@ static void fix_rep_wk(struct k_work *work)
 				(pvt.sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX) ? 1 : 0,
 				(pvt.sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_UNHEALTHY) ? 1 : 0);
 		}
+	}
+
+	err = nrf_modem_gnss_read((void *)&nmea, sizeof(nmea), NRF_MODEM_GNSS_DATA_NMEA);
+	if (err) {
+		LOG_WRN("Failed to read GNSS NMEA data, error %d", err);
+	} else {
+		/* Report to nRF Cloud by best-effort */
+		if (nrf_cloud_ready && location_signify) {
+			err = date_time_now(&ts_ms);
+			if (err) {
+				err = nrf_cloud_rest_send_location(&rest_ctx, device_id,
+								nmea.nmea_str, -1);
+			} else if (last_ts_ms == 0 ||
+				ts_ms > last_ts_ms + REST_LOCATION_REPORT_MS) {
+				last_ts_ms = ts_ms;
+				err = nrf_cloud_rest_send_location(&rest_ctx, device_id,
+								nmea.nmea_str, ts_ms);
+			}
+			if (err) {
+				LOG_WRN("Failed to send location, error %d", err);
+			}
+		}
+		/* GGA,hhmmss.ss,llll.ll,a,yyyyy.yy,a,x,xx,x.x,x.x,M,x.x,M,x.x,xxxx \r\n */
+		sprintf(rsp_buf, "\r\n#XGPS: %s", nmea.nmea_str);
+		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 
 	if (run_type == RUN_TYPE_PGPS) {
@@ -620,6 +669,7 @@ static void on_cloud_evt_ready(void)
 static void on_cloud_evt_disconnected(void)
 {
 	nrf_cloud_ready = false;
+	(void)nrf_cloud_rest_disconnect(&rest_ctx);
 	sprintf(rsp_buf, "\r\n#XNRFCLOUD: %d,%d\r\n", nrf_cloud_ready, location_signify);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 	at_monitor_pause(&ncell_meas);
@@ -711,7 +761,6 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 	}
 }
 
-#if defined(CONFIG_SLM_AGPS) || defined(CONFIG_SLM_PGPS)
 static void date_time_event_handler(const struct date_time_evt *evt)
 {
 	switch (evt->type) {
@@ -728,7 +777,6 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 		break;
 	}
 }
-#endif
 
 static int nrf_cloud_datamode_callback(uint8_t op, const uint8_t *data, int len)
 {
@@ -790,6 +838,11 @@ int handle_at_gps(enum at_cmd_type cmd_type)
 				}
 			} /* else leave it to default or previously configured timeout */
 
+			err = nrf_modem_gnss_nmea_mask_set(NRF_MODEM_GNSS_NMEA_GGA_MASK);
+			if (err < 0) {
+				LOG_ERR("Failed to set nmea mask, error: %d", err);
+				return err;
+			}
 			err = gnss_startup(RUN_TYPE_GPS);
 		} else if (op == GPS_STOP && run_type == RUN_TYPE_GPS) {
 			err = gnss_shutdown();
@@ -846,14 +899,12 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 			err = nrf_cloud_connect(NULL);
 			if (err) {
 				LOG_ERR("Cloud connection failed, error: %d", err);
-#if defined(CONFIG_SLM_AGPS) || defined(CONFIG_SLM_PGPS)
 			} else {
 				/* A-GPS & P-GPS needs date_time, trigger to update current time */
 				date_time_update_async(date_time_event_handler);
 				if (k_sem_take(&sem_date_time, K_SECONDS(10)) != 0) {
 					LOG_WRN("Failed to get current time");
 				}
-#endif
 			}
 		} else if (op == nRF_CLOUD_SEND && nrf_cloud_ready) {
 			/* enter data mode */
@@ -868,9 +919,6 @@ int handle_at_nrf_cloud(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_READ_COMMAND: {
-		char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN] = {0};
-
-		(void)nrf_cloud_client_id_get(device_id, sizeof(device_id));
 		sprintf(rsp_buf, "\r\n#XNRFCLOUD: %d,%d,%d,\"%s\"\r\n", nrf_cloud_ready,
 			location_signify, CONFIG_NRF_CLOUD_SEC_TAG, device_id);
 		rsp_send(rsp_buf, strlen(rsp_buf));
@@ -950,6 +998,11 @@ int handle_at_agps(enum at_cmd_type cmd_type)
 				}
 			} /* else leave it to default or previously configured timeout */
 
+			err = nrf_modem_gnss_nmea_mask_set(NRF_MODEM_GNSS_NMEA_GGA_MASK);
+			if (err < 0) {
+				LOG_ERR("Failed to set nmea mask, error: %d", err);
+				return err;
+			}
 			err = gnss_startup(RUN_TYPE_AGPS);
 		} else if (op == AGPS_STOP && run_type == RUN_TYPE_AGPS) {
 			err = gnss_shutdown();
@@ -1038,6 +1091,11 @@ int handle_at_pgps(enum at_cmd_type cmd_type)
 				return err;
 			}
 
+			err = nrf_modem_gnss_nmea_mask_set(NRF_MODEM_GNSS_NMEA_GGA_MASK);
+			if (err < 0) {
+				LOG_ERR("Failed to set nmea mask, error: %d", err);
+				return err;
+			}
 			err = gnss_startup(RUN_TYPE_PGPS);
 		} else if (op == PGPS_STOP && run_type == RUN_TYPE_PGPS) {
 			err = gnss_shutdown();
@@ -1147,6 +1205,7 @@ int slm_at_gnss_init(void)
 	k_work_init(&pgps_req, pgps_req_wk);
 	k_work_init(&cell_pos_req, cell_pos_req_wk);
 	k_work_init(&fix_rep, fix_rep_wk);
+	nrf_cloud_client_id_get(device_id, sizeof(device_id));
 
 	return err;
 }
