@@ -21,13 +21,19 @@ extern "C" {
 #endif
 
 /** Length of SHA256 hash result (256 bits = 32 bytes). */
-#define FP_CRYPTO_SHA256_HASH_LEN	32U
+#define FP_CRYPTO_SHA256_HASH_LEN		32U
 /** Length of AES-128 block (128 bits = 16 bytes). */
-#define FP_CRYPTO_AES128_BLOCK_LEN	16U
+#define FP_CRYPTO_AES128_BLOCK_LEN		16U
+/** Length of AES-128 key (128 bits = 16 bytes). */
+#define FP_CRYPTO_AES128_KEY_LEN		16U
 /** Length of ECDH public key (512 bits = 64 bytes). */
-#define FP_CRYPTO_ECDH_PUBLIC_KEY_LEN	64U
+#define FP_CRYPTO_ECDH_PUBLIC_KEY_LEN		64U
 /** Length of ECDH shared key (256 bits = 32 bytes). */
-#define FP_CRYPTO_ECDH_SHARED_KEY_LEN	32U
+#define FP_CRYPTO_ECDH_SHARED_KEY_LEN		32U
+/** Length of nonce in Additional Data packet (64 bits = 8 bytes). */
+#define FP_CRYPTO_ADDITIONAL_DATA_NONCE_LEN	8U
+/** Length of Additional Data packet header (128 bits = 16 bytes). */
+#define FP_CRYPTO_ADDITIONAL_DATA_HEADER_LEN	16U
 
 /** Hash value using SHA-256.
  *
@@ -38,6 +44,17 @@ extern "C" {
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
 int fp_crypto_sha256(uint8_t *out, const uint8_t *in, size_t data_len);
+
+/** Generate HMAC-SHA256.
+ *
+ * @param[out] out 256-bit (32-byte) buffer to receive hashed result.
+ * @param[in] in Input data.
+ * @param[in] data_len Length of input data.
+ * @param[in] aes_key 128-bit (16-byte) AES key used to encrypt data.
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int fp_crypto_hmac_sha256(uint8_t *out, const uint8_t *in, size_t data_len, const uint8_t *aes_key);
 
 /** Encrypt message using AES-128.
  *
@@ -58,6 +75,32 @@ int fp_crypto_aes128_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k);
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
 int fp_crypto_aes128_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k);
+
+/** Encrypt data using AES-128-CTR.
+ *
+ * @param[out] out Buffer to receive encrypted data.
+ * @param[in] in Plaintext data.
+ * @param[in] data_len Length of input and output data (in bytes).
+ * @param[in] key 128-bit (16-byte) AES key.
+ * @param[in] nonce 64-bit (8-byte) nonce.
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int fp_crypto_aes128_ctr_encrypt(uint8_t *out, const uint8_t *in, size_t data_len,
+				 const uint8_t *key, const uint8_t *nonce);
+
+/** Decrypt data using AES-128-CTR.
+ *
+ * @param[out] out Buffer to receive plaintext data.
+ * @param[in] in Ciphertext data.
+ * @param[in] data_len Length of input and output data (in bytes).
+ * @param[in] key 128-bit (16-byte) AES key.
+ * @param[in] nonce 64-bit (8-byte) nonce used to encrypt data.
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int fp_crypto_aes128_ctr_decrypt(uint8_t *out, const uint8_t *in, size_t data_len,
+				 const uint8_t *key, const uint8_t *nonce);
 
 /** Compute a shared secret key using Elliptic-Curve Diffie-Hellman algorithm.
  *
@@ -102,6 +145,35 @@ size_t fp_crypto_account_key_filter_size(size_t n);
  */
 int fp_crypto_account_key_filter(uint8_t *out, const struct fp_account_key *account_key_list,
 				 size_t n, uint8_t salt);
+
+/** Encode data to Additional Data packet.
+ *
+ * @param[out] out_packet Buffer to receive Additional Data packet. Buffer size must be at least
+ *                        equal to sum of @ref FP_CRYPTO_ADDITIONAL_DATA_HEADER_LEN and data_len.
+ * @param[in] data Data to be encoded to packet.
+ * @param[in] data_len Length of data (in bytes) to be encoded to packet.
+ * @param[in] aes_key 128-bit (16-byte) AES key.
+ * @param[in] nonce 64-bit (8-byte) nonce.
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int fp_crypto_additional_data_encode(uint8_t *out_packet, const uint8_t *data, size_t data_len,
+				     const uint8_t *aes_key, const uint8_t *nonce);
+
+/** Check Additional Data packet integrity and decode data from the packet.
+ *
+ * @param[out] out_data Buffer to receive data decoded from Additional Data packet. Buffer size must
+ *                      be at least equal to packet_len minus
+ *                      @ref FP_CRYPTO_ADDITIONAL_DATA_HEADER_LEN.
+ * @param[in] in_packet Additional Data packet.
+ * @param[in] packet_len Length (in bytes) of Additional Data packet.
+ * @param[in] aes_key 128-bit (16-byte) AES key.
+ *
+ * @return 0 If the operation was successful and packet passed integrity check.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int fp_crypto_additional_data_decode(uint8_t *out_data, const uint8_t *in_packet, size_t packet_len,
+				     const uint8_t *aes_key);
 
 #ifdef __cplusplus
 }

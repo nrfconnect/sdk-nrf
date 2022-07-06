@@ -7,6 +7,7 @@
 #include <zephyr/device.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/bluetooth/conn.h>
+#include <zephyr/sys/__assert.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
@@ -23,6 +24,8 @@ LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 #define FP_KEY_TIMEOUT				K_SECONDS(10)
 #define FP_KEY_GEN_FAILURE_MAX_CNT		10
 #define FP_KEY_GEN_FAILURE_CNT_RESET_TIMEOUT	K_MINUTES(5)
+
+BUILD_ASSERT(FP_ACCOUNT_KEY_LEN == FP_CRYPTO_AES128_KEY_LEN);
 
 enum fp_state {
 	FP_STATE_INITIAL,
