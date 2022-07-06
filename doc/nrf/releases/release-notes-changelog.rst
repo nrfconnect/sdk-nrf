@@ -235,6 +235,26 @@ Bluetooth samples
   * Fixed peer throughput calculations.
     These were too low because the total transfer time incorrectly included 500ms delay without including the actual transfer.
 
+* :ref:`bluetooth_direction_finding_central` sample:
+
+  * Added devicetree overlay file for the nRF5340 application core that configures GPIO pin forwarding.
+    This enables the radio peripheral's Direction Finding Extension for antenna switching.
+
+* :ref:`bluetooth_direction_finding_connectionless_rx` sample:
+
+  * Added devicetree overlay file for the nRF5340 application core that configures GPIO pin forwarding.
+    This enables the radio peripheral's Direction Finding Extension for antenna switching.
+
+* :ref:`bluetooth_direction_finding_connectionless_tx` sample:
+
+  * Added devicetree overlay file for the nRF5340 application core that configures GPIO pin forwarding.
+    This enables the radio peripheral's Direction Finding Extension for antenna switching.
+
+* :ref:`bluetooth_direction_finding_peripheral` sample:
+
+  * Added devicetree overlay file for the nRF5340 application core that configures GPIO pin forwarding.
+    This enables the radio peripheral's Direction Finding Extension for antenna switching.
+
 Bluetooth mesh samples
 ----------------------
 
