@@ -50,9 +50,9 @@ void main(void)
 	 * Do this before switching to function mode 1 (CFUN=1)
 	 * to receive the first activation event.
 	 */
-	err = pdn_default_callback_set(pdn_event_handler);
+	err = pdn_default_ctx_cb_reg(pdn_event_handler);
 	if (err) {
-		printk("pdn_default_callback_set() failed, err %d\n", err);
+		printk("pdn_default_ctx_cb_reg() failed, err %d\n", err);
 		return;
 	}
 

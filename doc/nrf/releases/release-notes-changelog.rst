@@ -367,6 +367,7 @@ Modem libraries
 
     * Updated:
 
+      * Renamed the :c:func:`pdn_default_callback_set` function to :c:func:`pdn_default_ctx_cb_reg`.
       * Automatically subscribe to ``+CNEC=16`` and ``+CGEREP=1`` if the :ref:`lte_lc_readme` library is used to change the modem's functional mode.
 
     * Removed:

@@ -176,11 +176,11 @@ int pdn_id_get(uint8_t cid);
 int pdn_default_apn_get(char *buf, size_t len);
 
 /**
- * @brief Set a callback for events pertaining to the default PDP context (zero).
+ * @brief Register a callback for events pertaining to the default PDP context (zero).
  *
  * @param cb The PDN event handler.
  */
-int pdn_default_callback_set(pdn_event_handler_t cb);
+int pdn_default_ctx_cb_reg(pdn_event_handler_t cb);
 
 /**
  * @brief Deregister a callback for events pertaining to the default PDP context (zero).
