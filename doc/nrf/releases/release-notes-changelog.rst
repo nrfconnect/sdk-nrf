@@ -192,6 +192,26 @@ Bluetooth samples
 
   * Added possibility of toggling between show and hide UI indication in the Fast Pair not discoverable advertising.
 
+* :ref:`bluetooth_direction_finding_central` sample:
+
+  * Added devicetree overlay file for the nRF5340 application core that configures GPIO pin forwarding.
+    This enables the radio peripheral's Direction Finding Extension for antenna switching.
+
+* :ref:`bluetooth_direction_finding_connectionless_rx` sample:
+
+  * Added devicetree overlay file for the nRF5340 application core that configures GPIO pin forwarding.
+    This enables the radio peripheral's Direction Finding Extension for antenna switching.
+
+* :ref:`bluetooth_direction_finding_connectionless_tx` sample:
+
+  * Added devicetree overlay file for the nRF5340 application core that configures GPIO pin forwarding.
+    This enables the radio peripheral's Direction Finding Extension for antenna switching.
+
+* :ref:`bluetooth_direction_finding_peripheral` sample:
+
+  * Added devicetree overlay file for the nRF5340 application core that configures GPIO pin forwarding.
+    This enables the radio peripheral's Direction Finding Extension for antenna switching.
+
 Bluetooth mesh samples
 ----------------------
 
