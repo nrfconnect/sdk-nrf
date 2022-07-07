@@ -557,6 +557,10 @@
 
 .. _`Windows path length limitations`: https://docs.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation
 
+.. _`Windows 11`: https://www.microsoft.com/software-download/windows11
+.. _`Windows 10`: https://www.microsoft.com/en-us/software-download/windows10
+
+
 .. ### Source: ietf.org
 
 .. _`CoAP response codes`: https://datatracker.ietf.org/doc/html/rfc7252#section-12.1.2
@@ -783,6 +787,19 @@
 
 .. _`Google Chrome browser`: https://www.google.com/chrome
 
+.. ### Source: ubuntu.com
+
+.. _`Linux - Ubuntu 22.04 LTS`: https://releases.ubuntu.com/22.04/
+.. _`Linux - Ubuntu 20.04 LTS`: https://releases.ubuntu.com/20.04/
+
+.. ### Source: apple.com
+
+.. _`macOS 12`: https://www.apple.com/macos/monterey/
+.. _`macOS 11`: https://support.apple.com/en-us/HT211896
+.. _`macOS 10.15`: https://support.apple.com/en-us/HT210642
+.. _`Apple Notification Center Service Specification`: https://developer.apple.com/library/archive/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/Introduction/Introduction.html
+.. _`Apple Media Service Reference`: https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/AppleMediaService_Reference/Introduction/Introduction.html
+
 .. ### Source: other
 
 .. _`Developing Matter products with nRF Connect SDK`: https://www.youtube.com/watch?v=kdMJQFDRoss
@@ -808,10 +825,6 @@
 .. _`GCC compiler`: https://gcc.gnu.org/
 
 .. _`MCUboot`: https://www.mcuboot.com
-
-.. _`Apple Notification Center Service Specification`: https://developer.apple.com/library/archive/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/Introduction/Introduction.html
-
-.. _`Apple Media Service Reference`: https://developer.apple.com/library/ios/documentation/CoreBluetooth/Reference/AppleMediaService_Reference/Introduction/Introduction.html
 
 .. _`nRF Mesh mobile app for iOS`: https://apps.apple.com/us/app/nrf-mesh/id1380726771
 .. _`nRF Mesh mobile app for Android`: https://play.google.com/store/apps/details?id=no.nordicsemi.android.nrfmeshprovisioner

@@ -887,6 +887,7 @@ Documentation
   * :ref:`build_pgm_nrf9160` section in the :ref:`ug_nrf9160` documentation by adding |VSC| and command line instructions.
   * Restructured the :ref:`programming_thingy` and :ref:`connect_nRF_cloud` sections in the :ref:`ug_thingy91_gsg` documentation.
   * The instructions and images in the :ref:`ug_thingy91_gsg` and :ref:`ug_nrf9160_gs` documentations about also accepting :term:`eUICC Identifier (EID)` when activating your iBasis SIM card from the `nRF Cloud`_ website.
+  * :ref:`gs_recommended_versions` page with a new section about :ref:`gs_supported_OS`.
 
 * Removed:
 
