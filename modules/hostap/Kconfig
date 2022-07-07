@@ -1,0 +1,49 @@
+# Nordic WiFi driver for nRF52840 and nRF5340
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config WPA_SUPP
+	bool "WPA WPA_SUPP"
+	depends on  NET_SOCKETS
+	depends on  NET_SOCKETS_POSIX_NAMES || POSIX_API
+	select NET_SOCKETS_PACKET
+	select NET_MGMT
+	select NET_MGMT_EVENT
+	select NET_MGMT_EVENT_INFO
+	help
+	  WPA WPA_SUPP
+
+config WPA_SUPP_THREAD_STACK_SIZE
+	int "Stack size for wpa_supplicant thread"
+	default 8192
+
+config WPA_SUPP_CRYPTO
+	bool "Crypto support for WiFi"
+	default y
+
+config WPA_SUPP_CRYPTO_ENTERPRISE
+	bool "Enterprise Crypto support for WiFi"
+
+config WPA_SUPP_WPA3
+	bool "WPA3 support"
+	select WPA_SUPP_CRYPTO
+	default y
+
+config WPA_SUPP_AP
+	bool "AP mode support"
+	select WPA_SUPP_CRYPTO
+
+config WPA_SUPP_WPS
+	bool "WPS support"
+
+config WPA_SUPP_P2P
+	bool "P2P mode support"
+	select WPA_SUPP_AP
+	select WPA_SUPP_WPS
+
+config WPA_SUPP_DEBUG_LEVEL
+	string "Debug level for prints"
+	default "INFO"
