@@ -148,10 +148,16 @@ config MEMFAULT_NCS_LTE_METRICS
 	  Capture LTE metrics while the application is running. Supported
 	  metrics are time to connect and number of connection establishments.
 
+config MEMFAULT_NCS_BT_METRICS
+	bool "Collect BT metrics"
+	depends on BT
+	help
+	  Collect metrics related to the Bluetooth stack in background while application is running.
+
 config MEMFAULT_NCS_USE_DEFAULT_METRICS
 	bool
 	select MEMFAULT_METRICS_EXTRA_DEFS_FILE
-	default y if (MEMFAULT_NCS_STACK_METRICS || MEMFAULT_NCS_LTE_METRICS)
+	default y if (MEMFAULT_NCS_STACK_METRICS || MEMFAULT_NCS_LTE_METRICS || MEMFAULT_NCS_BT_METRICS)
 
 config MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
 	bool "Save coredump to internal flash instead of RAM"
@@ -187,6 +193,5 @@ module = MEMFAULT_NCS
 module-dep = LOG
 module-str = Memfault NCS module
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
-
 
 endif # MEMFAULT

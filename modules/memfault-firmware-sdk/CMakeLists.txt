@@ -6,10 +6,24 @@
 
 zephyr_library()
 zephyr_library_sources(memfault_integration.c)
+
+zephyr_library_include_directories(include)
+
 zephyr_library_sources_ifdef(
         CONFIG_MEMFAULT_NCS_USE_DEFAULT_METRICS
         memfault_ncs_metrics.c)
+
 zephyr_library_sources_ifdef(
         CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
         memfault_flash_coredump_storage.c)
+
+zephyr_library_sources_ifdef(
+        CONFIG_MEMFAULT_NCS_LTE_METRICS
+        memfault_lte_metrics.c
+)
+
+zephyr_library_sources_ifdef(
+        CONFIG_MEMFAULT_NCS_BT_METRICS
+        memfault_bt_metrics.c)
+
 zephyr_include_directories(config)
