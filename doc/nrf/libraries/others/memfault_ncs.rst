@@ -130,6 +130,7 @@ The Kconfig options for Memfault that are defined in |NCS| provide some addition
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_LTE_METRICS`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_STACK_METRICS`
+* :kconfig:option:`CONFIG_MEMFAULT_NCS_BT_METRICS`
 
 The |NCS| integration of `Memfault SDK`_ provides default values for some metadata that are required to identify the firmware when it is sent to Memfault cloud.
 These defaults can be controlled by using the configuration options below:
