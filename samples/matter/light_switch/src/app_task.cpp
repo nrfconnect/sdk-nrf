@@ -106,6 +106,14 @@ CHIP_ERROR AppTask::Init()
 		return err;
 	}
 
+#ifdef CONFIG_OPENTHREAD_DEFAULT_TX_POWER
+	err = SetDefaultThreadOutputPower();
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("Cannot set default Thread output power");
+		return err;
+	}
+#endif
+
 	LightSwitch::GetInstance().Init(kLightSwitchEndpointId);
 
 	/* Initialize UI components */
