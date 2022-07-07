@@ -37,6 +37,9 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
+.. note::
+   |nfc_nfct_driver_note|
+
 Testing
 =======
 

@@ -43,6 +43,9 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
+.. note::
+   |nfc_nfct_driver_note|
+
 Testing
 =======
 After programming the sample to your development kit, you can test it with an NFC-A Type 2 Tag or Tag 4 Type.
