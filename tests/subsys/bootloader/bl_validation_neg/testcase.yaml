@@ -11,7 +11,7 @@ tests:
       type: multi_line
       ordered: true
       regex:
-        - "Running test suite test_bl_validation_neg"
+        - "Running TESTSUITE test_bl_validation_neg"
         - "Rebooting. Should fail to validate slot 1."
         - "Attempting to boot slot 1."
         - "Firmware info doesn't point to itself."
@@ -37,7 +37,7 @@ tests:
       type: multi_line
       ordered: true
       regex:
-        - "Running test suite test_bl_validation_neg"
+        - "Running TESTSUITE test_bl_validation_neg"
         - "Rebooting. Should fail to validate slot 1."
         - "Attempting to boot slot 1."
         - "Firmware info doesn't point to itself."
