@@ -310,7 +310,7 @@ Matter samples
 NFC samples
 -----------
 
-|no_changes_yet_note|
+* Added a note to the documentation of each NFC sample about debug message configuration with the NFCT driver from the `nrfx`_ repository.
 
 nRF5340 samples
 ---------------
