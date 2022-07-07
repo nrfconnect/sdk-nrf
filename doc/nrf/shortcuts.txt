@@ -130,3 +130,7 @@
    :rtrim:
 
 .. |Google_CCLicense| replace:: Portions of this page are reproduced from work created and `shared by Google`_, and used according to terms described in the `Creative Commons 4.0 Attribution License`_.
+
+.. |nfc_nfct_driver_note| replace:: If you are using debug messages in the NFCT driver, the driver might not be working properly if you have :kconfig:option:`CONFIG_LOG_MODE_IMMEDIATE` enabled.
+   The NFCT driver is part of the nrfx driver package.
+   For more information about this driver, see the NFCT driver page in the `nrfx`_ repository.
