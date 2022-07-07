@@ -90,11 +90,6 @@ config BOOT_ERASE_PROGRESSIVELY
 	 on some hardware that has long erase times, to prevent long wait
 	 times at the beginning of the DFU process.
 
-config BOOT_IMAGE_ACCESS_HOOKS_FILE
-	string
-	default "${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/hooks/nrf53_hooks.c"
-	depends on BOOT_IMAGE_ACCESS_HOOKS
-
 config BOOT_IMAGE_ACCESS_HOOKS
 	bool
 	default y if UPDATEABLE_IMAGE_NUMBER > 1 && SOC_NRF5340_CPUAPP && PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
