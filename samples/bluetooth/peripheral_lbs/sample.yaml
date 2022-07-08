@@ -26,3 +26,18 @@ tests:
       - nrf52833dk_nrf52820
     platform_allow: nrf51dk_nrf51422 nrf52dk_nrf52810 nrf52840dk_nrf52811 nrf52833dk_nrf52820
     tags: bluetooth ci_build
+  sample.bluetooth.peripheral_lbs_no_security:
+    build_only: true
+    extra_args: CONFIG_BT_LBS_SECURITY_ENABLED=n
+    integration_platforms:
+      - nrf51dk_nrf51422
+      - nrf52dk_nrf52832
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuapp_ns
+      - thingy53_nrf5340_cpuapp
+      - thingy53_nrf5340_cpuapp_ns
+    platform_allow: nrf51dk_nrf51422 nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf52dk_nrf52810
+      nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns thingy53_nrf5340_cpuapp
+      thingy53_nrf5340_cpuapp_ns
+    tags: bluetooth ci_build
