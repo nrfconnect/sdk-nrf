@@ -1138,6 +1138,13 @@ Bluetooth® LE
 
 .. rst-class:: v2-0-0
 
+NCSDK-16060: :ref:`peripheral_lbs` sample build fails when the :kconfig:option:`CONFIG_BT_LBS_SECURITY_ENABLED` option is disabled
+  Build failure is caused by the undefined ``conn_auth_info_callbacks`` structure.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix from ``main`` (commit hash: ``32c827b20f3c5ab85a359e572d366da310fe2767``).
+
+.. rst-class:: v2-0-0
+
 NCSDK-15724: Bluetooth's Peripheral UART sample fails to start on Thingy:53
   Enabling USB by the :ref:`Peripheral UART's <peripheral_uart>` main function ends with error because the USB was already enabled by the Thingy:53-specific code.
 
