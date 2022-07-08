@@ -25,7 +25,6 @@
 #include "osal_ops.h"
 #include "qspi_if.h"
 
-
 LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
 static void *zep_shim_mem_alloc(size_t size)
@@ -154,57 +153,33 @@ static void zep_shim_spinlock_irq_rel(void *lock, unsigned long *flags)
 
 static int zep_shim_pr_dbg(const char *fmt, va_list args)
 {
-	char *mod_fmt = NULL;
+	char buf[80];
 
-	mod_fmt = k_calloc(strlen(fmt) + 1 + 3, sizeof(char));
+	vsnprintf(buf, sizeof(buf), fmt, args);
 
-	if (!mod_fmt) {
-		LOG_ERR("%s: Unable to allocate memory for mod_fmt\n", __func__);
-		return -1;
-	}
-
-	strcpy(mod_fmt, "Debug: ");
-	strcat(mod_fmt, fmt);
-
-	vprintk(mod_fmt, args);
+	LOG_DBG("%s", buf);
 
 	return 0;
 }
 
 static int zep_shim_pr_info(const char *fmt, va_list args)
 {
-	char *mod_fmt = NULL;
+	char buf[80];
 
-	mod_fmt = k_calloc(strlen(fmt) + 1 + 3, sizeof(char));
+	vsnprintf(buf, sizeof(buf), fmt, args);
 
-	if (!mod_fmt) {
-		LOG_ERR("%s: Unable to allocate memory for mod_fmt\n", __func__);
-		return -1;
-	}
-
-	strcpy(mod_fmt, "Info: ");
-	strcat(mod_fmt, fmt);
-
-	vprintk(mod_fmt, args);
+	LOG_INF("%s", buf);
 
 	return 0;
 }
 
 static int zep_shim_pr_err(const char *fmt, va_list args)
 {
-	char *mod_fmt = NULL;
+	char buf[80];
 
-	mod_fmt = k_calloc(strlen(fmt) + 1 + 3, sizeof(char));
+	vsnprintf(buf, sizeof(buf), fmt, args);
 
-	if (!mod_fmt) {
-		LOG_ERR("%s: Unable to allocate memory for mod_fmt\n", __func__);
-		return -1;
-	}
-
-	strcpy(mod_fmt, "Error: ");
-	strcat(mod_fmt, fmt);
-
-	vprintk(mod_fmt, args);
+	LOG_ERR("%s", buf);
 
 	return 0;
 }
