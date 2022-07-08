@@ -17,8 +17,11 @@ LOG_MODULE_REGISTER(modem_info_json);
 
 static int json_add_obj(cJSON *parent, const char *str, cJSON *item)
 {
-	cJSON_AddItemToObject(parent, str, item);
-
+	if (!cJSON_AddItemToObject(parent, str, item)) {
+		LOG_ERR("Failed adding object");
+		cJSON_Delete(item);
+		return -ENOMEM;
+	}
 	return 0;
 }
 
@@ -184,6 +187,8 @@ static int device_data_add(struct device_param *device, cJSON *json_obj)
 int modem_info_json_object_encode(struct modem_param_info *modem,
 				  cJSON *root_obj)
 {
+	int ret;
+
 	if (root_obj == NULL || modem == NULL) {
 		return -EINVAL;
 	}
@@ -202,22 +207,34 @@ int modem_info_json_object_encode(struct modem_param_info *modem,
 	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_NETWORK) &&
 	    (network_data_add(&modem->network, network_obj) > 0)) {
 
-		json_add_obj(root_obj, MODEM_INFO_JSON_KEY_NET_INF, network_obj);
+		ret = json_add_obj(root_obj, MODEM_INFO_JSON_KEY_NET_INF, network_obj);
 		network_obj = NULL;
+		if (ret) {
+			obj_count = -ENOMEM;
+			goto delete_object;
+		}
 	}
 
 	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_SIM) &&
 	    (sim_data_add(&modem->sim, sim_obj) > 0)) {
 
-		json_add_obj(root_obj, MODEM_INFO_JSON_KEY_SIM_INF, sim_obj);
+		ret = json_add_obj(root_obj, MODEM_INFO_JSON_KEY_SIM_INF, sim_obj);
 		sim_obj = NULL;
+		if (ret) {
+			obj_count = -ENOMEM;
+			goto delete_object;
+		}
 	}
 
 	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_DEVICE) &&
 	    (device_data_add(&modem->device, device_obj) > 0)) {
 
-		json_add_obj(root_obj, MODEM_INFO_JSON_KEY_DEV_INF, device_obj);
+		ret = json_add_obj(root_obj, MODEM_INFO_JSON_KEY_DEV_INF, device_obj);
 		device_obj = NULL;
+		if (ret) {
+			obj_count = -ENOMEM;
+			goto delete_object;
+		}
 	}
 
 delete_object:
@@ -257,10 +274,14 @@ int modem_info_json_string_encode(struct modem_param_info *modem,
 		}
 
 		total_len += ret;
-		json_add_obj(root_obj, MODEM_INFO_JSON_KEY_NET_INF, network_obj);
-
+		ret = json_add_obj(root_obj, MODEM_INFO_JSON_KEY_NET_INF, network_obj);
 		/* network_obj is now part of the root_obj */
 		network_obj = NULL;
+
+		if (ret) {
+			total_len = -ENOMEM;
+			goto delete_object;
+		}
 	}
 
 	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_SIM)) {
@@ -271,10 +292,14 @@ int modem_info_json_string_encode(struct modem_param_info *modem,
 		}
 
 		total_len += ret;
-		json_add_obj(root_obj, MODEM_INFO_JSON_KEY_SIM_INF, sim_obj);
-
+		ret = json_add_obj(root_obj, MODEM_INFO_JSON_KEY_SIM_INF, sim_obj);
 		/* sim_obj is now part of the root_obj */
 		sim_obj = NULL;
+
+		if (ret) {
+			total_len = -ENOMEM;
+			goto delete_object;
+		}
 	}
 
 	if (IS_ENABLED(CONFIG_MODEM_INFO_ADD_DEVICE)) {
@@ -285,10 +310,14 @@ int modem_info_json_string_encode(struct modem_param_info *modem,
 		}
 
 		total_len += ret;
-		json_add_obj(root_obj, MODEM_INFO_JSON_KEY_DEV_INF, device_obj);
-
+		ret = json_add_obj(root_obj, MODEM_INFO_JSON_KEY_DEV_INF, device_obj);
 		/* device_obj is now part of the root_obj */
 		device_obj = NULL;
+
+		if (ret) {
+			total_len = -ENOMEM;
+			goto delete_object;
+		}
 	}
 
 	if (total_len > 0) {
