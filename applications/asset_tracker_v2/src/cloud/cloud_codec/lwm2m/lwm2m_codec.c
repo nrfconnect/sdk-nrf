@@ -692,7 +692,7 @@ int cloud_codec_encode_pgps_request(struct cloud_codec_data *output,
 	return 0;
 }
 
-int cloud_codec_decode_config(char *input, size_t input_len,
+int cloud_codec_decode_config(const char *input, size_t input_len,
 			      struct cloud_data_cfg *cfg)
 {
 	return -ENOTSUP;
