@@ -13,11 +13,14 @@
 #include <stdlib.h>
 
 #include <zephyr/device.h>
+#include <zephyr/logging/log.h>
 
 #include "zephyr_fmac_main.h"
 #include "zephyr_wpa_supp_if.h"
 #include "wpa_supplicant_i.h"
 #include "bss.h"
+
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
 /* TODO: Move this to driver_zephyr.c */
 extern struct wpa_supplicant *wpa_s_0;

@@ -15,14 +15,6 @@
 #include <stdarg.h>
 #include "osal_structs.h"
 
-#include <logging/log.h>
-
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
-
-#define wifi_nrf_osal_log_dbg(o, f, ...) LOG_DBG(f, ##__VA_ARGS__)
-#define wifi_nrf_osal_log_err(o, f, ...)  LOG_ERR(f, ##__VA_ARGS__)
-#define wifi_nrf_osal_log_info(o, f, ...)  LOG_INF(f, ##__VA_ARGS__)
-
 /**
  * wifi_nrf_osal_init() - Initialize the OSAL layer.
  *
@@ -320,6 +312,49 @@ void wifi_nrf_osal_spinlock_irq_take(struct wifi_nrf_osal_priv *opriv,
 void wifi_nrf_osal_spinlock_irq_rel(struct wifi_nrf_osal_priv *opriv,
 				     void *lock,
 				     unsigned long *flags);
+
+
+/**
+ * wifi_nrf_osal_log_dbg() - Log a debug message.
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @fmt: Format string.
+ * @...: Variable arguments.
+ *
+ * Logs a debug message.
+ *
+ * Return: Number of characters of the message logged.
+ */
+int wifi_nrf_osal_log_dbg(struct wifi_nrf_osal_priv *opriv,
+			   const char *fmt, ...);
+
+
+/**
+ * wifi_nrf_osal_log_info() - Log a informational message.
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @fmt: Format string.
+ * @...: Variable arguments.
+ *
+ * Logs an informational message.
+ *
+ * Return: Number of characters of the message logged.
+ */
+int wifi_nrf_osal_log_info(struct wifi_nrf_osal_priv *opriv,
+			    const char *fmt, ...);
+
+
+/**
+ * wifi_nrf_osal_log_err() - Logs an error message.
+ * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
+ * @fmt: Format string.
+ * @...: Variable arguments.
+ *
+ * Logs an error message.
+ *
+ * Return: Number of characters of the message logged.
+ */
+int wifi_nrf_osal_log_err(struct wifi_nrf_osal_priv *opriv,
+			   const char *fmt, ...);
+
 
 /**
  * wifi_nrf_osal_llist_node_alloc() - Allocate a linked list mode.
