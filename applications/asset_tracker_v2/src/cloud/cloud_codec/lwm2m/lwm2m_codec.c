@@ -73,6 +73,7 @@ LOG_MODULE_REGISTER(cloud_codec, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 #define LTE_FDD_BEARER 6U
 #define NB_IOT_BEARER 7U
 
+#if defined(CONFIG_CLOUD_CODEC_LWM2M_SENSORS)
 /* Temperature sensor metadata. */
 #define BME680_TEMP_MIN_RANGE_VALUE -40.0
 #define BME680_TEMP_MAX_RANGE_VALUE 85.0
@@ -88,20 +89,6 @@ LOG_MODULE_REGISTER(cloud_codec, CONFIG_CLOUD_CODEC_LOG_LEVEL);
 #define BME680_PRESSURE_MAX_RANGE_VALUE 110.0
 #define BME680_PRESSURE_UNIT "kPa"
 
-/* Macros used to create A-GPS request mask in location assist object. */
-#define LOCATION_ASSIST_NEEDS_UTC	 BIT(0)
-#define LOCATION_ASSIST_NEEDS_EPHEMERIES BIT(1)
-#define LOCATION_ASSIST_NEEDS_ALMANAC	 BIT(2)
-#define LOCATION_ASSIST_NEEDS_KLOBUCHAR	 BIT(3)
-#define LOCATION_ASSIST_NEEDS_NEQUICK	 BIT(4)
-#define LOCATION_ASSIST_NEEDS_TOW	 BIT(5)
-#define LOCATION_ASSIST_NEEDS_CLOCK	 BIT(6)
-#define LOCATION_ASSIST_NEEDS_LOCATION	 BIT(7)
-#define LOCATION_ASSIST_NEEDS_INTEGRITY	 BIT(8)
-
-/* Some resources does not have designated buffers. Therefore we define those in here. */
-static uint8_t bearers[2] = { LTE_FDD_BEARER, NB_IOT_BEARER };
-static int battery_voltage;
 static int32_t pressure_timestamp;
 static int32_t temperature_timestamp;
 static int32_t humidity_timestamp;
@@ -115,6 +102,16 @@ static double humid_min_range_val = BME680_HUMID_MIN_RANGE_VALUE;
 static double humid_max_range_val = BME680_HUMID_MAX_RANGE_VALUE;
 static double pressure_min_range_val = BME680_PRESSURE_MIN_RANGE_VALUE;
 static double pressure_max_range_val = BME680_PRESSURE_MAX_RANGE_VALUE;
+static int32_t pressure_timestamp;
+static int32_t temperature_timestamp;
+static int32_t humidity_timestamp;
+#endif /* CONFIG_CLOUD_CODEC_LWM2M_SENSORS */
+
+/* Some resources does not have designated buffers. Therefore we define those in here. */
+static uint8_t bearers[2] = { LTE_FDD_BEARER, NB_IOT_BEARER };
+static int battery_voltage;
+static int32_t button_timestamp;
+static int64_t current_time;
 
 /* Button object. */
 #define BUTTON1_OBJ_INST_ID 0
@@ -310,6 +307,8 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 		return err;
 	}
 
+#if defined(CONFIG_CLOUD_CODEC_LWM2M_SENSORS)
+
 	/* Sensor timestamps. */
 	err = lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, TIMESTAMP_RID),
 					&pressure_timestamp, sizeof(pressure_timestamp),
@@ -395,6 +394,8 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 	if (err) {
 		return err;
 	}
+
+#endif /* CONFIG_CLOUD_CODEC_LWM2M_SENSORS */
 
 	/* Current configuration. */
 	err = lwm2m_engine_set_bool(LWM2M_PATH(CONFIGURATION_OBJECT_ID, 0, PASSIVE_MODE_RID),
@@ -1132,6 +1133,8 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 		objects_written = true;
 	}
 
+#if defined(CONFIG_CLOUD_CODEC_LWM2M_SENSORS)
+
 	/* Environmental sensor data */
 	if (sensor_buf->queued) {
 
@@ -1230,6 +1233,7 @@ int cloud_codec_encode_data(struct cloud_codec_data *output,
 		sensor_buf->queued = false;
 		objects_written = true;
 	}
+#endif /* CONFIG_CLOUD_CODEC_LWM2M_SENSORS */
 
 	if (!objects_written) {
 		return -ENODATA;
