@@ -16,7 +16,6 @@
 
 #include "cJSON.h"
 #include "json_helpers.h"
-#include "json_common.h"
 #include "json_protocol_names.h"
 
 #include <zephyr/logging/log.h>
@@ -220,6 +219,341 @@ exit:
 	return err;
 }
 
+static int modem_static_data_add(struct cloud_data_modem_static *data, cJSON **val_obj_ref)
+{
+	int err;
+
+	if (!data->queued) {
+		return -ENODATA;
+	}
+
+	err = date_time_uptime_to_unix_time_ms(&data->ts);
+	if (err) {
+		LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
+		return err;
+	}
+
+	cJSON *modem_val_obj = cJSON_CreateObject();
+
+	if (modem_val_obj == NULL) {
+		err = -ENOMEM;
+		goto exit;
+	}
+
+	err = json_add_str(modem_val_obj, MODEM_IMEI, data->imei);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_str(modem_val_obj, MODEM_ICCID, data->iccid);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_str(modem_val_obj, MODEM_FIRMWARE_VERSION, data->fw);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_str(modem_val_obj, MODEM_BOARD, data->brdv);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_str(modem_val_obj, MODEM_APP_VERSION, data->appv);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	*val_obj_ref = modem_val_obj;
+
+	data->queued = false;
+
+	return 0;
+
+exit:
+	cJSON_Delete(modem_val_obj);
+	return err;
+}
+
+static int modem_dynamic_data_add(struct cloud_data_modem_dynamic *data, cJSON **val_obj_ref)
+{
+	int err;
+	uint32_t mccmnc;
+	char *end_ptr;
+	bool values_added = false;
+
+	if (!data->queued) {
+		return -ENODATA;
+	}
+
+	err = date_time_uptime_to_unix_time_ms(&data->ts);
+	if (err) {
+		LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
+		return err;
+	}
+
+	cJSON *modem_val_obj = cJSON_CreateObject();
+
+	if (modem_val_obj == NULL) {
+		err = -ENOMEM;
+		goto exit;
+	}
+
+	if (data->band_fresh) {
+		err = json_add_number(modem_val_obj, MODEM_CURRENT_BAND, data->band);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
+	}
+
+	if (data->nw_mode_fresh) {
+		err = json_add_str(modem_val_obj, MODEM_NETWORK_MODE,
+				   (data->nw_mode == LTE_LC_LTE_MODE_LTEM) ? "LTE-M" :
+				   (data->nw_mode == LTE_LC_LTE_MODE_NBIOT) ? "NB-IoT" : "Unknown");
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
+	}
+
+	if (data->rsrp_fresh) {
+		err = json_add_number(modem_val_obj, MODEM_RSRP, data->rsrp);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
+	}
+
+	if (data->area_code_fresh) {
+		err = json_add_number(modem_val_obj, MODEM_AREA_CODE, data->area);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
+	}
+
+	if (data->mccmnc_fresh) {
+		/* Convert mccmnc to unsigned long integer. */
+		errno = 0;
+		mccmnc = strtoul(data->mccmnc, &end_ptr, 10);
+
+		if ((errno == ERANGE) || (*end_ptr != '\0')) {
+			LOG_ERR("MCCMNC string could not be converted.");
+			err = -ENOTEMPTY;
+			goto exit;
+		}
+
+		err = json_add_number(modem_val_obj, MODEM_MCCMNC, mccmnc);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
+	}
+
+	if (data->cell_id_fresh) {
+		err = json_add_number(modem_val_obj, MODEM_CELL_ID, data->cell);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
+	}
+
+	if (data->ip_address_fresh) {
+		err = json_add_str(modem_val_obj, MODEM_IP_ADDRESS, data->ip);
+		if (err) {
+			LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+			goto exit;
+		}
+		values_added = true;
+	}
+
+	if (!values_added) {
+		err = -ENODATA;
+		data->queued = false;
+		LOG_WRN("No valid dynamic modem data values present, entry unqueued");
+		goto exit;
+	}
+
+	*val_obj_ref = modem_val_obj;
+
+	data->queued = false;
+
+	return 0;
+
+exit:
+	cJSON_Delete(modem_val_obj);
+	return err;
+}
+
+static int config_add(cJSON *parent, struct cloud_data_cfg *data, const char *object_label)
+{
+	int err;
+
+	if (object_label == NULL) {
+		LOG_WRN("Missing object label");
+		return -EINVAL;
+	}
+
+	cJSON *config_obj = cJSON_CreateObject();
+
+	if (config_obj == NULL) {
+		err = -ENOMEM;
+		goto exit;
+	}
+
+	err = json_add_bool(config_obj, CONFIG_DEVICE_MODE, data->active_mode);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_number(config_obj, CONFIG_GNSS_TIMEOUT, data->gnss_timeout);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_number(config_obj, CONFIG_ACTIVE_TIMEOUT, data->active_wait_timeout);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_number(config_obj, CONFIG_MOVE_RES, data->movement_resolution);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_number(config_obj, CONFIG_MOVE_TIMEOUT, data->movement_timeout);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	err = json_add_number(config_obj, CONFIG_ACC_THRESHOLD, data->accelerometer_threshold);
+	if (err) {
+		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
+		goto exit;
+	}
+
+	cJSON *nod_list = cJSON_CreateArray();
+
+	if (nod_list == NULL) {
+		err = -ENOMEM;
+		goto exit;
+	}
+
+	/* If a flag in the no_data structure is set to true the corresponding JSON entry is
+	 * added to the no data array configuration.
+	 */
+	if (data->no_data.gnss) {
+		cJSON *gnss_str = cJSON_CreateString(CONFIG_NO_DATA_LIST_GNSS);
+
+		if (gnss_str == NULL) {
+			cJSON_Delete(nod_list);
+			err = -ENOMEM;
+			goto exit;
+		}
+
+		json_add_obj_array(nod_list, gnss_str);
+	}
+
+	if (data->no_data.neighbor_cell) {
+		cJSON *ncell_str = cJSON_CreateString(CONFIG_NO_DATA_LIST_NEIGHBOR_CELL);
+
+		if (ncell_str == NULL) {
+			cJSON_Delete(nod_list);
+			err = -ENOMEM;
+			goto exit;
+		}
+
+		json_add_obj_array(nod_list, ncell_str);
+	}
+
+	/* If there are no flag set in the no_data structure, an empty array is encoded. */
+	json_add_obj(config_obj, CONFIG_NO_DATA_LIST, nod_list);
+	json_add_obj(parent, object_label, config_obj);
+
+	return 0;
+
+exit:
+	cJSON_Delete(config_obj);
+	return err;
+}
+
+static void config_get(cJSON *parent, struct cloud_data_cfg *data)
+{
+	cJSON *gnss_timeout = cJSON_GetObjectItem(parent, CONFIG_GNSS_TIMEOUT);
+	cJSON *active = cJSON_GetObjectItem(parent, CONFIG_DEVICE_MODE);
+	cJSON *active_wait = cJSON_GetObjectItem(parent, CONFIG_ACTIVE_TIMEOUT);
+	cJSON *move_res = cJSON_GetObjectItem(parent, CONFIG_MOVE_RES);
+	cJSON *move_timeout = cJSON_GetObjectItem(parent, CONFIG_MOVE_TIMEOUT);
+	cJSON *acc_thres = cJSON_GetObjectItem(parent, CONFIG_ACC_THRESHOLD);
+	cJSON *nod_list = cJSON_GetObjectItem(parent, CONFIG_NO_DATA_LIST);
+
+	if (gnss_timeout != NULL) {
+		data->gnss_timeout = gnss_timeout->valueint;
+	}
+
+	if (active != NULL) {
+		data->active_mode = active->valueint;
+	}
+
+	if (active_wait != NULL) {
+		data->active_wait_timeout = active_wait->valueint;
+	}
+
+	if (move_res != NULL) {
+		data->movement_resolution = move_res->valueint;
+	}
+
+	if (move_timeout != NULL) {
+		data->movement_timeout = move_timeout->valueint;
+	}
+
+	if (acc_thres != NULL) {
+		data->accelerometer_threshold = acc_thres->valuedouble;
+	}
+
+	if (nod_list != NULL && cJSON_IsArray(nod_list)) {
+		cJSON *item;
+		bool gnss_found = false;
+		bool ncell_found = false;
+
+		for (int i = 0; i < cJSON_GetArraySize(nod_list); i++) {
+			item = cJSON_GetArrayItem(nod_list, i);
+
+			if (strcmp(item->valuestring, CONFIG_NO_DATA_LIST_GNSS) == 0) {
+				gnss_found = true;
+			}
+
+			if (strcmp(item->valuestring, CONFIG_NO_DATA_LIST_NEIGHBOR_CELL) == 0) {
+				ncell_found = true;
+			}
+		}
+
+		/* If a supported entry is present in the no data list we set the corresponding flag
+		 * to true. Signifying that no data is to be sampled for that data type.
+		 */
+		data->no_data.gnss = gnss_found;
+		data->no_data.neighbor_cell = ncell_found;
+	}
+}
+
 static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, size_t buf_count)
 {
 	for (int i = 0; i < buf_count; i++) {
@@ -345,26 +679,15 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 		}
 		case MODEM_STATIC: {
 			int err;
-			cJSON *modem_static_ref = NULL;
 			cJSON *data_ref = NULL;
 			struct cloud_data_modem_static *modem_static =
 						(struct cloud_data_modem_static *)buf;
 
-			err = json_common_modem_static_data_add(NULL, modem_static,
-								JSON_COMMON_GET_POINTER_TO_OBJECT,
-								NULL, &modem_static_ref);
+			err = modem_static_data_add(&modem_static[i], &data_ref);
 			if (err && err != -ENODATA) {
 				return err;
 			} else if (err == -ENODATA) {
 				break;
-			}
-
-			data_ref = cJSON_DetachItemFromObject(modem_static_ref, DATA_VALUE);
-			cJSON_Delete(modem_static_ref);
-
-			if (data_ref == NULL) {
-				LOG_ERR("Cannot find object: %s", DATA_VALUE);
-				return -ENOENT;
 			}
 
 			err = add_data(array, data_ref, APP_ID_DEVICE, NULL, &modem_static->ts,
@@ -379,26 +702,15 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 		case MODEM_DYNAMIC: {
 			int err, len;
 			char rsrp[5];
-			cJSON *modem_dynamic_ref = NULL;
 			cJSON *data_ref = NULL;
 			struct cloud_data_modem_dynamic *modem_dynamic =
 				(struct cloud_data_modem_dynamic *)buf;
 
-			err = json_common_modem_dynamic_data_add(NULL, &modem_dynamic[i],
-								 JSON_COMMON_GET_POINTER_TO_OBJECT,
-								 NULL, &modem_dynamic_ref);
+			err = modem_dynamic_data_add(&modem_dynamic[i], &data_ref);
 			if (err && err != -ENODATA) {
 				return err;
 			} else if (err == -ENODATA) {
 				break;
-			}
-
-			data_ref = cJSON_DetachItemFromObject(modem_dynamic_ref, DATA_VALUE);
-			cJSON_Delete(modem_dynamic_ref);
-
-			if (data_ref == NULL) {
-				LOG_ERR("Cannot find object: %s", DATA_VALUE);
-				return -ENOENT;
 			}
 
 			err = add_data(array, data_ref, APP_ID_DEVICE, NULL, &modem_dynamic[i].ts,
@@ -596,7 +908,7 @@ int cloud_codec_decode_config(char *input, size_t input_len,
 
 get_data:
 
-	json_common_config_get(subgroup_obj, cfg);
+	config_get(subgroup_obj, cfg);
 
 exit:
 	cJSON_Delete(root_obj);
@@ -620,7 +932,7 @@ int cloud_codec_encode_config(struct cloud_codec_data *output,
 		return -ENOMEM;
 	}
 
-	err = json_common_config_add(rep_obj, data, DATA_CONFIG);
+	err = config_add(rep_obj, data, DATA_CONFIG);
 
 	json_add_obj(state_obj, OBJECT_REPORTED, rep_obj);
 	json_add_obj(root_obj, OBJECT_STATE, state_obj);
