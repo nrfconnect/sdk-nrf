@@ -33,7 +33,6 @@ enum fp_state {
 struct fp_procedure {
 	struct k_work_delayable timeout;
 	enum fp_state state;
-	uint8_t key_gen_failure_cnt;
 	bool pairing_mode;
 	uint8_t aes_key[FP_ACCOUNT_KEY_LEN];
 };
@@ -42,6 +41,9 @@ struct fp_key_gen_account_key_check_context {
 	const struct bt_conn *conn;
 	struct fp_keys_keygen_params *keygen_params;
 };
+
+static uint8_t key_gen_failure_cnt;
+static struct k_work_delayable key_gen_failure_cnt_reset;
 
 static bool user_pairing_mode = true;
 static struct fp_procedure fp_procedures[CONFIG_BT_MAX_CONN];
@@ -75,7 +77,6 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 
 	invalidate_key(proc);
-	proc->key_gen_failure_cnt = 0;
 }
 
 BT_CONN_CB_DEFINE(conn_callbacks) = {
@@ -204,7 +205,7 @@ int fp_keys_generate_key(const struct bt_conn *conn, struct fp_keys_keygen_param
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 	int err = 0;
 
-	if (proc->key_gen_failure_cnt >= FP_KEY_GEN_FAILURE_MAX_CNT) {
+	if (key_gen_failure_cnt >= FP_KEY_GEN_FAILURE_MAX_CNT) {
 		return -EACCES;
 	}
 
@@ -220,7 +221,9 @@ int fp_keys_generate_key(const struct bt_conn *conn, struct fp_keys_keygen_param
 		if (proc->pairing_mode) {
 			err = key_gen_public_key(conn, keygen_params);
 		} else {
-			err = -EACCES;
+			/* Ignore write and exit. */
+			proc->state = FP_STATE_INITIAL;
+			return -EACCES;
 		}
 	} else {
 		err = key_gen_account_key(conn, keygen_params);
@@ -228,13 +231,14 @@ int fp_keys_generate_key(const struct bt_conn *conn, struct fp_keys_keygen_param
 
 	if (err) {
 		invalidate_key(proc);
-		proc->key_gen_failure_cnt++;
-		if (proc->key_gen_failure_cnt >= FP_KEY_GEN_FAILURE_MAX_CNT) {
+		key_gen_failure_cnt++;
+		if (key_gen_failure_cnt >= FP_KEY_GEN_FAILURE_MAX_CNT) {
 			LOG_WRN("Key generation failure limit exceeded");
-			k_work_reschedule(&proc->timeout, FP_KEY_GEN_FAILURE_CNT_RESET_TIMEOUT);
+			(void)k_work_schedule(&key_gen_failure_cnt_reset,
+					      FP_KEY_GEN_FAILURE_CNT_RESET_TIMEOUT);
 		}
 	} else {
-		proc->key_gen_failure_cnt = 0;
+		key_gen_failure_cnt = 0;
 		if (proc->state == FP_STATE_USE_TEMP_KEY) {
 			k_work_reschedule(&proc->timeout, FP_KEY_TIMEOUT);
 		}
@@ -287,16 +291,18 @@ void fp_keys_drop_key(const struct bt_conn *conn)
 	invalidate_key(&fp_procedures[bt_conn_index(conn)]);
 }
 
+static void key_gen_failure_cnt_reset_fn(struct k_work *w)
+{
+	key_gen_failure_cnt = 0;
+	LOG_INF("Key generation failure counter reset");
+}
+
 static void timeout_fn(struct k_work *w)
 {
 	struct fp_procedure *proc = CONTAINER_OF(w, struct fp_procedure, timeout);
 
-	if (proc->key_gen_failure_cnt >= FP_KEY_GEN_FAILURE_MAX_CNT) {
-		proc->key_gen_failure_cnt = 0;
-	} else {
-		LOG_WRN("Key discarded (timeout)");
-		invalidate_key(proc);
-	}
+	LOG_WRN("Key discarded (timeout)");
+	invalidate_key(proc);
 }
 
 static int fp_keys_init(const struct device *unused)
@@ -310,6 +316,8 @@ static int fp_keys_init(const struct device *unused)
 		memset(proc->aes_key, EMPTY_AES_KEY_BYTE, sizeof(proc->aes_key));
 		k_work_init_delayable(&proc->timeout, timeout_fn);
 	}
+
+	k_work_init_delayable(&key_gen_failure_cnt_reset, key_gen_failure_cnt_reset_fn);
 
 	return 0;
 }
