@@ -175,7 +175,7 @@ static int zep_shim_pr_info(const char *fmt, va_list args)
 
 static int zep_shim_pr_err(const char *fmt, va_list args)
 {
-	char buf[80];
+	char buf[256];
 
 	vsnprintf(buf, sizeof(buf), fmt, args);
 
