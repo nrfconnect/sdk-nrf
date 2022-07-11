@@ -59,9 +59,7 @@ static enum {
 static enum {
 	RUN_STATUS_STOPPED,
 	RUN_STATUS_STARTED,
-	RUN_STATUS_PERIODIC_WAKEUP,
 	RUN_STATUS_SLEEP_AFTER_TIMEOUT,
-	RUN_STATUS_SLEEP_AFTER_FIX,
 	RUN_STATUS_MAX
 } run_status;
 
@@ -533,8 +531,10 @@ static void fix_rep_wk(struct k_work *work)
 			}
 		}
 		/* GGA,hhmmss.ss,llll.ll,a,yyyyy.yy,a,x,xx,x.x,x.x,M,x.x,M,x.x,xxxx \r\n */
-		sprintf(rsp_buf, "\r\n#XGPS: %s", nmea.nmea_str);
-		rsp_send(rsp_buf, strlen(rsp_buf));
+		if (location_signify) {
+			sprintf(rsp_buf, "\r\n#XGPS: %s", nmea.nmea_str);
+			rsp_send(rsp_buf, strlen(rsp_buf));
+		}
 	}
 
 	if (run_type == RUN_TYPE_PGPS) {
@@ -602,9 +602,7 @@ static void gnss_event_handler(int event)
 		LOG_INF("GNSS_EVT_UNBLOCKED");
 		break;
 	case NRF_MODEM_GNSS_EVT_PERIODIC_WAKEUP:
-		LOG_INF("GNSS_EVT_PERIODIC_WAKEUP");
-		run_status = RUN_STATUS_PERIODIC_WAKEUP;
-		gnss_status_notify();
+		LOG_DBG("GNSS_EVT_PERIODIC_WAKEUP");
 		break;
 	case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT:
 		LOG_INF("GNSS_EVT_SLEEP_AFTER_TIMEOUT");
@@ -612,9 +610,7 @@ static void gnss_event_handler(int event)
 		gnss_status_notify();
 		break;
 	case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_FIX:
-		LOG_INF("GNSS_EVT_SLEEP_AFTER_FIX");
-		run_status = RUN_STATUS_SLEEP_AFTER_FIX;
-		gnss_status_notify();
+		LOG_DBG("GNSS_EVT_SLEEP_AFTER_FIX");
 		break;
 	case NRF_MODEM_GNSS_EVT_REF_ALT_EXPIRED:
 		LOG_INF("GNSS_EVT_REF_ALT_EXPIRED");
