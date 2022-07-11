@@ -69,7 +69,7 @@ The following list summarizes the most important changes inherited from the upst
 Thread
 ------
 
-|no_changes_yet_note|
+* Fixed a bug in which a Minimal Thread Device was not able to handle Address Error Notification messages.
 
 See `Thread samples`_ for the list of changes for the Thread samples.
 

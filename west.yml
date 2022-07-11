@@ -86,7 +86,6 @@ manifest:
           - net-tools
           - nrf_hw_models
           - open-amp
-          - openthread
           - psa-arch-tests
           - segger
           - tinycbor
@@ -177,6 +176,10 @@ manifest:
       revision: 9f6b3812237fbb0d4157ba3584c13f1644fcbe3a
       groups:
       - nrf5340_audio
+    - name: openthread
+      repo-path: sdk-openthread
+      path: modules/lib/openthread
+      revision: b6126a143ef1e1b68d1c86c321fae7668e6d5bf5
 
   # West-related configuration for the nrf repository.
   self:
