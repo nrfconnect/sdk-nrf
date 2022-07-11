@@ -70,6 +70,7 @@ Thread
 ------
 
 * Fixed a bug in which a Minimal Thread Device was not able to handle Address Error Notification messages.
+* Updated the values in the memory requirement tables in :ref:`thread_ot_memory` after the update to the :ref:`nrfxlib:ot_libs` in nrfxlib.
 
 See `Thread samples`_ for the list of changes for the Thread samples.
 
