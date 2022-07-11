@@ -396,3 +396,7 @@
   - "samples/nrf9160/multicell_location/**/*"
   - "subsys/net/lib/nrf_cloud/**/*"
   - "subsys/net/lib/rest_client/**/*"
+
+"CI-wifi":
+  - "drivers/wifi/**/*"
+  - "samples/wifi/**/*"
