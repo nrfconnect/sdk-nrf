@@ -45,7 +45,6 @@ static struct k_work fix_rep;
 static struct k_work cell_pos_req;
 static enum nrf_cloud_cell_pos_type cell_pos_type;
 
-static bool nrf_cloud_initd;
 static bool nrf_cloud_ready;
 static bool location_signify;
 static uint64_t ttft_start;
@@ -59,7 +58,9 @@ static enum {
 static enum {
 	RUN_STATUS_STOPPED,
 	RUN_STATUS_STARTED,
+	RUN_STATUS_PERIODIC_WAKEUP,
 	RUN_STATUS_SLEEP_AFTER_TIMEOUT,
+	RUN_STATUS_SLEEP_AFTER_FIX,
 	RUN_STATUS_MAX
 } run_status;
 
@@ -134,16 +135,17 @@ static bool is_gnss_activated(void)
 	return false;
 }
 
-static void gnss_status_notify(void)
+static void gnss_status_notify(int status)
 {
 	if (run_type == RUN_TYPE_AGPS) {
-		sprintf(rsp_buf, "\r\n#XAGPS: 1,%d\r\n", run_status);
+		sprintf(rsp_buf, "\r\n#XAGPS: 1,%d\r\n", status);
 	} else if (run_type == RUN_TYPE_PGPS) {
-		sprintf(rsp_buf, "\r\n#XPGPS: 1,%d\r\n", run_status);
+		sprintf(rsp_buf, "\r\n#XPGPS: 1,%d\r\n", status);
 	} else {
-		sprintf(rsp_buf, "\r\n#XGPS: 1,%d\r\n", run_status);
+		sprintf(rsp_buf, "\r\n#XGPS: 1,%d\r\n", status);
 	}
 	rsp_send(rsp_buf, strlen(rsp_buf));
+	run_status = status;
 }
 
 static int gnss_startup(int type)
@@ -159,8 +161,8 @@ static int gnss_startup(int type)
 		run_type = RUN_TYPE_NONE;
 	} else {
 		ttft_start = k_uptime_get();
-		run_status = RUN_STATUS_STARTED;
-		gnss_status_notify();
+		gnss_status_notify(RUN_STATUS_STARTED);
+		LOG_INF("GNSS start %d", type);
 	}
 
 	return ret;
@@ -171,8 +173,7 @@ static int gnss_shutdown(void)
 	int ret = nrf_modem_gnss_stop();
 
 	LOG_INF("GNSS stop %d", ret);
-	run_status = RUN_STATUS_STOPPED;
-	gnss_status_notify();
+	gnss_status_notify(RUN_STATUS_STOPPED);
 	run_type = RUN_TYPE_NONE;
 
 	if (nrf_cloud_ready) {
@@ -212,6 +213,7 @@ static void agps_req_wk(struct k_work *work)
 	if (err) {
 		LOG_ERR("Failed to request A-GPS data: %d", err);
 	}
+	LOG_INF("A-GPS requested");
 }
 
 static void pgps_req_wk(struct k_work *work)
@@ -224,6 +226,8 @@ static void pgps_req_wk(struct k_work *work)
 	err = nrf_cloud_pgps_notify_prediction();
 	if (err) {
 		LOG_ERR("Failed to request notify of prediction: %d", err);
+	} else {
+		LOG_INF("P-GPS requested");
 	}
 }
 
@@ -603,14 +607,15 @@ static void gnss_event_handler(int event)
 		break;
 	case NRF_MODEM_GNSS_EVT_PERIODIC_WAKEUP:
 		LOG_DBG("GNSS_EVT_PERIODIC_WAKEUP");
+		run_status = RUN_STATUS_PERIODIC_WAKEUP;
 		break;
 	case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT:
 		LOG_INF("GNSS_EVT_SLEEP_AFTER_TIMEOUT");
-		run_status = RUN_STATUS_SLEEP_AFTER_TIMEOUT;
-		gnss_status_notify();
+		gnss_status_notify(RUN_STATUS_SLEEP_AFTER_TIMEOUT);
 		break;
 	case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_FIX:
 		LOG_DBG("GNSS_EVT_SLEEP_AFTER_FIX");
+		run_status = RUN_STATUS_SLEEP_AFTER_FIX;
 		break;
 	case NRF_MODEM_GNSS_EVT_REF_ALT_EXPIRED:
 		LOG_INF("GNSS_EVT_REF_ALT_EXPIRED");
@@ -673,18 +678,12 @@ static void on_cloud_evt_disconnected(void)
 
 static void on_cloud_evt_data_received(const struct nrf_cloud_data *const data)
 {
-	int err = 0;
+	int err = -EAGAIN;
 
 	if (run_type == RUN_TYPE_AGPS) {
 		err = nrf_cloud_agps_process(data->ptr, data->len);
-		if (err) {
-			LOG_INF("Unable to process A-GPS data, error: %d", err);
-		}
 	} else if (run_type == RUN_TYPE_PGPS) {
 		err = nrf_cloud_pgps_process(data->ptr, data->len);
-		if (err) {
-			LOG_ERR("Unable to process P-GPS data, error: %d", err);
-		}
 	} else if (run_type == RUN_TYPE_CELL_POS) {
 		struct nrf_cloud_cell_pos_result result;
 
@@ -703,11 +702,17 @@ static void on_cloud_evt_data_received(const struct nrf_cloud_data *const data)
 		} else if (err == -EFAULT) {
 			LOG_ERR("Unable to determine location from cell data, error: %d",
 				result.err);
-		} else {
-			LOG_ERR("Unable to process cell pos data, error: %d", err);
 		}
 	} else {
-		LOG_DBG("Unexpected message received");
+		if (nrf_cloud_ready) {
+			sprintf(rsp_buf, "\r\n#XNRFCLOUD: %s\r\n", (char *)data->ptr);
+			rsp_send(rsp_buf, strlen(rsp_buf));
+			err = 0;
+		}
+	}
+
+	if (err < 0) {
+		LOG_WRN("Unable to process data, error: %d run_type: %d", err, run_type);
 	}
 }
 
@@ -1119,6 +1124,38 @@ int handle_at_pgps(enum at_cmd_type cmd_type)
 	return err;
 }
 
+/**@brief handle AT#XGPSDEL commands
+ *  AT#XGPSDEL=<mask>
+ *  AT#XGPSDEL? READ command not supported
+ *  AT#XGPSDEL=?
+ */
+int handle_at_gps_delete(enum at_cmd_type cmd_type)
+{
+	int err = -EINVAL;
+	uint32_t mask;
+
+	switch (cmd_type) {
+	case AT_CMD_TYPE_SET_COMMAND:
+		err = at_params_unsigned_int_get(&at_param_list, 1, &mask);
+		if (err < 0) {
+			return err;
+		}
+		err = nrf_modem_gnss_nv_data_delete(mask);
+		break;
+
+	case AT_CMD_TYPE_TEST_COMMAND:
+		sprintf(rsp_buf, "\r\n#XGPSDEL: <mask>\r\n");
+		rsp_send(rsp_buf, strlen(rsp_buf));
+		err = 0;
+		break;
+
+	default:
+		break;
+	}
+
+	return err;
+}
+
 /**@brief handle AT#XCELLPOS commands
  *  AT#XCELLPOS=<op>
  *  AT#XCELLPOS? READ command not supported
@@ -1187,14 +1224,10 @@ int slm_at_gnss_init(void)
 		return err;
 	}
 
-	if (!nrf_cloud_initd) {
-		err = nrf_cloud_init(&init_param);
-		if (err) {
-			LOG_ERR("Cloud could not be initialized, error: %d", err);
-			return err;
-		}
-
-		nrf_cloud_initd = true;
+	err = nrf_cloud_init(&init_param);
+	if (err && err != -EACCES) {
+		LOG_ERR("Cloud could not be initialized, error: %d", err);
+		return err;
 	}
 
 	k_work_init(&agps_req, agps_req_wk);
@@ -1214,8 +1247,6 @@ int slm_at_gnss_uninit(void)
 		(void)nrf_cloud_disconnect();
 	}
 	(void)nrf_cloud_uninit();
-
-	nrf_cloud_initd = false;
 
 	return 0;
 }
