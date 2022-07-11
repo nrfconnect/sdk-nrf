@@ -7,6 +7,9 @@
 #ifndef _FP_STORAGE_PRIV_H_
 #define _FP_STORAGE_PRIV_H_
 
+#include <zephyr/sys/__assert.h>
+#include <zephyr/settings/settings.h>
+
 #include "fp_common.h"
 
 /**
@@ -23,18 +26,18 @@
 extern "C" {
 #endif
 
-/** Settings subtree name for Fast Pair storage.  */
-#define SETTINGS_AK_SUBTREE_NAME "fp"
+/** Settings subtree name for Fast Pair storage. */
+#define SETTINGS_AK_SUBTREE_NAME "fp_ak"
 
-/** Settings key name prefix for Account Key.  */
-#define SETTINGS_AK_NAME_PREFIX "ak_data"
+/** Settings key name prefix for Account Key. */
+#define SETTINGS_AK_NAME_PREFIX "ak"
 
-/** String used as a connector in settings keys. */
-#define SETTINGS_NAME_CONNECTOR "/"
+/** String used as a separator in settings keys. */
+#define SETTINGS_NAME_SEPARATOR_STR "/"
 
 /** Full settings key name prefix for Account Key (including subtree name). */
 #define SETTINGS_AK_FULL_PREFIX \
-	(SETTINGS_AK_SUBTREE_NAME SETTINGS_NAME_CONNECTOR SETTINGS_AK_NAME_PREFIX)
+	(SETTINGS_AK_SUBTREE_NAME SETTINGS_NAME_SEPARATOR_STR SETTINGS_AK_NAME_PREFIX)
 
 /** Max length of suffix (key ID) in settings key name for Account Key. */
 #define SETTINGS_AK_NAME_MAX_SUFFIX_LEN 1
@@ -54,6 +57,7 @@ extern "C" {
 
 BUILD_ASSERT(ACCOUNT_KEY_MAX_ID < UINT8_MAX);
 BUILD_ASSERT(ACCOUNT_KEY_CNT <= 10);
+BUILD_ASSERT(SETTINGS_NAME_SEPARATOR == '/');
 
 /** Account Key settings record data format. */
 struct account_key_data {
@@ -67,30 +71,30 @@ struct account_key_data {
 
 /** Get Account Key index for given Account Key ID.
  *
- * @param[in] account_key_id	ID of an Account Key.
+ * @param[in] account_key_id ID of an Account Key.
  *
  * @return Account Key index.
  */
 static inline uint8_t account_key_id_to_idx(uint8_t account_key_id)
 {
-        __ASSERT_NO_MSG(account_key_id >= ACCOUNT_KEY_MIN_ID);
+	__ASSERT_NO_MSG(account_key_id >= ACCOUNT_KEY_MIN_ID);
 
-        return (account_key_id - ACCOUNT_KEY_MIN_ID) % ACCOUNT_KEY_CNT;
+	return (account_key_id - ACCOUNT_KEY_MIN_ID) % ACCOUNT_KEY_CNT;
 }
 
 /** Generate next Account Key ID.
  *
- * @param[in] account_key_id		Current Account Key ID.
+ * @param[in] account_key_id Current Account Key ID.
  *
  * @return Next Account Key ID.
  */
 static inline uint8_t next_account_key_id(uint8_t account_key_id)
 {
-        if (account_key_id == ACCOUNT_KEY_MAX_ID) {
-                return ACCOUNT_KEY_MIN_ID;
-        }
+	if (account_key_id == ACCOUNT_KEY_MAX_ID) {
+		return ACCOUNT_KEY_MIN_ID;
+	}
 
-        return account_key_id + 1;
+	return account_key_id + 1;
 }
 
 #ifdef __cplusplus

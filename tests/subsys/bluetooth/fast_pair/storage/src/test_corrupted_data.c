@@ -53,8 +53,8 @@ static void test_wrong_settings_key(void)
 	data.account_key_id = key_id;
 	cu_generate_account_key(key_id, &data.account_key);
 
-	err = settings_save_one(SETTINGS_AK_SUBTREE_NAME SETTINGS_NAME_CONNECTOR "not_account_key",
-				&data, sizeof(data));
+	err = settings_save_one(SETTINGS_AK_SUBTREE_NAME SETTINGS_NAME_SEPARATOR_STR
+				"not_account_key", &data, sizeof(data));
 	zassert_ok(err, "Unexpected error in settings save");
 }
 

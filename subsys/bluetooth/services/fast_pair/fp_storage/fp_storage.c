@@ -201,8 +201,8 @@ static int fp_settings_commit(void)
 	return 0;
 }
 
-SETTINGS_STATIC_HANDLER_DEFINE(fast_pair_storage, SETTINGS_AK_SUBTREE_NAME, NULL, fp_settings_set,
-			       fp_settings_commit, NULL);
+SETTINGS_STATIC_HANDLER_DEFINE(fast_pair_storage_ak, SETTINGS_AK_SUBTREE_NAME, NULL,
+			       fp_settings_set, fp_settings_commit, NULL);
 
 int fp_storage_account_key_count(void)
 {
