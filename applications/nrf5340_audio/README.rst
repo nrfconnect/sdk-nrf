@@ -7,7 +7,7 @@ nRF5340 Audio
    :local:
    :depth: 2
 
-The nRF5340 Audio application demonstrates audio playback over isochronous channels (ISO) using LC3 codec compression and decompression, as per `Bluetooth LE Audio specifications`_.
+The nRF5340 Audio application demonstrates audio playback over isochronous channels (ISO) using LC3 codec compression and decompression, as per `Bluetooth® LE Audio specifications`_.
 It is developed for use with the :ref:`nrf53_audio_app_dk`.
 
 In its default configuration, the application requires access to the external repository containing the LC3 software codec.
@@ -44,9 +44,10 @@ Regardless of the configuration, the application handles the audio data in the f
 #. The headsets process the audio data in their application cores, which channel the data through the application layers:
 
    a. Audio data is sent to the stream control module and placed in a FIFO buffer.
-   #. Audio data is decoded by the software codec either in the synchronization module (I2S-based firmware) or directly (USB-based firmware).
+   #. Audio data is sent from the FIFO buffer to the synchronization module (headsets only use I2S-based firmware).
+   #. Audio data is decoded by the software codec.
 
-#. Decoded audio data is sent to the hardware audio output over USB or I2S.
+#. Decoded audio data is sent to the hardware audio output over I2S.
 
 .. note::
    Currently, only a unidirectional stream is supported (gateway to headsets).
@@ -89,7 +90,7 @@ Broadcast Isochronous Stream (BIS)
      * In the BIS mode, you can use any number of nRF5340 Audio development kits as receivers.
      * In the current version of the nRF5340 Audio application, the BIS mode offers only monophonic sound reproduction.
 
-The audio quality for both modes does not change, although the processing time for stereo quality can be longer.
+The audio quality for both modes does not change, although the processing time for stereo can be longer.
 
 .. _nrf53_audio_app_overview_architecture:
 
@@ -121,10 +122,18 @@ These modules include the following major ones:
   * UART (debug)
   * Timer
 
+* Application-specific Bluetooth modules for handling the Bluetooth connection:
+
+  * :file:`le_audio_cis_gateway.c` or :file:`le_audio_cis_headset.c` - One of these ``cis`` modules is used by default.
+  * :file:`le_audio_bis_gateway.c` or :file:`le_audio_bis_headset.c` - One of these ``bis`` modules is selected automatically when you :ref:`switch to the BIS configuration <nrf53_audio_app_configuration_select_bis>`.
+
+  Only one of these files is used at compile time.
+  Each of these files handles the Bluetooth connection and Bluetooth events and funnels the data to the relevant audio modules.
+
 * Application-specific custom modules:
 
-  * Stream Control - This module watches over the state machine of the application.
-    It checks the state of the Bluetooth connection, handles button presses and events, receives audio from the host, and forwards the audio data to the next module.
+  * Stream Control - This module implements a simple state machine for the application (``STREAMING`` or ``PAUSED``).
+    It also handles events from Bluetooth LE and buttons, receives audio from the host, and forwards the audio data to the next module.
   * FIFO buffers
   * Synchronization module (part of `I2S-based firmware for gateway and headsets`_) - See `Synchronization module overview`_ for more information.
 
@@ -132,7 +141,8 @@ These modules include the following major ones:
 
   * LC3 encoder/decoder (default)
 
-  :ref:`Selecting and configuring the right software codec <nrf53_audio_app_requirements_codec>` is required to run the application.
+.. note::
+   :ref:`Selecting and configuring the right software codec <nrf53_audio_app_requirements_codec>` is required to run the application.
 
 Since the application architecture is uniform and the firmware code is shared, the set of audio modules in use depends on the chosen stream mode (BIS or CIS), the chosen audio inputs and outputs (USB or analog jack), and if the gateway or the headset configuration is selected.
 
@@ -167,7 +177,7 @@ The following figure shows an overview of the modules currently included in the 
    nRF5340 Audio modules on the gateway and the headsets using I2S
 
 The Bluetooth LE RX FIFO is mainly used to make :file:`audio_datapath.c` (synchronization module) run in a separate thread.
-After the encoding, the frames are sent by the encoder thread using a function located in :file:`streamctrl.c`.
+After encoding the audio data received from I2S, the frames are sent by the encoder thread using a function located in :file:`streamctrl.c`.
 
 .. _nrf53_audio_app_overview_architecture_sync_module:
 
@@ -201,8 +211,8 @@ See the following figure for an overview of the synchronization module.
 
 Both synchronization methods use the SDU reference timestamps (:c:type:`sdu_ref`) as the reference variable.
 If the device is a gateway that is :ref:`using I2S as audio source <nrf53_audio_app_overview_architecture_i2s>` and the stream is unidirectional (gateway to headsets), :c:type:`sdu_ref` is continuously being extracted from the LE Audio Controller Subsystem for nRF53 on the gateway.
-These :c:type:`sdu_ref` values are then sent to the gateway's synchronization module, and used to do drift compensation.
-This extraction of :c:type:`sdu_ref` happens inside the function in :file:`streamctrl.c` that sends encoded data.
+The extraction happens inside the :file:`le_audio_cis_gateway.c` and :file:`le_audio_bis_gateway.c` files' send function.
+The :c:type:`sdu_ref` values are then sent to the gateway's synchronization module, and used to do drift compensation.
 
 .. note::
    Inside the synchronization module (:file:`audio_datapath.c`), all time-related variables end with ``_us`` (for microseconds).
@@ -250,7 +260,7 @@ The received audio data in the I2S-based firmware devices follows the following 
 #. The data is sent from the FIFO buffer to the :file:`audio_datapath.c` synchronization module.
    The :file:`audio_datapath.c` module performs the audio synchronization based on the SDU reference timestamps.
    Each package sent from the gateway gets a unique SDU reference timestamp.
-   These timestamps are generated on the headset controllers.
+   These timestamps are generated on the headset controllers (in the network core).
    This enables the creation of True Wireless Stereo (TWS) earbuds where the audio is synchronized in the CIS mode.
    It does also keep the speed of the inter-IC sound (I2S) interface synchronized with the sending and receiving speed of Bluetooth packets.
 #. The :file:`audio_datapath.c` module sends the compressed audio data to the LC3 audio decoder for decoding.
@@ -593,56 +603,15 @@ The following table lists hardware limitations discovered in different revisions
 nRF5340 Audio configuration files
 =================================
 
-The nRF5340 Audio uses combinations of multiple :file:`.conf` files for different application versions and device types.
+The nRF5340 Audio application uses :file:`Kconfig.defaults` files to change configuration defaults automatically, based on the different application versions and device types.
 
-The :file:`prj.conf` file is the main configuration file, and it is always included.
-The configuration files for specifying application versions and device types are named using the format *overlay-<version_or_device>.conf*.
-For example, the configuration file for the ``release`` application version is :file:`overlay-release.conf`.
+Only one of the following :file:`.conf` files is included when building:
 
-The following configuration file options are available for the nRF5340 Audio development kit:
-
-* ``release`` - Release version of the application with no debugging features.
-* ``debug`` - Debug version of the application.
-  It has the same option settings as the ``release`` configuration, but also enables debug options.
-* ``headset`` - Application configuration for the headset device type.
-* ``gateway`` - Application configuration for the gateway device type.
-
-You can combine the configuration files as follows to obtain one of four different application configurations:
-
-.. list-table::
-    :widths: auto
-    :header-rows: 1
-
-    * - Configuration file/Application configuration
-      - Headset + debug
-      - Gateway + debug
-      - Headset + release
-      - Gateway + release
-    * - ``prj.conf`` (always used)
-      - ✔
-      - ✔
-      - ✔
-      - ✔
-    * - ``overlay-debug.conf``
-      - ✔
-      - ✔
-      -
-      -
-    * - ``overlay-release.conf``
-      -
-      -
-      - ✔
-      - ✔
-    * - Resulting build directory when using the script
-      - ``dev_headset/build_debug``
-      - ``dev_gateway/build_debug``
-      - ``dev_headset/build_release``
-      - ``dev_gateway/build_release``
-
-This means that when you build the application using the ``headset`` device type and the ``release`` application version (third column), the build process includes :file:`prj.conf`,  :file:`overlay-headset.conf`, and :file:`overlay-release.conf` at the time of building the firmware.
-If you are building using the script, the build files are then placed in the :file:`build/headset_release` directory.
-
-See :ref:`nrf53_audio_app_building` for detailed information about selecting the desired combination of configuration files for your build.
+* :file:`prj.conf` is the default configuration file and it implements the debug application version.
+* :file:`prj_release.conf` is the optional configuration file and it implements the release application version.
+  No debug features are enabled in the release application version.
+  When building using the command line, you must explicitly specify if :file:`prj_release.conf` is going to be included instead of :file:`prj.conf`.
+  See :ref:`nrf53_audio_app_building` for details.
 
 .. _nrf53_audio_app_ui:
 
@@ -684,11 +653,12 @@ The application uses the following buttons on the supported development kit:
 +---------------+----------------------------------------------------------------+
 | **PLAY/PAUSE**| Starts or pauses the playback.                                 |
 +---------------+----------------------------------------------------------------+
-| **BTN 4**     | During playback, sends a test tone generated by the gateway.   |
+| **BTN 4**     | During playback, sends a test tone generated on the device.    |
 |               | Pressing the button multiple times changes the tone frequency. |
 |               | The available values are 1000 Hz, 2000 Hz, and 4000 Hz.        |
 |               | Use this tone to check the synchronization of headsets.        |
-|               | This button is only supported on the gateway.                  |
+|               | Sending of test tone is currently only supported on the        |
+|               | gateway.                                                       |
 +---------------+----------------------------------------------------------------+
 | **BTN 5**     | Mutes the playback volume.                                     |
 +---------------+----------------------------------------------------------------+
@@ -826,7 +796,7 @@ Selecting the BIS mode
 ======================
 
 The CIS mode is the default operating mode for the application.
-You can switch to the BIS mode by adding the ``CONFIG_TRANSPORT_BIS`` Kconfig option set to ``y`` to the main :file:`prj.conf` file.
+You can switch to the BIS mode by adding the ``CONFIG_TRANSPORT_BIS`` Kconfig option set to ``y``  to the :file:`prj.conf` file for the debug version and the :file:`prj_release.conf` file for the release version.
 
 .. _nrf53_audio_app_configuration_select_i2s:
 
@@ -836,7 +806,7 @@ Selecting the I2S serial
 In the default configuration, the gateway application uses the USB serial port as the audio source.
 The :ref:`nrf53_audio_app_building` and :ref:`nrf53_audio_app_testing` steps also refer to using the USB serial connection.
 
-You can switch to using the I2S serial connection by adding the ``CONFIG_AUDIO_SOURCE_I2S`` Kconfig option set to ``y`` to the main :file:`prj.conf` file.
+You can switch to using the I2S serial connection by adding the ``CONFIG_AUDIO_SOURCE_I2S`` Kconfig option set to ``y``  to the :file:`prj.conf` file for the debug version and the :file:`prj_release.conf` file for the release version.
 
 When testing the application, an additional audio jack cable is required to use I2S.
 Use this cable to connect the audio source (PC) to the analog **LINE IN** on the development kit.
@@ -877,7 +847,7 @@ Testing out of the box
 Each development kit comes preprogrammed with basic firmware that indicates if the kit is functional.
 Before building the application, you can verify if the kit is working by completing the following steps:
 
-1. Plug the devices into the USB port using USB-C.
+1. Plug the device into the USB port using USB-C.
 #. Turn on the development kit using the On/Off switch.
 #. Observe **RGB1** (bottom side LEDs around the center opening that illuminate the Nordic Semiconductor logo) turn solid yellow, **OB/EXT** turn solid green, and **LED3** start blinking green.
 
@@ -938,6 +908,9 @@ Programming with the script
 
       python buildprog.py -c both -b debug -d both -p
 
+   .. note::
+      If you are using Windows Subsystem for Linux (WSL) and encounter problems while programming, include the ``-s`` parameter to program sequentially.
+
    This command builds the application with the ``debug`` application version for both the headset and the gateway and programs the application core.
    Given the ``-c both`` parameter, it also takes the precompiled Bluetooth Low Energy Controller binary from the :file:`applications/nrf5340_audio/bin` directory and programs it to the network core of both the gateway and the headset.
 
@@ -984,19 +957,25 @@ Configuration table overview
    |                       | This depends on the ``-r`` parameter in the command, which overrides other parameters.              +-----------------------------------------------+
    |                       |                                                                                                     | ``Selected TBD`` - Only reset requested.      |
    |                       |                                                                                                     +-----------------------------------------------+
-   |                       |                                                                                                     | ``Selected done`` - Reset done.               |
+   |                       |                                                                                                     | ``Done`` - Reset done.                        |
+   |                       |                                                                                                     +-----------------------------------------------+
+   |                       |                                                                                                     | ``Failed`` - Reset failed.                    |
    +-----------------------+-----------------------------------------------------------------------------------------------------+-----------------------------------------------+
    |``core app programmed``| Whether the application core is to be programmed.                                                   | ``Not selected`` - Core won't be programmed.  |
-   |                       | This depends on the values provided to the ``-c`` and ``-d`` parameters (see above).                +-----------------------------------------------+
+   |                       | This depends on the value provided to the ``-c`` parameter (see above).                             +-----------------------------------------------+
    |                       |                                                                                                     | ``Selected TBD`` - Programming requested.     |
    |                       |                                                                                                     +-----------------------------------------------+
-   |                       |                                                                                                     | ``Selected done`` - Programming done.         |
+   |                       |                                                                                                     | ``Done`` - Programming done.                  |
+   |                       |                                                                                                     +-----------------------------------------------+
+   |                       |                                                                                                     | ``Failed`` - Programming failed.              |
    +-----------------------+-----------------------------------------------------------------------------------------------------+-----------------------------------------------+
    |``core net programmed``| Whether the network core is to be programmed.                                                       | ``Not selected`` - Core won't be programmed.  |
-   |                       | This depends on the values provided to the ``-c`` parameter (see above).                            +-----------------------------------------------+
+   |                       | This depends on the value provided to the ``-c`` parameter (see above).                             +-----------------------------------------------+
    |                       |                                                                                                     | ``Selected TBD`` - Programming requested.     |
    |                       |                                                                                                     +-----------------------------------------------+
-   |                       |                                                                                                     | ``Selected done`` - Programming done.         |
+   |                       |                                                                                                     | ``Done`` - Programming done.                  |
+   |                       |                                                                                                     +-----------------------------------------------+
+   |                       |                                                                                                     | ``Failed`` - Programming failed.              |
    +-----------------------+-----------------------------------------------------------------------------------------------------+-----------------------------------------------+
 
 .. _nrf53_audio_app_building_standard:
@@ -1015,28 +994,29 @@ Building the application
 
 Complete the following steps to build the application:
 
-1. Choose the combination of the build flags, in line with :ref:`nrf53_audio_app_configuration_files`:
+1. Choose the combination of build flags:
 
-   a. Choose the application version by using one of the following options:
+   a. Choose the device type by using one of the following options:
 
-      * ``-DOVERLAY_CONFIG=overlay-debug.conf``
-      * ``-DOVERLAY_CONFIG=overlay-release.conf``
+      * For headset device: ``-DCONFIG_AUDIO_DEV=1``
+      * For gateway device: ``-DCONFIG_AUDIO_DEV=2``
 
-   #. Choose the device type by using one of the following options:
+   #. Choose the application version by using one of the following options:
 
-      * ``-DOVERLAY_CONFIG=overlay-headset.conf``
-      * ``-DOVERLAY_CONFIG=overlay-gateway.conf``
+      * For the debug version: No build flag needed.
+      * For the release version: ``-DCONF_FILE=prj_release.conf``
 
-   Both build flags must be provided using only one ``-DOVERLAY_CONFIG`` parameter, as shown in the following step.
 #. Build the application using the standard :ref:`build steps <gs_programming>`.
-   For example, if you want to build the firmware for the application core as a headset using the ``debug`` application version, you can run the following command:
+   For example, if you want to build the firmware for the application core as a headset using the ``release`` application version, you can run the following command:
 
    .. code-block:: console
 
-      west build -b nrf5340_audio_dk_nrf5340_cpuapp --pristine -- -DOVERLAY_CONFIG="overlay-headset.conf overlay-debug.conf"
+      west build -b nrf5340_audio_dk_nrf5340_cpuapp --pristine -DCONFIG_AUDIO_DEV=1 -DCONF_FILE=prj_release.conf
 
    Unlike when :ref:`nrf53_audio_app_building_script`, this command creates the build files directly in the :file:`build` directory.
-   This means that you first need to program the development kit for the headset before you build and program other development kits.
+   This means that you first need to program the headset development kits before you build and program gateway development kits.
+   Alternatively, you can add the ``-d`` parameter to the ``west`` command to specify a custom build folder. This lets you build firmware for both
+   headset and gateway before programming any development kits.
 
 Programming the application
 ---------------------------
@@ -1059,7 +1039,7 @@ After building the files for the development kit you want to program, complete t
 
    .. code-block:: console
 
-      nrfjprog --program bin/ble5-ctr-rpmsg_3216.hex --chiperase --coprocessor CP_NETWORK -r
+      nrfjprog --program bin/*.hex --chiperase --coprocessor CP_NETWORK -r
 
    |net_core_hex_note|
 #. Program the application core on the development kit with the respective HEX file from the :file:`build` directory by running the following command:
@@ -1068,7 +1048,8 @@ After building the files for the development kit you want to program, complete t
 
       nrfjprog --program build/zephyr/zephyr.hex --coprocessor CP_APPLICATION --sectorerase -r
 
-   In this example, :file:`build/zephyr/zephyr.hex` is the HEX binary file for the application core.
+   In this command, :file:`build/zephyr/zephyr.hex` is the HEX binary file for the application core.
+   If a custom build folder is specified, the path to this folder must be used instead of :file:`build/`.
 #. If any device is not programmed due to :ref:`readback_protection_error`, complete the following steps:
 
    a. Run the following commands to recover the device:
@@ -1121,17 +1102,15 @@ Complete the following steps to test the CIS mode for one gateway and two headse
 #. Search the list of audio devices listed in the sound settings of your operating system for *nRF5340 USB Audio* (gateway) and select it as the output device.
 #. Connect headphones to the **HEADPHONE** audio jack on both headset devices.
 #. Start audio playback on your PC from any source.
-#. After **LED1** turns solid blue on the headsets and starts blinking blue on the gateway, press the **PLAY/PAUSE** button on a headset.
-   **LED1** starts blinking blue and the audio stream starts on the chosen headset.
+#. Wait for **LED1** to blink blue on both headsets.
+   When they do, the audio stream has started on both headsets.
 
    .. note::
       The audio outputs only to the left channel of the audio jack, even if the given headset is configured as the right headset.
       This is because of the mono hardware codec chip used on the development kits.
       If you want to play stereo sound using one development kit, you must connect an external hardware codec chip that supports stereo.
 
-#. Wait for the **LED2** to light up solid green to indicate that the audio synchronization is achieved between the gateway and the chosen headset.
-#. Press the **PLAY/PAUSE** button on the second headset.
-   Both **LED1** and **LED2** have the same behavior as for the first headset.
+#. Wait for **LED2** to light up solid green on the headsets to indicate that the audio synchronization is achieved.
 #. Press the **VOL+** button on one of the headsets.
    The playback volume increases for both headsets.
 #. Press the **VOL-** button on the gateway.
@@ -1188,16 +1167,17 @@ For detailed instructions for adding Zephyr support to a custom board, see Zephy
 Application configuration sources
 =================================
 
-The application configuration source files define the set of options used by the nRF5340 Audio application board and the included modules (such as Bluetooth or I2S).
-These are :file:`.conf` files that modify the default Kconfig values defined in the Kconfig files.
+The application configuration source file defines a set of options used by the nRF5340 Audio application.
+This is a :file:`.conf` file that modifies the default Kconfig values defined in the Kconfig files.
 
-The following :file:`.conf` files are the default ones in the application:
+Only one :file:`.conf` file is included at a time.
+The :file:`prj.conf` file is the default configuration file and it implements the debug application version.
+For the release application version, you need to include the :file:`prj_release.conf` configuration file.
+In the release application version no debug features should be enabled.
 
-* The :file:`prj.conf` application configuration file.
-* Either :file:`overlay-debug.conf` or :file:`overlay-release.conf`.
-* Either :file:`overlay-gateway.conf` or :file:`overlay-headset.conf`.
+The nRF5340 Audio application also use several :file:`Kconfig.defaults` files to change configuration defaults automatically, based on the different application versions and device types.
 
-You need to edit these files if you want to add new functionalities to your application, but editing these files when adding a new board is not required.
+You need to edit :file:`prj.conf` and :file:`prj_release.conf` if you want to add new functionalities to your application, but editing these files when adding a new board is not required.
 
 .. _nrf53_audio_app_porting_guide_adding_board:
 
