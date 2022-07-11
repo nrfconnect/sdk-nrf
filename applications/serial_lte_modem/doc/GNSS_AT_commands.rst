@@ -129,9 +129,7 @@ Response syntax
 
 * ``0`` - GNSS is stopped.
 * ``1`` - GNSS is started.
-* ``2`` - GNSS wakes up in periodic mode.
-* ``3`` - GNSS enters sleep because of timeout.
-* ``4`` - GNSS enters sleep because a fix is achieved.
+* ``2`` - GNSS enters sleep because of timeout.
 
 Example
 ~~~~~~~
@@ -456,9 +454,7 @@ Response syntax
 
 * ``0`` - AGPS is stopped.
 * ``1`` - AGPS is started.
-* ``2`` - GNSS wakes up in periodic mode.
-* ``3`` - GNSS enters sleep because of timeout.
-* ``4`` - GNSS enters sleep because a fix is achieved.
+* ``2`` - GNSS enters sleep because of timeout.
 
 Example
 ~~~~~~~
@@ -627,9 +623,7 @@ Response syntax
 
 * ``0`` - PGPS is stopped.
 * ``1`` - PGPS is started.
-* ``2`` - GNSS wakes up in periodic mode.
-* ``3`` - GNSS enters sleep because of timeout.
-* ``4`` - GNSS enters sleep because a fix is achieved.
+* ``2`` - GNSS enters sleep because of timeout.
 
 Test command
 ------------
