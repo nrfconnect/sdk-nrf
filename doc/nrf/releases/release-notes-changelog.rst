@@ -124,6 +124,7 @@ nRF9160: Serial LTE modem
     * Selected flags support in #XRECV and #XRECVFROM commands.
     * Multi-PDN support in the Socket service.
     * The GNSS service now signifies location info to nRF Cloud.
+    * New #XGPSDEL command to delete GNSS data from non-volatile memory.
 
   * Updated:
 
