@@ -423,6 +423,7 @@ Libraries for networking
       * Handling for new nRF Cloud REST error code 40499.
         Moved the error log from the :c:func:`nrf_cloud_parse_rest_error` function into the calling function.
       * Support for full modem FOTA updates.
+      * :c:func:`nrf_cloud_fota_is_type_enabled` function that determines if the specified FOTA type is enabled by the configuration.
 
   * :ref:`lib_multicell_location` library:
 

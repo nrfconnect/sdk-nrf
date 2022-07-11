@@ -774,6 +774,20 @@ int nrf_cloud_fota_fmfu_apply(void);
  */
 bool nrf_cloud_fota_is_type_modem(const enum nrf_cloud_fota_type type);
 
+/**
+ * @brief Function to determine if the specified FOTA type is enabled by the
+ *        configuration.
+ *        Depends on CONFIG_NRF_CLOUD_FOTA.
+ *        REST-based FOTA applications are responsible for determining
+ *        their supported FOTA types.
+ *
+ * @param[in] type Fota type.
+ *
+ * @retval true  Specified FOTA type is enabled by the configuration.
+ * @retval false Specified FOTA type is not enabled by the configuration.
+ */
+bool nrf_cloud_fota_is_type_enabled(const enum nrf_cloud_fota_type type);
+
 /** @} */
 
 #ifdef __cplusplus
