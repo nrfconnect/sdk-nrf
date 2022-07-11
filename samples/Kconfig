@@ -100,10 +100,19 @@ config LOG_DEFAULT_LEVEL
 
 endif # LOG
 
+menu "Image build variants"
+
+# These are set by CMake, and they need a prompt.
+# Keep them in a separate menu to avoid cluttering the top-level menu
+
 config NCS_IS_VARIANT_IMAGE
 	bool "Image is a variant build of another image [READ ONLY]"
+	help
+	   Image is a variant build of another image.
 
 config NCS_MCUBOOT_IN_BUILD
 	bool "MCUBoot is included in the build [READ ONLY]"
 	help
 	  Helper option used to communicate to child images that MCUboot is included in the build.
+
+endmenu
