@@ -417,9 +417,9 @@ static void update_shadow(void)
 {
 	int err;
 	struct nrf_cloud_svc_info_fota fota_info = {
-		.application = fota_capable(),
-		.bootloader = fota_capable() && boot_fota_capable(),
-		.modem = fota_capable()
+		.application = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_APPLICATION),
+		.bootloader = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_BOOTLOADER),
+		.modem = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_DELTA)
 	};
 	struct nrf_cloud_svc_info_ui ui_info = {
 		.gps = location_tracking_enabled(),
