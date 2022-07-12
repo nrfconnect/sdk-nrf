@@ -124,10 +124,10 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_LOG_AUDIO_DATAPATH_LEVEL);
 #define UNDERRUN_LOG_INTERVAL_BLKS 5000
 
 enum drift_comp_state {
-	DRFT_STATE_INIT, /* Waiting for data to be received */
-	DRFT_STATE_CALIB, /* Calibrate and zero out local delay */
-	DRFT_STATE_OFFSET, /* Adjust I2S offset relative to SDU Reference */
-	DRFT_STATE_LOCKED /* Drift compensation locked - Minor corrections */
+	DRIFT_STATE_INIT, /* Waiting for data to be received */
+	DRIFT_STATE_CALIB, /* Calibrate and zero out local delay */
+	DRIFT_STATE_OFFSET, /* Adjust I2S offset relative to SDU Reference */
+	DRIFT_STATE_LOCKED /* Drift compensation locked - Minor corrections */
 };
 
 static const char *const drift_comp_state_names[] = {
@@ -230,16 +230,16 @@ static void drift_comp_state_set(enum drift_comp_state new_state)
 static void audio_datapath_drift_compensation(uint32_t frame_start_ts)
 {
 	switch (ctrl_blk.drift_comp.state) {
-	case DRFT_STATE_INIT: {
+	case DRIFT_STATE_INIT: {
 		/* Check if audio data has been received */
 		if (ctrl_blk.previous_sdu_ref_us) {
 			ctrl_blk.drift_comp.meas_start_time_us = ctrl_blk.previous_sdu_ref_us;
 
-			drift_comp_state_set(DRFT_STATE_CALIB);
+			drift_comp_state_set(DRIFT_STATE_CALIB);
 		}
 		break;
 	}
-	case DRFT_STATE_CALIB: {
+	case DRIFT_STATE_CALIB: {
 		if (++ctrl_blk.drift_comp.ctr < DRIFT_COMP_WAITING_CNT) {
 			/* Waiting */
 			return;
@@ -261,10 +261,10 @@ static void audio_datapath_drift_compensation(uint32_t frame_start_ts)
 
 		hfclkaudio_set(ctrl_blk.drift_comp.center_freq);
 
-		drift_comp_state_set(DRFT_STATE_OFFSET);
+		drift_comp_state_set(DRIFT_STATE_OFFSET);
 		break;
 	}
-	case DRFT_STATE_OFFSET: {
+	case DRIFT_STATE_OFFSET: {
 		if (++ctrl_blk.drift_comp.ctr < DRIFT_COMP_WAITING_CNT) {
 			/* Waiting */
 			return;
@@ -281,12 +281,12 @@ static void audio_datapath_drift_compensation(uint32_t frame_start_ts)
 		hfclkaudio_set(ctrl_blk.drift_comp.center_freq + freq_adj);
 
 		if ((err_us < DRIFT_ERR_THRESH_LOCK) && (err_us > -DRIFT_ERR_THRESH_LOCK)) {
-			drift_comp_state_set(DRFT_STATE_LOCKED);
+			drift_comp_state_set(DRIFT_STATE_LOCKED);
 		}
 
 		break;
 	}
-	case DRFT_STATE_LOCKED: {
+	case DRIFT_STATE_LOCKED: {
 		if (++ctrl_blk.drift_comp.ctr < DRIFT_COMP_WAITING_CNT) {
 			/* Waiting */
 			return;
@@ -351,7 +351,7 @@ static void pres_comp_state_set(enum pres_comp_state new_state)
 static void audio_datapath_presentation_compensation(uint32_t recv_frame_ts_us, uint32_t sdu_ref_us,
 						     bool sdu_ref_not_consecutive)
 {
-	if (ctrl_blk.drift_comp.state != DRFT_STATE_LOCKED) {
+	if (ctrl_blk.drift_comp.state != DRIFT_STATE_LOCKED) {
 		/* Unconditionally reset state machine if drift compensation looses lock */
 		pres_comp_state_set(PRES_STATE_INIT);
 		return;
@@ -390,7 +390,7 @@ static void audio_datapath_presentation_compensation(uint32_t recv_frame_ts_us, 
 		if ((pres_adj_us >= (BLK_PERIOD_US / 2)) || (pres_adj_us <= -(BLK_PERIOD_US / 2))) {
 			pres_comp_state_set(PRES_STATE_WAIT);
 		} else {
-			/* Drift compensation will always be in DRFT_STATE_LOCKED here */
+			/* Drift compensation will always be in DRIFT_STATE_LOCKED here */
 			pres_comp_state_set(PRES_STATE_LOCKED);
 		}
 
