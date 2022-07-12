@@ -114,8 +114,16 @@ static int egu_channel_alloc(uint8_t *egu_channels, size_t size, uint8_t egu_ins
 
 #if IS_ENABLED(CONFIG_MPSL_FEM_NRF21540_GPIO_SPI)
 
-static void fem_nrf21540_spi_configure(mpsl_fem_nrf21540_gpio_spi_interface_config_t *cfg)
+static uint32_t fem_nrf21540_spi_configure(mpsl_fem_nrf21540_gpio_spi_interface_config_t *cfg)
 {
+#if DT_NODE_HAS_PROP(MPSL_FEM_SPI_BUS, cs_gpios)
+	uint8_t cs_gpiote_channel;
+
+	if (nrfx_gpiote_channel_alloc(&cs_gpiote_channel) != NRFX_SUCCESS) {
+		return -ENOMEM;
+	}
+#endif
+
 	cfg->spi_config = (mpsl_fem_spi_config_t) {
 		.p_spim = MPSL_FEM_SPI_REG,
 #if !defined(CONFIG_PINCTRL)
@@ -152,13 +160,18 @@ static void fem_nrf21540_spi_configure(mpsl_fem_nrf21540_gpio_spi_interface_conf
 
 #endif // !defined(CONFIG_PINCTRL)
 
-		.cs_pin = {
+		.cs_pin_config = {
 #if DT_NODE_HAS_PROP(MPSL_FEM_SPI_BUS, cs_gpios)
-			.p_port        = MPSL_FEM_SPI_GPIO_PORT_REG(cs_gpios),
-			.port_no       = MPSL_FEM_SPI_GPIO_PORT_NO(cs_gpios),
-			.port_pin      = MPSL_FEM_SPI_GPIO_PIN_NO(cs_gpios),
+			.gpio_pin = {
+				.p_port        = MPSL_FEM_SPI_GPIO_PORT_REG(cs_gpios),
+				.port_no       = MPSL_FEM_SPI_GPIO_PORT_NO(cs_gpios),
+				.port_pin      = MPSL_FEM_SPI_GPIO_PIN_NO(cs_gpios),
+			},
+			.enable        = true,
+			.active_high   = true,
+			.gpiote_ch_id  = cs_gpiote_channel
 #else
-			.port_pin      = MPSL_FEM_GPIO_INVALID_PIN
+			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
 #endif
 		}
 	};
@@ -205,6 +218,7 @@ static void fem_nrf21540_spi_configure(mpsl_fem_nrf21540_gpio_spi_interface_conf
 	}
 #endif // defined(CONFIG_PINCTRL)
 
+	return 0;
 }
 
 static int fem_nrf21540_gpio_spi_configure(void)
@@ -312,7 +326,10 @@ static int fem_nrf21540_gpio_spi_configure(void)
 		},
 	};
 
-	fem_nrf21540_spi_configure(&cfg);
+	err = fem_nrf21540_spi_configure(&cfg);
+	if (err) {
+		return err;
+	}
 
 	IF_ENABLED(CONFIG_HAS_HW_NRF_PPI,
 		   (err = ppi_channel_alloc(cfg.ppi_channels, ARRAY_SIZE(cfg.ppi_channels));));
