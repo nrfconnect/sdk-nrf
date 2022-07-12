@@ -37,6 +37,9 @@ int nrf_cloud_fota_fmfu_dev_set(const struct dfu_target_fmfu_fdev *const fmfu_de
 	} else if (!fmfu_dev_inf->dev) {
 		LOG_ERR("Flash device is NULL");
 		return -ENODEV;
+	} else if (!device_is_ready(fmfu_dev_inf->dev)) {
+		LOG_ERR("Flash device is not ready");
+		return -EBUSY;
 	}
 
 	int ret;
