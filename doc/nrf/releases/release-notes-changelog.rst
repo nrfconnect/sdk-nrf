@@ -244,6 +244,10 @@ nRF9160 samples
     * Minor logging and function structure improvements
     * :ref:`lib_nrf_cloud` library is no longer de-initialized and re-initialized on disconnect and reconnect.
 
+  * Added:
+
+    * Support for full modem FOTA.
+
 * :ref:`nrf_cloud_rest_fota` sample:
 
   * Added:

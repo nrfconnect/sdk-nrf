@@ -5,6 +5,7 @@
 
 #include <zephyr/kernel.h>
 #include <stdio.h>
+#include <modem/nrf_modem_lib.h>
 #include <modem/lte_lc.h>
 #include <zephyr/net/socket.h>
 #include <net/nrf_cloud.h>
@@ -292,6 +293,7 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		LOG_DBG("NRF_CLOUD_EVT_FOTA_DONE, FOTA type: %s",
 			fota_type == NRF_CLOUD_FOTA_APPLICATION	  ?		"Application"	:
 			fota_type == NRF_CLOUD_FOTA_MODEM_DELTA	  ?		"Modem (delta)"	:
+			fota_type == NRF_CLOUD_FOTA_MODEM_FULL	  ?		"Modem (full)"	:
 			fota_type == NRF_CLOUD_FOTA_BOOTLOADER	  ?		"Bootloader"	:
 										"Invalid");
 
@@ -419,7 +421,8 @@ static void update_shadow(void)
 	struct nrf_cloud_svc_info_fota fota_info = {
 		.application = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_APPLICATION),
 		.bootloader = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_BOOTLOADER),
-		.modem = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_DELTA)
+		.modem = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_DELTA),
+		.modem_full = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_FULL)
 	};
 	struct nrf_cloud_svc_info_ui ui_info = {
 		.gps = location_tracking_enabled(),
@@ -632,6 +635,14 @@ static int setup_lte(void)
 {
 	int err;
 
+	/* Initialize the modem library if required */
+	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_SYS_INIT)) {
+		err = nrf_modem_lib_init(NORMAL_MODE);
+		if (err) {
+			LOG_ERR("Modem library initialization failed, error: %d", err);
+		}
+	}
+
 	/* Register to be notified when the modem has figured out the current time. */
 	date_time_register_handler(date_time_evt_handler);
 
@@ -689,8 +700,10 @@ static int setup_cloud(void)
 {
 	/* Initialize nrf_cloud library. */
 	struct nrf_cloud_init_param params = {
-		.event_handler = cloud_event_handler
+		.event_handler = cloud_event_handler,
+		.fmfu_dev_inf = get_full_modem_fota_fdev()
 	};
+
 	int err = nrf_cloud_init(&params);
 
 	if (err) {
