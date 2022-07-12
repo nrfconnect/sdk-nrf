@@ -108,7 +108,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: fc0080b193bfdba5d186eb7dd1e1309cea6b57d0
+      revision: v2.0.1
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -120,7 +120,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v2.0.0
+      revision: v2.0.1
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -131,7 +131,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: v2.0.0
+      revision: v2.0.1
       groups:
       - nrf-802154
     - name: cjson
@@ -140,12 +140,12 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: v2.0.0
+      revision: v2.0.1
       groups:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: v2.0.0
+      revision: v2.0.1
       groups:
       - find-my
     - name: sdk-lc3
@@ -179,7 +179,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: b6126a143ef1e1b68d1c86c321fae7668e6d5bf5
+      revision: v2.0.1
 
   # West-related configuration for the nrf repository.
   self:
