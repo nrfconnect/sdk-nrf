@@ -74,12 +74,12 @@
 	</defs>
 	<g>
 		<title>Page-1</title>
-		<g id="shape5-1" transform="translate(150.609,-512.654)">
+		<g id="shape5-1" transform="translate(162.467,-531.496)">
 			<title>Nordic Blue</title>
 			<desc>Bluetooth LE Host</desc>
-			<rect x="0" y="552.359" width="202.677" height="42.5197" class="st1"/>
-			<text x="57.01" y="576.92" class="st2">Bluetooth LE Host</text>		</g>
-		<g id="shape6-4" transform="translate(425.57,-512.654)">
+			<rect x="0" y="552.359" width="191.864" height="42.5197" class="st1"/>
+			<text x="51.6" y="576.92" class="st2">Bluetooth LE Host</text>		</g>
+		<g id="shape6-4" transform="translate(425.57,-531.496)">
 			<title>Nordic Blue.6</title>
 			<desc>LE Audio Controller Subsystem for nRF53</desc>
 			<rect x="0" y="552.359" width="129.685" height="42.5197" class="st1"/>
@@ -144,19 +144,19 @@
 			<title>Dynamic connector</title>
 			<path d="M7.09 588.2 L7.09 587.84 L7.09 559.4" class="st7"/>
 		</g>
-		<g id="shape22-56" transform="translate(155.729,-184.806)">
+		<g id="shape22-56" transform="translate(155.729,-174.567)">
 			<title>Nordic Blueslate</title>
 			<desc>audio_codec.c</desc>
 			<rect x="0" y="465.12" width="220.802" height="129.758" class="st9"/>
 			<text x="158.76" y="588.18" class="st10">audio_codec.c</text>		</g>
-		<g id="shape23-59" transform="translate(155.729,-109.034)">
+		<g id="shape23-59" transform="translate(155.729,-94.1787)">
 			<title>Nordic Lake</title>
 			<desc>audio_usb.c</desc>
 			<rect x="0" y="561.498" width="220.802" height="33.3804" class="st11"/>
 			<text x="80.74" y="581.49" class="st2">audio_usb.c</text>		</g>
 		<g id="shape25-62" transform="translate(149.909,-2.03534)">
 			<title>Nordic Blue.25</title>
-			<path d="M0 594.88 L232.44 594.88 L232.44 120.06 L0 120.06 L0 594.88 Z" class="st12"/>
+			<path d="M0 594.88 L235.6 594.88 L235.6 191.94 L0 191.94 L0 594.88 Z" class="st12"/>
 		</g>
 		<g id="shape26-64" transform="translate(97.8139,-108.717)">
 			<title>Dynamic connector.26</title>
@@ -175,85 +175,85 @@
 			<title>Nordic Blue.33</title>
 			<path d="M0 594.88 L0.28 594.88 L0.28 5.27 L0 5.27 L0 594.88 Z" class="st14"/>
 		</g>
-		<g id="shape34-84" transform="translate(397.223,-570.055)">
+		<g id="shape34-84" transform="translate(397.223,-575.453)">
 			<title>Sheet.34</title>
 			<desc>Network core</desc>
 			<rect x="0" y="576.453" width="85.0394" height="18.4252" class="st15"/>
 			<text x="10.12" y="588.97" class="st5">Network core</text>		</g>
-		<g id="shape36-87" transform="translate(305.097,-570.055)">
+		<g id="shape36-87" transform="translate(305.097,-574.724)">
 			<title>Sheet.36</title>
 			<desc>Application core</desc>
 			<rect x="0" y="576.453" width="92.4095" height="18.4252" class="st15"/>
 			<text x="7.07" y="588.97" class="st5">Application core</text>		</g>
-		<g id="shape42-90" transform="translate(155.729,-331.758)">
+		<g id="shape42-90" transform="translate(155.729,-320.397)">
 			<title>Nordic Middle Grey.42</title>
 			<desc>streamctrl.c</desc>
-			<rect x="0" y="483.89" width="220.802" height="110.988" class="st9"/>
+			<rect x="0" y="537.421" width="220.802" height="57.4569" class="st9"/>
 			<text x="170.3" y="588.18" class="st10">streamctrl.c</text>		</g>
-		<g id="shape43-93" transform="translate(175.775,-375.173)">
+		<g id="shape43-93" transform="translate(175.775,-327.483)">
 			<title>Nordic Lake.43</title>
 			<desc>Bluetooth LE RX FIFO</desc>
 			<rect x="0" y="561.498" width="63.7795" height="33.3804" class="st16"/>
 			<text x="8.98" y="575.79" class="st17">Bluetooth LE <tspan x="16.11" dy="1.2em" class="st3">RX FIFO</tspan></text>		</g>
-		<g id="shape45-97" transform="translate(212.155,-512.654)">
+		<g id="shape45-97" transform="translate(209.764,-441.927)">
 			<title>Dynamic connector.45</title>
-			<path d="M7.09 594.88 L7.09 691.94" class="st18"/>
+			<path d="M7.09 594.88 L7.09 668.9" class="st18"/>
 		</g>
-		<g id="shape46-103" transform="translate(202.699,-512.654)">
+		<g id="shape46-103" transform="translate(187.087,-441.927)">
 			<title>Dynamic connector.46</title>
-			<path d="M-6.98 594.88 L-7.17 691.94" class="st18"/>
+			<path d="M7.09 594.88 L7.09 668.9" class="st18"/>
 		</g>
-		<g id="shape66-108" transform="translate(219.596,-484.125)">
+		<g id="shape66-108" transform="translate(218.268,-514.488)">
 			<title>Sheet.66</title>
 			<desc>bad_frame</desc>
-			<rect x="0" y="573.618" width="53.1496" height="21.2598" class="st15"/>
-			<text x="4" y="586.95" class="st20">bad_frame</text>		</g>
-		<g id="shape71-111" transform="translate(156.278,-484.125)">
+			<rect x="0" y="582.122" width="52.1575" height="12.7559" class="st15"/>
+			<text x="4" y="591.2" class="st20">bad_frame</text>		</g>
+		<g id="shape71-111" transform="translate(156.278,-510.236)">
 			<title>Sheet.71</title>
 			<desc>sdu_ref</desc>
 			<rect x="0" y="573.618" width="39.2315" height="21.2598" class="st15"/>
 			<text x="5.21" y="586.95" class="st20">sdu_ref</text>		</g>
-		<g id="shape72-114" transform="translate(199.966,-512.654)">
+		<g id="shape72-114" transform="translate(212.628,-441.927)">
 			<title>Dynamic connector.72</title>
-			<path d="M7.09 594.88 L7.09 691.94" class="st21"/>
+			<path d="M-7.06 594.88 L-7.11 668.9" class="st21"/>
 		</g>
-		<g id="shape74-120" transform="translate(200.215,-205.094)">
+		<g id="shape74-120" transform="translate(200.215,-194.856)">
 			<title>Dynamic connector.74</title>
-			<path d="M7.09 594.88 L7.09 650.52" class="st23"/>
+			<path d="M7.09 594.88 L7.09 655.13" class="st23"/>
 		</g>
-		<g id="shape75-126" transform="translate(307.932,-205.094)">
+		<g id="shape75-126" transform="translate(307.932,-194.856)">
 			<title>Dynamic connector.75</title>
-			<path d="M-7.09 601.56 L-7.09 601.92 L-7.09 657.56" class="st25"/>
+			<path d="M-7.09 601.56 L-7.09 601.92 L-7.09 662.17" class="st25"/>
 		</g>
 		<g id="shape80-132" transform="translate(244.152,-52.0236)">
 			<title>Dynamic connector.80</title>
-			<path d="M7.09 588.2 L7.09 587.84 L7.09 544.91" class="st26"/>
+			<path d="M7.09 588.2 L7.09 587.84 L7.09 559.76" class="st26"/>
 		</g>
 		<g id="shape81-140" transform="translate(270.515,-52.0236)">
 			<title>Dynamic connector.81</title>
-			<path d="M7.09 588.2 L7.09 587.84 L7.09 544.91" class="st27"/>
+			<path d="M7.09 588.2 L7.09 587.84 L7.09 559.76" class="st27"/>
 		</g>
-		<g id="shape82-147" transform="translate(353.286,-526.827)">
+		<g id="shape82-147" transform="translate(354.331,-545.669)">
 			<title>Dynamic connector.82</title>
-			<path d="M6.68 587.79 L7.04 587.79 L65.24 587.79" class="st26"/>
+			<path d="M6.68 587.79 L7.04 587.79 L64.2 587.79" class="st26"/>
 		</g>
-		<g id="shape83-154" transform="translate(355.696,-533.913)">
+		<g id="shape83-154" transform="translate(357.165,-552.756)">
 			<title>Sheet.83</title>
 			<desc>HCI RPMSG</desc>
 			<rect x="0" y="573.618" width="42.5197" height="21.2598" class="st15"/>
 			<text x="13.51" y="581.55" class="st20">HCI <tspan x="4.76" dy="1.2em" class="st3">RPMSG</tspan></text>		</g>
-		<g id="shape84-158" transform="translate(310.784,-455.597)">
+		<g id="shape84-158" transform="translate(304.964,-383.712)">
 			<title>Sheet.84</title>
 			<desc>Audio modules</desc>
-			<rect x="0" y="573.618" width="71.5663" height="21.2598" class="st15"/>
-			<text x="4" y="586.95" class="st20">Audio modules</text>		</g>
-		<g id="shape86-161" transform="translate(137.503,-285.72)">
+			<rect x="0" y="573.618" width="80.5476" height="21.2598" class="st15"/>
+			<text x="17.01" y="586.95" class="st20">Audio modules</text>		</g>
+		<g id="shape86-161" transform="translate(137.503,-303.569)">
 			<title>Dynamic connector.86</title>
-			<path d="M1.77 587.95 L5.37 587.84" class="st18"/>
+			<path d="M1.77 587.81 L5.37 587.8" class="st18"/>
 		</g>
-		<g id="shape87-166" transform="translate(151.676,-275.961)">
+		<g id="shape87-166" transform="translate(151.676,-307.546)">
 			<title>Dynamic connector.87</title>
-			<path d="M-1.77 587.79 L-5.37 587.79" class="st18"/>
+			<path d="M-1.77 601.95 L-5.37 601.96" class="st18"/>
 		</g>
 		<g id="shape88-171" transform="translate(2.88994,-423.362)">
 			<title>Nordic Blue.88</title>
@@ -317,61 +317,61 @@
 			<title>Sheet.102</title>
 			<g id="shape24-215">
 				<title>Nordic Blue.24</title>
-				<path d="M0 594.88 L136.38 594.88 L136.38 215.35 L0 215.35 L0 594.88 Z" class="st12"/>
+				<path d="M0 594.88 L136.38 594.88 L136.38 191.94 L0 191.94 L0 594.88 Z" class="st12"/>
 			</g>
-			<g id="shape85-217" transform="translate(0,-362.569)">
+			<g id="shape85-217" transform="translate(0,-384.935)">
 				<title>Sheet.85</title>
 				<desc>Peripheral modules</desc>
-				<rect x="0" y="577.922" width="136.381" height="16.956" class="st15"/>
-				<text x="4" y="589.1" class="st20">Peripheral modules</text>			</g>
+				<rect x="0" y="576.876" width="136.381" height="18.002" class="st15"/>
+				<text x="4" y="588.58" class="st20">Peripheral modules</text>			</g>
 		</g>
-		<g id="shape103-220" transform="translate(179.664,-205.094)">
+		<g id="shape103-220" transform="translate(179.664,-194.856)">
 			<title>Nordic Lake.103</title>
 			<desc>USB TX FIFO</desc>
 			<rect x="0" y="561.498" width="53.1496" height="33.3804" class="st11"/>
 			<text x="18.35" y="575.79" class="st30">USB <tspan x="11.24" dy="1.2em" class="st3">TX FIFO</tspan></text>		</g>
-		<g id="shape104-224" transform="translate(274.271,-205.094)">
+		<g id="shape104-224" transform="translate(274.271,-194.856)">
 			<title>Nordic Lake.104</title>
 			<desc>USB RX FIFO</desc>
 			<rect x="0" y="561.498" width="53.1496" height="33.3804" class="st11"/>
 			<text x="18.35" y="575.79" class="st30">USB  <tspan x="10.8" dy="1.2em" class="st3">RX FIFO</tspan></text>		</g>
-		<g id="shape40-228" transform="translate(167.901,-249.685)">
+		<g id="shape40-228" transform="translate(167.901,-239.528)">
 			<title>Nordic Light Grey</title>
 			<desc>sw_codec_select.c</desc>
 			<rect x="0" y="537.421" width="202.677" height="57.4569" class="st31"/>
 			<text x="131.53" y="588.48" class="st30">sw_codec_select.c</text>		</g>
-		<g id="shape105-231" transform="translate(272.499,-271.992)">
+		<g id="shape105-231" transform="translate(272.499,-261.753)">
 			<title>Nordic Lake.105</title>
 			<desc>Encoder</desc>
 			<rect x="0" y="561.498" width="53.1496" height="33.3804" class="st16"/>
 			<text x="7.95" y="581.19" class="st32">Encoder</text>		</g>
-		<g id="shape106-234" transform="translate(180.727,-271.989)">
+		<g id="shape106-234" transform="translate(180.727,-261.75)">
 			<title>Nordic Lake.106</title>
 			<desc>Decoder</desc>
 			<rect x="0" y="561.498" width="53.1496" height="33.3804" class="st16"/>
 			<text x="7.68" y="581.19" class="st32">Decoder</text>		</g>
-		<g id="shape107-237" transform="translate(200.215,-375.173)">
+		<g id="shape107-237" transform="translate(200.215,-327.483)">
 			<title>Dynamic connector.107</title>
-			<path d="M7.09 594.88 L7.09 657.64" class="st21"/>
+			<path d="M7.09 594.88 L7.09 620.19" class="st21"/>
 		</g>
-		<g id="shape109-242" transform="translate(305.629,-305.373)">
+		<g id="shape109-242" transform="translate(306.151,-295.134)">
 			<title>Dynamic connector.109</title>
-			<path d="M-6.56 594.88 L-7.58 394.64" class="st21"/>
+			<path d="M-7.08 594.88 L-7.1 455.12" class="st21"/>
 		</g>
-		<g id="shape111-247" transform="translate(211.301,-375.173)">
+		<g id="shape111-247" transform="translate(211.301,-327.483)">
 			<title>Dynamic connector.111</title>
-			<path d="M7.09 594.88 L7.09 657.64" class="st18"/>
+			<path d="M7.09 594.88 L7.09 620.52" class="st18"/>
 		</g>
-		<g id="shape112-252" transform="translate(218.388,-314.564)">
+		<g id="shape112-252" transform="translate(218.388,-301.89)">
 			<title>Sheet.112</title>
 			<desc>bad_frame</desc>
 			<rect x="0" y="573.618" width="53.1496" height="21.2598" class="st15"/>
 			<text x="4" y="586.95" class="st20">bad_frame</text>		</g>
-		<g id="shape113-255" transform="translate(213.857,-271.989)">
+		<g id="shape113-255" transform="translate(213.857,-261.75)">
 			<title>Dynamic connector.113</title>
 			<path d="M-6.82 594.88 L-7.24 621.35" class="st23"/>
 		</g>
-		<g id="shape114-260" transform="translate(290.037,-238.475)">
+		<g id="shape114-260" transform="translate(290.551,-228.236)">
 			<title>Dynamic connector.114</title>
 			<path d="M7.09 594.88 L7.09 568.4" class="st23"/>
 		</g>
@@ -406,9 +406,52 @@
 			<title>Nordic Lake.121</title>
 			<rect x="0" y="584.817" width="16.0192" height="10.0608" class="st9"/>
 		</g>
-		<g id="shape122-283" transform="translate(445.049,-512.654)">
+		<g id="shape122-283" transform="translate(445.049,-531.496)">
 			<title>Dynamic connector.122</title>
-			<path d="M7.08 601.56 L7.08 601.92 L7.1 1048.47" class="st33"/>
+			<path d="M7.08 601.56 L7.08 601.92 L7.1 1067.31" class="st33"/>
 		</g>
+		<g id="shape129-291" transform="translate(149.909,-418.11)">
+			<title>Nordic Blue.129</title>
+			<path d="M0 594.88 L235.6 594.88 L235.6 502.75 L0 502.75 L0 594.88 Z" class="st12"/>
+		</g>
+		<g id="group130-293" transform="translate(159.36,-441.927)">
+			<title>Sheet.130</title>
+			<g id="shape124-294">
+				<title>Nordic Blue.124</title>
+				<desc>One of the following:</desc>
+				<rect x="0" y="552.359" width="205.689" height="42.5197" class="st9"/>
+				<text x="57.26" y="565.36" class="st32">One of the following:</text>			</g>
+			<g id="shape125-297" transform="translate(6.73799,-8.92863)">
+				<title>Nordic Light Grey.125</title>
+				<desc>le_audio_bis_gateway.c</desc>
+				<rect x="0" y="576.878" width="94.615" height="18.0005" class="st31"/>
+				<text x="4.61" y="588.28" class="st30">le_audio_bis_gateway.c</text>			</g>
+			<g id="shape126-300" transform="translate(106.476,-8.92863)">
+				<title>Nordic Light Grey.126</title>
+				<desc>le_audio_cis_gateway.c</desc>
+				<rect x="0" y="576.878" width="94.615" height="18.0005" class="st31"/>
+				<text x="4.84" y="588.28" class="st30">le_audio_cis_gateway.c</text>			</g>
+		</g>
+		<g id="shape131-303" transform="translate(187.087,-531.496)">
+			<title>Dynamic connector.131</title>
+			<path d="M7.09 594.88 L7.09 634.89" class="st18"/>
+		</g>
+		<g id="shape132-308" transform="translate(198.425,-531.496)">
+			<title>Dynamic connector.132</title>
+			<path d="M7.09 594.88 L7.09 634.89" class="st21"/>
+		</g>
+		<g id="shape133-313" transform="translate(209.764,-531.72)">
+			<title>Dynamic connector.133</title>
+			<path d="M7.09 594.88 L7.09 635.04" class="st18"/>
+		</g>
+		<g id="shape134-318" transform="translate(291.969,-484.447)">
+			<title>Dynamic connector.134</title>
+			<path d="M7.09 594.88 L7.09 556.08" class="st21"/>
+		</g>
+		<g id="shape135-323" transform="translate(300.472,-488.976)">
+			<title>Sheet.135</title>
+			<desc>Bluetooth modules</desc>
+			<rect x="0" y="573.618" width="85.0394" height="21.2598" class="st15"/>
+			<text x="6.49" y="586.95" class="st20">Bluetooth modules</text>		</g>
 	</g>
 </svg>
