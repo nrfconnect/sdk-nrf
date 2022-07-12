@@ -108,12 +108,7 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param)
 		return err;
 	}
 
-	/* Initialize the transport. */
-	err = nct_init(param->client_id);
-	if (err) {
-		return err;
-	}
-
+	/* Set the flash device before initializing the transport/FOTA. */
 #if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
 	if (param->fmfu_dev_inf) {
 		err = nrf_cloud_fota_fmfu_dev_set(param->fmfu_dev_inf);
@@ -124,6 +119,12 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param)
 		LOG_WRN("Full modem FOTA not initialized; flash device info not provided");
 	}
 #endif
+
+	/* Initialize the transport. */
+	err = nct_init(param->client_id);
+	if (err) {
+		return err;
+	}
 
 	app_event_handler = param->event_handler;
 

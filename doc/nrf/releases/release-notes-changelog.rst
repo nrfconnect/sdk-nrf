@@ -243,6 +243,7 @@ nRF9160 samples
 * :ref:`nrf_cloud_rest_fota` sample:
 
   * Added:
+
     * Support for full modem FOTA updates.
 
 Thread samples
@@ -412,6 +413,7 @@ Libraries for networking
     * Fixed:
 
       * An issue that caused the application to receive multiple disconnect events.
+      * An issue that prevented full modem FOTA updates to be installed during library initialization.
 
     * Added:
 
