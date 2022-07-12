@@ -312,17 +312,7 @@ static int fem_nrf21540_gpio_spi_configure(void)
 #endif
 		},
 		.mode_pin_config = {
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), mode_gpios) && \
-	IS_ENABLED(CONFIG_MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL)
-			.cfg_type      = MPSL_FEM_PIN_CFG_TYPE_PIN_PORT,
-			.enable        = true,
-			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(mode_gpios),
-			.p_port        = MPSL_FEM_GPIO_PORT_REG(mode_gpios),
-			.gpio_port_no  = MPSL_FEM_GPIO_PORT_NO(mode_gpios),
-			.gpio_port_pin = MPSL_FEM_GPIO_PIN_NO(mode_gpios)
-#else
 			MPSL_FEM_DISABLED_GPIO_CONFIG_INIT
-#endif
 		},
 	};
 
@@ -358,12 +348,7 @@ static int fem_nrf21540_gpio_spi_configure(void)
 	  (CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB == CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTB));
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), mode_gpios)
 	if (!IS_ENABLED(CONFIG_MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL)) {
-		gpio_flags_t mode_pin_flags = GPIO_OUTPUT_ACTIVE;
-
-		if (CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB ==
-		    CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA) {
-			mode_pin_flags = GPIO_OUTPUT_INACTIVE;
-		}
+		gpio_flags_t mode_pin_flags = GPIO_OUTPUT_INACTIVE;
 
 		mode_pin_flags |= DT_GPIO_FLAGS(DT_NODELABEL(nrf_radio_fem), mode_gpios);
 
