@@ -1002,7 +1002,10 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_VS_COEX_SCAN_MODE_CONFIG:
 		return sdc_hci_cmd_vs_coex_scan_mode_config((void *)cmd_params);
 #endif	/* CONFIG_MPSL_CX_BT_3WIRE */
-
+#ifdef CONFIG_BT_PERIPHERAL
+	case SDC_HCI_OPCODE_CMD_VS_PERIPHERAL_LATENCY_MODE_SET:
+		return sdc_hci_cmd_vs_peripheral_latency_mode_set((void *)cmd_params);
+#endif
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;
 	}
