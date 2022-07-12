@@ -18,6 +18,9 @@ config DK_LIBRARY_DYNAMIC_BUTTON_HANDLERS
 	bool "Enable the runtime assignable button handler API"
 	default y
 
+menuconfig NRF52_DBG_PINS
+	bool "Debug pin library for NRF52 boards"
+
 module = DK_LIBRARY
 module-str = DK library
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
