@@ -130,6 +130,15 @@ Reboot after download completion is handled by the :file:`src/fota_support.c` fi
 In a real-world setting, these two behaviors could be directly implemented in the :file:`src/connection.c` file.
 In this sample, they are separated for clarity.
 
+This sample supports full modem FOTA for the nRF9160 development kit version 1.0.1 and higher.
+To enable full modem FOTA, add the following parameter to your build command:
+
+``-DOVERLAY_CONFIG=overlay_full_modem_fota.conf``
+
+Also, specify your development kit version by appending it to the board name. For example, if your development kit version is 1.0.1, use the following board name in your build command:
+
+``nrf9160dk_nrf9160_ns@1_0_1``
+
 .. _nrf_cloud_mqtt_multi_service_temperature_sensing:
 
 Temperature sensing

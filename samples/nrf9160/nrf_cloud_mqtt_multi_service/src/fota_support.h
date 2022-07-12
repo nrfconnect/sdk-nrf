@@ -18,4 +18,13 @@
  */
 void on_fota_downloaded(void);
 
+/**
+ * @brief Get the external flash device used for full modem FOTA updates.
+ *
+ * This function returns NULL if CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE is not
+ * enabled.
+ *
+ */
+struct dfu_target_fmfu_fdev * get_full_modem_fota_fdev(void);
+
 #endif /* _FOTA_SUPPORT_H_ */
