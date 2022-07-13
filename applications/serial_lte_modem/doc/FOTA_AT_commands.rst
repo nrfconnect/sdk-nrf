@@ -118,7 +118,7 @@ Unsolicited notification
 
    #XFOTA: <fota_stage>,<fota_status>[,<fota_info>]
 
-* The ``<fota_stage>`` value is an integer and can assume one of the following values:
+* The ``<fota_stage>`` value is an integer and can return one of the following values:
 
   * ``0`` - Init
   * ``1`` - Download
@@ -127,7 +127,7 @@ Unsolicited notification
   * ``4`` - Downloaded, to be activated
   * ``5`` - Complete
 
-* The ``<fota_status>`` value is an integer and can assume one of the following values:
+* The ``<fota_status>`` value is an integer and can return one of the following values:
 
   * ``0`` - OK
   * ``1`` - Error
@@ -135,7 +135,7 @@ Unsolicited notification
   * ``3`` - Reverted (application FOTA only)
 
 * The ``<fota_info>`` value is an integer.
-  Its value can have different meanings based on the values assumed by ``<fota_stage>`` and ``<fota_status>``.
+  Its value can have different meanings based on the values returned by ``<fota_stage>`` and ``<fota_status>``.
   See the following table:
 
   +-------------------------+----------------------------+-------------------------------------------------------------------------------+

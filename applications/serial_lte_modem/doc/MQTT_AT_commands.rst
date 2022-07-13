@@ -27,7 +27,7 @@ Syntax
    #XMQTTEVT=<evt_type>,<result>
 
 * The ``<evt_type>`` value is an integer indicating the type of the event.
-  It can assume the following values:
+  It can return the following values:
 
   * ``0`` - Connection request.
   * ``1`` - Disconnection.
@@ -42,7 +42,7 @@ Syntax
   * ``9`` - Ping response from the MQTT broker.
 
 * The ``<result>`` value is an integer indicating the result of the event.
-  It can assume the following values:
+  It can return the following values:
 
   * ``0`` - Success.
   * *Negative value* - Failure.
@@ -95,7 +95,7 @@ Response syntax
 * The ``<evt_type>`` value is an integer.
   When ``0``, it indicates the acknowledgment of the connection request.
 * The ``<result>`` value is an integer.
-  It can assume the following values:
+  It can return the following values:
 
   * ``0`` - Connection succeded.
   * *Negative Value* - Error code.
@@ -196,13 +196,13 @@ Response syntax
    #XMQTTEVT: <evt_type>,<result>
 
 * The ``<evt_type>`` value is an integer.
-  It can assume the following values:
+  It can return the following values:
 
   * ``2`` - Notification that a *publish event* has been received on a topic the client is subscribed to.
   * ``7`` - Acknowledgment of the subscribe request.
 
 * The ``<result>`` value is an integer.
-  It can assume the following values:
+  It can return the following values:
 
   * ``0`` - Value indicating the acknowledgment of the connection request.
   * *Negative Value* - Error code indicating the reason for the failure.
@@ -291,7 +291,7 @@ Response syntax
   When ``8``, it acknowledges the reception of the unsubscription request.
 
 * The ``<result>`` value is an integer.
-  It can assume the following values:
+  It can return the following values:
 
   * ``0`` - Value indicating the successful unsubscription.
   * *Negative Value* - Error code indicating the reason for the failure.
@@ -363,7 +363,7 @@ Response syntax
    #XMQTTEVT: <evt_type>,<result>
 
 * The ``<evt_type>`` value is an integer.
-  It can assume the following values:
+  It can return the following values:
 
   * ``3`` - Acknowledgment for the published message with QoS 1.
   * ``4`` - Reception confirmation for the published message with QoS 2.
@@ -373,7 +373,7 @@ Response syntax
     It is notified when PUBREL is received from the broker.
 
 * The ``<result>`` value is an integer.
-  It can assume the following values:
+  It can return the following values:
 
   * ``0`` - Value indicating the acknowledgment of the connection request.
   * *Negative Value* - Error code indicating the reason for the failure.

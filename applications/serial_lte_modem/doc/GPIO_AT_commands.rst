@@ -106,7 +106,7 @@ Syntax
   It ranges between ``0`` and ``31``.
 
 * The ``<value>`` parameter indicates the value to be written to the GPIO pin.
-  It can assume one of the following values:
+  It accepts one of the following values:
 
   * ``0`` - Logic low
   * ``1`` - Logic high
