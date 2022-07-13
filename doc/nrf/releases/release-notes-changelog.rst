@@ -533,21 +533,21 @@ Zephyr
 
 .. NOTE TO MAINTAINERS: All the Zephyr commits in the below git commands must be handled specially after each upmerge and each NCS release.
 
-The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``53fbf40227de087423620822feedde6c98f3d631``, plus some |NCS| specific additions.
+The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``fb802fb6c0af80dbd383e744065bcf1745ecbc66``, plus some |NCS| specific additions.
 
 For the list of upstream Zephyr commits (not including cherry-picked commits) incorporated into nRF Connect SDK since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
 .. code-block:: none
 
-   git log --oneline 53fbf40227 ^45ef0d2
+   git log --oneline fb802fb6c0 ^45ef0d2
 
 For the list of |NCS| specific commits, including commits cherry-picked from upstream, run:
 
 .. code-block:: none
 
-   git log --oneline manifest-rev ^53fbf40227
+   git log --oneline manifest-rev ^fb802fb6c0
 
-The current |NCS| main branch is based on revision ``53fbf40227`` of Zephyr.
+The current |NCS| main branch is based on revision ``fb802fb6c0`` of Zephyr.
 
 zcbor
 =====
