@@ -124,7 +124,7 @@ Response syntax
   When positive or ``0``, the socket is valid.
 
 * The ``<family>`` value is present only in the response to a request to open the socket.
-  It can assume one of the following values:
+  It can return one of the following values:
 
   * ``1`` - IP protocol family version 4.
   * ``2`` - IP protocol family version 6.
@@ -463,14 +463,14 @@ Response syntax
   * ``0`` - Client
   * ``1`` - Server
 
-* The ``<type>`` value can assume one of the following values:
+* The ``<type>`` value can return one of the following:
 
   * ``1`` - Set ``SOCK_STREAM`` for the stream socket type using the TLS 1.2 protocol.
   * ``2`` - Set ``SOCK_DGRAM`` for the datagram socket type using the DTLS 1.2 protocol.
 
 * The ``<sec_tag>`` value is an integer.
   It indicates to the modem the credential of the security tag to be used for establishing a secure connection.
-  For a non-secure socket, it assumes the value of -1.
+  For a non-secure socket, it returns the value of -1.
 
 * The ``<ranking>`` value is an integer.
   It indicates the ranking value of this socket, where the largest value means the highest ranking.
@@ -618,13 +618,13 @@ Syntax
   * ``2`` - ``TLS_HOSTNAME``.
     ``<value>`` is a string.
   * ``4`` - ``TLS_CIPHERSUITE_USED`` (get-only).
-    It returns the IANA assigned ciphersuite identifier of the chosen ciphersuite.
+    It accepts the IANA assigned ciphersuite identifier of the chosen ciphersuite.
   * ``5`` - ``TLS_PEER_VERIFY``.
     ``<value>`` is an integer and can be either ``0`` or ``1``.
   * ``10`` - ``TLS_SESSION_CACHE``.
     ``<value>`` is an integer and can be either ``0`` or ``1``.
   * ``11`` - ``TLS_SESSION_CACHE_PURGE``.
-    ``<value>`` can assume any integer value.
+    ``<value>`` can accept any integer value.
   * ``12`` - ``TLS_DTLS_HANDSHAKE_TIMEO``.
     ``<value>`` is the timeout in seconds and can be one of the following integers: ``1``, ``3``, ``7``, ``15``, ``31``, ``63``, ``123``.
 
@@ -748,7 +748,7 @@ Response syntax
    #XCONNECT: <status>
 
 * The ``<status>`` value is an integer.
-  It can assume one of the following values:
+  It can return one of the following values:
 
 * ``1`` - Connected
 * ``0`` - Disconnected

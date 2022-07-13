@@ -69,7 +69,7 @@ Response syntax
 * The ``<dfu_step>`` value is an integer.
   It indicates which image is being downloaded.
 * The ``<info>`` value is an integer.
-  It can assume the following values:
+  It can return the following values:
 
   * A value between ``1`` and ``100`` - the percentage of the download
   * Any other value - error code
