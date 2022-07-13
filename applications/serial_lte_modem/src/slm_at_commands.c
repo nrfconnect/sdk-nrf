@@ -446,6 +446,7 @@ int handle_at_gpio_operate(enum at_cmd_type cmd_type);
 
 #if defined(CONFIG_SLM_NRF52_DFU)
 int handle_at_dfu_get(enum at_cmd_type cmd_type);
+int handle_at_dfu_size(enum at_cmd_type cmd_type);
 int handle_at_dfu_run(enum at_cmd_type cmd_type);
 #endif
 
@@ -551,6 +552,7 @@ static struct slm_at_cmd {
 
 #if defined(CONFIG_SLM_NRF52_DFU)
 	{"AT#XDFUGET", handle_at_dfu_get},
+	{"AT#XDFUSIZE", handle_at_dfu_size},
 	{"AT#XDFURUN", handle_at_dfu_run},
 #endif
 };
