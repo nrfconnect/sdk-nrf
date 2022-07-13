@@ -133,6 +133,7 @@ Kconfig*                                  @tejlmand
 /samples/gazell/                          @leewkb4567
 /samples/keys/random_hw_unique_key/       @oyvindronningstad @Vge0rge
 /samples/keys/identity_key_generation/    @frkv @Vge0rge
+/samples/keys/identity_key_usage/         @frkv @Vge0rge
 /samples/mpsl/                            @rugeGerritsen
 /samples/nfc/                             @grochu
 /samples/nrf_rpc/                         @doki-nordic @KAGA164
