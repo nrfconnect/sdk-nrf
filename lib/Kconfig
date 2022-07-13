@@ -37,5 +37,6 @@ rsource "location/Kconfig"
 rsource "at_shell/Kconfig"
 rsource "modem_antenna/Kconfig"
 rsource "qos/Kconfig"
+rsource "identity_key/Kconfig"
 
 endmenu
