@@ -531,6 +531,7 @@ Other samples
 
   * Added :ref:`configuration<sensor_stub_config>` for the Sensor stub driver.
 
+* Added :ref:`identity_key_generate` sample to show generation of an identity key that is stored in the Key Management Unit (KMU).
 Devicetree configuration
 ========================
 
