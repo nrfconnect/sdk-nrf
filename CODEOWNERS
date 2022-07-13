@@ -108,6 +108,7 @@ Kconfig*                                  @tejlmand
 /lib/date_time/                           @trantanen @tokangas
 /lib/wave_gen/                            @MarekPieta
 /lib/hw_unique_key/                       @oyvindronningstad @Vge0rge
+/lib/identity_key/                        @frkv @Vge0rge
 /lib/modem_jwt/                           @jayteemo @SeppoTakalo
 /lib/modem_attest_token/                  @jayteemo
 /lib/qos/                                 @simensrostad

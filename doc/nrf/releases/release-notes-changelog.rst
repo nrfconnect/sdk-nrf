@@ -786,6 +786,7 @@ Other libraries
 * Added:
 
   * :ref:`nrf_rpc_ipc_readme` library.
+  * :ref:`lib_identity_key` library.
 
 * :ref:`lib_flash_patch` library:
 
