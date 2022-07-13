@@ -671,9 +671,8 @@ static void qos_event_handler(const struct qos_evt *evt)
  */
 static void connect_check_work_fn(struct k_work *work)
 {
-	// If cancelling works fails
 	if ((state == STATE_LTE_CONNECTED && sub_state == SUB_STATE_CLOUD_CONNECTED) ||
-		(state == STATE_LTE_DISCONNECTED)) {
+	    (state == STATE_LTE_DISCONNECTED)) {
 		return;
 	}
 
@@ -765,7 +764,7 @@ static void on_sub_state_cloud_connected(struct cloud_msg_data *msg)
 	if (IS_EVENT(msg, cloud, CLOUD_EVT_DISCONNECTED)) {
 		sub_state_set(SUB_STATE_CLOUD_DISCONNECTED);
 
-		k_work_reschedule(&connect_check_work, K_NO_WAIT);
+		k_work_reschedule(&connect_check_work, K_SECONDS(1));
 
 		/* Reset QoS timer. Will be restarted upon a successful call to qos_message_add() */
 		qos_timer_reset();
