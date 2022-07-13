@@ -64,7 +64,7 @@ Response syntax
 
 ::
 
-  AT#XDFUGET: <dfu_step>,<info>
+  #XDFUGET: <dfu_step>,<info>
 
 * The ``<dfu_step>`` value is an integer.
   It indicates which image is being downloaded.
@@ -82,9 +82,9 @@ Get the image files for the legacy DFU from ``http://myserver.com/path/*.*``:
 ::
 
    AT#XDFUGET=1,"http://myserver.com","path/nrf52840_xxaa.dat","path/nrf52840_xxaa.bin"
-   AT#XDFUGET: 1, 14
+   #XDFUGET: 1,14
    ...
-   AT#XDFUGET: 1, 100
+   #XDFUGET: 1,100
    OK
 
 Erase the previous image after DFU:
@@ -99,9 +99,9 @@ Get the image files for the |NCS| DFU from ``http://myserver.com/path/*.*``:
 ::
 
    AT#XDFUGET=1,"https://myserver.com","path/nrf52_app_update.bin","",1234
-   AT#XDFUGET: 0, 14
+   #XDFUGET: 0,14
    ...
-   AT#XDFUGET: 0, 100
+   #XDFUGET: 0,100
    OK
 
 Read command
@@ -134,10 +134,59 @@ Examples
 ::
 
    AT#XDFUGET=?
-
    #XDFUGET: (0,1,8),<host>,<image_1>,<image_2>,<sec_tag>
-
    OK
+
+Get file size #XDFUSIZE
+=======================
+
+The ``#XDFUSIZE`` command returns the size of the downloaded (:file:`.bin`) image file.
+
+Set command
+-----------
+
+The set command allows you to get the size of the downloaded image file.
+
+Syntax
+~~~~~~
+
+::
+
+   AT#XDFUSIZE
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+  XDFUSIZE: <file_size>,<download_size>
+
+* The ``<file_size>`` is an integer.
+  It indicates the size of the DFU image file.
+* The ``<download_size>`` is an integer.
+  It indicates the size that has been downloaded so far.
+
+Examples
+~~~~~~~~
+
+::
+
+   #XDFUGET: 1,100
+   OK
+
+   AT#XDFUSIZE
+   #XDFUSIZE: 17048,17048
+   OK
+
+Read command
+------------
+
+The read command is not supported.
+
+Test command
+------------
+
+The test command is not supported.
 
 Run request #XDFURUN
 ====================
@@ -174,7 +223,7 @@ Response syntax
 
 ::
 
-  AT#XDFURUN: <dfu_step>,<info>
+  #XDFURUN: <dfu_step>,<info>
 
 * The ``<dfu_step>`` is an integer.
   It indicates which step of the DFU protocol is being executed.
@@ -220,7 +269,7 @@ Response syntax
 
 ::
 
-   #XDFUGET: <list of op value>,<host>,<image_1><image_2><sec_tag>
+   #XDFURUN: <start_delay>,<mtu>,<pause>
 
 Examples
 ~~~~~~~~
@@ -229,6 +278,6 @@ Examples
 
    AT#XDFURUN=?
 
-   #XDFUGET: <delay>,<mtu>,<pause>
+   #XDFURUN: <start_delay>,<mtu>,<pause>
 
    OK

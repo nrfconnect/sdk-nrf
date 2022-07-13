@@ -125,6 +125,7 @@ nRF9160: Serial LTE modem
     * Multi-PDN support in the Socket service.
     * The GNSS service now signifies location info to nRF Cloud.
     * New #XGPSDEL command to delete GNSS data from non-volatile memory.
+    * New #XDFUSIZE command to get the size of the DFU file image.
 
   * Updated:
 
