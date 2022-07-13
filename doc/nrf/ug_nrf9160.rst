@@ -229,11 +229,11 @@ Complete the following steps after installing the |nRFVSC|:
 .. prog_nrf9160_end
 ..
 
-   d. In |VSC|, click the :guilabel:`Flash` option in the :guilabel:`Actions` panel.
+   d. In |VSC|, click the :guilabel:`Flash` option in the :guilabel:`Actions View`.
 
       If you have multiple boards connected, you are prompted to pick a device at the top of the screen.
 
-      A small notification banner appears in the bottom-right corner of |VSC| to display the progress and confirm when the flash is complete.
+      A small notification banner appears in the bottom-right corner of |VSC| to display the progress and confirm when the flashing is complete.
 
 .. _build_pgm_nrf9160_cmdline:
 

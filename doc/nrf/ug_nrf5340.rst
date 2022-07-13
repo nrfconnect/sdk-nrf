@@ -438,8 +438,8 @@ Complete the following steps to build and program a multi-image build to the nRF
 
    a. Connect the nRF5340 development kit to your PC using a USB cable.
    #. Make sure that the nRF5340 DK and the external debug probe are powered on.
-   #. Click :guilabel:`Build` in the :guilabel:`Actions` panel to start the build process.
-   #. Click :guilabel:`Flash` in the :guilabel:`Actions` panel to program the resulting image to your device.
+   #. Click :guilabel:`Build` in the :guilabel:`Actions View` to start the build process.
+   #. Click :guilabel:`Flash` in the :guilabel:`Actions View` to program the resulting image to your device.
 
 Using the command line
 ======================

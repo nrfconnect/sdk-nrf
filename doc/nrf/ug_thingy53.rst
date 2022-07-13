@@ -99,7 +99,7 @@ Complete the following steps after installing the |nRFVSC|:
    a. Connect the Nordic Thingy:53 to the debug out port on a 10-pin external debug probe, for example nRF5340 DK, using a 10-pin JTAG cable.
    #. Connect the external debug probe to the PC using a USB cable.
    #. Make sure that the Thingy:53 and the external debug probe are powered on.
-   #. Click :guilabel:`Flash` in the :guilabel:`Actions` panel.
+   #. Click :guilabel:`Flash` in the :guilabel:`Actions View`.
 
 .. _thingy53_build_pgm_command_line:
 

@@ -151,9 +151,9 @@ To program the samples, complete the following steps:
 #. Program the application to the board:
 
    a. Connect your development kit using the serial port.
-   #. In the Connected Devices panel, click :guilabel:`Refresh Connected Devices`.
+   #. In the :guilabel:`Connected Devices View`, click :guilabel:`Refresh Connected Devices`.
       Your development kit appears on the list.
-   #. In the Actions panel, click :guilabel:`Flash`.
+   #. In the :guilabel:`Actions View`, click :guilabel:`Flash`.
 
       .. figure:: images/zigbee_qsg_vsc_flash.png
          :alt: nRF Connect for Visual Studio Code - Refresh Connected Devices and Flash buttons
