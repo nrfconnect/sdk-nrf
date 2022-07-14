@@ -18,7 +18,7 @@ Build warnings will be generated to indicate when features labeled EXPERIMENTAL 
 Highlights
 **********
 
-* Fixed a Multiprotocol Service Layer issue where the High Frequency Clock would stay active if it was turned on between timing events.
+* Fixed an issue in Multiprotocol Service Layer where the High Frequency Clock would stay active if it was turned on between timing events.
 
 Release tag
 ***********
