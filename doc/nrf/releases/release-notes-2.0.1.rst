@@ -31,7 +31,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v2.0.1**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` for more information.
+See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
 
 For information on the included repositories and revisions, see `Repositories and revisions for v2.0.1`_.
 

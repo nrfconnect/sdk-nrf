@@ -58,6 +58,8 @@ Running ``west update`` updates the project repositories to the state specified 
    :start-after: west-error-start
    :end-before: west-error-end
 
+.. _gs_updating_repos_examples:
+
 Examples of commands
 ====================
 
