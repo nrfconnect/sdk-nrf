@@ -1,0 +1,35 @@
+# Nordic Wi-Fi driver for nRF700x
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+DT_COMPAT_NORDIC_NRF7002_QSPI := nordic,nrf7002-qspi
+DT_COMPAT_NORDIC_NRF7002_SPI := nordic,nrf7002-spi
+
+config WIFI_NRF700X
+	bool "nRF700x driver"
+	depends on WIFI
+	help
+	  Nordic Wi-Fi Driver
+
+if WIFI_NRF700X
+
+config NRF700X_ON_QSPI
+	def_bool $(dt_compat_enabled,$(DT_COMPAT_NORDIC_NRF7002_QSPI))
+	select NRFX_QSPI
+
+config NRF700X_ON_SPI
+	def_bool $(dt_compat_enabled,$(DT_COMPAT_NORDIC_NRF7002_SPI))
+	select SPI
+
+config NRF700X_WORKQ_STACK_SIZE
+	int "Stack size for workqueue"
+	default 4096
+
+config NRF700X_WORKQ_MAX_ITEMS
+	int "Maximum work items for workqueue"
+	default 10
+
+endif
