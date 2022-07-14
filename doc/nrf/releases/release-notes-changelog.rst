@@ -922,6 +922,10 @@ Release notes for 0.5.0 and 0.5.1 can be found in :file:`ncs/nrf/modules/lib/zcb
 Trusted Firmware-M
 ==================
 
+* Added:
+
+  * Added support for an identity key that can be used as a PSA attestation key
+
 * Fixed:
 
   * |no_changes_yet_note|
