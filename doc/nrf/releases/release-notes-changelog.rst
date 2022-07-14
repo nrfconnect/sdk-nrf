@@ -41,6 +41,14 @@ Protocols
 This section provides detailed lists of changes by :ref:`protocol <protocols>`.
 See `Samples`_ for lists of changes for the protocol-related samples.
 
+Bluetooth LE
+------------
+
+* Added support for changing the radio transmitter's default power level using the :c:func:`sdc_default_tx_power_set` function.
+* Added support for changing the peripheral latency mode using the :c:func:`sdc_hci_cmd_vs_peripheral_latency_mode_set` function.
+
+For details, see :ref:`nrfxlib:softdevice_controller_changelog`.
+
 Bluetooth mesh
 --------------
 
