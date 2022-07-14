@@ -108,7 +108,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 541341f0cc49da47efba4768a1938e7c1767b54d
+      revision: v1.9.2
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -120,7 +120,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v1.9.1
+      revision: v1.9.2
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -131,7 +131,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: v1.9.1
+      revision: v1.9.2
       groups:
       - nrf-802154
     - name: cjson
@@ -140,12 +140,12 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: v1.9.1
+      revision: v1.9.2
       groups:
       - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: v1.9.1
+      revision: v1.9.2
       groups:
       - find-my
     # Other third-party repositories.
