@@ -243,7 +243,7 @@ static int resolve_and_connect(struct zzhc *ctx)
 
 	rc = getaddrinfo(hostname, NULL, &hints, &info);
 	if (rc != 0) {
-		LOG_DBG("Can't resolve hostname %s.", log_strdup(hostname));
+		LOG_DBG("Can't resolve hostname %s.", hostname);
 		return -EIO;
 	}
 
@@ -502,7 +502,7 @@ static int check_and_set_dns(struct zzhc *ctx)
 	err = nrf_getaddrinfo(hostname, NULL, &hints, &info);
 	if (err) {
 		LOG_DBG("Can't resolve hostname %s. err: %d. Trying secondary backup DNS.",
-			log_strdup(hostname), err);
+			hostname, err);
 	} else {
 		return 0;
 	}
@@ -523,7 +523,7 @@ static int check_and_set_dns(struct zzhc *ctx)
 
 	err = nrf_getaddrinfo(hostname, NULL, &hints, &info);
 	if (err) {
-		LOG_DBG("Can't resolve hostname %s. err: %d", log_strdup(hostname), err);
+		LOG_DBG("Can't resolve hostname %s. err: %d", hostname, err);
 		return -EIO;
 	}
 
