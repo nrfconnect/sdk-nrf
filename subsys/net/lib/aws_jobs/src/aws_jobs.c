@@ -87,11 +87,11 @@ static int construct_topic(const uint8_t *client_id, const uint8_t *job_id,
 
 	if (ret >= AWS_JOBS_TOPIC_MAX_LEN) {
 		LOG_ERR("Unable to fit formated string into to allocate "
-			"memory for %s", log_strdup(conf->name));
+			"memory for %s", (char *)conf->name);
 		return -ENOMEM;
 	} else if (ret < 0) {
 		LOG_ERR("Output error for %s was encountered with return value "
-			"%d", log_strdup(conf->name), ret);
+			"%d", (char *)conf->name, ret);
 		return ret;
 	}
 
@@ -124,11 +124,11 @@ static int reg_topic(struct mqtt_client *const client, uint8_t *topic_buf,
 	}
 
 	if (subscribe) {
-		LOG_DBG("Subscribe: %s", log_strdup(topic.topic.utf8));
+		LOG_DBG("Subscribe: %s", (char *)topic.topic.utf8);
 		return mqtt_subscribe(client, &subscription_list);
 	}
 
-	LOG_DBG("Unsubscribe: %s", log_strdup(topic.topic.utf8));
+	LOG_DBG("Unsubscribe: %s", (char *)topic.topic.utf8);
 	return mqtt_unsubscribe(client, &subscription_list);
 }
 
@@ -222,8 +222,8 @@ static int publish(struct mqtt_client *const client, const uint8_t *job_id,
 		return ret;
 	}
 
-	LOG_DBG("Publish topic: %s", log_strdup(topic.topic.utf8));
-	LOG_DBG("Publish payload %s", log_strdup(payload_data));
+	LOG_DBG("Publish topic: %s", (char *)topic.topic.utf8);
+	LOG_DBG("Publish payload %s", (char *)payload_data);
 
 	struct mqtt_publish_param param = {
 		.message.topic = topic,
