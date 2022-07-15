@@ -77,7 +77,7 @@ static void log_event(const struct app_event_header *aeh)
 		}
 
 		APP_EVENT_MANAGER_LOG(aeh, "%s - Requested data types (%s)",
-				get_evt_type_str(event->type), log_strdup(data_types));
+				get_evt_type_str(event->type), data_types);
 	} else {
 		APP_EVENT_MANAGER_LOG(aeh, "%s", get_evt_type_str(event->type));
 	}

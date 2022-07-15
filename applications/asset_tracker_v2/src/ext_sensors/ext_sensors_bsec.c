@@ -95,7 +95,7 @@ static int settings_set(const char *key, size_t len_rd, settings_read_cb read_cb
 		return -EINVAL;
 	}
 
-	LOG_DBG("Settings key: %s, size: %d", log_strdup(key), len_rd);
+	LOG_DBG("Settings key: %s, size: %d", key, len_rd);
 
 	if (!strncmp(key, SETTINGS_KEY_STATE, strlen(SETTINGS_KEY_STATE))) {
 		if (len_rd > sizeof(ctx.state_buffer)) {

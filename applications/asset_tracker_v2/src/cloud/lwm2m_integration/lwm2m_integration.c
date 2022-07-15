@@ -288,7 +288,7 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 		return -ERANGE;
 	}
 
-	LOG_DBG("LwM2M endpoint name: %s", log_strdup(endpoint_name));
+	LOG_DBG("LwM2M endpoint name: %s", endpoint_name);
 
 	if (IS_ENABLED(CONFIG_LWM2M_INTEGRATION_FLUSH_SESSION_CACHE)) {
 		int fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_DTLS_1_2);

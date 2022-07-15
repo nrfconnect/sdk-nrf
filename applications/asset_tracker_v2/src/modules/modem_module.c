@@ -210,7 +210,7 @@ static void lte_evt_handler(const struct lte_lc_evt *const evt)
 			       "eDRX parameter update: eDRX: %.2f, PTW: %.2f",
 			       evt->edrx_cfg.edrx, evt->edrx_cfg.ptw);
 		if (len > 0) {
-			LOG_DBG("%s", log_strdup(log_buf));
+			LOG_DBG("%s", log_buf);
 		}
 
 		send_edrx_update(evt->edrx_cfg.edrx, evt->edrx_cfg.ptw);

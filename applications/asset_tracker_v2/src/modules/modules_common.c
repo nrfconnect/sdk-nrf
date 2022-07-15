@@ -56,7 +56,7 @@ int module_get_next_msg(struct module_data *module, void *msg)
 			event->log_event_func_dep(&evt_proto->header, buf, sizeof(buf));
 			LOG_DBG("%s module: Dequeued %s",
 				module->name,
-				log_strdup(buf));
+				buf);
 		}
 #endif
 	}
@@ -97,7 +97,7 @@ int module_enqueue_msg(struct module_data *module, void *msg)
 			event->log_event_func_dep(&evt_proto->header, buf, sizeof(buf));
 			LOG_DBG("%s module: Dequeued %s",
 				module->name,
-				log_strdup(buf));
+				buf);
 		}
 #endif
 	}
