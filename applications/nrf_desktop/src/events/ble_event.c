@@ -37,7 +37,7 @@ static void log_ble_qos_event(const struct app_event_header *aeh)
 		APP_EVENT_MANAGER_LOG(aeh, "log message preparation failure");
 		return;
 	}
-	APP_EVENT_MANAGER_LOG(aeh, "%s", log_strdup(log_buf));
+	APP_EVENT_MANAGER_LOG(aeh, "%s", log_buf);
 }
 
 APP_EVENT_TYPE_DEFINE(ble_qos_event,
