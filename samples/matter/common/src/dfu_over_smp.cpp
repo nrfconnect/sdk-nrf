@@ -35,12 +35,21 @@ void DFUOverSMP::Init(DFUOverSMPRestartAdvertisingHandler startAdvertisingCb)
 	img_mgmt_set_upload_cb(UploadConfirmHandler);
 
 	memset(&mBleConnCallbacks, 0, sizeof(mBleConnCallbacks));
-	mBleConnCallbacks.connected = OnBleConnect;
+	mBleConnCallbacks.connected = nullptr;
 	mBleConnCallbacks.disconnected = OnBleDisconnect;
 	bt_conn_cb_register(&mBleConnCallbacks);
-
-	k_work_init(&mFlashSleepWork, [](k_work *) { GetFlashHandler().DoAction(FlashHandler::Action::SLEEP); });
-	k_work_init(&mFlashWakeUpWork, [](k_work *) { GetFlashHandler().DoAction(FlashHandler::Action::WAKE_UP); });
+	mgmt_register_evt_cb([](uint8_t opcode, uint16_t group, uint8_t id, void *arg) {
+		switch (opcode) {
+		case MGMT_EVT_OP_CMD_RECV:
+			GetFlashHandler().DoAction(FlashHandler::Action::WAKE_UP);
+			break;
+		case MGMT_EVT_OP_CMD_DONE:
+			GetFlashHandler().DoAction(FlashHandler::Action::SLEEP);
+			break;
+		default:
+			break;
+		}
+	});
 
 	restartAdvertisingCallback = startAdvertisingCb;
 
@@ -61,11 +70,12 @@ void DFUOverSMP::ConfirmNewImage()
 	}
 }
 
-int DFUOverSMP::UploadConfirmHandler(const struct img_mgmt_upload_req req,
-				  const struct img_mgmt_upload_action action)
+int DFUOverSMP::UploadConfirmHandler(const struct img_mgmt_upload_req req, const struct img_mgmt_upload_action action)
 {
 	/* For now just print update progress and confirm data chunk without any additional checks. */
-	ChipLogProgress(DeviceLayer, "Software update progress of image %d: %d B / %d B", req.image, req.off, action.size);
+	ChipLogProgress(DeviceLayer, "Software update progress of image %u: %u B / %u B",
+			static_cast<unsigned>(req.image), static_cast<unsigned>(req.off),
+			static_cast<unsigned>(action.size));
 
 	return 0;
 }
@@ -122,19 +132,8 @@ void DFUOverSMP::StartBLEAdvertising()
 	}
 }
 
-void DFUOverSMP::OnBleConnect(bt_conn *conn, uint8_t err)
-{
-	if (GetDFUOverSMP().IsEnabled()) {
-		(void)k_work_submit(&sDFUOverSMP.mFlashWakeUpWork);
-	}
-}
-
 void DFUOverSMP::OnBleDisconnect(bt_conn *conId, uint8_t reason)
 {
-	if (GetDFUOverSMP().IsEnabled()) {
-		(void)k_work_submit(&sDFUOverSMP.mFlashSleepWork);
-	}
-
 	PlatformMgr().LockChipStack();
 
 	/* After BLE disconnect SMP advertising needs to be restarted. Before making it ensure that BLE disconnect was
