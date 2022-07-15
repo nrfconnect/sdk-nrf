@@ -392,7 +392,7 @@ static int topic_subscribe(void)
 
 		for (size_t i = 0; i < app_sub_list.list_count; i++) {
 			LOG_DBG("Subscribing to application topic: %s",
-				log_strdup(app_sub_list.list[i].topic.utf8));
+				(char *)app_sub_list.list[i].topic.utf8);
 		}
 
 		err = mqtt_subscribe(&client, &app_sub_list);
@@ -416,7 +416,7 @@ static int topic_subscribe(void)
 
 		for (size_t i = 0; i < aws_sub_list.list_count; i++) {
 			LOG_DBG("Subscribing to AWS shadow topic: %s",
-				log_strdup(aws_sub_list.list[i].topic.utf8));
+				(char *)aws_sub_list.list[i].topic.utf8);
 		}
 
 		err = mqtt_subscribe(&client, &aws_sub_list);
@@ -724,7 +724,7 @@ static int broker_init(void)
 	broker4->sin_family = AF_INET;
 	broker4->sin_port = htons(CONFIG_AWS_IOT_PORT);
 
-	LOG_DBG("IPv4 Address %s", log_strdup(CONFIG_AWS_IOT_STATIC_IPV4_ADDR));
+	LOG_DBG("IPv4 Address %s", CONFIG_AWS_IOT_STATIC_IPV4_ADDR);
 
 	return 0;
 }
@@ -763,7 +763,7 @@ static int broker_init(void)
 
 			inet_ntop(AF_INET, &broker4->sin_addr.s_addr, ipv4_addr,
 				  sizeof(ipv4_addr));
-			LOG_DBG("IPv4 Address found %s", log_strdup(ipv4_addr));
+			LOG_DBG("IPv4 Address found %s", ipv4_addr);
 			break;
 		} else if ((addr->ai_addrlen == sizeof(struct sockaddr_in6)) &&
 			   (AWS_AF_FAMILY == AF_INET6)) {
@@ -780,7 +780,7 @@ static int broker_init(void)
 
 			inet_ntop(AF_INET6, &broker6->sin6_addr.s6_addr,
 				  ipv6_addr, sizeof(ipv6_addr));
-			LOG_DBG("IPv4 Address found %s", log_strdup(ipv6_addr));
+			LOG_DBG("IPv4 Address found %s", ipv6_addr);
 			break;
 		}
 
@@ -995,8 +995,7 @@ int aws_iot_send(const struct aws_iot_data *const tx_data)
 		LOG_DBG("Using message ID %d set by the application", param.message_id);
 	}
 
-	LOG_DBG("Publishing to topic: %s",
-		log_strdup(param.message.topic.topic.utf8));
+	LOG_DBG("Publishing to topic: %s", (char *)param.message.topic.topic.utf8);
 
 	return mqtt_publish(&client, &param);
 }
