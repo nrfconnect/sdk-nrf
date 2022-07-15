@@ -24,6 +24,7 @@ BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT <= 1,
 static struct bt_audio_broadcast_sink *broadcast_sink;
 
 static struct bt_audio_stream streams[CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT];
+static struct bt_audio_stream *streams_p[ARRAY_SIZE(streams)];
 
 static struct bt_audio_lc3_preset lc3_preset = BT_AUDIO_LC3_BROADCAST_PRESET_48_4_1;
 
@@ -204,7 +205,7 @@ static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 
 	LOG_INF("Syncing to broadcast");
 
-	ret = bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfield, streams,
+	ret = bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfield, streams_p,
 					   &lc3_preset.codec, NULL);
 	if (ret) {
 		LOG_ERR("Unable to sync to broadcast source");
@@ -231,6 +232,7 @@ static void initialize(le_audio_receive_cb recv_cb)
 		bt_audio_broadcast_sink_register_cb(&broadcast_sink_cbs);
 
 		for (size_t i = 0U; i < ARRAY_SIZE(streams); i++) {
+			streams_p[i] = &streams[i];
 			streams[i].ops = &stream_ops;
 		}
 
@@ -309,7 +311,7 @@ int le_audio_volume_mute(void)
 
 int le_audio_play(void)
 {
-	return bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfield, streams,
+	return bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfield, streams_p,
 					    &lc3_preset.codec, NULL);
 }
 

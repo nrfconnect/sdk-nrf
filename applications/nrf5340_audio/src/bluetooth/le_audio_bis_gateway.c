@@ -38,6 +38,7 @@ static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ISO_MAX_CHAN,
 static struct bt_audio_broadcast_source *broadcast_source;
 
 static struct bt_audio_stream streams[CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT];
+static struct bt_audio_stream *streams_p[ARRAY_SIZE(streams)];
 
 static struct bt_audio_lc3_preset lc3_preset = BT_AUDIO_LC3_BROADCAST_PRESET_48_4_1;
 
@@ -124,6 +125,7 @@ static void initialize(void)
 
 	if (!initialized) {
 		for (size_t i = 0U; i < ARRAY_SIZE(streams); i++) {
+			streams_p[i] = &streams[i];
 			streams[i].ops = &stream_ops;
 		}
 
@@ -243,7 +245,7 @@ int le_audio_enable(le_audio_receive_cb recv_cb)
 
 	LOG_INF("Creating broadcast source");
 
-	ret = bt_audio_broadcast_source_create(streams, ARRAY_SIZE(streams), &lc3_preset.codec,
+	ret = bt_audio_broadcast_source_create(streams_p, ARRAY_SIZE(streams_p), &lc3_preset.codec,
 					       &lc3_preset.qos, &broadcast_source);
 	if (ret) {
 		return ret;
