@@ -494,14 +494,7 @@ static inline int bt_mesh_sensor_ch_to_str(const struct sensor_value *ch,
  *
  *  @return A string representing the sensor channel.
  */
-const char *bt_mesh_sensor_ch_str_real(const struct sensor_value *ch);
-
-/** String duplication variant of @ref bt_mesh_sensor_ch_str_real for use in
- *  logging.
- *
- *  @param[in] ch Sensor channel to represent.
- */
-#define bt_mesh_sensor_ch_str(ch) log_strdup(bt_mesh_sensor_ch_str_real(ch))
+const char *bt_mesh_sensor_ch_str(const struct sensor_value *ch);
 
 /** @cond INTERNAL_HIDDEN */
 

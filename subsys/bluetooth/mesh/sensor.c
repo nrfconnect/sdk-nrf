@@ -583,7 +583,7 @@ void sensor_cadence_update(struct bt_mesh_sensor *sensor,
 	sensor->state.fast_pub = new;
 }
 
-const char *bt_mesh_sensor_ch_str_real(const struct sensor_value *ch)
+const char *bt_mesh_sensor_ch_str(const struct sensor_value *ch)
 {
 	static char str[BT_MESH_SENSOR_CH_STR_LEN];
 

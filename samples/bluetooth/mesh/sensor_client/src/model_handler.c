@@ -18,7 +18,7 @@ static void sensor_cli_data_cb(struct bt_mesh_sensor_cli *cli,
 {
 	if (sensor->id == bt_mesh_sensor_present_dev_op_temp.id) {
 		printk("Chip temperature: %s\n",
-		       bt_mesh_sensor_ch_str_real(value));
+		       bt_mesh_sensor_ch_str(value));
 	} else if (sensor->id == bt_mesh_sensor_presence_detected.id) {
 		if (value->val1) {
 			printk("Precense detected\n");
@@ -29,7 +29,7 @@ static void sensor_cli_data_cb(struct bt_mesh_sensor_cli *cli,
 		   bt_mesh_sensor_time_since_presence_detected.id) {
 		if (value->val1) {
 			printk("%s second(s) since last presence detected\n",
-			       bt_mesh_sensor_ch_str_real(value));
+			       bt_mesh_sensor_ch_str(value));
 		} else {
 			printk("No presence detected, or under 1 second since presence detected\n");
 		}
@@ -43,7 +43,7 @@ static void sensor_cli_series_entry_cb(
 {
 	printk("Relative runtime in %d to %d degrees: %s percent\n",
 	       entry->value[1].val1, entry->value[2].val1,
-	       bt_mesh_sensor_ch_str_real(&entry->value[0]));
+	       bt_mesh_sensor_ch_str(&entry->value[0]));
 }
 
 static const struct bt_mesh_sensor_cli_handlers bt_mesh_sensor_cli_handlers = {
