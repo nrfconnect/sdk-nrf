@@ -332,7 +332,7 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 	LOG_DBG(" The Asset Tracker v2 has started");
 	LOG_DBG(" Version:     %s",
 		CONFIG_ASSET_TRACKER_V2_APP_VERSION);
-	LOG_DBG(" Client ID:   %s", log_strdup(client_id_buf));
+	LOG_DBG(" Client ID:   %s", client_id_buf);
 	LOG_DBG(" Cloud:       %s", "AWS IoT");
 	LOG_DBG(" Endpoint:    %s",
 		CONFIG_AWS_IOT_BROKER_HOST_NAME);
