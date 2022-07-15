@@ -321,7 +321,7 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 			 */
 			stop_network_rejoin(ZB_FALSE);
 			LOG_INF("Joined network successfully on reboot signal (Extended PAN ID: %s, PAN ID: 0x%04hx)",
-				log_strdup(ieee_addr_buf),
+				ieee_addr_buf,
 				ZB_PIBCACHE_PAN_ID());
 		} else {
 			if (role != ZB_NWK_DEVICE_TYPE_COORDINATOR) {
@@ -361,7 +361,7 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 			}
 
 			LOG_INF("Joined network successfully (Extended PAN ID: %s, PAN ID: 0x%04hx)",
-				log_strdup(ieee_addr_buf),
+				ieee_addr_buf,
 				ZB_PIBCACHE_PAN_ID());
 			/* Device has joined the network so stop the network
 			 * rejoin procedure.
@@ -412,7 +412,7 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 			}
 
 			LOG_INF("Network formed successfully, start network steering (Extended PAN ID: %s, PAN ID: 0x%04hx)",
-				log_strdup(ieee_addr_buf),
+				ieee_addr_buf,
 				ZB_PIBCACHE_PAN_ID());
 			comm_status = bdb_start_top_level_commissioning(
 				ZB_BDB_NETWORK_STEERING);
@@ -479,7 +479,7 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 			strcpy(ieee_addr_buf, "unknown");
 		}
 		LOG_INF("Child left the network (long: %s, rejoin flag: %d)",
-			log_strdup(ieee_addr_buf),
+			ieee_addr_buf,
 			leave_ind_params->rejoin);
 		break;
 	}
@@ -520,7 +520,7 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 		}
 		LOG_INF("Device update received (short: 0x%04hx, long: %s, status: %d)",
 			update_params->short_addr,
-			log_strdup(ieee_addr_buf),
+			ieee_addr_buf,
 			update_params->status);
 
 		if (IS_ENABLED(CONFIG_ZIGBEE_TC_REJOIN_ENABLED)) {
@@ -598,7 +598,7 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 		LOG_INF("Device authorization event received"
 			" (short: 0x%04hx, long: %s, authorization type: %d,"
 			" authorization status: %d)",
-			authorize_params->short_addr, log_strdup(ieee_addr_buf),
+			authorize_params->short_addr, ieee_addr_buf,
 			authorize_params->authorization_type,
 			authorize_params->authorization_status);
 		break;
@@ -682,7 +682,7 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 
 				LOG_INF("Joined network successfully after TC rejoin"
 						" (Extended PAN ID: %s, PAN ID: 0x%04hx)",
-					log_strdup(ieee_addr_buf),
+					ieee_addr_buf,
 					ZB_PIBCACHE_PAN_ID());
 				/* Device has joined the network so stop the network
 				 * rejoin procedure.
