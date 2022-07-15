@@ -150,9 +150,9 @@ static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (!err) {
-		LOG_INF("Security changed: %s level %u", log_strdup(addr), level);
+		LOG_INF("Security changed: %s level %u", addr, level);
 	} else {
-		LOG_WRN("Security failed: %s level %u err %d", log_strdup(addr), level, err);
+		LOG_WRN("Security failed: %s level %u err %d", addr, level, err);
 	}
 }
 
