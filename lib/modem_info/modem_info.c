@@ -465,7 +465,7 @@ static int parse_ip_addresses(char *out_buf, size_t out_buf_size, char *in_buf)
 
 	p = strstr(in_buf, "OK\r\n");
 	if (!p) {
-		LOG_WRN("No response status: %s", log_strdup(in_buf));
+		LOG_WRN("No response status: %s", in_buf);
 		return -EINVAL;
 	}
 
@@ -541,10 +541,10 @@ parse_line:
 		*ip_v6_str = '\0';
 		len = strlen(ip_buf);
 
-		LOG_DBG("IPv6 address (%s) discarded", log_strdup(ip_v6_str + 1));
+		LOG_DBG("IPv6 address (%s) discarded", ip_v6_str + 1);
 	}
 
-	LOG_DBG("IP address found: %s", log_strdup(ip_buf));
+	LOG_DBG("IP address found: %s", ip_buf);
 
 	out_buf_len = strlen(out_buf);
 
