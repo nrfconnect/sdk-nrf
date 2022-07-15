@@ -121,7 +121,7 @@ static void active_nbr_log(void)
 
 		LOG_INF("[%3u] %s %s %s %4u %3d %d",
 			i,
-			log_strdup(ieee_addr_buf),
+			ieee_addr_buf,
 			device_type_name[nbr_cache.entries[i].device_type],
 			relationship_name[nbr_cache.entries[i].relationship],
 			nbr_cache.entries[i].outgoing_cost,
