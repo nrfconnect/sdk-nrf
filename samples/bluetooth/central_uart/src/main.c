@@ -358,8 +358,7 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (conn_err) {
-		LOG_INF("Failed to connect to %s (%d)", log_strdup(addr),
-			conn_err);
+		LOG_INF("Failed to connect to %s (%d)", addr, conn_err);
 
 		if (default_conn == conn) {
 			bt_conn_unref(default_conn);
@@ -375,7 +374,7 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 		return;
 	}
 
-	LOG_INF("Connected: %s", log_strdup(addr));
+	LOG_INF("Connected: %s", addr);
 
 	static struct bt_gatt_exchange_params exchange_params;
 
@@ -405,8 +404,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	LOG_INF("Disconnected: %s (reason %u)", log_strdup(addr),
-		reason);
+	LOG_INF("Disconnected: %s (reason %u)", addr, reason);
 
 	if (default_conn != conn) {
 		return;
@@ -430,10 +428,9 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (!err) {
-		LOG_INF("Security changed: %s level %u", log_strdup(addr),
-			level);
+		LOG_INF("Security changed: %s level %u", addr, level);
 	} else {
-		LOG_WRN("Security failed: %s level %u err %d", log_strdup(addr),
+		LOG_WRN("Security failed: %s level %u err %d", addr,
 			level, err);
 	}
 
@@ -455,7 +452,7 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 	bt_addr_le_to_str(device_info->recv_info->addr, addr, sizeof(addr));
 
 	LOG_INF("Filters matched. Address: %s connectable: %d",
-		log_strdup(addr), connectable);
+		addr, connectable);
 }
 
 static void scan_connecting_error(struct bt_scan_device_info *device_info)
@@ -525,7 +522,7 @@ static void auth_cancel(struct bt_conn *conn)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	LOG_INF("Pairing cancelled: %s", log_strdup(addr));
+	LOG_INF("Pairing cancelled: %s", addr);
 }
 
 
@@ -535,8 +532,7 @@ static void pairing_complete(struct bt_conn *conn, bool bonded)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	LOG_INF("Pairing completed: %s, bonded: %d", log_strdup(addr),
-		bonded);
+	LOG_INF("Pairing completed: %s, bonded: %d", addr, bonded);
 }
 
 
@@ -546,8 +542,7 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	LOG_WRN("Pairing failed conn: %s, reason %d", log_strdup(addr),
-		reason);
+	LOG_WRN("Pairing failed conn: %s, reason %d", addr, reason);
 }
 
 static struct bt_conn_auth_cb conn_auth_callbacks = {
