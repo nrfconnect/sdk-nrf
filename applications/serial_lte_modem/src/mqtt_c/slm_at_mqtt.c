@@ -276,7 +276,7 @@ static int broker_init(void)
 
 	err = util_resolve_host(0, mqtt_broker_url, mqtt_broker_port, ctx.family, &sa);
 	if (err) {
-		LOG_ERR("getaddrinfo() error: %s", log_strdup(gai_strerror(err)));
+		LOG_ERR("getaddrinfo() error: %s", gai_strerror(err));
 		return -EAGAIN;
 	}
 	if (sa.sa_family == AF_INET) {

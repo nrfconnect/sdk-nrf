@@ -209,7 +209,7 @@ int handle_at_twi_write(enum at_cmd_type cmd_type)
 		if (err) {
 			return err;
 		}
-		LOG_DBG("Data to write: %s", log_strdup(twi_data));
+		LOG_DBG("Data to write: %s", (char *)twi_data);
 		err = do_twi_write(index, dev_addr, twi_data, (uint16_t)ascii_len);
 		break;
 	case AT_CMD_TYPE_TEST_COMMAND:
@@ -309,7 +309,7 @@ int handle_at_twi_write_read(enum at_cmd_type cmd_type)
 		if (err) {
 			return err;
 		}
-		LOG_DBG("Data to write: %s", log_strdup(twi_data));
+		LOG_DBG("Data to write: %s", (char *)twi_data);
 		err = at_params_unsigned_short_get(&at_param_list, 4, &num_read);
 		if (err < 0) {
 			LOG_ERR("Fail to get twi index: %d", err);
