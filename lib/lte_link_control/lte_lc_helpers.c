@@ -1059,7 +1059,7 @@ int parse_mdmev(const char *at_response, enum lte_lc_modem_evt *modem_evt)
 		}
 	}
 
-	LOG_DBG("No modem event type found: %s", log_strdup(at_response));
+	LOG_DBG("No modem event type found: %s", at_response);
 
 	return -ENODATA;
 }
