@@ -379,14 +379,13 @@ static void scan_attempts_filter_device_add(const bt_addr_le_t *addr)
 
 		if (bt_addr_le_cmp(addr, &device->addr) == 0) {
 			LOG_DBG("Device %s is already in the filter array",
-				log_strdup(addr_str));
+				addr_str);
 			goto out;
 		}
 	}
 
 	if (filter->count >= ARRAY_SIZE(filter->device)) {
-		LOG_DBG("Force adding %s device filter",
-			log_strdup(addr_str));
+		LOG_DBG("Force adding %s device filter", addr_str);
 		attempts_filter_force_add(filter, addr);
 	} else {
 		bt_addr_le_copy(&filter->device[filter->count].addr, addr);
@@ -436,7 +435,7 @@ static bool conn_attempts_exceeded(const bt_addr_le_t *addr)
 		if (bt_addr_le_cmp(addr, &device->addr) == 0) {
 			if (device->attempts >= CONFIG_BT_SCAN_CONN_ATTEMPTS_COUNT) {
 				LOG_DBG("Connection attempts count for %s exceeded",
-					log_strdup(addr_str));
+					addr_str);
 				attempts_exceeded = true;
 			}
 
@@ -1578,7 +1577,7 @@ int bt_scan_blocklist_device_add(const bt_addr_le_t *addr)
 	for (size_t i = 0; i < ARRAY_SIZE(bt_scan.blocklist.addr); i++) {
 		if (bt_addr_le_cmp(&bt_scan.blocklist.addr[i], addr) == 0) {
 			LOG_DBG("Device %s is already on the blocklist",
-				log_strdup(addr_str));
+				addr_str);
 
 			goto out;
 		}
@@ -1591,8 +1590,7 @@ int bt_scan_blocklist_device_add(const bt_addr_le_t *addr)
 		bt_addr_le_copy(&bt_scan.blocklist.addr[bt_scan.blocklist.count],
 				addr);
 		bt_scan.blocklist.count++;
-		LOG_INF("Device %s added to the scanning blocklist",
-			log_strdup(addr_str));
+		LOG_INF("Device %s added to the scanning blocklist", addr_str);
 	}
 
 out:

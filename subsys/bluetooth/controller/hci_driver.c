@@ -150,7 +150,7 @@ void sdc_assertion_handler(const char *const file, const uint32_t line)
 #else /* !IS_ENABLED(CONFIG_BT_CTLR_ASSERT_HANDLER) */
 void sdc_assertion_handler(const char *const file, const uint32_t line)
 {
-	BT_ERR("SoftDevice Controller ASSERT: %s, %d", log_strdup(file), line);
+	BT_ERR("SoftDevice Controller ASSERT: %s, %d", file, line);
 	k_oops();
 }
 #endif /* IS_ENABLED(CONFIG_BT_CTLR_ASSERT_HANDLER) */
