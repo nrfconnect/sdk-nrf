@@ -375,7 +375,7 @@ static int write_dl_uri(uint16_t obj_inst_id,
 {
 	int ret;
 
-	LOG_INF("write URI: %s", log_strdup((char *) data));
+	LOG_INF("write URI: %s", (char *) data);
 	ret = fota_download_init(fota_download_callback);
 	if (ret != 0) {
 		LOG_ERR("fota_download_init() returned %d", ret);
