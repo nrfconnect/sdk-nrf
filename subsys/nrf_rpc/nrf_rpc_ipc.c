@@ -89,7 +89,7 @@ static void ept_received(const void *data, size_t len, void *priv)
 
 static void ept_error(const char *message, void *priv)
 {
-	LOG_ERR("Endpoint error: \"%s\"", log_strdup(message));
+	LOG_ERR("Endpoint error: \"%s\"", message);
 	__ASSERT_NO_MSG(false);
 }
 
