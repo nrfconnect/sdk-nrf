@@ -101,7 +101,7 @@ int location_utils_modem_params_read(struct location_utils_modem_params_info *mo
 		LOG_DBG("parsed modem parameters: "
 			"mcc %d, mnc %d, tac %d (string: %s), cell_id %d (string: %s) phys_cell_id %d",
 			modem_params->mcc, modem_params->mnc, modem_params->tac,
-			log_strdup(tac_str), modem_params->cell_id, log_strdup(cell_id_str),
+			tac_str, modem_params->cell_id, cell_id_str,
 			modem_params->phys_cell_id);
 	}
 	return err;

@@ -169,7 +169,7 @@ static int wifi_nrf_cloud_rest_pos_response_parse(const char *const buf,
 
 cleanup:
 	if (ret) {
-		LOG_DBG("Unparsed response:\n%s", log_strdup(buf));
+		LOG_DBG("Unparsed response:\n%s", buf);
 	}
 	cJSON_Delete(root_obj);
 	return ret;
