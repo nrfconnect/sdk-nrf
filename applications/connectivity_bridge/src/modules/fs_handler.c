@@ -78,7 +78,7 @@ static int fs_init(void)
 
 		err = fs_unlink(name_buf);
 		if (err) {
-			LOG_ERR("fs_unlink(%s): %d", log_strdup(name_buf), err);
+			LOG_ERR("fs_unlink(%s): %d", name_buf, err);
 		}
 	}
 
