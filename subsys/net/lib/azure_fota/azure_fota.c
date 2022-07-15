@@ -182,7 +182,7 @@ static char *create_report(void)
 		return NULL;
 	}
 
-	LOG_DBG("Created FOTA report: %s", log_strdup(buf));
+	LOG_DBG("Created FOTA report: %s", buf);
 
 	return buf;
 }
@@ -427,7 +427,7 @@ static bool parse_reported_status(const char *msg)
 	}
 
 	LOG_DBG("Currently reported 'fwUpdateStatus' in device twin: %s",
-		log_strdup(fw_status_obj->valuestring));
+		fw_status_obj->valuestring);
 
 	/* Current firmware object (currentFwVersion) */
 	fw_current_obj = cJSON_GetObjectItemCaseSensitive(fw_obj,
@@ -438,7 +438,7 @@ static bool parse_reported_status(const char *msg)
 	}
 
 	LOG_DBG("Currently reported 'currentFwVersion' in device twin: %s",
-		log_strdup(fw_current_obj->valuestring));
+		fw_current_obj->valuestring);
 
 	/* Pending firmware object (pendingFwVersion) */
 	fw_pending_obj = cJSON_GetObjectItemCaseSensitive(fw_obj,
@@ -451,7 +451,7 @@ static bool parse_reported_status(const char *msg)
 
 	LOG_DBG("Currently reported 'pendingFwVersion' in device twin: %s",
 		strlen(fw_pending_obj->valuestring) > 0 ?
-		       log_strdup(fw_pending_obj->valuestring) :
+		       fw_pending_obj->valuestring :
 		       "(none)");
 
 	report_needed = reported_status_process(fw_status_obj->valuestring,
@@ -459,7 +459,7 @@ static bool parse_reported_status(const char *msg)
 						fw_pending_obj->valuestring);
 	if (report_needed) {
 		LOG_DBG("Reported status was \"%s\", reporting back \"%s\"",
-			log_strdup(fw_status_obj->valuestring),
+			fw_status_obj->valuestring,
 			reported_status_str_get());
 	}
 
@@ -536,8 +536,7 @@ static int extract_fw_details(const char *msg)
 		memcpy(fota_object.version, fw_version_obj->valuestring,
 		       sizeof(fota_object.version));
 
-		LOG_DBG("Incoming firmware version: %s",
-			log_strdup(fota_object.version));
+		LOG_DBG("Incoming firmware version: %s", fota_object.version);
 	} else if (cJSON_IsNumber(fw_version_obj)) {
 		ssize_t len = snprintk(fota_object.version,
 				       sizeof(fota_object.version),
@@ -568,7 +567,7 @@ static int extract_fw_details(const char *msg)
 		strncpy(fota_object.job_id, job_id_obj->valuestring,
 			sizeof(fota_object.job_id));
 
-		LOG_DBG("Job ID: %s", log_strdup(job_id_obj->valuestring));
+		LOG_DBG("Job ID: %s", job_id_obj->valuestring);
 	}
 
 	/* Firmware image location */
@@ -654,8 +653,7 @@ int azure_fota_init(azure_fota_callback_t evt_handler)
 
 	state_set(STATE_INIT);
 
-	LOG_INF("Current firmware version: %s",
-		log_strdup(get_current_version()));
+	LOG_INF("Current firmware version: %s", get_current_version());
 
 	return 0;
 }
@@ -700,7 +698,7 @@ int azure_fota_msg_process(const char *const buf, size_t size)
 
 	if (!is_new_job()) {
 		LOG_WRN("Update job (ID: %s) was already attempted, aborting",
-			log_strdup(reported_job_id));
+			reported_job_id);
 		rep_status_set(REP_STATUS_CURRENT);
 
 		return 0;
@@ -710,8 +708,8 @@ int azure_fota_msg_process(const char *const buf, size_t size)
 	if (!is_update()) {
 		LOG_DBG("Image is not an update, skipping download");
 		LOG_DBG("Current version: %s",
-			log_strdup(get_current_version()));
-		LOG_DBG("FOTA version: %s", log_strdup(fota_object.version));
+			get_current_version());
+		LOG_DBG("FOTA version: %s", fota_object.version);
 
 		rep_status_set(REP_STATUS_CURRENT);
 
@@ -722,9 +720,9 @@ int azure_fota_msg_process(const char *const buf, size_t size)
 	rep_status_set(REP_STATUS_DOWNLOADING);
 
 	LOG_INF("Attempting to download firmware (version '%s') from %s/%s",
-		log_strdup(fota_object.version),
-		log_strdup(fota_object.host),
-		log_strdup(fota_object.path));
+		fota_object.version,
+		fota_object.host,
+		fota_object.path);
 
 	err = fota_download_start(fota_object.host, fota_object.path,
 				  CONFIG_AZURE_FOTA_SEC_TAG,
