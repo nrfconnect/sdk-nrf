@@ -191,7 +191,7 @@ static int sms_submit_encode(
 	send_buf[ud_start_index + encoded_data_size_octets * 2 + 1] = '\0';
 
 	LOG_DBG("Sending encoded SMS data (length=%d):", msg_size);
-	LOG_DBG("%s", log_strdup(send_buf));
+	LOG_DBG("%s", send_buf);
 
 	err = nrf_modem_at_printf(send_buf);
 	if (err) {
@@ -331,7 +331,7 @@ int sms_submit_send(const char *number, const char *text)
 		text = empty_string;
 	}
 
-	LOG_DBG("Sending SMS to number=%s, text='%s'", log_strdup(number), log_strdup(text));
+	LOG_DBG("Sending SMS to number=%s, text='%s'", number, text);
 
 	/* Encode number into format required in SMS header */
 	encoded_number_size = strlen(number);
