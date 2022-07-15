@@ -142,7 +142,7 @@ static void read_dev_descr_hwid(const uint8_t *ptr, uint16_t len)
 	}
 
 	if (err > 0) {
-		LOG_INF("HW ID: %s", log_strdup(log_buf));
+		LOG_INF("HW ID: %s", log_buf);
 	} else {
 		LOG_ERR("Failed to log HW ID");
 	}

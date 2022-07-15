@@ -43,7 +43,7 @@ static void log_hid_report_event(const struct app_event_header *aeh)
 		APP_EVENT_MANAGER_LOG(aeh, "log message preparation failure");
 		return;
 	}
-	APP_EVENT_MANAGER_LOG(aeh, "%s", log_strdup(log_buf));
+	APP_EVENT_MANAGER_LOG(aeh, "%s", log_buf);
 }
 
 static void profile_hid_report_event(struct log_event_buf *buf,

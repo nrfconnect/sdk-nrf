@@ -194,7 +194,7 @@ static int configure_address_filters(uint8_t *filter_mode)
 
 		bt_addr_le_to_str(&subscribed_peers[i].addr, addr_str,
 				  sizeof(addr_str));
-		LOG_INF("Address filter added %s", log_strdup(addr_str));
+		LOG_INF("Address filter added %s", addr_str);
 		*filter_mode |= BT_SCAN_ADDR_FILTER;
 	}
 
@@ -422,7 +422,7 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 	bt_addr_le_to_str(device_info->recv_info->addr, addr, sizeof(addr));
 
 	LOG_INF("Filters matched. %s %sconnectable",
-		log_strdup(addr), connectable ? "" : "non");
+		addr, connectable ? "" : "non");
 
 	/* Scanning will be stopped by nrf scan module. */
 }
