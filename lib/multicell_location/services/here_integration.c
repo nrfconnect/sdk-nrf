@@ -373,7 +373,7 @@ int location_service_get_cell_location_here(
 		return err;
 	}
 
-	LOG_DBG("Generated request body:\r\n%s", log_strdup(body));
+	LOG_DBG("Generated request body:\r\n%s", body);
 
 	/* Set the defaults: */
 	rest_client_request_defaults_set(&req_ctx);
@@ -401,7 +401,7 @@ int location_service_get_cell_location_here(
 		/* Let it fail in parsing */
 	}
 
-	LOG_DBG("Received response body:\r\n%s", log_strdup(resp_ctx.response));
+	LOG_DBG("Received response body:\r\n%s", resp_ctx.response);
 
 	err = location_service_parse_response(resp_ctx.response, location);
 	if (err) {
