@@ -76,7 +76,7 @@ void at_monitor_dispatch(const char *notif)
 	at_notif = k_heap_alloc(&at_monitor_heap, sz_needed, K_NO_WAIT);
 	if (!at_notif) {
 		LOG_WRN("No heap space for incoming notification: %s",
-			log_strdup(notif));
+			notif);
 		return;
 	}
 
