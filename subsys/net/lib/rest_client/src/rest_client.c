@@ -67,7 +67,7 @@ static void rest_client_http_response_cb(struct http_response *rsp,
 			resp_ctx->response_len,
 			resp_ctx->total_response_len,
 			rsp->http_status_code,
-			log_strdup(rsp->http_status));
+			rsp->http_status);
 	}
 }
 
@@ -170,9 +170,7 @@ static int rest_client_sckt_connect(int *const fd,
 
 	snprintf(portstr, 6, "%d", port_num);
 
-	LOG_DBG("Doing getaddrinfo() with connect addr %s port %s",
-		log_strdup(hostname),
-		log_strdup(portstr));
+	LOG_DBG("Doing getaddrinfo() with connect addr %s port %s", hostname, portstr);
 
 	ret = getaddrinfo(hostname, portstr, &hints, &addr_info);
 	if (ret) {
@@ -185,7 +183,7 @@ static int rest_client_sckt_connect(int *const fd,
 		  (void *)&((struct sockaddr_in *)sa)->sin_addr,
 		  peer_addr,
 		  INET6_ADDRSTRLEN);
-	LOG_DBG("getaddrinfo() %s", log_strdup(peer_addr));
+	LOG_DBG("getaddrinfo() %s", peer_addr);
 
 	proto = (sec_tag == REST_CLIENT_SEC_TAG_NO_SEC) ? IPPROTO_TCP : IPPROTO_TLS_1_2;
 	*fd = socket(addr_info->ai_family, SOCK_STREAM, proto);
@@ -210,9 +208,7 @@ static int rest_client_sckt_connect(int *const fd,
 		goto clean_up;
 	}
 
-	LOG_DBG("Connecting to %s port %s",
-		log_strdup(hostname),
-		log_strdup(portstr));
+	LOG_DBG("Connecting to %s port %s", hostname, portstr);
 
 	ret = connect(*fd, addr_info->ai_addr, addr_info->ai_addrlen);
 	if (ret) {
@@ -364,14 +360,14 @@ int rest_client_request(struct rest_client_req_context *req_ctx,
 	http_req.url = req_ctx->url;
 
 	LOG_DBG("Requesting destination HOST: %s at port %d, URL: %s",
-		log_strdup(req_ctx->host), req_ctx->port, log_strdup(http_req.url));
+		req_ctx->host, req_ctx->port, http_req.url);
 
 	http_req.header_fields = req_ctx->header_fields;
 
 	if (req_ctx->body != NULL) {
 		http_req.payload = req_ctx->body;
 		http_req.payload_len = strlen(http_req.payload);
-		LOG_DBG("Payload: %s", log_strdup(http_req.payload));
+		LOG_DBG("Payload: %s", http_req.payload);
 	}
 
 	ret = rest_client_do_api_call(&http_req, req_ctx, resp_ctx);
