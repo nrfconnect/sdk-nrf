@@ -115,7 +115,7 @@ static int dps_settings_handler(const char *key, size_t len,
 		dps_reg_status.state = DPS_STATE_REGISTERED;
 
 		LOG_DBG("Azure IoT Hub hostname found, DPS not needed: %s",
-			log_strdup(dps_reg_status.assigned_hub));
+			dps_reg_status.assigned_hub);
 	}
 
 	return 0;
@@ -297,11 +297,11 @@ static int dps_check_reg_success(char *json)
 
 	if (strcmp("assigned", status_str) != 0) {
 		LOG_ERR("The device was not assigned to hub, status: %s",
-			log_strdup(status_str));
+			status_str);
 		goto exit;
 	}
 
-	LOG_DBG("Registration status: %s", log_strdup(status_str));
+	LOG_DBG("Registration status: %s", status_str);
 
 	assigned_hub_item =
 		cJSON_GetObjectItem(reg_status_obj, "assignedHub");
@@ -365,8 +365,8 @@ static void dps_parse_reg_update(struct topic_parser_data *topic, char *payload,
 		}
 
 		LOG_INF("Device ID %s is now registered to %s",
-			log_strdup(dps_reg_status.reg_id),
-			log_strdup(dps_reg_status.assigned_hub));
+			dps_reg_status.reg_id,
+			dps_reg_status.assigned_hub);
 
 		dps_reg_status.state = DPS_STATE_REGISTERED;
 		cb_handler(dps_reg_status.state);
@@ -394,8 +394,8 @@ static void dps_parse_reg_update(struct topic_parser_data *topic, char *payload,
 		retry_str = topic->prop_bag[0].value;
 	} else {
 		LOG_WRN("Unexpected property bag keys: \"%s\", \"%s\"",
-			log_strdup(topic->prop_bag[0].key),
-			log_strdup(topic->prop_bag[1].key));
+			topic->prop_bag[0].key,
+			topic->prop_bag[1].key);
 		return;
 	}
 
@@ -406,8 +406,8 @@ static void dps_parse_reg_update(struct topic_parser_data *topic, char *payload,
 		reg_id_str = topic->prop_bag[1].value;
 	} else {
 		LOG_WRN("Unexpected property bag keys: \"%s\", \"%s\"",
-			log_strdup(topic->prop_bag[0].key),
-			log_strdup(topic->prop_bag[1].key));
+			topic->prop_bag[0].key,
+			topic->prop_bag[1].key);
 		return;
 	}
 
@@ -443,7 +443,7 @@ static void dps_parse_reg_update(struct topic_parser_data *topic, char *payload,
 		return;
 	}
 
-	LOG_DBG("Operation ID: %s", log_strdup(dps_reg_status.operation_id));
+	LOG_DBG("Operation ID: %s", dps_reg_status.operation_id);
 	k_work_reschedule(&dps_reg_status.poll_work,
 			  K_SECONDS(dps_reg_status.retry));
 }
@@ -457,13 +457,12 @@ static int dps_reg_id_set(const char *id, size_t id_len)
 		return -EMSGSIZE;
 	}
 
-	LOG_INF("Setting DPS registration ID: %s", log_strdup(id));
+	LOG_INF("Setting DPS registration ID: %s", id);
 
 	memcpy(dps_reg_status.reg_id, id, id_len);
 	dps_reg_status.reg_id[id_len] = '\0';
 
-	LOG_DBG("Saved DPS registration ID: %s",
-		log_strdup(dps_reg_status.reg_id));
+	LOG_DBG("Saved DPS registration ID: %s", dps_reg_status.reg_id);
 
 	/* Populate registration status topic with ID */
 	len = snprintk(dps_topic_reg_pub, sizeof(dps_topic_reg_pub),
@@ -517,7 +516,7 @@ int dps_start(void)
 
 	if (strlen(dps_reg_status.assigned_hub) > 0) {
 		LOG_INF("Device is assigned to IoT hub: %s",
-			log_strdup(dps_reg_status.assigned_hub));
+			dps_reg_status.assigned_hub);
 
 		dps_reg_status.state = DPS_STATE_REGISTERED;
 
@@ -557,8 +556,7 @@ int dps_subscribe(void)
 	};
 
 	for (size_t i = 0; i < sub_list.list_count; i++) {
-		LOG_DBG("Subscribing to: %s",
-			log_strdup(sub_list.list[i].topic.utf8));
+		LOG_DBG("Subscribing to: %s", sub_list.list[i].topic.utf8);
 	}
 
 	err = mqtt_subscribe(mqtt_client, &sub_list);
@@ -605,8 +603,8 @@ int dps_send_reg_request(void)
 	param.message.payload.len = payload_len;
 
 	LOG_DBG("Publishing to DPS registration topic: %s, msg: %s",
-		log_strdup(param.message.topic.topic.utf8),
-		log_strdup(param.message.payload.data));
+		param.message.topic.topic.utf8,
+		param.message.payload.data);
 
 	return mqtt_publish(mqtt_client, &param);
 }
