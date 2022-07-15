@@ -45,9 +45,9 @@ static void log_event_using_buffer(const struct app_event_header *aeh,
 	}
 
 	if (IS_ENABLED(CONFIG_APP_EVENT_MANAGER_LOG_EVENT_TYPE)) {
-		LOG_INF("e: %s %s", et->name, log_strdup(log_buf));
+		LOG_INF("e: %s %s", et->name, log_buf);
 	} else {
-		LOG_INF("%s", log_strdup(log_buf));
+		LOG_INF("%s", log_buf);
 	}
 }
 #endif /*CONFIG_APP_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN*/
