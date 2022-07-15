@@ -862,7 +862,7 @@ int sms_deliver_pdu_parse(const char *pdu, struct sms_data *data)
 		header->time.hour,
 		header->time.minute,
 		header->time.second);
-	LOG_DBG("Text:   '%s'", log_strdup(data->payload));
+	LOG_DBG("Text:   '%s'", (char *)data->payload);
 
 	LOG_DBG("Length: %d", data->payload_len);
 

@@ -157,7 +157,7 @@ static void sms_at_cmd_handler_cmt(const char *at_notif)
 		"%"STRINGIFY(SMS_BUF_TMP_LEN)"s\r\n",
 		sms_buf_tmp);
 	if (err < 1) {
-		LOG_ERR("Unable to parse CMT notification, err=%d: %s", err, log_strdup(at_notif));
+		LOG_ERR("Unable to parse CMT notification, err=%d: %s", err, at_notif);
 		goto sms_ack_send;
 	}
 
