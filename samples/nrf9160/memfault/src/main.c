@@ -48,7 +48,7 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 			       "eDRX parameter update: eDRX: %f, PTW: %f",
 			       evt->edrx_cfg.edrx, evt->edrx_cfg.ptw);
 		if (len > 0) {
-			LOG_DBG("%s", log_strdup(log_buf));
+			LOG_DBG("%s", log_buf);
 		}
 		break;
 	}
