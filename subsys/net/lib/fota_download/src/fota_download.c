@@ -413,7 +413,7 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 	}
 
 	if (update != NULL) {
-		LOG_INF("B1 update, selected file:\n%s", log_strdup(update));
+		LOG_INF("B1 update, selected file:\n%s", update);
 		file_buf_ptr = update;
 	}
 #endif /* PM_S1_ADDRESS */
