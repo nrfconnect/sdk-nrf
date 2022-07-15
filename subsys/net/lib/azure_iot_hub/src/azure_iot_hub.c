@@ -208,8 +208,8 @@ static void connection_state_set(enum connection_state new_state)
 		};
 
 		LOG_ERR("Invalid connection state transition, %s --> %s",
-			log_strdup(state_name_get(connection_state)),
-			log_strdup(state_name_get(new_state)));
+			state_name_get(connection_state),
+			state_name_get(new_state));
 
 		azure_iot_hub_notify_event(&evt);
 		return;
@@ -217,8 +217,7 @@ static void connection_state_set(enum connection_state new_state)
 
 	connection_state = new_state;
 
-	LOG_DBG("New connection state: %s",
-		log_strdup(state_name_get(connection_state)));
+	LOG_DBG("New connection state: %s", state_name_get(connection_state));
 }
 
 static bool connection_state_verify(enum connection_state state)
@@ -275,8 +274,7 @@ static int topic_subscribe(void)
 	sub_topics[0].topic.size = len;
 
 	for (size_t i = 0; i < sub_list.list_count; i++) {
-		LOG_DBG("Subscribing to: %s",
-			log_strdup(sub_list.list[i].topic.utf8));
+		LOG_DBG("Subscribing to: %s", sub_list.list[i].topic.utf8);
 	}
 
 	err = mqtt_subscribe(&client, &sub_list);
@@ -304,7 +302,7 @@ static bool direct_method_process(struct topic_parser_data *topic,
 	if (topic->name) {
 		evt.data.method.name = topic->name;
 
-		LOG_DBG("Direct method name: %s", log_strdup(topic->name));
+		LOG_DBG("Direct method name: %s", topic->name);
 	} else {
 		LOG_WRN("No direct method name, event will not be notified");
 		return false;
@@ -328,8 +326,7 @@ static bool direct_method_process(struct topic_parser_data *topic,
 		return false;
 	}
 
-	LOG_DBG("Direct method request ID: %s",
-		log_strdup(evt.data.method.rid));
+	LOG_DBG("Direct method request ID: %s", evt.data.method.rid);
 
 	azure_iot_hub_notify_event(&evt);
 
@@ -694,8 +691,7 @@ static int broker_init(bool dps)
 	broker4->sin_family = AF_INET;
 	broker4->sin_port = htons(CONFIG_AZURE_IOT_HUB_PORT);
 
-	LOG_DBG("IPv4 Address %s",
-		log_strdup(CONFIG_AZURE_IOT_HUB_STATIC_IPV4_ADDR));
+	LOG_DBG("IPv4 Address %s", CONFIG_AZURE_IOT_HUB_STATIC_IPV4_ADDR);
 
 	return 0;
 }
@@ -754,7 +750,7 @@ static int broker_init(bool dps)
 
 			inet_ntop(AF_INET, &broker4->sin_addr.s_addr, ipv4_addr,
 				  sizeof(ipv4_addr));
-			LOG_DBG("IPv4 Address found %s", log_strdup(ipv4_addr));
+			LOG_DBG("IPv4 Address found %s", ipv4_addr);
 			break;
 		}
 
@@ -1024,8 +1020,7 @@ static void dps_handler(enum dps_reg_state state)
 		return;
 	}
 
-	LOG_DBG("Connecting to assigned IoT hub (%s)",
-		log_strdup(dps_hostname_get()));
+	LOG_DBG("Connecting to assigned IoT hub (%s)", dps_hostname_get());
 
 	connection_state_set(STATE_CONNECTING);
 
@@ -1201,8 +1196,7 @@ int azure_iot_hub_send(const struct azure_iot_hub_data *const tx_data)
 	param.message.topic.topic.size = len;
 	param.message.topic.topic.utf8 = topic;
 
-	LOG_DBG("Publishing to topic: %s",
-		log_strdup(param.message.topic.topic.utf8));
+	LOG_DBG("Publishing to topic: %s", param.message.topic.topic.utf8);
 
 	return mqtt_publish(&client, &param);
 }
@@ -1353,8 +1347,7 @@ int azure_iot_hub_method_respond(struct azure_iot_hub_result *result)
 
 	param.message.topic.topic.size = len;
 
-	LOG_DBG("Publishing to topic: %s",
-		log_strdup(param.message.topic.topic.utf8));
+	LOG_DBG("Publishing to topic: %s", param.message.topic.topic.utf8);
 
 	return mqtt_publish(&client, &param);
 }
