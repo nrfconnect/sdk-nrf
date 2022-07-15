@@ -77,7 +77,7 @@ static void log_fw_version_uuid(void)
 		fw_version_end = strstr(fw_version_buf, "\r\n");
 		off = fw_version_end - fw_version_buf - 1;
 		fw_version_buf[off + 1] = '\0';
-		LOG_INF("Modem FW version: %s", log_strdup(fw_version_buf));
+		LOG_INF("Modem FW version: %s", fw_version_buf);
 	} else {
 		LOG_ERR("Unable to obtain modem FW version (ERR: %d, ERR TYPE: %d)",
 			nrf_modem_at_err(err), nrf_modem_at_err_type(err));
@@ -94,7 +94,7 @@ static void log_fw_version_uuid(void)
 		fw_uuid_end = strstr(fw_uuid_buf, "\r\n");
 		off = fw_uuid_end - fw_uuid_buf - 1;
 		fw_uuid_buf[off + 1] = '\0';
-		LOG_INF("Modem FW UUID: %s", log_strdup(fw_uuid));
+		LOG_INF("Modem FW UUID: %s", fw_uuid);
 	} else {
 		LOG_ERR("Unable to obtain modem FW UUID (ERR: %d, ERR TYPE: %d)\n",
 			nrf_modem_at_err(err), nrf_modem_at_err_type(err));
