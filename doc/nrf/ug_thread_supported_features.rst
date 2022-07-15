@@ -7,7 +7,7 @@ Supported Thread features
    :local:
    :depth: 2
 
-The OpenThread implementation of the Thread protocol supports all features defined in the Thread 1.2.1 Specification:
+The OpenThread implementation of the Thread protocol supports all features defined in the Thread 1.3.0 Specification:
 
 * All Thread networking layers:
 
@@ -25,6 +25,10 @@ The OpenThread implementation of the Thread protocol supports all features defin
   * Link Metrics Probing
   * Multicast across Thread networks
   * Thread Domain unicast addressing
+
+* Features introduced with Thread 1.3.0:
+
+  * Service Registration Protocol (SRP) client
 
 .. _thread_ug_supported_features_v12:
 

@@ -67,6 +67,8 @@ The following list summarizes the most important changes inherited from the upst
 Thread
 ------
 
+* Enabled Thread 1.3 features by default.
+* Removed support for Thread Border Router as part of the Master library feature set.
 * Added information about Synchronized Sleepy End Device (SSED) and SED vs SSED activity in the :ref:`thread_ot_device_types` documentation.
 * Multiprotocol support was removed from :file:`overlay-cert.config` and moved to :file:`overlay-multiprotocol.conf`.
 
