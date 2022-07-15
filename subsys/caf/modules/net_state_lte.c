@@ -110,7 +110,7 @@ static void lte_lc_evt_edrx_update_handler(const struct lte_lc_edrx_cfg *edrx_cf
 		       "eDRX parameter update: eDRX: %0.2f, PTW: %0.2f",
 		       edrx_cfg->edrx, edrx_cfg->ptw);
 	if ((err > 0) && ((size_t)err < sizeof(log_buf))) {
-		LOG_INF("%s", log_strdup(log_buf));
+		LOG_INF("%s", log_buf);
 	}
 }
 
