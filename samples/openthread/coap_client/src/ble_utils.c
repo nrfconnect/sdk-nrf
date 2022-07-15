@@ -99,11 +99,9 @@ security_changed(struct bt_conn *conn, bt_security_t level,
 	char *addr = ble_addr(conn);
 
 	if (!err) {
-		LOG_INF("Security changed: %s level %u", log_strdup(addr),
-			level);
+		LOG_INF("Security changed: %s level %u", addr, level);
 	} else {
-		LOG_INF("Security failed: %s level %u err %d", log_strdup(addr),
-			level, err);
+		LOG_INF("Security failed: %s level %u err %d", addr, level, err);
 	}
 }
 
@@ -111,28 +109,28 @@ static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
 	char *addr = ble_addr(conn);
 
-	LOG_INF("Passkey for %s: %06u", log_strdup(addr), passkey);
+	LOG_INF("Passkey for %s: %06u", addr, passkey);
 }
 
 static void auth_cancel(struct bt_conn *conn)
 {
 	char *addr = ble_addr(conn);
 
-	LOG_INF("Pairing cancelled: %s", log_strdup(addr));
+	LOG_INF("Pairing cancelled: %s", addr);
 }
 
 static void pairing_complete(struct bt_conn *conn, bool bonded)
 {
 	char *addr = ble_addr(conn);
 
-	LOG_INF("Pairing completed: %s, bonded: %d", log_strdup(addr), bonded);
+	LOG_INF("Pairing completed: %s, bonded: %d", addr, bonded);
 }
 
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 {
 	char *addr = ble_addr(conn);
 
-	LOG_INF("Pairing failed conn: %s, reason %d", log_strdup(addr), reason);
+	LOG_INF("Pairing failed conn: %s, reason %d", addr, reason);
 }
 
 int ble_utils_init(struct bt_nus_cb *nus_clbs, ble_connection_cb_t on_connect,
