@@ -144,8 +144,7 @@ static void connected(struct bt_conn *conn, uint8_t error)
 		event->state = PEER_STATE_CONN_FAILED;
 		APP_EVENT_SUBMIT(event);
 
-		LOG_WRN("Failed to connect to %s (%u)", log_strdup(addr_str),
-			error);
+		LOG_WRN("Failed to connect to %s (%u)", addr_str, error);
 		return;
 	}
 
@@ -156,7 +155,7 @@ static void connected(struct bt_conn *conn, uint8_t error)
 		set_tx_power(conn);
 	}
 
-	LOG_INF("Connected to %s", log_strdup(addr_str));
+	LOG_INF("Connected to %s", addr_str);
 
 	size_t i;
 
@@ -202,7 +201,7 @@ static void connected(struct bt_conn *conn, uint8_t error)
 				   &bond_find_data.peer_address)) {
 			bt_addr_le_to_str(&bond_find_data.peer_address, addr_str,
 					sizeof(addr_str));
-			LOG_INF("Already bonded to %s", log_strdup(addr_str));
+			LOG_INF("Already bonded to %s", addr_str);
 			goto disconnect;
 		}
 	}
@@ -233,7 +232,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	LOG_INF("Disconnected from %s (reason %u)", log_strdup(addr), reason);
+	LOG_INF("Disconnected from %s (reason %u)", addr, reason);
 
 	size_t i;
 
@@ -278,10 +277,10 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (!bt_err && (level >= BT_SECURITY_L2)) {
-		LOG_INF("Security with %s level %u", log_strdup(addr), level);
+		LOG_INF("Security with %s level %u", addr, level);
 	} else {
 		LOG_WRN("Security with %s failed, level %u err %d",
-			log_strdup(addr), level, bt_err);
+			addr, level, bt_err);
 		if (IS_ENABLED(CONFIG_CAF_BLE_STATE_SECURITY_REQ)) {
 			disconnect_peer(conn);
 		}
