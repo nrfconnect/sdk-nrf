@@ -113,7 +113,7 @@ static enum jobs_topic topic_type_get(const char *incoming_topic, size_t topic_l
 
 	memcpy(debug_log, incoming_topic, topic_len);
 	debug_log[topic_len] = '\0';
-	LOG_DBG("Received topic: %s", log_strdup(debug_log)); /* Make this debug */
+	LOG_DBG("Received topic: %s", debug_log); /* Make this debug */
 #endif
 
 	if (aws_jobs_cmp(get_topic, incoming_topic, topic_len, "")) {
@@ -238,7 +238,7 @@ static int get_job_execution(struct mqtt_client *const client,
 
 	memcpy(job_doc, payload_buf, payload_len);
 	job_doc[payload_len] = '\0';
-	LOG_DBG("Job doc: %s", log_strdup(job_doc));
+	LOG_DBG("Job doc: %s", job_doc);
 #endif
 
 	/* Check if message received is a job. */
@@ -266,9 +266,9 @@ static int get_job_execution(struct mqtt_client *const client,
 		job_id_handling[sizeof(job_id_handling) - 1] = '\0';
 	}
 
-	LOG_DBG("Job ID: %s", log_strdup(job_id_handling));
-	LOG_DBG("hostname: %s", log_strdup(hostname));
-	LOG_DBG("file_path %s", log_strdup(file_path));
+	LOG_DBG("Job ID: %s", (char *)job_id_handling);
+	LOG_DBG("hostname: %s", (char *)hostname);
+	LOG_DBG("file_path %s", (char *)file_path);
 	LOG_DBG("execution_version_number: %d ", execution_version_number);
 
 	/* Subscribe to update topic to receive feedback on whether an
@@ -280,7 +280,7 @@ static int get_job_execution(struct mqtt_client *const client,
 		goto cleanup;
 	}
 
-	LOG_DBG("Subscribed to FOTA update topic %s", log_strdup(update_topic));
+	LOG_DBG("Subscribed to FOTA update topic %s", (char *)update_topic);
 	return 0;
 
 cleanup:
@@ -324,7 +324,7 @@ static int job_update_accepted(struct mqtt_client *const client,
 		};
 
 		LOG_DBG("Start downloading firmware from %s/%s",
-			log_strdup(hostname), log_strdup(file_path));
+			(char *)hostname, (char *)file_path);
 
 #if defined(CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG)
 		sec_tag = CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG;
@@ -388,7 +388,7 @@ static int job_update_rejected(struct mqtt_client *const client,
 		LOG_ERR("Error %d when getting the payload", err);
 		return err;
 	}
-	LOG_ERR("%s", log_strdup(payload_buf));
+	LOG_ERR("%s", (char *)payload_buf);
 	callback(&aws_fota_evt);
 	return -EFAULT;
 }
@@ -526,7 +526,7 @@ static int on_connack_evt(struct mqtt_client *const client)
 			return err;
 		}
 
-		LOG_DBG("Subscribed to FOTA update topic %s", log_strdup(update_topic));
+		LOG_DBG("Subscribed to FOTA update topic %s", (char *)update_topic);
 		break;
 	default:
 		break;
@@ -803,5 +803,5 @@ int aws_fota_get_job_id(uint8_t *const job_id_buf, size_t buf_size)
 	if ((job_id_buf == NULL) || (buf_size == 0)) {
 		return -EINVAL;
 	}
-	return snprintf(job_id_buf, buf_size, "%s", job_id_handling);
+	return snprintf(job_id_buf, buf_size, "%s", (char *)job_id_handling);
 }
