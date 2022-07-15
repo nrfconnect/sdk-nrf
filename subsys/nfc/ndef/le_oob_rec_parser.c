@@ -355,12 +355,11 @@ void nfc_ndef_le_oob_rec_printout(
 
 		bt_addr_le_to_str(le_oob_rec_desc->addr, addr_str,
 			sizeof(addr_str));
-		LOG_INF("\tDevice Address:\t%s", log_strdup(addr_str));
+		LOG_INF("\tDevice Address:\t%s", addr_str);
 	}
 
 	if (le_oob_rec_desc->local_name) {
-		LOG_INF("\tLocal Name:\t%s",
-			log_strdup(le_oob_rec_desc->local_name));
+		LOG_INF("\tLocal Name:\t%s", le_oob_rec_desc->local_name);
 	}
 
 	if (le_oob_rec_desc->le_role) {
