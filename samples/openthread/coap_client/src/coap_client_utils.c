@@ -126,7 +126,7 @@ static int on_provisioning_reply(const struct coap_packet *response,
 		goto exit;
 	}
 
-	LOG_INF("Received peer address: %s", log_strdup(unique_local_addr_str));
+	LOG_INF("Received peer address: %s", unique_local_addr_str);
 
 exit:
 	if (IS_ENABLED(CONFIG_OPENTHREAD_MTD_SED)) {
@@ -148,8 +148,7 @@ static void toggle_one_light(struct k_work *item)
 		return;
 	}
 
-	LOG_INF("Send 'light' request to: %s",
-		log_strdup(unique_local_addr_str));
+	LOG_INF("Send 'light' request to: %s", unique_local_addr_str);
 	coap_send_request(COAP_METHOD_PUT,
 			  (const struct sockaddr *)&unique_local_addr,
 			  light_option, &payload, sizeof(payload), NULL);
