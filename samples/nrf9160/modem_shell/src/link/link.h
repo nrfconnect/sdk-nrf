@@ -18,6 +18,7 @@ enum link_ncellmeas_modes {
 
 #define LINK_FUNMODE_NONE 99
 #define LINK_REDMOB_NONE 99
+#define LTE_LC_FACTORY_RESET_INVALID 99
 
 void link_init(void);
 void link_ind_handler(const struct lte_lc_evt *const evt);

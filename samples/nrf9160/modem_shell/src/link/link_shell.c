@@ -66,7 +66,7 @@ enum link_shell_common_options {
 struct link_shell_cmd_args_t {
 	enum link_shell_command command;
 	enum link_shell_common_options common_option;
-	enum link_sett_modem_reset_type mreset_type;
+	enum lte_lc_factory_reset_type mreset_type;
 	enum link_ncellmeas_modes ncellmeasmode;
 	enum lte_lc_neighbor_search_type ncellmeas_search_type;
 	enum lte_lc_func_mode funmode_option;
@@ -540,7 +540,7 @@ static void link_shell_cmd_defaults_set(struct link_shell_cmd_args_t *link_cmd_a
 		LTE_LC_SYSTEM_MODE_PREFER_AUTO;
 	link_cmd_args->lte_mode = LTE_LC_LTE_MODE_NONE;
 	link_cmd_args->common_option = LINK_COMMON_NONE;
-	link_cmd_args->mreset_type = LINK_SHELL_MODEM_FACTORY_RESET_NONE;
+	link_cmd_args->mreset_type = LTE_LC_FACTORY_RESET_INVALID;
 	link_cmd_args->ncellmeasmode = LINK_NCELLMEAS_MODE_NONE;
 	link_cmd_args->ncellmeas_search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT;
 	link_cmd_args->redmob_mode = LINK_REDMOB_NONE;
@@ -1019,10 +1019,10 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 			link_cmd_args.common_option = LINK_COMMON_WRITE;
 			break;
 		case LINK_SHELL_OPT_MRESET_ALL:
-			link_cmd_args.mreset_type = LINK_SHELL_MODEM_FACTORY_RESET_ALL;
+			link_cmd_args.mreset_type = LTE_LC_FACTORY_RESET_ALL;
 			break;
 		case LINK_SHELL_OPT_MRESET_USER:
-			link_cmd_args.mreset_type = LINK_SHELL_MODEM_FACTORY_RESET_USER_CONFIG;
+			link_cmd_args.mreset_type = LTE_LC_FACTORY_RESET_USER;
 			break;
 		case LINK_SHELL_OPT_START:
 			link_cmd_args.common_option = LINK_COMMON_START;
@@ -1233,18 +1233,16 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 		if (link_cmd_args.common_option == LINK_COMMON_READ) {
 			link_sett_all_print();
 		} else if (link_cmd_args.common_option == LINK_COMMON_RESET ||
-			   link_cmd_args.mreset_type != LINK_SHELL_MODEM_FACTORY_RESET_NONE) {
+			   link_cmd_args.mreset_type != LTE_LC_FACTORY_RESET_INVALID) {
 			if (link_cmd_args.common_option == LINK_COMMON_RESET) {
 				link_sett_defaults_set();
 				link_shell_sysmode_set(SYS_MODE_PREFERRED,
 						       CONFIG_LTE_MODE_PREFERENCE);
 			}
-			if (link_cmd_args.mreset_type == LINK_SHELL_MODEM_FACTORY_RESET_ALL) {
-				link_sett_modem_factory_reset(LINK_SHELL_MODEM_FACTORY_RESET_ALL);
-			} else if (link_cmd_args.mreset_type ==
-					   LINK_SHELL_MODEM_FACTORY_RESET_USER_CONFIG) {
-				link_sett_modem_factory_reset(
-					LINK_SHELL_MODEM_FACTORY_RESET_USER_CONFIG);
+			if (link_cmd_args.mreset_type == LTE_LC_FACTORY_RESET_ALL) {
+				link_sett_modem_factory_reset(LTE_LC_FACTORY_RESET_ALL);
+			} else if (link_cmd_args.mreset_type == LTE_LC_FACTORY_RESET_USER) {
+				link_sett_modem_factory_reset(LTE_LC_FACTORY_RESET_USER);
 			}
 		} else {
 			goto show_usage;
@@ -1678,7 +1676,7 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 			ret = link_shell_pdn_auth_prot_to_pdn_lib_method_map(
 				protocol, &method);
 			if (ret) {
-				mosh_error("Uknown auth protocol %d", protocol);
+				mosh_error("Unknown auth protocol %d", protocol);
 				goto show_usage;
 			}
 			auth_params.method = method;

@@ -476,6 +476,14 @@ enum lte_lc_modem_evt {
 	LTE_LC_MODEM_EVT_OVERHEATED,
 };
 
+/** @brief Type of factory reset to perform. */
+enum lte_lc_factory_reset_type {
+	/** Reset all modem data to factory settings. */
+	LTE_LC_FACTORY_RESET_ALL = 0,
+	/** Reset user-configurable data to factory settings. */
+	LTE_LC_FACTORY_RESET_USER = 1,
+};
+
 /** @brief Connection evaluation parameters.
  *
  *  @note For more information on the various connection evaluation parameters, refer to the
@@ -1228,6 +1236,20 @@ int lte_lc_reduced_mobility_get(enum lte_lc_reduced_mobility_mode *mode);
  * @retval -EFAULT if an AT command failed.
  */
 int lte_lc_reduced_mobility_set(enum lte_lc_reduced_mobility_mode mode);
+
+/** @brief Reset modem to factory settings.
+ *	   This operation is only allowed when the modem is not activated.
+ *
+ *  @note This feature is supported for nRF9160 modem firmware v1.3.0 and later
+ *	  versions. Attempting to use this API with older modem versions will
+ *	  result in an error being returned.
+ *
+ * @param type Variable that determines what type of modem data will be reset.
+ *
+ * @retval 0 if factory reset was performed successfully.
+ * @retval -EFAULT if an AT command failed.
+ */
+int lte_lc_factory_reset(enum lte_lc_factory_reset_type type);
 
 /** @} */
 
