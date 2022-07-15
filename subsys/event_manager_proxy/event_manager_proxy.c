@@ -179,13 +179,13 @@ static void handle_remote_command_subscribe(struct emp_ipc_data *ipc, const void
 	struct event_type *et = find_event_by_name(cmd->name);
 
 	if (!et) {
-		LOG_ERR("Cannot register event: %s", log_strdup(cmd->name));
+		LOG_ERR("Cannot register event: %s", cmd->name);
 	} else {
 		size_t ctx_idx = ipc2idx(ipc);
 		size_t et_idx = et2idx(et);
 
 		ipc->event_type_map[et_idx] = cmd->id;
-		LOG_DBG("Remote event %s registered on ipc %zu", log_strdup(cmd->name), ctx_idx);
+		LOG_DBG("Remote event %s registered on ipc %zu", cmd->name, ctx_idx);
 	}
 }
 
@@ -270,7 +270,7 @@ static void handle_ipc_data_receive(const void *data, size_t len, void *priv)
  */
 static void handle_ipc_endpoint_error(const char *message, void *priv)
 {
-	LOG_ERR("Endpoint error: \"%s\"", log_strdup(message));
+	LOG_ERR("Endpoint error: \"%s\"", message);
 	__ASSERT_NO_MSG(false);
 }
 
