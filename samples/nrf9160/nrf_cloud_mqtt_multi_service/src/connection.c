@@ -371,7 +371,7 @@ static void lte_event_handler(const struct lte_lc_evt *const evt)
 				"LTE_EVENT: eDRX parameter update: eDRX: %f, PTW: %f",
 				evt->edrx_cfg.edrx, evt->edrx_cfg.ptw);
 			if (len > 0) {
-				LOG_DBG("%s", log_strdup(log_buf));
+				LOG_DBG("%s", log_buf);
 			}
 		}
 		break;
@@ -522,7 +522,7 @@ int send_device_message(const char *const msg)
 		return -ENOMEM;
 	}
 	strcpy(msg_buf, msg);
-	LOG_DBG("Enqueued message: %s", log_strdup(msg_buf));
+	LOG_DBG("Enqueued message: %s", msg_buf);
 
 	/* Attempt to append data onto message queue. */
 	if (k_msgq_put(&device_message_queue, &msg_buf, K_NO_WAIT)) {
