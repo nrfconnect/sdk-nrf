@@ -169,7 +169,7 @@ static int ble_adv_start_directed(const bt_addr_le_t *addr, bool fast_adv)
 	char addr_str[BT_ADDR_LE_STR_LEN];
 	bt_addr_le_to_str(addr, addr_str, sizeof(addr_str));
 
-	LOG_INF("Direct advertising to %s", log_strdup(addr_str));
+	LOG_INF("Direct advertising to %s", addr_str);
 
 	return 0;
 }
