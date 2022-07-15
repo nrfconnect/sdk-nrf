@@ -146,7 +146,7 @@ static int socket_tls_hostname_set(int fd, const char * const hostname)
 			 strlen(parsed_host));
 	if (err) {
 		LOG_ERR("Failed to setup TLS hostname (%s), errno %d",
-			log_strdup(parsed_host), errno);
+			parsed_host, errno);
 		return -errno;
 	}
 
@@ -160,7 +160,7 @@ static int socket_pdn_id_set(int fd, uint8_t pdn_id)
 
 	(void) snprintf(buf, sizeof(buf), "pdn%d", pdn_id);
 
-	LOG_INF("Binding to PDN ID: %s", log_strdup(buf));
+	LOG_INF("Binding to PDN ID: %s", buf);
 	err = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, &buf, strlen(buf));
 	if (err) {
 		LOG_ERR("Failed to bind socket to PDN ID %d, err %d",
@@ -199,7 +199,7 @@ static int host_lookup(const char *host, int family, uint8_t pdn_id,
 
 	if (err) {
 		LOG_WRN("Failed to resolve hostname %s on %s",
-			log_strdup(hostname), str_family(family));
+			hostname, str_family(family));
 		return -EHOSTUNREACH;
 	}
 
@@ -313,7 +313,7 @@ static int client_connect(struct download_client *dl)
 		}
 	}
 
-	LOG_INF("Connecting to %s", log_strdup(dl->host));
+	LOG_INF("Connecting to %s", dl->host);
 	LOG_DBG("fd %d, addrlen %d, fam %s, port %d",
 		dl->fd, addrlen, str_family(dl->remote_addr.sa_family), port);
 
@@ -758,8 +758,7 @@ int download_client_start(struct download_client *client, const char *file,
 		return err;
 	}
 
-	LOG_INF("Downloading: %s [%u]", log_strdup(client->file),
-		client->progress);
+	LOG_INF("Downloading: %s [%u]", client->file, client->progress);
 
 	/* Let the thread run */
 	k_thread_resume(client->tid);
