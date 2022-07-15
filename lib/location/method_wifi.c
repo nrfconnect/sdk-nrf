@@ -92,8 +92,8 @@ static void method_wifi_scan_result_handle(struct net_mgmt_event_callback *cb)
 
 		LOG_DBG("scan result #%d stored: ssid %s, mac address: %s, channel %d,",
 			current_scan_result_count,
-			log_strdup(current->ssid_str),
-			log_strdup(current->mac_addr_str),
+			current->ssid_str,
+			current->mac_addr_str,
 			current->channel);
 	} else {
 		LOG_WRN("Scanning result (mac %02x:%02x:%02x:%02x:%02x:%02x) "
