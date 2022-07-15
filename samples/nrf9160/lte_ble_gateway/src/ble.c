@@ -138,11 +138,11 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (conn_err) {
-		LOG_ERR("Failed to connect to %s (%u)", log_strdup(addr), conn_err);
+		LOG_ERR("Failed to connect to %s (%u)", addr, conn_err);
 		return;
 	}
 
-	LOG_INF("Connected: %s", log_strdup(addr));
+	LOG_INF("Connected: %s", addr);
 
 	err = bt_gatt_dm_start(conn, BT_UUID_TMS, &discovery_cb, NULL);
 	if (err) {
@@ -162,7 +162,7 @@ void scan_filter_match(struct bt_scan_device_info *device_info,
 
 	bt_addr_le_to_str(device_info->recv_info->addr, addr, sizeof(addr));
 
-	LOG_INF("Device found: %s", log_strdup(addr));
+	LOG_INF("Device found: %s", addr);
 }
 
 void scan_connecting_error(struct bt_scan_device_info *device_info)

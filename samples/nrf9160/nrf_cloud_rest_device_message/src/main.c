@@ -227,7 +227,7 @@ static int setup_connection(void)
 		return err;
 	}
 
-	LOG_INF("Device ID: %s", log_strdup(device_id));
+	LOG_INF("Device ID: %s", device_id);
 
 	/* Connect to LTE */
 	err = connect_to_lte();
