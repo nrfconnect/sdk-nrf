@@ -125,7 +125,7 @@ static int device_info_init(void)
 			sizeof(device_serial) - strlen(device_serial) - 1);
 	}
 
-	LOG_DBG("Device serial generated: %s", log_strdup(device_serial));
+	LOG_DBG("Device serial generated: %s", device_serial);
 
 	return err;
 }
