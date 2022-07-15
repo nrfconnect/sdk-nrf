@@ -81,7 +81,7 @@ static int write_credential_type(int sec_obj_inst, int sec_tag, int res_id,
 	snprintk(pathstr, sizeof(pathstr), "0/%d/%d", sec_obj_inst, res_id);
 	ret = lwm2m_engine_get_res_buf(pathstr, &cred, NULL, &cred_len,  &cred_flags);
 	if (ret < 0) {
-		LOG_ERR("Unable to get resource data for '%s'", log_strdup(pathstr));
+		LOG_ERR("Unable to get resource data for '%s'", pathstr);
 		return ret;
 	}
 
@@ -115,7 +115,7 @@ static bool sec_obj_has_credentials(int sec_obj_inst)
 	snprintk(pathstr, sizeof(pathstr), "0/%d/%d", sec_obj_inst, SECURITY_SECRET_KEY_ID);
 	ret = lwm2m_engine_get_res_buf(pathstr, &cred, NULL, &cred_len, &cred_flags);
 	if (ret < 0) {
-		LOG_ERR("Unable to get resource data for '%s'", log_strdup(pathstr));
+		LOG_ERR("Unable to get resource data for '%s'", pathstr);
 		return false;
 	}
 
@@ -262,7 +262,7 @@ static int set(const char *key, size_t len_rd, settings_read_cb read_cb, void *c
 		return -ENOENT;
 	}
 
-	LOG_DBG("Loading \"%s\"", log_strdup(key));
+	LOG_DBG("Loading \"%s\"", key);
 
 	ret = lwm2m_string_to_path(key, &path, '/');
 	if (ret) {
@@ -280,7 +280,7 @@ static int set(const char *key, size_t len_rd, settings_read_cb read_cb, void *c
 		}
 		ret = lwm2m_engine_create_obj_inst(o_path);
 		if (ret) {
-			LOG_ERR("Failed to create object instance %s", log_strdup(o_path));
+			LOG_ERR("Failed to create object instance %s", o_path);
 			return ret;
 		}
 	}
@@ -324,9 +324,9 @@ static int write_to_settings(int obj, int inst, int res, uint8_t *data, uint16_t
 
 	snprintk(path, sizeof(path), SETTINGS_PREFIX "/%d/%d/%d", obj, inst, res);
 	if (settings_save_one(path, data, data_len)) {
-		LOG_ERR("Failed to store %s", log_strdup(path));
+		LOG_ERR("Failed to store %s", path);
 	}
-	LOG_DBG("Permanently stored %s", log_strdup(path));
+	LOG_DBG("Permanently stored %s", path);
 	return 0;
 }
 
@@ -336,7 +336,7 @@ static void delete_from_storage(int obj, int inst, int res)
 
 	snprintk(path, sizeof(path), SETTINGS_PREFIX "/%d/%d/%d", obj, inst, res);
 	settings_delete(path);
-	LOG_DBG("Deleted %s", log_strdup(path));
+	LOG_DBG("Deleted %s", path);
 }
 
 
