@@ -124,7 +124,7 @@ static int get_next_prop_bag(char *buf, size_t buf_len,
 	memcpy(bag->key, start_ptr, len);
 	bag->key[len] = '\0';
 
-	LOG_DBG("Key: %s", log_strdup(bag->key));
+	LOG_DBG("Key: %s", bag->key);
 
 	if (end_ptr == max_ptr) {
 		return 0;
@@ -159,7 +159,7 @@ static int get_next_prop_bag(char *buf, size_t buf_len,
 	memcpy(bag->value, start_ptr, len);
 	bag->value[len] = '\0';
 
-	LOG_DBG("Value: %s", log_strdup(bag->value));
+	LOG_DBG("Value: %s", bag->value);
 
 	return parsed_len;
 }
@@ -234,7 +234,7 @@ int azure_iot_hub_topic_parse(struct topic_parser_data *const data)
 		memcpy(data->name, start_ptr, len);
 		data->name[len] = '\0';
 
-		LOG_DBG("Dynamic value: %s", log_strdup(data->name));
+		LOG_DBG("Dynamic value: %s", data->name);
 
 		if ((data->type == TOPIC_TYPE_TWIN_UPDATE_RESULT) ||
 		    (data->type == TOPIC_TYPE_DPS_REG_RESULT)) {
