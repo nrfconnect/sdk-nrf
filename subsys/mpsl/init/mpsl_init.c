@@ -119,7 +119,7 @@ void m_assert_handler(const char *const file, const uint32_t line)
 #else /* !IS_ENABLED(CONFIG_MPSL_ASSERT_HANDLER) */
 static void m_assert_handler(const char *const file, const uint32_t line)
 {
-	LOG_ERR("MPSL ASSERT: %s, %d", log_strdup(file), line);
+	LOG_ERR("MPSL ASSERT: %s, %d", file, line);
 	k_oops();
 }
 #endif /* IS_ENABLED(CONFIG_MPSL_ASSERT_HANDLER) */
