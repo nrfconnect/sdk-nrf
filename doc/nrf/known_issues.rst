@@ -1391,6 +1391,14 @@ NCSDK-10200: The device stops sending Secure Network Beacons after re-provisioni
 
   **Workaround:** Reboot the device after re-provisioning.
 
+.. rst-class:: v1-7-1 v1-8-0 v1-9-0 v1-9-1 v2-0-0 v2-0-1 v2-0-2
+
+NCSDK-16061: IV update procedure fails on the device
+  Bluetooth® mesh device does not undergo IV update and fails to participate in the procedure initiated by any other node unless it is rebooted after the provisioning.
+
+  **Workaround:** Reboot the device after provisioning.
+
+
 Bluetooth direction finding
 ===========================
 
