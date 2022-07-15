@@ -86,7 +86,7 @@ int dfu_target_modem_delta_init(size_t file_size, int img_num, dfu_target_callba
 	snprintf(version_string, sizeof(version_string), "%.*s",
 		 sizeof(version.data), version.data);
 
-	LOG_INF("Modem firmware version: %s", log_strdup(version_string));
+	LOG_INF("Modem firmware version: %s", version_string);
 
 	/* Check if scratch area is big enough for downloaded image */
 	err = nrf_modem_delta_dfu_area(&scratch_space);
