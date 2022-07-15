@@ -386,8 +386,7 @@ int nrf_cloud_decode_requested_state(const struct nrf_cloud_data *input,
 
 	root_obj = cJSON_Parse(input->ptr);
 	if (root_obj == NULL) {
-		LOG_ERR("cJSON_Parse failed: %s",
-			log_strdup((char *)input->ptr));
+		LOG_ERR("cJSON_Parse failed: %s", (char *)input->ptr);
 		return -ENOENT;
 	}
 
@@ -716,7 +715,7 @@ int json_send_to_cloud(cJSON *const request)
 		return -ENOMEM;
 	}
 
-	LOG_DBG("Created request: %s", log_strdup(msg_string));
+	LOG_DBG("Created request: %s", msg_string);
 
 	struct nct_dc_data msg = {
 		.data.ptr = msg_string,
@@ -746,19 +745,19 @@ static int encode_info_item_cs(const enum nrf_cloud_shadow_info inf, const char 
 		move_obj = cJSON_DetachItemFromObject(inf_obj, inf_name);
 
 		if (!move_obj) {
-			LOG_ERR("Info item \"%s\" not found", log_strdup(inf_name));
+			LOG_ERR("Info item \"%s\" not found", inf_name);
 			return -ENOMSG;
 		}
 
 		if (json_add_obj_cs(root_obj, inf_name, move_obj)) {
 			cJSON_Delete(move_obj);
-			LOG_ERR("Failed to add info item \"%s\"", log_strdup(inf_name));
+			LOG_ERR("Failed to add info item \"%s\"", inf_name);
 			return -ENOMEM;
 		}
 		break;
 	case NRF_CLOUD_INFO_CLEAR:
 		if (json_add_null_cs(root_obj, inf_name)) {
-			LOG_ERR("Failed to create NULL item for \"%s\"", log_strdup(inf_name));
+			LOG_ERR("Failed to create NULL item for \"%s\"", inf_name);
 			return -ENOMEM;
 		}
 		break;
@@ -1141,7 +1140,7 @@ int nrf_cloud_rest_fota_execution_parse(const char *const response,
 	} else if (!strcmp(type, NRF_CLOUD_FOTA_TYPE_APP)) {
 		job->type = NRF_CLOUD_FOTA_APPLICATION;
 	} else {
-		LOG_WRN("Unhandled FOTA type: %s", log_strdup(type));
+		LOG_WRN("Unhandled FOTA type: %s", type);
 		job->type = NRF_CLOUD_FOTA_TYPE__INVALID;
 	}
 
@@ -1220,10 +1219,10 @@ int nrf_cloud_parse_pgps_response(const char *const response,
 	}
 
 	strncpy(result->host, host_ptr, result->host_sz);
-	LOG_DBG("host: %s", log_strdup(result->host));
+	LOG_DBG("host: %s", result->host);
 
 	strncpy(result->path, path_ptr, result->path_sz);
-	LOG_DBG("path: %s", log_strdup(result->path));
+	LOG_DBG("path: %s", result->path);
 
 cleanup:
 	if (rsp_obj) {
@@ -1504,7 +1503,7 @@ static int nrf_cloud_parse_cell_pos_json(const cJSON *const cell_pos_obj,
 		} else if (!strcmp(type, NRF_CLOUD_CELL_POS_TYPE_VAL_SCELL)) {
 			location_out->type = CELL_POS_TYPE_SINGLE;
 		} else {
-			LOG_WRN("Unhandled cellular positioning type: %s", log_strdup(type));
+			LOG_WRN("Unhandled cellular positioning type: %s", type);
 		}
 	} else {
 		LOG_WRN("Cellular positioning type not found in message");
