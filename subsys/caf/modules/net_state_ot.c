@@ -69,7 +69,7 @@ static bool check_neighbors(otInstance *instance)
 
 		format_address(addr_str, sizeof(addr_str), info.mExtAddress.m8,
 			       ARRAY_SIZE(info.mExtAddress.m8));
-		LOG_INF("Neighbor addr:%s age:%" PRIu32, log_strdup(addr_str), info.mAge);
+		LOG_INF("Neighbor addr:%s age:%" PRIu32, addr_str, info.mAge);
 
 		has_neighbors = true;
 
@@ -94,7 +94,7 @@ static bool check_routes(otInstance *instance)
 
 		format_address(addr_str, sizeof(addr_str), config.mPrefix.mPrefix.mFields.m8,
 			       ARRAY_SIZE(config.mPrefix.mPrefix.mFields.m8));
-		LOG_INF("Route prefix:%s default:%s preferred:%s", log_strdup(addr_str),
+		LOG_INF("Route prefix:%s default:%s preferred:%s", addr_str,
 			(config.mDefaultRoute)?("yes"):("no"),
 			(config.mPreferred)?("yes"):("no"));
 
