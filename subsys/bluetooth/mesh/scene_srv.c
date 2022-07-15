@@ -399,7 +399,7 @@ static void page_store(struct bt_mesh_scene_srv *srv, uint16_t scene,
 
 	err = bt_mesh_model_data_store(srv->model, false, path, buf, len);
 	if (err) {
-		BT_ERR("Failed storing %s: %d", log_strdup(path), err);
+		BT_ERR("Failed storing %s: %d", path, err);
 	}
 }
 
@@ -738,7 +738,7 @@ static int scene_srv_set(struct bt_mesh_model *model, const char *path,
 	uint8_t page;
 	bool vnd;
 
-	BT_DBG("path: %s", log_strdup(path));
+	BT_DBG("path: %s", path);
 
 	/* The entire model data tree is loaded in this callback. Depending on
 	 * the path and whether we have started the mesh, we'll handle the data
@@ -749,7 +749,7 @@ static int scene_srv_set(struct bt_mesh_model *model, const char *path,
 	 */
 	scene = strtol(path, NULL, 16);
 	if (scene == BT_MESH_SCENE_NONE) {
-		BT_ERR("Unknown data %s", log_strdup(path));
+		BT_ERR("Unknown data %s", path);
 		return 0;
 	}
 
@@ -913,7 +913,7 @@ int bt_mesh_scene_srv_set(struct bt_mesh_scene_srv *srv, uint16_t scene,
 	sprintf(path, "bt/mesh/s/%x/data/%x",
 		(srv->model->elem_idx << 8) | srv->model->mod_idx, scene);
 
-	BT_DBG("Loading %s", log_strdup(path));
+	BT_DBG("Loading %s", path);
 
 	err = settings_load_subtree(path);
 	if (!err) {
