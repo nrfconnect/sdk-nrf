@@ -1710,6 +1710,11 @@ int lte_lc_reduced_mobility_set(enum lte_lc_reduced_mobility_mode mode)
 	return 0;
 }
 
+int lte_lc_factory_reset(enum lte_lc_factory_reset_type type)
+{
+	return nrf_modem_at_printf("AT%%XFACTORYRESET=%d", type) ? -EFAULT : 0;
+}
+
 #if defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT)
 SYS_INIT(init_and_connect,
 		  APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
