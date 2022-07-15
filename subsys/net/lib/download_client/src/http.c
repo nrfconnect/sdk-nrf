@@ -173,7 +173,7 @@ static int http_header_parse(struct download_client *client, size_t *hdr_len)
 		}
 		*q = '\0';
 
-		LOG_ERR("Unexpected HTTP response: %s", log_strdup(p));
+		LOG_ERR("Unexpected HTTP response: %s", p);
 		return -1;
 	}
 
