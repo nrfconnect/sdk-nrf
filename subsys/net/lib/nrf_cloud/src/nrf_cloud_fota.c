@@ -141,7 +141,7 @@ static int fota_settings_set(const char *key, size_t len_rd,
 		return -EINVAL;
 	}
 
-	LOG_DBG("Settings key: %s, size: %d", log_strdup(key), len_rd);
+	LOG_DBG("Settings key: %s, size: %d", key, len_rd);
 
 	if (strncmp(key, NRF_CLOUD_SETTINGS_FOTA_JOB, strlen(NRF_CLOUD_SETTINGS_FOTA_JOB)) != 0) {
 		return -ENOMSG;
@@ -164,7 +164,7 @@ static int fota_settings_set(const char *key, size_t len_rd,
 
 	if (sz == sizeof(saved_job)) {
 		LOG_INF("Saved job: %s, type: %d, validate: %d, bl: 0x%X",
-			log_strdup(saved_job.id), saved_job.type,
+			saved_job.id, saved_job.type,
 			saved_job.validate, saved_job.bl_flags);
 	} else {
 		LOG_INF("FOTA settings size smaller than expected, likely outdated");
@@ -539,8 +539,7 @@ int nrf_cloud_fota_subscribe(void)
 		    sub_list.list[i].topic.utf8 == NULL) {
 			return -EFAULT;
 		}
-		LOG_DBG("Subscribing to topic: %s",
-			log_strdup(sub_list.list[i].topic.utf8));
+		LOG_DBG("Subscribing to topic: %s", sub_list.list[i].topic.utf8);
 	}
 
 	return mqtt_subscribe(client_mqtt, &sub_list);
@@ -583,8 +582,7 @@ static int save_validate_status(const char *const job_id,
 
 	int ret;
 
-	LOG_DBG("%s() - %s, %d, %d",
-		__func__, log_strdup(job_id), job_type, validate);
+	LOG_DBG("%s() - %s, %d, %d", __func__, job_id, job_type, validate);
 
 	if (validate == NRF_CLOUD_FOTA_VALIDATE_DONE) {
 		/* Saved FOTA job has been validated, clear it */
@@ -789,7 +787,7 @@ static int parse_job_info(struct nrf_cloud_fota_job_info *const job_info,
 
 	temp = cJSON_PrintUnformatted(array);
 	if (temp) {
-		LOG_DBG("JSON array: %s", log_strdup(temp));
+		LOG_DBG("JSON array: %s", temp);
 		cJSON_FreeString(temp);
 	}
 
@@ -809,7 +807,7 @@ static int parse_job_info(struct nrf_cloud_fota_job_info *const job_info,
 
 		if (bt_addr_from_str(ble_str, ble_id)) {
 			err = -EADDRNOTAVAIL;
-			LOG_ERR("Invalid BLE ID: %s", log_strdup(ble_str));
+			LOG_ERR("Invalid BLE ID: %s", ble_str);
 			goto cleanup;
 		}
 	}
@@ -842,12 +840,12 @@ static int parse_job_info(struct nrf_cloud_fota_job_info *const job_info,
 	}
 
 	LOG_DBG("Job ID: %s, type: %d, size: %d",
-		log_strdup(job_info->id),
+		job_info->id,
 		job_info->type,
 		job_info->file_size);
 	LOG_DBG("File: %s/%s",
-		log_strdup(job_info->host),
-		log_strdup(job_info->path));
+		job_info->host,
+		job_info->path);
 
 	return 0;
 
@@ -952,7 +950,7 @@ static void cleanup_job(struct nrf_cloud_fota_job *const job)
 {
 	__ASSERT_NO_MSG(job != NULL);
 	LOG_DBG("%s() - ID: %s", __func__,
-		job->info.id ? log_strdup(job->info.id) : "N/A");
+		job->info.id ? job->info.id : "N/A");
 
 	if (job->parsed_payload) {
 		cJSON_Delete(job->parsed_payload);
@@ -967,11 +965,10 @@ static int publish(const struct mqtt_publish_param *const pub)
 
 	int ret;
 
-	LOG_DBG("Topic: %s",
-		log_strdup(pub->message.topic.topic.utf8));
+	LOG_DBG("Topic: %s", pub->message.topic.topic.utf8);
 	LOG_DBG("Payload (%d bytes): %s",
 		pub->message.payload.len,
-		log_strdup(pub->message.payload.data));
+		pub->message.payload.data);
 
 	ret = mqtt_publish(client_mqtt, pub);
 	if (ret) {
@@ -1177,8 +1174,7 @@ static int handle_mqtt_evt_publish(const struct mqtt_evt *evt)
 	} else if (strncmp(last_job, job_info->id, sizeof(last_job)) == 0) {
 		/* Job parsed and already processed */
 		skip = true;
-		LOG_INF("Job %s already completed... skipping",
-			log_strdup(last_job));
+		LOG_INF("Job %s already completed... skipping", last_job);
 	}
 
 send_ack:
