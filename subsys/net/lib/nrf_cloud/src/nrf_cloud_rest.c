@@ -952,7 +952,7 @@ int nrf_cloud_rest_agps_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		remain -= ret;
 	}
 
-	LOG_DBG("req url:%s", log_strdup(url));
+	LOG_DBG("req url:%s", url);
 
 	/* Format auth header */
 	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);

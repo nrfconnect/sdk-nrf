@@ -65,7 +65,7 @@ static int settings_set(const char *key, size_t len_rd,
 		return -EINVAL;
 	}
 
-	LOG_DBG("Settings key:%s, size:%d", log_strdup(key), len_rd);
+	LOG_DBG("Settings key:%s, size:%d", key, len_rd);
 
 	if (!strncmp(key, SETTINGS_KEY_PGPS_HEADER,
 		     strlen(SETTINGS_KEY_PGPS_HEADER)) &&
@@ -372,7 +372,7 @@ void npgps_print_blocks(void)
 		map[i] = pool.block_used[i] ? '1' : '0';
 	}
 	map[i] = '\0';
-	LOG_DBG("map:%s", log_strdup(map));
+	LOG_DBG("map:%s", map);
 }
 
 

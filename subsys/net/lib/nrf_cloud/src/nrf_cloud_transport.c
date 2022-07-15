@@ -344,7 +344,7 @@ static int nct_client_id_set(const char * const client_id)
 		}
 	}
 
-	LOG_DBG("client_id = %s", log_strdup(client_id_buf));
+	LOG_DBG("client_id = %s", client_id_buf);
 
 	return 0;
 }
@@ -525,11 +525,11 @@ static int nct_topics_populate(void)
 		goto err_cleanup;
 	}
 
-	LOG_DBG("accepted_topic: %s", log_strdup(accepted_topic));
-	LOG_DBG("rejected_topic: %s", log_strdup(rejected_topic));
-	LOG_DBG("update_delta_topic: %s", log_strdup(update_delta_topic));
-	LOG_DBG("update_topic: %s", log_strdup(update_topic));
-	LOG_DBG("shadow_get_topic: %s", log_strdup(shadow_get_topic));
+	LOG_DBG("accepted_topic: %s", accepted_topic);
+	LOG_DBG("rejected_topic: %s", rejected_topic);
+	LOG_DBG("update_delta_topic: %s", update_delta_topic);
+	LOG_DBG("update_topic: %s", update_topic);
+	LOG_DBG("shadow_get_topic: %s", shadow_get_topic);
 
 	/* Populate RX and TX topic lists */
 	nct_topic_lists_populate();
@@ -648,7 +648,7 @@ static int nct_settings_set(const char *key, size_t len_rd,
 
 	int read_val;
 
-	LOG_DBG("Settings key: %s, size: %d", log_strdup(key), len_rd);
+	LOG_DBG("Settings key: %s, size: %d", key, len_rd);
 
 	if (!strncmp(key, SETTINGS_KEY_PERSISTENT_SESSION,
 		     strlen(SETTINGS_KEY_PERSISTENT_SESSION)) &&
@@ -1125,7 +1125,7 @@ int nct_connect(void)
 				 addr_str,
 				 sizeof(addr_str));
 
-			LOG_DBG("IPv4 address: %s", log_strdup(addr_str));
+			LOG_DBG("IPv4 address: %s", addr_str);
 
 			err = nct_mqtt_connect();
 			break;
