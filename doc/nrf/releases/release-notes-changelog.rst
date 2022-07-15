@@ -274,6 +274,7 @@ Matter samples
 --------------
 
 * Removed the low-power configuration build type from all Matter samples.
+* Optimized the usage of the QSPI NOR flash sleep mode to reduce power consumption during the Matter commissioning.
 
 * :ref:`matter_light_switch_sample`:
 
