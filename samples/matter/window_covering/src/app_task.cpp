@@ -265,7 +265,8 @@ void AppTask::FunctionTimerEventHandler(AppEvent *aEvent)
 	} else if (Instance().mFunctionTimerActive && Instance().mMode == OperatingMode::FactoryReset) {
 		/* Actually trigger Factory Reset */
 		Instance().mMode = OperatingMode::Normal;
-		ConfigurationMgr().InitiateFactoryReset();
+		LOG_INF("Factory Reset triggered");
+		chip::Server::GetInstance().ScheduleFactoryReset();
 	}
 }
 
