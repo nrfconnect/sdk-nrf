@@ -135,7 +135,7 @@ static void data_print(uint8_t *prefix, uint8_t *data, size_t len)
 
 	memcpy(buf, data, len);
 	buf[len] = 0;
-	LOG_INF("%s%s", log_strdup(prefix), log_strdup(buf));
+	LOG_INF("%s%s", (char *)prefix, (char *)buf);
 }
 
 /**@brief Function to publish data on the configured topic
@@ -347,7 +347,7 @@ static int broker_init(void)
 
 			inet_ntop(AF_INET, &broker4->sin_addr.s_addr,
 				  ipv4_addr, sizeof(ipv4_addr));
-			LOG_INF("IPv4 Address found %s", log_strdup(ipv4_addr));
+			LOG_INF("IPv4 Address found %s", ipv4_addr);
 
 			break;
 		} else {
@@ -406,7 +406,7 @@ static const uint8_t* client_id_get(void)
 #endif /* !defined(NRF_CLOUD_CLIENT_ID) */
 
 exit:
-	LOG_DBG("client_id = %s", log_strdup(client_id));
+	LOG_DBG("client_id = %s", (char *)client_id);
 
 	return client_id;
 }
