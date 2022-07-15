@@ -306,7 +306,7 @@ static int do_http_connect(void)
 
 	ret = util_resolve_host(0, httpc.host, httpc.port, httpc.family, &sa);
 	if (ret) {
-		LOG_ERR("getaddrinfo() error: %s", log_strdup(gai_strerror(ret)));
+		LOG_ERR("getaddrinfo() error: %s", gai_strerror(ret));
 		goto exit_cli;
 	}
 	if (sa.sa_family == AF_INET) {
