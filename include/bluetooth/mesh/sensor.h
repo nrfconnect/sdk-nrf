@@ -498,7 +498,7 @@ const char *bt_mesh_sensor_ch_str_real(const struct sensor_value *ch);
  *
  *  @param[in] ch Sensor channel to represent.
  */
-#define bt_mesh_sensor_ch_str(ch) log_strdup(bt_mesh_sensor_ch_str_real(ch))
+#define bt_mesh_sensor_ch_str(ch) bt_mesh_sensor_ch_str_real(ch)
 
 /** @cond INTERNAL_HIDDEN */
 
