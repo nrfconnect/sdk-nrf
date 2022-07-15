@@ -39,7 +39,7 @@ static int cmd_custom(const struct shell *shell, size_t argc, char **argv)
 		}
 	}
 
-	LOG_DBG("Assembled command: %s", log_strdup(cmd_buf));
+	LOG_DBG("Assembled command: %s", cmd_buf);
 	ptt_uart_push_packet((uint8_t *)cmd_buf, strlen(cmd_buf));
 
 	return 0;
