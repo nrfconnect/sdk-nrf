@@ -297,7 +297,7 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 
 	ret = util_resolve_host(0, url, port, proxy.family, &sa);
 	if (ret) {
-		LOG_ERR("getaddrinfo() error: %s", log_strdup(gai_strerror(ret)));
+		LOG_ERR("getaddrinfo() error: %s", gai_strerror(ret));
 		goto exit_cli;
 	}
 	if (sa.sa_family == AF_INET) {
