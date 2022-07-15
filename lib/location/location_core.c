@@ -279,7 +279,7 @@ void location_core_config_log(const struct location_config *config)
 		LOG_DBG("    Method #%d", i);
 		if (method_api != NULL) {
 			LOG_DBG("      Method type: %s (%d)",
-				log_strdup(method_api->method_string), type);
+				method_api->method_string, type);
 		} else {
 			LOG_DBG("      Method type: Unknown (%d)", type);
 		}
@@ -411,11 +411,11 @@ void location_core_event_cb(const struct location_data *location)
 		 * but that's up to application to configure.
 		 */
 		sprintf(latitude_str, "%.06f", current_event_data.location.latitude);
-		LOG_DBG("  latitude: %s", log_strdup(latitude_str));
+		LOG_DBG("  latitude: %s", latitude_str);
 		sprintf(longitude_str, "%.06f", current_event_data.location.longitude);
-		LOG_DBG("  longitude: %s", log_strdup(longitude_str));
+		LOG_DBG("  longitude: %s", longitude_str);
 		sprintf(accuracy_str, "%.01f", current_event_data.location.accuracy);
-		LOG_DBG("  accuracy: %s m", log_strdup(accuracy_str));
+		LOG_DBG("  accuracy: %s m", accuracy_str);
 		if (current_event_data.location.datetime.valid) {
 			LOG_DBG("  date: %04d-%02d-%02d",
 				current_event_data.location.datetime.year,
@@ -428,7 +428,7 @@ void location_core_event_cb(const struct location_data *location)
 				current_event_data.location.datetime.ms);
 		}
 		LOG_DBG("  Google maps URL: https://maps.google.com/?q=%s,%s",
-			log_strdup(latitude_str), log_strdup(longitude_str));
+			latitude_str, longitude_str);
 		if (current_config.mode == LOCATION_REQ_MODE_ALL) {
 			/* Get possible next method */
 			previous_method = current_event_data.location.method;
