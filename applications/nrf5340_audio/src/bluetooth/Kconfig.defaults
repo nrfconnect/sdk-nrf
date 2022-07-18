@@ -112,6 +112,16 @@ config BT_VCS
 	bool
 	default y
 
+config BT_PACS_SNK_CONTEXT
+	hex
+	default 0x0005
+
+#TODO: This should be fixed in Zephyr since BT_AUDIO_CONTEXT_TYPE_PROHIBITED
+#      should be involved automatically when there's no audio source endpoint
+config BT_PACS_SRC_CONTEXT
+	hex
+	default 0x0000
+
 endif # AUDIO_DEV = 1 (HEADSET)
 
 # GATEWAY

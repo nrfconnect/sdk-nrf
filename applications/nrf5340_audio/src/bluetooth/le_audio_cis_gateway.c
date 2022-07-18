@@ -369,6 +369,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 {
 	int ret;
 	static bool initialized;
+	struct bt_audio_stream *streams_p[CONFIG_BT_ISO_MAX_CHAN];
 
 #if (CONFIG_BT_VCS_CLIENT)
 	ret = ble_vcs_client_init();
@@ -381,7 +382,8 @@ static int initialize(le_audio_receive_cb recv_cb)
 	ARG_UNUSED(recv_cb);
 	if (!initialized) {
 		audio_stream.ops = &stream_ops;
-		ret = bt_audio_unicast_group_create(&audio_stream, CONFIG_BT_ISO_MAX_CHAN,
+		streams_p[0] = &audio_stream;
+		ret = bt_audio_unicast_group_create(streams_p, CONFIG_BT_ISO_MAX_CHAN,
 						    &unicast_group);
 
 		if (ret) {
