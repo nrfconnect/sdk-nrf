@@ -246,12 +246,17 @@ static void audio_datapath_drift_compensation(uint32_t frame_start_ts)
 		}
 
 		int32_t err_us = (DRIFT_MEAS_PERIOD_US - (ctrl_blk.previous_sdu_ref_us -
-							  ctrl_blk.drift_comp.meas_start_time_us)) %
-				 CONFIG_AUDIO_FRAME_DURATION_US;
+							  ctrl_blk.drift_comp.meas_start_time_us));
 
 		int32_t freq_adj = APLL_FREQ_ADJ(err_us);
 
 		ctrl_blk.drift_comp.center_freq = APLL_FREQ_CENTER + freq_adj;
+
+		if ((ctrl_blk.drift_comp.center_freq > (APLL_FREQ_MAX)) ||
+		    (ctrl_blk.drift_comp.center_freq < (APLL_FREQ_MIN))) {
+			LOG_DBG("Invalid center frequency, re-calculating");
+			drift_comp_state_set(DRFT_STATE_INIT);
+		}
 
 		hfclkaudio_set(ctrl_blk.drift_comp.center_freq);
 
@@ -299,7 +304,7 @@ static void audio_datapath_drift_compensation(uint32_t frame_start_ts)
 		hfclkaudio_set(ctrl_blk.drift_comp.center_freq + freq_adj);
 
 		if ((err_us > DRIFT_ERR_THRESH_UNLOCK) || (err_us < -DRIFT_ERR_THRESH_UNLOCK)) {
-			drift_comp_state_set(DRIFT_STATE_OFFSET);
+			drift_comp_state_set(DRFT_STATE_INIT);
 		} else {
 			ctrl_blk.drift_comp.ctr = 0;
 		}
