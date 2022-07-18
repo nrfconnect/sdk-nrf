@@ -24,5 +24,6 @@ const char *link_shell_sysmode_preferred_to_string(int sysmode_preference, char 
 const char *link_shell_sysmode_currently_active_to_string(int actmode, char *out_str_buff);
 const char *link_shell_map_to_string(struct mapping_tbl_item const *mapping_table,
 				      int mode, char *out_str_buff);
+const char *link_shell_redmob_mode_to_string(int funmode, char *out_str_buff);
 
 #endif /* MOSH_LINK_SHELL_PRINT_H */

@@ -46,7 +46,8 @@ enum link_shell_command {
 	LINK_CMD_EDRX,
 	LINK_CMD_PSM,
 	LINK_CMD_RAI,
-	LINK_CMD_DNSADDR
+	LINK_CMD_DNSADDR,
+	LINK_CMD_REDMOB,
 };
 
 enum link_shell_common_options {
@@ -72,6 +73,7 @@ struct link_shell_cmd_args_t {
 	enum lte_lc_system_mode sysmode_option;
 	enum lte_lc_system_mode_preference sysmode_lte_pref_option;
 	enum lte_lc_lte_mode lte_mode;
+	enum lte_lc_reduced_mobility_mode redmob_mode;
 };
 
 /******************************************************************************/
@@ -117,7 +119,8 @@ static const char link_usage_str[] =
 	"                operator does not provide any DNS addresses, or if the name\n"
 	"                resolution using DNS server(s) provided by mobile network operator\n"
 	"                fails for given domain name. The manual DNS address does not\n"
-	"                override the mobile network operator provided DNS addresses.\n";
+	"                override the mobile network operator provided DNS addresses.\n"
+	"  redmob:       Set/read reduced mobility modes of the modem.\n";
 
 static const char link_settings_usage_str[] =
 	"Usage: link settings --read | --reset | --mreset_all | --mreset_user\n"
@@ -346,6 +349,14 @@ static const char link_dnsaddr_usage_str[] =
 	"  -e, --enable,       Enable manual DNS server address\n"
 	"  -i, --ipaddr, [str] DNS server IP address\n";
 
+static const char link_redmob_usage_str[] =
+	"Usage: link redmob [options] | --read\n"
+	"Options:\n"
+	"  -r, --read,         Read and print current mode\n"
+	"  -d, --disable,      Disable reduced mobility mode\n"
+	"  --default,          Enable default reduced mobility mode\n"
+	"  --nordic,           Enable Nordic proprietary reduced mobility mode\n";
+
 /******************************************************************************/
 
 /* Following are not having short options: */
@@ -382,6 +393,8 @@ enum {
 	LINK_SHELL_OPT_SEARCH_PATTERN_TABLE,
 	LINK_SHELL_OPT_NMODE_NO_REL14,
 	LINK_SHELL_OPT_WRITE,
+	LINK_SHELL_OPT_REDMOB_DEFAULT,
+	LINK_SHELL_OPT_REDMOB_NORDIC,
 };
 
 /* Specifying the expected options (both long and short): */
@@ -445,6 +458,8 @@ static struct option long_options[] = {
 	{ "search_pattern_range", required_argument, 0, LINK_SHELL_OPT_SEARCH_PATTERN_RANGE },
 	{ "search_pattern_table", required_argument, 0, LINK_SHELL_OPT_SEARCH_PATTERN_TABLE },
 	{ "normal_no_rel14", no_argument, 0, LINK_SHELL_OPT_NMODE_NO_REL14 },
+	{ "default", no_argument, 0, LINK_SHELL_OPT_REDMOB_DEFAULT },
+	{ "nordic", no_argument, 0, LINK_SHELL_OPT_REDMOB_NORDIC },
 	{ 0, 0, 0, 0 }
 };
 
@@ -507,6 +522,9 @@ static void link_shell_print_usage(struct link_shell_cmd_args_t *link_cmd_args)
 	case LINK_CMD_DNSADDR:
 		mosh_print_no_format(link_dnsaddr_usage_str);
 		break;
+	case LINK_CMD_REDMOB:
+		mosh_print_no_format(link_redmob_usage_str);
+		break;
 	default:
 		mosh_print_no_format(link_usage_str);
 		break;
@@ -525,6 +543,7 @@ static void link_shell_cmd_defaults_set(struct link_shell_cmd_args_t *link_cmd_a
 	link_cmd_args->mreset_type = LINK_SHELL_MODEM_FACTORY_RESET_NONE;
 	link_cmd_args->ncellmeasmode = LINK_NCELLMEAS_MODE_NONE;
 	link_cmd_args->ncellmeas_search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT;
+	link_cmd_args->redmob_mode = LINK_REDMOB_NONE;
 }
 
 /******************************************************************************/
@@ -704,6 +723,8 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 		link_cmd_args.command = LINK_CMD_RAI;
 	} else if (strcmp(argv[1], "dnsaddr") == 0) {
 		link_cmd_args.command = LINK_CMD_DNSADDR;
+	} else if (strcmp(argv[1], "redmob") == 0) {
+		link_cmd_args.command = LINK_CMD_REDMOB;
 	} else {
 		mosh_error("Unsupported command=%s\n", argv[1]);
 		ret = -EINVAL;
@@ -1078,6 +1099,12 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 			}
 			nmode_use_rel14 = false;
 			break;
+		case LINK_SHELL_OPT_REDMOB_DEFAULT:
+			link_cmd_args.redmob_mode = LTE_LC_REDUCED_MOBILITY_DEFAULT;
+			break;
+		case LINK_SHELL_OPT_REDMOB_NORDIC:
+			link_cmd_args.redmob_mode = LTE_LC_REDUCED_MOBILITY_NORDIC;
+			break;
 		case '?':
 			goto show_usage;
 		default:
@@ -1227,6 +1254,36 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 		link_api_coneval_read_for_shell();
 		break;
 
+	case LINK_CMD_REDMOB:
+		if (link_cmd_args.common_option == LINK_COMMON_DISABLE) {
+			link_cmd_args.redmob_mode = LTE_LC_REDUCED_MOBILITY_DISABLED;
+		}
+		if (link_cmd_args.common_option == LINK_COMMON_READ) {
+			enum lte_lc_reduced_mobility_mode mode;
+
+			ret = lte_lc_reduced_mobility_get(&mode);
+			if (ret) {
+				mosh_error("Cannot get reduced mobility mode: %d", ret);
+			} else {
+				mosh_print(
+					"Reduced mobility mode read successfully: %s",
+					link_shell_redmob_mode_to_string(mode, snum));
+			}
+		} else if (link_cmd_args.redmob_mode != LINK_REDMOB_NONE) {
+			ret = lte_lc_reduced_mobility_set(link_cmd_args.redmob_mode);
+			if (ret) {
+				mosh_error("Cannot set reduced mobility mode: %d", ret);
+			} else {
+				mosh_print(
+					"Reduced mobility mode set successfully: %s",
+					link_shell_redmob_mode_to_string(
+						link_cmd_args.redmob_mode, snum));
+			}
+		} else {
+			goto show_usage;
+		}
+		break;
+
 	case LINK_CMD_SYSMODE:
 		if (link_cmd_args.common_option == LINK_COMMON_READ) {
 			enum lte_lc_system_mode sys_mode_current;
@@ -1250,8 +1307,8 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 				    sett_sys_mode != sys_mode_current &&
 				    sett_lte_pref != sys_mode_pref_current) {
 					mosh_warn(
-						"note: seems that set link sysmode and a "
-						"counterparts in modem are not in synch");
+						"note: seems that set link sysmode and "
+						"counterparts in modem are not in sync");
 					mosh_warn(
 						"but no worries; requested system mode retried "
 						"next time when going to normal mode");
