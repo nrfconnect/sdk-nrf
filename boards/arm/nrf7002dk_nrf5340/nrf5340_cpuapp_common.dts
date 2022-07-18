@@ -228,6 +228,11 @@ arduino_spi: &spi4 {
 	};
 };
 
+zephyr_udc0: &usbd {
+	compatible = "nordic,nrf-usbd";
+	status = "okay";
+};
+
 / {
 
 	reserved-memory {
