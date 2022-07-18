@@ -17,9 +17,11 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(cis_gateway, CONFIG_LOG_BLE_LEVEL);
 
+#define BLE_ISO_PRES_DELAY_US 10000u
+
 #define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO                                                  \
 	BT_AUDIO_LC3_PRESET(BT_CODEC_LC3_CONFIG_48_4,                                              \
-			    BT_CODEC_LC3_QOS_10_UNFRAMED(120u, 2u, 20u, 10000u))
+			    BT_CODEC_LC3_QOS_10_UNFRAMED(120u, 2u, 20u, BLE_ISO_PRES_DELAY_US))
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
 /* For being able to dynamically define iso_tx_pools */
@@ -474,17 +476,20 @@ int le_audio_send(uint8_t const *const data, size_t size)
 	//TODO: Handling dual channel sending properly
 	net_buf_add_mem(buf, data, 120);
 
-#if (CONFIG_AUDIO_SOURCE_I2S)
 	struct bt_iso_tx_info tx_info = { 0 };
 
 	ret = bt_iso_chan_get_tx_sync(audio_stream.iso, &tx_info);
 
 	if (ret) {
 		LOG_WRN("Error getting ISO TX anchor point: %d", ret);
-	} else {
-		audio_datapath_sdu_ref_update(tx_info.ts);
 	}
+
+	if (tx_info.ts != 0 && !ret) {
+#if (CONFIG_AUDIO_SOURCE_I2S)
+		audio_datapath_sdu_ref_update(tx_info.ts);
 #endif
+		audio_datapath_just_in_time_check_and_adjust(tx_info.ts);
+	}
 
 	atomic_inc(&iso_tx_pool_alloc[0]);
 

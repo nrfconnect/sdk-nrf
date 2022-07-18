@@ -15,6 +15,7 @@
 #include "macros_common.h"
 #include "ctrl_events.h"
 #include "ble_audio_services.h"
+#include "audio_datapath.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(cis_headset, CONFIG_LOG_BLE_LEVEL);
@@ -22,10 +23,6 @@ LOG_MODULE_REGISTER(cis_headset, CONFIG_LOG_BLE_LEVEL);
 #define CHANNEL_COUNT_1 BIT(0)
 #define BLE_ISO_LATENCY_MS 10
 #define BLE_ISO_RETRANSMITS 2
-#define BLE_ISO_PRSENTATION_DELAY_MIN_US 10000
-#define BLE_ISO_PRSENTATION_DELAY_MAX_US 40000
-#define BLE_ISO_PREF_PRSENTATION_DELAY_MIN_US 10000
-#define BLE_ISO_PREF_PRSENTATION_DELAY_MAX_US 40000
 #define DEVICE_NAME_PEER CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_PEER_LEN (sizeof(DEVICE_NAME_PEER) - 1)
 
@@ -40,11 +37,9 @@ static struct bt_codec lc3_codec =
 		     1u, BT_AUDIO_CONTEXT_TYPE_MEDIA, BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
 static struct bt_audio_capability caps = {
 	.dir = BT_AUDIO_DIR_SINK,
-	.pref = BT_AUDIO_CAPABILITY_PREF(
-		BT_AUDIO_CAPABILITY_UNFRAMED_SUPPORTED, BT_GAP_LE_PHY_2M, BLE_ISO_RETRANSMITS,
-		BLE_ISO_LATENCY_MS, BLE_ISO_PRSENTATION_DELAY_MIN_US,
-		BLE_ISO_PRSENTATION_DELAY_MAX_US, BLE_ISO_PREF_PRSENTATION_DELAY_MIN_US,
-		BLE_ISO_PREF_PRSENTATION_DELAY_MAX_US),
+	.pref = BT_AUDIO_CAPABILITY_PREF(BT_AUDIO_CAPABILITY_UNFRAMED_SUPPORTED, BT_GAP_LE_PHY_2M,
+					 BLE_ISO_RETRANSMITS, BLE_ISO_LATENCY_MS, MIN_PRES_DLY_US,
+					 MAX_PRES_DLY_US, MIN_PRES_DLY_US, MAX_PRES_DLY_US),
 	.codec = &lc3_codec,
 	.ops = &lc3_cap_codec_ops,
 };
@@ -105,9 +100,12 @@ static int lc3_cap_reconfig_cb(struct bt_audio_stream *stream, struct bt_audio_c
 
 static int lc3_cap_qos_cb(struct bt_audio_stream *stream, struct bt_codec_qos *qos)
 {
-	LOG_INF("QoS: stream %p qos %p", (void *)stream, (void *)qos);
+	int ret;
 
-	return 0;
+	LOG_INF("QoS: stream %p qos %p", (void *)stream, (void *)qos);
+	ret = audio_datapath_pres_delay_us_set(qos->pd);
+
+	return ret;
 }
 
 static int lc3_cap_enable_cb(struct bt_audio_stream *stream, struct bt_codec_data *meta,

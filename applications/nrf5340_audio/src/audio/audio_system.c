@@ -354,6 +354,25 @@ void audio_system_stop(void)
 	data_fifo_empty(&fifo_tx);
 }
 
+void audio_system_fifo_rx_block_drop(void)
+{
+	int ret;
+	void *temp;
+	size_t temp_size;
+
+	ret = data_fifo_pointer_last_filled_get(&fifo_rx, &temp, &temp_size, K_NO_WAIT);
+	if (ret) {
+		LOG_WRN("Failed to get last filled block");
+	}
+
+	ret = data_fifo_block_free(&fifo_rx, &temp);
+	if (ret) {
+		LOG_WRN("Failed to free block");
+	}
+
+	LOG_DBG("Block dropped");
+}
+
 void audio_system_init(void)
 {
 	int ret;

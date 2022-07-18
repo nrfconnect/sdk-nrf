@@ -44,6 +44,14 @@ void audio_system_start(void);
 void audio_system_stop(void);
 
 /**
+ * @brief Drop oldest block from fifo_rx buffer
+ *
+ * @note  This can be used to adjust the timing of completed frame sampled
+ *	  in relation to the connection interval in BLE, to reduce latency
+ */
+void audio_system_fifo_rx_block_drop(void);
+
+/**
  * @brief Initialize the audio_system
  */
 void audio_system_init(void);
