@@ -4,9 +4,22 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr/toolchain.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/net/socket.h>
+#include <pm_config.h>
 #include <errno.h>
 #include <nrf_errno.h>
-#include <zephyr/toolchain.h>
+#include <nrf_socket.h>
+#include <nrf_gai_errors.h>
+
+#if defined(CONFIG_POSIX_API)
+#include <zephyr/posix/poll.h>
+#include <zephyr/posix/sys/time.h>
+#include <zephyr/posix/sys/socket.h>
+#endif
+
+/* errno sanity check */
 
 BUILD_ASSERT(EPERM           == NRF_EPERM,           "Errno not aligned with nrf_errno.");
 BUILD_ASSERT(ENOENT          == NRF_ENOENT,          "Errno not aligned with nrf_errno.");
@@ -91,3 +104,70 @@ BUILD_ASSERT(ESHUTDOWN       == NRF_ESHUTDOWN,       "Errno not aligned with nrf
 BUILD_ASSERT(EHOSTDOWN       == NRF_EHOSTDOWN,       "Errno not aligned with nrf_errno.");
 BUILD_ASSERT(ESOCKTNOSUPPORT == NRF_ESOCKTNOSUPPORT, "Errno not aligned with nrf_errno.");
 BUILD_ASSERT(ETOOMANYREFS    == NRF_ETOOMANYREFS,    "Errno not aligned with nrf_errno.");
+
+/* Shared memory sanity check */
+
+#define SRAM_BASE 0x20000000
+#define SHMEM_RANGE KB(128)
+#define SHMEM_END (SRAM_BASE + SHMEM_RANGE)
+
+#define SHMEM_IN_USE \
+	(PM_NRF_MODEM_LIB_SRAM_ADDRESS + PM_NRF_MODEM_LIB_SRAM_SIZE)
+
+BUILD_ASSERT(SHMEM_IN_USE < SHMEM_END,
+	     "The libmodem shmem configuration exceeds the range of "
+	     "memory readable by the Modem core");
+
+/* Socket values sanity check */
+
+#if defined(CONFIG_NET_SOCKETS_OFFLOAD)
+
+BUILD_ASSERT(AF_UNSPEC == NRF_AF_UNSPEC, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(AF_INET == NRF_AF_INET, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(AF_INET6 == NRF_AF_INET6, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(AF_PACKET == NRF_AF_PACKET, "Socket value not aligned with modemlib.");
+
+BUILD_ASSERT(SOCK_STREAM == NRF_SOCK_STREAM, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(SOCK_DGRAM == NRF_SOCK_DGRAM, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(SOCK_RAW == NRF_SOCK_RAW, "Socket value not aligned with modemlib.");
+
+BUILD_ASSERT(IPPROTO_IP == NRF_IPPROTO_IP, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(IPPROTO_TCP == NRF_IPPROTO_TCP, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(IPPROTO_UDP == NRF_IPPROTO_UDP, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(IPPROTO_IPV6 == NRF_IPPROTO_IPV6, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(IPPROTO_RAW == NRF_IPPROTO_RAW, "Socket value not aligned with modemlib.");
+/* Comparison is inverted here to prevent `WARNING:CONSTANT_COMPARISON` from checkpatch */
+BUILD_ASSERT(NRF_SPROTO_TLS1v2 == IPPROTO_TLS_1_2, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(NRF_SPROTO_DTLS1v2 == IPPROTO_DTLS_1_2, "Socket value not aligned with modemlib.");
+
+BUILD_ASSERT(SOL_TLS == NRF_SOL_SECURE, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(SOL_SOCKET == NRF_SOL_SOCKET, "Socket value not aligned with modemlib.");
+
+BUILD_ASSERT(MSG_DONTWAIT == NRF_MSG_DONTWAIT, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(MSG_PEEK == NRF_MSG_PEEK, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(MSG_WAITALL == NRF_MSG_WAITALL, "Socket value not aligned with modemlib.");
+
+BUILD_ASSERT(AI_CANONNAME == NRF_AI_CANONNAME, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(AI_NUMERICSERV == NRF_AI_NUMERICSERV, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(AI_PDNSERV == NRF_AI_PDNSERV, "Socket value not aligned with modemlib.");
+
+BUILD_ASSERT(POLLIN == NRF_POLLIN, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(POLLOUT == NRF_POLLOUT, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(POLLERR == NRF_POLLERR, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(POLLHUP == NRF_POLLHUP, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(POLLNVAL == NRF_POLLNVAL, "Socket value not aligned with modemlib.");
+
+BUILD_ASSERT(DNS_EAI_ADDRFAMILY == NRF_EAI_ADDRFAMILY, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(DNS_EAI_AGAIN == NRF_EAI_AGAIN, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(DNS_EAI_BADFLAGS == NRF_EAI_BADFLAGS, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(DNS_EAI_FAIL == NRF_EAI_FAIL, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(DNS_EAI_FAMILY == NRF_EAI_FAMILY, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(DNS_EAI_MEMORY == NRF_EAI_MEMORY, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(DNS_EAI_NODATA == NRF_EAI_NODATA, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(DNS_EAI_NONAME == NRF_EAI_NONAME, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(DNS_EAI_SERVICE == NRF_EAI_SERVICE, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(DNS_EAI_SOCKTYPE == NRF_EAI_SOCKTYPE, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(DNS_EAI_INPROGRESS == NRF_EAI_INPROGRESS, "Socket value not aligned with modemlib.");
+BUILD_ASSERT(DNS_EAI_SYSTEM == NRF_EAI_SYSTEM, "Socket value not aligned with modemlib.");
+
+#endif
