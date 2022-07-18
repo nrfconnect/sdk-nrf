@@ -12,12 +12,11 @@ project(remote)
 #Include application application event headers
 zephyr_library_include_directories(../src/events)
 
-target_sources(app PRIVATE
-  src/main.c
-  ../src/modules/sensor_sim_ctrl.c
-  ../configuration/common/event_proxy_init.c)
+target_sources(app PRIVATE src/main.c)
 
 # Add include directory for board specific CAF def files
 zephyr_include_directories(
   ../configuration/common
   ../configuration/${BOARD})
+
+add_subdirectory(../src/modules "${CMAKE_CURRENT_BINARY_DIR}/modules")

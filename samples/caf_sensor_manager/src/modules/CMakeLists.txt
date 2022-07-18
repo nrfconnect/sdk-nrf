@@ -1,0 +1,10 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+target_include_directories(app PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_sources_ifdef(CONFIG_EVENT_MANAGER_PROXY app PRIVATE event_proxy_init.c)
+target_sources_ifdef(CONFIG_SENSOR_MANAGER_SENSOR_SIM_CTRL app PRIVATE sensor_sim_ctrl.c)
+target_sources_ifdef(CONFIG_WORKLOAD_SIM app PRIVATE workload_sim.c)
