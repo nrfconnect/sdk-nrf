@@ -13,7 +13,7 @@
 #include <caf/events/module_state_event.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(MODULE);
+LOG_MODULE_REGISTER(MODULE, CONFIG_SENSOR_MANAGER_SENSOR_SIM_CTRL_LOG_LEVEL);
 
 static int set_wave(void)
 {
