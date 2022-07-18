@@ -1676,6 +1676,39 @@ int lte_lc_periodic_search_get(struct lte_lc_periodic_search_cfg *const cfg)
 	return 0;
 }
 
+int lte_lc_reduced_mobility_get(enum lte_lc_reduced_mobility_mode *mode)
+{
+	int ret;
+	uint16_t mode_tmp;
+
+	if (mode == NULL) {
+		return -EINVAL;
+	}
+
+	ret = nrf_modem_at_scanf("AT%REDMOB?", "%%REDMOB: %hu", &mode_tmp);
+	if (ret != 1) {
+		LOG_ERR("AT command failed, nrf_modem_at_scanf() returned error: %d", ret);
+		return -EFAULT;
+	}
+
+	*mode = mode_tmp;
+
+	return 0;
+}
+
+int lte_lc_reduced_mobility_set(enum lte_lc_reduced_mobility_mode mode)
+{
+	int ret = nrf_modem_at_printf("AT%%REDMOB=%d", mode);
+
+	if (ret) {
+		/* Failure to send the AT command. */
+		LOG_ERR("AT command failed, returned error code: %d", ret);
+		return -EFAULT;
+	}
+
+	return 0;
+}
+
 #if defined(CONFIG_LTE_AUTO_INIT_AND_CONNECT)
 SYS_INIT(init_and_connect,
 		  APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);

@@ -425,6 +425,18 @@ enum lte_lc_ce_level {
 	LTE_LC_CE_LEVEL_UNKNOWN			= UINT8_MAX,
 };
 
+/** @brief Reduced mobility mode */
+enum lte_lc_reduced_mobility_mode {
+	/** Functionality according to the 3GPP relaxed monitoring feature. */
+	LTE_LC_REDUCED_MOBILITY_DEFAULT = 0,
+	/** Enable Nordic-proprietary reduced mobility feature. */
+	LTE_LC_REDUCED_MOBILITY_NORDIC = 1,
+	/** Full measurements for best possible mobility. Disable the 3GPP relaxed
+	 *  monitoring and Nordic-proprietary reduced mobility features.
+	 */
+	LTE_LC_REDUCED_MOBILITY_DISABLED = 2,
+};
+
 /** @brief Modem domain events. */
 enum lte_lc_modem_evt {
 	/** Indicates that a light search has been performed. This event gives the
@@ -1189,6 +1201,33 @@ int lte_lc_periodic_search_clear(void);
  * @retval -EFAULT if an AT command could not be sent to the modem.
  */
 int lte_lc_periodic_search_request(void);
+
+/** @brief Read the current reduced mobility mode.
+ *
+ *  @note This feature is supported for nRF9160 modem firmware v1.3.2 and later
+ *	  versions. Attempting to use this API with older modem versions will
+ *	  result in an error being returned.
+ *
+ * @param[out] mode pointer to where the current reduced mobility mode should be written to
+ *
+ * @retval 0 if a mode was found and written to the provided pointer.
+ * @retval -EINVAL if input parameter was NULL.
+ * @retval -EFAULT if an AT command failed.
+ */
+int lte_lc_reduced_mobility_get(enum lte_lc_reduced_mobility_mode *mode);
+
+/** @brief Set reduced mobility mode.
+ *
+ *  @note This feature is supported for nRF9160 modem firmware v1.3.2 and later
+ *	  versions. Attempting to use this API with older modem versions will
+ *	  result in an error being returned.
+ *
+ * @param[in] mode new reduced mobility mode
+ *
+ * @retval 0 if the new reduced mobility mode was accepted by the modem.
+ * @retval -EFAULT if an AT command failed.
+ */
+int lte_lc_reduced_mobility_set(enum lte_lc_reduced_mobility_mode mode);
 
 /** @} */
 
