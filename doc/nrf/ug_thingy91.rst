@@ -132,7 +132,7 @@ The table below shows the different types of build files that are generated and 
 +--------------+----------------------------------------+----------------------------------------------------------------+
 |app_signed.hex| MCUboot compatible image, HEX format   | Using the built-in bootloader and nRF Connect Programmer       |
 +--------------+----------------------------------------+----------------------------------------------------------------+
-|app_update.bin| MCUboot compatible image, binary format|* Using the built-in bootloader and ``mcumgr`` command line tool|
+|app_update.bin| MCUboot compatible image, binary format|* Using the built-in bootloader and mcumgr command line tool    |
 |              |                                        |* For FOTA updates                                              |
 +--------------+----------------------------------------+----------------------------------------------------------------+
 

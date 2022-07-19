@@ -197,7 +197,7 @@ For example, to change the ``VARIABLEONE`` variable for the ``childimageone`` ch
 You can extend the CMake command used to create the child images by adding flags to the CMake variable ``EXTRA_MULTI_IMAGE_CMAKE_ARGS``.
 For example, add ``--trace-expand`` to that variable to output more debug information.
 
-With ``west``, you can pass these configuration variables into CMake by using the ``--`` separator:
+With west, you can pass these configuration variables into CMake by using the ``--`` separator:
 
 .. code-block:: console
 
@@ -344,7 +344,7 @@ Unlike CMake options, CMake environment variables allow you to control the build
 
 You can use the CMake environment variables `VERBOSE`_ and `CMAKE_BUILD_PARALLEL_LEVEL`_ to control the verbosity and the number of parallel jobs for a build:
 
-When using the command line or |VSC| terminal window, you must set them before invoking ``west``.
+When using the command line or |VSC| terminal window, you must set them before invoking west.
 They apply to both the parent and child images.
 For example, to build with verbose output and one parallel job, use the following command, where *build_target* is the target for the development kit for which you are building:
 
