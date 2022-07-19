@@ -315,6 +315,7 @@ void wifi_nrf_wpa_supp_event_proc_assoc_resp(void *if_priv,
 		event.assoc_info.addr = mgmt->bssid;
 		event.assoc_info.resp_frame = frame;
 		event.assoc_info.resp_frame_len = frame_len;
+		event.assoc_info.freq = vif_ctx_zep->assoc_freq;
 
 		if (frame_len > 24 + sizeof(mgmt->u.assoc_resp)) {
 			event.assoc_info.resp_ies = (unsigned char *)mgmt->u.assoc_resp.variable;
