@@ -532,9 +532,17 @@ static int configure_supported_features(void)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_DATA_LENGTH)) {
-		err = sdc_support_dle();
-		if (err) {
-			return -ENOTSUP;
+		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+			err = sdc_support_dle_central();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
+		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+			err = sdc_support_dle_peripheral();
+			if (err) {
+				return -ENOTSUP;
+			}
 		}
 	}
 
@@ -543,12 +551,36 @@ static int configure_supported_features(void)
 		if (err) {
 			return -ENOTSUP;
 		}
+		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+			err = sdc_support_phy_update_central();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
+		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+			err = sdc_support_phy_update_peripheral();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_PHY_CODED)) {
 		err = sdc_support_le_coded_phy();
 		if (err) {
 			return -ENOTSUP;
+		}
+		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+			err = sdc_support_phy_update_central();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
+		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+			err = sdc_support_phy_update_peripheral();
+			if (err) {
+				return -ENOTSUP;
+			}
 		}
 	}
 
