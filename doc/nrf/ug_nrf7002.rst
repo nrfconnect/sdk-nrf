@@ -31,8 +31,7 @@ The ``nrf7002dk_nrf5340_cpunet`` build target provides support for the network c
 
      nRF7002 DK (Credit: Nordic Semiconductor)
 
-Visit the `Nordic Semiconductor Wi-Fi products`_ page for more information on the development kit.
-Visit the `Infocenter <Nordic Semiconductor Infocenter>`_ for the processor's information and the datasheet.
+Visit the `Nordic Semiconductor Wi-Fi products`_ page for more information on the development kit and `Infocenter <Nordic Semiconductor Infocenter>`_ for the processor's information and the datasheet.
 
 Hardware
 ********
@@ -123,7 +122,7 @@ Other hardware features are not supported by the |NCS| kernel.
 Connections and IOs
 ===================
 
-The following are the connections and IOs supported by the development kit.
+The connections and IOs supported by the development kit are listed in this section.
 
 LED
 ---
@@ -184,9 +183,10 @@ You must always build the non-secure firmware images using |NCS|.
 Building the firmware with TF-M
 -------------------------------
 
-To build the secure firmware image using TF-M and the non-secure firmware image using |NCS|, follow these steps:
+To build the secure firmware image using TF-M and the non-secure firmware image using |NCS|, complete the following steps:
 
 1. Build the non-secure |NCS| application for the application core using the ``nrf7002dk_nrf5340_cpuapp_ns`` build target.
+
    To invoke the building of TF-M, the |NCS| build system requires the Kconfig option :kconfig:option:`CONFIG_BUILD_WITH_TFM` to be enabled, which is set by default when building |NCS| as a non-secure application.
 
    The |NCS| build system performs the following steps automatically:
@@ -197,7 +197,7 @@ To build the secure firmware image using TF-M and the non-secure firmware image 
       #. Optionally, build a bootloader image (MCUboot).
 
    .. note::
-      Depending on the TF-M configuration, an application DTS overlay can be required, to adjust the non-secure image flash memory partition and SRAM starting address and sizes.
+      Depending on the TF-M configuration, an application DTS overlay can be required to adjust the non-secure image flash memory partition and SRAM starting address and sizes.
 
 #. Build the application firmware for the network core using the ``nrf7002dk_nrf5340_cpunet`` build target.
 
@@ -205,9 +205,10 @@ To build the secure firmware image using TF-M and the non-secure firmware image 
 Building the secure firmware using |NCS|
 ----------------------------------------
 
-To build the secure and the non-secure firmware images using |NCS|, follow these steps:
+To build the secure and the non-secure firmware images using |NCS|, complete the following steps:
 
 1. Build the secure |NCS| application for the application core using the ``nrf7002dk_nrf5340_cpuapp`` build target.
+
    Also set :kconfig:option:`CONFIG_TRUSTED_EXECUTION_SECURE` to ``y`` and :kconfig:option:`CONFIG_BUILD_WITH_TFM` to ``n`` in the application project configuration file.
 #. Build the non-secure |NCS| application for the application core using the ``nrf7002dk_nrf5340_cpuapp_ns`` build target.
 #. Merge the two binaries.
@@ -220,7 +221,7 @@ SPU configuration must be applied before jumping to the non-secure application.
 Building a secure-only application
 ==================================
 
-Build the |NCS| application following the standard process (see :ref:`gs_programming` for more details), using the ``nrf7002dk_nrf5340_cpuapp`` build target for the firmware running on the nRF5340 application core and the ``nrf7002dk_nrf5340_cpunet`` build target for the firmware running on the nRF5340 network core.
+Build the |NCS| application as described in :ref:`gs_programming`, using the ``nrf7002dk_nrf5340_cpuapp`` build target for the firmware running on the nRF5340 application core and the ``nrf7002dk_nrf5340_cpunet`` build target for the firmware running on the nRF5340 network core.
 
 Programming the firmware to the DK
 ==================================
@@ -228,7 +229,7 @@ Programming the firmware to the DK
 Follow the instructions in the :ref:`gs_programming` page to build and flash applications.
 
 .. note::
-   To flash and debug applications on the nRF7002 DK you must use the nRF Command Line Tools to version 10.12.0 or above.
+   To flash and debug applications on the nRF7002 DK you must use the nRF Command Line Tools version 10.12.0 or above.
    For further information on how to install the nRF Command Line Tools, see :ref:`gs_updating`.
 
 Debugging
@@ -245,5 +246,5 @@ The following samples allow you to test if the buttons (or switches) and LEDs on
 * :ref:`blinky-sample`
 * :ref:`button-sample`
 
-You can build and flash the samples to make sure |NCS| is running correctly on your development kit.
+Build and flash the samples to make sure |NCS| is running correctly on your development kit.
 For the button and LED definitions, see the :file:`boards/arm/nrf7002dk_nrf5340/nrf5340_cpuapp_common.dts` file.
