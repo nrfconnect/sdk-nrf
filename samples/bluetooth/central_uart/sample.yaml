@@ -5,12 +5,11 @@ tests:
   sample.bluetooth.central_uart:
     build_only: true
     integration_platforms:
-      - nrf51dk_nrf51422
       - nrf52dk_nrf52832
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
       - nrf5340dk_nrf5340_cpuapp_ns
       - nrf21540dk_nrf52840
-    platform_allow: nrf51dk_nrf51422 nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf52dk_nrf52810
+    platform_allow: nrf52dk_nrf52832 nrf52840dk_nrf52840 nrf52dk_nrf52810
       nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns nrf21540dk_nrf52840
     tags: bluetooth ci_build
