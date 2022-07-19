@@ -217,6 +217,7 @@ Kconfig*                                  @tejlmand
 /tests/lib/hw_unique_key*/                @oyvindronningstad @Vge0rge
 /tests/lib/location/                      @trantanen @hiltunent @jhirsi @tokangas
 /tests/lib/lte_lc/                        @jtguggedal @tokangas @simensrostad
+/tests/lib/lte_lc_api/                    @maxd-nordic
 /tests/lib/modem_jwt/                     @SeppoTakalo
 /tests/lib/qos/                           @simensrostad
 /tests/lib/sms/                           @trantanen @tokangas
