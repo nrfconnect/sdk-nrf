@@ -653,11 +653,11 @@ static int action_set(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 		srv->action_set_cb(srv, ctx, idx, &srv->sch_reg[idx]);
 	}
 
-	if (is_entry_defined(srv, idx)) {
-		if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
-			store(srv, idx, true);
-		}
+	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
+		store(srv, idx, is_entry_defined(srv, idx));
+	}
 
+	if (is_entry_defined(srv, idx)) {
 		/* publish state changing */
 		send_scheduler_action_status(model, NULL, idx, false);
 	}
