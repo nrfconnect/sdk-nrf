@@ -94,9 +94,6 @@ void wifi_nrf_wpa_supp_event_proc_scan_start(void *if_priv)
 	if (vif_ctx_zep->supp_callbk_fns.scan_start) {
 		vif_ctx_zep->supp_callbk_fns.scan_start(vif_ctx_zep->supp_drv_if_ctx);
 	}
-
-	/* TODO: Fix this when FW starts sending SCAN_DONE before scan results */
-	wpa_supp_event_handler(vif_ctx_zep, NULL, wifi_nrf_wpa_supp_event_proc_scan_done);
 }
 
 void wifi_nrf_wpa_supp_event_proc_scan_done(void *if_priv,
@@ -107,11 +104,6 @@ void wifi_nrf_wpa_supp_event_proc_scan_done(void *if_priv,
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	union wpa_event_data *event = NULL;
 	struct scan_info *info = NULL;
-
-	/* TODO: Fix this when FW starts sending SCAN_DONE before scan results */
-	if (scan_done_event) {
-		return;
-	}
 
 	vif_ctx_zep = if_priv;
 
