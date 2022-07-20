@@ -15,10 +15,8 @@
 LOG_MODULE_DECLARE(app);
 
 #define VBATT DT_PATH(vbatt)
+
 #define BATTERY_ADC_DEVICE_NAME DT_LABEL(DT_NODELABEL(adc))
-#define BATTERY_ENABLE_MEASUREMENT_GPIO DT_GPIO_LABEL(VBATT, power_gpios)
-#define BATTERY_ENABLE_MEASUREMENT_PIN DT_GPIO_PIN(VBATT, power_gpios)
-#define BATTERY_ENABLE_MEASUREMENT_FLAGS DT_GPIO_FLAGS(VBATT, power_gpios)
 #define BATTERY_CHARGE_GPIO DT_LABEL(DT_NODELABEL(gpio1))
 #define BATTERY_CHARGE_PIN 0
 #define BATTERY_FULL_OHMS DT_PROP(VBATT, full_ohms)
@@ -26,8 +24,8 @@ LOG_MODULE_DECLARE(app);
 
 namespace
 {
+const struct gpio_dt_spec sPowerGpio = GPIO_DT_SPEC_GET(VBATT, power_gpios);
 const device *sAdcController;
-const device *sMeasurementGpioController;
 const device *sChargeGpioController;
 
 bool sBatteryConfigured = false;
@@ -59,14 +57,12 @@ int BatteryMeasurementInit()
 {
 	int err;
 
-	sMeasurementGpioController = device_get_binding(BATTERY_ENABLE_MEASUREMENT_GPIO);
-	if (!sMeasurementGpioController) {
-		LOG_ERR("Cannot get battery measurement GPIO device");
+	if (!device_is_ready(sPowerGpio.port)) {
+		LOG_ERR("Battery measurement GPIO device not ready");
 		return -ENODEV;
 	}
 
-	err = gpio_pin_configure(sMeasurementGpioController, BATTERY_ENABLE_MEASUREMENT_PIN,
-				 GPIO_OUTPUT_INACTIVE | BATTERY_ENABLE_MEASUREMENT_FLAGS);
+	err = gpio_pin_configure_dt(&sPowerGpio, GPIO_OUTPUT_INACTIVE);
 	if (err != 0) {
 		LOG_ERR("Failed to configure battery measurement GPIO %d", err);
 		return err;
@@ -93,7 +89,7 @@ int BatteryMeasurementEnable()
 {
 	int err = -ECANCELED;
 	if (sBatteryConfigured) {
-		err = gpio_pin_set(sMeasurementGpioController, BATTERY_ENABLE_MEASUREMENT_PIN, 1);
+		err = gpio_pin_set_dt(&sPowerGpio, 1);
 		if (err != 0) {
 			LOG_ERR("Failed to enable measurement pin %d", err);
 		}
