@@ -184,6 +184,11 @@ manifest:
       remote: ant-nrfconnect
       groups:
         - ant
+      revision: 0d19f9112101e87722ec80b3a247bc7a1c54b232
+    - name: pmic-npm6001-lib
+      path: modules/hal/npm6001
+      revision: 26d46b0f60096162d65b04d296a88b1221b438b7
+      remote: nordicsemi
 
   # West-related configuration for the nrf repository.
   self:

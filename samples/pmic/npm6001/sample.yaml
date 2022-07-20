@@ -1,0 +1,28 @@
+sample:
+  description: nPM6001 sample
+  name: npm6001
+common:
+  integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf52dk_nrf52832
+      - nrf5340dk_nrf5340_cpuapp
+      - nrf5340dk_nrf5340_cpuapp_ns
+  platform_allow: nrf52840dk_nrf52840 nrf52dk_nrf52832
+    nrf5340dk_nrf5340_cpuapp nrf5340dk_nrf5340_cpuapp_ns
+  tags: npm6001 ci_build
+
+tests:
+  sample.app_npm6001:
+    build_only: true
+  sample.app_npm6001_loopback:
+    build_only: false
+    harness: console
+    harness_config:
+      ordered: false
+      regex:
+        - ".*nPM6001 successfully initialized..*"
+      type: multi_line
+    extra_args: CONFIG_TEST=y
+    integration_platforms:
+        - nrf52840dk_nrf52840
+        - nrf5340dk_nrf5340_cpuapp

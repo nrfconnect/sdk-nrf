@@ -33,4 +33,5 @@ Those samples are a good starting point for understanding how to put together yo
    samples/samples_thread.rst
    samples/samples_zigbee.rst
    samples/samples_wifi.rst
+   samples/samples_pmic.rst
    samples/samples_other.rst

@@ -235,6 +235,11 @@ Wi-Fi samples
 
 * Added :ref:`wifi_scan_sample` sample for Wi-Fi Scan functionality.
 
+PMIC samples
+--------------
+
+* Added :ref:`pmic_npm6001_sample` sample.
+
 Other samples
 -------------
 
