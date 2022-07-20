@@ -497,6 +497,7 @@ Libraries for networking
         Moved the error log from the :c:func:`nrf_cloud_parse_rest_error` function into the calling function.
       * Support for full modem FOTA updates.
       * :c:func:`nrf_cloud_fota_is_type_enabled` function that determines if the specified FOTA type is enabled by the configuration.
+      * :c:func:`nrf_cloud_gnss_msg_json_encode` function that encodes GNSS data (PVT or NMEA) into an nRF Cloud device message.
 
   * :ref:`lib_multicell_location` library:
 
@@ -507,6 +508,10 @@ Libraries for networking
 
     * Updated timeout handling. Now using http_client library timeout also.
     * Removed CONFIG_REST_CLIENT_SCKT_SEND_TIMEOUT and CONFIG_REST_CLIENT_SCKT_RECV_TIMEOUT.
+
+  * :ref:`lib_nrf_cloud_rest` library:
+
+    * Updated the :c:func:`nrf_cloud_rest_send_location` function to accept a :c:struct `nrf_cloud_gnss_data` pointer instead of an NMEA sentence.
 
 Libraries for NFC
 -----------------

@@ -15,6 +15,9 @@
 #endif
 #include <cJSON.h>
 #include <dfu/dfu_target_full_modem.h>
+#if defined(CONFIG_NRF_MODEM)
+#include <nrf_modem_gnss.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -417,6 +420,79 @@ struct nrf_cloud_device_status {
 	struct nrf_cloud_svc_info *svc;
 };
 
+/** @brief GNSS data type contained in @ref nrf_cloud_gnss_data */
+enum nrf_cloud_gnss_type {
+	/** Invalid data type */
+	NRF_CLOUD_GNSS_TYPE_INVALID,
+	/** Specifies a data type of @ref nrf_cloud_gnss_pvt */
+	NRF_CLOUD_GNSS_TYPE_PVT,
+	/** Specifies a data type of @ref nrf_cloud_gnss_nmea */
+	NRF_CLOUD_GNSS_TYPE_NMEA,
+	/** Specifies a data type of nrf_modem_gnss_pvt_data_frame */
+	NRF_CLOUD_GNSS_TYPE_MODEM_PVT,
+	/** Specifies a data type of nrf_modem_gnss_nmea_data_frame */
+	NRF_CLOUD_GNSS_TYPE_MODEM_NMEA,
+};
+
+/** @brief PVT data */
+struct nrf_cloud_gnss_pvt {
+	/** Longitude in degrees; required. */
+	double lon;
+	/** Latitude in degrees; required. */
+	double lat;
+	/** Position accuracy (2D 1-sigma) in meters; required. */
+	float accuracy;
+
+	/** Altitude above WGS-84 ellipsoid in meters; optional. */
+	float alt;
+	/** Horizontal speed in m/s; optional. */
+	float speed;
+	/** Heading of user movement in degrees; optional. */
+	float heading;
+
+	/** Flags to indicate if the optional parameters are set */
+	uint8_t has_alt:1;
+	uint8_t has_speed:1;
+	uint8_t has_heading:1;
+
+	/** Reserved for future use */
+	uint8_t _rsvd:5;
+};
+
+#if !defined(CONFIG_NRF_MODEM)
+#define NRF_MODEM_GNSS_NMEA_MAX_LEN 83
+#endif
+/** @brief NMEA data */
+struct nrf_cloud_gnss_nmea {
+	/** NULL-terminated NMEA sentence. Supported types are GPGGA, GPGLL, GPRMC.
+	 * Max string length is NRF_MODEM_GNSS_NMEA_MAX_LEN - 1
+	 */
+	const char *sentence;
+};
+
+#define NRF_CLOUD_NO_TIMESTAMP -1
+/** @brief GNSS data to be sent to nRF Cloud as a device message */
+struct nrf_cloud_gnss_data {
+	/** The type of GNSS data below. */
+	enum nrf_cloud_gnss_type type;
+	/** UNIX epoch timestamp (in milliseconds) of the data.
+	 * If a negative value is provided, the timestamp will be ingored.
+	 */
+	int64_t ts_ms;
+	union {
+		/** For type: NRF_CLOUD_GNSS_TYPE_PVT */
+		struct nrf_cloud_gnss_pvt pvt;
+		/** For type: NRF_CLOUD_GNSS_TYPE_NMEA */
+		struct nrf_cloud_gnss_nmea nmea;
+#if defined(CONFIG_NRF_MODEM)
+		/** For type: NRF_CLOUD_GNSS_TYPE_MODEM_PVT */
+		struct nrf_modem_gnss_nmea_data_frame *mdm_nmea;
+		/** For type: NRF_CLOUD_GNSS_TYPE_MODEM_NMEA */
+		struct nrf_modem_gnss_pvt_data_frame *mdm_pvt;
+#endif
+	};
+};
+
 #ifdef CONFIG_NRF_CLOUD_GATEWAY
 /**@brief Structure to hold message received from nRF Cloud. */
 struct nrf_cloud_gw_data {
@@ -788,6 +864,18 @@ bool nrf_cloud_fota_is_type_modem(const enum nrf_cloud_fota_type type);
  */
 bool nrf_cloud_fota_is_type_enabled(const enum nrf_cloud_fota_type type);
 
+/**
+ * @brief Add GNSS location data, formatted as an nRF Cloud device message,
+ *        to the provided cJSON object.
+ *
+ * @param[in]     gnss     Service info to add.
+ * @param[in,out] gnss_msg_obj cJSON object to which GNSS data will be added.
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int nrf_cloud_gnss_msg_json_encode(const struct nrf_cloud_gnss_data * const gnss,
+				   cJSON * const gnss_msg_obj);
 /** @} */
 
 #ifdef __cplusplus

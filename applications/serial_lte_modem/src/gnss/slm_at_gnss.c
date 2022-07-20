@@ -513,8 +513,7 @@ static void fix_rep_wk(struct k_work *work)
 	int err;
 	struct nrf_modem_gnss_pvt_data_frame pvt;
 	struct nrf_modem_gnss_nmea_data_frame nmea;
-	int64_t ts_ms;
-	static int64_t last_ts_ms;
+	static int64_t last_ts_ms = NRF_CLOUD_NO_TIMESTAMP;
 
 	ARG_UNUSED(work);
 
@@ -554,18 +553,23 @@ static void fix_rep_wk(struct k_work *work)
 	} else {
 		/* Report to nRF Cloud by best-effort */
 		if (nrf_cloud_ready && location_signify) {
-			err = date_time_now(&ts_ms);
-			if (err) {
-				err = nrf_cloud_rest_send_location(&rest_ctx, device_id,
-								nmea.nmea_str, -1);
-			} else if (last_ts_ms == 0 ||
-				ts_ms > last_ts_ms + REST_LOCATION_REPORT_MS) {
-				last_ts_ms = ts_ms;
-				err = nrf_cloud_rest_send_location(&rest_ctx, device_id,
-								nmea.nmea_str, ts_ms);
-			}
-			if (err) {
-				LOG_WRN("Failed to send location, error %d", err);
+			struct nrf_cloud_gnss_data gnss = {
+				.ts_ms = NRF_CLOUD_NO_TIMESTAMP,
+				.type = NRF_CLOUD_GNSS_TYPE_MODEM_NMEA,
+				.mdm_nmea = &nmea
+			};
+
+			/* On failure, NRF_CLOUD_NO_TIMESTAMP will omit the timestamp */
+			(void)date_time_now(&gnss.ts_ms);
+
+			if ((last_ts_ms == NRF_CLOUD_NO_TIMESTAMP) ||
+			    (gnss.ts_ms == NRF_CLOUD_NO_TIMESTAMP) ||
+			    (gnss.ts_ms > (last_ts_ms + REST_LOCATION_REPORT_MS))) {
+				last_ts_ms = gnss.ts_ms;
+				err = nrf_cloud_rest_send_location(&rest_ctx, device_id, &gnss);
+				if (err) {
+					LOG_WRN("Failed to send location, error %d", err);
+				}
 			}
 		}
 		/* GGA,hhmmss.ss,llll.ll,a,yyyyy.yy,a,x,xx,x.x,x.x,M,x.x,M,x.x,xxxx \r\n */
