@@ -29,6 +29,7 @@ extern "C" {
 #define NRF_CLOUD_JSON_APPID_KEY		"appId"
 #define NRF_CLOUD_JSON_APPID_VAL_AGPS		"AGPS"
 #define NRF_CLOUD_JSON_APPID_VAL_PGPS		"PGPS"
+#define NRF_CLOUD_JSON_APPID_VAL_GNSS		"GNSS"
 #define NRF_CLOUD_JSON_APPID_VAL_GPS		"GPS"
 #define NRF_CLOUD_JSON_APPID_VAL_CELL_POS	"CELL_POS"
 #define NRF_CLOUD_JSON_APPID_VAL_DEVICE		"DEVICE"
@@ -113,6 +114,14 @@ extern "C" {
 /* REST */
 #define NRF_CLOUD_REST_ERROR_CODE_KEY		"code"
 #define NRF_CLOUD_REST_ERROR_MSG_KEY		"message"
+
+/* GNSS - PVT */
+#define NRF_CLOUD_JSON_GNSS_PVT_KEY_LAT		"lat"
+#define NRF_CLOUD_JSON_GNSS_PVT_KEY_LON		"lng"
+#define NRF_CLOUD_JSON_GNSS_PVT_KEY_ACCURACY	"acc"
+#define NRF_CLOUD_JSON_GNSS_PVT_KEY_ALTITUDE	"alt"
+#define NRF_CLOUD_JSON_GNSS_PVT_KEY_SPEED	"spd"
+#define NRF_CLOUD_JSON_GNSS_PVT_KEY_HEADING	"hdg"
 
 /**@brief Initialize the codec used encoding the data to the cloud. */
 int nrf_cloud_codec_init(void);
@@ -220,7 +229,18 @@ int json_send_to_cloud(cJSON * const request);
  */
 cJSON *json_create_req_obj(const char *const app_id, const char *const msg_type);
 
+/** @brief Parses received REST data for an nRF Cloud error code  */
 int nrf_cloud_parse_rest_error(const char *const buf, enum nrf_cloud_error *const err);
+
+/** @brief Encodes PVT data to be sent to nRF Cloud */
+int nrf_cloud_pvt_data_encode(const struct nrf_cloud_gnss_pvt * const pvt,
+			      cJSON * const pvt_data_obj);
+
+#if defined(CONFIG_NRF_MODEM)
+/** @brief Encodes a modem PVT data frame to be sent to nRF Cloud */
+int nrf_cloud_modem_pvt_data_encode(const struct nrf_modem_gnss_pvt_data_frame	* const mdm_pvt,
+				    cJSON * const pvt_data_obj);
+#endif
 
 #ifdef CONFIG_NRF_CLOUD_GATEWAY
 typedef int (*gateway_state_handler_t)(void *root_obj);

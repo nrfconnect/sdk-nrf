@@ -1279,32 +1279,25 @@ int nrf_cloud_rest_jitp(const sec_tag_t nrf_cloud_sec_tag)
 }
 
 int nrf_cloud_rest_send_location(struct nrf_cloud_rest_context *const rest_ctx,
-	const char *const device_id, const char *const nmea_sentence, const int64_t ts_ms)
+	const char *const device_id, const struct nrf_cloud_gnss_data * const gnss)
 {
 	__ASSERT_NO_MSG(rest_ctx != NULL);
 	__ASSERT_NO_MSG(device_id != NULL);
-	__ASSERT_NO_MSG(nmea_sentence != NULL);
+	__ASSERT_NO_MSG(gnss != NULL);
 
 	int err = -ENOMEM;
 	char *json_msg = NULL;
+	cJSON *msg_obj = NULL;
 
 	(void)nrf_cloud_codec_init();
 
-	cJSON *root_obj = json_create_req_obj(NRF_CLOUD_JSON_APPID_VAL_GPS,
-					     NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
-
-	if (cJSON_AddStringToObjectCS(root_obj, NRF_CLOUD_JSON_DATA_KEY, nmea_sentence) == NULL) {
-		LOG_ERR("Failed to add NMEA string");
+	msg_obj = cJSON_CreateObject();
+	err = nrf_cloud_gnss_msg_json_encode(gnss, msg_obj);
+	if (err) {
 		goto clean_up;
 	}
 
-	if ((ts_ms >= 0) &&
-	    (cJSON_AddNumberToObject(root_obj, NRF_CLOUD_MSG_TIMESTAMP_KEY, ts_ms) == NULL)) {
-		LOG_ERR("Failed to add timestamp");
-		goto clean_up;
-	}
-
-	json_msg = cJSON_PrintUnformatted(root_obj);
+	json_msg = cJSON_PrintUnformatted(msg_obj);
 	if (!json_msg) {
 		LOG_ERR("Failed to print JSON");
 		goto clean_up;
@@ -1313,7 +1306,7 @@ int nrf_cloud_rest_send_location(struct nrf_cloud_rest_context *const rest_ctx,
 	err = nrf_cloud_rest_send_device_message(rest_ctx, device_id, json_msg, false, NULL);
 
 clean_up:
-	cJSON_Delete(root_obj);
+	cJSON_Delete(msg_obj);
 	if (json_msg) {
 		cJSON_free((void *)json_msg);
 	}

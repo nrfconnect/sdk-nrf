@@ -55,7 +55,7 @@ int nrf_cloud_cell_pos_request_json_get(const struct lte_lc_cells_info *const ce
 {
 	int err = 0;
 	*req_obj_out = json_create_req_obj(NRF_CLOUD_JSON_APPID_VAL_CELL_POS,
-						      NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
+					   NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
 	cJSON *data_obj = cJSON_AddObjectToObject(*req_obj_out, NRF_CLOUD_JSON_DATA_KEY);
 
 	if (!data_obj) {
