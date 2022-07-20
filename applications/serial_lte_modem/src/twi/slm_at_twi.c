@@ -14,15 +14,6 @@
 
 LOG_MODULE_REGISTER(slm_twi, CONFIG_SLM_LOG_LEVEL);
 
-#if defined(CONFIG_HAS_HW_NRF_TWIM3)
-#define TWI_MAX_INSTANCE	4
-#elif defined(CONFIG_HAS_HW_NRF_TWIM2)
-#define TWI_MAX_INSTANCE	3
-#elif defined(CONFIG_HAS_HW_NRF_TWIM1)
-#define TWI_MAX_INSTANCE	2
-#elif defined(CONFIG_HAS_HW_NRF_TWIM0)
-#define TWI_MAX_INSTANCE	1
-#endif
 #define TWI_ADDR_LEN		2
 #define TWI_DATA_LEN		255
 
@@ -30,7 +21,12 @@ LOG_MODULE_REGISTER(slm_twi, CONFIG_SLM_LOG_LEVEL);
 # error "Please specify smaller TWI_DATA_LEN"
 #endif
 
-static const struct device *slm_twi_dev[TWI_MAX_INSTANCE];
+static const struct device *slm_twi_dev[] = {
+	DEVICE_DT_GET_OR_NULL(DT_NODELABEL(i2c0)),
+	DEVICE_DT_GET_OR_NULL(DT_NODELABEL(i2c1)),
+	DEVICE_DT_GET_OR_NULL(DT_NODELABEL(i2c2)),
+	DEVICE_DT_GET_OR_NULL(DT_NODELABEL(i2c3)),
+};
 static uint8_t twi_data[TWI_DATA_LEN * 2 + 1];
 
 /* global variable defined in different files */
@@ -42,8 +38,8 @@ static void do_twi_list(void)
 	memset(rsp_buf, 0, sizeof(rsp_buf));
 	sprintf(rsp_buf, "\r\n#XTWILS: ");
 
-	for (int i = 0; i < TWI_MAX_INSTANCE; i++) {
-		if (slm_twi_dev[i]) {
+	for (size_t i = 0U; i < ARRAY_SIZE(slm_twi_dev); i++) {
+		if (slm_twi_dev[i] != NULL) {
 			sprintf(rsp_buf + strlen(rsp_buf), "%d,", i);
 		}
 	}
@@ -53,14 +49,14 @@ static void do_twi_list(void)
 	}
 }
 
-static int do_twi_write(uint16_t index, uint16_t dev_addr,
-			const uint8_t *twi_data_ascii, uint16_t ascii_len)
+static int do_twi_write(uint16_t index, uint16_t dev_addr, const uint8_t *twi_data_ascii,
+			uint16_t ascii_len)
 {
-	int ret = -EINVAL;
+	int ret;
 
-	if (!slm_twi_dev[index]) {
-		LOG_ERR("TWI device is not opened");
-		return ret;
+	if (index >= ARRAY_SIZE(slm_twi_dev) || slm_twi_dev[index] == NULL) {
+		LOG_ERR("TWI device not available");
+		return -EINVAL;
 	}
 
 	/* Decode hex string to hex array */
@@ -81,11 +77,11 @@ static int do_twi_write(uint16_t index, uint16_t dev_addr,
 
 static int do_twi_read(uint16_t index, uint16_t dev_addr, uint8_t num_read)
 {
-	int ret = -EINVAL;
+	int ret;
 
-	if (!slm_twi_dev[index]) {
-		LOG_ERR("TWI device is not opened");
-		return ret;
+	if (index >= ARRAY_SIZE(slm_twi_dev) || slm_twi_dev[index] == NULL) {
+		LOG_ERR("TWI device not available");
+		return -EINVAL;
 	}
 
 	if (num_read > TWI_DATA_LEN) {
@@ -115,15 +111,14 @@ static int do_twi_read(uint16_t index, uint16_t dev_addr, uint8_t num_read)
 	return ret;
 }
 
-static int do_twi_write_read(uint16_t index, uint16_t dev_addr,
-			     const uint8_t *twi_data_ascii, uint16_t ascii_len,
-			     uint16_t num_read)
+static int do_twi_write_read(uint16_t index, uint16_t dev_addr, const uint8_t *twi_data_ascii,
+			     uint16_t ascii_len, uint16_t num_read)
 {
-	int ret = -EINVAL;
+	int ret;
 
-	if (!slm_twi_dev[index]) {
-		LOG_ERR("TWI device is not opened");
-		return ret;
+	if (index >= ARRAY_SIZE(slm_twi_dev) || slm_twi_dev[index] == NULL) {
+		LOG_ERR("TWI device not available");
+		return -EINVAL;
 	}
 
 	/* Decode hex string to hex array */
@@ -134,9 +129,7 @@ static int do_twi_write_read(uint16_t index, uint16_t dev_addr,
 		return ret;
 	}
 	memset(twi_data, 0, sizeof(twi_data));
-	ret = i2c_write_read(slm_twi_dev[index], dev_addr,
-			     rsp_buf, ret,
-			     twi_data, num_read);
+	ret = i2c_write_read(slm_twi_dev[index], dev_addr, rsp_buf, ret, twi_data, num_read);
 	if (ret < 0) {
 		LOG_ERR("Fail to write and read data at address: %hx", dev_addr);
 		return ret;
@@ -326,9 +319,7 @@ int handle_at_twi_write_read(enum at_cmd_type cmd_type)
 			LOG_ERR("No enough buffer to read %d bytes", num_read);
 			return -ENOBUFS;
 		}
-		err = do_twi_write_read(index, dev_addr,
-					twi_data, (uint16_t)ascii_len,
-					num_read);
+		err = do_twi_write_read(index, dev_addr, twi_data, (uint16_t)ascii_len, num_read);
 		if (err < 0) {
 			return err;
 		}
@@ -347,22 +338,11 @@ int handle_at_twi_write_read(enum at_cmd_type cmd_type)
 
 int slm_at_twi_init(void)
 {
-#if DT_NODE_HAS_COMPAT_STATUS(DT_NODELABEL(i2c0), nordic_nrf_twim, okay)
-	slm_twi_dev[0] = device_get_binding(DT_LABEL(DT_NODELABEL(i2c0)));
-	LOG_DBG("bind %s", slm_twi_dev[0]->name);
-#endif
-#if DT_NODE_HAS_COMPAT_STATUS(DT_NODELABEL(i2c1), nordic_nrf_twim, okay)
-	slm_twi_dev[1] = device_get_binding(DT_LABEL(DT_NODELABEL(i2c1)));
-	LOG_DBG("bind %s", slm_twi_dev[1]->name);
-#endif
-#if DT_NODE_HAS_COMPAT_STATUS(DT_NODELABEL(i2c2), nordic_nrf_twim, okay)
-	slm_twi_dev[2] = device_get_binding(DT_LABEL(DT_NODELABEL(i2c2)));
-	LOG_DBG("bind %s", slm_twi_dev[2]->name);
-#endif
-#if DT_NODE_HAS_COMPAT_STATUS(DT_NODELABEL(i2c3), nordic_nrf_twim, okay)
-	slm_twi_dev[3] = device_get_binding(DT_LABEL(DT_NODELABEL(i2c3)));
-	LOG_DBG("bind %s", slm_twi_dev[3]->name);
-#endif
+	for (size_t i = 0U; i < ARRAY_SIZE(slm_twi_dev); i++) {
+		if (slm_twi_dev[i] != NULL && !device_is_ready(slm_twi_dev[i])) {
+			return -ENODEV;
+		}
+	}
 
 	return 0;
 }
