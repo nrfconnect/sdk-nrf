@@ -1098,9 +1098,9 @@ int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status)
 
 	if (!is_cellid_valid(cell_id)) {
 		*status = LTE_LC_NW_REG_UNKNOWN;
+	} else {
+		*status = status_tmp;
 	}
-
-	*status = status_tmp;
 
 	return 0;
 }
