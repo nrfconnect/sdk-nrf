@@ -15,19 +15,18 @@
 LOG_MODULE_DECLARE(app);
 
 #define VBATT DT_PATH(vbatt)
-
-#define BATTERY_CHARGE_GPIO DT_LABEL(DT_NODELABEL(gpio1))
-#define BATTERY_CHARGE_PIN 0
+#define ZEPHYR_USER DT_PATH(zephyr_user)
 
 namespace
 {
 const struct gpio_dt_spec sPowerGpio = GPIO_DT_SPEC_GET(VBATT, power_gpios);
+const struct gpio_dt_spec sChargeGpio = GPIO_DT_SPEC_GET(ZEPHYR_USER, battery_charge_gpios);
 const uint32_t sFullOhms = DT_PROP(VBATT, full_ohms);
 const uint32_t sOutputOhms = DT_PROP(VBATT, output_ohms);
 const struct adc_dt_spec sAdc = ADC_DT_SPEC_GET(VBATT);
-const device *sChargeGpioController;
 
 bool sBatteryConfigured = false;
+bool sBatteryChargeConfigured = false;
 int16_t sAdcBuffer = 0;
 
 struct adc_sequence sAdcSeq = {
@@ -98,25 +97,27 @@ int32_t BatteryMeasurementReadVoltageMv()
 
 int BatteryChargeControlInit()
 {
-	sChargeGpioController = device_get_binding(BATTERY_CHARGE_GPIO);
-	if (!sChargeGpioController) {
-		LOG_ERR("Cannot get battery charge GPIO device");
+	if (!device_is_ready(sChargeGpio.port)) {
+		LOG_ERR("Charge GPIO controller not ready");
 		return -ENODEV;
 	}
 
-	int err = gpio_pin_configure(sChargeGpioController, BATTERY_CHARGE_PIN, GPIO_INPUT | GPIO_PULL_UP);
+	int err = gpio_pin_configure_dt(&sChargeGpio, GPIO_INPUT);
 	if (err != 0) {
 		LOG_ERR("Failed to configure battery charge GPIO %d", err);
+		return err;
 	}
 
-	return err;
+	sBatteryChargeConfigured = true;
+
+	return 0;
 }
 
 bool BatteryCharged()
 {
-	if (sChargeGpioController) {
-		/* Invert logic (low state means charging and high not charging) */
-		return !gpio_pin_get(sChargeGpioController, BATTERY_CHARGE_PIN);
+	if (!sBatteryChargeConfigured) {
+		return true;
 	}
-	return true;
+
+	return static_cast<bool>(gpio_pin_get_dt(&sChargeGpio));
 }
