@@ -171,6 +171,14 @@ Thingy:53 Zigbee weather station
 
 |no_changes_yet_note|
 
+Connectivity Bridge
+-------------------
+
+  * Fixed:
+
+    * Missing return statement that caused immediate asserts when asserts were enabled.
+    * Too low UART RX timeout that caused high level of fragmentation of UART RX data.
+
 Samples
 =======
 

@@ -453,6 +453,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			settings_init();
 		}
+
+		return false;
 	}
 
 	/* If event is unhandled, unsubscribe. */
