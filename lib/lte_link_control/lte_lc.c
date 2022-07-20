@@ -590,7 +590,8 @@ static int connect_lte(bool blocking)
 	    (reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
 		LOG_DBG("The device is already registered with an LTE network");
 
-		return 0;
+		err = 0;
+		goto exit;
 	}
 
 	if (blocking) {
