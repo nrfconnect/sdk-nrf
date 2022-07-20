@@ -220,6 +220,8 @@ void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
 	}
 
 	vif_ctx_zep->supp_callbk_fns.scan_res(vif_ctx_zep->supp_drv_if_ctx, r, more_res);
+
+	k_free(r);
 }
 
 void wifi_nrf_wpa_supp_event_proc_auth_resp(void *if_priv,
