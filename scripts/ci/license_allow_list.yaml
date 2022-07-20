@@ -1,0 +1,43 @@
+# List of licenses allowed by the "license_check.py" script.
+# Key is a license identifier, value is a regular expression (see Python's
+# re.search) that matches the files that are allowed to have the license.
+# The value can be multiline string. Each line is a regexp that can optionally
+# start with a '!' character to indicate that it is a negative match.
+# File paths are relative to west workspace directory.
+# Special key "none" match no license. Special key "any" match any license
+# including no license.
+# You can add a '-' character to the beginning of the license identifier to
+# allow specific license, but using it will generate a warning.
+
+# Nordic 5-Clause is always allowed.
+LicenseRef-Nordic-5-Clause: ".*"
+
+# ZBOSS 4-clause is allowed only in zboss directory.
+LicenseRef-ZBOSS-4-Clause: "^nrfxlib/zboss/"
+
+# Missing license information is allowed in all files except the ones listed below using
+# negative match.
+none: |
+  .*
+  !\.c$
+  !\.h$
+  !\.cpp$
+  !\.a$
+  !\.py$
+
+# Any license information is allowed in Python scripts, but it will generate a warning.
+-any: |
+  \.py$
+
+# The 'license-texts.yaml' file contains texts of multiple licenses.
+# Ignore all detected licenses in that file.
+any: |
+  .*/license-texts.yaml$
+
+# Allow different licenses from external sources
+LicenseRef-west-ncs-sbom-iperf-BSD-3-Clause: "^nrf/ext/"
+Apache-2.0: "^nrf/ext/"
+curl: "^nrf/ext/"
+MIT: "^nrf/ext/"
+BSD-3-CLAUSE: "^nrf/ext/"
+BSD-2-CLAUSE-NETBSD: "^nrf/ext/"
