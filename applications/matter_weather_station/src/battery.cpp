@@ -19,12 +19,12 @@ LOG_MODULE_DECLARE(app);
 #define BATTERY_ADC_DEVICE_NAME DT_LABEL(DT_NODELABEL(adc))
 #define BATTERY_CHARGE_GPIO DT_LABEL(DT_NODELABEL(gpio1))
 #define BATTERY_CHARGE_PIN 0
-#define BATTERY_FULL_OHMS DT_PROP(VBATT, full_ohms)
-#define BATTERY_OUTPUT_OHMS DT_PROP(VBATT, output_ohms)
 
 namespace
 {
 const struct gpio_dt_spec sPowerGpio = GPIO_DT_SPEC_GET(VBATT, power_gpios);
+const uint32_t sFullOhms = DT_PROP(VBATT, full_ohms);
+const uint32_t sOutputOhms = DT_PROP(VBATT, output_ohms);
 const device *sAdcController;
 const device *sChargeGpioController;
 
@@ -106,8 +106,7 @@ int32_t BatteryMeasurementReadVoltageMv()
 			int32_t val = sAdcBuffer;
 			adc_raw_to_millivolts(adc_ref_internal(sAdcController), sAdcConfig.gain, sAdcSeq.resolution,
 					      &val);
-			result = static_cast<int32_t>(static_cast<int64_t>(val) * BATTERY_FULL_OHMS /
-						      BATTERY_OUTPUT_OHMS);
+			result = static_cast<int32_t>(static_cast<int64_t>(val) * sFullOhms / sOutputOhms);
 		}
 	}
 	return result;
