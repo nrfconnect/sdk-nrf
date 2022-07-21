@@ -50,7 +50,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 191864f05ef3343432258cdded3709bb9cc619e2
+      revision: be360e7db2db7e1f0e9fcac686a08e62e350bf55
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -108,7 +108,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: v2.0.1
+      revision: 6ed78933b488c7685506591aeaf32b3744ce5481
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -120,7 +120,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v2.0.1
+      revision: 5959a2ed66563f5f34cb6229cba4698e460f57d4
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -140,7 +140,7 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: v2.0.1
+      revision: 7cc481f270748de82c2573e375caa3fc2119d440
       groups:
       - homekit
     - name: find-my
@@ -179,7 +179,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: v2.0.1
+      revision: e299df7fcd87fe7b41da48356d3a09a95a950353
 
   # West-related configuration for the nrf repository.
   self:
