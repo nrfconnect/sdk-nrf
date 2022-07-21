@@ -15,17 +15,14 @@
 #include "button_handler.h"
 #include "button_assignments.h"
 #include "nrfx_clock.h"
-#include "streamctrl.h"
 #include "ble_core.h"
 #include "pmic.h"
 #include "power_module.h"
 #include "sd_card.h"
 #include "board_version.h"
-#include "audio_datapath.h"
-#include "audio_i2s.h"
+#include "audio_system.h"
 #include "channel_assignment.h"
-#include "hw_codec.h"
-#include "audio_usb.h"
+#include "streamctrl.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_LOG_MAIN_LEVEL);
@@ -179,17 +176,6 @@ void main(void)
 	ret = power_module_init();
 	ERR_CHK(ret);
 
-#if ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_USB))
-	ret = audio_usb_init();
-	ERR_CHK(ret);
-#else
-	ret = audio_datapath_init();
-	ERR_CHK(ret);
-	audio_i2s_init();
-	ret = hw_codec_init();
-	ERR_CHK(ret);
-#endif
-
 	/* Initialize BLE, with callback for when BLE is ready */
 	ret = ble_core_init(on_ble_core_ready);
 	ERR_CHK(ret);
@@ -202,10 +188,9 @@ void main(void)
 	ret = leds_set();
 	ERR_CHK(ret);
 
-	ret = streamctrl_start();
-	ERR_CHK(ret);
+	audio_system_init();
 
-	ret = audio_datapath_tone_play(440, 500, 0.2);
+	ret = streamctrl_start();
 	ERR_CHK(ret);
 
 	while (1) {

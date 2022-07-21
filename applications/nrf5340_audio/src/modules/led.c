@@ -32,13 +32,10 @@ LOG_MODULE_REGISTER(led, CONFIG_LOG_LED_LEVEL);
 #define GPIO_DT_SPEC_GET_AND_COMMA(node_id) GPIO_DT_SPEC_GET(node_id, gpios),
 
 /* The following arrays are populated compile time from the .dts*/
-static const char * const led_labels[] = {
-	DT_FOREACH_CHILD(DT_PATH(leds), DT_LABEL_AND_COMMA)
-};
+static const char *const led_labels[] = { DT_FOREACH_CHILD(DT_PATH(leds), DT_LABEL_AND_COMMA) };
 
-static const struct gpio_dt_spec leds[] = {
-	DT_FOREACH_CHILD(DT_PATH(leds), GPIO_DT_SPEC_GET_AND_COMMA)
-};
+static const struct gpio_dt_spec leds[] = { DT_FOREACH_CHILD(DT_PATH(leds),
+							     GPIO_DT_SPEC_GET_AND_COMMA) };
 
 enum led_core_assigned {
 	LED_CORE_APP,
@@ -100,8 +97,7 @@ static int config_led_monochrome(uint8_t led_unit, uint8_t led)
 	led_units[led_unit].type.mono = &leds[led];
 	led_units[led_unit].unit_type = LED_MONOCHROME;
 
-	return gpio_pin_configure_dt(led_units[led_unit].type.mono,
-				     GPIO_OUTPUT_INACTIVE);
+	return gpio_pin_configure_dt(led_units[led_unit].type.mono, GPIO_OUTPUT_INACTIVE);
 }
 
 /**
@@ -121,8 +117,7 @@ static int transfer_pin_to_net(uint8_t led)
 	}
 
 	nrf_gpio_pin_mcu_select(pin_to_transfer, NRF_GPIO_PIN_MCUSEL_NETWORK);
-	LOG_DBG("Pin %d transferred on device %s", leds[led].pin,
-		leds[led].port->name);
+	LOG_DBG("Pin %d transferred on device %s", leds[led].pin, leds[led].port->name);
 	return 0;
 }
 

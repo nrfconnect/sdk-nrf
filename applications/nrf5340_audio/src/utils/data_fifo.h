@@ -133,6 +133,15 @@ int data_fifo_num_used_get(struct data_fifo *data_fifo, uint32_t *alloced_num,
 			   uint32_t *locked_num);
 
 /**
+ * @brief Empty all items from data_fifo
+ *
+ * @param data_fifo Pointer to the data FIFO to be emptied
+ *
+ * @return 0 if success, error otherwise
+ */
+int data_fifo_empty(struct data_fifo *data_fifo);
+
+/**
  * @brief Initialise the data_fifo.
  *
  * @param data_fifo Pointer to the data_fifo structure.

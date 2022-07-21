@@ -4,18 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/** \defgroup button_handler Button handler
- *	@{
- */
-
-/** @file
- *  @brief Button handler
- *
- * This module handles, and gives an interface to, buttons.
- *
- * Debouncing of buttons is handled by this module.
- */
-
 #ifndef _BUTTON_HANDLER_H_
 #define _BUTTON_HANDLER_H_
 
@@ -67,5 +55,3 @@ int button_handler_init(void);
 int button_pressed(gpio_pin_t button_pin, bool *button_pressed);
 
 #endif /* _BUTTON_HANDLER_H_ */
-
-/** @} */ /* End defgroup */

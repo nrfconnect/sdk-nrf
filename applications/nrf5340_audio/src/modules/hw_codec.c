@@ -118,7 +118,7 @@ int hw_codec_volume_adjust(int8_t adjustment)
 	 */
 	adjustment *= 2;
 
-	uint16_t volume_reg_val;
+	int16_t volume_reg_val;
 
 	ret = cs47l63_read_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1,
 			       (uint32_t *)&volume_reg_val);
