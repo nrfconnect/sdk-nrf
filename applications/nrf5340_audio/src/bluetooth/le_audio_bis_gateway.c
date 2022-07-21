@@ -23,6 +23,15 @@ BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT <= 1,
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
 
+#define BT_AUDIO_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                \
+	BT_AUDIO_LC3_PRESET(                                                                       \
+		BT_CODEC_LC3_CONFIG(BT_CODEC_CONFIG_LC3_FREQ_48KHZ,                                \
+				    BT_CODEC_CONFIG_LC3_DURATION_10,                               \
+				    LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE),                  \
+				    BT_AUDIO_CONTEXT_TYPE_MEDIA),                                  \
+		BT_CODEC_LC3_QOS_10_UNFRAMED(LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE), 4u,     \
+					     20u, LE_AUDIO_PRES_DELAY_US))
+
 /* For being able to dynamically define iso_tx_pools */
 #define NET_BUF_POOL_ITERATE(i, _)                                                                 \
 	NET_BUF_POOL_FIXED_DEFINE(iso_tx_pool_##i, HCI_ISO_BUF_ALLOC_PER_CHAN,                     \
@@ -40,7 +49,7 @@ static struct bt_audio_broadcast_source *broadcast_source;
 static struct bt_audio_stream streams[CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT];
 static struct bt_audio_stream *streams_p[ARRAY_SIZE(streams)];
 
-static struct bt_audio_lc3_preset lc3_preset = BT_AUDIO_LC3_BROADCAST_PRESET_48_4_1;
+static struct bt_audio_lc3_preset lc3_preset = BT_AUDIO_LC3_BROADCAST_PRESET_NRF5340_AUDIO;
 
 static atomic_t iso_tx_pool_alloc[CONFIG_BT_ISO_MAX_CHAN];
 static bool delete_broadcast_src;

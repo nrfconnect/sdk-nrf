@@ -33,8 +33,10 @@ static const struct bt_data ad[] = {
 };
 static struct bt_audio_capability_ops lc3_cap_codec_ops;
 static struct bt_codec lc3_codec =
-	BT_CODEC_LC3(BT_CODEC_LC3_FREQ_ANY, BT_CODEC_LC3_DURATION_10, CHANNEL_COUNT_1, 40u, 120u,
-		     1u, BT_AUDIO_CONTEXT_TYPE_MEDIA, BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
+	BT_CODEC_LC3(BT_CODEC_LC3_FREQ_ANY, BT_CODEC_LC3_DURATION_10, CHANNEL_COUNT_1,
+		     LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
+		     LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u,
+		     BT_AUDIO_CONTEXT_TYPE_MEDIA, BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
 static struct bt_audio_capability caps = {
 	.dir = BT_AUDIO_DIR_SINK,
 	.pref = BT_AUDIO_CAPABILITY_PREF(BT_AUDIO_CAPABILITY_UNFRAMED_SUPPORTED, BT_GAP_LE_PHY_2M,
@@ -59,7 +61,11 @@ static void print_codec(const struct bt_codec *codec)
 			LOG_INF("\tChannel allocation: 0x%x", chan_allocation);
 		}
 
-		LOG_INF("\tOctets per frame: %d", bt_codec_cfg_get_octets_per_frame(codec));
+		uint32_t octets_per_sdu = bt_codec_cfg_get_octets_per_frame(codec);
+		uint32_t bitrate =
+			octets_per_sdu * 8 * (1000000 / bt_codec_cfg_get_frame_duration_us(codec));
+
+		LOG_INF("\tOctets per frame: %d (%d kbps)", octets_per_sdu, bitrate);
 		LOG_INF("\tFrames per SDU: %d", bt_codec_cfg_get_frame_blocks_per_sdu(codec, true));
 	} else {
 		LOG_INF("Codec is not LC3, codec_id: 0x%2x", codec->id);
@@ -77,7 +83,17 @@ static struct bt_audio_stream *lc3_cap_config_cb(struct bt_conn *conn, struct bt
 	if (!stream->conn) {
 		LOG_INF("ASE Codec Config stream %p", (void *)stream);
 
-		print_codec(stream->codec);
+		print_codec(codec);
+
+		uint32_t octets_per_sdu = bt_codec_cfg_get_octets_per_frame(codec);
+
+		if (octets_per_sdu > LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX)) {
+			LOG_WRN("Too high bitrate");
+			return NULL;
+		} else if (octets_per_sdu < LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN)) {
+			LOG_WRN("Too low bitrate");
+			return NULL;
+		}
 
 		ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_CONFIG_RECEIVED);
 		ERR_CHK(ret);

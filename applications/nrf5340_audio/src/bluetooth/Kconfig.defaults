@@ -27,14 +27,6 @@ config BT_EXT_ADV
 	bool
 	default y
 
-config BT_ISO_RX_MTU
-	int
-	default 190
-
-config BT_ISO_TX_MTU
-	int
-	default 190
-
 if TRANSPORT_CIS # Depends on TRANSPORT_CIS
 
 config BT_DEVICE_NAME

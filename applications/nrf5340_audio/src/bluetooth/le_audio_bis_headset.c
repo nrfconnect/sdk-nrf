@@ -53,11 +53,30 @@ static void print_codec(const struct bt_codec *codec)
 			LOG_INF("\tChannel allocation: 0x%x", chan_allocation);
 		}
 
-		LOG_INF("\tOctets per frame: %d", bt_codec_cfg_get_octets_per_frame(codec));
+		uint32_t octets_per_sdu = bt_codec_cfg_get_octets_per_frame(codec);
+		uint32_t bitrate =
+			octets_per_sdu * 8 * (1000000 / bt_codec_cfg_get_frame_duration_us(codec));
+
+		LOG_INF("\tOctets per frame: %d (%d kbps)", octets_per_sdu, bitrate);
 		LOG_INF("\tFrames per SDU: %d", bt_codec_cfg_get_frame_blocks_per_sdu(codec, true));
 	} else {
 		LOG_INF("Codec is not LC3, codec_id: 0x%2x", codec->id);
 	}
+}
+
+static bool bitrate_check(const struct bt_codec *codec)
+{
+	uint32_t octets_per_sdu = bt_codec_cfg_get_octets_per_frame(codec);
+
+	if (octets_per_sdu < LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN)) {
+		LOG_WRN("Bitrate too low");
+		return false;
+	} else if (octets_per_sdu > LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX)) {
+		LOG_WRN("Bitrate too high");
+		return false;
+	}
+
+	return true;
 }
 
 static void stream_started_cb(struct bt_audio_stream *stream)
@@ -176,18 +195,24 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 		for (size_t j = 0U; j < base->subgroups[i].bis_count; j++) {
 			const uint8_t index = base->subgroups[i].bis_data[j].index;
 
-			base_bis_index_bitfield |= BIT(index);
 			streams[i].codec = (struct bt_codec *)&base->subgroups[i].codec;
 			print_codec(streams[i].codec);
 
-			ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_CONFIG_RECEIVED);
-			ERR_CHK(ret);
+			if (bitrate_check(streams[i].codec)) {
+				base_bis_index_bitfield |= BIT(index);
+			}
 		}
 	}
 
-	bis_index_bitfield = base_bis_index_bitfield & bis_index_mask;
+	if (base_bis_index_bitfield) {
+		ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_CONFIG_RECEIVED);
+		ERR_CHK(ret);
+		bis_index_bitfield = base_bis_index_bitfield & bis_index_mask;
 
-	LOG_INF("Waiting for syncable");
+		LOG_INF("Waiting for syncable");
+	} else {
+		LOG_WRN("Found no suitable streams");
+	}
 }
 
 static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)

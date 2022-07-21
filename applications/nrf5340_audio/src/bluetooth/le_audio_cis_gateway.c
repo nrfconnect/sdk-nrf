@@ -17,11 +17,14 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(cis_gateway, CONFIG_LOG_BLE_LEVEL);
 
-#define BLE_ISO_PRES_DELAY_US 10000u
-
 #define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO                                                  \
-	BT_AUDIO_LC3_PRESET(BT_CODEC_LC3_CONFIG_48_4,                                              \
-			    BT_CODEC_LC3_QOS_10_UNFRAMED(120u, 2u, 20u, BLE_ISO_PRES_DELAY_US))
+	BT_AUDIO_LC3_PRESET(                                                                       \
+		BT_CODEC_LC3_CONFIG(BT_CODEC_CONFIG_LC3_FREQ_48KHZ,                                \
+				    BT_CODEC_CONFIG_LC3_DURATION_10,                               \
+				    LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE),                  \
+				    BT_AUDIO_CONTEXT_TYPE_MEDIA),                                  \
+		BT_CODEC_LC3_QOS_10_UNFRAMED(LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE), 2u,     \
+					     20u, LE_AUDIO_PRES_DELAY_US))
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
 /* For being able to dynamically define iso_tx_pools */
@@ -47,8 +50,7 @@ static struct bt_audio_ep *sinks[CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SNK_COUNT];
 static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ISO_MAX_CHAN,
 						       NET_BUF_POOL_PTR_ITERATE, (,)) };
 /* clang-format on */
-static struct bt_audio_lc3_preset lc3_preset_unicast_nrf5340 =
-	BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO;
+static struct bt_audio_lc3_preset lc3_preset_nrf5340 = BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO;
 
 static atomic_t iso_tx_pool_alloc[CONFIG_BT_ISO_MAX_CHAN];
 
@@ -82,7 +84,7 @@ static void stream_configured_cb(struct bt_audio_stream *stream,
 {
 	int ret;
 
-	ret = bt_audio_stream_qos(default_conn, unicast_group, &lc3_preset_unicast_nrf5340.qos);
+	ret = bt_audio_stream_qos(default_conn, unicast_group, &lc3_preset_nrf5340.qos);
 	if (ret) {
 		LOG_ERR("Unable to setup QoS: %d", ret);
 	}
@@ -92,8 +94,8 @@ static void stream_qos_set_cb(struct bt_audio_stream *stream)
 {
 	int ret;
 
-	ret = bt_audio_stream_enable(stream, lc3_preset_unicast_nrf5340.codec.meta,
-				     lc3_preset_unicast_nrf5340.codec.meta_count);
+	ret = bt_audio_stream_enable(stream, lc3_preset_nrf5340.codec.meta,
+				     lc3_preset_nrf5340.codec.meta_count);
 	if (ret) {
 		LOG_ERR("Unable to enable stream: %d", ret);
 	}
@@ -207,7 +209,7 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 
 	(void)memset(params, 0, sizeof(*params));
 	ret = bt_audio_stream_config(default_conn, &audio_stream, sinks[0],
-				     &lc3_preset_unicast_nrf5340.codec);
+				     &lc3_preset_nrf5340.codec);
 	if (ret) {
 		LOG_ERR("Could not configure stream");
 	}
@@ -476,7 +478,7 @@ int le_audio_send(uint8_t const *const data, size_t size)
 	net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
 
 	//TODO: Handling dual channel sending properly
-	net_buf_add_mem(buf, data, 120);
+	net_buf_add_mem(buf, data, LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE));
 
 	struct bt_iso_tx_info tx_info = { 0 };
 

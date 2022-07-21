@@ -9,6 +9,9 @@
 
 #include <zephyr.h>
 
+#define LE_AUDIO_SDU_SIZE_OCTETS(bitrate) (bitrate / (1000000 / CONFIG_AUDIO_FRAME_DURATION_US) / 8)
+#define LE_AUDIO_PRES_DELAY_US 10000u
+
 enum le_audio_evt_type {
 	LE_AUDIO_EVT_CONFIG_RECEIVED,
 	LE_AUDIO_EVT_STREAMING,
