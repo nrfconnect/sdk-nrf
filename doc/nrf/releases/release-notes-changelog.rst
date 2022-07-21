@@ -282,6 +282,11 @@ Bluetooth samples
   * Added devicetree overlay file for the nRF5340 application core that configures GPIO pin forwarding.
     This enables the radio peripheral's Direction Finding Extension for antenna switching.
 
+* :ref:`peripheral_proximity` sample:
+
+  * Added sample demonstrates how to use the Immediate Alert Service and Link Loss Service.
+
+
 Bluetooth mesh samples
 ----------------------
 
@@ -466,6 +471,9 @@ Bluetooth libraries and services
       *  :ref:`bt_mesh_lightness_srv_readme`
       * Replay protection list (RPL)
 
+* :ref:`lls_readme`:
+
+  * Added module implements the Link Loss Service (LLS) with the corresponding set of characteristics.
 
 Bootloader libraries
 --------------------
