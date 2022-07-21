@@ -10,9 +10,7 @@ config WPA_SUPP
 	depends on  NET_SOCKETS
 	depends on  NET_SOCKETS_POSIX_NAMES || POSIX_API
 	select NET_SOCKETS_PACKET
-	select NET_MGMT
-	select NET_MGMT_EVENT
-	select NET_MGMT_EVENT_INFO
+	select NET_L2_NRF_WIFI_MGMT
 	help
 	  WPA WPA_SUPP
 
@@ -53,15 +51,15 @@ module-str = WPA supplicant
 source "subsys/logging/Kconfig.template.log_config"
 
 config WPA_SUPP_DEBUG_LEVEL
-    int "Min compiled-in debug message level for WPA supplicant"
-    default 0 if WPA_SUPP_LOG_LEVEL_DBG # MSG_EXCESSIVE
-    default 3 if WPA_SUPP_LOG_LEVEL_INF # MSG_INFO
-    default 4 if WPA_SUPP_LOG_LEVEL_WRN # MSG_WARNING
-    default 5 if WPA_SUPP_LOG_LEVEL_ERR # MSG_ERROR
-    default 6
-    help
-      Minimum priority level of a debug message emitted by WPA supplicant that
-      is compiled-in the firmware. See wpa_debug.h file of the supplicant for
-      available levels and functions for emitting the messages. Note that
-      runtime filtering can also be configured in addition to the compile-time
-      filtering.
+	int "Min compiled-in debug message level for WPA supplicant"
+	default 0 if WPA_SUPP_LOG_LEVEL_DBG # MSG_EXCESSIVE
+	default 3 if WPA_SUPP_LOG_LEVEL_INF # MSG_INFO
+	default 4 if WPA_SUPP_LOG_LEVEL_WRN # MSG_WARNING
+	default 5 if WPA_SUPP_LOG_LEVEL_ERR # MSG_ERROR
+	default 6
+	help
+	  Minimum priority level of a debug message emitted by WPA supplicant that
+	  is compiled-in the firmware. See wpa_debug.h file of the supplicant for
+	  available levels and functions for emitting the messages. Note that
+	  runtime filtering can also be configured in addition to the compile-time
+	  filtering.
