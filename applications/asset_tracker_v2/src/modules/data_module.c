@@ -902,7 +902,6 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		}
 	} else {
 		LOG_ERR("New GNSS timeout out of range: %d", new_config->gnss_timeout);
-		return;
 	}
 
 	if (new_config->active_wait_timeout > 0) {
@@ -915,7 +914,6 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		}
 	} else {
 		LOG_ERR("New Active timeout out of range: %d", new_config->active_wait_timeout);
-		return;
 	}
 
 	if (new_config->movement_resolution > 0) {
@@ -929,7 +927,6 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 	} else {
 		LOG_ERR("New Movement resolution out of range: %d",
 			new_config->movement_resolution);
-		return;
 	}
 
 	if (new_config->movement_timeout > 0) {
@@ -942,7 +939,6 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 		}
 	} else {
 		LOG_ERR("New Movement timeout out of range: %d", new_config->movement_timeout);
-		return;
 	}
 
 	if ((new_config->accelerometer_threshold < ACCELEROMETER_S_M2_MAX) &&
@@ -958,7 +954,6 @@ static void new_config_handle(struct cloud_data_cfg *new_config)
 	} else {
 		LOG_ERR("New Accelerometer threshold out of range: %.2f",
 			new_config->accelerometer_threshold);
-		return;
 	}
 
 	/* If there has been a change in the currently applied device configuration we want to store
