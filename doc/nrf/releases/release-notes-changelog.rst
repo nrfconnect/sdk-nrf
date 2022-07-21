@@ -156,6 +156,7 @@ nRF9160: Asset Tracker v2
       * :ref:`CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD <CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD>`
       * :ref:`CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS <CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS>`
     * Data sampling is now performed when the device detects both activity and inactivity in passive mode, notified by the :c:enum:`SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED` event of the :ref:`sensor module <asset_tracker_v2_sensor_module>`.
+    * ``CONFIG_MODEM_NEIGHBOR_SEARCH_TYPE`` option.
 
   * Removed:
 
@@ -187,6 +188,7 @@ nRF9160: Asset Tracker v2
     * Added support for full modem FOTA updates for nRF Cloud builds.
     * ``CONFIG_DATA_DEVICE_MODE`` option is now a choice that can be set to either ``CONFIG_DATA_DEVICE_MODE_ACTIVE`` or ``CONFIG_DATA_DEVICE_MODE_PASSIVE`` depending on the desired device mode.
     * Restructured the documentation.
+    * The default sample timeout for sample requests that include neighbor cell searches is now 11 seconds.
 
   * Fixed:
 

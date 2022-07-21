@@ -94,6 +94,14 @@ static void data_sample_timer_handler(struct k_timer *timer);
 #define APP_QUEUE_ENTRY_COUNT		10
 #define APP_QUEUE_BYTE_ALIGNMENT	4
 
+/* Data fetching timeouts */
+#define DATA_FETCH_TIMEOUT_DEFAULT 2
+/* Use a timeout of 11 seconds to accommodate for neighbour cell measurements
+ * that can take up to 10.24 seconds.
+ */
+#define DATA_FETCH_TIMEOUT_NEIGHBORHOOD_SEARCH 11
+
+
 K_MSGQ_DEFINE(msgq_app, sizeof(struct app_msg_data), APP_QUEUE_ENTRY_COUNT,
 	      APP_QUEUE_BYTE_ALIGNMENT);
 
@@ -411,10 +419,9 @@ static void data_get(void)
 	size_t count = 0;
 
 	/* Set a low sample timeout. If GNSS is requested, the sample timeout will be increased to
-	 * accommodate the GNSS timeout. Use 2 seconds to accommodate for
-	 * neighbour cell measurements that usually takes a few seconds.
+	 * accommodate the GNSS timeout.
 	 */
-	app_module_event->timeout = 2;
+	app_module_event->timeout = DATA_FETCH_TIMEOUT_DEFAULT;
 
 	/* Specify which data that is to be included in the transmission. */
 	app_module_event->data_list[count++] = APP_DATA_MODEM_DYNAMIC;
@@ -427,6 +434,7 @@ static void data_get(void)
 
 	if (!app_cfg.no_data.neighbor_cell) {
 		app_module_event->data_list[count++] = APP_DATA_NEIGHBOR_CELLS;
+		app_module_event->timeout = DATA_FETCH_TIMEOUT_NEIGHBORHOOD_SEARCH;
 	}
 
 	/* The reason for having at least 75 seconds sample timeout when
