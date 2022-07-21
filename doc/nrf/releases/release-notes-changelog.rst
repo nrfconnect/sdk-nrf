@@ -109,6 +109,11 @@ ESB
 
 * Fixed the ``update_radio_crc()`` function in order to correctly configure the CRC's registers (8 bits, 16 bits, or none).
 
+nRF IEEE 802.15.4 radio driver
+------------------------------
+
+* Added option to configure IEEE 802.15.4 ACK frame timeout at build time using :kconfig:option:`CONFIG_NRF_802154_ACK_TIMEOUT_CUSTOM_US`.
+
 RF Front-End Modules
 ====================
 
