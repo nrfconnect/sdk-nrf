@@ -80,6 +80,15 @@ The following table indicates the software maturity levels of the support for ea
 
 .. sml-table:: top_level
 
+HomeKit features support
+************************
+
+The following table indicates the software maturity levels of the support for each HomeKit feature:
+
+.. toggle::
+
+  .. sml-table:: homekit
+
 Thread features support
 ***********************
 
