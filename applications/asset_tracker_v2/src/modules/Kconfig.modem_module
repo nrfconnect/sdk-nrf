@@ -56,6 +56,25 @@ config MODEM_NEIGHBOR_CELLS_DATA_CONVERT_RSRQ_TO_DB
 	  Don't convert RSRQ to dB when building for nRF Cloud, this is handled during encoding
 	  using the nRF Cloud cellular positioning library.
 
+choice MODEM_NEIGHBOR_SEARCH_TYPE
+	prompt "Type of search for neighbor cell measurements"
+	default MODEM_NEIGHBOR_SEARCH_TYPE_DEFAULT
+	help
+	  This setting specifies how much effort the modem will put into neighbor cell
+	  measurements. Depending on the modem's state, the extended options might take longer
+	  than the default one.
+
+config MODEM_NEIGHBOR_SEARCH_TYPE_DEFAULT
+	bool "Modem searches the registered network based on previous cell history"
+
+config MODEM_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT
+	bool "Modem additionally performs a light search with all networks"
+
+config MODEM_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE
+	bool "Modem additionally performs a complete search with all networks"
+
+endchoice # MODEM_NEIGHBOR_SEARCH_TYPE
+
 endif # MODEM_MODULE
 
 # Since this configuration is used in the module's event header file, it cannot be guarded
