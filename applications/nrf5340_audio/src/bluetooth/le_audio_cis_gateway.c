@@ -84,7 +84,7 @@ static void stream_configured_cb(struct bt_audio_stream *stream,
 {
 	int ret;
 
-	ret = bt_audio_stream_qos(default_conn, unicast_group, &lc3_preset_nrf5340.qos);
+	ret = bt_audio_stream_qos(default_conn, unicast_group);
 	if (ret) {
 		LOG_ERR("Unable to setup QoS: %d", ret);
 	}
@@ -371,7 +371,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 {
 	int ret;
 	static bool initialized;
-	struct bt_audio_stream *streams_p[CONFIG_BT_ISO_MAX_CHAN];
+	struct bt_audio_unicast_group_param params;
 
 #if (CONFIG_BT_VCS_CLIENT)
 	ret = ble_vcs_client_init();
@@ -384,8 +384,10 @@ static int initialize(le_audio_receive_cb recv_cb)
 	ARG_UNUSED(recv_cb);
 	if (!initialized) {
 		audio_stream.ops = &stream_ops;
-		streams_p[0] = &audio_stream;
-		ret = bt_audio_unicast_group_create(streams_p, CONFIG_BT_ISO_MAX_CHAN,
+		params.stream = &audio_stream;
+		params.qos = &lc3_preset_unicast_nrf5340.qos;
+		params.dir = BT_AUDIO_DIR_SINK;
+		ret = bt_audio_unicast_group_create(&params, CONFIG_BT_ISO_MAX_CHAN,
 						    &unicast_group);
 
 		if (ret) {
