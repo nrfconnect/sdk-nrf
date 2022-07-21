@@ -385,7 +385,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 	if (!initialized) {
 		audio_stream.ops = &stream_ops;
 		params.stream = &audio_stream;
-		params.qos = &lc3_preset_unicast_nrf5340.qos;
+		params.qos = &lc3_preset_nrf5340.qos;
 		params.dir = BT_AUDIO_DIR_SINK;
 		ret = bt_audio_unicast_group_create(&params, CONFIG_BT_ISO_MAX_CHAN,
 						    &unicast_group);
