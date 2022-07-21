@@ -89,7 +89,9 @@ zephyr_library_sources(
 	# Zephyr main
 	src/supp_main.c
 	src/utils/wpa_debug.c
+	src/supp_api.c
 )
+
 zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_AP
 	${WPA_SUPPLICANT_BASE}/ap.c
 	${COMMON_SRC_BASE}/ap/ap_config.c
