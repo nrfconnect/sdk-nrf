@@ -1630,6 +1630,11 @@ nrfxlib
 Crypto
 ======
 
+.. rst-class:: v2-0-1 v2-0-0
+
+NCSDK-15697: ECDH key generation for Curve25519 is failing with the legacy Mbed TLS APIs for CryptoCell
+  This only affects the functions ``mbedtls_ecdh_make_params_edwards`` and ``mbedtls_ecdh_read_params_edwards``.
+
 .. rst-class:: v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
 
 NCSDK-13843: Limited support for MAC in PSA Crypto APIs
