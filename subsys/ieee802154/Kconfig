@@ -21,4 +21,16 @@ config NRF_802154_RADIO_CONFIG_PRIO
 	  Set the nRF IEEE 802.15.4 configuration priority number. Must be
 	  greater than nRF IEEE 802.15.4 Radio initialization priority.
 
+config NRF_802154_ACK_TIMEOUT_CUSTOM_US
+	int "nRF IEEE 802.15.4 ACK timeout"
+	default 0
+	range 0 2000
+	depends on NRF_802154_RADIO_CONFIG
+	help
+	  Set the custom value of ACK timeout in the nRF IEEE 802.15.4 radio driver module.
+	  It is not recommended to change this setting for anything but testing purposes.
+	  Setting this value too low will cause the radio driver to never receive ACK frames
+	  and setting it too high will increase current consumption. Set this value to 0 to
+	  use the default and recommended value of the ACK timeout.
+
 endmenu
