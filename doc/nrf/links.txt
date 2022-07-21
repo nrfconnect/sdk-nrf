@@ -471,6 +471,7 @@
 .. _`Bluetooth mesh FAQ`: https://www.bluetooth.com/learn-about-bluetooth/bluetooth-technology/topology-options/le-mesh/mesh-faq/
 .. _`Bluetooth mesh study guide`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-developer-study-guide/
 .. _`Bluetooth mesh introduction blog`: https://www.bluetooth.com/blog/introducing-bluetooth-mesh-networking
+.. _`Link Loss Service specification`: https://www.bluetooth.com/specifications/specs/?status=active&show_latest_version=0&show_latest_version=1&keyword=link+loss&filter=
 
 .. ### Source: openmobilealliance.org
 
