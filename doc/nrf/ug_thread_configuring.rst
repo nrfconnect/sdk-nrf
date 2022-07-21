@@ -289,12 +289,12 @@ No tick indicates that there is no support for the given feature in the related 
       - Optimized_MTD
       - Custom
     * - BORDER_AGENT
-      - ✔
+      -
       -
       -
       -
     * - BORDER_ROUTER
-      - ✔
+      -
       -
       -
       -
@@ -409,7 +409,7 @@ No tick indicates that there is no support for the given feature in the related 
       - ✔
       -
     * - BACKBONE_ROUTER (Thread 1.2)
-      - ✔
+      -
       -
       -
       -
@@ -430,9 +430,6 @@ No tick indicates that there is no support for the given feature in the related 
       -
 
 For the full list of configuration options that were used during compilation, including their default values, see the :file:`openthread_lib_configuration.txt` file within each library folder in the nrfxlib repository.
-
-.. note::
-   The Backbone Router feature enables the functionality for the Thread Network side, but not for the Backbone side.
 
 .. _thread_ug_customizing_prebuilt:
 
