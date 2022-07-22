@@ -309,6 +309,7 @@ nRF9160 samples
     * This sample now uses the :ref:`lib_modem_antenna` library to configure the GNSS antenna instead of configuring it directly.
     * Minor logging and function structure improvements
     * :ref:`lib_nrf_cloud` library is no longer de-initialized and re-initialized on disconnect and reconnect.
+    * The :ref:lib_nrf_cloud library function :c:func:nrf_cloud_gnss_msg_json_encode is used to send PVT location data instead of building an NMEA sentence.
 
   * Added:
 

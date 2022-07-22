@@ -23,7 +23,7 @@ void location_assistance_data_handler(const char *buf, size_t len);
  *
  * @param[in] location_data The tracked location data.
  */
-typedef void (*location_update_cb_t)(const struct location_data location_data);
+typedef void (*location_update_cb_t)(const struct location_data * const location_data);
 
 /**
  * @brief Start tracking our location at the given interval in seconds.

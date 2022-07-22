@@ -107,54 +107,47 @@ cleanup:
 /**
  * @brief Transmit a collected GNSS sample to nRF Cloud.
  *
- * @param NMEA - The raw MNEA value to send to nRF Cloud.
+ * @param loc_gnss - GNSS location data.
  * @return int - 0 on success, negative error code otherwise.
  */
-static int send_gnss_nmea(const char *const nmea)
+static int send_gnss(const struct location_data * const loc_gnss)
 {
+	if (!loc_gnss || (loc_gnss->method != LOCATION_METHOD_GNSS)) {
+		return -EINVAL;
+	}
+
 	int ret = 0;
+	struct nrf_cloud_gnss_data gnss_pvt = {
+		.type = NRF_CLOUD_GNSS_TYPE_PVT,
+		.ts_ms = NRF_CLOUD_NO_TIMESTAMP,
+		.pvt = {
+			.lon		= loc_gnss->longitude,
+			.lat		= loc_gnss->latitude,
+			.accuracy	= loc_gnss->accuracy,
+			.has_alt	= 0,
+			.has_speed	= 0,
+			.has_heading	= 0
+		}
+	};
 
-	/* Create a timestamped message container object for the GNSS NMEA data. */
-	cJSON *msg_obj = create_timestamped_data_message_object(NRF_CLOUD_JSON_APPID_VAL_GPS);
+	cJSON *msg_obj = cJSON_CreateObject();
 
-	if (!msg_obj) {
-		ret = -EINVAL;
-		goto cleanup;
+	/* Add the timestamp */
+	(void)date_time_now(&gnss_pvt.ts_ms);
+
+	/* Encode the location data into a device message */
+	ret = nrf_cloud_gnss_msg_json_encode(&gnss_pvt, msg_obj);
+
+	if (ret == 0) {
+		/* Send the location message */
+		ret = send_device_message_cJSON(msg_obj);
 	}
 
-	/* Populate the container object with the NMEA data. */
-	if (cJSON_AddStringToObject(msg_obj, NRF_CLOUD_JSON_DATA_KEY, nmea) == NULL) {
-		ret = -ENOMEM;
-		LOG_ERR("Failed to append NMEA data to GNSS message object");
-		goto cleanup;
-	}
-
-	/* Send the sensor sample container object as a device message. */
-	ret = send_device_message_cJSON(msg_obj);
-
-cleanup:
 	if (msg_obj) {
 		cJSON_Delete(msg_obj);
 	}
+
 	return ret;
-}
-
-
-/**
- * @brief Compute checksum for NMEA string.
- *
- * @param datastring - The NMEA string to compute the checksum for.
- * @return uint8_t - The resultant checksum.
- */
-static uint8_t nmea_checksum(const char *const datastring)
-{
-	uint8_t checksum = 0;
-	int len = strlen(datastring);
-
-	for (int i = 0; i < len; i++) {
-		checksum ^= datastring[i];
-	}
-	return checksum;
 }
 
 /**
@@ -169,44 +162,19 @@ static uint8_t nmea_checksum(const char *const datastring)
  * @param location_data - The received location update.
  *
  */
-static void on_location_update(const struct location_data location_data)
+static void on_location_update(const struct location_data * const location_data)
 {
 	LOG_INF("Location Updated: %.06f N %.06f W, accuracy: %.01f m, Method: %s",
-		location_data.latitude, location_data.longitude, location_data.accuracy,
-		location_data.method == LOCATION_METHOD_CELLULAR	? "Cellular" :
-		location_data.method == LOCATION_METHOD_GNSS		? "GNSS"     :
-		location_data.method == LOCATION_METHOD_WIFI		? "WIFI"     :
+		location_data->latitude, location_data->longitude, location_data->accuracy,
+		location_data->method == LOCATION_METHOD_CELLULAR	? "Cellular" :
+		location_data->method == LOCATION_METHOD_GNSS		? "GNSS"     :
+		location_data->method == LOCATION_METHOD_WIFI		? "WIFI"     :
 									  "Invalid");
 
 	/* If the position update was derived using GNSS, send it onward to nRF Cloud. */
-	if (location_data.method == LOCATION_METHOD_GNSS) {
+	if (location_data->method == LOCATION_METHOD_GNSS) {
 		LOG_INF("GNSS Position Update! Sending to nRF Cloud...");
-
-		/* Synthesize an NMEA message from the provided lat/long/timestamp.
-		 * This is necessary, because the nRF Cloud MQTT API only supports NMEA messages.
-		 */
-
-		char nmea_buf[50];
-		int lat_deg = floor(fabs(location_data.latitude));
-		int lon_deg = floor(fabs(location_data.longitude));
-		double lat_min = (fabs(location_data.latitude) - lat_deg) * 60;
-		double lon_min = (fabs(location_data.longitude) - lon_deg) * 60;
-
-		/* Not actually a valid NMEA,
-		 * but close enough that nRF Cloud can't tell the difference.
-		 */
-		snprintf(nmea_buf, sizeof(nmea_buf), "$GPGGA,,%02d%08.5f,%c,%02d%08.5f,%c,,,,,,,,,",
-			lat_deg, lat_min, location_data.latitude > 0 ? 'N':'S',
-			lon_deg, lon_min, location_data.longitude > 0 ? 'E':'W');
-
-		int payload_length = strlen(nmea_buf);
-
-		snprintf(nmea_buf + payload_length, sizeof(nmea_buf) - payload_length, "*%02X\n",
-			 nmea_checksum(nmea_buf + 1));
-		LOG_DBG("NMEA: %s", log_strdup(nmea_buf));
-
-		/* Send the NMEA string. */
-		send_gnss_nmea(nmea_buf);
+		send_gnss(location_data);
 	}
 }
 

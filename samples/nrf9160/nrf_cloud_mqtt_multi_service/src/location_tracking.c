@@ -78,7 +78,7 @@ static void location_event_handler(const struct location_event_data *event_data)
 		LOG_DBG("Location Event: Got location");
 		if (location_update_handler) {
 			/* Pass received location data along to our handler. */
-			location_update_handler(event_data->location);
+			location_update_handler(&event_data->location);
 		}
 		break;
 
