@@ -108,7 +108,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 6ed78933b488c7685506591aeaf32b3744ce5481
+      revision: 6e4f78f25a860fb0bb135605e3f47ae880ed31aa
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -179,7 +179,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: e299df7fcd87fe7b41da48356d3a09a95a950353
+      revision: aacd9eb0ba0d45483613370d8b7924fe3fa71606
 
   # West-related configuration for the nrf repository.
   self:
