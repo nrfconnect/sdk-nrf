@@ -374,6 +374,34 @@ static bool fetch_and_process_acl_data(uint8_t *p_hci_buffer)
 	return true;
 }
 
+
+static bool fetch_and_process_hci_msg(uint8_t *p_hci_buffer)
+{
+	int errcode;
+	sdc_hci_msg_type_t msg_type;
+
+	errcode = MULTITHREADING_LOCK_ACQUIRE();
+	if (!errcode) {
+		errcode = hci_internal_msg_get(p_hci_buffer, &msg_type);
+		MULTITHREADING_LOCK_RELEASE();
+	}
+
+	if (errcode) {
+		return false;
+	}
+
+	if (msg_type == SDC_HCI_MSG_TYPE_EVT) {
+		event_packet_process(p_hci_buffer);
+	} else if (msg_type == SDC_HCI_MSG_TYPE_DATA) {
+		data_packet_process(p_hci_buffer);
+	} else {
+		__ASSERT(false, "sdc_hci_msg_type_t has changed. This if-else needs a new branch");
+		return false;
+	}
+
+	return true;
+}
+
 void hci_driver_receive_process(void)
 {
 #if defined(CONFIG_BT_BUF_EVT_DISCARDABLE_COUNT)
@@ -385,6 +413,7 @@ void hci_driver_receive_process(void)
 
 	bool received_evt = false;
 	bool received_data = false;
+	bool received_msg = false;
 
 	received_evt = fetch_and_process_hci_evt(&hci_buf[0]);
 
@@ -392,7 +421,9 @@ void hci_driver_receive_process(void)
 		received_data = fetch_and_process_acl_data(&hci_buf[0]);
 	}
 
-	if (received_evt || received_data) {
+	received_msg = fetch_and_process_hci_msg(&hci_buf[0]);
+
+	if (received_evt || received_data || received_msg) {
 		/* Let other threads of same priority run in between. */
 		receive_signal_raise();
 	}
