@@ -449,6 +449,9 @@ Other samples
 * :ref:`radio_test` sample:
    * Fixed the way of setting gain for the nRF21540 Front-end Module with nRF5340.
 
+* :ref:`caf_sensor_manager_sample` sample:
+  * Added configuration with :ref:`sensor_stub`.
+
 Devicetree configuration
 ========================
 
