@@ -150,7 +150,11 @@ nRF9160: Serial LTE modem
 nRF5340 Audio
 -------------
 
-* Documentation in the :ref:`nrf53_audio_app_building_script` section now mentions how to recover the device if programming using script fails.
+* Updated:
+
+  * Documentation in the :ref:`nrf53_audio_app_building_script` section.
+    The text now mentions how to recover the device if programming using script fails.
+  * Documentation of the operating temperature maximum range in the :ref:`nrf53_audio_app_dk_features` and :ref:`nrf53_audio_app_dk_legal` sections.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

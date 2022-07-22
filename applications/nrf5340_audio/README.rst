@@ -322,9 +322,13 @@ Key features of the nRF5340 Audio DK
 * SD card reader (no SD card supplied).
 * User-programmable buttons and LEDs.
 * Normal operating temperature range 10–40°C.
+
+  .. note::
+      The battery supplied with this kit can operate with a max temperature of Max +60°C.
+
 * When using a power adapter to USB, the power supply adapter must meet USB power supply requirements.
-* Embedded battery charge system
-* Rechargeable Li-Po battery with 1500 mAh capacity
+* Embedded battery charge system.
+* Rechargeable Li-Po battery with 1500 mAh capacity.
 
 .. _nrf53_audio_app_dk_drawings:
 
@@ -1258,7 +1262,7 @@ Important - Battery warnings and mandatory requirements for the nRF5340 Audio DK
      * Leaving a battery in an extremely high temperature surrounding environment can result in an explosion or the leakage of flammable liquid or gas.
      * A battery subjected to extremely low air pressure may result in an explosion or the leakage of flammable liquid or gas.
 
-   * The nRF5340 Audio development kit shall not be operated outside the internal battery's discharge temperature range between +10°C and +45°C or stored or transported outside the internal battery's storage temperature.
+   * The nRF5340 Audio development kit shall not be operated outside the internal battery's charge & discharge temperature range between +10°C and +60°C or stored or transported outside the internal battery's storage temperature.
    * Power supply adapter must meet PS1 requirements.
 
    .. figure:: /images/nRF5340_audio_dk_battery_warning.png
