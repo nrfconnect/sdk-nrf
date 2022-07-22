@@ -5,6 +5,7 @@
  */
 
 #if defined(CONFIG_MPSL_FEM_NRF21540_GPIO_SPI)
+#if !defined(CONFIG_MPSL_FEM_PIN_FORWARDER)
 
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/gpio.h>
@@ -14,7 +15,6 @@
 
 #include <mpsl_fem_utils.h>
 
-#if !defined(CONFIG_MPSL_FEM_PIN_FORWARDER)
 #include <mpsl_fem_config_nrf21540_gpio_spi.h>
 #include <nrfx_gpiote.h>
 #if IS_ENABLED(CONFIG_HAS_HW_NRF_PPI)
@@ -22,19 +22,11 @@
 #elif IS_ENABLED(CONFIG_HAS_HW_NRF_DPPIC)
 #include <nrfx_dppi.h>
 #endif
-#else /* !defined(CONFIG_MPSL_FEM_PIN_FORWARDER) */
-#include <soc_secure.h>
-#if IS_ENABLED(CONFIG_PINCTRL)
-#include <pinctrl_soc.h>
-#endif
-#endif /* !defined(CONFIG_MPSL_FEM_PIN_FORWARDER) */
 
 #define MPSL_FEM_SPI_IF    DT_PHANDLE(DT_NODELABEL(nrf_radio_fem), spi_if)
 #define MPSL_FEM_SPI_BUS   DT_BUS(MPSL_FEM_SPI_IF)
 #define MPSL_FEM_SPI_LABEL DT_LABEL(MPSL_FEM_SPI_BUS)
 #define MPSL_FEM_SPI_REG   ((NRF_SPIM_Type *) DT_REG_ADDR(MPSL_FEM_SPI_BUS))
-
-#if !defined(CONFIG_MPSL_FEM_PIN_FORWARDER)
 
 #define MPSL_FEM_GPIO_POLARITY_GET(dt_property) \
 	((GPIO_ACTIVE_LOW & \
@@ -391,89 +383,6 @@ static int mpsl_fem_init(const struct device *dev)
 }
 
 SYS_INIT(mpsl_fem_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
-
-#else /* !defined(CONFIG_MPSL_FEM_PIN_FORWARDER) */
-
-
-static void fem_host_init_spi(void)
-{
-#if DT_NODE_HAS_STATUS(MPSL_FEM_SPI_IF, okay)
-#ifdef CONFIG_PINCTRL
-#define FEM_SPI_PIN_INIT(node_id, prop, idx) \
-	NRF_GET_PIN(DT_PROP_BY_IDX(node_id, prop, idx)),
-
-	/* obtain SPI pins from default state (sck, miso, mosi) */
-	uint8_t fem_spi_pins[] = {
-		DT_FOREACH_CHILD_VARGS(
-			DT_PINCTRL_BY_NAME(DT_BUS(MPSL_FEM_SPI_IF), default, 0),
-			DT_FOREACH_PROP_ELEM, psels, FEM_SPI_PIN_INIT
-		)
-	};
-
-	/* configure spi pins (sck, miso, mosi) */
-	for (size_t i = 0U; i < ARRAY_SIZE(fem_spi_pins); i++) {
-		soc_secure_gpio_pin_mcu_select(fem_spi_pins[i],
-						   NRF_GPIO_PIN_MCUSEL_NETWORK);
-	}
-#else
-	uint8_t sck_pin = DT_PROP(MPSL_FEM_SPI_BUS, sck_pin);
-	uint8_t miso_pin = DT_PROP(MPSL_FEM_SPI_BUS, miso_pin);
-	uint8_t mosi_pin = DT_PROP(MPSL_FEM_SPI_BUS, mosi_pin);
-
-	soc_secure_gpio_pin_mcu_select(sck_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-	soc_secure_gpio_pin_mcu_select(miso_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-	soc_secure_gpio_pin_mcu_select(mosi_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-#endif /* CONFIG_PINCTRL */
-
-	/* configure cs pin */
-	uint8_t cs_pin = NRF_DT_GPIOS_TO_PSEL_BY_IDX(DT_BUS(MPSL_FEM_SPI_IF), cs_gpios,
-						     DT_REG_ADDR(MPSL_FEM_SPI_IF));
-
-	soc_secure_gpio_pin_mcu_select(cs_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-#endif /* DT_NODE_HAS_STATUS(MPSL_FEM_SPI_IF, okay) */
-}
-
-static int mpsl_fem_host_init(const struct device *dev)
-{
-	ARG_UNUSED(dev);
-
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), tx_en_gpios)
-	uint8_t tx_en_pin = NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(nrf_radio_fem), tx_en_gpios);
-
-	soc_secure_gpio_pin_mcu_select(tx_en_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-#endif
-
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), rx_en_gpios)
-	uint8_t rx_en_pin = NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(nrf_radio_fem), rx_en_gpios);
-
-	soc_secure_gpio_pin_mcu_select(rx_en_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-#endif
-
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), pdn_gpios)
-	uint8_t pdn_pin = NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(nrf_radio_fem), pdn_gpios);
-
-	soc_secure_gpio_pin_mcu_select(pdn_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-#endif
-
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), mode_gpios)
-	uint8_t mode_pin = NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(nrf_radio_fem), mode_gpios);
-
-	soc_secure_gpio_pin_mcu_select(mode_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-#endif
-
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios)
-	uint8_t ant_sel_pin = NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios);
-
-	soc_secure_gpio_pin_mcu_select(ant_sel_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-#endif
-
-	fem_host_init_spi();
-
-	return 0;
-
-}
-
-SYS_INIT(mpsl_fem_host_init, PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 
 #endif /* !defined(CONFIG_MPSL_FEM_PIN_FORWARDER) */
 
