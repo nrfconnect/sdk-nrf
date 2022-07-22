@@ -14,24 +14,40 @@ config SAMPLE_SENSOR_MANAGER_REMOTE_CORE_INITIALIZATION_TIMEOUT
 
 menuconfig WORKLOAD_SIM
 	bool "Simulated workload"
+
 if WORKLOAD_SIM
 
-	config WORKLOAD_TIME_PER_SAMPLE
-		int "CPU load time per sample [us]"
-		default 10
-		help
-		  Simulated CPU busy time when processing sensor aggregator event.
-		  Sensor aggregator event comes with number of aggregated events.
-		  Simulated busy time is multiplied by this value.
+config WORKLOAD_TIME_PER_SAMPLE
+	int "CPU load time per sample [us]"
+	default 10
+	help
+	  Simulated CPU busy time when processing sensor aggregator event.
+	  Sensor aggregator event comes with number of aggregated events.
+	  Simulated busy time is multiplied by this value.
+
 endif # WORKLOAD_SIM
 
 menuconfig SENSOR_MANAGER_SENSOR_SIM_CTRL
 	bool "Simulated sensor controller"
 	default y if SENSOR_SIM
+
 if SENSOR_MANAGER_SENSOR_SIM_CTRL
 
-	module = SENSOR_MANAGER_SENSOR_SIM_CTRL
-	module-str = sensor sim controller
-	source "subsys/logging/Kconfig.template.log_config"
+module = SENSOR_MANAGER_SENSOR_SIM_CTRL
+module-str = sensor sim controller
+source "subsys/logging/Kconfig.template.log_config"
 
 endif # SENSOR_MANAGER_SENSOR_SIM_CTRL
+
+
+menuconfig SENSOR_STUB_GEN
+	bool "Implement the generator functions for sensor stub"
+	default y if SENSOR_STUB
+
+if SENSOR_STUB_GEN
+
+module = SENSOR_STUB_GEN
+module-str = sensor stub controller
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # SENSOR_STUB_GEN

@@ -18,6 +18,23 @@ tests:
         - "main state:READY"
         - "Send sensor buffer desc address:"
         - "sensor_data_aggregator_release_buffer_event"
+  sample.caf_sensor_manager.sensor_stub.correctness_test:
+    build_only: false
+    harness: console
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp qemu_cortex_m3
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+      - qemu_cortex_m3
+    extra_args: remote_OVERLAY_CONFIG=sensor_stub_overlay.conf
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "sensor_stub_gen: READY"
+        - "main state:READY"
+        - "Send sensor buffer desc address:"
+        - "sensor_data_aggregator_release_buffer_event"
   sample.caf_sensor_manager.nrf52840dk.power_consumption_test:
     build_only: true
     platform_allow: nrf52840dk_nrf52840
@@ -35,4 +52,11 @@ tests:
     platform_allow: nrf5340dk_nrf5340_cpuapp
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp
-    extra_args: OVERLAY_CONFIG=boards/nrf5340dk_nrf5340_cpuapp_nrf5340_singlecore.conf CONFIG_SERIAL=n CONFIG_CONSOLE=n CONFIG_UART_CONSOLE=n CONFIG_LOG=n
+    extra_args: OVERLAY_CONFIG=boards/nrf5340dk_nrf5340_cpuapp_singlecore.conf CONFIG_SERIAL=n CONFIG_CONSOLE=n CONFIG_UART_CONSOLE=n CONFIG_LOG=n
+
+  sample.caf_sensor_manager.nrf5340dk_singlecore.sensor_stub.power_consumption_test:
+    build_only: true
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    extra_args: OVERLAY_CONFIG="boards/nrf5340dk_nrf5340_cpuapp_singlecore.conf;sensor_stub_overlay.conf" CONFIG_SERIAL=n CONFIG_CONSOLE=n CONFIG_UART_CONSOLE=n CONFIG_LOG=n
