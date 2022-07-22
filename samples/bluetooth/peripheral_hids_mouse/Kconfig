@@ -18,5 +18,6 @@ config BT_HIDS_SECURITY_ENABLED
 config BT_DIRECTED_ADVERTISING
 	bool "Enable directed advertising"
 	default y
+	select BT_PRIVACY
 
 endmenu
