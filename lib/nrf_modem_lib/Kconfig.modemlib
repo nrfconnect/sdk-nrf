@@ -161,41 +161,33 @@ config NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC
 
 endchoice # NRF_MODEM_LIB_ON_FAULT
 
-menu "Diagnostics"
-
-config NRF_MODEM_LIB_DEBUG_ALLOC
-	depends on LOG
-	bool "Debug allocations on the library heap"
+menuconfig NRF_MODEM_LIB_MEM_DIAG
+	bool "Memory diagnostic"
+	select SYS_HEAP_LISTENER
+	select SYS_HEAP_RUNTIME_STATS
 	help
-	   Log all nrf_modem_os_alloc() and nrf_modem_os_free() calls.
+	  Keep track of the library and shared memory heap usage.
 
-config NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC
-	depends on LOG
-	bool "Debug allocations on the TX region"
+if (NRF_MODEM_LIB_MEM_DIAG && LOG)
+
+config NRF_MODEM_LIB_MEM_DIAG_ALLOC
+	bool "Log all memory allocations"
 	help
-	  Log all nrf_modem_os_shm_tx_alloc() and nrf_modem_os_shm_tx_free() calls.
+	   Log all nrf_modem_os_alloc(), nrf_modem_os_free()
+	   nrf_modem_os_shm_tx_alloc() and nrf_modem_os_shm_tx_free() calls.
 
-config NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
-	bool "Periodically print library heap info"
+config NRF_MODEM_LIB_MEM_DIAG_DUMP
+	bool "Periodically log shared memory and heap statistics"
 	help
-	  Schedule a periodic system workqueue task to print the library heap info.
+	  Schedule a periodic system workqueue task to print
+	  the library and shared memory heap runtime statistics.
 
-config NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS
-	depends on NRF_MODEM_LIB_HEAP_DUMP_PERIODIC
+config NRF_MODEM_LIB_MEM_DIAG_DUMP_PERIOD_MS
+	depends on NRF_MODEM_LIB_MEM_DIAG_DUMP
 	int "Period (millisec)"
 	default 20000
 
-config NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC
-	bool "Periodically print the TX region heap info"
-	help
-	  Schedule a periodic system workqueue task to print the library TX region heap info.
-
-config NRF_MODEM_LIB_SHMEM_TX_DUMP_PERIOD_MS
-	depends on NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC
-	int "Period (millisec)"
-	default 20000
-
-endmenu
+endif
 
 module = NRF_MODEM_LIB
 module-str = Modem library

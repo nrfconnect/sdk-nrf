@@ -10,6 +10,10 @@
 #include <zephyr/kernel.h>
 #include <nrf_modem.h>
 
+#if CONFIG_NRF_MODEM_LIB_MEM_DIAG
+#include <zephyr/sys/sys_heap.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -137,22 +141,34 @@ int nrf_modem_lib_get_init_ret(void);
 int nrf_modem_lib_shutdown(void);
 
 /**
- * @brief Print diagnostic information for the TX heap.
- */
-void nrf_modem_lib_shm_tx_diagnose(void);
-
-/**
- * @brief Print diagnostic information for the library heap.
- */
-void nrf_modem_lib_heap_diagnose(void);
-
-/**
  * @brief Modem fault handler.
  *
  * @param[in] fault_info Modem fault information.
  *			 Contains the fault reason and, in some cases, the modem program counter.
  */
 void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info);
+
+#if defined(CONFIG_NRF_MODEM_LIB_MEM_DIAG) || defined(__DOXYGEN__)
+
+struct nrf_modem_lib_diag_stats {
+	struct {
+		struct sys_memory_stats heap;
+		uint32_t failed_allocs;
+	} library;
+	struct {
+		struct sys_memory_stats heap;
+		uint32_t failed_allocs;
+	} shmem;
+};
+
+/**
+ * @brief Retrieve heap runtime statistics.
+ *
+ * Retrieve runtime statistics for the shared memory and library heaps.
+ */
+int nrf_modem_lib_diag_stats_get(struct nrf_modem_lib_diag_stats *stats);
+
+#endif /* defined(CONFIG_NRF_MODEM_LIB_MEM_DIAG) || defined(__DOXYGEN__) */
 
 /** @} */
 

@@ -303,12 +303,11 @@ When the Modem library is initialized by the integration layer in |NCS|, the int
 Diagnostic functionality
 ************************
 
-The Modem library integration layer in |NCS| provides some diagnostic functionalities to log the allocations on the Modem library heap and the TX memory region.
-These functionalities can be turned on by the :kconfig:option:`CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC` options.
+The Modem library integration layer in |NCS| provides some memory diagnostic functionality that is enabled by the :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG` option.
 
-The contents of both the Modem library heap and the TX memory region can be examined through the :c:func:`nrf_modem_lib_heap_diagnose` and :c:func:`nrf_modem_lib_shm_tx_diagnose` functions, respectively.
-Additionally, it is possible to schedule a periodic report of the contents of these two areas of memory by using the :kconfig:option:`CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC` options, respectively.
-The report will be printed by a dedicated work queue that is distinct from the system work queue at configurable time intervals.
+The application can retrieve runtime statistics for the library and TX memory region heaps by enabling the :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG` option and calling the :c:func:`nrf_modem_lib_diag_stats_get` function.
+The application can schedule a periodic report of the runtime statistics of the library and TX memory region heaps, by enabling the :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG_DUMP` option.
+The application can log the allocations on the Modem library heap and the TX memory region by enabling the :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG_ALLOC` option.
 
 API documentation
 *****************

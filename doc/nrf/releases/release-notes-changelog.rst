@@ -600,6 +600,10 @@ Modem libraries
         The modem trace output is now handled by a dedicated thread that starts automatically.
         The trace thread is synchronized with the initialization and shutdown operations of the Modem library.
       * The Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` is replaced by the Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE`. The Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` is now deprecated and will be removed in the future.
+      * Added the :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG` option to enable the :c:func:`nrf_modem_lib_diag_stats_get` function that retrieves memory runtime statistics, replacing the ``nrf_modem_lib_heap_diagnose`` and ``nrf_modem_lib_shm_tx_diagnose`` functions.
+      * Consolidated ``CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC`` and ``CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC`` into the new :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG_ALLOC` option.
+      * Consolidated ``CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC`` and ``CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC`` into the new :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG_DUMP` option.
+      * Consolidated ``CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS`` and ``CONFIG_NRF_MODEM_LIB_SHMEM_TX_DUMP_PERIOD_MS`` into the new :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG_DUMP_PERIOD_MS` option.
 
     * Removed:
 
@@ -610,11 +614,19 @@ Modem libraries
         * ``CONFIG_NRF_MODEM_LIB_TRACE_HEAP_SIZE_OVERRIDE``
         * ``CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIODIC``
         * ``CONFIG_NRF_MODEM_LIB_TRACE_HEAP_DUMP_PERIOD_MS``
+        * ``CONFIG_NRF_MODEM_LIB_DEBUG_ALLOC``
+        * ``CONFIG_NRF_MODEM_LIB_DEBUG_SHM_TX_ALLOC``
+        * ``CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIODIC``
+        * ``CONFIG_NRF_MODEM_LIB_HEAP_DUMP_PERIOD_MS``
+        * ``CONFIG_NRF_MODEM_LIB_SHM_TX_DUMP_PERIODIC``
+        * ``CONFIG_NRF_MODEM_LIB_SHMEM_TX_DUMP_PERIOD_MS``
 
       * The following functions:
 
         * ``nrf_modem_lib_trace_start``
         * ``nrf_modem_lib_trace_stop``
+        * ``nrf_modem_lib_heap_diagnose``
+        * ``nrf_modem_lib_shm_tx_diagnose``
 
   * :ref:`lib_location` library:
 
