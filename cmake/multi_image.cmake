@@ -309,7 +309,7 @@ function(add_child_image_from_source)
       # Check for overlay named <ACI_NAME>.overlay.
       set(child_image_dts_overlay ${ACI_CONF_DIR}/${ACI_NAME}.overlay)
       if (EXISTS ${child_image_dts_overlay})
-        add_overlay_dts(${ACI_NAME} ${child_image_dts_overlay})
+        set(${ACI_NAME}_DTC_OVERLAY_FILE ${child_image_dts_overlay})
       endif()
       if(DEFINED ${ACI_NAME}_CONF_FILE)
         set(${ACI_NAME}_CONF_FILE ${${ACI_NAME}_CONF_FILE} CACHE STRING
