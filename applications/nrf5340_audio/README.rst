@@ -567,6 +567,33 @@ The following table is a complete overview of the test points on the nRF5340 Aud
 |TP69         | LINE_IN.RIGHT              | Line-in jack ring                                | 1.5mm | Top    |
 +-------------+----------------------------+--------------------------------------------------+-------+--------+
 
+
+.. _nrf53_audio_hw_limitations:
+
+nRF5340 Audio hardware limitations
+----------------------------------
+
+The following table lists hardware limitations discovered in different revisions of the nRF5340 Audio DK.
+
+.. list-table::
+    :widths: auto
+    :header-rows: 1
+
+    * - PCA10121 revision
+      - Limitation
+      - Description
+      - Workaround
+      - Fixed in revision
+    * - Rev 1.0.0
+      - CS47L63 AD-DA converter (**U2**) may fail to start
+      - In some occasions, the 1.2 V power supply for **U2** is not provided at boot-up.
+        This is caused by higher than expected inrush current.
+        This function is tested in production.
+        The issue should not happen, although we observe that some kits have the problem.
+      - Restart kit or attach the battery to the kit before connecting the USB cable.
+        If problem persists, contact Nordic Semiconductor and ask for replacement.
+      - Rev 1.0.1
+
 .. _nrf53_audio_app_configuration_files:
 
 nRF5340 Audio configuration files
@@ -850,6 +877,8 @@ Before building the application, make sure to meet the following prerequisites d
 
 * :ref:`nrf53_audio_app_configuration_repos`
 * :ref:`nrf53_audio_app_configuration_select_codec`
+
+You might also want to check the :ref:`nRF5340 Audio application known issues <known_issues_nrf5340audio>`.
 
 Testing out of the box
 ======================
