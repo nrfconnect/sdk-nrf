@@ -18,6 +18,7 @@
 
 / {
 	chosen {
+		zephyr,ppp-uart = &uart0;
 		zephyr,console = &uart1;
 		zephyr,shell-uart = &uart1;
 	};
