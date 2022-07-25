@@ -8,8 +8,9 @@
 #define _PORT_STATE_H_
 
 #include <stddef.h>
+#include <stdint.h>
 
-#include <zephyr/types.h>
+#include <zephyr/device.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +22,7 @@ struct pin_state {
 };
 
 struct port_state {
-	const char             *name;
+	const struct device    *port;
 	const struct pin_state *ps;
 	size_t                  ps_count;
 };
