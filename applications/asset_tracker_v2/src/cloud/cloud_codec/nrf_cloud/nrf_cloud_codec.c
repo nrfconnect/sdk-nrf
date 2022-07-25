@@ -148,75 +148,44 @@ exit:
 static int add_pvt_data(cJSON *parent, struct cloud_data_gnss *gnss)
 {
 	int err;
-
+	struct nrf_cloud_gnss_data gnss_pvt = {
+		.type = NRF_CLOUD_GNSS_TYPE_PVT,
+		.ts_ms = NRF_CLOUD_NO_TIMESTAMP,
+		.pvt = {
+			.lon =		gnss->pvt.longi,
+			.lat =		gnss->pvt.lat,
+			.accuracy =	gnss->pvt.alt,
+			.alt =		gnss->pvt.acc,
+			.has_alt =	1,
+			.speed =	gnss->pvt.spd,
+			.has_speed =	1,
+			.heading =	gnss->pvt.hdg,
+			.has_heading =	1
+		}
+	};
 	cJSON *data_obj = cJSON_CreateObject();
 
 	if (data_obj == NULL) {
 		return -ENOMEM;
 	}
 
-	err = add_meta_data(data_obj, APP_ID_GNSS, &gnss->gnss_ts, true);
+	err = date_time_uptime_to_unix_time_ms(&gnss->gnss_ts);
 	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		goto exit;
+		LOG_WRN("date_time_uptime_to_unix_time_ms, error: %d", err);
+	} else {
+		gnss_pvt.ts_ms = gnss->gnss_ts;
 	}
 
-	cJSON *gnss_val_obj = cJSON_CreateObject();
-
-	if (gnss_val_obj == NULL) {
-		err = -ENOMEM;
-		goto exit;
-	}
-
-	err = json_add_number(gnss_val_obj, DATA_GNSS_LONGITUDE, gnss->pvt.longi);
+	/* Encode the location data into a device message */
+	err = nrf_cloud_gnss_msg_json_encode(&gnss_pvt, data_obj);
 	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		cJSON_Delete(gnss_val_obj);
-		goto exit;
+		LOG_ERR("nrf_cloud_gnss_msg_json_encode, error: %d", err);
+		cJSON_Delete(data_obj);
+		return err;
 	}
 
-	err = json_add_number(gnss_val_obj, DATA_GNSS_LATITUDE, gnss->pvt.lat);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		cJSON_Delete(gnss_val_obj);
-		goto exit;
-	}
-
-	err = json_add_number(gnss_val_obj, DATA_GNSS_ACCURACY, gnss->pvt.acc);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		cJSON_Delete(gnss_val_obj);
-		goto exit;
-	}
-
-	err = json_add_number(gnss_val_obj, DATA_GNSS_ALTITUDE, gnss->pvt.alt);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		cJSON_Delete(gnss_val_obj);
-		goto exit;
-	}
-
-	err = json_add_number(gnss_val_obj, DATA_GNSS_SPEED, gnss->pvt.spd);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		cJSON_Delete(gnss_val_obj);
-		goto exit;
-	}
-
-	err = json_add_number(gnss_val_obj, DATA_GNSS_HEADING, gnss->pvt.hdg);
-	if (err) {
-		LOG_ERR("Encoding error: %d returned at %s:%d", err, __FILE__, __LINE__);
-		cJSON_Delete(gnss_val_obj);
-		goto exit;
-	}
-
-	json_add_obj(data_obj, DATA_TYPE, gnss_val_obj);
 	json_add_obj_array(parent, data_obj);
 	return 0;
-
-exit:
-	cJSON_Delete(data_obj);
-	return err;
 }
 
 static int modem_static_data_add(struct cloud_data_modem_static *data, cJSON **val_obj_ref)
