@@ -122,10 +122,7 @@ static void location_config_method_defaults_set(
 	struct location_method_config *method,
 	enum location_method method_type)
 {
-	if (method == NULL) {
-		LOG_ERR("Method must not be NULL");
-		return;
-	}
+	__ASSERT_NO_MSG(method != NULL);
 
 	method->method = method_type;
 	if (method_type == LOCATION_METHOD_GNSS) {
@@ -136,9 +133,11 @@ static void location_config_method_defaults_set(
 	} else if (method_type == LOCATION_METHOD_CELLULAR) {
 		method->cellular.timeout = 30 * MSEC_PER_SEC;
 		method->cellular.service = LOCATION_SERVICE_ANY;
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
 	} else if (method_type == LOCATION_METHOD_WIFI) {
 		method->wifi.timeout = 30 * MSEC_PER_SEC;
 		method->wifi.service = LOCATION_SERVICE_ANY;
+#endif
 	}
 }
 
@@ -149,6 +148,12 @@ void location_config_defaults_set(
 {
 	if (config == NULL) {
 		LOG_ERR("Configuration must not be NULL");
+		return;
+	}
+
+	if (methods_count > CONFIG_LOCATION_METHODS_LIST_SIZE) {
+		LOG_ERR("Maximum number of methods (%d) exceeded: %d",
+			CONFIG_LOCATION_METHODS_LIST_SIZE, methods_count);
 		return;
 	}
 
