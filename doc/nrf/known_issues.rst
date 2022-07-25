@@ -1084,6 +1084,17 @@ NCSDK-14117: Build fails for nRF52840DK in the ``prj_b0_wwcb`` configuration
 
   **Workaround:** Manually cherry-pick and apply commit with fix from ``main`` (commit hash: ``cf4c465aceeb00d83a4f50edf67ce8c26427ac52``).
 
+.. _known_issues_nrf5340audio:
+
+nRF5340 Audio
+=============
+
+.. rst-class:: v2-0-1 v2-0-0
+
+OCT-2154: USB audio interface does not work correctly on macOS
+  The audio stream is intermittent on the headset side after connecting the gateway to a Mac computer and starting audio stream.
+  This issue occurs sporadically after building the nRF5340 Audio application with the default USB port as the audio source.
+
 nRF Machine Learning
 ====================
 
