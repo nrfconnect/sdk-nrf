@@ -6,7 +6,6 @@
 &uart0 {
 	compatible = "nordic,nrf-uarte";
 	status = "okay";
-	/delete-property/ cts-pull-up;
 	hw-flow-control;
 };
 
