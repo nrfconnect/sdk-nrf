@@ -63,7 +63,7 @@ static const struct sensor_trigger qdec_trig = {
 };
 
 static const struct device *qdec_dev = DEVICE_DT_GET(DT_NODELABEL(qdec));
-static const struct device *gpio_dev;
+static const struct device *const gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 static struct gpio_callback gpio_cbs[2];
 static struct k_spinlock lock;
 static struct k_work_delayable idle_timeout;
@@ -311,10 +311,9 @@ static int init(void)
 		return -ENODEV;
 	}
 
-	gpio_dev = device_get_binding(DT_LABEL(DT_NODELABEL(gpio0)));
-	if (!gpio_dev) {
-		LOG_ERR("Cannot get GPIO device");
-		return -ENXIO;
+	if (!device_is_ready(gpio_dev)) {
+		LOG_ERR("GPIO device not ready");
+		return -ENODEV;
 	}
 
 	BUILD_ASSERT(ARRAY_SIZE(qdec_pin) == ARRAY_SIZE(gpio_cbs),
