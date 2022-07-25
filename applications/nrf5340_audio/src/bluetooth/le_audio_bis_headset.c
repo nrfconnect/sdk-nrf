@@ -14,25 +14,26 @@
 #include "macros_common.h"
 #include "ctrl_events.h"
 #include "hw_codec.h"
+#include "channel_assignment.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(bis_headset, CONFIG_LOG_BLE_LEVEL);
 
-BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT <= 1,
-	     "Only one stream is currently supported");
+BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT <= 2,
+	     "A maximum of two broadcast streams are currently supported");
 
 static struct bt_audio_broadcast_sink *broadcast_sink;
 
-static struct bt_audio_stream streams[CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT];
+static struct bt_audio_stream streams[CONFIG_LC3_DEC_CHAN_MAX];
 static struct bt_audio_stream *streams_p[ARRAY_SIZE(streams)];
 
 static struct bt_audio_lc3_preset lc3_preset = BT_AUDIO_LC3_BROADCAST_PRESET_48_4_1;
 
 /* Create a mask for the maximum BIS we can sync to using the number of streams
- * we have. We add an additional 1 since the bis indexes start from 1 and not
+ * broadcasted. We add an additional 1 since the bis indexes start from 1 and not
  * 0.
  */
-static const uint32_t bis_index_mask = BIT_MASK(ARRAY_SIZE(streams) + 1U);
+static const uint32_t bis_index_mask = BIT_MASK(CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT + 1U);
 static uint32_t bis_index_bitfield;
 
 static le_audio_receive_cb receive_cb;
@@ -184,22 +185,50 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 {
 	int ret;
 	uint32_t base_bis_index_bitfield = 0U;
+	enum audio_channel channel;
 
 	if (init_routine_completed) {
 		return;
 	}
 
-	LOG_INF("Received BASE with %u subgroups from broadcast sink", base->subgroup_count);
+	/* Test to ensure there are enough streams for each subgroup */
+	if (base->subgroup_count > CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT) {
+		LOG_INF("Too many channels in subgroup");
+		return;
+	}
 
-	for (size_t i = 0U; i < CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT; i++) {
+	ret = channel_assignment_get(&channel);
+	if (ret) {
+		/* Channel is not assigned yet: use default */
+		channel = AUDIO_CHANNEL_DEFAULT;
+	}
+	channel = BIT(channel);
+
+	LOG_INF("Received BASE with %u subgroup(s) from broadcast sink", base->subgroup_count);
+
+	/* Search each subgroup for the BIS of interest */
+	for (size_t i = 0U; i < base->subgroup_count; i++) {
 		for (size_t j = 0U; j < base->subgroups[i].bis_count; j++) {
 			const uint8_t index = base->subgroups[i].bis_data[j].index;
 
-			streams[i].codec = (struct bt_codec *)&base->subgroups[i].codec;
-			print_codec(streams[i].codec);
+			LOG_DBG("BIS %u   index = %u", j, index);
 
-			if (bitrate_check(streams[i].codec)) {
-				base_bis_index_bitfield |= BIT(index);
+			/* If this is a BIS of interest then attach to and start a stream */
+			if (index == channel) {
+				if (bitrate_check(streams[i].codec)) {
+					base_bis_index_bitfield |= BIT(index);
+
+					streams[i].codec =
+						(struct bt_codec *)&base->subgroups[i].codec;
+					print_codec(streams[i].codec);
+
+					ret = ctrl_events_le_audio_event_send(
+						LE_AUDIO_EVT_CONFIG_RECEIVED);
+					ERR_CHK(ret);
+
+					LOG_INF("Stream %u in subgroup %u from broadcast sink", i,
+						j);
+				}
 			}
 		}
 	}

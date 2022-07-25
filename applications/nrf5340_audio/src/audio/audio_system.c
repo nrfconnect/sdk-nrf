@@ -61,11 +61,7 @@ static void audio_gateway_configure(void)
 		sw_codec_cfg.encoder.bitrate = CONFIG_LC3_BITRATE;
 	}
 
-#if (CONFIG_TRANSPORT_CIS)
 	sw_codec_cfg.encoder.channel_mode = SW_CODEC_STEREO;
-#else
-	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
-#endif /* (CONFIG_TRANSPORT_CIS) */
 	sw_codec_cfg.encoder.enabled = true;
 }
 

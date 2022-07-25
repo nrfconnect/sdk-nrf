@@ -18,8 +18,8 @@
 #include <logging/log.h>
 LOG_MODULE_REGISTER(bis_gateway, CONFIG_LOG_BLE_LEVEL);
 
-BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT <= 1,
-	     "Only one stream is currently supported");
+BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT <= 2,
+	     "A maximum of two streams are currently supported");
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
 
@@ -72,20 +72,37 @@ static bool is_iso_buffer_full(uint8_t idx)
 	return false;
 }
 
+static int get_stream_index(struct bt_audio_stream *stream, uint8_t *index)
+{
+	for (size_t i = 0U; i < ARRAY_SIZE(streams); i++) {
+		if (&streams[i] == stream) {
+			*index = i;
+			return 0;
+		}
+	}
+
+	LOG_WRN("Stream not found");
+
+	return -EINVAL;
+}
+
 static void stream_sent_cb(struct bt_audio_stream *stream)
 {
-	static uint32_t sent_cnt;
+	static uint32_t sent_cnt[ARRAY_SIZE(streams)];
+	uint8_t index;
 
-	if (atomic_get(&iso_tx_pool_alloc[0])) {
-		atomic_dec(&iso_tx_pool_alloc[0]);
+	get_stream_index(stream, &index);
+
+	if (atomic_get(&iso_tx_pool_alloc[index])) {
+		atomic_dec(&iso_tx_pool_alloc[index]);
 	} else {
 		LOG_WRN("Decreasing atomic variable failed");
 	}
 
-	sent_cnt++;
+	sent_cnt[index]++;
 
-	if ((sent_cnt % 1000U) == 0U) {
-		LOG_INF("Sent %u total ISO packets", sent_cnt);
+	if ((sent_cnt[index] % 1000U) == 0U) {
+		LOG_INF("Sent %u total ISO packets on stream %u", sent_cnt[index], index);
 	}
 }
 
@@ -195,31 +212,45 @@ int le_audio_send(uint8_t const *const data, size_t size)
 	int ret;
 	static bool wrn_printed[CONFIG_BT_ISO_MAX_CHAN];
 	struct net_buf *buf;
+	size_t num_streams = ARRAY_SIZE(streams);
+	size_t data_size = size / num_streams;
 
 	if (streams[0].ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
 		return -ECANCELED;
 	}
 
-	if (is_iso_buffer_full(0)) {
-		if (!wrn_printed[0]) {
-			LOG_WRN("HCI ISO TX overrun on ch %d - Single print", 0);
-			wrn_printed[0] = true;
+	for (size_t i = 0U; i < num_streams; i++) {
+		if (is_iso_buffer_full(i)) {
+			if (!wrn_printed[i]) {
+				LOG_WRN("HCI ISO TX overrun on ch %d - Single print", i);
+				wrn_printed[i] = true;
+			}
+
+			return -ENOMEM;
 		}
 
-		return -ENOMEM;
+		wrn_printed[i] = false;
+
+		buf = net_buf_alloc(iso_tx_pools[i], K_NO_WAIT);
+		if (buf == NULL) {
+			/* This should never occur because of the is_iso_buffer_full() check */
+			LOG_WRN("Out of TX buffers");
+			return -ENOMEM;
+		}
+
+		net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
+		net_buf_add_mem(buf, &data[i * data_size], data_size);
+
+		atomic_inc(&iso_tx_pool_alloc[i]);
+
+		ret = bt_audio_stream_send(&streams[i], buf);
+		if (ret < 0) {
+			LOG_WRN("Failed to send audio data: %d", ret);
+			net_buf_unref(buf);
+			atomic_dec(&iso_tx_pool_alloc[i]);
+			return ret;
+		}
 	}
-
-	wrn_printed[0] = false;
-
-	buf = net_buf_alloc(iso_tx_pools[0], K_NO_WAIT);
-	if (buf == NULL) {
-		/* This should never occur because of the is_iso_buffer_full() check */
-		LOG_WRN("Out of TX buffers");
-		return -ENOMEM;
-	}
-
-	net_buf_reserve(buf, BT_ISO_CHAN_SEND_RESERVE);
-	net_buf_add_mem(buf, data, size);
 
 #if (CONFIG_AUDIO_SOURCE_I2S)
 	struct bt_iso_tx_info tx_info = { 0 };
@@ -232,16 +263,6 @@ int le_audio_send(uint8_t const *const data, size_t size)
 		audio_datapath_sdu_ref_update(tx_info.ts);
 	}
 #endif
-
-	atomic_inc(&iso_tx_pool_alloc[0]);
-
-	ret = bt_audio_stream_send(&streams[0], buf);
-	if (ret < 0) {
-		LOG_WRN("Failed to send audio data: %d", ret);
-		net_buf_unref(buf);
-		atomic_dec(&iso_tx_pool_alloc[0]);
-		return ret;
-	}
 
 	return 0;
 }
