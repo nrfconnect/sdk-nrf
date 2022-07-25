@@ -11,10 +11,6 @@
 #include <zephyr/drivers/entropy.h>
 #include "gzp_internal.h"
 
-
-#define CRYPTO_DEV_NAME DT_LABEL(DT_INST(0, nordic_nrf_ecb))
-
-
 /*
  * Constant holding base address part of the pairing address.
  */
