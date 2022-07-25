@@ -25,6 +25,14 @@
 
 LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 
+#if defined(CONFIG_SLM_CONNECT_UART_0)
+#define UART_NODE DT_NODELABEL(uart0)
+#elif defined(CONFIG_SLM_CONNECT_UART_2)
+#define UART_NODE DT_NODELABEL(uart2)
+#else
+#error "Unknown Inter-Connect UART"
+#endif
+
 #define OK_STR		"\r\nOK\r\n"
 #define ERROR_STR	"\r\nERROR\r\n"
 #define FATAL_STR	"FATAL ERROR\r\n"
@@ -49,7 +57,7 @@ static enum slm_operation_modes {
 	SLM_DFU_MODE          /* nRF52 DFU controller */
 } slm_operation_mode;
 
-static const struct device *uart_dev;
+static const struct device *const uart_dev = DEVICE_DT_GET(UART_NODE);
 static uint8_t at_buf[AT_MAX_CMD_LEN];
 static uint16_t at_buf_len;
 static bool at_buf_overflow;
@@ -954,18 +962,9 @@ int slm_at_host_init(void)
 	int err;
 	uint32_t start_time;
 
-	/* Initialize the UART module */
-#if defined(CONFIG_SLM_CONNECT_UART_0)
-	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
-#elif defined(CONFIG_SLM_CONNECT_UART_2)
-	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart2)));
-#else
-	LOG_ERR("Unsupported UART instance");
-	return -EINVAL;
-#endif
-	if (uart_dev == NULL) {
-		LOG_ERR("Cannot bind UART device\n");
-		return -EINVAL;
+	if (!device_is_ready(uart_dev)) {
+		LOG_ERR("UART device not ready");
+		return -ENODEV;
 	}
 	/* Save UART configuration to setting page */
 	if (!uart_configured) {
