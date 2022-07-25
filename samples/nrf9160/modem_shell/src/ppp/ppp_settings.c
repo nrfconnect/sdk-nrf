@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <errno.h>
 
 #include <zephyr/drivers/uart.h>
 #include <zephyr/settings/settings.h>
@@ -23,7 +24,7 @@
 #define PPP_SETT_UART_DATA_BITS "uart_data_bits"
 #define PPP_SETT_UART_FLOW_CTRL "uart_flow_ctrl"
 
-static const struct device *ppp_uart_dev;
+static const struct device *ppp_uart_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_ppp_uart));
 static bool ppp_uart_conf_valid;
 static struct uart_config ppp_uart_conf;
 
@@ -33,32 +34,26 @@ static int ppp_settings_uart_dev_conf_get(struct uart_config *uart_conf)
 {
 	int ret;
 
-	if (ppp_uart_dev) {
-		ret = uart_config_get(ppp_uart_dev, uart_conf);
-		if (ret != 0) {
-			mosh_warn("Cannot get PPP uart config, ret %d", ret);
-		}
-	} else {
-		mosh_warn("No PPP uart device with name %s", CONFIG_NET_PPP_UART_NAME);
-		ret = -1;
+	ret = uart_config_get(ppp_uart_dev, uart_conf);
+	if (ret != 0) {
+		mosh_warn("Cannot get PPP uart config, ret %d", ret);
+		return ret;
 	}
-	return ret;
+
+	return 0;
 }
 
 static int ppp_settings_uart_dev_conf_set(struct uart_config *uart_conf)
 {
 	int ret;
 
-	if (ppp_uart_dev) {
-		ret = uart_configure(ppp_uart_dev, uart_conf);
-		if (ret != 0) {
-			mosh_warn("Cannot get PPP uart config, ret %d", ret);
-		}
-	} else {
-		mosh_warn("No PPP uart device with name %s", CONFIG_NET_PPP_UART_NAME);
-		ret = -1;
+	ret = uart_configure(ppp_uart_dev, uart_conf);
+	if (ret != 0) {
+		mosh_warn("Cannot get PPP uart config, ret %d", ret);
+		return ret;
 	}
-	return ret;
+
+	return 0;
 }
 
 /******************************************************************************/
@@ -173,10 +168,9 @@ int ppp_settings_init(void)
 
 	ppp_uart_conf_valid = false;
 
-	ppp_uart_dev = device_get_binding(CONFIG_NET_PPP_UART_NAME);
-	if (!ppp_uart_dev) {
-		mosh_warn("Cannot get ppp dev binding");
-		ppp_uart_dev = NULL;
+	if (!device_is_ready(ppp_uart_dev)) {
+		mosh_warn("PPP UART device not ready");
+		return -ENODEV;
 	}
 
 	/* Read defaults: */

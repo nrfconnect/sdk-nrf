@@ -58,7 +58,7 @@ struct ppp_ctrl_pdn_status_worker_data {
 	bool default_pdn_active;
 } ppp_ctrl_pdn_status_worker_data;
 
-static const struct device *ppp_uart_dev;
+static const struct device *ppp_uart_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_ppp_uart));
 
 /* Work for a re-starting PPP */
 static struct k_work ppp_ctrl_restart_work;
@@ -269,10 +269,8 @@ void ppp_ctrl_init(void)
 	/* A work for doing the restart for ppp: */
 	k_work_init(&ppp_ctrl_restart_work, ppp_ctrl_restart_worker);
 
-	ppp_uart_dev = device_get_binding(CONFIG_NET_PPP_UART_NAME);
-	if (!ppp_uart_dev) {
-		mosh_warn("Cannot get ppp dev binding");
-		ppp_uart_dev = NULL;
+	if (!device_is_ready(ppp_uart_dev)) {
+		mosh_warn("PPP UART device not ready");
 	}
 
 	ppp_settings_init();
