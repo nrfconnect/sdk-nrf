@@ -291,6 +291,7 @@ nRF9160 samples
     * Bootstrap is not TLV only anymore.
       With v1.1, preferred content format is sent in the bootstrap request.
       SenML CBOR takes precedence over SenML JSON and OMA TLV, when enabled.
+    * Generation of the timestamp of LwM2M Location object on obtaining location fix.
 
   * Added:
 

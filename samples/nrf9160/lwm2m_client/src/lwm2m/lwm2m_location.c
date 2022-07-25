@@ -8,6 +8,7 @@
 #include <nrf_modem_gnss.h>
 #include <zephyr/net/lwm2m.h>
 #include <zephyr/net/lwm2m_path.h>
+#include <zephyr/sys/timeutil.h>
 
 #include "gnss_pvt_event.h"
 #include "lwm2m_app_utils.h"
@@ -16,6 +17,19 @@
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_APP_LOG_LEVEL);
+
+static time_t gnss_mktime(struct nrf_modem_gnss_datetime *date)
+{
+	struct tm tm = {
+		.tm_sec = date->seconds,
+		.tm_min = date->minute,
+		.tm_hour = date->hour,
+		.tm_mday = date->day,
+		.tm_mon = date->month,
+		.tm_year = date->year - 1900
+	};
+	return timeutil_timegm(&tm);
+}
 
 static bool app_event_handler(const struct app_event_header *aeh)
 {
@@ -27,6 +41,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		double altitude = event->pvt.altitude;
 		double speed = event->pvt.speed;
 		double radius = event->pvt.accuracy;
+		uint32_t timestamp = gnss_mktime(&event->pvt.datetime);
 
 		lwm2m_engine_set_float(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LATITUDE_RID),
 				       &latitude);
@@ -38,6 +53,9 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LOCATION_RADIUS_RID), &radius);
 		lwm2m_engine_set_float(
 			LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0, LOCATION_SPEED_RID), &speed);
+		lwm2m_engine_set_u32(LWM2M_PATH(LWM2M_OBJECT_LOCATION_ID, 0,
+						LOCATION_TIMESTAMP_RID),
+				     timestamp);
 
 		return true;
 	}
