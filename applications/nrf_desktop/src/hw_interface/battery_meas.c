@@ -25,7 +25,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BATTERY_MEAS_LOG_LEVEL);
 
-#define ADC_DEVICE_NAME		DT_LABEL(DT_NODELABEL(adc))
+#define ADC_NODE		DT_NODELABEL(adc)
 #define ADC_RESOLUTION		12
 #define ADC_OVERSAMPLING	4 /* 2^ADC_OVERSAMPLING samples are averaged */
 #define ADC_MAX 		4096
@@ -51,7 +51,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BATTERY_MEAS_LOG_LEVEL);
 				 * ADC_REF_INTERNAL_MV / ADC_MAX)
 #endif
 
-static const struct device *adc_dev;
+static const struct device *const adc_dev = DEVICE_DT_GET(ADC_NODE);
 static int16_t adc_buffer;
 static bool adc_async_read_pending;
 
@@ -62,17 +62,16 @@ static struct k_poll_event  async_evt =
 				 K_POLL_MODE_NOTIFY_ONLY,
 				 &async_sig);
 
-static const struct device *gpio_dev;
+static const struct device *const gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 
 static atomic_t active;
 static bool sampling;
 
 static int init_adc(void)
 {
-	adc_dev = device_get_binding(ADC_DEVICE_NAME);
-	if (!adc_dev) {
-		LOG_ERR("Cannot get ADC device");
-		return -ENXIO;
+	if (!device_is_ready(adc_dev)) {
+		LOG_ERR("ADC device not ready");
+		return -ENODEV;
 	}
 
 	static const struct adc_channel_cfg channel_cfg = {
@@ -229,10 +228,9 @@ static int init_fn(void)
 	int err = 0;
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BATTERY_MEAS_HAS_ENABLE_PIN)) {
-		gpio_dev = device_get_binding(DT_LABEL(DT_NODELABEL(gpio0)));
-		if (!gpio_dev) {
-			LOG_ERR("Cannot get GPIO device");
-			err = -ENXIO;
+		if (!device_is_ready(gpio_dev)) {
+			LOG_ERR("GPIO device not ready");
+			err = -ENODEV;
 			goto error;
 		}
 
