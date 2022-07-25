@@ -64,7 +64,7 @@ bool await_connection(k_timeout_t timeout);
 bool await_date_time_known(k_timeout_t timeout);
 
 /**
- * @brief Consume (attempt to send) a single device message from the device message FIFO. Will wait
+ * @brief Consume (attempt to send) a single device message from the device message queue. Will wait
  *        until connection to nRF Cloud is established before actually sending. If message fails
  *	  to send, it will be dropped.
  *
@@ -88,8 +88,15 @@ int send_device_message(const char *const msg);
 int send_device_message_cJSON(cJSON *msg_obj);
 
 /**
- * @brief Manage our connection to nRF Cloud, resetting and restablishing as necessary.
+ * @brief The message queue thread function.
+ * Continually consumes device messages from the device message queue.
  */
-void manage_connection(void);
+void message_queue_thread_fn(void);
+
+/**
+ * @brief The connection management thread function.
+ * Manages our connection to nRF Cloud, resetting and restablishing as necessary.
+ */
+void connection_management_thread_fn(void);
 
 #endif /* _CONNECTION_H_ */

@@ -330,6 +330,7 @@ nRF9160 samples
   * Added:
 
     * Support for full modem FOTA.
+    * LED status indication.
 
 * :ref:`nrf_cloud_rest_fota` sample:
 

@@ -18,6 +18,7 @@
 #include "connection.h"
 
 #include "location_tracking.h"
+#include "led_control.h"
 
 LOG_MODULE_REGISTER(application, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
 
@@ -178,8 +179,11 @@ static void on_location_update(const struct location_data * const location_data)
 	}
 }
 
-void main_application(void)
+void main_application_thread_fn(void)
 {
+	/* Wait for first connection before starting the application. */
+	(void)await_connection(K_FOREVER);
+
 	/* Wait for the date and time to become known.
 	 * This is needed both for location services and for sensor sample timestamping.
 	 */

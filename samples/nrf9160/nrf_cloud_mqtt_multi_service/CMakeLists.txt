@@ -15,6 +15,7 @@ target_sources(app PRIVATE src/application.c)
 target_sources(app PRIVATE src/connection.c)
 target_sources(app PRIVATE src/temperature.c)
 target_sources(app PRIVATE src/fota_support.c)
+target_sources(app PRIVATE src/led_control.c)
 target_sources(app PRIVATE src/location_tracking.c)
 # NORDIC SDK APP END
 
