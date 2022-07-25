@@ -58,8 +58,7 @@ config MPSL_CX_BT_1WIRE
 	select NRFX_GPIOTE
 	select GPIO
 	select NRFX_TIMER1
-	select EXPERIMENTAL
-	bool "Bluetooth Radio 1-Wire Coexistence [EXPERIMENTAL]"
+	bool "Bluetooth Radio 1-Wire Coexistence"
 	help
 	  Radio Coexistence interface implementation using a simple 1-wire PTA
 	  implementation for co-located radios.
