@@ -39,12 +39,6 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_QOS_LOG_LEVEL);
 # endif
 #endif
 
-#ifdef CONFIG_USB_CDC_ACM_DEVICE_NAME
-#define USB_SERIAL_DEVICE_NAME CONFIG_USB_CDC_ACM_DEVICE_NAME
-#else
-#define USB_SERIAL_DEVICE_NAME  ""
-#endif
-
 #ifndef ROUNDED_DIV
 #define ROUNDED_DIV(a, b)  (((a) + ((b) / 2)) / (b))
 #endif /* ROUNDED_DIV */
@@ -106,7 +100,8 @@ BUILD_ASSERT(THREAD_PRIORITY >= CONFIG_BT_HCI_TX_PRIO);
 
 static void ble_qos_thread_fn(void);
 
-static const struct device *cdc_dev;
+static const struct device *const cdc_dev =
+	DEVICE_DT_GET_OR_NULL(DT_CHOSEN(ncs_ble_qos_uart));
 static uint32_t cdc_dtr;
 
 enum ble_qos_opt {
@@ -696,9 +691,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			atomic_set(&params_updated, false);
 
 			if (IS_ENABLED(CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE)) {
-				cdc_dev = device_get_binding(
-					USB_SERIAL_DEVICE_NAME "_0");
-				__ASSERT_NO_MSG(cdc_dev != NULL);
+				__ASSERT_NO_MSG(device_is_ready(cdc_dev));
 				/* CONFIG_UART_LINE_CTRL == 1: dynamic dtr */
 				cdc_dtr = !IS_ENABLED(CONFIG_UART_LINE_CTRL);
 			}
