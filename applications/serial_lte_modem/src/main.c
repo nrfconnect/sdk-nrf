@@ -30,7 +30,7 @@ LOG_MODULE_REGISTER(slm, CONFIG_SLM_LOG_LEVEL);
 #define SLM_WQ_PRIORITY		K_LOWEST_APPLICATION_THREAD_PRIO
 static K_THREAD_STACK_DEFINE(slm_wq_stack_area, SLM_WQ_STACK_SIZE);
 
-static const struct device *gpio_dev;
+static const struct device *gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 static struct gpio_callback gpio_cb;
 static struct k_work_delayable indicate_work;
 
@@ -130,10 +130,9 @@ static int init_gpio(void)
 {
 	int err;
 
-	gpio_dev = device_get_binding(DT_LABEL(DT_NODELABEL(gpio0)));
-	if (gpio_dev == NULL) {
-		LOG_ERR("GPIO_0 bind error");
-		return -EAGAIN;
+	if (!device_is_ready(gpio_dev)) {
+		LOG_ERR("GPIO controller not ready");
+		return -ENODEV;
 	}
 	err = gpio_pin_configure(gpio_dev, CONFIG_SLM_WAKEUP_PIN,
 				 GPIO_INPUT | GPIO_PULL_UP | GPIO_ACTIVE_LOW);
