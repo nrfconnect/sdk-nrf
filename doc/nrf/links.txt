@@ -11,6 +11,9 @@
 .. _`Zephyr Initial Configuration`: https://docs.zephyrproject.org/latest/guides/build/kconfig/setting.html#the-initial-configuration
 .. _`Zephyr Network APIs`: https://docs.zephyrproject.org/latest/reference/networking/apis.html
 .. _`Zephyr Events`: https://docs.zephyrproject.org/latest/reference/kernel/synchronization/events.html
+.. _`Zephyr LED API`: https://docs.zephyrproject.org/latest/hardware/peripherals/led.html
+.. _`Zephyr gpio-leds`: https://docs.zephyrproject.org/latest/build/dts/api/bindings/gpio/gpio-leds.html
+.. _`Zephyr pwm-leds`: https://docs.zephyrproject.org/latest/build/dts/api/bindings/led/pwm-leds.html
 .. _`Pinctrl Migration Utility Script documentation`: https://github.com/zephyrproject-rtos/zephyr/blob/main/scripts/utils/pinctrl_nrf_migrate.py
 
 .. ### Source: github.com

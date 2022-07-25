@@ -10,6 +10,6 @@
  * @brief Main application -- Wait for valid connection, start location tracking, and then
  * periodically sample sensors and send them to nRF Cloud.
  */
-void main_application(void);
+void main_application_thread_fn(void);
 
 #endif /* _APPLICATION_H_ */

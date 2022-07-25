@@ -8,50 +8,42 @@
 #include <zephyr/logging/log.h>
 #include "application.h"
 #include "connection.h"
+#include "led_control.h"
 #include "fota_support.h"
 
 LOG_MODULE_REGISTER(main, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
 
-static void msg_thread_fn(void)
-{
-	/* Continuously consume (that is, send to NRF Cloud) queued-up outgoing messages. */
-	while (true) {
-		(void)consume_device_message();
-	}
-}
+/* Here, we start the various threads that our application will run in */
 
-static void app_thread_fn(void)
-{
-	/* Wait for first connection before starting the application. */
-	(void)await_connection(K_FOREVER);
+#ifndef CONFIG_LED_INDICATION_DISABLED
+/* Define, and automatically start the LED animation thread. See led_control.c */
+K_THREAD_DEFINE(led_thread, CONFIG_LED_THREAD_STACK_SIZE, led_animation_thread_fn,
+		NULL, NULL, NULL, 0, 0, 0);
+#endif
 
-	/* Afterwards, allow application to run in this thread. */
-	main_application();
-}
-
-static void conn_thread_fn(void)
-{
-	/* Continuously manage our connection. */
-	manage_connection();
-}
-
-
-K_THREAD_DEFINE(app_thread, CONFIG_APPLICATION_THREAD_STACK_SIZE, app_thread_fn,
+/* Define, and automatically start the main application thread. See application.c */
+K_THREAD_DEFINE(app_thread, CONFIG_APPLICATION_THREAD_STACK_SIZE, main_application_thread_fn,
 		NULL, NULL, NULL, 0, 0, 0);
 
-K_THREAD_DEFINE(msg_thread, CONFIG_MESSAGE_THREAD_STACK_SIZE, msg_thread_fn,
+/* Define, and automatically start the message queue thread. See connection.c */
+K_THREAD_DEFINE(msg_thread, CONFIG_MESSAGE_THREAD_STACK_SIZE, message_queue_thread_fn,
 		NULL, NULL, NULL, 0, 0, 0);
 
-/* The connection thread is given higher priority (-1) so that it can preempt the other threads,
+/* Define, and automatically start the connection management thread. See connection.c
+ *
+ * The connection thread is given higher priority (-1) so that it can preempt the other threads,
  * for instance in the event of a call to disconnect_cloud().
  *
  * Priority -1 is also a non-preeemptible priority level, so other threads, even of higher
  * priority, cannot interrupt the connection thread until it yields.
  */
-K_THREAD_DEFINE(conn_thread, CONFIG_CONNECTION_THREAD_STACK_SIZE, conn_thread_fn,
+K_THREAD_DEFINE(con_thread, CONFIG_CONNECTION_THREAD_STACK_SIZE, connection_management_thread_fn,
 		NULL, NULL, NULL, -1, 0, 0);
 
-
+/* main() is called from the main thread, which defaults to priority zero,
+ * but for illustrative purposes we don't use it. main_application() could be called directly
+ * from this function, rather than given its own dedicated thread.
+ */
 void main(void)
 {
 	LOG_INF("nRF Cloud MQTT multi-service sample has started.");

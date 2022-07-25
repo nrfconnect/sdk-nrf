@@ -36,7 +36,7 @@ This sample implements or demonstrates the following features:
 * Periodic temperature sensor sampling on your `Nordic Thingy:91`_, or fake temperature  measurements on your `Nordic nRF9160 DK`_.
 * Transmission of sensor and GNSS location samples to the nRF Cloud portal as `nRF Cloud device messages <nRF Cloud Device Messages_>`_.
 * Construction of valid `nRF Cloud device messages <nRF Cloud Device Messages_>`_ using `cJSON`_.
-
+* Minimal LED status indication using the `Zephyr LED API`_.
 
 .. _nrf_cloud_mqtt_multi_service_structure_and_theory_of_operation:
 
@@ -45,11 +45,13 @@ Structure and theory of operation
 
 This sample is separated into a number of smaller functional units.
 The top level functional unit and entry point for the sample is the :file:`src/main.c` file.
-This file starts three threads, each with a distinct function:
+This file starts three primary threads, each with a distinct function:
 
-* The connection thread (``conn_thread``) runs the :ref:`nrf_cloud_mqtt_multi_service_connection_management_loop`, which maintains a connection to `nRF Cloud`_.
+* The connection thread (``con_thread``) runs the :ref:`nrf_cloud_mqtt_multi_service_connection_management_loop`, which maintains a connection to `nRF Cloud`_.
 * The application thread (``app_thread``) Runs the :ref:`nrf_cloud_mqtt_multi_service_application_thread_and_main_application_loop`, which may add `device messages <nRF Cloud Device Messages_>`_ to the :ref:`nrf_cloud_mqtt_multi_service_device_message_queue`.
 * The message thread (``msg_thread``) processes the :ref:`nrf_cloud_mqtt_multi_service_device_message_queue` whenever there is an active connection.
+
+:file:`src/main.c` also optionally starts a fourth thread, the ``led_thread``, which animates any onboard LEDs if :ref:`nrf_cloud_mqtt_multi_service_led_status_indication` is enabled.
 
 .. _nrf_cloud_mqtt_multi_service_connection_management_loop:
 
@@ -172,6 +174,45 @@ The :c:func:`location_assistance_data_handler` function handles this task, and M
   For location readings to be visible in the nRF Cloud portal, they must be marked as enabled in the `Device Shadow <nRF Cloud Device Shadows_>`_.
   This is performed by the :file:`src/connection.c` file.
 
+.. _nrf_cloud_mqtt_multi_service_led_status_indication:
+
+LED status indication
+=====================
+
+On boards that support LED status indication, this sample can indicate its current status with any on-board LEDs.
+
+This is performed by a background thread implemented in the :file:`src/led_control.c` file.
+
+Other threads may request either a temporary or indefinite LED pattern.
+This wakes up the ``led_thread``, which begins animating the requested pattern, sleeping for 100 milliseconds at a time between animation frames, until the requested pattern has completed (if it is temporary), or until a new pattern is requested in its place.
+
+This feature is enabled by default for the ``thingy91_nrf9160_ns`` (Thingy:91) and ``nrf9160dk_nrf9160_ns`` (nRF9160 DK) targets.
+
+The patterns displayed, the states they describe, and the options required for them to appear are as follows:
+
++------------------------------------------------------+--------------------------------------+--------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| Status                                               | Thingy:91                            | nRF9160 DK                                                                                             | Conditions                                                                                                |
++======================================================+======================================+========================================================================================================+===========================================================================================================+
+| Trying to connect to nRF Cloud (for the first time)  | Pulsating orange LED                 | Single LED lit, spinning around the square of LEDs                                                     | LED status indication is enabled                                                                          |
++------------------------------------------------------+--------------------------------------+--------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| Connection to nRF Cloud lost, reconnecting           | Pulsating orange LED                 | Single LED lit, spinning around the square of LEDs                                                     | The :ref:`CONFIG_LED_VERBOSE_INDICATION <CONFIG_LED_VERBOSE_INDICATION>` option is enabled                |
++------------------------------------------------------+--------------------------------------+--------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| Fatal error                                          | Blinking red LED, 75% duty cycle     | All four LEDs blinking, 75% duty cycle                                                                 | LED status indication is enabled                                                                          |
++------------------------------------------------------+--------------------------------------+--------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| Device message sent successfully                     | Blinking green LED, 25% duty cycle   | Alternating checkerboard pattern (two LEDs are lit at a time, either LED1 and LED4, or LED2 and LED3)  | The :ref:`CONFIG_LED_VERBOSE_INDICATION <CONFIG_LED_VERBOSE_INDICATION>` option is enabled                |
++------------------------------------------------------+--------------------------------------+--------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| Idle                                                 | LED pulsating between blue and cyan  | Single LED lit, bouncing between opposite corners (LED1 and LED4)                                      | The :ref:`CONFIG_LED_CONTINUOUS_INDICATION <CONFIG_LED_CONTINUOUS_INDICATION>` option is enabled          |
++------------------------------------------------------+--------------------------------------+--------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+
+Under all other circumstances, on-board LEDs are turned off.
+
+.. note::
+  The :ref:`CONFIG_LED_VERBOSE_INDICATION <CONFIG_LED_VERBOSE_INDICATION>` and :ref:`CONFIG_LED_CONTINUOUS_INDICATION <CONFIG_LED_CONTINUOUS_INDICATION>` options are enabled by default.
+
+See :ref:`nrf_cloud_mqtt_multi_service_customizing_LED_status_indication` for details on customizing the LED behavior.
+
+See :ref:`nrf_cloud_mqtt_multi_service_led_third_party` for details on configuring LED status indication on third-party boards.
+
 .. _nrf_cloud_mqtt_multi_service_test_counter:
 
 Test counter
@@ -228,6 +269,39 @@ This sample uses the :ref:`lib_modem_antenna` library, which is enabled by defau
 If you are using a different board or build target, or would like to use a custom or external GNSS antenna, see the :ref:`lib_modem_antenna` library documentation for configuration instructions.
 
 Enable :kconfig:option:`CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL` to use an external antenna.
+
+.. _nrf_cloud_mqtt_multi_service_customizing_LED_status_indication:
+
+Customizing LED status indication
+=================================
+
+To disable LED status indication (other than the selected idle behavior) after a connection to nrf Cloud has been established at least once, disable :ref:`CONFIG_LED_VERBOSE_INDICATION <CONFIG_LED_VERBOSE_INDICATION>`.
+
+To turn the LED off while the sample is idle (rather than show an idle pattern), disable :ref:`CONFIG_LED_CONTINUOUS_INDICATION <CONFIG_LED_CONTINUOUS_INDICATION>`.
+
+If you disable both of these options together, the status indicator LED remains off after a connection to nRF Cloud has been established at least once.
+
+.. _nrf_cloud_mqtt_multi_service_led_third_party:
+
+Configuring LED status indication for third-party boards
+========================================================
+
+This sample assumes that the target board either has a single RGB LED with PWM support, or four discrete LEDs available.
+
+For third-party boards, you can select the RGB LED option by enabling both the :ref:`CONFIG_LED_INDICATION_PWM <CONFIG_LED_INDICATION_PWM>` and :ref:`CONFIG_LED_INDICATION_RGB <CONFIG_LED_INDICATOR_RGB>` options.
+In this case, the board must have a devicetree entry marked as compatible with the `Zephyr pwm-leds`_ driver.
+
+Otherwise, the four-LED option (:ref:`CONFIG_LED_INDICATION_GPIO <CONFIG_LED_INDICATION_GPIO>` and :ref:`CONFIG_LED_INDICATOR_4LED <CONFIG_LED_INDICATOR_4LED>`) is selected by default as long as there is a devicetree entry compatible with the `Zephyr gpio-leds`_ driver.
+
+The four-LED option should work even if there are not four LEDs available, as long as an appropriate devicetree entry exists.
+However, if fewer than four LEDs are available, the patterns may be difficult to identify.
+
+To add your own LED indication implementations, you can add values to the ``LED_INDICATOR`` KConfig choice and modify the :file:`src/led_control.c` file accordingly.
+
+To disable LED indication, enable the :ref:`CONFIG_LED_INDICATION_DISABLED <CONFIG_LED_INDICATION_DISABLED>` option.
+
+For examples of how to set up devicetree entries compatible with the Zephyr ``gpio-leds`` and ``pwm-leds`` drivers, see the files :file:`zephyr/boards/arm/nrf9160dk_nrf9160/nrf9160dk_nrf9160_common.dts` and :file:`zephyr/boards/arm/thingy91_nrf9160/thingy91_nrf9160_common.dts`.
+Search for nodes with ``compatible = "gpio-leds";`` and ``compatible = "pwm-leds";`` respectively.
 
 Useful debugging options
 ========================
@@ -368,6 +442,50 @@ CONFIG_TEMP_DATA_USE_SENSOR - Use genuine temperature data
 CONFIG_TEMP_TRACKING - Track temperature data
    Enables tracking and reporting of temperature data to `nRF Cloud`_.
    Defaults to enabled.
+
+
+.. _CONFIG_LED_INDICATION_PWM:
+
+CONFIG_LED_INDICATION_PWM - PWM LED indication
+   Use the `Zephyr pwm-leds`_ driver for LED indication.
+   Defaults to enabled on the Thingy:91.
+
+.. _CONFIG_LED_INDICATION_GPIO:
+
+CONFIG_LED_INDICATION_GPIO - GPIO LED indication
+   Use the `Zephyr gpio-leds`_ driver for LED indication.
+   Defaults to enabled if there is a compatible devicetree entry, and the Thingy:91 is not the target.
+   Defaults to enabled on the nRF9160DK.
+
+.. _CONFIG_LED_INDICATION_DISABLED:
+
+CONFIG_LED_INDICATION_DISABLED - Completely disable LED indication
+   Defaults to enabled if both :ref:`CONFIG_LED_INDICATION_PWM <CONFIG_LED_INDICATION_PWM>` and :ref:`CONFIG_LED_INDICATION_GPIO <CONFIG_LED_INDICATION_GPIO>` are disabled.
+
+.. _CONFIG_LED_INDICATOR_RGB:
+
+CONFIG_LED_INDICATOR_RGB - RGB LED status indication
+   Use an on-board RGB LED for status indication.
+   Defaults to enabled on the Thingy:91.
+
+.. _CONFIG_LED_INDICATOR_4LED:
+
+CONFIG_LED_INDICATOR_4LED - Four-LED status indication
+   Use four discrete LEDs for status indication.
+   Defaults to enabled if :ref:`CONFIG_LED_INDICATOR_RGB <CONFIG_LED_INDICATOR_RGB>` is disabled and LED indication is not disabled.
+
+.. _CONFIG_LED_VERBOSE_INDICATION:
+
+CONFIG_LED_VERBOSE_INDICATION - Verbose LED status indication
+   Show more detailed LED status updates.
+   Show a pattern when device messages are successfully sent, and when the initial connection to nRF Cloud is lost.
+   Defaults to enabled if LED indication is enabled.
+
+.. _CONFIG_LED_CONTINUOUS_INDICATION:
+
+CONFIG_LED_CONTINUOUS_INDICATION - Continuous LED status indication
+   Show an idle pattern, rather than turn the LEDs off, when the sample is idle.
+   Defaults to enabled if LED indication is enabled.
 
 .. _CONFIG_TEST_COUNTER:
 
