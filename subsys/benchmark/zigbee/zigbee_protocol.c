@@ -43,7 +43,7 @@ void protocol_init(void)
     zb_ieee_addr_t ieee_addr;
 
     /* Intiialise the leds */
-    bsp_board_leds_off();
+    // bsp_board_leds_off();
 
     /* Set Zigbee stack logging level and traffic dump subsystem. */
     ZB_SET_TRAF_DUMP_OFF();

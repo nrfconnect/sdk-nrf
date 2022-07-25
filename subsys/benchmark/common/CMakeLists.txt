@@ -4,5 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-add_subdirectory_ifdef(CONFIG_BENCHMARK common)
-add_subdirectory_ifdef(CONFIG_BENCHMARK_ZIGBEE zigbee)
+zephyr_include_directories(include)
+zephyr_sources(benchmark_util.c
+  cli_benchmark.c
+  cli_suppress.c
+)
