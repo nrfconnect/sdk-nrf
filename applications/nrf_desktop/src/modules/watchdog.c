@@ -17,18 +17,21 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_WATCHDOG_LOG_LEVEL);
 #define WDT_FEED_WORKER_DELAY_MS ((CONFIG_DESKTOP_WATCHDOG_TIMEOUT)/3)
 
 struct wdt_data_storage {
-	const struct device *wdt_drv;
+	const struct device *const wdt;
 	int wdt_channel_id;
 	struct k_work_delayable work;
 };
-static struct wdt_data_storage wdt_data;
+
+static struct wdt_data_storage wdt_data = {
+	.wdt = DEVICE_DT_GET(DT_NODELABEL(wdt)),
+};
 
 static void watchdog_feed_worker(struct k_work *work_desc)
 {
 	struct wdt_data_storage *data =
 			CONTAINER_OF(work_desc, struct wdt_data_storage, work);
 
-	int err = wdt_feed(data->wdt_drv, data->wdt_channel_id);
+	int err = wdt_feed(data->wdt, data->wdt_channel_id);
 
 	if (err) {
 		LOG_ERR("Cannot feed watchdog. Error code: %d", err);
@@ -53,7 +56,7 @@ static int watchdog_timeout_install(struct wdt_data_storage *data)
 	__ASSERT_NO_MSG(data != NULL);
 
 	data->wdt_channel_id = wdt_install_timeout(
-			data->wdt_drv, &wdt_settings);
+			data->wdt, &wdt_settings);
 	if (data->wdt_channel_id < 0) {
 		LOG_ERR("Cannot install watchdog timer! Error code: %d",
 			data->wdt_channel_id);
@@ -68,7 +71,7 @@ static int watchdog_start(struct wdt_data_storage *data)
 {
 	__ASSERT_NO_MSG(data != NULL);
 
-	int err = wdt_setup(data->wdt_drv, WDT_OPT_PAUSE_HALTED_BY_DBG);
+	int err = wdt_setup(data->wdt, WDT_OPT_PAUSE_HALTED_BY_DBG);
 
 	if (err) {
 		LOG_ERR("Cannot start watchdog! Error code: %d", err);
@@ -100,12 +103,11 @@ static int watchdog_enable(struct wdt_data_storage *data)
 {
 	__ASSERT_NO_MSG(data != NULL);
 
-	int err = -ENXIO;
+	int err;
 
-	data->wdt_drv = device_get_binding(DT_LABEL(DT_NODELABEL(wdt)));
-	if (data->wdt_drv == NULL) {
-		LOG_ERR("Cannot bind watchdog driver");
-		return err;
+	if (!device_is_ready(data->wdt)) {
+		LOG_ERR("Watchdog device not ready");
+		return -ENODEV;
 	}
 
 	err = watchdog_timeout_install(data);
