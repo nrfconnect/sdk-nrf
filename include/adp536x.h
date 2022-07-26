@@ -14,7 +14,10 @@
  * @{
  */
 
-#include <zephyr/kernel.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#include <zephyr/device.h>
 
 /* Definition of VBUS current limit values. */
 #define ADP536X_VBUS_ILIM_50mA		0x00
@@ -49,12 +52,12 @@
 /**
  * @brief Initialize ADP536X.
  *
- * @param[in] dev_name Pointer to the device name.
+ * @param[in] dev Pointer to the I2C bus device.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int adp536x_init(const char *dev_name);
+int adp536x_init(const struct device *dev);
 
 /**
  * @brief Set the VBUS current limit.
