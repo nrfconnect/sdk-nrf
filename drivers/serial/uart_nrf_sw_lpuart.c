@@ -117,16 +117,6 @@ static void rdy_pin_handler(nrfx_gpiote_pin_t pin,
 			     nrfx_gpiote_trigger_t trigger,
 			     void *context);
 
-static inline struct lpuart_data *get_dev_data(const struct device *dev)
-{
-	return dev->data;
-}
-
-static inline const struct lpuart_config *get_dev_config(const struct device *dev)
-{
-	return dev->config;
-}
-
 /* Called when uart transfer is finished to indicate to the receiver that it
  * can be closed.
  */
@@ -441,7 +431,7 @@ static void rdy_pin_handler(nrfx_gpiote_pin_t pin,
 static int api_callback_set(const struct device *dev, uart_callback_t callback,
 			    void *user_data)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 
 	data->user_callback = callback;
 	data->user_data = user_data;
@@ -451,7 +441,7 @@ static int api_callback_set(const struct device *dev, uart_callback_t callback,
 
 static void user_callback(const struct device *dev, struct uart_event *evt)
 {
-	const struct lpuart_data *data = get_dev_data(dev);
+	const struct lpuart_data *data = dev->data;
 
 	if (data->user_callback) {
 		data->user_callback(dev, evt, data->user_data);
@@ -462,7 +452,7 @@ static void uart_callback(const struct device *uart, struct uart_event *evt,
 			  void *user_data)
 {
 	struct device *dev = user_data;
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 
 	switch (evt->type) {
 	case UART_TX_DONE:
@@ -549,7 +539,7 @@ static void uart_callback(const struct device *uart, struct uart_event *evt,
 static void tx_timeout(struct k_timer *timer)
 {
 	struct device *dev = k_timer_user_data_get(timer);
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 	const uint8_t *txbuf = data->tx_buf;
 	int err;
 
@@ -586,7 +576,7 @@ static void tx_timeout(struct k_timer *timer)
 static int api_tx(const struct device *dev, const uint8_t *buf,
 		  size_t len, int32_t timeout)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 
 	if (!atomic_ptr_cas((atomic_ptr_t *)&data->tx_buf, NULL, (void *)buf)) {
 		return -EBUSY;
@@ -604,7 +594,7 @@ static int api_tx(const struct device *dev, const uint8_t *buf,
 
 static int api_tx_abort(const struct device *dev)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 	const uint8_t *buf = data->tx_buf;
 	int err;
 	int key;
@@ -644,7 +634,7 @@ static int api_tx_abort(const struct device *dev)
 static int api_rx_enable(const struct device *dev, uint8_t *buf,
 			 size_t len, int32_t timeout)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 
 	__ASSERT_NO_MSG(data->rx_state == RX_OFF);
 
@@ -664,7 +654,7 @@ static int api_rx_enable(const struct device *dev, uint8_t *buf,
 
 static int api_rx_buf_rsp(const struct device *dev, uint8_t *buf, size_t len)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 
 	__ASSERT_NO_MSG((data->rx_state != RX_OFF) &&
 		 (data->rx_state != RX_TO_OFF));
@@ -685,7 +675,7 @@ static int api_rx_buf_rsp(const struct device *dev, uint8_t *buf, size_t len)
 
 static int api_rx_disable(const struct device *dev)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 
 	data->rx_state = RX_TO_OFF;
 
@@ -715,7 +705,7 @@ static void int_driven_evt_handler(const struct device *lpuart,
 				   struct uart_event *evt,
 				   void *user_data)
 {
-	struct lpuart_data *data = get_dev_data(lpuart);
+	struct lpuart_data *data = lpuart->data;
 	bool call_handler = false;
 
 	switch (evt->type) {
@@ -760,7 +750,7 @@ static int api_fifo_read(const struct device *dev,
 			 uint8_t *rx_data,
 			 const int size)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 	uint32_t available = int_driven_rd_available(data);
 	uint32_t cpylen = 0;
 
@@ -779,7 +769,7 @@ static int api_fifo_fill(const struct device *dev,
 			 const uint8_t *tx_data,
 			 int size)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 	int err;
 
 	size = MIN(size, sizeof(data->int_driven.txbuf));
@@ -803,7 +793,7 @@ static int api_fifo_fill(const struct device *dev,
 
 static void api_irq_tx_enable(const struct device *dev)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 
 	data->int_driven.tx_enabled = true;
 	if (data->tx_buf == NULL) {
@@ -813,14 +803,14 @@ static void api_irq_tx_enable(const struct device *dev)
 
 static void api_irq_tx_disable(const struct device *dev)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 
 	data->int_driven.tx_enabled = false;
 }
 
 static int api_irq_tx_ready(const struct device *dev)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 
 	return data->int_driven.tx_enabled && (data->tx_buf == NULL);
 }
@@ -829,7 +819,7 @@ static void api_irq_callback_set(const struct device *dev,
 				 uart_irq_callback_user_data_t cb,
 				 void *user_data)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 
 	data->int_driven.callback = cb;
 	data->int_driven.user_data = user_data;
@@ -837,7 +827,7 @@ static void api_irq_callback_set(const struct device *dev,
 
 static void api_irq_rx_enable(const struct device *dev)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 
 	data->int_driven.rx_enabled = true;
 	if (int_driven_rd_available(data)) {
@@ -857,17 +847,17 @@ static void api_irq_rx_enable(const struct device *dev)
 
 static void api_irq_rx_disable(const struct device *dev)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 
 	data->int_driven.rx_enabled = false;
 }
 
 static int api_irq_rx_ready(const struct device *dev)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 
 	return data->int_driven.rx_enabled &&
-		int_driven_rd_available(get_dev_data(dev));
+		int_driven_rd_available(dev->data);
 }
 
 static int api_irq_tx_complete(const struct device *dev)
@@ -877,14 +867,14 @@ static int api_irq_tx_complete(const struct device *dev)
 
 static void api_irq_err_enable(const struct device *dev)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 
 	data->int_driven.err_enabled = true;
 }
 
 static void api_irq_err_disable(const struct device *dev)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 
 	data->int_driven.err_enabled = false;
 }
@@ -903,8 +893,8 @@ static int api_irq_update(const struct device *dev)
 
 static int lpuart_init(const struct device *dev)
 {
-	struct lpuart_data *data = get_dev_data(dev);
-	const struct lpuart_config *cfg = get_dev_config(dev);
+	struct lpuart_data *data = dev->data;
+	const struct lpuart_config *cfg = dev->config;
 	int err;
 
 	data->uart = device_get_binding(cfg->uart_name);
@@ -958,7 +948,7 @@ static int api_poll_in(const struct device *dev, unsigned char *p_char)
 
 static void api_poll_out(const struct device *dev, unsigned char out_char)
 {
-	struct lpuart_data *data = get_dev_data(dev);
+	struct lpuart_data *data = dev->data;
 	bool thread_ctx = !k_is_in_isr() && !k_is_pre_kernel();
 	int err;
 
@@ -984,7 +974,7 @@ static void api_poll_out(const struct device *dev, unsigned char out_char)
 
 static int api_configure(const struct device *dev, const struct uart_config *cfg)
 {
-	const struct lpuart_data *data = get_dev_data(dev);
+	const struct lpuart_data *data = dev->data;
 
 	if (cfg->flow_ctrl != UART_CFG_FLOW_CTRL_NONE) {
 		return -ENOTSUP;
@@ -995,7 +985,7 @@ static int api_configure(const struct device *dev, const struct uart_config *cfg
 
 static int api_config_get(const struct device *dev, struct uart_config *cfg)
 {
-	const struct lpuart_data *data = get_dev_data(dev);
+	const struct lpuart_data *data = dev->data;
 
 	return uart_config_get(data->uart, cfg);
 }
