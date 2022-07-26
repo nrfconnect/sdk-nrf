@@ -142,6 +142,7 @@ enum bt_rpc_cmd_from_cli_to_host {
 	BT_CCM_ENCRYPT_RPC_CMD,
 	/* internal.h API */
 	BT_ADDR_LE_IS_BONDED_CMD,
+	BT_HCI_CMD_SEND_SYNC_RPC_CMD,
 };
 
 /** @brief Host commands IDs used in bluetooth API serialization.
