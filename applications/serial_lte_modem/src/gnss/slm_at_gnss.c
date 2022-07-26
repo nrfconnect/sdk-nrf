@@ -13,7 +13,6 @@
 #include <net/nrf_cloud_agps.h>
 #include <net/nrf_cloud_pgps.h>
 #include <net/nrf_cloud_cell_pos.h>
-#include <net/nrf_cloud_rest.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_gnss.h"
@@ -22,6 +21,8 @@ LOG_MODULE_REGISTER(slm_gnss, CONFIG_SLM_LOG_LEVEL);
 
 #define SERVICE_INFO_GPS \
 	"{\"state\":{\"reported\":{\"device\": {\"serviceInfo\":{\"ui\":[\"GPS\"]}}}}}"
+
+#define LOCATION_REPORT_MS 5000
 
 /**@brief GNSS operations. */
 enum slm_gnss_operation {
@@ -90,22 +91,6 @@ static struct lte_lc_cells_info cell_data = {
 };
 static int ncell_meas_status;
 static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN];
-
-#define REST_RX_BUF_SZ			1024
-#define REST_LOCATION_REPORT_MS		5000
-
-/* Buffer used for REST calls */
-static char rx_buf[REST_RX_BUF_SZ];
-/* nRF Cloud REST context */
-struct nrf_cloud_rest_context rest_ctx = {
-	.connect_socket = -1,
-	.keep_alive = false,
-	.timeout_ms = NRF_CLOUD_REST_TIMEOUT_NONE,
-	.rx_buf = rx_buf,
-	.rx_buf_len = sizeof(rx_buf),
-	.fragment_size = 0,
-	.auth = NULL
-};
 
 /* global variable defined in different files */
 extern struct k_work_q slm_work_q;
@@ -192,10 +177,6 @@ static int gnss_shutdown(void)
 	LOG_INF("GNSS stop %d", ret);
 	gnss_status_notify(RUN_STATUS_STOPPED);
 	run_type = RUN_TYPE_NONE;
-
-	if (nrf_cloud_ready) {
-		(void)nrf_cloud_rest_disconnect(&rest_ctx);
-	}
 
 	return ret;
 }
@@ -508,12 +489,76 @@ static void on_gnss_evt_pvt(void)
 	}
 }
 
+static int do_cloud_send_msg(const char *message, int len)
+{
+	int err;
+	struct nrf_cloud_tx_data msg = {
+		.data.ptr = message,
+		.data.len = len,
+		.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
+		.qos = MQTT_QOS_0_AT_MOST_ONCE
+	};
+
+	err = nrf_cloud_send(&msg);
+	if (err) {
+		LOG_ERR("nrf_cloud_send failed, error: %d", err);
+	}
+
+	return err;
+}
+
+static void send_location(struct nrf_modem_gnss_nmea_data_frame * const nmea_data)
+{
+	static int64_t last_ts_ms = NRF_CLOUD_NO_TIMESTAMP;
+	int err;
+	char *json_msg = NULL;
+	cJSON *msg_obj = NULL;
+	struct nrf_cloud_gnss_data gnss = {
+		.ts_ms = NRF_CLOUD_NO_TIMESTAMP,
+		.type = NRF_CLOUD_GNSS_TYPE_MODEM_NMEA,
+		.mdm_nmea = nmea_data
+	};
+
+	/* On failure, NRF_CLOUD_NO_TIMESTAMP is used and the timestamp is omitted */
+	(void)date_time_now(&gnss.ts_ms);
+
+	if ((last_ts_ms == NRF_CLOUD_NO_TIMESTAMP) ||
+	    (gnss.ts_ms == NRF_CLOUD_NO_TIMESTAMP) ||
+	    (gnss.ts_ms > (last_ts_ms + LOCATION_REPORT_MS))) {
+		last_ts_ms = gnss.ts_ms;
+	} else {
+		return;
+	}
+
+	err = nrf_cloud_gnss_msg_json_encode(&gnss, msg_obj);
+	if (err) {
+		goto clean_up;
+	}
+
+	json_msg = cJSON_PrintUnformatted(msg_obj);
+	if (!json_msg) {
+		err = -ENOMEM;
+		goto clean_up;
+	}
+
+	err = do_cloud_send_msg(json_msg, strlen(json_msg));
+
+clean_up:
+	cJSON_Delete(msg_obj);
+	if (json_msg) {
+		cJSON_free((void *)json_msg);
+	}
+
+	if (err) {
+		LOG_WRN("Failed to send location, error %d", err);
+	}
+}
+
 static void fix_rep_wk(struct k_work *work)
 {
 	int err;
 	struct nrf_modem_gnss_pvt_data_frame pvt;
 	struct nrf_modem_gnss_nmea_data_frame nmea;
-	static int64_t last_ts_ms = NRF_CLOUD_NO_TIMESTAMP;
 
 	ARG_UNUSED(work);
 
@@ -553,25 +598,9 @@ static void fix_rep_wk(struct k_work *work)
 	} else {
 		/* Report to nRF Cloud by best-effort */
 		if (nrf_cloud_ready && location_signify) {
-			struct nrf_cloud_gnss_data gnss = {
-				.ts_ms = NRF_CLOUD_NO_TIMESTAMP,
-				.type = NRF_CLOUD_GNSS_TYPE_MODEM_NMEA,
-				.mdm_nmea = &nmea
-			};
-
-			/* On failure, NRF_CLOUD_NO_TIMESTAMP will omit the timestamp */
-			(void)date_time_now(&gnss.ts_ms);
-
-			if ((last_ts_ms == NRF_CLOUD_NO_TIMESTAMP) ||
-			    (gnss.ts_ms == NRF_CLOUD_NO_TIMESTAMP) ||
-			    (gnss.ts_ms > (last_ts_ms + REST_LOCATION_REPORT_MS))) {
-				last_ts_ms = gnss.ts_ms;
-				err = nrf_cloud_rest_send_location(&rest_ctx, device_id, &gnss);
-				if (err) {
-					LOG_WRN("Failed to send location, error %d", err);
-				}
-			}
+			send_location(&nmea);
 		}
+
 		/* GGA,hhmmss.ss,llll.ll,a,yyyyy.yy,a,x,xx,x.x,x.x,M,x.x,M,x.x,xxxx \r\n */
 		if (location_signify) {
 			sprintf(rsp_buf, "\r\n#XGPS: %s", nmea.nmea_str);
@@ -667,24 +696,6 @@ static void gnss_event_handler(int event)
 	}
 }
 
-static int do_cloud_send_msg(const char *message, int len)
-{
-	int err;
-	struct nrf_cloud_tx_data msg = {
-		.data.ptr = message,
-		.data.len = len,
-		.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
-		.qos = MQTT_QOS_0_AT_MOST_ONCE
-	};
-
-	err = nrf_cloud_send(&msg);
-	if (err) {
-		LOG_ERR("nrf_cloud_send failed, error: %d", err);
-	}
-
-	return err;
-}
-
 static void on_cloud_evt_ready(void)
 {
 	if (location_signify) {
@@ -712,7 +723,6 @@ static void on_cloud_evt_ready(void)
 static void on_cloud_evt_disconnected(void)
 {
 	nrf_cloud_ready = false;
-	(void)nrf_cloud_rest_disconnect(&rest_ctx);
 	sprintf(rsp_buf, "\r\n#XNRFCLOUD: %d,%d\r\n", nrf_cloud_ready, location_signify);
 	rsp_send(rsp_buf, strlen(rsp_buf));
 	at_monitor_pause(&ncell_meas);
