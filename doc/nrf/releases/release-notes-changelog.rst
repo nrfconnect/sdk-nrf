@@ -73,6 +73,7 @@ Thread
 * Removed support for Thread Border Router as part of the Master library feature set.
 * Fixed a bug in which a Minimal Thread Device was not able to handle Address Error Notification messages.
 * Updated the values in the memory requirement tables in :ref:`thread_ot_memory` after the update to the :ref:`nrfxlib:ot_libs` in nrfxlib.
+* Updated recommended version of OpenThread Border Router and the accompanying ``nrfconnect/otbr`` docker image.
 
 See `Thread samples`_ for the list of changes for the Thread samples.
 
