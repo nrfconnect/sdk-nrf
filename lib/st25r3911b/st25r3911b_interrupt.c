@@ -21,11 +21,10 @@ LOG_MODULE_DECLARE(st25r3911b);
 #define IRQ_REG_CNT 3
 #define IRQ_REG_READ_MAX_CNT 5
 
-#define IRQ_PORT DT_GPIO_LABEL(ST25R3911B_NODE, irq_gpios)
-#define IRQ_PIN DT_GPIO_PIN(ST25R3911B_NODE, irq_gpios)
+static const struct gpio_dt_spec irq_gpio =
+	GPIO_DT_SPEC_GET(ST25R3911B_NODE, irq_gpios);
 
 static struct gpio_callback gpio_cb;
-static const struct device *gpio_dev;
 
 static struct k_spinlock spinlock;
 static struct k_sem *sem;
@@ -42,30 +41,28 @@ static int gpio_init(void)
 {
 	int err;
 
-	LOG_DBG("Setting up interrupts on %s pin %d", IRQ_PORT, IRQ_PIN);
+	LOG_DBG("Setting up interrupts on %s pin %d", irq_gpio.port->name,
+		irq_gpio.pin);
 
-	gpio_dev = device_get_binding(IRQ_PORT);
-	if (!gpio_dev) {
-		LOG_ERR("GPIO device binding error: can't find %s.", IRQ_PORT);
-		return -ENXIO;
+	if (!device_is_ready(irq_gpio.port)) {
+		LOG_ERR("IRQ GPIO device not ready");
+		return -ENODEV;
 	}
 
 	/* Configure IRQ pin */
-	err = gpio_pin_configure(gpio_dev, IRQ_PIN, GPIO_INPUT);
+	err = gpio_pin_configure_dt(&irq_gpio, GPIO_INPUT);
 	if (err) {
 		return err;
 	}
 
-	gpio_init_callback(&gpio_cb, irq_pin_cb, BIT(IRQ_PIN));
+	gpio_init_callback(&gpio_cb, irq_pin_cb, BIT(irq_gpio.pin));
 
-	err = gpio_add_callback(gpio_dev, &gpio_cb);
+	err = gpio_add_callback(irq_gpio.port, &gpio_cb);
 	if (err) {
 		return err;
 	};
 
-	return gpio_pin_interrupt_configure(gpio_dev,
-					    IRQ_PIN,
-					    GPIO_INT_EDGE_RISING);
+	return gpio_pin_interrupt_configure_dt(&irq_gpio, GPIO_INT_EDGE_TO_ACTIVE);
 }
 
 uint32_t st25r3911b_irq_read(void)
@@ -93,7 +90,7 @@ uint32_t st25r3911b_irq_read(void)
 		status |= ((uint32_t)data[1] << 8);
 		status |= ((uint32_t)data[2] << 16);
 
-		value = gpio_pin_get_raw(gpio_dev, IRQ_PIN);
+		value = gpio_pin_get_dt(&irq_gpio);
 		value = (value < 0) ? 0 : value;
 
 		/* Limiting the number of interrupt reads,
