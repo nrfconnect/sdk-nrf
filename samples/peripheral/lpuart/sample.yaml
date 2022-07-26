@@ -33,7 +33,7 @@ tests:
   sample.peripheral.lpuart_int_driven:
     build_only: true
     extra_configs:
-      - CONFIG_NRF_SW_LPUART_INT_DRIVEN=y
+      - CONFIG_UART_INTERRUPT_DRIVEN=y
     integration_platforms:
       - nrf52dk_nrf52832
       - nrf52833dk_nrf52833

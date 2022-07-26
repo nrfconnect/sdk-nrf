@@ -125,7 +125,7 @@ void main(void)
 
 	__ASSERT(device_is_ready(lpuart), "LPUART device not ready");
 
-	if (IS_ENABLED(CONFIG_NRF_SW_LPUART_INT_DRIVEN)) {
+	if (IS_ENABLED(CONFIG_UART_INTERRUPT_DRIVEN)) {
 		interrupt_driven(lpuart);
 	} else {
 		async(lpuart);
