@@ -1053,5 +1053,4 @@ static const struct lpuart_config lpuart_config = {
 static struct lpuart_data lpuart_data;
 
 DEVICE_DT_INST_DEFINE(0, lpuart_init, NULL, &lpuart_data, &lpuart_config,
-		      POST_KERNEL, CONFIG_NRF_SW_LPUART_INIT_PRIORITY,
-		      &lpuart_api);
+		      POST_KERNEL, CONFIG_SERIAL_INIT_PRIORITY, &lpuart_api);
