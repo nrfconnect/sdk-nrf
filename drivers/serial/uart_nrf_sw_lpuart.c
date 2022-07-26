@@ -13,6 +13,8 @@
 #include <zephyr/sys/onoff.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 
+#include <soc_nrf_common.h>
+
 LOG_MODULE_REGISTER(lpuart, CONFIG_NRF_SW_LPUART_LOG_LEVEL);
 
 /* States. */
@@ -105,10 +107,10 @@ struct lpuart_data {
 /* Configuration structured. */
 struct lpuart_config {
 	const struct device *uart;
-	nrfx_gpiote_pin_t req_pin;
-	nrfx_gpiote_pin_t rdy_pin;
-	struct lpuart_pin_config req;
-	struct lpuart_pin_config rdy;
+	struct gpio_dt_spec req;
+	struct gpio_dt_spec rdy;
+	uint32_t req_psel;
+	uint32_t rdy_psel;
 };
 
 static void req_pin_handler(nrfx_gpiote_pin_t pin,
@@ -915,13 +917,13 @@ static int lpuart_init(const struct device *dev)
 		return -ENODEV;
 	}
 
-	err = req_pin_init(data, cfg->req_pin);
+	err = req_pin_init(data, cfg->req_psel);
 	if (err < 0) {
 		LOG_ERR("req pin init failed:%d", err);
 		return err;
 	}
 
-	err = rdy_pin_init(data, cfg->rdy_pin);
+	err = rdy_pin_init(data, cfg->rdy_psel);
 	if (err < 0) {
 		LOG_ERR("rdy pin init failed:%d", err);
 		return err;
@@ -1006,23 +1008,12 @@ static int api_config_get(const struct device *dev, struct uart_config *uart_cfg
 
 #define DT_DRV_COMPAT nordic_nrf_sw_lpuart
 
-#define GPIO(id) DT_NODELABEL(gpio##id)
-
-#define GET_PORT(pin_prop) \
-	COND_CODE_1(DT_NODE_EXISTS(GPIO(1)), \
-		    ((DT_INST_PROP(0, pin_prop) >= 32) ? \
-			DT_LABEL(GPIO(1)) : DT_LABEL(GPIO(0))), \
-		    (DT_LABEL(GPIO(0))))
-
-#define LPUART_PIN_CFG_INITIALIZER(pin_prop) \
-	{ \
-		.pin = DT_INST_PROP(0, pin_prop) \
-	}
-
 static const struct lpuart_config lpuart_config = {
 	.uart = DEVICE_DT_GET(DT_INST_BUS(0)),
-	.req_pin = DT_INST_PROP(0, req_pin),
-	.rdy_pin = DT_INST_PROP(0, rdy_pin)
+	.req = GPIO_DT_SPEC_INST_GET(0, req_gpios),
+	.rdy = GPIO_DT_SPEC_INST_GET(0, rdy_gpios),
+	.req_psel = NRF_DT_GPIOS_TO_PSEL(DT_DRV_INST(0), req_gpios),
+	.rdy_psel = NRF_DT_GPIOS_TO_PSEL(DT_DRV_INST(0), rdy_gpios),
 };
 
 static struct lpuart_data lpuart_data;

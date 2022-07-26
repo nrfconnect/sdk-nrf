@@ -93,8 +93,8 @@ See the following configuration example:
 			compatible = "nordic,nrf-sw-lpuart";
 			status = "okay";
 			label = "LPUART";
-			req-pin = <46>;
-			rdy-pin = <47>;
+			req-gpios = <&gpio1 14 0>;
+			rdy-gpios = <&gpio1 15 0>;
 		};
 	};
 
