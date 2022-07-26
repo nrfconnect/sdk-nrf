@@ -369,6 +369,14 @@ Other samples
 
 |no_changes_yet_note|
 
+Devicetree configuration
+========================
+
+Thingy:91
+---------
+
+* Changed the PWM frequency of the pwmleds device from 50 Hz to 125 Hz.
+
 Drivers
 =======
 
