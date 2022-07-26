@@ -75,7 +75,6 @@ static nrfx_spim_t spim = NRFX_SPIM_INSTANCE(0);
 
 #define NRF21540_SPI DT_PHANDLE(NRF21540_NODE, spi_if)
 #define NRF21540_SPI_BUS DT_BUS(NRF21540_SPI)
-#define NRF21540_SPI_LABEL DT_LABEL(NRF21540_SPI_BUS)
 
 #if defined(NRF5340_XXAA_NETWORK)
 PINCTRL_DT_DEFINE(NRF21540_SPI_BUS);
@@ -119,7 +118,7 @@ struct gpiote_pin {
 static struct nrf21540 {
 #if CONFIG_NRF21540_FEM_SPI_SUPPORTED
 #if !defined(NRF5340_XXAA_NETWORK)
-	const struct device *spi_dev;
+	const struct device *const spi_dev;
 #endif /* !defined(NRF5340_XXAA_NETWORK) */
 	const struct spi_config spi_cfg;
 
@@ -147,6 +146,9 @@ static struct nrf21540 {
 	const nrfx_timer_t timer;
 } nrf21540_cfg = {
 #if CONFIG_NRF21540_FEM_SPI_SUPPORTED
+#if !defined(NRF5340_XXAA_NETWORK)
+	.spi_dev = DEVICE_DT_GET(NRF21540_SPI_BUS),
+#endif /* !defined(NRF5340_XXAA_NETWORK) */
 #if DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI)
 	.spi_cs.gpio = SPI_CS_GPIOS_DT_SPEC_GET(NRF21540_SPI),
 #endif /* DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI) */
@@ -363,11 +365,6 @@ static int spi_config(void)
 #endif /* DT_SPI_DEV_HAS_CS_GPIOS(NRF21540_SPI)  */
 
 #if !defined(NRF5340_XXAA_NETWORK)
-	nrf21540_cfg.spi_dev = device_get_binding(NRF21540_SPI_LABEL);
-	if (!nrf21540_cfg.spi_dev) {
-		return -ENXIO;
-	}
-
 	if (!device_is_ready(nrf21540_cfg.spi_dev)) {
 		return -ENODEV;
 	}
