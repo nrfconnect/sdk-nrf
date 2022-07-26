@@ -116,11 +116,12 @@ For more configuration options, read the module documentation.
 Thread Specification options
 ============================
 
-The OpenThread stack can be configured to operate in compliance with either the Thread 1.1 Specification  or the :ref:`Thread 1.2 Specification <thread_ug_supported_features_v12>`.
+The OpenThread stack can be configured to operate in compliance with either the Thread 1.1 Specification, the :ref:`Thread 1.2 Specification <thread_ug_supported_features_v12>`, or the :ref:`Thread 1.3 Specification <thread_ug_supported_features_v13>`.
 You can change the stack version by using the following Kconfig options:
 
 * :kconfig:option:`CONFIG_OPENTHREAD_THREAD_VERSION_1_1` - Selects the Thread stack version that is compliant with the Thread 1.1 Specification.
 * :kconfig:option:`CONFIG_OPENTHREAD_THREAD_VERSION_1_2` - Selects the Thread stack version that is compliant with the Thread 1.2 Specification.
+* :kconfig:option:`CONFIG_OPENTHREAD_THREAD_VERSION_1_3` - Selects the Thread stack version that is compliant with the Thread 1.3 Specification.
   This option is enabled by default if no other option is selected.
 
 By selecting support for Thread 1.2, you enable the following features in addition to the :ref:`Thread 1.1 features <thread_ug_supported_features>`:
@@ -129,6 +130,10 @@ By selecting support for Thread 1.2, you enable the following features in additi
 * Enhanced Keep Alive
 * Thread Domain Name
 * Coordinated Sampled Listening (CSL) Transmitter (for Full Thread Devices only)
+
+By selecting support for Thread 1.3, you enable the following features in addition to the :ref:`Thread 1.2 features <thread_ug_supported_features>`:
+
+* Service Registration Protocol (SRP) client
 
 For a list of all supported features, see the :ref:`thread_ug_feature_sets`.
 
