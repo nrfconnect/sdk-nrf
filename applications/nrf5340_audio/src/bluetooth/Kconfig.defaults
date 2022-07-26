@@ -27,6 +27,8 @@ config BT_EXT_ADV
 	bool
 	default y
 
+if TRANSPORT_CIS # Depends on TRANSPORT_CIS
+
 config BT_DEVICE_NAME
 	string
 	default "NRF5340_AUDIO"
