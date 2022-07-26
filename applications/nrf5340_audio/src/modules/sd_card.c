@@ -40,6 +40,7 @@ int sd_card_list_files(char *path)
 	if (!sd_init_success) {
 		return -ENODEV;
 	}
+	fs_dir_t_init(&dirp);
 
 	if (path == NULL) {
 		ret = fs_opendir(&dirp, sd_root_path);
@@ -103,6 +104,7 @@ int sd_card_write(char const *const filename, char const *const data, size_t *si
 	}
 
 	strcat(abs_path_name, filename);
+	fs_file_t_init(&f_entry);
 
 	ret = fs_open(&f_entry, abs_path_name, FS_O_CREATE | FS_O_WRITE | FS_O_APPEND);
 	if (ret) {
@@ -150,6 +152,7 @@ int sd_card_read(char const *const filename, char *const data, size_t *size)
 	}
 
 	strcat(abs_path_name, filename);
+	fs_file_t_init(&f_entry);
 
 	ret = fs_open(&f_entry, abs_path_name, FS_O_READ);
 	if (ret) {
