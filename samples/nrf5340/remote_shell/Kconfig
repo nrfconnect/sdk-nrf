@@ -23,11 +23,4 @@ config REMOTE_SHELL_RX_RING_BUFFER_SIZE
 	  RX ring buffer size, used to collect data received from remote shell and passing
 	  them to chosen transport medium.
 
-config REMOTE_SHELL_UART_DEV
-	string "UART device name"
-	default "CDC_ACM_0"
-	help
-	  Name of the used UART device. The sample uses cdc_acm_0 by default.
-	  The UART device should not be used as logger backend.
-
 endmenu
