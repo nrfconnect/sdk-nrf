@@ -48,7 +48,6 @@ Besides applying `General recommendations`_, you can also complete the following
 
   The following configuration options affect the stack sizes of the Bluetooth threads:
 
-  * :kconfig:option:`CONFIG_BT_CTLR_SDC_RX_STACK_SIZE`
   * :kconfig:option:`CONFIG_BT_RX_STACK_SIZE`
   * :kconfig:option:`CONFIG_BT_HCI_TX_STACK_SIZE`
   * :kconfig:option:`CONFIG_MPSL_WORK_STACK_SIZE`
