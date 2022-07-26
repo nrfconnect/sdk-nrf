@@ -4,16 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-&zephyr_udc0 {
-	cdc_acm0: cdc_acm0 {
-		compatible = "zephyr,cdc-acm-uart";
-		label = "CDC_ACM_0";
-	};
-};
-
 / {
 	chosen {
 		zephyr,shell-ipc = &ipc0;
-		ncs,remote-shell-uart = &cdc_acm0;
+		ncs,remote-shell-uart = &uart0;
 	};
 };

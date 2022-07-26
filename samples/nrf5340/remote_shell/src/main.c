@@ -131,10 +131,9 @@ static void uart_irq_handler(const struct device *dev, void *user_data)
 void main(void)
 {
 	int err;
-	const struct device *dev;
+	const struct device *dev = DEVICE_DT_GET(DT_CHOSEN(ncs_remote_shell_uart));
 	uint32_t baudrate = 0;
 
-	dev = device_get_binding(CONFIG_REMOTE_SHELL_UART_DEV);
 	if (!device_is_ready(dev)) {
 		LOG_ERR("Device not ready");
 		return;
