@@ -10,7 +10,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(board_secure, CONFIG_BOARD_LOG_LEVEL);
 
-#define ADP536X_I2C_DEV_NAME	DT_LABEL(DT_NODELABEL(i2c2))
+#define ADP536X_I2C_DEVICE	DEVICE_DT_GET(DT_NODELABEL(i2c2))
 #define LC_MAX_READ_LENGTH	128
 
 /* The BH1749 on must be powered by the ADP5360 before it can be initialized. */
@@ -24,7 +24,7 @@ static int power_mgmt_init(void)
 {
 	int err;
 
-	err = adp536x_init(ADP536X_I2C_DEV_NAME);
+	err = adp536x_init(ADP536X_I2C_DEVICE);
 	if (err) {
 		LOG_ERR("ADP536X failed to initialize, error: %d\n", err);
 		return err;
