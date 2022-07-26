@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#define DT_DRV_COMPAT nordic_nrf_sw_lpuart
+
 #include <zephyr/drivers/uart.h>
 #include <zephyr/drivers/gpio.h>
 #include <hal/nrf_gpio.h>
@@ -907,52 +909,6 @@ static int api_irq_update(const struct device *dev)
 
 #endif /* CONFIG_UART_INTERRUPT_DRIVEN */
 
-static int lpuart_init(const struct device *dev)
-{
-	struct lpuart_data *data = dev->data;
-	const struct lpuart_config *cfg = dev->config;
-	int err;
-
-	if (!device_is_ready(cfg->uart)) {
-		return -ENODEV;
-	}
-
-	err = req_pin_init(data, cfg->req_psel);
-	if (err < 0) {
-		LOG_ERR("req pin init failed:%d", err);
-		return err;
-	}
-
-	err = rdy_pin_init(data, cfg->rdy_psel);
-	if (err < 0) {
-		LOG_ERR("rdy pin init failed:%d", err);
-		return err;
-	}
-
-	k_timer_init(&data->tx_timer, tx_timeout, NULL);
-	k_timer_user_data_set(&data->tx_timer, (void *)dev);
-
-	err = uart_callback_set(cfg->uart, uart_callback, (void *)dev);
-	if (err < 0) {
-		return -EINVAL;
-	}
-
-#if CONFIG_UART_INTERRUPT_DRIVEN
-	err = uart_callback_set(dev, int_driven_evt_handler, NULL);
-	if (err < 0) {
-		return -EINVAL;
-	}
-
-	err = api_rx_enable(dev, data->int_driven.rxbuf,
-				sizeof(data->int_driven.rxbuf), 1000);
-#endif
-
-	data->txbyte = -1;
-	data->dev = dev;
-
-	return err;
-}
-
 static int api_poll_in(const struct device *dev, unsigned char *p_char)
 {
 #if CONFIG_UART_INTERRUPT_DRIVEN
@@ -1006,18 +962,6 @@ static int api_config_get(const struct device *dev, struct uart_config *uart_cfg
 	return uart_config_get(cfg->uart, uart_cfg);
 }
 
-#define DT_DRV_COMPAT nordic_nrf_sw_lpuart
-
-static const struct lpuart_config lpuart_config = {
-	.uart = DEVICE_DT_GET(DT_INST_BUS(0)),
-	.req = GPIO_DT_SPEC_INST_GET(0, req_gpios),
-	.rdy = GPIO_DT_SPEC_INST_GET(0, rdy_gpios),
-	.req_psel = NRF_DT_GPIOS_TO_PSEL(DT_DRV_INST(0), req_gpios),
-	.rdy_psel = NRF_DT_GPIOS_TO_PSEL(DT_DRV_INST(0), rdy_gpios),
-};
-
-static struct lpuart_data lpuart_data;
-
 static const struct uart_driver_api lpuart_api = {
 	.callback_set = api_callback_set,
 	.tx = api_tx,
@@ -1047,11 +991,67 @@ static const struct uart_driver_api lpuart_api = {
 #endif
 };
 
-BUILD_ASSERT(DT_IRQ(DT_PARENT(DT_NODELABEL(lpuart)), priority) ==
+
+static int lpuart_init(const struct device *dev)
+{
+	struct lpuart_data *data = dev->data;
+	const struct lpuart_config *cfg = dev->config;
+	int err;
+
+	if (!device_is_ready(cfg->uart)) {
+		return -ENODEV;
+	}
+
+	err = req_pin_init(data, cfg->req_psel);
+	if (err < 0) {
+		LOG_ERR("req pin init failed:%d", err);
+		return err;
+	}
+
+	err = rdy_pin_init(data, cfg->rdy_psel);
+	if (err < 0) {
+		LOG_ERR("rdy pin init failed:%d", err);
+		return err;
+	}
+
+	k_timer_init(&data->tx_timer, tx_timeout, NULL);
+	k_timer_user_data_set(&data->tx_timer, (void *)dev);
+
+	err = uart_callback_set(cfg->uart, uart_callback, (void *)dev);
+	if (err < 0) {
+		return -EINVAL;
+	}
+
+#if CONFIG_UART_INTERRUPT_DRIVEN
+	err = uart_callback_set(dev, int_driven_evt_handler, NULL);
+	if (err < 0) {
+		return -EINVAL;
+	}
+
+	err = api_rx_enable(dev, data->int_driven.rxbuf,
+				sizeof(data->int_driven.rxbuf), 1000);
+#endif
+
+	data->txbyte = -1;
+	data->dev = dev;
+
+	return err;
+}
+
+BUILD_ASSERT(DT_IRQ(DT_INST_PARENT(0), priority) ==
 	     DT_IRQ(DT_NODELABEL(gpiote), priority),
 	     "UARTE and GPIOTE interrupt priority must match.");
 
-DEVICE_DT_DEFINE(DT_NODELABEL(lpuart), lpuart_init, NULL,
-	      &lpuart_data, &lpuart_config,
-	      POST_KERNEL, CONFIG_NRF_SW_LPUART_INIT_PRIORITY,
-	      &lpuart_api);
+static const struct lpuart_config lpuart_config = {
+	.uart = DEVICE_DT_GET(DT_INST_BUS(0)),
+	.req = GPIO_DT_SPEC_INST_GET(0, req_gpios),
+	.rdy = GPIO_DT_SPEC_INST_GET(0, rdy_gpios),
+	.req_psel = NRF_DT_GPIOS_TO_PSEL(DT_DRV_INST(0), req_gpios),
+	.rdy_psel = NRF_DT_GPIOS_TO_PSEL(DT_DRV_INST(0), rdy_gpios),
+};
+
+static struct lpuart_data lpuart_data;
+
+DEVICE_DT_INST_DEFINE(0, lpuart_init, NULL, &lpuart_data, &lpuart_config,
+		      POST_KERNEL, CONFIG_NRF_SW_LPUART_INIT_PRIORITY,
+		      &lpuart_api);
