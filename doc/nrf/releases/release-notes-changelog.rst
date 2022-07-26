@@ -428,6 +428,14 @@ Other samples
 * :ref:`radio_test` sample:
    * Fixed the way of setting gain for the nRF21540 Front-end Module with nRF5340.
 
+Devicetree configuration
+========================
+
+Thingy:91
+---------
+
+* Changed the PWM frequency of the pwmleds device from 50 Hz to 125 Hz.
+
 Drivers
 =======
 
