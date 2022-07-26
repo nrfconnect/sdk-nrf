@@ -59,8 +59,8 @@ struct lpuart_int_driven {
 
 /* Low power uart structure. */
 struct lpuart_data {
-	/* Physical UART device */
-	const struct device *uart;
+	/* Instance reference. */
+	const struct device *dev;
 
 	/* Request pin. */
 	nrfx_gpiote_pin_t req_pin;
@@ -104,9 +104,11 @@ struct lpuart_data {
 
 /* Configuration structured. */
 struct lpuart_config {
-	const char *uart_name;
+	const struct device *uart;
 	nrfx_gpiote_pin_t req_pin;
 	nrfx_gpiote_pin_t rdy_pin;
+	struct lpuart_pin_config req;
+	struct lpuart_pin_config rdy;
 };
 
 static void req_pin_handler(nrfx_gpiote_pin_t pin,
@@ -276,16 +278,18 @@ static void rdy_pin_blink(struct lpuart_data *data)
  * clearing the pin (out, low) and then reconfigures to in, pullup + high to low
  * detection to detect end of transfer.
  */
-static void activate_rx(struct lpuart_data *data)
+static void activate_rx(const struct device *dev)
 {
 	int err;
+	struct lpuart_data *data = dev->data;
+	const struct lpuart_config *cfg = dev->config;
 
 	if (data->rx_buf == NULL) {
 		LOG_ERR("RX: Request before enabling RX");
 		return;
 	}
 
-	err = uart_rx_enable(data->uart, data->rx_buf,
+	err = uart_rx_enable(cfg->uart, data->rx_buf,
 				data->rx_len, data->rx_timeout);
 	__ASSERT(err == 0, "RX: Enabling failed (err:%d)", err);
 
@@ -304,7 +308,7 @@ static void rx_hfclk_callback(struct onoff_manager *mgr,
 
 	__ASSERT_NO_MSG(res >= 0);
 
-	activate_rx(data);
+	activate_rx(data->dev);
 }
 
 static void rx_hfclk_request(struct lpuart_data *data)
@@ -318,22 +322,26 @@ static void rx_hfclk_request(struct lpuart_data *data)
 	__ASSERT_NO_MSG(err >= 0);
 }
 
-static void start_rx_activation(struct lpuart_data *data)
+static void start_rx_activation(const struct device *dev)
 {
+	struct lpuart_data *data = dev->data;
+
 	data->rx_state = RX_PREPARE;
 
 	if (IS_ENABLED(CONFIG_NRF_SW_LPUART_HFXO_ON_RX)) {
 		rx_hfclk_request(data);
 	} else {
-		activate_rx(data);
+		activate_rx(dev);
 	}
 }
 
 /* Called when end of transfer is detected. It sets response pin to idle and
  * disables RX.
  */
-static void deactivate_rx(struct lpuart_data *data)
+static void deactivate_rx(const struct device *dev)
 {
+	const struct lpuart_config *cfg = dev->config;
+	struct lpuart_data *data = dev->data;
 	int err;
 
 	if (IS_ENABLED(CONFIG_NRF_SW_LPUART_HFXO_ON_RX)) {
@@ -346,7 +354,7 @@ static void deactivate_rx(struct lpuart_data *data)
 
 	/* abort rx */
 	data->rx_state = RX_TO_IDLE;
-	err = uart_rx_disable(data->uart);
+	err = uart_rx_disable(cfg->uart);
 	if (err < 0 && err != -EFAULT) {
 		LOG_ERR("RX: Failed to disable (err: %d)", err);
 	} else if (err == -EFAULT) {
@@ -376,6 +384,8 @@ static void req_pin_handler(nrfx_gpiote_pin_t pin,
 	size_t len;
 	int err;
 	struct lpuart_data *data = context;
+	const struct device *dev = data->dev;
+	const struct lpuart_config *cfg = dev->config;
 
 	if (data->tx_buf == NULL) {
 		LOG_WRN("TX: request confirmed but no data to send");
@@ -394,7 +404,7 @@ static void req_pin_handler(nrfx_gpiote_pin_t pin,
 	buf = data->tx_buf;
 	len = data->tx_len;
 	irq_unlock(key);
-	err = uart_tx(data->uart, buf, len, 0);
+	err = uart_tx(cfg->uart, buf, len, 0);
 	if (err < 0) {
 		LOG_ERR("TX: Not started (error: %d)", err);
 		tx_complete(data);
@@ -418,13 +428,13 @@ static void rdy_pin_handler(nrfx_gpiote_pin_t pin,
 
 		LOG_DBG("RX: Request detected.");
 		if (data->rx_state == RX_IDLE) {
-			start_rx_activation(data);
+			start_rx_activation(data->dev);
 		}
 	} else { /* HITOLO */
 		__ASSERT_NO_MSG(data->rx_state == RX_ACTIVE);
 
 		LOG_DBG("RX: End detected.");
-		deactivate_rx(data);
+		deactivate_rx(data->dev);
 	}
 }
 
@@ -540,12 +550,13 @@ static void tx_timeout(struct k_timer *timer)
 {
 	struct device *dev = k_timer_user_data_get(timer);
 	struct lpuart_data *data = dev->data;
+	const struct lpuart_config *cfg = dev->config;
 	const uint8_t *txbuf = data->tx_buf;
 	int err;
 
 	LOG_WRN("Tx timeout");
 	if (data->tx_active) {
-		err = uart_tx_abort(data->uart);
+		err = uart_tx_abort(cfg->uart);
 		if (err == -EFAULT) {
 			LOG_DBG("No active transfer. Already finished?");
 		} else if (err < 0) {
@@ -594,6 +605,7 @@ static int api_tx(const struct device *dev, const uint8_t *buf,
 
 static int api_tx_abort(const struct device *dev)
 {
+	const struct lpuart_config *cfg = dev->config;
 	struct lpuart_data *data = dev->data;
 	const uint8_t *buf = data->tx_buf;
 	int err;
@@ -608,7 +620,7 @@ static int api_tx_abort(const struct device *dev)
 	tx_complete(data);
 	irq_unlock(key);
 
-	err = uart_tx_abort(data->uart);
+	err = uart_tx_abort(cfg->uart);
 	if (err != -EFAULT) {
 		/* if successfully aborted or returned error different than
 		 * one indicating that there is no transfer, return error code.
@@ -654,6 +666,7 @@ static int api_rx_enable(const struct device *dev, uint8_t *buf,
 
 static int api_rx_buf_rsp(const struct device *dev, uint8_t *buf, size_t len)
 {
+	const struct lpuart_config *cfg = dev->config;
 	struct lpuart_data *data = dev->data;
 
 	__ASSERT_NO_MSG((data->rx_state != RX_OFF) &&
@@ -670,16 +683,17 @@ static int api_rx_buf_rsp(const struct device *dev, uint8_t *buf, size_t len)
 		return 0;
 	}
 
-	return uart_rx_buf_rsp(data->uart, buf, len);
+	return uart_rx_buf_rsp(cfg->uart, buf, len);
 }
 
 static int api_rx_disable(const struct device *dev)
 {
+	const struct lpuart_config *cfg = dev->config;
 	struct lpuart_data *data = dev->data;
 
 	data->rx_state = RX_TO_OFF;
 
-	return uart_rx_disable(data->uart);
+	return uart_rx_disable(cfg->uart);
 }
 
 #if CONFIG_UART_INTERRUPT_DRIVEN
@@ -897,8 +911,7 @@ static int lpuart_init(const struct device *dev)
 	const struct lpuart_config *cfg = dev->config;
 	int err;
 
-	data->uart = device_get_binding(cfg->uart_name);
-	if (data->uart == NULL) {
+	if (!device_is_ready(cfg->uart)) {
 		return -ENODEV;
 	}
 
@@ -917,7 +930,7 @@ static int lpuart_init(const struct device *dev)
 	k_timer_init(&data->tx_timer, tx_timeout, NULL);
 	k_timer_user_data_set(&data->tx_timer, (void *)dev);
 
-	err = uart_callback_set(data->uart, uart_callback, (void *)dev);
+	err = uart_callback_set(cfg->uart, uart_callback, (void *)dev);
 	if (err < 0) {
 		return -EINVAL;
 	}
@@ -933,6 +946,7 @@ static int lpuart_init(const struct device *dev)
 #endif
 
 	data->txbyte = -1;
+	data->dev = dev;
 
 	return err;
 }
@@ -972,22 +986,22 @@ static void api_poll_out(const struct device *dev, unsigned char out_char)
 	}
 }
 
-static int api_configure(const struct device *dev, const struct uart_config *cfg)
+static int api_configure(const struct device *dev, const struct uart_config *uart_cfg)
 {
-	const struct lpuart_data *data = dev->data;
+	const struct lpuart_config *cfg = dev->config;
 
-	if (cfg->flow_ctrl != UART_CFG_FLOW_CTRL_NONE) {
+	if (uart_cfg->flow_ctrl != UART_CFG_FLOW_CTRL_NONE) {
 		return -ENOTSUP;
 	}
 
-	return uart_configure(data->uart, cfg);
+	return uart_configure(cfg->uart, uart_cfg);
 }
 
-static int api_config_get(const struct device *dev, struct uart_config *cfg)
+static int api_config_get(const struct device *dev, struct uart_config *uart_cfg)
 {
-	const struct lpuart_data *data = dev->data;
+	const struct lpuart_config *cfg = dev->config;
 
-	return uart_config_get(data->uart, cfg);
+	return uart_config_get(cfg->uart, uart_cfg);
 }
 
 #define DT_DRV_COMPAT nordic_nrf_sw_lpuart
@@ -1006,7 +1020,7 @@ static int api_config_get(const struct device *dev, struct uart_config *cfg)
 	}
 
 static const struct lpuart_config lpuart_config = {
-	.uart_name = DT_INST_BUS_LABEL(0),
+	.uart = DEVICE_DT_GET(DT_INST_BUS(0)),
 	.req_pin = DT_INST_PROP(0, req_pin),
 	.rdy_pin = DT_INST_PROP(0, rdy_pin)
 };
