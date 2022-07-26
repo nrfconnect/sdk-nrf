@@ -155,6 +155,23 @@ static int gnss_startup(int type)
 	/* Set run_type first as modem send NRF_MODEM_GNSS_EVT_AGPS_REQ instantly */
 	run_type = type;
 
+	/* Subscribe to NMEA messages */
+	if (IS_ENABLED(CONFIG_SLM_LOG_LEVEL_DBG)) {
+		(void)nrf_modem_gnss_qzss_nmea_mode_set(
+			NRF_MODEM_GNSS_QZSS_NMEA_MODE_CUSTOM);
+		ret = nrf_modem_gnss_nmea_mask_set(NRF_MODEM_GNSS_NMEA_GGA_MASK |
+						   NRF_MODEM_GNSS_NMEA_GLL_MASK |
+						   NRF_MODEM_GNSS_NMEA_GSA_MASK |
+						   NRF_MODEM_GNSS_NMEA_GSV_MASK |
+						   NRF_MODEM_GNSS_NMEA_RMC_MASK);
+	} else {
+		ret = nrf_modem_gnss_nmea_mask_set(NRF_MODEM_GNSS_NMEA_GGA_MASK);
+	}
+	if (ret < 0) {
+		LOG_ERR("Failed to set nmea mask, error: %d", ret);
+		return ret;
+	}
+
 	ret = nrf_modem_gnss_start();
 	if (ret) {
 		LOG_ERR("Failed to start GPS, error: %d", ret);
@@ -461,6 +478,15 @@ static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 	}
 }
 
+static void on_gnss_evt_nmea(void)
+{
+	struct nrf_modem_gnss_nmea_data_frame nmea;
+
+	if (nrf_modem_gnss_read((void *)&nmea, sizeof(nmea), NRF_MODEM_GNSS_DATA_NMEA) == 0) {
+		LOG_DBG("%s", nmea.nmea_str);
+	}
+}
+
 static void on_gnss_evt_pvt(void)
 {
 	struct nrf_modem_gnss_pvt_data_frame pvt;
@@ -473,8 +499,11 @@ static void on_gnss_evt_pvt(void)
 	}
 	for (int i = 0; i < NRF_MODEM_GNSS_MAX_SATELLITES; ++i) {
 		if (pvt.sv[i].sv) { /* SV number 0 indicates no satellite */
-			LOG_DBG("SV:%3d sig: %d c/n0:%4d",
-				pvt.sv[i].sv, pvt.sv[i].signal, pvt.sv[i].cn0);
+			LOG_DBG("SV:%3d sig: %d c/n0:%4d el:%3d az:%3d in-fix: %d unhealthy: %d",
+				pvt.sv[i].sv, pvt.sv[i].signal, pvt.sv[i].cn0,
+				pvt.sv[i].elevation, pvt.sv[i].azimuth,
+				(pvt.sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX) ? 1 : 0,
+				(pvt.sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_UNHEALTHY) ? 1 : 0);
 		}
 	}
 }
@@ -514,6 +543,11 @@ static void fix_rep_wk(struct k_work *work)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_SLM_LOG_LEVEL_DBG)) {
+		goto update_pgps;
+	}
+
+	/* Read $GPGGA NMEA message */
 	err = nrf_modem_gnss_read((void *)&nmea, sizeof(nmea), NRF_MODEM_GNSS_DATA_NMEA);
 	if (err) {
 		LOG_WRN("Failed to read GNSS NMEA data, error %d", err);
@@ -541,6 +575,7 @@ static void fix_rep_wk(struct k_work *work)
 		}
 	}
 
+update_pgps:
 	if (run_type == RUN_TYPE_PGPS) {
 		struct tm gps_time = {
 			.tm_year = pvt.datetime.year - 1900,
@@ -585,15 +620,18 @@ static void gnss_event_handler(int event)
 {
 	switch (event) {
 	case NRF_MODEM_GNSS_EVT_PVT:
-		LOG_DBG("GNSS_EVT_PVT");
-		on_gnss_evt_pvt();
+		if (IS_ENABLED(CONFIG_SLM_LOG_LEVEL_DBG)) {
+			on_gnss_evt_pvt();
+		}
 		break;
 	case NRF_MODEM_GNSS_EVT_FIX:
 		LOG_INF("GNSS_EVT_FIX");
 		on_gnss_evt_fix();
 		break;
 	case NRF_MODEM_GNSS_EVT_NMEA:
-		LOG_DBG("GNSS_EVT_NMEA");
+		if (IS_ENABLED(CONFIG_SLM_LOG_LEVEL_DBG)) {
+			on_gnss_evt_nmea();
+		}
 		break;
 	case NRF_MODEM_GNSS_EVT_AGPS_REQ:
 		LOG_INF("GNSS_EVT_AGPS_REQ");
@@ -839,11 +877,6 @@ int handle_at_gps(enum at_cmd_type cmd_type)
 				}
 			} /* else leave it to default or previously configured timeout */
 
-			err = nrf_modem_gnss_nmea_mask_set(NRF_MODEM_GNSS_NMEA_GGA_MASK);
-			if (err < 0) {
-				LOG_ERR("Failed to set nmea mask, error: %d", err);
-				return err;
-			}
 			err = gnss_startup(RUN_TYPE_GPS);
 		} else if (op == GPS_STOP && run_type == RUN_TYPE_GPS) {
 			err = gnss_shutdown();
@@ -999,11 +1032,6 @@ int handle_at_agps(enum at_cmd_type cmd_type)
 				}
 			} /* else leave it to default or previously configured timeout */
 
-			err = nrf_modem_gnss_nmea_mask_set(NRF_MODEM_GNSS_NMEA_GGA_MASK);
-			if (err < 0) {
-				LOG_ERR("Failed to set nmea mask, error: %d", err);
-				return err;
-			}
 			err = gnss_startup(RUN_TYPE_AGPS);
 		} else if (op == AGPS_STOP && run_type == RUN_TYPE_AGPS) {
 			err = gnss_shutdown();
@@ -1092,11 +1120,6 @@ int handle_at_pgps(enum at_cmd_type cmd_type)
 				return err;
 			}
 
-			err = nrf_modem_gnss_nmea_mask_set(NRF_MODEM_GNSS_NMEA_GGA_MASK);
-			if (err < 0) {
-				LOG_ERR("Failed to set nmea mask, error: %d", err);
-				return err;
-			}
 			err = gnss_startup(RUN_TYPE_PGPS);
 		} else if (op == PGPS_STOP && run_type == RUN_TYPE_PGPS) {
 			err = gnss_shutdown();
