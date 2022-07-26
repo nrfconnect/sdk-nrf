@@ -45,17 +45,20 @@ LOG_MODULE_DECLARE(st25r3911b);
 #define FIFO_TX_WATER_16_EMPTY (ST25R3911B_MAX_FIFO_LEN - FIFO_TX_WATER_LVL_16)
 #define FIFO_TX_WATER_32_EMPTY (ST25R3911B_MAX_FIFO_LEN - FIFO_TX_WATER_LVL_32)
 
-#define NFCA_LED_PORT DT_GPIO_LABEL(ST25R3911B_NODE, led_nfca_gpios)
-#define NFCA_LED_PIN DT_GPIO_PIN(ST25R3911B_NODE, led_nfca_gpios)
+#if DT_NODE_HAS_PROP(ST25R3911B_NODE, led_nfca_gpios)
+static const struct gpio_dt_spec led_nfca =
+	GPIO_DT_SPEC_GET(ST25R3911B_NODE, led_nfca_gpios);
+#endif
 
-#define NFCB_LED_PORT DT_GPIO_LABEL(ST25R3911B_NODE, led_nfcb_gpios)
-#define NFCB_LED_PIN DT_GPIO_PIN(ST25R3911B_NODE, led_nfcb_gpios)
+#if DT_NODE_HAS_PROP(ST25R3911B_NODE, led_nfcb_gpios)
+static const struct gpio_dt_spec led_nfcb =
+	GPIO_DT_SPEC_GET(ST25R3911B_NODE, led_nfcb_gpios);
+#endif
 
-#define NFCF_LED_PORT DT_GPIO_LABEL(ST25R3911B_NODE, led_nfcf_gpios)
-#define NFCF_LED_PIN DT_GPIO_PIN(ST25R3911B_NODE, led_nfcf_gpios)
-
-
-static const struct device *gpio_dev;
+#if DT_NODE_HAS_PROP(ST25R3911B_NODE, led_nfcf_gpios)
+static const struct gpio_dt_spec led_nfcf =
+	GPIO_DT_SPEC_GET(ST25R3911B_NODE, led_nfcf_gpios);
+#endif
 
 static int command_process(uint8_t cmd, uint32_t *irq_mask, uint32_t timeout)
 {
@@ -540,31 +543,24 @@ int st25r3911b_field_on(uint8_t collision_threshold, uint8_t peer_threshold,
 int st25r3911b_technology_led_set(enum st25r3911b_leds led, bool on)
 {
 	int err;
-	gpio_pin_t pin;
-	const char *port;
+	const struct gpio_dt_spec *led_gpio;
 
 	switch (led) {
 #if DT_NODE_HAS_PROP(ST25R3911B_NODE, led_nfca_gpios)
 	case ST25R3911B_NFCA_LED:
-		pin = NFCA_LED_PIN;
-		port = NFCA_LED_PORT;
-
+		led_gpio = &led_nfca;
 		break;
 #endif /* DT_NODE_HAS_PROP(ST25R3911B_NODE, led_nfca_gpios) */
 
 #if DT_NODE_HAS_PROP(ST25R3911B_NODE, led_nfcb_gpios)
 	case ST25R3911B_NFCB_LED:
-		pin = NFCB_LED_PIN;
-		port = NFCB_LED_PORT;
-
+		led_gpio = &led_nfcb;
 		break;
 #endif /* DT_NODE_HAS_PROP(ST25R3911B_NODE, led_nfcb_gpios) */
 
 #if DT_NODE_HAS_PROP(ST25R3911B_NODE, led_nfcf_gpios)
 	case ST25R3911B_NFCF_LED:
-		pin = NFCF_LED_PIN;
-		port = NFCF_LED_PORT;
-
+		led_gpio = &led_nfcf;
 		break;
 #endif /* DT_NODE_HAS_PROP(ST25R3911B_NODE, led_nfcf_gpios) */
 
@@ -572,20 +568,17 @@ int st25r3911b_technology_led_set(enum st25r3911b_leds led, bool on)
 		return -ENOTSUP;
 	}
 
-	gpio_dev = device_get_binding(port);
-	if (!gpio_dev) {
-		LOG_ERR("GPIO device binding error.");
-		return -ENXIO;
+	if (!device_is_ready(led_gpio->port)) {
+		LOG_ERR("LED GPIO controller not ready");
+		return -ENODEV;
 	}
 
-	err = gpio_pin_configure(gpio_dev, pin,
-				 GPIO_OUTPUT |
-				 GPIO_PULL_UP);
+	err = gpio_pin_configure_dt(led_gpio, GPIO_OUTPUT);
 	if (err) {
 		return err;
 	}
 
-	return gpio_pin_set_raw(gpio_dev, pin, on);
+	return gpio_pin_set_dt(led_gpio, (int)on);
 }
 
 int st25r3911b_fifo_reload_lvl_get(uint8_t *tx_lvl, uint8_t *rx_lvl)

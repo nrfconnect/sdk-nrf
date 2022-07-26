@@ -11,8 +11,8 @@
 		compatible = "st,st25r3911b";
 		reg = <0>;
 		spi-max-frequency = <4000000>;
-		irq-gpios = <&gpio0 4 0>;
-		led-nfca-gpios = <&gpio0 7 0>;
+		irq-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+		led-nfca-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
 	};
 };
 
