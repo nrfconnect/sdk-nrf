@@ -374,7 +374,7 @@ foreach(container ${containers} ${merged})
     OUTPUT ${PROJECT_BINARY_DIR}/${container}.hex
     COMMAND
     ${PYTHON_EXECUTABLE}
-    ${ZEPHYR_BASE}/scripts/mergehex.py
+    ${ZEPHYR_BASE}/scripts/build/mergehex.py
     -o ${PROJECT_BINARY_DIR}/${container}.hex
     ${${container}overlap_arg}
     ${${container}hex_files}
@@ -629,7 +629,7 @@ to the external flash")
       OUTPUT ${final_merged}
       COMMAND
       ${PYTHON_EXECUTABLE}
-      ${ZEPHYR_BASE}/scripts/mergehex.py
+      ${ZEPHYR_BASE}/scripts/build/mergehex.py
       -o ${final_merged}
       ${domain_hex_files}
       DEPENDS
