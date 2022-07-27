@@ -19,12 +19,6 @@ menuconfig ETH_RTT
 
 if ETH_RTT
 
-config ETH_RTT_DRV_NAME
-	string "Ethernet over RTT driver name"
-	default "eth_rtt"
-	help
-	  This option sets the driver name.
-
 config ETH_RTT_MAC_ADDR
 	string "MAC address for the interface"
 	default ""
