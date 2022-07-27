@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
+#include <zephyr/devicetree.h>
 #include <zephyr/drivers/flash/flash_simulator.h>
 #include "bootutil/image.h"
 #include "bootutil/bootutil.h"
@@ -81,7 +82,7 @@ int network_core_update(bool wait)
 	void *mock_flash;
 	size_t mock_size;
 
-	mock_flash_dev = device_get_binding(PM_MCUBOOT_PRIMARY_1_DEV_NAME);
+	mock_flash_dev = DEVICE_DT_GET(DT_NODELABEL(PM_MCUBOOT_PRIMARY_1_DEV));
 	if (mock_flash_dev == NULL) {
 		return -ENODEV;
 	}
