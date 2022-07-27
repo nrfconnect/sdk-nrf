@@ -648,6 +648,7 @@ Documentation
   * :ref:`ug_thread_prebuilt_libs` as a separate page instead of being part of :ref:`ug_thread_configuring`.
   * Added software maturity entries for security features: TF-M, PSA crypto, Immutable bootloader, HW unique key.
   * A section about NFC in the :ref:`app_memory` page.
+  * A note in the :ref:`ug_ble_controller` about the usage of the Zephyr LE Controller.
 
 * Updated:
 
