@@ -77,7 +77,7 @@ def get_config_lines(gpm_config, greg_config, head, split, dest, current_domain=
 
             if dest is DEST_HEADER:
                 if partition_has_device(partition):
-                    add_line(f'{name_upper}_DEV_NAME', f"\"{region['device']}\"")
+                    add_line(f'{name_upper}_DEV', f"{region['device']}")
             elif dest is DEST_KCONFIG:
                 if 'span' in partition.keys():
                     add_line(f'{name_upper}_SPAN', string_of_strings(partition['span']))
