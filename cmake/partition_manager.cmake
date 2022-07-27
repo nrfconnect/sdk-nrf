@@ -190,7 +190,7 @@ add_region(
   SIZE ${flash_size}
   BASE ${CONFIG_FLASH_BASE_ADDRESS}
   PLACEMENT complex
-  DEVICE NRF_FLASH_DRV_NAME
+  DEVICE flash_controller
   )
 
 dt_chosen(ext_flash_dev PROPERTY nordic,pm-ext-flash)
