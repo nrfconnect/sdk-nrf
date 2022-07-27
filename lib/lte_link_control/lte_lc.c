@@ -1075,7 +1075,7 @@ int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status)
 	err = nrf_modem_at_scanf("AT+CEREG?",
 		"+CEREG: "
 		"%*u,"		/* <n> */
-		"%u,"		/* <stat> */
+		"%hu,"		/* <stat> */
 		"%*[^,],"	/* <tac> */
 		"\"%x\",",	/* <ci> */
 		&status_tmp,
