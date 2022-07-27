@@ -25,7 +25,7 @@
  *
  * @return	0 if success
  */
-int pscm_zero_pad(void const *const input, size_t input_size, enum audio_channel channel,
+int pscm_zero_pad(void const *const input, size_t input_size, enum audio_channel_select channel,
 		  uint8_t pcm_bit_depth, void *output, size_t *output_size);
 
 /**@brief  Adds a copy of every sample from *input
@@ -72,8 +72,9 @@ int pscm_combine(void const *const input_left, void const *const input_right, si
  *
  * @return	0 if success.
  */
-int pscm_one_channel_split(void const *const input, size_t input_size, enum audio_channel channel,
-			   uint8_t pcm_bit_depth, void *output, size_t *output_size);
+int pscm_one_channel_split(void const *const input, size_t input_size,
+			   enum audio_channel_select channel, uint8_t pcm_bit_depth, void *output,
+			   size_t *output_size);
 
 /**@brief  Splits a stereo stream to two separate mono streams
  * @note: Use to split stereo audio stream to two separate channels

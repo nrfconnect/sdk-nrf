@@ -256,6 +256,7 @@ static void audio_datapath_drift_compensation(uint32_t frame_start_ts)
 		    (ctrl_blk.drift_comp.center_freq < (APLL_FREQ_MIN))) {
 			LOG_DBG("Invalid center frequency, re-calculating");
 			drift_comp_state_set(DRIFT_STATE_INIT);
+			return;
 		}
 
 		hfclkaudio_set(ctrl_blk.drift_comp.center_freq);

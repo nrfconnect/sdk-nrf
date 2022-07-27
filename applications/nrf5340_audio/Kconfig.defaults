@@ -16,6 +16,10 @@ config MAIN_STACK_SIZE
 	int
 	default 1940
 
+config SYSTEM_WORKQUEUE_STACK_SIZE
+	int
+	default 4096
+
 # As long as thread names are used, config must be set to "y"
 config THREAD_NAME
 	bool
