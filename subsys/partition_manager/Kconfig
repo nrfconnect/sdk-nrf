@@ -133,6 +133,13 @@ config PM_IMAGE_NOT_BUILT_FROM_SOURCE
 	  Promptless helper config used to indicate that one or more
 	  image is not built from source.
 
+config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
+	bool "Override external driver check"
+	help
+	  When enabled, will include all external flash stroage areas without
+	  being gated on the NORDIC_QSPI_NOR Kconfig, can be enabled to use
+	  non-QSPI external flash chips from partition manager.
+
 # Helper configs needed since 'SRAM_SIZE/BASE' use the chosen node.
 config PM_SRAM_BASE
 	hex

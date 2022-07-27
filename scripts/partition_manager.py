@@ -915,6 +915,8 @@ This file contains all addresses and sizes of all partitions.
         parser.add_argument(f'--{x}-placement-strategy', required=False, type=str,
                             choices=[START_TO_END, END_TO_START, COMPLEX], default=START_TO_END)
         parser.add_argument(f'--{x}-device', required=False, type=str, default='')
+        parser.add_argument(f'--{x}-default-driver-kconfig', required=False, type=str, default='',
+                            help="Default Kconfig option that is used to turn on the driver")
         parser.add_argument(f'--{x}-dynamic-partition', required=False, type=str, help='Name of dynamic partition')
 
     ranges_configuration = parser.parse_args(region_args)
