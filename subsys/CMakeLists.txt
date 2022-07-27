@@ -6,6 +6,7 @@
 
 add_subdirectory_ifdef(CONFIG_BT bluetooth)
 
+add_subdirectory_ifdef(CONFIG_BOOTLOADER_MCUBOOT bootloader/bl_override)
 add_subdirectory_ifdef(CONFIG_IS_SECURE_BOOTLOADER bootloader)
 add_subdirectory_ifdef(CONFIG_SECURE_BOOT bootloader/image)
 add_subdirectory_ifdef(CONFIG_SECURE_BOOT_CRYPTO bootloader/bl_crypto)
