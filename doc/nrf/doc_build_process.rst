@@ -38,7 +38,7 @@ The |NCS| documentation consists of multiple docsets.
 The main docset is the nRF documentation, while the other docsets are pulled from their upstream versions.
 The only file that is needed to maintain for this, is a customized :file:`conf.py` file located under :file:`doc/\\{docset-name\\}/`.
 To be able to make references across docsets, the Sphinx extension Intersphinx is used, and local paths are configured under :code:`intersphinx_mapping` in :file:`doc/nrf/conf.py`.
-The upstream docsets are pulled using ``west``.
+The upstream docsets are pulled using west.
 
 Building and publishing the documentation
 *****************************************
@@ -49,7 +49,7 @@ This is done through two chained GitHub actions, :file:`docbuild.yml` and :file:
 Docbuild
 --------
 Whenever a pull request is created the `docbuild`_ workflow is triggered.
-This will checkout all the relevant repositories with ``west``, install the necessary dependencies and build the documentation with ``cmake``.
+This will checkout all the relevant repositories with west, install the necessary dependencies and build the documentation with cmake.
 After the documentation is built a cache file is created using :file:`doc/_scripts/cache_create.py` which can be used locally to speed up builds.
 
 Docpublish

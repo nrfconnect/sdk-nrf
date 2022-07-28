@@ -102,7 +102,7 @@ After programming the sample to your development kit, complete the following ste
       I: Jumping to the first image slot
       *** Booting Zephyr OS build v2.7.99-ncs1-2195-g186cf4539e5a  ***
 
-#. Program the network core update image using ``nrfjprog``:
+#. Program the network core update image using nrfjprog:
 
    .. code-block:: console
 
@@ -110,7 +110,7 @@ After programming the sample to your development kit, complete the following ste
 
    .. note::
       Typically, the update image is received through serial interface or Bluetooth.
-      For testing purposes, use ``nrfjprog`` to program the update image directly into the update slot.
+      For testing purposes, use nrfjprog to program the update image directly into the update slot.
 
 
 #. Reset the kit.

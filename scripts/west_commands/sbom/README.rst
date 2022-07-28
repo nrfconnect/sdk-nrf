@@ -115,11 +115,11 @@ You can also mix them, for example, to generate a report for the application and
 
      -d build_directory
 
-  You have to first build the ``build_directory`` with the ``west build`` command using ``Ninja`` as the underlying build tool (default).
+  You have to first build the ``build_directory`` with the ``west build`` command using Ninja as the underlying build tool (default).
   The build must be successful.
   Any change in the application configuration may affect the results, so always rebuild it after reconfiguration and before calling the ``west ncs-sbom``.
 
-  You can skip this option if you are in the application directory and you have a default ``build`` directory there - the same way as in ``west build`` command.
+  You can skip this option if you are in the application directory and you have a default :file:`build` directory there - the same way as in ``west build`` command.
 
   The :ref:`west_sbom Extracting from build` section describes in detail how to extract a list of files from a build directory.
 
@@ -328,10 +328,10 @@ Extracting a list of files from a build directory
 *************************************************
 
 The ``ncs-sbom`` extracts a list of files from a build directory.
-It queries ``ninja`` for the targets and dependencies.
+It queries ninja for the targets and dependencies.
 
 The entry point is the :file:`zephyr/zephyr.elf` target file.
-The script asks ``ninja`` for all input targets of the :file:`zephyr/zephyr.elf` target.
+The script asks ninja for all input targets of the :file:`zephyr/zephyr.elf` target.
 It also asks for all input targets of the previously extracted input targets,
 until it reaches all leaves in the dependency tree.
 The result is a list of all the leaves.
@@ -345,15 +345,15 @@ To change the target or specify multiple targets, you can add them after the bui
 
 There are two additional methods for improving the correctness of the above algorithm:
 
-* Each library is examined using the GNU ``ar`` tool.
+* Each library is examined using the GNU ar tool.
 
-  If the list of files returned by the GNU ``ar`` tool is covered by the list returned from the ``ninja``, the list is assumed to be valid.
+  If the list of files returned by the GNU ar tool is covered by the list returned from the ninja, the list is assumed to be valid.
   Otherwise, the library is assumed to be a leaf, so it is shown in the report and its inputs are not analyzed further.
 
 * The ``ncs-sbom`` parses the :file:`.map` file created during the :file:`zephyr/zephyr.elf` linking.
 
   It provides a list of all object files and libraries linked to the :file:`zephyr/zephyr.elf` file.
-  The script ends with a fatal error if any file in the :file:`.map` file is not visible by ``ninja``.
+  The script ends with a fatal error if any file in the :file:`.map` file is not visible by ninja.
 
   Exceptions are the runtime and standard libraries.
   You can specify the list of exceptions with the ``--allowed-in-map-file-only`` option.
