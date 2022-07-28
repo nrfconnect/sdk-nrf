@@ -371,6 +371,7 @@ static int config_settings_handler(const char *key, size_t len,
 			LOG_ERR("Failed to load configuration, error: %d", err);
 		} else {
 			LOG_DBG("Device configuration loaded from flash");
+			err = 0;
 		}
 	}
 

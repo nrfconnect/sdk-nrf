@@ -96,6 +96,17 @@ The client libraries supported by the cloud wrapper API all implement their own 
 This enables the cloud to issue FOTA updates and update the application and modem firmware while the device is in field.
 For additional documentation on the various FOTA implementations, refer to the respective client library documentation linked to in :ref:`Integration layers <integration_layers>`.
 
+Full modem FOTA updates are only supported by nRF Cloud.
+This application implements full modem FOTA only for the nRF9160 development kit version 1.0.1 and higher.
+To enable full modem FOTA, add the following parameter to your build command:
+
+``-DOVERLAY_CONFIG=overlay-full_modem_fota.conf``
+
+Also, specify your development kit version by appending it to the board name.
+For example, if your development kit version is 1.0.1, use the following board name in your build command:
+
+``nrf9160dk_nrf9160_ns@1_0_1``
+
 Connection awareness
 ====================
 
