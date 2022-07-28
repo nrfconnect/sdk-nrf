@@ -595,7 +595,7 @@ static void zep_shim_bus_qspi_deinit(void *os_qspi_priv)
 	k_free(qspi_priv);
 }
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 static int zep_shim_bus_qspi_ps_sleep(void *os_qspi_priv)
 {
 	rpu_sleep();
@@ -614,7 +614,7 @@ static int zep_shim_bus_qspi_ps_status(void *os_qspi_priv)
 {
 	return rpu_sleep_status();
 }
-#endif
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 static void zep_shim_bus_qspi_dev_host_map_get(void *os_qspi_dev_ctx,
 					       struct wifi_nrf_osal_host_map *host_map)
@@ -689,7 +689,7 @@ static void zep_shim_bus_qspi_intr_unreg(void *os_qspi_dev_ctx)
 {
 }
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 static void *zep_shim_timer_alloc(void)
 {
 	struct timer_list *timer = NULL;
@@ -724,7 +724,7 @@ static void zep_shim_timer_kill(void *timer)
 {
 	del_timer_sync(timer);
 }
-#endif
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 static const struct wifi_nrf_osal_ops wifi_nrf_os_zep_ops = {
 	.mem_alloc = zep_shim_mem_alloc,
@@ -796,7 +796,7 @@ static const struct wifi_nrf_osal_ops wifi_nrf_os_zep_ops = {
 	.bus_qspi_dev_intr_unreg = zep_shim_bus_qspi_intr_unreg,
 	.bus_qspi_dev_host_map_get = zep_shim_bus_qspi_dev_host_map_get,
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	.timer_alloc = zep_shim_timer_alloc,
 	.timer_init = zep_shim_timer_init,
 	.timer_free = zep_shim_timer_free,
@@ -806,7 +806,7 @@ static const struct wifi_nrf_osal_ops wifi_nrf_os_zep_ops = {
 	.bus_qspi_ps_sleep = zep_shim_bus_qspi_ps_sleep,
 	.bus_qspi_ps_wake = zep_shim_bus_qspi_ps_wake,
 	.bus_qspi_ps_status = zep_shim_bus_qspi_ps_status,
-#endif
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 };
 
 const struct wifi_nrf_osal_ops *get_os_ops(void)

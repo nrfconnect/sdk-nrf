@@ -1202,7 +1202,7 @@ void wifi_nrf_osal_qspi_cpy_to(struct wifi_nrf_osal_priv *opriv,
 				const void *src,
 				size_t count);
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 /**
  * wifi_nrf_osal_timer_alloc() - Allocate a timer.
  * @opriv: Pointer to the OSAL context returned by the @wifi_nrf_osal_init API.
@@ -1285,5 +1285,5 @@ int wifi_nrf_osal_bus_qspi_ps_wake(struct wifi_nrf_osal_priv *opriv,
 
 int wifi_nrf_osal_bus_qspi_ps_status(struct wifi_nrf_osal_priv *opriv,
 				     void *os_qspi_priv);
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 #endif /* __OSAL_API_H__ */

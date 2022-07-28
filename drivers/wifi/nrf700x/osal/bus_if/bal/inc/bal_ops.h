@@ -60,11 +60,11 @@ struct wifi_nrf_bal_ops {
 				   unsigned long phy_addr,
 				   size_t len,
 				   enum wifi_nrf_osal_dma_dir dma_dir);
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	void (*rpu_ps_sleep)(void *bus_dev_ctx);
 	void (*rpu_ps_wake)(void *bus_dev_ctx);
 	int (*rpu_ps_status)(void *bus_dev_ctx);
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 };
 
 
