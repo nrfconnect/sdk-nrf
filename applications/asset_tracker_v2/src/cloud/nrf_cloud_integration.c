@@ -9,6 +9,10 @@
 #include "json_protocol_names.h"
 #include "cloud/cloud_wrapper.h"
 
+#if defined(CONFIG_NRF_MODEM_LIB)
+#include <modem/nrf_modem_lib.h>
+#endif /* CONFIG_NRF_MODEM_LIB */
+
 #define MODULE nrf_cloud_integration
 
 #include <zephyr/logging/log.h>
@@ -35,6 +39,51 @@ static char client_id_buf[NRF_CLOUD_CLIENT_ID_LEN + 1];
 static struct k_work_delayable user_associating_work;
 
 static cloud_wrap_evt_handler_t wrapper_evt_handler;
+
+#if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
+/* Full modem FOTA requires external flash to hold the full modem image.
+ * Below is the external flash device present on the nRF9160 DK version
+ * 1.0.1 and higher.
+ */
+static struct dfu_target_fmfu_fdev ext_flash_dev = {
+	.size = 0,
+	.offset = 0,
+	.dev = DEVICE_DT_GET_ONE(jedec_spi_nor)
+};
+
+static int fmfu_and_modem_init(const struct device *dev)
+{
+	enum nrf_cloud_fota_type fota_type = NRF_CLOUD_FOTA_TYPE__INVALID;
+	int ret;
+
+	ARG_UNUSED(dev);
+
+	/* Check if a full modem FOTA job is pending */
+	ret = nrf_cloud_fota_pending_job_type_get(&fota_type);
+
+	/* Process pending full modem FOTA job before initializing the modem library */
+	if ((ret == 0) && (fota_type == NRF_CLOUD_FOTA_MODEM_FULL)) {
+		/* The flash device must be set before a full modem FOTA update can be applied */
+		ret = nrf_cloud_fota_fmfu_dev_set(&ext_flash_dev);
+		if (ret < 0) {
+			LOG_ERR("Failed to set flash device for full modem FOTA, error: %d",
+				ret);
+		} else {
+			ret = nrf_cloud_fota_pending_job_validate(NULL);
+			if ((ret < 0) && (ret != -ENODEV)) {
+				LOG_ERR("Error validating full modem FOTA job: %d", ret);
+			}
+		}
+	}
+
+	/* Ignore the result, it will be checked later */
+	(void)nrf_modem_lib_init(NORMAL_MODE);
+
+	return 0;
+}
+
+SYS_INIT(fmfu_and_modem_init, APPLICATION, 0);
+#endif /* CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE */
 
 static void cloud_wrapper_notify_event(const struct cloud_wrap_event *evt)
 {
@@ -67,14 +116,11 @@ static void user_association_work_fn(struct k_work *work)
 static int send_service_info(void)
 {
 	int err;
-	bool fota_capable = IS_ENABLED(CONFIG_NRF_CLOUD_FOTA) &&
-			    IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT);
-	bool boot_fota_capable = IS_ENABLED(CONFIG_BUILD_S1_VARIANT) &&
-				 IS_ENABLED(CONFIG_SECURE_BOOT);
 	struct nrf_cloud_svc_info_fota fota_info = {
-		.application = fota_capable,
-		.bootloader = fota_capable && boot_fota_capable,
-		.modem = fota_capable
+		.application = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_APPLICATION),
+		.bootloader = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_BOOTLOADER),
+		.modem = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_DELTA),
+		.modem_full = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_FULL)
 	};
 	struct nrf_cloud_svc_info_ui ui_info = {
 		.gps = true,
@@ -253,6 +299,9 @@ int cloud_wrap_init(cloud_wrap_evt_handler_t event_handler)
 	int err;
 	struct nrf_cloud_init_param config = {
 		.event_handler = nrf_cloud_event_handler,
+#if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
+		.fmfu_dev_inf = &ext_flash_dev
+#endif
 	};
 
 #if !defined(CONFIG_CLOUD_CLIENT_ID_USE_CUSTOM)
