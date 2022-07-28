@@ -605,7 +605,7 @@ static int zep_shim_bus_qspi_ps_sleep(void *os_qspi_priv)
 
 static int zep_shim_bus_qspi_ps_wake(void *os_qspi_priv)
 {
-	rpu_wake();
+	rpu_wakeup();
 
 	return 0;
 }
