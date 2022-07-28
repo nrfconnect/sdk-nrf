@@ -35,7 +35,6 @@ LOG_MODULE_REGISTER(cis_gateway, CONFIG_LOG_BLE_LEVEL);
 				  BT_ISO_SDU_BUF_SIZE(CONFIG_BT_ISO_TX_MTU), 8, NULL);
 #define NET_BUF_POOL_PTR_ITERATE(i, ...) IDENTITY(&iso_tx_pool_##i)
 LISTIFY(CONFIG_BT_ISO_MAX_CHAN, NET_BUF_POOL_ITERATE, (;))
-
 #define BT_LE_CONN_PARAM_MULTI                                                                     \
 	BT_LE_CONN_PARAM(CONFIG_BLE_ACL_CONN_INTERVAL, CONFIG_BLE_ACL_CONN_INTERVAL,               \
 			 CONFIG_BLE_ACL_SLAVE_LATENCY, CONFIG_BLE_ACL_SUP_TIMEOUT)
@@ -61,6 +60,7 @@ K_MSGQ_DEFINE(kwork_msgq, sizeof(struct worker_data), CONFIG_BT_ISO_MAX_CHAN, 4)
 static struct k_work_delayable stream_start_work[CONFIG_BT_ISO_MAX_CHAN];
 
 static void ble_acl_start_scan(void);
+static bool ble_acl_gateway_all_links_connected(void);
 
 static bool is_iso_buffer_full(uint8_t idx)
 {
@@ -107,6 +107,31 @@ static int headset_conn_index_get(struct bt_conn *conn, uint8_t *index)
 
 	return -EINVAL;
 }
+
+static void unicast_client_location_cb(struct bt_conn *conn, enum bt_audio_dir dir,
+				       enum bt_audio_location loc)
+{
+	int ret;
+
+	if (loc == BT_AUDIO_LOCATION_SIDE_LEFT) {
+		headset_conn[AUDIO_CHANNEL_LEFT] = conn;
+	} else if (loc == BT_AUDIO_LOCATION_SIDE_RIGHT) {
+		headset_conn[AUDIO_CHANNEL_RIGHT] = conn;
+	} else {
+		LOG_ERR("Channel location not supported");
+		ret = bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+		if (ret) {
+			LOG_ERR("Failed to disconnect %d", ret);
+		}
+	}
+
+	if (!ble_acl_gateway_all_links_connected()) {
+		ble_acl_start_scan();
+	}
+}
+
+const struct bt_audio_unicast_client_cb unicast_client_cbs = { .location =
+								       unicast_client_location_cb };
 
 static void stream_sent_cb(struct bt_audio_stream *stream)
 {
@@ -289,13 +314,6 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 	uint8_t ep_index = 0;
 	uint8_t conn_index = 0;
 
-	ret = headset_conn_index_get(conn, &conn_index);
-	if (ret) {
-		LOG_ERR("Unknown connection, should not reach here");
-	} else {
-		ep_index = conn_index;
-	}
-
 	if (params->err) {
 		LOG_ERR("Discovery failed: %d", params->err);
 		return;
@@ -308,6 +326,12 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 
 	if (ep != NULL) {
 		if (params->dir == BT_AUDIO_DIR_SINK) {
+			ret = headset_conn_index_get(conn, &conn_index);
+			if (ret) {
+				ERR_CHK_MSG(ret, "Unknown connection, should not reach here");
+			} else {
+				ep_index = conn_index;
+			}
 			add_remote_sink(ep, ep_index);
 		} else {
 			LOG_ERR("Invalid param type: %u", params->dir);
@@ -319,6 +343,7 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 	LOG_INF("Discover complete: err %d", params->err);
 
 	(void)memset(params, 0, sizeof(*params));
+
 	ret = headset_conn_index_get(conn, &conn_index);
 
 	if (ret) {
@@ -356,13 +381,13 @@ static int device_found(uint8_t type, const uint8_t *data, uint8_t data_len,
 	char addr_str[BT_ADDR_LE_STR_LEN];
 
 	if (ble_acl_gateway_all_links_connected()) {
+		LOG_DBG("All headset connected");
 		return 0;
 	}
 
 	bt_addr_le_to_str(addr, addr_str, sizeof(addr_str));
-
-	if ((data_len == DEVICE_NAME_PEER_L_LEN) &&
-	    (strncmp(DEVICE_NAME_PEER_L, data, DEVICE_NAME_PEER_L_LEN) == 0)) {
+	if ((data_len == DEVICE_NAME_PEER_LEN) &&
+	    (strncmp(DEVICE_NAME_PEER, data, DEVICE_NAME_PEER_LEN) == 0)) {
 		bt_le_scan_stop();
 
 		ret = bt_conn_le_create(addr, BT_CONN_LE_CREATE_CONN, BT_LE_CONN_PARAM_MULTI,
@@ -371,22 +396,6 @@ static int device_found(uint8_t type, const uint8_t *data, uint8_t data_len,
 			LOG_ERR("Could not init connection");
 			return ret;
 		}
-
-		headset_conn[AUDIO_CHANNEL_LEFT] = conn;
-
-		return 0;
-	} else if ((data_len == DEVICE_NAME_PEER_R_LEN) &&
-		   (strncmp(DEVICE_NAME_PEER_R, data, DEVICE_NAME_PEER_R_LEN) == 0)) {
-		bt_le_scan_stop();
-
-		ret = bt_conn_le_create(addr, BT_CONN_LE_CREATE_CONN, BT_LE_CONN_PARAM_MULTI,
-					&conn);
-		if (ret) {
-			LOG_ERR("Could not init connection");
-			return ret;
-		}
-
-		headset_conn[AUDIO_CHANNEL_RIGHT] = conn;
 
 		return 0;
 	}
@@ -445,22 +454,13 @@ static void ble_acl_start_scan(void)
 static void connected_cb(struct bt_conn *conn, uint8_t err)
 {
 	int ret;
-	uint8_t conn_index;
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	(void)bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	ret = headset_conn_index_get(conn, &conn_index);
-
-	if (ret) {
-		LOG_ERR("Unknown connection, should not reach here");
-		return;
-	}
-
 	if (err) {
 		LOG_ERR("ACL connection to %s failed, error %d", addr, err);
-		bt_conn_unref(headset_conn[conn_index]);
-		headset_conn[conn_index] = NULL;
+		bt_conn_unref(conn);
 		ble_acl_start_scan();
 		return;
 	} else {
@@ -474,10 +474,6 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	if (ret) {
 		LOG_ERR("Failed to set security to L2: %d", ret);
 	}
-
-	if (!ble_acl_gateway_all_links_connected()) {
-		ble_acl_start_scan();
-	}
 }
 
 static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
@@ -486,21 +482,16 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 	uint8_t conn_index;
 	char addr[BT_ADDR_LE_STR_LEN];
 
-	if (conn != headset_conn[AUDIO_CHANNEL_LEFT] && conn != headset_conn[AUDIO_CHANNEL_RIGHT]) {
-		LOG_ERR("Unknown connection disconnected, should not reach here");
-		return;
-	}
-
 	(void)bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	LOG_INF("Disconnected: %s (reason 0x%02x)", addr, reason);
 
-	ret = headset_conn_index_get(conn, &conn_index);
+	bt_conn_unref(conn);
 
+	ret = headset_conn_index_get(conn, &conn_index);
 	if (ret) {
-		LOG_ERR("Unknown connection, should not reach here");
+		LOG_WRN("Unknown connection");
 	} else {
-		bt_conn_unref(headset_conn[conn_index]);
 		headset_conn[conn_index] = NULL;
 	}
 
@@ -510,15 +501,16 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 static int discover_sink(struct bt_conn *conn)
 {
 	int ret = 0;
-	uint8_t conn_index;
+	static uint8_t conn_index;
 
-	ret = headset_conn_index_get(conn, &conn_index);
-	if (ret) {
-		LOG_ERR("Unknown connection, should not reach here");
-	} else {
-		audio_discover_param[conn_index].func = discover_sink_cb;
-		audio_discover_param[conn_index].dir = BT_AUDIO_DIR_SINK;
-		ret = bt_audio_discover(conn, &audio_discover_param[conn_index]);
+	audio_discover_param[conn_index].func = discover_sink_cb;
+	audio_discover_param[conn_index].dir = BT_AUDIO_DIR_SINK;
+	ret = bt_audio_discover(conn, &audio_discover_param[conn_index]);
+	conn_index++;
+
+	/* Avoid multiple discover procedure sharing the same params */
+	if (conn_index > CONFIG_BT_ISO_MAX_CHAN - 1) {
+		conn_index = 0;
 	}
 
 	return ret;
@@ -599,10 +591,15 @@ static int initialize(le_audio_receive_cb recv_cb)
 	static bool initialized;
 	struct bt_audio_unicast_group_param group_params[CONFIG_BT_ISO_MAX_CHAN];
 
-	for (int i; i < CONFIG_BT_ISO_MAX_CHAN; i++) {
+	for (int i = 0; i < CONFIG_BT_ISO_MAX_CHAN; i++) {
 		k_work_init_delayable(&stream_start_work[i], work_stream_start);
 	}
 
+	ret = bt_audio_unicast_client_register_cb(&unicast_client_cbs);
+	if (ret != 0) {
+		LOG_ERR("Failed to register client callbacks: %d", ret);
+		return ret;
+	}
 #if (CONFIG_BT_VCS_CLIENT)
 	ret = ble_vcs_client_init();
 	if (ret) {
