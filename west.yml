@@ -170,7 +170,7 @@ manifest:
       path: modules/lib/zcbor
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 0.31.3
+      revision: 0.31.5
       remote: memfault
     - name: cirrus
       repo-path: sdk-mcu-drivers
