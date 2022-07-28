@@ -307,7 +307,7 @@ static unsigned long wifi_nrf_bus_qspi_dma_unmap(void *dev_ctx,
 }
 
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 static void wifi_nrf_bus_qspi_ps_sleep(void *dev_ctx)
 {
 	struct wifi_nrf_bus_qspi_dev_ctx *qspi_dev_ctx = NULL;
@@ -339,7 +339,7 @@ static int wifi_nrf_bus_qspi_ps_status(void *dev_ctx)
 	return wifi_nrf_osal_bus_qspi_ps_status(qspi_dev_ctx->qspi_priv->opriv,
 						qspi_dev_ctx->os_qspi_dev_ctx);
 }
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 
 static struct wifi_nrf_bal_ops wifi_nrf_bus_qspi_ops = {
@@ -355,11 +355,11 @@ static struct wifi_nrf_bal_ops wifi_nrf_bus_qspi_ops = {
 	.write_block = &wifi_nrf_bus_qspi_write_block,
 	.dma_map = &wifi_nrf_bus_qspi_dma_map,
 	.dma_unmap = &wifi_nrf_bus_qspi_dma_unmap,
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	.rpu_ps_sleep = &wifi_nrf_bus_qspi_ps_sleep,
 	.rpu_ps_wake = &wifi_nrf_bus_qspi_ps_wake,
 	.rpu_ps_status = &wifi_nrf_bus_qspi_ps_status,
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 };
 
 

@@ -18,9 +18,9 @@
 #define SOC_BOOT_FAIL 1
 #define SOC_BOOT_ERRORS 2
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 #define SOC_MMAP_ADDR_RPU_PS_CTRL 0x3FFFFC
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 #define DEFAULT_IMGPCI_VENDOR_ID 0x0700
 #define DEFAULT_IMGPCI_DEVICE_ID PCI_ANY_ID
@@ -66,9 +66,9 @@ enum wifi_nrf_status pal_rpu_addr_offset_get(struct wifi_nrf_osal_priv *opriv,
 					     unsigned long *addr_offset);
 
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 unsigned long pal_rpu_ps_ctrl_reg_addr_get(void);
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 char *pal_ops_get_fw_loc(struct wifi_nrf_osal_priv *opriv,
 			 enum wifi_nrf_fw_type fw_type,

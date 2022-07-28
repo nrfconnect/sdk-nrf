@@ -304,9 +304,9 @@ enum wifi_nrf_status wifi_nrf_fmac_dev_init_zep(struct wifi_nrf_ctx_zep *rpu_ctx
 		/* override rf_params with calib data */
 	}
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	params.sleep_type = HW_SLEEP_ENABLE;
-#endif
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	status = wifi_nrf_fmac_dev_init(rpu_ctx_zep->rpu_ctx, &params);
 
@@ -344,7 +344,6 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	int ret = -1;
 	struct wifi_nrf_fmac_callbk_fns callbk_fns;
 	struct img_data_config_params data_config;
 	struct rx_buf_pool_params rx_buf_pools[MAX_NUM_OF_RX_QUEUES];

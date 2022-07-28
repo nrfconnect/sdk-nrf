@@ -33,9 +33,9 @@ enum wifi_nrf_status hal_rpu_reg_read(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	unsigned long addr_offset = 0;
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	unsigned long flags = 0;
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	if (!hal_dev_ctx) {
 		return status;
@@ -62,7 +62,7 @@ enum wifi_nrf_status hal_rpu_reg_read(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 		return status;
 	}
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	wifi_nrf_osal_spinlock_irq_take(hal_dev_ctx->hpriv->opriv,
 					hal_dev_ctx->rpu_ps_lock,
 					&flags);
@@ -75,7 +75,7 @@ enum wifi_nrf_status hal_rpu_reg_read(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 				      __func__);
 		goto out;
 	}
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	*val = wifi_nrf_bal_read_word(hal_dev_ctx->bal_dev_ctx,
 				      addr_offset);
@@ -92,11 +92,11 @@ enum wifi_nrf_status hal_rpu_reg_read(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 
 	status = WIFI_NRF_STATUS_SUCCESS;
 out:
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	wifi_nrf_osal_spinlock_irq_rel(hal_dev_ctx->hpriv->opriv,
 				       hal_dev_ctx->rpu_ps_lock,
 				       &flags);
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 	return status;
 }
 
@@ -106,9 +106,9 @@ enum wifi_nrf_status hal_rpu_reg_write(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	unsigned long addr_offset = 0;
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	unsigned long flags = 0;
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	if (!hal_dev_ctx) {
 		return status;
@@ -133,7 +133,7 @@ enum wifi_nrf_status hal_rpu_reg_write(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 		return status;
 	}
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	wifi_nrf_osal_spinlock_irq_take(hal_dev_ctx->hpriv->opriv,
 					hal_dev_ctx->rpu_ps_lock,
 					&flags);
@@ -146,7 +146,7 @@ enum wifi_nrf_status hal_rpu_reg_write(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 				      __func__);
 		goto out;
 	}
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	wifi_nrf_bal_write_word(hal_dev_ctx->bal_dev_ctx,
 				addr_offset,
@@ -154,11 +154,11 @@ enum wifi_nrf_status hal_rpu_reg_write(struct wifi_nrf_hal_dev_ctx *hal_dev_ctx,
 
 	status = WIFI_NRF_STATUS_SUCCESS;
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 out:
 	wifi_nrf_osal_spinlock_irq_rel(hal_dev_ctx->hpriv->opriv,
 				       hal_dev_ctx->rpu_ps_lock,
 				       &flags);
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 	return status;
 }

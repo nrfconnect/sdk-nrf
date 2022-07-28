@@ -12,8 +12,8 @@
 
 #include "bal_api.h"
 
-#ifdef RPU_SLEEP_SUPPORT
-#ifdef RPU_SLEEP_DBG
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF_WIFI_LOW_POWER_DBG
 #include "pal.h"
 
 static void wifi_nrf_rpu_bal_sleep_chk(struct wifi_nrf_bal_dev_ctx *bal_ctx,
@@ -44,8 +44,8 @@ static void wifi_nrf_rpu_bal_sleep_chk(struct wifi_nrf_bal_dev_ctx *bal_ctx,
 				      sleep_reg_val);
 	}
 }
-#endif	/* RPU_SLEEP_DBG */
-#endif  /* RPU_SLEEP_SUPPORT */
+#endif	/* CONFIG_NRF_WIFI_LOW_POWER_DBG */
+#endif  /* CONFIG_NRF_WIFI_LOW_POWER */
 
 
 struct wifi_nrf_bal_dev_ctx *wifi_nrf_bal_dev_add(struct wifi_nrf_bal_priv *bpriv,
@@ -102,9 +102,9 @@ enum wifi_nrf_status wifi_nrf_bal_dev_init(struct wifi_nrf_bal_dev_ctx *bal_dev_
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	bal_dev_ctx->rpu_fw_booted = true;
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	status = bal_dev_ctx->bpriv->ops->dev_init(bal_dev_ctx->bus_dev_ctx);
 
@@ -193,12 +193,12 @@ unsigned int wifi_nrf_bal_read_word(void *ctx,
 
 	bal_dev_ctx = (struct wifi_nrf_bal_dev_ctx *)ctx;
 
-#ifdef RPU_SLEEP_SUPPORT
-#ifdef RPU_SLEEP_DBG
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF_WIFI_LOW_POWER_DBG
 	wifi_nrf_rpu_bal_sleep_chk(bal_dev_ctx,
 				   addr_offset);
-#endif	/* RPU_SLEEP_DBG */
-#endif  /* RPU_SLEEP_SUPPORT */
+#endif	/* CONFIG_NRF_WIFI_LOW_POWER_DBG */
+#endif  /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	val = bal_dev_ctx->bpriv->ops->read_word(bal_dev_ctx->bus_dev_ctx,
 						 addr_offset);
@@ -215,12 +215,12 @@ void wifi_nrf_bal_write_word(void *ctx,
 
 	bal_dev_ctx = (struct wifi_nrf_bal_dev_ctx *)ctx;
 
-#ifdef RPU_SLEEP_SUPPORT
-#ifdef RPU_SLEEP_DBG
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF_WIFI_LOW_POWER_DBG
 	wifi_nrf_rpu_bal_sleep_chk(bal_dev_ctx,
 				   addr_offset);
-#endif	/* RPU_SLEEP_DBG */
-#endif  /* RPU_SLEEP_SUPPORT */
+#endif	/* CONFIG_NRF_WIFI_LOW_POWER_DBG */
+#endif  /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	bal_dev_ctx->bpriv->ops->write_word(bal_dev_ctx->bus_dev_ctx,
 					    addr_offset,
@@ -237,12 +237,12 @@ void wifi_nrf_bal_read_block(void *ctx,
 
 	bal_dev_ctx = (struct wifi_nrf_bal_dev_ctx *)ctx;
 
-#ifdef RPU_SLEEP_SUPPORT
-#ifdef RPU_SLEEP_DBG
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF_WIFI_LOW_POWER_DBG
 	wifi_nrf_rpu_bal_sleep_chk(bal_dev_ctx,
 				   src_addr_offset);
-#endif	/* RPU_SLEEP_DBG */
-#endif  /* RPU_SLEEP_SUPPORT */
+#endif	/* CONFIG_NRF_WIFI_LOW_POWER_DBG */
+#endif  /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	bal_dev_ctx->bpriv->ops->read_block(bal_dev_ctx->bus_dev_ctx,
 					    dest_addr,
@@ -260,12 +260,12 @@ void wifi_nrf_bal_write_block(void *ctx,
 
 	bal_dev_ctx = (struct wifi_nrf_bal_dev_ctx *)ctx;
 
-#ifdef RPU_SLEEP_SUPPORT
-#ifdef RPU_SLEEP_DBG
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF_WIFI_LOW_POWER_DBG
 	wifi_nrf_rpu_bal_sleep_chk(bal_dev_ctx,
 				   dest_addr_offset);
-#endif	/* RPU_SLEEP_DBG */
-#endif  /* RPU_SLEEP_SUPPORT */
+#endif	/* CONFIG_NRF_WIFI_LOW_POWER_DBG */
+#endif  /* CONFIG_NRF_WIFI_LOW_POWER */
 
 	bal_dev_ctx->bpriv->ops->write_block(bal_dev_ctx->bus_dev_ctx,
 					     dest_addr_offset,
@@ -312,7 +312,7 @@ unsigned long wifi_nrf_bal_dma_unmap(void *ctx,
 }
 
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 void wifi_nrf_bal_rpu_ps_sleep(void *ctx)
 {
 	struct wifi_nrf_bal_dev_ctx *bal_dev_ctx = NULL;
@@ -341,4 +341,4 @@ int wifi_nrf_bal_rpu_ps_status(void *ctx)
 
 	return bal_dev_ctx->bpriv->ops->rpu_ps_status(bal_dev_ctx->bus_dev_ctx);
 }
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */

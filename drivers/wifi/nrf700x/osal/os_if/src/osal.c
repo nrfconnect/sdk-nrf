@@ -688,7 +688,7 @@ void wifi_nrf_osal_qspi_cpy_to(struct wifi_nrf_osal_priv *opriv,
 				count);
 }
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 void *wifi_nrf_osal_timer_alloc(struct wifi_nrf_osal_priv *opriv)
 {
 	return opriv->ops->timer_alloc();
@@ -749,4 +749,4 @@ int wifi_nrf_osal_bus_qspi_ps_status(struct wifi_nrf_osal_priv *opriv,
 {
 	return opriv->ops->bus_qspi_ps_status(os_qspi_priv);
 }
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */

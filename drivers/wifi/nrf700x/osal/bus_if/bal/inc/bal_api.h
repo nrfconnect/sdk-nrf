@@ -88,11 +88,11 @@ void wifi_nrf_bal_bus_access_rec_disab(void *ctx);
 
 void wifi_nrf_bal_bus_access_cnt_print(void *ctx);
 
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 void wifi_nrf_bal_rpu_ps_sleep(void *ctx);
 
 void wifi_nrf_bal_rpu_ps_wake(void *ctx);
 
 int wifi_nrf_bal_rpu_ps_status(void *ctx);
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 #endif /* __BAL_API_H__ */

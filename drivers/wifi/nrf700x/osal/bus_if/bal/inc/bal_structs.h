@@ -48,8 +48,8 @@ struct wifi_nrf_bal_dev_ctx {
 	struct wifi_nrf_bal_priv *bpriv;
 	void *hal_dev_ctx;
 	void *bus_dev_ctx;
-#ifdef RPU_SLEEP_SUPPORT
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 	bool rpu_fw_booted;
-#endif /* RPU_SLEEP_SUPPORT */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 };
 #endif /* __BAL_STRUCTS_H__ */
