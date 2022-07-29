@@ -600,7 +600,9 @@ Bluetooth libraries and services
 Bootloader libraries
 --------------------
 
-|no_changes_yet_note|
+* :ref:`lib_dfu_target` library:
+
+   * Moved the :c:func:`dfu_ctx_mcuboot_set_b1_file` function to :ref:`lib_fota_download` and renamed to :c:func:`fota_download_parse_dual_resource_locator`.
 
 Modem libraries
 ---------------
