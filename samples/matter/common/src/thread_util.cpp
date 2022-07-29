@@ -11,6 +11,11 @@
 #include <platform/CHIPDeviceLayer.h>
 #include <platform/internal/DeviceNetworkInfo.h>
 
+#ifdef CONFIG_OPENTHREAD_DEFAULT_TX_POWER
+#include <openthread/platform/radio.h>
+#include <platform/OpenThread/OpenThreadUtils.h>
+#endif
+
 #include <zephyr/zephyr.h>
 
 void StartDefaultThreadNetwork(uint64_t datasetTimestamp)
@@ -43,3 +48,17 @@ void StartDefaultThreadNetwork(uint64_t datasetTimestamp)
 	chip::app::DnssdServer::Instance().StartServer();
 #endif
 }
+
+#ifdef CONFIG_OPENTHREAD_DEFAULT_TX_POWER
+CHIP_ERROR SetDefaultThreadOutputPower()
+{
+	CHIP_ERROR err;
+	/* set output power when FEM is active */
+	chip::DeviceLayer::ThreadStackMgr().LockThreadStack();
+	err = chip::DeviceLayer::Internal::MapOpenThreadError(
+		otPlatRadioSetTransmitPower(chip::DeviceLayer::ThreadStackMgrImpl().OTInstance(),
+					    static_cast<int8_t>(CONFIG_OPENTHREAD_DEFAULT_TX_POWER)));
+	chip::DeviceLayer::ThreadStackMgr().UnlockThreadStack();
+	return err;
+}
+#endif

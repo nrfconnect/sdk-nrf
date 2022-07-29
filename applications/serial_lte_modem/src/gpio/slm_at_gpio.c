@@ -18,7 +18,7 @@ LOG_MODULE_REGISTER(slm_gpio, CONFIG_SLM_LOG_LEVEL);
 extern struct at_param_list at_param_list;
 extern char rsp_buf[SLM_AT_CMD_RESPONSE_MAX_LEN];
 
-static const struct device *gpio_dev;
+static const struct device *gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 static sys_slist_t slm_gpios = SYS_SLIST_STATIC_INIT(&slm_gpios);
 
 /* global variable defined in different files */
@@ -289,14 +289,12 @@ int handle_at_gpio_operate(enum at_cmd_type cmd_type)
 
 int slm_at_gpio_init(void)
 {
-	int err = 0;
-
-	gpio_dev = device_get_binding(DT_LABEL(DT_NODELABEL(gpio0)));
-	if (gpio_dev == NULL) {
-		LOG_ERR("GPIO_0 bind error");
-		err = -EIO;
+	if (!device_is_ready(gpio_dev)) {
+		LOG_ERR("GPIO controller not ready");
+		return -ENODEV;
 	}
-	return err;
+
+	return 0;
 }
 
 int slm_at_gpio_uninit(void)

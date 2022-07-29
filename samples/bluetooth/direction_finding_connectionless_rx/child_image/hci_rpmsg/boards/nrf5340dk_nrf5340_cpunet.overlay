@@ -20,6 +20,9 @@
 	 * drive antenna switching when AoA is enabled.
 	 * Pin numbers are selected to drive switches on antenna matrix
 	 * desinged by Nordic. For more information see README.rst.
+	 *
+	 * NOTE: Make sure to select the same GPIOs in the application core DTS
+	 * overlay's gpio_fwd node.
 	 */
 	dfegpio0-gpios = <&gpio0 4 0>;
 	dfegpio1-gpios = <&gpio0 5 0>;

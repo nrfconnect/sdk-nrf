@@ -33,7 +33,7 @@ To collect and view the log files, you will need the following:
 
 * Correct COM port.
 
-   * For traces using the UART, the JLink COM port is used. The development kit is assigned to a COM port (Windows) or a ttyACM device (Linux), which is visible in the system's :guilabel:`Device Manager`.
+   * For traces using the UART, the J-Link COM port is used. The development kit is assigned to a COM port (Windows) or a ttyACM device (Linux), which is visible in the system's :guilabel:`Device Manager`.
 
    * For traces using USB, a virtual COM port (a serial port emulated over USB) is used. You can set :kconfig:option:`CONFIG_USB_DEVICE_PRODUCT` to help identify the COM port in the system's :guilabel:`Device Manager`.
 
@@ -102,7 +102,7 @@ To configure trace logs using the UART, complete the following steps:
 #. Optionally, configure which UART device you want to use with the Kconfig option :kconfig:option:`CONFIG_ZBOSS_TRACE_LOGGER_DEVICE_NAME`.
    The default ``UART_1`` will be used if no other UART device is configured.
 
-#. Configure the UART device that you want to use to be connected to the onboard JLink instead of ``UART_0``, by extending the DTS overlay file for the selected board with the following:
+#. Configure the UART device that you want to use to be connected to the onboard J-Link instead of ``UART_0``, by extending the DTS overlay file for the selected board with the following:
 
    .. code-block:: devicetree
 
@@ -155,8 +155,8 @@ To configure trace logs using the UART, complete the following steps:
       };
 
    .. note::
-      By connecting the UART device to the on-board JLink, trace logs can be read directly from the JLink COM port.
-      As a consequence, the UART device used by the logger is disconnected and application logs cannot be accessed from the JLink COM port.
+      By connecting the UART device to the on-board J-Link, trace logs can be read directly from the J-Link COM port.
+      As a consequence, the UART device used by the logger is disconnected and application logs cannot be accessed from the J-Link COM port.
 
 
 Optional: Increasing the UART throughput
@@ -202,8 +202,8 @@ Trace logs using native USB
 ===========================
 
 Trace logs can also be configured to use a native USB.
-This is useful because trace logs will be printed through a separate virtual COM port so that the console logs can still be read through the JLink COM port.
-For applications that relay on the UART connection through the JLink COM port, for example the Network co-processor (NCP) sample, trace logs can only be configured through USB (COM port emulated over USB).
+This is useful because trace logs will be printed through a separate virtual COM port so that the console logs can still be read through the J-Link COM port.
+For applications that relay on the UART connection through the J-Link COM port, for example the Network co-processor (NCP) sample, trace logs can only be configured through USB (COM port emulated over USB).
 See the :ref:`Zigbee NCP <zigbee_ncp_sample>` sample page for how to configure trace logs for USB in this case.
 
 .. note::

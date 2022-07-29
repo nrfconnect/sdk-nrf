@@ -50,7 +50,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 85a0034809612b332fbdf478357e8a4109c493fd
+      revision: 779625942fabc50b31bdcb5d6d36b6d594cd56ba
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -86,7 +86,7 @@ manifest:
           - net-tools
           - nrf_hw_models
           - open-amp
-          - openthread
+          - picolibc
           - psa-arch-tests
           - segger
           - tinycbor
@@ -98,9 +98,12 @@ manifest:
     #
     # Some of these are also Zephyr modules which have NCS-specific
     # changes.
+    - name: sdk-hostap
+      path: modules/lib/hostap
+      revision: 3dabc364cb4e4e7f3513889431737b02ee0111e0
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: v1.9.99-ncs1
+      revision: 6097de22bd1f1b499e599bfef618a235de7073b2
       path: bootloader/mcuboot
     - name: mbedtls-nrf
       path: mbedtls
@@ -109,7 +112,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 766cc270caca3975fa6d924ada43177089040fcc
+      revision: d5b5156e32ccb1897a26f4885317cd11193773b0
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -121,7 +124,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 0b457ece3f0c37f5c92b21fe56cacd319874364f
+      revision: 0ad8f70d5a257eb94d79c6b734aed8a075625c71
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -141,7 +144,7 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: 22c46fe0496bfe4da37d7b2647b1a115a60a2312
+      revision: e28ed162d1e70d3e7dbe6637db6ac6809d6696d4
       groups:
       - homekit
     - name: find-my
@@ -157,11 +160,8 @@ manifest:
     # Other third-party repositories.
     - name: cmock
       path: test/cmock
-      revision: 9d092898ef26ece140d9225e037274b64d4f851e
-      remote: throwtheswitch
-    - name: unity
-      path: test/cmock/vendor/unity
-      revision: 74cde089e65c3435ce9aa87d5c69f4f16b7f6ade
+      submodules: true
+      revision: f65066f15d8248e6dcb778efb8739904a4512087
       remote: throwtheswitch
     - name: zcbor
       remote: nordicsemi
@@ -169,7 +169,7 @@ manifest:
       path: modules/lib/zcbor
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 0.29.1
+      revision: 0.31.5
       remote: memfault
     - name: cirrus
       repo-path: sdk-mcu-drivers
@@ -177,6 +177,10 @@ manifest:
       revision: 9f6b3812237fbb0d4157ba3584c13f1644fcbe3a
       groups:
       - nrf5340_audio
+    - name: openthread
+      repo-path: sdk-openthread
+      path: modules/lib/openthread
+      revision: 0d19f9112101e87722ec80b3a247bc7a1c54b232
 
   # West-related configuration for the nrf repository.
   self:

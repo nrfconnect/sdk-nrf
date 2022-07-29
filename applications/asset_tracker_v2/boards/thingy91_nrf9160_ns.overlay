@@ -18,5 +18,8 @@
 };
 
 &spi3 {
-	adxl362: adxl362@0 {};
+	adxl362: adxl362@0 {
+		wakeup-mode;
+		autosleep;
+	};
 };

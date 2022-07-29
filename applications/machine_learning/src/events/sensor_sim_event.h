@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @brief Simulated Sensor event header file.
+ */
+
 #ifndef _SENSOR_SIM_EVENT_H_
 #define _SENSOR_SIM_EVENT_H_
 
@@ -22,9 +26,11 @@ extern "C" {
 
 /** @brief Simulated sensor event. */
 struct sensor_sim_event {
-	struct app_event_header header; /**< Event header. */
+	/** Event header. */
+	struct app_event_header header;
 
-	const char *label; /**< Label of generated signal. */
+	/** Label of generated signal. */
+	const char *label;
 };
 
 APP_EVENT_TYPE_DECLARE(sensor_sim_event);

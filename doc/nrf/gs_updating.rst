@@ -24,7 +24,7 @@ Updating the repositories
 Updating in |VSC|
 =================
 
-The |nRFVSC| lets you update the associated |NCS| repositories within the :guilabel:`Source Control` panel.
+The |nRFVSC| lets you update the associated |NCS| repositories within the :guilabel:`Source Control View`.
 For detailed instructions, see the `West integration`_ section of the extension's documentation.
 
 Updating in Toolchain Manager
@@ -57,6 +57,8 @@ Running ``west update`` updates the project repositories to the state specified 
 .. include:: gs_installing.rst
    :start-after: west-error-start
    :end-before: west-error-end
+
+.. _gs_updating_repos_examples:
 
 Examples of commands
 ====================

@@ -157,12 +157,18 @@ Glossary
       A :term:`repository <Repository>` located downstream, relative to another repository, in the flow of information.
       See :ref:`dm_repo_types`.
 
+   Embedded Universal Integrated Circuit Card (eUICC)
+      A component of a SIM card that enables switching Mobile Network Operators over-the-air.
+
    Endpoint
       In the context of a :ref:`Matter <ug_matter>` or :ref:`Zigbee <ug_zigbee>` network, an addressable container that contains *clusters* appropriate for a single device type such as a sensor or a light bulb.
 
    Ephemeris data
       In the :term:`Global Navigation Satellite System (GNSS)`, the data providing information about the orbit of the satellite transmitting it.
       This data is valid for four hours and becomes inaccurate after that.
+
+   eUICC Identifier (EID)
+      A unique global serial number of an :term:`Embedded Universal Integrated Circuit Card (eUICC)`.
 
    Evaluation Kit (EK)
       A platform used to evaluate different development platforms.
@@ -577,6 +583,9 @@ Glossary
 
    Spinel
       A general management protocol for enabling a host device to communicate with and manage co-processors, like a network co-processor (NCP) or a radio co-processor (RCP).
+
+   Station mode (STA)
+      Device operating as a IEEE 802.11 station.
 
    Submodule
       A child of another Git :term:`repository <Repository>`, managed using the ``git submodule`` command family.

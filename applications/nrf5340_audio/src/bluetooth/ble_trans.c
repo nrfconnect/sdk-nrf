@@ -54,6 +54,7 @@ static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ISO_MAX_CHAN,
 						       (,)) };
 static struct bt_iso_chan iso_chan[CONFIG_BT_ISO_MAX_CHAN];
 static struct bt_iso_chan *iso_chan_p[CONFIG_BT_ISO_MAX_CHAN];
+static uint32_t seq_num;
 static atomic_t iso_tx_pool_alloc[CONFIG_BT_ISO_MAX_CHAN];
 static atomic_t iso_tx_flush;
 
@@ -759,7 +760,8 @@ static int iso_tx(uint8_t const *const data, size_t size, uint8_t iso_chan_idx)
 	net_buf_reserve(net_buffer, BT_ISO_CHAN_SEND_RESERVE);
 	net_buf_add_mem(net_buffer, data, size);
 
-	ret = bt_iso_chan_send(iso_chan_p[iso_chan_idx], net_buffer);
+	ret = bt_iso_chan_send(iso_chan_p[iso_chan_idx], net_buffer, seq_num++,
+			       BT_ISO_TIMESTAMP_NONE);
 	if (ret < 0) {
 		LOG_ERR("Unable to send ISO data: %d", ret);
 		net_buf_unref(net_buffer);

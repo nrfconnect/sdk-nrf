@@ -222,7 +222,7 @@ You can test that the bootloader no longer boots images signed with the earlier 
       CONFIG_SB_SIGNING_KEY_FILE="/path/to/priv_b.pem"
       CONFIG_FW_INFO_FIRMWARE_VERSION=3
 
-#. To facilitate testing, you can use ``nrfjprog`` to program this image directly into a slot:
+#. To facilitate testing, you can use nrfjprog to program this image directly into a slot:
 
    .. code-block:: console
 

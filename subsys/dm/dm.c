@@ -20,6 +20,9 @@
 #include "timeslot_queue.h"
 #include "dm_io.h"
 
+#include "rpc/host/dm_rpc_host.h"
+#include "rpc/common/dm_rpc_common.h"
+
 #if defined(DPPI_PRESENT)
 #include <nrfx_dppi.h>
 #define gppi_channel_t uint8_t
@@ -366,12 +369,35 @@ static void dm_reschedule(void)
 	}
 }
 
+static void calculation(void)
+{
+	if (IS_ENABLED(CONFIG_DM_MODULE_RPC_HOST)) {
+		struct dm_rpc_process_data *data;
+
+		data = dm_rpc_get_buffer(sizeof(*data));
+		if (data) {
+			nrf_dm_populate_report(&data->report);
+			bt_addr_le_copy(&data->bt_addr, &timeslot_ctx.curr_req.dm_req.bt_addr);
+			dm_rpc_calc_and_process(data, sizeof(*data));
+		}
+	} else {
+		static nrf_dm_report_t report;
+
+		nrf_dm_populate_report(&report);
+		nrf_dm_calc(&report);
+		process_data(&report);
+
+		if (dm_context.cb->data_ready != NULL) {
+			dm_context.cb->data_ready(&result);
+		}
+	}
+}
+
 static void dm_thread(void)
 {
 	int err;
 	enum mpsl_timeslot_call mpsl_api_call;
 	enum dm_call dm_api_call;
-	static nrf_dm_report_t report;
 
 	mpsl_api_call = OPEN_SESSION;
 	err = k_msgq_put(&mpsl_api_msgq, &mpsl_api_call, K_FOREVER);
@@ -389,14 +415,9 @@ static void dm_thread(void)
 			case TIMESLOT_NORMAL_END:
 				dm_reschedule();
 				if (dm_context.ranging_status) {
-					nrf_dm_populate_report(&report);
-					nrf_dm_calc(&report);
-					process_data(&report);
+					calculation();
 				}
 
-				if (dm_context.cb->data_ready != NULL) {
-					dm_context.cb->data_ready(&result);
-				}
 				atomic_set(&timeslot_ctx.state, TIMESLOT_STATE_IDLE);
 				dm_start_ranging();
 				break;

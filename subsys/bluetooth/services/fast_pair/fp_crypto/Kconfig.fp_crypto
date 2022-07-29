@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_FAST_PAIR_CRYPTO
+	bool
+	default y
+	help
+	  Add Fast Pair crypto source files.
+
+if BT_FAST_PAIR_CRYPTO
+
+choice BT_FAST_PAIR_CRYPTO_BACKEND
+	prompt "Fast Pair cryptographic backend selection"
+	default BT_FAST_PAIR_CRYPTO_TINYCRYPT if BUILD_WITH_TFM
+	default BT_FAST_PAIR_CRYPTO_MBEDTLS
+	help
+	  Select the Fast Pair cryptographic backend.
+
+config BT_FAST_PAIR_CRYPTO_TINYCRYPT
+	bool "Fast Pair with Tinycrypt cryptographic backend"
+	select TINYCRYPT
+	select TINYCRYPT_SHA256
+	select TINYCRYPT_AES
+	select TINYCRYPT_ECC_DH
+	help
+	  Select Tinycrypt cryptographic backend for Fast Pair.
+
+config BT_FAST_PAIR_CRYPTO_MBEDTLS
+	bool "Fast Pair with MbedTLS cryptographic backend"
+	select NORDIC_SECURITY_BACKEND
+	select MBEDTLS_ENABLE_HEAP
+	help
+	  Select MbedTLS cryptographic backend for Fast Pair.
+
+endchoice
+
+module = FP_CRYPTO
+module-str = Fast Pair crypto library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_FAST_PAIR_CRYPTO

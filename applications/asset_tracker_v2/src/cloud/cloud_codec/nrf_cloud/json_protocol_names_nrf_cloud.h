@@ -40,7 +40,7 @@
 #define APP_ID_BUTTON	   "BUTTON"
 #define APP_ID_VOLTAGE	   "VOLTAGE"
 #define APP_ID_DEVICE      "DEVICE"
-#define APP_ID_GPS	   "GPS"
+#define APP_ID_GNSS	   "GNSS"
 #define APP_ID_HUMIDITY	   "HUMID"
 #define APP_ID_AIR_PRESS   "AIR_PRESS"
 #define APP_ID_AIR_QUAL    "AIR_QUAL"

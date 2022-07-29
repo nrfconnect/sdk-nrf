@@ -25,7 +25,8 @@ static void submit_smp_transfer_event(void)
 	APP_EVENT_SUBMIT(event);
 }
 
-static int upload_confirm(uint32_t offset, uint32_t size, void *arg)
+static int upload_confirm(const struct img_mgmt_upload_req req,
+			  const struct img_mgmt_upload_action action)
 {
 	submit_smp_transfer_event();
 
@@ -38,7 +39,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-			img_mgmt_set_upload_cb(upload_confirm, NULL);
+			img_mgmt_set_upload_cb(upload_confirm);
 			img_mgmt_register_group();
 #ifdef CONFIG_MCUMGR_CMD_OS_MGMT
 			os_mgmt_register_group();

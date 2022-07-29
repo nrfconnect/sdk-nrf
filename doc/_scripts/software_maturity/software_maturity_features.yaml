@@ -3,6 +3,7 @@ top_table:
   Zigbee: ZIGBEE
   Thread: NET_L2_OPENTHREAD
   LTE: LTE_LINK_CONTROL
+  HomeKit: HOMEKIT
 features:
   zigbee:
     Zigbee (Sleepy) End Device: ZIGBEE_ROLE_END_DEVICE
@@ -33,6 +34,14 @@ features:
     OTA DFU over Matter: CHIP && CHIP_OTA_REQUESTOR
     Matter - Amazon Frustration Free Setup support: CHIP && BT && CHIP_ROTATING_DEVICE_ID && CHIP_COMMISSIONABLE_DEVICE_TYPE
     Matter Sleepy End Device: CHIP && CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT && NET_L2_OPENTHREAD && OPENTHREAD_MTD_SED
+  homekit:
+    HomeKit over Bluetooth LE: HOMEKIT && BT
+    HomeKit over Thread FTD: HOMEKIT && BT && NET_L2_OPENTHREAD && OPENTHREAD_FTD
+    HomeKit over Thread MTD SED: HOMEKIT && BT && NET_L2_OPENTHREAD && OPENTHREAD_MTD && OPENTHREAD_MTD_SED
+    HomeKit commissioning over Bluetooth LE with QR code: HOMEKIT && BT
+    HomeKit commissioning over Bluetooth LE with NFC: HOMEKIT && BT && CONFIG_HAP_HAVE_NFC && CONFIG_NFC_NDEF
+    HomeKit - OTA DFU over Bluetooth LE: HOMEKIT && BT && MCUMGR_SMP_BT && HOMEKIT_NORDIC_DFU
+    HomeKit - OTA DFU over HomeKit: HOMEKIT && BT && CONFIG_HAP_FIRMWARE_UPDATE
   trusted_firmware_m:
     Minimal Build: BUILD_WITH_TFM && TFM_PROFILE_TYPE_MINIMAL
     Full build: BUILD_WITH_TFM && TFM_PROFILE_TYPE_NOT_SET && NRF_SECURITY

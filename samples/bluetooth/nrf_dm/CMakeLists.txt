@@ -18,3 +18,5 @@ target_sources(app PRIVATE
 # NORDIC SDK APP END
 
 zephyr_library_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+target_link_options(app PUBLIC "-Wl,--no-wchar-size-warning")

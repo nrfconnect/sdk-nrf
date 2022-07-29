@@ -9,26 +9,6 @@
 #include <zephyr/kernel.h>
 
 /**
- * @brief Check whether we are capable of Firmware Over The Air (FOTA) application or modem update.
- *
- * @return bool - Whether we are capable of application or modem FOTA.
- */
-static inline bool fota_capable(void)
-{
-	return IS_ENABLED(CONFIG_NRF_CLOUD_FOTA) && IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT);
-}
-
-/**
- * @brief Check whether we are capable of Firmware Over The Air (FOTA) bootloader update.
- *
- * @return bool - Whether we are capable of bootloader FOTA.
- */
-static inline bool boot_fota_capable(void)
-{
-	return IS_ENABLED(CONFIG_BUILD_S1_VARIANT) && IS_ENABLED(CONFIG_SECURE_BOOT);
-}
-
-/**
  * @brief Notify fota_support that a FOTA download has finished.
  *
  * Besides updating the device shadow (handled in connection.c), this is the only additional
@@ -37,5 +17,14 @@ static inline bool boot_fota_capable(void)
  *
  */
 void on_fota_downloaded(void);
+
+/**
+ * @brief Get the external flash device used for full modem FOTA updates.
+ *
+ * This function returns NULL if CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE is not
+ * enabled.
+ *
+ */
+struct dfu_target_fmfu_fdev * get_full_modem_fota_fdev(void);
 
 #endif /* _FOTA_SUPPORT_H_ */

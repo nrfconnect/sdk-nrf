@@ -23,7 +23,7 @@ enum motion_sensor_option {
 
  #include <sensor/pmw3360.h>
 
- #define MOTION_SENSOR_DEV_NAME "PMW3360"
+ #define MOTION_SENSOR_COMPATIBLE pixart_pmw3360
 
  static const int motion_sensor_option_attr[MOTION_SENSOR_OPTION_COUNT] = {
 	[MOTION_SENSOR_OPTION_CPI] = PMW3360_ATTR_CPI,
@@ -40,7 +40,7 @@ enum motion_sensor_option {
 
  #include <sensor/paw3212.h>
 
- #define MOTION_SENSOR_DEV_NAME "PAW3212"
+ #define MOTION_SENSOR_COMPATIBLE pixart_paw3212
 
  static const int motion_sensor_option_attr[MOTION_SENSOR_OPTION_COUNT] = {
 	[MOTION_SENSOR_OPTION_CPI] = PAW3212_ATTR_CPI,

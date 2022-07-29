@@ -6,11 +6,11 @@
 
 #include <zephyr/kernel.h>
 #include <stdio.h>
-#include <stdio.h>
 #include <app_event_manager.h>
 #include <math.h>
 #include <modem/lte_lc.h>
 #include <modem/modem_info.h>
+#include <modem/pdn.h>
 
 #define MODULE modem_module
 
@@ -188,16 +188,13 @@ static void lte_evt_handler(const struct lte_lc_evt *const evt)
 			break;
 		}
 
-		if ((evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
-		    (evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
-			SEND_EVENT(modem, MODEM_EVT_LTE_DISCONNECTED);
-			break;
+		if ((evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
+		    (evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+			LOG_DBG("Network registration status: %s",
+				evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
+				"Connected - home network" : "Connected - roaming");
 		}
 
-		LOG_DBG("Network registration status: %s",
-			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
-			"Connected - home network" : "Connected - roaming");
-		SEND_EVENT(modem, MODEM_EVT_LTE_CONNECTED);
 		break;
 	}
 	case LTE_LC_EVT_PSM_UPDATE:
@@ -267,6 +264,35 @@ static void lte_evt_handler(const struct lte_lc_evt *const evt)
 		}
 		break;
 	default:
+		break;
+	}
+}
+
+/* Handler that notifies the application of events related to the default PDN context, CID 0. */
+void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
+{
+	ARG_UNUSED(cid);
+
+	switch (event) {
+	case PDN_EVENT_CNEC_ESM:
+		LOG_WRN("Event: PDP context %d, %s", cid, pdn_esm_strerror(reason));
+		break;
+	case PDN_EVENT_ACTIVATED:
+		LOG_DBG("PDN_EVENT_ACTIVATED");
+		{ SEND_EVENT(modem, MODEM_EVT_LTE_CONNECTED); }
+		break;
+	case PDN_EVENT_DEACTIVATED:
+		LOG_DBG("PDN_EVENT_DEACTIVATED");
+		{ SEND_EVENT(modem, MODEM_EVT_LTE_DISCONNECTED); }
+		break;
+	case PDN_EVENT_IPV6_UP:
+		LOG_DBG("PDN_EVENT_IPV6_UP");
+		break;
+	case PDN_EVENT_IPV6_DOWN:
+		LOG_DBG("PDN_EVENT_IPV6_DOWN");
+		break;
+	default:
+		LOG_WRN("Unexpected PDN event!");
 		break;
 	}
 }
@@ -852,6 +878,13 @@ static int setup(void)
 	err = lte_lc_init();
 	if (err) {
 		LOG_ERR("lte_lc_init, error: %d", err);
+		return err;
+	}
+
+	/* Setup a callback for the default PDP context. */
+	err = pdn_default_ctx_cb_reg(pdn_event_handler);
+	if (err) {
+		LOG_ERR("pdn_default_ctx_cb_reg, error: %d", err);
 		return err;
 	}
 

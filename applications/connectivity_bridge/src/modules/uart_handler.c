@@ -31,7 +31,7 @@ static const struct device *devices[] = {
 #define UART_SLAB_BLOCK_SIZE sizeof(struct uart_rx_buf)
 #define UART_SLAB_BLOCK_COUNT (UART_DEVICE_COUNT * CONFIG_BRIDGE_UART_BUF_COUNT)
 #define UART_SLAB_ALIGNMENT 4
-#define UART_RX_TIMEOUT_MS 1
+#define UART_RX_TIMEOUT_USEC 1000
 
 #if defined(CONFIG_PM_DEVICE)
 #define UART_SET_PM_STATE true
@@ -259,7 +259,7 @@ static void enable_uart_rx(uint8_t dev_idx)
 		return;
 	}
 
-	err = uart_rx_enable(dev, buf->buf, sizeof(buf->buf), UART_RX_TIMEOUT_MS);
+	err = uart_rx_enable(dev, buf->buf, sizeof(buf->buf), UART_RX_TIMEOUT_USEC);
 	if (err) {
 		uart_rx_buf_unref(buf);
 		LOG_ERR("uart_rx_enable: %d", err);

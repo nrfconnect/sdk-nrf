@@ -21,8 +21,10 @@
 
 struct settings_data {
 	struct bt_mesh_light_hsl_range range;
-	uint16_t last;
 	uint16_t dflt;
+#if !IS_ENABLED(CONFIG_EMDS)
+	uint16_t last;
+#endif
 } __packed;
 
 #if CONFIG_BT_SETTINGS
@@ -34,8 +36,10 @@ static void store_timeout(struct k_work *work)
 
 	struct settings_data data = {
 		.range = srv->range,
-		.last = srv->last,
 		.dflt = srv->dflt,
+#if !IS_ENABLED(CONFIG_EMDS)
+		.last = srv->transient.last,
+#endif
 	};
 
 	(void)bt_mesh_model_data_store(srv->model, false, NULL, &data,
@@ -209,9 +213,11 @@ static void lvl_set(struct bt_mesh_lvl_srv *lvl_srv,
 	set.lvl = hue;
 	set.transition = lvl_set->transition;
 	srv->handlers->set(srv, NULL, &set, &status);
-	srv->last = hue;
+	srv->transient.last = hue;
 
-	store(srv);
+	if (!IS_ENABLED(CONFIG_EMDS)) {
+		store(srv);
+	}
 
 	(void)bt_mesh_light_hue_srv_pub(srv, NULL, &status);
 
@@ -237,9 +243,11 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	};
 
 	srv->handlers->delta_set(srv, ctx, &delta, &status);
-	srv->last = status.target;
+	srv->transient.last = status.target;
 
-	store(srv);
+	if (!IS_ENABLED(CONFIG_EMDS)) {
+		store(srv);
+	}
 
 	(void)bt_mesh_light_hue_srv_pub(srv, NULL, &status);
 
@@ -264,9 +272,11 @@ static void lvl_move_set(struct bt_mesh_lvl_srv *lvl_srv,
 	};
 
 	srv->handlers->move_set(srv, ctx, &move, &status);
-	srv->last = status.target;
+	srv->transient.last = status.target;
 
-	store(srv);
+	if (!IS_ENABLED(CONFIG_EMDS)) {
+		store(srv);
+	}
 
 	(void)bt_mesh_light_hue_srv_pub(srv, NULL, &status);
 
@@ -352,6 +362,17 @@ static int hue_srv_init(struct bt_mesh_model *model)
 
 #if CONFIG_BT_SETTINGS
 	k_work_init_delayable(&srv->store_timer, store_timeout);
+
+#if IS_ENABLED(CONFIG_EMDS)
+	srv->emds_entry.entry.id = EMDS_MODEL_ID(model);
+	srv->emds_entry.entry.data = (uint8_t *)&srv->transient;
+	srv->emds_entry.entry.len = sizeof(srv->transient);
+	int err = emds_entry_add(&srv->emds_entry);
+
+	if (err) {
+		return err;
+	}
+#endif
 #endif
 
 	return bt_mesh_model_extend(model, srv->lvl.model);
@@ -371,8 +392,10 @@ static int hue_srv_settings_set(struct bt_mesh_model *model, const char *name,
 	}
 
 	srv->range = data.range;
-	srv->last = data.last;
 	srv->dflt = data.dflt;
+#if !IS_ENABLED(CONFIG_EMDS)
+	srv->transient.last = data.last;
+#endif
 
 	return 0;
 }
@@ -383,8 +406,8 @@ static void hue_srv_reset(struct bt_mesh_model *model)
 
 	srv->range.min = BT_MESH_LIGHT_HSL_MIN;
 	srv->range.max = BT_MESH_LIGHT_HSL_MAX;
-	srv->last = 0;
 	srv->dflt = 0;
+	srv->transient.last = 0;
 
 	net_buf_simple_reset(srv->pub.msg);
 
@@ -404,10 +427,12 @@ void bt_mesh_light_hue_srv_set(struct bt_mesh_light_hue_srv *srv,
 			       const struct bt_mesh_light_hue *set,
 			       struct bt_mesh_light_hue_status *status)
 {
-	srv->last = set->lvl;
+	srv->transient.last = set->lvl;
 	srv->handlers->set(srv, ctx, set, status);
 
-	store(srv);
+	if (!IS_ENABLED(CONFIG_EMDS)) {
+		store(srv);
+	}
 }
 
 void bt_mesh_light_hue_srv_default_set(struct bt_mesh_light_hue_srv *srv,

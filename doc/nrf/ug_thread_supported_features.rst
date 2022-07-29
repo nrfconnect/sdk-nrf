@@ -7,7 +7,7 @@ Supported Thread features
    :local:
    :depth: 2
 
-The OpenThread implementation of the Thread protocol supports all features defined in the Thread 1.2.1 Specification:
+The OpenThread implementation of the Thread protocol supports all features defined in the Thread 1.3.0 Specification that are required for the Thread 1.3 Certification program:
 
 * All Thread networking layers:
 
@@ -26,6 +26,14 @@ The OpenThread implementation of the Thread protocol supports all features defin
   * Multicast across Thread networks
   * Thread Domain unicast addressing
 
+* Features introduced with Thread 1.3.0:
+
+  * Service Registration Protocol (SRP) client
+
+In |NCS|, you can choose which version of the Thread protocol to use in your application.
+By default, |NCS| supports Thread 1.3, which includes support for Thread 1.2.
+You can enable and configure any Thread version by using :ref:`dedicated options <thread_ug_thread_specification_options>`.
+
 .. _thread_ug_supported_features_v12:
 
 Thread 1.2 features
@@ -37,8 +45,8 @@ The features introduced with the Thread 1.2 Specification are fully backward-com
 Thread 1.2 improves network scalability, responsiveness, density, and power consumption.
 For more information about this Thread version, see the official `Thread 1.2 in Commercial White Paper`_ and the `Thread 1.2 Base Features`_ document.
 
-In |NCS|, you can choose which version of the Thread protocol to use in your application.
-By default, |NCS| enables Thread 1.2, but you can enable and configure Thread 1.1 by using the :ref:`dedicated specification option <thread_ug_thread_specification_options>`.
+.. note::
+    See :ref:`thread_ug_thread_specification_options` for the list of 1.2 features that are currently available in |NCS|.
 
 Coordinated Sampled Listening (CSL)
 ===================================
@@ -109,3 +117,21 @@ Limitations for Thread 1.2 support
 The Thread 1.2 Specification support has the following limitation:
 
 * Due to code size limitation, the combination of complete set of Thread 1.2 features with the Bluetooth® LE multiprotocol support is not possible for the nRF52833 DKs.
+
+.. _thread_ug_supported_features_v13:
+
+Thread 1.3 features
+*******************
+
+For more information about this Thread version, see the official `Thread 1.3.0 Features White Paper`_.
+
+DNS-based Service Discovery
+===========================
+
+Thread 1.3 Specification introduces DNS-SD Service Registration Protocol, which lets devices advertise the fact that they provide services while avoiding the use of multicast in the discovery.
+|NCS| provides the required SRP client functionality.
+
+Limitations for Thread 1.3 support
+==================================
+
+Transport Control Protocol (TCP) as defined by the Thread 1.3 Specification is not currently supported by |NCS|.

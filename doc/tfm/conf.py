@@ -17,9 +17,9 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 # General configuration --------------------------------------------------------
 
 project = "Trusted Firmware-M"
-copyright = "2017-2019, ARM CE-OSS"
+copyright = "2017-2021, ARM CE-OSS"
 author = "ARM CE-OSS"
-version = "1.5.0"
+version = "1.6.0"
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
@@ -35,6 +35,8 @@ extensions = [
 source_suffix = [".rst", ".md"]
 
 exclude_patterns = ["readme.rst"]
+
+numfig = True
 
 # Options for HTML output ------------------------------------------------------
 
@@ -58,8 +60,7 @@ autosectionlabel_maxdepth = 2
 # Options for external_content -------------------------------------------------
 
 external_content_contents = [
-    (TFM_BASE / "docs", "index.rst"),
-    (TFM_BASE, "docs/**/*"),
+    (TFM_BASE / "docs", "**/*"),
     (TFM_BASE, "platform/**/*"),
     (TFM_BASE, "tools/**/*"),
 ]

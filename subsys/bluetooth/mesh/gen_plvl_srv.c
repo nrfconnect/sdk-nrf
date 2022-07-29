@@ -19,8 +19,10 @@
 struct bt_mesh_plvl_srv_settings_data {
 	struct bt_mesh_plvl_range range;
 	uint16_t default_power;
+#if !IS_ENABLED(CONFIG_EMDS)
 	uint16_t last;
 	bool is_on;
+#endif
 } __packed;
 
 #if CONFIG_BT_SETTINGS
@@ -32,9 +34,11 @@ static void store_timeout(struct k_work *work)
 
 	struct bt_mesh_plvl_srv_settings_data data = {
 		.default_power = srv->default_power,
-		.last = srv->last,
-		.is_on = srv->is_on,
 		.range = srv->range,
+#if !IS_ENABLED(CONFIG_EMDS)
+		.last = srv->transient.last,
+		.is_on = srv->transient.is_on,
+#endif
 	};
 
 	(void)bt_mesh_model_data_store(srv->plvl_model, false, NULL, &data,
@@ -129,18 +133,18 @@ static int change_lvl(struct bt_mesh_plvl_srv *srv,
 		       struct bt_mesh_plvl_set *set,
 		       struct bt_mesh_plvl_status *status)
 {
-	bool state_change = (srv->is_on == (set->power_lvl == 0));
+	bool state_change = (srv->transient.is_on == (set->power_lvl == 0));
 
 	if (set->power_lvl != 0) {
 		set->power_lvl =
 			CLAMP(set->power_lvl, srv->range.min, srv->range.max);
-		state_change |= (srv->last != set->power_lvl);
-		srv->last = set->power_lvl;
+		state_change |= (srv->transient.last != set->power_lvl);
+		srv->transient.last = set->power_lvl;
 	}
 
-	srv->is_on = (set->power_lvl > 0);
+	srv->transient.is_on = (set->power_lvl > 0);
 
-	if (state_change) {
+	if (!IS_ENABLED(CONFIG_EMDS) && state_change) {
 		store_state(srv);
 	}
 
@@ -207,7 +211,7 @@ static int handle_last_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *
 				 BT_MESH_PLVL_MSG_LEN_LAST_STATUS);
 	bt_mesh_model_msg_init(&rsp, BT_MESH_PLVL_OP_LAST_STATUS);
 
-	net_buf_simple_add_le16(&rsp, srv->last);
+	net_buf_simple_add_le16(&rsp, srv->transient.last);
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
 
 	return 0;
@@ -459,7 +463,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 		srv->handlers->power_get(srv, NULL, &status);
 		start_lvl = status.current;
 	} else {
-		start_lvl = srv->last;
+		start_lvl = srv->transient.last;
 	}
 
 	struct bt_mesh_plvl_set set = {
@@ -478,7 +482,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	 * storage will still be the target value, allowing us to recover
 	 * correctly on power loss.
 	 */
-	srv->last = start_lvl;
+	srv->transient.last = start_lvl;
 
 	if (rsp) {
 		rsp->current = POWER_TO_LVL(status.current);
@@ -558,7 +562,7 @@ static void onoff_set(struct bt_mesh_onoff_srv *onoff_srv,
 
 	if (onoff_set->on_off) {
 		set.power_lvl =
-			(srv->default_power ? srv->default_power : srv->last);
+			(srv->default_power ? srv->default_power : srv->transient.last);
 	} else {
 		set.power_lvl = 0;
 	}
@@ -648,8 +652,8 @@ static void plvl_srv_reset(struct bt_mesh_plvl_srv *srv)
 	srv->range.min = 0;
 	srv->range.max = UINT16_MAX;
 	srv->default_power = 0;
-	srv->last = UINT16_MAX;
-	srv->is_on = false;
+	srv->transient.last = UINT16_MAX;
+	srv->transient.is_on = false;
 }
 
 static void bt_mesh_plvl_srv_reset(struct bt_mesh_model *model)
@@ -689,6 +693,16 @@ static int bt_mesh_plvl_srv_init(struct bt_mesh_model *model)
 
 #if CONFIG_BT_SETTINGS
 	k_work_init_delayable(&srv->store_timer, store_timeout);
+
+#if IS_ENABLED(CONFIG_EMDS)
+	srv->emds_entry.entry.id = EMDS_MODEL_ID(model);
+	srv->emds_entry.entry.data = (uint8_t *)&srv->transient;
+	srv->emds_entry.entry.len = sizeof(srv->transient);
+	err = emds_entry_add(&srv->emds_entry);
+	if (err) {
+		return err;
+	}
+#endif
 #endif
 
 	err = bt_mesh_model_extend(model, srv->ponoff.ponoff_model);
@@ -717,8 +731,10 @@ static int bt_mesh_plvl_srv_settings_set(struct bt_mesh_model *model,
 
 	srv->default_power = data.default_power;
 	srv->range = data.range;
-	srv->last = data.last;
-	srv->is_on = data.is_on;
+#if !IS_ENABLED(CONFIG_EMDS)
+	srv->transient.last = data.last;
+	srv->transient.is_on = data.is_on;
+#endif
 
 	return 0;
 }
@@ -738,10 +754,10 @@ static int bt_mesh_plvl_srv_start(struct bt_mesh_model *model)
 		break;
 	case BT_MESH_ON_POWER_UP_ON:
 		set.power_lvl =
-			(srv->default_power ? srv->default_power : srv->last);
+			(srv->default_power ? srv->default_power : srv->transient.last);
 		break;
 	case BT_MESH_ON_POWER_UP_RESTORE:
-		set.power_lvl = srv->is_on ? srv->last : 0;
+		set.power_lvl = srv->transient.is_on ? srv->transient.last : 0;
 		break;
 	default:
 		return -EINVAL;

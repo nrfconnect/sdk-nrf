@@ -6,7 +6,6 @@
 &uart0 {
 	compatible = "nordic,nrf-uarte";
 	status = "okay";
-	/delete-property/ cts-pull-up;
 	hw-flow-control;
 };
 
@@ -19,6 +18,7 @@
 
 / {
 	chosen {
+		zephyr,ppp-uart = &uart0;
 		zephyr,console = &uart1;
 		zephyr,shell-uart = &uart1;
 	};

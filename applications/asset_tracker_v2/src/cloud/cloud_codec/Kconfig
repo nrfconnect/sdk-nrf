@@ -43,7 +43,7 @@ config CLOUD_CODEC_LWM2M_PATH_LIST_ENTRIES_MAX
 
 config CLOUD_CODEC_LWM2M_PATH_ENTRY_SIZE_MAX
 	int "Size of each path list entry"
-	default 20 if LWM2M
+	default 12 if LWM2M
 	default 1
 	help
 	  Maximum size of a lwm2m path entry

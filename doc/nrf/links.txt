@@ -90,8 +90,8 @@
 
 .. _`SMP over Bluetooth`: https://github.com/apache/mynewt-mcumgr/blob/master/transport/smp-bluetooth.md
 
-.. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/2a120900/src/android/CHIPTool
-.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/2a120900/src/controller
+.. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/5959a2ed/src/android/CHIPTool
+.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/5959a2ed/src/controller
 .. _`ZCL Advanced Platform`: https://github.com/project-chip/zap
 .. _`Matter nRF Connect releases`: https://github.com/nrfconnect/sdk-connectedhomeip/releases
 
@@ -110,6 +110,9 @@
 .. _`PR #329 in sdk-homekit repo`: https://github.com/nrfconnect/sdk-homekit/pull/329
 
 .. _`PR #332 in sdk-homekit repo`: https://github.com/nrfconnect/sdk-homekit/pull/332
+
+.. _`docbuild`: https://github.com/nrfconnect/sdk-nrf/blob/main/.github/workflows/docbuild.yml
+.. _`docpublish`: https://github.com/nrfconnect/sdk-nrf/blob/main/.github/workflows/docpublish.yml
 
 .. ### Source: github.io
 
@@ -151,7 +154,10 @@
 .. _`nRF Connect SDK latest documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html
 
 .. _`known issues page on the main branch`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html
+.. _`known issues for nRF Connect SDK v2.0.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-0-2
+.. _`known issues for nRF Connect SDK v2.0.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-0-1
 .. _`known issues for nRF Connect SDK v2.0.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v2-0-0
+.. _`known issues for nRF Connect SDK v1.9.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-9-2
 .. _`known issues for nRF Connect SDK v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-9-1
 .. _`known issues for nRF Connect SDK v1.9.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-9-0
 .. _`known issues for nRF Connect SDK v1.8.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/known_issues.html?v=v1-8-0
@@ -215,15 +221,25 @@
 .. _`TF-M documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/index.html
 .. _`TF-M secure partition integration guide`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/tfm/docs/integration_guide/services/tfm_secure_partition_addition.html
 
+.. _`Repositories and revisions for v2.0.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.2/nrf/introduction.html#repositories-and-revisions
+.. _`Repositories and revisions for v2.0.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.1/nrf/introduction.html#repositories-and-revisions
 .. _`Repositories and revisions for v2.0.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.0/nrf/introduction.html#repositories-and-revisions
+.. _`Repositories and revisions for v1.9.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.2/nrf/introduction.html#repositories-and-revisions
 .. _`Repositories and revisions for v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.1/nrf/introduction.html#repositories-and-revisions
 .. _`Repositories and revisions`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.0/nrf/introduction.html#repositories-and-revisions
 
+.. _`Modem library changelog for v2.0.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.2/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
+.. _`Modem library changelog for v2.0.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.1/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.0.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
+.. _`Modem library changelog for v1.9.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.2/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.1/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
-.. _`LwM2M carrier library changelog for v2.0.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
-.. _`LwM2M carrier library changelog for v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.1/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`Modem library changelog for v1.9.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.0/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
+
+.. _`LwM2M carrier library changelog for v2.0.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.2/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
+.. _`LwM2M carrier library changelog for v2.0.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.1/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
+.. _`LwM2M carrier library changelog for v2.0.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.0.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
+.. _`LwM2M carrier library changelog for v1.9.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.2/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
+.. _`LwM2M carrier library changelog for v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.1/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v1.9.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.0/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 
 
@@ -287,6 +303,7 @@
 .. _`nRF Connect SDK v2.0.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v2?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0&utm_content=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0
 
 .. _`Contact Us`: https://www.nordicsemi.com/About-us/Contact-Us
+.. _`Nordic Semiconductor Wi-Fi products`: https://www.nordicsemi.com/Products/WiFi
 
 .. ### Source: infocenter.nordicsemi.com
 
@@ -602,6 +619,7 @@
 .. _`Thread 1.2 Base Features`: https://www.threadgroup.org/Portals/0/documents/support/Thread%201.2%20Base%20Features.pdf
 .. _`Thread Group members`: https://www.threadgroup.org/thread-group
 .. _`Thread Group's certification information`: https://www.threadgroup.org/What-is-Thread/Certification
+.. _`Thread 1.3.0 Features White Paper`: https://www.threadgroup.org/Portals/0/documents/support/Thread1.3.0WhitePaper_07192022_3990_1.pdf
 
 .. ### Source: nist.gov
 
@@ -742,6 +760,7 @@
 .. _`ARM Flash Patch and Breakpoint Unit`: https://developer.arm.com/documentation/100166/0001/Debug/Flash-Patch-and-Breakpoint-Unit--FPB-
 .. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
 .. _`PSA Cryptography API 1.1`: https://armmbed.github.io/mbed-crypto/html/
+.. _`IDAU`: https://developer.arm.com/docs/100690/latest/attribution-units-sau-and-idau
 
 .. _`Kconfig language`: https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html
 
@@ -793,6 +812,7 @@
 .. _`Platform Security Architecture (PSA)`: https://www.psacertified.org/what-is-psa-certified/
 
 .. _`Mbed TLS`: https://developer.trustedfirmware.org/w/mbed-tls/
+.. _`Trusted Firmware M`: https://www.trustedfirmware.org/projects/tf-m/
 
 .. _`Nanopb`: https://jpa.kapsi.fi/nanopb/
 .. _`Nanopb Downloads`: https://jpa.kapsi.fi/nanopb/download/

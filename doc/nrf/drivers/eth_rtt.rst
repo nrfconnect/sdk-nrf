@@ -42,7 +42,17 @@ The content of this frame is constant and it is available in the driver source c
 Initialization
 **************
 
-You can initialize the RTT driver using the :kconfig:option:`CONFIG_ETH_RTT` Kconfig option.
+You need to define one instance of the device in Devicetree like this:
+
+.. code-block:: devicetree
+
+  / {
+    eth-rtt {
+      compatible = "segger,eth-rtt";
+    };
+  };
+
+Driver can then be enabled by using the :kconfig:option:`CONFIG_ETH_RTT` Kconfig option.
 
 API documentation
 *****************

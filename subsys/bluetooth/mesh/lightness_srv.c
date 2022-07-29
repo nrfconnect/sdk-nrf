@@ -21,8 +21,10 @@
 struct bt_mesh_lightness_srv_settings_data {
 	struct bt_mesh_lightness_range range;
 	uint16_t default_light;
+#if !IS_ENABLED(CONFIG_EMDS)
 	uint16_t last;
 	bool is_on;
+#endif
 } __packed;
 
 #ifdef BT_DBG_ENABLED
@@ -38,14 +40,21 @@ static void store_timeout(struct k_work *work)
 
 	struct bt_mesh_lightness_srv_settings_data data = {
 		.default_light = srv->default_light,
-		.last = srv->last,
-		.is_on = atomic_test_bit(&srv->flags, LIGHTNESS_SRV_FLAG_IS_ON),
 		.range = srv->range,
+#if !IS_ENABLED(CONFIG_EMDS)
+		.last = srv->transient.last,
+		.is_on = srv->transient.is_on,
+#endif
 	};
 
+#if !IS_ENABLED(CONFIG_EMDS)
 	BT_DBG("Store: Last: %u Default: %u State: %s Range: [%u - %u]",
 	       data.last, data.default_light, data.is_on ? "On" : "Off",
 	       data.range.min, data.range.max);
+#else
+	BT_DBG("Store: Default: %u Range: [%u - %u]",
+	       data.default_light, data.range.min, data.range.max);
+#endif
 
 	(void)bt_mesh_model_data_store(srv->lightness_model, false, NULL,
 				       &data, sizeof(data));
@@ -187,7 +196,7 @@ void bt_mesh_lightness_srv_set(struct bt_mesh_lightness_srv *srv,
 		set->lvl = CLAMP(set->lvl, srv->range.min, srv->range.max);
 	}
 
-	atomic_set_bit_to(&srv->flags, LIGHTNESS_SRV_FLAG_IS_ON, set->lvl > 0);
+	srv->transient.is_on = (set->lvl > 0);
 
 	srv->handlers->light_set(srv, ctx, set, status);
 }
@@ -198,18 +207,16 @@ void lightness_srv_change_lvl(struct bt_mesh_lightness_srv *srv,
 			      struct bt_mesh_lightness_status *status,
 			      bool publish)
 {
-	bool state_change =
-		(atomic_test_bit(&srv->flags, LIGHTNESS_SRV_FLAG_IS_ON) ==
-		 (set->lvl == 0));
+	bool state_change = (srv->transient.is_on == (set->lvl == 0));
 
 	bt_mesh_lightness_srv_set(srv, ctx, set, status);
 
 	if (set->lvl != 0) {
-		state_change |= (srv->last != set->lvl);
-		srv->last = set->lvl;
+		state_change |= (srv->transient.last != set->lvl);
+		srv->transient.last = set->lvl;
 	}
 
-	if (state_change) {
+	if (!IS_ENABLED(CONFIG_EMDS) && state_change) {
 		store_state(srv);
 	}
 
@@ -300,7 +307,7 @@ static int handle_last_get(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *
 				 BT_MESH_LIGHTNESS_MSG_LEN_LAST_STATUS);
 	bt_mesh_model_msg_init(&rsp, BT_MESH_LIGHTNESS_OP_LAST_STATUS);
 
-	net_buf_simple_add_le16(&rsp, to_actual(srv->last));
+	net_buf_simple_add_le16(&rsp, to_actual(srv->transient.last));
 	bt_mesh_model_send(model, ctx, &rsp, NULL, NULL);
 
 	return 0;
@@ -611,12 +618,14 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 	 * started.
 	 */
 	if ((set.lvl == 0) && (from_actual(srv->delta_start) != 0) &&
-	    (from_actual(srv->delta_start) != srv->last)) {
+	    (from_actual(srv->delta_start) != srv->transient.last)) {
 		/* Recalulate it back to light state when overriding the "last"
 		 * value.
 		 */
-		srv->last = from_actual(srv->delta_start);
-		store_state(srv);
+		srv->transient.last = from_actual(srv->delta_start);
+		if (!IS_ENABLED(CONFIG_EMDS)) {
+			store_state(srv);
+		}
 	}
 
 	if (rsp) {
@@ -716,7 +725,7 @@ static void onoff_set(struct bt_mesh_onoff_srv *onoff_srv,
 	struct bt_mesh_lightness_status status;
 
 	if (onoff_set->on_off) {
-		set.lvl = (srv->default_light ? srv->default_light : srv->last);
+		set.lvl = (srv->default_light ? srv->default_light : srv->transient.last);
 	} else {
 		set.lvl = 0;
 	}
@@ -759,8 +768,8 @@ static void lightness_srv_reset(struct bt_mesh_lightness_srv *srv)
 	srv->range.min = 1;
 	srv->range.max = UINT16_MAX;
 	srv->default_light = 0;
-	srv->last = UINT16_MAX;
-	atomic_clear_bit(&srv->flags, LIGHTNESS_SRV_FLAG_IS_ON);
+	srv->transient.last = UINT16_MAX;
+	srv->transient.is_on = false;
 }
 
 static void bt_mesh_lightness_srv_reset(struct bt_mesh_model *model)
@@ -851,6 +860,16 @@ static int bt_mesh_lightness_srv_init(struct bt_mesh_model *model)
 
 #if CONFIG_BT_SETTINGS
 	k_work_init_delayable(&srv->store_timer, store_timeout);
+
+#if IS_ENABLED(CONFIG_EMDS)
+	srv->emds_entry.entry.id = EMDS_MODEL_ID(model);
+	srv->emds_entry.entry.data = (uint8_t *)&srv->transient;
+	srv->emds_entry.entry.len = sizeof(srv->transient);
+	err = emds_entry_add(&srv->emds_entry);
+	if (err) {
+		return err;
+	}
+#endif
 #endif
 
 	err = bt_mesh_model_extend(model, srv->ponoff.ponoff_model);
@@ -884,8 +903,17 @@ static int bt_mesh_lightness_srv_settings_set(struct bt_mesh_model *model,
 
 	srv->default_light = data.default_light;
 	srv->range = data.range;
-	srv->last = data.last;
-	atomic_set_bit_to(&srv->flags, LIGHTNESS_SRV_FLAG_IS_ON, data.is_on);
+#if !IS_ENABLED(CONFIG_EMDS)
+	srv->transient.last = data.last;
+	srv->transient.is_on = data.is_on;
+
+	BT_DBG("Set: Last: %u Default: %u State: %s Range: [%u - %u]",
+	       srv->transient.last, srv->default_light, data.is_on ? "On" : "Off",
+	       srv->range.min, srv->range.max);
+#else
+	BT_DBG("Set: Default: %u Range: [%u - %u]",
+	       srv->default_light, srv->range.min, srv->range.max);
+#endif
 
 	return 0;
 }
@@ -903,14 +931,14 @@ int lightness_on_power_up(struct bt_mesh_lightness_srv *srv)
 	case BT_MESH_ON_POWER_UP_OFF:
 		break;
 	case BT_MESH_ON_POWER_UP_ON:
-		set.lvl = (srv->default_light ? srv->default_light : srv->last);
+		set.lvl = (srv->default_light ? srv->default_light : srv->transient.last);
 		break;
 	case BT_MESH_ON_POWER_UP_RESTORE:
-		if (!atomic_test_bit(&srv->flags, LIGHTNESS_SRV_FLAG_IS_ON)) {
+		if (!srv->transient.is_on) {
 			return 0;
 		}
 
-		set.lvl = srv->last;
+		set.lvl = srv->transient.last;
 		break;
 	default:
 		return -EINVAL;

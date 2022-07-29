@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+add_library(fp_storage STATIC)
+
+if(CONFIG_BT_FAST_PAIR_STORAGE)
+  target_sources(fp_storage PRIVATE fp_storage.c)
+endif()
+
+target_include_directories(fp_storage PUBLIC include)
+target_include_directories(fp_storage PUBLIC ../include/common)
+if(CONFIG_BT_FAST_PAIR_STORAGE_EXPOSE_PRIV_API)
+  target_include_directories(fp_storage PUBLIC include_priv)
+else()
+  target_include_directories(fp_storage PRIVATE include_priv)
+endif()
+
+target_link_libraries(fp_storage PRIVATE zephyr_interface)

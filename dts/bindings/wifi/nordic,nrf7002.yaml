@@ -1,0 +1,44 @@
+# Copyright (c) 2022 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+
+# GPIO lines for controlling the nRF7002 Wi-Fi chip.
+include: base.yaml
+
+properties:
+    iovdd-ctrl-gpios:
+        type: phandle-array
+        required: true
+        description: |
+            GPIO of the SOC controlling IO VDD Control pin of the nRF7002
+    bucken-gpios:
+        type: phandle-array
+        required: true
+        description: |
+            GPIO of the SOC controlling BUCK_EN pin of the nRF7002
+    host-irq-gpios:
+        type: phandle-array
+        required: true
+        description: |
+            GPIO of the SOC controlling the HOST IRQ pin of the nRF7002
+    coex-req-gpios:
+        type: phandle-array
+        required: true
+        description: |
+            GPIO of the SOC controlling SR Coexistence REQ pin of the nRF7002
+    coex-status0-gpios:
+        type: phandle-array
+        required: true
+        description: |
+            GPIO of the SOC controlling SR Coexistence STATUS pin of the nRF7002
+    coex-grant-gpios:
+        type: phandle-array
+        required: true
+        description: |
+            GPIO of the SOC controlling SR Coexistence GRANT pin of the nRF7002
+    swctrl1-gpios:
+        type: phandle-array
+        required: true
+        description: |
+            GPIO of the SOC controlling the Priority (STATUS1) pin (in 4-wire
+            coex case) of the nRF7002

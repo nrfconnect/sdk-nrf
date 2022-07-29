@@ -1002,7 +1002,10 @@ static uint8_t vs_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_VS_COEX_SCAN_MODE_CONFIG:
 		return sdc_hci_cmd_vs_coex_scan_mode_config((void *)cmd_params);
 #endif	/* CONFIG_MPSL_CX_BT_3WIRE */
-
+#ifdef CONFIG_BT_PERIPHERAL
+	case SDC_HCI_OPCODE_CMD_VS_PERIPHERAL_LATENCY_MODE_SET:
+		return sdc_hci_cmd_vs_peripheral_latency_mode_set((void *)cmd_params);
+#endif
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;
 	}
@@ -1129,4 +1132,22 @@ int hci_internal_evt_get(uint8_t *evt_out)
 	}
 
 	return sdc_hci_evt_get(evt_out);
+}
+
+int hci_internal_msg_get(uint8_t *msg_out, sdc_hci_msg_type_t *msg_type_out)
+{
+	if (cmd_complete_or_status.occurred) {
+		struct bt_hci_evt_hdr *evt_hdr = (void *)&cmd_complete_or_status.raw_event[0];
+
+		memcpy(msg_out,
+					 &cmd_complete_or_status.raw_event[0],
+					 evt_hdr->len + BT_HCI_EVT_HDR_SIZE);
+		cmd_complete_or_status.occurred = false;
+
+		*msg_type_out = SDC_HCI_MSG_TYPE_EVT;
+
+		return 0;
+	}
+
+	return sdc_hci_get(msg_out, msg_type_out);
 }

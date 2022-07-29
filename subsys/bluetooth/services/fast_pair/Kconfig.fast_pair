@@ -13,6 +13,9 @@ menuconfig BT_FAST_PAIR
 
 if BT_FAST_PAIR
 
+rsource "fp_crypto/Kconfig.fp_crypto"
+rsource "fp_storage/Kconfig.fp_storage"
+
 config BT_RPA_TIMEOUT
 	default 3600
 	help
@@ -38,6 +41,7 @@ config BT_DIS_FW_REV_STR
 config BT_FAST_PAIR_KEYS
 	bool
 	default y
+	depends on SYSTEM_WORKQUEUE_PRIORITY < 0
 	help
 	  Add Fast Pair key handling source files.
 
@@ -87,68 +91,12 @@ config BT_CTLR_DATA_LENGTH_MAX
 
 endif # BT_FAST_PAIR_GATT_SERVICE
 
-config BT_FAST_PAIR_CRYPTO
-	bool
-	default y
-	help
-	  Add Fast Pair crypto source files.
-
-if BT_FAST_PAIR_CRYPTO
-
-choice BT_FAST_PAIR_CRYPTO_BACKEND
-	prompt "Fast Pair cryptographic backend selection"
-	default BT_FAST_PAIR_CRYPTO_TINYCRYPT if BUILD_WITH_TFM
-	default BT_FAST_PAIR_CRYPTO_MBEDTLS
-	help
-	  Select the Fast Pair cryptographic backend.
-
-config BT_FAST_PAIR_CRYPTO_TINYCRYPT
-	bool "Fast Pair with Tinycrypt cryptographic backend"
-	select TINYCRYPT
-	select TINYCRYPT_SHA256
-	select TINYCRYPT_AES
-	select TINYCRYPT_ECC_DH
-	help
-	  Select Tinycrypt cryptographic backend for Fast Pair.
-
-config BT_FAST_PAIR_CRYPTO_MBEDTLS
-	bool "Fast Pair with MbedTLS cryptographic backend"
-	select NORDIC_SECURITY_BACKEND
-	select MBEDTLS_ENABLE_HEAP
-	help
-	  Select MbedTLS cryptographic backend for Fast Pair.
-
-endchoice
-
-endif # BT_FAST_PAIR_CRYPTO
-
 config BT_FAST_PAIR_REGISTRATION_DATA
 	bool
 	default y
 	select PM_SINGLE_IMAGE
 	help
 	  Add Fast Pair registration data source files.
-
-config BT_FAST_PAIR_STORAGE
-	bool
-	default y
-	select SETTINGS
-	help
-	  Add Fast Pair storage source files.
-
-if BT_FAST_PAIR_STORAGE
-
-config BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX
-	int "Maximum number of stored Account Keys"
-	range 5 10
-	default 5
-	help
-	  Maximum number of stored account keys. According to Fast Pair specification, it should be
-	  at least equal to 5. It can not be larger than 10, because then Account Key Filter length
-	  would not fit in the "field length and type" data field specified in the non-discoverable
-	  advertising packet.
-
-endif # BT_FAST_PAIR_STORAGE
 
 module = BT_FAST_PAIR
 module-str = Fast Pair Service

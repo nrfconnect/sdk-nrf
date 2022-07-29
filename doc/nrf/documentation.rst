@@ -17,3 +17,4 @@ The documentation follows specific conventions and templates proper to the |NCS|
    doc_build
    doc_styleguide
    doc_templates
+   doc_build_process

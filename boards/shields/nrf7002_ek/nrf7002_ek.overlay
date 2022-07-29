@@ -1,0 +1,27 @@
+/* Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+#include <freq.h>
+
+&arduino_spi {
+	status = "okay";
+	cs-gpios = <&arduino_header 16 GPIO_ACTIVE_LOW>; /* D10 */
+
+	nrf7002: nrf7002@0 {
+		compatible = "nordic,nrf7002-spi";
+		status = "okay";
+		reg = <0>;
+		label = "NRF7002";
+		spi-max-frequency = <DT_FREQ_M(96)>;
+
+		iovdd-ctrl-gpios = <&arduino_header 6 GPIO_ACTIVE_HIGH>;   /* D0 */
+		bucken-gpios = <&arduino_header 7 GPIO_ACTIVE_HIGH>;	   /* D1 */
+		host-irq-gpios = <&arduino_header 13 GPIO_ACTIVE_HIGH>;	   /* D7 */
+
+		coex-req-gpios = <&arduino_header 8 GPIO_ACTIVE_HIGH>;	   /* D2 */
+		coex-status0-gpios = <&arduino_header 9 GPIO_ACTIVE_HIGH>; /* D3 */
+		coex-grant-gpios = <&arduino_header 10 GPIO_ACTIVE_HIGH>;  /* D4 */
+		swctrl1-gpios = <&arduino_header 12 GPIO_ACTIVE_HIGH>;	   /* D6 */
+	};
+};

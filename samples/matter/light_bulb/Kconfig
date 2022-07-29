@@ -5,6 +5,25 @@
 #
 mainmenu "Matter nRF Connect Light Bulb Example Application"
 
+if MPSL_FEM
+
+config OPENTHREAD_DEFAULT_TX_POWER
+	int "Set the default 802.15.4 output power (dBm) for device with FEM"
+	range -40 20
+	default 20
+	help
+	  Use this setting to set the default Thread (802.15.4) output power for device that
+	  uses FEM. This value has a unit in dBm and represents the Tx power at Antenna port of FEM device.
+
+# override FEM GAIN to 20 dB as a default
+# see subsys/mpsl/fem/Kconfig
+# Leave MPSL_FEM_NRF21540_TX_GAIN_DB unchanged when OPENTHREAD_DEFAULT_TX_POWER=0
+# to set the output power to a similar value as for nRF52840DK.
+config MPSL_FEM_NRF21540_TX_GAIN_DB
+	default 20 if OPENTHREAD_DEFAULT_TX_POWER != 0
+
+endif # MPSL_FEM
+
 source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_BASE}/../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.defaults"
 source "Kconfig.zephyr"

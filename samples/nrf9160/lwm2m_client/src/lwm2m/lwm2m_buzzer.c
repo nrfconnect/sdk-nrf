@@ -84,14 +84,15 @@ int lwm2m_init_buzzer(void)
 		LWM2M_PATH(IPSO_OBJECT_BUZZER_ID, 0, DIGITAL_INPUT_STATE_RID), buzzer_state_cb);
 	lwm2m_engine_register_post_write_callback(LWM2M_PATH(IPSO_OBJECT_BUZZER_ID, 0, LEVEL_RID),
 						  buzzer_intensity_cb);
-	lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_BUZZER_ID, 0, APPLICATION_TYPE_RID),
-				  BUZZER_APP_TYPE, sizeof(BUZZER_APP_TYPE), LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_BUZZER_ID, 0, APPLICATION_TYPE_RID),
+				  BUZZER_APP_TYPE, sizeof(BUZZER_APP_TYPE), sizeof(BUZZER_APP_TYPE),
+				  LWM2M_RES_DATA_FLAG_RO);
 	lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_BUZZER_ID, 0, LEVEL_RID), &start_intensity);
 
 	if (IS_ENABLED(CONFIG_LWM2M_IPSO_APP_BUZZER_VERSION_1_1)) {
-		lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_BUZZER_ID, 0, TIMESTAMP_RID),
-					  &lwm2m_timestamp, sizeof(lwm2m_timestamp),
-					  LWM2M_RES_DATA_FLAG_RW);
+		lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_BUZZER_ID, 0, TIMESTAMP_RID),
+					 &lwm2m_timestamp, sizeof(lwm2m_timestamp),
+					 sizeof(lwm2m_timestamp), LWM2M_RES_DATA_FLAG_RW);
 	}
 
 	return 0;

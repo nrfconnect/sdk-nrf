@@ -1454,7 +1454,7 @@ static enum ptt_ret cmd_uart_l_set_payload(void)
 				/* lets be sure that there are no extra parameters */
 				ret = PTT_RET_INVALID_VALUE;
 			} else {
-				uint8_t actual_len;
+				uint8_t actual_len = 0;
 
 				ret = ptt_parser_hex_string_to_uint8_array(
 					token_str, payload, PTT_CUSTOM_LTX_PAYLOAD_MAX_SIZE,

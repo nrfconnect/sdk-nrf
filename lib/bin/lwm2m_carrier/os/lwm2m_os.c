@@ -631,7 +631,7 @@ int lwm2m_os_pdn_default_apn_get(char *buf, size_t len)
 
 int lwm2m_os_pdn_default_callback_set(lwm2m_os_pdn_event_handler_t cb)
 {
-	return pdn_default_callback_set((pdn_event_handler_t)cb);
+	return pdn_default_ctx_cb_reg((pdn_event_handler_t)cb);
 }
 
 /* errno handling. */

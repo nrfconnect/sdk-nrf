@@ -70,7 +70,23 @@ The states of the extended model are bound to the states in the Light CTL Temper
 Persistent storage
 ===================
 
-None.
+The Light CTL Temperature Server stores the following information:
+
+* Any changes to the Default Light Temperature/Delta UV and Temperature Range states.
+* The last known Temperature level.
+
+This information is used to reestablish the correct Temperature level when the device powers up.
+
+If :kconfig:option:`CONFIG_BT_SETTINGS` is enabled, the Light CTL Temperature Server stores all its states persistently using a configurable storage delay to stagger storing.
+See :kconfig:option:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`.
+
+The Light CTL Temperature Server can use the :ref:`emergency data storage (EMDS) <emds_readme>` together with persistent storage to:
+
+* Extend the flash memory life expectancy.
+* Reduce the use of resources by reducing the number of writes to flash memory.
+
+If option :kconfig:option:`CONFIG_EMDS` is enabled, the Light CTL Temperature Server continues to store the default light temperature and temperature range states to the flash memory through the settings library, but the last known color temperature level is stored by using the :ref:`EMDS <emds_readme>` library. The values stored by :ref:`EMDS <emds_readme>` will be lost at first boot when the :kconfig:option:`CONFIG_EMDS` is enabled.
+This split is done so the values that may change often are stored on shutdown only, while the rarely changed values are immediately stored in flash memory.
 
 API documentation
 ==================

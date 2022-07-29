@@ -34,6 +34,12 @@ config WARN_EXPERIMENTAL
 config BOARD_THINGY91_NRF9160_NS
 	bool
 
+# memfault depends on the now removed NET_SOCKETS_OFFLOAD_TLS symbol.
+# Until an updated memfault sdk is released, we define this as a promptless
+# symbol here.
+config NET_SOCKETS_OFFLOAD_TLS
+	bool
+
 # nRF Connect SDK needs a larger default stacks in certain configurations
 #  - For running tests.
 #  - For CC3XX RNG

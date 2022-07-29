@@ -122,13 +122,13 @@ To perform a full erase, do the following:
 
    .. tab:: Command Line
 
-      Using ``west``:
+      Using west:
 
       .. code-block:: console
 
          west flash -d *build_directory* --erase
 
-      Using ``nrfjprog``:
+      Using nrfjprog:
 
       .. code-block:: console
 
@@ -136,11 +136,11 @@ To perform a full erase, do the following:
 
    .. tab:: |VSC|
 
-      Using the :guilabel:`ACTIONS` panel:
+      Using the :guilabel:`Actions View` in |nRFVSC|:
 
-         1. Go to the :guilabel:`ACTIONS` panel.
+         1. Go to the :guilabel:`Actions View`.
          #. Move the cursor over the :guilabel:`Flash` action.
-         #. Click :guilabel:`Erase and Flash to Board` on the right side of the :guilabel:`Flash` action.
+         #. Click :guilabel:`Erase And Flash To Board` on the right side of the :guilabel:`Flash` action.
 
       Using the |VSC| Command Palette:
 
@@ -264,7 +264,7 @@ To add the bootloader sample as a child image to your application, complete the 
 1. :ref:`Create a private key in PEM format <ug_fw_update_keys>`.
 #. Enable the |NSIB| through Kconfig as follows:
 
-   a. Select :guilabel:`Kconfig` in the :guilabel:`ACTIONS` panel to open the Kconfig configuration tab.
+   a. Select :guilabel:`Kconfig` in the :guilabel:`Actions View` to open the nRF Kconfig tab.
    #. Expand :guilabel:`Modules` > :guilabel:`nrf` > :guilabel:`Nordic nRF Connect` > :guilabel:`Bootloader` and set :guilabel:`Use Secure Bootloader` to enable :kconfig:option:`CONFIG_SECURE_BOOT`.
    #. Expand :guilabel:`Use Secure Bootloader`.
       Under :guilabel:`Private key PEM file` (:kconfig:option:`CONFIG_SB_SIGNING_KEY_FILE`), enter the path to the private key that you created.
@@ -279,10 +279,10 @@ To add the bootloader sample as a child image to your application, complete the 
 
    #. Click :guilabel:`Save`.
 
-#. Select :guilabel:`Build` in the :guilabel:`ACTIONS` panel to start the build process.
+#. Select :guilabel:`Build` in the :guilabel:`Actions View` to start the build process.
    The build process creates two images, one for the bootloader and one for the application, and merges them.
 
-#. Select :guilabel:`Flash` in the :guilabel:`ACTIONS` panel to program the resulting image to your device.
+#. Select :guilabel:`Flash` in the :guilabel:`Actions View` to program the resulting image to your device.
 
 Testing
 =======

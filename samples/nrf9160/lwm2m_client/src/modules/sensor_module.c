@@ -132,12 +132,12 @@ static void accel_work_cb(struct k_work *work)
 	bool sufficient_x, sufficient_y, sufficient_z;
 
 	/* Get latest registered accelerometer values */
-	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID),
-				  (void **)(&old_x_val), &dummy_data_len, &dummy_data_flags);
-	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID),
-				  (void **)(&old_y_val), &dummy_data_len, &dummy_data_flags);
-	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID),
-				  (void **)(&old_z_val), &dummy_data_len, &dummy_data_flags);
+	lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID),
+				  (void **)(&old_x_val), NULL, &dummy_data_len, &dummy_data_flags);
+	lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID),
+				  (void **)(&old_y_val), NULL, &dummy_data_len, &dummy_data_flags);
+	lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID),
+				  (void **)(&old_z_val), NULL, &dummy_data_len, &dummy_data_flags);
 
 	accelerometer_read(&new_data);
 
@@ -169,8 +169,9 @@ static void temp_work_cb(struct k_work *work)
 	struct sensor_value new_temp_val;
 
 	/* Get latest registered temperature value */
-	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_TEMP_SENSOR_ID, 0, SENSOR_VALUE_RID),
-				  (void **)(&old_temp_val), &dummy_data_len, &dummy_data_flags);
+	lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_TEMP_SENSOR_ID, 0, SENSOR_VALUE_RID),
+				 (void **)(&old_temp_val), NULL, &dummy_data_len,
+				 &dummy_data_flags);
 
 	env_sensor_read_temperature(&new_temp_val);
 
@@ -197,8 +198,9 @@ static void press_work_cb(struct k_work *work)
 	struct sensor_value new_press_val;
 
 	/* Get latest registered pressure value */
-	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, SENSOR_VALUE_RID),
-				  (void **)(&old_press_val), &dummy_data_len, &dummy_data_flags);
+	lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, SENSOR_VALUE_RID),
+				 (void **)(&old_press_val), NULL, &dummy_data_len,
+				 &dummy_data_flags);
 
 	env_sensor_read_pressure(&new_press_val);
 
@@ -225,8 +227,9 @@ static void humid_work_cb(struct k_work *work)
 	struct sensor_value new_humid_val;
 
 	/* Get latest registered humidity value */
-	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0, SENSOR_VALUE_RID),
-				  (void **)(&old_humid_val), &dummy_data_len, &dummy_data_flags);
+	lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0, SENSOR_VALUE_RID),
+				 (void **)(&old_humid_val), NULL, &dummy_data_len,
+				 &dummy_data_flags);
 
 	env_sensor_read_humidity(&new_humid_val);
 
@@ -253,8 +256,9 @@ static void gas_res_work_cb(struct k_work *work)
 	struct sensor_value new_gas_res_val;
 
 	/* Get latest registered gas resistance value */
-	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_GENERIC_SENSOR_ID, 0, SENSOR_VALUE_RID),
-				  (void **)(&old_gas_res_val), &dummy_data_len, &dummy_data_flags);
+	lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_GENERIC_SENSOR_ID, 0, SENSOR_VALUE_RID),
+				 (void **)(&old_gas_res_val), NULL, &dummy_data_len,
+				 &dummy_data_flags);
 
 	env_sensor_read_gas_resistance(&new_gas_res_val);
 
@@ -308,9 +312,9 @@ static void light_work_cb(struct k_work *work)
 	uint32_t new_light_val;
 
 	/* Get latest registered light value */
-	lwm2m_engine_get_res_data(
+	lwm2m_engine_set_res_buf(
 		LWM2M_PATH(IPSO_OBJECT_COLOUR_ID, LIGHT_OBJ_INSTANCE_ID, COLOUR_RID),
-		(void **)(&old_light_val_str), &dummy_data_len, &dummy_data_flags);
+		(void **)(&old_light_val_str), NULL, &dummy_data_len, &dummy_data_flags);
 	old_light_val = strtol(old_light_val_str, NULL, 0);
 
 	/* Read sensor, try again later if busy */
@@ -342,9 +346,9 @@ static void colour_work_cb(struct k_work *work)
 	uint32_t new_colour_val;
 
 	/* Get latest registered colour value */
-	lwm2m_engine_get_res_data(
+	lwm2m_engine_set_res_buf(
 		LWM2M_PATH(IPSO_OBJECT_COLOUR_ID, COLOUR_OBJ_INSTANCE_ID, COLOUR_RID),
-		(void **)(&old_colour_val_str), &dummy_data_len, &dummy_data_flags);
+		(void **)(&old_colour_val_str), NULL, &dummy_data_len, &dummy_data_flags);
 	old_colour_val = strtol(old_colour_val_str, NULL, 0);
 
 	/* Read sensor, try again later if busy */

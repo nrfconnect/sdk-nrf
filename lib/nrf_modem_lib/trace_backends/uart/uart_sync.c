@@ -42,12 +42,14 @@ int trace_backend_init(void)
 
 int trace_backend_deinit(void)
 {
-	int err;
-
 	nrfx_uarte_uninit(&uarte_inst);
+
+#if CONFIG_PM_DEVICE
+	int err;
 
 	err = pinctrl_apply_state(PINCTRL_DT_DEV_CONFIG_GET(UART1_NL), PINCTRL_STATE_SLEEP);
 	__ASSERT_NO_MSG(err == 0);
+#endif /* CONFIG_PM_DEVICE */
 
 	return 0;
 }

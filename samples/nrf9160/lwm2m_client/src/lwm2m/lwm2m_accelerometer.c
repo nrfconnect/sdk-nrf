@@ -188,21 +188,22 @@ int lwm2m_init_accel(void)
 	accelerometer_init();
 
 	lwm2m_engine_create_obj_inst(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0));
-	lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, SENSOR_UNITS_RID),
-				  SENSOR_UNIT_NAME, sizeof(SENSOR_UNIT_NAME),
-				  LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, SENSOR_UNITS_RID),
+				 SENSOR_UNIT_NAME, sizeof(SENSOR_UNIT_NAME),
+				 sizeof(SENSOR_UNIT_NAME),
+				 LWM2M_RES_DATA_FLAG_RO);
 	lwm2m_engine_register_read_callback(
 		LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID), accel_x_read_cb);
 	lwm2m_engine_register_read_callback(
 		LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID), accel_y_read_cb);
 	lwm2m_engine_register_read_callback(
 		LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID), accel_z_read_cb);
-	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID),
-				  (void **)&x_val, &dummy_data_len, &dummy_data_flags);
-	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID),
-				  (void **)&y_val, &dummy_data_len, &dummy_data_flags);
-	lwm2m_engine_get_res_data(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID),
-				  (void **)&z_val, &dummy_data_len, &dummy_data_flags);
+	lwm2m_engine_get_res_buf(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, X_VALUE_RID),
+				  (void **)&x_val, NULL, &dummy_data_len, &dummy_data_flags);
+	lwm2m_engine_get_res_buf(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Y_VALUE_RID),
+				  (void **)&y_val, NULL, &dummy_data_len, &dummy_data_flags);
+	lwm2m_engine_get_res_buf(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, Z_VALUE_RID),
+				  (void **)&z_val, NULL, &dummy_data_len, &dummy_data_flags);
 	lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, MIN_RANGE_VALUE_RID),
 			       &min_range_val);
 	lwm2m_engine_set_float(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, MAX_RANGE_VALUE_RID),
@@ -211,16 +212,17 @@ int lwm2m_init_accel(void)
 	if (IS_ENABLED(CONFIG_LWM2M_IPSO_ACCELEROMETER_VERSION_1_1)) {
 		meas_qual_ind = 0;
 
-		lwm2m_engine_set_res_data(
-			LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, APPLICATION_TYPE_RID),
-			ACCEL_APP_TYPE, sizeof(ACCEL_APP_TYPE), LWM2M_RES_DATA_FLAG_RO);
-		lwm2m_engine_set_res_data(
-			LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, TIMESTAMP_RID),
-			&lwm2m_timestamp, sizeof(lwm2m_timestamp), LWM2M_RES_DATA_FLAG_RW);
-		lwm2m_engine_set_res_data(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0,
-						     MEASUREMENT_QUALITY_INDICATOR_RID),
-					  &meas_qual_ind, sizeof(meas_qual_ind),
-					  LWM2M_RES_DATA_FLAG_RW);
+		lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0,
+						    APPLICATION_TYPE_RID),
+					 ACCEL_APP_TYPE, sizeof(ACCEL_APP_TYPE),
+					 sizeof(ACCEL_APP_TYPE), LWM2M_RES_DATA_FLAG_RO);
+		lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0, TIMESTAMP_RID),
+					 &lwm2m_timestamp, sizeof(lwm2m_timestamp),
+					 sizeof(lwm2m_timestamp), LWM2M_RES_DATA_FLAG_RW);
+		lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_ACCELEROMETER_ID, 0,
+						    MEASUREMENT_QUALITY_INDICATOR_RID),
+					 &meas_qual_ind, sizeof(meas_qual_ind),
+					 sizeof(meas_qual_ind), LWM2M_RES_DATA_FLAG_RW);
 	}
 
 	return 0;

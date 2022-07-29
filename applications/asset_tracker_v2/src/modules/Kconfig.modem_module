@@ -7,6 +7,8 @@
 menuconfig MODEM_MODULE
 	bool "Modem module"
 	select LTE_LINK_CONTROL
+	select PDN
+	select PDN_ESM_STRERROR
 	select MODEM_INFO
 	default y
 

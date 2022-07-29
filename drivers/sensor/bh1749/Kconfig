@@ -6,7 +6,7 @@
 
 menuconfig BH1749
 	bool "BH1749 Sensor"
-	depends on I2C && HAS_DTS_GPIO
+	depends on I2C
 	help
 	  Enable driver for BH1749 sensors.
 

@@ -132,7 +132,7 @@ The table below shows the different types of build files that are generated and 
 +--------------+----------------------------------------+----------------------------------------------------------------+
 |app_signed.hex| MCUboot compatible image, HEX format   | Using the built-in bootloader and nRF Connect Programmer       |
 +--------------+----------------------------------------+----------------------------------------------------------------+
-|app_update.bin| MCUboot compatible image, binary format|* Using the built-in bootloader and ``mcumgr`` command line tool|
+|app_update.bin| MCUboot compatible image, binary format|* Using the built-in bootloader and mcumgr command line tool    |
 |              |                                        |* For FOTA updates                                              |
 +--------------+----------------------------------------+----------------------------------------------------------------+
 
@@ -141,7 +141,7 @@ You can choose the method based on the availability or absence of an external de
 
 .. note::
 
-   If you do not have an external debug probe available to program the Thingy:91, you can directly program by :ref:`using the USB (MCUboot) method and nRF Connect Programmer <programming_usb>`.
+   If you do not have an external debug probe available to program the Thingy:91, you can directly program by :ref:`using the USB (MCUboot) method and nRF Connect Programmer <programming_thingy>`.
    In this scenario, use the :file:`app_signed.hex` firmware image file.
 
 .. note::
@@ -185,7 +185,7 @@ Complete the following steps after installing the |nRFVSC|:
 .. prog_extdebugprobe_end
 ..
 
-   e. In |VSC|, click the :guilabel:`Flash` option in the :guilabel:`Actions` panel.
+   e. In |VSC|, click the :guilabel:`Flash` option in the :guilabel:`Actions View`.
 
       If you have multiple boards connected, you are prompted to pick a device at the top of the screen.
 

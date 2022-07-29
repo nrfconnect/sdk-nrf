@@ -21,3 +21,6 @@ common:
 tests:
   sample.app_event_manager:
     build_only: false
+  sample.app_event_manager_shell:
+    build_only: false
+    extra_args: CONFIG_SHELL=y

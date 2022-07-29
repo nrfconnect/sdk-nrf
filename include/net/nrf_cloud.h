@@ -470,6 +470,11 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param);
  * @note If nRF Cloud FOTA is enabled and a FOTA job is active
  *  uninit will not be performed.
  *
+ * @note This function is solely intended to allow the this library to be deactivated when
+ *  no longer needed. You can recover from any error state you may encounter without calling this
+ *  function. See @ref nrf_cloud_disconnect for a way to reset the nRF Cloud connection state
+ *  without uninitializing the whole library.
+ *
  * @retval 0      If successful.
  * @retval -EBUSY If a FOTA job is in progress.
  *                Otherwise, a (negative) error code is returned.
@@ -768,6 +773,20 @@ int nrf_cloud_fota_fmfu_apply(void);
  * @return true if FOTA is modem type, otherwise false.
  */
 bool nrf_cloud_fota_is_type_modem(const enum nrf_cloud_fota_type type);
+
+/**
+ * @brief Function to determine if the specified FOTA type is enabled by the
+ *        configuration.
+ *        Depends on CONFIG_NRF_CLOUD_FOTA.
+ *        REST-based FOTA applications are responsible for determining
+ *        their supported FOTA types.
+ *
+ * @param[in] type Fota type.
+ *
+ * @retval true  Specified FOTA type is enabled by the configuration.
+ * @retval false Specified FOTA type is not enabled by the configuration.
+ */
+bool nrf_cloud_fota_is_type_enabled(const enum nrf_cloud_fota_type type);
 
 /** @} */
 

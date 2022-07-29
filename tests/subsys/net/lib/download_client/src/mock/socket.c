@@ -299,7 +299,7 @@ void mock_socket_iface_init(struct net_if *iface)
 {
 	mock_socket_iface_data.iface = iface;
 
-	iface->if_dev->offloaded = true;
+	iface->if_dev->socket_offload = mock_socket_create;
 
 	socket_offload_dns_register(&mock_socket_dns_offload_ops);
 }

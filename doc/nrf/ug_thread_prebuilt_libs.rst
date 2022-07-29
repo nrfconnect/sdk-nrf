@@ -50,12 +50,12 @@ For more information about Thread 1.2 features, see the `Thread 1.2 Base Feature
       - MTD
       - Custom
     * - BORDER_AGENT
-      - ✔
+      -
       -
       -
       -
     * - BORDER_ROUTER
-      - ✔
+      -
       -
       -
       -
@@ -160,7 +160,7 @@ For more information about Thread 1.2 features, see the `Thread 1.2 Base Feature
       -
       -
     * - BACKBONE_ROUTER (Thread 1.2)
-      - ✔
+      -
       -
       -
       -
@@ -191,9 +191,6 @@ For more information about Thread 1.2 features, see the `Thread 1.2 Base Feature
       -
 
 For the full list of configuration options that were used during compilation, including their default values, see the :file:`openthread_lib_configuration.txt` file within each library folder in the nrfxlib repository.
-
-.. note::
-   The Backbone Router feature enables the functionality for the Thread Network side, but not for the Backbone side.
 
 .. _thread_ug_customizing_prebuilt:
 

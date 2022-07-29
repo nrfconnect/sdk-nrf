@@ -201,19 +201,19 @@ The following code snippets show examples of the DTS nodes:
 
 		pwm_led0: led_pwm_0 {
 			status = "okay";
-			pwms = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
+			pwms = <&pwm0 0 PWM_MSEC(1) PWM_POLARITY_INVERTED>;
 			label = "LED0 red";
 		};
 
 		pwm_led1: led_pwm_1 {
 			status = "okay";
-			pwms = <&pwm0 1 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
+			pwms = <&pwm0 1 PWM_MSEC(1) PWM_POLARITY_INVERTED>;
 			label = "LED0 green";
 		};
 
 		pwm_led2: led_pwm_2 {
 			status = "okay";
-			pwms = <&pwm0 2 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
+			pwms = <&pwm0 2 PWM_MSEC(1) PWM_POLARITY_INVERTED>;
 			label = "LED0 blue";
 		};
 	};
@@ -231,6 +231,12 @@ The following code snippets show examples of the DTS nodes:
 
   In this example, ``pwmleds0`` is a tri-channel color LED node, while ``pwmleds1`` is a monochromatic LED node.
   Both ``pwmleds`` nodes are pointing to the ``pwms`` properties corresponding to PWM nodes set in Example 2 in `Enabling the PWM ports`_, with the respective channel numbers.
+
+.. note::
+   Set the PWM period for the LED to a smaller value, such as 1 millisecond, to avoid glitches during tri-channel LED color updates.
+   Because of the limitations of Zephyr's :ref:`zephyr:pwm_api`, color channels are not updated simultaneously.
+   The first LED channel is updated one PWM period before other channels.
+   A short LED PWM period mitigates the glitches.
 
 Configuring GPIO LEDs
 ---------------------

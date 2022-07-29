@@ -70,7 +70,8 @@ static K_SEM_DEFINE(sem, 1, 1);
 static K_THREAD_STACK_DEFINE(thread_stack, THREAD_STACK_SIZE);
 static struct k_thread thread;
 
-static const struct device *sensor_dev;
+static const struct device *sensor_dev =
+	DEVICE_DT_GET_ONE(MOTION_SENSOR_COMPATIBLE);
 
 static struct sensor_state state;
 
@@ -321,12 +322,11 @@ static void set_default_configuration(void)
 
 static int init(void)
 {
-	int err = -ENXIO;
+	int err;
 
-	sensor_dev = device_get_binding(MOTION_SENSOR_DEV_NAME);
-	if (!sensor_dev) {
-		LOG_ERR("Cannot get motion sensor device");
-		return err;
+	if (!device_is_ready(sensor_dev)) {
+		LOG_ERR("Sensor device not ready");
+		return -ENODEV;
 	}
 
 	k_spinlock_key_t key = k_spin_lock(&state.lock);

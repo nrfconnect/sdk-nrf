@@ -18,6 +18,7 @@
 #include <net/nrf_cloud.h>
 #include <net/fota_download.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/settings/settings.h>
 #include <zephyr/sys/reboot.h>
@@ -221,6 +222,26 @@ static int pending_fota_job_validate(void)
 	return (int)reboot;
 }
 
+bool nrf_cloud_fota_is_type_enabled(const enum nrf_cloud_fota_type type)
+{
+	switch (type)
+	{
+	case NRF_CLOUD_FOTA_APPLICATION:
+		return IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT);
+	case NRF_CLOUD_FOTA_BOOTLOADER:
+		return IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT) &&
+		       IS_ENABLED(CONFIG_BUILD_S1_VARIANT) &&
+		       IS_ENABLED(CONFIG_SECURE_BOOT);
+	case NRF_CLOUD_FOTA_MODEM_DELTA:
+		return IS_ENABLED(CONFIG_NRF_MODEM);
+	case NRF_CLOUD_FOTA_MODEM_FULL:
+		return IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE) &&
+		       IS_ENABLED(CONFIG_NRF_MODEM);
+	default:
+		return false;
+	}
+}
+
 int nrf_cloud_fota_pending_job_validate(enum nrf_cloud_fota_type * const fota_type_out)
 {
 	int err = load_fota_settings();
@@ -243,6 +264,7 @@ int nrf_cloud_fota_pending_job_validate(enum nrf_cloud_fota_type * const fota_ty
 static void fota_reboot(void)
 {
 	LOG_INF("Rebooting to complete FOTA update...");
+	LOG_PANIC();
 	sys_reboot(SYS_REBOOT_COLD);
 }
 

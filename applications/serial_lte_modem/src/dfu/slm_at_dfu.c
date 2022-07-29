@@ -206,7 +206,7 @@ static int download_client_callback(const struct download_client_evt *event)
 		}
 
 		if (!first_fragment) {
-			sprintf(rsp_buf, "\r\n#XDFUGET: %d, %d\r\n", dfu_step,
+			sprintf(rsp_buf, "\r\n#XDFUGET: %d,%d\r\n", dfu_step,
 				(file_download_size * 100) / file_image_size);
 			rsp_send(rsp_buf, strlen(rsp_buf));
 		}
@@ -264,6 +264,11 @@ static int download_client_callback(const struct download_client_evt *event)
 				}
 			}
 			first_fragment = true;
+			if (dfu_step == DFU_INIT_PACKET_DOWNLOAD) {
+				k_sem_give(&sem_init_packet);
+			} else {
+				k_sem_give(&sem_file_image);
+			}
 			/* Return non-zero to tell download_client to stop */
 			return event->error;
 		}
@@ -455,7 +460,7 @@ int handle_at_dfu_get(enum at_cmd_type cmd_type)
 			dfu_step = DFU_INIT_PACKET_DOWNLOAD;
 			err = do_dfu_download(host, ip_file, sec_tag);
 			if (err) {
-				sprintf(rsp_buf, "\r\n#XDFUGET: %d, %d\r\n", dfu_step, err);
+				sprintf(rsp_buf, "\r\n#XDFUGET: %d,%d\r\n", dfu_step, err);
 				rsp_send(rsp_buf, strlen(rsp_buf));
 				return err;
 			}
@@ -463,19 +468,19 @@ int handle_at_dfu_get(enum at_cmd_type cmd_type)
 #endif
 			/* Download DFU image files */
 			dfu_step = DFU_FILE_IMAGE_DOWNLOAD;
+			file_image_size = 0;
+			file_download_size = 0;
 			err = do_dfu_download(host, fw_file, sec_tag);
 			if (err) {
-				sprintf(rsp_buf, "\r\n#XDFUGET: %d, %d\r\n", dfu_step, err);
+				sprintf(rsp_buf, "\r\n#XDFUGET: %d,%d\r\n", dfu_step, err);
 				rsp_send(rsp_buf, strlen(rsp_buf));
 				return err;
 			}
 			k_sem_take(&sem_file_image, K_FOREVER);
-			if (file_image_size > 0 && file_image_size == file_download_size) {
-				sprintf(rsp_buf, "\r\n#XDFUGET: %d, %d\r\n",
-					dfu_step, file_image_size);
-				rsp_send(rsp_buf, strlen(rsp_buf));
-			} else {
+			if (file_image_size > 0 && file_image_size != file_download_size) {
 				err = -EAGAIN;
+				sprintf(rsp_buf, "\r\n#XDFUGET: %d,%d\r\n", dfu_step, err);
+				rsp_send(rsp_buf, strlen(rsp_buf));
 			}
 		} else if (op == SLM_DFU_ERASE) {
 			err = do_dfu_erase();
@@ -497,8 +502,30 @@ int handle_at_dfu_get(enum at_cmd_type cmd_type)
 	return err;
 }
 
+/**@brief handle AT#XDFUSIZE commands
+ *  AT#XDFUSIZE
+ *  AT#XDFUSIZE? READ command not supported
+ *  AT#XDFUSIZE=? TEST command not supported
+ */
+int handle_at_dfu_size(enum at_cmd_type cmd_type)
+{
+	int err = -EINVAL;
+
+	switch (cmd_type) {
+	case AT_CMD_TYPE_SET_COMMAND:
+		sprintf(rsp_buf, "\r\n#XDFUSIZE: %d,%d\r\n", file_image_size, file_download_size);
+		rsp_send(rsp_buf, strlen(rsp_buf));
+		err = 0;
+		break;
+	default:
+		break;
+	}
+
+	return err;
+}
+
 /**@brief handle AT#XDFURUN commands
- *  AT#XDFURUN=<delay>[,<mtu>[,<pause>]]
+ *  AT#XDFURUN=<start_delay>[,<mtu>[,<pause>]]
  *  AT#XDFURUN? READ command not supported
  *  AT#XDFURUN=?
  */
@@ -536,8 +563,7 @@ int handle_at_dfu_run(enum at_cmd_type cmd_type)
 		} break;
 
 	case AT_CMD_TYPE_TEST_COMMAND:
-		sprintf(rsp_buf,
-			"\r\n#XDFURUN=<delay>,<mtu>,<pause>\r\n");
+		sprintf(rsp_buf, "\r\n#XDFURUN=<start_delay>,<mtu>,<pause>\r\n");
 		rsp_send(rsp_buf, strlen(rsp_buf));
 		err = 0;
 		break;

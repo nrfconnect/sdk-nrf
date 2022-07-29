@@ -96,13 +96,19 @@ The following boards are defined in the :file:`nrf/boards/arm/` folder.
 |                   |            +----------------------------------------------------------+---------------------------------------+
 |                   |            | :ref:`thingy91_nrf52840 <ug_thingy91>`                   | ``thingy91_nrf52840``                 |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------+
+| nRF7002 DK        | PCA10143   | :ref:`nrf7002dk_nrf5340 <nrf7002dk_nrf5340>`             | ``nrf7002dk_nrf5340_cpunet``          |
+|                   |            |                                                          |                                       |
+|                   |            |                                                          | ``nrf7002dk_nrf5340_cpuapp``          |
+|                   |            |                                                          |                                       |
+|                   |            |                                                          | ``nrf7002dk_nrf5340_cpuapp_ns``       |
++-------------------+------------+----------------------------------------------------------+---------------------------------------+
 
 The :ref:`nRF21540 EK shield <ug_radio_fem_nrf21540_ek>` is defined in the :file:`nrf/boards/shields` folder.
 
 Custom boards
 *************
 
-Defining your own board is a very common step in application development, since applications are typically designed to run on boards that are not directly supported by the |NCS|, given that they are typically custom designs and not available publicly.
+Defining your own board is a very common step in application development, because applications are typically designed to run on boards that are not directly supported by the |NCS|, and are often custom designs not available publicly.
 To define your own board, you can use the following Zephyr guides as reference, since boards are defined in the |NCS| just as they are in Zephyr:
 
 * :ref:`custom_board_definition` is a guide to adding your own custom board to the Zephyr build system.

@@ -17,6 +17,9 @@
 #include <bluetooth/mesh/light_ctl.h>
 #include <bluetooth/mesh/model_types.h>
 #include <bluetooth/mesh/gen_lvl_srv.h>
+#if IS_ENABLED(CONFIG_EMDS) && IS_ENABLED(CONFIG_BT_SETTINGS)
+#include "emds/emds.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -140,8 +143,15 @@ struct bt_mesh_light_temp_srv {
 	struct bt_mesh_light_temp dflt;
 	/** Current Temperature range. */
 	struct bt_mesh_light_temp_range range;
-	/** The last known color temperature. */
-	struct bt_mesh_light_temp last;
+	struct __packed {
+		/** The last known color temperature. */
+		struct bt_mesh_light_temp last;
+	} transient;
+
+#if IS_ENABLED(CONFIG_EMDS) && IS_ENABLED(CONFIG_BT_SETTINGS)
+	/** Dynamic entry to be stored with EMDS */
+	struct emds_dynamic_entry emds_entry;
+#endif
 };
 
 /** @brief Publish the current CTL Temperature status.

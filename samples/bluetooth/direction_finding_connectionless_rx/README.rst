@@ -41,9 +41,15 @@ This sample configuration is split into the following two files:
 * generic configuration is available in :file:`prj.conf` file
 * board specific configuration is available in :file:`boards/<BOARD>.conf` file
 
-Board specific configuration involves configuring the Bluetooth LE controller.
-For :ref:`nRF5340 DK <ug_nrf5340>`, the Bluetooth LE controller is part of a ``child image`` aimed to run on the network core.
-Configuration for the child image is stored in :file:`child_image/` subdirectory.
+nRF5340 configuration files
+===========================
+
+The following additional configuration files are available for the :ref:`nRF5340 DK <ug_nrf5340>`:
+
+* The Bluetooth LE controller is part of a child image meant to run on the network core.
+  The configuration for the child image is stored in the :file:`child_image/` subdirectory.
+* :file:`boards/nrf5340dk_nrf5340_cpuapp.overlay` DTS overlay file is available for the application core.
+  This file forwards the control over GPIOs to network core, which gives control over GPIOs to the radio peripheral in order to execute antenna switching.
 
 Angle of departure mode
 =======================

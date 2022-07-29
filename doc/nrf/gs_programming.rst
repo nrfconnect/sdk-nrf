@@ -53,7 +53,7 @@ After completing the :ref:`manual <build_environment_cli>` or :ref:`automatic <g
 
       .. code-block:: console
 
-         cd nrf/samples/nRF9160/at_client
+         cd nrf/samples/nrf9160/at_client
 
 
 #.    Build the application using the west command.

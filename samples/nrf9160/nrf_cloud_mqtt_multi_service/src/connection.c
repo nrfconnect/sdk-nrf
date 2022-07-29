@@ -5,6 +5,7 @@
 
 #include <zephyr/kernel.h>
 #include <stdio.h>
+#include <modem/nrf_modem_lib.h>
 #include <modem/lte_lc.h>
 #include <zephyr/net/socket.h>
 #include <net/nrf_cloud.h>
@@ -24,8 +25,7 @@ LOG_MODULE_REGISTER(connection, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
 /* LTE either is connected or isn't */
 #define LTE_CONNECTED			(1 << 1)
 
-/* Do not confuse these with the similarly-named features of the generic cloud API.
- * CLOUD_CONNECTED is fired when we first connect to the nRF Cloud.
+/* CLOUD_CONNECTED is fired when we first connect to the nRF Cloud.
  * CLOUD_READY is fired when the connection is fully associated and ready to send device messages.
  * CLOUD_ASSOCIATION_REQUEST is a special state only used when first associating a device with
  *				an nRF Cloud user account.
@@ -293,6 +293,7 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		LOG_DBG("NRF_CLOUD_EVT_FOTA_DONE, FOTA type: %s",
 			fota_type == NRF_CLOUD_FOTA_APPLICATION	  ?		"Application"	:
 			fota_type == NRF_CLOUD_FOTA_MODEM_DELTA	  ?		"Modem (delta)"	:
+			fota_type == NRF_CLOUD_FOTA_MODEM_FULL	  ?		"Modem (full)"	:
 			fota_type == NRF_CLOUD_FOTA_BOOTLOADER	  ?		"Bootloader"	:
 										"Invalid");
 
@@ -418,9 +419,10 @@ static void update_shadow(void)
 {
 	int err;
 	struct nrf_cloud_svc_info_fota fota_info = {
-		.application = fota_capable(),
-		.bootloader = fota_capable() && boot_fota_capable(),
-		.modem = fota_capable()
+		.application = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_APPLICATION),
+		.bootloader = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_BOOTLOADER),
+		.modem = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_DELTA),
+		.modem_full = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_FULL)
 	};
 	struct nrf_cloud_svc_info_ui ui_info = {
 		.gps = location_tracking_enabled(),
@@ -558,29 +560,27 @@ int send_device_message_cJSON(cJSON *msg_obj)
 }
 
 /**
- * @brief Reset connection to nRF Cloud, and reset connection status event state.
- * For internal use only. Externally, disconnect_cloud() may be used instead.
+ * @brief Close any connection to nRF Cloud, and reset connection status event state.
+ * For internal use only. Externally, disconnect_cloud() may be used to trigger a disconnect.
  */
 static void reset_cloud(void)
 {
 	int err;
 
 	/* Wait for a few seconds to help residual events settle. */
-	LOG_INF("Resetting nRF Cloud transport");
+	LOG_INF("Disconnecting from nRF Cloud");
 	k_sleep(K_SECONDS(20));
 
-	/* Disconnect from nRF Cloud and uninit the cloud library. */
-	err = nrf_cloud_uninit();
+	/* Disconnect from nRF Cloud */
+	err = nrf_cloud_disconnect();
 
-	/* nrf_cloud_uninit returns -EBUSY if reset is blocked by a FOTA job. */
-	if (err == -EBUSY) {
-		LOG_ERR("Could not reset nRF Cloud transport due to ongoing FOTA job. "
-			"Continuing without resetting");
+	/* nrf_cloud_uninit returns -EACCES if we are not currently in a connected state. */
+	if (err == -EACCES) {
+		LOG_INF("Cannot disconnect from nRF Cloud because we are not currently connected");
 	} else if (err) {
-		LOG_ERR("Could not reset nRF Cloud transport, error %d. "
-			"Continuing without resetting", err);
+		LOG_ERR("Cannot disconnect from nRF Cloud, error: %d. Continuing anyways", err);
 	} else {
-		LOG_INF("nRF Cloud transport has been reset");
+		LOG_INF("Successfully disconnected from nRF Cloud");
 	}
 
 	/* Clear cloud connection event state (reset to initial state). */
@@ -592,22 +592,11 @@ static void reset_cloud(void)
  *
  * @return int - 0 on success, otherwise negative error code.
  */
-
 static int connect_cloud(void)
 {
 	int err;
 
-	LOG_INF("Connecting to nRF Cloud");
-
-	/* Initialize nrf_cloud library. */
-	struct nrf_cloud_init_param params = {
-		.event_handler = cloud_event_handler
-	};
-	err = nrf_cloud_init(&params);
-	if (err) {
-		LOG_ERR("Cloud lib could not be initialized, error: %d", err);
-		return err;
-	}
+	LOG_INF("Connecting to nRF Cloud...");
 
 	/* Begin attempting to connect persistently. */
 	while (true) {
@@ -646,7 +635,13 @@ static int setup_lte(void)
 {
 	int err;
 
-	LOG_INF("Setting up LTE");
+	/* Initialize the modem library if required */
+	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_SYS_INIT)) {
+		err = nrf_modem_lib_init(NORMAL_MODE);
+		if (err) {
+			LOG_ERR("Modem library initialization failed, error: %d", err);
+		}
+	}
 
 	/* Register to be notified when the modem has figured out the current time. */
 	date_time_register_handler(date_time_evt_handler);
@@ -664,13 +659,15 @@ static int setup_lte(void)
 		 * request after the connection is in place, which may be
 		 * rejected in some networks.
 		 */
+		LOG_INF("Requesting PSM mode");
+
 		err = lte_lc_psm_req(true);
 		if (err) {
 			LOG_ERR("Failed to set PSM parameters, error: %d", err);
 			return err;
+		} else {
+			LOG_INF("PSM mode requested");
 		}
-
-		LOG_INF("PSM mode requested");
 	}
 
 	/* Modem events must be enabled before we can receive them. */
@@ -694,6 +691,29 @@ static int setup_lte(void)
 	return 0;
 }
 
+/**
+ * @brief Set up the nRF Cloud library
+ *
+ * @return int - 0 on success, otherwise negative error code.
+ */
+static int setup_cloud(void)
+{
+	/* Initialize nrf_cloud library. */
+	struct nrf_cloud_init_param params = {
+		.event_handler = cloud_event_handler,
+		.fmfu_dev_inf = get_full_modem_fota_fdev()
+	};
+
+	int err = nrf_cloud_init(&params);
+
+	if (err) {
+		LOG_ERR("nRF Cloud library could not be initialized, error: %d", err);
+		return err;
+	}
+
+	return 0;
+}
+
 void manage_connection(void)
 {
 	/* Enable the modem and start trying to connect to LTE.
@@ -702,12 +722,22 @@ void manage_connection(void)
 	 * (Once we request connection, the modem will automatically try to reconnect whenever
 	 *  connection is lost).
 	 */
-
-	LOG_INF("Connecting to LTE network. This may take several minutes...");
+	LOG_INF("Setting up LTE...");
 	if (setup_lte()) {
-		LOG_ERR("LTE initialization failed. Continuing anyway. This may fail.");
+		LOG_ERR("Fatal: LTE setup failed");
+		return;
 	}
 
+	/* The nRF Cloud library need only be initialized once, and does not need to be reset
+	 * under any circumstances, even error conditions.
+	 */
+	LOG_INF("Setting up nRF Cloud library...");
+	if (setup_cloud()) {
+		LOG_ERR("Fatal: nRF Cloud library setup failed");
+		return;
+	}
+
+	LOG_INF("Connecting to LTE network. This may take several minutes...");
 	while (true) {
 		/* Wait for LTE to become connected (or re-connected if connection was lost). */
 		LOG_INF("Waiting for connection to LTE network...");

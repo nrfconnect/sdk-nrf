@@ -127,3 +127,5 @@ module-str = DM_MODULE
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endif #DM_MODULE
+
+rsource "rpc/Kconfig"
