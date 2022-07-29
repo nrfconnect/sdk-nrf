@@ -619,6 +619,7 @@
 .. _`Thread 1.2 Base Features`: https://www.threadgroup.org/Portals/0/documents/support/Thread%201.2%20Base%20Features.pdf
 .. _`Thread Group members`: https://www.threadgroup.org/thread-group
 .. _`Thread Group's certification information`: https://www.threadgroup.org/What-is-Thread/Certification
+.. _`Thread 1.3.0 Features White Paper`: https://www.threadgroup.org/Portals/0/documents/support/Thread1.3.0WhitePaper_07192022_3990_1.pdf
 
 .. ### Source: nist.gov
 
