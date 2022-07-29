@@ -44,10 +44,10 @@ static size_t test_tone_size;
 
 static void audio_gateway_configure(void)
 {
-	if (IS_ENABLED(CONFIG_SW_CODEC_SBC)) {
-		sw_codec_cfg.sw_codec = SW_CODEC_SBC;
-	} else if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
+	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
 		sw_codec_cfg.sw_codec = SW_CODEC_LC3;
+	} else {
+		ERR_CHK_MSG(-EINVAL, "No codec selected");
 	}
 
 #if (CONFIG_STREAM_BIDIRECTIONAL)
@@ -55,10 +55,10 @@ static void audio_gateway_configure(void)
 	sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
 
-	if (IS_ENABLED(CONFIG_SW_CODEC_SBC)) {
-		sw_codec_cfg.encoder.bitrate = SBC_MONO_BITRATE;
-	} else if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
+	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
 		sw_codec_cfg.encoder.bitrate = CONFIG_LC3_BITRATE;
+	} else {
+		ERR_CHK_MSG(-EINVAL, "No codec selected");
 	}
 
 	sw_codec_cfg.encoder.channel_mode = SW_CODEC_STEREO;
@@ -67,20 +67,20 @@ static void audio_gateway_configure(void)
 
 static void audio_headset_configure(void)
 {
-	if (IS_ENABLED(CONFIG_SW_CODEC_SBC)) {
-		sw_codec_cfg.sw_codec = SW_CODEC_SBC;
-	} else if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
+	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
 		sw_codec_cfg.sw_codec = SW_CODEC_LC3;
+	} else {
+		ERR_CHK_MSG(-EINVAL, "No codec selected");
 	}
 
 #if (CONFIG_STREAM_BIDIRECTIONAL)
 	sw_codec_cfg.encoder.enabled = true;
 	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
 
-	if (IS_ENABLED(CONFIG_SW_CODEC_SBC)) {
-		sw_codec_cfg.encoder.bitrate = CONFIG_SBC_MONO_BITRATE;
-	} else if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
+	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
 		sw_codec_cfg.encoder.bitrate = CONFIG_LC3_BITRATE;
+	} else {
+		ERR_CHK_MSG(-EINVAL, "No codec selected");
 	}
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
 

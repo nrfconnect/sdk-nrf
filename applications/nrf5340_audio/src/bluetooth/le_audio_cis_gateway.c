@@ -365,7 +365,7 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 
 static bool ble_acl_gateway_all_links_connected(void)
 {
-	for (int i = 0; i < ARRAY_SIZE(headset_conn); i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(headset_conn); i++) {
 		if (headset_conn[i] == NULL) {
 			return false;
 		}
@@ -610,7 +610,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 
 	ARG_UNUSED(recv_cb);
 	if (!initialized) {
-		for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
+		for (size_t i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 			audio_streams[i].ops = &stream_ops;
 			group_params[i].stream = &audio_streams[i];
 			group_params[i].qos = &lc3_preset_nrf5340.qos;
