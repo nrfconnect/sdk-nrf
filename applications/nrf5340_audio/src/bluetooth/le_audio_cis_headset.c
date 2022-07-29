@@ -52,6 +52,10 @@ static struct bt_audio_capability caps = {
 };
 static struct bt_conn *default_conn;
 static struct bt_audio_stream audio_stream;
+static struct k_work adv_work;
+
+/* Bonded address queue */
+K_MSGQ_DEFINE(bonds_queue, sizeof(bt_addr_le_t), CONFIG_BT_MAX_PAIRED, 4);
 
 static void print_codec(const struct bt_codec *codec)
 {
@@ -75,6 +79,78 @@ static void print_codec(const struct bt_codec *codec)
 	} else {
 		LOG_INF("Codec is not LC3, codec_id: 0x%2x", codec->id);
 	}
+}
+
+static void advertising_process(struct k_work *work)
+{
+	int ret;
+	struct bt_le_adv_param adv_param;
+
+#if CONFIG_BT_BONDABLE
+	bt_addr_le_t addr;
+
+	if (!k_msgq_get(&bonds_queue, &addr, K_NO_WAIT)) {
+		char addr_buf[BT_ADDR_LE_STR_LEN];
+
+		adv_param = *BT_LE_ADV_CONN_DIR_LOW_DUTY(&addr);
+		adv_param.id = BT_ID_DEFAULT;
+
+		ret = bt_le_adv_start(&adv_param, NULL, 0, NULL, 0);
+
+		if (ret) {
+			LOG_ERR("Directed advertising failed to start");
+			return;
+		}
+
+		bt_addr_le_to_str(&addr, addr_buf, BT_ADDR_LE_STR_LEN);
+		LOG_INF("Direct advertising to %s started", addr_buf);
+	} else
+#endif
+	{
+		adv_param = *BT_LE_ADV_CONN;
+		adv_param.options |= BT_LE_ADV_OPT_ONE_TIME;
+
+		ret = bt_le_adv_start(&adv_param, ad_peer, ARRAY_SIZE(ad_peer), NULL, 0);
+
+		if (ret) {
+			LOG_ERR("Advertising failed to start (ret %d)", ret);
+			return;
+		}
+
+		LOG_INF("Regular advertising started");
+	}
+}
+
+#if CONFIG_BT_BONDABLE
+static void bond_find(const struct bt_bond_info *info, void *user_data)
+{
+	int ret;
+
+	/* Filter already connected peers. */
+	if (default_conn) {
+		const bt_addr_le_t *dst = bt_conn_get_dst(default_conn);
+
+		if (!bt_addr_le_cmp(&info->addr, dst)) {
+			LOG_DBG("Already connected");
+			return;
+		}
+	}
+
+	ret = k_msgq_put(&bonds_queue, (void *)&info->addr, K_NO_WAIT);
+	if (ret) {
+		LOG_WRN("No space in the queue for the bond");
+	}
+}
+#endif
+
+static void advertising_start(void)
+{
+#if CONFIG_BT_BONDABLE
+	k_msgq_purge(&bonds_queue);
+	bt_foreach_bond(BT_ID_DEFAULT, bond_find, NULL);
+#endif
+
+	k_work_submit(&adv_work);
 }
 
 static struct bt_audio_stream *lc3_cap_config_cb(struct bt_conn *conn, struct bt_audio_ep *ep,
@@ -115,8 +191,7 @@ static int lc3_cap_reconfig_cb(struct bt_audio_stream *stream, struct bt_audio_c
 {
 	LOG_INF("ASE Codec Reconfig: stream %p cap %p", (void *)stream, (void *)cap);
 
-	/* We only support one QoS at the moment, reject changes */
-	return -ENOEXEC;
+	return 0;
 }
 
 static int lc3_cap_qos_cb(struct bt_audio_stream *stream, struct bt_codec_qos *qos)
@@ -253,6 +328,8 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 
 	bt_conn_unref(default_conn);
 	default_conn = NULL;
+
+	advertising_start();
 }
 
 BT_CONN_CB_DEFINE(conn_callbacks) = {
@@ -310,6 +387,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 		}
 
 		bt_audio_stream_cb_register(&audio_stream, &stream_ops);
+		k_work_init(&adv_work, advertising_process);
 		initialized = true;
 	}
 	return 0;
@@ -388,14 +466,9 @@ int le_audio_enable(le_audio_receive_cb recv_cb)
 		LOG_ERR("Initialize failed");
 		return ret;
 	}
-	ret = bt_le_adv_start(BT_LE_ADV_FAST_CONN, ad_peer, ARRAY_SIZE(ad_peer), NULL, 0);
 
-	if (ret) {
-		LOG_ERR("Advertising failed to start: %d", ret);
-		return ret;
-	}
+	advertising_start();
 
-	LOG_INF("Advertising successfully started");
 	return 0;
 }
 
