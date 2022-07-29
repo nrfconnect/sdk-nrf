@@ -513,16 +513,18 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 
 	if (err) {
 		LOG_ERR("ACL connection to %s failed, error %d", addr, err);
+
 		bt_conn_unref(conn);
 		ble_acl_start_scan();
+
 		return;
-	} else {
-		/* ACL connection established */
-		LOG_DBG("ACL connection to %s established", addr);
-		/* TODO: Setting TX power for connection if set to anything but 0 */
 	}
+	/* ACL connection established */
+	LOG_DBG("ACL connection to %s established", addr);
+	/* TODO: Setting TX power for connection if set to anything but 0 */
 
 	LOG_INF("Connected: %s", addr);
+
 	ret = bt_conn_set_security(conn, BT_SECURITY_L2);
 	if (ret) {
 		LOG_ERR("Failed to set security to L2: %d", ret);
