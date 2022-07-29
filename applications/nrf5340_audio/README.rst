@@ -7,10 +7,10 @@ nRF5340 Audio
    :local:
    :depth: 2
 
-The nRF5340 Audio application demonstrates audio playback over isochronous channels (ISO) using LC3 or SBC codec compression and decompression, as per `Bluetooth LE Audio specifications`_.
+The nRF5340 Audio application demonstrates audio playback over isochronous channels (ISO) using LC3 codec compression and decompression, as per `Bluetooth LE Audio specifications`_.
 It is developed for use with the :ref:`nrf53_audio_app_dk`.
 
-In its default configuration, the application requires access to the non-public external repository containing the LC3 software codec.
+In its default configuration, the application requires access to the external repository containing the LC3 software codec.
 The application also comes with various tools, including the :file:`buildprog.py` Python script that simplifies building and programming the firmware.
 
 .. _nrf53_audio_app_overview:
@@ -128,10 +128,9 @@ These modules include the following major ones:
   * FIFO buffers
   * Synchronization module (part of `I2S-based firmware for gateway and headsets`_) - See `Synchronization module overview`_ for more information.
 
-* Application-specific modules from external sources (only one is used at a time):
+* Application-specific modules from external sources:
 
   * LC3 encoder/decoder (default)
-  * SBC encoder/decoder
 
   :ref:`Selecting and configuring the right software codec <nrf53_audio_app_requirements_codec>` is required to run the application.
 
@@ -254,12 +253,7 @@ The received audio data in the I2S-based firmware devices follows the following 
    These timestamps are generated on the headset controllers.
    This enables the creation of True Wireless Stereo (TWS) earbuds where the audio is synchronized in the CIS mode.
    It does also keep the speed of the inter-IC sound (I2S) interface synchronized with the sending and receiving speed of Bluetooth packets.
-#. The :file:`audio_datapath.c` module sends the compressed audio data to the LC3 or the SBC audio decoders for decoding.
-
-   .. note::
-      Only the SBC audio codec is open-source.
-      To use the proprietary LC3 audio codec, you need to obtain a license.
-      For more information, see `requirements <nrf53_audio_app_requirements>`_.
+#. The :file:`audio_datapath.c` module sends the compressed audio data to the LC3 audio decoder for decoding.
 
 #. The audio decoder decodes the data and sends the uncompressed audio data (PCM) back to the :file:`audio_datapath.c` module.
 #. The :file:`audio_datapath.c` module continuously feeds the uncompressed audio data to the hardware codec.
@@ -293,8 +287,8 @@ For CIS with TWS in mind, three kits are required.
 Software codec requirements
 ===========================
 
-The nRF5340 Audio application must use either the LC3 software (developed specifically for use with LE Audio) or the open-source SBC software codec (developed for use with Classic Bluetooth Audio).
-Each codec requires :ref:`adding its own repository before building and running <nrf53_audio_app_configuration_repos>`.
+The nRF5340 Audio application must the LC3 software (developed specifically for use with LE Audio).
+The codec requires :ref:`adding its own repository before building and running <nrf53_audio_app_configuration_repos>`.
 
 |lc3_codec_access_note|
 See :ref:`nrf53_audio_app_configuration_select_codec` for more information.
@@ -796,7 +790,6 @@ Setting up the nRF5340 Audio repositories
 The application relies on the following :ref:`external OSS repositories <dm_code_base>` that need to be pulled using west:
 
 * LC3 software codec repository
-* SBC software codec repository
 * Hardware codec driver repository
 
 To have these repositories managed by west, complete the following steps:
@@ -822,12 +815,10 @@ For more information about west, see :ref:`Zephyr's documentation page <zephyr:w
 Selecting the audio software codec
 ==================================
 
-The nRF5340 Audio application must use either the LC3 software (developed specifically for use with LE Audio) or the open-source SBC software codec (developed for use with Classic Bluetooth Audio).
-Each codec requires :ref:`adding its own repository before building and running <nrf53_audio_app_configuration_repos>`.
+The nRF5340 Audio application must use either the LC3 software (developed specifically for use with LE Audio).
+The codec requires :ref:`adding its own repository before building and running <nrf53_audio_app_configuration_repos>`.
 
 |lc3_codec_access_note|
-
-If you decide to use the open-source SBC codec, you also need to change the application's Kconfig configuration by adding the ``CONFIG_SW_CODEC_SBC`` Kconfig option set to ``y``  to the main :file:`prj.conf` file.
 
 .. _nrf53_audio_app_configuration_select_bis:
 

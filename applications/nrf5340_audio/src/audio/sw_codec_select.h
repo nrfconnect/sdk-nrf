@@ -9,33 +9,6 @@
 
 #include <zephyr/kernel.h>
 
-#if (CONFIG_SW_CODEC_SBC)
-/* Frame length in samples */
-#define SBC_FRAME_LEN_SAMPLES (CONFIG_SBC_NO_OF_BLOCKS * CONFIG_SBC_NO_OF_SUBBANDS)
-/* Frame rate in Hz */
-#define SBC_FRAME_RATE_HZ (CONFIG_AUDIO_SAMPLE_RATE_HZ / SBC_FRAME_LEN_SAMPLES)
-/* Frame size in bytes */
-#define SBC_ENC_MONO_FRAME_SIZE                                                                    \
-	(4 + (CONFIG_SBC_NO_OF_BLOCKS * CONFIG_SBC_BITPOOL + 4 * CONFIG_SBC_NO_OF_SUBBANDS) / 8)
-/* Bitrate in bits/s */
-#define SBC_MONO_BITRATE (SBC_ENC_MONO_FRAME_SIZE * 8 * SBC_FRAME_RATE_HZ)
-/* PCM frame size in bytes */
-#define PCM_NUM_BYTES_SBC_FRAME_MONO ((SBC_FRAME_LEN_SAMPLES * CONFIG_AUDIO_BIT_DEPTH_BITS) / 8)
-/* Size of PCM frames sent per BLE packet, in bytes */
-#define SBC_PCM_NUM_BYTES_MONO (PCM_NUM_BYTES_SBC_FRAME_MONO * CONFIG_SBC_NUM_FRAMES_PER_BLE_PACKET)
-/* Encoded total frame size in bytes */
-#define SBC_ENC_MAX_FRAME_SIZE (SBC_ENC_MONO_FRAME_SIZE * CONFIG_SBC_NUM_FRAMES_PER_BLE_PACKET)
-#define SBC_ENC_TIME_US 3000
-#define SBC_DEC_TIME_US 1500
-
-#else
-#define SBC_ENC_MAX_FRAME_SIZE 0
-#define SBC_PCM_NUM_BYTES_MONO 0
-#define SBC_MONO_BITRATE 0
-#define SBC_ENC_TIME_US 0
-#define SBC_DEC_TIME_US 0
-#endif /* CONFIG_SW_CODEC_SBC */
-
 #if (CONFIG_SW_CODEC_LC3)
 #define LC3_MAX_FRAME_SIZE_MS 10
 #define LC3_ENC_MONO_FRAME_SIZE (CONFIG_LC3_BITRATE * LC3_MAX_FRAME_SIZE_MS / (8 * 1000))
@@ -51,16 +24,16 @@
 #define LC3_DEC_TIME_US 0
 #endif /* CONFIG_SW_CODEC_LC3 */
 
-#define ENC_MAX_FRAME_SIZE MAX(LC3_ENC_MONO_FRAME_SIZE, SBC_ENC_MAX_FRAME_SIZE)
-#define ENC_TIME_US MAX(LC3_ENC_TIME_US, SBC_ENC_TIME_US)
-#define DEC_TIME_US MAX(LC3_DEC_TIME_US, SBC_DEC_TIME_US)
-#define PCM_NUM_BYTES_MONO MAX(LC3_PCM_NUM_BYTES_MONO, SBC_PCM_NUM_BYTES_MONO)
+/* Max will be used when multiple codecs are supported */
+#define ENC_MAX_FRAME_SIZE MAX(LC3_ENC_MONO_FRAME_SIZE, 0)
+#define ENC_TIME_US MAX(LC3_ENC_TIME_US, 0)
+#define DEC_TIME_US MAX(LC3_DEC_TIME_US, 0)
+#define PCM_NUM_BYTES_MONO MAX(LC3_PCM_NUM_BYTES_MONO, 0)
 #define PCM_NUM_BYTES_STEREO (PCM_NUM_BYTES_MONO * 2)
 
 enum sw_codec_select {
 	SW_CODEC_NONE,
 	SW_CODEC_LC3, /* Low Complexity Communication Codec */
-	SW_CODEC_SBC, /* Subband codec */
 };
 
 enum sw_codec_select_ch {
@@ -91,7 +64,7 @@ struct sw_codec_decoder {
 /** @brief  Sw_codec configuration structure
  */
 struct sw_codec_config {
-	enum sw_codec_select sw_codec; /* sw_codec to be used, e.g. LC3, SBC etc */
+	enum sw_codec_select sw_codec; /* sw_codec to be used, e.g. LC3, etc */
 	struct sw_codec_decoder decoder; /* Struct containing settings for decoder */
 	struct sw_codec_encoder encoder; /* Struct containing settings for encoder */
 	bool initialized; /* Status of codec */
