@@ -52,12 +52,15 @@ static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ISO_MAX_CHAN,
 /* clang-format on */
 static struct bt_audio_lc3_preset lc3_preset_nrf5340 = BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO;
 static atomic_t iso_tx_pool_alloc[CONFIG_BT_ISO_MAX_CHAN];
+
 struct worker_data {
 	uint8_t channel;
 	uint8_t retries;
 } __aligned(4);
 K_MSGQ_DEFINE(kwork_msgq, sizeof(struct worker_data), CONFIG_BT_ISO_MAX_CHAN, 4);
 static struct k_work_delayable stream_start_work[CONFIG_BT_ISO_MAX_CHAN];
+
+static uint8_t bonded_num;
 
 static void ble_acl_start_scan(void);
 static bool ble_acl_gateway_all_links_connected(void);
@@ -373,27 +376,64 @@ static bool ble_acl_gateway_all_links_connected(void)
 	return true;
 }
 
+static void bond_check(const struct bt_bond_info *info, void *user_data)
+{
+	char addr_buf[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(&info->addr, addr_buf, BT_ADDR_LE_STR_LEN);
+
+	LOG_INF("Stored bonding found: %s", addr_buf);
+	bonded_num++;
+}
+
+static void bond_connect(const struct bt_bond_info *info, void *user_data)
+{
+	int ret;
+	const bt_addr_le_t *adv_addr = user_data;
+	struct bt_conn *conn;
+
+	if (!bt_addr_le_cmp(&info->addr, adv_addr)) {
+		LOG_INF("Found bonded device");
+
+		ret = bt_le_scan_stop();
+		if (ret) {
+			LOG_WRN("Stop scan failed: %d", ret);
+		}
+
+		ret = bt_conn_le_create(adv_addr, BT_CONN_LE_CREATE_CONN, BT_LE_CONN_PARAM_MULTI,
+					&conn);
+		if (ret) {
+			LOG_WRN("Create ACL connection failed: %d", ret);
+			ble_acl_start_scan();
+		}
+	}
+}
+
 static int device_found(uint8_t type, const uint8_t *data, uint8_t data_len,
 			const bt_addr_le_t *addr)
 {
 	int ret;
 	struct bt_conn *conn;
-	char addr_str[BT_ADDR_LE_STR_LEN];
 
 	if (ble_acl_gateway_all_links_connected()) {
 		LOG_DBG("All headset connected");
 		return 0;
 	}
 
-	bt_addr_le_to_str(addr, addr_str, sizeof(addr_str));
 	if ((data_len == DEVICE_NAME_PEER_LEN) &&
 	    (strncmp(DEVICE_NAME_PEER, data, DEVICE_NAME_PEER_LEN) == 0)) {
-		bt_le_scan_stop();
+		LOG_INF("Device found");
+
+		ret = bt_le_scan_stop();
+		if (ret) {
+			LOG_WRN("Stop scan failed: %d", ret);
+		}
 
 		ret = bt_conn_le_create(addr, BT_CONN_LE_CREATE_CONN, BT_LE_CONN_PARAM_MULTI,
 					&conn);
 		if (ret) {
 			LOG_ERR("Could not init connection");
+			ble_acl_start_scan();
 			return ret;
 		}
 
@@ -434,6 +474,14 @@ static void ad_parse(struct net_buf_simple *p_ad, const bt_addr_le_t *addr)
 static void on_device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
 			    struct net_buf_simple *p_ad)
 {
+	/* Direct advertising has no payload, so no need to parse */
+	if (type == BT_GAP_ADV_TYPE_ADV_DIRECT_IND) {
+		if (bonded_num) {
+			bt_foreach_bond(BT_ID_DEFAULT, bond_connect, (void *)addr);
+		}
+		return;
+	}
+
 	/* Note: May lead to connection creation */
 	ad_parse(p_ad, addr);
 }
@@ -442,7 +490,12 @@ static void ble_acl_start_scan(void)
 {
 	int ret;
 
-	ret = bt_le_scan_start(BT_LE_SCAN_PASSIVE, on_device_found);
+	/* Reset number of bonds found */
+	bonded_num = 0;
+
+	bt_foreach_bond(BT_ID_DEFAULT, bond_check, NULL);
+
+	ret = bt_le_scan_start(BT_LE_SCAN_ACTIVE, on_device_found);
 	if (ret) {
 		LOG_INF("Scanning failed to start: %d", ret);
 		return;
@@ -734,6 +787,7 @@ int le_audio_enable(le_audio_receive_cb recv_cb)
 	if (ret) {
 		return ret;
 	}
+
 	ble_acl_start_scan();
 	return 0;
 }

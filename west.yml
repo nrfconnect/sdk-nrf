@@ -31,8 +31,6 @@ manifest:
       url-base: https://github.com/NordicSemiconductor
     - name: memfault
       url-base: https://github.com/memfault
-    - name: erikrobstad
-      url-base: https://github.com/erikrobstad
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
