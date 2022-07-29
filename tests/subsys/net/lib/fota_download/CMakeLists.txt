@@ -1,7 +1,8 @@
 #
-# Copyright (c) 2019 Nordic Semiconductor
+# Copyright (c) 2022 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
 #
 
 cmake_minimum_required(VERSION 3.20.0)
@@ -15,10 +16,13 @@ target_sources(app PRIVATE ${app_sources})
 target_sources(app
   PRIVATE
   ${ZEPHYR_BASE}/../nrf/subsys/net/lib/fota_download/src/fota_download.c
+  ${ZEPHYR_BASE}/../nrf/subsys/net/lib/fota_download/src/fota_download_util.c
   )
 
 target_include_directories(app
   PRIVATE
+  src
+  ${ZEPHYR_BASE}/../nrf/subsys/net/lib/fota_download/include
   ${ZEPHYR_BASE}/../nrf/include/net/
   ${ZEPHYR_BASE}/../nrf/subsys/dfu/include
   . # To get 'pm_config.h'

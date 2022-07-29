@@ -19,7 +19,6 @@
 #include <zephyr/kernel.h>
 #include <pm_config.h>
 #include <zephyr/logging/log.h>
-#include <nrfx.h>
 #include <zephyr/dfu/mcuboot.h>
 #include <dfu/dfu_target.h>
 #include <dfu/dfu_target_stream.h>
@@ -27,7 +26,6 @@
 
 LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 
-#define MAX_FILE_SEARCH_LEN 500
 #define MCUBOOT_HEADER_MAGIC 0x96f3b83d
 
 #define IS_ALIGNED_32(POINTER) (((uintptr_t)(const void *)(POINTER)) % 4 == 0)
@@ -89,43 +87,6 @@ static uint8_t *stream_buf;
 static size_t stream_buf_len;
 static size_t stream_buf_bytes;
 static uint8_t curr_sec_img;
-
-int dfu_ctx_mcuboot_set_b1_file(char *const file, bool s0_active,
-				const char **selected_path)
-{
-	if (file == NULL || selected_path == NULL) {
-		LOG_ERR("Got NULL pointer");
-		return -EINVAL;
-	}
-
-	if (!nrfx_is_in_ram(file)) {
-		LOG_ERR("'file' pointer is not located in RAM");
-		return -EFAULT;
-	}
-
-	/* Ensure that 'file' is null-terminated. */
-	if (strnlen(file, MAX_FILE_SEARCH_LEN) == MAX_FILE_SEARCH_LEN) {
-		LOG_ERR("Input is not null terminated");
-		return -ENOTSUP;
-	}
-
-	/* We have verified that there is a null-terminator, so this is safe */
-	char *delimiter = strstr(file, " ");
-
-	if (delimiter == NULL) {
-		/* Could not find delimiter in input */
-		*selected_path = NULL;
-		return 0;
-	}
-
-	/* Insert null-terminator to split the dual filepath into two separate filepaths */
-	*delimiter = '\0';
-	const char *s0_path = file;
-	const char *s1_path = delimiter + 1;
-
-	*selected_path = s0_active ? s1_path : s0_path;
-	return 0;
-}
 
 bool dfu_target_mcuboot_identify(const void *const buf)
 {

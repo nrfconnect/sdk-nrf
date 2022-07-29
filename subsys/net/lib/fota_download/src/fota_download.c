@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -10,6 +10,8 @@
 #include <net/download_client.h>
 #include <pm_config.h>
 #include <zephyr/net/socket.h>
+
+#include "fota_download_util.h"
 
 #if defined(PM_S1_ADDRESS) || defined(CONFIG_DFU_TARGET_MCUBOOT)
 /* MCUBoot support is required */
@@ -407,7 +409,7 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 		return err;
 	}
 
-	err = dfu_ctx_mcuboot_set_b1_file(file_buf, s0_active, &update);
+	err = fota_download_parse_dual_resource_locator(file_buf, s0_active, &update);
 	if (err != 0) {
 		return err;
 	}
