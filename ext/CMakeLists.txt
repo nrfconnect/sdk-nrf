@@ -7,7 +7,6 @@
 add_subdirectory_ifdef(CONFIG_GETOPT_LIB freebsd-getopt)
 add_subdirectory_ifdef(CONFIG_NRF_IPERF3 iperf3)
 add_subdirectory_ifdef(CONFIG_NRF_CURL curl)
-add_subdirectory_ifdef(CONFIG_SBC sbc)
 
 if(CONFIG_SUPL_CLIENT_LIB)
   if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/lib/bin/supl)

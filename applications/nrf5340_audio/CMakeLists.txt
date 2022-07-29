@@ -60,7 +60,7 @@ if (CONFIG_SW_CODEC_LC3_T2_SOFTWARE)
                 "Run 'west config manifest.group-filter +nrf5340_audio' "
                 "and then 'west update'.\n"
                 "If access is denied, contact local Nordic Semiconductor "
-                "support or use SBC codec")
+                "support")
     endif()
 endif()
 
