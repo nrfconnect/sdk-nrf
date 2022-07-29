@@ -42,7 +42,11 @@ config BT_GATT_CLIENT
 
 config BT_BONDABLE
 	bool
-	default n
+	default y
+
+config BT_SCAN_WITH_IDENTITY
+	bool
+	default y
 
 config BT_SMP
 	bool
@@ -67,6 +71,26 @@ config BT_L2CAP_TX_BUF_COUNT
 config BT_BUF_ACL_RX_SIZE
 	int
 	default 259
+
+config SETTINGS
+	bool
+	default y
+
+config BT_SETTINGS
+	bool
+	default y
+
+config FLASH
+	bool
+	default y
+
+config FLASH_MAP
+	bool
+	default y
+
+config NVS
+	bool
+	default y
 
 # HEADSET
 if AUDIO_DEV = 1
