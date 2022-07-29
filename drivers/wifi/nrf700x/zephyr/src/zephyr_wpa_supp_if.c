@@ -390,18 +390,17 @@ void wifi_nrf_wpa_supp_event_proc_disassoc(void *if_priv,
 	return vif_ctx_zep->supp_callbk_fns.disassoc(vif_ctx_zep->supp_drv_if_ctx, &event);
 }
 
-void *wifi_nrf_wpa_supp_dev_init(void *supp_drv_if_ctx, const char *iface_name,
+void *wifi_nrf_wpa_supp_dev_init(void *supp_drv_if_ctx, const struct device *dev,
 				 struct zep_wpa_supp_dev_callbk_fns *supp_callbk_fns)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	const struct device *device = device_get_binding(iface_name);
 
-	if (!device) {
-		LOG_ERR("%s: Interface %s not found\n", __func__, iface_name);
+	if (!device_is_ready(dev)) {
+		LOG_ERR("%s: Device %s not ready", __func__, dev->name);
 		return NULL;
 	}
 
-	vif_ctx_zep = device->data;
+	vif_ctx_zep = dev->data;
 
 	if (!vif_ctx_zep || !vif_ctx_zep->rpu_ctx_zep) {
 		LOG_ERR("%s: Interface %s not properly initialized\n", __func__, iface_name);

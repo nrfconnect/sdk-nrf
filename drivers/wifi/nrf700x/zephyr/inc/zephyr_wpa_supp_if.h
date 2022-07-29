@@ -13,7 +13,7 @@
 #define __ZEPHYR_WPA_SUPP_IF_H__
 
 #ifdef CONFIG_WPA_SUPP
-void *wifi_nrf_wpa_supp_dev_init(void *supp_drv_if_ctx, const char *iface_name,
+void *wifi_nrf_wpa_supp_dev_init(void *supp_drv_if_ctx, const struct device *dev,
 				 struct zep_wpa_supp_dev_callbk_fns *supp_callbk_fns);
 
 void wifi_nrf_wpa_supp_dev_deinit(void *if_priv);
