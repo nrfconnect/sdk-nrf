@@ -102,24 +102,19 @@ void wifi_nrf_wpa_supp_event_proc_scan_done(void *if_priv,
 					    int aborted)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	union wpa_event_data *event = NULL;
+	union wpa_event_data event;
 	struct scan_info *info = NULL;
 
 	vif_ctx_zep = if_priv;
 
-	event = k_calloc(sizeof(*event), sizeof(char));
+	memset(&event, 0, sizeof(event));
 
-	if (!event) {
-		LOG_ERR("%s: Unable to allocate memory\n", __func__);
-		return;
-	}
-
-	info = &event->scan_info;
+	info = &event.scan_info;
 
 	info->aborted = aborted;
 	info->external_scan = 0;
 	info->nl_scan_event = 1;
-	vif_ctx_zep->supp_callbk_fns.scan_done(vif_ctx_zep->supp_drv_if_ctx, event);
+	vif_ctx_zep->supp_callbk_fns.scan_done(vif_ctx_zep->supp_drv_if_ctx, &event);
 }
 
 void wifi_nrf_wpa_supp_event_proc_scan_res(void *if_priv,
