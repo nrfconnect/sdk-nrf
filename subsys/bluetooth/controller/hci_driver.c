@@ -417,11 +417,13 @@ void hci_driver_receive_process(void)
 
 	received_evt = fetch_and_process_hci_evt(&hci_buf[0]);
 
-	if (IS_ENABLED(CONFIG_BT_CONN)) {
-		received_data = fetch_and_process_acl_data(&hci_buf[0]);
+	if (!received_evt) {
+		if (IS_ENABLED(CONFIG_BT_CONN)) {
+			received_data = fetch_and_process_acl_data(&hci_buf[0]);
+		}
+	} else if (!received_data) {
+		received_msg = fetch_and_process_hci_msg(&hci_buf[0]);
 	}
-
-	received_msg = fetch_and_process_hci_msg(&hci_buf[0]);
 
 	if (received_evt || received_data || received_msg) {
 		/* Let other threads of same priority run in between. */
