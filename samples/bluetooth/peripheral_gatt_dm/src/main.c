@@ -160,8 +160,8 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 	printk("Pairing failed conn: %s, reason %d\n", addr, reason);
 
 	if (pairing_confirmation_conn) {
-		pairing_confirmation_conn = NULL;
 		bt_conn_unref(pairing_confirmation_conn);
+		pairing_confirmation_conn = NULL;
 	}
 }
 
