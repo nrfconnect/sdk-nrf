@@ -44,6 +44,13 @@ else()
   endif()
 endif()
 
+if (CONFIG_BOOTLOADER_MCUBOOT AND NOT CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
+  # Configure the secondary partition to be non-secure
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_NS_SECONDARY=ON
+  )
+endif()
+
 if (CONFIG_TFM_HW_INIT_RESET_ON_BOOT)
   set_property(TARGET zephyr_property_target
     APPEND PROPERTY TFM_CMAKE_OPTIONS -DNRF_HW_INIT_RESET_ON_BOOT=ON

@@ -31,11 +31,6 @@ target_compile_definitions(platform_s
   EXT_API_MAGIC=${EXT_API_MAGIC}
   )
 
-if (CONFIG_BOOTLOADER_MCUBOOT)
-  # Needed to compile in the MCUBoot secondary region in flash layout.
-  target_compile_definitions(platform_region_defs INTERFACE BL2)
-endif()
-
 target_include_directories(platform_s
   PUBLIC ${partition_includes} ${board_includes}
   ${NRF_DIR}/include
