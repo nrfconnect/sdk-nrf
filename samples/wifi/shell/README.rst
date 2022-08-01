@@ -1,4 +1,4 @@
-.. _wifi_shell:
+.. _wifi_shell_sample:
 
 Wi-Fi: Shell
 ############
