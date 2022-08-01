@@ -31,8 +31,7 @@ config MODEM_INFO_ADD_NETWORK
 	bool "Read the network information from the modem"
 	default y
 	help
-	  Add the network information to the returned
-	  device JSON object.
+	  Add the network information to outgoing deviceInfo device messages.
 
 config MODEM_INFO_ADD_DATE_TIME
 	bool "Read the real-time clock value from the modem"
@@ -47,37 +46,26 @@ config MODEM_INFO_ADD_SIM
 	bool "Read the SIM card information from the modem"
 	default y
 	help
-	  Add the SIM card information to the returned
-	  device JSON object.
+	  Add the SIM card information to outgoing deviceInfo device messages.
 
 config MODEM_INFO_ADD_SIM_ICCID
 	bool "Read the SIM card ICCID from the modem"
 	depends on MODEM_INFO_ADD_SIM
 	default y
 	help
-	  Add the SIM card ICCID to the returned
-	  device JSON object.
+	  Add the SIM card ICCID to outgoing deviceInfo device messages.
 
 config MODEM_INFO_ADD_SIM_IMSI
 	bool "Read the SIM card IMSI from the modem"
 	depends on MODEM_INFO_ADD_SIM
 	default y
 	help
-	  Add the SIM card IMSI to the returned
-	  device JSON object.
+	  Add the SIM card IMSI to outgoing deviceInfo device messages.
 
 config MODEM_INFO_ADD_DEVICE
 	bool "Add the device information to the modem informer"
 	default y
 	help
-	  Add the device information to the returned
-	  device JSON object.
-
-config MODEM_INFO_ADD_BOARD
-	bool "Add board name to JSON string"
-	default y
-	help
-	  Add the name of the board to the returned
-	  device JSON object.
+	  Add the device information to outgoing deviceInfo device messages.
 
 endif # MODEM_INFO

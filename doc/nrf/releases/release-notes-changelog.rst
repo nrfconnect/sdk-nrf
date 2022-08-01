@@ -242,6 +242,13 @@ Libraries for networking
 
 |no_changes_yet_note|
 
+  * :ref:`modem_info_readme` library:
+
+    * Removed :c:func:`modem_info_json_string_encode` and :c:func:`modem_info_json_object_encode` functions.
+    * Removed network_mode field from :c:struct:`network_param`.
+    * Removed ``MODEM_INFO_NETWORK_MODE_MAX_SIZE``.
+    * Removed ``CONFIG_MODEM_INFO_ADD_BOARD``.
+
 Libraries for NFC
 -----------------
 
