@@ -94,5 +94,6 @@ void LightingManager::UpdateLight()
 	const uint8_t maxEffectiveLevel = mMaxLevel - mMinLevel;
 	const uint8_t effectiveLevel = mState == State::On ? MIN(mLevel - mMinLevel, maxEffectiveLevel) : 0;
 
-	pwm_set_pulse_dt(mPwmDevice, static_cast<uint32_t>(static_cast<const uint64_t>(mPwmDevice->period) * effectiveLevel / maxEffectiveLevel));
+	pwm_set_pulse_dt(mPwmDevice, static_cast<uint32_t>(static_cast<const uint64_t>(mPwmDevice->period) *
+							   effectiveLevel / maxEffectiveLevel));
 }

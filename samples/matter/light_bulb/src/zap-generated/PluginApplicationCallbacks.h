@@ -22,24 +22,24 @@
 #include <app-common/zap-generated/callbacks/PluginCallbacks.h>
 
 #define MATTER_PLUGINS_INIT                                                                                            \
-	MatterAccessControlPluginServerInitCallback();                                                                 \
-	MatterAdministratorCommissioningPluginServerInitCallback();                                                    \
-	MatterBasicPluginServerInitCallback();                                                                         \
-	MatterBindingPluginClientInitCallback();                                                                       \
-	MatterDescriptorPluginServerInitCallback();                                                                    \
-	MatterDiagnosticLogsPluginServerInitCallback();                                                                \
-	MatterGeneralCommissioningPluginServerInitCallback();                                                          \
-	MatterGeneralDiagnosticsPluginServerInitCallback();                                                            \
-	MatterGroupKeyManagementPluginServerInitCallback();                                                            \
-	MatterGroupsPluginServerInitCallback();                                                                        \
 	MatterIdentifyPluginServerInitCallback();                                                                      \
+	MatterGroupsPluginServerInitCallback();                                                                        \
+	MatterOnOffPluginServerInitCallback();                                                                         \
 	MatterLevelControlPluginServerInitCallback();                                                                  \
-	MatterLocalizationConfigurationPluginServerInitCallback();                                                     \
-	MatterNetworkCommissioningPluginServerInitCallback();                                                          \
+	MatterDescriptorPluginServerInitCallback();                                                                    \
+	MatterBindingPluginClientInitCallback();                                                                       \
+	MatterAccessControlPluginServerInitCallback();                                                                 \
+	MatterBasicPluginServerInitCallback();                                                                         \
 	MatterOtaSoftwareUpdateProviderPluginClientInitCallback();                                                     \
 	MatterOtaSoftwareUpdateRequestorPluginServerInitCallback();                                                    \
-	MatterOnOffPluginServerInitCallback();                                                                         \
-	MatterOperationalCredentialsPluginServerInitCallback();                                                        \
+	MatterLocalizationConfigurationPluginServerInitCallback();                                                     \
+	MatterTimeFormatLocalizationPluginServerInitCallback();                                                        \
+	MatterGeneralCommissioningPluginServerInitCallback();                                                          \
+	MatterNetworkCommissioningPluginServerInitCallback();                                                          \
+	MatterDiagnosticLogsPluginServerInitCallback();                                                                \
+	MatterGeneralDiagnosticsPluginServerInitCallback();                                                            \
 	MatterSoftwareDiagnosticsPluginServerInitCallback();                                                           \
 	MatterThreadNetworkDiagnosticsPluginServerInitCallback();                                                      \
-	MatterTimeFormatLocalizationPluginServerInitCallback();
+	MatterAdministratorCommissioningPluginServerInitCallback();                                                    \
+	MatterOperationalCredentialsPluginServerInitCallback();                                                        \
+	MatterGroupKeyManagementPluginServerInitCallback();

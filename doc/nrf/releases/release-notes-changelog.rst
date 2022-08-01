@@ -73,11 +73,14 @@ See `Matter samples`_ for the list of changes for the Matter samples.
 Matter fork
 +++++++++++
 
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``25e241ebcbf11b1f63dbe25546b1f10219866ad0``.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, ``41cb8220744f2587413d0723e24847f07d6ac59f``.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
-|no_changes_yet_note|
+* Added:
+
+  * Support for Matter device factory data.
+    This includes a set of scripts for building the factory data partition content, and the ``FactoryDataProvider`` class for accessing this data.
 
 Thread
 ------

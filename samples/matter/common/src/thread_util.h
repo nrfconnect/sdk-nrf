@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include <cstdint>
 #include <core/CHIPError.h>
+#include <cstdint>
 
 void StartDefaultThreadNetwork(uint64_t datasetTimestamp = 0);
 

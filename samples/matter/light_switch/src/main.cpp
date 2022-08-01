@@ -13,5 +13,8 @@ LOG_MODULE_REGISTER(app, CONFIG_MATTER_LOG_LEVEL);
 
 int main()
 {
-	return GetAppTask().StartApp() == CHIP_NO_ERROR ? EXIT_SUCCESS : EXIT_FAILURE;
+	CHIP_ERROR err = GetAppTask().StartApp();
+
+	LOG_ERR("Exited with code %" CHIP_ERROR_FORMAT, err.Format());
+	return err == CHIP_NO_ERROR ? EXIT_SUCCESS : EXIT_FAILURE;
 }
