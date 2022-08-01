@@ -400,6 +400,7 @@ int modem_info_name_get(enum modem_info info, char *name)
 	}
 
 	len = strlen(modem_data[info]->data_name);
+	__ASSERT_NO_MSG(len <= MODEM_INFO_MAX_RESPONSE_SIZE);
 
 	if (len <= 0) {
 		return -EINVAL;

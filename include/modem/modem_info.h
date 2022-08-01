@@ -49,9 +49,6 @@ extern "C" {
 #define RSRQ_IDX_TO_DB(rsrq) ((((float)(rsrq)) * RSRQ_SCALE_VAL) - \
 			      RSRQ_OFFSET_VAL)
 
-/** Maximum string size of the network mode string */
-#define MODEM_INFO_NETWORK_MODE_MAX_SIZE 12
-
 /**@brief RSRP event handler function protoype. */
 typedef void (*rsrp_cb_t)(char rsrp_value);
 
@@ -109,7 +106,6 @@ struct network_param {
 	struct lte_param rsrp; /**< Received signal strength. */
 
 	double cellid_dec; /**< Cell ID of the device (in decimal format). */
-	char network_mode[MODEM_INFO_NETWORK_MODE_MAX_SIZE];
 };
 
 /**@brief SIM card parameters. */
@@ -210,41 +206,6 @@ int modem_info_name_get(enum modem_info info, char *name);
  *         Otherwise, a (negative) error code is returned.
  */
 enum at_param_type modem_info_type_get(enum modem_info info);
-
-#ifdef CONFIG_CJSON_LIB
-#define MODEM_INFO_JSON_KEY_NET_INF	"networkInfo"
-#define MODEM_INFO_JSON_KEY_SIM_INF	"simInfo"
-#define MODEM_INFO_JSON_KEY_DEV_INF	"deviceInfo"
-
-/** @brief Encode the modem parameters.
- *
- * The data is added to the string buffer with JSON formatting.
- *
- * @param modem_param Pointer to the modem parameter structure.
- * @param buf         The buffer where the string will be written.
- *
- * @return Length of the string buffer data if the operation was
- *         successful.
- *         Otherwise, a (negative) error code is returned.
- */
-int modem_info_json_string_encode(struct modem_param_info *modem_param,
-				  char *buf);
-
-
-/** @brief Encode the modem parameters.
- *
- * The data is stored to a JSON object.
- *
- * @param modem_param Pointer to the modem parameter structure.
- * @param root_obj    The JSON object where to store the data.
- *
- * @return Number of JSON objects added to root_obj if the
- *         operation was successful.
- *         Otherwise, a (negative) error code is returned.
- */
-int modem_info_json_object_encode(struct modem_param_info *modem,
-				  cJSON *root_obj);
-#endif
 
 /** @brief Obtain the modem parameters.
  *

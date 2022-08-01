@@ -123,6 +123,11 @@ extern "C" {
 #define NRF_CLOUD_JSON_GNSS_PVT_KEY_SPEED	"spd"
 #define NRF_CLOUD_JSON_GNSS_PVT_KEY_HEADING	"hdg"
 
+/* DEVICE */
+#define NRF_CLOUD_DEVICE_JSON_KEY_NET_INF	"networkInfo"
+#define NRF_CLOUD_DEVICE_JSON_KEY_SIM_INF	"simInfo"
+#define NRF_CLOUD_DEVICE_JSON_KEY_DEV_INF	"deviceInfo"
+
 /**@brief Initialize the codec used encoding the data to the cloud. */
 int nrf_cloud_codec_init(void);
 
