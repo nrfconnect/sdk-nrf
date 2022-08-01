@@ -501,16 +501,6 @@ namespace app
 						}
 						break;
 					}
-					case Commands::RemoveTrustedRootCertificate::Id: {
-						Commands::RemoveTrustedRootCertificate::DecodableType commandData;
-						TLVError = DataModel::Decode(aDataTlv, commandData);
-						if (TLVError == CHIP_NO_ERROR) {
-							wasHandled =
-								emberAfOperationalCredentialsClusterRemoveTrustedRootCertificateCallback(
-									apCommandObj, aCommandPath, commandData);
-						}
-						break;
-					}
 					default: {
 						// Unrecognized command ID, error status will apply.
 						apCommandObj->AddStatus(

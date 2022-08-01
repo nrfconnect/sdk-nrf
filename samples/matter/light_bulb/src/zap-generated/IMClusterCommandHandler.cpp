@@ -393,15 +393,6 @@ namespace app
 						}
 						break;
 					}
-					case Commands::IdentifyQuery::Id: {
-						Commands::IdentifyQuery::DecodableType commandData;
-						TLVError = DataModel::Decode(aDataTlv, commandData);
-						if (TLVError == CHIP_NO_ERROR) {
-							wasHandled = emberAfIdentifyClusterIdentifyQueryCallback(
-								apCommandObj, aCommandPath, commandData);
-						}
-						break;
-					}
 					case Commands::TriggerEffect::Id: {
 						Commands::TriggerEffect::DecodableType commandData;
 						TLVError = DataModel::Decode(aDataTlv, commandData);
@@ -853,16 +844,6 @@ namespace app
 						if (TLVError == CHIP_NO_ERROR) {
 							wasHandled =
 								emberAfOperationalCredentialsClusterAddTrustedRootCertificateCallback(
-									apCommandObj, aCommandPath, commandData);
-						}
-						break;
-					}
-					case Commands::RemoveTrustedRootCertificate::Id: {
-						Commands::RemoveTrustedRootCertificate::DecodableType commandData;
-						TLVError = DataModel::Decode(aDataTlv, commandData);
-						if (TLVError == CHIP_NO_ERROR) {
-							wasHandled =
-								emberAfOperationalCredentialsClusterRemoveTrustedRootCertificateCallback(
 									apCommandObj, aCommandPath, commandData);
 						}
 						break;

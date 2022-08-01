@@ -149,17 +149,26 @@ CHIP_ERROR AppTask::Init()
 #endif
 
 	/* Print initial configs */
+#if CONFIG_CHIP_FACTORY_DATA
+	ReturnErrorOnFailure(mFactoryDataProvider.Init());
+	SetDeviceInstanceInfoProvider(&mFactoryDataProvider);
+	SetDeviceAttestationCredentialsProvider(&mFactoryDataProvider);
+	SetCommissionableDataProvider(&mFactoryDataProvider);
+#else
 	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
-	static chip::CommonCaseDeviceServerInitParams initParams;
+#endif
+	static CommonCaseDeviceServerInitParams initParams;
 	(void)initParams.InitializeStaticResourcesBeforeServerInit();
 
 	ReturnErrorOnFailure(chip::Server::GetInstance().Init(initParams));
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(RendezvousInformationFlags(RendezvousInformationFlag::kBLE));
 
-	/* Add CHIP event handler and start CHIP thread. */
-	/* Note that all the initialization code should happen prior to this point */
-	/* to avoid data races between the main and the CHIP threads. */
+	/*
+	 * Add CHIP event handler and start CHIP thread.
+	 * Note that all the initialization code should happen prior to this point
+	 * to avoid data races between the main and the CHIP threads.
+	 */
 	PlatformMgr().AddEventHandler(ChipEventHandler, 0);
 
 	err = PlatformMgr().StartEventLoopTask();
@@ -304,6 +313,7 @@ void AppTask::IdentifyStopHandler(Identify *)
 
 void AppTask::StartBLEAdvertisingHandler(AppEvent *aEvent)
 {
+	/* Don't allow on starting Matter service BLE advertising after Thread provisioning. */
 	if (Server::GetInstance().GetFabricTable().FabricCount() != 0) {
 		LOG_INF("Matter service BLE advertising not started - device is already commissioned");
 		return;
@@ -368,10 +378,12 @@ void AppTask::UpdateStatusLED()
 #ifdef CONFIG_STATE_LEDS
 	sUnusedLED.Set(false);
 
-	/* Status LED indicates: */
-	/* - blinking 1 s - advertising, ready to commission */
-	/* - blinking 200 ms - commissioning in progress */
-	/* - constant lightning means commissioned with Thread network */
+	/*
+	 * Status LED indicates:
+	 * - blinking 1 s - advertising, ready to commission
+	 * - blinking 200 ms - commissioning in progress
+	 * - constant lightning means commissioned with Thread network
+	 */
 	if (sIsThreadBLEAdvertising && !sHaveBLEConnections) {
 		sStatusLED.Blink(50, 950);
 	} else if (sIsThreadProvisioned && sIsThreadEnabled) {
@@ -382,8 +394,10 @@ void AppTask::UpdateStatusLED()
 		sStatusLED.Set(false);
 	}
 
-/* Ble LED indicates BLE connectivity: */
-/*- blinking 200 ms means BLE advertising */
+/*
+ * Ble LED indicates BLE connectivity:
+ *- blinking 200 ms means BLE advertising
+ */
 #ifdef CONFIG_MCUMGR_SMP_BT
 	if (sIsSMPAdvertising) {
 		sBleLED.Blink(30, 170);

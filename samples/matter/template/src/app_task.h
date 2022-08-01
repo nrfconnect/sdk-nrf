@@ -11,6 +11,10 @@
 
 #include <platform/CHIPDeviceLayer.h>
 
+#if CONFIG_CHIP_FACTORY_DATA
+#include <platform/nrfconnect/FactoryDataProvider.h>
+#endif
+
 struct k_timer;
 
 class AppTask {
@@ -44,6 +48,10 @@ private:
 
 	static AppTask sAppTask;
 	bool mFunctionTimerActive = false;
+
+#if CONFIG_CHIP_FACTORY_DATA
+	chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData> mFactoryDataProvider;
+#endif
 };
 
 inline AppTask &GetAppTask()

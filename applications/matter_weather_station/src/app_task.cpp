@@ -527,44 +527,44 @@ void AppTask::UpdatePowerSourceClusterState()
 		batteryCharged = Clusters::PowerSource::BatChargeState::kIsNotCharging;
 	}
 
-	status = Clusters::PowerSource::Attributes::BatteryVoltage::Set(kPowerSourceEndpointId,
+	status = Clusters::PowerSource::Attributes::BatVoltage::Set(kPowerSourceEndpointId,
 									voltage);
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery voltage failed %x", status);
 	}
 
-	status = Clusters::PowerSource::Attributes::BatteryPercentRemaining::Set(
+	status = Clusters::PowerSource::Attributes::BatPercentRemaining::Set(
 		kPowerSourceEndpointId, batteryPercentage);
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery percentage failed %x", status);
 	}
 
-	status = Clusters::PowerSource::Attributes::BatteryTimeRemaining::Set(
+	status = Clusters::PowerSource::Attributes::BatTimeRemaining::Set(
 		kPowerSourceEndpointId, batteryTimeRemaining);
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery time remaining failed %x", status);
 	}
 
-	status = Clusters::PowerSource::Attributes::BatteryChargeLevel::Set(
-		kPowerSourceEndpointId, chip::to_underlying(batteryChargeLevel));
+	status = Clusters::PowerSource::Attributes::BatChargeLevel::Set(
+		kPowerSourceEndpointId, batteryChargeLevel);
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery charge level failed %x", status);
 	}
 
 	status = Clusters::PowerSource::Attributes::Status::Set(kPowerSourceEndpointId,
-								chip::to_underlying(batteryStatus));
+								batteryStatus);
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery status failed %x", status);
 	}
 
-	status = Clusters::PowerSource::Attributes::BatteryPresent::Set(kPowerSourceEndpointId,
+	status = Clusters::PowerSource::Attributes::BatPresent::Set(kPowerSourceEndpointId,
 									batteryPresent);
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery present failed %x", status);
 	}
 
-	status = Clusters::PowerSource::Attributes::BatteryChargeState::Set(
-		kPowerSourceEndpointId, chip::to_underlying(batteryCharged));
+	status = Clusters::PowerSource::Attributes::BatChargeState::Set(
+		kPowerSourceEndpointId, batteryCharged);
 	if (status != EMBER_ZCL_STATUS_SUCCESS) {
 		LOG_ERR("Updating battery charge failed %x", status);
 	}

@@ -8,8 +8,8 @@
 #include "app_config.h"
 #include "app_event.h"
 #include "led_widget.h"
-#include "window_covering.h"
 #include "thread_util.h"
+#include "window_covering.h"
 
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
@@ -138,14 +138,17 @@ CHIP_ERROR AppTask::Init()
 	k_timer_user_data_set(&sFunctionTimer, this);
 
 	/* Initialize CHIP server */
+#if CONFIG_CHIP_FACTORY_DATA
+	ReturnErrorOnFailure(mFactoryDataProvider.Init());
+	SetDeviceInstanceInfoProvider(&mFactoryDataProvider);
+	SetDeviceAttestationCredentialsProvider(&mFactoryDataProvider);
+	SetCommissionableDataProvider(&mFactoryDataProvider);
+#else
 	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
+#endif
 	static chip::CommonCaseDeviceServerInitParams initParams;
 	(void)initParams.InitializeStaticResourcesBeforeServerInit();
 	ReturnErrorOnFailure(chip::Server::GetInstance().Init(initParams));
-
-#if CONFIG_CHIP_OTA_REQUESTOR
-	InitBasicOTARequestor();
-#endif
 
 	ConfigurationMgr().LogDeviceConfig();
 	PrintOnboardingCodes(chip::RendezvousInformationFlag(chip::RendezvousInformationFlag::kBLE));
@@ -456,6 +459,13 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *aEvent, intptr_t)
 		Instance().mIsThreadProvisioned = ConnectivityMgr().IsThreadProvisioned();
 		Instance().mIsThreadEnabled = ConnectivityMgr().IsThreadEnabled();
 		UpdateStatusLED();
+		break;
+	case DeviceEventType::kThreadConnectivityChange:
+#if CONFIG_CHIP_OTA_REQUESTOR
+		if (aEvent->ThreadConnectivityChange.Result == kConnectivity_Established) {
+			InitBasicOTARequestor();
+		}
+#endif
 		break;
 	default:
 		break;
