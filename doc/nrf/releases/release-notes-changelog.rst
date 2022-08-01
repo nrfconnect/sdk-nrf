@@ -114,6 +114,14 @@ nRF IEEE 802.15.4 radio driver
 
 * Added option to configure IEEE 802.15.4 ACK frame timeout at build time using :kconfig:option:`CONFIG_NRF_802154_ACK_TIMEOUT_CUSTOM_US`.
 
+Wi-Fi
+-----
+
+* Added support for nRF700x DK that supports Wi-Fi SoC, which implements IEEE 802.11 protocols.
+
+See `Wi-Fi samples`_ for details about how to use Wi-Fi in your application.
+
+
 RF Front-End Modules
 ====================
 
@@ -423,6 +431,11 @@ Zigbee samples
 * :ref:`zigbee_ncp_sample` sample:
 
   * Set :kconfig:option:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` to be disabled by default for NCP over USB variant.
+
+Wi-Fi samples
+-------------
+
+* Added :ref:`wifi_shell_sample` sample with the shell support.
 
 Other samples
 -------------
@@ -799,6 +812,7 @@ Documentation
   * Added software maturity entries for security features: TF-M, PSA crypto, Immutable bootloader, HW unique key.
   * A section about NFC in the :ref:`app_memory` page.
   * A note in the :ref:`ug_ble_controller` about the usage of the Zephyr LE Controller.
+  * Documentation for the :ref:`ug_nrf70`.
 
 * Updated:
 
