@@ -43,12 +43,18 @@ static void bt_ready(int err)
 
 void main(void)
 {
-	int err;
+	/* 	int err;
 
 	printk("Initializing...\n");
 
 	err = bt_enable(bt_ready);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
+	} */
+
+	for (size_t i = 0; i < 4; i++) {
+		dk_set_led(i, true);
+		k_sleep(K_MSEC(1000));
+		dk_set_led(i, false);
 	}
 }

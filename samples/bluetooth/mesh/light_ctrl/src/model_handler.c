@@ -65,6 +65,7 @@ static void attention_off(struct bt_mesh_model *mod)
 	attention = false;
 }
 
+
 static const struct bt_mesh_health_srv_cb health_srv_cb = {
 	.attn_on = attention_on,
 	.attn_off = attention_off,
@@ -73,6 +74,10 @@ static const struct bt_mesh_health_srv_cb health_srv_cb = {
 static struct bt_mesh_health_srv health_srv = {
 	.cb = &health_srv_cb,
 };
+
+
+static struct bt_mesh_time_srv time_srv = BT_MESH_TIME_SRV_INIT(NULL);
+
 
 BT_MESH_HEALTH_PUB_DEFINE(health_pub, 0);
 
@@ -137,6 +142,52 @@ static void light_set(struct bt_mesh_lightness_srv *srv,
 	rsp->remaining_time = set->transition ? set->transition->time : 0;
 }
 
+static struct k_work_delayable localtime_periodic_print;
+
+static void print_datetime(struct k_work *work)
+{
+	struct tm *today = bt_mesh_time_srv_localtime(&time_srv, k_uptime_get());
+	if (!today) {
+		/* Time Server doesn't know */
+		printk("Local time is not available\n");
+
+	} else {
+		const char *weekdays[] = {
+			"Sunday",   "Monday", "Tuesday",  "Wednesday",
+			"Thursday", "Friday", "Saturday",
+		};
+
+		printk("Today is %s %04u-%02u-%02u\n", weekdays[today->tm_wday],
+		       today->tm_year + 1900, today->tm_mon + 1, today->tm_mday);
+		printk("The time is %02u:%02u:%02u\n", today->tm_hour, today->tm_min, today->tm_sec);
+	}
+	k_work_reschedule(&localtime_periodic_print, K_SECONDS(10));
+}
+
+static void button_handler_cb(uint32_t pressed, uint32_t changed)
+{
+	if (!bt_mesh_is_provisioned()) {
+		return;
+	}
+	if (pressed & changed & BIT(0)) {
+		struct tm *today = bt_mesh_time_srv_localtime(&time_srv, k_uptime_get());
+		if (!today) {
+			/* Time Server doesn't know */
+			printk("Local time is not available\n");
+
+		} else {
+			const char *weekdays[] = {
+				"Sunday",   "Monday", "Tuesday",  "Wednesday",
+				"Thursday", "Friday", "Saturday",
+			};
+
+			printk("Today is %s %04u-%02u-%02u\n", weekdays[today->tm_wday],
+			       today->tm_year + 1900, today->tm_mon + 1, today->tm_mday);
+			printk("The time is %02u:%02u:%02u\n", today->tm_hour, today->tm_min,
+			       today->tm_sec);
+		}
+	}
+}
 static void light_get(struct bt_mesh_lightness_srv *srv,
 		      struct bt_mesh_msg_ctx *ctx,
 		      struct bt_mesh_lightness_status *rsp)
@@ -167,7 +218,8 @@ static struct bt_mesh_elem elements[] = {
 		     BT_MESH_MODEL_LIST(
 			     BT_MESH_MODEL_CFG_SRV,
 			     BT_MESH_MODEL_HEALTH_SRV(&health_srv, &health_pub),
-			     BT_MESH_MODEL_LIGHTNESS_SRV(
+			     BT_MESH_MODEL_TIME_SRV(&time_srv),
+				 BT_MESH_MODEL_LIGHTNESS_SRV(
 					 &my_ctx.lightness_srv)),
 		     BT_MESH_MODEL_NONE),
 	BT_MESH_ELEM(2,
@@ -182,11 +234,18 @@ static const struct bt_mesh_comp comp = {
 	.elem_count = ARRAY_SIZE(elements),
 };
 
+static struct button_handler button_handler = {
+	.cb = button_handler_cb,
+};
+
 const struct bt_mesh_comp *model_handler_init(void)
 {
 	k_work_init_delayable(&attention_blink_work, attention_blink);
 	k_work_init_delayable(&my_ctx.per_work, periodic_led_work);
-
+	k_work_init_delayable(&localtime_periodic_print, print_datetime);
+	k_work_submit(&localtime_periodic_print);
+	
+	dk_button_handler_add(&button_handler);
 	return &comp;
 }
 

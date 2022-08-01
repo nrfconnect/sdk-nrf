@@ -45,12 +45,10 @@ static struct button buttons[] = {
 #endif
 };
 
-static void status_handler(struct bt_mesh_onoff_cli *cli,
-			   struct bt_mesh_msg_ctx *ctx,
+static void status_handler(struct bt_mesh_onoff_cli *cli, struct bt_mesh_msg_ctx *ctx,
 			   const struct bt_mesh_onoff_status *status)
 {
-	struct button *button =
-		CONTAINER_OF(cli, struct button, client);
+	struct button *button = CONTAINER_OF(cli, struct button, client);
 	int index = button - &buttons[0];
 
 	button->status = status->present_on_off;
@@ -58,6 +56,10 @@ static void status_handler(struct bt_mesh_onoff_cli *cli,
 
 	printk("Button %d: Received response: %s\n", index + 1,
 	       status->present_on_off ? "on" : "off");
+
+	printk("Button %d is issuing a message \n", index + 1);	   
+
+	printk("The source adress is: 0x%04x \n The TTL value is: %d \n", ctx->addr, ctx->recv_ttl);
 }
 
 static void button_handler_cb(uint32_t pressed, uint32_t changed)

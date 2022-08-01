@@ -55,6 +55,7 @@ static void led_transition_start(struct led_ctx *led)
 	led->remaining = 0;
 }
 
+
 static void led_status(struct led_ctx *led, struct bt_mesh_onoff_status *status)
 {
 	/* Do not include delay in the remaining time. */
