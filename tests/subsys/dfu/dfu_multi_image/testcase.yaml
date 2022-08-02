@@ -1,6 +1,0 @@
-tests:
-  dfu.dfu_multi_image:
-    platform_allow: native_posix
-    integration_platforms:
-      - native_posix
-    tags: dfu

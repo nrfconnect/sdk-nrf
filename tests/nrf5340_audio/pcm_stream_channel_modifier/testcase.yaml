@@ -1,6 +1,0 @@
-tests:
-  nrf5340_audio.pscm_test:
-    platform_allow: qemu_cortex_m3
-    integration_platforms:
-      - qemu_cortex_m3
-    tags: pcm_stream_channel_modifier nrf5340_audio_unit_tests

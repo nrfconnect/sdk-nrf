@@ -1,4 +1,0 @@
-This test case will not pass in the regular way.
-Instead, you must check that it reboots, and then fails to boot the app because
-of monotonic counter.
-If the test fails via a zassert, it has failed.

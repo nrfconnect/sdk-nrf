@@ -1,8 +1,0 @@
-tests:
-  mcuboot.external_flash:
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp thingy53_nrf5340_cpuapp
-    tags: mcuboot external_flash
-    integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-      - thingy53_nrf5340_cpuapp

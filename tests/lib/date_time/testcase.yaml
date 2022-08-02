@@ -1,7 +1,0 @@
-tests:
-  date_time.functionality_test:
-    platform_allow: nrf9160dk_nrf9160 qemu_x86 qemu_cortex_m3
-    integration_platforms:
-      - nrf9160dk_nrf9160
-      - qemu_cortex_m3
-    tags: date_time

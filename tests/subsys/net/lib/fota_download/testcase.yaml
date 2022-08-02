@@ -1,7 +1,0 @@
-tests:
-  net.lib.fota_download:
-    tags: aws fota
-    platform_allow: nrf9160dk_nrf9160 nrf9160dk_nrf9160_ns
-    integration_platforms:
-      - nrf9160dk_nrf9160
-      - nrf9160dk_nrf9160_ns

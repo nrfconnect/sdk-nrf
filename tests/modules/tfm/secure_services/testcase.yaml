@@ -1,7 +1,0 @@
-tests:
-  tfm.secure_services:
-    platform_allow: nrf9160dk_nrf9160_ns nrf5340dk_nrf5340_cpuapp_ns
-    tags: tfm secure_services
-    integration_platforms:
-      - nrf9160dk_nrf9160_ns
-      - nrf5340dk_nrf5340_cpuapp_ns

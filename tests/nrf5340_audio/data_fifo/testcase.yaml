@@ -1,6 +1,0 @@
-tests:
-  nrf5340_audio.data_fifo_test:
-    platform_allow: qemu_cortex_m3
-    integration_platforms:
-      - qemu_cortex_m3
-    tags: data_fifo nrf5340_audio_unit_tests

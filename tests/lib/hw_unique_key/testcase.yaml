@@ -1,8 +1,0 @@
-tests:
-  lib.hw_unique_key:
-    platform_allow: nrf9160dk_nrf9160 nrf5340dk_nrf5340_cpuapp nrf52840dk_nrf52840
-    integration_platforms:
-      - nrf9160dk_nrf9160
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf52840dk_nrf52840
-    tags: huk

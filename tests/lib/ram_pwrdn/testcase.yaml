@@ -1,6 +1,0 @@
-tests:
-  ram_pwrdn.functionality_test:
-    platform_allow: nrf52840dk_nrf52840
-    integration_platforms:
-      - nrf52840dk_nrf52840
-    tags: ram_pwrdn

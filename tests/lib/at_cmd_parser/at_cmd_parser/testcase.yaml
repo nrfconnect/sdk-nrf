@@ -1,7 +1,0 @@
-tests:
-  at_cmd_parser.at_cmd_parser:
-    platform_allow: qemu_cortex_m3 native_posix
-    integration_platforms:
-      - qemu_cortex_m3
-      - native_posix
-    tags: at_cmd_parser
