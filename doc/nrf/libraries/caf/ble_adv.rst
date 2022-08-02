@@ -23,6 +23,7 @@ The following Kconfig options are available for this module:
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_DIRECT_ADV`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_FAST_ADV`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_FAST_ADV_TIMEOUT`
+* :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD`
 
@@ -136,7 +137,8 @@ The module performs one of the following operations:
 Avoiding connection requests from unbonded centrals when bonded
 ===============================================================
 
-If :kconfig:option:`CONFIG_BT_FILTER_ACCEPT_LIST` is enabled and Bluetooth local identity that is in use already has a bond, the device will mark incoming scan response data requests and connection requests as acceptable.
+If :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST` is enabled and the Bluetooth local identity currently in use already has a bond, the device will filter incoming scan response data requests and connection requests.
+In that case, only the bonded peer can connect or request scan response data.
 This is done to prevent Bluetooth Centrals other than the bonded one from connecting with the device.
 
 .. |ble_adv| replace:: Bluetooth® LE advertising module

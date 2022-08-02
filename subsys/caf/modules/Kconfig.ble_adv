@@ -102,6 +102,17 @@ config CAF_BLE_ADV_FAST_ADV_TIMEOUT
 
 endif
 
+config CAF_BLE_ADV_FILTER_ACCEPT_LIST
+	bool "Enable filter accept list"
+	select BT_FILTER_ACCEPT_LIST
+	select BT_CTLR_FILTER_ACCEPT_LIST
+	select BT_CTLR_PRIVACY
+	help
+	  If the used local identity already has bond, the device will filter
+	  incoming scan response data requests and connection requests. In
+	  that case, only the bonded peer can connect or request scan response
+	  data.
+
 config CAF_BLE_ADV_SWIFT_PAIR
 	bool "Enable Swift Pair feature"
 	depends on CAF_BLE_ADV_FAST_ADV
