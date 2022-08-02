@@ -937,7 +937,7 @@ int audio_datapath_init(void)
 	audio_i2s_blk_comp_cb_register(audio_datapath_i2s_blk_complete);
 	ctrl_blk.datapath_initialized = true;
 	ctrl_blk.drift_comp.hfclkaudio_comp_enabled = true;
-	ctrl_blk.pres_comp.pres_delay_us = MIN_PRES_DLY_US;
+	ctrl_blk.pres_comp.pres_delay_us = DEFAULT_PRES_DLY_US;
 
 	return 0;
 }
