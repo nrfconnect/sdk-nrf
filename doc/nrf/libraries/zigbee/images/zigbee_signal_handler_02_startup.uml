@@ -1,9 +1,0 @@
-@startuml
-
-:ZB_ZDO_SIGNAL_SKIP_STARTUP;
-
-:bdb_start_top_level_commissioning(ZB_BDB_INITIALIZATION);
-
-stop
-
-@enduml

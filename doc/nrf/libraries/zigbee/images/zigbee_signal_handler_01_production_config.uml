@@ -1,9 +1,0 @@
-@startuml
-
-:ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY;
-
-:LOG_INF(load_status);
-
-stop
-
-@enduml
