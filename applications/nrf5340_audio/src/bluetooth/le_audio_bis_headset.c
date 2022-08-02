@@ -215,16 +215,12 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 
 			/* If this is a BIS of interest then attach to and start a stream */
 			if (index == channel) {
-				if (bitrate_check(streams[i].codec)) {
+				if (bitrate_check((struct bt_codec *)&base->subgroups[i].codec)) {
 					base_bis_index_bitfield |= BIT(index);
 
 					streams[i].codec =
 						(struct bt_codec *)&base->subgroups[i].codec;
 					print_codec(streams[i].codec);
-
-					ret = ctrl_events_le_audio_event_send(
-						LE_AUDIO_EVT_CONFIG_RECEIVED);
-					ERR_CHK(ret);
 
 					LOG_INF("Stream %u in subgroup %u from broadcast sink", i,
 						j);

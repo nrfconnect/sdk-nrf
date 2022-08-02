@@ -56,6 +56,7 @@
 /* Allow some buffer time to allow for HCI Transport etc */
 #define PRES_DLY_BUFFER_US 2500
 #define MAX_PRES_DLY_US 40000
+#define DEFAULT_PRES_DLY_US 10000
 #define MIN_PRES_DLY_US ((DEC_TIME_US * CONFIG_BT_ISO_MAX_CHAN) + PRES_DLY_BUFFER_US)
 
 /**

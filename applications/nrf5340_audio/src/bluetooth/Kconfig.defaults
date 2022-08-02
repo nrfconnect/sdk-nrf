@@ -175,6 +175,14 @@ if TRANSPORT_BIS # Depends on TRANSPORT_BIS
 # HEADSET
 if AUDIO_DEV = 1
 
+config BT_OBSERVER
+	bool
+	default y
+
+config BT_ISO_SYNC_RECEIVER
+	bool
+	default y
+
 config BT_AUDIO_BROADCAST_SINK
 	bool
 	default y
@@ -195,6 +203,10 @@ endif # AUDIO_DEV = 1 (HEADSET)
 
 # GATEWAY
 if AUDIO_DEV = 2
+
+config BT_ISO_BROADCASTER
+	bool
+	default y
 
 config BT_AUDIO_BROADCAST_SOURCE
 	bool
