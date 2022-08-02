@@ -23,14 +23,16 @@ enum wifi_nrf_status umac_cmd_cfg(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 				  int len);
 
 enum wifi_nrf_status umac_cmd_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+#ifndef CONFIG_NRF700X_RADIO_TEST
 				   unsigned char *def_mac_addr,
 				   unsigned char def_vif_idx,
 				   unsigned char *rf_params,
 				   bool rf_params_valid,
+				   struct img_data_config_params config,
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 				   int sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-				   struct img_data_config_params config,
 				   unsigned int phy_calib);
 
 enum wifi_nrf_status umac_cmd_deinit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
@@ -43,8 +45,18 @@ enum wifi_nrf_status umac_cmd_he_ltf_gi(struct wifi_nrf_fmac_dev_ctx *fmac_dev_c
 					unsigned char he_gi,
 					unsigned char enabled);
 
+#ifdef CONFIG_NRF700X_RADIO_TEST
+enum wifi_nrf_status umac_cmd_prog_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+				      struct rpu_conf_params *params);
+
+enum wifi_nrf_status umac_cmd_prog_rx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+				      struct rpu_conf_rx_radio_test_params *rx_params);
+#endif /* CONFIG_NRF700X_RADIO_TEST */
 
 enum wifi_nrf_status umac_cmd_prog_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+#ifdef CONFIG_NRF700X_RADIO_TEST
+					     int op_mode,
+#endif /* CONFIG_NRF700X_RADIO_TEST */
 					     int stat_type);
 
 #endif /* __FMAC_CMD_H__ */

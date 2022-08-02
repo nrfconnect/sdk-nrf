@@ -976,7 +976,6 @@ enum wifi_nrf_status tx_done_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 
 	fmac_dev_ctx->host_stats.total_tx_done_pkts += pkt;
 
-
 	pkts_pending = tx_buff_req_free(fmac_dev_ctx, config, &queue);
 
 	if (pkts_pending) {

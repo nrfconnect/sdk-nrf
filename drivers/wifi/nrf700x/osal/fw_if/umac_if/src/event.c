@@ -16,6 +16,7 @@
 #include "fmac_cmd.h"
 #include "fmac_ap.h"
 
+#ifndef CONFIG_NRF700X_RADIO_TEST
 static enum wifi_nrf_status
 wifi_nrf_fmac_if_state_chg_event_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					 unsigned char *umac_head,
@@ -504,6 +505,7 @@ out:
 }
 
 
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 
 static enum wifi_nrf_status umac_event_stats_process(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
@@ -591,6 +593,7 @@ enum wifi_nrf_status wifi_nrf_fmac_event_callback(void *mac_dev_ctx,
 	umac_msg_type = umac_hdr->cmd_evnt;
 
 	switch (rpu_msg->type) {
+#ifndef CONFIG_NRF700X_RADIO_TEST
 	case IMG_HOST_RPU_MSG_TYPE_DATA:
 		status = wifi_nrf_fmac_data_events_process(fmac_dev_ctx,
 							   rpu_msg);
@@ -607,6 +610,7 @@ enum wifi_nrf_status wifi_nrf_fmac_event_callback(void *mac_dev_ctx,
 			goto out;
 		}
 		break;
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 	case IMG_HOST_RPU_MSG_TYPE_SYSTEM:
 		status = umac_process_sys_events(fmac_dev_ctx,
 						 rpu_msg);

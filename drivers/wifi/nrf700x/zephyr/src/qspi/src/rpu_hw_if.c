@@ -156,13 +156,10 @@ int rpu_gpio_config(void)
 int rpu_pwron(void)
 {
 	gpio_pin_set_dt(&bucken_spec, 1);
-#if SHELIAK_SOC
 	k_msleep(SLEEP_TIME_MS);
 	gpio_pin_set_dt(&iovdd_ctrl_spec, 1);
 	k_msleep(SLEEP_TIME_MS);
 	LOG_DBG("BUCKEN=1, IOVDD=1...\n");
-#else
-#endif
 
 	return 0;
 }
@@ -288,12 +285,10 @@ int rpu_rdsr1(void)
 
 int rpu_clks_on(void)
 {
-#if SHELIAK_SOC
 	uint32_t rpu_clks = 0x100;
 	/* Enable RPU Clocks */
 	qdev->write(0x048C20, &rpu_clks, 4);
 	LOG_DBG("RPU Clocks ON...\n");
-#endif
 	return 0;
 }
 
@@ -310,9 +305,7 @@ int rpu_enable(void)
 
 int rpu_disable(void)
 {
-#if SHELIAK_SOC
 	gpio_pin_set_dt(&iovdd_ctrl_spec, 0); /* IOVDD CNTRL = 0 */
 	gpio_pin_set_dt(&bucken_spec, 0); /* BUCKEN = 0 */
-#endif
 	return 0;
 }

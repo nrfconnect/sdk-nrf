@@ -101,7 +101,7 @@
  * @RPU_OP_MODE_NORMAL: Normal mode is the regular mode of operation
  * @RPU_OP_MODE_DBG: Debug mode can be used to control certain parameters
  *	like TX rate etc in order to debug functional issues
- * @RPU_OP_MODE_PROD: Production mode is used for performing production
+ * @RPU_OP_MODE_RADIO_TEST: Radio test mode is used for performing
  *	tests using continuous Tx/Rx on a configured channel at a particular
  *	rate, power etc
  * @RPU_OP_MODE_FCM: In the FCM mode different type of calibration like RF
@@ -109,7 +109,7 @@
  *
  * Lists the different types of operating modes.
  */
-#define RPU_OP_MODE_PROD 0
+#define RPU_OP_MODE_RADIO_TEST 0
 #define RPU_OP_MODE_FCM 1
 #define RPU_OP_MODE_REG 2
 #define RPU_OP_MODE_DBG 3
@@ -153,7 +153,7 @@
  * @IMG_CMD_MODE: command to specify mode of operation
  * @IMG_CMD_GET_STATS: command to get statistics
  * @IMG_CMD_CLEAR_STATS: command to clear statistics
- * @IMG_CMD_RX: command to ENABLE/DISABLE receiving packets in production mode
+ * @IMG_CMD_RX: command to ENABLE/DISABLE receiving packets in radio test mode
  * @IMG_CMD_DEINIT: RPU De-initialization
  * @IMG_CMD_HE_GI_LTF_CONFIG: Configure HE_GI & HE_LTF.
  *
@@ -200,12 +200,12 @@ struct chan_params {
 	int sec_40_offset;
 } __IMG_PKD;
 
-struct rpu_conf_rx_prod_mode_params {
+struct rpu_conf_rx_radio_test_params {
 	unsigned char nss;
 	/* Input to the RF for operation */
 	unsigned char rf_params[NRF_WIFI_RF_PARAMS_SIZE];
 	struct chan_params chan;
-	char phy_threshold;
+	signed char phy_threshold;
 	unsigned int phy_calib;
 	unsigned char rx;
 } __IMG_PKD;
@@ -292,7 +292,7 @@ struct umac_rx_dbg_params {
 	unsigned int rx_packet_action_count;
 	unsigned int rx_packet_probe_req_count;
 	unsigned int rx_packet_other_mgmt_count;
-	char max_coalised_pkts;
+	signed char max_coalised_pkts;
 	unsigned int null_skb_pointer_from_lmac;
 	unsigned int unexpected_mgmt_pkt;
 
@@ -338,7 +338,7 @@ struct umac_cmd_evnt_dbg_params {
 	unsigned int CURR_STATE;
 } __IMG_PKD;
 
-#ifdef REG_DEBUG_MODE_SUPPORT
+#ifndef CONFIG_NRF700X_RADIO_TEST
 
 struct rpu_umac_stats {
 	struct umac_tx_dbg_params tx_dbg_params;
@@ -386,10 +386,10 @@ struct rpu_lmac_stats {
 	/*END:LMAC DEBUG Stats*/
 } __IMG_PKD;
 
-#endif /* REG_DEBUG_MODE_SUPPORT */
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 struct rpu_phy_stats {
-	char rssi_avg;
+	signed char rssi_avg;
 	unsigned char pdout_val;
 	unsigned int ofdm_crc32_pass_cnt;
 	unsigned int ofdm_crc32_fail_cnt;
@@ -505,11 +505,11 @@ struct img_sys_params {
 	unsigned int bcn_time_out;
 	unsigned int calib_sleep_clk;
 	unsigned int phy_calib;
-#ifdef REG_DEBUG_MODE_SUPPORT
+#ifndef CONFIG_NRF700X_RADIO_TEST
 	unsigned char mac_addr[IMG_ETH_ADDR_LEN];
 	unsigned char rf_params[NRF_WIFI_RF_PARAMS_SIZE];
 	unsigned char rf_params_valid;
-#endif /* REG_DEBUG_MODE_SUPPORT */
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 } __IMG_PKD;
 
 /**
@@ -595,7 +595,6 @@ struct img_cmd_mode {
 
 } __IMG_PKD;
 
-#ifdef CONF_SUPPORT
 
 struct rpu_conf_params {
 	unsigned char nss;
@@ -609,21 +608,10 @@ struct rpu_conf_params {
 	unsigned char tx_pkt_preamble;
 	unsigned char tx_pkt_stbc;
 	unsigned char tx_pkt_fec_coding;
-	char tx_pkt_mcs;
-	char tx_pkt_rate;
-	char phy_threshold;
+	signed char tx_pkt_mcs;
+	signed char tx_pkt_rate;
+	signed char phy_threshold;
 	unsigned int phy_calib;
-#ifdef DEBUG_MODE_SUPPORT
-	int stats_type;
-	unsigned char max_agg_limit;
-	unsigned char max_agg;
-	unsigned char mimo_ps;
-	unsigned char rate_protection_type;
-	unsigned char ch_scan_mode;
-	unsigned char ch_probe_cnt;
-	unsigned short active_scan_dur;
-	unsigned short passive_scan_dur;
-#endif /* DEBUG_MODE_SUPPORT */
 	int op_mode;
 	struct chan_params chan;
 	unsigned char tx_mode;
@@ -657,12 +645,11 @@ struct img_cmd_mode_params {
 	unsigned int ddr_ptrs[MAX_TX_AGG_SIZE];
 } __IMG_PKD;
 
-#endif /* CONF_SUPPORT */
 
 /**
  * struct img_cmd_rx - command rx
  * @sys_head: UMAC header, See &struct img_sys_head
- * @conf: rx configuration parameters see &struct rpu_conf_rx_prod_mode_params
+ * @conf: rx configuration parameters see &struct rpu_conf_rx_radio_test_params
  * @:rx_enable: 1-Enable Rx to receive packets contineously on specified channel
  *	0-Disable Rx stop receiving packets and clear statistics
  *
@@ -671,7 +658,7 @@ struct img_cmd_mode_params {
 
 struct img_cmd_rx {
 	struct img_sys_head sys_head;
-	struct rpu_conf_rx_prod_mode_params conf;
+	struct rpu_conf_rx_radio_test_params conf;
 } __IMG_PKD;
 
 /**
@@ -781,10 +768,10 @@ struct img_event_pwr_data {
 
 struct rpu_fw_stats {
 	struct rpu_phy_stats phy;
-#ifdef REG_DEBUG_MODE_SUPPORT
+#ifndef CONFIG_NRF700X_RADIO_TEST
 	struct rpu_lmac_stats lmac;
 	struct rpu_umac_stats umac;
-#endif /* REG_DEBUG_MODE_SUPPORT */
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 } __IMG_PKD;
 
 /**
@@ -801,7 +788,7 @@ struct img_umac_event_stats {
 	struct rpu_fw_stats fw;
 } __IMG_PKD;
 
-#ifdef REG_DEBUG_MODE_SUPPORT
+#ifndef CONFIG_NRF700X_RADIO_TEST
 /**
  * struct img_event_buff_config_done - Buffers configuration done
  * @sys_head: UMAC header, See &struct img_sys_head.
@@ -841,7 +828,7 @@ struct img_event_buffs_config {
 
 } __IMG_PKD;
 
-#endif /* REG_DEBUG_MODE_SUPPORT */
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 
 /**
  * struct img_event_init_done - UMAC initialization done

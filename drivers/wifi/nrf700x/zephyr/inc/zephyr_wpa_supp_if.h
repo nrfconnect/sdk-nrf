@@ -16,6 +16,8 @@
 #include "bss.h"
 
 #ifdef CONFIG_WPA_SUPP
+#include <drivers/driver_zephyr.h>
+
 void *wifi_nrf_wpa_supp_dev_init(void *supp_drv_if_ctx, const char *iface_name,
 				 struct zep_wpa_supp_dev_callbk_fns *supp_callbk_fns);
 
