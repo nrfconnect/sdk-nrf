@@ -52,6 +52,7 @@ config MODEM_INFO_ADD_SIM
 
 config MODEM_INFO_ADD_SIM_ICCID
 	bool "Read the SIM card ICCID from the modem"
+	depends on MODEM_INFO_ADD_SIM
 	default y
 	help
 	  Add the SIM card ICCID to the returned
@@ -59,6 +60,7 @@ config MODEM_INFO_ADD_SIM_ICCID
 
 config MODEM_INFO_ADD_SIM_IMSI
 	bool "Read the SIM card IMSI from the modem"
+	depends on MODEM_INFO_ADD_SIM
 	default y
 	help
 	  Add the SIM card IMSI to the returned
