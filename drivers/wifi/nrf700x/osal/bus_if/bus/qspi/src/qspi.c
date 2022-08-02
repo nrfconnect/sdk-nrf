@@ -54,7 +54,6 @@ static void *wifi_nrf_bus_qspi_dev_add(void *bus_priv,
 	qspi_dev_ctx->os_qspi_dev_ctx = wifi_nrf_osal_bus_qspi_dev_add(qspi_priv->opriv,
 								       qspi_priv->os_qspi_priv,
 								       qspi_dev_ctx);
-	;
 
 	if (!qspi_dev_ctx->os_qspi_dev_ctx) {
 		wifi_nrf_osal_log_err(qspi_priv->opriv,

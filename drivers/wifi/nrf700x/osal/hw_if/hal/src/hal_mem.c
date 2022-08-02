@@ -135,12 +135,14 @@ static enum wifi_nrf_status rpu_mem_read_ram(struct wifi_nrf_hal_dev_ctx *hal_de
 				len);
 
 	status = WIFI_NRF_STATUS_SUCCESS;
+
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 out:
 	wifi_nrf_osal_spinlock_irq_rel(hal_dev_ctx->hpriv->opriv,
 				       hal_dev_ctx->rpu_ps_lock,
 				       &flags);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
+
 	return status;
 }
 
@@ -188,12 +190,14 @@ static enum wifi_nrf_status rpu_mem_write_ram(struct wifi_nrf_hal_dev_ctx *hal_d
 				 len);
 
 	status = WIFI_NRF_STATUS_SUCCESS;
+
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 out:
 	wifi_nrf_osal_spinlock_irq_rel(hal_dev_ctx->hpriv->opriv,
 				       hal_dev_ctx->rpu_ps_lock,
 				       &flags);
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
+
 	return status;
 }
 

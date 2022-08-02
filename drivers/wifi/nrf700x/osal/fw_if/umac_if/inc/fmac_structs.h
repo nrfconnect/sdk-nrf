@@ -20,6 +20,67 @@
 #define MAX_PEERS 5
 #define MAX_SW_PEERS (MAX_PEERS + 1)
 
+#ifdef CONFIG_NRF700X_RADIO_TEST
+/**
+ * struct rpu_op_stats - Structure to hold per device host and firmware
+ *                       statistics.
+ * @host: Host statistics.
+ * @fw: Firmware statistics.
+ *
+ * This structure holds per device host and firmware statistics.
+ */
+struct rpu_op_stats {
+	struct rpu_fw_stats fw;
+};
+
+
+/**
+ * struct wifi_nrf_fmac_priv - Structure to hold context information for the
+ *                             UMAC IF layer.
+ * @opriv: Pointer to the OS abstraction layer.
+ * @hpriv: Pointer to the HAL layer.
+ *
+ * This structure maintains the context information necessary for the
+ * operation of the UMAC IF layer.
+ */
+struct wifi_nrf_fmac_priv {
+	struct wifi_nrf_osal_priv *opriv;
+	struct wifi_nrf_hal_priv *hpriv;
+};
+
+
+/**
+ * struct wifi_nrf_fmac_dev_ctx - Structure to hold per device context information
+ *                                for the UMAC IF layer.
+ * @fpriv: Pointer to the UMAC IF abstraction layer.
+ * @os_fmac_dev_ctx: Pointer to the per device OS context which is using the
+ *               UMAC IF layer.
+ * @hal_ctx: Pointer to the per device HAL context.
+ * @stats_req: Flag indicating whether a request for statistics has been sent
+ *             to the RPU.
+ * @fw_stats: Firmware statistics.
+ * @umac_ver: UMAC version information.
+ * @lmac_ver: LMAC version information.
+ * @base_mac_addr: The base mac address for the RPU device.
+ *
+ * This structure maintains the context information necessary for the
+ * a single instance of an FullMAC based RPU.
+ */
+struct wifi_nrf_fmac_dev_ctx {
+	struct wifi_nrf_fmac_priv *fpriv;
+	void *os_dev_ctx;
+	void *hal_dev_ctx;
+	bool stats_req;
+	struct rpu_fw_stats *fw_stats;
+	unsigned int umac_ver;
+	unsigned int lmac_ver;
+	unsigned char base_mac_addr[IMG_ETH_ADDR_LEN];
+	bool init_done;
+	bool deinit_done;
+};
+
+#else /* CONFIG_NRF700X_RADIO_TEST */
+
 /**
  * enum wifi_nrf_fmac_ac - WLAN access categories.
  * @WIFI_NRF_FMAC_AC_BK: Background access category.
@@ -155,32 +216,6 @@ struct wifi_nrf_fmac_callbk_fns {
 struct wifi_nrf_fmac_buf_map_info {
 	bool mapped;
 	unsigned long nwb;
-};
-
-
-/**
- * struct wifi_nrf_fmac_init_dev_params - Structure to hold parameters for
- *                                        initializing the RPU.
- * @base_mac_addr: The base mac address for the RPU.
- * @def_vif_idx: Index for the default VIF.
- * @rf_params: RF parameters (if any) to be passed to the RPU.
- * @rf_params_valid: Flag to indicate to the RPU that the data in the
- *                   @rf_params is valid.
- * @sleep_type: Type of RPU sleep.
- * @phy_calib: PHY calibration flags to be passed to the RPU.
- * @config: Data path configuration parameters to be passed to the RPU.
- *
- * This structure holds the parameters for initializing the RPU.
- */
-struct wifi_nrf_fmac_init_dev_params {
-	unsigned char base_mac_addr[IMG_ETH_ADDR_LEN];
-	unsigned char def_vif_idx;
-	unsigned char rf_params[NRF_WIFI_RF_PARAMS_SIZE];
-	bool rf_params_valid;
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
-	int sleep_type;
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
-	unsigned int phy_calib;
 };
 
 
@@ -360,14 +395,14 @@ struct wifi_nrf_fmac_dev_ctx {
 	struct wifi_nrf_fmac_buf_map_info *tx_buf_info;
 	struct wifi_nrf_fmac_buf_map_info *rx_buf_info;
 	struct tx_config tx_config;
-	bool stats_req;
 	struct rpu_host_stats host_stats;
+	unsigned char num_sta;
+	unsigned char num_ap;
+	bool stats_req;
 	struct rpu_fw_stats *fw_stats;
 	unsigned int umac_ver;
 	unsigned int lmac_ver;
 	unsigned char base_mac_addr[IMG_ETH_ADDR_LEN];
-	unsigned char num_sta;
-	unsigned char num_ap;
 	bool init_done;
 	bool deinit_done;
 };
@@ -397,6 +432,34 @@ struct wifi_nrf_fmac_vif_ctx {
 	bool ifflags;
 	int if_type;
 	unsigned char bssid[IMG_ETH_ADDR_LEN];
+};
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
+
+
+/**
+ * struct wifi_nrf_fmac_init_dev_params - Structure to hold parameters for
+ *                                        initializing the RPU.
+ * @base_mac_addr: The base mac address for the RPU.
+ * @def_vif_idx: Index for the default VIF.
+ * @rf_params: RF parameters (if any) to be passed to the RPU.
+ * @rf_params_valid: Flag to indicate to the RPU that the data in the
+ *                   @rf_params is valid.
+ * @sleep_type: Type of RPU sleep.
+ * @phy_calib: PHY calibration flags to be passed to the RPU.
+ *
+ * This structure holds the parameters for initializing the RPU.
+ */
+struct wifi_nrf_fmac_init_dev_params {
+#ifndef CONFIG_NRF700X_RADIO_TEST
+	unsigned char base_mac_addr[IMG_ETH_ADDR_LEN];
+	unsigned char def_vif_idx;
+	unsigned char rf_params[NRF_WIFI_RF_PARAMS_SIZE];
+	bool rf_params_valid;
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
+	int sleep_type;
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+	unsigned int phy_calib;
 };
 
 

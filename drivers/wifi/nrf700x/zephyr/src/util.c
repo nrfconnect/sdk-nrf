@@ -39,8 +39,6 @@ int hex_str_to_val(unsigned char *hex_arr, unsigned int hex_arr_sz, unsigned cha
 		return -1;
 	}
 
-	memset(hex_arr, 0, hex_arr_sz);
-
 	for (i = 0; i < len; i++) {
 		/* Convert to lower case */
 		ch = ((str[i] >= 'A' && str[i] <= 'Z') ? str[i] + 32 : str[i]);

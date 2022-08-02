@@ -6,22 +6,6 @@
 
 zephyr_library()
 
-zephyr_library_compile_definitions(
-	SOC_CALDER
-	RPU_SUPPORT_WAPI
-	RPU_VHT_SUPPORT
-	RPU_HE_SUPPORT
-	RPU_BSS_DB_SUPPORT
-	RPU_32_BIT_DMA_SUPPORT
-	RPU_CONFIG_FMAC
-	REG_MODE_SUPPORT
-	REG_DEBUG_MODE_SUPPORT
-	OFFLINE_MODE
-	SHELIAK_SOC	# SOC
-	ASICBUILD	# SOC
-	C0_CHIP
-)
-
 zephyr_include_directories(
 	zephyr/inc
 	osal/utils/inc
@@ -51,23 +35,26 @@ zephyr_library_sources(
 	osal/bus_if/bus/qspi/src/qspi.c
 	osal/fw_if/umac_if/src/cmd.c
 	osal/fw_if/umac_if/src/event.c
-	osal/fw_if/umac_if/src/fmac_ap.c
-	osal/fw_if/umac_if/src/fmac_peer.c
-	osal/fw_if/umac_if/src/fmac_util.c
-	osal/fw_if/umac_if/src/fmac_vif.c
 	osal/fw_if/umac_if/src/fmac_api.c
-	osal/fw_if/umac_if/src/rx.c
-	osal/fw_if/umac_if/src/tx.c
 	zephyr/src/shim.c
 	zephyr/src/zephyr_work.c
 	zephyr/src/timer.c
 	zephyr/src/util.c
-	zephyr/src/zephyr_disp_scan.c
 	zephyr/src/zephyr_fmac_main.c
-	zephyr/src/zephyr_net_if.c
-	zephyr/src/zephyr_wpa_supp_if.c
 	zephyr/src/qspi/src/device.c
 	zephyr/src/qspi/src/rpu_hw_if.c
+)
+
+zephyr_library_sources_ifndef(CONFIG_NRF700X_RADIO_TEST
+	osal/fw_if/umac_if/src/rx.c
+	osal/fw_if/umac_if/src/tx.c
+	osal/fw_if/umac_if/src/fmac_vif.c
+	osal/fw_if/umac_if/src/fmac_ap.c
+	osal/fw_if/umac_if/src/fmac_peer.c
+	osal/fw_if/umac_if/src/fmac_util.c
+	zephyr/src/zephyr_disp_scan.c
+	zephyr/src/zephyr_net_if.c
+	zephyr/src/zephyr_wpa_supp_if.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_NRF700X_ON_QSPI

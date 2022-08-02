@@ -26,6 +26,74 @@
 #include "fmac_bb.h"
 
 
+#ifdef CONFIG_NRF700X_RADIO_TEST
+/**
+ * wifi_nrf_fmac_init() - Initializes the UMAC IF layer of the RPU WLAN FullMAC
+ *                        driver.
+ *
+ * This function initializes the UMAC IF layer of the RPU WLAN FullMAC driver.
+ * It does the following:
+ *
+ *     - Creates and initializes the context for the UMAC IF layer.
+ *     - Initializes the HAL layer.
+ *     - Registers the driver to the underlying OS.
+ *
+ * Returns: Pointer to the context of the UMAC IF layer.
+ */
+struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(void);
+
+
+/**
+ * wifi_nrf_fmac_stats_get() - Issue a request to get stats from the RPU.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @op_mode: Production/FCM mode.
+ * @stats: Pointer to memory where the stats are to be copied.
+ *
+ * This function is used to send a command to
+ * instruct the firmware to return the current RPU statistics. The RPU will
+ * send the event with the current statistics.
+ *
+ * Returns: Status
+ *		Pass: %WIFI_NRF_STATUS_SUCCESS
+ *		Fail: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+					     int op_mode,
+					     struct rpu_op_stats *stats);
+
+
+/**
+ * wifi_nrf_fmac_radio_test_prog_tx() - Start TX tests in radio test mode.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @params: Parameters necessary for the TX tests.
+ *
+ * This function is used to send a command to RPU to start
+ * the TX tests in radio test mode.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_tx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+						      struct rpu_conf_params *params);
+
+/**
+ * wifi_nrf_fmac_radio_test_prog_rx() - Start RX tests in radio test mode.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ * @params: Parameters necessary for the RX tests.
+ *
+ * This function is used to send a command to RPU to start
+ * the RX tests in radio test mode.
+ *
+ * Returns: Status
+ *              Pass : %WIFI_NRF_STATUS_SUCCESS
+ *              Error: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_radio_test_prog_rx(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+						      struct rpu_conf_params *params);
+
+#else
+
 /**
  * wifi_nrf_fmac_init() - Initializes the UMAC IF layer of the RPU WLAN FullMAC
  *                        driver.
@@ -46,107 +114,10 @@ struct wifi_nrf_fmac_priv *wifi_nrf_fmac_init(struct img_data_config_params *dat
 					      struct rx_buf_pool_params *rx_buf_pools,
 					      struct wifi_nrf_fmac_callbk_fns *callbk_fns);
 
-
-/**
- * wifi_nrf_fmac_deinit() - De-initializes the UMAC IF layer of the RPU WLAN
- *                          FullMAC driver.
- * @fpriv: Pointer to the context of the UMAC IF layer.
- *
- * This function de-initializes the UMAC IF layer of the RPU WLAN FullMAC
- * driver. It does the following:
- *
- *     - De-initializes the HAL layer.
- *     - Frees the context for the UMAC IF layer.
- *
- * Returns: None
- */
-void wifi_nrf_fmac_deinit(struct wifi_nrf_fmac_priv *fpriv);
-
-
-/**
- * wifi_nrf_fmac_dev_add() - Adds a RPU instance.
- * @fpriv: Pointer to the context of the UMAC IF layer.
- *
- * This function adds an RPU instance. This function will return the
- * pointer to the context of the RPU instance. This pointer will need to be
- * supplied while invoking further device specific API's,
- * e.g. @wifi_nrf_fmac_scan etc.
- *
- * Returns: Pointer to the context of the RPU instance.
- */
-struct wifi_nrf_fmac_dev_ctx *wifi_nrf_fmac_dev_add(struct wifi_nrf_fmac_priv *fpriv,
-						    void *os_dev_ctx);
-
-
-/**
- * wifi_nrf_fmac_dev_rem() - Removes a RPU instance.
- * @fmac_dev_ctx: Pointer to the context of the RPU instance to be removed.
- *
- * This function handles the removal of an RPU instance at the UMAC IF layer.
- *
- * Returns: None.
- */
-void wifi_nrf_fmac_dev_rem(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
-
-
-/**
- * wifi_nrf_fmac_umac_info() - Get the RPU information.
- * @fmac_dev_ctx: Pointer to the context of the RPU instance to be removed.
- *
- * This function returns RPU information stored in the OTP etc.
- *
- * Returns: Pointer to a structure containing RPU information.
- */
-struct host_rpu_umac_info *wifi_nrf_fmac_umac_info(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
-
-/**
- * wifi_nrf_fmac_dev_init() - Initializes a RPU instance.
- * @fmac_dev_ctx: Pointer to the context of the RPU instance to be removed.
- * @params: Parameters needed for initialization of RPU.
- *
- * This function initializes the firmware of an RPU instance.
- *
- * Returns:
- *		Pass: WIFI_NRF_STATUS_SUCCESS.
- *		Fail: WIFI_NRF_STATUS_FAIL.
- */
-enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					    struct wifi_nrf_fmac_init_dev_params *params);
-
-
-/**
- * wifi_nrf_fmac_dev_deinit() - De-initializes a RPU instance.
- * @fmac_dev_ctx: Pointer to the context of the RPU instance to be removed.
- *
- * This function de-initializes the firmware of an RPU instance.
- *
- * Returns: None.
- */
-void wifi_nrf_fmac_dev_deinit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
-
-
-/**
- * wifi_nrf_fmac_fw_load() - Loads the Firmware(s) to the RPU WLAN device.
- * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device, which was
- *            passed as @fmac_dev_ctx parameter via the @add_dev_callbk_fn
- *            callback function.
- * @fmac_fw: Information about the FullMAC firmware(s) to be loaded.
- *
- * This function loads the FullMAC firmware(s) to the RPU WLAN device.
- *
- * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
- */
-enum wifi_nrf_status wifi_nrf_fmac_fw_load(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
-					   struct wifi_nrf_fmac_fw_info *fmac_fw);
-
-
 /**
  * wifi_nrf_fmac_stats_get() - Issue a request to get stats from the RPU.
  * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
- * @rpu_stats_type: The type of RPU statistics to get.
- * @op_mode: Production/FCM mode.
+ * @stats_type: The type of RPU statistics to get.
  * @stats: Pointer to memory where the stats are to be copied.
  *
  * This function is used to send a command to
@@ -159,20 +130,6 @@ enum wifi_nrf_status wifi_nrf_fmac_fw_load(struct wifi_nrf_fmac_dev_ctx *fmac_de
  */
 enum wifi_nrf_status wifi_nrf_fmac_stats_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
 					     struct rpu_op_stats *stats);
-
-
-/**
- * wifi_nrf_fmac_ver_get() - Get FW versions from the RPU.
- * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
- *
- * This function is used to get Firmware versions from the RPU and they
- * are then stored in the @fmac_dev_ctx.
- *
- * Returns: Status
- *		Pass: %WIFI_NRF_STATUS_SUCCESS
- *		Fail: %WIFI_NRF_STATUS_FAIL
- */
-enum wifi_nrf_status wifi_nrf_fmac_ver_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
 
 
 /**
@@ -883,6 +840,116 @@ enum wifi_nrf_status wifi_nrf_fmac_set_wowlan(void *fmac_dev_ctx,
 enum wifi_nrf_status wifi_nrf_fmac_set_wiphy_params(void *fmac_dev_ctx,
 						    unsigned char if_idx,
 						    struct img_umac_set_wiphy_info *wiphy_info);
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
+
+
+/**
+ * wifi_nrf_fmac_deinit() - De-initializes the UMAC IF layer of the RPU WLAN
+ *                          FullMAC driver.
+ * @fpriv: Pointer to the context of the UMAC IF layer.
+ *
+ * This function de-initializes the UMAC IF layer of the RPU WLAN FullMAC
+ * driver. It does the following:
+ *
+ *     - De-initializes the HAL layer.
+ *     - Frees the context for the UMAC IF layer.
+ *
+ * Returns: None
+ */
+void wifi_nrf_fmac_deinit(struct wifi_nrf_fmac_priv *fpriv);
+
+
+/**
+ * wifi_nrf_fmac_dev_add() - Adds a RPU instance.
+ * @fpriv: Pointer to the context of the UMAC IF layer.
+ *
+ * This function adds an RPU instance. This function will return the
+ * pointer to the context of the RPU instance. This pointer will need to be
+ * supplied while invoking further device specific API's,
+ * e.g. @wifi_nrf_fmac_scan etc.
+ *
+ * Returns: Pointer to the context of the RPU instance.
+ */
+struct wifi_nrf_fmac_dev_ctx *wifi_nrf_fmac_dev_add(struct wifi_nrf_fmac_priv *fpriv,
+						    void *os_dev_ctx);
+
+
+/**
+ * wifi_nrf_fmac_dev_rem() - Removes a RPU instance.
+ * @fmac_dev_ctx: Pointer to the context of the RPU instance to be removed.
+ *
+ * This function handles the removal of an RPU instance at the UMAC IF layer.
+ *
+ * Returns: None.
+ */
+void wifi_nrf_fmac_dev_rem(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
+
+
+/**
+ * wifi_nrf_fmac_umac_info() - Get the RPU information.
+ * @fmac_dev_ctx: Pointer to the context of the RPU instance to be removed.
+ *
+ * This function returns RPU information stored in the OTP etc.
+ *
+ * Returns: Pointer to a structure containing RPU information.
+ */
+struct host_rpu_umac_info *wifi_nrf_fmac_umac_info(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
+
+/**
+ * wifi_nrf_fmac_dev_init() - Initializes a RPU instance.
+ * @fmac_dev_ctx: Pointer to the context of the RPU instance to be removed.
+ * @params: Parameters needed for initialization of RPU.
+ *
+ * This function initializes the firmware of an RPU instance.
+ *
+ * Returns:
+ *		Pass: WIFI_NRF_STATUS_SUCCESS.
+ *		Fail: WIFI_NRF_STATUS_FAIL.
+ */
+enum wifi_nrf_status wifi_nrf_fmac_dev_init(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+					    struct wifi_nrf_fmac_init_dev_params *params);
+
+
+/**
+ * wifi_nrf_fmac_dev_deinit() - De-initializes a RPU instance.
+ * @fmac_dev_ctx: Pointer to the context of the RPU instance to be removed.
+ *
+ * This function de-initializes the firmware of an RPU instance.
+ *
+ * Returns: None.
+ */
+void wifi_nrf_fmac_dev_deinit(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
+
+
+/**
+ * wifi_nrf_fmac_fw_load() - Loads the Firmware(s) to the RPU WLAN device.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device, which was
+ *            passed as @fmac_dev_ctx parameter via the @add_dev_callbk_fn
+ *            callback function.
+ * @fmac_fw: Information about the FullMAC firmware(s) to be loaded.
+ *
+ * This function loads the FullMAC firmware(s) to the RPU WLAN device.
+ *
+ * Returns: Status
+ *		Pass: %WIFI_NRF_STATUS_SUCCESS
+ *		Fail: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_fw_load(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx,
+					   struct wifi_nrf_fmac_fw_info *fmac_fw);
+
+
+/**
+ * wifi_nrf_fmac_ver_get() - Get FW versions from the RPU.
+ * @fmac_dev_ctx: Pointer to the UMAC IF context for a RPU WLAN device.
+ *
+ * This function is used to get Firmware versions from the RPU and they
+ * are then stored in the @fmac_dev_ctx.
+ *
+ * Returns: Status
+ *		Pass: %WIFI_NRF_STATUS_SUCCESS
+ *		Fail: %WIFI_NRF_STATUS_FAIL
+ */
+enum wifi_nrf_status wifi_nrf_fmac_ver_get(struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx);
 
 
 /**
@@ -919,5 +986,4 @@ enum wifi_nrf_status wifi_nrf_fmac_conf_ltf_gi(struct wifi_nrf_fmac_dev_ctx *fma
 					       unsigned char he_ltf,
 					       unsigned char he_gi,
 					       unsigned char enabled);
-
 #endif /* __FMAC_API_H__ */

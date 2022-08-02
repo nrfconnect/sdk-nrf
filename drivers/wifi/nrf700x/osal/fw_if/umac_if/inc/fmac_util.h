@@ -11,6 +11,7 @@
 #ifndef __FMAC_UTIL_H__
 #define __FMAC_UTIL_H__
 
+#ifndef CONFIG_NRF700X_RADIO_TEST
 #include <stdbool.h>
 #include "fmac_structs.h"
 #include "pack_def.h"
@@ -130,4 +131,5 @@ void wifi_nrf_util_rx_convert_amsdu_to_eth(struct wifi_nrf_fmac_dev_ctx *fmac_de
 
 bool wifi_nrf_util_is_arr_zero(unsigned char *arr,
 			       unsigned int arr_sz);
+#endif /* !CONFIG_NRF700X_RADIO_TEST */
 #endif /* __FMAC_UTIL_H__ */
