@@ -1,0 +1,9 @@
+# Mkdocs Material will automatically install a relevant mkdocs
+mkdocs-material
+
+# The "awesome pages" plugin provides more dynamic menu organization
+mkdocs-awesome-pages-plugin
+
+# Jinja2 seems to have broken something with 3.1+, so make sure we peg at
+# something older
+Jinja2==3.0.3

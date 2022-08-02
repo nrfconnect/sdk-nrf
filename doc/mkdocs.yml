@@ -1,0 +1,7 @@
+site_name: Erik's Documentation
+
+docs_dir: docs/
+site_dir: site/
+
+theme:
+    name: material
