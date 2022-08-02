@@ -1,0 +1,87 @@
+name: CMake
+
+on:
+    push:
+        branches: [ "main" ]
+    pull_request:
+        branches: [ "main" ]
+
+env:
+    ZEPHYR_BASE: ${{github.workspace}}/project/zephyr
+    BOARD: nrf52840dk_nrf52840
+    ZEPHYR_TOOLCHAIN_VARIANT: gnuarmemb
+    GNUARMEMB_TOOLCHAIN_PATH: ${{github.workspace}}/project/nrf/toolchain
+
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        environment:
+            name: github-pages
+            url: ${{steps.deployment.outputs.page_url}}
+
+        steps:
+        -   uses: actions/checkout@v3
+            with:
+                path: 'project/nrf'
+
+        -   uses: actions/setup-python@v4
+            with:
+                python-version: '3.8'
+                cache: 'pip'
+
+        -   name: Setup Environment
+            working-directory: ${{github.workspace}}/project/nrf
+            run: |
+                pip install -r scripts/requirements.txt
+                pip install pyelftools
+                pip install -r doc/requirements.txt
+
+        -   name: Initialize Repo
+            working-directory: ${{github.workspace}}/project
+            run: |
+                west init -l nrf
+                west update --narrow
+
+        -   name: Configure Code
+            working-directory: ${{github.workspace}}/project/nrf
+            run: cmake -B build samples/bluetooth/central_uart
+
+        -   name: Build Code
+            working-directory: ${{github.workspace}}/project/nrf
+            run: cmake --build build
+
+        -   name: Test
+            working-directory: ${{github.workspace}}/project/sdk-nrf
+            run: cmake --build build -t run_tests
+
+        -   name: Build Documentation
+            working-directory: ${{github.workspace}}/project/nrf/doc
+            run: mkdocs build
+
+        -   name: Setup Pages
+            uses: actions/configure-pages@v1
+
+        -   name: Upload Pages
+            uses: actions/upload-pages-artifact@v1
+            with:
+                path: ${{github.workspace}}/project/nrf/doc/site
+
+        -   name: Deploy Pages
+            id: deployment
+            uses: actions/deploy-pages@main
+
+        -   name: Archive Code Build
+            uses: actions/upload-artifact@v3
+            with:
+                name: build-outputs
+                path: |
+                    ${{github.workspace}}/project/nrf/build/zephyr/zephyr.elf
+                    ${{github.workspace}}/project/nrf/build/zephyr/zephyr.bin
+                    ${{github.workspace}}/project/nrf/build/zephyr/zephyr.hex
+                    ${{github.workspace}}/project/nrf/build/zephyr/zephyr.map
