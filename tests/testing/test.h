@@ -3,5 +3,5 @@
 class TestClass
 {
     public:
-        static constexpr int Value = 10;
+        static constexpr int Value = 11;
 };
