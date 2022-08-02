@@ -40,6 +40,9 @@ extern "C" {
 /** RSRQ scale value. */
 #define RSRQ_SCALE_VAL 0.5
 
+/** Modem firmware version string can be up to 40 characters long. */
+#define MODEM_INFO_FWVER_SIZE 41
+
 /** Modem returns RSRP and RSRQ as index values which require
  * a conversion to dBm and dB respectively. See modem AT
  * command reference guide for more information.
@@ -217,6 +220,89 @@ enum at_param_type modem_info_type_get(enum modem_info info);
  *           Otherwise, a (negative) error code is returned.
  */
 int modem_info_params_get(struct modem_param_info *modem_param);
+
+/** @brief Obtain the UUID of the modem firmware build.
+ *
+ * The UUID is represented as a string, for example:
+ * 25c95751-efa4-40d4-8b4a-1dcaab81fac9
+ *
+ * See the documentation for the AT command %XMODEMUUID.
+ *
+ * @param buf Pointer to the target buffer.
+ * @param buf_size Size of target buffer.
+ *
+ * @retval 0 if the operation was successful.
+ * @retval -EINVAL if the provided buf_size was not enough.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int modem_info_get_fw_uuid(char *buf, size_t buf_size);
+
+/** @brief Obtain the short software identification.
+ *
+ * The short software identification is represented as a string, for example:
+ * nrf9160_1.1.2
+ *
+ * See the documentation for the AT command %SHORTSWVER.
+ *
+ * @param buf Pointer to the target buffer.
+ * @param buf_size Size of target buffer.
+ *
+ * @retval 0 if the operation was successful.
+ * @retval -EINVAL if the provided buf_size was not enough.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int modem_info_get_fw_version(char *buf, size_t buf_size);
+
+/** @brief Obtain the modem Software Version Number (SVN).
+ *
+ * The SVN is represented as a string, for example:
+ * 12
+ *
+ * See the documentation for the AT command +CGSN.
+ *
+ * @param buf Pointer to the target buffer.
+ * @param buf_size Size of target buffer.
+ *
+ * @retval 0 if the operation was successful.
+ * @retval -EINVAL if the provided buf_size was not enough.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int modem_info_get_svn(char *buf, size_t buf_size);
+
+/** @brief Obtain the battery voltage.
+ *
+ * Get the battery voltage, in mV, with a 4 mV resolution.
+ *
+ * @param val Pointer to the target variable.
+ *
+ * @retval 0 if the operation was successful.
+ * @retval -EINVAL if the provided buf_size was not enough.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int modem_info_get_batt_voltage(int *val);
+
+/** @brief Obtain the internal temperature.
+ *
+ * Get the internal temperature, in degrees Celsius.
+ *
+ * @param val Pointer to the target variable.
+ *
+ * @retval 0 if the operation was successful.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int modem_info_get_temperature(int *val);
+
+/** @brief Obtain the RSRP.
+ *
+ * Get the reference signal received strength (RSRP), in dBm.
+ *
+ * @param val Pointer to the target variable.
+ *
+ * @retval 0 if the operation was successful.
+ * @retval -ENOENT if there is no valid RSRP.
+ *         Otherwise, a (negative) error code is returned.
+ */
+int modem_info_get_rsrp(int *val);
 
 /** @} */
 
