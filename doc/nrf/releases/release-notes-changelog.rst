@@ -354,6 +354,10 @@ nRF9160 samples
     * CoAP max message size is set to 1280 by default.
     * Number of SenML CBOR records is set to a higher value to cope with data exchange after registration with Coiote server.
 
+  * Updated:
+
+    * The sample now uses TF-M instead of SPM.
+
 * :ref:`memfault_sample` sample:
 
   * Updated the sample to reflect changes in logging to the `Memfault SDK`_.
