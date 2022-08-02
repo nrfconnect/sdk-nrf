@@ -193,11 +193,11 @@ static int ble_adv_start_undirected(const bt_addr_le_t *bond_addr,
 		adv_param.interval_max = CONFIG_CAF_BLE_ADV_SLOW_INT_MAX;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_FILTER_ACCEPT_LIST)) {
+	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST)) {
 		int err = bt_le_filter_accept_list_clear();
 
 		if (err) {
-			LOG_ERR("Cannot clear whitelist (err: %d)", err);
+			LOG_ERR("Cannot clear filter accept list (err: %d)", err);
 			return err;
 		}
 
@@ -208,7 +208,7 @@ static int ble_adv_start_undirected(const bt_addr_le_t *bond_addr,
 		}
 
 		if (err) {
-			LOG_ERR("Cannot add peer to whitelist (err: %d)", err);
+			LOG_ERR("Cannot add peer to filter accept list (err: %d)", err);
 			return err;
 		}
 	}

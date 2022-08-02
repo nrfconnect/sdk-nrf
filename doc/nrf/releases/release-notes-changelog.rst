@@ -554,6 +554,11 @@ Other libraries
 Common Application Framework (CAF)
 ----------------------------------
 
+* :ref:`caf_ble_adv`:
+
+  * Added :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST` Kconfig option.
+    The option is used instead of :kconfig:option:`CONFIG_BT_FILTER_ACCEPT_LIST` option to enable the filter accept list.
+
 * :ref:`caf_ble_state`:
 
   * Running on Bluetooth Peripheral no longer automatically send security request immediately after Bluetooth LE connection is established.
