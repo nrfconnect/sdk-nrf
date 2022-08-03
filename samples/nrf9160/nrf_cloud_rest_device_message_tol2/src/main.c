@@ -28,10 +28,10 @@ K_SEM_DEFINE(lte_connect, 0, 1);
 char rx_buf[REST_RX_BUF_SIZE];
 struct nrf_cloud_rest_context rest_context = { 
 						   .connect_socket = -1,
-					       .timeout_ms = MAX_TIME_OUT,
-					       .rx_buf = rx_buf,
-					       .rx_buf_len = sizeof(rx_buf),
-					       .fragment_size = 0 };
+						   .timeout_ms = MAX_TIME_OUT,
+						   .rx_buf = rx_buf,
+						   .rx_buf_len = sizeof(rx_buf),
+						   .fragment_size = 0};
 
 void lte_handler(const struct lte_lc_evt *const evt)
 {
