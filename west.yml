@@ -92,6 +92,7 @@ manifest:
           - tinycbor
           - tinycrypt
           - tf-m-tests
+          - zcbor
           - zscilib
 
     # NCS repositories.
@@ -165,10 +166,6 @@ manifest:
       submodules: true
       revision: f65066f15d8248e6dcb778efb8739904a4512087
       remote: throwtheswitch
-    - name: zcbor
-      remote: nordicsemi
-      revision: a0d6981f14d4001d6f0d608d1a427f9bc6bb6d02
-      path: modules/lib/zcbor
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
       revision: 36a634536d2cd3c455545f0b97c926275772153c
