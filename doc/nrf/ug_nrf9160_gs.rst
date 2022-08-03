@@ -192,19 +192,24 @@ If you experience any problems during the process, restart the Programmer app by
 
 .. _nrf9160_gs_connecting_dk_to_cloud:
 
-Connecting the DK to nRF Cloud
-******************************
+Connecting the |DK| to nRF Cloud
+*********************************
 
-To test the nRF9160 DK with the :ref:`asset_tracker_v2` application, you need an `nRF Cloud`_ account.
+.. |DK| replace:: nRF9160 DK
+
+.. dk_nrf_cloud_start
+
+To transmit data from your |DK| to nRF Cloud, you need an `nRF Cloud`_ account.
 nRF Cloud is Nordic Semiconductor's platform for connecting your IoT devices to the cloud, viewing and analyzing device message data, prototyping ideas that use Nordic Semiconductor's chips, and more.
 
-nRF Cloud also includes a public REST Application Programming Interface (API) that can be used for building your own IoT solutions.
-If you wish to use the REST API, you need to :ref:`update the nRF Cloud certificate <nrf9160_ug_updating_cloud_certificate>` of your DK.
+.. dk_nrf_cloud_end
 
 .. _creating_cloud_account:
 
 Creating an nRF Cloud account
 =============================
+
+.. nrf_cloud_account_start
 
 To create an nRF Cloud account, complete the following steps:
 
@@ -217,15 +222,20 @@ To create an nRF Cloud account, complete the following steps:
    If you closed the registration dialog box, you can repeat Step 1 and then click :guilabel:`Already have a code?`.
    Then enter your email and the verification code.
 
-You can now log in with your email and the password you chose.
+You can now log in to `nRF Cloud`_ with your email and password.
 After logging in, you are taken to the dashboard view that displays your device count and service usage.
+Next, you need to activate the SIM card you will use in the |DK|.
+
+.. nrf_cloud_account_end
 
 .. _nrf9160_gs_connect_to_cloud:
 
 Connecting to nRF Cloud
 =======================
 
-To transmit data from your nRF9160 DK to nRF Cloud, you must activate your SIM card and add the nRF9160 DK to your nRF Cloud account.
+.. nrf_cloud_connection_start
+
+You must activate your SIM card and add the |DK| to your nRF Cloud account.
 
 .. note::
 
@@ -233,7 +243,7 @@ To transmit data from your nRF9160 DK to nRF Cloud, you must activate your SIM c
 
    If you are using a SIM card from another provider, make sure you activate it through your network operator, then click :guilabel:`Skip this step` in Step 4 instead of filling in the information.
 
-Complete the following steps:
+To activate the iBasis Subscriber Identity Module (SIM) card that comes shipped with the |DK| and add the |DK| to nRF Cloud, complete the following steps:
 
 1. Log in to the `nRF Cloud`_ portal.
 #. Click the :guilabel:`+` icon in the top left corner.
@@ -261,7 +271,10 @@ Complete the following steps:
 #. Complete the following steps in the Activate SIM Card window to Activate your iBasis SIM card:
 
    a. Enter the 18-digit :term:`Integrated Circuit Card Identifier (ICCID)` or the 19-digit :term:`eUICC Identifier (EID)` in the :guilabel:`SIM ICCID/EID` text box.
-      The ICCID and the EID are printed on the SIM card.
+
+      .. note::
+         The SIM cards can have either the EID or the ICCID printed on it.
+
    #. Enter the :term:`Personal Unblocking Key (PUK)` in the :guilabel:`PUK` text box.
       The PUK is printed on the SIM card.
       Reveal the PUK by scratching off the area on the back of the SIM card.
@@ -271,7 +284,9 @@ Complete the following steps:
    After the SIM card is activated, you are redirected to the Add LTE Device window.
    Leave the browser window open and continue with the next step before you enter the information on this window.
 
-#. Punch out the nano-SIM from the SIM card and plug it into the SIM card holder on the nRF9160 DK.
+.. nrf_cloud_connection_end
+
+5. Punch out the nano-SIM from the SIM card and plug it into the SIM card holder on the nRF9160 DK.
 #. **Optional:** If you want to test the optional GPS functionality and you have an external GPS antenna for your nRF9160 DK, attach it to connector **J2** to the left of the LTE antenna.
    See `nRF9160 DK GPS`_ for more information.
 #. Connect the nRF9160 DK to the computer with a USB cable and turn it on, or reset the device if it is already turned on.
@@ -287,9 +302,9 @@ Complete the following steps:
 
       nRF Cloud - Add LTE Device window
 
-   * **Device ID:** the device ID is composed of *nrf-* and the 15-digit :term:`International Mobile (Station) Equipment Identity (IMEI)` number that is printed on the label of your nRF9160 DK.
+   * **Device ID:** The device ID is composed of *nrf-* and the 15-digit :term:`International Mobile (Station) Equipment Identity (IMEI)` number that is printed on the label of your nRF9160 DK.
      For example, *nrf-123456789012345*.
-   * **Ownership code:** the ownership code is the PIN or the hardware ID of your DK, and it is found on the label of your nRF9160 DK.
+   * **Ownership code:** The ownership code is the PIN or the hardware ID of your DK, and it is found on the label of your nRF9160 DK.
 
      If the label contains a PIN in addition to the IMEI number, enter this pin.
      If it does not contain a PIN, enter the Hardware ID (HWID) HEX code, with or without colons.

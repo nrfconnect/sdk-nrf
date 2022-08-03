@@ -361,7 +361,7 @@ Update the modem firmware on the nRF9160 SiP
          When the update is complete, a "Completed successfully" message appears.
 
          .. note::
-            If you have issues updating modem firmware, click :guilabel:`Erase all` before trying to update the modem again. In this case, the contents of the flash memory are deleted and the applications must be reprogrammed.
+            Before trying to update the modem again, click the :guilabel:`Erase all` button. In this case, the contents of the flash memory are deleted and the applications must be reprogrammed.
 
 ..
 
@@ -480,78 +480,32 @@ You can now disconnect the Thingy:91 from the computer.
 
 Next, you need to create a cloud account if you do not have one already.
 
+Connecting the |DK| to nRF Cloud
+*********************************
+
+.. |DK| replace:: Thingy:91
+
+.. include:: /ug_nrf9160_gs.rst
+   :start-after: dk_nrf_cloud_start
+   :end-before: dk_nrf_cloud_end
+
 Creating an nRF Cloud account
-*****************************
+=============================
 
-You must sign up with `nRF Cloud`_ before you can start using the service.
-
-To create an nRF Cloud account, complete the following steps:
-
-1. Open the `nRF Cloud`_ landing page and click :guilabel:`Register`.
-#. Enter your email address and choose a password, then click :guilabel:`Create Account`.
-   nRF Cloud will send you a verification email.
-#. Copy the 6-digit verification code and paste it into the registration dialog box.
-   If you do not see the verification email, check your junk mail for an email from no-reply@verificationemail.com.
-
-   If you closed the registration dialog box, you can repeat Step 1 and then click :guilabel:`Already have a code?`.
-   Then enter your email and the verification code.
-
-You can now log in to `nRF Cloud`_ with your email and the password your chose.
-After logging in, you are directed to the dashboard view that displays your device count and service usage.
-Next, you need to activate the SIM card for the Thingy:91.
+.. include:: /ug_nrf9160_gs.rst
+   :start-after: nrf_cloud_account_start
+   :end-before: nrf_cloud_account_end
 
 .. _connect_nRF_cloud:
 
 Connecting to nRF Cloud
-***********************
+=======================
 
-To transmit data from your Thingy:91 to nRF Cloud, you must activate your SIM card and add the Thingy:91 to your nRF Cloud account.
+.. include:: /ug_nrf9160_gs.rst
+   :start-after: nrf_cloud_connection_start
+   :end-before: nrf_cloud_connection_end
 
-.. note::
-
-   If you activated your iBasis SIM card before, click :guilabel:`Skip this step` in Step 4 instead of filling in the information.
-
-   If you are using a SIM card from another provider, make sure you activate it through your network operator, then click :guilabel:`Skip this step` in Step 4 instead of filling in the information.
-
-To activate the iBasis Subscriber Identity Module (SIM) card that comes shipped with the Thingy:91 and add the Thingy:91 to nRF Cloud, complete the following steps:
-
-#. Log in to the nRF Cloud portal.
-#. Click the large plus sign in the upper-left corner.
-
-   .. figure:: /images/nrfcloud_plus_sign_callout.png
-      :alt: nRF Cloud
-
-      nRF Cloud
-
-   The Add New window appears.
-
-   .. figure:: /images/nrfcloud_add_lte_device1.png
-      :alt: nRF Cloud - Add new device
-
-      nRF Cloud - Add new device
-
-#. In the Add New window, click :guilabel:`LTE Device`.
-   The Activate SIM Card window appears.
-
-   .. figure:: /images/nrfcloud_activating_sim.png
-      :alt: nRF Cloud - Activate SIM Card window
-
-      nRF Cloud - Activate SIM Card window
-
-#. Complete the following steps in the Activate SIM Card window to Activate your iBasis SIM card:
-
-   a. Enter the 18-digit :term:`Integrated Circuit Card Identifier (ICCID)` or the 19-digit :term:`eUICC Identifier (EID)` in the :guilabel:`SIM ICCID/EID` text box.
-      The ICCID and the EID are printed on the SIM card.
-   #. Enter the :term:`Personal Unblocking Key (PUK)` in the :guilabel:`PUK` text box.
-      The PUK is printed on the SIM card.
-      Reveal the PUK by scratching off the area on the back of the SIM card.
-   #. Accept the Terms and the Privacy Policy.
-   #. Click the :guilabel:`Activate SIM` button.
-
-   After the SIM card is activated, you are redirected to the Add LTE Device window.
-   Leave the browser window open and continue with the next step before you enter the information on this window.
-
-#. Punch out the nano-SIM from the SIM card and plug it into the SIM card holder on the Thingy:91.
+5. Punch out the nano-SIM from the SIM card and plug it into the SIM card holder on the Thingy:91.
 
    .. figure:: /images/thingy91_insert_sim.svg
       :alt: Inserting SIM
@@ -566,14 +520,18 @@ To activate the iBasis Subscriber Identity Module (SIM) card that comes shipped 
 
 #. In the Add LTE Device window from Step 4, enter your device ID and ownership code.
 
-   * **Ownership code**: The ownership code is the PIN or the hardware ID of your Thingy:91, and it is found on the label of your Thingy:91.
+   .. figure:: /images/nrfcloud_add_lte_device.png
+      :alt: nRF Cloud - Add LTE Device window
+
+      nRF Cloud - Add LTE Device window
+
    * **Device ID**: The device ID is composed of *nrf-* and the 15-digit :term:`International Mobile (Station) Equipment Identity (IMEI)` number that is printed on the label of your Thingy:91. It is case sensitive, so make sure all the letters are lower-case.
+   * **Ownership code**: The ownership code is the PIN or the hardware ID of your Thingy:91, and it is found on the label of your Thingy:91.
 
    .. figure:: /images/thingy91_pin_imei.svg
       :alt: PIN and IMEI on Thingy:91
 
       PIN and IMEI on Thingy:91
-
 
    If the label contains a PIN in addition to the IMEI number, enter this pin.
    If it does not contain a PIN, enter the Hardware ID (HWID) HEX code, with or without colons.
@@ -581,7 +539,7 @@ To activate the iBasis Subscriber Identity Module (SIM) card that comes shipped 
 
    .. note::
 
-      The ownership code serves as a password and proves that you own the specific nRF9160 DK.
+      The ownership code serves as a password and proves that you own the specific Thingy:91.
       Therefore, do not share it with anyone.
 
 
