@@ -313,7 +313,11 @@ static void button_evt_handler(struct button_evt event)
 				test_tone_hz = test_tone_hz * 2;
 			}
 
-			LOG_INF("Test tone set at %d Hz", test_tone_hz);
+			if (test_tone_hz != 0) {
+				LOG_INF("Test tone set at %d Hz", test_tone_hz);
+			} else {
+				LOG_INF("Test tone off");
+			}
 
 			ret = audio_encode_test_tone_set(test_tone_hz);
 			ERR_CHK_MSG(ret, "Failed to generate test tone");
