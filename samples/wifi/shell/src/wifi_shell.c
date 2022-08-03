@@ -234,6 +234,14 @@ static int cmd_supplicant(const struct shell *shell,
 			  size_t argc,
 			  const char *argv[])
 {
+	if (!wpa_s_0) {
+		shell_fprintf(shell,
+			SHELL_ERROR,
+			"%s: wpa_supplicant is not initialized, dropping connect\n",
+			__func__);
+		return -1;
+	}
+
 	return cli_main(argc,
 			argv);
 }
