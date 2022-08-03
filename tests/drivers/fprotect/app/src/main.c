@@ -29,7 +29,7 @@ static void test_writing_to_app_image(void)
 	const struct device *flash_dev;
 	static uint8_t val[] = {0xba, 0x53, 0xba, 0x11};
 
-	flash_dev = device_get_binding(PM_APP_DEV_NAME);
+	flash_dev = DEVICE_DT_GET(DT_NODELABEL(PM_APP_DEV));
 	zassert_not_null(flash_dev, "Could not load flash driver");
 
 	printf("Perform a legal flash write to show that it is supported\n");
