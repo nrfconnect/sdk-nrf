@@ -8,6 +8,7 @@
 #define _SW_CODEC_SELECT_H_
 
 #include <zephyr/kernel.h>
+#include "channel_assignment.h"
 
 #if (CONFIG_SW_CODEC_LC3)
 #define LC3_MAX_FRAME_SIZE_MS 10
@@ -42,23 +43,17 @@ enum sw_codec_select_ch {
 	SW_CODEC_STEREO, /* Use both channels */
 };
 
-enum audio_channel_select {
-	AUDIO_CH_L,
-	AUDIO_CH_R,
-	AUDIO_CH_NUM,
-};
-
 struct sw_codec_encoder {
 	bool enabled;
 	int bitrate;
 	enum sw_codec_select_ch channel_mode;
-	enum audio_channel_select audio_ch; /* Only used if channel mode is mono */
+	enum audio_channel audio_ch; /* Only used if channel mode is mono */
 };
 
 struct sw_codec_decoder {
 	bool enabled;
 	enum sw_codec_select_ch channel_mode;
-	enum audio_channel_select audio_ch; /* Only used if channel mode is mono */
+	enum audio_channel audio_ch; /* Only used if channel mode is mono */
 };
 
 /** @brief  Sw_codec configuration structure

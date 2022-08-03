@@ -361,7 +361,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 			/* Channel is not assigned yet: use default */
 			channel = AUDIO_CHANNEL_DEFAULT;
 		}
-		if (channel == AUDIO_CHANNEL_LEFT) {
+		if (channel == AUDIO_CH_L) {
 			ret = bt_audio_capability_set_location(BT_AUDIO_DIR_SINK,
 							       BT_AUDIO_LOCATION_SIDE_LEFT);
 		} else {

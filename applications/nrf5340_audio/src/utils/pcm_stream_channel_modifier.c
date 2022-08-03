@@ -9,6 +9,8 @@
 #include <zephyr/kernel.h>
 #include <errno.h>
 
+#include "channel_assignment.h"
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(pscm);
 
@@ -49,7 +51,7 @@ static bool is_valid_size(size_t size, uint8_t bytes_per_sample, uint8_t no_chan
 	return true;
 }
 
-int pscm_zero_pad(void const *const input, size_t input_size, enum audio_channel_select channel,
+int pscm_zero_pad(void const *const input, size_t input_size, enum audio_channel channel,
 		  uint8_t pcm_bit_depth, void *output, size_t *output_size)
 {
 	uint8_t bytes_per_sample = pcm_bit_depth / 8;
@@ -143,7 +145,7 @@ int pscm_combine(void const *const input_left, void const *const input_right, si
 }
 
 int pscm_one_channel_split(void const *const input, size_t input_size,
-			   enum audio_channel_select channel, uint8_t pcm_bit_depth, void *output,
+			   enum audio_channel channel, uint8_t pcm_bit_depth, void *output,
 			   size_t *output_size)
 {
 	uint8_t bytes_per_sample = pcm_bit_depth / 8;

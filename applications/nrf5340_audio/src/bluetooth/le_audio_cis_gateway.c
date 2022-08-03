@@ -117,9 +117,9 @@ static void unicast_client_location_cb(struct bt_conn *conn, enum bt_audio_dir d
 	int ret;
 
 	if (loc == BT_AUDIO_LOCATION_SIDE_LEFT) {
-		headset_conn[AUDIO_CHANNEL_LEFT] = conn;
+		headset_conn[AUDIO_CH_L] = conn;
 	} else if (loc == BT_AUDIO_LOCATION_SIDE_RIGHT) {
-		headset_conn[AUDIO_CHANNEL_RIGHT] = conn;
+		headset_conn[AUDIO_CH_R] = conn;
 	} else {
 		LOG_ERR("Channel location not supported");
 		ret = bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
@@ -266,8 +266,8 @@ static void stream_stopped_cb(struct bt_audio_stream *stream)
 		atomic_clear(&iso_tx_pool_alloc[channel_index]);
 	}
 
-	if (audio_streams[AUDIO_CHANNEL_LEFT].ep->status.state != BT_AUDIO_EP_STATE_STREAMING &&
-	    audio_streams[AUDIO_CHANNEL_RIGHT].ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
+	if (audio_streams[AUDIO_CH_L].ep->status.state != BT_AUDIO_EP_STATE_STREAMING &&
+	    audio_streams[AUDIO_CH_R].ep->status.state != BT_AUDIO_EP_STATE_STREAMING) {
 		ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 		ERR_CHK(ret);
 	}
@@ -748,11 +748,11 @@ int le_audio_send(uint8_t const *const data, size_t size)
 		return -ECANCELED;
 	}
 
-	if (audio_streams[AUDIO_CHANNEL_LEFT].ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
-		ret = bt_iso_chan_get_tx_sync(audio_streams[AUDIO_CHANNEL_LEFT].iso, &tx_info);
-	} else if (audio_streams[AUDIO_CHANNEL_RIGHT].ep->status.state ==
+	if (audio_streams[AUDIO_CH_L].ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
+		ret = bt_iso_chan_get_tx_sync(audio_streams[AUDIO_CH_L].iso, &tx_info);
+	} else if (audio_streams[AUDIO_CH_R].ep->status.state ==
 		   BT_AUDIO_EP_STATE_STREAMING) {
-		ret = bt_iso_chan_get_tx_sync(audio_streams[AUDIO_CHANNEL_RIGHT].iso, &tx_info);
+		ret = bt_iso_chan_get_tx_sync(audio_streams[AUDIO_CH_R].iso, &tx_info);
 	} else {
 		LOG_DBG("No headset in stream state");
 		return -ECANCELED;
@@ -768,12 +768,12 @@ int le_audio_send(uint8_t const *const data, size_t size)
 		audio_datapath_just_in_time_check_and_adjust(tx_info.ts);
 	}
 
-	ret = iso_stream_send(data, sdu_size, AUDIO_CHANNEL_LEFT);
+	ret = iso_stream_send(data, sdu_size, AUDIO_CH_L);
 	if (ret) {
 		LOG_DBG("Failed to send data to left channel");
 	}
 
-	ret = iso_stream_send(&data[sdu_size], sdu_size, AUDIO_CHANNEL_RIGHT);
+	ret = iso_stream_send(&data[sdu_size], sdu_size, AUDIO_CH_R);
 	if (ret) {
 		LOG_DBG("Failed to send data to right channel");
 	}

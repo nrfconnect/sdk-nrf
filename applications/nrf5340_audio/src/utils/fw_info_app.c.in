@@ -55,14 +55,14 @@ int fw_info_app_print(void)
 			}
 			LOG_INF(COLOR_CYAN"\r\n\t HEADSET <no ch selected> defaulting to " STRINGIFY(AUDIO_CHANNEL_DEFAULT)" "COLOR_RESET);
 		}
-		if (channel == AUDIO_CHANNEL_LEFT) {
+		if (channel == AUDIO_CH_L) {
 			static const char log_tag[] = "HL";
 			ret = log_set_tag(log_tag);
 			if (ret) {
 				return ret;
 			}
 			LOG_INF(COLOR_CYAN"\r\n\t HEADSET left device"COLOR_RESET);
-		} else if (channel == AUDIO_CHANNEL_RIGHT) {
+		} else if (channel == AUDIO_CH_R) {
 			static const char log_tag[] = "HR";
 			ret = log_set_tag(log_tag);
 			if (ret) {
