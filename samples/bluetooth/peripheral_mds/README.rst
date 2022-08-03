@@ -42,6 +42,23 @@ It defines the following metrics:
 These metrics are defined in the :file:`samples/bluetooth/peripheral_mds/memfault_config/memfault_metrics_heartbeat_config.def` file.
 For more details about the metrics, see `Memfault: Collecting Device Metrics`_.
 
+There are also metrics that are specific to |NCS|.
+The :ref:`mod_memfault` adds these system proprietary metrics.
+The following metrics are enabled by default in this sample:
+
+   * Bluetooth metrics, enabled and disabled using the :kconfig:option:`CONFIG_MEMFAULT_NCS_BT_METRICS` option.
+
+      * ``Ncs_BtConnectionCount`` - Number of Bluetooth connections.
+      * ``Ncs_BtConnectionTime`` - Bluetooth connection time.
+         Amount of time with at least one live Bluetooth connection.
+      * ``Ncs_BtBondCount`` - Number of Bluetooth bonds.
+
+   * Stack usage metrics shows the free stack space in bytes.
+     Configurable by the :kconfig:option:`CONFIG_MEMFAULT_NCS_STACK_METRICS` option.
+
+      * ``NcsBtRxUnusedStack`` - HCI Rx thread stack.
+      * ``NcsBtTxUnusedStack`` - HCI Tx thread stack.
+
 Error tracking with trace events
 ================================
 
