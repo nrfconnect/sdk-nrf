@@ -93,7 +93,7 @@ static void start_wpa_supplicant(void)
 	struct wpa_global *global;
 
 	os_memset(&params, 0, sizeof(params));
-	params.wpa_debug_level = str_to_debug_level(CONFIG_WPA_SUPP_DEBUG_LEVEL);
+	params.wpa_debug_level = CONFIG_WPA_SUPP_DEBUG_LEVEL;
 
 	wpa_printf(MSG_INFO, "%s: %d Starting wpa_supplicant thread with debug level: %d\n",
 		  __func__, __LINE__, params.wpa_debug_level);

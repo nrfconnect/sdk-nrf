@@ -20,7 +20,7 @@ zephyr_compile_definitions(
 )
 
 zephyr_include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}/
+	${CMAKE_CURRENT_SOURCE_DIR}/src
 	${HOSTAP_BASE}/
 	${WPA_SUPPLICANT_BASE}/
 	${COMMON_SRC_BASE}/
@@ -40,6 +40,7 @@ zephyr_library_compile_definitions(
 	)
 
 zephyr_library_include_directories(
+	${CMAKE_CURRENT_SOURCE_DIR}/src
 	${HOSTAP_BASE}/
 	${COMMON_SRC_BASE}/utils
 	${COMMON_SRC_BASE}/drivers
@@ -61,7 +62,6 @@ zephyr_library_sources(
 	${COMMON_SRC_BASE}/drivers/driver_zephyr.c
 	${COMMON_SRC_BASE}/utils/base64.c
 	${COMMON_SRC_BASE}/utils/common.c
-	${COMMON_SRC_BASE}/utils/wpa_debug.c
 	${COMMON_SRC_BASE}/utils/wpabuf.c
 	${COMMON_SRC_BASE}/utils/bitfield.c
 	${COMMON_SRC_BASE}/utils/eloop.c
@@ -88,6 +88,7 @@ zephyr_library_sources(
 	${WPA_SUPPLICANT_BASE}/wpa_cli.c
 	# Zephyr main
 	src/supp_main.c
+	src/utils/wpa_debug.c
 )
 zephyr_library_sources_ifdef(CONFIG_WPA_SUPP_AP
 	${WPA_SUPPLICANT_BASE}/ap.c
