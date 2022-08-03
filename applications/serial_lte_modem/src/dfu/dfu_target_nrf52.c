@@ -17,6 +17,7 @@
 #include <string.h>
 
 #include <zephyr/kernel.h>
+#include <zephyr/devicetree.h>
 #include <pm_config.h>
 #include <zephyr/logging/log.h>
 #include <nrfx.h>
@@ -71,12 +72,7 @@ int dfu_target_nrf52_init(size_t file_size, dfu_target_callback_t cb)
 		return -EFBIG;
 	}
 
-	flash_dev = device_get_binding(PM_MCUBOOT_SECONDARY_DEV_NAME);
-	if (flash_dev == NULL) {
-		LOG_ERR("Failed to get device '%s'",
-			PM_MCUBOOT_SECONDARY_DEV_NAME);
-		return -EFAULT;
-	}
+	flash_dev = DEVICE_GET_DT(DT_NODELABEL(PM_MCUBOOT_SECONDARY_DEV));
 
 	err = dfu_target_stream_init(&(struct dfu_target_stream_init){
 		.id = "NRF52",
