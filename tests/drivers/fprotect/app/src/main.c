@@ -29,8 +29,8 @@ static void test_writing_to_app_image(void)
 	const struct device *flash_dev;
 	static uint8_t val[] = {0xba, 0x53, 0xba, 0x11};
 
-	flash_dev = device_get_binding(PM_APP_DEV_NAME);
-	zassert_not_null(flash_dev, "Could not load flash driver");
+	flash_dev = DEVICE_DT_GET(DT_NODELABEL(PM_APP_DEV));
+	zassert_true(device_is_ready(flash_dev), "Flash device not ready");
 
 	printf("Perform a legal flash write to show that it is supported\n");
 	err = flash_write(flash_dev, STORAGE_LAST_WORD, val, sizeof(val));
