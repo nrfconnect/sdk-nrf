@@ -530,6 +530,11 @@ static void send_location(struct nrf_modem_gnss_nmea_data_frame * const nmea_dat
 		return;
 	}
 
+	msg_obj = cJSON_CreateObject();
+	if (!msg_obj) {
+		return;
+	}
+
 	err = nrf_cloud_gnss_msg_json_encode(&gnss, msg_obj);
 	if (err) {
 		goto clean_up;
