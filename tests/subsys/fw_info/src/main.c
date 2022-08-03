@@ -10,6 +10,7 @@
 #include <pm_config.h>
 #include <zephyr/drivers/flash.h>
 #include <zephyr/sys/reboot.h>
+#include <zephyr/devicetree.h>
 
 #define S1_ADDRESS PM_S1_ADDRESS
 #define S1_SIZE 0x8000
@@ -33,7 +34,7 @@ void test_fw_info_invalidate(void)
 	const uint32_t zero = 0;
 	int ret;
 
-	const struct device *flash_dev = device_get_binding(PM_S0_DEV_NAME);
+	const struct device *flash_dev = DEVICE_DT_GET(DT_NODELABEL(PM_S0_DEV));
 
 	/* Write a dummy upgrade to S1 */
 	if (!fw_info_check(S1_ADDRESS)) {
