@@ -564,6 +564,7 @@ Libraries for networking
 
     * Updated timeout handling. Now using http_client library timeout also.
     * Removed CONFIG_REST_CLIENT_SCKT_SEND_TIMEOUT and CONFIG_REST_CLIENT_SCKT_RECV_TIMEOUT.
+    * Updated to handle a zero timeout value as "no timeout" (wait forever) to avoid immediate timeouts.
 
   * :ref:`lib_nrf_cloud_rest` library:
 

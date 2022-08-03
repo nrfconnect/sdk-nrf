@@ -57,7 +57,7 @@ static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
 static char rx_buf[REST_RX_BUF_SZ];
 
 /* nRF Cloud REST context */
-struct nrf_cloud_rest_context rest_ctx = {
+static struct nrf_cloud_rest_context rest_ctx = {
 	.connect_socket = -1,
 	.rx_buf = rx_buf,
 	.rx_buf_len = sizeof(rx_buf),

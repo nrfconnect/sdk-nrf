@@ -91,7 +91,7 @@ static char rx_buf[REST_RX_BUF_SZ];
 static char jwt[JWT_BUF_SZ];
 
 /* nRF Cloud REST context */
-struct nrf_cloud_rest_context rest_ctx = {
+static struct nrf_cloud_rest_context rest_ctx = {
 	.connect_socket = -1,
 	.keep_alive = true,
 	.rx_buf = rx_buf,
