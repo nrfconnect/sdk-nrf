@@ -30,10 +30,14 @@ int wifi_nrf_disp_scan_zep(const struct device *dev,
 	int ret = -1;
 
 	vif_ctx_zep = dev->data;
-	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-
 	if (!vif_ctx_zep) {
 		LOG_ERR("%s: vif_ctx_zep is NULL\n", __func__);
+		goto out;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL\n", __func__);
 		goto out;
 	}
 
