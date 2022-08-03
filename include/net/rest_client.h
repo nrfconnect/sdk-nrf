@@ -86,6 +86,7 @@ struct rest_client_req_context {
 	/** User-defined timeout value for REST request. The timeout is set individually
 	 *  for socket connection creation and data transfer meaning REST request can take
 	 *  longer than this given timeout. To disable, set the timeout duration to SYS_FOREVER_MS.
+	 *  A value of zero will result in an immediate timeout.
 	 *  Default: CONFIG_REST_CLIENT_REST_REQUEST_TIMEOUT.
 	 */
 	int32_t timeout_ms;
