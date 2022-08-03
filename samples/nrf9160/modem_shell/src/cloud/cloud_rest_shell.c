@@ -90,10 +90,11 @@ static int cmd_cloud_rest_shadow_device_status_update(const struct shell *shell,
 #define REST_RX_BUF_SZ 300 /* No payload in response, "just" headers */
 	static char rx_buf[REST_RX_BUF_SZ];
 	struct nrf_cloud_rest_context rest_ctx = { .connect_socket = -1,
-							  .keep_alive = false,
-							  .rx_buf = rx_buf,
-							  .rx_buf_len = sizeof(rx_buf),
-							  .fragment_size = 0 };
+						   .keep_alive = false,
+						   .rx_buf = rx_buf,
+						   .rx_buf_len = sizeof(rx_buf),
+						   .timeout_ms = NRF_CLOUD_REST_TIMEOUT_NONE,
+						   .fragment_size = 0 };
 
 	err = nrf_cloud_client_id_get(device_id, sizeof(device_id));
 	if (err) {

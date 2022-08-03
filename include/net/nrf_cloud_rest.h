@@ -67,7 +67,9 @@ struct nrf_cloud_rest_context {
 	/** Timeout value, in milliseconds, for REST request. The timeout is set individually
 	 * for socket connection creation and data transfer meaning REST request can take
 	 * longer than this given timeout.
-	 * For no timeout, set to NRF_CLOUD_REST_TIMEOUT_NONE.
+	 * For no timeout (wait forever) set to less than or equal to zero,
+	 * or NRF_CLOUD_REST_TIMEOUT_NONE.
+	 * Using a timeout value that is too short can result in failed REST requests.
 	 */
 	int32_t timeout_ms;
 	/** Authentication string: JWT @ref modem_jwt.
