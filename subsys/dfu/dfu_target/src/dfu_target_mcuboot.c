@@ -23,6 +23,7 @@
 #include <zephyr/dfu/mcuboot.h>
 #include <dfu/dfu_target.h>
 #include <dfu/dfu_target_stream.h>
+#include <zephyr/devicetree.h>
 
 LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 
@@ -33,6 +34,8 @@ LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 
 #define _MB_SEC_PAT(i, x) PM_MCUBOOT_SECONDARY_ ## i ## _ ## x
 
+#define _MB_SEC_PAT_DEV(i, x) \
+	DEVICE_DT_GET(DT_NODELABEL(PM_MCUBOOT_SECONDARY_ ## i ## _ ## x))
 
 #define _H_MB_SEC_LA(i) (PM_MCUBOOT_SECONDARY_## i ##_ADDRESS + \
 			 PM_MCUBOOT_SECONDARY_## i ##_SIZE - 1)
@@ -52,7 +55,8 @@ LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
  */
 #define PM_MCUBOOT_SECONDARY_0_SIZE     PM_MCUBOOT_SECONDARY_SIZE
 #define PM_MCUBOOT_SECONDARY_0_ADDRESS  PM_MCUBOOT_SECONDARY_ADDRESS
-#define PM_MCUBOOT_SECONDARY_0_DEV_NAME PM_MCUBOOT_SECONDARY_DEV_NAME
+#define PM_MCUBOOT_SECONDARY_0_DEV_NAME STRINGIFY(PM_MCUBOOT_SECONDARY_DEV_NAME)
+#define PM_MCUBOOT_SECONDARY_0_DEV	PM_MCUBOOT_SECONDARY_DEV
 
 static const size_t secondary_size[] = {
 	LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT, (,), SIZE)
@@ -60,6 +64,10 @@ static const size_t secondary_size[] = {
 
 static const off_t secondary_address[] = {
 	LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT, (,), ADDRESS)
+};
+
+static const struct device *const secondary_dev[] = {
+	LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT_DEV, (,), DEV)
 };
 
 static const char *const secondary_dev_name[] = {
@@ -157,7 +165,7 @@ int dfu_target_mcuboot_init(size_t file_size, int img_num, dfu_target_callback_t
 		return -EFBIG;
 	}
 
-	flash_dev = device_get_binding(secondary_dev_name[img_num]);
+	flash_dev = secondary_dev[img_num];
 	if (flash_dev == NULL) {
 		LOG_ERR("Failed to get device '%s'",
 			secondary_dev_name[img_num]);
