@@ -450,11 +450,13 @@ void main(void)
 		return;
 	}
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT)
 	ret = lwm2m_init_image();
 	if (ret < 0) {
 		LOG_ERR("Failed to setup image properties (%d)", ret);
 		return;
 	}
+#endif
 
 	reconnection_counter = 0;
 	modem_connect();
