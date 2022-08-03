@@ -9,6 +9,7 @@
 #include <zephyr/kernel.h>
 #include <errno.h>
 
+#include "channel_assignment.h"
 #include "pcm_stream_channel_modifier.h"
 #if (CONFIG_SW_CODEC_LC3)
 #include "sw_codec_lc3.h"

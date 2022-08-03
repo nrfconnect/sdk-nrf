@@ -17,7 +17,7 @@ int channel_assignment_get(enum audio_channel *channel)
 
 	channel_value = uicr_channel_get();
 
-	if (channel_value >= AUDIO_CHANNEL_COUNT) {
+	if (channel_value >= AUDIO_CH_NUM) {
 		return -EIO;
 	}
 

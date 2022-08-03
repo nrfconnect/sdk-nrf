@@ -15,15 +15,14 @@
  */
 
 #ifndef AUDIO_CHANNEL_DEFAULT
-#define AUDIO_CHANNEL_DEFAULT AUDIO_CHANNEL_LEFT
+#define AUDIO_CHANNEL_DEFAULT AUDIO_CH_L
 #endif /* AUDIO_CHANNEL_DEFAULT */
 
 /**@brief Audio channel assignment values */
 enum audio_channel {
-	AUDIO_CHANNEL_LEFT = 0,
-	AUDIO_CHANNEL_RIGHT,
-
-	AUDIO_CHANNEL_COUNT
+	AUDIO_CH_L,
+	AUDIO_CH_R,
+	AUDIO_CH_NUM,
 };
 
 /**

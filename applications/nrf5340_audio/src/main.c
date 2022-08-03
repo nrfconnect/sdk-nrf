@@ -76,7 +76,7 @@ static int leds_set(void)
 		channel = AUDIO_CHANNEL_DEFAULT;
 	}
 
-	if (channel == AUDIO_CHANNEL_LEFT) {
+	if (channel == AUDIO_CH_L) {
 		ret = led_on(LED_APP_RGB, LED_COLOR_BLUE);
 	} else {
 		ret = led_on(LED_APP_RGB, LED_COLOR_MAGENTA);
@@ -117,7 +117,7 @@ static int bonding_clear_check(void)
 static int channel_assign_check(void)
 {
 #if (CONFIG_AUDIO_DEV == HEADSET) && CONFIG_AUDIO_HEADSET_CHANNEL_RUNTIME
-	if (!channel_assignment_get(&(enum audio_channel){ AUDIO_CHANNEL_LEFT })) {
+	if (!channel_assignment_get(&(enum audio_channel){ AUDIO_CH_L })) {
 		/* Channel already assigned */
 		return 0;
 	}
@@ -131,7 +131,7 @@ static int channel_assign_check(void)
 	}
 
 	if (pressed) {
-		return channel_assignment_set(AUDIO_CHANNEL_LEFT);
+		return channel_assignment_set(AUDIO_CH_L);
 	}
 
 	ret = button_pressed(BUTTON_VOLUME_UP, &pressed);
@@ -140,7 +140,7 @@ static int channel_assign_check(void)
 	}
 
 	if (pressed) {
-		return channel_assignment_set(AUDIO_CHANNEL_RIGHT);
+		return channel_assignment_set(AUDIO_CH_R);
 	}
 #endif
 
