@@ -382,6 +382,9 @@ Zigbee samples
   * Added support for :ref:`zephyr:nrf52840dongle_nrf52840`.
   * Added an option to build :ref:`zigbee_shell_sample` sample with the nRF USB CDC ACM as shell backend.
 
+* :ref:`zigbee_ncp_sample` sample:
+
+  * Set :kconfig:option:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` to be disabled by default for NCP over USB variant.
 
 Other samples
 -------------
