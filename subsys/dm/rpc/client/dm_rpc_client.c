@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
-#include <sys/printk.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/sys/printk.h>
 #include <nrf_rpc_cbor.h>
 #include <nrf_dm.h>
-#include <ipc/ipc_service.h>
-#include <logging/log.h>
+#include <zephyr/ipc/ipc_service.h>
+#include <zephyr/logging/log.h>
 
 #include <dm.h>
 

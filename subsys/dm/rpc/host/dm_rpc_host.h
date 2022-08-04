@@ -7,7 +7,7 @@
 #ifndef DM_RPC_HOST_H_
 #define DM_RPC_HOST_H_
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdlib.h>
 #include <zephyr/types.h>
 
