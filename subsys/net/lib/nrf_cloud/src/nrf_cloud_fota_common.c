@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #include <stdbool.h>
 #include <nrf_modem.h>
 #include <modem/nrf_modem_lib.h>
