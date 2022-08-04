@@ -162,6 +162,14 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.security_changed = security_changed,
 };
 
+static void pairing_complete(struct bt_conn *conn, bool bonded)
+{
+	if (bonded && (fp_adv_mode == BT_FAST_PAIR_ADV_MODE_DISCOVERABLE)) {
+		fp_adv_mode = BT_FAST_PAIR_ADV_MODE_NOT_DISCOVERABLE_SHOW_UI_IND;
+		k_work_reschedule(&fp_adv_mode_status_led_handle, K_NO_WAIT);
+	}
+}
+
 static const char *volume_change_to_str(enum hids_helper_volume_change volume_change)
 {
 	const char *res = NULL;
@@ -254,8 +262,17 @@ void main(void)
 {
 	bool run_led_on = true;
 	int err;
+	static struct bt_conn_auth_info_cb auth_info_cb = {
+		.pairing_complete = pairing_complete
+	};
 
 	LOG_INF("Starting Bluetooth Fast Pair example");
+
+	err = bt_conn_auth_info_cb_register(&auth_info_cb);
+	if (err) {
+		LOG_ERR("Registering authentication info callbacks failed (err %d)", err);
+		return;
+	}
 
 	err = hids_helper_init();
 	if (err) {
