@@ -18,11 +18,41 @@ LOG_MODULE_REGISTER(cts_client, CONFIG_BT_CTS_CLIENT_LOG_LEVEL);
 #define CTS_YEAR_MIN 1582
 /* The highest possible Current Time year. */
 #define CTS_YEAR_MAX 9999
+/* The highest possible Current Time month. */
+#define CTS_MONTH_MAX	12
+/* The highest possible Current Time day of month. */
+#define CTS_DAY_MAX	31
+/* The highest possible Current Time day of week. */
+#define CTS_DAY_IN_WEEK_MAX	7
+/* The highest possible Current Time hours. */
+#define CTS_HOUR_MAX	23
+/* The highest possible Current Time minutes. */
+#define CTS_MIN_MAX	59
+/* The highest possible Current Time seconds. */
+#define CTS_SEC_MAX	59
+
+/* The lowest valid time zone value in Local Time characteristic. */
+#define TIME_ZONE_MIN -48
+/* The highest valid time zone value in Local Time characteristic. */
+#define TIME_ZONE_MAX 56
+/* If the time zone value is not known. */
+#define TIME_ZONE_UNKNOWN -128
+/* Currently defined DST results */
+#define DST_ZERO	0
+#define DST_HALF_HR 2
+#define DST_HOUR	4
+#define DST_DOUBLE	8
+#define DST_UNKNOWN	255
 
 /* |     Year        |Month   |Day     |Hours   |Minutes |Seconds |Weekday |Fraction|Reason  |
  * |     2 bytes     |1 byte  |1 byte  |1 byte  |1 byte  |1 byte  |1 byte  |1 byte  |1 byte  | = 10 bytes.
  */
 #define CTS_C_CURRENT_TIME_EXPECTED_LENGTH 10
+
+/* | Time Zone |  DST  |
+ * |  1 bytes  |1 byte | = 2 bytes.
+ */
+#define CTS_C_LOCAL_TIME_EXPECTED_LENGTH 2
 
 enum {
 	CTS_ASYNC_READ_PENDING,
@@ -34,6 +64,7 @@ static void cts_reinit(struct bt_cts_client *cts_c)
 	cts_c->conn = NULL;
 	cts_c->handle_ct = 0;
 	cts_c->handle_ct_ccc = 0;
+	cts_c->handle_lt = 0;
 	cts_c->state = ATOMIC_INIT(0);
 }
 
@@ -48,7 +79,7 @@ int bt_cts_client_init(struct bt_cts_client *cts_c)
 	return 0;
 }
 
-int bt_cts_handles_assign(struct bt_gatt_dm *dm, struct bt_cts_client *cts_c)
+int bt_cts_handles_assign(struct bt_gatt_dm *dm, struct bt_cts_client *cts_c, int *flag)
 {
 	const struct bt_gatt_dm_attr *gatt_service_attr =
 		bt_gatt_dm_service_get(dm);
@@ -56,6 +87,8 @@ int bt_cts_handles_assign(struct bt_gatt_dm *dm, struct bt_cts_client *cts_c)
 		bt_gatt_dm_attr_service_val(gatt_service_attr);
 	const struct bt_gatt_dm_attr *gatt_chrc;
 	const struct bt_gatt_dm_attr *gatt_desc;
+
+	*flag = 0;
 
 	if (bt_uuid_cmp(gatt_service->uuid, BT_UUID_CTS)) {
 		return -ENOTSUP;
@@ -65,6 +98,7 @@ int bt_cts_handles_assign(struct bt_gatt_dm *dm, struct bt_cts_client *cts_c)
 
 	cts_reinit(cts_c);
 
+	/* Current time info */
 	gatt_chrc = bt_gatt_dm_char_by_uuid(dm, BT_UUID_CTS_CURRENT_TIME);
 	if (!gatt_chrc) {
 		return -EINVAL;
@@ -75,8 +109,9 @@ int bt_cts_handles_assign(struct bt_gatt_dm *dm, struct bt_cts_client *cts_c)
 	if (!gatt_desc) {
 		return -EINVAL;
 	}
-	cts_c->handle_ct = gatt_desc->handle;
 
+    cts_c->handle_ct = gatt_desc->handle;
+	
 	gatt_desc = bt_gatt_dm_desc_by_uuid(dm, gatt_chrc, BT_UUID_GATT_CCC);
 	if (!gatt_desc) {
 		return -EINVAL;
@@ -84,6 +119,29 @@ int bt_cts_handles_assign(struct bt_gatt_dm *dm, struct bt_cts_client *cts_c)
 	cts_c->handle_ct_ccc = gatt_desc->handle;
 
 	LOG_DBG("Current Time characteristic found.");
+
+	/* Local time info */
+	gatt_chrc = bt_gatt_dm_char_by_uuid(dm, BT_UUID_CTS_LOCAL_TIME);
+	if (!gatt_chrc) {
+		*flag = -EINVAL;
+
+		LOG_DBG("Local Time characteristic not available.");
+	}
+	else {
+		gatt_desc = bt_gatt_dm_desc_by_uuid(dm, gatt_chrc,
+					    BT_UUID_CTS_LOCAL_TIME);
+		if (!gatt_desc) {
+			*flag = -EINVAL;
+			
+			LOG_DBG("Local Time description not available.");
+		}
+	}
+
+    if (flag) {
+		cts_c->handle_lt = gatt_desc->handle;
+
+		LOG_DBG("Local Time characteristic found.");
+	}
 
 	/* Finally - save connection object */
 	cts_c->conn = bt_gatt_dm_conn_get(dm);
@@ -146,11 +204,12 @@ static int current_time_validate(struct bt_cts_current_time *time)
 	if ((time->exact_time_256.year > CTS_YEAR_MAX) ||
 	    ((time->exact_time_256.year < CTS_YEAR_MIN) &&
 	     (time->exact_time_256.year != 0)) ||
-	    time->exact_time_256.month > 12 || time->exact_time_256.day > 31 ||
-	    time->exact_time_256.hours > 23 ||
-	    time->exact_time_256.minutes > 59 ||
-	    time->exact_time_256.seconds > 59 ||
-	    time->exact_time_256.day_of_week > 7) {
+	    (time->exact_time_256.month > CTS_MONTH_MAX) || 
+		(time->exact_time_256.day > CTS_DAY_MAX) ||
+	    (time->exact_time_256.hours > CTS_HOUR_MAX) ||
+	    (time->exact_time_256.minutes > CTS_MIN_MAX) ||
+	    (time->exact_time_256.seconds > CTS_SEC_MAX) ||
+	    (time->exact_time_256.day_of_week > CTS_DAY_IN_WEEK_MAX)) {
 		return -EINVAL;
 	}
 
@@ -189,9 +248,9 @@ static uint8_t bt_cts_read_callback(struct bt_conn *conn, uint8_t err,
 		err_cb = err;
 	}
 
-	read_cb = cts_c->read_cb;
+	read_cb = cts_c->read_ct_cb;
 	atomic_clear_bit(&cts_c->state, CTS_ASYNC_READ_PENDING);
-	cts_c->read_cb(cts_c, &current_time, err_cb);
+	cts_c->read_ct_cb(cts_c, &current_time, err_cb);
 
 	return BT_GATT_ITER_STOP;
 }
@@ -221,8 +280,8 @@ static uint8_t bt_cts_notify_callback(struct bt_conn *conn,
 		err = current_time_validate(&current_time);
 	}
 
-	if (!err && cts_c->notify_cb) {
-		cts_c->notify_cb(cts_c, &current_time);
+	if (!err && cts_c->notify_ct_cb) {
+		cts_c->notify_ct_cb(cts_c, &current_time);
 	}
 
 	return BT_GATT_ITER_CONTINUE;
@@ -242,7 +301,7 @@ int bt_cts_read_current_time(struct bt_cts_client *cts_c, bt_cts_read_cb func)
 		return -EBUSY;
 	}
 
-	cts_c->read_cb = func;
+	cts_c->read_ct_cb = func;
 
 	cts_c->read_params.func = bt_cts_read_callback;
 	cts_c->read_params.handle_count = 1;
@@ -273,7 +332,7 @@ int bt_cts_subscribe_current_time(struct bt_cts_client *cts_c,
 		return -EALREADY;
 	}
 
-	cts_c->notify_cb = func;
+	cts_c->notify_ct_cb = func;
 
 	cts_c->notify_params.notify = bt_cts_notify_callback;
 	cts_c->notify_params.value = BT_GATT_CCC_NOTIFY;
@@ -305,6 +364,137 @@ int bt_cts_unsubscribe_current_time(struct bt_cts_client *cts_c)
 	err = bt_gatt_unsubscribe(cts_c->conn, &cts_c->notify_params);
 
 	atomic_clear_bit(&cts_c->state, CTS_NOTIF_ENABLED);
+
+	return err;
+}
+
+/**@brief Function for decoding a read from the Local Time characteristic.
+*
+* @param[in] time    Local Time structure.
+* @param[in] data    Pointer to the buffer containing the Local Time.
+* @param[in] length  Length of the buffer containing the Local Time.
+*
+* @retval 0        If the time struct is valid.
+* @retval -EINVAL 	If the length does not match the expected size of the data.
+*/
+static int local_time_decode(struct bt_cts_local_time *time,
+			       uint8_t const *data, uint32_t const length)
+{
+
+	if (length != CTS_C_LOCAL_TIME_EXPECTED_LENGTH) {
+		/* Return to prevent accessing the out-of-bounds data. */
+		LOG_DBG("Local Time Characteristic exceeded expected length");
+		return -EINVAL;
+	}
+
+	time->timeZone = *data;
+	data += sizeof(int8_t);
+	time->dst = *data;
+
+	return 0;
+}
+
+/**@brief Function for sanity check of a Local Time structure.
+ *
+ * @param[in] time  Local Time structure.
+ *
+ * @retval 0        If the time struct is valid.
+ * @retval -EINVAL  If the time is out of bounds or not known.
+ */
+static int local_time_validate(struct bt_cts_local_time *time)
+{
+	bool dst_valid;
+
+	if ((time->timeZone > TIME_ZONE_MAX) ||
+	    (time->timeZone < TIME_ZONE_MIN) ||
+		(time->timeZone == TIME_ZONE_UNKNOWN)) {
+		LOG_DBG("timeZone out of bounds");
+		printk("timeZone out of bounds");
+		return -EINVAL;
+	}
+
+	dst_valid = ((time->dst == DST_ZERO) || 
+				(time->dst == DST_HALF_HR) ||
+				(time->dst == DST_HOUR) ||
+				(time->dst == DST_DOUBLE));
+
+	if (!dst_valid || (time->dst == DST_UNKNOWN)) {
+		LOG_DBG("dst out of bounds");
+		printk("dst out of bounds");
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+/**@brief Function for handling of Local Time characteristic read response.
+ *
+ * @param[in] conn    Connection object.
+ * @param[in] err     ATT error code.
+ * @param[in] params  Read parameters used.
+ * @param[in] data    Pointer to the data buffer.
+ * @param[in] length  The size of the received data.
+ *
+ * @retval BT_GATT_ITER_STOP  Stop reading
+ */
+static uint8_t bt_lts_read_callback(struct bt_conn *conn, uint8_t err,
+				    struct bt_gatt_read_params *params,
+				    const void *data, uint16_t length)
+{
+	struct bt_cts_client *cts_c;
+	struct bt_cts_local_time local_time;
+	bt_lts_read_cb read_cb;
+	int err_cb;
+
+	/* Retrieve CTS client module context. */
+	cts_c = CONTAINER_OF(params, struct bt_cts_client, read_params);
+
+	if (!err) {
+		err_cb = local_time_decode(&local_time, data, length);
+		if (!err_cb) {
+			/* Verify that the time is valid. */
+			err_cb = local_time_validate(&local_time);
+		}
+	} else {
+		err_cb = err;
+	}
+
+	read_cb = cts_c->read_lt_cb;
+	atomic_clear_bit(&cts_c->state, CTS_ASYNC_READ_PENDING);
+	cts_c->read_lt_cb(cts_c, &local_time, err_cb);
+
+	return BT_GATT_ITER_STOP;
+}
+
+
+int bt_cts_read_local_time(struct bt_cts_client *cts_c, bt_lts_read_cb func)
+{
+	int err;
+
+	if (!cts_c || !func) {
+		return -EINVAL;
+	}
+	if (!cts_c->conn) {
+		return -EINVAL;
+	}
+	if (!cts_c->handle_lt) {
+		return -EINVAL;
+	}
+	if (atomic_test_and_set_bit(&cts_c->state, CTS_ASYNC_READ_PENDING)) {
+		return -EBUSY;
+	}
+
+	cts_c->read_lt_cb = func;
+
+	cts_c->read_params.func = bt_lts_read_callback;
+	cts_c->read_params.handle_count = 1;
+	cts_c->read_params.single.handle = cts_c->handle_lt;
+	cts_c->read_params.single.offset = 0;
+
+	err = bt_gatt_read(cts_c->conn, &cts_c->read_params);
+	if (err) {
+		atomic_clear_bit(&cts_c->state, CTS_ASYNC_READ_PENDING);
+	}
 
 	return err;
 }
