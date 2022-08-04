@@ -93,8 +93,12 @@ Button 1:
    * Fast Pair not discoverable advertising (with the hide UI indication).
 
    .. note::
-       The advertising is disabled while the Fast Pair Provider is connected to a Bluetooth Central.
-       The discoverable advertising is automatically switched to the not discoverable advertising with the show UI indication mode after a 10-minute timeout.
+       The Bluetooth advertising is active only until the Fast Pair Provider connects to a Bluetooth Central.
+       After the connection, you can still switch the advertising modes, but the switch will come into effect only after disconnection.
+       The discoverable advertising is automatically switched to the not discoverable advertising with the show UI indication mode in the following cases:
+
+       * After 10 minutes of active advertising.
+       * After a Bluetooth Central successfully pairs.
 
 Button 2:
    Increases audio volume of the connected Bluetooth Central.
@@ -187,14 +191,15 @@ Test not discoverable advertising by completing `Testing`_ and the following add
       .. note::
          Do not remove Bluetooth bond information related to the Fast Pair Provider.
 
+      After disconnection, the provider automatically switches from the discoverable advertising to the not discoverable advertising with the show UI indication mode.
+      **LED 3** is blinking rapidly.
+
 #. Make sure that the Fast Pair Provider is added to :guilabel:`Saved devices` on the Android device that was used for `Testing`_:
 
    a. Go to :guilabel:`Settings` > :guilabel:`Google` > :guilabel:`Devices & sharing` (or :guilabel:`Device connections`) > :guilabel:`Devices` > :guilabel:`Saved devices`.
    #. Verify that the paired device is appearing on the list.
 
-#. Press **Button 1** to switch to the Fast Pair not discoverable advertising show UI indication mode.
-   **LED 3** starts blinking rapidly.
-   If you want to test the Fast Pair not discoverable advertising hide UI indication mode, press **Button 1** again.
+#. If you want to test the Fast Pair not discoverable advertising with the hide UI indication mode, press **Button 1**.
    **LED 3** starts blinking slowly.
 
 #. Wait until the Fast Pair Provider is added to :guilabel:`Saved devices` on the second Android device:

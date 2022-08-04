@@ -256,6 +256,7 @@ Bluetooth samples
 
     * Possibility of toggling between show and hide UI indication in the Fast Pair not discoverable advertising.
     * Automatic switching to the not discoverable advertising with the show UI indication mode after 10 minutes of discoverable advertising.
+    * Automatic switching from discoverable advertising to the not discoverable advertising with the show UI indication mode after a Bluetooth Central successfully pairs.
 
 * :ref:`bluetooth_direction_finding_connectionless_tx` sample:
 
