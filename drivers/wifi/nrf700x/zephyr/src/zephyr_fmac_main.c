@@ -385,34 +385,28 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 
 	if (rpu_drv_priv_zep.fmac_priv == NULL) {
 		LOG_ERR("%s: wifi_nrf_fmac_init failed\n", __func__);
-		goto out;
+		goto err;
 	}
 
 	status = wifi_nrf_fmac_dev_add_zep(&rpu_drv_priv_zep);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		LOG_ERR("%s: wifi_nrf_fmac_dev_add_zep failed\n", __func__);
-		wifi_nrf_fmac_deinit(rpu_drv_priv_zep.fmac_priv);
-		goto out;
+		goto fmac_deinit;
 	}
 
 	status = wifi_nrf_fmac_def_vif_add_zep(&rpu_drv_priv_zep.rpu_ctx_zep, 0, dev);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		LOG_ERR("%s: wifi_nrf_fmac_def_vif_add_zep failed\n", __func__);
-		wifi_nrf_fmac_dev_rem_zep(&rpu_drv_priv_zep.rpu_ctx_zep);
-		wifi_nrf_fmac_deinit(rpu_drv_priv_zep.fmac_priv);
-		goto out;
+		goto rpu_rem;
 	}
 
 	status = wifi_nrf_fmac_dev_init_zep(&rpu_drv_priv_zep.rpu_ctx_zep);
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		LOG_ERR("%s: wifi_nrf_fmac_dev_init_zep failed\n", __func__);
-		wifi_nrf_fmac_def_vif_rem_zep(vif_ctx_zep);
-		wifi_nrf_fmac_dev_rem_zep(vif_ctx_zep->rpu_ctx_zep);
-		wifi_nrf_fmac_deinit(rpu_drv_priv_zep.fmac_priv);
-		goto out;
+		goto vif_rem;
 	}
 
 	/* Bring the default interface up in the firmware */
@@ -420,16 +414,20 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 
 	if (status != WIFI_NRF_STATUS_SUCCESS) {
 		LOG_ERR("%s: wifi_nrf_fmac_def_vif_state_chg failed\n", __func__);
-		wifi_nrf_fmac_dev_deinit_zep(vif_ctx_zep->rpu_ctx_zep);
-		wifi_nrf_fmac_def_vif_rem_zep(vif_ctx_zep);
-		wifi_nrf_fmac_dev_rem_zep(vif_ctx_zep->rpu_ctx_zep);
-		wifi_nrf_fmac_deinit(rpu_drv_priv_zep.fmac_priv);
-		goto out;
+		goto dev_deinit;
 	}
 
-	ret = 0;
-out:
-	return ret;
+	return 0;
+dev_deinit:
+	wifi_nrf_fmac_dev_deinit_zep(vif_ctx_zep->rpu_ctx_zep);
+vif_rem:
+	wifi_nrf_fmac_def_vif_rem_zep(vif_ctx_zep);
+rpu_rem:
+	wifi_nrf_fmac_dev_rem_zep(&rpu_drv_priv_zep.rpu_ctx_zep);
+fmac_deinit:
+	wifi_nrf_fmac_deinit(rpu_drv_priv_zep.fmac_priv);
+err:
+	return -1;
 }
 
 static const struct wifi_nrf_dev_ops dev_ops = {
