@@ -7,7 +7,7 @@
 #ifndef DM_RPC_COMMON_H_
 #define DM_RPC_COMMON_H_
 
-#include <bluetooth/addr.h>
+#include <zephyr/bluetooth/addr.h>
 #include <nrf_dm.h>
 
 /** @brief Command IDs used in inter-core communication. */
