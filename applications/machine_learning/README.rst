@@ -13,6 +13,18 @@ It also displays results of the machine learning model on LEDs.
 The Edge Impulse platform collects data from sensors, trains machine learning model, and deploys the model to your Nordic Semiconductor's device.
 To learn more about Edge Impulse support in the |NCS| see :ref:`ug_edge_impulse`.
 
+Requirements
+************
+
+The application supports the following development kits:
+
+.. table-from-sample-yaml::
+
+The available configurations use only built-in sensors or the simulated sensor signal.
+You do not need to connect any additional components to the board.
+
+.. include:: /includes/tfm.txt
+
 Overview
 ********
 
@@ -28,12 +40,12 @@ This approach allows to use any sensor available in Zephyr.
 
 By default, the following sensors are used by the application:
 
-* Thingy:52 - built-in accelerometer (``LIS2DH``).
-* Thingy:53 - built-in accelerometer (``ADXL362``).
-* nRF52840 Development Kit - simulated sensor (:ref:`sensor_sim`).
+* Thingy:52 - Built-in accelerometer (``LIS2DH``).
+* Thingy:53 - Built-in accelerometer (``ADXL362``).
+* nRF52840 Development Kit - Simulated sensor (:ref:`sensor_sim`).
   The simulated sensor generates predefined waves as acceleration.
   This development kit does not have a built-in accelerometer.
-* nRF5340 Development Kit - simulated sensor (:ref:`sensor_sim`).
+* nRF5340 Development Kit - Simulated sensor (:ref:`sensor_sim`).
   The simulated sensor generates predefined waves as acceleration.
   This development kit does not have a built-in accelerometer.
 
@@ -60,10 +72,10 @@ By default, the application uses pretrained machine leaning models deployed in `
 * Both Thingy:52 and Thingy:53 use the `NCS hardware accelerometer machine learning model`_.
   The model uses the data from the built-in accelerometer to recognize the following gestures:
 
-  * ``idle`` - the device is placed on a flat surface.
-  * ``updown`` - the device is moved in updown direction.
-  * ``rotate`` - the device is rotated.
-  * ``tap`` - the device is tapped while placed on a flat surface.
+  * ``idle`` - The device is placed on a flat surface.
+  * ``updown`` - The device is moved in updown direction.
+  * ``rotate`` - The device is rotated.
+  * ``tap`` - The device is tapped while placed on a flat surface.
 
   Unknown gestures, such as shaking the device, are recognized as anomaly.
 * Both the nRF52840 Development Kit and nRF5340 Development Kit use the `NCS simulated sensor machine learning model`_.
@@ -126,18 +138,6 @@ For example, the :ref:`caf_ble_state` and :ref:`caf_ble_adv` modules are not ena
 
 See :ref:`nrf_machine_learning_app_internal_modules` for detailed information about every module used by the nRF Machine Learning application.
 
-Requirements
-************
-
-The application supports the following development kits:
-
-.. table-from-sample-yaml::
-
-The available configurations use only built-in sensors or the simulated sensor signal.
-There is no need to connect any additional components to the board.
-
-.. include:: /includes/tfm.txt
-
 Programming Thingy:52
 =====================
 
@@ -162,7 +162,7 @@ If you build this application for the nRF53 DK, it enables additional features s
 See :ref:`ug_thingy53` for detailed information about the mentioned features.
 
 The nRF53 DK has a J-Link debug IC that can be used to program the firmware.
-Alternatively, firmware can be updated over MCUBoot serial recovery or DFU over-ther-air using Simple Management Protocol over Bluetooth.
+Alternatively, firmware can be updated over MCUBoot serial recovery or DFU over-the-air using Simple Management Protocol over Bluetooth.
 Keep in mind that if you use bootloader to update firmware, the new firmware must be compatible with used bootloader and partition map.
 
 The nRF53 Development Kit uses RTT as logger's backend.
@@ -270,10 +270,10 @@ By default, the application uses the following LED effects:
 
   * If the device is returning the machine learning prediction results, the LED uses following predefined colors:
 
-    * ``rotate`` - red
-    * ``updown`` - green
-    * ``tap`` - blue
-    * Anomaly - purple
+    * ``rotate`` - Red
+    * ``updown`` - Green
+    * ``tap`` - Blue
+    * Anomaly - Purple
 
     If the machine learning model is running, but it has not detected anything yet or the ``idle`` state is detected, the LED is blinking.
     After a successful detection, the LED is set to the predefined color.

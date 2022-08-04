@@ -245,7 +245,7 @@ APP_EVENT_TYPE_DECLARE(module_state_event);
  * selected module reported selected state. The @ref MODULE_ID can be used to get module ID of
  * module with selected name.
  *
- * @param[in] event		Poitner to handled module state event.
+ * @param[in] event		Pointer to handled module state event.
  * @param[in] module_id		ID of the selected module.
  * @param[in] state		Selected module state.
  *

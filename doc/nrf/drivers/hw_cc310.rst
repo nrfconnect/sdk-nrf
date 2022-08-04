@@ -11,9 +11,9 @@ The CC310 hardware driver (hw_cc310) ensures correct initialization of the :ref:
 
 It initializes the following elements of the library:
 
-* CC310 abort functions,
-* hardware mutex and mutex API,
-* platform with or without RNG.
+* CC310 abort functions.
+* Hardware mutex and mutex API.
+* Platform with or without RNG.
 
 You can initialize the hw_cc310 driver using the :kconfig:option:`CONFIG_HW_CC3XX` Kconfig option.
 

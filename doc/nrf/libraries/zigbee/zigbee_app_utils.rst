@@ -276,7 +276,7 @@ Once :c:func:`start_network_rejoin` is called, the stack generates the `ZB_BDB_S
 Zigbee network rejoining
 ------------------------
 
-The Zigee network rejoin procedure is a mechanism that is similar to the ZDO rejoin back-off procedure.
+The Zigbee network rejoin procedure is a mechanism that is similar to the ZDO rejoin back-off procedure.
 It is implemented to work with both routers and end devices and simplify handling of cases such as device joining, rejoining, or leaving the network.
 It is used in :c:func:`zigbee_default_signal_handler` by default.
 

@@ -255,7 +255,7 @@ static inline void nrf_profiler_log_encode_int8(struct log_event_buf *buf,
 
 /** @brief Encode and add string to a buffer.
  *
- * Maximum 255 characters can be sent (the rest is ommited).
+ * Maximum 255 characters can be sent (the rest is omitted).
  *
  * @note The buffer must be initialized with @ref nrf_profiler_log_start
  *       before calling this function.

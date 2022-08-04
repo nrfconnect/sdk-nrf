@@ -51,7 +51,7 @@ mdl_lightness get
 mdl_lightness set <lightness_actual>|<lightness_linear> [transition_time_ms [delay_ms]]
 	Set the Light Level value and wait for a response.
 
-	* ``lightness_actual|lightness_linear`` - The Light Level value to be set. By default the *Actual* representation of the value is used. If :kconfig:option:`CONFIG_BT_MESH_LIGHTNESS_LINEAR` is enabled, the *Linear* representation of the value is used.
+	* ``lightness_actual|lightness_linear`` - The Light Level value to be set. By default, the *Actual* representation of the value is used. If :kconfig:option:`CONFIG_BT_MESH_LIGHTNESS_LINEAR` is enabled, the *Linear* representation of the value is used.
 	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 
@@ -59,7 +59,7 @@ mdl_lightness set <lightness_actual>|<lightness_linear> [transition_time_ms [del
 mdl_lightness set-unack <lightness_actual>|<lightness_linear> [transition_time_ms [delay_ms]]
 	Set the Light Level value without requesting a response.
 
-	* ``lightness_actual|lightness_linear`` - The Light Level value to be set. By default the *Actual* representation of the value is used. If :kconfig:option:`CONFIG_BT_MESH_LIGHTNESS_LINEAR` is enabled, the *Linear* representation of the value is used.
+	* ``lightness_actual|lightness_linear`` - The Light Level value to be set. By default, the *Actual* representation of the value is used. If :kconfig:option:`CONFIG_BT_MESH_LIGHTNESS_LINEAR` is enabled, the *Linear* representation of the value is used.
 	* ``transition_time_ms`` - If present, defines the transition time in the message in milliseconds.
 	* ``delay_ms`` - If present, defines the delay in the message in milliseconds.
 

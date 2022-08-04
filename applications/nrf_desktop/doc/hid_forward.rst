@@ -7,7 +7,7 @@ HID forward module
    :local:
    :depth: 2
 
-Use the |hid_forward| to:
+Use the |hid_forward| for the following purposes:
 
 * Receive the HID input reports from the peripherals connected over Bluetooth®.
 * Forward the HID input reports in report or boot protocol.

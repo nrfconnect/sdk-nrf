@@ -10,13 +10,6 @@ Bluetooth: Central BAS
 The Central BAS sample demonstrates how do use the :ref:`bas_client_readme`.
 It uses the BAS Client to receive battery level information from a compatible device.
 
-Overview
-********
-
-When connected, the sample subscribes to battery level notifications.
-Every notification that is received is printed to the terminal.
-If the device does not support notifications for the Battery Level Characteristic, you can request to read the battery level by pressing Button 1.
-
 Requirements
 ************
 
@@ -27,6 +20,13 @@ The sample supports the following development kits:
 .. include:: /includes/tfm.txt
 
 The sample also requires a device running a BAS Server to connect with (for example, another development kit running the :ref:`peripheral_hids_mouse` or :ref:`peripheral_hids_keyboard` sample, or a Bluetooth® Low Energy dongle and nRF Connect for Desktop).
+
+Overview
+********
+
+When connected, the sample subscribes to battery level notifications.
+Every notification that is received is printed to the terminal.
+If the device does not support notifications for the Battery Level Characteristic,  press **Button 1** to request for reading the battery level.
 
 User interface
 **************

@@ -45,7 +45,7 @@ Complete the following steps to enable bond erase:
 #. By default, detection of the specific click for a specific button always triggers the bond erase.
    Set :kconfig:option:`CONFIG_CAF_BLE_BOND_PEER_ERASE_CLICK_TIMEOUT` to specify the waiting time for detecting the button click after boot.
    The timeout is specified in milliseconds.
-   The button click is ignored if it occurrs after the timeout.
+   The button click is ignored if it occurs after the timeout.
 
 Implementation details
 **********************

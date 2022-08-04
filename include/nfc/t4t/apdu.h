@@ -141,7 +141,7 @@ int nfc_t4t_apdu_comm_encode(const struct nfc_t4t_apdu_comm *cmd_apdu,
  *
  *  @param[out] resp_apdu Pointer to the R-APDU descriptor.
  *  @param[in] raw_data Pointer to the buffer with encoded R-APDU.
- *  @param[in] len Size of of the buffer with encoded R-APDU.
+ *  @param[in] len Size of the buffer with encoded R-APDU.
  *
  *  @retval 0 If the operation was successful.
  *            Otherwise, a (negative) error code is returned.

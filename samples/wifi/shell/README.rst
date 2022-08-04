@@ -83,7 +83,7 @@ Testing
 
 #. |connect_kit|
 #. |connect_terminal|
-#. Scan for the Wi-FI networks in range using the following command::
+#. Scan for the Wi-Fi networks in range using the following command::
 
      wifi scan
 

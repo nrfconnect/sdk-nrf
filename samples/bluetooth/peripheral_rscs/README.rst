@@ -9,14 +9,6 @@ Bluetooth: Peripheral Running Speed and Cadence Service (RSCS)
 
 The peripheral RSCS sample demonstrates how to use the :ref:`rscs_readme`.
 
-Overview
-********
-
-This sample demonstrates the use of Running Speed and Cadence Service.
-It simulates a sensor and sends measurements to the connected device, such as a phone or a tablet.
-
-The mobile application on the device can configure sensor parameters using the SC Control Point characteristic.
-
 Requirements
 ************
 
@@ -28,6 +20,13 @@ The sample supports the following development kits:
 
 The sample also requires a phone or tablet running a compatible application, for example `nRF Connect for Mobile`_ or `nRF Toolbox`_.
 
+Overview
+********
+
+This sample demonstrates the use of Running Speed and Cadence Service.
+It simulates a sensor and sends measurements to the connected device, such as a phone or a tablet.
+
+The mobile application on the device can configure sensor parameters using the SC Control Point characteristic.
 
 User interface
 **************

@@ -55,7 +55,7 @@ Complete the following steps:
 
       py -3 -m pip install -r requirements.txt
 
-#. If you want to display LED stream based on sound data, you must also install the additional requrements using the following command:
+#. If you want to display LED stream based on sound data, you must also install the additional requirements using the following command:
 
    .. parsed-literal::
       :class: highlight
@@ -82,7 +82,7 @@ Complete the following steps:
        In versions earlier than 5.44, the HID device attached by BlueZ could obtain wrong VID and PID values (ignoring values in Device Information Service), which would stop HIDAPI from opening the device.
        In versions earlier than 5.56, the HID device attached by BlueZ might provide incomplete HID feature report on get operation.
 
-#. If you don't want to use the root access to run the python script, copy the provided udev rule from the :file:`99-hid.rules` file to the :file:`/etc/udev/rules.d` and reconnect the device.
+#. If you do not want to use the root access to run the Python script, copy the provided udev rule from the :file:`99-hid.rules` file to the :file:`/etc/udev/rules.d` and reconnect the device.
 #. If you want to connect to a device with a different Vendor or Product ID other than the one specified in the file, use one of the following options:
 
    * Run the script with the root permission.

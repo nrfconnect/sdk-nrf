@@ -111,9 +111,9 @@ In this :c:member:`button_event.key_id` value:
 
 For example, if the configuration file looks as described in the `Configuration`_ section of this documentation, an event :c:struct:`button_event` with the :c:member:`button_event.key_id` value equal to ``0x0083`` indicates the following information:
 
-* The button row pin is connected to the gpio that is at index 3 in the ``row`` array from the configuration file.
+* The button row pin is connected to the GPIO that is at index 3 in the ``row`` array from the configuration file.
   That is, the row port and pin are ``1`` and ``14``, respectively.
-* The button column pin is connected to the gpio that is at index 1 in the ``col`` array from the configuration file.
+* The button column pin is connected to the GPIO that is at index 1 in the ``col`` array from the configuration file.
   That is, the column port and pin are ``0`` and ``24``, respectively.
 
 Power management states
@@ -134,5 +134,5 @@ If a ``power_down_event`` comes while the module is in the ``STATE_SCANNING`` st
 Then, it switches to ``STATE_IDLE``.
 
 If a ``power_down_event`` comes while the module is in the ``STATE_ACTIVE`` state, the module switches to ``STATE_IDLE`` immediately.
-Similarly as in ``STATE_ACTIVE``, in ``STATE_IDLE`` the module enables the GPIO interrupts and waits for the pin state to change.
+Similarly, as in ``STATE_ACTIVE``, in ``STATE_IDLE`` the module enables the GPIO interrupts and waits for the pin state to change.
 However, in ``STATE_IDLE`` the module can also invoke ``wake_up_event`` and send it to all subscribing modules.

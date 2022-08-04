@@ -116,7 +116,7 @@ Setting up own PKI lets the manufacturer obtain the following certificates:
 
 * Own PAA - Provided that the manufacturer has a certification authority with root in the DCL.
   The PAA can have the VID embedded (VID-scoped PAA) or not (Non-Vendor Scoped PAA).
-* Own PAI - Provided that the manufacturer has sufficient and secure supply chain logistics that are able to provide DACs to a large amount of devices, as each device has a unique DAC.
+* Own PAI - Provided that the manufacturer has sufficient and secure supply chain logistics that can provide DACs to a large number of devices, as each device has a unique DAC.
 
 Generating DAC with platform vendor (option 3)
 ----------------------------------------------

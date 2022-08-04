@@ -26,8 +26,8 @@ The direction finding central sample application uses Constant Tone Extension (C
 
 The sample supports two direction finding modes:
 
-* angle of arrival (AoA)
-* angle of departure (AoD)
+* Angle of Arrival (AoA)
+* Angle of Departure (AoD)
 
 By default, both modes are available in the sample.
 
@@ -38,8 +38,8 @@ Configuration
 
 This sample configuration is split into the following two files:
 
-* generic configuration is available in the :file:`prj.conf` file
-* board specific configuration is available in the :file:`boards/<BOARD>.conf` file
+* Generic configuration is available in the :file:`prj.conf` file
+* Board specific configuration is available in the :file:`boards/<BOARD>.conf` file
 
 nRF5340 configuration files
 ===========================
@@ -180,7 +180,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+|test_sample|
 
 1. |connect_terminal_specific|
 #. In the terminal window, check for information similar to the following::

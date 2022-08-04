@@ -164,7 +164,7 @@ int at_params_array_put(const struct at_param_list *list, size_t index,
 			const uint32_t *array, size_t array_len);
 
 /**
- * @brief Add a parameter in the list at the specified index and assign it a
+ * @brief Add a parameter in the list at the specified index and assign it an
  * empty status.
  *
  * This will indicate that an empty parameter was found when parsing the
@@ -207,7 +207,7 @@ int at_params_short_get(const struct at_param_list *list, size_t index,
 			int16_t *value);
 
 /**
- * @brief Get a parameter value as a unsigned short number.
+ * @brief Get a parameter value as an unsigned short number.
  *
  * @param[in] list    Parameter list.
  * @param[in] index   Parameter index in the list.
@@ -245,7 +245,7 @@ int at_params_int_get(const struct at_param_list *list, size_t index,
 int at_params_unsigned_int_get(const struct at_param_list *list, size_t index, uint32_t *value);
 
 /**
- * @brief Get a parameter value as an signed 64-bit integer number.
+ * @brief Get a parameter value as a signed 64-bit integer number.
  *
  * @param[in] list    Parameter list.
  * @param[in] index   Parameter index in the list.
@@ -277,9 +277,9 @@ int at_params_string_get(const struct at_param_list *list, size_t index,
 			 char *value, size_t *len);
 
 /**
- * @brief Get a parameter value as a array.
+ * @brief Get a parameter value as an array.
  *
- * The parameter type must be a array, or an error is returned.
+ * The parameter type must be an array, or an error is returned.
  * The string parameter value is copied to the buffer.
  * @p len must be equal or bigger than the array length,
  * or an error is returned. The copied string is not null-terminated.

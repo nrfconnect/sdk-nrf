@@ -196,7 +196,7 @@ The commissioning procedure consists of the following stages:
    The CASE protocol is in charge of exchanging NOCs to set up a session secured with a new pair of keys.
    The CASE connection is reset each time a device breaks the connection.
 #. Disarming fail-safe -- The commissioner requests the commissionee node to remove the stored configuration backup.
-#. Message exchange -- The commissioner and the commissionee exchange a AES-encrypted message on the operational network.
+#. Message exchange -- The commissioner and the commissionee exchange an AES-encrypted message on the operational network.
 
 These stages can take place in one of the following connection scenarios between the commissioner and the commissionee:
 

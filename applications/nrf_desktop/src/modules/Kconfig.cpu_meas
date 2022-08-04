@@ -21,7 +21,7 @@ config DESKTOP_CPU_MEAS_PERIOD
 	help
 	  The CPU load event is submitted periodically by a delayed work.
 	  When the event is submitted, application module resets measurement.
-	  Accodring to CPU load subsystem documentation, measurement must be
+	  According to CPU load subsystem documentation, measurement must be
 	  reset at least every 4294 seconds. Otherwise results are invalid.
 
 module = DESKTOP_CPU_MEAS

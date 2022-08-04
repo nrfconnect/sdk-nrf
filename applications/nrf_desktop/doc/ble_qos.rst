@@ -70,7 +70,7 @@ The module is a configuration channel listener and provides the following config
    Weight of CRC ERROR.
    Fixed point value with 1/100 scaling.
 * ``ble_block_threshold``
-   Threshold relative to the average rating for blocking Bluetoooth LE channels.
+   Threshold relative to the average rating for blocking Bluetooth LE channels.
    Fixed point value with 1/100 scaling.
 * ``eval_max_count``
    Maximum number of blocked channels that can be evaluated.
@@ -92,7 +92,7 @@ The module is a configuration channel listener and provides the following config
    Average rating threshold for considering a Wi-Fi active (blockable).
    Fixed point value with 1/100 scaling.
 * ``channel_map``
-   5-byte Bluetoooth LE channel map bitmask.
+   5-byte Bluetooth LE channel map bitmask.
    This option is read-only.
 * ``wifi_blacklist``
    List of blacklisted Wi-Fi channels.
@@ -127,7 +127,7 @@ The thread is used to periodically perform the following operations:
 If the :ref:`CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE <config_desktop_app_options>` Kconfig option is set, the module prints the following information through the virtual COM port:
 
 * HID report rate
-   The module counts the number of HID input reports received through Bluetoooth LE and prints the report rate through the virtual COM port every 100 packets.
+   The module counts the number of HID input reports received through Bluetooth LE and prints the report rate through the virtual COM port every 100 packets.
    The report rate is printed with a timestamp.
 
    Example output:
@@ -136,10 +136,10 @@ If the :ref:`CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE <config_desktop_app_op
 
       [05399493]Rate:0455
 
-* Bluetoooth LE channel statistics
+* Bluetooth LE channel statistics
    The information is printed by the low-priority thread.
-   The output (``BT_INFO``) consists of the Bluetoooth LE channel information.
-   Every Bluetoooth LE channel information contains the following elements:
+   The output (``BT_INFO``) consists of the Bluetooth LE channel information.
+   Every Bluetooth LE channel information contains the following elements:
 
    * Last two digits of the channel frequency (2400 + x MHz)
    * Channel state

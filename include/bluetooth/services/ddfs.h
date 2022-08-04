@@ -216,7 +216,7 @@ int bt_ddfs_distance_measurement_notify(struct bt_conn *conn,
 
 /** @brief Function for sending Azimuth Measurement value.
  *
- *  The application calls this function after having performed a Azimuth Measurement.
+ *  The application calls this function after having performed an Azimuth Measurement.
  *  If notification has been enabled, the measurement data is encoded and sent to the client.
  *
  *  @param[in] conn Pointer to connection object, or NULL if sent to all connected peers.
@@ -230,7 +230,7 @@ int bt_ddfs_azimuth_measurement_notify(struct bt_conn *conn,
 
 /** @brief Function for sending Elevation Measurement value.
  *
- *  The application calls this function after having performed a Elevation Measurement.
+ *  The application calls this function after having performed an Elevation Measurement.
  *  If notification has been enabled, the measurement data is encoded and sent to the client.
  *
  *  @param[in] conn Pointer to connection object, or NULL if sent to all connected peers.

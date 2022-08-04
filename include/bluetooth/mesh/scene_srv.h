@@ -141,7 +141,7 @@ struct bt_mesh_scene_entry {
 	 *  When a scene is recalled, the Scene Server calls this callback for
 	 *  every scene entry that has data for the recalled scene. The handler
 	 *  shall start transitioning to the given scene with the given
-	 *  transition parameters. If the transition is non-instantaneious, for example
+	 *  transition parameters. If the transition is non-instantaneous, for example
 	 *  when @ref bt_mesh_model_transition_time returns a nonzero value, the
 	 *  handler shall publish a status message at the end of the transition.
 	 *

@@ -22,7 +22,7 @@ It contains the NFC Reader chip ST25R3911B.
 The ST25R3911B can both generate its own field to read and write NFC tags and behave like a tag itself.
 It is a slave device, and the external microcontroller initiates all communication.
 
-Communication is performed by 4-wire Serial Pheripheral Interface (SPI).
+Communication is performed by 4-wire Serial Peripheral Interface (SPI).
 The ST25R3911B sends an interrupt request (pin IRQ) to the microcontroller.
 For the documentation of the NFC chip, see the `ST25R3911B chip documentation`_.
 

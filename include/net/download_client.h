@@ -96,8 +96,8 @@ struct download_client_cfg {
 	 * Zero is the default PDN.
 	 */
 	uint8_t pdn_id;
-	/** Maximum fragment size to download. 0 indicates that Kconfigured
-	 *  values shall be used.
+	/** Maximum fragment size to download. 0 indicates that values
+	 * configured using Kconfig shall be used.
 	 */
 	size_t frag_size_override;
 	/** Set hostname for TLS Server Name Indication extension */

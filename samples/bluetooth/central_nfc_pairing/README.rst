@@ -21,6 +21,18 @@ The sample supports pairing in one of the following modes:
 * Legacy Just Works pairing
 * Negotiated Handover (TNEP protocol) - two-way OOB pairing
 
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-sample-yaml::
+
+The sample has the following additional requirements:
+
+* NFC Reader ST25R3911B Nucleo expansion board (X-NUCLEO-NFC05A1)
+* NFC Tag 2 Tag device or NFC Tag 4 Tag device
+
 Overview
 ********
 
@@ -52,18 +64,6 @@ The NFC Poler Device can be the Handover Requester or Handover Selector Device, 
 .. figure:: images/nfc_negotiated_connection_handover.svg
    :alt: Negotiated Handover
 
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-sample-yaml::
-
-The sample has the following additional requirements:
-
-* NFC Reader ST25R3911B Nucleo expansion board (X-NUCLEO-NFC05A1)
-* NFC Tag 2 Tag device or NFC Tag 4 Tag device
-
 User interface
 **************
 
@@ -84,7 +84,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+|test_sample|
 
 1. Touch the :ref:`st25r3911b_nfc_readme` with a Type 2 Tag or Tag 4 Tag.
    The Tag Device can support the TNEP protocol.

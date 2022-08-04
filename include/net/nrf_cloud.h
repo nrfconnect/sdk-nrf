@@ -476,7 +476,7 @@ struct nrf_cloud_gnss_data {
 	/** The type of GNSS data below. */
 	enum nrf_cloud_gnss_type type;
 	/** UNIX epoch timestamp (in milliseconds) of the data.
-	 * If a negative value is provided, the timestamp will be ingored.
+	 * If a negative value is provided, the timestamp will be ignored.
 	 */
 	int64_t ts_ms;
 	union {
@@ -546,7 +546,7 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param);
  * @note If nRF Cloud FOTA is enabled and a FOTA job is active
  *  uninit will not be performed.
  *
- * @note This function is solely intended to allow the this library to be deactivated when
+ * @note This function is solely intended to allow this library to be deactivated when
  *  no longer needed. You can recover from any error state you may encounter without calling this
  *  function. See @ref nrf_cloud_disconnect for a way to reset the nRF Cloud connection state
  *  without uninitializing the whole library.
@@ -631,7 +631,7 @@ int nrf_cloud_sensor_data_stream(const struct nrf_cloud_sensor_data *param);
  *
  * This API is used to send pre-encoded data to nRF Cloud.
  *
- * @param[in] msg Pointer to a structure containting data and topic
+ * @param[in] msg Pointer to a structure containing data and topic
  *                information.
  *
  * @retval 0       If successful.

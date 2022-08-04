@@ -176,7 +176,7 @@ static inline bool parse_long_address(const char *input, zb_ieee_addr_t addr)
  *
  * @param input   Pointer to the input string representing
  *                the address in big endian.
- * @param addr    Pointer to the a variable where address will be placed.
+ * @param addr    Pointer to the variable where address will be placed.
  *
  * @retval true   if the conversion succeed
  * @retval false  if the conversion failed

@@ -12,7 +12,7 @@ You can use this library to set the antenna configuration on an nRF9160 DK or a 
 Overview
 ********
 
-The library writes the MAGPIO and COEX0 configuration to the modem after the :ref:`nrfxlib:nrf_modem` library has been initialized.
+The library writes the MAGPIO and COEX0 configuration to the modem after the :ref:`nrfxlib:nrf_modem` has been initialized.
 The configuration depends on the selected board and the used GNSS antenna type, onboard or external.
 
 For an nRF9160 DK, the library configures the Low Noise Amplifier (LNA) depending on the GNSS antenna type.

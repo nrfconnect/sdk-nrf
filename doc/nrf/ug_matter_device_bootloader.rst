@@ -77,7 +77,7 @@ Factory data partition
 
 If you make a real Matter product, you also need the ``factory_data`` partition to store the factory data.
 The factory data contains a set of immutable device identifiers, certificates and cryptographic keys, programmed onto a device at the time of the device fabrication.
-For that parition one flash page of 4kB should be enough in most use cases.
+For that partition one flash page of 4kB should be enough in most use cases.
 
 See the :ref:`ug_matter_device_attestation_device_data_generating` section on the Device Attestation page for more information about the factory data in Matter.
 

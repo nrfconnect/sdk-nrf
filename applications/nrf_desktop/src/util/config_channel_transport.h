@@ -35,7 +35,7 @@ int config_channel_report_parse(const uint8_t *buffer, size_t length,
  *
  * @param buffer Pointer to the report buffer to be filled.
  * @param length Length of the buffer.
- * @param event  Pointer to a event with values to be copied to the buffer.
+ * @param event  Pointer to an event with values to be copied to the buffer.
  *
  * @return Number of written bytes if the operation was successful. Otherwise,
  *         a negative error code is returned.

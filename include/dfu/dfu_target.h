@@ -45,15 +45,15 @@ struct dfu_target {
 };
 
 /**
- * @brief Find the image type for the buffer of bytes recived. Used to determine
- *	  what dfu target to initialize.
+ * @brief Find the image type for the buffer of bytes received. Used to determine
+ *	  what DFU target to initialize.
  *
- * @param[in] buf A buffer of bytes which are the start of an binary firmware
+ * @param[in] buf A buffer of bytes which are the start of a binary firmware
  *		  image.
  * @param[in] len The length of the provided buffer.
  *
  * @return Positive identifier for a supported image type or a negative error
- *	   code identicating reason of failure.
+ *	   code indicating reason of failure.
  **/
 int dfu_target_img_type(const void *const buf, size_t len);
 
@@ -74,10 +74,10 @@ int dfu_target_img_type(const void *const buf, size_t len);
  *		      currently.
  * @param[in] file_size Size of the current file being downloaded.
  * @param[in] cb Callback function in case the DFU operation requires additional
- *		 proceedures to be called.
+ *		 procedures to be called.
  *
  * @return 0 for a supported image type or a negative error
- *	   code identicating reason of failure.
+ *	   code indicating reason of failure.
  *
  **/
 int dfu_target_init(int img_type, int img_num, size_t file_size, dfu_target_callback_t cb);
@@ -99,7 +99,7 @@ int dfu_target_offset_get(size_t *offset);
  * @param[in] len The length of the provided buffer.
  *
  * @return Positive identifier for a supported image type or a negative error
- *	   code identicating reason of failure.
+ *	   code indicating reason of failure.
  **/
 int dfu_target_write(const void *const buf, size_t len);
 
@@ -110,17 +110,17 @@ int dfu_target_write(const void *const buf, size_t len);
  * @param[in] successful Indicate whether the process completed successfully or
  *			 was aborted.
  *
- * @return 0 for an successful deinitialization or a negative error
- *	   code identicating reason of failure.
+ * @return 0 for a successful deinitialization or a negative error
+ *	   code indicating reason of failure.
  **/
 int dfu_target_done(bool successful);
 
 /**
  * @brief Deinitialize the resources that were needed for the current DFU
- *	  target if any and resets the current dfu target.
+ *	  target if any and resets the current DFU target.
  *
  * @return 0 for an successful deinitialization and reset or a negative error
- *	   code identicating reason of failure.
+ *	   code indicating reason of failure.
  **/
 int dfu_target_reset(void);
 
@@ -134,7 +134,7 @@ int dfu_target_reset(void);
  *		      of image pair indexes. Disregard otherwise.
  *
  * @return 0 for a successful request or a negative error
- *	   code identicating reason of failure.
+ *	   code indicating reason of failure.
  **/
 int dfu_target_schedule_update(int img_num);
 

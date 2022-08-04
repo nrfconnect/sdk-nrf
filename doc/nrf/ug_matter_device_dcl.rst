@@ -141,7 +141,7 @@ Vendor schema
 
 Device model schema
    This schema provides general information about the device.
-   It includes the Vendor ID, Product ID, name and label od the product, part number, device type, custom commissioning flow instructions, as well as a series of URLs related to commissioning, product page, Vendor tech support, or the user manual.
+   It includes the Vendor ID, Product ID, name and label on the product, part number, device type, custom commissioning flow instructions, as well as a series of URLs related to commissioning, product page, Vendor tech support, or the user manual.
 
 Device software version model schema
    This schema provides information specific to the device software version, including certification declaration number, firmware information, OTA software update image URL, OTA image size and OTA image checksum.

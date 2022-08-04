@@ -53,6 +53,4 @@ API documentation
 
 The library does not expose any API of its own.
 
-.. code-block::
-
-   | Header file: :file:`zephyr/include/zephyr/storage/flash_map.h`
+| Header file: :file:`zephyr/include/zephyr/storage/flash_map.h`

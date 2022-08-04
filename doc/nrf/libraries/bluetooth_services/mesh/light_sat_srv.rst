@@ -67,7 +67,7 @@ This information is used to reestablish the correct Saturation level when the de
 If :kconfig:option:`CONFIG_BT_SETTINGS` is enabled, the Light Saturation Server stores all its states persistently using a configurable storage delay to stagger storing.
 See :kconfig:option:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`.
 
-The Light Saturation Server can use the :ref:`emergency data storage (EMDS) <emds_readme>` together with persistent storage to:
+The Light Saturation Server can use the :ref:`emergency data storage (EMDS) <emds_readme>` together with persistent storage for the following purposes:
 
 * Extend the flash memory life expectancy.
 * Reduce the use of resources by reducing the number of writes to flash memory.

@@ -173,7 +173,7 @@ struct ble_peer_conn_params_event {
 
 /** @brief Bluetooth LE peer search event.
  *
- * The Bluetooth LE peer search event is submitted to inform if applcation is currently looking for
+ * The Bluetooth LE peer search event is submitted to inform if application is currently looking for
  * a Bluetooth peer. The event can be related either to Bluetooth scanning or advertising.
  */
 struct ble_peer_search_event {

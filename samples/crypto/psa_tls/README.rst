@@ -88,7 +88,7 @@ In Linux
 --------
 
 The TAP adapter functionality for Linux is included in the `Ethernet over RTT for Linux`_ executable, named :file:`eth_rtt_link`, located in the :file:`samples/crypto/psa_tls` folder.
-You must pass the development kit's Segger-ID and the TAP IPv4 as parameters when calling the executable.
+You must pass the development kit's SEGGER ID and the TAP IPv4 as parameters when calling the executable.
 See the examples in the `Testing`_ section.
 
 When using an nRF5340 development kit, if :file:`eth_rtt_link` cannot start the RTT connection, pass the ``_SEGGER_RTT`` RAM block address as a parameter using ``--rttcbaddr``, as shown in the following example:

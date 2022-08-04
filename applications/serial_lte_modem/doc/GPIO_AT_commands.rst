@@ -108,8 +108,8 @@ Syntax
 * The ``<value>`` parameter indicates the value to be written to the GPIO pin.
   It accepts one of the following values:
 
-  * ``0`` - Logic low
-  * ``1`` - Logic high
+  * ``0`` - Logic low.
+  * ``1`` - Logic high.
 
 Response syntax
 ~~~~~~~~~~~~~~~

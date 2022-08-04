@@ -190,15 +190,16 @@ Module discovery operations
 
   * ``CONFIG_STATUS_GET_MAX_MOD_ID`` - Obtain the maximum value of Module ID supported by the device.
     The maximum Module ID is returned as a single unsigned byte.
-  * ``CONFIG_STATUS_GET_HWID`` - Obtain an unique Hardware ID of the device.
+  * ``CONFIG_STATUS_GET_HWID`` - Obtain a unique Hardware ID of the device.
     The Hardware ID is represented as 8 bytes.
   * ``CONFIG_STATUS_GET_BOARD_NAME`` - Obtain the device's board name.
     The board name is part of the Zephyr board name (:kconfig:option:`CONFIG_BOARD`) from a beginning to the first underscore (``_``) character.
-    For example the ``nrf52840gmouse_nrf52840`` would return ``nrf52840gmouse`` as the board name.
+    For example, the ``nrf52840gmouse_nrf52840`` build target would return ``nrf52840gmouse`` as the board name.
 
   .. note::
-    Using :ref:`nrf_desktop_info` is mandatory for every device that is configurable with the configuration channel.
-    The module provides information that is necessary to identify the device.
+
+     You must use :ref:`nrf_desktop_info` for every device that is configurable with the configuration channel.
+     The module provides information that is necessary to identify the device.
 
 Recipient discovery operations
   The :ref:`nrf_desktop_hid_forward` handles recipients discovery operations.
@@ -335,7 +336,7 @@ If you are developing a custom host tool, you need to ensure your tool performs 
 For reading the module descriptor, the following conditions must be met:
 
 * The module descriptor is read using fetch request with the current Module ID while Option ID is set to ``0``.
-  The transaction must be performed multiple times, with responses for following requests containining strings that are part of the module descriptor.
+  The transaction must be performed multiple times, with responses for following requests containing strings that are part of the module descriptor.
 * The end line character (``\n``) indicates the end of the descriptor.
   After the end line character is fetched, following requests should loop around and repeat descriptor strings.
 * The module descriptor strings are provided in a predefined order, but the host should make no assumption about the descriptor string that will be provided by the device as the first one.

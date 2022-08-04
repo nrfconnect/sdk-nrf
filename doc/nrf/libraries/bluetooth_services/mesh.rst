@@ -7,7 +7,7 @@ Bluetooth® mesh is supported for development in |NCS|, through the Zephyr :ref:
 Nordic Semiconductor's implementation of the Bluetooth mesh allows applications to use the features provided by the Bluetooth mesh when running on supported Nordic devices.
 
 The `Bluetooth mesh profile specification`_ is developed and published by the Bluetooth® Special Interest Group (SIG).
-It's a solution that allows one-to-one, one-to-many, and many-to-many communication, using the Bluetooth Low Energy protocol to exchange messages between the nodes in the network.
+It is a solution that allows one-to-one, one-to-many, and many-to-many communication, using the Bluetooth Low Energy protocol to exchange messages between the nodes in the network.
 The nodes can communicate with each other as long as they are in direct radio range of each other, or there are enough devices available that are capable of listening and forwarding these messages.
 See the :ref:`Bluetooth mesh user guide <ug_bt_mesh>` for an overview of the technology, like supported features, concepts and architecture.
 

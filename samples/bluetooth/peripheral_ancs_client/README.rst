@@ -9,20 +9,6 @@ Bluetooth: Peripheral ANCS client
 
 The Peripheral ANCS client sample demonstrates how to use the :ref:`ancs_client_readme`.
 
-Overview
-********
-
-The ANCS client sample implements an Apple Notification Center Service client.
-This client receives iOS notifications and is therefore a Notification Consumer.
-It can be connected with a Notification Provider, typically an iPhone or some other Apple device, which functions as ANCS server.
-
-When the sample is connected to a Notification Provider, it receives and prints incoming notifications on the UART.
-
-Notifications can have positive and negative actions associated with them, depending on the app that is sending the notification.
-For example, a notification for an incoming call is usually associated with the positive action to answer the call and the negative action to reject it.
-After receiving a notification, the available actions are indicated by flags on UART.
-The sample can perform the positive or negative action as a response to the notification.
-
 Requirements
 ************
 

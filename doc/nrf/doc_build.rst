@@ -28,7 +28,7 @@ Complete the following steps to install the required tools:
 1. If you have not done so already, install the |NCS| as described in :ref:`gs_installing` or :ref:`gs_assistant`.
 #. Install or update all required :ref:`Python dependencies <additional_deps>`.
 #. Install `Doxygen`_.
-#. Install `mscgen`_ and make sure that the ``mscgen`` executable is in your :envvar:`PATH`.
+#. Install `Mscgen`_ and make sure that the ``mscgen`` executable is in your :envvar:`PATH`.
 #. Install PlantUML.
    On Windows, you can install `PlantUML from chocolatey`_.
 

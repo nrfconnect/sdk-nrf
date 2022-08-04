@@ -16,13 +16,13 @@ One core gathers data from sensors and when there is sufficient data to analyze,
 Configuration
 *************
 
-The |sensor_data_aggregator| module can be enabled by selecting the :kconfig:option:`CONFIG_CAF_SENSOR_DATA_AGGREGATOR` option.
+To enable the |sensor_data_aggregator|,select the :kconfig:option:`CONFIG_CAF_SENSOR_DATA_AGGREGATOR` Kconfig option.
 
 To use the module, you must complete the following steps:
 
 1. Enable the :kconfig:option:`CONFIG_CAF_SENSOR_DATA_AGGREGATOR` option.
 #. If you are using multi-core SoC and want to receive aggregated data on another core, on the second core enable the :kconfig:option:`CONFIG_CAF_SENSOR_DATA_AGGREGATOR_EVENTS` option.
-#. Enable aggregator in devicetree file that describes the aggregator parameters you can use for example app.overlay file.
+#. Enable aggregator in devicetree file that describes the aggregator parameters you can use, for example :file:`app.overlay` file.
    Each aggregator should be placed as a separate node.
    For example, the file content could look like follows:
 
@@ -48,7 +48,7 @@ Two aggregators are defined here and each one is responsible to handle data of t
 The aggregator is defined as a separate node in the devicetree and consists of the following parameters:
 
 * ``compatible`` - This is DTS binding and should be set to ``caf,aggregator``.
-* ``sensor_descr`` - This parameter represents the description of the sensor and should be the same as the description in the :ref:`caf_sensor_sampler` module.
+* ``sensor_descr`` - This parameter represents the description of the sensor and should be the same as the description in the :ref:`caf_sensor_sampler`.
 * ``buf_data_length`` - This parameter represents the length of the buffer in bytes.
   Its default value is ``120``.
   The value should be set as a multiple of sensor sample size.

@@ -239,7 +239,7 @@ References*
 .. tip::
    * Do not duplicate links that have been mentioned in other sections before.
    * Do not include links to documents that are common to all or many of our samples.
-     For example, the Bluetooth Spec or the DK user guides are always important, but shouldn't be listed.
+     For example, the Bluetooth Spec or the DK user guides are always important, but should not be listed.
    * Include specific links, like a chapter in the Bluetooth Spec if the sample demonstrates the respective feature, or a link to the hardware pictures in the DK user guide if there is a lot of wiring required, or specific information about the feature that is presented in the sample.
 
 Dependencies*

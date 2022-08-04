@@ -29,9 +29,9 @@ Syntax
 
 * The ``<op>`` parameter can accept one of the following values:
 
-  * ``0`` - Stop SMS
-  * ``1`` - Start SMS, ready to receive
-  * ``2`` - Send SMS
+  * ``0`` - Stop SMS.
+  * ``1`` - Start SMS, ready to receive.
+  * ``2`` - Send SMS.
 
 * The ``<number>`` parameter is a string.
   It represents the SMS recipient's phone number, including the country code (for example ``+81xxxxxxx``).
