@@ -198,6 +198,9 @@ void model_handler_start(void)
 		return;
 	}
 
+	bt_mesh_ponoff_srv_set(&light_ctrl_srv.lightness->ponoff,
+			       BT_MESH_ON_POWER_UP_RESTORE);
+
 	err = bt_mesh_light_ctrl_srv_enable(&light_ctrl_srv);
 	if (!err) {
 		printk("Successfully enabled LC server\n");

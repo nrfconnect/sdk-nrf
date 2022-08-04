@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+choice BT_MESH_RPL_STORAGE_MODE
+	prompt "Replay protection list storage mode"
+
+config BT_MESH_RPL_STORAGE_MODE_EMDS
+	bool "Persistent storage of RPL in Emergency Data Storage"
+	depends on EMDS
+	help
+	  Persistent storage of RPL in Emergency Data Storage.
+
+endchoice
+
+if BT_MESH_RPL_STORAGE_MODE_EMDS
+
+config BT_MESH_RPL_INDEX
+	int "Unique index for the storage of RPL data"
+	default 999
+	help
+	  This value defines the storage index for the RPL data in Emergency
+	  Data Storage, and can not overlap with any other index in the
+	  Emergency Data Storage.
+
+endif # BT_MESH_RPL_STORAGE_MODE_EMDS

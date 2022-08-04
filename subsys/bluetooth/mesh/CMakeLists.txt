@@ -78,3 +78,5 @@ add_subdirectory_ifdef(CONFIG_BT_MESH_SHELL shell)
 
 zephyr_linker_sources(SECTIONS sensor_types.ld)
 zephyr_linker_sources(SECTIONS scene_types.ld)
+
+zephyr_library_sources_ifdef(CONFIG_BT_MESH_RPL_STORAGE_MODE_EMDS rpl.c)
