@@ -930,7 +930,7 @@ int qspi_validate_rpu_wake_writecmd(const struct device *dev)
 		}
 	}
 
-	return -1;
+	return rdsr2;
 }
 
 
@@ -953,6 +953,8 @@ int qspi_RDSR1(const struct device *dev, uint8_t *rdsr1)
 	ret = qspi_send_cmd(dev, &cmd, false);
 
 	ANOMALY_122_UNINIT(dev);
+
+	LOG_DBG("RDSR2 = 0x%x\n", sr);
 
 	if (ret == 0)
 		*rdsr1 = sr;
@@ -978,7 +980,7 @@ int qspi_wait_while_rpu_awake(const struct device *dev)
 		k_msleep(1);
 	}
 
-	return ret;
+	return val;
 }
 
 /* Wait until RDSR1 confirms RPU_AWAKE/RPU_READY and Firmware is booted */

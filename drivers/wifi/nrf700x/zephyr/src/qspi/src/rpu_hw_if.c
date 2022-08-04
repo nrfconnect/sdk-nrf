@@ -270,22 +270,19 @@ int rpu_wrsr2(uint8_t data)
 int rpu_rdsr2(void)
 {
 #if CONFIG_NRF700X_ON_QSPI
-	qspi_validate_rpu_wake_writecmd(&qspi_perip);
+	return qspi_validate_rpu_wake_writecmd(&qspi_perip);
 #else
-	spi_validate_rpu_wake_writecmd();
+	return spi_validate_rpu_wake_writecmd();
 #endif
-
-	return 0;
 }
 
 int rpu_rdsr1(void)
 {
 #if CONFIG_NRF700X_ON_QSPI
-	qspi_wait_while_rpu_awake(&qspi_perip);
+	return qspi_wait_while_rpu_awake(&qspi_perip);
 #else
-	spim_wait_while_rpu_awake();
+	return spim_wait_while_rpu_awake();
 #endif
-	return 0;
 }
 
 
