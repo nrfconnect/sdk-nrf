@@ -9,11 +9,6 @@ Bluetooth: Peripheral CTS client
 
 The Peripheral CTS client sample demonstrates how to use the :ref:`cts_client_readme`.
 
-Overview
-********
-
-The CTS client sample implements a Current Time Service client. It uses the Current Time Service to read the current time. The time received is printed on the UART.
-
 Requirements
 ************
 
@@ -24,6 +19,14 @@ The sample supports the following development kits:
 .. include:: /includes/tfm.txt
 
 The sample also requires a device running a CTS Server to connect with (for example, a Bluetooth® Low Energy dongle and nRF Connect for Desktop).
+
+Overview
+********
+
+The CTS client sample implements a Current Time Service client.
+It uses the Current Time Service to read the current time.
+The time received is printed on the UART.
+
 
 User interface
 **************

@@ -16,7 +16,7 @@ The xyL models allow remote control and configuration of a light device with x a
    :scale: 50 %
    :alt: CIE1931 color space chromaticity diagram
 
-The Light xyL models can represent the lightness states on a linear or preceptually uniform lightness scale.
+The Light xyL models can represent the lightness states on a linear or perceptually uniform lightness scale.
 See :ref:`bt_mesh_lightness_readme` for details.
 
 The Light xyL models also feature their own common types, listed below.

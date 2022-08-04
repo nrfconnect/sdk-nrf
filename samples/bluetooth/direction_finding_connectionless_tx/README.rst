@@ -26,8 +26,8 @@ The direction finding connectionless beacon sample application uses Constant Ton
 
 The sample supports two direction finding modes:
 
-* angle of arrival (AoA)
-* angle of departure (AoD)
+* Angle of Arrival (AoA)
+* Angle of Departure (AoD)
 
 By default, both modes are available in the sample.
 
@@ -141,7 +141,7 @@ Building and Running
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+|test_sample|
 
 1. |connect_terminal_specific|
 #. In the terminal window, check for information similar to the following::

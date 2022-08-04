@@ -66,7 +66,7 @@ int aws_fota_init(struct mqtt_client *const client,
 /**@brief AWS Firmware over the air mqtt event handler.
  *
  * @param client Pointer to the mqtt_client instance.
- * @param evt          Pointer to the recived mqtt_evt.
+ * @param evt          Pointer to the received mqtt_evt.
  *
  * @retval 0 If successful and the application can skip handling this event.
  * @retval 1 If successful but wants the application to handle the event.

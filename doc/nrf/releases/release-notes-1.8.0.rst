@@ -25,7 +25,7 @@ Highlights
 * Wi-Fi coexistence with Bluetooth LE and LTE coexistence with Bluetooth LE have been added for the nRF52 family.
 * Experimental configuration labels in Kconfig now generate warnings when experimental configurations are used.
   For more information, check the Experimental features section on the :ref:`zephyr:application` page in the Zephyr documentation.
-* Energy consumption of Matter over Thread devices that are using Thread's Sleepy End Device role has beed improved.
+* Energy consumption of Matter over Thread devices that are using Thread's Sleepy End Device role has been improved.
 * Apple HomeKit ADK v6.1 has been integrated and support for nRF5340 for Bluetooth LE and Thread HomeKit accessories has been added.
 * Support for the `Gazell`_ protocol has been added for the nRF52 family, with related libraries and samples.
 * The :ref:`caf_preview_sample` sample has been added to demonstrate how to use CAF components to build event-based applications and interface with some simple IO like LEDs and Buttons.
@@ -212,7 +212,7 @@ nRF Desktop
   * Updated documentation for :ref:`nrf_desktop_config_channel` and added more detailed protocol description.
   * Updated :ref:`nrf_desktop_config_channel` to respond with the disconnected status to explicitly inform the host tools that the given HID instance cannot be used to configure device.
   * Updated documentation with information about forwarding boot reports.
-    See the documenation page of nRF Desktop's :ref:`nrf_desktop_hid_forward` for details.
+    See the documentation page of nRF Desktop's :ref:`nrf_desktop_hid_forward` for details.
 
 * Bug fixes:
 
@@ -276,7 +276,7 @@ Bluetooth samples
 * :ref:`direct_test_mode`:
 
   * Isolated the usage of Timer to the nRF52840 device in the workaround for Anomaly 172.
-  * Replaced the busy wait mode with the idle mode to reduce RF noise coming from accesses to flash on devices that don't support instruction cache.
+  * Replaced the busy wait mode with the idle mode to reduce RF noise coming from accesses to flash on devices that do not support instruction cache.
 
 * :ref:`ble_llpm` sample - Added role selection.
 * :ref:`peripheral_bms` sample - Modified the Testing section in the documentation.
@@ -424,7 +424,7 @@ Other samples
 
     * Introduced :kconfig:option:`CONFIG_HW_UNIQUE_KEY_LOAD` with fewer dependencies than :kconfig:option:`CONFIG_HW_UNIQUE_KEY` solely for loading the key.
     * The bootloader now allows a single boot with no key present, to allow the app to write a key.
-      After the first boot, the key must be present or the bootloader won't boot the app.
+      After the first boot, the key must be present or the bootloader will not boot the app.
 
   * Bug fixes:
 
@@ -662,7 +662,7 @@ Other libraries
 
 * :ref:`lib_hw_unique_key` library:
 
-  * Made the checking for ``hw_unique_key_write_random()`` more strict.
+  * Made the checking for ``hw_unique_key_write_random()`` stricter.
     This change will trigger panic if any key is unwritten after writing random keys.
   * Refactored the ``HUK_HAS_*`` macros to be defined or undefined instead of ``1`` or ``0``.
   * Added a new sample :ref:`hw_unique_key_usage` showing how to use a hardware unique key to derive an encryption key.

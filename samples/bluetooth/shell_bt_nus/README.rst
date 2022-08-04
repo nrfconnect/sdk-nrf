@@ -13,7 +13,7 @@ Overview
 ********
 
 When the connection is established, you can connect to the sample through the :ref:`nus_service_readme` by using a host application.
-You can then send shell commands, that are executed on the device that runs the sample, and see the logs.
+You can then send shell commands that are executed on the device running the sample, and see the logs.
 See :ref:`shell_bt_nus_host_tools` for more information about the host tools available, in |NCS|, for communicating with the sample.
 
 Requirements

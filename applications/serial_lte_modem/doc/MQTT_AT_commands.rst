@@ -97,7 +97,7 @@ Response syntax
 * The ``<result>`` value is an integer.
   It can return the following values:
 
-  * ``0`` - Connection succeded.
+  * ``0`` - Connection succeeded.
   * *Negative Value* - Error code.
     It indicates the reason for the failure.
 
@@ -352,7 +352,7 @@ Syntax
     The acknowledgment of the reception is expected and the message should be published only once.
 
 * The ``<retain>`` parameter is an integer.
-  Its default vefault value is  ``0``..
+  Its default value is ``0``.
   When ``1``, it indicates that the broker should store the message persistently.
 
 Response syntax
@@ -367,9 +367,11 @@ Response syntax
 
   * ``3`` - Acknowledgment for the published message with QoS 1.
   * ``4`` - Reception confirmation for the published message with QoS 2.
+
     It is notified when PUBREC is received from the broker.
   * ``5`` - Release of the published message with QoS 2.
   * ``6`` - Confirmation (PUBREL) to a publish release message with QoS 2.
+
     It is notified when PUBREL is received from the broker.
 
 * The ``<result>`` value is an integer.

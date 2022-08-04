@@ -45,8 +45,8 @@ Syntax
 
 * The ``<role>`` parameter can accept one of the following values:
 
-  * ``0`` - Client
-  * ``1`` - Server
+  * ``0`` - Client.
+  * ``1`` - Server.
 
 * The ``<cid>`` parameter is an integer.
   It represents ``cid`` in the ``+CGDCONT`` command.
@@ -73,9 +73,9 @@ Response syntax
 
 * The ``<protocol>`` value can be one of the following integers:
 
-  * ``0`` - IPPROTO_IP
-  * ``6`` - IPPROTO_TCP
-  * ``17`` - IPPROTO_UDP
+  * ``0`` - IPPROTO_IP.
+  * ``6`` - IPPROTO_TCP.
+  * ``17`` - IPPROTO_UDP.
 
 * The ``<result>`` value indicates the result of closing the socket.
   When ``0``, the socket closed successfully.
@@ -132,8 +132,8 @@ Response syntax
 
 * The ``<role>`` value can be one of the following integers:
 
-  * ``0`` - Client
-  * ``1`` - Server
+  * ``0`` - Client.
+  * ``1`` - Server.
 
 * The ``<type>`` value can be one of the following integers:
 
@@ -187,8 +187,8 @@ Response syntax
 
 * The ``<list of roles>`` value can be one of the following integers:
 
-  * ``0`` - Client
-  * ``1`` - Server
+  * ``0`` - Client.
+  * ``1`` - Server.
 
 Examples
 ~~~~~~~~
@@ -234,8 +234,8 @@ Syntax
 
 * The ``<role>`` parameter can accept one of the following values:
 
-  * ``0`` - Client
-  * ``1`` - Server
+  * ``0`` - Client.
+  * ``1`` - Server.
 
 * The ``<sec_tag>`` parameter is an integer.
   It indicates to the modem the credential of the security tag to be used for establishing a secure connection.
@@ -243,9 +243,9 @@ Syntax
 
 * The ``<peer_verify>`` parameter can accept one of the following values:
 
-  * ``0`` - None (default for server role)
-  * ``1`` - Optional
-  * ``2`` - Required (default for client role)
+  * ``0`` - None (default for server role).
+  * ``1`` - Optional.
+  * ``2`` - Required (default for client role).
 
 * The ``<cid>`` parameter is an integer.
   It represents ``cid`` in the ``+CGDCONT`` command.
@@ -271,8 +271,8 @@ Response syntax
 
 * The ``<protocol>`` value can be one of the following integers:
 
-  * ``258`` - IPPROTO_TLS_1_2
-  * ``273`` - IPPROTO_DTLS_1_2
+  * ``258`` - IPPROTO_TLS_1_2.
+  * ``273`` - IPPROTO_DTLS_1_2.
 
 * The ``<result>`` value indicates the result of closing the socket.
   When ``0``, the socket closed successfully.
@@ -460,8 +460,8 @@ Response syntax
 
 * The ``<role>`` value can be one of the following integers:
 
-  * ``0`` - Client
-  * ``1`` - Server
+  * ``0`` - Client.
+  * ``1`` - Server.
 
 * The ``<type>`` value can return one of the following:
 
@@ -610,8 +610,8 @@ Syntax
 
 * The ``<op>`` parameter can accept one of the following values:
 
-  * ``0`` - Get
-  * ``1`` - Set
+  * ``0`` - Get.
+  * ``1`` - Set.
 
 * The ``<name>`` parameter can accept one of the following values:
 
@@ -750,8 +750,8 @@ Response syntax
 * The ``<status>`` value is an integer.
   It can return one of the following values:
 
-* ``1`` - Connected
-* ``0`` - Disconnected
+* ``1`` - Connected.
+* ``0`` - Disconnected.
 
 Examples
 ~~~~~~~~
@@ -1106,7 +1106,7 @@ Response syntax
 
 * The ``<data>`` value is a string that contains the data being received.
 * The ``<size>`` value is an integer that represents the actual number of bytes received.
-* The ``<ip_addr>`` value is an string that represents the IPv4 or IPv6 address of remote peer.
+* The ``<ip_addr>`` value is a string that represents the IPv4 or IPv6 address of remote peer.
 
 Examples
 ~~~~~~~~

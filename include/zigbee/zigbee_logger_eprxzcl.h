@@ -24,7 +24,7 @@ extern "C" {
 #endif
 
 /**@brief Handler function which may be called to log an incoming frame
- *        onto zigbee endpoint.
+ *        onto Zigbee endpoint.
  *
  * @details When this function is called as a callback bound to endpoint
  *          via ZB_AF_SET_ENDPOINT_HANDLER(),
@@ -36,12 +36,12 @@ extern "C" {
  * cmd_seq=128 disable_def_resp=0 manuf_code=void payload=[0700] (17)
  * @endcode
  *
- * @param  bufid     Reference to zigbee buffer holding received
+ * @param  bufid     Reference to Zigbee buffer holding received
  *                   zcl command to be logged
  *
  * @retval ZB_FALSE  in all conditions. This enables possibility
  *                   to use this function directly
- *                   as zigbee stack endpoint handler.
+ *                   as Zigbee stack endpoint handler.
  *
  */
 zb_uint8_t zigbee_logger_eprxzcl_ep_handler(zb_bufid_t bufid);

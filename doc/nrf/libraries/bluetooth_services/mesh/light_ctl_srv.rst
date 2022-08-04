@@ -73,7 +73,7 @@ Lightness: ``uint16_t``
 
 Temperature: ``uint16_t``
     The Temperature state represents the color temperature of the tunable white light emitted by an element.
-    It ranges from ``800`` to ``20000``, and is shared by the assosiated :ref:`bt_mesh_light_temp_srv_readme`.
+    It ranges from ``800`` to ``20000``, and is shared by the associated :ref:`bt_mesh_light_temp_srv_readme`.
 
     The Temperature state power-up behavior is determined by the On Power Up state of the extended :ref:`bt_mesh_ponoff_srv_readme`:
 
@@ -92,7 +92,7 @@ Delta UV: ``int16_t``
 
        Represented Delta UV = (Light CTL Delta UV) / 32768
 
-    The Delta UV state of the Light CTL Server is shared by the assosiated :ref:`bt_mesh_light_temp_srv_readme`, and its power-up behavior is determined by the On Power Up state of the extended :ref:`bt_mesh_ponoff_srv_readme`:
+    The Delta UV state of the Light CTL Server is shared by the associated :ref:`bt_mesh_light_temp_srv_readme`, and its power-up behavior is determined by the On Power Up state of the extended :ref:`bt_mesh_ponoff_srv_readme`:
 
     * :c:enumerator:`BT_MESH_ON_POWER_UP_OFF` - The Delta UV state is set to Default Delta UV on power-up.
     * :c:enumerator:`BT_MESH_ON_POWER_UP_ON` - The Delta UV state is set to Default Delta UV on power-up.
@@ -114,7 +114,7 @@ Temperature Range: :c:struct:`bt_mesh_light_temp_range`
     If the Temperature level is set to a value outside the current Temperature Range, it is moved to fit inside the range.
     If the Temperature Range changes to exclude the current Temperature level, the Temperature level should be changed accordingly.
 
-    The Temperature Range state of the Light CTL Server is shared by the assosiated :ref:`bt_mesh_light_temp_srv_readme`.
+    The Temperature Range state of the Light CTL Server is shared by the associated :ref:`bt_mesh_light_temp_srv_readme`.
 
     The memory for the Temperature Range state is held by the model, and the application may receive updates on state changes through the :c:member:`bt_mesh_light_ctl_srv_handlers.temp_range_update` callback.
 

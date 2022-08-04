@@ -14,7 +14,7 @@ Configuration
 
 To use the module, you must enable the following Kconfig options:
 
-* :kconfig:option:`CONFIG_CAF_BLE_STATE` - This module enables :ref:`caf_ble_state` module.
+* :kconfig:option:`CONFIG_CAF_BLE_STATE` - This module enables :ref:`caf_ble_state`.
 * :kconfig:option:`CONFIG_CAF_BLE_SMP` - This option enables |smp| over Bluetooth LE.
 * :kconfig:option:`CONFIG_MCUMGR_CMD_IMG_MGMT` - This option enables MCUmgr image management handlers, which are required for the DFU process.
   For details, see :ref:`zephyr:device_mgmt` in the Zephyr documentation.

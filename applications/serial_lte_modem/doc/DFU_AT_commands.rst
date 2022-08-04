@@ -11,12 +11,12 @@ The following commands list contains AT commands related to DFU requests.
 
 The SLM application supports the following types of cloud-to-device Device Firmware Update (DFU) for the nRF52 Series of MCUs:
 
-* The application DFU based on mcuboot.
+* The application DFU based on MCUboot.
   This is supported by |NCS|.
   To use this, define :ref:`CONFIG_SLM_NRF52_DFU <CONFIG_SLM_NRF52_DFU>` but leave :ref:`CONFIG_SLM_NRF52_DFU_LEGACY <CONFIG_SLM_NRF52_DFU_LEGACY>` undefined.
 * The legacy serial DFU.
   This is supported by the legacy nRF5 SDK.
-  To use this, define both :ref:`CONFIG_SLM_NRF52_DFU <CONFIG_SLM_NRF52_DFU>` and ::ref:`CONFIG_SLM_NRF52_DFU_LEGACY <CONFIG_SLM_NRF52_DFU_LEGACY>`.
+  To use this, define both :ref:`CONFIG_SLM_NRF52_DFU <CONFIG_SLM_NRF52_DFU>` and :ref:`CONFIG_SLM_NRF52_DFU_LEGACY <CONFIG_SLM_NRF52_DFU_LEGACY>`.
 
 .. note::
    You must configure SLM to use ``UART_2`` for the DFU service.
@@ -42,14 +42,14 @@ Syntax
 
   * ``0`` - Cancel DFU (during download only).
   * ``1`` - Start downloading ``<image_1>`` and ``<image_2>``.
-  * ``8`` - Erase mcuboot secondary slot.
+  * ``8`` - Erase MCUboot secondary slot.
 
 * The ``<host>`` parameter is a string.
   It indicates the HTTP or HTTPS server name and optionally a port number.
 * The ``<image_1>`` parameter is a string.
   It indicates the first file image to download.
   If :ref:`CONFIG_SLM_NRF52_DFU_LEGACY <CONFIG_SLM_NRF52_DFU_LEGACY>` is defined, you must set ``<image_1>`` as the path to the init packet file (:file:`.dat`).
-  Otherwise, you must set ``<image_1>`` as the path to the mcuboot application update file (:file:`.bin`).
+  Otherwise, you must set ``<image_1>`` as the path to the MCUboot application update file (:file:`.bin`).
 * The ``<image_2>`` parameter is a string.
   It indicates the second file image to download.
   If :ref:`CONFIG_SLM_NRF52_DFU_LEGACY <CONFIG_SLM_NRF52_DFU_LEGACY>` is defined, you must set ``<image_2>`` as the path to the file image (:file:`.bin`).
@@ -71,8 +71,8 @@ Response syntax
 * The ``<info>`` value is an integer.
   It can return the following values:
 
-  * A value between ``1`` and ``100`` - the percentage of the download
-  * Any other value - error code
+  * A value between ``1`` and ``100`` - The percentage of the download.
+  * Any other value - Error code.
 
 Examples
 ~~~~~~~~
@@ -240,7 +240,7 @@ Run the legacy serial DFU protocol:
    AT#XDFURUN=2
    OK
 
-Run the mcuboot-based DFU protocol:
+Run the MCUboot-based DFU protocol:
 
 ::
 

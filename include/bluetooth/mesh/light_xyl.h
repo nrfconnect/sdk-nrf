@@ -32,7 +32,7 @@ struct bt_mesh_light_xy {
 struct bt_mesh_light_xyl {
 	/** Lightness value */
 	uint16_t lightness;
-	/** xy parmeters */
+	/** xy parameters */
 	struct bt_mesh_light_xy xy;
 };
 

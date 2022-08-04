@@ -30,8 +30,8 @@ extern "C" {
 
 /** Generic Transition parameters for the model messages.
  *
- * @note Time can not be larger than @ref BT_MESH_MODEL_TRANSITION_TIME_MAX_MS
- *       and delay can not be larger than @ref BT_MESH_MODEL_DELAY_TIME_MAX_MS.
+ * @note Time cannot be larger than @ref BT_MESH_MODEL_TRANSITION_TIME_MAX_MS
+ *       and delay cannot be larger than @ref BT_MESH_MODEL_DELAY_TIME_MAX_MS.
  */
 struct bt_mesh_model_transition {
 	uint32_t time; /**< Transition time value in milliseconds */

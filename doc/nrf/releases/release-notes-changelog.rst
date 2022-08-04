@@ -435,7 +435,7 @@ nRF9160 samples
     * This sample now uses the :ref:`lib_modem_antenna` library to configure the GNSS antenna instead of configuring it directly.
     * Minor logging and function structure improvements
     * :ref:`lib_nrf_cloud` library is no longer de-initialized and re-initialized on disconnect and reconnect.
-    * The :ref:lib_nrf_cloud library function :c:func:nrf_cloud_gnss_msg_json_encode is used to send PVT location data instead of building an NMEA sentence.
+    * The :ref:`lib_nrf_cloud` library function :c:func:`nrf_cloud_gnss_msg_json_encode` is used to send PVT location data instead of building an NMEA sentence.
 
   * Added:
 
@@ -759,7 +759,7 @@ Libraries for networking
 
   * :ref:`lib_nrf_cloud_rest` library:
 
-    * Updated the :c:func:`nrf_cloud_rest_send_location` function to accept a :c:struct `nrf_cloud_gnss_data` pointer instead of an NMEA sentence.
+    * Updated the :c:func:`nrf_cloud_rest_send_location` function to accept a :c:struct:`nrf_cloud_gnss_data` pointer instead of an NMEA sentence.
 
   * :ref:`lib_nrf_cloud_pgps` library:
 
@@ -807,7 +807,7 @@ Other libraries
 
 * :ref:`emds_readme`
 
-  * Updated :c:func:`emds_entry_add` to no longer use heap, but instead require a pointer to the dynamic entry structure :c:struct `emds_dynamic_entry`.
+  * Updated :c:func:`emds_entry_add` to no longer use heap, but instead require a pointer to the dynamic entry structure :c:struct:`emds_dynamic_entry`.
     The dynamic entry structure should be allocated in advance.
 
 * :ref:`mod_memfault`:

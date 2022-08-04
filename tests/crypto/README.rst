@@ -217,8 +217,8 @@ As part of the test case setup, any previously used buffers are cleared.
 The next test vector is fetched using the ``ITEM_GET`` macro.
 The macro requires the following parameters:
 
-* ``test_vector_hmac_data`` - the section to fetch the test vector from (HMAC in this example).
-* ``test_vector_hmac_t`` - information about which type of test vector to expect in the given section.
+* ``test_vector_hmac_data`` - The section to fetch the test vector from (HMAC in this example).
+* ``test_vector_hmac_t`` - Information about which type of test vector to expect in the given section.
   In the example, ``test_vector_hmac_t`` is expected.
   It is the same type that is used when registering HMAC test vectors.
 * Information about which index to fetch a test vector from.

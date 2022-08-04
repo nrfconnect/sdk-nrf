@@ -18,7 +18,7 @@ Characteristics
 ***************
 
 The Fast Pair GATT characteristics are described in detail in the `Fast Pair GATT Characteristics`_ documentation.
-The implementaion available in the |NCS| follows these requirements.
+The implementation in the |NCS| follows these requirements.
 
 .. note::
    The Additional Data characteristic is not supported yet.

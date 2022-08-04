@@ -10,6 +10,17 @@ Bluetooth: Peripheral HIDS mouse
 The Peripheral HIDS mouse sample demonstrates how to use the :ref:`hids_readme` to implement a mouse input device that you can connect to your computer.
 This sample also shows how to perform directed advertising.
 
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-sample-yaml::
+
+.. include:: /includes/tfm.txt
+
+.. include:: /includes/hci_rpmsg_overlay.txt
+
 Overview
 ********
 
@@ -25,17 +36,6 @@ This feature is enabled by default and it changes the way in which advertising w
 When the device wants to advertise, it starts with high duty cycle directed advertising provided that it has bonding information.
 If the timeout occurs, then the device starts directed advertising to the next bonded peer.
 If all bonding information is used and there is still no connection, then the regular advertising starts.
-
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-sample-yaml::
-
-.. include:: /includes/tfm.txt
-
-.. include:: /includes/hci_rpmsg_overlay.txt
 
 User interface
 **************

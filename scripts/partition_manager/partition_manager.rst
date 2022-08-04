@@ -709,7 +709,7 @@ This file is similar to the regular :file:`pm.yml` configuration files, except t
 
 You can set ``PM_STATIC_YML_FILE`` to contain exactly the static configuration you want to use.
 
-If you don’t set ``PM_STATIC_YML_FILE``, the build system will use the following order to look for files in your application source directory to use as a static configuration layout:
+If you do not set ``PM_STATIC_YML_FILE``, the build system will use the following order to look for files in your application source directory to use as a static configuration layout:
 
 * If build type is used, :ref:`gs_modifying_build_types`, the following order applies:
 

@@ -212,7 +212,7 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:api_peripherals`:
 
-   * ``incude/gpio.h``
+   * ``include/gpio.h``
    * ``include/uart.h``
 
 * :ref:`zephyr:bluetooth_api`:

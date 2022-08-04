@@ -50,7 +50,7 @@ struct wave_gen_param {
 	/** Amplitude of the wave signal. */
 	double amplitude;
 
-	/** Amplitue of the added noise signal. */
+	/** Amplitude of the added noise signal. */
 	double noise;
 };
 

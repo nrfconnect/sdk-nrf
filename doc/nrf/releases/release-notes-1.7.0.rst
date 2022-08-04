@@ -81,7 +81,7 @@ nRF9160
 
   * All samples
 
-    * All samples built for the nRF9160 SoC now have the :ref:`nrf_modem` library enabled by default.
+    * All samples built for the nRF9160 SoC now have the :ref:`nrf_modem` enabled by default.
 
   * :ref:`lib_nrf_cloud` library:
 
@@ -138,8 +138,8 @@ nRF9160
 * Deprecated:
 
   * nRF9160: Asset Tracker has been deprecated in favor of :ref:`asset_tracker_v2`.
-  * ``at_notif`` library library has been deprecated in favor of the :ref:`at_monitor_readme` library.
-  * ``at_cmd`` library library has been deprecated in favor of Modem library's native AT interface.
+  * ``at_notif`` library has been deprecated in favor of the :ref:`at_monitor_readme` library.
+  * ``at_cmd`` library has been deprecated in favor of Modem library's native AT interface.
   * GPS driver has been deprecated in favor of the :ref:`nrfxlib:gnss_interface`.
 
 nRF5

@@ -58,7 +58,7 @@ enum bt_mesh_battery_charging {
 	BT_MESH_BATTERY_CHARGING_NOT_CHARGEABLE,
 	/** The battery is chargeable and is not charging. */
 	BT_MESH_BATTERY_CHARGING_CHARGEABLE_NOT_CHARGING,
-	/** The battery is chareable and is charging. */
+	/** The battery is chargeable and is charging. */
 	BT_MESH_BATTERY_CHARGING_CHARGEABLE_CHARGING,
 	/** The battery charging state is unknown. */
 	BT_MESH_BATTERY_CHARGING_UNKNOWN,
@@ -72,7 +72,7 @@ enum bt_mesh_battery_service {
 	BT_MESH_BATTERY_SERVICE_NOT_REQUIRED,
 	/** The battery requires service. */
 	BT_MESH_BATTERY_SERVICE_REQUIRED,
-	/** The battery servicability is unknown. */
+	/** The battery serviceability is unknown. */
 	BT_MESH_BATTERY_SERVICE_UNKNOWN,
 };
 

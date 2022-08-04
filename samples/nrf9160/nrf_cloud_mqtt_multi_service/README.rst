@@ -296,7 +296,7 @@ Otherwise, the four-LED option (:ref:`CONFIG_LED_INDICATION_GPIO <CONFIG_LED_IND
 The four-LED option should work even if there are not four LEDs available, as long as an appropriate devicetree entry exists.
 However, if fewer than four LEDs are available, the patterns may be difficult to identify.
 
-To add your own LED indication implementations, you can add values to the ``LED_INDICATOR`` KConfig choice and modify the :file:`src/led_control.c` file accordingly.
+To add your own LED indication implementations, you can add values to the ``LED_INDICATOR`` Kconfig choice and modify the :file:`src/led_control.c` file accordingly.
 
 To disable LED indication, enable the :ref:`CONFIG_LED_INDICATION_DISABLED <CONFIG_LED_INDICATION_DISABLED>` option.
 

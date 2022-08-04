@@ -10,13 +10,6 @@ Bluetooth: Central Heart Rate Monitor with Coded PHY
 The Central Heart Rate Monitor with Coded PHY offers similar functionality to the :ref:`zephyr:bluetooth_central_hr` sample from Zephyr.
 However, this sample specifically looks for heart rate monitors using LE Coded PHY.
 
-Overview
-********
-
-The sample demonstrates a Bluetooth® LE Central role functionality by scanning for other Bluetooth LE devices that run a Heart Rate Server with LE Coded PHY support, which is not available in Zephyr Bluetooth LE Controller (See :ref:`ug_ble_controller` for more information).
-It then establishes a connection to the first Peripheral device in range.
-It can be used together with the :ref:`peripheral_hr_coded` sample.
-
 Requirements
 ************
 
@@ -28,6 +21,14 @@ The sample supports the following development kits:
 
 The sample also requires a device running a Heart Rate Server with LE Coded PHY support to connect to.
 For example, another development kit running the :ref:`peripheral_hr_coded` sample.
+
+Overview
+********
+
+The sample demonstrates a Bluetooth® LE Central role functionality by scanning for other Bluetooth LE devices that run a Heart Rate Server with LE Coded PHY support, which is not available in Zephyr Bluetooth LE Controller.
+See :ref:`ug_ble_controller` for more information.
+It then establishes a connection to the first Peripheral device in range.
+You can use it together with the :ref:`peripheral_hr_coded` sample.
 
 Building and running
 ********************

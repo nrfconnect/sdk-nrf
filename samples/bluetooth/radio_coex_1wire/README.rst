@@ -45,7 +45,7 @@ Building and running
 Testing
 =======
 
-To test the sample, complete the following steps:
+|test_sample|
 
 1. Build and program the development kit.
 #. |connect_terminal|
@@ -53,7 +53,7 @@ To test the sample, complete the following steps:
 #. Enter ``d`` to deny packet transmission.
 #. Observe that packet transmissions have stopped.
 #. Enter ``g`` to grant packet transmission.
-#. Observe that packet packet transmissions have restarted.
+#. Observe that packet transmissions have restarted.
 
 Dependencies
 ************

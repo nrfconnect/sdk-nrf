@@ -9,6 +9,22 @@ Bluetooth: Direct Test Mode
 
 This sample enables the Direct Test Mode functions described in `Bluetooth® Core Specification <Bluetooth Core Specification_>`_: Version 5.2, Vol. 6, Part F.
 
+Requirements
+************
+
+The sample supports the following development kit:
+
+.. table-from-sample-yaml::
+
+Additionally, the sample requires one of the following testing devices:
+
+  * Dedicated test equipment, like an Anritsu MT8852 tester.
+    See :ref:`direct_test_mode_testing_anritsu`.
+  * Another development kit with the same sample.
+    See :ref:`direct_test_mode_testing_board`.
+  * Another development kit connected to a PC with the Direct Test Mode sample available in the `nRF Connect for Desktop`_.
+    See :ref:`direct_test_mode_testing_app`.
+
 Overview
 ********
 
@@ -259,22 +275,6 @@ Instead, they are printed by the RTT logger.
 If you want to view the debug messages, follow the procedure in :ref:`testing_rtt_connect`.
 For more information about debugging in the |NCS|, see :ref:`gs_debugging`.
 
-Requirements
-************
-
-The sample supports the following development kit:
-
-.. table-from-sample-yaml::
-
-Additionally, the sample requires one of the following testing devices:
-
-  * Dedicated test equipment, like an Anritsu MT8852 tester.
-    See :ref:`direct_test_mode_testing_anritsu`.
-  * Another development kit with the same sample.
-    See :ref:`direct_test_mode_testing_board`.
-  * Another development kit connected to a PC with the Direct Test Mode sample available in the `nRF Connect for Desktop`_.
-    See :ref:`direct_test_mode_testing_app`.
-
 Building and running
 ********************
 
@@ -335,9 +335,8 @@ Testing with another development kit
 Testing with nRF Connect for Desktop
 ------------------------------------
 
-1. Connect the development kit to the computer using a USB cable.
-   The computer assigns to the development kit a COM port on Windows or a ttyACM device on Linux, which is visible in the Device Manager.
-#. Connect to the kit with a terminal emulator.
+1. |connect_kit|
+#. |connect_terminal|
    See `Direct Test Mode terminal connection`_ for the required settings.
 #. Start the ``TRANSMITTER_TEST`` by sending the ``0x80 0x96`` DTM command to the connected development kit.
    This command triggers TX activity on 2402 MHz frequency (1st channel) with ``10101010`` packet pattern and 37-byte packet length.

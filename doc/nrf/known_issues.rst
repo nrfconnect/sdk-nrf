@@ -567,7 +567,7 @@ KRKNWK-12115: Simultaneous commissioning of many devices can cause the Coordinat
         #define ZB_CONFIG_SCHEDULER_Q_SIZE 56
         */
 
-  #. Replace the code you've just located with the following code:
+  #. Replace the code you have just located with the following code:
 
      .. code-block:: c
 
@@ -604,7 +604,7 @@ KRKNWK-12522: Incorrect Read Attributes Response on reading multiple attributes 
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0
 
 KRKNWK-12017: Zigbee End Device does not recover from broken rejoin procedure
-  If the Device Announcement packet is not acknowledged by the End Device's parent, joiner logic is stopped and device doesn't recover.
+  If the Device Announcement packet is not acknowledged by the End Device's parent, joiner logic is stopped and the device does not recover.
 
   **Workaround:** Complete the following steps to detect when the rejoin procedure breaks and reset the device:
 
@@ -1652,7 +1652,7 @@ MCUboot
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0
 
 NCSDK-15494: Unable to build with RSA and ECIES-X25519 image encryptions
-  Building MCUboot with either RSA and ECIES-X25519 image encryptions feature enabled is not possible.
+  Building MCUboot with either RSA or ECIES-X25519 image encryptions feature enabled is not possible.
 
   **Workaround:** To fix the issue, update the ``sdk-mcuboot`` repository by cherry-picking the upstream commits with the following hashes: ``7315e424b91503819307d33ebbc3140103470dd8`` and ``0f7db390d3537bff0feee20f900f9720f90f33f9``.
 

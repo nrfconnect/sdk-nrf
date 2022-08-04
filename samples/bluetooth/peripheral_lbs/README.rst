@@ -9,14 +9,6 @@ Bluetooth: Peripheral LBS
 
 The peripheral LBS sample demonstrates how to use the :ref:`lbs_readme`.
 
-Overview
-********
-
-When connected, the sample sends the state of **Button 1** on the development kit to the connected device, such as a phone or tablet.
-The mobile application on the device can display the received button state and can control the state of **LED 3** on the development kit.
-
-Alternatively, you can use this sample to control the color of the RGB LED on the nRF52840 Dongle or Thingy:53.
-
 Requirements
 ************
 
@@ -32,6 +24,14 @@ The `Testing`_ instructions refer to `nRF Connect for Mobile`_, but you can also
 .. note::
    |thingy53_sample_note|
 
+Overview
+********
+
+When connected, the sample sends the state of **Button 1** on the development kit to the connected device, such as a phone or tablet.
+The mobile application on the device can display the received button state and control the state of **LED 3** on the development kit.
+
+You can also use this sample to control the color of the RGB LED on the nRF52840 Dongle or Thingy:53.
+
 User interface
 **************
 
@@ -46,8 +46,8 @@ Green LED:
 RGB LED:
    The RGB LED channels are used independently to display the following information:
 
-   * Red - if Dongle is connected.
-   * Green - if user set the LED using Nordic LED Button Service.
+   * Red - If Dongle is connected.
+   * Green - If user set the LED using Nordic LED Button Service.
 
 Button 1:
    Send a notification with the button state: "pressed" or "released".
@@ -58,10 +58,10 @@ Thingy:53
 RGB LED:
    The RGB LED channels are used independently to display the following information:
 
-   * Red - if the main loop is running (that is, the device is advertising).
+   * Red - If the main loop is running (that is, the device is advertising).
      The LED blinks with a period of 2 seconds, duty cycle 50%.
-   * Green - if the device is connected.
-   * Blue - if user set the LED using Nordic LED Button Service.
+   * Green - If the device is connected.
+   * Blue - If user set the LED using Nordic LED Button Service.
 
    For example, if Thingy:53 is connected over Bluetooth, the LED color toggles between green and yellow.
    The green LED channel is kept on and the red LED channel is blinking.

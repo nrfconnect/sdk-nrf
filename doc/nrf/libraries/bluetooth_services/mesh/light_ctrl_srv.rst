@@ -313,7 +313,7 @@ The illuminance regulator's output level only comes into effect if the required 
 To get full benefit of the regulator, the state machine's light level output should generally be configured to a lower value than desired, while keeping the target illuminance levels high.
 This allows the regulator to conserve energy by taking advantage of the room's ambient lighting.
 
-The Light LC Server uses :ref:`bt_mesh_light_ctrl_reg_readme` to interract with the illuminance regulator.
+The Light LC Server uses :ref:`bt_mesh_light_ctrl_reg_readme` to interact with the illuminance regulator.
 If the regulator functionality is enabled and no regulator is specified (using :c:macro:`BT_MESH_LIGHT_CTRL_SRV_INIT_WITH_REG`), the server will by default use the :ref:`bt_mesh_light_ctrl_reg_spec_readme`.
 
 Sensor input

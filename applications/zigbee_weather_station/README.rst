@@ -12,6 +12,29 @@ It allows you to build a weather station that remotely gathers different kinds o
 The device works as a Zigbee device, meaning it can be paired and controlled remotely over a Zigbee network.
 You can use this application as a reference for creating your own application.
 
+Requirements
+************
+
+The application supports the following development kits:
+
+.. table-from-sample-yaml::
+
+To commission the Zigbee weather station device and control it remotely through a Zigbee network, you also need to program a Zigbee network coordinator on a separate compatible development kit.
+The Zigbee network coordinator forms the network that the weather station node will join and share its measurement data with.
+You can use one of the following options to set up the Zigbee network coordinator:
+
+* For `Testing`_ purposes, program the :ref:`Zigbee shell <zigbee_shell_sample>` as the network coordinator to be able to use the interactive shell for readings and bindings.
+  Read the sample documentation for more information.
+* For generic usage of the application, you can use the standard :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>`.
+
+To program a Thingy:53 device from which the preprogrammed MCUboot bootloader has been erased, you need an external J-Link programmer.
+If you have an nRF5340 DK that has an onboard J-Link programmer, you can also use it for this purpose.
+
+If the Thingy:53 device is programmed with a Thingy:53-compatible sample or application, you can also update the firmware using MCUboot's serial recovery or DFU over Bluetooth LE.
+See :ref:`thingy53_app_guide` for details.
+
+For capturing packets while testing, you can use `nRF Sniffer for 802.15.4`_ with `Wireshark configured for Zigbee <Configuring Wireshark for Zigbee>`_.
+
 Overview
 ********
 
@@ -40,8 +63,8 @@ If a board has other configuration files, for example associated with partition 
 Before you start testing the application, you can select one of the build types supported by the Zigbee weather station application, depending on the building method.
 This application supports the following build types:
 
-* ``debug`` -- Debug version of the application - can be used to enable additional features for verifying the application behavior, such as logs.
-* ``release`` -- Release version of the application - can be used to enable only the necessary application functionalities to optimize its performance.
+* ``debug`` - Debug version of the application. You can use this version to enable additional features for verifying the application behavior, such as logs.
+* ``release`` - Release version of the application. You can use this version to enable only the necessary application functionalities to optimize its performance.
 
 .. note::
     `Selecting a build type`_ is optional.
@@ -83,28 +106,6 @@ OTA and DFU
    The MCUboot secure bootloader is used to apply the new firmware image.
    For information about how to upgrade the device firmware, see the :ref:`zigbee_weather_station_app_dfu` section.
 
-Requirements
-************
-
-The application supports the following development kits:
-
-.. table-from-sample-yaml::
-
-To commission the Zigbee weather station device and control it remotely through a Zigbee network, you also need to program a Zigbee network coordinator on a separate compatible development kit.
-The Zigbee network coordinator forms the network that the weather station node will join and onto which it will share its measurement data.
-You can use one of the following options for setting up the Zigbee network coordinator:
-
-* For `Testing`_ purposes, program the :ref:`Zigbee shell <zigbee_shell_sample>` as the network coordinator to be able to use the interactive shell for readings and bindings.
-  Read the sample documentation for more information.
-* For generic usage of the application, you can use the standard :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>`.
-
-To program a Thingy:53 device where the preprogrammed MCUboot bootloader has been erased, you need the external J-Link programmer.
-If you own an nRF5340 DK that has an onboard J-Link programmer, you can also use it for this purpose.
-
-If the Thingy:53 device is programmed with a Thingy:53-compatible sample or application, then you can also update the firmware using MCUboot's serial recovery or DFU over Bluetooth LE.
-See :ref:`thingy53_app_guide` for details.
-
-For capturing packets while testing, you can use `nRF Sniffer for 802.15.4`_ with `Wireshark configured for Zigbee <Configuring Wireshark for Zigbee>`_.
 
 User interface
 **************

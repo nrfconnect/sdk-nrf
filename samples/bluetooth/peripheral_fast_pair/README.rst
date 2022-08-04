@@ -17,6 +17,17 @@ For detailed information about supported functionalities, see the official `Fast
    The Fast Pair support in the |NCS| is experimental.
    See :ref:`ug_bt_fast_pair` for details.
 
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-sample-yaml::
+
+.. include:: /includes/tfm.txt
+
+.. include:: /includes/hci_rpmsg_overlay.txt
+
 Overview
 ********
 
@@ -38,17 +49,6 @@ While maintaining the connection, the Bluetooth advertising is disabled.
 The advertising is restarted after disconnection.
 
 See `Fast Pair Advertising`_ for detailed information about discoverable and not discoverable advertising.
-
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-sample-yaml::
-
-.. include:: /includes/tfm.txt
-
-.. include:: /includes/hci_rpmsg_overlay.txt
 
 Fast Pair device registration
 =============================
@@ -149,7 +149,7 @@ See :ref:`ug_bt_fast_pair_provisioning` for detailed guide.
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+|test_sample|
 
 1. |connect_terminal_specific|
    The sample provides Fast Pair debug logs to inform about state of the Fast Pair procedure.
@@ -157,7 +157,7 @@ After programming the sample to your development kit, test it by performing the 
 #. Observe that **LED 1** is blinking (firmware is running) and **LED 3** is turned on (device is Fast Pair discoverable).
    This means that the device is now working as Fast Pair Provider and is advertising.
 #. On the Android device, go to :guilabel:`Settings` > :guilabel:`Google` > :guilabel:`Devices & sharing` (or :guilabel:`Device connections`, depending on your Android device configuration) > :guilabel:`Devices`.
-#. Move the Andoid device close to the Fast Pair Provider that is advertising.
+#. Move the Android device close to the Fast Pair Provider that is advertising.
 #. Wait for Android device's notification about the detected Fast Pair Provider.
    The notification is similar to the following one:
 

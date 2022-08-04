@@ -43,7 +43,7 @@ config DESKTOP_NRF_PROFILER_SYNC_GPIO_PORT
 	range 0 1
 	default 0
 	help
-	  This option defines which gpio port is to be used to generate/receive
+	  This option defines which GPIO port is to be used to generate/receive
 	  synchronization signal. The signal is used to synchronize timestamps
 	  between two different devices.
 
@@ -52,7 +52,7 @@ config DESKTOP_NRF_PROFILER_SYNC_GPIO_PIN
 	range 0 31
 	default 0
 	help
-	  This option defines which gpio pin is to be used to generate/receive
+	  This option defines which GPIO pin is to be used to generate/receive
 	  synchronization signal. The signal is used to synchronize timestamps
 	  between two different devices.
 

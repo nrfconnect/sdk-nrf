@@ -889,7 +889,7 @@
 
 .. _`reStructuredText Primer`: https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
 
-.. _`mscgen`: http://www.mcternan.me.uk/mscgen/
+.. _`Mscgen`: http://www.mcternan.me.uk/mscgen/
 
 .. _`Doxygen`: https://www.doxygen.nl/
 

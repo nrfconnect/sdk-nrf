@@ -28,9 +28,9 @@ Syntax
 
 * The ``<op>`` parameter can accept one of the following values:
 
-  * ``0`` - Disconnect from the HTTP server
-  * ``1`` - Connect to the HTTP server for IP protocol family version 4
-  * ``2`` - Connect to the HTTP server for IP protocol family version 6
+  * ``0`` - Disconnect from the HTTP server.
+  * ``1`` - Connect to the HTTP server for IP protocol family version 4.
+  * ``2`` - Connect to the HTTP server for IP protocol family version 6.
 
 * The ``<host>`` parameter is a string.
   It represents the HTTP server hostname.

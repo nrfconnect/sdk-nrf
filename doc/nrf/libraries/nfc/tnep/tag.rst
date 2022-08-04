@@ -98,7 +98,7 @@ Receiving new messages
 When a new NDEF message appears in the buffer and it contains a Service Select record, the application can select this service.
 To do this, the application should inform the TNEP tag library of the received NDEF message by calling :c:func:`nfc_tnep_tag_rx_msg_indicate`.
 The tag library will then change its state to Service Selected.
-From that point, the service description message will not longer be provided.
+From that point, the service description message will no longer be provided.
 
 After the successful service selection, the select callback function of the service is called.
 If the tag library was already in Service Selected state when receiving the NDEF message with the Service Select record, the deselect callback of the previous service is called before the select callback of the new service.

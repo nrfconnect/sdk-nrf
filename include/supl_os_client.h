@@ -32,7 +32,7 @@ int supl_session(const struct nrf_modem_gnss_agps_data_frame *const agps_request
 
 /**
  * @brief Setup the API and the buffers required by
- *        the SUPL client libray.
+ *        the SUPL client library.
  *
  * @param[in] api Function pointers to the API required by SUPL client library
  *                to work.

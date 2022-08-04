@@ -49,7 +49,7 @@ The following table lists variants and extensions available out of the box for e
       - ✔
       -
 
-See the sample documentation pages for instructions about how to enable these variants and extenstions.
+See the sample documentation pages for instructions about how to enable these variants and extensions.
 
 In addition to these samples, check also the :ref:`Thingy:53 Matter weather station <matter_weather_station_app>` application.
 

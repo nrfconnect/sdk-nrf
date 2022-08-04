@@ -25,7 +25,7 @@ Experimental
 
    .. note::
       By default, the build system generates build warnings to indicate when features labeled ``EXPERIMENTAL`` are included in builds.
-      You can disable these warnings by disabling the :kconfig:option:`CONFIG_WARN_EXPERIMENTAL` kconfig option.
+      To disable these warnings, disable the :kconfig:option:`CONFIG_WARN_EXPERIMENTAL` Kconfig option.
       See :ref:`app_build_additions` for details.
 
 See the following table for more details:

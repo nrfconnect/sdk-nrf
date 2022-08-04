@@ -166,7 +166,7 @@ Cadence
 *******
 
 Each sensor may use the cadence state to control the rate at which their data is published.
-The sensor's publication interval is defined as a divisor of the holding sensor Server's publication interval, that is always a power of two.
+The sensor's publication interval is defined as a divisor of the holding sensor Server's publication interval that is always a power of two.
 Under normal circumstances, the sensor's period divisor is always 1, and the sensor only publishes on the Server's actual publication interval.
 
 All single-channel sensors have a configurable *fast cadence* range that automatically controls the sensor cadence.

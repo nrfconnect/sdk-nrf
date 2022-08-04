@@ -453,7 +453,7 @@ int lwm2m_os_thread_start(int index, lwm2m_os_thread_entry_t entry, const char *
  * @brief Initialize modem library.
  *
  * @retval  0      If success.
- * @retval -EIO    If modem initialisation failed.
+ * @retval -EIO    If modem initialization failed.
  * @return  A positive number @em nrf_modem_dfu in case of modem firmware update.
  */
 int lwm2m_os_nrf_modem_init(void);
@@ -470,7 +470,7 @@ int lwm2m_os_nrf_modem_shutdown(void);
  * @brief Initialize AT command driver.
  *
  * @retval  0      If success.
- * @retval -EIO    If AT command driver initialisation failed.
+ * @retval -EIO    If AT command driver initialization failed.
  */
 int lwm2m_os_at_init(lwm2m_os_at_handler_callback_t callback);
 

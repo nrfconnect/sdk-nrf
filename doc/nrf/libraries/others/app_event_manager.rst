@@ -197,7 +197,7 @@ The following code example shows how to create and submit an event of type ``sam
 	/* Submit event. */
 	APP_EVENT_SUBMIT(event);
 
-If an event type also defines data with variable size, you must pass also the size of the data as an argument to the function that allocates the event.
+If an event type also defines data with variable size, you must also pass the size of the data as an argument to the function that allocates the event.
 For example, if the ``sample_event`` also contains data with variable size, you must apply the following changes to the code:
 
 .. code-block:: c
@@ -329,7 +329,7 @@ Tracing hooks
 .. em_tracing_hooks_start
 
 The Application Event Manager uses flexible mechanism to implement hooks when an event is submitted, before it is processed, and after its processing.
-Oryginally designed to implement event tracing, the tracing hooks can be used for other purposes as well.
+The tracing hooks are originally designed to implement event tracing, but you can use them for other purposes as well.
 The registered hook function should be declared in the ``void hook(const struct app_event_header *aeh)`` format.
 
 The following macros are implemented to register event tracing hooks:

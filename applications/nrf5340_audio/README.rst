@@ -241,7 +241,7 @@ The following external factors can affect the presentation compensation:
   Also, if the drift compensation loses synchronization, moving out of :c:enumerator:`DRIFT_STATE_LOCKED`, the presentation compensation moves back to :c:enumerator:`PRES_STATE_INIT`.
 * When audio is being played, it is expected that a new audio frame is received in each ISO connection interval.
   If this does not occur, the headset might have lost its connection with the gateway.
-  When the connection is restored, the application receives an :c:type:`sdu_ref` not consecutive with the previously received :c:type:`sdu_ref`.
+  When the connection is restored, the application receives a :c:type:`sdu_ref` not consecutive with the previously received :c:type:`sdu_ref`.
   Then the presentation compensation is put into :c:enumerator:`PRES_STATE_WAIT` to ensure that the audio is still in sync.
 
 .. note::
@@ -1030,43 +1030,43 @@ Configuration table overview
 
    See the following table for the meaning of each column and the list of possible values:
 
-   +-----------------------+-----------------------------------------------------------------------------------------------------+-----------------------------------------------+
-   | Column                | Indication                                                                                          | Possible values                               |
-   +=======================+=====================================================================================================+===============================================+
-   | ``snr``               | Serial number of the device, as provided in the :file:`nrf5340_audio_dk_devices.json` file.         | Serial number.                                |
-   +-----------------------+-----------------------------------------------------------------------------------------------------+-----------------------------------------------+
-   | ``snr conn``          | Whether the device with the provided serial number is connected to the PC with a serial connection. | ``True`` - Connected.                         |
-   |                       |                                                                                                     +-----------------------------------------------+
-   |                       |                                                                                                     | ``False`` - Not connected.                    |
-   +-----------------------+-----------------------------------------------------------------------------------------------------+-----------------------------------------------+
-   | ``device``            | Device type, as provided in the :file:`nrf5340_audio_dk_devices.json` file.                         | ``headset`` - Headset.                        |
-   |                       |                                                                                                     +-----------------------------------------------+
-   |                       |                                                                                                     | ``gateway`` - Gateway.                        |
-   +-----------------------+-----------------------------------------------------------------------------------------------------+-----------------------------------------------+
-   | ``only reboot``       | Whether the device is to be only reset and not programmed.                                          | ``Not selected`` - No reset.                  |
-   |                       | This depends on the ``-r`` parameter in the command, which overrides other parameters.              +-----------------------------------------------+
-   |                       |                                                                                                     | ``Selected TBD`` - Only reset requested.      |
-   |                       |                                                                                                     +-----------------------------------------------+
-   |                       |                                                                                                     | ``Done`` - Reset done.                        |
-   |                       |                                                                                                     +-----------------------------------------------+
-   |                       |                                                                                                     | ``Failed`` - Reset failed.                    |
-   +-----------------------+-----------------------------------------------------------------------------------------------------+-----------------------------------------------+
-   |``core app programmed``| Whether the application core is to be programmed.                                                   | ``Not selected`` - Core won't be programmed.  |
-   |                       | This depends on the value provided to the ``-c`` parameter (see above).                             +-----------------------------------------------+
-   |                       |                                                                                                     | ``Selected TBD`` - Programming requested.     |
-   |                       |                                                                                                     +-----------------------------------------------+
-   |                       |                                                                                                     | ``Done`` - Programming done.                  |
-   |                       |                                                                                                     +-----------------------------------------------+
-   |                       |                                                                                                     | ``Failed`` - Programming failed.              |
-   +-----------------------+-----------------------------------------------------------------------------------------------------+-----------------------------------------------+
-   |``core net programmed``| Whether the network core is to be programmed.                                                       | ``Not selected`` - Core won't be programmed.  |
-   |                       | This depends on the value provided to the ``-c`` parameter (see above).                             +-----------------------------------------------+
-   |                       |                                                                                                     | ``Selected TBD`` - Programming requested.     |
-   |                       |                                                                                                     +-----------------------------------------------+
-   |                       |                                                                                                     | ``Done`` - Programming done.                  |
-   |                       |                                                                                                     +-----------------------------------------------+
-   |                       |                                                                                                     | ``Failed`` - Programming failed.              |
-   +-----------------------+-----------------------------------------------------------------------------------------------------+-----------------------------------------------+
+   +-----------------------+-----------------------------------------------------------------------------------------------------+-------------------------------------------------+
+   | Column                | Indication                                                                                          | Possible values                                 |
+   +=======================+=====================================================================================================+=================================================+
+   | ``snr``               | Serial number of the device, as provided in the :file:`nrf5340_audio_dk_devices.json` file.         | Serial number.                                  |
+   +-----------------------+-----------------------------------------------------------------------------------------------------+-------------------------------------------------+
+   | ``snr conn``          | Whether the device with the provided serial number is connected to the PC with a serial connection. | ``True`` - Connected.                           |
+   |                       |                                                                                                     +-------------------------------------------------+
+   |                       |                                                                                                     | ``False`` - Not connected.                      |
+   +-----------------------+-----------------------------------------------------------------------------------------------------+-------------------------------------------------+
+   | ``device``            | Device type, as provided in the :file:`nrf5340_audio_dk_devices.json` file.                         | ``headset`` - Headset.                          |
+   |                       |                                                                                                     +-------------------------------------------------+
+   |                       |                                                                                                     | ``gateway`` - Gateway.                          |
+   +-----------------------+-----------------------------------------------------------------------------------------------------+-------------------------------------------------+
+   | ``only reboot``       | Whether the device is to be only reset and not programmed.                                          | ``Not selected`` - No reset.                    |
+   |                       | This depends on the ``-r`` parameter in the command, which overrides other parameters.              +-------------------------------------------------+
+   |                       |                                                                                                     | ``Selected TBD`` - Only reset requested.        |
+   |                       |                                                                                                     +-------------------------------------------------+
+   |                       |                                                                                                     | ``Done`` - Reset done.                          |
+   |                       |                                                                                                     +-------------------------------------------------+
+   |                       |                                                                                                     | ``Failed`` - Reset failed.                      |
+   +-----------------------+-----------------------------------------------------------------------------------------------------+-------------------------------------------------+
+   |``core app programmed``| Whether the application core is to be programmed.                                                   | ``Not selected`` - Core will not be programmed. |
+   |                       | This depends on the value provided to the ``-c`` parameter (see above).                             +-------------------------------------------------+
+   |                       |                                                                                                     | ``Selected TBD`` - Programming requested.       |
+   |                       |                                                                                                     +-------------------------------------------------+
+   |                       |                                                                                                     | ``Done`` - Programming done.                    |
+   |                       |                                                                                                     +-------------------------------------------------+
+   |                       |                                                                                                     | ``Failed`` - Programming failed.                |
+   +-----------------------+-----------------------------------------------------------------------------------------------------+-------------------------------------------------+
+   |``core net programmed``| Whether the network core is to be programmed.                                                       | ``Not selected`` - Core will not be programmed. |
+   |                       | This depends on the value provided to the ``-c`` parameter (see above).                             +-------------------------------------------------+
+   |                       |                                                                                                     | ``Selected TBD`` - Programming requested.       |
+   |                       |                                                                                                     +-------------------------------------------------+
+   |                       |                                                                                                     | ``Done`` - Programming done.                    |
+   |                       |                                                                                                     +-------------------------------------------------+
+   |                       |                                                                                                     | ``Failed`` - Programming failed.                |
+   +-----------------------+-----------------------------------------------------------------------------------------------------+-------------------------------------------------+
 
 .. _nrf53_audio_app_building_standard:
 
@@ -1076,7 +1076,7 @@ Building and programming using command line
 You can also build the nRF5340 Audio application using the standard |NCS| :ref:`build steps <gs_programming>` for the command line.
 
 .. note::
-   Using this method requires you to build and progam each development kit one at a time before moving to the next configuration, which can be time-consuming.
+   Using this method requires you to build and program each development kit one at a time before moving to the next configuration, which can be time-consuming.
    :ref:`nrf53_audio_app_building_script` is recommended.
 
 Building the application

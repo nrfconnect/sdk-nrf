@@ -44,7 +44,7 @@ bool (*bl_validate_firmware_t)(uint32_t fw_dst_address, uint32_t fw_src_address)
  *
  * @retval true  bl_validate_firmware() can be called and should work correctly.
  * @retval false bl_validate_firmware() is unavailable and will always return
- *               false because the undelying EXT_API is unavailable.
+ *               false because the underlying EXT_API is unavailable.
  */
 bool bl_validate_firmware_available(void);
 

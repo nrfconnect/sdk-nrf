@@ -11,6 +11,19 @@ The Peripheral HIDS keyboard sample demonstrates how to use the :ref:`hids_readm
 
 The sample also shows how to perform LE Secure Connections Out-of-Band pairing using NFC.
 
+Requirements
+************
+
+The sample supports the following development kits:
+
+.. table-from-sample-yaml::
+
+.. include:: /includes/tfm.txt
+
+.. include:: /includes/hci_rpmsg_overlay.txt
+
+If the NFC_OOB_PAIRING feature is enabled, the sample requires a smartphone or a tablet with Android v8.0.0 or newer.
+
 Overview
 ********
 
@@ -36,19 +49,6 @@ After reading the tag, the device can pair with the nRF52 device which is advert
 After connecting, the sample application behaves in the same way as the original HID Keyboard sample.
 Reading the NFC tag again when the application is in a connected state causes disconnection.
 When the connection is lost, advertising does not restart automatically.
-
-Requirements
-************
-
-The sample supports the following development kits:
-
-.. table-from-sample-yaml::
-
-.. include:: /includes/tfm.txt
-
-.. include:: /includes/hci_rpmsg_overlay.txt
-
-If the `NFC_OOB_PAIRING` feature is enabled, the sample requires  a smartphone or a tablet with Android v8.0.0 or newer.
 
 User interface
 **************

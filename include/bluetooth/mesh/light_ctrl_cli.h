@@ -111,7 +111,7 @@ struct bt_mesh_light_ctrl_cli_handlers {
 
 	/** @brief Light LC Regulator Coefficient status handler.
 	 *
-	 *  The Light Lightness Control Server's Regulator Coeffients control
+	 *  The Light Lightness Control Server's Regulator Coefficients control
 	 *  its Illuminance Regulator's response.
 	 *
 	 *  @param[in] cli   Client that received the message.

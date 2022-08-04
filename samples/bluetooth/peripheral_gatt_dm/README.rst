@@ -9,11 +9,6 @@ Bluetooth: Peripheral GATT Discovery Manager
 
 The Peripheral GATT Discovery Manager sample demonstrates how to use the :ref:`gatt_dm_readme`.
 
-Overview
-********
-
-When connected to another device, the sample discovers the services of the connected device and outputs the service information.
-
 Requirements
 ************
 
@@ -24,6 +19,12 @@ The sample supports the following development kits:
 .. include:: /includes/tfm.txt
 
 The sample also requires a device to connect to the peripheral, for example, a phone or a tablet with `nRF Connect for Mobile`_ or `nRF Toolbox`_.
+
+
+Overview
+********
+
+When connected to another device, the sample discovers the services of the connected device and outputs the service information.
 
 User interface
 **************
@@ -48,8 +49,7 @@ Testing
 After programming the sample to your dongle or development kit, test it by performing the following steps.
 This testing procedure assumes that you are using `nRF Connect for Mobile`_.
 
-1. Connect the kit to the computer using a USB cable.
-   The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+1. |connect_kit|
 #. |connect_terminal|
 #. Connect to the device from nRF Connect (the device is advertising as "Nordic Discovery Sample").
    When connected, the sample starts discovering the services of the connected device.

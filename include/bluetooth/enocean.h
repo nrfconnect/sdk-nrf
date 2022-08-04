@@ -190,7 +190,7 @@ int bt_enocean_commission(const bt_addr_le_t *addr, const uint8_t key[16],
  */
 void bt_enocean_decommission(struct bt_enocean_device *dev);
 
-/** @brief Call the given callback for each commissioned enocean device.
+/** @brief Call the given callback for each commissioned EnOcean device.
  *
  *  @param cb        Callback to call for each device
  *  @param user_data User data to pass to the callback.
