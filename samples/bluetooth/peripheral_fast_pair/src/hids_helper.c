@@ -8,7 +8,7 @@
 #include <zephyr/sys/byteorder.h>
 #include <bluetooth/services/hids.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fp_sample, LOG_LEVEL_INF);
 
 #include "hids_helper.h"

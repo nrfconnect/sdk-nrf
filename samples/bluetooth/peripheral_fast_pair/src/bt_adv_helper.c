@@ -11,7 +11,7 @@
 #include <zephyr/bluetooth/uuid.h>
 #include <bluetooth/services/fast_pair.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fp_sample, LOG_LEVEL_INF);
 
 #include "bt_tx_power_adv.h"
