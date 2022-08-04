@@ -15,7 +15,7 @@
 #include <zephyr/logging/log.h>
 #include <dk_buttons_and_leds.h>
 
-LOG_MODULE_REGISTER(nrf_cloud_rest_device_message,
+LOG_MODULE_REGISTER(nrf_cloud_rest_device_message_sample,
 		    CONFIG_NRF_CLOUD_REST_DEVICE_MESSAGE_SAMPLE_LOG_LEVEL);
 
 #define WAIT_TIME_BETWEEN_MESSAGES_SEC 3
@@ -26,7 +26,7 @@ LOG_MODULE_REGISTER(nrf_cloud_rest_device_message,
 char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
 K_SEM_DEFINE(lte_connect, 0, 1);
 char rx_buf[REST_RX_BUF_SIZE];
-struct nrf_cloud_rest_context rest_context = { 
+struct nrf_cloud_rest_context rest_context = {
 						   .connect_socket = -1,
 						   .timeout_ms = MAX_TIME_OUT,
 						   .rx_buf = rx_buf,
@@ -86,8 +86,8 @@ void get_date_time_lte(void)
 	do {
 		err = nrf_modem_at_cmd(time_buf, sizeof(time_buf), "AT%%CCLK?");
 		if (err) {
-			LOG_ERR("Failed to acquire time from network, error: %d. Retry in %d seconds",
-				err, TIME_TO_RETRY);
+			LOG_ERR("Failed to acquire time from network, error: %d. ", err);
+			LOG_ERR("Retry in %d seconds", TIME_TO_RETRY);
 		}
 		k_sleep(K_SECONDS(TIME_TO_RETRY));
 	} while (err != 0);
