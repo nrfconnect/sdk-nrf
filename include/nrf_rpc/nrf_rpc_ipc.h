@@ -7,8 +7,8 @@
 #ifndef NRF_RPC_IPC_H_
 #define NRF_RPC_IPC_H_
 
-#include <device.h>
-#include <ipc/ipc_service.h>
+#include <zephyr/device.h>
+#include <zephyr/ipc/ipc_service.h>
 
 #include <nrf_rpc.h>
 #include <nrf_rpc_tr.h>
