@@ -3,11 +3,11 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <kernel.h>
-#include <ztest.h>
-#include <busy_sim.h>
-#include <drivers/uart.h>
-#include <random/rand32.h>
+#include <zephyr/kernel.h>
+#include <zephyr/ztest.h>
+#include <zephyr/busy_sim.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/random/rand32.h>
 
 static uint32_t tx_req_cnt;
 static uint32_t tx_done_cnt;
