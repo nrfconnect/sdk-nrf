@@ -6,9 +6,9 @@
 
 #include <emds/emds.h>
 
-#include <zephyr.h>
-#include <storage/flash_map.h>
-#include <drivers/flash.h>
+#include <zephyr/zephyr.h>
+#include <zephyr/storage/flash_map.h>
+#include <zephyr/drivers/flash.h>
 #include "emds_flash.h"
 
 #include <logging/log.h>
