@@ -14,6 +14,46 @@
 #include "model_handler.h"
 #include "lc_pwm_led.h"
 
+#ifdef CONFIG_EMDS
+#include <emds/emds.h>
+
+#define EMDS_DEV_IRQ 24
+#define EMDS_DEV_PRIO 0
+#define EMDS_ISR_ARG 0
+#define EMDS_IRQ_FLAGS 0
+
+static void button_handler_cb(uint32_t pressed, uint32_t changed)
+{
+	if (!bt_mesh_is_provisioned()) {
+		return;
+	}
+
+	if (pressed & changed & BIT(3)) {
+		NVIC_SetPendingIRQ(EMDS_DEV_IRQ);
+	}
+}
+
+static void app_emds_cb(void)
+{
+	printk("SAMPLE HALTED!!!\n");
+	dk_set_leds(DK_LED2_MSK | DK_LED3_MSK | DK_LED4_MSK);
+	k_fatal_halt(K_ERR_CPU_EXCEPTION);
+}
+
+static void isr_emds_cb(void *arg)
+{
+	ARG_UNUSED(arg);
+
+	/* Stop bt and mpsl to reduce power usage and increase storage speed. */
+	(void) bt_disable();
+#if defined(CONFIG_BT_CTLR)
+	mpsl_uninit();
+#endif
+
+	emds_store();
+}
+#endif
+
 static void bt_ready(int err)
 {
 	if (err) {
@@ -26,11 +66,43 @@ static void bt_ready(int err)
 	dk_leds_init();
 	dk_buttons_init(NULL);
 
+#ifdef CONFIG_EMDS
+	static struct button_handler button_handler = {
+		.cb = button_handler_cb,
+	};
+
+	dk_button_handler_add(&button_handler);
+
+	err = emds_init(&app_emds_cb);
+	if (err) {
+		printk("Initializing emds failed (err %d)\n", err);
+		return;
+	}
+#endif
+
 	err = bt_mesh_init(bt_mesh_dk_prov_init(), model_handler_init());
 	if (err) {
 		printk("Initializing mesh failed (err %d)\n", err);
 		return;
 	}
+
+#ifdef CONFIG_EMDS
+	err = emds_load();
+	if (err) {
+		printk("Restore of emds data failed (err %d)\n", err);
+		return;
+	}
+
+	err = emds_prepare();
+	if (err) {
+		printk("Preparation emds failed (err %d)\n", err);
+		return;
+	}
+
+	IRQ_CONNECT(EMDS_DEV_IRQ, EMDS_DEV_PRIO, isr_emds_cb,
+		    EMDS_ISR_ARG, EMDS_IRQ_FLAGS);
+	irq_enable(EMDS_DEV_IRQ);
+#endif
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();

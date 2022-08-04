@@ -60,7 +60,8 @@ For details, see :ref:`nrfxlib:softdevice_controller_changelog`.
 Bluetooth mesh
 --------------
 
-|no_changes_yet_note|
+* Added support for usage of :ref:`emds_readme`.
+  For details, see `Bluetooth mesh samples`_ and `Bluetooth libraries and services`_.
 
 See `Bluetooth mesh samples`_ for the list of changes for the Bluetooth mesh samples.
 
@@ -283,7 +284,10 @@ Bluetooth samples
 Bluetooth mesh samples
 ----------------------
 
-|no_changes_yet_note|
+* :ref:`bluetooth_mesh_light_lc` sample:
+
+  * Added overlay file with support for storing data with :ref:`emds_readme`.
+    Also changed the sample to restore Light state after power-down.
 
 nRF9160 samples
 ---------------
@@ -449,7 +453,7 @@ Bluetooth libraries and services
   * Added:
 
     * Use of decommissioned callback in :ref:`bt_mesh_silvair_enocean_srv_readme` when EnOcean switch is decommissioned.
-    * Emergency data storage (EMDS) support to:
+    * :ref:`emds_readme` support to:
 
       *  :ref:`bt_mesh_plvl_srv_readme`
       *  :ref:`bt_mesh_light_hue_srv_readme`
@@ -457,6 +461,7 @@ Bluetooth libraries and services
       *  :ref:`bt_mesh_light_temp_srv_readme`
       *  :ref:`bt_mesh_light_xyl_srv_readme`
       *  :ref:`bt_mesh_lightness_srv_readme`
+      * Replay protection list (RPL)
 
 
 Bootloader libraries

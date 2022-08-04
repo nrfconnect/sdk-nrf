@@ -11,6 +11,7 @@ menu "Bluetooth mesh"
 rsource "Kconfig.models"
 rsource "Kconfig.dk_prov"
 rsource "shell/Kconfig"
+rsource "Kconfig.rpl"
 
 endmenu
 
