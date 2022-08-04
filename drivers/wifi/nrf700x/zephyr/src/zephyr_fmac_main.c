@@ -195,8 +195,6 @@ out:
 void wifi_nrf_fmac_dev_rem_zep(struct wifi_nrf_ctx_zep *rpu_ctx_zep)
 {
 	wifi_nrf_fmac_dev_rem(rpu_ctx_zep->rpu_ctx);
-
-	k_free(rpu_ctx_zep);
 }
 
 enum wifi_nrf_status wifi_nrf_fmac_def_vif_add_zep(struct wifi_nrf_ctx_zep *rpu_ctx_zep,
@@ -240,8 +238,6 @@ void wifi_nrf_fmac_def_vif_rem_zep(struct wifi_nrf_vif_ctx_zep *vif_ctx_zep)
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
 	wifi_nrf_fmac_del_vif(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
-
-	k_free(vif_ctx_zep);
 }
 
 enum wifi_nrf_status wifi_nrf_fmac_def_vif_state_chg(struct wifi_nrf_vif_ctx_zep *vif_ctx_zep,
