@@ -12,7 +12,7 @@
 
 #include <dk_buttons_and_leds.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(fp_sample, LOG_LEVEL_INF);
 
 #include "bt_adv_helper.h"
