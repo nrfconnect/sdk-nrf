@@ -66,7 +66,7 @@ To set up a cloud service to work with the application firmware, complete the st
   This step retrieves a *security tag* and *ID scope* that will be needed during the configuration of the firmware.
   Make sure to follow the steps documented in the :ref:`dps_config` section to enable Device Provisioning Service (DPS).
 
-* AVSystem's LwM2M Coiote Device Management - :ref:`server_setup_lwm2m`.
+* AVSystem's LwM2M Coiote Device Management - :ref:`server_setup_lwm2m_client`.
   No additional configuration is needed if the server is set up according to the linked documentation.
 
 You can also use the nRF Asset Tracker project that provides an example cloud implementation for multiple cloud providers.

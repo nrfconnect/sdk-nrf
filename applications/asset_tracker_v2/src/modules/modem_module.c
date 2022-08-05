@@ -338,6 +338,8 @@ static void print_carrier_error(const lwm2m_carrier_event_t *evt)
 			"Initialization failure",
 		[LWM2M_CARRIER_ERROR_INTERNAL] =
 			"Internal failure",
+		[LWM2M_CARRIER_ERROR_RUN] =
+			"Configuration failure",
 	};
 
 	__ASSERT(PART_OF_ARRAY(strerr, &strerr[err->type]), "Unhandled carrier library error");
@@ -859,12 +861,6 @@ static void on_state_init(struct modem_msg_data *msg)
 		err = setup();
 		__ASSERT(err == 0, "Failed running setup()");
 		SEND_EVENT(modem, MODEM_EVT_INITIALIZED);
-
-		err = lte_connect();
-		if (err) {
-			LOG_ERR("Failed connecting to LTE, error: %d", err);
-			SEND_ERROR(modem, MODEM_EVT_ERROR, err);
-		}
 	}
 }
 
@@ -919,16 +915,6 @@ static void on_state_connected(struct modem_msg_data *msg)
 {
 	if (IS_EVENT(msg, modem, MODEM_EVT_LTE_DISCONNECTED)) {
 		state_set(STATE_DISCONNECTED);
-	}
-
-	if (IS_EVENT(msg, modem, MODEM_EVT_CARRIER_EVENT_LTE_LINK_DOWN_REQUEST)) {
-		int err;
-
-		err = lte_lc_offline();
-		if (err) {
-			LOG_ERR("LTE disconnect failed, error: %d", err);
-			SEND_ERROR(modem, MODEM_EVT_ERROR, err);
-		}
 	}
 
 	if ((IS_EVENT(msg, app, APP_EVT_LTE_DISCONNECT)) ||

@@ -9,6 +9,125 @@ Changelog
 
 All notable changes to this project are documented in this file.
 
+liblwm2m_carrier 3.1.0
+***********************
+
+Release for modem firmware version 1.3.3 and 1.3.4.
+
+Certification status
+====================
+
+For certification status, see `Mobile network operator certifications`_.
+
+Size
+====
+
+See :ref:`lwm2m_lib_size` for an explanation of the library size in different scenarios.
+
++-------------------------+---------------+------------+
+|                         | Flash (Bytes) | RAM (Bytes)|
++-------------------------+---------------+------------+
+| Library size            | 64044         | 10687      |
+| (binary)                |               |            |
++-------------------------+---------------+------------+
+| Library size            | 94048         | 40176      |
+| (reference application) |               |            |
++-------------------------+---------------+------------+
+
+Changes
+=======
+
+* Added shell functionality to the LwM2M carrier library (:file:`lwm2m_shell.c` and :file:`lwm2m_settings.c` or :file:`lwm2m_settings.h`).
+  This is intended to provide convenient access to the API for development and debugging.
+
+  * Enabled or disabled by using :kconfig:option:`CONFIG_LWM2M_CARRIER_SHELL` and :kconfig:option:`CONFIG_LWM2M_CARRIER_SETTINGS`.
+  * For examples of using the shell, see the :ref:`lwm2m_carrier` sample documentation and the :ref:`lwm2m_shell` section in the library documentation.
+
+* Added a new ``__weak`` function :c:func:`lwm2m_carrier_custom_init`.
+
+  * This function is run in :file:`lwm2m_carrier.c` before :c:func:`lwm2m_carrier_init`.
+  * This function allows Kconfig settings of the LwM2M carrier library to be overwritten without having to make changes in the :file:`lwm2m_carrier.c` file.
+  * The :ref:`lwm2m_carrier` sample uses the :c:func:`lwm2m_carrier_custom_init` function to facilitate shell access to the initialization settings, by loading a stored ``lwm2m_carrier_config_t``.
+
+* Fixed a bug where the functions :c:func:`lwm2m_carrier_avail_power_sources_set` and :c:func:`lwm2m_carrier_error_code_add` would not return an error if the device object is uninitialized.
+
+* Removed the following functions from the glue layer:
+
+  * ``lwm2m_os_sec_psk_exists()``
+  * ``lwm2m_os_sec_psk_write()``
+  * ``lwm2m_os_sec_psk_delete()``
+  * ``lwm2m_os_sec_identity_exists()``
+  * ``lwm2m_os_sec_identity_write()``
+  * ``lwm2m_os_sec_identity_delete()``
+
+* Added the Kconfig options :kconfig:option:`CONFIG_LWM2M_CARRIER_THREAD_STACK_SIZE` and :kconfig:option:`CONFIG_LWM2M_CARRIER_WORKQ_STACK_SIZE`.
+
+  * These options allow you to alter the LwM2M carrier library thread and work queue stack without editing :file:`lwm2m_carrier.c`.
+
+* Moved the configuration parameter :c:macro:`lwm2m_carrier_config_t` from :c:func:`lwm2m_carrier_init` to :c:func:`lwm2m_carrier_run`.
+
+  * Added a new error event type :c:macro:`LWM2M_CARRIER_ERROR_RUN`.
+    This event is returned if the configuration provided to :c:func:`lwm2m_carrier_run` is invalid.
+
+* Removed :c:macro:`certification_mode` from the configuration parameters of :c:macro:`lwm2m_carrier_config_t`.
+* Removed the ``CONFIG_LWM2M_CARRIER_CERTIFICATION_MODE`` Kconfig.
+
+  * The LwM2M carrier library always connects to the correct production (live) server (if in an applicable network).
+  * To connect to a certification (test) server, you must enter the appropriate URI using :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI`.
+
+* Removed :c:macro:`psk` from the configuration parameters of :c:macro:`lwm2m_carrier_config_t`.
+* Removed the ``CONFIG_LWM2M_CARRIER_CUSTOM_PSK`` Kconfig.
+* Added :c:macro:`server_sec_tag` to the configuration :c:macro:`lwm2m_carrier_config_t`.
+* Added the :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` Kconfig option.
+
+  * The LwM2M carrier library no longer uses PSK as a configuration parameter.
+    Instead, you can provide a ``sec_tag`` (containing a PSK).
+  * The :ref:`lwm2m_carrier` sample now contains a Kconfig option :kconfig:option:`CONFIG_CARRIER_APP_PSK`, which will be written to the security tag provided by :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG`.
+    This was added for convenience during development but must not be used for production.
+  * See :ref:`modem_key_mgmt` for more information about using security tags, and :ref:`lwm2m_carrier_provisioning` for information on provisioning them for the LwM2M carrier library.
+
+* Removed the Kconfig option ``CONFIG_LWM2M_CARRIER_USE_CUSTOM_URI``.
+
+  * You need to use only the Kconfig option :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI`.
+    If the Kconfig option is empty, it is ignored.
+
+* Added the Kconfig option :kconfig:option:`CONFIG_LWM2M_CARRIER_PDN_TYPE`.
+
+  * The new :c:macro:`pdn_type` parameter in :c:macro:`lwm2m_carrier_config_t` is used to select the PDN type of the :c:macro:`apn` parameter.
+
+* Added the Kconfig option :kconfig:option:`LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NUMBER`.
+
+  * This configuration lets you choose between using the nRF9160 SoC 2DID Serial Number, or the Device IMEI as a Serial Number when connecting to the LG U+ device management server.
+  * Now that there are several LG U+ options, they have been grouped in :c:struct:`lwm2m_carrier_lg_uplus_config_t` inside :c:struct:`lwm2m_carrier_config_t`.
+
+* Added the :c:macro:`carriers_enabled` parameter to :c:macro:`lwm2m_carrier_config_t`.
+
+  * This parameter allows you to enable or disable the Carrier Library based on which Subscriber ID is used in the current network.
+
+  * Added Kconfig options to the new "Enabled Carriers" menu:
+
+    * :kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`
+    * :kconfig:option:`CONFIG_LWM2M_CARRIER_VERIZON`
+    * :kconfig:option:`CONFIG_LWM2M_CARRIER_ATT`
+    * :kconfig:option:`CONFIG_LWM2M_CARRIER_TMO`
+    * :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS`
+
+* Added the :c:macro:`server_binding` parameter to :c:macro:`lwm2m_carrier_config_t`.
+
+  * This optional value can be left empty to use the default binding (UDP).
+  * Added the new Kconfig :kconfig:option:`LWM2M_SERVER_BINDING_CHOICE`.
+  * The binding can be either 'U' (UDP) or 'N' (Non-IP).
+
+* Added the function :c:func:`lwm2m_carrier_request`
+
+  * This function allows the application to request that the carrier library takes a certain action.
+
+     * LWM2M_CARRIER_REQUEST_REBOOT
+     * LWM2M_CARRIER_REQUEST_LINK_UP
+     * LWM2M_CARRIER_REQUEST_LINK_DOWN
+
+  * This function allows the LwM2M carrier library to disconnect gracefully and it is mandatory to use when the Subscriber ID is LG U+.
+
 liblwm2m_carrier 0.30.2
 ***********************
 
@@ -120,7 +239,7 @@ Changes
 * Renamed the error ``LWM2M_CARRIER_ERROR_DISCONNECT_FAIL`` to :c:macro:`LWM2M_CARRIER_ERROR_LTE_LINK_DOWN_FAIL`.
 * Removed the event ``LWM2M_CARRIER_EVENT_LTE_READY``. The event was intended to help the user application coexist with the library, but it was not useful.
 
-  * Action to bring up and down the link are requested using the new :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_UP` and :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_DOWN` events.
+  * Actions to bring the link up and down are requested using the new :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_UP` and :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_DOWN` events.
     The application can therefore perform housekeeping at these events if needed.
   * Even when the ``LWM2M_CARRIER_EVENT_LTE_READY`` event was sent to the application, the carrier library could still disconnect the link to write keys to the modem after a while in some cases.
   * Any application must handle untimely disconnects anyway, because of factors such as signal coverage, making the ``LWM2M_CARRIER_EVENT_LTE_READY`` event redundant.
@@ -396,7 +515,7 @@ Changes
 * Added new APIs to create and access portfolio object instances.
   A new portfolio object instance can be created using ``lwm2m_carrier_portfolio_instance_create()``.
   ``lwm2m_carrier_identity_read()`` and ``lwm2m_carrier_identity_write()`` are used to read and write to the corresponding Identity resource fields of a given portfolio object instance.
-* Expanded API with "certification_mode" variable that chooses between certification or live servers upon the initialization of the LwM2M carrier library.
+* Expanded API with "certification_mode" variable that chooses between certification (test) or production (live) servers upon the initialization of the LwM2M carrier library.
 * Expanded API with "apn" variable to set a custom APN upon the initialization of the LwM2M carrier library.
 * PSK Key is now set independently of custom URI.
 
@@ -555,12 +674,15 @@ Known issues and limitations
 * It is not possible to use a DTLS connection in parallel with the library.
 * It is not possible to use a TLS connection in parallel with LwM2M-managed modem firmware updates. The application should close any TLS connections when it receives the LWM2M_CARRIER_EVENT_FOTA_START event from the library.
 * The API to query the application for resource values is not implemented yet.
+
 	* The "Available Power Sources" resource is reported as "DC power (0)" and "External Battery (2)".
 	* The following resources are reported to have value "0" (zero):
+
 		* Power Source Voltage, Power Source Current, Battery Level, Battery Status, Memory Free, Memory Total, Error Code.
 	* The "Device Type" resource is reported as "Smart Device".
 	* The "Software Version" resource is reported as "LwM2M 0.6.0".
 	* The "Hardware Version" is reported as "1.0".
 * The following values are reported as dummy values instead of being fetched from the modem:
+
 	* "IP address", reported as 192.168.0.0.
 * The "Current Time" and "Timezone" resources do not respect write operations, instead, read operations on these resources will return the current time and timezone as kept by the nRF9160 modem.
