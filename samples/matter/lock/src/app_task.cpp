@@ -258,9 +258,6 @@ void AppTask::DispatchEvent(const AppEvent &event)
 	case AppEvent::FunctionTimer:
 		FunctionTimerEventHandler();
 		break;
-	case AppEvent::StartThread:
-		StartThreadHandler();
-		break;
 	case AppEvent::StartBleAdvertising:
 		StartBLEAdvertisingHandler();
 		break;
@@ -334,16 +331,6 @@ void AppTask::FunctionTimerEventHandler()
 		sAppTask.mFunction = TimerFunction::NoneSelected;
 		LOG_INF("Factory Reset triggered");
 		chip::Server::GetInstance().ScheduleFactoryReset();
-	}
-}
-
-void AppTask::StartThreadHandler()
-{
-	if (!ConnectivityMgr().IsThreadProvisioned()) {
-		StartDefaultThreadNetwork();
-		LOG_INF("Device is not commissioned to a Thread network. Starting with the default configuration.");
-	} else {
-		LOG_INF("Device is commissioned to a Thread network.");
 	}
 }
 
@@ -463,10 +450,6 @@ void AppTask::ButtonEventHandler(uint32_t buttonState, uint32_t hasChanged)
 
 	if (DK_BTN2_MSK & buttonState & hasChanged) {
 		GetAppTask().PostEvent(AppEvent{ AppEvent::Toggle, BoltLockManager::OperationSource::kButton });
-	}
-
-	if (DK_BTN3_MSK & buttonState & hasChanged) {
-		GetAppTask().PostEvent(AppEvent{ AppEvent::StartThread });
 	}
 
 	if (DK_BTN4_MSK & buttonState & hasChanged) {

@@ -23,10 +23,8 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-For remote testing scenarios, you also need the following:
-
-* To commission the light bulb device and :ref:`control it remotely <matter_light_bulb_network_mode>` through a Thread network: a Matter controller device :ref:`configured on PC or mobile <ug_matter_configuring>` (which requires additional hardware depending on which setup you choose).
-* To use the :ref:`test mode <matter_light_bulb_sample_test_mode>` and control the light bulb using light switch: the :ref:`Matter light switch <matter_light_switch_sample>` sample programmed to another supported development kit.
+If you want to commission the light bulb device and :ref:`control it remotely <matter_light_bulb_network_mode>` through a Thread network, you also need a Matter controller device :ref:`configured on PC or mobile <ug_matter_configuring>`.
+This requires additional hardware depending on the setup you choose.
 
 .. note::
     |matter_gn_required_note|
@@ -40,7 +38,7 @@ You can test it in the following ways:
 * Standalone, by using a single DK that runs the light bulb application.
 * Remotely over the Thread protocol, which requires more devices.
 
-The remote control testing requires a Matter controller that you can configure on a PC, mobile device (for remote testing in a network), or on an embedded device (for remote testing using test mode).
+The remote control testing requires a Matter controller that you can configure either on a PC or a mobile device (for remote testing in a network).
 You can enable both methods after :ref:`building and running the sample <matter_light_bulb_sample_remote_control>`.
 
 .. _matter_light_bulb_network_mode:
@@ -51,18 +49,6 @@ Remote testing in a network
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_remote_testing_start
     :end-before: matter_door_lock_sample_remote_testing_end
-
-.. _matter_light_bulb_sample_test_mode:
-
-Remote testing using test mode
-==============================
-
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_test_mode_start
-    :end-before: matter_door_lock_sample_test_mode_end
-
-Using the test mode allows you to control the light bulb remotely without using a smartphone compatible with Android.
-You can use the light bulb device programmed with this sample together with a light switch device programmed with the :ref:`Matter light switch <matter_light_switch_sample>` sample to create a simplified Thread network.
 
 Configuration
 *************
@@ -108,12 +94,6 @@ LED 2:
 
 Button 2:
     Changes the light bulb state to the opposite one.
-
-Button 3:
-    Starts the Thread networking in the :ref:`test mode <matter_light_bulb_sample_test_mode>` using the default configuration.
-
-    When running the application in light switch test mode, it also starts publishing the light bulb service messages for a predefined period of time to advertise the light bulb device IP address to the light switch device (if used).
-    If the light switch device cannot receive messages during this time, press the button again to restart the publishing service.
 
 Button 4:
     Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.

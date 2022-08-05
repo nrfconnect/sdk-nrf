@@ -104,7 +104,6 @@
 
 .. ### Matter shortcuts
 
-.. |matter_sample_button3_note| replace:: Use **Button 3** to enable this mode after building and running the sample.
 .. |matter_gn_required_note| replace:: Matter requires the GN tool.
    If you are updating from the |NCS| version earlier than v1.5.0, see the :ref:`GN installation instructions <gs_installing_gn>`.
 

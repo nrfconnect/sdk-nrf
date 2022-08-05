@@ -41,7 +41,6 @@ private:
 	void FunctionPressHandler();
 	void FunctionReleaseHandler();
 	void FunctionTimerEventHandler();
-	void StartThreadHandler();
 	void StartBLEAdvertisingHandler();
 
 	static void ActionInitiated(LightingManager::Action aAction);
