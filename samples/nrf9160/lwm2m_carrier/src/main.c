@@ -12,10 +12,6 @@
 #include <modem/lte_lc.h>
 
 #ifdef CONFIG_LWM2M_CARRIER
-void nrf_modem_recoverable_error_handler(uint32_t err)
-{
-	printk("Modem library recoverable error: %u\n", (unsigned int)err);
-}
 static void lte_event_handler(const struct lte_lc_evt *const evt)
 {
 	/* This event handler is not in use here. */
@@ -51,6 +47,8 @@ void print_err(const lwm2m_carrier_event_t *evt)
 			"Initialization failure",
 		[LWM2M_CARRIER_ERROR_INTERNAL] =
 			"Internal failure",
+		[LWM2M_CARRIER_ERROR_RUN] =
+			"Configuration failure",
 	};
 
 	__ASSERT(PART_OF_ARRAY(strerr[err->type]),
@@ -104,7 +102,24 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 		if (err) {
 			printk("failed to provision CA certificates\n");
 		}
-		err = lte_lc_init_and_connect_async(lte_event_handler);
+#ifdef LWM2M_CARRIER_SETTINGS
+		if (!lwm2m_settings_enable_custom_server_config_get()) {
+			err = carrier_psk_provision();
+			if (err) {
+				printk("failed to provision PSK\n");
+			}
+		}
+#else
+		err = carrier_psk_provision();
+		if (err) {
+			printk("failed to provision PSK\n");
+		}
+#endif /* LWM2M_CARRIER_SETTINGS */
+		err = lte_lc_init();
+		if (err != 0) {
+			printk("failed to initialize lte link controller library\n");
+		}
+		lte_lc_register_handler(lte_event_handler);
 		break;
 	case LWM2M_CARRIER_EVENT_LTE_LINK_UP:
 		printk("LWM2M_CARRIER_EVENT_LTE_LINK_UP\n");

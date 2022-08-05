@@ -196,7 +196,7 @@ To allow the device to communicate with other LwM2M servers, modify the default 
 * :kconfig:option:`CONFIG_LWM2M_INTEGRATION_PSK`
 * :kconfig:option:`CONFIG_LWM2M_INTEGRATION_PROVISION_CREDENTIALS`
 
-See :ref:`server setup <server_setup_lwm2m>` for information on how you can configure the `Coiote Device Management server`_ to communicate with the application using the default PSK.
+See :ref:`server setup <server_setup_lwm2m_client>` for information on how the `Coiote Device Management server`_ can be configured to communicate with the application.
 
 .. important::
    In production, it is not recommended to use the default PSK that is automatically provisioned by the application.

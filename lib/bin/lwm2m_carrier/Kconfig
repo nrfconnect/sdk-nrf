@@ -7,7 +7,7 @@
 menuconfig LWM2M_CARRIER
 	bool "LwM2M carrier library"
 	depends on NEWLIB_LIBC
-	depends on NRF_MODEM_LIB && !NRF_MODEM_LIB_SYS_INIT
+	depends on NRF_MODEM_LIB
 	depends on PDN
 	# Only have hard-float variant
 	depends on FP_HARDABI
@@ -40,18 +40,66 @@ menuconfig LWM2M_CARRIER
 
 if LWM2M_CARRIER
 
-config LWM2M_CARRIER_CERTIFICATION_MODE
-	bool "Connect to certification servers"
-	select LWM2M_CARRIER_IS_SERVER_BOOTSTRAP if LWM2M_CARRIER_USE_CUSTOM_URI
-	help
-	  Connect to certification servers instead of production servers.
+menu "Enabled Carriers"
 
-config LWM2M_CARRIER_USE_CUSTOM_URI
-	bool "Use custom server URI"
+config LWM2M_CARRIER_GENERIC
+	bool "Generic"
+	default y
 	help
-	  Use a custom server URI.
+	  Enable Carrier Library to connect using the LWM2M_CARRIER_CUSTOM_URI and
+	  LWM2M_CARRIER_SERVER_SEC_TAG. Generic mode is applied when outside the selected carriers.
 
-if LWM2M_CARRIER_USE_CUSTOM_URI
+config LWM2M_CARRIER_VERIZON
+	bool "Verizon"
+	default y
+	help
+	  Enable Carrier Library when the SIM Subscriber ID is Verizon.
+
+config LWM2M_CARRIER_ATT
+	bool "AT&T"
+	default y
+	help
+	  Enable Carrier Library when the SIM Subscriber ID is AT&T.
+
+config LWM2M_CARRIER_LG_UPLUS
+	bool "LG U+"
+	depends on DFU_TARGET_MCUBOOT
+	default y
+	help
+	  Enable Carrier Library when the SIM Subscriber ID is LG U+.
+if LWM2M_CARRIER_LG_UPLUS
+
+config LWM2M_CARRIER_LG_UPLUS_SERVICE_CODE
+	string "LG U+ Service Code"
+	help
+	  Service Code registered for this device with LG U+.
+
+choice LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NUMBER
+	prompt "Device Serial Number used in LG U+ network"
+	default LWM2M_CARRIER_LG_UPLUS_IMEI
+
+config LWM2M_CARRIER_LG_UPLUS_IMEI
+	bool "Use IMEI as LG U+ Device Serial Number"
+	help
+	  Use the IMEI as the Device Serial Number registered for this device with LG U+.
+
+config LWM2M_CARRIER_LG_UPLUS_2DID
+	bool "Use 2DID as LG U+ Device Serial Number"
+	help
+	  Use the two-dimensional barcode of the SiP as the Device Serial Number
+	  registered for this device with LG U+.
+
+endchoice
+
+endif # LWM2M_CARRIER_LG_UPLUS
+
+config LWM2M_CARRIER_T_MOBILE
+	bool "T-Mobile"
+	default y
+	help
+	  Enable Carrier Library when the SIM Subscriber ID is T-Mobile.
+
+endmenu
 
 config LWM2M_CARRIER_CUSTOM_URI
 	string "LwM2M carrier custom URI"
@@ -59,14 +107,14 @@ config LWM2M_CARRIER_CUSTOM_URI
 	help
 	  URI of the custom server.
 
-config LWM2M_CARRIER_IS_SERVER_BOOTSTRAP
+config LWM2M_CARRIER_IS_BOOTSTRAP_SERVER
 	bool "Bootstrap-Server"
 	default y
 	help
 	  Configure whether the custom server is a LwM2M Bootstrap-Server
 	  or a standard LwM2M Server.
 
-if !LWM2M_CARRIER_IS_SERVER_BOOTSTRAP
+if !LWM2M_CARRIER_IS_BOOTSTRAP_SERVER
 
 config LWM2M_CARRIER_SERVER_LIFETIME
 	int "Server lifetime"
@@ -74,22 +122,66 @@ config LWM2M_CARRIER_SERVER_LIFETIME
 	help
 	  Default server lifetime (seconds).
 
-endif # !LWM2M_CARRIER_IS_SERVER_BOOTSTRAP
+endif # !LWM2M_CARRIER_IS_BOOTSTRAP_SERVER
 
-endif # LWM2M_CARRIER_USE_CUSTOM_URI
-
-config LWM2M_CARRIER_CUSTOM_PSK
-	string "LwM2M carrier custom bootstrap PSK"
-	default ""
+config LWM2M_CARRIER_SERVER_SEC_TAG
+	int "LwM2M carrier custom server security tag"
+	default 0
 	help
-	  Set a custom PSK for the Bootstrap-Server.
-	  If left blank, a default PSK will be generated based on the carrier.
+	  Custom server security tag. Stores the PSK of the LwM2M
+	  Bootstrap-Server.
 
 config LWM2M_CARRIER_CUSTOM_APN
 	string "LwM2M carrier custom APN"
 	default ""
 	help
 	  Add an optional custom APN.
+
+choice LWM2M_CARRIER_PDN_TYPE_CHOICE
+	prompt "PDN Type"
+	default LWM2M_CARRIER_PDN_IPV4V6
+
+config LWM2M_CARRIER_PDN_IPV4V6
+	bool "IPv4v6"
+
+config LWM2M_CARRIER_PDN_IPV4
+	bool "IPv4"
+
+config LWM2M_CARRIER_PDN_IPV6
+	bool "IPv6"
+
+config LWM2M_CARRIER_PDN_NONIP
+	bool "Non-IP"
+
+endchoice
+
+config LWM2M_CARRIER_PDN_TYPE
+	int
+	default 0 if LWM2M_CARRIER_PDN_IPV4V6
+	default 1 if LWM2M_CARRIER_PDN_IPV4
+	default 2 if LWM2M_CARRIER_PDN_IPV6
+	default 3 if LWM2M_CARRIER_PDN_NONIP
+	help
+	  PDN type for custom APN.
+
+choice LWM2M_SERVER_BINDING_CHOICE
+	prompt "Server Binding"
+
+config LWM2M_CARRIER_SERVER_BINDING_U
+	bool "UDP"
+
+config LWM2M_CARRIER_SERVER_BINDING_N
+	bool "Non-IP"
+
+endchoice
+
+config LWM2M_SERVER_BINDING
+	int
+	default 85 if LWM2M_CARRIER_SERVER_BINDING_U
+	default 78 if LWM2M_CARRIER_SERVER_BINDING_N
+	help
+	  Server binding. Valid values: 'U' (UDP) or 'N' (Non-IP).
+	  Leaving this value empty will default to 'U'.
 
 config LWM2M_CARRIER_BOOTSTRAP_SMARTCARD
 	bool "Allow bootstrap from Smartcard"
@@ -134,27 +226,35 @@ config LWM2M_CARRIER_DEVICE_SOFTWARE_VERSION
 	  Set the LwM2M device software version.
 	  Some carriers may override this value.
 
-config LWM2M_CARRIER_LG_UPLUS
-	bool "LwM2M carrier LG U+ settings"
-	depends on DFU_TARGET_MCUBOOT
-	help
-	  Enable settings required for supporting the LG U+ carrier.
-
-if LWM2M_CARRIER_LG_UPLUS
-
-config LWM2M_CARRIER_LG_UPLUS_SERVICE_CODE
-	string "LG U+ Service Code"
-	help
-	  Service Code registered for this device with LG U+.
-
-endif # LWM2M_CARRIER_LG_UPLUS
-
 config LWM2M_CARRIER_SESSION_IDLE_TIMEOUT
 	int "DTLS session idle timeout"
 	default 60
 	help
 	  Number of seconds, for which a DTLS session used by this library can be idle
 	  before it is closed. Setting this to 0 will use the default value (60 seconds).
+	  Setting this to -1 disables the session idle timeout.
+
+config LWM2M_CARRIER_COAP_CON_INTERVAL
+	int "CoAP Confirmable interval"
+	range -1 86400
+	default 86400
+	help
+	  This interval defines how often a CoAP Non-Confirmable notification
+	  is sent as Confirmable, according to RFC 7641 section 4.5.
+	  Setting this to 0 will use the default value (86400s).
+	  Setting this to -1 will always use Confirmable notifications.
+
+config LWM2M_CARRIER_WORKQ_STACK_SIZE
+	int "LwM2M carrier work queue stack size"
+	default 4096
+	help
+	  Stack size for the LwM2M work queue thread.
+
+config LWM2M_CARRIER_THREAD_STACK_SIZE
+	int "LwM2M carrier thread stack size"
+	default 600
+	help
+	  Stack size for the LwM2M carrier process thread.
 
 config LWM2M_CARRIER_STORAGE_AREA_SIZE
 	hex "Size of the lwm2m_carrier partition"
@@ -168,6 +268,18 @@ config LWM2M_CARRIER_STORAGE_SECTOR_SIZE
 	hex
 	default $(dt_node_int_prop_hex,$(dt_chosen_path,$(DT_ZEPHYR_FLASH)),erase-block-size)
 
+config LWM2M_CARRIER_SETTINGS
+	bool "LwM2M carrier settings"
+	depends on SETTINGS
+	help
+	  Include LwM2M carrier settings
+
+config LWM2M_CARRIER_SHELL
+	bool "LwM2M carrier shell"
+	depends on SHELL
+	depends on LWM2M_CARRIER_SETTINGS
+	help
+	  Include LwM2M carrier shell
 
 module=LWM2M_CARRIER
 module-dep=LOG

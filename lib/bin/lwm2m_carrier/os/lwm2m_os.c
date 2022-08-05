@@ -15,7 +15,6 @@
 #include <modem/lte_lc.h>
 #include <modem/pdn.h>
 #include <modem/nrf_modem_lib.h>
-#include <modem/modem_key_mgmt.h>
 #include <modem/sms.h>
 #include <net/download_client.h>
 #include <zephyr/storage/flash_map.h>
@@ -34,9 +33,9 @@
 
 /* Divide flash area into NVS sectors */
 #define NVS_SECTOR_SIZE     (CONFIG_LWM2M_CARRIER_STORAGE_SECTOR_SIZE)
-#define NVS_SECTOR_COUNT    (FIXED_PARTITION_SIZE(lwm2m_carrier) / NVS_SECTOR_SIZE)
+#define NVS_SECTOR_COUNT    (FLASH_AREA_SIZE(lwm2m_carrier) / NVS_SECTOR_SIZE)
 /* Start address of the filesystem in flash */
-#define NVS_STORAGE_OFFSET  (FIXED_PARTITION_OFFSET(lwm2m_carrier))
+#define NVS_STORAGE_OFFSET  (FLASH_AREA_OFFSET(lwm2m_carrier))
 /* Flash Device runtime structure */
 #define NVS_FLASH_DEVICE    (DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller)))
 
@@ -47,10 +46,12 @@ static struct nvs_fs fs = {
 	.flash_device = NVS_FLASH_DEVICE,
 };
 
-K_THREAD_STACK_ARRAY_DEFINE(lwm2m_os_work_q_client_stack, LWM2M_OS_MAX_WORK_QS, 4096);
+K_THREAD_STACK_ARRAY_DEFINE(lwm2m_os_work_q_client_stack, LWM2M_OS_MAX_WORK_QS,
+			    CONFIG_LWM2M_CARRIER_WORKQ_STACK_SIZE);
 static struct k_work_q lwm2m_os_work_qs[LWM2M_OS_MAX_WORK_QS];
 
-K_THREAD_STACK_ARRAY_DEFINE(lwm2m_os_thread_stack, LWM2M_OS_MAX_THREAD_COUNT, 600);
+K_THREAD_STACK_ARRAY_DEFINE(lwm2m_os_thread_stack, LWM2M_OS_MAX_THREAD_COUNT,
+			    CONFIG_LWM2M_CARRIER_THREAD_STACK_SIZE);
 static struct k_thread lwm2m_os_threads[LWM2M_OS_MAX_THREAD_COUNT];
 
 static struct k_sem lwm2m_os_sems[LWM2M_OS_MAX_SEM_COUNT];
@@ -140,7 +141,7 @@ int lwm2m_os_sem_init(lwm2m_os_sem_t **sem, unsigned int initial_count, unsigned
 
 		*sem = (lwm2m_os_sem_t *)&lwm2m_os_sems[lwm2m_os_sems_used++];
 	} else {
-		__ASSERT(PART_OF_ARRAY(lwm2m_os_sems, (struct k_sem *)sem),
+		__ASSERT(PART_OF_ARRAY(lwm2m_os_sems, (struct k_sem *)*sem),
 			 "Uninitialised semaphore");
 	}
 
@@ -209,7 +210,7 @@ static void work_handler(struct k_work *work)
 	struct k_work_delayable *delayed_work = CONTAINER_OF(work, struct k_work_delayable, work);
 	struct lwm2m_work *lwm2m_work = CONTAINER_OF(delayed_work, struct lwm2m_work, work_item);
 
-	lwm2m_work->handler(lwm2m_work);
+	lwm2m_work->handler((lwm2m_os_timer_t *)lwm2m_work);
 }
 
 /* Delayed work queue functions */
@@ -256,7 +257,7 @@ lwm2m_os_timer_t *lwm2m_os_timer_get(lwm2m_os_timer_handler_t handler)
 		k_work_init_delayable(&work->work_item, work_handler);
 	}
 
-	return work;
+	return (lwm2m_os_timer_t *)work;
 }
 
 void lwm2m_os_timer_release(lwm2m_os_timer_t *timer)
@@ -620,7 +621,8 @@ void lwm2m_os_lte_mode_request(int32_t prefer)
 BUILD_ASSERT(
 	(int)LWM2M_OS_PDN_FAM_IPV4 == (int)PDN_FAM_IPV4 &&
 	(int)LWM2M_OS_PDN_FAM_IPV6 == (int)PDN_FAM_IPV6 &&
-	(int)LWM2M_OS_PDN_FAM_IPV4V6 == (int)PDN_FAM_IPV4V6,
+	(int)LWM2M_OS_PDN_FAM_IPV4V6 == (int)PDN_FAM_IPV4V6 &&
+	(int)LWM2M_OS_PDN_FAM_NONIP == (int)PDN_FAM_NONIP,
 	"Incompatible enums"
 );
 BUILD_ASSERT(
@@ -677,36 +679,6 @@ int lwm2m_os_nrf_errno(void)
 {
 	/* nrf_errno have the same values as newlibc errno */
 	return errno;
-}
-
-int lwm2m_os_sec_psk_exists(uint32_t sec_tag, bool *exists)
-{
-	return modem_key_mgmt_exists(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_PSK, exists);
-}
-
-int lwm2m_os_sec_psk_write(uint32_t sec_tag, const void *buf, uint16_t len)
-{
-	return modem_key_mgmt_write(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_PSK, buf, len);
-}
-
-int lwm2m_os_sec_psk_delete(uint32_t sec_tag)
-{
-	return modem_key_mgmt_delete(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_PSK);
-}
-
-int lwm2m_os_sec_identity_exists(uint32_t sec_tag, bool *exists)
-{
-	return modem_key_mgmt_exists(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_IDENTITY, exists);
-}
-
-int lwm2m_os_sec_identity_write(uint32_t sec_tag, const void *buf, uint16_t len)
-{
-	return modem_key_mgmt_write(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_IDENTITY, buf, len);
-}
-
-int lwm2m_os_sec_identity_delete(uint32_t sec_tag)
-{
-	return modem_key_mgmt_delete(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_IDENTITY);
 }
 
 /* Application firmware upgrade abstractions */

@@ -15,4 +15,12 @@
  */
 int carrier_cert_provision(void);
 
+/**
+ * @brief Provision a PSK to modem.
+ *
+ * @retval  0 in case of success
+ * @retval -1 in case of failure
+ */
+int carrier_psk_provision(void);
+
 #endif /* CARRIER_CERTS_H__ */

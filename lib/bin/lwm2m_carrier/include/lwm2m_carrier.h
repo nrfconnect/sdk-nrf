@@ -166,6 +166,8 @@ typedef struct {
 #define LWM2M_CARRIER_ERROR_INIT		10
 /** Internal error detected. */
 #define LWM2M_CARRIER_ERROR_INTERNAL		11
+/** LwM2M carrier run failed. */
+#define LWM2M_CARRIER_ERROR_RUN			12
 /** @} */
 
 /**
@@ -253,25 +255,82 @@ typedef struct {
 /** @} */
 
 /**
+ * @name PDN types.
+ * @{
+ */
+#define LWM2M_CARRIER_PDN_TYPE_IPV4V6 0
+#define LWM2M_CARRIER_PDN_TYPE_IPV4   1
+#define LWM2M_CARRIER_PDN_TYPE_IPV6   2
+#define LWM2M_CARRIER_PDN_TYPE_NONIP  3
+/** @} */
+
+/**
+ * @name LG U+ Device Serial Number types.
+ * @{
+ */
+#define LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NO_IMEI 0
+#define LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NO_2DID 1
+/** @} */
+
+/**
+ * @name LwM2M carrier requests.
+ * @{
+ */
+#define LWM2M_CARRIER_REQUEST_REBOOT    0
+#define LWM2M_CARRIER_REQUEST_LINK_UP   1
+#define LWM2M_CARRIER_REQUEST_LINK_DOWN 2
+/** @} */
+
+/**
+ * @brief LG U+ configuration structure.
+ */
+typedef struct {
+	/**
+	 * LG U+ Service Code registered for this device. Null-terminated string of at most
+	 * 5 characters.
+	 */
+	const char *service_code;
+	/** Indicates the type of Device Serial Number to be used in the LG U+ network. */
+	uint8_t device_serial_no_type;
+} lwm2m_carrier_lg_uplus_config_t;
+
+/**
+ * @brief LwM2M enabled carriers.
+ * @{
+ */
+#define LWM2M_CARRIER_GENERIC		0x00000001
+#define LWM2M_CARRIER_VERIZON		0x00000002
+#define LWM2M_CARRIER_ATT		0x00000004
+#define LWM2M_CARRIER_LG_UPLUS		0x00000008
+#define LWM2M_CARRIER_T_MOBILE		0x00000010
+/** @} */
+
+/**
  * @brief Structure holding LwM2M carrier library initialization parameters.
  */
 typedef struct {
-	/** Connect to certification servers if true, connect to production servers otherwise. */
-	bool certification_mode;
+	/** Configure enabled carriers. All carriers are enabled when no bits are set. */
+	uint32_t carriers_enabled;
 	/** Disable bootstrap from Smartcard mode when this is enabled by the carrier. */
 	bool disable_bootstrap_from_smartcard;
 	/** Denotes whether @c server_uri is an LwM2M Bootstrap-Server or an LwM2M Server. */
 	bool is_bootstrap_server;
 	/** Optional URI of the custom server. Null-terminated string of max 255 characters. */
 	const char *server_uri;
+	/** Optional security tag when using a custom PSK. */
+	uint32_t server_sec_tag;
+	/** Optional server binding. Valid values: 'U' or 'N'. */
+	uint8_t server_binding;
 	/** Default server lifetime (in seconds). Used only for an LwM2M Server. */
 	int32_t server_lifetime;
 	/** Default DTLS session idle timeout (in seconds). */
 	int32_t session_idle_timeout;
-	/** Optional Pre-Shared Key. Null-terminated string of max 64 hexadecimal digits. */
-	const char *psk;
+	/** How often to send CON instead of NON in CoAP observables (in seconds). */
+	int32_t coap_con_interval;
 	/** Optional custom APN. Null-terminated string of max 63 characters. */
 	const char *apn;
+	/** Optional PDN type for custom APN. */
+	uint8_t pdn_type;
 	/** Optional LwM2M device manufacturer name. Null-terminated string of max 32 characters. */
 	const char *manufacturer;
 	/** Optional LwM2M device model number. Null-terminated string of max 32 characters. */
@@ -282,21 +341,12 @@ typedef struct {
 	const char *hardware_version;
 	/** Optional LwM2M device software version. Null-terminated string of max 32 characters. */
 	const char *software_version;
-	/**
-	 * LG U+ Service Code registered for this device. This field is only required for devices
-	 * certifying with LG U+. Null-terminated string of at most 5 characters.
-	 */
-	const char *service_code;
+	/** Optional LG U+ configuration, only required for devices certifying with LG U+. */
+	lwm2m_carrier_lg_uplus_config_t lg_uplus;
 } lwm2m_carrier_config_t;
 
 /**
  * @brief Initialize the LwM2M carrier library.
- *
- * @param[in] config Configuration parameters for the library. Optional.
- *
- * @note The library does not copy the contents of pointers in the config parameters. The
- *       application has to make sure that the provided parameters are valid throughout the
- *       application lifetime (i.e. placed in static memory or in flash).
  *
  * @note This function will block until a SIM card is initialized by the modem. The library cannot
  *       proceed if, for example, no SIM is inserted, or a PIN code must be entered.
@@ -305,20 +355,49 @@ typedef struct {
  *       for several seconds in order to complete the procedure.
  *
  * @retval  0      If initialization was successful.
- * @retval -EINVAL If the configuration parameters are invalid. See @c lwm2m_carrier_config_t
  * @retval -EACCES If initialization failed due to an error in the OS integration layer.
  * @retval -ENOMEM If initialization failed due to insufficient OS resources.
  * @retval -EIO    If initialization failed due to a modem or AT command error.
  * @retval -EFAULT If initialization failed due to an internal error.
  */
-int lwm2m_carrier_init(const lwm2m_carrier_config_t *config);
+int lwm2m_carrier_init(void);
 
 /**
  * @brief LwM2M carrier library main function.
  *
- * Intended to run on a separate thread. The function will exit only on non-recoverable errors.
+ * @param[in] config Configuration parameters for the library. Optional.
+ *
+ * @note This function is intended to run on a separate thread. The function will only exit
+ *       on configuration errors and non-recoverable errors.
+ *
+ * @note The library does not copy the contents of pointers in the config parameters. The
+ *       application has to make sure that the provided parameters are valid throughout the
+ *       application lifetime (i.e. placed in static memory or in flash).
+ *
+ * @retval  0      If library main function exited at modem shutdown.
+ * @retval -EINVAL If configuration parameters are invalid. See @c lwm2m_carrier_config_t
+ * @retval -EFAULT If library failed due to an internal error.
  */
-void lwm2m_carrier_run(void);
+int lwm2m_carrier_run(const lwm2m_carrier_config_t *config);
+
+/**
+ * @brief Request the LwM2M carrier library to perform an action.
+ *
+ * @note This function will behave differently depending on the chosen @c request.
+ *       @c LWM2M_CARRIER_REQUEST_REBOOT shall request a system reboot.
+ *       @c LWM2M_CARRIER_REQUEST_LINK_UP shall indicate to the LwM2M carrier library that the
+ *          application is about to go online, so that a @c LWM2M_CARRIER_EVENT_LTE_LINK_UP shall
+ *          be generated once the library is ready.
+ *       @c LWM2M_CARRIER_REQUEST_LINK_DOWN shall indicate to the LwM2M carrier library that the
+ *          application is about to go offline, so that a @c LWM2M_CARRIER_EVENT_LTE_LINK_DOWN shall
+ *          be generated once the library is ready.
+ *
+ * @param[in] request Request to be sent to the LwM2M carrier library.
+ *
+ * @retval  0      If success.
+ * @retval -EINVAL If an invalid @c request was selected.
+ */
+int lwm2m_carrier_request(int request);
 
 /**
  * @brief Function to read all time parameters.
@@ -327,7 +406,7 @@ void lwm2m_carrier_run(void);
  *
  * @param[out] utc_time   Pointer to time since Epoch in seconds.
  * @param[out] utc_offset Pointer to UTC offset in minutes.
- * @param[out] tz         Pointer to null-terminated time zone string pointer.
+ * @param[out] tz         Pointer to null-terminated timezone string pointer.
  */
 void lwm2m_carrier_time_read(int32_t *utc_time, int *utc_offset, const char **tz);
 
@@ -350,11 +429,11 @@ int32_t lwm2m_carrier_utc_time_read(void);
 int lwm2m_carrier_utc_offset_read(void);
 
 /**
- * @brief Function to read time zone
+ * @brief Function to read timezone
  *
  * @note This function can be implemented by the application, if custom time management is needed.
  *
- * @return  Null-terminated time zone string pointer, IANA Time zone (TZ) database format.
+ * @return  Null-terminated timezone string pointer, IANA Timezone (TZ) database format.
  */
 char *lwm2m_carrier_timezone_read(void);
 
@@ -423,6 +502,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event);
  * @retval  0      If the available power sources have been set successfully.
  * @retval -E2BIG  If the reported number of power sources is bigger than the maximum supported.
  * @retval -EINVAL If one or more of the power sources are not supported.
+ * @retval -ENOENT If LwM2M object is not initialized yet.
  */
 int lwm2m_carrier_avail_power_sources_set(const uint8_t *power_sources, uint8_t power_source_count);
 
@@ -499,6 +579,7 @@ int lwm2m_carrier_battery_status_set(int32_t battery_status);
  *
  * @retval  0      If the error code has been added successfully.
  * @retval -EINVAL If the error code is not supported.
+ * @retval -ENOENT If LwM2M object is not initialized yet.
  */
 int lwm2m_carrier_error_code_add(int32_t error);
 
@@ -584,6 +665,7 @@ int lwm2m_carrier_identity_write(uint16_t instance_id, uint16_t identity_type, c
  * @param[in]  instance_id    The identifier to be used for the new instance.
  *
  * @retval  0      If the instance has been created successfully.
+ * @retval -ENOENT If the object is not yet initialized.
  * @retval -ENOMEM If it was not possible to create the instance because the maximum number of
  *                 supported object instances has already been reached.
  * @retval -EINVAL If the provided instance identifier is already in use.
@@ -602,6 +684,7 @@ int lwm2m_carrier_portfolio_instance_create(uint16_t instance_id);
  *
  * @retval  0      If the location data has been updated successfully.
  * @retval -EINVAL If at least one input argument is incorrect.
+ * @retval -ENOENT If the object is not yet initialized.
  */
 int lwm2m_carrier_location_set(double latitude, double longitude, float altitude,
 			       uint32_t timestamp, float uncertainty);
@@ -623,6 +706,7 @@ int lwm2m_carrier_location_set(double latitude, double longitude, float altitude
  *
  * @retval  0      If the velocity data has been updated successfully.
  * @retval -EINVAL If at least one input argument is incorrect.
+ * @retval -ENOENT If the object is not yet initialized.
  * @retval -ENOMEM If it was not possible to allocate memory storage to hold the velocity data.
  */
 int lwm2m_carrier_velocity_set(int heading, float speed_h, float speed_v, float uncertainty_h,
@@ -645,6 +729,16 @@ int lwm2m_carrier_velocity_set(int heading, float speed_h, float speed_v, float 
  * @retval -ENOMEM If there is not enough memory to copy the buffer contents to the resource model.
  */
 int lwm2m_carrier_app_data_send(const uint8_t *buffer, size_t buffer_len);
+
+/**
+ *
+ * @brief Initialize the LwM2M carrier library with custom configuration.
+ *
+ * @note This function may be implemented by the application if custom settings are needed.
+ *
+ * @param[in] config Configuration parameters for the library.
+ */
+int lwm2m_carrier_custom_init(lwm2m_carrier_config_t *config);
 
 #ifdef __cplusplus
 }

@@ -39,3 +39,6 @@ zephyr_library_sources(
   os/lwm2m_carrier.c
   os/lwm2m_os.c
 )
+
+zephyr_library_sources_ifdef(CONFIG_LWM2M_CARRIER_SETTINGS os/lwm2m_settings.c)
+zephyr_library_sources_ifdef(CONFIG_LWM2M_CARRIER_SHELL os/lwm2m_shell.c)

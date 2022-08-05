@@ -84,6 +84,8 @@ void lwm2m_print_err(const lwm2m_carrier_event_t *evt)
 			"Initialization failure",
 		[LWM2M_CARRIER_ERROR_INTERNAL] =
 			"Internal failure",
+		[LWM2M_CARRIER_ERROR_RUN] =
+			"Configuration failure",
 	};
 
 	mosh_error("%s, reason %d\n", strerr[err->type], err->value);

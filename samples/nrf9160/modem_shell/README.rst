@@ -1139,7 +1139,7 @@ LwM2M support
 =============
 
 Before building and running the sample, select the LwM2M server for testing.
-Follow the instructions in :ref:`server_setup_lwm2m` to set up the server and register your device to the server.
+Follow the instructions in :ref:`server_setup_lwm2m_client` to set up the server and register your device to the server.
 
 Location assistance uses a proprietary mechanism to fetch location assistance data from nRF Cloud by proxying it through the LwM2M server.
 As of now, you can only use AVSystem's Coiote LwM2M server for the location assistance data from nRF Cloud.
