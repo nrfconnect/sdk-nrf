@@ -327,7 +327,12 @@ nRF5
 nRF5340
 =======
 
-.. rst-class:: v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0
+.. rst-class:: v2-0-2 v2-0-1 v2-0-0
+
+NCSDK-16338: Setting gain for nRF21540 Front-end module does not work in the :ref:`radio_test` sample.
+  **Workaround:** Enable the SPI 0 instance in the nRF5340 network core DTS overlay file.
+
+.. rst-class:: v2-0-0 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0
 
 NCSDK-11432: DFU: Erasing secondary slot returns error response
   Trying to erase secondary slot results in an error response.

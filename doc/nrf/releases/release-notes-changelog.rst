@@ -407,7 +407,8 @@ Zigbee samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* :ref:`radio_test` sample:
+   * Fixed the way of setting gain for the nRF21540 Front-end Module with nRF5340.
 
 Drivers
 =======
