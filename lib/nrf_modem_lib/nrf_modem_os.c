@@ -474,8 +474,8 @@ void nrf_modem_os_log(int level, const char *fmt, ...)
 			source = (void *)__log_current_const_data;
 		}
 
-		z_log_msg2_runtime_vcreate(CONFIG_LOG_DOMAIN_ID, source, level,
-					   NULL, 0, 0, fmt, ap);
+		z_log_msg_runtime_vcreate(CONFIG_LOG_DOMAIN_ID, source, level,
+					  NULL, 0, 0, fmt, ap);
 	}
 
 	va_end(ap);
@@ -500,8 +500,8 @@ void nrf_modem_os_logdump(int level, const char *str, const void *data, size_t l
 			source = (void *)__log_current_const_data;
 		}
 
-		z_log_msg2_runtime_vcreate(CONFIG_LOG_DOMAIN_ID, source, level,
-					   data, len, 0, str, (va_list) { 0 });
+		z_log_msg_runtime_vcreate(CONFIG_LOG_DOMAIN_ID, source, level,
+					  data, len, 0, str, (va_list) { 0 });
 	}
 #endif /* CONFIG_LOG */
 }
