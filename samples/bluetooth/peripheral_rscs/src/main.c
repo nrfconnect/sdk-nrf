@@ -30,6 +30,26 @@
 static struct bt_rscs_measurement measurement;
 static struct bt_conn *current_conn;
 
+static const char *const sensor_location[] = {
+	"Other",
+	"Top of shoe",
+	"In shoe",
+	"Hip",
+	"Front Wheel",
+	"Left Crank",
+	"Right Crank",
+	"Left Pedal",
+	"Right Pedal",
+	"Front Hub",
+	"Rear Dropout",
+	"Chainstay",
+	"Rear Wheel",
+	"Rear Hub",
+	"Chest",
+	"Spider",
+	"Chain Ring"
+};
+
 static void rsc_simulation(struct bt_rscs_measurement *measurement)
 {
 	static uint8_t i;
@@ -64,7 +84,7 @@ int set_cumulative(uint32_t total_distance)
 	return 0;
 }
 
-int calibrarion(void)
+int calibration(void)
 {
 	printk("Start the calibration procedure\n");
 	return 0;
@@ -72,7 +92,9 @@ int calibrarion(void)
 
 void update_loc(uint8_t location)
 {
-	printk("Update sensor location: %d\n", location);
+	__ASSERT_NO_MSG(location < ARRAY_SIZE(sensor_location));
+
+	printk("Update sensor location: %u - %s\n", location, sensor_location[location]);
 }
 
 void evt_handler(enum bt_rscs_evt evt)
@@ -90,7 +112,7 @@ void evt_handler(enum bt_rscs_evt evt)
 
 static const struct bt_rscs_cp_cb control_point_cb = {
 	.set_cumulative = set_cumulative,
-	.calibrarion = calibrarion,
+	.calibration = calibration,
 	.update_loc = update_loc,
 };
 
@@ -191,6 +213,7 @@ static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 };
 #else
 static struct bt_conn_auth_cb conn_auth_callbacks;
+static struct bt_conn_auth_info_cb conn_auth_info_callbacks;
 #endif
 
 
@@ -202,7 +225,7 @@ static const struct bt_data ad[] = {
 void main(void)
 {
 	int err;
-	int blink_status = 0;
+	uint32_t blink_status = 0;
 
 	printk("Starting Running Speed and Cadence peripheral example\n");
 

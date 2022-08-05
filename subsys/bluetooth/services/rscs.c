@@ -55,7 +55,6 @@ LOG_MODULE_REGISTER(bt_rscs, CONFIG_BT_RSCS_LOG_LEVEL);
 
 /* Attribute indexes */
 #define RSC_SVC_MEAS_ATTR_IDX		1
-#define RSC_SVC_CTRL_POINT_ATTR_IDX	8
 
 static struct {
 	struct bt_gatt_indicate_params ind_params;
@@ -65,8 +64,6 @@ static struct {
 	const struct bt_rscs_cp_cb *cp_cb;
 	bt_rscs_evt_handler evt_handler;
 	uint8_t num_location;
-	bool meas_notify_enabled;
-	bool ctrl_pt_indicate_enabled;
 	bool indicating;
 } rscs_inst;
 
@@ -92,17 +89,12 @@ struct sc_ctrl_point_ind {
 
 static void rsc_meas_ccc_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
-	rscs_inst.meas_notify_enabled = (value == BT_GATT_CCC_NOTIFY);
+	bool notify_enabled = (value == BT_GATT_CCC_NOTIFY);
 
 	if (rscs_inst.evt_handler) {
-		rscs_inst.evt_handler(rscs_inst.meas_notify_enabled ? RSCS_EVT_MEAS_NOTIFY_ENABLE :
-								      RSCS_EVT_MEAS_NOTIFY_DISABLE);
+		rscs_inst.evt_handler(notify_enabled ? RSCS_EVT_MEAS_NOTIFY_ENABLE :
+						       RSCS_EVT_MEAS_NOTIFY_DISABLE);
 	}
-}
-
-static void ctrl_point_ccc_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
-{
-	rscs_inst.ctrl_pt_indicate_enabled = (value == BT_GATT_CCC_INDICATE);
 }
 
 static uint16_t feature_encode(void)
@@ -183,8 +175,12 @@ static ssize_t write_ctrl_point(struct bt_conn *conn, const struct bt_gatt_attr 
 	const struct write_sc_ctrl_point_req *req = buf;
 	uint8_t status;
 
-	if (!rscs_inst.ctrl_pt_indicate_enabled) {
+	if (!bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_INDICATE)) {
 		return BT_GATT_ERR(RSC_ERR_CCC_CONFIG);
+	}
+
+	if (rscs_inst.indicating) {
+		return BT_GATT_ERR(RSC_ERR_IN_PROGRESS);
 	}
 
 	if (!len) {
@@ -192,13 +188,13 @@ static ssize_t write_ctrl_point(struct bt_conn *conn, const struct bt_gatt_attr 
 	}
 
 	if (!ctrl_point_op_code_validate(req->op)) {
-		LOG_ERR("Operation code not supported %#x", req->op);
+		LOG_WRN("Operation code not supported %#x", req->op);
 		ctrl_point_ind(conn, req->op, SC_CP_RSP_OP_NOT_SUPP, NULL, 0);
 		return len;
 	}
 
 	if (!ctrl_point_param_validate(req, len)) {
-		LOG_ERR("Invalid parameter for op code %#x", req->op);
+		LOG_WRN("Invalid parameter for op code %#x", req->op);
 		ctrl_point_ind(conn, req->op, SC_CP_RSP_INVAL_PARAM, NULL, 0);
 		return len;
 	}
@@ -214,8 +210,8 @@ static ssize_t write_ctrl_point(struct bt_conn *conn, const struct bt_gatt_attr 
 		status = SC_CP_RSP_FAILED;
 		break;
 	case SC_CP_OP_CALIBRATION:
-		if (rscs_inst.cp_cb && rscs_inst.cp_cb->calibrarion) {
-			if (!rscs_inst.cp_cb->calibrarion()) {
+		if (rscs_inst.cp_cb && rscs_inst.cp_cb->calibration) {
+			if (!rscs_inst.cp_cb->calibration()) {
 				status = SC_CP_RSP_SUCCESS;
 				break;
 			}
@@ -261,7 +257,7 @@ BT_GATT_SERVICE_DEFINE(rsc_svc,
 			       BT_GATT_PERM_READ, read_location, NULL, &rscs_inst.sensor_loc),
 	BT_GATT_CHARACTERISTIC(BT_UUID_SC_CONTROL_POINT, BT_GATT_CHRC_WRITE | BT_GATT_CHRC_INDICATE,
 			       BT_GATT_PERM_WRITE, NULL, write_ctrl_point, &rscs_inst.sensor_loc),
-	BT_GATT_CCC(ctrl_point_ccc_cfg_changed, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
+	BT_GATT_CCC(NULL, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 );
 
 static void indicate_cb(struct bt_conn *conn,
@@ -279,13 +275,18 @@ static void indicate_destroy(struct bt_gatt_indicate_params *params)
 static void ctrl_point_ind(struct bt_conn *conn, uint8_t req_op, uint8_t status,
 			   const void *data, uint16_t len)
 {
+	int err;
 	struct sc_ctrl_point_ind *ind;
+	static const struct bt_gatt_attr *attr;
+
+	if (!attr) {
+		attr = bt_gatt_find_by_uuid(rsc_svc.attrs, rsc_svc.attr_count,
+					    BT_UUID_SC_CONTROL_POINT);
+	}
+
+	__ASSERT_NO_MSG(attr);
 
 	NET_BUF_SIMPLE_DEFINE(buf, sizeof(*ind) + len);
-
-	if (rscs_inst.indicating) {
-		return;
-	}
 
 	ind = net_buf_simple_add(&buf, sizeof(*ind));
 	ind->op = SC_CP_OP_RESPONSE;
@@ -296,22 +297,23 @@ static void ctrl_point_ind(struct bt_conn *conn, uint8_t req_op, uint8_t status,
 		net_buf_simple_add_mem(&buf, data, len);
 	}
 
-	rscs_inst.ind_params.attr = &rsc_svc.attrs[RSC_SVC_CTRL_POINT_ATTR_IDX];
+	rscs_inst.ind_params.attr = attr;
 	rscs_inst.ind_params.func = indicate_cb;
 	rscs_inst.ind_params.destroy = indicate_destroy;
 	rscs_inst.ind_params.data = ind;
 	rscs_inst.ind_params.len = buf.len;
 
-	if (bt_gatt_indicate(conn, &rscs_inst.ind_params) == 0) {
+	err = bt_gatt_indicate(conn, &rscs_inst.ind_params);
+	if (err) {
+		LOG_ERR("Failed to send Control Point indication, err: %d", err);
+	} else {
 		rscs_inst.indicating = true;
 	}
 }
 
 int bt_rscs_measurement_send(struct bt_conn *conn, const struct bt_rscs_measurement *measurement)
 {
-	if (!rscs_inst.meas_notify_enabled) {
-		return -EACCES;
-	}
+	static const struct bt_gatt_attr *attr = &rsc_svc.attrs[RSC_SVC_MEAS_ATTR_IDX];
 
 	if (!measurement) {
 		return -EINVAL;
@@ -344,12 +346,12 @@ int bt_rscs_measurement_send(struct bt_conn *conn, const struct bt_rscs_measurem
 		meas_nfy->flags |= RSC_WALKING_OR_RUNNING_BIT;
 	}
 
-	if (conn) {
-		return bt_gatt_notify(conn, &rsc_svc.attrs[RSC_SVC_MEAS_ATTR_IDX],
-				      meas_nfy, buf.len);
+	if (!conn) {
+		return bt_gatt_notify(NULL, attr, meas_nfy, buf.len);
+	} else if (bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_NOTIFY)) {
+		return bt_gatt_notify(conn, attr, meas_nfy, buf.len);
 	} else {
-		return bt_gatt_notify(NULL, &rsc_svc.attrs[RSC_SVC_MEAS_ATTR_IDX],
-				      meas_nfy, buf.len);
+		return -EINVAL;
 	}
 }
 

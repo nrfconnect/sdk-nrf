@@ -99,6 +99,7 @@ struct bt_rscs_cp_cb {
 	/** @brief Set Cumulative Value Procedure.
 	 *
 	 * @param total_distance New value for total distance.
+	 *
 	 * @retval 0 If the operation was successful.
 	 *         Otherwise, a negative error code is returned.
 	 */
@@ -109,7 +110,7 @@ struct bt_rscs_cp_cb {
 	 * @retval 0 If the operation was successful.
 	 *         Otherwise, a negative error code is returned.
 	 */
-	int (*calibrarion)(void);
+	int (*calibration)(void);
 
 	/** @brief Update Sensor Location Procedure.
 	 *
@@ -123,7 +124,7 @@ struct bt_rscs_init_params {
 	/** Initial value for features of sensor. */
 	struct bt_rscs_features features;
 
-	/** List of supperted locations */
+	/** List of supported locations */
 	struct bt_rsc_supported_loc supported_locations;
 
 	/** Initial value for sensor location. */
@@ -166,8 +167,8 @@ struct bt_rscs_measurement {
  * measurement. If notification has been enabled, the measurement data is encoded
  * and sent to the client.
  *
- * @param conn Pointer to connection object, or NULL if sent to all connected peers.
- * @param measurement Pointer to new running speed and cadence measurement.
+ * @param[in] conn Pointer to connection object, or NULL if sent to all connected peers.
+ * @param[in] measurement Pointer to new running speed and cadence measurement.
  *
  * @retval 0 If the operation was successful.
  *          Otherwise, a negative error code is returned.
@@ -176,7 +177,7 @@ int bt_rscs_measurement_send(struct bt_conn *conn, const struct bt_rscs_measurem
 
 /** @brief Function for initializing the Running Speed and Cadence Service.
  *
- *  @param init Initialization parameters.
+ *  @param[in] init Initialization parameters.
  *
  *  @retval 0 If the operation was successful.
  *          Otherwise, a negative error code is returned.
