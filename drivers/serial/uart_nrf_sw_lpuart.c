@@ -15,6 +15,8 @@
 
 LOG_MODULE_REGISTER(lpuart, CONFIG_NRF_SW_LPUART_LOG_LEVEL);
 
+#define DT_DRV_COMPAT nordic_nrf_sw_lpuart
+
 /* States. */
 enum rx_state {
 	/* RX is disabled. */
@@ -104,7 +106,6 @@ struct lpuart_data {
 
 /* Configuration structured. */
 struct lpuart_config {
-	const char *uart_name;
 	nrfx_gpiote_pin_t req_pin;
 	nrfx_gpiote_pin_t rdy_pin;
 };
@@ -907,8 +908,8 @@ static int lpuart_init(const struct device *dev)
 	const struct lpuart_config *cfg = get_dev_config(dev);
 	int err;
 
-	data->uart = device_get_binding(cfg->uart_name);
-	if (data->uart == NULL) {
+	data->uart = DEVICE_DT_GET(DT_INST_BUS(0));
+	if (!device_is_ready(data->uart)) {
 		return -ENODEV;
 	}
 
@@ -1000,8 +1001,6 @@ static int api_config_get(const struct device *dev, struct uart_config *cfg)
 	return uart_config_get(data->uart, cfg);
 }
 
-#define DT_DRV_COMPAT nordic_nrf_sw_lpuart
-
 #define GPIO(id) DT_NODELABEL(gpio##id)
 
 #define GET_PORT(pin_prop) \
@@ -1016,7 +1015,6 @@ static int api_config_get(const struct device *dev, struct uart_config *cfg)
 	}
 
 static const struct lpuart_config lpuart_config = {
-	.uart_name = DT_INST_BUS_LABEL(0),
 	.req_pin = DT_INST_PROP(0, req_pin),
 	.rdy_pin = DT_INST_PROP(0, rdy_pin)
 };
