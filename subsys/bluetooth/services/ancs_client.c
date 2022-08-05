@@ -61,7 +61,7 @@ static void parse_notif(struct bt_ancs_client *ancs_c,
 			const uint8_t *data_src, const uint16_t len)
 {
 	int err;
-	struct bt_ancs_evt_notif notif;
+	struct bt_ancs_evt_notif notif = {0};
 
 	if (len != BT_ANCS_NOTIF_DATA_LENGTH) {
 		bt_ancs_do_ns_notif_cb(ancs_c, -EINVAL, &notif);
