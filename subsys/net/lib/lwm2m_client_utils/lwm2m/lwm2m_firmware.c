@@ -462,7 +462,7 @@ static int write_dl_uri(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst
 	char *package_uri = (char *)data;
 	uint8_t state;
 
-	LOG_DBG("write URI: %s", log_strdup(package_uri));
+	LOG_DBG("write URI: %s", package_uri);
 
 	state = lwm2m_firmware_get_update_state();
 
