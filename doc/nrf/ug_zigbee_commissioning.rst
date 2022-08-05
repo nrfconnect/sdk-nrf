@@ -50,7 +50,7 @@ These modes are triggered by the top-level commissioning procedure.
 The procedure goes through one or more modes, depending on the bits specified in the ``bdbCommissioningMode`` mask (``0`` through ``3``).
 A node can have one or more of these bits set.
 
-The following figure shows a generic scenario where all modes are used, together with their corresponding ``bdbCommissioningMode`` mask bits.
+The following figure shows a generic scenario where all modes are used, together with their corresponding ``bdbCommissioningMode`` mask bits:
 
 .. figure:: /images/zigbee_commissioning_overview.svg
    :alt: Simplified top-level Zigbee commissioning procedure

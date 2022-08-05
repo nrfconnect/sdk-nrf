@@ -494,7 +494,7 @@ Modem libraries
 
     * Removed:
 
-      * The :kconfig:option:`CONFIG_PDN_CONTEXTS_MAX` Kconfig option.
+      * The ``CONFIG_PDN_CONTEXTS_MAX`` Kconfig option.
         The maximum number of PDP contexts is now dynamic.
 
   * :ref:`nrf_modem_lib_readme` library:
