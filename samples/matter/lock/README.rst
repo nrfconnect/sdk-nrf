@@ -53,21 +53,6 @@ For details, see the `Commissioning the device`_ section.
 
 .. matter_door_lock_sample_remote_testing_end
 
-.. _matter_lock_sample_test_mode:
-
-Remote testing using test mode
-==============================
-
-.. matter_door_lock_sample_test_mode_start
-
-Alternatively to the commissioning procedure, you can use the test mode that allows joining the Thread network with default static parameters and static cryptographic keys.
-|matter_sample_button3_note|
-
-.. note::
-    The test mode is not compliant with Matter and it only works together with the Matter controller and other devices that use the same default configuration.
-
-.. matter_door_lock_sample_test_mode_end
-
 Configuration
 *************
 
@@ -180,9 +165,6 @@ Button 1:
 Button 2:
     Changes the lock state to the opposite one.
 
-Button 3:
-    Starts the Thread networking in the :ref:`test mode <matter_lock_sample_test_mode>` using the default configuration.
-
 .. matter_door_lock_sample_button4_start
 
 Button 4:
@@ -286,11 +268,7 @@ Remote control allows you to control the Matter door lock device from a Thread n
 
 .. matter_door_lock_sample_remote_control_start
 
-Use one of the following to enable remote control:
-
-* `Commissioning the device`_ allows you to set up a testing environment and remotely control the sample over a Matter-enabled Thread network.
-* `Remote testing using test mode`_ allows you to test the sample functionalities in a Thread network with default parameters, without commissioning.
-  |matter_sample_button3_note|
+`Commissioning the device`_ allows you to set up a testing environment and remotely control the sample over a Matter-enabled Thread network.
 
 .. matter_door_lock_sample_remote_control_end
 

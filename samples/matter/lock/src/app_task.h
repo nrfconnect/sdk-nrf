@@ -39,7 +39,6 @@ private:
 	void FunctionPressHandler();
 	void FunctionReleaseHandler();
 	void FunctionTimerEventHandler();
-	void StartThreadHandler();
 	void StartBLEAdvertisingHandler();
 
 	static void LockStateChanged(BoltLockManager::State state, BoltLockManager::OperationSource source);
