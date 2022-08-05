@@ -12,7 +12,11 @@
 
 #include <zephyr/ipc/ipc_service.h>
 
+#ifdef CONFIG_TEST_EXTRA_STACK_SIZE
 #define STACKSIZE	(1024 + CONFIG_TEST_EXTRA_STACK_SIZE)
+#else
+#define STACKSIZE	(1024)
+#endif
 
 K_THREAD_STACK_DEFINE(ipc0_stack, STACKSIZE);
 
