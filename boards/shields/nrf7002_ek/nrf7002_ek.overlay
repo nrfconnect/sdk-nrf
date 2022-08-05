@@ -15,13 +15,13 @@
 		label = "NRF7002";
 		spi-max-frequency = <DT_FREQ_M(96)>;
 
-		iovdd-ctrl-gpios = <&arduino_header 6 GPIO_ACTIVE_HIGH>;   /* D0 */
-		bucken-gpios = <&arduino_header 7 GPIO_ACTIVE_HIGH>;	   /* D1 */
-		host-irq-gpios = <&arduino_header 13 GPIO_ACTIVE_HIGH>;	   /* D7 */
+		iovdd-ctrl-gpios = <&arduino_header 6 GPIO_ACTIVE_HIGH>;	/* D0 */
+		bucken-gpios = <&arduino_header 7 GPIO_ACTIVE_HIGH>;		/* D1 */
+		host-irq-gpios = <&arduino_header 13 GPIO_ACTIVE_HIGH>;		/* D7 */
 
-		coex-req-gpios = <&arduino_header 8 GPIO_ACTIVE_HIGH>;	   /* D2 */
-		coex-status0-gpios = <&arduino_header 9 GPIO_ACTIVE_HIGH>; /* D3 */
-		coex-grant-gpios = <&arduino_header 10 GPIO_ACTIVE_HIGH>;  /* D4 */
-		swctrl1-gpios = <&arduino_header 12 GPIO_ACTIVE_HIGH>;	   /* D6 */
+		coex-req-gpios = <&arduino_header 8 GPIO_ACTIVE_HIGH>;		/* D2 */
+		coex-status0-gpios = <&arduino_header 9 GPIO_ACTIVE_HIGH>;	/* D3 */
+		coex-grant-gpios = <&arduino_header 10 GPIO_ACTIVE_HIGH>;	/* D4 */
+		swctrl1-gpios = <&arduino_header 12 GPIO_ACTIVE_HIGH>;		/* D6 */
 	};
 };
