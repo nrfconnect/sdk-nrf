@@ -1,7 +1,3 @@
-&spi0 {
-	status = "disabled";
-};
-
 / {
 	chosen {
 		zephyr,shell-ipc = &ipc0;
