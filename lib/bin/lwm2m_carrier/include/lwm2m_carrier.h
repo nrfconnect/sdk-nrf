@@ -424,6 +424,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event);
  * @retval  0      If the available power sources have been set successfully.
  * @retval -E2BIG  If the reported number of power sources is bigger than the maximum supported.
  * @retval -EINVAL If one or more of the power sources are not supported.
+ * @retval -ENOENT If LwM2M object is not initialized yet.
  */
 int lwm2m_carrier_avail_power_sources_set(const uint8_t *power_sources, uint8_t power_source_count);
 
@@ -500,6 +501,7 @@ int lwm2m_carrier_battery_status_set(int32_t battery_status);
  *
  * @retval  0      If the error code has been added successfully.
  * @retval -EINVAL If the error code is not supported.
+ * @retval -ENOENT If LwM2M object is not initialized yet.
  */
 int lwm2m_carrier_error_code_add(int32_t error);
 
@@ -585,6 +587,7 @@ int lwm2m_carrier_identity_write(uint16_t instance_id, uint16_t identity_type, c
  * @param[in]  instance_id    The identifier to be used for the new instance.
  *
  * @retval  0      If the instance has been created successfully.
+ * @retval -ENOENT If the object is not yet initialized.
  * @retval -ENOMEM If it was not possible to create the instance because the maximum number of
  *                 supported object instances has already been reached.
  * @retval -EINVAL If the provided instance identifier is already in use.
@@ -603,6 +606,7 @@ int lwm2m_carrier_portfolio_instance_create(uint16_t instance_id);
  *
  * @retval  0      If the location data has been updated successfully.
  * @retval -EINVAL If at least one input argument is incorrect.
+ * @retval -ENOENT If the object is not yet initialized.
  */
 int lwm2m_carrier_location_set(double latitude, double longitude, float altitude,
 			       uint32_t timestamp, float uncertainty);
@@ -624,6 +628,7 @@ int lwm2m_carrier_location_set(double latitude, double longitude, float altitude
  *
  * @retval  0      If the velocity data has been updated successfully.
  * @retval -EINVAL If at least one input argument is incorrect.
+ * @retval -ENOENT If the object is not yet initialized.
  * @retval -ENOMEM If it was not possible to allocate memory storage to hold the velocity data.
  */
 int lwm2m_carrier_velocity_set(int heading, float speed_h, float speed_v, float uncertainty_h,
@@ -646,6 +651,16 @@ int lwm2m_carrier_velocity_set(int heading, float speed_h, float speed_v, float 
  * @retval -ENOMEM If there is not enough memory to copy the buffer contents to the resource model.
  */
 int lwm2m_carrier_app_data_send(const uint8_t *buffer, size_t buffer_len);
+
+/**
+ *
+ * @brief Initialize the LwM2M carrier library with custom configuration.
+ *
+ * @note This function may be implemented by the application if custom settings are needed.
+ *
+ * @param[in] config Configuration parameters for the library.
+ */
+int lwm2m_carrier_custom_init(lwm2m_carrier_config_t *config);
 
 #ifdef __cplusplus
 }

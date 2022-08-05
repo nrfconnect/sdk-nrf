@@ -156,6 +156,18 @@ config LWM2M_CARRIER_SESSION_IDLE_TIMEOUT
 	  Number of seconds, for which a DTLS session used by this library can be idle
 	  before it is closed. Setting this to 0 will use the default value (60 seconds).
 
+config LWM2M_CARRIER_WORKQ_STACK_SIZE
+	int "LwM2M carrier work queue stack size"
+	default 4096
+	help
+	  Stack size for the LwM2M work queue thread.
+
+config LWM2M_CARRIER_THREAD_STACK_SIZE
+	int "LwM2M carrier thread stack size"
+	default 600
+	help
+	  Stack size for the LwM2M carrier process thread.
+
 config LWM2M_CARRIER_STORAGE_AREA_SIZE
 	hex "Size of the lwm2m_carrier partition"
 	default 0x3000
@@ -168,6 +180,13 @@ config LWM2M_CARRIER_STORAGE_SECTOR_SIZE
 	hex
 	default $(dt_node_int_prop_hex,$(dt_chosen_path,$(DT_ZEPHYR_FLASH)),erase-block-size)
 
+config LWM2M_CARRIER_SHELL
+	bool "LwM2M carrier shell"
+	depends on SHELL
+	depends on SETTINGS
+	default n
+	help
+	  Include LwM2M carrier shell
 
 module=LWM2M_CARRIER
 module-dep=LOG

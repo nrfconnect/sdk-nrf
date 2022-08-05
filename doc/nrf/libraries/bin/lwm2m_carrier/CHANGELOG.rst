@@ -9,6 +9,60 @@ Changelog
 
 All notable changes to this project are documented in this file.
 
+liblwm2m_carrier 3.1.0
+***********************
+
+Release for modem firmware version 1.3.3.
+
+Certification status
+====================
+
+For certification status, see `Mobile network operator certifications`_.
+
+Size
+====
+
+See :ref:`lwm2m_lib_size` for an explanation of the library size in different scenarios.
+
++-------------------------+---------------+------------+
+|                         | Flash (Bytes) | RAM (Bytes)|
++-------------------------+---------------+------------+
+| Library size            |               |            |
+| (binary)                |               |            |
++-------------------------+---------------+------------+
+| Library size            |               |            |
+| (reference application) |               |            |
++-------------------------+---------------+------------+
+
+Changes
+=======
+
+* Added shell functionality to the LwM2M carrier library (``lwm2m_shell.c`` and ``lwm2m_settings.c/.h``). This is intended to provide convenient access to the API for development and debugging.
+
+  * Enable/Disable with :kconfig:option:`CONFIG_LWM2M_CARRIER_SHELL`.
+  * Examples of using the shell can be found throughout the :ref:`lwm2m_carrier` sample documentation.
+
+* Added a new weak function :c:func:`lwm2m_carrier_custom_init`.
+
+  * This function is run in in ``lwm2m_carrier.c`` right before :c:func:`lwm2m_carrier_init`.
+  * This function allows Kconfig settings of the LwM2M carrier library can be overwritten without having to make changes in the ``lwm2m_carrier.c``.
+  * The :ref:`lwm2m_carrier` sample uses the :c:func:`lwm2m_carrier_custom_init` function to facilitate shell access to the initialization settings, by loading a stored ``lwm2m_carrier_config_t``.
+
+* Fixed a bug where the functions :c:func:`lwm2m_carrier_avail_power_sources_set` and :c:func:`lwm2m_carrier_error_code_add` did not return an error in the case of the device object being uninitialized.
+
+* Removed the following functions from the glue layer:
+
+  * ``lwm2m_os_sec_psk_exists()``
+  * ``lwm2m_os_sec_psk_write()``
+  * ``lwm2m_os_sec_psk_delete()``
+  * ``lwm2m_os_sec_identity_exists()``
+  * ``lwm2m_os_sec_identity_write()``
+  * ``lwm2m_os_sec_identity_delete()``
+
+* Added the Kconfigs :kconfig:option:`LWM2M_CARRIER_THREAD_STACK_SIZE` and :kconfig:option:`LWM2M_CARRIER_WORKQ_STACK_SIZE`.
+
+  * This allows you to alter the LwM2M carrier library thread and work queue stack without editing ``lwm2m_carrier.c``
+
 liblwm2m_carrier 0.30.1
 ***********************
 

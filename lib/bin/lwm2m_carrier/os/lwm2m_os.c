@@ -15,7 +15,6 @@
 #include <modem/lte_lc.h>
 #include <modem/pdn.h>
 #include <modem/nrf_modem_lib.h>
-#include <modem/modem_key_mgmt.h>
 #include <modem/sms.h>
 #include <net/download_client.h>
 #include <storage/flash_map.h>
@@ -47,10 +46,12 @@ static struct nvs_fs fs = {
 	.flash_device = NVS_FLASH_DEVICE,
 };
 
-K_THREAD_STACK_ARRAY_DEFINE(lwm2m_os_work_q_client_stack, LWM2M_OS_MAX_WORK_QS, 4096);
+K_THREAD_STACK_ARRAY_DEFINE(lwm2m_os_work_q_client_stack, LWM2M_OS_MAX_WORK_QS,
+			    CONFIG_LWM2M_CARRIER_WORKQ_STACK_SIZE);
 static struct k_work_q lwm2m_os_work_qs[LWM2M_OS_MAX_WORK_QS];
 
-K_THREAD_STACK_ARRAY_DEFINE(lwm2m_os_thread_stack, LWM2M_OS_MAX_THREAD_COUNT, 600);
+K_THREAD_STACK_ARRAY_DEFINE(lwm2m_os_thread_stack, LWM2M_OS_MAX_THREAD_COUNT,
+			    CONFIG_LWM2M_CARRIER_THREAD_STACK_SIZE);
 static struct k_thread lwm2m_os_threads[LWM2M_OS_MAX_THREAD_COUNT];
 
 static struct k_sem lwm2m_os_sems[LWM2M_OS_MAX_SEM_COUNT];
@@ -110,6 +111,7 @@ int lwm2m_os_sleep(int ms)
 
 void lwm2m_os_sys_reset(void)
 {
+	LOG_PANIC();
 	sys_reboot(SYS_REBOOT_COLD);
 	CODE_UNREACHABLE;
 }
@@ -634,36 +636,6 @@ int lwm2m_os_nrf_errno(void)
 {
 	/* nrf_errno have the same values as newlibc errno */
 	return errno;
-}
-
-int lwm2m_os_sec_psk_exists(uint32_t sec_tag, bool *exists)
-{
-	return modem_key_mgmt_exists(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_PSK, exists);
-}
-
-int lwm2m_os_sec_psk_write(uint32_t sec_tag, const void *buf, uint16_t len)
-{
-	return modem_key_mgmt_write(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_PSK, buf, len);
-}
-
-int lwm2m_os_sec_psk_delete(uint32_t sec_tag)
-{
-	return modem_key_mgmt_delete(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_PSK);
-}
-
-int lwm2m_os_sec_identity_exists(uint32_t sec_tag, bool *exists)
-{
-	return modem_key_mgmt_exists(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_IDENTITY, exists);
-}
-
-int lwm2m_os_sec_identity_write(uint32_t sec_tag, const void *buf, uint16_t len)
-{
-	return modem_key_mgmt_write(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_IDENTITY, buf, len);
-}
-
-int lwm2m_os_sec_identity_delete(uint32_t sec_tag)
-{
-	return modem_key_mgmt_delete(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_IDENTITY);
 }
 
 /* Application firmware upgrade abstractions */
