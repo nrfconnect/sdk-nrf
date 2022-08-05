@@ -222,8 +222,6 @@ void main(void)
 
 	/* Resize terminal width and height of the shell to have proper command editing. */
 	shell_execute_cmd(shell, "resize");
-	/* Run empty command because otherwise "resize" would be set to the command line. */
-	shell_execute_cmd(shell, "");
 
 #if defined(CONFIG_MOSH_STARTUP_CMDS)
 	startup_cmd_ctrl_init();
