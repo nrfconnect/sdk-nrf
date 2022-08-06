@@ -19,64 +19,6 @@ LOG_MODULE_REGISTER(location_tracking, CONFIG_MQTT_MULTI_SERVICE_LOG_LEVEL);
 static location_update_cb_t location_update_handler;
 static bool location_initialized;
 
-void location_assistance_data_handler(const char *buf, size_t len)
-{
-	/* We don't actually check whether the passed-in payload contains assistance data!
-	 * Instead, nrf_cloud_agps_process and nrf_cloud_pgps_process will check for us,
-	 * ignoring payloads that don't contain assistance data, and processing
-	 * (and sending to the modem) payloads that do.
-	 *
-	 * Note that P-GPS payloads are actually just resource identifiers encoded with JSON,
-	 * and upon encountering this resource identifier, nrf_cloud_pgps_process will
-	 * automatically download and store the predictive data it references.
-	 *
-	 * A-GPS payloads, on the other hand, are pure binary, and are passed more or less directly
-	 * to the modem by nrf_cloud_agps_process.
-	 */
-	int err;
-
-	if (!location_initialized) {
-		LOG_DBG("Received data but not ready for it.");
-		return;
-	}
-
-	/* First, try to process the payload as A-GPS data, if AGPS is enabled */
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_AGPS)) {
-		err = nrf_cloud_agps_process(buf, len);
-		if (err) {
-			if (err != -EBADMSG) {
-				LOG_WRN("Unable to process A-GPS data, error: %d", err);
-			} else {
-				/* The passed in MQTT message was likely just not AGPS-related. */
-				LOG_DBG("Failed to extract A-GPS data from passed in MQTT message, "
-					"got -EBADMSG. This is normal behavior if a non-AGPS "
-					"message was received.");
-			}
-		} else {
-			LOG_DBG("A-GPS data processed");
-			return;
-		}
-	}
-
-	/* Failing that, try to process the payload as P-GPS data, if P-GPS is enabled */
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_PGPS)) {
-		err = nrf_cloud_pgps_process(buf, len);
-		if (err) {
-			if (err != -EBADMSG && err != -EFTYPE) {
-				LOG_WRN("Unable to process P-GPS data, error: %d", err);
-			} else {
-				/* The passed in MQTT message was likely just not PGPS-related. */
-				LOG_DBG("Failed to extract P-GPS data from passed in MQTT message, "
-					"got -%s. This is normal behavior if a non-PGPS "
-					"message was received.",
-					err == -EBADMSG ? "EBADMSG" : "EFTYPE");
-			}
-		} else {
-			LOG_DBG("P-GPS data processed");
-		}
-	}
-}
-
 static void location_event_handler(const struct location_event_data *event_data)
 {
 	switch (event_data->id) {

@@ -357,21 +357,13 @@ static void cloud_wrap_event_handler(const struct cloud_wrap_event *const evt)
 			/* The incoming message has already been handled, ignored. */
 			break;
 		} else if (err == -ENOENT) {
-			/* Encoding of incoming message is not supported. Proceed to check if the
-			 * message is AGPS/PGPS related data.
-			 */
+			/* Encoding of incoming message is not supported. */
 		} else {
 			LOG_ERR("Decoding of device configuration, error: %d", err);
 			SEND_ERROR(cloud, CLOUD_EVT_ERROR, err);
 			break;
 		}
 
-		/* If incoming message is A-GPS/P-GPS related, handle it. nRF Cloud publishes A-GPS
-		 * data on a generic c2d topic meaning that the integration layer cannot filter
-		 * based on topic. This means that agps_data_handle() must be called on both
-		 * CLOUD_WRAP_EVT_AGPS_DATA_RECEIVED and CLOUD_WRAP_EVT_DATA_RECEIVED events.
-		 */
-		agps_data_handle(evt->data.buf, evt->data.len);
 		break;
 	case CLOUD_WRAP_EVT_PGPS_DATA_RECEIVED:
 		LOG_DBG("CLOUD_WRAP_EVT_PGPS_DATA_RECEIVED");

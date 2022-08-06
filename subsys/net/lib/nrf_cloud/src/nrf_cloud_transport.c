@@ -885,9 +885,11 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 	case MQTT_EVT_PUBLISH: {
 		const struct mqtt_publish_param *p = &_mqtt_evt->param.publish;
 
-		LOG_DBG("MQTT_EVT_PUBLISH: id = %d len = %d",
+		LOG_DBG("MQTT_EVT_PUBLISH: id = %d len = %d, topic = %.*s",
 			p->message_id,
-			p->message.payload.len);
+			p->message.payload.len,
+			p->message.topic.topic.size,
+			p->message.topic.topic.utf8);
 
 		int err = publish_get_payload(mqtt_client,
 					      p->message.payload.len);
@@ -1322,8 +1324,16 @@ int nct_dc_disconnect(void)
 
 	LOG_DBG("nct_dc_disconnect");
 
+	struct mqtt_topic subscribe_topic = {
+		.topic = {
+			.utf8 = nct.dc_rx_endp.utf8,
+			.size = nct.dc_rx_endp.size
+		},
+		.qos = MQTT_QOS_1_AT_LEAST_ONCE
+	};
+
 	const struct mqtt_subscription_list subscription_list = {
-		.list = (struct mqtt_topic *)&nct.dc_rx_endp,
+		.list = &subscribe_topic,
 		.list_count = 1,
 		.message_id = NCT_MSG_ID_DC_UNSUB
 	};

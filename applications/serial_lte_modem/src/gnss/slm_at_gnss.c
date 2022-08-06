@@ -733,43 +733,42 @@ static void on_cloud_evt_disconnected(void)
 	at_monitor_pause(&ncell_meas);
 }
 
-static void on_cloud_evt_data_received(const struct nrf_cloud_data *const data)
+static void on_cloud_evt_cell_pos_data_received(const struct nrf_cloud_data *const data)
 {
-	int err = -EAGAIN;
-
-	if (run_type == RUN_TYPE_AGPS) {
-		err = nrf_cloud_agps_process(data->ptr, data->len);
-	} else if (run_type == RUN_TYPE_PGPS) {
-		err = nrf_cloud_pgps_process(data->ptr, data->len);
-	} else if (run_type == RUN_TYPE_CELL_POS) {
-		struct nrf_cloud_cell_pos_result result;
-
-		err = nrf_cloud_cell_pos_process(data->ptr, &result);
-		if (err == 0) {
-			if (ttft_start != 0) {
-				LOG_INF("TTFF %ds", (int)k_uptime_delta(&ttft_start)/1000);
-				ttft_start = 0;
-			}
-			sprintf(rsp_buf, "\r\n#XCELLPOS: %d,%lf,%lf,%d\r\n",
-				result.type, result.lat, result.lon, result.unc);
-			rsp_send(rsp_buf, strlen(rsp_buf));
-			run_type = RUN_TYPE_NONE;
-		} else if (err == 1) {
-			LOG_WRN("No position found");
-		} else if (err == -EFAULT) {
-			LOG_ERR("Unable to determine location from cell data, error: %d",
-				result.err);
-		}
-	} else {
-		if (nrf_cloud_ready) {
-			sprintf(rsp_buf, "\r\n#XNRFCLOUD: %s\r\n", (char *)data->ptr);
-			rsp_send(rsp_buf, strlen(rsp_buf));
-			err = 0;
-		}
+	if (run_type != RUN_TYPE_CELL_POS) {
+		LOG_WRN("Not expecting cell pos data during run_type: %d", run_type);
+		return;
 	}
 
-	if (err < 0) {
-		LOG_WRN("Unable to process data, error: %d run_type: %d", err, run_type);
+	int err;
+	struct nrf_cloud_cell_pos_result result;
+
+	err = nrf_cloud_cell_pos_process(data->ptr, &result);
+	if (err == 0) {
+		if (ttft_start != 0) {
+			LOG_INF("TTFF %ds", (int)k_uptime_delta(&ttft_start)/1000);
+			ttft_start = 0;
+		}
+		sprintf(rsp_buf, "\r\n#XCELLPOS: %d,%lf,%lf,%d\r\n",
+			result.type, result.lat, result.lon, result.unc);
+		rsp_send(rsp_buf, strlen(rsp_buf));
+		run_type = RUN_TYPE_NONE;
+	} else if (err == 1) {
+		LOG_WRN("No position found");
+	} else if (err == -EFAULT) {
+		LOG_ERR("Unable to determine location from cell data, error: %d",
+			result.err);
+	} else {
+		LOG_ERR("Failed to process cellular location response, error: %d",
+			err);
+	}
+}
+
+static void on_cloud_evt_data_received(const struct nrf_cloud_data *const data)
+{
+	if (nrf_cloud_ready) {
+		sprintf(rsp_buf, "\r\n#XNRFCLOUD: %s\r\n", (char *)data->ptr);
+		rsp_send(rsp_buf, strlen(rsp_buf));
 	}
 }
 
@@ -801,9 +800,16 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
 		LOG_DBG("NRF_CLOUD_EVT_SENSOR_DATA_ACK");
 		break;
-	case NRF_CLOUD_EVT_RX_DATA:
-		LOG_INF("NRF_CLOUD_EVT_RX_DATA");
+	case NRF_CLOUD_EVT_RX_DATA_GENERAL:
+		LOG_INF("NRF_CLOUD_EVT_RX_DATA_GENERAL");
 		on_cloud_evt_data_received(&evt->data);
+		break;
+	case NRF_CLOUD_EVT_RX_DATA_CELL_POS:
+		LOG_INF("NRF_CLOUD_EVT_RX_DATA_CELL_POS");
+		on_cloud_evt_cell_pos_data_received(&evt->data);
+		break;
+	case NRF_CLOUD_EVT_RX_DATA_SHADOW:
+		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_SHADOW");
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
 		LOG_DBG("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");

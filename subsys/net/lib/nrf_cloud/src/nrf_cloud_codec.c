@@ -72,6 +72,20 @@ static const char *const sensor_type_str[] = {
 #define JSON_KEY_CLOUD_TO_DEVICE "c2g"
 #endif
 
+#define TOPIC_VAL_C2D		"/" JSON_KEY_CLOUD_TO_DEVICE
+#define STRLEN_TOPIC_VAL_C2D	(sizeof(TOPIC_VAL_C2D) - 1)
+#define TOPIC_VAL_AGPS		"/agps"
+#define TOPIC_VAL_PGPS		"/pgps"
+#define TOPIC_VAL_CELL_POS	"/cell_pos"
+#define TOPIC_VAL_RCV		"/r"
+#define TOPIC_VAL_WILDCARD	"/+"
+
+#define TOPIC_VAL_RCV_WILDCARD	(TOPIC_VAL_WILDCARD TOPIC_VAL_RCV)
+#define TOPIC_VAL_RCV_AGPS	(TOPIC_VAL_AGPS	    TOPIC_VAL_RCV)
+#define TOPIC_VAL_RCV_PGPS	(TOPIC_VAL_PGPS	    TOPIC_VAL_RCV)
+#define TOPIC_VAL_RCV_CELL_POS	(TOPIC_VAL_CELL_POS TOPIC_VAL_RCV)
+#define TOPIC_VAL_RCV_C2D	(TOPIC_VAL_C2D	    TOPIC_VAL_RCV)
+
 int nrf_cloud_codec_init(struct nrf_cloud_os_mem_hooks *hooks)
 {
 	if (!initialized) {
@@ -531,7 +545,8 @@ int nrf_cloud_encode_config_response(struct nrf_cloud_data const *const input,
 	return 0;
 }
 
-int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *output)
+int nrf_cloud_encode_state(uint32_t reported_state, const bool update_desired_topic,
+			   struct nrf_cloud_data *output)
 {
 	__ASSERT_NO_MSG(output != NULL);
 
@@ -585,6 +600,15 @@ int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *outpu
 
 		ret += json_add_str_cs(topics_obj, JSON_KEY_DEVICE_TO_CLOUD, tx_endp.ptr);
 		ret += json_add_str_cs(topics_obj, JSON_KEY_CLOUD_TO_DEVICE, rx_endp.ptr);
+
+		if (update_desired_topic) {
+			/* Align desired c2d topic with reported to prevent delta events */
+			cJSON *des_obj = cJSON_AddObjectToObjectCS(state_obj, JSON_KEY_DES);
+			cJSON *pair_obj = cJSON_AddObjectToObjectCS(des_obj, JSON_KEY_PAIRING);
+			cJSON *topic_obj = cJSON_AddObjectToObjectCS(pair_obj, JSON_KEY_TOPICS);
+
+			ret += json_add_str_cs(topic_obj, JSON_KEY_CLOUD_TO_DEVICE, rx_endp.ptr);
+		}
 
 		if (ret != 0) {
 			cJSON_Delete(root_obj);
@@ -678,7 +702,7 @@ int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
 	err = json_decode_and_alloc(tx_obj, tx_endpoint);
 	if (err) {
 		cJSON_Delete(root_obj);
-		LOG_ERR("could not decode topic for %s", JSON_KEY_DEVICE_TO_CLOUD);
+		LOG_ERR("Could not decode topic for %s", JSON_KEY_DEVICE_TO_CLOUD);
 		return err;
 	}
 
@@ -698,18 +722,59 @@ int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
 				       (char *)tx_endpoint->ptr,
 				       NRF_CLOUD_BULK_MSG_TOPIC);
 
-	cJSON *rx_obj = json_object_decode(topic_obj, JSON_KEY_CLOUD_TO_DEVICE);
-
-	err = json_decode_and_alloc(rx_obj, rx_endpoint);
+	err = json_decode_and_alloc(json_object_decode(topic_obj, JSON_KEY_CLOUD_TO_DEVICE),
+				    rx_endpoint);
 	if (err) {
 		cJSON_Delete(root_obj);
-		LOG_ERR("could not decode topic for %s", JSON_KEY_CLOUD_TO_DEVICE);
+		LOG_ERR("Failed to parse \"%s\" from JSON, error: %d",
+			JSON_KEY_CLOUD_TO_DEVICE, err);
 		return err;
 	}
 
 	cJSON_Delete(root_obj);
 
 	return err;
+}
+
+BUILD_ASSERT(sizeof(TOPIC_VAL_C2D) == sizeof(TOPIC_VAL_RCV_WILDCARD),
+	"TOPIC_VAL_C2D and TOPIC_VAL_RCV_WILDCARD are expected to be the same size");
+bool nrf_cloud_set_wildcard_c2d_topic(char *const topic, size_t topic_len)
+{
+	if (!topic || (topic_len < STRLEN_TOPIC_VAL_C2D)) {
+		return false;
+	}
+
+	char *c2d_str = &topic[topic_len - STRLEN_TOPIC_VAL_C2D];
+
+	/* If the shadow contains the old c2d postfix, update to use new wildcard string */
+	if (memcmp(c2d_str, TOPIC_VAL_C2D, sizeof(TOPIC_VAL_C2D)) == 0) {
+		/* The build assert above ensures the string defines are the same size */
+		memcpy(c2d_str, TOPIC_VAL_RCV_WILDCARD, sizeof(TOPIC_VAL_C2D));
+		LOG_DBG("Replaced \"%s\" with \"%s\" in c2d topic",
+			TOPIC_VAL_C2D, TOPIC_VAL_RCV_WILDCARD);
+		return true;
+	}
+
+	return false;
+}
+
+enum nrf_cloud_rcv_topic nrf_cloud_decode_dc_rx_topic(const char * const topic)
+{
+	if (!topic) {
+		return NRF_CLOUD_RCV_TOPIC_UNKNOWN;
+	}
+
+	if (strstr(topic, TOPIC_VAL_RCV_AGPS)) {
+		return NRF_CLOUD_RCV_TOPIC_AGPS;
+	} else if (strstr(topic, TOPIC_VAL_RCV_PGPS)) {
+		return NRF_CLOUD_RCV_TOPIC_PGPS;
+	} else if (strstr(topic, TOPIC_VAL_RCV_CELL_POS)) {
+		return NRF_CLOUD_RCV_TOPIC_CELL_POS;
+	} else if (strstr(topic, TOPIC_VAL_RCV_C2D)) {
+		return NRF_CLOUD_RCV_TOPIC_GENERAL;
+	} else {
+		return NRF_CLOUD_RCV_TOPIC_UNKNOWN;
+	}
 }
 
 int json_send_to_cloud(cJSON *const request)

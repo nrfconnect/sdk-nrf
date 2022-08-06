@@ -165,7 +165,6 @@ static void nrf_cloud_update_shadow(struct k_work *work)
 
 static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 {
-	int err = 0;
 	const int reconnection_delay = 10;
 
 	switch (evt->type) {
@@ -203,56 +202,20 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 	case NRF_CLOUD_EVT_FOTA_ERROR:
 		mosh_print("NRF_CLOUD_EVT_FOTA_ERROR");
 		break;
-	case NRF_CLOUD_EVT_RX_DATA:
-		mosh_print("NRF_CLOUD_EVT_RX_DATA");
+	case NRF_CLOUD_EVT_RX_DATA_GENERAL:
+		mosh_print("NRF_CLOUD_EVT_RX_DATA_GENERAL");
 		if (((char *)evt->data.ptr)[0] == '{') {
 			/* Check if it's a MoSh command sent from the cloud */
-			bool cmd_found = cloud_shell_parse_mosh_cmd(evt->data.ptr);
-
-			if (cmd_found) {
+			if (cloud_shell_parse_mosh_cmd(evt->data.ptr)) {
 				k_work_submit_to_queue(&mosh_common_work_q, &cloud_cmd_work);
-				break;
 			}
 		}
-#if defined(CONFIG_NRF_CLOUD_AGPS)
-		err = nrf_cloud_agps_process((char *)evt->data.ptr, evt->data.len);
-		if (!err) {
-			mosh_print("A-GPS data processed");
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-			/* call us back when prediction is ready */
-			k_work_submit_to_queue(&mosh_common_work_q, &notify_pgps_work);
-#endif
-			/* data was valid; no need to pass to other handlers */
-			break;
-		} else if (err == -EFAULT) {
-			/* data were an A-GPS error; no need to pass to other handlers */
-			break;
-		}
-#endif
-#if defined(CONFIG_NRF_CLOUD_PGPS)
-		/* Check if we are waiting for P-GPS data in order to avoid parsing other data as
-		 * P-GPS data and showing irrelevant error messages.
-		 */
-		if (nrf_cloud_pgps_loading()) {
-			err = nrf_cloud_pgps_process(evt->data.ptr, evt->data.len);
-			if (err == -EFAULT) {
-				/* P-GPS error code from nRF Cloud was received */
-			} else if (err) {
-				mosh_error("Error processing P-GPS packet: %d", err);
-			}
-			break;
-		}
-#endif
-		/* P-GPS is not compiled in or we are not expecting P-GPS data,
-		 * finish A-GPS error handling
-		 */
-		if (err == -ENOMSG) {
-			/* JSON data received that were not an A-GPS error either.
-			 * This message was likely just not AGPS-related so don't print an error.
-			 */
-		} else if (err) {
-			mosh_print("Unable to process A-GPS data, error: %d", err);
-		}
+		break;
+	case NRF_CLOUD_EVT_RX_DATA_SHADOW:
+		mosh_print("NRF_CLOUD_EVT_RX_DATA_SHADOW");
+		break;
+	case NRF_CLOUD_EVT_RX_DATA_CELL_POS:
+		mosh_print("NRF_CLOUD_EVT_RX_DATA_CELL_POS");
 		break;
 	case NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST:
 		mosh_print("NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST");
