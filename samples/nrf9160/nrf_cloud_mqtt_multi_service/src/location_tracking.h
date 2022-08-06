@@ -10,15 +10,6 @@
 struct location_data;
 
 /**
- * @brief Check an MQTT message payload for AGPS data, and if AGPS data is present,
- * pass it along to the modem for use in GNSS fix acquisition.
- *
- * @param[in] buf The MQTT message payload buffer.
- * @param[in] len the length of the MQTT message payload.
- */
-void location_assistance_data_handler(const char *buf, size_t len);
-
-/**
  * @brief Callback to receive tracked locations.
  *
  * @param[in] location_data The tracked location data.

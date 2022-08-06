@@ -128,6 +128,15 @@ extern "C" {
 #define NRF_CLOUD_DEVICE_JSON_KEY_SIM_INF	"simInfo"
 #define NRF_CLOUD_DEVICE_JSON_KEY_DEV_INF	"deviceInfo"
 
+enum nrf_cloud_rcv_topic {
+	NRF_CLOUD_RCV_TOPIC_GENERAL,
+	NRF_CLOUD_RCV_TOPIC_AGPS,
+	NRF_CLOUD_RCV_TOPIC_PGPS,
+	NRF_CLOUD_RCV_TOPIC_CELL_POS,
+	/* Unknown/unhandled topic */
+	NRF_CLOUD_RCV_TOPIC_UNKNOWN
+};
+
 /**@brief Initialize the codec used encoding the data to the cloud. */
 int nrf_cloud_codec_init(struct nrf_cloud_os_mem_hooks *hooks);
 
@@ -151,7 +160,8 @@ int nrf_cloud_decode_data_endpoint(const struct nrf_cloud_data *input,
 				   struct nrf_cloud_data *m_endpoint);
 
 /** @brief Encodes state information. */
-int nrf_cloud_encode_state(uint32_t reported_state, struct nrf_cloud_data *output);
+int nrf_cloud_encode_state(uint32_t reported_state, const bool update_desired_topic,
+			   struct nrf_cloud_data *output);
 
 /** @brief Search input for config and encode response if necessary. */
 int nrf_cloud_encode_config_response(struct nrf_cloud_data const *const input,
@@ -234,7 +244,7 @@ int json_send_to_cloud(cJSON * const request);
  */
 cJSON *json_create_req_obj(const char *const app_id, const char *const msg_type);
 
-/** @brief Parses received REST data for an nRF Cloud error code  */
+/** @brief Parses received REST data for an nRF Cloud error code */
 int nrf_cloud_parse_rest_error(const char *const buf, enum nrf_cloud_error *const err);
 
 /** @brief Encodes PVT data to be sent to nRF Cloud */
@@ -246,6 +256,14 @@ int nrf_cloud_pvt_data_encode(const struct nrf_cloud_gnss_pvt * const pvt,
 int nrf_cloud_modem_pvt_data_encode(const struct nrf_modem_gnss_pvt_data_frame	* const mdm_pvt,
 				    cJSON * const pvt_data_obj);
 #endif
+
+/** @brief Replaces legacy c2d topic with wilcard topic string. Returns true
+ *  if the topic was modified; otherwise false.
+ */
+bool nrf_cloud_set_wildcard_c2d_topic(char *const topic, size_t topic_len);
+
+/** @brief Decodes dc receive topic string into defined types */
+enum nrf_cloud_rcv_topic nrf_cloud_decode_dc_rx_topic(const char * const topic);
 
 #ifdef CONFIG_NRF_CLOUD_GATEWAY
 typedef int (*gateway_state_handler_t)(void *root_obj);

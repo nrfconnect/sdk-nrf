@@ -163,12 +163,7 @@ Location tracking
 =================
 
 All matters concerning location tracking are handled in the :file:`src/location_tracking.c` file.
-For the most part, this amounts to setting up a periodic location request, and then passing the results to a callback configured by the :file:`src/application.c` file.
-
-Additionally, the :ref:`lib_location` library requires GPS assistance data (either A-GPS, P-GPS, or both) to have the fastest possible `time-to-first-fix <TTFF_>`_.
-The library requests this data automatically, but has no way to automatically receive the response.
-Therefore, all MQTT messages received from `nRF Cloud`_ must be be passed directly through to the :ref:`lib_nrf_cloud_agps` and :ref:`lib_nrf_cloud_pgps` libraries to be checked for A-GPS and P-GPS data, respectively.
-The :c:func:`location_assistance_data_handler` function handles this task, and MQTT messages are sent directly to it from the :file:`src/connection.c` file.
+This involves setting up a periodic location request, and then passing the results to a callback configured by the :file:`src/application.c` file.
 
 .. note::
   For location readings to be visible in the nRF Cloud portal, they must be marked as enabled in the `Device Shadow <nRF Cloud Device Shadows_>`_.

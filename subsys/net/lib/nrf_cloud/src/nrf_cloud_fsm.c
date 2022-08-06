@@ -7,9 +7,14 @@
 #include "nrf_cloud_fsm.h"
 #include "nrf_cloud_codec.h"
 #include "nrf_cloud_mem.h"
-
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+#include <net/nrf_cloud_agps.h>
+#endif
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+#include <net/nrf_cloud_pgps.h>
+#endif
 
 LOG_MODULE_REGISTER(nrf_cloud_fsm, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
@@ -103,6 +108,11 @@ BUILD_ASSERT(ARRAY_SIZE(state_event_handlers) == STATE_TOTAL);
 
 static bool persistent_session;
 
+/* Flag to track if the c2d topic was modified; if so, the desired section
+ * in the shadow needs to be updated to prevent delta events.
+ */
+static bool c2d_topic_modified;
+
 #if defined(CONFIG_NRF_CLOUD_CELL_POS) && defined(CONFIG_NRF_CLOUD_MQTT)
 static nrf_cloud_cell_pos_response_t cell_pos_cb;
 void nfsm_set_cell_pos_response_cb(nrf_cloud_cell_pos_response_t cb)
@@ -151,7 +161,7 @@ static int state_ua_pin_wait(void)
 	};
 
 	/* Publish report to the cloud on current status. */
-	err = nrf_cloud_encode_state(STATE_UA_PIN_WAIT, &msg.data);
+	err = nrf_cloud_encode_state(STATE_UA_PIN_WAIT, false, &msg.data);
 	if (err) {
 		LOG_ERR("nrf_cloud_encode_state failed %d", err);
 		return err;
@@ -185,7 +195,7 @@ static int handle_device_config_update(const struct nct_evt *const evt,
 	};
 
 	struct nrf_cloud_evt cloud_evt = {
-		.type = NRF_CLOUD_EVT_RX_DATA
+		.type = NRF_CLOUD_EVT_RX_DATA_SHADOW
 	};
 
 	if ((evt == NULL) || (config_found == NULL)) {
@@ -232,11 +242,13 @@ static int state_ua_pin_complete(void)
 		.message_id = NCT_MSG_ID_PAIR_STATUS_REPORT,
 	};
 
-	err = nrf_cloud_encode_state(STATE_UA_PIN_COMPLETE, &msg.data);
+	err = nrf_cloud_encode_state(STATE_UA_PIN_COMPLETE, c2d_topic_modified, &msg.data);
 	if (err) {
 		LOG_ERR("nrf_cloud_encode_state failed %d", err);
 		return err;
 	}
+
+	c2d_topic_modified = false;
 
 	err = nct_cc_send(&msg);
 	if (err) {
@@ -373,6 +385,9 @@ static int handle_pin_complete(const struct nct_evt *nct_evt)
 		return err;
 	}
 
+	/* Update to use wildcard topic if necessary */
+	c2d_topic_modified = nrf_cloud_set_wildcard_c2d_topic((char *)rx.ptr, rx.len);
+
 	/* Set the endpoint information. */
 	nct_dc_endpoint_set(&tx, &rx, &bulk, &endpoint);
 
@@ -412,7 +427,7 @@ static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 			/* If the config was found, the shadow data has already been sent */
 			if (!config_found) {
 				struct nrf_cloud_evt cloud_evt = {
-					.type = NRF_CLOUD_EVT_RX_DATA,
+					.type = NRF_CLOUD_EVT_RX_DATA_SHADOW,
 					.data = nct_evt->param.cc->data,
 					.topic = nct_evt->param.cc->topic
 				};
@@ -509,22 +524,57 @@ static int dc_connection_handler(const struct nct_evt *nct_evt)
 	return 0;
 }
 
-static int cell_pos_cb_send(const char *const rx_buf)
+static void agps_process(const char * const buf, const size_t buf_len)
+{
+#if defined(CONFIG_NRF_CLOUD_AGPS)
+	int ret = nrf_cloud_agps_process(buf, buf_len);
+
+	LOG_DBG("A-GPS data processed; result: %d", ret);
+
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+	/* If both A-GPS and P-GPS are enabled, everything but ephemerides and almanacs
+	 * are handled by A-GPS.
+	 * In this configuration it is important to check, after receiving A-GPS data,
+	 * whether any further assistance is needed by the modem for ephemerides,
+	 * which would come from P-GPS (usually, in stored predictions in flash).
+	 */
+	if (ret == 0) {
+		ret = nrf_cloud_pgps_notify_prediction();
+		if (ret) {
+			LOG_ERR("Error requesting P-GPS notification: %d", ret);
+		}
+	}
+#endif
+#endif
+}
+
+static void pgps_process(const char * const buf, const size_t buf_len)
+{
+#if defined(CONFIG_NRF_CLOUD_PGPS)
+	int ret = nrf_cloud_pgps_process(buf, buf_len);
+
+	LOG_DBG("P-GPS data processed; result: %d", ret);
+#endif
+}
+
+static int cell_pos_process(const char * const buf)
 {
 #if defined(CONFIG_NRF_CLOUD_CELL_POS) && defined(CONFIG_NRF_CLOUD_MQTT)
 	if (cell_pos_cb) {
 		struct nrf_cloud_cell_pos_result res;
-		int ret = nrf_cloud_cell_pos_process(rx_buf, &res);
+		int ret = nrf_cloud_cell_pos_process(buf, &res);
 
 		if (ret <= 0) {
 			/* A cell-pos response was received, send to callback */
 			cell_pos_cb(&res);
 
+			LOG_DBG("Cellular positioning data sent to provided callback");
+
 			/* Clear the callback after use */
 			nfsm_set_cell_pos_response_cb(NULL);
 			return 0;
 		}
-		/* ret == 1 indicates that no cell pos data was found, send to app */
+		/* ret == 1 indicates that no cell pos data was found */
 	}
 #endif
 	return -EFTYPE;
@@ -532,17 +582,39 @@ static int cell_pos_cb_send(const char *const rx_buf)
 
 static int dc_rx_data_handler(const struct nct_evt *nct_evt)
 {
+	__ASSERT_NO_MSG(nct_evt != NULL);
+	__ASSERT_NO_MSG(nct_evt->param.dc != NULL);
+
+	bool discon_req = false;
+
 	struct nrf_cloud_evt cloud_evt = {
-		.type = NRF_CLOUD_EVT_RX_DATA,
 		.data = nct_evt->param.dc->data,
 		.topic = nct_evt->param.dc->topic,
 	};
 
-	bool discon_req = nrf_cloud_detect_disconnection_request(nct_evt->param.dc->data.ptr);
-
-	/* All data is forwared to the app... unless a callback is registered */
-	if (cell_pos_cb_send(nct_evt->param.dc->data.ptr) == 0) {
+	switch (nrf_cloud_decode_dc_rx_topic(cloud_evt.topic.ptr)) {
+	case NRF_CLOUD_RCV_TOPIC_AGPS:
+		agps_process(cloud_evt.data.ptr, cloud_evt.data.len);
 		return 0;
+	case NRF_CLOUD_RCV_TOPIC_PGPS:
+		pgps_process(cloud_evt.data.ptr, cloud_evt.data.len);
+		return 0;
+	case NRF_CLOUD_RCV_TOPIC_CELL_POS:
+		if (cell_pos_process(cloud_evt.data.ptr) == 0) {
+			/* Data was sent to cell pos cb, do not send to application */
+			return 0;
+		}
+		cloud_evt.type = NRF_CLOUD_EVT_RX_DATA_CELL_POS;
+		break;
+	case NRF_CLOUD_RCV_TOPIC_UNKNOWN:
+		LOG_DBG("Received data on unknown topic: %s",
+			(char *)(cloud_evt.topic.ptr ? cloud_evt.topic.ptr : "NULL"));
+		/* Intentional fall-through */
+	case NRF_CLOUD_RCV_TOPIC_GENERAL:
+	default:
+		cloud_evt.type = NRF_CLOUD_EVT_RX_DATA_GENERAL;
+		discon_req = nrf_cloud_detect_disconnection_request(cloud_evt.data.ptr);
+		break;
 	}
 
 	nfsm_set_current_state_and_notify(nfsm_get_current_state(), &cloud_evt);

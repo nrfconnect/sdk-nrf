@@ -76,7 +76,7 @@ typedef void (*nrf_cloud_cell_pos_response_t)(const struct nrf_cloud_cell_pos_re
  *                    If false, cloud will not send location to the device.
  * @param cb Callback function to receive parsed cell pos result. Only used when
  *           request_loc is true. If NULL, JSON result will be sent to the cloud event
- *           handler as an NRF_CLOUD_EVT_RX_DATA event.
+ *           handler as an NRF_CLOUD_EVT_RX_DATA_CELL_POS event.
  * @retval 0       Request sent successfully.
  * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
  * @return A negative value indicates an error.
