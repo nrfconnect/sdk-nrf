@@ -11,6 +11,12 @@ config BT_NUS
 	  Enable Nordic UART service.
 if BT_NUS
 
+config BT_NUS_AUTHEN
+	bool "Require encryption and authentication for access"
+	depends on BT_SMP
+	help
+	  Enable encrypted and authenticated connection requirements for Nordic UART service.
+
 module = BT_NUS
 module-str = NUS
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
