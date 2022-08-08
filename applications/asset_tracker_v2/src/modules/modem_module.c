@@ -491,12 +491,12 @@ static inline int adjust_rsrp(int input, enum sample_type type)
 	switch (type) {
 	case NEIGHBOR_CELL:
 		if (IS_ENABLED(CONFIG_MODEM_NEIGHBOR_CELLS_DATA_CONVERT_RSRP_TO_DBM)) {
-			return input - 140;
+			return RSRP_IDX_TO_DBM(input);
 		}
 		break;
 	case MODEM_DYNAMIC:
 		if (IS_ENABLED(CONFIG_MODEM_DYNAMIC_DATA_CONVERT_RSRP_TO_DBM)) {
-			return input - 140;
+			return RSRP_IDX_TO_DBM(input);
 		}
 		break;
 	default:
@@ -510,7 +510,7 @@ static inline int adjust_rsrp(int input, enum sample_type type)
 static inline int adjust_rsrq(int input)
 {
 	if (IS_ENABLED(CONFIG_MODEM_NEIGHBOR_CELLS_DATA_CONVERT_RSRQ_TO_DB)) {
-		return round(input * 0.5 - 19.5);
+		return round(RSRQ_IDX_TO_DB(input));
 	}
 
 	return input;

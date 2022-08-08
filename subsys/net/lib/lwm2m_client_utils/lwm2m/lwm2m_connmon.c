@@ -108,7 +108,7 @@ static void modem_signal_handler(char rsrp_value)
 		return;
 	}
 
-	modem_rsrp = (int8_t)rsrp_value - MODEM_INFO_RSRP_OFFSET_VAL;
+	modem_rsrp = (int8_t)RSRP_IDX_TO_DBM(rsrp_value);
 	k_work_submit(&modem_signal_work);
 }
 

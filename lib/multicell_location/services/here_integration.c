@@ -9,6 +9,7 @@
 #include <net/rest_client.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
+#include <modem/modem_info.h>
 #include <net/multicell_location.h>
 
 #include "location_service.h"
@@ -104,13 +105,6 @@ BUILD_ASSERT(sizeof(HOSTNAME) > 1, "Hostname must be configured");
 static char body[HTTP_BODY_SIZE];
 static char neighbors[NEIGHBOR_BUFFER_SIZE];
 
-/* Modem returns RSRP and RSRQ as index values which require
- * a conversion to dBm and dB respectively. See modem AT
- * command reference guide for more information.
- */
-#define RSRP_ADJ(rsrp) (rsrp - ((rsrp <= 0) ? 140 : 141))
-#define RSRQ_ADJ(rsrq) (((double)rsrq * 0.5) - 19.5)
-
 #define HERE_MIN_RSRP -140
 #define HERE_MAX_RSRP -44
 
@@ -118,7 +112,7 @@ static int here_adjust_rsrp(int input)
 {
 	int return_value;
 
-	return_value = RSRP_ADJ(input);
+	return_value = RSRP_IDX_TO_DBM(input);
 
 	if (return_value < HERE_MIN_RSRP) {
 		return_value = HERE_MIN_RSRP;
@@ -136,7 +130,7 @@ static double here_adjust_rsrq(int input)
 {
 	double return_value;
 
-	return_value = RSRQ_ADJ(input);
+	return_value = RSRQ_IDX_TO_DB(input);
 
 	if (return_value < HERE_MIN_RSRQ) {
 		return_value = HERE_MIN_RSRQ;

@@ -131,6 +131,7 @@ nRF9160: Asset Tracker v2
     * The default value of the GNSS timeout in the application's :ref:`Real-time configurations <real_time_configs>` is now 30 seconds.
     * GNSS fixes are now published in PVT format instead of NMEA for nRF Cloud builds. To revert to NMEA, set the :ref:`CONFIG_GNSS_MODULE_NMEA <CONFIG_GNSS_MODULE_NMEA>` option.
     * The sensor module now forwards :c:enum:`SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED` and :c:enum:`SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED` events.
+    * The conversions of RSRP and RSRQ now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
 
   * Fixed:
 
@@ -318,6 +319,7 @@ nRF9160 samples
   * Updated:
 
     * Changed timeout parameters from seconds to milliseconds in ``location`` and ``rest`` commands.
+    * The conversions of RSRP and RSRQ now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
 
 * :ref:`nrf_cloud_mqtt_multi_service` sample:
 
@@ -338,6 +340,10 @@ nRF9160 samples
   * Added:
 
     * Support for full modem FOTA updates.
+
+* :ref:`at_monitor_sample` sample:
+
+  * The conversions of RSRP and RSRQ now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
 
 Thread samples
 --------------
@@ -528,6 +534,10 @@ Modem libraries
     * Changed timeout parameters' type from uint16_t to int32_t, unit from seconds to milliseconds, and value to disable them from 0 to SYS_FOREVER_MS.
       This change is done to align with Zephyr's style for timeouts.
 
+  * :ref:`modem_info_readme` library:
+
+    * The conversions of RSRP and RSRQ now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
+
 Libraries for networking
 ------------------------
 
@@ -539,6 +549,10 @@ Libraries for networking
 
       * Setting of the FOTA update result.
       * Reporting of the FOTA update result back to the LwM2M server.
+
+    * Updated:
+
+      * The conversions of RSRP and RSRQ now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
 
   * :ref:`lib_nrf_cloud` library:
 
@@ -556,10 +570,15 @@ Libraries for networking
       * :c:func:`nrf_cloud_fota_is_type_enabled` function that determines if the specified FOTA type is enabled by the configuration.
       * :c:func:`nrf_cloud_gnss_msg_json_encode` function that encodes GNSS data (PVT or NMEA) into an nRF Cloud device message.
 
+    * Updated:
+
+      * The conversions of RSRP and RSRQ now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
+
   * :ref:`lib_multicell_location` library:
 
     * Added timeout parameter.
     * Made a structure for input parameters for multicell_location_get() to make updates easier in the future.
+    * The conversions of RSRP and RSRQ now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
 
   * :ref:`lib_rest_client` library:
 
