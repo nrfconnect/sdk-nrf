@@ -117,7 +117,7 @@ static int emds_fs_init(void)
 	emds_flash.sector_cnt = cnt;
 	emds_flash.offset = fa->fa_off;
 
-	return emds_flash_init(&emds_flash, fa->fa_dev_name);
+	return emds_flash_init(&emds_flash, fa->fa_dev);
 }
 
 
