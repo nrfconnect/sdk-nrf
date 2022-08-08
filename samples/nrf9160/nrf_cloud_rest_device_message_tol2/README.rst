@@ -82,6 +82,4 @@ This sample uses the following |NCS| libraries:
 * :ref:`lib_nrf_cloud_rest`
 * :ref:`lib_modem_jwt`
 * :ref:`lte_lc_readme`
-* :ref:`dk_buttons_and_leds_readme`
-* :ref:`modem_info_readme`
 * :ref:`lib_at_host`

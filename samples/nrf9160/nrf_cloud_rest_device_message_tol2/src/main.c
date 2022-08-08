@@ -5,15 +5,12 @@
  */
 
 #include <zephyr/kernel.h>
-#include <modem/nrf_modem_lib.h>
 #include <nrf_modem_at.h>
-#include <modem/modem_info.h>
 #include <zephyr/settings/settings.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_rest.h>
-#include <zephyr/sys/reboot.h>
 #include <zephyr/logging/log.h>
-#include <dk_buttons_and_leds.h>
+#include <date_time.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_rest_device_message_sample,
 		    CONFIG_NRF_CLOUD_REST_DEVICE_MESSAGE_SAMPLE_LOG_LEVEL);
@@ -25,13 +22,14 @@ LOG_MODULE_REGISTER(nrf_cloud_rest_device_message_sample,
 
 char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
 K_SEM_DEFINE(lte_connect, 0, 1);
+K_SEM_DEFINE(modem_time, 0, 1);
 char rx_buf[REST_RX_BUF_SIZE];
 struct nrf_cloud_rest_context rest_context = {
 						   .connect_socket = -1,
-						   .timeout_ms = MAX_TIME_OUT,
-						   .rx_buf = rx_buf,
-						   .rx_buf_len = sizeof(rx_buf),
-						   .fragment_size = 0};
+					       .timeout_ms = MAX_TIME_OUT,
+					       .rx_buf = rx_buf,
+					       .rx_buf_len = sizeof(rx_buf),
+					       .fragment_size = 0};
 
 void lte_handler(const struct lte_lc_evt *const evt)
 {
@@ -76,23 +74,32 @@ int lte_connnecting(void)
 	return 0;
 }
 
+void date_time_handler(const struct date_time_evt *const dt_evt)
+{
+	switch (dt_evt->type) {
+	case DATE_TIME_OBTAINED_MODEM:
+		LOG_INF("Network time acquired successfully");
+		k_sem_give(&modem_time);
+		break;
+	default:
+		LOG_ERR("Failed to acquire network time from LTE");
+		break;
+	}
+}
+
 void get_date_time_lte(void)
 {
-	char time_buf[64];
-	int err;
-
 	LOG_INF("Waiting for modem to acquire time from network");
+	k_sem_reset(&modem_time);
 
-	do {
-		err = nrf_modem_at_cmd(time_buf, sizeof(time_buf), "AT%%CCLK?");
-		if (err) {
-			LOG_ERR("Failed to acquire time from network, error: %d. ", err);
-			LOG_ERR("Retry in %d seconds", TIME_TO_RETRY);
-		}
-		k_sleep(K_SECONDS(TIME_TO_RETRY));
-	} while (err != 0);
+	int err = date_time_update_async(date_time_handler);
 
-	LOG_INF("Network time acquisition completed, %s", time_buf);
+	if (err) {
+		LOG_ERR("Failed to acquire time from network, error: %d. ", err);
+	}
+
+	k_sem_take(&modem_time, K_FOREVER);
+	LOG_INF("Network time acquisition completed");
 }
 
 int setup(void)
