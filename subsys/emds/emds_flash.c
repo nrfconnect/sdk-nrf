@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <drivers/flash.h>
+#include <zephyr/drivers/flash.h>
 #include <string.h>
 #include <errno.h>
 #include <inttypes.h>
-#include <sys/crc.h>
-#include <logging/log.h>
+#include <zephyr/sys/crc.h>
+#include <zephyr/logging/log.h>
 #include "emds_flash.h"
 
 LOG_MODULE_REGISTER(emds_flash, CONFIG_EMDS_LOG_LEVEL);
