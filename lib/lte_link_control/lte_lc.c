@@ -245,7 +245,9 @@ static void at_handler_cereg(const char *response)
 
 	err = lte_lc_psm_get(&psm_cfg.tau, &psm_cfg.active_time);
 	if (err) {
-		LOG_ERR("Failed to get PSM information");
+		if (err != -EBADMSG) {
+			LOG_ERR("Failed to get PSM information");
+		}
 		return;
 	}
 
@@ -842,19 +844,27 @@ int lte_lc_psm_get(int *tau, int *active_time)
 	response[0] = '\0';
 
 	err = nrf_modem_at_cmd(response, sizeof(response), "AT%%XMONITOR");
-	if (err < 0) {
+	if (err) {
 		LOG_ERR("AT command failed, error: %d", err);
 		return -EFAULT;
 	}
 
-	/* Skip over first 13 fields in AT cmd response by counting delimiters (commas). */
 	comma_ptr = strchr(response, ch);
+	if (!comma_ptr) {
+		/* Not an AT error, thus must be that just a <reg_status> received:
+		 * optional part is included in a response only when <reg_status> is 1 or 5.
+		 */
+		LOG_DBG("Not registered: cannot get current PSM configuration");
+		return -EBADMSG;
+	}
+
+	/* Skip over first 13 fields in AT cmd response by counting delimiters (commas). */
 	for (int i = 0; i < 12; i++) {
 		if (comma_ptr) {
 			comma_ptr = strchr(comma_ptr + 1, ch);
 		} else {
 			LOG_ERR("AT command parsing failed");
-			return -EFAULT;
+			return -EBADMSG;
 		}
 	}
 
@@ -869,7 +879,7 @@ int lte_lc_psm_get(int *tau, int *active_time)
 		strncpy(active_time_str, comma_ptr + 2, 8);
 	} else {
 		LOG_ERR("AT command parsing failed");
-		return -EFAULT;
+		return -EBADMSG;
 	}
 
 	comma_ptr = strchr(comma_ptr + 1, ch);
@@ -877,7 +887,7 @@ int lte_lc_psm_get(int *tau, int *active_time)
 		strncpy(tau_ext_str, comma_ptr + 2, 8);
 	} else {
 		LOG_ERR("AT command parsing failed");
-		return -EFAULT;
+		return -EBADMSG;
 	}
 
 	/* It's ok not to have legacy Periodic-TAU, older FWs don't provide it. */
