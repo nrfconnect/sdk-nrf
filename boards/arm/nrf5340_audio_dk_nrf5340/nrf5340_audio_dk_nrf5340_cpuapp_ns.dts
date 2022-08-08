@@ -24,7 +24,6 @@ zephyr_udc0: &usbd {
 	status = "okay";
 
 	hs_0 {
-		label = "HEADSET";
 		compatible = "usb-audio-hs";
 		mic-feature-mute;
 		mic-channel-l;
