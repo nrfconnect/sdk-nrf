@@ -77,8 +77,6 @@ LOG_MODULE_REGISTER(modem_info);
 #define RSRP_PARAM_INDEX	6
 #define RSRP_PARAM_COUNT	7
 
-#define RSRP_OFFSET_VAL		141
-
 #define BAND_PARAM_INDEX	1 /* Index of desired parameter */
 #define BAND_PARAM_COUNT	2 /* Number of parameters */
 

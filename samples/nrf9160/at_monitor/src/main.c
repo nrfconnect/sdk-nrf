@@ -11,6 +11,7 @@
 #include <nrf_modem_at.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/at_monitor.h>
+#include <modem/modem_info.h>
 
 #define ENABLE 1
 #define DISABLE 0
@@ -58,7 +59,7 @@ static const char *cereg_str_get(enum cereg_status status)
 	}
 }
 
-static int rsps_status;
+static int rsrp_status;
 static char response[64];
 
 static void cereg_mon(const char *notif)
@@ -82,10 +83,9 @@ static void cereg_mon(const char *notif)
 
 static void cesq_mon(const char *notif)
 {
-	rsps_status = atoi(notif + strlen("%CESQ: "));
+	rsrp_status = atoi(notif + strlen("%CESQ: "));
 
-#define FLOOR 140
-	printk("Link quality: %d dBm\n", rsps_status - FLOOR);
+	printk("Link quality: %d dBm\n", RSRP_IDX_TO_DBM(rsrp_status));
 }
 
 static int psm_control(int enable)

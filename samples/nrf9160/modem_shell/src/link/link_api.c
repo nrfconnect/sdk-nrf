@@ -197,7 +197,7 @@ void link_api_coneval_read_for_shell(void)
 			link_shell_map_to_string(coneval_energy_est_strs,
 				params.energy_estimate, snum));
 	mosh_print("  rsrp:            %d: %ddBm", params.rsrp,
-			(params.rsrp - MODEM_INFO_RSRP_OFFSET_VAL));
+			RSRP_IDX_TO_DBM(params.rsrp));
 	mosh_print("  rsrq:            %d", params.rsrq);
 
 	mosh_print("  snr:             %d: %ddB", params.snr,
@@ -333,7 +333,7 @@ static void link_api_modem_operator_info_read_for_shell(void)
 		mosh_print(
 			"Current rsrp:          %d: %ddBm",
 			xmonitor_resp.rsrp,
-			(xmonitor_resp.rsrp - MODEM_INFO_RSRP_OFFSET_VAL));
+			RSRP_IDX_TO_DBM(xmonitor_resp.rsrp));
 	}
 
 	if (xmonitor_resp.snr >= 0) {

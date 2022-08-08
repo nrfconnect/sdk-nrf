@@ -10,6 +10,7 @@
 #include <net/rest_client.h>
 #include <cJSON.h>
 #include <cJSON_os.h>
+#include <modem/modem_info.h>
 
 #include "location_service.h"
 
@@ -93,15 +94,6 @@ const char *location_service_get_certificate_polte(void)
 	return tls_certificate;
 }
 
-static int adjust_rsrp(int input)
-{
-	if (input <= 0) {
-		return input - 140;
-	}
-
-	return input - 141;
-}
-
 static int location_service_generate_request(
 	const struct lte_lc_cells_info *cell_data,
 	char *buf,
@@ -175,7 +167,7 @@ static int location_service_generate_request(
 	    !cJSON_AddItemToArray(earfcn_array,
 		cJSON_CreateNumber(cell_data->current_cell.earfcn)) ||
 	    !cJSON_AddItemToArray(rsrp_array,
-		cJSON_CreateNumber(adjust_rsrp(cell_data->current_cell.rsrp)))) {
+		cJSON_CreateNumber(RSRP_IDX_TO_DBM(cell_data->current_cell.rsrp)))) {
 		LOG_ERR("Failed to add current cell information");
 		err = -ENOMEM;
 		goto cleanup;
@@ -189,7 +181,7 @@ static int location_service_generate_request(
 				cJSON_CreateNumber(cell_data->neighbor_cells[i].earfcn)) ||
 			    !cJSON_AddItemToArray(rsrp_array,
 				cJSON_CreateNumber(
-					adjust_rsrp(cell_data->neighbor_cells[i].rsrp)))) {
+					RSRP_IDX_TO_DBM(cell_data->neighbor_cells[i].rsrp)))) {
 				LOG_ERR("Failed to add neighbor cell");
 				err = -ENOMEM;
 				goto cleanup;
