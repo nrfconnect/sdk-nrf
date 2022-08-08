@@ -7,6 +7,10 @@
 
 config TEMP_NRF5_MPSL
 	bool "nRF5 MPSL Temperature Sensor"
-	depends on HAS_HW_NRF_TEMP && MPSL
+	default y
+	depends on DT_HAS_NORDIC_NRF_TEMP_ENABLED
+	depends on HAS_HW_NRF_TEMP
+	depends on MPSL
+	select TEMP_NRF5_FORCE_ALT
 	help
 	  Enable MPSL driver for nRF5 temperature sensor.
