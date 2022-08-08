@@ -51,11 +51,10 @@ struct emds_fs {
  * @brief Initialize emergency data storage flash.
  *
  * @param fs Pointer to file system
- * @param dev_name Pointer to flash device name
  *
  * @retval 0 on success or negative error code
  */
-int emds_flash_init(struct emds_fs *fs, const char *dev_name);
+int emds_flash_init(struct emds_fs *fs);
 
 /**
  * @brief Clears the emergency data storage file system from flash.
