@@ -939,7 +939,8 @@ int lte_lc_psm_req(bool enable);
  * @retval 0 if successful.
  * @retval -EINVAL if input argument was invalid.
  * @retval -EFAULT if AT command failed.
- * @retval -EBADMSG if no active time and/or TAU value was received.
+ * @retval -EBADMSG if no active time and/or TAU value was received, including the case when
+ *         modem is not registered to network.
  */
 int lte_lc_psm_get(int *tau, int *active_time);
 
