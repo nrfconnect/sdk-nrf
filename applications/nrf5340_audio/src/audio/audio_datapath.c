@@ -830,7 +830,7 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 			     (CONFIG_AUDIO_FRAME_DURATION_US + SDU_REF_DELTA_MAX_ERR_US)) ||
 			    (sdu_ref_delta_us <
 			     (CONFIG_AUDIO_FRAME_DURATION_US - SDU_REF_DELTA_MAX_ERR_US))) {
-				LOG_WRN("Invalid sdu_ref_us delta (%d) - Estimating sdu_ref_us",
+				LOG_DBG("Invalid sdu_ref_us delta (%d) - Estimating sdu_ref_us",
 					sdu_ref_delta_us);
 
 				/* Estimate sdu_ref_us */
