@@ -666,6 +666,9 @@ Other libraries
   * Updated :c:func:`emds_entry_add` to no longer use heap, but instead require a pointer to the dynamic entry structure :c:struct `emds_dynamic_entry`.
     The dynamic entry structure should be allocated in advance.
 
+* :ref:`mod_memfault`:
+
+  * Added default metrics for Bluetooth.
 
 Common Application Framework (CAF)
 ----------------------------------
