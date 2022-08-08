@@ -16,7 +16,10 @@
 if BUILD_WITH_TFM
 
 config TFM_IPC
-	default y if TFM_PROFILE_TYPE_MINIMAL
+	default y
+
+config TFM_ISOLATION_LEVEL
+	default 2 if TFM_IPC
 
 config TFM_BL2
 	bool
