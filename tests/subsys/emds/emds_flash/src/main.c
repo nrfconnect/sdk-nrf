@@ -183,7 +183,7 @@ static int fs_init(void)
 	ctx.sector_cnt = m_sec_cnt;
 	ctx.sector_size = m_sec_size;
 
-	m_test_fd.fd = device_get_binding(m_fa->fa_dev_name);
+	m_test_fd.fd = m_fa->fa_dev;
 	m_test_fd.offset = m_fa->fa_off;
 	m_test_fd.size = hw_flash_sector.fs_size;
 	m_test_fd.ate_idx_start = m_fa->fa_off + hw_flash_sector.fs_size - sizeof(struct test_ate);
@@ -249,6 +249,7 @@ static void device_reset(void)
 	ctx.sector_cnt = m_sec_cnt;
 	ctx.sector_size = m_sec_size;
 	ctx.offset = m_fa->fa_off;
+	ctx.flash_dev = m_fa->fa_dev;
 }
 
 /** End Local functions *******************************************************/
@@ -259,8 +260,8 @@ static void test_initialize(void)
 	flash_clear();
 	device_reset();
 
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
-	zassert_true(emds_flash_init(&ctx, m_fa->fa_dev_name), "Should not init more than once");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
+	zassert_true(emds_flash_init(&ctx), "Should not init more than once");
 }
 
 static void test_rd_wr_simple(void)
@@ -274,7 +275,7 @@ static void test_rd_wr_simple(void)
 	flash_clear();
 	device_reset();
 
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size), "Prepare failed");
 	zassert_false(emds_flash_write(&ctx, 1, data_in, sizeof(data_in)) < 0, "Error when write");
 	zassert_false(emds_flash_read(&ctx, 1, data_out, sizeof(data_out)) < 0, "Error when read");
@@ -302,7 +303,7 @@ static void test_flash_recovery(void)
 	 *    ...
 	 * Expect: Normal behavior
 	 */
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_false(ctx.force_erase, "Expected false");
 	zassert_equal(m_test_fd.ate_idx_start, ctx.ate_wra, "%X not equal to %X",
 		      m_test_fd.ate_idx_start, ctx.ate_wra);
@@ -321,7 +322,7 @@ static void test_flash_recovery(void)
 	idx = m_test_fd.ate_idx_start;
 	entry_write(idx, 1, data_in1, sizeof(data_in1));
 	idx -= sizeof(struct test_ate);
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in1)) > 0, "Could not read");
 	(void)emds_flash_read(&ctx, 1, data_out, sizeof(data_in1));
 	zassert_false(ctx.force_erase, "Expected false");
@@ -344,7 +345,7 @@ static void test_flash_recovery(void)
 	idx -= sizeof(struct test_ate);
 	entry_write(idx, 2, data_in2, sizeof(data_in2));
 	idx -= sizeof(struct test_ate);
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_false(ctx.force_erase, "Expected false");
 	zassert_equal(idx, ctx.ate_wra, "Addr not equal");
 	zassert_true(emds_flash_read(&ctx, 2, data_out, sizeof(data_in2)) > 0, "Could not read");
@@ -365,7 +366,7 @@ static void test_flash_recovery(void)
 	idx -= sizeof(struct test_ate);
 	entry_write(idx, 3, data_in3, sizeof(data_in3));
 	idx -= sizeof(struct test_ate);
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_true(ctx.force_erase, "Expected true");
 	zassert_equal(idx, ctx.ate_wra, "Addr not equal");
 	zassert_true(emds_flash_read(&ctx, 2, data_out, sizeof(data_in2)) > 0, "Could not read");
@@ -395,7 +396,7 @@ static void test_flash_recovery(void)
 	idx -= sizeof(struct test_ate);
 	ate_corrupt_write(idx);
 	idx -= sizeof(struct test_ate);
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_true(ctx.force_erase, "Expected true");
 	zassert_equal(idx, ctx.ate_wra, "Addr not equal");
 	zassert_true(emds_flash_read(&ctx, 3, data_out, sizeof(data_in3)) > 0, "Could not read");
@@ -409,7 +410,7 @@ static void test_flash_recovery_corner_case(void)
 
 	/* Fill flash with garbage. Expect 0 space left and erase on prepare */
 	corrupt_write_all();
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_true(ctx.force_erase, "Force erase should be true");
 	zassert_equal(0, emds_flash_free_space_get(&ctx), "Expected no free space");
 	device_reset();
@@ -431,7 +432,7 @@ static void test_invalidate_on_prepare(void)
 		idx -= sizeof(struct test_ate);
 	}
 
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_false(ctx.force_erase, "Force erase should be false");
 	zassert_equal(idx, ctx.ate_wra, "Addr not equal");
 
@@ -445,7 +446,7 @@ static void test_invalidate_on_prepare(void)
 	zassert_false(emds_flash_prepare(&ctx, 0), "Error when preparing");
 
 	device_reset();
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 
 	/* Expect the free storage integrity to fail due to no valid ATE and invalid presence.
 	 * This occurs only if the user does not store any new entry after emds_flash_prepare
@@ -479,7 +480,7 @@ static void test_clear_on_strange_flash(void)
 	 * Expect: Unexpected behavior
 	 */
 	ate_corrupt_write(m_test_fd.ate_idx_start);
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_true(ctx.force_erase, "Force erase should be true");
 	zassert_false(emds_flash_prepare(&ctx, 0), "Error when preparing");
 	zassert_false(flash_cmp_const(m_test_fd.offset, 0xff, m_test_fd.size), "Flash not cleared");
@@ -500,7 +501,7 @@ static void test_permission(void)
 	zassert_true(emds_flash_write(&ctx, 1, data_in, sizeof(data_in)) == -EACCES,
 		     "Should not be able to read");
 
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 
 	zassert_true(emds_flash_write(&ctx, 1, data_in, sizeof(data_in)) == -EACCES,
 		     "Should not be able to read");
@@ -523,7 +524,7 @@ static void test_overflow(void)
 	flash_clear();
 	device_reset();
 
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size), "Prepare failed");
 
 	uint16_t test_cnt = 0;
@@ -539,7 +540,7 @@ static void test_overflow(void)
 				      "Should not be able to write");
 
 	device_reset();
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 
 	data_in[0] = 'D';
 	for (size_t i = 0; i < test_cnt; i++) {
@@ -557,7 +558,7 @@ static void test_overflow(void)
 	emds_flash_write(&ctx, 0, data_in, sizeof(data_in));
 
 	device_reset();
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 
 	emds_flash_read(&ctx, 0, data_out, sizeof(data_out));
 	zassert_false(memcmp(data_out, data_in, sizeof(data_out)), "Retrived wrong value");
@@ -572,7 +573,7 @@ static void test_prepare_overflow(void)
 	flash_clear();
 	device_reset();
 
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_true(emds_flash_prepare(&ctx, m_test_fd.size), "Prepare should return error");
 	zassert_false(emds_flash_prepare(&ctx, m_test_fd.size - 16), "Prepare failed");
 	zassert_false(emds_flash_prepare(&ctx, m_test_fd.size - 24), "Prepare failed");
@@ -585,7 +586,7 @@ static void test_full_corrupt_recovery(void)
 
 	/* Fill flash with garbage. Expect 0 space left and erase on prepare */
 	corrupt_write_all();
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_true(ctx.force_erase, "Force erase should be true");
 	zassert_equal(0, emds_flash_free_space_get(&ctx), "Expected no free space");
 
@@ -606,7 +607,7 @@ static void test_corrupted_data(void)
 	flash_clear();
 	device_reset();
 
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size), "Prepare failed");
 
 	zassert_true(emds_flash_write(&ctx, 1, data_in, sizeof(data_in)) == sizeof(data_in),
@@ -621,7 +622,7 @@ static void test_corrupted_data(void)
 
 	/* Reset */
 	device_reset();
-	zassert_false(emds_flash_init(&ctx, m_fa->fa_dev_name), "Error when initializing");
+	zassert_false(emds_flash_init(&ctx), "Error when initializing");
 
 	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in)) < 0,
 				     "Should not be able to read");
@@ -647,7 +648,7 @@ static void test_write_speed(void)
 	(void)sdc_disable();
 	mpsl_uninit();
 #endif
-	emds_flash_init(&ctx, m_fa->fa_dev_name);
+	emds_flash_init(&ctx);
 	emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size);
 
 	tic = k_uptime_ticks();
