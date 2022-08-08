@@ -72,7 +72,7 @@ static void link_api_context_info_fill_activation_status(
 		return;
 	}
 
-	/* For each contexts: */
+	/* For each contexts */
 	for (int i = 0; i < ctx_cnt; i++) {
 		/* Search for a string +CGACT: <cid>,<state> */
 		snprintf(buf, sizeof(buf), "+CGACT: %d,1", ctx_tbl[i].cid);
@@ -386,7 +386,7 @@ static int link_api_pdp_context_dynamic_params_get(struct pdp_context_info *popu
 		return ret;
 	}
 
-	/* Check how many rows of info do we have: */
+	/* Check how many rows of info do we have */
 	while (strncmp(tmp_ptr, "OK", 2) &&
 	       (tmp_ptr = strstr(tmp_ptr, AT_CMD_PDP_CONTEXT_READ_RSP_DELIM)) != NULL) {
 		tmp_ptr += 2;
@@ -477,7 +477,7 @@ parse:
 		ret = at_params_int_get(&param_list, AT_CMD_PDP_CONTEXT_READ_INFO_MTU_INDEX,
 					&(populated_info->ipv6_mtu));
 		if (ret) {
-			/* Don't care if it fails: */
+			/* Don't care if it fails */
 			ret = 0;
 			populated_info->ipv6_mtu = 0;
 		}
@@ -485,7 +485,7 @@ parse:
 		ret = at_params_int_get(&param_list, AT_CMD_PDP_CONTEXT_READ_INFO_MTU_INDEX,
 					&(populated_info->ipv4_mtu));
 		if (ret) {
-			/* Don't care if it fails: */
+			/* Don't care if it fails */
 			ret = 0;
 			populated_info->ipv4_mtu = 0;
 		}
@@ -494,7 +494,7 @@ parse:
 	if (resp_continues) {
 		at_ptr = next_param_str;
 		iterator++;
-		if (iterator < lines && strncmp(next_param_str, "OK", 2)) {
+		if (iterator < lines) {
 			goto parse;
 		}
 	}
@@ -540,14 +540,14 @@ int link_api_pdp_contexts_read(struct pdp_context_info_array *pdp_info)
 		goto clean_exit;
 	}
 
-	/* Check how many rows/context do we have: */
+	/* Check how many rows/context do we have */
 	while (strncmp(tmp_ptr, "OK", 2) &&
 	       (tmp_ptr = strstr(tmp_ptr, AT_CMD_PDP_CONTEXT_READ_RSP_DELIM)) != NULL) {
 		tmp_ptr += 2;
 		pdp_cnt++;
 	}
 
-	/* Allocate array of PDP info accordingly: */
+	/* Allocate array of PDP info accordingly */
 	pdp_info->array = calloc(pdp_cnt, sizeof(struct pdp_context_info));
 	pdp_info->size = pdp_cnt;
 
@@ -652,7 +652,7 @@ parse:
 	}
 	if (ip_address2 != NULL) {
 		/* Note: If we are here, PDP_addr_2 should be IPv6,
-		 * thus in following ipv4 branch should not be possible:
+		 * thus in following ipv4 branch should not be possible
 		 */
 		family = net_utils_sa_family_from_ip_string(ip_address2);
 		if (family == AF_INET) {
@@ -664,7 +664,7 @@ parse:
 		}
 	}
 
-	/* Get DNS addresses etc.  for this IP context: */
+	/* Get DNS addresses etc. for this IP context */
 	if (populated_info[iterator].pdp_type != PDP_TYPE_NONIP) {
 		(void)link_api_pdp_context_dynamic_params_get(&(populated_info[iterator]));
 	}
@@ -672,17 +672,17 @@ parse:
 	if (resp_continues) {
 		at_ptr = next_param_str;
 		iterator++;
-		if (iterator < pdp_cnt && strncmp(next_param_str, "OK", 2)) {
+		if (iterator < pdp_cnt) {
 			goto parse;
 		}
 	}
 
-	/* ...and finally, fill PDP context activation status for each: */
+	/* ...and finally, fill PDP context activation status for each */
 	link_api_context_info_fill_activation_status(pdp_info);
 
 clean_exit:
 	at_params_list_free(&param_list);
-	/* user need do free pdp_info->array also in case of error */
+	/* User need to free pdp_info->array also in case of error */
 
 	k_mutex_unlock(&at_resp_buf_mutex);
 
@@ -765,7 +765,7 @@ void link_api_modem_info_get_for_shell(bool connected)
 					sprintf(tmp_str, "%d", info_tbl[i].pdn_id);
 				}
 
-				/* Parsed PDP context info: */
+				/* Parsed PDP context info */
 				mosh_print("PDP context info %d:", (i + 1));
 				mosh_print("  CID:                %d", info_tbl[i].cid);
 				mosh_print("  PDN ID:             %s",
