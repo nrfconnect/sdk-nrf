@@ -31,7 +31,8 @@ extern struct event_type *_event_manager_proxy_array_list_end[];
 enum emp_cmd_code {
 	EMP_CMD_SUBSCRIBE,
 	EMP_CMD_START,
-	EMP_CMD_COUNT
+	EMP_CMD_COUNT,
+	EMP_CMD_FORCE_INT_SIZE = INT_MAX
 };
 
 /**
