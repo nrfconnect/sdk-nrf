@@ -29,10 +29,6 @@ sys.path.insert(0, str(Path(__file__).absolute().parents[1] / "_utils"))
 import utils
 
 
-NO_MERGE = ("kconfig", )
-"""Docsets that should not be merged"""
-
-
 def load_search_index(file: Path, prefix: str) -> Dict:
     """Load search index from a file
 
@@ -175,11 +171,7 @@ def main(build_dir: Path) -> None:
     # discover built docsets
     docsets = list()
     for entry in (build_dir / "html").iterdir():
-        if (
-            entry.is_dir()
-            and entry.name not in NO_MERGE
-            and entry.name in utils.ALL_DOCSETS
-        ):
+        if entry.is_dir() and entry.name in utils.ALL_DOCSETS:
             docsets.append(entry.name)
 
     # load indexes
