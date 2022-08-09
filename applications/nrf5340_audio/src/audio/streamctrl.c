@@ -342,7 +342,7 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 	LOG_DBG("Received event = %d, current state = %d", event, strm_state);
 	switch (event) {
 	case LE_AUDIO_EVT_STREAMING:
-		LOG_INF("LE audio evt streaming");
+		LOG_DBG("LE audio evt streaming");
 
 		if (strm_state == STATE_STREAMING) {
 			LOG_WRN("Got streaming event in streaming state");
@@ -357,7 +357,7 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 		break;
 
 	case LE_AUDIO_EVT_NOT_STREAMING:
-		LOG_INF("LE audio evt not_streaming");
+		LOG_DBG("LE audio evt not_streaming");
 
 		if (strm_state == STATE_PAUSED) {
 			LOG_WRN("Got not_streaming event in paused state");
@@ -372,7 +372,7 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 		break;
 
 	case LE_AUDIO_EVT_CONFIG_RECEIVED:
-		LOG_INF("Config received");
+		LOG_DBG("Config received");
 
 		int bitrate;
 		int sampling_rate;

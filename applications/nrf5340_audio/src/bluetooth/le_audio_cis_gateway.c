@@ -236,7 +236,7 @@ static void stream_started_cb(struct bt_audio_stream *stream)
 {
 	int ret;
 
-	LOG_INF("Audio stream %p started", (void *)stream);
+	LOG_INF("Stream %p started", (void *)stream);
 
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
 	ERR_CHK(ret);
@@ -244,12 +244,12 @@ static void stream_started_cb(struct bt_audio_stream *stream)
 
 static void stream_metadata_updated_cb(struct bt_audio_stream *stream)
 {
-	LOG_INF("Audio Stream %p metadata updated", (void *)stream);
+	LOG_DBG("Audio Stream %p metadata updated", (void *)stream);
 }
 
 static void stream_disabled_cb(struct bt_audio_stream *stream)
 {
-	LOG_INF("Audio Stream %p disabled", (void *)stream);
+	LOG_DBG("Audio Stream %p disabled", (void *)stream);
 }
 
 static void stream_stopped_cb(struct bt_audio_stream *stream)
@@ -257,7 +257,7 @@ static void stream_stopped_cb(struct bt_audio_stream *stream)
 	int ret;
 	uint8_t channel_index;
 
-	LOG_INF("Audio Stream %p stopped", (void *)stream);
+	LOG_INF("Stream %p stopped", (void *)stream);
 
 	ret = stream_index_get(stream, &channel_index);
 	if (ret) {
@@ -275,7 +275,7 @@ static void stream_stopped_cb(struct bt_audio_stream *stream)
 
 static void stream_released_cb(struct bt_audio_stream *stream)
 {
-	LOG_INF("Audio Stream %p released", (void *)stream);
+	LOG_DBG("Audio Stream %p released", (void *)stream);
 }
 
 static struct bt_audio_stream_ops stream_ops = {
@@ -343,7 +343,7 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 		return;
 	}
 
-	LOG_INF("Discover complete: err %d", params->err);
+	LOG_DBG("Discover complete: err %d", params->err);
 
 	(void)memset(params, 0, sizeof(*params));
 
@@ -382,7 +382,7 @@ static void bond_check(const struct bt_bond_info *info, void *user_data)
 
 	bt_addr_le_to_str(&info->addr, addr_buf, BT_ADDR_LE_STR_LEN);
 
-	LOG_INF("Stored bonding found: %s", addr_buf);
+	LOG_DBG("Stored bonding found: %s", addr_buf);
 	bonded_num++;
 }
 
@@ -393,7 +393,7 @@ static void bond_connect(const struct bt_bond_info *info, void *user_data)
 	struct bt_conn *conn;
 
 	if (!bt_addr_le_cmp(&info->addr, adv_addr)) {
-		LOG_INF("Found bonded device");
+		LOG_DBG("Found bonded device");
 
 		ret = bt_le_scan_stop();
 		if (ret) {
@@ -422,7 +422,7 @@ static int device_found(uint8_t type, const uint8_t *data, uint8_t data_len,
 
 	if ((data_len == DEVICE_NAME_PEER_LEN) &&
 	    (strncmp(DEVICE_NAME_PEER, data, DEVICE_NAME_PEER_LEN) == 0)) {
-		LOG_INF("Device found");
+		LOG_DBG("Device found");
 
 		ret = bt_le_scan_stop();
 		if (ret) {
@@ -457,7 +457,7 @@ static void ad_parse(struct net_buf_simple *p_ad, const bt_addr_le_t *addr)
 		}
 
 		if (len > p_ad->len) {
-			LOG_INF("AD malformed");
+			LOG_WRN("AD malformed");
 			return;
 		}
 
@@ -497,7 +497,7 @@ static void ble_acl_start_scan(void)
 
 	ret = bt_le_scan_start(BT_LE_SCAN_ACTIVE, on_device_found);
 	if (ret) {
-		LOG_INF("Scanning failed to start: %d", ret);
+		LOG_WRN("Scanning failed to start: %d", ret);
 		return;
 	}
 
@@ -519,10 +519,9 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 
 		return;
 	}
-	/* ACL connection established */
-	LOG_DBG("ACL connection to %s established", addr);
-	/* TODO: Setting TX power for connection if set to anything but 0 */
 
+	/* ACL connection established */
+	/* TODO: Setting TX power for connection if set to anything but 0 */
 	LOG_INF("Connected: %s", addr);
 
 	ret = bt_conn_set_security(conn, BT_SECURITY_L2);
@@ -582,10 +581,10 @@ static void security_changed_cb(struct bt_conn *conn, bt_security_t level, enum 
 			LOG_ERR("Failed to disconnect %d", ret);
 		}
 	} else {
-		LOG_INF("Security changed: level %d", level);
+		LOG_DBG("Security changed: level %d", level);
 		ret = discover_sink(conn);
 		if (ret) {
-			LOG_INF("Failed to discover sink: %d", ret);
+			LOG_WRN("Failed to discover sink: %d", ret);
 		}
 	}
 }
@@ -750,8 +749,7 @@ int le_audio_send(uint8_t const *const data, size_t size)
 
 	if (audio_streams[AUDIO_CH_L].ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
 		ret = bt_iso_chan_get_tx_sync(audio_streams[AUDIO_CH_L].iso, &tx_info);
-	} else if (audio_streams[AUDIO_CH_R].ep->status.state ==
-		   BT_AUDIO_EP_STATE_STREAMING) {
+	} else if (audio_streams[AUDIO_CH_R].ep->status.state == BT_AUDIO_EP_STATE_STREAMING) {
 		ret = bt_iso_chan_get_tx_sync(audio_streams[AUDIO_CH_R].iso, &tx_info);
 	} else {
 		LOG_DBG("No headset in stream state");

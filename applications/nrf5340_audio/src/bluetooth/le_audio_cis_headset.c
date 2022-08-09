@@ -77,7 +77,7 @@ static void print_codec(const struct bt_codec *codec)
 		LOG_INF("\tOctets per frame: %d (%d kbps)", octets_per_sdu, bitrate);
 		LOG_INF("\tFrames per SDU: %d", bt_codec_cfg_get_frame_blocks_per_sdu(codec, true));
 	} else {
-		LOG_INF("Codec is not LC3, codec_id: 0x%2x", codec->id);
+		LOG_WRN("Codec is not LC3, codec_id: 0x%2x", codec->id);
 	}
 }
 
@@ -162,7 +162,7 @@ static struct bt_audio_stream *lc3_cap_config_cb(struct bt_conn *conn, struct bt
 	struct bt_audio_stream *stream = &audio_stream;
 
 	if (!stream->conn) {
-		LOG_INF("ASE Codec Config stream %p", (void *)stream);
+		LOG_DBG("ASE Codec Config stream %p", (void *)stream);
 
 		print_codec(codec);
 
@@ -189,7 +189,7 @@ static struct bt_audio_stream *lc3_cap_config_cb(struct bt_conn *conn, struct bt
 static int lc3_cap_reconfig_cb(struct bt_audio_stream *stream, struct bt_audio_capability *cap,
 			       struct bt_codec *codec)
 {
-	LOG_INF("ASE Codec Reconfig: stream %p cap %p", (void *)stream, (void *)cap);
+	LOG_DBG("ASE Codec Reconfig: stream %p cap %p", (void *)stream, (void *)cap);
 
 	return 0;
 }
@@ -198,7 +198,7 @@ static int lc3_cap_qos_cb(struct bt_audio_stream *stream, struct bt_codec_qos *q
 {
 	int ret;
 
-	LOG_INF("QoS: stream %p qos %p", (void *)stream, (void *)qos);
+	LOG_DBG("QoS: stream %p qos %p", (void *)stream, (void *)qos);
 	ret = audio_datapath_pres_delay_us_set(qos->pd);
 
 	return ret;
@@ -209,7 +209,7 @@ static int lc3_cap_enable_cb(struct bt_audio_stream *stream, struct bt_codec_dat
 {
 	int ret;
 
-	LOG_INF("Enable: stream %p meta_count %u", (void *)stream, meta_count);
+	LOG_DBG("Enable: stream %p meta_count %u", (void *)stream, meta_count);
 
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
 	ERR_CHK(ret);
@@ -219,20 +219,20 @@ static int lc3_cap_enable_cb(struct bt_audio_stream *stream, struct bt_codec_dat
 
 static int lc3_cap_start_cb(struct bt_audio_stream *stream)
 {
-	LOG_INF("Start: stream %p", (void *)stream);
+	LOG_INF("Stream started");
 	return 0;
 }
 
 static int lc3_cap_metadata_cb(struct bt_audio_stream *stream, struct bt_codec_data *meta,
 			       size_t meta_count)
 {
-	LOG_INF("Metadata: stream %p meta_count %u", (void *)stream, meta_count);
+	LOG_DBG("Metadata: stream %p meta_count %u", (void *)stream, meta_count);
 	return 0;
 }
 
 static int lc3_cap_disable_cb(struct bt_audio_stream *stream)
 {
-	LOG_INF("Disable: stream %p", (void *)stream);
+	LOG_DBG("Disable: stream %p", (void *)stream);
 	return 0;
 }
 
@@ -240,7 +240,7 @@ static int lc3_cap_stop_cb(struct bt_audio_stream *stream)
 {
 	int ret;
 
-	LOG_INF("Stop: stream %p", (void *)stream);
+	LOG_DBG("Stop: stream %p", (void *)stream);
 
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 	ERR_CHK(ret);
@@ -250,7 +250,7 @@ static int lc3_cap_stop_cb(struct bt_audio_stream *stream)
 
 static int lc3_cap_release_cb(struct bt_audio_stream *stream)
 {
-	LOG_INF("Release: stream %p", (void *)stream);
+	LOG_DBG("Release: stream %p", (void *)stream);
 	return 0;
 }
 
@@ -285,7 +285,7 @@ static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_r
 
 	recv_cnt++;
 	if ((recv_cnt % 1000U) == 0U) {
-		LOG_INF("Received %u total ISO packets", recv_cnt);
+		LOG_DBG("Received %u total ISO packets", recv_cnt);
 	}
 }
 
@@ -293,7 +293,7 @@ static void stream_stop_cb(struct bt_audio_stream *stream)
 {
 	int ret;
 
-	LOG_INF("Stop: stream %p", (void *)stream);
+	LOG_INF("Stream stopped");
 
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_NOT_STREAMING);
 	ERR_CHK(ret);
@@ -309,6 +309,7 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	}
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
 	LOG_INF("Connected: %s", addr);
 	default_conn = bt_conn_ref(conn);
 }

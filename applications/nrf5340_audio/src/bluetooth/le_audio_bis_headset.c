@@ -62,7 +62,7 @@ static void print_codec(const struct bt_codec *codec)
 		LOG_INF("\tOctets per frame: %d (%d kbps)", octets_per_sdu, bitrate);
 		LOG_INF("\tFrames per SDU: %d", bt_codec_cfg_get_frame_blocks_per_sdu(codec, true));
 	} else {
-		LOG_INF("Codec is not LC3, codec_id: 0x%2x", codec->id);
+		LOG_WRN("Codec is not LC3, codec_id: 0x%2x", codec->id);
 	}
 }
 
@@ -120,7 +120,7 @@ static void stream_recv_cb(struct bt_audio_stream *stream, const struct bt_iso_r
 
 	recv_cnt++;
 	if ((recv_cnt % 1000U) == 0U) {
-		LOG_INF("Received %u total ISO packets", recv_cnt);
+		LOG_DBG("Received %u total ISO packets", recv_cnt);
 	}
 }
 
@@ -130,7 +130,7 @@ static struct bt_audio_stream_ops stream_ops = { .started = stream_started_cb,
 
 static bool scan_recv_cb(const struct bt_le_scan_recv_info *info, uint32_t broadcast_id)
 {
-	LOG_INF("Broadcast source found, waiting for PA sync");
+	LOG_DBG("Broadcast source found, waiting for PA sync");
 
 	return true;
 }
@@ -150,11 +150,11 @@ static void pa_synced_cb(struct bt_audio_broadcast_sink *sink, struct bt_le_per_
 		return;
 	}
 
-	LOG_INF("PA synced for broadcast sink with broadcast ID 0x%06X", broadcast_id);
+	LOG_DBG("PA synced for broadcast sink with broadcast ID 0x%06X", broadcast_id);
 
 	broadcast_sink = sink;
 
-	LOG_INF("Broadcast source PA synced, waiting for BASE");
+	LOG_DBG("Broadcast source PA synced, waiting for BASE");
 }
 
 static void pa_sync_lost_cb(struct bt_audio_broadcast_sink *sink)
@@ -166,7 +166,7 @@ static void pa_sync_lost_cb(struct bt_audio_broadcast_sink *sink)
 		return;
 	}
 
-	LOG_INF("Sink disconnected");
+	LOG_DBG("Sink disconnected");
 
 	ret = bis_headset_cleanup(true);
 	if (ret) {
@@ -194,7 +194,7 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 
 	/* Test to ensure there are enough streams for each subgroup */
 	if (base->subgroup_count > CONFIG_BT_AUDIO_BROADCAST_SNK_STREAM_COUNT) {
-		LOG_INF("Too many channels in subgroup");
+		LOG_WRN("Too many channels in subgroup");
 		return;
 	}
 
@@ -205,7 +205,7 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 	}
 	channel = BIT(channel);
 
-	LOG_INF("Received BASE with %u subgroup(s) from broadcast sink", base->subgroup_count);
+	LOG_DBG("Received BASE with %u subgroup(s) from broadcast sink", base->subgroup_count);
 
 	/* Search each subgroup for the BIS of interest */
 	for (size_t i = 0U; i < base->subgroup_count; i++) {
@@ -223,7 +223,7 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 						(struct bt_codec *)&base->subgroups[i].codec;
 					print_codec(streams[i].codec);
 
-					LOG_INF("Stream %u in subgroup %u from broadcast sink", i,
+					LOG_DBG("Stream %u in subgroup %u from broadcast sink", i,
 						j);
 				}
 			}
@@ -235,7 +235,7 @@ static void base_recv_cb(struct bt_audio_broadcast_sink *sink, const struct bt_a
 		ERR_CHK(ret);
 		bis_index_bitfield = base_bis_index_bitfield & bis_index_mask;
 
-		LOG_INF("Waiting for syncable");
+		LOG_DBG("Waiting for syncable");
 	} else {
 		LOG_WRN("Found no suitable streams");
 	}
@@ -397,7 +397,7 @@ int le_audio_enable(le_audio_receive_cb recv_cb)
 		return ret;
 	}
 
-	LOG_INF("LE Audio enabled");
+	LOG_DBG("LE Audio enabled");
 
 	return 0;
 }
@@ -412,7 +412,7 @@ int le_audio_disable(void)
 		return ret;
 	}
 
-	LOG_INF("LE Audio disabled");
+	LOG_DBG("LE Audio disabled");
 
 	return 0;
 }
