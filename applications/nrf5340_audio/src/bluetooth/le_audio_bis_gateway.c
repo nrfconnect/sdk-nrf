@@ -102,7 +102,7 @@ static void stream_sent_cb(struct bt_audio_stream *stream)
 	sent_cnt[index]++;
 
 	if ((sent_cnt[index] % 1000U) == 0U) {
-		LOG_INF("Sent %u total ISO packets on stream %u", sent_cnt[index], index);
+		LOG_DBG("Sent %u total ISO packets on stream %u", sent_cnt[index], index);
 	}
 }
 
@@ -273,7 +273,7 @@ int le_audio_enable(le_audio_receive_cb recv_cb)
 
 	initialize();
 
-	LOG_INF("Creating broadcast source");
+	LOG_DBG("Creating broadcast source");
 
 	ret = bt_audio_broadcast_source_create(streams_p, ARRAY_SIZE(streams_p), &lc3_preset.codec,
 					       &lc3_preset.qos, &broadcast_source);
@@ -281,14 +281,14 @@ int le_audio_enable(le_audio_receive_cb recv_cb)
 		return ret;
 	}
 
-	LOG_INF("Starting broadcast source");
+	LOG_DBG("Starting broadcast source");
 
 	ret = bt_audio_broadcast_source_start(broadcast_source);
 	if (ret) {
 		return ret;
 	}
 
-	LOG_INF("LE Audio enabled");
+	LOG_DBG("LE Audio enabled");
 
 	return 0;
 }
@@ -314,7 +314,7 @@ int le_audio_disable(void)
 		broadcast_source = NULL;
 	}
 
-	LOG_INF("LE Audio disabled");
+	LOG_DBG("LE Audio disabled");
 
 	return 0;
 }
