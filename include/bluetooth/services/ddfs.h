@@ -95,7 +95,7 @@ struct bt_ddfs_dm_config {
 struct bt_ddfs_cb {
 	/** @brief Indicates that the ranging mode for Distance Measurement is set.
 	 *
-	 * @param mode New ranging mode for distanance measurement.
+	 * @param mode New ranging mode for distance measurement.
 	 *
 	 * @retval 0 If the operation was successful.
 	 *         Otherwise, a negative error code is returned.
@@ -117,7 +117,7 @@ struct bt_ddfs_cb {
 	 *
 	 * @param enabled Azimuth Measurement notification status.
 	 */
-	void (*am_notification_config_changed)(bool enebled);
+	void (*am_notification_config_changed)(bool enabled);
 
 	/** @brief Distance Measurement state callback.
 	 *
@@ -125,7 +125,7 @@ struct bt_ddfs_cb {
 	 *
 	 * @param enabled Distance Measurement notification status.
 	 */
-	void (*dm_notification_config_changed)(bool enebled);
+	void (*dm_notification_config_changed)(bool enabled);
 
 	/** @brief Elevation Measurement state callback.
 	 *
@@ -133,7 +133,7 @@ struct bt_ddfs_cb {
 	 *
 	 * @param enabled Elevation Measurement notification status.
 	 */
-	void (*em_notification_config_changed)(bool enebled);
+	void (*em_notification_config_changed)(bool enabled);
 };
 
 /** @brief Structure of distance measurement results. */
@@ -205,8 +205,8 @@ struct bt_ddfs_init_params {
  *  The application calls this function after having performed a Distance Measurement.
  *  If notification has been enabled, the measurement data is encoded and sent to the client.
  *
- *  @param conn Pointer to connection object, or NULL if sent to all connected peers.
- *  @param measurement Pointer to new distance measurement.
+ *  @param[in] conn Pointer to connection object, or NULL if sent to all connected peers.
+ *  @param[in] measurement Pointer to new distance measurement.
  *
  *  @retval 0 If the operation was successful.
  *          Otherwise, a negative error code is returned.
@@ -219,8 +219,8 @@ int bt_ddfs_distance_measurement_notify(struct bt_conn *conn,
  *  The application calls this function after having performed a Azimuth Measurement.
  *  If notification has been enabled, the measurement data is encoded and sent to the client.
  *
- *  @param conn Pointer to connection object, or NULL if sent to all connected peers.
- *  @param measurement Pointer to new azituth measurement.
+ *  @param[in] conn Pointer to connection object, or NULL if sent to all connected peers.
+ *  @param[in] measurement Pointer to new azimuth measurement.
  *
  *  @retval 0 If the operation was successful.
  *          Otherwise, a negative error code is returned.
@@ -233,8 +233,8 @@ int bt_ddfs_azimuth_measurement_notify(struct bt_conn *conn,
  *  The application calls this function after having performed a Elevation Measurement.
  *  If notification has been enabled, the measurement data is encoded and sent to the client.
  *
- *  @param conn Pointer to connection object, or NULL if sent to all connected peers.
- *  @param measurement Pointer to new elevation measurement.
+ *  @param[in] conn Pointer to connection object, or NULL if sent to all connected peers.
+ *  @param[in] measurement Pointer to new elevation measurement.
  *
  *  @retval 0 If the operation was successful.
  *          Otherwise, a negative error code is returned.
@@ -244,7 +244,7 @@ int bt_ddfs_elevation_measurement_notify(struct bt_conn *conn,
 
 /** @brief Function for initializing the Direction and Distance Finding Service.
  *
- *  @param init Initialization parameters.
+ *  @param[in] init Initialization parameters.
  *
  *  @retval 0 If the operation was successful.
  *          Otherwise, a negative error code is returned.

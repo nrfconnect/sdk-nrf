@@ -26,10 +26,10 @@ Overview
 The sample initializes and performs distance measurements between devices.
 The procedure for distance measurement on both devices must be synchronized.
 
-The synchronisation step has two goals:
+The synchronization step has two goals:
 
    * Detect peers that support the ranging procedure.
-   * Provide synchronisation for the ranging step.
+   * Provide synchronization for the ranging step.
 
 This sample synchronizes devices using the scan and advertising facilities of the Bluetooth LE.
 Anchoring occurs after the exchange of ``SCAN_REQ`` and ``SCAN_RSP`` packets.
@@ -61,7 +61,7 @@ This message contains the following fields:
    * Identifier indicating that the device supports distance measurement.
    * The access address used for measurement.
 
-This scanner/advertiser interaction is used as a synchronisation point.
+This scanner/advertiser interaction is used as a synchronization point.
 After a configurable delay, Device A and Device B try to range each other.
 
    * If a Device acts as an advertiser in synchronization, it will act as the reflector in the ranging procedure.

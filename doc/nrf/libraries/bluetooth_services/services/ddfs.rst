@@ -7,7 +7,7 @@ Direction and Distance Finding Service (DDFS)
    :local:
    :depth: 2
 
-The Bluetooth® LE GATT Direction and Distance Finding Service is a custom service that allows publication of distance, azimuth and elavation measurement data.
+The Bluetooth® LE GATT Direction and Distance Finding Service is a custom service that allows publication of distance, azimuth and elevation measurement data.
 It also allows adjusting the measurement configuration parameters.
 
 Service UUID

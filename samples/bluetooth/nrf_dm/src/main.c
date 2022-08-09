@@ -287,7 +287,7 @@ static struct dm_cb dm_cb = {
 void main(void)
 {
 	int err;
-	int blink_status = 0;
+	uint32_t blink_status = 0;
 	struct dm_init_param init_param;
 
 	printk("Starting Distance Measurement example\n");
