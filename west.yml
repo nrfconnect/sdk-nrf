@@ -72,7 +72,6 @@ manifest:
           - fatfs
           - fff
           - hal_nordic
-          - hal_st
           - liblc3codec
           - libmetal
           - littlefs
