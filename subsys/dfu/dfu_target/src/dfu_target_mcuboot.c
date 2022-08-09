@@ -34,8 +34,11 @@ LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 
 #define _MB_SEC_PAT(i, x) PM_MCUBOOT_SECONDARY_ ## i ## _ ## x
 
-#define _MB_SEC_PAT_DEV(i, x) \
-	DEVICE_DT_GET(DT_NODELABEL(PM_MCUBOOT_SECONDARY_ ## i ## _ ## x))
+#define _MB_SEC_PAT_STRING(i, x) STRINGIFY(PM_MCUBOOT_SECONDARY_ ## i ## _ ## x)
+
+#define _MB_SEC_PAT_DEV(i, x) COND_CODE_1(DT_NODE_EXISTS(PM_MCUBOOT_SECONDARY_##i##_##x), \
+			      (DEVICE_DT_GET_OR_NULL(PM_MCUBOOT_SECONDARY_##i##_##x)), \
+			      (DEVICE_DT_GET_OR_NULL(DT_NODELABEL(PM_MCUBOOT_SECONDARY_##i##_##x))))
 
 #define _H_MB_SEC_LA(i) (PM_MCUBOOT_SECONDARY_## i ##_ADDRESS + \
 			 PM_MCUBOOT_SECONDARY_## i ##_SIZE - 1)
@@ -53,33 +56,33 @@ LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 /* For the first image the Partition Managed doesen't us 0 indice.
  * Let's define liberal macros with 0 for making code more generic.
  */
-#define PM_MCUBOOT_SECONDARY_0_SIZE     PM_MCUBOOT_SECONDARY_SIZE
-#define PM_MCUBOOT_SECONDARY_0_ADDRESS  PM_MCUBOOT_SECONDARY_ADDRESS
-#define PM_MCUBOOT_SECONDARY_0_DEV_NAME STRINGIFY(PM_MCUBOOT_SECONDARY_DEV_NAME)
+#define PM_MCUBOOT_SECONDARY_0_SIZE	PM_MCUBOOT_SECONDARY_SIZE
+#define PM_MCUBOOT_SECONDARY_0_ADDRESS	PM_MCUBOOT_SECONDARY_ADDRESS
+#define PM_MCUBOOT_SECONDARY_0_NAME	STRINGIFY(PM_MCUBOOT_SECONDARY_NAME)
 #define PM_MCUBOOT_SECONDARY_0_DEV	PM_MCUBOOT_SECONDARY_DEV
 
 static const size_t secondary_size[] = {
-	LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT, (,), SIZE)
+	LIST_DROP_EMPTY(LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT, (,), SIZE))
 };
 
 static const off_t secondary_address[] = {
-	LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT, (,), ADDRESS)
+	LIST_DROP_EMPTY(LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT, (,), ADDRESS))
 };
 
 static const struct device *const secondary_dev[] = {
-	LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT_DEV, (,), DEV)
+	LIST_DROP_EMPTY(LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT_DEV, (,), DEV))
 };
 
-static const char *const secondary_dev_name[] = {
-	LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT, (,), DEV_NAME)
+static const char *const secondary_name[] = {
+	LIST_DROP_EMPTY(LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT_STRING, (,), NAME))
 };
 
 static const off_t secondary_last_address[] = {
-	LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_LA, (,))
+	LIST_DROP_EMPTY(LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_LA, (,)))
 };
 
 static const char *const target_id_name[] = {
-	LISTIFY(TARGET_IMAGE_COUNT, _STR_TARGET_NAME, (,))
+	LIST_DROP_EMPTY(LISTIFY(TARGET_IMAGE_COUNT, _STR_TARGET_NAME, (,)))
 };
 
 static uint8_t *stream_buf;
@@ -167,8 +170,8 @@ int dfu_target_mcuboot_init(size_t file_size, int img_num, dfu_target_callback_t
 
 	flash_dev = secondary_dev[img_num];
 	if (!device_is_ready(flash_dev)) {
-		LOG_ERR("Failed to get device '%s'",
-			secondary_dev_name[img_num]);
+		LOG_ERR("Failed to get device for area '%s'",
+			secondary_name[img_num]);
 		return -EFAULT;
 	}
 
