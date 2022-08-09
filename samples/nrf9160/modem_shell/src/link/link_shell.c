@@ -33,6 +33,7 @@ enum link_shell_command {
 	LINK_CMD_DEFCONT,
 	LINK_CMD_DEFCONTAUTH,
 	LINK_CMD_RSRP,
+	LINK_CMD_SEARCH,
 	LINK_CMD_NCELLMEAS,
 	LINK_CMD_MDMSLEEP,
 	LINK_CMD_TAU,
@@ -51,6 +52,7 @@ enum link_shell_command {
 enum link_shell_common_options {
 	LINK_COMMON_NONE = 0,
 	LINK_COMMON_READ,
+	LINK_COMMON_WRITE,
 	LINK_COMMON_ENABLE,
 	LINK_COMMON_DISABLE,
 	LINK_COMMON_SUBSCRIBE,
@@ -93,6 +95,7 @@ static const char link_usage_str[] =
 	"                a PDP context\n"
 	"  rsrp:         Subscribe/unsubscribe for RSRP signal info\n"
 	"  ncellmeas:    Start/cancel neighbor cell measurements\n"
+	"  search:       Read/write periodic search parameters or start search operation\n"
 	"  msleep:       Subscribe/unsubscribe for modem sleep notifications\n"
 	"  tau:          Subscribe/unsubscribe for modem TAU pre-warning notifications\n"
 	"  funmode:      Set/read functional modes of the modem\n"
@@ -247,6 +250,34 @@ static const char link_rsrp_usage_str[] =
 	"  -s, --subscribe,    Subscribe for RSRP info\n"
 	"  -u, --unsubscribe,  Unsubscribe for RSRP info\n";
 
+static const char link_search_usage_str[] =
+	"Usage: link search --read | --write | --clear | --start\n"
+	"\n"
+	"Options:\n"
+	"  -r, --read,   Read modem search configuration\n"
+	"      --clear,  Clear modem search configuration\n"
+	"      --write,  Write modem search configuration.\n"
+	"                Use --search_cfg option to define the configuration and\n"
+	"                any combination of 1 to 4 --search_pattern_range or\n"
+	"                --search_pattern_table options.\n"
+	"                Default values will be used if no additional parameters are provided.\n"
+	"      --search_cfg, [str]\n"
+	"                Search configuration in the following format (3 numbers):\n"
+	"                  <loop>,<return_to_pattern>,<band_optimization>\n"
+	"      --search_pattern_range, [str]\n"
+	"                Range type of search pattern in the following format (4 numbers):\n"
+	"                  <initial_sleep>,<final_sleep>,<time_to_final_sleep>,<pattern_end_point>\n"
+	"                Set <time_to_final_sleep> to -1 if it is not given.\n"
+	"      --search_pattern_table, [str]\n"
+	"                Table type of search pattern in the following format (1 to 5 numbers):\n"
+	"                  <val1>[,<val2>][,<val3>][,<val4>][,<val5>]\n"
+	"      --start,  Start modem search request. This is an extra request outside of\n"
+	"                the periodic requests. However, the search is performed only\n"
+	"                when the modem is in sleep state between periodic searches.\n"
+	"\n"
+	"For more details on the individual parameters referred to with <param>, see:\n"
+	"https://infocenter.nordicsemi.com/index.jsp?topic=%2Fref_at_commands%2FREF%2Fat_commands%2Fnw_service%2Fperiodicsearchconf_set.html\n";
+
 static const char link_ncellmeas_usage_str[] =
 	"Usage: link ncellmeas --single | --continuous [--interval <interval_in_secs>] | --cancel\n"
 	"                      [--search_type <type>]\n"
@@ -346,7 +377,11 @@ enum {
 	LINK_SHELL_OPT_CONTINUOUS,
 	LINK_SHELL_OPT_NCELLMEAS_SEARCH_TYPE,
 	LINK_SHELL_OPT_NCELLMEAS_CONTINUOUS_INTERVAL_TIME,
+	LINK_SHELL_OPT_SEARCH_CFG,
+	LINK_SHELL_OPT_SEARCH_PATTERN_RANGE,
+	LINK_SHELL_OPT_SEARCH_PATTERN_TABLE,
 	LINK_SHELL_OPT_NMODE_NO_REL14,
+	LINK_SHELL_OPT_WRITE,
 };
 
 /* Specifying the expected options (both long and short): */
@@ -358,6 +393,7 @@ static struct option long_options[] = {
 	{ "subscribe", no_argument, 0, 's' },
 	{ "unsubscribe", no_argument, 0, 'u' },
 	{ "read", no_argument, 0, 'r' },
+	{ "write", no_argument, 0, LINK_SHELL_OPT_WRITE },
 	{ "pwroff", no_argument, 0, '0' },
 	{ "normal", no_argument, 0, '1' },
 	{ "flightmode", no_argument, 0, '4' },
@@ -387,6 +423,7 @@ static struct option long_options[] = {
 	{ "mem2", required_argument, 0, LINK_SHELL_OPT_MEM_SLOT_2 },
 	{ "mem3", required_argument, 0, LINK_SHELL_OPT_MEM_SLOT_3 },
 	{ "reset", no_argument, 0, LINK_SHELL_OPT_RESET },
+	{ "clear", no_argument, 0, LINK_SHELL_OPT_RESET },
 	{ "mreset_all", no_argument, 0, LINK_SHELL_OPT_MRESET_ALL },
 	{ "mreset_user", no_argument, 0, LINK_SHELL_OPT_MRESET_USER },
 	{ "ltem_nbiot", no_argument, 0, LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT },
@@ -404,6 +441,9 @@ static struct option long_options[] = {
 	{ "threshold", required_argument, 0, LINK_SHELL_OPT_THRESHOLD_TIME },
 	{ "interval", required_argument, 0, LINK_SHELL_OPT_NCELLMEAS_CONTINUOUS_INTERVAL_TIME },
 	{ "search_type", required_argument, 0, LINK_SHELL_OPT_NCELLMEAS_SEARCH_TYPE },
+	{ "search_cfg", required_argument, 0, LINK_SHELL_OPT_SEARCH_CFG },
+	{ "search_pattern_range", required_argument, 0, LINK_SHELL_OPT_SEARCH_PATTERN_RANGE },
+	{ "search_pattern_table", required_argument, 0, LINK_SHELL_OPT_SEARCH_PATTERN_TABLE },
 	{ "normal_no_rel14", no_argument, 0, LINK_SHELL_OPT_NMODE_NO_REL14 },
 	{ 0, 0, 0, 0 }
 };
@@ -446,6 +486,9 @@ static void link_shell_print_usage(struct link_shell_cmd_args_t *link_cmd_args)
 		break;
 	case LINK_CMD_RSRP:
 		mosh_print_no_format(link_rsrp_usage_str);
+		break;
+	case LINK_CMD_SEARCH:
+		mosh_print_no_format(link_search_usage_str);
 		break;
 	case LINK_CMD_NCELLMEAS:
 		mosh_print_no_format(link_ncellmeas_usage_str);
@@ -596,6 +639,9 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 	int threshold_time = 0;
 	int periodic_time = 0;
 
+	struct lte_lc_periodic_search_cfg search_cfg = { 0 };
+	bool search_cfg_given = false;
+
 	link_shell_cmd_defaults_set(&link_cmd_args);
 
 	if (argc < 2) {
@@ -613,6 +659,9 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 	} else if (strcmp(argv[1], "rsrp") == 0) {
 		require_subscribe = true;
 		link_cmd_args.command = LINK_CMD_RSRP;
+	} else if (strcmp(argv[1], "search") == 0) {
+		require_option = true;
+		link_cmd_args.command = LINK_CMD_SEARCH;
 	} else if (strcmp(argv[1], "ncellmeas") == 0) {
 		require_option = true;
 		link_cmd_args.command = LINK_CMD_NCELLMEAS;
@@ -696,49 +745,39 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 
 		/* Modem functional modes: */
 		case '0':
-			link_cmd_args.funmode_option =
-				LTE_LC_FUNC_MODE_POWER_OFF;
+			link_cmd_args.funmode_option = LTE_LC_FUNC_MODE_POWER_OFF;
 			break;
 		case '1':
 			link_cmd_args.funmode_option = LTE_LC_FUNC_MODE_NORMAL;
 			break;
 		case '4':
-			link_cmd_args.funmode_option =
-				LTE_LC_FUNC_MODE_OFFLINE;
+			link_cmd_args.funmode_option = LTE_LC_FUNC_MODE_OFFLINE;
 			break;
 		case LINK_SHELL_OPT_FUNMODE_LTEOFF:
-			link_cmd_args.funmode_option =
-				LTE_LC_FUNC_MODE_DEACTIVATE_LTE;
+			link_cmd_args.funmode_option = LTE_LC_FUNC_MODE_DEACTIVATE_LTE;
 			break;
 		case LINK_SHELL_OPT_FUNMODE_LTEON:
-			link_cmd_args.funmode_option =
-				LTE_LC_FUNC_MODE_ACTIVATE_LTE;
+			link_cmd_args.funmode_option = LTE_LC_FUNC_MODE_ACTIVATE_LTE;
 			break;
 		case LINK_SHELL_OPT_FUNMODE_GNSSOFF:
-			link_cmd_args.funmode_option =
-				LTE_LC_FUNC_MODE_DEACTIVATE_GNSS;
+			link_cmd_args.funmode_option = LTE_LC_FUNC_MODE_DEACTIVATE_GNSS;
 			break;
 		case LINK_SHELL_OPT_FUNMODE_GNSSON:
-			link_cmd_args.funmode_option =
-				LTE_LC_FUNC_MODE_ACTIVATE_GNSS;
+			link_cmd_args.funmode_option = LTE_LC_FUNC_MODE_ACTIVATE_GNSS;
 			break;
 		case LINK_SHELL_OPT_FUNMODE_UICCOFF:
-			link_cmd_args.funmode_option =
-				LTE_LC_FUNC_MODE_DEACTIVATE_UICC;
+			link_cmd_args.funmode_option = LTE_LC_FUNC_MODE_DEACTIVATE_UICC;
 			break;
 		case LINK_SHELL_OPT_FUNMODE_UICCON:
-			link_cmd_args.funmode_option =
-				LTE_LC_FUNC_MODE_ACTIVATE_UICC;
+			link_cmd_args.funmode_option = LTE_LC_FUNC_MODE_ACTIVATE_UICC;
 			break;
 		case LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_UICCON:
-			link_cmd_args.funmode_option =
-				LTE_LC_FUNC_MODE_OFFLINE_UICC_ON;
+			link_cmd_args.funmode_option = LTE_LC_FUNC_MODE_OFFLINE_UICC_ON;
 			break;
 
 		/* eDRX specifics: */
 		case 'x': /* drx_value */
-			if (strlen(optarg) ==
-			    LINK_SHELL_EDRX_VALUE_STR_LENGTH) {
+			if (strlen(optarg) == LINK_SHELL_EDRX_VALUE_STR_LENGTH) {
 				strcpy(edrx_value_str, optarg);
 				edrx_value_set = true;
 			} else {
@@ -762,8 +801,7 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 
 		/* PSM specifics: */
 		case 'p': /* rptau */
-			if (strlen(optarg) ==
-			    LINK_SHELL_PSM_PARAM_STR_LENGTH) {
+			if (strlen(optarg) == LINK_SHELL_PSM_PARAM_STR_LENGTH) {
 				strcpy(psm_rptau_bit_str, optarg);
 				psm_rptau_set = true;
 			} else {
@@ -774,8 +812,7 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case 't': /* rat */
-			if (strlen(optarg) ==
-			    LINK_SHELL_PSM_PARAM_STR_LENGTH) {
+			if (strlen(optarg) == LINK_SHELL_PSM_PARAM_STR_LENGTH) {
 				strcpy(psm_rat_bit_str, optarg);
 				psm_rat_set = true;
 			} else {
@@ -792,20 +829,17 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 			link_cmd_args.lte_mode = LTE_LC_LTE_MODE_LTEM;
 			break;
 		case 'n':
-			link_cmd_args.sysmode_option =
-				LTE_LC_SYSTEM_MODE_NBIOT;
+			link_cmd_args.sysmode_option = LTE_LC_SYSTEM_MODE_NBIOT;
 			link_cmd_args.lte_mode = LTE_LC_LTE_MODE_NBIOT;
 			break;
 		case 'g':
 			link_cmd_args.sysmode_option = LTE_LC_SYSTEM_MODE_GPS;
 			break;
 		case 'M':
-			link_cmd_args.sysmode_option =
-				LTE_LC_SYSTEM_MODE_LTEM_GPS;
+			link_cmd_args.sysmode_option = LTE_LC_SYSTEM_MODE_LTEM_GPS;
 			break;
 		case 'N':
-			link_cmd_args.sysmode_option =
-				LTE_LC_SYSTEM_MODE_NBIOT_GPS;
+			link_cmd_args.sysmode_option = LTE_LC_SYSTEM_MODE_NBIOT_GPS;
 			break;
 
 		/* Common options: */
@@ -870,8 +904,96 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 				goto show_usage;
 			}
 			break;
+		case LINK_SHELL_OPT_SEARCH_CFG: {
+			int loop_integer = 0;
+
+			ret = sscanf(
+				optarg,
+				"%d,%hd,%hd",
+				&loop_integer,
+				&search_cfg.return_to_pattern,
+				&search_cfg.band_optimization);
+
+			if (ret < 0) {
+				mosh_error("Reading --search_cfg option failed: %d", ret);
+				return -EINVAL;
+			} else if (ret != 3) {
+				mosh_error(
+					"3 values should be given for --search_cfg option "
+					"but %d given", ret);
+				return -EINVAL;
+			}
+
+			if (loop_integer != 0 && loop_integer != 1) {
+				mosh_error(
+					"1st parameter of --search_cfg option must be 0 or 1 "
+					"but %d given", loop_integer);
+				return -EINVAL;
+			}
+
+			search_cfg.loop = loop_integer;
+			search_cfg_given = true;
+			break;
+		}
+		case LINK_SHELL_OPT_SEARCH_PATTERN_RANGE: {
+			int index = search_cfg.pattern_count;
+
+			ret = sscanf(
+				optarg,
+				"%hd,%hd,%hd,%hd",
+				&search_cfg.patterns[index].range.initial_sleep,
+				&search_cfg.patterns[index].range.final_sleep,
+				&search_cfg.patterns[index].range.time_to_final_sleep,
+				&search_cfg.patterns[index].range.pattern_end_point);
+
+			if (ret < 0) {
+				mosh_error("Reading --search_pattern_range option failed: %d", ret);
+				return -EINVAL;
+			} else if (ret != 4) {
+				mosh_error(
+					"4 values should be given for --search_pattern_range "
+					"option but %d given", ret);
+				return -EINVAL;
+			}
+			search_cfg.patterns[index].type = LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE;
+			search_cfg.pattern_count++;
+			break;
+		}
+		case LINK_SHELL_OPT_SEARCH_PATTERN_TABLE: {
+			int index = search_cfg.pattern_count;
+
+			search_cfg.patterns[index].table.val_2 = -1;
+			search_cfg.patterns[index].table.val_3 = -1;
+			search_cfg.patterns[index].table.val_4 = -1;
+			search_cfg.patterns[index].table.val_5 = -1;
+
+			ret = sscanf(
+				optarg,
+				"%d,%d,%d,%d,%d",
+				&search_cfg.patterns[index].table.val_1,
+				&search_cfg.patterns[index].table.val_2,
+				&search_cfg.patterns[index].table.val_3,
+				&search_cfg.patterns[index].table.val_4,
+				&search_cfg.patterns[index].table.val_5);
+
+			if (ret < 0) {
+				mosh_error("Reading --search_pattern_table option failed: %d", ret);
+				return -EINVAL;
+			} else if (ret > 5) {
+				mosh_error(
+					"1 to 5 values should be given for --search_pattern_table "
+					"option but %d given", ret);
+				return -EINVAL;
+			}
+			search_cfg.patterns[index].type = LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE;
+			search_cfg.pattern_count++;
+			break;
+		}
 		case LINK_SHELL_OPT_RESET:
 			link_cmd_args.common_option = LINK_COMMON_RESET;
+			break;
+		case LINK_SHELL_OPT_WRITE:
+			link_cmd_args.common_option = LINK_COMMON_WRITE;
 			break;
 		case LINK_SHELL_OPT_MRESET_ALL:
 			link_cmd_args.mreset_type = LINK_SHELL_MODEM_FACTORY_RESET_ALL;
@@ -962,7 +1084,7 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 		}
 	}
 
-	/* Check that all mandatory args were given: */
+	/* Check that all mandatory args were given */
 	if (require_apn && apn == NULL) {
 		mosh_error("Option -a | -apn MUST be given. See usage:");
 		goto show_usage;
@@ -1163,8 +1285,7 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 					"Functional mode read successfully: %s",
 					link_shell_funmode_to_string(functional_mode, snum));
 			}
-		} else if (link_cmd_args.funmode_option !=
-			   LINK_FUNMODE_NONE) {
+		} else if (link_cmd_args.funmode_option != LINK_FUNMODE_NONE) {
 			ret = link_func_mode_set(link_cmd_args.funmode_option, nmode_use_rel14);
 			if (ret < 0) {
 				mosh_error("Cannot set functional mode: %d", ret);
@@ -1258,8 +1379,7 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 			} else {
 				mosh_print("eDRX enabled");
 			}
-		} else if (link_cmd_args.common_option ==
-			   LINK_COMMON_DISABLE) {
+		} else if (link_cmd_args.common_option == LINK_COMMON_DISABLE) {
 			ret = lte_lc_edrx_req(false);
 			if (ret < 0) {
 				mosh_error("Cannot disable eDRX: %d", ret);
@@ -1336,6 +1456,112 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 		(link_cmd_args.common_option == LINK_COMMON_SUBSCRIBE) ?
 		link_rsrp_subscribe(true) :
 		link_rsrp_subscribe(false);
+		break;
+	case LINK_CMD_SEARCH:
+		if (link_cmd_args.common_option == LINK_COMMON_READ) {
+
+			ret = lte_lc_periodic_search_get(&search_cfg);
+			if (ret) {
+				mosh_error("Reading search configuration failed: %d", ret);
+			} else {
+				mosh_print("Search configuration:");
+				mosh_print("  Loop: %s", search_cfg.loop ? "True" : "False");
+				mosh_print("  Return to pattern: %u", search_cfg.return_to_pattern);
+				mosh_print("  Band optimization: %u", search_cfg.band_optimization);
+				mosh_print("  Pattern count: %d", search_cfg.pattern_count);
+				for (int i = 0; i < search_cfg.pattern_count; i++) {
+					struct lte_lc_periodic_search_pattern *pattern =
+						&search_cfg.patterns[i];
+					mosh_print("  [%d] Type: %s", i,
+						(pattern->type ==
+						 LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE) ?
+						"Range" : "Table");
+
+					if (pattern->type == LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE) {
+						mosh_print("  [%d] Initial sleep: %u", i,
+							pattern->range.initial_sleep);
+						mosh_print("  [%d] Final sleep: %u", i,
+							pattern->range.final_sleep);
+						mosh_print("  [%d] Time to final sleep: %d", i,
+							pattern->range.time_to_final_sleep);
+						mosh_print("  [%d] Pattern endpoint: %d", i,
+							pattern->range.pattern_end_point);
+					} else if (pattern->type ==
+						   LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE) {
+						mosh_print("  [%d] Value 1: %d", i,
+							pattern->table.val_1);
+						mosh_print("  [%d] Value 2: %d", i,
+							pattern->table.val_2);
+						mosh_print("  [%d] Value 3: %d", i,
+							pattern->table.val_3);
+						mosh_print("  [%d] Value 4: %d", i,
+							pattern->table.val_4);
+						mosh_print("  [%d] Value 5: %d", i,
+							pattern->table.val_5);
+					} else {
+						mosh_error("Unknown pattern");
+					}
+				}
+			}
+		} else if (link_cmd_args.common_option == LINK_COMMON_WRITE) {
+
+			if (!search_cfg_given) {
+				mosh_print(
+					"No --search_cfg option given, "
+					"using default configuration");
+
+				/* Using search parameters for normal power level mentioned in
+				 * https://infocenter.nordicsemi.com/index.jsp?topic=%2Fref_at_commands%2FREF%2Fat_commands%2Fnw_service%2Fperiodicsearchconf_set.html
+				 */
+				search_cfg.loop = false;
+				search_cfg.return_to_pattern = 0;
+				search_cfg.band_optimization = 1;
+				search_cfg.pattern_count = 2;
+
+				search_cfg.patterns[0].type = LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE;
+				search_cfg.patterns[0].range.initial_sleep = 10;
+				search_cfg.patterns[0].range.final_sleep = 40;
+				search_cfg.patterns[0].range.time_to_final_sleep = 5;
+				search_cfg.patterns[0].range.pattern_end_point = 15;
+
+				search_cfg.patterns[1].type = LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE;
+				search_cfg.patterns[1].table.val_1 = 60;
+				search_cfg.patterns[1].table.val_2 = 90;
+				search_cfg.patterns[1].table.val_3 = 300;
+				search_cfg.patterns[1].table.val_4 = -1;
+				search_cfg.patterns[1].table.val_5 = -1;
+
+			} else if (search_cfg.pattern_count == 0) {
+				mosh_error(
+					"No --search_pattern_range or --search_pattern_table "
+					"options given");
+				return -EINVAL;
+			}
+
+			ret = lte_lc_periodic_search_set(&search_cfg);
+			if (ret) {
+				mosh_error("Writing search configuration failed: %d", ret);
+			} else {
+				mosh_print("Writing search configuration succeeded");
+			}
+
+		} else if (link_cmd_args.common_option == LINK_COMMON_START) {
+			ret = lte_lc_periodic_search_request();
+			if (ret) {
+				mosh_error("Starting search failed: %d", ret);
+			} else {
+				mosh_print("Search requested");
+			}
+		} else if (link_cmd_args.common_option == LINK_COMMON_RESET) {
+			ret = lte_lc_periodic_search_clear();
+			if (ret) {
+				mosh_error("Clearing search configuration failed: %d", ret);
+			} else {
+				mosh_print("Search configuration cleared");
+			}
+		} else {
+			goto show_usage;
+		}
 		break;
 	case LINK_CMD_NCELLMEAS:
 		if (link_cmd_args.common_option == LINK_COMMON_STOP) {
