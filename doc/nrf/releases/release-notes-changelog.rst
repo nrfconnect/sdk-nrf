@@ -482,7 +482,10 @@ Bluetooth libraries and services
 
 * Added:
 
-  * :ref:`mds_readme`
+  * :ref:`mds_readme`.
+  * :ref:`bt_le_adv_prov_readme`.
+    The subsystem manages Bluetooth LE advertising data and scan response data.
+    The subsystem does not control Bluetooth LE advertising by itself.
 
 * :ref:`bt_fast_pair_readme` service:
 
