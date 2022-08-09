@@ -3,9 +3,11 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-
 #include <zephyr/storage/flash_map.h>
 #include <zephyr/device.h>
+
+#if defined(CONFIG_FLASH_HAS_DRIVER_ENABLED)
+
 #include <zephyr/devicetree.h>
 #include <pm_config.h>
 #include <zephyr/sys/util_macro.h>
@@ -49,3 +51,10 @@ const struct flash_area default_flash_map[] = {
 
 const int flash_map_entries = ARRAY_SIZE(default_flash_map);
 const struct flash_area *flash_map = default_flash_map;
+
+#else
+
+const int flash_map_entries = 0;
+const struct flash_area *flash_map = NULL;
+
+#endif /* if defined(CONFIG_FLASH_HAS_DRIVER_ENABLED) */
