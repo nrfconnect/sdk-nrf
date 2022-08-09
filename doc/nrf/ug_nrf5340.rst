@@ -557,6 +557,8 @@ See the following instructions.
    :start-after: fota_upgrades_zigbee_start
    :end-before: fota_upgrades_zigbee_end
 
+.. _ug_nrf5340_multi_image_dfu:
+
 Simultaneous multi-image DFU
 ****************************
 
