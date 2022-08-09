@@ -121,12 +121,12 @@ void service_azimuth_elevation_simulation(void)
 	bt_addr_le_copy(&azimuth.bt_addr, &bt_addr);
 
 	err = bt_ddfs_elevation_measurement_notify(NULL, &elevation);
-	if (err && err != -EACCES) {
+	if (err && (err != -EACCES) && (err != -ENOTCONN)) {
 		printk("Failed to send elevation measurement (err %d)\n", err);
 	}
 
 	err = bt_ddfs_azimuth_measurement_notify(NULL, &azimuth);
-	if (err && err != -EACCES) {
+	if (err && (err != -EACCES) && (err != -ENOTCONN)) {
 		printk("Failed to send azimuth measurement (err %d)\n", err);
 	}
 }

@@ -51,16 +51,11 @@ LOG_MODULE_REGISTER(bt_ddfs, CONFIG_BT_DDFS_LOG_LEVEL);
 #define DDF_SVC_DISTANCE_MEAS_ATTR_IDX	1
 #define DDF_SVC_AZIMUTH_MEAS_ATTR_IDX	4
 #define DDF_SVC_ELEVATION_MEAS_ATTR_IDX	7
-#define DDF_SVC_CTRL_POINT_ATTR_IDX	12
 
 static struct {
 	struct bt_gatt_indicate_params ind_params;
 	struct bt_ddfs_features dm_features;
 	const struct bt_ddfs_cb *cb;
-	bool dm_notification_enabled;
-	bool am_notification_enabled;
-	bool em_notification_enebled;
-	bool dm_ctrl_pt_indicate_enabled;
 	bool indicating;
 } ddfs_inst;
 
@@ -90,26 +85,28 @@ struct dm_ctrl_point_ind {
 
 static void ddf_distance_meas_ccc_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
-	ddfs_inst.dm_notification_enabled = (value == BT_GATT_CCC_NOTIFY);
+	bool notification_enabled = (value == BT_GATT_CCC_NOTIFY);
 
 	if (ddfs_inst.cb && ddfs_inst.cb->dm_notification_config_changed) {
-		ddfs_inst.cb->dm_notification_config_changed(ddfs_inst.dm_notification_enabled);
+		ddfs_inst.cb->dm_notification_config_changed(notification_enabled);
 	}
 }
 
 static void ddf_azimuth_meas_ccc_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
-	ddfs_inst.am_notification_enabled = (value == BT_GATT_CCC_NOTIFY);
+	bool notification_enabled = (value == BT_GATT_CCC_NOTIFY);
+
 	if (ddfs_inst.cb && ddfs_inst.cb->am_notification_config_changed) {
-		ddfs_inst.cb->am_notification_config_changed(ddfs_inst.am_notification_enabled);
+		ddfs_inst.cb->am_notification_config_changed(notification_enabled);
 	}
 }
 
 static void ddf_elevation_meas_ccc_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
-	ddfs_inst.em_notification_enebled = (value == BT_GATT_CCC_NOTIFY);
+	bool notification_enabled = (value == BT_GATT_CCC_NOTIFY);
+
 	if (ddfs_inst.cb && ddfs_inst.cb->em_notification_config_changed) {
-		ddfs_inst.cb->em_notification_config_changed(ddfs_inst.em_notification_enebled);
+		ddfs_inst.cb->em_notification_config_changed(notification_enabled);
 	}
 }
 
@@ -183,8 +180,13 @@ static ssize_t dm_write_ctrl_point(struct bt_conn *conn, const struct bt_gatt_at
 	uint8_t status;
 
 	status = DDF_CP_RSP_OP_NOT_SUPP;
-	if (!ddfs_inst.dm_ctrl_pt_indicate_enabled) {
+
+	if (!bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_INDICATE)) {
 		return BT_GATT_ERR(DDF_ERR_CCC_CONFIG);
+	}
+
+	if (ddfs_inst.indicating) {
+		return BT_GATT_ERR(DDF_ERR_IN_PROGRESS);
 	}
 
 	if (!len) {
@@ -192,13 +194,13 @@ static ssize_t dm_write_ctrl_point(struct bt_conn *conn, const struct bt_gatt_at
 	}
 
 	if (!dm_ctrl_point_op_code_validate(req->op)) {
-		LOG_ERR("Operation code not supported %#x", req->op);
+		LOG_WRN("Operation code not supported %#x", req->op);
 		ctrl_point_ind(conn, req->op, DDF_CP_RSP_OP_NOT_SUPP, NULL, 0);
 		return len;
 	}
 
 	if (!dm_ctrl_point_param_validate(req, len)) {
-		LOG_ERR("Invalid parameter for op code %#x", req->op);
+		LOG_WRN("Invalid parameter for op code %#x", req->op);
 		ctrl_point_ind(conn, req->op, DDF_CP_RSP_INVAL_PARAM, NULL, 0);
 		return len;
 	}
@@ -234,11 +236,6 @@ static ssize_t dm_write_ctrl_point(struct bt_conn *conn, const struct bt_gatt_at
 	return len;
 }
 
-static void dm_ctrl_point_ccc_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
-{
-	ddfs_inst.dm_ctrl_pt_indicate_enabled = (value == BT_GATT_CCC_INDICATE);
-}
-
 BT_GATT_SERVICE_DEFINE(ddf_svc,
 	BT_GATT_PRIMARY_SERVICE(BT_UUID_DDFS),
 	BT_GATT_CHARACTERISTIC(BT_UUID_DDFS_DISTANCE_MEAS, BT_GATT_CHRC_NOTIFY,
@@ -254,19 +251,24 @@ BT_GATT_SERVICE_DEFINE(ddf_svc,
 			       BT_GATT_PERM_READ, read_ddf_dm_featute, NULL, NULL),
 	BT_GATT_CHARACTERISTIC(BT_UUID_DFFS_CTRL_POINT, BT_GATT_CHRC_WRITE |  BT_GATT_CHRC_INDICATE,
 			       BT_GATT_PERM_WRITE, NULL, dm_write_ctrl_point, NULL),
-	BT_GATT_CCC(dm_ctrl_point_ccc_cfg_changed, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
+	BT_GATT_CCC(NULL, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 );
 
 static void ctrl_point_ind(struct bt_conn *conn, uint8_t req_op, uint8_t status,
 			   const void *data, uint16_t len)
 {
+	int err;
+	static const struct bt_gatt_attr *attr;
 	struct dm_ctrl_point_ind *ind;
 
 	NET_BUF_SIMPLE_DEFINE(buf, sizeof(*ind) + len);
 
-	if (ddfs_inst.indicating) {
-		return;
+	if (!attr) {
+		attr = bt_gatt_find_by_uuid(ddf_svc.attrs, ddf_svc.attr_count,
+					    BT_UUID_DFFS_CTRL_POINT);
 	}
+
+	__ASSERT_NO_MSG(attr);
 
 	ind = net_buf_simple_add(&buf, sizeof(*ind));
 	ind->op = DDF_OP_RESPONSE;
@@ -277,13 +279,16 @@ static void ctrl_point_ind(struct bt_conn *conn, uint8_t req_op, uint8_t status,
 		net_buf_simple_add_mem(&buf, data, len);
 	}
 
-	ddfs_inst.ind_params.attr = &ddf_svc.attrs[DDF_SVC_CTRL_POINT_ATTR_IDX];
+	ddfs_inst.ind_params.attr = attr;
 	ddfs_inst.ind_params.func = indicate_cb;
 	ddfs_inst.ind_params.destroy = indicate_destroy;
 	ddfs_inst.ind_params.data = ind;
 	ddfs_inst.ind_params.len = buf.len;
 
-	if (bt_gatt_indicate(conn, &ddfs_inst.ind_params) == 0) {
+	err = bt_gatt_indicate(conn, &ddfs_inst.ind_params);
+	if (err) {
+		LOG_ERR("Failed to send Control Point indication, err: %d", err);
+	} else {
 		ddfs_inst.indicating = true;
 	}
 }
@@ -291,9 +296,7 @@ static void ctrl_point_ind(struct bt_conn *conn, uint8_t req_op, uint8_t status,
 int bt_ddfs_distance_measurement_notify(struct bt_conn *conn,
 					const struct bt_ddfs_distance_measurement *measurement)
 {
-	if (!ddfs_inst.dm_notification_enabled) {
-		return -EACCES;
-	}
+	static const struct bt_gatt_attr *attr = &ddf_svc.attrs[DDF_SVC_DISTANCE_MEAS_ATTR_IDX];
 
 	if (!measurement) {
 		return -EINVAL;
@@ -325,21 +328,19 @@ int bt_ddfs_distance_measurement_notify(struct bt_conn *conn,
 		net_buf_simple_add_le16(&buf, measurement->dist_estimates.mcpd.best);
 	}
 
-	if (conn) {
-		return bt_gatt_notify(conn, &ddf_svc.attrs[DDF_SVC_DISTANCE_MEAS_ATTR_IDX],
-				      dist_meas_notify, buf.len);
+	if (!conn) {
+		return bt_gatt_notify(NULL, attr, dist_meas_notify, buf.len);
+	} else if (bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_NOTIFY)) {
+		return bt_gatt_notify(conn, attr, dist_meas_notify, buf.len);
 	} else {
-		return bt_gatt_notify(NULL, &ddf_svc.attrs[DDF_SVC_DISTANCE_MEAS_ATTR_IDX],
-				      dist_meas_notify, buf.len);
+		return -EINVAL;
 	}
 }
 
 int bt_ddfs_azimuth_measurement_notify(struct bt_conn *conn,
 				       const struct bt_ddfs_azimuth_measurement *measurement)
 {
-	if (!ddfs_inst.am_notification_enabled) {
-		return -EACCES;
-	}
+	static const struct bt_gatt_attr *attr = &ddf_svc.attrs[DDF_SVC_AZIMUTH_MEAS_ATTR_IDX];
 
 	if (!measurement) {
 		return -EINVAL;
@@ -358,23 +359,19 @@ int bt_ddfs_azimuth_measurement_notify(struct bt_conn *conn,
 
 	net_buf_simple_add_le16(&buf, measurement->value);
 
-	if (conn) {
-		return bt_gatt_notify(conn, &ddf_svc.attrs[DDF_SVC_AZIMUTH_MEAS_ATTR_IDX],
-				      azimuth_meas_notify, buf.len);
+	if (!conn) {
+		return bt_gatt_notify(NULL, attr, azimuth_meas_notify, buf.len);
+	} else if (bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_NOTIFY)) {
+		return bt_gatt_notify(conn, attr, azimuth_meas_notify, buf.len);
 	} else {
-		return bt_gatt_notify(NULL, &ddf_svc.attrs[DDF_SVC_AZIMUTH_MEAS_ATTR_IDX],
-				      azimuth_meas_notify, buf.len);
+		return -EINVAL;
 	}
-
-	return 0;
 }
 
 int bt_ddfs_elevation_measurement_notify(struct bt_conn *conn,
 					const struct bt_ddfs_elevation_measurement *measurement)
 {
-	if (!ddfs_inst.em_notification_enebled) {
-		return -EACCES;
-	}
+	static const struct bt_gatt_attr *attr = &ddf_svc.attrs[DDF_SVC_ELEVATION_MEAS_ATTR_IDX];
 
 	if (!measurement) {
 		return -EINVAL;
@@ -393,15 +390,13 @@ int bt_ddfs_elevation_measurement_notify(struct bt_conn *conn,
 
 	net_buf_simple_add_u8(&buf, measurement->value);
 
-	if (conn) {
-		return bt_gatt_notify(conn, &ddf_svc.attrs[DDF_SVC_ELEVATION_MEAS_ATTR_IDX],
-				      elevation_meas_notify, buf.len);
+	if (!conn) {
+		return bt_gatt_notify(NULL, attr, elevation_meas_notify, buf.len);
+	} else if (bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_NOTIFY)) {
+		return bt_gatt_notify(conn, attr, elevation_meas_notify, buf.len);
 	} else {
-		return bt_gatt_notify(NULL, &ddf_svc.attrs[DDF_SVC_ELEVATION_MEAS_ATTR_IDX],
-				      elevation_meas_notify, buf.len);
+		return -EINVAL;
 	}
-
-	return 0;
 }
 
 int bt_ddfs_init(const struct bt_ddfs_init_params *init)
