@@ -42,6 +42,7 @@ extensions = [
     "sphinx_tabs.tabs",
     "software_maturity_table",
     "sphinx_togglebutton",
+    "notfound.extension",
 ]
 
 linkcheck_ignore = [
@@ -183,6 +184,11 @@ ncs_cache_build_dir = utils.get_builddir()
 ncs_cache_config = NRF_BASE / "doc" / "cache.yml"
 ncs_cache_manifest = NRF_BASE / "west.yml"
 
+# Options for sphinx_notfound_page ---------------------------------------------
+
+notfound_urls_prefix = "/nRF_Connect_SDK/doc/{}/nrf/".format(
+    "latest" if version.endswith("99") else version
+)
 
 def setup(app):
     app.add_css_file("css/nrf.css")
