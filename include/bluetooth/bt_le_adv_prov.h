@@ -42,7 +42,8 @@ struct bt_le_adv_prov_feedback {
 	/** Instead of instantly stopping Bluetooth advertising, the advertising may enter grace
 	 * period (if requested by at least one of the providers). During the grace period
 	 * advertising is continued for the requested time, but the advertising data is modified.
-	 * The value is used by providers to inform about required time of grace period.
+	 * The value is used by providers to inform about required minimal time of grace period.
+	 * The time of grace period advertising is equal to maximum time requested by providers.
 	 */
 	size_t grace_period_s;
 };
