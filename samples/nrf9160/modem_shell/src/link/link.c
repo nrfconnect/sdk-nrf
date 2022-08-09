@@ -251,6 +251,7 @@ void link_init(void)
 	link_shell_pdn_init();
 
 	lte_lc_register_handler(link_ind_handler);
+	(void)lte_lc_modem_events_enable();
 
 	if (link_sett_is_dnsaddr_enabled()) {
 		(void)link_setdnsaddr(link_sett_dnsaddr_ip_get());
@@ -409,6 +410,9 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		}
 		break;
 	}
+	case LTE_LC_EVT_MODEM_EVENT:
+		link_shell_print_modem_domain_event(evt->modem_evt);
+		break;
 	default:
 		break;
 	}
