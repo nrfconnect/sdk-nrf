@@ -39,20 +39,20 @@ void mpsl_fem_pin_extend_with_port(uint8_t *pin, const char *lbl)
 	 */
 
 #if DT_NODE_HAS_STATUS(DT_NODELABEL(gpio0), okay)
-	if (strcmp(lbl, DT_LABEL(DT_NODELABEL(gpio0))) == 0) {
+	if (strcmp(lbl, UTIL_CAT(DT_NODELABEL(gpio0), _FULL_NAME)) == 0) {
 		return;
 	}
 #endif
 
 #if DT_NODE_HAS_STATUS(DT_NODELABEL(gpio1), okay)
-	if (strcmp(lbl, DT_LABEL(DT_NODELABEL(gpio1))) == 0) {
+	if (strcmp(lbl, UTIL_CAT(DT_NODELABEL(gpio1), _FULL_NAME)) == 0) {
 		*pin += 32;
 		return;
 	}
 #endif
 	(void)pin;
 
-	__ASSERT(false, "Unknown GPIO port DT label");
+	__ASSERT(false, "Unknown GPIO port");
 }
 
 #endif /* !defined(CONFIG_MPSL_FEM_PIN_FORWARDER) */
