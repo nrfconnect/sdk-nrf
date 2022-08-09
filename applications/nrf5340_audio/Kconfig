@@ -39,6 +39,7 @@ rsource "src/drivers/Kconfig"
 rsource "src/events/Kconfig"
 rsource "src/modules/Kconfig"
 rsource "src/utils/Kconfig"
+rsource "dfu/conf/Kconfig.dfu"
 
 #----------------------------------------------------------------------------#
 menu "Logging"

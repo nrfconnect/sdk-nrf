@@ -6,6 +6,30 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
+if (CONFIG_AUDIO_DFU EQUAL 1)
+    set(mcuboot_OVERLAY_CONFIG
+    ${CMAKE_CURRENT_LIST_DIR}/dfu/conf/overlay-mcuboot.conf
+    )
+
+endif()
+
+if (CONFIG_AUDIO_DFU EQUAL 2)
+    set(mcuboot_OVERLAY_CONFIG
+        ${CMAKE_CURRENT_LIST_DIR}/dfu/conf/overlay-mcuboot_external_flash.conf
+    )
+    set(mcuboot_DTC_OVERLAY_FILE ${CMAKE_CURRENT_LIST_DIR}/dfu/conf/overlay-dfu_external_flash.overlay)
+    set(DTC_OVERLAY_FILE ${CMAKE_CURRENT_LIST_DIR}/dfu/conf/overlay-dfu_external_flash.overlay)
+    set(mcuboot_PM_STATIC_YML_FILE ${CMAKE_CURRENT_LIST_DIR}/dfu/conf/pm_dfu_external_flash.yml)
+    set(PM_STATIC_YML_FILE ${CMAKE_CURRENT_LIST_DIR}/dfu/conf/pm_dfu_external_flash.yml)
+endif()
+
+if ((CONFIG_AUDIO_DFU EQUAL 1) OR (CONFIG_AUDIO_DFU EQUAL 2))
+    set(hci_rpmsg_b0n_OVERLAY_CONFIG ${CMAKE_CURRENT_LIST_DIR}/dfu/conf/b0n.conf)
+    if (CONFIG_B0N_MINIMAL)
+        list(APPEND hci_rpmsg_b0n_OVERLAY_CONFIG overlay-minimal-size.conf)
+    endif()
+endif()
+
 # Flag which defines whether application is compiled as gateway/dongle or headset
 add_compile_definitions(HEADSET=1)
 add_compile_definitions(GATEWAY=2)

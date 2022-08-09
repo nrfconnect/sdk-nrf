@@ -167,6 +167,7 @@ nRF5340 Audio
     * Remove support for SBC
     * Update network controller
     * Bonding between gateway and headset(s) in CIS (Connected Isochronous Stream)
+    * Add DFU support for internal and external flash layouts
 
   * Updated:
 

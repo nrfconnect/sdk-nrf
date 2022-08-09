@@ -26,6 +26,18 @@
 #include "audio_system.h"
 #include "channel_assignment.h"
 #include "streamctrl.h"
+#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
+#include <os_mgmt/os_mgmt.h>
+#endif
+#ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
+#include <img_mgmt/img_mgmt.h>
+#endif
+#ifdef CONFIG_MCUMGR_CMD_STAT_MGMT
+#include <stat_mgmt/stat_mgmt.h>
+#endif
+#ifdef CONFIG_MCUMGR_SMP_BT
+#include <zephyr/mgmt/mcumgr/smp_bt.h>
+#endif
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_LOG_MAIN_LEVEL);
@@ -162,6 +174,26 @@ void on_ble_core_ready(void)
 	}
 }
 
+/* MCUMGR related functions */
+static void mcumgr_register(void)
+{
+#if (CONFIG_AUDIO_DFU > 0)
+	/* Enable MCUMGR */
+	#ifdef CONFIG_MCUMGR_CMD_OS_MGMT
+		os_mgmt_register_group();
+	#endif
+	#ifdef CONFIG_MCUMGR_CMD_IMG_MGMT
+		img_mgmt_register_group();
+	#endif
+	#ifdef CONFIG_MCUMGR_CMD_STAT_MGMT
+		stat_mgmt_register_group();
+	#endif
+	#ifdef CONFIG_MCUMGR_SMP_BT
+		smp_bt_register();
+	#endif
+#endif
+}
+
 void main(void)
 {
 	int ret;
@@ -223,6 +255,8 @@ void main(void)
 
 	ret = streamctrl_start();
 	ERR_CHK(ret);
+
+	mcumgr_register();
 
 	while (1) {
 		streamctrl_event_handler();
