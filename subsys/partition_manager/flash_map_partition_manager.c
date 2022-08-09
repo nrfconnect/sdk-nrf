@@ -3,10 +3,11 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#if defined(CONFIG_FLASH_HAS_DRIVER_ENABLED)
-
 #include <zephyr/storage/flash_map.h>
 #include <zephyr/device.h>
+
+#if defined(CONFIG_FLASH_HAS_DRIVER_ENABLED)
+
 #include <zephyr/devicetree.h>
 #include <pm_config.h>
 #include <zephyr/sys/util_macro.h>
