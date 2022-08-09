@@ -65,9 +65,9 @@ You can enable both methods after :ref:`building and running the sample <matter_
 Remote testing in a network
 ---------------------------
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_remote_testing_start
-    :end-before: matter_door_lock_sample_remote_testing_end
+.. include:: ../light_bulb/README.rst
+    :start-after: matter_light_bulb_sample_remote_testing_start
+    :end-before: matter_light_bulb_sample_remote_testing_end
 
 Configuration
 *************
@@ -77,16 +77,16 @@ Configuration
 Matter window covering build types
 ==================================
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_configuration_file_types_start
-    :end-before: matter_door_lock_sample_configuration_file_types_end
+.. include:: ../light_bulb/README.rst
+    :start-after: matter_light_bulb_sample_configuration_file_types_start
+    :end-before: matter_light_bulb_sample_configuration_file_types_end
 
 Device Firmware Upgrade support
 ===============================
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_build_with_dfu_start
-    :end-before: matter_door_lock_sample_build_with_dfu_end
+.. include:: ../light_bulb/README.rst
+    :start-after: matter_light_bulb_sample_build_with_dfu_start
+    :end-before: matter_light_bulb_sample_build_with_dfu_end
 
 FEM support
 ===========
@@ -220,9 +220,9 @@ Remote control allows you to control the Matter window covering device from a Th
 Commissioning the device
 ------------------------
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_commissioning_start
-    :end-before: matter_door_lock_sample_commissioning_end
+.. include:: ../light_bulb/README.rst
+    :start-after: matter_light_bulb_sample_commissioning_start
+    :end-before: matter_light_bulb_sample_commissioning_end
 
 Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE.
 Press **Button 4** to enable the Bluetooth LE advertising.

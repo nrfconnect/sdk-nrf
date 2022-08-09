@@ -46,9 +46,14 @@ You can enable both methods after :ref:`building and running the sample <matter_
 Remote testing in a network
 ===========================
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_remote_testing_start
-    :end-before: matter_door_lock_sample_remote_testing_end
+.. matter_light_bulb_sample_remote_testing_start
+
+By default, the Matter accessory device has Thread disabled.
+You must pair it with the Matter controller over Bluetooth® LE to get the configuration from the controller to use the device within a Thread network.
+The controller must get the commissioning information from the Matter accessory device and provision the device into the network.
+For details, see the `Commissioning the device`_ section.
+
+.. matter_light_bulb_sample_remote_testing_end
 
 Configuration
 *************
@@ -58,16 +63,73 @@ Configuration
 Matter light bulb build types
 =============================
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_configuration_file_types_start
-    :end-before: matter_door_lock_sample_configuration_file_types_end
+.. matter_light_bulb_sample_configuration_file_types_start
+
+The sample uses different configuration files depending on the supported features.
+Configuration files are provided for different build types and they are located in the application root directory.
+
+The :file:`prj.conf` file represents a ``debug`` build type.
+Other build types are covered by dedicated files with the build type added as a suffix to the ``prj`` part, as per the following list.
+For example, the ``release`` build type file name is :file:`prj_release.conf`.
+If a board has other configuration files, for example associated with partition layout or child image configuration, these follow the same pattern.
+
+.. include:: /gs_modifying.rst
+   :start-after: build_types_overview_start
+   :end-before: build_types_overview_end
+
+Before you start testing the application, you can select one of the build types supported by the sample.
+This sample supports the following build types, depending on the selected board:
+
+* ``debug`` -- Debug version of the application - can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
+* ``release`` -- Release version of the application - can be used to enable only the necessary application functionalities to optimize its performance.
+* ``no_dfu`` -- Debug version of the application without Device Firmware Upgrade feature support - can be used for the nRF52840 DK, nRF5340 DK, and nRF21540 DK.
+
+.. note::
+    `Selecting a build type`_ is optional.
+    The ``debug`` build type is used by default if no build type is explicitly selected.
+
+.. matter_light_bulb_sample_configuration_file_types_end
 
 Device Firmware Upgrade support
 ===============================
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_build_with_dfu_start
-    :end-before: matter_door_lock_sample_build_with_dfu_end
+.. matter_light_bulb_sample_build_with_dfu_start
+
+.. note::
+   You can enable over-the-air Device Firmware Upgrade only on hardware platforms that have external flash memory.
+   Currently only nRF52840 DK and nRF5340 DK support Device Firmware Upgrade feature.
+
+The sample supports over-the-air (OTA) device firmware upgrade (DFU) using one of the two following protocols:
+
+* Matter OTA update protocol that uses the Matter operational network for querying and downloading a new firmware image.
+* Simple Management Protocol (SMP) over Bluetooth® LE.
+  In this case, the DFU can be done either using a smartphone application or a PC command line tool.
+  Note that this protocol is not part of the Matter specification.
+
+In both cases, :ref:`MCUboot <mcuboot:mcuboot_wrapper>` secure bootloader is used to apply the new firmware image.
+
+The DFU over Matter is enabled by default.
+The following configuration arguments are available during the build process for configuring DFU:
+
+* To configure the sample to support the DFU over Matter and SMP, use the ``-DCONFIG_CHIP_DFU_OVER_BT_SMP=y`` build flag.
+* To configure the sample to disable the DFU and the secure bootloader, use the ``-DCONF_FILE=prj_no_dfu.conf`` build flag.
+
+See :ref:`cmake_options` for instructions on how to add these options to your build.
+
+When building on the command line, run the following command with *build_target* replaced with the build target name of the hardware platform you are using (see `Requirements`_), and *dfu_build_flag* replaced with the desired DFU build flag:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *build_target* -- *dfu_build_flag*
+
+For example:
+
+.. code-block:: console
+
+   west build -b nrf52840dk_nrf52840 -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
+
+.. matter_light_bulb_sample_build_with_dfu_end
 
 FEM support
 ===========
@@ -223,9 +285,19 @@ Remote control allows you to control the Matter light bulb device from a Thread 
 Commissioning the device
 ------------------------
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_commissioning_start
-    :end-before: matter_door_lock_sample_commissioning_end
+.. matter_light_bulb_sample_commissioning_start
+
+To commission the device, go to the :ref:`ug_matter_configuring_env` guide and complete the steps for the Matter controller you want to use.
+The guide walks you through the following steps:
+
+* Configure the Thread Border Router.
+* Build and install the Matter controller.
+* Commission the device.
+* Send Matter commands that cover scenarios described in the `Testing`_ section.
+
+If you are new to Matter, the recommended approach is to use :ref:`ug_matter_configuring_controller_chip_tool`.
+
+.. matter_light_bulb_sample_commissioning_end
 
 Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE.
 The device becomes discoverable automatically upon the device startup, but only for a predefined period of time (15 minutes by default).

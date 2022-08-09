@@ -88,9 +88,9 @@ This sample supports the following build types, depending on the selected board:
 Device Firmware Upgrade support
 ===============================
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_build_with_dfu_start
-    :end-before: matter_door_lock_sample_build_with_dfu_end
+.. include:: ../light_bulb/README.rst
+    :start-after: matter_light_bulb_sample_build_with_dfu_start
+    :end-before: matter_light_bulb_sample_build_with_dfu_end
 
 FEM support
 ===========
