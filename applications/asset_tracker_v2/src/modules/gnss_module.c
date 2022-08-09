@@ -524,15 +524,24 @@ static int setup(void)
 /* Message handler for STATE_INIT. */
 static void on_state_init(struct gnss_msg_data *msg)
 {
-	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_INIT)) {
-		gnss_timeout = msg->module.data.data.cfg.gnss_timeout;
+	if (IS_EVENT(msg, modem, MODEM_EVT_INITIALIZED)) {
+		int err;
+
+		err = setup();
+		if (err) {
+			LOG_ERR("setup, error: %d", err);
+			SEND_ERROR(gnss, GNSS_EVT_ERROR_CODE, err);
+		}
+
+		state_set(STATE_RUNNING);
 	}
 }
 
 /* Message handler for STATE_RUNNING. */
 static void on_state_running(struct gnss_msg_data *msg)
 {
-	if (IS_EVENT(msg, data, DATA_EVT_CONFIG_READY)) {
+	if ((IS_EVENT(msg, data, DATA_EVT_CONFIG_INIT)) ||
+	    (IS_EVENT(msg, data, DATA_EVT_CONFIG_READY))) {
 		gnss_timeout = msg->module.data.data.cfg.gnss_timeout;
 	}
 }
@@ -586,18 +595,6 @@ static void on_all_states(struct gnss_msg_data *msg)
 		}
 
 		state_set(STATE_INIT);
-	}
-
-	if (IS_EVENT(msg, modem, MODEM_EVT_INITIALIZED)) {
-		int err;
-
-		err = setup();
-		if (err) {
-			LOG_ERR("setup, error: %d", err);
-			SEND_ERROR(gnss, GNSS_EVT_ERROR_CODE, err);
-		}
-
-		state_set(STATE_RUNNING);
 	}
 
 	if (IS_EVENT(msg, util, UTIL_EVT_SHUTDOWN_REQUEST)) {
