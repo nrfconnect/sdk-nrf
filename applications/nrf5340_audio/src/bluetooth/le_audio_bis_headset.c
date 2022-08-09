@@ -38,6 +38,7 @@ static uint32_t bis_index_bitfield;
 
 static le_audio_receive_cb receive_cb;
 static bool init_routine_completed;
+static bool playing_state = true;
 
 static int bis_headset_cleanup(bool from_sync_lost_cb);
 
@@ -244,7 +245,7 @@ static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 {
 	int ret;
 
-	if (init_routine_completed) {
+	if (streams[0].ep->status.state == BT_AUDIO_EP_STATE_STREAMING || !playing_state) {
 		return;
 	}
 
@@ -361,12 +362,13 @@ int le_audio_volume_mute(void)
 
 int le_audio_play(void)
 {
-	return bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfield, streams_p,
-					    &lc3_preset.codec, NULL);
+	playing_state = true;
+	return 0;
 }
 
 int le_audio_pause(void)
 {
+	playing_state = false;
 	return bt_audio_broadcast_sink_stop(broadcast_sink);
 }
 
