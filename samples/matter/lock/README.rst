@@ -9,8 +9,9 @@ Matter: Door lock
    :depth: 2
 
 This door lock sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a door lock device with one basic bolt.
-This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread network.
-Additionally, this device works as a Thread :ref:`Router <thread_ot_device_types>`.
+This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread or Wi-Fi network.
+Support for both Thread and Wi-Fi is mutually exclusive and depends on the hardware platform, so only one protocol can be supported for a specific lock device.
+In case of Thread, this device works as a Thread :ref:`Sleepy End Device <thread_ot_device_types>`.
 You can use this sample as a reference for creating your application.
 
 Requirements
@@ -20,11 +21,19 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-If you want to commission the lock device and :ref:`control it remotely <matter_lock_sample_network_mode>` through a Thread network, you also need a Matter controller device :ref:`configured on PC or mobile <ug_matter_configuring>`.
+If you want to commission the lock device and :ref:`control it remotely <matter_lock_sample_network_mode>` through an IPv6 network, you also need a Matter controller device :ref:`configured on PC or mobile <ug_matter_configuring>`.
 This requires additional hardware depending on the setup you choose.
 
 .. note::
     |matter_gn_required_note|
+
+IPv6 network support
+====================
+
+The development kits for this sample offer the following IPv6 network support for Matter:
+
+* Matter over Thread is supported for ``nrf52840dk_nrf52840``, ``nrf5340dk_nrf5340_cpuapp``, and ``nrf21540dk_nrf52840``.
+* Matter over Wi-Fi is supported for ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield attached or for ``nrf7002dk_nrf5340_cpuapp``.
 
 Overview
 ********
@@ -33,9 +42,8 @@ The sample uses buttons for changing the lock and device states, and LEDs to sho
 You can test it in the following ways:
 
 * Standalone, using a single DK that runs the door lock application.
-* Remotely over the Thread protocol, which requires more devices.
+* Remotely over the Thread or the Wi-Fi protocol, which in either case requires more devices, including a Matter controller that you can configure either on a PC or a mobile device.
 
-The remote control testing requires a Matter controller that you can configure either on a PC or a mobile device (for remote testing in a network).
 You can enable both methods after :ref:`building and running the sample <matter_lock_sample_remote_control>`.
 
 .. _matter_lock_sample_network_mode:
@@ -45,8 +53,8 @@ Remote testing in a network
 
 .. matter_door_lock_sample_remote_testing_start
 
-By default, the Matter accessory device has Thread disabled.
-You must pair it with the Matter controller over Bluetooth® LE to get the configuration from the controller to use the device within a Thread network.
+By default, the Matter accessory device has IPv6 networking disabled.
+You must pair it with the Matter controller over Bluetooth® LE to get the configuration from the controller to use the device within a Thread or Wi-Fi network.
 You have to make the device discoverable manually (for security reasons).
 The controller must get the commissioning information from the Matter accessory device and provision the device into the network.
 For details, see the `Commissioning the device`_ section.
@@ -80,7 +88,7 @@ This sample supports the following build types, depending on the selected board:
 
 * ``debug`` -- Debug version of the application - can be used to enable additional features for verifying the application behavior, such as logs or command-line shell.
 * ``release`` -- Release version of the application - can be used to enable only the necessary application functionalities to optimize its performance.
-* ``no_dfu`` -- Debug version of the application without Device Firmware Upgrade feature support - can be used for the nRF52840 DK, nRF5340 DK and nRF21540 DK.
+* ``no_dfu`` -- Debug version of the application without Device Firmware Upgrade feature support - can be used for the nRF52840 DK, nRF5340 DK, nRF7002 DK, and nRF21540 DK.
 
 .. note::
     `Selecting a build type`_ is optional.
@@ -104,11 +112,13 @@ The sample supports over-the-air (OTA) device firmware upgrade (DFU) using one o
   In this case, the DFU can be done either using a smartphone application or a PC command line tool.
   Note that this protocol is not part of the Matter specification.
 
-In both cases, MCUboot secure bootloader is used to apply the new firmware image.
+In both cases, :ref:`MCUboot <mcuboot:mcuboot_wrapper>` secure bootloader is used to apply the new firmware image.
 
 The DFU over Matter is enabled by default.
-To configure the sample to support the DFU over Matter and SMP, use the ``-DCONFIG_CHIP_DFU_OVER_BT_SMP=y`` build flag during the build process.
-To configure the sample to disable the DFU and the secure bootloader, use the ``-DCONF_FILE=prj_no_dfu.conf`` build flag during the build process.
+The following configuration arguments are available during the build process for configuring DFU:
+
+* To configure the sample to support the DFU over Matter and SMP, use the ``-DCONFIG_CHIP_DFU_OVER_BT_SMP=y`` build flag.
+* To configure the sample to disable the DFU and the secure bootloader, use the ``-DCONF_FILE=prj_no_dfu.conf`` build flag.
 
 See :ref:`cmake_options` for instructions on how to add these options to your build.
 
@@ -118,6 +128,12 @@ When building on the command line, run the following command with *build_target*
    :class: highlight
 
    west build -b *build_target* -- *dfu_build_flag*
+
+For example:
+
+.. code-block:: console
+
+   west build -b nrf52840dk_nrf52840 -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
 
 .. matter_door_lock_sample_build_with_dfu_end
 
@@ -155,7 +171,7 @@ Button 1:
     Depending on how long you press the button:
 
     * If pressed for less than three seconds, it initiates the SMP server (Security Manager Protocol).
-      After that the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started.
+      After that, the Direct Firmware Update (DFU) over Bluetooth Low Energy can be started.
       (See `Upgrading the device firmware`_.)
     * If pressed for more than three seconds, it initiates the factory reset of the device.
       Releasing the button within the 3-second window cancels the factory reset procedure.
@@ -163,13 +179,19 @@ Button 1:
 .. matter_door_lock_sample_button1_end
 
 Button 2:
-    Changes the lock state to the opposite one.
+    * On nRF52840 DK, nRF5340 DK, and nRF21540 DK: Changes the lock state to the opposite one.
+    * On nRF7002 DK:
+
+      * If pressed for less than three seconds, it changes the lock state to the opposite one.
+      * If pressed for more than three seconds, it starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
 
 .. matter_door_lock_sample_button4_start
 
 Button 4:
-    Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
-    This button is used during the :ref:`commissioning procedure <matter_lock_sample_remote_control_commissioning>`.
+    * On nRF52840 DK, nRF5340 DK, and nRF21540 DK: Starts the NFC tag emulation, enables Bluetooth LE advertising for the predefined period of time (15 minutes by default), and makes the device discoverable over Bluetooth LE.
+      This button is used during the :ref:`commissioning procedure <matter_lock_sample_remote_control_commissioning>`.
+
+    * On nRF7002 DK: Not available.
 
 .. matter_door_lock_sample_button4_end
 
@@ -264,11 +286,11 @@ The device reboots after all its settings are erased.
 Enabling remote control
 =======================
 
-Remote control allows you to control the Matter door lock device from a Thread network.
+Remote control allows you to control the Matter door lock device from a Thread or a Wi-Fi network.
 
 .. matter_door_lock_sample_remote_control_start
 
-`Commissioning the device`_ allows you to set up a testing environment and remotely control the sample over a Matter-enabled Thread network.
+`Commissioning the device`_ allows you to set up a testing environment and remotely control the sample over a Matter-enabled Thread or Wi-Fi network.
 
 .. matter_door_lock_sample_remote_control_end
 
@@ -282,7 +304,7 @@ Commissioning the device
 To commission the device, go to the :ref:`ug_matter_configuring_env` guide and complete the steps for the Matter controller you want to use.
 The guide walks you through the following steps:
 
-* Configure the Thread Border Router.
+* Only if you are configuring Matter over Thread: Configure the Thread Border Router.
 * Build and install the Matter controller.
 * Commission the device.
 * Send Matter commands that cover scenarios described in the `Testing`_ section.

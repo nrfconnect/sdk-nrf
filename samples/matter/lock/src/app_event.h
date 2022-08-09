@@ -27,7 +27,7 @@ struct AppEvent {
 
 	AppEvent() = default;
 	AppEvent(LockEventType type, BoltLockManager::OperationSource source) : Type(type), LockEvent{ source } {}
-	explicit AppEvent(FunctionEventType type) : Type(type) {}
+	AppEvent(FunctionEventType type, uint8_t buttonNumber) : Type(type), FunctionEvent{ buttonNumber } {}
 	AppEvent(UpdateLedStateEventType type, LEDWidget *ledWidget) : Type(type), UpdateLedStateEvent{ ledWidget } {}
 	explicit AppEvent(OtherEventType type) : Type(type) {}
 
@@ -40,5 +40,8 @@ struct AppEvent {
 		struct {
 			LEDWidget *LedWidget;
 		} UpdateLedStateEvent;
+		struct {
+			uint8_t ButtonNumber;
+		} FunctionEvent;
 	};
 };
