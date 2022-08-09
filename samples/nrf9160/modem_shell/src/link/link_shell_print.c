@@ -68,6 +68,27 @@ void link_shell_print_modem_sleep_notif(const struct lte_lc_evt *const evt)
 	}
 }
 
+void link_shell_print_modem_domain_event(enum lte_lc_modem_evt modem_evt)
+{
+	switch (modem_evt) {
+	case LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE:
+		mosh_print("Modem domain event: Light search done");
+		break;
+	case LTE_LC_MODEM_EVT_SEARCH_DONE:
+		mosh_print("Modem domain event: Search done");
+		break;
+	case LTE_LC_MODEM_EVT_RESET_LOOP:
+		mosh_print("Modem domain event: Reset loop");
+		break;
+	case LTE_LC_MODEM_EVT_BATTERY_LOW:
+		mosh_print("Modem domain event: Battery low");
+		break;
+	case LTE_LC_MODEM_EVT_OVERHEATED:
+		mosh_print("Modem domain event: Overheated");
+		break;
+	}
+}
+
 const char *link_shell_funmode_to_string(int funmode, char *out_str_buff)
 {
 	struct mapping_tbl_item const mapping_table[] = {
