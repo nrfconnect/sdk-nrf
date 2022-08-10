@@ -1,4 +1,8 @@
 / {
+	chosen {
+		ncs,ml-app-ei-data-forwarder-uart = &uart0;
+	};
+
 	sensor_sim: sensor-sim {
 		compatible = "nordic,sensor-sim";
 		label = "SENSOR_SIM";

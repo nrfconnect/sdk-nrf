@@ -19,7 +19,9 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_ML_APP_EI_DATA_FORWARDER_LOG_LEVEL);
 
-#define UART_LABEL		CONFIG_ML_APP_EI_DATA_FORWARDER_UART_DEV
+#define EI_DATA_FORWARDER_UART_NODE DT_CHOSEN(ncs_ml_app_ei_data_forwarder_uart)
+#define EI_DATA_FORWARDER_UART_DEV DEVICE_DT_GET(EI_DATA_FORWARDER_UART_NODE)
+
 #define UART_BUF_SIZE		CONFIG_ML_APP_EI_DATA_FORWARDER_BUF_SIZE
 #define ML_APP_MODE_CONTROL	IS_ENABLED(CONFIG_ML_APP_MODE_EVENTS)
 
@@ -156,9 +158,9 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 
 static int init(void)
 {
-	dev = device_get_binding(UART_LABEL);
+	dev = EI_DATA_FORWARDER_UART_DEV;
 
-	if (!dev) {
+	if (!device_is_ready(dev)) {
 		LOG_ERR("UART device binding failed");
 		return -ENXIO;
 	}

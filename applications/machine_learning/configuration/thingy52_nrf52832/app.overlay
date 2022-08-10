@@ -1,4 +1,8 @@
 / {
+	chosen {
+		ncs,ml-app-ei-data-forwarder-uart = &uart0;
+	};
+
 	leds {
 		status = "okay";
 		label = "ML state LED";
