@@ -150,50 +150,6 @@ namespace app
 
 		} // namespace DiagnosticLogs
 
-		namespace EthernetNetworkDiagnostics
-		{
-			void DispatchServerCommand(CommandHandler *apCommandObj,
-						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
-			{
-				CHIP_ERROR TLVError = CHIP_NO_ERROR;
-				bool wasHandled = false;
-				{
-					switch (aCommandPath.mCommandId) {
-					case Commands::ResetCounts::Id: {
-						Commands::ResetCounts::DecodableType commandData;
-						TLVError = DataModel::Decode(aDataTlv, commandData);
-						if (TLVError == CHIP_NO_ERROR) {
-							wasHandled =
-								emberAfEthernetNetworkDiagnosticsClusterResetCountsCallback(
-									apCommandObj, aCommandPath, commandData);
-						}
-						break;
-					}
-					default: {
-						// Unrecognized command ID, error status will apply.
-						apCommandObj->AddStatus(
-							aCommandPath,
-							Protocols::InteractionModel::Status::UnsupportedCommand);
-						ChipLogError(Zcl,
-							     "Unknown command " ChipLogFormatMEI
-							     " for cluster " ChipLogFormatMEI,
-							     ChipLogValueMEI(aCommandPath.mCommandId),
-							     ChipLogValueMEI(aCommandPath.mClusterId));
-						return;
-					}
-					}
-				}
-
-				if (CHIP_NO_ERROR != TLVError || !wasHandled) {
-					apCommandObj->AddStatus(aCommandPath,
-								Protocols::InteractionModel::Status::InvalidCommand);
-					ChipLogProgress(Zcl, "Failed to dispatch command, TLVError=%" CHIP_ERROR_FORMAT,
-							TLVError.Format());
-				}
-			}
-
-		} // namespace EthernetNetworkDiagnostics
-
 		namespace GeneralCommissioning
 		{
 			void DispatchServerCommand(CommandHandler *apCommandObj,
@@ -868,10 +824,6 @@ namespace app
 			break;
 		case Clusters::DiagnosticLogs::Id:
 			Clusters::DiagnosticLogs::DispatchServerCommand(apCommandObj, aCommandPath, aReader);
-			break;
-		case Clusters::EthernetNetworkDiagnostics::Id:
-			Clusters::EthernetNetworkDiagnostics::DispatchServerCommand(apCommandObj, aCommandPath,
-										    aReader);
 			break;
 		case Clusters::GeneralCommissioning::Id:
 			Clusters::GeneralCommissioning::DispatchServerCommand(apCommandObj, aCommandPath, aReader);

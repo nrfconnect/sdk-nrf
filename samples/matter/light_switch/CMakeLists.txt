@@ -42,7 +42,7 @@ target_sources(app PRIVATE
     src/binding_handler.cpp
     src/shell_commands.cpp
     ${COMMON_ROOT}/src/led_widget.cpp
-    ${COMMON_ROOT}/src/thread_util.cpp
+    $<$<BOOL:${CONFIG_NET_L2_OPENTHREAD}>:${COMMON_ROOT}/src/thread_util.cpp>
     src/zap-generated/IMClusterCommandHandler.cpp
     src/zap-generated/callback-stub.cpp
 )
@@ -59,4 +59,5 @@ chip_configure_data_model(app
     INCLUDE_SERVER
     ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/light_switch.zap
 )
+
 # NORDIC SDK APP END

@@ -44,7 +44,7 @@ The following table lists variants and extensions available out of the box for e
       - SSED
     * - Wi-Fi support
       -
-      -
+      - ✔
       - ✔
       -
       -
