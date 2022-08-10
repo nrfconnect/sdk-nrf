@@ -4,18 +4,10 @@ sample:
 tests:
   sample.matter.lock.debug:
     build_only: true
+    extra_args: CONFIG_CHIP_LIB_SHELL=y
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
-    tags: ci_build
-  sample.matter.lock.no_dfu:
-    build_only: true
-    extra_args: CONF_FILE=prj_no_dfu.conf
-    integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf21540dk_nrf52840
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
     tags: ci_build
   sample.matter.lock.release:
@@ -24,13 +16,79 @@ tests:
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
     tags: ci_build
-  sample.matter.lock.smp_dfu:
+
+  sample.matter.lock.debug.ffs:
     build_only: true
-    extra_args: CONFIG_CHIP_DFU_OVER_BT_SMP=y
+    extra_args: CONFIG_CHIP_LIB_SHELL=y CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE=y CONFIG_CHIP_ROTATING_DEVICE_ID=y CONFIG_CHIP_DEVICE_TYPE=10
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    tags: ci_build
+  sample.matter.lock.release.ffs:
+    build_only: true
+    extra_args: CONF_FILE=prj_release.conf CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE=y CONFIG_CHIP_ROTATING_DEVICE_ID=y CONFIG_CHIP_DEVICE_TYPE=10
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    tags: ci_build
+
+  sample.matter.lock.debug.smp_dfu:
+    build_only: true
+    extra_args: CONFIG_CHIP_LIB_SHELL=y CONFIG_CHIP_DFU_OVER_BT_SMP=y
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    tags: ci_build
+  sample.matter.lock.release.smp_dfu:
+    build_only: true
+    extra_args: CONF_FILE=prj_release.conf CONFIG_CHIP_DFU_OVER_BT_SMP=y
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    tags: ci_build
+
+  sample.matter.lock.debug.smp_dfu__ffs:
+    build_only: true
+    extra_args: CONFIG_CHIP_LIB_SHELL=y CONFIG_CHIP_DFU_OVER_BT_SMP=y CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE=y CONFIG_CHIP_ROTATING_DEVICE_ID=y CONFIG_CHIP_DEVICE_TYPE=10
+    integration_platforms:
+      - nrf52840dk_nrf52840
+      - nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    tags: ci_build
+  sample.matter.lock.release.smp_dfu__ffs:
+    build_only: true
+    extra_args: CONF_FILE=prj_release.conf CONFIG_CHIP_DFU_OVER_BT_SMP=y CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE=y CONFIG_CHIP_ROTATING_DEVICE_ID=y CONFIG_CHIP_DEVICE_TYPE=10
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    tags: ci_build
+
+  sample.matter.lock.debug.no_dfu:
+    build_only: true
+    extra_args: CONFIG_CHIP_LIB_SHELL=y CONF_FILE=prj_no_dfu.conf
+    integration_platforms:
+      - nrf21540dk_nrf52840
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    tags: ci_build
+  sample.matter.lock.release.no_dfu:
+    build_only: true
+    extra_args: CONF_FILE=prj_release.conf CONF_FILE=prj_no_dfu.conf
+    integration_platforms:
+      - nrf21540dk_nrf52840
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    tags: ci_build
+
+  sample.matter.lock.debug.no_dfu__ffs:
+    build_only: true
+    extra_args: CONFIG_CHIP_LIB_SHELL=y CONF_FILE=prj_no_dfu.conf CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE=y CONFIG_CHIP_ROTATING_DEVICE_ID=y CONFIG_CHIP_DEVICE_TYPE=10
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    tags: ci_build
+  sample.matter.lock.release.no_dfu__ffs:
+    build_only: true
+    extra_args: CONF_FILE=prj_release.conf CONF_FILE=prj_no_dfu.conf CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE=y CONFIG_CHIP_ROTATING_DEVICE_ID=y CONFIG_CHIP_DEVICE_TYPE=10
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
     tags: ci_build

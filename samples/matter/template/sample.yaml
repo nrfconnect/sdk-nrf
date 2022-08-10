@@ -4,10 +4,11 @@ sample:
 tests:
   sample.matter.template.debug:
     build_only: true
+    extra_args: CONFIG_CHIP_LIB_SHELL=y
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
     tags: ci_build
   sample.matter.template.release:
     build_only: true
@@ -15,14 +16,29 @@ tests:
     integration_platforms:
       - nrf52840dk_nrf52840
       - nrf5340dk_nrf5340_cpuapp
-    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp
-    tags: ci_build
-  sample.matter.template.no_dfu:
-    build_only: true
     platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
-    integration_platforms:
-      - nrf52840dk_nrf52840
-      - nrf5340dk_nrf5340_cpuapp
-      - nrf21540dk_nrf52840
     tags: ci_build
-    extra_args: CONF_FILE=prj_no_dfu.conf
+
+  sample.matter.template.debug.smp_dfu:
+    build_only: true
+    extra_args: CONFIG_CHIP_LIB_SHELL=y CONFIG_CHIP_DFU_OVER_BT_SMP=y
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    tags: ci_build
+  sample.matter.template.release.smp_dfu:
+    build_only: true
+    extra_args: CONF_FILE=prj_release.conf CONFIG_CHIP_DFU_OVER_BT_SMP=y
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    tags: ci_build
+
+  sample.matter.template.debug.no_dfu:
+    build_only: true
+    extra_args: CONFIG_CHIP_LIB_SHELL=y CONF_FILE=prj_no_dfu.conf
+    integration_platforms:
+      - nrf21540dk_nrf52840
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    tags: ci_build
+  sample.matter.template.release.no_dfu:
+    build_only: true
+    extra_args: CONF_FILE=prj_release.conf CONF_FILE=prj_no_dfu.conf
+    platform_allow: nrf52840dk_nrf52840 nrf5340dk_nrf5340_cpuapp nrf21540dk_nrf52840
+    tags: ci_build
