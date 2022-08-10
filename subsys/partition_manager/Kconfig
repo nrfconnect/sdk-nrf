@@ -99,6 +99,20 @@ partition-size=0x1000
 rsource "Kconfig.template.partition_config"
 endif
 
+if NRF_CLOUD_PGPS_STORAGE_PARTITION
+partition=PGPS
+partition-size=NRF_CLOUD_PGPS_PARTITION_SIZE
+rsource "Kconfig.template.partition_config"
+rsource "Kconfig.template.partition_region"
+
+config PM_PGPS_ALIGN
+	hex
+	default NRF_SPU_FLASH_REGION_SIZE if BUILD_WITH_TFM
+	default NRF_CLOUD_PGPS_PARTITION_ALIGN
+	depends on PM_PARTITION_REGION_PGPS_EXTERNAL && BUILD_WITH_TFM
+
+endif
+
 endmenu # Zephyr subsystem configurations
 menu "NCS subsystem configurations"
 
