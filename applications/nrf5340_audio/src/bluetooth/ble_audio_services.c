@@ -8,7 +8,6 @@
 #include <zephyr/types.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/audio/vcs.h>
-#include <zephyr/bluetooth/audio/mics.h>
 #include "macros_common.h"
 #include "ble_audio_services.h"
 #include "hw_codec.h"
