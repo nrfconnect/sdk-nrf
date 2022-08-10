@@ -589,10 +589,11 @@ static void security_changed_cb(struct bt_conn *conn, bt_security_t level, enum 
 	}
 }
 
-BT_CONN_CB_DEFINE(conn_callbacks) = {
+static struct bt_conn_cb conn_callbacks = {
 	.connected = connected_cb,
 	.disconnected = disconnected_cb,
 	.security_changed = security_changed_cb,
+
 };
 
 static int iso_stream_send(uint8_t const *const data, size_t size, uint8_t iso_chan_idx)
@@ -664,6 +665,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 
 	ARG_UNUSED(recv_cb);
 	if (!initialized) {
+		bt_conn_cb_register(&conn_callbacks);
 		for (size_t i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 			audio_streams[i].ops = &stream_ops;
 			group_params[i].stream = &audio_streams[i];

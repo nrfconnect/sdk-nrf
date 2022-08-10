@@ -163,21 +163,25 @@ nRF9160: Serial LTE modem
 
 nRF5340 Audio
 -------------
-  * Added:
 
-    * Implemented Basic Audio Profile
-      * Add support for stereo BIS (Broadcast Isochronous Stream)
-    * Remove support for SBC
-    * Update network controller
-    * Bonding between gateway and headset(s) in CIS (Connected Isochronous Stream)
-    * Add DFU support for internal and external flash layouts
+* Added:
 
-  * Updated:
+  * Support for Basic Audio Profile, including support for the stereo BIS (Broadcast Isochronous Stream).
+  * Bonding between gateway and headsets in the CIS (Connected Isochronous Stream).
+  * DFU support for internal and external flash layouts.
+    See :ref:`nrf53_audio_app_configuration_configure_fota` in the application documentation for details.
 
-    * Documentation in the :ref:`nrf53_audio_app_building_script` section.
-      The text now mentions how to recover the device if programming using script fails.
-    * Documentation of the operating temperature maximum range in the
-      :ref:`nrf53_audio_app_dk_features` and :ref:`nrf53_audio_app_dk_legal` sections.
+* Updated:
+
+  * Network controller.
+  * Documentation in the :ref:`nrf53_audio_app_building_script` section.
+    The text now mentions how to recover the device if programming using script fails.
+  * Documentation of the operating temperature maximum range in the
+    :ref:`nrf53_audio_app_dk_features` and :ref:`nrf53_audio_app_dk_legal` sections.
+
+* Removed:
+
+  * Support for SBC.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

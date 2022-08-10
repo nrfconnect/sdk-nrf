@@ -646,26 +646,28 @@ Buttons
 
 The application uses the following buttons on the supported development kit:
 
-+---------------+----------------------------------------------------------------+
-| Button        | Function                                                       |
-+===============+================================================================+
-| **VOL-**      | Turns the playback volume down (and unmutes).                  |
-+---------------+----------------------------------------------------------------+
-| **VOL+**      | Turns the playback volume up (and unmutes).                    |
-+---------------+----------------------------------------------------------------+
-| **PLAY/PAUSE**| Starts or pauses the playback.                                 |
-+---------------+----------------------------------------------------------------+
-| **BTN 4**     | During playback, sends a test tone generated on the device.    |
-|               | Pressing the button multiple times changes the tone frequency. |
-|               | The available values are 1000 Hz, 2000 Hz, and 4000 Hz.        |
-|               | Use this tone to check the synchronization of headsets.        |
-|               | Sending of test tone is currently only supported on the        |
-|               | gateway.                                                       |
-+---------------+----------------------------------------------------------------+
-| **BTN 5**     | Mutes the playback volume.                                     |
-+---------------+----------------------------------------------------------------+
-| **RESET**     | Resets the device.                                             |
-+---------------+----------------------------------------------------------------+
++---------------+----------------------------------------------------------------------------------------+
+| Button        | Function                                                                               |
++===============+========================================================================================+
+| **VOL-**      | Turns the playback volume down (and unmutes).                                          |
++---------------+----------------------------------------------------------------------------------------+
+| **VOL+**      | Turns the playback volume up (and unmutes).                                            |
++---------------+----------------------------------------------------------------------------------------+
+| **PLAY/PAUSE**| Starts or pauses the playback.                                                         |
++---------------+----------------------------------------------------------------------------------------+
+| **BTN 4**     | Depending on the moment it is pressed:                                                 |
+|               |                                                                                        |
+|               | * Long-pressed during startup: Turns on the DFU mode, if                               |
+|               |   the device is :ref:`configured <nrf53_audio_app_configuration_configure_fota>`.      |
+|               | * Pressed on the gateway during playback: Sends a test tone generated on the device.   |
+|               |   Use this tone to check the synchronization of headsets.                              |
+|               | * Pressed on the gateway during playback multiple times: Changes the tone frequency.   |
+|               |   The available values are 1000 Hz, 2000 Hz, and 4000 Hz.                              |
++---------------+----------------------------------------------------------------------------------------+
+| **BTN 5**     | Mutes the playback volume.                                                             |
++---------------+----------------------------------------------------------------------------------------+
+| **RESET**     | Resets the device.                                                                     |
++---------------+----------------------------------------------------------------------------------------+
 
 .. _nrf53_audio_app_ui_leds:
 
@@ -852,6 +854,13 @@ Enabling FOTA upgrades
 The FOTA upgrades are only available when :ref:`nrf53_audio_app_building_script`.
 With the appropriate parameter provided, the :file:`buildprog.py` Python script will add overlay files for the given DFU type.
 For the full list of parameters and examples, see the :ref:`nrf53_audio_app_building_script_running` section.
+
+Entering the DFU mode
+---------------------
+
+The |NCS| uses :ref:`SMP server and mcumgr <zephyr:device_mgmt>` as the DFU backend.
+Unlike the CIS and BIS modes for gateway and headsets, the DFU mode is advertising using the SMP server service.
+For this reason, to enter the DFU mode, you must long press **BTN 4** during each device startup to have the nRF5340 Audio DK enter the DFU mode.
 
 .. _nrf53_audio_app_building:
 
@@ -1064,8 +1073,8 @@ Complete the following steps to build the application:
 
    #. (Optional) Choose the DFU flash memory layouts:
 
-      * For Internal flash memory DFU: ``-DCONFIG_AUDIO_DFU=1``
-      * For External flash memory DFU: ``-DCONFIG_AUDIO_DFU=2``
+      * For internal flash memory DFU: ``-DCONFIG_AUDIO_DFU=1``
+      * For external flash memory DFU: ``-DCONFIG_AUDIO_DFU=2``
       * For minimal sizes of the net core bootloader: ``-DCONFIG_B0N_MINIMAL=y``
 
 #. Build the application using the standard :ref:`build steps <gs_programming>`.
