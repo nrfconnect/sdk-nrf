@@ -8,8 +8,12 @@
 #include "app_config.h"
 #include "led_widget.h"
 #include "light_switch.h"
-#include "thread_util.h"
 
+#ifdef CONFIG_NET_L2_OPENTHREAD
+#include "thread_util.h"
+#endif
+
+#include "board_util.h"
 #include <app/clusters/identify-server/identify-server.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
@@ -20,6 +24,11 @@
 #include <lib/support/SafeInt.h>
 #include <platform/CHIPDeviceLayer.h>
 #include <system/SystemError.h>
+
+#ifdef CONFIG_CHIP_WIFI
+#include <app/clusters/network-commissioning/network-commissioning.h>
+#include <platform/nrfconnect/wifi/NrfWiFiDriver.h>
+#endif
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include "ota_util.h"
@@ -53,16 +62,14 @@ Identify sIdentify = { kLightEndpointId, AppTask::IdentifyStartHandler, AppTask:
 		       EMBER_ZCL_IDENTIFY_IDENTIFY_TYPE_VISIBLE_LED };
 
 LEDWidget sStatusLED;
-LEDWidget sBleLED;
 LEDWidget sIdentifyLED;
+#if NUMBER_OF_BUTTONS == 4
 LEDWidget sUnusedLED;
-
-bool sIsThreadProvisioned = false;
-bool sIsThreadEnabled = false;
-bool sIsThreadBLEAdvertising = false;
-#ifdef CONFIG_MCUMGR_SMP_BT
-bool sIsSMPAdvertising = false;
+LEDWidget sUnusedLED_1;
 #endif
+
+bool sIsNetworkProvisioned = false;
+bool sIsNetworkEnabled = false;
 bool sHaveBLEConnections = false;
 bool sWasDimmerTriggered = false;
 
@@ -72,6 +79,11 @@ k_timer sDimmerTimer;
 } /* namespace */
 
 AppTask AppTask::sAppTask;
+
+#ifdef CONFIG_CHIP_WIFI
+app::Clusters::NetworkCommissioning::Instance
+	sWiFiCommissioningInstance(0, &(NetworkCommissioning::NrfWiFiDriver::Instance()));
+#endif
 
 CHIP_ERROR AppTask::Init()
 {
@@ -90,6 +102,7 @@ CHIP_ERROR AppTask::Init()
 		return err;
 	}
 
+#if defined(CONFIG_NET_L2_OPENTHREAD)
 	err = ThreadStackMgr().InitThreadStack();
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("ThreadStackMgr().InitThreadStack() failed: %s", ErrorStr(err));
@@ -100,7 +113,7 @@ CHIP_ERROR AppTask::Init()
 	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_SleepyEndDevice);
 #else
 	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
-#endif
+#endif /* CONFIG_OPENTHREAD_MTD_SED */
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed: %s", ErrorStr(err));
 		return err;
@@ -112,7 +125,12 @@ CHIP_ERROR AppTask::Init()
 		LOG_ERR("Cannot set default Thread output power");
 		return err;
 	}
-#endif
+#endif /* CONFIG_OPENTHREAD_DEFAULT_TX_POWER */
+#elif defined(CONFIG_CHIP_WIFI)
+	sWiFiCommissioningInstance.Init();
+#else
+	return CHIP_ERROR_INTERNAL;
+#endif /* CONFIG_NET_L2_OPENTHREAD */
 
 	LightSwitch::GetInstance().Init(kLightSwitchEndpointId);
 
@@ -121,9 +139,11 @@ CHIP_ERROR AppTask::Init()
 	LEDWidget::SetStateUpdateCallback(LEDStateUpdateHandler);
 
 	sStatusLED.Init(SYSTEM_STATE_LED);
-	sBleLED.Init(DFU_BLE_LED);
 	sIdentifyLED.Init(IDENTIFY_LED);
-	sUnusedLED.Init(DK_LED4);
+#if NUMBER_OF_LEDS == 4
+	sUnusedLED.Init(DK_LED3);
+	sUnusedLED_1.Init(DK_LED4);
+#endif
 
 	UpdateStatusLED();
 
@@ -202,7 +222,16 @@ void AppTask::ButtonPushHandler(AppEvent *aEvent)
 			sAppTask.StartTimer(Timer::Function, kFactoryResetTriggerTimeout);
 			sAppTask.mFunction = TimerFunction::SoftwareUpdate;
 			break;
-		case SWITCH_BUTTON:
+		case
+#if NUMBER_OF_BUTTONS == 2
+			BLE_ADVERTISEMENT_START_AND_SWITCH_BUTTON:
+			if (!ConnectivityMgr().IsBLEAdvertisingEnabled() &&
+			    Server::GetInstance().GetFabricTable().FabricCount() == 0) {
+				break;
+			}
+#else
+			SWITCH_BUTTON:
+#endif
 			LOG_INF("Button has been pressed, keep in this state for at least 500 ms to change light sensitivity of binded lighting devices.");
 			sAppTask.StartTimer(Timer::DimmerTrigger, kDimmerTriggeredTimeout);
 			break;
@@ -223,7 +252,6 @@ void AppTask::ButtonReleaseHandler(AppEvent *aEvent)
 
 #ifdef CONFIG_MCUMGR_SMP_BT
 				GetDFUOverSMP().StartServer();
-				sIsSMPAdvertising = true;
 				UpdateStatusLED();
 #else
 				LOG_INF("Software update is disabled");
@@ -236,7 +264,21 @@ void AppTask::ButtonReleaseHandler(AppEvent *aEvent)
 				LOG_INF("Factory Reset has been canceled");
 			}
 			break;
+#if NUMBER_OF_BUTTONS == 4
 		case SWITCH_BUTTON:
+#else
+		case BLE_ADVERTISEMENT_START_AND_SWITCH_BUTTON:
+			if (!ConnectivityMgr().IsBLEAdvertisingEnabled() &&
+			    Server::GetInstance().GetFabricTable().FabricCount() == 0) {
+				AppEvent buttonEvent;
+				buttonEvent.Type = AppEvent::kEventType_Button;
+				buttonEvent.ButtonEvent.PinNo = BLE_ADVERTISEMENT_START_AND_SWITCH_BUTTON;
+				buttonEvent.ButtonEvent.Action = AppEvent::kButtonPushEvent;
+				buttonEvent.Handler = StartBLEAdvertisingHandler;
+				sAppTask.PostEvent(&buttonEvent);
+				break;
+			}
+#endif
 			if (!sWasDimmerTriggered) {
 				LightSwitch::GetInstance().InitiateActionSwitch(LightSwitch::Action::Toggle);
 			}
@@ -265,13 +307,17 @@ void AppTask::TimerEventHandler(AppEvent *aEvent)
 				/* reset all LEDs to synchronize factory reset blinking */
 				sStatusLED.Set(false);
 				sIdentifyLED.Set(false);
-				sBleLED.Set(false);
+#if NUMBER_OF_LEDS == 4
 				sUnusedLED.Set(false);
+				sUnusedLED_1.Set(false);
+#endif
 
 				sStatusLED.Blink(500);
 				sIdentifyLED.Blink(500);
-				sBleLED.Blink(500);
+#if NUMBER_OF_LEDS == 4
 				sUnusedLED.Blink(500);
+				sUnusedLED_1.Blink(500);
+#endif
 #endif
 			} else if (sAppTask.mFunction == TimerFunction::FactoryReset) {
 				sAppTask.mFunction = TimerFunction::NoneSelected;
@@ -334,7 +380,6 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *aEvent, intptr_t /* arg */
 {
 	switch (aEvent->Type) {
 	case DeviceEventType::kCHIPoBLEAdvertisingChange:
-		sIsThreadBLEAdvertising = true;
 		UpdateStatusLED();
 #ifdef CONFIG_CHIP_NFC_COMMISSIONING
 		if (aEvent->CHIPoBLEAdvertisingChange.Result == kActivity_Started) {
@@ -351,8 +396,14 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *aEvent, intptr_t /* arg */
 		UpdateStatusLED();
 		break;
 	case DeviceEventType::kThreadStateChange:
-		sIsThreadProvisioned = ConnectivityMgr().IsThreadProvisioned();
-		sIsThreadEnabled = ConnectivityMgr().IsThreadEnabled();
+	case DeviceEventType::kWiFiConnectivityChange:
+#if defined(CONFIG_NET_L2_OPENTHREAD)
+		sIsNetworkProvisioned = ConnectivityMgr().IsThreadProvisioned();
+		sIsNetworkEnabled = ConnectivityMgr().IsThreadEnabled();
+#elif defined(CONFIG_CHIP_WIFI)
+		sIsNetworkProvisioned = ConnectivityMgr().IsWiFiStationProvisioned();
+		sIsNetworkEnabled = ConnectivityMgr().IsWiFiStationEnabled();
+#endif
 		UpdateStatusLED();
 		break;
 	case DeviceEventType::kThreadConnectivityChange:
@@ -363,12 +414,6 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *aEvent, intptr_t /* arg */
 #endif
 		break;
 	default:
-		if ((ConnectivityMgr().NumBLEConnections() == 0) && (!sIsThreadProvisioned || !sIsThreadEnabled)) {
-			LOG_ERR("Commissioning with a Thread network has not been done. An error occurred...");
-			sIsThreadBLEAdvertising = false;
-			sHaveBLEConnections = false;
-			UpdateStatusLED();
-		}
 		break;
 	}
 }
@@ -376,37 +421,26 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *aEvent, intptr_t /* arg */
 void AppTask::UpdateStatusLED()
 {
 #ifdef CONFIG_STATE_LEDS
+#if NUMBER_OF_LEDS == 4
 	sUnusedLED.Set(false);
+	sUnusedLED_1.Set(false);
+#endif
 
-	/*
-	 * Status LED indicates:
-	 * - blinking 1 s - advertising, ready to commission
-	 * - blinking 200 ms - commissioning in progress
-	 * - constant lightning means commissioned with Thread network
-	 */
-	if (sIsThreadBLEAdvertising && !sHaveBLEConnections) {
-		sStatusLED.Blink(50, 950);
-	} else if (sIsThreadProvisioned && sIsThreadEnabled) {
+	/* Update the status LED.
+	 *
+	 * If Thread and service provisioned, keep the LED on constantly.
+	 *
+	 * If the system has BLE connection(s) up till the stage above, THEN blink the LED at an even
+	 * rate of 100ms.
+	 *
+	 * Otherwise, blink the LED for a very short time. */
+	if (sIsNetworkProvisioned && sIsNetworkEnabled) {
 		sStatusLED.Set(true);
 	} else if (sHaveBLEConnections) {
-		sStatusLED.Blink(30, 170);
+		sStatusLED.Blink(100, 100);
 	} else {
-		sStatusLED.Set(false);
+		sStatusLED.Blink(50, 950);
 	}
-
-/*
- * Ble LED indicates BLE connectivity:
- *- blinking 200 ms means BLE advertising
- */
-#ifdef CONFIG_MCUMGR_SMP_BT
-	if (sIsSMPAdvertising) {
-		sBleLED.Blink(30, 170);
-	} else {
-		sBleLED.Set(false);
-	}
-#else
-	sBleLED.Set(false);
-#endif
 #endif
 }
 
@@ -427,24 +461,32 @@ void AppTask::ButtonEventHandler(uint32_t aButtonState, uint32_t aHasChanged)
 		sAppTask.PostEvent(&buttonEvent);
 	}
 
-	if (SWITCH_BUTTON_MASK & aButtonState & aHasChanged) {
-		buttonEvent.ButtonEvent.PinNo = SWITCH_BUTTON;
+#if NUMBER_OF_BUTTONS == 2
+	uint32_t buttonMask = BLE_ADVERTISEMENT_START_AND_SWITCH_BUTTON_MASK;
+	buttonEvent.ButtonEvent.PinNo = BLE_ADVERTISEMENT_START_AND_SWITCH_BUTTON;
+#else
+	uint32_t buttonMask = SWITCH_BUTTON_MASK;
+	buttonEvent.ButtonEvent.PinNo = SWITCH_BUTTON;
+#endif
+
+	if (buttonMask & aButtonState & aHasChanged) {
 		buttonEvent.ButtonEvent.Action = AppEvent::kButtonPushEvent;
 		buttonEvent.Handler = ButtonPushHandler;
 		sAppTask.PostEvent(&buttonEvent);
-	} else if (SWITCH_BUTTON_MASK & aHasChanged) {
-		buttonEvent.ButtonEvent.PinNo = SWITCH_BUTTON;
+	} else if (buttonMask & aHasChanged) {
 		buttonEvent.ButtonEvent.Action = AppEvent::kButtonReleaseEvent;
 		buttonEvent.Handler = ButtonReleaseHandler;
 		sAppTask.PostEvent(&buttonEvent);
 	}
 
+#if NUMBER_OF_BUTTONS == 4
 	if (BLE_ADVERTISEMENT_START_BUTTON_MASK & aHasChanged & aButtonState) {
 		buttonEvent.ButtonEvent.PinNo = BLE_ADVERTISEMENT_START_BUTTON;
 		buttonEvent.ButtonEvent.Action = AppEvent::kButtonPushEvent;
 		buttonEvent.Handler = StartBLEAdvertisingHandler;
 		sAppTask.PostEvent(&buttonEvent);
 	}
+#endif
 }
 
 void AppTask::StartTimer(Timer aTimer, uint32_t aTimeoutMs)

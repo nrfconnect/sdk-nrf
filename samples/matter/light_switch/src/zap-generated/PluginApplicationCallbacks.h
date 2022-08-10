@@ -42,7 +42,6 @@
 	MatterSoftwareDiagnosticsPluginServerInitCallback();                                                           \
 	MatterThreadNetworkDiagnosticsPluginServerInitCallback();                                                      \
 	MatterWiFiNetworkDiagnosticsPluginServerInitCallback();                                                        \
-	MatterEthernetNetworkDiagnosticsPluginServerInitCallback();                                                    \
 	MatterSwitchPluginServerInitCallback();                                                                        \
 	MatterAdministratorCommissioningPluginServerInitCallback();                                                    \
 	MatterOperationalCredentialsPluginServerInitCallback();                                                        \

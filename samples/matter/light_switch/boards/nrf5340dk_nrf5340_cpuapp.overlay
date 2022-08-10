@@ -15,3 +15,20 @@
 &ipc0 {
     zephyr,priority = <0 PRIO_COOP>;
 };
+
+/* Disable unused peripherals to reduce power consumption */
+&adc {
+	status = "disabled";
+};
+&i2c1 {
+	status = "disabled";
+};
+&pwm0 {
+	status = "disabled";
+};
+&spi2 {
+	status = "disabled";
+};
+&usbd {
+	status = "disabled";
+};
