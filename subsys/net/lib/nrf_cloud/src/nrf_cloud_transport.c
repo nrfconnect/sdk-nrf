@@ -15,19 +15,17 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <zephyr/net/mqtt.h>
-#include <zephyr/net/socket.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/settings/settings.h>
-#if defined(CONFIG_NRF_MODEM_LIB)
+
 #if defined(CONFIG_POSIX_API)
 #include <zephyr/posix/arpa/inet.h>
 #include <zephyr/posix/netdb.h>
 #include <zephyr/posix/sys/socket.h>
 #else
 #include <zephyr/net/socket.h>
-#endif
-#endif /* defined(CONFIG_NRF_MODEM_LIB) */
+#endif /* defined(CONFIG_POSIX_API) */
 
 LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
