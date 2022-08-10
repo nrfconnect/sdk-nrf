@@ -192,15 +192,30 @@ static void isr(const struct device *dev, void *user_data)
 	}
 }
 
-static int at_uart_init(char *uart_dev_name)
+static int at_uart_init(enum select_uart uart_id)
 {
 	int err;
 	uint8_t dummy;
 
-	uart_dev = device_get_binding(uart_dev_name);
-	if (uart_dev == NULL) {
-		LOG_ERR("Cannot bind %s\n", uart_dev_name);
+	/* Get the UART device */
+	switch (uart_id) {
+	case UART_0:
+		uart_dev = DEVICE_DT_GET_OR_NULL(DT_NODELABEL(uart0));
+		break;
+	case UART_1:
+		uart_dev = DEVICE_DT_GET_OR_NULL(DT_NODELABEL(uart1));
+		break;
+	case UART_2:
+		uart_dev = DEVICE_DT_GET_OR_NULL(DT_NODELABEL(uart2));
+		break;
+	default:
+		LOG_ERR("Unknown UART instance %d", uart_id);
 		return -EINVAL;
+	}
+
+	if (uart_dev == NULL) {
+		LOG_ERR("Could not bind UART device");
+		return -EFAULT;
 	}
 
 	uint32_t start_time = k_uptime_get_32();
@@ -232,7 +247,6 @@ static int at_uart_init(char *uart_dev_name)
 
 static int at_host_init(const struct device *arg)
 {
-	char *uart_dev_name;
 	int err;
 	enum select_uart uart_id = CONFIG_AT_HOST_UART;
 	enum term_modes mode = CONFIG_AT_HOST_TERMINATION;
@@ -246,24 +260,8 @@ static int at_host_init(const struct device *arg)
 		return -EINVAL;
 	}
 
-	/* Choose which UART to use */
-	switch (uart_id) {
-	case UART_0:
-		uart_dev_name = CONFIG_UART_0_NAME;
-		break;
-	case UART_1:
-		uart_dev_name = CONFIG_UART_1_NAME;
-		break;
-	case UART_2:
-		uart_dev_name = CONFIG_UART_2_NAME;
-		break;
-	default:
-		LOG_ERR("Unknown UART instance %d", uart_id);
-		return -EINVAL;
-	}
-
 	/* Initialize the UART module */
-	err = at_uart_init(uart_dev_name);
+	err = at_uart_init(uart_id);
 	if (err) {
 		LOG_ERR("UART could not be initialized: %d", err);
 		return -EFAULT;
