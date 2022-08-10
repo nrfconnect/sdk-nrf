@@ -584,11 +584,11 @@ Examples
 Remote control using nRF Cloud
 ==============================
 
-Once you have established an MQTT connection to nRF Cloud using the ``cloud`` command, you can use the :guilabel:`Terminal` window in the nRF Cloud portal to execute MoSh commands to the device.
+Once you have established an MQTT connection to nRF Cloud using the ``cloud`` command, you can use the **Terminal** window in the nRF Cloud portal to execute MoSh commands to the device.
 This feature enables full remote control of the MoSh application running on a device that is connected to cloud.
-MoSh output, such as responses to commands and other notifications can be echoed to the ``messages`` endpoint and the :guilabel:`Terminal` window of the nRF Cloud portal.
+MoSh output, such as responses to commands and other notifications can be echoed to the ``messages`` endpoint and the **Terminal** window of the nRF Cloud portal.
 Use the ``print cloud`` command to enable this behavior.
-The data format of the input data in the :guilabel:`Terminal` window must be JSON.
+The data format of the input data in the **Terminal** window must be JSON.
 
 Examples
 --------
@@ -599,13 +599,13 @@ Examples
 
      cloud connect
 
-* To request the device location, enter the following command in the :guilabel:`Terminal` window of the nRF Cloud portal:
+* To request the device location, enter the following command in the **Terminal** window of the nRF Cloud portal:
 
    .. code-block:: console
 
      {"appId":"MODEM_SHELL", "data":"location get --method cellular"}
 
-  The device location appears in the :guilabel:`Location` window.
+  The device location appears in the **Location** window.
 
 * An AT command is sent to the modem:
 
@@ -803,9 +803,9 @@ To program the certificates and connect to nRF Cloud, complete the following ste
 
    1. Open the `nRF Cloud`_ portal.
    #. Click the large plus sign in the upper left corner.
-   #. Enter the device ID from MoSh in the :guilabel:`Device ID` field.
+   #. Enter the device ID from MoSh in the **Device ID** field.
 
-   When the device has been added, the message :guilabel:`Device added to account. Waiting for it to connect...` appears.
+   When the device has been added, the message **Device added to account. Waiting for it to connect...** appears.
    When the message disappears, click :guilabel:`Devices` on the left side menu.
    Your MoSh device is now visible in the list.
 #. Send MoSh device information to nRF Cloud:
@@ -822,7 +822,7 @@ To program the certificates and connect to nRF Cloud, complete the following ste
       mosh:~$ location get --method cellular
 
 #. As a success response, the location is printed in the MoSh terminal.
-#. Open the entry for your device in the :guilabel:`Devices` view.
+#. Open the entry for your device in the **Devices** view.
 #. Observe that location and device information are shown in the device page.
 
 ESP8266 Wi-Fi support

@@ -101,7 +101,7 @@ Testing
 
 #. Log in to the `Azure Portal`_, navigate to :guilabel:`IoT Hub` and select your IoT hub.
 #. Navigate to :guilabel:`IoT devices` and select the device to update.
-#. In the device view, click the :guilabel:`Device Twin` button.
+#. In the device view, click :guilabel:`Device Twin`.
 #. Create a `firmware` JSON object inside the *desired* object of the device twin document, containing information about the binary to download:
 
    .. parsed-literal::

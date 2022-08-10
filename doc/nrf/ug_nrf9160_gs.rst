@@ -92,7 +92,7 @@ If you experience any problems during the process, restart the Programmer app by
 #. Make sure the **PROG/DEBUG SW10** switch on the nRF9160 DK is set to **nRF91**.
    On DK v0.9.0 and earlier, this is the **SW5** switch.
 #. Connect the nRF9160 DK to the computer with a micro-USB cable, and then turn the DK on.
-#. Click :guilabel:`Select device` and select the DK from the drop-down list.
+#. Click :guilabel:`SELECT DEVICE` and select the DK from the drop-down list.
    You can identify the nRF9160 DK by the fact that it has three COM ports.
 
    .. figure:: /images/programmer_com_ports.png
@@ -100,14 +100,14 @@ If you experience any problems during the process, restart the Programmer app by
 
       Programmer - COM ports
 
-   If the three COM ports are not visible, press ``Ctrl+R`` in Windows or ``command+R`` in macOS to restart the Programmer application.
+   If the three COM ports are not visible, press Ctrl+R in Windows or command+R in macOS to restart the Programmer application.
 
    The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
    The Device Memory Layout section also changes its name to the device name, and indicates that the device is connected.
-   If the :guilabel:`Auto read memory` option is selected in the DEVICE section of the side panel, the memory layout will update.
-   If it is not selected and you wish to see the memory layout, click :guilabel:`Read` in the DEVICE section of the side panel.
+   If the :guilabel:`Auto read memory` option is selected in the **DEVICE** section of the side panel, the memory layout will update.
+   If it is not selected and you wish to see the memory layout, click :guilabel:`Read` in the **DEVICE** section of the side panel.
 
-#. Click :guilabel:`Add file` in the FILE section, and select :guilabel:`Browse`.
+#. Click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
 
    .. figure:: /images/programmer_addfile_nrf9160dk.png
       :alt: Programmer - Add file
@@ -115,7 +115,7 @@ If you experience any problems during the process, restart the Programmer app by
       Programmer - Add file
 
 #. Navigate to where you extracted the firmware, and choose the :file:`mfwnrf9160_<version-number>.zip` file.
-#. Click :guilabel:`Write` in the DEVICE section of the side panel.
+#. Click :guilabel:`Write` in the **DEVICE** section of the side panel.
 
    .. figure:: /images/programmer_write_nrf9160dk.png
       :alt: Programmer - Write
@@ -129,7 +129,7 @@ If you experience any problems during the process, restart the Programmer app by
 
       The Modem DFU window
 
-#. Click the :guilabel:`Write` button in the Modem DFU window to update the firmware.
+#. Click the :guilabel:`Write` button in the **Modem DFU** window to update the firmware.
    Do not unplug or turn off the device during this process.
 
 When the update is complete, you see a success message.
@@ -137,7 +137,7 @@ If you update the application firmware now, you can go directly to Step 5 of :re
 
 .. note::
 
-   If you experience problems updating the modem firmware, click :guilabel:`Erase all` in the DEVICE section of the side panel and try updating again.
+   If you experience problems updating the modem firmware, click :guilabel:`Erase all` in the **DEVICE** section of the side panel and try updating again.
 
 .. _nrf9160_gs_updating_fw_application:
 
@@ -151,7 +151,7 @@ If you experience any problems during the process, restart the Programmer app by
 #. Make sure the **PROG/DEBUG SW10** switch on the nRF9160 DK is set to **nRF91**.
    On DK v0.9.0 and earlier, this is the **SW5** switch.
 #. Connect the nRF9160 DK to the computer with a micro-USB cable, and then turn the DK on.
-#. Click :guilabel:`Select device` and select the DK from the drop-down list.
+#. Click :guilabel:`SELECT DEVICE` and select the DK from the drop-down list.
    You can identify the nRF9160 DK by the fact that it has three COM ports when you expand its entry.
 
    .. figure:: /images/programmer_com_ports.png
@@ -159,12 +159,12 @@ If you experience any problems during the process, restart the Programmer app by
 
       Programmer - COM ports
 
-   If the three COM ports are not visible, press ``Ctrl+R`` in Windows or ``command+R`` in macOS to restart the Programmer application.
+   If the three COM ports are not visible, press Ctrl+R in Windows or command+R in macOS to restart the Programmer application.
 
    The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
    The Device Memory Layout section also changes its name to the device name, and indicates that the device is connected.
-   If the :guilabel:`Auto read memory` option is selected in the DEVICE section, the memory layout will update.
-   If it is not selected and you wish to see the memory layout, click :guilabel:`Read` in the DEVICE section.
+   If the :guilabel:`Auto read memory` option is selected in the **DEVICE** section, the memory layout will update.
+   If it is not selected and you wish to see the memory layout, click :guilabel:`Read` in the **DEVICE** section.
 
 #. Click :guilabel:`Add file` in the FILE section, and select :guilabel:`Browse`.
 
@@ -182,7 +182,7 @@ If you experience any problems during the process, restart the Programmer app by
    For NB-IoT, there is a second variant of the firmware in the :file:`nrf9160dk_asset_tracker_v2_nbiot_legacy_pco_<version-number>.hex` file.
    Only use this legacy variant if your network does not support ePCO.
 
-#. Click the :guilabel:`Erase & write` button in the DEVICE section to program the DK.
+#. Click the :guilabel:`Erase & write` button in the **DEVICE** section to program the DK.
    Do not unplug or turn off the DK during this process.
 
    .. figure:: /images/programmer_erasewrite_nrf9160dk.png
@@ -260,22 +260,23 @@ To activate the iBasis Subscriber Identity Module (SIM) card that comes shipped 
 
       nRF Cloud - Add New window
 
-#. In the Add New window, click :guilabel:`LTE Device`.
-   The Activate SIM Card window appears.
+#. In the **Add New** window, click :guilabel:`LTE Device`.
+   The **Activate SIM Card** window appears.
 
    .. figure:: /images/nrfcloud_activating_sim.png
       :alt: nRF Cloud - Activate SIM Card window
 
       nRF Cloud - Activate SIM Card window
 
-#. Complete the following steps in the Activate SIM Card window to Activate your iBasis SIM card:
+#. Complete the following steps in the **Activate SIM Card** window to activate your iBasis SIM card:
 
-   a. Enter the 18-digit :term:`Integrated Circuit Card Identifier (ICCID)` or the 19-digit :term:`eUICC Identifier (EID)` in the :guilabel:`SIM ICCID/EID` text box.
+   a. Enter the 18-digit :term:`Integrated Circuit Card Identifier (ICCID)` or the 19-digit :term:`eUICC Identifier (EID)` in the **SIM ICCID/EID** text box.
 
       .. note::
          The SIM cards can have either the EID or the ICCID printed on it.
 
-   #. Enter the :term:`Personal Unblocking Key (PUK)` in the :guilabel:`PUK` text box.
+   #. Enter the :term:`Personal Unblocking Key (PUK)` in the **PUK** text box.
+
       The PUK is printed on the SIM card.
       Reveal the PUK by scratching off the area on the back of the SIM card.
    #. Accept the Terms and the Privacy Policy.
@@ -343,7 +344,7 @@ For a basic test, complete the following steps:
 
       nRF Cloud - Devices
 
-#. From the :guilabel:`Devices` view, open the entry for your device.
+#. From the **Devices** view, open the entry for your device.
 #. Observe that the DK is sending data to nRF Cloud.
 
 If you experience problems and need to check the log messages, open nRF Connect for Desktop and launch the LTE Link Monitor app.
@@ -396,8 +397,8 @@ Complete the following steps to test the GNSS functionality:
 
       nRF Cloud - Devices
 
-#. From the :guilabel:`Devices` view, open the entry for your device.
-#. Observe that after a while, the GNSS data is displayed on the map in the :guilabel:`GPS Data` card on nRF Cloud.
+#. From the **Devices** view, open the entry for your device.
+#. Observe that after a while, the GNSS data is displayed on the map in the **GPS Data** card on nRF Cloud.
 
 Next steps
 **********

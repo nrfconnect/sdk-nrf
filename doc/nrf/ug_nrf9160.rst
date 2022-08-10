@@ -61,7 +61,7 @@ Complete the following steps to download the nRF Cloud certificate for your nRF9
 
       nRF Cloud - Gear icon in Provision Devices
 
-   The :guilabel:`Create JITP Certificates` dialog box opens.
+   The **Create JITP Certificates** dialog box opens.
 
    .. figure:: /images/nrfcloud_jitpcertificates.png
       :alt: nRF Cloud - Create JITP Certificates dialog box
@@ -105,7 +105,7 @@ After downloading the certificate, you must provision it to your nRF9160 DK.
 Complete the following steps to provision the certificate:
 
 1. Open the LTE Link Monitor app from nRF Connect for Desktop.
-#. In the :guilabel:`Settings` pane of the side panel, deselect the checkbox for :guilabel:`Automatic requests` if it is selected.
+#. In the **SETTINGS** section of the side panel, deselect the checkbox for :guilabel:`Automatic requests` if it is selected.
 
    .. figure:: /images/ltelinkmonitor_automaticrequests.png
       :alt: LTE Link Monitor - Automatic requests check box
@@ -124,7 +124,7 @@ Complete the following steps to provision the certificate:
 
    The drop-down text changes to the type of the selected device, with the SEGGER ID below the name.
 
-#. Click :guilabel:`Terminal` in the navigation bar to switch to the terminal view.
+#. Click :guilabel:`TERMINAL` in the navigation bar to switch to the terminal view.
 
    .. figure:: /images/ltelinkmonitor_navigationterminal.png
       :alt: LTE Link Monitor - Terminal
@@ -138,7 +138,7 @@ Complete the following steps to provision the certificate:
 
    The command must return ``+CFUN: 4``, which indicates that the modem is in offline state.
    If it returns a different value, repeat the previous step.
-#. Click :guilabel:`Certificate manager` in the navigation bar to switch to the certificate manager view.
+#. Click :guilabel:`CERTIFICATE MANAGER` in the navigation bar to switch to the certificate manager view.
 
    .. figure:: /images/ltelinkmonitor_navigationcertificatemanager.png
       :alt: LTE Link Monitor - Certificate Manager
@@ -153,7 +153,7 @@ Complete the following steps to provision the certificate:
 
       LTE Link Monitor - Load from JSON
 
-#. Ensure that the :guilabel:`Security tag` is set to ``16842753``, which is the security tag for nRF Cloud credentials.
+#. Ensure that the **Security tag** is set to ``16842753``, which is the security tag for nRF Cloud credentials.
 #. Click :guilabel:`Update certificate`.
 
    .. figure:: /images/ltelinkmonitor_updatecertificates.png
@@ -167,7 +167,7 @@ Complete the following steps to provision the certificate:
    .. note::
 
       If you have connected your nRF9160 DK to nRF Cloud before, you must delete the device there after provisioning the certificate.
-      To do so, open the entry for your device from the :guilabel:`Devices` view, then click the gear icon to the right of the device's name, and select :guilabel:`Delete Device`.
+      Open the entry for your device from the **Devices** view, then click the gear icon to the right of the device's name, and select :guilabel:`Delete Device`.
       Then, add the nRF9160 DK again as described in :ref:`nrf9160_gs_connecting_dk_to_cloud`
 
 

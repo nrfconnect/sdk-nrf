@@ -202,16 +202,16 @@ After programming the application, perform the following steps to test the Matte
 #. Read sensor measurements in CHIP Tool for Android:
 
    a. In the CHIP Tool for Android application main menu, tap the :guilabel:`SENSOR CLUSTERS` button to open the sensor measurements section.
-      This section contains text boxes to enter :guilabel:`Device ID` and :guilabel:`Endpoint ID`, a drop-down menu with available measurements and two buttons, :guilabel:`READ` and :guilabel:`WATCH`.
+      This section contains text boxes to enter **Device ID** and **Endpoint ID**, a drop-down menu with available measurements and two buttons, :guilabel:`READ` and :guilabel:`WATCH`.
 
       .. figure:: /images/chiptool_sensor_cluster.gif
          :alt: Sensor cluster section selection
 
          Sensor cluster section selection
 
-      On this image, :guilabel:`Device ID` has the value ``5`` and :guilabel:`Endpoint ID` has the value ``1``.
+      On this image, **Device ID** has the value ``5`` and **Endpoint ID** has the value ``1``.
    #. Select one of the available measurement types from the drop-down menu.
-   #. Enter one of the following values for :guilabel:`Endpoint ID`, depending on the selected measurement type:
+   #. Enter one of the following values for **Endpoint ID**, depending on the selected measurement type:
 
       * 1 - Temperature measurement
       * 2 - Relative humidity measurement
@@ -232,7 +232,7 @@ After programming the application, perform the following steps to test the Matte
          Continuous temperature measurement watch
 
       The vertical axis represents the measurement values and the horizontal axis represents the current time.
-   #. Change the displayed measurement by selecting a different measurement type from the drop-down list and entering the corresponding :guilabel:`Endpoint ID` value.
+   #. To change the displayed measurement, select a different measurement type from the drop-down list and enter the corresponding **Endpoint ID** value.
 
       .. figure:: /images/chiptool_relative_humidity.gif
          :alt: Relative humidity measurement type selection

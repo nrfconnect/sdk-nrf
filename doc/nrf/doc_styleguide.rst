@@ -29,7 +29,7 @@ Title and headings
 * Add a reference label above the title.
 
   For example, this page has the reference label ``.. _doc_styleguide:``.
-  You can see this by clicking the :guilabel:`View page source` in the top-right corner of the page.
+  To see it, click :guilabel:`View page source` in the upper corner of the page.
 
 * Do not repeat the section name in the titles of subpages, such as *sample* when adding a sample.
 

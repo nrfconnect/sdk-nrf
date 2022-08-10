@@ -58,20 +58,20 @@ When the connection is established, set switch 2 to **N.C.** to send GNSS data t
 
 On the nRF9160 DK, the LEDs display the following information regarding the application state:
 
-LED 3 and LED 4:
-    * LED 3 blinking: The device is connecting to the LTE network.
-    * LED 3 ON: The device is connected to the LTE network.
-    * LED 4 blinking: The device is connecting to nRF Cloud.
-    * LED 3 and LED 4 blinking: The MQTT connection has been established and the user association procedure with nRF Cloud has been initiated.
-    * LED 4 ON: The device is connected and ready for sensor data transfer.
+**LED 3** and **LED 4**:
+    * **LED 3** blinking: The device is connecting to the LTE network.
+    * **LED 3** lit: The device is connected to the LTE network.
+    * **LED 4** blinking: The device is connecting to nRF Cloud.
+    * **LED 3** and **LED 4** blinking: The MQTT connection has been established and the user association procedure with nRF Cloud has been initiated.
+    * **LED 4** lit: The device is connected and ready for sensor data transfer.
 
     .. figure:: /images/nrf_cloud_led_states.svg
        :alt: Application state indicated by LEDs
 
 All LEDs (1-4):
-    * Blinking in groups of two (LED 1 and 3, LED 2 and 4): Modem fault.
-    * Blinking in a cross pattern (LED 1 and 4, LED 2 and 3): Communication error with nRF Cloud.
-    * Blinking in groups of two (LED 1 and 2, LED 3 and 4): Other error.
+    * Blinking in groups of two (**LED 1** and **LED 3**, **LED 2** and **LED 4**): Modem fault.
+    * Blinking in a cross pattern (**LED 1** and **LED 4**, **LED 2** and **LED 3**): Communication error with nRF Cloud.
+    * Blinking in groups of two (**LED 1** and **LED 2**, **LED 3** and **LED 4**): Other error.
 
 
 Building and running
@@ -129,12 +129,12 @@ After programming the main controller with the sample, test it by performing the
 
 #. Observe that the message ``LTE Sensor Gateway sample started`` is shown in the terminal window, to ensure that the application has started.
 #. The nRF9160 DK now connects to the network. This might take several minutes.
-#. Observe that LED 3 starts blinking as the connection to nRF Cloud is established.
+#. Observe that **LED 3** starts blinking as the connection to nRF Cloud is established.
 #. The first time you start the sample the device will be paired to your account.
-#. Observe that LED 4 is turned on to indicate that the connection to nRF Cloud is established.
-#. Select :guilabel:`Device Management` in the left pane and select :guilabel:`Devices` in the nRF Cloud portal.
+#. Observe that **LED 4** is turned on to indicate that the connection to nRF Cloud is established.
+#. In the nRF Cloud portal, select :guilabel:`Device Management` in the left pane and select :guilabel:`Devices`.
 #. Observe that the device is shown as connected in the Devices screen.
-#. Set switch 2 in the position marked as **N.C.**.
+#. Set **Switch 2** in the position marked as **N.C.**.
    If a GNSS position fix is acquired, GNSS data is now added to the sensor data.
 #. Make sure that the Thingy:52 has established a connection to the application.
    This is indicated by its led blinking green.

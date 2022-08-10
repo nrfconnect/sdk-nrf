@@ -51,12 +51,12 @@ To program the certificates, complete the following steps:
 #. Update the modem firmware on the on-board modem of the nRF9160-based kit to the latest version by following the steps in :ref:`nrf9160_gs_updating_fw_modem`.
 #. Build and program the :ref:`at_client_sample` sample to the nRF9160-based kit as explained in :ref:`gs_programming`.
 #. Launch the `LTE Link Monitor`_ application, which is implemented as part of `nRF Connect for Desktop`_.
-#. Click :guilabel:`Certificate manager` located at the top right corner.
+#. Click :guilabel:`CERTIFICATE MANAGER` located at the upper right corner.
 #. Copy and paste the certificates downloaded earlier from the AWS IoT console into the respective entries (``CA certificate``, ``Client certificate``, ``Private key``).
-#. Select a desired security tag and click on :guilabel:`Update certificates`.
+#. Select a desired security tag and click :guilabel:`Update certificates`.
 
 .. note::
-   The default security tag set by the :guilabel:`Certificate manager` *16842753* is reserved for communications with :ref:`lib_nrf_cloud`.
+   The default security tag set by the **CERTIFICATE MANAGER** *16842753* is reserved for communications with :ref:`lib_nrf_cloud`.
 
 Configure the required library options
 ======================================

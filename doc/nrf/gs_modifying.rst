@@ -54,7 +54,7 @@ Advanced compiler settings
 The application has full control over the build process.
 
 Using Zephyr's configuration options is the standard way of controlling how the system is built.
-These options can be found under Zephyr's menuconfig :guilabel:`Build and Link Features` > :guilabel:`Compiler Options`.
+These options can be found under Zephyr's menuconfig **Build and Link Features** > **Compiler Options**.
 For example, to turn off optimizations, select :kconfig:option:`CONFIG_NO_OPTIMIZATIONS`.
 
 Compiler options not controlled by the Zephyr build system can be controlled through the :kconfig:option:`CONFIG_COMPILER_OPT` Kconfig option.
@@ -176,7 +176,7 @@ Read the `nRF Kconfig`_ documentation for more information.
 
 See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run menuconfig or guiconfig.
 
-To locate a specific configuration option, use the filter (:guilabel:`Search modules` field in the nRF Kconfig GUI or :guilabel:`Jump to` in menuconfig and guiconfig).
+To locate a specific configuration option, use the filter (**Search modules** field in the nRF Kconfig GUI or **Jump to** in menuconfig and guiconfig).
 The documentation for each :ref:`configuration option <configuration_options>` also lists the menu path where the option can be found.
 
 Changing the configuration permanently
@@ -253,7 +253,7 @@ Selecting a build type in |VSC|
 To select the build type in the |nRFVSC|:
 
 1. When `Building an application`_ as described in the |nRFVSC| documentation, follow the steps for setting up the build configuration.
-#. In the :guilabel:`Add Build Configuration` screen, select the desired :file:`.conf` file from the :guilabel:`Configuration` drop-down menu.
+#. In the **Add Build Configuration** screen, select the desired :file:`.conf` file from the :guilabel:`Configuration` drop-down menu.
 #. Fill in other configuration options, if applicable, and click :guilabel:`Build Configuration`.
 
 .. build_types_selection_vsc_end

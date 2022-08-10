@@ -65,7 +65,7 @@ After programming the sample to your development kit, test it by performing the 
 #. Trigger sampling data from the device using Edge Impulse studio:
 
    a. Go to the :guilabel:`Data acquisition` tab.
-   #. In the :guilabel:`Record new data` panel, set the desired values and click :guilabel:`Start sampling`.
+   #. In the **Record new data** panel, set the desired values and click :guilabel:`Start sampling`.
 
       .. figure:: ../../../doc/nrf/images/ei_data_acquisition.png
          :scale: 50 %

@@ -81,7 +81,7 @@ To upload the file to a public S3 bucket, perform the following steps:
 #. Go to the bucket you have created.
 #. Click :guilabel:`Upload` and select the file :file:`app_update.bin`.
    It is located in the :file:`zephyr` subfolder of your build directory.
-#. Click the file you uploaded in the bucket and check the :guilabel:`Object URL` field to find the download URL for the file.
+#. Click the file you uploaded in the bucket and check the **Object URL** field to find the download URL for the file.
 
 Remember to do the following when specifying the filenames:
 
@@ -96,7 +96,7 @@ Testing
 After programming the sample to your development kit, test it by performing the following steps:
 
 1. Upload the file :file:`app_update.bin` with the application image version 1 to the server you have chosen.
-   To upload the file on *nRF Connect for Cloud*, click :guilabel:`Upload` for the firmware URL that you generated earlier, then select the file :file:`app_update.bin` and upload it.
+   To upload the file on nRF Cloud, click :guilabel:`Upload` for the firmware URL that you generated earlier, then select the file :file:`app_update.bin` and upload it.
    Remember to rename the file to match the ``CONFIG_DOWNLOAD_FILE_V1`` configuration option.
 #. Configure the application image version to be 2 and rebuild the application.
 #. Upload the file :file:`app_update.bin` with the application image version 2 to the server you have chosen.

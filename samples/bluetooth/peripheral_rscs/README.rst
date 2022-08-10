@@ -58,7 +58,7 @@ After programming the sample to your development kit, test it by performing the 
 #. In :guilabel:`RSC Feature`, tap the :guilabel:`Read` button to get the supported features.
 #. In :guilabel:`Sensor Location`, tap the :guilabel:`Read` button to read the location of the sensor.
 #. In :guilabel:`SC Control Point`, tap the :guilabel:`Indicate` button to control the sensor.
-#. The following Op Codes (with data if required) can be written into :guilabel:`SC Control Point`:
+#. The following Op Codes (with data if required) can be written into the **SC Control Point**:
 
    * ``01 xx xx xx xx`` to set the Total Distance Value to the entered value in meters. (if the server supports the Total Distance Measurement feature).
    * ``02`` to start the sensor calibration process (if the server supports the Sensor Calibration feature).

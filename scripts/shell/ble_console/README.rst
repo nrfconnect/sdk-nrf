@@ -62,6 +62,6 @@ Pairing with the device
 ***********************
 
 After configuring the Bluetooth daemon, you can pair with the device using the Bluetooth tools provided by your Linux vendor.
-For example, in Ubuntu simply go to :guilabel:`Settings` > :guilabel:`Bluetooth`.
+For example, in Ubuntu go to :guilabel:`Settings` > :guilabel:`Bluetooth`.
 
 After pairing successfully, you can start using Bluetooth LE Console.

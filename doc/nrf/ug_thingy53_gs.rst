@@ -86,7 +86,7 @@ Complete these steps to update the firmware:
 
 #. Select a sample.
 
-   :guilabel:`Application Info` appears.
+   Application info appears.
 
    .. figure:: images/thingy53_application_info.png
       :alt: nRF Programmer - Application Info
@@ -101,7 +101,7 @@ Complete these steps to update the firmware:
 
    A list of nearby devices and their signal strengths appears.
 #. Select your Nordic Thingy:53 from the list.
-   It is listed as :guilabel:`El Thingy:53`.
+   It is listed as **El Thingy:53**.
 
    The transfer of the firmware image starts, and a progress wheel appears.
 
@@ -115,7 +115,7 @@ Complete these steps to update the firmware:
 
    The image transfer is complete when the progress wheel reaches 100%.
    The Nordic Thingy:53 is reset and updated to the new firmware sample.
-#. Tap :guilabel:`Done` to return to :guilabel:`Application Info`.
+#. Tap :guilabel:`Done` to return to Application info.
 
 .. _thingy53_gs_updating_usb:
 
@@ -130,7 +130,7 @@ You can update the Nordic Thingy:53 application and network core firmware over U
 Complete the following steps to update the firmware:
 
 1. Open the `Nordic Thingy:53 Downloads`_ page.
-#. Go to :guilabel:`Precompiled application firmware`, and download the latest version.
+#. Go to the **Precompiled application firmware** section, and download the latest version.
 #. Extract the zip file to a location of your choice.
 
    The :file:`CONTENTS.txt` file in the extracted folder contains the location and names of the different firmware images.
@@ -153,27 +153,27 @@ Complete the following steps to update the firmware:
 
       The Nordic Thingy:53 schematic - **SW1** and **SW2**
 
-#. In the Programmer navigation bar, click :guilabel:`Select device`.
+#. In the Programmer navigation bar, click :guilabel:`SELECT DEVICE`.
 
    A drop-down menu appears.
 #. In the drop-down menu, select :guilabel:`Bootloader Thingy:53`.
-#. Click :guilabel:`Add file` in the :guilabel:`File` section, and select :guilabel:`Browse`.
+#. Click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
 
    A file explorer window appears.
 #. Navigate to the folder where you extracted the application firmware.
 #. Open the :file:`Peripheral_LBS` folder, select the update file and click :guilabel:`Open`.
 
    The update file is titled :file:`peripheral_lbs_<version-number>_thingy53_nrf5340.zip`.
-#. Click the :guilabel:`Write` button in the :guilabel:`Device` section.
+#. Click the :guilabel:`Write` button in the **DEVICE** section.
 
-   The :guilabel:`MCUboot DFU` window appears.
+   The **MCUboot DFU** window appears.
 
    .. figure:: images/programmer_thingy53_mcuboot_dfu.png
       :alt: Programmer - MCUboot DFU window
 
       Programmer - MCUboot DFU window
 
-#. Click :guilabel:`Write` in the :guilabel:`MCUboot DFU` window.
+#. Click :guilabel:`Write` in the **MCUboot DFU** window.
 
    The flash slot is erased.
    When the flash slot has been erased, image transfer starts and a progress bar appears.
@@ -181,7 +181,7 @@ Complete the following steps to update the firmware:
    When the image transfer has been completed, the network core part of the image is transferred from RAM to the network core flash.
    This can take up to 20 seconds.
 
-   When the update is complete, a :guilabel:`Completed successfully` message appears.
+   When the update is complete, a **Completed successfully** message appears.
 
 You can now disconnect the Nordic Thingy:53 from the computer.
 
@@ -201,7 +201,7 @@ In these steps, the nRF5340 DK is used as the external debug probe.
 Do no unplug or power off the devices during this process.
 
 1. Open the `Nordic Thingy:53 Downloads`_ page.
-#. Go to :guilabel:`Precompiled application firmware`, and download the latest version.
+#. Go to the **Precompiled application firmware** section and download the latest version.
 #. Extract the zip file to a location of your choice.
 
    The :file:`CONTENTS.txt` file in the extracted folder contains the location and names of the different firmware images.
@@ -221,7 +221,7 @@ Do no unplug or power off the devices during this process.
    #. Power on the external debug probe.
    #. Connect the external debug probe to the computer with a micro-USB cable.
 
-      In the Programmer app's navigation bar, :guilabel:`No devices available` changes to :guilabel:`Select device`.
+      In the Programmer app's navigation bar, :guilabel:`No devices available` changes to :guilabel:`SELECT DEVICE`.
 
       .. figure:: /images/programmer_select_device1.png
          :alt: Programmer - Select device
@@ -230,23 +230,23 @@ Do no unplug or power off the devices during this process.
 
 #. Click :guilabel:`Select device` and select the appropriate debug probe entry from the drop-down list.
 
-   The icon text changes to board name and the ID of the selected device, and the :guilabel:`Device memory layout` section indicates that the device is connected.
+   The icon text changes to board name and the ID of the selected device, and the **Device memory layout** section indicates that the device is connected.
 
    You can identify the nRF5340 DK by its PCA number PCA10095 and its ID that is printed on the label sticker on the DK.
 
    If the nRF5340 DK does not show up in the drop-down list, press ``Ctrl+R`` in Windows or ``command+R`` in macOS to restart the Programmer application.
 
-#. Click :guilabel:`Add file` in the :guilabel:`File` section, and select :guilabel:`Browse`.
+#. Click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
 
    A file explorer window appears.
 #. Navigate to the folder where you extracted the application firmware.
 #. Open the folder for the application that you want to transfer to the Nordic Thingy:53.
 #. Select the corresponding HEX file to be used with the debug probe and click :guilabel:`Open`.
 
-   The HEX file appears in the :guilabel:`File memory layout` section.
-#. Click :guilabel:`Erase & write` in the :guilabel:`Device` section of the side panel.
+   The HEX file appears in the **File memory layout** section.
+#. Click :guilabel:`Erase & write` in the **DEVICE** section of the side panel.
 
-The update is complete when the animation in the Programmer app's :guilabel:`Device memory layout` section ends.
+The update is complete when the animation in the Programmer app's **Device memory layout** section ends.
 
 .. _thingy53_gs_machine_learning:
 

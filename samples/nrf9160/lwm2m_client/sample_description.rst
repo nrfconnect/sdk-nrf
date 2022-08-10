@@ -204,8 +204,8 @@ The following instructions describe how to register your device to `Leshan Demo 
       .. tab:: Leshan Demo Server
 
          1. Open the `Leshan Demo Server web UI`_.
-         #. Click on :guilabel:`SECURITY` in the upper right corner in the UI.
-         #. Click on :guilabel:`ADD SECURITY INFORMATION`.
+         #. Click :guilabel:`SECURITY` in the upper right corner in the UI.
+         #. Click :guilabel:`ADD SECURITY INFORMATION`.
          #. Enter the following data and click :guilabel:`ADD`:
 
             * Endpoint - urn\:imei\:*your Device IMEI*
@@ -216,9 +216,9 @@ The following instructions describe how to register your device to `Leshan Demo 
       .. tab:: Coiote Device Management
 
          1. Open `Coiote Device Management server`_.
-         #. Click on :guilabel:`Device inventory` in the left menu in the UI.
-         #. Click on :guilabel:`Add new device`.
-         #. Click on :guilabel:`Connect your LwM2M device directly via the management server`.
+         #. Click :guilabel:`Device inventory` in the left menu in the UI.
+         #. Click :guilabel:`Add new device`.
+         #. Click :guilabel:`Connect your LwM2M device directly via the management server`.
          #. Enter the following data and click :guilabel:`Add device`:
 
             * Endpoint - urn\:imei\:*your Device IMEI*
@@ -237,25 +237,25 @@ The following instructions describe how to register your device to `Leshan Demo 
       .. tab:: Leshan Demo Server
 
          1. Open the `Leshan Bootstrap Server Demo web UI <public Leshan Bootstrap Server Demo_>`_.
-         #. Click on :guilabel:`BOOTSTRAP` in the top right corner.
-         #. In the :guilabel:`BOOTSTRAP` tab, click on :guilabel:`ADD CLIENTS CONFIGURATION`.
-         #. Click on :guilabel:`Add clients configuration`.
+         #. Click :guilabel:`BOOTSTRAP` in the upper right corner.
+         #. In the :guilabel:`BOOTSTRAP` tab, click :guilabel:`ADD CLIENTS CONFIGURATION`.
+         #. Click :guilabel:`Add clients configuration`.
          #. Enter your Client Endpoint name - urn\:imei\:*your device IMEI*.
          #. Click :guilabel:`NEXT` and select :guilabel:`Using (D)TLS` and enter following data:
 
             * Identity - urn\:imei\:*your device IMEI*
             * Key - ``000102030405060708090a0b0c0d0e0f``
          #. Click :guilabel:`NEXT` and leave default paths to be deleted.
-         #. Click :guilabel:`NEXT` and in the :guilabel:`LWM2M Server Configuration` section, enter the following data:
+         #. Click :guilabel:`NEXT` and in the **LWM2M Server Configuration** section, enter the following data:
 
             * Server URL - ``coaps://leshan.eclipseprojects.io:5684``
-            * Select :guilabel:`Pre-shared Key` as the :guilabel:`Security Mode`
+            * Select :guilabel:`Pre-shared Key` as the **Security Mode**
             * Identity - urn\:imei\:*your device IMEI*
             * Key - ``000102030405060708090a0b0c0d0e0f``
 
             This information is used when your client connects to the server.
             If you choose :guilabel:`Pre-shared Key`, you must add the values for :guilabel:`Identity` and :guilabel:`Key` fields (the configured Key need not match the Bootstrap Server configuration).
-            The same credentials must be provided in the :guilabel:`Leshan Demo Server Security configuration` page (see :ref:`dtls_support` for instructions).
+            The same credentials must be provided in the **Leshan Demo Server Security configuration** page (see :ref:`dtls_support` for instructions).
 
          #. Click :guilabel:`NEXT` and do not select :guilabel:`Add a Bootstrap Server`.
          #. Click :guilabel:`ADD`.
@@ -264,9 +264,9 @@ The following instructions describe how to register your device to `Leshan Demo 
       .. tab:: Coiote Device Management
 
          1. Open `Coiote Device Management server`_.
-         #. Click on :guilabel:`Device inventory` in the menu on the left.
-         #. Click on :guilabel:`Add new device`.
-         #. Click on :guilabel:`Connect your LwM2M device via the Bootstrap server`.
+         #. Click :guilabel:`Device inventory` in the menu on the left.
+         #. Click :guilabel:`Add new device`.
+         #. Click :guilabel:`Connect your LwM2M device via the Bootstrap server`.
          #. Enter the following data and click :guilabel:`Configuration`:
 
             * Endpoint - urn\:imei\:*your Device IMEI*
@@ -282,9 +282,9 @@ The following instructions describe how to register your device to `Leshan Demo 
 
 .. note::
 
-   The :guilabel:`Client Configuration` page of the LWM2M Bootstrap server and the :guilabel:`Registered Clients` page of the LWM2M server display only a limited number of devices by default.
-   You can increase the number of displayed devices from the drop-down menu associated with :guilabel:`Rows per page`.
-   In both cases, the menu is displayed at the bottom-right corner of the :guilabel:`Client Configuration` pages.
+   The **Client Configuration** page of the LwM2M Bootstrap server and the **Registered Clients** page of the LwM2M server display only a limited number of devices by default.
+   You can increase the number of displayed devices from the drop-down menu associated with **Rows per page**.
+   In both cases, the menu is displayed at the bottom-right corner of the **Client Configuration** pages.
 
 2. Set the server address in the client:
 
@@ -326,21 +326,21 @@ Following are the instructions for enabling notifications in the Leshan Demo ser
 
       1. Open `Coiote Device Management server`_.
       #. Click :guilabel:`Device inventory` tab in the top.
-      #. Identify your device in the list and click on the anchor text corresponding to the device ID in the :guilabel:`Identity column`.
-      #. Click on the Objects tab in the new menu to the left, just below :guilabel:`Dashboard`.
+      #. Identify your device in the list and click on the anchor text corresponding to the device ID in the **Identity** column.
+      #. Click the :guilabel:`Objects` tab in the new menu to the left, just below :guilabel:`Dashboard`.
       #. Identify one or more objects that you want to receive notifications from, and expand it by clicking on them.
       #. Identify one or more resources of the object that you want to track:
 
          * You can track either a single resource or all the resources of an object. It is recommended to track only the resources that are expected to change.
          * If you want to use the :ref:`sensor_module_lwm2m`, at least the Sensor Value resource must be tracked for all sensors enabled in the Sensor Module.
 
-      #. Click on the :guilabel:`Value Tracking` button of the selected resource.
+      #. Click the :guilabel:`Value Tracking` button of the selected resource.
       #. Select :guilabel:`Observe` or :guilabel:`Monitoring` from the dropdown menu.
 
          * Selecting :guilabel:`Observe` will only update the Value field of the resource when it receives a notification.
          * Selecting :guilabel:`Monitoring` will additionally create a graph of the logged datapoints.
 
-      #. Click on :guilabel:`Limit data usage` to configure how often notifications are sent.
+      #. Click :guilabel:`Limit data usage` to configure how often notifications are sent.
 
 
 Configuration options
@@ -493,8 +493,8 @@ Building and running
 
 After building and running the sample, you can locate your device in the server:
 
-   * Leshan - Devices are listed under :guilabel:`Clients`.
-   * Coiote - Devices are listed under :guilabel:`Device inventory`.
+   * Leshan - Devices are listed under **Clients**.
+   * Coiote - Devices are listed under **Device inventory**.
 
 Queue Mode support
 ==================

@@ -163,12 +163,12 @@ Configuring models
 
 See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
 
-Configure the :ref:`bt_mesh_onoff_cli_readme` and the :ref:`bt_mesh_lvl_cli_readme` models on each element on the :guilabel:`Mesh Silvair EnOcean` node:
+Configure the :ref:`bt_mesh_onoff_cli_readme` and the :ref:`bt_mesh_lvl_cli_readme` models on each element on the **Mesh Silvair EnOcean** node:
 
-* Bind the model to :guilabel:`Application Key 1`.
+* Bind the model to **Application Key 1**.
 * Set the publication parameters:
 
-  * Destination/publish address: Set the :guilabel:`Publish Address` to the first unicast address of the Mesh Light Fixture node.
+  * Destination/publish address: Set the **Publish Address** to the first unicast address of the Mesh Light Fixture node.
 
 .. note::
    Configuring the periodic publication and publication retransmission of these models has no effect.

@@ -138,9 +138,9 @@ Configuring models
 
 See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
 
-Configure the Generic OnOff Server model on the root element of the :guilabel:`Mesh and Peripheral Coex` node:
+Configure the Generic OnOff Server model on the root element of the **Mesh and Peripheral Coex** node:
 
-1. Bind the model to :guilabel:`Application Key 1`.
+1. Bind the model to **Application Key 1**.
    Once the model is bound to the application key, you can control **LED 1** on the device.
 
 #. In the model view, tap :guilabel:`ON`/:guilabel:`OFF` (one of the Generic On Off Controls).
@@ -156,14 +156,14 @@ After programming the sample to your development kit, test it by performing the 
 #. Connect to the device from the nRF Connect application.
    The device is advertising as "Mesh and Peripheral Coex".
    The services of the connected device are shown.
-#. In :guilabel:`Nordic LED Button Service`, enable notifications for the :guilabel:`Button` characteristic.
+#. In **Nordic LED Button Service**, enable notifications for the **Button** characteristic.
 #. Press **Button 1** on the device.
 #. Observe that notifications with the following values are displayed:
 
    * ``Button released`` when **Button 1** is released.
    * ``Button pressed`` when **Button 1** is pressed.
 
-#. Write the following values to the LED characteristic in the :guilabel:`Nordic LED Button Service`:
+#. Write the following values to the LED characteristic in the **Nordic LED Button Service**:
 
    * Value ``OFF`` to switch the **LED 2** on the development kit off.
    * Value ``ON`` to switch the **LED 2** on the development kit on.

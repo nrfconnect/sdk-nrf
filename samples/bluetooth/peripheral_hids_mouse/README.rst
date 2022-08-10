@@ -99,14 +99,16 @@ Testing with nRF Connect for Desktop
 To test with `nRF Connect for Desktop`_, complete the following steps:
 
 1. Power on your development kit.
-#. Connect to the device from nRF Connect (the device is advertising as "NCS HIDS mouse").
+#. Start `nRF Connect for Desktop`_.
+#. Open the Bluetooth Low Energy app.
+#. Connect to the device from the app. The device is advertising as "NCS HIDS mouse"
 #. Optionally, bond to the device.
-   To do so, click the settings button for the device in nRF Connect, select :guilabel:`Pair`, check :guilabel:`Perform Bonding`, and click :guilabel:`Pair`.
+   Click the settings button for the device in the app, select **Pair**, check :guilabel:`Perform Bonding`, and click :guilabel:`Pair`.
    Optionally check :guilabel:`Enable MITM protection` to pair with MITM protection and use a button on the device to confirm or reject passkey value.
-#. Click Match in nRF Connect app.
+#. Click :guilabel:`Match` in the app.
    Wait until the bond is established before you continue.
 #. Observe that the services of the connected device are shown.
-#. Click the :guilabel:`Play` button for all HID Report characteristics.
+#. Click :guilabel:`Play` for all HID Report characteristics.
 #. Push **Button 1** on the kit.
    Observe that a notification is received on one of the HID Report characteristics, containing the value ``FB0F00``.
 

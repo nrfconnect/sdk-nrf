@@ -60,10 +60,10 @@ See `AWS IoT Developer Guide: Basic Policy Variables`_ and `AWS IoT Developer Gu
 
 To create a thing for your kit:
 
-1. Log on to the `AWS IoT console`_.
+1. Log in to the `AWS IoT console`_.
 #. Go to :guilabel:`Secure` > :guilabel:`Policies` and select :guilabel:`Create a policy`.
 #. Enter a name and define your policy.
-   For testing purposes, you can use the following policy (switch to :guilabel:`Advanced mode` to copy and paste it):
+   For testing purposes, you can use the following policy (switch to **Advanced mode** to copy and paste it):
 
    .. code-block:: javascript
 
@@ -90,7 +90,7 @@ To create a thing for your kit:
    You need the thing certificate (:file:`*-certificate.pem.crt`), the private key (:file:`*.private.pem.key`), and the root CA (choose the Amazon Root CA 1, :file:`AmazonRootCA1.pem`).
 #. Click :guilabel:`Activate` to activate the certificates.
 #. Click :guilabel:`Attach a policy` to continue to the next step.
-#. Select the policy that you created in step 3 and click :guilabel:`Register Thing`.
+#. Select the policy that you created in Step 3 and click :guilabel:`Register Thing`.
 
 Update the certificates
 -----------------------
@@ -139,7 +139,7 @@ CONFIG_CERT_SEC_TAG - Security tag for TLS credentials
 CONFIG_MQTT_BROKER_HOSTNAME - AWT IoT MQTT broker hostname
    By default, the sample uses nRF Cloud's MQTT broker.
    Change this value to AWS IoT's MQTT broker.
-   To find the address of the AWS IoT MQTT broker, open the AWS IoT console, go to :guilabel:`Settings` and read the endpoint under :guilabel:`Device data endpoint`.
+   To find the address of the AWS IoT MQTT broker, open the AWS IoT console, go to :guilabel:`Settings` and read the endpoint under **Device data endpoint**.
 
 .. _CONFIG_USE_CUSTOM_CLIENT_ID:
 
@@ -185,7 +185,7 @@ After programming the sample to your development kit, test it by performing the 
 #. Go to `AWS S3 console`_ and sign in.
 #. Go to the bucket you have created.
 #. Click :guilabel:`Upload` and select the file :file:`app_update.bin` (located in the :file:`zephyr` subfolder of your build directory).
-#. Click the file you uploaded in the bucket and check the :guilabel:`Object URL` field to find the download URL for the file.
+#. Click the file you uploaded in the bucket and check the **Object URL** field to find the download URL for the file.
 #. Create a job document (a text file) with the following content, replacing *host_url* with the server part of the URL that you created (for example, ``s3.amazonaws.com``) and *file_path* with the path and file name (for example, :file:`nordic-firmware-files/app_update.bin`):
 
    .. parsed-literal::
@@ -206,7 +206,7 @@ After programming the sample to your development kit, test it by performing the 
 #. Log on to the `AWS S3 console`_.
 #. Select the bucket, click :guilabel:`Upload`, and select your job document.
    Use the default settings when uploading the file.
-#. Log on to the `AWS IoT console`_, go to :guilabel:`Manage` > :guilabel:`Jobs`, and select :guilabel:`Create a job`.
+#. Log in to the `AWS IoT console`_, go to :guilabel:`Manage` > :guilabel:`Jobs`, and select :guilabel:`Create a job`.
 #. Click :guilabel:`Create custom job` and enter a unique job ID.
    Select your device and the job file that you uploaded to AWS S3.
    Use the default settings for all other options.
@@ -229,7 +229,7 @@ After programming the sample to your development kit, test it by performing the 
 
 
 #. When the kit resets, observe that the sample prints the new application version.
-#. Log on to the `AWS IoT console`_, go to :guilabel:`Manage` > :guilabel:`Things`, and select your thing.
+#. Log in to the `AWS IoT console`_, go to :guilabel:`Manage` > :guilabel:`Things`, and select your thing.
 #. Go to :guilabel:`Shadow` and confirm that the application version has updated.
 
 

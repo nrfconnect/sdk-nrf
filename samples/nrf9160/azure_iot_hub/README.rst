@@ -107,7 +107,7 @@ Optionally, follow the instructions at `Azure IoT Explorer`_ to install and conf
 #. Observe that the device receives the updated ``telemetryInterval`` value, applies it, and starts sending new telemetry events every 10 seconds.
 #. Verify that the ``reported`` object in the device twin now has a ``telemetryInterval`` property with the correct value reported back from the device.
 #. In the `Azure IoT Explorer`_ or device page in `Azure Portal`_, navigate to the :guilabel:`Direct method` tab.
-#. Enter ``led`` as the method name. In the ``payload`` field, enter the value ``1`` (or ``0``) and click :guilabel:`Invoke method`.
+#. Enter ``led`` as the method name. In the **payload** field, enter the value ``1`` (or ``0``) and click :guilabel:`Invoke method`.
 #. Observe that **LED 1** on the development kit lights up (or switches off if ``0`` is entered as the payload).
    If you are using `Azure IoT Explorer`_, you can observe a notification in the top right corner stating if the direct method was successfully invoked based on the report received from the device.
 #. In the `Azure IoT Explorer`_, navigate to the :guilabel:`Telemetry` tab and click :guilabel:`start`.

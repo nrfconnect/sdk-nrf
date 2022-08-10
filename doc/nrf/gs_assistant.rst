@@ -30,7 +30,7 @@ To install the Toolchain Manager app, complete the following steps:
 
 1. `Download nRF Connect for Desktop`_ for your operating system.
 #. Install and run the tool on your machine.
-#. In the APPS section, click :guilabel:`Install` next to Toolchain Manager.
+#. In the **APPS** section, click :guilabel:`Install` next to Toolchain Manager.
 
 The app is installed on your machine, and the :guilabel:`Install` button changes to :guilabel:`Open`.
 
@@ -46,8 +46,8 @@ Once you have installed the Toolchain Manager, open it in nRF Connect for Deskto
 
    The Toolchain Manager window
 
-Click :guilabel:`Settings` in the navigation bar to specify where you want to install the |NCS|.
-Then, in :guilabel:`SDK Environments`, click the :guilabel:`Install` button next to the |NCS| version that you want to install.
+Click :guilabel:`SETTINGS` in the navigation bar to specify where you want to install the |NCS|.
+Then, in :guilabel:`SDK ENVIRONMENTS`, click the :guilabel:`Install` button next to the |NCS| version that you want to install.
 The |NCS| version of your choice is installed on your machine.
 
 There are two ways you can build an application:

@@ -76,7 +76,7 @@ Perform the following steps to use the :file:`bt_nus_shell.py` script:
       bt_nus_shell.py --name BT_NUS_shell --com COM237 --family NRF52 --snr 682560213
 
 #. Open a console application, for example, PuTTY.
-   Open a new session, setting up the :guilabel:`Connection Type` to :guilabel:`Raw` and the :guilabel:`Destination Address` to ``127.0.0.1:8889``.
+   Open a new session, setting the :guilabel:`Connection Type` to :guilabel:`Raw` and the :guilabel:`Destination Address` to ``127.0.0.1:8889``.
 #. Press Enter in the terminal window.
    A console prompt is displayed.
 #. Enter the commands that you want to execute in the remote shell.
