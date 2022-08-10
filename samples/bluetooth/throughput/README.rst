@@ -60,7 +60,7 @@ By default, the following connection parameter values are used:
    * - Parameter
      - Value
    * - ATT_MTU size
-     - 247 bytes
+     - 498 bytes
    * - Data length
      - 251 bytes
    * - Connection interval
@@ -206,8 +206,8 @@ For the tester::
                          ^.:.^                             ^^.^^
 
    Done
-   [local] sent 612684 bytes (598 KB) in 3890 ms at 1260 kbps
-   [peer] received 612684 bytes (598 KB) in 2511 GATT writes at 1395626 bps
+   [local] sent 1242945 bytes (1213 KB) in 7292 ms at 1363 kbps
+   [peer] received 1242945 bytes (1213 KB) in 2511 GATT writes at 1415583 bps
 
    Type 'config' to change the configuration parameters.
    You can use the Tab key to autocomplete your input.
@@ -249,7 +249,7 @@ For the peer::
    =============================================================================
    =============================================================================
    ===========================================================
-   [local] received 612684 bytes (598 KB) in 2511 GATT writes at 1261557 bps
+   [local] received 1242945 bytes (1213 KB) in 2511 GATT writes at 1415583 bps
 
 
 Dependencies
