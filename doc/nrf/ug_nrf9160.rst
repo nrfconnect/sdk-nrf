@@ -115,10 +115,10 @@ Complete the following steps to provision the certificate:
 #. Click :guilabel:`Select device` and select the DK from the drop-down list.
    You can identify the nRF9160 DK by the fact that it has three COM ports.
 
-   .. figure:: /images/programmer_com_ports.png
-      :alt: Programmer - COM ports
+   .. figure:: /images/ltelinkmonitor_selectdevice.png
+      :alt: LTE Link Monitor - COM ports
 
-      Programmer - COM ports
+      LTE Link Monitor - COM ports
 
    If the three COM ports are not visible, press ``Ctrl+R`` in Windows or ``command+R`` in macOS to restart the Programmer application.
 
