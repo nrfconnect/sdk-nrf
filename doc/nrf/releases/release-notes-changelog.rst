@@ -266,6 +266,7 @@ Bluetooth samples
 
   * Fixed peer throughput calculations.
     These were too low because the total transfer time incorrectly included 500ms delay without including the actual transfer.
+  * Optimized throughput speed by increasing MTU to 498 and using the maximum connection event time.
 
 * :ref:`bluetooth_direction_finding_central` sample:
 
