@@ -65,13 +65,6 @@ config ML_APP_EI_DATA_FORWARDER_BUF_COUNT
 	  application module. This Kconfig option specifies number of sensor samples temporarily
 	  stored by the application module.
 
-config ML_APP_EI_DATA_FORWARDER_UART_DEV
-	string "UART device name"
-	depends on ML_APP_EI_DATA_FORWARDER_UART
-	default "UART_0"
-	help
-	  Name of UART device that is used to forward data.
-
 module = ML_APP_EI_DATA_FORWARDER
 module-str = EI data forwarder
 source "subsys/logging/Kconfig.template.log_config"
