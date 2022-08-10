@@ -1,4 +1,8 @@
 / {
+	chosen {
+		nordic,ml_app_ei_data_forwarder_uart = &uart0;
+	};
+
 	leds {
 		status = "okay";
 		label = "ML state LED";

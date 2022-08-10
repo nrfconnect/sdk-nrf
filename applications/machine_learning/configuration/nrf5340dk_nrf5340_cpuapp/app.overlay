@@ -1,6 +1,7 @@
 / {
 	chosen {
 		nordic,pm-ext-flash = &mx25r64;
+		nordic,ml_app_ei_data_forwarder_uart = &uart0;
 	};
 };
 
