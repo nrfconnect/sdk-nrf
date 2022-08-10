@@ -125,18 +125,16 @@ Configuring models
 
 See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
 
-Create a new group and name it *Chat Channel*, then configure the Vendor model on the :guilabel:`Mesh Chat` node:
+Create a new group and name it *Chat Channel*, then configure the Vendor model on the **Mesh Chat** node:
 
-* Bind the model to :guilabel:`Application Key 1`.
+* Bind the model to **Application Key 1**.
 * Set the publication parameters:
 
-  * Destination/publish address: Select just created group :guilabel:`Chat Channel`.
+  * Destination/publish address: Select the created group **Chat Channel**.
   * Publication interval: Set the interval to recommended value of 10 seconds.
   * Retransmit count: Change the count as preferred.
 
-* Set the subscription parameters: Select just created group :guilabel:`Chat Channel`.
-
-Make sure to configure the parameters for each mesh node in the mesh network.
+* Set the subscription parameters: Select the created group **Chat Channel**.
 
 Interacting with the sample
 ---------------------------

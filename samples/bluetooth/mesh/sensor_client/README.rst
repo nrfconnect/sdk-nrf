@@ -136,13 +136,13 @@ Configuring models
 
 See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
 
-Configure the Sensor Client model on the :guilabel:`Mesh Sensor Observer` node:
+Configure the Sensor Client model on the **Mesh Sensor Observer** node:
 
-* Bind the model to :guilabel:`Application Key 1`.
+* Bind the model to **Application Key 1**.
 * Set the publication parameters:
 
   * Destination/publish address: Select an existing group or create a new one, but make sure that the Sensor Server subscribes to the same group.
-  * Retransmit count: Set the count to zero (:guilabel:`Disabled`), to avoid duplicate logging in the UART terminal.
+  * Retransmit count: Set the count to zero (**Disabled**), to avoid duplicate logging in the UART terminal.
 
 * Set the subscription parameters: Select an existing group or create a new one, but make sure that the Sensor Server publishes to the same group.
 

@@ -382,16 +382,16 @@ The RealTerm terminal program offers a graphical interface for setting up your c
 
 To test DTM with RealTerm, complete the following steps:
 
-1. On the :guilabel:`Display` tab, set :guilabel:`Display As` to :guilabel:`Hex[space]`.
+1. On the :guilabel:`Display` tab, set **Display As** to **Hex[space]**.
 
    .. figure:: /images/realterm_hex_display.png
       :alt: Set the RealTerm display format
 
 #. Open the :guilabel:`Port` tab and configure the serial port parameters:
 
-   a. Set the :guilabel:`Baud` to 19200 **(1)**.
-   #. Select your J-Link serial port from the :guilabel:`Port` list **(2)**.
-   #. Set the port status to "Open" **(3)**.
+   a. Set the **Baud** to ``19200`` **(1)**.
+   #. Select your J-Link serial port from the **Port** list **(2)**.
+   #. Set the port status to ``Open`` **(3)**.
 
    .. figure:: /images/real_term_serial_port.png
       :alt: RealTerm serial port settings
@@ -399,7 +399,7 @@ To test DTM with RealTerm, complete the following steps:
 #. Open the :guilabel:`Send` tab:
 
    a. Write the command as a hexadecimal number in the field **(1)**.
-      For example, write **0x00 0x00** to send a **Reset** command.
+      For example, write ``0x00 0x00`` to send a **Reset** command.
    #. Click the :guilabel:`Send Numbers` button **(2)** to send the command.
    #. Observe the response in the DTM in area **(3)**.
       The response is encoded as hexadecimal numbers.
@@ -441,13 +441,13 @@ On Ubuntu, run:
 
       Configuration window
 
-   a. Select :guilabel:`Serial port setup` and set UART baudrate to 19200.
+   a. Select :guilabel:`Serial port setup` and set UART baudrate to ``19200``.
 
       .. figure:: /images/minicom_serial_port.png
          :alt: minicom serial port settings
 
-   #. Select :guilabel:`Screen and keyboard` and press **S** on the keyboard to enable the **Hex Display**.
-   #. Press **Q** on the keyboard to enable **Local echo**.
+   #. Select :guilabel:`Screen and keyboard` and press S on the keyboard to enable the **Hex Display**.
+   #. Press Q on the keyboard to enable **Local echo**.
 
       .. figure:: /images/minicom_terminal_cfg.png
          :alt: minicom terminal screen and keyboard settings
@@ -457,7 +457,7 @@ On Ubuntu, run:
 
 #. Send DTM commands:
 
-   To send DTM commands, use **echo** with **-ne** options in another terminal.
+   To send DTM commands, use ``echo`` with ``-ne`` options in another terminal.
    You must encode the data as hexadecimal numbers (\xHH, byte with hexadecimal value HH, 1 to 2 digits).
 
    .. parsed-literal::

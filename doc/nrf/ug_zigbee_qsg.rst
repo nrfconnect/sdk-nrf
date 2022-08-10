@@ -117,11 +117,11 @@ To set up the required software, complete the following steps:
 
    a. `Download nRF Connect for Desktop`_ for your operating system.
    #. Install and run the tool on your machine.
-   #. In the APPS section, click :guilabel:`Install` next to Toolchain Manager.
+   #. In the **APPS** view, click :guilabel:`Install` next to Toolchain Manager.
 
    The app is installed on your machine, and the :guilabel:`Install` button changes to :guilabel:`Open`.
 #. Open the Toolchain Manager in nRF Connect for Desktop.
-#. Click :guilabel:`Settings` in the navigation bar to specify where you want to install the |NCS|.
+#. Click :guilabel:`SETTINGS` in the navigation bar to specify where you want to install the |NCS|.
    Then, in :guilabel:`SDK Environments`, click the :guilabel:`Install` button next to the |NCS| version that you want to install.
    The |NCS| version of your choice is installed on your machine.
 #. Click the :guilabel:`Open VS Code` button.

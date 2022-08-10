@@ -38,7 +38,7 @@ Since there are links from the |NCS| documentation set into other documentation 
 Documentation search
 ********************
 
-Use the :guilabel:`Search all docs` field in the top of each documentation page to search for a given word or phrase in all the documentation sets.
+Use the **Search all docs...** field in the top of each documentation page to search for a given word or phrase in all the documentation sets.
 The search engine only looks up the perfect matches for each word or phrase.
 
 .. figure:: images/doc_structure_search.PNG

@@ -164,13 +164,13 @@ Configuring models
 
 See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh models with the nRF Mesh mobile app.
 
-Configure the Generic OnOff Client model on each element on the :guilabel:`Mesh Light Switch` node:
+Configure the Generic OnOff Client model on each element on the **Mesh Light Switch** node:
 
-* Bind the model to :guilabel:`Application Key 1`.
+* Bind the model to **Application Key 1**.
 * Set the publication parameters:
 
-  * Destination/publish address: Set the :guilabel:`Publish Address` to the first unicast address of the Mesh Light node.
-  * Retransmit count: Set the count to zero (:guilabel:`Disabled`), to prevent the model from sending each button press multiple times.
+  * Destination/publish address: Set the **Publish Address** to the first unicast address of the Mesh Light node.
+  * Retransmit count: Set the count to zero (**Disabled**), to prevent the model from sending each button press multiple times.
 
 Once the provisioning and the configuration of the client node and at least one of the server nodes are complete, you can use buttons on the client development kit.
 The buttons will control the LED lights on the associated servers, as described in :ref:`bluetooth_mesh_light_switch_user_interface`.

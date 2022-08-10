@@ -96,7 +96,7 @@ Testing with other development kits
 
 #. Program another development kit with the :ref:`zephyr:bluetooth_central_hr` sample and reset it.
 #. Wait until central is connected to your development kit.
-   Observe that **LED 3** is on.
+   Observe that **LED 3** is lit.
 #. In terminal windows connected to device with the :ref:`zephyr:bluetooth_central_hr` sample, check for information similar to following::
 
         [NOTIFICATION] data 0x20006779 length 2
@@ -107,13 +107,14 @@ Testing with nRF Connect for Desktop
 ------------------------------------
 1. |connect_terminal_specific|
 #. Reset the development kit.
-#. Start `nRF Connect for Desktop`_ and select the connected dongle that is used for communication.
+#. Start `nRF Connect for Desktop`_.
+#. Open the Bluetooth Low Energy app and select the connected dongle that is used for communication.
 #. Open the :guilabel:`SERVER SETUP` tab.
 #. Click the dongle configuration and select :guilabel:`Load setup`.
 #. Load the :file:`hr_service.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hr` in the |NCS| folder structure.
 #. Click :guilabel:`Apply to device`.
 #. Open the :guilabel:`CONNECTION MAP` tab.
-#. Click the dongle configuration(gear ikon) and select :guilabel:`Advertising setup`.
+#. Click the dongle configuration (gear icon) and select :guilabel:`Advertising setup`.
 
    The current version of nRF Connect can store the advertising setup.
 
@@ -123,8 +124,8 @@ Testing with nRF Connect for Desktop
 
 #. Click the gear icon to open the Adapter settings and select :guilabel:`Start advertising`.
 #. Wait until the development kit running the Central and Peripheral HRS connects.
-   Observe that **LED 2** is on.
-#. Explore the :guilabel:`Heart Rate Measurement` characteristic.
+   Observe that **LED 2** is lit.
+#. Explore the **Heart Rate Measurement** characteristic.
 #. Write value ``06 80`` and click the :guilabel:`Play` button to send a notification.
    In the terminal window, check for information similar to the following::
 
@@ -140,9 +141,10 @@ Testing with nRF Connect for Desktop
             Heart Rate Measurement Value: 128 bpm
 
 #. The `nRF Connect for Desktop`_ also detects the Central and Peripheral HRS sample Heart Rate Service.
-#. Enable the notification for the :guilabel:`Heart Rate Measurement` characteristic.
+#. Enable the notification for the **Heart Rate Measurement** characteristic.
 #. Write again value ``06 80`` and click the :guilabel:`Play` button to send a notification.
-   The same value appears for the sample :guilabel:`Heart Rate Measurement` characteristic, sample works as relay for Heart Rate Service.
+   The same value appears for the **Heart Rate Measurement** characteristic.
+   The sample works as relay for the Heart Rate Service.
 
 Dependencies
 ************

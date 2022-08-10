@@ -101,14 +101,14 @@ Testing with nRF Connect for Desktop
       Security changed: xx:xx:xx:xx:xx:xx (random) level 2
       Pairing completed: xx:xx:xx:xx:xx:xx (random), bonded: 1
 
-#. After bonding, verify in the Bluetooth Low Energy app that the :guilabel:`Client Characteristic Configuration` (CCCD) value for :guilabel:`Apple Remote Command` and :guilabel:`Apple Entity Update` are set to ``01 00``.
+#. After bonding, verify in the Bluetooth Low Energy app that the **Client Characteristic Configuration** (CCCD) value for **Apple Remote Command** and **Apple Entity Update** are set to ``01 00``.
 
 Music setup
 ^^^^^^^^^^^
 
 Complete the following steps to initiate a music player setup:
 
-#. In the Bluetooth Low Energy app, verify that the :guilabel:`Apple Entity Update` is initiated to ``00 00 01 02``.
+#. In the Bluetooth Low Energy app, verify that the **Apple Entity Update** is initiated to ``00 00 01 02``.
    The following table lists the attributes requested by the MR.
 
    +--------------+-------+----------------+
@@ -124,7 +124,7 @@ Complete the following steps to initiate a music player setup:
    +--------------+-------+----------------+
 
 #. Press **Button 1** to enable track attributes notification.
-#. In the Bluetooth Low Energy app, verify that the :guilabel:`Apple Entity Update` is updated to ``02 00 01 02 03``.
+#. In the Bluetooth Low Energy app, verify that the **Apple Entity Update** is updated to ``02 00 01 02 03``.
    The following table lists the attributes requested by the MR.
 
    +--------------+-------+----------------+
@@ -141,13 +141,13 @@ Complete the following steps to initiate a music player setup:
    | Attribute ID | 03    | Duration       |
    +--------------+-------+----------------+
 
-#. Set the :guilabel:`Apple Remote Command` value to ``00 01 02 03 04 05 06 07 08 09 0A 0B 0C``.
+#. Set the **Apple Remote Command** value to ``00 01 02 03 04 05 06 07 08 09 0A 0B 0C``.
    It tells the MR the list of commands supported by the MS.
 #. Verify that the UART output is as follows::
 
       AMS RC: 00,01,02,03,04,05,06,07,08,09,0A,0B,0C
 
-#. Set the :guilabel:`Apple Entity Update` value to ``00 01 00 30 2C 30 2E 30 2C 30 2E 30 30 30``.
+#. Set the **Apple Entity Update** value to ``00 01 00 30 2C 30 2E 30 2C 30 2E 30 30 30``.
 #. Verify that the UART output is as follows::
 
       AMS EU: 00,01,00 0,0.0,0.000
@@ -166,7 +166,7 @@ Complete the following steps to initiate a music player setup:
    | Value        | 0,0.0,0.000 | Paused         |
    +--------------+-------------+----------------+
 
-#. Set the :guilabel:`Apple Entity Update` value to ``02 03 00 31 32 30 2E 30 30 30``.
+#. Set the **Apple Entity Update** value to ``02 03 00 31 32 30 2E 30 30 30``.
 #. Verify that the UART output is as follows::
 
       AMS EU: 02,03,00 120.000
@@ -185,7 +185,7 @@ Complete the following steps to initiate a music player setup:
    | Value        | 120.000 | 120 seconds    |
    +--------------+---------+----------------+
 
-#. Set the :guilabel:`Apple Entity Update` value to ``02 02 00 6E 52 46 35 32 20 53 65 72 69 65 73 20 73 6F 6E 67``.
+#. Set the **Apple Entity Update** value to ``02 02 00 6E 52 46 35 32 20 53 65 72 69 65 73 20 73 6F 6E 67``.
 #. Verify that the UART output is as follows::
 
       AMS EU: 02,02,00 nRF52 Series song
@@ -210,8 +210,8 @@ Playback
 To test an audio playback, complete the following steps:
 
 #. Press **Button 2** to start audio playback.
-#. In the Bluetooth Low Energy app, verify that the :guilabel:`Apple Remote Command` is updated to ``02``.
-#. Set the :guilabel:`Apple Entity Update` value to ``00 01 00 31 2C 31 2E 30 2C 30 2E 30 31 34``.
+#. In the Bluetooth Low Energy app, verify that the **Apple Remote Command** is updated to ``02``.
+#. Set the **Apple Entity Update** value to ``00 01 00 31 2C 31 2E 30 2C 30 2E 30 31 34``.
 #. Verify that the UART output is as follows::
 
       AMS EU: 00,01,00 1,1.0,0.014
@@ -237,15 +237,15 @@ Next track
 To test the next track feature, complete the following steps:
 
 #. Press **Button 3** to jump to next song.
-#. In the Bluetooth Low Energy app, verify that the :guilabel:`Apple Remote Command` is updated to ``03``.
-#. Set the :guilabel:`Apple Entity Update` value to ``02 03 00 31 38 30 2E 30 30 30``.
+#. In the Bluetooth Low Energy app, verify that the **Apple Remote Command** is updated to ``03``.
+#. Set the **Apple Entity Update** value to ``02 03 00 31 38 30 2E 30 30 30``.
 #. Verify that the UART output is as follows::
 
       AMS EU: 02,03,00 180.000
 
    The notification informs about the updated song duration.
 
-#. Set the :guilabel:`Apple Entity Update` value to ``02 02 00 6E 52 46 35 33 20 53 65 72 69 65 73 20 73 6F 6E 67``.
+#. Set the **Apple Entity Update** value to ``02 02 00 6E 52 46 35 33 20 53 65 72 69 65 73 20 73 6F 6E 67``.
 #. Verify that the UART output is as follows::
 
       AMS EU: 02,02,00 nRF53 Series song

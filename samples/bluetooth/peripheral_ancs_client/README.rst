@@ -85,12 +85,13 @@ Testing with nRF Connect for Desktop
 
 #. |connect_terminal_specific|
 #. Reset the kit.
-#. Start `nRF Connect for Desktop`_ and select the connected dongle that is used for communication.
-#. Click the :guilabel:`Server setup` tab.
+#. Start `nRF Connect for Desktop`_.
+#. Open the Bluetooth Low Energy app and select the connected dongle that is used for communication.
+#. Click the :guilabel:`SERVER SETUP` tab.
    Click the dongle configuration and select :guilabel:`Load setup`.
    Load the :file:`ANCS_central.ncs` file that is located under :file:`samples/bluetooth/peripheral_ancs_client` in the |NCS| folder structure.
 #. Click :guilabel:`Apply to device`.
-#. Click the :guilabel:`Connection Map` tab.
+#. Click the :guilabel:`CONNECTION MAP` tab.
    Click the dongle configuration and select :guilabel:`Security parameters`.
    Check :guilabel:`Perform Bonding`, and click :guilabel:`Apply`.
 #. Connect to the device from nRF Connect. The device is advertising as "ANCS".
@@ -102,7 +103,7 @@ Testing with nRF Connect for Desktop
       GATT Service could not be found during the discovery
       The discovery procedure for ANCS succeeded
 
-#. After bonding, verify in nRF Connect that the :guilabel:`Client Characteristic Configuration` (CCCD) value for :guilabel:`Apple Notification Source` and :guilabel:`Apple Data Source` are set to ``01 00``.
+#. After bonding, verify in the Bluetooth Low Energy app that the **Client Characteristic Configuration** (CCCD) value for **Apple Notification Source** and **Apple Data Source** are set to ``01 00``.
 
 Send an iOS notification to the application
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -123,7 +124,7 @@ The following table shows the format of a notification that you can send to the 
    | Notification UID | 01 02 03 04   | 67305985 (0x4030201)     |
    +------------------+---------------+--------------------------+
 
-#. In nRF Connect, set the value of :guilabel:`Apple Notification Source` to ``00 18 06 02 01 02 03 04`` and click :guilabel:`Update`.
+#. In the Bluetooth Low Energy app, set the value of **Apple Notification Source** to ``00 18 06 02 01 02 03 04`` and click :guilabel:`Update`.
 #. Verify that the UART data is received as follows::
 
       Notification
@@ -155,7 +156,7 @@ The following table shows the format of the message that the application must se
    |                  | 01            | Negative                    |
    +------------------+---------------+-----------------------------+
 
-#. Press **Button 3** to perform a positive action and verify that the :guilabel:`Apple Control Point` value is updated to ``02 01 02 03 04 00``.
+#. Press **Button 3** to perform a positive action and verify that the **Apple Control Point** value is updated to ``02 01 02 03 04 00``.
 #. You can also press **Button 4** and observe that the server receives a negative action ``02 01 02 03 04 01``.
 
 Retrieve notification attributes
@@ -212,16 +213,16 @@ The following table shows the format of a response that contains some of the req
    +------------------+---------------+-----------------------------+
 
 #. Press **Button 1** to request notification attributes for the iOS notification that was received.
-#. In nRF Connect, verify that the :guilabel:`Apple Control Point` is updated to ``00 01 02 03 04 00 01 20 00 02 20 00 03 20 00 04 05 06 07``.
+#. In the Bluetooth Low Energy app, verify that the **Apple Control Point** is updated to ``00 01 02 03 04 00 01 20 00 02 20 00 03 20 00 04 05 06 07``.
 #. Respond to the request by sending two notification attributes: the title and the message.
-   Set the :guilabel:`Apple Data Source` value in the Server to ``00 01 02 03 04 01 03 00 6E 52 46 03 02 00 35 32``.
+   Set the **Apple Data Source** value in the Server to ``00 01 02 03 04 01 03 00 6E 52 46 03 02 00 35 32``.
 #. The application will print the received data on UART.
    Verify that the UART output is as follows::
 
       Title: nRF
       Message: 52
 
-#. Update the :guilabel:`Apple Data Source` value again with the app identifier ``00 03 00 63 6F 6D``.
+#. Update the **Apple Data Source** value again with the app identifier ``00 03 00 63 6F 6D``.
 #. Verify that the notification is received and the UART output is as follows::
 
       App Identifier: com
@@ -260,9 +261,9 @@ The following table shows the format of a response that contains the requested a
    +------------------+---------------+--------------------+
 
 #. Press **Button 2** to request app attributes for the app with the app identifier "com" (the last received app identifier).
-#. In nRF Connect, verify that the :guilabel:`Apple Control Point` is updated to ``01 63 6F 6D 00 00``.
+#. In the Bluetooth Low Energy app, verify that the **Apple Control Point** is updated to ``01 63 6F 6D 00 00``.
 #. Respond to the request by sending the app attribute.
-   Set the :guilabel:`Apple Data Source` value in the Server to ``01 63 6F 6D 00 00 04 00 4D 61 69 6C``.
+   Set the **Apple Data Source** value in the Server to ``01 63 6F 6D 00 00 04 00 4D 61 69 6C``.
 #. The application will print the received data on UART. Verify that the UART output is as follows::
 
       Display Name: Mail
@@ -270,8 +271,8 @@ The following table shows the format of a response that contains the requested a
 Disconnect
 ^^^^^^^^^^
 
-Disconnect the device in nRF Connect.
-As the bond information is preserved by nRF Connect, you can immediately reconnect to the device by clicking :guilabel:`Connect`.
+Disconnect the device in the Bluetooth Low Energy app.
+As the bond information is preserved by the app, you can immediately reconnect to the device by clicking :guilabel:`Connect`.
 
 Dependencies
 ************

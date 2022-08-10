@@ -108,7 +108,7 @@ Complete the following steps to download the model from a private Edge Impulse p
       CONFIG_EDGE_IMPULSE_URI="https:\ //studio.edgeimpulse.com/v1/api/*XYZ*/deployment/download?type=zip"
 
    Set *XYZ* to the project ID of your Edge Impulse project.
-   You can check the project ID of your project in the :guilabel:`Project info` panel under :guilabel:`Dashboard`.
+   You can check the project ID of your project in the **Project info** panel under :guilabel:`Dashboard`.
 
    .. figure:: images/ei_project_id.png
       :scale: 50 %
@@ -132,7 +132,7 @@ Complete the following steps to download the model from a public Edge Impulse pr
 
 1. Check the ID of the public project:
 
-   a. Check the project ID of your project in the :guilabel:`Project info` panel under :guilabel:`Dashboard`.
+   a. Check the project ID of your project in the **Project info** panel under :guilabel:`Dashboard`.
    #. Provide this project ID in the *XYZ* field in the following URL:
 
       .. parsed-literal::

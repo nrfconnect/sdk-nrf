@@ -101,7 +101,7 @@ If you disabled automatic updates:
 1. Open the :guilabel:`Extensions` tab and locate the |nRFVSC|.
 
 #. The :guilabel:`Update` button appears when an update is available.
-   Click on the button to install the update.
+   Click the button to install the update.
 
 .. _toolchain_update:
 
@@ -198,7 +198,7 @@ To change the remotes, complete the following steps:
 
    a. Visit your personal fork in a browser.
       For example, to rename the fw-nrfconnect-nrf repository, access your fork on GitHub (``https://github.com/<username>/fw-nrfconnect-nrf``, where *<username>* is your GitHub account name).
-   #. Switch to the :guilabel:`Settings` tab and edit the name in the :guilabel:`Repository name` field to ``sdk-nrf``.
+   #. Switch to the :guilabel:`Settings` tab and edit the name in the **Repository name** field to ``sdk-nrf``.
 
 #. Rename the remotes:
 

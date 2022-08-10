@@ -496,8 +496,8 @@ To start forwarding data to Edge Impulse studio:
 #. Run the ``edge-impulse-data-forwarder`` Edge Impulse command line tool.
 #. Log in to `Edge Impulse studio`_ and perform the following steps:
 
-   a. Go to the :guilabel:`Data acquisition` tab.
-   #. In the :guilabel:`Record new data` panel, set the desired values and click :guilabel:`Start sampling`.
+   a. Select the :guilabel:`Data acquisition` tab.
+   #. In the **Record new data** panel, set the desired values and click :guilabel:`Start sampling`.
 
       .. figure:: ../../doc/nrf/images/ei_data_acquisition.png
          :scale: 50%

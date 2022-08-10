@@ -138,11 +138,11 @@ To simulate the use case with Online Power Profiler, complete the following step
 
 1. Start the simulation in Online Power Profiler with the default settings and add the following changes to the default configuration:
 
-   A. In the :guilabel:`PSM` tab on the left, set :guilabel:`Active time (sec)` to ``0`` (indicating that the device need not be active after sending the payload).
-   #. In the :guilabel:`Data transfer` tab on the left, select ``Upload`` from the drop-down menu for :guilabel:`Enable`. The :guilabel:`Data size` and :guilabel:`Data transfer interval` options are now visible. Set the options to the following values:
+   A. In the **PSM** section on the left, set **Active time (sec)** to ``0`` (indicating that the device does not need to be active after sending the payload).
+   #. In the **Data transfer** section on the left, select :guilabel:`Upload` from the **Enable** drop-down menu. The **Data size (bytes)** and **Data transfer interval (sec)** options are now visible. Set the options to the following values:
 
-     a. Set :guilabel:`Data size (bytes)` to ``20``.
-     #. Set :guilabel:`Data transfer interval (sec)` to ``600`` (10 minutes).
+     a. Set **Data size (bytes)** to ``20``.
+     #. Set **Data transfer interval (sec)** to ``600`` (10 minutes).
 
 	The following image shows the result of the power profile simulation using Online Power Profiler:
 
@@ -157,8 +157,8 @@ To simulate the use case with Online Power Profiler, complete the following step
 
 #. Tune the current estimation:
 
-	a. Set :guilabel:`Data size(bytes)` to 40.
-	#. Set :guilabel:`Data transfer interval (sec)` to 1200 (20 minutes).
+	a. Set **Data size(bytes)** to 40.
+	#. Set **Data transfer interval (sec)** to 1200 (20 minutes).
 
 	The tuning of parameters results in the following output in Online Power Profiler:
 
@@ -172,7 +172,7 @@ To simulate the use case with Online Power Profiler, complete the following step
    Complete the following sub-steps to export the settings from Online Power Profiler:
 
    a. Click :guilabel:`Export settings` to store current Online Power Profiler settings to a :file:`.json` file.
-   #. Click :guilabel:`Export project config` to export the configuration parameters in an :file:`opp.conf` file that you can use when building the firmware.
+   #. Click :guilabel:`Export NCS project config` to export the configuration parameters in an :file:`opp.conf` file that you can use when building the firmware.
 
 Real-time power measurement using Power Profiler Kit II
 -------------------------------------------------------

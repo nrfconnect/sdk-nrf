@@ -33,9 +33,9 @@ To collect and view the log files, you will need the following:
 
 * Correct COM port.
 
-   * For traces using the UART, the J-Link COM port is used. The development kit is assigned to a COM port (Windows) or a ttyACM device (Linux), which is visible in the system's :guilabel:`Device Manager`.
+   * For traces using the UART, the J-Link COM port is used. The development kit is assigned to a COM port (Windows) or a ttyACM device (Linux), which is visible in the system's Device Manager.
 
-   * For traces using USB, a virtual COM port (a serial port emulated over USB) is used. You can set :kconfig:option:`CONFIG_USB_DEVICE_PRODUCT` to help identify the COM port in the system's :guilabel:`Device Manager`.
+   * For traces using USB, a virtual COM port (a serial port emulated over USB) is used. You can set :kconfig:option:`CONFIG_USB_DEVICE_PRODUCT` to help identify the COM port in the system's Device Manager.
 
 * An additional USB cable if trace logs through USB are enabled (see :ref:`ug_zigbee_configuring_zboss_traces_using_usb`).
 

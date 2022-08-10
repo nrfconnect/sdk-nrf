@@ -64,7 +64,7 @@ To provision the certificates and the private key to the nRF9160 modem, complete
 #. Update the modem firmware on the onboard modem of the nRF9160-based device to the latest version by following the steps in :ref:`nrf9160_gs_updating_fw_modem`.
 #. Build and program the :ref:`at_client_sample` sample to the nRF9160-based device as explained in :ref:`gs_programming`.
 #. Launch the `LTE Link Monitor`_ application, which is part of `nRF Connect for Desktop`_.
-#. Click :guilabel:`Certificate manager` located at the top right corner.
+#. Click :guilabel:`CERTIFICATE MANAGER` located at the upper right corner.
 #. Copy the Baltimore CyberTrust Root certificate into the ``CA certificate`` entry.
 #. Copy and paste the device certificate and the key created using the scripts located in `Creating Azure IoT Hub certificates`_, into the respective entries (``Client certificate``, ``Private key``).
 #. Select a desired security tag (any positive integer, for example, ``42``) and click :guilabel:`Update certificates`.

@@ -133,12 +133,14 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
 #. Press **Button 4** on the kit if the device is not advertising.
    Advertising is indicated by blinking **LED 1**.
 #. |connect_terminal|
-#. Connect to the device from nRF Connect (the device is advertising as "NCS HIDS keyboard").
+#. Start `nRF Connect for Desktop`_.
+#. Open the Bluetooth Low Energy app.
+#. Connect to the device from the app. The device is advertising as "NCS HIDS keyboard".
 #. Pair the devices:
 
-   a. Click the settings button for the device in nRF Connect.
-   b. Select :guilabel:`Pair`.
-   c. Optionally, check :guilabel:`Perform Bonding`.
+   a. Click the settings button for the device in the app.
+   #. Select :guilabel:`Pair`.
+   #. Optionally, select :guilabel:`Perform Bonding`.
 
    Optionally, check :guilabel:`Enable MITM protection` to pair with MITM protection and use a button on the device to confirm or reject the passkey value.
 
@@ -168,7 +170,7 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
 
    Observe that **LED 3** turns on.
 #. Select the same HID Report again.
-   Enter ``00`` in the text box and click the :guilabel:`Write` button.
+   Enter ``00`` in the text box and click :guilabel:`Write`.
    This sets the modifier bit to 00, which simulates turning Caps Lock OFF.
 
    Observe that **LED 3** turns off.

@@ -258,7 +258,7 @@ To test the multiprotocol Bluetooth LE extension, complete the following steps a
 
          Configure the UART commands by completing the following steps:
 
-         1. Tap the :guilabel:`EDIT` button in the top right corner of the application.
+         1. Tap :guilabel:`EDIT` in the top right corner of the application.
             The button configuration window appears.
          #. Create the active application buttons by completing the following steps:
 
@@ -273,11 +273,11 @@ To test the multiprotocol Bluetooth LE extension, complete the following steps a
 
                Configuring buttons in the UART application of nRF Toolbox
 
-         #. Tap the :guilabel:`DONE` button in the top right corner of the application.
+         #. Tap :guilabel:`DONE` in the top right corner of the application.
 
       .. tab:: c. Connect to device
 
-         Tap :guilabel:`CONNECT` and select the ``Zigbee_Switch`` device from the list of devices.
+         Tap :guilabel:`CONNECT` and select the **Zigbee_Switch** device from the list of devices.
 
          .. figure:: /images/nrftoolbox_dynamic_zigbee_uart_3.png
             :alt: nRF Toolbox - UART application view after establishing connection
@@ -290,9 +290,9 @@ To test the multiprotocol Bluetooth LE extension, complete the following steps a
 
 #. In nRF Toolbox, tap the buttons you assigned:
 
-   a. Tap the ``n`` and ``f`` command buttons to turn the LED on the Zigbee Light bulb node on and off, respectively.
-   #. Tap the ``t`` command button two times to toggle the LED on the Zigbee Light bulb node on and off.
-   #. Tap the ``i`` and ``d`` command buttons to make adjustments to the brightness level.
+   a. Tap the :guilabel:`n` and :guilabel:`f` command buttons to turn the LED on the Zigbee Light bulb node on and off, respectively.
+   #. Tap the :guilabel:`t` command button two times to toggle the LED on the Zigbee Light bulb node on and off.
+   #. Tap the :guilabel:`i` and :guilabel:`d` command buttons to make adjustments to the brightness level.
 
 You can now control the devices either with the buttons on the development kits or with the NUS UART command buttons in the nRF Toolbox application.
 

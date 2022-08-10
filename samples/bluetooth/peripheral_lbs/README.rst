@@ -109,17 +109,17 @@ After programming the sample to your dongle or development kit, test it by perfo
 
 1. Start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
 #. Power on the development kit or insert your dongle into the USB port.
-#. Connect to the device from the nRF Connect application.
+#. Connect to the device from the application.
    The device is advertising as ``Nordic_LBS``.
    The services of the connected device are shown.
-#. In :guilabel:`Nordic LED Button Service`, enable notifications for the :guilabel:`Button` characteristic.
+#. In **Nordic LED Button Service**, enable notifications for the **Button** characteristic.
 #. Press **Button 1** on the device.
 #. Observe that notifications with the following values are displayed:
 
    * ``Button released`` when **Button 1** is released.
    * ``Button pressed`` when **Button 1** is pressed.
 
-#. Write the following values to the LED characteristic in the :guilabel:`Nordic LED Button Service`.
+#. Write the following values to the LED characteristic in the **Nordic LED Button Service**.
    Depending on the hardware platform, this produces results described in the table.
 
 +------------------------+---------+----------------------------------------------+

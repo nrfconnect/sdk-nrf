@@ -58,7 +58,7 @@ See :ref:`ug_bt_fast_pair_provisioning` in the Fast Pair user guide for details.
 .. tip::
    The sample provides TX power in the Bluetooth advertising data.
    There is no need to provide the TX power value during device model registration.
-   The device is using only Bluetooth LE, so you must select :guilabel:`Skip connecting audio profiles (e.g. A2DP, HFP)` option when registering the device.
+   The device is using only Bluetooth LE, so you must select **Skip connecting audio profiles (e.g. A2DP, HFP)** option when registering the device.
 
 Seeker device
 =============
@@ -169,7 +169,7 @@ After programming the sample to your development kit, test it by performing the 
    **LED 2** turns on to indicate that the device is connected with the Bluetooth Central.
 
    .. note::
-      Some Android devices might disconnect right after the Fast Pair procedure is finished.
+      Some Android devices might disconnect right after the Fast Pair procedure has completed.
       Go to :guilabel:`Settings` > :guilabel:`Bluetooth` and tap on the bonded Fast Pair Provider to reconnect.
 
    The connected Fast Pair Provider can now be used to control audio volume of the Bluetooth Central.

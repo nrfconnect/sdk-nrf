@@ -47,7 +47,7 @@ Complete the following steps to prepare the Thingy:91 for setup:
    a. Go to `nRF Connect for Desktop Downloads <Download nRF Connect for Desktop_>`_.
    #. Download and install nRF Connect for Desktop.
    #. Open `nRF Connect for Desktop`_.
-   #. Find :guilabel:`Programmer` in the list of applications and click :guilabel:`Install`.
+   #. Find **Programmer** in the list of applications and click :guilabel:`Install`.
 
 .. _download_firmware_thingy91:
 
@@ -124,7 +124,7 @@ Updating the firmware in the nRF52840 SoC
       To update the firmware, complete the following steps:
 
       1. Open `nRF Connect for Desktop`_ and launch the Programmer application.
-      #. Scroll down in the menu on the left and make sure :guilabel:`Enable MCUboot` is selected.
+      #. Scroll down in the menu on the left and make sure **Enable MCUboot** is selected.
 
          .. figure:: /images/programmer_enable_mcuboot.png
             :alt: Programmer - Enable MCUboot
@@ -139,7 +139,7 @@ Updating the firmware in the nRF52840 SoC
 
             Thingy:91 - SW1 SW4 switch
 
-      #. In the Programmer navigation bar, click :guilabel:`Select device`.
+      #. In the Programmer navigation bar, click :guilabel:`SELECT DEVICE`.
          A drop-down menu appears.
 
          .. figure:: /images/programmer_select_device.png
@@ -152,7 +152,7 @@ Updating the firmware in the nRF52840 SoC
          .. note::
             The device entry might not be the same in all cases and can vary depending on the application version and the operating system.
 
-      #. In the menu on the left, click :guilabel:`Add file` in the FILE section, and select :guilabel:`Browse`.
+      #. In the menu on the left, click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
          A file explorer window appears.
 
          .. figure:: /images/programmer_add_file.png
@@ -169,7 +169,7 @@ Updating the firmware in the nRF52840 SoC
 
       #. Click :guilabel:`Open`.
 
-      #. Scroll down in the menu on the left the DEVICE section and click :guilabel:`Write`.
+      #. Scroll down in the menu on the left to the **DEVICE** section and click :guilabel:`Write`.
 
          .. figure:: /images/programmer_hex_write.png
             :alt: Programmer - Writing of HEX files
@@ -183,9 +183,9 @@ Updating the firmware in the nRF52840 SoC
 
             Programmer - MCUboot DFU
 
-      #. In the MCUboot DFU window, click :guilabel:`Write`.
+      #. In the **MCUboot DFU** window, click :guilabel:`Write`.
          When the update is complete, a "Completed successfully" message appears.
-      #. Scroll up in the menu on the left to the FILE section and click :guilabel:`Clear files`.
+      #. Scroll up in the menu on the left to the **FILE** section and click :guilabel:`Clear files`.
 
    .. group-tab:: Through external debug probe
 
@@ -214,13 +214,13 @@ Updating the firmware in the nRF52840 SoC
 
          #. Connect the external debug probe to the computer with a micro-USB cable.
 
-            In the Programmer navigation bar, :guilabel:`No devices available` changes to :guilabel:`Select device`.
+            In the Programmer navigation bar, :guilabel:`No devices available` changes to :guilabel:`SELECT DEVICE`.
 
             .. figure:: /images/programmer_select_device1.png
                :alt: Programmer - Select device
 
-               Programmer - Select device
-         #. Click :guilabel:`Select device` and select the appropriate debug probe entry from the drop-down list.
+               Programmer - SELECT DEVICE
+         #. Click :guilabel:`SELECT DEVICE` and select the appropriate debug probe entry from the drop-down list.
 
             Select nRF9160 DK from the list.
 
@@ -234,7 +234,7 @@ Updating the firmware in the nRF52840 SoC
       #. Set the SWD selection switch **SW2** to **nRF52** on the Thingy:91.
          See `SWD Select`_ for more information on the switch.
 
-      #. In the menu on the left, click :guilabel:`Add file` in the FILE section, and select :guilabel:`Browse`.
+      #. In the menu on the left, click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
          A file explorer window appears.
 
          .. figure:: /images/programmer_add_file1.png
@@ -249,7 +249,7 @@ Updating the firmware in the nRF52840 SoC
 
       #. Select the Connectivity bridge firmware file.
       #. Click :guilabel:`Open`.
-      #. Scroll down in the menu on the left to the DEVICE section and click :guilabel:`Erase & write`.
+      #. Scroll down in the menu on the left to the **DEVICE** section and click :guilabel:`Erase & write`.
          The update is completed when the animation in Programmer's Device memory layout window ends.
 
          .. figure:: /images/programmer_ext_debug_hex_write.png
@@ -257,7 +257,7 @@ Updating the firmware in the nRF52840 SoC
 
             Programming using External debug probe
 
-      #. Scroll up in the menu on the left to the FILE section and click :guilabel:`Clear files`.
+      #. Scroll up in the menu on the left to the **FILE** section and click :guilabel:`Clear files`.
 
 .. rst-class:: numbered-step
 
@@ -273,7 +273,7 @@ Update the modem firmware on the nRF9160 SiP
      To update the modem firmware using USB, complete the following steps:
 
       1. Open `nRF Connect for Desktop`_ and launch the Programmer application if you do not have it open already.
-      #. Make sure that :guilabel:`Enable MCUboot` is selected.
+      #. Make sure that **Enable MCUboot** is selected.
       #. Switch off the Thingy:91.
       #. Press **SW3** while switching **SW1** to the **ON** position.
 
@@ -284,7 +284,7 @@ Update the modem firmware on the nRF9160 SiP
 
       #. In the menu, select Thingy:91.
 
-      #. In the menu on the left, click :guilabel:`Add file` in the FILE section, and select :guilabel:`Browse`.
+      #. In the menu on the left, click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
          A file explorer window appears.
 
          .. figure:: /images/programmer_add_file.png
@@ -304,7 +304,7 @@ Update the modem firmware on the nRF9160 SiP
 
       .. update_modem_end
 
-      8. In the Programmer application, scroll down in the menu on the left to the DEVICE section and click :guilabel:`Write`.
+      8. In the Programmer application, scroll down in the menu on the left to the **DEVICE** section and click :guilabel:`Write`.
 
          .. figure:: /images/programmer_usb_update_modem.png
             :alt: Programmer - Update modem
@@ -318,8 +318,8 @@ Update the modem firmware on the nRF9160 SiP
 
             Programmer - Modem DFU via MCUboot
 
-      #. In the Modem DFU via MCUboot window, click :guilabel:`Write`.
-         When the update is complete, a "Completed successfully" message appears.
+      #. In the **Modem DFU via MCUboot** window, click :guilabel:`Write`.
+         When the update is complete, a **Completed successfully** message appears.
 
    .. group-tab:: Through external debug probe
 
@@ -328,7 +328,7 @@ Update the modem firmware on the nRF9160 SiP
       1. Open `nRF Connect for Desktop`_ and launch the Programmer application and :ref:`prepare the hardware <prepare_hw_ext_dp>` if you have not done it already.
       #. Set the SWD selection switch **SW2** to **nRF91** on the Thingy:91.
 
-      #. In the menu on the left, click :guilabel:`Add file` in the FILE section, and select :guilabel:`Browse`.
+      #. In the menu on the left, click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
          A file explorer window appears.
 
          .. figure:: /images/programmer_add_file1.png
@@ -343,7 +343,7 @@ Update the modem firmware on the nRF9160 SiP
             Do not extract the modem firmware zip file.
 
       #. Select the zip file and click :guilabel:`Open`.
-      #. In the Programmer application, scroll down in the menu on the left to the DEVICE section and click :guilabel:`Write`.
+      #. In the Programmer application, scroll down in the menu on the left to the **DEVICE** section and click :guilabel:`Write`.
 
          .. figure:: /images/programmer_ext_debug_update_modem.png
             :alt: Programmer - Update modem
@@ -357,7 +357,7 @@ Update the modem firmware on the nRF9160 SiP
 
             Programmer - Modem DFU
 
-      #. In the Modem DFU window, click :guilabel:`Write`.
+      #. In the **Modem DFU** window, click :guilabel:`Write`.
          When the update is complete, a "Completed successfully" message appears.
 
          .. note::
@@ -379,7 +379,7 @@ Program the nRF9160 SiP application
       To program the application firmware using USB, complete the following steps:
 
       1. Open `nRF Connect for Desktop`_ and launch the Programmer application if you have not done already.
-      #. Make sure that :guilabel:`Enable MCUboot` is selected.
+      #. Make sure that **Enable MCUboot** is selected.
       #. Switch off the Thingy:91.
       #. Press **SW3** while switching **SW1** to the **ON** position.
 
@@ -388,7 +388,7 @@ Program the nRF9160 SiP application
 
             Thingy:91 - SW1 SW3 switch
 
-      #. In the Programmer navigation bar, click :guilabel:`Select device`.
+      #. In the Programmer navigation bar, click :guilabel:`SELECT DEVICE`.
          A drop-down menu appears.
 
          .. figure:: /images/programmer_select_device.png
@@ -398,7 +398,7 @@ Program the nRF9160 SiP application
 
       #. In the menu, select Thingy:91.
 
-      #. In the menu on the left, click :guilabel:`Add file` in the FILE section, and select :guilabel:`Browse`.
+      #. In the menu on the left, click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
          A file explorer window appears.
 
          .. figure:: /images/programmer_add_file.png
@@ -419,7 +419,7 @@ Program the nRF9160 SiP application
 
       #. Click :guilabel:`Open`.
 
-      #. Scroll down in the menu on the left to the DEVICE section and click :guilabel:`Write`.
+      #. Scroll down in the menu on the left to the **DEVICE** section and click :guilabel:`Write`.
 
          .. figure:: /images/programmer_hex_write.png
             :alt: Programmer - Writing of HEX files
@@ -433,9 +433,9 @@ Program the nRF9160 SiP application
 
             Programmer - MCUboot DFU
 
-      #. In the MCUboot DFU window, click :guilabel:`Write`.
-         When the update is complete, a "Completed successfully" message appears.
-      #. Scroll up in the menu on the left to the FILE section and click :guilabel:`Clear files`.
+      #. In the **MCUboot DFU** window, click :guilabel:`Write`.
+         When the update is complete, a **Completed successfully** message appears.
+      #. Scroll up in the menu on the left to the **FILE** section and click :guilabel:`Clear files`.
 
    .. group-tab:: Through external debug probe
 
@@ -444,7 +444,7 @@ Program the nRF9160 SiP application
       1. Open `nRF Connect for Desktop`_ and launch the Programmer application and :ref:`prepare the hardware <prepare_hw_ext_dp>` if you have not done it already.
       #. Make sure the SWD selection switch **SW2** is set to **nRF91** on the Thingy:91.
 
-      #. In the menu on the left, click :guilabel:`Add file` in the FILE section, and select :guilabel:`Browse`.
+      #. In the menu on the left, click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
          A file explorer window appears.
 
          .. figure:: /images/programmer_add_file1.png
@@ -464,15 +464,15 @@ Program the nRF9160 SiP application
          If you are connecting over NB-IoT and your operator does not support extended Protocol Configuration Options (ePCO), select the file that has legacy Protocol Configuration Options (PCO) mode enabled.
 
       #. Click :guilabel:`Open`.
-      #. Scroll down in the menu on the left to the DEVICE section and click :guilabel:`Erase & write`.
-         The update is completed when the animation in Programmer's Device memory layout window ends.
+      #. Scroll down in the menu on the left to the **DEVICE** section and click :guilabel:`Erase & write`.
+         The update is completed when the animation in Programmer's **Device memory layout** window ends.
 
          .. figure:: /images/programmer_ext_debug_hex_write.png
             :alt: Programming using External debug probe
 
             Programming using External debug probe
 
-      #. Scroll up in the menu on the left to the FILE section and click :guilabel:`Clear files`.
+      #. Scroll up in the menu on the left to the **FILE** section and click :guilabel:`Clear files`.
 
 ..
 

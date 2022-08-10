@@ -109,7 +109,7 @@ To connect to the nRF9160-based kit with LTE Link Monitor, perform the following
 
    .. note::
 
-      Make sure that :guilabel:`Automatic requests` is enabled in LTE Link Monitor.
+      Make sure that :guilabel:`Automatic requests` (in the **SETTINGS** section) is enabled in LTE Link Monitor.
 
 #. Connect the nRF9160-based kit to the PC with a USB cable.
 #. Power on the nRF9160-based kit.
@@ -161,7 +161,7 @@ For more information about the GDB tool, see `Debug tools`_.
 Debug configuration
 ===================
 
-When you are following the `Debugging an application`_ process in the |nRFVSC| and select the :guilabel:`Enable debug options` field in :guilabel:`Add Build Configuration`, the following Kconfig options are set to ``y`` when you add the configuration:
+When you are following the `Debugging an application`_ process in the |nRFVSC| and select the :guilabel:`Enable debug options` checkbox in the **Add Build Configuration** page, the following Kconfig options are set to ``y`` when you add the configuration:
 
 * :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` - This option limits the optimizations made by the compiler to only those that do not impact debugging.
 * :kconfig:option:`CONFIG_DEBUG_THREAD_INFO` - This option adds additional information to the thread object, so that the debugger can discover the threads.

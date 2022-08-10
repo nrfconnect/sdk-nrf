@@ -58,7 +58,7 @@ To connect to the Thingy:91 using LTE Link Monitor, complete the following steps
 #. Connect the Thingy:91 to a computer with a micro-Universal Serial Bus (USB) cable.
 #. Make sure that the Thingy:91 is powered on.
 #. Launch the LTE Link Monitor application.
-#. In the navigation bar, click :guilabel:`Select device`.
+#. In the navigation bar, click :guilabel:`SELECT DEVICE`.
    A drop-down menu appears.
 #. In the menu, select Thingy:91.
 #. In the LTE Link Monitor terminal, send an AT command to the modem.
@@ -185,7 +185,7 @@ Complete the following steps after installing the |nRFVSC|:
 .. prog_extdebugprobe_end
 ..
 
-   e. In |VSC|, click the :guilabel:`Flash` option in the :guilabel:`Actions View`.
+   e. In |VSC|, click the :guilabel:`Flash` option in the **Actions View**.
 
       If you have multiple boards connected, you are prompted to pick a device at the top of the screen.
 
