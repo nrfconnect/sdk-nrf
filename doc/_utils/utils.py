@@ -111,5 +111,5 @@ def add_google_analytics(app: Sphinx) -> None:
         app: Sphinx instance.
     """
 
-    app.add_js_file("https://www.googletagmanager.com/gtag/js?id=UA-210766333-2")
+    app.add_js_file("https://www.googletagmanager.com/gtag/js?id=G-ZPVZRKFQJR")
     app.add_js_file("js/ga-tracker.js")
