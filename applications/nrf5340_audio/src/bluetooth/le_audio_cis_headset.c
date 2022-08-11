@@ -384,7 +384,7 @@ static int initialize(le_audio_receive_cb recv_cb)
 			BT_AUDIO_DIR_SINK,
 			BT_AUDIO_CONTEXT_TYPE_MEDIA | BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
 		if (ret) {
-			LOG_ERR("Available contexte set failed");
+			LOG_ERR("Available context set failed");
 			return ret;
 		}
 
@@ -446,11 +446,31 @@ int le_audio_volume_mute(void)
 
 int le_audio_play(void)
 {
+	int ret;
+
+	ret = bt_audio_capability_set_available_contexts(
+		BT_AUDIO_DIR_SINK, BT_AUDIO_CONTEXT_TYPE_MEDIA | BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
+
+	if (ret) {
+		LOG_ERR("Available context set failed");
+		return ret;
+	}
+
 	return 0;
 }
 
 int le_audio_pause(void)
 {
+	int ret;
+
+	ret = bt_audio_capability_set_available_contexts(BT_AUDIO_DIR_SINK,
+							 BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
+
+	if (ret) {
+		LOG_ERR("Available context set failed");
+		return ret;
+	}
+
 	return 0;
 }
 
