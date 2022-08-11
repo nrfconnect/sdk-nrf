@@ -598,6 +598,44 @@ Examples
 
 ----
 
+.. _pipelining_commands:
+
+Running commands in different threads and pipelining commands
+=============================================================
+
+MoSh command: ``th``
+
+You can run ``iperf3`` and ``ping`` in separate threads either in the background or in the foreground.
+Subcommand ``pipeline`` allows running any commands sequentially in the foreground.
+
+Examples
+--------
+
+* Start iperf test in the background.
+  Meanwhile, start ping in the foreground.
+  Print the output buffer of iperf thread once done:
+
+  .. code-block:: console
+
+     th startbg iperf3 --client 111.222.111.222 --port 10000 -l 3540 --time 30 -V -R
+     th startfg ping -d 8.8.8.8
+     th results 1
+
+* Establish MQTT connection to nRF Cloud, wait 10 seconds for the connection establishment, and request current location:
+
+  .. code-block:: console
+
+     th pipeline "cloud connect" "sleep 10" "location get"
+
+----
+
+Sleep
+=====
+
+When pipelining commands using ``th pipeline``, you can use the ``sleep`` command to pause the execution for a given period to allow previous command to return before executing next one.
+See :ref:`pipelining_commands` for usage.
+
+
 Cloud
 =====
 

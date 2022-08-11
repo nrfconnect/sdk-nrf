@@ -181,6 +181,19 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 }
 #endif
 
+int sleep_shell(const struct shell *shell, size_t argc, char **argv)
+{
+	long sleep_duration = strtol(argv[1], NULL, 10);
+
+	if (sleep_duration > 0) {
+		k_sleep(K_SECONDS(sleep_duration));
+		return 0;
+	}
+	mosh_print("sleep: duration must be greater than zero");
+
+	return -EINVAL;
+}
+
 #if defined(CONFIG_MOSH_IPERF3)
 static int cmd_iperf3(const struct shell *shell, size_t argc, char **argv)
 {
@@ -234,3 +247,7 @@ SHELL_CMD_REGISTER(rest, NULL,
 	"REST client.",
 	rest_shell);
 #endif
+
+SHELL_CMD_ARG_REGISTER(sleep, NULL,
+	"Sleep for n seconds.",
+	sleep_shell, 1, 0);
