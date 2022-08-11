@@ -53,6 +53,16 @@ static void indicate_wk(struct k_work *work);
 
 BUILD_ASSERT(CONFIG_SLM_WAKEUP_PIN >= 0, "Wake up pin not configured");
 
+NRF_MODEM_LIB_ON_INIT(serial_lte_modem_init_hook, on_modem_lib_init, NULL);
+
+/* Initialized to value different than success (0) */
+static int modem_lib_init_result = -1;
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	modem_lib_init_result = ret;
+}
+
 #if defined(CONFIG_NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC)
 static void on_modem_failure_shutdown(struct k_work *item);
 static void on_modem_failure_reinit(struct k_work *item);
@@ -246,7 +256,7 @@ void enter_sleep(void)
 
 static void handle_nrf_modem_lib_init_ret(void)
 {
-	int ret = nrf_modem_lib_get_init_ret();
+	int ret = modem_lib_init_result;
 
 	/* Handle return values relating to modem firmware update */
 	switch (ret) {

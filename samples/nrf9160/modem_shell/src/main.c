@@ -147,6 +147,16 @@ void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info)
 	__ASSERT(false, "Modem crash detected, halting application execution");
 }
 
+NRF_MODEM_LIB_ON_INIT(modem_shell_init_hook, on_modem_lib_init, NULL);
+
+/* Initialized to value different than success (0) */
+static int modem_lib_init_result = -1;
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	modem_lib_init_result = ret;
+}
+
 static void mosh_print_version_info(void)
 {
 #if defined(APP_VERSION)
@@ -217,7 +227,7 @@ void main(void)
 
 #if !defined(CONFIG_LWM2M_CARRIER)
 	/* Get Modem library initialization return value. */
-	err = nrf_modem_lib_get_init_ret();
+	err = modem_lib_init_result;
 	switch (err) {
 	case 0:
 		/* Modem library was initialized successfully. */

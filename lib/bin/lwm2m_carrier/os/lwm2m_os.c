@@ -62,6 +62,16 @@ AT_MONITOR(lwm2m_carrier_at_handler, ANY, lwm2m_os_at_handler);
 /* LwM2M carrier OS logs. */
 LOG_MODULE_REGISTER(lwm2m_os, LOG_LEVEL_DBG);
 
+NRF_MODEM_LIB_ON_INIT(lwm2m_os_init_hook, on_modem_lib_init, NULL);
+
+/* Initialized to value different than success (0) */
+static int modem_lib_init_result = -1;
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	modem_lib_init_result = ret;
+}
+
 int lwm2m_os_init(void)
 {
 #if defined CONFIG_LOG_RUNTIME_FILTERING
@@ -357,7 +367,7 @@ int lwm2m_os_thread_start(int index, lwm2m_os_thread_entry_t entry, const char *
 int lwm2m_os_nrf_modem_init(void)
 {
 #if defined CONFIG_NRF_MODEM_LIB_SYS_INIT
-	int nrf_err = nrf_modem_lib_get_init_ret();
+	int nrf_err = modem_lib_init_result;
 #else
 	int nrf_err = nrf_modem_lib_init(NORMAL_MODE);
 #endif /* CONFIG_NRF_MODEM_LIB_SYS_INIT */

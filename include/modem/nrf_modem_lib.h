@@ -131,7 +131,7 @@ __deprecated void nrf_modem_lib_shutdown_wait(void);
  *
  * @return int The last return value of nrf_modem_lib_init.
  */
-int nrf_modem_lib_get_init_ret(void);
+__deprecated int nrf_modem_lib_get_init_ret(void);
 
 /**
  * @brief Shutdown the Modem library, releasing its resources.
