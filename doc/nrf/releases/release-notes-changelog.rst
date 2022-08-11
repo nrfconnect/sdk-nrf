@@ -690,6 +690,8 @@ Modem libraries
         * ``nrf_modem_lib_heap_diagnose``
         * ``nrf_modem_lib_shm_tx_diagnose``
 
+    * Deprecated the ``nrf_modem_lib_get_init_ret`` function.
+
   * :ref:`lib_location` library:
 
     * Changed timeout parameters' type from uint16_t to int32_t, unit from seconds to milliseconds, and value to disable them from 0 to SYS_FOREVER_MS.

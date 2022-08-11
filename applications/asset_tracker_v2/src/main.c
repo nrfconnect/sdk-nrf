@@ -133,6 +133,18 @@ static struct module_data self = {
 	.supports_shutdown = true,
 };
 
+#if defined(CONFIG_NRF_MODEM_LIB)
+NRF_MODEM_LIB_ON_INIT(asset_tracker_init_hook, on_modem_lib_init, NULL);
+
+/* Initialized to value different than success (0) */
+static int modem_lib_init_result = -1;
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	modem_lib_init_result = ret;
+}
+#endif /* CONFIG_NRF_MODEM_LIB */
+
 /* Convenience functions used in internal state handling. */
 static char *state2str(enum state_type new_state)
 {
@@ -223,7 +235,7 @@ static void lwm2m_update_modem_fota_counter(void)
 static void handle_nrf_modem_lib_init_ret(void)
 {
 #if defined(CONFIG_NRF_MODEM_LIB)
-	int ret = nrf_modem_lib_get_init_ret();
+	int ret = modem_lib_init_result;
 
 	/* Handle return values relating to modem firmware update */
 	switch (ret) {

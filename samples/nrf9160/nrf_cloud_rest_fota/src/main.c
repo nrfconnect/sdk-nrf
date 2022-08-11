@@ -90,6 +90,17 @@ static char rx_buf[REST_RX_BUF_SZ];
 /* Buffer used for JSON Web Tokens (JWTs) */
 static char jwt[JWT_BUF_SZ];
 
+NRF_MODEM_LIB_ON_INIT(nrf_cloud_rest_fota_init_hook,
+		      on_modem_lib_init, NULL);
+
+/* Initialized to value different than success (0) */
+static int modem_lib_init_result = -1;
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	modem_lib_init_result = ret;
+}
+
 /* nRF Cloud REST context */
 static struct nrf_cloud_rest_context rest_ctx = {
 	.connect_socket = -1,
@@ -422,7 +433,6 @@ static void process_pending_job(void)
 int init(void)
 {
 	struct modem_param_info mdm_param;
-	int modem_lib_init_result;
 	int err = init_led();
 
 	if (err) {
@@ -457,9 +467,7 @@ int init(void)
 	}
 #endif
 
-	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_SYS_INIT)) {
-		modem_lib_init_result = nrf_modem_lib_get_init_ret();
-	} else {
+	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_SYS_INIT)) {
 		modem_lib_init_result = nrf_modem_lib_init(NORMAL_MODE);
 	}
 

@@ -14,6 +14,17 @@
 
 #define FOTA_TEST "FOTA-TEST"
 
+NRF_MODEM_LIB_ON_INIT(modem_delta_update_init_hook,
+		      on_modem_lib_init, NULL);
+
+/* Initialized to value different than success (0) */
+static int modem_lib_init_result = -1;
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	modem_lib_init_result = ret;
+}
+
 static char version[256];
 
 static bool is_test_firmware(void)
@@ -90,7 +101,7 @@ void main(void)
 	/* If nrf_modem_lib is initialized on post-kernel we should
 	 * fetch the returned error code instead of nrf_modem_lib_init
 	 */
-	err = nrf_modem_lib_get_init_ret();
+	err = modem_lib_init_result;
 #endif
 	switch (err) {
 	case MODEM_DFU_RESULT_OK:

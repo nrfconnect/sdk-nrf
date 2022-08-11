@@ -59,6 +59,17 @@ static struct k_work download_work;
 
 void client_acknowledge(void);
 
+NRF_MODEM_LIB_ON_INIT(lwm2m_firmware_init_hook,
+		      on_modem_lib_init, NULL);
+
+/* Initialized to value different than success (0) */
+static int modem_lib_init_result = -1;
+
+static void on_modem_lib_init(int ret, void *ctx)
+{
+	modem_lib_init_result = ret;
+}
+
 #if defined(CONFIG_DFU_TARGET_FULL_MODEM)
 static void apply_fmfu_from_ext_flash(struct k_work *work)
 {
@@ -520,10 +531,10 @@ int lwm2m_init_firmware(void)
 
 void lwm2m_verify_modem_fw_update(void)
 {
-	int ret = nrf_modem_lib_get_init_ret();
 	struct update_counter counter;
 
 	/* Handle return values relating to modem firmware update */
+	int ret = modem_lib_init_result;
 	switch (ret) {
 	case MODEM_DFU_RESULT_OK:
 		LOG_INF("MODEM UPDATE OK. Will run new firmware");
