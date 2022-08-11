@@ -160,6 +160,26 @@ The :ref:`nrfxlib:nrf_modem` is released as an OS-independent binary library in 
 The Modem library integration layer fulfills the integration requirements of the Modem library in |NCS|.
 For more information on the integration, see :ref:`nrf_modem_lib_readme`.
 
+.. _modem_trace:
+
+Modem trace
+-----------
+
+The modem traces of the nRF9160 modem can be captured using the nRF Connect Trace Collector.
+For more information on how to collect traces using nRF Connect Trace Collector, see the `Trace Collector`_ documentation.
+When the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig option is enabled, the modem traces are enabled in the modem and are forwarded to the :ref:`modem_trace_module`.
+
+.. note::
+   For the :ref:`serial_lte_modem` application and the :ref:`at_client_sample` sample, you must also run ``AT%xmodemtrace=1,2`` to manually activate the predefined trace set.
+
+You can set the trace level using the AT command ``%XMODEMTRACE``.
+See `modem trace AT command documentation`_ for more information.
+
+If the existing trace backends are not sufficient, it is possible to implement custom trace backends.
+You can implement your own custom modem traces to store the traces on an external flash.
+You can then upload the traces to the cloud for remote analysis when needed.
+For more information on the implementation of a custom trace backend, see :ref:`adding_custom_modem_trace_backends`.
+
 .. _nrf9160_fota:
 
 FOTA upgrades

@@ -78,6 +78,8 @@ The behavior of the functions in the OS abstraction layer is dependent on the |N
 This is relevant for functions such as :c:func:`nrf_modem_os_shm_tx_alloc`, which uses :ref:`Zephyr's Heap implementation <zephyr:heap_v2>` to dynamically allocate memory.
 In this case, the characteristics of the allocations made by these functions depend on the heap implementation by Zephyr.
 
+.. _modem_trace_module:
+
 Modem trace module
 ******************
 The modem trace module is implemented in :file:`nrf/lib/nrf_modem_lib/nrf_modem_lib_trace.c`.
@@ -86,6 +88,17 @@ The module implements a thread that initializes, deinitializes, and forwards mod
 
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART` to send modem traces over UARTE1
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RTT` to send modem traces over SEGGER RTT
+
+To reduce the amount of trace data sent from the modem, a different trace level can be selected.
+Complete the following steps to configure the modem trace level at compile time:
+
+#. Set :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE` to ``y`` in your project configuration.
+#. Enable any one of the following Kconfig options by setting it to ``y`` in your project configuration:
+
+   * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_FULL`
+   * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_LTE_AND_IP`
+   * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_IP_ONLY`
+   * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_COREDUMP_ONLY`
 
 The application can use the :c:func:`nrf_modem_lib_trace_level_set` function to set the desired trace level.
 Passing ``NRF_MODEM_LIB_TRACE_LEVEL_OFF`` to the :c:func:`nrf_modem_lib_trace_level_set` function disables trace output.
