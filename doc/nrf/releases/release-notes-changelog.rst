@@ -133,6 +133,7 @@ nRF9160: Asset Tracker v2
     * GNSS fixes are now published in PVT format instead of NMEA for nRF Cloud builds. To revert to NMEA, set the :ref:`CONFIG_GNSS_MODULE_NMEA <CONFIG_GNSS_MODULE_NMEA>` option.
     * The sensor module now forwards :c:enum:`SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED` and :c:enum:`SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED` events.
     * The conversions of RSRP and RSRQ now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
+    * Bootstrapping has been disabled by default to be able to connect to the default LwM2M service AVSystem's `Coiote Device Management`_ using free tier accounts.
 
   * Fixed:
 
