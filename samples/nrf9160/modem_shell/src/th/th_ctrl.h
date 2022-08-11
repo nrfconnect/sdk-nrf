@@ -13,7 +13,11 @@
 void th_ctrl_init(void);
 void th_ctrl_result_print(int nbr);
 void th_ctrl_status_print(void);
-void th_ctrl_start(const struct shell *shell, size_t argc, char **argv, bool bg_thread);
+void th_ctrl_start(const struct shell *shell,
+		   size_t argc,
+		   char **argv,
+		   bool bg_thread,
+		   bool pipeline);
 void th_ctrl_kill(int nbr);
 void th_ctrl_kill_em_all(void);
 
