@@ -147,7 +147,7 @@ void mosh_fprintf_valist(enum mosh_print_level print_level, const char *fmt, va_
 		break;
 	}
 
-#if defined(CONFIG_MOSH_CLOUD)
+#if defined(CONFIG_MOSH_CLOUD_MQTT)
 	if (mosh_print_cloud_echo) {
 		struct nrf_cloud_sensor_data mosh_cloud_print = {
 			.type = NRF_CLOUD_DEVICE_INFO,
