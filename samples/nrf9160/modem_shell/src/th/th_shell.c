@@ -21,20 +21,30 @@ static int print_help(const struct shell *shell, size_t argc, char **argv)
 static int cmd_th_startbg(const struct shell *shell, size_t argc, char **argv)
 {
 	if (argc < 2) {
-		mosh_error("please, give also the command to be run");
+		mosh_error("Missing the command to be run");
 		return -EINVAL;
 	}
-	th_ctrl_start(shell, argc, argv, true);
+	th_ctrl_start(shell, argc, argv, true, false);
 	return 0;
 }
 
 static int cmd_th_startfg(const struct shell *shell, size_t argc, char **argv)
 {
 	if (argc < 2) {
-		mosh_error("please, give also the command to be run");
+		mosh_error("Missing the command to be run");
 		return -EINVAL;
 	}
-	th_ctrl_start(shell, argc, argv, false);
+	th_ctrl_start(shell, argc, argv, false, false);
+	return 0;
+}
+
+static int cmd_th_start_pipeline(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 2) {
+		mosh_error("Missing the command to be run");
+		return -EINVAL;
+	}
+	th_ctrl_start(shell, argc, argv, false, true);
 	return 0;
 }
 
@@ -79,10 +89,13 @@ static int cmd_th(const struct shell *shell, size_t argc, char **argv)
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_bg,
-	SHELL_CMD(startbg, NULL, "iperf3 | ping <params>\nStart a background thread.\n",
+	SHELL_CMD(startbg, NULL, "iperf3 | ping <params>\nStart a background thread.",
 		  cmd_th_startbg),
 	SHELL_CMD(startfg, NULL, "iperf3 | ping <params>\nStart a foreground thread.",
 		  cmd_th_startfg),
+	SHELL_CMD(pipeline, NULL, "\"<cmd> <params>\" \"<cmd> <params>\" \"<cmd> <params>\"...\n"
+				  "Execute any MoSh commands sequentially in one thread.",
+		  cmd_th_start_pipeline),
 	SHELL_CMD_ARG(
 		results, NULL,
 		"th results <thread nbr>\nGet results for the background thread.",
