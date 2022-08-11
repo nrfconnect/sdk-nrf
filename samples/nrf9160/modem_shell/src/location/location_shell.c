@@ -31,7 +31,7 @@ extern struct k_work_q mosh_common_work_q;
 struct gnss_location_work_data {
 	struct k_work work;
 
-	enum location_cmd_cloud_data_gnss_format format;
+	enum nrf_cloud_gnss_type format;
 
 	/* Data from LOCATION_EVT_LOCATION: */
 	struct location_data location;
@@ -111,7 +111,7 @@ static struct option long_options[] = {
 };
 
 static bool gnss_location_to_cloud;
-static enum location_cmd_cloud_data_gnss_format gnss_location_to_cloud_format;
+static enum nrf_cloud_gnss_type gnss_location_to_cloud_format;
 
 /******************************************************************************/
 
@@ -333,7 +333,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 	int ret = 0;
 	int long_index = 0;
 
-	gnss_location_to_cloud_format = CLOUD_GNSS_FORMAT_PVT;
+	gnss_location_to_cloud_format = NRF_CLOUD_GNSS_TYPE_PVT;
 
 	if (argc < 2) {
 		goto show_usage;
@@ -374,7 +374,7 @@ int location_shell(const struct shell *shell, size_t argc, char **argv)
 			gnss_num_fixes_set = true;
 			break;
 		case LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_NMEA:
-			gnss_location_to_cloud_format = CLOUD_GNSS_FORMAT_NMEA;
+			gnss_location_to_cloud_format = NRF_CLOUD_GNSS_TYPE_NMEA;
 		/* flow-through */
 		case LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT:
 			gnss_location_to_cloud = true;
