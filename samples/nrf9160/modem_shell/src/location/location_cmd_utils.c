@@ -62,97 +62,61 @@ static int location_cmd_utils_generate_nmea(const struct location_data *location
 
 /**************************************************************************************************/
 
-#define MSG_TYPE      "messageType"
-#define MSG_APP_ID    "appId"
-#define MSG_DATA      "data"
-#define MSG_TIMESTAMP "ts"
-
-#define MSG_APP_ID_GNSS_FORMAT_NMEA "GPS"
-#define MSG_APP_ID_GNSS_FORMAT_PVT  "GNSS"
-#define MSG_TYPE_DATA               "DATA"
-
-#define MSG_TYPE_DATA_GNSS_LATITUDE  "lat"
-#define MSG_TYPE_DATA_GNSS_LONGITUDE "lon"
-#define MSG_TYPE_DATA_GNSS_ACCURACY  "acc"
-
 int location_cmd_utils_gnss_loc_to_cloud_payload_json_encode(
-	enum location_cmd_cloud_data_gnss_format format, const struct location_data *location_data,
+	enum nrf_cloud_gnss_type format, const struct location_data *location_data,
 	char **json_str_out)
 {
 	__ASSERT_NO_MSG(location_data != NULL);
 	__ASSERT_NO_MSG(json_str_out != NULL);
 
-	/* This structure corresponds to the General Message Schema described in the
-	 * application-protocols repo:
-	 * https://github.com/nRFCloud/application-protocols
-	 */
-
+	struct nrf_cloud_gnss_data gnss_data = {
+		.type = format,
+		.ts_ms = NRF_CLOUD_NO_TIMESTAMP,
+		.pvt = {
+			.lon		= location_data->longitude,
+			.lat		= location_data->latitude,
+			.accuracy	= location_data->accuracy,
+			.has_alt	= 0,
+			.has_speed	= 0,
+			.has_heading	= 0
+		}
+	};
+	char nmea_buf[64];
 	int err = 0;
-	cJSON *root_obj = cJSON_CreateObject();
-	cJSON *gnss_data_obj;
-	int64_t timestamp = 0;
-	char *app_id = MSG_APP_ID_GNSS_FORMAT_NMEA;
+	cJSON *gnss_data_obj = cJSON_CreateObject();
 
-	if (root_obj == NULL) {
+	if (gnss_data_obj == NULL) {
 		err = -ENOMEM;
 		goto cleanup;
 	}
 
 #if defined(CONFIG_DATE_TIME)
-	err = date_time_now(&timestamp);
+	/* Add the timestamp */
+	err = date_time_now(&gnss_data.ts_ms);
 	if (err) {
 		mosh_error("Failed to create timestamp");
 		goto cleanup;
 	}
 #endif
-	/* GNSS data based on used format */
-	if (format == CLOUD_GNSS_FORMAT_NMEA) {
-		int payloadlength;
-		char nmea_buf[64];
-
-		payloadlength =
-			location_cmd_utils_generate_nmea(location_data, nmea_buf, sizeof(nmea_buf));
-		if (!cJSON_AddStringToObjectCS(root_obj, MSG_DATA, nmea_buf)) {
-			err = -ENOMEM;
-			goto cleanup;
-		}
-	} else {
-		assert(format == CLOUD_GNSS_FORMAT_PVT);
-
-		app_id = MSG_APP_ID_GNSS_FORMAT_PVT;
-		gnss_data_obj = cJSON_CreateObject();
-		if (gnss_data_obj == NULL) {
-			err = -ENOMEM;
-			goto cleanup;
-		}
-		if (!cJSON_AddNumberToObjectCS(gnss_data_obj, MSG_TYPE_DATA_GNSS_LATITUDE,
-					       location_data->latitude) ||
-		    !cJSON_AddNumberToObjectCS(gnss_data_obj, MSG_TYPE_DATA_GNSS_LONGITUDE,
-					       location_data->longitude) ||
-		    !cJSON_AddNumberToObjectCS(gnss_data_obj, MSG_TYPE_DATA_GNSS_ACCURACY,
-					       location_data->accuracy) ||
-		    !cJSON_AddItemToObject(root_obj, MSG_DATA, gnss_data_obj)) {
-			cJSON_Delete(gnss_data_obj);
-			err = -ENOMEM;
-			goto cleanup;
-		}
+	if (format == NRF_CLOUD_GNSS_TYPE_NMEA) {
+		(void)location_cmd_utils_generate_nmea(location_data, nmea_buf, sizeof(nmea_buf));
+		gnss_data.nmea.sentence = nmea_buf;
 	}
 
-	/* Common metadata */
-	if (!cJSON_AddStringToObjectCS(root_obj, MSG_APP_ID, app_id) ||
-	    !cJSON_AddStringToObjectCS(root_obj, MSG_TYPE, MSG_TYPE_DATA) ||
-	    !cJSON_AddNumberToObjectCS(root_obj, MSG_TIMESTAMP, timestamp)) {
-		err = -ENOMEM;
+	/* Encode the GNSS location data */
+	err = nrf_cloud_gnss_msg_json_encode(&gnss_data, gnss_data_obj);
+	if (err) {
+		mosh_error("Failed to encode GNSS data to json");
 		goto cleanup;
 	}
 
-	*json_str_out = cJSON_PrintUnformatted(root_obj);
+	*json_str_out = cJSON_PrintUnformatted(gnss_data_obj);
 	if (*json_str_out == NULL) {
 		err = -ENOMEM;
 	}
 cleanup:
-	if (root_obj) {
-		cJSON_Delete(root_obj);
+	if (gnss_data_obj) {
+		cJSON_Delete(gnss_data_obj);
 	}
 	return err;
 }
