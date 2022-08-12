@@ -242,12 +242,27 @@ bool nrf_cloud_fota_is_type_enabled(const enum nrf_cloud_fota_type type)
 	}
 }
 
-int nrf_cloud_fota_pending_job_validate(enum nrf_cloud_fota_type * const fota_type_out)
+int nrf_cloud_fota_pending_job_type_get(enum nrf_cloud_fota_type * const pending_fota_type)
 {
+	if (!pending_fota_type) {
+		return -EINVAL;
+	}
+
 	int err = load_fota_settings();
 
+	*pending_fota_type = (err ? NRF_CLOUD_FOTA_TYPE__INVALID : saved_job.type);
+
+	return err;
+}
+
+int nrf_cloud_fota_pending_job_validate(enum nrf_cloud_fota_type * const fota_type_out)
+{
+	int err = 0;
+
 	if (fota_type_out) {
-		*fota_type_out = (err ? NRF_CLOUD_FOTA_TYPE__INVALID : saved_job.type);
+		err = nrf_cloud_fota_pending_job_type_get(fota_type_out);
+	} else {
+		err = load_fota_settings();
 	}
 
 	if (err) {

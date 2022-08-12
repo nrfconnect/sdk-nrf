@@ -63,6 +63,7 @@ int nrf_cloud_fota_fmfu_dev_set(const struct dfu_target_fmfu_fdev *const fmfu_de
 int nrf_cloud_fota_fmfu_apply(void)
 {
 	if (!fmfu_dev_set) {
+		LOG_ERR("Flash device for full modem FOTA is not set");
 		return -EACCES;
 	}
 
@@ -184,6 +185,9 @@ static enum nrf_cloud_fota_validate_status modem_full_fota_validate_get(void)
 
 #if defined(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)
 	err = nrf_cloud_fota_fmfu_apply();
+	if (err) {
+		LOG_ERR("Full modem FOTA was not applied, error: %d", err);
+	}
 #endif
 
 	return (err ? NRF_CLOUD_FOTA_VALIDATE_FAIL :
