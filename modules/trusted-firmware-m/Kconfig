@@ -58,15 +58,56 @@ config TFM_EXPERIMENTAL
 	select EXPERIMENTAL
 	default y if !TFM_PROFILE_TYPE_MINIMAL
 
+if TFM_PARTITION_CRYPTO
+
 config TFM_CRYPTO_ENGINE_BUF_SIZE
 	int
-	prompt "TFM Crypto engine buffer size" if !TFM_PROFILE_TYPE_MINIMAL
+	prompt "TF-M Crypto - Engine buffer size" if !TFM_PROFILE_TYPE_MINIMAL
 	default 1 if TFM_PROFILE_TYPE_MINIMAL
 	default 12288 if PSA_CRYPTO_DRIVER_ALG_RSA_OAEP_CC3XX || \
 		PSA_CRYPTO_DRIVER_ALG_RSA_PKCS1V15_CRYPT_CC3XX || \
 		PSA_CRYPTO_DRIVER_ALG_RSA_PKCS1V15_SIGN_CC3XX || \
 		PSA_CRYPTO_DRIVER_ALG_RSA_PSS_CC3XX
 	default 8320
+	help
+	  Buffer used by Mbed Crypto for its own allocations at runtime.
+	  This is a buffer allocated in static memory.
+	  To be configured based on the desired use case and application requirements.
+
+config TFM_CRYPTO_CONC_OPER_NUM
+	int
+	prompt "TF-M Crypto - Number of concurrent operations" if !TFM_PROFILE_TYPE_MINIMAL
+	default 1 if TFM_PROFILE_TYPE_MINIMAL
+	default 8
+	help
+	  This parameter defines the maximum number of possible
+	  concurrent operation contexts (cipher, MAC, hash and key derivation)
+	  for multi-part operations, that can be allocated simultaneously
+	  at any time. To be configured based on the desired use case and
+	  application requirements.
+
+config TFM_CRYPTO_IOVEC_BUFFER_SIZE
+	int
+	prompt "TF-M Crypto - PSA FF IO vector buffer size" if !TFM_PROFILE_TYPE_MINIMAL
+	depends on TFM_IPC
+	default 1024 if TFM_PROFILE_TYPE_MINIMAL
+	default 5120
+	help
+	  This parameter applies only to IPC model builds. In IPC model,
+	  during a Service call, input and outputs are allocated
+	  temporarily in an internal scratch buffer whose size is
+	  determined by this parameter. To be configured based on the
+	  desired use case and application requirements.
+
+config TFM_CRYPTO_PARTITION_STACK_SIZE
+	hex
+	prompt "TF-M Crypto Partition - Stack size" if !TFM_PROFILE_TYPE_MINIMAL
+	default 0x400 if TFM_PROFILE_TYPE_MINIMAL
+	default 0x2000
+	help
+	  The stack size of the Crypto Secure Partition
+
+endif # TFM_PARTITION_CRYPTO
 
 config TFM_ITS_ENCRYPTED
 	bool
@@ -155,7 +196,7 @@ if BUILD_WITH_TFM
 config PM_PARTITION_SIZE_TFM_SRAM
 	hex
 	prompt "Memory reserved for TFM_RAM." if !TFM_PROFILE_TYPE_MINIMAL
-	default 0x10000 if TFM_PROFILE_TYPE_MINIMAL
+	default 0x8000 if TFM_PROFILE_TYPE_MINIMAL
 	default 0x16000 if SOC_NRF9160
 	default 0x40000 if SOC_NRF5340_CPUAPP
 	help
