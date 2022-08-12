@@ -178,6 +178,26 @@ void location_assist_cell_inform_set(void);
 int lwm2m_init_cellular_connectivity_object(void);
 #endif
 
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_NWK_REG_NOTIFICATION)
+/**
+ * @brief LTE network registration update state change event callback.
+ *
+ * @param[in] connected Network registration status True or False
+ *
+ */
+typedef void (*lwm2m_lte_nwk_reg_update_state_cb_t)(bool connected);
+
+/**
+ * @brief Register a callback for receiving LTE network status notifications.
+ *
+ * @param[in] cb A callback function to receive LTE network status notifications
+ *
+ * @return Returns a negative error code (errno.h) indicating
+ *         reason of failure or 0 for success.
+ */
+int lwm2m_lte_reg_handler_register(lwm2m_lte_nwk_reg_update_state_cb_t cb);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

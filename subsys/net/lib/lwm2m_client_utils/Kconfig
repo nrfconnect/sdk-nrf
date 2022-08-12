@@ -17,6 +17,7 @@ config LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT
 config LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT
 	bool "Security object support"
 	default y
+
 if LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT
 
 config LWM2M_CLIENT_UTILS_SERVER
@@ -101,9 +102,15 @@ config LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG
 
 endif # LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
 
+config LWM2M_LTE_EVENT_LISTENER
+	bool
+	help
+	  Enable this flag for select lte event listener module to build.
+
 config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
 	bool "Support for location assist object (ID 50001) EXPERIMENTAL"
 	select EXPERIMENTAL
+	select LWM2M_LTE_EVENT_LISTENER
 
 if LWM2M_CLIENT_UTILS_LOCATION_ASSIST_OBJ_SUPPORT
 
@@ -161,6 +168,9 @@ config LWM2M_CELL_CONN_APN_PROFILE_COUNT
 	default 3
 
 endif #LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT
+config LWM2M_CLIENT_UTILS_NWK_REG_NOTIFICATION
+	bool "Enable LTE network registration status notifications"
+	select LWM2M_LTE_EVENT_LISTENER
 
 module = LWM2M_CLIENT_UTILS
 module-dep = LOG
