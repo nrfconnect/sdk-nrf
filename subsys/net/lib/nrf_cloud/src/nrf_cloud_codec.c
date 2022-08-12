@@ -1789,6 +1789,8 @@ int nrf_cloud_gnss_msg_json_encode(const struct nrf_cloud_gnss_data * const gnss
 		} else {
 #if defined(CONFIG_NRF_MODEM)
 			ret = nrf_cloud_modem_pvt_data_encode(gnss->mdm_pvt, data_obj);
+#else
+			ret = -ENOSYS;
 #endif
 		}
 

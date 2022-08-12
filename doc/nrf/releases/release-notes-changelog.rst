@@ -602,6 +602,7 @@ Libraries for networking
       * Support for full modem FOTA updates.
       * :c:func:`nrf_cloud_fota_is_type_enabled` function that determines if the specified FOTA type is enabled by the configuration.
       * :c:func:`nrf_cloud_gnss_msg_json_encode` function that encodes GNSS data (PVT or NMEA) into an nRF Cloud device message.
+      * :c:func:`nrf_cloud_fota_pending_job_type_get` function that retreives the FOTA type of a pending FOTA job.
 
     * Updated:
 
