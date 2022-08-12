@@ -8,6 +8,6 @@ pygit2
 pyyaml
 azure-storage-blob
 sphinx_markdown_tables
-breathe<4.33 # Workaround for #803 and #805 breathe issues
+breathe>=4.34
 sphinx-togglebutton
 sphinx-notfound-page
