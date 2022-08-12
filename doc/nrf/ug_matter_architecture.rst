@@ -22,8 +22,10 @@ That is, the code used for the |NCS| and Matter integration is stored in the Mat
 Both instances depend on each other, but their development is independent to ensure that they both support the latest stable version of one another.
 
 Matter is located on the top application layer of the integration model, looking from the networking point of view.
-The |NCS| and Zephyr provide the Bluetooth® LE and Thread stacks, which must be integrated with the Matter stack using a special intermediate layer.
+The |NCS| and Zephyr provide the Bluetooth® LE, Thread, and Wi-Fi stacks, which must be integrated with the Matter stack using a special intermediate layer.
+Depending on the selected build target, either Wi-Fi or Thread is enabled.
 The |NCS|'s Multiprotocol Service Layer (MPSL) driver allows running Bluetooth LE and Thread concurrently on the same radio chip.
+You can also run Bluetooth LE and Wi-Fi concurrently on a single device using the Wi-Fi coexistence mechanism.
 
 .. figure:: images/matter_nrfconnect_overview_simplified_ncs.svg
    :alt: nRF Connect platform in Matter

@@ -11,19 +11,19 @@ Setting up Matter development environment is all about setting up the Matter net
 In Matter, the commissioning procedure takes place over Bluetooth LE between a Matter accessory device and the Matter controller, where the controller has the commissioner role.
 When the procedure has completed, the device should be equipped with all information needed to securely operate in the Matter network.
 
-During the last part of the commissioning procedure (the provisioning operation), the Matter controller sends the Thread network credentials to the Matter accessory device.
-As a result, the device can join the Thread network and communicate with other Thread devices in the network.
+During the last part of the commissioning procedure (the provisioning operation), the Matter controller sends the Thread or Wi-Fi network credentials to the Matter accessory device.
+As a result, the device can join the IPv6 network and communicate with other IPv6 devices in the network.
 
 To start the commissioning procedure, the controller must get the onboarding information from the Matter accessory device.
 The data payload, which includes the device discriminator and setup PIN code, is encoded within a QR code, printed to the UART console, and can be shared using an NFC tag.
 
 Matter development environment setup depends on how you choose to run the Matter controller.
-You can either run it on the same device as the Thread Border Router or run the Matter controller and the Thread Border Router on separate devices.
+When using Matter over Thread, you can either run it on the same device as the Thread Border Router or run the Matter controller and the Thread Border Router on separate devices.
 
-Running Thread Border Router and Matter controller on separate devices
-**********************************************************************
+Matter over Thread: Running Thread Border Router and Matter controller on separate devices
+******************************************************************************************
 
-The recommended approach is to run the Thread Border Router and the Matter controller on separate devices.
+The recommended approach for Matter over Thread is to run the Thread Border Router and the Matter controller on separate devices.
 With the Thread Border Router installed on Raspberry Pi, this approach provides support for most functionalities.
 For example, it allows using a mobile controller by providing connectivity between a Wi-Fi network and a Thread network.
 
@@ -123,10 +123,10 @@ To configure and use Thread Border Router and CHIP Tool for Android on separate 
 
 #. Depending on which Matter sample you programmed onto the development kit, go to this sample's documentation page and complete the steps from the Testing section.
 
-Running Thread Border Router and Matter controller on the same device
-*********************************************************************
+Matter over Thread: Running Thread Border Router and Matter controller on the same device
+*****************************************************************************************
 
-If you only have one device, be it a PC with Linux or a Raspberry Pi, you can set up and test the development environment with both the Thread Border Router and the Matter controller running on this one device.
+If you only have one device, be it a PC with Linux or a Raspberry Pi, you can set up and test the Matter over Thread development environment with both the Thread Border Router and the Matter controller running on this one device.
 
 In this setup, a PC or a Raspberry Pi runs the Thread Border Router and the CHIP Tool for Linux or macOS simultaneously.
 To simplify enabling the Thread communication with the Matter accessory device, use a Docker container with the OpenThread Border Router image instead of installing the OpenThread Border Router natively.
@@ -172,3 +172,72 @@ To configure and use Thread Border Router and Matter controller on the same devi
    * Prepare the environment for testing by completing the steps listed in "Using CHIP Tool for Matter device testing".
 
 #. Depending on which Matter sample you programmed onto the development kit, go to this sample's documentation page and complete the steps from the Testing section.
+
+.. _ug_matter_configuring_pc_chip_tool_wifi:
+
+Matter over Wi-Fi: Configuring CHIP Tool for Linux or macOS
+***********************************************************
+
+In this setup, the Matter controller is installed on PC that is running either Linux or macOS, and a dedicated Wi-Fi Access Point is used.
+This is the recommended setup.
+
+Requirements
+============
+
+To use this setup, you need the following hardware:
+
+* 1x PC with Ubuntu (20.04 or newer)
+* 1x Wi-Fi Access Point supporting IPv6 (without the IPv6 Router Advertisement Guard enabled on the router)
+* 1x compatible Nordic Semiconductor's DK - for the Matter accessory device (compatible and programmed with one of :ref:`matter_samples`)
+
+Configuring the environment
+===========================
+
+To configure and use CHIP Tool for Linux or macOS, complete the following steps:
+
+1. Program the development kit for the Matter accessory device with one of available :ref:`matter_samples`.
+#. Configure the CHIP Tool for Linux or macOS by following the steps in the sections of the :doc:`matter:chip_tool_guide` in the Matter documentation:
+
+   a. Build and run the CHIP Tool by completing the steps listed in "Building and running CHIP Tool".
+   #. Prepare the environment for testing by completing the steps listed in "Using CHIP Tool for Matter device testing".
+
+#. Depending on which Matter sample you programmed onto the development kit, go to this sample's documentation page and complete the steps from the Testing section.
+
+.. _ug_matter_configuring_mobile_wifi:
+
+Matter over Wi-Fi: Configuring CHIP Tool for Android
+****************************************************
+
+In this setup, the Matter controller is installed on mobile, and a dedicated Wi-Fi Access Point is used.
+
+Requirements
+============
+
+To use this setup, you need the following hardware:
+
+* 1x smartphone with Android 8+
+* 1x Wi-Fi Access Point supporting IPv6 (without the IPv6 Router Advertisement Guard enabled on the router)
+* 1x compatible Nordic Semiconductor's DK - for the Matter accessory device (compatible and programmed with one of :ref:`matter_samples`)
+
+Configuring the environment
+===========================
+
+To configure and use CHIP Tool for Android, complete the following steps:
+
+1. Program the development kit for the Matter accessory device with one of available :ref:`matter_samples`.
+#. Configure the CHIP Tool for Android:
+
+   a. Install the controller using one of the options described in :ref:`ug_matter_configuring_controller_mobile`.
+   #. Complete the following steps from the :doc:`matter:nrfconnect_android_commissioning` user guide in the Matter documentation:
+
+      * Building and installing CHIP Tool for Android - which prepares the controller for commissioning.
+      * Preparing accessory device - which prepares your device programmed with the Matter sample for commissioning and provides you with the commissioning QR code.
+
+        .. note::
+            In the |NCS|, you can also use :ref:`NFC tag for Matter commissioning <ug_matter_configuring_optional_nfc>`.
+
+      * Commissioning accessory device - which lets you commission your device into the Wi-Fi network (Wi-Fi Access Point).
+      * Sending Matter commands - which checks the IPv6 connectivity.
+
+#. Depending on which Matter sample you programmed onto the development kit, go to this sample's documentation page and complete the steps from the Testing section.
+

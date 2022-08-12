@@ -47,10 +47,10 @@ In the |NCS|, the ZAP file is provided in the :file:`src` directory for each :re
 For an example of how to use the ZAP tool to edit a ZAP file, see the :ref:`ug_matter_creating_accessory_edit_zap` in the :ref:`ug_matter_creating_accessory` user guide.
 For more information about the ZAP tool, see the official `ZCL Advanced Platform`_ documentation.
 
-Thread tools
-************
+Matter over Thread tools
+************************
 
-Because Matter is based on the Thread network, you can use the following :ref:`ug_thread_tools` when working with Matter in the |NCS|.
+You can use the following :ref:`ug_thread_tools` when working with Matter in the |NCS| using the Matter over Thread setup.
 
 Thread Border Router
 ====================

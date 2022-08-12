@@ -20,7 +20,7 @@ To use the Matter protocol, set the following Kconfig options:
 * :kconfig:option:`CONFIG_CHIP_PROJECT_CONFIG` - This option defines the path to the configuration file that specifies Vendor ID, Product ID, and other project-specific Matter settings.
 
 Because Matter is an application layer protocol on top of the other IPv6-based transport protocols (see :ref:`ug_matter_architecture`), it uses multiple software modules with their own configuration options to provide the communication between the devices and the necessary functionalities.
-It uses modules such as Bluetooth® LE, the IPv6 stack (currently, only :ref:`Thread <ug_thread_configuring>` is supported), :ref:`nRF Security <nrfxlib:nrf_security_config>`, or :ref:`MCUboot <mcuboot:mcuboot_ncs>`.
+It uses modules such as Bluetooth® LE, the IPv6 stack (for example :ref:`Thread <ug_thread_configuring>`), :ref:`nRF Security <nrfxlib:nrf_security_config>`, or :ref:`MCUboot <mcuboot:mcuboot_ncs>`.
 Make sure to review the configuration options of these modules when configuring Matter.
 
 The Kconfig options for Matter applications in the nRF Connect SDK are stored in the following files:
@@ -39,22 +39,6 @@ Optional configuration
 **********************
 
 After enabling the Matter protocol and defining the path to the Matter configuration file, you can enable additional options in Kconfig.
-
-.. _ug_matter_configuring_optional_ot:
-
-OpenThread configuration
-========================
-
-Enabling :kconfig:option:`CONFIG_CHIP` automatically enables the following options related to OpenThread:
-
-* :kconfig:option:`CONFIG_OPENTHREAD_ECDSA` and :kconfig:option:`CONFIG_OPENTHREAD_SRP_CLIENT` - enabled through :kconfig:option:`CONFIG_CHIP_ENABLE_DNSSD_SRP`
-* :kconfig:option:`CONFIG_OPENTHREAD_DNS_CLIENT` - enabled through :kconfig:option:`CONFIG_CHIP_ENABLE_DNS_CLIENT`
-
-Additionally, you can enable the support for Thread :ref:`Sleepy End Device <thread_ot_device_types>` in Matter by using the :kconfig:option:`CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT` Kconfig option.
-This option sets the :kconfig:option:`CONFIG_OPENTHREAD_MTD_SED` Kconfig option.
-It is enabled by default for some :ref:`matter_samples`: :ref:`light switch <matter_light_switch_sample>`, :ref:`door lock <matter_lock_sample>`, and :ref:`window covering <matter_window_covering_sample>`.
-
-For more information about configuring OpenThread in the |NCS|, see :ref:`ug_thread_configuring`.
 
 .. _ug_matter_configuring_optional_nfc:
 
@@ -118,15 +102,3 @@ To enable the FFS support, set the following configuration options to meet the A
 * :kconfig:option:`CONFIG_CHIP_ROTATING_DEVICE_ID` to ``y``.
 * :kconfig:option:`CONFIG_CHIP_DEVICE_TYPE` to the appropriate value, depending on the device used.
   The value must be compliant with the Matter Device Type Identifier.
-
-.. _ug_matter_configuring_requirements:
-
-Required components for Matter network
-**************************************
-
-The Matter protocol is centered around the Matter network, which requires the following components to operate properly:
-
-* Matter controller - either CHIP Tool for Linux or macOS, or CHIP Tool for Android
-* Thread Border Router - configured either on PC or Raspberry Pi
-
-For information about how to configure these components, read :ref:`ug_matter_configuring_controller` and :ref:`ug_matter_configuring_env`.
