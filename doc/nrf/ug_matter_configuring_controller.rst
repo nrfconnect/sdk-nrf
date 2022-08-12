@@ -36,7 +36,7 @@ CHIP Tool for Linux or macOS
 ****************************
 
 CHIP Tool for Linux or macOS is the default implementation of the Matter controller role, recommended for the nRF Connect platform.
-You can use it either on a separate device from Thread Border Router or on the same device as Thread Border Router, depending on which :ref:`development environment setup option <ug_matter_configuring>` you choose.
+For Matter over Thread, you can use it either on a separate device from Thread Border Router or on the same device as Thread Border Router, depending on which :ref:`development environment setup option <ug_matter_configuring>` you choose.
 CHIP Tool for Linux or macOS is available for both amd64 and aarch64 architectures.
 This implies that the tool can also be run on a Raspberry Pi with a 64-bit OS.
 
@@ -54,7 +54,7 @@ CHIP Tool for Android
 *********************
 
 CHIP Tool for Android (also known as Android CHIPTool) is the recommended Mobile controller for mobile, which allows you to test Matter applications using an Android smartphone.
-You can use it in the :ref:`development environment setup option <ug_matter_configuring>` where Thread Border Router and Matter controller are running on separate devices.
+For Matter over Thread, you can use it in the :ref:`development environment setup option <ug_matter_configuring>` where Thread Border Router and Matter controller are running on separate devices.
 
 To use CHIP Tool for Android, choose one of the following options:
 
