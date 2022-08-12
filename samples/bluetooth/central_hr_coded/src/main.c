@@ -131,7 +131,6 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 	err = bt_conn_le_create(device_info->recv_info->addr, conn_params,
 				BT_LE_CONN_PARAM_DEFAULT,
 				&default_conn);
-
 	if (err) {
 		printk("Create conn failed (err %d)\n", err);
 
@@ -172,7 +171,6 @@ static void scan_init(void)
 	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_HRS);
 	if (err) {
 		printk("Scanning filters cannot be set (err %d)\n", err);
-
 		return;
 	}
 
@@ -205,9 +203,8 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 	}
 
 	err = bt_conn_get_info(conn, &info);
-
 	if (err) {
-		printk("Failed to get connection info\n");
+		printk("Failed to get connection info (err %d)\n", err);
 	} else {
 		const struct bt_conn_le_phy_info *phy_info;
 
@@ -217,7 +214,6 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 	}
 
 	if (conn == default_conn) {
-
 		err = bt_gatt_dm_start(conn, BT_UUID_HRS, &discover_hrs_cb, NULL);
 		if (err) {
 			printk("Failed to start discovery (err %d)\n", err);
@@ -255,6 +251,8 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 void main(void)
 {
 	int err;
+
+	printk("Starting Bluetooth Central HR coded example\n");
 
 	err = bt_enable(NULL);
 	if (err) {

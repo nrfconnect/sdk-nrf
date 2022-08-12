@@ -29,6 +29,17 @@ The sample demonstrates a basic Bluetooth® Low Energy Peripheral role functiona
 Once it connects to a Central device, it generates dummy heart rate values.
 You can use it together with the :ref:`bluetooth_central_hr_coded` sample.
 
+User interface
+**************
+
+The user interface of the sample depends on the hardware platform you are using.
+
+LED 1:
+   Blinks when the main loop is running (that is, the device is advertising) with a period of two seconds, duty cycle 50%.
+
+LED 2:
+   Lit when the development kit is connected.
+
 Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_hr_coded`
@@ -55,6 +66,10 @@ After programming the sample to your development kit, you can test it by connect
 
 Dependencies
 ************
+
+This sample uses the following |NCS| library:
+
+* :ref:`dk_buttons_and_leds_readme`
 
 This sample uses the following Zephyr libraries:
 

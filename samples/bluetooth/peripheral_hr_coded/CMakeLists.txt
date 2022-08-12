@@ -13,5 +13,3 @@ target_sources(app PRIVATE
   src/main.c
 )
 # NORDIC SDK APP END
-
-zephyr_library_include_directories(${ZEPHYR_BASE}/samples/bluetooth)
