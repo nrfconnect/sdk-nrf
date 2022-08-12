@@ -65,6 +65,11 @@ static int reconnection_counter;
 static struct k_sem lwm2m_restart;
 /* Enable session lifetime check for initial boot */
 static bool update_session_lifetime = true;
+static bool lwm2m_client_connected;
+
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_NWK_REG_NOTIFICATION)
+static bool lwm2m_stack_suspended;
+#endif
 
 static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event client_event);
 
@@ -327,6 +332,7 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_BOOTSTRAP_REG_COMPLETE:
 		LOG_DBG("Bootstrap registration complete");
+		lwm2m_client_connected = false;
 		update_session_lifetime = true;
 		reconnection_counter = 0;
 		break;
@@ -337,11 +343,13 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_FAILURE:
 		LOG_WRN("Registration failure!");
+		lwm2m_client_connected = false;
 		k_sem_give(&lwm2m_restart);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REGISTRATION_COMPLETE:
 		reconnection_counter = 0;
+		lwm2m_client_connected = true;
 		LOG_DBG("Registration complete");
 		if (update_session_lifetime) {
 			/* Read a current server  lifetime value */
@@ -357,11 +365,13 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE_FAILURE:
 		LOG_DBG("Registration update failure!");
+		lwm2m_client_connected = false;
 		k_sem_give(&lwm2m_restart);
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_REG_UPDATE_COMPLETE:
 		LOG_DBG("Registration update complete");
+		lwm2m_client_connected = true;
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_DEREGISTER_FAILURE:
@@ -372,6 +382,7 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 
 	case LWM2M_RD_CLIENT_EVENT_DISCONNECT:
 		LOG_DBG("Disconnected");
+		lwm2m_client_connected = false;
 		break;
 
 	case LWM2M_RD_CLIENT_EVENT_QUEUE_MODE_RX_OFF:
@@ -385,6 +396,7 @@ static void rd_client_event(struct lwm2m_ctx *client, enum lwm2m_rd_client_event
 	case LWM2M_RD_CLIENT_EVENT_NETWORK_ERROR:
 		LOG_ERR("LwM2M engine reported a network error.");
 		reconnect = true;
+		lwm2m_client_connected = false;
 		k_sem_give(&lwm2m_restart);
 		break;
 	}
@@ -418,6 +430,28 @@ static void modem_connect(void)
 		}
 	} while (ret < 0);
 }
+
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_NWK_REG_NOTIFICATION)
+static void lwm2m_lte_nwk_reg_update_state_cb(bool connected)
+{
+	if (connected) {
+		LOG_INF("LTE connected");
+		if (lwm2m_stack_suspended) {
+			if (lwm2m_engine_resume() == 0) {
+				lwm2m_stack_suspended = false;
+			}
+		}
+	} else {
+		LOG_INF("LTE disconnected");
+		if (!lwm2m_stack_suspended && lwm2m_client_connected) {
+			if (lwm2m_engine_pause() == 0) {
+				lwm2m_stack_suspended = true;
+				lwm2m_client_connected = false;
+			}
+		}
+	}
+}
+#endif /* CONFIG_LWM2M_CLIENT_UTILS_NWK_REG_NOTIFICATION */
 
 void main(void)
 {
@@ -465,6 +499,10 @@ void main(void)
 		LOG_ERR("Unable to init modem (%d)", ret);
 		return;
 	}
+
+#if defined(CONFIG_LWM2M_CLIENT_UTILS_NWK_REG_NOTIFICATION)
+	lwm2m_lte_reg_handler_register(lwm2m_lte_nwk_reg_update_state_cb);
+#endif
 
 	ret = modem_info_init();
 	if (ret < 0) {
