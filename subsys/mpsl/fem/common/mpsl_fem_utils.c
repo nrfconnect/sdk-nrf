@@ -25,34 +25,4 @@ void mpsl_fem_extended_pin_to_mpsl_fem_pin(uint32_t pin_num, mpsl_fem_pin_t *p_f
 	p_fem_pin->port_pin = pin_num;
 }
 
-#else
-
-void mpsl_fem_pin_extend_with_port(uint8_t *pin, const char *lbl)
-{
-	/* The pin numbering in the FEM configuration API follows the
-	 * convention:
-	 *   pin numbers 0..31 correspond to the gpio0 port
-	 *   pin numbers 32..63 correspond to the gpio1 port
-	 *
-	 * Values obtained from devicetree are here adjusted to the ranges
-	 * given above.
-	 */
-
-#if DT_NODE_HAS_STATUS(DT_NODELABEL(gpio0), okay)
-	if (strcmp(lbl, UTIL_CAT(DT_NODELABEL(gpio0), _FULL_NAME)) == 0) {
-		return;
-	}
-#endif
-
-#if DT_NODE_HAS_STATUS(DT_NODELABEL(gpio1), okay)
-	if (strcmp(lbl, UTIL_CAT(DT_NODELABEL(gpio1), _FULL_NAME)) == 0) {
-		*pin += 32;
-		return;
-	}
-#endif
-	(void)pin;
-
-	__ASSERT(false, "Unknown GPIO port");
-}
-
 #endif /* !defined(CONFIG_MPSL_FEM_PIN_FORWARDER) */
