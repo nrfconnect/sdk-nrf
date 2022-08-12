@@ -103,6 +103,7 @@ Updating the build scripts
 ==========================
 
 To make it possible to enable a child image from a parent image, you must include the child image in the build script.
+If you need to perform this operation out-of-tree (that is, without modifying NCS code), or from the top-level CMakeLists.txt in your sample, see :ref:`ug_multi_image_add_child_image_oot`.
 
 To do so, place the code from the following example in the CMake tree that is conditional on a configuration option.
 In the |NCS|, the code is included in the :file:`CMakeLists.txt` file for the samples, and in the MCUboot repository.
@@ -139,6 +140,37 @@ See the following example:
       )
 
 A *domain* is well-defined if there is the ``CONFIG_DOMAIN_${DOMAIN}_BOARD`` configuration option in Kconfig.
+
+.. _ug_multi_image_add_child_image_oot:
+
+Adding a child image using Zephyr modules
+=========================================
+
+Any call to ``add_child_image`` must be done *after* :file:`nrf/cmake/extensions.cmake` is invoked, but *before* :file:`multi_image.cmake` is invoked.
+In some scenarios, this is not possible without modifying the NCS build code, for example, from top-level sample files and project :file:`CMakeLists.txt` files.
+
+To avoid this issue, use the *Modules* mechanism provided by the Zephyr build system.
+The following example shows how to add the required module from a top-level sample :file:`CMakeLists.txt`.
+
+.. literalinclude:: ../../samples/nrf5340/multicore/CMakeLists.txt
+    :language: cmake
+    :start-at: cmake_minimum_required
+    :end-at: target_sources
+
+A :file:`zephyr/module.yml` file is needed at the base of the added module.
+The following example specifies only the path to the :file:`CMakeLists.txt` of the new module.
+See :ref:`modules` for more details.
+
+.. literalinclude:: ../../samples/nrf5340/multicore/zephyr/module.yml
+    :language: yaml
+
+The :file:`CMakeLists.txt` located in the directory pointed to by :file:`zephyr/module.yml` will be invoked when ``add_child_image`` can be invoked.
+
+.. literalinclude:: ../../samples/nrf5340/multicore/aci/CMakeLists.txt
+    :language: cmake
+    :start-at: add_child_image
+    :end-before: endif()
+
 
 Adding configuration options
 ============================
