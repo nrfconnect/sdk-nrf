@@ -9,4 +9,4 @@ pyyaml
 azure-storage-blob
 sphinx_markdown_tables
 mistune<2.0 # Workaround for https://github.com/CrossNox/m2r2/issues/40
-breathe<4.33 # Workaround for #803 and #805 breathe issues
+breathe>=4.34
