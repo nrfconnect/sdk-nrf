@@ -235,7 +235,7 @@ static int nrf_to_z_addrinfo_flags(int flags)
 	return 0;
 }
 
-static int z_to_nrf_addrinfo_hints(const struct zsock_addrinfo *z_in,
+static void z_to_nrf_addrinfo_hints(const struct zsock_addrinfo *z_in,
 				   struct nrf_addrinfo *nrf_out)
 {
 	memset(nrf_out, 0, sizeof(struct nrf_addrinfo));
@@ -248,8 +248,6 @@ static int z_to_nrf_addrinfo_hints(const struct zsock_addrinfo *z_in,
 	if (z_in->ai_canonname != NULL) {
 		nrf_out->ai_canonname = z_in->ai_canonname;
 	}
-
-	return 0;
 }
 
 static int nrf_to_z_addrinfo(struct zsock_addrinfo *z_out,
@@ -765,7 +763,7 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 					    const struct zsock_addrinfo *hints,
 					    struct zsock_addrinfo **res)
 {
-	int error;
+	int err;
 	struct nrf_addrinfo nrf_hints;
 	struct nrf_addrinfo *nrf_res = NULL;
 	struct nrf_addrinfo *nrf_hints_ptr = NULL;
@@ -774,12 +772,7 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 	memset(&nrf_hints, 0, sizeof(struct nrf_addrinfo));
 
 	if (hints != NULL) {
-		error = z_to_nrf_addrinfo_hints(hints, &nrf_hints);
-		if (error == -EPROTONOSUPPORT) {
-			return DNS_EAI_SOCKTYPE;
-		} else if (error == -EAFNOSUPPORT) {
-			return DNS_EAI_ADDRFAMILY;
-		}
+		z_to_nrf_addrinfo_hints(hints, &nrf_hints);
 		nrf_hints_ptr = &nrf_hints;
 	}
 
@@ -787,7 +780,6 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 	int retval = nrf_getaddrinfo(node, service, nrf_hints_ptr, &nrf_res);
 
 	if (retval != 0) {
-		retval = error;
 		goto error;
 	}
 
@@ -805,16 +797,16 @@ static int nrf91_socket_offload_getaddrinfo(const char *node,
 			break;
 		}
 
-		error = nrf_to_z_addrinfo(next_z_res, next_nrf_res);
-		if (error == -ENOMEM) {
+		err = nrf_to_z_addrinfo(next_z_res, next_nrf_res);
+		if (err == -ENOMEM) {
 			retval = DNS_EAI_MEMORY;
 			k_free(next_z_res);
 			break;
-		} else if (error == -EPROTONOSUPPORT) {
+		} else if (err == -EPROTONOSUPPORT) {
 			retval = DNS_EAI_SOCKTYPE;
 			k_free(next_z_res);
 			break;
-		} else if (error == -EAFNOSUPPORT) {
+		} else if (err == -EAFNOSUPPORT) {
 			retval = DNS_EAI_ADDRFAMILY;
 			k_free(next_z_res);
 			break;
