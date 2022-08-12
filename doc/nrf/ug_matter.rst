@@ -29,6 +29,8 @@ If you are new to Matter, you can follow along with the video tutorials on Nordi
    :caption: Subpages:
 
    ug_matter_architecture.rst
+   ug_matter_gs_kconfig.rst
    ug_matter_configuring.rst
    ug_matter_tools.rst
+   ug_matter_device_advanced_kconfigs.rst
    ug_matter_creating_accessory.rst
