@@ -154,7 +154,7 @@ After building the sample and programming it to your development kit, complete t
       .. code-block:: console
 
          uart:~$ ot networkname
-         ot_zephyr
+         OpenThread
          Done
 
    #. Get the IP addresses of the current Thread network with the ``ot ipaddr`` command.
@@ -204,7 +204,9 @@ To test communication between kits, complete the following steps:
    .. code-block:: console
 
       uart:~$ ot ping fdde:ad00:beef:0:3102:d00b:5cbe:a61
-      16 bytes from fdde:ad00:beef:0:3102:d00b:5cbe:a61: icmp_seq=1 hlim=64 time=22ms
+      16 bytes from fdde:ad00:beef:0:3102:d00b:5cbe:a61: icmp_seq=3 hlim=64 time=23ms
+      1 packets transmitted, 1 packets received. Packet loss = 0.0%. Round-trip min/av
+      Done
 
 Testing diagnostic module
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -259,11 +261,12 @@ To test diagnostic commands, complete the following steps:
 
 .. _ot_cli_sample_testing_multiple_v12:
 
-Testing Thread 1.2 features
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Testing Thread 1.2 and Thread 1.3 features
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To test the Thread 1.2 features, complete the following steps:
+To test the Thread 1.2 and Thread 1.3 features, complete the following steps:
 
+#. Enable the extra options :kconfig:option:`CONFIG_OPENTHREAD_BORDER_ROUTER`, :kconfig:option:`CONFIG_OPENTHREAD_BACKBONE_ROUTER` and :kconfig:option:`CONFIG_OPENTHREAD_SRP_SERVER` when building the CLI sample.
 #. Make sure both development kits are programmed with the CLI sample.
 #. Turn on the developments kits.
 #. |connect_terminal_both_ANSI|
@@ -282,10 +285,7 @@ To test the Thread 1.2 features, complete the following steps:
    .. code-block:: console
 
       uart:~$ ot bbr enable
-      DIo:
-       State changed! Flags: 0x02001000 Current role: 4
-      I: State changed! Flags: 0x00000200 Current role: 4
-      I: State changed! Flags: 0x02000001 Current role: 4
+      Done
 
 #. On the leader kit, configure the Domain prefix:
 
@@ -295,8 +295,6 @@ To test the Thread 1.2 features, complete the following steps:
       Done
       uart:~$ ot netdata register
       Done
-      I: State changed! Flags: 0x00000200 Current role: 4
-      I: State changed! Flags: 0x00001001 Current role: 4
 
 #. On the router kit, display the autoconfigured Domain Unicast Address and set another one manually:
 
@@ -307,9 +305,9 @@ To test the Thread 1.2 features, complete the following steps:
       fdde:ad00:beef:0:0:ff:fe00:c400
       fdde:ad00:beef:0:e0fc:dc28:1d12:8c2
       fe80:0:0:0:acbd:53bf:1461:a861
+      Done
       uart:~$ ot dua iid 0004000300020001
-      Io:
-      State changed! Flags: 0x00000003 Current role: 3
+      Done
       uart:~$ ot ipaddr
       fd00:7d03:7d03:7d03:4:3:2:1
       fdde:ad00:beef:0:0:ff:fe00:c400
@@ -323,7 +321,6 @@ To test the Thread 1.2 features, complete the following steps:
 
       uart:~$ ot ipmaddr add ff04::1
       Done
-      : State changed! Flags: 0x00001000 Current role: 3
       uart:~$ ot ipmaddr
       ff04:0:0:0:0:0:0:1
       ff33:40:fdde:ad00:beef:0:0:1
@@ -413,8 +410,9 @@ To test the Thread 1.2 features, complete the following steps:
 
          uart:~$ ot linkmetrics mgmt fe80:0:0:0:10b1:93ea:c0ee:eeb7 enhanced-ack register qm
          Done
-         Received Link Metrics Management Response from: fe80:0:0:0:10b1:93ea:c0ee:eeb7
-         Status: Success
+         Received Link Metrics data in Enh Ack from neighbor, short address:0xa400 , extended address:12b193eac0eeeeb7
+         - LQI: 255 (Exponential Moving Average)
+         - Margin: 68 (dB) (Exponential Moving Average)
 
    #. Send a Link Metrics Management Request to clear an Enhanced ACK-based Probing:
 
@@ -442,6 +440,13 @@ To test the Thread 1.2 features, complete the following steps:
       Observe that there is a long latency, up to 3000 ms, on the reply.
       This is due to the indirect transmission mechanism based on data polling.
 
+   #. Stop frequent polling on the router kit (now SED) by configuring a polling period of 240 seconds:
+
+      .. code-block:: console
+
+         uart:~$ ot pollperiod 240000
+         Done
+
    #. Enable a CSL Receiver on the router kit (now SED) by configuring a CSL period of 0.5 seconds:
 
       .. code-block:: console
@@ -454,13 +459,64 @@ To test the Thread 1.2 features, complete the following steps:
       .. code-block:: console
 
          uart:~$ ot ping fe80:0:0:0:acbd:53bf:1461:a861
-         uart:~$ W: TX_STARTED event will be triggered without delay
          16 bytes from fe80:0:0:0:acbd:53bf:1461:a861: icmp_seq=3 hlim=64 time=421ms
          1 packets transmitted, 1 packets received. Packet loss = 0.0%. Round-trip min/a
          Done
 
       Observe that the reply latency is reduced to a value below 500 ms.
       The reduction occurs because the transmission from the leader is performed using CSL, based on the CSL Information Elements sent by the CSL Receiver.
+
+#. Verify the Service Registration Protocol (SRP) functionality.
+
+   a. On the leader kit, enable the SRP Server function:
+
+      .. code-block:: console
+
+         uart:~$ ot srp server enable
+         Done
+
+   #. Register a `_ipps._tcp`` service on the router kit (now SED):
+
+      .. code-block:: console
+
+         uart:~$ ot srp client host name my-host
+         Done
+         uart:~$ ot srp client host address fdde:ad00:beef:0:e0fc:dc28:1d12:8c2
+         Done
+         uart:~$ ot srp client service add my-service _ipps._tcp 12345
+         Done
+         uart:~$ ot srp client autostart enable
+         Done
+
+   #. On the router kit (now SED), check that the host and service have been successfully registered:
+
+      .. code-block:: console
+
+         uart:~$ ot srp client host
+         name:"my-host", state:Registered, addrs:[fdde:ad00:beef:0:e0fc:dc28:1d12:8c2]
+         Done
+
+   #. Check the host and service on the leader kit:
+
+      .. code-block:: console
+
+         uart:~$ ot srp server host
+         my-host.default.service.arpa.
+            deleted: false
+            addresses: [fdde:ad00:beef:0:e0fc:dc28:1d12:8c2]
+         Done
+         uart:~$ ot srp server service
+         my-service._ipps._tcp.default.service.arpa.
+            deleted: false
+            subtypes: (null)
+            port: 12345
+            priority: 0
+            weight: 0
+            ttl: 7200
+            TXT: []
+            host: my-host.default.service.arpa.
+            addresses: [fdde:ad00:beef:0:e0fc:dc28:1d12:8c2]
+         Done
 
 Dependencies
 ************

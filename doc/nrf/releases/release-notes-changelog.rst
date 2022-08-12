@@ -352,7 +352,8 @@ nRF9160 samples
 Thread samples
 --------------
 
-* Enables logging of errors and hard faults in CLI sample by default.
+* Enabled logging of errors and hard faults in CLI sample by default.
+* Extended the CLI sample documentation with SRP information.
 
 Matter samples
 --------------
