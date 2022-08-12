@@ -1,7 +1,8 @@
+.. _ug_matter_gs_testing:
 .. _ug_matter_configuring:
 
-Configuring Matter
-##################
+Testing Matter in the |NCS|
+###########################
 
 When you build any of the available Matter samples to the supported development kits, you automatically build the Matter stack for the nRF Connect platform.
 The development kit and the application running Matter stack that is programmed on the development kit together form the Matter accessory device.
@@ -41,35 +42,16 @@ Matter development environment depends on the following criteria:
 
   * To enable the IPv6 communication with the Matter accessory device over the Wi-Fi network, you need a Wi-Fi Access Point, for example a Wi-Fi router, so that the Matter controller can interact with any Wi-Fi device directly.
 
-* Matter controller setup:
+* For Matter over Thread, Matter controller setup:
 
-  * You can run it on a separate device.
-  * You can run it on the same device as the Thread Border Router (Matter over Thread only).
+  * You can run it on a separate device from the device running the Thread Border Router.
+  * You can run it on the same device as the Thread Border Router.
 
 The following subpages describe possible development environments in more detail.
-
-* Thread Border Router on Raspberry Pi and Matter controller on PC (CHIP Tool for Linux or macOS)
-
-  .. include:: /ug_matter_configuring_env.rst
-     :start-after: matter_env_ctrl_pc_start
-     :end-before: matter_env_ctrl_pc_end
-
-* Thread Border Router on Raspberry Pi and Matter controller for mobile (CHIP Tool for Android)
-
-  .. include:: /ug_matter_configuring_env.rst
-     :start-after: matter_env_ctrl_mobile_start
-     :end-before: matter_env_ctrl_mobile_end
-
-* Thread Border Router and Matter controller on the same device
-
-  .. include:: /ug_matter_configuring_env.rst
-     :start-after: matter_env_ctrl_one_start
-     :end-before: matter_env_ctrl_one_end
 
 .. toctree::
    :maxdepth: 1
    :caption: Subpages:
 
-   ug_matter_configuring_protocol.rst
    ug_matter_configuring_controller.rst
    ug_matter_configuring_env.rst

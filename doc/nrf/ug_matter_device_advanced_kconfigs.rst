@@ -1,44 +1,19 @@
-.. _ug_matter_configuring_protocol:
+.. _ug_matter_device_advanced_kconfigs:
 
-Configuring Matter in |NCS|
-###########################
+Advanced Matter Kconfig options
+###############################
 
 .. contents::
    :local:
    :depth: 2
 
-This page describes what is needed to start working with Matter in the |NCS|.
+After :ref:`enabling the Matter protocol <ug_matter_gs_kconfig>` and testing some of the samples, you can enable additional options in Kconfig and start developing your own Matter application.
 
-.. _ug_matter_configuring_mandatory:
+Defining path to project-specific Matter settings
+=================================================
 
-Mandatory configuration
-***********************
-
-To use the Matter protocol, set the following Kconfig options:
-
-* :kconfig:option:`CONFIG_CHIP` - This option enables the Matter protocol stack and other associated Kconfig options, including :kconfig:option:`CONFIG_CHIP_ENABLE_DNSSD_SRP` that is required for the discovery of the Matter device using DNS-SD.
-* :kconfig:option:`CONFIG_CHIP_PROJECT_CONFIG` - This option defines the path to the configuration file that specifies Vendor ID, Product ID, and other project-specific Matter settings.
-
-Because Matter is an application layer protocol on top of the other IPv6-based transport protocols (see :ref:`ug_matter_architecture`), it uses multiple software modules with their own configuration options to provide the communication between the devices and the necessary functionalities.
-It uses modules such as Bluetooth® LE, the IPv6 stack (for example :ref:`Thread <ug_thread_configuring>`), :ref:`nRF Security <nrfxlib:nrf_security_config>`, or :ref:`MCUboot <mcuboot:mcuboot_ncs>`.
-Make sure to review the configuration options of these modules when configuring Matter.
-
-The Kconfig options for Matter applications in the nRF Connect SDK are stored in the following files:
-
-* :file:`prj.conf` files, which are specific to the application.
-* :file:`Kconfig.defaults` file, which is available in the :file:`module/lib/matter/config/nrfconnect/chip-module` directory and is used to populate :file:`prj.conf` with Kconfig option settings common to all samples.
-
-The Matter samples use the same structure for other software images, such as MCUboot or Multiprotocol RPMsg, which have default options defined in the corresponding :file:`Kconfig.mcuboot.defaults` and :file:`Kconfig.multiprotocol_rpmsg.defaults` files.
-
-For an example configuration, see the :ref:`Matter Template sample's <matter_template_sample>` :file:`prj.conf` files in the sample root directory.
-For instructions about how to set Kconfig options, see :ref:`configure_application`.
-
-.. _ug_matter_configuring_optional:
-
-Optional configuration
-**********************
-
-After enabling the Matter protocol and defining the path to the Matter configuration file, you can enable additional options in Kconfig.
+You can use the :kconfig:option:`CONFIG_CHIP_PROJECT_CONFIG` Kconfig option to define the path to the configuration file that contains project-specific Matter settings in the form of C preprocessor macros.
+These macros cannot be altered using dedicated Kconfig options.
 
 .. _ug_matter_configuring_optional_nfc:
 
