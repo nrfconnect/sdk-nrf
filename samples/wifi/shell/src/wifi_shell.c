@@ -44,7 +44,10 @@ static uint32_t scan_result;
 
 int cli_main(int argc, const char **argv);
 
-extern struct wpa_supplicant *wpa_s_0;
+extern struct wpa_global *global;
+
+/* TODO: Take this an input from shell */
+static const char *if_name = "wlan0";
 
 struct wpa_ssid *ssid_0;
 
@@ -152,6 +155,7 @@ static int cmd_supplicant_connect(const struct shell *shell,
 	struct wifi_connect_req_params *params;
 	struct wpa_ssid *ssid = NULL;
 	bool pmf = true;
+	struct wpa_supplicant *wpa_s;
 
 	if (__wifi_args_to_params(argc - 1,
 				  &argv[1],
@@ -162,7 +166,8 @@ static int cmd_supplicant_connect(const struct shell *shell,
 
 	params = &cnx_params;
 
-	if (!wpa_s_0) {
+	wpa_s = wpa_supplicant_get_iface(global, if_name);
+	if (!wpa_s) {
 		shell_fprintf(context.shell,
 			      SHELL_ERROR,
 			      "%s: wpa_supplicant is not initialized, dropping connect\n",
@@ -170,7 +175,7 @@ static int cmd_supplicant_connect(const struct shell *shell,
 		return -1;
 	}
 
-	ssid = wpa_supplicant_add_network(wpa_s_0);
+	ssid = wpa_supplicant_add_network(wpa_s);
 	ssid->ssid = os_zalloc(sizeof(u8) * MAX_SSID_LEN);
 
 	memcpy(ssid->ssid, params->ssid, params->ssid_length);
@@ -178,8 +183,8 @@ static int cmd_supplicant_connect(const struct shell *shell,
 	ssid->disabled = 1;
 	ssid->key_mgmt = WPA_KEY_MGMT_NONE;
 
-	wpa_s_0->conf->filter_ssids = 1;
-	wpa_s_0->conf->ap_scan = 1;
+	wpa_s->conf->filter_ssids = 1;
+	wpa_s->conf->ap_scan = 1;
 
 	if (params->psk) {
 		// TODO: Extend enum wifi_security_type
@@ -220,10 +225,10 @@ static int cmd_supplicant_connect(const struct shell *shell,
 
 	}
 
-	wpa_supplicant_enable_network(wpa_s_0,
+	wpa_supplicant_enable_network(wpa_s,
 				      ssid);
 
-	wpa_supplicant_select_network(wpa_s_0,
+	wpa_supplicant_select_network(wpa_s,
 				      ssid);
 
 	return 0;
@@ -234,7 +239,9 @@ static int cmd_supplicant(const struct shell *shell,
 			  size_t argc,
 			  const char *argv[])
 {
-	if (!wpa_s_0) {
+	struct wpa_supplicant *wpa_s = wpa_supplicant_get_iface(global, if_name);
+
+	if (!wpa_s) {
 		shell_fprintf(shell,
 			SHELL_ERROR,
 			"%s: wpa_supplicant is not initialized, dropping connect\n",
