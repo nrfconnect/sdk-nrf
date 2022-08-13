@@ -12,6 +12,9 @@
 #ifndef __ZEPHYR_WPA_SUPP_IF_H__
 #define __ZEPHYR_WPA_SUPP_IF_H__
 
+#include "wpa_supplicant_i.h"
+#include "bss.h"
+
 #ifdef CONFIG_WPA_SUPP
 void *wifi_nrf_wpa_supp_dev_init(void *supp_drv_if_ctx, const char *iface_name,
 				 struct zep_wpa_supp_dev_callbk_fns *supp_callbk_fns);
@@ -26,7 +29,8 @@ int wifi_nrf_wpa_supp_scan_results_get(void *if_priv);
 
 int wifi_nrf_wpa_supp_deauthenticate(void *if_priv, const char *addr, unsigned short reason_code);
 
-int wifi_nrf_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params *params);
+int wifi_nrf_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params *params,
+			   struct wpa_bss *curr_bss);
 
 int wifi_nrf_wpa_supp_associate(void *if_priv, struct wpa_driver_associate_params *params);
 

@@ -17,8 +17,6 @@
 
 #include "zephyr_fmac_main.h"
 #include "zephyr_wpa_supp_if.h"
-#include "wpa_supplicant_i.h"
-#include "bss.h"
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_LOG_LEVEL);
 
@@ -576,10 +574,10 @@ int wifi_nrf_wpa_supp_add_key(struct img_umac_key_info *key_info, enum wpa_alg a
 	return 0;
 }
 
-int wifi_nrf_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params *params)
+int wifi_nrf_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params *params,
+				struct wpa_bss *curr_bss)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
-	struct wpa_bss *curr_bss = NULL;
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
 	struct img_umac_auth_info auth_info;
@@ -615,12 +613,6 @@ int wifi_nrf_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 	if (params->ie) {
 		memcpy(auth_info.bss_ie.ie, params->ie, params->ie_len);
 	} else {
-		/* TODO: Move this to driver_zephyr.c */
-		/* TODO: See why the ie info is not being passed as part of
-		 * wpa_driver_auth_params
-		 */
-		curr_bss = wpa_bss_get(wpa_s_0, params->bssid, params->ssid, params->ssid_len);
-
 		memcpy(auth_info.bss_ie.ie, (const unsigned char *)(curr_bss + 1), IMG_MAX_IE_LEN);
 
 		auth_info.bss_ie.ie_len = curr_bss->ie_len;
