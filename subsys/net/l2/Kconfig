@@ -1,0 +1,29 @@
+# Copyright (c) 2016 Intel Corporation.
+# SPDX-License-Identifier: Apache-2.0
+
+menu "Link layer options"
+
+config NET_L2_NRF_WIFI_MGMT
+	bool "nRF Wi-Fi Management support"
+	select NET_MGMT
+	select NET_MGMT_EVENT
+	select NET_MGMT_EVENT_INFO
+	help
+	  Add support for nRF Wi-Fi Management interface.
+	  Conflicts with Zephyr's Wi-Fi Management interface.
+
+config NET_L2_NRF_WIFI_SHELL
+	bool "nRF Wi-Fi shell module"
+	select NET_L2_NRF_WIFI_MGMT
+	help
+		This can be used for controlling Wi-Fi through the console via
+		exposing a shell module named "wifi".
+
+if NET_L2_NRF_WIFI_MGMT
+module = NET_L2_NRF_WIFI_MGMT
+module-dep = NET_LOG
+module-str = Log level for nRF Wi-Fi management layer
+module-help = Enables nRF Wi-Fi management interface to output debug messages.
+source "subsys/net/Kconfig.template.log_config.net"
+endif # NET_L2_NRF_WIFI_MGMT
+endmenu
