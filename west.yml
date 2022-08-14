@@ -100,7 +100,7 @@ manifest:
     # changes.
     - name: sdk-hostap
       path: modules/lib/hostap
-      revision: 40e297d14ed7a1b8292819f6e60caf4e4fc9eda3
+      revision: pull/15/head
     - name: mcuboot
       repo-path: sdk-mcuboot
       revision: 74b34fe10bde956ddecd84104536dcb78a612e5f
