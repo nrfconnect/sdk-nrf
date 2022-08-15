@@ -154,14 +154,6 @@ config BLE_ADV_TX_POWER_DBM
 	default -20 if BLE_ADV_TX_POWER_NEG_20DBM
 	default -40 if BLE_ADV_TX_POWER_NEG_40DBM
 
-config BLE_DEVICE_NAME_BASE
-	string
-	default "NRF5340_AUDIO"
-	help
-	 Base for the device name that will be visible over the air. The actual
-	 name on air could look like: NRF5340_AUDIO_DEV_H_L or NRF5340_AUDIO_DEV_H_R
-	 depending on which device it is.
-
 config BLE_ISO_TEST_PATTERN
 	bool "Transmit a test pattern to measure link performance"
 	default n

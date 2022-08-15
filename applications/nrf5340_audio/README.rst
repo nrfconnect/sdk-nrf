@@ -384,7 +384,7 @@ The following table is a complete overview of the solder bridges on the nRF5340 
 +------------+-------------------------------------------------------------------------------------+--------------+--------+
 |SB5         | Cut to enable VBAT current measurements on P6                                       | Shorted      | Top    |
 +------------+-------------------------------------------------------------------------------------+--------------+--------+
-|SB6         | Cut to enable VBAT current measurements on P6                                       | Shorted      | Top    |
+|SB6         | Cut to enable HW CODEC 1.2V current measurements on P7                              | Shorted      | Top    |
 +------------+-------------------------------------------------------------------------------------+--------------+--------+
 |SB7         | Cut to enable HW CODEC 1.8V current measurements on P8                              | Shorted      | Top    |
 +------------+-------------------------------------------------------------------------------------+--------------+--------+
