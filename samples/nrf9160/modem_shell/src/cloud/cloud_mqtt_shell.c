@@ -55,7 +55,7 @@ static void cloud_reconnect_work_fn(struct k_work *work)
 	int err = nrf_cloud_connect(NULL);
 
 	if (err == NRF_CLOUD_CONNECT_RES_SUCCESS) {
-		mosh_print("Connection to nRF Cloud established");
+		mosh_print("Connecting to nRF Cloud...");
 	} else if (err == NRF_CLOUD_CONNECT_RES_ERR_ALREADY_CONNECTED) {
 		mosh_print("nRF Cloud connection already established");
 	} else {
@@ -178,11 +178,12 @@ static void nrf_cloud_event_handler(const struct nrf_cloud_evt *evt)
 		mosh_print("NRF_CLOUD_EVT_TRANSPORT_CONNECTED");
 		break;
 	case NRF_CLOUD_EVT_READY:
-		mosh_print("NRF_CLOUD_EVT_READY");
+		mosh_print("NRF_CLOUD_EVT_READY: Connection to nRF Cloud established");
 		k_work_submit_to_queue(&mosh_common_work_q, &shadow_update_work);
 		break;
 	case NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED:
-		mosh_print("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED");
+		mosh_print("NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED: Connection to nRF Cloud "
+			   "disconnected");
 		if (!nfsm_get_disconnect_requested()) {
 			mosh_print("Reconnecting in %d seconds...", reconnection_delay);
 			k_work_reschedule_for_queue(&mosh_common_work_q, &cloud_reconnect_work,

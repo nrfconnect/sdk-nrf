@@ -329,6 +329,7 @@ nRF9160 samples
       By default, commands are run after the default PDN context is activated, but can be set to run N seconds after bootup.
     * New command ``link search`` for setting periodic modem search parameters.
     * Added printing of modem domain events.
+    * MQTT support for ``gnss`` command A-GPS and P-GPS.
 
   * Updated:
 
