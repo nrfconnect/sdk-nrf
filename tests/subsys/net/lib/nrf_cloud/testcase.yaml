@@ -1,0 +1,6 @@
+tests:
+  nrf_cloud.nrf_cloud_init:
+    platform_allow: nrf9160dk_nrf9160_ns
+    integration_platforms:
+      - nrf9160dk_nrf9160_ns
+    tags: cia_nightly nrf_cloud_test_init
