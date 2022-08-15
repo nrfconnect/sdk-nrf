@@ -143,6 +143,8 @@ struct bt_mesh_light_temp_srv {
 	struct bt_mesh_light_temp dflt;
 	/** Current Temperature range. */
 	struct bt_mesh_light_temp_range range;
+	/** Corrective delta used by the generic level server. */
+	uint16_t corrective_delta;
 	struct __packed {
 		/** The last known color temperature. */
 		struct bt_mesh_light_temp last;
