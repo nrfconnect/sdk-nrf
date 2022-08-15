@@ -258,6 +258,10 @@ Libraries for networking
     * Removed ``MODEM_INFO_NETWORK_MODE_MAX_SIZE``.
     * Removed ``CONFIG_MODEM_INFO_ADD_BOARD``.
 
+* :ref:`lib_download_client` library:
+
+  * Updated the library so that it does not retry download on disconnect.
+
 Libraries for NFC
 -----------------
 
