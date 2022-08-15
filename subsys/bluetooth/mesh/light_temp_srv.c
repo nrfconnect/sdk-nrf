@@ -221,7 +221,7 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 		srv->handlers->get(srv, NULL, &status);
 		start_lvl = temp_to_lvl(srv, status.current.temp);
 	} else {
-		start_lvl = temp_to_lvl(srv, srv->transient.last.temp);
+		start_lvl = temp_to_lvl(srv, srv->corrective_delta);
 	}
 
 	/* Clamp to int16_t range before storing the value in a 16 bit integer
@@ -234,12 +234,10 @@ static void lvl_delta_set(struct bt_mesh_lvl_srv *lvl_srv,
 
 	bt_mesh_light_temp_srv_set(srv, ctx, &set, &status);
 
-	/* Override last temp value to be able to make corrective deltas when
-	 * new_transaction is false. Note that the last temp value in
-	 * persistent storage will still be the target value, allowing us to
-	 * recover correctly on power loss.
+	/* Copy start level to be able to make corrective deltas when
+	 * new_transaction is false.
 	 */
-	srv->transient.last.temp = lvl_to_temp(srv, start_lvl);
+	srv->corrective_delta = lvl_to_temp(srv, start_lvl);
 
 	(void)bt_mesh_light_temp_srv_pub(srv, NULL, &status);
 
