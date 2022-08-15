@@ -37,9 +37,6 @@ config BT_GATT_CLIENT
 	bool
 	default y
 
-	bool
-	default y
-
 config BT_BONDABLE
 	bool
 	default y
