@@ -1181,6 +1181,13 @@ Subsystems
 Bluetooth® LE
 =============
 
+.. rst-class:: v2-0-2
+
+DRGN-17695: The BT RX thread stack might overflow if the :kconfig:option:`CONFIG_BT_SMP` is enabled.
+  When performing SMP pairing MPU FAULTs may be triggered because the stack is not large enough.
+
+  **Workaround:** Increase the stack size manually in the project configuration file (:file:`prj.conf`) using :kconfig:option:`CONFIG_BT_RX_STACK_SIZE`.
+
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0
 
 NCSDK-15527: Advertising in the :ref:`peripheral_hr_coded` sample and scanning in the :ref:`bluetooth_central_hr_coded` sample cannot be started when using the SW Split Link Layer.
