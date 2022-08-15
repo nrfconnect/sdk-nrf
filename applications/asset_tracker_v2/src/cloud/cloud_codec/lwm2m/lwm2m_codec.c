@@ -17,100 +17,27 @@
 #include <net/lwm2m_client_utils_location.h>
 #include <date_time.h>
 
+#include "lwm2m_codec_defines.h"
+
 #include <logging/log.h>
 LOG_MODULE_REGISTER(cloud_codec, CONFIG_CLOUD_CODEC_LOG_LEVEL);
-
-/* LwM2M read-write flag. */
-#define LWM2M_RES_DATA_FLAG_RW 0
-
-/* Location object RIDs. */
-#define LATITUDE_RID		0
-#define LONGITUDE_RID		1
-#define ALTITUDE_RID		2
-#define RADIUS_RID		3
-#define LOCATION_TIMESTAMP_RID	5
-#define SPEED_RID		6
-
-/* Connectivity monitoring object RIDs. */
-#define NETWORK_BEARER_ID		0
-#define AVAIL_NETWORK_BEARER_ID		1
-#define RADIO_SIGNAL_STRENGTH		2
-#define IP_ADDRESSES			4
-#define APN				7
-#define CELLID				8
-#define SMNC				9
-#define SMCC				10
-#define LAC				12
-
-/* Device object RIDs. */
-#define FIRMWARE_VERSION_RID		3
-#define SOFTWARE_VERSION_RID		19
-#define DEVICE_SERIAL_NUMBER_ID		2
-#define CURRENT_TIME_RID		13
-#define POWER_SOURCE_VOLTAGE_RID	7
-#define MODEL_NUMBER_RID		1
-#define MANUFACTURER_RID		0
-#define HARDWARE_VERSION_RID		18
-
-/* Configuration object RIDs. */
-#define CONFIGURATION_OBJECT_ID		50009
-#define PASSIVE_MODE_RID		0
-#define GNSS_TIMEOUT_RID		1
-#define ACTIVE_WAIT_TIMEOUT_RID		2
-#define MOVEMENT_RESOLUTION_RID		3
-#define MOVEMENT_TIMEOUT_RID		4
-#define ACCELEROMETER_THRESHOLD_RID	5
-#define GNSS_ENABLE_RID			6
-#define NEIGHBOR_CELL_ENABLE_RID	7
-
-/* Location Assistance resource IDs */
-#define LOCATION_ASSIST_OBJECT_ID		   50001
-#define ASSIST_TYPE_RID				   0
-#define AGPS_MASK_RID				   1
-#define ASSISTANCE_REQUEST_TYPE_SINGLECELL_REQUEST 3
-#define ASSISTANCE_REQUEST_TYPE_MULTICELL_REQUEST  4
-
-/* LTE-FDD (LTE-M) bearer & NB-IoT bearer. */
-#define LTE_FDD_BEARER 6U
-#define NB_IOT_BEARER 7U
-
-/* Temperature sensor metadata. */
-#define BME680_TEMP_MIN_RANGE_VALUE -40.0
-#define BME680_TEMP_MAX_RANGE_VALUE 85.0
-#define BME680_TEMP_UNIT "Celsius degrees"
-
-/* Humidity sensor metadata. */
-#define BME680_HUMID_MIN_RANGE_VALUE 0.0
-#define BME680_HUMID_MAX_RANGE_VALUE 100.0
-#define BME680_HUMID_UNIT "%"
-
-/* Pressure sensor metadata. */
-#define BME680_PRESSURE_MIN_RANGE_VALUE 30.0
-#define BME680_PRESSURE_MAX_RANGE_VALUE 110.0
-#define BME680_PRESSURE_UNIT "kPa"
 
 /* Some resources does not have designated buffers. Therefore we define those in here. */
 static uint8_t bearers[2] = { LTE_FDD_BEARER, NB_IOT_BEARER };
 static int battery_voltage;
-static int32_t pressure_timestamp;
-static int32_t temperature_timestamp;
-static int32_t humidity_timestamp;
-static int32_t button_timestamp;
+static int32_t pressure_ts;
+static int32_t temperature_ts;
+static int32_t humidity_ts;
+static int32_t button_ts;
 static int64_t current_time;
 
-/* Minimuim and maximum values for the BME680 present on the Thingy:91. */
+/* Minimum and maximum values for the BME680 present on the Thingy:91. */
 static double temp_min_range_val = BME680_TEMP_MIN_RANGE_VALUE;
 static double temp_max_range_val = BME680_TEMP_MAX_RANGE_VALUE;
 static double humid_min_range_val = BME680_HUMID_MIN_RANGE_VALUE;
 static double humid_max_range_val = BME680_HUMID_MAX_RANGE_VALUE;
 static double pressure_min_range_val = BME680_PRESSURE_MIN_RANGE_VALUE;
 static double pressure_max_range_val = BME680_PRESSURE_MAX_RANGE_VALUE;
-
-/* Button object. */
-#define BUTTON1_OBJ_INST_ID 0
-#define BUTTON1_APP_NAME "Push button 1"
-#define BUTTON2_OBJ_INST_ID 1
-#define BUTTON2_APP_NAME "Push button 2"
 
 /* Module event handler.  */
 static cloud_codec_evt_handler_t module_evt_handler;
@@ -123,6 +50,10 @@ static int object_path_list_add(struct cloud_codec_data *output, const char * co
 {
 	bool path_added = false;
 	uint8_t j = 0;
+
+	if (output == NULL || path == NULL || path_size == 0) {
+		return -EINVAL;
+	}
 
 	for (int i = 0; i < ARRAY_SIZE(output->paths); i++) {
 		if (strcmp(output->paths[i], "\0") == 0) {
@@ -161,6 +92,10 @@ static int object_path_list_add(struct cloud_codec_data *output, const char * co
 static int config_update_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
 			    uint8_t *data, uint16_t data_len, bool last_block, size_t total_size)
 {
+	/* Because we are dependent on providing all configurations in the
+	 * CLOUD_CODEC_EVT_CONFIG_UPDATE event, all configuration is retrieved whenever the
+	 * configuration object changes.
+	 */
 	ARG_UNUSED(obj_inst_id);
 	ARG_UNUSED(res_id);
 	ARG_UNUSED(res_inst_id);
@@ -321,23 +256,23 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 
 	/* Sensor timestamps. */
 	err = lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_PRESSURE_ID, 0, TIMESTAMP_RID),
-				       &pressure_timestamp, sizeof(pressure_timestamp),
-				       sizeof(pressure_timestamp), LWM2M_RES_DATA_FLAG_RW);
+				       &pressure_ts, sizeof(pressure_ts),
+				       sizeof(pressure_ts), LWM2M_RES_DATA_FLAG_RW);
 	if (err) {
 		return err;
 	}
 
 	err = lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_TEMP_SENSOR_ID, 0, TIMESTAMP_RID),
-				       &temperature_timestamp, sizeof(temperature_timestamp),
-				       sizeof(temperature_timestamp), LWM2M_RES_DATA_FLAG_RW);
+				       &temperature_ts, sizeof(temperature_ts),
+				       sizeof(temperature_ts), LWM2M_RES_DATA_FLAG_RW);
 	if (err) {
 		return err;
 	}
 
 	err = lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_HUMIDITY_SENSOR_ID, 0,
 						  TIMESTAMP_RID),
-				       &humidity_timestamp, sizeof(humidity_timestamp),
-				       sizeof(humidity_timestamp), LWM2M_RES_DATA_FLAG_RW);
+				       &humidity_ts, sizeof(humidity_ts),
+				       sizeof(humidity_ts), LWM2M_RES_DATA_FLAG_RW);
 	if (err) {
 		return err;
 	}
@@ -535,8 +470,7 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 
 	err = lwm2m_engine_set_res_buf(
 		LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID, BUTTON1_OBJ_INST_ID, TIMESTAMP_RID),
-		&button_timestamp,
-		sizeof(button_timestamp), sizeof(button_timestamp), LWM2M_RES_DATA_FLAG_RW);
+		&button_ts, sizeof(button_ts), sizeof(button_ts), LWM2M_RES_DATA_FLAG_RW);
 	if (err) {
 		return err;
 	}
@@ -560,9 +494,9 @@ int cloud_codec_init(struct cloud_data_cfg *cfg, cloud_codec_evt_handler_t event
 
 		err = lwm2m_engine_set_res_buf(LWM2M_PATH(IPSO_OBJECT_PUSH_BUTTON_ID,
 							  BUTTON2_OBJ_INST_ID, TIMESTAMP_RID),
-					       &button_timestamp,
-					       sizeof(button_timestamp),
-					       sizeof(button_timestamp),
+					       &button_ts,
+					       sizeof(button_ts),
+					       sizeof(button_ts),
 					       LWM2M_RES_DATA_FLAG_RW);
 		if (err) {
 			return err;
