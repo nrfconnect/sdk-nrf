@@ -43,5 +43,6 @@ rsource "lwm2m_client_utils/Kconfig"
 rsource "wifi_credentials/Kconfig"
 rsource "wifi_mgmt_ext/Kconfig"
 rsource "mqtt_helper/Kconfig"
+rsource "nrf_provisioning/Kconfig"
 
 endmenu

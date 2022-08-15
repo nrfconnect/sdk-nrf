@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+menuconfig NRF_PROVISIONING_CODEC
+	bool "nRF Provisioning codec"
+	select EXPERIMENTAL
+	imply NRF_MODEM_LIB
+	imply NRF_PROVISIONING_AT
+
+if NRF_PROVISIONING_CODEC
+
+config NRF_PROVISIONING_CODEC_AT_CMD_LEN
+	int "AT command maximum length"
+	default 1792
+
+config NRF_PROVISIONING_CODEC_RX_SZ_START
+	int "Default RX buff size, increased automatically up to 4K if necessary"
+	range 64 4096
+	default 512
+
+rsource "Kconfig.nrf_provisioning_cbor"
+
+endif

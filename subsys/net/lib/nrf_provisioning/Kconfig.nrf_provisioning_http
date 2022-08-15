@@ -1,0 +1,59 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF_PROVISIONING_HTTP
+	bool "nRF Provisioning HTTP"
+	select EXPERIMENTAL
+	imply REST_CLIENT
+	imply NRF_PROVISIONING_AT
+
+if NRF_PROVISIONING_HTTP
+
+config NRF_PROVISIONING_ROOT_CA_SEC_TAG
+	int "Root CA for Nordic identity server - security tag"
+
+config NRF_PROVISIONING_HTTP_HOSTNAME
+	string "nRF Provisioning HTTP API hostname"
+	default "provisioning-http.nrfcloud.com"
+
+config NRF_PROVISIONING_HTTP_PORT
+	int "Provision Service's port"
+	default 443
+
+config NRF_PROVISIONING_HTTP_TIMEOUT_MS
+	int "Provision Service's timeout for HTTP connection"
+	default 30000
+
+config NRF_PROVISIONING_HTTP_RX_BUF_SZ
+	int "RX buffer size"
+	default 1536
+
+config NRF_PROVISIONING_HTTP_TX_BUF_SZ
+	int "Request body size"
+	default 1536
+
+rsource "Kconfig.nrf_provisioning_codec"
+
+choice
+	prompt "Authentication token"
+
+config NRF_PROVISIONING_HTTP_JWT
+	bool "Authenticate with JWT"
+
+config NRF_PROVISIONING_HTTP_ATTESTTOKEN
+	bool "Authenticate with Attestation token"
+
+endchoice
+
+if NRF_PROVISIONING_HTTP_JWT
+rsource "Kconfig.nrf_provisioning_jwt"
+endif
+
+if NRF_PROVISIONING_HTTP_ATTESTTOKEN
+rsource "Kconfig.nrf_provisioning_attesttoken"
+endif
+
+endif

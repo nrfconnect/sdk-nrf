@@ -1,0 +1,65 @@
+diff --git a/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_cbor_encode.h b/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_cbor_encode.h
+index 3b6f2a87a..57fcfaf40 100644
+--- a/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_cbor_encode.h
++++ b/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_cbor_encode.h
+@@ -14,7 +14,7 @@
+ #include "zcbor_encode.h"
+ #include "nrf_provisioning_cbor_encode_types.h"
+
+-#if DEFAULT_MAX_QTY != 1234567890
++#if DEFAULT_MAX_QTY != CONFIG_NRF_PROVISIONING_CBOR_RECORDS
+ #error "The type file was generated with a different default_max_qty than this file"
+ #endif
+
+diff --git a/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_cbor_encode_types.h b/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_cbor_encode_types.h
+index 4c512b209..f3dda00ce 100644
+--- a/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_cbor_encode_types.h
++++ b/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_cbor_encode_types.h
+@@ -20,7 +20,7 @@
+  *
+  *  See `zcbor --help` for more information about --default-max-qty
+  */
+-#define DEFAULT_MAX_QTY 1234567890
++#define DEFAULT_MAX_QTY CONFIG_NRF_PROVISIONING_CBOR_RECORDS
+
+ struct error_response {
+ 	struct zcbor_string _error_response_error_code;
+@@ -46,7 +46,7 @@ struct response {
+ };
+
+ struct responses {
+-	struct response _responses__response[1234567890];
++	struct response _responses__response[CONFIG_NRF_PROVISIONING_CBOR_RECORDS];
+ 	uint_fast32_t _responses__response_count;
+ };
+
+diff --git a/subsys/net/lib/nrf_provisioning/src/nrf_provisioning_cbor_encode.c b/subsys/net/lib/nrf_provisioning/src/nrf_provisioning_cbor_encode.c
+index f65bdfcf2..e1769cc97 100644
+--- a/subsys/net/lib/nrf_provisioning/src/nrf_provisioning_cbor_encode.c
++++ b/subsys/net/lib/nrf_provisioning/src/nrf_provisioning_cbor_encode.c
+@@ -11,7 +11,7 @@
+ #include "zcbor_encode.h"
+ #include "nrf_provisioning_cbor_encode.h"
+
+-#if DEFAULT_MAX_QTY != 1234567890
++#if DEFAULT_MAX_QTY != CONFIG_NRF_PROVISIONING_CBOR_RECORDS
+ #error "The type file was generated with a different default_max_qty than this file"
+ #endif
+
+@@ -81,13 +81,13 @@ static bool encode_responses(zcbor_state_t *state, const struct responses *input
+ 	zcbor_print("%s\r\n", __func__);
+
+ 	bool tmp_result =
+-		(((zcbor_list_start_encode(state, 1234567890) &&
+-		   ((zcbor_multi_encode_minmax(1, 1234567890, &(*input)._responses__response_count,
++		(((zcbor_list_start_encode(state, DEFAULT_MAX_QTY) &&
++		   ((zcbor_multi_encode_minmax(1, DEFAULT_MAX_QTY, &(*input)._responses__response_count,
+ 					       (zcbor_encoder_t *)encode_response, state,
+ 					       (&(*input)._responses__response),
+ 					       sizeof(struct response))) ||
+ 		    (zcbor_list_map_end_force_encode(state), false)) &&
+-		   zcbor_list_end_encode(state, 1234567890))));
++		   zcbor_list_end_encode(state, DEFAULT_MAX_QTY))));
+
+ 	if (!tmp_result)
+ 		zcbor_trace();

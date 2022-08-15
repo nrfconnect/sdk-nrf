@@ -1,0 +1,12 @@
+tests:
+  nrf_provisioning.unittest_jwt:
+    extra_args: CONF_FILE="prj_jwt.conf"
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+    tags: unittest
+  nrf_provisioning.unittest:
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
+    tags: unittest
