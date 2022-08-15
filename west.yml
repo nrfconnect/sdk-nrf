@@ -67,7 +67,6 @@ manifest:
           - TraceRecorderSource
           - canopennode
           - chre
-          - civetweb
           - cmsis
           - edtt
           - fatfs
