@@ -88,6 +88,9 @@ config MOSH_CLOUD_REST
 	bool "nRFCloud commands over REST"
 	default y
 	select NRF_CLOUD_REST
+	select MODEM_JWT
+	select NRF_CLOUD_AGPS_FILTERED if NRF_CLOUD_AGPS && !NRF_CLOUD_MQTT
+	select NRF_CLOUD_AGPS_FILTERED_RUNTIME if NRF_CLOUD_AGPS && !NRF_CLOUD_MQTT
 
 config MOSH_CLOUD_MQTT
 	bool "MQTT connection to nRFCloud"
@@ -109,7 +112,7 @@ config MOSH_PRINT_BUFFER_SIZE
 
 config MOSH_COMMON_WORKQUEUE_STACK_SIZE
 	int "Common workqueue stack size"
-	default 6144 if MOSH_STARTUP_CMDS && MOSH_CURL#
+	default 6144 if MOSH_STARTUP_CMDS && MOSH_CURL
 	default 4096
 
 config MOSH_COMMON_WORKQUEUE_PRIORITY

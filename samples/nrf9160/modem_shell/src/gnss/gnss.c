@@ -39,15 +39,14 @@
 BUILD_ASSERT(false, "nRF Cloud assistance and SUPL library cannot be enabled at the same time");
 #endif
 
-#if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS))
-BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_CLOUD_REST), "Only REST transport supported for nRF Cloud");
+#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+/* Verify that MQTT or REST is enabled */
+BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) || IS_ENABLED(CONFIG_NRF_CLOUD_REST),
+	     "CONFIG_NRF_CLOUD_MQTT or CONFIG_NRF_CLOUD_REST transport must be enabled");
 #endif
 
 #define GNSS_DATA_HANDLER_THREAD_STACK_SIZE 1536
 #define GNSS_DATA_HANDLER_THREAD_PRIORITY   5
-
-#define GNSS_WORKQ_THREAD_STACK_SIZE 2048
-#define GNSS_WORKQ_THREAD_PRIORITY   5
 
 enum gnss_operation_mode {
 	GNSS_OP_MODE_CONTINUOUS,
@@ -56,9 +55,8 @@ enum gnss_operation_mode {
 	GNSS_OP_MODE_PERIODIC_FIX_GNSS
 };
 
-K_THREAD_STACK_DEFINE(gnss_workq_stack_area, GNSS_WORKQ_THREAD_STACK_SIZE);
+extern struct k_work_q mosh_common_work_q;
 
-static struct k_work_q gnss_work_q;
 static struct k_work gnss_stop_work;
 static struct k_work_delayable gnss_start_work;
 static struct k_work_delayable gnss_timeout_work;
@@ -83,23 +81,30 @@ static bool agps_inject_pos = true;
 static bool agps_inject_int = true;
 #endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_SUPL_CLIENT_LIB */
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT)
 static char agps_data_buf[3500];
-static bool gnss_filtered_ephemerides_enabled;
-#endif /* CONFIG_NRF_CLOUD_AGPS */
+#endif /* CONFIG_NRF_CLOUD_AGPS && !CONFIG_NRF_CLOUD_MQTT */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 static bool pgps_enabled;
-static struct gps_pgps_request pgps_request;
 static struct nrf_cloud_pgps_prediction *prediction;
-static struct k_work get_pgps_data_work;
 static struct k_work inject_pgps_data_work;
+static struct k_work notify_pgps_prediction_work;
+#if !defined(CONFIG_NRF_CLOUD_MQTT)
+static struct gps_pgps_request pgps_request;
+static struct k_work get_pgps_data_work;
+#endif /* !CONFIG_NRF_CLOUD_MQTT */
 #endif /* CONFIG_NRF_CLOUD_PGPS */
 
-#if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)
+#if (defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_NRF_CLOUD_PGPS)) && \
+	!defined(CONFIG_NRF_CLOUD_MQTT)
 static char jwt_buf[600];
 static char rx_buf[2048];
-#endif /* CONFIG_NRF_CLOUD_AGPS || CONFIG_NRF_CLOUD_PGPS */
+#endif /* (CONFIG_NRF_CLOUD_AGPS || CONFIG_NRF_CLOUD_PGPS) && !CONFIG_NRF_CLOUD_MQTT */
+
+#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME)
+static bool gnss_filtered_ephemerides_enabled;
+#endif /* CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME */
 
 /* Struct for an event item. The data is read in the event handler and passed as a part of the
  * event item because an NMEA string would get overwritten by the next NMEA string before the
@@ -161,7 +166,7 @@ static void gnss_event_handler(int event_id)
 		 */
 		if (operation_mode == GNSS_OP_MODE_PERIODIC_FIX) {
 			k_work_cancel_delayable(&gnss_timeout_work);
-			k_work_submit_to_queue(&gnss_work_q, &gnss_stop_work);
+			k_work_submit_to_queue(&mosh_common_work_q, &gnss_stop_work);
 		}
 		break;
 
@@ -374,13 +379,14 @@ static void data_handler_thread_fn(void)
 
 #if defined(CONFIG_NRF_CLOUD_AGPS) || defined(CONFIG_SUPL_CLIENT_LIB)
 			if (agps_automatic) {
-				k_work_submit_to_queue(&gnss_work_q, &get_agps_data_work);
+				k_work_submit_to_queue(&mosh_common_work_q, &get_agps_data_work);
 			}
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 			if (pgps_enabled && agps_need.sv_mask_ephe != 0x0) {
-				nrf_cloud_pgps_notify_prediction();
+				k_work_submit_to_queue(&mosh_common_work_q,
+						       &notify_pgps_prediction_work);
 			}
 #endif
 			break;
@@ -446,7 +452,7 @@ static int gnss_enable_all_nmeas(void)
 		NRF_MODEM_GNSS_NMEA_RMC_MASK);
 }
 
-#if defined(CONFIG_NRF_CLOUD_AGPS)
+#if defined(CONFIG_NRF_CLOUD_AGPS) && !defined(CONFIG_NRF_CLOUD_MQTT)
 static int serving_cell_info_get(struct lte_lc_cell *serving_cell)
 {
 	int err;
@@ -554,7 +560,14 @@ static void get_agps_data(struct k_work *item)
 
 #if defined(CONFIG_NRF_CLOUD_AGPS)
 	int err;
-
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+	err = nrf_cloud_agps_request(&agps_request);
+	if (err == -EACCES) {
+		mosh_error("GNSS: Not connected to nRF Cloud");
+	} else if (err) {
+		mosh_error("GNSS: Failed to get A-GPS data, error: %d", err);
+	}
+#else
 	err = nrf_cloud_jwt_generate(0, jwt_buf, sizeof(jwt_buf));
 	if (err) {
 		mosh_error("GNSS: Failed to generate JWT, error: %d", err);
@@ -582,11 +595,13 @@ static void get_agps_data(struct k_work *item)
 
 	struct lte_lc_cells_info net_info = { 0 };
 
+#if defined(CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME)
 	if (gnss_filtered_ephemerides_enabled) {
 		request.mask_angle = gnss_elevation;
 		mosh_print("GNSS: Requesting filtered ephemeris; elevation = %u", gnss_elevation);
 	}
 	request.filtered = gnss_filtered_ephemerides_enabled;
+#endif /* CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME */
 
 	err = serving_cell_info_get(&net_info.current_cell);
 	if (err) {
@@ -611,7 +626,7 @@ static void get_agps_data(struct k_work *item)
 	}
 
 	mosh_print("GNSS: A-GPS data injected to the modem");
-
+#endif
 #else /* CONFIG_SUPL_CLIENT_LIB */
 	if (open_supl_socket() == 0) {
 		supl_session((void *)&agps_request);
@@ -697,12 +712,12 @@ static void start_gnss_work_fn(struct k_work *item)
 		}
 	}
 
-	k_work_schedule_for_queue(&gnss_work_q,
+	k_work_schedule_for_queue(&mosh_common_work_q,
 				  &gnss_start_work,
 				  K_SECONDS(periodic_fix_interval));
 
 	if (periodic_fix_retry > 0 && periodic_fix_retry < periodic_fix_interval) {
-		k_work_schedule_for_queue(&gnss_work_q,
+		k_work_schedule_for_queue(&mosh_common_work_q,
 					  &gnss_timeout_work,
 					  K_SECONDS(periodic_fix_retry));
 	}
@@ -737,6 +752,7 @@ static void handle_timeout_work_fn(struct k_work *item)
 }
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
+#if !defined(CONFIG_NRF_CLOUD_MQTT)
 static void get_pgps_data_work_fn(struct k_work *work)
 {
 	ARG_UNUSED(work);
@@ -793,8 +809,9 @@ static void get_pgps_data_work_fn(struct k_work *work)
 		return;
 	}
 
-	mosh_print("GNSS: P-GPS prediction requested");
+	mosh_print("GNSS: P-GPS predictions requested");
 }
+#endif /* !CONFIG_NRF_CLOUD_MQTT */
 
 static void inject_pgps_data_work_fn(struct k_work *work)
 {
@@ -815,6 +832,18 @@ static void inject_pgps_data_work_fn(struct k_work *work)
 	}
 }
 
+static void notify_pgps_prediction_work_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	int err;
+
+	err = nrf_cloud_pgps_notify_prediction();
+	if (err) {
+		mosh_error("GNSS: Failed to notify P-GPS predictions");
+	}
+}
+
 static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 {
 	switch (event->type) {
@@ -823,15 +852,17 @@ static void pgps_event_handler(struct nrf_cloud_pgps_event *event)
 		if (event->prediction != NULL) {
 			prediction = event->prediction;
 
-			k_work_submit_to_queue(&gnss_work_q, &inject_pgps_data_work);
+			k_work_submit_to_queue(&mosh_common_work_q, &inject_pgps_data_work);
 		}
 		break;
 
+#if !defined(CONFIG_NRF_CLOUD_MQTT)
 	case PGPS_EVT_REQUEST:
 		memcpy(&pgps_request, event->request, sizeof(pgps_request));
 
-		k_work_submit_to_queue(&gnss_work_q, &get_pgps_data_work);
+		k_work_submit_to_queue(&mosh_common_work_q, &get_pgps_data_work);
 		break;
+#endif
 
 	default:
 		/* No action needed */
@@ -852,18 +883,6 @@ static void gnss_api_init(void)
 	}
 
 	gnss_api_initialized = true;
-
-	struct k_work_queue_config gnss_work_q_config = {
-		.name = "gnss_workq",
-		.no_yield = false
-	};
-
-	k_work_queue_start(
-		&gnss_work_q,
-		gnss_workq_stack_area,
-		K_THREAD_STACK_SIZEOF(gnss_workq_stack_area),
-		GNSS_WORKQ_THREAD_PRIORITY,
-		&gnss_work_q_config);
 
 	k_work_init(&gnss_stop_work, stop_gnss_work_fn);
 	k_work_init_delayable(&gnss_start_work, start_gnss_work_fn);
@@ -900,7 +919,7 @@ int gnss_start(void)
 	}
 
 	if (operation_mode == GNSS_OP_MODE_PERIODIC_FIX) {
-		k_work_schedule_for_queue(&gnss_work_q, &gnss_start_work, K_NO_WAIT);
+		k_work_schedule_for_queue(&mosh_common_work_q, &gnss_start_work, K_NO_WAIT);
 		return 0;
 	}
 
@@ -1134,8 +1153,8 @@ int gnss_set_agps_filtered_ephemerides(bool enable)
 	gnss_filtered_ephemerides_enabled = enable;
 	return 0;
 #else
-	mosh_error("GNSS: Enable CONFIG_NRF_CLOUD_AGPS_FILTERED_RUNTIME to "
-		   "change A-GPS filtered ephemerides mode from the shell.");
+	mosh_error("GNSS: A-GPS filtered ephemerides are only supported with nRF Cloud REST-only "
+		   "configuration.");
 	return -EOPNOTSUPP;
 #endif
 }
@@ -1380,7 +1399,7 @@ int gnss_inject_agps_data(void)
 				  NRF_MODEM_GNSS_AGPS_POSITION_REQUEST |
 				  NRF_MODEM_GNSS_AGPS_INTEGRITY_REQUEST;
 
-	k_work_submit_to_queue(&gnss_work_q, &get_agps_data_work);
+	k_work_submit_to_queue(&mosh_common_work_q, &get_agps_data_work);
 
 	return 0;
 #else
@@ -1402,8 +1421,11 @@ int gnss_enable_pgps(void)
 
 	gnss_api_init();
 
+#if !defined(CONFIG_NRF_CLOUD_MQTT)
 	k_work_init(&get_pgps_data_work, get_pgps_data_work_fn);
+#endif
 	k_work_init(&inject_pgps_data_work, inject_pgps_data_work_fn);
+	k_work_init(&notify_pgps_prediction_work, notify_pgps_prediction_work_fn);
 
 	struct nrf_cloud_pgps_init_param pgps_param = {
 		.event_handler = pgps_event_handler,
@@ -1413,7 +1435,10 @@ int gnss_enable_pgps(void)
 	};
 
 	err = nrf_cloud_pgps_init(&pgps_param);
-	if (err) {
+	if (err == -EACCES) {
+		mosh_error("GNSS: Not connected to nRF Cloud");
+		return err;
+	} else if (err) {
 		mosh_error("GNSS: Failed to initialize P-GPS, error: %d", err);
 		return err;
 	}
