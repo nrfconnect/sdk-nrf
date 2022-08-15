@@ -483,7 +483,7 @@ void download_thread(void *client, void *a, void *b)
 restart_and_suspend:
 	k_thread_suspend(dl->tid);
 
-	while (true) {
+	while (dl->fd != -1) {
 		__ASSERT(dl->offset < sizeof(dl->buf), "Buffer overflow");
 
 		if (sizeof(dl->buf) - dl->offset == 0) {
@@ -500,6 +500,11 @@ restart_and_suspend:
 
 		if ((len == 0) || (len == -1)) {
 			/* We just had an unexpected socket error or closure */
+
+			if (dl->fd == -1) {
+				/* download was aborted */
+				break;
+			}
 
 			/* If there is a partial data payload in our buffer,
 			 * and it has been accounted in our progress, we have
@@ -620,6 +625,11 @@ send_again:
 
 			rc = request_send(dl);
 			if (rc) {
+				if (dl->fd == -1) {
+					/* download was aborted */
+					break;
+				}
+
 				rc = error_evt_send(dl, ECONNRESET);
 				if (rc) {
 					/* Restart and suspend */
