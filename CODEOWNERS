@@ -239,6 +239,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/net/lib/aws_*/              @simensrostad
 /tests/subsys/net/lib/azure_iot_hub/      @jtguggedal
 /tests/subsys/net/lib/fota_download/      @hakonfam @sigvartmh
+/tests/subsys/net/lib/nrf_cloud/          @tony-le-24
 /tests/subsys/partition_manager/region/   @hakonfam @sigvartmh
 /tests/subsys/pcd/                        @hakonfam @sigvartmh
 /tests/subsys/nrf_profiler/               @pdunaj @MarekPieta
