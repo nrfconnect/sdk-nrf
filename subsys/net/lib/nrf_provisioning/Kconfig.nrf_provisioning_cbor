@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+menuconfig NRF_PROVISIONING_CBOR
+	bool "nRF Provisioning CBOR content format"
+	select EXPERIMENTAL
+	depends on ZCBOR
+	depends on ZCBOR_CANONICAL
+
+if NRF_PROVISIONING_CBOR
+
+config NRF_PROVISIONING_CBOR_RECORDS
+	int "Maximum number of CBOR records that can be encoded or decoded at a time"
+	default 10
+
+endif

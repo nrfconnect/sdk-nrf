@@ -1,0 +1,9 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NRF_PROVISIONING_ATTESTTOKEN
+	bool "nRF Provisioning authentication bearer attestation token"
+	select EXPERIMENTAL

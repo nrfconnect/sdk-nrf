@@ -1,0 +1,51 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF_PROVISIONING
+	bool "nRF Provisioning"
+	select EXPERIMENTAL
+	imply NRF_MODEM_LIB
+	depends on SETTINGS
+	imply FCB
+
+if NRF_PROVISIONING
+
+config NRF_PROVISIONING_SYS_INIT
+	bool "Initialize during SYS_INIT"
+	help
+	  Initialize the client automatically during the SYS_INIT sequence.
+
+config NRF_PROVISIONING_INTERVAL_S
+	int "Maximum provisioning interval in seconds"
+	default 86400
+
+config NRF_PROVISIONING_SPREAD_S
+	int "Provisioning time spread in seconds"
+	default 0
+
+config NRF_PROVISIONING_SHELL
+	bool "Shell utilities"
+	depends on SHELL
+	help
+	  Activate shell module that provides nRF Provisioning commands to the console.
+
+config NRF_PROVISIONING_WITH_CERT
+	bool "Include the certificate"
+	default y
+	help
+	  Includes the root certificate used by the server side and provisions it if needed.
+
+rsource "Kconfig.nrf_provisioning_http"
+
+rsource "Kconfig.nrf_provisioning_at"
+
+module=NRF_PROVISIONING
+module-dep=LOG
+module-str=Log level for nRF Provisioning
+module-help=Enables nRF Provisioning log messages.
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
