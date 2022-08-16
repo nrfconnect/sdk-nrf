@@ -10,6 +10,7 @@ zephyr_sources_ifdef(CONFIG_BT_SCAN scan.c)
 zephyr_sources_ifdef(CONFIG_BT_CONN_CTX conn_ctx.c)
 zephyr_sources_ifdef(CONFIG_BT_ENOCEAN enocean.c)
 
+add_subdirectory_ifdef(CONFIG_BT_LE_ADV_PROV bt_le_adv_prov)
 add_subdirectory_ifdef(CONFIG_BT_LL_SOFTDEVICE controller)
 add_subdirectory_ifdef(CONFIG_BT_MESH mesh)
 
