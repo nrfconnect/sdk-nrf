@@ -96,12 +96,8 @@ int fprotect_area(uint32_t start, size_t length)
 				       NRF_ACL_PERM_READ_NO_WRITE);
 }
 
-#if defined(CONFIG_FPROTECT_ENABLE_NO_ACCESS)
-
 int fprotect_area_no_access(uint32_t start, size_t length)
 {
 	return fprotect_set_permission(start, length,
 				       NRF_ACL_PERM_NO_READ_NO_WRITE);
 }
-
-#endif
