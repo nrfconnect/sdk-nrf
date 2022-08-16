@@ -563,7 +563,7 @@ Modem libraries
       * The trace module has been updated to use the new APIs in Modem library.
         The modem trace output is now handled by a dedicated thread that starts automatically.
         The trace thread is synchronized with the initialization and shutdown operations of the Modem library.
-      * The Kconfig option ``CONFIG_NRF_MODEM_LIB_TRACE_ENABLED`` has been renamed to :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE`.
+      * The Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` is replaced by the Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE`. The Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_ENABLED` is now deprecated and will be removed in the future.
 
     * Removed:
 
