@@ -44,7 +44,9 @@ static size_t test_tone_size;
 
 static void audio_gateway_configure(void)
 {
-	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
+	if (IS_ENABLED(CONFIG_SW_CODEC_OPUS)) {
+		sw_codec_cfg.sw_codec = SW_CODEC_OPUS;
+	} else if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
 		sw_codec_cfg.sw_codec = SW_CODEC_LC3;
 	} else {
 		ERR_CHK_MSG(-EINVAL, "No codec selected");
@@ -55,7 +57,9 @@ static void audio_gateway_configure(void)
 	sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
 
-	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
+	if (IS_ENABLED(CONFIG_SW_CODEC_OPUS)) {
+		sw_codec_cfg.encoder.bitrate = CONFIG_OPUS_BITRATE;
+	} else if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
 		sw_codec_cfg.encoder.bitrate = CONFIG_LC3_BITRATE;
 	} else {
 		ERR_CHK_MSG(-EINVAL, "No codec selected");
@@ -67,7 +71,9 @@ static void audio_gateway_configure(void)
 
 static void audio_headset_configure(void)
 {
-	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
+	if (IS_ENABLED(CONFIG_SW_CODEC_OPUS)) {
+		sw_codec_cfg.sw_codec = SW_CODEC_OPUS;
+	} else if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
 		sw_codec_cfg.sw_codec = SW_CODEC_LC3;
 	} else {
 		ERR_CHK_MSG(-EINVAL, "No codec selected");
@@ -77,7 +83,9 @@ static void audio_headset_configure(void)
 	sw_codec_cfg.encoder.enabled = true;
 	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
 
-	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
+	if (IS_ENABLED(CONFIG_SW_CODEC_OPUS)) {
+		sw_codec_cfg.encoder.bitrate = CONFIG_OPUS_BITRATE;
+	} else if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
 		sw_codec_cfg.encoder.bitrate = CONFIG_LC3_BITRATE;
 	} else {
 		ERR_CHK_MSG(-EINVAL, "No codec selected");

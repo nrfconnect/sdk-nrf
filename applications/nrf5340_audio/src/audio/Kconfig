@@ -140,7 +140,9 @@ config SW_CODEC_LC3
 	help
 		LC3 is the mandatory codec for LE Audio
 
-# Leave room for other codecs
+config SW_CODEC_OPUS
+	bool "OPUS"
+	select OPUS
 endchoice
 
 config SW_CODEC_PLC_DISABLED
@@ -166,6 +168,31 @@ config LC3_BITRATE_MIN
 osource "../modules/lib/lc3/Kconfig"
 
 endmenu # LC3
+
+#----------------------------------------------------------------------------#
+menu "OPUS"
+visible if SW_CODEC_OPUS
+
+config OPUS_BITRATE
+	int "Bitrate for OPUS"
+	default 96000
+
+config OPUS_SAMPLE_RATE
+	int "Samplerate for OPUS"
+	default 48000
+
+config OPUS_CHANNELS
+	int "Channels for OPUS"
+	default 1
+
+config OPUS_COMPLEXITY
+	int "Complexity for OPUS"
+	default 0
+
+endmenu # OPUS
+
+#----------------------------------------------------------------------------#
+
 endmenu # SW Codec
 
 #----------------------------------------------------------------------------#
@@ -233,13 +260,18 @@ endmenu # Thread priorities
 #----------------------------------------------------------------------------#
 menu "Stack sizes"
 
+
 config ENCODER_STACK_SIZE
 	int "Stack size for encoder thread"
+	default 20480 if AUDIO_BIT_DEPTH_16 && SW_CODEC_OPUS
+	default 25600 if (AUDIO_BIT_DEPTH_24 || AUDIO_BIT_DEPTH_32) && SW_CODEC_OPUS
 	default 6750 if AUDIO_BIT_DEPTH_16
 	default 11264 if AUDIO_BIT_DEPTH_24 || AUDIO_BIT_DEPTH_32
 
 config AUDIO_DATAPATH_STACK_SIZE
 	int "Stack size for audio datapath thread"
+	default 8192 if AUDIO_BIT_DEPTH_16 && SW_CODEC_OPUS
+	default 11264 if (AUDIO_BIT_DEPTH_24 || AUDIO_BIT_DEPTH_32) && SW_CODEC_OPUS
 	default 4096 if AUDIO_BIT_DEPTH_16
 	default 7168 if AUDIO_BIT_DEPTH_24 || AUDIO_BIT_DEPTH_32
 

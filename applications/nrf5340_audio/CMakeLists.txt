@@ -54,6 +54,9 @@ target_sources(app PRIVATE
     ${CMAKE_BINARY_DIR}/fw_info_app.c
     )
 
+zephyr_link_libraries(${CMAKE_CURRENT_SOURCE_DIR}/../../ext/opus/opus_lib_nrf53.a)
+target_include_directories(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../ext/opus/include)
+
 # Include application events and configuration headers
 zephyr_library_include_directories(
     src/audio
