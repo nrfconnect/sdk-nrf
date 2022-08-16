@@ -41,36 +41,51 @@ def _program_cores(dev: DeviceConf) -> int:
         print(f"Programming net core on: {dev}")
         cmd = f"nrfjprog --program {dev.hex_path_net}  -f NRF53  -q --snr {dev.nrf5340_audio_dk_snr} --sectorerase --coprocessor CP_NETWORK"
         ret_val = system(cmd)
-        dev.core_net_programmed = SelectFlags.FAIL if ret_val else SelectFlags.DONE
         if ret_val != 0:
+            if not dev.recover_on_fail:
+                dev.core_net_programmed = SelectFlags.FAIL
             return ret_val
+        else:
+            dev.core_net_programmed = SelectFlags.DONE
 
     if dev.core_app_programmed == SelectFlags.TBD:
         print(f"Programming app core on: {dev}")
         cmd = f"nrfjprog --program {dev.hex_path_app} -f NRF53  -q --snr {dev.nrf5340_audio_dk_snr} --chiperase --coprocessor CP_APPLICATION"
         ret_val = system(cmd)
         if ret_val != 0:
+            if not dev.recover_on_fail:
+                dev.core_app_programmed =  SelectFlags.FAIL
             return ret_val
-        dev.core_app_programmed = SelectFlags.FAIL if ret_val else SelectFlags.DONE
+        else:
+            dev.core_app_programmed = SelectFlags.DONE
+
         # Populate UICR data matching the JSON file
         if not __populate_UICR(dev):
             dev.core_app_programmed = SelectFlags.FAIL
             return 1
 
-    print(f"Resetting {dev}")
-    cmd = f"nrfjprog -r --snr {dev.nrf5340_audio_dk_snr}"
-    ret_val = system(cmd)
-    if ret_val != 0:
-        return ret_val
+    if dev.core_net_programmed != SelectFlags.NOT and dev.core_app_programmed != SelectFlags.NOT:
+        print(f"Resetting {dev}")
+        cmd = f"nrfjprog -r --snr {dev.nrf5340_audio_dk_snr}"
+        ret_val = system(cmd)
+        if ret_val != 0:
+            return ret_val
     return 0
 
 
 def _recover(dev: DeviceConf):
     print(f"Recovering device: {dev}")
-    system(
+    ret_val = system(
         f"nrfjprog --recover --coprocessor CP_NETWORK --snr {dev.nrf5340_audio_dk_snr}"
     )
-    system(f"nrfjprog --recover --snr {dev.nrf5340_audio_dk_snr}")
+    if ret_val != 0:
+        dev.core_net_programmed = SelectFlags.FAIL
+
+    ret_val = system(
+        f"nrfjprog --recover --coprocessor CP_APPLICATION --snr {dev.nrf5340_audio_dk_snr}"
+    )
+    if ret_val != 0:
+        dev.core_app_programmed = SelectFlags.FAIL
 
 
 def __program_thread(dev: DeviceConf):
