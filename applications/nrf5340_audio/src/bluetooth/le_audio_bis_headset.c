@@ -8,6 +8,8 @@
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/audio/audio.h>
+#include <bluetooth/audio/capabilities.h>
+
 /* TODO: Remove when a get_info function is implemented in host */
 #include <../subsys/bluetooth/audio/endpoint.h>
 
@@ -27,7 +29,9 @@ static struct bt_audio_broadcast_sink *broadcast_sink;
 static struct bt_audio_stream streams[CONFIG_LC3_DEC_CHAN_MAX];
 static struct bt_audio_stream *streams_p[ARRAY_SIZE(streams)];
 
-static struct bt_audio_lc3_preset lc3_preset = BT_AUDIO_LC3_BROADCAST_PRESET_48_4_1;
+/* We need to set a location as a pre-compile, this changed in initialize */
+static struct bt_codec codec =
+	BT_CODEC_LC3_CONFIG_48_4(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
 
 /* Create a mask for the maximum BIS we can sync to using the number of streams
  * broadcasted. We add an additional 1 since the bis indexes start from 1 and not
@@ -128,7 +132,8 @@ static struct bt_audio_stream_ops stream_ops = { .started = stream_started_cb,
 						 .stopped = stream_stopped_cb,
 						 .recv = stream_recv_cb };
 
-static bool scan_recv_cb(const struct bt_le_scan_recv_info *info, uint32_t broadcast_id)
+static bool scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf_simple *ad,
+			 uint32_t broadcast_id)
 {
 	LOG_DBG("Broadcast source found, waiting for PA sync");
 
@@ -256,8 +261,7 @@ static void syncable_cb(struct bt_audio_broadcast_sink *sink, bool encrypted)
 
 	LOG_INF("Syncing to broadcast");
 
-	ret = bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfield, streams_p,
-					   &lc3_preset.codec, NULL);
+	ret = bt_audio_broadcast_sink_sync(broadcast_sink, bis_index_bitfield, streams_p, NULL);
 	if (ret) {
 		LOG_ERR("Unable to sync to broadcast source");
 		return;
@@ -273,12 +277,41 @@ static struct bt_audio_broadcast_sink_cb broadcast_sink_cbs = { .scan_recv = sca
 								.base_recv = base_recv_cb,
 								.syncable = syncable_cb };
 
+static struct bt_audio_capability capabilities = {
+	.dir = BT_AUDIO_DIR_SINK,
+	.codec = &codec,
+};
+
 static void initialize(le_audio_receive_cb recv_cb)
 {
+	int ret;
 	static bool initialized;
+	enum audio_channel channel;
 
 	if (!initialized) {
 		receive_cb = recv_cb;
+
+		ret = channel_assignment_get(&channel);
+		if (ret) {
+			/* Channel is not assigned yet: use default */
+			channel = AUDIO_CHANNEL_DEFAULT;
+		}
+		if (channel == AUDIO_CH_L) {
+			ret = bt_audio_capability_set_location(BT_AUDIO_DIR_SINK,
+							       BT_AUDIO_LOCATION_FRONT_LEFT);
+		} else {
+			ret = bt_audio_capability_set_location(BT_AUDIO_DIR_SINK,
+							       BT_AUDIO_LOCATION_FRONT_RIGHT);
+		}
+		if (ret) {
+			LOG_ERR("Location set failed");
+		}
+
+		ret = bt_audio_capability_register(&capabilities);
+		if (ret) {
+			LOG_ERR("Capability register failed (ret %d)", ret);
+			ERR_CHK(ret);
+		}
 
 		bt_audio_broadcast_sink_register_cb(&broadcast_sink_cbs);
 

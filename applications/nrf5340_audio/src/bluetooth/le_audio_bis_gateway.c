@@ -26,8 +26,8 @@ BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT <= 2,
 #define BT_AUDIO_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                \
 	BT_AUDIO_LC3_PRESET(                                                                       \
 		BT_CODEC_LC3_CONFIG(BT_CODEC_CONFIG_LC3_FREQ_48KHZ,                                \
-				    BT_CODEC_CONFIG_LC3_DURATION_10,                               \
-				    LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE),                  \
+				    BT_CODEC_CONFIG_LC3_DURATION_10, BT_AUDIO_LOCATION_FRONT_LEFT, \
+				    LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE), 1,               \
 				    BT_AUDIO_CONTEXT_TYPE_MEDIA),                                  \
 		BT_CODEC_LC3_QOS_10_UNFRAMED(LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE), 4u,     \
 					     20u, LE_AUDIO_PRES_DELAY_US))
@@ -53,6 +53,7 @@ static struct bt_audio_lc3_preset lc3_preset = BT_AUDIO_LC3_BROADCAST_PRESET_NRF
 
 static atomic_t iso_tx_pool_alloc[CONFIG_BT_ISO_MAX_CHAN];
 static bool delete_broadcast_src;
+static uint32_t seq_num[CONFIG_BT_ISO_MAX_CHAN];
 
 static bool is_iso_buffer_full(uint8_t idx)
 {
@@ -243,7 +244,7 @@ int le_audio_send(uint8_t const *const data, size_t size)
 
 		atomic_inc(&iso_tx_pool_alloc[i]);
 
-		ret = bt_audio_stream_send(&streams[i], buf);
+		ret = bt_audio_stream_send(&streams[i], buf, seq_num[i]++, BT_ISO_TIMESTAMP_NONE);
 		if (ret < 0) {
 			LOG_WRN("Failed to send audio data: %d", ret);
 			net_buf_unref(buf);

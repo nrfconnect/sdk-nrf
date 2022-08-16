@@ -105,18 +105,7 @@ static int config_led_monochrome(uint8_t led_unit, uint8_t led)
  */
 static int transfer_pin_to_net(uint8_t led)
 {
-	uint8_t pin_to_transfer;
-
-	if (strcmp(leds[led].port->name, "GPIO_0") == 0) {
-		pin_to_transfer = leds[led].pin;
-	} else if (strcmp(leds[led].port->name, "GPIO_1") == 0) {
-		pin_to_transfer = leds[led].pin + P0_PIN_NUM;
-	} else {
-		LOG_ERR("Invalid GPIO device");
-		return -ENODEV;
-	}
-
-	nrf_gpio_pin_mcu_select(pin_to_transfer, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	nrf_gpio_pin_control_select(leds[led].pin, NRF_GPIO_PIN_SEL_NETWORK);
 	LOG_DBG("Pin %d transferred on device %s", leds[led].pin, leds[led].port->name);
 	return 0;
 }
