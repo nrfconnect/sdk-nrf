@@ -51,13 +51,6 @@ config FPROTECT_BLOCK_SIZE
 	default NRF_ACL_FLASH_REGION_SIZE if HAS_HW_NRF_ACL
 	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
 
-config FPROTECT_ENABLE_NO_ACCESS
-	bool
-	default y if HAS_HW_NRF_ACL
-	depends on FPROTECT
-	help
-	  Protect flash blocks from both reading and writing until reset.
-
 config FPROTECT_APP
 	bool "Lock image partition using FPROTECT"
 	depends on PARTITION_MANAGER_ENABLED && FPROTECT

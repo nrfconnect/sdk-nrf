@@ -17,7 +17,6 @@ config HW_UNIQUE_KEY_LOAD
 	depends on HAS_HW_NRF_CC310
 	depends on NRF_CC3XX_PLATFORM
 	select FPROTECT
-	imply FPROTECT_ENABLE_NO_ACCESS
 	imply NRFX_NVMC
 	help
 	  Use this on devices with no KMU. Enable this in the immutable
@@ -36,7 +35,6 @@ config HW_UNIQUE_KEY
 	depends on !ARM_NONSECURE_FIRMWARE
 	depends on MPU_ALLOW_FLASH_WRITE
 	select FPROTECT if HAS_HW_NRF_ACL
-	imply FPROTECT_ENABLE_NO_ACCESS if HAS_HW_NRF_ACL
 	imply NRFX_NVMC if HAS_HW_NRF_ACL
 	help
 	  This option will load the Hardware Unique Key (HUK) in the KDR
