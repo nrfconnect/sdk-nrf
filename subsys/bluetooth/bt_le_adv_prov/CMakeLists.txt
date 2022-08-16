@@ -6,3 +6,5 @@
 
 zephyr_sources(core.c)
 zephyr_linker_sources(SECTIONS core.ld)
+
+add_subdirectory(providers)
