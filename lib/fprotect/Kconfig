@@ -4,15 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config FPROTECT
-	bool "Enable FPROTECT"
-	depends on SOC_FAMILY_NRF
-	help
-	  Enable the software library FPROTECT that may or may not be used
-	  by other systems to protect flash from writes and possibly also
-	  reads. Does not protect against execution.
-	  May use the HW peripherals BPROT, ACL, or SPU to achieve this.
-
 if !ARM
 config NRF_SPU_FLASH_REGION_SIZE
 	hex
@@ -43,6 +34,7 @@ endif
 DT_ZEPHYR_FLASH := zephyr,flash
 DT_CHOSEN_ZEPHYR_FLASH := $(dt_chosen_path,$(DT_ZEPHYR_FLASH))
 
+# This option is used even when FPROTECT is disabled so we add it unconditionally.
 config FPROTECT_BLOCK_SIZE
 	hex
 	default NRF_SPU_FLASH_REGION_SIZE if CPU_HAS_NRF_IDAU
@@ -51,9 +43,19 @@ config FPROTECT_BLOCK_SIZE
 	default NRF_ACL_FLASH_REGION_SIZE if HAS_HW_NRF_ACL
 	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
 
+menuconfig FPROTECT
+	bool "Enable FPROTECT"
+	depends on SOC_FAMILY_NRF
+	help
+	  Enable the software library FPROTECT that may or may not be used
+	  by other systems to protect flash from writes and possibly also
+	  reads. Does not protect against execution.
+	  May use the HW peripherals BPROT, ACL, or SPU to achieve this.
+
+if FPROTECT
 config FPROTECT_APP
 	bool "Lock image partition using FPROTECT"
-	depends on PARTITION_MANAGER_ENABLED && FPROTECT
+	depends on PARTITION_MANAGER_ENABLED
 	help
 	  The flash partition which contains the image hex file should never be
 	  written to. Set this option to enable a module which will perform
@@ -69,3 +71,5 @@ config FPROTECT_APP
 	  of the 'app' partition can be found by either inspecting the file
 	  'pm_config.h' in your build directory, or by invoking the
 	  'partition_manager_report' target.
+
+endif # FPROTECT
