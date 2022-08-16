@@ -27,6 +27,9 @@ MoSh uses the LTE link control driver to establish an LTE connection and initial
 
 The subsections list the MoSh features and show shell command examples for their usage.
 
+.. note::
+   To learn more about using a MoSh command, run the command without any parameters.
+
 LTE link control
 ================
 
@@ -35,6 +38,11 @@ MoSh command: ``link``
 LTE link control changes and queries the state of the LTE connection.
 Many of the changes are applied when going to online mode for the next time.
 You can store some link subcommand parameters into settings, which are persistent between sessions.
+
+3GPP Release 14 features are enabled by default, which means they are set when going into normal mode and when booting up.
+For the list of supported features, refer to `3GPP Release 14 features AT command`_.
+To disable these features in normal mode,  use the ``link funmode --normal_no_rel14`` command.
+During autoconnect in bootup, use the ``link nmodeauto --enable_no_rel14`` command.
 
 Examples
 --------
@@ -84,6 +92,13 @@ Examples
      link nmodeat --mem1 "at%xbandlock=2,\"100\""
      link funmode --normal
 
+* Write periodic search parameters with two patterns, read the parameters and start modem network search operation:
+
+  .. code-block:: console
+
+     link search --write --search_cfg="0,1,1" --search_pattern_table="10,10,30" --search_pattern_range="50,300,10,20"
+     link search --read
+     link search --start
 
 ----
 
@@ -94,6 +109,15 @@ MoSh command: ``at``
 
 You can use the AT command module to send AT commands to the modem, individually or
 in a separate plain AT command mode where also pipelining of AT commands is supported.
+
+.. note::
+   Using AT commands that read information from the modem is safe together with MoSh commands.
+   However, it is not recommended to write any values with AT commands and use MoSh commands among them.
+   If you mix AT commands and MoSh commands, the internal state of MoSh might get out of synchronization and result in unexpected behavior.
+
+.. note::
+   When using ``at`` command, any quotation marks ("), apostrophes (') and backslashes (\) within the AT command syntax must be escaped with a backslash (\).
+   The percentage sign (%) is often needed and can be written as is.
 
 Examples
 --------
@@ -109,6 +133,12 @@ Examples
   .. code-block:: console
 
      at at%NBRGRSRP
+
+* Escape quotation marks in a command targeting the network search to a specific operator:
+
+  .. code-block:: console
+
+     at AT+COPS=1,2,\"24407\"
 
 * Enable AT command events:
 
@@ -342,6 +372,10 @@ Examples
      sock connect -a 111.222.111.222 -p 20000
      sock rai -i 0 --rai_last
      sock send -i 0 -d testing
+
+  When both 3GPP Release 13 Control Plane (CP) Release Assistance Indication (RAI) and 3GPP Release 14 Access Stratum (AS) RAI are enabled,
+  which can be the case for NB-IoT, both are signalled.
+  Which RAI takes effect depends on the network configuration and prioritization.
 
 * List open sockets:
 
@@ -615,6 +649,27 @@ Examples
 
   Note the syntax for escaping the quotation marks.
 
+----
+
+.. _uart_command:
+
+UART
+====
+
+Disable UARTs for power measurement purposes.
+
+* Disable UARTs for 30 seconds:
+
+  .. code-block:: console
+
+     uart disable 30
+
+* Disable UARTs whenever modem is in sleep state:
+
+  .. code-block:: console
+
+     uart during_sleep disable
+
 Configuration
 *************
 
@@ -678,8 +733,22 @@ CONFIG_MOSH_PPP
 .. _CONFIG_MOSH_REST:
 
 CONFIG_MOSH_REST
-   Enable REST feature in modem shell
+   Enable REST client feature in modem shell.
 
+.. _CONFIG_MOSH_CLOUD_REST:
+
+CONFIG_MOSH_CLOUD_REST
+   Enable nRF Cloud REST feature in modem shell.
+
+.. _CONFIG_MOSH_CLOUD_MQTT:
+
+CONFIG_MOSH_CLOUD_MQTT
+   Enable nRF Cloud MQTT connection feature in modem shell.
+
+.. _CONFIG_MOSH_AT_CMD_MODE:
+
+CONFIG_MOSH_AT_CMD_MODE
+   Enable AT command mode feature in modem shell.
 
 .. note::
    You may not be able to use all features at the same time due to memory restrictions.
@@ -701,6 +770,8 @@ Building and running
 
 See :ref:`cmake_options` for instructions on how to provide CMake options, for example to use a configuration overlay.
 
+.. _dk_buttons:
+
 DK buttons
 ==========
 
@@ -719,6 +790,22 @@ The LEDs have the following functions:
 
 LED 3 (nRF9160 DK)/Blue LED (Thingy:91):
    Indicates the LTE registration status.
+
+Power measurements
+==================
+
+You can perform power measurements using the `Power Profiler Kit II (PPK2)`_.
+See the documentation for instructions on how to setup the DK for power measurements.
+The documentation shows, for example, how to connect the wires for both source meter and ampere meter modes.
+The same instructions are valid also when using a different meter.
+
+To achieve satisfactory power measurement results, it is often desirable to disable UART interfaces unless their contribution to overall power consumption is of interest.
+In MoSh, perform one of the following actions:
+
+  * Use MoSh command ``uart`` to disable UARTs as in :ref:`uart_command`
+  * Press **Button 2** in DK to enable or disable UARTs as instructed in :ref:`dk_buttons`
+
+For more information about application power optimizations, refer to :ref:`app_power_opt`.
 
 Testing
 =======
