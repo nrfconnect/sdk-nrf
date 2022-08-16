@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Utilities"
+
+if BT_LE_ADV_PROV
+
+config BT_LE_ADV_PROV_FLAGS
+	default y
+
+config BT_LE_ADV_PROV_GAP_APPEARANCE
+	default y
+
+config BT_LE_ADV_PROV_SWIFT_PAIR
+	default y
+
+config BT_LE_ADV_PROV_TX_POWER
+	default y
+
+config DESKTOP_ADV_PROV_UUID16_ALL
+	bool "UUID16 advertising provider"
+	depends on (DESKTOP_HIDS_ENABLE || DESKTOP_BAS_ENABLE)
+	default y
+	help
+	  Adds all UUID16 to the advertising payload if used Bluetooth local
+	  identity has no bond.
+
+endif # BT_LE_ADV_PROV
+
+endmenu

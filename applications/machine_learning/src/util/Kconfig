@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Utilities"
+
+if BT_LE_ADV_PROV
+
+config BT_LE_ADV_PROV_FLAGS
+	default y
+
+config ML_APP_ADV_PROV_UUID128_ALL
+	bool "UUID128 advertising provider"
+	depends on BT_NUS
+	default y
+	help
+	  Adds UUID128 of Nordic UART Service (NUS) to the scan response data
+	  if used Bluetooth local identity has no bond.
+
+endif # BT_LE_ADV_PROV
+
+endmenu

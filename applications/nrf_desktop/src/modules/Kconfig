@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+menu "Application modules"
+
 rsource "Kconfig.hid"
 rsource "Kconfig.hid_state"
 rsource "Kconfig.led_state"
@@ -21,3 +23,5 @@ rsource "Kconfig.hotfixes"
 rsource "Kconfig.failsafe"
 rsource "Kconfig.cpu_meas"
 rsource "Kconfig.nrf_profiler_sync"
+
+endmenu
