@@ -66,21 +66,6 @@ typedef uint8_t (*hci_internal_user_cmd_handler_t)(uint8_t const *cmd,
  */
 int hci_internal_user_cmd_handler_register(const hci_internal_user_cmd_handler_t handler);
 
-/** @brief Retrieve an HCI event packet from the SoftDevice Controller.
- *
- * This API is non-blocking.
- *
- * @note The application should ensure that the size of the provided buffer is at least
- *       @ref HCI_EVENT_PACKET_MAX_SIZE bytes.
- *
- * @param[in,out] evt_out Buffer where the HCI event will be stored.
- *                        If an event is retrieved, the first byte corresponds to Event Code,
- *                        as specified by the Bluetooth Core Specification.
- *
- * @return Zero on success or (negative) error code otherwise.
- */
-int hci_internal_evt_get(uint8_t *evt_out);
-
 /** @brief Retrieve an HCI packet from the SoftDevice Controller.
  *
  * This API is non-blocking.

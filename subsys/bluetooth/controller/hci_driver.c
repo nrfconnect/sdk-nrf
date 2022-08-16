@@ -339,43 +339,6 @@ static void event_packet_process(uint8_t *hci_buf)
 	bt_recv(evt_buf);
 }
 
-static bool fetch_and_process_hci_evt(uint8_t *p_hci_buffer)
-{
-	int errcode;
-
-	errcode = MULTITHREADING_LOCK_ACQUIRE();
-	if (!errcode) {
-		errcode = hci_internal_evt_get(p_hci_buffer);
-		MULTITHREADING_LOCK_RELEASE();
-	}
-
-	if (errcode) {
-		return false;
-	}
-
-	event_packet_process(p_hci_buffer);
-	return true;
-}
-
-static bool fetch_and_process_acl_data(uint8_t *p_hci_buffer)
-{
-	int errcode;
-
-	errcode = MULTITHREADING_LOCK_ACQUIRE();
-	if (!errcode) {
-		errcode = sdc_hci_data_get(p_hci_buffer);
-		MULTITHREADING_LOCK_RELEASE();
-	}
-
-	if (errcode) {
-		return false;
-	}
-
-	data_packet_process(p_hci_buffer);
-	return true;
-}
-
-
 static bool fetch_and_process_hci_msg(uint8_t *p_hci_buffer)
 {
 	int errcode;
@@ -412,19 +375,7 @@ void hci_driver_receive_process(void)
 	static uint8_t hci_buf[BT_BUF_RX_SIZE];
 #endif
 
-	bool received_evt = false;
-	bool received_data = false;
-	bool received_msg = false;
-
-	received_evt = fetch_and_process_hci_evt(&hci_buf[0]);
-
-	if (IS_ENABLED(CONFIG_BT_CONN)) {
-		received_data = fetch_and_process_acl_data(&hci_buf[0]);
-	}
-
-	received_msg = fetch_and_process_hci_msg(&hci_buf[0]);
-
-	if (received_evt || received_data || received_msg) {
+	if (fetch_and_process_hci_msg(&hci_buf[0])) {
 		/* Let other threads of same priority run in between. */
 		receive_signal_raise();
 	}
