@@ -59,13 +59,6 @@ config FPROTECT_ENABLE_NO_ACCESS
 	  Allows to protect flash pages both from reading and writing until the
 	  next reboot.
 
-config FPROTECT_ENABLE_IS_PROTECTED
-	bool
-	default y
-	depends on FPROTECT && HAS_HW_NRF_ACL
-	help
-	  Enable API to query if an address has been protected.
-
 config FPROTECT_APP
 	bool "Lock image partition using FPROTECT"
 	depends on PARTITION_MANAGER_ENABLED && FPROTECT

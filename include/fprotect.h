@@ -56,6 +56,8 @@ int fprotect_area_no_access(uint32_t start, size_t length);
 /**
  * @brief Check whether a block has already been protected.
  *
+ * NB: Only supported on HW platforms with ACL (CONFIG_HAS_HW_NRF_ACL).
+ *
  * @param[in]  addr  The address to check. The block containing this address
  *                   will be checked.
  *
