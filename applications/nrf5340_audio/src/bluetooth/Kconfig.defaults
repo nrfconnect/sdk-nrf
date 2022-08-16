@@ -180,6 +180,10 @@ config BT_OBSERVER
 	bool
 	default y
 
+config BT_PERIPHERAL
+	bool
+	default y
+
 config BT_ISO_SYNC_RECEIVER
 	bool
 	default y
@@ -199,6 +203,14 @@ config BT_AUDIO_BROADCAST_SNK_STREAM_COUNT
 config BT_ISO_MAX_CHAN
 	int
 	default 2
+
+config BT_SMP
+	bool
+	default y
+
+config BT_PAC_SNK
+	bool
+	default y
 
 endif # AUDIO_DEV = 1 (HEADSET)
 
