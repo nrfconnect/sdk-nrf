@@ -11,29 +11,6 @@ menuconfig AT_HOST_LIBRARY
 
 if AT_HOST_LIBRARY
 
-choice
-	prompt "UART for AT Host"
-	default AT_HOST_UART_0
-	depends on AT_HOST_LIBRARY
-	help
-		Sets the UART to use for the AT Host
-		-  UART 0
-		-  UART 1
-		-  UART 2
-	config AT_HOST_UART_0
-		bool "UART 0"
-	config AT_HOST_UART_1
-		bool "UART 1"
-	config AT_HOST_UART_2
-		bool "UART 2"
-endchoice
-
-config AT_HOST_UART
-	int
-	default 0 if AT_HOST_UART_0
-	default 1 if AT_HOST_UART_1
-	default 2 if AT_HOST_UART_2
-
 config AT_HOST_UART_INIT_TIMEOUT
 	int "Timeout waiting for a valid UART line on init (ms)"
 	help

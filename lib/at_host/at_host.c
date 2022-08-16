@@ -22,10 +22,6 @@ LOG_MODULE_REGISTER(at_host, CONFIG_AT_HOST_LOG_LEVEL);
 
 K_THREAD_STACK_DEFINE(at_host_stack_area, AT_HOST_STACK_SIZE);
 
-#define CONFIG_UART_0_NAME      "UART_0"
-#define CONFIG_UART_1_NAME      "UART_1"
-#define CONFIG_UART_2_NAME      "UART_2"
-
 #define AT_BUF_SIZE CONFIG_AT_HOST_CMD_MAX_LEN
 
 AT_MONITOR(at_host, ANY, response_handler);
@@ -39,15 +35,12 @@ enum term_modes {
 	MODE_COUNT      /* Counter of term_modes */
 };
 
-/** @brief UARTs. */
-enum select_uart {
-	UART_0,
-	UART_1,
-	UART_2
-};
-
 static enum term_modes term_mode;
-static const struct device *uart_dev;
+#if DT_HAS_CHOSEN(ncs_at_host_uart)
+static const struct device *const uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_at_host_uart));
+#else
+static const struct device *const uart_dev = DEVICE_DT_GET(DT_NODELABEL(uart0));
+#endif
 static bool at_buf_busy; /* Guards at_buf while processing a command */
 static char at_buf[AT_BUF_SIZE]; /* AT command and modem response buffer */
 static struct k_work_q at_host_work_q;
@@ -192,15 +185,14 @@ static void isr(const struct device *dev, void *user_data)
 	}
 }
 
-static int at_uart_init(char *uart_dev_name)
+static int at_uart_init(const struct device *uart_dev)
 {
 	int err;
 	uint8_t dummy;
 
-	uart_dev = device_get_binding(uart_dev_name);
-	if (uart_dev == NULL) {
-		LOG_ERR("Cannot bind %s\n", uart_dev_name);
-		return -EINVAL;
+	if (!device_is_ready(uart_dev)) {
+		LOG_ERR("UART device not ready");
+		return -ENODEV;
 	}
 
 	uint32_t start_time = k_uptime_get_32();
@@ -232,9 +224,7 @@ static int at_uart_init(char *uart_dev_name)
 
 static int at_host_init(const struct device *arg)
 {
-	char *uart_dev_name;
 	int err;
-	enum select_uart uart_id = CONFIG_AT_HOST_UART;
 	enum term_modes mode = CONFIG_AT_HOST_TERMINATION;
 
 	ARG_UNUSED(arg);
@@ -246,24 +236,8 @@ static int at_host_init(const struct device *arg)
 		return -EINVAL;
 	}
 
-	/* Choose which UART to use */
-	switch (uart_id) {
-	case UART_0:
-		uart_dev_name = CONFIG_UART_0_NAME;
-		break;
-	case UART_1:
-		uart_dev_name = CONFIG_UART_1_NAME;
-		break;
-	case UART_2:
-		uart_dev_name = CONFIG_UART_2_NAME;
-		break;
-	default:
-		LOG_ERR("Unknown UART instance %d", uart_id);
-		return -EINVAL;
-	}
-
 	/* Initialize the UART module */
-	err = at_uart_init(uart_dev_name);
+	err = at_uart_init(uart_dev);
 	if (err) {
 		LOG_ERR("UART could not be initialized: %d", err);
 		return -EFAULT;

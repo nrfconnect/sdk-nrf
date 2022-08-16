@@ -24,11 +24,16 @@ The various configuration options used in the library are listed below:
 * :kconfig:option:`CONFIG_AT_HOST_CMD_MAX_LEN` - Sets the maximum length for an AT command
 * :kconfig:option:`CONFIG_AT_HOST_THREAD_PRIO` - Sets the priority level for the AT host work queue thread
 
-Configuration options for setting the UART:
+The library will use ``uart0`` by default.
+However, ``ncs,at-host-uart`` choice in devicetree can be used to change the UART device in the following way:
 
-* :kconfig:option:`CONFIG_AT_HOST_UART_0` - Enables UART 0
-* :kconfig:option:`CONFIG_AT_HOST_UART_1` - Enables UART 1
-* :kconfig:option:`CONFIG_AT_HOST_UART_2` - Enables UART 2
+.. code-block:: devicetree
+
+   / {
+      chosen {
+         ncs,at-host-uart = &uart1;
+      };
+   };
 
 Configuration options for setting the termination character:
 
