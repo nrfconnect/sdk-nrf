@@ -5,11 +5,13 @@
 #
 
 config FPROTECT
-	bool "Write-protect flash regions"
+	bool "Enable FPROTECT"
 	depends on SOC_FAMILY_NRF
 	help
-	  Use hardware peripherals (BPROT, ACL, or SPU) to write-protect
-	  regions of flash until next reset.
+	  Enable the software library FPROTECT that may or may not be used
+	  by other systems to protect flash from writes and possibly also
+	  reads. Does not protect against execution.
+	  May use the HW peripherals BPROT, ACL, or SPU to achieve this.
 
 if !ARM
 config NRF_SPU_FLASH_REGION_SIZE
@@ -48,16 +50,13 @@ config FPROTECT_BLOCK_SIZE
 	default NRF_BPROT_FLASH_REGION_SIZE if HAS_HW_NRF_BPROT
 	default NRF_ACL_FLASH_REGION_SIZE if HAS_HW_NRF_ACL
 	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
-	help
-	  Block size of fprotect
 
 config FPROTECT_ENABLE_NO_ACCESS
 	bool
 	default y if HAS_HW_NRF_ACL
 	depends on FPROTECT
 	help
-	  Allows to protect flash pages both from reading and writing until the
-	  next reboot.
+	  Protect flash blocks from both reading and writing until reset.
 
 config FPROTECT_APP
 	bool "Lock image partition using FPROTECT"
