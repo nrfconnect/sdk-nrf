@@ -93,7 +93,7 @@ static int key_fetch(nrf_sec_tag_t tag,
 	cmee_enable(&cmee_was_active);
 
 	err = nrf_modem_at_cmd(scratch_buf, sizeof(scratch_buf),
-			       "AT%%CMNG=2,%d,%d", tag, cred_type);
+			       "AT%%CMNG=2,%u,%d", tag, cred_type);
 
 	if (!cmee_was_active) {
 		cmee_disable();
@@ -119,7 +119,7 @@ int modem_key_mgmt_write(nrf_sec_tag_t sec_tag,
 
 	cmee_enable(&cmee_was_enabled);
 
-	err = nrf_modem_at_printf("AT%%CMNG=0,%d,%d,\"%.*s\"",
+	err = nrf_modem_at_printf("AT%%CMNG=0,%u,%d,\"%.*s\"",
 				  sec_tag, cred_type, len, (const char *)buf);
 
 	if (!cmee_was_enabled) {
@@ -214,7 +214,7 @@ int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
 
 	cmee_enable(&cmee_was_enabled);
 
-	err = nrf_modem_at_printf("AT%%CMNG=3,%d,%d", sec_tag, cred_type);
+	err = nrf_modem_at_printf("AT%%CMNG=3,%u,%d", sec_tag, cred_type);
 
 	if (!cmee_was_enabled) {
 		cmee_disable();
@@ -242,7 +242,7 @@ int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 
 	scratch_buf[0] = '\0';
 	err = nrf_modem_at_cmd(scratch_buf, sizeof(scratch_buf),
-			       "AT%%CMNG=1,%d,%d", sec_tag, cred_type);
+			       "AT%%CMNG=1,%u,%d", sec_tag, cred_type);
 
 	if (!cmee_was_active) {
 		cmee_disable();
