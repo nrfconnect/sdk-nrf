@@ -19,7 +19,7 @@
 	(DEVICE_DT_GET_OR_NULL(FLASH_MAP_PM_DEV(i))),			\
 	(DEVICE_DT_GET_OR_NULL(DT_NODELABEL(FLASH_MAP_PM_DEV(i)))))
 
-#define FLASH_MAP_PM_DRIVER_KCONFIG(x) UTIL_CAT(x, _DRIVER_KCONFIG)
+//#define FLASH_MAP_PM_DRIVER_KCONFIG(x) UTIL_CAT(x, _DRIVER_KCONFIG)
 
 #define FLASH_MAP_ID(i) UTIL_CAT(i, _ID)
 #define FLASH_MAP_OFFSET(i) UTIL_CAT(i, _OFFSET)
@@ -29,9 +29,20 @@
 /* The full list of partitions will be here cut down to partitions that
  * are defined over devices with drivers enabled in Kconfig.
  */
+#if 0
 #define FLASH_MAP_PM_ENTRY(x)				\
 	COND_CODE_1(FLASH_MAP_PM_DRIVER_KCONFIG(x),	\
 		(FLASH_AREA_FOO(x)), ())
+#endif
+
+#if 0
+#define FLASH_MAP_PM_ENTRY(x)				\
+	COND_CODE_1(DT_NODE_HAS_STATUS(x, okay),	\
+		(FLASH_AREA_FOO(x)), ())
+#endif
+
+#define FLASH_MAP_PM_ENTRY(x)				\
+		FLASH_AREA_FOO(x)
 
 #define FLASH_AREA_FOO(i) \
 	{						\

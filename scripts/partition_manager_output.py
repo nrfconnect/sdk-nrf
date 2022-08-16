@@ -87,8 +87,8 @@ def get_config_lines(gpm_config, greg_config, head, split, dest, current_domain=
             if dest is DEST_HEADER:
                 if partition_has_device(partition):
                     add_line(f'{name_upper}_DEV', dt_device_node_label_or_node(region['device']))
-                    if region['driver_kconfig']:
-                        add_line(f'{name_upper}_DRIVER_KCONFIG', region['driver_kconfig'])
+#                    if region['driver_kconfig']:
+#                        add_line(f'{name_upper}_DRIVER_KCONFIG', region['driver_kconfig'])
 
             elif dest is DEST_KCONFIG:
                 if 'span' in partition.keys():
