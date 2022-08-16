@@ -64,7 +64,7 @@ def _program_cores(dev: DeviceConf) -> int:
             dev.core_app_programmed = SelectFlags.FAIL
             return 1
 
-    if dev.core_net_programmed != SelectFlags.NOT and dev.core_app_programmed != SelectFlags.NOT:
+    if dev.core_net_programmed != SelectFlags.NOT or dev.core_app_programmed != SelectFlags.NOT:
         print(f"Resetting {dev}")
         cmd = f"nrfjprog -r --snr {dev.nrf5340_audio_dk_snr}"
         ret_val = system(cmd)

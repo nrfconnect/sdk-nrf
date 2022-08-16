@@ -365,10 +365,10 @@ static int initialize(le_audio_receive_cb recv_cb)
 		}
 		if (channel == AUDIO_CH_L) {
 			ret = bt_audio_capability_set_location(BT_AUDIO_DIR_SINK,
-							       BT_AUDIO_LOCATION_SIDE_LEFT);
+							       BT_AUDIO_LOCATION_FRONT_LEFT);
 		} else {
 			ret = bt_audio_capability_set_location(BT_AUDIO_DIR_SINK,
-							       BT_AUDIO_LOCATION_SIDE_RIGHT);
+							       BT_AUDIO_LOCATION_FRONT_RIGHT);
 		}
 		if (ret) {
 			LOG_ERR("Location set failed");

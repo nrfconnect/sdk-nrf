@@ -198,7 +198,8 @@ int button_handler_init(void)
 	}
 
 	for (uint8_t i = 0; i < ARRAY_SIZE(btn_cfg); i++) {
-		ret = gpio_pin_configure(gpio_53_dev, btn_cfg[i].btn_pin, btn_cfg[i].btn_cfg_mask);
+		ret = gpio_pin_configure(gpio_53_dev, btn_cfg[i].btn_pin,
+					 GPIO_INPUT | btn_cfg[i].btn_cfg_mask);
 		if (ret) {
 			return ret;
 		}

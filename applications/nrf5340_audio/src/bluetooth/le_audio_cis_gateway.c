@@ -22,8 +22,8 @@ LOG_MODULE_REGISTER(cis_gateway, CONFIG_LOG_BLE_LEVEL);
 #define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO                                                  \
 	BT_AUDIO_LC3_PRESET(                                                                       \
 		BT_CODEC_LC3_CONFIG(BT_CODEC_CONFIG_LC3_FREQ_48KHZ,                                \
-				    BT_CODEC_CONFIG_LC3_DURATION_10,                               \
-				    LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE),                  \
+				    BT_CODEC_CONFIG_LC3_DURATION_10, BT_AUDIO_LOCATION_FRONT_LEFT, \
+				    LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE), 1,               \
 				    BT_AUDIO_CONTEXT_TYPE_MEDIA),                                  \
 		BT_CODEC_LC3_QOS_10_UNFRAMED(LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE), 2u,     \
 					     20u, LE_AUDIO_PRES_DELAY_US))
@@ -44,8 +44,12 @@ static struct bt_conn *headset_conn[CONFIG_BT_MAX_CONN];
 static struct bt_audio_stream audio_streams[CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SNK_COUNT];
 static struct bt_audio_unicast_group *unicast_group;
 static struct bt_codec *remote_codecs[CONFIG_BT_AUDIO_UNICAST_CLIENT_PAC_COUNT];
-static struct bt_audio_ep *sinks[CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SNK_COUNT];
 static struct bt_audio_discover_params audio_discover_param[CONFIG_BT_MAX_CONN];
+
+static struct bt_audio_sink {
+	struct bt_audio_ep *ep;
+	uint32_t seq_num;
+} sinks[CONFIG_BT_AUDIO_UNICAST_CLIENT_ASE_SNK_COUNT];
 /* clang-format off */
 static struct net_buf_pool *iso_tx_pools[] = { LISTIFY(CONFIG_BT_ISO_MAX_CHAN,
 						       NET_BUF_POOL_PTR_ITERATE, (,)) };
@@ -109,6 +113,19 @@ static int headset_conn_index_get(struct bt_conn *conn, uint8_t *index)
 	LOG_WRN("Connection not found");
 
 	return -EINVAL;
+}
+
+static uint32_t get_and_incr_seq_num(const struct bt_audio_stream *stream)
+{
+	for (size_t i = 0U; i < ARRAY_SIZE(sinks); i++) {
+		if (stream->ep == sinks[i].ep) {
+			return sinks[i].seq_num++;
+		}
+	}
+
+	LOG_WRN("Could not find endpoint from stream %p", stream);
+
+	return 0;
 }
 
 static void unicast_client_location_cb(struct bt_conn *conn, enum bt_audio_dir dir,
@@ -236,6 +253,14 @@ static void stream_started_cb(struct bt_audio_stream *stream)
 {
 	int ret;
 
+	/* Reset sequence number for sinks */
+	for (size_t i = 0U; i < ARRAY_SIZE(sinks); i++) {
+		if (stream->ep == sinks[i].ep) {
+			sinks[i].seq_num = 0U;
+			break;
+		}
+	}
+
 	LOG_INF("Stream %p started", (void *)stream);
 
 	ret = ctrl_events_le_audio_event_send(LE_AUDIO_EVT_STREAMING);
@@ -295,7 +320,7 @@ static void add_remote_sink(struct bt_audio_ep *ep, uint8_t index)
 	if (index > sizeof(sinks)) {
 		LOG_ERR("Sink index is out of range");
 	} else {
-		sinks[index] = ep;
+		sinks[index].ep = ep;
 	}
 }
 
@@ -358,7 +383,7 @@ static void discover_sink_cb(struct bt_conn *conn, struct bt_codec *codec, struc
 			LOG_ERR("Could not do VCS discover");
 		}
 #endif /* (CONFIG_BT_VCS_CLIENT) */
-		ret = bt_audio_stream_config(conn, &audio_streams[conn_index], sinks[conn_index],
+		ret = bt_audio_stream_config(conn, &audio_streams[conn_index], sinks[conn_index].ep,
 					     &lc3_preset_nrf5340.codec);
 		if (ret) {
 			LOG_ERR("Could not configure stream");
@@ -630,7 +655,9 @@ static int iso_stream_send(uint8_t const *const data, size_t size, uint8_t iso_c
 
 	atomic_inc(&iso_tx_pool_alloc[iso_chan_idx]);
 
-	ret = bt_audio_stream_send(&audio_streams[iso_chan_idx], buf);
+	ret = bt_audio_stream_send(&audio_streams[iso_chan_idx], buf,
+				   get_and_incr_seq_num(&audio_streams[iso_chan_idx]),
+				   BT_ISO_TIMESTAMP_NONE);
 	if (ret < 0) {
 		LOG_WRN("Failed to send audio data: %d", ret);
 		net_buf_unref(buf);
