@@ -18,4 +18,6 @@ module = BT_LE_ADV_PROV
 module-str = Bluetooth LE advertising providers
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
+rsource "providers/Kconfig"
+
 endif # BT_LE_ADV_PROV
