@@ -24,6 +24,21 @@
 #include "drivers/driver_zephyr.h"
 #endif /* CONFIG_WPA_SUPP */
 
+/* Display scan */
+struct wifi_driver_scan_result {
+	uint8_t ssid[WIFI_SSID_MAX_LEN];
+	uint8_t ssid_length;
+
+	uint8_t channel;
+	uint8_t security;
+	int8_t rssi;
+
+	uint8_t mac[WIFI_MAC_ADDR_LEN];
+	uint8_t mac_length;
+};
+typedef void (*driver_scan_result_cb_t)(struct net_if *iface, int status,
+				 struct wifi_driver_scan_result *entry);
+
 struct wifi_nrf_vif_ctx_zep {
 	const struct device *zep_dev_ctx;
 	struct net_if *zep_net_if_ctx;
@@ -31,7 +46,7 @@ struct wifi_nrf_vif_ctx_zep {
 	void *rpu_ctx_zep;
 	unsigned char vif_idx;
 
-	scan_result_cb_t disp_scan_cb;
+	driver_scan_result_cb_t disp_scan_cb;
 	bool scan_in_progress;
 	int scan_type;
 
@@ -63,7 +78,7 @@ struct wifi_nrf_drv_priv_zep {
 
 struct wifi_nrf_dev_offload_ops {
 	int (*disp_scan)(const struct device *dev,
-			 scan_result_cb_t cb);
+			 driver_scan_result_cb_t cb);
 };
 
 struct wifi_nrf_dev_ops {

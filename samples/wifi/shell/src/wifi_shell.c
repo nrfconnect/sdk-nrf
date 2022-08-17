@@ -25,6 +25,8 @@
 #include <src/utils/common.h>
 #include <wpa_supplicant/config.h>
 #include <wpa_supplicant/wpa_supplicant_i.h>
+
+#include "zephyr_disp_scan.h"
 #endif /* CONFIG_WPA_SUPP */
 
 static struct {
@@ -53,10 +55,31 @@ struct wpa_ssid *ssid_0;
 
 #define MAX_SSID_LEN 32
 
+static inline const char *driver_security_to_string(int security)
+{
+	switch (security) {
+	case IMG_WEP:
+		return "WEP";
+	case IMG_WPA:
+		return "WPA";
+	case IMG_WPA2:
+		return "WPA2";
+	case IMG_WPA3:
+		return "WPA3";
+	case IMG_WAPI:
+		return "WAPI";
+	case IMG_OPEN:
+		return "OPEN";
+	case IMG_EAP:
+		return "EAP";
+	default:
+		return "Unknown";
+	}
+}
 
-static void scan_result_cb(struct net_if *iface,
+static void driver_scan_result_cb(struct net_if *iface,
 			   int status,
-			   struct wifi_scan_result *entry)
+			   struct wifi_driver_scan_result *entry)
 {
 	if (!iface) {
 		return;
@@ -65,13 +88,13 @@ static void scan_result_cb(struct net_if *iface,
 	if (!entry) {
 		if (status) {
 			shell_fprintf(context.shell,
-				      SHELL_WARNING,
-				      "Scan request failed (%d)\n",
-				      status);
+				SHELL_WARNING,
+				"Scan request failed (%d)\n",
+				status);
 		} else {
 			shell_fprintf(context.shell,
-				      SHELL_NORMAL,
-				      "Scan request done\n");
+				SHELL_NORMAL,
+				"Scan request done\n");
 		}
 
 		return;
@@ -81,24 +104,25 @@ static void scan_result_cb(struct net_if *iface,
 
 	if (scan_result == 1U) {
 		shell_fprintf(context.shell,
-			      SHELL_NORMAL,
-			      "\n%-4s | %-32s %-5s | %-4s | %-4s | %-8s | %-12s\n", "Num", "SSID",
-			      "(len)", "Chan", "RSSI", "Sec", "BSSID");
+			SHELL_NORMAL,
+			"\n%-4s | %-32s %-5s | %-4s | %-4s | %-8s | %-12s\n", "Num", "SSID",
+			"(len)", "Chan", "RSSI", "Sec", "BSSID");
 	}
 
 	shell_fprintf(context.shell,
-		      SHELL_NORMAL,
-		      "%-4d | %-32s %-5u | %-4u | %-4d | %-8s | "
-			  "%02x:%02x:%02x:%02x:%02x:%02x \n",
-		      scan_result,
-		      entry->ssid,
-		      entry->ssid_length,
-		      entry->channel,
-		      entry->rssi,
-		      (entry->security == WIFI_SECURITY_TYPE_PSK ? "WPA/WPA2" : "Open"),
+		SHELL_NORMAL,
+		"%-4d | %-32s %-5u | %-4u | %-4d | %-8s | "
+		"%02x:%02x:%02x:%02x:%02x:%02x\n",
+		scan_result,
+		entry->ssid,
+		entry->ssid_length,
+		entry->channel,
+		entry->rssi,
+		driver_security_to_string(entry->security),
 		entry->mac[0], entry->mac[1],
 		entry->mac[2], entry->mac[3],
-		entry->mac[4], entry->mac[5]);
+		entry->mac[4], entry->mac[5]
+	);
 }
 
 
@@ -113,7 +137,7 @@ static int cmd_wifi_scan(const struct shell *shell,
 	context.shell = shell;
 
 	return dev_ops->off_api.disp_scan(dev,
-					  scan_result_cb);
+					  driver_scan_result_cb);
 }
 
 
