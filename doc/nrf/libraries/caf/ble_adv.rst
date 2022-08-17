@@ -18,14 +18,12 @@ Configuration
 The following Kconfig options are available for this module:
 
 * :kconfig:option:`CONFIG_CAF_BLE_ADV`
-* :kconfig:option:`CONFIG_CAF_BLE_ADV_DEF_PATH`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_PM_EVENTS`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_DIRECT_ADV`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_FAST_ADV`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_FAST_ADV_TIMEOUT`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST`
-* :kconfig:option:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR`
-* :kconfig:option:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD`
+* :kconfig:option:`CONFIG_CAF_BLE_ADV_GRACE_PERIOD`
 
 Read about some of these options in the following sections.
 
@@ -35,44 +33,11 @@ Enabling the module
 To enable the |ble_adv|, complete the following steps:
 
 1. Enable and configure the :ref:`CAF Bluetooth LE state module <caf_ble_state>`.
-#. Define the Bluetooth device name using the :kconfig:option:`CONFIG_BT_DEVICE_NAME` Kconfig option.
-#. Define the Bluetooth device appearance using the :kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE` Kconfig option.
 #. Set the :kconfig:option:`CONFIG_CAF_BLE_ADV` Kconfig option.
-#. Create a configuration file that defines Bluetooth LE advertising data.
-#. In the configuration file, define the following arrays of :c:struct:`bt_data`:
-
-   * ``ad_unbonded`` - Defines undirected advertising data when unbonded.
-   * ``ad_bonded``- Defines undirected advertising data when bonded.
-   * ``sd``- Defines scan response data.
-
-   For example, the file contents should look like follows:
-
-   .. code-block:: c
-
-      #include <zephyr/zephyr.h>
-      #include <zephyr/bluetooth/bluetooth.h>
-
-      static const struct bt_data ad_unbonded[] = {
-            BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-            BT_DATA_BYTES(BT_DATA_UUID16_ALL,
-                          0x0f, 0x18,          /* Battery Service */
-            ),
-      };
-
-      static const struct bt_data ad_bonded[] = {
-            BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_NO_BREDR),
-            BT_DATA_BYTES(BT_DATA_UUID16_ALL,
-                          0x0f, 0x18,	/* Battery Service */
-            ),
-      };
-
-      static const struct bt_data sd[] = {};
-
-#. Specify the path to the configuration file with the :kconfig:option:`CONFIG_CAF_BLE_ADV_DEF_PATH` Kconfig option.
-
-.. note::
-    The configuration file should be included only by the configured module.
-    Do not include the configuration file in other source files.
+#. Configure the advertising data and scan response data for undirected advertising.
+   Both advertising data and scan response data are managed by Bluetooth LE advertising providers.
+   See :ref:`bt_le_adv_prov_readme` for details.
+   Also see :ref:`nrf_desktop_ble_adv` for an example of the Bluetooth LE advertising providers configuration defined by an application.
 
 Using directed advertising
 ==========================
@@ -98,22 +63,31 @@ This lets you speed up finding the Peripheral by Bluetooth Centrals.
 
 Switching to slower advertising is done to reduce the energy consumption.
 
-Using Swift Pair
-================
-
-You can use the :kconfig:option:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR` option to enable the Swift Pair feature.
-The feature simplifies pairing the Bluetooth Peripheral with Windows 10 hosts.
-
-.. note::
-   Make sure to add the Swift Pair data to advertising packets for unbonded device in the configuration file if you enable :kconfig:option:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR` option.
-   The Swift Pair data must be added as the last member of ``ad_unbonded`` array.
-
 Power-down
 ==========
 
-When the system goes to the Power-down state, the advertising stops.
+When the system goes to the power-down state, the advertising either instantly stops or enters the grace period state.
 
-If the Swift Pair feature is enabled with :kconfig:option:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR`, the device advertises without the Swift Pair data for additional :kconfig:option:`CONFIG_CAF_BLE_ADV_SWIFT_PAIR_GRACE_PERIOD` seconds to ensure that the user does not try to connect to the device that is no longer available.
+Grace period
+------------
+
+The grace period is an advertising state, during which the advertising is still active, but the advertising data and scan response data can be modified to inform that system is about to go to the power-down state.
+
+If any advertising data provider requests non-zero grace period time, the stopping of advertising on power-down is delayed by the requested time.
+Instead of instantly stopping, the advertising enters the grace period.
+After the grace period ends, the advertising stops.
+
+The grace period is requested for example by the `Swift Pair`_ advertising data provider (:kconfig:option:`CONFIG_BT_LE_ADV_PROV_SWIFT_PAIR`).
+During the grace period, Swift Pair data is removed from the advertising packet and the device enters Swift Pair's cool-down phase.
+This is done to ensure that the user does not try to connect to the device that is no longer available.
+
+.. note::
+   Make sure that :kconfig:option:`CONFIG_CAF_BLE_ADV_GRACE_PERIOD` Kconfig option is enabled if both following conditions are met:
+
+   * Any of the providers requests the grace period.
+   * :kconfig:option:`CONFIG_CAF_BLE_ADV_PM_EVENTS` is enabled.
+
+   The :kconfig:option:`CONFIG_CAF_BLE_ADV_GRACE_PERIOD` is enabled by default if the Swift Pair advertising data provider is enabled in the configuration.
 
 Implementation details
 **********************
