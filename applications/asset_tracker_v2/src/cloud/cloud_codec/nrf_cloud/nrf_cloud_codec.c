@@ -154,8 +154,8 @@ static int add_pvt_data(cJSON *parent, struct cloud_data_gnss *gnss)
 		.pvt = {
 			.lon =		gnss->pvt.longi,
 			.lat =		gnss->pvt.lat,
-			.accuracy =	gnss->pvt.alt,
-			.alt =		gnss->pvt.acc,
+			.accuracy =	gnss->pvt.acc,
+			.alt =		gnss->pvt.alt,
 			.has_alt =	1,
 			.speed =	gnss->pvt.spd,
 			.has_speed =	1,
