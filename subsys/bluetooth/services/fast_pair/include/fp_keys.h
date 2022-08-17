@@ -85,6 +85,37 @@ int fp_keys_encrypt(const struct bt_conn *conn, uint8_t *out, const uint8_t *in)
  */
 int fp_keys_decrypt(const struct bt_conn *conn, uint8_t *out, const uint8_t *in);
 
+/** Encode data to Additional Data packet for the Fast Pair Seeker.
+ *
+ * Length of buffer used to store Additional Data packet must be at least equal to sum of
+ * @ref FP_CRYPTO_ADDITIONAL_DATA_HEADER_LEN and data_len.
+ *
+ * @param[in] conn	Pointer to Bluetooth connection (determines used key).
+ * @param[out] out	Pointer to buffer used to store Additional Data packet.
+ * @param[in] data	Data to be encoded to packet.
+ * @param[in] data_len	Length of data (in bytes) to be encoded to packet.
+ * @param[in] nonce	64-bit (8-byte) nonce.
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int fp_keys_additional_data_encode(const struct bt_conn *conn, uint8_t *out, const uint8_t *data,
+				   size_t data_len, const uint8_t *nonce);
+
+/** Decode and check integrity of Additional Data packet received from the Fast Pair Seeker.
+ *
+ * Length of buffer used to store decoded data must be at least equal to packet_len minus
+ * @ref FP_CRYPTO_ADDITIONAL_DATA_HEADER_LEN.
+ *
+ * @param[in] conn		Pointer to Bluetooth connection (determines used key).
+ * @param[out] out_data		Pointer to buffer used to store decoded data.
+ * @param[in] in_packet		Additional Data packet.
+ * @param[in] packet_len	Length (in bytes) of Additional Data packet.
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int fp_keys_additional_data_decode(const struct bt_conn *conn, uint8_t *out_data,
+				   const uint8_t *in_packet, size_t packet_len);
+
 /** Generate Fast Pair key for a given Fast Pair Seeker.
  *
  * The key is stored internally by the Fast Pair Keys and it is used to encrypt and decrypt messages
@@ -105,6 +136,26 @@ int fp_keys_generate_key(const struct bt_conn *conn, struct fp_keys_keygen_param
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
 int fp_keys_store_account_key(const struct bt_conn *conn, const struct fp_account_key *account_key);
+
+/** Store Personalized Name written by Fast Pair Seeker in non-volatile memory.
+ *
+ * @param[in] conn	Pointer to Bluetooth connection (determines Fast Pair Seeker).
+ * @param[in] pn	Pointer to Personalized Name string.
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int fp_keys_store_personalized_name(const struct bt_conn *conn, const char *pn);
+
+/** Inform Fast Pair Keys about an expected Personalized Name write.
+ *
+ * The function must be called to allow Personalized Name write after receiving an Action Request.
+ * It is not used to allow Personalized Name write right after an Account Key write.
+ *
+ * @param[in] conn	Pointer to Bluetooth connection (determines Fast Pair Seeker).
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int fp_keys_wait_for_personalized_name(const struct bt_conn *conn);
 
 /** Inform Fast Pair Keys about the progress of the Bluetooth authentication procedure.
  *

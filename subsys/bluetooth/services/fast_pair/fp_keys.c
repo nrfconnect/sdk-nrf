@@ -17,6 +17,7 @@ LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 #include "fp_crypto.h"
 #include "fp_common.h"
 #include "fp_storage.h"
+#include "fp_storage_pn.h"
 
 #define EMPTY_AES_KEY_BYTE	0xff
 #define FP_ACCOUNT_KEY_PREFIX	0x04
@@ -27,15 +28,24 @@ LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
 BUILD_ASSERT(FP_ACCOUNT_KEY_LEN == FP_CRYPTO_AES128_KEY_LEN);
 
+enum wait_for {
+	WAIT_FOR_ACCOUNT_KEY_BIT_POS,
+	WAIT_FOR_PERSONALIZED_NAME_BIT_POS,
+	WAIT_FOR_COUNT,
+};
+
+BUILD_ASSERT(__CHAR_BIT__ * sizeof(uint8_t) >= WAIT_FOR_COUNT);
+
 enum fp_state {
 	FP_STATE_INITIAL,
 	FP_STATE_USE_TEMP_KEY,
-	FP_STATE_WAIT_FOR_ACCOUNT_KEY,
+	FP_STATE_USE_TEMP_ACCOUNT_KEY,
 };
 
 struct fp_procedure {
 	struct k_work_delayable timeout;
 	enum fp_state state;
+	uint8_t wait_for_mask;
 	bool pairing_mode;
 	uint8_t aes_key[FP_ACCOUNT_KEY_LEN];
 };
@@ -60,6 +70,7 @@ void bt_fast_pair_set_pairing_mode(bool pairing_mode)
 static void key_timeout(struct fp_procedure *proc)
 {
 	proc->state = FP_STATE_INITIAL;
+	proc->wait_for_mask = 0;
 	memset(proc->aes_key, EMPTY_AES_KEY_BYTE, sizeof(proc->aes_key));
 }
 
@@ -97,20 +108,26 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.disconnected = disconnected,
 };
 
+static inline bool is_key_generated(enum fp_state state)
+{
+	switch (state) {
+	case FP_STATE_USE_TEMP_KEY:
+	case FP_STATE_USE_TEMP_ACCOUNT_KEY:
+		return true;
+
+	case FP_STATE_INITIAL:
+	default:
+		return false;
+	}
+}
+
 int fp_keys_encrypt(const struct bt_conn *conn, uint8_t *out, const uint8_t *in)
 {
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 	int err = 0;
 
-	switch (proc->state) {
-	case FP_STATE_USE_TEMP_KEY:
-	case FP_STATE_WAIT_FOR_ACCOUNT_KEY:
-		break;
-
-	case FP_STATE_INITIAL:
-	default:
+	if (!is_key_generated(proc->state)) {
 		err = -EACCES;
-		break;
 	}
 
 	if (!err) {
@@ -125,19 +142,47 @@ int fp_keys_decrypt(const struct bt_conn *conn, uint8_t *out, const uint8_t *in)
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 	int err = 0;
 
-	switch (proc->state) {
-	case FP_STATE_USE_TEMP_KEY:
-	case FP_STATE_WAIT_FOR_ACCOUNT_KEY:
-		break;
-
-	case FP_STATE_INITIAL:
-	default:
+	if (!is_key_generated(proc->state)) {
 		err = -EACCES;
-		break;
 	}
 
 	if (!err) {
 		err = fp_crypto_aes128_ecb_decrypt(out, in, proc->aes_key);
+	}
+
+	return err;
+}
+
+int fp_keys_additional_data_encode(const struct bt_conn *conn, uint8_t *out, const uint8_t *data,
+				   size_t data_len, const uint8_t *nonce)
+{
+	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
+	int err = 0;
+
+	if (!is_key_generated(proc->state)) {
+		err = -EACCES;
+	}
+
+	if (!err) {
+		err = fp_crypto_additional_data_encode(out, data, data_len, proc->aes_key, nonce);
+	}
+
+	return err;
+}
+
+int fp_keys_additional_data_decode(const struct bt_conn *conn, uint8_t *out_data,
+				   const uint8_t *in_packet, size_t packet_len)
+{
+	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
+	int err = 0;
+
+	if (!is_key_generated(proc->state)) {
+		err = -EACCES;
+	}
+
+	if (!err) {
+		err = fp_crypto_additional_data_decode(out_data, in_packet, packet_len,
+						       proc->aes_key);
 	}
 
 	return err;
@@ -227,10 +272,10 @@ int fp_keys_generate_key(const struct bt_conn *conn, struct fp_keys_keygen_param
 		return -EACCES;
 	}
 
-	/* Update state to ensure that key could be used for decryption. */
-	proc->state = FP_STATE_USE_TEMP_KEY;
-
 	if (keygen_params->public_key) {
+		/* Update state to ensure that key could be used for decryption. */
+		proc->state = FP_STATE_USE_TEMP_KEY;
+
 		if (proc->pairing_mode) {
 			err = key_gen_public_key(conn, keygen_params);
 		} else {
@@ -239,6 +284,9 @@ int fp_keys_generate_key(const struct bt_conn *conn, struct fp_keys_keygen_param
 			return -EACCES;
 		}
 	} else {
+		/* Update state to ensure that key could be used for decryption. */
+		proc->state = FP_STATE_USE_TEMP_ACCOUNT_KEY;
+
 		err = key_gen_account_key(conn, keygen_params);
 	}
 
@@ -255,14 +303,14 @@ int fp_keys_generate_key(const struct bt_conn *conn, struct fp_keys_keygen_param
 			ARG_UNUSED(ret);
 		}
 	} else {
-		key_gen_failure_cnt = 0;
-		if (proc->state == FP_STATE_USE_TEMP_KEY) {
-			int ret;
+		int ret;
 
-			ret = k_work_schedule(&proc->timeout, FP_KEY_TIMEOUT);
-			__ASSERT_NO_MSG(ret == 1);
-			ARG_UNUSED(ret);
-		}
+		key_gen_failure_cnt = 0;
+		__ASSERT_NO_MSG(is_key_generated(proc->state));
+
+		ret = k_work_schedule(&proc->timeout, FP_KEY_TIMEOUT);
+		__ASSERT_NO_MSG(ret == 1);
+		ARG_UNUSED(ret);
 	}
 
 	return err;
@@ -273,13 +321,20 @@ int fp_keys_store_account_key(const struct bt_conn *conn, const struct fp_accoun
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 	int err = 0;
 
-	if (proc->state != FP_STATE_WAIT_FOR_ACCOUNT_KEY) {
+	if (!(proc->wait_for_mask & BIT(WAIT_FOR_ACCOUNT_KEY_BIT_POS))) {
 		LOG_WRN("Invalid state during Account Key write");
 		return -EACCES;
 	}
+	WRITE_BIT(proc->wait_for_mask, WAIT_FOR_ACCOUNT_KEY_BIT_POS, 0);
 
-	/* Invalidate Key to ensure that requests will be rejected until procedure is restarted. */
-	invalidate_key(proc);
+	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_EXT_PN)) {
+		/* Invalidate Key to ensure that requests will be rejected until procedure is
+		 * restarted.
+		 */
+		invalidate_key(proc);
+	} else {
+		WRITE_BIT(proc->wait_for_mask, WAIT_FOR_PERSONALIZED_NAME_BIT_POS, 1);
+	}
 
 	if (account_key->key[0] != FP_ACCOUNT_KEY_PREFIX) {
 		LOG_WRN("Received invalid Account Key");
@@ -295,11 +350,59 @@ int fp_keys_store_account_key(const struct bt_conn *conn, const struct fp_accoun
 	return err;
 }
 
+int fp_keys_store_personalized_name(const struct bt_conn *conn, const char *pn)
+{
+	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
+	int err = 0;
+
+	if (!(proc->wait_for_mask & BIT(WAIT_FOR_PERSONALIZED_NAME_BIT_POS))) {
+		LOG_WRN("Invalid state during Personalized Name write");
+		return -EACCES;
+	}
+	WRITE_BIT(proc->wait_for_mask, WAIT_FOR_PERSONALIZED_NAME_BIT_POS, 0);
+
+	/* Invalidate Key to ensure that requests will be rejected until procedure is restarted. */
+	invalidate_key(proc);
+
+	err = fp_storage_pn_save(pn);
+	if (!err) {
+		LOG_DBG("Personalized Name stored");
+	} else {
+		LOG_ERR("Store Personalized Name error: err=%d", err);
+	}
+
+	return err;
+}
+
+int fp_keys_wait_for_personalized_name(const struct bt_conn *conn)
+{
+	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
+
+	/* The function is meant to be used only if we expect a Personalized Name write after
+	 * receiving an Action Request.
+	 */
+	if (proc->state != FP_STATE_USE_TEMP_ACCOUNT_KEY) {
+		LOG_ERR("Invalid state to wait for personalized name");
+		return -EACCES;
+	}
+
+	__ASSERT_NO_MSG(!(proc->wait_for_mask & BIT(WAIT_FOR_ACCOUNT_KEY_BIT_POS)));
+
+	if (proc->wait_for_mask & BIT(WAIT_FOR_PERSONALIZED_NAME_BIT_POS)) {
+		LOG_ERR("Already waiting for personalized name");
+		return -EALREADY;
+	}
+
+	WRITE_BIT(proc->wait_for_mask, WAIT_FOR_PERSONALIZED_NAME_BIT_POS, 1);
+
+	return 0;
+}
+
 void fp_keys_bt_auth_progress(const struct bt_conn *conn, bool authenticated)
 {
 	struct fp_procedure *proc = &fp_procedures[bt_conn_index(conn)];
 
-	if (proc->state == FP_STATE_USE_TEMP_KEY) {
+	if (is_key_generated(proc->state)) {
 		int ret;
 
 		ret = k_work_cancel_delayable(&proc->timeout);
@@ -309,7 +412,11 @@ void fp_keys_bt_auth_progress(const struct bt_conn *conn, bool authenticated)
 		ARG_UNUSED(ret);
 
 		if (authenticated) {
-			proc->state = FP_STATE_WAIT_FOR_ACCOUNT_KEY;
+			if (proc->wait_for_mask & BIT(WAIT_FOR_ACCOUNT_KEY_BIT_POS)) {
+				LOG_ERR("Already waiting for account key write");
+			} else {
+				WRITE_BIT(proc->wait_for_mask, WAIT_FOR_ACCOUNT_KEY_BIT_POS, 1);
+			}
 		}
 	}
 }
@@ -329,10 +436,9 @@ static void timeout_fn(struct k_work *w)
 {
 	struct fp_procedure *proc = CONTAINER_OF(w, struct fp_procedure, timeout);
 
-	__ASSERT_NO_MSG((proc->state == FP_STATE_USE_TEMP_KEY) ||
-			(proc->state == FP_STATE_WAIT_FOR_ACCOUNT_KEY));
+	__ASSERT_NO_MSG(is_key_generated(proc->state));
 
-	LOG_WRN("Key discarded (timeout)");
+	LOG_INF("Key discarded (timeout)");
 	key_timeout(proc);
 }
 
