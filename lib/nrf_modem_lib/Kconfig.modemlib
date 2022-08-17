@@ -31,6 +31,11 @@ if NRF_MODEM_LIB_TRACE
 # Add trace backends
 rsource "trace_backends/Kconfig"
 
+config NRF_MODEM_LIB_TRACE_STACK_SIZE
+	int "Modem trace thread stack size"
+	default 768 if SIZE_OPTIMIZATIONS
+	default 1024
+
 config NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE
 	bool "Override trace level"
 	default y

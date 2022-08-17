@@ -105,6 +105,10 @@ if (CONFIG_BT_FAST_PAIR_REGISTRATION_DATA)
   ncs_add_partition_manager_config(pm.yml.bt_fast_pair)
 endif()
 
+if (CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH)
+  ncs_add_partition_manager_config(pm.yml.modem_trace)
+endif()
+
 # We are using partition manager if we are a child image or if we are
 # the root image and the 'partition_manager' target exists.
 set(using_partition_manager

@@ -1,0 +1,9 @@
+#include <autoconf.h>
+
+modem_trace:
+  placement: {before: [end]}
+  size: CONFIG_PM_PARTITION_SIZE_MODEM_TRACE
+#ifdef CONFIG_SPI_NOR
+  align: CONFIG_SPI_NOR_FLASH_LAYOUT_PAGE_SIZE
+#endif
+  region: external_flash

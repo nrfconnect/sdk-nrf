@@ -309,6 +309,8 @@ Bluetooth mesh samples
 nRF9160 samples
 ---------------
 
+* Added :ref:`modem_trace_flash` sample that demonstrates how to add a modem trace backend that stores the trace data to external flash.
+
 * :ref:`lwm2m_client` sample:
 
   * Added:
