@@ -35,10 +35,12 @@ The nRF Desktop devices also enable :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_A
 This is done to prevent Bluetooth Centrals other than the bonded one from connecting with the device.
 The nRF Desktop dongle scans for peripheral devices using the Bluetooth device name, which is provided in the scan response data.
 
-Transmission power level
-========================
+Advertised data
+===============
 
-Bluetooth TX power level is assumed to be 0 dBm during advertising.
-This value is sent in unbonded advertising.
+The :ref:`caf_ble_adv` relies on :ref:`bt_le_adv_prov_readme` to manage advertising data and scan response data.
+nRF Desktop application configures the data providers in :file:`src/util/Kconfig`.
+By default, the application enables a set of data providers available in the |NCS| and adds a custom provider of UUID16 values of Battery Service (BAS) and Human Interface Device Service (HIDS).
+The UUID16 of a given GATT Service is added to the advertising data only if the service is enabled in the configuration and the Bluetooth local identity in use has no bond.
 
 .. |ble_adv| replace:: Bluetooth® LE advertising module

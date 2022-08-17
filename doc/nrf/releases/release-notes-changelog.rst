@@ -203,7 +203,10 @@ nRF5340 Audio
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
-|no_changes_yet_note|
+* Added configuration of :ref:`bt_le_adv_prov_readme`.
+  The subsystem is now used instead of the :file:`*.def` file to configure advertising data and scan response data in :ref:`caf_ble_adv`.
+* Updated Bluetooth advertising data and scan response data logic.
+  The UUID128 of Nordic UART Service (NUS) is now added to the scan response data only if the NUS is enabled and the Bluetooth local identity in use has no bond.
 
 nRF Desktop
 -----------
@@ -212,6 +215,13 @@ nRF Desktop
   The feature can be turned on using :kconfig:option:`CONFIG_CAF_BLE_STATE_SECURITY_REQ`.
 * nRF Desktop dongles start peripheral discovery immediately after Bluetooth LE connection is established.
   The dongles no longer wait until the connection is secured.
+* Added configuration of :ref:`bt_le_adv_prov_readme`.
+  The subsystem is now used instead of the :file:`*.def` file to configure advertising data and scan response data in :ref:`caf_ble_adv`.
+* Updated Bluetooth advertising data and scan response data logic.
+
+  * The TX power included in the advertising packet is no longer hardcoded, the application reads it from the Bluetooth controller.
+    The TX power is included in advertising packets even if the Bluetooth local identity in use has bond.
+  * The UUID16 of Battery Service (BAS) and Human Interface Device Service (HIDS) are included in advertising packets only if the Bluetooth local identity in use has no bond.
 
 Thingy:53 Zigbee weather station
 --------------------------------
@@ -707,6 +717,8 @@ Common Application Framework (CAF)
 
   * Added :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST` Kconfig option.
     The option is used instead of :kconfig:option:`CONFIG_BT_FILTER_ACCEPT_LIST` option to enable the filter accept list.
+  * Integrated :ref:`bt_le_adv_prov_readme`.
+    The subsystem is now used instead of the :file:`*.def` file to configure advertising data and scan response data.
   * Bluetooth device name is no longer automatically included in scan response data.
     A dedicated data provider (:kconfig:option:`CONFIG_BT_LE_ADV_PROV_DEVICE_NAME`) can be used to add the Bluetooth device name to the scan response data.
 
