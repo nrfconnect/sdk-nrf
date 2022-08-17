@@ -1,0 +1,10 @@
+
+/ {
+    nrf_radio_coex: radio_coex_three_wire {
+        status = "okay";
+        compatible = "generic-radio-coex-three-wire";
+        req-gpios =     <&gpio1 5 (GPIO_ACTIVE_HIGH)>;
+        pri-dir-gpios = <&gpio1 4 (GPIO_ACTIVE_HIGH)>;
+        grant-gpios =   <&gpio1 6 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+    };
+};
