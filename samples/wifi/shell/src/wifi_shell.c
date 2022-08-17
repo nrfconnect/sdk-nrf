@@ -175,6 +175,8 @@ static int cmd_supplicant_connect(const struct shell *shell,
 		return -1;
 	}
 
+	wpa_supplicant_remove_all_networks(wpa_s);
+
 	ssid = wpa_supplicant_add_network(wpa_s);
 	ssid->ssid = os_zalloc(sizeof(u8) * MAX_SSID_LEN);
 
