@@ -10,7 +10,7 @@ config TFM_BOARD
 	default "${ZEPHYR_NRF_MODULE_DIR}/modules/tfm/tfm/boards/nrf5340_cpuapp" if SOC_NRF5340_CPUAPP_QKAA
 	depends on TRUSTED_EXECUTION_NONSECURE
 	help
-	  Redefintition of TFM_BOARD to use out-of-tree boards. These depend on
+	  Redefinition of TFM_BOARD to use out-of-tree boards. These depend on
 	  ${TFM_BOARD_BASE_DIR} being set to the TFM board dir inside sdk-nrf.
 
 if BUILD_WITH_TFM
