@@ -20,9 +20,10 @@ LOG_MODULE_REGISTER(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 #include "fp_crypto.h"
 #include "fp_keys.h"
 #include "fp_auth.h"
+#include "fp_storage_pn.h"
 
 /* Fast Pair GATT Service UUIDs defined by the Fast Pair specification. */
-#define BT_UUID_FAST_PAIR		BT_UUID_DECLARE_16(FP_SERVICE_UUID)
+#define BT_UUID_FAST_PAIR			BT_UUID_DECLARE_16(FP_SERVICE_UUID)
 #define BT_UUID_FAST_PAIR_MODEL_ID \
 	BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0xFE2C1233, 0x8366, 0x4814, 0x8EB0, 0x01DE32100BEA))
 #define BT_UUID_FAST_PAIR_KEY_BASED_PAIRING \
@@ -31,13 +32,17 @@ LOG_MODULE_REGISTER(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 	BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0xFE2C1235, 0x8366, 0x4814, 0x8EB0, 0x01DE32100BEA))
 #define BT_UUID_FAST_PAIR_ACCOUNT_KEY \
 	BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0xFE2C1236, 0x8366, 0x4814, 0x8EB0, 0x01DE32100BEA))
+#define BT_UUID_FAST_PAIR_ADDITIONAL_DATA \
+	BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0xFE2C1237, 0x8366, 0x4814, 0x8EB0, 0x01DE32100BEA))
 
 /* Make sure that MTU value of at least 83 is used (recommended by the Fast Pair specification). */
-#define FP_RECOMMENDED_MTU	83
+#define FP_RECOMMENDED_MTU			83
 BUILD_ASSERT(BT_L2CAP_TX_MTU >= FP_RECOMMENDED_MTU);
 BUILD_ASSERT(BT_L2CAP_RX_MTU >= FP_RECOMMENDED_MTU);
 
-#define MSB_BIT(n)		BIT(7 - n)
+#define MSB_BIT(n)				BIT(7 - n)
+
+#define MSG_ACTION_REQ_ADDITIONAL_DATA_MAX_LEN	5
 
 /* Fast Pair message type. */
 enum fp_msg_type {
@@ -57,11 +62,32 @@ enum fp_msg_type {
 	FP_MSG_ACTION_REQ               = 0x10,
 };
 
-struct msg_key_based_pairing_req {
+enum additional_action {
+	ADDITIONAL_ACTION_NOTIFY_PN_BIT_POS,
+	ADDITIONAL_ACTION_COUNT,
+};
+
+struct msg_kbp_req_data {
+	uint8_t seeker_address[BT_ADDR_SIZE];
+};
+
+struct msg_action_req_data {
+	uint8_t msg_group;
+	uint8_t msg_code;
+	uint8_t additional_data_len_or_id;
+	uint8_t additional_data[MSG_ACTION_REQ_ADDITIONAL_DATA_MAX_LEN];
+};
+
+union kbp_write_msg_specific_data {
+	struct msg_kbp_req_data kbp_req;
+	struct msg_action_req_data action_req;
+};
+
+struct msg_kbp_write {
 	uint8_t msg_type;
 	uint8_t fp_flags;
 	uint8_t provider_address[BT_ADDR_SIZE];
-	uint8_t seeker_address[BT_ADDR_SIZE];
+	union kbp_write_msg_specific_data data;
 };
 
 struct msg_seekers_passkey {
@@ -69,6 +95,61 @@ struct msg_seekers_passkey {
 	uint32_t passkey;
 };
 
+
+static ssize_t read_model_id(struct bt_conn *conn,
+			     const struct bt_gatt_attr *attr,
+			     void *buf,
+			     uint16_t len,
+			     uint16_t offset);
+
+static ssize_t write_key_based_pairing(struct bt_conn *conn,
+				       const struct bt_gatt_attr *attr,
+				       const void *buf,
+				       uint16_t len, uint16_t offset, uint8_t flags);
+
+static ssize_t write_passkey(struct bt_conn *conn,
+			     const struct bt_gatt_attr *attr,
+			     const void *buf,
+			     uint16_t len, uint16_t offset, uint8_t flags);
+
+static ssize_t write_account_key(struct bt_conn *conn,
+				 const struct bt_gatt_attr *attr,
+				 const void *buf,
+				 uint16_t len, uint16_t offset, uint8_t flags);
+
+static ssize_t write_additional_data(struct bt_conn *conn,
+				     const struct bt_gatt_attr *attr,
+				     const void *buf,
+				     uint16_t len, uint16_t offset, uint8_t flags);
+
+BT_GATT_SERVICE_DEFINE(fast_pair_svc,
+BT_GATT_PRIMARY_SERVICE(BT_UUID_FAST_PAIR),
+	BT_GATT_CHARACTERISTIC(BT_UUID_FAST_PAIR_MODEL_ID,
+		BT_GATT_CHRC_READ,
+		BT_GATT_PERM_READ,
+		read_model_id, NULL, NULL),
+	BT_GATT_CHARACTERISTIC(BT_UUID_FAST_PAIR_KEY_BASED_PAIRING,
+		BT_GATT_CHRC_WRITE | BT_GATT_CHRC_NOTIFY,
+		BT_GATT_PERM_WRITE,
+		NULL, write_key_based_pairing, NULL),
+	BT_GATT_CCC(NULL, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
+	BT_GATT_CHARACTERISTIC(BT_UUID_FAST_PAIR_PASSKEY,
+		BT_GATT_CHRC_WRITE | BT_GATT_CHRC_NOTIFY,
+		BT_GATT_PERM_WRITE,
+		NULL, write_passkey, NULL),
+	BT_GATT_CCC(NULL, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
+	BT_GATT_CHARACTERISTIC(BT_UUID_FAST_PAIR_ACCOUNT_KEY,
+		BT_GATT_CHRC_WRITE,
+		BT_GATT_PERM_WRITE,
+		NULL, write_account_key, NULL),
+#if CONFIG_BT_FAST_PAIR_GATT_SERVICE_ADDITIONAL_DATA
+	BT_GATT_CHARACTERISTIC(BT_UUID_FAST_PAIR_ADDITIONAL_DATA,
+		BT_GATT_CHRC_WRITE | BT_GATT_CHRC_NOTIFY,
+		BT_GATT_PERM_WRITE,
+		NULL, write_additional_data, NULL),
+	BT_GATT_CCC(NULL, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
+#endif /* CONFIG_BT_FAST_PAIR_GATT_SERVICE_ADDITIONAL_DATA */
+);
 
 static int fp_gatt_rsp_notify(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 			      struct net_buf_simple *rsp)
@@ -108,6 +189,59 @@ static int fp_gatt_rsp_notify(struct bt_conn *conn, const struct bt_gatt_attr *a
 	return err;
 }
 
+static int notify_personalized_name(struct bt_conn *conn)
+{
+	int err;
+	char pn[FP_STORAGE_PN_BUF_LEN];
+	size_t pn_len;
+	uint8_t packet[FP_CRYPTO_ADDITIONAL_DATA_HEADER_LEN + FP_STORAGE_PN_BUF_LEN - 1];
+	size_t packet_len;
+	uint8_t nonce[FP_CRYPTO_ADDITIONAL_DATA_NONCE_LEN];
+	static struct bt_gatt_attr *additional_data_attr;
+
+	err = fp_storage_pn_get(pn);
+	if (err) {
+		LOG_ERR("Failed to get Personalized Name from storage: err=%d", err);
+		return err;
+	}
+
+	pn_len = strlen(pn);
+	if (pn_len == 0) {
+		LOG_DBG("Personalized Name is empty");
+		return 0;
+	}
+
+	packet_len = FP_CRYPTO_ADDITIONAL_DATA_HEADER_LEN + pn_len;
+
+	/* Generate random nonce. */
+	err = sys_csrand_get(nonce, sizeof(nonce));
+	if (err) {
+		LOG_ERR("Failed to generate nonce: err=%d", err);
+		return err;
+	}
+
+	err = fp_keys_additional_data_encode(conn, packet, pn, pn_len, nonce);
+	if (err) {
+		LOG_ERR("Failed to encode additional data: err=%d", err);
+		return err;
+	}
+
+	if (!additional_data_attr) {
+		additional_data_attr = bt_gatt_find_by_uuid(fast_pair_svc.attrs,
+							    fast_pair_svc.attr_count,
+							    BT_UUID_FAST_PAIR_ADDITIONAL_DATA);
+		__ASSERT_NO_MSG(additional_data_attr != NULL);
+	}
+
+	err = bt_gatt_notify(conn, additional_data_attr, packet, packet_len);
+	if (err) {
+		LOG_ERR("Personalized Name notify failed: err=%d", err);
+		return err;
+	}
+
+	return packet_len;
+}
+
 static ssize_t read_model_id(struct bt_conn *conn,
 			     const struct bt_gatt_attr *attr,
 			     void *buf,
@@ -128,13 +262,14 @@ static ssize_t read_model_id(struct bt_conn *conn,
 	return res;
 }
 
-static int parse_key_based_pairing_req(const struct bt_conn *conn,
-				       struct msg_key_based_pairing_req *parsed_req,
-				       struct net_buf_simple *req)
+static int parse_key_based_pairing_write(const struct bt_conn *conn,
+					 struct msg_kbp_write *parsed_req,
+					 struct net_buf_simple *req)
 {
 	struct bt_conn_info conn_info;
 	uint8_t *provider_address;
 	uint8_t *seeker_address;
+	uint8_t *additional_data;
 	int err = 0;
 
 	parsed_req->msg_type = net_buf_simple_pull_u8(req);
@@ -144,14 +279,6 @@ static int parse_key_based_pairing_req(const struct bt_conn *conn,
 	sys_memcpy_swap(parsed_req->provider_address, provider_address,
 			sizeof(parsed_req->provider_address));
 
-	seeker_address = net_buf_simple_pull_mem(req, sizeof(parsed_req->seeker_address));
-	sys_memcpy_swap(parsed_req->seeker_address, seeker_address,
-			sizeof(parsed_req->seeker_address));
-
-	if (parsed_req->msg_type != FP_MSG_KEY_BASED_PAIRING_REQ) {
-		return -ENOMSG;
-	}
-
 	err = bt_conn_get_info(conn, &conn_info);
 	if (err) {
 		LOG_ERR("Failed to get local conn info %d", err);
@@ -160,50 +287,44 @@ static int parse_key_based_pairing_req(const struct bt_conn *conn,
 
 	if (memcmp(parsed_req->provider_address, &conn_info.le.local->a.val,
 	    sizeof(parsed_req->provider_address))) {
-		err = -EINVAL;
+		return -EINVAL;
+	}
+
+	switch (parsed_req->msg_type) {
+	case FP_MSG_KEY_BASED_PAIRING_REQ:
+		seeker_address = net_buf_simple_pull_mem(req,
+						sizeof(parsed_req->data.kbp_req.seeker_address));
+		sys_memcpy_swap(parsed_req->data.kbp_req.seeker_address, seeker_address,
+				sizeof(parsed_req->data.kbp_req.seeker_address));
+
+		break;
+
+	case FP_MSG_ACTION_REQ:
+		parsed_req->data.action_req.msg_group = net_buf_simple_pull_u8(req);
+		parsed_req->data.action_req.msg_code = net_buf_simple_pull_u8(req);
+		parsed_req->data.action_req.additional_data_len_or_id = net_buf_simple_pull_u8(req);
+
+		additional_data = net_buf_simple_pull_mem(req,
+					sizeof(parsed_req->data.action_req.additional_data));
+		memcpy(parsed_req->data.action_req.additional_data, additional_data,
+		       sizeof(parsed_req->data.action_req.additional_data));
+
+		break;
+
+	default:
+		LOG_WRN("Unexpected message type: %" PRIx8 " (Key-based Pairing)",
+			parsed_req->msg_type);
+		return -EINVAL;
 	}
 
 	return err;
 }
 
-static int handle_key_based_pairing_req(struct bt_conn *conn,
-					struct net_buf_simple *rsp,
-					struct msg_key_based_pairing_req *parsed_req)
+static int prepare_key_based_pairing_rsp(struct bt_conn *conn, struct net_buf_simple *rsp)
 {
-	enum fp_kbp_flags {
-		FP_KBP_FLAG_DEPRECATED				= MSB_BIT(0),
-		FP_KBP_FLAG_INITIATE_BONDING			= MSB_BIT(1),
-		FP_KBP_FLAG_NOTIFY_NAME				= MSB_BIT(2),
-		FP_KBP_FLAG_RETROACTIVELY_WRITE_ACCOUNT_KEY	= MSB_BIT(3),
-	};
-
 	struct bt_conn_info conn_info;
-	bool send_pairing_req = false;
 	uint8_t *local_addr = NULL;
-	int err = 0;
-
-	if (parsed_req->fp_flags & FP_KBP_FLAG_INITIATE_BONDING) {
-		/* Ignore Seeker's BR/EDR Address. */
-		ARG_UNUSED(parsed_req->seeker_address);
-
-		send_pairing_req = true;
-	}
-
-	if (parsed_req->fp_flags & FP_KBP_FLAG_NOTIFY_NAME) {
-		/* The notification will not be sent, do not return error. */
-		LOG_WRN("Notify name not supported (Key-based Pairing)");
-	}
-
-	if (parsed_req->fp_flags & FP_KBP_FLAG_RETROACTIVELY_WRITE_ACCOUNT_KEY) {
-		LOG_WRN("Retroactively write account key not supported (Key-based Pairing)");
-		return -ENOTSUP;
-	}
-
-	err = fp_auth_start(conn, send_pairing_req);
-	if (err) {
-		LOG_WRN("Failed to start authentication: err=%d (Key-based Pairing)", err);
-		return err;
-	}
+	int err;
 
 	err = bt_conn_get_info(conn, &conn_info);
 	if (err) {
@@ -218,14 +339,136 @@ static int handle_key_based_pairing_req(struct bt_conn *conn,
 	return 0;
 }
 
-static int validate_key_based_pairing_req(const struct bt_conn *conn, const uint8_t *req,
-					  void *context)
+static int handle_key_based_pairing_req(struct bt_conn *conn,
+					struct net_buf_simple *rsp,
+					struct msg_kbp_write *parsed_req,
+					uint8_t *additional_actions)
 {
-	struct msg_key_based_pairing_req *parsed_req = context;
+	enum fp_kbp_flags {
+		FP_KBP_FLAG_DEPRECATED				= MSB_BIT(0),
+		FP_KBP_FLAG_INITIATE_BONDING			= MSB_BIT(1),
+		FP_KBP_FLAG_NOTIFY_NAME				= MSB_BIT(2),
+		FP_KBP_FLAG_RETROACTIVELY_WRITE_ACCOUNT_KEY	= MSB_BIT(3),
+	};
+
+	bool send_pairing_req = false;
+	int err;
+
+	if (parsed_req->fp_flags & FP_KBP_FLAG_INITIATE_BONDING) {
+		/* Ignore Seeker's BR/EDR Address. */
+		ARG_UNUSED(parsed_req->data.kbp_req.seeker_address);
+
+		send_pairing_req = true;
+	}
+
+	if (parsed_req->fp_flags & FP_KBP_FLAG_NOTIFY_NAME) {
+		if (IS_ENABLED(CONFIG_BT_FAST_PAIR_EXT_PN)) {
+			WRITE_BIT(*additional_actions, ADDITIONAL_ACTION_NOTIFY_PN_BIT_POS, 1);
+		} else {
+			/* The notification will not be sent, do not return error. */
+			LOG_WRN("Notify name not supported (KBP request)");
+		}
+	}
+
+	if (parsed_req->fp_flags & FP_KBP_FLAG_RETROACTIVELY_WRITE_ACCOUNT_KEY) {
+		LOG_WRN("Retroactively write account key unsupported (KBP request)");
+		return -ENOTSUP;
+	}
+
+	err = fp_auth_start(conn, send_pairing_req);
+	if (err) {
+		LOG_WRN("Failed to start authentication: err=%d (KBP request)", err);
+		return err;
+	}
+
+	err = prepare_key_based_pairing_rsp(conn, rsp);
+	if (err) {
+		LOG_ERR("Failed to prepare Key-based Pairing response: err=%d (KBP request)", err);
+		return err;
+	}
+
+	return 0;
+}
+
+static int handle_action_req(struct bt_conn *conn,
+			     struct net_buf_simple *rsp,
+			     struct msg_kbp_write *parsed_req)
+{
+	enum fp_action_flags {
+		FP_ACTION_FLAG_DEVICE_ACTION			= MSB_BIT(0),
+		FP_ACTION_FLAG_ADDITIONAL_DATA_TO_FOLLOW	= MSB_BIT(1),
+	};
+
+	static const uint8_t personalized_name_data_id = 0x01;
+
+	int err;
+
+	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_EXT_PN)) {
+		ARG_UNUSED(write_additional_data);
+		LOG_WRN("Action request not supported (Action request)");
+		return -ENOTSUP;
+	}
+
+	if (!(parsed_req->fp_flags & FP_ACTION_FLAG_ADDITIONAL_DATA_TO_FOLLOW) ||
+	     (parsed_req->fp_flags & FP_ACTION_FLAG_DEVICE_ACTION)) {
+		LOG_WRN("Unexpected message flags: %" PRIx8 " (Action request)",
+			parsed_req->fp_flags);
+		return -ENOMSG;
+	}
+
+	if (parsed_req->data.action_req.additional_data_len_or_id != personalized_name_data_id) {
+		LOG_WRN("Unexpected Data ID: %" PRIx8 " (Action request)",
+			parsed_req->data.action_req.additional_data_len_or_id);
+		return -ENOMSG;
+	}
+
+	err = fp_keys_wait_for_personalized_name(conn);
+	if (err) {
+		LOG_ERR("Failed to change state: err=%d (Action request)", err);
+		return err;
+	}
+	LOG_DBG("Waiting for Personalized Name write (Action request)");
+
+	err = prepare_key_based_pairing_rsp(conn, rsp);
+	if (err) {
+		LOG_ERR("Failed to prepare Key-based Pairing response: err=%d (Action request)",
+			err);
+		return err;
+	}
+
+	return 0;
+}
+
+static int validate_key_based_pairing_write(const struct bt_conn *conn, const uint8_t *req,
+					    void *context)
+{
+	struct msg_kbp_write *parsed_req = context;
 	struct net_buf_simple req_net_buf;
 
 	net_buf_simple_init_with_data(&req_net_buf, (uint8_t *)req, FP_CRYPTO_AES128_BLOCK_LEN);
-	return parse_key_based_pairing_req(conn, parsed_req, &req_net_buf);
+	return parse_key_based_pairing_write(conn, parsed_req, &req_net_buf);
+}
+
+static int perform_additional_actions(struct bt_conn *conn, uint8_t additional_actions)
+{
+	if (additional_actions & BIT(ADDITIONAL_ACTION_NOTIFY_PN_BIT_POS)) {
+		int len;
+
+		len = notify_personalized_name(conn);
+		if (len < 0) {
+			LOG_ERR("Failed to notify Personalized Name: err=%d (Key-based Pairing)",
+				len);
+			return len;
+		}
+
+		if (len == 0) {
+			LOG_DBG("Personalized Name was not notified (Key-based Pairing)");
+		} else {
+			LOG_INF("Notified Personalized Name (Key-based Pairing)");
+		}
+	}
+
+	return 0;
 }
 
 static ssize_t write_key_based_pairing(struct bt_conn *conn,
@@ -235,9 +478,10 @@ static ssize_t write_key_based_pairing(struct bt_conn *conn,
 {
 	struct net_buf_simple gatt_write;
 	struct fp_keys_keygen_params keygen_params;
-	struct msg_key_based_pairing_req parsed_req;
+	struct msg_kbp_write parsed_req;
 	int err = 0;
 	ssize_t res = len;
+	uint8_t additional_actions = 0;
 
 	NET_BUF_SIMPLE_DEFINE(rsp, FP_CRYPTO_AES128_BLOCK_LEN);
 
@@ -263,7 +507,7 @@ static ssize_t write_key_based_pairing(struct bt_conn *conn,
 	} else {
 		keygen_params.public_key = NULL;
 	}
-	keygen_params.req_validate_cb = validate_key_based_pairing_req;
+	keygen_params.req_validate_cb = validate_key_based_pairing_write;
 	keygen_params.context = &parsed_req;
 
 	err = fp_keys_generate_key(conn, &keygen_params);
@@ -273,7 +517,19 @@ static ssize_t write_key_based_pairing(struct bt_conn *conn,
 		goto finish;
 	}
 
-	err = handle_key_based_pairing_req(conn, &rsp, &parsed_req);
+	switch (parsed_req.msg_type) {
+	case FP_MSG_KEY_BASED_PAIRING_REQ:
+		err = handle_key_based_pairing_req(conn, &rsp, &parsed_req, &additional_actions);
+		break;
+
+	case FP_MSG_ACTION_REQ:
+		err = handle_action_req(conn, &rsp, &parsed_req);
+		break;
+
+	default:
+		__ASSERT_NO_MSG(false);
+		break;
+	}
 	if (err) {
 		LOG_WRN("Handling request failed: ret=%d (Key-based Pairing)", err);
 		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
@@ -284,6 +540,12 @@ static ssize_t write_key_based_pairing(struct bt_conn *conn,
 	if (err) {
 		LOG_WRN("Failed to send response: err=%d (Key-based Pairing)", err);
 		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
+		goto finish;
+	}
+
+	err = perform_additional_actions(conn, additional_actions);
+	if (err) {
+		LOG_WRN("Failed to perform additional actions: err=%d (Key-based Pairing)", err);
 	}
 
 finish:
@@ -302,7 +564,7 @@ static int parse_passkey_req(struct msg_seekers_passkey *parsed_req, struct net_
 	parsed_req->passkey = net_buf_simple_pull_be24(req);
 
 	if (parsed_req->msg_type != FP_MSG_SEEKERS_PASSKEY) {
-		LOG_WRN("Invalid message type: %" PRIu8 " (Passkey)", parsed_req->msg_type);
+		LOG_WRN("Invalid message type: %" PRIx8 " (Passkey)", parsed_req->msg_type);
 		return -ENOMSG;
 	}
 
@@ -347,7 +609,7 @@ static ssize_t write_passkey(struct bt_conn *conn,
 	}
 
 	if (len != FP_CRYPTO_AES128_BLOCK_LEN) {
-		LOG_WRN("Invalid length: len=%" PRIu16 " (Key-based Pairing)", len);
+		LOG_WRN("Invalid length: len=%" PRIu16 " (Passkey)", len);
 		res = BT_GATT_ERR(BT_ATT_ERR_INVALID_ATTRIBUTE_LEN);
 		goto finish;
 	}
@@ -376,6 +638,7 @@ static ssize_t write_passkey(struct bt_conn *conn,
 	if (err) {
 		LOG_WRN("Failed to send response: err=%d (Passkey)", err);
 		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
+		goto finish;
 	}
 
 finish:
@@ -432,24 +695,50 @@ finish:
 	return res;
 }
 
-BT_GATT_SERVICE_DEFINE(fast_pair_svc,
-BT_GATT_PRIMARY_SERVICE(BT_UUID_FAST_PAIR),
-	BT_GATT_CHARACTERISTIC(BT_UUID_FAST_PAIR_MODEL_ID,
-		BT_GATT_CHRC_READ,
-		BT_GATT_PERM_READ,
-		read_model_id, NULL, NULL),
-	BT_GATT_CHARACTERISTIC(BT_UUID_FAST_PAIR_KEY_BASED_PAIRING,
-		BT_GATT_CHRC_WRITE | BT_GATT_CHRC_NOTIFY,
-		BT_GATT_PERM_WRITE,
-		NULL, write_key_based_pairing, NULL),
-	BT_GATT_CCC(NULL, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
-	BT_GATT_CHARACTERISTIC(BT_UUID_FAST_PAIR_PASSKEY,
-		BT_GATT_CHRC_WRITE | BT_GATT_CHRC_NOTIFY,
-		BT_GATT_PERM_WRITE,
-		NULL, write_passkey, NULL),
-	BT_GATT_CCC(NULL, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
-	BT_GATT_CHARACTERISTIC(BT_UUID_FAST_PAIR_ACCOUNT_KEY,
-		BT_GATT_CHRC_WRITE,
-		BT_GATT_PERM_WRITE,
-		NULL, write_account_key, NULL),
-);
+static ssize_t write_additional_data(struct bt_conn *conn,
+				     const struct bt_gatt_attr *attr,
+				     const void *buf,
+				     uint16_t len, uint16_t offset, uint8_t flags)
+{
+	/* The only expected Additional Data write is with Personalized Name. fp_keys module will
+	 * return an error if it receives Personalized Name store request in inappropriate state.
+	 */
+	size_t data_len = len - FP_CRYPTO_ADDITIONAL_DATA_HEADER_LEN;
+	uint8_t decoded_data[data_len + sizeof(char)];
+	int err = 0;
+	ssize_t res = len;
+
+	if (offset != 0) {
+		LOG_WRN("Invalid offset: off=%" PRIu16 " (Additional Data)", offset);
+		res = BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+		goto finish;
+	}
+
+	err = fp_keys_additional_data_decode(conn, decoded_data, buf, len);
+	if (err) {
+		LOG_WRN("Decrypt failed: err=%d (Additional Data)", err);
+		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
+		goto finish;
+	}
+
+	/* Received data is assumed to be a Personalized Name string. Terminate the string. */
+	decoded_data[data_len] = '\0';
+
+	LOG_DBG("Received following Personalized Name: %s (Additional Data)", decoded_data);
+
+	err = fp_keys_store_personalized_name(conn, decoded_data);
+	if (err) {
+		LOG_WRN("Personalized Name store failed: err=%d (Additional Data)", err);
+		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
+		goto finish;
+	}
+
+finish:
+	if (res < 0) {
+		fp_keys_drop_key(conn);
+	}
+
+	LOG_DBG("Additional Data write: res=%d conn=%p", res, (void *)conn);
+
+	return res;
+}
