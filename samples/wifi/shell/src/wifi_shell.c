@@ -82,19 +82,23 @@ static void scan_result_cb(struct net_if *iface,
 	if (scan_result == 1U) {
 		shell_fprintf(context.shell,
 			      SHELL_NORMAL,
-			      "\n%-4s | %-32s %-5s | %-4s | %-4s | %-5s\n", "Num", "SSID",
-			      "(len)", "Chan", "RSSI", "Sec");
+			      "\n%-4s | %-32s %-5s | %-4s | %-4s | %-8s | %-12s\n", "Num", "SSID",
+			      "(len)", "Chan", "RSSI", "Sec", "BSSID");
 	}
 
 	shell_fprintf(context.shell,
 		      SHELL_NORMAL,
-		      "%-4d | %-32s %-5u | %-4u | %-4d | %-5s\n",
+		      "%-4d | %-32s %-5u | %-4u | %-4d | %-8s | "
+			  "%02x:%02x:%02x:%02x:%02x:%02x \n",
 		      scan_result,
 		      entry->ssid,
 		      entry->ssid_length,
 		      entry->channel,
 		      entry->rssi,
-		      (entry->security == WIFI_SECURITY_TYPE_PSK ? "WPA/WPA2" : "Open"));
+		      (entry->security == WIFI_SECURITY_TYPE_PSK ? "WPA/WPA2" : "Open"),
+		entry->mac[0], entry->mac[1],
+		entry->mac[2], entry->mac[3],
+		entry->mac[4], entry->mac[5]);
 }
 
 

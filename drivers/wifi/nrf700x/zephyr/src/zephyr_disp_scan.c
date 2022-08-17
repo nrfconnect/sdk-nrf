@@ -93,8 +93,11 @@ void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
 	struct umac_display_results *r = NULL;
 	struct wifi_scan_result res;
 	unsigned int i = 0;
+	scan_result_cb_t cb = NULL;
 
 	vif_ctx_zep = vif_ctx;
+
+	cb = (scan_result_cb_t) vif_ctx_zep->disp_scan_cb;
 
 	for (i = 0; i < scan_res->event_bss_count; i++) {
 		memset(&res, 0x0, sizeof(res));
@@ -114,6 +117,8 @@ void wifi_nrf_event_proc_disp_scan_res_zep(void *vif_ctx,
 		memcpy(res.ssid,
 		       r->ssid.img_ssid,
 		       res.ssid_length);
+
+		memcpy(res.mac,	r->mac_addr, IMG_ETH_ALEN);
 
 		if (r->signal.signal_type == IMG_SIGNAL_TYPE_MBM) {
 			int val = (r->signal.signal.mbm_signal);
