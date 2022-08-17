@@ -22,13 +22,6 @@ NRF_MODEM_LIB_ON_INIT(trace_init, trace_init_callback, NULL);
 K_SEM_DEFINE(trace_sem, 0, 1);
 K_SEM_DEFINE(trace_done_sem, 1, 1);
 
-#if CONFIG_SIZE_OPTIMIZATIONS
-#define TRACE_THREAD_STACK_SIZE 768
-#else
-/* Need more stack when optimizations are disabled */
-#define TRACE_THREAD_STACK_SIZE 1024
-#endif
-
 #define TRACE_THREAD_PRIORITY                                                                      \
 	COND_CODE_1(CONFIG_NRF_MODEM_LIB_TRACE_THREAD_PRIO_OVERRIDE,                               \
 		    (CONFIG_NRF_MODEM_LIB_TRACE_THREAD_PRIO), (K_LOWEST_APPLICATION_THREAD_PRIO))
@@ -335,5 +328,5 @@ int nrf_modem_lib_trace_level_set(enum nrf_modem_lib_trace_level trace_level)
 	return 0;
 }
 
-K_THREAD_DEFINE(trace_thread, TRACE_THREAD_STACK_SIZE, trace_thread_handler,
+K_THREAD_DEFINE(trace_thread, CONFIG_NRF_MODEM_LIB_TRACE_STACK_SIZE, trace_thread_handler,
 	       NULL, NULL, NULL, TRACE_THREAD_PRIORITY, 0, 0);
