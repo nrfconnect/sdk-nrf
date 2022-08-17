@@ -93,7 +93,7 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param)
 		return -EACCES;
 	}
 
-	if (param->event_handler == NULL) {
+	if ((param == NULL) || (param->event_handler == NULL)) {
 		return -EINVAL;
 	}
 
