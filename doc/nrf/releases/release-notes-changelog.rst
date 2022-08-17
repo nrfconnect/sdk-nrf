@@ -595,6 +595,7 @@ Libraries for networking
 
       * An issue that caused the application to receive multiple disconnect events.
       * An issue that prevented full modem FOTA updates to be installed during library initialization.
+      * An issue that caused the :c:func:`nrf_cloud_client_id_get` function to fail if both :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` and :kconfig:option:`CONFIG_NRF_CLOUD_REST` were enabled.
 
     * Added:
 

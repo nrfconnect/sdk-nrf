@@ -36,11 +36,23 @@ BUILD_ASSERT(IMEI_CLIENT_ID_LEN <= NRF_CLOUD_CLIENT_ID_MAX_LEN,
 
 int nrf_cloud_client_id_get(char *id_buf, size_t id_len)
 {
+	int ret = -ENODEV;
+
 #if defined(CONFIG_NRF_CLOUD_MQTT)
-	return nct_client_id_get(id_buf, id_len);
-#else
-	return nrf_cloud_configured_client_id_get(id_buf, id_len);
+	/* For MQTT, the client ID is allocated and generated when nrf_cloud_init is called,
+	 * so just get a copy.
+	 */
+	ret = nct_client_id_get(id_buf, id_len);
 #endif
+
+#if defined(CONFIG_NRF_CLOUD_REST)
+	if (ret != 0) {
+		/* For REST, the client ID is generated on demand. */
+		ret = nrf_cloud_configured_client_id_get(id_buf, id_len);
+	}
+#endif
+
+	return ret;
 }
 
 size_t nrf_cloud_configured_client_id_length_get(void)
