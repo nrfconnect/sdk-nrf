@@ -450,6 +450,8 @@ static struct option long_options[] = {
 
 /******************************************************************************/
 
+bool link_shell_msleep_notifications_subscribed;
+
 static void link_shell_print_usage(struct link_shell_cmd_args_t *link_cmd_args)
 {
 	switch (link_cmd_args->command) {
@@ -1586,8 +1588,10 @@ int link_shell(const struct shell *shell, size_t argc, char **argv)
 				((threshold_time) ?
 					 threshold_time :
 					 CONFIG_LTE_LC_MODEM_SLEEP_NOTIFICATIONS_THRESHOLD_MS));
+			link_shell_msleep_notifications_subscribed = true;
 		} else {
 			link_modem_sleep_notifications_unsubscribe();
+			link_shell_msleep_notifications_subscribed = false;
 		}
 		break;
 	case LINK_CMD_TAU:

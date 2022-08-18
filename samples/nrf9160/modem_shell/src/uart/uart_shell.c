@@ -18,9 +18,11 @@
 #include "uart_shell.h"
 #include "uart.h"
 #include "mosh_print.h"
+#include "link.h"
 
 
-bool uart_disable_during_sleep_requested;
+bool uart_shell_disable_during_sleep_requested;
+extern bool link_shell_msleep_notifications_subscribed;
 
 static int print_help(const struct shell *shell, size_t argc, char **argv)
 {
@@ -128,21 +130,37 @@ void uart_toggle_power_state(void)
 
 static int cmd_uart_disable_when_sleep(void)
 {
+	/* Modem sleep notification must be subscribed to. Check if the user has already subscribed
+	 * to avoid resubscribing and potentially altering the configured notification threshold.
+	 */
+	if (!link_shell_msleep_notifications_subscribed) {
+		link_modem_sleep_notifications_subscribe(
+			CONFIG_LTE_LC_MODEM_SLEEP_PRE_WARNING_TIME_MS,
+			CONFIG_LTE_LC_MODEM_SLEEP_NOTIFICATIONS_THRESHOLD_MS);
+	}
+
 	mosh_print("during_sleep: disabling UARTs during the modem sleep mode");
 
 	/* Setting the flag to indicate that UARTs are requested to be disabled should the
 	 * modem enter sleep mode.
 	 */
-	uart_disable_during_sleep_requested = true;
+	uart_shell_disable_during_sleep_requested = true;
 	return 0;
 }
 
 static int cmd_uart_enable_when_sleep(void)
 {
+	/* If the sleep notification subscription was triggered by 'uart disable during_sleep' and
+	 * not explicitly by the user, unsubscribe from notification if user re-enables UARTs.
+	 */
+	if (!link_shell_msleep_notifications_subscribed) {
+		link_modem_sleep_notifications_unsubscribe();
+	}
+
 	mosh_print("during_sleep: enabling UARTs during the modem sleep mode");
 
 	/* Reset the flag, no dot disable UARTs when the modem enters sleep mode. */
-	uart_disable_during_sleep_requested = false;
+	uart_shell_disable_during_sleep_requested = false;
 	return 0;
 }
 
@@ -173,8 +191,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_uart,
 		during_sleep,
 		&sub_uart_during_sleep,
 		"Disable UARTs during the modem sleep mode. UARTs are re-enabled once the modem "
-		"exits sleep mode. Modem sleep notifications need to be subscribed to "
-		"using 'link msleep --subscribe'.",
+		"exits sleep mode.",
 		cmd_uart_during_sleep),
 	SHELL_SUBCMD_SET_END
 );
