@@ -4,7 +4,7 @@
 #
 
 menuconfig NRF_CLOUD_FOTA
-	bool "Enable FOTA through nRF Cloud"
+	bool "Enable nRF Cloud MQTT FOTA library"
 	select FOTA_DOWNLOAD
 	select FOTA_DOWNLOAD_PROGRESS_EVT
 	select DFU_TARGET

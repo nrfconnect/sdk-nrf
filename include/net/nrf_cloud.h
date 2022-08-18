@@ -872,10 +872,10 @@ bool nrf_cloud_fota_is_type_modem(const enum nrf_cloud_fota_type type);
 
 /**
  * @brief Function to determine if the specified FOTA type is enabled by the
- *        configuration.
- *        Depends on CONFIG_NRF_CLOUD_FOTA.
- *        REST-based FOTA applications are responsible for determining
- *        their supported FOTA types.
+ *        configuration. This function returns false if both CONFIG_NRF_CLOUD_FOTA
+ *        and CONFIG_NRF_CLOUD_REST are disabled.
+ *        REST-based applications are responsible for implementing FOTA updates
+ *        for all configured types.
  *
  * @param[in] type Fota type.
  *
