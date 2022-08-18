@@ -528,6 +528,9 @@ Connection through Bluetooth LE
 When turned on, the nRF Desktop peripherals are advertising until they go to the suspended state or connect through Bluetooth.
 The peripheral supports one wireless connection at a time, but it can be bonded with :ref:`multiple peers <nrf_desktop_ble_peers>`.
 
+.. note::
+   To simplify pairing the nRF Desktop peripherals with Windows 10 hosts, the peripherals include `Swift Pair`_ payload in the Bluetooth LE advertising data.
+
 The nRF Desktop Bluetooth Central device scans for all bonded peripherals that are not connected.
 The scanning is interrupted when any device connected to the dongle through Bluetooth comes in use.
 Continuing the scanning in such scenario would cause report rate drop.
