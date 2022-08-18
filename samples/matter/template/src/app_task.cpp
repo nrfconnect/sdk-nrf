@@ -6,10 +6,14 @@
 
 #include "app_task.h"
 #include "led_widget.h"
+
+#ifdef CONFIG_NET_L2_OPENTHREAD
 #include "thread_util.h"
+#endif
 
 #include <platform/CHIPDeviceLayer.h>
 
+#include "board_util.h"
 #include <app/server/OnboardingCodesUtil.h>
 #include <app/server/Server.h>
 #include <credentials/DeviceAttestationCredsProvider.h>
@@ -17,6 +21,11 @@
 #include <lib/support/CHIPMem.h>
 #include <lib/support/CodeUtils.h>
 #include <system/SystemError.h>
+
+#ifdef CONFIG_CHIP_WIFI
+#include <app/clusters/network-commissioning/network-commissioning.h>
+#include <platform/nrfconnect/wifi/NrfWiFiDriver.h>
+#endif
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include "ota_util.h"
@@ -40,17 +49,24 @@ static constexpr uint32_t kFactoryResetTriggerTimeout = 6000;
 K_MSGQ_DEFINE(sAppEventQueue, sizeof(AppEvent), kAppEventQueueSize, alignof(AppEvent));
 LEDWidget sStatusLED;
 LEDWidget sUnusedLED;
+#if NUMBER_OF_BUTTONS == 4
 LEDWidget sUnusedLED_1;
 LEDWidget sUnusedLED_2;
+#endif
 
-bool sIsThreadProvisioned;
-bool sIsThreadEnabled;
+bool sIsNetworkProvisioned;
+bool sIsNetworkEnabled;
 bool sHaveBLEConnections;
 
 k_timer sFunctionTimer;
 } /* namespace */
 
 AppTask AppTask::sAppTask;
+
+#ifdef CONFIG_CHIP_WIFI
+app::Clusters::NetworkCommissioning::Instance
+	sWiFiCommissioningInstance(0, &(NetworkCommissioning::NrfWiFiDriver::Instance()));
+#endif
 
 CHIP_ERROR AppTask::Init()
 {
@@ -69,6 +85,7 @@ CHIP_ERROR AppTask::Init()
 		return err;
 	}
 
+#if defined(CONFIG_NET_L2_OPENTHREAD)
 	err = ThreadStackMgr().InitThreadStack();
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("ThreadStackMgr().InitThreadStack() failed");
@@ -81,7 +98,7 @@ CHIP_ERROR AppTask::Init()
 	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_MinimalEndDevice);
 #else
 	err = ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_Router);
-#endif
+#endif /* CONFIG_OPENTHREAD_MTD_SED */
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("ConnectivityMgr().SetThreadDeviceType() failed");
 		return err;
@@ -93,7 +110,12 @@ CHIP_ERROR AppTask::Init()
 		LOG_ERR("Cannot set default Thread output power");
 		return err;
 	}
-#endif
+#endif /* CONFIG_OPENTHREAD_DEFAULT_TX_POWER */
+#elif defined(CONFIG_CHIP_WIFI)
+	sWiFiCommissioningInstance.Init();
+#else
+	return CHIP_ERROR_INTERNAL;
+#endif /* CONFIG_NET_L2_OPENTHREAD */
 
 	/* Initialize LEDs */
 	LEDWidget::InitGpio();
@@ -101,8 +123,10 @@ CHIP_ERROR AppTask::Init()
 
 	sStatusLED.Init(DK_LED1);
 	sUnusedLED.Init(DK_LED2);
+#if NUMBER_OF_LEDS == 4
 	sUnusedLED_1.Init(DK_LED3);
 	sUnusedLED_2.Init(DK_LED4);
+#endif
 
 	UpdateStatusLED();
 
@@ -201,8 +225,10 @@ void AppTask::FunctionPressHandler()
 void AppTask::FunctionReleaseHandler()
 {
 	if (sAppTask.mFunction == TimerFunction::FactoryReset) {
+#if NUMBER_OF_LEDS == 4
 		sUnusedLED_2.Set(false);
 		sUnusedLED_1.Set(false);
+#endif
 		sUnusedLED.Set(false);
 
 		UpdateStatusLED();
@@ -221,8 +247,10 @@ void AppTask::FunctionTimerEventHandler()
 
 		sStatusLED.Set(true);
 		sUnusedLED.Set(true);
+#if NUMBER_OF_LEDS == 4
 		sUnusedLED_1.Set(true);
 		sUnusedLED_2.Set(true);
+#endif
 
 		chip::Server::GetInstance().ScheduleFactoryReset();
 	}
@@ -237,13 +265,13 @@ void AppTask::UpdateStatusLED()
 {
 	/* Update the status LED.
 	 *
-	 * If thread and service provisioned, keep the LED On constantly.
+	 * If IPv6 networking and service provisioned, keep the LED on constantly.
 	 *
-	 * If the system has ble connection(s) uptill the stage above, THEN blink the LED at an even
+	 * If the system has BLE connection(s) up till the stage above, THEN blink the LED at an even
 	 * rate of 100ms.
 	 *
-	 * Otherwise, blink the LED On for a very short time. */
-	if (sIsThreadProvisioned && sIsThreadEnabled) {
+	 * Otherwise, blink the LED for a very short time. */
+	if (sIsNetworkProvisioned && sIsNetworkEnabled) {
 		sStatusLED.Set(true);
 	} else if (sHaveBLEConnections) {
 		sStatusLED.Blink(100, 100);
@@ -260,8 +288,14 @@ void AppTask::ChipEventHandler(const ChipDeviceEvent *event, intptr_t /* arg */)
 		UpdateStatusLED();
 		break;
 	case DeviceEventType::kThreadStateChange:
-		sIsThreadProvisioned = ConnectivityMgr().IsThreadProvisioned();
-		sIsThreadEnabled = ConnectivityMgr().IsThreadEnabled();
+	case DeviceEventType::kWiFiConnectivityChange:
+#if defined(CONFIG_NET_L2_OPENTHREAD)
+		sIsNetworkProvisioned = ConnectivityMgr().IsThreadProvisioned();
+		sIsNetworkEnabled = ConnectivityMgr().IsThreadEnabled();
+#elif defined(CONFIG_CHIP_WIFI)
+		sIsNetworkProvisioned = ConnectivityMgr().IsWiFiStationProvisioned();
+		sIsNetworkEnabled = ConnectivityMgr().IsWiFiStationEnabled();
+#endif
 		UpdateStatusLED();
 		break;
 	case DeviceEventType::kDnssdPlatformInitialized:
