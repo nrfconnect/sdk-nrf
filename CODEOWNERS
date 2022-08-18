@@ -118,8 +118,8 @@ Kconfig*                                  @tejlmand
 /samples/sensor/bh1749/                   @wlgrd
 /samples/bluetooth/                       @alwa-nordic @carlescufi @KAGA164
 /samples/bluetooth/mesh/                  @ludvigsj
-/samples/bluetooth/direction_finding_connectionless_rx/ @ppryga @alwa-nordic
-/samples/bluetooth/direction_finding_connectionless_tx/ @ppryga @alwa-nordic
+/samples/bluetooth/direction_finding_connectionless_rx/ @ppryga-nordic @alwa-nordic
+/samples/bluetooth/direction_finding_connectionless_tx/ @ppryga-nordic @alwa-nordic
 /samples/bluetooth/peripheral_fast_pair/  @MarekPieta @kapi-no @KAGA164
 /samples/bootloader/                      @hakonfam @SebastianBoe
 /samples/matter/                          @Damian-Nordic @kkasperczyk-no
