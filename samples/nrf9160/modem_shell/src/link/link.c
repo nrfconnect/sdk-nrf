@@ -40,7 +40,7 @@
 #include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 
-extern bool uart_disable_during_sleep_requested;
+extern bool uart_shell_disable_during_sleep_requested;
 extern struct k_work_q mosh_common_work_q;
 extern char at_resp_buf[MOSH_AT_CMD_RESPONSE_MAX_LEN];
 extern struct k_mutex at_resp_buf_mutex;
@@ -344,7 +344,7 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 	case LTE_LC_EVT_MODEM_SLEEP_EXIT:
 		link_shell_print_modem_sleep_notif(evt);
 
-		if (uart_disable_during_sleep_requested) {
+		if (uart_shell_disable_during_sleep_requested) {
 			uart_toggle_power_state_at_event(evt);
 		}
 		break;
