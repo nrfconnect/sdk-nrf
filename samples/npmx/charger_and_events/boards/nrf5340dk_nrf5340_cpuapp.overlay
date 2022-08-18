@@ -1,0 +1,15 @@
+/{
+    /* Node with pin configuration for default state */
+    buttons {
+        compatible = "gpio-keys";
+        npm_irq0: npm_irq_0 {
+            gpios = <&gpio1 10 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+            label = "npm_irq_0";
+        };
+
+        npm_irq1: npm_irq_1 {
+            gpios = <&gpio1 11 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+            label = "npm_irq_1";
+        };
+    };
+};
