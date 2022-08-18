@@ -618,6 +618,10 @@ static void timeout(struct k_work *work)
 		return;
 	}
 
+	if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+		bt_mesh_scene_invalidate(srv->model);
+	}
+
 	if (srv->state == LIGHT_CTRL_STATE_ON) {
 		prolong(srv);
 		return;
