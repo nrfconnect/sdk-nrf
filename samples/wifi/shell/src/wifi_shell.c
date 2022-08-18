@@ -27,6 +27,7 @@
 #include <wpa_supplicant/wpa_supplicant_i.h>
 
 #include "zephyr_disp_scan.h"
+#include "supp_main.h"
 #endif /* CONFIG_WPA_SUPP */
 
 static struct {
@@ -174,6 +175,16 @@ static int __wifi_args_to_params(size_t argc,
 	return 0;
 }
 
+static int send_wpa_supplicant_dummy_event(void)
+{
+	struct wpa_supplicant_event_msg msg = { 0 };
+
+	msg.ignore_msg = true;
+	wpa_printf(MSG_INFO, "Msg:Dummy, size: %d", sizeof(msg));
+
+	return send_wpa_supplicant_event(&msg);
+}
+
 
 static int cmd_supplicant_connect(const struct shell *shell,
 				  size_t argc,
@@ -261,6 +272,8 @@ static int cmd_supplicant_connect(const struct shell *shell,
 	wpa_supplicant_select_network(wpa_s,
 				      ssid);
 
+	send_wpa_supplicant_dummy_event();
+
 	return 0;
 }
 
@@ -269,6 +282,7 @@ static int cmd_supplicant(const struct shell *shell,
 			  size_t argc,
 			  const char *argv[])
 {
+	int ret;
 	struct wpa_supplicant *wpa_s = wpa_supplicant_get_iface(global, if_name);
 
 	if (!wpa_s) {
@@ -279,8 +293,12 @@ static int cmd_supplicant(const struct shell *shell,
 		return -1;
 	}
 
-	return cli_main(argc,
-			argv);
+	ret =  cli_main(argc, argv);
+	if (!ret) {
+		send_wpa_supplicant_dummy_event();
+	}
+
+	return ret;
 }
 #endif /* CONFIG_WPA_SUPP */
 
