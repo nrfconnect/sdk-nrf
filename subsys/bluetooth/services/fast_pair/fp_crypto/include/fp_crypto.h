@@ -34,6 +34,8 @@ extern "C" {
 #define FP_CRYPTO_ADDITIONAL_DATA_NONCE_LEN	8U
 /** Length of Additional Data packet header (128 bits = 16 bytes). */
 #define FP_CRYPTO_ADDITIONAL_DATA_HEADER_LEN	16U
+/** Length of battery info (1-byte length and type field and 3-byte battery values field). */
+#define FP_CRYPTO_BATTERY_INFO_LEN		4U
 
 /** Hash value using SHA-256.
  *
@@ -140,11 +142,13 @@ size_t fp_crypto_account_key_filter_size(size_t n);
  *			       equal to number of Account Keys.
  * @param[in] n Number of account keys (n >= 1).
  * @param[in] salt Random byte - Salt.
+ * @param[in] battery_info Battery info or NULL if there is no battery info. Length of battery info
+ *			   must be equal to @ref FP_CRYPTO_BATTERY_INFO_LEN.
  *
  * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
  */
 int fp_crypto_account_key_filter(uint8_t *out, const struct fp_account_key *account_key_list,
-				 size_t n, uint8_t salt);
+				 size_t n, uint8_t salt, const uint8_t *battery_info);
 
 /** Encode data to Additional Data packet.
  *
