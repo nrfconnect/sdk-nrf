@@ -14,6 +14,9 @@
 
 #if !defined(CONFIG_MPSL_CX_PIN_FORWARDER)
 #include <mpsl_cx_abstract_interface.h>
+#else
+#include <string.h>
+#include <soc_secure.h>
 #endif
 
 #include <stddef.h>
@@ -32,6 +35,8 @@
 #error No enabled coex nodes registered in DTS.
 #endif
 
+#if !defined(CONFIG_MPSL_CX_PIN_FORWARDER)
+
 /* Value from chapter 7. Logic Timing from Thread Radio Coexistence */
 #define REQUEST_TO_GRANT_US 50U
 
@@ -39,7 +44,6 @@ static const struct gpio_dt_spec req_spec = GPIO_DT_SPEC_GET(CX_NODE, req_gpios)
 static const struct gpio_dt_spec pri_spec = GPIO_DT_SPEC_GET(CX_NODE, pri_dir_gpios);
 static const struct gpio_dt_spec gra_spec = GPIO_DT_SPEC_GET(CX_NODE, grant_gpios);
 
-#if !defined(CONFIG_MPSL_CX_PIN_FORWARDER)
 static mpsl_cx_cb_t callback;
 static struct gpio_callback grant_cb;
 
@@ -217,9 +221,21 @@ SYS_INIT(mpsl_cx_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
 #else // !defined(CONFIG_MPSL_CX_PIN_FORWARDER)
 static int mpsl_cx_init(const struct device *dev)
 {
-	nrf_gpio_pin_mcu_select(req_spec.pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-	nrf_gpio_pin_mcu_select(pri_spec.pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
-	nrf_gpio_pin_mcu_select(gra_spec.pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+#if DT_NODE_HAS_PROP(CX_NODE, req_gpios)
+	uint8_t req_pin = NRF_DT_GPIOS_TO_PSEL(CX_NODE, req_gpios);
+
+	soc_secure_gpio_pin_mcu_select(req_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+#endif
+#if DT_NODE_HAS_PROP(CX_NODE, pri_dir_gpios)
+	uint8_t pri_dir_pin = NRF_DT_GPIOS_TO_PSEL(CX_NODE, pri_dir_gpios);
+
+	soc_secure_gpio_pin_mcu_select(pri_dir_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+#endif
+#if DT_NODE_HAS_PROP(CX_NODE, grant_gpios)
+	uint8_t grant_pin = NRF_DT_GPIOS_TO_PSEL(CX_NODE, grant_gpios);
+
+	soc_secure_gpio_pin_mcu_select(grant_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+#endif
 
 	return 0;
 }
