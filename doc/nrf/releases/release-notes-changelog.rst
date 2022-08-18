@@ -607,6 +607,7 @@ Libraries for networking
     * Updated:
 
       * The conversions of RSRP and RSRQ now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
+      * Function :c:func:`nrf_cloud_fota_is_type_enabled` no longer depends on :kconfig:option:`CONFIG_NRF_CLOUD_FOTA`.
 
   * :ref:`lib_multicell_location` library:
 

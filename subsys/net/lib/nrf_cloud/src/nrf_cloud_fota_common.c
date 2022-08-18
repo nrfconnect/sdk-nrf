@@ -6,8 +6,12 @@
 
 #include <zephyr/zephyr.h>
 #include <stdbool.h>
+#if defined(CONFIG_NRF_MODEM)
 #include <nrf_modem.h>
+#endif
+#if defined(CONFIG_NRF_MODEM_LIB)
 #include <modem/nrf_modem_lib.h>
+#endif
 #include <zephyr/dfu/mcuboot.h>
 #include <dfu/dfu_target_full_modem.h>
 #include <dfu/fmfu_fdev.h>
@@ -288,4 +292,27 @@ int nrf_cloud_pending_fota_job_process(struct nrf_cloud_settings_fota_job * cons
 	}
 
 	return 0;
+}
+
+bool nrf_cloud_fota_is_type_enabled(const enum nrf_cloud_fota_type type)
+{
+	if (!IS_ENABLED(CONFIG_NRF_CLOUD_FOTA) && !IS_ENABLED(CONFIG_NRF_CLOUD_REST)) {
+		return false;
+	}
+
+	switch (type) {
+	case NRF_CLOUD_FOTA_APPLICATION:
+		return IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT);
+	case NRF_CLOUD_FOTA_BOOTLOADER:
+		return IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT) &&
+		       IS_ENABLED(CONFIG_BUILD_S1_VARIANT) &&
+		       IS_ENABLED(CONFIG_SECURE_BOOT);
+	case NRF_CLOUD_FOTA_MODEM_DELTA:
+		return IS_ENABLED(CONFIG_NRF_MODEM);
+	case NRF_CLOUD_FOTA_MODEM_FULL:
+		return IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE) &&
+		       IS_ENABLED(CONFIG_NRF_MODEM);
+	default:
+		return false;
+	}
 }
