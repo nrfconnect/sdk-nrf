@@ -807,7 +807,6 @@ int cmd_zb_ping_generic(const struct shell *shell, struct ping_req *ping_req, st
 
 	memcpy(&ping_entry->zcl_data.pkt_info, pkt_info, sizeof(*pkt_info));
 	ping_entry->zcl_data.ping_req.cb = ping_evt_cb;
-	ping_entry->zcl_data.pkt_info.cb = ping_evt_cb;
 	ping_entry->zcl_data.ping_req.request_ack = ping_req->request_ack;
 	ping_entry->zcl_data.ping_req.request_echo = ping_req->request_echo;
 	ping_entry->zcl_data.ping_req.timeout_ms = CONFIG_ZIGBEE_SHELL_ZCL_CMD_TIMEOUT * MSEC_PER_SEC;

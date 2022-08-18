@@ -4,17 +4,15 @@
 
 #include <zephyr.h>
 #include <zboss_api.h>
-// #include <zigbee_cli.h>
-#include <logging/log.h>
+#include <zigbee/zigbee_shell.h>
+#include "zigbee_shell_utils.h"
+#include <zigbee/zigbee_app_utils.h>
 
 #include "benchmark_api.h"
 #include "benchmark_zigbee_common.h"
-#include "zigbee_shell_ping_types.h"
-#include "zigbee_shell_zcl_types.h"
-#include "zigbee_shell_ctx_mgr.h"
-#include "zigbee/zigbee_app_utils.h"
 #include "zigbee_benchmark_internal.h"
 
+#include <logging/log.h>
 LOG_MODULE_REGISTER(benchmark, CONFIG_LOG_DEFAULT_LEVEL);
 
 #define BENCHMARK_THREAD_STACK_SIZE 1024
@@ -308,7 +306,7 @@ static void schedule_next_frame(void)
  * @param[in] delay_us  Time, in microseconds, between ping request and the event.
  * @param[in] p_request Pointer to the ongoing ping request context structure.
  */
-static void benchmark_ping_evt_handler(enum ping_time_evt evt, zb_uint32_t delay_us,
+static void benchmark_ping_evt_handler(enum ping_time_evt evt, unsigned int delay_us,
                                        struct ctx_entry *entry)
 {
     struct ping_req *p_request = &entry->zcl_data.ping_req;
@@ -696,8 +694,8 @@ void benchmark_init(void)
 {
     mp_test_configuration = NULL;
 
-    zb_ping_set_ping_indication_cb(benchmark_ping_evt_handler);
-    zb_ping_set_ping_event_cb(benchmark_ping_evt_handler);
+    zb_ping_set_ping_indication_cb((ping_time_cb_t)benchmark_ping_evt_handler);
+    zb_ping_set_ping_event_cb((ping_time_cb_t)benchmark_ping_evt_handler);
 
     k_thread_create(&benchmark_thread, benchmark_thread_stack,
                     BENCHMARK_THREAD_STACK_SIZE, benchmark_thread_loop,

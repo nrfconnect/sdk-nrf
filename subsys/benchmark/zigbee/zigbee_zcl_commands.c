@@ -1,12 +1,11 @@
 /*$$$LICENCE_NORDIC_STANDARD<2022>$$$*/
 
+#include "zboss_api.h"
 #include "benchmark_api.h"
 #include "benchmark_zigbee_common.h"
-#include "zboss_api.h"
-// #include "zigbee_cli.h"
-// #include "zigbee_cli_utils.h"
-#include <logging/log.h>
+#include <zigbee/zigbee_shell.h>
 
+#include <logging/log.h>
 LOG_MODULE_DECLARE(benchmark, CONFIG_LOG_DEFAULT_LEVEL);
 
 /**@brief ZCL Frame control field of Zigbee benchmark commands, that expects command execution result.

@@ -245,7 +245,7 @@ static void cmd_discover_peers(const struct shell *shell, size_t argc, char ** a
     uint32_t err_code;
 
     // Remember cli used to start the test so results can be printed on the same interface.
-    p_shell = shell;
+    p_shell = (struct shell*) shell;
     cli_suppress_init((struct shell *)shell);
 
     err_code = benchmark_test_init(&m_test_configuration, benchmark_evt_handler);
@@ -561,7 +561,7 @@ static void cmd_test_start(const struct shell *shell, size_t argc, char ** argv)
     }
 
     // Remember cli used to start the test so results can be printed on the same interface.
-    p_shell = shell;
+    p_shell = (struct shell*) shell;
     cli_suppress_init((struct shell *)shell);
 
     err_code = benchmark_test_init(&m_test_configuration, benchmark_evt_handler);

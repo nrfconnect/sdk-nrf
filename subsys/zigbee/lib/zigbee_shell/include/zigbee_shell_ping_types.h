@@ -11,7 +11,7 @@
 #include <zboss_api_addons.h>
 
 #define PING_CUSTOM_CLUSTER           0xBEEF
-#define PING_MAX_LENGTH               125 // (128-3)
+#define PING_MAX_LENGTH               79
 #define PING_ECHO_REQUEST             0x00
 #define PING_ECHO_REPLY               0x01
 #define PING_ECHO_NO_ACK_REQUEST      0x02
