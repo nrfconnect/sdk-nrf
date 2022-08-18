@@ -505,10 +505,10 @@ static void on_device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
 			bt_foreach_bond(BT_ID_DEFAULT, bond_connect, (void *)addr);
 		}
 		return;
+	} else if (type == BT_GAP_ADV_TYPE_ADV_IND) {
+		/* Note: May lead to connection creation */
+		ad_parse(p_ad, addr);
 	}
-
-	/* Note: May lead to connection creation */
-	ad_parse(p_ad, addr);
 }
 
 static void ble_acl_start_scan(void)

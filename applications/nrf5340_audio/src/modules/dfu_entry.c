@@ -3,6 +3,10 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+/* Override compiler definition to use size-bounded string copying and concatenation function */
+#define _BSD_SOURCE
+#include "string.h"
 #include <zephyr/kernel.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/conn.h>
@@ -10,6 +14,7 @@
 #include "ble_core.h"
 #include "button_handler.h"
 #include "macros_common.h"
+#include "channel_assignment.h"
 
 #ifdef CONFIG_MCUMGR_CMD_OS_MGMT
 #include <os_mgmt/os_mgmt.h>
@@ -87,15 +92,40 @@ static struct bt_conn_cb dfu_conn_callbacks = {
 	.disconnected = dfu_disconnected_cb,
 };
 
+static void dfu_set_bt_name(void)
+{
+	char name[CONFIG_BT_DEVICE_NAME_MAX] = {0};
+
+	strlcpy(name, CONFIG_BT_DEVICE_NAME, CONFIG_BT_DEVICE_NAME_MAX);
+	strlcat(name, "_", CONFIG_BT_DEVICE_NAME_MAX);
+#if (CONFIG_AUDIO_DEV == GATEWAY)
+	strlcat(name, GW_TAG, CONFIG_BT_DEVICE_NAME_MAX);
+#else
+	int ret;
+	enum audio_channel channel;
+
+	ret = channel_assignment_get(&channel);
+	if (ret) {
+		/* Channel is not assigned yet: use default */
+		channel = AUDIO_CHANNEL_DEFAULT;
+	}
+
+	if (channel == AUDIO_CH_L) {
+		strlcat(name, CH_L_TAG, CONFIG_BT_DEVICE_NAME_MAX);
+	} else {
+		strlcat(name, CH_R_TAG, CONFIG_BT_DEVICE_NAME_MAX);
+	}
+
+#endif
+	strlcat(name, "_DFU", CONFIG_BT_DEVICE_NAME_MAX);
+	bt_set_name(name);
+}
+
 static void on_ble_core_ready_dfu_entry(void)
 {
-	char name[CONFIG_BT_DEVICE_NAME_MAX];
-
 	bt_conn_cb_register(&dfu_conn_callbacks);
 	adv_param = *BT_LE_ADV_CONN_NAME;
-	strncpy(name, CONFIG_BT_DEVICE_NAME, CONFIG_BT_DEVICE_NAME_MAX);
-	strncat(name, "_DFU", 4);
-	bt_set_name(name);
+	dfu_set_bt_name();
 	mcumgr_register();
 	smp_adv();
 }

@@ -848,6 +848,9 @@ See the following table for the pin definitions.
 | P1.10       | CS                | D8          |
 +-------------+-------------------+-------------+
 
+.. note::
+   External flash shields must be connected for the kits to boot, even if DFU mode is not initiated.
+
 Enabling FOTA upgrades
 ----------------------
 
@@ -861,6 +864,16 @@ Entering the DFU mode
 The |NCS| uses :ref:`SMP server and mcumgr <zephyr:device_mgmt>` as the DFU backend.
 Unlike the CIS and BIS modes for gateway and headsets, the DFU mode is advertising using the SMP server service.
 For this reason, to enter the DFU mode, you must long press **BTN 4** during each device startup to have the nRF5340 Audio DK enter the DFU mode.
+
+To identify the devices before the DFU takes place, the DFU mode advertising names mention the device type directly.
+The names follow the pattern in which the device *ROLE* is inserted before the ``_DFU`` suffix.
+For example:
+
+* Gateway: NRF5340_AUDIO_GW_DFU
+* Left Headset: NRF5340_AUDIO_HL_DFU
+* Right Headset: NRF5340_AUDIO_HR_DFU
+
+The first part of these names is based on :kconfig:option:`CONFIG_BT_DEVICE_NAME`.
 
 .. _nrf53_audio_app_building:
 
