@@ -18,6 +18,10 @@
 #define AUDIO_CHANNEL_DEFAULT AUDIO_CH_L
 #endif /* AUDIO_CHANNEL_DEFAULT */
 
+static const char CH_L_TAG[] = "HL";
+static const char CH_R_TAG[] = "HR";
+static const char GW_TAG[] = "GW";
+
 /**@brief Audio channel assignment values */
 enum audio_channel {
 	AUDIO_CH_L,

@@ -185,6 +185,7 @@ nRF5340 Audio
   * Bonding between gateway and headsets in the CIS (Connected Isochronous Stream).
   * DFU support for internal and external flash layouts.
     See :ref:`nrf53_audio_app_configuration_configure_fota` in the application documentation for details.
+  * DFU advertising name based on role.
 
 * Updated:
 
