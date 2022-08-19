@@ -212,8 +212,6 @@ nRF Desktop
 * nRF Desktop dongles start peripheral discovery immediately after Bluetooth LE connection is established.
   The dongles no longer wait until the connection is secured.
 
-|no_changes_yet_note|
-
 Thingy:53 Zigbee weather station
 --------------------------------
 
@@ -703,6 +701,8 @@ Common Application Framework (CAF)
 
   * Added :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST` Kconfig option.
     The option is used instead of :kconfig:option:`CONFIG_BT_FILTER_ACCEPT_LIST` option to enable the filter accept list.
+  * Bluetooth device name is no longer automatically included in scan response data.
+    A dedicated data provider (:kconfig:option:`CONFIG_BT_LE_ADV_PROV_DEVICE_NAME`) can be used to add the Bluetooth device name to the scan response data.
 
 * :ref:`caf_ble_state`:
 
