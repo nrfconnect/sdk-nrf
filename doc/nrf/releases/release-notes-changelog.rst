@@ -343,6 +343,8 @@ nRF9160 samples
     * New command ``link search`` for setting periodic modem search parameters.
     * Added printing of modem domain events.
     * MQTT support for ``gnss`` command A-GPS and P-GPS.
+    * An application-specific modem fault handler.
+      The modem fault handler halts application execution in case of a modem crash.
 
   * Updated:
 

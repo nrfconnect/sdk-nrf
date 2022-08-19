@@ -76,6 +76,69 @@ K_MUTEX_DEFINE(at_resp_buf_mutex);
 
 K_SEM_DEFINE(nrf_carrier_lib_initialized, 0, 1);
 
+static const char *modem_crash_reason_get(uint32_t reason)
+{
+	switch (reason) {
+	case NRF_MODEM_FAULT_UNDEFINED:
+		return "Undefined fault";
+
+	case NRF_MODEM_FAULT_HW_WD_RESET:
+		return "HW WD reset";
+
+	case NRF_MODEM_FAULT_HARDFAULT:
+		return "Hard fault";
+
+	case NRF_MODEM_FAULT_MEM_MANAGE:
+		return "Memory management fault";
+
+	case NRF_MODEM_FAULT_BUS:
+		return "Bus fault";
+
+	case NRF_MODEM_FAULT_USAGE:
+		return "Usage fault";
+
+	case NRF_MODEM_FAULT_SECURE_RESET:
+		return "Secure control reset";
+
+	case NRF_MODEM_FAULT_PANIC_DOUBLE:
+		return "Error handler crash";
+
+	case NRF_MODEM_FAULT_PANIC_RESET_LOOP:
+		return "Reset loop";
+
+	case NRF_MODEM_FAULT_ASSERT:
+		return "Assert";
+
+	case NRF_MODEM_FAULT_PANIC:
+		return "Unconditional SW reset";
+
+	case NRF_MODEM_FAULT_FLASH_ERASE:
+		return "Flash erase fault";
+
+	case NRF_MODEM_FAULT_FLASH_WRITE:
+		return "Flash write fault";
+
+	case NRF_MODEM_FAULT_POFWARN:
+		return "Undervoltage fault";
+
+	case NRF_MODEM_FAULT_THWARN:
+		return "Overtemperature fault";
+
+	default:
+		return "Unknown reason";
+	}
+}
+
+void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info)
+{
+	printk("Modem crash reason: 0x%x (%s), PC: 0x%x\n",
+		fault_info->reason,
+		modem_crash_reason_get(fault_info->reason),
+		fault_info->program_counter);
+
+	__ASSERT(false, "Modem crash detected, halting application execution");
+}
+
 static void mosh_print_version_info(void)
 {
 #if defined(APP_VERSION)
