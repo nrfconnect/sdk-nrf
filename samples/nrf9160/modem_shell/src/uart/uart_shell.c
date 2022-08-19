@@ -38,11 +38,11 @@ static int print_help(const struct shell *shell, size_t argc, char **argv)
 
 static void uart_disable_handler(struct k_work *work)
 {
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
-	int err = nrf_modem_lib_trace_stop();
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART
+	int err = nrf_modem_lib_trace_level_set(NRF_MODEM_LIB_TRACE_LEVEL_OFF);
 
 	if (err) {
-		mosh_print("nrf_modem_lib_trace_stop failed with err = %d.", err);
+		mosh_print("nrf_modem_lib_trace_level_set failed with err = %d.", err);
 		return;
 	}
 #endif
@@ -53,11 +53,11 @@ static void uart_enable_handler(struct k_work *work)
 {
 	enable_uarts();
 	mosh_print("UARTs enabled\n");
-#ifdef CONFIG_NRF_MODEM_LIB_TRACE_MEDIUM_UART
-	int err = nrf_modem_lib_trace_start(NRF_MODEM_LIB_TRACE_ALL);
+#ifdef CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART
+	int err = nrf_modem_lib_trace_level_set(NRF_MODEM_LIB_TRACE_LEVEL_FULL);
 
 	if (err) {
-		mosh_print("nrf_modem_lib_trace_start failed with err = %d.", err);
+		mosh_print("nrf_modem_lib_trace_level_set failed with err = %d.", err);
 	}
 #endif
 }
