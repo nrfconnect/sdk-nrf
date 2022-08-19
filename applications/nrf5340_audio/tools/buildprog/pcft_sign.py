@@ -181,14 +181,14 @@ def sign(orig_pcft_hex, build_dir):
     if ret_val:
         raise Exception("python error: " + str(ret_val))
 
-    os_cmd = f'python {ZEPHYR_BASE}/scripts/mergehex.py -o {build_dir}/b0n_container.hex\
+    os_cmd = f'python {ZEPHYR_BASE}/scripts/build/mergehex.py -o {build_dir}/b0n_container.hex\
     {build_dir}/{PCFT_HEX} {build_dir}/provision.hex'
 
     ret_val = os.system(os_cmd)
     if ret_val:
         raise Exception("python error: " + str(ret_val))
 
-    os_cmd = f'python {ZEPHYR_BASE}/scripts/mergehex.py -o {build_dir}/{FINAL_PCFT_HEX}\
+    os_cmd = f'python {ZEPHYR_BASE}/scripts/build/mergehex.py -o {build_dir}/{FINAL_PCFT_HEX}\
     --overlap=replace {build_dir}/hci_rpmsg/b0n/zephyr/zephyr.hex  {build_dir}/b0n_container.hex\
     {build_dir}/provision.hex {build_dir}/{PCFT_HEX} {build_dir}/signed_by_b0_pcft.hex'
 
@@ -213,7 +213,7 @@ def sign(orig_pcft_hex, build_dir):
     shutil.copy(src_path, dst_path)
 
     # Generate merged_domains.hex
-    os_cmd = f'python {ZEPHYR_BASE}/scripts/mergehex.py -o {build_dir}/zephyr/merged_domains.hex\
+    os_cmd = f'python {ZEPHYR_BASE}/scripts/build/mergehex.py -o {build_dir}/zephyr/merged_domains.hex\
     {build_dir}/{FINAL_PCFT_HEX} {build_dir}/zephyr/merged.hex'
 
     ret_val = os.system(os_cmd)
