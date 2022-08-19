@@ -195,6 +195,7 @@ Kconfig*                                  @tejlmand
 /subsys/shell/                            @nordic-krch
 /subsys/spm/                              @SebastianBoe
 /subsys/nonsecure/                        @SebastianBoe
+/subsys/benchmark/                        @FilipZajdel
 /modules/                                 @tejlmand
 /modules/tfm/                             @SebastianBoe @joerchan
 /subsys/zigbee/                           @tomchy @sebastiandraus
