@@ -1951,6 +1951,16 @@ fail:
 		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
 }
 
+struct sensor_value val_to_sensorval(int val)
+{
+	struct sensor_value out;
+
+	out.val1 = val;
+	out.val2 = (val - out.val1) * 1000000;
+
+	return out;
+}
+
 static void sensor_column_get(uint8_t *data, uint16_t len)
 {
 	struct mesh_sensor_column_get *cmd = (void *)data;
@@ -1990,10 +2000,15 @@ static void sensor_column_get(uint8_t *data, uint16_t len)
 	net_buf_simple_init_with_data(buf, (void *)&cmd->data, cmd->len);
 
 	col_format = bt_mesh_sensor_column_format_get(sensor);
-	err = sensor_ch_decode(buf, col_format, &column.start);
-	if (err) {
-		LOG_ERR("err=%d", err);
-		goto fail;
+	if (col_format == NULL) {
+		column.start = val_to_sensorval(cmd->data[0]);
+	} else {
+		err = sensor_ch_decode(buf, col_format, &column.start);
+
+		if (err) {
+			LOG_ERR("err=%d", err);
+			goto fail;
+		}
 	}
 
 	err = bt_mesh_sensor_cli_series_entry_get(&sensor_cli, &ctx, sensor,
@@ -2004,6 +2019,11 @@ static void sensor_column_get(uint8_t *data, uint16_t len)
 	}
 	net_buf_simple_init(buf_rsp, 0);
 	net_buf_simple_add_le16(buf_rsp, sensor->id);
+
+	if (col_format == NULL) {
+		sensor_value_encode(buf_rsp, sensor, rsp.value);
+		goto send;
+	}
 
 	LOG_ERR("err=%d", err);
 	err = sensor_ch_encode(buf_rsp, col_format, &rsp.column.start);
@@ -2026,7 +2046,7 @@ static void sensor_column_get(uint8_t *data, uint16_t len)
 		LOG_ERR("err=%d", err);
 		goto fail;
 	}
-
+send:
 	tester_send(BTP_SERVICE_ID_MMDL, MMDL_SENSOR_COLUMN_GET,
 		    CONTROLLER_INDEX, buf_rsp->data, buf_rsp->len);
 	return;
@@ -2043,7 +2063,7 @@ static void sensor_series_get(uint8_t *data, uint16_t len)
 	struct net_buf_simple *buf_rsp = NET_BUF_SIMPLE(BT_MESH_TX_SDU_MAX);
 	const struct bt_mesh_sensor_type *sensor;
 	struct bt_mesh_sensor_column range;
-	struct bt_mesh_sensor_series_entry rsp[5];
+	struct bt_mesh_sensor_series_entry rsp[10];
 	struct sensor_value width;
 	uint32_t count = ARRAY_SIZE(rsp);
 	const struct bt_mesh_sensor_format *col_format;
@@ -2077,15 +2097,17 @@ static void sensor_series_get(uint8_t *data, uint16_t len)
 	net_buf_simple_init_with_data(buf, (void *)&cmd->data, cmd->len);
 
 	col_format = bt_mesh_sensor_column_format_get(sensor);
-	err = sensor_ch_decode(buf, col_format, &range.start);
-	if (err) {
-		goto fail;
+
+	if (col_format != NULL) {
+		err = sensor_ch_decode(buf, col_format, &range.end);
+		if (err) {
+			goto fail;
+		}
+	} else {
+		range.start.val1 = net_buf_simple_pull_u8(buf);
+		range.end.val1 = net_buf_simple_pull_u8(buf);
 	}
 
-	err = sensor_ch_decode(buf, col_format, &range.end);
-	if (err) {
-		goto fail;
-	}
 
 	err = bt_mesh_sensor_cli_series_entries_get(&sensor_cli, &ctx, sensor,
 						    &range, rsp, &count);
@@ -2095,6 +2117,13 @@ static void sensor_series_get(uint8_t *data, uint16_t len)
 	}
 
 	net_buf_simple_init(buf_rsp, 0);
+
+	if (col_format == NULL) {
+		for (i = 0; i < count; ++i) {
+			sensor_value_encode(buf_rsp, sensor, rsp[i].value);
+		}
+		goto send;
+	}
 
 	for (i = 0; i < count; ++i) {
 		err = sensor_ch_encode(buf_rsp, col_format,
@@ -2119,6 +2148,8 @@ static void sensor_series_get(uint8_t *data, uint16_t len)
 			goto fail;
 		}
 	}
+
+send:
 	net_buf_simple_add_le16(buf_rsp, sensor->id);
 	tester_send(BTP_SERVICE_ID_MMDL, MMDL_SENSOR_SERIES_GET,
 		    CONTROLLER_INDEX, buf_rsp->data, buf_rsp->len);
