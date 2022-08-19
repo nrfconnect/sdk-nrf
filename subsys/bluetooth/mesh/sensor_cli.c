@@ -259,9 +259,14 @@ static int handle_column_status(struct bt_mesh_model *model, struct bt_mesh_msg_
 
 yield_ack:
 	if (bt_mesh_msg_ack_ctx_match(&cli->ack_ctx, BT_MESH_SENSOR_OP_COLUMN_STATUS, ctx->addr,
-				      (void **)&rsp) &&
-	    rsp->col->start.val1 == entry.column.start.val1 &&
-	    rsp->col->start.val2 == entry.column.start.val2) {
+								  (void **)&rsp)) {
+		/* If column format exists verify Raw Value A */
+		if (col_format &&
+			(rsp->col->start.val1 != entry.column.start.val1 ||
+			 rsp->col->start.val2 != entry.column.start.val2)) {
+			return 0;
+		}
+
 		if (err) {
 			rsp->count = 0;
 		} else {
