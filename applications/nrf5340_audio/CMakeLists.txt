@@ -36,8 +36,7 @@ add_compile_definitions(GATEWAY=2)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
-# Set the nRF5340 Audio version. x.x.99 indicates master branch/cutting edge
-project(NRF5340_AUDIO VERSION 0.5.99)
+project(NRF5340_AUDIO)
 
 string(TIMESTAMP NRF5340_AUDIO_CORE_APP_COMP_DATE "%a %b %d %H:%M:%S %Y")
 
