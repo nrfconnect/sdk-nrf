@@ -14,6 +14,9 @@ config BT_LE_ADV_PROV_FLAGS
 config BT_LE_ADV_PROV_GAP_APPEARANCE
 	default y
 
+config BT_LE_ADV_PROV_DEVICE_NAME
+	default y
+
 config BT_LE_ADV_PROV_SWIFT_PAIR
 	default y
 

@@ -230,8 +230,7 @@ static int ble_adv_start_undirected(const bt_addr_le_t *bond_addr,
 				    bool fast_adv)
 {
 	struct bt_le_adv_param adv_param = {
-		.options = BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME |
-			   BT_LE_ADV_OPT_USE_NAME,
+		.options = BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME,
 	};
 
 	LOG_INF("Use %s advertising", (fast_adv)?("fast"):("slow"));
