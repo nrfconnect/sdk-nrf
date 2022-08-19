@@ -8,5 +8,6 @@ comment "Bluetooth LE advertising providers"
 
 rsource "Kconfig.flags"
 rsource "Kconfig.gap_appearance"
+rsource "Kconfig.device_name"
 rsource "Kconfig.swift_pair"
 rsource "Kconfig.tx_power"

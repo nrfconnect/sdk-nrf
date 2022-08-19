@@ -94,6 +94,7 @@ Among others, the following providers are available:
 * GAP Appearance (:kconfig:option:`CONFIG_BT_LE_ADV_PROV_GAP_APPEARANCE`),
 * Microsoft Swift Pair (:kconfig:option:`CONFIG_BT_LE_ADV_PROV_SWIFT_PAIR`),
 * TX Power (:kconfig:option:`CONFIG_BT_LE_ADV_PROV_TX_POWER`).
+* Bluetooth device name (:kconfig:option:`CONFIG_BT_LE_ADV_PROV_DEVICE_NAME`).
 
 For details about each advertising provider, see the Kconfig option description.
 

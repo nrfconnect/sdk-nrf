@@ -6,5 +6,6 @@
 
 zephyr_sources_ifdef(CONFIG_BT_LE_ADV_PROV_FLAGS		flags.c)
 zephyr_sources_ifdef(CONFIG_BT_LE_ADV_PROV_GAP_APPEARANCE	gap_appearance.c)
+zephyr_sources_ifdef(CONFIG_BT_LE_ADV_PROV_DEVICE_NAME		device_name.c)
 zephyr_sources_ifdef(CONFIG_BT_LE_ADV_PROV_SWIFT_PAIR		swift_pair.c)
 zephyr_sources_ifdef(CONFIG_BT_LE_ADV_PROV_TX_POWER		tx_power.c)
