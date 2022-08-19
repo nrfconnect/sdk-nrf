@@ -183,7 +183,10 @@ manifest:
       repo-path: sdk-openthread
       path: modules/lib/openthread
       revision: 0d19f9112101e87722ec80b3a247bc7a1c54b232
-
+    - name: npmx
+      repo-path: npmx
+      path: modules/npmx
+      revision: 7d38136be5180ea5db6ccd03809448e200545698
   # West-related configuration for the nrf repository.
   self:
     # This repository should be cloned to ncs/nrf.

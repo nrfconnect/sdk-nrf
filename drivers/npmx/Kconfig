@@ -1,0 +1,22 @@
+
+config NPMX_ENABLE
+	bool "Enabling npmx"
+
+if NPMX_ENABLE
+
+config NPMX_INIT_PRIORITY
+    int "NPMX init priority"
+	default 90
+	help
+	  NPMX initialization priority.
+
+config NPMX_DEVICE_NPM1300_FP1
+    depends on I2C && GPIO
+    bool "Select nPM1300 FP1 as npmx device"
+    default y
+
+module = NPMX
+module-str = npmx
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # NPMX_ENABLE

@@ -13,3 +13,15 @@
         };
     };
 };
+
+&i2c1 {
+    compatible = "nordic,nrf-twim";
+    status = "okay";
+    npmx: npm1300@6b {
+        status = "okay";
+		compatible = "nordic,npm1300";
+		label = "npm1300";
+		reg = <0x6b>;
+		int-gpios = <&gpio1 10 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+	};
+};
