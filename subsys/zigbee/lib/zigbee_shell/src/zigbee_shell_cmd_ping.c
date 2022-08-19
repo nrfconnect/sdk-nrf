@@ -13,7 +13,6 @@
 #include <zigbee/zigbee_shell.h>
 #include "zigbee_shell_utils.h"
 
-
 /** @brief ZCL Frame control field of Zigbee PING commands.
  */
 
@@ -21,15 +20,13 @@
 
 LOG_MODULE_REGISTER(zigbee_shell_ping, CONFIG_ZIGBEE_SHELL_LOG_LEVEL);
 
-
 static zb_uint32_t get_request_duration(struct ctx_entry *req_data);
 static void ping_shell_evt_handler(enum ping_time_evt evt, zb_uint32_t delay_ms,
-				 struct ctx_entry *req_data);
+				   struct ctx_entry *req_data);
 
 static uint8_t ping_seq_num;
 static ping_time_cb_t ping_ind_cb;
 static ping_time_cb_t ping_evt_cb = ping_shell_evt_handler;
-
 
 /**@brief Invalidate an entry with ping request data after the timeout.
  *        This function is called as the ZBOSS callback.
@@ -45,8 +42,7 @@ static void invalidate_ping_entry_cb(zb_uint8_t index)
 		delay_ms = get_request_duration(ping_entry);
 		/* Inform user about timeout event. */
 		if (ping_entry->zcl_data.ping_req.cb) {
-			ping_entry->zcl_data.ping_req.cb(PING_EVT_FRAME_TIMEOUT,
-							 delay_ms,
+			ping_entry->zcl_data.ping_req.cb(PING_EVT_FRAME_TIMEOUT, delay_ms,
 							 ping_entry);
 		}
 
@@ -121,18 +117,10 @@ static void zb_zcl_send_ping_frame(zb_uint8_t index)
 
 	/* Send the actual frame. */
 	zb_err_code = zb_zcl_finish_and_send_packet_new(
-				packet_info->buffer,
-				packet_info->ptr,
-				&(packet_info->dst_addr),
-				packet_info->dst_addr_mode,
-				packet_info->dst_ep,
-				packet_info->ep,
-				packet_info->prof_id,
-				packet_info->cluster_id,
-				packet_info->cb,
-				0,
-				packet_info->disable_aps_ack,
-				0);
+		packet_info->buffer, packet_info->ptr, &(packet_info->dst_addr),
+		packet_info->dst_addr_mode, packet_info->dst_ep, packet_info->ep,
+		packet_info->prof_id, packet_info->cluster_id, packet_info->cb, 0,
+		packet_info->disable_aps_ack, 0);
 
 	if (ping_entry->type == CTX_MGR_PING_REQ_ENTRY_TYPE) {
 		if (zb_err_code != RET_OK) {
@@ -142,16 +130,14 @@ static void zb_zcl_send_ping_frame(zb_uint8_t index)
 			return;
 		}
 
-		zb_err_code = ZB_SCHEDULE_APP_ALARM(invalidate_ping_entry_cb,
-						    index,
-						    ZB_MILLISECONDS_TO_BEACON_INTERVAL(
-						    ping_entry->zcl_data.ping_req.timeout_ms));
+		zb_err_code =
+			ZB_SCHEDULE_APP_ALARM(invalidate_ping_entry_cb, index,
+					      ZB_MILLISECONDS_TO_BEACON_INTERVAL(
+						      ping_entry->zcl_data.ping_req.timeout_ms));
 
 		if (zb_err_code != RET_OK) {
-			zb_shell_print_error(
-				ping_entry->shell,
-				"Can not schedule timeout alarm.",
-				ZB_FALSE);
+			zb_shell_print_error(ping_entry->shell, "Can not schedule timeout alarm.",
+					     ZB_FALSE);
 			ctx_mgr_delete_entry(ping_entry);
 			return;
 		}
@@ -159,8 +145,7 @@ static void zb_zcl_send_ping_frame(zb_uint8_t index)
 		if (ping_entry->zcl_data.ping_req.cb) {
 			uint32_t time_diff = get_request_duration(ping_entry);
 
-			ping_entry->zcl_data.ping_req.cb(PING_EVT_FRAME_SCHEDULED,
-							 time_diff,
+			ping_entry->zcl_data.ping_req.cb(PING_EVT_FRAME_SCHEDULED, time_diff,
 							 ping_entry);
 		}
 	} else {
@@ -245,31 +230,27 @@ static void dispatch_user_callback(zb_bufid_t bufid)
 			if (req_data->zcl_data.ping_req.cb) {
 				if (req_data->zcl_data.ping_req.request_ack == 0) {
 					req_data->zcl_data.ping_req.cb(PING_EVT_FRAME_SENT,
-								       delay_ms,
-								       req_data);
+								       delay_ms, req_data);
 				} else {
 					req_data->zcl_data.ping_req.cb(PING_EVT_ACK_RECEIVED,
-								       delay_ms,
-								       req_data);
+								       delay_ms, req_data);
 				}
 			}
 
 			/* If only ACK was requested, cancel ongoing alarm. */
 			if (req_data->zcl_data.ping_req.request_echo == 0) {
 				zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(
-						invalidate_ping_entry_cb,
-						ctx_mgr_get_index_by_entry(req_data));
+					invalidate_ping_entry_cb,
+					ctx_mgr_get_index_by_entry(req_data));
 				ZB_ERROR_CHECK(zb_err_code);
 
 				ctx_mgr_delete_entry(req_data);
 			}
 		} else {
-			LOG_ERR("Ping request returned error status: %d",
-				ping_cmd_status->status);
+			LOG_ERR("Ping request returned error status: %d", ping_cmd_status->status);
 		}
 	} else {
-		LOG_ERR("Couldn't find entry with ping request sent to %#.4x",
-			short_addr);
+		LOG_ERR("Couldn't find entry with ping request sent to %#.4x", short_addr);
 	}
 
 	zb_buf_free(bufid);
@@ -394,7 +375,7 @@ static void ping_request_send(struct ctx_entry *ping_entry)
 	memset(cmd_buf_ptr, PING_ECHO_REQUEST_BYTE, ping_entry->zcl_data.ping_req.count);
 	cmd_buf_ptr += ping_entry->zcl_data.ping_req.count;
 	ping_entry->zcl_data.ping_req.ping_seq = ping_seq_num;
-	ping_entry->id  = ping_seq_num;
+	ping_entry->id = ping_seq_num;
 	ping_seq_num++;
 
 	/* Schedule frame to send. */
@@ -533,8 +514,7 @@ static void ping_req_indicate(zb_bufid_t zcl_cmd_bufid)
 	tmp_request.zcl_data.pkt_info.dst_addr.addr_short = remote_node_addr.u.short_addr;
 
 	ping_ind_cb(PING_EVT_REQUEST_RECEIVED,
-		    k_ticks_to_us_near32(tmp_request.zcl_data.ping_req.sent_time),
-		    &tmp_request);
+		    k_ticks_to_us_near32(tmp_request.zcl_data.ping_req.sent_time), &tmp_request);
 }
 
 /**@brief The Handler to 'intercept' every frame coming to the endpoint.
@@ -589,10 +569,8 @@ zb_uint8_t zb_shell_ep_handler_ping(zb_bufid_t bufid)
 		time_diff = get_request_duration(req_data);
 
 		/* Cancel the ongoing alarm which was to erase the row ... */
-		zb_ret_t zb_err_code =
-			ZB_SCHEDULE_APP_ALARM_CANCEL(
-				invalidate_ping_entry_cb,
-				ctx_mgr_get_index_by_entry(req_data));
+		zb_ret_t zb_err_code = ZB_SCHEDULE_APP_ALARM_CANCEL(
+			invalidate_ping_entry_cb, ctx_mgr_get_index_by_entry(req_data));
 		ZB_ERROR_CHECK(zb_err_code);
 
 		/* Call callback function in order to indicate
@@ -607,7 +585,6 @@ zb_uint8_t zb_shell_ep_handler_ping(zb_bufid_t bufid)
 
 	} else if ((zcl_hdr->cmd_id == PING_ECHO_REQUEST) ||
 		   (zcl_hdr->cmd_id == PING_ECHO_NO_ACK_REQUEST)) {
-
 		zb_uint8_t len = zb_buf_len(bufid);
 		struct zcl_packet_info *packet_info;
 		struct ctx_entry *ping_entry = ctx_mgr_new_entry(CTX_MGR_PING_REPLY_ENTRY_TYPE);
@@ -741,9 +718,7 @@ int cmd_zb_ping(const struct shell *shell, size_t argc, char **argv)
 
 	if (!ping_entry) {
 		zb_shell_print_error(
-			shell,
-			"Request pool empty - wait for ongoing command to finish",
-			ZB_FALSE);
+			shell, "Request pool empty - wait for ongoing command to finish", ZB_FALSE);
 		return -ENOEXEC;
 	}
 
@@ -762,9 +737,7 @@ int cmd_zb_ping(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	ping_entry->zcl_data.pkt_info.dst_addr_mode =
-		parse_address(argv[argc - 2],
-			      &(ping_entry->zcl_data.pkt_info.dst_addr),
-			      ADDR_ANY);
+		parse_address(argv[argc - 2], &(ping_entry->zcl_data.pkt_info.dst_addr), ADDR_ANY);
 
 	if (ping_entry->zcl_data.pkt_info.dst_addr_mode == ADDR_INVALID) {
 		zb_shell_print_error(shell, "Wrong address format", ZB_FALSE);
@@ -772,10 +745,8 @@ int cmd_zb_ping(const struct shell *shell, size_t argc, char **argv)
 		return -EINVAL;
 	}
 
-	if (!zb_shell_sscan_uint(argv[argc - 1],
-			       (uint8_t *)&ping_entry->zcl_data.ping_req.count, 2,
-			       10)) {
-
+	if (!zb_shell_sscan_uint(argv[argc - 1], (uint8_t *)&ping_entry->zcl_data.ping_req.count, 2,
+				 10)) {
 		zb_shell_print_error(shell, "Incorrect ping payload size", ZB_FALSE);
 		ctx_mgr_delete_entry(ping_entry);
 		return -EINVAL;
@@ -794,14 +765,13 @@ int cmd_zb_ping(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
-int cmd_zb_ping_generic(const struct shell *shell, struct ping_req *ping_req, struct zcl_packet_info *pkt_info)
+int cmd_zb_ping_generic(const struct shell *shell, struct ping_req *ping_req,
+			struct zcl_packet_info *pkt_info)
 {
-	struct ctx_entry *ping_entry =
-		ctx_mgr_new_entry(CTX_MGR_PING_REQ_ENTRY_TYPE);
+	struct ctx_entry *ping_entry = ctx_mgr_new_entry(CTX_MGR_PING_REQ_ENTRY_TYPE);
 
 	if (!ping_entry || !ping_req) {
-		zb_shell_print_error(shell, "Couldn't get free entry to store data",
-				   ZB_FALSE);
+		zb_shell_print_error(shell, "Couldn't get free entry to store data", ZB_FALSE);
 		return -ENOEXEC;
 	}
 
@@ -809,20 +779,19 @@ int cmd_zb_ping_generic(const struct shell *shell, struct ping_req *ping_req, st
 	ping_entry->zcl_data.ping_req.cb = ping_evt_cb;
 	ping_entry->zcl_data.ping_req.request_ack = ping_req->request_ack;
 	ping_entry->zcl_data.ping_req.request_echo = ping_req->request_echo;
-	ping_entry->zcl_data.ping_req.timeout_ms = CONFIG_ZIGBEE_SHELL_ZCL_CMD_TIMEOUT * MSEC_PER_SEC;
+	ping_entry->zcl_data.ping_req.timeout_ms =
+		CONFIG_ZIGBEE_SHELL_ZCL_CMD_TIMEOUT * MSEC_PER_SEC;
 	ping_entry->zcl_data.ping_req.count = ping_req->count;
 
-	if (ping_entry->zcl_data.pkt_info.dst_addr_mode ==
-	    ADDR_INVALID) {
+	if (ping_entry->zcl_data.pkt_info.dst_addr_mode == ADDR_INVALID) {
 		zb_shell_print_error(shell, "Wrong address format", ZB_FALSE);
 		ctx_mgr_delete_entry(ping_entry);
 		return -EINVAL;
 	}
 
 	if (ping_req->count > PING_MAX_LENGTH) {
-		shell_print(shell, "Note: Ping payload size"
-							"exceeds maximum possible,"
-							"assuming maximum");
+		shell_print(shell, "Note: Ping payload size exceeds maximum possible size, "
+			   "assuming maximum size of %u bytes", PING_MAX_LENGTH);
 		ping_entry->zcl_data.ping_req.count = PING_MAX_LENGTH;
 	}
 

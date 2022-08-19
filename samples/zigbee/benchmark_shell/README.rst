@@ -1,6 +1,6 @@
-.. _zigbee_shell_sample:
+.. _zigbee_benchmark_sample:
 
-Zigbee: Shell
+Zigbee: Benchmark
 #############
 
 .. contents::

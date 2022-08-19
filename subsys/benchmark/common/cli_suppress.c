@@ -1,36 +1,39 @@
-/*$$$LICENCE_NORDIC_STANDARD<2022>$$$*/
-#include <logging/log.h>
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 #include <shell/shell.h>
 
-LOG_MODULE_DECLARE(benchmark, CONFIG_LOG_DEFAULT_LEVEL);
-
-static bool m_suppress_cli = false;
-extern struct shell *p_shell;
+static bool suppress_enabled;
+static struct shell *p_shell;
 
 void cli_suppress_init(struct shell *_shell)
 {
-    p_shell = _shell;
+	suppress_enabled = false;
+	p_shell = _shell;
 }
 
 void cli_suppress_enable(void)
 {
-    shell_info(p_shell, "Suppressing CLI");
+	shell_info(p_shell, "Suppressing CLI");
 
-    m_suppress_cli = true;
+	suppress_enabled = true;
 
-    shell_stop(p_shell);
+	shell_stop(p_shell);
 }
 
 void cli_suppress_disable(void)
 {
-    m_suppress_cli = false;
+	suppress_enabled = false;
 
-    shell_start(p_shell);
+	shell_start(p_shell);
 
-    shell_info(p_shell, "Enabling CLI");
+	shell_info(p_shell, "Enabling CLI");
 }
 
 bool cli_suppress_is_enabled(void)
 {
-    return m_suppress_cli;
+	return suppress_enabled;
 }

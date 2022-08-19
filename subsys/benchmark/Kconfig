@@ -7,15 +7,15 @@
 menu "Benchmark"
 
 config BENCHMARK
-    bool "Enable Benchmark component"
-    help
-      Enable the benchmark component.
+	bool "Enable Benchmark component"
+	help
+	  Enable the benchmark component.
 
 config BENCHMARK_ZIGBEE
-    bool "Enable Benchmark for Zigbee"
-    imply BENCHMARK
-    imply ZIGBEE_SHELL
-    help
-      The benchmark component for ZigBee.
+	bool "Enable Benchmark for Zigbee"
+	imply BENCHMARK
+	imply ZIGBEE_SHELL
+	help
+	  The benchmark component for ZigBee.
 
 endmenu

@@ -1,4 +1,8 @@
-/*$$$LICENCE_NORDIC_STANDARD<2018>$$$*/
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
 
 #ifndef PROTOCOL_API_H__
 #define PROTOCOL_API_H__
@@ -23,7 +27,7 @@ bool protocol_is_error(uint32_t error_code);
 /**@brief Function for protocol initialization.
  *
  * @note  This function should initialize protocol-specific Board Support Package.
-*/
+ */
 void protocol_init(void);
 
 /**@brief Function for protocol processing. */
@@ -43,14 +47,14 @@ void protocol_soc_evt_handler(uint32_t soc_evt);
  * @param[in]  shell    Pointer to a shell instance.
  * @param[in]  p_peers  Pointer to a structure describing all known peers.
  */
-void protocol_cmd_peer_db_get(const struct shell *shell, const benchmark_peer_db_t * p_peers);
+void protocol_cmd_peer_db_get(const struct shell *shell, const struct benchmark_peer_db *p_peers);
 
 /**@brief   Function that prints protocol-specific information about a peer.
  *
  * @param[in]  shell   Pointer to a shell instance.
  * @param[in]  p_peer  Pointer to a peer information structure.
  */
-void protocol_cmd_peer_get(const struct shell *shell, const benchmark_peer_entry_t * p_peer);
+void protocol_cmd_peer_get(const struct shell *shell, const struct benchmark_peer_entry *p_peer);
 
 /**@brief   Function that prints protocol-specific information about the local node.
  *

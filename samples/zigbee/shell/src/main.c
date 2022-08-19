@@ -19,6 +19,10 @@
 #include <zb_nrf_platform.h>
 #include "zb_range_extender.h"
 
+#if defined(CONFIG_BENCHMARK_ZIGBEE) && CONFIG_BENCHMARK_ZIGBEE
+#include <benchmark_api.h>
+#endif
+
 
 /* Device endpoint, used to receive ZCL commands. */
 #define APP_ZIGBEE_ENDPOINT              CONFIG_ZIGBEE_SHELL_ENDPOINT
@@ -244,6 +248,10 @@ void main(void)
 	ZB_AF_REGISTER_DEVICE_CTX(&app_zigbee_ctx);
 
 	app_clusters_attr_init();
+
+	if (IS_ENABLED(CONFIG_BENCHMARK_ZIGBEE)) {
+		benchmark_init();
+	}
 
 	/* Register handlers to identify notifications */
 	ZB_AF_SET_IDENTIFY_NOTIFICATION_HANDLER(APP_ZIGBEE_ENDPOINT, identify_cb);
