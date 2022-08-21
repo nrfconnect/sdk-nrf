@@ -426,12 +426,11 @@ err:
 	return -1;
 }
 
-static const struct wifi_nrf_dev_ops dev_ops = {
-	.if_api.iface_api.init = wifi_nrf_if_init,
-	.if_api.get_capabilities = wifi_nrf_if_caps_get,
-	.if_api.send = wifi_nrf_if_send,
-
-	.off_api.disp_scan = wifi_nrf_disp_scan_zep,
+static const struct net_wifi_mgmt_offload wifi_offload_ops = {
+	.wifi_iface.iface_api.init = wifi_nrf_if_init,
+	.wifi_iface.get_capabilities = wifi_nrf_if_caps_get,
+	.wifi_iface.send = wifi_nrf_if_send,
+	.scan = wifi_nrf_disp_scan_zep,
 };
 
 
@@ -462,5 +461,5 @@ ETH_NET_DEVICE_INIT(wlan0, /* name - token */
 		    NULL, /* cfg */
 #endif /* !CONFIG_WPA_SUPP */
 		    CONFIG_WIFI_INIT_PRIORITY, /* prio */
-		    &dev_ops, /* api */
+		    &wifi_offload_ops, /* api */
 		    1500); /*mtu */

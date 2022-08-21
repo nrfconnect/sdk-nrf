@@ -88,17 +88,12 @@ static int wifi_scan(uint32_t mgmt_request, struct net_if *iface,
 {
 	const struct device *dev = net_if_get_device(iface);
 
-	/* Remove this once native ethernet APIs support for Wi-Fi is merged */
-#ifdef CONFIG_WPA_SUPP
-	return zephyr_supp_scan(dev, scan_result_cb);
-#else
 	struct net_wifi_mgmt_offload *off_api =
 		(struct net_wifi_mgmt_offload *) dev->api;
 	if (off_api == NULL || off_api->scan == NULL) {
 		return -ENOTSUP;
 	}
 	return off_api->scan(dev, scan_result_cb);
-#endif
 }
 
 NET_MGMT_REGISTER_REQUEST_HANDLER(NET_REQUEST_WIFI_SCAN, wifi_scan);
