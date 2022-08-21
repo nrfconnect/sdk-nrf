@@ -66,8 +66,4 @@ struct wifi_nrf_dev_offload_ops {
 			 scan_result_cb_t cb);
 };
 
-struct wifi_nrf_dev_ops {
-	struct ethernet_api if_api;
-	struct wifi_nrf_dev_offload_ops off_api;
-};
 #endif /* __ZEPHYR_FMAC_MAIN_H__ */
