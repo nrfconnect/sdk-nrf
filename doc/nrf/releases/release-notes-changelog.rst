@@ -879,13 +879,29 @@ Unity
 MCUboot
 =======
 
-The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``e86f575f68fdac2cab1898e0a893c8c6d8fd0fa1``, plus some |NCS| specific additions.
+The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``1d4404116a9a6b54d54ea9aa3dd2575286e666cd``, plus some |NCS| specific additions.
 
 The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/modules/mcuboot` folder.
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-* |no_changes_yet_note|
+* boot_serial:
+
+  * Refactored and optimized the code, mainly in what affects the progressive erase implementation.
+  * Fixed a compilation issue with the echo command code.
+  * Upgraded from cddl-gen v0.1.0 to zcbor v0.4.0.
+
+* imgtool: Added support for providing signature through a third party.
+
+* zephyr:
+
+  * Added initial support for leveraging the RAM-LOAD mode with the zephyr-rtos port.
+  * Added the MCUboot status callback support.
+    See :kconfig:option:`CONFIG_MCUBOOT_ACTION_HOOKS`.
+  * Edited includes to have the ``zephyr/`` prefix.
+  * Edited the DFU detection's GPIO-pin configuration to be done through DTS using the ``mcuboot-button0`` pin alias.
+  * Edited the LED usage to prefer DTS' ``mcuboot-led0`` alias over the ``bootloader-led0`` alias.
+  * Removed :c:func:`device_get_binding()` usage in favor of :c:func:`DEVICE_DT_GET()`.
 
 Zephyr
 ======
