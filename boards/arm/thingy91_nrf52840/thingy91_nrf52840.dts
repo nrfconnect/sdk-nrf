@@ -18,6 +18,19 @@
 		zephyr,sram = &sram0;
 		zephyr,uart-mcumgr = &uart0;
 	};
+
+	buttons {
+		compatible = "gpio-keys";
+
+		button0: button_0 {
+			gpios = <&gpio1 13 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Button 1";
+		};
+	};
+
+	aliases {
+		mcuboot-button0 = &button0;
+	};
 };
 
 &adc {
