@@ -504,8 +504,6 @@ static int init_default_security_obj(struct lwm2m_ctx *ctx, char *endpoint)
 
 int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint, struct modem_mode_change *mmode)
 {
-	have_permanently_stored_keys = false;
-
 	/* Restore the default if not a callback function */
 	if (!mmode) {
 		mm.cb = lwm2m_modem_mode_cb;
@@ -516,6 +514,7 @@ int lwm2m_init_security(struct lwm2m_ctx *ctx, char *endpoint, struct modem_mode
 	}
 
 #if defined(CONFIG_LWM2M_DTLS_SUPPORT)
+	have_permanently_stored_keys = false;
 	ctx->tls_tag = IS_ENABLED(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP) ?
 			       CONFIG_LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG :
 				     CONFIG_LWM2M_CLIENT_UTILS_SERVER_TLS_TAG;
