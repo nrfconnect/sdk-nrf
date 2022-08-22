@@ -47,6 +47,8 @@ Partition Manager
 * Added :kconfig:option:`CONFIG_PM_PARTITION_REGION_LITTLEFS_EXTERNAL`, :kconfig:option:`CONFIG_PM_PARTITION_REGION_SETTINGS_STORAGE_EXTERNAL`, and :kconfig:option:`CONFIG_PM_PARTITION_REGION_NVS_STORAGE_EXTERNAL` to specify that the relevant partition must be located in external flash memory.
   You must add a ``chosen`` entry for ``nordic,pm-ext-flash`` in your devicetree to make this option available.
   See :file:`tests/subsys/partition_manager/region` for example configurations.
+* Added :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK` to override the external driver check.
+  This is needed when using an external flash which is not using the :ref:`QSPI NOR <zephyr:dtbinding_nordic_qspi_nor>` driver from Zephyr.
 
 Protocols
 =========
