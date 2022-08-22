@@ -37,6 +37,10 @@ config BT_GATT_CLIENT
 	bool
 	default y
 
+config BT_GATT_DYNAMIC_DB
+	bool
+	default y
+
 config BT_BONDABLE
 	bool
 	default y
