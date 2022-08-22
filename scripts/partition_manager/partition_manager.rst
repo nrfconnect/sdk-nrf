@@ -523,6 +523,9 @@ After the ``nordic,pm-ext-flash`` value is set, you can place partitions in the 
      region: external_flash
      size: CONFIG_EXTERNAL_PLZ_SIZE
 
+.. note::
+    If the external flash device is not using the :ref:`QSPI NOR <zephyr:dtbinding_nordic_qspi_nor>` driver, :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK` must be enabled to override the Partition Manager's external flash driver check, and the required driver must also be enabled for all applications that need it.
+
 See :ref:`ug_bootloader_external_flash` for more details on using external flash memory with MCUboot.
 
 .. _pm_build_system:
