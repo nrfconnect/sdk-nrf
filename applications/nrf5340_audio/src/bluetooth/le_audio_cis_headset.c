@@ -38,7 +38,7 @@ static const struct bt_data ad_peer[] = {
 static le_audio_receive_cb receive_cb;
 static struct bt_audio_capability_ops lc3_cap_codec_ops;
 static struct bt_codec lc3_codec =
-	BT_CODEC_LC3(BT_CODEC_LC3_FREQ_ANY, BT_CODEC_LC3_DURATION_10, CHANNEL_COUNT_1,
+	BT_CODEC_LC3(BT_CODEC_LC3_FREQ_48KHZ, BT_CODEC_LC3_DURATION_10, CHANNEL_COUNT_1,
 		     LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
 		     LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u,
 		     BT_AUDIO_CONTEXT_TYPE_MEDIA);
