@@ -916,7 +916,7 @@ zcbor
 =====
 
 The `zcbor`_ module has been updated from version 0.4.0 to 0.5.1.
-Release notes for 0.5.0 and 0.5.1 can be found in :file:`ncs/nrf/modules/lib/zcbor/RELEASE_NOTES.md`.
+Release notes for 0.5.0 and 0.5.1 can be found in :file:`ncs/modules/lib/zcbor/RELEASE_NOTES.md`.
 :ref:`lib_fmfu_fdev` code has been regenerated using zcbor 0.5.1.
 
 
