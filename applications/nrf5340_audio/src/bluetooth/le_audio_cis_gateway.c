@@ -133,9 +133,9 @@ static void unicast_client_location_cb(struct bt_conn *conn, enum bt_audio_dir d
 {
 	int ret;
 
-	if (loc == BT_AUDIO_LOCATION_SIDE_LEFT) {
+	if (loc == BT_AUDIO_LOCATION_FRONT_LEFT) {
 		headset_conn[AUDIO_CH_L] = conn;
-	} else if (loc == BT_AUDIO_LOCATION_SIDE_RIGHT) {
+	} else if (loc == BT_AUDIO_LOCATION_FRONT_RIGHT) {
 		headset_conn[AUDIO_CH_R] = conn;
 	} else {
 		LOG_ERR("Channel location not supported");
