@@ -37,11 +37,10 @@ static const struct bt_data ad_peer[] = {
 
 static le_audio_receive_cb receive_cb;
 static struct bt_audio_capability_ops lc3_cap_codec_ops;
-static struct bt_codec lc3_codec =
-	BT_CODEC_LC3(BT_CODEC_LC3_FREQ_48KHZ, BT_CODEC_LC3_DURATION_10, CHANNEL_COUNT_1,
-		     LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
-		     LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u,
-		     BT_AUDIO_CONTEXT_TYPE_MEDIA);
+static struct bt_codec lc3_codec = BT_CODEC_LC3(
+	BT_CODEC_LC3_FREQ_48KHZ, (BT_CODEC_LC3_DURATION_10 | BT_CODEC_LC3_DURATION_PREFER_10),
+	CHANNEL_COUNT_1, LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
+	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u, BT_AUDIO_CONTEXT_TYPE_MEDIA);
 static struct bt_audio_capability caps = {
 	.dir = BT_AUDIO_DIR_SINK,
 	.pref = BT_AUDIO_CAPABILITY_PREF(BT_AUDIO_CAPABILITY_UNFRAMED_SUPPORTED, BT_GAP_LE_PHY_2M,
@@ -94,6 +93,7 @@ static void advertising_process(struct k_work *work)
 
 		adv_param = *BT_LE_ADV_CONN_DIR_LOW_DUTY(&addr);
 		adv_param.id = BT_ID_DEFAULT;
+		adv_param.options |= BT_LE_ADV_OPT_DIR_ADDR_RPA;
 
 		ret = bt_le_adv_start(&adv_param, NULL, 0, NULL, 0);
 
