@@ -16,7 +16,7 @@
 #endif /* (CONFIG_SW_CODEC_LC3) */
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(sw_codec_select);
+LOG_MODULE_REGISTER(sw_codec_select, CONFIG_LOG_SW_CODEC_SELECT_LEVEL);
 
 static struct sw_codec_config m_config;
 
@@ -263,10 +263,16 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			}
 			uint16_t pcm_bytes_req_enc;
 
+			LOG_DBG("Encode: %dHz %dbits %dus %dbps %d channel(s)",
+				CONFIG_AUDIO_SAMPLE_RATE_HZ, CONFIG_AUDIO_BIT_DEPTH_BITS,
+				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.encoder.bitrate,
+				sw_codec_cfg.encoder.channel_mode);
+
 			ret = sw_codec_lc3_enc_init(
 				CONFIG_AUDIO_SAMPLE_RATE_HZ, CONFIG_AUDIO_BIT_DEPTH_BITS,
 				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.encoder.bitrate,
 				sw_codec_cfg.encoder.channel_mode, &pcm_bytes_req_enc);
+
 			if (ret) {
 				return ret;
 			}
@@ -277,10 +283,16 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 				LOG_WRN("The LC3 decoder is already initialized");
 				return -EALREADY;
 			}
+
+			LOG_DBG("Decode: %dHz %dbits %dus %d channel(s)",
+				CONFIG_AUDIO_SAMPLE_RATE_HZ, CONFIG_AUDIO_BIT_DEPTH_BITS,
+				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.decoder.channel_mode);
+
 			ret = sw_codec_lc3_dec_init(CONFIG_AUDIO_SAMPLE_RATE_HZ,
 						    CONFIG_AUDIO_BIT_DEPTH_BITS,
 						    CONFIG_AUDIO_FRAME_DURATION_US,
 						    sw_codec_cfg.decoder.channel_mode);
+
 			if (ret) {
 				return ret;
 			}

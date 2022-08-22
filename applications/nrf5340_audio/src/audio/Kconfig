@@ -12,9 +12,9 @@ choice AUDIO_FRAME_DURATION
 	prompt "Select frame duration - 7.5 ms frame duration is not tested"
 	default AUDIO_FRAME_DURATION_10_MS
 	help
-		LC3 supports frame duration of 7.5 and 10 ms
-		If USB is selected as audio source, we should
-		have a frame duration of 10 ms since USB sends 1ms at a time
+	  LC3 supports frame duration of 7.5 and 10 ms.
+	  If USB is selected as audio source, we should
+	  have a frame duration of 10 ms since USB sends 1ms at a time.
 
 config AUDIO_FRAME_DURATION_7_5_MS
 	bool "Frame duration 7.5 ms"
@@ -28,31 +28,45 @@ config AUDIO_FRAME_DURATION_US
 	default 7500 if AUDIO_FRAME_DURATION_7_5_MS
 	default 10000 if AUDIO_FRAME_DURATION_10_MS
 	help
-		Audio frame duration in µs
+	  Audio frame duration in µs.
+
+choice AUDIO_SAMPLE_RATE
+	prompt "Audio sample rate"
+	default AUDIO_SAMPLE_RATE_48000_HZ if BT_AUDIO_BROADCAST_RECOMMENDED || BT_AUDIO_UNICAST_RECOMMENDED
+	default AUDIO_SAMPLE_RATE_16000_HZ if BT_AUDIO_BROADCAST_16_2_1 || BT_AUDIO_BROADCAST_16_2_2 || BT_AUDIO_UNICAST_16_2_1
+	default AUDIO_SAMPLE_RATE_24000_HZ if BT_AUDIO_BROADCAST_24_2_1 || BT_AUDIO_BROADCAST_24_2_2 || BT_AUDIO_UNICAST_24_2_1
+	help
+	  This will be selected based on the BAP settings.
+
+config AUDIO_SAMPLE_RATE_16000_HZ
+	bool "16 kHz"
+	depends on AUDIO_SOURCE_I2S
+
+config AUDIO_SAMPLE_RATE_24000_HZ
+	bool "24 kHz"
+	depends on AUDIO_SOURCE_I2S
+
+config AUDIO_SAMPLE_RATE_48000_HZ
+	bool "48 kHz"
+endchoice
 
 config AUDIO_SAMPLE_RATE_HZ
-	int "Sample rate Hz"
-	range 48000 48000
-	default 48000
+	int
+	default 16000 if AUDIO_SAMPLE_RATE_16000_HZ
+	default 24000 if AUDIO_SAMPLE_RATE_24000_HZ
+	default 48000 if AUDIO_SAMPLE_RATE_48000_HZ
 	help
-		For now 48 kHz is the only sample rate supported
+	  I2S supports 16, 24, and 48 kHz sample rates for both input and output.
+	  USB supports only 48 kHz for input.
 
 choice AUDIO_BIT_DEPTH
 	prompt "Audio bit depth"
 	default AUDIO_BIT_DEPTH_16
 	help
-		Select the bit depth for audio
+	  Select the bit depth for audio.
 
 config AUDIO_BIT_DEPTH_16
 	bool "16 bit audio"
-
-config AUDIO_BIT_DEPTH_24
-	bool "24 bit audio"
-	help
-		Setting a 24 bit depth for I2S leads to a mismatch between
-		requested MCK and actual MCK. Even though requested LRCLK is
-		48 kHz, actual LRCLK might be 42 kHz or 51 kHz, depending on
-		ratio and ACLK settings
 
 config AUDIO_BIT_DEPTH_32
 	bool "32 bit audio"
@@ -61,32 +75,28 @@ endchoice
 config AUDIO_BIT_DEPTH_BITS
 	int
 	default 16 if AUDIO_BIT_DEPTH_16
-	default 32 if AUDIO_BIT_DEPTH_24
 	default 32 if AUDIO_BIT_DEPTH_32
 	help
-		Bit depth of one sample in storage. Note that 24 bit depth
-		requires 32 bit for storage
+	  Bit depth of one sample in storage.
 
 config AUDIO_BIT_DEPTH_OCTETS
 	int
 	default 2 if AUDIO_BIT_DEPTH_16
-	default 4 if AUDIO_BIT_DEPTH_24
 	default 4 if AUDIO_BIT_DEPTH_32
 	help
-		Bit depth of one sample in storage given in octets.
-		Note that 24 bit depth requires 4 octets for storage
+	  Bit depth of one sample in storage given in octets.
 
 choice AUDIO_SOURCE_GATEWAY
 	prompt "Audio source for gateway"
 	default AUDIO_SOURCE_USB
 	help
-		Select audio source for the gateway
+	  Select audio source for the gateway.
 
 config AUDIO_SOURCE_USB
 	bool "Use USB as audio source"
 	help
-		Set USB as audio source. Note that this forces the
-		stream to be unidirectional because of CPU load
+	  Set USB as audio source. Note that this forces the
+	  stream to be unidirectional because of CPU load.
 
 config AUDIO_SOURCE_I2S
 	bool "Use I2S as audio source"
@@ -96,20 +106,20 @@ choice AUDIO_HEADSET_CHANNEL
 	prompt "Headset audio channel assignment"
 	default AUDIO_HEADSET_CHANNEL_RUNTIME
 	help
-		Set whether audio channel assignment for the headset
-		should happen at runtime or compile-time.
+	  Set whether audio channel assignment for the headset
+	  should happen at runtime or compile-time.
 
 config AUDIO_HEADSET_CHANNEL_RUNTIME
 	bool "Select at runtime"
 	help
-		Make channel selection at runtime. Selected value is stored in persistent memory.
-		Left channel: Hold volume-down button on headset while resetting headset.
-		Right channel: Hold volume-up button on headset while resetting headset.
+	  Make channel selection at runtime. Selected value is stored in persistent memory.
+	  Left channel: Hold volume-down button on headset while resetting headset.
+	  Right channel: Hold volume-up button on headset while resetting headset.
 
 config AUDIO_HEADSET_CHANNEL_COMPILE_TIME
 	bool "Set at compile-time"
 	help
-		Set channel selection at compile-time.
+	  Set channel selection at compile-time.
 endchoice
 
 if AUDIO_HEADSET_CHANNEL_COMPILE_TIME
@@ -119,9 +129,9 @@ config AUDIO_HEADSET_CHANNEL
 	range 0 1
 	default 0
 	help
-		Audio channel compile-time selection.
-		Left = 0.
-		Right = 1.
+	  Audio channel compile-time selection.
+	  Left = 0.
+	  Right = 1.
 
 endif # AUDIO_HEADSET_CHANNEL_COMPILE_TIME
 
@@ -132,13 +142,13 @@ choice SW_CODEC_DEFAULT
 	prompt "Starting SW codec"
 	default SW_CODEC_LC3
 	help
-		Select the default codec to use on start up
+	  Select the default codec to use on start up.
 
 config SW_CODEC_LC3
 	bool "LC3"
 	select SW_CODEC_LC3_T2_SOFTWARE
 	help
-		LC3 is the mandatory codec for LE Audio
+	  LC3 is the mandatory codec for LE Audio.
 
 # Leave room for other codecs
 endchoice
@@ -153,7 +163,9 @@ visible if SW_CODEC_LC3
 
 config LC3_BITRATE
 	int "Bitrate for LC3"
-	default 96000
+	default 96000 if BT_AUDIO_BROADCAST_RECOMMENDED || BT_AUDIO_UNICAST_RECOMMENDED
+	default 32000 if BT_AUDIO_BROADCAST_16_2_1 || BT_AUDIO_BROADCAST_16_2_2 || BT_AUDIO_UNICAST_16_2_1
+	default 48000 if BT_AUDIO_BROADCAST_24_2_1 || BT_AUDIO_BROADCAST_24_2_2 || BT_AUDIO_UNICAST_24_2_1
 
 config LC3_BITRATE_MAX
 	int "Max bitrate for LC3"
@@ -176,19 +188,19 @@ config BUF_BLE_RX_PACKET_NUM
 	default 5
 	range 2 5
 	help
-		Value can be adjusted to affect the overall latency.
-		This adjusts the number packets in the BLE FIFO RX buffer,
-		which is where the main latency resides. A low value will decrease
-		latency and reduce stability, and vice-versa.
-		Two is recommended minimum to reduce the likelyhood of audio
-		gaps due to BLE retransmits.
+	  Value can be adjusted to affect the overall latency.
+	  This adjusts the number packets in the BLE FIFO RX buffer,
+	  which is where the main latency resides. A low value will decrease
+	  latency and reduce stability, and vice-versa.
+	  Two is recommended minimum to reduce the likelyhood of audio
+	  gaps due to BLE retransmits.
 
 config STREAM_BIDIRECTIONAL
 	bool "Enable bi-directional stream - Currently not supported"
 	default n
 	help
-		Bi-directional stream enables encoder and decoder on both sides,
-		and one device can both send and receive audio.
+	  Bi-directional stream enables encoder and decoder on both sides,
+	  and one device can both send and receive audio.
 
 endmenu # Stream
 
@@ -197,6 +209,10 @@ menu "Log levels"
 
 config LOG_AUDIO_SYSTEM_LEVEL
 	int "Log level for audio system"
+	default 3
+
+config LOG_SW_CODEC_SELECT_LEVEL
+	int "Log level for sw_codec_select"
 	default 3
 
 config LOG_STREAMCTRL_LEVEL
@@ -220,13 +236,13 @@ config ENCODER_THREAD_PRIO
 	int "Priority for encoder thread"
 	default 3
 	help
-		This is a preemptible thread
+	  This is a preemptible thread.
 
 config AUDIO_DATAPATH_THREAD_PRIO
 	int "Priority for audio datapath thread"
 	default 4
 	help
-		This is a preemptible thread
+	  This is a preemptible thread.
 
 endmenu # Thread priorities
 
@@ -236,12 +252,12 @@ menu "Stack sizes"
 config ENCODER_STACK_SIZE
 	int "Stack size for encoder thread"
 	default 6750 if AUDIO_BIT_DEPTH_16
-	default 11264 if AUDIO_BIT_DEPTH_24 || AUDIO_BIT_DEPTH_32
+	default 11264 if AUDIO_BIT_DEPTH_32
 
 config AUDIO_DATAPATH_STACK_SIZE
 	int "Stack size for audio datapath thread"
 	default 4096 if AUDIO_BIT_DEPTH_16
-	default 7168 if AUDIO_BIT_DEPTH_24 || AUDIO_BIT_DEPTH_32
+	default 7168 if AUDIO_BIT_DEPTH_32
 
 endmenu # Stack sizes
 endmenu # Audio

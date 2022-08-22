@@ -31,9 +31,12 @@
 /* clang-format off */
 /* Set up clocks */
 const uint32_t clock_configuration[][2] = {
+	{ CS47L63_SAMPLE_RATE3, 0x0012 },
+	{ CS47L63_SAMPLE_RATE2, 0x0002 },
+	{ CS47L63_SAMPLE_RATE1, 0x0003 },
 	{ CS47L63_SYSTEM_CLOCK1, 0x034C },
 	{ CS47L63_ASYNC_CLOCK1, 0x034C },
-	{ CS47L63_FLL1_CONTROL2, 0x88208020 },
+	{ CS47L63_FLL1_CONTROL2, 0x88200008 },
 	{ CS47L63_FLL1_CONTROL3, 0x10000 },
 	{ CS47L63_FLL1_GPIO_CLOCK, 0x0005 },
 	{ CS47L63_FLL1_CONTROL1, 0x0001 },
@@ -101,7 +104,6 @@ const uint32_t input_enable[][2] = {
 /* Set up output */
 const uint32_t output_enable[][2] = {
 	{ CS47L63_OUTPUT_ENABLE_1, 0x0002 },
-
 	{ CS47L63_OUT1L_INPUT1, 0x800020 },
 	{ CS47L63_OUT1L_INPUT2, 0x800021 },
 };
@@ -119,8 +121,14 @@ const uint32_t asp1_enable[][2] = {
 	{ CS47L63_GPIO4_CTRL1, 0xE1000000 },
 	{ CS47L63_GPIO5_CTRL1, 0x61000001 },
 
-	/* Set ASP1 in slave mode and 16 bit per channel */
+/* Set ASP1 in slave mode and 16 bit per channel */
+#if CONFIG_AUDIO_SAMPLE_RATE_16000_HZ
+	{ CS47L63_ASP1_CONTROL1, 0x021B },
+#elif CONFIG_AUDIO_SAMPLE_RATE_24000_HZ
+	{ CS47L63_ASP1_CONTROL1, 0x011B },
+#elif CONFIG_AUDIO_SAMPLE_RATE_48000_HZ
 	{ CS47L63_ASP1_CONTROL1, 0x001B },
+#endif
 	{ CS47L63_ASP1_CONTROL2, 0x10100200 },
 	{ CS47L63_ASP1_CONTROL3, 0x0000 },
 	{ CS47L63_ASP1_DATA_CONTROL1, 0x0020 },
