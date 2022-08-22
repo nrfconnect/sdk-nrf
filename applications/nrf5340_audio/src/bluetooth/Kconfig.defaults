@@ -18,11 +18,6 @@ config BT_HCI_VS_EXT
 	bool
 	default n
 
-# Disable local privacy feature to easier track the device during development
-config BT_PRIVACY
-	bool
-	default n
-
 config BT_EXT_ADV
 	bool
 	default y
@@ -38,6 +33,10 @@ config BT_GATT_CLIENT
 	default y
 
 config BT_BONDABLE
+	bool
+	default y
+
+config BT_PRIVACY
 	bool
 	default y
 
