@@ -16,9 +16,6 @@ LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 #define EMPTY_PASSKEY	0xffffffff
 #define USED_PASSKEY	0xfffffffe
 
-extern const struct bt_conn_auth_cb *bt_auth;
-static const struct bt_conn_auth_cb *prev_bt_auth;
-
 static uint32_t bt_auth_peer_passkeys[CONFIG_BT_MAX_CONN];
 
 #if (CONFIG_BT_MAX_CONN <= 8)
@@ -32,8 +29,6 @@ static uint32_t handled_conn_bm;
 #endif
 
 
-static void update_bt_auth_callbacks(void);
-
 static bool is_conn_handled(const struct bt_conn *conn)
 {
 	return ((handled_conn_bm & BIT(bt_conn_index(conn))) != 0);
@@ -44,7 +39,6 @@ static void update_conn_handling(const struct bt_conn *conn, bool handled)
 	size_t conn_idx = bt_conn_index(conn);
 
 	WRITE_BIT(handled_conn_bm, conn_idx, handled);
-	update_bt_auth_callbacks();
 }
 
 static int send_auth_confirm(struct bt_conn *conn)
@@ -85,11 +79,13 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 enum bt_security_err auth_pairing_accept(struct bt_conn *conn,
 					 const struct bt_conn_pairing_feat *const feat)
 {
-	/* While Fast Pair authentication module is handling the Bluetooth authentication callbacks,
-	 * peers that do not follow Fast Pair procedure should be rejected. Otherwise invalid
-	 * capabilities will be reported by the Fast Pair Provider.
-	 */
-	return is_conn_handled(conn) ? BT_SECURITY_ERR_SUCCESS : BT_SECURITY_ERR_UNSPECIFIED;
+	bool conn_handled = is_conn_handled(conn);
+
+	if (!conn_handled) {
+		LOG_ERR("Invalid conn (pairing accept): %p", (void *)conn);
+	}
+
+	return conn_handled ? BT_SECURITY_ERR_SUCCESS : BT_SECURITY_ERR_UNSPECIFIED;
 }
 
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
@@ -143,7 +139,6 @@ static void auth_cancel(struct bt_conn *conn)
 static void pairing_complete(struct bt_conn *conn, bool bonded)
 {
 	if (!is_conn_handled(conn)) {
-		LOG_ERR("Invalid conn (pairing complete): %p", (void *)conn);
 		return;
 	}
 
@@ -165,7 +160,6 @@ static void pairing_complete(struct bt_conn *conn, bool bonded)
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 {
 	if (!is_conn_handled(conn)) {
-		LOG_ERR("Invalid conn (pairing failed): %p", (void *)conn);
 		return;
 	}
 
@@ -185,34 +179,6 @@ static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 	.pairing_failed = pairing_failed,
 };
 
-static void update_bt_auth_callbacks(void)
-{
-	int err;
-
-	if (handled_conn_bm != 0) {
-		if (bt_auth != &conn_auth_callbacks) {
-			prev_bt_auth = bt_auth;
-			bt_auth = &conn_auth_callbacks;
-
-			err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
-
-			if (err) {
-				LOG_ERR("Cannot register auth info callbacks (err: %d)", err);
-			}
-		}
-	} else {
-		if (bt_auth == &conn_auth_callbacks) {
-			bt_auth = prev_bt_auth;
-
-			err = bt_conn_auth_info_cb_unregister(&conn_auth_info_callbacks);
-
-			if (err && (err != -EALREADY)) {
-				LOG_ERR("Cannot unregister auth info callbacks (err: %d)", err);
-			}
-		}
-	}
-}
-
 static int fp_auth_send_pairing_req(struct bt_conn *conn)
 {
 	int err = bt_conn_set_security(conn, BT_SECURITY_L4);
@@ -230,6 +196,7 @@ int fp_auth_start(struct bt_conn *conn, bool send_pairing_req)
 {
 	int err = 0;
 	size_t conn_idx = bt_conn_index(conn);
+	static bool auth_info_cb_registered;
 
 	if (is_conn_handled(conn)) {
 		LOG_ERR("Auth started twice for connection %p", (void *)conn);
@@ -242,11 +209,27 @@ int fp_auth_start(struct bt_conn *conn, bool send_pairing_req)
 		return 0;
 	}
 
-	bt_auth_peer_passkeys[conn_idx] = EMPTY_PASSKEY;
-	update_conn_handling(conn, true);
+	err = bt_conn_auth_cb_overlay(conn, &conn_auth_callbacks);
+	if (err) {
+		return err;
+	}
+
+	if (!auth_info_cb_registered) {
+		err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
+		if (err) {
+			return err;
+		}
+
+		auth_info_cb_registered = true;
+	}
 
 	if (send_pairing_req) {
 		err = fp_auth_send_pairing_req(conn);
+	}
+
+	if (!err) {
+		bt_auth_peer_passkeys[conn_idx] = EMPTY_PASSKEY;
+		update_conn_handling(conn, true);
 	}
 
 	return err;
