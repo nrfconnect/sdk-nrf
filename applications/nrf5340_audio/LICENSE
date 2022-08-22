@@ -1,10 +1,6 @@
-/*************************************************************************************************/
+LicenseID:  LicenseRef-PCFT
 
-Copyright (c) 2021, PACKETCRAFT, INC.
-
-All rights reserved.
-/*************************************************************************************************/
-
+ExtractedText: <text>
 Redistribution and use of the Audio subsystem for nRF5340 Software, in binary
 and source code forms, with or without modification, are permitted provided that
 the following conditions are met:
@@ -36,3 +32,5 @@ OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTE
 AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
+
+</text>

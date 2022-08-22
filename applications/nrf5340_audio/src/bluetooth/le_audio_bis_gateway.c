@@ -23,15 +23,6 @@ BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT <= 2,
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
 
-#define BT_AUDIO_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                \
-	BT_AUDIO_LC3_PRESET(                                                                       \
-		BT_CODEC_LC3_CONFIG(BT_CODEC_CONFIG_LC3_FREQ_48KHZ,                                \
-				    BT_CODEC_CONFIG_LC3_DURATION_10, BT_AUDIO_LOCATION_FRONT_LEFT, \
-				    LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE), 1,               \
-				    BT_AUDIO_CONTEXT_TYPE_MEDIA),                                  \
-		BT_CODEC_LC3_QOS_10_UNFRAMED(LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE), 4u,     \
-					     20u, LE_AUDIO_PRES_DELAY_US))
-
 /* For being able to dynamically define iso_tx_pools */
 #define NET_BUF_POOL_ITERATE(i, _)                                                                 \
 	NET_BUF_POOL_FIXED_DEFINE(iso_tx_pool_##i, HCI_ISO_BUF_ALLOC_PER_CHAN,                     \
