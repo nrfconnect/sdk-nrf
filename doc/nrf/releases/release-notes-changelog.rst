@@ -300,6 +300,7 @@ Bluetooth samples
 * Added:
 
   * :ref:`peripheral_mds` sample, that demonstrates how to send Memfault diagnostic data through Bluetooth.
+  * :ref:`power_profiling` sample, that uses the system off mode and can be used for power consumption measurement.
 
 * :ref:`ble_nrf_dm` sample:
 
