@@ -5,7 +5,6 @@
  */
 
 #include <zephyr/types.h>
-#include <stdlib.h>
 
 const size_t pmw3360_firmware_length = 4094;
 
