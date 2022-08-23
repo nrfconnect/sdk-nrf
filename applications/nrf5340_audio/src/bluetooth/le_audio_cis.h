@@ -1,0 +1,32 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#ifndef _LE_AUDIO_H_
+#define _LE_AUDIO_H_
+
+#include <zephyr/kernel.h>
+
+/* These give the row as given in Table 5.2 of BAP (starting form 0) */
+#define BT_AUDIO_UNICAST_LC3_DEFAULT 11
+#define BT_AUDIO_LC3_UNICAST_MANDATORY_1 3
+#define BT_AUDIO_LC3_UNICAST_MANDATORY_2 5
+
+#if (CONFIG_AUDIO_SOURCE_GATEWAY == CONFIG_AUDIO_SOURCE_USB)
+#define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO BT_AUDIO_LC3_UNICAST_PRESET_48_4_1
+#else
+#if (CONFIG_BT_AUDIO_LC3_CONFIGURATION == BT_AUDIO_UNICAST_LC3_DEFAULT)
+#define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO BT_AUDIO_LC3_UNICAST_PRESET_48_4_1
+#elif (CONFIG_BT_AUDIO_LC3_CONFIGURATION == BT_AUDIO_LC3_UNICAST_MANDATORY_1)
+#define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO BT_AUDIO_LC3_UNICAST_PRESET_16_2_1
+#elif ((CONFIG_AUDIO_DEV == HEADSET) &&                                                            \
+       (CONFIG_BT_AUDIO_LC3_CONFIGURATION == BT_AUDIO_LC3_UNICAST_MANDATORY_2))
+#define BT_AUDIO_LC3_UNICAST_PRESET_NRF5340_AUDIO BT_AUDIO_LC3_UNICAST_PRESET_24_2_1
+#else
+BUILD_ASSERT(0, "Unsupported LC3 codec preset for unicast");
+#endif
+#endif
+
+#endif /* _LE_AUDIO_H_ */

@@ -17,6 +17,7 @@
 #include "ctrl_events.h"
 #include "hw_codec.h"
 #include "channel_assignment.h"
+#include "le_audio_bis.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(bis_headset, CONFIG_LOG_BLE_LEVEL);

@@ -32,10 +32,12 @@ config AUDIO_FRAME_DURATION_US
 
 config AUDIO_SAMPLE_RATE_HZ
 	int "Sample rate Hz"
-	range 48000 48000
+	range 8000 48000
 	default 48000
 	help
-		For now 48 kHz is the only sample rate supported
+		For now 16, 24 and 48 kHz are the only sample rates 
+		supported for I2S input and nnly 48 kHz is supported 
+		for USB input
 
 choice AUDIO_BIT_DEPTH
 	prompt "Audio bit depth"

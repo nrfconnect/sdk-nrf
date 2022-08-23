@@ -17,6 +17,7 @@
 #include "ble_audio_services.h"
 #include "audio_datapath.h"
 #include "channel_assignment.h"
+#include "le_audio_cis.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(cis_headset, CONFIG_LOG_BLE_LEVEL);

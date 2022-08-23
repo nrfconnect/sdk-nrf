@@ -33,6 +33,10 @@ config BT_DEVICE_NAME
 	string
 	default "NRF5340_AUDIO"
 
+config BT_AUDIO_LC3_CONFIGURATION
+	int 
+	default 11
+	
 config BT_GATT_CLIENT
 	bool
 	default y
@@ -81,10 +85,6 @@ config SETTINGS
 config BT_SETTINGS
 	bool
 	default y
-
-config BT_AUDIO_LC3_CONFIGURATION
-	int 
-	default 11
 
 config FLASH
 	bool
