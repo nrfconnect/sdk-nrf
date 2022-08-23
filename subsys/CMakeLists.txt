@@ -26,11 +26,19 @@ add_subdirectory(pcd)
 endif()
 add_subdirectory_ifdef(CONFIG_IS_SPM		spm)
 add_subdirectory_ifdef(CONFIG_TRUSTED_EXECUTION_NONSECURE nonsecure)
-add_subdirectory_ifdef(CONFIG_MPSL mpsl/init)
+
+if (CONFIG_MPSL AND NOT CONFIG_MPSL_FEM_ONLY)
+  add_subdirectory(mpsl/init)
+endif()
+
 if (CONFIG_MPSL_FEM OR CONFIG_MPSL_FEM_PIN_FORWARDER)
   add_subdirectory(mpsl/fem)
 endif()
-add_subdirectory_ifdef(CONFIG_MPSL_CX mpsl/cx)
+
+if (CONFIG_MPSL_CX AND NOT CONFIG_MPSL_FEM_ONLY)
+  add_subdirectory(mpsl/cx)
+endif()
+
 add_subdirectory_ifdef(CONFIG_ZIGBEE zigbee)
 add_subdirectory_ifdef(CONFIG_MGMT_FMFU mgmt/fmfu)
 add_subdirectory_ifdef(CONFIG_GAZELL gazell)
