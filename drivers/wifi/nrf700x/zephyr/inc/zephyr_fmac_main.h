@@ -61,6 +61,7 @@ struct wifi_nrf_vif_ctx_zep {
 	struct wifi_ps_config *ps_info;
 	bool ps_config_info_evnt;
 	bool passive_scan;
+	bool authorized;
 };
 
 struct wifi_nrf_vif_ctx_map {
