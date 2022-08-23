@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "le_audio_bis.h"
 #include "le_audio.h"
 
 #include <bluetooth/bluetooth.h>
@@ -17,7 +18,6 @@
 #include "ctrl_events.h"
 #include "hw_codec.h"
 #include "channel_assignment.h"
-#include "le_audio_bis.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(bis_headset, CONFIG_LOG_BLE_LEVEL);
@@ -30,7 +30,9 @@ static struct bt_audio_broadcast_sink *broadcast_sink;
 static struct bt_audio_stream streams[CONFIG_LC3_DEC_CHAN_MAX];
 static struct bt_audio_stream *streams_p[ARRAY_SIZE(streams)];
 
-static struct bt_audio_lc3_preset lc3_preset = BT_AUDIO_LC3_BROADCAST_PRESET_48_4_1;
+/* We need to set a location as a pre-compile, this changed in initialize */
+static struct bt_codec codec =
+	BT_CODEC_LC3_CONFIG_48_4(BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_MEDIA);
 
 /* Create a mask for the maximum BIS we can sync to using the number of streams
  * broadcasted. We add an additional 1 since the bis indexes start from 1 and not

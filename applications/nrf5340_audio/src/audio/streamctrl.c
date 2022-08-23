@@ -383,8 +383,8 @@ static void le_audio_evt_handler(enum le_audio_evt_type event)
 			break;
 		}
 
-		LOG_DBG("Sampling rate: %d", sampling_rate);
-		LOG_DBG("Bitrate: %d", bitrate);
+		LOG_INF("Sampling rate: %d", sampling_rate);
+		LOG_INF("Bitrate: %d", bitrate);
 		break;
 
 	default:

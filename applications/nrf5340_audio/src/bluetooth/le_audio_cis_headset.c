@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "le_audio_cis.h"
 #include "le_audio.h"
 
 #include <bluetooth/audio/audio.h>
@@ -17,7 +18,6 @@
 #include "ble_audio_services.h"
 #include "audio_datapath.h"
 #include "channel_assignment.h"
-#include "le_audio_cis.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(cis_headset, CONFIG_LOG_BLE_LEVEL);

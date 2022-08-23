@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "le_audio_bis.h"
 #include "le_audio.h"
 
 #include <bluetooth/bluetooth.h>
@@ -14,7 +15,6 @@
 #include "macros_common.h"
 #include "ctrl_events.h"
 #include "audio_datapath.h"
-#include "le_audio_bis.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(bis_gateway, CONFIG_LOG_BLE_LEVEL);
@@ -23,17 +23,6 @@ BUILD_ASSERT(CONFIG_BT_AUDIO_BROADCAST_SRC_STREAM_COUNT <= 2,
 	     "A maximum of two streams are currently supported");
 
 #define HCI_ISO_BUF_ALLOC_PER_CHAN 2
-
-#define BT_AUDIO_BROADCAST_LC3_DEFAULT 11
-#define BT_AUDIO_LC3_BROADCAST_MANDATORY_1 3
-
-#if (CONFIG_BT_AUDIO_LC3_CONFIGURATION == BT_AUDIO_BROADCAST_LC3_DEFAULT)
-#define BT_AUDIO_LC3_BROADCAST_PRESET_NRF5340_AUDIO BT_AUDIO_LC3_BROADCAST_PRESET_48_4_1
-#elif ((CONFIG_BT_AUDIO_LC3_CONFIGURATION == BT_AUDIO_LC3_BROADCAST_MANDATORY_1))
-#define BT_AUDIO_LC3_BROADCAST_PRESET_NRF5340_AUDIO BT_AUDIO_LC3_BROADCAST_PRESET_16_2_1
-#else
-BUILD_ASSERT(0, "Unsupported LC3 codec preset for broadcast");
-#endif
 
 /* For being able to dynamically define iso_tx_pools */
 #define NET_BUF_POOL_ITERATE(i, _)                                                                 \
