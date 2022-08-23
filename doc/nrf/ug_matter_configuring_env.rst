@@ -240,4 +240,3 @@ To configure and use CHIP Tool for Android, complete the following steps:
       * Sending Matter commands - which checks the IPv6 connectivity.
 
 #. Depending on which Matter sample you programmed onto the development kit, go to this sample's documentation page and complete the steps from the Testing section.
-

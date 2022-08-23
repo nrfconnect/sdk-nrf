@@ -93,10 +93,16 @@
 
 .. _`SMP over Bluetooth`: https://github.com/apache/mynewt-mcumgr/blob/master/transport/smp-bluetooth.md
 
+.. _`Matter GitHub repository`: https://github.com/project-chip/connectedhomeip
 .. _`Android CHIPTool`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/bb3c7570/src/android/CHIPTool
 .. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/bb3c7570/src/controller
 .. _`ZCL Advanced Platform`: https://github.com/project-chip/zap
 .. _`Matter nRF Connect releases`: https://github.com/nrfconnect/sdk-connectedhomeip/releases
+.. _`Matter Certification Policy`: https://github.com/CHIP-Specifications/connectedhomeip-spec/blob/master/policies/matter_certificate_policy.adoc
+.. _`Kconfig.mcuboot.defaults`: https://github.com/project-chip/connectedhomeip/blob/master/config/nrfconnect/chip-module/Kconfig.mcuboot.defaults
+.. _`Matter specification repository`: https://github.com/CHIP-Specifications/connectedhomeip-spec/blob/master/policies/
+
+.. _`DCL Quick Start Guide`: https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/quickStartGuide.adoc
 
 .. _`nRF Cloud JSON protocol schemas`: https://github.com/nRFCloud/application-protocols
 
@@ -348,6 +354,7 @@
 .. _`nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/keyfeatures_html5.html
 .. _`nRF5340 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf5340_dk/UG/dk/intro.html
 .. _`Execute in place page in the nRF5340 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf5340/qspi.html#execute_in_place
+.. _`nRF5340 DK Compatibility Matrix`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf5340/COMP/nrf5340/nrf5340_comp_matrix.html
 
 .. _`Getting started with nRF Connect SDK (nRF52 Series)`: https://infocenter.nordicsemi.com/topic/ug_gsg_ncs52/UG/gsg/intro.html
 
@@ -355,6 +362,7 @@
 .. _`System OFF mode`: https://infocenter.nordicsemi.com/topic/ps_nrf52840/power.html#unique_1384365742
 .. _`nRF52840 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dk/UG/dk/intro.html
 .. _`nRF52840 Dongle User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52840_dongle/UG/nrf52840_Dongle/intro.html
+.. _`nRF52840 DK Compatibility Matrix`: https://infocenter.nordicsemi.com/topic/comp_matrix_nrf52840/COMP/nrf52840/nrf52840_comp_matrix.html
 
 .. _`nRF52833 Product Specification`: https://infocenter.nordicsemi.com/topic/ps_nrf52833/keyfeatures_html5.html
 .. _`nRF52833 DK User Guide`: https://infocenter.nordicsemi.com/topic/ug_nrf52833_dk/UG/dk/intro.html
@@ -455,6 +463,8 @@
 .. _`Bluetooth Core Specification`: https://www.bluetooth.com/specifications/specs/
 .. _`Bluetooth® LE Audio specifications`: https://www.bluetooth.com/learn-about-bluetooth/recent-enhancements/le-audio/le-audio-specifications/
 
+.. _`Join Bluetooth SIG`: https://www.bluetooth.com/develop-with-bluetooth/join/
+
 .. _`HID Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=245140
 .. _`Battery Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=245138
 .. _`Bluetooth Low Energy RF PHY Test Specification`: https://www.bluetooth.org/docman/handlers/DownloadDoc.ashx?doc_id=225827
@@ -463,6 +473,8 @@
 .. _`Running Speed and Cadence Service Specification`: https://www.bluetooth.com/specifications/specs/running-speed-and-cadence-service-1-0/
 
 .. _`Bluetooth SIG company identifiers`: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
+
+.. _`Bluetooth SIG's Qualification Process`: https://www.bluetooth.com/develop-with-bluetooth/qualification-listing/
 
 .. _`Bluetooth mesh model specification`:
 .. _`Bluetooth mesh profile specification`: https://www.bluetooth.com/specifications/specs/
@@ -568,6 +580,8 @@
 
 .. _`CBOR Object Signing and Encryption (COSE)`: https://datatracker.ietf.org/doc/html/rfc8152
 
+.. _`SPAKE2+`: https://datatracker.ietf.org/doc/pdf/draft-bar-cfrg-spake2plus-02.pdf
+
 .. ### Source: pubs.opengroup.org
 
 .. _`BSD Networking Services Spec Reference`: https://pubs.opengroup.org/onlinepubs/007908799/xnsix.html
@@ -626,6 +640,7 @@
 .. _`Thread Group's Commissioning White Paper`: https://www.threadgroup.org/Portals/0/documents/support/CommissioningWhitePaper_658_2.pdf
 .. _`Thread 1.2 in Commercial White Paper`: https://www.threadgroup.org/Portals/0/documents/support/ThreadInCommercialWhitePaper_2542_1.pdf
 .. _`Thread 1.2 Base Features`: https://www.threadgroup.org/Portals/0/documents/support/Thread%201.2%20Base%20Features.pdf
+.. _`Join Thread Group`:
 .. _`Thread Group members`: https://www.threadgroup.org/thread-group
 .. _`Thread Group's certification information`: https://www.threadgroup.org/What-is-Thread/Certification
 .. _`Thread 1.3.0 Features White Paper`: https://www.threadgroup.org/Portals/0/documents/support/Thread1.3.0WhitePaper_07192022_3990_1.pdf
@@ -729,6 +744,11 @@
 .. _`Connectivity Standards Alliance`: https://csa-iot.org
 .. _`Zigbee Specification`: https://zigbeealliance.org/developer_resources/
 .. _`Zigbee Cluster Library specification`: https://zigbeealliance.org/wp-content/uploads/2019/12/07-5123-06-zigbee-cluster-library-specification.pdf
+
+.. _`Connectivity Standards Alliance Certification Policy`: https://csa-iot.org/wp-content/uploads/2021/12/07-4842-14-ptsc-certification-policy.pdf
+.. _`Connectivity Standards Alliance members`: https://csa-iot.org/members/
+.. _`Join CSA`:
+.. _`CSA's Become Member page`: https://csa-iot.org/become-member/
 
 .. ### Source: Chocolatey
 
@@ -895,6 +915,9 @@
 
 .. _`Power Saving Mode (PSM)`: https://www.sharetechnote.com/html/Handbook_LTE_PSM.html
 
+.. _`Distributed Compliance Ledger`:
+.. _`Distributed Compliance Ledger website`: https://testnet.iotledger.io/
+
 .. _`Leshan Demo Server web UI`:
 .. _`public Leshan Demo Server`: https://leshan.eclipseprojects.io
 .. _`Leshan homepage`: https://www.eclipse.org/leshan/
@@ -932,3 +955,5 @@
 .. _`Teraterm`: https://ttssh2.osdn.jp/index.html.en
 
 .. _`GNU Project Debugger`: https://www.sourceware.org/gdb/
+
+.. _`SIGMA`: https://webee.technion.ac.il/~hugo/sigma-pdf.pdf
