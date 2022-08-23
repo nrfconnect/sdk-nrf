@@ -908,6 +908,7 @@ int wifi_nrf_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_umac_chg_sta_info chg_sta_info;
 	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	enum wifi_nrf_status ret = WIFI_NRF_STATUS_FAIL;
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
@@ -916,6 +917,8 @@ int wifi_nrf_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 
 	os_memcpy(chg_sta_info.mac_addr, bssid, ETH_ALEN);
 
+	vif_ctx_zep->authorized = authorized;
+
 	if (authorized) {
 		/* BIT(NL80211_STA_FLAG_AUTHORIZED) */
 		chg_sta_info.sta_flags2.nrf_wifi_mask = 1 << 1;
@@ -923,7 +926,14 @@ int wifi_nrf_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 		chg_sta_info.sta_flags2.nrf_wifi_set = 1 << 1;
 	}
 
-	return wifi_nrf_fmac_chg_sta(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &chg_sta_info);
+	ret = wifi_nrf_fmac_chg_sta(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, &chg_sta_info);
+
+	if (ret != WIFI_NRF_STATUS_SUCCESS) {
+		LOG_ERR("%s: wifi_nrf_fmac_chg_sta failed\n", __func__);
+		return -1;
+	}
+
+	return 0;
 }
 
 int wifi_nrf_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, unsigned char *bssid)

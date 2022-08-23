@@ -68,10 +68,30 @@ enum wifi_nrf_status wifi_nrf_if_carr_state_chg(void *os_vif_ctx,
 
 	vif_ctx_zep->if_carr_state = carr_state;
 
+	if (vif_ctx_zep->zep_net_if_ctx) {
+		if (carr_state == WIFI_NRF_FMAC_IF_CARR_STATE_ON) {
+			net_eth_carrier_on(vif_ctx_zep->zep_net_if_ctx);
+		} else if (carr_state == WIFI_NRF_FMAC_IF_CARR_STATE_OFF) {
+			net_eth_carrier_off(vif_ctx_zep->zep_net_if_ctx);
+		}
+	}
+	LOG_INF("%s: Carrier state: %d\n", __func__, carr_state);
+
 	status = WIFI_NRF_STATUS_SUCCESS;
 
 out:
 	return status;
+}
+
+static bool is_eapol(struct net_pkt *pkt)
+{
+	struct net_eth_hdr *hdr;
+	uint16_t ethertype;
+
+	hdr = NET_ETH_HDR(pkt);
+	ethertype = ntohs(hdr->type);
+
+	return ethertype == NET_ETH_PTYPE_EAPOL;
 }
 #endif /* CONFIG_NRF700X_DATA_TX */
 
@@ -103,7 +123,8 @@ int wifi_nrf_if_send(const struct device *dev,
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
-	if (vif_ctx_zep->if_carr_state != WIFI_NRF_FMAC_IF_CARR_STATE_ON) {
+	if ((vif_ctx_zep->if_carr_state != WIFI_NRF_FMAC_IF_CARR_STATE_ON) ||
+	    (!vif_ctx_zep->authorized && !is_eapol(pkt))) {
 		ret = 0;
 		goto out;
 	}
@@ -286,6 +307,7 @@ void wifi_nrf_if_init_zep(struct net_if *iface)
 	}
 
 	ethernet_init(iface);
+	net_if_carrier_off(iface);
 
 	net_if_set_link_addr(iface,
 			     vif_ctx_zep->mac_addr.addr,
