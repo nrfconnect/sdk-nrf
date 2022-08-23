@@ -566,6 +566,34 @@ static bool handle_ble_peer_event(const struct ble_peer_event *event)
 	return false;
 }
 
+static bool handle_ble_adv_data_update_event(const struct ble_adv_data_update_event *event)
+{
+	ARG_UNUSED(event);
+
+	int err = 0;
+	bool in_grace_period = false;
+
+	switch (state) {
+	case STATE_GRACE_PERIOD:
+		in_grace_period = true;
+		/* Fall-through */
+
+	case STATE_ACTIVE_FAST:
+	case STATE_ACTIVE_SLOW:
+		err = update_undirected_advertising(NULL, in_grace_period);
+		if (err) {
+			LOG_ERR("Cannot modify advertising data (err %d)", err);
+		}
+		break;
+
+	default:
+		/* Advertising data will be updated on undirected advertising start. */
+		break;
+	}
+
+	return false;
+}
+
 static bool handle_ble_peer_operation_event(const struct ble_peer_operation_event *event)
 {
 	switch (event->op)  {
@@ -740,6 +768,10 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return handle_ble_peer_event(cast_ble_peer_event(aeh));
 	}
 
+	if (is_ble_adv_data_update_event(aeh)) {
+		return handle_ble_adv_data_update_event(cast_ble_adv_data_update_event(aeh));
+	}
+
 	if (IS_ENABLED(CONFIG_CAF_BLE_ADV_BLE_BOND_SUPPORTED) &&
 	    is_ble_peer_operation_event(aeh)) {
 		return handle_ble_peer_operation_event(cast_ble_peer_operation_event(aeh));
@@ -763,6 +795,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
+APP_EVENT_SUBSCRIBE(MODULE, ble_adv_data_update_event);
 #if CONFIG_CAF_BLE_ADV_BLE_BOND_SUPPORTED
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
 #endif /* CONFIG_CAF_BLE_ADV_BLE_BOND_SUPPORTED */

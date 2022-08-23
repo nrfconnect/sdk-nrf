@@ -68,6 +68,8 @@ Power-down
 
 When the system goes to the power-down state, the advertising either instantly stops or enters the grace period state.
 
+.. _caf_ble_adv_grace_period:
+
 Grace period
 ------------
 
@@ -95,6 +97,18 @@ Implementation details
 The |ble_adv| is used only by Bluetooth Peripheral devices.
 
 The |ble_adv| uses Zephyr's :ref:`zephyr:settings_api` to store the information if the peer for the given local identity uses the Resolvable Private Address (RPA).
+
+Undirected advertising data update
+==================================
+
+The module does not instantly update advertising and scan response payloads when either advertising data or scan response data (provided by :ref:`bt_le_adv_prov_readme`) is modified.
+The module automatically gets new advertising data and scan response data from Bluetooth LE's advertising data provider subsystem only in the following cases:
+
+* Bluetooth LE undirected advertising is started or restarted.
+* Undirected advertising enters the :ref:`caf_ble_adv_grace_period`.
+
+The payload update can be triggered by the application using :c:struct:`ble_adv_data_update_event`.
+Make sure to submit the event after changing the Bluetooth data provided by a provider.
 
 Reaction on Bluetooth peer operation
 ====================================
