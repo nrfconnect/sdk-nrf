@@ -724,6 +724,8 @@ Common Application Framework (CAF)
     The subsystem is now used instead of the :file:`*.def` file to configure advertising data and scan response data.
   * Bluetooth device name is no longer automatically included in scan response data.
     A dedicated data provider (:kconfig:option:`CONFIG_BT_LE_ADV_PROV_DEVICE_NAME`) can be used to add the Bluetooth device name to the scan response data.
+  * Added :c:struct:`ble_adv_data_update_event` that can be used to trigger update of advertising data and scan response data during undirected advertising.
+    When the event is received, the module gets new data from providers and updates advertising payload.
 
 * :ref:`caf_ble_state`:
 
