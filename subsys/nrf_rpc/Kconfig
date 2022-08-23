@@ -15,6 +15,22 @@ config _NRF_RPC_DUMMY_SELECT
 	default y
 	select THREAD_CUSTOM_DATA
 
+config NRF_RPC_UART
+	bool "nRF RPC over UART"
+	default y
+	select SERIAL
+	select UART_INTERRUPT_DRIVEN
+	select ASSERT
+	select RING_BUFFER
+	help
+	  If enabled, selects UART as a transport layer for nRF RPC.
+
+if NRF_RPC_UART
+config NRF_RPC_UART_BUF_SIZE
+	int "Buffer size for both the uart ringbuf and the packet buffer."
+	default 2048
+endif
+
 menuconfig NRF_RPC_IPC_SERVICE
 	bool "nRF RPC over IPC Service"
 	default y
@@ -22,7 +38,7 @@ menuconfig NRF_RPC_IPC_SERVICE
 	select MBOX
 	select EVENTS
 	help
-	  If enabled, selects the IPC Service as a transport layer for nRF PRC.
+	  If enabled, selects the IPC Service as a transport layer for nRF RPC.
 
 if NRF_RPC_IPC_SERVICE
 
