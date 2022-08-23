@@ -80,6 +80,11 @@ static void mac_print(void)
 	LOG_INF("MAC: %s", dev);
 }
 
+static int ble_core_le_lost_notify_enable(void)
+{
+	return ble_hci_vsc_set_op_flag(BLE_HCI_VSC_OP_ISO_LOST_NOTIFY, 1);
+}
+
 /* Callback called by the Bluetooth stack in Zephyr when Bluetooth is ready */
 static void on_bt_ready(int err)
 {
@@ -98,6 +103,9 @@ static void on_bt_ready(int err)
 	ERR_CHK_MSG(ret, "Failed to get controller version");
 
 	LOG_INF("Controller version: %d", ctrl_version);
+
+	ble_core_le_lost_notify_enable();
+
 	m_ready_callback();
 }
 
