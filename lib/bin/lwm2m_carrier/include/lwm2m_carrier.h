@@ -366,7 +366,6 @@ char *lwm2m_carrier_timezone_read(void);
  * @param[in] time Time since Epoch in seconds.
  *
  * @retval  0      If success.
- * @retval -EINVAL If value of time is less than 0.
  */
 int lwm2m_carrier_utc_time_write(int32_t time);
 

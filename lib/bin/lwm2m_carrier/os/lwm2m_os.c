@@ -110,6 +110,7 @@ int lwm2m_os_sleep(int ms)
 
 void lwm2m_os_sys_reset(void)
 {
+	LOG_PANIC();
 	sys_reboot(SYS_REBOOT_COLD);
 	CODE_UNREACHABLE;
 }
@@ -554,7 +555,7 @@ int lwm2m_os_download_file_size_get(size_t *size)
 
 /* LTE LC module abstractions. */
 
-int32_t lwm2m_os_lte_mode_get(void)
+size_t lwm2m_os_lte_modes_get(int32_t *modes)
 {
 	enum lte_lc_system_mode mode;
 
@@ -563,13 +564,45 @@ int32_t lwm2m_os_lte_mode_get(void)
 	switch (mode) {
 	case LTE_LC_SYSTEM_MODE_LTEM:
 	case LTE_LC_SYSTEM_MODE_LTEM_GPS:
-		return LWM2M_OS_LTE_MODE_CAT_M1;
+		modes[0] = LWM2M_OS_LTE_MODE_CAT_M1;
+		return 1;
 	case LTE_LC_SYSTEM_MODE_NBIOT:
 	case LTE_LC_SYSTEM_MODE_NBIOT_GPS:
-		return LWM2M_OS_LTE_MODE_CAT_NB1;
+		modes[0] = LWM2M_OS_LTE_MODE_CAT_NB1;
+		return 1;
+	case LTE_LC_SYSTEM_MODE_LTEM_NBIOT:
+	case LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS:
+		modes[0] = LWM2M_OS_LTE_MODE_CAT_M1;
+		modes[1] = LWM2M_OS_LTE_MODE_CAT_NB1;
+		return 2;
 	default:
-		return LWM2M_OS_LTE_MODE_NONE;
+		return 0;
 	}
+}
+
+void lwm2m_os_lte_mode_request(int32_t prefer)
+{
+	enum lte_lc_system_mode mode;
+	enum lte_lc_system_mode_preference preference;
+	static enum lte_lc_system_mode_preference application_preference;
+
+	(void)lte_lc_system_mode_get(&mode, &preference);
+
+	switch (prefer) {
+	case LWM2M_OS_LTE_MODE_CAT_M1:
+		application_preference = preference;
+		preference = LTE_LC_SYSTEM_MODE_PREFER_LTEM;
+		break;
+	case LWM2M_OS_LTE_MODE_CAT_NB1:
+		application_preference = preference;
+		preference = LTE_LC_SYSTEM_MODE_PREFER_NBIOT;
+		break;
+	case LWM2M_OS_LTE_MODE_NONE:
+		preference = application_preference;
+		break;
+	}
+
+	(void)lte_lc_system_mode_set(mode, preference);
 }
 
 /* PDN abstractions */

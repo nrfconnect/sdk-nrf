@@ -51,7 +51,9 @@ typedef void (*lwm2m_os_thread_entry_t)(void *p1, void *p2, void *p3);
 typedef void lwm2m_os_sem_t;
 
 #define LWM2M_OS_LTE_MODE_NONE   -1
+/* LTE Rel-13 Cat-M1 HD-FDD == E-UTRAN == LTE-M */
 #define LWM2M_OS_LTE_MODE_CAT_M1  6
+/* LTE Rel-13 Cat-NB1 HD-FDD || LTE Rel-14 Cat-NB1 and Cat-NB2 HD-FDD == E-UTRAN NB-S1 == NB-IoT */
 #define LWM2M_OS_LTE_MODE_CAT_NB1 7
 
 /**
@@ -533,13 +535,26 @@ int lwm2m_os_download_start(const char *file, size_t from);
 int lwm2m_os_download_file_size_get(size_t *size);
 
 /**
- * @brief get system mode from modem.
+ * @brief get enabled system modes from modem.
  *
- * @retval LWM2M_OS_LTE_MODE_NONE    Not connected
- * @retval LWM2M_OS_LTE_MODE_CAT_M1  Cat-M1 (LTE-FDD)
- * @retval LWM2M_OS_LTE_MODE_CAT_NB1 Cat-NB1 (NB-IOT)
+ * @param modes Array to store the enabled modes.
+ *                  LWM2M_OS_LTE_MODE_CAT_M1  Cat-M1 (LTE-FDD)
+ *                  LWM2M_OS_LTE_MODE_CAT_NB1 Cat-NB1 (NB-IoT)
+ *
+ * @return Number of enabled modes:
  */
-int32_t lwm2m_os_lte_mode_get(void);
+size_t lwm2m_os_lte_modes_get(int32_t *modes);
+
+/**
+ * @brief set preferred bearer in modem.
+ *
+ * @param prefer LWM2M_OS_LTE_MODE_NONE    for no preference
+ *               LWM2M_OS_LTE_MODE_CAT_M1  for Cat-M1 (LTE-FDD)
+ *               LWM2M_OS_LTE_MODE_CAT_NB1 for Cat-NB1 (NB-IoT)
+ *
+ * @return Number of enabled modes:
+ */
+void lwm2m_os_lte_mode_request(int32_t prefer);
 
 /**
  * @brief Translate the error number.
