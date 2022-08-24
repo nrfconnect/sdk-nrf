@@ -6,6 +6,7 @@
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/hci.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
@@ -79,13 +80,17 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 enum bt_security_err auth_pairing_accept(struct bt_conn *conn,
 					 const struct bt_conn_pairing_feat *const feat)
 {
-	bool conn_handled = is_conn_handled(conn);
-
-	if (!conn_handled) {
+	if (!is_conn_handled(conn)) {
 		LOG_ERR("Invalid conn (pairing accept): %p", (void *)conn);
+		return BT_SECURITY_ERR_UNSPECIFIED;
 	}
 
-	return conn_handled ? BT_SECURITY_ERR_SUCCESS : BT_SECURITY_ERR_UNSPECIFIED;
+	if (feat->io_capability == BT_IO_NO_INPUT_OUTPUT) {
+		LOG_ERR("Invalid IO capability (pairing accept): %p", (void *)conn);
+		return BT_SECURITY_ERR_AUTH_REQUIREMENT;
+	}
+
+	return BT_SECURITY_ERR_SUCCESS;
 }
 
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
