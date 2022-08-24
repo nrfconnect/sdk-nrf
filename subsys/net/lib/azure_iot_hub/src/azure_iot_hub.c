@@ -734,6 +734,9 @@ int azure_iot_hub_connect(const struct azure_iot_hub_config *config)
 			.on_error = on_error,
 		},
 	};
+	struct azure_iot_hub_evt evt = {
+		evt.type = AZURE_IOT_HUB_EVT_CONNECTING,
+	};
 
 	if (iot_hub_state_verify(STATE_CONNECTING)) {
 		LOG_WRN("Azure IoT Hub connection establishment in progress");
@@ -771,6 +774,9 @@ int azure_iot_hub_connect(const struct azure_iot_hub_config *config)
 	}
 
 	iot_hub_state_set(STATE_CONNECTING);
+
+	/* Notify the application that the library is currently connecting to the IoT hub. */
+	azure_iot_hub_notify_event(&evt);
 
 #if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
 	if (config && config->use_dps) {
