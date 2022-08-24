@@ -33,13 +33,13 @@ See  `nRF Cloud Security`_ for more details.
 Generating valid JWTs requires the network carrier to provide date and time to the modem, so the sample must first connect to an LTE carrier and determine the current date and time before REST requests can be sent.
 
 Note also that the `nRF Cloud REST API`_ is stateless.
-This differs from the `nRF Cloud MQTT API`_, which requires you to establish and maintain an `MQTT`_ connection while sending `Device Messages <nRF Cloud Device Messages_>`.
+This differs from the `nRF Cloud MQTT API`_, which requires you to establish and maintain an `MQTT`_ connection while sending `Device Messages <nRF Cloud Device Messages_>`_.
 
 User interface
 **************
 
 Once the device is provisioned and connected, each press of the configured button (**Button 1** by default) (:ref:`CONFIG_REST_DEVICE_MESSAGE_BUTTON_EVT_NUM <CONFIG_REST_DEVICE_MESSAGE_BUTTON_EVT_NUM>`) generates a device-to-cloud button press `Device Message <nRF Cloud Device Messages_>`_ over REST.
-These messages are sent to the non-bulk d2c (Device to Cloud) topic, detailed in `topics used by devices running the nRF Cloud library <nRF Cloud MQTT Topics_>`_.
+These messages are sent to the non-bulk D2C (device-to-cloud) topic, detailed in `topics used by devices running the nRF Cloud library <nRF Cloud MQTT Topics_>`_.
 
 The configured LTE LED (**LED 1** by default) (:ref:`CONFIG_REST_DEVICE_MESSAGE_LTE_LED_NUM <CONFIG_REST_DEVICE_MESSAGE_LTE_LED_NUM>`) is lit once an LTE connection is established and JWT tokens are ready to be generated.
 

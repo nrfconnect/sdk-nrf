@@ -105,8 +105,8 @@ AWS IoT topics
 
 The following tables list the various topics used in the AWS IoT implementation.
 
-Device-to-Cloud
----------------
+Device-to-cloud (D2C)
+---------------------
 
 +------------------------------+--------------------------------------------------------+
 |              Data            |            Topic                                       |
@@ -126,8 +126,8 @@ Device-to-Cloud
 | Buffered sensor/device data  | ``<imei>/batch``                                       |
 +------------------------------+--------------------------------------------------------+
 
-Cloud-to-Device
----------------
+Cloud-to-device (C2D)
+---------------------
 
 +------------------------------+--------------------------------------------------------+
 |              Data            |            Topic                                       |
@@ -149,8 +149,8 @@ Azure IoT Hub topics
 For simplicity, the following table omits certain meta values present in topics and property bags used in Azure IoT Hub.
 For more information on MQTT topics and property bags in Azure IoT Hub, refer to the `Azure IoT Hub MQTT protocol support`_ documentation.
 
-Device-to-Cloud
----------------
+Device-to-cloud (D2C)
+---------------------
 
 +------------------------------+---------------------------------------------+--------------+
 |               Data           |             Topic                           | Property bag |
@@ -170,8 +170,8 @@ Device-to-Cloud
 | Buffered sensor/device data  | ``devices/<imei>/messages/events/``         | ``batch``    |
 +------------------------------+---------------------------------------------+--------------+
 
-Cloud-to-Device
----------------
+Cloud-to-device (C2D)
+---------------------
 
 +------------------------------+------------------------------------------+----------------+
 |               Data           |             Topic                        | Property bag   |
@@ -188,8 +188,8 @@ nRF Cloud topics
 
 For more information on topics used in the nRF Cloud connection, refer to the `nRF Cloud MQTT API`_ documentation.
 
-Device-to-Cloud
----------------
+Device-to-cloud (D2C)
+---------------------
 
 +------------------------------+----------------------------------------------------+
 |              Data            |            AWS IoT topic                           |
@@ -209,8 +209,8 @@ Device-to-Cloud
 | Buffered sensor/device data  | ``<topic_prefix>/<imei>/d2c/batch``                |
 +------------------------------+----------------------------------------------------+
 
-Cloud-to-Device
----------------
+Cloud-to-device (C2D)
+---------------------
 
 +------------------------------+----------------------------------------------------+
 |              Data            |            AWS IoT topic                           |
