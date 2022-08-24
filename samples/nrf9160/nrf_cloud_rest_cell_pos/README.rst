@@ -31,9 +31,9 @@ It requires one of the following:
 Overview
 ********
 
-After the sample initializes and connects to the network, it enters single-cell mode and sends a single-cell location request to nRF Cloud using network data obtained from the ref:`modem_info_readme` library.
+After the sample initializes and connects to the network, it enters single-cell mode and sends a single-cell location request to nRF Cloud using network data obtained from the :ref:`modem_info_readme` library.
 To enable multi-cell mode, press **button 1**.
-In multi-cell mode, the sample requests for neighbor cell measurement using the ref:`lte_lc_readme` library.
+In multi-cell mode, the sample requests for neighbor cell measurement using the :ref:`lte_lc_readme` library.
 If neighbor cell data is measured, the sample sends a multi-cell location request to nRF Cloud.
 Otherwise, the request is single-cell.
 In either mode, the sample sends a new location request if a change in cell ID is detected.
