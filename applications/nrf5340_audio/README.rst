@@ -612,6 +612,14 @@ Only one of the following :file:`.conf` files is included when building:
   When building using the command line, you must explicitly specify if :file:`prj_release.conf` is going to be included instead of :file:`prj.conf`.
   See :ref:`nrf53_audio_app_building` for details.
 
+Requirements for FOTA
+=====================
+
+To test Firmware Over-The-Air (FOTA), you need an Android or iOS device with the `nRF Connect Device Manager`_ app installed.
+
+If you want to do FOTA upgrades for the application core and the network core at the same time, you need an external flash shield.
+See :ref:`nrf53_audio_app_configuration_configure_fota` for more details.
+
 .. _nrf53_audio_app_ui:
 
 User interface
@@ -813,7 +821,14 @@ Use this cable to connect the audio source (PC) to the analog **LINE IN** on the
 Configuring FOTA upgrades
 =========================
 
-You can configure FOTA upgrades to replace the applications on both the application core and the network core.
+.. caution::
+	Firmware based on the |NCS| versions earlier than v2.1.0 does not support DFU.
+	FOTA is not available for those versions.
+
+	You can test performing separate application and network core upgrades, but for production, both cores must be updated at the same time.
+	When updates take place in the inter-core communication module (HCI RPMsg), communication between the cores will break if they are not updated together.
+
+You can configure Firmware Over-The-Air (FOTA) upgrades to replace the applications on both the application core and the network core.
 The nRF5340 Audio application supports the following types of DFU flash memory layouts:
 
 * Internal flash memory layout - which supports only single-image DFU.
@@ -848,7 +863,12 @@ Enabling FOTA upgrades
 ----------------------
 
 The FOTA upgrades are only available when :ref:`nrf53_audio_app_building_script`.
-With the appropriate parameter provided, the :file:`buildprog.py` Python script will add overlay files for the given DFU type.
+With the appropriate parameters provided, the :file:`buildprog.py` Python script will add overlay files for the given DFU type.
+To enable the desired FOTA functions:
+
+* To define flash memory layout, include the ``-m internal`` parameter for the internal layout or the ``-m external`` parameter for the external layout.
+* To use the minimal size network core bootloader, add the ``-M`` parameter.
+
 For the full list of parameters and examples, see the :ref:`nrf53_audio_app_building_script_running` section.
 
 Entering the DFU mode
@@ -903,7 +923,7 @@ Testing out of the box
 Each development kit comes preprogrammed with basic firmware that indicates if the kit is functional.
 Before building the application, you can verify if the kit is working by completing the following steps:
 
-1. Plug the device into the USB port using USB-C.
+1. Plug the device into the USB port.
 #. Turn on the development kit using the On/Off switch.
 #. Observe **RGB1** (bottom side LEDs around the center opening that illuminate the Nordic Semiconductor logo) turn solid yellow, **OB/EXT** turn solid green, and **LED3** start blinking green.
 
@@ -960,7 +980,7 @@ See the following examples of the parameter usage with the command run from the 
 
      python buildprog.py -c app -b debug -d both -m internal -M
 
-  If you run this command with the ``external`` DFU type parameter instead, the external flash memory layout will be enabled using the minimal size of the network core bootloader.
+  If you run this command with the ``external`` DFU type parameter instead of ``internal``, the external flash memory layout will be enabled.
 
 The command can be run from any location, as long as the correct path to :file:`buildprog.py` is given.
 
@@ -971,7 +991,7 @@ For example, when running the command above, the script creates the :file:`dev_g
 Programming with the script
    The development kits are programmed according to the serial numbers set in the JSON file.
    If you run the script with the ``-p`` parameter, you can program one or both of the cores after building the files.
-   Make sure to connect the development kits with your PC using USB-C and turn them on using the **POWER** switch before you run the command.
+   Make sure to connect the development kits to your PC using USB and turn them on using the **POWER** switch before you run the command.
    The command for programming can look as follows:
 
    .. code-block:: console
@@ -1080,7 +1100,7 @@ Complete the following steps to build the application:
 
       * For internal flash memory DFU: ``-DCONFIG_AUDIO_DFU=1``
       * For external flash memory DFU: ``-DCONFIG_AUDIO_DFU=2``
-      * For minimal sizes of the net core bootloader: ``-DCONFIG_B0N_MINIMAL=y``
+      * For minimal sizes of the network core bootloader: ``-DCONFIG_B0N_MINIMAL=y``
 
 #. Build the application using the standard :ref:`build steps <gs_programming>`.
    For example, if you want to build the firmware for the application core as a headset using the ``release`` application version, you can run the following command:
@@ -1099,7 +1119,7 @@ Programming the application
 
 After building the files for the development kit you want to program, complete the following steps to program the application from the command line:
 
-1. Plug the device into the USB port using USB-C.
+1. Plug the device into the USB port.
 #. Turn on the development kit using the On/Off switch.
 #. Open a command prompt.
 #. Run the following command to print the SEGGER serial number of your development kit:
@@ -1172,7 +1192,7 @@ Testing the default CIS mode
 
 Complete the following steps to test the CIS mode for one gateway and two headset devices:
 
-1. Make sure that the development kits are still plugged into the USB port using USB-C and are turned on.
+1. Make sure that the development kits are still plugged into the USB ports and are turned on.
    After programming, **RGB2** starts blinking green on every device to indicate the ongoing CPU activity on the network core.
    **LED3** starts blinking green on every device to indicate the ongoing CPU activity on the application core.
 #. Wait for the **LED1** on the gateway to start blinking blue.
@@ -1222,6 +1242,43 @@ Testing the BIS mode is identical to `Testing the default CIS mode`_, except for
   For example, you can decrease or increase the volume separately for each receiver during playback.
 
 .. _nrf53_audio_app_porting_guide:
+
+Testing FOTA upgrades
+---------------------
+
+`nRF Connect Device Manager`_ can be used for testing FOTA upgrades.
+The procedure for upgrading the firmware is identical for both headset and gateway firmware.
+You can test upgrading the firmware on both cores at the same time on a headset device by completing the following steps:
+
+1. Make sure you have :ref:`configured the application for FOTA <nrf53_audio_app_configuration_configure_fota>`.
+#. Install `nRF Connect Device Manager`_ on your Android or iOS device.
+#. Connect an external flash shield to the headset.
+#. Make sure the headset runs a firmware that supports DFU using external flash memory.
+   One way of doing this is to connect the headset to the USB port, turn it on, and then run this command:
+
+   .. code-block:: console
+
+      python buildprog.py -c both -b debug -d headset --pristine -m external -p
+
+   .. note::
+      When using the FOTA related functionality in the :file:`buildprog.py` script on Linux, the ``python`` command must execute Python 3.
+
+#. Use the :file:`buildprog.py` script to create a zip file that contains new firmware for both cores:
+
+   .. code-block:: console
+
+      python buildprog.py -c both -b debug -d headset --pristine -m external
+
+#. Transfer the generated zip file to your Android or iOS device.
+   The file name should start with :file:`dev_headset_build_debug_dfu_application`.
+   For transfer, you can use cloud services like Google Drive for Android or iCloud for iOS.
+#. Open `nRF Connect Device Manager`_ and look for ``NRF5340_AUDIO_HL_DFU`` in the scanned devices window.
+   The headset is left by default.
+#. Tap on :guilabel:`NRF5340_AUDIO_HL_DFU` and then on the downward arrow icon at the bottom of the screen.
+#. In the :guilabel:`Firmware Upgrade` section, tap :guilabel:`SELECT FILE`.
+#. Select the zip file you transferred to the device.
+#. Tap :guilabel:`START` and then :guilabel:`START` again in the notification to start the DFU process.
+#. When the DFU has finished, verify that the new application core and network core firmware works properly.
 
 Adapting application for end products
 *************************************
@@ -1327,7 +1384,9 @@ Legal notices and disclaimers
 *****************************
 
 Additional Disclaimer for the nRF5340 Audio application
-   This application and the LE Audio Controller Subsystem for nRF53 are marked as experimental.
+   This application and the LE Audio Controller Subsystem for nRF53 are marked as :ref:`experimental <software_maturity>`.
+   The DFU/FOTA functionality in this application is also marked as :ref:`experimental <software_maturity>`.
+
    The LE Audio Controller Subsystem for nRF53 associated with this release comes with QDID 181316.
    This LE Audio link controller is tested and works in configurations used by the present reference code (for example, 2 concurrent CIS, or BIS).
    No other configurations than the ones used in the reference application are tested nor documented in this release.
