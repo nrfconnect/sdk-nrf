@@ -49,7 +49,7 @@ You can find an overview of currently supported bootloaders in the table below:
      - No
      - Yes
      - :ref:`Monotonic (HW) <bootloader_monotonic_counter>`
-     - Dual-slot execute-in-place (XIP)
+     - Dual-slot direct-xip
    * - :doc:`MCUboot <mcuboot:index-ncs>`
      - Yes
      - Yes
@@ -59,7 +59,7 @@ You can find an overview of currently supported bootloaders in the table below:
      - Yes
      - :ref:`Semantic (SW) <ug_fw_update_image_versions_mcuboot>`
      - Image swap - single primary
-       Dual-slot execute-in-place (XIP)
+       Dual-slot direct-xip
 
 See the following user guides to learn more:
 
