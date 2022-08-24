@@ -31,17 +31,6 @@ config MODEM_AUTO_REQUEST_POWER_SAVING_FEATURES
 	bool "Auto request power saving features"
 	default y
 
-config MODEM_CONVERT_RSRP_AND_RSPQ_TO_DB
-	bool "Convert RSRP and RSRQ values to dBm and dB, respectively [DEPRECATED]"
-	select MODEM_DYNAMIC_DATA_CONVERT_RSRP_TO_DBM
-	select MODEM_NEIGHBOR_CELLS_DATA_CONVERT_RSRP_TO_DBM
-	select MODEM_NEIGHBOR_CELLS_DATA_CONVERT_RSRQ_TO_DB
-	help
-	  If this option is enabled, RSRP and RSRQ values are converted to dBm and dB before being
-	  sent out by the module. This option is deprecated,
-	  use MODEM_DYNAMIC_DATA_CONVERT_RSRP_TO_DBM, MODEM_NEIGHBOR_CELLS_DATA_CONVERT_RSRP_TO_DBM
-	  and MODEM_NEIGHBOR_CELLS_DATA_CONVERT_RSRQ_TO_DB instead.
-
 config MODEM_DYNAMIC_DATA_CONVERT_RSRP_TO_DBM
 	bool "Convert RSRP values to dBm for dynamic modem data"
 	default y
