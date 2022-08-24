@@ -133,6 +133,17 @@ config PM_SINGLE_IMAGE
 
 DT_CHOSEN_EXT_FLASH:= nordic,pm-ext-flash
 
+config PM_EXTERNAL_FLASH_HAS_DRIVER
+	bool
+	default y if NORDIC_QSPI_NOR || SPI_NOR
+	default y if PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
+	help
+	  This option needs to be enabled by flash drivers that provide
+	  support for external flash devices with partition manager
+	  controlled partitions on them.
+	  Partitions on devices without drivers will not have partition map
+	  entries generated and will not be available from Flash Map API.
+
 config PM_EXTERNAL_FLASH_BASE
 	hex "External flash base address"
 	default 0
