@@ -56,6 +56,7 @@ config BT_FAST_PAIR_AUTH
 	default y
 	select BT_SMP
 	select BT_SMP_APP_PAIRING_ACCEPT
+	select BT_SMP_ENFORCE_MITM
 	help
 	  Add Fast Pair Bluetooth authentication source files.
 
