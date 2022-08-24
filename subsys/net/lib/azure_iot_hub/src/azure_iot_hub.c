@@ -351,7 +351,7 @@ AZ_HUB_STATIC void on_publish(struct azure_iot_hub_buf topic, struct azure_iot_h
 		 */
 		switch (twin_msg.response_type) {
 		case AZ_IOT_HUB_CLIENT_TWIN_RESPONSE_TYPE_GET:
-			evt.topic.type = AZURE_IOT_HUB_TOPIC_TWIN_DESIRED;
+			evt.topic.type = AZURE_IOT_HUB_TOPIC_TWIN_REQUEST_RESULT;
 			LOG_DBG("Message type: AZ_IOT_HUB_CLIENT_TWIN_RESPONSE_TYPE_GET");
 			break;
 		case AZ_IOT_HUB_CLIENT_TWIN_RESPONSE_TYPE_DESIRED_PROPERTIES:
