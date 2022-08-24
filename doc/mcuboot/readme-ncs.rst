@@ -31,8 +31,9 @@ When you build your application with this option set, the following files that c
   When this file is programmed to the device, MCUboot will trigger the DFU procedure upon reboot.
 
 .. note::
-   When you use MCUboot in the execute-in-place (XIP) mode, enable :kconfig:option:`CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT` to let the build system generate an additional set of files for the second application slot.
+   When you use MCUboot in the direct-xip mode, enable the :kconfig:option:`CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT` Kconfig option to let the build system generate an additional set of files for the second application slot.
    These ``.hex`` files are identical to the ones listed above, but their names also use the ``mcuboot_secondary_`` prefix.
    For example, :file:`mcuboot_secondary_app_signed.hex` is created and placed in the second slot on the target device when the :file:`app_signed.hex` file is placed in the first slot.
+   For more information about the direct-xip mode, see the *Equal slots (direct-xip)* section in the :doc:`Bootloader documentation <design>`.
 
 .. _`sdk-nrf`: https://github.com/nrfconnect/sdk-nrf
