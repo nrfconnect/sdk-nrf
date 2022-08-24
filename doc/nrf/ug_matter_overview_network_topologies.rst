@@ -72,7 +72,7 @@ OTA Requestor
   A Matter node that can request information about available software update images to the OTA Provider node and receive update packages from it during the OTA software update process.
   An OTA Requestor can also handle announcements about the available OTA Providers in the Matter network.
 
-.. _ug_matter_network_topologies_security:
+.. _ug_matter_network_topologies_concepts_security:
 
 Matter network security
 ***********************
@@ -96,8 +96,8 @@ Message confidentiality
 The Matter protocol uses elliptic curve cryptography as the principal mean of both public and private key protection and for providing digital signatures.
 The elliptic curve cryptography is based on the NIST P-256 curve (secp256r1).
 To prevent the communication from intercepting and unwanted decryption, Matter uses the `SPAKE2+`_ and `SIGMA`_ algorithms that ensure a safe exchange of keys over non-secure channel.
-With the SPAKE2+ algorithm, only one of the communicating parties knows the password.
-This is a reinforced version of the Password Authenticated Key Exchange (PAKE) protocol, where both parties are involved in creating a shared key.
+With the SPAKE2+ algorithm, only one of the communicating parties actively uses the password during the execution of the protocol.
+This is a reinforced version of the Password Authenticated Key Exchange (PAKE) protocol, where both parties are involved in creating a shared key and both actively use the password.
 After exchanging the keys and establishing secure channel, the commonly available AES modes of operation are used to provide shared key cryptographic operations.
 
 .. _ug_matter_network_topologies_commissioning:
@@ -129,7 +129,7 @@ It consists of the following stages:
    The CASE protocol is in charge of exchanging NOCs to set up a session secured with a new pair of keys.
    The CASE connection is reset each time a device breaks the connection.
 #. Disarming fail-safe -- The commissioner requests the commissionee node to remove the stored configuration backup.
-#. Message exchange -- The commissioner and the commissionee exchange a CASE-encrypted message on the operational network.
+#. Message exchange -- The commissioner and the commissionee exchange a AES-encrypted message on the operational network.
 
 These stages can take place in one of the following connection scenarios between the commissioner and the commissionee:
 
@@ -141,7 +141,7 @@ This is because the commissioning process can take place over a different networ
 At the end of the commissioning procedure, the device that has successfully joined the Matter fabric will have the following information configured:
 
 * New instance name, constructed using the fabric ID and the node ID (assigned by the commissioner)
-* New operational certificate for the Matter fabric it has joined
+* New Node Operational Certificate for the Matter fabric it has joined
 * New Private Key for operation certificate
 * New Access Control List
 * Information about operational network

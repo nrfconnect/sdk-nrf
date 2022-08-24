@@ -23,7 +23,7 @@ Matter in the |NCS|
 
 The |NCS| provides full toolchain for Linux, macOS, and Windows, and is built on top of the Zephyr RTOS.
 It includes west for managing repositories, toolchain manager for managing toolchain, Kconfig for feature configuration, and Devicetree for board description.
-Finally, it integrates the OpenThread and Bluetooth LE stacks, which can work in multiprotocol operation.
+Finally, it integrates the OpenThread and Wi-Fi stacks, both of which can work in a multiprotocol scenario with the integrated Bluetooth® LE stack.
 
 Nordic Semiconductor integrates the Matter stack in the |NCS| using a dedicated fork ``nrfconnect/sdk-connectedhomeip``.
 The official Matter repository is fetched into the fork and the fork is included in the |NCS| as a Zephyr module.

@@ -13,8 +13,8 @@ Both instances depend on each other, but their development is independent to ens
 The fork is maintained and verified as a part of the |NCS| release process.
 
 Matter is located on the top application layer of the integration model, looking from the networking point of view.
-The |NCS| and Zephyr provide the Bluetooth® LE and Thread stacks, which must be integrated with the Matter stack using a special intermediate layer.
-The |NCS|'s Multiprotocol Service Layer (MPSL) driver allows running Bluetooth LE and Thread concurrently on the same radio chip.
+The |NCS| and Zephyr provide the Bluetooth® LE, Thread, and Wi-Fi stacks, which must be integrated with the Matter stack using a special intermediate layer.
+In case of Matter over Thread, the |NCS|'s Multiprotocol Service Layer (MPSL) driver allows running Bluetooth LE and Thread concurrently on the same radio chip.
 
 .. figure:: images/matter_nrfconnect_overview_simplified_ncs.svg
    :alt: nRF Connect platform in Matter
@@ -66,5 +66,10 @@ This platform design is suitable for the following development kits:
    :header: heading
    :rows: nrf7002dk_nrf5340_cpuapp, nrf5340dk_nrf5340_cpuapp
 
-.. note::
-   The ``nrf5340dk_nrf5340_cpuapp`` requires the ``nrf7002_ek`` shield attached for this platform design.
+For this design, the Wi-Fi driver on the application core communicates with the external nRF7002 Wi-Fi 6 Companion IC over QSPI or SPI:
+
+* For the ``nrf5340dk_nrf5340_cpuapp``, nRF7002 support is added using ``nrf7002_ek`` shield connected through SPI.
+* For the ``nrf7002dk_nrf5340_cpuapp``, nRF7002 is connected with the nRF5340 SoC through QSPI.
+
+.. figure:: /images/matter_platform_design_nRF53_wifi.svg
+   :alt: Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF53 with the nRF7002 Wi-Fi 6 Companion IC)

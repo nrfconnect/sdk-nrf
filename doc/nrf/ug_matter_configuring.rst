@@ -18,7 +18,7 @@ This controller interacts with the accessory devices using the following protoco
 
 The following figure shows the protocol types and the available Matter controllers.
 
-.. figure:: images/matter_protocols_controllers.svg
+.. figure:: images/matter_setup_controllers_generic.png
    :width: 600
    :alt: Protocol types and controllers used by Matter
 
