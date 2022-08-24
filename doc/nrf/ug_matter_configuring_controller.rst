@@ -14,7 +14,7 @@ The controller device is used to pair and control the Matter accessory device re
 
 The following figure shows the available Matter controllers in the |NCS|.
 
-.. figure:: images/matter_protocols_controllers.svg
+.. figure:: images/matter_setup_controllers_generic.png
    :width: 600
    :alt: Controllers used by Matter
 

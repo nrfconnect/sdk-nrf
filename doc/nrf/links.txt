@@ -916,7 +916,7 @@
 .. _`Power Saving Mode (PSM)`: https://www.sharetechnote.com/html/Handbook_LTE_PSM.html
 
 .. _`Distributed Compliance Ledger`:
-.. _`Distributed Compliance Ledger website`: https://testnet.iotledger.io/
+.. _`Distributed Compliance Ledger website`: https://webui.dcl.csa-iot.org/
 
 .. _`Leshan Demo Server web UI`:
 .. _`public Leshan Demo Server`: https://leshan.eclipseprojects.io

@@ -68,7 +68,7 @@ Endpoints
 
 Clusters
    Endpoints are composed of one or more clusters, which group attributes, commands and events that together make up each single feature in a set.
-   For example, in an endpoint for operating a door bolt, one cluster could group attributes for moving the bolt to open or closed position, while other could group attributes for controlling how fast the bolt would move.
+   For example, in an endpoint for operating a door bolt, one cluster could group attributes for moving the bolt to open or closed position, while other could group attributes for controlling alarms in case the door is opened in unauthorized way.
 
    Clusters can be of the following types:
 
@@ -84,7 +84,7 @@ Attributes
 
 Commands
    Commands are actions that can be used to trigger some behavior on other devices.
-   For example, they can be used to request a Matter node to do something, communicate attribute data or modify some attributes.
+   For example, in a door lock device the lock door command can be used to trigger such action on a physical device.
 
 Events
    Events are a type of attributes that communicate device state changes.
