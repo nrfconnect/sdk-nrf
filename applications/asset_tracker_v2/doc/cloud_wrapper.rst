@@ -291,7 +291,6 @@ Currently, the LwM2M integration does not have support for the following scenari
 
 * Sending of batched data.
 * Downloading of P-GPS data. This is under development and will be made available through `Coiote Device Management`_.
-* Building with support for `Memfault SDK`_ using the :file:`overlay-memfault.conf` file. This is due to memory constraints.
 
 Dependencies
 ************
