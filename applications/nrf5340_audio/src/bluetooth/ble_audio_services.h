@@ -7,6 +7,8 @@
 #ifndef _BLE_AUDIO_SERVICES_H_
 #define _BLE_AUDIO_SERVICES_H_
 
+#include <zephyr/bluetooth/conn.h>
+
 /**
  * @brief Discover VCS and included services
  *
