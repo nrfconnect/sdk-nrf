@@ -375,6 +375,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		  NULL,
 		  "\"\"",
 		  cmd_supplicant),
+	SHELL_CMD(abort_scan,
+		  NULL,
+		  "\"Abort an ongoing scan\"",
+		  cmd_supplicant),
 #endif /* CONFIG_WPA_SUPP */
 	SHELL_SUBCMD_SET_END);
 

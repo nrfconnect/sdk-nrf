@@ -470,13 +470,26 @@ out:
 int wifi_nrf_wpa_supp_scan_abort(void *if_priv)
 {
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct wifi_nrf_ctx_zep *rpu_ctx_zep = NULL;
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 
 	vif_ctx_zep = if_priv;
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 
-	/* TODO: No support in UMAC for scan abort yet */
-	LOG_ERR("%s: Scan abort not supported yet\n", __func__);
+	if (!vif_ctx_zep->scan_in_progress) {
+		LOG_INF("%s:Ignore scan abort, no scan in progress", __func__);
+		goto out;
+	}
 
-	return 0;
+	status = wifi_nrf_fmac_abort_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
+
+	if (status != WIFI_NRF_STATUS_SUCCESS) {
+		LOG_ERR("%s: Scan trigger failed\n", __func__);
+		goto out;
+	}
+
+out:
+	return status;
 }
 
 int wifi_nrf_wpa_supp_scan_results_get(void *if_priv)
