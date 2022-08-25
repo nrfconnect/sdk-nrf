@@ -60,12 +60,8 @@ kconfig_ext_paths = [ZEPHYR_BASE, NRF_BASE]
 # task has been completed.
 os.environ["NCS_MEMFAULT_FIRMWARE_SDK_KCONFIG"] = str(
     NRF_BASE
-    / ".."
     / "modules"
-    / "lib"
     / "memfault-firmware-sdk"
-    / "ports"
-    / "zephyr"
     / "Kconfig"
 )
 
