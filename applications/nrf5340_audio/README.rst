@@ -141,9 +141,6 @@ These modules include the following major ones:
 
   * LC3 encoder/decoder (default)
 
-.. note::
-   :ref:`Selecting and configuring the right software codec <nrf53_audio_app_requirements_codec>` is required to run the application.
-
 Since the application architecture is uniform and the firmware code is shared, the set of audio modules in use depends on the chosen stream mode (BIS or CIS), the chosen audio inputs and outputs (USB or analog jack), and if the gateway or the headset configuration is selected.
 
 .. note::
@@ -299,11 +296,11 @@ For CIS with TWS in mind, three kits are required.
 Software codec requirements
 ===========================
 
-The nRF5340 Audio application must the LC3 software (developed specifically for use with LE Audio).
-The codec requires :ref:`adding its own repository before building and running <nrf53_audio_app_configuration_repos>`.
+The nRF5340 Audio application only supports the LC3 software codec, developed specifically for use with LE Audio.
+The codec is not open-source and you need to obtain access to its repository.
+To do so, `contact the sales department <Contact Us_>`_.
 
-|lc3_codec_access_note|
-See :ref:`nrf53_audio_app_configuration_select_codec` for more information.
+Once you obtain the access, the codec requires :ref:`adding its own repository before building and running <nrf53_audio_app_configuration_repos>`.
 
 .. _nrf53_audio_app_dk:
 
@@ -761,14 +758,17 @@ Configuration
 Setting up the nRF5340 Audio repositories
 =========================================
 
-The application relies on the following :ref:`external OSS repositories <dm_code_base>` that need to be pulled using west:
+The application relies on the following repositories that need to be pulled using west:
 
-* LC3 software codec repository
-* Hardware codec driver repository
+* LC3 software codec repository - The default software codec for the application, which is not open-source.
+  The application only supports the LC3 software codec.
+* Hardware codec driver repository - One of the :ref:`external OSS repositories <dm_code_base>`.
 
 To have these repositories managed by west, complete the following steps:
 
-1. Add the group filter specific to the nRF5340 Audio application to the west manifest file of your project by running the following command:
+1. Obtain access to the LC3 codec repository.
+   To do so, `contact the sales department <Contact Us_>`_.
+#. Add the group filter specific to the nRF5340 Audio application to the west manifest file of your project by running the following command:
 
    .. code-block:: console
 
@@ -783,16 +783,6 @@ To have these repositories managed by west, complete the following steps:
 If west can fetch the repositories correctly, you can now build the application.
 
 For more information about west, see :ref:`Zephyr's documentation page <zephyr:west>`.
-
-.. _nrf53_audio_app_configuration_select_codec:
-
-Selecting the audio software codec
-==================================
-
-The nRF5340 Audio application must use either the LC3 software (developed specifically for use with LE Audio).
-The codec requires :ref:`adding its own repository before building and running <nrf53_audio_app_configuration_repos>`.
-
-|lc3_codec_access_note|
 
 .. _nrf53_audio_app_configuration_select_bis:
 
@@ -901,7 +891,6 @@ Prerequisites
 Before building the application, make sure to meet the following prerequisites described in the :ref:`nrf53_audio_app_configuration` section:
 
 * :ref:`nrf53_audio_app_configuration_repos`
-* :ref:`nrf53_audio_app_configuration_select_codec`
 
 You might also want to check the :ref:`nRF5340 Audio application known issues <known_issues_nrf5340audio>`.
 
@@ -1385,10 +1374,6 @@ Legal notices for the nRF5340 Audio DK
       © 2022 Nordic Semiconductor ASA.
       All rights are reserved.
       Reproduction in whole or in part is prohibited without the prior written permission of the copyright holder.
-
-.. |lc3_codec_access_note| replace:: The default software codec for the application is LC3, which is not open-source.
-   To build the application using this codec requires obtaining access to the LC3 codec repository.
-   To obtain access to the repository, `contact the sales department <Contact Us_>`_.
 
 .. |net_core_hex_note| replace:: The network core for both gateway and headsets is programmed with the precompiled Bluetooth Low Energy Controller binary file :file:`ble5-ctr-rpmsg_<XYZ>.hex`, where ``<XYZ>`` corresponds to the controller version, for example :file:`ble5-ctr-rpmsg_3216.hex`.
    This file includes the LE Audio Controller Subsystem for nRF53 and is provided in the :file:`applications/nrf5340_audio/bin` directory.
