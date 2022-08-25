@@ -340,7 +340,7 @@ static int wifi_nrf_drv_main_zep(const struct device *dev)
 {
 	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
 	struct wifi_nrf_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct wifi_nrf_fmac_callbk_fns callbk_fns;
+	struct wifi_nrf_fmac_callbk_fns callbk_fns = { 0 };
 	struct img_data_config_params data_config;
 	struct rx_buf_pool_params rx_buf_pools[MAX_NUM_OF_RX_QUEUES];
 
