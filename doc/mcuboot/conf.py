@@ -35,6 +35,11 @@ master_doc = "wrapper"
 
 linkcheck_ignore = [r"(\.\.(\\|/))+(kconfig|zephyr)"]
 
+rst_epilog = """
+.. include:: /links.txt
+.. include:: /shortcuts.txt
+"""
+
 # Options for HTML output ------------------------------------------------------
 
 html_theme = "sphinx_ncs_theme"
@@ -57,6 +62,7 @@ if kconfig_mapping:
 
 external_content_contents = [
     (NRF_BASE / "doc" / "mcuboot", "*.rst"),
+    (NRF_BASE / "doc" / "mcuboot", "*.txt"),
     (MCUBOOT_BASE / "docs", "release-notes.md"),
     (MCUBOOT_BASE / "docs", "design.md"),
     (MCUBOOT_BASE / "docs", "encrypted_images.md"),

@@ -21,9 +21,7 @@ Topics that are not relevant for the integration of MCUboot in the nRF Connect S
    encrypted_images.md
    imgtool.md
    ecdsa.md
-   readme-zephyr.md
    readme-ncs.rst
-   testplan-zephyr.md
    release.md
    SECURITY.md
    SubmittingPatches.md
