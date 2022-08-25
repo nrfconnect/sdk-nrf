@@ -146,7 +146,7 @@ manifest:
       revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
     - name: homekit
       repo-path: sdk-homekit
-      revision: f5f0d2540d99d1d6c43a6a9bf796e8dfeced059c
+      revision: 4296c2ad29120d3f7897e996623857d89554e2ff
       groups:
       - homekit
     - name: find-my
