@@ -126,6 +126,9 @@ RF Front-End Modules
 ====================
 
 * Fixed a build error that occurred when building an application for nRF53 SoCs with Simple GPIO Front-End Module support enabled.
+* Added the :kconfig:option:`CONFIG_MPSL_FEM_ONLY` Kconfig option that allows the :ref:`nrfxlib:mpsl_fem` API to be used without other MPSL features.
+  The :ref:`MPSL library <nrfxlib:mpsl>` is linked into the build without initialization.
+  You cannot use other MPSL features when this option is enabled.
 
 Applications
 ============
