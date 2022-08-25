@@ -48,7 +48,7 @@ It is developed by the Zephyr community and provided as open source.
 
 To use Zephyr's Bluetooth LE Controller in your application, include a :ref:`Controller-only build <zephyr:bluetooth-build-types>` of the Bluetooth LE stack.
 
-Zephyr's Bluetooth LE Controller supports most of the standard Bluetooth LE features, except for Advertising Extensions.
+Zephyr's Bluetooth LE Controller supports most of the standard Bluetooth LE features.
 See the :ref:`Zephyr documentation <zephyr:bluetooth-overview>` for a detailed list of supported features.
 
 
