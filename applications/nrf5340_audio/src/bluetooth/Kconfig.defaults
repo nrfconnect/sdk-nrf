@@ -33,10 +33,6 @@ config BT_DEVICE_NAME
 	string
 	default "NRF5340_AUDIO"
 
-config BT_AUDIO_LC3_CONFIGURATION
-	int 
-	default 11
-	
 config BT_GATT_CLIENT
 	bool
 	default y
@@ -177,10 +173,6 @@ endif # AUDIO_DEV = 2 (GATEWAY)
 endif # TRANSPORT_CIS
 
 if TRANSPORT_BIS # Depends on TRANSPORT_BIS
-
-config BT_AUDIO_LC3_CONFIGURATION
-	int
-	default 11
 
 # HEADSET
 if AUDIO_DEV = 1

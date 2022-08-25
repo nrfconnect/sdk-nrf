@@ -174,6 +174,70 @@ config BLE_ISO_RX_STATS_S
 	int "Interval in seconds to print BLE ISO RX stats. 0 to deactivate"
 	default 0
 
+choice BT_AUDIO_UNICAST_LC3_CONFIGURATION
+	prompt "Unicast codec capability"
+	default BT_AUDIO_LC3_CONFIGURATION_UNICAST_DEFAULT
+	help
+		Select the unicast codec configuration as given in
+		Table 5.2 of BAP Specification
+
+config BT_AUDIO_LC3_CONFIGURATION_UNICAST_DEFAULT
+	bool "Default unicast codec capability"
+
+config BT_AUDIO_LC3_CONFIGURATION_UNICAST_MANDATORY_1
+	bool "Unicast mandatory codec capability 16_2_1"
+
+config BT_AUDIO_LC3_CONFIGURATION_UNICAST_MANDATORY_2
+	bool "Unicast mandatory codec capability 24_2_1"
+	
+endchoice
+
+config BT_AUDIO_UNICAST_LC3_CONFIGURATION
+	int "Unicast codec configuration"
+	default  0 if BT_AUDIO_LC3_CONFIGURATION_UNICAST_DEFAULT
+	default  4 if BT_AUDIO_LC3_CONFIGURATION_UNICAST_MANDATORY_1
+	default  6 if BT_AUDIO_LC3_CONFIGURATION_UNICAST_MANDATORY_2
+	help
+		Only support the default configuration and the mandatory 
+		conciguratios, as given in Table 5.2 of the BAP Specification
+		Only the default configuration is supported for USB input
+
+choice BT_AUDIO_BROADCAST_CODEC_CONFIGURATION
+	prompt "Broadcast codec capability"
+	default BT_AUDIO_LC3_CONFIGURATION_BROADCAST_DEFAULT
+	help
+		Select the broadcast codec configuration as given
+		in Table 6.4 of the BAP specification
+
+config BT_AUDIO_LC3_CONFIGURATION_BROADCAST_DEFAULT
+	bool "Default Broadcast codec capability"
+
+config BT_AUDIO_LC3_CONFIGURATION_BROADCAST_LATENCY_MANDATORY_1
+	bool "Broadcast mandatory codec capability 16_2_1"
+
+config BT_AUDIO_LC3_CONFIGURATION_BROADCAST_LATENCY_MANDATORY_2
+	bool "Broadcast mandatory codec capability 24_2_1"
+
+config BT_AUDIO_LC3_CONFIGURATION_BROADCAST_RELIABILITY_MANDATORY_1
+	bool "Broadcast mandatory codec capability 16_2_1"
+
+config BT_AUDIO_LC3_CONFIGURATION_BROADCAST_RELIABILITY_MANDATORY_2
+	bool "Broadcast mandatory codec capability 24_2_1"
+
+endchoice
+
+config BT_AUDIO_BROADCAST_LC3_CONFIGURATION
+	int "Broadcast codec configuration"
+	default  0 if BT_AUDIO_LC3_CONFIGURATION_BROADCAST_DEFAULT
+	default  4 if BT_AUDIO_LC3_CONFIGURATION_BROADCAST_LATENCY_MANDATORY_1
+	default  6 if BT_AUDIO_LC3_CONFIGURATION_BROADCAST_LATENCY_MANDATORY_2
+	default 20 if BT_AUDIO_LC3_CONFIGURATION_BROADCAST_RELIABILITY_MANDATORY_1
+	default 22 if BT_AUDIO_LC3_CONFIGURATION_BROADCAST_RELIABILITY_MANDATORY_2
+	help
+		Only support the default configuration and the mandatory 
+		conciguratios, as given in Table 6.4 of the BAP Specification
+		Only the default configuration is supported for USB input
+
 #----------------------------------------------------------------------------#
 menu "Log levels"
 

@@ -32,41 +32,29 @@ config AUDIO_FRAME_DURATION_US
 
 choice AUDIO_SAMPLE_RATE
 	prompt "Sample rate Hz"
-	default AUDIO_SAMPLE_RATE_48_HZ
+	default AUDIO_SAMPLE_RATE_48000_HZ
 	help
-		Select the bit audio sample rate
+		Select the audio sample rate
 
-config AUDIO_SAMPLE_RATE_8_HZ
-	bool "8 kHz sampled audio"
-
-config AUDIO_SAMPLE_RATE_16_HZ
+config AUDIO_SAMPLE_RATE_16000_HZ
 	bool "16 kHz sampled audio"
 
-config AUDIO_SAMPLE_RATE_24_HZ
+config AUDIO_SAMPLE_RATE_24000_HZ
 	bool "24 kHz sampled audio"
 
-config AUDIO_SAMPLE_RATE_32_HZ
-	bool "32 kHz sampled audio"
-
-config AUDIO_SAMPLE_RATE_441_HZ
-	bool "44.1 kHz sampled audio"
-
-config AUDIO_SAMPLE_RATE_48_HZ
+config AUDIO_SAMPLE_RATE_48000_HZ
 	bool "48 kHz sampled audio"
 endchoice
 
 config AUDIO_SAMPLE_RATE_HZ
-	int
-	default  8000 if AUDIO_SAMPLE_RATE_8_HZ
-	default 16000 if AUDIO_SAMPLE_RATE_16_HZ
-	default 24000 if AUDIO_SAMPLE_RATE_24_HZ
-	default 32000 if AUDIO_SAMPLE_RATE_32_HZ
-	default 44100 if AUDIO_SAMPLE_RATE_441_HZ
-	default 48000 if AUDIO_SAMPLE_RATE_48_HZ
+	int "Sample rate in Hz"
+	default 16000 if AUDIO_SAMPLE_RATE_16000_HZ
+	default 24000 if AUDIO_SAMPLE_RATE_24000_HZ
+	default 48000 if AUDIO_SAMPLE_RATE_48000_HZ
 	help
 		For now 16, 24 and 48 kHz are the only sample rates 
-		supported for I2S input and o	nly 48 kHz is supported 
-		for USB input
+		supported for I2S input and output
+		Only 48 kHz is supported for USB input
 
 choice AUDIO_BIT_DEPTH
 	prompt "Audio bit depth"

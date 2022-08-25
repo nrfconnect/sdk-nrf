@@ -69,6 +69,16 @@ static enum audio_i2s_state state = AUDIO_I2S_STATE_UNINIT;
 
 PINCTRL_DT_DEFINE(I2S_NL);
 
+#if (CONFIG_AUDIO_SAMPLE_RATE_HZ == 16000)
+#define CONFIG_AUDIO_RATIO NRF_I2S_RATIO_384X
+#elif (CONFIG_AUDIO_SAMPLE_RATE_HZ == 24000)
+#define CONFIG_AUDIO_RATIO NRF_I2S_RATIO_256X
+#elif (CONFIG_AUDIO_SAMPLE_RATE_HZ == 48000)
+#define CONFIG_AUDIO_RATIO NRF_I2S_RATIO_128X
+#else
+#error "Currnet AUDIO_SAMPLE_RATE_HZ setting not surpport"
+#endif
+
 static nrfx_i2s_config_t cfg = {
 	/* Pins are configured by pinctrl. */
 	.skip_gpio_cfg = true,
@@ -80,16 +90,16 @@ static nrfx_i2s_config_t cfg = {
 #if (CONFIG_AUDIO_BIT_DEPTH_16)
 	.sample_width = NRF_I2S_SWIDTH_16BIT,
 	.mck_setup = 0x66666000,
-	.ratio = NRF_I2S_RATIO_128X,
+	.ratio = CONFIG_AUDIO_RATIO,
 #elif (CONFIG_AUDIO_BIT_DEPTH_24)
 	.sample_width = NRF_I2S_SWIDTH_24BIT,
 	/* Clock mismatch warning: See CONFIG_AUDIO_24_BIT in KConfig */
 	.mck_setup = 0x2BE2B000,
-	.ratio = NRF_I2S_RATIO_48X,
+	.ratio = CONFIG_AUDIO_RATIO,
 #elif (CONFIG_AUDIO_BIT_DEPTH_32)
 	.sample_width = NRF_I2S_SWIDTH_32BIT,
 	.mck_setup = 0x66666000,
-	.ratio = NRF_I2S_RATIO_128X,
+	.ratio = CONFIG_AUDIO_RATIO,
 #else
 #error Invalid bit depth selected
 #endif /* (CONFIG_AUDIO_BIT_DEPTH_16) */
