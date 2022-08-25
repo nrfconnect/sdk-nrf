@@ -661,7 +661,10 @@ The application uses the following buttons on the supported development kit:
 |               | * Pressed on the gateway during playback multiple times: Changes the tone frequency.   |
 |               |   The available values are 1000 Hz, 2000 Hz, and 4000 Hz.                              |
 +---------------+----------------------------------------------------------------------------------------+
-| **BTN 5**     | Mutes the playback volume.                                                             |
+| **BTN 5**     | Depending on the moment it is pressed:                                                 |
+|               |                                                                                        |
+|               | * Long-pressed during startup: Clears the previously stored bonding information.       |
+|               | * Pressed during playback: Mutes the playback volume.                                  |
 +---------------+----------------------------------------------------------------------------------------+
 | **RESET**     | Resets the device.                                                                     |
 +---------------+----------------------------------------------------------------------------------------+
@@ -1200,6 +1203,10 @@ Complete the following steps to test the CIS mode for one gateway and two headse
 #. Press the **BTN 4** button on the gateway multiple times.
    For each button press, the audio stream playback is stopped and the gateway sends a test tone to both headsets.
    These tones can be used as audio cues to check the synchronization of the headsets.
+
+After the kits have paired for the first time, they are now bonded.
+This means the Long-Term Key(LTK) is stored on each side, and that the kits will only connect to each other unless the bonding information is cleared.
+To clear the bonding information, press and hold **BTN5** during boot.
 
 When you finish testing, power off the nRF5340 Audio development kits by switching the power switch from On to Off.
 
