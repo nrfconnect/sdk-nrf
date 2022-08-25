@@ -808,6 +808,47 @@ out:
 	return status;
 }
 
+enum wifi_nrf_status wifi_nrf_fmac_abort_scan(void *dev_ctx,
+					unsigned char if_idx)
+{
+	enum wifi_nrf_status status = WIFI_NRF_STATUS_FAIL;
+	struct img_umac_cmd_abort_scan *scan_abort_cmd = NULL;
+	struct wifi_nrf_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	fmac_dev_ctx = dev_ctx;
+
+	if (fmac_dev_ctx->vif_ctx[if_idx]->if_type == IMG_IFTYPE_AP) {
+		wifi_nrf_osal_log_info(fmac_dev_ctx->fpriv->opriv,
+				       "%s: Scan operation not supported in AP mode\n",
+				       __func__);
+		goto out;
+	}
+
+	scan_abort_cmd = wifi_nrf_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+					    sizeof(*scan_abort_cmd));
+
+	if (!scan_abort_cmd) {
+		wifi_nrf_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate memory\n",
+				      __func__);
+		goto out;
+	}
+
+	scan_abort_cmd->umac_hdr.cmd_evnt = IMG_UMAC_CMD_ABORT_SCAN;
+	scan_abort_cmd->umac_hdr.ids.wdev_id = if_idx;
+	scan_abort_cmd->umac_hdr.ids.valid_fields |= IMG_INDEX_IDS_WDEV_ID_VALID;
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      scan_abort_cmd,
+			      sizeof(*scan_abort_cmd));
+out:
+	if (scan_abort_cmd) {
+		wifi_nrf_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       scan_abort_cmd);
+	}
+
+	return status;
+}
 
 enum wifi_nrf_status wifi_nrf_fmac_scan_res_get(void *dev_ctx,
 						unsigned char vif_idx,
