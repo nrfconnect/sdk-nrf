@@ -111,6 +111,26 @@ void nfsm_set_cell_pos_response_cb(nrf_cloud_cell_pos_response_t cb)
 }
 #endif
 
+static nrf_cloud_app_id_specific_rx_data_handler_t app_id_cb;
+static char rx_data_specific_app_id[NRF_CLOUD_APP_ID_MAX_LEN];
+
+int nfsm_set_app_id_specific_rx_data_cb(nrf_cloud_app_id_specific_rx_data_handler_t cb,
+	const char *app_id_str)
+{
+	if (!cb) {
+		app_id_cb = NULL;
+		rx_data_specific_app_id[0] = '\0';
+		return 0;
+	}
+	if (strlen(app_id_str) >= NRF_CLOUD_APP_ID_MAX_LEN) {
+		return -E2BIG;
+	}
+	app_id_cb = cb;
+	strcpy(rx_data_specific_app_id, app_id_str);
+
+	return 0;
+}
+
 int nfsm_init(void)
 {
 	persistent_session = false;
@@ -530,6 +550,18 @@ static int cell_pos_cb_send(const char *const rx_buf)
 	return -EFTYPE;
 }
 
+static int app_id_rx_data_cb(const char *const rx_buf)
+{
+	if (app_id_cb) {
+		if (nrf_cloud_json_app_id_match(rx_buf, rx_data_specific_app_id) != 0) {
+			return -EINVAL;
+		}
+		/* Call appId specific handler */
+		return app_id_cb(rx_buf);
+	}
+	return 0;
+}
+
 static int dc_rx_data_handler(const struct nct_evt *nct_evt)
 {
 	struct nrf_cloud_evt cloud_evt = {
@@ -542,6 +574,11 @@ static int dc_rx_data_handler(const struct nct_evt *nct_evt)
 
 	/* All data is forwared to the app... unless a callback is registered */
 	if (cell_pos_cb_send(nct_evt->param.dc->data.ptr) == 0) {
+		return 0;
+	}
+
+	if (app_id_rx_data_cb(nct_evt->param.dc->data.ptr) == 0) {
+		/* appId specific handler processed the message */
 		return 0;
 	}
 

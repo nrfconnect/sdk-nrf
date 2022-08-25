@@ -71,6 +71,10 @@ bool nfsm_get_disconnect_requested(void);
 void nfsm_set_cell_pos_response_cb(nrf_cloud_cell_pos_response_t cb);
 #endif
 
+/**@brief Sets appId specific callback to handle MQTT rx data with the appId. */
+int nfsm_set_app_id_specific_rx_data_cb(nrf_cloud_app_id_specific_rx_data_handler_t cb,
+	const char *app_id_str);
+
 #ifdef __cplusplus
 }
 #endif

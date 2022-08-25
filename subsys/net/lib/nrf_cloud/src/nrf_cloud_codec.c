@@ -1547,6 +1547,24 @@ clean_up:
 	return ret;
 }
 
+int nrf_cloud_json_app_id_match(const char *const buf,
+				const char *const app_id)
+{
+	cJSON *root_obj;
+
+	root_obj = cJSON_Parse(buf);
+	if (!root_obj) {
+		LOG_DBG("No JSON found for app id match");
+		return -1;
+	}
+	if (!json_item_string_exists(root_obj, NRF_CLOUD_JSON_APPID_KEY,
+				     app_id)) {
+		LOG_DBG("No ¨matching app id found");
+		return -1;
+	}
+	return 0;
+}
+
 int nrf_cloud_parse_cell_pos_response(const char *const buf,
 				      struct nrf_cloud_cell_pos_result *result)
 {

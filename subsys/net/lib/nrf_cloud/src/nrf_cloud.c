@@ -84,6 +84,12 @@ bool nfsm_get_disconnect_requested(void)
 	return (bool)atomic_get(&disconnect_requested);
 }
 
+int nrf_cloud_app_id_specific_rx_data_handler_set(
+	nrf_cloud_app_id_specific_rx_data_handler_t rx_data_handler, const char *app_id_str)
+{
+	return nfsm_set_app_id_specific_rx_data_cb(rx_data_handler, app_id_str);
+}
+
 int nrf_cloud_init(const struct nrf_cloud_init_param *param)
 {
 	int err;

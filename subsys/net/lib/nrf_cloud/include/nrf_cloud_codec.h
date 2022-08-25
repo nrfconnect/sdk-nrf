@@ -236,6 +236,9 @@ int nrf_cloud_parse_rest_error(const char *const buf, enum nrf_cloud_error *cons
 int nrf_cloud_pvt_data_encode(const struct nrf_cloud_gnss_pvt * const pvt,
 			      cJSON * const pvt_data_obj);
 
+/** @brief Checks if app_id match within the json object in a given buf */
+int nrf_cloud_json_app_id_match(const char *const buf,
+				const char *const app_id);
 #if defined(CONFIG_NRF_MODEM)
 /** @brief Encodes a modem PVT data frame to be sent to nRF Cloud */
 int nrf_cloud_modem_pvt_data_encode(const struct nrf_modem_gnss_pvt_data_frame	* const mdm_pvt,
