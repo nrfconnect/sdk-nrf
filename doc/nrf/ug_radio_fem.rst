@@ -62,6 +62,13 @@ Before you add the devicetree node in your application, complete the following s
    See :ref:`nrfxlib:mpsl_lib` in the nrfxlib documentation for details.
 #. Enable support for MPSL implementation in |NCS| by setting the :kconfig:option:`CONFIG_MPSL` Kconfig option to ``y``.
 
+You can use only the :ref:`nrfxlib:mpsl_fem` API if your application does not require other MPSL features.
+This might be useful when you want to run simple radio protocols that are not intended to be used concurrently with other protocols.
+Enable the following Kconfig options:
+
+* :kconfig:option:`CONFIG_MPSL`
+* :kconfig:option:`CONFIG_MPSL_FEM_ONLY`
+
 .. _ug_radio_fem_direct_support:
 
 Direct support
