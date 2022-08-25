@@ -178,6 +178,55 @@ Complete the following steps to add a custom trace backend:
       CONFIG_NRF_MODEM_LIB_TRACE=y
       CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_MY_TRACE_BACKEND=y
 
+.. _modem_trace_backend_uart_custom_board:
+
+Sending traces over UART1 on a custom board
+===========================================
+
+When sending modem traces over UART1 on a custom board, configuration must be added for the UART1 device in the devicetree.
+This is done by adding the following code snippet to the board devicetree or overlay file, where the pin numbers (``0``, ``1``, ``14``, and ``15``) must be updated to match your board.
+
+.. code-block:: dts
+
+   &pinctrl {
+      uart1_default: uart1_default {
+         group1 {
+            psels = <NRF_PSEL(UART_TX, 0, 1)>,
+               <NRF_PSEL(UART_RTS, 0, 14)>;
+         };
+         group2 {
+            psels = <NRF_PSEL(UART_RX, 0, 0)>,
+               <NRF_PSEL(UART_CTS, 0, 15)>;
+            bias-pull-up;
+         };
+      };
+
+      uart1_sleep: uart1_sleep {
+         group1 {
+            psels = <NRF_PSEL(UART_TX, 0, 1)>,
+               <NRF_PSEL(UART_RX, 0, 0)>,
+               <NRF_PSEL(UART_RTS, 0, 14)>,
+               <NRF_PSEL(UART_CTS, 0, 15)>;
+            low-power-enable;
+         };
+      };
+   };
+
+   &uart1 {
+      ...
+      pinctrl-0 = <&uart1_default>;
+      pinctrl-1 = <&uart1_sleep>;
+      pinctrl-names = "default", "sleep";
+      ...
+   };
+
+The UART trace backends allow the pins and UART1 interrupt priority to be set using the devicetree.
+Other configurations set in the devicetree, such as the current speed, are overwritten by the UART trace backends.
+
+.. note::
+
+   When one of the UART trace backends is enabled by either the Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART` or :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_SYNC`, it initializes the UART1 driver, regardless of its status in the devicetree.
+
 Modem fault handling
 ********************
 If a fault occurs in the modem, the application is notified through the fault handler function that is registered with the Modem library during initialization.
