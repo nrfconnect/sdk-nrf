@@ -147,6 +147,14 @@ int z_impl_zsock_inet_pton(sa_family_t family, const char *src, void *dst)
 
 #ifdef CONFIG_TRUSTED_EXECUTION_NONSECURE
 
+#include "tfm_platform_api.h"
+enum tfm_platform_err_t tfm_platform_ioctl(tfm_platform_ioctl_req_t request,
+					   psa_invec *input,
+					   psa_outvec *output)
+{
+	return PSA_SUCCESS;
+}
+
 int spm_s0_active(uint32_t s0_address, uint32_t s1_address, bool *s0_active)
 {
 	*s0_active = spm_s0_active_retval;
