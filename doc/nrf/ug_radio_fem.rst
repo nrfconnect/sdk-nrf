@@ -69,12 +69,80 @@ Enable the following Kconfig options:
 * :kconfig:option:`CONFIG_MPSL`
 * :kconfig:option:`CONFIG_MPSL_FEM_ONLY`
 
+Using FEM power models
+----------------------
+
+When a protocol driver requests a given transmission power to be the output, MPSL splits the power into the following components: the SoC Power and the FEM gain.
+This gain is considered constant and accurate even if external conditions, such as temperature, might affect the effective gain achieved by the Front-End Module.
+
+To perform the split differently (for example, to compensate for external conditions), you can use a FEM power model, either using one of the built-in ones or providing your own custom model.
+
+To use FEM power models, set the :kconfig:option:`CONFIG_MPSL_FEM_POWER_MODEL` Kconfig option to ``y``  and either select one of the built-in models or provide a custom model, as described in the following chapters.
+
+Using nRF21540 GPIO SPI built-in power model (Experimental)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. note::
+   The software maturity level of this feature is :ref:`Experimental <software_maturity>`.
+   The feature can be used for development, but it is not recommended for production.
+   This feature is incomplete in functionality or verification and can be expected to change in future releases.
+   The feature is made available in its current state, but the design and interfaces can change between release tags.
+   The feature is also labeled as ``EXPERIMENTAL`` in Kconfig files to indicate this status.
+
+To use this model, set :kconfig:option:`CONFIG_MPSL_FEM_POWER_MODEL` and :kconfig:option:`CONFIG_MPSL_FEM_POWER_MODEL_NRF21540_USE_BUILTIN` to ``y``.
+
+This feature uses a model to compensate the FEM gain for the following external conditions:
+
+* Temperature
+* FEM supply voltage
+* Carrier frequency
+* FEM input power.
+
+The model assumes that the FEM supply voltage is constant.
+To provide the value of this voltage to the MPSL subsystem, use the :kconfig:option:`CONFIG_MPSL_FEM_POWER_VOLTAGE` option.
+
+Adding custom power models
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If the way MPSL splits the TX power into components does not meet your requirements, or if you wish to implement a custom compensation model, you can provide one as follows:
+
+1. Set :kconfig:option:`CONFIG_MPSL_FEM_POWER_MODEL` to ``y``
+#. Provide an implementation of the ``mpsl_fem_power_model_to_use_get()`` function.
+   This function should return a pointer to a variable of the type ``mpsl_fem_power_model_t`` which contains pointers to the model's callbacks.
+#. Mandatorily implement the model's ``fetch`` callback (details explained below).
+#. Optionally implement the model's ``init`` callback (details explained below).
+   If no ``init`` callback is provided, pass ``NULL`` as the pointer to the callback.
+#. You can also optionally extend the ``MPSL_FEM_POWER_MODEL_CHOICE`` Kconfig choice with an option to select your custom model, for example, if you want to test multiple custom models.
+
+The ``init`` callback is called by MPSL once, after FEM configuration finishes.
+Calibration data (acquired from FEM internal registers, Kconfig options, and devicetree files) is passed to this function using a parameter of the ``mpsl_fem_calibration_data_t`` type.
+The meaning of the calibration data stored in this parameter is implementation-specific.
+For details, see the ``mpsl_fem_calibration_data_t`` type documentation.
+
+The ``fetch`` callback is used to split the power between the SoC output power and the FEM gain.
+It is called every time this split needs to be recalculated.
+For 802.15.4, this happens before every transmission.
+For Bluetooth® Low Energy, this happens every time the channel changes.
+
+.. note::
+   This function is called in a time-critical path.
+   Please refer to the documentation of ``mpsl_fem_power_model_t`` on timing constraints.
+   Any complex calculations have to be done outside this function (for example, using a look up table).
+   Failing to meet the timing requirements will lead to an undefined behavior of the protocol stacks.
+
+
+The ``fetch`` callback must fill out all the fields of the  the ``p_output`` output parameter.
+For more details, see the ``mpsl_fem_power_model_output_t`` type documentation.
+
+.. note::
+   The ``soc_power`` field value must be one of the output power values supported by the given nRF SoC, otherwise the behavior is undefined.
+   The user can meet this requirement by converting the requested SoC power using the ``mpsl_tx_power_radio_supported_power_adjust`` function.
+
 .. _ug_radio_fem_direct_support:
 
 Direct support
 ==============
 
-If your application cannot use MPSL or if the FEM driver in MPSL does not support all features you need, you can implement your own driver for nRF21540.
+If your application cannot use MPSL or if the FEM driver in MPSL does not support all features you need, you can implement your own driver for the nRF21540.
 The following samples have direct FEM support:
 
 * :ref:`direct_test_mode`
