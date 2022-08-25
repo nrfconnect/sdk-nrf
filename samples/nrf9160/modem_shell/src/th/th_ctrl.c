@@ -42,7 +42,6 @@ struct th_ctrl_data {
 	size_t argc;
 	uint16_t cmd_len;
 	uint8_t th_nbr;
-	char *cmd_str;
 	bool background;
 };
 
@@ -156,20 +155,29 @@ static void th_ctrl_data_status_print(struct th_ctrl_data *data)
 	mosh_print("thread #%d status:", data->th_nbr);
 	if (data->results_str != NULL && strlen(data->results_str)) {
 		mosh_print("  Results available");
-		if (k_work_is_pending(&(data->work))) {
-			mosh_print("  thread is running");
-		} else {
-			mosh_print("  thread is not running");
-		}
-		print_buf = (char *)calloc(data->cmd_len + 1, sizeof(char));
-		mosh_print(
-			"  command: %s",
-			th_ctrl_get_command_str_from_argv(
-				data->argc, data->argv, print_buf,
-				data->cmd_len + 1));
-		free(print_buf);
 	} else {
-		mosh_print("  Nothing");
+		mosh_print("  Results not available");
+	}
+	if (k_work_is_pending(&(data->work))) {
+		mosh_print("  thread is running %s",
+			((data->background) ? "in the background" : "in the foreground"));
+	} else {
+		mosh_print("  thread is not running");
+	}
+
+	if (data->argv != NULL) {
+		print_buf = (char *)calloc(data->cmd_len + 1, sizeof(char));
+		if (print_buf != NULL) {
+			mosh_print(
+				"  command: %s",
+				th_ctrl_get_command_str_from_argv(
+					data->argc, data->argv,
+					print_buf,
+					data->cmd_len + 1));
+		} else {
+			mosh_print("  command: No memory available to print");
+		}
+		free(print_buf);
 	}
 }
 
@@ -217,17 +225,19 @@ static void th_ctrl_data_result_print(struct th_ctrl_data *data)
 		mosh_print_no_format(data->results_str);
 		mosh_print("-------------------------------------");
 
-		/* Delete data if the work is done */
+		/* Delete results data if the work is done */
 		if (!k_work_is_pending(&(data->work))) {
 			free(data->results_str);
 			data->results_str = NULL;
 			mosh_print("Note: th results #%d were deleted.", data->th_nbr);
-
-			/* Clean up for cmd argv */
-			th_ctrl_util_duplicate_argv_free(data->argc, data->argv);
-			data->argc = 0;
-			data->argv = NULL;
 		}
+	}
+
+	/* Clean up for cmd argv if the work is done */
+	if (!k_work_is_pending(&(data->work))) {
+		th_ctrl_util_duplicate_argv_free(data->argc, data->argv);
+		data->argc = 0;
+		data->argv = NULL;
 	}
 }
 
