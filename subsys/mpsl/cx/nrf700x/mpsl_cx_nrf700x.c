@@ -285,17 +285,17 @@ static int mpsl_cx_init(const struct device *dev)
 #if DT_NODE_HAS_PROP(CX_NODE, req_gpios)
 	uint8_t req_pin = NRF_DT_GPIOS_TO_PSEL(CX_NODE, req_gpios);
 
-	soc_secure_gpio_pin_mcu_select(req_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(req_pin, NRF_GPIO_PIN_SEL_NETWORK);
 #endif
 #if DT_NODE_HAS_PROP(CX_NODE, status0_gpios)
 	uint8_t status0_pin = NRF_DT_GPIOS_TO_PSEL(CX_NODE, status0_gpios);
 
-	soc_secure_gpio_pin_mcu_select(status0_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(status0_pin, NRF_GPIO_PIN_SEL_NETWORK);
 #endif
 #if DT_NODE_HAS_PROP(CX_NODE, grant_gpios)
 	uint8_t grant_pin = NRF_DT_GPIOS_TO_PSEL(CX_NODE, grant_gpios);
 
-	soc_secure_gpio_pin_mcu_select(grant_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(grant_pin, NRF_GPIO_PIN_SEL_NETWORK);
 #endif
 
 	return 0;
