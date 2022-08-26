@@ -44,7 +44,7 @@ static void timer_init(NRF_TIMER_Type *timer, uint32_t ticks)
 {
 	nrf_timer_mode_set(timer, NRF_TIMER_MODE_TIMER);
 	nrf_timer_bit_width_set(timer, NRF_TIMER_BIT_WIDTH_32);
-	nrf_timer_frequency_set(timer, NRF_TIMER_FREQ_1MHz);
+	nrf_timer_prescaler_set(timer, NRF_TIMER_FREQ_1MHz);
 	nrf_timer_cc_set(timer, NRF_TIMER_CC_CHANNEL0, ticks);
 	/* Clear the timer once event is generated. */
 	nrf_timer_shorts_enable(timer, NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK);
