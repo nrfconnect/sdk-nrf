@@ -31,6 +31,14 @@ config MPSL_ASSERT_HANDLER
 	  application code and will be invoked whenever the
 	  MPSL code encounters an unrecoverable error.
 
+config MPSL_DYNAMIC_INTERRUPTS
+	bool "Use direct dynamic interrupts for MPSL IRQ handlers"
+	depends on DYNAMIC_DIRECT_INTERRUPTS
+	help
+	  This option configures MPSL IRQ handlers using direct dynamic
+	  interrupts. This allows reconfiguring TIMER0_IRQn, RTC0_IRQn,
+	  and RADIO_IRQn handlers during runtime when MPSL is uninitialized.
+
 module=MPSL
 module-str=MPSL
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

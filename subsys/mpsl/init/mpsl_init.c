@@ -73,12 +73,63 @@ static void mpsl_low_prio_work_handler(struct k_work *item)
 	MULTITHREADING_LOCK_RELEASE();
 }
 
+#if IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS)
+static void mpsl_timer0_isr_wrapper(const void *args)
+{
+	ARG_UNUSED(args);
+
+	MPSL_IRQ_TIMER0_Handler();
+
+	ISR_DIRECT_PM();
+}
+
+static void mpsl_rtc0_isr_wrapper(const void *args)
+{
+	ARG_UNUSED(args);
+
+	MPSL_IRQ_RTC0_Handler();
+
+	ISR_DIRECT_PM();
+}
+
+static void mpsl_radio_isr_wrapper(const void *args)
+{
+	ARG_UNUSED(args);
+
+	MPSL_IRQ_RADIO_Handler();
+
+	ISR_DIRECT_PM();
+}
+
+static void mpsl_lib_irq_disable(void)
+{
+	irq_disable(TIMER0_IRQn);
+	irq_disable(RTC0_IRQn);
+	irq_disable(RADIO_IRQn);
+}
+
+static void mpsl_lib_irq_connect(void)
+{
+	/* Ensure IRQs are disabled before attaching. */
+	mpsl_lib_irq_disable();
+
+	irq_connect_dynamic(TIMER0_IRQn, MPSL_HIGH_IRQ_PRIORITY,
+			mpsl_timer0_isr_wrapper, NULL, IRQ_CONNECT_FLAGS);
+	irq_connect_dynamic(RTC0_IRQn, MPSL_HIGH_IRQ_PRIORITY,
+			mpsl_rtc0_isr_wrapper, NULL, IRQ_CONNECT_FLAGS);
+	irq_connect_dynamic(RADIO_IRQn, MPSL_HIGH_IRQ_PRIORITY,
+			mpsl_radio_isr_wrapper, NULL, IRQ_CONNECT_FLAGS);
+
+	irq_enable(TIMER0_IRQn);
+	irq_enable(RTC0_IRQn);
+	irq_enable(RADIO_IRQn);
+}
+#else /* !IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
 ISR_DIRECT_DECLARE(mpsl_timer0_isr_wrapper)
 {
 	MPSL_IRQ_TIMER0_Handler();
 
 	ISR_DIRECT_PM();
-
 
 	/* We may need to reschedule in case a radio timeslot callback
 	 * accesses zephyr primitives.
@@ -109,6 +160,7 @@ ISR_DIRECT_DECLARE(mpsl_radio_isr_wrapper)
 	 */
 	return 1;
 }
+#endif /* IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
 
 #if IS_ENABLED(CONFIG_MPSL_ASSERT_HANDLER)
 void m_assert_handler(const char *const file, const uint32_t line)
@@ -142,9 +194,8 @@ static uint8_t m_config_clock_source_get(void)
 #endif
 }
 
-static int mpsl_lib_init(const struct device *dev)
+static int32_t mpsl_lib_init_internal(void)
 {
-	ARG_UNUSED(dev);
 	int err = 0;
 	mpsl_clock_lfclk_cfg_t clock_cfg;
 
@@ -181,12 +232,45 @@ static int mpsl_lib_init(const struct device *dev)
 	}
 #endif
 
+	return 0;
+}
+
+static int mpsl_lib_init_sys(const struct device *dev)
+{
+	ARG_UNUSED(dev);
+	int err = 0;
+
+	err = mpsl_lib_init_internal();
+	if (err) {
+		return err;
+	}
+
+#if IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS)
+	/* Ensure IRQs are disabled before attaching. */
+	mpsl_lib_irq_disable();
+
+	/* We may need to reschedule in case a radio timeslot callback
+	 * accesses Zephyr primitives.
+	 * The RTC0 interrupt handler does not access zephyr primitives,
+	 * however, as this decision needs to be made during build-time,
+	 * rescheduling is performed to account for user-provided handlers.
+	 */
+	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(TIMER0_IRQn, MPSL_HIGH_IRQ_PRIORITY,
+			IRQ_CONNECT_FLAGS, reschedule);
+	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(RTC0_IRQn, MPSL_HIGH_IRQ_PRIORITY,
+			IRQ_CONNECT_FLAGS, reschedule);
+	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(RADIO_IRQn, MPSL_HIGH_IRQ_PRIORITY,
+			IRQ_CONNECT_FLAGS, reschedule);
+
+	mpsl_lib_irq_connect();
+#else /* !IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
 	IRQ_DIRECT_CONNECT(TIMER0_IRQn, MPSL_HIGH_IRQ_PRIORITY,
 			   mpsl_timer0_isr_wrapper, IRQ_CONNECT_FLAGS);
 	IRQ_DIRECT_CONNECT(RTC0_IRQn, MPSL_HIGH_IRQ_PRIORITY,
 			   mpsl_rtc0_isr_wrapper, IRQ_CONNECT_FLAGS);
 	IRQ_DIRECT_CONNECT(RADIO_IRQn, MPSL_HIGH_IRQ_PRIORITY,
 			   mpsl_radio_isr_wrapper, IRQ_CONNECT_FLAGS);
+#endif /* IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
 
 	return 0;
 }
@@ -207,6 +291,37 @@ static int mpsl_low_prio_init(const struct device *dev)
 	return 0;
 }
 
-SYS_INIT(mpsl_lib_init, PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+int32_t mpsl_lib_init(void)
+{
+#if IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS)
+	int err = 0;
+
+	err = mpsl_lib_init_internal();
+	if (err) {
+		return err;
+	}
+
+	mpsl_lib_irq_connect();
+
+	return 0;
+#else /* !IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
+	return -NRF_EPERM;
+#endif /* IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
+}
+
+int32_t mpsl_lib_uninit(void)
+{
+#if IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS)
+	mpsl_lib_irq_disable();
+
+	mpsl_uninit();
+
+	return 0;
+#else /* !IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
+	return -NRF_EPERM;
+#endif /* IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
+}
+
+SYS_INIT(mpsl_lib_init_sys, PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 SYS_INIT(mpsl_low_prio_init, POST_KERNEL,
 	 CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
