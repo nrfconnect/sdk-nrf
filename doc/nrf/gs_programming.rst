@@ -64,6 +64,14 @@ After completing the :ref:`manual <build_environment_cli>` or :ref:`automatic <g
 
          west build -b *build_target*
 
+      Some applications contain configuration overlay files that enable specific features.
+      These can be added to the ``west build`` command as follows:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build -b *build_target* -- -DOVERLAY_CONFIG="overlay-feature1.conf;overlay-feature2.conf"
+
       .. note::
 
          You can run the west command with optional parameters:
