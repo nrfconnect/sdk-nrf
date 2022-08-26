@@ -217,13 +217,13 @@ static int mpsl_fem_host_init(const struct device *dev)
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ctx_gpios)
 	uint8_t ctx_pin = NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(nrf_radio_fem), ctx_gpios);
 
-	soc_secure_gpio_pin_mcu_select(ctx_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(ctx_pin, NRF_GPIO_PIN_SEL_NETWORK);
 #endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), crx_gpios)
 	uint8_t crx_pin = NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(nrf_radio_fem), crx_gpios);
 
-	soc_secure_gpio_pin_mcu_select(crx_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(crx_pin, NRF_GPIO_PIN_SEL_NETWORK);
 #endif
 
 	return 0;
