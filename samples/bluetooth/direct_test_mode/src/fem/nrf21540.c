@@ -399,7 +399,7 @@ static int nrf21540_init(void)
 	nrf_timer_mode_set(nrf21540_cfg.timer.p_reg, NRF_TIMER_MODE_TIMER);
 	nrf_timer_bit_width_set(nrf21540_cfg.timer.p_reg,
 				NRF_TIMER_BIT_WIDTH_16);
-	nrf_timer_frequency_set(nrf21540_cfg.timer.p_reg, NRF_TIMER_FREQ_1MHz);
+	nrf_timer_prescaler_set(nrf21540_cfg.timer.p_reg, NRF_TIMER_FREQ_1MHz);
 
 	err = gpio_configure();
 	if (err) {
