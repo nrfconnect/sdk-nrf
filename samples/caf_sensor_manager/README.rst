@@ -50,9 +50,10 @@ Configuration
 Single core configuration
 =========================
 
-For the MCU with multiple cores, the default configuration would use one core to simulate the sensor and the other core to process the sensor.
+For the MCU with multiple cores, the default configuration will use one core to simulate the sensor and the other core to process the sensor.
 These multiple core MCU can support single core configuration, where the sensor is simulated and processed on the single, selected core.
-The configuration is placed in the :file:boards/<board>_singlecore.conf file.
+The configuration is placed in the :file:`boards/<board>_singlecore.conf file`.
+
 To use this configuration, specify the ``-DOVERLAY_CONFIG=boards/<board>_singlecore.conf`` parameter along with the build command when building the sample:
 
    .. code-block:: console
@@ -66,6 +67,7 @@ Sensor stub configuration
 
 The Sensor stub configuration is provided in the :file:`sensor_stub_overlay.conf` file.
 To use this configuration, specify the ``-DOVERLAY_CONFIG=sensor_stub_overlay.conf`` parameter along with the build command when building the sample.
+
 For the multicore configuration, it would change to ``-Dremote_OVERLAY_CONFIG=sensor_stub_overlay.conf`` as shown in the following example:
 
    .. code-block:: console
