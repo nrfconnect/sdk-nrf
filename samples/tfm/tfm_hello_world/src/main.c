@@ -20,8 +20,8 @@
 #define PIN_XL2 1
 
 /* Check if MCU selection is required */
-#if defined(GPIO_PIN_CNF_MCUSEL_Msk)
-static void gpio_pin_mcu_select(uint32_t pin_number, nrf_gpio_pin_mcusel_t mcu)
+#if NRF_GPIO_HAS_SEL
+static void gpio_pin_control_select(uint32_t pin_number, nrf_gpio_pin_sel_t mcu)
 {
 	uint32_t err;
 	enum tfm_platform_err_t plt_err;
@@ -32,7 +32,7 @@ static void gpio_pin_mcu_select(uint32_t pin_number, nrf_gpio_pin_mcusel_t mcu)
 			plt_err, err);
 	}
 }
-#endif /* defined(GPIO_PIN_CNF_MCUSEL_Msk) */
+#endif /* NRF_GPIO_HAS_SEL */
 
 static uint32_t secure_read_word(intptr_t ptr)
 {
@@ -119,17 +119,17 @@ void main(void)
 	}
 
 	if (IS_ENABLED(CONFIG_TFM_PARTITION_PLATFORM)) {
-#if defined(GPIO_PIN_CNF_MCUSEL_Msk)
+#if NRF_GPIO_HAS_SEL
 		/* Configure properly the XL1 and XL2 pins so that the low-frequency crystal
 		 * oscillator (LFXO) can be used.
 		 * This configuration has already been done by TF-M so this is redundant.
 		 */
-		gpio_pin_mcu_select(PIN_XL1, NRF_GPIO_PIN_MCUSEL_PERIPHERAL);
-		gpio_pin_mcu_select(PIN_XL2, NRF_GPIO_PIN_MCUSEL_PERIPHERAL);
+		gpio_pin_control_select(PIN_XL1, NRF_GPIO_PIN_SEL_PERIPHERAL);
+		gpio_pin_control_select(PIN_XL2, NRF_GPIO_PIN_SEL_PERIPHERAL);
 		printk("MCU selection configured\n");
 #else
 		printk("MCU selection skipped\n");
-#endif /* defined(GPIO_PIN_CNF_MCUSEL_Msk) */
+#endif /* NRF_GPIO_HAS_SEL */
 
 #ifdef PM_S1_ADDRESS
 		bool s0_active = false;
