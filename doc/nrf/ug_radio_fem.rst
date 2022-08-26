@@ -61,6 +61,36 @@ Before you add the devicetree node in your application, complete the following s
    The MPSL library provides API to configure FEM.
    See :ref:`nrfxlib:mpsl_lib` in the nrfxlib documentation for details.
 #. Enable support for MPSL implementation in |NCS| by setting the :kconfig:option:`CONFIG_MPSL` Kconfig option to ``y``.
+#. Enable support for the FEM subsystem in |NCS| by setting the :kconfig:option:`CONFIG_MPSL_FEM` Kconfig option to ``y``.
+#. Choose the used FEM implementation by selecting the appropriate Kconfig option.
+
+The following FEM implementations are supported:
+
+* The nRF21540 GPIO implementation, see :ref:`ug_radio_fem_nrf21540_gpio`.
+  To use it, set the :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_GPIO` Kconfig option to ``y``.
+* The nRF21540 GPIO SPI implementation, see :ref:`ug_radio_fem_nrf21540_spi_gpio`.
+  To use it, set the :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_GPIO_SPI` Kconfig option to ``y``.
+* The nRF21540 2-pin simple GPIO implementation.
+  To use it, set the :kconfig:option:`CONFIG_MPSL_FEM_SIMPLE_GPIO` Kconfig option to ``y``.
+
+Setting the FEM output power
+----------------------------
+
+The ``tx_gain_db`` property in devicetree provides the FEM gain value to use with the simple GPIO FEM implementation.
+The property must represent the real gain of the FEM.
+This implementation does not support controlling the gain value during runtime.
+
+nRF21540 implementations have the gain set to ``10`` by default.
+You can set a different gain value to use through the :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB`  option, but it has to match the value of one of the POUTA (:kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA` ) or POUTB (:kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTB`) gains.
+
+.. caution::
+   :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA` and :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTB` are by default set to ``20`` and ``10`` and these are factory-precalibrated gain values.
+   Do not change these values, unless POUTA and POUTB were calibrated to different values on specific request.
+
+To enable runtime control of the gain, set the :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL` to ``y``.
+This option makes the gain of the FEM to be adjusted dynamically during runtime, depending on the power requested by the protocol driver for each transmission.
+For the nRF21540 GPIO implementation, you must enable the **MODE** pin in devicetree.
+For the nRF21540 GPIO SPI implementation, no additional configuration is needed as the gain setting is transmitted over the SPI bus to the nRF21540.
 
 You can use only the :ref:`nrfxlib:mpsl_fem` API if your application does not require other MPSL features.
 This might be useful when you want to run simple radio protocols that are not intended to be used concurrently with other protocols.
@@ -72,7 +102,7 @@ Enable the following Kconfig options:
 Using FEM power models
 ----------------------
 
-When a protocol driver requests a given transmission power to be the output, MPSL splits the power into the following components: the SoC Power and the FEM gain.
+When a protocol driver requests a given transmission power to be output, MPSL splits the power into the following components: the SoC Power and the FEM gain.
 This gain is considered constant and accurate even if external conditions, such as temperature, might affect the effective gain achieved by the Front-End Module.
 
 To perform the split differently (for example, to compensate for external conditions), you can use a FEM power model, either using one of the built-in ones or providing your own custom model.
