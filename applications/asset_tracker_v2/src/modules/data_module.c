@@ -100,16 +100,14 @@ static K_SEM_DEFINE(config_load_sem, 0, 1);
 
 /* Default device configuration. */
 static struct cloud_data_cfg current_cfg = {
-	.gnss_timeout			= CONFIG_DATA_GNSS_TIMEOUT_SECONDS,
-	.active_mode			= (IS_ENABLED(CONFIG_DATA_DEVICE_MODE) ? true : false),
-	.active_wait_timeout		= CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS,
-	.movement_resolution		= CONFIG_DATA_MOVEMENT_RESOLUTION_SECONDS,
-	.movement_timeout		= CONFIG_DATA_MOVEMENT_TIMEOUT_SECONDS,
-	.accelerometer_threshold	= CONFIG_DATA_ACCELEROMETER_THRESHOLD,
-	.no_data.gnss			= (IS_ENABLED(CONFIG_DATA_SAMPLE_GNSS_DEFAULT)
-					   ? false : true),
-	.no_data.neighbor_cell		= (IS_ENABLED(CONFIG_DATA_SAMPLE_NEIGHBOR_CELLS_DEFAULT)
-					   ? false : true)
+	.gnss_timeout		 = CONFIG_DATA_GNSS_TIMEOUT_SECONDS,
+	.active_mode		 = IS_ENABLED(CONFIG_DATA_DEVICE_MODE_ACTIVE),
+	.active_wait_timeout	 = CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS,
+	.movement_resolution	 = CONFIG_DATA_MOVEMENT_RESOLUTION_SECONDS,
+	.movement_timeout	 = CONFIG_DATA_MOVEMENT_TIMEOUT_SECONDS,
+	.accelerometer_threshold = CONFIG_DATA_ACCELEROMETER_THRESHOLD,
+	.no_data.gnss		 = !IS_ENABLED(CONFIG_DATA_SAMPLE_GNSS_DEFAULT),
+	.no_data.neighbor_cell	 = !IS_ENABLED(CONFIG_DATA_SAMPLE_NEIGHBOR_CELLS_DEFAULT)
 };
 
 static struct k_work_delayable data_send_work;

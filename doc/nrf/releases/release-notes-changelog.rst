@@ -157,6 +157,7 @@ nRF9160: Asset Tracker v2
     * The conversions of RSRP and RSRQ now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
     * Bootstrapping has been disabled by default to be able to connect to the default LwM2M service AVSystem's `Coiote Device Management`_ using free tier accounts.
     * Added support for full modem FOTA updates for nRF Cloud builds.
+    * ``CONFIG_DATA_DEVICE_MODE`` option is now a choice that can be set to either ``CONFIG_DATA_DEVICE_MODE_ACTIVE`` or ``CONFIG_DATA_DEVICE_MODE_PASSIVE`` depending on the desired device mode.
 
   * Fixed:
 
