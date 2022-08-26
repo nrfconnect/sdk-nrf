@@ -53,7 +53,7 @@ static inline uint32_t timer_time_get(void)
 void nrf_802154_hp_timer_init(void)
 {
 	nrf_timer_bit_width_set(TIMER, NRF_TIMER_BIT_WIDTH_32);
-	nrf_timer_frequency_set(TIMER, NRF_TIMER_FREQ_1MHz);
+	nrf_timer_prescaler_set(TIMER, NRF_TIMER_FREQ_1MHz);
 	nrf_timer_mode_set(TIMER, NRF_TIMER_MODE_TIMER);
 }
 
