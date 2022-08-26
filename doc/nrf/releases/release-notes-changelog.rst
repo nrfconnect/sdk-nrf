@@ -790,6 +790,8 @@ Common Application Framework (CAF)
     A dedicated data provider (:kconfig:option:`CONFIG_BT_ADV_PROV_DEVICE_NAME`) can be used to add the Bluetooth device name to the scan response data.
   * Added :c:struct:`ble_adv_data_update_event` that can be used to trigger update of advertising data and scan response data during undirected advertising.
     When the event is received, the module gets new data from providers and updates advertising payload.
+  * Added a wakeup call when connection is made in the grace period.
+    With this change, the call wakes up the whole system to avoid inconsistent power state between modules.
 
 * :ref:`caf_ble_state`:
 
