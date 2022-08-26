@@ -160,7 +160,7 @@ After programming the sample to your development kit, test it by performing the 
    The notification is similar to the following one:
 
    .. figure:: /images/bt_fast_pair_discoverable_notification.png
-      :scale: 75 %
+      :scale: 33 %
       :alt: Fast Pair discoverable advertising Android notification
 
    The device model name and displayed logo depend on the data provided during the device model registration.
