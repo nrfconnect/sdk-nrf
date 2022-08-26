@@ -306,7 +306,7 @@ static int generic_fem_init(void)
 	nrf_timer_mode_set(generic_fem_cfg.timer.p_reg, NRF_TIMER_MODE_TIMER);
 	nrf_timer_bit_width_set(generic_fem_cfg.timer.p_reg,
 				NRF_TIMER_BIT_WIDTH_16);
-	nrf_timer_frequency_set(generic_fem_cfg.timer.p_reg, NRF_TIMER_FREQ_1MHz);
+	nrf_timer_prescaler_set(generic_fem_cfg.timer.p_reg, NRF_TIMER_FREQ_1MHz);
 
 	err = gppi_channel_config();
 	if (err) {
