@@ -185,6 +185,8 @@ Bluetooth mesh samples
 
     * Ability to use buttons to send get and set messages for a sensor setting, as well as a get message for a sensor descriptor.
 
+* Default advertiser changed to extended advertiser instead of legacy advertiser for all Bluetooth mesh samples.
+
 nRF9160 samples
 ---------------
 
