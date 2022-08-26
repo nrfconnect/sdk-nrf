@@ -187,8 +187,11 @@ Setup
 Before building and running the sample, complete the following steps:
 
 1. Select the device to be tested.
-2. Select the LwM2M server to be used for testing and register the device on it. You can also optionally enable notifications for the resources so that the resources are actively monitored by the server.
-3. Configure the application to work with the chosen LwM2M server.
+#. Select the LwM2M server to be used for testing and register the device on it.
+   You can also optionally enable notifications for the resources so that the resources are actively monitored by the server.
+#. Setup the LwM2M server by completing the steps listed in :ref:`server_setup_lwm2m`.
+   This step retrieves the server address and the security tag that will be needed during the next steps.
+#. :ref:`server_addr_PSK`.
 
 .. _server_setup_lwm2m:
 
@@ -208,7 +211,8 @@ The following instructions describe how to register your device to `Leshan Demo 
          #. Click :guilabel:`ADD SECURITY INFORMATION`.
          #. Enter the following data and click :guilabel:`ADD`:
 
-            * Endpoint - urn\:imei\:*your Device IMEI*
+            * Endpoint - urn\:imei\:*your Device IMEI*.
+	      The IMEI value is printed on the development kit.
             * Security Mode - psk
             * Identity: - urn\:imei\:*your Device IMEI*
             * Key - 000102030405060708090a0b0c0d0e0f
@@ -221,10 +225,11 @@ The following instructions describe how to register your device to `Leshan Demo 
          #. Click :guilabel:`Connect your LwM2M device directly via the management server`.
          #. Enter the following data and click :guilabel:`Add device`:
 
-            * Endpoint - urn\:imei\:*your Device IMEI*
-            * Friendly Name - *recognizable name*
-            * Security mode - psk (Pre-Shared Key)
-            * Key - 000102030405060708090a0b0c0d0e0f
+            * Endpoint - urn\:imei\:*your Device IMEI*.
+	      The IMEI value is printed on the development kit.
+            * Friendly Name - *recognizable name*.
+            * Security mode - psk (Pre-Shared Key).
+            * Key - 000102030405060708090a0b0c0d0e0f.
 
             Also, make sure to select the :guilabel:`Key in hexadecimal` checkbox.
 
@@ -240,7 +245,7 @@ The following instructions describe how to register your device to `Leshan Demo 
          #. Click :guilabel:`BOOTSTRAP` in the upper right corner.
          #. In the :guilabel:`BOOTSTRAP` tab, click :guilabel:`ADD CLIENTS CONFIGURATION`.
          #. Click :guilabel:`Add clients configuration`.
-         #. Enter your Client Endpoint name - urn\:imei\:*your device IMEI*.
+         #. Enter your Client Endpoint name - urn\:imei\:*your device IMEI*. The IMEI value is printed on the development kit.
          #. Click :guilabel:`NEXT` and select :guilabel:`Using (D)TLS` and enter following data:
 
             * Identity - urn\:imei\:*your device IMEI*
@@ -269,10 +274,10 @@ The following instructions describe how to register your device to `Leshan Demo 
          #. Click :guilabel:`Connect your LwM2M device via the Bootstrap server`.
          #. Enter the following data and click :guilabel:`Configuration`:
 
-            * Endpoint - urn\:imei\:*your Device IMEI*
-            * Friendly Name - *recognisable name*
-            * Security mode - psk (Pre-Shared Key)
-            * Key - 000102030405060708090a0b0c0d0e0f
+            * Endpoint - urn\:imei\:*your Device IMEI*. The IMEI value is printed on the development kit.
+            * Friendly Name - *recognisable name*.
+            * Security mode - psk (Pre-Shared Key).
+            * Key - 000102030405060708090a0b0c0d0e0f.
 
             Also, make sure to select the :guilabel:`Key in hexadecimal` checkbox.
 
@@ -286,20 +291,20 @@ The following instructions describe how to register your device to `Leshan Demo 
    You can increase the number of displayed devices from the drop-down menu associated with **Rows per page**.
    In both cases, the menu is displayed at the bottom-right corner of the **Client Configuration** pages.
 
-2. Set the server address in the client:
+.. _server_addr_PSK:
 
-   a. Open :file:`src/prj.conf`.
-   #. Set :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_SERVER` to the correct server URL:
+Set the server address and PSK
+------------------------------
 
-      * For `Leshan Demo Server`_ - ``coaps://leshan.eclipseprojects.io:5684`` (`public Leshan Demo Server`_).
-      * For `Coiote Device Management`_ - ``coaps://eu.iot.avsystem.cloud:5684`` (`Coiote Device Management server`_).
-      * For `Leshan Bootstrap Server Demo web UI <public Leshan Bootstrap Server Demo_>`_ - ``coaps://leshan.eclipseprojects.io:5784``
-      * For Coiote bootstrap server - ``coaps://eu.iot.avsystem.cloud:5694``
-   #. Set :kconfig:option:`CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP` if bootstrap is used.
+1. Open :file:`src/prj.conf`.
+#. Set :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_SERVER` to the correct server URL:
 
+   * For `Leshan Demo Server`_ - ``coaps://leshan.eclipseprojects.io:5684`` (`public Leshan Demo Server`_).
+   * For `Coiote Device Management`_ - ``coaps://eu.iot.avsystem.cloud:5684`` (`Coiote Device Management server`_).
+   * For `Leshan Bootstrap Server Demo web UI <public Leshan Bootstrap Server Demo_>`_ - ``coaps://leshan.eclipseprojects.io:5784``
+   * For Coiote bootstrap server - ``coaps://eu.iot.avsystem.cloud:5694``
+#. Set :kconfig:option:`CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP` if bootstrap is used.
 #. Set :ref:`CONFIG_APP_LWM2M_PSK <CONFIG_APP_LWM2M_PSK>` to the hexadecimal representation of the PSK used when registering the device with the server.
-
-
 
 .. _notifications_setup_lwm2m:
 
@@ -493,8 +498,8 @@ Building and running
 
 After building and running the sample, you can locate your device in the server:
 
-   * Leshan - Devices are listed under **Clients**.
-   * Coiote - Devices are listed under **Device inventory**.
+* Leshan - Devices are listed under **Clients**.
+* Coiote - Devices are listed under **Device inventory**.
 
 Queue Mode support
 ==================

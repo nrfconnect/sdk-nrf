@@ -181,10 +181,13 @@ Configurations for Azure IoT Hub library
 
 To enable communication with Azure IoT Hub, set the following options in the :file:`overlay-azure.conf` file:
 
-* :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME`
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE`
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_SEC_TAG`
 * :kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG`
+
+If not using the default DPS (Device Provisioning Service) host, ensure that the hostname option is correctly set using the following Kconfig option:
+
+* :kconfig:option:`CONFIG_AZURE_IOT_HUB_DPS_HOSTNAME`
 
 Configurations for LwM2M integration layer
 ------------------------------------------

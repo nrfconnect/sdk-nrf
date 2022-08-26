@@ -127,14 +127,14 @@
 			<text x="16.59" y="154.17" class="st7" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>Util</text>		</g>
 		<g id="shape21-33" v:mID="21" v:groupContext="shape" transform="translate(293.163,-1)">
 			<title>Box.21</title>
-			<desc>GPS</desc>
+			<desc>GNSS</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="23.7722" cy="151.173" width="47.55" height="26.9291"/>
 			<rect x="0" y="137.709" width="47.5444" height="26.9291" class="st8"/>
-			<text x="15.74" y="154.17" class="st7" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>GPS</text>		</g>
+			<text x="15.74" y="154.17" class="st7" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>GNSS</text>		</g>
 		<g id="shape29-36" v:mID="29" v:groupContext="shape" transform="translate(414.28,-153.787)">
 			<title>Box.29</title>
 			<v:userDefs>
