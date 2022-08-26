@@ -304,31 +304,31 @@ static int mpsl_fem_host_init(const struct device *dev)
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), tx_en_gpios)
 	uint8_t tx_en_pin = NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(nrf_radio_fem), tx_en_gpios);
 
-	soc_secure_gpio_pin_mcu_select(tx_en_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(tx_en_pin, NRF_GPIO_PIN_SEL_NETWORK);
 #endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), rx_en_gpios)
 	uint8_t rx_en_pin = NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(nrf_radio_fem), rx_en_gpios);
 
-	soc_secure_gpio_pin_mcu_select(rx_en_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(rx_en_pin, NRF_GPIO_PIN_SEL_NETWORK);
 #endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), pdn_gpios)
 	uint8_t pdn_pin = NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(nrf_radio_fem), pdn_gpios);
 
-	soc_secure_gpio_pin_mcu_select(pdn_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(pdn_pin, NRF_GPIO_PIN_SEL_NETWORK);
 #endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), mode_gpios)
 	uint8_t mode_pin = NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(nrf_radio_fem), mode_gpios);
 
-	soc_secure_gpio_pin_mcu_select(mode_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(mode_pin, NRF_GPIO_PIN_SEL_NETWORK);
 #endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios)
 	uint8_t ant_sel_pin = NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(nrf_radio_fem), ant_sel_gpios);
 
-	soc_secure_gpio_pin_mcu_select(ant_sel_pin, NRF_GPIO_PIN_MCUSEL_NETWORK);
+	soc_secure_gpio_pin_mcu_select(ant_sel_pin, NRF_GPIO_PIN_SEL_NETWORK);
 #endif
 
 	return 0;
