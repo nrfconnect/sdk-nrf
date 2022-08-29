@@ -20,6 +20,13 @@ The script requires three inputs to be functional:
   '||' (indicating that at least one of the symbols must be present). && has a
   higher precedence than ||, so  A || B && C is equivalent to A || (B && C).
   Parenthesis can also be used to form rules like (A || B && (C || D)) && E.
+  Finally, a symbol can be negated with '!', indicating that the symbol must
+  not be present. Only symbols can be negated, not entire expressions.
+
+  Specific values for symbols can be given with '=', e.g. A=2. When no specific
+  value is given, a symbol is automatically expanded to A=y. Negating a symbol
+  with a value allows all occurrences of the symbol where the value differs
+  from the given value.
 
   One such file might look like this:
 
@@ -147,6 +154,7 @@ class MaturityLevels(IntEnum):
             self.EXPERIMENTAL: "Experimental",
             self.SUPPORTED: "Supported",
         }[self]
+
 
 __version__ = "0.1.0"
 
@@ -320,8 +328,9 @@ def parse_rule(rule: str) -> list:
     rule -> or-rule
     or-rule -> and-rule | and-rule '||' or-rule
     and-rule -> sub-rule | sub-rule '&&' and-rule
-    sub-rule -> symbol | '(' or-rule ')'
-    symbol -> any matches of the regular expression '[A-Z0-9_]+'
+    sub-rule -> not-symbol | '(' or-rule ')'
+    not-symbol -> symbol | '!' symbol
+    symbol -> any matches of the regular expression '[A-Z0-9_=]+'
 
     And-expressions have a higher precedence than or-expressions, making the
     rule 'A || B && C' equivalent with 'A || (B && C)'
@@ -331,6 +340,9 @@ def parse_rule(rule: str) -> list:
 
     For example, the rule 'A && (B || C)' will return the following list:
     [OR, [AND, A, [OR, [AND, B], [AND, C]]]]
+
+    Every symbol can be negated. The rule 'A && !B' will return the following
+    list: [OR, [AND, A, (NOT B)]]. Only symbols can be negated, not expressions.
 
     Args:
         rule: Kconfig rule string.
@@ -344,12 +356,20 @@ def parse_rule(rule: str) -> list:
     for expression in and_expressions:
         symbols = split_on("&&", expression)
         for i, symbol in enumerate(symbols):
+            # Symbol is a nested expression
             if symbol.startswith("(") and symbol.endswith(")"):
                 symbols[i] = parse_rule(symbol[1:-1])
-            elif not re.match(r"^[A-Z0-9_=]+$", symbol):
+                continue
+
+            negation = False
+            if not re.match(r"^(!\s*)?[A-Z0-9_=]+$", symbol):
                 logger.error(f"Invalid Kconfig symbol '{symbol}'")
-            elif not symbol.startswith("CONFIG_"):
-                symbols[i] = "CONFIG_" + symbol
+            if symbol.startswith("!"):
+                negation = True
+                symbol = symbol[1:].strip()
+            if not symbol.startswith("CONFIG_"):
+                symbol = "CONFIG_" + symbol
+            symbols[i] = ("NOT", symbol) if negation else symbol
         symbols.insert(0, "AND")
         parsed_rule.append(symbols)
     return parsed_rule
@@ -382,6 +402,14 @@ def evaluate_rule(vars: Dict[str, kconfiglib.Variable], rule: list) -> bool:
             if isinstance(symbol, list):
                 if not evaluate_rule(vars, symbol):
                     break
+            # The and-rule fails if a negated symbol is present
+            elif isinstance(symbol, tuple):
+                assert (
+                    len(symbol) == 2 and symbol[0] == "NOT"
+                ), f"invalid negation {symbol}"
+                symbol = symbol[1]
+                if symbol in vars and vars[symbol].value == value:
+                    break
             # The and-rule fails if a symbol is not present
             elif symbol not in vars or vars[symbol].value != value:
                 break
@@ -412,7 +440,9 @@ def flatten(items: list) -> Set[str]:
     return out
 
 
-def find_maturity_level(vars: Dict[str, kconfiglib.Variable], experimental_symbols: Set[str]) -> MaturityLevels:
+def find_maturity_level(
+    vars: Dict[str, kconfiglib.Variable], experimental_symbols: Set[str]
+) -> MaturityLevels:
     """Find if any of the symbols used in a rule are experimental or not.
 
     Args:
@@ -528,8 +558,11 @@ def generate_tables(
                     exp_soc_sets[soc] if soc in exp_soc_sets else set()
                 )
                 status = find_maturity_level(kconf.variables, experimental_symbols)
-                soc_sets[feature][soc] = \
-                    max(status, soc_sets[feature][soc]) if soc in soc_sets[feature] else status
+                soc_sets[feature][soc] = (
+                    max(status, soc_sets[feature][soc])
+                    if soc in soc_sets[feature]
+                    else status
+                )
 
     # Create the output data structure
     top_table = {}
