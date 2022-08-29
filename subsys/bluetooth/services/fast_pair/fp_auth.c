@@ -208,12 +208,6 @@ int fp_auth_start(struct bt_conn *conn, bool send_pairing_req)
 		return -EALREADY;
 	}
 
-	/* Peer is already bonded. Allow to write the account key. */
-	if (bt_conn_get_security(conn) >= BT_SECURITY_L4) {
-		fp_keys_bt_auth_progress(conn, true);
-		return 0;
-	}
-
 	err = bt_conn_auth_cb_overlay(conn, &conn_auth_callbacks);
 	if (err) {
 		return err;
