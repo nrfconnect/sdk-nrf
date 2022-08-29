@@ -72,7 +72,7 @@ void client_acknowledge(void)
 static struct k_work_delayable ncell_meas_work;
 void ncell_meas_work_handler(struct k_work *work)
 {
-	lte_lc_neighbor_cell_measurement(LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT);
+	lwm2m_ncell_schedule_measurement();
 	k_work_schedule(&ncell_meas_work, K_SECONDS(CONFIG_APP_NEIGHBOUR_CELL_SCAN_INTERVAL));
 }
 #endif
